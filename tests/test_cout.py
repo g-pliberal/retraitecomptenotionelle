@@ -632,12 +632,16 @@ def test_la_part_du_pib_reste_dans_un_ordre_de_grandeur_plausible(avenir, compte
         propre = ligne.base_modele / ligne.coefficient_constants / ligne.pib
         assert 0.10 < propre < 0.20, f"{ligne.annee} : {propre:.1%}"
     # L'écart au COR à l'horizon, lu dans son compte : deux points et demi
-    # jusqu'à l'étape 8 de l'action 147, moins d'un depuis, et une dérive au-delà de trois et demi relèverait d'une
-    # erreur de méthode plutôt que d'un désaccord d'hypothèses.
+    # jusqu'à l'étape 8 de l'action 147, moins d'un jusqu'à l'étape 10, et
+    # 0,4 point SOUS le COR depuis l'étape 11, qui compte les arrivées
+    # tardives : la base du modèle part d'un demi-point sous lui (la dépense de
+    # la DREES, sans gestion ni minimum vieillesse) et croît désormais comme
+    # lui. Une dérive au-delà de trois et demi relèverait d'une erreur de
+    # méthode plutôt que d'un désaccord d'hypothèses.
     horizon = avenir.annees[-1]
     propre = horizon.base_modele / horizon.coefficient_constants / horizon.pib
     ecart = propre - comptes.depense(horizon.annee)
-    assert 0.0 < ecart < 0.035, f"{horizon.annee} : écart au COR {ecart:.2%}"
+    assert -0.01 < ecart < 0.035, f"{horizon.annee} : écart au COR {ecart:.2%}"
 
 
 def test_la_trajectoire_du_systeme_actuel_est_celle_du_cor(avenir, comptes):
@@ -757,8 +761,11 @@ DECOMPOSITION_TETES = 0.03
 #: groupe par groupe sur la dépense du COR (étape 8), puis 10,4 %, la fonction
 #: publique suivant les retraités et le traitement indiciaire du COR (étape
 #: 9), puis 6,2 % (le modèle -12,0 %), l'Agirc-Arrco au taux moyen des
-#: entreprises (étape 10). Il ne doit que descendre, vers la cible.
-DECOMPOSITION_PENSION_CLIQUET = 0.07
+#: entreprises (étape 10), puis 3,1 % (le modèle -14,6 %), la masse de chaque
+#: génération portant ses arrivées tardives et le fonctionnaire de l'État
+#: entrant tard dans son régime (étape 11). Il ne doit que descendre, vers la
+#: cible.
+DECOMPOSITION_PENSION_CLIQUET = 0.04
 DECOMPOSITION_PENSION_CIBLE = 0.03
 
 
@@ -793,14 +800,16 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
     Le COR la fait reculer de 17 % de 2025 à 2070 — l'indexation des droits sur
     les prix, la baisse du rendement de l'Agirc-Arrco, la part croissante des
     primes des fonctionnaires, que sa figure 2.7 lit régime par régime ; le
-    modèle, de 12,0 % seulement, depuis qu'il suit les deux dernières
-    conventions, que ses poids sont calés sur la dépense des groupes du COR,
-    que la fonction publique suit ses retraités et son traitement indiciaire
-    et que l'Agirc-Arrco compte ses points au taux moyen des entreprises (de
-    3,5 % avant, puis de 5,6 %, de 6,3 %, de 8,6 %). C'est l'écart tout entier : les effectifs, eux,
-    se suivent (``test_la_projection_compte_les_retraites_du_cor``). Le même
-    défaut fait la reconstitution du passé (``test_la_projection_refait_le_passe``) :
-    la pension relative du modèle croît de 11,8 % de 2005 à 2025 (17,5 % avant
+    modèle, de 14,6 %, depuis qu'il suit les deux dernières conventions, que
+    ses poids sont calés sur la dépense des groupes du COR, que la fonction
+    publique suit ses retraités et son traitement indiciaire, que
+    l'Agirc-Arrco compte ses points au taux moyen des entreprises et que la
+    masse de chaque génération porte ses arrivées tardives (de 3,5 % avant,
+    puis de 5,6 %, de 6,3 %, de 8,6 %, de 12,0 %). C'est l'écart tout entier :
+    les effectifs, eux, se suivent
+    (``test_la_projection_compte_les_retraites_du_cor``). Le même défaut fait
+    la reconstitution du passé (``test_la_projection_refait_le_passe``) : la
+    pension relative du modèle croît de 11,4 % de 2005 à 2025 (17,5 % avant
     l'étape 10), celle du COR de 8,9 %.
 
     Le seuil est un CLIQUET, comme celui de la reconstitution : il ne doit que
@@ -853,15 +862,20 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: L'étape 10 compte l'Agirc-Arrco au taux moyen des entreprises : pension
 #: relative de l'Agirc-Arrco +23,9 %, dépense des complémentaires -0,1 %, qui
 #: passent aux groupes suivis ; le calage des poids sur la dépense des groupes
-#: en reporte un peu sur les non-salariés, +134,7 %.
+#: en reporte un peu sur les non-salariés, +134,7 %. L'étape 11 fait entrer le
+#: fonctionnaire de l'État dans son régime deux ans après le début de sa
+#: carrière, huit pour la génération 2000, et porte à la masse de chaque
+#: génération ses arrivées tardives : pension relative de la FPE +3,8 %, de la
+#: CNRACL +6,1 %, de l'Agirc-Arrco +20,4 % ; dépense de la FPE +23,1 %, de la
+#: CNRACL +8,4 %, des non-salariés +128,4 %, des régimes spéciaux +80,0 %.
 DECOMPOSITION_GROUPES_CLIQUETS = {
-    ("pension_relative", "fpe"): 0.17,
-    ("pension_relative", "cnracl"): 0.09,
-    ("pension_relative", "agirc_arrco"): 0.24,
-    ("depense_part_pib", "fpe"): 0.39,
-    ("depense_part_pib", "cnracl"): 0.12,
-    ("depense_part_pib", "non_salaries_base"): 1.35,
-    ("depense_part_pib", "regimes_speciaux"): 0.85,
+    ("pension_relative", "fpe"): 0.04,
+    ("pension_relative", "cnracl"): 0.07,
+    ("pension_relative", "agirc_arrco"): 0.21,
+    ("depense_part_pib", "fpe"): 0.24,
+    ("depense_part_pib", "cnracl"): 0.09,
+    ("depense_part_pib", "non_salaries_base"): 1.29,
+    ("depense_part_pib", "regimes_speciaux"): 0.81,
 }
 
 
@@ -961,6 +975,134 @@ console.log(JSON.stringify(annees.map((annee) => macro.traitementIndiciaireRelat
                                        rel=1e-12), annee
 
 
+def test_les_arrivees_tardives_se_lisent_dans_la_pyramide():
+    """Action 147, étape 11 : ce que les arrivées après 21 ans retirent à la
+    pension d'une génération, tiré du classeur de l'INSEE que lit déjà la
+    pyramide (``arrivees_tardives.csv``). Le manque double des générations
+    d'après-guerre à celles des années 1990 — 2,9 % en moyenne de 1941 à 1955,
+    6,0 % de 1986 à 2005 —, que l'hypothèse de solde migratoire de + 150 000
+    par an fait arriver adultes ; hors de la série, la valeur du bord."""
+    from retraite_notionnelle.donnees.population import ArriveesTardives
+
+    arrivees = ArriveesTardives(RACINE_DONNEES)
+    assert (arrivees.premiere_generation, arrivees.derniere_generation) == (1941, 2005)
+    manque = {g: 1.0 - arrivees.completude(g) for g in range(1941, 2006)}
+    assert all(0.0 < valeur < 0.08 for valeur in manque.values()), manque
+    anciennes = sum(manque[g] for g in range(1941, 1956)) / 15
+    recentes = sum(manque[g] for g in range(1986, 2006)) / 20
+    assert anciennes < 0.035 and recentes > 0.055, (anciennes, recentes)
+    assert arrivees.completude(1900) == arrivees.completude(1941)
+    assert arrivees.completude(2015) == arrivees.completude(2005)
+
+
+def test_les_arrivees_tardives_pesent_les_masses_et_non_les_tetes(population):
+    """La complétude d'une cohorte pèse sa masse de pensions, dans tous les
+    systèmes et dans chaque régime, et non ses têtes : un arrivé tard est un
+    retraité, à la pension plus courte (``Pensionne.completude``)."""
+    from retraite_notionnelle.cout import (
+        CLES_CAS_TYPES, RESSOURCES_GARANTIE, TETES_TOUTES, Pensionne, VoletLiberal,
+        _masses, _masses_regimes)
+
+    simulateur = Simulateur(Parametres()).pour_la_projection()
+    revalorisation = RevalorisationServie(simulateur, 2000, 2030)
+    volet = VoletLiberal(annee_liquidation=2010, annee_ouverture_garantie=2011,
+                         pension=1.0, ressources_garantie=1.0)
+    entiere = Pensionne(code="x", generation=1950, annee_liquidation=2010,
+                        pensions={cle: 1.0 for cle in CLES_CAS_TYPES}, propre=volet,
+                        parts_regimes={"regime_general": 1.0})
+    completudes = (0.90, 0.92, 0.94, 0.96, 0.98)
+    raccourcie = replace(entiere, completudes=completudes)
+    effectifs = [population.effectif(2020 - 1950 - decalage, 2020)
+                 for decalage in range(-2, 3)]
+    attendu = sum(e * k for e, k in zip(effectifs, completudes)) / sum(effectifs)
+    masses, _, tetes = _masses([entiere], population, 2020, {"x": 1.0}, revalorisation)
+    courtes, _, tetes_courtes = _masses([raccourcie], population, 2020, {"x": 1.0},
+                                        revalorisation)
+    assert tetes_courtes[TETES_TOUTES] == tetes[TETES_TOUTES] == pytest.approx(
+        sum(effectifs), rel=1e-12)
+    # Au système actuel, indexé sur les prix, la moyenne des complétudes que
+    # pèsent les effectifs ; aux autres, dont la revalorisation dépend de
+    # l'année de départ de chaque cohorte, une moyenne entre la plus courte et
+    # la plus longue.
+    assert courtes["actuel"] == pytest.approx(masses["actuel"] * attendu, rel=1e-12)
+    for cle in ("notionnel_retroactif", "notionnel_liberal", RESSOURCES_GARANTIE):
+        assert 0.90 < courtes[cle] / masses[cle] < 0.98, cle
+    regimes, tetes_regimes = _masses_regimes([entiere], population, 2020, {"x": 1.0},
+                                             revalorisation)
+    courts, tetes_courts = _masses_regimes([raccourcie], population, 2020, {"x": 1.0},
+                                           revalorisation)
+    assert tetes_courts == tetes_regimes
+    assert courts["regime_general"] == pytest.approx(
+        regimes["regime_general"] * attendu, rel=1e-12)
+    # Sans complétudes, la pension entière : la grille du simulateur individuel.
+    assert entiere.completude(-2) == entiere.completude(2) == 1.0
+
+
+def test_le_fonctionnaire_de_l_etat_entre_tard_dans_son_regime():
+    """Action 147, étape 11 : sous les conventions du COR, le fonctionnaire
+    sédentaire commence sa carrière contractuel, deux ans pour la génération
+    1962 (« un à trois ans », annexe méthodologique du COR, d'après l'EIC
+    2013), huit pour la génération 2000 (six ans de services en moins, note 69
+    du rapport de juin 2026), en ligne droite entre les deux. Il part au même
+    âge, sa pension seule se partage ; le simulateur individuel et la page Cas
+    types gardent la carrière d'un seul statut."""
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    from retraite_notionnelle.donnees.macro import DonneesMacro
+
+    macro = DonneesMacro(RACINE_DONNEES)
+    assert macro.delai_entree_fonction_publique(1940) == 2.0
+    assert macro.delai_entree_fonction_publique(1962) == 2.0
+    assert macro.delai_entree_fonction_publique(1981) == pytest.approx(5.0, rel=1e-12)
+    assert macro.delai_entree_fonction_publique(2000) == 8.0
+    assert macro.delai_entree_fonction_publique(2015) == 8.0
+    assert [c.code for c in CAS_TYPES if c.affiliation_avant_entree] == [
+        "fonctionnaire_sedentaire"]
+    cas = next(c for c in CAS_TYPES if c.code == "fonctionnaire_sedentaire")
+    individuel = Simulateur(Parametres())
+    projection = individuel.pour_la_projection()
+    for generation in (1945, 1980, 2000):
+        seul = cas.construire(individuel, generation)
+        tard = cas.construire(projection, generation)
+        assert {ligne.affiliation for ligne in seul.lignes} == {"fonctionnaire_etat"}
+        assert tard.annee_liquidation == seul.annee_liquidation, generation
+        avant = [ligne for ligne in tard.lignes if ligne.affiliation == "contractuel_public"]
+        delai = macro.delai_entree_fonction_publique(generation)
+        assert sum(ligne.fraction_annee for ligne in avant) == pytest.approx(
+            delai, abs=1.0), generation
+        assert all(ligne.annee < generation + cas.age_debut + delai + 1 for ligne in avant)
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    generations = [1930, 1962, 1970, 1981, 1999, 2000, 2015]
+    script = """
+import { readFileSync } from "node:fs";
+import { DonneesMacro } from "./moteur/js/macro.js";
+import { ArriveesTardives } from "./moteur/js/population.js";
+const generations = JSON.parse(process.argv[1]);
+const paquet = JSON.parse(readFileSync("moteur/donnees.json", "utf8"));
+const macro = new DonneesMacro(paquet);
+const arrivees = new ArriveesTardives(paquet);
+console.log(JSON.stringify(generations.map((g) => [
+  macro.delaiEntreeFonctionPublique(g), arrivees.completude(g)])));
+"""
+    calcul = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(generations)],
+        capture_output=True, text=True, encoding="utf-8",
+        cwd=Path(__file__).resolve().parents[1], check=False,
+    )
+    assert calcul.returncode == 0, calcul.stderr[-2000:]
+    from retraite_notionnelle.donnees.population import ArriveesTardives
+
+    arrivees = ArriveesTardives(RACINE_DONNEES)
+    for generation, (delai, completude) in zip(generations, json.loads(calcul.stdout)):
+        assert delai == macro.delai_entree_fonction_publique(generation), generation
+        assert completude == arrivees.completude(generation), generation
+
+
 def test_la_masse_se_decompose_regime_par_regime(avenir):
     """Les masses par régime de :attr:`AvenirAnnuel.masses_regimes` refont la
     base du modèle, et chaque régime qui sert une pension projetée est dans un
@@ -1013,13 +1155,15 @@ def test_l_ecart_au_cor_groupe_par_groupe(avenir, comptes):
     sa pension moyenne (+46 %, +24 % depuis l'étape 10, qui compte ses points
     au taux moyen des entreprises) est donc pour l'essentiel un écart de têtes.
     La DÉPENSE EN PART DE PIB (figure 2.6) ne dépend pas de ce compte : c'est
-    elle qui dit ce que chaque groupe pèse dans l'écart. Il est dans la
+    elle qui dit ce que chaque groupe pèse dans l'écart. Il était dans la
     fonction publique d'État, où le COR fait baisser la pension relative par
     la proratisation (des entrées plus tardives, six ans de services en moins
-    jusqu'à la génération 2000) — ses effectifs, la grille les suit depuis
-    l'étape 9 de l'action 147, et le décrochage de son traitement depuis
-    2019 —, et dans les régimes qui se ferment ou s'éteignent — non-salariés
-    agricoles, régimes spéciaux —, que la grille pèse aux effectifs de 2024.
+    jusqu'à la génération 2000) : ses effectifs, la grille les suit depuis
+    l'étape 9 de l'action 147, le décrochage de son traitement depuis 2019, et
+    ses entrées tardives depuis l'étape 11, si bien qu'il n'en reste que sa
+    dépense, que le COR compte réversion comprise. Il est surtout dans les
+    régimes qui se ferment ou s'éteignent — non-salariés agricoles, régimes
+    spéciaux —, que la grille pèse aux effectifs de 2024.
 
     Des CLIQUETS : un écart qui passe d'un point sous le sien demande de
     l'abaisser.
@@ -1036,9 +1180,10 @@ def test_l_ecart_au_cor_groupe_par_groupe(avenir, comptes):
 def test_la_derive_mesure_l_ecart_de_la_masse_du_modele_au_cor(avenir, comptes):
     """La dérive d'une année projetée est la croissance de la masse que le
     modèle se donne, rapportée à celle de la dépense du COR, depuis la première
-    année projetée : un à cette jonction et sur les années publiées, et plus de
-    un ensuite tant que le modèle ne fait pas reculer sa pension moyenne comme
-    le COR. Elle valait 1,203 en 2070 le 5 octobre 2026.
+    année projetée : un à cette jonction et sur les années publiées. Elle
+    valait 1,203 en 2070 le 5 octobre 2026, le modèle ne faisant pas reculer sa
+    pension moyenne comme le COR ; elle passe sous un, de peu, de 2031 à 2067
+    depuis le 6 octobre (action 147, étape 11).
     """
     jonction = avenir.annee(avenir.premiere_annee_projetee)
     assert jonction.derive == 1.0
@@ -1054,16 +1199,23 @@ def test_la_derive_mesure_l_ecart_de_la_masse_du_modele_au_cor(avenir, comptes):
     # réversion, l'ancrage unique — et la ramène à 1,097, puis 1,080 à l'étape
     # 9, la fonction publique suivant les retraités et le traitement indiciaire
     # du COR, puis 1,039 à l'étape 10, l'Agirc-Arrco comptant ses points au taux
-    # moyen des entreprises : un cliquet, qui ne doit que descendre à mesure
-    # que l'écart s'explique.
-    assert 1.02 < horizon.derive < 1.05, horizon.derive
+    # moyen des entreprises, puis 1,008 à l'étape 11, la masse de chaque
+    # génération portant ses arrivées tardives : un cliquet, qui ne doit que
+    # descendre à mesure que l'écart s'explique.
+    assert 1.0 < horizon.derive < 1.02, horizon.derive
+    # Les arrivées tardives pèsent dès 2035, quand la grille sert encore au
+    # privé une pension relative 3 à 4 % sous celle du COR : la dérive passe
+    # sous un, et au plus bas à 0,977 en 2054. Une dérive qui s'en écarterait
+    # de plus de 3 % dirait un défaut, non un écart d'hypothèses.
+    for ligne in avenir.projetees():
+        assert 0.97 < ligne.derive < 1.03, (ligne.annee, ligne.derive)
 
 
 def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):
     """La fourchette ne déplace ni le système actuel, dont le rapport vaut un,
-    ni la garantie, lue sur la distribution des pensions ; elle alourdit la
-    dépense de chaque système notionnel de la dérive de l'année, et donc la
-    dette de la proposition."""
+    ni la garantie, lue sur la distribution des pensions ; elle multiplie la
+    dépense de chaque système notionnel par la dérive de l'année, et déplace
+    d'autant la dette de la proposition."""
     for haute, basse in zip(cout.solde_derive.annees, cout.solde.annees):
         assert haute.annee == basse.annee
         assert haute.solde("actuel") == pytest.approx(basse.solde("actuel"), rel=1e-12)
@@ -1075,9 +1227,13 @@ def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):
     assert cout.dette_derive.horizon("actuel") == pytest.approx(
         cout.dette.horizon("actuel"), rel=1e-12)
     # Dix points de PIB de plus jusqu'à l'étape 10 de l'action 147, un et demi
-    # depuis : la dérive de 2070 y tombe de 8 à 4 %.
-    assert cout.dette_derive.horizon("notionnel_liberal") > cout.dette.horizon(
-        "notionnel_liberal") + 0.01
+    # jusqu'à l'étape 11, la dérive de 2070 y tombant de 8 à 4 %. Depuis, la
+    # dérive passe sous un de 2031 à 2067, et la seconde lecture ALLÈGE la
+    # dette de la proposition, de huit points : les deux lectures encadrent
+    # encore la vérité, mais la seconde n'est plus la borne haute.
+    ecart = cout.dette_derive.horizon("notionnel_liberal") - cout.dette.horizon(
+        "notionnel_liberal")
+    assert -0.10 < ecart < -0.05, ecart
 
 
 def test_le_pib_projete_croit_moins_vite_que_l_hypothese_nominale(avenir):

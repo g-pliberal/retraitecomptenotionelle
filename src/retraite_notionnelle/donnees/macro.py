@@ -512,6 +512,31 @@ class DonneesMacro:
             return relatif.get(annee, relatif[min(passe)] if annee < min(passe) else 1.0)
         return relatif[min(annee, max(relatif))]
 
+    def delai_entree_fonction_publique(self, generation: int) -> float:
+        """Les années qu'un fonctionnaire de l'État né en ``generation`` passe
+        sous un autre statut avant d'entrer dans le régime
+        (``entree_fonction_publique`` de ``macro/hypotheses_projection.yaml``,
+        action 147, étape 11).
+
+        Deux pour la génération qui part en ce moment, d'après l'EIC 2013 que
+        cite l'annexe méthodologique du COR (« un à trois ans »), huit pour la
+        génération 2000, la durée de services retenue pour la proratisation
+        baissant « d'environ 6 ans » (rapport de juin 2026, note 69) ; en ligne
+        droite entre les points du fichier, la valeur du bord au-delà, zéro
+        sans fichier. Seuls les cas types la lisent, sous les conventions du
+        COR (:meth:`~retraite_notionnelle.castypes.CasType.construire`).
+        """
+        points = sorted((int(point["generation"]), float(point["annees"]))
+                        for point in self._hypotheses.get("entree_fonction_publique") or ())
+        if not points:
+            return 0.0
+        if generation <= points[0][0]:
+            return points[0][1]
+        for (debut, avant), (fin, apres) in zip(points, points[1:]):
+            if generation <= fin:
+                return avant + (apres - avant) * (generation - debut) / (fin - debut)
+        return points[-1][1]
+
     def coefficient_smic(self, annee_depart: int, annee_arrivee: int) -> float:
         """Coefficient de passage par le SMIC, d'une année à l'autre.
 

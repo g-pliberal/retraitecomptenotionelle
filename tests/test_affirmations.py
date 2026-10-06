@@ -2075,9 +2075,10 @@ def _(m: Modele):
     # est celle du COR ; l'écart se lit dans celle que le modèle se donne
     # lui-même, et sa décomposition le met dans la pension, non dans les têtes.
     # Les deux parts se rejoignent à l'horizon depuis l'étape 10 de l'action
-    # 147 : la masse du modèle part d'une dépense plus étroite et croît plus
-    # vite. C'est la croissance que la page compare, et son rapport est la
-    # dérive de la borne haute.
+    # 147 : la masse du modèle part d'une dépense plus étroite. C'est la
+    # croissance que la page compare, et son rapport est la dérive de la
+    # seconde lecture ; depuis l'étape 11, elle ne s'écarte plus de celle du
+    # COR que de trois points, et passe sous elle entre les deux.
     avenir = m.cout.avenir
     debut, fin = avenir.premiere_annee_projetee, avenir.derniere_annee
     comptes = m.contexte.comptes()
@@ -2087,8 +2088,9 @@ def _(m: Modele):
 
     ecart = (part(avenir.annee(fin)) / part(avenir.annee(debut))
              / (comptes.depense(fin) / comptes.depense(debut)))
-    assert ecart > 1.02
+    assert abs(ecart - 1.0) < 0.03
     assert _proche(ecart, avenir.annee(fin).derive)
+    assert min(ligne.derive for ligne in avenir.projetees()) < 1.0
     tetes, pension = avenir.decomposition(avenir.premiere_annee_projetee)[avenir.derniere_annee]
     decomposition = m.contexte.comptes().decomposition
     assert abs(tetes / decomposition.indice_croissance(
@@ -2112,11 +2114,15 @@ def _(m: Modele):
         assert _proche(ligne.rapports["notionnel_liberal"],
                        basse.rapports["notionnel_liberal"] * derive)
         assert _proche(ligne.solde("actuel"), basse.solde("actuel"))
-    assert m.cout.dette_derive.horizon("notionnel_liberal") > m.cout.dette.horizon(
-        "notionnel_liberal")
+    # Jusqu'à l'étape 11 de l'action 147, la seconde lecture alourdissait
+    # toujours la proposition : c'était la borne haute. La dérive passant sous
+    # un au milieu de la période, elle l'allège désormais en moyenne ; ce qui
+    # se contrôle est l'étroitesse de la fourchette, dans les deux sens.
+    assert abs(m.cout.dette_derive.horizon("notionnel_liberal")
+               - m.cout.dette.horizon("notionnel_liberal")) < 0.10
     debut, fin = haut.premiere_annee_projetee, haut.derniere_annee
-    assert haut.solde_moyen("notionnel_liberal", debut, fin) < m.solde.solde_moyen(
-        "notionnel_liberal", debut, fin)
+    assert abs(haut.solde_moyen("notionnel_liberal", debut, fin) - m.solde.solde_moyen(
+        "notionnel_liberal", debut, fin)) < 0.0025
 
 
 @controle("trajectoire_du_cor")

@@ -1150,12 +1150,12 @@ affirmations:
 
   - id: cout.vigilance_cor
     page: /cout
-    extrait: "Point de vigilance : le modèle ne refait pas lui-même la projection du COR."
+    extrait: "Point de vigilance : le modèle ne refait la projection du COR qu'à quelques points près."
     porte: >-
       la part de PIB que le modèle donne lui-même au système actuel, sa masse à
-      l'échelle de la dernière année publiée, croît d'ici l'horizon plus vite que
-      celle du COR, et l'écart tient à la pension moyenne relative, non aux
-      effectifs
+      l'échelle de la dernière année publiée, croît d'ici l'horizon comme celle
+      du COR à trois points près, et passe sous elle entre les deux ; l'écart
+      tient à la pension moyenne relative, non aux effectifs
     etat: verifiee
     controle: projection_s_ecarte_du_cor
 
@@ -1172,7 +1172,7 @@ affirmations:
     page: /cout
     extrait: "S'il tient tout entier au système actuel"
     porte: >-
-      la borne haute multiplie le rapport de chaque système notionnel par la
+      la seconde lecture multiplie le rapport de chaque système notionnel par la
       dérive de son année, la croissance de la masse du modèle rapportée à celle
       de la dépense du COR, et ne déplace ni le système actuel ni la garantie
     etat: verifiee
@@ -1180,10 +1180,11 @@ affirmations:
 
   - id: cout.borne_basse
     page: /cout
-    extrait: "Les chiffres de la proposition sont la borne basse d'une fourchette."
+    extrait: "Les chiffres de la proposition ont une fourchette, étroite."
     porte: >-
-      la dette et le solde de la proposition sous la borne haute sont plus
-      lourds que ceux de la page
+      la dette et le solde moyen de la proposition sous la seconde lecture ne
+      s'écartent de ceux de la page que de dix points de PIB et d'un quart de
+      point par an au plus, dans un sens ou dans l'autre
     etat: verifiee
     controle: fourchette_haute_derive
 

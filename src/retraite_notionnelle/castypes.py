@@ -17,7 +17,7 @@ from dataclasses import dataclass, field, replace
 
 from typing import TYPE_CHECKING
 
-from .carriere import PROFIL_AUTOMATIQUE, Carriere
+from .carriere import PROFIL_AUTOMATIQUE, Carriere, Metier
 from .donnees.chargement import dans_un_instantane
 from .simulateur import Comparaison, Simulateur
 from . import pilote
@@ -89,6 +89,14 @@ class CasType:
     #: moteur, et l'a rendu avec lui.
     ecart_liquidation: float = 0.0
     commentaire: str = ""
+    #: Sous les conventions de projection du COR seulement — la page Coût — :
+    #: le statut des premières années, avant l'entrée dans le régime de
+    #: l'affiliation, pendant
+    #: :meth:`~retraite_notionnelle.donnees.macro.DonneesMacro.delai_entree_fonction_publique`
+    #: années (action 147, étape 11). Vide, la carrière n'a qu'un statut, et
+    #: la page Cas types montre toujours celle-là : le droit d'une carrière,
+    #: non une projection.
+    affiliation_avant_entree: str = ""
 
     def age_liquidation_pour(self, simulateur: Simulateur, generation: int,
                              variante: str = "droit") -> float:
@@ -98,10 +106,47 @@ class CasType:
 
     def construire(self, simulateur: Simulateur, generation: int,
                    variante: str = "droit") -> Carriere:
-        return self._carriere(
-            simulateur, generation,
-            self.age_liquidation_pour(simulateur, generation, variante),
+        age = self.age_liquidation_pour(simulateur, generation, variante)
+        if self.affiliation_avant_entree and simulateur.parametres.conventions_cor:
+            delai = simulateur.macro.delai_entree_fonction_publique(generation)
+            if delai > 0.0:
+                return self._carriere_entree_tardive(simulateur, generation, age, delai)
+        return self._carriere(simulateur, generation, age)
+
+    def _carriere_entree_tardive(self, simulateur: Simulateur, generation: int,
+                                 age_liquidation: float, delai: float) -> Carriere:
+        """La carrière d'un fonctionnaire entré tard dans son régime : ses
+        ``delai`` premières années sous :attr:`affiliation_avant_entree`, au
+        même niveau de salaire, le reste dans le régime.
+
+        L'âge de départ est celui que le pilote a fixé sur la carrière d'un
+        seul statut : l'entrée tardive ne fait partir personne plus tard. Le
+        pilote attendrait sinon que la petite pension du régime général soit
+        elle aussi au taux plein — deux ans de plus pour la génération 1945,
+        que le régime de l'État servait entière dès soixante ans —, ce
+        qu'aucun fonctionnaire ne fait pour quelques euros.
+        Le COR fait partir de même ses cas types au taux plein de leur régime
+        principal.
+        """
+        interruptions = {
+            int(generation + self.age_debut + decalage): motif
+            for decalage, motif in self.interruptions_relatives
+        }
+        carriere = simulateur.carriere_parcours(
+            annee_naissance=generation,
+            sexe=self.sexe,
+            metiers=[Metier(self.affiliation_avant_entree, self.age_debut,
+                            self.niveau_salaire),
+                     Metier(self.affiliation, self.age_debut + delai,
+                            self.niveau_salaire)],
+            age_liquidation=age_liquidation,
+            profil_carriere=self.profil_carriere,
+            interruptions=interruptions,
+            nombre_enfants=self.nombre_enfants,
+            part_primes=self.part_primes,
+            identifiant=f"{self.libelle} (génération {generation})",
         )
+        return primes_projetees(carriere, simulateur.macro)
 
     def _carriere(self, simulateur: Simulateur, generation: int,
                   age_liquidation: float) -> Carriere:
@@ -213,6 +258,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         part_primes=0.18,
         profil_carriere="public_categorie_b",
         caisses=("fonction_publique_etat_civile",),
+        affiliation_avant_entree="contractuel_public",
         commentaire="Traitement indiciaire hors primes ; les primes relèvent du RAFP.",
     ),
     CasType(

@@ -70,6 +70,7 @@ export const CAS_TYPES = [
     part_primes: 0.18,
     profil_carriere: "public_categorie_b",
     caisses: ["fonction_publique_etat_civile"],
+    affiliation_avant_entree: "contractuel_public",
     commentaire: "Traitement indiciaire hors primes ; les primes relèvent du RAFP.",
   },
   {
@@ -190,6 +191,11 @@ export const CAS_TYPES = [
   // règle d'exception qu'il contournait.
   regle_liquidation: "taux_plein",
   ecart_liquidation: 0.0,
+  // Sous les conventions de projection du COR seulement — la page Coût — : le
+  // statut des premières années, avant l'entrée dans le régime de
+  // l'affiliation, pendant `delaiEntreeFonctionPublique` années (action 147,
+  // étape 11). Vide, la carrière n'a qu'un statut. Voir castypes.py.
+  affiliation_avant_entree: "",
   ...cas,
 }));
 
@@ -302,12 +308,52 @@ export function ageLiquidationPour(cas, simulateur, generation, variante = "droi
   return ageDeDepart(simulateur, cas, generation, variante);
 }
 
-/** Construit la carrière d'un cas type pour une génération donnée. */
+/**
+ * Construit la carrière d'un cas type pour une génération donnée. Sous les
+ * conventions du COR, un cas type qui nomme `affiliation_avant_entree` entre
+ * tard dans son régime (`carriereEntreeTardive`), à l'âge que le pilote fixe
+ * sur sa carrière d'un seul statut. Voir `CasType.construire` dans castypes.py.
+ */
 export function construireCasType(cas, simulateur, generation, variante = "droit") {
-  return carriereCasType(
-    cas, simulateur, generation,
-    ageLiquidationPour(cas, simulateur, generation, variante),
+  const age = ageLiquidationPour(cas, simulateur, generation, variante);
+  if (cas.affiliation_avant_entree && simulateur.parametres.conventions_cor) {
+    const delai = simulateur.macro.delaiEntreeFonctionPublique(generation);
+    if (delai > 0.0) return carriereEntreeTardive(cas, simulateur, generation, age, delai);
+  }
+  return carriereCasType(cas, simulateur, generation, age);
+}
+
+/**
+ * La carrière d'un fonctionnaire entré tard dans son régime : ses `delai`
+ * premières années sous `affiliation_avant_entree`, au même niveau de salaire,
+ * le reste dans le régime. L'âge de départ est celui de la carrière d'un seul
+ * statut : le pilote attendrait sinon que la petite pension du régime général
+ * soit elle aussi au taux plein. Voir `_carriere_entree_tardive` dans
+ * castypes.py.
+ */
+function carriereEntreeTardive(cas, simulateur, generation, ageLiquidation, delai) {
+  const interruptions = new Map(
+    cas.interruptions_relatives.map(([decalage, motif]) => [
+      Math.trunc(generation + cas.age_debut + decalage), motif,
+    ]),
   );
+  const carriere = simulateur.carriereParcours({
+    annee_naissance: generation,
+    sexe: cas.sexe,
+    metiers: [
+      { affiliation: cas.affiliation_avant_entree, age_debut: cas.age_debut,
+        niveau_salaire: cas.niveau_salaire },
+      { affiliation: cas.affiliation, age_debut: cas.age_debut + delai,
+        niveau_salaire: cas.niveau_salaire },
+    ],
+    age_liquidation: ageLiquidation,
+    profil_carriere: cas.profil_carriere,
+    interruptions,
+    nombre_enfants: cas.nombre_enfants,
+    part_primes: cas.part_primes,
+    identifiant: `${cas.libelle} (génération ${generation})`,
+  });
+  return primesProjetees(carriere, simulateur.macro);
 }
 
 /**

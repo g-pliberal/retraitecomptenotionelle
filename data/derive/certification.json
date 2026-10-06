@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-10-05",
+ "dernier_passage_le": "2026-10-06",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -66,6 +66,17 @@
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-29-1",
    "valeurs": 16,
    "verifiee_le": "2026-09-17"
+  },
+  "arrivees_tardives": {
+   "ajoutees": 130,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "853ad9edf20ddb83",
+   "identiques": 0,
+   "niveau": "estimee",
+   "source": "INSEE, projections de population 2026, scénario central : population au 1er janvier et décès par âge, 1962-2070",
+   "valeurs": 130,
+   "verifiee_le": "2026-10-06"
   },
   "assiette_revenu_mixte": {
    "ajoutees": 0,

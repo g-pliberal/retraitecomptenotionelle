@@ -158,7 +158,7 @@ from .donnees.equilibre import (
     DecompositionDepense,
 )
 from .donnees.tva import AssietteTva
-from .donnees.population import Population
+from .donnees.population import ArriveesTardives, Population
 from .garantie import (
     CoutGarantie,
     _manque_moyen,
@@ -410,6 +410,21 @@ class Pensionne:
     #: liquidation : celle des régimes en points dont le COR projette la
     #: valeur de service ne suit pas les prix (:func:`coefficient_actuel`).
     parts_regimes: dict[str, float] = field(default_factory=dict)
+    #: Ce que touche chacune de ses cinq cohortes, en part de la pension
+    #: d'une carrière française complète, du ``-_DEMI_TRANCHE`` au
+    #: ``+_DEMI_TRANCHE`` : les arrivées après 21 ans la raccourcissent
+    #: (:class:`~retraite_notionnelle.donnees.population.ArriveesTardives`,
+    #: action 147, étape 11). Vide, la cohorte touche la pension entière.
+    completudes: tuple[float, ...] = ()
+
+    def completude(self, decalage: int) -> float:
+        """La part de la pension de la grille que touche, en moyenne, la
+        cohorte née ``decalage`` ans après la génération de la grille. Elle
+        pèse les MASSES de cette cohorte, et non ses têtes : un arrivé tard est
+        un retraité, à la pension plus courte."""
+        if not self.completudes:
+            return 1.0
+        return self.completudes[decalage + _DEMI_TRANCHE]
 
     def volet(self, decalage: int) -> "VoletLiberal":
         """La proposition de la cohorte née ``decalage`` ans après la grille.
@@ -2010,6 +2025,11 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
     macro = simulateur.macro
     annee_euros = simulateur.parametres.annee_euros_constants
     bascule = simulateur.parametres.annee_bascule
+    # Les arrivées après 21 ans, que la pyramide compte et que la grille
+    # paierait en carrière complète : une convention de projection, comme
+    # celles du COR que la page suit.
+    arrivees = (ArriveesTardives(simulateur.parametres.racine_donnees)
+                if simulateur.parametres.conventions_cor else None)
     pensionnes = []
     for (code, generation), comparaison in grille.resultats.items():
         propre = _volet(comparaison.carriere_de("notionnel_liberal"),
@@ -2057,6 +2077,9 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
             autre=autre,
             bascule=bascule,
             parts_regimes=_parts_regimes(comparaison.actuel),
+            completudes=() if arrivees is None else tuple(
+                arrivees.completude(generation + decalage)
+                for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)),
             cotisations={
                 # Le dénominateur ne peut pas être le compte du scénario 4.
                 # Celui-là fusionne les régimes à la bascule et prélève ensuite
@@ -2356,6 +2379,13 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
     scénario 1 aussi, sauf la part de sa pension que sert l'Agirc-Arrco, dont
     le COR projette la valeur de service (``poids_actuel``,
     :func:`coefficient_actuel`).
+
+    Les poids en euros portent enfin ce que chaque cohorte touche de la
+    pension d'une carrière complète (:meth:`Pensionne.completude`, action 147,
+    étape 11) : la pyramide compte aussi les arrivés tard, dont la carrière
+    française est courte. Les têtes ne le portent pas — un arrivé tard est un
+    retraité —, et les poids en têtes non plus, sauf comme poids de masse
+    (``poids_masse``).
     """
     masses = {cle: 0.0 for cle in CLES_CAS_TYPES}
     masses[MASSE_STOCK] = 0.0
@@ -2371,6 +2401,7 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
         if part <= 0.0:
             continue
         poids = 0.0
+        poids_masse = 0.0
         poids_actuel = 0.0
         poids_revalorise = 0.0
         poids_revalorise_prospectif = 0.0
@@ -2386,10 +2417,15 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             effectif = population.effectif(
                 annee - pensionne.generation - decalage, annee
             )
+            # Ce que la cohorte touche de la pension d'une carrière complète
+            # (:meth:`Pensionne.completude`) : il pèse ses MASSES, et non ses
+            # têtes.
+            pese = effectif * pensionne.completude(decalage)
             liquidation = pensionne.annee_liquidation + decalage
             if annee >= liquidation:
                 poids += effectif
-                poids_actuel += effectif * coefficient_actuel(
+                poids_masse += pese
+                poids_actuel += pese * coefficient_actuel(
                     convenues, revalorisation, liquidation, annee)
                 # Le poids revalorisé porte la revalorisation des pensions
                 # SERVIES, et il faut qu'il soit à part : le coefficient
@@ -2398,10 +2434,10 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
                 # appliquerait à toutes celui de la génération du milieu, soit
                 # deux ans d'indexation en trop d'un côté et en moins de
                 # l'autre.
-                poids_revalorise += effectif * revalorisation.coefficient_stock(
+                poids_revalorise += pese * revalorisation.coefficient_stock(
                     liquidation, annee, prospectif=False
                 )
-                poids_revalorise_prospectif += effectif * revalorisation.coefficient_stock(
+                poids_revalorise_prospectif += pese * revalorisation.coefficient_stock(
                     liquidation, annee, prospectif=True
                 )
             volet = pensionne.volet(decalage)
@@ -2409,7 +2445,7 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             if annee < depart:
                 continue
             # L'ordre des produits est celui du portage, au bit près.
-            masse_liberale += effectif * (
+            masse_liberale += pese * (
                 1.0 if regle_liberale == REGLE_PRIX
                 else revalorisation.coefficient_stock(
                     depart, annee, prospectif=regle_liberale == REGLE_PROSPECTIVE)
@@ -2423,7 +2459,7 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             # revalorisées sur la masse salariale jusqu'au 23 septembre 2026.
             if annee >= volet.annee_ouverture_garantie + decalage:
                 poids_garantie += effectif
-                masse_garantie += effectif * (
+                masse_garantie += pese * (
                     revalorisation.coefficient_stock(depart, annee, prospectif=False)
                     * (volet.ressources_garantie - volet.rente_garantie)
                     + revalorisation.coefficient_nominal(depart, annee)
@@ -2449,7 +2485,7 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             elif cle == "actuel":
                 poids_cle = poids_actuel
             else:
-                poids_cle = poids
+                poids_cle = poids_masse
             masses[cle] += part * poids_cle * pensionne.pensions[cle]
         # Le critère est celui du scénario prospectif lui-même : une carrière
         # liquidée au plus tard l'année de la bascule y garde sa pension.
@@ -2827,9 +2863,12 @@ def _masses_regimes(pensionnes: list[Pensionne], population: Population, annee: 
                 continue
             effectif = part * population.effectif(
                 annee - pensionne.generation - decalage, annee)
+            # La complétude de la cohorte pèse sa masse, non ses têtes, comme
+            # dans :func:`_masses`.
+            pese = effectif * pensionne.completude(decalage)
             for tete, parts in regroupees.items():
                 tetes[tete] = tetes.get(tete, 0.0) + effectif
-                masses[tete] = masses.get(tete, 0.0) + effectif * pensionne.pensions["actuel"] * sum(
+                masses[tete] = masses.get(tete, 0.0) + pese * pensionne.pensions["actuel"] * sum(
                     part_regime * revalorisation.coefficient_points(
                         convenu, liquidation, annee)
                     for convenu, part_regime in parts)
@@ -4139,8 +4178,10 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
                         effectif = effectif_bord * (courbe[rang] if rang < len(courbe) else 0.0)
                     if effectif <= 0.0:
                         continue
+                    # La complétude de la cohorte, comme dans les masses dont
+                    # l'engagement est la somme (:meth:`Pensionne.completude`).
                     commun = (
-                        acquis * part_caisse * effectif
+                        acquis * part_caisse * effectif * pensionne.completude(decalage)
                         * ancrage * reversion[millesime]
                         / macro.coefficient_prix(millesime, annee_euros)
                         / pib[millesime]

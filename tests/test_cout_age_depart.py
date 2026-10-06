@@ -187,12 +187,23 @@ def test_corriger_les_ages_eloigne_le_modele_du_COR(mesure):
     MAUVAIS sens : l'écart avec la projection du COR se creuse. L'âge de
     départ n'explique donc pas cet écart, et la piste du taux de remplacement
     reste entière.
+
+    *Le 6 octobre 2026* (action 147, étape 11), la trajectoire propre finit
+    0,4 point de PIB SOUS le COR en 2070 : elle part d'un demi-point sous lui,
+    la dépense de la DREES n'ayant ni gestion ni minimum vieillesse, et croît
+    désormais comme lui. Les niveaux ne se comparent plus ; leurs croissances
+    si, et la correction des âges éloigne celle du modèle de celle du COR : sa
+    dérive de 2070 passe de 1,008 à 1,036.
     """
+    from retraite_notionnelle import memoire
+
     avant = mesure["reference"]["actuel"]
     apres = mesure["contrefactuel"]["actuel"]
     assert apres > avant
-    cor = CAD.cor_horizon(Parametres().racine_donnees)
-    assert abs(apres - cor) > abs(avant - cor)
+    parametres = Parametres()
+    derives = [memoire.cout(parametres, cas_types=grille).avenir.annees[-1].derive
+               for grille in (CAS_TYPES, mesure["corrigee"])]
+    assert abs(derives[1] - 1.0) > abs(derives[0] - 1.0), derives
     assert 0.002 < apres - avant < 0.02
 
 

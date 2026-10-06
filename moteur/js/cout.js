@@ -49,6 +49,7 @@ import { Fiabilite } from "./serie.js";
 import { GROUPES_DU_MODELE, ORGANISMES, POSTES } from "./equilibre.js";
 import { RevalorisationServie } from "./revalorisation.js";
 import { AssietteTva } from "./tva.js";
+import { ArriveesTardives } from "./population.js";
 
 // La règle des pensions servies est née ici, pour la page Coût ; le
 // simulateur s'en sert aussi, pour dire ce qu'un retraité touche aujourd'hui,
@@ -350,6 +351,11 @@ function pensionnes(simulateurIndividuel, casTypes, liquidation = "droit") {
   // projection, que le simulateur individuel ne suit pas.
   const simulateur = simulateurIndividuel.pourLaProjection();
   const grille = calculerCasTypes(simulateur, casTypes, generations(), liquidation);
+  // Les arrivées après 21 ans, que la pyramide compte et que la grille
+  // paierait en carrière complète : une convention de projection. Voir
+  // `_pensionnes` dans cout.py.
+  const arrivees = simulateur.parametres.conventions_cor
+    ? new ArriveesTardives(simulateur.paquet) : null;
   const liste = [];
   for (const [cle, comparaison] of grille.resultats) {
     const pensions = {};
@@ -415,6 +421,8 @@ function pensionnes(simulateurIndividuel, casTypes, liquidation = "droit") {
       autre,
       bascule: simulateur.parametres.annee_bascule,
       partsRegimes: partsRegimes(comparaison.actuel),
+      completudes: arrivees === null ? [] : completudesDe(arrivees,
+        Number(cle.slice(cle.indexOf("|") + 1))),
     });
   }
   const motifs = new Map();
@@ -422,6 +430,15 @@ function pensionnes(simulateurIndividuel, casTypes, liquidation = "droit") {
     motifs.set(motif, (motifs.get(motif) || 0) + 1);
   }
   return { liste, motifs };
+}
+
+/** Les complétudes des cinq cohortes d'une génération de la grille. */
+function completudesDe(arrivees, generation) {
+  const completudes = [];
+  for (let decalage = -DEMI_TRANCHE; decalage <= DEMI_TRANCHE; decalage += 1) {
+    completudes.push(arrivees.completude(generation + decalage));
+  }
+  return completudes;
 }
 
 /**
@@ -567,6 +584,19 @@ function voletDe(pensionne, decalage) {
   const franchit = pensionne.anneeLiquidation + decalage >= pensionne.bascule;
   const grilleFranchit = pensionne.anneeLiquidation >= pensionne.bascule;
   return franchit === grilleFranchit ? pensionne.propre : pensionne.autre;
+}
+
+/**
+ * La part de la pension de la grille que touche, en moyenne, la cohorte née
+ * `decalage` ans après la génération de la grille : les arrivées après 21 ans
+ * la raccourcissent (action 147, étape 11). Elle pèse les MASSES de la
+ * cohorte, et non ses têtes. Sans complétudes, la pension entière. Voir
+ * `Pensionne.completude` dans cout.py.
+ */
+function completude(pensionne, decalage) {
+  const completudes = pensionne.completudes;
+  if (!completudes || completudes.length === 0) return 1.0;
+  return completudes[decalage + DEMI_TRANCHE];
 }
 
 /** Les flux annuels du pilier capitalisé d'une carrière, en euros courants :
@@ -726,6 +756,7 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
     const part = poidsCas[pensionne.code] || 0;
     if (part <= 0) continue;
     let poids = 0;
+    let poidsMasse = 0;
     let poidsActuel = 0;
     let poidsRevalorise = 0;
     let poidsRevaloriseProspectif = 0;
@@ -738,23 +769,27 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
     let poidsGarantie = 0;
     for (let decalage = -DEMI_TRANCHE; decalage <= DEMI_TRANCHE; decalage += 1) {
       const effectif = population.effectif(annee - pensionne.generation - decalage, annee);
+      // Ce que la cohorte touche de la pension d'une carrière complète : il
+      // pèse ses MASSES, et non ses têtes. Voir `Pensionne.completude`.
+      const pese = effectif * completude(pensionne, decalage);
       const liquidation = pensionne.anneeLiquidation + decalage;
       if (annee >= liquidation) {
         poids += effectif;
-        poidsActuel += effectif * coefficientActuel(convenues, revalorisation,
+        poidsMasse += pese;
+        poidsActuel += pese * coefficientActuel(convenues, revalorisation,
           liquidation, annee);
         // Le poids revalorisé porte la revalorisation des pensions SERVIES, et
         // il faut qu'il soit à part : le coefficient dépend de l'année de
         // liquidation, qui n'est pas la même pour les cinq cohortes.
-        poidsRevalorise += effectif * revalorisation.coefficientStock(liquidation, annee, false);
-        poidsRevaloriseProspectif += effectif * revalorisation.coefficientStock(
+        poidsRevalorise += pese * revalorisation.coefficientStock(liquidation, annee, false);
+        poidsRevaloriseProspectif += pese * revalorisation.coefficientStock(
           liquidation, annee, true,
         );
       }
       const voletCohorte = voletDe(pensionne, decalage);
       const depart = voletCohorte.anneeLiquidation + decalage;
       if (annee < depart) continue;
-      masseLiberale += effectif
+      masseLiberale += pese
         * revalorisation.coefficientStock(depart, annee, liberaleProspective)
         * voletCohorte.pension;
       // La garantie n'entre qu'à 65 ans, même pour qui est parti plus tôt. Ce
@@ -763,7 +798,7 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
       // comme le pilier la sert, nominale et constante.
       if (annee >= voletCohorte.anneeOuvertureGarantie + decalage) {
         poidsGarantie += effectif;
-        masseGarantie += effectif * (
+        masseGarantie += pese * (
           revalorisation.coefficientStock(depart, annee, false)
             * (voletCohorte.ressourcesGarantie - voletCohorte.renteGarantie)
           + revalorisation.coefficientNominal(depart, annee)
@@ -784,7 +819,7 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
         total[cle] += part * masseGarantie;
         continue;
       }
-      let poidsCle = poids;
+      let poidsCle = poidsMasse;
       if (CLES_PROSPECTIVES.has(cle)) poidsCle = poidsRevaloriseProspectif;
       else if (CLES_REVALORISEES.has(cle)) poidsCle = poidsRevalorise;
       else if (cle === "actuel") poidsCle = poidsActuel;
@@ -1034,6 +1069,8 @@ function massesRegimes(liste, population, annee, poidsCas, revalorisation) {
       if (annee < liquidation) continue;
       const effectif = part * population.effectif(
         annee - pensionne.generation - decalage, annee);
+      // La complétude de la cohorte pèse sa masse, non ses têtes.
+      const pese = effectif * completude(pensionne, decalage);
       for (const [tete, parts] of regroupees) {
         let somme = 0;
         for (const [convenu, partRegime] of parts) {
@@ -1041,7 +1078,7 @@ function massesRegimes(liste, population, annee, poidsCas, revalorisation) {
         }
         tetesRegime.set(tete, (tetesRegime.get(tete) ?? 0) + effectif);
         massesRegime.set(tete, (massesRegime.get(tete) ?? 0)
-          + effectif * pensionne.pensions.actuel * somme);
+          + pese * pensionne.pensions.actuel * somme);
       }
     }
   }

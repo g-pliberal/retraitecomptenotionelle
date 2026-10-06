@@ -8926,13 +8926,16 @@ ce modèle.</div>
 /**
  * La fourchette que l'écart du modèle au COR impose aux chiffres de la
  * proposition (action 147, étape 3). La page prend au modèle un RAPPORT de
- * masses ; la masse qu'il donne au système actuel croît plus vite que la
- * dépense du COR. Deux lectures l'encadrent : un écart PARTAGÉ par toutes les
- * règles laisse le rapport juste, et ce sont les chiffres de la page ; un écart
- * PROPRE au système actuel laisse juste la masse des systèmes notionnels, et
- * leur rapport doit être multiplié par la dérive (`rapportDerive`). Le tableau
- * donne les deux bornes pour la proposition, le seul système qu'un lecteur
- * vienne chercher.
+ * masses ; la masse qu'il donne au système actuel ne croît pas tout à fait
+ * comme la dépense du COR. Deux lectures l'encadrent : un écart PARTAGÉ par
+ * toutes les règles laisse le rapport juste, et ce sont les chiffres de la
+ * page ; un écart PROPRE au système actuel laisse juste la masse des systèmes
+ * notionnels, et leur rapport doit être multiplié par la dérive
+ * (`rapportDerive`). Depuis l'étape 11, la dérive passe sous un au milieu de
+ * la période : la seconde lecture n'est plus la borne haute, et le texte dit
+ * de combien elle s'écarte, dans un sens ou dans l'autre. Le tableau donne les
+ * deux lectures pour la proposition, le seul système qu'un lecteur vienne
+ * chercher.
  */
 function coutFourchette(contexte) {
   const c = contexte.cout();
@@ -8942,6 +8945,8 @@ function coutFourchette(contexte) {
   const fin = avenir.derniereAnnee;
   const debut = solde.premiereAnneeProjetee;
   const horizon = avenir.annee(fin);
+  const plusBasse = avenir.projetees().reduce(
+    (bas, ligne) => (ligne.derive < bas.derive ? ligne : bas), horizon);
   const scenario = "notionnel_liberal";
   const moyenne = (bilan) => bilan.soldeMoyen(scenario, debut, bilan.derniereAnnee);
   const lignes = [
@@ -8965,16 +8970,20 @@ par tous les systèmes</strong>, parce que la grille compte mal qui part, quand
 et avec quelle carrière, elle se trompe de la même façon sous toutes les
 règles : le rapport est juste, et ce sont les chiffres de cette page.
 <strong>S'il tient tout entier au système actuel</strong>, parce qu'une règle du
-droit en vigueur est servie par la grille plus généreusement que par le COR, la
-masse des systèmes notionnels est juste et celle du système actuel trop haute :
-le rapport doit grandir d'autant, de ${g.pourcentage(horizon.derive - 1, false, 0)}
-en ${fin}. Le COR attribue la baisse de sa pension moyenne relative à des
-règles du droit en vigueur, qui tirent vers la seconde lecture, et à des effets
-de population, l'âge des retraités ou des carrières françaises courtes, qui
-tirent vers la première. Les deux hypothèses du COR que la page suit, sur
-l'Agirc-Arrco et les primes des fonctionnaires, n'en expliquent qu'une petite
-part, et la page ne sait pas encore situer la vérité entre les deux lectures : c'est la seconde qui borne, par le haut, ce que la
-proposition coûterait.</p>
+droit en vigueur est servie par la grille autrement que par le COR, la masse
+des systèmes notionnels est juste et celle du système actuel fausse : le
+rapport doit être multiplié par la dérive de l'année, qui va de
+${g.nombre(plusBasse.derive, 3)} en ${plusBasse.annee} à
+${g.nombre(horizon.derive, 3)} en ${fin}. Le COR attribue la baisse de sa
+pension moyenne relative à des règles du droit en vigueur, qui tirent vers la
+seconde lecture, et à des effets de population, l'âge des retraités ou des
+carrières françaises courtes, qui tirent vers la première. La page suit trois
+de ses hypothèses, sur l'Agirc-Arrco, les primes et l'entrée tardive des
+fonctionnaires dans leur régime, et la masse de chaque génération porte les
+carrières courtes de ceux qui sont arrivés en France adultes : l'écart qui
+reste est petit, et il change de signe. La seconde lecture ne borne donc plus
+la proposition par le haut : elle l'alourdit en ${fin}, l'allège avant, et la
+vérité est entre les deux colonnes, qui se tiennent de près.</p>
 ${g.tableau(
     ["La proposition libérale", "Si l'écart est partagé (cette page)",
       "Si l'écart est propre au système actuel"],
@@ -9161,12 +9170,15 @@ function coutDetailScenarios(contexte) {
   const totalFin = horizon.coutConstants("notionnel_liberal") + garantieFin;
   // Ce que le modèle donnerait LUI-MÊME au système actuel — sa masse, à
   // l'échelle de la dernière année publiée —, et que la page ne prend plus
-  // pour une projection : le contrôle que le COR lui oppose. Depuis le
-  // 5 octobre 2026, les deux parts se rejoignent à l'horizon ; la masse du
+  // pour une projection : le contrôle que le COR lui oppose. La masse du
   // modèle part d'une dépense plus étroite que celle du COR, sans gestion ni
-  // minimum vieillesse, et croît plus vite : c'est la croissance qui se
-  // compare, et son rapport est la dérive.
+  // minimum vieillesse : c'est la croissance qui se compare, et son rapport
+  // est la dérive. Depuis le 6 octobre 2026, les deux croissances se
+  // rejoignent à l'horizon, et celle du modèle passe sous celle du COR entre
+  // les deux, au plus bas l'année de la plus petite dérive.
   const premiereProjetee = avenir.premiereAnneeProjetee;
+  const plusBasse = avenir.projetees().reduce(
+    (bas, ligne) => (ligne.derive < bas.derive ? ligne : bas), horizon);
   const partModele = (ligne) => ligne.baseModele / ligne.coefficientConstants / ligne.pib;
   const croissanceModele = partModele(horizon) / partModele(avenir.annee(premiereProjetee));
   const croissanceCor = corHorizon / comptes.depense(premiereProjetee);
@@ -9249,23 +9261,26 @@ ${euros}, le chiffre de son rapport. Les trois autres en sont tirés par le
 cartes du haut : la page ne porte qu'une dépense pour le système actuel, et
 c'est la dépense officielle.</p>
 <div class="note vigilance"><strong>Point de vigilance : le modèle ne refait
-pas lui-même la projection du COR.</strong> Mise à l'échelle de la dépense
-de ${derniere}, sa propre masse de pensions ferait croître la part du système
-actuel dans le PIB de ${g.pourcentage(croissanceModele - 1, false, 0)} de
-${premiereProjetee} à ${avenir.derniereAnnee}, quand le COR la fait croître de
-${g.pourcentage(croissanceCor - 1, false, 0)}. Le nombre de retraités,
-le modèle le suit : sur ces années, il en
-compte ${g.pourcentage(tetesModele - 1, false, 0)} de plus, le COR
+la projection du COR qu'à quelques points près.</strong> Mise à l'échelle de la
+dépense de ${derniere}, sa propre masse de pensions ferait croître la part du
+système actuel dans le PIB de ${g.pourcentage(croissanceModele - 1, false, 0)}
+de ${premiereProjetee} à ${avenir.derniereAnnee}, quand le COR la fait croître
+de ${g.pourcentage(croissanceCor - 1, false, 0)} ; entre les deux, elle passe
+sous la sienne, de ${g.pourcentage(1 - plusBasse.derive, false, 0)} au plus en
+${plusBasse.annee}. Le nombre de retraités, le modèle le suit : sur ces années,
+il en compte ${g.pourcentage(tetesModele - 1, false, 0)} de plus, le COR
 ${tetesCor === null ? "—" : g.pourcentage(tetesCor - 1, false, 0)}. La pension
-moyenne rapportée au revenu d'activité moyen, il la suit mal : elle recule de
-${pensionCor === null ? "—" : g.pourcentage(1 - pensionCor, false, 0)} chez le
-COR et de ${g.pourcentage(1 - pensionModele, false, 0)} seulement dans le modèle,
-dont les treize carrières types, commencées au même âge à chaque génération
-et le plus souvent complètes, gardent un ${g.terme("taux de remplacement")} que
-le COR fait reculer davantage. C'est pourquoi aucune
-dépense du système actuel n'est prise au modèle sur cette page ; le rapport qu'on lui prend, lui, porte encore cet
-écart, et <a href="${g.DEPOT}/blob/main/docs/limites.md">le § 5 ter des
-limites</a> dit ce qu'il déplace.</div>
+moyenne rapportée au revenu d'activité moyen, il la suit moins bien : elle
+recule de ${pensionCor === null ? "—" : g.pourcentage(1 - pensionCor, false, 0)}
+chez le COR et de ${g.pourcentage(1 - pensionModele, false, 0)} dans le modèle,
+dont les treize carrières types, commencées au même âge à chaque génération,
+gardent un ${g.terme("taux de remplacement")} que le COR fait reculer
+davantage, bien que la masse de chaque génération porte les carrières
+françaises courtes de ceux qui sont arrivés en France adultes. C'est pourquoi
+aucune dépense du système actuel n'est prise au modèle sur cette page ; le
+rapport qu'on lui prend, lui, porte encore cet écart, et
+<a href="${g.DEPOT}/blob/main/docs/limites.md">le § 5 ter des limites</a> dit
+ce qu'il déplace.</div>
 
 ${g.tableau(
     ["Système", `Coût ${avenir.derniereAnnee}`,
@@ -10654,12 +10669,12 @@ s'ajouterait à celle que le pays porte déjà, que le second graphique pose
 dessous. La proposition, qui fixe le taux à 18 % et ne fixe pas les pensions,
 en accumule ${g.pourcentage(dette.horizon("notionnel_liberal"), false, 0)} du
 PIB au même horizon,
-${g.milliards(dette.horizon("notionnel_liberal") * pibFin)}. C'est la borne
-basse d'une fourchette : si l'écart du modèle au COR tenait tout entier au
-système actuel, elle en accumulerait
+${g.milliards(dette.horizon("notionnel_liberal") * pibFin)}. Si l'écart du
+modèle au COR tenait tout entier au système actuel, elle en accumulerait
 ${g.pourcentage(c.detteDerive.horizon("notionnel_liberal"), false, 0)},
-${g.milliards(c.detteDerive.horizon("notionnel_liberal") * pibFin)}. Le
-dépliant des quatre systèmes dit pourquoi.</p>
+${g.milliards(c.detteDerive.horizon("notionnel_liberal") * pibFin)} : le
+dépliant des quatre systèmes dit pourquoi les deux lectures se tiennent de si
+près.</p>
 
 ${g.tableau(
     ["Système", `Dette en ${fin}`, `Intérêts de l'année ${fin}`,
@@ -11811,14 +11826,14 @@ peut ni changer ni lire ailleurs.</p>
   cette hypothèse est la sienne, et personne ne l'a mesurée. Seize autres
   scénarios démographiques existent, dont l'écart mesurerait l'incertitude ;
   cette page n'en montre aucun.</li>
-  <li><strong>Les chiffres de la proposition sont la borne basse d'une
-  fourchette.</strong> Le rapport de masses que la page prend au modèle porte
-  l'écart de sa propre trajectoire à celle du COR : si cet écart tenait tout
-  entier au système actuel, la dette de la proposition en
+  <li><strong>Les chiffres de la proposition ont une fourchette, étroite.</strong>
+  Le rapport de masses que la page prend au modèle porte l'écart de sa propre
+  trajectoire à celle du COR, qui n'est plus que de quelques points : si cet
+  écart tenait tout entier au système actuel, la dette de la proposition en
   ${c.dette.derniereAnnee} serait de
   ${g.pourcentage(c.detteDerive.horizon("notionnel_liberal"), false, 0)} du PIB
   et non de ${g.pourcentage(c.dette.horizon("notionnel_liberal"), false, 0)}.
-  Le dépliant des quatre systèmes donne les deux bornes.</li>
+  Le dépliant des quatre systèmes donne les deux lectures.</li>
   <li><strong>Les réserves d'aujourd'hui ne sont pas comptées.</strong> Le
   système de retraite détient des réserves financières que le COR chiffre à
   part ; un solde annuel négatif peut être couvert par elles pendant des
@@ -14847,13 +14862,13 @@ export const MESURES_BLOCAGES = {
   // la bascule, que la part « retraite seule » du taux que l'État verse — le
   // défaut depuis le même jour : sous le taux entier, la proposition était à
   // −0,9, 59 % et 0,85, et 1,03 en 2070.
-  solde_moyen_proposition: -0.7,
+  solde_moyen_proposition: -0.8,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 48,
+  dette_2070_proposition: 49,
   dette_2070_actuel: 66,
   coefficient_minimum: 0.86,
   decennie_coefficient_minimum: 2050,
-  coefficient_2070: 1.0,
+  coefficient_2070: 1.01,
   // donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
   // quatre taux d'aujourd'hui, en points de PIB ; zéro, la TVA n'étant pas
   // réformée.

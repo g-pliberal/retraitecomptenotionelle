@@ -245,6 +245,28 @@ conventions_points:
 # Avant 2019, que la figure ne couvre pas, le premier rapport est reconduit :
 # le point d'indice a perdu le tiers de sa valeur sur le salaire moyen depuis
 # 2000, et le décrochage d'avant est sous-estimé d'autant.
+# L'entrée tardive dans la fonction publique de l'État (action 147, étape 11).
+# Deux sources. L'annexe méthodologique en ligne du rapport de juin 2026
+# (§ 2.1, cas types de fonctionnaires de l'État), d'après l'EIC 2013 de la
+# DREES et les comptes individuels retraite du SRE : « les fonctionnaires
+# entrent dans la vie active en moyenne un à trois ans avant d'entrer dans le
+# régime de la FPE ». Le rapport de juin 2026, partie 2, chapitre 1, note 69 :
+# « La durée retenue pour le coefficient de proratisation serait en baisse
+# d'environ 6 ans entre les générations qui partent actuellement à la
+# retraite et la génération 2000. »
+#
+# Le cas type de fonctionnaire sédentaire (castypes.py) commence sa carrière
+# au même âge, mais sous le statut que nomme son champ
+# `affiliation_avant_entree` — contractuel de la fonction publique — pendant
+# `annees` années : deux pour la génération 1962, qui part en ce moment, huit
+# pour la génération 2000, et de l'une à l'autre en ligne droite ; avant la
+# première et après la seconde, la valeur du bord. Il part à l'âge que le droit
+# ouvre à sa carrière d'un seul statut (pilote.py) : seule sa pension se
+# partage, entre l'État d'un côté, le régime général et l'Ircantec de l'autre.
+entree_fonction_publique:
+  - {generation: 1962, annees: 2}
+  - {generation: 2000, annees: 8}
+
 traitement_indiciaire:
   annee_base: 2025
   nominal: {depuis: 2026, jusqu_a: 2027, taux: 0.001}

@@ -466,7 +466,8 @@ institutions:
         millesime: 2026
         cible: >-
           data/reference/macro/population_par_age.csv,
-          data/reference/macro/population_active.csv
+          data/reference/macro/population_active.csv,
+          data/reference/macro/arrivees_tardives.csv
         note: >-
           Pyramide des âges au 1er janvier, par âge détaillé et par année, de
           1962 à 2070 — l'onglet `population` du classeur du scénario central.
@@ -478,8 +479,12 @@ institutions:
           reprend : `certifiee` jusqu'en 2023, `estimee` ensuite. Deux séries en
           sont tirées : les effectifs par âge à partir de 50 ans, qui comptent
           les retraités, et l'effectif des 20-64 ans, qui projette le
-          dénominateur d'une part de PIB. Seize autres scénarios sont publiés ;
-          seul le central est repris, comme pour les quotients de mortalité.
+          dénominateur d'une part de PIB. Une troisième en est reconstituée,
+          avec l'onglet `deces` : les arrivées après 21 ans, génération par
+          génération, et ce qu'elles retirent à la pension d'une carrière
+          française complète (`estimee`, action 147, étape 11). Seize autres
+          scénarios sont publiés ; seul le central est repris, comme pour les
+          quotients de mortalité.
 
       - id: insee_mortalite_niveau_de_vie
         titre: >-

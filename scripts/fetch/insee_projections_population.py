@@ -2,6 +2,7 @@
 """Population par âge, observée puis projetée, auprès de l'INSEE.
 
     python scripts/fetch/insee_projections_population.py
+    python scripts/fetch/insee_projections_population.py --fichier 00_central.xlsx
 
 Le dépôt calcule des droits individuels. Pour dire ce que coûtera un système,
 il faut en plus savoir COMBIEN de gens le percevront : une pyramide des âges.
@@ -31,6 +32,22 @@ DEUX SÉRIES, ET UN SEUL FICHIER SOURCE
 
 Le scénario retenu est le CENTRAL, seul dont le COR et le dépôt se réclament.
 Le classeur en publie seize autres.
+
+UNE TROISIÈME SÉRIE : LES ARRIVÉES TARDIVES (action 147, étape 11)
+-------------------------------------------------------------------
+La page Coût compte ses retraités dans cette pyramide, et sert à chacun la
+pension d'une carrière française complète. Or une génération y gagne, après
+ses études, des personnes arrivées en France à l'âge adulte, dont la carrière
+française est courte : la grille les payait plein. Leur part se lit dans le
+même classeur, sans autre source : la population d'une génération au 1er
+janvier de l'année suivante, moins celle de l'année, plus ses décès de
+l'année, est ce qu'elle a gagné ou perdu de résidents (onglets `population`
+et `deces`), observé jusqu'en 2022, selon l'hypothèse de solde migratoire
+ensuite (+ 150 000 par an). Génération par génération, de 1941 à 2005, le
+script en tire, à 64 ans, la part des résidents entrés après 21 ans, et la
+part de pension que leur carrière française n'a pas : une arrivée à l'âge
+`a` y travaille (64 - a) / (64 - 21) d'une carrière. Voir
+:func:`arrivees_tardives` pour ce qui est compté, et ce qui ne l'est pas.
 """
 
 from __future__ import annotations
@@ -75,12 +92,119 @@ DERNIERE_ANNEE_OBSERVEE = 2023
 CONTROLE_POPULATION_2070 = 65.9e6
 TOLERANCE_CONTROLE = 0.2e6
 
+#: Les arrivées tardives (:func:`arrivees_tardives`). Une arrivée compte
+#: après ``AGE_ENTREE_ARRIVEES`` — l'âge où la carrière d'un natif commence —,
+#: et se mesure à ``AGE_REFERENCE_ARRIVEES``, celui du départ des générations
+#: que la projection fait partir.
+AGE_ENTREE_ARRIVEES = 21
+AGE_REFERENCE_ARRIVEES = 64
+#: Les générations mesurées : la première dont toutes les arrivées après 21
+#: ans tombent dans le classeur, qui commence en 1962 ; la dernière qui a 64
+#: ans au 1er janvier 2070.
+GENERATIONS_ARRIVEES = (1941, 2005)
+#: 1962, l'année des rapatriés d'Algérie : des carrières françaises, que la
+#: grille paie bien. Elle ne compte pas d'arrivée.
+ANNEE_RAPATRIES = 1962
+#: Les deux changements de champ du classeur — les départements d'outre-mer
+#: en 1995, Mayotte en 2014 — font gagner aux générations des résidents qui
+#: n'arrivent de nulle part : l'année qui les porte prend la moyenne des
+#: deux années qui l'entourent.
+RUPTURES_DE_CHAMP = (1994, 2013)
 
-def _grille(donnees: bytes) -> dict[tuple[int, int], float | str]:
-    onglets = feuilles(donnees)
-    if FEUILLE not in onglets:
-        raise LookupError(f"onglet {FEUILLE!r} absent du classeur")
-    return onglets[FEUILLE]
+
+def _grille(onglets: dict, feuille: str = FEUILLE) -> dict[tuple[int, int], float | str]:
+    if feuille not in onglets:
+        raise LookupError(f"onglet {feuille!r} absent du classeur")
+    return onglets[feuille]
+
+
+def _par_age(grille: dict[tuple[int, int], float | str]) -> dict[tuple[int, int], float]:
+    """Une feuille âge × année, tous âges détaillés : (âge, année) -> valeur.
+
+    Même disposition que ``population`` : les années en deuxième ligne, l'âge
+    en première colonne ; les lignes d'agrégats, au libellé écrit, restent
+    dehors, comme « 105+ ».
+    """
+    annees = {
+        colonne: int(valeur)
+        for (ligne, colonne), valeur in grille.items()
+        if ligne == 1 and colonne > 0 and isinstance(valeur, float)
+    }
+    table: dict[tuple[int, int], float] = {}
+    for (ligne, colonne), valeur in grille.items():
+        age = grille.get((ligne, 0))
+        if (ligne > 1 and colonne in annees and isinstance(age, float)
+                and isinstance(valeur, float)):
+            table[(int(age), annees[colonne])] = valeur
+    return table
+
+
+def arrivees_tardives(onglets: dict) -> dict[str, dict[str, float]]:
+    """Génération par génération, ce que les arrivées après 21 ans retirent à
+    la pension d'une carrière française complète.
+
+    LE SOLDE. Ce qu'une génération gagne ou perd de résidents une année est
+    sa population au 1er janvier suivant, moins celle de l'année, plus ses
+    décès de l'année : ``P(a, y+1) - P(a-1, y) + D(a, y)``, ``a`` étant l'âge
+    atteint dans l'année — celui des décès —, la population étant comptée en
+    âge révolu au 1er janvier. Jusqu'en 2022, l'INSEE l'observe, ajustements
+    des recensements compris : ce sont des résidents que la pyramide compte,
+    et que la grille paie. Ensuite, c'est l'hypothèse de solde migratoire du
+    scénario central (+ 150 000 par an dès 2026, aux trois quarts entre 22 et
+    63 ans), au résident près. L'identité se vérifie à l'unité sur les années
+    projetées, où l'onglet ``solde_migratoire`` la publie.
+
+    CE QUI EST COMPTÉ. Le solde POSITIF de chaque âge de 22 à 64 ans, porté
+    jusqu'à 64 ans par la survie de la génération, rapporté à sa population à
+    64 ans : ``arrivees``. Chaque arrivée à l'âge ``a`` travaille en France
+    (64 - a) / (64 - 21) d'une carrière, et sa pension en est d'autant plus
+    courte : ``manque``, la part de la pension de carrière complète que la
+    génération n'a pas. La pension est tenue proportionnelle aux années — ni
+    décote, ni salaires plus bas, que l'enquête de la DREES trouve pourtant
+    aux retraités nés à l'étranger (leur pension vaut 81 % de celle des
+    natifs résidents, leur durée validée 90 %, EIR 2020) —, et le solde, net
+    des départs, compte moins d'arrivées qu'il n'y en a : deux bornes basses.
+
+    CE QUI NE L'EST PAS. 1962 (les rapatriés, ``ANNEE_RAPATRIES``) ; les deux
+    changements de champ (``RUPTURES_DE_CHAMP``), remplacés par la moyenne des
+    années voisines ; les arrivées après 64 ans, rares (8 000 par an dans
+    l'hypothèse) ; les arrivées d'avant 1962, faute de pyramide — d'où la
+    première génération, 1941, dont la carrière commence en 1963.
+    """
+    population = _par_age(_grille(onglets, "population"))
+    deces = _par_age(_grille(onglets, "deces"))
+    entree, reference = AGE_ENTREE_ARRIVEES, AGE_REFERENCE_ARRIVEES
+
+    def solde(age: int, annee: int) -> float:
+        if annee == ANNEE_RAPATRIES:
+            return 0.0
+        if annee in RUPTURES_DE_CHAMP:
+            return (solde(age, annee - 1) + solde(age, annee + 1)) / 2.0
+        return (population[(age, annee + 1)] - population[(age - 1, annee)]
+                + deces[(age, annee)])
+
+    def survie(generation: int, age: int) -> float:
+        """De l'année de l'arrivée, à ``age``, au 1er janvier des 65 ans."""
+        valeur = 1.0
+        for atteint in range(age + 1, reference + 1):
+            annee = generation + atteint
+            valeur *= 1.0 - deces[(atteint, annee)] / population[(atteint - 1, annee)]
+        return valeur
+
+    premiere, derniere = GENERATIONS_ARRIVEES
+    resultat: dict[str, dict[str, float]] = {}
+    for generation in range(premiere, derniere + 1):
+        effectif = population[(reference, generation + reference + 1)]
+        arrivees = manque = 0.0
+        for age in range(entree + 1, reference + 1):
+            venus = max(solde(age, generation + age), 0.0) * survie(generation, age)
+            arrivees += venus
+            manque += venus * (1.0 - (reference - age) / (reference - entree))
+        resultat[str(generation)] = {
+            "arrivees": arrivees / effectif,
+            "manque": manque / effectif,
+        }
+    return resultat
 
 
 def extraire(grille: dict[tuple[int, int], float | str]) -> dict:
@@ -160,17 +284,28 @@ def controler(charge: dict) -> None:
         )
 
 
-def main() -> int:
-    try:
-        demande = urllib.request.Request(URL, headers=ENTETES)
-        with urllib.request.urlopen(demande, timeout=300) as reponse:
-            donnees = reponse.read()
-    except (urllib.error.HTTPError, urllib.error.URLError) as erreur:
-        print(f"INSEE indisponible : {erreur}", file=sys.stderr)
-        return 1
+def main(arguments: list[str] | None = None) -> int:
+    arguments = sys.argv[1:] if arguments is None else arguments
+    if arguments[:1] == ["--fichier"] and len(arguments) == 2:
+        # Le classeur déjà téléchargé : le même fichier, lu sans réseau.
+        donnees = Path(arguments[1]).expanduser().read_bytes()
+    elif arguments:
+        print("usage : insee_projections_population.py [--fichier CLASSEUR]",
+              file=sys.stderr)
+        return 2
+    else:
+        try:
+            demande = urllib.request.Request(URL, headers=ENTETES)
+            with urllib.request.urlopen(demande, timeout=300) as reponse:
+                donnees = reponse.read()
+        except (urllib.error.HTTPError, urllib.error.URLError) as erreur:
+            print(f"INSEE indisponible : {erreur}", file=sys.stderr)
+            return 1
 
-    charge = extraire(_grille(donnees))
+    onglets = feuilles(donnees)
+    charge = extraire(_grille(onglets))
     controler(charge)
+    charge["arrivees_tardives"] = arrivees_tardives(onglets)
     charge["source"] = URL
 
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
@@ -182,6 +317,9 @@ def main() -> int:
     print(f"{len(charge['par_age'])} effectifs par âge écrits dans {SORTIE}")
     print(f"Couverture {annees[0]}-{annees[-1]}, âges {AGE_MINIMAL}-{AGE_MAXIMAL}")
     print(f"Observé jusqu'en {DERNIERE_ANNEE_OBSERVEE}, projeté ensuite")
+    manques = charge["arrivees_tardives"]
+    print(f"Arrivées tardives de {min(manques)} à {max(manques)} : manque de "
+          f"{manques[min(manques)]['manque']:.2%} à {manques[max(manques)]['manque']:.2%}")
     return 0
 
 

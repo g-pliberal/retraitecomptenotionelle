@@ -330,6 +330,29 @@ export class DonneesMacro {
     return relatif.get(Math.min(annee, Math.max(...relatif.keys())));
   }
 
+  /**
+   * Les années qu'un fonctionnaire de l'État né en `generation` passe sous un
+   * autre statut avant d'entrer dans le régime (`entree_fonction_publique` de
+   * `macro/hypotheses_projection.yaml`, action 147, étape 11) : en ligne
+   * droite entre les points du fichier, la valeur du bord au-delà, zéro sans
+   * fichier. Voir donnees/macro.py.
+   */
+  delaiEntreeFonctionPublique(generation) {
+    const points = (this.paquet.hypotheses.entree_fonction_publique ?? [])
+      .map((point) => [Number(point.generation), Number(point.annees)])
+      .sort((a, b) => a[0] - b[0]);
+    if (points.length === 0) return 0.0;
+    if (generation <= points[0][0]) return points[0][1];
+    for (let rang = 1; rang < points.length; rang += 1) {
+      const [debut, avant] = points[rang - 1];
+      const [fin, apres] = points[rang];
+      if (generation <= fin) {
+        return avant + (apres - avant) * (generation - debut) / (fin - debut);
+      }
+    }
+    return points[points.length - 1][1];
+  }
+
   _calculerTraitementRelatif() {
     const regle = this.paquet.hypotheses.traitement_indiciaire;
     if (!regle) {

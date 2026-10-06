@@ -7252,16 +7252,16 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 10 (le passé refait,
-la décomposition du COR, sa dépense, la fourchette, ses deux conventions,
-l'écart groupe par groupe, la pondération par génération écartée, la méthode
-du COR relue, sa comptabilité corrigée, la fonction publique, puis
-l'Agirc-Arrco au taux moyen des entreprises, comme les cas types du COR : la
-dérive de 2070 tombe de 1,080 à 1,039, et la dépense des complémentaires suit
-celle du COR). Reste, en une session neuve : les carrières incomplètes, les
-migrants et les entrées tardives des fonctionnaires (point 4 de l'étape 7).
-Au propriétaire, le taux du simulateur individuel (registre, 138.13). Lire
-les notes des étapes 7 et 10.
+**Reprise, au 6 octobre 2026.** Faites : les étapes 1 à 11 (le passé refait,
+la décomposition du COR, sa dépense, la fourchette, ses conventions, l'écart
+groupe par groupe, la méthode relue, la comptabilité corrigée, la fonction
+publique, l'Agirc-Arrco au taux moyen, puis les arrivées tardives et l'entrée
+tardive des fonctionnaires : dérive de 2070 1,008, sous un de 2031 à 2067).
+Reste, une session neuve par point : le salaire moyen du modèle, son ancrage
+et sa croissance depuis 2000 contre TRAJECTOiRE, avant de porter les carrières
+incomplètes des natifs ; les non-salariés et les régimes spéciaux ; la CNRACL.
+Fabriquer et tester sous Python 3.11, celui de la CI. Au propriétaire, le
+taux du simulateur individuel (registre, 138.13). Lire la note de l'étape 11.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -7926,3 +7926,118 @@ simulation ne bouge.
   0,97 que le taux moyen ne ferme pas, où sa part Cnav paraît dépasser celle
   du COR (le plafond rapporté au salaire moyen, à vérifier) ; la pension
   relative de la FPE (+16,8 %), les non-salariés et les régimes spéciaux.
+
+**Étape 11, le 6 octobre 2026 : les carrières que la grille ne connaît pas —
+les arrivées tardives et l'entrée tardive des fonctionnaires.** Le point (4)
+de l'étape 7. Deux conventions de la page Coût, dans les deux moteurs ; aucun
+témoin de simulation ne bouge.
+
+- *Le cadre, vérifié d'abord.* Sur les relevés des cas types n° 1 et 2 du COR
+  que TRAJECTOiRE a calculés (`tests/temoins/trajectoire.json`, générations
+  1955 à 1970), le modèle sous les conventions du COR rend la pension de la
+  Cnav à −4 à +1 % de celle de TRAJECTOiRE, celle de l'Agirc-Arrco à −5 à
+  −1 %, et le rapport des deux parts à 0,97-1,03, cadre comme non-cadre. Le
+  0,88 à 0,97 de l'étape 10 tenait à la reconstruction : le profil relatif au
+  SMPT y était converti au salaire moyen du modèle, de 7 à 14 % sous celui de
+  TRAJECTOiRE de 1984 à 2024 (40 000 € en 2024 contre 42 791). Les salaires du
+  cadre en tombaient d'autant, et le plafond en coupait moins : la pension de
+  la Cnav, plafonnée, ne bougeait pas en euros, mais sa part du taux de
+  remplacement montait de 10 à 14 %, quand l'Agirc-Arrco perdait sa tranche 2
+  au rythme du salaire. Les mêmes relevés ramenés au salaire moyen du modèle
+  rendent 0,86-0,97. C'est donc bien la part Cnav qui dépasse, et le droit n'y
+  est pour rien. Deux pistes en sortent, sans rien changer ici : l'ancrage du
+  salaire moyen (`ANCRAGE_SALAIRE_MOYEN`, 40 000 € « arrondi »), et sa
+  croissance de 2000 à 2024, +76 % dans le modèle (D11 rapporté à l'emploi
+  salarié), +65 % dans TRAJECTOiRE : les salaires anciens du modèle en
+  seraient de 3 à 7 % trop bas, et ses pensions des générations qui partent
+  de 2030 à 2055 avec eux.
+- *Les arrivées tardives.* La pyramide de l'INSEE compte des résidents, et une
+  génération y gagne, après ses études, des arrivés adultes à la carrière
+  française courte, que la grille payait plein. Le classeur du scénario
+  central en donne la mesure sans autre source : le solde d'une génération est
+  sa population au 1er janvier suivant, moins celle de l'année, plus ses décès
+  (onglets `population` et `deces`), observé jusqu'en 2022, ajustements des
+  recensements compris, selon l'hypothèse de + 150 000 par an ensuite ;
+  l'identité se vérifie à l'unité sur les années que publie l'onglet
+  `solde_migratoire`. Hors de compte : 1962 (les rapatriés), les deux
+  changements de champ de 1995 et 2014 (moyenne des années voisines). Le solde
+  positif de 22 à 64 ans, porté à 64 ans par la survie, rapporté à la
+  génération : 8,0 % pour celle de 1950, 12,7 % pour 1975, 18,7 % pour 1993,
+  15,2 % pour 2000. Chaque arrivée à l'âge a y travaille (64 − a) / 43 d'une
+  carrière : le manque de pension va de 2,4 à 3,6 % pour les générations 1941
+  à 1955 (2,9 en moyenne) à 6,0 % en moyenne de 1986 à 2005 (6,6 en 1993).
+  Deux bornes basses : la pension tenue proportionnelle aux années — l'EIR
+  2020 donne aux retraités nés à l'étranger résidant en France 81 % de la
+  pension des natifs pour 90 % de leur durée —, et un solde net des départs.
+  `scripts/fetch/insee_projections_population.py` la calcule (`--fichier` pour
+  un classeur déjà téléchargé), certification `arrivees_tardives` (130
+  valeurs, `estimee`), troisième série de la source
+  `insee_projections_population`. Sous `conventions_cor`, chaque cohorte de la
+  grille porte sa complétude (`Pensionne.completude`, `completudes` au
+  portage, la série au paquet), qui pèse ses masses dans tous les systèmes, son
+  engagement, ses masses par régime, et non ses têtes. Sur les 64 ans et plus,
+  le passé ne bouge pas (±0,15 %), l'avenir de −0,9 % en 2040, −1,8 % en 2050,
+  −2,9 % en 2070 : le moment où la dérive montait.
+- *L'entrée tardive des fonctionnaires.* « Les fonctionnaires entrent dans la
+  vie active en moyenne un à trois ans avant d'entrer dans le régime de la
+  FPE » (annexe méthodologique, d'après l'EIC 2013 et les CIR du SRE) ; la
+  durée retenue pour la proratisation baisse « d'environ 6 ans » d'ici la
+  génération 2000 (rapport de juin 2026, partie 2, chapitre 1, note 69). Le
+  fonctionnaire sédentaire commence sa carrière contractuel, deux ans pour la
+  génération 1962, huit pour 2000, en ligne droite entre les deux
+  (`entree_fonction_publique` de `hypotheses_projection.yaml`,
+  `CasType.affiliation_avant_entree`, `delai_entree_fonction_publique`), au
+  même âge de départ : le pilote le fixe sur la carrière d'un seul statut, sans
+  quoi la petite pension du régime général retardait de deux ans la génération
+  1945, que l'État servait entière dès soixante ans. Sans base de deux ans, le
+  régime général gagnait ses retraités en route, et la pension relative de la
+  Cnav tombait de 11 % sous celle du COR. Seule, la correction ne déplace la
+  dérive que de 0,2 point : ce que l'État perd, le régime général et
+  l'Ircantec le reprennent ; elle met la FPE à sa place.
+- *Les carrières incomplètes des natifs, mesurées, non portées.* La durée
+  validée de la DREES (figure 3.2 du rapport) passe de 39,5 ans (générations
+  1955 à 1958) à 37,9 (1990 à 2000), quand la durée requise passe de 166 à 172
+  trimestres ; celle des hommes de 164 à 155 trimestres (figure 3.22). Un
+  coefficient par génération, durée validée sur durée requise, migrants
+  compris, porté seul à la masse : dérive de 2070 0,987, 0,968 de 2050 à 2060,
+  et la reconstitution de 2009 à −16,5 %, les carrières des femmes, de 1940 à
+  1955, relevant les pensions récentes du passé. Le résidu des natifs, porté
+  en plus des deux corrections, ferait passer la trajectoire propre 5 % sous
+  le COR en 2050-2060. Écarté : de 2030 à 2055, la grille sert déjà au privé
+  une pension relative sous celle du COR (Cnav −3,5 % en 2050, dépense des
+  complémentaires −7,0 %, de LURA −3,1 %), un défaut qui en compense un autre
+  et qu'il faut trouver d'abord. La piste du salaire moyen a le bon calendrier
+  : des carrières faites de 1980 à 2024.
+- *Ce que ça déplace.* Dérive de 2070 : 1,039 → 1,008 ; elle passe sous un de
+  2031 à 2067, au plus bas 0,977 en 2054. Trajectoire propre : 15,3 → 14,9 % du
+  PIB en 2070, quatre dixièmes sous le COR, quand elle part trois dixièmes sous
+  lui. Pension
+  relative de l'ensemble : +6,2 → +3,1 % du COR (le modèle −14,6 %, le COR
+  −17,2 %) ; de la FPE +16,8 → +3,8 %, de la CNRACL +8,8 → +6,1 %, de
+  l'Agirc-Arrco +23,9 → +20,4 %. Dépense : FPE +38,0 → +23,1 %, CNRACL +11,1 →
+  +8,4 %, non-salariés +134,7 → +128,4 %, régimes spéciaux +84,5 → +80,0 % ;
+  LURA +2,2 %, complémentaires −2,0 %, Cnav +3,0 % suivis. Reconstitution :
+  −14,3 → −14,0 % en 2009. La proposition : solde moyen −0,74 → −0,75 %,
+  dette de 2070 48 → 49 %, coefficient 1,005 → 1,007, engagement du système
+  actuel 484 → 479 %. La seconde lecture de la fourchette — 8,5 % du PIB en
+  2070, solde moyen −0,63 %, dette 41 % — n'est plus la borne haute : elle
+  alourdit la proposition en 2070 et l'allège avant ; la page, le README et
+  `limites.md` disent « les deux lectures », l'affirmation `cout.borne_basse`
+  devient « une fourchette, étroite », `cout.vigilance_cor` « à quelques points
+  près ». L'accueil cite −0,8, 49 % et 1,01. Huit cliquets resserrés, la dérive
+  tenue chaque année entre 0,97 et 1,03 ; le test des âges de départ compare
+  désormais les dérives, la trajectoire propre finissant sous le COR ; 57
+  rendus de page sur 74 ; le parcours compte 44 515 valeurs sur 121 séries, et
+  la conservation est refigée pour lui.
+- *Trouvé en chemin.* Le Python du conteneur est la 3.13, dont `sum()`, depuis
+  la 3.12, compense ses arrondis : les fichiers fabriqués en bougent au dernier
+  chiffre, quand la CI, en 3.11, les compare au bit près sous Linux. HEAD se
+  refait au bit près sous `/usr/bin/python3.11`, pas sous la 3.13 :
+  fabriquer et tester sous un environnement 3.11 (`uv venv --python
+  /usr/bin/python3.11`). Sous la 3.13, le test de la réforme prospective qui ne
+  déplace rien avant sa bascule échoue au dernier ulp, HEAD compris.
+- *Restent* : le salaire moyen du modèle (ancrage, croissance de 2000 à 2024,
+  contre TRAJECTOiRE et les comptes nationaux), puis les carrières incomplètes
+  des natifs ; les non-salariés et les régimes spéciaux, que la grille pèse aux
+  effectifs de 2024 ; la CNRACL ; la dépense de la FPE, que le COR compte
+  réversion comprise.

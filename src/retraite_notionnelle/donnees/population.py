@@ -142,3 +142,41 @@ class Population:
 
     def annees(self) -> list[int]:
         return list(self._annees)
+
+
+class ArriveesTardives:
+    """Ce que les arrivées après 21 ans retirent à la pension d'une génération.
+
+    La pyramide compte des résidents, et la grille sert à chacun la pension
+    d'une carrière française complète. Or une génération gagne, à l'âge
+    adulte, des résidents arrivés tard, dont la carrière française est
+    courte. ``arrivees_tardives.csv`` en tire, génération par génération et
+    du même classeur de l'INSEE, la part de la pension d'une carrière complète
+    qui lui manque à 64 ans (action 147, étape 11 ; l'en-tête du fichier dit
+    comment). La page Coût multiplie par :meth:`completude` la masse de
+    pensions de chaque génération, et non ses têtes : un arrivé tard est un
+    retraité, à la pension plus courte.
+
+    La série va de 1941, première génération dont la carrière commence dans la
+    pyramide, à 2005, qui a 64 ans en 2070 ; en deçà et au-delà, la génération
+    prend la valeur du bord.
+    """
+
+    def __init__(self, racine: Path) -> None:
+        chemin = racine / "reference" / "macro" / "arrivees_tardives.csv"
+        self._manques: dict[int, float] = {}
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            for ligne in csv.DictReader(lignes):
+                if ligne["mesure"] == "manque":
+                    self._manques[int(ligne["generation"])] = float(ligne["valeur"])
+        if not self._manques:
+            raise ValueError(f"aucun manque dans {chemin}")
+        self.premiere_generation = min(self._manques)
+        self.derniere_generation = max(self._manques)
+
+    def completude(self, generation: int) -> float:
+        """La part de la pension d'une carrière complète que touche, en
+        moyenne, la génération ``generation``."""
+        bornee = min(max(generation, self.premiere_generation), self.derniere_generation)
+        return 1.0 - self._manques[bornee]

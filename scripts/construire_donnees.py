@@ -75,7 +75,7 @@ from retraite_notionnelle.noyau import univers as univers_de_droit  # noqa: E402
 from retraite_notionnelle.noyau import vocabulaire  # noqa: E402
 from retraite_notionnelle.remuneration import charger_prelevements  # noqa: E402
 from retraite_notionnelle.restitution import POSTES_REMUNERATION  # noqa: E402
-from retraite_notionnelle.donnees.population import Population  # noqa: E402
+from retraite_notionnelle.donnees.population import ArriveesTardives, Population  # noqa: E402
 from retraite_notionnelle.donnees.taux import CourbeTauxSansRisque  # noqa: E402
 from retraite_notionnelle.donnees.regimes import (  # noqa: E402
     CatalogueRegimes,
@@ -507,6 +507,8 @@ def _population() -> dict:
     population = Population(DONNEES)
     annees = population.annees()
     ages = list(range(50, population.age_maximal + 1))
+    arrivees = ArriveesTardives(DONNEES)
+    generations = range(arrivees.premiere_generation, arrivees.derniere_generation + 1)
     return {
         "annees": annees,
         "ages": ages,
@@ -515,6 +517,12 @@ def _population() -> dict:
         ],
         "fiabilites": [int(population.fiabilite(annee)) for annee in annees],
         "actifs": _serie(population.actifs),
+        # Les arrivées tardives : la complétude de chaque génération, de la
+        # première à la dernière que le fichier mesure (action 147, étape 11).
+        "arrivees": {
+            "premiere_generation": arrivees.premiere_generation,
+            "completudes": [arrivees.completude(generation) for generation in generations],
+        },
     }
 
 
@@ -1508,6 +1516,7 @@ def _hypotheses() -> dict:
             "trajectoire_emploi_par_defaut", "constant"),
         "trajectoires_emploi": contenu.get("trajectoires_emploi", {}),
         "traitement_indiciaire": contenu.get("traitement_indiciaire"),
+        "entree_fonction_publique": contenu.get("entree_fonction_publique") or [],
     }
 
 

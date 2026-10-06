@@ -1,0 +1,174 @@
+# Les arrivées tardives : ce qu'elles retirent à la pension d'une génération
+# source_id: insee_projections_population
+# unite: fraction de la génération à 64 ans (arrivees) ; fraction de la
+#        pension d'une carrière française complète (manque)
+# fiabilite:
+#   estimee (1941-2005) : tirée des onglets `population` et `deces` du
+#             classeur du scénario central, par
+#             scripts/fetch/insee_projections_population.py. Une
+#             reconstitution : ni l'INSEE ni le COR ne la publient.
+#
+# À QUOI ELLE SERT (action 147, étape 11)
+# ----------------------------------------
+# La page Coût compte ses retraités dans la pyramide de l'INSEE, et sert
+# à chacun la pension d'une carrière française complète. Une génération y
+# gagne pourtant, après 21 ans, des résidents arrivés à l'âge adulte, dont
+# la carrière française est courte : le COR attribue à « l'arrivée de
+# nombreux retraités issus du solde migratoire et dont la pension serait
+# plus faible » une part du recul de sa pension moyenne (rapport de juin
+# 2026, partie 2, chapitre 1). Sous les conventions de projection, la masse
+# de pensions d'une génération est multipliée par un moins `manque`
+# (cout.py, Pensionne.completude) ; ses têtes ne bougent pas.
+#
+# CE QUI EST MESURÉ
+# -----------------
+# `arrivees` : le solde migratoire POSITIF de chaque âge de 22 à 64 ans,
+# porté à 64 ans par la survie de la génération, rapporté à sa population
+# à 64 ans. Le solde d'une génération est sa population au 1er janvier
+# suivant, moins celle de l'année, plus ses décès : observé jusqu'en 2022,
+# ajustements des recensements compris ; l'hypothèse du scénario central
+# ensuite (+ 150 000 par an dès 2026). `manque` : chaque arrivée à l'âge a
+# travaille en France (64 - a) / (64 - 21) d'une carrière. Deux bornes
+# basses : la pension tenue proportionnelle aux années — l'EIR 2020 donne
+# aux retraités nés à l'étranger 81 % de la pension des natifs, pour 90 %
+# de leur durée validée —, et un solde net des départs.
+#
+# Ni 1962 (les rapatriés, des carrières françaises), ni les deux
+# changements de champ de 1995 et 2014, remplacés par la moyenne des
+# années voisines. La première génération, 1941, est la première dont la
+# carrière commence dans la pyramide ; les plus anciennes prennent sa
+# valeur, les plus jeunes celle de 2005.
+#
+# Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas
+# modifier à la main.
+generation,mesure,valeur,fiabilite
+1941,arrivees,0.088182,estimee
+1941,manque,0.029658,estimee
+1942,arrivees,0.085119,estimee
+1942,manque,0.036129,estimee
+1943,arrivees,0.074935,estimee
+1943,manque,0.029697,estimee
+1944,arrivees,0.077964,estimee
+1944,manque,0.028362,estimee
+1945,arrivees,0.078761,estimee
+1945,manque,0.028387,estimee
+1946,arrivees,0.073823,estimee
+1946,manque,0.028095,estimee
+1947,arrivees,0.067270,estimee
+1947,manque,0.025684,estimee
+1948,arrivees,0.071135,estimee
+1948,manque,0.027087,estimee
+1949,arrivees,0.064907,estimee
+1949,manque,0.024088,estimee
+1950,arrivees,0.079516,estimee
+1950,manque,0.031755,estimee
+1951,arrivees,0.066387,estimee
+1951,manque,0.024475,estimee
+1952,arrivees,0.077828,estimee
+1952,manque,0.031777,estimee
+1953,arrivees,0.062858,estimee
+1953,manque,0.028183,estimee
+1954,arrivees,0.062530,estimee
+1954,manque,0.029742,estimee
+1955,arrivees,0.067856,estimee
+1955,manque,0.034153,estimee
+1956,arrivees,0.069251,estimee
+1956,manque,0.033118,estimee
+1957,arrivees,0.067523,estimee
+1957,manque,0.032376,estimee
+1958,arrivees,0.073368,estimee
+1958,manque,0.036078,estimee
+1959,arrivees,0.071999,estimee
+1959,manque,0.034750,estimee
+1960,arrivees,0.086622,estimee
+1960,manque,0.039814,estimee
+1961,arrivees,0.074258,estimee
+1961,manque,0.037157,estimee
+1962,arrivees,0.083378,estimee
+1962,manque,0.041286,estimee
+1963,arrivees,0.087086,estimee
+1963,manque,0.043703,estimee
+1964,arrivees,0.087359,estimee
+1964,manque,0.043621,estimee
+1965,arrivees,0.088075,estimee
+1965,manque,0.045529,estimee
+1966,arrivees,0.089195,estimee
+1966,manque,0.044937,estimee
+1967,arrivees,0.091916,estimee
+1967,manque,0.047853,estimee
+1968,arrivees,0.092561,estimee
+1968,manque,0.046676,estimee
+1969,arrivees,0.089555,estimee
+1969,manque,0.045410,estimee
+1970,arrivees,0.103929,estimee
+1970,manque,0.050616,estimee
+1971,arrivees,0.092388,estimee
+1971,manque,0.044079,estimee
+1972,arrivees,0.104567,estimee
+1972,manque,0.047354,estimee
+1973,arrivees,0.105614,estimee
+1973,manque,0.047800,estimee
+1974,arrivees,0.115085,estimee
+1974,manque,0.051528,estimee
+1975,arrivees,0.127098,estimee
+1975,manque,0.055260,estimee
+1976,arrivees,0.127387,estimee
+1976,manque,0.055582,estimee
+1977,arrivees,0.125755,estimee
+1977,manque,0.055266,estimee
+1978,arrivees,0.134429,estimee
+1978,manque,0.058834,estimee
+1979,arrivees,0.132483,estimee
+1979,manque,0.057659,estimee
+1980,arrivees,0.132211,estimee
+1980,manque,0.057323,estimee
+1981,arrivees,0.123444,estimee
+1981,manque,0.054093,estimee
+1982,arrivees,0.130113,estimee
+1982,manque,0.056281,estimee
+1983,arrivees,0.137757,estimee
+1983,manque,0.059262,estimee
+1984,arrivees,0.138739,estimee
+1984,manque,0.059022,estimee
+1985,arrivees,0.139233,estimee
+1985,manque,0.058888,estimee
+1986,arrivees,0.140458,estimee
+1986,manque,0.058644,estimee
+1987,arrivees,0.149726,estimee
+1987,manque,0.060800,estimee
+1988,arrivees,0.153833,estimee
+1988,manque,0.061081,estimee
+1989,arrivees,0.156438,estimee
+1989,manque,0.061306,estimee
+1990,arrivees,0.169732,estimee
+1990,manque,0.063031,estimee
+1991,arrivees,0.167686,estimee
+1991,manque,0.062700,estimee
+1992,arrivees,0.177875,estimee
+1992,manque,0.063868,estimee
+1993,arrivees,0.186671,estimee
+1993,manque,0.065660,estimee
+1994,arrivees,0.186565,estimee
+1994,manque,0.064642,estimee
+1995,arrivees,0.183648,estimee
+1995,manque,0.062814,estimee
+1996,arrivees,0.180586,estimee
+1996,manque,0.061625,estimee
+1997,arrivees,0.179577,estimee
+1997,manque,0.060964,estimee
+1998,arrivees,0.173949,estimee
+1998,manque,0.059341,estimee
+1999,arrivees,0.165424,estimee
+1999,manque,0.058294,estimee
+2000,arrivees,0.152427,estimee
+2000,manque,0.055604,estimee
+2001,arrivees,0.151096,estimee
+2001,manque,0.056354,estimee
+2002,arrivees,0.149249,estimee
+2002,manque,0.057213,estimee
+2003,arrivees,0.151279,estimee
+2003,manque,0.058044,estimee
+2004,arrivees,0.150479,estimee
+2004,manque,0.057731,estimee
+2005,arrivees,0.149936,estimee
+2005,manque,0.057517,estimee

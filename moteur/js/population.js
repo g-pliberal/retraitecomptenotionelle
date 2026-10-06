@@ -100,3 +100,26 @@ export class Population {
     return this._fiabilites[this._rangs.get(annee)];
   }
 }
+
+/**
+ * Ce que les arrivées après 21 ans retirent à la pension d'une génération :
+ * la part de la pension d'une carrière française complète que la génération
+ * touche, en moyenne (action 147, étape 11). La page Coût en pèse les MASSES de
+ * chaque cohorte, et non ses têtes. En deçà et au-delà des générations que le
+ * paquet porte, la valeur du bord. Voir `ArriveesTardives` dans
+ * donnees/population.py.
+ */
+export class ArriveesTardives {
+  constructor(paquet) {
+    const brut = paquet.population.arrivees;
+    this.premiereGeneration = brut.premiere_generation;
+    this._completudes = brut.completudes;
+    this.derniereGeneration = this.premiereGeneration + this._completudes.length - 1;
+  }
+
+  completude(generation) {
+    const bornee = Math.min(Math.max(generation, this.premiereGeneration),
+      this.derniereGeneration);
+    return this._completudes[bornee - this.premiereGeneration];
+  }
+}

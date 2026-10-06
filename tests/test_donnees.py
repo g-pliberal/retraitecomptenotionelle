@@ -450,6 +450,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "population_par_age_projetee": "macro/population_par_age.csv",
         "population_active": "macro/population_active.csv",
         "population_active_projetee": "macro/population_active.csv",
+        # Les arrivées tardives, tirées du même classeur que la pyramide :
+        # une reconstitution, au niveau `estimee` (action 147, étape 11).
+        "arrivees_tardives": "macro/arrivees_tardives.csv",
         "depenses_retraite": "macro/depenses_retraite.csv",
         "depenses_retraite_regimes": "macro/depenses_retraite_regimes.csv",
         # Les deux moitiés du compte du système de retraite, observées puis

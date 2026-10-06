@@ -1023,6 +1023,24 @@ def source_population_active() -> dict[tuple, float]:
     }
 
 
+def source_arrivees_tardives() -> dict[tuple, float]:
+    """Les arrivées après 21 ans, génération par génération (action 147,
+    étape 11) : leur part à 64 ans, et ce qu'elles retirent à la pension
+    d'une carrière française complète. Tirées par
+    ``scripts/fetch/insee_projections_population.py`` des onglets
+    ``population`` et ``deces`` du classeur que lit déjà la pyramide."""
+    charge = _population()
+    if "arrivees_tardives" not in charge:
+        raise SourceAbsente(
+            "arrivées tardives absentes du fichier brut (relancer "
+            "scripts/fetch/insee_projections_population.py)")
+    return {
+        (generation, mesure): valeur
+        for generation, mesures in sorted(charge["arrivees_tardives"].items())
+        for mesure, valeur in sorted(mesures.items())
+    }
+
+
 def _cps() -> dict:
     return _lire_json("drees_cps.json", "scripts/fetch/drees_cps.py")
 
@@ -4425,6 +4443,63 @@ CERTIFICATIONS = (
         decimales=0,
         tolerance=0.51,
         niveau="projetee",
+    ),
+    Certification(
+        nom="arrivees_tardives",
+        chemin=REFERENCE / "macro" / "arrivees_tardives.csv",
+        cles=("generation", "mesure"),
+        colonne="valeur",
+        source=source_arrivees_tardives,
+        origine="INSEE, projections de population 2026, scénario central : "
+                "population au 1er janvier et décès par âge, 1962-2070",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="estimee",
+        entete=(
+            "# Les arrivées tardives : ce qu'elles retirent à la pension d'une génération",
+            "# source_id: insee_projections_population",
+            "# unite: fraction de la génération à 64 ans (arrivees) ; fraction de la",
+            "#        pension d'une carrière française complète (manque)",
+            "# fiabilite:",
+            "#   estimee (1941-2005) : tirée des onglets `population` et `deces` du",
+            "#             classeur du scénario central, par",
+            "#             scripts/fetch/insee_projections_population.py. Une",
+            "#             reconstitution : ni l'INSEE ni le COR ne la publient.",
+            "#",
+            "# À QUOI ELLE SERT (action 147, étape 11)",
+            "# ----------------------------------------",
+            "# La page Coût compte ses retraités dans la pyramide de l'INSEE, et sert",
+            "# à chacun la pension d'une carrière française complète. Une génération y",
+            "# gagne pourtant, après 21 ans, des résidents arrivés à l'âge adulte, dont",
+            "# la carrière française est courte : le COR attribue à « l'arrivée de",
+            "# nombreux retraités issus du solde migratoire et dont la pension serait",
+            "# plus faible » une part du recul de sa pension moyenne (rapport de juin",
+            "# 2026, partie 2, chapitre 1). Sous les conventions de projection, la masse",
+            "# de pensions d'une génération est multipliée par un moins `manque`",
+            "# (cout.py, Pensionne.completude) ; ses têtes ne bougent pas.",
+            "#",
+            "# CE QUI EST MESURÉ",
+            "# -----------------",
+            "# `arrivees` : le solde migratoire POSITIF de chaque âge de 22 à 64 ans,",
+            "# porté à 64 ans par la survie de la génération, rapporté à sa population",
+            "# à 64 ans. Le solde d'une génération est sa population au 1er janvier",
+            "# suivant, moins celle de l'année, plus ses décès : observé jusqu'en 2022,",
+            "# ajustements des recensements compris ; l'hypothèse du scénario central",
+            "# ensuite (+ 150 000 par an dès 2026). `manque` : chaque arrivée à l'âge a",
+            "# travaille en France (64 - a) / (64 - 21) d'une carrière. Deux bornes",
+            "# basses : la pension tenue proportionnelle aux années — l'EIR 2020 donne",
+            "# aux retraités nés à l'étranger 81 % de la pension des natifs, pour 90 %",
+            "# de leur durée validée —, et un solde net des départs.",
+            "#",
+            "# Ni 1962 (les rapatriés, des carrières françaises), ni les deux",
+            "# changements de champ de 1995 et 2014, remplacés par la moyenne des",
+            "# années voisines. La première génération, 1941, est la première dont la",
+            "# carrière commence dans la pyramide ; les plus anciennes prennent sa",
+            "# valeur, les plus jeunes celle de 2005.",
+            "#",
+            "# Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas",
+            "# modifier à la main.",
+        ),
     ),
     Certification(
         nom="population_active",
