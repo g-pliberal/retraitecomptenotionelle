@@ -203,6 +203,42 @@ institutions:
           l'emploi salarié intérieur en personnes physiques — la définition du
           SMPT dans les comptes nationaux. Disponible depuis 1949.
 
+      - id: insee_bdm_smpt_niveau
+        titre: Salaire moyen par tête EN NIVEAU, comptes nationaux annuels base 2020
+        url: https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/011785411
+        idbank: ["011785411", "011793486"]
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/salaire_moyen_niveau.csv
+        recuperation: scripts/fetch/insee_bdm.py
+        note: >-
+          Le même rapport que insee_bdm_smpt, gardé en euros et non en
+          croissances : 40 897 € bruts annuels en 2024. C'est de lui que le
+          modèle tire le niveau d'où il cumule les croissances, et donc les
+          euros de tout multiple du salaire moyen. Il était écrit à la main,
+          40 000 € en 2024, un arrondi de 2,2 % (action 147, étape 16).
+
+      - id: insee_sls_smic
+        titre: Salaire minimum annuel à temps complet, séries longues sur les salaires (SM01, SM02)
+        url: https://www.insee.fr/fr/statistiques/2122816
+        idbank: ["000822484"]
+        acces: fichier
+        statut_integration: certifie
+        cible: data/reference/macro/smic_annuel.csv
+        recuperation: scripts/fetch/insee_sls_smic.py
+        note: >-
+          Le SMIG puis le SMIC d'une année entière à temps complet, de 1951 à
+          2012, calculé par l'INSEE sur les barèmes exacts : le salaire horaire
+          moyen de l'année fois la durée légale, 173,33 heures par mois
+          jusqu'en 1981, 169 ensuite (tableau SM02, « avant le passage aux
+          35 heures »), 151,67 depuis 2000 (tableau SM01). Au-delà de 2012,
+          la moyenne des douze barèmes mensuels de la BDM (idbank 000822484),
+          fois 1 820 heures, qui refait SM01 au centime de 2002 à 2012. Le
+          revenu du cas type au SMIC, que le modèle écrivait 0,55 fois le
+          salaire moyen à toutes les années (action 147, étape 16). La
+          validation des trimestres garde le barème du 1er janvier
+          (smic_horaire.csv).
+
       - id: insee_profil_salaire_age
         titre: Séries longues de salaires dans le secteur privé — par tranche d'âge
         url: https://api.insee.fr/melodi/data/DS_DERA_PRIVE_SERIES_LONGUES

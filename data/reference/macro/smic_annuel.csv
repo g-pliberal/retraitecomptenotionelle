@@ -1,0 +1,105 @@
+# Salaire minimum brut d'une année entière à temps complet, en euros courants
+# ---------------------------------------------------------------------------
+# source_id: insee_sls_smic
+#
+# Le SMIG jusqu'en 1969, le SMIC ensuite. Le salaire horaire minimum MOYEN
+# de l'année — il change en cours d'année, en juillet jusqu'en 2009 —, fois
+# la durée légale : 40 heures par semaine (173,33 heures par mois) jusqu'en
+# 1981, 39 heures (169) de 1982 à 1999, 35 heures (151,67) depuis 2000.
+#
+# fiabilite:
+#   certifiee (1951-2012) : INSEE, « Séries longues sur les salaires
+#             (1950-2010) », tableau SM02 jusqu'en 1999 (salaire minimum
+#             avant le passage aux 35 heures), SM01 depuis 2000 (pour
+#             35 heures hebdomadaires) — calculés par l'INSEE sur les
+#             barèmes exacts, en francs.
+#   certifiee (2013-2025) : la moyenne des douze barèmes mensuels de la
+#             banque de données macroéconomiques (idbank 000822484), fois
+#             1 820 heures. Elle refait SM01 au centime de 2002 à 2012.
+#
+# La garantie mensuelle de rémunération, qui a maintenu de 2000 à 2005 le
+# salaire des smicards passés aux 35 heures, n'y est pas : l'INSEE donne
+# les deux durées sur ces années, et le passage se fait à la sienne.
+#
+# Sert le cas type « salarié au niveau du SMIC », dont le salaire est celui
+# de chaque année (action 147, étape 16). La validation des trimestres
+# garde le barème horaire du 1er janvier, smic_horaire.csv, qui est celui
+# que la caisse oppose.
+#
+# Fichier écrit par scripts/verifier_donnees.py --appliquer.
+annee,smic_annuel,fiabilite
+1951,282.48,certifiee
+1952,317.09,certifiee
+1953,317.09,certifiee
+1954,365.84,certifiee
+1955,395.97,certifiee
+1956,399.54,certifiee
+1957,409.38,certifiee
+1958,464.43,certifiee
+1959,495.07,certifiee
+1960,510.75,certifiee
+1961,520.81,certifiee
+1962,546.57,certifiee
+1963,584.71,certifiee
+1964,600.53,certifiee
+1965,626.16,certifiee
+1966,651.76,certifiee
+1967,673.80,certifiee
+1968,850.32,certifiee
+1969,1002.80,certifiee
+1970,1082.85,certifiee
+1971,1192.25,certifiee
+1972,1328.06,certifiee
+1973,1570.11,certifiee
+1974,1933.19,certifiee
+1975,2305.49,certifiee
+1976,2645.31,certifiee
+1977,2981.15,certifiee
+1978,3365.36,certifiee
+1979,3784.44,certifiee
+1980,4375.29,certifiee
+1981,5166.94,certifiee
+1982,6079.90,certifiee
+1983,6816.06,certifiee
+1984,7460.03,certifiee
+1985,7930.40,certifiee
+1986,8200.91,certifiee
+1987,8531.97,certifiee
+1988,8765.90,certifiee
+1989,9131.24,certifiee
+1990,9522.33,certifiee
+1991,9986.08,certifiee
+1992,10380.79,certifiee
+1993,10649.25,certifiee
+1994,10881.13,certifiee
+1995,11213.47,certifiee
+1996,11614.88,certifiee
+1997,11955.47,certifiee
+1998,12312.56,certifiee
+1999,12511.97,certifiee
+2000,11478.40,certifiee
+2001,11902.80,certifiee
+2002,12285.00,certifiee
+2003,12758.20,certifiee
+2004,13468.00,certifiee
+2005,14232.40,certifiee
+2006,14833.00,certifiee
+2007,15206.10,certifiee
+2008,15664.13,certifiee
+2009,15952.30,certifiee
+2010,16125.20,certifiee
+2011,16408.82,certifiee
+2012,16944.20,certifiee
+2013,17162.60,certifiee
+2014,17344.60,certifiee
+2015,17490.20,certifiee
+2016,17599.40,certifiee
+2017,17763.20,certifiee
+2018,17981.60,certifiee
+2019,18254.60,certifiee
+2020,18473.00,certifiee
+2021,18759.65,certifiee
+2022,19743.97,certifiee
+2023,20814.73,certifiee
+2024,21272.77,certifiee
+2025,21621.60,certifiee

@@ -447,11 +447,15 @@ def test_la_bascule_ne_fait_jamais_sortir_des_bornes(contexte):
     avant — l'arrondi peut faire franchir 0,1 ou 10 à un revenu qui les frôle.
     """
     echelle = contexte.echelle(Saisie())
-    for euros in range(round(echelle.mensuel(0.1)), round(echelle.mensuel(10)) + 1):
+    for euros in range(echelle.euros_dans_les_bornes(0.1),
+                       echelle.euros_dans_les_bornes(10) + 1):
         multiple = round(echelle.niveau(euros), pages.DECIMALES_MULTIPLE)
         assert 0.1 <= multiple <= 10, f"{euros} € donne {multiple}"
+    # Vers les euros, la bascule prend l'euro le plus proche, sauf aux bords :
+    # 0,1 fois le salaire moyen fait 355,34 € en 2026, et 355 € serait refusé.
     for millieme in range(100, 10001):
-        euros = round(echelle.mensuel(millieme / 1000))
+        euros = echelle.euros_dans_les_bornes(millieme / 1000)
+        assert abs(euros - echelle.mensuel(millieme / 1000)) < 1
         assert 0.1 <= echelle.niveau(euros) <= 10, f"{millieme / 1000} donne {euros} €"
 
 
@@ -465,7 +469,7 @@ def test_les_bornes_annoncees_par_le_refus_sont_acceptees(contexte):
     # puisque c'est l'unité du modèle. En net, le nombre saisi est converti
     # avant d'être borné, et le test porterait sur autre chose.
     echelle = contexte.echelle(Saisie(montants="brut"))
-    for borne in (round(echelle.mensuel(0.1)), round(echelle.mensuel(10))):
+    for borne in (echelle.euros_dans_les_bornes(0.1), echelle.euros_dans_les_bornes(10)):
         saisie = Saisie.depuis_requete({
             "unite_revenu": "euros_mois", "salaire": str(borne),
             "montants": "brut",

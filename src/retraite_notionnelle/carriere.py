@@ -47,6 +47,15 @@ from .droit.preparer import preparer
 #: et le seul que le site propose : les autres noms restent pour la grille de
 #: cas types et pour qui veut mesurer une variante.
 PROFIL_AUTOMATIQUE = "auto"
+
+#: Le profil du salarié payé au SMIC : son revenu est le salaire minimum de
+#: chaque année, à temps complet
+#: (:meth:`~retraite_notionnelle.donnees.macro.DonneesMacro.smic_annuel`), et
+#: son niveau en est un MULTIPLE, non un multiple du salaire moyen. Le cas
+#: type au SMIC s'écrivait 0,55 fois le salaire moyen à toutes les années,
+#: quand le minimum en a valu 0,40 en 1970 et 0,52 en 2024 (action 147,
+#: étape 16). Le site ne le propose pas : on y saisit son salaire.
+PROFIL_SMIC = "smic"
 from .calendrier import (
     MOIS_PAR_AN,
     DateMois,
@@ -1944,10 +1953,8 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
                            for _, ouverture, cloture in principaux]
         quotite = _quotite_de_l_annee(annee, debut, fin, progressive)
         revenu = sum(
-            metier["niveau_salaire"]
-            * profil_salaire(macro.racine, metier["profil"], age_annee,
-                             annee, metier["affiliation"])
-            * salaire_moyen_reference[annee] * (mois / MOIS_PAR_AN)
+            revenu_annuel(macro, metier, age_annee, annee, salaire_moyen_reference)
+            * (mois / MOIS_PAR_AN)
             for (metier, _, _), mois in zip(principaux, mois_par_metier)
             if mois > 0
         ) * quotite
@@ -1984,11 +1991,9 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
             mois = mois_travailles(annee, ouverture, cloture)
             if mois <= 0:
                 continue
-            revenu = (metier["niveau_salaire"]
-                      * profil_salaire(macro.racine, metier["profil"],
-                                       annee - annee_naissance, annee,
-                                       metier["affiliation"])
-                      * salaire_moyen_reference[annee] * (mois / MOIS_PAR_AN))
+            revenu = (revenu_annuel(macro, metier, annee - annee_naissance, annee,
+                                    salaire_moyen_reference)
+                      * (mois / MOIS_PAR_AN))
             lignes.append(_ligne_annuelle(
                 annee=annee,
                 revenu=revenu,
@@ -2007,6 +2012,23 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
     return lignes, dates_entree
 
 
+def revenu_annuel(macro: DonneesMacro, metier: dict, age: float, annee: int,
+                  salaire_moyen: dict[int, float]) -> float:
+    """Ce qu'une année ENTIÈRE de ce métier rapporte, en euros de l'année.
+
+    Son niveau, fois le salaire minimum de l'année sous le profil
+    :data:`PROFIL_SMIC`, ou fois le salaire moyen ``salaire_moyen[annee]``
+    déformé par le profil sinon. ``metier`` porte le niveau, le profil et
+    l'affiliation, sous les clés de la chronologie.
+    """
+    if metier["profil"] == PROFIL_SMIC:
+        return metier["niveau_salaire"] * macro.smic_annuel(annee)
+    return (metier["niveau_salaire"]
+            * profil_salaire(macro.racine, metier["profil"], age, annee,
+                             metier["affiliation"])
+            * salaire_moyen[annee])
+
+
 def _lignes_apres_depart(date_naissance: DateMois, periode: dict,
                          macro: DonneesMacro) -> list[AnneeCarriere]:
     """Les années de l'activité exercée après le départ, chacune sur ses
@@ -2022,11 +2044,9 @@ def _lignes_apres_depart(date_naissance: DateMois, periode: dict,
         mois = mois_travailles(annee, ouverture, cloture)
         if mois <= 0:
             continue
-        revenu = (attributs["niveau_salaire"]
-                  * profil_salaire(macro.racine, attributs["profil"],
-                                   annee - date_naissance.annee, annee,
-                                   attributs["affiliation"])
-                  * salaire_moyen[annee] * (mois / MOIS_PAR_AN))
+        revenu = (revenu_annuel(macro, attributs, annee - date_naissance.annee, annee,
+                                salaire_moyen)
+                  * (mois / MOIS_PAR_AN))
         lignes.append(_ligne_annuelle(
             annee=annee, revenu=revenu, affiliation=attributs["affiliation"],
             type_periode="emploi", macro=macro, motifs=motifs,
@@ -2335,16 +2355,29 @@ def bornes_deformation(racine: Path, profil: str,
             profil_salaire(racine, profil, 60.0, ANNEE_FORME_CATEGORIE, affiliation))
 
 
-#: Point d'ancrage du salaire moyen par tête, en euros bruts annuels courants.
-#: Le dépôt ne garde de la série que ses taux de croissance
-#: (``macro/salaire_moyen.csv``) ; il faut un niveau pour les cumuler. 40 000 €
-#: est un arrondi par défaut : la série elle-même — les salaires et traitements
-#: bruts (D11) sur l'emploi salarié intérieur, base 2020 — vaut 40 897 € en
-#: 2024. L'écart ne déplace presque rien sur la page Coût (action 147,
-#: étape 12). Il est ici, en un seul endroit, parce que le site l'affiche
-#: désormais — dire « 1 = salaire moyen » sans dire combien cela fait d'euros
-#: laissait toute la saisie dans le flou.
-ANCRAGE_SALAIRE_MOYEN = (2024, 40_000.0)
+#: L'année dont le NIVEAU du salaire moyen par tête ancre tous les autres :
+#: celle où le coût agrégé ancre aussi la masse des pensions, et celle que le
+#: site donne pour repère. Le niveau, lui, n'est pas écrit ici : voir
+#: :func:`ancrage_salaire_moyen`.
+ANNEE_ANCRAGE_SALAIRE_MOYEN = 2024
+
+
+def ancrage_salaire_moyen(macro: DonneesMacro) -> tuple[int, float]:
+    """Le point d'où se cumulent les croissances du salaire moyen : son année
+    et son niveau, en euros bruts annuels courants.
+
+    Le niveau est LU dans la série certifiée de l'INSEE
+    (``macro/salaire_moyen_niveau.csv``) — les salaires et traitements bruts
+    (D11) sur l'emploi salarié intérieur, base 2020 —, le rapport même dont
+    ``macro/salaire_moyen.csv`` garde les croissances. Il était écrit à la
+    main, 40 000 € en 2024, un arrondi de 2,2 % qui plaçait tous les cas types
+    trop bas face au plafond et aux minima (action 147, étapes 15 et 16).
+    Il est ici, en un seul endroit, parce que le site l'affiche — dire
+    « 1 = salaire moyen » sans dire combien cela fait d'euros laissait toute la
+    saisie dans le flou.
+    """
+    annee = ANNEE_ANCRAGE_SALAIRE_MOYEN
+    return annee, macro.salaire_moyen_niveau(annee)
 
 
 def salaire_moyen_annuel(macro: DonneesMacro, annee: int) -> float:
@@ -2363,12 +2396,12 @@ def indice_salaire_moyen(macro: DonneesMacro, debut: int, fin: int) -> dict[int,
     le niveau de revenu saisi, les cotisations versées et les pensions
     calculées sont donc tous bruts, et se comparent directement.
 
-    Le dépôt ne garde de cette série que ses TAUX DE CROISSANCE. On les cumule
-    à partir d'un point d'ancrage, ``ANCRAGE_SALAIRE_MOYEN`` : 40 000 € bruts
-    annuels en 2024, arrondi par défaut du niveau de la série cette année-là.
-    Ce point d'ancrage est un paramètre documenté, pas une donnée certifiée —
-    il déplace proportionnellement tous les revenus reconstitués, donc toutes
-    les pensions, mais presque pas les RAPPORTS entre scénarios, qui sont
+    Les CROISSANCES de la série se cumulent à partir du niveau d'une année,
+    lu dans la même source (:func:`ancrage_salaire_moyen`) : les niveaux
+    qu'elle publie, le cumul les refait à moins d'un dix-millième près, l'écart
+    des cinq décimales auxquelles les croissances sont écrites. Ce niveau
+    déplace proportionnellement tous les revenus reconstitués en multiples du
+    salaire moyen, mais presque pas les RAPPORTS entre scénarios, qui sont
     l'objet du modèle : seuls le plafond de la Sécurité sociale et les minima,
     qui ne le suivent pas, en tirent de petits écarts.
 
@@ -2377,7 +2410,7 @@ def indice_salaire_moyen(macro: DonneesMacro, debut: int, fin: int) -> dict[int,
     l'emploi total, qui croît moins vite depuis 2000. L'écart des deux
     croissances tient à ce concept, non à la série (action 147, étape 12).
     """
-    ancrage_annee, ancrage_valeur = ANCRAGE_SALAIRE_MOYEN
+    ancrage_annee, ancrage_valeur = ancrage_salaire_moyen(macro)
     valeurs = {ancrage_annee: ancrage_valeur}
 
     borne_haute = max(fin, ancrage_annee)

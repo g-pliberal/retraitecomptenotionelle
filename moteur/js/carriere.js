@@ -1631,6 +1631,20 @@ export class Carriere {
  * année, sans profil, les trimestres que ses mois valident au plus. Voir
  * `_lignes_apres_depart` du Python.
  */
+/**
+ * Ce qu'une année ENTIÈRE de ce métier rapporte, en euros de l'année : son
+ * niveau fois le SMIC annuel sous `PROFIL_SMIC`, fois le salaire moyen déformé
+ * par le profil sinon. Voir `revenu_annuel` du Python.
+ */
+export function revenuAnnuel(macro, metier, age, annee, salaireMoyen) {
+  if (metier.profil === PROFIL_SMIC) {
+    return metier.niveau_salaire * macro.smicAnnuel(annee);
+  }
+  return metier.niveau_salaire
+    * profilSalaire(macro.paquet, metier.profil, age, annee, metier.affiliation)
+    * salaireMoyen.get(annee);
+}
+
 function lignesApresDepart(dateNaissance, periode, macro) {
   const attributs = periode.attributs;
   const ouverture = chrono.moisDe(periode.debut);
@@ -1642,10 +1656,8 @@ function lignesApresDepart(dateNaissance, periode, macro) {
     if (mois <= 0) {
       continue;
     }
-    const revenu = attributs.niveau_salaire
-      * profilSalaire(macro.paquet, attributs.profil, annee - dateNaissance.annee, annee,
-        attributs.affiliation)
-      * salaireMoyen.get(annee)
+    const revenu = revenuAnnuel(macro, attributs, annee - dateNaissance.annee, annee,
+      salaireMoyen)
       * (mois / MOIS_PAR_AN);
     lignes.push(ligneAnnuelle({
       annee,
@@ -1836,10 +1848,7 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
     let revenu = 0;
     periodes.forEach(({ metier }, i) => {
       if (moisParMetier[i] > 0) {
-        revenu += metier.niveau_salaire
-          * profilSalaire(macro.paquet, metier.profil, ageAnnee, annee,
-            metier.affiliation)
-          * salaireMoyen.get(annee)
+        revenu += revenuAnnuel(macro, metier, ageAnnee, annee, salaireMoyen)
           * (moisParMetier[i] / MOIS_PAR_AN);
       }
     });
@@ -1881,10 +1890,8 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
       if (mois <= 0) {
         continue;
       }
-      const revenu = metier.niveau_salaire
-        * profilSalaire(macro.paquet, metier.profil, annee - anneeNaissance,
-          annee, metier.affiliation)
-        * salaireMoyen.get(annee)
+      const revenu = revenuAnnuel(macro, metier, annee - anneeNaissance, annee,
+        salaireMoyen)
         * (mois / MOIS_PAR_AN);
       // Après la limite du chômage non indemnisé, qui ne regarde que
       // l'activité principale — comme en Python.
@@ -1973,6 +1980,13 @@ export const PROFIL_PAR_AFFILIATION = {
 
 export const PROFIL_PAR_DEFAUT = "employe";
 export const PROFIL_AUTOMATIQUE = "auto";
+
+/**
+ * Le profil du salarié payé au SMIC : son revenu est le salaire minimum de
+ * chaque année à temps complet (`DonneesMacro.smicAnnuel`), et son niveau en
+ * est un multiple. Voir le Python.
+ */
+export const PROFIL_SMIC = "smic";
 
 /**
  * La section d'activité dont chaque affiliation emprunte son facteur de pente.
@@ -2115,17 +2129,23 @@ export function bornesDeformation(paquet, profil, affiliation = null) {
 }
 
 /**
- * Point d'ancrage du salaire moyen par tête, en euros bruts annuels courants.
- * Le dépôt ne garde de la série que ses taux de croissance
- * (`macro/salaire_moyen.csv`) ; il faut un niveau pour les cumuler. 40 000 €
- * est un arrondi par défaut : la série elle-même — les salaires et traitements
- * bruts (D11) sur l'emploi salarié intérieur, base 2020 — vaut 40 897 € en
- * 2024. L'écart ne déplace presque rien sur la page Coût (action 147,
- * étape 12). Il est ici, en un seul endroit, parce que le site l'affiche
- * désormais — dire « 1 = salaire moyen » sans dire combien cela fait d'euros
- * laissait toute la saisie dans le flou.
+ * L'année dont le NIVEAU du salaire moyen par tête ancre tous les autres. Le
+ * niveau, lui, n'est pas écrit ici : voir `ancrageSalaireMoyen`.
  */
-export const ANCRAGE_SALAIRE_MOYEN = [2024, 40000.0];
+export const ANNEE_ANCRAGE_SALAIRE_MOYEN = 2024;
+
+/**
+ * Le point d'où se cumulent les croissances du salaire moyen, `[année,
+ * niveau]` en euros bruts annuels courants. Le niveau est LU dans la série
+ * certifiée de l'INSEE (`macro/salaire_moyen_niveau.csv`), le rapport même dont
+ * `macro/salaire_moyen.csv` garde les croissances ; il était écrit à la main,
+ * 40 000 € en 2024, un arrondi de 2,2 % (action 147, étapes 15 et 16). Voir le
+ * Python.
+ */
+export function ancrageSalaireMoyen(macro) {
+  const annee = ANNEE_ANCRAGE_SALAIRE_MOYEN;
+  return [annee, macro.salaire_moyen_niveau.valeur(annee)];
+}
 
 /** Salaire moyen par tête d'une année, en euros BRUTS courants de cette année. */
 export function salaireMoyenAnnuel(macro, annee) {
@@ -2141,14 +2161,13 @@ export function salaireMoyenAnnuel(macro, annee) {
  * sur le revenu, cotisations patronales exclues. C'est la même assiette que
  * celle sur laquelle les régimes appellent leurs cotisations.
  *
- * Le dépôt ne garde de cette série que ses TAUX DE CROISSANCE. On les cumule à
- * partir d'un point d'ancrage, `ANCRAGE_SALAIRE_MOYEN` : 40 000 € bruts annuels
- * en 2024, arrondi par défaut du niveau de la série cette année-là. Ce point
- * d'ancrage est un paramètre documenté, pas une donnée certifiée — il déplace
- * proportionnellement tous les revenus reconstitués, donc toutes les pensions,
- * mais presque pas les RAPPORTS entre scénarios, qui sont l'objet du modèle :
- * seuls le plafond de la Sécurité sociale et les minima, qui ne le suivent pas,
- * en tirent de petits écarts.
+ * Les CROISSANCES de la série se cumulent à partir du niveau d'une année, lu
+ * dans la même source (`ancrageSalaireMoyen`) : les niveaux qu'elle publie, le
+ * cumul les refait à moins d'un dix-millième près. Ce niveau déplace
+ * proportionnellement tous les revenus reconstitués en multiples du salaire
+ * moyen, mais presque pas les RAPPORTS entre scénarios, qui sont l'objet du
+ * modèle : seuls le plafond de la Sécurité sociale et les minima, qui ne le
+ * suivent pas, en tirent de petits écarts.
  *
  * Ce n'est pas le « SMPT » des cas types du COR, que lit TRAJECTOiRE : un
  * revenu moyen par tête, revenu mixte des non-salariés compris, rapporté à
@@ -2156,7 +2175,7 @@ export function salaireMoyenAnnuel(macro, annee) {
  * croissances tient à ce concept, non à la série (action 147, étape 12).
  */
 export function indiceSalaireMoyen(macro, debut, fin) {
-  const [ancrageAnnee, ancrageValeur] = ANCRAGE_SALAIRE_MOYEN;
+  const [ancrageAnnee, ancrageValeur] = ancrageSalaireMoyen(macro);
   const valeurs = new Map([[ancrageAnnee, ancrageValeur]]);
 
   const borneHaute = Math.max(fin, ancrageAnnee);

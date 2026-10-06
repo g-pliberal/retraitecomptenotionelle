@@ -98,7 +98,7 @@
    "niveau": "certifiee",
    "source": "INSEE BDM, idbank 011785411 (D11, total des branches)",
    "valeurs": 77,
-   "verifiee_le": "2026-09-19"
+   "verifiee_le": "2026-10-06"
   },
   "bonifications_jaune_effectifs": {
    "ajoutees": 0,
@@ -299,15 +299,15 @@
    "verifiee_le": "2026-09-19"
   },
   "dette_publique": {
-   "ajoutees": 31,
+   "ajoutees": 0,
    "colonne": "part_pib",
    "corrigees": 0,
    "empreinte": "15c018915a4ec22e",
-   "identiques": 0,
+   "identiques": 31,
    "niveau": "certifiee",
    "source": "INSEE BDM, idbank 010777608 (quatrième trimestre)",
    "valeurs": 31,
-   "verifiee_le": "2026-09-19"
+   "verifiee_le": "2026-10-06"
   },
   "dispersion_salaires": {
    "ajoutees": 0,
@@ -343,22 +343,22 @@
    "verifiee_le": "2026-09-20"
   },
   "duree_assurance_generations": {
-   "ajoutees": 22,
+   "ajoutees": 0,
    "colonne": "trimestres",
    "corrigees": 0,
    "empreinte": "12c48b3f9f58d71f",
-   "identiques": 0,
+   "identiques": 22,
    "niveau": "haute",
    "source": "COR, rapport annuel, durée moyenne d'assurance par génération (EIR 2020)",
    "valeurs": 22,
    "verifiee_le": "2026-10-06"
   },
   "duree_assurance_generations_projetee": {
-   "ajoutees": 94,
+   "ajoutees": 0,
    "colonne": "trimestres",
    "corrigees": 0,
    "empreinte": "70922e5f34d73667",
-   "identiques": 0,
+   "identiques": 94,
    "niveau": "projetee",
    "source": "COR, rapport annuel, durée moyenne d'assurance par génération (TRAJECTOiRE)",
    "valeurs": 94,
@@ -648,7 +648,7 @@
    "niveau": "certifiee",
    "source": "INSEE BDM, idbanks 000008965 et 001764363",
    "valeurs": 76,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-06"
   },
   "masse_salariale": {
    "ajoutees": 0,
@@ -659,7 +659,7 @@
    "niveau": "certifiee",
    "source": "INSEE BDM, idbank 011785411",
    "valeurs": 76,
-   "verifiee_le": "2026-09-19"
+   "verifiee_le": "2026-10-06"
   },
   "masse_salariale_privee": {
    "ajoutees": 29,
@@ -846,7 +846,7 @@
    "niveau": "certifiee",
    "source": "INSEE BDM, idbank 011779992",
    "valeurs": 77,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-06"
   },
   "pib_nominal": {
    "ajoutees": 0,
@@ -857,7 +857,7 @@
    "niveau": "certifiee",
    "source": "INSEE BDM, idbank 011779992",
    "valeurs": 76,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-06"
   },
   "plafond": {
    "ajoutees": 0,
@@ -868,7 +868,7 @@
    "niveau": "certifiee",
    "source": "INSEE BDM, idbank 000822494",
    "valeurs": 25,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-06"
   },
   "plafond_ancien": {
    "ajoutees": 0,
@@ -978,7 +978,7 @@
    "niveau": "certifiee",
    "source": "INSEE BDM, idbanks 011785223 et 011793334",
    "valeurs": 76,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-06"
   },
   "profil_salaire_age": {
    "ajoutees": 0,
@@ -1077,7 +1077,18 @@
    "niveau": "certifiee",
    "source": "INSEE BDM, idbanks 011785411 et 011793486",
    "valeurs": 76,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-06"
+  },
+  "salaire_moyen_niveau": {
+   "ajoutees": 77,
+   "colonne": "salaire_moyen_annuel",
+   "corrigees": 0,
+   "empreinte": "b369321402459737",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "INSEE BDM, idbanks 011785411 et 011793486",
+   "valeurs": 77,
+   "verifiee_le": "2026-10-06"
   },
   "salaires_forfaitaires_marins": {
    "ajoutees": 380,
@@ -1089,6 +1100,17 @@
    "source": "DILA, base JORF, arrêtés annuels portant majoration des salaires forfaitaires des marins",
    "valeurs": 380,
    "verifiee_le": "2026-09-14"
+  },
+  "smic_annuel": {
+   "ajoutees": 75,
+   "colonne": "smic_annuel",
+   "corrigees": 0,
+   "empreinte": "8bf0b9fde09ffae0",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "INSEE, séries longues sur les salaires (tableaux SM02 et SM01), puis BDM, idbank 000822484",
+   "valeurs": 75,
+   "verifiee_le": "2026-10-06"
   },
   "smic_horaire": {
    "ajoutees": 0,

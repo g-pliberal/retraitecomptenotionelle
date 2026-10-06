@@ -820,13 +820,13 @@ def test_le_resume_dit_au_retraite_que_sa_pension_serait_recalculee():
 def test_le_retraite_lit_le_chemin_de_sa_pension_depuis_son_depart():
     """Le cas type de ``tests/test_revalorisation.py``, saisi sur le site : un
     non-cadre né en 1950, parti en janvier 2012. Sa pension de 2026 est
-    1 781,79 € bruts par mois — celle de son départ, 1 469,77 €, menée par
+    1 821,75 € bruts par mois — celle de son départ, 1 502,73 €, menée par
     les treize revalorisations du régime général (×1,2215) et la valeur du
     point Agirc-Arrco (×1,1855), depuis celle de son départ, fixée en avril
     2011 (étape 138.20). Le dépliant refait ce chemin régime par régime, dit
-    la tranche de 2020 — 1 538,82 € en décembre 2019, donc 1 % — et ce que la
+    la tranche de 2020 — 1 573,32 € en décembre 2019, donc 1 % — et ce que la
     page affichait avant : la pension du départ ramenée par les prix,
-    1 834,49 €, que ce retraité n'a jamais touchée."""
+    1 875,63 €, que ce retraité n'a jamais touchée."""
     corps = rendre("/simuler", {
         "situation": "retraite", "saisie_par": "revenu", "salaire": "0.8",
         "unite_revenu": "moyen", "naissance": "1950-01-01", "liquidation": "62",
@@ -835,11 +835,11 @@ def test_le_retraite_lit_le_chemin_de_sa_pension_depuis_son_depart():
     bloc = corps[debut:corps.index("</details>", debut)]
     texte = re.sub(r"[ \t\n]+", " ", re.sub(r"<[^>]+>", " ", bloc)).replace("\u202f", " ")
     assert "Votre pension a pris effet en janvier 2012." in texte
-    assert "376,68 € ×1,1855 446,55 €" in texte
-    assert "1 093,10 € ×1,2215 1 335,24 €" in texte
-    assert "Pension du système actuel 1 469,77 € ×1,2123 1 781,79 €" in texte
-    assert "votre pension de départ vaudrait 1 834,49 € bruts par mois" in texte
-    assert "Pour vous, 1 538,82 € en décembre 2019 : +1,0 %." in texte
+    assert "385,12 € ×1,1855 456,56 €" in texte
+    assert "1 117,61 € ×1,2215 1 365,18 €" in texte
+    assert "Pension du système actuel 1 502,73 € ×1,2123 1 821,75 €" in texte
+    assert "votre pension de départ vaudrait 1 875,63 € bruts par mois" in texte
+    assert "Pour vous, 1 573,32 € en décembre 2019 : +1,0 %." in texte
 
 
 def test_aucun_lien_ne_remplace_la_route_par_une_ancre():

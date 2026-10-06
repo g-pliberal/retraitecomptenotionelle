@@ -17,7 +17,7 @@ from dataclasses import dataclass, field, replace
 
 from typing import TYPE_CHECKING
 
-from .carriere import PROFIL_AUTOMATIQUE, Carriere, Metier
+from .carriere import PROFIL_AUTOMATIQUE, PROFIL_SMIC, Carriere, Metier
 from .donnees.chargement import dans_un_instantane
 from .simulateur import Comparaison, Simulateur
 from . import pilote
@@ -97,6 +97,22 @@ class CasType:
     #: la page Cas types montre toujours celle-là : le droit d'une carrière,
     #: non une projection.
     affiliation_avant_entree: str = ""
+
+    def niveau_relatif(self, simulateur: Simulateur, generation: int) -> float:
+        """Son salaire en multiples du salaire moyen : ce qui le RATTACHE à un
+        vingtile de niveau de vie hors du simulateur
+        (``DonneesMortalite.population_niveau_de_vie``).
+
+        Le niveau écrit, sauf sous :data:`~retraite_notionnelle.carriere.PROFIL_SMIC`,
+        dont le niveau est un multiple du SMIC : c'est alors celui de la
+        carrière construite, tel que le simulateur le lit
+        (:func:`~retraite_notionnelle.moteur.conversion.niveau_relatif`).
+        """
+        if self.profil_carriere != PROFIL_SMIC:
+            return self.niveau_salaire
+        from .moteur.conversion import niveau_relatif
+
+        return niveau_relatif(self.construire(simulateur, generation), simulateur.macro)
 
     def age_liquidation_pour(self, simulateur: Simulateur, generation: int,
                              variante: str = "droit") -> float:
@@ -211,8 +227,11 @@ CAS_TYPES: tuple[CasType, ...] = (
         code="smic_carriere_complete",
         libelle="Salarié au niveau du SMIC, carrière complète",
         affiliation="salarie_prive_non_cadre",
-        age_debut=18, age_liquidation=64, niveau_salaire=0.55,
-        profil_carriere="plat",
+        # Le SMIC de chaque année, à temps complet, et non une part fixe du
+        # salaire moyen : 0,55 l'arrondissait, quand il en a valu 0,40 en 1970
+        # et 0,52 en 2024 (action 147, étape 16).
+        age_debut=18, age_liquidation=64, niveau_salaire=1.0,
+        profil_carriere=PROFIL_SMIC,
         caisses=("cnav",),
         commentaire="Carrière longue à bas salaire : le cas où les minima pèsent le plus.",
     ),

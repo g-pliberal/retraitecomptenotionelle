@@ -13,7 +13,7 @@
  * carrière interrompue — parce que ce sont eux que la réforme déplace le plus.
  */
 
-import { AnneeCarriere, PROFIL_AUTOMATIQUE } from "./carriere.js";
+import { AnneeCarriere, PROFIL_AUTOMATIQUE, PROFIL_SMIC } from "./carriere.js";
 import { VARIANTES_LIQUIDATION, ageDeDepart } from "./pilote.js";
 
 /** Les deux façons de dater le départ d'un cas type : voir `pilote.js`. */
@@ -25,8 +25,10 @@ export const CAS_TYPES = [
     code: "smic_carriere_complete",
     libelle: "Salarié au niveau du SMIC, carrière complète",
     affiliation: "salarie_prive_non_cadre",
-    age_debut: 18, age_liquidation: 64, niveau_salaire: 0.55,
-    profil_carriere: "plat",
+    // Le SMIC de chaque année, à temps complet, et non une part fixe du
+    // salaire moyen. Voir le Python.
+    age_debut: 18, age_liquidation: 64, niveau_salaire: 1.0,
+    profil_carriere: PROFIL_SMIC,
     caisses: ["cnav"],
     commentaire: "Carrière longue à bas salaire : le cas où les minima pèsent le plus.",
   },

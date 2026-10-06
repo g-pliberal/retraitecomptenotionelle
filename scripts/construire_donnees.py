@@ -142,6 +142,14 @@ def _series() -> dict:
             macro / "ipc_annuel.csv", "variation", nom="inflation"),
         "salaire_moyen": charger_serie_annuelle(
             macro / "salaire_moyen.csv", "variation_nominale", nom="salaire_moyen_nominal"),
+        # Le même salaire moyen EN NIVEAU : d'où se cumulent les croissances.
+        "salaire_moyen_niveau": charger_serie_annuelle(
+            macro / "salaire_moyen_niveau.csv", "salaire_moyen_annuel",
+            nom="salaire_moyen_niveau"),
+        # Le salaire minimum d'une année entière à temps complet : le revenu du
+        # cas type au SMIC (action 147, étape 16).
+        "smic_annuel": charger_serie_annuelle(
+            macro / "smic_annuel.csv", "smic_annuel", nom="smic_annuel"),
         "masse_salariale": charger_serie_annuelle(
             macro / "masse_salariale.csv", "variation_nominale",
             nom="masse_salariale_nominale"),

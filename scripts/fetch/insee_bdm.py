@@ -107,6 +107,15 @@ SERIES: dict[str, dict[str, str]] = {
         "role": "Montant du plafond mensuel de la Sécurité sociale, 2001-",
         "note": "la série ne remonte pas avant 2001 : le plafond ancien reste à saisir",
     },
+    # -- salaire minimum ------------------------------------------------------
+    "smic_horaire_mensuel": {
+        "idbank": "000822484",
+        "role": "Montant du SMIC (SMIG avant 1970) brut horaire, mensuel, euros, 1951-",
+        "note": "le barème de chaque mois, d'où se refait le salaire minimum ANNUEL "
+                "au-delà des séries longues de l'INSEE (insee_sls_smic.py), qui "
+                "s'arrêtent en 2012. Au centime d'euro : exact depuis 2002, une "
+                "conversion arrondie des francs avant",
+    },
     # -- valeur de service du point des complémentaires du privé ------------
     # Mensuelles, et l'INSEE n'est pas le producteur de ces barèmes : elles ne
     # servent donc pas de source mais de contre-épreuve à la transcription

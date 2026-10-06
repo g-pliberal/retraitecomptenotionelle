@@ -293,10 +293,11 @@ MODES_MONTANT = [
     ("net", "net avant impôt — après CSG"),
 ]
 
-#: Durée mensuelle de référence du SMIC : 35 heures par semaine ramenées au
-#: mois, soit 151,67 heures. Elle ne sert qu'à écrire un repère à l'échelle
-#: d'un salaire mensuel.
-HEURES_SMIC_PAR_MOIS = 151.67
+#: Durée mensuelle de référence du SMIC : 35 heures par semaine pendant 52
+#: semaines, ramenées au mois. Le barème l'écrit « 151,67 heures » et calcule
+#: sur 151,666… : 11,88 € de l'heure font 1 801,80 € par mois, non 1 801,84.
+#: Elle ne sert qu'à écrire un repère à l'échelle d'un salaire mensuel.
+HEURES_SMIC_PAR_MOIS = 35 * 52 / 12
 
 
 #: Nombre maximal de métiers d'une carrière, le premier compris. Le formulaire
@@ -1250,8 +1251,8 @@ class Saisie:
             rang,
             f"Ce revenu vaut {nombre(niveau, 2)} fois le salaire moyen ; le "
             "modèle en accepte de 0,1 à 10 fois, soit de "
-            f"{nombre(echelle.mensuel(0.1), 0)} à "
-            f"{euros(echelle.mensuel(10))} bruts par mois.",
+            f"{nombre(echelle.euros_dans_les_bornes(NIVEAU_MINIMAL), 0)} à "
+            f"{euros(echelle.euros_dans_les_bornes(NIVEAU_MAXIMAL))} bruts par mois.",
         )
 
     # -- les dates ------------------------------------------------------------
@@ -2516,3 +2517,22 @@ class Echelle:
     def mensuel(self, niveau: float) -> float:
         """L'opération inverse : un multiple, en euros bruts par mois."""
         return niveau * self.moyen / MOIS_PAR_AN
+
+    def euros_dans_les_bornes(self, niveau: float) -> int:
+        """Un multiple en euros bruts mensuels ENTIERS, sans sortir des bornes.
+
+        L'euro le plus proche, sauf aux bords : 0,1 fois le salaire moyen ne
+        fait pas un nombre rond d'euros, et l'arrondi peut tomber du mauvais
+        côté — 355 € pour 355,34, que le modèle refuse ensuite. Il est alors
+        poussé d'un euro vers l'intérieur. C'est ce que la bascule d'unité
+        écrit et ce que le refus nomme : un montant qu'on montre est un montant
+        accepté.
+        """
+        # L'arrondi de ``Math.round``, et non celui de ``round`` qui va au
+        # pair : les deux moteurs nomment ainsi le même euro.
+        euros = math.floor(self.mensuel(niveau) + 0.5)
+        while self.niveau(euros) < NIVEAU_MINIMAL:
+            euros += 1
+        while self.niveau(euros) > NIVEAU_MAXIMAL:
+            euros -= 1
+        return euros

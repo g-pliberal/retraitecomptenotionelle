@@ -234,10 +234,10 @@ export const MODES_MONTANT = [
   ["net", "net avant impôt — après CSG"],
 ];
 
-// Durée mensuelle de référence du SMIC : 35 heures par semaine ramenées au
-// mois, soit 151,67 heures. Elle ne sert qu'à écrire un repère à l'échelle d'un
-// salaire mensuel.
-export const HEURES_SMIC_PAR_MOIS = 151.67;
+// Durée mensuelle de référence du SMIC : 35 heures par semaine pendant 52
+// semaines, ramenées au mois. Le barème l'écrit « 151,67 heures » et calcule sur
+// 151,666… Elle ne sert qu'à écrire un repère à l'échelle d'un salaire mensuel.
+export const HEURES_SMIC_PAR_MOIS = (35 * 52) / 12;
 
 /**
  * Nombre maximal de métiers d'une carrière, le premier compris. Le formulaire
@@ -1140,8 +1140,8 @@ export class Saisie {
       rang,
       `Ce revenu vaut ${g.nombre(niveau, 2)} fois le salaire moyen ; le `
       + "modèle en accepte de 0,1 à 10 fois, soit de "
-      + `${g.nombre(echelle.mensuel(0.1), 0)} à `
-      + `${g.euros(echelle.mensuel(10))} bruts par mois.`,
+      + `${g.nombre(echelle.eurosDansLesBornes(NIVEAU_MINIMAL), 0)} à `
+      + `${g.euros(echelle.eurosDansLesBornes(NIVEAU_MAXIMAL))} bruts par mois.`,
     );
   }
 
@@ -2603,6 +2603,22 @@ export class Echelle {
   /** L'opération inverse : un multiple, en euros bruts par mois. */
   mensuel(niveau) {
     return (niveau * this.moyen) / MOIS_PAR_AN;
+  }
+
+  /**
+   * Un multiple en euros bruts mensuels ENTIERS, sans sortir des bornes :
+   * l'euro le plus proche, poussé d'un euro vers l'intérieur quand l'arrondi
+   * tombe du mauvais côté. Voir le Python.
+   */
+  eurosDansLesBornes(niveau) {
+    let euros = Math.round(this.mensuel(niveau));
+    while (this.niveau(euros) < NIVEAU_MINIMAL) {
+      euros += 1;
+    }
+    while (this.niveau(euros) > NIVEAU_MAXIMAL) {
+      euros -= 1;
+    }
+    return euros;
   }
 
   /** Le brut mensuel d'un montant saisi, quel que soit le mode. */

@@ -4677,7 +4677,7 @@ def test_la_tranche_c_d_avant_2016_garde_le_coefficient_pour_age(simulateur):
     gardent le coefficient pour âge avant l'âge du 1° de l'article L. 351-8,
     et « ne peuvent pas être attribués à taux plein avant l'âge de 67 ans »
     (Agirc-Arrco). Un cadre né en 1955, payé huit fois le salaire moyen et
-    parti à soixante-deux ans avec la durée, a 40 % de ses points Agirc sur
+    parti à soixante-deux ans avec la durée, a 41 % de ses points Agirc sur
     la tranche C d'avant 2016 : ils prennent 0,78, cinq ans avant
     soixante-sept ans, les autres rien.
     """
@@ -4693,11 +4693,11 @@ def test_la_tranche_c_d_avant_2016_garde_le_coefficient_pour_age(simulateur):
 
     pension = agirc(62)
     assert pension.detail.endswith(
-        "× coefficient d'anticipation 0.9120, dont 73,498.42 points de la tranche C "
+        "× coefficient d'anticipation 0.9093, dont 77,442.08 points de la tranche C "
         "d'avant 2016 au coefficient pour âge 0.7800")
-    part = 73_498.42 / 183_700.78
+    part = 77_442.08 / 187_836.66
     assert pension.montant == pytest.approx(
-        183_700.78 * 0.4352 * (1 - part + 0.78 * part), rel=1e-6)
+        187_836.66 * 0.4352 * (1 - part + 0.78 * part), rel=1e-6)
     # À soixante-sept ans, plus rien ; sous quatre plafonds, pas de tranche C.
     assert "coefficient" not in agirc(67).detail
     assert "coefficient" not in agirc(62, niveau=1.0).detail
@@ -4745,7 +4745,7 @@ def test_la_reforme_agricole_rend_l_exemple_de_la_msa(simulateur):
         p for p in simulateur.scenario_actuel.calculer(carriere).pensions_par_regime
         if p.regime == "msa_salaries")
     assert salarie.detail == (
-        "SR 27,311.21 € × taux 51.250% × 40/170, "
+        "SR 27,923.66 € × taux 51.250% × 40/170, "
         "6 années au plus au salaire annuel moyen (R. 173-3-2)")
     # Avant 2026, rien ne se partage : ses dix années.
     avant = simulateur.carriere_parcours(

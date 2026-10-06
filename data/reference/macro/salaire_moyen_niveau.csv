@@ -1,0 +1,97 @@
+# Salaire moyen par tête (SMPT), EN NIVEAU — ensemble de l'économie
+# source_id: insee_bdm_smpt_niveau (comptes nationaux annuels, base 2020)
+# unite: euros bruts annuels courants, par salarié
+# fiabilite:
+#   certifiee (1949-2025) : salaires et traitements bruts (D11, total des
+#             branches, idbank 011785411, millions d'euros) rapportés à
+#             l'emploi salarié intérieur en personnes physiques (idbank
+#             011793486, milliers), recontrôlés par
+#             scripts/verifier_donnees.py.
+#
+# Le même rapport que salaire_moyen.csv, qui n'en garde que les
+# variations. Le modèle cumule celles-ci à partir du niveau d'UNE année,
+# lu ici (carriere.ANNEE_ANCRAGE_SALAIRE_MOYEN) : c'est ce qui donne des
+# euros aux multiples du salaire moyen — les cas types, le repère du
+# site. Il était écrit à la main, 40 000 € en 2024, un arrondi de 2,2 %
+# (feuille de route, action 147, étapes 15 et 16).
+#
+# Ne pas modifier les années certifiées à la main : elles seraient écrasées
+# au prochain scripts/verifier_donnees.py --appliquer.
+annee,salaire_moyen_annuel,fiabilite
+1949,368.31,certifiee
+1950,404.51,certifiee
+1951,505.15,certifiee
+1952,599.33,certifiee
+1953,620.11,certifiee
+1954,660.86,certifiee
+1955,698.08,certifiee
+1956,764.53,certifiee
+1957,837.50,certifiee
+1958,949.25,certifiee
+1959,1038.99,certifiee
+1960,1122.02,certifiee
+1961,1225.20,certifiee
+1962,1365.98,certifiee
+1963,1528.19,certifiee
+1964,1660.16,certifiee
+1965,1763.31,certifiee
+1966,1869.33,certifiee
+1967,1990.07,certifiee
+1968,2225.24,certifiee
+1969,2467.27,certifiee
+1970,2737.92,certifiee
+1971,3048.68,certifiee
+1972,3360.39,certifiee
+1973,3791.89,certifiee
+1974,4456.82,certifiee
+1975,5209.08,certifiee
+1976,5941.70,certifiee
+1977,6622.44,certifiee
+1978,7417.52,certifiee
+1979,8275.49,certifiee
+1980,9466.45,certifiee
+1981,10744.42,certifiee
+1982,12136.38,certifiee
+1983,13226.30,certifiee
+1984,14180.45,certifiee
+1985,14944.09,certifiee
+1986,15629.38,certifiee
+1987,16082.67,certifiee
+1988,16763.03,certifiee
+1989,17444.33,certifiee
+1990,18433.80,certifiee
+1991,19151.30,certifiee
+1992,19770.98,certifiee
+1993,20228.09,certifiee
+1994,20446.28,certifiee
+1995,20944.37,certifiee
+1996,21318.00,certifiee
+1997,21682.22,certifiee
+1998,22045.09,certifiee
+1999,22459.46,certifiee
+2000,23204.08,certifiee
+2001,23880.99,certifiee
+2002,24739.32,certifiee
+2003,25389.56,certifiee
+2004,26298.16,certifiee
+2005,27153.08,certifiee
+2006,28043.02,certifiee
+2007,28746.17,certifiee
+2008,29486.43,certifiee
+2009,29903.50,certifiee
+2010,30767.27,certifiee
+2011,31391.88,certifiee
+2012,31976.45,certifiee
+2013,32477.29,certifiee
+2014,32720.51,certifiee
+2015,33080.66,certifiee
+2016,33526.94,certifiee
+2017,34234.13,certifiee
+2018,34795.74,certifiee
+2019,35561.56,certifiee
+2020,34258.42,certifiee
+2021,36057.14,certifiee
+2022,38070.73,certifiee
+2023,39845.61,certifiee
+2024,40897.00,certifiee
+2025,41620.93,certifiee

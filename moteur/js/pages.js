@@ -19,7 +19,7 @@
 import {
   MOIS_PAR_AN, NOMS_DE_MOIS, DateMois, enMois, formaterAge, moisTravailles,
 } from "./calendrier.js";
-import { bornesDeformation, salaireMoyenAnnuel } from "./carriere.js";
+import { ancrageSalaireMoyen, bornesDeformation, salaireMoyenAnnuel } from "./carriere.js";
 import { repartition } from "./capitalisation.js";
 import { CourbeTauxSansRisque } from "./taux.js";
 import {
@@ -1774,7 +1774,7 @@ function remplacementsUnite(saisie, echelle) {
   // `niveaux` ramène les montants à l'unité du modèle quelle que soit celle de
   // la saisie : la traduction dans l'autre sens part donc toujours de là.
   const valeurs = saisie.niveaux(echelle).map((niveau) => nombreBrut(
-    versLesEuros ? arrondir(echelle.mensuel(niveau), 0)
+    versLesEuros ? echelle.eurosDansLesBornes(niveau)
       : arrondir(niveau, DECIMALES_MULTIPLE),
   ));
   const remplacements = { unite_revenu: autre, salaire: valeurs[0] };
@@ -12855,7 +12855,7 @@ ${methodeCapitalisation(contexte)}
 ${methodeDroitPositif()}
 ${methodeSuppressions()}
 ${methodeCarriere(contexte)}
-${methodeUnites()}
+${methodeUnites(contexte)}
 ${methodeConstruction()}
 
 ${methodeSources(contexte)}
@@ -13107,7 +13107,7 @@ jusqu'en 1986 et sur les prix seulement depuis 1987. C'est donc elle, plutôt qu
 « Indexation sur les prix », qui neutralise la question de l'indexation quand on
 veut isoler l'effet propre des comptes notionnels. Sur une carrière
 (un salarié du privé non cadre au salaire moyen, entré à 20 ans et parti
-à 62), la correction reste modeste : +5,6 points pour la génération 1920,
+à 62), la correction reste modeste : +5,5 points pour la génération 1920,
 +0,0 pour 1945, -0,5 pour 1958. Les cotisations se concentrent sur les dernières années, là où
 les deux règles coïncident.</p>
 
@@ -13314,7 +13314,8 @@ chiffres »</a>, plus bas, dit lesquelles, et à quelle date.</p>
 le tiennent</a> · <a href="${g.DEPOT}/tree/main/tests">les tests</a></p>`);
 }
 
-function methodeUnites() {
+function methodeUnites(contexte) {
+  const [anneeAncrage, niveauAncrage] = ancrageSalaireMoyen(contexte.simulateur().macro);
   return g.depliant("En quelles unités, et sur quel périmètre", `
 <h4 id="unites">Brut, et pas net</h4>
 <p>Tout ce que le modèle manipule est <strong>brut</strong> : le revenu saisi,
@@ -13335,12 +13336,14 @@ et une seule : <code>niveau = revenu mensuel × 12 ÷ salaire moyen annuel</code
 Ce niveau suit ensuite le salaire moyen d'une année à l'autre, déformé par le
 profil de carrière : le revenu saisi est celui du milieu de carrière. Un lien
 sous les métiers bascule entre les deux unités, montants convertis.</p>
-<p>Reste que les comptes nationaux ne publient que des <em>taux de croissance</em>
-du salaire moyen. Les niveaux en sont reconstitués à partir d'un point
-d'ancrage — <strong>40 000 € bruts annuels en 2024</strong> —, paramètre
-documenté et non donnée certifiée. Il déplace proportionnellement tous les
-revenus reconstitués, donc toutes les pensions, mais il est sans effet sur les
-<strong>rapports</strong> entre scénarios, qui sont l'objet du modèle.</p>
+<p>Ce salaire moyen est celui des comptes nationaux de l'INSEE : les salaires et
+traitements bruts rapportés à l'emploi salarié. Le modèle en cumule les
+<em>taux de croissance</em> à partir du niveau d'une année, lu à la même
+source — <strong>${g.euros(niveauAncrage)} bruts annuels en ${anneeAncrage}</strong>.
+Ce niveau déplace proportionnellement tous les revenus reconstitués, donc
+toutes les pensions, mais presque pas les <strong>rapports</strong> entre
+scénarios, qui sont l'objet du modèle : seuls le plafond de la Sécurité sociale
+et les minima, qui ne le suivent pas, en tirent de petits écarts.</p>
 
 <h4>Périmètre</h4>
 <p>Origine 1941 (allocation aux vieux travailleurs salariés), premier dispositif

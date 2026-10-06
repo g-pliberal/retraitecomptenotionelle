@@ -181,8 +181,10 @@ def _deficit(mortalite, depuis: int | None = None) -> int:
                          ComptesRetraite(racine), assiette=AssietteActivite(racine))
     pensionnes, _ = _pensionnes(simulateur, CAS_TYPES, cout.liquidation)
     par_code = {cas.code: cas for cas in CAS_TYPES}
-    vingtiles = {cas.code: mortalite.population_niveau_de_vie(cas.niveau_salaire)
-                 for cas in CAS_TYPES}
+    vingtiles = {
+        (pensionne.code, pensionne.generation): mortalite.population_niveau_de_vie(
+            par_code[pensionne.code].niveau_relatif(simulateur, pensionne.generation))
+        for pensionne in pensionnes}
     scenarios = [cle for cle, _, _ in SCENARIOS_NOTIONNELS]
 
     # Pour chaque couple : le rapport des diviseurs (ce que la pension devient
@@ -192,7 +194,7 @@ def _deficit(mortalite, depuis: int | None = None) -> int:
         age = pensionne.annee_liquidation - pensionne.generation
         commune = mortalite.courbe(age, float(pensionne.annee_liquidation), None, True)
         propre = mortalite.courbe(age, float(pensionne.annee_liquidation), None, True,
-                                  vingtiles[pensionne.code])
+                                  vingtiles[pensionne.code, pensionne.generation])
         e_commune = sum(0.5 * (commune[k] + commune[k + 1]) for k in range(len(commune) - 1))
         e_propre = sum(0.5 * (propre[k] + propre[k + 1]) for k in range(len(propre) - 1))
         couples.append((pensionne, e_commune / e_propre, commune, propre))
@@ -296,13 +298,14 @@ def _par_niveau_de_vie(mortalite, generations: list[int]) -> int:
               "Pension notionnelle | Transfert, système actuel | Transfert, scénario 6 |")
         print("  |---|---:|---:|---:|---:|---:|---:|---:|---:|")
         for cas in CAS_TYPES:
-            population = mortalite.population_niveau_de_vie(cas.niveau_salaire)
+            niveau = cas.niveau_relatif(_simulateur(None), generation)
+            population = mortalite.population_niveau_de_vie(niveau)
             resultat = mesurer(population, cas, generation)
             if resultat is None or "erreur" in resultat:
-                print(f"  | {cas.libelle} | {cas.niveau_salaire:.2f} | {population[-2:]} | écarté |||||||")
+                print(f"  | {cas.libelle} | {niveau:.2f} | {population[-2:]} | écarté |||||||")
                 continue
             par_numero = {l["numero"]: l for l in resultat["scenarios"]}
-            print(f"  | {cas.libelle} | ×{cas.niveau_salaire:.2f} | {int(population[-2:])} | "
+            print(f"  | {cas.libelle} | ×{niveau:.2f} | {int(population[-2:])} | "
                   f"{resultat['esperance_commune']:.1f} ans | {resultat['esperance_population']:.1f} ans | "
                   f"{resultat['esperance_population'] - resultat['esperance_commune']:+.1f} an | "
                   f"{par_numero[4]['ecart']:+.1%} | {_euros(par_numero[1]['transfert_vie'])} € | "

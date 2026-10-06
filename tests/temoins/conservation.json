@@ -539,7 +539,8 @@
    "2026-10-06 | action 147, étape 11 : les carrières que la grille ne connaît pas, les arrivées tardives et l'entrée tardive des fonctionnaires",
    "2026-10-06 | action 147, étape 12 : le salaire moyen du modèle contre celui de TRAJECTOiRE, ni son ancrage ni sa croissance",
    "2026-10-06 | action 147, étape 13 : le défaut du privé de 2030 à 2055, les régimes qui se ferment et la réversion des groupes",
-   "2026-10-06 | action 147, étape 14 : les carrières incomplètes des natifs, de la durée d'assurance par génération du COR"
+   "2026-10-06 | action 147, étape 14 : les carrières incomplètes des natifs, de la durée d'assurance par génération du COR",
+   "2026-10-06 | action 147, étape 15 : l'ancrage du salaire moyen, recensé chez les autres modèles, rien de changé"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
    "Agirc-Arrco, paramètres annuels",
@@ -1289,6 +1290,7 @@
    "insee_bdm_point_complementaire",
    "insee_bdm_productivite",
    "insee_bdm_smpt",
+   "insee_bdm_smpt_niveau",
    "insee_deces_mortalite",
    "insee_dispersion_salaires",
    "insee_ipc_long",
@@ -1301,6 +1303,7 @@
    "insee_profil_salaire_public",
    "insee_projections_mortalite",
    "insee_projections_population",
+   "insee_sls_smic",
    "insee_tables_mortalite",
    "insee_vie_en_couple",
    "ipp_points_independants",
@@ -6791,7 +6794,7 @@
    "1. Programme — trois minutes": [
     "4affbd8c4e78027d",
     "679d82b755a3480f",
-    "e45bb9e6cd69db89"
+    "6de6aded3ad4e635"
    ],
    "2. Simuler — six minutes, c'est le cœur": [
     "d745ea9a8aeebb45",
@@ -6814,8 +6817,8 @@
    "4 bis. Risque — deux minutes, si on a le temps": [
     "68969bf92be67711",
     "f971f23cb7a212f4",
-    "4f59ef99acfac088",
-    "2a1bb678954f5440",
+    "6c133b8f6b2c0247",
+    "2041982c9067894b",
     "7be0c23682934574",
     "c8fe453896f43ca8"
    ],
@@ -6830,13 +6833,13 @@
    ],
    "5. Avantages — deux minutes": [
     "e13190fb11225547",
-    "89dbf52244920b06",
+    "f82cd0b30eee7f56",
     "bfbaa9f3a0c8cd0e"
    ],
    "6. Méthode et Données — deux minutes, pour finir": [
     "9a630078d6a3bd10",
     "d8fe3e7fd9af50b2",
-    "c2bb9e7adb12d67d"
+    "90ea36595950d83a"
    ],
    "Avant de partir": [
     "5d7ed1de7dc7c4d7",
@@ -6879,7 +6882,7 @@
     "8e58f59420f24e3e",
     "e96e70e1d0dacf78",
     "b638caf9172c7a49",
-    "78c469803454345f",
+    "92fadbb01550a7e1",
     "5f719a1303f242e0",
     "42fbe0590ab543ae",
     "c6d47d8a2329646a",

@@ -238,6 +238,19 @@ def source_salaire_moyen() -> dict[tuple, float]:
     return {(str(a),): v for a, v in sorted(variations.items())}
 
 
+def source_salaire_moyen_niveau() -> dict[tuple, float]:
+    """Le même salaire moyen par tête, EN NIVEAU, en euros bruts annuels.
+
+    Le rapport dont ``source_salaire_moyen`` ne garde que les variations : D11,
+    en millions d'euros, sur l'emploi salarié, en milliers de personnes, d'où
+    le facteur mille. C'est de lui que le modèle tire le niveau d'où il cumule
+    les variations : un ancrage écrit à la main, 40 000 € en 2024, arrondissait
+    ce niveau de 2,2 % (action 147, étape 16).
+    """
+    return {(annee,): valeur * 1000.0
+            for annee, valeur in _rapport("salaires_bruts", "emploi_salarie").items()}
+
+
 def source_masse_salariale() -> dict[tuple, float]:
     """Variation nominale de la masse salariale — l'assiette des cotisations.
 
@@ -2800,6 +2813,59 @@ def source_smic() -> dict[tuple, float]:
     return {(annee,): valeur for annee, valeur in sorted(serie.items())}
 
 
+#: La première année où les séries longues de l'INSEE comptent le salaire
+#: minimum sur 35 heures (tableau SM01) : la durée légale passe à 35 heures le
+#: 1er février 2000 dans les entreprises de plus de vingt salariés (loi du
+#: 19 janvier 2000), le 1er janvier 2002 dans les autres.
+ANNEE_SMIC_35_HEURES = 2000
+
+#: 35 heures pendant 52 semaines : l'année du SMIC mensualisé, que l'INSEE
+#: écrit « 151,67 heures par mois » et calcule sur 1 820 heures par an.
+HEURES_ANNUELLES_35_HEURES = 35 * 52
+
+#: Le SMIC se fixe au centime d'euro depuis 2002 : la série mensuelle de la BDM
+#: le porte alors exactement, et doit refaire au centime l'annuel de l'INSEE.
+ANNEE_SMIC_EN_EUROS = 2002
+
+
+def source_smic_annuel() -> dict[tuple, float]:
+    """Le salaire minimum brut d'une année entière à temps complet, en euros.
+
+    Trois morceaux d'une même source, l'INSEE. Le tableau SM02 de ses séries
+    longues sur les salaires jusqu'en 1999, sur la durée légale d'avant les
+    35 heures — 173,33 heures par mois jusqu'en 1981, 169 ensuite — ; le
+    tableau SM01 de 2000 à 2012, sur 35 heures ; au-delà, la moyenne des douze
+    barèmes horaires de l'année que porte la BDM, fois 1 820 heures. SM01 et
+    la BDM doivent donner le même annuel au centime sur les années qu'ils
+    partagent depuis que le SMIC se fixe en euros : sans quoi le relais ne se
+    prend pas. Une année dont la BDM n'a pas encore les douze mois n'est pas
+    rendue.
+    """
+    chemin = BRUT / "insee_sls_smic.json"
+    if not chemin.exists():
+        raise SourceAbsente(f"{chemin} absent (lancer scripts/fetch/insee_sls_smic.py)")
+    tableaux = json.loads(chemin.read_text(encoding="utf-8"))["tableaux"]
+    valeurs = {int(annee): ligne["annuel"] for annee, ligne in tableaux["SM02"]["annees"].items()
+               if int(annee) < ANNEE_SMIC_35_HEURES}
+    valeurs.update({int(annee): ligne["annuel"]
+                    for annee, ligne in tableaux["SM01"]["annees"].items()})
+    derniere_sls = max(valeurs)
+    mensuel = _observations("smic_horaire_mensuel")
+    for annee in sorted({int(periode[:4]) for periode in mensuel}):
+        mois = [mensuel.get(f"{annee}-{rang:02d}") for rang in range(1, 13)]
+        if annee < ANNEE_SMIC_EN_EUROS or None in mois:
+            continue
+        annuel = round(HEURES_ANNUELLES_35_HEURES * sum(mois) / 12, 2)
+        if annee <= derniere_sls:
+            if abs(annuel - valeurs[annee]) > 0.005:
+                raise ValueError(
+                    f"SMIC annuel {annee} : {annuel:.2f} € depuis la BDM, "
+                    f"{valeurs[annee]:.2f} € dans le tableau SM01 de l'INSEE")
+            continue
+        valeurs[annee] = annuel
+    return {(str(annee),): valeur for annee, valeur in sorted(valeurs.items())}
+
+
 def _parametres_retraite() -> dict[str, float]:
     return _serie_json("dila_legi_parametres_retraite.json",
                        "scripts/fetch/dila_legi_parametres_retraite.py")
@@ -4045,6 +4111,38 @@ CERTIFICATIONS = (
         origine="INSEE BDM, idbanks 011785411 et 011793486",
         decimales=5,
         tolerance=5e-4,
+    ),
+    Certification(
+        nom="salaire_moyen_niveau",
+        chemin=REFERENCE / "macro" / "salaire_moyen_niveau.csv",
+        cles=("annee",),
+        colonne="salaire_moyen_annuel",
+        source=source_salaire_moyen_niveau,
+        origine="INSEE BDM, idbanks 011785411 et 011793486",
+        decimales=2,
+        tolerance=0.005,
+        unite=" €",
+        entete=(
+            "# Salaire moyen par tête (SMPT), EN NIVEAU — ensemble de l'économie",
+            "# source_id: insee_bdm_smpt_niveau (comptes nationaux annuels, base 2020)",
+            "# unite: euros bruts annuels courants, par salarié",
+            "# fiabilite:",
+            "#   certifiee (1949-2025) : salaires et traitements bruts (D11, total des",
+            "#             branches, idbank 011785411, millions d'euros) rapportés à",
+            "#             l'emploi salarié intérieur en personnes physiques (idbank",
+            "#             011793486, milliers), recontrôlés par",
+            "#             scripts/verifier_donnees.py.",
+            "#",
+            "# Le même rapport que salaire_moyen.csv, qui n'en garde que les",
+            "# variations. Le modèle cumule celles-ci à partir du niveau d'UNE année,",
+            "# lu ici (carriere.ANNEE_ANCRAGE_SALAIRE_MOYEN) : c'est ce qui donne des",
+            "# euros aux multiples du salaire moyen — les cas types, le repère du",
+            "# site. Il était écrit à la main, 40 000 € en 2024, un arrondi de 2,2 %",
+            "# (feuille de route, action 147, étapes 15 et 16).",
+            "#",
+            "# Ne pas modifier les années certifiées à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
     ),
     Certification(
         nom="masse_salariale",
@@ -6560,6 +6658,49 @@ CERTIFICATIONS = (
         decimales=6,
         tolerance=5e-7,
         unite=" €",
+    ),
+    Certification(
+        nom="smic_annuel",
+        chemin=REFERENCE / "macro" / "smic_annuel.csv",
+        cles=("annee",),
+        colonne="smic_annuel",
+        source=source_smic_annuel,
+        origine="INSEE, séries longues sur les salaires (tableaux SM02 et SM01), "
+                "puis BDM, idbank 000822484",
+        decimales=2,
+        tolerance=0.005,
+        unite=" €",
+        entete=(
+            "# Salaire minimum brut d'une année entière à temps complet, en euros courants",
+            "# ---------------------------------------------------------------------------",
+            "# source_id: insee_sls_smic",
+            "#",
+            "# Le SMIG jusqu'en 1969, le SMIC ensuite. Le salaire horaire minimum MOYEN",
+            "# de l'année — il change en cours d'année, en juillet jusqu'en 2009 —, fois",
+            "# la durée légale : 40 heures par semaine (173,33 heures par mois) jusqu'en",
+            "# 1981, 39 heures (169) de 1982 à 1999, 35 heures (151,67) depuis 2000.",
+            "#",
+            "# fiabilite:",
+            "#   certifiee (1951-2012) : INSEE, « Séries longues sur les salaires",
+            "#             (1950-2010) », tableau SM02 jusqu'en 1999 (salaire minimum",
+            "#             avant le passage aux 35 heures), SM01 depuis 2000 (pour",
+            "#             35 heures hebdomadaires) — calculés par l'INSEE sur les",
+            "#             barèmes exacts, en francs.",
+            "#   certifiee (2013-2025) : la moyenne des douze barèmes mensuels de la",
+            "#             banque de données macroéconomiques (idbank 000822484), fois",
+            "#             1 820 heures. Elle refait SM01 au centime de 2002 à 2012.",
+            "#",
+            "# La garantie mensuelle de rémunération, qui a maintenu de 2000 à 2005 le",
+            "# salaire des smicards passés aux 35 heures, n'y est pas : l'INSEE donne",
+            "# les deux durées sur ces années, et le passage se fait à la sienne.",
+            "#",
+            "# Sert le cas type « salarié au niveau du SMIC », dont le salaire est celui",
+            "# de chaque année (action 147, étape 16). La validation des trimestres",
+            "# garde le barème horaire du 1er janvier, smic_horaire.csv, qui est celui",
+            "# que la caisse oppose.",
+            "#",
+            "# Fichier écrit par scripts/verifier_donnees.py --appliquer.",
+        ),
     ),
     Certification(
         nom="decote_fonction_publique_coefficient",

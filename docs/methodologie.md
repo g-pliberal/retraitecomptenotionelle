@@ -168,8 +168,8 @@ que le droit en vigueur a accordé ?**
 Ce que la correction déplace est modeste, et le dire fait partie de la
 correction : les cotisations se concentrent sur les dernières années d'une
 carrière, où les deux règles coïncident. La ligne de référence du scénario
-rétroactif passe de <!--chiffre:mesure(ecart?scenario=2&generation=1920&indexation=prix)-->-90,2<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1920&indexation=revalorisation_portee_au_compte)-->-84,7<!--/--> % pour la génération 1920, de
-<!--chiffre:mesure(ecart?scenario=2&generation=1930&indexation=prix)-->-89,0<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1930&indexation=revalorisation_portee_au_compte)-->-87,2<!--/--> % pour 1930, ne bouge pas pour 1945
+rétroactif passe de <!--chiffre:mesure(ecart?scenario=2&generation=1920&indexation=prix)-->-90,3<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1920&indexation=revalorisation_portee_au_compte)-->-84,8<!--/--> % pour la génération 1920, de
+<!--chiffre:mesure(ecart?scenario=2&generation=1930&indexation=prix)-->-89,0<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1930&indexation=revalorisation_portee_au_compte)-->-87,1<!--/--> % pour 1930, ne bouge pas pour 1945
 (<!--chiffre:mesure(ecart?scenario=2&generation=1945&indexation=prix)-->-84,7<!--/--> % contre <!--chiffre:mesure(ecart?scenario=2&generation=1945&indexation=revalorisation_portee_au_compte)-->-84,7<!--/--> %), et l'écart s'inverse pour
 les carrières entièrement postérieures à 1987 (<!--chiffre:mesure(ecart?scenario=2&generation=1958&indexation=prix)-->-80,4<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1958&indexation=revalorisation_portee_au_compte)-->-80,9<!--/--> % pour
 1958) : depuis 1990, les arrêtés revalorisent un peu moins vite que les prix
@@ -308,7 +308,7 @@ la fenêtre, ce qui gonfle le coefficient d'une vingtaine de pour cent à cinq a
 ×<!--chiffre:mesure(cumul_indexation?regle=pib_nominal&de=1940&a=2025)-->3 442,3<!--/--> à ×<!--chiffre:mesure(cumul_indexation?regle=pib_nominal&lissage=5&de=1940&a=2025)-->4 152,7<!--/--> dans le tableau plus haut, alors qu'il croît *moins* vite
 que la masse salariale (×<!--chiffre:mesure(cumul_indexation?regle=masse_salariale&de=1940&a=2025)-->3 685,1<!--/-->). Sur une carrière, l'écart entre lissé et non
 lissé retombe à un ou deux points : règle par défaut, génération 1930,
-<!--chiffre:mesure(ecart?scenario=2&generation=1930)-->-83,3<!--/--> % sans lissage, <!--chiffre:mesure(ecart?scenario=2&generation=1930&lissage=3)-->-82,2<!--/--> % à trois ans, <!--chiffre:mesure(ecart?scenario=2&generation=1930&lissage=5)-->-81,3<!--/--> % à cinq.
+<!--chiffre:mesure(ecart?scenario=2&generation=1930)-->-83,3<!--/--> % sans lissage, <!--chiffre:mesure(ecart?scenario=2&generation=1930&lissage=3)-->-82,2<!--/--> % à trois ans, <!--chiffre:mesure(ecart?scenario=2&generation=1930&lissage=5)-->-81,2<!--/--> % à cinq.
 
 Aucun plancher n'est appliqué par défaut : le taux peut être négatif, ce qui est
 la conséquence logique de la règle (`plancher_indexation`).
@@ -329,7 +329,7 @@ fiabilité la plus basse, qui se propage jusqu'au résultat.
 **Le site affiche une fourchette, pas un nombre seul.** Sous les cinq scénarios,
 un bloc rejoue la même carrière sous les trois hypothèses de productivité et
 donne l'amplitude — pour la génération 2000, entrée à <!--chiffre:illustration()-->21<!--/--> ans et partant à
-<!--chiffre:illustration()-->64<!--/--> ans, la pension du scénario 2 va de <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=basse)-->640<!--/--> € à <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=haute)-->804<!--/--> € par mois, soit
+<!--chiffre:illustration()-->64<!--/--> ans, la pension du scénario 2 va de <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=basse)-->654<!--/--> € à <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=haute)-->822<!--/--> € par mois, soit
 <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=amplitude)-->25,7<!--/--> % d'écart. Il dit aussi combien d'années du compte tombent après la
 dernière observation : <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=projetees)-->39<!--/--> sur <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=annees)-->44<!--/-->, soit <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=part)-->88,6<!--/--> % du calcul. Quand la liquidation précède cette année-là, le bloc le
 dit et ne montre aucune fourchette — **aucune hypothèse n'entre alors dans le
@@ -432,7 +432,7 @@ prend un diviseur plus élevé, donc un capital d'ouverture plus gros, et le
 cadeau va tout entier aux générations de transition. Le défaut suit l'âge légal
 de départ de la proposition, <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--/--> ans : moins que les <!--chiffre:maximum(data/reference/legislation/ages_reference.csv:age_reference)-->67<!--/--> ans du
 cliquet, et les deux scénarios prospectifs dépensent donc davantage qu'avec
-lui. Leurs soldes moyens sont, sous le défaut, de <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,55<!--/--> et <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,10<!--/--> % du
+lui. Leurs soldes moyens sont, sous le défaut, de <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,56<!--/--> et <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,09<!--/--> % du
 PIB, contre <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système actuel.
 
 ### Variantes
@@ -486,7 +486,7 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
   faute d'observation ailleurs. `scripts/mortalite_population.py` en tire le
   transfert, cas type par cas type et sur les six scénarios : pour le
   fonctionnaire sédentaire né en 1975, <!--chiffre:mesure(mortalite_population?population=fonctionnaires_civils_etat&cas=fonctionnaire_sedentaire&generation=1975&quoi=annees)-->1,3<!--/--> an de rente de plus, soit <!--chiffre:mesure(mortalite_population?population=fonctionnaires_civils_etat&cas=fonctionnaire_sedentaire&generation=1975&quoi=ecart&abs=1)-->5,2<!--/--> % de
-  pension notionnelle à capital égal, et <!--chiffre:mesure(mortalite_population?population=fonctionnaires_civils_etat&cas=fonctionnaire_sedentaire&generation=1975&quoi=transfert)-->48 734<!--/--> € sur la vie sous le système
+  pension notionnelle à capital égal, et <!--chiffre:mesure(mortalite_population?population=fonctionnaires_civils_etat&cas=fonctionnaire_sedentaire&generation=1975&quoi=transfert)-->49 827<!--/--> € sur la vie sous le système
   actuel, qui ne connaît aucun diviseur et transfère donc autant.
 - **L'axe du revenu, par les tables de l'INSEE.** L'INSEE publie des tables
   de mortalité par VINGTILE de niveau de vie (Insee Résultats, mai 2025 ;
@@ -509,8 +509,8 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
   en compte, l'exploitant agricole <!--chiffre:mesure(mortalite_population?population=vingtile&cas=exploitant_agricole&generation=1975&quoi=annees&abs=1)-->3,3<!--/--> de moins, le cadre <!--chiffre:mesure(mortalite_population?population=vingtile&cas=cadre&generation=1975&quoi=annees&abs=1)-->2,4<!--/--> de plus, le
   libéral <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=annees&abs=1)-->2,8<!--/--> de plus. Un diviseur commun transfère donc des modestes vers
   les aisés : <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=ecart&abs=1)-->11,2<!--/--> % de pension notionnelle à capital égal pour le SMIC,
-  <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=ecart&abs=1)-->11,1<!--/--> % dans l'autre sens pour le libéral, et sur la vie <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=transfert&abs=1)-->42 899<!--/--> € retirés
-  au premier et <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=transfert&abs=1)-->166 920<!--/--> € ajoutés au second sous le système actuel — qui
+  <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=ecart&abs=1)-->11,1<!--/--> % dans l'autre sens pour le libéral, et sur la vie <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=transfert&abs=1)-->42 600<!--/--> € retirés
+  au premier et <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=transfert&abs=1)-->170 474<!--/--> € ajoutés au second sous le système actuel — qui
   transfère autant que les autres, n'ayant aucun diviseur pour le savoir.
   Cette mesure est celle que le défaut applique désormais ; ses chiffres
   restent ceux de la table commune contre le vingtile, et
@@ -1151,17 +1151,17 @@ référence est de <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--
 <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=diviseur_service)-->27,51<!--/--> années. L'écart entre les deux, environ <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=ecart_diviseurs)-->16<!--/--> %, est retiré de
 droits que le système actuel aurait servis sans décote — l'anticipation est
 payée une seconde fois, sur le passé. La pension du scénario 3 passe de
-<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=pension)-->24 867<!--/--> € à <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&conversion=liquidation&quoi=pension)-->27 477<!--/--> € par an lorsqu'on retient l'autre convention. Un
+<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=pension)-->25 422<!--/--> € à <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&conversion=liquidation&quoi=pension)-->28 089<!--/--> € par an lorsqu'on retient l'autre convention. Un
 départ à l'âge de référence lui-même ne sépare pas les deux : le diviseur est
 alors le même.
 
 **Le défaut est celui qui fait dépendre le pot du seul passé**, et c'est la
 raison de fond. Sur une carrière témoin — né en 1975, homme, salarié du privé
 non cadre entré à <!--chiffre:illustration()-->21<!--/--> ans, au salaire moyen et à profil plat, soit trente années
-cotisées avant la bascule et un droit figé de <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=64&quoi=figee)-->19 053<!--/--> € par an —, le pot vaut
-sous `reference` **<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=64&quoi=pot)-->450 870<!--/--> € quel que soit l'âge de départ**. Sous
-`liquidation`, le même passé vaudrait **<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=60&conversion=liquidation&quoi=pot)-->539 986<!--/--> € pour un départ à <!--chiffre:illustration()-->60<!--/--> ans et
-<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=67&conversion=liquidation&quoi=pot)-->416 837<!--/--> € pour un départ à <!--chiffre:illustration()-->67<!--/--> ans** : <!--chiffre:mesure(droits_acquis_variation?generation=1975&debut=21&conversion=liquidation&quoi=pot&de=67&a=60)-->30<!--/--> % d'écart pour un passé identique,
+cotisées avant la bascule et un droit figé de <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=64&quoi=figee)-->19 477<!--/--> € par an —, le pot vaut
+sous `reference` **<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=64&quoi=pot)-->460 916<!--/--> € quel que soit l'âge de départ**. Sous
+`liquidation`, le même passé vaudrait **<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=60&conversion=liquidation&quoi=pot)-->552 018<!--/--> € pour un départ à <!--chiffre:illustration()-->60<!--/--> ans et
+<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=67&conversion=liquidation&quoi=pot)-->426 124<!--/--> € pour un départ à <!--chiffre:illustration()-->67<!--/--> ans** : <!--chiffre:mesure(droits_acquis_variation?generation=1975&debut=21&conversion=liquidation&quoi=pot&de=67&a=60)-->30<!--/--> % d'écart pour un passé identique,
 parce que le diviseur qui constitue le pot rétrécit avec l'âge. Un test tient
 ces deux propriétés.
 
@@ -2118,7 +2118,7 @@ quater le dit.
 un système notionnel réel relèverait ses pensions jusqu'à l'équilibre, ou les
 abaisserait, par un facteur commun à toutes les pensions de l'année. Un
 coefficient supérieur à un n'est donc pas une économie mais une MARGE, et lire
-les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,68<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->40<!--/--> % est un contresens : à
+les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,68<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->41<!--/--> % est un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, autrement
 réparti entre les carrières. Le facteur étant commun, l'appliquer déplacerait
 les niveaux sans toucher aux écarts, qui sont l'objet du modèle.
@@ -2152,7 +2152,7 @@ d'attendre une réforme.
 
 ### Sources
 
-`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->186<!--/--> jeux de données des
+`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->188<!--/--> jeux de données des
 <!--chiffre:entrees(data/sources.yaml:institutions)-->39<!--/--> institutions, avec pour chacun l'URL, le mode
 d'accès et l'état d'intégration.
 
@@ -2314,7 +2314,7 @@ Le lien, lui, porte l'adresse complète, unité et montants déjà traduits, si 
 que la page revient dans l'autre unité en décrivant la même carrière.
 
 L'aller-retour n'est pas exact, et il ne peut pas l'être : le multiple s'écrit au
-millième, et un millième de salaire moyen vaut **environ <!--chiffre:mesure(millieme_salaire)-->3,48<!--/--> € par mois**. Un
+millième, et un millième de salaire moyen vaut **environ <!--chiffre:mesure(millieme_salaire)-->3,55<!--/--> € par mois**. Un
 aller-retour déplace donc le revenu d'un demi-pas au plus, plus l'arrondi à
 l'euro — **deux euros par mois** sur tout le domaine accepté, balayé euro par
 euro par un test. Le pas du champ et la précision du lien sont tenus par une
@@ -2394,14 +2394,34 @@ choisies : elles suivront si ces précisions changent.
 
 ### Ancrage des rémunérations
 
-Le dépôt ne garde du salaire moyen que ses taux de croissance, ceux des
-salaires et traitements bruts des comptes nationaux rapportés à l'emploi
-salarié. Le modèle les cumule à partir d'un point d'ancrage — <!--chiffre:mesure(constante?de=retraite_notionnelle.carriere&nom=ANCRAGE_SALAIRE_MOYEN.1)-->40 000<!--/--> € bruts annuels en
-2024, arrondi par défaut du niveau que la série atteint cette année-là —
-documenté dans `carriere.py`. Ce point déplace proportionnellement tous les
-revenus reconstitués, donc toutes les pensions, mais **presque pas les rapports
-entre scénarios**, qui sont l'objet du modèle : seuls le plafond de la Sécurité
-sociale et les minima, qui ne le suivent pas, en tirent de petits écarts.
+Le salaire moyen du modèle est celui des comptes nationaux de l'INSEE : les
+salaires et traitements bruts rapportés à l'emploi salarié. Le modèle en cumule
+les taux de croissance (`macro/salaire_moyen.csv`) à partir du niveau d'une
+année, lu à la même source et certifié comme eux
+(`macro/salaire_moyen_niveau.csv`, `carriere.ancrage_salaire_moyen`) : <!--chiffre:mesure(salaire_moyen?annee=2024)-->40 897<!--/--> €
+bruts annuels en 2024. Aucun niveau n'est écrit à la main, et le cumul refait
+ceux que l'INSEE publie pour les autres années, à l'écart près des décimales
+auxquelles les croissances sont gardées. Ce niveau déplace proportionnellement
+tous les revenus reconstitués en multiples du salaire moyen, donc leurs
+pensions, mais **presque pas les rapports entre scénarios**, qui sont l'objet du
+modèle : seuls le plafond de la Sécurité sociale et les minima, qui ne le
+suivent pas, en tirent de petits écarts.
+
+Le cas type au SMIC n'est pas un multiple du salaire moyen : il gagne, chaque
+année, le salaire minimum d'une année entière à temps complet
+(`macro/smic_annuel.csv`, `DonneesMacro.smic_annuel`) — le SMIG puis le SMIC
+moyen de l'année, fois la durée légale : quarante heures par semaine jusqu'en
+1981, trente-neuf de 1982 à 1999, trente-cinq depuis 2000. L'INSEE a fait ce calcul de 1951 à 2012
+dans ses séries longues sur les salaires ; au-delà, le modèle le refait sur les
+barèmes mensuels de la banque de données macroéconomiques, qui retrouvent ces
+séries au centime. Rapporté au salaire moyen, ce salaire vaut <!--chiffre:mesure(smic_annuel?annee=1951&en=multiple)-->0,56<!--/--> en 1951,
+<!--chiffre:mesure(smic_annuel?annee=1970&en=multiple)-->0,40<!--/--> en 1970, <!--chiffre:mesure(smic_annuel?annee=1999&en=multiple)-->0,56<!--/--> en 1999, <!--chiffre:mesure(smic_annuel?annee=2024&en=multiple)-->0,52<!--/--> en 2024 : aucune part fixe du
+salaire moyen ne le décrit. Au-delà de la dernière année publiée, il suit le
+SMIC horaire du modèle, qui suit le salaire moyen ; avant 1951, faute de minimum
+légal, il garde son rapport de 1951. La garantie mensuelle de rémunération, qui
+a maintenu de 2000 à 2005 la paie des smicards passés aux trente-cinq heures, n'y est
+pas : l'INSEE donne les deux durées sur ces années, et le modèle prend la
+nouvelle dès 2000.
 
 Ce salaire par salarié n'est pas le « salaire moyen par tête » des cas types du
 COR, que lit TRAJECTOiRE : celui-là est un revenu moyen par tête, revenu mixte
@@ -2484,8 +2504,10 @@ Deux conventions le bornent, l'une et l'autre imposées par la maille des donné
   de carrière déplace la pente sans rien remettre à zéro. Les quatre noms
   explicites restent, pour une grille qui en sait plus — les cas types
   « sédentaire » et « catégorie active » portent le B et le C que leur
-  commentaire annonçait déjà — et pour une carrière qui ne progresse pas, comme
-  celle au SMIC.
+  commentaire annonçait déjà — et pour une carrière qui ne progresse pas
+  (`plat`). Le cas type au SMIC a le sien, `smic` : il suit le salaire
+  minimum de chaque année, et son niveau en est un multiple (« Ancrage des
+  rémunérations »).
 
   On module l'écart à la moyenne et non la valeur : `1 + (forme − 1) ×
   modulation` laisse le profil centré, de sorte que le niveau de revenu saisi

@@ -96,7 +96,7 @@ def test_une_courte_carriere_publique_recoit_le_minimum_du_d(simulateur):
     _, resultat, pensions = _calculer(
         simulateur,
         [Metier("salarie_prive_non_cadre", 30.0, 0.3),
-         Metier("fonctionnaire_etat", 54.0, 0.5)],
+         Metier("fonctionnaire_etat", 54.0, 0.45)],
         naissance=1959, liquidation=67.0, sexe="F", jour=1,
     )
     etat = pensions["fonction_publique_etat"]

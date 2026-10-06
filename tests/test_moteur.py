@@ -260,6 +260,80 @@ def test_masse_salariale_est_le_salaire_moyen_plus_l_emploi(macro):
     assert masse / salaires == pytest.approx(2.14, abs=0.05)
 
 
+def test_le_salaire_moyen_refait_les_niveaux_que_l_insee_publie(macro):
+    """L'ancrage est un niveau publié, et non un arrondi.
+
+    Le modèle cumule les croissances du salaire moyen à partir du niveau de
+    2024, LU dans la série certifiée : il était écrit à la main jusqu'au
+    6 octobre 2026, 40 000 € pour 40 897 €. Le cumul doit alors retrouver les
+    niveaux de TOUTES les années publiées, de 1949 à la dernière, à l'écart
+    près des cinq décimales des croissances : un ancrage faux, ou des
+    croissances tirées d'une autre source, l'en écarteraient du même coup.
+    """
+    from retraite_notionnelle.carriere import ancrage_salaire_moyen, indice_salaire_moyen
+
+    niveaux = macro.salaire_moyen_niveau
+    assert ancrage_salaire_moyen(macro) == (2024, niveaux(2024))
+    assert niveaux(2024) == pytest.approx(40_897.0, abs=0.5)
+    indice = indice_salaire_moyen(macro, niveaux.premiere_annee, niveaux.derniere_annee)
+    for annee in niveaux.annees():
+        assert indice[annee] == pytest.approx(niveaux(annee), rel=1e-4), annee
+
+
+def test_le_smic_annuel_suit_la_duree_legale(macro):
+    """Une année de SMIC à temps complet, telle que l'INSEE la compte.
+
+    Le salaire horaire moyen de l'année fois la durée légale : 173,33 heures
+    par mois jusqu'en 1981, 169 jusqu'en 1999, 151,67 depuis 2000. Le passage
+    aux 35 heures fait perdre à l'année 2000 ce que la durée lui retire, la
+    hausse du barème en plus ; au-delà de la dernière année publiée, 1 820
+    heures du barème du modèle — celui de juin 2026 pour les mois qui suivent
+    son relèvement.
+    """
+    from retraite_notionnelle.donnees.macro import HEURES_ANNUELLES_SMIC
+
+    assert macro.smic_annuel(1951) == pytest.approx(282.48)
+    assert macro.smic_annuel(1999) == pytest.approx(12_511.97)
+    assert macro.smic_annuel(2000) == pytest.approx(11_478.40)
+    # 2024 : 11,65 € de janvier à octobre, 11,88 € en novembre et décembre.
+    assert macro.smic_annuel(2024) == pytest.approx(1820 * (10 * 11.65 + 2 * 11.88) / 12,
+                                                    abs=0.005)
+    derniere = macro._smic_annuel_publie.derniere_annee
+    suivante = macro.smic_annuel(derniere + 2)
+    assert suivante == pytest.approx(HEURES_ANNUELLES_SMIC * macro.smic_horaire(derniere + 2))
+    # Avant le SMIG, le rapport de 1951 au salaire moyen.
+    assert (macro.smic_annuel(1945) / macro.smic_annuel(1951)
+            == pytest.approx(1 / macro.coefficient_salaire_moyen(1945, 1951)))
+
+
+def test_le_cas_type_au_smic_gagne_le_smic_de_chaque_annee():
+    """Le cas type au SMIC gagne le salaire minimum, non une part du moyen.
+
+    Il s'écrivait 0,55 fois le salaire moyen à toutes les années, quand le
+    minimum en a valu 0,40 en 1970 et 0,52 en 2024 : ses années de 1970
+    comptaient 39 % de trop, celles d'aujourd'hui 6 %. Chaque année entière de
+    sa carrière porte désormais au compte le SMIC annuel de cette année-là,
+    et le rattachement à un vingtile lit ce que cela fait en multiple du
+    salaire moyen, comme le simulateur.
+    """
+    from retraite_notionnelle.carriere import PROFIL_SMIC
+    from retraite_notionnelle.castypes import CAS_TYPES
+    from retraite_notionnelle.moteur.conversion import niveau_relatif
+    from retraite_notionnelle.simulateur import Simulateur
+
+    simulateur = Simulateur(Parametres())
+    cas = next(c for c in CAS_TYPES if c.code == "smic_carriere_complete")
+    assert (cas.profil_carriere, cas.niveau_salaire) == (PROFIL_SMIC, 1.0)
+    carriere = cas.construire(simulateur, 1955)
+    entieres = [l for l in carriere.lignes if l.fraction_annee == 1.0]
+    assert {l.annee for l in entieres} >= {1973, 1990, 2000, 2010}
+    for ligne in entieres:
+        assert ligne.revenu == pytest.approx(simulateur.macro.smic_annuel(ligne.annee))
+    niveau = cas.niveau_relatif(simulateur, 1955)
+    assert niveau == pytest.approx(niveau_relatif(carriere, simulateur.macro))
+    assert 0.45 < niveau < 0.55
+
+
 def test_la_masse_salariale_est_la_regle_la_plus_genereuse(macro):
     """Le taux d'équilibre de la répartition n'est pas une règle d'austérité.
 

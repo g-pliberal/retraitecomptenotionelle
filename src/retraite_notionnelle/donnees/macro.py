@@ -27,6 +27,12 @@ ANNEE_CREATION_AVPF = 1972
 #: précédente » (R. 381-3, rédactions de 2002 et de 2023).
 HEURES_AVPF_PAR_MOIS = 169
 
+#: Une année de SMIC à temps complet sur 35 heures : 35 heures pendant 52
+#: semaines, les « 151,67 heures par mois » du SMIC mensualisé, que l'INSEE
+#: et le barème calculent sur 151,666… et non sur leur arrondi. C'est la durée
+#: qui prolonge ``smic_annuel.csv`` au-delà de la dernière année publiée.
+HEURES_ANNUELLES_SMIC = 35 * 52
+
 
 def lire_smic_releve(racine: Path, annee: int) -> tuple[int, float] | None:
     """Le dernier relèvement du SMIC en cours d'``annee``, lu sur le fichier."""
@@ -186,6 +192,57 @@ class DonneesMacro:
             nom="salaire_moyen_nominal",
         )
         return self._prolonger(serie, "salaire_moyen_nominal")
+
+    @cached_property
+    def salaire_moyen_niveau(self) -> SerieAnnuelle:
+        """Le salaire moyen par tête EN NIVEAU, en euros bruts annuels courants,
+        des années que les comptes nationaux publient.
+
+        Le même rapport que :attr:`salaire_moyen`, qui n'en garde que les
+        variations : le modèle les cumule à partir du niveau d'une année, lu
+        ici (:func:`~retraite_notionnelle.carriere.ancrage_salaire_moyen`).
+        """
+        return charger_serie_annuelle(
+            self.racine / "reference" / "macro" / "salaire_moyen_niveau.csv",
+            colonne_valeur="salaire_moyen_annuel",
+            nom="salaire_moyen_niveau",
+        )
+
+    @cached_property
+    def _smic_annuel_publie(self) -> SerieAnnuelle:
+        return charger_serie_annuelle(
+            self.racine / "reference" / "macro" / "smic_annuel.csv",
+            colonne_valeur="smic_annuel",
+            nom="smic_annuel",
+        )
+
+    def smic_annuel(self, annee: int) -> float:
+        """Le salaire minimum brut d'une année ENTIÈRE à temps complet, en
+        euros de cette année : le revenu du cas type « au niveau du SMIC ».
+
+        Publié par l'INSEE de 1951 à la dernière année complète
+        (``smic_annuel.csv``) : le barème moyen de l'année fois la durée légale
+        — 40 heures par semaine jusqu'en 1981, 39 ensuite, 35 depuis 2000.
+        Au-delà, 1 820 heures du barème horaire du modèle, mois par mois :
+        celui de janvier, puis, l'année du dernier relèvement connu, celui-ci à
+        compter de son mois (``smic_horaire_releves.csv``). Avant le premier
+        SMIG, le rapport de 1951 au salaire moyen, faute de minimum légal :
+        c'est la seule hypothèse qui n'invente rien.
+        """
+        publie = self._smic_annuel_publie
+        if annee < publie.premiere_annee:
+            premiere = publie.premiere_annee
+            return publie(premiere) * self.coefficient_salaire_moyen(premiere, annee)
+        if annee <= publie.derniere_annee:
+            return publie(annee)
+        janvier = self.smic_horaire(annee)
+        derniere, releve = self._smic_publie
+        if annee == derniere and releve is not None:
+            mois, valeur = releve
+            horaire_moyen = (janvier * (mois - 1) + valeur * (13 - mois)) / 12
+        else:
+            horaire_moyen = janvier
+        return HEURES_ANNUELLES_SMIC * horaire_moyen
 
     @cached_property
     def masse_salariale(self) -> SerieAnnuelle:

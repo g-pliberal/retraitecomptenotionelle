@@ -56,10 +56,10 @@ def test_l_etat_puis_la_cnracl_une_pension_unique(simulateur):
         ("fonctionnaire_etat", 22), ("fonctionnaire_territorial_hospitalier", 40)]))
     assert "fonction_publique_etat" not in pensions
     unique = pensions["cnracl"]
-    assert unique.detail.startswith("SR 45,546.41 € × taux 74.063% × 168/169")
+    assert unique.detail.startswith("SR 46,567.79 € × taux 74.063% × 168/169")
     assert unique.detail.endswith(
         "2 caisses liquidées ensemble (fonction_publique_etat puis cnracl)")
-    assert unique.montant == pytest.approx(45_546.41 * 0.740625 * 168 / 169, abs=0.01)
+    assert unique.montant == pytest.approx(46_567.79 * 0.740625 * 168 / 169, abs=0.01)
 
 
 def test_c_est_le_dernier_regime_qui_liquide(simulateur):

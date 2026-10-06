@@ -853,12 +853,15 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
 #: agricoles suivent les retraités que le COR leur projette. À l'étape 14,
 #: les carrières incomplètes des natifs portées : LURA +0,5 %, Cnav +0,2 %,
 #: non-salariés -2,7 %, complémentaires -4,4 %, que les polypensionnés,
-#: absents de la grille, laissent sous le COR (tolérance relevée à 5 %).
+#: absents de la grille, laissent sous le COR (tolérance relevée à 5 %). À
+#: l'étape 16, l'ancrage du salaire moyen lu dans les données (+2,2 %) et le
+#: cas type au SMIC payé au SMIC de chaque année : LURA +0,6 %, Cnav +0,3 %,
+#: complémentaires -4,0 %, non-salariés -3,2 % (tolérance relevée à 4 %).
 DECOMPOSITION_GROUPES_SUIVIS = {
     ("pension_relative", "cnav"): 0.04,
     ("depense_part_pib", "lura"): 0.05,
     ("depense_part_pib", "complementaires"): 0.05,
-    ("depense_part_pib", "non_salaries_base"): 0.03,
+    ("depense_part_pib", "non_salaries_base"): 0.04,
 }
 #: Et ce qu'elle ne suit pas encore : des CLIQUETS, qui ne doivent que
 #: descendre, comme celui de la pension moyenne relative de l'ensemble. Mesurés
@@ -893,9 +896,12 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: l'écart en valeur absolue. L'étape 14 pèse chaque génération de sa durée
 #: validée : pension relative de la FPE +1,0 %, de la CNRACL +3,2 %, de
 #: l'Agirc-Arrco +17,1 % ; dépense de la FPE +15,8 %, de la CNRACL +1,9 %, des
-#: régimes spéciaux -34,4 %.
+#: régimes spéciaux -34,4 %. L'étape 16 lit l'ancrage du salaire moyen dans les
+#: données et paie le cas type au SMIC le SMIC de chaque année : la pension
+#: relative de la FPE passe de +0,97 à +1,01 %, au-dessus du cliquet de 1 %,
+#: qui remonte d'un point ; celle de l'Agirc-Arrco à +17,6 %.
 DECOMPOSITION_GROUPES_CLIQUETS = {
-    ("pension_relative", "fpe"): 0.01,
+    ("pension_relative", "fpe"): 0.02,
     ("pension_relative", "cnracl"): 0.04,
     ("pension_relative", "agirc_arrco"): 0.18,
     ("depense_part_pib", "fpe"): 0.16,

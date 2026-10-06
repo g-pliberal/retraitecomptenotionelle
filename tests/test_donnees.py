@@ -442,6 +442,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
     fichiers = {
         "inflation": "macro/ipc_annuel.csv",
         "salaire_moyen": "macro/salaire_moyen.csv",
+        # Le même salaire moyen en niveau, d'où se cumulent les croissances,
+        # et le salaire minimum annuel du cas type au SMIC (action 147, étape 16).
+        "salaire_moyen_niveau": "macro/salaire_moyen_niveau.csv",
+        "smic_annuel": "macro/smic_annuel.csv",
         "masse_salariale": "macro/masse_salariale.csv",
         "pib_nominal": "macro/pib_nominal.csv",
         "pib_courant": "macro/pib_courant.csv",

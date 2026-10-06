@@ -47,7 +47,7 @@ import yaml
 
 from retraite_notionnelle.avantages import LIGNES_LUES
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import ANCRAGE_SALAIRE_MOYEN, salaire_moyen_annuel
+from retraite_notionnelle.carriere import ancrage_salaire_moyen, salaire_moyen_annuel
 from retraite_notionnelle.castypes import GENERATIONS, calculer_cas_types
 from retraite_notionnelle.config import (
     ModeIndexation,
@@ -1642,8 +1642,19 @@ def _(m: Modele):
 
 @controle("ancrage_du_salaire_moyen")
 def _(m: Modele):
-    assert ANCRAGE_SALAIRE_MOYEN == (2024, 40_000.0)
-    assert _proche(salaire_moyen_annuel(m.sim.macro, 2024), 40_000.0)
+    """Le niveau de 2024 est celui que l'INSEE publie, lu dans le fichier
+    certifié — les salaires et traitements bruts sur l'emploi salarié —, et
+    non un arrondi écrit à la main : 40 000 € l'a été jusqu'au 6 octobre 2026."""
+    import csv
+
+    chemin = RACINE / "data" / "reference" / "macro" / "salaire_moyen_niveau.csv"
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = {l["annee"]: l for l in csv.DictReader(
+            ligne for ligne in flux if not ligne.startswith("#"))}
+    assert lignes["2024"]["fiabilite"] == "certifiee"
+    publie = float(lignes["2024"]["salaire_moyen_annuel"])
+    assert ancrage_salaire_moyen(m.sim.macro) == (2024, publie)
+    assert salaire_moyen_annuel(m.sim.macro, 2024) == publie
 
 
 @controle("legende_rouge_vert")

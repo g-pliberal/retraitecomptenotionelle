@@ -2078,7 +2078,9 @@ affirmations:
   - id: methode.ancrage_salaire_moyen
     page: /methode
     extrait: "bruts annuels en 2024"
-    porte: l'ancrage du salaire moyen est 40 000 € en 2024
+    porte: >-
+      l'ancrage du salaire moyen est son niveau de 2024, lu dans la série
+      certifiée de l'INSEE, et non une constante
     etat: verifiee
     controle: ancrage_du_salaire_moyen
 

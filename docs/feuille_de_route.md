@@ -7252,15 +7252,16 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 6 octobre 2026.** Faites : les étapes 1 à 15 — le passé, le COR
-et ses conventions (1 à 12) ; les régimes qui se ferment suivent le COR, les
-groupes se comparent réversion comprise (13) ; les carrières incomplètes des
-natifs (14 : dérive de 2070 0,999, 0,977 en 2050) ; l'ancrage du salaire moyen
-recensé, rien de changé (15). Reste, une session neuve par point : le privé
-sous le COR au milieu de la période (complémentaires −6 % en 2050, les
-polypensionnés) ; le passé (−16 % en 2009) ; la FPE et les régimes spéciaux à
-l'horizon. Python 3.11, celui de la CI. Au propriétaire : le taux du simulateur
-individuel (138.13) ; l'ancrage, 40 897 € recommandés. Lire les notes 13 à 15.
+**Reprise, au 6 octobre 2026.** Faites : les étapes 1 à 16 — le passé, le COR
+et ses conventions (1 à 12) ; les régimes qui se ferment suivent le COR (13) ;
+les carrières incomplètes des natifs (14) ; l'ancrage du salaire moyen recensé
+(15), puis lu dans les données, 40 897 €, et le cas type au SMIC payé au SMIC
+de chaque année (16 : dérive de 2070 1,001, 0,979 en 2050). Reste, une session
+neuve par point : le privé sous le COR au milieu de la période
+(complémentaires −6 % en 2050, les polypensionnés) ; le passé (−16 % en 2009) ;
+la FPE et les régimes spéciaux à l'horizon. Python 3.11, celui de la CI. Au
+propriétaire : le taux du simulateur individuel (138.13). Lire les notes 13 à
+16.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -8285,3 +8286,73 @@ ce qu'utilisent les autres modèles, et ce qui convient le mieux, sans toucher
   (étape 12). Le changement se fait en une session, après décision : la
   constante dans les deux moteurs, l'affirmation et son contrôle,
   `regenerer.py`, la prose.
+
+**Étape 16, le 6 octobre 2026 : l'ancrage lu dans les données, et le cas type
+au SMIC payé au SMIC.** La décision du propriétaire, après l'étape 15 : « Il
+faut arrêter de faire des arrondis », puis « corrige les deux maintenant » —
+l'ancrage du salaire moyen, et le seul autre arrondi d'une donnée que l'étape
+avait relevé, le cas type au SMIC écrit 0,55 fois le salaire moyen.
+
+- *L'ancrage.* Le salaire moyen par tête est certifié EN NIVEAU, de 1949 à
+  2025 (`macro/salaire_moyen_niveau.csv`, 77 valeurs : D11 sur l'emploi
+  salarié, les deux séries de la BDM que `insee_bdm.py` allait déjà
+  chercher), et le modèle cumule les croissances depuis le niveau de 2024
+  qu'il y lit : 40 897,00 € au lieu de 40 000. `ANCRAGE_SALAIRE_MOYEN` devient
+  `ANNEE_ANCRAGE_SALAIRE_MOYEN` et `ancrage_salaire_moyen(macro)`, dans les
+  deux moteurs, et le paquet porte la série. Le cumul refait tous les niveaux
+  publiés à moins d'un dix-millième près (4,7 × 10⁻⁵ en 1949, l'écart des
+  cinq décimales des croissances) : un test le tient. La page Méthode affiche
+  le niveau qu'elle lit ; son affirmation, son contrôle et la méthodologie
+  suivent, celle-ci sur une sonde nouvelle, `salaire_moyen`.
+- *Le cas type au SMIC.* Le SMIC à temps complet vaut 0,56 fois le salaire
+  moyen en 1951, 0,40 en 1970, 0,56 en 1999, 0,49 en 2000 avec les
+  35 heures, 0,52 en 2024 : aucune part fixe ne le décrit. Le cas type gagne
+  désormais le salaire minimum de chaque année (`macro/smic_annuel.csv`,
+  75 valeurs certifiées) : de 1951 à 2012, les « Séries longues sur les
+  salaires » de l'INSEE (tableaux SM02 et SM01 : le salaire horaire moyen de
+  l'année fois 173,33 heures par mois, 169 à compter de 1982, 151,67 à compter
+  de 2000), lues par un récupérateur nouveau, `insee_sls_smic.py` ; au-delà,
+  la moyenne des douze barèmes mensuels de la BDM (idbank 000822484, ajoutée
+  à `insee_bdm.py`) fois 1 820 heures, qui refait SM01 au centime de 2001 à
+  2012 — le vérificateur refuse le relais sinon. En projection, 1 820 heures
+  du barème horaire du modèle, celui du relèvement de juin 2026 pour les mois
+  qui le suivent ; avant 1951, le rapport de 1951 au salaire moyen. Un profil
+  nouveau, `smic` (`PROFIL_SMIC`, `revenu_annuel`), dont le niveau est un
+  multiple du SMIC ; le rattachement à un vingtile hors du simulateur
+  (`mortalite_population.py` et la sonde du même nom) lit le niveau relatif
+  de la carrière construite (`CasType.niveau_relatif`), comme le simulateur.
+- *Et un arrondi de plus.* Le repère « SMIC » du site multipliait le barème
+  horaire par 151,67 heures ; il le multiplie par 35 × 52 ÷ 12, comme le
+  barème : 1 801,80 € par mois en 2025, non 1 801,84.
+- *Ce qui n'y est pas.* La garantie mensuelle de rémunération, qui a
+  maintenu de 2000 à 2005 la paie des smicards passés aux 35 heures : le cas
+  type perd 8 % en 2000, comme le tableau SM01. La prolongation d'une carrière
+  au-delà de son départ (`Carriere.prolongee`) suit le salaire moyen et non le
+  SMIC, que le modèle projette au même rythme.
+- *Ce que ça déplace*, en mémoire, sous les réglages de la page, l'ancrage
+  seul puis avec le SMIC : dette de la proposition en 2070, 49,5 → 50,2 →
+  48,9 % du PIB ; solde moyen −0,762 → −0,774 → −0,753 % ; coefficient de
+  2070 1,014 → 1,012 → 1,015 ; dérive de 2070 0,999 → 0,999 → 1,001, de 2050
+  0,977 → 0,978 → 0,979 ; reconstitution de 2009 −16,1 → −16,2 → −16,3 %. Le
+  SMIC réel allège la proposition : avant 2000 surtout, le smicard gagnait et
+  cotisait moins que 0,55 fois le salaire moyen. 725 témoins de simulation sur
+  737 bougent, +2,2 % en médiane (l'ancrage), jusqu'à +7,8 % (marin, 1965) ;
+  64 rendus de page sur 74 ; le chiffrage du PLF, −0,67 → −0,65 point de PIB
+  d'écart de solde en 2026. Écarts au COR à l'horizon : dépense des
+  non-salariés −2,7 → −3,2 % (tolérance relevée à 4 %), pension relative de
+  la FPE +0,97 → +1,01 % (cliquet relevé à 2 %), complémentaires −4,4 →
+  −4,0 %. La page Méthode écrivait à la main la correction de la génération
+  1920, +5,6 points : +5,5. Neuf tests figeaient des montants calculés sur
+  l'ancien ancrage : leurs chiffres suivent, et deux cas qui devaient toucher
+  un minimum y restent, à un salaire un peu plus bas (0,45 → 0,44 du salaire
+  moyen pour les pensions étrangères, 0,5 → 0,45 pour le minimum garanti
+  d'une courte carrière publique). Le journal de certification consigne deux
+  séries de plus : le parcours compte 45 576 valeurs sur 129 séries, et la
+  conservation est refigée pour lui.
+- *Un défaut que l'ancrage a fait voir.* La bascule d'unité du simulateur
+  prenait l'euro le plus proche : 0,1 fois le salaire moyen fait 355,34 € par
+  mois en 2026, et les 355 € qu'elle écrivait, la page les refusait ensuite ;
+  le refus lui-même nommait cette borne. L'ancien ancrage arrondissait du bon
+  côté, par chance. `Echelle.euros_dans_les_bornes` (et son jumeau) pousse
+  l'euro d'un cran vers l'intérieur aux bords, pour la bascule comme pour le
+  message : de 356 à 35 533 € bruts par mois.

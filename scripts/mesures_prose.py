@@ -416,6 +416,34 @@ def emploi_projete(**_: str) -> float:
     return (cumul - 1) * 100
 
 
+def salaire_moyen(**reglages: str) -> float:
+    """Le salaire moyen par tête d'une année, en euros bruts : ``annee=2024``.
+
+    Celui que le modèle prête aux multiples du salaire moyen : les croissances
+    de la série cumulées depuis son niveau certifié de l'année d'ancrage
+    (``carriere.ancrage_salaire_moyen``).
+    """
+    from retraite_notionnelle.carriere import salaire_moyen_annuel
+
+    return salaire_moyen_annuel(_simulateur(_parametres()).macro, int(reglages["annee"]))
+
+
+def smic_annuel(**reglages: str) -> float:
+    """Le salaire minimum d'une année entière à temps complet : ``annee=1970``.
+
+    En euros bruts, ou, sous ``en=multiple``, en multiple du salaire moyen de
+    la même année — ce que le cas type au SMIC gagne, rapporté à l'unité des
+    autres cas types.
+    """
+    from retraite_notionnelle.carriere import salaire_moyen_annuel
+
+    macro = _simulateur(_parametres()).macro
+    annee = int(reglages["annee"])
+    if reglages.get("en") == "multiple":
+        return macro.smic_annuel(annee) / salaire_moyen_annuel(macro, annee)
+    return macro.smic_annuel(annee)
+
+
 def dependance(**reglages: str) -> float:
     """Rapport de dépendance démographique d'une année : 65 ans et plus sur 20-64 ans."""
     return _avenir(reglages).dependance
@@ -559,9 +587,8 @@ def constante(**reglages: str) -> float:
         objet = importlib.import_module(reglages["de"])
     # Une constante de classe se nomme par son chemin : l'âge d'ouverture de
     # l'ASPA est ``MinimumVieillesse.AGE_OUVERTURE``.
-    # un rang désigne l'élément d'un couple — le salaire d'ancrage est
-    # ``ANCRAGE_SALAIRE_MOYEN.1``, l'année qui le porte ``.0`` —, et une clé
-    # l'entrée d'une table : ``TRANCHES_CATEGORIE.Y_LT30``.
+    # un rang désigne l'élément d'un couple — ``NOM.1`` le second —, et une
+    # clé l'entrée d'une table : ``TRANCHES_CATEGORIE.Y_LT30``.
     for morceau in reglages["nom"].split("."):
         if morceau.isdigit() and isinstance(objet, (tuple, list)) and int(morceau) < len(objet):
             objet = objet[int(morceau)]
@@ -812,8 +839,9 @@ def _mortalite_population(population: str, cas: str, generation: int):
     if cas_type is None:
         raise ValueError(f"cas type inconnu « {cas} »")
     if population == "vingtile":
-        mortalite = mortalite_population._simulateur(None).mortalite
-        population = mortalite.population_niveau_de_vie(cas_type.niveau_salaire)
+        simulateur = mortalite_population._simulateur(None)
+        population = simulateur.mortalite.population_niveau_de_vie(
+            cas_type.niveau_relatif(simulateur, generation))
     resultat = mortalite_population.mesurer(population, cas_type, generation)
     if resultat is None or "erreur" in resultat:
         raise ValueError(f"{cas} ne se mesure pas : {resultat}")
@@ -1721,6 +1749,8 @@ MESURES = {
     "trajectoire_propre": trajectoire_propre,
     "derive_cor": derive_cor,
     "emploi_projete": emploi_projete,
+    "salaire_moyen": salaire_moyen,
+    "smic_annuel": smic_annuel,
     "composition_revalorisation": composition_revalorisation,
     "age_reference": age_reference,
     "droits_acquis": droits_acquis,

@@ -89,7 +89,7 @@ C'est l'accueil. Descendre lentement, sans rien cliquer.
   « Votre retraite : ce que votre régime promet → de l'ordre d'un quart de moins,
   en médiane ». La première des « Vos questions », « Ma
   retraite va-t-elle baisser ? », en donne le détail : 23 % pour qui n'est
-  pas encore à la retraite, 13 % s'il place les cinq points rendus, 28 % sur
+  pas encore à la retraite, 12 % s'il place les cinq points rendus, 28 % sur
   la pension d'aujourd'hui d'un retraité, garantie vieillesse comprise.
 - Le bloc « Et vous, ça donne combien ? » en haut de page est un raccourci
   vers le simulateur : on peut y saisir une date de naissance et un statut et
@@ -194,7 +194,7 @@ l'impôt », sous les résultats, en donne la règle.
 |---|---|---|
 | 1. Actuel | 2 755 € | référence |
 | 3. Ce qui a été cotisé, deux parts | 2 360 € | -14,3 % |
-| 4. La proposition | 2 532 € | -8,1 % |
+| 4. La proposition | 2 556 € | -7,2 % |
 
 C'est le cas qu'on attend au tournant, et il faut savoir le dire : l'État
 employeur verse pour ses fonctionnaires bien au-delà de ce qu'un employeur
@@ -314,11 +314,11 @@ cet ordre :
 
 | | |
 |---|---|
-| Prélevé chaque mois sur un salaire moyen | 940 €, cotisation salariale et patronale réunies |
+| Prélevé chaque mois sur un salaire moyen | 967 €, cotisation salariale et patronale réunies |
 | Promis au-delà de ce que ces cotisations financent | 33 % de la pension |
 | Non financé en 2070, sans rien changer | 16 % |
 
-Le 940 € est le chiffre qui porte : c'est le premier poste de la fiche de
+Le 967 € est le chiffre qui porte : c'est le premier poste de la fiche de
 paie, avant l'impôt sur le revenu et avant la maladie, et plus de quatre cent
 mille euros sur une carrière au salaire moyen. Le tableau qui suit le décline
 du SMIC au double du salaire moyen.
@@ -336,8 +336,8 @@ Si le temps manque, garder cette page pour les questions : elle répond seule
 Onglet **Avantages**. La page qui explique les écarts du simulateur : ce que
 le système actuel verse sans que personne l'ait cotisé. Trois chiffres :
 41 dispositifs en vigueur, du minimum vieillesse à la bonification du
-cinquième ; 96,5 Md € en 2024 pour les 19 que le modèle sait chiffrer, dont
-38,3 Md € de réversion, qui est lue et non calculée ; 11,1 Md € de pensions
+cinquième ; 96,8 Md € en 2024 pour les 19 que le modèle sait chiffrer, dont
+38,3 Md € de réversion, qui est lue et non calculée ; 11,0 Md € de pensions
 servies avant l'âge légal. La page dit que ces deux montants sont des
 planchers. Le graphique du haut compte les dispositifs année par année depuis
 1831, où il n'y en avait qu'un.
@@ -353,8 +353,8 @@ Onglet **Méthode** : les trois opérations, en une phrase chacune, puis
 « Qu'est-ce qui décide du résultat ? ». On peut s'arrêter au titre.
 
 Onglet **Données**, et c'est la bonne page pour conclure : « Rien ici n'est à
-croire sur parole. » 45 424 valeurs recontrôlées automatiquement contre le
-fichier de l'institution qui les produit, sur 127 séries ; 108 régimes
+croire sur parole. » 45 576 valeurs recontrôlées automatiquement contre le
+fichier de l'institution qui les produit, sur 129 séries ; 108 régimes
 recensés dont 74 calculés ; 39 institutions citées. Ce compte mesure la
 fidélité de la recopie, non la justesse des pensions : si on vous le demande,
 la réponse est que les pensions se contrôlent ailleurs, sur les exemples

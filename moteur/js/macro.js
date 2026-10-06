@@ -24,6 +24,13 @@ export const ANNEE_CREATION_AVPF = 1972;
 /** Heures de SMIC de l'assiette MENSUELLE de l'AVPF (R. 381-3). */
 export const HEURES_AVPF_PAR_MOIS = 169;
 
+/**
+ * Une année de SMIC à temps complet sur 35 heures, 35 heures pendant 52
+ * semaines : ce qui prolonge `smic_annuel.csv` au-delà de la dernière année
+ * publiée. Voir le Python.
+ */
+export const HEURES_ANNUELLES_SMIC = 35 * 52;
+
 export class DonneesMacro {
   constructor(paquet, scenarioProjection = null, trajectoireEmploi = null) {
     this.paquet = paquet;
@@ -72,6 +79,13 @@ export class DonneesMacro {
 
     this.inflation = prolonger(serie("inflation"), "inflation");
     this.salaire_moyen = prolonger(serie("salaire_moyen"), "salaire_moyen_nominal");
+    /**
+     * Le salaire moyen par tête EN NIVEAU, des années que les comptes
+     * nationaux publient : d'où se cumulent les croissances
+     * (`ancrageSalaireMoyen`, dans carriere.js).
+     */
+    this.salaire_moyen_niveau = serie("salaire_moyen_niveau");
+    this._smicAnnuelPublie = serie("smic_annuel");
     this.masse_salariale = this._prolongeAvecEmploi(
       serie("masse_salariale"), "masse_salariale_nominale");
     this.pib_nominal = this._prolongeAvecEmploi(serie("pib_nominal"), "pib_nominal");
@@ -419,6 +433,32 @@ export class DonneesMacro {
   coefficientSmic(depart, arrivee) {
     const valeurDepart = this.smic_horaire.valeur(depart);
     return valeurDepart > 0 ? this.smic_horaire.valeur(arrivee) / valeurDepart : 1.0;
+  }
+
+  /**
+   * Le salaire minimum brut d'une année ENTIÈRE à temps complet, en euros de
+   * cette année : publié par l'INSEE de 1951 à la dernière année complète ;
+   * au-delà, 1 820 heures du barème horaire, celui de janvier puis, l'année du
+   * dernier relèvement connu, celui-ci à compter de son mois ; avant 1951, le
+   * rapport de 1951 au salaire moyen. Voir le Python.
+   */
+  smicAnnuel(annee) {
+    const publie = this._smicAnnuelPublie;
+    if (annee < publie.premiereAnnee) {
+      const premiere = publie.premiereAnnee;
+      return publie.valeur(premiere) * this.coefficientSalaireMoyen(premiere, annee);
+    }
+    if (annee <= publie.derniereAnnee) {
+      return publie.valeur(annee);
+    }
+    const janvier = this.smic_horaire.valeur(annee);
+    const [derniere, releve] = this._smicPublie;
+    let horaireMoyen = janvier;
+    if (annee === derniere && releve !== null) {
+      const [mois, valeur] = releve;
+      horaireMoyen = (janvier * (mois - 1) + valeur * (13 - mois)) / 12;
+    }
+    return HEURES_ANNUELLES_SMIC * horaireMoyen;
   }
 
   /**
