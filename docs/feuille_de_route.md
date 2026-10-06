@@ -7252,16 +7252,16 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 6 octobre 2026.** Faites : les étapes 1 à 11 (le passé refait,
-la décomposition du COR, sa dépense, la fourchette, ses conventions, l'écart
-groupe par groupe, la méthode relue, la comptabilité corrigée, la fonction
-publique, l'Agirc-Arrco au taux moyen, puis les arrivées tardives et l'entrée
-tardive des fonctionnaires : dérive de 2070 1,008, sous un de 2031 à 2067).
-Reste, une session neuve par point : le salaire moyen du modèle, son ancrage
-et sa croissance depuis 2000 contre TRAJECTOiRE, avant de porter les carrières
+**Reprise, au 6 octobre 2026.** Faites : les étapes 1 à 12 (le passé refait,
+la décomposition du COR, ses conventions, la fonction publique, l'Agirc-Arrco
+au taux moyen, les arrivées tardives : dérive de 2070 1,008, sous un de 2031 à
+2067 ; puis le salaire moyen, écarté : ni son ancrage ni sa croissance).
+Reste, une session neuve par point : le défaut du privé de 2030 à 2055, à
+chercher dans les complémentaires d'abord, avant de porter les carrières
 incomplètes des natifs ; les non-salariés et les régimes spéciaux ; la CNRACL.
-Fabriquer et tester sous Python 3.11, celui de la CI. Au propriétaire, le
-taux du simulateur individuel (registre, 138.13). Lire la note de l'étape 11.
+Fabriquer et tester sous Python 3.11, celui de la CI. Au propriétaire, le taux
+du simulateur individuel (registre, 138.13) et l'ancrage du salaire moyen.
+Lire les notes des étapes 11 et 12.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait
@@ -8041,3 +8041,59 @@ témoin de simulation ne bouge.
   des natifs ; les non-salariés et les régimes spéciaux, que la grille pèse aux
   effectifs de 2024 ; la CNRACL ; la dépense de la FPE, que le COR compte
   réversion comprise.
+
+**Étape 12, le 6 octobre 2026 : le salaire moyen du modèle, contre celui de
+TRAJECTOiRE — ni son ancrage ni sa croissance.** La piste que l'étape 11
+ouvrait pour le défaut du privé de 2030 à 2055. Aucun calcul ne bouge ; la
+documentation de l'ancrage, fausse sur deux points, est corrigée dans les deux
+moteurs et dans `methodologie.md`.
+
+- *Ce que TRAJECTOiRE appelle SMPT.* Le module des cas types lit la feuille
+  `SMPT` du classeur d'hypothèses du COR qu'il embarque
+  (`inst/extdata/cor/hypo_Salaires_Prix_PIB_Pstab2024.xlsx`, commit 0963b57) :
+  « (revenu mixte brut (B3g) + salaires et traitements bruts (D11)) / emploi
+  total », comptes en base 2010 de 1949 à 2015. Un revenu moyen par tête,
+  non-salariés compris : 42 790,93 € en 2024, 25 905,53 € en 2000, soit
+  ×1,652. Tiré des comptes de l'INSEE en base 2020 (BDM : D11 011785411,
+  emploi total 011793334 ; B3g d'`assiette_activite.csv`), le même rapport
+  croît de ×1,635, à un facteur de niveau près (1,037 à 1,050) ; le salaire par
+  salarié du modèle (D11 sur l'emploi salarié, 011793486), de ×1,7625, que
+  `salaire_moyen.csv` refait au chiffre près. L'écart de croissance tient au
+  concept — le revenu des non-salariés croît moins vite que les salaires —, non
+  à la série. Les paramètres du COR de 2023 que lit Destinie 2 portent, eux, un
+  SMPT de 40 925 € en 2024, à 0,1 % de la série du modèle.
+- *L'ancrage.* 40 000 € est un arrondi par défaut : la série vaut 40 897 € en
+  2024, et le commentaire qui le donnait pour « le salaire moyen par tête du
+  secteur privé » se trompait de champ. À 40 897 €, sous les réglages de la
+  page : dérive de 2070 1,0083 → 1,0084, reconstitution de 2009 −0,1 point,
+  solde moyen de la proposition −0,754 → −0,766 %, dette de 2070 48,5 → 49,3 %,
+  coefficient 1,0073 → 1,0057 ; à 43 500 €, la dérive ne passe que 1,011.
+  Laissé à 40 000 € : les 737 témoins de simulation sont écrits en multiples du
+  salaire moyen (`salaire: "1"`) et bougeraient tous de 2 % pour presque rien
+  sur la page Coût ; le site, qui saisit en euros, ne l'affiche qu'en repère.
+  Les commentaires disent désormais ce qu'il est, et « sans effet sur les
+  rapports entre scénarios » devient « presque pas » : le plafond et les minima
+  ne le suivent pas.
+- *La croissance, éprouvée.* Les niveaux du modèle remplacés, de 2000 à 2024,
+  par ceux du revenu moyen par tête de l'INSEE, à ancrage de 2024 égal — les
+  salaires de 2000 et d'avant relevés de 7,8 % : la dérive DESCEND, 0,977 →
+  0,941 en 2054, 1,008 → 0,962 en 2070 ; trajectoire propre 14,9 → 14,2 % du
+  PIB en 2070 ; reconstitution de 2009 −14,0 → −13,2 %. Remplacés depuis 1984 :
+  0,948 et 0,970. Le stock de retraités de la dernière année observée, aux
+  carrières faites avant 2000, en profite plus que les départs à venir, et sa
+  pension relative, indice depuis cette année-là, recule plus vite que celle du
+  COR. La piste a le bon calendrier mais le mauvais signe : elle ne compense
+  pas les carrières incomplètes des natifs, elle s'y ajouterait.
+- *Reproduire.* `scripts/fetch/insee_bdm.py --serie salaires_bruts --serie
+  emploi_salarie --serie emploi_total` ; le classeur, dans l'archive du commit
+  de TRAJECTOiRE ; les mesures remplacent `carriere.ANCRAGE_SALAIRE_MOYEN`, ou
+  `carriere.indice_salaire_moyen`, sous `memoire.modele_modifie()`, et lisent
+  `memoire.cout(Parametres())`.
+- *Veille.* L'index LEGI à jour au 5 octobre (un incrément) : L. 161-17-2 et
+  L. 161-17-3 n'ont pas de version postérieure au 31 décembre 2025.
+- *Restent* : le défaut du privé de 2030 à 2055 (pension relative de la Cnav
+  −3,5 % en 2050, dépense des complémentaires −7,0 %, de LURA −3,1 %), à
+  chercher ailleurs que dans le salaire moyen — les complémentaires, l'écart le
+  plus grand, d'abord —, avant de porter les carrières incomplètes des natifs ;
+  les non-salariés et les régimes spéciaux ; la CNRACL ; la dépense de la FPE.
+  Au propriétaire, l'ancrage : 40 000 € ou le niveau de sa série.

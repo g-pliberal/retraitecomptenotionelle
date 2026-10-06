@@ -2394,11 +2394,21 @@ choisies : elles suivront si ces précisions changent.
 
 ### Ancrage des rémunérations
 
-Les comptes nationaux ne publient que des taux de croissance du salaire moyen.
-Le modèle les cumule à partir d'un point d'ancrage — <!--chiffre:mesure(constante?de=retraite_notionnelle.carriere&nom=ANCRAGE_SALAIRE_MOYEN.1)-->40 000<!--/--> € bruts annuels en
-2024 — documenté dans `carriere.py`. Ce point déplace proportionnellement tous
-les revenus reconstitués, donc toutes les pensions, mais il est **sans effet sur
-les rapports entre scénarios**, qui sont l'objet du modèle.
+Le dépôt ne garde du salaire moyen que ses taux de croissance, ceux des
+salaires et traitements bruts des comptes nationaux rapportés à l'emploi
+salarié. Le modèle les cumule à partir d'un point d'ancrage — <!--chiffre:mesure(constante?de=retraite_notionnelle.carriere&nom=ANCRAGE_SALAIRE_MOYEN.1)-->40 000<!--/--> € bruts annuels en
+2024, arrondi par défaut du niveau que la série atteint cette année-là —
+documenté dans `carriere.py`. Ce point déplace proportionnellement tous les
+revenus reconstitués, donc toutes les pensions, mais **presque pas les rapports
+entre scénarios**, qui sont l'objet du modèle : seuls le plafond de la Sécurité
+sociale et les minima, qui ne le suivent pas, en tirent de petits écarts.
+
+Ce salaire par salarié n'est pas le « salaire moyen par tête » des cas types du
+COR, que lit TRAJECTOiRE : celui-là est un revenu moyen par tête, revenu mixte
+des non-salariés compris, rapporté à l'emploi total, et il croît moins vite
+depuis 2000. L'écart des deux croissances tient à ce concept, non à une erreur
+de la série : tiré des mêmes comptes de l'INSEE, en base 2020, le revenu moyen
+par tête refait celle du COR (feuille de route, action 147, étape 12).
 
 Il commande en revanche la traduction d'un salaire en multiple, et donc les
 repères que le site affiche sous le champ — SMIC, salaire moyen, plafond de la

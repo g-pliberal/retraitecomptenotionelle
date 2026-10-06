@@ -2336,10 +2336,14 @@ def bornes_deformation(racine: Path, profil: str,
 
 
 #: Point d'ancrage du salaire moyen par tête, en euros bruts annuels courants.
-#: Les comptes nationaux ne publient que des taux de croissance ; il faut un
-#: niveau pour les cumuler. Il est ici, en un seul endroit, parce que le site
-#: l'affiche désormais — dire « 1 = salaire moyen » sans dire combien cela fait
-#: d'euros laissait toute la saisie dans le flou.
+#: Le dépôt ne garde de la série que ses taux de croissance
+#: (``macro/salaire_moyen.csv``) ; il faut un niveau pour les cumuler. 40 000 €
+#: est un arrondi par défaut : la série elle-même — les salaires et traitements
+#: bruts (D11) sur l'emploi salarié intérieur, base 2020 — vaut 40 897 € en
+#: 2024. L'écart ne déplace presque rien sur la page Coût (action 147,
+#: étape 12). Il est ici, en un seul endroit, parce que le site l'affiche
+#: désormais — dire « 1 = salaire moyen » sans dire combien cela fait d'euros
+#: laissait toute la saisie dans le flou.
 ANCRAGE_SALAIRE_MOYEN = (2024, 40_000.0)
 
 
@@ -2359,12 +2363,19 @@ def indice_salaire_moyen(macro: DonneesMacro, debut: int, fin: int) -> dict[int,
     le niveau de revenu saisi, les cotisations versées et les pensions
     calculées sont donc tous bruts, et se comparent directement.
 
-    La série de comptes nationaux ne donne que des TAUX DE CROISSANCE. On les
-    cumule à partir d'un point d'ancrage : le salaire moyen par tête du secteur
-    privé en 2024, arrondi à 40 000 € bruts annuels. Ce point d'ancrage est un
-    paramètre documenté, pas une donnée certifiée — il déplace proportionnellement
-    tous les revenus reconstitués, donc toutes les pensions, mais il est sans
-    effet sur les RAPPORTS entre scénarios, qui sont l'objet du modèle.
+    Le dépôt ne garde de cette série que ses TAUX DE CROISSANCE. On les cumule
+    à partir d'un point d'ancrage, ``ANCRAGE_SALAIRE_MOYEN`` : 40 000 € bruts
+    annuels en 2024, arrondi par défaut du niveau de la série cette année-là.
+    Ce point d'ancrage est un paramètre documenté, pas une donnée certifiée —
+    il déplace proportionnellement tous les revenus reconstitués, donc toutes
+    les pensions, mais presque pas les RAPPORTS entre scénarios, qui sont
+    l'objet du modèle : seuls le plafond de la Sécurité sociale et les minima,
+    qui ne le suivent pas, en tirent de petits écarts.
+
+    Ce n'est pas le « SMPT » des cas types du COR, que lit TRAJECTOiRE : un
+    revenu moyen par tête, revenu mixte des non-salariés compris, rapporté à
+    l'emploi total, qui croît moins vite depuis 2000. L'écart des deux
+    croissances tient à ce concept, non à la série (action 147, étape 12).
     """
     ancrage_annee, ancrage_valeur = ANCRAGE_SALAIRE_MOYEN
     valeurs = {ancrage_annee: ancrage_valeur}

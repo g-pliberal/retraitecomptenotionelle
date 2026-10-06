@@ -3277,7 +3277,11 @@ validée de la DREES (figure 3.2 du même rapport) les mesure ; portées à la
 masse, elles feraient passer la trajectoire propre nettement sous celle du COR
 au milieu de la période, où la grille sert déjà au privé une pension relative
 sous la sienne. Elles attendent ce qui fait ce défaut-là (feuille de route,
-action 147, étape 11).
+action 147, étape 11). Ce n'est pas le salaire moyen du modèle (étape 12) :
+celui des cas types du COR est un revenu par tête, non-salariés compris, qui
+croît moins vite depuis 2000 ; en rendre la croissance aux salaires anciens
+creuserait l'écart au lieu de le combler, le stock des retraités d'aujourd'hui
+en profitant plus que les départs à venir.
 
 **La fourchette, tant que l'écart dure (action 147, étape 3).** La page ne
 prend plus au modèle la dépense du système actuel, mais elle lui prend

@@ -5705,3 +5705,28 @@ journal:
       du modèle (son ancrage de 2024 et sa croissance depuis 2000), contre celui de
       TRAJECTOiRE ; les non-salariés et les régimes spéciaux ; la décision du conseil
       d'administration de l'Agirc-Arrco du 14 octobre 2026.
+  - date: "2026-10-06"
+    session: "action 147, étape 12 : le salaire moyen du modèle contre celui de TRAJECTOiRE, ni son ancrage ni sa croissance"
+    consulte: >-
+      La veille du jour (scripts/veille_droit.py) : rien de paru depuis l'étape 11, ce
+      matin ; les cinq règles qu'elle donne à relire sont les mêmes. L'index LEGI de la
+      DILA, mis à jour au 5 octobre 2026 (un incrément) : L. 161-17-2 et L. 161-17-3
+      n'ont pas de version postérieure au 31 décembre 2025. Le classeur d'hypothèses du
+      COR que TRAJECTOiRE embarque (hypo_Salaires_Prix_PIB_Pstab2024.xlsx, commit
+      0963b57, feuille SMPT) et le code qui le lit (R/gestionParametres.R, R/get.R) ;
+      les comptes nationaux annuels de l'INSEE en base 2020, par la BDM (D11, emploi
+      salarié, emploi total) ; le paramètre SMPT du témoin de Destinie 2.
+    trouve: >-
+      Aucun texte de droit : l'étape ne touche ni le scénario 1 ni le simulateur. Le
+      « SMPT » des cas types du COR est un revenu moyen par tête, revenu mixte des
+      non-salariés compris, sur l'emploi total (42 791 euros en 2024) ; les comptes de
+      l'INSEE en refont la croissance de 2000 à 2024, plus lente que celle du salaire
+      par salarié du modèle. L'ancrage de 40 000 euros est 2,2 % sous le niveau de sa
+      série (40 897 euros) et ne déplace presque rien sur la page Coût. Rendre aux
+      salaires anciens la croissance du COR ferait tomber la dérive de 2070 de 1,008 à
+      0,962 : la piste a le mauvais signe.
+    reste: >-
+      Le défaut du privé de 2030 à 2055, ailleurs que dans le salaire moyen, avant les
+      carrières incomplètes des natifs ; les non-salariés et les régimes spéciaux ; la
+      CNRACL ; l'ancrage du salaire moyen, au propriétaire ; la décision du conseil
+      d'administration de l'Agirc-Arrco du 14 octobre 2026.
