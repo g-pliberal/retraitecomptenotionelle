@@ -83,3 +83,11 @@ numéro, et l'en-tête du document n'en nomme plus aucune.**
 - *Hors de l'action.* Les 14 conflits qui restent sur le corps du document,
   de la prose écrite à la main, dont le tableau du périmètre (§ 2), où
   chaque étape récrit la ligne de son domaine, porte plus de la moitié.
+
+- *L'action close.* Elle tient en cette étape, et passe, telle quelle, à la
+  fin de l'archive, ce dossier avec elle, au commit qui suit celui de
+  l'étape. `conservation.py --depuis HEAD` n'y voit que deux paragraphes
+  changés, et c'est voulu : son titre, dont l'état passe à `fait`, et son
+  bloc « Reprise », retiré comme aux clôtures des actions 141 et 148 ; une
+  ligne « Ce que ça a déplacé » s'y ajoute. La référence refigée gèle ses
+  paragraphes et ceux de cette note.

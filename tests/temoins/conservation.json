@@ -2303,6 +2303,12 @@
     "395c318f870809ab",
     "651c81397a71c418"
    ],
+   "149. Une version de l'architecture par fichier : deux sessions n'écrivent plus au même endroit — `fait`": [
+    "7fea11eed4a99b25",
+    "6dd54dfe2cd8be25",
+    "d0356cdb761b61be",
+    "a340238bb9294e8e"
+   ],
    "15. Rendre les pages longues parcourables — `fait`": [
     "ea6c4ffd35b0e2ee",
     "3785e0bf6c66766f",
@@ -3861,6 +3867,14 @@
     "0cfd2a74713d3c5e",
     "7f16cd5d627d719a",
     "095c79a0e4529fac"
+   ]
+  },
+  "docs/archives/feuille_de_route/149/2026-10-06-une-version-par-fichier.md": {
+   "Action 149 : une version de l'architecture par fichier": [
+    "61ee75ffd485533f",
+    "76fd5136dd24da78",
+    "2a507368c4ae3978",
+    "6cc48a7eab39c3bf"
    ]
   },
   "docs/archives/limites.md": {

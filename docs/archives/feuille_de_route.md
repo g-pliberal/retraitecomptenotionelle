@@ -16659,3 +16659,27 @@ Hors de l'action, à reprendre peut-être : une mémoire des calculs
   refait (le nombre de tests avait changé, laissé exprès à GitHub) et le
   verdict. Le jeton du workflow peut pousser : aucun réglage à changer. Sous
   3.13, le tableau de bord qu'il a fabriqué est à jour.
+
+### 149. Une version de l'architecture par fichier : deux sessions n'écrivent plus au même endroit — `fait`
+
+**Demande**, le 6 octobre 2026 : « est-ce que cela va aider ? si oui, je
+veux bien », puis « donne moi le prompt et je lance ça moi-même », après un
+avis réservé : le gain serait faible, et les numéros des versions sont un
+compteur commun. L'action 148, close le même jour, laissait hors d'elle la
+liste « Les versions » de `docs/architecture.md` et sa ligne d'en-tête, que
+chaque version récrit au même endroit.
+
+**Le plan**, une étape : mesurer sur l'historique de `main` ce que le
+changement évite ; ranger les versions pour que deux sessions qui en ajoutent
+une chacune n'écrivent plus au même endroit, sans toucher aux numéros passés,
+que la feuille de route et les notes citent ; adapter les scripts et les
+tests qui lisent la liste ou l'en-tête, et un test qui tienne le rangement ;
+`CLAUDE.md` et l'architecture (§ 9.3, annexe B) disent la règle ; rien de
+perdu (`conservation.py --depuis HEAD`, puis `--figer`).
+
+**Ce que ça a déplacé.** Aucun chiffre du modèle ni du site. Deux sessions
+qui ajoutent chacune une version de l'architecture n'écrivent plus au même
+endroit : rejoués sur l'historique comme menés en parallèle, 19 des 33
+couples de versions successives ne buteraient plus, les 14 autres tenant au
+corps du document (la note du 6 octobre, sous
+`docs/archives/feuille_de_route/149/`).
