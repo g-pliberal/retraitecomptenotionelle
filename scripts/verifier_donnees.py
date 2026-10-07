@@ -3316,6 +3316,31 @@ def source_minimum_vieillesse_couple_cnav() -> dict[tuple, float]:
             if (annee,) not in certifiees}
 
 
+def source_minimum_reversion_cnav() -> dict[tuple, float]:
+    """Le minimum de la réversion du régime général (D. 353-1), par la Cnav.
+
+    L'article ne l'écrit en euros que depuis 2026 ; le barème de la caisse
+    porte chaque montant depuis 1941, avec le texte qui le fixe, et le
+    récupérateur en tire le montant en vigueur au 31 décembre de chaque année,
+    après avoir vérifié qu'il redonne celui de l'article. Transcription de la
+    caisse : niveau ``haute``.
+    """
+    serie = _lire_json("cnav_reversion.json",
+                       "scripts/fetch/cnav_reversion.py")["serie_minimum"]
+    return {(annee,): valeur for annee, valeur in sorted(serie.items())}
+
+
+def source_plafond_majoration_reversion_cnav() -> dict[tuple, float]:
+    """Le plafond trimestriel de la majoration de 11,1 % (D. 353-4), par la Cnav.
+
+    L'article n'en écrit que la valeur de 2010 ; le barème de la caisse porte
+    chaque revalorisation depuis. Niveau ``haute``.
+    """
+    serie = _lire_json("cnav_reversion.json",
+                       "scripts/fetch/cnav_reversion.py")["serie_plafond"]
+    return {(annee,): valeur for annee, valeur in sorted(serie.items())}
+
+
 def source_minimum_garanti_reference() -> dict[tuple, float]:
     """Traitement de référence du minimum garanti, par le service qui le sert.
 
@@ -6164,6 +6189,31 @@ CERTIFICATIONS = (
         unite=" €",
         niveau="haute",
         complementaire=True,
+    ),
+    Certification(
+        nom="minimum_reversion_cnav",
+        chemin=REFERENCE / "legislation" / "minimum_reversion.csv",
+        cles=("annee",),
+        colonne="valeur",
+        source=source_minimum_reversion_cnav,
+        origine="Cnav, barème « Montant minimum de la retraite de réversion »",
+        decimales=6,
+        tolerance=5e-3,
+        unite=" €",
+        niveau="haute",
+    ),
+    Certification(
+        nom="plafond_majoration_reversion_cnav",
+        chemin=REFERENCE / "legislation" / "plafond_majoration_reversion.csv",
+        cles=("annee",),
+        colonne="valeur",
+        source=source_plafond_majoration_reversion_cnav,
+        origine="Cnav, barème « Plafond de ressources pour la majoration de la "
+                "retraite de réversion »",
+        decimales=6,
+        tolerance=5e-3,
+        unite=" €",
+        niveau="haute",
     ),
     Certification(
         nom="plafond_journal_officiel",

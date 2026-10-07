@@ -40,7 +40,11 @@ dates_qui_decident:
 # `contenu.parametres` dit ce que le moteur lira : le taux, l'âge, la
 # condition de durée de mariage, le traitement des ressources — condition
 # d'ouverture avant juillet 2004, écrêtement depuis —, le plafond en heures de
-# SMIC et son facteur pour le ménage, le minimum et la majoration.
+# SMIC et son facteur pour le ménage ; le minimum — sa durée, ses soixantièmes
+# depuis décembre 1982, son prorata entre régimes alignés depuis juillet 2004 —,
+# dont le montant de chaque année est dans `legislation/minimum_reversion.csv` ;
+# les taux des deux majorations, celle de 11,1 % sous le plafond de
+# `legislation/plafond_majoration_reversion.csv`.
 versions:
 - id: avant_1982
   statut: supposee
@@ -67,9 +71,11 @@ versions:
       plafond_smic_heures: 2080
       facteur_menage: null
       minimum_trimestres: 60
-      minimum_sous_minimum_contributif: true
+      minimum_proratise: false
+      minimum_tous_regimes: false
       majoration_taux: null
       majoration_enfants_taux: 0.10
+      majoration_enfants_minimum: 0.10
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: taux_52
@@ -98,9 +104,11 @@ versions:
       plafond_smic_heures: 2080
       facteur_menage: null
       minimum_trimestres: 60
-      minimum_sous_minimum_contributif: true
+      minimum_proratise: true
+      minimum_tous_regimes: false
       majoration_taux: null
       majoration_enfants_taux: 0.10
+      majoration_enfants_minimum: 0.10
       fiabilite: haute
   exemples: aucun trouvé
 - id: taux_54
@@ -127,9 +135,11 @@ versions:
       plafond_smic_heures: 2080
       facteur_menage: null
       minimum_trimestres: 60
-      minimum_sous_minimum_contributif: true
+      minimum_proratise: true
+      minimum_tous_regimes: false
       majoration_taux: null
       majoration_enfants_taux: 0.10
+      majoration_enfants_minimum: 0.10
       fiabilite: haute
   exemples: aucun trouvé
 - id: reforme_2004
@@ -159,9 +169,11 @@ versions:
       plafond_smic_heures: 2080
       facteur_menage: 1.6
       minimum_trimestres: 60
-      minimum_sous_minimum_contributif: true
+      minimum_proratise: true
+      minimum_tous_regimes: true
       majoration_taux: null
       majoration_enfants_taux: 0.10
+      majoration_enfants_minimum: 0.10
       fiabilite: haute
   exemples: aucun trouvé
 - id: age_52
@@ -184,9 +196,11 @@ versions:
       plafond_smic_heures: 2080
       facteur_menage: 1.6
       minimum_trimestres: 60
-      minimum_sous_minimum_contributif: true
+      minimum_proratise: true
+      minimum_tous_regimes: true
       majoration_taux: null
       majoration_enfants_taux: 0.10
+      majoration_enfants_minimum: 0.10
       fiabilite: haute
   exemples: [cnav_2005_17_reversion_ecretee]
 - id: age_51
@@ -210,9 +224,11 @@ versions:
       plafond_smic_heures: 2080
       facteur_menage: 1.6
       minimum_trimestres: 60
-      minimum_sous_minimum_contributif: true
+      minimum_proratise: true
+      minimum_tous_regimes: true
       majoration_taux: null
       majoration_enfants_taux: 0.10
+      majoration_enfants_minimum: 0.10
       fiabilite: haute
   exemples: aucun trouvé
 - id: age_55_2009
@@ -237,9 +253,11 @@ versions:
       plafond_smic_heures: 2080
       facteur_menage: 1.6
       minimum_trimestres: 60
-      minimum_sous_minimum_contributif: true
+      minimum_proratise: true
+      minimum_tous_regimes: true
       majoration_taux: null
       majoration_enfants_taux: 0.10
+      majoration_enfants_minimum: 0.10
       fiabilite: haute
   exemples: aucun trouvé
 - id: age_51_2009
@@ -264,9 +282,11 @@ versions:
       plafond_smic_heures: 2080
       facteur_menage: 1.6
       minimum_trimestres: 60
-      minimum_sous_minimum_contributif: true
+      minimum_proratise: true
+      minimum_tous_regimes: true
       majoration_taux: null
       majoration_enfants_taux: 0.10
+      majoration_enfants_minimum: 0.10
       fiabilite: haute
   exemples: aucun trouvé
 - id: majoration_2010
@@ -291,11 +311,11 @@ versions:
       plafond_smic_heures: 2080
       facteur_menage: 1.6
       minimum_trimestres: 60
-      minimum_sous_minimum_contributif: true
+      minimum_proratise: true
+      minimum_tous_regimes: true
       majoration_taux: 0.111
-      majoration_plafond_trimestriel: 2400
-      majoration_plafond_annee: 2010
       majoration_enfants_taux: 0.10
+      majoration_enfants_minimum: 0.10
       fiabilite: haute
   exemples: aucun trouvé
 - id: majoration_2010_age_51
@@ -317,11 +337,11 @@ versions:
       plafond_smic_heures: 2080
       facteur_menage: 1.6
       minimum_trimestres: 60
-      minimum_sous_minimum_contributif: true
+      minimum_proratise: true
+      minimum_tous_regimes: true
       majoration_taux: 0.111
-      majoration_plafond_trimestriel: 2400
-      majoration_plafond_annee: 2010
       majoration_enfants_taux: 0.10
+      majoration_enfants_minimum: 0.10
       fiabilite: haute
   exemples: aucun trouvé
 - id: minimum_2012
@@ -348,11 +368,11 @@ versions:
       plafond_smic_heures: 2080
       facteur_menage: 1.6
       minimum_trimestres: 60
-      minimum_sous_minimum_contributif: false
+      minimum_proratise: true
+      minimum_tous_regimes: true
       majoration_taux: 0.111
-      majoration_plafond_trimestriel: 2400
-      majoration_plafond_annee: 2010
       majoration_enfants_taux: 0.10
+      majoration_enfants_minimum: 0.10
       fiabilite: haute
   exemples: aucun trouvé
 - id: minimum_2012_age_51
@@ -374,11 +394,11 @@ versions:
       plafond_smic_heures: 2080
       facteur_menage: 1.6
       minimum_trimestres: 60
-      minimum_sous_minimum_contributif: false
+      minimum_proratise: true
+      minimum_tous_regimes: true
       majoration_taux: 0.111
-      majoration_plafond_trimestriel: 2400
-      majoration_plafond_annee: 2010
       majoration_enfants_taux: 0.10
+      majoration_enfants_minimum: 0.10
       fiabilite: haute
   exemples: aucun trouvé
 - id: minimum_2026
@@ -404,13 +424,11 @@ versions:
       plafond_smic_heures: 2080
       facteur_menage: 1.6
       minimum_trimestres: 60
-      minimum_sous_minimum_contributif: false
-      minimum_annuel: 3983.29
-      minimum_annee: 2025
+      minimum_proratise: true
+      minimum_tous_regimes: true
       majoration_taux: 0.111
-      majoration_plafond_trimestriel: 2400
-      majoration_plafond_annee: 2010
       majoration_enfants_taux: 0.10
+      majoration_enfants_minimum: 0.10
       fiabilite: haute
   exemples: [ur_reversion_prive_63_ans, ur_reversion_prive_50_ans_deux_enfants,
              ur_reversion_prive_ressources_plafond_2024,
@@ -435,27 +453,56 @@ versions:
       plafond_smic_heures: 2080
       facteur_menage: 1.6
       minimum_trimestres: 60
-      minimum_sous_minimum_contributif: false
-      minimum_annuel: 3983.29
-      minimum_annee: 2025
+      minimum_proratise: true
+      minimum_tous_regimes: true
       majoration_taux: 0.111
-      majoration_plafond_trimestriel: 2400
-      majoration_plafond_annee: 2010
       majoration_enfants_taux: 0.10
+      majoration_enfants_minimum: 0.10
       fiabilite: haute
   exemples: aucun trouvé
 approximations:
 - ecart: >-
-    le minimum de réversion (D. 353-1), la majoration de 11,1 % du survivant aux
-    petites retraites (L. 353-6), la majoration de 10 % du survivant de trois enfants
-    (L. 353-1, qui renvoie à L. 351-12) et la majoration forfaitaire pour enfant à
-    charge (L. 353-5) ne sont pas appliqués
+    le maximum de la réversion (54 % du maximum des pensions, auquel s'ajoute 54 % de
+    la surcote du défunt) et la majoration forfaitaire pour enfant à charge du
+    survivant sans retraite personnelle (L. 353-5) ne sont pas appliqués
   effet: >-
-    la réversion des petites pensions est sous-estimée : depuis 2026, le minimum la
-    porte à 3 983,29 euros par an (valeur de 2025) pour un défunt qui avait au moins
-    soixante trimestres. Destinie 2, exécuté à part, la mesure pour un décès de 2023
-    (tests/test_destinie.py) : −41 % sous le minimum, −47 % avec la majoration de
-    11,1 %, −9,6 % pour la survivante de trois enfants
+    le maximum ne joue que lorsque les pensions sont revalorisées plus vite que le
+    plafond de la sécurité sociale, comme de 2020 à 2022 ; la majoration forfaitaire,
+    que pour le survivant qui élève encore ses enfants. Non mesuré
+- ecart: >-
+    la base de la réversion est la pension du défunt telle que le modèle la sert,
+    minimum contributif compris, quand la Cnav la calcule « sans être comparé[e] au
+    minimum et au maximum » (exposé « Retraite de l'assuré décédé »)
+  effet: >-
+    la réversion d'un défunt porté au minimum contributif est surestimée quand 54 % de
+    ce minimum dépasse le minimum de la réversion : jusqu'à 31 % en 2025 pour une
+    carrière complète au minimum majoré (54 % de 10 720,72 euros contre le minimum
+    de la réversion, 3 983,29 euros, quand la pension calculée en sert moins). Non
+    mesuré sur les témoins
+- ecart: >-
+    le minimum de réversion ne s'applique pas, depuis le 1er juillet 2012, à la
+    réversion d'une pension inférieure « au minimum prévu à l'article L. 351-9 »
+    (L. 353-1) — le seuil du versement forfaitaire unique, 175 francs par an au 1er
+    juillet 1974 revalorisés (R. 351-26), et non le minimum contributif, que la fiche
+    lisait jusqu'au 7 octobre 2026 ; le modèle, qui ne sert pas ce versement unique,
+    sert alors le minimum, réduit en soixantièmes
+  effet: >-
+    quelques dizaines d'euros par an, pour un défunt qui n'avait qu'un ou deux
+    trimestres
+- ecart: >-
+    sous la liquidation unique (Lura), le minimum lit la somme des durées des régimes
+    qu'elle réunit, chacune plafonnée à quatre trimestres par année, et non leur somme
+    plafonnée ; les durées de tous les régimes alignés se totalisent pour le prorata
+    « même s'ils se superposent », comme le dit la Cnav
+  effet: non mesuré
+- ecart: >-
+    le survivant est tenu pour avoir eu ou élevé les enfants que le défunt déclare
+    (majoration de 10 %), pour avoir demandé toutes ses retraites, et ses ressources
+    déclarées pour ses retraites personnelles, de base et complémentaires, à l'âge du
+    taux plein (majoration de 11,1 %) ; la majoration de 11,1 % d'une réversion dont
+    la date d'effet précède 2010 n'est pas calculée, ni sa révision quand les
+    retraites du survivant varient (R. 353-13)
+  effet: non mesuré
 - version: [avant_1982, taux_52, taux_54]
   ecart: >-
     les limites de cumul de la réversion avec la retraite personnelle du survivant
@@ -481,7 +528,7 @@ presomptions:
     n'est pas déclarée
   ressources_du_survivant: >-
     le plafond de ressources, que le survivant qui ne déclare pas les siennes
-    n'atteint que par ses réversions
+    n'atteint que par ses réversions ; de même le plafond de la majoration de 11,1 %
   reversion_demandee_dans_l_annee: >-
     la date d'effet, au premier jour du mois qui suit le décès, ou qui suit l'âge
     requis
@@ -489,7 +536,7 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-09-28
+  lu_le: 2026-10-07
   prochaine_relecture: 2027-03-31
   lectures_divergentes:
   - >-
@@ -520,8 +567,15 @@ sources:
     taux plein (R. 353-6, LEGIARTI000006749413 puis LEGIARTI000024113077).
   - >-
     Le minimum de base : D. 353-1 n'écrit son montant que depuis le 1er janvier 2026
-    (3 983,29 euros au 1er janvier 2025) ; les montants des années antérieures sont
-    dans les instructions annuelles de revalorisation, à relire.
+    (3 983,29 euros au 1er janvier 2025). Depuis le 7 octobre 2026, les montants de
+    chaque année, de 1941 à 2026, sont ceux du barème de la Cnav, qui redonne celui
+    de l'article (`legislation/minimum_reversion.csv`) ; ceux d'avant 2004 restent à
+    confronter aux décrets du Journal officiel qu'il cite.
+  - >-
+    Le plancher de la majoration de 10 % : R. 353-2 la veut au moins « au dixième du
+    montant minimum de la pension de réversion », que le modèle lit comme le minimum
+    de cette réversion, soixantièmes faits ; l'exemple de la circulaire Cnav
+    n° 2022-26 (§ 3.6), dont le minimum n'est pas dit, ne tranche pas.
   lectures:
   - type: legifrance
     reference: >-
@@ -586,6 +640,50 @@ sources:
       ur_reversion_prive_ressources_plafond_2024).
     date: 2025-12-23
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2025_33_23122025.pdf
+  - type: legifrance
+    reference: >-
+      relus le 7 octobre 2026 dans l'index LEGI, pour le minimum et les majorations :
+      D. 353-1 (LEGIARTI000006736586, 041968528, 053356066) — le minimum « lorsqu'elle
+      correspond à une durée d'assurance d'au moins quinze années (soit soixante
+      trimestres) », « réduit à autant de soixantièmes » en deçà, au régime général
+      « ou le régime social des indépendants » depuis 2020 ; L. 353-1
+      (LEGIARTI000025018616, 047453693) — le minimum « n'est pas applicable aux
+      pensions de réversion issues d'une pension dont le montant est inférieur au
+      minimum prévu à l'article L. 351-9 », dont la rédaction de 1985 à 2016
+      (LEGIARTI000006742677) substitue à la pension un versement forfaitaire unique ;
+      R. 351-26 (LEGIARTI000025749165) ; R. 353-2 (LEGIARTI000006749405) — la
+      majoration de 10 % « ne peut être inférieure au dixième du montant minimum » ;
+      L. 353-6 (LEGIARTI000019959401), D. 353-4 (LEGIARTI000020791861) — 2 400 euros
+      par trimestre au 1er janvier 2010, 11,1 % ; R. 353-12 (LEGIARTI000020791843),
+      R. 353-13 (LEGIARTI000024113062)
+    date: 2026-10-07
+  - type: circulaire_cnav
+    reference: >-
+      exposés de la base de législation de la Cnav, lus le 7 octobre 2026 par son API :
+      « Montant - retraite de réversion » (le minimum entier à soixante trimestres au
+      régime général, au prorata de la durée des régimes alignés depuis le 1er juillet
+      2004 quand ils en comptent plus de soixante, entier avant le 1er décembre 1982 ;
+      la réduction pour ressources du montant porté au minimum ; le maximum) ;
+      « Retraite de l'assuré décédé » (la base, « avant comparaison au minimum et au
+      maximum et sans avantages complémentaires », surcote comprise) ; « Majoration
+      de la retraite de réversion », « Calcul de la majoration », « Majoration à
+      plusieurs régimes » (11,1 % de la réversion réduite ; les retraites des trois
+      mois, majorations pour enfants comprises ; le dépassement partagé au prorata
+      des réversions ; due au premier jour du mois qui suit l'âge du taux plein, dès
+      l'anniversaire pour qui est né le premier d'un mois, jamais avant 2010)
+    date: 2026-10-07
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_reversion_montant_montant_ex.aspx
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2022-26 du 14 octobre 2022, § 3.6 : « La majoration pour
+      enfants est égale à 10 % du montant non majoré de la retraite de réversion » ;
+      exemple : réversion réduite pour ressources à 250 euros, majoration de 11,1 %
+      écrêtée à 20 euros, majoration pour enfants de 25 euros, 295 euros servis —
+      la majoration pour enfants s'ajoute à la réversion réduite, hors du plafond ;
+      circulaire Cnav n° 2018-4 du 1er février 2018, § 5 : 54 % de la surcote
+      s'ajoutent à la réversion, sans être ramenés au maximum
+    date: 2022-10-14
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2022_26_14102022.pdf
 textes_a_rattacher:
 - {id: LEGIARTI000031688429, article: L. 353-5, en_vigueur: 2015-12-23, change: "la majoration forfaitaire pour enfant à charge du survivant sans retraite personnelle"}
 - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22, change: "le partage entre conjoints au prorata de la durée de chaque mariage"}
@@ -593,26 +691,32 @@ textes_a_rattacher:
 - reference: D. 355-1 CSS, les limites de cumul d'avant juillet 2004
 code:
   python: >-
-    droit/reversion.py : reversion, _a_l_age, _mariage_dure ; scenarios/actuel.py :
-    Reversions ; echeancier.py : Echeancier._reverser
+    droit/reversion.py : reversion, _a_l_age, _mariage_dure, _part_du_minimum,
+    _majorer_les_petites_retraites ; scenarios/actuel.py : Reversions ;
+    echeancier.py : Echeancier._reverser
   javascript: >-
-    moteur/js/droit/reversion.js : reversion, aLAge, mariageDure ; moteur/js/regimes.js :
-    Reversions ; moteur/js/echeancier.js : Echeancier._reverser
+    moteur/js/droit/reversion.js : reversion, aLAge, mariageDure, partDuMinimum,
+    majorerLesPetitesRetraites ; moteur/js/regimes.js : Reversions ;
+    moteur/js/echeancier.js : Echeancier._reverser
   parametres: >-
     contenu.parametres de chaque version : taux, age_minimum, mariage_minimum_annees,
-    ressources, plafond_smic_heures ; le SMIC horaire du 1er janvier, dans les séries
-    macro
+    ressources, plafond_smic_heures, minimum_trimestres, minimum_proratise,
+    minimum_tous_regimes, majoration_enfants_taux, majoration_enfants_minimum,
+    majoration_taux ; le SMIC horaire du 1er janvier, dans les séries macro ; le
+    minimum et le plafond de la majoration, dans legislation/minimum_reversion.csv et
+    legislation/plafond_majoration_reversion.csv ; l'âge du taux plein du survivant,
+    dans legislation/age_annulation_decote.csv
   tests: >-
     tests/test_reversion.py ; les témoins reversion_* des simulations, dans les deux
     moteurs
 referents:
   destinie_2: >-
     confrontée le 5 octobre 2026, Destinie exécuté à part (tests/test_destinie.py) : le
-    taux de 54 % concorde, sur la même pension menée au décès ; le minimum et les
-    majorations, que le dépôt n'applique pas, s'y mesurent ; quatre écarts de Destinie
-    (l'âge levé par deux enfants à charge, la réversion complémentaire comptée aux
-    ressources, la base et le plafond de la réversion majorée, la revalorisation de
-    2020) sont au registre
+    taux de 54 % concorde, sur la même pension menée au décès ; depuis le 7 octobre
+    2026, le minimum et la majoration de 11,1 % concordent au centime, la majoration de
+    10 % à l'écart près de la base de Destinie ; quatre écarts de Destinie (l'âge levé
+    par deux enfants à charge, la réversion complémentaire comptée aux ressources, la
+    base de la réversion majorée, la revalorisation de 2020) sont au registre
 historique:
 - >-
   Jusqu'au 28 septembre 2026, la fiche ne portait que son intitulé : « le modèle décrit
@@ -630,8 +734,14 @@ historique:
   2026-10-05 — confrontée à Destinie 2, exécuté à part (action 142, étape 4) : la
   majoration de 10 % du survivant de trois enfants, que la fiche portait en paramètre
   sans la dire absente, rejoint les approximations.
+- >-
+  2026-10-07 — action 138, étape 4 : le moteur sert le minimum de D. 353-1, la
+  majoration de 10 % du survivant de trois enfants et celle de 11,1 % ; le paramètre
+  minimum_sous_minimum_contributif, qui lisait le « minimum prévu à l'article
+  L. 351-9 » comme le minimum contributif, et que le moteur ne lisait pas, est
+  retiré : c'est le seuil du versement forfaitaire unique.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un assuré du régime général ou d'un régime aligné
   qui décède : 4,41 millions de bénéficiaires d'un droit dérivé tous régimes fin 2024
-  (DREES, EACR). Le modèle la calcule pour le conjoint que la saisie déclare, sans le
-  minimum ni la majoration ; sa dépense, publiée, est sur la page Coût.
+  (DREES, EACR). Le modèle la calcule pour le conjoint que la saisie déclare, minimum et
+  majorations compris, sans le maximum ; sa dépense, publiée, est sur la page Coût.

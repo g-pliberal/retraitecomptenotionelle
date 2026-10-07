@@ -16,8 +16,14 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   l'invalidité et de l'inaptitude), comme deux enfants de moins de dix-huit ans
   au décès, et deux enfants de moins de vingt et un ans celui de l'Ircantec ;
   depuis 2019, l'Agirc-Arrco reverse en entier la majoration pour enfants du
-  défunt (accord du 17 novembre 2017, articles 109 à 111). Restent dehors le minimum
-  et les majorations du régime général, le complément de la fonction publique,
+  défunt (accord du 17 novembre 2017, articles 109 à 111). Le régime général
+  sert depuis le 7 octobre 2026 son minimum (D. 353-1), la majoration du
+  survivant de trois enfants (R. 353-2) et celle des petites retraites
+  (L. 353-6), mais calcule la
+  réversion sur la pension du défunt minimum contributif compris, quand la
+  caisse l'en retire. Restent dehors le maximum du régime général et sa
+  majoration forfaitaire pour enfant à charge, le plafond du ménage, le
+  complément de la fonction publique,
   le partage entre ex-conjoints et le remariage, les pensions d'orphelin — à
   l'Agirc-Arrco, la moitié des droits du parent pour l'orphelin de père et de
   mère de moins de vingt et un ans, ou de vingt-cinq à charge (articles 114 et

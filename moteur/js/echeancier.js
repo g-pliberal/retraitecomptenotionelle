@@ -113,6 +113,10 @@ export class Echeancier {
     // La réversion que le décès de l'assuré ouvre à son conjoint, quand la
     // chronologie les dit.
     this.reversion = null;
+    // La durée d'assurance de l'assuré dans chaque régime, enfants compris,
+    // telle que ses départs l'ont comptée : le minimum de la réversion du
+    // régime général la proratise (D. 353-1).
+    this.dureesAuDepart = {};
     // La retraite progressive que la carrière demande, sa liquidation
     // provisoire, et, ouverte, le plancher que les départs gardent.
     this.progressive = null;
@@ -301,7 +305,7 @@ export class Echeancier {
     const [annee, pensions, enCapital, majorations] = this._pensionsAuDeces(
       carriere, carriere.deces);
     this.reversion = reversion(this.moteur, pensions, carriere, annee, null, enCapital,
-      majorations);
+      majorations, this.dureesAuDepart);
     const survivant = carriere.conjoint.personne;
     const evenement = new Evenement({
       id: `reversion_${survivant}`, date: moisSuivant(carriere.deces),
@@ -326,7 +330,7 @@ export class Echeancier {
     const deces = depart > courante ? depart : courante;
     const [annee, pensions, enCapital, majorations] = this._pensionsAuDeces(carriere, deces);
     this.reversion = reversion(this.moteur, pensions, carriere, annee, deces, enCapital,
-      majorations);
+      majorations, this.dureesAuDepart);
   }
 
   /**
@@ -459,6 +463,7 @@ export class Echeancier {
       resultat.total, (liquidee.age_liquidation || 0.0) >= ageDeLAspa(this.moteur, liquidee),
       contexte, liquidee);
     this.auDepart = resultatActuel(resultat, foyer);
+    this.dureesAuDepart = Object.fromEntries(resultat.releve.durees.trimestresParRegime);
     this._inscrire(evenement, `liquidation_${evenement.id}`, "liquidation", resultat,
       evenement.date);
     this._composantes(evenement, resultat);
@@ -493,6 +498,14 @@ export class Echeancier {
       this._composantes(evenement, resultat);
     });
     this.auDepart = resultatDesDeparts(this.moteur, carriere, departs, liquidations, contexte);
+    // Chaque départ compte les durées de ses régimes : la plus longue que l'un
+    // d'eux a comptée dans un régime est la sienne.
+    this.dureesAuDepart = {};
+    for (const resultat of liquidations) {
+      for (const [code, trimestres] of resultat.releve.durees.trimestresParRegime) {
+        this.dureesAuDepart[code] = Math.max(this.dureesAuDepart[code] ?? 0, trimestres);
+      }
+    }
     const pensions = this.auDepart.pensions_par_regime
       .reduce((somme, p) => somme + p.montant, 0.0);
     const majoration = this.auDepart.avantages_appliques

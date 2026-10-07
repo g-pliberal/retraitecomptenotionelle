@@ -37,9 +37,25 @@ applique à chaque régime la version de sa fiche que les dates choisissent :
 
 Les autres régimes n'ont pas encore de fiche : leur ligne le dit, sans montant.
 
-CE QUI N'EST PAS ENCORE PORTÉ, et que les fiches déclarent : le minimum de
-réversion et la majoration de 11,1 % du régime général, la majoration pour
-enfants du survivant, le plafonnement du veuf de fonctionnaire d'avant 2004,
+LE RÉGIME GÉNÉRAL ET LES RÉGIMES ALIGNÉS, dans l'ordre où la caisse calcule
+(exposés « Montant » et « Majoration » de la retraite de réversion ; circulaire
+Cnav n° 2022-26, § 3.6) : le taux de la version, porté au MINIMUM de D. 353-1
+— entier à soixante trimestres du défunt dans le régime, en soixantièmes en
+deçà, et, depuis juillet 2004, au prorata de sa durée dans le régime quand
+plusieurs régimes alignés en comptent plus de soixante ; entier, sans
+soixantièmes, avant décembre 1982 — ; puis réduit du dépassement du plafond de
+ressources ; puis majoré de 10 % pour le survivant de trois enfants, sans
+descendre sous le dixième de son minimum (R. 353-2), hors du plafond ; enfin,
+depuis 2010, majoré de 11,1 % de la réversion réduite quand le survivant a
+l'âge du taux plein et que ses retraites, réversions et majorations comprises,
+restent sous le plafond de L. 353-6, la majoration étant réduite de ce qui le
+dépasse (D. 353-4). Une majoration qui commence après la date d'effet de la
+ligne, quand le survivant n'a pas encore l'âge du taux plein, s'écrit à part,
+avec sa date, hors du montant.
+
+CE QUI N'EST PAS ENCORE PORTÉ, et que les fiches déclarent : le maximum de la
+réversion du régime général, sa majoration forfaitaire pour enfant à charge,
+le plafond du ménage, le plafonnement du veuf de fonctionnaire d'avant 2004,
 la minoration de l'Agirc avant soixante ans, le partage entre ex-conjoints, le
 remariage. L'Agirc-Arrco sert 60 % des points sans le coefficient
 d'anticipation de l'assuré retraité, dans la limite de sa retraite, l'Ircantec
@@ -68,6 +84,7 @@ from typing import TYPE_CHECKING
 from .. import chronologie as chrono
 from ..donnees.chargement import Fiabilite
 from ..somme import somme_ordonnee
+from .coordonner import REGIMES_ALIGNES, lura_applicable
 
 if TYPE_CHECKING:
     from ..carriere import Carriere, Conjoint
@@ -80,11 +97,24 @@ SCHEMA_VERSION = 1
 #: entier.
 MOTIFS = {
     "servie": "servie",
+    "minimum": "portée au minimum de la réversion (D. 353-1)",
     "ecretee": "réduite à due concurrence du plafond de ressources",
     "ressources": "ressources au-dessus du plafond",
     "mariage": "condition d'antériorité ou de durée du mariage non remplie",
     "non_portee": "la réversion de ce régime n'est pas encore portée",
 }
+
+#: Les régimes dont les durées d'assurance du défunt s'additionnent pour
+#: proratiser le minimum de la réversion du régime général depuis le 1er juillet
+#: 2004, quand elles dépassent ensemble soixante trimestres : le régime général,
+#: les salariés et non-salariés agricoles, les indépendants, les professions
+#: libérales sauf les avocats, les cultes (exposé de la Cnav, « Montant -
+#: retraite de réversion » ; circulaires n° 2005-17, § 22, et n° 2008-42, § 4).
+REGIMES_DU_MINIMUM = ("regime_general", "msa_salaries", "msa_non_salaries", "organic",
+                      "cancava", "rsi", "cnavpl", "cavimac")
+
+#: La majoration de L. 353-6 ne prend pas effet avant cette date.
+DEBUT_DE_LA_MAJORATION = "2010-01-01"
 
 #: Les fiches dont les réversions se chiffrent après les autres, parce que
 #: celles des autres régimes de base comptent à leurs ressources : le régime
@@ -118,6 +148,17 @@ class ReversionRegime:
     #: La part du montant qui reverse la majoration pour enfants du défunt,
     #: hors du taux : l'Agirc-Arrco la reverse en entier depuis 2019.
     majoration: float = 0.0
+    #: Le minimum que D. 353-1 garantit à cette réversion du régime général ou
+    #: d'un régime aligné, soixantièmes et prorata faits ; 0 sans lui.
+    minimum: float = 0.0
+    #: La majoration de 10 % du survivant de trois enfants (L. 353-1, R. 353-2),
+    #: comprise dans le montant.
+    majoration_trois_enfants: float = 0.0
+    #: La majoration de 11,1 % du survivant aux petites retraites (L. 353-6),
+    #: et le jour où elle commence : comprise dans le montant quand elle
+    #: commence au plus tard à la date d'effet de la ligne, à part sinon.
+    majoration_petites_retraites: float = 0.0
+    majoration_petites_retraites_effet: str | None = None
 
     def donnees(self) -> dict:
         return {"regime": self.regime, "base": self.base, "taux": self.taux,
@@ -125,7 +166,11 @@ class ReversionRegime:
                 "date_effet": self.date_effet, "fiche": self.fiche,
                 "version": self.version, "texte": self.texte,
                 "fiabilite": self.fiabilite.name.lower(),
-                "majoration": self.majoration}
+                "majoration": self.majoration, "minimum": self.minimum,
+                "majoration_trois_enfants": self.majoration_trois_enfants,
+                "majoration_petites_retraites": self.majoration_petites_retraites,
+                "majoration_petites_retraites_effet":
+                    self.majoration_petites_retraites_effet}
 
 
 @dataclass(frozen=True)
@@ -258,6 +303,48 @@ def _mariage_ircantec(parametres: dict, conjoint: Conjoint, naissance: str, dece
             or chrono.annees_revolues(conjoint.mariage, depart) >= avant)
 
 
+def _au_taux_plein(naissance: str, age: float) -> str:
+    """Le jour où la majoration de L. 353-6 peut commencer : le premier jour du
+    mois qui suit l'âge du taux plein, ou l'anniversaire même du survivant né
+    le premier jour d'un mois (R. 353-13 ; exposé de la Cnav, « Majoration de
+    la retraite de réversion »). L'âge se compte en mois : soixante-six ans et
+    deux mois pour la génération 1953."""
+    mois = round(age * 12)
+    annee = int(naissance[:4]) + (int(naissance[5:7]) - 1 + mois) // 12
+    numero = (int(naissance[5:7]) - 1 + mois) % 12 + 1
+    atteint = f"{annee:04d}-{numero:02d}-{naissance[8:10]}"
+    return atteint if naissance[8:10] == "01" else mois_suivant(atteint)
+
+
+def _part_du_minimum(parametres: dict, regime: str, durees: dict[str, int] | None,
+                     lura: bool = False) -> float:
+    """La part du minimum de D. 353-1 que sert la réversion de ``regime`` :
+    entière avant le 1er décembre 1982 ; ensuite, autant de soixantièmes que le
+    défunt a de trimestres d'assurance dans le régime, soixante au plus ;
+    depuis le 1er juillet 2004, quand ses durées dans les régimes alignés
+    (:data:`REGIMES_DU_MINIMUM`) dépassent ensemble soixante trimestres et
+    qu'il en a dans plusieurs, sa durée dans le régime rapportée à leur total.
+    Sous la liquidation unique (``lura``), la pension d'un des régimes qu'elle
+    réunit est la leur : ses durées s'y additionnent, et ils ne comptent que
+    pour un régime (exposé de la Cnav, « Retraite de l'assuré décédé »). Sans
+    durées dites, la part entière."""
+    if not parametres.get("minimum_proratise") or durees is None:
+        return 1.0
+    seuil = float(parametres["minimum_trimestres"])
+    groupes = [(r,) for r in REGIMES_DU_MINIMUM if not (lura and r in REGIMES_ALIGNES)]
+    if lura:
+        groupes.insert(0, tuple(r for r in REGIMES_DU_MINIMUM if r in REGIMES_ALIGNES))
+    durees_des_groupes = {groupe: somme_ordonnee(durees.get(r, 0) for r in groupe)
+                          for groupe in groupes}
+    propre = float(next((duree for groupe, duree in durees_des_groupes.items()
+                         if regime in groupe), durees.get(regime, 0)))
+    alignes = [duree for duree in durees_des_groupes.values() if duree > 0]
+    total = float(somme_ordonnee(alignes))
+    if parametres.get("minimum_tous_regimes") and len(alignes) > 1 and total > seuil:
+        return propre / total
+    return min(1.0, propre / seuil)
+
+
 def _enfants_de_moins_de(carriere: Carriere, deces: str, ans: int) -> int:
     """Les enfants nés au décès qui n'ont pas encore ``ans`` ans : ceux que la
     chronologie porte, déclarés ou présumés, et que le modèle tient pour à la
@@ -266,11 +353,62 @@ def _enfants_de_moins_de(carriere: Carriere, deces: str, ans: int) -> int:
                if naissance <= deces < chrono._plus_ans(naissance, ans))
 
 
+def _majorer_les_petites_retraites(moteur: ScenarioActuel,
+                                   lignes: dict[str, ReversionRegime],
+                                   reduites: dict[str, tuple[float, dict]],
+                                   conjoint: Conjoint, ressources: float,
+                                   annee: int) -> None:
+    """La majoration de 11,1 % des réversions des régimes alignés (L. 353-6),
+    écrite dans ``lignes``, une fois toutes les réversions chiffrées.
+
+    Elle est due au survivant qui a l'âge du taux plein (L. 351-8, 1°) et dont
+    les retraites — ses ressources déclarées, tenues pour ses retraites
+    personnelles, et toutes ses réversions, de base et complémentaires,
+    majorations comprises — restent sous le plafond de D. 353-4, quatre fois
+    le plafond trimestriel ; elle vaut 11,1 % de la réversion réduite, et se
+    réduit de ce qui dépasserait le plafond, partagée entre les régimes au
+    prorata de leurs réversions (R. 353-12 ; exposé de la Cnav, « Majoration à
+    plusieurs régimes »). Elle commence au premier jour du mois qui suit l'âge
+    du taux plein, jamais avant le 1er janvier 2010 ni avant la réversion.
+    """
+    eligibles = {regime: (montant, parametres) for regime, (montant, parametres)
+                 in reduites.items()
+                 if montant > 0 and parametres.get("majoration_taux") is not None}
+    plafond = moteur.reversions.plafond_majoration(annee)
+    generation = round(int(conjoint.naissance[:4]) + (int(conjoint.naissance[5:7]) - 1) / 12, 3)
+    age = moteur.ages_annulation_decote.age(generation)
+    if not eligibles or plafond is None or age is None:
+        return
+    debut = _au_taux_plein(conjoint.naissance, age[0])
+    retraites = ressources + somme_ordonnee(l.montant for l in lignes.values())
+    theoriques = {regime: float(parametres["majoration_taux"]) * montant
+                  for regime, (montant, parametres) in eligibles.items()}
+    marge = 4 * plafond[0] - retraites
+    total = somme_ordonnee(theoriques.values())
+    if marge <= 0 or total <= 0:
+        return
+    servie = min(total, marge)
+    reversions = somme_ordonnee(montant for montant, _ in eligibles.values())
+    for regime, (montant, _) in eligibles.items():
+        majoration = (theoriques[regime] if servie == total
+                      else servie * montant / reversions)
+        ligne_du_regime = lignes[regime]
+        effet = max(debut, DEBUT_DE_LA_MAJORATION, ligne_du_regime.date_effet)
+        comprise = effet <= ligne_du_regime.date_effet
+        lignes[regime] = replace(
+            ligne_du_regime,
+            montant=ligne_du_regime.montant + (majoration if comprise else 0.0),
+            majoration_petites_retraites=majoration,
+            majoration_petites_retraites_effet=effet,
+            fiabilite=min(ligne_du_regime.fiabilite, plafond[1], age[1]))
+
+
 def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite]],
               carriere: Carriere, annee: int,
               deces_suppose: str | None = None,
               en_capital: frozenset[str] = frozenset(),
-              majorations: dict[str, float] | None = None) -> Reversion | None:
+              majorations: dict[str, float] | None = None,
+              durees: dict[str, int] | None = None) -> Reversion | None:
     """La réversion que le décès de la personne de ``carriere`` ouvre à son
     conjoint, régime par régime ; ``None`` sans décès ou sans conjoint.
 
@@ -283,6 +421,9 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
     dit pas. ``majorations`` donne, régime par régime, la majoration pour
     enfants du défunt aux mêmes euros que sa pension, hors d'elle : la version
     qui la dit réversible (``majoration_reversible``) en ajoute cette part.
+    ``durees`` donne la durée d'assurance du défunt dans chaque régime, enfants
+    compris, que le minimum du régime général proratise ; sans elle, il est
+    servi entier.
     """
     conjoint = carriere.conjoint
     deces = carriere.deces if deces_suppose is None else deces_suppose
@@ -390,6 +531,11 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
 
     # Le plafond de ressources est un : les réversions des régimes alignés se
     # l'imputent l'une après l'autre, dans l'ordre de la liquidation.
+    minimum_de_l_annee = table.minimum(annee)
+    lura = lura_applicable(carriere)
+    #: La réversion de chaque régime aligné, réduite, avant ses majorations :
+    #: ce que la majoration de 11,1 % multiplie.
+    reduites: dict[str, tuple[float, dict]] = {}
     for regime, base, fiabilite in pensions:
         fiche = table.fiche_du_regime(regime)
         if fiche is None or fiche["id"] != "reversion":
@@ -407,10 +553,19 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         parametres = version["parametres"]
         taux = float(parametres["taux"])
         montant = taux * base
+        motif = "servie"
+        # Le minimum de D. 353-1, avant les ressources : la caisse porte la
+        # réversion au minimum, puis la réduit du dépassement du plafond.
+        minimum = 0.0
+        if minimum_de_l_annee is not None and parametres.get("minimum_trimestres"):
+            minimum = minimum_de_l_annee[0] * _part_du_minimum(parametres, regime, durees,
+                                                               lura)
+            if minimum > montant:
+                montant, motif = minimum, "minimum"
+                fiabilite = min(fiabilite, minimum_de_l_annee[1])
         plafond_annuel = (float(parametres["plafond_smic_heures"])
                           * moteur.macro.smic_horaire(annee))
         disponible = plafond_annuel - ressources - autres_bases
-        motif = "servie"
         if not _mariage_dure(conjoint, deces, enfants, parametres["mariage_minimum_annees"]):
             montant, motif = 0.0, "mariage"
         elif parametres["ressources"] == "ecretement":
@@ -419,8 +574,21 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         elif disponible < 0:
             montant, motif = 0.0, "ressources"
         autres_bases += montant
-        lignes[regime] = ligne(regime, base, montant, motif, fiche, version, taux,
-                               date_effet, fiabilite)
+        # La majoration de 10 % du survivant de trois enfants, sur la réversion
+        # réduite et hors du plafond (circulaire Cnav n° 2022-26, § 3.6), au
+        # moins le dixième du minimum de la réversion (R. 353-2) ; le
+        # survivant est tenu pour avoir eu les enfants que déclare le défunt.
+        trois_enfants = 0.0
+        if montant > 0 and enfants >= 3:
+            taux_enfants = float(parametres["majoration_enfants_taux"])
+            trois_enfants = max(taux_enfants * montant,
+                                float(parametres.get("majoration_enfants_minimum") or 0.0)
+                                * minimum)
+        reduites[regime] = (montant, parametres)
+        lignes[regime] = replace(
+            ligne(regime, base, montant + trois_enfants, motif, fiche, version, taux,
+                  date_effet, fiabilite),
+            minimum=minimum, majoration_trois_enfants=trois_enfants)
 
     # La complémentaire des indépendants en dernier : ses ressources sont
     # celles de R. 353-1, que les réversions de tous les régimes de base
@@ -456,6 +624,8 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
                                   float(parametres["age_minimum"]))
             lignes[regime] = ligne(regime, base, montant, motif, fiche, version, taux,
                                    date_effet, fiabilite)
+
+    _majorer_les_petites_retraites(moteur, lignes, reduites, conjoint, ressources, annee)
 
     return Reversion(
         personne=conjoint.personne, defunt=carriere.personne, deces=deces, annee=annee,

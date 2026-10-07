@@ -51,6 +51,11 @@ plus un également. Ce que la première exécution a montré, le 5 octobre 2026 
   valeurs du point, elle, est la même des deux côtés.
 * **Ouvert** — Destinie reverse la majoration pour enfants de l'Agirc-Arrco du
   défunt avec sa retraite, le dépôt non ; l'accord reste à lire sur ce point.
+
+Le 7 octobre 2026 (action 138, étape 4), le scénario 1 sert le minimum de
+réversion, la majoration de 11,1 % et celle de 10 % de la survivante de trois
+enfants : les deux premiers concordent au centime, la troisième à l'écart près
+de la base que Destinie réverse (−0,6 %, déclaré).
 """
 
 from __future__ import annotations
@@ -189,23 +194,17 @@ ECARTS = {
         "revalorisation de 2020, de 1 % pour une pension de moins de 2 000 € par mois "
         "au dépôt, de 0,58 % en moyenne chez Destinie"),
     ("reversion_trois_enfants", "reversion_regime_general"): (
-        -0.105, -0.088,
-        "le dépôt ne sert pas la majoration de 10 % de la réversion de la survivante de "
-        "trois enfants (L. 353-1, qui renvoie à L. 351-12 ; R. 351-30), que sa fiche "
-        "déclare sans l'appliquer ; Destinie la calcule sur la pension revalorisée moins "
-        "la majoration du défunt non revalorisée (+0,7 %)"),
+        -0.0070, -0.0045,
+        "la base de la réversion : Destinie la prend sur la pension du défunt "
+        "revalorisée, moins sa majoration pour enfants NON revalorisée (`src/Reversion.cpp`, "
+        "`pension_rg - liq->majo_3enf_rg`), qui excède de 0,6 % en cinq ans celle du "
+        "dépôt, la pension sans sa majoration, revalorisée ; la majoration de 10 % de la "
+        "survivante de trois enfants (L. 353-1, R. 353-2), elle, concorde depuis le "
+        "7 octobre 2026 ; l'écart est celui de Destinie (registre)"),
     ("reversion_plafond", "reversion_regime_general"): (
         0.13, 0.17,
         "Destinie compte la réversion de l'Agirc-Arrco dans les ressources sous le "
         "plafond, que R. 353-1 exclut, et écrête ; le dépôt ne l'y compte pas"),
-    ("reversion_minimum", "reversion_regime_general"): (
-        -0.42, -0.38,
-        "le dépôt ne sert pas le minimum de réversion (D. 353-1), que sa fiche déclare"),
-    ("reversion_minimum_age", "reversion_regime_general"): (
-        -0.48, -0.44,
-        "le dépôt ne sert ni le minimum de réversion (D. 353-1) ni la majoration de "
-        "11,1 % de la survivante passée l'âge du taux plein (L. 353-6), que sa fiche "
-        "déclare"),
     ("reversion_jeune_deux_enfants", "reversion_regime_general"): (
         -1.0, -1.0,
         "Destinie sert la réversion du régime général à 48 ans pour deux enfants à "

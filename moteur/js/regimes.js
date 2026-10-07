@@ -1147,6 +1147,33 @@ export class Reversions {
         }
       }
     }
+    // Le minimum annuel de la réversion du régime général (D. 353-1) et le
+    // plafond trimestriel de sa majoration de 11,1 % (D. 353-4) : une ancre
+    // par année, le montant en vigueur à son 31 décembre.
+    this._minimum = paquet.minimum_reversion ?? {};
+    this._plafondMajoration = paquet.plafond_majoration_reversion ?? {};
+  }
+
+  /**
+   * L'ancre de l'année, ou la dernière qui la précède ; `null` avant la
+   * première : voir `_en_vigueur` du Python.
+   */
+  static _enVigueur(table, annee) {
+    const anterieures = Object.keys(table).map(Number).filter((a) => a <= annee);
+    if (anterieures.length === 0) {
+      return null;
+    }
+    return table[String(Math.max(...anterieures))];
+  }
+
+  /** Le minimum annuel de la réversion du régime général, en euros de `annee`. */
+  minimum(annee) {
+    return Reversions._enVigueur(this._minimum, annee);
+  }
+
+  /** Le plafond TRIMESTRIEL de la majoration de 11,1 %, en euros de `annee`. */
+  plafondMajoration(annee) {
+    return Reversions._enVigueur(this._plafondMajoration, annee);
   }
 
   /** La fiche préparée de la réversion d'un régime, ou `null`. */

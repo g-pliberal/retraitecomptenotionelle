@@ -5063,6 +5063,7 @@ ${reserve}
  * Ce que motive une ligne de réversion qui n'est pas servie entière.
  */
 const MOTIFS_DE_REVERSION = Object.freeze({
+  minimum: "portée au minimum de la réversion",
   ecretee: "réduite : avec ses ressources, elle dépasserait le plafond",
   ressources: "rien : ses ressources dépassent le plafond",
   mariage: "rien : le mariage est trop court ou trop tardif",
@@ -5107,18 +5108,35 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
   }
 
   // L'Agirc-Arrco reverse en entier la majoration pour enfants du défunt, hors
-  // du taux : la ligne dit quelle part du montant elle fait.
-  const dont = (ligne) => (ligne.majoration > 0
-    ? ` <span class="discret">(dont ${g.euros(mensuel(ligne.majoration, ligne.regime))} `
-      + "de majoration pour enfants, reversée en entier)</span>"
-    : "");
+  // du taux ; le régime général majore la réversion de 10 % pour trois enfants,
+  // puis de 11,1 % aux petites retraites, à l'âge du taux plein : la ligne dit
+  // quelle part du montant chacune fait, ou quand la seconde commencera.
+  const dont = (ligne) => {
+    const parts = [];
+    if (ligne.majoration > 0) {
+      parts.push(`dont ${g.euros(mensuel(ligne.majoration, ligne.regime))} `
+        + "de majoration pour enfants, reversée en entier");
+    }
+    if (ligne.majoration_trois_enfants > 0) {
+      parts.push(`dont ${g.euros(mensuel(ligne.majoration_trois_enfants, ligne.regime))} `
+        + "de majoration pour trois enfants");
+    }
+    if (ligne.majoration_petites_retraites > 0) {
+      const montant = g.euros(mensuel(ligne.majoration_petites_retraites, ligne.regime));
+      parts.push(ligne.majoration_petites_retraites_effet <= ligne.date_effet
+        ? `dont ${montant} de majoration de 11,1 %`
+        : `${montant} de plus à partir de ${mois(ligne.majoration_petites_retraites_effet)}, `
+          + "majoration de 11,1 %");
+    }
+    return parts.length ? ` <span class="discret">(${parts.join(" ; ")})</span>` : "";
+  };
   const lignes = reversion.regimes.map((ligne) => [
     echapper(nomRegime(ligne.regime)),
     g.euros(mensuel(ligne.base, ligne.regime)),
     ligne.fiche === null ? "—" : g.pourcentage(ligne.taux, false, 0),
     ligne.motif === "servie" ? g.euros(mensuel(ligne.montant, ligne.regime)) + dont(ligne)
       : `${g.euros(mensuel(ligne.montant, ligne.regime))} <span class="discret">`
-        + `(${MOTIFS_DE_REVERSION[ligne.motif]})</span>`,
+        + `(${MOTIFS_DE_REVERSION[ligne.motif]})</span>` + dont(ligne),
     ligne.date_effet === null ? "—" : mois(ligne.date_effet),
   ]);
   lignes.push(["Réversion du système actuel", "", "",
@@ -5140,9 +5158,8 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
     reserves.push("un mariage à vos "
       + `${contexte.paquet.presomptions.mariage_des_conjoints.valeur} ans`);
   }
-  reserves.push("ni minimum de réversion ni majoration au régime général, que le "
-    + "modèle ne sert pas encore, si bien qu'une petite pension ouvre en réalité une "
-    + "réversion plus élevée");
+  reserves.push("un conjoint qui vivrait seul, sans partage avec un ex-conjoint, ce que "
+    + "le modèle ne sait pas encore autrement");
 
   return `
 <div class="carte" id="resultats-reversion">

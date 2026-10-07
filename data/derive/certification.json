@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-10-06",
+ "dernier_passage_le": "2026-10-07",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -604,7 +604,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-10-06"
+   "verifiee_le": "2026-10-07"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -760,6 +760,17 @@
    "valeurs": 10,
    "verifiee_le": "2026-09-17"
   },
+  "minimum_reversion_cnav": {
+   "ajoutees": 86,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "070b199d9c48c59a",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "Cnav, barème « Montant minimum de la retraite de réversion »",
+   "valeurs": 86,
+   "verifiee_le": "2026-10-07"
+  },
   "minimum_vieillesse": {
    "ajoutees": 0,
    "colonne": "valeur",
@@ -891,6 +902,17 @@
    "source": "DILA, base JORF, décrets portant fixation du plafond de la sécurité sociale",
    "valeurs": 31,
    "verifiee_le": "2026-09-17"
+  },
+  "plafond_majoration_reversion_cnav": {
+   "ajoutees": 17,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "8cbea5cc7a313734",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "Cnav, barème « Plafond de ressources pour la majoration de la retraite de réversion »",
+   "valeurs": 17,
+   "verifiee_le": "2026-10-07"
   },
   "point_indice_fonction_publique": {
    "ajoutees": 0,
@@ -1154,7 +1176,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-10-06"
+   "verifiee_le": "2026-10-07"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -1308,7 +1330,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
    "valeurs": 29,
-   "verifiee_le": "2026-10-06"
+   "verifiee_le": "2026-10-07"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -1341,7 +1363,7 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-10-06"
+   "verifiee_le": "2026-10-07"
   },
   "valeurs_point_msa": {
    "ajoutees": 0,

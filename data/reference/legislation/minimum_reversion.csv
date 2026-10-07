@@ -1,0 +1,117 @@
+# Minimum de la pension de réversion du régime général, en euros par an
+# --------------------------------------------------------------------
+# source_id: cnav_reversion
+#
+# LA RÈGLE. La pension de réversion du régime général et des régimes alignés
+# « ne peut être inférieure au montant minimum » quand elle correspond à quinze
+# années d'assurance du défunt, soixante trimestres, au régime général — et
+# au régime des indépendants depuis 2020 ; en deçà, le minimum « est réduit à
+# autant de soixantièmes que l'assuré justifiait de trimestres » (D. 353-1).
+# Ce minimum est l'ancienne allocation aux vieux travailleurs salariés,
+# revalorisée comme les pensions : D. 353-1 ne l'écrit en euros que pour les
+# pensions prenant effet depuis le 1er janvier 2026, 3 983,29 € au
+# 1er janvier 2025 (décret n° 2025-1410). Avant le 1er décembre 1982, la
+# réversion était portée au minimum entier, sans soixantièmes (exposé de la
+# Cnav, « Montant - retraite de réversion »). La majoration de 10 % du
+# survivant de trois enfants ne peut être inférieure au dixième de ce
+# minimum (R. 353-2). Le scénario 1 le lit dans `droit/reversion.py`.
+#
+# D'OÙ VIENNENT CES MONTANTS. Du barème « Montant minimum de la retraite de
+# réversion » de la Cnav (`scripts/fetch/cnav_reversion.py`), qui cite pour
+# chaque date la loi, le décret, l'arrêté ou la circulaire qui la fixe, et qui
+# redonne au centime le montant que D. 353-1 écrit pour 2025 : `haute`.
+# Jusqu'en 1961, le montant des villes de plus de 5 000 habitants ; en 1963,
+# celui des allocataires de moins de 75 ans. Les francs sont convertis au
+# taux de 6,55957, les anciens francs au centième.
+#
+# UNE ANCRE PAR ANNÉE, EN EUROS PAR AN : le montant en vigueur au 31 décembre
+# de l'année, celui que le modèle lit aux euros de la pension que « faire
+# vivre » mène jusqu'à ce jour — celui du 1er juillet en 2022, celui
+# d'octobre 2015 en 2016, que rien n'a revalorisé.
+annee,valeur,fiabilite
+1941,5.488165,haute
+1942,5.488165,haute
+1943,5.488165,haute
+1944,5.488165,haute
+1945,10.976329,haute
+1946,22.867353,haute
+1947,27.440823,haute
+1948,51.832666,haute
+1949,59.455117,haute
+1950,68.602058,haute
+1951,91.164512,haute
+1952,91.164512,haute
+1953,91.164512,haute
+1954,100.311453,haute
+1955,100.311453,haute
+1956,110.342599,haute
+1957,110.342599,haute
+1958,110.342599,haute
+1959,110.342599,haute
+1960,110.342599,haute
+1961,110.342599,haute
+1962,121.959214,haute
+1963,121.959214,haute
+1964,152.449017,haute
+1965,167.693919,haute
+1966,190.561272,haute
+1967,213.428624,haute
+1968,236.295977,haute
+1969,251.540878,haute
+1970,266.785780,haute
+1971,282.030682,haute
+1972,320.142936,haute
+1973,343.010289,haute
+1974,457.347052,haute
+1975,533.571560,haute
+1976,609.796069,haute
+1977,800.357340,haute
+1978,884.204300,haute
+1979,1128.122728,haute
+1980,1204.347236,haute
+1981,1433.020762,haute
+1982,1661.694288,haute
+1983,1791.275953,haute
+1984,1862.926991,haute
+1985,1980.312734,haute
+1986,2016.900498,haute
+1987,2073.306634,haute
+1988,2154.104614,haute
+1989,2208.986260,haute
+1990,2285.210768,haute
+1991,2342.379150,haute
+1992,2408.694472,haute
+1993,2440.708766,haute
+1994,2489.644901,haute
+1995,2532.178176,haute
+1996,2582.943699,haute
+1997,2614.043299,haute
+1998,2642.856163,haute
+1999,2695.755972,haute
+2000,2722.739448,haute
+2001,2782.651912,haute
+2002,2843.870000,haute
+2003,2886.530000,haute
+2004,2935.600000,haute
+2005,2994.310000,haute
+2006,3048.200000,haute
+2007,3103.060000,haute
+2008,3162.280000,haute
+2009,3193.900000,haute
+2010,3222.640000,haute
+2011,3290.310000,haute
+2012,3359.400000,haute
+2013,3403.070000,haute
+2014,3403.070000,haute
+2015,3406.470000,haute
+2016,3406.470000,haute
+2017,3433.720000,haute
+2018,3433.720000,haute
+2019,3444.020000,haute
+2020,3478.460000,haute
+2021,3492.370000,haute
+2022,3672.010000,haute
+2023,3701.380000,haute
+2024,3897.550000,haute
+2025,3983.290000,haute
+2026,4019.130000,haute

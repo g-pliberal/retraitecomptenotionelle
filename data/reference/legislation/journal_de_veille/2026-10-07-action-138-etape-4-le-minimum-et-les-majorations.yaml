@@ -1,0 +1,46 @@
+date: "2026-10-07"
+session: "action 138, étape 4 : le minimum et les majorations de la réversion du régime général"
+consulte: >-
+  veille_droit.py (dernière veille consignée : 2026-10-07) ; l'index LEGI, mis à jour
+  des incréments du 6 octobre 2026 (2 incréments, 248 documents), puis textes.py
+  --inscrire ; dans l'index : D. 353-1 (LEGIARTI000006736586, 041968528, 053356066),
+  L. 353-1 (LEGIARTI000025018616, 047453693), L. 351-9 (LEGIARTI000006742677),
+  R. 351-26 (LEGIARTI000025749165), R. 353-1 (LEGIARTI000038790257), R. 353-2
+  (LEGIARTI000006749405), R. 351-30 (LEGIARTI000006750045), L. 353-6
+  (LEGIARTI000019959401), D. 353-4 (LEGIARTI000020791861), R. 353-12
+  (LEGIARTI000020791843), R. 353-13 (LEGIARTI000024113062) ; l'API de la législation
+  de la Cnav : barèmes « Montant minimum de la retraite de réversion », « Plafond de
+  ressources pour la majoration de la retraite de réversion », « Montant maximum »,
+  « Limite forfaitaire de cumul », « Montant minimum de la pension vieillesse de veuve
+  ou de veuf » ; exposés « Montant - retraite de réversion », « Retraite de l'assuré
+  décédé », « Majoration de la retraite de réversion », « Calcul de la majoration »,
+  « Majoration à plusieurs régimes », « Condition de ressources », « Évaluation des
+  ressources », « Majoration pour enfants » ; circulaires Cnav n° 2022-26 (§ 3 et 3.6)
+  et n° 2018-4 (§ 5), en PDF.
+trouve: >-
+  Le minimum de D. 353-1 est entier à soixante trimestres du défunt au régime général
+  — et au régime des indépendants depuis 2020 —, réduit en soixantièmes en deçà depuis
+  décembre 1982, partagé au prorata des durées des régimes alignés depuis juillet 2004
+  quand elles dépassent ensemble soixante trimestres (exposé de la Cnav) ; la caisse
+  porte la réversion au minimum avant de la réduire pour ressources. Son montant de
+  chaque année, de 1941 à 2026, est au barème de la Cnav, qui redonne celui que l'article
+  écrit pour 2025 (3 983,29 €). La majoration de 10 % s'ajoute à la réversion réduite,
+  hors du plafond (circulaire n° 2022-26, § 3.6), au moins le dixième du minimum
+  (R. 353-2). La majoration de 11,1 % (L. 353-6) vaut 11,1 % de la réversion réduite,
+  réduite de ce que les retraites, majorations comprises, dépassent du plafond
+  trimestriel de D. 353-4 (2 400 € en 2010, 3 020,07 € en 2026), due au premier jour du
+  mois qui suit l'âge du taux plein (R. 353-13). La fiche lisait le « minimum prévu à
+  l'article L. 351-9 », qui écarte le minimum depuis juillet 2012, comme le minimum
+  contributif : c'est le seuil du versement forfaitaire unique (R. 351-26), et le
+  paramètre, que le moteur ne lisait pas, est retiré. La base de la réversion est, pour
+  la Cnav, la pension « avant comparaison au minimum et au maximum » : le modèle, qui y
+  garde le minimum contributif, le déclare. Le scénario 1 sert désormais le minimum et
+  les deux majorations ; Destinie 2 concorde au centime sur le minimum (3 701,38 €) et
+  la majoration de 11,1 % (4 112,23 €).
+reste: >-
+  Le reste de l'étape 4 : le maximum de la réversion (54 % du maximum des pensions,
+  surcote en sus), la majoration forfaitaire pour enfant à charge (L. 353-5), le
+  plafond du ménage, la réversion d'un assuré mort avant son départ, le partage entre
+  ex-conjoints (L. 353-3), le remariage, les limites de cumul d'avant 2004 (D. 355-1) ;
+  la base de la réversion sans le minimum contributif ; les montants du minimum
+  d'avant 2004, à confronter aux décrets du Journal officiel que le barème cite.

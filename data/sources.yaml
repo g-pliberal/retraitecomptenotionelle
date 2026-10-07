@@ -1155,6 +1155,32 @@ institutions:
           ou si, depuis avril 2010, celui d'une personne seule n'est pas le
           sien ; lu le 5 octobre 2026.
 
+      - id: cnav_reversion
+        titre: Barèmes du minimum de la réversion, 1941-2026, et du plafond de sa majoration, 2010-2026
+        url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=retraite_reversion_montant_minimum_bar.aspx
+        acces: api
+        statut_integration: automatise
+        cible: >-
+          data/reference/legislation/minimum_reversion.csv ;
+          data/reference/legislation/plafond_majoration_reversion.csv
+        recuperation: scripts/fetch/cnav_reversion.py
+        note: >-
+          Deux barèmes de la base de législation de la Cnav, servis par son API
+          publique : retraite_reversion_montant_minimum_bar, le minimum annuel
+          de la pension de réversion du régime général (D. 353-1) — l'ancienne
+          allocation aux vieux travailleurs salariés — à chaque date depuis la
+          loi du 14 mars 1941, en anciens francs, en francs puis en euros, avec
+          le texte qui fixe chacun ; et
+          retraite_reversion_plafond_ressource_majoration_retraite_reversion_bar,
+          le plafond trimestriel de la majoration de 11,1 % (L. 353-6,
+          D. 353-4) depuis le 1er janvier 2010. Le scénario 1 en lit le montant
+          en vigueur au 31 décembre de chaque année, au niveau `haute`. Le
+          récupérateur refuse d'écrire si les barèmes ne redonnent pas le
+          minimum que D. 353-1 écrit pour 2025 (3 983,29 €) et le plafond de
+          D. 353-4 pour 2010 (2 400 €), si un montant baisse, ou si le plafond
+          ne garde pas avec le minimum le rapport de 2010 ; lu le 7 octobre
+          2026.
+
       - id: cnav_montants_minimum
         titre: Barèmes du minimum contributif et du plafond d'écrêtement, 1983-2026
         url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=retraite_personnelle_montant_minimum_bar.aspx

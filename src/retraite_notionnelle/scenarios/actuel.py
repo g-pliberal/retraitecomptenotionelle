@@ -1277,6 +1277,37 @@ class Reversions:
                 "regimes": list(brute.get("regimes") or ())}
             for regime in brute.get("regimes") or ():
                 self._par_regime.setdefault(regime, nom)
+        legislation = racine / "reference" / "legislation"
+        #: Le minimum annuel de la réversion du régime général (D. 353-1) et le
+        #: plafond trimestriel de sa majoration de 11,1 % (D. 353-4) : une
+        #: ancre par année, le montant en vigueur à son 31 décembre.
+        self._minimum = MinimumVieillesse._lire(legislation / "minimum_reversion.csv")
+        self._plafond_majoration = MinimumVieillesse._lire(
+            legislation / "plafond_majoration_reversion.csv")
+
+    @staticmethod
+    def _en_vigueur(table: dict[int, tuple[float, Fiabilite]],
+                    annee: int) -> tuple[float, Fiabilite] | None:
+        """L'ancre de l'année, ou la dernière qui la précède ; ``None`` avant la
+        première. Les montants d'une réversion sont ceux d'une année passée ou
+        de l'année courante : la série n'a pas à se projeter."""
+        anterieures = [a for a in table if a <= annee]
+        return table[max(anterieures)] if anterieures else None
+
+    def minimum(self, annee: int) -> tuple[float, Fiabilite] | None:
+        """Le minimum annuel de la réversion du régime général, en euros de
+        l'année ``annee`` ; ``None`` avant la loi du 14 mars 1941."""
+        return self._en_vigueur(self._minimum, annee)
+
+    def plafond_majoration(self, annee: int) -> tuple[float, Fiabilite] | None:
+        """Le plafond TRIMESTRIEL de la majoration de 11,1 % (L. 353-6), en
+        euros de l'année ``annee`` ; ``None`` avant 2010."""
+        return self._en_vigueur(self._plafond_majoration, annee)
+
+    def series(self) -> dict[str, dict]:
+        """Les deux séries, sous le nom que le paquet du site leur donne."""
+        return {"minimum_reversion": dict(self._minimum),
+                "plafond_majoration_reversion": dict(self._plafond_majoration)}
 
     def fiches(self) -> dict[str, dict]:
         """Les fiches préparées, sous leur nom : ce que le paquet du site porte."""

@@ -1441,6 +1441,57 @@ def test_le_bareme_de_l_aspa_est_refuse_s_il_contredit_l_article():
     assert not any("2006-01-01 : le plafond" in e for e in erreurs), erreurs
 
 
+def _reversion_cnav():
+    return _charger_script("cnav_reversion", "scripts", "fetch", "cnav_reversion.py")
+
+
+def test_le_minimum_de_reversion_se_lit_en_euros_en_francs_et_en_anciens_francs():
+    """Le barème de la Cnav écrit le minimum en anciens francs jusqu'en 1959, en
+    francs jusqu'en 2001, en euros depuis ; une cellule qui porte deux montants
+    — les grandes villes, puis les petites — donne le premier."""
+    module = _reversion_cnav()
+    assert module._montant("3 983,29 €") == 3983.29
+    assert module._montant("14 800,00 F") == pytest.approx(14800 / 6.55957)
+    assert module._montant(
+        "72 380 AF 68 640 AF pour les villes de moins de 5 000 habitants") == pytest.approx(
+        723.80 / 6.55957)
+    assert module._montant("39000 AF 36 000 AF pour les villes") == pytest.approx(
+        390 / 6.55957)
+
+
+def test_le_minimum_de_reversion_garde_le_montant_que_l_annee_laisse_en_place():
+    """Une ancre par année, celle du 31 décembre : juillet 2022 l'emporte sur
+    janvier, et 2016, sans revalorisation, garde le montant d'octobre 2015."""
+    module = _reversion_cnav()
+    lignes = [{"date": "2015-10-01", "montant": 3406.47},
+              {"date": "2017-10-01", "montant": 3433.72},
+              {"date": "2022-01-01", "montant": 3530.78},
+              {"date": "2022-07-01", "montant": 3672.01}]
+    ancres = module.ancres_annuelles(lignes)
+    assert (ancres[2016], ancres[2017], ancres[2021], ancres[2022]) == (
+        3406.47, 3433.72, 3433.72, 3672.01)
+
+
+def test_le_bareme_de_la_reversion_est_refuse_s_il_contredit_les_articles():
+    """Le minimum doit redonner celui que D. 353-1 écrit pour 2025, le plafond
+    celui de D. 353-4 pour 2010, et les deux garder le rapport de 2010, puisqu'ils
+    se revalorisent ensemble : sinon, rien ne s'écrit."""
+    module = _reversion_cnav()
+
+    def ligne(date, montant):
+        return {"date": date, "montant": montant, "mensuel": None, "reference": "Circulaire"}
+
+    minimums = [ligne("2009-04-01", 3193.90), ligne("2025-01-01", 3983.29)]
+    plafonds = [ligne("2010-01-01", 2400.00), ligne("2025-01-01", 2993.14)]
+    assert module.controler(minimums, plafonds) == []
+    erreurs = module.controler([ligne("2009-04-01", 3193.90), ligne("2025-01-01", 3983.30)],
+                               [ligne("2010-01-01", 2400.00), ligne("2025-01-01", 2993.14)])
+    assert any(e.startswith("minimum|2025-01-01 : attendu 3983.29") for e in erreurs), erreurs
+    erreurs = module.controler(minimums, [ligne("2010-01-01", 2400.00),
+                                          ligne("2025-01-01", 3100.00)])
+    assert any(e.startswith("plafond 2025-01-01 :") for e in erreurs), erreurs
+
+
 def test_l_aspa_lit_l_annuel_du_texte_et_non_douze_fois_le_mensuel():
     """8 507,49 € par an, et non 708,95 × 12 = 8 507,40 €."""
     module = _aspa()

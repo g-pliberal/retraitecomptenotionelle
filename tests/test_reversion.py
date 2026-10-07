@@ -157,6 +157,164 @@ def test_deux_ans_de_mariage_avant_2004_sauf_enfant(simulateur, enfants, attendu
     assert lignes[1][2:4] == attendu
 
 
+# -- le minimum et les majorations du régime général ------------------------------------
+
+def _servies(simulateur, carriere, pensions, annee, durees=None):
+    """Chaque ligne de la réversion, sous son régime."""
+    resultat = reversion(simulateur.scenario_actuel,
+                         [(regime, base, HAUTE) for regime, base in pensions],
+                         carriere, annee, durees=durees)
+    return {r.regime: r for r in resultat.regimes}
+
+
+def test_les_series_du_minimum_et_du_plafond_de_la_majoration(simulateur):
+    """Les montants que D. 353-1 et D. 353-4 écrivent, et ce que la Cnav sert
+    au 31 décembre de chaque année (barèmes de la caisse) : 3 983,29 € en
+    2025, le minimum de la circulaire n° 2023-3 en 2023 ; 2 400 € par
+    trimestre au 1er janvier 2010, 2 421,60 € depuis avril."""
+    table = simulateur.scenario_actuel.reversions
+    assert table.minimum(2025)[0] == 3983.29
+    assert table.minimum(2023)[0] == 3701.38
+    assert round(table.minimum(1982)[0], 2) == round(10_900 / 6.55957, 2)
+    assert table.minimum(1940) is None
+    assert table.plafond_majoration(2010)[0] == 2421.60
+    assert table.plafond_majoration(2009) is None
+
+
+def test_la_reversion_est_portee_au_minimum_entier_a_soixante_trimestres(simulateur):
+    """D. 353-1 : la réversion ne peut être inférieure au minimum quand le défunt
+    a quinze ans d'assurance au régime général — 54 % d'une petite pension, 540 €,
+    deviennent 3 701,38 € en 2023. La survivante n'a pas encore l'âge du taux
+    plein : la majoration de 11,1 % attend."""
+    carriere = _carriere(simulateur, 1950, 62.0, "1960", "2023-05-10")
+    ligne = _servies(simulateur, carriere, [("regime_general", 1000.0)], 2023,
+                     {"regime_general": 80})["regime_general"]
+    assert (round(ligne.montant, 2), ligne.motif, ligne.minimum) == (
+        3701.38, "minimum", 3701.38)
+
+
+def test_sous_soixante_trimestres_le_minimum_se_reduit_en_soixantiemes(simulateur):
+    """« Lorsque cette durée est inférieure à quinze années, le montant minimum
+    de base est réduit à autant de soixantièmes que l'assuré justifiait de
+    trimestres d'assurance » (D. 353-1) : trente trimestres, la moitié."""
+    carriere = _carriere(simulateur, 1950, 62.0, "1960", "2023-05-10")
+    ligne = _servies(simulateur, carriere, [("regime_general", 1000.0)], 2023,
+                     {"regime_general": 30})["regime_general"]
+    assert round(ligne.montant, 2) == round(3701.38 / 2, 2)
+
+
+@pytest.mark.parametrize("conjoint, deces, annee, parts", [
+    ("1938", "2000-05-10", 2000, (50 / 60, 40 / 60)),
+    ("1960", "2023-05-10", 2023, (50 / 90, 40 / 90)),
+])
+def test_depuis_juillet_2004_le_minimum_se_partage_entre_les_regimes_alignes(
+        simulateur, conjoint, deces, annee, parts):
+    """Avant juillet 2004, chaque régime proratise le minimum sur ses propres
+    soixantièmes ; depuis, quand les régimes alignés comptent ensemble plus de
+    soixante trimestres, chacun au prorata de sa durée sur leur total (exposé de
+    la Cnav, « Montant - retraite de réversion » ; circulaire n° 2005-17)."""
+    carriere = _carriere(simulateur, 1935, 62.0, conjoint, deces)
+    minimum = simulateur.scenario_actuel.reversions.minimum(annee)[0]
+    servies = _servies(simulateur, carriere,
+                       [("regime_general", 1000.0), ("msa_salaries", 1000.0)], annee,
+                       {"regime_general": 50, "msa_salaries": 40})
+    assert (round(servies["regime_general"].montant, 2),
+            round(servies["msa_salaries"].montant, 2)) == (
+        round(minimum * parts[0], 2), round(minimum * parts[1], 2))
+
+
+@pytest.mark.parametrize("naissance, depart, deces, annee, part", [
+    (1950, 62.0, "2015-05-10", 2015, 40 / 80),
+    (1960, 64.0, "2025-05-10", 2025, 1.0),
+])
+def test_sous_la_liquidation_unique_le_minimum_compte_tous_les_regimes_alignes(
+        simulateur, naissance, depart, deces, annee, part):
+    """La liquidation unique (née en 1953 et après, pensions de juillet 2017 et
+    après) sert une pension pour le régime général et les salariés agricoles :
+    la réversion se calcule « dans les mêmes conditions » (exposé de la Cnav),
+    et quarante trimestres dans chacun valent quatre-vingts. Sans elle, chaque
+    régime sert sa part du minimum, la moitié."""
+    carriere = _carriere(simulateur, naissance, depart, "1966", deces)
+    minimum = simulateur.scenario_actuel.reversions.minimum(annee)[0]
+    ligne = _servies(simulateur, carriere, [("msa_salaries", 1000.0)], annee,
+                     {"regime_general": 40, "msa_salaries": 40})["msa_salaries"]
+    assert round(ligne.minimum, 2) == round(minimum * part, 2)
+
+
+def test_avant_decembre_1982_le_minimum_est_servi_entier(simulateur):
+    """« Avant le 01/12/1982, la retraite de réversion était portée au minimum
+    AVTS entier » (exposé de la Cnav ; circulaire n° 31/75) : dix trimestres ne
+    le réduisent pas."""
+    carriere = _carriere(simulateur, 1920, 60.0, "1925", "1982-10-15")
+    ligne = _servies(simulateur, carriere, [("regime_general", 1000.0)], 1982,
+                     {"regime_general": 10})["regime_general"]
+    assert round(ligne.montant, 2) == round(10_900 / 6.55957, 2)
+
+
+def test_trois_enfants_majorent_la_reversion_reduite_sans_descendre_sous_le_dixieme_du_minimum(
+        simulateur):
+    """La réversion, portée au minimum, est réduite du dépassement du plafond ;
+    la majoration de 10 % s'ajoute ensuite, hors du plafond (circulaire Cnav
+    n° 2022-26, § 3.6), et ne peut être inférieure au dixième du minimum de la
+    réversion (R. 353-2)."""
+    ressources = _plafond(simulateur, 2023) - 2000.0
+    carriere = _carriere(simulateur, 1950, 62.0, "1953-01-15", "2023-05-10",
+                         ressources=ressources, enfants=3)
+    ligne = _servies(simulateur, carriere, [("regime_general", 6000.0)], 2023,
+                     {"regime_general": 160})["regime_general"]
+    assert ligne.motif == "ecretee"
+    assert round(ligne.majoration_trois_enfants, 2) == round(0.10 * 3701.38, 2)
+    assert round(ligne.montant, 2) == round(2000.0 + 0.10 * 3701.38, 2)
+
+
+@pytest.mark.parametrize("ressources, majoration", [
+    (3000.0, 0.111 * 3701.38),
+    (7200.0, 4 * 2781.31 - 7200.0 - 3701.38),
+    (10000.0, 0.0),
+])
+def test_la_majoration_de_11_1_pour_cent_sous_le_plafond(simulateur, ressources, majoration):
+    """L. 353-6 et D. 353-4 : 11,1 % de la réversion, au survivant qui a l'âge
+    du taux plein — soixante-six ans et deux mois pour la génération 1953 —,
+    réduite de ce que ses retraites, réversion et majoration comprises,
+    dépassent du plafond, 2 781,31 € par trimestre en 2023."""
+    carriere = _carriere(simulateur, 1950, 62.0, "1953-01-15", "2023-05-10",
+                         ressources=ressources)
+    ligne = _servies(simulateur, carriere, [("regime_general", 1000.0)], 2023,
+                     {"regime_general": 160})["regime_general"]
+    assert round(ligne.majoration_petites_retraites, 2) == round(majoration, 2)
+    assert round(ligne.montant, 2) == round(3701.38 + majoration, 2)
+    if majoration:
+        assert ligne.majoration_petites_retraites_effet == ligne.date_effet == "2023-06-01"
+
+
+@pytest.mark.parametrize("conjoint, effet", [
+    ("1960-03-10", "2027-04-01"),
+    ("1960-03-01", "2027-03-01"),
+])
+def test_avant_l_age_du_taux_plein_la_majoration_attend(simulateur, conjoint, effet):
+    """La majoration est due au premier jour du mois qui suit l'âge du taux plein
+    (R. 353-13), le jour même de l'anniversaire pour qui est né le premier d'un
+    mois : écrite à part, avec sa date, hors du montant que la réversion sert
+    d'ici là."""
+    carriere = _carriere(simulateur, 1950, 62.0, conjoint, "2023-05-10", ressources=3000.0)
+    ligne = _servies(simulateur, carriere, [("regime_general", 1000.0)], 2023,
+                     {"regime_general": 160})["regime_general"]
+    assert round(ligne.montant, 2) == 3701.38
+    assert round(ligne.majoration_petites_retraites, 2) == round(0.111 * 3701.38, 2)
+    assert ligne.majoration_petites_retraites_effet == effet
+
+
+def test_avant_2010_la_majoration_n_existe_pas(simulateur):
+    """L. 353-6 n'est en vigueur que depuis le 1er janvier 2010 : la version d'une
+    réversion de 2009 ne porte pas de taux de majoration."""
+    carriere = _carriere(simulateur, 1930, 62.0, "1935-01-15", "2009-05-10",
+                         ressources=1000.0)
+    ligne = _servies(simulateur, carriere, [("regime_general", 1000.0)], 2009,
+                     {"regime_general": 160})["regime_general"]
+    assert (ligne.majoration_petites_retraites, ligne.majoration_petites_retraites_effet) == (
+        0.0, None)
+
+
 # -- la fonction publique -----------------------------------------------------------
 
 @pytest.mark.parametrize("mariage, deces, servie", [
@@ -295,14 +453,20 @@ def test_la_majoration_pour_enfants_du_defunt_est_reversee_en_entier(simulateur)
 
 def test_l_echeancier_reverse_la_majoration_de_l_agirc_arrco(contexte):
     """La même carrière, avec trois enfants et sans : le régime général ne
-    reverse pas la majoration du défunt, l'Agirc-Arrco la reverse en entier."""
+    reverse pas la majoration du défunt, mais majore de 10 % la réversion du
+    survivant de trois enfants (L. 353-1, R. 353-2) ; l'Agirc-Arrco reverse
+    la majoration du défunt en entier."""
     def lignes(enfants):
         sortie = contexte.simuler(Saisie.depuis_requete({
             "naissance": "1958", "liquidation": "62", "conjoint": "1960",
             "deces": "2023-05", "enfants": enfants})).dictionnaire()["reversion"]
         return {l["regime"]: l for l in sortie["regimes"]}
     sans, avec = lignes("0"), lignes("3")
-    assert avec["regime_general"]["montant"] == pytest.approx(sans["regime_general"]["montant"])
+    assert avec["regime_general"]["majoration"] == 0.0
+    assert avec["regime_general"]["majoration_trois_enfants"] == pytest.approx(
+        0.10 * sans["regime_general"]["montant"])
+    assert avec["regime_general"]["montant"] == pytest.approx(
+        1.10 * sans["regime_general"]["montant"])
     for regime in ("arrco", "agirc_arrco"):
         assert avec[regime]["majoration"] > 0
         assert avec[regime]["montant"] == pytest.approx(

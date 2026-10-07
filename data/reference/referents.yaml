@@ -2110,16 +2110,22 @@ referents:
           Il réverse au survivant de trois enfants 54 % de la pension
           du défunt revalorisée, moins sa majoration pour enfants
           non revalorisée (`src/Reversion.cpp`, `pension_rg -
-          liq->majo_3enf_rg`) : la base excède de 0,7 % en cinq ans
-          celle qui l'ôte ; et il oppose au plafond la réversion sans
-          sa propre majoration de 10 %.
+          liq->majo_3enf_rg`) : la base excède de 0,6 % en cinq ans
+          celle qui l'ôte. Qu'il oppose au plafond la réversion sans sa
+          propre majoration de 10 %, que ce registre lui reprochait
+          jusqu'au 7 octobre 2026, est ce que fait la caisse : la
+          majoration pour enfants « est égale à 10 % du montant non
+          majoré de la retraite de réversion », réduite pour ressources,
+          et s'y ajoute (circulaire Cnav n° 2022-26, § 3.6) ; le dépôt
+          fait de même depuis ce jour.
         tranche: >-
-          L. 353-1 (LEGIARTI000047453693) : « Lorsque son montant
-          majoré des ressources […] excède les plafonds prévus, la
-          pension de réversion est réduite » ; la majoration du défunt
-          n'entre pas dans la pension réversible ; l'écart est le sien
+          la majoration du défunt n'entre pas dans la pension
+          réversible, que la Cnav calcule « sans avantages
+          complémentaires » (exposé « Retraite de l'assuré décédé ») ;
+          l'écart, −0,6 % sur ce cas, est le sien
         preuve: >-
-          tests/temoins/destinie_2.json, cas reversion_trois_enfants
+          tests/temoins/destinie_2.json, cas reversion_trois_enfants ;
+          tests/test_destinie.py, ECARTS
       - constat: >-
           Il reverse la majoration pour enfants du défunt à l'Agirc-Arrco
           avec la retraite qu'elle majore, au taux de la réversion, 60 %.
@@ -2229,16 +2235,14 @@ referents:
           tests/test_destinie.py, VALEUR_DU_JOUR
     fait_mieux:
       - quoi: >-
-          Il calcule la réversion du régime général entière : minimum
-          proratisé sous quinze ans et maximum, majoration de 10 % du
-          survivant de trois enfants, réversion d'un assuré mort avant son
-          départ, plafond de ressources du ménage, majoration de 11,1 % sous
-          plafond, partage entre ex-conjoints au prorata des mariages,
-          remariage ; son minimum de 2024, revalorisé de 2,2 %, donne celui de
-          2025 que lit le dépôt. Le dépôt la déclare absente
-          (`data/reference/regles/reversion.yaml:444-470`,
-          `droit/reversion.py:19-24`, `docs/limites.md:73-86`) ; Destinie,
-          exécuté à part, en est le témoin, sorties seules.
+          Il calcule le minimum de la réversion du régime général,
+          proratisé sous quinze ans, la majoration de 10 % du survivant de
+          trois enfants et la majoration de 11,1 % sous plafond ; son
+          minimum de 2024, revalorisé de 2,2 %, donne celui de 2025 que lit
+          le dépôt. Le dépôt les déclarait sans les appliquer
+          (`data/reference/regles/reversion.yaml`, approximations ;
+          `droit/reversion.py`, en-tête) ; Destinie, exécuté à part, en est
+          le témoin, sorties seules.
         preuve: >-
           `src/Reversion.cpp:23-49, 76-106`, `src/Retraite.cpp:235-268,
           300-334, 347-357, 365-380` et `src/Retraite.h:274`, au commit
@@ -2247,12 +2251,26 @@ referents:
           Exécuté le 5 octobre 2026 (tests/temoins/destinie_2.json,
           tests/test_destinie.py), pour un décès de janvier 2023 : il sert
           le minimum de réversion (D. 353-1), 3 701,38 €, quand le dépôt
-          sert 2 189,24 € à la veuve d'une petite pension (−41 %) ; avec la
-          majoration de 11,1 % de la survivante passée l'âge du taux plein
+          servait 2 189,24 € à la veuve d'une petite pension (−41 %) ; avec
+          la majoration de 11,1 % de la survivante passée l'âge du taux plein
           (L. 353-6), 4 112,23 € (−47 %) ; la majoration de 10 % de la
           survivante de trois enfants (L. 353-1, LEGIARTI000047453693, qui
-          renvoie à L. 351-12 ; 10 % par R. 351-30), −9,6 %. La fiche du
-          dépôt en porte les paramètres sans les appliquer.
+          renvoie à L. 351-12 ; 10 % par R. 353-2), −9,6 %. Repris le
+          7 octobre 2026 (action 138, étape 4) : le minimum, au barème de la
+          Cnav de 1941 à 2026 (`legislation/minimum_reversion.csv`), et la
+          majoration de 11,1 % concordent au centime ; la majoration de 10 %
+          à l'écart près de la base de Destinie (−0,6 %, déclaré).
+        etat: repris
+        chantier: "138.4"
+      - quoi: >-
+          Il calcule le reste de la réversion du régime général : le
+          maximum, la réversion d'un assuré mort avant son départ, le
+          plafond de ressources du ménage, le partage entre ex-conjoints au
+          prorata des mariages, le remariage. Le dépôt les déclare absents
+          (`data/reference/regles/reversion.yaml`, approximations).
+        preuve: >-
+          `src/Reversion.cpp:23-49, 76-106`, `src/Retraite.cpp:235-268,
+          300-334, 347-357, 365-380`, au commit `4c1d34b`
         etat: a_reprendre
         chantier: "138.4"
       - quoi: >-

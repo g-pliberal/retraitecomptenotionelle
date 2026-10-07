@@ -1,0 +1,41 @@
+# Plafond de la majoration de 11,1 % de la réversion, en euros par TRIMESTRE
+# -------------------------------------------------------------------------
+# source_id: cnav_reversion
+#
+# LA RÈGLE. Depuis le 1er janvier 2010, la pension de réversion du régime
+# général est majorée de 11,1 % quand le survivant a l'âge du taux plein
+# (L. 351-8, 1°) et que la somme de ses retraites personnelles et de réversion,
+# de base et complémentaires, n'excède pas un plafond ; « lorsque le total de
+# cette majoration et de ces avantages excède ce plafond, la majoration est
+# réduite à due concurrence du dépassement » (L. 353-6). Le plafond est de
+# 2 400 € par trimestre au 1er janvier 2010, revalorisé comme les pensions
+# (D. 353-4). Le scénario 1 le lit dans `droit/reversion.py`.
+#
+# D'OÙ VIENNENT CES MONTANTS. Du barème « Plafond de ressources pour la
+# majoration de la retraite de réversion » de la Cnav
+# (`scripts/fetch/cnav_reversion.py`), qui cite pour chaque date le décret ou
+# la circulaire qui la fixe, et redonne les 2 400 € de D. 353-4 : `haute`. Le
+# récupérateur vérifie aussi que le plafond garde avec le minimum de la
+# réversion (`minimum_reversion.csv`) le rapport de 2010, à un dix-millième
+# près : les deux se revalorisent comme les pensions, aux mêmes dates.
+#
+# UNE ANCRE PAR ANNÉE : le plafond en vigueur au 31 décembre de l'année —
+# 2 421,60 € en 2010, celui du 1er avril.
+annee,valeur,fiabilite
+2010,2421.600000,haute
+2011,2472.450000,haute
+2012,2524.370000,haute
+2013,2557.180000,haute
+2014,2557.180000,haute
+2015,2559.730000,haute
+2016,2559.730000,haute
+2017,2580.200000,haute
+2018,2580.200000,haute
+2019,2587.940000,haute
+2020,2613.810000,haute
+2021,2624.260000,haute
+2022,2759.240000,haute
+2023,2781.310000,haute
+2024,2928.710000,haute
+2025,2993.140000,haute
+2026,3020.070000,haute

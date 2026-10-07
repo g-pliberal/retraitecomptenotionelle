@@ -1393,6 +1393,14 @@ def _minimum_vieillesse(couple: bool = False) -> dict:
             for annee, (valeur, fiabilite) in sorted(table.items())}
 
 
+def _series_de_la_reversion() -> dict:
+    """Le minimum de la réversion du régime général et le plafond de sa
+    majoration de 11,1 %, par année : ``{nom: {annee: [valeur, fiabilité]}}``."""
+    return {nom: {str(annee): [valeur, int(fiabilite)]
+                  for annee, (valeur, fiabilite) in sorted(table.items())}
+            for nom, table in Reversions(DONNEES).series().items()}
+
+
 def _versions_des_fiches() -> dict:
     """Les fiches de la carte que le moteur lit, réduites à ce qu'il en lit :
     leurs dates qui décident, et chaque version avec ses bornes, son texte et
@@ -1910,6 +1918,7 @@ def construire(bilan: bytes) -> bytes:
         "baremes_trimestre": _baremes_trimestre(),
         "minimum_vieillesse": _minimum_vieillesse(),
         "minimum_vieillesse_couple": _minimum_vieillesse(couple=True),
+        **_series_de_la_reversion(),
         "durees_requises_fonction_publique": _durees_requises_fonction_publique(),
         "durees_requises_avant_soixante_ans": _durees_requises_avant_soixante_ans(),
         "decote_fonction_publique": _decote_fonction_publique(),

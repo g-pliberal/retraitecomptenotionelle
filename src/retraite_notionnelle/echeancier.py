@@ -128,6 +128,10 @@ class Echeancier:
         #: La réversion que le décès de l'assuré ouvre à son conjoint, quand la
         #: chronologie les dit.
         self.reversion: _reversion.Reversion | None = None
+        #: La durée d'assurance de l'assuré dans chaque régime, enfants compris,
+        #: telle que ses départs l'ont comptée : le minimum de la réversion du
+        #: régime général la proratise (D. 353-1).
+        self.durees_au_depart: dict[str, int] = {}
         #: La retraite progressive que la carrière demande, sa liquidation
         #: provisoire, et, ouverte, le plancher que les départs gardent.
         self.progressive: _progressive.Progressive | None = None
@@ -280,7 +284,8 @@ class Echeancier:
             carriere, carriere.deces)
         self.reversion = _reversion.reversion(self.moteur, pensions, carriere, annee,
                                               en_capital=en_capital,
-                                              majorations=majorations)
+                                              majorations=majorations,
+                                              durees=self.durees_au_depart)
         survivant = carriere.conjoint.personne
         evenement = Evenement(id=f"reversion_{survivant}", date=_reversion.mois_suivant(
             carriere.deces), personnes=(survivant,), vise={"regimes": "du défunt"},
@@ -301,7 +306,8 @@ class Echeancier:
         annee, pensions, en_capital, majorations = self._pensions_au_deces(carriere, deces)
         self.reversion = _reversion.reversion(self.moteur, pensions, carriere, annee,
                                               deces_suppose=deces, en_capital=en_capital,
-                                              majorations=majorations)
+                                              majorations=majorations,
+                                              durees=self.durees_au_depart)
 
     def _pensions_au_deces(self, carriere: Carriere, deces: str) -> tuple[
             int, list[tuple[str, float, Fiabilite]], frozenset[str], dict[str, float]]:
@@ -409,6 +415,7 @@ class Echeancier:
             >= _invalidite.age_de_l_aspa(self.moteur, liquidee), contexte,
             carriere=liquidee)
         self.au_depart = resultat_actuel(liquidation, foyer)
+        self.durees_au_depart = dict(liquidation.releve.durees.trimestres_par_regime)
         self._inscrire(evenement, f"liquidation_{evenement.id}", "liquidation", liquidation,
                        evenement.date)
         self._composantes(evenement, liquidation)
@@ -441,6 +448,13 @@ class Echeancier:
             self._composantes(evenement, liquidation)
         self.au_depart = resultat_des_departs(
             self.moteur, carriere, departs, liquidations, contexte)
+        # Chaque départ compte les durées de ses régimes : la plus longue que
+        # l'un d'eux a comptée dans un régime est la sienne.
+        self.durees_au_depart = {}
+        for liquidation in liquidations:
+            for code, trimestres in liquidation.releve.durees.trimestres_par_regime.items():
+                self.durees_au_depart[code] = max(self.durees_au_depart.get(code, 0),
+                                                  trimestres)
         foyer = _foyer.foyer_et_net(
             self.moteur, carriere.personne, declare.date, carriere.annee_liquidation,
             somme_ordonnee(p.montant for p in self.au_depart.pensions_par_regime) + somme_ordonnee(

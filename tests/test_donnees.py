@@ -504,6 +504,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # Le couple : l'article certifie six années, la Cnav transcrit les autres.
         "minimum_vieillesse_couple": "legislation/minimum_vieillesse_couple.csv",
         "minimum_vieillesse_couple_cnav": "legislation/minimum_vieillesse_couple.csv",
+        # La réversion du régime général : son minimum et le plafond de sa
+        # majoration, que la Cnav transcrit (action 138, étape 4).
+        "minimum_reversion_cnav": "legislation/minimum_reversion.csv",
+        "plafond_majoration_reversion_cnav": "legislation/plafond_majoration_reversion.csv",
         "minimum_garanti_reference": "legislation/minimum_garanti_montants.csv",
         "esperances_vie": "mortalite/esperances_vie.csv",
         "esperance_65_derivee": "mortalite/esperances_vie.csv",

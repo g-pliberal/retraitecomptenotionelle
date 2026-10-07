@@ -13,14 +13,18 @@
  * (`reversion_agirc_arrco`), le RAFP (`reversion_rafp`),
  * l'Ircantec (`reversion_ircantec`), la complémentaire des indépendants
  * (`reversion_rci`). Les autres régimes n'ont pas encore de fiche : leur ligne
- * le dit, sans montant. Ce qui n'est pas encore porté, et les montants — ceux
- * de l'année du décès —, sont dits dans l'en-tête du Python. Sans décès
- * déclaré, l'échéancier liquide une réversion d'essai pour un décès supposé
- * juste après le départ (présomption `deces_apres_le_depart`).
+ * le dit, sans montant. Le régime général et les régimes alignés : le taux,
+ * porté au minimum de D. 353-1, réduit du dépassement du plafond, majoré de
+ * 10 % pour trois enfants (R. 353-2), puis de 11,1 % sous le plafond de
+ * L. 353-6. Ce qui n'est pas encore porté, et les montants — ceux de l'année
+ * du décès —, sont dits dans l'en-tête du Python. Sans décès déclaré,
+ * l'échéancier liquide une réversion d'essai pour un décès supposé juste après
+ * le départ (présomption `deces_apres_le_depart`).
  */
 
 import * as chrono from "../chronologie.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
+import { REGIMES_ALIGNES, luraApplicable } from "./coordonner.js";
 
 /** La version du schéma que `Reversion.donnees` suit. */
 export const SCHEMA_VERSION = 1;
@@ -28,6 +32,7 @@ export const SCHEMA_VERSION = 1;
 /** Ce que dit une ligne dont le montant est nul, ou qui n'est pas servie en entier. */
 export const MOTIFS = Object.freeze({
   servie: "servie",
+  minimum: "portée au minimum de la réversion (D. 353-1)",
   ecretee: "réduite à due concurrence du plafond de ressources",
   ressources: "ressources au-dessus du plafond",
   mariage: "condition d'antériorité ou de durée du mariage non remplie",
@@ -49,6 +54,19 @@ export const MOITIE_SOUS_CONDITION_DE_MARIAGE = Object.freeze([
   "reversion_fonction_publique", "reversion_crpcen",
 ]);
 
+/**
+ * Les régimes dont les durées d'assurance du défunt s'additionnent pour
+ * proratiser le minimum de la réversion du régime général depuis le 1er juillet
+ * 2004 : voir le Python.
+ */
+export const REGIMES_DU_MINIMUM = Object.freeze([
+  "regime_general", "msa_salaries", "msa_non_salaries", "organic", "cancava", "rsi",
+  "cnavpl", "cavimac",
+]);
+
+/** La majoration de L. 353-6 ne prend pas effet avant cette date. */
+export const DEBUT_DE_LA_MAJORATION = "2010-01-01";
+
 /** La réversion d'un régime du défunt. */
 export class ReversionRegime {
   /**
@@ -57,7 +75,9 @@ export class ReversionRegime {
    * l'âge requis.
    */
   constructor({ regime, base, montant, motif, fiche = null, version = null, texte = null,
-    taux = 0.0, date_effet = null, fiabilite = Fiabilite.ESTIMEE, majoration = 0.0 }) {
+    taux = 0.0, date_effet = null, fiabilite = Fiabilite.ESTIMEE, majoration = 0.0,
+    minimum = 0.0, majoration_trois_enfants = 0.0, majoration_petites_retraites = 0.0,
+    majoration_petites_retraites_effet = null }) {
     this.regime = regime;
     this.base = base;
     this.montant = montant;
@@ -71,7 +91,20 @@ export class ReversionRegime {
     // La part du montant qui reverse la majoration pour enfants du défunt,
     // hors du taux : l'Agirc-Arrco la reverse en entier depuis 2019.
     this.majoration = majoration;
+    // Le minimum de D. 353-1, soixantièmes et prorata faits ; 0 sans lui.
+    this.minimum = minimum;
+    // La majoration de 10 % du survivant de trois enfants, comprise dans le montant.
+    this.majoration_trois_enfants = majoration_trois_enfants;
+    // La majoration de 11,1 % (L. 353-6) et le jour où elle commence :
+    // comprise dans le montant quand elle commence à la date d'effet, à part sinon.
+    this.majoration_petites_retraites = majoration_petites_retraites;
+    this.majoration_petites_retraites_effet = majoration_petites_retraites_effet;
     Object.freeze(this);
+  }
+
+  /** Une copie, ces champs changés. */
+  avec(changes) {
+    return new ReversionRegime({ ...this, ...changes });
   }
 
   donnees() {
@@ -79,7 +112,10 @@ export class ReversionRegime {
       regime: this.regime, base: this.base, taux: this.taux, montant: this.montant,
       motif: this.motif, date_effet: this.date_effet, fiche: this.fiche,
       version: this.version, texte: this.texte, fiabilite: nomFiabilite(this.fiabilite),
-      majoration: this.majoration,
+      majoration: this.majoration, minimum: this.minimum,
+      majoration_trois_enfants: this.majoration_trois_enfants,
+      majoration_petites_retraites: this.majoration_petites_retraites,
+      majoration_petites_retraites_effet: this.majoration_petites_retraites_effet,
     };
   }
 }
@@ -237,6 +273,106 @@ function mariageIrcantec(parametres, conjoint, naissance, deces, depart, enfants
 }
 
 /**
+ * Le jour où la majoration de L. 353-6 peut commencer : le premier jour du mois
+ * qui suit l'âge du taux plein, ou l'anniversaire même du survivant né le
+ * premier jour d'un mois. L'âge se compte en mois. Voir le Python.
+ */
+function auTauxPlein(naissance, age) {
+  const mois = Math.round(age * 12);
+  const depuis = Number(naissance.slice(5, 7)) - 1 + mois;
+  const annee = Number(naissance.slice(0, 4)) + Math.floor(depuis / 12);
+  const numero = (depuis % 12) + 1;
+  const atteint = `${String(annee).padStart(4, "0")}-${String(numero).padStart(2, "0")}-`
+    + naissance.slice(8, 10);
+  return naissance.slice(8, 10) === "01" ? atteint : moisSuivant(atteint);
+}
+
+/**
+ * La part du minimum de D. 353-1 que sert la réversion de `regime` : entière
+ * avant le 1er décembre 1982 ; ensuite, autant de soixantièmes que le défunt a
+ * de trimestres dans le régime, soixante au plus ; depuis le 1er juillet 2004,
+ * sa durée dans le régime rapportée à celle de tous les régimes alignés quand
+ * elles dépassent ensemble soixante trimestres dans plusieurs. Sans durées
+ * dites, la part entière. Voir le Python.
+ */
+function partDuMinimum(parametres, regime, durees, lura = false) {
+  if (!parametres.minimum_proratise || durees === null) {
+    return 1.0;
+  }
+  const seuil = Number(parametres.minimum_trimestres);
+  // Sous la liquidation unique, les régimes qu'elle réunit ne comptent que pour
+  // un, et leurs durées s'additionnent : voir le Python.
+  const groupes = REGIMES_DU_MINIMUM.filter((r) => !(lura && REGIMES_ALIGNES.has(r)))
+    .map((r) => [r]);
+  if (lura) {
+    groupes.unshift(REGIMES_DU_MINIMUM.filter((r) => REGIMES_ALIGNES.has(r)));
+  }
+  const dureeDu = (groupe) => groupe.reduce((somme, r) => somme + (durees[r] ?? 0), 0);
+  const sien = groupes.find((groupe) => groupe.includes(regime));
+  const propre = Number(sien === undefined ? (durees[regime] ?? 0) : dureeDu(sien));
+  const alignes = groupes.map(dureeDu).filter((d) => d > 0);
+  let total = 0;
+  for (const duree of alignes) {
+    total += duree;
+  }
+  if (parametres.minimum_tous_regimes && alignes.length > 1 && total > seuil) {
+    return propre / total;
+  }
+  return Math.min(1.0, propre / seuil);
+}
+
+/**
+ * La majoration de 11,1 % des réversions des régimes alignés (L. 353-6),
+ * écrite dans `lignes`, une fois toutes les réversions chiffrées : voir
+ * `_majorer_les_petites_retraites` du Python.
+ */
+function majorerLesPetitesRetraites(moteur, lignes, reduites, conjoint, ressources, annee) {
+  const eligibles = [...reduites].filter(([, [montant, parametres]]) => montant > 0
+    && parametres.majoration_taux !== null && parametres.majoration_taux !== undefined);
+  const plafond = moteur.reversions.plafondMajoration(annee);
+  const generation = Math.round((Number(conjoint.naissance.slice(0, 4))
+    + (Number(conjoint.naissance.slice(5, 7)) - 1) / 12) * 1000) / 1000;
+  const age = moteur.agesAnnulationDecote.age(generation);
+  if (eligibles.length === 0 || plafond === null || age === null) {
+    return;
+  }
+  const debut = auTauxPlein(conjoint.naissance, age[0]);
+  let servies = 0;
+  for (const ligne of lignes.values()) {
+    servies += ligne.montant;
+  }
+  const retraites = ressources + servies;
+  const theoriques = new Map(eligibles.map(([regime, [montant, parametres]]) => [
+    regime, Number(parametres.majoration_taux) * montant]));
+  const marge = 4 * plafond[0] - retraites;
+  let total = 0;
+  for (const majoration of theoriques.values()) {
+    total += majoration;
+  }
+  if (marge <= 0 || total <= 0) {
+    return;
+  }
+  const servie = Math.min(total, marge);
+  let reversions = 0;
+  for (const [, [montant]] of eligibles) {
+    reversions += montant;
+  }
+  for (const [regime, [montant]] of eligibles) {
+    const majoration = servie === total ? theoriques.get(regime) : servie * montant / reversions;
+    const ligne = lignes.get(regime);
+    const effet = [debut, DEBUT_DE_LA_MAJORATION, ligne.date_effet].reduce(
+      (a, b) => (a > b ? a : b));
+    const comprise = effet <= ligne.date_effet;
+    lignes.set(regime, ligne.avec({
+      montant: ligne.montant + (comprise ? majoration : 0.0),
+      majoration_petites_retraites: majoration,
+      majoration_petites_retraites_effet: effet,
+      fiabilite: Math.min(ligne.fiabilite, plafond[1], age[1]),
+    }));
+  }
+}
+
+/**
  * Les enfants nés au décès qui n'ont pas encore `ans` ans : ceux que la
  * chronologie porte, déclarés ou présumés, et que le modèle tient pour à la
  * charge du survivant.
@@ -254,10 +390,12 @@ function enfantsDeMoinsDe(carriere, deces, ans) {
  * Un régime qui ne lui sert rien n'a rien à reverser, ni celui qui lui a versé
  * son droit en capital, quand la fiche le dit : `enCapital` nomme ces régimes.
  * `decesSuppose` date le décès que la présomption `deces_apres_le_depart`
- * suppose, quand la chronologie n'en dit pas. Voir `reversion` du Python.
+ * suppose, quand la chronologie n'en dit pas. `durees` donne la durée
+ * d'assurance du défunt dans chaque régime, que le minimum du régime général
+ * proratise ; sans elle, il est servi entier. Voir `reversion` du Python.
  */
 export function reversion(moteur, pensions, carriere, annee, decesSuppose = null,
-  enCapital = new Set(), majorations = null) {
+  enCapital = new Set(), majorations = null, durees = null) {
   const conjoint = carriere.conjoint;
   const deces = decesSuppose === null ? carriere.deces : decesSuppose;
   if (deces === null || conjoint === null) {
@@ -383,7 +521,12 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
 
   // Le plafond de ressources est un : les réversions des régimes alignés se
   // l'imputent l'une après l'autre, dans l'ordre de la liquidation.
-  for (const [regime, base, fiabilite] of servies) {
+  const minimumDeLAnnee = table.minimum(annee);
+  const lura = luraApplicable(carriere);
+  // La réversion de chaque régime aligné, réduite, avant ses majorations : ce
+  // que la majoration de 11,1 % multiplie.
+  const reduites = new Map();
+  for (const [regime, base, fiabiliteDuRegime] of servies) {
     const fiche = table.ficheDuRegime(regime);
     if (fiche === null || fiche.id !== "reversion") {
       continue;
@@ -404,10 +547,22 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     const parametres = version.parametres;
     const taux = Number(parametres.taux);
     let montant = taux * base;
+    let motif = "servie";
+    let fiabilite = fiabiliteDuRegime;
+    // Le minimum de D. 353-1, avant les ressources : la caisse porte la
+    // réversion au minimum, puis la réduit du dépassement du plafond.
+    let minimum = 0.0;
+    if (minimumDeLAnnee !== null && parametres.minimum_trimestres) {
+      minimum = minimumDeLAnnee[0] * partDuMinimum(parametres, regime, durees, lura);
+      if (minimum > montant) {
+        montant = minimum;
+        motif = "minimum";
+        fiabilite = Math.min(fiabilite, minimumDeLAnnee[1]);
+      }
+    }
     const plafondAnnuel = Number(parametres.plafond_smic_heures)
       * moteur.macro.smic_horaire.valeur(annee);
     const disponible = plafondAnnuel - ressources - autresBases;
-    let motif = "servie";
     if (!mariageDure(conjoint, deces, enfants, parametres.mariage_minimum_annees)) {
       montant = 0.0;
       motif = "mariage";
@@ -421,8 +576,16 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       motif = "ressources";
     }
     autresBases += montant;
-    lignes.set(regime, ligne(regime, base, montant, motif, fiche, version, taux,
-      dateEffet, fiabilite));
+    // La majoration de 10 % du survivant de trois enfants, sur la réversion
+    // réduite et hors du plafond, au moins le dixième du minimum (R. 353-2).
+    let troisEnfants = 0.0;
+    if (montant > 0 && enfants >= 3) {
+      troisEnfants = Math.max(Number(parametres.majoration_enfants_taux) * montant,
+        Number(parametres.majoration_enfants_minimum ?? 0.0) * minimum);
+    }
+    reduites.set(regime, [montant, parametres]);
+    lignes.set(regime, ligne(regime, base, montant + troisEnfants, motif, fiche, version,
+      taux, dateEffet, fiabilite).avec({ minimum, majoration_trois_enfants: troisEnfants }));
   }
 
   // La complémentaire des indépendants en dernier : ses ressources sont celles
@@ -467,6 +630,8 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
         dateEffet, fiabilite));
     }
   }
+
+  majorerLesPetitesRetraites(moteur, lignes, reduites, conjoint, ressources, annee);
 
   return new Reversion({
     personne: conjoint.personne, defunt: carriere.personne, deces, annee,
