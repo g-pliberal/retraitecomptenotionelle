@@ -100,7 +100,11 @@ dépôt le fait sur elles.
   prend 0,085 point de PIB en 2070, un quart de plus (0,051) ; le passé se
   refait à 12,8 % au pire depuis 2000, contre 16,4 % sur la grille du dépôt
   (12,9 et 19,9). Le modèle ayant changé entre-temps, ces écarts ne disent pas
-  le seul correctif ; ils disent que la population reste justifiée.
+  le seul correctif ; ils disent que la population reste justifiée. Ils
+  précèdent l'étape 3 de l'action, publiée le même soir, qui ramène à la
+  moitié la part des reportés en emploi : la page dit depuis −0,90 point de
+  solde moyen à la proposition, sur la grille du dépôt. La distribution de
+  2020, qui ne lit que le scénario 1, n'en bouge pas.
 - *Le registre.* Le point de MOSART, la distribution simulée confrontée à
   l'observée, est repris, la mesure et son verdict écrits à son point ; les
   treize autres restent à reprendre.
