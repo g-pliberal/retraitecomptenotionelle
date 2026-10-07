@@ -48,6 +48,28 @@ def test_chaque_fichier_fabrique_a_son_etape():
     assert [f for f in fabriques if f not in ecrits] == []
 
 
+def test_une_suite_rouge_n_est_pas_publiee_verte(tmp_path):
+    """L'étape de la suite passe la sortie de pytest dans ``tee``. Sous le
+    ``bash -e`` que GitHub prend quand l'étape ne nomme pas son shell, l'issue
+    du tube est celle de ``tee`` : le 7 octobre 2026, onze courses rouges ont
+    été publiées vertes. L'étape se joue ici sous le shell que GitHub lui
+    donnerait, pytest remplacé par un échec, et doit échouer."""
+    import yaml
+
+    flux = yaml.safe_load((RACINE / ".github" / "workflows" / "tests.yml")
+                          .read_text(encoding="utf-8"))
+    etape = next(e for e in flux["jobs"]["suite"]["steps"] if e.get("id") == "suite")
+    # Les shells de GitHub : `shell: bash` est `bash --noprofile --norc -eo
+    # pipefail {0}` ; sans `shell`, c'est `bash -e {0}`.
+    shell = (["bash", "--noprofile", "--norc", "-eo", "pipefail", "-c"]
+             if etape.get("shell") == "bash" else ["bash", "-e", "-c"])
+    script = etape["run"].replace("python -m pytest", "false")
+    assert script != etape["run"], "l'étape ne lance plus `python -m pytest`"
+    issue = subprocess.run([*shell, script], capture_output=True,
+                           env={**os.environ, "RUNNER_TEMP": str(tmp_path)})
+    assert issue.returncode != 0
+
+
 def test_chaque_etape_a_son_script_et_sait_verifier():
     for etape in regenerer.etapes():
         script = RACINE / "scripts" / etape.script

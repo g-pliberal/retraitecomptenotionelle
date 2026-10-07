@@ -18,6 +18,12 @@ set -euo pipefail
 
 branche=${GITHUB_REF_NAME:?}
 source=$(git rev-parse HEAD)
+# L'issue de l'étape ne suffit pas : un tube sans pipefail l'a dite réussie
+# onze courses de suite, le 7 octobre 2026, sur jusqu'à six échecs. Un échec
+# que la sortie nomme rend la suite rouge.
+if grep -qE '^(FAILED|ERROR) ' "${SORTIE_SUITE:-/dev/null}" 2>/dev/null; then
+    SUITE=echecs_dans_la_sortie
+fi
 etat=vert
 if [ "${FABRICATION:-}" != success ] || [ "${SUITE:-}" != success ]; then
     etat=rouge
