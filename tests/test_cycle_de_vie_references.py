@@ -25,7 +25,8 @@ test, comme dans ``tests/test_trajectoire.py``.
 Ce que la première confrontation a montré, le 7 octobre 2026 :
 
 * **Concordent** — l'espérance de vie à 60 ans des générations 1960 à 2000,
-  à 0,07 an près par sexe : les tables du dépôt sont celles de l'INSEE ; la
+  à 0,02 an près par sexe depuis l'étape 7, publiée le même soir : les tables
+  du dépôt sont celles de l'INSEE ; la
   durée de retraite rapportée à la carrière de TRAJECTOiRE, exactement, sur
   ses cas types du COR, avec un âge de décès par génération ; le rendement
   interne net du cas type n° 2, à 0,3 point près, et son profil décroissant ;
@@ -33,8 +34,9 @@ Ce que la première confrontation a montré, le 7 octobre 2026 :
   coefficient de rente de l'OCDE des hommes.
 * **Contre le dépôt** — la génération 1941, dont les quotients observés sont
   de 5 à 10 % sous ceux de ses voisines à chaque âge de 60 à 83 ans : son
-  espérance de vie à 60 ans dépasse de 0,6 an celle de l'INSEE, et son
-  diviseur en hérite. À reprendre avec les données.
+  espérance de vie à 60 ans dépasse celle de l'INSEE de 0,3 an pour les
+  hommes et de 0,2 pour les femmes, et son diviseur en hérite. À reprendre
+  avec les données.
 * **Des conventions** — le dépôt ne porte pas les contributions d'équilibre
   de l'Agirc-Arrco (AGFF, CEG, CET), que TRAJECTOiRE compte, et cotise à
   l'Arrco au taux minimal, TRAJECTOiRE au taux moyen des entreprises : son
@@ -104,7 +106,7 @@ def simulateur(contexte) -> Simulateur:
 ECARTS_ESPERANCE = {
     1941: ("les quotients observés de la génération 1941 sont de 5 à 10 % sous "
            "ceux de 1940 et de 1942 à chaque âge de 60 à 83 ans ; la table de "
-           "génération de l'INSEE ne montre pas cette marche", 0.55, 0.75),
+           "génération de l'INSEE ne montre pas cette marche", 0.18, 0.40),
 }
 
 
@@ -112,9 +114,10 @@ def test_l_esperance_de_vie_a_60_ans_des_generations_est_celle_de_l_insee(cor, s
     """Le COR publie, avec sa durée de retraite, l'espérance de vie à 60 ans de
     chaque génération de 1940 à 2000, par sexe, du scénario central des
     projections de l'INSEE (figure 3.6, données complémentaires). Le dépôt la
-    retrouve sur ses tables de génération : à 0,1 an près dès la génération
-    1960, qu'il projette ; à 0,45 an près avant, où ses quotients observés
-    d'Eurostat ne sont pas ceux que l'INSEE retient."""
+    retrouve sur ses tables de génération : à 0,05 an près dès la génération
+    1960, dont il lit les quotients projetés de l'INSEE depuis l'étape 7 ; à
+    0,15 an près avant, où ses quotients observés d'Eurostat ne sont pas
+    exactement ceux que l'INSEE retient."""
     mortalite = simulateur.mortalite
     esperances = cor["duree_retraite"]["esperance_60"]
     for generation in range(1940, 2001):
@@ -125,7 +128,7 @@ def test_l_esperance_de_vie_a_60_ans_des_generations_est_celle_de_l_insee(cor, s
                 _, bas, haut = ECARTS_ESPERANCE[generation]
                 assert bas <= ecart <= haut, (generation, sexe, ecart)
             else:
-                tolerance = 0.10 if generation >= 1960 else 0.45
+                tolerance = 0.05 if generation >= 1960 else 0.15
                 assert abs(ecart) <= tolerance, (generation, sexe, ecart)
 
 
@@ -470,11 +473,11 @@ def test_le_patrimoine_retraite_de_l_ocde_se_retrouve_a_la_mortalite_pres(
         ocde, carrieres_ocde, simulateur_ocde):
     """Le patrimoine retraite est le taux de remplacement multiplié par la
     valeur d'un euro de rente : celle-ci, à 1,5 % réel sur la survie de
-    génération, est celle de l'OCDE à 2 % près pour les hommes. Pour les
+    génération, est celle de l'OCDE à 3 % près pour les hommes. Pour les
     femmes, la mortalité de l'ONU que l'OCDE retient les fait vivre plus
     longtemps que celle de l'INSEE que le dépôt suit : leur rente vaut 3 à
     8 % de moins au dépôt."""
-    for sexe, qui, bas, haut in (("H", "hommes", -0.02, 0.02),
+    for sexe, qui, bas, haut in (("H", "hommes", -0.03, 0.03),
                                  ("F", "femmes", -0.08, -0.03)):
         for multiple in ("0.5", "1"):
             comparaison = carrieres_ocde[(sexe, multiple)]

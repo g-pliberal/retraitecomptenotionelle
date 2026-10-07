@@ -616,8 +616,8 @@ institutions:
           types du privé). Il n'alimente aucune valeur :
           `tests/test_cycle_de_vie_references.py` s'y confronte (action 138,
           étape 9). L'espérance de vie à 60 ans des générations 1960 à 2000
-          y est celle des tables du dépôt à 0,07 an près ; celle de la
-          génération 1941 la dépasse de 0,6 an.
+          y est celle des tables du dépôt à 0,02 an près ; celle de la
+          génération 1941 y reste sous celle du dépôt de 0,2 à 0,3 an.
 
       - id: cor_projection_emploi
         titre: >-

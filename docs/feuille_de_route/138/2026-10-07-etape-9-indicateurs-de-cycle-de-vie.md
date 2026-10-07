@@ -133,6 +133,18 @@ simulateur de pilotage, le modèle norvégien, l'IJM, l'ETK, PROST et l'OCDE.
   longtemps que celle de l'INSEE ; 11,1 années de salaire contre 11,5 pour un
   homme, 11,8 contre 13,1 pour une femme.
 
+**Le même soir, après l'étape 7.** Les quotients projetés de l'INSEE, que
+l'étape 7 a substitués à la loi de Gompertz-Makeham et publiés juste après
+celle-ci, rapprochent encore les tables du dépôt de celles du COR :
+l'espérance de vie à 60 ans des générations 1960 à 2000 concorde à 0,02 an
+près, celle des générations 1940 à 1959 à 0,08 an, et l'écart de la
+génération 1941 tombe à +0,32 an pour les hommes et +0,22 pour les femmes —
+la marche de ses quotients observés demeure. Le rendement du cas type n° 2
+ne bouge que d'un centième ; la rente de l'OCDE vaut 1,9 % de plus que la
+sienne pour un homme, 5,1 % de moins pour une femme. Les tolérances du test
+de l'espérance de vie sont resserrées, la bande des hommes de l'OCDE portée à
+3 %.
+
 **Ce que dit la grille** (conventions du dépôt ; `python scripts/cycle_de_vie.py`).
 Le rendement interne réel du système actuel décroît de génération en
 génération : 3,5 % pour le salarié au salaire moyen né en 1940, 1,5 % pour

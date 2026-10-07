@@ -4294,7 +4294,7 @@ referents:
           retrouve le rendement du cas type n° 2 des générations 1955 à
           1970 à 0,3 point près, et l'écart du cadre au non-cadre de la
           génération 2000 à 0,2 point ; l'espérance de vie à 60 ans des
-          générations 1960 à 2000, à 0,07 an près. L'affirmation du site
+          générations 1960 à 2000, à 0,02 an près. L'affirmation du site
           reste `hors_modele` tant qu'aucune page n'affiche le calcul.
         etat: repris
         chantier: "138.9"
@@ -9300,7 +9300,7 @@ referents:
           Repris le 7 octobre 2026 (action 138, étape 9) :
           `cycle_de_vie.py` le calcule sous ses conventions, sur la
           survie de génération du dépôt. Sous ses hypothèses (jeu
-          `ocde_2025`), la valeur d'un euro de rente est la sienne à 2 %
+          `ocde_2025`), la valeur d'un euro de rente est la sienne à 3 %
           près pour un homme ; pour une femme, 3 à 8 % sous la sienne,
           la mortalité de l'ONU la faisant vivre plus longtemps que
           celle de l'INSEE (tests/test_cycle_de_vie_references.py).
