@@ -192,3 +192,72 @@ def test_l_aspa_des_premieres_generations_ne_touche_que_le_passe(parametres):
         assert sans[scenario]["ecart_passe"] >= page[scenario]["ecart_passe"] - 1e-9
     assert sans["notionnel_retroactif"]["ecart_passe"] > (
         page["notionnel_retroactif"]["ecart_passe"] + 0.1)
+
+
+# -- la distribution de l'année de l'enquête (action 138, étape 14) -------------
+
+def test_le_quantile_d_une_grille_est_l_un_de_ses_montants():
+    """Une grille est faite d'atomes, une carrière et son montant : son quantile
+    est le plus petit montant sous lequel tombe au moins le rang du poids."""
+    lot = [(300.0, 2.0), (100.0, 1.0), (200.0, 1.0)]
+    assert G.quantile_pondere(lot, 0.25) == 100.0
+    assert G.quantile_pondere(lot, 0.5) == 200.0
+    assert G.quantile_pondere(lot, 0.51) == 300.0
+    assert G.part_sous(lot, 200.0) == pytest.approx(0.25)
+    assert G.part_sous(lot, 250.0) == pytest.approx(0.5)
+
+
+def test_la_distribution_compte_les_tetes_et_les_euros_de_la_page(parametres):
+    """La distribution de l'année est la population de la page, en têtes : ses
+    poids somment les têtes que ``cout._masses`` compte, et ses montants, la
+    complétude des cohortes ôtée, la masse du scénario 1, des euros constants
+    à ceux de l'année et au mois près."""
+    from dataclasses import replace
+
+    sans = G.parametres_de_la_grille(parametres)
+    grille = G.en_tetes(sans, G.reference())
+    annee = 2020
+    lignes = grille.pensions(annee)
+    entieres = [replace(p, completudes=()) for p in grille.pensionnes]
+    masses, _, tetes = C._masses(entieres, grille.population, annee,
+                                 grille.poids(annee), grille.revalorisation)
+    vers = grille.macro.coefficient_prix(sans.annee_euros_constants, annee) / 12
+    assert sum(p for _, p, _ in lignes) == pytest.approx(tetes[C.TETES_TOUTES], rel=1e-12)
+    assert sum(m * p for m, p, _ in lignes) == pytest.approx(masses["actuel"] * vers,
+                                                             rel=1e-12)
+    assert {s for _, _, s in lignes} == {"F", "H"}
+
+
+def test_la_mesure_appliquee_a_l_enquete_redonne_l_enquete(parametres):
+    """L'enquête, mise en atomes au milieu de ses tranches de cent euros, se
+    confronte à elle-même sans écart aux bornes des tranches, et ses quantiles
+    redonnent ceux que la DREES publie à une tranche près — l'atome est au
+    milieu de la sienne, et la soustraction des résidents à l'étranger
+    (``DistributionPensions``) n'est exacte qu'à quelques dizaines d'euros :
+    la mesure ne mesure que la grille."""
+    from retraite_notionnelle.donnees.distribution import (DistributionPensions,
+                                                           ResidenceRetraites)
+
+    racine = parametres.racine_donnees
+    residence = ResidenceRetraites(racine, 2020)
+    distributions = {sexe: DistributionPensions(racine, sexe, 2020, "france")
+                     for sexe in G.SEXES}
+    lignes = []
+    for sexe in ("F", "H"):
+        effectif = residence.valeur("france", "effectifs", sexe)
+        for tranche in distributions[sexe].tranches:
+            milieu = (tranche.borne_inferieure + 50.0 if not tranche.ouverte
+                      else tranche.borne_inferieure + 1000.0)
+            lignes.append((milieu, tranche.part * effectif, sexe))
+    mesure = G.confronter(lignes, residence, distributions)
+    for sexe in ("F", "H"):
+        lue = mesure[sexe]
+        assert abs(lue["kolmogorov"]) < 1e-9, sexe
+        # Les effectifs publiés sont arrondis au millier : 15 647 milliers de
+        # résidents, quand les deux sexes en font 15 648.
+        assert lue["part"] == pytest.approx(lue["part_eir"], rel=1e-4)
+        for code, publie in lue["quantiles_eir"].items():
+            assert abs(lue["quantiles"][code] - publie) < 100.0, (sexe, code)
+    # L'ensemble n'est pas le mélange des deux sexes au poids des effectifs à
+    # mieux que quelques dixièmes de point : les parts publiées sont arrondies.
+    assert abs(mesure["ensemble"]["kolmogorov"]) < 5e-3

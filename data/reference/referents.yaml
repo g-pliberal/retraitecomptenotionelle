@@ -8110,8 +8110,19 @@ referents:
         preuve: >-
           IJM 2020, § 7, figure 5 : « it tracks very well the
           observed data ».
-        verification: Méthode ; en France, il y faudrait l'EIR, au CASD.
-        etat: a_reprendre
+        verification: >-
+          Méthode, reprise le 7 octobre 2026 sans le CASD : la
+          distribution que l'EIR publie, par sexe, en tranches de
+          cent euros et en quantiles, suffit à confronter une
+          distribution simulée. `scripts/grille_large.py
+          --distribution` y confronte les grilles de la page Coût,
+          en 2020 : les treize cas types servent 1 792 € de moyenne
+          pour 1 536, 8 % des pensions sous 900 € pour 30 % ; la
+          grille élargie, 1 436 €, sert trop aux femmes (1 329 €
+          pour 1 177) et trop peu aux hommes (1 558 € pour 1 957).
+          La comparaison pension par pension reste au CASD (point
+          de CALIPER).
+        etat: repris
         chantier: "138.14"
       - quoi: >-
           Il boucle sur l'offre de travail et un modèle d'équilibre

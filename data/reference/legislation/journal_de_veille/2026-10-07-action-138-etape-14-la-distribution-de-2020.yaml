@@ -1,0 +1,19 @@
+date: "2026-10-07"
+session: "action 138, étape 14, première partie : les pensions de 2020, simulées contre publiées"
+consulte: >-
+  Aucun texte de droit : la session mesure la grille de la page Coût contre
+  l'EIR de 2020 et n'écrit aucune règle. Le classeur « Distribution des pensions
+  mensuelles » de l'EIR 2020, sur l'API de la DREES (jeu 4178), pour l'intitulé de
+  son tableau 1 : « pension mensuelle brute de droit direct (y compris majoration
+  pour trois enfants) », ce que distribution_pensions.csv disait déjà.
+trouve: >-
+  Dans la carte, un défaut de forme et non de droit : les versions supposées des
+  bonifications pour enfants de l'IEG et de la RATP (pensions d'avant juillet
+  2008) et de la CRPCEN (d'avant le 30 décembre 1990) portaient, dans les
+  paramètres que les moteurs lisent, une fiabilité « faible » que ni l'un ni
+  l'autre ne connaît : le calcul de toute mère de ces régimes partie avant ces
+  dates s'arrêtait. Elles portent « estimee » ; leur contenu, leurs bornes et leur
+  hypothèse ne changent pas.
+reste: >-
+  Les textes d'avant 2008 de l'IEG et de la RATP, et le décret n° 51-721 de la
+  CRPCEN, que ces versions supposent sans les avoir lus.

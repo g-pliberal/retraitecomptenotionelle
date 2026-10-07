@@ -56,7 +56,7 @@ versions:
       services_second_de_deux: 8
       beneficiaire: mere
       condition: tout_enfant
-      fiabilite: faible
+      fiabilite: estimee
   exemples: aucun trouvé
 - id: bonification_2008
   statut: lue

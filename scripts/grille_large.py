@@ -81,6 +81,21 @@ observées, une économie qui n'est que le minimum vieillesse retiré ; le scrip
 la chiffre à part. Il vérifie aussi que la grille du dépôt, réécrite en parts
 et avec l'ASPA, redonne la page au chiffre près.
 
+LA DISTRIBUTION DES PENSIONS, CONTRE CELLE DE L'ENQUÊTE (action 138, étape 14)
+-------------------------------------------------------------------------------
+Une grille qui représente les retraités doit redonner ce qu'on sait d'eux. La
+composition le dit de ses caractéristiques ; la distribution des pensions le dit
+de son résultat, qui ne sert à construire aucune grille : c'est une validation,
+la forme publique de celle que les microsimulations font sur les pensions
+réelles de l'EIR, qui ne se lisent qu'au CASD. Chaque grille est lue l'année de
+l'enquête en têtes — celles que la page compte : chaque cohorte pesée par son
+effectif INSEE, chaque cas type par son poids de la page —, chaque pension de
+droit direct du scénario 1 revalorisée comme la page la revalorise et ramenée
+en euros de l'année ; puis confrontée, sexe par sexe, à la moyenne et aux
+quantiles que l'EIR publie des résidents en France, majorations pour enfants
+comprises, et à leur distribution par tranches de cent euros
+(``--distribution`` : la composition et la distribution seules, sans la page).
+
 CE QUE LA MESURE N'EST PAS
 ---------------------------
 Une population. Les axes sont tenus pour indépendants — le salaire ne dépend
@@ -106,8 +121,9 @@ import os
 import sys
 import time
 from concurrent.futures import ProcessPoolExecutor
-from dataclasses import dataclass, fields, replace
+from dataclasses import dataclass, field, fields, replace
 from pathlib import Path
+from typing import Callable
 
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
@@ -121,10 +137,15 @@ from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
 from retraite_notionnelle.donnees.caracteristiques import CaracteristiquesRetraites  # noqa: E402
 from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
-from retraite_notionnelle.donnees.equilibre import (  # noqa: E402
-    ComptesRetraite, variante_du_scenario,
+from retraite_notionnelle.donnees.distribution import (  # noqa: E402
+    QUANTILES_PUBLIES, DistributionPensions, ResidenceRetraites,
 )
+from retraite_notionnelle.donnees.equilibre import (  # noqa: E402
+    ComptesRetraite, DecompositionDepense, variante_du_scenario,
+)
+from retraite_notionnelle.donnees.macro import DonneesMacro  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
+from retraite_notionnelle.revalorisation import RevalorisationServie  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 
 GRILLES = ("reference", "personnes", "melees", "femmes", "interruptions", "salaires",
@@ -699,6 +720,154 @@ def composition_eir(source: CaracteristiquesRetraites) -> dict:
             "moins_de_30_ans": courtes, "groupes": parts_personnes(source)}
 
 
+# -- la distribution de l'année de l'enquête (action 138, étape 14) -------------
+
+#: Les trois lectures de la distribution : tous les retraités, puis les femmes et
+#: les hommes, comme l'EIR les publie.
+SEXES = ("ensemble", "F", "H")
+INTITULES_SEXES = {"ensemble": "Ensemble", "F": "Femmes", "H": "Hommes"}
+
+
+def pensions_de_l_annee(pensionnes: list, cas_types: tuple[CasType, ...],
+                        poids: dict[str, float], population: Population,
+                        revalorisation: RevalorisationServie, macro: DonneesMacro,
+                        annee_euros: int, annee: int) -> list[tuple[float, float, str]]:
+    """Ce que la grille sert l'année ``annee``, en TÊTES : une ligne par cohorte
+    liquidée, (pension mensuelle de droit direct du scénario 1 en euros de
+    l'année, poids, sexe).
+
+    Les têtes sont celles de la page (``cout._masses``) : chaque génération de
+    la grille en représente cinq, chacune pesée par son effectif INSEE de
+    l'année et comptée dès sa liquidation, chaque cas type par son poids de la
+    page. La pension est celle de la liquidation, revalorisée comme la page la
+    revalorise — les prix, et la valeur de service de l'Agirc-Arrco pour sa
+    part (``coefficient_actuel``) —, ramenée des euros constants à ceux de
+    l'année. Sans la complétude des cohortes (``Pensionne.completude``) : elle
+    allège la MASSE d'une cohorte d'une moyenne, que la distribution ne sait
+    pas répartir entre ses membres ; chaque ligne décrit une carrière.
+    """
+    sexes = {cas.code: cas.sexe for cas in cas_types}
+    vers_l_annee = macro.coefficient_prix(annee_euros, annee) / 12.0
+    lignes = []
+    for pensionne in pensionnes:
+        part = poids.get(pensionne.code, 0.0)
+        if part <= 0.0:
+            continue
+        convenues = C.parts_convenues(pensionne, revalorisation)
+        for decalage in range(-C._DEMI_TRANCHE, C._DEMI_TRANCHE + 1):
+            liquidation = pensionne.annee_liquidation + decalage
+            if annee < liquidation:
+                continue
+            effectif = population.effectif(annee - pensionne.generation - decalage, annee)
+            if effectif <= 0.0:
+                continue
+            montant = pensionne.pensions["actuel"] * vers_l_annee * C.coefficient_actuel(
+                convenues, revalorisation, liquidation, annee)
+            lignes.append((montant, part * effectif, sexes[pensionne.code]))
+    return lignes
+
+
+def quantile_pondere(lot: list[tuple[float, float]], rang: float) -> float:
+    """Le plus petit montant sous lequel tombe au moins ``rang`` du poids. Une
+    grille est faite d'atomes, une carrière et son montant : le quantile en est
+    un."""
+    tries = sorted(lot)
+    total = somme_ordonnee(poids for _, poids in tries)
+    cumul = 0.0
+    for montant, poids in tries:
+        cumul += poids
+        if cumul >= rang * total:
+            return montant
+    return tries[-1][0]
+
+
+def part_sous(lot: list[tuple[float, float]], montant: float) -> float:
+    """La part du poids sous ``montant`` : ``DistributionPensions.part_sous``,
+    pour la grille."""
+    return (somme_ordonnee(poids for m, poids in lot if m < montant)
+            / somme_ordonnee(poids for _, poids in lot))
+
+
+def confronter(lignes: list[tuple[float, float, str]], residence: ResidenceRetraites,
+               distributions: dict[str, DistributionPensions]) -> dict:
+    """La distribution de la grille contre celle des résidents en France que
+    l'EIR publie, majorations pour enfants comprises, sexe par sexe : la part
+    de chacun, la moyenne et chaque quantile publié, chacun contre le sien ; le
+    plus grand écart des deux fonctions de répartition aux bornes des tranches
+    de cent euros de l'enquête, la distance de Kolmogorov, et la borne où il
+    tombe — positif, la grille a trop de retraités sous elle, négatif, trop peu.
+    """
+    sortie = {}
+    total = somme_ordonnee(poids for _, poids, _ in lignes)
+    effectifs = residence.valeur("france", "effectifs", "ensemble")
+    for sexe in SEXES:
+        lot = [(montant, poids) for montant, poids, s in lignes
+               if sexe == "ensemble" or s == sexe]
+        if not lot:
+            continue
+        masse = somme_ordonnee(poids for _, poids in lot)
+        distribution = distributions[sexe]
+        ecarts = [(t.borne_inferieure,
+                   part_sous(lot, t.borne_inferieure) - distribution.part_sous(t.borne_inferieure))
+                  for t in distribution.tranches[1:]]
+        borne, ecart = max(ecarts, key=lambda e: abs(e[1]))
+        sortie[sexe] = {
+            "part": masse / total,
+            "part_eir": residence.valeur("france", "effectifs", sexe) / effectifs,
+            "moyenne": somme_ordonnee(montant * poids for montant, poids in lot) / masse,
+            "moyenne_eir": residence.valeur("france", "pension_droit_direct_majorations", sexe),
+            "quantiles": {code: quantile_pondere(lot, rang) for code, rang in QUANTILES_PUBLIES},
+            "quantiles_eir": {code: residence.valeur("france", code, sexe)
+                              for code, _ in QUANTILES_PUBLIES},
+            "kolmogorov": ecart,
+            "borne_kolmogorov": borne,
+        }
+    return sortie
+
+
+@dataclass(frozen=True)
+class GrilleEnTetes:
+    """Ce que la page pèse d'une grille : ses couples simulés, ses cas types, le
+    poids de chacun année par année, la pyramide et la revalorisation ; et les
+    couples que le modèle a refusé de calculer, par motif."""
+
+    pensionnes: list
+    cas_types: tuple[CasType, ...]
+    poids: Callable[[int], dict[str, float]]
+    population: Population
+    revalorisation: RevalorisationServie
+    macro: DonneesMacro
+    annee_euros: int
+    echecs: dict[str, int] = field(default_factory=dict)
+
+    def pensions(self, annee: int) -> list[tuple[float, float, str]]:
+        """:func:`pensions_de_l_annee`, pour cette grille."""
+        return pensions_de_l_annee(self.pensionnes, self.cas_types, self.poids(annee),
+                                   self.population, self.revalorisation, self.macro,
+                                   self.annee_euros, annee)
+
+
+def en_tetes(parametres: Parametres, variantes: list[Variante],
+             processus: int = 1) -> GrilleEnTetes:
+    """La grille de :func:`calculer`, la même simulation gardée, sous les poids
+    que la page lui donne : ceux de ses caisses, recalés sur la dépense des
+    groupes du COR (``cout._poids_par_groupe``)."""
+    racine = parametres.racine_donnees
+    cas_types, retraites, _ = pseudo(variantes)
+    pensionnes, echecs = simuler(parametres, cas_types, processus)
+    simulateur = Simulateur(parametres)
+    simulateur.effectifs = EffectifsRepartis(simulateur.effectifs, retraites)
+    population = Population(racine)
+    revalorisation = RevalorisationServie(
+        simulateur.pour_la_projection(),
+        min(p.annee_liquidation for p in pensionnes) - C._DEMI_TRANCHE, C.HORIZON)
+    poids = C._poids_par_groupe(
+        C._ponderation(simulateur, "effectifs", cas_types), pensionnes, population,
+        revalorisation, DecompositionDepense(racine / "reference" / "macro"))
+    return GrilleEnTetes(pensionnes, cas_types, poids, population, revalorisation,
+                         simulateur.macro, parametres.annee_euros_constants, echecs)
+
+
 def processus_par_defaut() -> int:
     try:
         return len(os.sched_getaffinity(0))
@@ -707,10 +876,12 @@ def processus_par_defaut() -> int:
 
 
 def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
-            parametres: Parametres | None = None) -> dict:
-    """Chaque grille, sa composition et ce que la page y affiche, sans ASPA ;
-    la page elle-même, et la grille du dépôt réécrite en parts avec l'ASPA,
-    qui doit la redonner."""
+            parametres: Parametres | None = None, page: bool = True) -> dict:
+    """Chaque grille, sa composition, la distribution de ses pensions l'année de
+    l'enquête et ce que la page y affiche, sans ASPA ; la page elle-même, et la
+    grille du dépôt réécrite en parts avec l'ASPA, qui doit la redonner.
+    ``page=False`` s'en tient à la composition et à la distribution, que la
+    simulation seule donne."""
     parametres = parametres if parametres is not None else Parametres()
     racine = parametres.racine_donnees
     source = eir(racine)
@@ -718,26 +889,33 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
     points = multiplicateurs(valeurs)
     sans_aspa = parametres_de_la_grille(parametres)
     effectifs = Simulateur(parametres).effectifs
+    residence = ResidenceRetraites(racine, source.millesime)
+    distributions = {sexe: DistributionPensions(racine, sexe, source.millesime, "france")
+                     for sexe in SEXES}
     resultat = {
-        "page": indicateurs(memoire.cout(parametres)),
-        "page_en_parts": indicateurs(calculer(parametres, reference(), processus)),
         "eir": {"millesime": source.millesime, **composition_eir(source)},
         "centiles": {"annee": annee_centiles,
                      "points": [{"centile": n, "part": p, "multiplicateur": m}
                                 for n, p, m in points]},
         "grilles": {},
     }
+    if page:
+        resultat["page"] = indicateurs(memoire.cout(parametres))
+        resultat["page_en_parts"] = indicateurs(calculer(parametres, reference(), processus))
     noms = ("reference",) + tuple(n for n in noms if n != "reference")
     for nom in noms:
         debut = time.time()
         variantes = grille(nom, effectifs, source, points)
-        cout = calculer(sans_aspa, variantes, processus)
-        resultat["grilles"][nom] = {
-            "cas_types": len(variantes),
-            "secondes": round(time.time() - debut, 1),
-            "composition": composition(variantes, effectifs, source),
-            **indicateurs(cout),
-        }
+        mesure = {"cas_types": len(variantes)}
+        if page:
+            mesure.update(indicateurs(calculer(sans_aspa, variantes, processus)))
+        tetes = en_tetes(sans_aspa, variantes, processus)
+        mesure["echecs"] = somme_ordonnee(tetes.echecs.values())
+        mesure["composition"] = composition(variantes, effectifs, source)
+        mesure["distribution"] = confronter(tetes.pensions(source.millesime),
+                                            residence, distributions)
+        mesure["secondes"] = round(time.time() - debut, 1)
+        resultat["grilles"][nom] = mesure
     return resultat
 
 
@@ -751,24 +929,50 @@ def ecart_maximal(a: dict, b: dict) -> float:
     return max(abs(a[s][k] - b[s][k]) for s, _ in C.SCENARIOS for k in a[s])
 
 
+def imprimer_distribution(resultat: dict) -> None:
+    """La distribution de chaque grille contre celle de l'EIR, sexe par sexe."""
+    grilles = resultat["grilles"]
+    millesime = resultat["eir"]["millesime"]
+    codes = ("d1", "d2", "d3", "mediane", "d7", "d8", "d9")
+    print(f"\nLa pension de droit direct en {millesime}, contre celle de l'EIR — "
+          "résidents en France, majorations pour enfants comprises, euros par mois ; "
+          "Kolmogorov : le plus grand écart des répartitions, et la borne où il tombe")
+    for sexe in SEXES:
+        lus = [(nom, g["distribution"][sexe]) for nom, g in grilles.items()
+               if sexe in g["distribution"]]
+        if not lus:
+            continue
+        print(f"\n{INTITULES_SEXES[sexe]:16}{'part':>6}{'moyenne':>9}"
+              + "".join(f"{c:>8}" for c in codes) + f"{'Kolmogorov':>14}")
+        eir_ = lus[0][1]
+        print(f"{'  EIR':16}{eir_['part_eir'] * 100:>5.1f}%{eir_['moyenne_eir']:>9.0f}"
+              + "".join(f"{eir_['quantiles_eir'][c]:>8.0f}" for c in codes))
+        for nom, d in lus:
+            print(f"{'  ' + nom:16}{d['part'] * 100:>5.1f}%{d['moyenne']:>9.0f}"
+                  + "".join(f"{d['quantiles'][c]:>8.0f}" for c in codes)
+                  + f"{d['kolmogorov'] * 100:>+8.1f} pt à {d['borne_kolmogorov']:.0f}")
+
+
 def imprimer(resultat: dict) -> None:
-    page = resultat["page"]
     grilles = resultat["grilles"]
     base = grilles["reference"]
     eir_ = resultat["eir"]
     print(f"Ce que les treize cas types déplacent sur la page Coût "
           f"(EIR {eir_['millesime']}, centiles {resultat['centiles']['annee']})\n")
-    print(f"La grille du dépôt, réécrite en parts, redonne la page à "
-          f"{ecart_maximal(resultat['page_en_parts'], page):.1e} près.")
-    print("Sans l'ASPA que le scénario 1 sert aux premières générations de "
-          "non-salariés, l'écart passé devient :")
-    print("  " + " ; ".join(
-        f"sc. {NUMEROS[s]} {page[s]['ecart_passe']:.2f} → {base[s]['ecart_passe']:.2f}"
-        for s, _ in C.SCENARIOS if abs(base[s]['ecart_passe'] - page[s]['ecart_passe']) > 5e-3))
-    autres = max(abs(base[s][k] - page[s][k]) for s, _ in C.SCENARIOS
-                 for k in page[s] if k != "ecart_passe")
-    print(f"  et rien d'autre ne bouge de plus de {autres:.1e}. Les grilles se "
-          "comparent à celle du dépôt sans ASPA.\n")
+    page = resultat.get("page")
+    if page is not None:
+        print(f"La grille du dépôt, réécrite en parts, redonne la page à "
+              f"{ecart_maximal(resultat['page_en_parts'], page):.1e} près.")
+        print("Sans l'ASPA que le scénario 1 sert aux premières générations de "
+              "non-salariés, l'écart passé devient :")
+        print("  " + " ; ".join(
+            f"sc. {NUMEROS[s]} {page[s]['ecart_passe']:.2f} → {base[s]['ecart_passe']:.2f}"
+            for s, _ in C.SCENARIOS
+            if abs(base[s]['ecart_passe'] - page[s]['ecart_passe']) > 5e-3))
+        autres = max(abs(base[s][k] - page[s][k]) for s, _ in C.SCENARIOS
+                     for k in page[s] if k != "ecart_passe")
+        print(f"  et rien d'autre ne bouge de plus de {autres:.1e}. Les grilles se "
+              "comparent à celle du dépôt sans ASPA.\n")
 
     print("Composition, retraités de l'année de l'enquête :")
     entete = f"{'':16}{'femmes':>8}{'poly':>7}{'durée F':>9}{'durée H':>9}{'<30 F':>7}{'<30 H':>7}"
@@ -778,38 +982,41 @@ def imprimer(resultat: dict) -> None:
         print(f"{nom:16}{comp['femmes']*100:>7.1f}%{comp['polypensionnes']*100:>6.1f}%"
               f"{d.get('F', float('nan')):>9.1f}{d.get('H', float('nan')):>9.1f}"
               f"{c.get('F', float('nan'))*100:>6.1f}%{c.get('H', float('nan'))*100:>6.1f}%")
+    imprimer_distribution(resultat)
 
-    horizon = page["annee_horizon"]
-    colonnes = (("ecart_passe", "écart passé (pts)", "notionnels"),
-                ("part_pib_horizon", f"part du PIB {horizon} (pts)", "tous"),
-                ("solde_moyen", "solde moyen 2026-" + str(horizon) + " (pts)", "notionnels"),
-                ("coefficient_horizon", f"coefficient {horizon}", "notionnels"))
-    for cle, titre, champ in colonnes:
-        print(f"\n{titre} — la grille du dépôt, puis ce que chaque grille déplace")
-        scenarios = [s for s, _ in C.SCENARIOS if champ == "tous" or s != "actuel"]
-        chiffres = 3 if cle == "coefficient_horizon" else 2
-        print(f"{'':16}" + "".join(f"{'sc. ' + NUMEROS[s]:>9}" for s in scenarios))
-        print(f"{'reference':16}" + "".join(f"{base[s][cle]:>9.{chiffres}f}"
+    if page is not None:
+        horizon = page["annee_horizon"]
+        colonnes = (("ecart_passe", "écart passé (pts)", "notionnels"),
+                    ("part_pib_horizon", f"part du PIB {horizon} (pts)", "tous"),
+                    ("solde_moyen", "solde moyen 2026-" + str(horizon) + " (pts)",
+                     "notionnels"),
+                    ("coefficient_horizon", f"coefficient {horizon}", "notionnels"))
+        for cle, titre, champ in colonnes:
+            print(f"\n{titre} — la grille du dépôt, puis ce que chaque grille déplace")
+            scenarios = [s for s, _ in C.SCENARIOS if champ == "tous" or s != "actuel"]
+            chiffres = 3 if cle == "coefficient_horizon" else 2
+            print(f"{'':16}" + "".join(f"{'sc. ' + NUMEROS[s]:>9}" for s in scenarios))
+            print(f"{'reference':16}" + "".join(f"{base[s][cle]:>9.{chiffres}f}"
+                                                for s in scenarios))
+            for nom, g in grilles.items():
+                if nom == "reference":
+                    continue
+                print(f"{nom:16}" + "".join(f"{g[s][cle] - base[s][cle]:>+9.{chiffres}f}"
                                             for s in scenarios))
-        for nom, g in grilles.items():
-            if nom == "reference":
-                continue
-            print(f"{nom:16}" + "".join(f"{g[s][cle] - base[s][cle]:>+9.{chiffres}f}"
-                                        for s in scenarios))
-    print(f"\ngarantie vieillesse en {horizon} (pts de PIB) : reference "
-          f"{base['garantie_horizon']:.3f}"
-          + "".join(f" ; {n} {g['garantie_horizon'] - base['garantie_horizon']:+.3f}"
-                    for n, g in grilles.items() if n != "reference"))
+        print(f"\ngarantie vieillesse en {horizon} (pts de PIB) : reference "
+              f"{base['garantie_horizon']:.3f}"
+              + "".join(f" ; {n} {g['garantie_horizon'] - base['garantie_horizon']:+.3f}"
+                        for n, g in grilles.items() if n != "reference"))
 
-    annees = (1990, 2000, 2009, 2020)
-    print("\nle passé refait par la projection (action 147) — écart de la base du "
-          "modèle à la dépense observée, en %")
-    print(f"{'':16}" + "".join(f"{a:>9}" for a in annees) + f"{'pire ≥ 2000':>13}")
-    for nom, g in grilles.items():
-        passe = {int(a): v for a, v in g["reconstitution"].items()}
-        print(f"{nom:16}" + "".join(f"{passe[a]:>+9.1f}" if a in passe else f"{'—':>9}"
-                                    for a in annees)
-              + f"{g['reconstitution_pire_depuis_2000']:>13.1f}")
+        annees = (1990, 2000, 2009, 2020)
+        print("\nle passé refait par la projection (action 147) — écart de la base du "
+              "modèle à la dépense observée, en %")
+        print(f"{'':16}" + "".join(f"{a:>9}" for a in annees) + f"{'pire ≥ 2000':>13}")
+        for nom, g in grilles.items():
+            passe = {int(a): v for a, v in g["reconstitution"].items()}
+            print(f"{nom:16}" + "".join(f"{passe[a]:>+9.1f}" if a in passe else f"{'—':>9}"
+                                        for a in annees)
+                  + f"{g['reconstitution_pire_depuis_2000']:>13.1f}")
     print("\n" + "  ".join(f"{n} : {g['cas_types']} cas types, {g['echecs']} échecs, "
                            f"{g['secondes']} s" for n, g in grilles.items()))
 
@@ -820,11 +1027,13 @@ def main(argv: list[str] | None = None) -> int:
                            help="une grille seulement (répétable)")
     analyseur.add_argument("--processus", type=int, default=processus_par_defaut(),
                            help="cœurs sur lesquels simuler la grille")
+    analyseur.add_argument("--distribution", action="store_true",
+                           help="la composition et la distribution seules, sans la page")
     analyseur.add_argument("--json", help="écrit le résultat dans ce fichier")
     arguments = analyseur.parse_args(argv)
 
     noms = tuple(arguments.grille) if arguments.grille else GRILLES
-    resultat = mesurer(noms, arguments.processus)
+    resultat = mesurer(noms, arguments.processus, page=not arguments.distribution)
     imprimer(resultat)
     if arguments.json:
         Path(arguments.json).write_text(json.dumps(resultat, ensure_ascii=False, indent=1),

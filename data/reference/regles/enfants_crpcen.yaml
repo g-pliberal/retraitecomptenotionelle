@@ -50,7 +50,7 @@ versions:
       services_par_enfant: 4
       beneficiaire: mere
       condition: tout_enfant
-      fiabilite: faible
+      fiabilite: estimee
   exemples: aucun trouvé
 - id: annee_par_enfant_1990
   statut: lue

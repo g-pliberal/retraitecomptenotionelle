@@ -43,6 +43,25 @@ def test_la_carte_tient():
     assert carte.controler() == []
 
 
+def test_la_fiabilite_que_les_moteurs_lisent_est_un_niveau_connu(fiches):
+    """Les deux moteurs lisent la fiabilité des paramètres d'une version, et
+    ne connaissent que quatre niveaux (``Fiabilite.depuis_texte``, son jumeau
+    ``fiabiliteDepuisTexte``) : un autre mot arrête le calcul. Le 7 octobre
+    2026, « faible », écrit aux versions supposées des bonifications pour
+    enfants de l'IEG, de la RATP et de la CRPCEN, arrêtait celui de toute
+    mère de ces régimes partie avant juillet 2008, avant 1991 à la CRPCEN."""
+    from retraite_notionnelle.donnees.chargement import Fiabilite
+
+    for nom, fiche in fiches.items():
+        for version in fiche.get("versions") or []:
+            parametres = (version.get("contenu") or {}).get("parametres")
+            if isinstance(parametres, dict) and "fiabilite" in parametres:
+                try:
+                    Fiabilite.depuis_texte(parametres["fiabilite"])
+                except ValueError as erreur:
+                    pytest.fail(f"{nom}.{version['id']} : {erreur}")
+
+
 def test_chaque_regle_du_scenario_1_est_lue_et_datee(fiches):
     """Ce que la veille exigeait de chaque ligne, la carte l'exige de chaque
     fiche : un intitulé qui dit la règle, au moins un texte, une lecture datée
