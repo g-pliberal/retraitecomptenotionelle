@@ -73,6 +73,7 @@ from retraite_notionnelle.donnees.mortalite import (  # noqa: E402
 )
 from retraite_notionnelle.noyau import univers as univers_de_droit  # noqa: E402
 from retraite_notionnelle.noyau import vocabulaire  # noqa: E402
+from retraite_notionnelle.lignes import json_en_lignes  # noqa: E402
 from retraite_notionnelle.remuneration import charger_prelevements  # noqa: E402
 from retraite_notionnelle.restitution import POSTES_REMUNERATION  # noqa: E402
 from retraite_notionnelle.donnees.population import CarrieresIncompletes, Population  # noqa: E402
@@ -1828,10 +1829,12 @@ def _bilan(contexte=None) -> dict:
 
 
 def construire_bilan(contexte=None) -> bytes:
-    """La table figée, écrite dans ``data/derive/`` et relue par le modèle."""
-    texte = json.dumps(_bilan(contexte), ensure_ascii=False, sort_keys=True,
-                       separators=(",", ":"))
-    return (texte + "\n").encode("utf-8")
+    """La table figée, écrite dans ``data/derive/`` et relue par le modèle.
+
+    Chaque année sur sa ligne (``json_en_lignes``) : le diff d'un changement
+    montre les années qu'il déplace.
+    """
+    return (json_en_lignes(_bilan(contexte)) + "\n").encode("utf-8")
 
 def construire(bilan: bytes) -> bytes:
     """Paquet complet, à contenu identique pour des données identiques.
@@ -1944,9 +1947,10 @@ def construire(bilan: bytes) -> bytes:
         # endroit — le diff de ce fichier.
         "bilan_equilibre": json.loads(bilan.decode("utf-8")),
     }
-    texte = json.dumps(paquet, ensure_ascii=False, sort_keys=True,
-                       separators=(",", ":"))
-    return (texte + "\n").encode("utf-8")
+    # Le JSON compact, passé à la ligne entre les éléments de ce qui dépasse
+    # trois cents caractères : un ``grep`` rend une ligne courte, non le
+    # paquet entier, et le navigateur ne reçoit qu'un octet de plus par ligne.
+    return (json_en_lignes(paquet) + "\n").encode("utf-8")
 
 
 def sorties(contexte=None) -> dict[Path, bytes]:

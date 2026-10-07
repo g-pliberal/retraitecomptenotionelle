@@ -125,8 +125,17 @@ def resumer(avant: dict, apres: dict, pages_avant: dict | None = None,
         mouvements=mouvements,
         pages=len(pages_apres),
         pages_changees=sorted(nom for nom in pages_apres
-                              if pages_avant.get(nom) != pages_apres[nom]),
+                              if nom not in pages_avant
+                              or _rendu(pages_avant[nom]) != _rendu(pages_apres[nom])),
     )
+
+
+def _rendu(page: dict) -> dict:
+    """La page, son HTML recousu : le témoin le garde en morceaux depuis le
+    7 octobre 2026 (``retraite_notionnelle.lignes``), une révision plus
+    ancienne en une chaîne, et ce changement de forme ne change aucune page.
+    ``"".join`` rend une chaîne telle quelle."""
+    return {**page, "corps": "".join(page.get("corps", ""))}
 
 
 def pourcent(ecart: float) -> str:

@@ -1,7 +1,8 @@
 # Ce que les recherches larges (outil Grep, ripgrep) passent : de gros fichiers
-# fabriqués, souvent d'une ligne géante, qu'une session ne lit pas en
-# travaillant (feuille de route, action 135, étape 2 du contexte). Nommés,
-# ils se cherchent encore.
+# fabriqués, qu'une session ne lit pas en travaillant (feuille de route,
+# action 135, étape 2 du contexte). Nommés, ils se cherchent encore ; le
+# paquet, le bilan et les témoins n'y rendent que des lignes courtes depuis
+# l'étape 4.
 tests/temoins/*.json
 moteur/donnees.json
 data/derive/*.json

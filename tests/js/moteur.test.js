@@ -143,7 +143,7 @@ test("les pages rendent le HTML que leurs témoins ont figé", () => {
     const [titre, corps] = rendre(contexte, temoin.chemin, temoin.parametres);
     assert.equal(titre, temoin.titre, `titre de la page « ${nom} »`);
     const rendu = sansBlocJson(corps);
-    assert.equal(temoin.formulaire_retire ? sansFormulaire(rendu) : rendu, temoin.corps,
+    assert.equal(temoin.formulaire_retire ? sansFormulaire(rendu) : rendu, recousu(temoin),
       `corps de la page « ${nom} »`);
   }
 });
@@ -193,10 +193,19 @@ test("un paquet d'avant les dépenses figées rend Pourquoi changer et Partager 
   for (const nom of ["risque", "partager"]) {
     const temoin = temoinsPages[nom];
     const rendu = sansBlocJson(rendre(contexte, temoin.chemin, temoin.parametres)[1]);
-    assert.equal(temoin.formulaire_retire ? sansFormulaire(rendu) : rendu, temoin.corps,
+    assert.equal(temoin.formulaire_retire ? sansFormulaire(rendu) : rendu, recousu(temoin),
       `corps de la page « ${nom} »`);
   }
 });
+
+/**
+ * Le HTML qu'un témoin a figé, en morceaux d'une ligne ou d'un élément
+ * (`retraite_notionnelle/lignes.py`) : une page tenait sur des lignes de
+ * centaines de milliers de caractères, que son diff rendait entières.
+ */
+function recousu(temoin) {
+  return temoin.corps.join("");
+}
 
 /**
  * Le bloc JSON de la page reprend les chiffres déjà comparés un à un ; ne

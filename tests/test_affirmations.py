@@ -139,6 +139,9 @@ def phrase_forte(texte: str) -> bool:
 
 def _charger_temoins() -> dict[str, dict]:
     pages = json.loads(TEMOINS.read_text(encoding="utf-8"))
+    # Le témoin garde le HTML en morceaux, une ligne ou un élément chacun
+    # (``retraite_notionnelle.lignes``) : on le recoud.
+    corps = {nom: "".join(page["corps"]) for nom, page in pages.items()}
     temoins = {
         nom: {
             "chemin": page["chemin"],
@@ -146,8 +149,8 @@ def _charger_temoins() -> dict[str, dict]:
             # a été calculée sous d'autres règles que celles par défaut, et
             # c'est plus sûr qu'une convention de nommage.
             "parametres": page.get("parametres", {}),
-            "corps": page["corps"],
-            "texte": normaliser(page["corps"]),
+            "corps": corps[nom],
+            "texte": normaliser(corps[nom]),
         }
         for nom, page in pages.items()
     }

@@ -11,7 +11,9 @@ JavaScript doit retrouver :
 * ``tests/temoins/pages.json`` — le HTML rendu de chaque page du site, par le
   site lui-même : son texte n'est écrit qu'en JavaScript (docs/architecture.md,
   § 8), et ``web/site.py`` le fait rendre par node, sur le paquet
-  ``moteur/donnees.json`` — qu'il faut donc avoir reconstruit d'abord.
+  ``moteur/donnees.json`` — qu'il faut donc avoir reconstruit d'abord. Son
+  ``corps`` est une liste de morceaux, une ligne ou un élément chacun
+  (``retraite_notionnelle.lignes``), dont la concaténation rend la page.
 
 Les deux fichiers sont versionnés : une différence de chiffre entre les deux
 implémentations apparaît alors dans ``node --test``, et une modification voulue
@@ -39,6 +41,7 @@ from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
 from retraite_notionnelle.droit import liquidation as _liquidation  # noqa: E402
 from retraite_notionnelle.saisie import AGE_DEBUT_MINIMAL, Saisie  # noqa: E402
 from retraite_notionnelle.contexte import Contexte  # noqa: E402
+from retraite_notionnelle.lignes import html_en_morceaux  # noqa: E402
 from retraite_notionnelle.web.site import rendre  # noqa: E402
 
 DOSSIER = RACINE / "tests" / "temoins"
@@ -1985,11 +1988,13 @@ def _pages() -> dict:
     for nom, chemin, parametres in demandes:
         titre, corps = rendre(chemin, parametres)
         corps = sans_bloc_json(corps)
-        pages[nom] = {"chemin": chemin, "parametres": parametres, "titre": titre,
-                      "corps": corps}
         retire = corps if nom in FORMULAIRE_ENTIER else sans_formulaire(corps)
+        # Le HTML en morceaux, que ses lecteurs recousent : une page tenait sur
+        # des lignes de centaines de milliers de caractères, et son diff aussi.
+        pages[nom] = {"chemin": chemin, "parametres": parametres, "titre": titre,
+                      "corps": html_en_morceaux(retire)}
         if retire != corps:
-            pages[nom].update(corps=retire, formulaire_retire=True)
+            pages[nom]["formulaire_retire"] = True
     return pages
 
 

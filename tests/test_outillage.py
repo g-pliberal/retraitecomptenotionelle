@@ -169,6 +169,17 @@ def test_les_pages_qui_changent_sont_nommees():
                      "et 2 autres.")
 
 
+def test_une_page_mise_en_morceaux_n_a_pas_change():
+    """Le témoin garde le HTML en morceaux depuis le 7 octobre 2026, une
+    révision antérieure en une chaîne : la même page sous les deux formes ne
+    change pas ; un mot de plus, si, comme une page nouvelle."""
+    avant = {"accueil": {"corps": "<p>un</p>\n<p>deux</p>"}, "cout": {"corps": "<p>trois</p>"}}
+    apres = {"accueil": {"corps": ["<p>un</p>\n", "<p>deux</p>"]},
+             "cout": {"corps": ["<p>trois mots</p>"]}, "methode": {"corps": ["<p>neuf</p>"]}}
+    resume = resumer_temoins.resumer({}, {}, avant, apres)
+    assert resume.pages_changees == ["cout", "methode"]
+
+
 def test_un_pourcentage_s_ecrit_comme_la_prose():
     assert resumer_temoins.pourcent(0.0024) == "+0,24 %"
     assert resumer_temoins.pourcent(-0.0265) == "−2,65 %"
