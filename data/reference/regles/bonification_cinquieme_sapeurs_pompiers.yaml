@@ -1,0 +1,288 @@
+schema_version: 1
+id: bonification_cinquieme_sapeurs_pompiers
+intitule: >-
+  Bonification du cinquième des sapeurs-pompiers professionnels, depuis février 1986 :
+  un cinquième du temps de service accompli en cette qualité, cinq ans au plus, aux
+  services liquidés sans dépasser le maximum, à qui part à l'âge anticipé avec trente
+  ans de services dont quinze de sapeur-pompier, puis vingt-sept dont dix-sept.
+domaine: duree
+regimes:
+- cnracl
+etape: compter_les_durees
+face: droit
+etat: approchee
+lit:
+- les années servies dans le statut sapeur_pompier_professionnel, et celles de services
+  dans la fonction publique civile, jusqu'à la liquidation
+- l'âge anticipé de la catégorie active à la génération (legislation/categorie_active.csv)
+- l'âge à la liquidation
+- la radiation des cadres pour invalidité, et son imputabilité au service
+- liquidation.date_effet
+ecrit:
+- les trimestres de bonification, aux services liquidés de la CNRACL et à la durée
+  d'assurance pour la décote (Durees.emplois)
+dates_qui_decident:
+- liquidation.date_effet
+# Les paramètres que le moteur lit (droit/compter.py, `trimestres_des_emplois`, et
+# son jumeau) sont ceux de la bonification des policiers, et la condition
+# `durees_et_age_de_l_emploi` lit trois seuils : les années servies dans le statut
+# (`annees_dans_l_emploi`), les années de services de la fonction publique civile
+# (`annees_de_services`, sur `services_comptes`), et l'âge anticipé de la catégorie
+# active à la génération (`age_anticipe`) ; la radiation pour invalidité imputable au
+# service en dispense.
+versions:
+- id: avant_le_decret_de_1986
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006317431, article: 125, en_vigueur: 1983-12-30}
+  - {id: JORFTEXT000000700722, en_vigueur: 1986-02-07}
+  nee_de: JORFTEXT000000700722
+  bornes:
+    liquidation.date_effet: [null, 1986-02-07]
+  contenu:
+    droit: >-
+      aucune bonification : la loi de finances pour 1984 la renvoie à un décret, qui
+      l'applique « aux sapeurs-pompiers professionnels admis à la retraite après le
+      7 février 1986 » (résumé de l'index JORF du décret n° 86-169)
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: decret_de_1986
+  statut: lue
+  textes:
+  - {id: JORFTEXT000000700722, en_vigueur: 1986-02-07}
+  - {id: LEGIARTI000006368203, article: 11, en_vigueur: 1986-02-07}
+  nee_de: JORFTEXT000000700722
+  bornes:
+    liquidation.date_effet: [1986-02-07, 2004-01-01]
+  contenu:
+    droit: >-
+      « une bonification du cinquième du temps de service qu'ils ont effectivement
+      accompli en qualité de sapeurs-pompiers professionnels, sans que cette
+      bonification puisse dépasser cinq ans », qui « ne peut avoir pour effet de porter
+      le nombre des annuités liquidables dans la pension au-delà du maximum »
+    conditions: >-
+      admis à la retraite à compter de cinquante-cinq ans, trente années de services
+      effectifs, dont quinze de sapeur-pompier professionnel ; ou radié pour invalidité
+      imputable au service
+    parametres:
+      existe: true
+      nature: bonification
+      statuts: [sapeur_pompier_professionnel]
+      regime: cnracl
+      classement: active
+      services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
+                         fonctionnaire_etat_super_actif, fonctionnaire_territorial_hospitalier,
+                         fonctionnaire_territorial_hospitalier_actif,
+                         fonctionnaire_hospitalier_actif,
+                         fonctionnaire_territorial_hospitalier_super_actif,
+                         sapeur_pompier_professionnel]
+      fraction: 0.2
+      plafond_trimestres: 20
+      condition: durees_et_age_de_l_emploi
+      annees_dans_l_emploi: 15
+      annees_de_services: 30
+      age_anticipe: true
+      age_de_reduction: null
+      au_dela_du_maximum: false
+      cumul_maximum_trimestres: null
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: decret_de_2003
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006400876, article: 15, en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006400877, article: 15, en_vigueur: 2005-05-12}
+  nee_de: LEGIARTI000006400876
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2011-07-01]
+  contenu:
+    droit: >-
+      la même bonification, « ne peut dépasser vingt trimestres ni avoir pour effet de
+      porter le nombre des trimestres liquidables dans la pension au-delà du maximum »
+    conditions: >-
+      admis à la retraite à compter de cinquante-cinq ans, cent vingt trimestres de
+      services effectifs, dont soixante de sapeur-pompier ; ou, en congé pour
+      difficulté opérationnelle, cent trimestres ; ou radié pour invalidité imputable
+      au service
+    parametres:
+      existe: true
+      nature: bonification
+      statuts: [sapeur_pompier_professionnel]
+      regime: cnracl
+      classement: active
+      services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
+                         fonctionnaire_etat_super_actif, fonctionnaire_territorial_hospitalier,
+                         fonctionnaire_territorial_hospitalier_actif,
+                         fonctionnaire_hospitalier_actif,
+                         fonctionnaire_territorial_hospitalier_super_actif,
+                         sapeur_pompier_professionnel]
+      fraction: 0.2
+      plafond_trimestres: 20
+      condition: durees_et_age_de_l_emploi
+      annees_dans_l_emploi: 15
+      annees_de_services: 30
+      age_anticipe: true
+      age_de_reduction: null
+      au_dela_du_maximum: false
+      cumul_maximum_trimestres: null
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: decret_du_30_decembre_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023414050, article: 15, en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000023033669, article: 125, en_vigueur: 2011-07-01}
+  nee_de: LEGIARTI000023414050
+  bornes:
+    liquidation.date_effet: [2011-07-01, 2023-09-01]
+  contenu:
+    droit: la même bonification, cinq années au plus, sous le maximum
+    conditions: >-
+      admis à la retraite à compter de cinquante-sept ans, vingt-sept ans de services
+      effectifs, dont dix-sept de sapeur-pompier ; ou, en congé pour raison
+      opérationnelle ; ou radié pour invalidité imputable au service ; ou ancien
+      sapeur-pompier reclassé après un accident de service
+    parametres:
+      existe: true
+      nature: bonification
+      statuts: [sapeur_pompier_professionnel]
+      regime: cnracl
+      classement: active
+      services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
+                         fonctionnaire_etat_super_actif, fonctionnaire_territorial_hospitalier,
+                         fonctionnaire_territorial_hospitalier_actif,
+                         fonctionnaire_hospitalier_actif,
+                         fonctionnaire_territorial_hospitalier_super_actif,
+                         sapeur_pompier_professionnel]
+      fraction: 0.2
+      plafond_trimestres: 20
+      condition: durees_et_age_de_l_emploi
+      annees_dans_l_emploi: 17
+      annees_de_services: 27
+      age_anticipe: true
+      age_de_reduction: null
+      au_dela_du_maximum: false
+      cumul_maximum_trimestres: null
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: decret_du_3_juin_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047633112, article: 15, en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047452950, article: 125, en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000054590023, article: 15, en_vigueur: 2026-08-01}
+  nee_de: LEGIARTI000047633112
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: >-
+      la même bonification, aux sapeurs-pompiers « et anciens sapeurs-pompiers
+      professionnels » ; cumulée avec les bonifications des militaires et des
+      emplois classés de l'État « dans la limite de vingt trimestres » (article 15,
+      IV)
+    conditions: >-
+      « sous réserve d'avoir accompli dix-sept années en cette qualité et vingt-sept
+      années de service en tant que fonctionnaire », sans condition d'âge ; sans
+      condition de durée, la radiation pour invalidité imputable au service, le
+      reclassement ou le congé pour raison opérationnelle
+    parametres:
+      existe: true
+      nature: bonification
+      statuts: [sapeur_pompier_professionnel]
+      regime: cnracl
+      classement: active
+      services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
+                         fonctionnaire_etat_super_actif, fonctionnaire_territorial_hospitalier,
+                         fonctionnaire_territorial_hospitalier_actif,
+                         fonctionnaire_hospitalier_actif,
+                         fonctionnaire_territorial_hospitalier_super_actif,
+                         sapeur_pompier_professionnel]
+      fraction: 0.2
+      plafond_trimestres: 20
+      condition: durees_et_age_de_l_emploi
+      annees_dans_l_emploi: 17
+      annees_de_services: 27
+      age_anticipe: false
+      age_de_reduction: null
+      au_dela_du_maximum: false
+      cumul_maximum_trimestres: 20
+      fiabilite: moyenne
+  exemples: aucun trouvé
+approximations:
+- version: [decret_de_1986, decret_de_2003, decret_du_30_decembre_2010]
+  ecart: >-
+    L'âge d'admission à la retraite, cinquante-cinq ans puis cinquante-sept, se lit à
+    l'âge anticipé de la catégorie active de la génération, que la loi du 9 novembre
+    2010 relève de cinq mois par génération : le décret du 30 décembre 2010 écrit
+    cinquante-sept ans pour toute pension liquidée depuis le 1er juillet 2011, et le
+    modèle en dispense les générations de la montée en charge.
+  effet: non mesuré ; les sapeurs-pompiers nés de 1956 à 1959 partis avant 57 ans
+- version: [decret_de_1986, decret_de_2003, decret_du_30_decembre_2010, decret_du_3_juin_2023]
+  ecart: >-
+    Les services se comptent à l'année, ceux de la fonction publique civile seule :
+    les services militaires « pris en compte dans la constitution de leurs droits à
+    pension » n'y entrent pas. Le congé pour difficulté ou raison opérationnelle et le
+    reclassement après un accident de service ne sont pas saisis.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-07
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Lire si une disposition transitoire adapte les cinquante-sept ans du décret du
+    30 décembre 2010 aux générations de la montée en charge.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 83-1179 du 29 décembre 1983, article 125, ses neuf rédactions
+      (LEGIARTI000006317431 à LEGIARTI000048697314)
+    date: 2023-12-28
+  - type: jorf
+    reference: >-
+      décret n° 86-169 du 5 février 1986 (JORFTEXT000000700722), dans son résumé de
+      l'index JORF : la bonification « si 30 ans de services effectifs », aux
+      sapeurs-pompiers « admis à la retraite après le 07-02-1986 »
+    date: 1986-02-07
+  - type: legifrance
+    reference: >-
+      décret n° 65-773 du 9 septembre 1965, article 11, III (LEGIARTI000006368203) ;
+      décret n° 2003-1306 du 26 décembre 2003, article 15, ses six rédactions
+      (LEGIARTI000006400876 à LEGIARTI000054590023)
+    date: 2026-08-01
+  - type: autre
+    reference: >-
+      réponse ministérielle à la question écrite n° 9211 (16e législature, JO du 12
+      septembre 2023, p. 8148) : la bonification « est prévue par loi, notamment pour
+      les sapeurs-pompiers professionnels (article L. 125 de la loi n° 83-1179 de
+      finances pour 1984) », « soumise à des cotisations supplémentaires »
+    url: https://questions.assemblee-nationale.fr/dyn/16/questions/QANR5L16QE9211.pdf
+    date: 2023-09-12
+code:
+  python: >-
+    scenarios/actuel.py : FichesDatees ; droit/compter.py : trimestres_des_emplois,
+    trimestres_d_un_emploi, condition_d_un_emploi ; droit/liquider.py :
+    liquider_chaque_regime
+  javascript: >-
+    moteur/js/regimes.js : FichesDatees ; moteur/js/droit/compter.js :
+    trimestresDesEmplois, trimestresDUnEmploi, conditionDUnEmploi ;
+    moteur/js/droit/liquider.js
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_bonifications_emplois.py]
+referents:
+  trajectoire:
+    equivalent: >-
+      bonifDeterministes (R/fonctionsCalculsDivers.R), « 4 trim tous les 5 ans, limites
+      a 20 » aux cas types super-actifs
+    confrontation: >-
+      aucune exécutée : aucun cas type du COR n'est sapeur-pompier ; le registre lui
+      reproche d'omettre les dix-sept et vingt-sept années (138.17)
+historique:
+- >-
+  2026-10-07 — née de l'étape 17 de l'action 138, avec le statut
+  sapeur_pompier_professionnel : le sapeur-pompier était rangé au statut super-actif
+  de la CNRACL, qui lui ouvrait l'âge minoré au lieu de l'âge anticipé, et ne recevait
+  aucune bonification.
+effet: >-
+  Le sapeur-pompier professionnel qui réunit ses durées : vingt trimestres à qui a servi
+  vingt-cinq ans en cette qualité, sous le maximum de 75 %.

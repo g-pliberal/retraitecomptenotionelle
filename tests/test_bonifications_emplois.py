@@ -17,7 +17,9 @@ Et l'article 78 de la loi n° 2003-775 majore la durée d'assurance du
 fonctionnaire hospitalier de catégorie active d'« un an par période de dix
 années de services effectifs », pour la seule décote de la CNRACL : fiche
 ``majoration_duree_hospitaliers_actifs``, au statut ``fonctionnaire_hospitalier_actif``
-qui naît avec elle.
+qui naît avec elle. Et le sapeur-pompier professionnel, de catégorie active et
+non super-active, a sa bonification du cinquième depuis 1986 : fiche
+``bonification_cinquieme_sapeurs_pompiers``, au statut ``sapeur_pompier_professionnel``.
 """
 
 from __future__ import annotations
@@ -194,3 +196,46 @@ def test_bonification_et_majoration_dans_la_limite_de_vingt_trimestres(simulateu
         naissance=1970, liquidation=60.0)
     assert [(e.fiche, e.services, e.duree, e.majoration) for e in durees.emplois] == [
         ("bonification_cinquieme_police_penitentiaire", 20, 20, 0)]
+
+
+# -- la bonification du cinquième des sapeurs-pompiers professionnels ----------
+
+POMPIER = "sapeur_pompier_professionnel"
+
+
+def test_vingt_trimestres_au_sapeur_pompier_sous_le_maximum(simulateur):
+    """Né en 1960, sapeur-pompier de vingt à cinquante-sept ans, départ en
+    janvier 2017 : trente-sept ans de services, dont autant en cette qualité,
+    l'âge anticipé de sa génération atteint ; vingt trimestres, qui « ne
+    peuvent avoir pour effet de porter le nombre des trimestres liquidables
+    dans la pension au-delà du maximum » : 166/166, non 168/166."""
+    durees, resultat, pensions = _calculer(
+        simulateur, [Metier(POMPIER, 20.0, 1.0)], naissance=1960, liquidation=57.0)
+    assert [(e.fiche, e.version, e.services) for e in durees.emplois] == [
+        ("bonification_cinquieme_sapeurs_pompiers", "decret_du_30_decembre_2010", 20)]
+    assert resultat.trimestres_valides == 148 + 20
+    assert "× 166/166" in pensions["cnracl"].detail
+    # Le statut est de catégorie active, non super-active : l'âge anticipé.
+    assert resultat.age_ouverture_opposable == pytest.approx(57.0)
+
+
+def test_le_sapeur_pompier_de_quatorze_ans_n_a_rien(simulateur):
+    """Vingt-trois ans d'emploi territorial sédentaire, puis quatorze de
+    sapeur-pompier : moins des dix-sept années en cette qualité."""
+    durees, _, _ = _calculer(
+        simulateur, [Metier("fonctionnaire_territorial_hospitalier", 20.0, 1.0),
+                     Metier(POMPIER, 43.0, 1.0)], naissance=1960, liquidation=57.0)
+    assert durees.emplois == ()
+
+
+def test_rien_avant_le_decret_de_1986_puis_trente_ans_de_services(simulateur):
+    """Le décret n° 86-169 l'applique aux sapeurs-pompiers admis à la retraite
+    après le 7 février 1986 ; de 2004 à 2011, cent vingt trimestres de
+    services, dont soixante de sapeur-pompier, et cinquante-cinq ans."""
+    durees, _, _ = _calculer(simulateur, [Metier(POMPIER, 25.0, 1.0)],
+                             naissance=1928, liquidation=55.0)
+    assert durees.emplois == ()
+    durees, _, pensions = _calculer(simulateur, [Metier(POMPIER, 25.0, 1.0)],
+                                    naissance=1950, liquidation=55.0)
+    assert [(e.version, e.services) for e in durees.emplois] == [("decret_de_2003", 20)]
+    assert "× 140/154" in pensions["cnracl"].detail

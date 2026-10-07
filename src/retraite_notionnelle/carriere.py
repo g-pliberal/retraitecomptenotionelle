@@ -2120,6 +2120,7 @@ PROFIL_PAR_AFFILIATION = {
     "fonctionnaire_territorial_hospitalier_actif": "public_territoriale",
     "fonctionnaire_hospitalier_actif": "public_hospitaliere",
     "fonctionnaire_territorial_hospitalier_super_actif": "public_territoriale",
+    "sapeur_pompier_professionnel": "public_territoriale",
     "contractuel_public": "public_non_titulaire",
     "maitre_enseignement_prive": "public_non_titulaire",
     # Les professions libérales réglementées progressent comme des cadres :

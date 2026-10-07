@@ -75,7 +75,7 @@ STATUTS = (
     "fonctionnaire_etat_actif", "fonctionnaire_etat_super_actif",
     "fonctionnaire_territorial_hospitalier",
     "fonctionnaire_territorial_hospitalier_actif", "fonctionnaire_hospitalier_actif",
-    "fonctionnaire_territorial_hospitalier_super_actif",
+    "fonctionnaire_territorial_hospitalier_super_actif", "sapeur_pompier_professionnel",
     "ouvrier_etat_actif", "militaire", "militaire_officier",
     "contractuel_public", "agent_sncf",
     "agent_ratp", "agent_ieg", "artisan", "commercant", "profession_liberale",

@@ -78,7 +78,8 @@ versions:
                          fonctionnaire_etat_super_actif, fonctionnaire_territorial_hospitalier,
                          fonctionnaire_territorial_hospitalier_actif,
                          fonctionnaire_hospitalier_actif,
-                         fonctionnaire_territorial_hospitalier_super_actif]
+                         fonctionnaire_territorial_hospitalier_super_actif,
+                         sapeur_pompier_professionnel]
       fraction: 0.1
       plafond_trimestres: null
       condition: categorie_active_en_fonction
@@ -110,7 +111,8 @@ versions:
                          fonctionnaire_etat_super_actif, fonctionnaire_territorial_hospitalier,
                          fonctionnaire_territorial_hospitalier_actif,
                          fonctionnaire_hospitalier_actif,
-                         fonctionnaire_territorial_hospitalier_super_actif]
+                         fonctionnaire_territorial_hospitalier_super_actif,
+                         sapeur_pompier_professionnel]
       fraction: 0.1
       plafond_trimestres: null
       condition: categorie_active_en_fonction
@@ -148,7 +150,8 @@ versions:
                          fonctionnaire_etat_super_actif, fonctionnaire_territorial_hospitalier,
                          fonctionnaire_territorial_hospitalier_actif,
                          fonctionnaire_hospitalier_actif,
-                         fonctionnaire_territorial_hospitalier_super_actif]
+                         fonctionnaire_territorial_hospitalier_super_actif,
+                         sapeur_pompier_professionnel]
       fraction: 0.1
       plafond_trimestres: null
       condition: duree_de_la_categorie_active

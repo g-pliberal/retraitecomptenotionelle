@@ -130,6 +130,9 @@ export const SEDENTAIRE = {
   fonctionnaire_territorial_hospitalier_super_actif: [
     "fonctionnaire_territorial_hospitalier", "categorie_active",
   ],
+  sapeur_pompier_professionnel: [
+    "fonctionnaire_territorial_hospitalier", "categorie_active",
+  ],
   ouvrier_etat_actif: ["ouvrier_etat", "categorie_active"],
   militaire: ["fonctionnaire_etat", "age_jouissance_militaire"],
   militaire_officier: ["fonctionnaire_etat", "age_jouissance_militaire"],
@@ -312,7 +315,8 @@ export const NEUTRALISATIONS = [
   {
     code: "bonification_cinquieme_services_actifs",
     quoi: "les fiches des bonifications des emplois classés sont retirées : le "
-      + "policier et le surveillant pénitentiaire liquident leurs seuls services",
+      + "policier, le surveillant pénitentiaire et le sapeur-pompier liquident "
+      + "leurs seuls services",
     par: "table",
   },
 ];
@@ -523,7 +527,7 @@ export function recalculer(simulateur, cas, generation, age, reelle, variantes =
       const variante = retraits[code];
       if (variante === undefined) continue;
       // Une carrière qu'aucune fiche ne bonifie n'a rien à perdre au retrait :
-      // aucun cas type de la grille n'est policier.
+      // aucun cas type de la grille n'est policier ni pompier.
       if (code === "bonification_cinquieme_services_actifs"
           && !statutsDesEmplois(simulateur).has(cas.affiliation)) {
         continue;
@@ -554,7 +558,7 @@ export function recalculer(simulateur, cas, generation, age, reelle, variantes =
  * Ce qui ouvre ce départ, quand il est anticipé.
  *
  * Le modèle nomme la carrière longue lui-même ; les deux autres se lisent au
- * statut, le classement étant celui des huit affiliations marquées.
+ * statut, le classement étant celui des neuf affiliations marquées.
  */
 export function motifDeDepart(cas, actuel) {
   if (actuel.motif_ouverture === "carriere_longue") return "carriere_longue";

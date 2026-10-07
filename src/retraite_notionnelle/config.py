@@ -366,9 +366,10 @@ class Neutralisations:
 
     **La catégorie active est désormais servie**, et les âges de la pension
     militaire avec elle : le classement de l'emploi ne se devine pas d'un revenu
-    et d'un régime, mais il se DÉCLARE, et huit statuts de
+    et d'un régime, mais il se DÉCLARE, et neuf statuts de
     ``legislation/affiliations.yaml`` le portent — catégorie active et
-    super-active des trois fonctions publiques, hospitaliers actifs à part, ouvriers de l'État, militaires
+    super-active des trois fonctions publiques, hospitaliers actifs et
+    sapeurs-pompiers à part, ouvriers de l'État, militaires
     officiers et non officiers. Le scénario 1 leur oppose l'âge anticipé ou
     minoré de l'article L. 24, l'âge d'annulation de décote de l'article
     L. 14 bis et, pour les militaires, la durée de services qui ouvre leur

@@ -79,6 +79,7 @@ CONDITIONS = ("tout_enfant", "ne_en_service", "ne_avant_radiation",
 #: dans le régime qui le pensionne, lues par :class:`FichesDatees
 #: <retraite_notionnelle.scenarios.actuel.FichesDatees>` à la date d'effet.
 FICHES_DES_EMPLOIS = ("bonification_cinquieme_police_penitentiaire",
+                      "bonification_cinquieme_sapeurs_pompiers",
                       "majoration_duree_hospitaliers_actifs")
 
 #: Ce qu'une version de ces fiches accorde (``contenu.parametres.nature``) : une
@@ -96,9 +97,13 @@ NATURES_DES_EMPLOIS = ("bonification", "majoration")
 #:   durée de services actifs et âge anticipé, réunies à la radiation des
 #:   cadres, l'agent étant alors dans l'un des statuts de la fiche ;
 #: * ``duree_de_la_categorie_active`` — la durée de services actifs, l'agent
-#:   ayant servi dans l'un des statuts de la fiche.
+#:   ayant servi dans l'un des statuts de la fiche ;
+#: * ``durees_et_age_de_l_emploi`` — les années servies dans les statuts de la
+#:   fiche (``annees_dans_l_emploi``) et celles de la fonction publique civile
+#:   (``annees_de_services``), l'âge anticipé atteint si ``age_anticipe`` ; la
+#:   radiation pour invalidité imputable au service en dispense.
 CONDITIONS_DES_EMPLOIS = ("duree_de_l_age_minore", "categorie_active_en_fonction",
-                          "duree_de_la_categorie_active")
+                          "duree_de_la_categorie_active", "durees_et_age_de_l_emploi")
 
 
 @dataclass(frozen=True)
@@ -496,11 +501,13 @@ def trimestres_des_emplois(moteur: ScenarioActuel, carriere: Carriere,
             continue
         cumul = version["parametres"].get("cumul_maximum_trimestres")
         if cumul is not None:
+            # Une bonification y porte ses services et sa durée, une
+            # majoration sa seule majoration : l'un ou l'autre se borne.
             reste = max(0, int(cumul) - somme_ordonnee(e.duree + e.majoration for e in emplois))
-            duree = min(emploi.duree, reste)
-            emploi = replace(emploi, duree=duree,
-                             majoration=min(emploi.majoration, reste - duree))
-            if not (emploi.services or emploi.duree or emploi.majoration):
+            emploi = replace(emploi, services=min(emploi.services, reste),
+                             duree=min(emploi.duree, reste),
+                             majoration=min(emploi.majoration, reste))
+            if not (emploi.services or emploi.majoration):
                 continue
         emplois.append(emploi)
     return tuple(emplois)
@@ -584,6 +591,21 @@ def condition_d_un_emploi(moteur: ScenarioActuel, carriere: Carriere, condition:
     """
     derogation = moteur.ages_categorie_active.derogation(
         parametres["classement"], carriere.generation)
+    if condition == "durees_et_age_de_l_emploi":
+        radiation = carriere.radiation_pour_invalidite
+        if radiation is not None and radiation.imputable:
+            return Fiabilite.depuis_texte(parametres["fiabilite"])
+        borne = coordonner.borne_carriere(carriere)
+        publiques = carriere.duree_de_service(list(parametres["services_comptes"]), borne)
+        if (servies + 1e-9 < float(parametres["annees_dans_l_emploi"])
+                or publiques + 1e-9 < float(parametres["annees_de_services"])):
+            return None
+        if not parametres["age_anticipe"]:
+            return Fiabilite.depuis_texte(parametres["fiabilite"])
+        if (derogation is None or carriere.age_liquidation is None
+                or carriere.age_liquidation + 1e-9 < derogation.age_ouverture):
+            return None
+        return derogation.fiabilite
     if condition == "duree_de_l_age_minore":
         if carriere.radiation_pour_invalidite is not None:
             return Fiabilite.depuis_texte(parametres["fiabilite"])

@@ -146,6 +146,8 @@ SEDENTAIRE: dict[str, tuple[str, str]] = {
         "fonctionnaire_territorial_hospitalier", "categorie_active"),
     "fonctionnaire_territorial_hospitalier_super_actif": (
         "fonctionnaire_territorial_hospitalier", "categorie_active"),
+    "sapeur_pompier_professionnel": (
+        "fonctionnaire_territorial_hospitalier", "categorie_active"),
     "ouvrier_etat_actif": ("ouvrier_etat", "categorie_active"),
     "militaire": ("fonctionnaire_etat", "age_jouissance_militaire"),
     "militaire_officier": ("fonctionnaire_etat", "age_jouissance_militaire"),
@@ -445,8 +447,8 @@ NEUTRALISATIONS: tuple[Neutralisation, ...] = (
     Neutralisation(
         code="bonification_cinquieme_services_actifs",
         quoi="les fiches des bonifications des emplois classés sont retirées : "
-             "le policier et le surveillant pénitentiaire liquident leurs seuls "
-             "services",
+             "le policier, le surveillant pénitentiaire et le sapeur-pompier "
+             "liquident leurs seuls services",
         par="table",
     ),
 )
@@ -669,7 +671,7 @@ def recalculer(simulateur: Simulateur, cas: CasType, generation: int,
             if (code == "bonification_cinquieme_services_actifs"
                     and cas.affiliation not in statuts_des_emplois(simulateur)):
                 # Une carrière qu'aucune fiche ne bonifie n'a rien à perdre au
-                # retrait : aucun cas type de la grille n'est policier.
+                # retrait : aucun cas type de la grille n'est policier ni pompier.
                 continue
             carriere = carriere_variante(simulateur, cas, generation, age)
             if code == "retraite_anticipee_handicap" and carriere.incapacite_permanente is None:
@@ -696,7 +698,7 @@ def motif_de_depart(cas: CasType, actuel) -> str:
     """Ce qui ouvre ce départ, quand il est anticipé.
 
     Le modèle nomme la carrière longue lui-même (``motif_ouverture``) ; les deux
-    autres se lisent au statut, le classement étant celui des huit affiliations
+    autres se lisent au statut, le classement étant celui des neuf affiliations
     que ``legislation/affiliations.yaml`` marque.
     """
     if actuel.motif_ouverture == "carriere_longue":

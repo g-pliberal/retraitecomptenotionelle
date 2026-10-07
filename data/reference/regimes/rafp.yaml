@@ -23,6 +23,7 @@ inventaire:
             fonctionnaire_territorial_hospitalier_actif,
             fonctionnaire_hospitalier_actif,
             fonctionnaire_territorial_hospitalier_super_actif,
+            sapeur_pompier_professionnel,
             militaire, militaire_officier]
   textes:
     - {reference: "loi n° 2003-775 du 21 août 2003, article 76", id: null}

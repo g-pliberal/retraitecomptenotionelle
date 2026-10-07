@@ -704,7 +704,7 @@
 "fonctionnaire_territorial_hospitalier_super_actif":{
 "categorie_active":"super_active",
 "famille":"public",
-"libelle":"Fonctionnaire territorial ou hospitalier, emploi de catégorie super-active (sapeur-pompier)",
+"libelle":"Fonctionnaire territorial ou hospitalier, emploi de catégorie super-active (égoutier)",
 "part_salariale_seule":false,
 "pension_militaire":null,
 "periodes":[{"debut":1945,"fin":2004,"regimes":["cnracl"]},{"debut":2005,"fin":null,"regimes":["cnracl","rafp"]}],
@@ -1020,6 +1020,16 @@
 },
 "salarie_wallis_et_futuna":{"categorie_active":null,"famille":"outre_mer","libelle":"Salarié de Wallis-et-Futuna","part_salariale_seule":false,"pension_militaire":null,"periodes":[{"debut":1975,"fin":null,"regimes":["wallis_et_futuna"]}],"releve_par":null,"sans_employeur":false},
 "sans_activite":{"categorie_active":null,"famille":"hors_emploi","libelle":"Sans activité professionnelle","part_salariale_seule":false,"pension_militaire":null,"periodes":[{"debut":1930,"fin":null,"regimes":[]}],"releve_par":null,"sans_employeur":false},
+"sapeur_pompier_professionnel":{
+"categorie_active":"active",
+"famille":"public",
+"libelle":"Sapeur-pompier professionnel (emploi de catégorie active)",
+"part_salariale_seule":false,
+"pension_militaire":null,
+"periodes":[{"debut":1945,"fin":2004,"regimes":["cnracl"]},{"debut":2005,"fin":null,"regimes":["cnracl","rafp"]}],
+"releve_par":null,
+"sans_employeur":false
+},
 "veterinaire":{
 "categorie_active":null,
 "famille":"independant",
@@ -1707,7 +1717,7 @@
 "mesurable_par":"modele",
 "quoi":"La même annuité gratuite pour cinq servies, accordée par des statuts particuliers aux policiers, aux sapeurs-pompiers professionnels, aux surveillants de l'administration pénitentiaire et aux douaniers de la branche surveillance.",
 "regimes":"fonction publique, catégories actives",
-"sans_chiffre":"aucun cas type de la grille n'est policier ni surveillant ; le jaune en compte 108 453, à 19,1 trimestres, la plus longue"
+"sans_chiffre":"aucun cas type de la grille n'est policier, surveillant ni sapeur-pompier ; le jaune en compte 108 453 à l'État, à 19,1 trimestres, la plus longue"
 },
 {
 "base_legale":["Décret n° 2008-639 du 30 juin 2008 art. 9 (SNCF)","Décret n° 2008-637 du 30 juin 2008 art. 20 (RATP)"],
@@ -10861,6 +10871,109 @@ null
 }
 ]
 },
+"bonification_cinquieme_sapeurs_pompiers":{
+"dates_qui_decident":["liquidation.date_effet"],
+"id":"bonification_cinquieme_sapeurs_pompiers",
+"versions":[
+{"bornes":{"liquidation.date_effet":[null,"1986-02-07"]},"exception_de":null,"id":"avant_le_decret_de_1986","parametres":{"existe":false},"texte":"JORFTEXT000000700722"},
+{
+"bornes":{"liquidation.date_effet":["1986-02-07","2004-01-01"]},
+"exception_de":null,
+"id":"decret_de_1986",
+"parametres":{
+"age_anticipe":true,
+"age_de_reduction":null,
+"annees_dans_l_emploi":15,
+"annees_de_services":30,
+"au_dela_du_maximum":false,
+"classement":"active",
+"condition":"durees_et_age_de_l_emploi",
+"cumul_maximum_trimestres":null,
+"existe":true,
+"fiabilite":"moyenne",
+"fraction":0.2,
+"nature":"bonification",
+"plafond_trimestres":20,
+"regime":"cnracl",
+"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif","sapeur_pompier_professionnel"],
+"statuts":["sapeur_pompier_professionnel"]
+},
+"texte":"JORFTEXT000000700722"
+},
+{
+"bornes":{"liquidation.date_effet":["2004-01-01","2011-07-01"]},
+"exception_de":null,
+"id":"decret_de_2003",
+"parametres":{
+"age_anticipe":true,
+"age_de_reduction":null,
+"annees_dans_l_emploi":15,
+"annees_de_services":30,
+"au_dela_du_maximum":false,
+"classement":"active",
+"condition":"durees_et_age_de_l_emploi",
+"cumul_maximum_trimestres":null,
+"existe":true,
+"fiabilite":"moyenne",
+"fraction":0.2,
+"nature":"bonification",
+"plafond_trimestres":20,
+"regime":"cnracl",
+"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif","sapeur_pompier_professionnel"],
+"statuts":["sapeur_pompier_professionnel"]
+},
+"texte":"LEGIARTI000006400876"
+},
+{
+"bornes":{"liquidation.date_effet":["2011-07-01","2023-09-01"]},
+"exception_de":null,
+"id":"decret_du_30_decembre_2010",
+"parametres":{
+"age_anticipe":true,
+"age_de_reduction":null,
+"annees_dans_l_emploi":17,
+"annees_de_services":27,
+"au_dela_du_maximum":false,
+"classement":"active",
+"condition":"durees_et_age_de_l_emploi",
+"cumul_maximum_trimestres":null,
+"existe":true,
+"fiabilite":"moyenne",
+"fraction":0.2,
+"nature":"bonification",
+"plafond_trimestres":20,
+"regime":"cnracl",
+"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif","sapeur_pompier_professionnel"],
+"statuts":["sapeur_pompier_professionnel"]
+},
+"texte":"LEGIARTI000023414050"
+},
+{
+"bornes":{"liquidation.date_effet":["2023-09-01",null]},
+"exception_de":null,
+"id":"decret_du_3_juin_2023",
+"parametres":{
+"age_anticipe":false,
+"age_de_reduction":null,
+"annees_dans_l_emploi":17,
+"annees_de_services":27,
+"au_dela_du_maximum":false,
+"classement":"active",
+"condition":"durees_et_age_de_l_emploi",
+"cumul_maximum_trimestres":20,
+"existe":true,
+"fiabilite":"moyenne",
+"fraction":0.2,
+"nature":"bonification",
+"plafond_trimestres":20,
+"regime":"cnracl",
+"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif","sapeur_pompier_professionnel"],
+"statuts":["sapeur_pompier_professionnel"]
+},
+"texte":"LEGIARTI000047633112"
+}
+]
+},
 "majoration_duree_hospitaliers_actifs":{
 "dates_qui_decident":["liquidation.date_effet"],
 "id":"majoration_duree_hospitaliers_actifs",
@@ -10882,7 +10995,7 @@ null
 "nature":"majoration",
 "plafond_trimestres":null,
 "regime":"cnracl",
-"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif"],
+"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif","sapeur_pompier_professionnel"],
 "statuts":["fonctionnaire_hospitalier_actif"]
 },
 "texte":"LEGIARTI000006758626"
@@ -10903,7 +11016,7 @@ null
 "nature":"majoration",
 "plafond_trimestres":null,
 "regime":"cnracl",
-"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif"],
+"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif","sapeur_pompier_professionnel"],
 "statuts":["fonctionnaire_hospitalier_actif"]
 },
 "texte":"LEGIARTI000023096779"
@@ -10924,7 +11037,7 @@ null
 "nature":"majoration",
 "plafond_trimestres":null,
 "regime":"cnracl",
-"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif"],
+"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif","sapeur_pompier_professionnel"],
 "statuts":["fonctionnaire_hospitalier_actif"]
 },
 "texte":"LEGIARTI000047453001"
@@ -11846,7 +11959,7 @@ null
 "nom":"Caisse nationale de retraites des agents des collectivités locales",
 "population":"Fonctionnaires territoriaux et hospitaliers",
 "raison_hors_champ":"",
-"statuts":["fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif"],
+"statuts":["fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif","sapeur_pompier_professionnel"],
 "succede_a":[],
 "textes":[{"id":null,"reference":"ordonnance n° 45-993 du 17 mai 1945"},{"id":null,"reference":"décret n° 47-1846 du 19 septembre 1947"},{"id":null,"reference":"décret n° 2003-1306 du 26 décembre 2003 relatif au régime de retraite des fonctionnaires affiliés à la CNRACL"}]
 },
@@ -11898,7 +12011,18 @@ null
 "nom":"Retraite additionnelle de la fonction publique",
 "population":"Fonctionnaires des trois fonctions publiques, sur leurs primes",
 "raison_hors_champ":"",
-"statuts":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif","militaire","militaire_officier"],
+"statuts":[
+"fonctionnaire_etat",
+"fonctionnaire_etat_actif",
+"fonctionnaire_etat_super_actif",
+"fonctionnaire_territorial_hospitalier",
+"fonctionnaire_territorial_hospitalier_actif",
+"fonctionnaire_hospitalier_actif",
+"fonctionnaire_territorial_hospitalier_super_actif",
+"sapeur_pompier_professionnel",
+"militaire",
+"militaire_officier"
+],
 "succede_a":[],
 "textes":[{"id":null,"reference":"loi n° 2003-775 du 21 août 2003, article 76"},{"id":null,"reference":"décret n° 2004-569 du 18 juin 2004 relatif à la retraite additionnelle de la fonction publique"}]
 },

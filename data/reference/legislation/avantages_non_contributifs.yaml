@@ -826,7 +826,7 @@ avantages:
     etat_modele: integre
     ligne_cascade: null
     pourquoi_pas_chiffre: >-
-      L'avantage est un ÂGE, pas un montant. Huit statuts de
+      L'avantage est un ÂGE, pas un montant. Neuf statuts de
       `legislation/affiliations.yaml` le portent, et le scénario 1 leur oppose
       l'âge anticipé de L. 24 et l'âge d'annulation de L. 14 bis.
     chiffre_par: scripts/cout_avantages.py
@@ -984,7 +984,8 @@ avantages:
       8 avril 1957 art. 6, Loi n° 89-1007 du 31 décembre 1989 art. 5,
       Loi n° 96-452 du 28 mai 1996 art. 24, Loi n° 2003-1312 du
       30 décembre 2003 art. 93, R. 411-2 code de la sécurité intérieure]
-    fiches: [bonification_cinquieme_police_penitentiaire]
+    fiches: [bonification_cinquieme_police_penitentiaire,
+             bonification_cinquieme_sapeurs_pompiers]
     creation: 1957
     fin: null
     regimes: fonction publique, catégories actives
@@ -994,13 +995,14 @@ avantages:
       L'avantage est une DURÉE : vingt trimestres au plus, aux services liquidés
       sous le maximum de 75 % et à la durée d'assurance de la décote. Le
       scénario 1 le sert depuis le 7 octobre 2026 au statut super-actif de
-      l'État, policiers et surveillants pénitentiaires ; les sapeurs-pompiers,
-      les douaniers de la branche surveillance et les contrôleurs aériens n'ont
-      pas de statut qui le porte.
+      l'État, policiers et surveillants pénitentiaires, et au statut des
+      sapeurs-pompiers professionnels ; les douaniers de la branche
+      surveillance et les contrôleurs aériens n'ont pas de statut qui le
+      porte.
     chiffre_par: scripts/cout_avantages.py
     sans_chiffre: >-
-      aucun cas type de la grille n'est policier ni surveillant ; le jaune en
-      compte 108 453, à 19,1 trimestres, la plus longue
+      aucun cas type de la grille n'est policier, surveillant ni sapeur-pompier
+      ; le jaune en compte 108 453 à l'État, à 19,1 trimestres, la plus longue
     denombrement:
       source_id: sre_jaune_pensions
       tableau_a7: hors_l12

@@ -24,7 +24,8 @@ inventaire:
   statuts: [fonctionnaire_territorial_hospitalier,
             fonctionnaire_territorial_hospitalier_actif,
             fonctionnaire_hospitalier_actif,
-            fonctionnaire_territorial_hospitalier_super_actif]
+            fonctionnaire_territorial_hospitalier_super_actif,
+            sapeur_pompier_professionnel]
   textes:
     - {reference: "ordonnance n° 45-993 du 17 mai 1945", id: null}
     - {reference: "décret n° 47-1846 du 19 septembre 1947", id: null}

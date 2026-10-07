@@ -496,17 +496,35 @@ affiliations:
       majoration_duree_hospitaliers_actifs).
 
   fonctionnaire_territorial_hospitalier_super_actif:
-    libelle: Fonctionnaire territorial ou hospitalier, emploi de catégorie super-active (sapeur-pompier)
+    libelle: Fonctionnaire territorial ou hospitalier, emploi de catégorie super-active (égoutier)
     famille: public
     categorie_active: super_active
     periodes:
       - {debut: 1945, fin: 2004, regimes: [cnracl]}
       - {debut: 2005, fin: null, regimes: [cnracl, rafp]}
     note: >-
-      Sapeur-pompier professionnel, agent des réseaux souterrains. La
-      bonification du cinquième du sapeur-pompier — une annuité pour cinq ans de
-      service, dans la limite de cinq — n'est pas servie : c'est une
-      bonification de SERVICE, et le modèle n'en sert aucune.
+      Agent des réseaux souterrains des égouts, identificateur de l'institut
+      médico-légal de la préfecture de police : les emplois super-actifs de la
+      CNRACL (décret n° 2003-1306, article 25, I, 1°). Le statut portait jusqu'au
+      7 octobre 2026 le sapeur-pompier professionnel, qui n'en est pas : son
+      emploi est de catégorie active, et il a son statut. Leur bonification de la
+      moitié du temps passé dans ces services, dix ans au plus (article 15, II,
+      1°), n'est pas servie, ni leur durée propre de douze ans.
+
+  sapeur_pompier_professionnel:
+    libelle: Sapeur-pompier professionnel (emploi de catégorie active)
+    famille: public
+    categorie_active: active
+    periodes:
+      - {debut: 1945, fin: 2004, regimes: [cnracl]}
+      - {debut: 2005, fin: null, regimes: [cnracl, rafp]}
+    note: >-
+      Fonctionnaire territorial de la CNRACL, en catégorie active : l'âge
+      anticipé à dix-sept ans de services actifs, comme l'aide-soignant. Et la
+      bonification du cinquième du temps de service accompli en qualité de
+      sapeur-pompier professionnel, cinq ans au plus, sous le pourcentage
+      maximum (loi n° 83-1179, article 125, III ; décret n° 2003-1306, article
+      15, II, 2° ; fiche bonification_cinquieme_sapeurs_pompiers).
 
   ouvrier_etat_actif:
     libelle: Ouvrier de l'État, emploi insalubre ou de catégorie active

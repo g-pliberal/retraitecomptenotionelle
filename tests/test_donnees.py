@@ -2413,6 +2413,7 @@ def test_les_statuts_classes_et_militaires_sont_ceux_qu_on_attend():
         "fonctionnaire_territorial_hospitalier_actif": "active",
         "fonctionnaire_hospitalier_actif": "active",
         "fonctionnaire_territorial_hospitalier_super_actif": "super_active",
+        "sapeur_pompier_professionnel": "active",
         "ouvrier_etat_actif": "active",
     }
     assert affiliations.categories_militaires == {
@@ -2430,6 +2431,7 @@ def test_les_statuts_classes_et_militaires_sont_ceux_qu_on_attend():
         ("fonctionnaire_hospitalier_actif", "fonctionnaire_territorial_hospitalier"),
         ("fonctionnaire_territorial_hospitalier_super_actif",
          "fonctionnaire_territorial_hospitalier"),
+        ("sapeur_pompier_professionnel", "fonctionnaire_territorial_hospitalier"),
         ("ouvrier_etat_actif", "ouvrier_etat"),
         ("militaire", "fonctionnaire_etat"),
         ("militaire_officier", "fonctionnaire_etat"),
