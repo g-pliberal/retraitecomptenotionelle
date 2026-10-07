@@ -38,10 +38,21 @@ const DETAILS = {
     + "d'allocataires, servie par moitié",
 };
 
+/** Ce qu'elle en dit avant 2007, quand le minimum tient en deux étages. */
+const DETAILS_DEUX_ETAGES = {
+  [PERSONNE_SEULE]: "allocation aux vieux travailleurs salariés et allocation "
+    + "supplémentaire, sous le plafond d'une personne seule",
+  [COUPLE]: "allocation aux vieux travailleurs salariés et allocation "
+    + "supplémentaire, sous le plafond du couple",
+  [DEUX_ALLOCATAIRES]: "allocation aux vieux travailleurs salariés et allocation "
+    + "supplémentaire du ménage, sous le plafond du couple, servie par moitié",
+};
+
 /** Ce que l'étape « foyer et net » écrit, à une date. */
 export class Foyer {
   constructor({ personne, date, ressources, minimumVieillesse, plafond, fiabilite,
-    etrangeres = 0.0, bareme = PERSONNE_SEULE, ressourcesConjoint = 0.0 }) {
+    etrangeres = 0.0, bareme = PERSONNE_SEULE, ressourcesConjoint = 0.0,
+    deuxEtages = false }) {
     this.personne = personne;
     this.date = date;
     this.ressources = ressources;
@@ -54,6 +65,8 @@ export class Foyer {
     this.bareme = bareme;
     /** Les ressources du conjoint, que le plafond du couple compte avec les siennes. */
     this.ressourcesConjoint = ressourcesConjoint;
+    /** Avant 2007, le minimum à deux étages : il borne les ressources au plafond sans les y porter. */
+    this.deuxEtages = deuxEtages;
   }
 
   /** L'ASPA, sous la forme où la cascade des avantages la dit. */
@@ -62,17 +75,18 @@ export class Foyer {
       code: "minimum_vieillesse",
       libelle: "Minimum vieillesse (ASPA)",
       montant: this.minimumVieillesse,
-      detail: DETAILS[this.bareme],
+      detail: (this.deuxEtages ? DETAILS_DEUX_ETAGES : DETAILS)[this.bareme],
     };
   }
 
   /**
    * Les pensions françaises de la personne et l'allocation, ensemble : le
    * barème d'une personne seule, moins ce que les pensions étrangères en
-   * remplissent ; dans un couple, ses pensions et sa part de l'allocation.
+   * remplissent ; dans un couple, ses pensions et sa part de l'allocation ;
+   * avant 2007, ses pensions et les deux étages, que le plafond borne.
    */
   servieAvec(pensions) {
-    if (this.bareme === PERSONNE_SEULE) {
+    if (this.bareme === PERSONNE_SEULE && !this.deuxEtages) {
       return this.plafond - this.etrangeres;
     }
     return pensions + this.minimumVieillesse;
@@ -141,6 +155,37 @@ export function conjointAllocataire(conjoint, jour) {
 }
 
 /**
+ * Le minimum vieillesse d'avant 2007, et le plafond qui le borne : le premier
+ * étage porte la pension au montant de l'allocation aux vieux travailleurs
+ * salariés (L. 814-2) ; le second, l'allocation supplémentaire, se réduit de ce
+ * que son total et les ressources du foyer, premier étage compris, dépassent le
+ * plafond (L. 815-8). Deux allocataires se partagent par moitié le montant du
+ * ménage, le double de celui d'un seul avant juillet 1982 ; le premier étage
+ * n'est servi que sous le plafond, que les ressources du conjoint peuvent
+ * atteindre ; avant 1956, le premier étage seul. Voir `avant_l_aspa` du Python.
+ */
+export function avantLAspa(etages, bareme, ressources, duConjoint) {
+  const seule = bareme === PERSONNE_SEULE;
+  const plafond = seule ? etages.plafond : etages.plafondCouple;
+  let total = seule ? ressources : ressources + duConjoint;
+  let premier = Math.max(0.0, etages.avts - ressources);
+  if (plafond === null || plafond === undefined) {
+    return [premier, null];
+  }
+  premier = Math.max(0.0, Math.min(premier, plafond - total));
+  total += premier;
+  let maximum = etages.supplementaire;
+  let part = 1.0;
+  if (bareme === DEUX_ALLOCATAIRES) {
+    total += Math.max(0.0, Math.min(etages.avts - duConjoint, plafond - total));
+    maximum = etages.supplementaireMenage === null || etages.supplementaireMenage === undefined
+      ? 2 * etages.supplementaire : etages.supplementaireMenage;
+    part = 0.5;
+  }
+  return [premier + part * Math.max(0.0, Math.min(maximum, plafond - total)), plafond];
+}
+
+/**
  * L'ASPA qu'appellent `ressources`, les pensions françaises, en `annee`.
  * `ageAtteint` dit si l'âge de l'allocation l'est : à la date d'effet pour une
  * liquidation, dans l'année pour une échéance ; la `carriere`, les pensions
@@ -168,9 +213,17 @@ export function foyerEtNet(moteur, personne, date, annee, ressources, ageAtteint
   let montant = 0.0;
   let plafond = null;
   let fiabilite = Fiabilite.CERTIFIEE;
-  if (ageAtteint && moteur.parametres.minimum_vieillesse_dans_le_scenario_actuel
-      && conditionDeResidence(moteur, residence, jour, moisEnFrance)
-      && !(contexte !== null && contexte.neutralise("avantages_non_contributifs"))) {
+  const servie = ageAtteint && moteur.parametres.minimum_vieillesse_dans_le_scenario_actuel
+    && conditionDeResidence(moteur, residence, jour, moisEnFrance)
+    && !(contexte !== null && contexte.neutralise("avantages_non_contributifs"));
+  const etages = servie ? moteur.minimumVieillesse.deuxEtages(annee) : null;
+  if (etages !== null) {
+    // Avant l'ASPA, deux étages (action 138, étape 6).
+    [montant, plafond] = avantLAspa(etages, bareme, total, duConjoint);
+    if (montant > 0) {
+      fiabilite = etages.fiabilite;
+    }
+  } else if (servie) {
     const seule = moteur.minimumVieillesse.plafond(annee);
     const couple = bareme === PERSONNE_SEULE
       ? null : moteur.minimumVieillesse.plafondCouple(annee);
@@ -193,6 +246,6 @@ export function foyerEtNet(moteur, personne, date, annee, ressources, ageAtteint
   }
   return new Foyer({
     personne, date, ressources: total, minimumVieillesse: montant, plafond, fiabilite,
-    etrangeres, bareme, ressourcesConjoint: duConjoint,
+    etrangeres, bareme, ressourcesConjoint: duConjoint, deuxEtages: etages !== null,
   });
 }

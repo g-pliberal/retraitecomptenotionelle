@@ -45,6 +45,28 @@
    "valeurs": 79,
    "verifiee_le": "2026-09-17"
   },
+  "allocation_supplementaire_cnav": {
+   "ajoutees": 0,
+   "colonne": "supplementaire",
+   "corrigees": 0,
+   "empreinte": "4cc8a2030600d816",
+   "identiques": 51,
+   "niveau": "haute",
+   "source": "Cnav, barème « Allocation supplémentaire - Montant »",
+   "valeurs": 51,
+   "verifiee_le": "2026-10-07"
+  },
+  "allocation_supplementaire_menage_cnav": {
+   "ajoutees": 0,
+   "colonne": "supplementaire_menage",
+   "corrigees": 0,
+   "empreinte": "708bcca5fc174270",
+   "identiques": 25,
+   "niveau": "haute",
+   "source": "Cnav, barème « Allocation supplémentaire - Montant »",
+   "valeurs": 25,
+   "verifiee_le": "2026-10-07"
+  },
   "annees_revenu_annuel_moyen_independants": {
    "ajoutees": 0,
    "colonne": "annees",
@@ -99,6 +121,17 @@
    "source": "INSEE BDM, idbank 011785411 (D11, total des branches)",
    "valeurs": 77,
    "verifiee_le": "2026-10-06"
+  },
+  "avts_cnav": {
+   "ajoutees": 0,
+   "colonne": "avts",
+   "corrigees": 0,
+   "empreinte": "d334d347b9dc6bc9",
+   "identiques": 66,
+   "niveau": "haute",
+   "source": "Cnav, barème « Allocation aux vieux travailleurs salariés […] - Montant »",
+   "valeurs": 66,
+   "verifiee_le": "2026-10-07"
   },
   "bonifications_jaune_effectifs": {
    "ajoutees": 0,
@@ -892,6 +925,17 @@
    "valeurs": 40,
    "verifiee_le": "2026-09-13"
   },
+  "plafond_couple_minimum_vieillesse_cnav": {
+   "ajoutees": 0,
+   "colonne": "plafond_couple",
+   "corrigees": 0,
+   "empreinte": "a930c080c8852826",
+   "identiques": 51,
+   "niveau": "haute",
+   "source": "Cnav, barème « Allocation supplémentaire - Plafond de ressources »",
+   "valeurs": 51,
+   "verifiee_le": "2026-10-07"
+  },
   "plafond_journal_officiel": {
    "ajoutees": 0,
    "colonne": "pass_eur",
@@ -912,6 +956,17 @@
    "niveau": "haute",
    "source": "Cnav, barème « Plafond de ressources pour la majoration de la retraite de réversion »",
    "valeurs": 17,
+   "verifiee_le": "2026-10-07"
+  },
+  "plafond_minimum_vieillesse_cnav": {
+   "ajoutees": 0,
+   "colonne": "plafond",
+   "corrigees": 0,
+   "empreinte": "d8e30f61acfb4e2d",
+   "identiques": 51,
+   "niveau": "haute",
+   "source": "Cnav, barème « Allocation supplémentaire - Plafond de ressources »",
+   "valeurs": 51,
    "verifiee_le": "2026-10-07"
   },
   "point_indice_fonction_publique": {

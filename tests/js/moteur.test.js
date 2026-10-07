@@ -27,6 +27,10 @@ import { appels } from "../../moteur/js/droit/liquidation.js";
 import { moyenneSelonLaRegle } from "../../moteur/js/droit/liquider.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import { DonneesMacro } from "../../moteur/js/macro.js";
+import { MinimumVieillesse } from "../../moteur/js/regimes.js";
+import {
+  avantLAspa, COUPLE, DEUX_ALLOCATAIRES, PERSONNE_SEULE,
+} from "../../moteur/js/droit/foyer.js";
 import { AnneeCarriere, limiterChomageNonIndemnise } from "../../moteur/js/carriere.js";
 import * as gabarit from "../../moteur/js/gabarit.js";
 import { Fiabilite, SerieAnnuelle } from "../../moteur/js/serie.js";
@@ -782,6 +786,34 @@ test("l'assiette de l'AVPF et la colonne de revalorisation sont celles de la Cna
   proche(lu(1947, 1949, 6), 1.6);
   proche(lu(1990, 2013, 5), 1.431);
   assert.equal(lu(1954, 1955, 2), 1);
+});
+
+/**
+ * Le portage des montants de `test_avant_2007_le_minimum_vieillesse_tient_en_deux_etages`
+ * (tests/test_liquidation.py) : les deux étages d'avant l'ASPA, sur la table du paquet.
+ */
+test("avant 2007, le minimum vieillesse tient en deux étages", () => {
+  const macro = new DonneesMacro(paquet);
+  const minimum = new MinimumVieillesse(paquet, macro);
+  const francs = (montant) => montant / 6.55957;
+  const proche = (obtenu, attendu) => assert.ok(Math.abs(obtenu - attendu) < 1e-6,
+    `${obtenu} contre ${attendu}`);
+  const en1970 = minimum.deuxEtages(1970);
+  for (const [pension, attendu] of [[0, 3000], [2000, 1250], [3500, 1000], [4500, 0]]) {
+    const [montant, plafond] = avantLAspa(en1970, PERSONNE_SEULE, francs(pension), 0);
+    proche(montant, francs(attendu));
+    proche(plafond, francs(4500));
+  }
+  const [premier, sansPlafond] = avantLAspa(minimum.deuxEtages(1950), PERSONNE_SEULE,
+    francs(100), 0);
+  proche(premier, francs(350));
+  assert.equal(sansPlafond, null);
+  const en1990 = minimum.deuxEtages(1990);
+  proche(avantLAspa(en1990, DEUX_ALLOCATAIRES, 0, 0)[0],
+    francs(14990 + (63110 - 29980) / 2));
+  proche(avantLAspa(en1990, COUPLE, 0, francs(30000))[0], francs(14990 + 63110 - 44990));
+  assert.equal(avantLAspa(en1990, COUPLE, 0, francs(70000))[0], 0);
+  assert.equal(minimum.deuxEtages(2007), null);
 });
 
 /**

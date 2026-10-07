@@ -7,7 +7,10 @@ intitule: >-
   qui manque à chacun de deux allocataires, tout ce qui manque à un seul, au plus le
   montant d'une personne seule. À tous, en ligne séparée. Revalorisée sur les prix :
   L. 816-2 renvoie au coefficient de L. 161-25, moyenne annuelle des prix hors tabac,
-  plancher à 1.
+  plancher à 1. Jusqu'en 2006, deux étages : la pension portée au montant de
+  l'allocation aux vieux travailleurs salariés (L. 814-2), puis l'allocation
+  supplémentaire, depuis 1956, réduite de ce que son total et les ressources dépassent
+  le plafond (L. 815-8).
 etat: approchee
 etape: foyer_et_net
 presomptions:
@@ -37,9 +40,19 @@ effet: >-
   prend le montant. Une pension étrangère déclarée compte : « il est tenu compte,
   pour l'appréciation des ressources, de tous les avantages d'invalidité et de
   vieillesse dont bénéficie l'intéressé » (R. 815-22), à son montant brut, revalorisé
-  « dans les mêmes conditions que ceux du régime général ».
+  « dans les mêmes conditions que ceux du régime général ». AVANT L'ASPA, depuis le 7
+  octobre 2026 (action 138, étape 6), les deux étages de chaque année de 1941 à 2006,
+  au lieu du montant de 2006 ramené sur les prix (1 195 € en 1970 au lieu de 457 €) :
+  sous un plafond qui dépassait de moitié la somme des deux étages en 1970, une pension
+  au-dessus du minimum recevait encore une part de l'allocation supplémentaire. Deux
+  témoins des cultes bougent, de −0,95 % et +2,53 % ; la page Coût reconstitue les
+  minima de pension de 1970 à 0,4 Md€ au lieu de 2,2, de 1990 à 2,4 au lieu de 4,2.
+  Le modèle ignore, avant 2007, la majoration pour conjoint à charge et l'allocation
+  spéciale de qui n'avait aucun régime ; il donne le premier étage à toute pension
+  sous l'allocation aux vieux travailleurs salariés, sans en lire le plafond avant
+  1956, et au montant des villes de plus de 5 000 habitants jusqu'en 1961.
 sources:
-  lu_le: 2026-10-05
+  lu_le: 2026-10-07
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -109,7 +122,36 @@ sources:
       est révisée le 1er jour du mois qui suit la date de modification d'un avantage
       viager »
     date: 2026-10-01
+  - type: legifrance
+    reference: >-
+      L. 814-2 CSS, rédaction du 11 juillet 1990 (LEGIARTI000006745108) : les
+      avantages de vieillesse « dont les ressources sont inférieures au plafond […]
+      sont majorés, le cas échéant, pour être portés au montant de l'allocation aux
+      vieux travailleurs salariés » ; L. 815-2 (LEGIARTI000006745116) : l'allocation
+      supplémentaire du titulaire d'un avantage de vieillesse ; L. 815-4
+      (LEGIARTI000006744834) : son montant « peut varier suivant la situation
+      matrimoniale » ; L. 815-8 (LEGIARTI000006744866) : elle « n'est due que si le
+      total de cette allocation et des ressources personnelles de l'intéressé et du
+      conjoint, si le bénéficiaire est marié, n'excède pas des chiffres limites
+      fixés par décret », et se réduit « à due concurrence » au-delà ; lus dans
+      l'index LEGI du dépôt
+    date: 1990-07-11
+  - type: circulaire_cnav
+    reference: >-
+      base législative de la Cnav, barèmes « Allocation aux vieux travailleurs
+      salariés […] - Montant » (depuis la loi du 14 mars 1941), « Allocation
+      supplémentaire - Montant » (un et deux allocataires, depuis le 1er avril 1956)
+      et « Allocation supplémentaire - Plafond de ressources », par leur API
+      (`cnav_avts.py`), chaque date avec la loi, le décret ou l'arrêté qui la fixe ;
+      ils redonnent les montants des décrets n° 70-879, 80-1159, 90-265 et 90-266 du
+      Journal officiel et, au 1er janvier 2006, l'ancre de D. 815-1 (3 009,45 € et
+      4 314,03 €, 7 323,48 €)
+    date: 2025-12-22
 textes_a_rattacher:
+- id: LEGIARTI000006745108
+  reference: L. 814-2 CSS, rédaction de 1990, le premier étage avant l'ASPA
+- id: LEGIARTI000006744866
+  reference: L. 815-8 CSS, rédaction de 1990, le plafond du second étage
 - reference: L. 815-1 CSS et suivants
 - reference: R. 815-22 CSS
 - reference: L. 816-2 CSS

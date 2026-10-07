@@ -1661,6 +1661,27 @@ class DecoteRegimesSpeciaux(DecoteFonctionPublique):
     FICHIER = "decote_regimes_speciaux.csv"
 
 
+@dataclass(frozen=True)
+class DeuxEtages:
+    """Le minimum vieillesse d'avant l'ASPA, une année, en euros par an.
+
+    Le premier étage porte l'avantage de vieillesse au montant de l'allocation
+    aux vieux travailleurs salariés (L. 814-2) ; le second, l'allocation
+    supplémentaire, depuis 1956, n'est due que si son total et celui des
+    ressources n'excède pas un plafond, et se réduit « à due concurrence »
+    sinon (L. 815-8). ``supplementaire_menage`` est le montant servi à deux
+    allocataires, que le barème distingue depuis le 1er juillet 1982 ;
+    ``None`` avant, chacun ayant le sien. Avant 1956, le seul premier étage.
+    """
+
+    avts: float
+    supplementaire: float
+    supplementaire_menage: float | None
+    plafond: float | None
+    plafond_couple: float | None
+    fiabilite: Fiabilite
+
+
 class MinimumVieillesse:
     """Allocation de solidarité aux personnes âgées (ASPA).
 
@@ -1686,6 +1707,44 @@ class MinimumVieillesse:
         #: foyer d'un assuré qui déclare un conjoint, et l'accueil.
         self._table_couple = self._lire(racine / "reference" / "legislation"
                                         / "minimum_vieillesse_couple.csv")
+        #: Jusqu'en 2006, le minimum vieillesse à deux étages, une ligne par
+        #: année depuis la loi du 14 mars 1941 (action 138, étape 6).
+        self._deux_etages = self._lire_deux_etages(
+            racine / "reference" / "legislation" / "minimum_vieillesse_avant_2007.csv")
+
+    #: L'ASPA remplace l'allocation aux vieux travailleurs salariés et
+    #: l'allocation supplémentaire le 13 janvier 2007 (ordonnance n° 2004-605,
+    #: décret n° 2007-57) : jusqu'en 2006, le minimum tient en deux étages.
+    DERNIERE_ANNEE_A_DEUX_ETAGES = 2006
+
+    @staticmethod
+    def _lire_deux_etages(chemin: Path) -> dict[int, DeuxEtages]:
+        table: dict[int, DeuxEtages] = {}
+        if not chemin.exists():
+            return table
+
+        def montant(texte: str) -> float | None:
+            return float(texte) if texte else None
+
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            for ligne in csv.DictReader(lignes):
+                table[int(ligne["annee"])] = DeuxEtages(
+                    avts=float(ligne["avts"]),
+                    supplementaire=montant(ligne["supplementaire"]) or 0.0,
+                    supplementaire_menage=montant(ligne["supplementaire_menage"]),
+                    plafond=montant(ligne["plafond"]),
+                    plafond_couple=montant(ligne["plafond_couple"]),
+                    fiabilite=Fiabilite.depuis_texte(ligne["fiabilite"]),
+                )
+        return table
+
+    def deux_etages(self, annee: int) -> DeuxEtages | None:
+        """Le minimum vieillesse à deux étages de l'année, s'il a cours : de
+        1941 à 2006 ; ``None`` avant la loi du 14 mars 1941, et depuis l'ASPA."""
+        if annee > self.DERNIERE_ANNEE_A_DEUX_ETAGES:
+            return None
+        return self._deux_etages.get(annee)
 
     @staticmethod
     def _lire(chemin: Path) -> dict[int, tuple[float, Fiabilite]]:

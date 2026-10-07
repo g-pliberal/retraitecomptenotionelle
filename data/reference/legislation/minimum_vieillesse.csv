@@ -36,12 +36,12 @@
 # sont les valeurs au 1er janvier ; la revalorisation supplémentaire du
 # 1er juillet 2022 n'est pas retenue, le modèle travaillant à l'année.
 #
-# Entre deux valeurs connues, et de part et d'autre de la série, le montant est
-# projeté sur les prix depuis l'ancre EN VIGUEUR. Les années 2011-2015 le sont
-# depuis 2010, et les liquidations antérieures à 2007 depuis la création de
-# l'ASPA. Cette projection en arrière n'est qu'indicative : le minimum
-# vieillesse a été relevé bien plus vite que les prix dans les années 1960 et
-# 1970, où il constituait l'essentiel de la politique de la vieillesse.
+# Entre deux valeurs connues, et au-delà de la dernière, le montant est projeté
+# sur les prix depuis l'ancre EN VIGUEUR. Jusqu'en 2006, le scénario 1 ne lit
+# pas cette table : le minimum vieillesse y tient en deux étages, l'allocation
+# aux vieux travailleurs salariés et l'allocation supplémentaire sous son
+# plafond (`minimum_vieillesse_avant_2007.csv`, action 138, étape 6). Il y
+# ramenait sur les prix le montant de 2006 : 1 195 € en 1970 au lieu de 457 €.
 #
 # D'OÙ VIENNENT CES MONTANTS. Neuf ancres — 2006, 2009 à 2012, 2014, et 2018 à
 # 2020 — sont lues dans l'**article D. 815-1 du code de la sécurité sociale**,

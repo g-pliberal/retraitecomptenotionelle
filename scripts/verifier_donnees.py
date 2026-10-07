@@ -3342,6 +3342,42 @@ def source_salaire_validant_trimestre_cnav() -> dict[tuple, float]:
     return {(annee,): valeur for annee, valeur in sorted(serie.items())}
 
 
+def _deux_etages_cnav(serie: str) -> dict[tuple, float]:
+    """Une colonne du minimum vieillesse d'avant l'ASPA, par la Cnav : le
+    montant en vigueur au 31 décembre de chaque année, jusqu'en 2006."""
+    valeurs = _lire_json("cnav_avts.json", "scripts/fetch/cnav_avts.py")[serie]
+    return {(annee,): valeur for annee, valeur in sorted(valeurs.items())
+            if int(annee) <= 2006}
+
+
+def source_avts_cnav() -> dict[tuple, float]:
+    """Le premier étage : l'allocation aux vieux travailleurs salariés, depuis
+    la loi du 14 mars 1941. Niveau ``haute``."""
+    return _deux_etages_cnav("serie_avts")
+
+
+def source_allocation_supplementaire_cnav() -> dict[tuple, float]:
+    """Le second étage : l'allocation supplémentaire d'un allocataire, depuis
+    1956. Niveau ``haute``."""
+    return _deux_etages_cnav("serie_as_seul")
+
+
+def source_allocation_supplementaire_menage_cnav() -> dict[tuple, float]:
+    """L'allocation supplémentaire de deux allocataires, depuis juillet 1982.
+    Niveau ``haute``."""
+    return _deux_etages_cnav("serie_as_couple")
+
+
+def source_plafond_minimum_vieillesse_cnav() -> dict[tuple, float]:
+    """Le plafond de ressources d'une personne seule, depuis 1956. Niveau ``haute``."""
+    return _deux_etages_cnav("serie_plafond_seul")
+
+
+def source_plafond_couple_minimum_vieillesse_cnav() -> dict[tuple, float]:
+    """Le plafond de ressources d'un couple marié, depuis 1956. Niveau ``haute``."""
+    return _deux_etages_cnav("serie_plafond_couple")
+
+
 def source_plafond_majoration_reversion_cnav() -> dict[tuple, float]:
     """Le plafond trimestriel de la majoration de 11,1 % (D. 353-4), par la Cnav.
 
@@ -6225,6 +6261,66 @@ CERTIFICATIONS = (
         # Un seuil : le salaire qui tombe pile dessus le valide, ce que six
         # décimales arrondies au-dessus empêchaient.
         decimales=9,
+        tolerance=5e-3,
+        unite=" €",
+        niveau="haute",
+    ),
+    Certification(
+        nom="avts_cnav",
+        chemin=REFERENCE / "legislation" / "minimum_vieillesse_avant_2007.csv",
+        cles=("annee",),
+        colonne="avts",
+        source=source_avts_cnav,
+        origine="Cnav, barème « Allocation aux vieux travailleurs salariés […] - Montant »",
+        decimales=6,
+        tolerance=5e-3,
+        unite=" €",
+        niveau="haute",
+    ),
+    Certification(
+        nom="allocation_supplementaire_cnav",
+        chemin=REFERENCE / "legislation" / "minimum_vieillesse_avant_2007.csv",
+        cles=("annee",),
+        colonne="supplementaire",
+        source=source_allocation_supplementaire_cnav,
+        origine="Cnav, barème « Allocation supplémentaire - Montant »",
+        decimales=6,
+        tolerance=5e-3,
+        unite=" €",
+        niveau="haute",
+    ),
+    Certification(
+        nom="allocation_supplementaire_menage_cnav",
+        chemin=REFERENCE / "legislation" / "minimum_vieillesse_avant_2007.csv",
+        cles=("annee",),
+        colonne="supplementaire_menage",
+        source=source_allocation_supplementaire_menage_cnav,
+        origine="Cnav, barème « Allocation supplémentaire - Montant »",
+        decimales=6,
+        tolerance=5e-3,
+        unite=" €",
+        niveau="haute",
+    ),
+    Certification(
+        nom="plafond_minimum_vieillesse_cnav",
+        chemin=REFERENCE / "legislation" / "minimum_vieillesse_avant_2007.csv",
+        cles=("annee",),
+        colonne="plafond",
+        source=source_plafond_minimum_vieillesse_cnav,
+        origine="Cnav, barème « Allocation supplémentaire - Plafond de ressources »",
+        decimales=6,
+        tolerance=5e-3,
+        unite=" €",
+        niveau="haute",
+    ),
+    Certification(
+        nom="plafond_couple_minimum_vieillesse_cnav",
+        chemin=REFERENCE / "legislation" / "minimum_vieillesse_avant_2007.csv",
+        cles=("annee",),
+        colonne="plafond_couple",
+        source=source_plafond_couple_minimum_vieillesse_cnav,
+        origine="Cnav, barème « Allocation supplémentaire - Plafond de ressources »",
+        decimales=6,
         tolerance=5e-3,
         unite=" €",
         niveau="haute",

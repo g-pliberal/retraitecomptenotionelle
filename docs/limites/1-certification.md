@@ -47,6 +47,8 @@ résumé :
 | Minimum vieillesse (ASPA) | ancres 2007, 2016, 2017, depuis 2021 | haute / moyenne | publications — l'article n'est pas réécrit à chaque revalorisation |
 | Minimum vieillesse (ASPA) d'un couple | ancres 2006, 2009, 2014, 2018-2020 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `D. 815-1`, b |
 | Minimum vieillesse (ASPA) d'un couple | les quinze autres années, 2007 à 2026 | haute | barèmes de la Cnav, que le récupérateur refuse s'ils ne redonnent pas au centime les montants de l'article |
+| Minimum vieillesse d'avant l'ASPA : allocation aux vieux travailleurs salariés, allocation supplémentaire et plafonds de ressources | chaque année de 1941 à 2006 (l'allocation supplémentaire et les plafonds depuis 1956) | haute | barèmes de la Cnav, que le récupérateur refuse s'ils ne redonnent pas les montants que le Journal officiel écrit (décrets n° 70-879, 80-1159, 90-265 et 90-266) et l'ancre de 2006 de `D. 815-1` |
+| Salaire qui valide un trimestre | 1946-1971 | haute | `R. 351-9` : 18 F, puis le quart de l'allocation aux vieux travailleurs salariés au 1er janvier, que le barème de la Cnav des seuils redonne au centime |
 | Minimum garanti, traitement de référence | 2004 et année courante | **certifiée** | Service des retraites de l'État, sa page du minimum garanti |
 | Minimum garanti, traitement de référence | ancres intermédiaires | haute | non publiées : la page ne porte que l'ancre et l'année courante |
 | Âge d'ouverture des droits par génération | <!--chiffre:minimum(data/reference/legislation/age_ouverture_requis.csv:generation?fiabilite=certifiee)-->1900<!--/-->-<!--chiffre:maximum(data/reference/legislation/age_ouverture_requis.csv:generation?fiabilite=certifiee)-->1975<!--/--> | **certifiée** | DILA, base LEGI, code de la sécurité sociale `D. 161-2-1-9` |
@@ -140,6 +142,7 @@ python scripts/fetch/jorf_plafond_securite_sociale.py  # plafond ancien, dans se
 python scripts/fetch/sncf_contribution_employeur.py  # contribution SNCF, dans les deux index
 python scripts/fetch/dila_legi_minimum_vieillesse.py  # montants de l'ASPA, seule et en couple, dans le code (index LEGI)
 python scripts/fetch/cnav_minimum_vieillesse.py  # ASPA du couple entre les ancres, barèmes de la Cnav
+python scripts/fetch/cnav_avts.py  # AVTS, allocation supplémentaire et seuil du trimestre d'avant 1972, barèmes de la Cnav
 python scripts/fetch/sre_minimum_garanti.py     # référence du minimum garanti, par le service qui la sert
 python scripts/fetch/ined_vallin_mesle.py      # quotients de mortalité d'avant 1986
 python scripts/fetch/insee_projections_mortalite.py  # espérances de vie projetées, jusqu'en 2125

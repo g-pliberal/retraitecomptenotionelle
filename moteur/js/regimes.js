@@ -958,6 +958,27 @@ export class MinimumVieillesse {
     // Le barème d'un couple d'allocataires, qui est aussi le plafond de
     // ressources de tout couple : le foyer qui déclare un conjoint, et l'accueil.
     this._tableCouple = paquet.minimum_vieillesse_couple ?? {};
+    // Jusqu'en 2006, le minimum vieillesse à deux étages, une ligne par année
+    // depuis la loi du 14 mars 1941 (action 138, étape 6).
+    this._deuxEtages = paquet.minimum_vieillesse_avant_2007 ?? {};
+  }
+
+  /**
+   * Le minimum vieillesse à deux étages de l'année, s'il a cours : de 1941 à
+   * 2006 ; `null` avant la loi du 14 mars 1941, et depuis l'ASPA. Voir
+   * `deux_etages` du Python.
+   */
+  deuxEtages(annee) {
+    if (annee > MinimumVieillesse.DERNIERE_ANNEE_A_DEUX_ETAGES) {
+      return null;
+    }
+    const ligne = this._deuxEtages[String(annee)];
+    if (ligne === undefined) {
+      return null;
+    }
+    const [avts, supplementaire, supplementaireMenage, plafond, plafondCouple, fiabilite] = ligne;
+    return { avts, supplementaire: supplementaire ?? 0.0, supplementaireMenage,
+      plafond, plafondCouple, fiabilite };
   }
 
   _enVigueur(table, annee) {
@@ -989,6 +1010,11 @@ export class MinimumVieillesse {
 
 /** Âge d'ouverture de droit commun de l'ASPA. */
 MinimumVieillesse.AGE_OUVERTURE = 65;
+/**
+ * L'ASPA remplace l'AVTS et l'allocation supplémentaire le 13 janvier 2007 :
+ * jusqu'en 2006, le minimum tient en deux étages.
+ */
+MinimumVieillesse.DERNIERE_ANNEE_A_DEUX_ETAGES = 2006;
 
 /**
  * Le maximum de la pension du régime des cultes, l'année demandée : la

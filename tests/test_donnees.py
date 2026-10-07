@@ -512,6 +512,15 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # Cnav date texte par texte (action 138, étape 6).
         "salaire_validant_trimestre_cnav":
             "legislation/salaire_validant_trimestre_avant_1972.csv",
+        # Le minimum vieillesse d'avant l'ASPA, ses deux étages et leur
+        # plafond, colonne par colonne (action 138, étape 6).
+        "avts_cnav": "legislation/minimum_vieillesse_avant_2007.csv",
+        "allocation_supplementaire_cnav": "legislation/minimum_vieillesse_avant_2007.csv",
+        "allocation_supplementaire_menage_cnav":
+            "legislation/minimum_vieillesse_avant_2007.csv",
+        "plafond_minimum_vieillesse_cnav": "legislation/minimum_vieillesse_avant_2007.csv",
+        "plafond_couple_minimum_vieillesse_cnav":
+            "legislation/minimum_vieillesse_avant_2007.csv",
         "minimum_garanti_reference": "legislation/minimum_garanti_montants.csv",
         "esperances_vie": "mortalite/esperances_vie.csv",
         "esperance_65_derivee": "mortalite/esperances_vie.csv",

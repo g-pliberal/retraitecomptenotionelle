@@ -37,7 +37,7 @@ from .invalidite import AGE_DE_L_ASPA
 
 if TYPE_CHECKING:
     from ..carriere import Carriere, Conjoint
-    from ..scenarios.actuel import ScenarioActuel
+    from ..scenarios.actuel import DeuxEtages, ScenarioActuel
     from .liquidation import Contexte
 
 #: La version du schéma de l'étape que :meth:`Foyer.donnees` suit.
@@ -58,6 +58,17 @@ DETAILS = {
              "d'une personne seule"),
     DEUX_ALLOCATAIRES: ("allocation différentielle, barème d'un couple "
                         "d'allocataires, servie par moitié"),
+}
+
+#: Ce qu'elle en dit avant 2007, quand le minimum tient en deux étages.
+DETAILS_DEUX_ETAGES = {
+    PERSONNE_SEULE: ("allocation aux vieux travailleurs salariés et allocation "
+                     "supplémentaire, sous le plafond d'une personne seule"),
+    COUPLE: ("allocation aux vieux travailleurs salariés et allocation "
+             "supplémentaire, sous le plafond du couple"),
+    DEUX_ALLOCATAIRES: ("allocation aux vieux travailleurs salariés et allocation "
+                        "supplémentaire du ménage, sous le plafond du couple, "
+                        "servie par moitié"),
 }
 
 
@@ -88,6 +99,9 @@ class Foyer:
     #: Les ressources du conjoint, que le plafond du couple compte avec les
     #: siennes : déclarées, nulles sinon ; nulles sans conjoint.
     ressources_conjoint: float = 0.0
+    #: Avant 2007, le minimum à deux étages (:func:`avant_l_aspa`) : il ne
+    #: porte pas les ressources au plafond, qu'il ne fait que borner.
+    deux_etages: bool = False
 
     def avantage(self) -> AvantageApplique:
         """L'ASPA, sous la forme où la cascade des avantages la dit."""
@@ -95,15 +109,16 @@ class Foyer:
             code="minimum_vieillesse",
             libelle="Minimum vieillesse (ASPA)",
             montant=self.minimum_vieillesse,
-            detail=DETAILS[self.bareme],
+            detail=(DETAILS_DEUX_ETAGES if self.deux_etages else DETAILS)[self.bareme],
         )
 
     def servie_avec(self, pensions: float) -> float:
         """Les pensions françaises de la personne et l'allocation, ensemble :
         le barème d'une personne seule, moins ce que les pensions étrangères,
         servies à part, en remplissent ; dans un couple, ses pensions et sa
-        part de l'allocation, que le barème ne dit plus."""
-        if self.bareme == PERSONNE_SEULE:
+        part de l'allocation, que le barème ne dit plus ; avant 2007, ses
+        pensions et les deux étages, que le plafond borne sans les y porter."""
+        if self.bareme == PERSONNE_SEULE and not self.deux_etages:
             return self.plafond - self.etrangeres
         return pensions + self.minimum_vieillesse
 
@@ -158,6 +173,41 @@ def conjoint_allocataire(conjoint: Conjoint, jour: str) -> bool:
     return anniversaire <= jour
 
 
+def avant_l_aspa(etages: DeuxEtages, bareme: str, ressources: float,
+                 du_conjoint: float) -> tuple[float, float | None]:
+    """Le minimum vieillesse d'avant 2007, et le plafond qui le borne.
+
+    Le premier étage porte la pension au montant de l'allocation aux vieux
+    travailleurs salariés (L. 814-2). Le second, l'allocation supplémentaire,
+    « n'est due que si le total de cette allocation et des ressources
+    personnelles de l'intéressé et du conjoint » n'excède pas le plafond, et
+    se réduit « à due concurrence » sinon (L. 815-8) : au-dessus du montant
+    des deux étages, que le plafond dépassait de moitié en 1970, une pension en
+    recevait encore une part. Deux allocataires se partagent par moitié le
+    montant du ménage, le double de celui d'un seul avant juillet 1982 ; le
+    conjoint qui l'est a lui aussi son premier étage, qui compte dans les
+    ressources du ménage. Le premier étage n'est servi que sous le plafond
+    (L. 814-2), que les ressources du conjoint peuvent atteindre. Avant 1956,
+    le premier étage seul, sans plafond lu.
+    """
+    if bareme == PERSONNE_SEULE:
+        plafond, total = etages.plafond, ressources
+    else:
+        plafond, total = etages.plafond_couple, ressources + du_conjoint
+    premier = max(0.0, etages.avts - ressources)
+    if plafond is None:
+        return premier, None
+    premier = max(0.0, min(premier, plafond - total))
+    total += premier
+    maximum, part = etages.supplementaire, 1.0
+    if bareme == DEUX_ALLOCATAIRES:
+        total += max(0.0, min(etages.avts - du_conjoint, plafond - total))
+        maximum = (2 * etages.supplementaire if etages.supplementaire_menage is None
+                   else etages.supplementaire_menage)
+        part = 0.5
+    return premier + part * max(0.0, min(maximum, plafond - total)), plafond
+
+
 def foyer_et_net(moteur: ScenarioActuel, personne: str, date: str | None, annee: int,
                  ressources: float, age_atteint: bool,
                  contexte: Contexte | None = None, carriere: Carriere | None = None) -> Foyer:
@@ -185,10 +235,18 @@ def foyer_et_net(moteur: ScenarioActuel, personne: str, date: str | None, annee:
     bareme = (PERSONNE_SEULE if conjoint is None
               else DEUX_ALLOCATAIRES if conjoint_allocataire(conjoint, jour) else COUPLE)
     montant, plafond, fiabilite = 0.0, None, Fiabilite.CERTIFIEE
-    if (age_atteint and moteur.parametres.minimum_vieillesse_dans_le_scenario_actuel
-            and condition_de_residence(moteur, residence, jour, mois_en_france)
-            and not (contexte is not None
-                     and contexte.neutralise("avantages_non_contributifs"))):
+    servie = (age_atteint and moteur.parametres.minimum_vieillesse_dans_le_scenario_actuel
+              and condition_de_residence(moteur, residence, jour, mois_en_france)
+              and not (contexte is not None
+                       and contexte.neutralise("avantages_non_contributifs")))
+    etages = moteur.minimum_vieillesse.deux_etages(annee) if servie else None
+    if etages is not None:
+        # AVANT L'ASPA, DEUX ÉTAGES. Le modèle servait le montant de 2006 ramené
+        # sur les prix, 1 195 € en 1970 au lieu de 457 € (action 138, étape 6).
+        montant, plafond = avant_l_aspa(etages, bareme, ressources, du_conjoint)
+        if montant > 0:
+            fiabilite = etages.fiabilite
+    elif servie:
         seule = moteur.minimum_vieillesse.plafond(annee)
         couple = (None if bareme == PERSONNE_SEULE
                   else moteur.minimum_vieillesse.plafond_couple(annee))
@@ -209,4 +267,5 @@ def foyer_et_net(moteur: ScenarioActuel, personne: str, date: str | None, annee:
                              else min(couple[1], seule[1]))
     return Foyer(personne=personne, date=date, ressources=ressources,
                  minimum_vieillesse=montant, plafond=plafond, fiabilite=fiabilite,
-                 etrangeres=etrangeres, bareme=bareme, ressources_conjoint=du_conjoint)
+                 etrangeres=etrangeres, bareme=bareme, ressources_conjoint=du_conjoint,
+                 deux_etages=etages is not None)

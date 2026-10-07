@@ -1,14 +1,14 @@
 # Étape 6 : l'AVTS, le trimestre d'avant 1972 et le minimum vieillesse d'avant 2007
 
 **Reprise, au 7 octobre 2026.** Fait : le trimestre de 1946 à 1971 au salaire
-de R. 351-9 — 18 F, puis le quart de l'AVTS au 1er janvier —, dans les deux
-moteurs, sur les barèmes de la Cnav (`cnav_avts.py`), qui redonnent aussi au
-centime le seuil au SMIC du dépôt de 1972 à 2026. Reste, dans cet ordre : le
-minimum vieillesse de 1956 à 2006 à deux étages, AVTS et allocation
-supplémentaire sous son plafond, au lieu du montant de 2006 ramené sur les prix
-(les séries sont déjà dans `data/brut/cnav_avts.json`) ; les décrets du Journal
-officiel qui le certifient ; la pension minimum d'avant avril 1983 ; R. 732-70 ;
-l'outre-mer. Détail : plus bas, « Ce qui reste ».
+de R. 351-9 — 18 F, puis le quart de l'AVTS au 1er janvier — ; le minimum
+vieillesse de 1941 à 2006 à deux étages, l'AVTS puis l'allocation
+supplémentaire sous son plafond (L. 814-2, L. 815-8), au lieu du montant de 2006
+ramené sur les prix ; les deux dans les deux moteurs, sur les barèmes de la Cnav
+(`cnav_avts.py`). Reste, dans cet ordre : la certification des montants au
+Journal officiel, décret par décret ; la pension minimum d'avant avril 1983 ;
+l'AVTS dans R. 732-70 ; l'outre-mer, avec un champ de saisie ; avant 1946, la
+retenue. Commencer par le Journal officiel. Détail : plus bas, « Ce qui reste ».
 
 **La demande.** L'étape 6 de l'action : « L'AVTS et le minimum vieillesse
 d'avant 2007, au Journal officiel : la validation de 1949 à 1971, la série du
@@ -69,6 +69,37 @@ seuil de l'outre-mer ; il mettait le forfait à la place de l'AVTS dans R. 732-7
 - *L'effet* : quatre trimestres demandaient de 9 à 14 % du salaire moyen, un
   seul de 2 à 3,5 % ; aucun des 737 témoins ne bouge.
 
+**Ce qui est fait, ensuite : le minimum vieillesse d'avant l'ASPA.**
+
+- *La règle*, lue dans les rédactions de 1990 : le premier étage porte les
+  avantages de vieillesse « dont les ressources sont inférieures au plafond […]
+  au montant de l'allocation aux vieux travailleurs salariés » (L. 814-2) ; le
+  second, l'allocation supplémentaire, « n'est due que si le total de cette
+  allocation et des ressources personnelles de l'intéressé et du conjoint, si le
+  bénéficiaire est marié, n'excède pas des chiffres limites fixés par décret », et
+  se réduit « à due concurrence » au-delà (L. 815-8) ; son montant « peut varier
+  suivant la situation matrimoniale » (L. 815-4). Le plafond, le même pour les
+  deux étages, dépassait leur somme de moitié en 1970 (4 500 F contre 3 000 F) :
+  une pension au-dessus du minimum recevait encore une part de l'allocation, ce
+  que l'allocation différentielle de l'ASPA ne fait pas.
+- *La table* `minimum_vieillesse_avant_2007.csv` : chaque année de 1941 à 2006,
+  au 31 décembre, l'AVTS, l'allocation supplémentaire d'un et de deux
+  allocataires (depuis juillet 1982), les plafonds d'une personne seule et d'un
+  couple, `haute`, certifiés colonne par colonne contre le récupérateur.
+- *Les deux moteurs* (`avant_l_aspa` dans `droit/foyer.py`, `avantLAspa` dans
+  `foyer.js`) : jusqu'en 2006, le premier étage, puis l'allocation sous le
+  plafond ; deux allocataires ont chacun leur premier étage et se partagent par
+  moitié le montant du ménage, le double de celui d'un seul avant 1982 ; un seul,
+  sous le plafond du couple ; avant 1956, le premier étage seul. Le total servi
+  est la pension et les deux étages, non le plafond. Un test dans chaque moteur.
+- *L'effet* : deux témoins des cultes, liquidés en 1990 et en 2003, bougent de
+  −0,95 % et de +2,53 % ; la page Coût reconstitue les minima de pension de 1970
+  à 0,4 Md€ au lieu de 2,2, de 1980 à 1,5 au lieu de 5,1, de 1990 à 2,4 au lieu
+  de 4,2 — et l'écart de la reconstitution à la dépense de 1990 passe de −22,5 %
+  à −23,8 % : le minimum surestimé masquait une part de ce qui manque ailleurs.
+  La fiche `minimum_vieillesse`, deux points du registre (OpenFisca-France,
+  Destinie 2) repris ; celui de l'IPP attend R. 732-70.
+
 **Ce que la vérification a trouvé.**
 
 - Le barème des seuils porte 216 anciens francs pour 1946 ; le texte en écrit
@@ -89,20 +120,17 @@ seuil de l'outre-mer ; il mettait le forfait à la place de l'AVTS dans R. 732-7
 
 **Ce qui reste.**
 
-1. *Le minimum vieillesse de 1956 à 2006.* Avant l'ASPA, il tenait en deux
-   étages : l'AVTS, ou ce qui en tenait lieu (la majoration de L. 814-2 portait
-   une petite pension au même montant), et l'allocation supplémentaire, réduite
-   de ce que les ressources dépassent son plafond — qui valait bien plus que la
-   somme des deux étages dans les années 1960 et 1970 (4 500 F contre 3 000 F
-   fin 1970). Le modèle sert une allocation différentielle jusqu'au montant de
-   2006 ramené sur les prix : il faut la règle à deux étages, pour une personne
-   seule, deux allocataires et un couple dont un seul l'est, dans les deux
-   moteurs (`droit/foyer.py`), sur les séries du récupérateur.
-2. *Le Journal officiel* : certifier chaque montant que le texte ou la notice
+1. *Le Journal officiel* : certifier chaque montant que le texte ou la notice
    redit, décret par décret, avec les rédactions de LEGI des décrets de 1981 à
-   1985 (n° 81-1166, 82-561, 82-1142, 83-551, 84-92, 84-643, 84-1288, 85-784).
-3. *La pension minimum d'avant le 1er avril 1983*, au montant de l'AVTS, que la
+   1985 (n° 81-1166, 82-561, 82-1142, 83-551, 84-92, 84-643, 84-1288, 85-784),
+   et passer au niveau `certifiee` ce qui s'y retrouve.
+2. *La pension minimum d'avant le 1er avril 1983*, au montant de l'AVTS, que la
    fiche du minimum contributif renvoie ici.
-4. *R. 732-70* : l'AVTS au lieu du forfait (`droit/acquerir.py`).
-5. *L'outre-mer* : le seuil des Antilles, de la Guyane et de La Réunion, avec un
-   champ de saisie, que la session du site posera.
+3. *R. 732-70* : l'AVTS au lieu du forfait (`droit/acquerir.py`), ce qui demande
+   la série de l'AVTS après 2006, que le barème porte jusqu'en 2026 ; à mener
+   avec l'étape 8, les minima des exploitants.
+4. *L'outre-mer* : le seuil des Antilles, de la Guyane et de La Réunion, et leur
+   AVTS de 1949 à 1951, avec un champ de saisie, que la session du site posera.
+5. *Avant 1946*, la règle de la retenue ; *avant 2007*, la majoration pour
+   conjoint à charge, l'allocation spéciale de qui n'avait aucun régime, l'AVTS
+   des villes de moins de 5 000 habitants, que la fiche déclare.

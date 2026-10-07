@@ -1187,7 +1187,8 @@ institutions:
         acces: api
         statut_integration: automatise
         cible: >-
-          data/reference/legislation/salaire_validant_trimestre_avant_1972.csv
+          data/reference/legislation/salaire_validant_trimestre_avant_1972.csv ;
+          data/reference/legislation/minimum_vieillesse_avant_2007.csv
         recuperation: scripts/fetch/cnav_avts.py
         note: >-
           Quatre barèmes de la base de législation de la Cnav, servis par son
@@ -1207,9 +1208,10 @@ institutions:
           dépôt, si un montant baisse, ou si les montants que le Journal
           officiel (décrets n° 70-879, 80-1159, 90-265 et 90-266) et D. 815-1
           écrivent ne s'y retrouvent pas ; il déclare les 216 anciens francs que
-          le barème porte pour 1946, où le texte en écrit 1 800. Les montants de
-          l'allocation et de son plafond attendent le minimum vieillesse d'avant
-          2007 (action 138, étape 6) ; lu le 7 octobre 2026.
+          le barème porte pour 1946, où le texte en écrit 1 800. Il en lit aussi,
+          au 31 décembre de chaque année de 1941 à 2006, les deux étages du
+          minimum vieillesse d'avant l'ASPA et leurs plafonds, au niveau
+          `haute` ; lu le 7 octobre 2026.
 
       - id: cnav_montants_minimum
         titre: Barèmes du minimum contributif et du plafond d'écrêtement, 1983-2026

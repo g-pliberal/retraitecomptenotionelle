@@ -1388,6 +1388,20 @@ def _maximum_des_cultes() -> dict:
             for annee, (valeur, fiabilite) in sorted(table.items())}
 
 
+def _minimum_vieillesse_avant_2007() -> dict:
+    """Le minimum vieillesse à deux étages, de 1941 à 2006 : par année, l'AVTS,
+    l'allocation supplémentaire d'un et de deux allocataires, les plafonds d'une
+    personne seule et d'un couple (``null`` quand le barème n'en a pas), et la
+    fiabilité."""
+    from retraite_notionnelle.donnees.macro import DonneesMacro
+    from retraite_notionnelle.scenarios.actuel import MinimumVieillesse
+
+    table = MinimumVieillesse(DONNEES, DonneesMacro(DONNEES))._deux_etages
+    return {str(annee): [e.avts, e.supplementaire, e.supplementaire_menage, e.plafond,
+                         e.plafond_couple, int(e.fiabilite)]
+            for annee, e in sorted(table.items())}
+
+
 def _minimum_vieillesse(couple: bool = False) -> dict:
     """Barème de l'ASPA par année : personne seule, ou couple d'allocataires."""
     from retraite_notionnelle.donnees.macro import DonneesMacro
@@ -1924,6 +1938,7 @@ def construire(bilan: bytes) -> bytes:
         "baremes_trimestre": _baremes_trimestre(),
         "minimum_vieillesse": _minimum_vieillesse(),
         "minimum_vieillesse_couple": _minimum_vieillesse(couple=True),
+        "minimum_vieillesse_avant_2007": _minimum_vieillesse_avant_2007(),
         **_series_de_la_reversion(),
         "durees_requises_fonction_publique": _durees_requises_fonction_publique(),
         "durees_requises_avant_soixante_ans": _durees_requises_avant_soixante_ans(),

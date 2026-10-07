@@ -154,6 +154,63 @@ def test_l_aspa_d_un_couple_suit_le_plafond_du_couple(simulateur):
         assert _erreurs(_etape("foyer_et_net").valider(foyer_.donnees(), "foyer")) == []
 
 
+def test_avant_2007_le_minimum_vieillesse_tient_en_deux_etages(simulateur):
+    """Action 138, étape 6. Jusqu'en 2006, le premier étage porte la pension à
+    l'allocation aux vieux travailleurs salariés (L. 814-2) ; le second,
+    l'allocation supplémentaire, se réduit de ce que son total et les
+    ressources dépassent le plafond (L. 815-8), qui la dépassait de loin : à
+    la fin de 1970, 1 750 F, 1 250 F et 4 500 F. Une pension de 2 000 F reçoit
+    l'allocation entière, une de 3 500 F ce qui la mène au plafond ; avant
+    1956, le premier étage seul ; deux allocataires se partagent le montant du
+    ménage. Le modèle servait le montant de 2006 ramené sur les prix."""
+    actuel = simulateur.scenario_actuel
+
+    def francs(montant: float) -> float:
+        return montant / 6.55957
+
+    def foyer_de(annee, pension, conjoint=None, ressources=0.0):
+        en_couple = None if conjoint is None else {
+            "naissance": conjoint, "sexe": "F", "mariage": None,
+            "ressources": ressources, "invalidite": None}
+        carriere = simulateur.carriere_simple(
+            annee_naissance=annee - 66, sexe="H", affiliation="salarie_prive_non_cadre",
+            age_liquidation=66.0, age_debut=20.0, niveau_salaire=0.3, conjoint=en_couple)
+        return foyer.foyer_et_net(actuel, carriere.personne, f"{annee}-06-01", annee,
+                                  pension, True, carriere=carriere)
+
+    for pension, attendu in ((0.0, 3_000.0), (2_000.0, 1_250.0), (3_500.0, 1_000.0),
+                             (4_500.0, 0.0)):
+        seul = foyer_de(1970, francs(pension))
+        # Au centime près : le plafond s'écrit à six décimales d'euro.
+        assert seul.minimum_vieillesse == pytest.approx(francs(attendu), abs=1e-5), pension
+        assert seul.plafond == pytest.approx(francs(4_500.0))
+    seul = foyer_de(1970, francs(2_000.0))
+    assert seul.servie_avec(francs(2_000.0)) == pytest.approx(francs(3_250.0))
+    assert "allocation supplémentaire" in seul.avantage().detail
+    # Avant 1956, le premier étage seul : 45 000 anciens francs en 1950.
+    avant = foyer_de(1950, francs(100.0))
+    assert (avant.minimum_vieillesse, avant.plafond) == (pytest.approx(francs(350.0)), None)
+    # 1990 : 14 990 F, 20 180 F, des plafonds de 36 070 F et 63 110 F. Deux
+    # allocataires sans ressources : chacun son premier étage, et la moitié de
+    # ce qui reste sous le plafond du couple ; un seul, son premier étage et
+    # l'allocation d'un allocataire, sous le même plafond.
+    deux = foyer_de(1990, 0.0, conjoint="1920")
+    assert deux.bareme == "deux_allocataires"
+    assert deux.minimum_vieillesse == pytest.approx(francs(14_990.0 + (63_110.0 - 29_980.0) / 2))
+    un = foyer_de(1990, 0.0, conjoint="1940", ressources=francs(30_000.0))
+    assert un.bareme == "couple"
+    assert un.minimum_vieillesse == pytest.approx(francs(14_990.0 + 63_110.0 - 44_990.0))
+    # Un conjoint dont les ressources passent le plafond du couple : rien,
+    # pas même le premier étage (L. 814-2).
+    assert foyer_de(1990, 0.0, conjoint="1940",
+                    ressources=francs(70_000.0)).minimum_vieillesse == 0.0
+    # Depuis 2007, l'ASPA.
+    assert not foyer_de(2007, 0.0).deux_etages
+    for foyer_ in (seul, avant, deux, un):
+        assert foyer_.deux_etages
+        assert _erreurs(_etape("foyer_et_net").valider(foyer_.donnees(), "foyer")) == []
+
+
 @pytest.mark.parametrize("nom", sorted(CARRIERES))
 def test_la_liquidation_suit_le_contrat_c6(simulateur, nom):
     """Ses composantes — une pension par régime, puis la majoration pour
