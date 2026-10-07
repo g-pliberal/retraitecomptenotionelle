@@ -2305,7 +2305,17 @@ referents:
           l'écart, à la queue au-delà de 85 ans, n'est pas mesuré.
         preuve: >-
           `src/Mortalite.cpp:27`, au commit `4c1d34b`
-        etat: a_reprendre
+        verification: >-
+          Repris le 7 octobre 2026 (action 138, étape 7) : le modèle lit les
+          quotients de l'hypothèse centrale de 2026 à 2125, convertis de
+          l'âge atteint à l'âge exact (`quotients_projetes.csv`). L'écart,
+          mesuré ce jour-là sur la table du moment de 2026 à 2125 : calée sur
+          e60 et e65, la loi surestimait l'espérance à 85 ans de 0,6 à 1,0 an,
+          à 90 ans de 0,9 à près de 1,5 an. Le diviseur de la population
+          générale à 64 ans en bouge de −2,1 % (génération 1940) à +0,2 %
+          (génération 2000) ; celui du premier vingtile de niveau de vie,
+          génération 1975, de +2,1 %, celui du dernier de −1,4 %.
+        etat: repris
         chantier: "138.7"
       - quoi: >-
           Il calcule un taux de rendement interne des cotisations ; le dépôt
@@ -7775,8 +7785,9 @@ referents:
           `packages/engine/src/pension/mortality.ts:30-60`.
         verification: >-
           Méthode ; même chantier que destinie_2 (les quotients
-          projetés âge par âge).
-        etat: a_reprendre
+          projetés âge par âge). Repris le 7 octobre 2026 (action 138,
+          étape 7) : les quotients projetés de l'INSEE, de 2026 à 2125.
+        etat: repris
         chantier: "138.7"
     bilan: >-
       Au-delà des gains d'héritage et des frais déjà au registre, il
@@ -8467,8 +8478,12 @@ referents:
         verification: >-
           Méthode : une table par âge rend la forme de la mortalité,
           que trois paramètres n'ont pas. C'est le premier volet du
-          138.7.
-        etat: a_reprendre
+          138.7, repris le 7 octobre 2026 : de 2026 à 2125, le diviseur
+          lit les quotients projetés de l'INSEE âge par âge. Les
+          probabilités du conjoint survivant tarifent une réversion
+          dans le diviseur, que le dépôt ne fait pas : c'est un choix
+          du programme, à l'étape 13.
+        etat: repris
         chantier: "138.7"
       - quoi: >-
           Son diviseur corrige la fréquence des versements : k = 1/2

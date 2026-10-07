@@ -348,6 +348,7 @@
    "taux_plein_et_proratisation",
    "temps_partiel_fonction_publique",
    "totalisation_des_periodes_etrangeres",
+   "trimestres_avant_1972",
    "trimestres_retenus_1972_1974",
    "un_statut_par_annee"
   ],
@@ -545,7 +546,17 @@
    "2026-10-06 | action 148, étape 1 : main vert, les fichiers fabriqués à la charge de GitHub",
    "2026-10-06 | action 148, étape 2 : les journaux en fichiers séparés",
    "2026-10-06 | action 148, étape 3 : la prose et ses chiffres ancrés",
-   "2026-10-06 | action 149 : une version de l'architecture par fichier"
+   "2026-10-06 | action 149 : une version de l'architecture par fichier",
+   "2026-10-07 | action 135, contexte, étape 3 : CLAUDE.md par zone",
+   "2026-10-07 | action 135, contexte, étape 4 : les lignes géantes",
+   "2026-10-07 | action 135, contexte, étape 5 : les limites par partie",
+   "2026-10-07 | action 138, étape 14, première partie : les pensions de 2020, simulées contre publiées",
+   "2026-10-07 | action 138, étape 3, première partie : la part des reportés en emploi, lue dans les évaluations de 2010",
+   "2026-10-07 | action 138, étape 4 : la base de la réversion du régime général, sans le minimum contributif",
+   "2026-10-07 | action 138, étape 4 : le minimum et les majorations de la réversion du régime général",
+   "2026-10-07 | action 138, étape 6 : l'AVTS, le trimestre d'avant 1972 et le minimum vieillesse d'avant 2007",
+   "2026-10-07 | action 138, étape 7, première partie : les quotients projetés de l'INSEE au lieu de la loi de Gompertz-Makeham",
+   "2026-10-07 | action 150, étape 1 : Pourquoi changer et Partager lisent le bilan figé"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
    "Agirc-Arrco, paramètres annuels",
@@ -896,6 +907,7 @@
    "avantages.total_plancher",
    "avantages.un_seul_a_l_origine",
    "cas_types.contre_une_promesse",
+   "cas_types.facteur_inferieur_a_un",
    "cas_types.facteur_superieur_a_un",
    "cas_types.niveau_depend_du_facteur",
    "cas_types.rouge_vert",
@@ -1209,6 +1221,7 @@
    "cipav_fiches_pratiques",
    "circulaire_rsi_conversion_rci",
    "cnav_assiette_avpf",
+   "cnav_avts",
    "cnav_baremes",
    "cnav_baremes_rci",
    "cnav_comptes_notionnels_2009",
@@ -1217,6 +1230,7 @@
    "cnav_revalorisation_pensions",
    "cnav_revalorisation_salaires",
    "cnav_revalorisation_salaires_anciennes",
+   "cnav_reversion",
    "cnav_statistiques",
    "cnavpl_parametres",
    "cnavpl_recueils",
@@ -1744,6 +1758,18 @@
    "Version du 6 octobre 2026 : une version par fichier": [
     "b4cc7c10df2634f1",
     "c671ae73a3ee8bad"
+   ]
+  },
+  "docs/architecture/versions/2026-10-07-consignes-par-dossier.md": {
+   "Version du 7 octobre 2026 : les consignes par dossier": [
+    "f29ee881abb1f784",
+    "c8bac6d5cb8c6626"
+   ]
+  },
+  "docs/architecture/versions/2026-10-07-limites-par-partie.md": {
+   "Version du 7 octobre 2026 : les limites par partie": [
+    "a005696d13bb2a2e",
+    "ce72bb9d15c41562"
    ]
   },
   "docs/archives/conventions.md": {
@@ -6708,36 +6734,7 @@
     "8240004a4c5a022a"
    ]
   },
-  "docs/limites.md": {
-   "5 ante bis. La fiche de paie : neuf réserves, dont trois décisives, et deux que la restitution ajoute": [
-    "0a1b30b1364ef7e5",
-    "cb2abe28a7d903df",
-    "3f4993efee3f489d"
-   ],
-   "5 ante. Le pilier capitalisé : ce que sa rente suppose": [
-    "73e36662ff6cf508",
-    "8e3712cfcd9c65dd",
-    "374df3b9386f97b4",
-    "5e52d38461580d1f",
-    "1650bc5654b0936a",
-    "006b5dc05e9b9aa2"
-   ],
-   "5 bis. Le coût agrégé : ce qui est observé, ce qui est estimé": [
-    "848cba2da938adc1",
-    "0e0cdc6ebcc5294b",
-    "dd6826fdc0054d11",
-    "7f24ac8a7988c215",
-    "7bb5229ab9b9cf57",
-    "0e15cd15f67b8e0b",
-    "fc0d0135c9ee7f97"
-   ],
-   "5 ter. La trajectoire projetée : ce qu'elle suppose, et ce qu'elle vaut": [
-    "a65f9485736bf8ce"
-   ],
-   "5. Ce que le modèle ne calcule pas, et pourquoi": [
-    "feab57168836c4e2",
-    "deb3eb23c91653ea"
-   ],
+  "docs/limites/3-systeme-actuel.md": {
    "Ce que disent les exemples publiés par les caisses": [
     "77d5cef97ff57a82",
     "8230fe6258f7aba5",
@@ -6748,7 +6745,9 @@
     "798089c8229d67fa",
     "b88d4d89f689b836",
     "48d87e1e220e117c"
-   ],
+   ]
+  },
+  "docs/limites/4-regimes-incomplets.md": {
    "Ce que vaut une série qu'on ne peut pas certifier": [
     "541b8ff1ba30f0b3"
    ],
@@ -6758,6 +6757,45 @@
    ],
    "Un rendement unique là où il faudrait une série": [
     "5a377ec35e167586"
+   ]
+  },
+  "docs/limites/5-ante-bis-fiche-de-paie.md": {
+   "5 ante bis. La fiche de paie : neuf réserves, dont trois décisives, et deux que la restitution ajoute": [
+    "0a1b30b1364ef7e5",
+    "cb2abe28a7d903df",
+    "3f4993efee3f489d"
+   ]
+  },
+  "docs/limites/5-ante-capitalisation.md": {
+   "5 ante. Le pilier capitalisé : ce que sa rente suppose": [
+    "73e36662ff6cf508",
+    "8e3712cfcd9c65dd",
+    "374df3b9386f97b4",
+    "5e52d38461580d1f",
+    "1650bc5654b0936a",
+    "006b5dc05e9b9aa2"
+   ]
+  },
+  "docs/limites/5-bis-cout-agrege.md": {
+   "5 bis. Le coût agrégé : ce qui est observé, ce qui est estimé": [
+    "848cba2da938adc1",
+    "0e0cdc6ebcc5294b",
+    "dd6826fdc0054d11",
+    "7f24ac8a7988c215",
+    "7bb5229ab9b9cf57",
+    "0e15cd15f67b8e0b",
+    "fc0d0135c9ee7f97"
+   ]
+  },
+  "docs/limites/5-hors-du-modele.md": {
+   "5. Ce que le modèle ne calcule pas, et pourquoi": [
+    "feab57168836c4e2",
+    "deb3eb23c91653ea"
+   ]
+  },
+  "docs/limites/5-ter-trajectoire.md": {
+   "5 ter. La trajectoire projetée : ce qu'elle suppose, et ce qu'elle vaut": [
+    "a65f9485736bf8ce"
    ]
   },
   "docs/methodologie.md": {
@@ -6784,7 +6822,8 @@
     "cbf0b8f68ffc1275"
    ],
    "Tables de mortalité": [
-    "5987ecdaa31c9a36"
+    "5987ecdaa31c9a36",
+    "d6e993989a92004a"
    ],
    "Une carrière, plusieurs métiers": [
     "abd3104cda4c86e6"
@@ -6846,7 +6885,7 @@
    "1. Programme — trois minutes": [
     "4affbd8c4e78027d",
     "679d82b755a3480f",
-    "6de6aded3ad4e635"
+    "d648a2542e81c834"
    ],
    "2. Simuler — six minutes, c'est le cœur": [
     "d745ea9a8aeebb45",
@@ -6854,7 +6893,7 @@
     "8b54fd5e1937e909",
     "0d257cb8ed5931ca",
     "da9d078a811cdd8c",
-    "75f88c139d4dd9a8",
+    "6cb7d40406336381",
     "9e3e659d80b97682",
     "35e77b79a9d702ee",
     "832e64567e3e3c6d"
@@ -6863,7 +6902,7 @@
     "97ff69c81eb19473",
     "773b3cc972166f9e",
     "967088dee9441d19",
-    "7456e84152066784",
+    "77001543c0cec0af",
     "22ed574a0dc38854"
    ],
    "4 bis. Risque — deux minutes, si on a le temps": [
@@ -6891,7 +6930,7 @@
    "6. Méthode et Données — deux minutes, pour finir": [
     "9a630078d6a3bd10",
     "d8fe3e7fd9af50b2",
-    "90ea36595950d83a"
+    "6efd5508418c8441"
    ],
    "Avant de partir": [
     "5d7ed1de7dc7c4d7",
@@ -6931,13 +6970,13 @@
     "f4bd4f6659915c98",
     "2712fab5d274d643",
     "019a3736392adf66",
-    "8e58f59420f24e3e",
+    "1984ab0d16c10477",
     "e96e70e1d0dacf78",
     "b638caf9172c7a49",
-    "92fadbb01550a7e1",
+    "3e8980b9306340be",
     "5f719a1303f242e0",
     "42fbe0590ab543ae",
-    "c6d47d8a2329646a",
+    "8f186cb8f9c90d96",
     "790f142cf35cd7c6",
     "efa808bc3c21fb03"
    ]

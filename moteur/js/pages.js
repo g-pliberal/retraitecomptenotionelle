@@ -14919,7 +14919,7 @@ export const MESURES_BLOCAGES = {
   // proposition, solde moyen 2026-2070, en points de PIB : ce que coûtent les
   // 18 %, l'âge légal de 65 ans de la proposition compris — il en rend un
   // demi-point.
-  cout_18_pour_cent: 2.0,
+  cout_18_pour_cent: 2.2,
   // Le coût par défaut : soldes moyens 2026-2070, dette et coefficient à
   // l'horizon, en points de PIB, en % du PIB et en valeur. Mesurés avec l'âge
   // légal de 65 ans et SANS TVA à taux unique : la proposition ne réforme plus
@@ -14928,21 +14928,26 @@ export const MESURES_BLOCAGES = {
   // étant des réserves. Et le compte d'un agent de l'État ne reçoit, jusqu'à
   // la bascule, que la part « retraite seule » du taux que l'État verse — le
   // défaut depuis le même jour : sous le taux entier, la proposition était à
-  // −0,9, 59 % et 0,85, et 1,03 en 2070.
-  solde_moyen_proposition: -0.8,
+  // −0,9, 59 % et 0,85, et 1,03 en 2070. Le 7 octobre 2026, la moitié des
+  // reportés en emploi, et non plus tous (action 138, étape 3), puis les
+  // quotients projetés de l'INSEE au lieu de la loi de Gompertz-Makeham
+  // (étape 7) les ont portés de −0,8, 49 %, 0,86 dans les années 2050 et 1,01
+  // en 2070 à ce qui suit ; le coût des 18 %, de 2,0 à 2,2 points.
+  solde_moyen_proposition: -0.9,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 49,
+  dette_2070_proposition: 62,
   dette_2070_actuel: 66,
-  coefficient_minimum: 0.86,
-  decennie_coefficient_minimum: 2050,
-  coefficient_2070: 1.01,
+  coefficient_minimum: 0.84,
+  decennie_coefficient_minimum: 2040,
+  coefficient_2070: 1.0,
   // donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
   // quatre taux d'aujourd'hui, en points de PIB ; zéro, la TVA n'étant pas
   // réformée.
   tva_affectee: 0.0,
   // proposition_prospective.py : le solde moyen de la variante qui laisse le
-  // stock intact, en points de PIB.
-  solde_moyen_prospectif: -3.0,
+  // stock intact, en points de PIB : −3,0 avant le 7 octobre 2026 (étapes 3
+  // et 7 de l'action 138).
+  solde_moyen_prospectif: -3.1,
   // stock_age_legal.py : ce que coûte le diviseur de l'âge de l'assuré au lieu
   // de celui de 65 ans, en points de PIB par an.
   cout_diviseur_age_legal: 0.2,

@@ -119,7 +119,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 
 #: Version du format. À incrémenter si la structure du paquet change, pour
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas.
-VERSION = 16
+VERSION = 17
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -542,13 +542,15 @@ def _population() -> dict:
     }
 
 
-def _quotients() -> dict:
-    """Quotients de mortalité observés, indexés « année|sexe » puis par âge."""
+def _quotients(projetes: bool = False) -> dict:
+    """Quotients de mortalité observés, ou projetés, indexés « année|sexe »
+    puis par âge."""
     donnees = DonneesMortalite(DONNEES, cache_disque=False)
-    observes = donnees._quotients_observes or {}
+    table_lue = (donnees._quotients_projetes if projetes
+                 else donnees._quotients_observes) or {}
     return {
         f"{annee}|{sexe}": {str(age): qx for age, qx in sorted(table.items())}
-        for (annee, sexe), table in sorted(observes.items())
+        for (annee, sexe), table in sorted(table_lue.items())
     }
 
 
@@ -1884,6 +1886,7 @@ def construire(bilan: bytes) -> bytes:
         "frais_epargne_retraite": _frais_epargne_retraite(),
         "prelevements_remuneration": _prelevements_remuneration(),
         "quotients": _quotients(),
+        "quotients_projetes": _quotients(projetes=True),
         "calibrations": _calibrations(),
         "populations": _populations(),
         "regimes": _regimes(),

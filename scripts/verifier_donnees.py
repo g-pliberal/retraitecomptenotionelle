@@ -2273,7 +2273,8 @@ def source_quotients() -> dict[tuple, float]:
 
 
 def source_esperances_projetees() -> dict[tuple, float]:
-    """Espérances de vie d'APRÈS 2025, dérivées des quotients projetés de l'INSEE.
+    """Espérances de vie d'APRÈS 2025, publiées par l'INSEE avec ses quotients
+    projetés.
 
     Ces années étaient saisies à la main aux seules années rondes, depuis un
     exercice de projection périmé, jusqu'à une année — 2080 — qui dépassait
@@ -2282,8 +2283,11 @@ def source_esperances_projetees() -> dict[tuple, float]:
     la fin de la projection.
 
     Les projections de population 2026 de l'INSEE publient les quotients de
-    mortalité par âge et par année jusqu'en 2125 : on en dérive e0, e60 et e65
-    année par année, par la méthode qui sert déjà aux années d'avant 1960. Plus
+    mortalité par âge et par année jusqu'en 2125, et sous chaque table e0, e60
+    et e65 année par année. Jusqu'au 7 octobre 2026, le dépôt DÉRIVAIT ces
+    espérances des quotients, les croyant inédites à 65 ans ; la somme des
+    survies d'une table par âge atteint les sous-estimait de 0,12 an au plus.
+    Elles sont désormais reprises telles que l'INSEE les publie. Plus
     d'interpolation entre années rondes, plus d'extrapolation muette, plus de
     gel — la projection du modèle s'arrête en 2100, la source va vingt-cinq ans
     plus loin.
@@ -2300,6 +2304,32 @@ def source_esperances_projetees() -> dict[tuple, float]:
                                   key=lambda kv: (int(kv[0].split("|")[0]),
                                                   kv[0].split("|")[1],
                                                   kv[0].split("|")[2]))
+    }
+
+
+def source_quotients_projetes() -> dict[tuple, float]:
+    """Quotients de mortalité par âge des années PROJETÉES, 2026-2125.
+
+    L'hypothèse centrale des projections de population 2026 de l'INSEE, que le
+    modèle lit âge par âge depuis le 7 octobre 2026 au lieu de la loi de
+    Gompertz-Makeham qu'il calait sur e60 et e65 (action 138, étape 7). Calée
+    sur deux espérances, la loi rendait bien la durée de service à 60 et 65
+    ans, mais pas la forme de la mortalité : elle faisait vivre les très vieux
+    trop longtemps, jusqu'à un an d'espérance de trop à 85 ans.
+
+    L'INSEE indexe ses quotients par âge atteint dans l'année ; le récupérateur
+    les convertit en quotients d'âge exact, ceux que le modèle lit, et contrôle
+    la conversion contre les espérances que l'INSEE publie. Niveau
+    ``projetee`` : la valeur vient du producteur, mais elle décrit un avenir.
+    """
+    serie = _serie_json("insee_quotients_projetes.json",
+                        "scripts/fetch/insee_projections_mortalite.py")
+    return {
+        tuple(cle.split("|")): valeur
+        for cle, valeur in sorted(serie.items(),
+                                  key=lambda kv: (int(kv[0].split("|")[0]),
+                                                  kv[0].split("|")[1],
+                                                  int(kv[0].split("|")[2])))
     }
 
 
@@ -6979,7 +7009,8 @@ CERTIFICATIONS = (
         cles=("annee", "sexe", "mesure"),
         colonne="valeur",
         source=source_esperances_projetees,
-        origine="dérivée des quotients projetés de l'INSEE, projections 2026",
+        origine="INSEE, projections de population 2026, espérances publiées "
+                "sous les quotients projetés",
         decimales=2,
         tolerance=0.005,
         unite=" ans",
@@ -6996,6 +7027,49 @@ CERTIFICATIONS = (
         tolerance=0.005,
         unite=" ans",
         niveau="haute",
+    ),
+    Certification(
+        nom="quotients_mortalite_projetes",
+        chemin=REFERENCE / "mortalite" / "quotients_projetes.csv",
+        cles=("annee", "sexe", "age"),
+        colonne="qx",
+        source=source_quotients_projetes,
+        origine="INSEE, projections de population 2026, quotients de "
+                "l'hypothèse centrale convertis à l'âge exact",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="projetee",
+        entete=(
+            "# Quotients de mortalité par âge — années projetées, France",
+            "# source_id: insee_projections_mortalite",
+            "# unite: probabilité de décès entre deux âges exacts, entre 0 et 1",
+            "#",
+            "# L'hypothèse centrale des projections de population 2026 de l'INSEE,",
+            "# de 2026 à 2125 et de 0 à 120 ans. Le modèle lit ce fichier après",
+            "# quotients_periode.csv et avant sa loi de Gompertz-Makeham : pour une",
+            "# année projetée, la loi ne sert plus à aucun âge (action 138, étape 7).",
+            "# Au-delà de 2125, les quotients de 2125.",
+            "#",
+            "# CONVERTIS, NON RECOPIÉS. L'INSEE indexe ses quotients par âge atteint",
+            "# dans l'année : un parallélogramme du diagramme de Lexis, de l'âge exact",
+            "# x - 1 à x + 1. Le modèle lit des carrés, de l'âge exact x à x + 1.",
+            "# Chaque carré prend la moyenne géométrique des survies des deux",
+            "# parallélogrammes qui l'encadrent :",
+            "#     1 - q(x) = racine de (1 - q'(x)) (1 - q'(x + 1)),",
+            "# et 120 ans garde le sien. La table convertie retrouve à moins de",
+            "# 0,05 an les espérances à 60 et 65 ans que l'INSEE publie, ce que le",
+            "# récupérateur contrôle à chaque exécution. À 0 an, la conversion",
+            "# ignore que les décès de la première année tombent dans ses premières",
+            "# semaines : aucun calcul du modèle ne part de la naissance.",
+            "#",
+            "# fiabilite: projetee — une projection du producteur, qui vaut estimee",
+            "# dans le modèle.",
+            "#",
+            "# Champ : France.",
+            "#",
+            "# Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas",
+            "# modifier à la main.",
+        ),
     ),
     Certification(
         nom="quotients_mortalite_anciens",

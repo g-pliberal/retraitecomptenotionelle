@@ -86,10 +86,10 @@ C'est l'accueil. Descendre lentement, sans rien cliquer.
   régime, et de règle de calcul → rien, le compte est le même » et « Tenir
   l'équilibre : une réforme tous les huit ans en moyenne → un chiffre publié
   chaque année ». Et une à ne pas sauter, parce que la salle la cherche :
-  « Votre retraite : ce que votre régime promet → de l'ordre d'un quart de moins,
-  en médiane ». La première des « Vos questions », « Ma
-  retraite va-t-elle baisser ? », en donne le détail : 23 % pour qui n'est
-  pas encore à la retraite, 12 % s'il place les cinq points rendus, 28 % sur
+  « Votre retraite : ce que votre régime promet → de l'ordre d'un cinquième à un
+  quart de moins, en médiane ». La première des « Vos questions », « Ma
+  retraite va-t-elle baisser ? », en donne le détail : 22 % pour qui n'est
+  pas encore à la retraite, 12 % s'il place les cinq points rendus, 27 % sur
   la pension d'aujourd'hui d'un retraité, garantie vieillesse comprise.
 - Le bloc « Et vous, ça donne combien ? » en haut de page est un raccourci
   vers le simulateur : on peut y saisir une date de naissance et un statut et
@@ -120,7 +120,7 @@ Comment les lire, et c'est la chose la plus importante de la présentation :
 - **Le système 1 est la référence** : le droit en vigueur, minima et
   majorations compris, recalculé règle par règle sur cette carrière. Sa ligne
   porte un troisième chiffre, plus récent que le reste de ce parcours, et il
-  vaut d'être lu à voix haute : **financé, 2 511 €**, soit 91 % de ce qu'il
+  vaut d'être lu à voix haute : **financé, 2 510 €**, soit 91 % de ce qu'il
   promet. Le reste attend des cotisations que personne n'a versées. La barre
   sous la ligne le montre, et la page Risque le chiffre.
 - **Les systèmes 2 et 3 ne sont pas des propositions.** Ce sont des
@@ -177,8 +177,8 @@ net :
 | Système | Pension nette par mois | Écart |
 |---|---|---|
 | 1. Actuel | 1 295 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 1 042 € | -19,5 % |
-| 4. La proposition | 1 144 € | -11,7 % |
+| 3. Ce qui a été cotisé, deux parts | 1 028 € | -20,6 % |
+| 4. La proposition | 1 127 € | -13,0 % |
 
 À montrer avec le plancher en tête : la garantie vieillesse, 1 050 € brut
 pour une personne seule dès 65 ans. Sous la proposition, cette carrière part
@@ -193,8 +193,8 @@ l'impôt », sous les résultats, en donne la règle.
 | Système | Pension nette par mois | Écart |
 |---|---|---|
 | 1. Actuel | 2 755 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 2 360 € | -14,3 % |
-| 4. La proposition | 2 556 € | -7,2 % |
+| 3. Ce qui a été cotisé, deux parts | 2 366 € | -14,1 % |
+| 4. La proposition | 2 563 € | -7,0 % |
 
 C'est le cas qu'on attend au tournant, et il faut savoir le dire : l'État
 employeur verse pour ses fonctionnaires bien au-delà de ce qu'un employeur
@@ -215,8 +215,8 @@ septembre 2022, départ en janvier 2064 à 64 ans :
 | Système | Pension nette par mois | Écart |
 |---|---|---|
 | 1. Actuel | 2 351 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 1 552 € | -34,0 % |
-| 4. La proposition | 1 912 € | -18,7 % |
+| 3. Ce qui a été cotisé, deux parts | 1 554 € | -33,9 % |
+| 4. La proposition | 1 915 € | -18,5 % |
 
 C'est la carrière qui cotise presque entièrement après la bascule : la
 rente capitalisée y pèse le plus, et l'écart entre 3 et 4 est le plus large
@@ -246,8 +246,8 @@ Trois choses à montrer :
   44 ans, après vingt-cinq ans de services, et la proposition le fait servir
   jusqu'à 65 ans —
   une pension mensuelle bien plus forte, servie vingt et un ans plus tard.
-- La ligne **« Fonctionnaire sédentaire (catégorie B) »**, qui va de -62 %
-  pour la génération 1940 à -7 % pour la génération 1970 : la même règle
+- La ligne **« Fonctionnaire sédentaire (catégorie B) »**, qui va de -61 %
+  pour la génération 1940 à -6 % pour la génération 1970 : la même règle
   donne des résultats très éloignés selon ce que l'État a versé à chaque
   époque, et le compte n'en reçoit que la part que la Cour des comptes
   rattache à la retraite de l'agent.
@@ -353,8 +353,8 @@ Onglet **Méthode** : les trois opérations, en une phrase chacune, puis
 « Qu'est-ce qui décide du résultat ? ». On peut s'arrêter au titre.
 
 Onglet **Données**, et c'est la bonne page pour conclure : « Rien ici n'est à
-croire sur parole. » 45 576 valeurs recontrôlées automatiquement contre le
-fichier de l'institution qui les produit, sur 129 séries ; 108 régimes
+croire sur parole. » 69 905 valeurs recontrôlées automatiquement contre le
+fichier de l'institution qui les produit, sur 133 séries ; 108 régimes
 recensés dont 74 calculés ; 39 institutions citées. Ce compte mesure la
 fidélité de la recopie, non la justesse des pensions : si on vous le demande,
 la réponse est que les pensions se contrôlent ailleurs, sur les exemples

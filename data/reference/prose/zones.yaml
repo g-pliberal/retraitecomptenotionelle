@@ -298,6 +298,10 @@ fichiers:
       - "**L'unification Arrco du 1<sup>er</sup> janvier 1999"
       - "La source est la circulaire annuelle de revalorisation de la Cnav"
       - "**La cible de cet ajustement est la table RACCORDÉE, pas la loi seule**"
+      # Et ce que la loi rendait aux années projetées, avant que les quotients
+      # de l'INSEE la remplacent : une mesure du 7 octobre 2026 (action 138,
+      # étape 7), contre une table qui ne la refera plus.
+      - "**Ce que la loi rendait aux années projetées, mesuré le 7 octobre 2026.**"
       # La mesure du 10 septembre 2026 qui a fixé les décimales affichées.
       - "Écart maximal de la ligne reconstituée depuis l'écran, mesuré le"
       - "| Étape | 4 déc. | 5 déc. | 6 déc. | Retenu |"

@@ -642,13 +642,13 @@
   "esperances_projetees": {
    "ajoutees": 0,
    "colonne": "valeur",
-   "corrigees": 0,
-   "empreinte": "78b7c81e9c34c206",
-   "identiques": 600,
+   "corrigees": 508,
+   "empreinte": "9344898fd5a7bd97",
+   "identiques": 92,
    "niveau": "projetee",
-   "source": "dérivée des quotients projetés de l'INSEE, projections 2026",
+   "source": "INSEE, projections de population 2026, espérances publiées sous les quotients projetés",
    "valeurs": 600,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-07"
   },
   "esperances_vie": {
    "ajoutees": 0,
@@ -1122,6 +1122,17 @@
    "source": "INED, tables de Vallin et Meslé, quotients du moment par âge",
    "valeurs": 18466,
    "verifiee_le": "2026-09-13"
+  },
+  "quotients_mortalite_projetes": {
+   "ajoutees": 24200,
+   "colonne": "qx",
+   "corrigees": 0,
+   "empreinte": "ffae96fff6f0002d",
+   "identiques": 0,
+   "niveau": "projetee",
+   "source": "INSEE, projections de population 2026, quotients de l'hypothèse centrale convertis à l'âge exact",
+   "valeurs": 24200,
+   "verifiee_le": "2026-10-07"
   },
   "ressources_eec_retraite": {
    "ajoutees": 0,

@@ -2,10 +2,11 @@
 # source_id: eurostat_mlifetable (1986-2024), ined_vallin_mesle (1899-1985)
 # unite: probabilité de décès dans l'année, entre 0 et 1
 #
-# Ce fichier PRIME sur la calibration paramétrique : dès qu'un couple
-# (année, sexe, âge) y figure, le moteur l'utilise tel quel et n'appelle
-# pas la loi de Gompertz-Makeham. Hors des années et des âges couverts, la
-# loi paramétrique reprend la main : c'est un raccord assumé, pas un oubli.
+# Ce fichier PRIME sur tout le reste : dès qu'un couple (année, sexe, âge)
+# y figure, le moteur l'utilise tel quel. Hors des années et des âges
+# couverts, les quotients que l'INSEE projette (quotients_projetes.csv, de
+# 2026 à 2125), puis la loi de Gompertz-Makeham, reprennent la main : c'est
+# un raccord assumé, pas un oubli.
 #
 # DEUX SOURCES, ET UNE SEULE PAR ANNÉE.
 #   1899-1985 : tables de Vallin et Meslé, publiées par l'INED, par année

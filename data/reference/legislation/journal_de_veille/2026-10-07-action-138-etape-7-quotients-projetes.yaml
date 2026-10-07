@@ -1,0 +1,19 @@
+date: "2026-10-07"
+session: "action 138, étape 7, première partie : les quotients projetés de l'INSEE au lieu de la loi de Gompertz-Makeham"
+consulte: >-
+  Aucune source de droit : la session ne touche ni au scénario 1 ni à une règle.
+  Le classeur des hypothèses de mortalité des projections de population 2026 de
+  l'INSEE (hyp_mortalite.xlsx), lu le jour même : huit feuilles, les quotients par
+  âge atteint dans l'année de 0 à 120 ans et de 2023 à 2125, et sous chaque table
+  les espérances de vie à la naissance, à 60 et à 65 ans.
+trouve: >-
+  Aucun texte de droit. Le classeur publie e65 année par année, que le dépôt
+  croyait inédite et dérivait en la sous-estimant jusqu'à 0,12 an ; ses quotients,
+  convertis à l'âge exact, remplacent la loi de Gompertz-Makeham de 2026 à 2125
+  dans les deux moteurs. Aucune pension du scénario 1 ne bouge.
+reste: >-
+  Le reste de l'étape 7 : les variantes d'espérance de vie basse et haute, la
+  fécondité et les migrations des seize autres scénarios de l'INSEE, la mortalité
+  différentielle des cas types de la page Coût, les départs qui suivent
+  l'espérance de vie ; la décision du conseil d'administration de l'Agirc-Arrco
+  du 14 octobre 2026.

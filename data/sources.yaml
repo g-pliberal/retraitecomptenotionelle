@@ -476,22 +476,30 @@ institutions:
         url: https://www.insee.fr/fr/statistiques/8990899
         acces: fichier
         statut_integration: automatise
-        cible: data/reference/mortalite/esperances_vie.csv
+        cible: >-
+          data/reference/mortalite/esperances_vie.csv,
+          data/reference/mortalite/quotients_projetes.csv
         recuperation: scripts/fetch/insee_projections_mortalite.py
         millesime: 2026
         note: >-
           Quotients de mortalité par âge (0 à 120 ans) et par année (2023 à
           2125), pour les hypothèses d'espérance de vie centrale, basse et
-          haute. Le dépôt reprend la centrale et en DÉRIVE e0, e60 et e65 de
-          2026 à 2125 — dont e65, que l'INSEE ne publie jamais. Les années 2023
-          à 2025 sont ignorées : elles sont observées, et l'observé prime sur le
-          projeté même quand les deux viennent du même producteur. La somme des
-          survies se fait sans le demi-an usuel, ce classeur indexant ses
-          quotients par âge atteint dans l'année ; le récupérateur contrôle la
-          convention contre l'espérance de vie à la naissance que l'INSEE
-          publie pour 2070 (89,5 et 86,7 ans) et échoue si elle casse. Remplace
-          l'exercice 2021-2070, dont six valeurs étaient saisies aux années
-          rondes et une, 2080, dépassait l'horizon.
+          haute, et sous chaque table e0, e60 et e65 année par année. Le dépôt
+          reprend la centrale, de 2026 à 2125 : ses quotients, que le modèle
+          lit âge par âge au lieu de sa loi de Gompertz-Makeham depuis le
+          7 octobre 2026 (action 138, étape 7), et ses espérances publiées,
+          qu'il dérivait jusque-là des quotients en croyant e65 inédite. Les
+          années 2023 à 2025 sont ignorées : elles sont observées, et
+          l'observé prime sur le projeté même quand les deux viennent du même
+          producteur. Le classeur indexe ses quotients par âge atteint dans
+          l'année ; le récupérateur les convertit à l'âge exact, par la
+          moyenne géométrique des survies des deux âges atteints qui encadrent
+          chaque âge exact, et échoue si la table convertie s'écarte de plus
+          de 0,05 an des espérances publiées à 60 et 65 ans, ou si la somme
+          des survies du classeur ne retrouve pas l'espérance à la naissance
+          publiée pour 2070 (89,5 et 86,7 ans). Remplace l'exercice 2021-2070,
+          dont six valeurs étaient saisies aux années rondes et une, 2080,
+          dépassait l'horizon.
       - id: insee_projections_population
         titre: >-
           Projections de population 2026 — scénario central, résultats détaillés
@@ -520,7 +528,8 @@ institutions:
           génération, et ce qu'elles retirent à la pension d'une carrière
           française complète (`estimee`, action 147, étape 11). Seize autres
           scénarios sont publiés ; seul le central est repris, comme pour les
-          quotients de mortalité.
+          quotients de mortalité — les variantes attendent l'action 138,
+          étape 7.
 
       - id: insee_mortalite_niveau_de_vie
         titre: >-

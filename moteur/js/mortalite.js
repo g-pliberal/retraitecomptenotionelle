@@ -1,11 +1,14 @@
 /**
- * Tables de mortalité : quotients observés, lois de Makeham, tables de génération.
+ * Tables de mortalité : quotients observés et projetés, lois de Makeham,
+ * tables de génération.
  *
- * Portage de ``src/retraite_notionnelle/donnees/mortalite.py``. Deux sources,
+ * Portage de ``src/retraite_notionnelle/donnees/mortalite.py``. Trois sources,
  * arbitrées couple par couple (année, sexe, âge) :
  *
  * 1. les quotients réellement observés, quand le couple y figure ;
- * 2. partout ailleurs, une table paramétrique de Gompertz-Makeham calibrée pour
+ * 2. les quotients que l'INSEE projette, de 2026 à 2125, convertis à l'âge
+ *    exact ; au-delà de 2125, ceux de 2125 ;
+ * 3. partout ailleurs, une table paramétrique de Gompertz-Makeham calibrée pour
  *    reproduire les espérances de vie publiées à 60 et 65 ans.
  *
  * Les paramètres calibrés sont livrés avec le paquet de données, calculés une
@@ -169,6 +172,15 @@ export class DonneesMortalite {
     this.poidsUnisexe = poidsUnisexe;
     this._calibrations = paquet.calibrations || {};
     this._quotients = paquet.quotients || {};
+    this._quotientsProjetes = paquet.quotients_projetes || {};
+    // Les années que couvrent les quotients projetés ; au-delà de la dernière,
+    // ce sont les siens qui servent, comme la loi s'en tient aux espérances de
+    // la dernière année de sa série.
+    const anneesProjetees = Object.keys(this._quotientsProjetes)
+      .map((cle) => Number(cle.split("|")[0]));
+    this.anneesProjetees = anneesProjetees.length > 0
+      ? [Math.min(...anneesProjetees), Math.max(...anneesProjetees)]
+      : null;
     this._e60 = {};
     this._e65 = {};
     for (const sexe of DonneesMortalite.SEXES) {
@@ -343,13 +355,27 @@ export class DonneesMortalite {
     return loi;
   }
 
-  /** Survie d'un âge ENTIER au suivant, quotient observé s'il existe. */
+  /**
+   * Survie d'un âge ENTIER au suivant : quotient observé s'il existe, sinon
+   * quotient projeté, sinon loi paramétrique. Au-delà de la dernière année
+   * projetée, les quotients de cette année-là.
+   */
   _survieCellule(age, annee, sexe) {
     const table = this._quotients[`${annee}|${sexe}`];
     if (table !== undefined) {
       const qx = table[String(age)];
       if (qx !== undefined) {
         return 1.0 - qx;
+      }
+    }
+    if (this.anneesProjetees !== null && annee >= this.anneesProjetees[0]) {
+      const projetee = this._quotientsProjetes[
+        `${Math.min(annee, this.anneesProjetees[1])}|${sexe}`];
+      if (projetee !== undefined) {
+        const qx = projetee[String(age)];
+        if (qx !== undefined) {
+          return 1.0 - qx;
+        }
       }
     }
     return this.loi(annee, sexe).survie(age, 1.0);

@@ -34,13 +34,14 @@ résumé :
 | Espérance de vie à 0 et <!--chiffre:illustration()-->60<!--/--> ans | <!--chiffre:minimum(data/reference/mortalite/esperances_vie.csv:annee?mesure=e0&fiabilite=certifiee)-->1946<!--/-->-<!--chiffre:maximum(data/reference/mortalite/esperances_vie.csv:annee?mesure=e0&fiabilite=certifiee)-->2025<!--/--> | **certifiée** | INSEE BDM, quatre idbanks, annuel par sexe |
 | Espérance de vie à <!--chiffre:illustration()-->65<!--/--> ans | 1960-2024 | **certifiée** | OCDE `DSD_HEALTH_STAT@DF_LE` |
 | Espérance de vie à <!--chiffre:illustration()-->65<!--/--> ans | 1946-1959 | haute | **dérivée** des quotients INED, recalculée à chaque exécution |
-| Espérances de vie e0, e60, e65 | 2026-2125 | projetée | **dérivée** des quotients projetés par l'INSEE, projections 2026 |
+| Espérances de vie e0, e60, e65 | 2026-2125 | projetée | INSEE, projections 2026, **publiées** sous ses quotients projetés |
+| Quotients de mortalité par âge | 2026-2125, âges 0-<!--chiffre:maximum(data/reference/mortalite/quotients_projetes.csv:age)-->120<!--/--> | projetée | INSEE, projections 2026, hypothèse centrale, **convertis** de l'âge atteint dans l'année à l'âge exact, contrôlés contre les espérances publiées |
 | Espérance de vie par vingtile de niveau de vie, e0, e60, e65 | 2012-2016 et 2020-2024 | haute | INSEE, tables de mortalité par niveau de vie (Insee Résultats 2025), lues telles quelles, l'ensemble contrôlé contre la série certifiée |
 | Espérance de vie à <!--chiffre:illustration()-->65<!--/--> ans des fonctionnaires civils de l'État | 2024 | **saisie** | Service des retraites de l'État, PAP 741 du PLF 2026, apporté par l'utilisateur |
 | Quotients de mortalité par âge | 1986-2024 | **certifiée** | Eurostat `demo_mlifetable`, âges 0-<!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=2024)-->94<!--/--> depuis 2014, 0-<!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=2010)-->84<!--/--> de 1998 à 2013 |
 | Quotients de mortalité par âge | 1899-1985 | **certifiée** | INED, tables de Vallin et Meslé, âges 0-104 |
 | Quotients de mortalité par âge | 1986-1997, jusqu'à <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=1990)-->104<!--/--> ans | **certifiée** | INED, là où Eurostat s'arrête |
-| Quotients de mortalité par âge | après 1997, au-delà de <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=2010)-->84<!--/--> ans jusqu'en 2013 et de <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=2024)-->94<!--/--> ans depuis | absents | calibration paramétrique, dont le biais est mesuré |
+| Quotients de mortalité par âge | après 1997, au-delà de <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=2010)-->84<!--/--> ans jusqu'en 2013 et de <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=2024)-->94<!--/--> ans depuis, et toute l'année 2025 | absents | calibration paramétrique, dont le biais est mesuré |
 | Minimum contributif et plafond d'écrêtement | ancres de 1983 à 2023, à leur date | **certifiée** | DILA, base LEGI, code de la sécurité sociale, R. 351-25, D. 351-2-1 et D. 173-21-0-0-1 |
 | Minimum contributif, minimum majoré et plafond | chaque revalorisation entre les ancres, de 1984 à juin 2026 | haute | barèmes de la Cnav, que le récupérateur refuse s'ils ne redonnent pas les ancres du code au centime ; recoupés contre les circulaires que transcrit OpenFisca-France-Pension, jusqu'en 2023, et contre la réponse ministérielle de 2020 |
 | Minimum vieillesse (ASPA) | ancres 2006, 2009-2012, 2014, 2018-2020 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `D. 815-1` |
@@ -145,7 +146,7 @@ python scripts/fetch/cnav_minimum_vieillesse.py  # ASPA du couple entre les ancr
 python scripts/fetch/cnav_avts.py  # AVTS, allocation supplémentaire et seuil du trimestre d'avant 1972, barèmes de la Cnav
 python scripts/fetch/sre_minimum_garanti.py     # référence du minimum garanti, par le service qui la sert
 python scripts/fetch/ined_vallin_mesle.py      # quotients de mortalité d'avant 1986
-python scripts/fetch/insee_projections_mortalite.py  # espérances de vie projetées, jusqu'en 2125
+python scripts/fetch/insee_projections_mortalite.py  # quotients et espérances de vie projetés, jusqu'en 2125
 python scripts/fetch/eurostat_hicp.py          # contrôle croisé de l'inflation
 
 python scripts/verifier_donnees.py             # confronte, sans rien écrire

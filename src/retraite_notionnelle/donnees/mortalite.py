@@ -1,18 +1,28 @@
 """Tables de mortalité : chargement, calibration, tables de génération.
 
-Deux sources, dans cet ordre de priorité, arbitrées **couple par couple**
+Trois sources, dans cet ordre de priorité, arbitrées **couple par couple**
 (année, sexe, âge) et non en bloc :
 
 1. ``data/reference/mortalite/quotients_periode.csv`` (colonnes
    ``annee,sexe,age,qx``) — les quotients réellement observés. Ils couvrent
-   1986-2024, des âges 0 à 84 puis 0 à 94 selon les millésimes ;
-2. partout ailleurs — avant 1986, au-delà du dernier âge publié, et pour les
-   années projetées — une table paramétrique de **Gompertz-Makeham** calibrée
-   pour reproduire les espérances de vie publiées à 60 et 65 ans.
+   1899-2024, jusqu'à 104 ans avant 1998, puis 84 et 94 ans selon les
+   millésimes ;
+2. ``data/reference/mortalite/quotients_projetes.csv`` — les quotients que
+   l'INSEE projette, hypothèse centrale de ses projections de population 2026,
+   convertis à l'âge exact : de 2026 à 2125, de 0 à 120 ans. Au-delà de 2125,
+   ceux de 2125 ;
+3. partout ailleurs — au-delà du dernier âge observé, et en 2025, que ni
+   l'observation ni la projection ne couvrent — une table paramétrique de
+   **Gompertz-Makeham** calibrée pour reproduire les espérances de vie
+   publiées à 60 et 65 ans.
 
-Le point 2 est une approximation assumée : elle donne la bonne espérance de vie
+Le point 3 est une approximation assumée : elle donne la bonne espérance de vie
 aux âges qui comptent pour la retraite (celle qui pilote le diviseur), mais elle
-ne prétend pas décrire la mortalité aux âges jeunes.
+ne prétend pas décrire la mortalité aux âges jeunes, ni la FORME de la
+mortalité aux grands âges. Elle servait aussi aux années projetées jusqu'au
+7 octobre 2026 : calée sur deux espérances, elle faisait vivre les très vieux
+trop longtemps, de 0,6 à 1,0 an d'espérance de trop à 85 ans, et le point 2 l'y
+a remplacée (action 138, étape 7).
 
 **La calibration porte sur la table raccordée, pas sur la loi seule.** C'est ce
 qui a longtemps manqué : ajustée sur elle-même, la loi donnait une queue trop
@@ -276,7 +286,14 @@ class DonneesMortalite:
                 chemin, "valeur", nom=f"e65_{sexe}", interpolation="lineaire",
                 filtre={"sexe": sexe, "mesure": "e65"},
             )
-        self._quotients_observes = self._charger_quotients_observes()
+        self._quotients_observes = self._charger_quotients("quotients_periode.csv")
+        self._quotients_projetes = self._charger_quotients("quotients_projetes.csv")
+        annees_projetees = sorted({annee for annee, _ in self._quotients_projetes or {}})
+        #: Les années que couvrent les quotients projetés ; au-delà de la
+        #: dernière, ce sont les siens qui servent, comme la loi paramétrique
+        #: s'en tient aux espérances de la dernière année de sa série.
+        self.annees_projetees: tuple[int, int] | None = (
+            (annees_projetees[0], annees_projetees[-1]) if annees_projetees else None)
         self._populations = self._charger_populations()
         self._facteurs: dict[tuple[str, str], float] = {}
 
@@ -441,14 +458,16 @@ class DonneesMortalite:
 
     # -- tables réelles, si présentes ---------------------------------------
 
-    def _charger_quotients_observes(self) -> dict[tuple[int, str], dict[int, float]] | None:
-        chemin = self.racine / "reference" / "mortalite" / "quotients_periode.csv"
+    def _charger_quotients(self, nom: str) -> dict[tuple[int, str], dict[int, float]] | None:
+        """Une table de quotients ``(annee, sexe) -> age -> qx``, observée ou
+        projetée, ou ``None`` si le fichier manque."""
+        chemin = self.racine / "reference" / "mortalite" / nom
         if not chemin.exists():
             return None
-        # Ce fichier fait vingt-cinq mille lignes et se relisait une fois par
-        # jeu de données reconstruit — trente-cinq fois pour les seuls témoins.
-        # La table est partagée, non copiée : tout ce qui la touche la lit
-        # (`in`, `.get`), ici comme dans `LoiMortalite`.
+        # Ces fichiers font vingt-cinq mille lignes chacun et se relisaient une
+        # fois par jeu de données reconstruit — trente-cinq fois pour les seuls
+        # témoins. La table est partagée, non copiée : tout ce qui la touche la
+        # lit (`in`, `.get`), ici comme dans `LoiMortalite`.
         etat = chemin.stat()
         cle_fichier = (str(chemin), etat.st_mtime_ns, etat.st_size)
         if cle_fichier in _QUOTIENTS_EN_CACHE:
@@ -551,11 +570,23 @@ class DonneesMortalite:
         self._cache_modifie = False
 
     def _survie_cellule(self, age: int, annee: int, sexe: str) -> float:
-        """Survie d'un âge ENTIER au suivant, quotient observé s'il existe."""
+        """Survie d'un âge ENTIER au suivant : quotient observé s'il existe,
+        sinon quotient projeté, sinon loi paramétrique.
+
+        Au-delà de la dernière année projetée, les quotients de cette année-là :
+        la projection de l'INSEE s'arrête en 2125, et la loi paramétrique, qui
+        prenait la main, s'en tenait déjà aux espérances de 2125.
+        """
         if self._quotients_observes is not None:
             cle = (annee, sexe)
             if cle in self._quotients_observes:
                 qx = self._quotients_observes[cle].get(age)
+                if qx is not None:
+                    return 1.0 - qx
+        if self.annees_projetees is not None and annee >= self.annees_projetees[0]:
+            table = self._quotients_projetes.get((min(annee, self.annees_projetees[1]), sexe))
+            if table is not None:
+                qx = table.get(age)
                 if qx is not None:
                     return 1.0 - qx
         return self.loi(annee, sexe).survie(float(age), 1.0)

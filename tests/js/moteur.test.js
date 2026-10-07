@@ -35,6 +35,7 @@ import { AnneeCarriere, limiterChomageNonIndemnise } from "../../moteur/js/carri
 import * as gabarit from "../../moteur/js/gabarit.js";
 import { Fiabilite, SerieAnnuelle } from "../../moteur/js/serie.js";
 import { PARAMETRES_DEFAUT } from "../../moteur/js/config.js";
+import { DonneesMortalite } from "../../moteur/js/mortalite.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -716,6 +717,23 @@ test("le salaire de référence des cultes est fait du forfait", () => {
     ["membre_congregation", 2.0]]) {
     assert.ok(Math.abs(cavimac(statut, niveau).montant - reference.montant) < 1e-9);
   }
+});
+
+/**
+ * Le portage de `test_les_quotients_projetes_remplacent_la_loi_aux_annees_projetees`
+ * (tests/test_donnees.py) : de 2026 à 2125, la table de l'INSEE, âge par âge ;
+ * au-delà, celle de 2125 ; en 2025, la loi.
+ */
+test("les quotients projetés de l'INSEE remplacent la loi aux années projetées", () => {
+  const mortalite = new DonneesMortalite(paquet);
+  const projetes = paquet.quotients_projetes;
+  assert.deepEqual(mortalite.anneesProjetees, [2026, 2125]);
+  for (const [annee, sexe, age] of [[2026, "F", 64], [2050, "H", 70], [2125, "F", 95]]) {
+    assert.equal(mortalite.survieAnnuelle(age, annee, sexe),
+      1 - projetes[`${annee}|${sexe}`][String(age)], `${annee} ${sexe} ${age}`);
+  }
+  assert.equal(mortalite.survieAnnuelle(90, 2140, "H"), 1 - projetes["2125|H"]["90"]);
+  assert.equal(mortalite.survieAnnuelle(70, 2025, "H"), mortalite.loi(2025, "H").survie(70, 1));
 });
 
 test("le préfinancement du diviseur se rend sur la pension servie", () => {

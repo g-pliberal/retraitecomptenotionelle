@@ -3328,7 +3328,12 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # terme, et celui du plancher — l'argument le plus parlant du site, remonté
     # en haut de page par la revue de septembre 2026. Plus l'entrée, deux
     # lignes et un bouton qui disent que le site est un simulateur.
-    "/": (470, 0, 2, 240),
+    # Les tableaux sont passés de 240 à 245 mots le 7 octobre 2026 : la ligne
+    # « Votre retraite » dit la baisse médiane en fractions CALCULÉES
+    # (`ordreDeGrandeur`), « d'un quart » quand les deux écarts médians
+    # tombent sur la même, « d'un cinquième à un quart » sinon — trois mots de
+    # plus, qu'un écart de 22,6 % passé à 22,5 % a suffi à écrire.
+    "/": (470, 0, 2, 245),
     "/simuler": (1500, 0, 0, 0),
     # Partager ne porte que des cartes : leur texte est court par
     # construction — il doit tenir dans une image de 1200 × 675.

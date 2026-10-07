@@ -564,6 +564,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
             "legislation/point_indice_fonction_publique.csv",
         "quotients_mortalite": "mortalite/quotients_periode.csv",
         "quotients_mortalite_anciens": "mortalite/quotients_periode.csv",
+        # Les quotients que l'INSEE projette, que le modèle lit au lieu de sa
+        # loi de Gompertz-Makeham depuis l'action 138, étape 7.
+        "quotients_mortalite_projetes": "mortalite/quotients_projetes.csv",
         "valeurs_point": "regimes/valeurs_point.csv",
         "valeurs_point_ircantec": "regimes/valeurs_point.csv",
         # La suite de la Caisse des dépôts, lue sur la page du régime.
@@ -1739,10 +1742,13 @@ def test_toute_succession_designe_un_regime_du_catalogue(catalogue):
 
 
 def test_calibration_reproduit_les_esperances_publiees(mortalite, esperances):
-    """Là où la loi EST la table, elle doit retomber sur ses cibles.
+    """Là où la loi est seule, elle doit retomber sur ses cibles.
 
     C'est le cas des années projetées, pour lesquelles aucun quotient n'est
-    observé : la loi paramétrique y décrit seule toute la plage d'âges. Les
+    observé. La loi paramétrique y décrivait seule toute la plage d'âges
+    jusqu'au 7 octobre 2026 ; les quotients projetés de l'INSEE l'y ont
+    remplacée, mais elle y reste calibrée, pour 2025, que rien ne couvre, et
+    pour qu'une table sans quotients projetés rende encore un résultat. Les
     cibles sont relues dans le fichier de référence plutôt que recopiées ici :
     c'est la source qui fait foi, et une recertification ne doit pas demander de
     retoucher le test.
@@ -1807,6 +1813,45 @@ def test_la_memoire_des_calibrations_est_a_jour():
         or entree[2] != modele.empreinte(int(cle.split("|")[0]), cle.split("|")[1])
     ]
     assert not perimees, perimees[:10]
+
+
+def test_les_quotients_projetes_remplacent_la_loi_aux_annees_projetees(mortalite):
+    """De 2026 à 2125, le modèle lit la table de l'INSEE âge par âge.
+
+    La loi de Gompertz-Makeham, calée sur deux espérances, y rendait la durée
+    de service à 60 et 65 ans, mais pas la forme de la mortalité : elle faisait
+    vivre les très vieux trop longtemps (action 138, étape 7). Au-delà de 2125,
+    ce sont les quotients de 2125 ; en 2025, que ni l'observation ni la
+    projection ne couvrent, la loi garde la main.
+    """
+    projetes = mortalite._quotients_projetes
+    assert mortalite.annees_projetees == (2026, 2125)
+    for annee, sexe, age in ((2026, "F", 64), (2050, "H", 70), (2125, "F", 95)):
+        assert mortalite.survie_annuelle(age, annee, sexe) == pytest.approx(
+            1 - projetes[(annee, sexe)][age]), (annee, sexe, age)
+    assert mortalite.survie_annuelle(90, 2140, "H") == pytest.approx(
+        1 - projetes[(2125, "H")][90])
+    assert mortalite.survie_annuelle(70, 2025, "H") == pytest.approx(
+        mortalite.loi(2025, "H").survie(70.0, 1.0))
+
+
+def test_la_table_projetee_reproduit_les_esperances_publiees(mortalite, esperances):
+    """Le contrôle du récupérateur, refait sur la table que le modèle LIT.
+
+    L'INSEE indexe ses quotients par âge atteint dans l'année, et le modèle
+    lit des âges exacts : la conversion doit rendre, à 60 et 65 ans, les
+    espérances que l'INSEE publie sous chaque table, chaque année projetée.
+    Elle les rend à deux centièmes d'année près.
+    """
+    ecarts = []
+    for annee in range(2026, 2126):
+        for sexe in ("H", "F"):
+            for age in (60, 65):
+                obtenue = _esperance_de_la_table_lue(mortalite, age, annee, sexe)
+                publiee = esperances[(annee, sexe, f"e{age}")]
+                if abs(obtenue - publiee) > 0.05:
+                    ecarts.append((annee, sexe, age, round(obtenue, 3), publiee))
+    assert not ecarts, ecarts[:10]
 
 
 def test_esperance_decroit_avec_l_age(mortalite):
