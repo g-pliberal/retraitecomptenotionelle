@@ -200,6 +200,7 @@
    "avpf",
    "bareme_minoration_regimes_en_points",
    "baremes_cnbf",
+   "bonification_cinquieme_police_penitentiaire",
    "carcdsf_minoration_age_seul",
    "carmf_asv_minoration_enfants",
    "carpimko_ages_2015",
@@ -556,6 +557,7 @@
    "2026-10-07 | action 138, étape 4 : le minimum et les majorations de la réversion du régime général",
    "2026-10-07 | action 138, étape 6 : l'AVTS, le trimestre d'avant 1972 et le minimum vieillesse d'avant 2007",
    "2026-10-07 | action 138, étape 7, première partie : les quotients projetés de l'INSEE au lieu de la loi de Gompertz-Makeham",
+   "2026-10-07 | action 138, étape 9, première partie : les indicateurs de cycle de vie",
    "2026-10-07 | action 150, étape 1 : Pourquoi changer et Partager lisent le bilan figé"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
@@ -1239,6 +1241,7 @@
    "cnbf_parametres",
    "cor_cas_types",
    "cor_comptes_systeme_retraite",
+   "cor_cycle_de_vie",
    "cor_hypotheses_projection",
    "cor_panorama_regimes",
    "cor_patrimoine_retraites",
@@ -1346,6 +1349,7 @@
    "legifrance_textes",
    "msa_parametres",
    "ocde_health_le",
+   "ocde_pensions_at_a_glance",
    "opef_rapport_annuel",
    "openfisca_arrco_oracle",
    "openfisca_contribution_employeur_public",
@@ -6930,7 +6934,7 @@
    "6. Méthode et Données — deux minutes, pour finir": [
     "9a630078d6a3bd10",
     "d8fe3e7fd9af50b2",
-    "6efd5508418c8441"
+    "7391483781a1c33b"
    ],
    "Avant de partir": [
     "5d7ed1de7dc7c4d7",

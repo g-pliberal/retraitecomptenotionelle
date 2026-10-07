@@ -83,6 +83,12 @@ mourir un peu trop tôt entre 65 et 80 ans. Ce que le passage déplace :
   du dépôt, passe de 481 à 479 % du PIB ; le système 6 voit son solde moyen
   de 2026 à 2070 passer de −0,90 à −0,94 % du PIB, et sa dette en 2070 de 59
   à 62 %, la moitié des reportés travaillant (étape 3) ;
+- *la confrontation de l'étape 9*, l'espérance de vie à 60 ans de chaque
+  génération contre celle de l'INSEE que publie le COR, se resserre : à
+  0,02 an près dès 1960, à 0,08 avant, et la génération 1941, dont les
+  quotients observés font une marche, passe de +0,62 à +0,32 an chez les
+  hommes ; la session de l'étape 9 a resserré son test d'autant (0,05 et
+  0,15 an, au lieu de 0,1 et 0,45) ;
 - *l'accueil* : la baisse médiane des pensions à venir passe de 22,6 à
   22,5 %, et la phrase calculée dit désormais « de l'ordre d'un cinquième à un
   quart » au lieu d'« un quart » ; le budget de lecture de ses tableaux passe
@@ -92,8 +98,8 @@ mourir un peu trop tôt entre 65 et 80 ans. Ce que le passage déplace :
 financée de l'exemple (2 510 €), la ligne des fonctionnaires sédentaires et
 l'ordre de grandeur de l'accueil. Ses comptes de la page Données étaient déjà
 périmés sur `main` depuis l'étape 4 (45 576 valeurs et 129 séries, quand la
-page en écrivait 45 679 et 131) : ils disent désormais 69 905 et 133, avec
-la série de l'étape 6. La
+page en écrivait 45 679 et 131) : ils disent désormais 70 149 et 138, avec
+les séries que les autres étapes du jour ont ajoutées. La
 référence de la conservation est refigée en acceptant ces paragraphes, comme
 à l'étape 16 de l'action 147.
 
