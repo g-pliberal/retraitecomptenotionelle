@@ -166,6 +166,38 @@ test("un paquet d'avant les écarts médians ne fait pas tomber l'accueil", () =
   assert.ok(texte.includes("c'est une avance, reprise sur la succession. Pour votre cas"));
 });
 
+test("Pourquoi changer et Partager lisent le bilan figé, sans rien calculer", () => {
+  // Elles ne prennent aucun réglage, et refaisaient le coût entier — cinq
+  // secondes chez le lecteur — pour en lire quelques chiffres, plus trois
+  // carrières d'exemple. Le paquet les porte depuis le 7 octobre 2026 : qu'une
+  // de ces pages se remette à calculer, et ce test le dit.
+  const contexte = new Contexte(paquet);
+  contexte.cout = () => { throw new Error("la page a recalculé le coût agrégé"); };
+  contexte.simuler = () => { throw new Error("la page a simulé une carrière"); };
+  for (const chemin of ["/risque", "/partager"]) {
+    assert.doesNotThrow(() => rendre(contexte, chemin, {}), chemin);
+  }
+});
+
+test("un paquet d'avant les dépenses figées rend Pourquoi changer et Partager comme avant", () => {
+  // Le site lit son paquet en `force-cache` : un lecteur peut recevoir le
+  // nouveau code et un paquet d'avant le 7 octobre 2026, dont le bilan ne
+  // porte ni la dépense ni le PIB de chaque année, ni les carrières d'exemple.
+  // Les deux pages refont alors le calcul, et rendent la même page.
+  const bilan = {
+    ...paquet.bilan_equilibre,
+    annees: paquet.bilan_equilibre.annees.map(({ depenses, pib, ...reste }) => reste),
+  };
+  delete bilan.exemples_risque;
+  const contexte = new Contexte({ ...paquet, bilan_equilibre: bilan });
+  for (const nom of ["risque", "partager"]) {
+    const temoin = temoinsPages[nom];
+    const rendu = sansBlocJson(rendre(contexte, temoin.chemin, temoin.parametres)[1]);
+    assert.equal(temoin.formulaire_retire ? sansFormulaire(rendu) : rendu, temoin.corps,
+      `corps de la page « ${nom} »`);
+  }
+});
+
 /**
  * Le bloc JSON de la page reprend les chiffres déjà comparés un à un ; ne
  * subsisterait que l'écriture des flottants, que Python et JavaScript ne

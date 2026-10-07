@@ -16,6 +16,12 @@ D'où cette table : le bilan est calculé UNE FOIS, par
 embarqué dans le paquet que le navigateur charge, et relu à l'identique des
 deux côtés du portage.
 
+« Pourquoi changer » et « Partager » la lisent aussi, depuis le 7 octobre 2026.
+Elles ne prennent aucun réglage, et refaisaient le coût entier chez le lecteur —
+cinq secondes — pour y lire la dépense, la recette et le solde de quelques
+années : la table porte donc la dépense et le PIB de chaque année, et les trois
+carrières d'exemple de « Pourquoi changer » (:class:`ExempleFige`).
+
 CE QUE LE FIGEAGE COÛTE, ET IL FAUT LE DIRE. La table est calculée sous les
 réglages de RÉFÉRENCE — ceux de ``Parametres()``. Le coefficient du système
 actuel n'en dépend pas : il est le rapport des ressources aux dépenses que le
@@ -51,6 +57,10 @@ class AnneeBilan:
     _coefficients: dict[str, float] = field(default_factory=dict)
     _soldes: dict[str, float] = field(default_factory=dict)
     _ressources: dict[str, float] = field(default_factory=dict)
+    _depenses: dict[str, float] = field(default_factory=dict)
+    #: Le PIB de l'année, en millions d'euros courants, s'il est publié ; zéro
+    #: sinon, comme dans ``cout.SoldeAnnuel``.
+    pib: float = 0.0
 
     def coefficient(self, scenario: str) -> float:
         return self._coefficients.get(scenario, 0.0)
@@ -60,6 +70,17 @@ class AnneeBilan:
 
     def ressources_de(self, scenario: str) -> float:
         return self._ressources.get(scenario, 0.0)
+
+    @property
+    def ressources(self) -> float:
+        """Ce que le système actuel encaisse : la recette que le COR publie."""
+        return self.ressources_de("actuel")
+
+    def depense(self, scenario: str) -> float:
+        return self._depenses.get(scenario, 0.0)
+
+    def solde_meur(self, scenario: str) -> float:
+        return self.solde(scenario) * self.pib
 
 
 @dataclass(frozen=True)
@@ -130,6 +151,51 @@ class EcartsFiges:
 
 
 @dataclass(frozen=True)
+class FicheFigee:
+    """La fiche de paie d'un exemple, réduite à ce que la page en lit."""
+
+    annee: int
+    brut: float
+    net: float
+    retraite_totale: float
+    retraite_employeur: float
+
+
+@dataclass(frozen=True)
+class ExempleFige:
+    """Une carrière d'exemple de « Pourquoi changer », simulée une fois.
+
+    ``saisie`` est la saisie simulée, champ par champ : la page ne lit
+    l'exemple que si elle demande exactement celle-là, et simule sinon.
+    ``pension_financee`` est la pension du système 3 — le scénario
+    ``notionnel_retroactif_employeur`` —, ce que les cotisations de l'assuré
+    financeraient au rendement d'équilibre.
+    """
+
+    saisie: dict
+    fiche: FicheFigee
+    coefficient_euros_constants: float
+    pension_actuel: float
+    pension_financee: float
+
+
+def exemple_de(saisie: dict, comparaison) -> ExempleFige:
+    """Ce que « Pourquoi changer » lit d'une simulation, et rien d'autre."""
+    fiche = comparaison.remuneration.reference.droit_en_vigueur
+    return ExempleFige(
+        saisie=dict(saisie),
+        fiche=FicheFigee(
+            annee=fiche.annee, brut=fiche.brut, net=fiche.net,
+            retraite_totale=fiche.retraite_totale,
+            retraite_employeur=fiche.retraite_employeur,
+        ),
+        coefficient_euros_constants=comparaison.coefficient_euros_constants,
+        pension_actuel=comparaison.actuel.pension_annuelle,
+        pension_financee=comparaison.notionnel_retroactif_employeur.pension_annuelle,
+    )
+
+
+@dataclass(frozen=True)
 class BilanFige:
     """Le bilan des quatre systèmes comparés, tel que la table le porte.
 
@@ -150,6 +216,18 @@ class BilanFige:
     engagements: EngagementFige | None = None
     #: Les écarts médians de la proposition au système actuel, sur la grille.
     ecarts: EcartsFiges | None = None
+    #: Les carrières d'exemple de « Pourquoi changer ».
+    exemples: tuple[ExempleFige, ...] = ()
+    #: La table porte-t-elle la dépense et le PIB de chaque année ? Une table
+    #: écrite avant le 7 octobre 2026 ne les porte pas.
+    depenses_figees: bool = False
+
+    def exemple(self, saisie: dict) -> ExempleFige | None:
+        """L'exemple de cette saisie exactement, ou rien."""
+        for exemple in self.exemples:
+            if exemple.saisie == saisie:
+                return exemple
+        return None
 
     @property
     def premiere_annee(self) -> int:
@@ -184,6 +262,9 @@ def depuis_dictionnaire(donnees: dict) -> BilanFige:
                          for cle, valeur in ligne["soldes"].items()},
                 _ressources={cle: float(valeur)
                              for cle, valeur in ligne["ressources"].items()},
+                _depenses={cle: float(valeur)
+                           for cle, valeur in ligne.get("depenses", {}).items()},
+                pib=float(ligne.get("pib", 0.0)),
             )
             for ligne in donnees["annees"]
         ],
@@ -196,6 +277,25 @@ def depuis_dictionnaire(donnees: dict) -> BilanFige:
         annee_pib=int(donnees.get("annee_pib", 0)),
         engagements=_engagements(donnees.get("engagements")),
         ecarts=_ecarts(donnees.get("ecarts_medians")),
+        exemples=tuple(_exemple(brut) for brut in donnees.get("exemples_risque", ())),
+        depenses_figees=bool(donnees["annees"]) and all(
+            "depenses" in ligne for ligne in donnees["annees"]),
+    )
+
+
+def _exemple(brut: dict) -> ExempleFige:
+    fiche = brut["fiche"]
+    return ExempleFige(
+        saisie=dict(brut["saisie"]),
+        fiche=FicheFigee(
+            annee=int(fiche["annee"]), brut=float(fiche["brut"]),
+            net=float(fiche["net"]),
+            retraite_totale=float(fiche["retraite_totale"]),
+            retraite_employeur=float(fiche["retraite_employeur"]),
+        ),
+        coefficient_euros_constants=float(brut["coefficient_euros_constants"]),
+        pension_actuel=float(brut["pension_actuel"]),
+        pension_financee=float(brut["pension_financee"]),
     )
 
 

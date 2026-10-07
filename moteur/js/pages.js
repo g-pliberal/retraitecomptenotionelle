@@ -56,7 +56,7 @@ import {
   masseDuScenario,
   tauxTvaRequis,
 } from "./cout.js";
-import { chargerBilan } from "./bilan.js";
+import { chargerBilan, exempleDe } from "./bilan.js";
 import { CaracteristiquesRetraites } from "./caracteristiques.js";
 import { DistributionPensions } from "./distribution.js";
 import { coutGarantie, coutGarantieParSexe } from "./garantie.js";
@@ -2426,7 +2426,7 @@ function cartePartage(nom, surtitre, chiffre, phrase, detail, classes = "",
  */
 function partager(contexte) {
   const base = contexte.base;
-  const solde = contexte.cout().solde;
+  const solde = soldeDeReference(contexte);
   const horizon = solde.annee(solde.derniereAnnee);
   const taux = g.pourcentage(base.taux_cotisation_liberal, false, 0);
   const capitalise = g.pourcentage(base.taux_capitalisation_obligatoire, false, 0);
@@ -11973,18 +11973,49 @@ export const NIVEAUX_RISQUE = [
 export const NAISSANCE_RISQUE = 1990;
 export const DEBUT_RISQUE = 22;
 export const LIQUIDATION_RISQUE = 64;
+export const STATUT_RISQUE = "salarie_prive_non_cadre";
 
-/** La carrière de référence de la page Risque, à un niveau de salaire. */
-function risqueExemple(contexte, niveau) {
-  return contexte.simuler(new Saisie({
+/**
+ * La saisie de la carrière de référence, à un niveau de salaire : celle que
+ * `scripts/construire_donnees.py` simule une fois, sous les réglages de
+ * référence, pour le bilan figé du paquet.
+ */
+export function saisieRisque(niveau) {
+  return {
     naissance: NAISSANCE_RISQUE,
-    statut: "salarie_prive_non_cadre",
+    statut: STATUT_RISQUE,
     debut: DEBUT_RISQUE,
     liquidation: LIQUIDATION_RISQUE,
     salaire: niveau,
     unite_revenu: "moyen",
     demandee: true,
-  }));
+  };
+}
+
+/**
+ * La carrière de référence de la page Risque, à un niveau de salaire : lue
+ * dans le bilan figé, simulée s'il ne la porte pas — un paquet d'avant le
+ * 7 octobre 2026, ou une carrière changée ici sans que le paquet soit refait.
+ */
+function risqueExemple(contexte, niveau) {
+  const saisie = saisieRisque(niveau);
+  return contexte.bilan().exemple(saisie)
+    ?? exempleDe(saisie, contexte.simuler(new Saisie(saisie)));
+}
+
+/**
+ * Le solde du système sous les réglages de référence, pour les pages qui n'en
+ * prennent aucun : « Pourquoi changer » et « Partager ».
+ *
+ * Le bilan figé du paquet porte, depuis le 7 octobre 2026, tout ce qu'elles en
+ * lisent — la dépense, la recette, le solde et le PIB de chaque année —, avec
+ * les accesseurs du calcul complet : il leur épargne les cinq secondes du coût
+ * agrégé. Un paquet d'avant, que le navigateur peut garder (`force-cache`), ne
+ * les porte pas : la page refait alors le calcul, comme avant.
+ */
+function soldeDeReference(contexte) {
+  const bilan = contexte.bilan();
+  return bilan.depensesFigees ? bilan : contexte.cout().solde;
 }
 
 /**
@@ -12018,7 +12049,7 @@ function risqueExemple(contexte, niveau) {
  * recherche n'en connaît pas, et le dire vaut mieux que d'en inventer une.
  */
 function risque(contexte) {
-  const solde = contexte.cout().solde;
+  const solde = soldeDeReference(contexte);
   const comptes = contexte.comptes();
   const obs = solde.derniereAnneeObservee;
   const observe = solde.annee(obs);
@@ -12032,7 +12063,7 @@ function risque(contexte) {
     ([libelle, niveau]) => [libelle, risqueExemple(contexte, niveau)],
   );
   const moyen = exemples[1][1];
-  const ficheMoyen = moyen.remuneration.reference.droitEnVigueur;
+  const ficheMoyen = moyen.fiche;
   const verseMensuel = ficheMoyen.retraiteTotale / MOIS_PAR_AN;
 
   // Ce que la promesse doit à quelqu'un d'autre : l'écart entre ce que le droit
@@ -12041,14 +12072,13 @@ function risque(contexte) {
   // système 3 du site, le scénario 4 du modèle —, sous la règle par défaut, et
   // l'écart se lit dans les deux sens : une promesse plus élevée que son
   // financement est une promesse dont quelqu'un d'autre répond.
-  const constants = moyen.coefficient_euros_constants;
-  const promis = moyen.actuel.pension_annuelle * constants / MOIS_PAR_AN;
-  const finance = moyen.notionnel_retroactif_employeur.pension_annuelle
-    * constants / MOIS_PAR_AN;
+  const constants = moyen.coefficientEurosConstants;
+  const promis = moyen.pensionActuel * constants / MOIS_PAR_AN;
+  const finance = moyen.pensionFinancee * constants / MOIS_PAR_AN;
   const partPromise = 1.0 - finance / promis;
 
-  const lignesSalaires = exemples.map(([libelle, comparaison]) => {
-    const fiche = comparaison.remuneration.reference.droitEnVigueur;
+  const lignesSalaires = exemples.map(([libelle, exemple]) => {
+    const fiche = exemple.fiche;
     return [
       libelle,
       g.euros(fiche.brut / MOIS_PAR_AN),
@@ -12217,7 +12247,7 @@ ${detail}
  */
 function risqueSalaire(contexte) {
   const moyen = risqueExemple(contexte, 1.0);
-  const fiche = moyen.remuneration.reference.droitEnVigueur;
+  const fiche = moyen.fiche;
   const employeur = fiche.retraiteEmployeur / MOIS_PAR_AN;
   return g.depliant(
     "Ces cotisations sont votre salaire, y compris celles de l'employeur",
@@ -12618,7 +12648,7 @@ facile de faire défaut sur une promesse de retraite que sur une obligation,
  * l'inverse de ce qu'on lui fait porter.
  */
 function risqueObjections(contexte) {
-  const solde = contexte.cout().solde;
+  const solde = soldeDeReference(contexte);
   const fin = solde.derniereAnnee;
   // Les points de PIB que le COR publie, dits aussi en milliards au PIB de la
   // dernière année publiée. Les « 2,4 » qui reviennent trois fois sont le solde

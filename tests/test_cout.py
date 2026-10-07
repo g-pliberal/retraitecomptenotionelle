@@ -3759,6 +3759,48 @@ def test_le_bilan_fige_dit_ce_que_le_modele_calcule(solde):
             attendu = solde.annee(annee).coefficient(scenario)
             assert bilan.annee(annee).coefficient(scenario) == pytest.approx(
                 attendu, rel=1e-9), f"{scenario} en {annee}"
+            assert bilan.annee(annee).depense(scenario) == pytest.approx(
+                solde.annee(annee).depense(scenario), rel=1e-9), f"{scenario} en {annee}"
+    # Ce que « Pourquoi changer » et « Partager » lisent du système actuel,
+    # sans plus refaire le coût : la recette, le PIB publié et le solde en
+    # euros de la dernière année observée.
+    assert bilan.depenses_figees
+    for annee in (solde.premiere_annee, solde.derniere_annee_observee, 2050,
+                  solde.derniere_annee):
+        ligne, figee = solde.annee(annee), bilan.annee(annee)
+        assert figee.ressources == pytest.approx(ligne.ressources, rel=1e-9)
+        assert figee.pib == pytest.approx(ligne.pib, rel=1e-9)
+        assert figee.solde_meur("actuel") == pytest.approx(
+            ligne.solde_meur("actuel"), rel=1e-9), annee
+    assert bilan.annee(solde.derniere_annee_observee).pib > 0
+    assert bilan.annee(solde.derniere_annee).pib == 0.0
+
+
+def test_les_exemples_figes_sont_ce_que_le_modele_simule():
+    """Les carrières d'exemple de « Pourquoi changer », simulées une fois par
+    ``scripts/construire_donnees.py`` : la page les lit sans simuler, et elles
+    doivent donc dire exactement ce que le modèle calcule pour leur saisie,
+    gardée avec chacune. Que la page en demande une autre, elle ne trouve rien
+    et simule ; le test du paquet, dans ``tests/test_web.py``, dit alors que
+    le paquet est à refaire."""
+    from retraite_notionnelle.contexte import Contexte
+    from retraite_notionnelle.donnees.bilan import exemple_de
+    from retraite_notionnelle.saisie import Saisie
+
+    bilan = charger_bilan(RACINE_DONNEES)
+    assert len(bilan.exemples) == 3
+    contexte = Contexte()
+    for figee in bilan.exemples:
+        attendu = exemple_de(figee.saisie, contexte.simuler(Saisie(**figee.saisie)))
+        assert bilan.exemple(dict(figee.saisie)) is figee
+        assert figee.fiche.annee == attendu.fiche.annee
+        for champ in ("brut", "net", "retraite_totale", "retraite_employeur"):
+            assert getattr(figee.fiche, champ) == pytest.approx(
+                getattr(attendu.fiche, champ), rel=1e-9), champ
+        for champ in ("coefficient_euros_constants", "pension_actuel", "pension_financee"):
+            assert getattr(figee, champ) == pytest.approx(
+                getattr(attendu, champ), rel=1e-9), champ
+    assert bilan.exemple({**bilan.exemples[0].saisie, "naissance": 1991}) is None
 
 
 def test_le_systeme_actuel_promet_plus_qu_il_n_encaisse_sur_tout_l_horizon(solde):

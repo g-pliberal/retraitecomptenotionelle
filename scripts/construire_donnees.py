@@ -1729,6 +1729,12 @@ def _bilan(contexte=None) -> dict:
     pour dire ce que les comptes financent de la pension qu'elle affiche, et
     elle ne peut pas le calculer chez le lecteur : d'où cette table.
 
+    « Pourquoi changer » et « Partager » la lisent aussi, depuis le 7 octobre
+    2026 : elles ne prennent aucun réglage, et refaisaient le coût entier chez
+    le lecteur — cinq secondes — pour en lire quelques chiffres. La table porte
+    donc aussi la dépense et le PIB de chaque année, et les trois carrières
+    d'exemple de « Pourquoi changer ».
+
     Elle est calculée sous les réglages de RÉFÉRENCE, et ``donnees/bilan.py``
     dit ce que ce figeage coûte et ce qu'il ne coûte pas.
     """
@@ -1771,8 +1777,23 @@ def _bilan(contexte=None) -> dict:
     from retraite_notionnelle.castypes import calculer_cas_types, ecarts_medians
 
     ecarts = ecarts_medians(calculer_cas_types(contexte.simulateur()))
+    # LES TROIS CARRIÈRES D'EXEMPLE DE « POURQUOI CHANGER », pour la même
+    # raison encore : la page ne prend aucun réglage, et ses trois simulations
+    # coûtaient une seconde au lecteur. La saisie vient du site
+    # (``saisieRisque`` de ``moteur/js/pages.js``), et la table la garde avec
+    # chaque exemple : une page qui en demande une autre n'y trouve rien, et
+    # simule.
+    from retraite_notionnelle.donnees.bilan import exemple_de
+    from retraite_notionnelle.saisie import Saisie
+
+    pages = module("pages")
+    exemples = []
+    for _, niveau in pages.NIVEAUX_RISQUE:
+        saisie = dict(pages.saisie_risque(niveau))
+        exemples.append(asdict(exemple_de(saisie, contexte.simuler(Saisie(**saisie)))))
     return {
         "ecarts_medians": asdict(ecarts),
+        "exemples_risque": exemples,
         "engagements": {
             "annee": engagement.annee,
             "horizon": engagement.horizon,
@@ -1797,6 +1818,9 @@ def _bilan(contexte=None) -> dict:
                 "coefficients": {s: ligne.coefficient(s) for s in scenarios},
                 "soldes": {s: ligne.solde(s) for s in scenarios},
                 "ressources": {s: ligne.ressources_de(s) for s in scenarios},
+                "depenses": {s: ligne.depense(s) for s in scenarios},
+                # Nul au-delà de la dernière année publiée, comme dans le solde.
+                "pib": ligne.pib,
             }
             for ligne in solde.annees
         ],

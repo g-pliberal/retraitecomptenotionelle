@@ -8369,3 +8369,45 @@ avait relevé, le cas type au SMIC écrit 0,55 fois le salaire moyen.
   côté, par chance. `Echelle.euros_dans_les_bornes` (et son jumeau) pousse
   l'euro d'un cran vers l'intérieur aux bords, pour la bascule comme pour le
   message : de 356 à 35 533 € bruts par mois.
+
+### 150. Ce que le lecteur n'a pas à calculer : les pages sans réglage lisent des résultats fabriqués à l'avance — `en cours`
+
+**Reprise, au 7 octobre 2026.** Fait, l'étape 1 : « Pourquoi changer » et
+« Partager » lisent le bilan figé du paquet, qui porte désormais la dépense et
+le PIB de chaque année et les trois carrières d'exemple de « Pourquoi
+changer » : 7 et 5 ms au lieu de 6 et 5 s, pages identiques à leurs témoins.
+Reste une décision du propriétaire : garder ou non les réglages libres de
+Coût, Carrières types et Droits non cotisés. Sans eux, ces pages liraient
+aussi des résultats fabriqués par le Python, et le portage JavaScript du coût
+(environ 5 000 lignes) partirait avec ses tests de parité ; avec eux, rien ne
+se supprime. Rien à commencer avant sa réponse. Détail : la note du
+7 octobre.
+
+**Demande**, le 6 octobre 2026 : « Est-ce que tous les calculs dans le
+calculateur sont obligatoires ? J'ai l'impression qu'il y a des calculs que
+nous pourrions faire de notre côté et servir les résultats uniquement » ;
+puis, la liste remise : « il faut précalculer Pourquoi changer et Partager le
+plus possible », et, des réglages de Coût, Carrières types et Droits non
+cotisés : « on a vraiment besoin de ça ? […] j'hésite à le garder ».
+
+**Le constat, le 6 octobre 2026.** Le paquet du site ne portait qu'un
+résultat fabriqué d'avance, le bilan figé (`data/derive/equilibre.json`), que
+le simulateur et l'accueil lisent ; les autres pages calculaient chez le
+lecteur. Mesuré sous node, page ouverte directement : Coût 9,1 s, Carrières
+types 6,6 s, Pourquoi changer 6,1 s, Partager 5,2 s, Droits non cotisés
+4,7 s, une simulation 0,67 s, Méthode et l'accueil quelques millisecondes.
+Pourquoi changer et Partager ne prennent aucun réglage : elles refaisaient le
+coût entier pour en lire quelques chiffres — deux pour Partager, le manque et
+la dépense de 2070. Les trois pages qui agrègent prennent les dix-huit
+réglages du simulateur (seize champs, deux par l'adresse) : 4 478 976
+combinaisons pour les seuls menus, 422 variantes à un réglage à la fois. Le
+portage JavaScript qui ne sert qu'à elles — `cout.js`, `avantages.js`,
+`castypes.js` et neuf autres modules — compte environ 5 500 lignes, dont
+5 000 partiraient si elles lisaient des résultats fabriqués par le Python.
+
+**Le plan.** Étape 1 : Pourquoi changer et Partager, sans rien trancher.
+Étape 2, si le propriétaire renonce aux réglages libres des trois pages qui
+agrègent : les fabriquer en Python sous les réglages de référence — avec, s'il
+le veut, un tableau de sensibilité fabriqué de même pour les variantes qui
+comptent —, puis retirer le portage du coût et ses tests de parité. S'il les
+garde, l'action se clôt sur l'étape 1.

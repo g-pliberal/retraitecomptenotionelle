@@ -16,6 +16,12 @@
  * affiche. D'où cette table, calculée une fois par
  * `scripts/construire_donnees.py` et lue ici telle quelle.
  *
+ * « Pourquoi changer » et « Partager » la lisent aussi, depuis le 7 octobre
+ * 2026 : elles ne prennent aucun réglage, et refaisaient le coût entier — cinq
+ * secondes — pour y lire la dépense, la recette et le solde de quelques années.
+ * La table porte donc la dépense et le PIB de chaque année, et les trois
+ * carrières d'exemple de « Pourquoi changer » (`ExempleFige`).
+ *
  * CE QUE LE FIGEAGE COÛTE. La table est calculée sous les réglages de
  * RÉFÉRENCE. Le coefficient du système actuel n'en dépend pas : il est le
  * rapport des ressources aux dépenses que le COR publie, et aucun réglage du
@@ -30,13 +36,18 @@
 
 /** Une année du bilan figé, dans l'unité du COR : la part de PIB. */
 class AnneeBilan {
-  constructor(annee, projete, partContributive, coefficients, soldes, ressources) {
+  constructor(annee, projete, partContributive, coefficients, soldes, ressources,
+              depenses = {}, pib = 0.0) {
     this.annee = annee;
     this.projete = projete;
     this.partContributive = partContributive;
     this._coefficients = coefficients;
     this._soldes = soldes;
     this._ressources = ressources;
+    this._depenses = depenses;
+    // Le PIB de l'année, en millions d'euros courants, s'il est publié ; zéro
+    // sinon, comme dans le solde du coût.
+    this.pib = pib;
   }
 
   coefficient(scenario) {
@@ -52,6 +63,20 @@ class AnneeBilan {
   ressourcesDe(scenario) {
     const valeur = this._ressources[scenario];
     return valeur === undefined ? 0.0 : valeur;
+  }
+
+  /** Ce que le système actuel encaisse : la recette que le COR publie. */
+  get ressources() {
+    return this.ressourcesDe("actuel");
+  }
+
+  depense(scenario) {
+    const valeur = this._depenses[scenario];
+    return valeur === undefined ? 0.0 : valeur;
+  }
+
+  soldeMeur(scenario) {
+    return this.solde(scenario) * this.pib;
   }
 }
 
@@ -129,10 +154,52 @@ export class EcartsFiges {
   }
 }
 
+/**
+ * Une carrière d'exemple de « Pourquoi changer », simulée une fois.
+ *
+ * `saisie` est la saisie simulée, champ par champ : la page ne lit l'exemple
+ * que si elle demande exactement celle-là, et simule sinon. `pensionFinancee`
+ * est la pension du système 3 — le scénario `notionnel_retroactif_employeur` —,
+ * ce que les cotisations de l'assuré financeraient au rendement d'équilibre.
+ * Les champs sont ceux d'`ExempleFige` côté Python.
+ */
+export class ExempleFige {
+  constructor(saisie, fiche, coefficientEurosConstants, pensionActuel, pensionFinancee) {
+    this.saisie = saisie;
+    // La fiche de paie, réduite à ce que la page en lit.
+    this.fiche = fiche;
+    this.coefficientEurosConstants = coefficientEurosConstants;
+    this.pensionActuel = pensionActuel;
+    this.pensionFinancee = pensionFinancee;
+  }
+}
+
+/** Ce que « Pourquoi changer » lit d'une simulation, et rien d'autre. */
+export function exempleDe(saisie, comparaison) {
+  const fiche = comparaison.remuneration.reference.droitEnVigueur;
+  return new ExempleFige(
+    { ...saisie },
+    {
+      annee: fiche.annee, brut: fiche.brut, net: fiche.net,
+      retraiteTotale: fiche.retraiteTotale, retraiteEmployeur: fiche.retraiteEmployeur,
+    },
+    comparaison.coefficient_euros_constants,
+    comparaison.actuel.pension_annuelle,
+    comparaison.notionnel_retroactif_employeur.pension_annuelle,
+  );
+}
+
+/** Deux saisies écrites comme des objets : les mêmes champs, les mêmes valeurs. */
+function memesChamps(une, autre) {
+  const cles = Object.keys(une);
+  return cles.length === Object.keys(autre).length
+    && cles.every((cle) => une[cle] === autre[cle]);
+}
+
 /** Le bilan des quatre systèmes comparés, tel que la table le porte. */
 export class BilanFige {
   constructor(annees, premiereAnneeProjetee, assiette, pib = 0.0, anneePib = 0,
-              engagements = null, ecarts = null) {
+              engagements = null, ecarts = null, exemples = [], depensesFigees = false) {
     this.annees = annees;
     this.premiereAnneeProjetee = premiereAnneeProjetee;
     this.assiette = assiette;
@@ -145,6 +212,13 @@ export class BilanFige {
     this.engagements = engagements;
     // Les écarts médians de la proposition au système actuel, sur la grille.
     this.ecarts = ecarts;
+    // Les carrières d'exemple de « Pourquoi changer ».
+    this.exemples = exemples;
+    // La table porte-t-elle la dépense et le PIB de chaque année ? Une table
+    // écrite avant le 7 octobre 2026 ne les porte pas, et le navigateur peut
+    // la garder (`force-cache`) : les pages qui les lisent refont alors le
+    // calcul complet.
+    this.depensesFigees = depensesFigees;
     this.premiereAnnee = annees.length ? annees[0].annee : 0;
     this.derniereAnnee = annees.length ? annees[annees.length - 1].annee : 0;
     this.derniereAnneeObservee = premiereAnneeProjetee - 1;
@@ -156,6 +230,11 @@ export class BilanFige {
     }
     return null;
   }
+
+  /** L'exemple de cette saisie exactement, ou rien. */
+  exemple(saisie) {
+    return this.exemples.find((exemple) => memesChamps(exemple.saisie, saisie)) ?? null;
+  }
 }
 
 /** Reconstruit le bilan depuis la clé `bilan_equilibre` du paquet. */
@@ -164,11 +243,22 @@ export function chargerBilan(donnees) {
     donnees.annees.map((ligne) => new AnneeBilan(
       ligne.annee, ligne.projete, ligne.part_contributive,
       ligne.coefficients, ligne.soldes, ligne.ressources,
+      ligne.depenses ?? {}, ligne.pib ?? 0.0,
     )),
     donnees.premiere_annee_projetee,
     new AssietteFigee(donnees.annee_assiette, donnees.part_pib_assiette),
     donnees.pib, donnees.annee_pib,
     donnees.engagements ? new EngagementFige(donnees.engagements) : null,
     donnees.ecarts_medians ? new EcartsFiges(donnees.ecarts_medians) : null,
+    (donnees.exemples_risque ?? []).map((brut) => new ExempleFige(
+      brut.saisie,
+      {
+        annee: brut.fiche.annee, brut: brut.fiche.brut, net: brut.fiche.net,
+        retraiteTotale: brut.fiche.retraite_totale,
+        retraiteEmployeur: brut.fiche.retraite_employeur,
+      },
+      brut.coefficient_euros_constants, brut.pension_actuel, brut.pension_financee,
+    )),
+    donnees.annees.length > 0 && donnees.annees.every((ligne) => ligne.depenses !== undefined),
   );
 }
