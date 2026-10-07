@@ -970,6 +970,7 @@ def compter_dettes() -> int:
     """Les ancres ``a_verifier`` du dépôt : ce qu'on s'est avoué devoir."""
     total = 0
     for fichier in (sorted(RACINE.glob("*.md")) + sorted((RACINE / "docs").glob("*.md"))
+                    + sorted((RACINE / "docs" / "limites").glob("*.md"))
                     + [RACINE / chemin for chemin in consignes()]):
         texte = fichier.read_text(encoding="utf-8")
         citations = _blocs_de_code(texte)

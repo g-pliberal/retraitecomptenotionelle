@@ -2756,7 +2756,9 @@ def test_le_README_ne_compte_plus_ses_tests():
     from pathlib import Path
 
     racine = Path(__file__).resolve().parents[1]
-    for chemin in ("README.md", "docs/limites.md"):
+    limites = sorted((racine / "docs" / "limites").glob("*.md"))
+    for chemin in ("README.md", "docs/limites.md",
+                   *(p.relative_to(racine).as_posix() for p in limites)):
         texte = (racine / chemin).read_text(encoding="utf-8")
         comptes = re.findall(r"\d[\d\s]*\s+tests (?:Python|couvrent)|<!--chiffre:tests\(\)-->", texte)
         assert not comptes, (
@@ -2825,7 +2827,9 @@ def test_le_README_dit_le_vrai_nombre_de_statuts_et_de_regimes():
     statuts_reels = len(Affiliations(RACINE_DONNEES).codes)
     regimes_reels = len(list(CatalogueRegimes(RACINE_DONNEES)))
 
-    for nom in ("README.md", "docs/limites.md"):
+    limites = sorted((racine / "docs" / "limites").glob("*.md"))
+    for nom in ("README.md", "docs/limites.md",
+                *(p.relative_to(racine).as_posix() for p in limites)):
         texte = (racine / nom).read_text(encoding="utf-8")
         for annonce, attendu, quoi in (
             (r"(\d+) statuts", statuts_reels, "statuts"),

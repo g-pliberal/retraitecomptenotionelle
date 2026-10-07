@@ -21,9 +21,10 @@ ce qu'elle a déplacé — va dans la feuille de route, ou dans l'archive du
 document (`docs/archives/`). Quelques documents gardent, par construction,
 des exceptions que `zones.yaml` déclare une à une : les paragraphes qui
 racontent, au milieu du README, texte de la proposition, ou de la
-méthodologie ; les procès-verbaux enclavés dans `limites.md` ; la liste des
-versions de l'architecture ; le préambule d'état de la feuille de route ;
-les blocs qu'un script écrit au milieu d'une prose.
+méthodologie ; les procès-verbaux enclavés dans les parties des limites
+(`docs/limites/`) ; la liste des versions de l'architecture ; le préambule
+d'état de la feuille de route ; les blocs qu'un script écrit au milieu d'une
+prose.
 
 ## L'ancre
 

@@ -145,19 +145,32 @@ fichiers:
   docs/fraicheur.md:
     defaut: etat
 
+  # Les limites tiennent en parties, une par fichier sous docs/limites/
+  # (action 135, étape 5 du contexte) ; le sommaire garde l'introduction.
+  # Chaque partie décrit l'état, et porte ses procès-verbaux enclavés : un
+  # défaut trouvé, corrigé, et ce qu'il valait ce jour-là. Leurs chiffres sont
+  # l'avant et l'après — la tranche de la Cipav écrite d'un seul côté, le
+  # régime agricole qui opposait 172 trimestres en 1980, le balayage des
+  # témoins passé de 138 à 250 cas, la part déplafonnée qu'OpenFisca servait
+  # dès le 1er janvier 2004.
   docs/limites.md:
     defaut: etat
-    # Des procès-verbaux enclavés dans des sections d'état : un défaut trouvé,
-    # corrigé, et ce qu'il valait ce jour-là. Leurs chiffres sont l'avant et
-    # l'après — la tranche de la Cipav écrite d'un seul côté, le régime
-    # agricole qui opposait 172 trimestres en 1980, le balayage des témoins
-    # passé de 138 à 250 cas, la part déplafonnée qu'OpenFisca servait dès le
-    # 1er janvier 2004.
+
+  docs/limites/parametres.md:
+    defaut: etat
+
+  docs/limites/ecarts-au-droit-positif.md:
+    defaut: etat
+
+  docs/limites/1-certification.md:
+    defaut: etat
+
+  docs/limites/2-indexation.md:
+    defaut: etat
+
+  docs/limites/3-systeme-actuel.md:
+    defaut: etat
     paragraphes_recit:
-      - "UN PIÈGE DÉCOUVERT EN CHEMIN"
-      - "Le nombre n'est pas à lui seul un verdict"
-      - "**Les témoins ne le voyaient pas, et c'est le second enseignement.**"
-      - "**Un : la confrontation vérifie une copie, pas une lecture.**"
       # Trois procès-verbaux de la confrontation aux exemples des caisses :
       # ce qu'elle a trouvé, les six exemples du 21 septembre, la circulaire
       # annulée.
@@ -176,6 +189,53 @@ fichiers:
       - "Le dépôt n'a d'abord gardé que la colonne la plus récente"
       - "Ce document a un temps affirmé"
       - "- **Le mois existe désormais"
+
+  docs/limites/4-regimes-incomplets.md:
+    defaut: etat
+    paragraphes_recit:
+      - "UN PIÈGE DÉCOUVERT EN CHEMIN"
+      - "Le nombre n'est pas à lui seul un verdict"
+      - "**Les témoins ne le voyaient pas, et c'est le second enseignement.**"
+      - "**Un : la confrontation vérifie une copie, pas une lecture.**"
+
+  docs/limites/5-hors-du-modele.md:
+    defaut: etat
+    paragraphes_recit:
+      # Deux mesures du §5, faites un jour par un script et chiffrées contre
+      # une table commune : le transfert du diviseur, ce que la décote coûte
+      # an par an d'avance.
+      - "- **Le diviseur est le même pour tout le monde"
+      - "- **La décote surpunit l'anticipation ordinaire"
+
+  docs/limites/5-ante-capitalisation.md:
+    defaut: etat
+    paragraphes_recit:
+      # Le pilier capitalisé : des mesures faites le 20 septembre 2026 sur la
+      # courbe du 17 — la prime de terme à 0,005, ce que chaque hypothèse de
+      # frais déplace, et pour qui —, et deux tableaux de sources datés.
+      - "Depuis septembre 2026, le modèle **sait** la retirer"
+      - "| Poste | OPEF 2025, marché"
+      - "| Marché | Mécanisme"
+      - "**Ce que chaque hypothèse déplace.**"
+      - "| Réglage | Rente | Écart |"
+      - "Pour un assuré né en 1985"
+
+  docs/limites/5-ante-bis-fiche-de-paie.md:
+    defaut: etat
+    paragraphes_recit:
+      # Le partage des 23 points, tranché le 20 septembre 2026 sur les mesures
+      # de `partage_taux_unique.py` : ses quatre lectures à deux SMIC et la
+      # hausse du brut sous le partage inverse sont celles de ce jour-là.
+      - "**2. Le partage salarial/patronal du taux unique n'est pas neutre"
+      - "**Ce que le choix retenu achète, et ce qu'il coûte**"
+      - "**Deux réserves subsistent au SMIC"
+
+  docs/limites/5-ante-ter-net-et-brut.md:
+    defaut: etat
+
+  docs/limites/5-bis-cout-agrege.md:
+    defaut: etat
+    paragraphes_recit:
       # Dans le coût agrégé, quatre mesures faites un jour : ce que valait la
       # pondération égale des générations, ce que le retrait de la réversion a
       # rendu au solde le 19 septembre, le contrôle de la part des droits
@@ -190,29 +250,19 @@ fichiers:
       # masse du scénario 1 : deux mesures de quelques minutes, faites un jour.
       - "**Ce que la grille de treize cas types déplace, mesuré le 5 octobre 2026**"
       - "**La page compte encore le minimum vieillesse des premiers non-salariés**"
-      # Le partage des 23 points, tranché le 20 septembre 2026 sur les mesures
-      # de `partage_taux_unique.py` : ses quatre lectures à deux SMIC et la
-      # hausse du brut sous le partage inverse sont celles de ce jour-là.
-      - "**2. Le partage salarial/patronal du taux unique n'est pas neutre"
-      - "**Ce que le choix retenu achète, et ce qu'il coûte**"
-      - "**Deux réserves subsistent au SMIC"
+
+  docs/limites/5-ter-trajectoire.md:
+    defaut: etat
+    paragraphes_recit:
       # Le PIB que la page se fabriquait jusqu'au 20 septembre 2026, et ce que
       # sa substitution a rendu.
       - "Elle en avait un jusqu'au 20 septembre 2026"
-      # Le pilier capitalisé : des mesures faites le 20 septembre 2026 sur la
-      # courbe du 17 — la prime de terme à 0,005, ce que chaque hypothèse de
-      # frais déplace, et pour qui —, et deux tableaux de sources datés.
-      - "Depuis septembre 2026, le modèle **sait** la retirer"
-      - "| Poste | OPEF 2025, marché"
-      - "| Marché | Mécanisme"
-      - "**Ce que chaque hypothèse déplace.**"
-      - "| Réglage | Rente | Écart |"
-      - "Pour un assuré né en 1985"
-      # Deux mesures du §5, faites un jour par un script et chiffrées contre
-      # une table commune : le transfert du diviseur, ce que la décote coûte
-      # an par an d'avance.
-      - "- **Le diviseur est le même pour tout le monde"
-      - "- **La décote surpunit l'anticipation ordinaire"
+
+  docs/limites/5-quater-litterature.md:
+    defaut: etat
+
+  docs/limites/6-reproductibilite.md:
+    defaut: etat
 
   # Les récits de limites.md, déplacés tels quels à la phase 1
   # (docs/architecture.md, § 9.3) : un défaut trouvé, corrigé, et ce qu'il

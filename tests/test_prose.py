@@ -153,13 +153,42 @@ def test_tout_document_du_depot_est_declare(zonage):
     connus = set(verifier_prose.documents(zonage))
     sur_disque = {"README.md", "CLAUDE.md"} | {
         c.relative_to(RACINE).as_posix()
-        for dossier in (RACINE / "docs", RACINE / "docs" / "archives")
+        for dossier in (RACINE / "docs", RACINE / "docs" / "archives",
+                        RACINE / "docs" / "limites")
         for c in dossier.glob("*.md")
     } | set(verifier_prose.consignes())
     assert not sur_disque - connus, (
         f"{sorted(sur_disque - connus)} : ajouter ces documents à "
         "data/reference/prose/zones.yaml, avec leur régime"
     )
+
+
+def test_le_sommaire_des_limites_mene_a_chaque_partie():
+    """Les limites tiennent en parties, une par fichier sous `docs/limites/`
+    (action 135, étape 5 du contexte), et `docs/limites.md`, que le site et
+    tout le dépôt citent, n'en garde que l'introduction et le sommaire. Une
+    partie que le sommaire ne nomme pas serait introuvable pour qui suit un
+    renvoi ; un lien vers une partie disparue ne mènerait nulle part ; une
+    section écrite dans le sommaire referait, peu à peu, le fichier qu'aucune
+    session ne pouvait lire en entier."""
+    import re
+
+    sommaire = (RACINE / "docs" / "limites.md").read_text(encoding="utf-8")
+    liens = re.findall(r"^- \[(.+)\]\(limites/([\w.-]+\.md)\)$", sommaire, re.MULTILINE)
+    parties = sorted(p.name for p in (RACINE / "docs" / "limites").glob("*.md"))
+    assert sorted(nom for _, nom in liens) == parties, (
+        "le sommaire de docs/limites.md et les fichiers de docs/limites/ ne "
+        f"se répondent plus : {sorted(nom for _, nom in liens)} contre {parties}")
+    for titre, nom in liens:
+        premiere = (RACINE / "docs" / "limites" / nom).read_text(
+            encoding="utf-8").split("\n", 1)[0]
+        assert premiere == f"# {titre}", (
+            f"docs/limites/{nom} s'ouvre sur « {premiere} », et le sommaire "
+            f"l'annonce comme « {titre} »")
+    sections = re.findall(r"^#{2,6} .*", sommaire, re.MULTILINE)
+    assert not sections, (
+        f"{sections} : une section des limites s'écrit dans sa partie, sous "
+        "docs/limites/, et le sommaire ne garde que son lien")
 
 
 # -- la mécanique elle-même --------------------------------------------------
@@ -363,25 +392,25 @@ def test_un_commentaire_de_code_n_est_pas_un_titre_de_section():
 def test_le_tableau_de_certification_dit_le_niveau_que_ses_sondes_lisent():
     """La période et le niveau d'une série doivent parler du même fichier.
 
-    Le tableau du §1 de `limites.md` donne, série par série, la période
-    couverte et le niveau de fiabilité qui y règne. Les deux sont désormais
-    liés : la période se lit par une sonde qui filtre le fichier sur un
-    niveau, et la colonne « Niveau » doit dire ce niveau-là. Sans ce test, une
-    ligne pourrait annoncer « certifiée » en lisant les bornes des années
-    estimées, et personne ne le verrait — c'est même la forme la plus probable
-    de l'erreur, puisque les deux colonnes se modifient séparément.
+    Le tableau du §1 des limites (`docs/limites/1-certification.md`) donne,
+    série par série, la période couverte et le niveau de fiabilité qui y
+    règne. Les deux sont désormais liés : la période se lit par une sonde qui
+    filtre le fichier sur un niveau, et la colonne « Niveau » doit dire ce
+    niveau-là. Sans ce test, une ligne pourrait annoncer « certifiée » en
+    lisant les bornes des années estimées, et personne ne le verrait — c'est
+    même la forme la plus probable de l'erreur, puisque les deux colonnes se
+    modifient séparément.
     """
     import re
 
     en_clair = {"certifiee": "certifiée", "haute": "haute", "moyenne": "moyenne",
                 "estimee": "estimée", "projetee": "projetée", "saisie": "saisie"}
-    texte = (RACINE / "docs" / "limites.md").read_text(encoding="utf-8").split("\n")
-    debut = next(i for i, l in enumerate(texte)
-                 if l.startswith("## 1. État de certification"))
-    fin = next(i for i, l in enumerate(texte) if i > debut and l.startswith("## 2."))
+    texte = (RACINE / "docs" / "limites" / "1-certification.md").read_text(
+        encoding="utf-8").split("\n")
+    assert texte[0].startswith("# 1. État de certification"), texte[0]
 
     verifiees = 0
-    for ligne in texte[debut:fin]:
+    for ligne in texte:
         if not ligne.startswith("| ") or ligne.startswith("| Donnée"):
             continue
         cases = [c.strip() for c in ligne.strip("|").split("|")]
@@ -602,6 +631,7 @@ def test_aucun_paragraphe_n_est_repete_a_la_suite():
     doublons = []
     for chemin in [RACINE / "README.md", RACINE / "CLAUDE.md",
                    *sorted((RACINE / "docs").glob("*.md")),
+                   *sorted((RACINE / "docs" / "limites").glob("*.md")),
                    *(RACINE / c for c in verifier_prose.consignes())]:
         paragraphes = [p.strip() for p in
                        re.split(r"\n\s*\n", chemin.read_text(encoding="utf-8"))]

@@ -116,8 +116,9 @@ ETAPES_LIQUIDATION = [
 
 #: Les fichiers que presque tout changement du moteur touche. Le registre de
 #: veille n'en est plus depuis que son journal tient un fichier par entrée
-#: (action 148).
-LOURDS = ["docs/feuille_de_route.md", "docs/limites.md", "README.md"]
+#: (action 148), ni ``docs/limites.md`` depuis qu'il tient une partie par
+#: fichier, sous ``docs/limites/`` (action 135, étape 5 du contexte).
+LOURDS = ["docs/feuille_de_route.md", "README.md"]
 
 
 # --------------------------------------------------------------------------

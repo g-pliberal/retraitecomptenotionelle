@@ -166,9 +166,9 @@ qu'elle dure. D'où cinq règles.
   « # Version du <date> : <sujet> » (action 149). Elle ne porte pas de
   numéro, que deux sessions prendraient ensemble, et se cite par sa date et
   son sujet ; ni l'en-tête du document ni sa liste, close à la 5.37, ne se
-  touchent. Les fiches et
-  `limites.md` une fois, à la fin de l'étape, sauf ce qu'un test exige plus
-  tôt. Un message de commit de cinq lignes au plus sous son titre, le détail
+  touchent. Les fiches et les limites (`docs/limites/`, une partie par
+  fichier) une fois, à la fin de l'étape, sauf ce qu'un test exige plus tôt.
+  Un message de commit de cinq lignes au plus sous son titre, le détail
   allant à la feuille de route. Le journal de veille garde sa règle.
 - **Rien ne se perd** (`docs/architecture.md`, § 12) : un récit ne se réécrit
   pas, et un déplacement de fichiers se vérifie avant d'être commité, par

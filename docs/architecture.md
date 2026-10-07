@@ -1570,6 +1570,12 @@ qu'on a corrigé.
   ensuite.
 - **L'état** : `docs/methodologie.md` (ce que le moteur calcule, étape par
   étape) et le tableau de bord (§ 9.1).
+- **Les limites** : `docs/limites.md`, que le site et tout le dépôt citent,
+  n'en garde que l'introduction et le sommaire ; chaque partie, nommée du
+  numéro sous lequel on la cite (« § 5 ter »), est un fichier de
+  `docs/limites/`, qu'une session ouvre seul au lieu de chercher sa fenêtre
+  dans le tout. Le sommaire mène à chaque partie et ne reprend aucune
+  section (`tests/test_prose.py`).
 - **Les archives** : `docs/archives/`, gelées et conservées intégralement : le
   journal et les actions faites de la feuille de route, avec, depuis l'action
   148, le dossier de leurs notes, les récits de `limites.md`, l'histoire git
