@@ -1112,6 +1112,17 @@
    "valeurs": 77,
    "verifiee_le": "2026-10-06"
   },
+  "salaire_validant_trimestre_cnav": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "d56cbc4d83eaae7e",
+   "identiques": 26,
+   "niveau": "haute",
+   "source": "Cnav, barèmes « Allocation aux vieux travailleurs salariés […] - Montant » et « Salaire validant un trimestre »",
+   "valeurs": 26,
+   "verifiee_le": "2026-10-07"
+  },
   "salaires_forfaitaires_marins": {
    "ajoutees": 380,
    "colonne": "montant_annuel",

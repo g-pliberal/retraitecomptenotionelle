@@ -508,6 +508,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # majoration, que la Cnav transcrit (action 138, étape 4).
         "minimum_reversion_cnav": "legislation/minimum_reversion.csv",
         "plafond_majoration_reversion_cnav": "legislation/plafond_majoration_reversion.csv",
+        # Le salaire qui valide un trimestre de 1946 à 1971 (R. 351-9), que la
+        # Cnav date texte par texte (action 138, étape 6).
+        "salaire_validant_trimestre_cnav":
+            "legislation/salaire_validant_trimestre_avant_1972.csv",
         "minimum_garanti_reference": "legislation/minimum_garanti_montants.csv",
         "esperances_vie": "mortalite/esperances_vie.csv",
         "esperance_65_derivee": "mortalite/esperances_vie.csv",

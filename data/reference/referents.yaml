@@ -400,7 +400,7 @@ referents:
           de 1936 à 1948 mêlent retenue et salaire (15 et 60 F chez
           l'IPP, 30 et 216 AF à la Cnav, 15 et 1 800 F au décret) :
           à relire au décret.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.6"
       - quoi: >-
           Avant 1973, la réversion du régime général s'ouvrait à 65
@@ -1269,7 +1269,7 @@ referents:
           salariés au 1er janvier de l'année considérée [...]
           jusqu'au 31 décembre 1962, ce montant est celui des villes
           de plus de 5 000 habitants »
-        etat: a_reprendre
+        etat: repris
         chantier: "138.6"
       - quoi: >-
           Depuis 2004, son salaire annuel moyen ne retient que les
@@ -7243,7 +7243,7 @@ referents:
           trimestriel de l'allocation aux vieux travailleurs salariés », dont
           la série reste à certifier au Journal officiel.
         preuve: la feuille Carriere du classeur, au commit `5344b10`
-        etat: a_reprendre
+        etat: repris
         chantier: "138.6"
       - quoi: >-
           Il recalcule les trimestres d'un relevé réel depuis ses montants, et

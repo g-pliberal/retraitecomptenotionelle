@@ -1,0 +1,116 @@
+schema_version: 1
+id: trimestres_avant_1972
+intitule: >-
+  Avant 1972, un trimestre d'assurance se valide par un salaire, non au SMIC : de 1949 à
+  1971, autant de trimestres que le salaire annuel représente de fois le montant
+  trimestriel de l'allocation aux vieux travailleurs salariés au 1er janvier de l'année,
+  celui des villes de plus de 5 000 habitants jusqu'en 1962, quatre au plus par année
+  civile ; de 1946 à 1948, autant de fois 18 F, 1 800 anciens francs.
+etat: approchee
+effet: >-
+  Les années travaillées de 1946 à 1971 dont le salaire n'atteint pas quatre fois le
+  seuil : 9 à 14 % du salaire moyen pour quatre trimestres, 2 à 3,5 % pour un — une année
+  commencée en décembre, un apprentissage, quelques semaines d'été. Le modèle leur
+  validait quatre trimestres, en écrivant qu'« aucun seuil de montant n'existait » ; elles
+  en valident désormais ce que le salaire paie, dans les deux moteurs, et une année qui
+  n'en valide aucun ne compte plus au salaire annuel moyen depuis 2004. Aucun des 737
+  témoins n'est touché.
+sources:
+  lu_le: 2026-10-07
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Avant 1946, la règle se lit sur la retenue : une retenue d'au moins 0,15 F par
+    trimestre de 1936 à 1941, autant de trimestres que la retenue annuelle représente de
+    fois 0,15 F de 1942 à 1945, soixante cotisations journalières par trimestre de 1930 à
+    1935, vingt-deux trimestres au plus (R. 351-9, rédactions de 1985 à 2025). Le modèle,
+    qui ne connaît pas la part salariale des assurances sociales de ces années, y valide
+    quatre trimestres par année travaillée. Le barème de la Cnav écrit 30 anciens francs
+    de 1936 à 1945 et 216 pour 1946 : à rapprocher de la retenue, ce qui dirait le taux.
+  - >-
+    Outre-mer : le seuil des Antilles, de la Guyane et de La Réunion, plus bas qu'en
+    métropole de 1949 à 1951 (l'allocation y était plus basse) et de 1972 à 1995 (le SMIC
+    du département, R. 351-9), est gardé par le récupérateur (`bareme_seuil`) ; le modèle
+    ne sait pas où l'assuré a travaillé, et le site n'a pas de champ pour le dire. Les
+    deux barèmes de la Cnav qui le portent intervertissent les colonnes des Antilles et
+    de La Réunion de 1975 à 1991 : celui du salaire validant met La Réunion plus bas,
+    comme OpenFisca et l'IPP ; à trancher au décret qui fixe le SMIC de chaque
+    département.
+  - >-
+    Le Journal officiel ne porte dans l'index du dépôt, pour ces années, que la notice du
+    décret n° 70-879 (1 750 F au 1er octobre 1970) ; les lois de 1948 à 1956 et les
+    décrets de 1962 à 1969 n'y ont que leur titre. Les montants restent `haute`.
+  lectures:
+  - type: legifrance
+    reference: >-
+      R. 351-9 CSS, LEGIARTI000053335598, en vigueur depuis le 1er janvier 2026, lue dans
+      l'index LEGI : « Pour la période comprise entre le 1er janvier 1949 et le 31
+      décembre 1971, il y a lieu de retenir autant de trimestres d'assurance que le
+      salaire annuel correspondant aux retenues subies par l'assuré sur sa rémunération
+      représente de fois le montant trimestriel de l'allocation aux vieux travailleurs
+      salariés au 1er janvier de l'année considérée, avec un maximum de quatre trimestres
+      par année civile ; jusqu'au 31 décembre 1962, ce montant est celui des villes de plus
+      de 5 000 habitants »
+    date: 2026-01-01
+  - type: legifrance
+    reference: >-
+      R. 351-9 CSS, rédactions du 21 décembre 1985 (LEGIARTI000006749353) et du 21 mars
+      2014 (LEGIARTI000028751530) : « Pour la période comprise entre le 1er janvier 1946
+      et le 31 décembre 1948, il y a lieu de retenir autant de trimestres que le salaire
+      annuel correspondant aux retenues subies par l'assuré sur sa rémunération
+      représente de fois 18 F », et les règles de 1930 à 1945 ; la rédaction de 2026 ne
+      commence plus qu'en 1949
+    date: 2014-03-21
+  - type: legifrance
+    reference: >-
+      décret n° 45-0179 du 29 décembre 1945, article 71, § 2, rédaction du 1er septembre
+      1983 (LEGIARTI000006760608) : les mêmes règles, en anciens francs — « de fois 1.800
+      anciens francs » de 1946 à 1948
+    date: 1983-09-01
+  - type: circulaire_cnav
+    reference: >-
+      barèmes « Allocation aux vieux travailleurs salariés, Allocation aux mères de
+      famille, Majoration L814-2, Secours viager - Montant » et « Salaire validant un
+      trimestre » de la base de législation, par son API (`cnav_avts.py`) : le premier date
+      chaque montant depuis la loi du 14 mars 1941 et cite le texte qui le fixe ; le second
+      redonne au centime, de 1949 à 1971, le quart du premier au 1er janvier — 8 500
+      anciens francs en 1949, 180,95 F de 1956 à 1962, 437,50 F en 1971 — et, de 1972 à
+      2026, les 200 puis 150 SMIC horaires du dépôt ; il porte 216 anciens francs pour 1946,
+      que le texte contredit
+    url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=salaire_validant_un_trimestre_montant_bar.aspx
+    date: 2025-12-23
+  - type: jorf
+    reference: >-
+      décret n° 70-879 du 29 septembre 1970, notice (JORFTEXT000000518679) : « A COMPTER DU
+      01-10-1970, LES TAUX SONT PORTES A 1750FRS PAR AN (ALLOCATIONS AUX VIEUX
+      TRAVAILLEURS SALARIES […]) »
+    date: 1970-10-01
+textes_a_rattacher:
+- id: LEGIARTI000053335598
+  reference: R. 351-9 CSS, rédaction en vigueur, de 1949 à 1971
+- id: LEGIARTI000028751530
+  reference: R. 351-9 CSS, rédaction de 2014 à 2025, de 1930 à 1948
+- id: LEGIARTI000006749353
+  reference: R. 351-9 CSS, rédaction de 1985 à 2014
+- id: LEGIARTI000006760608
+  reference: décret n° 45-0179 du 29 décembre 1945, article 71, § 2
+approximations:
+- ecart: >-
+    avant 1946, quatre trimestres par année travaillée, la règle se lisant sur la retenue
+    et non sur le salaire
+  effet: non mesuré ; aucun témoin n'a d'année travaillée avant 1946 sous le seuil
+- ecart: >-
+    le seuil de la métropole partout, quand l'assuré a travaillé outre-mer de 1949 à 1951
+    ou de 1972 à 1995
+  effet: non mesuré ; le modèle ne connaît pas le lieu de travail
+code:
+  moteur: >-
+    `DonneesMacro.trimestres_valides` (`donnees/macro.py`) et `trimestresValides`
+    (`moteur/js/macro.js`) lisent le seuil de 1946 à 1971 dans
+    `legislation/salaire_validant_trimestre_avant_1972.csv`, que le paquet porte sous
+    `salaire_validant_avant_1972`, et le divisent comme le SMIC depuis 1972 : un salaire
+    qui tombe pile sur le seuil le valide (neuf décimales d'euro).
+  tests: >-
+    `test_avant_1972_le_trimestre_se_valide_au_trimestre_de_l_avts`
+    (tests/test_salaire_annuel_moyen.py) et son jumeau de tests/js/moteur.test.js ; les
+    contrôles du récupérateur (tests/test_verification.py).

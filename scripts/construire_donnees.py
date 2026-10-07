@@ -170,6 +170,12 @@ def _series() -> dict:
         "heures_par_trimestre": charger_serie_annuelle(
             DONNEES / "reference" / "legislation" / "validation_trimestres.csv",
             "heures", nom="heures_par_trimestre"),
+        # Le salaire qui valide un trimestre de 1946 à 1971 (R. 351-9) : 18 F,
+        # puis le trimestre de l'allocation aux vieux travailleurs salariés.
+        "salaire_validant_avant_1972": charger_serie_annuelle(
+            DONNEES / "reference" / "legislation"
+            / "salaire_validant_trimestre_avant_1972.csv",
+            "valeur", nom="salaire_validant_avant_1972"),
     }
     for sexe in ("H", "F"):
         for mesure in ("e60", "e65"):

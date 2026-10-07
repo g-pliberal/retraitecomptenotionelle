@@ -407,9 +407,8 @@ class DonneesMacro:
     def heures_par_trimestre(self) -> SerieAnnuelle:
         """Heures de SMIC à cotiser pour valider un trimestre, par année.
 
-        200 heures depuis 1972, 150 depuis 2014. Avant 1972 la validation ne
-        dépendait pas du montant : la série ne commence donc qu'en 1972, et
-        l'appelant valide quatre trimestres par année travaillée en deçà.
+        200 heures depuis 1972, 150 depuis 2014. Avant 1972 le seuil n'est pas
+        un nombre d'heures : :attr:`salaire_validant_avant_1972`.
         """
         return charger_serie_annuelle(
             self.racine / "reference" / "legislation" / "validation_trimestres.csv",
@@ -417,19 +416,44 @@ class DonneesMacro:
             nom="heures_par_trimestre",
         )
 
+    @cached_property
+    def salaire_validant_avant_1972(self) -> SerieAnnuelle:
+        """Le salaire qui valide un trimestre de 1946 à 1971, en euros.
+
+        R. 351-9 : 18 F de 1946 à 1948, puis, de 1949 à 1971, « le montant
+        trimestriel de l'allocation aux vieux travailleurs salariés au 1er
+        janvier de l'année considérée » — celui des villes de plus de 5 000
+        habitants jusqu'en 1962 (``legislation/salaire_validant_trimestre_avant_1972.csv``).
+        """
+        return charger_serie_annuelle(
+            self.racine / "reference" / "legislation"
+            / "salaire_validant_trimestre_avant_1972.csv",
+            colonne_valeur="valeur",
+            nom="salaire_validant_avant_1972",
+        )
+
     def trimestres_valides(self, revenu: float, annee: int) -> int:
         """Trimestres qu'un revenu d'activité valide dans l'année.
 
-        Quatre au plus, et zéro si le revenu n'atteint pas le seuil du premier.
-        Avant 1972, aucun seuil de montant n'existait : une année travaillée
-        vaut quatre trimestres.
+        Quatre au plus, et zéro si le revenu n'atteint pas le seuil du premier :
+        200 heures de SMIC depuis 1972, 150 depuis 2014 ; de 1946 à 1971, le
+        salaire que R. 351-9 fixe, 18 F puis le trimestre de l'allocation aux
+        vieux travailleurs salariés. Avant 1946, la règle se lit sur la retenue
+        et non sur le salaire, et une année travaillée vaut quatre trimestres.
         """
         if revenu <= 0:
             return 0
         heures = self.heures_par_trimestre
         if annee < heures.premiere_annee:
-            return 4
-        seuil = heures(annee) * self.smic_horaire(annee)
+            # LE SEUIL D'AVANT 1972. Le modèle validait quatre trimestres à toute
+            # année travaillée, en écrivant qu'« aucun seuil de montant
+            # n'existait » : R. 351-9 en fixe un depuis 1946 (action 138, étape 6).
+            anciens = self.salaire_validant_avant_1972
+            if annee < anciens.premiere_annee:
+                return 4
+            seuil = anciens(annee)
+        else:
+            seuil = heures(annee) * self.smic_horaire(annee)
         if seuil <= 0:
             return 4
         # UN REVENU QUI TOMBE PILE SUR LE SEUIL LE VALIDE. L'assiette minimale

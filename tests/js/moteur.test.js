@@ -783,3 +783,20 @@ test("l'assiette de l'AVPF et la colonne de revalorisation sont celles de la Cna
   proche(lu(1990, 2013, 5), 1.431);
   assert.equal(lu(1954, 1955, 2), 1);
 });
+
+/**
+ * Le portage de `test_avant_1972_le_trimestre_se_valide_au_trimestre_de_l_avts`
+ * (tests/test_salaire_annuel_moyen.py) : R. 351-9, 18 F de 1946 à 1948, puis le
+ * trimestre de l'allocation aux vieux travailleurs salariés au 1er janvier.
+ */
+test("avant 1972, le trimestre se valide au trimestre de l'AVTS", () => {
+  const macro = new DonneesMacro(paquet);
+  const valides = (francs, annee) => macro.trimestresValides(francs / 6.55957, annee);
+  assert.equal(valides(1, 1940), 4);
+  assert.deepEqual([17.99, 18, 71.99, 72].map((f) => valides(f, 1946)), [0, 1, 3, 4]);
+  assert.deepEqual([84.99, 85, 170].map((f) => valides(f, 1949)), [0, 1, 2]);
+  assert.deepEqual([180.95, 723.79, 723.8].map((f) => valides(f, 1962)), [1, 3, 4]);
+  assert.deepEqual([199.99, 200].map((f) => valides(f, 1963)), [0, 1]);
+  assert.deepEqual([437.49, 437.5, 1749, 1750].map((f) => valides(f, 1971)), [0, 1, 3, 4]);
+  assert.deepEqual([787, 788].map((f) => valides(f, 1972)), [0, 1]);
+});

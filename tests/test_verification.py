@@ -1492,6 +1492,79 @@ def test_le_bareme_de_la_reversion_est_refuse_s_il_contredit_les_articles():
     assert any(e.startswith("plafond 2025-01-01 :") for e in erreurs), erreurs
 
 
+def _avts_cnav():
+    return _charger_script("cnav_avts", "scripts", "fetch", "cnav_avts.py")
+
+
+def test_l_avts_se_lit_en_euros_en_francs_et_en_francs_cfa():
+    """Le barème des seuils écrit 18 095 anciens francs, 180,95 F, 1 803 € et,
+    pour La Réunion en 1948, 900 francs CFA, deux anciens francs chacun ; « - »
+    et « 60 cotisations » ne sont pas des salaires."""
+    module = _avts_cnav()
+    assert module._montant("1 803,00 €") == 1803.0
+    assert module._montant("18 095 AF") == pytest.approx(180.95 / 6.55957)
+    assert module._montant("180,95 F") == pytest.approx(180.95 / 6.55957)
+    assert module._montant("900 CFA") == pytest.approx(18 / 6.55957)
+    assert module._montant("-") is None
+    assert module._montant("60 cotisations") is None
+
+
+def _francs(montant: float) -> float:
+    return montant / 6.55957
+
+
+def test_le_seuil_d_avant_1972_est_le_trimestre_de_l_avts_du_1er_janvier():
+    """R. 351-9 : 18 F de 1946 à 1948, puis le quart de l'AVTS en vigueur au
+    1er janvier — les 800 F d'avril 1962 ne comptent qu'en 1963."""
+    module = _avts_cnav()
+    avts = [{"date": d, "montant": _francs(f), "reference": ""}
+            for d, f in (("1948-10-01", 340.0), ("1956-01-01", 723.80),
+                         ("1962-04-01", 800.0), ("1970-10-01", 1_750.0))]
+    seuils = module.seuil_trimestre(avts)
+    assert sorted(seuils) == list(range(1946, 1972))
+    for annee, francs in ((1946, 18.0), (1948, 18.0), (1949, 85.0), (1962, 180.95),
+                          (1963, 200.0), (1970, 200.0), (1971, 437.50)):
+        assert seuils[annee] == pytest.approx(_francs(francs)), annee
+
+
+def test_le_bareme_des_seuils_est_refuse_s_il_contredit_r_351_9():
+    """Le barème des seuils doit redonner au centime le quart de l'AVTS de
+    chaque 1er janvier de 1949 à 1971, et les montants que le Journal officiel
+    écrit se retrouver à leur date : sinon, rien ne s'écrit. Les 216 anciens
+    francs de 1946, où R. 351-9 en écrit 1 800, sont un écart déclaré."""
+    module = _avts_cnav()
+
+    def ligne(date, francs):
+        return {"date": date, "montant": _francs(francs), "reference": ""}
+
+    series = {
+        "avts": [ligne("1948-10-01", 340.0), ligne("1956-01-01", 723.80),
+                 ligne("1962-04-01", 800.0), ligne("1970-10-01", 1_750.0),
+                 ligne("1981-01-01", 8_500.0), ligne("1990-01-01", 14_800.0),
+                 ligne("1990-07-01", 14_990.0),
+                 {"date": "2006-01-01", "montant": 3_009.45, "reference": ""}],
+        "as_seul": [ligne("1981-01-01", 8_500.0), ligne("1990-01-01", 19_920.0),
+                    ligne("1990-07-01", 20_180.0),
+                    {"date": "2006-01-01", "montant": 4_314.03, "reference": ""}],
+        "as_couple": [ligne("1990-01-01", 39_840.0)],
+        "plafond_seul": [ligne("1990-01-01", 35_620.0)],
+        "plafond_couple": [ligne("1990-01-01", 62_300.0)],
+    }
+    seuils = module.seuil_trimestre(series["avts"])
+    bareme = {annee: {"metropole": valeur, "antilles_guyane": None, "reunion": None}
+              for annee, valeur in seuils.items()}
+    bareme[1946]["metropole"] = _francs(2.16)
+    erreurs, ecarts = module.controler(series, bareme)
+    assert erreurs == []
+    assert len(ecarts) == 1 and ecarts[0].startswith("seuil 1946 :"), ecarts
+    bareme[1962]["metropole"] = _francs(200.0)
+    erreurs, _ = module.controler(series, bareme)
+    assert any(e.startswith("seuil 1962 :") for e in erreurs), erreurs
+    series["avts"][4] = ligne("1981-01-01", 8_400.0)
+    erreurs, _ = module.controler(series, bareme)
+    assert any(e.startswith("avts|1981-01-01 : attendu") for e in erreurs), erreurs
+
+
 def test_l_aspa_lit_l_annuel_du_texte_et_non_douze_fois_le_mensuel():
     """8 507,49 € par an, et non 708,95 × 12 = 8 507,40 €."""
     module = _aspa()

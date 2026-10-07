@@ -171,3 +171,29 @@ def test_la_colonne_de_revalorisation_est_celle_de_la_date_d_effet(simulateur):
     assert lu(1970, 1990, 1) == pytest.approx(5.629)
     assert lu(1947, 1949, 6) == pytest.approx(1.6)
     assert lu(1990, 2013, 5) == pytest.approx(1.431)
+
+
+def test_avant_1972_le_trimestre_se_valide_au_trimestre_de_l_avts(simulateur):
+    """R. 351-9 (action 138, étape 6) : de 1949 à 1971, autant de trimestres que
+    le salaire annuel représente de fois « le montant trimestriel de
+    l'allocation aux vieux travailleurs salariés au 1er janvier », celui des
+    villes de plus de 5 000 habitants jusqu'en 1962 ; de 1946 à 1948, autant de
+    fois 18 F. Le modèle validait quatre trimestres à toute année travaillée
+    avant 1972 ; il le fait encore avant 1946, où la règle se lit sur la retenue.
+    Les montants viennent du barème de la Cnav : 34 000 anciens francs au
+    1er octobre 1948, 72 380 au 1er janvier 1956, 800 F au 1er avril 1962 — qui
+    ne compte qu'en 1963 —, 1 750 F au 1er octobre 1970 (décret n° 70-879)."""
+    valides = simulateur.macro.trimestres_valides
+
+    def francs(montant: float) -> float:
+        return montant / 6.55957
+
+    assert valides(francs(1.0), 1940) == 4
+    assert [valides(francs(f), 1946) for f in (17.99, 18.0, 71.99, 72.0)] == [0, 1, 3, 4]
+    assert [valides(francs(f), 1949) for f in (84.99, 85.0, 170.0)] == [0, 1, 2]
+    assert [valides(francs(f), 1962) for f in (180.95, 723.79, 723.80)] == [1, 3, 4]
+    assert [valides(francs(f), 1963) for f in (199.99, 200.0)] == [0, 1]
+    assert [valides(francs(f), 1971) for f in (437.49, 437.50, 1_749.0, 1_750.0)] == [
+        0, 1, 3, 4]
+    # 1972 : 200 heures du SMIC de janvier, 3,94 F, la règle d'avant inchangée.
+    assert [valides(francs(f), 1972) for f in (787.0, 788.0)] == [0, 1]

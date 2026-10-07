@@ -97,6 +97,12 @@ export class DonneesMacro {
     this._smicPublie = [serie("smic_horaire").derniereAnnee, paquet.smic_horaire_releve ?? null];
     this.heures_par_trimestre = serie("heures_par_trimestre");
     /**
+     * Le salaire qui valide un trimestre de 1946 à 1971, en euros (R. 351-9) :
+     * 18 F jusqu'en 1948, puis le trimestre de l'allocation aux vieux
+     * travailleurs salariés au 1er janvier.
+     */
+    this.salaire_validant_avant_1972 = serie("salaire_validant_avant_1972");
+    /**
      * L'assiette forfaitaire MENSUELLE de l'AVPF à chaque date du barème de la
      * Cnav, `[[AAAA-MM-JJ, euros], …]`, du 1er juillet 1972 au dernier publié.
      */
@@ -231,18 +237,28 @@ export class DonneesMacro {
   /**
    * Trimestres qu'un revenu d'activité valide dans l'année.
    *
-   * Quatre au plus, et zéro si le revenu n'atteint pas le seuil du premier.
-   * Avant 1972, aucun seuil de montant n'existait : une année travaillée vaut
-   * quatre trimestres.
+   * Quatre au plus, et zéro si le revenu n'atteint pas le seuil du premier :
+   * 200 heures de SMIC depuis 1972, 150 depuis 2014 ; de 1946 à 1971, le
+   * salaire que R. 351-9 fixe, 18 F puis le trimestre de l'allocation aux
+   * vieux travailleurs salariés. Avant 1946, la règle se lit sur la retenue et
+   * non sur le salaire, et une année travaillée vaut quatre trimestres.
    */
   trimestresValides(revenu, annee) {
     if (revenu <= 0) {
       return 0;
     }
+    let seuil;
     if (annee < this.heures_par_trimestre.premiereAnnee) {
-      return 4;
+      // Le seuil d'avant 1972 : le modèle validait quatre trimestres à toute
+      // année travaillée, R. 351-9 en fixe un depuis 1946 (action 138, étape 6).
+      const anciens = this.salaire_validant_avant_1972;
+      if (annee < anciens.premiereAnnee) {
+        return 4;
+      }
+      seuil = anciens.valeur(annee);
+    } else {
+      seuil = this.heures_par_trimestre.valeur(annee) * this.smic_horaire.valeur(annee);
     }
-    const seuil = this.heures_par_trimestre.valeur(annee) * this.smic_horaire.valeur(annee);
     if (seuil <= 0) {
       return 4;
     }

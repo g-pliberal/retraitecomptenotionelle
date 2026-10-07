@@ -3330,6 +3330,18 @@ def source_minimum_reversion_cnav() -> dict[tuple, float]:
     return {(annee,): valeur for annee, valeur in sorted(serie.items())}
 
 
+def source_salaire_validant_trimestre_cnav() -> dict[tuple, float]:
+    """Le salaire qui valide un trimestre de 1946 à 1971 (R. 351-9), par la Cnav.
+
+    18 F de 1946 à 1948, puis le quart de l'allocation aux vieux travailleurs
+    salariés en vigueur au 1er janvier, que le barème de la caisse date texte
+    par texte depuis 1941 ; le récupérateur a vérifié que son barème des seuils
+    redonne ce quart au centime. Transcription de la caisse : niveau ``haute``.
+    """
+    serie = _lire_json("cnav_avts.json", "scripts/fetch/cnav_avts.py")["seuil_trimestre"]
+    return {(annee,): valeur for annee, valeur in sorted(serie.items())}
+
+
 def source_plafond_majoration_reversion_cnav() -> dict[tuple, float]:
     """Le plafond trimestriel de la majoration de 11,1 % (D. 353-4), par la Cnav.
 
@@ -6198,6 +6210,21 @@ CERTIFICATIONS = (
         source=source_minimum_reversion_cnav,
         origine="Cnav, barème « Montant minimum de la retraite de réversion »",
         decimales=6,
+        tolerance=5e-3,
+        unite=" €",
+        niveau="haute",
+    ),
+    Certification(
+        nom="salaire_validant_trimestre_cnav",
+        chemin=REFERENCE / "legislation" / "salaire_validant_trimestre_avant_1972.csv",
+        cles=("annee",),
+        colonne="valeur",
+        source=source_salaire_validant_trimestre_cnav,
+        origine="Cnav, barèmes « Allocation aux vieux travailleurs salariés […] - "
+                "Montant » et « Salaire validant un trimestre »",
+        # Un seuil : le salaire qui tombe pile dessus le valide, ce que six
+        # décimales arrondies au-dessus empêchaient.
+        decimales=9,
         tolerance=5e-3,
         unite=" €",
         niveau="haute",

@@ -1,0 +1,63 @@
+# Salaire qui valide un trimestre d'assurance avant 1972, en euros
+# ----------------------------------------------------------------
+# source_id: cnav_avts
+#
+# LA RÈGLE. Avant 1972, le trimestre ne se validait pas au SMIC. De 1949 à 1971,
+# « il y a lieu de retenir autant de trimestres d'assurance que le salaire annuel
+# correspondant aux retenues subies par l'assuré sur sa rémunération représente
+# de fois le montant trimestriel de l'allocation aux vieux travailleurs salariés
+# au 1er janvier de l'année considérée, avec un maximum de quatre trimestres par
+# année civile ; jusqu'au 31 décembre 1962, ce montant est celui des villes de
+# plus de 5 000 habitants » (R. 351-9, LEGIARTI000053335598, en vigueur, et toutes
+# ses rédactions depuis 1985). De 1946 à 1948, autant de fois 18 F, 1 800 anciens
+# francs (R. 351-9, rédactions de 1985 à 2025 ; décret n° 45-0179, article 71).
+# Depuis 1972, 200 heures de SMIC, 150 depuis 2014 : `validation_trimestres.csv`.
+# Avant 1946, la règle se lit sur la retenue, non sur le salaire — 15 anciens
+# francs de retenue par trimestre de 1936 à 1945, soixante cotisations
+# journalières de 1930 à 1935 — : le modèle y valide encore quatre trimestres par
+# année travaillée. Le modèle lit cette table dans `donnees/macro.py`
+# (`trimestres_valides`) et son portage dans `moteur/js/macro.js`.
+#
+# D'OÙ VIENNENT CES MONTANTS. Du barème « Allocation aux vieux travailleurs
+# salariés […] - Montant » de la Cnav, qui date chaque montant depuis la loi du
+# 14 mars 1941 et cite le texte qui le fixe : le seuil de l'année est le quart
+# du montant en vigueur au 1er janvier (`scripts/fetch/cnav_avts.py`). Le
+# barème « Salaire validant un trimestre » de la même caisse le redonne au
+# centime chaque année de 1949 à 1971, et, de 1972 à 2026, redonne au centime
+# les 200 puis 150 SMIC horaires du dépôt. Il porte 216 anciens francs pour
+# 1946 ; le texte en écrit 1 800, et c'est le texte qui est retenu. Le Journal
+# officiel ne porte de ces montants, dans l'index du dépôt, que celui du décret
+# n° 70-879 : 1 750 F au 1er octobre 1970, d'où les 437,50 F de 1971. `haute`.
+# Les francs sont convertis au taux de 6,55957, les anciens francs au centième.
+#
+# Les départements d'outre-mer avaient leur seuil, plus bas de 1949 à 1951 et
+# de 1972 à 1995 : le récupérateur le garde (`bareme_seuil`), le modèle, qui
+# ne sait pas où l'assuré a travaillé, ne le lit pas encore (action 138,
+# étape 6).
+annee,valeur,fiabilite
+1946,2.744082310,haute
+1947,2.744082310,haute
+1948,2.744082310,haute
+1949,12.958166465,haute
+1950,17.150514439,haute
+1951,19.818372241,haute
+1952,22.791128077,haute
+1953,22.791128077,haute
+1954,25.077863336,haute
+1955,25.077863336,haute
+1956,27.585649669,haute
+1957,27.585649669,haute
+1958,27.585649669,haute
+1959,27.585649669,haute
+1960,27.585649669,haute
+1961,27.585649669,haute
+1962,27.585649669,haute
+1963,30.489803447,haute
+1964,34.301028878,haute
+1965,38.112254309,haute
+1966,43.829092456,haute
+1967,49.545930602,haute
+1968,55.262768749,haute
+1969,59.073994179,haute
+1970,62.885219610,haute
+1971,66.696445041,haute

@@ -218,10 +218,11 @@ approximations:
     compte ses trimestres cotisés, sans reconstituer le salaire de trois trimestres
   effet: non mesuré
 - ecart: >-
-    les trimestres sont ceux que le modèle valide : quatre par année travaillée avant 1972,
-    quel qu'en soit le salaire (étape 138.6), et au plus ce que les mois de la ligne
-    permettent ; les années d'avant 1948 se classent avec les autres, quand le texte ne les
-    prend qu'à défaut de dix années postérieures, en remontant depuis 1947
+    les trimestres sont ceux que le modèle valide : au seuil de R. 351-9 depuis 1946
+    (fiche trimestres_avant_1972), quatre par année travaillée avant, et au plus ce que
+    les mois de la ligne permettent ; les années d'avant 1948 se classent avec les
+    autres, quand le texte ne les prend qu'à défaut de dix années postérieures, en
+    remontant depuis 1947
   effet: non mesuré
 - ecart: >-
     ni les années de rachat (R. 351-29, I, C, 1°), ni les indemnités journalières de

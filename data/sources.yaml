@@ -1181,6 +1181,36 @@ institutions:
           ne garde pas avec le minimum le rapport de 2010 ; lu le 7 octobre
           2026.
 
+      - id: cnav_avts
+        titre: Barèmes de l'allocation aux vieux travailleurs salariés, 1941-2026, de l'allocation supplémentaire et de son plafond, 1956-2026, et du salaire validant un trimestre, 1930-2026
+        url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=ancienne_prestation_autre_prestation_montant_bar.aspx
+        acces: api
+        statut_integration: automatise
+        cible: >-
+          data/reference/legislation/salaire_validant_trimestre_avant_1972.csv
+        recuperation: scripts/fetch/cnav_avts.py
+        note: >-
+          Quatre barèmes de la base de législation de la Cnav, servis par son
+          API publique : ancienne_prestation_autre_prestation_montant_bar,
+          l'allocation aux vieux travailleurs salariés à chaque date depuis la
+          loi du 14 mars 1941, avec le texte qui la fixe ;
+          ancienne_prestation_allocation_supplementaire_montant_bar et
+          ancienne_prestation_allocation_supplementaire_plafond_ressource_bar,
+          l'allocation supplémentaire du Fonds national de solidarité depuis
+          1956, pour un et deux allocataires, et son plafond de ressources ; et
+          salaire_validant_un_trimestre_montant_bar, le seuil d'un trimestre
+          depuis 1930, outre-mer compris de 1948 à 1995. Le scénario 1 en lit le
+          seuil de 1946 à 1971 que R. 351-9 définit — 18 F, puis le quart de
+          l'AVTS au 1er janvier —, au niveau `haute` ; le récupérateur refuse
+          d'écrire si le barème des seuils ne redonne pas ce quart au centime,
+          si celui de 1972 à 2026 n'est pas 200 puis 150 SMIC horaires du
+          dépôt, si un montant baisse, ou si les montants que le Journal
+          officiel (décrets n° 70-879, 80-1159, 90-265 et 90-266) et D. 815-1
+          écrivent ne s'y retrouvent pas ; il déclare les 216 anciens francs que
+          le barème porte pour 1946, où le texte en écrit 1 800. Les montants de
+          l'allocation et de son plafond attendent le minimum vieillesse d'avant
+          2007 (action 138, étape 6) ; lu le 7 octobre 2026.
+
       - id: cnav_montants_minimum
         titre: Barèmes du minimum contributif et du plafond d'écrêtement, 1983-2026
         url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=retraite_personnelle_montant_minimum_bar.aspx
