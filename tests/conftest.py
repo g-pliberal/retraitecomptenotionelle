@@ -94,9 +94,10 @@ CONTROLES = {
     "test_source_locale.py", "test_referents.py",
     # L'outillage du dépôt : l'index de la DILA, la publication sur main et
     # ses pilotes de fusion, ce partage-ci, le filet des déplacements
-    # (docs/architecture.md, § 12) et l'arbre du dépôt.
+    # (docs/architecture.md, § 12), l'arbre du dépôt et ce que les sessions
+    # consomment.
     "test_dila_index.py", "test_pousser.py", "test_fusionner.py", "test_niveaux.py",
-    "test_conservation.py", "test_outillage.py", "test_arbre.py",
+    "test_conservation.py", "test_outillage.py", "test_arbre.py", "test_consommation.py",
     # La saisie outillée des simulateurs officiels, et la confrontation d'une
     # carrière réelle à « Mon estimation retraite » (docs/architecture.md, § 3.5).
     "test_simulateurs.py", "test_estimation_officielle.py",

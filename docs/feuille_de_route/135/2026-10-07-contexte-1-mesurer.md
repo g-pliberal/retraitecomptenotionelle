@@ -1,14 +1,12 @@
 # Le contexte, étape 1 : mesurer ce que les sessions consomment
 
-**Reprise, au 7 octobre 2026.** À faire : `scripts/consommation.py`, qui lit
-les transcriptions des sessions Claude Code et classe ce qui a coûté, par
-fichier lu, par commande, par hook et par session : chaque ajout au contexte,
-en jetons, multiplié par le nombre d'appels qui l'ont relu. La méthode est
-éprouvée sur une session (plus bas) ; reste à l'écrire, avec ses tests sur des
-transcriptions factices, puis à la lancer sur celles du poste, où vivent les
-sessions locales. Indépendante des autres étapes ; la 4 et la 5 attendent son
-verdict. Fini quand cette note dit, chiffres à l'appui, ce qui coûte, et
-laquelle des étapes 4 et 5 vaut son prix. Détail : ce fichier.
+**Reprise, au 7 octobre 2026.** Fait : `scripts/consommation.py` et ses
+tests (`tests/test_consommation.py`, sur des transcriptions factices). Reste :
+le lancer sur le poste du propriétaire, `python scripts/consommation.py`, où
+vivent les sessions locales des trente derniers jours, et écrire ici, chiffres
+à l'appui, ce qui coûte et laquelle des étapes 4 et 5 vaut son prix. Un
+conteneur du cloud ne voit que sa propre session. Détail : plus bas,
+« Le script ».
 
 **Le 7 octobre 2026, la demande.** Le propriétaire, l'arbre du dépôt en main
 (`2026-10-07-arbre-du-depot.md`) : « Maintenant que nous avons une vision
@@ -56,6 +54,32 @@ se mènent ensemble, la 3 après la 2, la 4 et la 5 sur le verdict de la 1.
   commandes (`pytest`, `git diff`, `grep`…) et les hooks qui ont le plus
   coûté. Un contexte qui retombe d'un appel au suivant est une compaction :
   ce qui la précède cesse d'être relu.
+
+**Le 7 octobre 2026, le script.** `scripts/consommation.py` lit les
+transcriptions sous `~/.claude/projects/` (`CLAUDE_CONFIG_DIR` s'il est
+posé), sous-agents compris (`<session>/subagents/`, une session chacun), ou
+les fichiers et dossiers qu'on lui nomme ; `--jours` (30) et `--limite` (15).
+Il suit la méthode ci-dessus, avec trois précisions relevées sur la
+transcription de cette session-ci (Claude Code 2.1.292). Les `attachment`
+portent, dans `rendered`, le texte qui va au modèle : c'est lui qui se compte,
+et ceux qui n'en ont pas (`prompt_snapshot`, 225 000 caractères,
+`deferred_tools_record`, `credential_org`) n'y vont pas. Le contexte de
+départ se détaille entre ces ajouts, estimés à 3,5 caractères par jeton, et
+le reste, « système et outils », que seule l'API mesure. Une commande Bash se
+réduit à son verbe (`sed`, `git diff`, `python -m pytest`,
+`python scripts/x.py`), et le fichier qu'un `cat`, `sed`, `head` ou `tail`
+lit compte avec ceux de `Read`. La somme des parts égale exactement celle des
+contextes de chaque appel, ce que le test vérifie.
+
+- *Le premier relevé, cette session-ci, à mi-parcours* : 22 appels, contexte
+  de 73 000 à 113 000 jetons, 2,1 millions relus. Le départ en fait 75 % :
+  « système et outils », 59 000 jetons, 61 % à lui seul ; `CLAUDE.md`
+  (l'attachement `instructions`), 5 000 jetons, 6 % ; la liste des skills,
+  4 000, 4 %. Les sorties Bash, 13 %, et la sortie du modèle, 11 %. Une
+  session courte qui lit par fenêtres paie donc surtout son départ, que
+  l'étape 3 réduit pour `CLAUDE.md` et que le dépôt ne commande pas pour le
+  reste. Rien n'y dit encore si les lignes géantes (étape 4) ou les gros
+  fichiers (étape 5) coûtent : c'est ce que le relevé du poste tranchera.
 
 En finissant, la session ôte le bloc « Reprise » de cette note, et ne touche
 à celui de l'action que si elle est la dernière des cinq étapes.
