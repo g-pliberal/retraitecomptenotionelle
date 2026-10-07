@@ -355,10 +355,17 @@ fichiers:
     defaut: recit
   # Les consignes que toute session lit en s'ouvrant : elles décrivent le dépôt
   # d'AUJOURD'HUI, et une consigne périmée se suit quand même — c'est le pire
-  # des cas. Deux procès-verbaux y sont enclavés, et eux seuls sont gelés :
-  # l'audit des quatorze branches du 18 septembre 2026, et le compte des
-  # recalculs qui avait motivé la mémoire de `Carriere`.
+  # des cas. Leur histoire est dans docs/archives/conventions.md.
   CLAUDE.md:
+    defaut: etat
+  # Les consignes d'un dossier, que Claude Code ne charge qu'à la première
+  # lecture d'un de ses fichiers (action 135, étape 3 du contexte) : les règles
+  # d'une seule zone, d'aujourd'hui comme celles de la racine.
+  src/CLAUDE.md:
+    defaut: etat
+  moteur/CLAUDE.md:
+    defaut: etat
+  data/CLAUDE.md:
     defaut: etat
 
   # Le CLAUDE.md d'avant la phase 1, gardé tel quel : l'histoire des règles.

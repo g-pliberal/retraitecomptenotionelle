@@ -1,15 +1,5 @@
 # Le contexte, étape 3 : `CLAUDE.md` par zone
 
-**Reprise, au 7 octobre 2026.** Après l'étape 2, dont elle reprend le hook.
-`CLAUDE.md`, 18 644 caractères, est relu à chaque appel de chaque session. Les
-règles d'une seule zone vont dans un `CLAUDE.md` de son dossier, que Claude
-Code ne charge qu'à la première lecture ou retouche d'un fichier de ce
-dossier : `src/`, `moteur/`, `data/`. La veille du droit et la recherche dans
-le JORF vont dans `docs/veille_droit.md`, une ligne gardant leur déclencheur ;
-la liste des fichiers à ne jamais lire en entier cède au hook. Cible : vers
-10 000 caractères. Commencer par étendre `conservation.py` aux `CLAUDE.md` des
-dossiers, qu'il ne lit pas. Détail : ce fichier.
-
 **Le 7 octobre 2026, ce qui est établi.**
 
 - *Le poids de `CLAUDE.md`, section par section, en caractères* : le
@@ -62,3 +52,45 @@ racine est le règlement du propriétaire : le lui montrer avant de pousser.
 
 En finissant, la session ôte le bloc « Reprise » de cette note, et ne touche
 à celui de l'action que si elle est la dernière des cinq étapes.
+
+**Le 7 octobre 2026, ce qui est fait.** Les cinq gestes du plan, et un de
+plus, que le premier a montré nécessaire.
+
+- *Les consignes.* `CLAUDE.md` passe de 18 876 caractères à 12 672.
+  `src/CLAUDE.md` (2 581) reçoit le Python qui fait foi, les mémoires et la
+  liste d'un changement du modèle ; `moteur/CLAUDE.md` (1 712), le texte du
+  site, l'outillage d'interface et les listes d'une retouche de `pages.js`
+  et d'un champ de saisie ; `data/CLAUDE.md` (1 365), les données et la
+  proposition. Les règles y sont recopiées mot pour mot, et chaque consigne
+  s'ouvre sur ce qu'elle renvoie aux autres. La recherche dans le JORF passe
+  telle quelle à `docs/veille_droit.md` ; le résumé des obligations du
+  scénario 1, que ce document détaille déjà, cède à une ligne qui le
+  déclenche ; la liste des fichiers à ne jamais lire en entier, tous de plus
+  de 50 000 octets, à la règle du hook. À la racine, une puce nomme les
+  consignes des dossiers, une autre leurs listes de contrôle. Aucune session
+  ne relit plus qu'avant : la racine et les trois consignes font ensemble
+  18 330 caractères.
+- *L'outillage.* `scripts/conservation.py` lit les `CLAUDE.md` à un ou deux
+  niveaux sous la racine, hors des dossiers cachés
+  (`verifier_prose.consignes`, que reprennent `test_prose.py` et le compte
+  des dettes). Et `--depuis` retrouve une liste puce par puce : une liste
+  n'était, pour lui, qu'un paragraphe, et celle de « Travailler » en faisait
+  un de 7 338 caractères, qu'une seule puce déplacée aurait dit perdu tout
+  entier. Il ne signale plus que les quatre paragraphes récrits exprès :
+  « Chercher avant de lire », l'introduction du scénario 1, et ses deux
+  obligations « toute règle écrite » et « à la fin ». `docs/architecture.md`,
+  § 9.3, nomme les consignes des dossiers, et une version les date
+  (`2026-10-07-consignes-par-dossier.md`).
+- *Vu en vrai.* La première lecture par `Read` d'un fichier de `data/`,
+  `data/reference/prose/zones.yaml`, a joint `data/CLAUDE.md` au contexte,
+  né pendant la session et trois dossiers plus haut. Un `cat` du même
+  `data/CLAUDE.md` ne l'avait pas chargé.
+- *Ce que ça rapporte.* Cette session, mesurée par `scripts/consommation.py`
+  à 58 appels : le contexte de départ fait 49 % des 8,6 millions de jetons
+  relus ; `CLAUDE.md`, 3,7 % ; « système et outils », 40 %, que le dépôt ne
+  commande pas. Un tiers de moins à la racine, c'est donc 1 % environ d'une
+  session comme celle-ci ; davantage pour une session qui ne touche qu'une
+  zone, ou n'en ouvre les fichiers que tard.
+- *Le propriétaire* a vu ce qui quittait la racine avant la publication. Il
+  y garde le paragraphe des clones d'avant le 26 septembre, auquel
+  `pousser.sh` renvoie dans le cas grave.

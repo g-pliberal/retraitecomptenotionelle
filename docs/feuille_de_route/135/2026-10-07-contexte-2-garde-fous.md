@@ -72,3 +72,23 @@ entier reste, pour l'étape 3. Impeccable : `hook.quiet` à `true` dans
 `.impeccable/config.json`, la clé que donne `reference/hooks.md`, qu'aucune
 action de `impeccable hooks` ne pose. Le hook ne vaut qu'au démarrage d'une
 session : celle-ci ne l'a pas vu refuser en vrai.
+
+**Le 7 octobre 2026, vu en vrai par la session de l'étape 3.** Les
+garde-fous tiennent, et la suite complète est verte sur leur commit. Le hook
+a refusé un `Read` sans `limit` de `docs/limites.md`, 314 190 octets, avec sa
+raison ; l'outil Grep, cherchant `"pass"` dans `moteur/`, n'a rendu que
+`moteur/js/macro.js`, quand la ligne géante de `moteur/donnees.json` le porte
+aussi ; le contrôle de la prose passe sur le `CLAUDE.md` de l'étape. Le mode
+discret d'Impeccable n'a pas été mis à l'épreuve : la session n'a retouché
+aucun fichier d'interface. Ce que les garde-fous rapportent ne se mesure pas
+sur une session qui lit déjà par fenêtres : ils assurent contre un accident,
+dont seul le relevé du poste (étape 1) dira la fréquence passée. Leur part
+propre est plus étroite qu'il n'y paraît. Claude Code a ses propres
+plafonds, relevés dans sa version 2.1.292 : un nombre de jetons au-delà
+duquel `Read` refuse un fichier (« exceeds maximum allowed tokens », réglable
+par `CLAUDE_CODE_FILE_READ_MAX_OUTPUT_TOKENS`, valeur par défaut non lue), et
+30 000 caractères de sortie d'une commande Bash, au-delà desquels il ne rend
+qu'un aperçu. Le hook joue donc surtout de 50 000 octets jusqu'à ce plafond,
+et nomme le bon geste. Les sorties de Bash, qu'il ne voit pas, ont fait 20 %
+des jetons relus de cette session-là à 58 appels, plus que tous ses `Read` :
+de petites fenêtres, voulues.

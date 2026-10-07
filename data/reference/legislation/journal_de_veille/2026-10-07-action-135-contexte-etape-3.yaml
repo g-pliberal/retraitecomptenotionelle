@@ -1,0 +1,12 @@
+date: "2026-10-07"
+session: "action 135, contexte, étape 3 : CLAUDE.md par zone"
+consulte: >-
+  Aucune source de droit : la session ne touche ni au scénario 1 ni à une règle.
+  Elle déplace la procédure qui y oblige : le résumé que CLAUDE.md en donnait cède à
+  une ligne qui déclenche docs/veille_droit.md, où la recherche dans le JORF et LEGI
+  passe telle quelle.
+trouve: >-
+  Aucun texte de droit. Les trois obligations du scénario 1 que CLAUDE.md résumait
+  sont toutes détaillées dans docs/veille_droit.md : rien n'a dû s'y ajouter.
+reste: >-
+  La décision du conseil d'administration de l'Agirc-Arrco du 14 octobre 2026.

@@ -134,3 +134,38 @@ def test_une_version_de_l_architecture_est_gelee_des_son_fichier_ecrit(tmp_path)
     version.write_text(version.read_text(encoding="utf-8").replace("change", "changeait"),
                        encoding="utf-8")
     assert conservation.verifier(reference, arbre)
+
+
+def test_une_regle_de_claude_md_se_retrouve_puce_par_puce(tmp_path):
+    """Action 135, étape 3 du contexte : les règles de `CLAUDE.md` partent une
+    à une vers les consignes des dossiers, que Claude Code ne charge qu'à la
+    première lecture d'un de leurs fichiers. Une liste n'est qu'un paragraphe :
+    `--depuis` la retrouve puce par puce, en puce d'une autre liste ou en
+    paragraphe, et dit laquelle manque. Un dossier caché, qui est à
+    l'outillage, ne compte pas."""
+    avant, apres = tmp_path / "avant", tmp_path / "apres"
+    for racine in (avant, apres):
+        (racine / "data" / "reference" / "prose").mkdir(parents=True)
+        (racine / conservation.ZONES).write_text("fichiers: {}\n", encoding="utf-8")
+    (avant / "CLAUDE.md").write_text(
+        "# Règles\n\n- **Une.** Pour tous.\n- **Deux.** Pour le modèle,\n"
+        "  sur deux lignes.\n- **Trois.** Pour les données.\n", encoding="utf-8")
+    (apres / "CLAUDE.md").write_text("# Règles\n\n- **Une.** Pour tous.\n",
+                                     encoding="utf-8")
+    for dossier, texte in (("src", "1. **Deux.** Pour le modèle, sur deux lignes.\n"),
+                           ("data", "**Trois.** Pour les données.\n")):
+        (apres / dossier).mkdir(exist_ok=True)
+        (apres / dossier / "CLAUDE.md").write_text(f"# {dossier}\n\n{texte}",
+                                                   encoding="utf-8")
+    assert conservation.Arbre(racine=apres).documents() == [
+        "CLAUDE.md", "data/CLAUDE.md", "src/CLAUDE.md"]
+    assert conservation.pertes_entre(conservation.Arbre(racine=avant),
+                                     conservation.Arbre(racine=apres)) == []
+
+    (apres / ".claude").mkdir()
+    (apres / ".claude" / "CLAUDE.md").write_text("**Trois.** Pour les données.\n", encoding="utf-8")
+    (apres / "data" / "CLAUDE.md").write_text("# data\n\n**Trois.** Pour la donnée.\n",
+                                              encoding="utf-8")
+    assert conservation.pertes_entre(conservation.Arbre(racine=avant),
+                                     conservation.Arbre(racine=apres)) == [
+        "CLAUDE.md:6 : **Trois.** Pour les données."]

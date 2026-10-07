@@ -107,13 +107,11 @@ qu'elle dure. D'où cinq règles.
 - **Chercher avant de lire.** L'outil Grep d'abord, qui omet les lignes
   géantes et passe ce que `.ignore` nomme (`grep -n` par Bash, seulement sur
   un fichier sans ligne démesurée), puis la seule fenêtre utile (`Read` avec
-  `offset` et `limit`, ou `sed -n`) ; un hook refuse un `Read` sans `limit`
-  de plus de 50 000 octets (`.claude/hooks/lecture.py`). Ne se lisent jamais en
-  entier : `moteur/js/pages.js`, `docs/feuille_de_route.md` et les archives,
-  `docs/architecture.md`, `README.md`, `tests/test_simulateur.py`,
-  `scripts/verifier_donnees.py`, `data/sources.yaml`, ni `moteur/donnees.json`
-  et les témoins de `tests/temoins/`, qui se lisent par `resumer_temoins.py`
-  ou par une requête ciblée.
+  `offset` et `limit`, ou `sed -n`). Un fichier texte de plus de 50 000
+  octets ne se lit jamais en entier, ni par `Read`, que le hook
+  `.claude/hooks/lecture.py` refuse alors sans `limit`, ni par `cat`, qu'il
+  ne voit pas ; les témoins de `tests/temoins/`, par `resumer_temoins.py` ou
+  une requête ciblée.
 - **Les sorties longues passent par `tail` ou `grep`** :
   `python -m pytest 2>&1 | tail -n 30`, de même pour `regenerer.py` et
   `resumer_temoins.py` ; jamais de `git diff` ni de `git show` entier sur un
@@ -124,6 +122,11 @@ qu'elle dure. D'où cinq règles.
 
 ## Travailler
 
+- **Les consignes d'une zone sont dans son dossier** : `src/CLAUDE.md`, le
+  modèle ; `moteur/CLAUDE.md`, son portage et le site ; `data/CLAUDE.md`, les
+  données et la proposition. Claude Code charge chacune à la première lecture
+  d'un fichier de son dossier, avec ses listes de contrôle ; qui travaille
+  dans une zone par ses seuls scripts la lit d'abord.
 - **Mise en route** : `pip install -e '.[dev]'`. Sans lui, `python -m pytest`
   ne trouve ni pytest ni le paquet. Une session web n'a pas à le lancer : le
   hook `SessionStart` (`.claude/hooks/session-start.sh`, action 33 de la
@@ -142,37 +145,6 @@ qu'elle dure. D'où cinq règles.
   un fichier lent qui naît s'y range. Les tests du site tiennent en trois
   fichiers, `test_web.py`, `test_web_saisie.py` et `test_web_revues.py`, qui
   se partagent `tests/outils_web.py`.
-- **Le Python de `src/` fait foi.** Toute modification du modèle se porte
-  dans `moteur/js/`. Après elle, ou après toute modification des données,
-  `python scripts/regenerer.py` refait tout ce qu'un script fabrique — le
-  paquet, les témoins, le chiffrage, les tableaux, le tableau de bord, les
-  chiffres ancrés —, dans l'ordre (`--verifier` dit ce qui est périmé sans
-  rien écrire) ; `python scripts/resumer_temoins.py` dit ce qu'elle déplace,
-  scénario par scénario, et le diff des témoins, chiffre par chiffre. Une
-  étape dont rien n'a bougé ne se relance pas, et la suite ne revérifie pas
-  ce qu'elle vient de fabriquer (`.cache/fabrique.json`, que
-  `FABRIQUE_SANS_MEMOIRE=1` ignore) ; GitHub, sans mémoire, refait tout.
-- **Le texte du site ne s'écrit qu'en JavaScript** : `moteur/js/pages.js`,
-  `gabarit.js`, et `moteur/style.css`, sa propre source. Le Python le lit par
-  `web/site.py`, qui le fait rendre par node ; les témoins de pages se refont
-  par `construire_temoins.py`, après le paquet, et leur diff montre ce qu'une
-  page a changé. Seules les pages dont le formulaire est le sujet le figent
-  entier (`FORMULAIRE_ENTIER`) ; les autres n'en gardent que la balise.
-- **Les données** sont dans `data/`. Tous les régimes, calculés ou non : un
-  fichier par régime dans `data/reference/regimes/`, qui porte sa ligne
-  d'inventaire ; `inventaire.yaml`, qui les énumère, s'en fabrique par
-  `python scripts/construire_inventaire.py`. L'histoire des règles :
-  `reformes.yaml` et `pivots.yaml` ;
-  `python scripts/calendrier_regimes.py --regime X` dit ce qu'une fiche ne
-  coupe pas, `--carte` imprime le tableau des jeux de règles, et toute
-  réforme qui touche un régime est coupée, absorbée ou déclarée
-  `non_appliquee`.
-- **La proposition** : ses scénarios sont des univers de droit
-  (`data/reference/univers/`), piles de couches (`data/reference/couches/`)
-  posées sur le droit réel ; ce qu'elles ajoutent a sa fiche dans
-  `data/reference/regles/proposition/`, qui cite le README. Une variante
-  s'écrit en couche, jamais dans le code, et le moteur refuse ce qu'il ne
-  sait pas calculer (`scenarios/univers.py`).
 - **La prose** : chaque document a son régime, déclaré dans
   `data/reference/prose/zones.yaml` — `etat` (tout chiffre y est ancré sur
   une sonde), `recit` (vrai à sa date, gelé) ou `produit` —, et ce qui s'en
@@ -209,27 +181,6 @@ qu'elle dure. D'où cinq règles.
   JavaScript n'en a aucune ; pytest et pytest-xdist ne servent qu'aux tests.
   Node, qui fait tourner le portage, sert aussi au Python qui lit le site :
   les tests des pages, les témoins, la prose et le paquet.
-- **Les temps tiennent à des mémoires** qu'il ne faut pas contourner :
-  `charger_yaml` (qui rend une copie), `charger_serie_annuelle` et la table
-  des quotients de mortalité, indexées sur la signature du fichier, partagées
-  et jamais modifiées ; le temps d'un calcul, les chargeurs marqués
-  `une_fois_par_instantane` ne regardent le disque qu'une fois
-  (`chargement.instantane`), un `stat` coûtant cher sous Windows ; les lois
-  de mortalité calibrées, gardées dans
-  `data/derive/calibrations_mortalite.json` et reprises seulement si
-  l'empreinte de leurs entrées est celle du jour ; le coût agrégé, ses
-  variantes et le coût des avantages, que `memoire.py` garde dans le
-  `.cache/calculs/` du dépôt principal, commun à tous ses worktrees, sous
-  l'empreinte de `src/`, `data/` et `scripts/`, un seul processus faisant
-  chaque calcul pendant que les autres l'attendent
-  (`CALCULS_SANS_MEMOIRE=1` s'en passe) et ne sert que sur le modèle intact :
-  qui en remplace une fonction s'ouvre sous `memoire.modele_modifie()`, et
-  `monkeypatch` la fait taire. `SerieAnnuelle` et
-  `Carriere` sont immuables après leur constructeur : un champ réassigné
-  après coup casserait leurs mémoires sans bruit.
-- **L'outillage d'audit d'interface** (Impeccable, Web Interface Guidelines,
-  Playwright CLI) : `.claude/skills/`, mis en place par
-  `scripts/setup_ui_tools.sh` ; voir `docs/outillage_interface.md`.
 
 ## Listes de contrôle
 
@@ -238,62 +189,15 @@ qu'elle dure. D'où cinq règles.
   relever, par `grep -n` de son numéro ou de son domaine, ce que la feuille de
   route, ses notes et les fiches lui renvoient, avant d'écrire la moindre
   ligne.
-- **Une retouche de `moteur/js/pages.js`** : le budget de mots du formulaire
-  vierge (`test_le_simulateur_tient_en_peu_de_mots`) ; toute phrase en gras
-  d'une page figée au catalogue `data/reference/site/affirmations.yaml`, avec
-  son contrôle ; `python scripts/construire_temoins.py`, puis
-  `python scripts/resumer_temoins.py` ; `python -m pytest -m site`.
-- **Un champ de saisie de plus** : les deux saisies, `saisie.py` et
-  `saisie.js` — la lecture, la vérification, la réécriture de l'adresse — ;
-  toute borne `min` ou `max` du formulaire opposée aussi par la saisie ; les
-  deux contextes ; la chronologie s'il porte un fait ; un témoin de
-  simulation, et de page si la page change ; `python -m pytest -m site`.
-- **Un changement du modèle** : le Python d'abord, puis son jumeau ;
-  `python scripts/regenerer.py`, puis `python scripts/resumer_temoins.py`, pour
-  voir ce qu'il déplace ; `-m rapide` et les tests de sa zone, puis le commit.
+- **Les autres listes** sont aux consignes des dossiers : une retouche de
+  `moteur/js/pages.js` et un champ de saisie de plus, dans
+  `moteur/CLAUDE.md` ; un changement du modèle, dans `src/CLAUDE.md`.
 
 ## Le scénario 1 est le droit applicable, et rien d'autre
 
 Le scénario 1 est l'étalon : le droit EN VIGUEUR à la date d'effet de la
-pension, tel que la caisse l'applique. D'où trois obligations, décrites dans
-`docs/veille_droit.md` :
-
-- **Au début de toute session qui touche au scénario 1**, lancer
-  `python scripts/veille_droit.py` et consulter les sources qu'il liste pour
-  tout texte paru depuis la dernière date du journal (LFSS de l'année et ses
-  décrets, circulaires Cnav, fiches service-public, JORF par l'index DILA).
-- **Toute règle écrite ou modifiée** a été lue sur Légifrance (version en
-  vigueur, identifiant) ET dans la circulaire ou la fiche qui l'applique, a
-  son exemple chiffré publié dans `tests/temoins/exemples_officiels.yaml`
-  quand il en existe un — en écart connu si le modèle ne le reproduit pas —,
-  et sa fiche dans `data/reference/regles/`, avec la date de lecture et
-  l'état. Une déduction n'est pas une lecture ; une mémoire n'est pas une
-  source ; une table certifiée l'est à une date.
-- **À la fin**, consigner ce qui a été consulté, trouvé et laissé dans une
-  entrée du journal de veille : un fichier neuf de
-  `data/reference/legislation/journal_de_veille/`, nommé de la date et du
-  sujet de la session (`2026-10-06-action-148-etape-2.yaml`). Un test refuse
-  toute réforme du calendrier datée de 2023 ou après sans la fiche qui la
-  couvre.
-
-## Chercher dans le JORF ou LEGI
-
-Ne pas retélécharger les dumps de la DILA : l'index plein texte du champ
-social se récupère en une minute depuis la release `index-dila` du dépôt, que
-le workflow `index-dila.yml` tient à jour chaque lundi. Si `--recuperer`
-répond qu'aucun index n'est publié, lancer ce workflow (onglet Actions, « Run
-workflow ») : une session ne peut pas publier elle-même.
-
-```bash
-python scripts/fetch/dila_index.py jorf --recuperer      # une fois par session
-python scripts/fetch/dila_index.py jorf --mettre-a-jour  # les incréments parus depuis
-python scripts/fetch/dila_cherche.py jorf 'plafond NEAR("securite sociale")' --jusqu 1981
-python scripts/fetch/dila_cherche.py jorf --texte JORFTEXT000000568533 --motif mensuel
-python scripts/fetch/dila_cherche.py legi '"sur la base de" heures' --num R351-9
-```
-
-Lire les extraits, pas les textes : `--compter` d'abord si la requête est
-large, `--limite` ensuite, `--texte ID --motif` pour ne lire que les fenêtres
-utiles. L'index ne contient que le champ social (`THEMATIQUE` dans
-`dila_index.py`) : ce qu'il ne trouve pas peut exister dans le dump, que les
-scripts de certification lisent encore par leur option `--dump`.
+pension, tel que la caisse l'applique. Une session qui y touche commence par
+`python scripts/veille_droit.py` et suit `docs/veille_droit.md` : ce qu'elle
+lit avant d'écrire une règle, ce qu'elle en écrit, ce qu'elle consigne au
+journal de veille en finissant. On y cherche dans le JORF et LEGI par l'index
+de la DILA, sans jamais retélécharger les dumps.

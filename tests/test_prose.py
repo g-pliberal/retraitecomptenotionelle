@@ -155,7 +155,7 @@ def test_tout_document_du_depot_est_declare(zonage):
         c.relative_to(RACINE).as_posix()
         for dossier in (RACINE / "docs", RACINE / "docs" / "archives")
         for c in dossier.glob("*.md")
-    }
+    } | set(verifier_prose.consignes())
     assert not sur_disque - connus, (
         f"{sorted(sur_disque - connus)} : ajouter ces documents à "
         "data/reference/prose/zones.yaml, avec leur régime"
@@ -601,7 +601,8 @@ def test_aucun_paragraphe_n_est_repete_a_la_suite():
     sur des chiffres ancrés, on garde UN côté et l'on relance le script."""
     doublons = []
     for chemin in [RACINE / "README.md", RACINE / "CLAUDE.md",
-                   *sorted((RACINE / "docs").glob("*.md"))]:
+                   *sorted((RACINE / "docs").glob("*.md")),
+                   *(RACINE / c for c in verifier_prose.consignes())]:
         paragraphes = [p.strip() for p in
                        re.split(r"\n\s*\n", chemin.read_text(encoding="utf-8"))]
         for rang in range(1, len(paragraphes)):

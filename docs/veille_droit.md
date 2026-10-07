@@ -111,3 +111,25 @@ la session n'a pas pu finir de lire, et c'est par elle que la suivante
 commence : `python scripts/veille_droit.py` le dit. Combien de fiches la
 carte porte, dans quel état, et combien d'exemples les rejouent : le tableau
 de bord, `docs/etat.md`.
+
+## Chercher dans le JORF ou LEGI
+
+Ne pas retélécharger les dumps de la DILA : l'index plein texte du champ
+social se récupère en une minute depuis la release `index-dila` du dépôt, que
+le workflow `index-dila.yml` tient à jour chaque lundi. Si `--recuperer`
+répond qu'aucun index n'est publié, lancer ce workflow (onglet Actions, « Run
+workflow ») : une session ne peut pas publier elle-même.
+
+```bash
+python scripts/fetch/dila_index.py jorf --recuperer      # une fois par session
+python scripts/fetch/dila_index.py jorf --mettre-a-jour  # les incréments parus depuis
+python scripts/fetch/dila_cherche.py jorf 'plafond NEAR("securite sociale")' --jusqu 1981
+python scripts/fetch/dila_cherche.py jorf --texte JORFTEXT000000568533 --motif mensuel
+python scripts/fetch/dila_cherche.py legi '"sur la base de" heures' --num R351-9
+```
+
+Lire les extraits, pas les textes : `--compter` d'abord si la requête est
+large, `--limite` ensuite, `--texte ID --motif` pour ne lire que les fenêtres
+utiles. L'index ne contient que le champ social (`THEMATIQUE` dans
+`dila_index.py`) : ce qu'il ne trouve pas peut exister dans le dump, que les
+scripts de certification lisent encore par leur option `--dump`.

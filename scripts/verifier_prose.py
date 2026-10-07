@@ -90,6 +90,27 @@ from retraite_notionnelle.somme import somme_ordonnee
 RACINE = Path(__file__).resolve().parents[1]
 ZONES = RACINE / "data" / "reference" / "prose" / "zones.yaml"
 
+#: Les consignes d'un dossier, que Claude Code ne charge qu'à la première
+#: lecture d'un de ses fichiers (feuille de route, action 135, étape 3 du
+#: contexte) : un ``CLAUDE.md`` à un ou deux niveaux sous la racine, hors des
+#: dossiers cachés, qui sont à l'outillage et non au dépôt. Plus bas, la
+#: recherche descendrait dans les téléchargements de ``data/brut/`` et dans
+#: les copies du dépôt que ``.claude/worktrees/`` loge sur un poste.
+CONSIGNES = ("*/CLAUDE.md", "*/*/CLAUDE.md")
+
+
+def consigne(chemin: str) -> bool:
+    """Le ``CLAUDE.md`` d'un dossier, au sens de ``CONSIGNES``."""
+    *dossiers, nom = chemin.split("/")
+    return (nom == "CLAUDE.md" and 1 <= len(dossiers) <= 2
+            and not any(d.startswith(".") for d in dossiers))
+
+
+def consignes(racine: Path = RACINE) -> list[str]:
+    """Les consignes des dossiers du dépôt, au sens de ``CONSIGNES``."""
+    return sorted({chemin for motif in CONSIGNES for p in racine.glob(motif)
+                   if consigne(chemin := p.relative_to(racine).as_posix())})
+
 # --------------------------------------------------------------------------
 # Les sondes : le vocabulaire fermé de ce qu'un chiffre peut affirmer.
 # --------------------------------------------------------------------------
@@ -948,7 +969,8 @@ def controler(zonage: Zonage, corriger: bool) -> tuple[list[Anomalie], list[str]
 def compter_dettes() -> int:
     """Les ancres ``a_verifier`` du dépôt : ce qu'on s'est avoué devoir."""
     total = 0
-    for fichier in sorted(RACINE.glob("*.md")) + sorted((RACINE / "docs").glob("*.md")):
+    for fichier in (sorted(RACINE.glob("*.md")) + sorted((RACINE / "docs").glob("*.md"))
+                    + [RACINE / chemin for chemin in consignes()]):
         texte = fichier.read_text(encoding="utf-8")
         citations = _blocs_de_code(texte)
         for trouve in ANCRE.finditer(texte):

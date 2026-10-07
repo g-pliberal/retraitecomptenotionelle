@@ -1585,6 +1585,11 @@ qu'on a corrigé.
   `veille.yaml` ne garde que les sources à consulter (`docs/veille_droit.md`).
 - **`CLAUDE.md`** : une page, qui renvoie ici. Si un autre outil pilote un jour
   les sessions, un fichier d'entrée à son nom renvoie à la même page.
+- **Les consignes des dossiers** : les règles d'une seule zone, dans le
+  `CLAUDE.md` de son dossier (`src/`, `moteur/`, `data/`), que Claude Code ne
+  charge qu'à la première lecture d'un de ses fichiers, quand la page de la
+  racine est relue à chaque appel de chaque session ; la procédure de veille et
+  la recherche dans le JORF, dans `docs/veille_droit.md`.
 
 Les chiffres qui décrivent le dépôt lui-même (lignes, nombre de tests) sortent
 de la prose ; deux scripts les affichent à la demande :

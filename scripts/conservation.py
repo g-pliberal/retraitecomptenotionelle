@@ -62,7 +62,8 @@ FEUILLE = "docs/feuille_de_route.md"
 
 sys.path.insert(0, str(RACINE / "scripts"))
 from verifier_prose import (  # noqa: E402
-    Zonage, _blocs_de_code, decouper, lignes_produites, paragraphes_geles)
+    Zonage, _blocs_de_code, consigne, consignes, decouper, lignes_produites,
+    paragraphes_geles)
 
 #: Les registres, et ce qui identifie une entrée dans chacun : une clé, ou
 #: plusieurs jointes. Une section qui est un dictionnaire s'identifie par ses
@@ -123,6 +124,10 @@ TABLEAUX_PRODUITS = {"docs/chiffrage_plf.md"}
 ANCRE = re.compile(r"(<!--chiffre:[^>]*-->).*?(<!--/-->)", re.DOTALL)
 
 
+#: Une puce de liste au premier niveau : un déplacement l'emporte seule.
+PUCE = re.compile(r"(?:[-*+]|\d+[.)])\s+")
+
+
 # --------------------------------------------------------------------------
 # Lire un état du dépôt : le répertoire de travail, ou une révision.
 # --------------------------------------------------------------------------
@@ -136,17 +141,19 @@ class Arbre:
         self.revision, self.racine = revision, racine
 
     def documents(self) -> list[str]:
-        """Les documents : ``CLAUDE.md``, ``README.md`` et ``docs/``."""
+        """Les documents : ``CLAUDE.md``, ``README.md``, ``docs/`` et les
+        consignes des dossiers (``verifier_prose.CONSIGNES``)."""
         if self.revision is None:
             chemins = [p.relative_to(self.racine).as_posix()
                        for motif in ("*.md", "docs/**/*.md")
                        for p in self.racine.glob(motif)]
+            chemins += consignes(self.racine)
         else:
             sortie = subprocess.run(
                 ["git", "ls-tree", "-r", "--name-only", self.revision],
                 cwd=self.racine, capture_output=True, text=True, check=True).stdout
             chemins = [c for c in sortie.splitlines() if c.endswith(".md")
-                       and ("/" not in c or c.startswith("docs/"))]
+                       and ("/" not in c or c.startswith("docs/") or consigne(c))]
         return sorted(set(chemins))
 
     def fichiers(self, dossier: str) -> list[str]:
@@ -288,6 +295,23 @@ def tous_les_paragraphes(arbre: Arbre) -> dict[str, list[tuple[str, int, str]]]:
     return index
 
 
+def puces(bloc: str) -> list[tuple[int, str]]:
+    """Les puces de premier niveau d'un paragraphe qui est une liste, chacune
+    avec ses lignes de suite et son rang de ligne dans le paragraphe, sans sa
+    marque : une puce déplacée se retrouve en puce d'une autre liste, numérotée
+    autrement, ou en paragraphe. Rien si le paragraphe n'est pas une liste."""
+    lignes = bloc.split("\n")
+    if not PUCE.match(lignes[0]):
+        return []
+    sortie: list[tuple[int, list[str]]] = []
+    for rang, ligne in enumerate(lignes):
+        if PUCE.match(ligne):
+            sortie.append((rang, [PUCE.sub("", ligne, count=1)]))
+        else:
+            sortie[-1][1].append(ligne)
+    return [(rang, "\n".join(texte)) for rang, texte in sortie]
+
+
 # --------------------------------------------------------------------------
 # Les entrées des registres.
 # --------------------------------------------------------------------------
@@ -399,15 +423,31 @@ def entrees(arbre: Arbre) -> dict[str, dict[str, str]]:
 
 def depuis(revision: str) -> list[str]:
     """Ce qu'une révision portait et que le répertoire de travail n'a plus."""
-    avant, apres = Arbre(revision), Arbre()
+    return pertes_entre(Arbre(revision), Arbre())
+
+
+def pertes_entre(avant: Arbre, apres: Arbre) -> list[str]:
+    """Ce que l'arbre ``avant`` portait et que l'arbre ``apres`` n'a plus.
+
+    Un paragraphe se retrouve entier ou, s'il est une liste, puce par puce :
+    les règles de ``CLAUDE.md`` se déplacent une à une vers les consignes des
+    dossiers. Une puce, ou un paragraphe, se retrouve aussi en puce d'une
+    autre liste.
+    """
     ici = tous_les_paragraphes(apres)
+    connus = set(ici)
+    for lieux in ici.values():
+        connus.update(empreinte(puce) for _, puce in puces(lieux[0][2]))
     pertes = []
     for chemin in avant.documents():
         texte = avant.lire(chemin)
         for debut, _, bloc in paragraphes(texte or ""):
-            if empreinte(bloc) not in ici:
-                apercu = " ".join(bloc.split())
-                pertes.append(f"{chemin}:{debut} : {apercu[:110]}")
+            if empreinte(bloc) in connus:
+                continue
+            for rang, morceau in puces(bloc) or [(0, bloc)]:
+                if empreinte(morceau) not in connus:
+                    apercu = " ".join(morceau.split())
+                    pertes.append(f"{chemin}:{debut + rang} : {apercu[:110]}")
     registres_apres = entrees(apres)
     for registre, cles in entrees(avant).items():
         present = registres_apres.get(registre, {})
