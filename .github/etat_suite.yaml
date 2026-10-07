@@ -1,6 +1,10 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: a6ba7a5868d1db814b9f1cdfd7e33e953d0acd8f
-date: 2026-10-07T21:21:15Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/37687861438
+etat: rouge
+sources: 5c9a2e235dee74ff7ee11e461ed1d3e206f141f0
+date: 2026-10-07T21:42:41Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/37690605874
+echecs:
+  - "FAILED tests/test_parcours.py::test_chaque_chiffre_du_parcours_est_sur_sa_page[### 1. Programme \u2014 trois minutes-/] - AssertionError: ### 1. Programme — trois minutes"
+  - "FAILED tests/test_parcours.py::test_chaque_chiffre_du_parcours_est_sur_sa_page[### 5. Avantages \u2014 deux minutes-/avantages] - AssertionError: ### 5. Avantages — deux minutes"
+  - "FAILED tests/test_parcours.py::test_chaque_compte_du_parcours_est_sur_sa_page[### 5. Avantages \u2014 deux minutes-/avantages] - AssertionError: ### 5. Avantages — deux minutes"
