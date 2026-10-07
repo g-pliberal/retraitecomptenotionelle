@@ -288,8 +288,8 @@ def _cout(ponderation: str = "effectifs", age_legal: str = "", emploi_reportes: 
 
     ``age_legal=aucun`` retire l'âge légal de la proposition : elle part alors
     aux âges du scénario 4, et la prose peut dire ce que la mesure déplace.
-    ``emploi_reportes=0.5`` règle la part des reportés en emploi
-    (``Parametres.part_reportes_en_emploi``), un par défaut.
+    ``emploi_reportes=1`` règle la part des reportés en emploi
+    (``Parametres.part_reportes_en_emploi``), la moitié par défaut.
     ``contribution_etat=entiere`` porte au compte le taux de l'État entier, et
     non sa seule part « retraite ».
 
@@ -1296,9 +1296,9 @@ def tva_requise(**reglages: str) -> float:
     jusqu'au 24 septembre 2026, avant qu'il ne soit figé à 20 %, puis que la
     TVA ne soit retirée de la proposition. Il vaut zéro sous les réglages par
     défaut, qui ne réforment pas la TVA, et la prose ne le cite plus ; il
-    reste pour la variante. Les réglages sont ceux du coût : ``emploi_reportes=0.5`` le donne quand la moitié des
-    reportés travaillent, ``age_legal=aucun`` sans âge légal ; ``quoi=annee``
-    rend l'année la plus exigeante.
+    reste pour la variante. Les réglages sont ceux du coût : ``emploi_reportes=1``
+    le donne quand tous les reportés travaillent, ``age_legal=aucun`` sans âge
+    légal ; ``quoi=annee`` rend l'année la plus exigeante.
     """
     from retraite_notionnelle.cout import taux_tva_requis
     from retraite_notionnelle.donnees.tva import AssietteTva

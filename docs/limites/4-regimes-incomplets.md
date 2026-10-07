@@ -533,7 +533,7 @@ Ce que ce choix déplace est considérable. Sous le taux entier, la fonctionnair
 de l'exemple du README, née en 1975, aurait <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4&contribution_etat=entiere)-->+41,6<!--/--> % d'écart au système
 actuel dans le scénario 4 ; sous la part de la Cour, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4)-->−3,6<!--/--> %. Dans la
 proposition, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6&contribution_etat=entiere)-->+41,5<!--/--> % deviennent <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6)-->−5,6<!--/--> %, et le solde moyen de la proposition
-passe de <!--chiffre:mesure(solde_moyen?scenario=6&contribution_etat=entiere)-->−1,32<!--/--> % à <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,75<!--/--> % du PIB, de <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards&contribution_etat=entiere)-->−40<!--/--> à <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−23<!--/--> milliards
+passe de <!--chiffre:mesure(solde_moyen?scenario=6&contribution_etat=entiere)-->−1,47<!--/--> % à <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,90<!--/--> % du PIB, de <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards&contribution_etat=entiere)-->−44<!--/--> à <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−27<!--/--> milliards
 d'euros par an, parce que les droits qu'elle reprend à la bascule étaient
 gonflés de ce qui payait d'autres pensions. Le privé, la CNRACL, le scénario 1
 et la part salariale ne bougent pas, ni les années d'avant 1995, où le compte
@@ -629,10 +629,10 @@ indexée sur les prix depuis 1941.
 appliqué, année par année, à la distribution des pensions de l'échantillon
 interrégimes de 2020, déplacée du facteur que la grille donne : la pension
 moyenne que la garantie regarde, rapportée à celle du système actuel en 2020.
-Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,61<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,01<!--/--> en 2070. La garantie coûte
+Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,61<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->0,99<!--/--> en 2070. La garantie coûte
 <!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,47<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->14<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->2,8<!--/--> millions de
-bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,34<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->13<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,6<!--/--> millions —, soit
-<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->607<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
+bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,35<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->14<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,7<!--/--> millions —, soit
+<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->616<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
 déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 408<!--/--> depuis 1959. Ces chiffres
 sont bruts des reprises sur succession ; la sous-section qui suit dit comment
 chacun a été établi.
@@ -684,39 +684,52 @@ charge par génération comme en ont eu les réformes de 2010 et de 2023. La
 proposition n'en prévoit pas ; une montée en charge adoucirait les premières
 années, au prix du solde.
 
-**Tous ceux que le report fait attendre sont en emploi — par défaut.** C'est
-ce qui fait de la recette un PLAFOND. Sur la page Coût, la recette de la
-proposition est son taux appliqué à l'assiette que le COR projette aux âges
-d'aujourd'hui ; le report l'élargit du rapport des revenus d'activité de la
-grille sous les deux âges (`SoldeAnnuel.facteur_assiette`). Or tous les
-seniors ne sont pas en emploi : qui arrive à l'âge légal au chômage ou en
-invalidité ne cotise pas davantage, et ce que l'assurance chômage ou
-l'invalidité lui verseraient pendant l'attente n'est compté nulle part.
-Depuis le 24 septembre 2026, un paramètre le dit :
-`Parametres.part_reportes_en_emploi`, <!--chiffre:mesure(parametre?nom=part_reportes_en_emploi)-->100<!--/--> % par défaut. En deçà,
-chaque cohorte reportée de la grille mêle ceux qui travaillent et cotisent
-jusqu'à l'âge légal et ceux qui l'attendent sans activité, sans cotiser ni
-acquérir de droits, et liquident au même âge : ses recettes comme ses pensions
-sont celles de ce mélange (`VoletLiberal.melange`). Il ne joue que sur la page
-Coût ; le simulateur prolonge la situation de chacun.
+**La moitié de ceux que le report fait attendre sont en emploi — par
+défaut.** Sur la page Coût, la recette de la proposition est son taux
+appliqué à l'assiette que le COR projette aux âges d'aujourd'hui ; le report
+l'élargit du rapport des revenus d'activité de la grille sous les deux âges
+(`SoldeAnnuel.facteur_assiette`). Or tous les seniors ne sont pas en emploi :
+qui arrive à l'âge légal au chômage ou en invalidité ne cotise pas davantage,
+et ce que l'assurance chômage ou l'invalidité lui verseraient pendant
+l'attente n'est compté nulle part. Un paramètre le dit,
+`Parametres.part_reportes_en_emploi`, <!--chiffre:mesure(parametre?nom=part_reportes_en_emploi)-->50<!--/--> % par défaut : chaque cohorte
+reportée de la grille mêle ceux qui travaillent et cotisent jusqu'à l'âge
+légal et ceux qui l'attendent sans activité, sans cotiser ni acquérir de
+droits, et liquident au même âge ; ses recettes comme ses pensions sont celles
+de ce mélange (`VoletLiberal.melange`). Il ne joue que sur la page Coût ; le
+simulateur prolonge la situation de chacun.
+
+La part est lue, depuis le 7 octobre 2026, dans les évaluations de la réforme
+de 2010, qui a reculé l'âge légal de 60 à <!--chiffre:illustration()-->62<!--/--> ans : trois ont suivi ce que sont
+devenus ceux qu'elle a fait attendre. La plus récente, sur l'échantillon
+interrégimes de cotisants, trouve que « la moitié passe plus de temps en
+emploi, et environ un quart reçoit une allocation chômage » (IPP, rapport
+n° 61, novembre 2025, § 5.2.1) ; c'est aussi la convention du simulateur du
+COR. Les deux autres l'encadrent : <!--chiffre:illustration()-->37<!--/--> % sur les données de la Cnav, qui
+voient l'invalidité et la maladie (Rabaté et Rochut, document n° 11 de la
+séance du COR du 19 octobre 2016), <!--chiffre:illustration()-->63<!--/--> % des hommes et <!--chiffre:illustration()-->73<!--/--> % des femmes sur
+l'enquête Emploi, dont le champ écarte les invalides, les allocataires de
+l'AAH et qui a fini ses études avant <!--chiffre:illustration()-->18<!--/--> ans (Insee Analyses n° 30, janvier
+2017). Jusque-là, la page supposait que tous travaillaient : c'était un
+plafond. Les trois portent sur le secteur privé et sur un report de 60 à
+<!--chiffre:illustration()-->62<!--/--> ans ; un fonctionnaire que l'âge légal fait attendre garde son emploi, et
+la proposition fait attendre jusqu'à <!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans.
 
 C'est de cette part que dépend l'essentiel de ce que l'âge légal fait au
-solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,75<!--/--> point de PIB quand
-tous les reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0.5)-->−0,90<!--/--> quand la moitié le font, de
+solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,90<!--/--> point de PIB quand
+la moitié des reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=1)-->−0,75<!--/--> quand tous le font, de
 <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−1,05<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−1,25<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
 actuel : sans emploi, le report n'épargne guère que des années de pension, et
 sert ensuite des pensions plus fortes. Aucun impôt ne couvre ce qui reste —
 la TVA à taux unique qui le faisait du 23 au 24 septembre 2026 est retirée —,
-et le déficit s'accumule : la dette de la proposition en 2070 est de <!--chiffre:mesure(dette?scenario=6)-->49<!--/--> % du
-PIB quand tous les reportés travaillent, de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0.5)-->59<!--/--> % quand la moitié le font,
+et le déficit s'accumule : la dette de la proposition en 2070 est de <!--chiffre:mesure(dette?scenario=6)-->59<!--/--> % du
+PIB quand la moitié des reportés travaillent, de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=1)-->49<!--/--> % quand tous le font,
 de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0)-->70<!--/--> % quand aucun, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel et <!--chiffre:mesure(dette?scenario=6&age_legal=aucun)-->86<!--/--> % pour
 la proposition sans âge légal. L'ampleur de son avantage sur le système actuel
-tient donc à ce que les reportés travaillent ; qu'elle en ait un n'en dépend
-plus, depuis que le compte d'un fonctionnaire d'État ne reçoit que la part
-« retraite » du taux de l'État — sous le taux entier, la dette atteindrait
-<!--chiffre:mesure(dette?scenario=6&emploi_reportes=0&contribution_etat=entiere)-->109<!--/--> % si aucun ne travaillait. La part reste à lire dans
-les évaluations de la réforme de 2010, qui a reculé l'âge légal de deux ans :
-elles ont suivi ce que sont devenus ceux qu'elle a fait attendre.
+tient donc à ce que les reportés travaillent. Elle serait bien moindre si le
+compte d'un fonctionnaire d'État recevait le taux de l'État entier, et non sa
+seule part « retraite » : la dette atteindrait alors
+<!--chiffre:mesure(dette?scenario=6&emploi_reportes=0&contribution_etat=entiere)-->109<!--/--> % si aucun ne travaillait.
 
 **Le PIB ne bouge pas.** Plus d'emploi ferait plus de production, et le modèle
 garde le PIB que le COR projette aux âges d'aujourd'hui. Toutes les parts de

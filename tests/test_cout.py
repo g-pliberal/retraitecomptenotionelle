@@ -4136,19 +4136,36 @@ def test_deux_volets_se_melent_par_tete():
 
 
 @pytest.fixture(scope="module")
-def cout_a_mi_emploi():
-    """La page Coût quand la moitié seulement des reportés travaillent."""
-    return memoire.cout(Parametres(part_reportes_en_emploi=0.5),
+def cout_tous_en_emploi():
+    """La page Coût quand tous les reportés travaillent : le plafond, défaut
+    jusqu'au 7 octobre 2026."""
+    return memoire.cout(Parametres(part_reportes_en_emploi=1.0),
                         convention_recette=CONVENTION_ASSIETTE)
 
 
+def test_la_part_des_reportes_en_emploi_est_celle_que_2010_a_mesuree():
+    """La moitié des reportés en emploi, ce qu'a fait le recul de l'âge légal
+    de 60 à 62 ans (IPP, rapport n° 61, 2025), et non plus le plafond de un,
+    dans les deux moteurs ; la page Coût ne cite la source qu'à cette valeur."""
+    import re
+    from pathlib import Path
+
+    js = Path(__file__).resolve().parents[1] / "moteur" / "js"
+    lue = re.search(r"part_reportes_en_emploi: ([0-9.]+),",
+                    (js / "config.js").read_text(encoding="utf-8"))
+    assert Parametres().part_reportes_en_emploi == 0.5
+    assert lue and float(lue.group(1)) == Parametres().part_reportes_en_emploi
+    assert "part === 0.5" in (js / "pages.js").read_text(encoding="utf-8")
+
+
 def test_la_part_des_reportes_en_emploi_elargit_l_assiette_en_proportion(
-        cout_assiette, cout_a_mi_emploi, cout_sans_age_legal):
-    """La moitié des reportés en emploi : l'assiette s'élargit deux fois moins,
-    et le solde de la proposition se range entre celui où tous travaillent et
-    celui où elle n'a pas d'âge légal. Les cinq autres systèmes ne bougent
-    pas : la part ne touche que la proposition."""
-    tous, moitie, sans = (cout_assiette.solde, cout_a_mi_emploi.solde,
+        cout_assiette, cout_tous_en_emploi, cout_sans_age_legal):
+    """La moitié des reportés en emploi, le défaut : l'assiette s'élargit
+    deux fois moins que quand tous travaillent, et le solde de la proposition
+    se range entre celui où tous travaillent et celui où elle n'a pas d'âge
+    légal. Les cinq autres systèmes ne bougent pas : la part ne touche que la
+    proposition."""
+    tous, moitie, sans = (cout_tous_en_emploi.solde, cout_assiette.solde,
                           cout_sans_age_legal.solde)
     for ligne in moitie.projetees():
         plein = tous.annee(ligne.annee)
@@ -4168,9 +4185,9 @@ ANNEES_PORTAGE = [2025, 2026, 2030, 2040, 2050, 2070]
 
 
 @pytest.fixture(scope="module")
-def portage_a_mi_emploi(tmp_path_factory):
+def portage_tous_en_emploi(tmp_path_factory):
     """Le coût refait en JavaScript sous la même part de reportés en emploi
-    que ``cout_a_mi_emploi`` : ``tests/js/comparer-cout.mjs`` le calcule une
+    que ``cout_tous_en_emploi`` : ``tests/js/comparer-cout.mjs`` le calcule une
     fois, et chaque test en compare un morceau."""
     import json
     import shutil
@@ -4181,7 +4198,7 @@ def portage_a_mi_emploi(tmp_path_factory):
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     racine = Path(__file__).resolve().parents[1]
     demande = tmp_path_factory.mktemp("portage") / "cout.json"
-    demande.write_text(json.dumps({"parametres": {"part_reportes_en_emploi": 0.5},
+    demande.write_text(json.dumps({"parametres": {"part_reportes_en_emploi": 1.0},
                                    "annees": ANNEES_PORTAGE,
                                    "groupes": GROUPES_DU_MODELE}), encoding="utf-8")
     calcul = subprocess.run(
@@ -4192,13 +4209,14 @@ def portage_a_mi_emploi(tmp_path_factory):
     return json.loads(calcul.stdout)
 
 
-def test_le_portage_suit_la_part_des_reportes_en_emploi(cout_a_mi_emploi,
-                                                        portage_a_mi_emploi):
-    """Le site n'expose pas la part des reportés en emploi, et aucune page
-    témoin ne la couvre : ``tests/js/comparer-cout.mjs`` refait le coût en
-    JavaScript sous la même part, et chaque solde doit être celui du Python."""
-    portage = portage_a_mi_emploi
-    solde = cout_a_mi_emploi.solde
+def test_le_portage_suit_la_part_des_reportes_en_emploi(cout_tous_en_emploi,
+                                                        portage_tous_en_emploi):
+    """Le site n'expose pas la part des reportés en emploi, et ses pages
+    témoins n'en montrent que le défaut, la moitié :
+    ``tests/js/comparer-cout.mjs`` refait le coût en JavaScript quand tous
+    travaillent, et chaque solde doit être celui du Python."""
+    portage = portage_tous_en_emploi
+    solde = cout_tous_en_emploi.solde
     for annee in ANNEES_PORTAGE:
         ligne = solde.annee(annee)
         lu = portage["annees"][str(annee)]
@@ -4211,40 +4229,40 @@ def test_le_portage_suit_la_part_des_reportes_en_emploi(cout_a_mi_emploi,
             scenario, solde.premiere_annee_projetee, solde.derniere_annee), rel=1e-9)
 
 
-def test_le_portage_refait_le_meme_passe(cout_a_mi_emploi, portage_a_mi_emploi):
+def test_le_portage_refait_le_meme_passe(cout_tous_en_emploi, portage_tous_en_emploi):
     """Aucune page ne montre la reconstitution du passé
     (:meth:`Avenir.reconstitution`) : le comparateur la rend, et chaque année
     publiée doit être refaite comme le fait le Python."""
-    attendue = cout_a_mi_emploi.avenir.reconstitution()
+    attendue = cout_tous_en_emploi.avenir.reconstitution()
     lue = {int(annee): rapport
-           for annee, rapport in portage_a_mi_emploi["reconstitution"].items()}
+           for annee, rapport in portage_tous_en_emploi["reconstitution"].items()}
     assert lue.keys() == attendue.keys()
     for annee, rapport in attendue.items():
         assert lue[annee] == pytest.approx(rapport, rel=1e-9), annee
 
 
-def test_le_portage_decompose_la_trajectoire_de_meme(cout_a_mi_emploi,
-                                                     portage_a_mi_emploi):
+def test_le_portage_decompose_la_trajectoire_de_meme(cout_tous_en_emploi,
+                                                     portage_tous_en_emploi):
     """La décomposition en retraités et en pension moyenne relative
     (:meth:`Avenir.decomposition`), refaite en JavaScript année par année."""
-    avenir = cout_a_mi_emploi.avenir
+    avenir = cout_tous_en_emploi.avenir
     attendue = avenir.decomposition(avenir.premiere_annee_projetee)
     lue = {int(annee): valeurs
-           for annee, valeurs in portage_a_mi_emploi["decomposition"].items()}
+           for annee, valeurs in portage_tous_en_emploi["decomposition"].items()}
     assert attendue and lue.keys() == attendue.keys()
     for annee, (tetes, pension) in attendue.items():
         assert lue[annee][0] == pytest.approx(tetes, rel=1e-9), annee
         assert lue[annee][1] == pytest.approx(pension, rel=1e-9), annee
 
 
-def test_le_portage_decompose_groupe_par_groupe_de_meme(cout_a_mi_emploi,
-                                                        portage_a_mi_emploi):
+def test_le_portage_decompose_groupe_par_groupe_de_meme(cout_tous_en_emploi,
+                                                        portage_tous_en_emploi):
     """La décomposition par groupe de régimes
     (:meth:`Avenir.decomposition_groupes`), refaite en JavaScript."""
-    avenir = cout_a_mi_emploi.avenir
+    avenir = cout_tous_en_emploi.avenir
     attendue = avenir.decomposition_groupes(avenir.premiere_annee_projetee,
                                             GROUPES_DU_MODELE)
-    lue = portage_a_mi_emploi["decomposition_groupes"]
+    lue = portage_tous_en_emploi["decomposition_groupes"]
     assert attendue and lue.keys() == attendue.keys()
     for groupe, serie in attendue.items():
         assert {int(annee) for annee in lue[groupe]} == serie.keys(), groupe
@@ -4252,19 +4270,19 @@ def test_le_portage_decompose_groupe_par_groupe_de_meme(cout_a_mi_emploi,
             assert lue[groupe][str(annee)] == pytest.approx(valeurs, rel=1e-9), (groupe, annee)
 
 
-def test_le_portage_borne_la_fourchette_de_meme(cout_a_mi_emploi, portage_a_mi_emploi):
+def test_le_portage_borne_la_fourchette_de_meme(cout_tous_en_emploi, portage_tous_en_emploi):
     """La borne haute de la fourchette, refaite en JavaScript : la dérive de
     chaque année, les soldes moyens et la dette à l'horizon."""
-    portage = portage_a_mi_emploi
+    portage = portage_tous_en_emploi
     lue = {int(annee): derive for annee, derive in portage["derive"].items()}
-    for ligne in cout_a_mi_emploi.avenir.annees:
+    for ligne in cout_tous_en_emploi.avenir.annees:
         assert lue[ligne.annee] == pytest.approx(ligne.derive, rel=1e-12), ligne.annee
-    solde = cout_a_mi_emploi.solde_derive
+    solde = cout_tous_en_emploi.solde_derive
     for scenario, valeur in portage["soldes_moyens_derive"].items():
         assert valeur == pytest.approx(solde.solde_moyen(
             scenario, solde.premiere_annee_projetee, solde.derniere_annee), rel=1e-9)
     for scenario, valeur in portage["dette_derive"].items():
-        assert valeur == pytest.approx(cout_a_mi_emploi.dette_derive.horizon(scenario),
+        assert valeur == pytest.approx(cout_tous_en_emploi.dette_derive.horizon(scenario),
                                        rel=1e-9, abs=1e-12), scenario
 
 

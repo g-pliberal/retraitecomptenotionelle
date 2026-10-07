@@ -4307,10 +4307,13 @@ referents:
           Enquête Emploi »), lignes 60 et 61 ans
         verification: >-
           Donnée de l'enquête Emploi de l'INSEE, publiée par le COR.
-          L'étape 3 de l'action 138 demande déjà « la part des
-          reportés en emploi lue à l'INSEE au lieu du plafond de un
-          ».
-        etat: a_reprendre
+          C'est un stock, non l'effet d'un report : à 60 ans, des
+          non-retraités qui l'étaient déjà sans réforme. Repris le 7
+          octobre 2026 par l'effet que mesurent les évaluations du
+          recul de l'âge légal de 2010 : la moitié des reportés en
+          emploi (IPP, rapport n° 61, 2025), la part par défaut
+          (`config.py`, `docs/limites/4-regimes-incomplets.md`).
+        etat: repris
         chantier: "138.3"
       - quoi: >-
           Il chiffre la sensibilité de la dépense aux hypothèses
@@ -4527,8 +4530,11 @@ referents:
           C'est une convention du COR, pas une mesure. Elle est plus
           proche du réel qu'un facteur de un, que l'enquête Emploi
           dément : 66 à 72 % des non-retraités sont en emploi à
-          60-61 ans (voir maquette_globale_cor).
-        etat: a_reprendre
+          60-61 ans (voir maquette_globale_cor). Reprise le 7
+          octobre 2026 : la part par défaut est 0,5, qu'une mesure
+          fonde désormais, celle de l'IPP sur l'EIC (rapport n° 61,
+          2025).
+        etat: repris
         chantier: "138.3"
     bilan: >-
       Fermé, le simulateur ne se confronte que par sa documentation de
@@ -5041,8 +5047,14 @@ referents:
         preuve: >-
           classeur par régime du COR (2024), bloc « Effectifs de retraités de
           droit direct » ; COR, document n° 7 de décembre 2024
-        etat: a_reprendre
-        chantier: "138.3"
+        verification: >-
+          Relu le 7 octobre 2026 : l'action 147 l'a fait à son étape 9. La
+          grille prolonge la CNRACL par les retraités que le COR lui
+          projette (`retraites_projetes.csv`,
+          `EffectifsRetraites.CAISSES_PROJETEES`), et non plus par sa part de
+          2024.
+        etat: repris
+        chantier: "147.9"
       - quoi: >-
           Il sépare, à la CNRACL et grade par grade, les départs
           actifs, sédentaires, pour invalidité et en carrière
@@ -5368,8 +5380,10 @@ referents:
           est « conventionnel » (note 9), pas estimé : les valeurs à
           retenir sont plutôt celles de l'enquête Emploi
           (maquette_globale_cor) et de la convention du COR
-          (simulateur_cor).
-        etat: a_reprendre
+          (simulateur_cor). Repris le 7 octobre 2026, sans ses
+          logits, par la part que mesurent les évaluations du recul
+          de 2010 : la moitié (IPP, rapport n° 61, 2025).
+        etat: repris
         chantier: "138.3"
       - quoi: >-
           Il calcule la réversion sur quatre mariages successifs,
@@ -6762,7 +6776,16 @@ referents:
           chez les hommes et 0,73 chez les femmes.
         preuve: >-
           `docs/hypotheses.md:191-212`, au commit `59b7985`
-        etat: a_reprendre
+        verification: >-
+          Les 0,63 et 0,73 de l'INSEE se vérifient (Insee Analyses
+          n° 30, figure 3 : 17 points d'emploi pour 27 de retraite
+          chez les hommes, 16 pour 22 chez les femmes), sur un champ
+          qui écarte les invalides, les allocataires de l'AAH et qui
+          a fini ses études avant 18 ans. Sur l'EIC, l'IPP trouve la
+          moitié (rapport n° 61, 2025, § 5.2.1) ; sur les données de
+          la Cnav, Rabaté et Rochut 37 % (COR, 19 octobre 2016,
+          document n° 11). Reprise le 7 octobre 2026 à 0,5.
+        etat: repris
         chantier: "138.3"
       - quoi: >-
           Il chiffre l'effet retour d'une baisse des pensions : moins de CSG

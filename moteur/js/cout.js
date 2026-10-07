@@ -50,6 +50,7 @@ import { GROUPES_DU_MODELE, ORGANISMES, POSTES } from "./equilibre.js";
 import { RevalorisationServie } from "./revalorisation.js";
 import { AssietteTva } from "./tva.js";
 import { CarrieresIncompletes } from "./population.js";
+import { PARAMETRES_DEFAUT } from "./config.js";
 
 // La règle des pensions servies est née ici, pour la page Coût ; le
 // simulateur s'en sert aussi, pour dire ce qu'un retraité touche aujourd'hui,
@@ -524,7 +525,8 @@ function avantLaBascule(voletGrille, pension) {
  * quand tous travaillent. Voir `_reporte` dans cout.py.
  */
 function reporte(simulateur, carriere, enEmploi) {
-  const part = simulateur.parametres.part_reportes_en_emploi ?? 1.0;
+  const part = simulateur.parametres.part_reportes_en_emploi
+    ?? PARAMETRES_DEFAUT.part_reportes_en_emploi;
   if (part >= 1.0) return enEmploi;
   const attente = carriere.prolongee(
     simulateur.parametres.age_legal_liberal, simulateur.macro, false);

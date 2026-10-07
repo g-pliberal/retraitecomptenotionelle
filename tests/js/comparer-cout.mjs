@@ -10,8 +10,9 @@
  * décomposition en retraités et en pension moyenne relative.
  * `tests/test_cout.py` compare le tout au modèle Python.
  *
- * Il existe pour les paramètres que le site n'expose pas, et qu'aucune page
- * témoin ne couvre donc : la part des reportés en emploi, d'abord.
+ * Il existe pour les paramètres que le site n'expose pas, et dont aucune page
+ * témoin ne couvre donc que le défaut : la part des reportés en emploi,
+ * d'abord.
  *
  *     node tests/js/comparer-cout.mjs cout.json
  */

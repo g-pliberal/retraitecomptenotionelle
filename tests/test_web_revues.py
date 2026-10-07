@@ -430,8 +430,13 @@ def test_cas_types_dit_du_reglage_ce_que_le_solde_dit(contexte):
         assert "inférieur à un" not in cas_types
         assert f"Les {dernier} de la proposition en {fin} disent une marge" in cout
     elif sous_un == len(coefficients):
+        # Sous un partout, le dernier aussi s'écrit sans 1,00, comme le plus
+        # bas : la proposition peut finir tout près de un.
+        precis = g.nombre(coefficients[annee_minimum],
+                          pages.decimales_sous_un(coefficients[annee_minimum]))
+        dernier = g.nombre(coefficients[fin], pages.decimales_sous_un(coefficients[fin]))
         assert f"inférieur à un de {debut} à {fin}" in cas_types
-        assert f"{minimum} au plus bas en {annee_minimum}" in cas_types
+        assert f"{precis} au plus bas en {annee_minimum}" in cas_types
         assert f"{dernier} en {fin}" in cas_types
         assert "Un coefficient inférieur à un est un manque" in cas_types
         assert "supérieur à un chaque année" not in cas_types

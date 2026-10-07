@@ -355,9 +355,10 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: La PART DES REPORTÉS EN EMPLOI : de ceux que l'âge légal fait attendre,
   //: combien travaillent jusqu'à lui. Elle ne joue que sur la page Coût, où
   //: chaque cohorte reportée mêle ceux qui travaillent et cotisent jusqu'à
-  //: l'âge légal et ceux qui l'attendent sans activité. Un par défaut : tous
-  //: travaillent, un plafond. Voir `config.py`.
-  part_reportes_en_emploi: 1.0,
+  //: l'âge légal et ceux qui l'attendent sans activité. La moitié par
+  //: défaut, ce qu'a fait le recul de 60 à 62 ans en 2010 (IPP, 2025) ; un,
+  //: tous travaillent, est un plafond. Voir `config.py`.
+  part_reportes_en_emploi: 0.5,
   // Part des ayants droit qui réclament la garantie : l'hypothèse de l'ASPA,
   // un sur deux. Ne joue que sur le coût lu sur la distribution.
   taux_recours_garantie: 0.5,

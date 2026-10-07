@@ -7041,8 +7041,10 @@ function lectureReglageProposition(r) {
   }
   if (r.sousUn === r.total) {
     return "Pour la proposition, ce facteur est inférieur à un de "
-      + `${r.debut} à ${r.fin} : ${g.nombre(r.minimum, 2)} au plus `
-      + `bas en ${r.anneeMinimum}, ${g.nombre(r.dernier, 2)} en `
+      + `${r.debut} à ${r.fin} : `
+      + `${g.nombre(r.minimum, decimalesSousUn(r.minimum))} au plus `
+      + `bas en ${r.anneeMinimum}, `
+      + `${g.nombre(r.dernier, decimalesSousUn(r.dernier))} en `
       + `${r.fin}. Appliqué, il aurait abaissé les cases d'autant, `
       + `jusqu'à ${g.pourcentage(1 - r.minimum, false, 0)} en `
       + `${r.anneeMinimum}. <strong>Un coefficient inférieur à un est `
@@ -7060,14 +7062,17 @@ function lectureReglageProposition(r) {
 
 /** La note de Coût : le coefficient se lit dans les deux sens, jamais en économie. */
 function noteLectureCoefficient(r) {
-  const dernier = g.nombre(r.dernier, 2);
+  // Sous un, assez de décimales pour ne pas écrire 1,00 ni un manque de 0 %,
+  // comme pour le plus bas : la proposition peut finir tout près de un.
+  const decimalesDernier = r.dernier < 1.0 ? decimalesSousUn(r.dernier) : 2;
+  const dernier = g.nombre(r.dernier, decimalesDernier);
   let lecture;
   if (r.dernier >= 1.0) {
     lecture = `Les ${dernier} de la proposition en ${r.fin} disent une `
       + `marge de ${g.pourcentage(r.dernier - 1, false, 0)}`;
   } else {
     lecture = `Les ${dernier} de la proposition en ${r.fin} disent un `
-      + `manque de ${g.pourcentage(1 - r.dernier, false, 0)}`;
+      + `manque de ${g.pourcentage(1 - r.dernier, false, decimalesDernier - 2)}`;
   }
   if (r.sousUn === r.total) {
     lecture += `, et son plus bas, ${g.nombre(r.minimum, 2)} en `
@@ -10440,10 +10445,10 @@ function coutDetailPostes(contexte) {
   let suitLEmploi = "";
   if (ligne.recetteParAssiette && ligne.facteurAssiette > 1.0 + 1e-9) {
     const ageLegal = age(base.age_legal_liberal || 0.0);
-    // La part des reportés en emploi : tous par défaut, et c'est alors un
-    // plafond ; une part seulement si on la règle, le reste attendant sans
-    // activité.
-    const part = base.part_reportes_en_emploi ?? 1.0;
+    // La part des reportés en emploi : la moitié par défaut, celle que le
+    // recul de 2010 a mise en emploi, le reste attendant sans activité ; tous,
+    // si on la règle à un, et c'est alors un plafond.
+    const part = base.part_reportes_en_emploi ?? PARAMETRES_DEFAUT.part_reportes_en_emploi;
     const tous = part >= 1.0;
     const qui = tous
       ? "qui serait parti plus tôt travaille et cotise jusque-là"
@@ -10456,16 +10461,23 @@ function coutDetailPostes(contexte) {
       ? "C'est un plafond : le modèle suppose que tous ceux que le report "
         + "fait attendre sont en emploi jusqu'à cet âge, comme les carrières "
         + "de sa grille le sont jusqu'à leur départ. "
-        + "<code>part_reportes_en_emploi</code> porte cette hypothèse, un par "
-        + "défaut ; qui arrive à l'âge légal au chômage ou en invalidité ne "
-        + "cotise pas davantage pour autant."
+        + "<code>part_reportes_en_emploi</code> porte cette hypothèse ; qui "
+        + "arrive à l'âge légal au chômage ou en invalidité ne cotise pas "
+        + "davantage pour autant."
       : `Le modèle suppose que ${g.pourcentage(part, false, 0)} de ceux `
         + "que le report fait attendre sont en emploi jusqu'à cet âge "
         + "(<code>part_reportes_en_emploi</code>) ; les autres l'attendent "
-        + "sans activité, sans cotiser ni acquérir de droits.";
+        + "sans activité, sans cotiser ni acquérir de droits."
+        + (part === 0.5
+          ? " C'est ce qu'a fait le recul de l'âge légal de 60 à 62 ans, en "
+            + "2010 : de ceux qu'il a fait attendre, la moitié est restée en "
+            + "emploi, et un quart environ a touché une allocation chômage "
+            + "(IPP, rapport n° 61, 2025). Tous en emploi, ce serait un plafond."
+          : "");
     suitLEmploi = " Elle suit aussi l'emploi, et pour le seul système 4 encore : son "
-      + `âge légal de ${ageLegal} retient au travail qui serait parti `
-      + "plus tôt, et l'assiette que le COR projette aux âges "
+      + `âge légal de ${ageLegal} retient au travail `
+      + (tous ? "qui serait parti" : "une part de ceux qui seraient partis")
+      + " plus tôt, et l'assiette que le COR projette aux âges "
       + "d'aujourd'hui grandit d'autant : "
       + `${g.pourcentage(ligne.facteurAssiette - 1.0, false, 1)} en `
       + `${annee}. ${hypothese}`;

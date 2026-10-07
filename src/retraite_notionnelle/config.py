@@ -872,13 +872,24 @@ class Parametres:
     #: reportée de la grille est le mélange des deux, ses recettes comme ses
     #: pensions (:meth:`VoletLiberal.melange`).
     #:
-    #: Un par défaut : tous travaillent, l'hypothèse que la page Coût faisait
-    #: sans la nommer et que ``limites.md`` appelle un PLAFOND — c'est de lui
-    #: que vient l'essentiel de ce que l'âge légal fait au solde. Ce que font
-    #: réellement les reportés se lit
-    #: dans les évaluations du passage de 60 à 62 ans, en 2010 ; une valeur
-    #: retenue devra y avoir été lue.
-    part_reportes_en_emploi: float = 1.0
+    #: La MOITIÉ par défaut, depuis le 7 octobre 2026 (action 138, étape 3) :
+    #: ce qu'a fait le recul de l'âge légal de 60 à 62 ans, en 2010. Des
+    #: assurés qu'il a fait attendre, « la moitié passe plus de temps en
+    #: emploi, et environ un quart reçoit une allocation chômage » (IPP,
+    #: rapport n° 61, novembre 2025, § 5.2.1 : générations 1950 et 1954 de
+    #: l'échantillon interrégimes de cotisants, hors carrières longues ; 60 %
+    #: reportent leur départ, l'emploi gagne 30 points, le chômage indemnisé
+    #: 15, l'inactivité 18). C'est aussi la convention du simulateur du COR
+    #: (2016). Les deux autres évaluations l'encadrent : 37 % sur les données
+    #: de la Cnav, qui voient l'invalidité et la maladie (Rabaté et Rochut,
+    #: COR, séance du 19 octobre 2016, document n° 11, tableau 7), 63 % des
+    #: hommes et 73 % des femmes sur l'enquête Emploi, dont le champ écarte
+    #: les invalides, les allocataires de l'AAH et qui a fini ses études avant
+    #: 18 ans (Insee Analyses n° 30, janvier 2017, figure 3). Un rend
+    #: l'hypothèse que la page faisait jusque-là, un PLAFOND : tous
+    #: travaillent. C'est de cette part que vient l'essentiel de ce que l'âge
+    #: légal fait au solde (``docs/limites/4-regimes-incomplets.md``).
+    part_reportes_en_emploi: float = 0.5
 
     #: Année dans les euros de laquelle les deux montants ci-dessus sont fixés.
     annee_euros_garantie_vieillesse: int = 2026

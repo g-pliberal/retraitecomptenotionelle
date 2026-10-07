@@ -1771,8 +1771,13 @@ def _(m: Modele):
     for scenario in pages.SCENARIOS_MONTRES:
         assert _proche(ligne.coefficient(scenario) * ligne.depense(scenario),
                        ligne.ressources_de(scenario))
-    assert not _proche(ligne.depense("notionnel_liberal"),
-                       ligne.ressources_de("notionnel_liberal"), 1e-3)
+    # Appliqué, il ramènerait la dépense à la recette CHAQUE année : on le
+    # vérifie là où il s'écarte le plus de un, l'horizon pouvant tomber presque
+    # à l'équilibre — c'est le cas depuis que la moitié seulement des reportés
+    # travaillent (action 138, étape 3).
+    pire = max(m.projetees, key=lambda l: abs(l.coefficient("notionnel_liberal") - 1.0))
+    assert not _proche(pire.depense("notionnel_liberal"),
+                       pire.ressources_de("notionnel_liberal"), 1e-3)
 
 
 @controle("note_du_coefficient_suit_son_signe")
@@ -1792,11 +1797,13 @@ def _(m: Modele):
     dernier = reglage["dernier"]
     cout = TEMOINS_PAR_NOM["cout"]["texte"]
     cas_types = TEMOINS_PAR_NOM["cas_types"]["texte"]
-    # La page Coût nomme l'écart du dernier coefficient, dans le bon sens.
+    # La page Coût nomme l'écart du dernier coefficient, dans le bon sens ; sous
+    # un, avec assez de décimales pour ne pas l'écrire 1,00.
     sens = "un manque de" if dernier < 1.0 else "une marge de"
+    decimales = pages.decimales_sous_un(dernier) if dernier < 1.0 else 2
     ecart = abs(1.0 - dernier)
     attendu = normaliser(f"de la proposition en {reglage['fin']} disent {sens} "
-                         f"{g.pourcentage(ecart, decimales=0)}")
+                         f"{g.pourcentage(ecart, decimales=decimales - 2)}")
     assert attendu in cout, attendu
     # Cas types dit de quel côté de un se tient la proposition : dessous
     # partout, dessus partout, ou — depuis le 23 septembre 2026 — dessous
@@ -1811,7 +1818,7 @@ def _(m: Modele):
     assert cote in cas_types, cote
     for nom, texte in (("cout", cout), ("cas_types", cas_types)):
         if nom == "cout" or sous_un:
-            assert normaliser(g.nombre(dernier, 2)) in texte, nom
+            assert normaliser(g.nombre(dernier, decimales)) in texte, nom
         if reglage["sous_un"]:
             assert normaliser(g.nombre(reglage["minimum"], 2)) in texte, nom
             assert str(reglage["annee_minimum"]) in texte, nom
