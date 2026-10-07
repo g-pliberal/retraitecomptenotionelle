@@ -104,8 +104,11 @@ qu'elle dure. D'où cinq règles.
   parallèle, son bloc le dit, et aucune session ne le récrit plus : chaque
   étape inachevée tient le sien, sous le titre de sa note, et l'ôte en
   finissant.
-- **Chercher avant de lire.** `grep -n` d'abord, puis la seule fenêtre utile
-  (`Read` avec `offset` et `limit`, ou `sed -n`). Ne se lisent jamais en
+- **Chercher avant de lire.** L'outil Grep d'abord, qui omet les lignes
+  géantes et passe ce que `.ignore` nomme (`grep -n` par Bash, seulement sur
+  un fichier sans ligne démesurée), puis la seule fenêtre utile (`Read` avec
+  `offset` et `limit`, ou `sed -n`) ; un hook refuse un `Read` sans `limit`
+  de plus de 50 000 octets (`.claude/hooks/lecture.py`). Ne se lisent jamais en
   entier : `moteur/js/pages.js`, `docs/feuille_de_route.md` et les archives,
   `docs/architecture.md`, `README.md`, `tests/test_simulateur.py`,
   `scripts/verifier_donnees.py`, `data/sources.yaml`, ni `moteur/donnees.json`

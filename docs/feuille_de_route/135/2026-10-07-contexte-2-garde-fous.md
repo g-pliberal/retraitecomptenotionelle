@@ -1,14 +1,5 @@
 # Le contexte, étape 2 : les garde-fous mécaniques
 
-**Reprise, au 7 octobre 2026.** À faire, quatre gestes sûrs, sans attendre la
-mesure : un hook `PreToolUse` qui refuse de lire d'un bloc un fichier texte de
-plus de 50 000 caractères, et dit de chercher puis de lire par fenêtre ; un
-`.ignore` qui retire des recherches larges les gros fichiers fabriqués ; dans
-`CLAUDE.md`, l'outil Grep conseillé plutôt que `grep -n` par Bash ; le mode
-discret du hook d'Impeccable. Commencer par le hook, avec son test. La liste
-des fichiers à ne jamais lire en entier reste dans `CLAUDE.md` jusqu'à
-l'étape 3, qui la remplace par la règle du hook. Détail : ce fichier.
-
 **Le 7 octobre 2026, ce qui est établi.**
 
 - *Les gros fichiers.* 83 fichiers texte dépassent 50 000 caractères
@@ -68,3 +59,16 @@ prochain démarrage.
 
 En finissant, la session ôte le bloc « Reprise » de cette note, et ne touche
 à celui de l'action que si elle est la dernière des cinq étapes.
+
+**Le 7 octobre 2026, ce qui est fait.** Les quatre gestes.
+`.claude/hooks/lecture.py`, déclaré sous `PreToolUse` pour `Read`, refuse un
+fichier texte de plus de 50 000 octets lu sans `limit`, et laisse passer une
+image, un PDF, un carnet, un fichier absent, une entrée illisible ; un chemin
+relatif se lit depuis le `cwd` de l'appel. `tests/test_hook_lecture.py` le
+lance comme Claude Code, sur des entrées factices (niveau `controle`). Le
+`.ignore` à la racine nomme les fichiers du plan. `CLAUDE.md` conseille
+l'outil Grep et nomme le hook ; sa liste des fichiers à ne jamais lire en
+entier reste, pour l'étape 3. Impeccable : `hook.quiet` à `true` dans
+`.impeccable/config.json`, la clé que donne `reference/hooks.md`, qu'aucune
+action de `impeccable hooks` ne pose. Le hook ne vaut qu'au démarrage d'une
+session : celle-ci ne l'a pas vu refuser en vrai.

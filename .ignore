@@ -1,0 +1,10 @@
+# Ce que les recherches larges (outil Grep, ripgrep) passent : de gros fichiers
+# fabriqués, souvent d'une ligne géante, qu'une session ne lit pas en
+# travaillant (feuille de route, action 135, étape 2 du contexte). Nommés,
+# ils se cherchent encore.
+tests/temoins/*.json
+moteur/donnees.json
+data/derive/*.json
+.claude/skills/impeccable/scripts/data/
+.claude/skills/impeccable/scripts/live-browser*.js
+.claude/skills/impeccable/scripts/modern-screenshot.umd.js
