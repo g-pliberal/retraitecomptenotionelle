@@ -12,7 +12,7 @@
 
 import { DateMois } from "../calendrier.js";
 import * as chrono from "../chronologie.js";
-import { nomFiabilite, Fiabilite } from "../serie.js";
+import { fiabiliteDepuisTexte, nomFiabilite, Fiabilite } from "../serie.js";
 import { derniereAnnee, ligneCotisee } from "./commun.js";
 import * as coordonner from "./coordonner.js";
 import { compterLesPeriodes, familleDesRegimes } from "./etranger.js";
@@ -20,9 +20,10 @@ import { compterLesPeriodes, familleDesRegimes } from "./etranger.js";
 /**
  * La version du schéma de l'étape : la deuxième compte les trimestres des
  * enfants enfant par enfant, chacun dans son régime ; la troisième, les
- * trimestres que les périodes hors de France apportent.
+ * trimestres que les périodes hors de France apportent ; la quatrième, ceux
+ * que les emplois classés ajoutent.
  */
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 
 /** Les trois comptes, dans l'ordre où l'étape les écrit. */
 export const COMPTES = ["assurance", "services", "cotises"];
@@ -45,6 +46,42 @@ const REGIME_GENERAL = "regime_general";
 export const CONDITIONS = Object.freeze([
   "tout_enfant", "ne_en_service", "ne_avant_radiation", "accouchement_apres_recrutement",
 ]);
+
+/**
+ * Les fiches des bonifications et des majorations que l'emploi CLASSÉ ouvre
+ * dans le régime qui le pensionne, lues par `FichesDatees` à la date d'effet.
+ * Voir `FICHES_DES_EMPLOIS` du Python.
+ */
+export const FICHES_DES_EMPLOIS = Object.freeze(["bonification_cinquieme_police_penitentiaire"]);
+
+/**
+ * Les conditions qu'une version de ces fiches pose à la carrière : la durée de
+ * services classés qui ouvre l'âge anticipé ou minoré à la génération, ou la
+ * radiation pour invalidité. Voir `CONDITIONS_DES_EMPLOIS` du Python.
+ */
+export const CONDITIONS_DES_EMPLOIS = Object.freeze(["duree_de_l_age_minore"]);
+
+/**
+ * Ce que l'emploi classé ajoute dans le régime qui le pensionne : des services
+ * liquidés, sous le pourcentage maximum sauf `auDelaDuMaximum` ; de la durée
+ * tous régimes, que la surcote du fonctionnaire ne lit pas (L. 14, III) ; une
+ * majoration de la seule durée que ce régime oppose à sa décote. Voir
+ * `TrimestresEmploi` du Python.
+ */
+export class TrimestresEmploi {
+  constructor({ regime, fiche, version, texte, services, duree, majoration,
+    auDelaDuMaximum, fiabilite }) {
+    this.regime = regime;
+    this.fiche = fiche;
+    this.version = version;
+    this.texte = texte;
+    this.services = services;
+    this.duree = duree;
+    this.majoration = majoration;
+    this.auDelaDuMaximum = auDelaDuMaximum;
+    this.fiabilite = fiabilite;
+  }
+}
 
 /**
  * Les trimestres dus au titre des enfants, enfant par enfant : chacun a son
@@ -104,7 +141,7 @@ export class MajorationEnfants {
  */
 export class Durees {
   constructor({ carriere, parAnnee, horsAnnee, enfants, trimestres, trimestresParRegime,
-    bonificationsParRegime, etranger = null }) {
+    bonificationsParRegime, etranger = null, emplois = [] }) {
     this.carriere = carriere;
     /** Par compte, par régime et par année, les trimestres crédités. */
     this.parAnnee = parAnnee;
@@ -112,7 +149,10 @@ export class Durees {
     this.horsAnnee = horsAnnee;
     /** Les trimestres dus au titre des enfants, et le régime qui les porte. */
     this.enfants = enfants;
-    /** La durée d'assurance tous régimes, enfants compris. */
+    /**
+     * La durée d'assurance tous régimes, enfants et bonifications des emplois
+     * classés compris.
+     */
     this.trimestres = trimestres;
     /** La durée d'assurance de chaque régime, plafonnée année par année. */
     this.trimestresParRegime = trimestresParRegime;
@@ -124,6 +164,47 @@ export class Durees {
      * `pourLeTaux` les y ajoute.
      */
     this.etranger = etranger;
+    /**
+     * Ce que les emplois classés ajoutent, régime par régime : leur durée est
+     * dans `trimestres` ; leurs services et leurs majorations, la liquidation
+     * du régime qui les sert les y lit.
+     */
+    this.emplois = emplois;
+  }
+
+  /**
+   * Les trimestres que les emplois classés ajoutent aux services liquidés de
+   * ces régimes, sous le pourcentage maximum.
+   */
+  servicesDesEmplois(membres) {
+    return this.emplois.filter((e) => membres.includes(e.regime))
+      .reduce((somme, e) => somme + e.services, 0);
+  }
+
+  /**
+   * Les trimestres que les emplois classés ajoutent à la seule durée que ces
+   * régimes opposent à leur décote (L. 14, I).
+   */
+  majorationsDesEmplois(membres) {
+    return this.emplois.filter((e) => membres.includes(e.regime))
+      .reduce((somme, e) => somme + e.majoration, 0);
+  }
+
+  /**
+   * Ce que `trimestres` doit aux emplois classés, et que la surcote du
+   * fonctionnaire ne lit pas (L. 14, III).
+   */
+  get dureeHorsSurcote() {
+    return this.emplois.reduce((somme, e) => somme + e.duree, 0);
+  }
+
+  /**
+   * Ceux de leurs trimestres de services qui portent le pourcentage au-delà du
+   * maximum, comme les bonifications de L. 12.
+   */
+  bonificationsDesEmplois(membres) {
+    return this.emplois.filter((e) => membres.includes(e.regime) && e.auDelaDuMaximum)
+      .reduce((somme, e) => somme + e.services, 0);
   }
 
   /**
@@ -200,6 +281,12 @@ export class Durees {
       },
       trimestres: this.trimestres,
       etranger: this.etranger === null ? null : this.etranger.donnees(),
+      emplois: this.emplois.map((e) => ({
+        regime: e.regime, fiche: e.fiche, version: e.version,
+        services: e.services, duree: e.duree, majoration: e.majoration,
+        au_dela_du_maximum: e.auDelaDuMaximum,
+        fiabilite: nomFiabilite(e.fiabilite),
+      })),
     };
   }
 }
@@ -302,9 +389,92 @@ export function compter(moteur, coordination, avantagesNonContributifs = true) {
     ? compterLesPeriodes(carriere, coordination.etranger, carriere.trimestresActuels,
       familleDesRegimes(moteur, parAnnee.assurance.keys()))
     : null;
+  // Ce que les emplois classés ajoutent : leur bonification à la durée tous
+  // régimes, comme les services et bonifications admissibles en liquidation
+  // (L. 14, I), hors de toute année ; le reste, la liquidation du régime qui
+  // les sert l'y lit.
+  const emplois = avantagesNonContributifs
+    ? trimestresDesEmplois(moteur, carriere, anneeLiquidation)
+    : [];
+  trimestres += emplois.reduce((somme, emploi) => somme + emploi.duree, 0);
   return new Durees({
     carriere, parAnnee, horsAnnee, enfants: majorationEnfants, trimestres,
-    trimestresParRegime, bonificationsParRegime, etranger,
+    trimestresParRegime, bonificationsParRegime, etranger, emplois,
+  });
+}
+
+/**
+ * Ce que les emplois classés de la carrière ajoutent, une fiche après l'autre
+ * (`FICHES_DES_EMPLOIS`), chacune lue à la date d'effet de la pension. Voir
+ * `trimestres_des_emplois` du Python.
+ */
+export function trimestresDesEmplois(moteur, carriere, anneeLiquidation) {
+  const mois = carriere.age_liquidation !== null ? carriere.dateLiquidation.mois : 1;
+  const dateEffet = `${String(anneeLiquidation).padStart(4, "0")}-${String(mois).padStart(2, "0")}-01`;
+  const emplois = [];
+  for (const nom of FICHES_DES_EMPLOIS) {
+    const version = moteur.fichesDatees.version(nom, dateEffet);
+    if (version === null || !version.parametres.existe) {
+      continue;
+    }
+    const emploi = bonificationDEmploi(moteur, carriere, nom, version);
+    if (emploi !== null) {
+      emplois.push(emploi);
+    }
+  }
+  return emplois;
+}
+
+/**
+ * La bonification d'un emploi classé, ou null s'il n'en ouvre pas : une
+ * fraction du temps servi dans les statuts qui l'ouvrent, sous son plafond,
+ * diminuée des services accomplis au-delà de l'âge qui la réduit, comptés à
+ * l'année, arrondie au trimestre, un demi-trimestre et plus comptant pour un.
+ * La condition, que la version nomme, et qu'une radiation pour invalidité
+ * dispense de remplir. Voir `bonification_d_emploi` du Python.
+ */
+export function bonificationDEmploi(moteur, carriere, fiche, version) {
+  const parametres = version.parametres;
+  const statuts = [...parametres.statuts];
+  const regime = parametres.regime;
+  if (!moteur.catalogue.contient(regime)
+      || !coordonner.regimesRoutes(moteur, statuts).has(regime)) {
+    return null;
+  }
+  const borne = coordonner.borneCarriere(carriere);
+  const servies = carriere.dureeDeService(statuts, borne);
+  if (servies <= 0) {
+    return null;
+  }
+  const condition = parametres.condition;
+  if (!CONDITIONS_DES_EMPLOIS.includes(condition)) {
+    throw new Error(`${fiche}.${version.id} : condition inconnue, ${JSON.stringify(condition)}`);
+  }
+  let fiabilite = fiabiliteDepuisTexte(parametres.fiabilite);
+  if (carriere.radiationPourInvalidite === null) {
+    const derogation = moteur.agesCategorieActive.derogation(
+      parametres.classement, carriere.generation);
+    if (derogation === null || servies + 1e-9 < derogation.servicesRequis) {
+      return null;
+    }
+    fiabilite = Math.min(fiabilite, derogation.fiabilite);
+  }
+  let auDela = 0;
+  if (parametres.age_de_reduction !== null && parametres.age_de_reduction !== undefined) {
+    const annee = carriere.annee_naissance + Math.trunc(parametres.age_de_reduction);
+    const avant = carriere.dureeDeService(statuts, borne === null ? annee : Math.min(annee, borne));
+    auDela = Math.max(0, servies - avant);
+  }
+  const annees = Math.min(servies * Number(parametres.fraction),
+    Math.trunc(parametres.plafond_trimestres) / 4) - auDela;
+  const trimestres = annees > 0 ? Math.trunc(annees * 4 + 0.5) : 0;
+  if (trimestres <= 0) {
+    return null;
+  }
+  return new TrimestresEmploi({
+    regime, fiche, version: version.id, texte: version.texte,
+    services: trimestres, duree: trimestres, majoration: 0,
+    auDelaDuMaximum: Boolean(parametres.au_dela_du_maximum), fiabilite,
   });
 }
 

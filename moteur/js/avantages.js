@@ -36,6 +36,7 @@
 
 import { CAS_TYPES, ageLiquidationPour } from "./castypes.js";
 import { DEMI_TRANCHE, generations, ponderation } from "./cout.js";
+import { FICHES_DES_EMPLOIS } from "./droit/compter.js";
 import { CarriereLongue, CatalogueRegimes } from "./regimes.js";
 import { ScenarioActuel } from "./scenario-actuel.js";
 
@@ -305,7 +306,31 @@ export const NEUTRALISATIONS = [
       + "fonctionnaire handicapé sans décote",
     par: "table",
   },
+  {
+    code: "bonification_cinquieme_services_actifs",
+    quoi: "les fiches des bonifications des emplois classés sont retirées : le "
+      + "policier et le surveillant pénitentiaire liquident leurs seuls services",
+    par: "table",
+  },
 ];
+
+/**
+ * Les statuts qu'une version des fiches des emplois classés bonifie : les seules
+ * carrières que le retrait de ces fiches peut toucher. Voir
+ * `statuts_des_emplois` du Python.
+ */
+export function statutsDesEmplois(simulateur) {
+  const fiches = simulateur.scenarioActuel.fichesDatees.fiches();
+  const statuts = new Set();
+  for (const nom of FICHES_DES_EMPLOIS) {
+    for (const version of fiches[nom]?.versions ?? []) {
+      for (const statut of version.parametres.statuts ?? []) {
+        statuts.add(statut);
+      }
+    }
+  }
+  return statuts;
+}
 
 /**
  * Les codes mesurés par un retrait dans la carrière, et le motif par lequel on
@@ -389,6 +414,12 @@ export function scenariosNeutralises(simulateur) {
   const handicap = neuf(simulateur.catalogue);
   handicap.invalidites = handicap.invalidites.sans("handicap");
   variantes.retraite_anticipee_handicap = handicap;
+
+  // Les fiches des bonifications des emplois classés, retirées : seule une
+  // carrière servie dans un emploi qu'elles bonifient y perd quelque chose.
+  const emplois = neuf(simulateur.catalogue);
+  emplois.fichesDatees = emplois.fichesDatees.sans(...FICHES_DES_EMPLOIS);
+  variantes.bonification_cinquieme_services_actifs = emplois;
   return variantes;
 }
 
@@ -488,6 +519,12 @@ export function recalculer(simulateur, cas, generation, age, reelle, variantes =
     } else {
       const variante = retraits[code];
       if (variante === undefined) continue;
+      // Une carrière qu'aucune fiche ne bonifie n'a rien à perdre au retrait :
+      // aucun cas type de la grille n'est policier.
+      if (code === "bonification_cinquieme_services_actifs"
+          && !statutsDesEmplois(simulateur).has(cas.affiliation)) {
+        continue;
+      }
       const carriere = carriereVariante(simulateur, cas, generation, age);
       // Une carrière qui ne déclare aucune incapacité n'a rien à perdre au
       // retrait de la fiche du handicap : aucun cas type de la grille n'en déclare.

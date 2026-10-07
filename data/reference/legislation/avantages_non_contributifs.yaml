@@ -984,28 +984,33 @@ avantages:
       8 avril 1957 art. 6, Loi n° 89-1007 du 31 décembre 1989 art. 5,
       Loi n° 96-452 du 28 mai 1996 art. 24, Loi n° 2003-1312 du
       30 décembre 2003 art. 93, R. 411-2 code de la sécurité intérieure]
-    fiches: []
+    fiches: [bonification_cinquieme_police_penitentiaire]
     creation: 1957
     fin: null
     regimes: fonction publique, catégories actives
-    etat_modele: absent
+    etat_modele: integre
     ligne_cascade: null
     pourquoi_pas_chiffre: >-
-      Même raison que pour les militaires. La base légale n'est pas dans le
-      CPCMR : elle est éclatée dans les statuts de chaque corps, et elle n'a pas
-      été lue — l'écrire ici sans l'avoir lue serait une déduction, pas une
-      source.
+      L'avantage est une DURÉE : vingt trimestres au plus, aux services liquidés
+      sous le maximum de 75 % et à la durée d'assurance de la décote. Le
+      scénario 1 le sert depuis le 7 octobre 2026 au statut super-actif de
+      l'État, policiers et surveillants pénitentiaires ; les sapeurs-pompiers,
+      les douaniers de la branche surveillance et les contrôleurs aériens n'ont
+      pas de statut qui le porte.
+    chiffre_par: scripts/cout_avantages.py
     sans_chiffre: >-
-      le corps d'appartenance n'est pas saisi ; le jaune en compte 108 453, à
-      19,1 trimestres, la plus longue
+      aucun cas type de la grille n'est policier ni surveillant ; le jaune en
+      compte 108 453, à 19,1 trimestres, la plus longue
     denombrement:
       source_id: sre_jaune_pensions
       tableau_a7: hors_l12
       tableau_50: hors_l12
     cout:
-      mesurable_par: aucune
+      mesurable_par: modele
       note: >-
-        Les textes des quatre corps sont lus (lois de 1957 pour la police, 1989
+        Mesurée par retrait des fiches des emplois classés
+        (scripts/cout_avantages.py), sur les cas types qu'elles bonifient : la
+        grille n'en porte aucun. Les textes des quatre corps sont lus (lois de 1957 pour la police, 1989
         pour les contrôleurs aériens, 1996 pour les surveillants pénitentiaires,
         2003 pour les douanes). Dénombrée sous l'intitulé « bonifications ne
         relevant pas de l'article L. 12 du CPCMR » : 108 453 pensions civiles de

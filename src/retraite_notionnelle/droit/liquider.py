@@ -879,6 +879,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         # 75 % à une mère de trois enfants à qui le droit en doit près de 80.
         bonifications = (
             somme_ordonnee(bonifications_par_regime.get(m, 0) for m in membres)
+            + durees.bonifications_des_emplois(membres)
             if periode.taux_maximum_bonifie and periode.taux_plein else 0
         )
         # Les membres d'un groupe liquidé ensemble se somment ANNÉE PAR
@@ -903,6 +904,15 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             # toutes ; seules les bonifications y restent.
             portes = majoration_enfants.par_regime()
             numerateur -= somme_ordonnee(portes[m][0] - portes[m][1] for m in membres if m in portes)
+        #: Ce que l'emploi classé ajoute à la seule durée que ce régime oppose
+        #: à sa décote (:class:`~.compter.TrimestresEmploi`).
+        majorations_emplois = durees.majorations_des_emplois(membres)
+        if durees_cultes is None:
+            # LA BONIFICATION DE L'EMPLOI CLASSÉ entre aux services, sous le
+            # pourcentage maximum : le minimum qui suit borne les services et
+            # elle ensemble à la durée requise, et seules les bonifications de
+            # L. 12 le dépassent.
+            numerateur += durees.services_des_emplois(membres)
         trimestres_regime = min(numerateur, proratisation + bonifications)
         #: Rapport des trimestres liquidables à la durée requise, borné au
         #: taux maximum — 80/75 avec des bonifications, un sans elles.
@@ -969,8 +979,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             decote, age_annulation, fiabilite_decote = decote_opposable(moteur, 
                 periode, carriere, annee_liquidation
             )
-            trimestres_decote = trimestres_de_decote(moteur, 
-                periode, carriere, trimestres, requis, age_liquidation,
+            trimestres_decote = trimestres_de_decote(moteur,
+                periode, carriere, trimestres + majorations_emplois, requis, age_liquidation,
                 age_annulation
             )
             if (taux_plein_des_femmes(periode, carriere, durees, age_liquidation)
@@ -1025,8 +1035,11 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             # La surcote ne récompense que les trimestres COTISÉS APRÈS
             # l'âge légal ET au-delà de la durée requise. Les compter tous
             # majorait la pension de qui a commencé tôt sans jamais
-            # travailler au-delà de l'âge d'ouverture.
-            supplementaires = max(0, trimestres - requis)
+            # travailler au-delà de l'âge d'ouverture. Celle du fonctionnaire
+            # ne lit pas les bonifications des emplois classés (L. 14, III).
+            supplementaires = max(0, trimestres - requis - (
+                durees.duree_hors_surcote
+                if moteur.catalogue[code].famille == "fonction_publique" else 0))
             # La surcote se compte depuis l'âge légal DE DROIT COMMUN, même
             # pour un emploi classé, et le militaire n'en a aucune : le III
             # de l'article L. 14 ne la donne qu'au « fonctionnaire civil ».
@@ -1205,7 +1218,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     pour_invalidite is not None
                     or ancien_droit
                     or trimestres_decote <= 0
-                    or trimestres >= requis
+                    or trimestres + majorations_emplois >= requis
                     or (minoration > 0 and age_annulation is not None
                         and age_liquidation + 1e-9
                         >= age_annulation - minoration / 4.0)

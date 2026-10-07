@@ -1086,9 +1086,12 @@ class FichesDatees:
     (``revenu_annuel_moyen_independants``) : quelles années, comment les
     moyenner, lesquelles écarter, et, pour les seconds, quelle table du nombre
     d'années. Une période y renvoie par ``regles_du_salaire_annuel_moyen``.
+    Et les bonifications des emplois classés de la fonction publique, que
+    ``compter.trimestres_des_emplois`` lit (``compter.FICHES_DES_EMPLOIS``).
     """
 
-    NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants")
+    NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
+            "bonification_cinquieme_police_penitentiaire")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}
@@ -1101,15 +1104,30 @@ class FichesDatees:
         """Les fiches préparées : ce que le paquet du site porte."""
         return self._fiches
 
+    def sans(self, *noms: str) -> FichesDatees:
+        """Les mêmes fiches, celles-ci retirées : la contrefactuelle qui mesure
+        ce qu'elles servent (:mod:`~retraite_notionnelle.avantages`)."""
+        copie = object.__new__(FichesDatees)
+        copie._fiches = {nom: fiche for nom, fiche in self._fiches.items()
+                         if nom not in noms}
+        return copie
+
     def regle(self, nom: str, date_effet: str) -> dict | None:
         """Les paramètres de la version de ``nom`` qui vaut pour une pension
         prenant effet à ``date_effet`` (AAAA-MM-JJ) ; ``None`` sans fiche ou
         sans version à cette date."""
+        version = self.version(nom, date_effet)
+        return None if version is None else dict(version["parametres"])
+
+    def version(self, nom: str, date_effet: str) -> dict | None:
+        """La version de ``nom`` qui vaut pour une pension prenant effet à
+        ``date_effet`` (AAAA-MM-JJ), telle que :func:`versions.preparer` la
+        garde — son identifiant, son texte, ses paramètres ; ``None`` sans
+        fiche ou sans version à cette date."""
         fiche = self._fiches.get(nom)
         if fiche is None:
             return None
-        version = versions.applicable(fiche, {"liquidation.date_effet": date_effet})
-        return None if version is None else dict(version["parametres"])
+        return versions.applicable(fiche, {"liquidation.date_effet": date_effet})
 
 
 @dataclass(frozen=True)

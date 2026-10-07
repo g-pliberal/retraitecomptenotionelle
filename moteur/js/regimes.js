@@ -512,9 +512,9 @@ export class AnneesRevenuAnnuelMoyenIndependants extends TableParGeneration {
 
 /**
  * Les fiches dont le moteur lit, à la date d'effet d'une pension, les paramètres
- * de la version qui vaut : le salaire annuel moyen du régime général et le
- * revenu annuel moyen des artisans et des commerçants. Voir `FichesDatees` du
- * Python.
+ * de la version qui vaut : le salaire annuel moyen du régime général, le revenu
+ * annuel moyen des artisans et des commerçants, et les bonifications des emplois
+ * classés. Voir `FichesDatees` du Python.
  */
 export class FichesDatees {
   constructor(paquet) {
@@ -527,16 +527,39 @@ export class FichesDatees {
   }
 
   /**
+   * Les mêmes fiches, celles-ci retirées : la contrefactuelle qui mesure ce
+   * qu'elles servent (`avantages.js`). Voir `sans` du Python.
+   */
+  sans(...noms) {
+    const fiches = {};
+    for (const [nom, fiche] of Object.entries(this._fiches)) {
+      if (!noms.includes(nom)) {
+        fiches[nom] = fiche;
+      }
+    }
+    return new FichesDatees({ fiches_datees: fiches });
+  }
+
+  /**
    * Les paramètres de la version de `nom` qui vaut pour une pension prenant
    * effet à `dateEffet` (AAAA-MM-JJ) ; `null` sans fiche ou sans version.
    */
   regle(nom, dateEffet) {
+    const version = this.version(nom, dateEffet);
+    return version === null ? null : { ...version.parametres };
+  }
+
+  /**
+   * La version de `nom` qui vaut pour une pension prenant effet à `dateEffet`
+   * (AAAA-MM-JJ), telle que le paquet la porte — son identifiant, son texte,
+   * ses paramètres ; `null` sans fiche ou sans version à cette date.
+   */
+  version(nom, dateEffet) {
     const fiche = this._fiches[nom] ?? null;
     if (fiche === null) {
       return null;
     }
-    const version = applicable(fiche, { "liquidation.date_effet": dateEffet });
-    return version === null ? null : { ...version.parametres };
+    return applicable(fiche, { "liquidation.date_effet": dateEffet });
   }
 }
 

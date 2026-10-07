@@ -12,7 +12,9 @@ Les trimestres de chaque compte, régime par régime et année par année :
 
 Et les trimestres dus au titre des enfants, que le droit accorde DANS un
 régime, celui que la priorité entre régimes désigne (R. 173-15) :
-:func:`majoration_pour_enfants`.
+:func:`majoration_pour_enfants` ; ceux que l'emploi classé ajoute dans le
+régime qui le pensionne, bonification de services ou majoration de durée :
+:func:`trimestres_des_emplois`.
 
 Ce que l'étape écrit, :class:`Durees`, suit son schéma,
 ``data/reference/etapes/compter_les_durees.yaml``. Son jumeau est
@@ -42,8 +44,9 @@ if TYPE_CHECKING:
 
 #: La version du schéma de l'étape : la deuxième compte les trimestres des
 #: enfants enfant par enfant, chacun dans son régime ; la troisième, les
-#: trimestres que les périodes hors de France apportent.
-SCHEMA_VERSION = 3
+#: trimestres que les périodes hors de France apportent ; la quatrième, ceux
+#: que les emplois classés ajoutent.
+SCHEMA_VERSION = 4
 
 #: Les trois comptes, dans l'ordre où l'étape les écrit.
 COMPTES = ("assurance", "services", "cotises")
@@ -71,6 +74,17 @@ _REGIME_GENERAL = "regime_general"
 #: article 24…).
 CONDITIONS = ("tout_enfant", "ne_en_service", "ne_avant_radiation",
               "accouchement_apres_recrutement")
+
+#: Les fiches des bonifications et des majorations que l'emploi CLASSÉ ouvre
+#: dans le régime qui le pensionne, lues par :class:`FichesDatees
+#: <retraite_notionnelle.scenarios.actuel.FichesDatees>` à la date d'effet.
+FICHES_DES_EMPLOIS = ("bonification_cinquieme_police_penitentiaire",)
+
+#: Les conditions qu'une version de ces fiches pose à la carrière
+#: (``contenu.parametres.condition``) : ``duree_de_l_age_minore``, la durée de
+#: services classés qui ouvre l'âge anticipé ou minoré à la génération
+#: (``legislation/categorie_active.csv``), ou la radiation pour invalidité.
+CONDITIONS_DES_EMPLOIS = ("duree_de_l_age_minore",)
 
 
 @dataclass(frozen=True)
@@ -150,6 +164,44 @@ class MajorationEnfants:
         return list(dict.fromkeys(enfant.dispositif for enfant in self.enfants))
 
 
+@dataclass(frozen=True)
+class TrimestresEmploi:
+    """Ce que l'emploi classé ajoute dans le régime qui le pensionne.
+
+    Une BONIFICATION de services — le cinquième des policiers — entre aux
+    services liquidés, mais « dans la limite du taux maximal de 75 % »
+    (service des retraites de l'État) : seules celles de L. 12 portent le
+    pourcentage au-delà (L. 13), et elle n'en est pas. Elle entre aussi à la
+    durée d'assurance, qui « totalise la durée des services et bonifications
+    admissibles en liquidation » (L. 14, I), et par elle à la durée tous
+    régimes ; mais non à celle qui ouvre la surcote du fonctionnaire : « les
+    bonifications de durée de services et majorations de durée d'assurance, à
+    l'exclusion de celles accordées au titre des enfants et du handicap […]
+    ne sont pas prises en compte » (L. 14, III). Une MAJORATION de durée qui
+    ne vaut que « pour l'application des dispositions du I de l'article
+    L. 14 » ne joue que sur la décote du régime qui l'accorde.
+    """
+
+    #: Le régime qui la sert.
+    regime: str
+    #: La fiche et la version appliquées, et le texte qui fait naître celle-ci.
+    fiche: str
+    version: str
+    texte: str | None
+    #: Trimestres ajoutés aux services liquidés, sous le pourcentage maximum.
+    services: int
+    #: Trimestres ajoutés à la durée d'assurance tous régimes, hors de celle
+    #: qui ouvre la surcote du fonctionnaire.
+    duree: int
+    #: Trimestres ajoutés à la seule durée que ce régime oppose à sa décote, et
+    #: au minimum garanti qui en dépend.
+    majoration: int
+    #: La bonification porte-t-elle le pourcentage au-delà du maximum, comme
+    #: celles de L. 12 (``taux_maximum_bonifie``) ?
+    au_dela_du_maximum: bool
+    fiabilite: Fiabilite
+
+
 @dataclass(frozen=True, eq=False)
 class Durees:
     """Ce que l'étape écrit. Son schéma :
@@ -169,7 +221,8 @@ class Durees:
     hors_annee: dict[str, dict[str, int]]
     #: Les trimestres dus au titre des enfants, et le régime qui les porte.
     enfants: MajorationEnfants | None
-    #: La durée d'assurance tous régimes, enfants compris.
+    #: La durée d'assurance tous régimes, enfants et bonifications des emplois
+    #: classés compris.
     trimestres: int
     #: La durée d'assurance de chaque régime, plafonnée année par année,
     #: enfants compris dans celui qui les porte.
@@ -181,6 +234,34 @@ class Durees:
     #: de régimes : hors de :attr:`trimestres` et de la durée de chaque
     #: régime, qui proratise ; :meth:`pour_le_taux` les y ajoute.
     etranger: TrimestresEtrangers | None = None
+    #: Ce que les emplois classés ajoutent, régime par régime : leur durée est
+    #: dans :attr:`trimestres` ; leurs services et leurs majorations, la
+    #: liquidation du régime qui les sert les y lit
+    #: (:meth:`services_des_emplois`, :meth:`majorations_des_emplois`).
+    emplois: tuple[TrimestresEmploi, ...] = ()
+
+    def services_des_emplois(self, membres: tuple[str, ...]) -> int:
+        """Les trimestres que les emplois classés ajoutent aux services
+        liquidés de ces régimes, sous le pourcentage maximum."""
+        return somme_ordonnee(e.services for e in self.emplois if e.regime in membres)
+
+    def majorations_des_emplois(self, membres: tuple[str, ...]) -> int:
+        """Les trimestres que les emplois classés ajoutent à la seule durée
+        que ces régimes opposent à leur décote (L. 14, I)."""
+        return somme_ordonnee(e.majoration for e in self.emplois if e.regime in membres)
+
+    @property
+    def duree_hors_surcote(self) -> int:
+        """Ce que :attr:`trimestres` doit aux emplois classés, et que la
+        surcote du fonctionnaire ne lit pas (L. 14, III), « quel que soit le
+        régime de retraite de base au titre duquel elles ont été acquises »."""
+        return somme_ordonnee(e.duree for e in self.emplois)
+
+    def bonifications_des_emplois(self, membres: tuple[str, ...]) -> int:
+        """Ceux de leurs trimestres de services qui portent le pourcentage
+        au-delà du maximum, comme les bonifications de L. 12."""
+        return somme_ordonnee(e.services for e in self.emplois
+                              if e.regime in membres and e.au_dela_du_maximum)
 
     def pour_le_taux(self, famille: str | None, nationale: bool = False) -> int:
         """La durée d'assurance tous régimes que le taux d'un régime de cette
@@ -238,6 +319,12 @@ class Durees:
                     for e in enfants.enfants]},
             "trimestres": self.trimestres,
             "etranger": None if self.etranger is None else self.etranger.donnees(),
+            "emplois": [
+                {"regime": e.regime, "fiche": e.fiche, "version": e.version,
+                 "services": e.services, "duree": e.duree, "majoration": e.majoration,
+                 "au_dela_du_maximum": e.au_dela_du_maximum,
+                 "fiabilite": e.fiabilite.name.lower()}
+                for e in self.emplois],
         }
 
 
@@ -347,8 +434,15 @@ def compter(moteur: ScenarioActuel, coordination: Coordination,
                                      carriere.trimestres_actuels,
                                      famille_des_regimes(moteur, par_annee["assurance"]))
                 if coordination.etranger else None)
+    # Ce que les emplois classés ajoutent : leur bonification à la durée tous
+    # régimes, comme les services et bonifications admissibles en liquidation
+    # (L. 14, I), hors de toute année ; le reste, la liquidation du régime qui
+    # les sert l'y lit.
+    emplois = (trimestres_des_emplois(moteur, carriere, annee_liquidation)
+               if avantages_non_contributifs else ())
+    trimestres += somme_ordonnee(emploi.duree for emploi in emplois)
     return Durees(carriere, par_annee, hors_annee, majoration_enfants, trimestres,
-                  trimestres_par_regime, bonifications_par_regime, etranger)
+                  trimestres_par_regime, bonifications_par_regime, etranger, emplois)
 
 
 def services_a_temps_partiel(trimestres: int, quotite: float) -> int:
@@ -360,6 +454,87 @@ def services_a_temps_partiel(trimestres: int, quotite: float) -> int:
     if quotite >= 1.0:
         return trimestres
     return int(trimestres * quotite + 0.5)
+
+
+def trimestres_des_emplois(moteur: ScenarioActuel, carriere: Carriere,
+                           annee_liquidation: int) -> tuple[TrimestresEmploi, ...]:
+    """Ce que les emplois classés de la carrière ajoutent, une fiche après
+    l'autre (:data:`FICHES_DES_EMPLOIS`).
+
+    La version de chaque fiche se lit à la date d'effet de la pension. Une
+    fiche sans version à cette date, ou dont la version dit que le droit
+    n'existe pas encore, n'ajoute rien ; les autres disent le statut qui
+    ouvre la bonification, le régime qui la sert, et comment la compter
+    (:func:`bonification_d_emploi`).
+    """
+    mois = carriere.date_liquidation.mois if carriere.age_liquidation is not None else 1
+    date_effet = f"{annee_liquidation:04d}-{mois:02d}-01"
+    emplois = []
+    for nom in FICHES_DES_EMPLOIS:
+        version = moteur.fiches_datees.version(nom, date_effet)
+        if version is None or not version["parametres"].get("existe"):
+            continue
+        emploi = bonification_d_emploi(moteur, carriere, nom, version)
+        if emploi is not None:
+            emplois.append(emploi)
+    return tuple(emplois)
+
+
+def bonification_d_emploi(moteur: ScenarioActuel, carriere: Carriere, fiche: str,
+                          version: dict) -> TrimestresEmploi | None:
+    """La bonification d'un emploi classé, ou ``None`` s'il n'en ouvre pas.
+
+    Une fraction du temps servi dans les statuts qui l'ouvrent — « un
+    cinquième du temps qu'ils ont effectivement passé en position d'activité
+    dans des services actifs de police » (loi n° 57-444, article 1er) —, sous
+    son plafond — « cinq annuités » —, diminuée des services accomplis
+    au-delà de l'âge qui la réduit — « à concurrence de la durée des services
+    accomplis au-delà de cinquante-cinq ans », puis cinquante-sept, jusqu'en
+    août 2023 —, ceux-ci comptés à l'année : l'année de l'anniversaire est
+    réputée servie avant lui. Elle se compte en trimestres, arrondie comme
+    les services et bonifications de L. 13, un demi-trimestre et plus
+    comptant pour un.
+
+    La condition, que la version nomme (:data:`CONDITIONS_DES_EMPLOIS`) :
+    ``duree_de_l_age_minore``, la durée de services classés qui ouvre l'âge
+    minoré à la génération — vingt-cinq ans, puis vingt-sept —, que la
+    radiation pour invalidité dispense de remplir. Une condition que le
+    moteur ne connaît pas l'arrête (§ 6.7).
+    """
+    parametres = version["parametres"]
+    statuts = list(parametres["statuts"])
+    regime = parametres["regime"]
+    if (regime not in moteur.catalogue
+            or regime not in coordonner.regimes_routes(moteur, statuts)):
+        return None
+    borne = coordonner.borne_carriere(carriere)
+    servies = carriere.duree_de_service(statuts, borne)
+    if servies <= 0:
+        return None
+    condition = parametres["condition"]
+    if condition not in CONDITIONS_DES_EMPLOIS:
+        raise ValueError(f"{fiche}.{version['id']} : condition inconnue, {condition!r}")
+    fiabilite = Fiabilite.depuis_texte(parametres["fiabilite"])
+    if carriere.radiation_pour_invalidite is None:
+        derogation = moteur.ages_categorie_active.derogation(
+            parametres["classement"], carriere.generation)
+        if derogation is None or servies + 1e-9 < derogation.services_requis:
+            return None
+        fiabilite = min(fiabilite, derogation.fiabilite)
+    au_dela = 0.0
+    if parametres.get("age_de_reduction") is not None:
+        annee = carriere.annee_naissance + int(parametres["age_de_reduction"])
+        avant = carriere.duree_de_service(statuts, annee if borne is None else min(annee, borne))
+        au_dela = max(0.0, servies - avant)
+    annees = (min(servies * float(parametres["fraction"]),
+                  int(parametres["plafond_trimestres"]) / 4) - au_dela)
+    trimestres = int(annees * 4 + 0.5) if annees > 0 else 0
+    if trimestres <= 0:
+        return None
+    return TrimestresEmploi(
+        regime=regime, fiche=fiche, version=version["id"], texte=version["texte"],
+        services=trimestres, duree=trimestres, majoration=0,
+        au_dela_du_maximum=bool(parametres["au_dela_du_maximum"]), fiabilite=fiabilite)
 
 
 def majoration_pour_enfants(moteur: ScenarioActuel, carriere: Carriere,

@@ -446,6 +446,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     // bonifications » (L. 12 CPCMR).
     const bonifications = (periode.taux_maximum_bonifie && periode.taux_plein)
       ? membres.reduce((somme, m) => somme + (bonificationsParRegime.get(m) ?? 0), 0)
+        + durees.bonificationsDesEmplois(membres)
       : 0;
     let numerateur = dureesCultes !== null
       ? dureesCultes.depuis1998 : cumulPlafonne(acquisParRegime, membres);
@@ -460,6 +461,12 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           numerateur -= accordes - services;
         }
       }
+    }
+    // Ce que l'emploi classé ajoute à la seule durée que ce régime oppose à sa
+    // décote ; et sa bonification, aux services, sous le pourcentage maximum.
+    const majorationsEmplois = durees.majorationsDesEmplois(membres);
+    if (dureesCultes === null) {
+      numerateur += durees.servicesDesEmplois(membres);
     }
     let trimestresRegime = Math.min(numerateur, proratisation + bonifications);
     // Rapport des trimestres liquidables à la durée requise, borné au taux
@@ -523,7 +530,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       );
       ageAnnulation = ageAnnulationPeriode;
       trimestresDecote = trimestresDeDecote(
-        moteur, periode, carriere, trimestres, requis, ageLiquidation, ageAnnulation,
+        moteur, periode, carriere, trimestres + majorationsEmplois, requis, ageLiquidation,
+        ageAnnulation,
       );
       if (tauxPleinDesFemmes(periode, carriere, cumulPlafonne, ageLiquidation)
           || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation)
@@ -580,8 +588,10 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       // classé, depuis l'âge anticipé ou minoré majoré de cinq ou dix ans
       // (XXIV, D, de la loi du 14 avril 2023) —, et le militaire n'en a
       // aucune : le III de l'article L. 14 ne la donne qu'au « fonctionnaire
-      // civil ».
-      let supplementaires = Math.max(0, trimestres - requis);
+      // civil », et ne lit pas les bonifications des emplois classés.
+      let supplementaires = Math.max(0, trimestres - requis - (
+        moteur.catalogue.obtenir(code).famille === "fonction_publique"
+          ? durees.dureeHorsSurcote : 0));
       const ageOuverture = ouvrir.ageSurcote(moteur, periode, carriere);
       if (periode.surcote_par_trimestre && supplementaires > 0
           && ageLiquidation >= ageOuverture
@@ -730,7 +740,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         ouvert: pourInvalidite !== null
           || ancienDroit
           || trimestresDecote <= 0
-          || trimestres >= requis
+          || trimestres + majorationsEmplois >= requis
           || (minoration > 0 && ageAnnulation !== null
             && ageLiquidation + 1e-9 >= ageAnnulation - minoration / 4),
         // Le d et la minoration ne valent que pour la fonction publique.

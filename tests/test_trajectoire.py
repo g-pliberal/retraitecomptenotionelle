@@ -46,7 +46,10 @@ Ce que la première exécution a montré, le 5 octobre 2026 :
   +5,1 % à un départ de janvier 2022, +4,9 % en octobre 2023, +1,6 % en 2024 ;
   corrigé le jour même (action 138, étape 20 : `valeurs_service_datees.csv`),
   les valeurs du point concordent. La bonification du cinquième des super-actifs et
-  la majoration de durée des hospitaliers actifs, absentes (138.17).
+  la majoration de durée des hospitaliers actifs, absentes (138.17) ; la première
+  servie le 7 octobre 2026 (fiche bonification_cinquieme_police_penitentiaire),
+  les durées du policier concordent, et sa pension s'écarte de celle de
+  TRAJECTOiRE, qui borne la bonification (ci-dessous).
   L'arrondi des services de la fonction publique : OUVERT.
 * **Contre TRAJECTOiRE** — sa chaîne de coefficients du salaire annuel moyen
   (`revaloSam`), qui ne suit pas les colonnes de la Cnav : de −11 % sur les
@@ -57,7 +60,9 @@ Ce que la première exécution a montré, le 5 octobre 2026 :
   douze ; il range le chômage du cas type 3 hors de la durée du régime
   général (coefficient de proratisation de 0,86). Les âges et les durées des
   emplois super-actifs. Le traitement de référence revalorisé comme les
-  pensions. Le plafond de 75 % que les bonifications ne lèvent pas. Le RAFP
+  pensions. Le plafond de 75 % que les bonifications ne lèvent pas. La
+  bonification du cinquième du policier servie en majoration du taux, bornée à
+  cinq points et proratisée (`majoreBonifFonc`), et non aux services. Le RAFP
   servi en rente sous 5 125 points. Ses paramètres projetés depuis 2024.
 * **Une convention, à trancher** — les taux d'acquisition des points : le
   dépôt les minimaux, TRAJECTOiRE les moyens des entreprises, comme Destinie ;
@@ -356,9 +361,13 @@ DUREE_ACTIFS = (
     "trimestres au super-actif né en 1955 ; TRAJECTOiRE lui en demande 162 ; l'écart "
     "est le sien")
 BONIFICATION_CINQUIEME = (
-    "le dépôt ne sert pas la bonification du cinquième des super-actifs (vingt "
-    "trimestres au plus), que TRAJECTOiRE sert au policier du cas type 8, en durée et en "
-    "majoration de pension, avec l'ISS dans l'assiette ; registre, 138.17")
+    "la bonification du cinquième du policier du cas type 8 : vingt trimestres des deux "
+    "côtés, mais TRAJECTOiRE la sert en majoration du taux, bornée à cinq points et "
+    "multipliée par le coefficient de proratisation (`majoreBonifFonc`), soit 132/166 de "
+    "80 % au policier né en 1960, quand la loi la fait entrer « pour la liquidation de "
+    "ladite pension » (loi n° 57-444, article 1er) : 152/162 de 75 % au dépôt, sous le "
+    "maximum de 75 % (fiche bonification_cinquieme_police_penitentiaire) ; l'écart est "
+    "le sien. TRAJECTOiRE porte aussi l'ISS dans l'assiette, que le dépôt n'a pas")
 MAJORATION_HOSPITALIERS = (
     "le dépôt ne sert pas la majoration de durée d'assurance d'un an par dix ans de "
     "services de l'hospitalier de catégorie active (loi n° 2003-775, art. 78), que "
@@ -458,12 +467,9 @@ ECARTS.update(_ecarts(SUPER_ACTIFS, "taux", {"cor_8_1960": -0.0125}, 1e-6))
 ECARTS.update(_ecarts(DUREE_ACTIFS, "trimestres_requis", {
     "cor_8_1955": -8.0, "cor_8_1960": -4.0, "cor_8_1963": -2.0, "cor_8_1964": -1.0,
     "cor_8_1970": -1.0, "cor_9_1964": 1.0}, 1e-6))
-ECARTS.update(_ecarts(BONIFICATION_CINQUIEME, "trimestres", {
-    "cor_8_1955": -19.67, "cor_8_1960": -20.0, "cor_8_1963": -20.0, "cor_8_1964": -20.33,
-    "cor_8_1970": -19.67}, 0.01))
 ECARTS.update(_ecarts(BONIFICATION_CINQUIEME, "fonction_publique", {
-    "cor_8_1955": -0.0171, "cor_8_1960": -0.0698, "cor_8_1963": -0.0299,
-    "cor_8_1964": -0.0350}, 0.002))
+    "cor_8_1955": 0.1212, "cor_8_1960": 0.0711, "cor_8_1963": 0.1077,
+    "cor_8_1964": 0.0999}, 0.002))
 ECARTS.update(_ecarts(MAJORATION_HOSPITALIERS, "trimestres", {
     "cor_9_1955": -15.0, "cor_9_1960": -14.67, "cor_9_1963": -15.0, "cor_9_1964": -15.33,
     "cor_9_1970": -15.0}, 0.01))

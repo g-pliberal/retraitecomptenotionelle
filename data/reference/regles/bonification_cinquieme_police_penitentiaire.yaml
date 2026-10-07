@@ -1,0 +1,273 @@
+schema_version: 1
+id: bonification_cinquieme_police_penitentiaire
+intitule: >-
+  Bonification du cinquième des policiers actifs et des surveillants pénitentiaires :
+  une annuité par cinq années de services super-actifs, cinq au plus, aux services
+  liquidés dans la limite du pourcentage de 75 %, à la durée d'assurance de la décote
+  et non à celle de la surcote ; réduite, jusqu'en août 2023, des services accomplis
+  au-delà de cinquante-cinq ans, puis de cinquante-sept.
+domaine: duree
+regimes:
+- fonction_publique_etat
+etape: compter_les_durees
+face: droit
+etat: approchee
+lit:
+- les années servies dans le statut fonctionnaire_etat_super_actif, jusqu'à la liquidation
+- la durée de services super-actifs qui ouvre l'âge minoré à la génération
+  (legislation/categorie_active.csv)
+- la radiation des cadres pour invalidité
+- l'année de naissance, pour les services accomplis au-delà de l'âge qui réduit la
+  bonification
+- liquidation.date_effet
+ecrit:
+- les trimestres de bonification, aux services liquidés de la fonction publique de
+  l'État et à sa durée d'assurance pour la décote (Durees.emplois)
+dates_qui_decident:
+- liquidation.date_effet
+# Les paramètres que le moteur lit (droit/compter.py, `trimestres_des_emplois`, et
+# son jumeau) : le statut qui ouvre la bonification et le régime qui la sert ; la
+# fraction du temps servi et son plafond, en trimestres ; la condition, que le
+# moteur connaît par son nom ; l'âge au-delà duquel les services réduisent la
+# bonification ; et si elle porte le pourcentage au-delà du maximum, ce que ni la
+# loi de 1957 ni celle de 1996 ne font : seules les bonifications de L. 12 le
+# portent à 80 % (L. 13), et le service des retraites de l'État les borne à 75 %.
+versions:
+- id: avant_la_loi_de_1957
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006451453, article: 1er, en_vigueur: 1957-04-09}
+  nee_de: LEGIARTI000006451453
+  bornes:
+    liquidation.date_effet: [null, 1957-01-01]
+  contenu:
+    droit: >-
+      aucune bonification : la loi n° 57-444 l'accorde « à compter du 1er janvier 1957 »
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: loi_de_1957
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006451453, article: 1er, en_vigueur: 1957-04-09}
+  - {id: LEGIARTI000006451459, article: 6, en_vigueur: 1957-04-09}
+  - {id: LEGIARTI000006696955, article: 24, en_vigueur: 1996-05-29}
+  - {id: LEGIARTI000006696956, article: 24, en_vigueur: 2007-02-06}
+  nee_de: LEGIARTI000006451453
+  bornes:
+    liquidation.date_effet: [1957-01-01, 2011-07-01]
+  contenu:
+    droit: >-
+      « une bonification pour la liquidation de ladite pension, égale à un cinquième du
+      temps qu'ils ont effectivement passé en position d'activité dans des services
+      actifs de police », pas plus de cinq annuités ; aux surveillants pénitentiaires
+      depuis 1996, la même (loi n° 96-452, article 24)
+    conditions: >-
+      une pension d'ancienneté — vingt-cinq années de services effectifs ouvrant droit à
+      la bonification, que l'article 2 de la loi oppose au départ anticipé —, ou une
+      pension pour invalidité ou par limite d'âge ; réduite à concurrence des services
+      accomplis au-delà de cinquante-cinq ans
+    parametres:
+      existe: true
+      statuts: [fonctionnaire_etat_super_actif]
+      regime: fonction_publique_etat
+      classement: super_active
+      fraction: 0.2
+      plafond_trimestres: 20
+      condition: duree_de_l_age_minore
+      age_de_reduction: 55
+      au_dela_du_maximum: false
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: loi_du_9_novembre_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023033645, article: 1er, en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000023033650, article: 2, en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000023033660, article: 24, en_vigueur: 2011-07-01}
+  nee_de: LEGIARTI000023033645
+  bornes:
+    liquidation.date_effet: [2011-07-01, 2023-09-01]
+  contenu:
+    droit: la même bonification
+    conditions: >-
+      vingt-sept années de services effectifs ouvrant droit à la bonification (article 2,
+      loi n° 2010-1330, article 38), ou l'invalidité, ou la limite d'âge ; réduite à
+      concurrence des services accomplis « au-delà de cinquante-sept ans »
+    parametres:
+      existe: true
+      statuts: [fonctionnaire_etat_super_actif]
+      regime: fonction_publique_etat
+      classement: super_active
+      fraction: 0.2
+      plafond_trimestres: 20
+      condition: duree_de_l_age_minore
+      age_de_reduction: 57
+      au_dela_du_maximum: false
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: loi_du_14_avril_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047452953, article: 1er, en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000048697299, article: 1er, en_vigueur: 2023-12-28}
+  - {id: LEGIARTI000047453009, article: 24, en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000048697310, article: 24, en_vigueur: 2023-12-28}
+  - {id: LEGIARTI000047452833, article: L. 12, en_vigueur: 2023-09-01}
+  nee_de: LEGIARTI000047452953
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: >-
+      la même bonification, aux agents « et aux anciens agents », sans réduction pour les
+      services accomplis au-delà d'un âge ; cumulée avec la bonification des militaires
+      et les majorations de durée « dans la limite de vingt trimestres » (L. 12, L. 14)
+    conditions: >-
+      « la condition de durée de services mentionnée au onzième alinéa du 1° du I de
+      l'article L. 24 » : vingt-sept années de services super-actifs, sauf radiation
+      pour invalidité ou par limite d'âge — pour les surveillants dès le 1er septembre
+      2023, pour les policiers depuis le 28 décembre 2023 (loi n° 2023-1250, article 97),
+      la loi d'avril ayant gardé jusque-là la pension d'ancienneté de 1957
+    parametres:
+      existe: true
+      statuts: [fonctionnaire_etat_super_actif]
+      regime: fonction_publique_etat
+      classement: super_active
+      fraction: 0.2
+      plafond_trimestres: 20
+      condition: duree_de_l_age_minore
+      age_de_reduction: null
+      au_dela_du_maximum: false
+      fiabilite: moyenne
+  exemples: aucun trouvé
+approximations:
+- version: [loi_de_1957, loi_du_9_novembre_2010, loi_du_14_avril_2023]
+  ecart: >-
+    Le statut réunit policiers et surveillants pénitentiaires, et le modèle leur sert
+    les dates de la police. Les surveillants n'ont la bonification que pour les pensions
+    prenant effet depuis le 29 mai 1996, d'une annuité au plus en 1996, deux en 1997,
+    trois en 1998 et quatre en 1999 (loi n° 96-452, article 24, IV) ; les services
+    accomplis au-delà de leur limite d'âge n'y comptent pas, quand ceux des policiers la
+    réduisent. Les autres emplois que le statut couvre — ingénieurs du contrôle de la
+    navigation aérienne, identificateurs de l'institut médico-légal, égoutiers — ont des
+    règles propres, que le modèle ne distingue pas.
+  effet: non mesuré ; les liquidations de surveillants d'avant 2000 reçoivent trop
+- version: [loi_de_1957, loi_du_9_novembre_2010, loi_du_14_avril_2023]
+  ecart: >-
+    La radiation par limite d'âge, qui ouvre la bonification sans la durée de services,
+    n'est pas portée : le modèle ne l'ouvre qu'à la durée de services super-actifs qui
+    ouvre l'âge minoré à la génération, ou à la radiation pour invalidité. Les
+    services accomplis au-delà de l'âge qui réduit la bonification se comptent à
+    l'année : l'année de cet anniversaire est réputée servie avant lui.
+  effet: non mesuré ; l'agent entré tard qui part à sa limite d'âge n'a rien
+- version: [loi_de_1957, loi_du_9_novembre_2010, loi_du_14_avril_2023]
+  ecart: >-
+    La bonification n'entre qu'à la durée d'assurance de la fonction publique de l'État,
+    pour la décote et le minimum garanti : la durée tous régimes, que le régime général
+    oppose à sa propre décote, ne la lit pas, faute d'avoir lu comment la Cnav reçoit
+    les bonifications des régimes spéciaux.
+  effet: non mesuré ; ne joue que pour l'ancien policier passé au privé
+- version: [loi_de_1957, loi_du_9_novembre_2010, loi_du_14_avril_2023]
+  ecart: >-
+    L'indemnité de sujétions spéciales des policiers entre dans l'assiette de leur
+    pension depuis 1983, contre une retenue majorée (loi n° 57-444, article 6 bis,
+    LEGIARTI000006451461) : le modèle liquide le traitement seul, et verse l'indemnité
+    au RAFP avec les autres primes.
+  effet: >-
+    non mesuré au dépôt ; TRAJECTOiRE la porte (cas type 8 du COR)
+sources:
+  lu_le: 2026-10-07
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Lire comment le service des retraites de l'État applique, de 2004 à 2023, la
+    « pension d'ancienneté » de l'article 1er de la loi de 1957 : le modèle y lit la
+    durée de services qui ouvre l'âge minoré, vingt-cinq puis vingt-sept ans.
+  - >-
+    Lire si la Cnav compte la bonification dans la durée tous régimes d'un ancien
+    policier liquidé au régime général.
+  - >-
+    Porter l'indemnité de sujétions spéciales dans l'assiette de la pension des
+    policiers (article 6 bis de la loi de 1957 et son décret).
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 57-444 du 8 avril 1957, articles 1er, 2, 6 et 6 bis, toutes leurs rédactions
+      dans l'index LEGI (LEGIARTI000006451453 à LEGIARTI000048697299)
+    date: 2023-12-28
+  - type: legifrance
+    reference: >-
+      loi n° 96-452 du 28 mai 1996, article 24, ses six rédactions (LEGIARTI000006696955
+      à LEGIARTI000048697310)
+    date: 2023-12-28
+  - type: jorf
+    reference: >-
+      loi n° 2023-270 du 14 avril 2023, article 10, XII et XVII (JORFARTI000047445097) ;
+      loi n° 2023-1250 du 26 décembre 2023, article 97 (JORFARTI000048668794)
+    date: 2023-12-27
+  - type: legifrance
+    reference: >-
+      L. 12, L. 13, L. 14 et L. 24 CPCMR, rédactions en vigueur (LEGIARTI000053280361,
+      LEGIARTI000048844775, LEGIARTI000047452804) : la bonification du i de L. 12 et
+      les bonifications des emplois classés se cumulent dans la limite de vingt
+      trimestres ; celles qui ne sont pas accordées au titre des enfants ou du handicap
+      ne comptent pas pour la surcote
+    date: 2023-12-31
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, page « Les bonifications » : les bonifications
+      spécifiques des fonctionnaires actifs « ne sont prises en compte que dans la
+      limite du taux maximal de 75 % »
+    url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/les-bonifications
+    date: 2026-10-07
+  - type: autre
+    reference: >-
+      Conseil d'orientation des retraites, séance du 23 mars 2023, document n° 15, « Les
+      catégories actives de la fonction publique : définition et historique », § 3.3 et
+      3.4.1 : une annuité par cinq années de services, cinq au plus ; pas de surcote ;
+      pas de dépassement de 75 % ; la réduction au-delà de cinquante-sept ans
+    url: >-
+      https://www.cor-retraites.fr/sites/default/files/2023-03/Doc_15_SG_Catégories%20actives_fonction%20publique.pdf
+    date: 2023-03-23
+  - type: autre
+    reference: >-
+      réponse ministérielle à la question écrite n° 7025 (16e législature, JO du 20 juin
+      2023, p. 5610) : les policiers nationaux « peuvent bénéficier, sous conditions,
+      pour le calcul de leurs droits à pension, d'une annuité supplémentaire par période
+      de cinq années de services effectifs sans que la bonification ne puisse être
+      supérieure à cinq ans » ; les policiers municipaux, classés en catégorie active,
+      ne l'ont pas
+    url: https://questions.assemblee-nationale.fr/dyn/16/questions/QANR5L16QE7025.pdf
+    date: 2023-06-20
+textes_a_rattacher:
+- reference: loi n° 89-1007 du 31 décembre 1989, article 5 (ingénieurs du contrôle de la navigation aérienne)
+- reference: loi n° 2003-1312 du 30 décembre 2003, article 93 (douaniers de la branche surveillance)
+code:
+  python: >-
+    scenarios/actuel.py : FichesDatees, qui lit les versions de cette fiche ;
+    droit/compter.py : trimestres_des_emplois, bonification_d_emploi ;
+    droit/liquider.py : liquider_chaque_regime, qui ajoute la bonification aux
+    services et à la durée de la décote
+  javascript: >-
+    moteur/js/regimes.js : FichesDatees ; moteur/js/droit/compter.js :
+    trimestresDesEmplois, bonificationDEmploi ; moteur/js/droit/liquider.js
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_bonifications_emplois.py, tests/test_trajectoire.py]
+referents:
+  trajectoire:
+    equivalent: >-
+      bonifDeterministes (R/fonctionsCalculsDivers.R) : « 4 trim tous les 5 ans, limites
+      a 20 », en durée tous régimes, et une majoration de pension à part
+      (`majoration_pour_bonification`) ; l'indemnité de sujétions spéciales dans la base
+    confrontation: >-
+      le 7 octobre 2026, sur les sorties du 5 (tests/test_trajectoire.py) : vingt
+      trimestres au policier du cas type 8, des deux côtés, au tiers de trimestre près
+      de ses services
+historique:
+- >-
+  2026-10-07 — née de l'étape 17 de l'action 138 : le dépôt ne servait aucune
+  bonification de service, et TRAJECTOiRE servait celle-ci (registre, 138.17).
+effet: >-
+  Le policier ou le surveillant qui réunit la durée de l'âge minoré : vingt trimestres
+  de services à qui en a servi vingt-cinq, soit jusqu'à 15 % de pension à qui part à
+  l'âge minoré, et la décote qu'ils effacent.
