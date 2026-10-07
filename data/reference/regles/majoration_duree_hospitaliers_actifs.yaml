@@ -1,0 +1,253 @@
+schema_version: 1
+id: majoration_duree_hospitaliers_actifs
+intitule: >-
+  Majoration de durée d'assurance des fonctionnaires hospitaliers de catégorie active,
+  pour les pensions prenant effet depuis 2008 : quatre trimestres par période de dix
+  années de services effectifs, au prorata, pour la seule décote ; cumulée depuis
+  septembre 2023 avec les bonifications des emplois classés dans la limite de vingt
+  trimestres.
+domaine: duree
+regimes:
+- cnracl
+etape: compter_les_durees
+face: droit
+etat: approchee
+lit:
+- les années servies dans le statut fonctionnaire_hospitalier_actif, et la dernière
+  année servie dans la fonction publique civile
+- les années de services effectifs dans les statuts de la fonction publique civile
+- la durée de services actifs et l'âge anticipé de la génération
+  (legislation/categorie_active.csv)
+- l'âge à la liquidation
+- liquidation.date_effet
+ecrit:
+- les trimestres de majoration de la durée d'assurance que la CNRACL oppose à sa
+  décote (Durees.emplois)
+dates_qui_decident:
+- liquidation.date_effet
+# Les paramètres que le moteur lit (droit/compter.py, `trimestres_des_emplois`, et
+# son jumeau), comme pour la bonification des policiers : `nature: majoration`
+# dit que le droit ne touche ni les services liquidés ni la durée tous régimes,
+# mais la seule durée que la CNRACL oppose à sa décote ; `services_comptes`, les
+# statuts dont les années sont des services effectifs de la fonction publique
+# civile, sur lesquels se compte le dixième.
+versions:
+- id: avant_2008
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006758626, article: 78, en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006400884, article: 21, en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000006758626
+  bornes:
+    liquidation.date_effet: [null, 2008-01-01]
+  contenu:
+    droit: >-
+      aucune majoration : elle ne vaut que pour qui réunit les conditions de la catégorie
+      active « à compter de l'année 2008 », les droits s'ouvrant « à compter du 1er
+      janvier 2008 au plus tôt » (réponse ministérielle du 6 mai 2008)
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: loi_de_2003
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006758626, article: 78, en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006400884, article: 21, en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000006758626
+  bornes:
+    liquidation.date_effet: [2008-01-01, 2011-07-01]
+  contenu:
+    droit: >-
+      « la durée d'assurance fait l'objet d'une majoration. Cette majoration est fixée à
+      un an par période de dix années de services effectifs », « pour l'application des
+      dispositions du I de l'article L. 14 » : la décote seule ; services effectifs
+      « en catégorie active ou sédentaire, auprès des fonctions publiques
+      hospitalière, territoriale ou de l'État », sans plafond
+    conditions: >-
+      fonctionnaire hospitalier dont la limite d'âge est de soixante ans, qui réunit les
+      conditions de la catégorie active — quinze ans de services actifs, l'âge anticipé
+      — au moment de la radiation des cadres, et qui est alors « titulaire d'un emploi
+      classé en catégorie active »
+    parametres:
+      existe: true
+      nature: majoration
+      statuts: [fonctionnaire_hospitalier_actif]
+      regime: cnracl
+      classement: active
+      services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
+                         fonctionnaire_etat_super_actif, fonctionnaire_territorial_hospitalier,
+                         fonctionnaire_territorial_hospitalier_actif,
+                         fonctionnaire_hospitalier_actif,
+                         fonctionnaire_territorial_hospitalier_super_actif]
+      fraction: 0.1
+      plafond_trimestres: null
+      condition: categorie_active_en_fonction
+      age_de_reduction: null
+      au_dela_du_maximum: false
+      cumul_maximum_trimestres: null
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: loi_du_9_novembre_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023096779, article: 78, en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000023414107, article: 21, en_vigueur: 2011-07-01}
+  nee_de: LEGIARTI000023096779
+  bornes:
+    liquidation.date_effet: [2011-07-01, 2023-09-01]
+  contenu:
+    droit: la même majoration
+    conditions: >-
+      les mêmes, la limite d'âge portée à soixante-deux ans, et dix-sept ans de services
+      actifs à partir des générations que la loi du 9 novembre 2010 atteint
+    parametres:
+      existe: true
+      nature: majoration
+      statuts: [fonctionnaire_hospitalier_actif]
+      regime: cnracl
+      classement: active
+      services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
+                         fonctionnaire_etat_super_actif, fonctionnaire_territorial_hospitalier,
+                         fonctionnaire_territorial_hospitalier_actif,
+                         fonctionnaire_hospitalier_actif,
+                         fonctionnaire_territorial_hospitalier_super_actif]
+      fraction: 0.1
+      plafond_trimestres: null
+      condition: categorie_active_en_fonction
+      age_de_reduction: null
+      au_dela_du_maximum: false
+      cumul_maximum_trimestres: null
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: loi_du_14_avril_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047453001, article: 78, en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047633098, article: 21, en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000050941672, article: 21, en_vigueur: 2025-01-02}
+  - {id: LEGIARTI000054590043, article: 21, en_vigueur: 2026-08-01}
+  - {id: LEGIARTI000048844775, article: L. 14, en_vigueur: 2023-12-31}
+  nee_de: LEGIARTI000047453001
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: >-
+      la même majoration, aux « personnes ayant ou ayant eu la qualité de fonctionnaire
+      hospitalier » ; cumulée avec l'effet en durée des bonifications des emplois classés
+      et du i de L. 12 « dans la limite de vingt trimestres » (article 21, III ; L. 14, I)
+    conditions: >-
+      « les conditions prévues au deuxième alinéa du 1° du I de l'article L. 24 » :
+      dix-sept ans de services actifs, sans condition d'emploi à la radiation
+    parametres:
+      existe: true
+      nature: majoration
+      statuts: [fonctionnaire_hospitalier_actif]
+      regime: cnracl
+      classement: active
+      services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
+                         fonctionnaire_etat_super_actif, fonctionnaire_territorial_hospitalier,
+                         fonctionnaire_territorial_hospitalier_actif,
+                         fonctionnaire_hospitalier_actif,
+                         fonctionnaire_territorial_hospitalier_super_actif]
+      fraction: 0.1
+      plafond_trimestres: null
+      condition: duree_de_la_categorie_active
+      age_de_reduction: null
+      au_dela_du_maximum: false
+      cumul_maximum_trimestres: 20
+      fiabilite: moyenne
+  exemples: aucun trouvé
+approximations:
+- version: [loi_de_2003, loi_du_9_novembre_2010, loi_du_14_avril_2023]
+  ecart: >-
+    Le dixième se compte sur les années servies dans les statuts de la fonction
+    publique civile, à temps plein comme à temps partiel, arrondi au trimestre comme
+    les services de L. 13 : la Caisse des dépôts le compte « au prorata » (Conseil
+    d'orientation des retraites, document n° 15 du 23 mars 2023), et le modèle ne connaît
+    les services qu'à l'année. Les services militaires n'y entrent pas.
+  effet: non mesuré ; un trimestre au plus
+- version: [loi_de_2003, loi_du_9_novembre_2010, loi_du_14_avril_2023]
+  ecart: >-
+    Seul le statut fonctionnaire_hospitalier_actif ouvre la majoration : le statut
+    fonctionnaire_territorial_hospitalier_actif, qui ne dit pas le versant, ne la reçoit
+    pas, et les services hospitaliers sédentaires ne se distinguent pas des
+    territoriaux.
+  effet: non mesuré ; l'aide-soignant déclaré sous le statut commun n'a rien
+- version: [loi_du_14_avril_2023]
+  ecart: >-
+    La limite de vingt trimestres se tient sur les bonifications et majorations que le
+    modèle sert : ni le i de L. 12, ni la bonification des égoutiers, ni la majoration
+    de L. 12 quater ne le sont.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-07
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Chercher un exemple chiffré de la Caisse des dépôts, et l'arrondi qu'elle applique
+    au dixième des services.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 2003-775 du 21 août 2003, article 78, ses trois rédactions
+      (LEGIARTI000006758626, LEGIARTI000023096779, LEGIARTI000047453001)
+    date: 2023-09-01
+  - type: legifrance
+    reference: >-
+      décret n° 2003-1306 du 26 décembre 2003, article 21, ses six rédactions
+      (LEGIARTI000006400884 à LEGIARTI000054590043), et article 15, IV : le cumul dans la
+      limite de vingt trimestres
+    date: 2026-08-01
+  - type: jorf
+    reference: >-
+      loi n° 2023-270 du 14 avril 2023, article 10, XVIII (JORFARTI000047445097) : les
+      anciens fonctionnaires hospitaliers, les conditions du deuxième alinéa de L. 24
+    date: 2023-04-15
+  - type: autre
+    reference: >-
+      réponse ministérielle à la question écrite n° 15107 (13e législature, JO du 6 mai
+      2008, p. 3840) : « quatre trimestres par période de dix années de services
+      effectifs effectués en catégorie active ou sédentaire, auprès des fonctions
+      publiques hospitalière, territoriale ou de l'État », « pas limitée », comptée
+      « uniquement dans le calcul de la durée d'assurance », pour des droits ouverts
+      « à compter du 1er janvier 2008 au plus tôt », l'agent étant « titulaire d'un
+      emploi classé en catégorie active au moment de la radiation des cadres »
+    url: https://questions.assemblee-nationale.fr/dyn/13/questions/QANR5L13QE15107.pdf
+    date: 2008-05-06
+  - type: autre
+    reference: >-
+      Conseil d'orientation des retraites, séance du 23 mars 2023, document n° 15, § 3.4.2
+      : « Le calcul se fait au prorata : la majoration de durée d'assurance est égale à
+      1/10e des services effectifs », « uniquement dans la durée d'assurance retenue pour
+      la décote »
+    url: >-
+      https://www.cor-retraites.fr/sites/default/files/2023-03/Doc_15_SG_Catégories%20actives_fonction%20publique.pdf
+    date: 2023-03-23
+code:
+  python: >-
+    scenarios/actuel.py : FichesDatees ; droit/compter.py : trimestres_des_emplois,
+    trimestres_d_un_emploi, condition_d_un_emploi ; droit/liquider.py :
+    liquider_chaque_regime, qui ajoute la majoration à la durée de la décote de la
+    CNRACL
+  javascript: >-
+    moteur/js/regimes.js : FichesDatees ; moteur/js/droit/compter.js :
+    trimestresDesEmplois, trimestresDUnEmploi, conditionDUnEmploi ;
+    moteur/js/droit/liquider.js
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_bonifications_emplois.py, tests/test_trajectoire.py]
+referents:
+  trajectoire:
+    equivalent: >-
+      « majoration_duree » « 1 tous les 10 » des cas types de la fonction publique
+      hospitalière (bonifDeterministes, R/fonctionsCalculsDivers.R), en durée tous régimes
+    confrontation: >-
+      le 7 octobre 2026, sur les sorties du 5 (tests/test_trajectoire.py) : quinze
+      trimestres à l'aide-soignante du cas type 9, des deux côtés
+historique:
+- >-
+  2026-10-07 — née de l'étape 17 de l'action 138, avec le statut
+  fonctionnaire_hospitalier_actif : TRAJECTOiRE servait la majoration à l'aide-soignante
+  du cas type 9, et le dépôt lui opposait une décote de 5,6 à 21 % (registre, 138.17).
+effet: >-
+  L'aide-soignant ou l'agent hospitalier actif : quinze trimestres pour trente-sept ans et
+  demi de services, qui effacent la décote de qui part à l'âge anticipé.

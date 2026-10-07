@@ -142,6 +142,8 @@ SEDENTAIRE: dict[str, tuple[str, str]] = {
     "fonctionnaire_etat_super_actif": ("fonctionnaire_etat", "categorie_active"),
     "fonctionnaire_territorial_hospitalier_actif": (
         "fonctionnaire_territorial_hospitalier", "categorie_active"),
+    "fonctionnaire_hospitalier_actif": (
+        "fonctionnaire_territorial_hospitalier", "categorie_active"),
     "fonctionnaire_territorial_hospitalier_super_actif": (
         "fonctionnaire_territorial_hospitalier", "categorie_active"),
     "ouvrier_etat_actif": ("ouvrier_etat", "categorie_active"),
@@ -694,7 +696,7 @@ def motif_de_depart(cas: CasType, actuel) -> str:
     """Ce qui ouvre ce départ, quand il est anticipé.
 
     Le modèle nomme la carrière longue lui-même (``motif_ouverture``) ; les deux
-    autres se lisent au statut, le classement étant celui des sept affiliations
+    autres se lisent au statut, le classement étant celui des huit affiliations
     que ``legislation/affiliations.yaml`` marque.
     """
     if actuel.motif_ouverture == "carriere_longue":

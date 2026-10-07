@@ -476,7 +476,24 @@ affiliations:
       Aide-soignant, agent de service hospitalier, agent technique territorial,
       agent de police municipale : la catégorie active de la CNRACL, la plus
       nombreuse du système. L'article 25 du décret n° 2003-1306 y reprend, mot
-      pour mot, le 1° du I de l'article L. 24 du code des pensions.
+      pour mot, le 1° du I de l'article L. 24 du code des pensions. Le statut ne
+      dit pas le versant : la majoration de durée des hospitaliers, qui ne va
+      qu'à eux, est celle du statut suivant.
+
+  fonctionnaire_hospitalier_actif:
+    libelle: Fonctionnaire hospitalier, emploi de catégorie active (aide-soignant)
+    famille: public
+    categorie_active: active
+    periodes:
+      - {debut: 1945, fin: 2004, regimes: [cnracl]}
+      - {debut: 2005, fin: null, regimes: [cnracl, rafp]}
+    note: >-
+      Aide-soignant, agent de service hospitalier, infirmier resté en catégorie
+      active : le même emploi classé de la CNRACL que le statut précédent, et
+      de plus la majoration de durée d'assurance que l'article 78 de la loi
+      n° 2003-775 réserve aux fonctionnaires hospitaliers, quatre trimestres
+      par dix années de services effectifs, pour la décote seule (fiche
+      majoration_duree_hospitaliers_actifs).
 
   fonctionnaire_territorial_hospitalier_super_actif:
     libelle: Fonctionnaire territorial ou hospitalier, emploi de catégorie super-active (sapeur-pompier)

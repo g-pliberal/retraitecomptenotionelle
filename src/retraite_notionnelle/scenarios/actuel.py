@@ -1091,7 +1091,8 @@ class FichesDatees:
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
-            "bonification_cinquieme_police_penitentiaire")
+            "bonification_cinquieme_police_penitentiaire",
+            "majoration_duree_hospitaliers_actifs")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

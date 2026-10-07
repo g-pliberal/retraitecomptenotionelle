@@ -109,7 +109,10 @@ ETATS = {
 CAISSES_FONCTIONNAIRES = {"fonctionnaire_etat": "SRE",
                           "fonctionnaire_territorial_hospitalier": "CNRACL"}
 #: Le statut du dépôt d'un état de TRAJECTOiRE, selon la catégorie de la
-#: fonction publique que le cas type déclare (`categFonctionPublique`).
+#: fonction publique que le cas type déclare (`categFonctionPublique`). L'actif
+#: de la territoriale ou de l'hospitalière est l'aide-soignante du cas type 9, à
+#: qui TRAJECTOiRE sert la majoration de durée des hospitaliers : le statut
+#: hospitalier du dépôt, qui la sert aussi (action 138, étape 17).
 STATUTS_COR = {
     ("Salarie du prive non cadre", None): "salarie_prive_non_cadre",
     ("Salarie du prive cadre", None): "salarie_prive_cadre",
@@ -117,7 +120,7 @@ STATUTS_COR = {
     ("FPE", "Superactif"): "fonctionnaire_etat_super_actif",
     ("FPE", "Actif"): "fonctionnaire_etat_actif",
     ("FPT ou FPH", "Sedentaire"): "fonctionnaire_territorial_hospitalier",
-    ("FPT ou FPH", "Actif"): "fonctionnaire_territorial_hospitalier_actif",
+    ("FPT ou FPH", "Actif"): "fonctionnaire_hospitalier_actif",
     ("FPT ou FPH", "Superactif"): "fonctionnaire_territorial_hospitalier_super_actif",
 }
 #: Les états sans revenu d'activité, et le motif d'interruption du dépôt.

@@ -49,7 +49,9 @@ Ce que la première exécution a montré, le 5 octobre 2026 :
   la majoration de durée des hospitaliers actifs, absentes (138.17) ; la première
   servie le 7 octobre 2026 (fiche bonification_cinquieme_police_penitentiaire),
   les durées du policier concordent, et sa pension s'écarte de celle de
-  TRAJECTOiRE, qui borne la bonification (ci-dessous).
+  TRAJECTOiRE, qui borne la bonification (ci-dessous) ; la seconde le même jour
+  (fiche majoration_duree_hospitaliers_actifs), au statut hospitalier qui naît
+  avec elle, et le taux de l'aide-soignante concorde.
   L'arrondi des services de la fonction publique : OUVERT.
 * **Contre TRAJECTOiRE** — sa chaîne de coefficients du salaire annuel moyen
   (`revaloSam`), qui ne suit pas les colonnes de la Cnav : de −11 % sur les
@@ -369,10 +371,12 @@ BONIFICATION_CINQUIEME = (
     "maximum de 75 % (fiche bonification_cinquieme_police_penitentiaire) ; l'écart est "
     "le sien. TRAJECTOiRE porte aussi l'ISS dans l'assiette, que le dépôt n'a pas")
 MAJORATION_HOSPITALIERS = (
-    "le dépôt ne sert pas la majoration de durée d'assurance d'un an par dix ans de "
-    "services de l'hospitalier de catégorie active (loi n° 2003-775, art. 78), que "
-    "TRAJECTOiRE sert à l'aide-soignante du cas type 9 : quinze trimestres, et une décote "
-    "au dépôt ; registre, 138.17")
+    "la majoration de durée d'assurance de l'hospitalier de catégorie active (loi "
+    "n° 2003-775, art. 78) : quinze trimestres à l'aide-soignante du cas type 9, des deux "
+    "côtés, et le taux concorde ; mais le dépôt ne la compte que dans la durée que la "
+    "CNRACL oppose à sa décote, « pour l'application des dispositions du I de l'article "
+    "L. 14 » (fiche majoration_duree_hospitaliers_actifs), TRAJECTOiRE dans la durée tous "
+    "régimes")
 ANNEE_PARTAGEE = (
     "l'année partagée entre deux états : le script des cas types de TRAJECTOiRE donne à "
     "chacun le revenu de l'année entière, et son moteur compte une année partagée dans le "
@@ -473,12 +477,12 @@ ECARTS.update(_ecarts(BONIFICATION_CINQUIEME, "fonction_publique", {
 ECARTS.update(_ecarts(MAJORATION_HOSPITALIERS, "trimestres", {
     "cor_9_1955": -15.0, "cor_9_1960": -14.67, "cor_9_1963": -15.0, "cor_9_1964": -15.33,
     "cor_9_1970": -15.0}, 0.01))
-ECARTS.update(_ecarts(MAJORATION_HOSPITALIERS, "taux", {
-    "cor_9_1955": -0.05625, "cor_9_1960": -0.15, "cor_9_1963": -0.1875,
-    "cor_9_1964": -0.2125, "cor_9_1970": -0.15}, 1e-6))
-ECARTS.update(_ecarts(MAJORATION_HOSPITALIERS, "fonction_publique", {
-    "cor_9_1955": -0.0661, "cor_9_1960": -0.1430, "cor_9_1963": -0.1956,
-    "cor_9_1964": -0.2220}, 0.002))
+ECARTS.update(_ecarts(DUREE_ACTIFS + " ; et " + ARRONDI_SERVICES, "taux",
+                      {"cor_9_1964": -0.025}, 1e-6))
+ECARTS.update(_ecarts(DUREE_ACTIFS + " ; " + ARRONDI_SERVICES + " ; et " + TRAITEMENT,
+                      "fonction_publique", {"cor_9_1964": -0.0368}, 0.002))
+ECARTS.update(_ecarts(ARRONDI_SERVICES + " ; et " + TRAITEMENT, "fonction_publique",
+                      {"cor_9_1960": 0.0082}, 0.002))
 ECARTS.update(_ecarts(ANNEE_PARTAGEE, "trimestres", {"cor_10_1970": -2.0, "cor_3_1964": -1.0},
                       1e-6))
 ECARTS.update(_ecarts(ANNEE_PARTAGEE, "carriere_longue", {"cor_10_1970": -1.0}, 1e-6))
@@ -520,7 +524,7 @@ ECARTS.update(_ecarts(TRAITEMENT, "traitement_de_reference", {
 ECARTS.update(_ecarts(TRAITEMENT, "fonction_publique", {
     k: v for k, v in _TRAITEMENTS.items() if k not in ("cor_6_1955",)} | {
     "cor_5_1963": -0.0149, "cor_5_primes_constantes_1963": -0.0149,
-    "cor_6_1960": -0.0053}, 0.002))
+    "cor_6_1960": -0.0053, "cor_9_1955": -0.0104, "cor_9_1963": -0.0100}, 0.002))
 ECARTS.update(_ecarts(ARRONDI_SERVICES, "taux", {c: -0.0125 for c in (
     "cor_5_1970", "cor_5_primes_constantes_1970", "cor_6_1955", "cor_7_1970",
     "cor_11_1970")}, 1e-6))

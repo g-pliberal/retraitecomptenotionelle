@@ -2411,6 +2411,7 @@ def test_les_statuts_classes_et_militaires_sont_ceux_qu_on_attend():
         "fonctionnaire_etat_actif": "active",
         "fonctionnaire_etat_super_actif": "super_active",
         "fonctionnaire_territorial_hospitalier_actif": "active",
+        "fonctionnaire_hospitalier_actif": "active",
         "fonctionnaire_territorial_hospitalier_super_actif": "super_active",
         "ouvrier_etat_actif": "active",
     }
@@ -2426,6 +2427,7 @@ def test_les_statuts_classes_et_militaires_sont_ceux_qu_on_attend():
         ("fonctionnaire_etat_super_actif", "fonctionnaire_etat"),
         ("fonctionnaire_territorial_hospitalier_actif",
          "fonctionnaire_territorial_hospitalier"),
+        ("fonctionnaire_hospitalier_actif", "fonctionnaire_territorial_hospitalier"),
         ("fonctionnaire_territorial_hospitalier_super_actif",
          "fonctionnaire_territorial_hospitalier"),
         ("ouvrier_etat_actif", "ouvrier_etat"),

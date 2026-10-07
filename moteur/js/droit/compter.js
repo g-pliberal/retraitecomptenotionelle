@@ -52,14 +52,27 @@ export const CONDITIONS = Object.freeze([
  * dans le régime qui le pensionne, lues par `FichesDatees` à la date d'effet.
  * Voir `FICHES_DES_EMPLOIS` du Python.
  */
-export const FICHES_DES_EMPLOIS = Object.freeze(["bonification_cinquieme_police_penitentiaire"]);
+export const FICHES_DES_EMPLOIS = Object.freeze([
+  "bonification_cinquieme_police_penitentiaire", "majoration_duree_hospitaliers_actifs",
+]);
 
 /**
- * Les conditions qu'une version de ces fiches pose à la carrière : la durée de
- * services classés qui ouvre l'âge anticipé ou minoré à la génération, ou la
- * radiation pour invalidité. Voir `CONDITIONS_DES_EMPLOIS` du Python.
+ * Ce qu'une version de ces fiches accorde : une `bonification`, aux services
+ * liquidés et à la durée tous régimes, ou une `majoration`, à la seule durée que
+ * le régime oppose à sa décote. Voir `NATURES_DES_EMPLOIS` du Python.
  */
-export const CONDITIONS_DES_EMPLOIS = Object.freeze(["duree_de_l_age_minore"]);
+export const NATURES_DES_EMPLOIS = Object.freeze(["bonification", "majoration"]);
+
+/**
+ * Les conditions qu'une version de ces fiches pose à la carrière, lues sur la
+ * table des emplois classés de la génération : la durée de l'âge minoré dans les
+ * statuts de la fiche (ou la radiation pour invalidité), les conditions de la
+ * catégorie active réunies à la radiation dans l'un de ces statuts, ou la seule
+ * durée de services actifs. Voir `CONDITIONS_DES_EMPLOIS` du Python.
+ */
+export const CONDITIONS_DES_EMPLOIS = Object.freeze([
+  "duree_de_l_age_minore", "categorie_active_en_fonction", "duree_de_la_categorie_active",
+]);
 
 /**
  * Ce que l'emploi classé ajoute dans le régime qui le pensionne : des services
@@ -405,8 +418,9 @@ export function compter(moteur, coordination, avantagesNonContributifs = true) {
 
 /**
  * Ce que les emplois classés de la carrière ajoutent, une fiche après l'autre
- * (`FICHES_DES_EMPLOIS`), chacune lue à la date d'effet de la pension. Voir
- * `trimestres_des_emplois` du Python.
+ * (`FICHES_DES_EMPLOIS`), chacune lue à la date d'effet de la pension ; une
+ * version qui borne le cumul ne garde de son effet en durée que ce que les fiches
+ * qui la précèdent lui laissent. Voir `trimestres_des_emplois` du Python.
  */
 export function trimestresDesEmplois(moteur, carriere, anneeLiquidation) {
   const mois = carriere.age_liquidation !== null ? carriere.dateLiquidation.mois : 1;
@@ -417,24 +431,46 @@ export function trimestresDesEmplois(moteur, carriere, anneeLiquidation) {
     if (version === null || !version.parametres.existe) {
       continue;
     }
-    const emploi = bonificationDEmploi(moteur, carriere, nom, version);
-    if (emploi !== null) {
-      emplois.push(emploi);
+    let emploi = trimestresDUnEmploi(moteur, carriere, nom, version);
+    if (emploi === null) {
+      continue;
     }
+    const cumul = version.parametres.cumul_maximum_trimestres;
+    if (cumul !== null && cumul !== undefined) {
+      const reste = Math.max(0, Math.trunc(cumul)
+        - emplois.reduce((somme, e) => somme + e.duree + e.majoration, 0));
+      const duree = Math.min(emploi.duree, reste);
+      emploi = new TrimestresEmploi({
+        ...emploi, duree, majoration: Math.min(emploi.majoration, reste - duree),
+      });
+      if (!(emploi.services || emploi.duree || emploi.majoration)) {
+        continue;
+      }
+    }
+    emplois.push(emploi);
   }
   return emplois;
 }
 
 /**
- * La bonification d'un emploi classé, ou null s'il n'en ouvre pas : une
+ * Ce qu'un emploi classé ouvre, ou null s'il n'ouvre rien : une BONIFICATION,
  * fraction du temps servi dans les statuts qui l'ouvrent, sous son plafond,
  * diminuée des services accomplis au-delà de l'âge qui la réduit, comptés à
- * l'année, arrondie au trimestre, un demi-trimestre et plus comptant pour un.
- * La condition, que la version nomme, et qu'une radiation pour invalidité
- * dispense de remplir. Voir `bonification_d_emploi` du Python.
+ * l'année, aux services et à la durée ; ou une MAJORATION, fraction des
+ * services effectifs de la fonction publique civile, à la seule durée de la
+ * décote. En trimestres, un demi-trimestre et plus comptant pour un. Voir
+ * `trimestres_d_un_emploi` du Python.
  */
-export function bonificationDEmploi(moteur, carriere, fiche, version) {
+export function trimestresDUnEmploi(moteur, carriere, fiche, version) {
   const parametres = version.parametres;
+  const nature = parametres.nature;
+  if (!NATURES_DES_EMPLOIS.includes(nature)) {
+    throw new Error(`${fiche}.${version.id} : nature inconnue, ${JSON.stringify(nature)}`);
+  }
+  const condition = parametres.condition;
+  if (!CONDITIONS_DES_EMPLOIS.includes(condition)) {
+    throw new Error(`${fiche}.${version.id} : condition inconnue, ${JSON.stringify(condition)}`);
+  }
   const statuts = [...parametres.statuts];
   const regime = parametres.regime;
   if (!moteur.catalogue.contient(regime)
@@ -446,36 +482,75 @@ export function bonificationDEmploi(moteur, carriere, fiche, version) {
   if (servies <= 0) {
     return null;
   }
-  const condition = parametres.condition;
-  if (!CONDITIONS_DES_EMPLOIS.includes(condition)) {
-    throw new Error(`${fiche}.${version.id} : condition inconnue, ${JSON.stringify(condition)}`);
+  const ouverte = conditionDUnEmploi(moteur, carriere, condition, parametres, servies);
+  if (ouverte === null) {
+    return null;
   }
-  let fiabilite = fiabiliteDepuisTexte(parametres.fiabilite);
-  if (carriere.radiationPourInvalidite === null) {
-    const derogation = moteur.agesCategorieActive.derogation(
-      parametres.classement, carriere.generation);
-    if (derogation === null || servies + 1e-9 < derogation.servicesRequis) {
-      return null;
-    }
-    fiabilite = Math.min(fiabilite, derogation.fiabilite);
+  const fiabilite = Math.min(fiabiliteDepuisTexte(parametres.fiabilite), ouverte);
+  const bonification = nature === "bonification";
+  const base = bonification
+    ? servies : carriere.dureeDeService([...parametres.services_comptes], borne);
+  let annees = base * Number(parametres.fraction);
+  if (parametres.plafond_trimestres !== null && parametres.plafond_trimestres !== undefined) {
+    annees = Math.min(annees, Math.trunc(parametres.plafond_trimestres) / 4);
   }
-  let auDela = 0;
   if (parametres.age_de_reduction !== null && parametres.age_de_reduction !== undefined) {
     const annee = carriere.annee_naissance + Math.trunc(parametres.age_de_reduction);
     const avant = carriere.dureeDeService(statuts, borne === null ? annee : Math.min(annee, borne));
-    auDela = Math.max(0, servies - avant);
+    annees -= Math.max(0, servies - avant);
   }
-  const annees = Math.min(servies * Number(parametres.fraction),
-    Math.trunc(parametres.plafond_trimestres) / 4) - auDela;
   const trimestres = annees > 0 ? Math.trunc(annees * 4 + 0.5) : 0;
   if (trimestres <= 0) {
     return null;
   }
   return new TrimestresEmploi({
     regime, fiche, version: version.id, texte: version.texte,
-    services: trimestres, duree: trimestres, majoration: 0,
+    services: bonification ? trimestres : 0,
+    duree: bonification ? trimestres : 0,
+    majoration: bonification ? 0 : trimestres,
     auDelaDuMaximum: Boolean(parametres.au_dela_du_maximum), fiabilite,
   });
+}
+
+/**
+ * La condition remplie, et la fiabilité de ce qu'elle a lu ; null sinon. Les
+ * services actifs sont ceux de tous les statuts classés, super-actifs compris.
+ * Voir `condition_d_un_emploi` du Python.
+ */
+export function conditionDUnEmploi(moteur, carriere, condition, parametres, servies) {
+  const derogation = moteur.agesCategorieActive.derogation(
+    parametres.classement, carriere.generation);
+  if (condition === "duree_de_l_age_minore") {
+    if (carriere.radiationPourInvalidite !== null) {
+      return fiabiliteDepuisTexte(parametres.fiabilite);
+    }
+    if (derogation === null || servies + 1e-9 < derogation.servicesRequis) {
+      return null;
+    }
+    return derogation.fiabilite;
+  }
+  const borne = coordonner.borneCarriere(carriere);
+  const actifs = carriere.dureeDeService(
+    Object.keys(moteur.affiliations.classementsActifs), borne);
+  if (derogation === null || actifs + 1e-9 < derogation.servicesRequis) {
+    return null;
+  }
+  if (condition === "duree_de_la_categorie_active") {
+    return derogation.fiabilite;
+  }
+  // `categorie_active_en_fonction` : l'âge anticipé atteint à la radiation, et
+  // la dernière année de la fonction publique civile servie dans l'un des
+  // statuts de la fiche.
+  if (carriere.age_liquidation === null || carriere.age_liquidation === undefined
+      || carriere.age_liquidation + 1e-9 < derogation.ageOuverture) {
+    return null;
+  }
+  const publiques = carriere.bornesDeService([...parametres.services_comptes], borne);
+  const dansLEmploi = carriere.bornesDeService([...parametres.statuts], borne);
+  if (publiques === null || dansLEmploi === null || dansLEmploi[1] < publiques[1]) {
+    return null;
+  }
+  return derogation.fiabilite;
 }
 
 /**

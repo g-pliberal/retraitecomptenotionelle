@@ -78,13 +78,27 @@ CONDITIONS = ("tout_enfant", "ne_en_service", "ne_avant_radiation",
 #: Les fiches des bonifications et des majorations que l'emploi CLASSÉ ouvre
 #: dans le régime qui le pensionne, lues par :class:`FichesDatees
 #: <retraite_notionnelle.scenarios.actuel.FichesDatees>` à la date d'effet.
-FICHES_DES_EMPLOIS = ("bonification_cinquieme_police_penitentiaire",)
+FICHES_DES_EMPLOIS = ("bonification_cinquieme_police_penitentiaire",
+                      "majoration_duree_hospitaliers_actifs")
+
+#: Ce qu'une version de ces fiches accorde (``contenu.parametres.nature``) : une
+#: ``bonification``, aux services liquidés et à la durée tous régimes, ou une
+#: ``majoration``, à la seule durée que le régime oppose à sa décote.
+NATURES_DES_EMPLOIS = ("bonification", "majoration")
 
 #: Les conditions qu'une version de ces fiches pose à la carrière
-#: (``contenu.parametres.condition``) : ``duree_de_l_age_minore``, la durée de
-#: services classés qui ouvre l'âge anticipé ou minoré à la génération
-#: (``legislation/categorie_active.csv``), ou la radiation pour invalidité.
-CONDITIONS_DES_EMPLOIS = ("duree_de_l_age_minore",)
+#: (``contenu.parametres.condition``), toutes lues sur la table des emplois
+#: classés de la génération (``legislation/categorie_active.csv``) :
+#:
+#: * ``duree_de_l_age_minore`` — la durée de services dans les statuts de la
+#:   fiche qui ouvre l'âge anticipé ou minoré, ou la radiation pour invalidité ;
+#: * ``categorie_active_en_fonction`` — les conditions de la catégorie active,
+#:   durée de services actifs et âge anticipé, réunies à la radiation des
+#:   cadres, l'agent étant alors dans l'un des statuts de la fiche ;
+#: * ``duree_de_la_categorie_active`` — la durée de services actifs, l'agent
+#:   ayant servi dans l'un des statuts de la fiche.
+CONDITIONS_DES_EMPLOIS = ("duree_de_l_age_minore", "categorie_active_en_fonction",
+                          "duree_de_la_categorie_active")
 
 
 @dataclass(frozen=True)
@@ -464,44 +478,66 @@ def trimestres_des_emplois(moteur: ScenarioActuel, carriere: Carriere,
     La version de chaque fiche se lit à la date d'effet de la pension. Une
     fiche sans version à cette date, ou dont la version dit que le droit
     n'existe pas encore, n'ajoute rien ; les autres disent le statut qui
-    ouvre la bonification, le régime qui la sert, et comment la compter
-    (:func:`bonification_d_emploi`).
+    ouvre le droit, le régime qui le sert, et comment le compter
+    (:func:`trimestres_d_un_emploi`). Une version qui borne le cumul — « dans
+    la limite de vingt trimestres » depuis septembre 2023 (L. 14, I ; décret
+    n° 2003-1306, article 21, III) — ne garde de son effet en durée que ce
+    que les fiches qui la précèdent lui laissent.
     """
     mois = carriere.date_liquidation.mois if carriere.age_liquidation is not None else 1
     date_effet = f"{annee_liquidation:04d}-{mois:02d}-01"
-    emplois = []
+    emplois: list[TrimestresEmploi] = []
     for nom in FICHES_DES_EMPLOIS:
         version = moteur.fiches_datees.version(nom, date_effet)
         if version is None or not version["parametres"].get("existe"):
             continue
-        emploi = bonification_d_emploi(moteur, carriere, nom, version)
-        if emploi is not None:
-            emplois.append(emploi)
+        emploi = trimestres_d_un_emploi(moteur, carriere, nom, version)
+        if emploi is None:
+            continue
+        cumul = version["parametres"].get("cumul_maximum_trimestres")
+        if cumul is not None:
+            reste = max(0, int(cumul) - somme_ordonnee(e.duree + e.majoration for e in emplois))
+            duree = min(emploi.duree, reste)
+            emploi = replace(emploi, duree=duree,
+                             majoration=min(emploi.majoration, reste - duree))
+            if not (emploi.services or emploi.duree or emploi.majoration):
+                continue
+        emplois.append(emploi)
     return tuple(emplois)
 
 
-def bonification_d_emploi(moteur: ScenarioActuel, carriere: Carriere, fiche: str,
-                          version: dict) -> TrimestresEmploi | None:
-    """La bonification d'un emploi classé, ou ``None`` s'il n'en ouvre pas.
+def trimestres_d_un_emploi(moteur: ScenarioActuel, carriere: Carriere, fiche: str,
+                           version: dict) -> TrimestresEmploi | None:
+    """Ce qu'un emploi classé ouvre, ou ``None`` s'il n'ouvre rien.
 
-    Une fraction du temps servi dans les statuts qui l'ouvrent — « un
-    cinquième du temps qu'ils ont effectivement passé en position d'activité
-    dans des services actifs de police » (loi n° 57-444, article 1er) —, sous
-    son plafond — « cinq annuités » —, diminuée des services accomplis
-    au-delà de l'âge qui la réduit — « à concurrence de la durée des services
-    accomplis au-delà de cinquante-cinq ans », puis cinquante-sept, jusqu'en
-    août 2023 —, ceux-ci comptés à l'année : l'année de l'anniversaire est
-    réputée servie avant lui. Elle se compte en trimestres, arrondie comme
-    les services et bonifications de L. 13, un demi-trimestre et plus
-    comptant pour un.
+    Une BONIFICATION est une fraction du temps servi dans les statuts qui
+    l'ouvrent — « un cinquième du temps qu'ils ont effectivement passé en
+    position d'activité dans des services actifs de police » (loi n° 57-444,
+    article 1er) —, sous son plafond — « cinq annuités » —, diminuée des
+    services accomplis au-delà de l'âge qui la réduit — « à concurrence de la
+    durée des services accomplis au-delà de cinquante-cinq ans », puis
+    cinquante-sept, jusqu'en août 2023 —, ceux-ci comptés à l'année :
+    l'année de l'anniversaire est réputée servie avant lui. Elle entre aux
+    services liquidés et à la durée tous régimes.
 
-    La condition, que la version nomme (:data:`CONDITIONS_DES_EMPLOIS`) :
-    ``duree_de_l_age_minore``, la durée de services classés qui ouvre l'âge
-    minoré à la génération — vingt-cinq ans, puis vingt-sept —, que la
-    radiation pour invalidité dispense de remplir. Une condition que le
-    moteur ne connaît pas l'arrête (§ 6.7).
+    Une MAJORATION est une fraction des services effectifs de la fonction
+    publique civile — « un an par période de dix années de services
+    effectifs », au prorata (loi n° 2003-775, article 78) —, sans plafond.
+    Elle n'entre qu'à la durée que le régime oppose à sa décote.
+
+    L'une et l'autre se comptent en trimestres, arrondies comme les services
+    et bonifications de L. 13, un demi-trimestre et plus comptant pour un.
+    La condition est celle que la version nomme
+    (:data:`CONDITIONS_DES_EMPLOIS`, :func:`condition_d_un_emploi`). Une
+    nature ou une condition que le moteur ne connaît pas l'arrête (§ 6.7).
     """
     parametres = version["parametres"]
+    nature = parametres["nature"]
+    if nature not in NATURES_DES_EMPLOIS:
+        raise ValueError(f"{fiche}.{version['id']} : nature inconnue, {nature!r}")
+    condition = parametres["condition"]
+    if condition not in CONDITIONS_DES_EMPLOIS:
+        raise ValueError(f"{fiche}.{version['id']} : condition inconnue, {condition!r}")
     statuts = list(parametres["statuts"])
     regime = parametres["regime"]
     if (regime not in moteur.catalogue
@@ -511,30 +547,66 @@ def bonification_d_emploi(moteur: ScenarioActuel, carriere: Carriere, fiche: str
     servies = carriere.duree_de_service(statuts, borne)
     if servies <= 0:
         return None
-    condition = parametres["condition"]
-    if condition not in CONDITIONS_DES_EMPLOIS:
-        raise ValueError(f"{fiche}.{version['id']} : condition inconnue, {condition!r}")
-    fiabilite = Fiabilite.depuis_texte(parametres["fiabilite"])
-    if carriere.radiation_pour_invalidite is None:
-        derogation = moteur.ages_categorie_active.derogation(
-            parametres["classement"], carriere.generation)
-        if derogation is None or servies + 1e-9 < derogation.services_requis:
-            return None
-        fiabilite = min(fiabilite, derogation.fiabilite)
-    au_dela = 0.0
+    ouverte = condition_d_un_emploi(moteur, carriere, condition, parametres, servies)
+    if ouverte is None:
+        return None
+    fiabilite = min(Fiabilite.depuis_texte(parametres["fiabilite"]), ouverte)
+    bonification = nature == "bonification"
+    base = (servies if bonification
+            else carriere.duree_de_service(list(parametres["services_comptes"]), borne))
+    annees = base * float(parametres["fraction"])
+    if parametres.get("plafond_trimestres") is not None:
+        annees = min(annees, int(parametres["plafond_trimestres"]) / 4)
     if parametres.get("age_de_reduction") is not None:
         annee = carriere.annee_naissance + int(parametres["age_de_reduction"])
         avant = carriere.duree_de_service(statuts, annee if borne is None else min(annee, borne))
-        au_dela = max(0.0, servies - avant)
-    annees = (min(servies * float(parametres["fraction"]),
-                  int(parametres["plafond_trimestres"]) / 4) - au_dela)
+        annees -= max(0.0, servies - avant)
     trimestres = int(annees * 4 + 0.5) if annees > 0 else 0
     if trimestres <= 0:
         return None
     return TrimestresEmploi(
         regime=regime, fiche=fiche, version=version["id"], texte=version["texte"],
-        services=trimestres, duree=trimestres, majoration=0,
+        services=trimestres if bonification else 0,
+        duree=trimestres if bonification else 0,
+        majoration=0 if bonification else trimestres,
         au_dela_du_maximum=bool(parametres["au_dela_du_maximum"]), fiabilite=fiabilite)
+
+
+def condition_d_un_emploi(moteur: ScenarioActuel, carriere: Carriere, condition: str,
+                          parametres: dict, servies: float) -> Fiabilite | None:
+    """La condition remplie, et la fiabilité de ce qu'elle a lu ; ``None``
+    sinon. ``servies`` : les années servies dans les statuts de la fiche.
+
+    La durée de services classés et l'âge anticipé ou minoré sont ceux de la
+    génération, au classement que la version nomme. Les services actifs
+    sont ceux de tous les statuts classés, les super-actifs compris : ils
+    « peuvent être comptabilisés comme services actifs » (L. 24, I, 1°).
+    """
+    derogation = moteur.ages_categorie_active.derogation(
+        parametres["classement"], carriere.generation)
+    if condition == "duree_de_l_age_minore":
+        if carriere.radiation_pour_invalidite is not None:
+            return Fiabilite.depuis_texte(parametres["fiabilite"])
+        if derogation is None or servies + 1e-9 < derogation.services_requis:
+            return None
+        return derogation.fiabilite
+    borne = coordonner.borne_carriere(carriere)
+    actifs = carriere.duree_de_service(list(moteur.affiliations.classements_actifs), borne)
+    if derogation is None or actifs + 1e-9 < derogation.services_requis:
+        return None
+    if condition == "duree_de_la_categorie_active":
+        return derogation.fiabilite
+    # ``categorie_active_en_fonction`` : l'âge anticipé atteint à la
+    # radiation, et la dernière année de la fonction publique civile servie
+    # dans l'un des statuts de la fiche.
+    if (carriere.age_liquidation is None
+            or carriere.age_liquidation + 1e-9 < derogation.age_ouverture):
+        return None
+    publiques = carriere.bornes_de_service(list(parametres["services_comptes"]), borne)
+    dans_l_emploi = carriere.bornes_de_service(list(parametres["statuts"]), borne)
+    if publiques is None or dans_l_emploi is None or dans_l_emploi[1] < publiques[1]:
+        return None
+    return derogation.fiabilite
 
 
 def majoration_pour_enfants(moteur: ScenarioActuel, carriere: Carriere,

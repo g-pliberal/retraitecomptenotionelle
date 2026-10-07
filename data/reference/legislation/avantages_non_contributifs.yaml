@@ -826,7 +826,7 @@ avantages:
     etat_modele: integre
     ligne_cascade: null
     pourquoi_pas_chiffre: >-
-      L'avantage est un ÂGE, pas un montant. Sept statuts de
+      L'avantage est un ÂGE, pas un montant. Huit statuts de
       `legislation/affiliations.yaml` le portent, et le scénario 1 leur oppose
       l'âge anticipé de L. 24 et l'âge d'annulation de L. 14 bis.
     chiffre_par: scripts/cout_avantages.py

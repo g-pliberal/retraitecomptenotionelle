@@ -26,12 +26,14 @@ ecrit:
 dates_qui_decident:
 - liquidation.date_effet
 # Les paramètres que le moteur lit (droit/compter.py, `trimestres_des_emplois`, et
-# son jumeau) : le statut qui ouvre la bonification et le régime qui la sert ; la
-# fraction du temps servi et son plafond, en trimestres ; la condition, que le
-# moteur connaît par son nom ; l'âge au-delà duquel les services réduisent la
-# bonification ; et si elle porte le pourcentage au-delà du maximum, ce que ni la
-# loi de 1957 ni celle de 1996 ne font : seules les bonifications de L. 12 le
-# portent à 80 % (L. 13), et le service des retraites de l'État les borne à 75 %.
+# son jumeau) : la nature du droit — une bonification, qui entre aux services et à
+# la durée ; le statut qui l'ouvre et le régime qui la sert ; la fraction du temps
+# servi et son plafond, en trimestres ; la condition, que le moteur connaît par son
+# nom ; l'âge au-delà duquel les services réduisent la bonification ; si elle porte
+# le pourcentage au-delà du maximum, ce que ni la loi de 1957 ni celle de 1996 ne
+# font : seules les bonifications de L. 12 le portent à 80 % (L. 13), et le service
+# des retraites de l'État les borne à 75 % ; et la limite de son cumul avec les
+# autres, que la fiche de la majoration des hospitaliers porte.
 versions:
 - id: avant_la_loi_de_1957
   statut: lue
@@ -69,6 +71,7 @@ versions:
       accomplis au-delà de cinquante-cinq ans
     parametres:
       existe: true
+      nature: bonification
       statuts: [fonctionnaire_etat_super_actif]
       regime: fonction_publique_etat
       classement: super_active
@@ -77,6 +80,7 @@ versions:
       condition: duree_de_l_age_minore
       age_de_reduction: 55
       au_dela_du_maximum: false
+      cumul_maximum_trimestres: null
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: loi_du_9_novembre_2010
@@ -96,6 +100,7 @@ versions:
       concurrence des services accomplis « au-delà de cinquante-sept ans »
     parametres:
       existe: true
+      nature: bonification
       statuts: [fonctionnaire_etat_super_actif]
       regime: fonction_publique_etat
       classement: super_active
@@ -104,6 +109,7 @@ versions:
       condition: duree_de_l_age_minore
       age_de_reduction: 57
       au_dela_du_maximum: false
+      cumul_maximum_trimestres: null
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: loi_du_14_avril_2023
@@ -130,6 +136,7 @@ versions:
       la loi d'avril ayant gardé jusque-là la pension d'ancienneté de 1957
     parametres:
       existe: true
+      nature: bonification
       statuts: [fonctionnaire_etat_super_actif]
       regime: fonction_publique_etat
       classement: super_active
@@ -138,6 +145,7 @@ versions:
       condition: duree_de_l_age_minore
       age_de_reduction: null
       au_dela_du_maximum: false
+      cumul_maximum_trimestres: null
       fiabilite: moyenne
   exemples: aucun trouvé
 approximations:
@@ -245,12 +253,12 @@ textes_a_rattacher:
 code:
   python: >-
     scenarios/actuel.py : FichesDatees, qui lit les versions de cette fiche ;
-    droit/compter.py : trimestres_des_emplois, bonification_d_emploi ;
+    droit/compter.py : trimestres_des_emplois, trimestres_d_un_emploi, condition_d_un_emploi ;
     droit/liquider.py : liquider_chaque_regime, qui ajoute la bonification aux
     services et à la durée de la décote
   javascript: >-
     moteur/js/regimes.js : FichesDatees ; moteur/js/droit/compter.js :
-    trimestresDesEmplois, bonificationDEmploi ; moteur/js/droit/liquider.js
+    trimestresDesEmplois, trimestresDUnEmploi, conditionDUnEmploi ; moteur/js/droit/liquider.js
   parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
   tests: [tests/test_bonifications_emplois.py, tests/test_trajectoire.py]
 referents:

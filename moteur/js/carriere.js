@@ -1962,6 +1962,7 @@ export const PROFIL_PAR_AFFILIATION = {
   militaire_officier: "public_etat",
   fonctionnaire_territorial_hospitalier: "public_territoriale",
   fonctionnaire_territorial_hospitalier_actif: "public_territoriale",
+  fonctionnaire_hospitalier_actif: "public_hospitaliere",
   fonctionnaire_territorial_hospitalier_super_actif: "public_territoriale",
   contractuel_public: "public_non_titulaire",
   maitre_enseignement_prive: "public_non_titulaire",

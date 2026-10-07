@@ -124,6 +124,9 @@ export const SEDENTAIRE = {
   fonctionnaire_territorial_hospitalier_actif: [
     "fonctionnaire_territorial_hospitalier", "categorie_active",
   ],
+  fonctionnaire_hospitalier_actif: [
+    "fonctionnaire_territorial_hospitalier", "categorie_active",
+  ],
   fonctionnaire_territorial_hospitalier_super_actif: [
     "fonctionnaire_territorial_hospitalier", "categorie_active",
   ],
@@ -551,7 +554,7 @@ export function recalculer(simulateur, cas, generation, age, reelle, variantes =
  * Ce qui ouvre ce départ, quand il est anticipé.
  *
  * Le modèle nomme la carrière longue lui-même ; les deux autres se lisent au
- * statut, le classement étant celui des sept affiliations marquées.
+ * statut, le classement étant celui des huit affiliations marquées.
  */
 export function motifDeDepart(cas, actuel) {
   if (actuel.motif_ouverture === "carriere_longue") return "carriere_longue";

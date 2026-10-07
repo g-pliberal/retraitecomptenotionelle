@@ -188,8 +188,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1338<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->7 099<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1344<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->7 126<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Neuf pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -228,7 +228,7 @@ consultable en JSON au bas de la page.
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
 `index.html` charge deux choses : `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->4 106<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->4 465<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->74<!--/--> fiches de régime) et
 `moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
@@ -246,10 +246,10 @@ poids de ce qu'on voulait exécuter.
 Le risque d'un portage, c'est qu'il déplace un chiffre sans que rien n'échoue.
 Il est traité de front : **le Python de `src/` reste la référence**, et
 `scripts/construire_temoins.py` fige depuis lui
-<!--chiffre:entrees(tests/temoins/simulations.json:)-->738<!--/--> simulations complètes, et depuis le site
+<!--chiffre:entrees(tests/temoins/simulations.json:)-->745<!--/--> simulations complètes, et depuis le site
 <!--chiffre:entrees(tests/temoins/pages.json:)-->74<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue le tout côté JavaScript et compare valeur par valeur —
-<!--chiffre:portage(valeurs)-->134 176<!--/--> nombres,
+<!--chiffre:portage(valeurs)-->135 417<!--/--> nombres,
 dont <!--chiffre:portage(identiques)-->95,8<!--/--> % identiques
 au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->11,1<!--/--> · 10⁻¹⁵ (un *ulp*, la précision d'un flottant, vaut 2 · 10⁻¹⁶). Ce pire
 écart n'est pas celui d'un calcul mais d'une soustraction entre deux montants
@@ -407,7 +407,7 @@ print(simulateur.simuler(carriere).tableau())
 | Le droit ouvre-t-il ce départ ? | Âge légal du régime ou carrière longue ; sinon le montant est marqué comme un contrefactuel, pas une pension servie |
 | Suppression des minima | Ni minimum contributif, ni minimum garanti, ni ASPA : peu cotisé, peu de retraite |
 | Suppression des avantages | Ni majorations enfants, ni MDA, ni AVPF, ni bonifications, ni réversion, ni trimestres gratuits |
-| Tout le monde peut simuler | <!--chiffre:entrees(data/reference/legislation/affiliations.yaml:affiliations)-->63<!--/--> statuts d’affiliation, cinq informations suffisent |
+| Tout le monde peut simuler | <!--chiffre:entrees(data/reference/legislation/affiliations.yaml:affiliations)-->64<!--/--> statuts d’affiliation, cinq informations suffisent |
 | La cotisation de chaque année, pas une moyenne de période | Le compte notionnel reçoit le taux de l'année — <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1967&mesure=taux_plafonne)-->8<!--/--> % en 1967, <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1979&mesure=taux_plafonne)-->13<!--/--> % en 1979, <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1991&mesure=taux_plafonne)-->16<!--/--> % en 1991 au régime général, sous le plafond —, lu dans `taux_cotisation_annuels.csv` (<!--chiffre:lignes_csv(data/reference/regimes/taux_cotisation_annuels.csv)-->1 206<!--/--> valeurs, lues dans les décrets datés ou, à défaut, dans les barèmes d'OpenFisca-France, pour le régime général, les salariés agricoles, les cultes, Mayotte, Saint-Pierre-et-Miquelon, les artisans, les commerçants et le RSI) et appliqué année par année au chargement des fiches, qui gardent leur moyenne pour les années d'avant 1967 |
 | Le marin cotise et liquide sur le forfait de sa catégorie | Les <!--chiffre:distinctes(data/reference/regimes/salaires_forfaitaires.csv:categorie)-->20<!--/--> salaires forfaitaires des marins sont lus au Journal officiel, arrêté par arrêté depuis 2008 (`salaires_forfaitaires.csv`, <!--chiffre:lignes_csv(data/reference/regimes/salaires_forfaitaires.csv)-->380<!--/--> montants certifiés) ; le moteur range le marin dans la catégorie la plus proche de son revenu — convention nommée — et cotise comme il liquide sur ce forfait, dans les deux moteurs |
 | Avant 1967, la part vieillesse des assurances sociales, datée | Les taux de 1945 à 1966 viennent du tableau du COR d'après la Cnav, et la part vieillesse est la convention nommée de 8,5/21 — celle de l'ordonnance de 1967 —, au niveau estimé : le compte reçoit <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1945&mesure=taux_plafonne)-->5<!--/--> % en 1945, <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1947&mesure=taux_plafonne)-->6<!--/--> % en 1947, <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1966&mesure=taux_plafonne)-->8<!--/--> % en 1966 ; la retenue des fonctionnaires est à <!--chiffre:valeur(data/reference/regimes/fonction_publique_etat.yaml:periodes.debut=1989.taux_cotisation_retraite*100)-->8,9<!--/--> % dès 1989 (loi n° 89-18, art. 23), les points CARMF d'avant 1991 valent <!--chiffre:cellule(data/reference/regimes/conversions_points.csv:coefficient?regime=carmf_complementaire)-->1,33<!--/--> point d'après |
@@ -419,7 +419,7 @@ print(simulateur.simuler(carriere).tableau())
 | Salaires revalorisés par la circulaire, pas par une règle | Les coefficients qui revalorisent les salaires portés au compte sont LUS dans les circulaires de la Cnav — dix colonnes publiées, perceptions depuis 1930 : la règle « les salaires jusqu'en 1986, les prix depuis » les sur-revaluait, et le salaire de référence retient les N *meilleures* années — changer les coefficients change lesquelles |
 | Deux durées là où le droit en a deux | La durée requise pour le taux plein (L. 161-17-3) et la durée maximale prise en compte par la proratisation (R. 351-6), que le modèle confondait |
 | Points convertis à leur vraie unité | Les coefficients des fusions sont LUS dans les accords — un point Arrco vaut un point Agirc-Arrco, un point Agirc en vaut <!--chiffre:cellule(data/reference/regimes/conversions_points.csv:coefficient?regime=agirc)-->0,347791548<!--/-->, le rapport de leurs valeurs de service au 31 décembre 2018 —, et l'unification Arrco de 1999 est traitée comme le changement d'unité qu'elle est |
-| Portage vérifié, pas cru sur parole | Le site rejoue <!--chiffre:entrees(tests/temoins/simulations.json:)-->738<!--/--> simulations témoins figées depuis le modèle Python — chaque statut d’affiliation à six générations, née en 1925, 1935, 1945, 1955, 1965 et 1975, pour que les règles anciennes de chaque régime soient visitées autant que les récentes, et une fois né un 20 septembre, pour que chacun lise la naissance au jour ; un test oblige ce balayage à couvrir tous les statuts et toutes ces générations |
+| Portage vérifié, pas cru sur parole | Le site rejoue <!--chiffre:entrees(tests/temoins/simulations.json:)-->745<!--/--> simulations témoins figées depuis le modèle Python — chaque statut d’affiliation à six générations, née en 1925, 1935, 1945, 1955, 1965 et 1975, pour que les règles anciennes de chaque régime soient visitées autant que les récentes, et une fois né un 20 septembre, pour que chacun lise la naissance au jour ; un test oblige ce balayage à couvrir tous les statuts et toutes ces générations |
 
 ---
 
@@ -769,11 +769,11 @@ de chaque cas type :
 | Système | Cumul 1959-2024, euros de 2026 | Écart |
 |---|---|---|
 | 1. Système actuel | <!--chiffre:mesure(cumul_passe?scenario=1)-->13 767<!--/--> Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cumul_passe?scenario=2)-->2 864<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,2<!--/--> % |
+| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cumul_passe?scenario=2)-->2 883<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,1<!--/--> % |
 | 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cumul_passe?scenario=3)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=3)-->+0,0<!--/--> % |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 555<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,4<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 601<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,1<!--/--> % |
 | 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=5)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=5)-->+0,0<!--/--> % |
-| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->6 555<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−52,4<!--/--> % |
+| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->6 601<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−52,1<!--/--> % |
 | *s'ajoute au 6 : sa garantie vieillesse, payée par l'impôt, lue sur la distribution des pensions* | *<!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 402<!--/--> Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
@@ -798,8 +798,8 @@ pour que chaque groupe de régimes pèse la part que le COR donne à sa dépense
 (`docs/limites.md` § 5 ter) : l'agent de
 conduite pèse <!--chiffre:mesure(poids?cas=agent_sncf_conduite)-->1,5<!--/--> % et non <!--chiffre:mesure(poids?cas=agent_sncf_conduite&ponderation=egale)-->7,7<!--/--> %, les quatre carrières du privé <!--chiffre:mesure(poids?cas=smic_carriere_complete|salaire_moyen|cadre|carriere_interrompue)-->55<!--/--> % à elles
 quatre. Ce que la convention égalitaire valait est désormais mesuré plutôt
-qu'argumenté — elle donne <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−75,7<!--/--> % au scénario 2 contre <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,2<!--/--> %, et <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−53,7<!--/--> % au
-scénario 4 contre <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,4<!--/--> %. Le sens du biais n'était donc pas celui qu'on
+qu'argumenté — elle donne <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−75,6<!--/--> % au scénario 2 contre <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,1<!--/--> %, et <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−53,4<!--/--> % au
+scénario 4 contre <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,1<!--/--> %. Le sens du biais n'était donc pas celui qu'on
 annonçait : la surreprésentation des départs très précoces faisait bien du
 scénario 4 un plancher, mais elle faisait du scénario 2 un plafond.
 

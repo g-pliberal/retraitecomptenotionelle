@@ -74,7 +74,7 @@ STATUTS = (
     "salarie_prive_non_cadre", "salarie_prive_cadre", "fonctionnaire_etat",
     "fonctionnaire_etat_actif", "fonctionnaire_etat_super_actif",
     "fonctionnaire_territorial_hospitalier",
-    "fonctionnaire_territorial_hospitalier_actif",
+    "fonctionnaire_territorial_hospitalier_actif", "fonctionnaire_hospitalier_actif",
     "fonctionnaire_territorial_hospitalier_super_actif",
     "ouvrier_etat_actif", "militaire", "militaire_officier",
     "contractuel_public", "agent_sncf",
