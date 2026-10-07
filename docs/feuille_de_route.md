@@ -4959,16 +4959,16 @@ de statuts et les `manque` de la page Méthode.
 
 ### 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats — `en cours`
 
-**Reprise, au 5 octobre 2026.** Fait : le levier 1 (scripts) ; le 3 pour
+**Reprise, au 7 octobre 2026.** Fait : le levier 1 (scripts) ; le 3 pour
 l'essentiel — sous Windows, la suite complète passe de 56 à moins de 15 min
 à froid, et de 10 à 7 min à chaud, et sans plus aucun échec : hors de Linux,
 le paquet, les témoins et le bit près du portage se comparent à la dernière
 décimale près, la CI restant au bit près — ; le hook de démarrage ;
-« Économiser le contexte ». Reste : le levier 2, des tests sans
-présomptions ; les tests du portage que node rejoue ; l'indexation de la
-mémoire sur le seul code du modèle et `actions/cache` sur GitHub ; le 4 et
-le 5. Commencer par les tests du portage que node rejoue. Détail : les notes
-du 4 et du 5 octobre.
+« Économiser le contexte », et l'arbre du dépôt (`scripts/arbre.py`). Reste :
+le levier 2, des tests sans présomptions ; les tests du portage que node
+rejoue ; l'indexation de la mémoire sur le seul code du modèle et
+`actions/cache` sur GitHub ; le 4 et le 5. Commencer par les tests du portage
+que node rejoue. Détail : les notes du 4, du 5 et du 7 octobre.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus

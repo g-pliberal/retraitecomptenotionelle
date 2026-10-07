@@ -1587,8 +1587,9 @@ qu'on a corrigé.
   les sessions, un fichier d'entrée à son nom renvoie à la même page.
 
 Les chiffres qui décrivent le dépôt lui-même (lignes, nombre de tests) sortent
-de la prose ; un script les affiche à la demande :
-`python scripts/tableau_de_bord.py --cout`.
+de la prose ; deux scripts les affichent à la demande :
+`python scripts/tableau_de_bord.py --cout`, et `python scripts/arbre.py`, qui
+donne les lignes et les caractères de chaque fichier et de chaque dossier.
 
 ---
 
