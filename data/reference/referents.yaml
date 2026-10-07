@@ -3485,8 +3485,18 @@ referents:
           an par période de dix années de services effectifs », pour
           le I de L. 14 ; L. 12 quater CPCMR (LEGIARTI000048805987,
           depuis le 31 décembre 2023) : quatre trimestres par dix
-          ans aux actifs de la défense et de l'INI.
-        etat: a_reprendre
+          ans aux actifs de la défense et de l'INI. Repris le 7
+          octobre 2026 (fiches bonification_cinquieme_police_penitentiaire,
+          bonification_cinquieme_sapeurs_pompiers,
+          majoration_duree_hospitaliers_actifs) : vingt et quinze
+          trimestres aux cas types 8 et 9, des deux côtés. TRAJECTOiRE
+          sert la bonification en majoration du taux, bornée à cinq
+          points et multipliée par le coefficient de proratisation
+          (majoreBonifFonc, R/fonctionsCalculsPensions.R:2747-2778),
+          quand la loi la fait entrer aux services liquidés, sous 75
+          % : l'écart est le sien. L. 12 quater reste à servir, sans
+          statut qui le porte.
+        etat: repris
         chantier: "138.17"
       - quoi: >-
           Sa microsimulation range chaque retraité dans l'un des

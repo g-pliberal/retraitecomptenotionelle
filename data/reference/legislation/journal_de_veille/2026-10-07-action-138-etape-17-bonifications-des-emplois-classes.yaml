@@ -1,0 +1,42 @@
+date: "2026-10-07"
+session: "action 138, étape 17, première partie : les bonifications et la majoration des emplois classés de la fonction publique"
+consulte: >-
+  veille_droit.py (cinq fiches à relire, aucune de cette étape) ; l'index LEGI et l'index
+  JORF, récupérés, LEGI mis à jour des incréments du 6 octobre 2026, puis textes.py
+  --inscrire (aucune rédaction nouvelle) ; dans l'index, toutes leurs rédactions : la loi
+  n° 57-444 du 8 avril 1957, articles 1er, 2, 6 et 6 bis ; la loi n° 96-452 du 28 mai
+  1996, article 24 ; la loi n° 83-1179 du 29 décembre 1983, article 125 ; le décret
+  n° 86-169 du 5 février 1986 (son résumé JORF) ; le décret n° 65-773, article 11 ; le
+  décret n° 2003-1306, articles 15, 21 et 25 ; la loi n° 2003-775, article 78 ; L. 12,
+  L. 14 et L. 24 CPCMR ; la loi n° 2023-270, article 10, XII à XIX, et la loi
+  n° 2023-1250, article 97, au JORF. Hors de l'index : la page « Les bonifications » du
+  service des retraites de l'État ; le document n° 15 du Conseil d'orientation des
+  retraites du 23 mars 2023 sur les catégories actives ; les réponses ministérielles
+  aux questions écrites n° 15107 (13e législature) et n° 7025 et 9211 (16e) ; le code de
+  TRAJECTOiRE au commit du témoin, lu sans être recopié (majoreBonifFonc).
+trouve: >-
+  Le policier actif a, depuis 1957, une bonification d'un cinquième du temps passé dans
+  les services actifs, cinq annuités au plus, réduite jusqu'en août 2023 des services
+  accomplis au-delà de cinquante-cinq ans, puis de cinquante-sept ; le surveillant
+  pénitentiaire la même depuis 1996 ; le sapeur-pompier professionnel, de catégorie
+  active et non super-active, depuis le décret du 5 février 1986, à trente ans de
+  services dont quinze de sapeur-pompier, puis vingt-sept dont dix-sept. Ces
+  bonifications n'élèvent pas le pourcentage au-delà de 75 % (SRE ; décret
+  n° 2003-1306, article 15, II et III), et ne comptent pas pour la surcote (L. 14, III).
+  L'hospitalier actif a depuis 2008 une majoration de durée d'assurance d'un an par dix
+  ans de services effectifs, au prorata, pour la seule décote ; depuis septembre 2023,
+  ancien hospitalier compris, cumulée avec les bonifications dans la limite de vingt
+  trimestres. Les trois sont servies, dans les deux moteurs, avec deux statuts neufs ;
+  le statut super-actif de la CNRACL, qui portait le sapeur-pompier, est celui des
+  égoutiers. TRAJECTOiRE sert la bonification en majoration du taux bornée à cinq
+  points et proratisée, contre la loi : son écart. Et un manque nouveau : l'indemnité
+  de sujétions spéciales des policiers entre dans l'assiette de leur pension depuis
+  1983 (loi n° 57-444, article 6 bis), que le dépôt verse au RAFP.
+reste: >-
+  De l'étape 17 : la bonification du cinquième des militaires (L. 12, i), dégressive
+  avec l'âge jusqu'en 2023 ; celles des douaniers de la branche surveillance, des
+  contrôleurs aériens et des égoutiers, sans statut ; la majoration de L. 12 quater ;
+  le départ des parents de trois enfants ; le plafond de L. 18 ; les taux pleins par
+  catégorie de L. 351-8 ; la pension maximale ; la majoration pour enfants à charge de
+  l'Agirc-Arrco ; la majoration pour conjoint à charge ; les versements uniques ; la
+  majoration exceptionnelle de 2023. Et l'ISS des policiers dans l'assiette.

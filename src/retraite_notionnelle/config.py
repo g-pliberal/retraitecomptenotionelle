@@ -379,9 +379,11 @@ class Neutralisations:
 
     **Ce qu'il ne sert pas**, et qu'il ne peut donc pas retirer : la réversion,
     qui concerne le conjoint survivant et non l'assuré ; les bonifications de
-    SERVICE — dépaysement, campagne militaire, cinquième —, qui supposent de
-    connaître le corps d'appartenance et le détail des services, la bonification
-    pour ENFANTS étant, elle, servie depuis qu'elle est datée ; la limite d'âge
+    SERVICE — dépaysement, campagne militaire, cinquième des militaires —, qui
+    supposent de connaître le corps d'appartenance et le détail des services,
+    la bonification pour ENFANTS étant, elle, servie depuis qu'elle est datée,
+    et celles des policiers, des surveillants pénitentiaires et des
+    sapeurs-pompiers depuis que leurs statuts les portent ; la limite d'âge
     de grade, qui ouvre la pension militaire quelle que soit la durée
     accomplie ; la pension majorée de référence du régime agricole ; les
     coefficients de solidarité et majorants de l'Agirc-Arrco, dispositif éteint

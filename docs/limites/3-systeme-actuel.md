@@ -307,7 +307,9 @@ des régimes en points que ce fichier ne date pas : l'Ircantec, qui relevait la
 sienne au 1er avril à partir de 2009 avant de suivre en 2018 la date de
 l'article L. 161-23-1, et les autres, à relire. La bonification du cinquième
 des super-actifs et la majoration de durée des hospitaliers actifs, qu'il sert,
-manquent toujours au dépôt.
+le dépôt les sert aussi : les durées concordent, et TRAJECTOiRE borne la
+bonification à cinq points de taux proratisés, quand la loi la fait entrer aux
+services liquidés, sous le pourcentage maximum.
 
 ## Ce que disent les exemples publiés par les caisses
 

@@ -960,8 +960,12 @@ bascules:
     lu_le: 2026-09-21
     portee_modele: non_applique
     effet_modele: >-
-      Le moteur ne sert ni la bonification du cinquième ni les bonifications de
-      services de la catégorie active : il n'a donc rien à plafonner.
+      Le moteur ne sert pas la bonification du i : il n'a rien à cumuler avec
+      elle. Il sert depuis le 7 octobre 2026 celles des policiers, des
+      surveillants pénitentiaires et des sapeurs-pompiers, et la majoration des
+      hospitaliers actifs, dont le cumul se borne à vingt trimestres depuis
+      septembre 2023 (fiches bonification_cinquieme_sapeurs_pompiers et
+      majoration_duree_hospitaliers_actifs).
 
   - code: cinquieme_militaire_non_degressif
     date: 2023-09-01
