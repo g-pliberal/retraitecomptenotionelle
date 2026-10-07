@@ -139,7 +139,7 @@ def test_le_menu_des_statuts_est_groupe_par_famille(page):
     premier = re.search(r'<select id="statut".*?</select>', texte, re.S).group(0)
     groupes = re.findall(r'<optgroup label="([^"]+)">', premier)
     assert groupes == list(FAMILLES_STATUT.values())
-    assert premier.count("<option") == 63
+    assert premier.count("<option") == 65
     sncf = re.search(r'<optgroup label="Régimes spéciaux">(.*?)</optgroup>', premier).group(1)
     assert 'value="agent_sncf"' in sncf
     prive = re.search(r'<optgroup label="Salariés du privé">(.*?)</optgroup>', premier).group(1)

@@ -350,7 +350,7 @@ print(simulateur.simuler(simulateur.carriere_releve(
 # Le cas général : grille cas type × génération
 print(calculer_cas_types(simulateur).tableau())
 
-# Les 63 statuts et les 74 régimes du catalogue
+# Les 65 statuts et les 74 régimes du catalogue
 for regime in simulateur.catalogue:
     print(f"{regime.code:<26} {regime.famille:<22} {regime.nom}")
 ```
