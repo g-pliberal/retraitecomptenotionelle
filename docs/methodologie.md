@@ -432,7 +432,7 @@ prend un diviseur plus élevé, donc un capital d'ouverture plus gros, et le
 cadeau va tout entier aux générations de transition. Le défaut suit l'âge légal
 de départ de la proposition, <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--/--> ans : moins que les <!--chiffre:maximum(data/reference/legislation/ages_reference.csv:age_reference)-->67<!--/--> ans du
 cliquet, et les deux scénarios prospectifs dépensent donc davantage qu'avec
-lui. Leurs soldes moyens sont, sous le défaut, de <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,57<!--/--> et <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,09<!--/--> % du
+lui. Leurs soldes moyens sont, sous le défaut, de <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,59<!--/--> et <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,06<!--/--> % du
 PIB, contre <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système actuel.
 
 ### Variantes
@@ -548,7 +548,7 @@ Les tables elles-mêmes sont décrites au §9.
 ## 6. Les neutralisations
 
 > **L'inventaire complet de ce que le scénario 1 sert au-delà de la cotisation
-> — <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages)-->46<!--/--> dispositifs, avec leur base légale et le moyen d'en chiffrer le
+> — <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages)-->47<!--/--> dispositifs, avec leur base légale et le moyen d'en chiffrer le
 > coût — est dans `data/reference/legislation/avantages_non_contributifs.yaml`,
 > et `docs/avantages_non_contributifs.md` le commente.** Le tableau ci-dessous
 > ne porte que les quatorze champs de `Neutralisations`, qui sont une déclaration
@@ -592,7 +592,7 @@ ligne :
 | minimum contributif | oui, réservé au taux plein, deux prorata, écrêté |
 | minimum garanti | oui, barème de l'article L. 17 |
 | ASPA | oui, à partir de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, barème d'une personne seule ou du couple quand un conjoint est déclaré, ligne séparée |
-| PMR (retraite agricole) | **non** — voir `docs/limites.md` |
+| PMR (retraite agricole) | oui, depuis 2009, au taux plein, au prorata de la durée agricole, écrêtée au plafond de toutes les pensions ; et, depuis 2015, le complément différentiel de la complémentaire agricole |
 | majoration pour trois enfants | oui, plafonnée en euros à la complémentaire |
 | majoration de durée d'assurance | oui, attribuée dans un régime |
 | AVPF | oui, salaire forfaitaire au SMIC porté au compte |
@@ -2118,7 +2118,7 @@ quater le dit.
 un système notionnel réel relèverait ses pensions jusqu'à l'équilibre, ou les
 abaisserait, par un facteur commun à toutes les pensions de l'année. Un
 coefficient supérieur à un n'est donc pas une économie mais une MARGE, et lire
-les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,68<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->41<!--/--> % est un contresens : à
+les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,69<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->41<!--/--> % est un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, autrement
 réparti entre les carrières. Le facteur étant commun, l'appliquer déplacerait
 les niveaux sans toucher aux écarts, qui sont l'objet du modèle.
@@ -2152,7 +2152,7 @@ d'attendre une réforme.
 
 ### Sources
 
-`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->192<!--/--> jeux de données des
+`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->194<!--/--> jeux de données des
 <!--chiffre:entrees(data/sources.yaml:institutions)-->39<!--/--> institutions, avec pour chacun l'URL, le mode
 d'accès et l'état d'intégration.
 

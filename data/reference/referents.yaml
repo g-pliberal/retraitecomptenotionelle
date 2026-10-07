@@ -324,7 +324,7 @@ referents:
         preuve: >-
           `parameters/retraites/independants/pmr_msa.yaml`, au
           commit `fe2cdff`
-        etat: a_reprendre
+        etat: repris
         chantier: "138.8"
       - quoi: >-
           Il porte le salaire qui valide un trimestre outre-mer,
@@ -3711,7 +3711,7 @@ referents:
         preuve: >-
           `R/fonctionsCalculsPensions.R:2483-2488, 2541-2546` et
           `complementDiffRCO` (`:3117-3146`), au commit `ec5a871`
-        etat: a_reprendre
+        etat: repris
         chantier: "138.8"
       - quoi: >-
           Il retire du salaire annuel moyen les années sans

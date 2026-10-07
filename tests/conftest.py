@@ -122,6 +122,9 @@ EXCEPTIONS = {
     # Les étapes de la liquidation et le journal, sur la même requête sur cinq.
     ("test_liquidation.py",
      "test_les_deux_moteurs_liquident_et_journalisent_a_l_identique"): "complet",
+    # Les deux minima des exploitants agricoles, dans les deux moteurs.
+    ("test_minima_agricoles.py",
+     "test_les_deux_moteurs_servent_les_memes_minima_agricoles"): "complet",
 }
 
 

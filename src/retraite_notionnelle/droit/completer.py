@@ -10,8 +10,13 @@ ensemble, dans l'ordre où il l'applique — et l'ordre commande le résultat :
   services, qui se substitue à la pension quand il lui est supérieur ;
 * LA SURCOTE PARENTALE, sur la pension relevée, pour les trimestres de
   l'année qui précède l'âge légal ;
-* LA MAJORATION POUR ENFANTS enfin, sur ce plancher, plafonnée en euros à la
-  complémentaire (:func:`plafond_majoration`).
+* LA MAJORATION POUR ENFANTS, sur ce plancher, plafonnée en euros à la
+  complémentaire (:func:`plafond_majoration`) ;
+* LES DEUX MINIMA DES EXPLOITANTS AGRICOLES enfin, qui regardent toutes les
+  pensions, majorations pour enfants comprises : la pension majorée de
+  référence, qui relève leur pension de base (:func:`pension_majoree`), puis
+  le complément différentiel de la RCO, qui porte leurs deux pensions
+  agricoles à un pourcentage du SMIC net (:func:`complement_differentiel`).
 
 L'ASPA n'en est pas : elle regarde toutes les ressources, c'est l'étape
 « foyer et net » (:mod:`.foyer`).
@@ -23,6 +28,7 @@ Ce que l'étape écrit, :class:`Complements`, suit son schéma,
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
 
@@ -53,7 +59,22 @@ FICHES = {
     "minimum_garanti": "minimum_garanti",
     "surcote_parentale": "surcote_parentale",
     "majoration_enfants": "majoration_dix_pour_cent",
+    "pension_majoree_reference": "pension_majoree_reference",
+    "complement_differentiel_rco": "complement_differentiel_rco",
 }
+
+#: Le régime de la retraite complémentaire des non-salariés agricoles, dont
+#: le complément différentiel ajoute des points.
+RCO = "msa_rco"
+
+#: Les heures de SMIC d'une année, que le complément de la RCO multiplie
+#: (L. 732-63, IV).
+HEURES_DU_COMPLEMENT = 1820
+
+#: Les points de RCO d'une carrière complète au minimum, que la formule du
+#: complément retranche de 2015 à octobre 2021 (D. 732-166-4 : « 3 750 ×
+#: vpRCO »).
+POINTS_D_UNE_CARRIERE_COMPLETE = 3750
 
 #: Première date d'effet, (année, mois), où la surcote s'AJOUTE au minimum
 #: contributif au lieu d'entrer dans la pension qu'on lui compare : décret
@@ -257,6 +278,170 @@ def plancher_international(eligible, montant_base: float, montant_majore: float,
         else:
             plancher += majoration * min(eligible.cotisee_regime, maximum) / maximum
     return plancher
+
+
+@dataclass(frozen=True)
+class PensionMajoree:
+    """Ce que la pension majorée de référence ajoute à la pension de base des
+    non-salariés agricoles, et ce qu'elle a lu (:func:`pension_majoree`)."""
+
+    #: La PMR entière de la date d'effet, en euros par an.
+    entiere: float
+    #: La durée retenue et la durée de référence, en trimestres.
+    duree: int
+    reference: int
+    #: La majoration avant l'écrêtement, et après.
+    avant_ecretement: float
+    complement: float
+    #: Le plafond de l'écrêtement.
+    plafond: float
+    fiabilite: Fiabilite
+
+
+def pension_majoree(moteur: ScenarioActuel, carriere: Carriere, eligible,
+                    pension: PensionRegime, ressources: float) -> PensionMajoree | None:
+    """Ce que la pension majorée de référence (PMR) ajoute à la pension de
+    base des non-salariés agricoles ; ``None`` quand elle n'y ajoute rien.
+
+    La majoration « a pour objet de porter le total des droits propres et
+    dérivés servis à l'assuré par le régime [...] à un montant minimum »
+    (L. 732-54-2) : la PMR de la date d'effet au prorata de la durée
+    d'assurance non salariée agricole sur la durée de référence DR, la durée
+    au plus DR (D. 732-110, D. 732-111). Elle s'ouvre au taux plein, avec, de
+    2009 à janvier 2014, une durée minimale dans le régime (D. 732-109).
+    La pension se compare AVANT SA SURCOTE, « calculée sur la base du montant
+    de pension avant qu'il ne soit porté au montant minimum », et sans la
+    majoration pour enfants (D. 732-112) — que D. 732-38 ne fait porter que sur
+    la pension calculée, non sur la majoration : la surcote reste, la majoration
+    pour enfants ne s'applique pas au complément.
+
+    L'ÉCRÊTEMENT : la majoration ne fait pas dépasser le plafond à
+    ``ressources`` — toutes les pensions de base et complémentaires de
+    l'assuré et les majorations pour enfants qui leur sont rattachées, celles
+    que d'autres départs servent et les pensions étrangères (L. 732-54-3,
+    D. 732-114). ``eligible`` est l'
+    :class:`~retraite_notionnelle.droit.liquider.EligibleAgricole` du régime.
+    """
+    regle = moteur.pension_majoree_reference.regle(date_d_effet(carriere))
+    if not regle["existe"] or not eligible.taux_plein or pension.montant <= 0.0:
+        return None
+    duree = eligible.duree + (eligible.enfants if regle["majorations_de_duree"] else 0)
+    if duree < (regle["duree_minimale"] or 0):
+        return None
+    # De 2009 à 2021, PMR1 pour qui a été chef d'exploitation dix-sept ans et
+    # demi, PMR2 sinon (D. 732-110, II ; D. 732-111).
+    serie = regle["montant"]
+    if regle["montant_reduit"] and eligible.duree < (regle["seuil_chef"] or 0):
+        serie = regle["montant_reduit"]
+    annee, mois = carriere.annee_liquidation, carriere.mois_liquidation
+    lu = moteur.pension_majoree_reference.montant(serie, annee, mois)
+    if lu is None:
+        return None
+    entiere, fiabilite = lu
+    retenue = min(duree, eligible.reference)
+    avant = max(0.0, entiere * retenue / eligible.reference
+                - pension.montant / eligible.surcote)
+    if avant <= 0.0:
+        return None
+    if regle["plafond"] == "minimum_contributif":
+        _, _, plafond, fiabilite_plafond = moteur.minimum_contributif.valeurs(annee, mois)
+    else:
+        plafond, fiabilite_plafond = moteur.pension_majoree_reference.montant(
+            regle["plafond"], annee, mois)
+    return PensionMajoree(
+        entiere=entiere, duree=retenue, reference=eligible.reference,
+        avant_ecretement=avant, complement=max(0.0, min(avant, plafond - ressources)),
+        plafond=plafond, fiabilite=min(fiabilite, fiabilite_plafond))
+
+
+@dataclass(frozen=True)
+class ComplementDifferentiel:
+    """Ce que le complément différentiel ajoute à la RCO, et ce qu'il a lu
+    (:func:`complement_differentiel`)."""
+
+    #: Le pourcentage du SMIC net, et le SMIC net agricole horaire.
+    pourcentage: float
+    smic_net: float
+    #: Le montant minimal d'une carrière complète : pourcentage × 1 820 ×
+    #: SMIC net, en euros par an.
+    cible: float
+    #: La durée de chef retenue et la durée de référence, en trimestres.
+    duree: int
+    reference: int
+    #: Les points ajoutés, arrondis à l'entier, et la valeur du point.
+    points: int
+    valeur_point: float
+    #: Leur montant, en euros par an.
+    montant: float
+    #: Un plafond a-t-il réduit le complément de la formule ?
+    plafonne: bool
+    fiabilite: Fiabilite
+
+
+def complement_differentiel(moteur: ScenarioActuel, carriere: Carriere, eligible,
+                            base: float, rco: float, points_rco: float,
+                            valeur_point: float, personnelles: float
+                            ) -> ComplementDifferentiel | None:
+    """Les points de RCO que le complément différentiel ajoute (L. 732-63) ;
+    ``None`` quand il n'en ajoute pas.
+
+    Il s'ouvre au chef d'exploitation de dix-sept ans et demi qui a la durée
+    requise tous régimes — le taux plein suffit depuis septembre 2023 —, et
+    porte ses deux pensions agricoles, ``base`` (pension majorée de référence
+    et surcote comprises, sans la majoration pour enfants) et ``rco``, à un
+    pourcentage de 1 820 fois le SMIC net agricole horaire du 1er janvier de
+    l'année d'effet, la CIBLE (D. 732-166-2 à D. 732-166-4) :
+
+    * jusqu'en octobre 2021, ``(cible − (PMR1 + 3 750 × vpRCO)) × DCE / DR`` :
+      l'écart entre la cible et ce que vaudraient une PMR et une RCO entières ;
+    * depuis, ``(cible − PMRmax) × DCE / DR − N × vpRCO`` : l'écart entre la part
+      de la cible que la PMR ne couvre pas et les ``points_rco`` de chef.
+
+    Le complément ne fait pas dépasser aux deux pensions agricoles la cible au
+    prorata de la durée agricole (D. 732-166-5), ni, depuis novembre 2021, à
+    toutes les pensions personnelles de l'assuré, ``personnelles``, la cible
+    entière (L. 732-63, V ; D. 732-166-5-1). Il se convertit en points à la
+    valeur de service de l'année, arrondis à l'entier le plus proche
+    (D. 732-166-6). Le modèle ne connaissant que le statut de chef, la durée
+    de chef, DCE, est la durée agricole, Dnsa.
+    """
+    date_effet = date_d_effet(carriere)
+    regle = moteur.complement_differentiel_rco.regle(date_effet)
+    if not regle["existe"] or valeur_point <= 0.0:
+        return None
+    duree = eligible.duree + (eligible.enfants if regle["majorations_de_duree"] else 0)
+    ouvert = (eligible.taux_plein if regle["condition"] == "taux_plein"
+              else eligible.duree_requise_atteinte)
+    if duree < (regle["seuil_chef"] or 0) or not ouvert:
+        return None
+    annee = carriere.annee_liquidation
+    smic = moteur.complement_differentiel_rco.smic_net(annee)
+    pmr = moteur.pension_majoree_reference.montant(
+        moteur.pension_majoree_reference.regle(date_effet)["montant"] or "pmr_chef",
+        annee, regle["pmr_au_mois"] or 1)
+    if smic is None or pmr is None:
+        return None
+    smic_net, fiabilite = smic
+    cible = regle["pourcentage"] * HEURES_DU_COMPLEMENT * smic_net
+    retenue = min(duree, eligible.reference)
+    prorata = retenue / eligible.reference
+    if regle["formule"] == "carriere_complete":
+        formule = (cible - (pmr[0] + POINTS_D_UNE_CARRIERE_COMPLETE * valeur_point)) * prorata
+    else:
+        formule = (cible - pmr[0]) * prorata - points_rco * valeur_point
+    montant = min(formule, cible * prorata - (base + rco))
+    if regle["plafond_tous_regimes"]:
+        montant = min(montant, cible - personnelles)
+    montant = max(0.0, montant)
+    points = math.floor(montant / valeur_point + 0.5 + 1e-9)
+    if points <= 0:
+        return None
+    return ComplementDifferentiel(
+        pourcentage=regle["pourcentage"], smic_net=smic_net, cible=cible,
+        duree=retenue, reference=eligible.reference, points=points,
+        valeur_point=valeur_point, montant=points * valeur_point,
+        plafonne=montant < formule - 1e-9,
+        fiabilite=min(fiabilite, pmr[1]))
 
 
 @dataclass(frozen=True)
@@ -743,6 +928,73 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 ),
             ))
 
+    # LES DEUX MINIMA DES EXPLOITANTS AGRICOLES, après la majoration pour
+    # enfants, que leurs plafonds comptent : la pension majorée de référence
+    # relève la pension de base, puis le complément différentiel ajoute des
+    # points de RCO, en comptant la pension relevée. Les ressources sont
+    # toutes les pensions à la date d'effet, celles d'autres départs et les
+    # pensions étrangères comprises (L. 732-54-3, L. 732-63, V).
+    agricole = liquidees.agricole
+    if avantages_non_contributifs and agricole is not None:
+        etrangeres = _etranger.pensions_etrangeres_servies(
+            moteur.macro, carriere, carriere.date_liquidation)
+        base = pensions[agricole.indice]
+        majoree = pension_majoree(moteur, carriere, agricole, base,
+                                  total + servies + etrangeres)
+        if majoree is not None and majoree.complement > 0.0:
+            pensions[agricole.indice] = replace(
+                base, montant=base.montant + majoree.complement,
+                detail=(f"{base.detail} = {base.montant:,.2f} €, porté à la pension "
+                        f"majorée de référence par + {majoree.complement:,.2f} €"))
+            total += majoree.complement
+            fiabilite_globale = min(fiabilite_globale, majoree.fiabilite)
+            avantages.append(AvantageApplique(
+                code="pension_majoree_reference",
+                libelle="Pension majorée de référence",
+                montant=majoree.complement,
+                detail=(f"PMR {majoree.entiere:,.2f} € × {majoree.duree}/"
+                        f"{majoree.reference}, au taux plein"
+                        + (f", écrêtée au plafond de {majoree.plafond:,.2f} € de toutes "
+                           f"les pensions"
+                           if majoree.complement < majoree.avant_ecretement - 1e-9 else "")),
+                par_regime=((base.regime, majoree.complement),),
+            ))
+        # Le complément ne s'ajoute qu'à la RCO dont la période le déclare.
+        indice_rco = next((i for i, p in enumerate(pensions) if p.regime == RCO), None)
+        periode_rco = None
+        if indice_rco is not None:
+            regime_rco = moteur.catalogue[RCO]
+            periode_rco = regime_rco.periode(
+                min(annee_liquidation, derniere_annee(regime_rco)))
+        valeur = (liquider.valeur_du_point(moteur, RCO, carriere.date_liquidation)
+                  if periode_rco is not None and "complement_differentiel_rco"
+                  in periode_rco.avantages_non_contributifs else None)
+        if indice_rco is not None and valeur is not None:
+            rco = pensions[indice_rco]
+            differentiel = complement_differentiel(
+                moteur, carriere, agricole, pensions[agricole.indice].montant,
+                rco.montant, points_acquis.get(RCO, 0.0), valeur[0],
+                total + servies + etrangeres)
+            if differentiel is not None:
+                pensions[indice_rco] = replace(
+                    rco, montant=rco.montant + differentiel.montant,
+                    detail=(f"{rco.detail} = {rco.montant:,.2f} €, complément "
+                            f"différentiel de {differentiel.points:,} points"))
+                total += differentiel.montant
+                fiabilite_globale = min(fiabilite_globale, differentiel.fiabilite,
+                                        valeur[1])
+                avantages.append(AvantageApplique(
+                    code="complement_differentiel_rco",
+                    libelle="Complément différentiel de la complémentaire agricole",
+                    montant=differentiel.montant,
+                    detail=(f"{differentiel.points:,} points : "
+                            f"{differentiel.pourcentage:.0%} de 1 820 heures au SMIC "
+                            f"net agricole de {differentiel.smic_net:.4f} €, "
+                            f"{differentiel.cible:,.2f} € par an, × {differentiel.duree}/"
+                            f"{differentiel.reference}"
+                            + (", plafonné" if differentiel.plafonne else "")),
+                    par_regime=((RCO, differentiel.montant),),
+                ))
 
     return Complements(
         personne=carriere.personne,

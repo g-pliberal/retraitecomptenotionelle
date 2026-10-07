@@ -1,0 +1,516 @@
+schema_version: 1
+id: pension_majoree_reference
+intitule: >-
+  La pension de base des non-salariés agricoles liquidée au taux plein est portée à un
+  montant minimum, la pension majorée de référence, au prorata de la durée d'assurance
+  non salariée agricole sur la durée de la retraite forfaitaire, trente-sept ans et demi
+  au moins ; de 2009 à 2021, un montant pour les périodes de qui a été chef
+  d'exploitation dix-sept ans et demi, un autre, plus bas, sinon, et vingt-deux puis
+  dix-sept ans et demi de durée exigés jusqu'en janvier 2014 ; un montant unique depuis
+  2022, relevé au minimum contributif majoré, et de cent euros par mois pour les
+  pensions de septembre 2023 ; la majoration est écrêtée de ce que toutes les pensions
+  dépassent d'un plafond, celui de l'article L. 173-2 depuis 2026.
+domaine: minima
+regimes: [msa_non_salaries]
+etape: completer_tous_regimes
+face: droit
+etat: approchee
+lit:
+- la pension de base des non-salariés agricoles, avant surcote et sans la majoration
+  pour enfants, et le taux plein qui l'ouvre
+- la durée d'assurance non salariée agricole, les trimestres pour enfants depuis 2026,
+  et la durée de la retraite forfaitaire
+- les montants de la PMR et du plafond en vigueur à la date d'effet
+  (legislation/pension_majoree_reference.csv ; le plafond de l'article L. 173-2 depuis
+  2026, legislation/minimum_contributif.csv)
+- toutes les pensions et les majorations pour enfants, celles d'autres départs et les
+  pensions étrangères, pour l'écrêtement
+ecrit:
+- ce que la majoration ajoute à la pension de base des non-salariés agricoles, après
+  l'écrêtement
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: avant_la_pension_majoree
+  statut: lue
+  textes:
+  - id: LEGIARTI000006585622
+    article: L. 732-54-1 code rural
+    en_vigueur: 2001-12-29
+    citation: >-
+      « Les chefs d'exploitation ou d'entreprise agricole dont la pension de retraite
+      servie à titre personnel prend effet postérieurement au 31 décembre 1996 [...]
+      peuvent bénéficier d'une majoration de leur pension de retraite proportionnelle.
+      Cette majoration a pour objet de porter le montant de celle-ci à un minimum qui est
+      fixé par décret »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000006597537
+    article: D. 732-113 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « Le nombre minimal annuel moyen de points de retraite proportionnelle A est
+      déterminé [...] selon la formule suivante : A = (MV 1 - AVTS) / 37,5 x VP »
+    lu_le: 2026-10-07
+  bornes:
+    liquidation.date_effet: [null, 2009-01-01]
+  contenu:
+    droit: >-
+      pas de pension majorée de référence : les plans de revalorisation de 1994 à 2002
+      majoraient la retraite PROPORTIONNELLE en points — un minimum de points par année
+      de chef d'exploitation d'une carrière complète, des points pour les années d'aide
+      familial ou de conjoint —, ce que le modèle ne sert pas ; et la PMR de 2009 a
+      relevé aussi les pensions liquidées avant elle, ce que l'échéancier ne sert pas
+    parametres:
+      existe: false
+      duree_minimale: null
+      montant: null
+      montant_reduit: null
+      seuil_chef: null
+      plafond: null
+      majorations_de_duree: false
+  exemples: aucun trouvé
+- id: pmr_de_2009
+  statut: lue
+  textes:
+  - id: LEGIARTI000019959465
+    article: L. 732-54-1 code rural
+    en_vigueur: 2008-12-19
+    citation: >-
+      « Peuvent bénéficier d'une majoration de la pension de retraite servie à titre
+      personnel les personnes dont cette pension a pris effet : [...] 2° A compter du
+      1er janvier 2002 lorsqu'elles justifient des conditions prévues par les articles
+      L. 732-23 et L. 732-25 [...] pour ouvrir droit à une pension à taux plein [...] et
+      qu'elles remplissent des conditions fixées par décret de durées minimales
+      d'assurance » ; « ne peuvent bénéficier de la majoration que si elles ont fait
+      valoir l'intégralité des droits »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000019959460
+    article: L. 732-54-2 code rural
+    en_vigueur: 2008-12-19
+    citation: >-
+      « La majoration [...] a pour objet de porter le total des droits propres et
+      dérivés servis à l'assuré par le régime [...] des personnes non salariées des
+      professions agricoles à un montant minimum [...] différencié en fonction de la
+      qualité de l'assuré »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000019959457
+    article: L. 732-54-3 code rural
+    en_vigueur: 2008-12-19
+    citation: >-
+      « Lorsque le montant de la majoration [...] augmentée du montant des pensions de
+      droit propre et de droit dérivé servies à l'assuré par les régimes légaux [...],
+      de base et complémentaires, français et étrangers [...] excède un plafond fixé
+      par décret, la majoration de pension est réduite à due concurrence du
+      dépassement »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000020254724
+    article: D. 732-109 code rural
+    en_vigueur: 2009-02-16
+    citation: >-
+      « 3° Les personnes dont la pension [...] a pris effet à compter du 1er janvier
+      2009, qui justifient : a) [...] d'une durée d'assurance [...] au moins égale à
+      celle requise par l'article R. 732-39, lorsqu'elles sont âgées de moins de
+      soixante-cinq ans ou ne relèvent pas de l'article L. 732-23 ; b) D'autre part,
+      d'une durée d'assurance non salariée agricole exercée à titre exclusif ou
+      principal, au moins égale à vingt-deux années et demie. Cette durée est fixée à
+      dix-sept années et demie à compter du 1er janvier 2011 »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000020254712
+    article: D. 732-110 code rural
+    en_vigueur: 2009-02-16
+    citation: >-
+      « sont prises en considération les périodes qui ont donné lieu à versement des
+      cotisations ouvrant droit à la retraite forfaitaire ou à validation au titre de
+      périodes assimilées » ; « Le nombre total d'années prises en compte ne peut
+      excéder [...] la durée fixée au 1° de l'article R. 732-61 »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000020254705
+    article: D. 732-111 code rural
+    en_vigueur: 2009-02-16
+    citation: >-
+      « PMR = [PMR1 × (DM1 / DR)] + [PMR2 × (DM2) / DR] où ― PMR1 est égal à 7 596 euros
+      au 1er janvier 2009 ; ― PMR2 est égal à 6 036 euros au 1er janvier 2009 » ; « DR
+      [...] ne peut être inférieure à 37, 5 années » ; « Les montants minimums annuels
+      PMR1 et PMR2 sont revalorisés aux mêmes dates et dans les mêmes conditions que
+      celles prévues pour les pensions de vieillesse de base par l'article L. 161-23-1 »
+      ; « La majoration prévue à l'article L. 732-25-1 est calculée sur la base du
+      montant de pension avant qu'il ne soit porté au montant minimum annuel »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000020254696
+    article: D. 732-112 code rural
+    en_vigueur: 2009-02-16
+    citation: >-
+      « La majoration de pension est égale au montant différentiel entre la pension
+      annuelle majorée de référence de l'assuré [...] et la somme des pensions de
+      retraite et de réversion, servies à l'assuré par le régime » ; « La majoration
+      pour tierce personne [...], la majoration de pension prévue à l'article D. 732-38
+      et, pour les assurés dont la pension de retraite prend effet à compter du 1er
+      janvier 2009, la majoration prévue à l'article L. 732-25-1 ne sont pas prises en
+      compte »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000020254692
+    article: D. 732-113 code rural
+    en_vigueur: 2009-02-16
+    citation: >-
+      « Le montant annuel du plafond prévu à l'article L. 732-54-3 est fixé à 9 000 euros
+      au 1er janvier 2009 »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000020254688
+    article: D. 732-114 code rural
+    en_vigueur: 2009-02-16
+    citation: >-
+      « Il est tenu compte, pour l'appréciation des ressources, de l'ensemble des
+      pensions de retraite et des pensions de réversion servies à l'assuré par les
+      régimes de base et par les régimes complémentaires légalement obligatoires
+      d'assurance vieillesse imposables, ainsi que des majorations pour enfants
+      rattachées à ces pensions »
+    lu_le: 2026-10-07
+  - id: JORFARTI000021801973
+    publie_le: 2010-02-10
+    reference: >-
+      décret n° 2010-126 du 8 février 2010, article 1er : « Le montant annuel du plafond
+      prévu à l'article L. 732-54-3 est fixé à 9 600 euros », en vigueur le 11 février
+      2010 (D. 732-113, LEGIARTI000021803611)
+    lu_le: 2026-10-07
+  bornes:
+    liquidation.date_effet: [2009-01-01, 2011-01-01]
+  contenu:
+    droit: >-
+      au taux plein et avec vingt-deux ans et demi d'assurance non salariée agricole, la
+      pension de base, comparée avant surcote et sans la majoration pour enfants, est
+      portée à PMR1 × durée / DR pour qui a été chef d'exploitation dix-sept ans et
+      demi, à PMR2 × durée / DR sinon, la durée au plus DR, DR au moins 150 trimestres ;
+      la majoration est écrêtée de ce que toutes les pensions, majorations pour enfants
+      comprises, dépassent du plafond
+    parametres:
+      existe: true
+      duree_minimale: 90
+      montant: pmr_chef
+      montant_reduit: pmr_conjoint
+      seuil_chef: 70
+      plafond: plafond
+      majorations_de_duree: false
+  exemples: aucun trouvé
+- id: pmr_de_2011
+  statut: lue
+  textes:
+  - id: LEGIARTI000020254724
+    article: D. 732-109 code rural
+    en_vigueur: 2009-02-16
+    citation: >-
+      « Cette durée est fixée à dix-sept années et demie à compter du 1er janvier 2011 »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000023395298
+    article: D. 732-110 code rural
+    en_vigueur: 2011-01-01
+    lu_le: 2026-10-07
+  bornes:
+    liquidation.date_effet: [2011-01-01, 2014-02-01]
+  contenu:
+    droit: >-
+      la même règle, la durée exigée ramenée à dix-sept ans et demi d'assurance non
+      salariée agricole
+    parametres:
+      existe: true
+      duree_minimale: 70
+      montant: pmr_chef
+      montant_reduit: pmr_conjoint
+      seuil_chef: 70
+      plafond: plafond
+      majorations_de_duree: false
+  exemples: aucun trouvé
+- id: pmr_de_2014
+  statut: lue
+  textes:
+  - id: LEGIARTI000028498794
+    article: L. 732-54-1 code rural
+    en_vigueur: 2014-01-22
+    citation: >-
+      « 3° A compter du 1er février 2014 lorsqu'elles justifient des conditions prévues
+      aux mêmes articles L. 732-18-3, L. 732-23 et L. 732-25 [...] pour ouvrir droit à
+      une pension à taux plein dans le régime d'assurance vieillesse des personnes non
+      salariées des professions agricoles »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000028958254
+    article: D. 732-109 code rural
+    en_vigueur: 2014-05-18
+    citation: >-
+      « 4° Les personnes dont la pension de retraite servie à titre personnel prend
+      effet à compter du 1er février 2014, qui justifient d'une durée d'assurance [...]
+      au moins égales à celles mentionnées à l'article R. 732-39 [...] lorsqu'elles
+      n'ont pas atteint l'âge mentionné à l'article L. 732-25 ou qu'elles ne relèvent
+      pas des articles L. 732-18-3 et L. 732-23 » : le taux plein, sans durée minimale
+      dans le régime
+    lu_le: 2026-10-07
+  bornes:
+    liquidation.date_effet: [2014-02-01, 2022-01-01]
+  contenu:
+    droit: >-
+      le taux plein suffit, sans durée minimale d'assurance non salariée agricole ;
+      PMR1 pour qui a été chef dix-sept ans et demi, PMR2 sinon
+    parametres:
+      existe: true
+      duree_minimale: 0
+      montant: pmr_chef
+      montant_reduit: pmr_conjoint
+      seuil_chef: 70
+      plafond: plafond
+      majorations_de_duree: false
+  exemples: aucun trouvé
+- id: pmr_unique_de_2022
+  statut: lue
+  textes:
+  - id: LEGIARTI000044944271
+    article: D. 732-111 code rural
+    en_vigueur: 2022-01-01
+    citation: >-
+      « PMR = PMRmax × (DNSA/ DR) où ― PMRmax est égal à 8 557,38 euros au 1er janvier
+      2022 » ; « Dnsa ne peut être supérieure à la durée de référence DR »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000044944264
+    article: D. 732-113 code rural
+    en_vigueur: 2022-01-01
+    citation: >-
+      « Le montant annuel du plafond prévu à l'article L. 732-54-3 est fixé à 11 001,44
+      euros au 1er janvier 2022 »
+    lu_le: 2026-10-07
+  - id: JORFTEXT000044792131
+    publie_le: 2021-12-31
+    reference: >-
+      décret n° 2021-1919 du 30 décembre 2021 : « Il relève le montant annuel de la
+      pension majorée de référence pour une carrière complète [...] à hauteur du montant
+      prévu pour le minimum contributif majoré. Il relève également le montant annuel du
+      plafond d'écrêtement tous régimes [...] au niveau [...] de l'allocation de
+      solidarité aux personnes âgées servie pour une personne seule »
+    lu_le: 2026-10-07
+  nee_de: JORFTEXT000044792131
+  bornes:
+    liquidation.date_effet: [2022-01-01, 2023-09-01]
+  contenu:
+    droit: >-
+      un seul montant, quel que soit le statut : PMRmax × durée / DR ; le plafond relevé
+      à l'ASPA d'une personne seule
+    parametres:
+      existe: true
+      duree_minimale: 0
+      montant: pmr_chef
+      montant_reduit: null
+      seuil_chef: null
+      plafond: plafond
+      majorations_de_duree: false
+  exemples: aucun trouvé
+- id: pmr_de_septembre_2023
+  statut: lue
+  textes:
+  - id: LEGIARTI000047961256
+    article: D. 732-111 code rural
+    en_vigueur: 2023-08-12
+    citation: >-
+      « PMRmax est égal à 10 170,86 euros au 1er septembre 2023 pour les personnes dont
+      la pension de retraite servie à titre personnel prend effet à compter du 1er
+      septembre 2023 » ; « revalorisé dans les conditions prévues à la deuxième phrase
+      du deuxième alinéa de l'article L. 732-54-2 »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000047453332
+    article: L. 732-54-2 code rural
+    en_vigueur: 2023-09-01
+    citation: >-
+      « Le montant minimum est revalorisé dans les conditions prévues au dernier alinéa
+      de l'article L. 351-10 du code de la sécurité sociale »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000047961228
+    article: D. 732-113 code rural
+    en_vigueur: 2023-09-01
+    citation: >-
+      « II.-Pour les personnes dont la pension de retraite servie à titre personnel
+      prend effet à compter du 1er septembre 2023, le montant annuel du plafond [...]
+      est fixé à 12 732,96 euros au 1er septembre 2023. Le montant du plafond est
+      revalorisé aux mêmes dates et dans les mêmes proportions que le salaire minimum de
+      croissance »
+    lu_le: 2026-10-07
+  bornes:
+    liquidation.date_effet: [2023-09-01, 2026-01-01]
+  contenu:
+    droit: >-
+      le montant relevé de cent euros par mois, 10 170,86 € par an, puis revalorisé
+      comme le minimum contributif, qu'il vaut ; le plafond, 12 732,96 €, suit le SMIC
+    parametres:
+      existe: true
+      duree_minimale: 0
+      montant: pmr_depuis_septembre_2023
+      montant_reduit: null
+      seuil_chef: null
+      plafond: plafond_depuis_septembre_2023
+      majorations_de_duree: false
+  exemples: aucun trouvé
+- id: pmr_de_2026
+  statut: lue
+  textes:
+  - id: LEGIARTI000051289513
+    article: L. 732-54-3 code rural
+    en_vigueur: 2026-01-01
+    citation: >-
+      « Le plafond prévu au premier alinéa du présent article est : [...] 2° Pour les
+      pensions prenant effet à compter du 1er janvier 2026, égal au montant fixé en
+      application du premier alinéa de l'article L. 173-2 du code de la sécurité
+      sociale »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000053365690
+    article: D. 732-110 code rural
+    en_vigueur: 2026-01-01
+    citation: >-
+      « sont prises en compte les périodes d'assurance [...] auxquelles s'ajoutent les
+      majorations de durées d'assurance attribuées pour l'obtention de cette même
+      retraite » ; « à titre exclusif, principal ou secondaire pour les périodes à
+      compter de cette même date »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000053365711
+    article: D. 732-111 code rural
+    en_vigueur: 2026-01-01
+    citation: >-
+      « DR est la durée fixée [...] pour les pensions prenant effet à compter du 1er
+      janvier 2026, la durée mentionnée au troisième alinéa de l'article L. 351-1 du
+      code de la sécurité sociale ; cette durée de référence ne peut être inférieure à
+      37,5 années »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000053365723
+    article: D. 732-112 code rural
+    en_vigueur: 2026-01-01
+    citation: >-
+      « la majoration de pension prévue à l'article L. 351-12 du code de la sécurité
+      sociale et la majoration prévue à l'article L. 351-1-2 du même code, ne sont pas
+      prises en compte [...]. Toutefois, il est tenu compte de la majoration prévue à
+      l'article L. 353-6 »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000053365737
+    article: D. 732-113 code rural
+    en_vigueur: 2026-01-01
+    citation: >-
+      « III. - Pour les personnes dont la pension de retraite servie à titre personnel
+      prend effet à compter du 1er janvier 2026, le montant annuel du plafond [...] est
+      égal à douze fois le montant prévu à l'article D. 173-21-4 du code de la sécurité
+      sociale »
+    lu_le: 2026-10-07
+  bornes:
+    liquidation.date_effet: [2026-01-01, null]
+  contenu:
+    droit: >-
+      la durée compte les trimestres pour enfants ; le plafond est celui du minimum
+      contributif, douze fois le montant mensuel de D. 173-21-4 ; les périodes de chef
+      d'exploitation à titre secondaire comptent depuis 2026, que le modèle ne
+      distingue pas
+    parametres:
+      existe: true
+      duree_minimale: 0
+      montant: pmr_depuis_septembre_2023
+      montant_reduit: null
+      seuil_chef: null
+      plafond: minimum_contributif
+      majorations_de_duree: true
+  exemples: aucun trouvé
+approximations:
+- ecart: >-
+    le modèle ne connaît que le statut de chef d'exploitation, à titre principal : la
+    durée d'assurance non salariée agricole est celle de chef, les périodes de conjoint,
+    d'aide familial ou de collaborateur et celles d'activité secondaire n'y sont pas, et
+    PMR2 ne sert qu'au chef qui n'a pas dix-sept ans et demi de cette qualité
+  effet: non mesuré
+- ecart: >-
+    la réversion n'entre ni dans la pension comparée ni dans l'écrêtement : le modèle
+    liquide la pension personnelle seule, et PMR1 n'est pas servie à la personne
+    « susceptible de bénéficier d'une pension de réversion » qui n'a pas été chef
+  effet: non mesuré
+- ecart: >-
+    la majoration se calcule au départ : sa révision quand les ressources changent, et
+    la PMR attribuée en 2009 aux pensions liquidées avant elle, ne sont pas servies ;
+    les majorations des plans de 1994 à 2002, avant 2009, non plus
+  effet: >-
+    les pensions agricoles liquidées avant 2009, et celles qu'une pension étrangère ou
+    une seconde pension vient écrêter après le départ
+- ecart: >-
+    la durée de référence DR est la durée de proratisation de la retraite forfaitaire que
+    le modèle lit, 150 trimestres au moins ; pour les générations 1944 à 1948, R. 732-61
+    en fixe une plus courte, que le modèle ne lit pas non plus pour le forfait
+  effet: non mesuré
+- ecart: >-
+    entre deux ancres, les montants sont ceux que la loi définit — l'ancre revalorisée
+    par les coefficients de l'article L. 161-23-1, au centime inférieur, la tranche de
+    2020 étant celle des petites pensions —, aucune caisse n'en publiant la série
+  effet: >-
+    au plus quelques centimes par revalorisation ; le plafond de juillet 2022 retrouve
+    celui que la MSA publie, 11 441,49 €
+sources:
+  lu_le: 2026-10-07
+  prochaine_relecture: 2027-01-31
+  a_relire:
+  - >-
+    Chercher un exemple chiffré publié par la MSA (circulaire, fiche, simulateur) d'une
+    pension portée à la PMR, et le rejouer dans exemples_officiels.yaml.
+  - >-
+    Lire les décrets d'application des plans de revalorisation de 1994 à 2002 (D. 732-110
+    à D. 732-149 dans leur rédaction antérieure à 2009) pour servir le minimum de points
+    des pensions liquidées de 1997 à 2008.
+  - Relire les montants à chaque revalorisation de janvier.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 732-54-1 à L. 732-54-4 du code rural (rédactions de 2002, 2008, 2014, 2022,
+      2023 et 2026), D. 732-109 à D. 732-115 (2005, 2009, 2010, 2011, 2014, 2016, 2017,
+      2022, 2023 et 2026), R. 732-61 (2017), D. 173-21-4 CSS, dans l'index LEGI du dépôt
+      à jour au 6 octobre 2026
+    date: 2026-10-07
+  - type: jorf
+    reference: >-
+      décrets n° 2010-126 du 8 février 2010 (plafond de 9 600 €) et n° 2021-1919 du 30
+      décembre 2021 (PMR unique au minimum contributif majoré, plafond à l'ASPA), dans
+      l'index JORF du dépôt
+    date: 2026-10-07
+  - type: autre
+    reference: >-
+      MSA, tableaux de bord « Les retraites du régime des non-salariés agricoles » d'août
+      2023 et de mai 2024 : « Au 1er janvier 2022, le montant mensuel de la PMR maximum
+      est relevé à 8 557,38 €/ an (713,11 €/mois) et le plafond des pensions [...] soit
+      11 001,44 euros/an » ; « Au 1 er juillet 2022, le plafond des pensions augmente
+      [...] et passe à 11 441,49 €/an (953,45 €/mois) »
+    url: https://statistiques.msa.fr/wp-content/uploads/2024/05/TB-retraites-NSA-T4-2023-stock.pdf
+    date: 2026-10-07
+textes_a_rattacher:
+- reference: L. 732-54-1 à L. 732-54-4 code rural
+- reference: D. 732-109 à D. 732-115 code rural
+code:
+  python: >-
+    scenarios/actuel.py : PensionMajoreeReference (regle, montant) ; droit/completer.py :
+    pension_majoree, completer ; droit/liquider.py : EligibleAgricole
+  javascript: >-
+    moteur/js/regimes.js : PensionMajoreeReference ; moteur/js/droit/completer.js :
+    pensionMajoree, completer ; moteur/js/droit/liquider.js
+  parametres: >-
+    contenu.parametres de chaque version ; data/reference/legislation/pension_majoree_reference.csv,
+    écrit par scripts/fetch/dila_legi_pension_majoree.py
+  tests: >-
+    tests/test_minima_agricoles.py, dans les deux moteurs
+historique:
+- >-
+  2026-10-07 — servie, à l'étape 138.8 : déclarée depuis le 19 septembre 2026 dans six
+  périodes de msa_non_salaries.yaml sans qu'aucun code la serve ; sept versions, de son
+  absence avant 2009 au plafond de l'article L. 173-2 en 2026.
+exemples: []
+effet: >-
+  Les petites pensions de base des chefs d'exploitation liquidées au taux plein depuis
+  2009 : le moteur ne servait que le calcul contributif, forfait et points, souvent sous
+  la PMR — un chef parti en 2019 avec 44 ans de carrière à faible revenu touchait
+  6 892 € avant surcote, quand la PMR était de 8 273 €.
+referents:
+  calcul_pension:
+    equivalent: >-
+      R/fonctionsCalculsPensions.R : PMR1 au prorata de la durée sur la durée de
+      proratisation, depuis 2009, PMR2 omise ; écrêtement à l'ASPA d'une personne seule
+    confrontation: >-
+      le dépôt écrête au plafond de D. 732-113, que le décret de 2021 n'a porté au niveau
+      de l'ASPA qu'en 2022, et sert PMR2 au chef de moins de dix-sept ans et demi
+  baremes_ipp:
+    equivalent: parameters/retraites/independants/pmr_msa.yaml et pmr2_msa.yaml
+    confrontation: >-
+      les ancres de 2009, 2022 et 2023 concordent ; entre elles, l'IPP revalorise sur
+      les prix et au 1er janvier, le dépôt par les coefficients de l'article L. 161-23-1
+      à leurs dates : 8 388,94 € en 2021 au lieu de 8 515,89 €

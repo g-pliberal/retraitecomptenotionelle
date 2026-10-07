@@ -38,6 +38,7 @@ objets:
       fiabilite: {porte: "le niveau de ce qu'elle lit", type: texte, obligatoire: true}
       minimum: {porte: "ce que le minimum contributif lit de ce régime, quand il le porte", type: objet, objet: minimum, defaut: null}
       garanti: {porte: "ce que le minimum garanti lit de ce régime, quand il le porte", type: objet, objet: garanti, defaut: null}
+      agricole: {porte: "ce que la pension majorée de référence et le complément différentiel de la RCO lisent de la pension de base des non-salariés agricoles, quand elle porte la PMR", type: objet, objet: agricole, defaut: null}
 
   minimum:
     champs:
@@ -46,6 +47,15 @@ objets:
       taux_plein: {porte: "la pension est-elle liquidée au taux plein dans ce régime", type: booleen, obligatoire: true}
       surcote: {porte: "le coefficient de surcote déjà incorporé au montant, que le minimum retire avant de comparer", type: nombre, obligatoire: true}
       hors_minimum: {porte: "la part du montant que le minimum ne relève pas — la fraction d'avant 1998 des cultes, qu'il retire avant de comparer", type: nombre, defaut: 0}
+
+  agricole:
+    champs:
+      taux_plein: {porte: "la pension est-elle liquidée au taux plein dans le régime : durée requise, âge du taux plein, inaptitude ou handicap", type: booleen, obligatoire: true}
+      duree_requise_atteinte: {porte: "la durée tous régimes atteint-elle la durée requise, que le complément de la RCO demandait jusqu'en août 2023", type: booleen, obligatoire: true}
+      surcote: {porte: "le coefficient de surcote déjà incorporé au montant, que la PMR retire avant de comparer", type: nombre, obligatoire: true}
+      duree: {porte: "la durée d'assurance non salariée agricole des années, sans les trimestres pour enfants, en trimestres", type: entier, obligatoire: true}
+      enfants: {porte: "les trimestres pour enfants que le régime porte, que les durées comptent depuis 2026", type: entier, obligatoire: true}
+      reference: {porte: "la durée de référence DR, celle de la retraite forfaitaire, 150 trimestres au moins", type: entier, obligatoire: true}
 
   garanti:
     champs:

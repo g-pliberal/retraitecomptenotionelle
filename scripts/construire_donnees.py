@@ -1263,6 +1263,36 @@ def _minimum_contributif() -> dict:
     }
 
 
+def _pension_majoree_reference() -> dict:
+    """Les montants datés de la pension majorée de référence des non-salariés
+    agricoles et des plafonds de son écrêtement, et la fiche dont le moteur lit
+    la règle de la date d'effet."""
+    from retraite_notionnelle.donnees.macro import DonneesMacro
+    from retraite_notionnelle.scenarios.actuel import PensionMajoreeReference
+
+    pmr = PensionMajoreeReference(DONNEES, DonneesMacro(DONNEES))
+    return {
+        "montants": {mesure: [[jour, valeur, int(fiabilite)]
+                              for jour, valeur, fiabilite in datees]
+                     for mesure, datees in sorted(pmr._table.items())},
+        "fiche": pmr.fiche(),
+    }
+
+
+def _complement_differentiel_rco() -> dict:
+    """Le SMIC net agricole horaire de chaque 1er janvier, que le complément
+    différentiel de la RCO lit, et la fiche de sa règle."""
+    from retraite_notionnelle.donnees.macro import DonneesMacro
+    from retraite_notionnelle.scenarios.actuel import ComplementDifferentielRco
+
+    complement = ComplementDifferentielRco(DONNEES, DonneesMacro(DONNEES))
+    return {
+        "smic_net": [[annee, valeur, int(fiabilite)]
+                     for annee, (valeur, fiabilite) in sorted(complement.table().items())],
+        "fiche": complement.fiche(),
+    }
+
+
 def _durees_requises_regimes() -> dict:
     """Durée requise propre à un régime spécial, par table et par génération,
     avec le mois (rang) à compter duquel chaque table vaut, et l'âge auquel
@@ -1939,6 +1969,8 @@ def construire(bilan: bytes) -> bytes:
         "contribution_employeur_militaires": _contribution_employeur_militaires(),
         "contribution_etat_retraite_seule": _contribution_etat_retraite_seule(),
         "minimum_contributif": _minimum_contributif(),
+        "pension_majoree_reference": _pension_majoree_reference(),
+        "complement_differentiel_rco": _complement_differentiel_rco(),
         "cultes_maximum_pension": _maximum_des_cultes(),
         "minimum_garanti": _minimum_garanti(),
         "baremes_trimestre": _baremes_trimestre(),

@@ -356,10 +356,11 @@ class Neutralisations:
     ne promet plus le contraire.
 
     **Ce que le scénario 1 sert vraiment**, et il ne l'a pas toujours fait :
-    minimum contributif, minimum garanti, minimum vieillesse, majoration pour
-    enfants, majoration de durée d'assurance et bonification pour enfants de la
-    fonction publique, AVPF, périodes assimilées, carrière longue, décote et
-    surcote. La garantie minimale de points de l'Agirc a quitté cette liste le
+    minimum contributif, minimum garanti, minimum vieillesse, pension majorée
+    de référence des exploitants agricoles et complément différentiel de leur
+    retraite complémentaire, majoration pour enfants, majoration de durée
+    d'assurance et bonification pour enfants de la fonction publique, AVPF,
+    périodes assimilées, carrière longue, décote et surcote. La garantie minimale de points de l'Agirc a quitté cette liste le
     2 octobre 2026 : le scénario 1 la sert toujours, mais une cotisation
     forfaitaire achetait ses points, et le compte notionnel la reçoit — les
     scénarios notionnels ne la retirent pas.
@@ -385,8 +386,7 @@ class Neutralisations:
     et celles des policiers, des surveillants pénitentiaires et des
     sapeurs-pompiers depuis que leurs statuts les portent ; la limite d'âge
     de grade, qui ouvre la pension militaire quelle que soit la durée
-    accomplie ; la pension majorée de référence du régime agricole ; les
-    coefficients de solidarité et majorants de l'Agirc-Arrco, dispositif éteint
+    accomplie ; les coefficients de solidarité et majorants de l'Agirc-Arrco, dispositif éteint
     dont l'effet temporaire serait représenté faussement par un modèle qui ne
     calcule qu'une pension annuelle unique. Voir ``docs/limites.md``.
     """

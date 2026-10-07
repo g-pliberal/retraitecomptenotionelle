@@ -857,11 +857,17 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
 #: l'étape 16, l'ancrage du salaire moyen lu dans les données (+2,2 %) et le
 #: cas type au SMIC payé au SMIC de chaque année : LURA +0,6 %, Cnav +0,3 %,
 #: complémentaires -4,0 %, non-salariés -3,2 % (tolérance relevée à 4 %).
+#: Le 7 octobre, la pension majorée de référence des exploitants (action 138,
+#: étape 8) : non-salariés -5,2 %, complémentaires -4,4 % (tolérance des
+#: non-salariés relevée à 6 %). Elle relève en 2025 les pensions des
+#: générations que leurs revenus agricoles laissaient basses, et lie moins
+#: celles qui suivent : la pension relative du groupe ne croît plus que de
+#: 3 % jusqu'en 2070, au lieu de 6.
 DECOMPOSITION_GROUPES_SUIVIS = {
     ("pension_relative", "cnav"): 0.04,
     ("depense_part_pib", "lura"): 0.05,
     ("depense_part_pib", "complementaires"): 0.05,
-    ("depense_part_pib", "non_salaries_base"): 0.04,
+    ("depense_part_pib", "non_salaries_base"): 0.06,
 }
 #: Et ce qu'elle ne suit pas encore : des CLIQUETS, qui ne doivent que
 #: descendre, comme celui de la pension moyenne relative de l'ensemble. Mesurés

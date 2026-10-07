@@ -2126,6 +2126,20 @@ institutions:
         acces: document
         statut_integration: saisi
         cible: data/reference/regimes/msa_non_salaries.yaml
+      - id: msa_revalorisation_retraites
+        titre: >-
+          Garantie de retraite des chefs d'exploitation, 85 % du SMIC net
+          agricole : montants mensuels publiés, 2021-2026
+        url: https://www.msa.fr/lfp/retraite/revalorisation-retraites-agricoles-loi-3-juillet
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/legislation/complement_differentiel_rco.csv
+        note: >-
+          La page ne garde que le montant de l'année (1 214,40 € au 1er
+          janvier 2026, mise à jour du 20 mars 2026) ; celui de 2021 vient du
+          communiqué national du 3 novembre 2021, ceux de 2024 et de 2025 de
+          pages qui les ont repris. Le SMIC net agricole de l'heure s'en tire ;
+          les autres années sont estimées, et le fichier dit comment.
 
   cnavpl:
     nom: Caisse nationale d'assurance vieillesse des professions libérales
@@ -3530,6 +3544,25 @@ institutions:
           seul, de juillet 2025, s'arrêtait à 2024 ; l'index porte le décret
           n° 2026-78 du 11 février 2026, 0,3919 € pour 2025, lu et certifié ce
           jour-là.
+
+      - id: dila_legi_pension_majoree
+        titre: >-
+          Pension majorée de référence des non-salariés agricoles et plafond
+          de son écrêtement, ancres de 2009 à 2023
+        url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/legislation/pension_majoree_reference.csv
+        recuperation: scripts/fetch/dila_legi_pension_majoree.py
+        note: >-
+          Articles D. 732-111 et D. 732-113 du code rural, dans les versions
+          qui fixent chaque montant : 7 596 et 6 036 € au 1er janvier 2009,
+          8 557,38 € en 2022, 8 970,86 € en janvier 2023, 10 170,86 € en
+          septembre 2023 ; 9 000 €, 9 600 €, 11 001,44 €, 11 533,02 € et
+          12 732,96 € pour le plafond. Le récupérateur relit chaque ancre dans
+          l'index LEGI et la revalorise par les coefficients de
+          `cnav_revalorisation_pensions`, au centime inférieur, comme la loi
+          le dit : aucune caisse ne publie la série.
 
       - id: jorf_decrets_rco_artisans
         titre: >-

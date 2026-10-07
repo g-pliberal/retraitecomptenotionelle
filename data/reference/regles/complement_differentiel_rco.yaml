@@ -1,0 +1,409 @@
+schema_version: 1
+id: complement_differentiel_rco
+intitule: >-
+  Le chef d'exploitation de dix-sept ans et demi reçoit, en points de retraite
+  complémentaire obligatoire, ce qui manque à ses pensions agricoles de base et
+  complémentaire pour atteindre, au prorata de sa durée, un pourcentage de 1 820 fois le
+  SMIC net agricole horaire — 73 % en 2015, 74 % en 2016, 75 % jusqu'en octobre 2021,
+  85 % depuis — ; le complément ne fait pas dépasser ce montant à l'ensemble de ses
+  pensions depuis novembre 2021, et le taux plein suffit depuis septembre 2023 là où il
+  fallait la durée requise.
+domaine: minima
+regimes: [msa_rco, msa_non_salaries]
+etape: completer_tous_regimes
+face: droit
+etat: approchee
+lit:
+- la pension de base des non-salariés agricoles, pension majorée de référence et surcote
+  comprises, et la pension de la RCO, ses points et la valeur de service du point
+- la durée d'assurance non salariée agricole et celle de chef d'exploitation, les
+  trimestres pour enfants depuis 2026, la durée de la retraite forfaitaire, la durée
+  tous régimes et la durée requise, le taux plein du régime
+- le SMIC net agricole horaire du 1er janvier de l'année d'effet
+  (legislation/complement_differentiel_rco.csv) et la pension majorée de référence
+- toutes les pensions personnelles et les majorations pour enfants, celles d'autres
+  départs et les pensions étrangères, pour le plafond tous régimes
+ecrit:
+- les points de RCO que le complément ajoute, et leur montant, après les plafonds
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: avant_le_complement
+  statut: lue
+  textes:
+  - id: LEGIARTI000028497421
+    article: L. 732-63 code rural
+    en_vigueur: 2014-01-22
+    citation: >-
+      « Ce complément différentiel a pour objet de porter, au 1er janvier 2015 pour les
+      pensions de retraite prenant effet avant le 1er janvier 2015 ou lors de la
+      liquidation de la pension de retraite pour les pensions de retraite prenant effet
+      à compter du 1er janvier 2015, les droits propres [...] à un montant minimal »
+    lu_le: 2026-10-07
+  bornes:
+    liquidation.date_effet: [null, 2015-01-01]
+  contenu:
+    droit: >-
+      pas de complément à la liquidation ; il relève depuis 2015 les pensions liquidées
+      avant lui, ce que l'échéancier ne sert pas
+    parametres:
+      existe: false
+      pourcentage: null
+      formule: null
+      condition: null
+      seuil_chef: null
+      plafond_tous_regimes: false
+      pmr_au_mois: null
+      majorations_de_duree: false
+  exemples: aucun trouvé
+- id: complement_de_2015
+  statut: lue
+  textes:
+  - id: LEGIARTI000028497421
+    article: L. 732-63 code rural
+    en_vigueur: 2014-01-22
+    citation: >-
+      « 2° A compter du 1er janvier 1997 et qui justifient, dans un ou plusieurs autres
+      régimes obligatoires, d'une durée d'assurance [...] au moins égale à la durée
+      requise par l'article L. 732-25 [...] pour ouvrir droit à une pension à taux plein
+      [...] et de périodes minimales d'assurance accomplies en qualité de chef
+      d'exploitation » ; « Ce pourcentage est égal à 73 % au 1er janvier 2015, à 74 % au
+      1er janvier 2016 et à 75 % à compter du 1er janvier 2017 »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000031124284
+    article: D. 732-166-1 code rural
+    en_vigueur: 2015-09-03
+    citation: >-
+      « de dix-sept années et demie d'assurance accomplies à titre exclusif ou principal
+      en qualité de chef d'exploitation ou d'entreprise agricole »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000031124291
+    article: D. 732-166-4 code rural
+    en_vigueur: 2015-09-03
+    citation: >-
+      « CD = ((P × 1 820 × SMICnet)-(PMR1 + (3 750 × vpRCO)) * (DCE/ DR) » ; « PMR1
+      désigne le montant de la pension majorée de référence [...] en vigueur au 1er
+      octobre de l'année civile au titre de laquelle le complément différentiel est dû »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000031124293
+    article: D. 732-166-5 code rural
+    en_vigueur: 2015-09-03
+    citation: >-
+      « Lorsque le montant du complément différentiel [...] augmenté des avantages
+      mentionnés au 1°, au 2°, au 3° [...] excède un montant égal au produit du montant
+      prévu au IV de l'article L. 732-63 par le rapport Dnsa/ DR [...] Ce montant est
+      réduit à due concurrence du dépassement »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000031124289
+    article: D. 732-166-3 code rural
+    en_vigueur: 2015-09-03
+    citation: >-
+      « 1° Du total des droits propres servis à l'assuré par le régime de base [...] en
+      application des articles L. 732-24, L. 732-25-1 et L. 732-54-1 à L. 732-54-4 » ;
+      « 3° Du total des droits acquis par l'assuré, par cotisation ou à titre gratuit,
+      dans le régime de retraite complémentaire obligatoire » ; « il n'est pas tenu
+      compte de la majoration prévue à l'article D. 732-38 »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000031124295
+    article: D. 732-166-6 code rural
+    en_vigueur: 2015-09-03
+    citation: >-
+      « converti [...] en points de retraite complémentaire obligatoire, en le divisant
+      par la valeur de service du point [...] arrondi au nombre entier le plus proche, la
+      fraction de point égale à 0,5 étant comptée pour 1 »
+    lu_le: 2026-10-07
+  bornes:
+    liquidation.date_effet: [2015-01-01, 2016-01-01]
+  contenu:
+    droit: >-
+      la durée requise tous régimes et dix-sept ans et demi de chef ; le complément est
+      l'écart entre 73 % de 1 820 SMIC nets et la PMR1 d'octobre plus 3 750 points, au
+      prorata de la durée de chef ; il ne fait pas dépasser aux pensions agricoles ce
+      pourcentage au prorata de la durée agricole
+    parametres:
+      existe: true
+      pourcentage: 0.73
+      formule: carriere_complete
+      condition: duree_requise
+      seuil_chef: 70
+      plafond_tous_regimes: false
+      pmr_au_mois: 10
+      majorations_de_duree: false
+  exemples: aucun trouvé
+- id: complement_de_2016
+  statut: lue
+  textes:
+  - id: LEGIARTI000028497421
+    article: L. 732-63 code rural
+    en_vigueur: 2014-01-22
+    citation: « à 74 % au 1er janvier 2016 »
+    lu_le: 2026-10-07
+  bornes:
+    liquidation.date_effet: [2016-01-01, 2017-01-01]
+  contenu:
+    droit: la même règle, à 74 %
+    parametres:
+      existe: true
+      pourcentage: 0.74
+      formule: carriere_complete
+      condition: duree_requise
+      seuil_chef: 70
+      plafond_tous_regimes: false
+      pmr_au_mois: 10
+      majorations_de_duree: false
+  exemples: aucun trouvé
+- id: complement_de_2017
+  statut: lue
+  textes:
+  - id: LEGIARTI000028497421
+    article: L. 732-63 code rural
+    en_vigueur: 2014-01-22
+    citation: >-
+      « à 75 % à compter du 1er janvier 2017 » ; « Le montant du salaire minimum de
+      croissance net est [...] celui en vigueur au 1er janvier de l'année civile au cours
+      de laquelle la pension de retraite prend effet pour les pensions de retraite
+      prenant effet à compter du 1er janvier 2015 »
+    lu_le: 2026-10-07
+  bornes:
+    liquidation.date_effet: [2017-01-01, 2021-11-01]
+  contenu:
+    droit: la même règle, à 75 %
+    parametres:
+      existe: true
+      pourcentage: 0.75
+      formule: carriere_complete
+      condition: duree_requise
+      seuil_chef: 70
+      plafond_tous_regimes: false
+      pmr_au_mois: 10
+      majorations_de_duree: false
+  exemples: aucun trouvé
+- id: complement_de_novembre_2021
+  statut: lue
+  textes:
+  - id: LEGIARTI000042083792
+    article: L. 732-63 code rural
+    en_vigueur: 2020-07-05
+    citation: >-
+      « Ce pourcentage est égal à 85 % » ; « V. ― Lorsque le montant des pensions de
+      droit propre servies à l'assuré par les régimes légaux [...] de base et
+      complémentaires incluant le montant du complément différentiel [...], français et
+      étrangers [...] excède un plafond fixé par décret, le complément différentiel est
+      réduit à due concurrence du dépassement »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000043671216
+    article: D. 732-166-4 code rural
+    en_vigueur: 2021-11-01
+    citation: >-
+      « CD = (P × 1 820 × SMICnet-PMR1) x DCE/ DR-(N x vpRCO) » ; « N désigne le nombre de
+      points acquis par l'assuré, par cotisation ou à titre gratuit [...] au titre des
+      périodes d'assurance accomplies par l'assuré en qualité de chef d'exploitation »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000043670997
+    article: D. 732-166-5-1 code rural
+    en_vigueur: 2021-11-01
+    citation: >-
+      « Le montant mensuel du plafond mentionné au V de l'article L. 732-63 est fixé à un
+      douzième de 85 % de 1 820 fois le montant du salaire minimum de croissance retenu
+      après déduction des contributions et cotisations obligatoires [...] » ; « ainsi que
+      des majorations pour enfant correspondantes »
+    lu_le: 2026-10-07
+  - id: JORFTEXT000043669359
+    publie_le: 2021-06-17
+    reference: >-
+      décret n° 2021-769 du 16 juin 2021, article 3 : « s'appliquent aux pensions de
+      retraite dues à compter du 1er novembre 2021, y compris pour les pensions de
+      retraite ayant pris effet avant cette date »
+    lu_le: 2026-10-07
+  bornes:
+    liquidation.date_effet: [2021-11-01, 2023-09-01]
+  contenu:
+    droit: >-
+      85 % ; le complément est l'écart entre ce montant, la PMR de janvier déduite, au
+      prorata de la durée de chef, et les points de RCO de cette durée ; il ne fait
+      dépasser ni aux pensions agricoles ce montant au prorata de la durée agricole, ni
+      à l'ensemble des pensions personnelles, majorations pour enfants comprises, ce
+      montant entier
+    parametres:
+      existe: true
+      pourcentage: 0.85
+      formule: differentielle
+      condition: duree_requise
+      seuil_chef: 70
+      plafond_tous_regimes: true
+      pmr_au_mois: 1
+      majorations_de_duree: false
+  exemples: aucun trouvé
+- id: complement_de_septembre_2023
+  statut: lue
+  textes:
+  - id: LEGIARTI000047453258
+    article: L. 732-63 code rural
+    en_vigueur: 2023-09-01
+    citation: >-
+      « 2° A compter du 1er janvier 1997, qui liquident leur pension à taux plein dans le
+      régime d'assurance vieillesse des personnes non salariées des professions agricoles
+      et qui justifient de périodes minimales d'assurance accomplies en qualité de chef
+      d'exploitation »
+    lu_le: 2026-10-07
+  bornes:
+    liquidation.date_effet: [2023-09-01, 2026-01-01]
+  contenu:
+    droit: le taux plein suffit, sans la durée requise tous régimes
+    parametres:
+      existe: true
+      pourcentage: 0.85
+      formule: differentielle
+      condition: taux_plein
+      seuil_chef: 70
+      plafond_tous_regimes: true
+      pmr_au_mois: 1
+      majorations_de_duree: false
+  exemples: aucun trouvé
+- id: complement_de_2026
+  statut: lue
+  textes:
+  - id: LEGIARTI000053280353
+    article: L. 732-63 code rural
+    en_vigueur: 2026-01-01
+    citation: >-
+      « b) Les périodes accomplies en qualité de chef d'exploitation ou d'entreprise
+      agricole à titre secondaire, à compter du 1er janvier 2026 » ; « Les montants des
+      pensions de droit servies à l'assuré et constituées au titre de l'article L.
+      2123-27 du code général des collectivités territoriales sont exclus »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000054059327
+    article: D. 732-166-1 code rural
+    en_vigueur: 2026-05-09
+    citation: >-
+      « auxquelles s'ajoutent les majorations de durées d'assurance attribuées pour
+      l'obtention de ce même montant ou de cette même retraite »
+    lu_le: 2026-10-07
+  - id: LEGIARTI000053365801
+    article: D. 732-166-3 code rural
+    en_vigueur: 2026-01-01
+    lu_le: 2026-10-07
+  - id: LEGIARTI000053365809
+    article: D. 732-166-4 code rural
+    en_vigueur: 2026-01-01
+    citation: « CD = (P × 1 820 × SMICnet-PMRmax) x DCE/ DR-(N x vpRCO) »
+    lu_le: 2026-10-07
+  bornes:
+    liquidation.date_effet: [2026-01-01, null]
+  contenu:
+    droit: >-
+      les trimestres pour enfants comptent dans les durées ; les périodes de chef à
+      titre secondaire aussi, que le modèle ne distingue pas
+    parametres:
+      existe: true
+      pourcentage: 0.85
+      formule: differentielle
+      condition: taux_plein
+      seuil_chef: 70
+      plafond_tous_regimes: true
+      pmr_au_mois: 1
+      majorations_de_duree: true
+  exemples: aucun trouvé
+approximations:
+- ecart: >-
+    le SMIC net agricole n'est lu que pour 2021 et 2024 à 2026, tiré des montants
+    mensuels que la MSA publie ; les autres années sont estimées, par le rapport au SMIC
+    brut que ces montants donnent et les taux salariaux qui ont changé
+    (complement_differentiel_rco.csv)
+  effet: >-
+    de 2015 à 2020, 2022 et 2023 : la fiabilité du résultat tombe à « estimée »
+- ecart: >-
+    de 2015 à octobre 2021, le complément se calcule au 1er octobre de l'année d'effet,
+    sur les pensions de ce jour-là ; le modèle le calcule à la date d'effet, la PMR
+    seule étant lue en octobre
+  effet: non mesuré
+- ecart: >-
+    le modèle ne connaît que le statut de chef d'exploitation à titre principal : la
+    durée de chef est la durée agricole, et tous les points de RCO sont ceux de chef
+  effet: non mesuré
+- ecart: >-
+    le complément se calcule au départ : servi depuis 2015 aux pensions liquidées avant,
+    revu à chaque changement des pensions, il ne l'est pas ; le plafond tous régimes ne
+    distingue pas les pensions des élus locaux exclues depuis 2026
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-07
+  prochaine_relecture: 2027-01-31
+  a_relire:
+  - >-
+    Lire le SMIC net agricole de 2015 à 2020, de 2022 et de 2023 dans une publication de
+    la MSA (circulaire, communiqué, barème), et identifier les 0,79 point qu'elle déduit
+    au-delà des taux salariaux d'un salarié non cadre.
+  - >-
+    Chercher un exemple chiffré publié d'un complément différentiel, et le rejouer dans
+    exemples_officiels.yaml.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 732-63 du code rural (rédactions de 2014, 2020, 2023 et 2026) et D. 732-166-1 à
+      D. 732-166-6 (2015, 2021, 2022 et 2026), dans l'index LEGI du dépôt à jour au 6
+      octobre 2026
+    date: 2026-10-07
+  - type: autre
+    reference: >-
+      MSA, communiqué du 3 novembre 2021 « Revalorisation des retraites agricoles les plus
+      faibles au 1er novembre » : « dans la limite de 1035,57 € tous régimes de retraite
+      obligatoires pour 2021 »
+    url: https://www.msa.fr/lfp/en/presse/revalorisation-retraites-agricoles-faibles-1er-novembre-modalit%C3%A9s-date-versement
+    date: 2026-10-07
+  - type: autre
+    reference: >-
+      MSA, « Revalorisation des retraites agricoles », mise à jour le 20 mars 2026 :
+      « une garantie de retraite minimale portée à 1214,40 € par mois au 1er janvier
+      2026 »
+    url: https://www.msa.fr/lfp/en/retraite/revalorisation-retraites-agricoles-loi-3-juillet
+    date: 2026-10-07
+  - type: autre
+    reference: >-
+      MSA Mayenne-Orne-Sarthe, « Le complément différentiel RCO pour les chefs
+      d'exploitation », mis à jour le 7 octobre 2021 : 73 % au 1er janvier 2015, 74 % en
+      2016, 75 % en 2017, versé le 9 novembre 2015 avec un rappel depuis le 1er janvier
+    url: https://mayenne-orne-sarthe.msa.fr/lfp/en/le-complement-differentiel-rco
+    date: 2026-10-07
+textes_a_rattacher:
+- reference: L. 732-63 code rural
+- reference: D. 732-166-1 à D. 732-166-6 code rural
+code:
+  python: >-
+    scenarios/actuel.py : ComplementDifferentielRco (regle, smic_net) ;
+    droit/completer.py : complement_differentiel, completer
+  javascript: >-
+    moteur/js/regimes.js : ComplementDifferentielRco ; moteur/js/droit/completer.js :
+    complementDifferentiel, completer
+  parametres: >-
+    contenu.parametres de chaque version ; data/reference/legislation/complement_differentiel_rco.csv
+  tests: >-
+    tests/test_minima_agricoles.py, dans les deux moteurs
+historique:
+- >-
+  2026-10-07 — servi, à l'étape 138.8 : décrit depuis le 19 septembre 2026 dans
+  l'inventaire des avantages non contributifs, sous la ligne de la PMR, sans qu'aucun
+  code le serve ; sept versions, de son absence avant 2015 aux trimestres pour enfants
+  de 2026.
+exemples: []
+effet: >-
+  Les chefs d'exploitation de dix-sept ans et demi liquidant au taux plein depuis 2015 :
+  le moteur servait leurs points de RCO seuls ; la garantie porte leurs deux pensions
+  agricoles à 75 puis 85 % du SMIC net agricole d'une carrière complète, 1 214,40 € par
+  mois en 2026.
+referents:
+  trajectoire:
+    equivalent: >-
+      complementDiffRCO (R/fonctionsCalculsPensions.R), appliqué à la chronique des
+      pensions servies, la cible lue dans une série du COR
+    confrontation: >-
+      TRAJECTOiRE porte la pension totale à la cible sans la proratiser à la durée ni la
+      plafonner aux pensions agricoles ; il ne tient pas compte des années de chef à
+      titre secondaire que L. 732-63 compte depuis 2026
+  calcul_pension:
+    equivalent: >-
+      complementDiffRCO (R/fonctionsCalculsPensions.R) : dureeValidee >= 70 et taux plein,
+      la pension tous régimes portée à la cible annuelle du COR
+    confrontation: >-
+      même lecture que TRAJECTOiRE ; le dépôt suit D. 732-166-4 et D. 732-166-5 : la
+      formule, le prorata de la durée de chef et le plafond des pensions agricoles

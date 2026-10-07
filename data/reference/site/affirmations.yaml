@@ -979,8 +979,15 @@ affirmations:
   # phrase forte ; l'entrée était retirée. Elle revient le 7 octobre : la
   # moitié seulement des reportés en emploi (action 138, étape 3), le
   # coefficient est sous un chaque année de 2026 à 2070, 0,9997 en 2070, et
-  # `test_rien_n_echappe_au_catalogue` l'a dit. Le contrôle est celui de
-  # l'autre branche, qui éprouve les trois lectures.
+  # `test_rien_n_echappe_au_catalogue` l'a dit. Le même soir, les minima des
+  # exploitants agricoles (action 138, étape 8) relèvent les pensions du
+  # système actuel sur la grille, et le coefficient repasse au-dessus de un en
+  # 2070 sous les réglages par défaut : 1,0007. Plutôt que de retirer l'entrée
+  # une fois de plus, ce que la conservation refuse désormais, la branche a son
+  # témoin, comme l'autre : `cas_types_etat_entier`, la contribution de l'État
+  # portée entière au compte, sous laquelle le coefficient est sous un de 2026
+  # à 2070, 0,96 en 2070. Le contrôle est celui de l'autre branche, qui éprouve
+  # les trois lectures.
   - id: cas_types.facteur_inferieur_a_un
     page: /cas-types
     extrait: "Un coefficient inférieur à un est un manque"

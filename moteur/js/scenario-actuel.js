@@ -32,8 +32,9 @@ import {
   DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension,
   DureesRequisesFonctionPublique, DureesRequisesRegimes, CalendriersDureeRequise,
   DureesServicesMilitaires,
+  ComplementDifferentielRco,
   MajorationsPourEnfants, MaximumDesCultes, MinimumContributif, MinimumGaranti,
-  MinimumVieillesse,
+  MinimumVieillesse, PensionMajoreeReference,
   ClassesCotisation, ConversionsPoints, Rendements, SalairesForfaitaires,
   CarrieresHorsDeFrance, Invalidites, MajorationsEnfantsPoints, Reversions,
   ServicesOuvrantPension, SurcoteBaremes,
@@ -87,6 +88,10 @@ export class ScenarioActuel {
     this.decoteFonctionPublique = new DecoteFonctionPublique(paquet);
     this.decoteRegimesSpeciaux = new DecoteRegimesSpeciaux(paquet);
     this.minimumGaranti = new MinimumGaranti(paquet, macro);
+    // Les deux minima des exploitants agricoles : voir `pensionMajoree` et
+    // `complementDifferentiel` (`droit/completer.js`).
+    this.pensionMajoreeReference = new PensionMajoreeReference(paquet, macro);
+    this.complementDifferentielRco = new ComplementDifferentielRco(paquet, macro);
     this.baremesTrimestre = new BaremesTrimestre(paquet, macro);
     // Les revalorisations des pensions servies, qui portent aussi le
     // traitement d'une pension différée : voir `coefficientTraitementDiffere`.

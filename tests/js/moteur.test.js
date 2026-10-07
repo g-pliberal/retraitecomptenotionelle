@@ -657,13 +657,20 @@ test("le chef d'exploitation reçoit ses points gratuits de RCO", () => {
   const resultat = scenario.calculer(carriere);
   const [pension, ligne] = rco(resultat);
   assert.ok(pension.detail.includes("(dont 2,150.00 points gratuits)"), pension.detail);
-  const [sans] = rco(scenario.calculer(carriere, false, true, true, true, false));
+  const sansPoints = scenario.calculer(carriere, false, true, true, true, false);
+  const [sans] = rco(sansPoints);
   assert.ok(!sans.detail.includes("gratuits"));
-  assert.ok(Math.abs(ligne.montant - (pension.montant - sans.montant)) < 1e-6);
+  // Le complément différentiel de la RCO s'ajoute aux points, et comble ce que
+  // les points gratuits ne donnent plus : il se retire des deux côtés.
+  const pointsSeuls = (calcul, pensionRco) => pensionRco.montant
+    - calcul.avantages_appliques.filter((a) => a.code === "complement_differentiel_rco")
+      .reduce((s, a) => s + a.montant, 0);
+  assert.ok(Math.abs(ligne.montant
+    - (pointsSeuls(resultat, pension) - pointsSeuls(sansPoints, sans))) < 1e-6);
   const somme = resultat.avantages_appliques.reduce((s, a) => s + a.montant, 0);
   assert.ok(Math.abs(resultat.pension_annuelle - resultat.total_contributif - somme) < 1e-6);
   const [contributif] = rco(scenario.calculer(carriere, false, false));
-  assert.ok(Math.abs(contributif.montant - sans.montant) < 1e-9);
+  assert.ok(Math.abs(contributif.montant - pointsSeuls(sansPoints, sans)) < 1e-9);
 
   const [depart2003] = rco(scenario.calculer(chef(1939, 20, 64)));
   assert.ok(depart2003.detail.startsWith("3,750.00 points"), depart2003.detail);

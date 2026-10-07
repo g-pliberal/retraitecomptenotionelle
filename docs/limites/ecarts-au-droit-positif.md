@@ -225,11 +225,18 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   services, qui l'ouvre de la même façon. Conséquence : un officier supérieur
   radié par limite d'âge peut être déclaré non ouvert quand le droit l'ouvre, et
   la décote d'un militaire parti très tôt est au plus de <!--chiffre:mesure(constante?de=retraite_notionnelle.droit.ouvrir&nom=TRIMESTRES_DECOTE_MILITAIRE&echelle=1.25)-->12,5<!--/--> %, jamais de <!--chiffre:illustration()-->25<!--/--> %.
-- **Pension majorée de référence (PMR)** du régime des non-salariés agricoles.
-  Le régime agricole est déjà le plus approché du catalogue — sa part
-  forfaitaire, sa complémentaire obligatoire et ses valeurs de point ne sont que
-  partiellement sourcées. Ajouter la PMR sur ce socle donnerait un chiffre plus
-  précis d'apparence et pas davantage de vérité.
+- **Les minima des exploitants agricoles, en partie.** La pension majorée de
+  référence est servie depuis le 7 octobre 2026 aux pensions de non-salarié
+  agricole qui prennent effet depuis 2009, au taux plein, au prorata de la
+  durée agricole, écrêtée au plafond de toutes les pensions ; le complément
+  différentiel de la complémentaire agricole, aux pensions qui prennent effet
+  depuis 2015, à qui compte <!--chiffre:valeur(data/reference/regles/complement_differentiel_rco.yaml:versions.id=complement_de_2026.contenu.parametres.seuil_chef)-->70<!--/--> trimestres de chef d'exploitation. Restent
+  dehors : la pension majorée que la loi de 2008 a accordée aux pensions déjà
+  liquidées, et les plans de revalorisation de 1994 à 2002 ; le montant réduit
+  des conjoints et des aides familiaux, que le modèle ne distingue pas du chef
+  d'exploitation ; la réversion, que le plafond ne compte pas. Le SMIC net
+  agricole qui fixe le complément n'est publié par la MSA que pour 2021 et
+  depuis 2024 : les autres années sont estimées.
 - **Coefficients de solidarité et majorants de l'Agirc-Arrco.** Le malus de
   <!--chiffre:illustration()-->10<!--/--> % pendant trois ans (article 98 de l'accord du 17 novembre 2017) ne
   frappe aucune pension prenant effet depuis le 1er décembre 2023, et cesse sur

@@ -1284,6 +1284,16 @@ def _refaire_la_formule(detail: str) -> float | None:
         r"coefficient (?:d'anticipation|de majoration) ([\d.]+)", detail)
     if coefficient:
         montant *= float(coefficient.group(1))
+    # Les deux minima des exploitants disent ce qu'ils ajoutent : la pension
+    # majorée de référence en euros, le complément de la RCO en points, à la
+    # valeur de service de la formule.
+    majoree = re.search(
+        r"porté à la pension majorée de référence par \+ ([\d,]+\.\d+) €", detail)
+    if majoree:
+        montant += sans_virgules(majoree.group(1))
+    differentiel = re.search(r"complément différentiel de ([\d,]+) points", detail)
+    if differentiel and points:
+        montant += sans_virgules(differentiel.group(1)) * float(points.group(2))
     return montant
 
 
@@ -1339,7 +1349,9 @@ def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
                 controlees += 1
                 for marqueur in ("minimum contributif", "minimum garanti",
                                  "coefficient d'anticipation",
-                                 "coefficient de majoration", "surcote parentale"):
+                                 "coefficient de majoration", "surcote parentale",
+                                 "pension majorée de référence",
+                                 "complément différentiel"):
                     if marqueur in pension.detail:
                         branches.add(marqueur)
                 # Les grandeurs de la formule sont arrondies pour l'affichage :
@@ -1359,7 +1371,8 @@ def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
             controlees += 1
             for marqueur in ("minimum contributif", "minimum garanti",
                              "coefficient d'anticipation",
-                             "coefficient de majoration", "surcote parentale"):
+                             "coefficient de majoration", "surcote parentale",
+                             "pension majorée de référence", "complément différentiel"):
                 if marqueur in pension.detail:
                     branches.add(marqueur)
             if abs(refait - pension.montant) > 0.25:
@@ -1375,7 +1388,8 @@ def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
     assert controlees > 150, f"{controlees} formules seulement ont été refaites"
     assert branches == {"minimum contributif", "minimum garanti",
                         "coefficient d'anticipation",
-                        "coefficient de majoration", "surcote parentale"}, (
+                        "coefficient de majoration", "surcote parentale",
+                        "pension majorée de référence", "complément différentiel"}, (
         f"branches non exercées : {branches}"
     )
 

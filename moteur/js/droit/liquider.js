@@ -70,7 +70,8 @@ export const ANNEE_DES_REVENUS_AGRICOLES = 2016;
 
 /** Ce que l'étape « liquider chaque régime » écrit. */
 export class Pensions {
-  constructor({ personne, regimes, minimum, garanti, requis, taux, fiabilite }) {
+  constructor({ personne, regimes, minimum, garanti, requis, taux, fiabilite,
+    agricole = null }) {
     this.personne = personne;
     this.regimes = regimes;
     this.minimum = minimum;
@@ -78,6 +79,11 @@ export class Pensions {
     this.requis = requis;
     this.taux = taux;
     this.fiabilite = fiabilite;
+    /**
+     * La pension des non-salariés agricoles, quand elle porte la pension
+     * majorée de référence (`eligibleAgricole`) ; null sinon.
+     */
+    this.agricole = agricole;
   }
 
   /** Les pensions, telles que le schéma de l'étape les décrit. */
@@ -102,6 +108,16 @@ export class Pensions {
         trimestres_services: eligible.trimestresServices,
         ouvert: eligible.ouvert,
         duree_maximum: eligible.dureeMaximum,
+      };
+    }
+    if (this.agricole !== null) {
+      regimes[this.agricole.indice].agricole = {
+        taux_plein: this.agricole.tauxPlein,
+        duree_requise_atteinte: this.agricole.dureeRequiseAtteinte,
+        surcote: this.agricole.surcote,
+        duree: this.agricole.duree,
+        enfants: this.agricole.enfants,
+        reference: this.agricole.reference,
       };
     }
     return {
@@ -150,6 +166,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
   const eligiblesMinimum = [];
   // Régimes de la fonction publique qui portent le minimum garanti.
   const eligiblesGaranti = [];
+  // La pension des non-salariés agricoles, que la pension majorée de
+  // référence relève.
+  let agricole = null;
 
   // Ce que les étapes de l'acquisition ont écrit, sous les noms que la
   // liquidation lit.
@@ -190,6 +209,15 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           ageLiquidation, anneeLiquidation, ignorerPenaliteAge,
         );
         fiabiliteGlobale = Math.min(fiabiliteGlobale, pension.fiabilite);
+        if (periode.avantages_non_contributifs.includes("pension_majoree_reference")) {
+          agricole = eligibleAgricole(
+            moteur, periode, carriere, releve, membres, trimestres, ageLiquidation,
+            pensions.length,
+            ignorerPenaliteAge ? 1.0 : abattementPoints(
+              moteur, periode, carriere, trimestres, requisReference, ageLiquidation,
+              anneeLiquidation, durees.trimestresParRegime.get(code) ?? 0),
+            regimesDuHandicap.has(code));
+        }
         pensions.push(pension);
         continue;
       }
@@ -364,6 +392,12 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
             + `(de ${formatFixe(versee.seuil_du_fractionnement, 0, true)} à `
             + `${formatFixe(seuilCapital - 1, 0, true)} points)`;
         }
+      }
+      if (periode.type_calcul === "mixte"
+          && periode.avantages_non_contributifs.includes("pension_majoree_reference")) {
+        agricole = eligibleAgricole(
+          moteur, periode, carriere, releve, membres, trimestres, ageLiquidation,
+          pensions.length, abattement, regimesDuHandicap.has(code));
       }
       pensions.push({
         regime: code,
@@ -794,7 +828,39 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     requis: trimestresRequis,
     taux: tauxRetenu,
     fiabilite: fiabiliteGlobale,
+    agricole,
   });
+}
+
+/**
+ * Ce que la pension majorée de référence et le complément différentiel de la
+ * RCO lisent de la pension de base des non-salariés agricoles : le taux plein
+ * (durée requise tous régimes, âge du taux plein, inaptitude ou handicap), la
+ * durée des années et les trimestres pour enfants à part, la durée de
+ * référence DR de la retraite forfaitaire, 150 trimestres au moins, et la
+ * surcote, que la PMR retire avant de comparer. `coefficient` est celui de la
+ * décote ou de la surcote du régime. Voir `eligible_agricole` du Python.
+ */
+export function eligibleAgricole(moteur, periode, carriere, releve, membres, trimestres,
+  ageLiquidation, indice, coefficient, parLeHandicap) {
+  const durees = releve.durees;
+  const code = membres[0];
+  const requis = ouvrir.dureeRequise(moteur, periode, carriere)[0];
+  const proratisation = dureeProratisation(moteur, periode, carriere, requis)[0];
+  const annees = durees.cumulPlafonne("assurance", membres, () => true);
+  const toutes = durees.cumulPlafonne("assurance", membres);
+  return {
+    indice,
+    tauxPlein: trimestres >= requis
+      || ageLiquidation >= ouvrir.ageTauxPlein(moteur, periode, carriere)
+      || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation)
+      || parLeHandicap,
+    dureeRequiseAtteinte: trimestres >= requis,
+    surcote: Math.max(1.0, coefficient),
+    duree: annees,
+    enfants: Math.max(0, toutes - annees),
+    reference: Math.max(150, proratisation),
+  };
 }
 
 /**

@@ -1955,6 +1955,13 @@ def _pages() -> dict:
         # déclencher le calcul d'une carrière que personne n'a saisie.
         ("simuler_regles_seules", "/simuler", REGLES_AUTRES),
         ("cas_types_regles", "/cas-types", REGLES_AUTRES),
+        # La lecture du coefficient a trois branches, et le défaut n'en rend
+        # qu'une, qui suit le modèle : il frôle un en 2070 — 1,0007 depuis
+        # le 7 octobre 2026 —, et chaque correction qui le fait changer de
+        # côté effaçait du site une phrase du catalogue des affirmations.
+        # Celle d'au-dessus rend la marge ; celle-ci, le manque, sous la
+        # contribution de l'État portée entière au compte (0,96 en 2070).
+        ("cas_types_etat_entier", "/cas-types", {"contribution_etat": "entiere"}),
         ("cout_regles", "/cout", REGLES_AUTRES),
         # La cascade posée sur l'horizon : le seul témoin qui emprunte l'autre
         # branche du sélecteur d'année, celle où le PIB n'est plus publié mais

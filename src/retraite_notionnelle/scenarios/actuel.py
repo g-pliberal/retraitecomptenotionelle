@@ -2906,6 +2906,13 @@ class ScenarioActuel:
         )
         self.minimum_contributif = MinimumContributif(parametres.racine_donnees, macro)
         self.minimum_garanti = MinimumGaranti(parametres.racine_donnees, macro)
+        #: Les deux minima des exploitants agricoles : voir
+        #: :func:`~retraite_notionnelle.droit.completer.pension_majoree` et
+        #: :func:`~retraite_notionnelle.droit.completer.complement_differentiel`.
+        self.pension_majoree_reference = PensionMajoreeReference(
+            parametres.racine_donnees, macro)
+        self.complement_differentiel_rco = ComplementDifferentielRco(
+            parametres.racine_donnees, macro)
         self.baremes_trimestre = BaremesTrimestre(parametres.racine_donnees, macro)
         #: Les revalorisations des pensions servies, qui portent aussi le
         #: traitement d'une pension différée : voir
@@ -3201,3 +3208,160 @@ class MinimumContributif:
         plafond = self._en_vigueur("plafond_ecretement", annee, mois)
         fiabilite = min(base[1], majore[1], *(() if plafond is None else (plafond[1],)))
         return base[0], majore[0], 0.0 if plafond is None else plafond[0], fiabilite
+
+
+#: La règle de la pension majorée de référence quand sa fiche manque : aucune
+#: majoration.
+SANS_PENSION_MAJOREE = {
+    "existe": False, "duree_minimale": None, "montant": None, "montant_reduit": None,
+    "seuil_chef": None, "plafond": None, "majorations_de_duree": False,
+}
+
+
+class PensionMajoreeReference:
+    """La pension majorée de référence des non-salariés agricoles (PMR), le
+    plafond de son écrêtement, et la règle que leur applique la date d'effet.
+
+    **Des montants datés** (``legislation/pension_majoree_reference.csv``),
+    une série par mesure : la PMR des chefs d'exploitation puis la PMR unique
+    (``pmr_chef``), celle des autres périodes jusqu'en 2021 (``pmr_conjoint``),
+    celle des pensions de septembre 2023 (``pmr_depuis_septembre_2023``), et
+    les plafonds. Les ancres de D. 732-111 et D. 732-113, et entre elles ce
+    que la revalorisation de l'article L. 161-23-1 en fait : aucune caisse
+    n'en publie la série (``scripts/fetch/dila_legi_pension_majoree.py``).
+
+    **La règle** est celle de la fiche ``pension_majoree_reference``, dont le
+    moteur lit la version de la date d'effet : rien avant 2009, deux montants
+    et une durée minimale jusqu'en 2021, un seul depuis, relevé de cent euros
+    par mois en septembre 2023, et le plafond de l'article L. 173-2 depuis
+    2026 (:func:`~retraite_notionnelle.droit.completer.pension_majoree`).
+    """
+
+    def __init__(self, racine: Path, macro: DonneesMacro) -> None:
+        self.macro = macro
+        self._table: dict[str, tuple[tuple[str, float, Fiabilite], ...]] = {}
+        chemin = racine / "reference" / "legislation" / "pension_majoree_reference.csv"
+        if chemin.exists():
+            lues: dict[str, list[tuple[str, float, Fiabilite]]] = {}
+            with chemin.open(encoding="utf-8") as flux:
+                lignes = (l for l in flux if not l.lstrip().startswith("#"))
+                for ligne in csv.DictReader(lignes):
+                    lues.setdefault(ligne["mesure"], []).append((
+                        ligne["date"], float(ligne["valeur"]),
+                        Fiabilite.depuis_texte(ligne["fiabilite"])))
+            self._table = {mesure: tuple(sorted(datees))
+                           for mesure, datees in lues.items()}
+        fiche = racine / "reference" / "regles" / "pension_majoree_reference.yaml"
+        self._fiche = versions.preparer(charger_yaml(fiche)) if fiche.exists() else None
+
+    def fiche(self) -> dict | None:
+        """La fiche préparée : ce que le paquet du site porte."""
+        return self._fiche
+
+    def regle(self, date_effet: str) -> dict:
+        """Les paramètres de la version qui vaut pour une pension prenant effet
+        à ``date_effet`` (AAAA-MM-JJ) : ``existe``, ``duree_minimale`` (en
+        trimestres non salariés agricoles), ``montant`` et ``montant_reduit``
+        (les séries de la PMR entière et de celle de qui n'a pas ``seuil_chef``
+        trimestres de chef), ``plafond`` (une série, ou
+        ``minimum_contributif`` : celui de l'article L. 173-2),
+        ``majorations_de_duree``."""
+        if self._fiche is None:
+            return dict(SANS_PENSION_MAJOREE)
+        version = versions.applicable(self._fiche, {"liquidation.date_effet": date_effet})
+        return dict(SANS_PENSION_MAJOREE if version is None else version["parametres"])
+
+    def montant(self, mesure: str, annee: int, mois: int = 1
+                ) -> tuple[float, Fiabilite] | None:
+        """Le montant de la mesure en vigueur le premier jour du mois, en euros
+        par an ; ``None`` pour une mesure inconnue. Un mois qui précède la
+        série lit son premier montant — la PMR des pensions de septembre 2023
+        que le complément de la RCO lit au 1er janvier 2023 ; au-delà du
+        dernier, ce dernier revalorisé sur le SMIC, comme le minimum
+        contributif qu'elle vaut."""
+        datees = self._table.get(mesure)
+        if not datees:
+            return None
+        jour = f"{annee:04d}-{mois:02d}-01"
+        rang = max(1, bisect_right(datees, (jour, float("inf"))))
+        _, valeur, fiabilite = datees[rang - 1]
+        derniere = int(datees[-1][0][:4])
+        if rang == len(datees) and annee > derniere:
+            valeur *= self.macro.coefficient_smic(derniere, annee)
+            fiabilite = min(fiabilite, Fiabilite.ESTIMEE)
+        return valeur, fiabilite
+
+
+#: La règle du complément différentiel de la RCO quand sa fiche manque : aucun
+#: complément.
+SANS_COMPLEMENT_DIFFERENTIEL = {
+    "existe": False, "pourcentage": None, "formule": None, "condition": None,
+    "seuil_chef": None, "plafond_tous_regimes": False, "pmr_au_mois": None,
+    "majorations_de_duree": False,
+}
+
+
+class ComplementDifferentielRco:
+    """Le complément différentiel de points de la retraite complémentaire des
+    non-salariés agricoles (L. 732-63) : le SMIC net agricole horaire de
+    chaque 1er janvier, et la règle que la date d'effet lui applique.
+
+    **Le SMIC net agricole** (``legislation/complement_differentiel_rco.csv``)
+    se tire des montants que la MSA publie pour 2021 et de 2024 à 2026 ; les
+    autres années sont estimées, et le fichier dit comment. Au-delà de la
+    dernière, il suit le SMIC brut du modèle.
+
+    **La règle** est celle de la fiche ``complement_differentiel_rco`` : rien
+    avant 2015, 73, 74 puis 75 % d'une carrière complète, 85 % et un plafond
+    tous régimes depuis novembre 2021, le taux plein suffisant depuis
+    septembre 2023 (:func:`~retraite_notionnelle.droit.completer.complement_differentiel`).
+    """
+
+    def __init__(self, racine: Path, macro: DonneesMacro) -> None:
+        self.macro = macro
+        self._smic: dict[int, tuple[float, Fiabilite]] = {}
+        chemin = racine / "reference" / "legislation" / "complement_differentiel_rco.csv"
+        if chemin.exists():
+            with chemin.open(encoding="utf-8") as flux:
+                lignes = (l for l in flux if not l.lstrip().startswith("#"))
+                for ligne in csv.DictReader(lignes):
+                    self._smic[int(ligne["annee"])] = (
+                        float(ligne["smic_net_horaire"]),
+                        Fiabilite.depuis_texte(ligne["fiabilite"]))
+        fiche = racine / "reference" / "regles" / "complement_differentiel_rco.yaml"
+        self._fiche = versions.preparer(charger_yaml(fiche)) if fiche.exists() else None
+
+    def fiche(self) -> dict | None:
+        """La fiche préparée : ce que le paquet du site porte."""
+        return self._fiche
+
+    def table(self) -> dict[int, tuple[float, Fiabilite]]:
+        """Le SMIC net agricole horaire, par année : ce que le paquet porte."""
+        return dict(self._smic)
+
+    def regle(self, date_effet: str) -> dict:
+        """Les paramètres de la version qui vaut pour une pension prenant effet
+        à ``date_effet`` (AAAA-MM-JJ) : ``existe``, ``pourcentage``,
+        ``formule`` (« carriere_complete » jusqu'en octobre 2021,
+        « differentielle » depuis), ``condition`` (« duree_requise » ou
+        « taux_plein »), ``seuil_chef``, ``plafond_tous_regimes``,
+        ``pmr_au_mois`` (le mois où la PMR de la formule se lit),
+        ``majorations_de_duree``."""
+        if self._fiche is None:
+            return dict(SANS_COMPLEMENT_DIFFERENTIEL)
+        version = versions.applicable(self._fiche, {"liquidation.date_effet": date_effet})
+        return dict(SANS_COMPLEMENT_DIFFERENTIEL if version is None
+                    else version["parametres"])
+
+    def smic_net(self, annee: int) -> tuple[float, Fiabilite] | None:
+        """Le SMIC net agricole horaire du 1er janvier de l'année ; ``None``
+        avant la première ; au-delà de la dernière, celle-ci revalorisée sur
+        le SMIC brut, estimée."""
+        if not self._smic or annee < min(self._smic):
+            return None
+        if annee in self._smic:
+            return self._smic[annee]
+        derniere = max(self._smic)
+        valeur, fiabilite = self._smic[derniere]
+        return (valeur * self.macro.coefficient_smic(derniere, annee),
+                min(fiabilite, Fiabilite.ESTIMEE))

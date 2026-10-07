@@ -455,6 +455,39 @@ class EligibleMinimumGaranti:
 
 
 @dataclass(frozen=True)
+class EligibleAgricole:
+    """La pension des non-salariés agricoles, que la pension majorée de
+    référence relève et dont le complément différentiel de la RCO lit les
+    durées (:func:`~.completer.pension_majoree`,
+    :func:`~.completer.complement_differentiel`).
+
+    Le modèle ne connaît que le statut de chef d'exploitation, à titre
+    principal : la durée non salariée agricole est donc aussi celle de chef.
+    """
+
+    #: Indice de la pension dans :attr:`Pensions.regimes`.
+    indice: int
+    #: Liquidée au taux plein dans le régime : durée requise, âge du taux
+    #: plein, inaptitude ou handicap (L. 732-54-1, L. 732-63 depuis 2023).
+    taux_plein: bool
+    #: La durée tous régimes atteint-elle la durée requise ? Ce que le
+    #: complément de la RCO demandait jusqu'en août 2023 (L. 732-63, I, 2°).
+    duree_requise_atteinte: bool
+    #: Coefficient de surcote déjà incorporé au montant, que la PMR retire
+    #: avant de comparer (D. 732-111, D. 732-112).
+    surcote: float
+    #: Durée d'assurance non salariée agricole, en trimestres : celle des
+    #: années, sans les trimestres pour enfants.
+    duree: int
+    #: Les trimestres pour enfants que le régime porte, que les durées
+    #: comptent depuis 2026 (D. 732-110, D. 732-166-3).
+    enfants: int
+    #: La durée de référence DR, en trimestres : celle de la retraite
+    #: forfaitaire (R. 732-61, 1°), 150 au moins (D. 732-111, D. 732-166-4).
+    reference: int
+
+
+@dataclass(frozen=True)
 class Pensions:
     """Ce que l'étape « liquider chaque régime » écrit."""
 
@@ -471,6 +504,9 @@ class Pensions:
     #: Le plus haut des taux de liquidation des régimes en annuités.
     taux: float
     fiabilite: Fiabilite
+    #: La pension des non-salariés agricoles, quand elle porte la pension
+    #: majorée de référence ; ``None`` sinon.
+    agricole: EligibleAgricole | None = None
 
     def donnees(self) -> dict:
         """Les pensions, telles que le schéma de l'étape les décrit."""
@@ -491,6 +527,15 @@ class Pensions:
                 "trimestres_services": eligible.trimestres_services,
                 "ouvert": eligible.ouvert,
                 "duree_maximum": eligible.duree_maximum,
+            }
+        if self.agricole is not None:
+            regimes[self.agricole.indice]["agricole"] = {
+                "taux_plein": self.agricole.taux_plein,
+                "duree_requise_atteinte": self.agricole.duree_requise_atteinte,
+                "surcote": self.agricole.surcote,
+                "duree": self.agricole.duree,
+                "enfants": self.agricole.enfants,
+                "reference": self.agricole.reference,
             }
         return {"schema_version": SCHEMA_VERSION, "personne": self.personne,
                 "regimes": regimes, "requis": self.requis, "taux": self.taux,
@@ -545,6 +590,9 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
     eligibles_minimum: list[EligibleMinimum] = []
     #: Régimes de la fonction publique qui portent le minimum garanti.
     eligibles_garanti: list[EligibleMinimumGaranti] = []
+    #: La pension des non-salariés agricoles, que la pension majorée de
+    #: référence relève.
+    agricole: EligibleAgricole | None = None
 
     # Ce que les étapes de l'acquisition ont écrit, sous les noms que la
     # liquidation lit.
@@ -584,6 +632,15 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     ignorer_penalite_age,
                 )
                 fiabilite_globale = min(fiabilite_globale, pension.fiabilite)
+                if "pension_majoree_reference" in periode.avantages_non_contributifs:
+                    agricole = eligible_agricole(
+                        moteur, periode, carriere, releve, membres, trimestres,
+                        age_liquidation, len(pensions),
+                        1.0 if ignorer_penalite_age else abattement_points(
+                            moteur, periode, carriere, trimestres, requis_reference,
+                            age_liquidation, annee_liquidation,
+                            durees.trimestres_par_regime.get(code, 0)),
+                        code in regimes_du_handicap)
                 pensions.append(pension)
                 continue
             montant = 0.0
@@ -795,6 +852,12 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                         f"(de {versee.seuil_du_fractionnement:,.0f} à "
                         f"{periode.capital_seuil_points - 1:,.0f} points)"
                     )
+            if (periode.type_calcul == "mixte"
+                    and "pension_majoree_reference" in periode.avantages_non_contributifs):
+                agricole = eligible_agricole(
+                    moteur, periode, carriere, releve, membres, trimestres,
+                    age_liquidation, len(pensions), abattement,
+                    code in regimes_du_handicap)
             pensions.append(PensionRegime(
                 regime=code, montant=montant, type_calcul=periode.type_calcul,
                 detail=detail,
@@ -1280,6 +1343,45 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         requis=trimestres_requis,
         taux=taux_retenu,
         fiabilite=fiabilite_globale,
+        agricole=agricole,
+    )
+
+
+def eligible_agricole(moteur, periode: PeriodeRegime, carriere: Carriere, releve: Releve,
+                      membres: tuple[str, ...], trimestres: int, age_liquidation: float,
+                      indice: int, coefficient: float, par_le_handicap: bool
+                      ) -> EligibleAgricole:
+    """Ce que la pension majorée de référence et le complément différentiel de
+    la RCO lisent de la pension de base des non-salariés agricoles.
+
+    Le TAUX PLEIN est celui du minimum contributif : la durée requise tous
+    régimes, l'âge du taux plein, l'inaptitude ou le handicap (L. 732-54-1,
+    3°, depuis février 2014 ; D. 732-109, 3°, a) avant). La DURÉE est celle
+    des périodes cotisées ou assimilées pour la retraite forfaitaire, année par
+    année ; les trimestres pour enfants n'y entrent que depuis 2026, et la
+    règle les ajoute (D. 732-110). La DURÉE DE RÉFÉRENCE est celle de la
+    retraite forfaitaire, que le modèle lit comme le forfait la lit, au moins
+    trente-sept ans et demi. ``coefficient`` est celui de la décote ou de la
+    surcote du régime ; seule la surcote est retirée avant de comparer à la
+    PMR."""
+    durees = releve.durees
+    code = membres[0]
+    requis, _ = ouvrir.duree_requise(moteur, periode, carriere)
+    proratisation, _ = duree_proratisation(moteur, periode, carriere, requis)
+    annees = durees.cumul_plafonne("assurance", membres, lambda annee: True)
+    toutes = durees.cumul_plafonne("assurance", membres)
+    return EligibleAgricole(
+        indice=indice,
+        taux_plein=(trimestres >= requis
+                    or age_liquidation >= ouvrir.age_taux_plein(moteur, periode, carriere)
+                    or invalidite.taux_plein_de_l_inapte(moteur, code, carriere,
+                                                         age_liquidation)
+                    or par_le_handicap),
+        duree_requise_atteinte=trimestres >= requis,
+        surcote=max(1.0, coefficient),
+        duree=annees,
+        enfants=max(0, toutes - annees),
+        reference=max(150, proratisation),
     )
 
 

@@ -21,7 +21,7 @@
 #      que le moteur lit vraiment, mais dont six ne commandent aucun calcul.
 #   3. La cascade `AvantageApplique`
 #      (src/retraite_notionnelle/droit/liquidation.py, completer.py et
-#      foyer.py) — huit codes, et les
+#      foyer.py) — dix codes, et les
 #      seuls CHIFFRÉS en euros : c'est la seule des trois qui réponde à
 #      « combien ».
 #
@@ -463,29 +463,49 @@ avantages:
     libelle: Pension majorée de référence du régime agricole
     famille: minima_de_pension
     quoi: >-
-      Le plancher de la retraite forfaitaire et proportionnelle des non-salariés
-      agricoles, complété depuis 2015 par la garantie « 85 % du SMIC » puis par
-      le complément différentiel de points de RCO.
-    base_legale: [L. 732-54-1 code rural]
-    fiches: []
-    creation: 2002
+      Le plancher de la pension de base des non-salariés agricoles liquidée au
+      taux plein, au prorata de la durée agricole, depuis 2009 : deux montants
+      jusqu'en 2021, un seul depuis, relevé au minimum contributif majoré ;
+      écrêté de ce que toutes les pensions dépassent d'un plafond.
+    base_legale: [L. 732-54-1 à L. 732-54-4 code rural, D. 732-109 à D. 732-115 code rural]
+    fiches: [pension_majoree_reference]
+    creation: 2009
     fin: null
     regimes: non-salariés agricoles (MSA)
-    etat_modele: declare
-    ligne_cascade: null
-    pourquoi_pas_chiffre: >-
-      Déclarée dans treize périodes, six de msa_non_salaries.yaml et sept de
-      msa_rco.yaml ; aucun code du moteur ne la lit. `Neutralisations` la range d'ailleurs dans « ce que le scénario 1
-      ne sert pas ».
-    sans_chiffre: >-
-      déclarée par treize périodes du catalogue et servie par aucun code : la
-      déclaration est une intention
+    etat_modele: chiffre
+    ligne_cascade: pension_majoree_reference
     cout:
-      mesurable_par: aucune
+      mesurable_par: modele
       note: >-
-        À porter au moteur avant de pouvoir la chiffrer. Les non-salariés
-        agricoles sont le régime où un plancher pèse le plus lourd, leur pension
-        contributive étant la plus faible du catalogue.
+        Servie depuis le 7 octobre 2026 (action 138, étape 8), aux pensions qui
+        prennent effet depuis 2009 : celle que la loi de 2008 a accordée aux
+        pensions plus anciennes, et les plans de revalorisation de 1994 à
+        2002, ne le sont pas. Les non-salariés agricoles sont le régime où un
+        plancher pèse le plus lourd, leur pension contributive étant la plus
+        faible du catalogue.
+
+  - code: complement_differentiel_rco
+    libelle: Complément différentiel de la retraite complémentaire agricole
+    famille: minima_de_pension
+    quoi: >-
+      Des points de RCO qui portent les deux pensions agricoles d'un chef
+      d'exploitation de dix-sept ans et demi à 73, 74 puis 75 % de 1 820 SMIC
+      nets agricoles d'une carrière complète, à 85 % depuis novembre 2021, au
+      prorata de sa durée, sans dépasser ce montant tous régimes confondus.
+    base_legale: [L. 732-63 code rural, D. 732-166-1 à D. 732-166-6 code rural]
+    fiches: [complement_differentiel_rco]
+    creation: 2015
+    fin: null
+    regimes: retraite complémentaire des non-salariés agricoles (MSA)
+    etat_modele: chiffre
+    ligne_cascade: complement_differentiel_rco
+    cout:
+      mesurable_par: modele
+      note: >-
+        Servi depuis le 7 octobre 2026 (action 138, étape 8), aux pensions qui
+        prennent effet depuis 2015 ; la MSA en comptait 240 985 bénéficiaires
+        fin 2022, pour 1 668 euros bruts par an en moyenne (tableau de bord des
+        retraites des non-salariés agricoles, août 2023).
 
   # --- Périodes non cotisées mais validées ---------------------------------
 

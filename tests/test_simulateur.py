@@ -3595,17 +3595,27 @@ def test_le_chef_d_exploitation_recoit_ses_points_gratuits_de_rco(simulateur):
     resultat = scenario.calculer(carriere)
     pension, ligne = _rco(resultat)
     assert "(dont 2,150.00 points gratuits)" in pension.detail
-    sans, _ = _rco(scenario.calculer(carriere, points_gratuits=False))
+    sans_points = scenario.calculer(carriere, points_gratuits=False)
+    sans, _ = _rco(sans_points)
     assert "gratuits" not in sans.detail
+
+    # Le complément différentiel de la RCO (L. 732-63) s'ajoute aux points,
+    # et comble, différentiel, ce que les points gratuits ne donnent plus : il
+    # se retire des deux côtés.
+    def points_seuls(calcul, rco) -> float:
+        return rco.montant - sum(a.montant for a in calcul.avantages_appliques
+                                 if a.code == "complement_differentiel_rco")
+
     # La cascade isole exactement ce que les points ajoutent à la RCO, et le
     # sous-total contributif ne les compte pas.
-    assert ligne.montant == pytest.approx(pension.montant - sans.montant, abs=1e-6)
-    assert ligne.montant > 0.5 * pension.montant
+    assert ligne.montant == pytest.approx(
+        points_seuls(resultat, pension) - points_seuls(sans_points, sans), abs=1e-6)
+    assert ligne.montant > 0.5 * points_seuls(resultat, pension)
     assert resultat.pension_annuelle - resultat.total_contributif == pytest.approx(
         sum(a.montant for a in resultat.avantages_appliques), abs=1e-6)
     # Les droits acquis du scénario prospectif sont du contributif pur.
     contributif, _ = _rco(scenario.calculer(carriere, avantages_non_contributifs=False))
-    assert contributif.montant == pytest.approx(sans.montant, abs=1e-9)
+    assert contributif.montant == pytest.approx(points_seuls(sans_points, sans), abs=1e-9)
 
     # Parti en janvier 2003, avant d'avoir rien cotisé à la RCO : 44 années de
     # chef, retenues dans la limite de 37,5.

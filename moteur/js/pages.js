@@ -11165,17 +11165,21 @@ contiennent ; elles comptent pour ce qu'elles empêchent.</p>
   const avantages = contexte.avantages().derniere;
   const montants = avantages ? avantages.lignes : {};
   const anneeMinima = avantages ? avantages.annee : derniere;
+  // Les minima des exploitants agricoles sont deux lignes de la cascade, la
+  // pension majorée de référence et le complément différentiel de la RCO :
+  // un seul plancher, de deux étages.
   const remplaces = [
-    ["Minimum vieillesse (ASPA)", "minimum_vieillesse", "lu dans les comptes"],
-    ["Minimum contributif", "minimum_contributif", "calculé sur la grille"],
-    ["Minimum garanti de la fonction publique", "minimum_garanti", "calculé sur la grille"],
-    ["Pension majorée de référence des exploitants", "pension_majoree_reference",
-      "non chiffrée"],
+    ["Minimum vieillesse (ASPA)", ["minimum_vieillesse"], "lu dans les comptes"],
+    ["Minimum contributif", ["minimum_contributif"], "calculé sur la grille"],
+    ["Minimum garanti de la fonction publique", ["minimum_garanti"], "calculé sur la grille"],
+    ["Minima des exploitants agricoles, base et complémentaire",
+      ["pension_majoree_reference", "complement_differentiel_rco"], "calculés sur la grille"],
   ];
+  const montantDe = (codes) => codes.reduce((somme, code) => somme + (montants[code] || 0), 0);
   let totalRemplace = 0;
-  for (const [, code] of remplaces) totalRemplace += montants[code] || 0;
-  const lignesRemplaces = remplaces.map(([libelle, code, source]) => [
-    libelle, source, montants[code] ? milliards(montants[code], 2) : "—",
+  for (const [, codes] of remplaces) totalRemplace += montantDe(codes);
+  const lignesRemplaces = remplaces.map(([libelle, codes, source]) => [
+    libelle, source, montantDe(codes) ? milliards(montantDe(codes), 2) : "—",
   ]);
   const garantieBrute = c.annee(anneeMinima).cout(COMPOSANTE_GARANTIE);
   lignesRemplaces.push(["<strong>Ce que ces quatre minima coûtent</strong>", "",
@@ -11364,12 +11368,13 @@ ${g.tableau(
   )}
 
 <p class="discret">Le minimum vieillesse est le poste des comptes de la
-protection sociale ; les deux minima de pension sont calculés sur la grille des
-cas types, qui n'est pas une population et les sous-estime : le minimum
+protection sociale ; les trois autres sont calculés sur la grille des cas
+types, qui n'est pas une population et les sous-estime : le minimum
 contributif est réclamé par des carrières courtes que la grille ne compte
-guère. La pension majorée de référence n'est pas chiffrée, aucun code du
-moteur ne la servant. Le total est donc une borne basse, et l'écart une borne
-haute.</p>
+guère, et les minima des exploitants ne vont qu'aux pensions qui prennent effet
+depuis leur création, 2009 pour la pension majorée de référence, 2015 pour le
+complément différentiel. Le total est donc une borne basse, et l'écart une
+borne haute.</p>
 
 <div class="note"><strong>Deux corrections, et les deux sont dans la
 page.</strong> L'ASPA est réclamée par <strong>une personne seule éligible
@@ -14932,12 +14937,15 @@ export const MESURES_BLOCAGES = {
   // reportés en emploi, et non plus tous (action 138, étape 3), puis les
   // quotients projetés de l'INSEE au lieu de la loi de Gompertz-Makeham
   // (étape 7) les ont portés de −0,8, 49 %, 0,86 dans les années 2050 et 1,01
-  // en 2070 à ce qui suit ; le coût des 18 %, de 2,0 à 2,2 points.
+  // en 2070 à ce qui suit ; le coût des 18 %, de 2,0 à 2,2 points. Le même
+  // soir, les minima des exploitants agricoles (étape 8), qui relèvent les
+  // pensions du système actuel sur la grille, ont porté la dette de 62 à 60 %,
+  // et le creux du coefficient de 0,84 à 0,85.
   solde_moyen_proposition: -0.9,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 62,
+  dette_2070_proposition: 60,
   dette_2070_actuel: 66,
-  coefficient_minimum: 0.84,
+  coefficient_minimum: 0.85,
   decennie_coefficient_minimum: 2040,
   coefficient_2070: 1.0,
   // donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les

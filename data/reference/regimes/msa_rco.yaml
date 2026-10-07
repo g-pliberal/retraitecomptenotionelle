@@ -49,7 +49,7 @@ periodes:
     taux_cotisation_retraite: 0.0297
     decote_par_trimestre: null
     surcote_par_trimestre: null
-    avantages_non_contributifs: [pension_majoree_reference, reversion]
+    avantages_non_contributifs: [reversion]
     points_gratuits:
       regime: msa_non_salaries
       avant: 2003
@@ -81,7 +81,7 @@ periodes:
     taux_cotisation_retraite: 0.0297
     decote_par_trimestre: null
     surcote_par_trimestre: null
-    avantages_non_contributifs: [pension_majoree_reference, reversion]
+    avantages_non_contributifs: [reversion]
     points_gratuits:
       regime: msa_non_salaries
       avant: 2003
@@ -113,7 +113,7 @@ periodes:
     taux_cotisation_retraite: 0.0297
     decote_par_trimestre: null
     surcote_par_trimestre: null
-    avantages_non_contributifs: [pension_majoree_reference, reversion]
+    avantages_non_contributifs: [reversion]
     points_gratuits:
       regime: msa_non_salaries
       avant: 2003
@@ -144,7 +144,7 @@ periodes:
     taux_cotisation_retraite: 0.0297
     decote_par_trimestre: null
     surcote_par_trimestre: null
-    avantages_non_contributifs: [pension_majoree_reference, reversion]
+    avantages_non_contributifs: [reversion]
     points_gratuits:
       regime: msa_non_salaries
       avant: 2003
@@ -158,6 +158,37 @@ periodes:
       2006 à 2009 : 2,97 % chaque année. Lus dans l'index LEGI du dépôt le 27
       septembre 2026.
   - debut: 2010
+    fin: 2014
+    type_calcul: points
+    age_ouverture: 64
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    points_maximum: 100
+    assiette_repere_smic: 1820
+    assiette_plancher: assiette_minimale_agricole
+    salaire_reference: carriere_entiere
+    assiette: deplafonnee
+    taux_cotisation_retraite: 0.03
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    points_gratuits:
+      regime: msa_non_salaries
+      avant: 2003
+      points_par_annee: 100
+      annees_minimum: 17.5
+      annees_maximum: 37.5
+      taux_plein_depuis: "2023-09"
+    notes: >-
+      D. 732-165, rédactions de 2010 à 2016 : 3 % chaque année, sur 1 820 SMIC au
+      moins ; D. 732-155 : 100 points à ce minimum « pour les périodes postérieures
+      au 31 décembre 2002 et antérieures au 1er janvier 2017 ». Lus dans l'index
+      LEGI du dépôt le 27 septembre 2026.
+  - debut: 2015
     fin: 2016
     type_calcul: points
     age_ouverture: 64
@@ -175,7 +206,7 @@ periodes:
     taux_cotisation_retraite: 0.03
     decote_par_trimestre: null
     surcote_par_trimestre: null
-    avantages_non_contributifs: [pension_majoree_reference, reversion]
+    avantages_non_contributifs: [complement_differentiel_rco, reversion]
     points_gratuits:
       regime: msa_non_salaries
       avant: 2003
@@ -188,6 +219,10 @@ periodes:
       moins ; D. 732-155 : 100 points à ce minimum « pour les périodes postérieures
       au 31 décembre 2002 et antérieures au 1er janvier 2017 ». Lus dans l'index
       LEGI du dépôt le 27 septembre 2026.
+      Coupée en 2015, le 7 octobre 2026 (action 138, étape 8) : le complément
+      différentiel de points (L. 732-63, loi n° 2014-40 ; D. 732-166-1 à -6)
+      relève les pensions qui prennent effet depuis le 1er janvier 2015 ; sa
+      fiche, complement_differentiel_rco, en dit la règle de chaque date.
   - debut: 2017
     fin: 2017
     type_calcul: points
@@ -206,7 +241,7 @@ periodes:
     taux_cotisation_retraite: 0.035
     decote_par_trimestre: null
     surcote_par_trimestre: null
-    avantages_non_contributifs: [pension_majoree_reference, reversion]
+    avantages_non_contributifs: [complement_differentiel_rco, reversion]
     points_gratuits:
       regime: msa_non_salaries
       avant: 2003
@@ -237,7 +272,7 @@ periodes:
     taux_cotisation_retraite: 0.04
     decote_par_trimestre: null
     surcote_par_trimestre: null
-    avantages_non_contributifs: [pension_majoree_reference, reversion]
+    avantages_non_contributifs: [complement_differentiel_rco, reversion]
     # Les points gratuits des chefs d'exploitation pour leurs années
     # d'avant 2003 : D. 732-154 (100 points par année, dans la limite de
     # 37,5 ans moins les années de RCO), D. 732-151 (17,5 ans comme chef),

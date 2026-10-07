@@ -667,6 +667,130 @@ export class MinimumContributif {
   }
 }
 
+/** La règle de la pension majorée de référence quand sa fiche manque. */
+export const SANS_PENSION_MAJOREE = Object.freeze({
+  existe: false, duree_minimale: null, montant: null, montant_reduit: null,
+  seuil_chef: null, plafond: null, majorations_de_duree: false,
+});
+
+/**
+ * La pension majorée de référence des non-salariés agricoles (PMR), le plafond
+ * de son écrêtement, et la règle que leur applique la date d'effet : des
+ * montants datés, une série par mesure (`pmr_chef`, `pmr_conjoint`,
+ * `pmr_depuis_septembre_2023`, les plafonds), et la fiche
+ * `pension_majoree_reference`, dont le moteur lit la version. Voir
+ * `PensionMajoreeReference` du Python.
+ */
+export class PensionMajoreeReference {
+  constructor(paquet, macro) {
+    this.macro = macro;
+    const pmr = paquet.pension_majoree_reference ?? {};
+    this._table = pmr.montants ?? {};
+    this._fiche = pmr.fiche ?? null;
+  }
+
+  /** La fiche préparée, telle que le paquet la porte. */
+  fiche() {
+    return this._fiche;
+  }
+
+  /** Les paramètres de la version qui vaut à `dateEffet` (AAAA-MM-JJ). */
+  regle(dateEffet) {
+    if (this._fiche === null) {
+      return { ...SANS_PENSION_MAJOREE };
+    }
+    const version = applicable(this._fiche, { "liquidation.date_effet": dateEffet });
+    return { ...(version === null ? SANS_PENSION_MAJOREE : version.parametres) };
+  }
+
+  /**
+   * Le montant de la mesure en vigueur le premier jour du mois, en euros par
+   * an ; null pour une mesure inconnue. Un mois qui précède la série lit son
+   * premier montant ; au-delà du dernier, ce dernier revalorisé sur le SMIC.
+   *
+   * @returns {[number, number]|null} valeur, et fiabilité.
+   */
+  montant(mesure, annee, mois = 1) {
+    const datees = this._table[mesure] ?? [];
+    if (datees.length === 0) {
+      return null;
+    }
+    const jour = `${String(annee).padStart(4, "0")}-${String(mois).padStart(2, "0")}-01`;
+    let rang = 0;
+    while (rang < datees.length && datees[rang][0] <= jour) {
+      rang += 1;
+    }
+    rang = Math.max(1, rang);
+    let [, valeur, fiabilite] = datees[rang - 1];
+    const derniere = Number(datees[datees.length - 1][0].slice(0, 4));
+    if (rang === datees.length && annee > derniere) {
+      valeur *= this.macro.coefficientSmic(derniere, annee);
+      fiabilite = Math.min(fiabilite, Fiabilite.ESTIMEE);
+    }
+    return [valeur, fiabilite];
+  }
+}
+
+/** La règle du complément différentiel de la RCO quand sa fiche manque. */
+export const SANS_COMPLEMENT_DIFFERENTIEL = Object.freeze({
+  existe: false, pourcentage: null, formule: null, condition: null, seuil_chef: null,
+  plafond_tous_regimes: false, pmr_au_mois: null, majorations_de_duree: false,
+});
+
+/**
+ * Le complément différentiel de points de la RCO agricole (L. 732-63) : le
+ * SMIC net agricole horaire de chaque 1er janvier, et la règle que la date
+ * d'effet lui applique (fiche `complement_differentiel_rco`). Voir
+ * `ComplementDifferentielRco` du Python.
+ */
+export class ComplementDifferentielRco {
+  constructor(paquet, macro) {
+    this.macro = macro;
+    const complement = paquet.complement_differentiel_rco ?? {};
+    this._smic = new Map((complement.smic_net ?? []).map(([annee, valeur, fiabilite]) => [
+      annee, [valeur, fiabilite]]));
+    this._fiche = complement.fiche ?? null;
+  }
+
+  /** La fiche préparée, telle que le paquet la porte. */
+  fiche() {
+    return this._fiche;
+  }
+
+  /** Les paramètres de la version qui vaut à `dateEffet` (AAAA-MM-JJ). */
+  regle(dateEffet) {
+    if (this._fiche === null) {
+      return { ...SANS_COMPLEMENT_DIFFERENTIEL };
+    }
+    const version = applicable(this._fiche, { "liquidation.date_effet": dateEffet });
+    return { ...(version === null ? SANS_COMPLEMENT_DIFFERENTIEL : version.parametres) };
+  }
+
+  /**
+   * Le SMIC net agricole horaire du 1er janvier de l'année ; null avant la
+   * première ; au-delà de la dernière, celle-ci revalorisée sur le SMIC brut.
+   *
+   * @returns {[number, number]|null} valeur, et fiabilité.
+   */
+  smicNet(annee) {
+    if (this._smic.size === 0) {
+      return null;
+    }
+    const annees = [...this._smic.keys()];
+    const premiere = Math.min(...annees);
+    if (annee < premiere) {
+      return null;
+    }
+    if (this._smic.has(annee)) {
+      return this._smic.get(annee);
+    }
+    const derniere = Math.max(...annees);
+    const [valeur, fiabilite] = this._smic.get(derniere);
+    return [valeur * this.macro.coefficientSmic(derniere, annee),
+      Math.min(fiabilite, Fiabilite.ESTIMEE)];
+  }
+}
+
 /**
  * Décote de la fonction publique — article L. 14 du code des pensions.
  *

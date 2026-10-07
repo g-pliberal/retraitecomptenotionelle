@@ -1,0 +1,82 @@
+# Pension majorée de référence des non-salariés agricoles et plafond de son écrêtement
+# -------------------------------------------------------------------------------------
+# source_id: dila_legi_pension_majoree (ancres de D. 732-111 et D. 732-113),
+#            cnav_revalorisation_pensions
+#
+# Écrit par scripts/fetch/dila_legi_pension_majoree.py, qui relit chaque ancre
+# dans l'index LEGI du dépôt et la revalorise par les coefficients de
+# l'article L. 161-23-1 (revalorisation_pensions.csv), au centime inférieur :
+# ne pas modifier à la main. Montants en euros PAR AN ; une ligne par date de
+# revalorisation, le modèle lisant le montant en vigueur le premier jour du
+# mois de la date d'effet.
+#
+#   pmr_chef     PMR1 (D. 732-111, 2009) : la part des chefs d'exploitation de
+#                dix-sept ans et demi, puis, depuis 2022, la PMR unique
+#                (PMRmax), relevée au minimum contributif majoré ; pour les
+#                pensions prenant effet avant le 1er septembre 2023 ;
+#   pmr_conjoint PMR2 : les autres périodes, jusqu'en 2021 ;
+#   pmr_depuis_septembre_2023
+#                PMRmax des pensions prenant effet depuis le 1er septembre
+#                2023 : 10 170,86 €, revalorisée comme le minimum contributif,
+#                qu'elle vaut ;
+#   plafond      le plafond de l'écrêtement (D. 732-113), pour les pensions
+#                prenant effet avant le 1er septembre 2023 ;
+#   plafond_depuis_septembre_2023
+#                celui des pensions prenant effet de septembre 2023 à 2025, qui
+#                suit le SMIC comme le plafond de l'article L. 173-2. Depuis
+#                2026, le plafond est celui-ci (L. 732-54-3, 2°) :
+#                minimum_contributif.csv.
+#
+# Fiabilité : certifiee pour une ancre relue dans LEGI ; moyenne pour un
+# montant que la loi définit et que le script calcule, aucune caisse n'en
+# publiant la série ; celle de minimum_contributif.csv pour la PMR depuis
+# septembre 2023.
+mesure,date,valeur,fiabilite
+plafond,2009-01-01,9000.00,certifiee
+plafond,2009-04-01,9090.00,moyenne
+plafond,2010-02-11,9600.00,certifiee
+plafond,2010-04-01,9686.40,moyenne
+plafond,2011-04-01,9889.81,moyenne
+plafond,2012-04-01,10097.49,moyenne
+plafond,2013-04-01,10228.75,moyenne
+plafond,2015-10-01,10238.97,moyenne
+plafond,2017-10-01,10320.88,moyenne
+plafond,2019-01-01,10351.84,moyenne
+plafond,2020-01-01,10455.35,moyenne
+plafond,2021-01-01,10497.17,moyenne
+plafond,2022-01-01,11001.44,certifiee
+plafond,2022-07-01,11441.49,moyenne
+plafond,2023-01-01,11533.02,certifiee
+plafond_depuis_septembre_2023,2023-09-01,12732.96,certifiee
+plafond_depuis_septembre_2023,2024-01-01,12876.84,moyenne
+plafond_depuis_septembre_2023,2024-11-01,13130.42,moyenne
+plafond_depuis_septembre_2023,2025-01-01,13130.42,moyenne
+pmr_chef,2009-01-01,7596.00,certifiee
+pmr_chef,2009-04-01,7671.96,moyenne
+pmr_chef,2010-04-01,7741.00,moyenne
+pmr_chef,2011-04-01,7903.56,moyenne
+pmr_chef,2012-04-01,8069.53,moyenne
+pmr_chef,2013-04-01,8174.43,moyenne
+pmr_chef,2015-10-01,8182.60,moyenne
+pmr_chef,2017-10-01,8248.06,moyenne
+pmr_chef,2019-01-01,8272.80,moyenne
+pmr_chef,2020-01-01,8355.52,moyenne
+pmr_chef,2021-01-01,8388.94,moyenne
+pmr_chef,2022-01-01,8557.38,certifiee
+pmr_chef,2022-07-01,8899.67,moyenne
+pmr_chef,2023-01-01,8970.86,certifiee
+pmr_conjoint,2009-01-01,6036.00,certifiee
+pmr_conjoint,2009-04-01,6096.36,moyenne
+pmr_conjoint,2010-04-01,6151.22,moyenne
+pmr_conjoint,2011-04-01,6280.39,moyenne
+pmr_conjoint,2012-04-01,6412.27,moyenne
+pmr_conjoint,2013-04-01,6495.62,moyenne
+pmr_conjoint,2015-10-01,6502.11,moyenne
+pmr_conjoint,2017-10-01,6554.12,moyenne
+pmr_conjoint,2019-01-01,6573.78,moyenne
+pmr_conjoint,2020-01-01,6639.51,moyenne
+pmr_conjoint,2021-01-01,6666.06,moyenne
+pmr_depuis_septembre_2023,2023-09-01,10170.86,certifiee
+pmr_depuis_septembre_2023,2024-01-01,10513.61,haute
+pmr_depuis_septembre_2023,2025-01-01,10720.72,haute
+pmr_depuis_septembre_2023,2026-01-01,10847.22,haute

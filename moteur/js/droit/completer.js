@@ -5,8 +5,10 @@
  * fonction : ce que le droit ajoute aux pensions de régime en les regardant
  * toutes ensemble, dans l'ordre où il l'applique — le minimum contributif et
  * son écrêtement (`complementMinimum`), le minimum garanti de la fonction
- * publique, la surcote parentale, la majoration pour enfants enfin, plafonnée
- * en euros à la complémentaire (`plafondMajoration`). L'ASPA n'en est pas :
+ * publique, la surcote parentale, la majoration pour enfants, plafonnée en
+ * euros à la complémentaire (`plafondMajoration`), les deux minima des
+ * exploitants agricoles enfin (`pensionMajoree`, `complementDifferentiel`).
+ * L'ASPA n'en est pas :
  * c'est l'étape « foyer et net » (`foyer.js`). Ce que l'étape écrit,
  * `Complements`, suit son schéma, `data/reference/etapes/completer_tous_regimes.yaml`.
  */
@@ -29,7 +31,125 @@ export const FICHES = {
   minimum_garanti: "minimum_garanti",
   surcote_parentale: "surcote_parentale",
   majoration_enfants: "majoration_dix_pour_cent",
+  pension_majoree_reference: "pension_majoree_reference",
+  complement_differentiel_rco: "complement_differentiel_rco",
 };
+
+/** Le régime de la retraite complémentaire des non-salariés agricoles. */
+export const RCO = "msa_rco";
+
+/** Les heures de SMIC d'une année, que le complément de la RCO multiplie. */
+export const HEURES_DU_COMPLEMENT = 1820;
+
+/**
+ * Les points de RCO d'une carrière complète au minimum, que la formule du
+ * complément retranche de 2015 à octobre 2021 (D. 732-166-4).
+ */
+export const POINTS_D_UNE_CARRIERE_COMPLETE = 3750;
+
+/**
+ * Ce que la pension majorée de référence (PMR) ajoute à la pension de base des
+ * non-salariés agricoles ; null quand elle n'y ajoute rien. La PMR de la date
+ * d'effet au prorata de la durée sur DR, au taux plein, comparée avant surcote
+ * et sans la majoration pour enfants, écrêtée de ce que `ressources` — toutes
+ * les pensions et majorations pour enfants — dépassent du plafond. Voir
+ * `pension_majoree` du Python.
+ */
+export function pensionMajoree(moteur, carriere, eligible, pension, ressources) {
+  const regle = moteur.pensionMajoreeReference.regle(dateDEffet(carriere));
+  if (!regle.existe || !eligible.tauxPlein || pension.montant <= 0.0) {
+    return null;
+  }
+  const duree = eligible.duree + (regle.majorations_de_duree ? eligible.enfants : 0);
+  if (duree < (regle.duree_minimale ?? 0)) {
+    return null;
+  }
+  // De 2009 à 2021, PMR1 pour qui a été chef d'exploitation dix-sept ans et
+  // demi, PMR2 sinon (D. 732-110, II ; D. 732-111).
+  let serie = regle.montant;
+  if (regle.montant_reduit && eligible.duree < (regle.seuil_chef ?? 0)) {
+    serie = regle.montant_reduit;
+  }
+  const annee = carriere.anneeLiquidation;
+  const mois = carriere.moisLiquidation;
+  const lu = moteur.pensionMajoreeReference.montant(serie, annee, mois);
+  if (lu === null) {
+    return null;
+  }
+  const [entiere, fiabilite] = lu;
+  const retenue = Math.min(duree, eligible.reference);
+  const avant = Math.max(0.0, entiere * retenue / eligible.reference
+    - pension.montant / eligible.surcote);
+  if (avant <= 0.0) {
+    return null;
+  }
+  let plafond;
+  let fiabilitePlafond;
+  if (regle.plafond === "minimum_contributif") {
+    [, , plafond, fiabilitePlafond] = moteur.minimumContributif.valeurs(annee, mois);
+  } else {
+    [plafond, fiabilitePlafond] = moteur.pensionMajoreeReference.montant(
+      regle.plafond, annee, mois);
+  }
+  return {
+    entiere, duree: retenue, reference: eligible.reference, avantEcretement: avant,
+    complement: Math.max(0.0, Math.min(avant, plafond - ressources)),
+    plafond, fiabilite: Math.min(fiabilite, fiabilitePlafond),
+  };
+}
+
+/**
+ * Les points de RCO que le complément différentiel ajoute (L. 732-63) ; null
+ * quand il n'en ajoute pas. La cible, un pourcentage de 1 820 SMIC nets
+ * agricoles, la formule de D. 732-166-4 — une carrière complète jusqu'en
+ * octobre 2021, différentielle depuis —, le plafond des pensions agricoles
+ * (D. 732-166-5) et, depuis novembre 2021, celui de toutes les pensions
+ * personnelles, `personnelles` ; des points arrondis à l'entier le plus
+ * proche. Voir `complement_differentiel` du Python.
+ */
+export function complementDifferentiel(moteur, carriere, eligible, base, rco, pointsRco,
+  valeurPoint, personnelles) {
+  const dateEffet = dateDEffet(carriere);
+  const regle = moteur.complementDifferentielRco.regle(dateEffet);
+  if (!regle.existe || valeurPoint <= 0.0) {
+    return null;
+  }
+  const duree = eligible.duree + (regle.majorations_de_duree ? eligible.enfants : 0);
+  const ouvert = regle.condition === "taux_plein"
+    ? eligible.tauxPlein : eligible.dureeRequiseAtteinte;
+  if (duree < (regle.seuil_chef ?? 0) || !ouvert) {
+    return null;
+  }
+  const annee = carriere.anneeLiquidation;
+  const smic = moteur.complementDifferentielRco.smicNet(annee);
+  const pmr = moteur.pensionMajoreeReference.montant(
+    moteur.pensionMajoreeReference.regle(dateEffet).montant || "pmr_chef",
+    annee, regle.pmr_au_mois || 1);
+  if (smic === null || pmr === null) {
+    return null;
+  }
+  const [smicNet, fiabilite] = smic;
+  const cible = regle.pourcentage * HEURES_DU_COMPLEMENT * smicNet;
+  const retenue = Math.min(duree, eligible.reference);
+  const prorata = retenue / eligible.reference;
+  const formule = regle.formule === "carriere_complete"
+    ? (cible - (pmr[0] + POINTS_D_UNE_CARRIERE_COMPLETE * valeurPoint)) * prorata
+    : (cible - pmr[0]) * prorata - pointsRco * valeurPoint;
+  let montant = Math.min(formule, cible * prorata - (base + rco));
+  if (regle.plafond_tous_regimes) {
+    montant = Math.min(montant, cible - personnelles);
+  }
+  montant = Math.max(0.0, montant);
+  const points = Math.floor(montant / valeurPoint + 0.5 + 1e-9);
+  if (points <= 0) {
+    return null;
+  }
+  return {
+    pourcentage: regle.pourcentage, smicNet, cible, duree: retenue,
+    reference: eligible.reference, points, valeurPoint, montant: points * valeurPoint,
+    plafonne: montant < formule - 1e-9, fiabilite: Math.min(fiabilite, pmr[1]),
+  };
+}
 
 /**
  * Première date d'effet, [année, mois], où la surcote s'AJOUTE au minimum
@@ -643,6 +763,79 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
           code, part * (soumise ? retenuePlafonnee : 1.0),
         ]),
       });
+    }
+  }
+
+  // LES DEUX MINIMA DES EXPLOITANTS AGRICOLES, après la majoration pour
+  // enfants, que leurs plafonds comptent : la pension majorée de référence
+  // relève la pension de base, puis le complément différentiel ajoute des
+  // points de RCO, en comptant la pension relevée. Voir le Python.
+  const agricole = liquidees.agricole ?? null;
+  if (avantagesNonContributifs && agricole !== null) {
+    const etrangeres = etranger.pensionsEtrangeresServies(
+      moteur.macro, carriere, carriere.dateLiquidation);
+    const base = pensions[agricole.indice];
+    const majoree = pensionMajoree(moteur, carriere, agricole, base,
+      total + servies + etrangeres);
+    if (majoree !== null && majoree.complement > 0.0) {
+      pensions[agricole.indice] = {
+        ...base,
+        montant: base.montant + majoree.complement,
+        detail: `${base.detail} = ${formatFixe(base.montant, 2, true)} €, porté à la pension `
+          + `majorée de référence par + ${formatFixe(majoree.complement, 2, true)} €`,
+      };
+      total += majoree.complement;
+      fiabiliteGlobale = Math.min(fiabiliteGlobale, majoree.fiabilite);
+      avantages.push({
+        code: "pension_majoree_reference",
+        libelle: "Pension majorée de référence",
+        montant: majoree.complement,
+        detail: `PMR ${formatFixe(majoree.entiere, 2, true)} € × ${majoree.duree}/`
+          + `${majoree.reference}, au taux plein`
+          + (majoree.complement < majoree.avantEcretement - 1e-9
+            ? `, écrêtée au plafond de ${formatFixe(majoree.plafond, 2, true)} € de toutes `
+              + "les pensions"
+            : ""),
+        par_regime: [[base.regime, majoree.complement]],
+      });
+    }
+    // Le complément ne s'ajoute qu'à la RCO dont la période le déclare.
+    const indiceRco = pensions.findIndex((p) => p.regime === RCO);
+    let periodeRco = null;
+    if (indiceRco >= 0) {
+      const regimeRco = moteur.catalogue.obtenir(RCO);
+      periodeRco = regimeRco.periode(Math.min(anneeLiquidation, derniereAnnee(regimeRco)));
+    }
+    const valeur = periodeRco !== null
+      && periodeRco.avantages_non_contributifs.includes("complement_differentiel_rco")
+      ? liquider.valeurDuPoint(moteur, RCO, carriere.dateLiquidation) : null;
+    if (indiceRco >= 0 && valeur !== null) {
+      const rco = pensions[indiceRco];
+      const differentiel = complementDifferentiel(
+        moteur, carriere, agricole, pensions[agricole.indice].montant, rco.montant,
+        pointsAcquis.get(RCO) ?? 0.0, valeur[0], total + servies + etrangeres);
+      if (differentiel !== null) {
+        pensions[indiceRco] = {
+          ...rco,
+          montant: rco.montant + differentiel.montant,
+          detail: `${rco.detail} = ${formatFixe(rco.montant, 2, true)} €, complément `
+            + `différentiel de ${formatFixe(differentiel.points, 0, true)} points`,
+        };
+        total += differentiel.montant;
+        fiabiliteGlobale = Math.min(fiabiliteGlobale, differentiel.fiabilite, valeur[1]);
+        avantages.push({
+          code: "complement_differentiel_rco",
+          libelle: "Complément différentiel de la complémentaire agricole",
+          montant: differentiel.montant,
+          detail: `${formatFixe(differentiel.points, 0, true)} points : `
+            + `${formatPourcentage(differentiel.pourcentage, 0)} de 1 820 heures au SMIC `
+            + `net agricole de ${formatFixe(differentiel.smicNet, 4)} €, `
+            + `${formatFixe(differentiel.cible, 2, true)} € par an, × ${differentiel.duree}/`
+            + `${differentiel.reference}`
+            + (differentiel.plafonne ? ", plafonné" : ""),
+          par_regime: [[RCO, differentiel.montant]],
+        });
+      }
     }
   }
 
