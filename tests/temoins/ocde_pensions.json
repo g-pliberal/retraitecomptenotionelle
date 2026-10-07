@@ -1,0 +1,74 @@
+{
+ "age_de_depart": {
+  "actuel": {
+   "femmes": 64.3,
+   "hommes": 64.3
+  },
+  "futur": {
+   "femmes": 65.0,
+   "hommes": 65.0
+  }
+ },
+ "conventions": {
+  "carriere": "entrée à 22 ans en 2024 (génération 2002), carrière complète au même multiple du salaire moyen, départ à l'âge normal",
+  "hypotheses": "prix +2 % par an, salaires réels +1,25 % par an",
+  "multiples": "0.5, 1 et 2 fois le salaire moyen (AWGW, en euros de 2024)",
+  "patrimoine": "valeur au départ des pensions des régimes obligatoires, actualisées à 1,5 % réel sur la mortalité de cohorte de l'ONU, en années de salaire individuel brut (net)",
+  "taux": "en pour cent du salaire individuel brut (net) d'avant le départ"
+ },
+ "patrimoine_brut": {
+  "femmes": {
+   "0.5": 13.1,
+   "1": 13.1,
+   "2": 11.0
+  },
+  "hommes": {
+   "0.5": 11.5,
+   "1": 11.5,
+   "2": 9.7
+  }
+ },
+ "patrimoine_net": {
+  "femmes": {
+   "0.5": 15.3,
+   "1": 16.2,
+   "2": 13.6
+  },
+  "hommes": {
+   "0.5": 13.5,
+   "1": 14.3,
+   "2": 12.0
+  }
+ },
+ "salaire_moyen": 44968.0,
+ "source": {
+  "editeur": "OCDE",
+  "lu_le": "2026-10-07",
+  "reference": "Pensions at a Glance 2025, tableaux 4.1, 4.4, 4.6 et 5.4 ; hypothèses p. 160-161",
+  "url": "https://sdmx.oecd.org/public/rest/data/OECD.ELS.SPD,DSD_PAG@DF_PAG,/FRA......?dimensionAtObservation=AllDimensions"
+ },
+ "taux_remplacement_brut": {
+  "femmes": {
+   "0.5": 56.6,
+   "1": 56.6,
+   "2": 47.4
+  },
+  "hommes": {
+   "0.5": 56.6,
+   "1": 56.6,
+   "2": 47.4
+  }
+ },
+ "taux_remplacement_net": {
+  "femmes": {
+   "0.5": 66.1,
+   "1": 70.0,
+   "2": 58.9
+  },
+  "hommes": {
+   "0.5": 66.1,
+   "1": 70.0,
+   "2": 58.9
+  }
+ }
+}

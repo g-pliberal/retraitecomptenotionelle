@@ -75,9 +75,12 @@ class DonneesMacro:
 
     @cached_property
     def projection(self) -> dict:
+        """Le scénario retenu : une variante du COR, ou l'un des jeux de
+        référence d'une autre institution, qui se nomment de même."""
         hypotheses = self._hypotheses
         nom = self.scenario_projection or hypotheses.get("scenario_par_defaut")
-        scenarios = hypotheses.get("scenarios", {})
+        scenarios = {**(hypotheses.get("jeux_de_reference") or {}),
+                     **hypotheses.get("scenarios", {})}
         if nom not in scenarios:
             raise KeyError(
                 f"scénario de projection inconnu : {nom!r}. Disponibles : "

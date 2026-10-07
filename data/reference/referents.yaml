@@ -691,6 +691,9 @@ referents:
           Un taux de remplacement net au départ, par génération,
           demande les prélèvements de l'année du départ. Pour une
           pension servie aujourd'hui, les taux de 2026 suffisent.
+          Le rendement interne net de l'étape 9 les attend aussi :
+          il prélève toute la retraite aux taux de 2026
+          (`cycle_de_vie.taux_de_prelevement`).
         etat: a_reprendre
         chantier: "138.9"
     bilan: >-
@@ -2309,7 +2312,13 @@ referents:
           n'en a aucun (« rendement interne », cherché en vain dans `src/`).
         preuve: >-
           `src/CotisationsTRI.h`, au commit `4c1d34b`
-        etat: a_reprendre
+        verification: >-
+          Repris le 7 octobre 2026 (action 138, étape 9) :
+          `cycle_de_vie.py` calcule le rendement interne des six
+          systèmes, réel et relatif au salaire moyen ; sous ses
+          conventions, le COR en retrouve le cas type n° 2 à 0,3
+          point près (tests/test_cycle_de_vie_references.py).
+        etat: repris
         chantier: "138.9"
       - quoi: >-
           Il porte le minimum contributif de chaque année depuis
@@ -3217,6 +3226,32 @@ referents:
           `R/fonctionsAgregation.R:124-143`,
           `inst/templates/rapport_casTypesCOR.Rmd:28-35` et
           `inst/scripts/casTypesCOR.R:56, 84, 430-433`, au commit `0963b57`
+        verification: >-
+          Repris le 7 octobre 2026 (action 138, étape 9) : les taux
+          de récupération, d'annuité et de remplacement sur le cycle
+          de vie, la durée de retraite rapportée à la carrière et le
+          rendement interne (`cycle_de_vie.py`), sous ses conventions
+          — un âge de décès par génération — ou sous la survie de
+          génération du dépôt. Sa durée relative se retrouve
+          exactement sur ses cas types du COR ; son taux d'annuité, à
+          l'allure près ; son taux de cotisation, aux conventions près
+          (taux moyens de l'Arrco, contributions d'équilibre). Ce
+          qu'il calcule à plusieurs âges et en net est au point
+          suivant.
+        etat: repris
+        chantier: "138.9"
+      - quoi: >-
+          Il calcule ces indicateurs à chaque âge de départ, de l'âge
+          d'ouverture à l'annulation de la décote, sous quatre
+          productivités, avec la pension nette rapportée à l'ASPA et
+          le remplacement net en euros courants, constants et en
+          salaire moyen. Le dépôt ne les calcule, depuis l'étape 9,
+          qu'à l'âge où chaque cas type part, bruts ou nets des seuls
+          prélèvements de 2026.
+        preuve: >-
+          `inst/scripts/casTypesCOR.R:56, 84, 430-433` et
+          `inst/templates/rapport_casTypesCOR.Rmd:28-35`, au commit
+          `0963b57`
         etat: a_reprendre
         chantier: "138.9"
       - quoi: >-
@@ -4241,7 +4276,17 @@ referents:
         preuve: >-
           rapport annuel du COR de juin 2026, figure 3.7 (p. 142) ;
           figures 3.3 et 3.6, « Source : Drees, modèle Trajectoire »
-        etat: a_reprendre
+        verification: >-
+          Repris le 7 octobre 2026 (action 138, étape 9) : les figures
+          3.6, 3.7 et 3.A en témoin (tests/temoins/cor_cycle_de_vie.json).
+          Sous ses conventions — les deux sexes réunis, le décès à 60 ans
+          plus l'espérance de vie à 60 ans, la pension nette —, le dépôt
+          retrouve le rendement du cas type n° 2 des générations 1955 à
+          1970 à 0,3 point près, et l'écart du cadre au non-cadre de la
+          génération 2000 à 0,2 point ; l'espérance de vie à 60 ans des
+          générations 1960 à 2000, à 0,07 an près. L'affirmation du site
+          reste `hors_modele` tant qu'aucune page n'affiche le calcul.
+        etat: repris
         chantier: "138.9"
       - quoi: >-
           Il projette l'ASPA du FSV, 0,15 % du PIB en 2023 et 0,11 %
@@ -4428,7 +4473,7 @@ referents:
       effets macroéconomiques, les réserves. Elle localiserait l'écart
       de 2070 (18,24 % contre 15,3 %), et son enquête Emploi donne la
       part des reportés en emploi que le dépôt fixe à un.
-    manifeste: [cor_comptes_systeme_retraite]
+    manifeste: [cor_comptes_systeme_retraite, cor_cycle_de_vie]
     lu_le: 2026-10-04
     lu_dans:
       - https://www.cor-retraites.fr/sites/default/files/2026-07/RA_2026_def.pdf
@@ -4686,8 +4731,11 @@ referents:
           Source : Cnav - Modèle PRISME 2022 »)
         verification: >-
           Méthode ; c'est l'un des indicateurs du COR, et l'action
-          143 en a besoin.
-        etat: a_reprendre
+          143 en a besoin. Repris le 7 octobre 2026 (action 138, étape
+          9) pour les cas types : la durée de retraite et sa part dans
+          la vie, génération par génération (`cycle_de_vie.py`) ; la
+          moyenne d'une population attend l'étape 14.
+        etat: repris
         chantier: "138.9"
       - quoi: >-
           Il fait partir chacun par 48 équations logistiques au pas
@@ -6578,7 +6626,9 @@ referents:
           Méthode : c'est l'indicateur de durée de retraite du COR.
           Le point rejoint celui de trajectoire au 138.9. Ses
           espérances de vie datent de 2019 : il faudrait prendre les
-          tables du dépôt.
+          tables du dépôt. La part de la vie en retraite est reprise
+          le 7 octobre 2026 (action 138, étape 9), sur ces tables ;
+          reste l'âge qui la tient constante.
         etat: a_reprendre
         chantier: "138.9"
     bilan: >-
@@ -8098,8 +8148,12 @@ referents:
           Méthode : c'est l'indicateur de cycle de vie que l'étape
           138.9 prévoit (le taux de remplacement sur le cycle de vie
           de trajectoire), ici par niveau de revenu et par sexe. Il
-          servirait aussi l'action 143.
-        etat: a_reprendre
+          servirait aussi l'action 143. Repris le 7 octobre 2026
+          (action 138, étape 9) : le taux d'annuité et le taux de
+          remplacement sur le cycle de vie, par cas type, donc par
+          niveau de revenu et par sexe ; la ventilation d'une
+          génération par décile attend la population de l'étape 14.
+        etat: repris
         chantier: "138.9"
       - quoi: >-
           Il se valide sur les pensions observées : la distribution
@@ -9180,8 +9234,13 @@ referents:
         preuve: « Calculus for PROST 15 », § 5.5, éq. 161, p. 104
         verification: >-
           Méthode : ce sont les indicateurs standards de cycle de
-          vie, chiffrables sur les cas types du dépôt.
-        etat: a_reprendre
+          vie, chiffrables sur les cas types du dépôt. Repris le 7
+          octobre 2026 (action 138, étape 9) : le rendement interne
+          réel, la valeur actuelle nette et le taux de remplacement au
+          décès des six systèmes (`cycle_de_vie.py`) ; le taux initial
+          sur le salaire moyen se lit de la pension de départ et du
+          salaire moyen de l'année.
+        etat: repris
         chantier: "138.9"
     bilan: >-
       Il fait mieux sur la transition : diviseur de la génération de
@@ -9222,7 +9281,15 @@ referents:
           1,5 % sur une mortalité de cohorte ; le dépôt n'en a pas (absent,
           cherché en vain).
         preuve: Pensions at a Glance 2025, p. 160-161
-        etat: a_reprendre
+        verification: >-
+          Repris le 7 octobre 2026 (action 138, étape 9) :
+          `cycle_de_vie.py` le calcule sous ses conventions, sur la
+          survie de génération du dépôt. Sous ses hypothèses (jeu
+          `ocde_2025`), la valeur d'un euro de rente est la sienne à 2 %
+          près pour un homme ; pour une femme, 3 à 8 % sous la sienne,
+          la mortalité de l'ONU la faisant vivre plus longtemps que
+          celle de l'INSEE (tests/test_cycle_de_vie_references.py).
+        etat: repris
         chantier: "138.9"
       - quoi: >-
           Il publie, pour la France et une carrière de 22 à 65 ans, des taux
@@ -9232,7 +9299,15 @@ referents:
           ni jeu macroéconomique « OCDE » (prix +2 %, salaires réels +1,25 %)
           ni témoin qui s'y confronte.
         preuve: Pensions at a Glance 2025, tableaux 4.1, 4.4, 4.6 et 5.4
-        etat: a_reprendre
+        verification: >-
+          Repris le 7 octobre 2026 (action 138, étape 9) : le jeu
+          `ocde_2025` (`macro/hypotheses_projection.yaml`) et le témoin
+          tests/temoins/ocde_pensions.json, lu par l'API SDMX. Le taux
+          brut se retrouve à 5,5 points près : le régime général du
+          dépôt sert 42,7 % au salaire moyen, et l'écart est celui de
+          l'Agirc-Arrco, dont l'OCDE projette un quart de plus que la
+          convention du COR que le dépôt suit.
+        etat: repris
         chantier: "138.9"
       - quoi: >-
           Son taux de remplacement net compte l'impôt et les
@@ -9265,14 +9340,20 @@ referents:
         verification: >-
           Âges cohérents avec L. 161-17-2 et L. 161-17-3 dans leur
           rédaction issue de la LFSS pour 2026
-          (JORFARTI000053227007).
-        etat: a_reprendre
+          (JORFARTI000053227007). Repris le 7 octobre 2026 (action
+          138, étape 9) : la durée de retraite des cas types, et les
+          65 ans d'une carrière entrée à 22 ans en 2024, que le pilote
+          du dépôt retrouve (tests/test_cycle_de_vie_references.py) ;
+          l'âge effectif de sortie et les années qui le suivent sont
+          des mesures de population, avec l'étape 14.
+        etat: repris
         chantier: "138.9"
     bilan: >-
       Il fait mieux sur les indicateurs : patrimoine retraite, taux nets
       après impôt, durées de retraite, tous publiés pour la France et
       lisibles par l'API SDMX. Sur la France, il est à jour : la LFSS
       pour 2026 ne touche pas ses carrières types.
+    manifeste: [ocde_pensions_at_a_glance]
     lu_le: 2026-10-04
     lu_dans:
       - https://doi.org/10.1787/e40274c1-en

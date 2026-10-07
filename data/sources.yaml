@@ -585,6 +585,31 @@ institutions:
           génération 1952 année après année à un quart de point ; le cadre à
           0,16 point en 2025 et 0,35 en 2026, écart déclaré dans `limites.md`.
 
+      - id: cor_cycle_de_vie
+        titre: >-
+          Durée de retraite et espérance de vie à 60 ans par génération,
+          rendement interne net du cas type n° 2 de 1940 à 2000 et de la
+          génération 2000 par profil (rapport annuel de juin 2026, figures
+          3.6, 3.7 et 3.A)
+        url: https://www.cor-retraites.fr/sites/default/files/2026-06/Donn%C3%A9es_RA2026_P3_2.xlsx
+        acces: fichier
+        statut_integration: controle
+        cible: tests/temoins/cor_cycle_de_vie.json
+        recuperation: scripts/fetch/cor_cycle_de_vie.py
+        millesime: juin 2026
+        note: >-
+          Le même classeur que `cor_pouvoir_achat_retraite`. Les conventions
+          sont celles du rapport (p. 138-141) et de son annexe méthodologique
+          en ligne (Annexe_méthodo_en_ligne_2026.pdf, § 2.3 : le décès à 60 ans
+          plus l'espérance de vie à 60 ans de la génération, les cotisations
+          seules, les droits propres hors droits familiaux), et du document
+          n° 6 de la séance du 21 avril 2022 (le rendement interne des cas
+          types du privé). Il n'alimente aucune valeur :
+          `tests/test_cycle_de_vie_references.py` s'y confronte (action 138,
+          étape 9). L'espérance de vie à 60 ans des générations 1960 à 2000
+          y est celle des tables du dépôt à 0,07 an près ; celle de la
+          génération 1941 la dépasse de 0,6 an.
+
       - id: cor_projection_emploi
         titre: >-
           Rapport annuel du COR de juin 2026 — données de la partie 1 :
@@ -3828,6 +3853,27 @@ institutions:
           France, par sexe, 1960-2024, valeurs transmises par l'INSEE.
           Retenue plutôt qu'Eurostat parce qu'elle remonte vingt-six ans plus
           haut ; les deux sources coïncident sur leur période commune.
+      - id: ocde_pensions_at_a_glance
+        titre: >-
+          Pensions at a Glance 2025 — taux de remplacement bruts et nets,
+          patrimoine retraite et âges de départ de la France (DSD_PAG@DF_PAG)
+        url: https://sdmx.oecd.org/public/rest/data/OECD.ELS.SPD,DSD_PAG@DF_PAG,/FRA......?dimensionAtObservation=AllDimensions
+        acces: api
+        statut_integration: controle
+        cible: tests/temoins/ocde_pensions.json
+        recuperation: scripts/fetch/ocde_pensions.py
+        millesime: 2025
+        note: >-
+          Le salarié qui entre à 22 ans en 2024, à 0,5, 1 et 2 fois le salaire
+          moyen (44 968 € en 2024), et part à 65 ans : taux de remplacement
+          brut de 56,6, 56,6 et 47,4 %, patrimoine retraite brut de 11,5
+          années de salaire pour un homme et de 13,1 pour une femme au
+          salaire moyen. Hypothèses : prix +2 %, salaires réels +1,25 %,
+          actualisation à 1,5 % réel, mortalité de cohorte de l'ONU — le jeu
+          `ocde_2025` de `macro/hypotheses_projection.yaml`. Il n'alimente
+          aucune valeur : `tests/test_cycle_de_vie_references.py` s'y
+          confronte (action 138, étape 9). Le site de l'OCDE refuse les
+          robots ; son API, non.
 
   openfisca:
     nom: OpenFisca-France (modèle socio-fiscal de l'administration française)

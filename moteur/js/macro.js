@@ -39,7 +39,10 @@ export class DonneesMacro {
 
     const hypotheses = paquet.hypotheses;
     const nom = scenarioProjection || hypotheses.scenario_par_defaut;
-    const scenarios = hypotheses.scenarios || {};
+    // Une variante du COR, ou l'un des jeux de référence d'une autre
+    // institution, qui se nomment de même. Voir le Python.
+    const scenarios = { ...(hypotheses.jeux_de_reference || {}),
+                        ...(hypotheses.scenarios || {}) };
     if (!(nom in scenarios)) {
       throw new Error(
         `scénario de projection inconnu : ${nom}. Disponibles : `

@@ -84,6 +84,9 @@ CONTROLES = {
     # (ses exemples officiels restent rapides, plus bas), à Destinie 2 et à
     # TRAJECTOiRE, exécutés à part, dont les sorties sont figées.
     "test_oracle.py", "test_destinie.py", "test_trajectoire.py",
+    # Les indicateurs de cycle de vie, confrontés au COR, à TRAJECTOiRE et à
+    # l'OCDE, sous leurs conventions.
+    "test_cycle_de_vie_references.py",
     # Les données : leur socle, leur certification, les lecteurs des
     # documents qui les apportent.
     "test_donnees.py", "test_verification.py", "test_bonifications_jaune.py",

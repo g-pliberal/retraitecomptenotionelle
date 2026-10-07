@@ -115,6 +115,32 @@ scenarios:
     masse_salariale_nominale: 0.0275   # à emploi constant, composé ensuite
     pib_nominal: 0.0275               # partage de la valeur ajoutée stable
 
+# LES HYPOTHÈSES D'UNE AUTRE INSTITUTION, POUR SE CONFRONTER À SES RÉSULTATS
+# --------------------------------------------------------------------------
+# Ce ne sont pas des variantes du COR : aucun compte publié ne leur correspond
+# (`comptes_retraite_variantes.csv`), le site ne les propose pas, et la page
+# Coût ne s'y calcule pas. Elles servent à refaire, sous les conventions d'un
+# autre, un résultat qu'il publie : `Parametres(scenario_projection=...)` les
+# nomme comme un scénario.
+#
+# L'OCDE projette ses carrières types de *Pensions at a Glance* sous des
+# prix à +2 % l'an et des salaires réels à +1,25 %, « ce qui implique une
+# croissance nominale des salaires de 3,275 % » — le produit, et non la somme
+# que les scénarios du COR ci-dessus retiennent (Pensions at a Glance 2025,
+# p. 160-161, et Pensions at a Glance Asia/Pacific 2024, « Methodology and
+# assumptions » ; registre des modèles, `modeles_ocde`). L'emploi n'y entre
+# pas : la masse salariale et le PIB suivent le salaire moyen, et la
+# trajectoire d'emploi retenue les compose comme ailleurs.
+jeux_de_reference:
+
+  ocde_2025:
+    libelle: OCDE, Pensions at a Glance 2025 — prix +2 %, salaires réels +1,25 %
+    inflation: 0.02
+    productivite_reelle: 0.0125
+    salaire_moyen_nominal: 0.03275
+    masse_salariale_nominale: 0.03275
+    pib_nominal: 0.03275
+
 # L'emploi au-delà de la dernière observation. La trajectoire par défaut est
 # celle du scénario de référence du COR de juin 2026 ; `constant` est la
 # convention d'avant, gardée pour mesurer ce que la trajectoire déplace.

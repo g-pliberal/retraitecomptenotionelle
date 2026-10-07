@@ -1550,6 +1550,9 @@ def _hypotheses() -> dict:
         "scenario_par_defaut": contenu.get("scenario_par_defaut"),
         "plafond_suit_salaire_moyen": bool(contenu.get("plafond_suit_salaire_moyen", True)),
         "scenarios": contenu.get("scenarios", {}),
+        # Les hypothèses d'autres institutions, que le site ne propose pas,
+        # mais que le portage nomme comme le Python (``DonneesMacro``).
+        "jeux_de_reference": contenu.get("jeux_de_reference") or {},
         "trajectoire_emploi_par_defaut": contenu.get(
             "trajectoire_emploi_par_defaut", "constant"),
         "trajectoires_emploi": contenu.get("trajectoires_emploi", {}),

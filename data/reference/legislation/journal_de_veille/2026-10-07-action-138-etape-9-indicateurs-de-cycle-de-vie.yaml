@@ -1,0 +1,22 @@
+date: "2026-10-07"
+session: "action 138, étape 9, première partie : les indicateurs de cycle de vie"
+consulte: >-
+  Aucune source de droit : la session ne touche ni au scénario 1 ni à une règle.
+  Le rapport annuel du COR de juin 2026 (p. 138-141), son annexe méthodologique en
+  ligne (§ 2.3) et son classeur de la partie 3 (figures 3.6, 3.7 et 3.A) ; les
+  documents n° 6 du 21 avril 2022 et n° 9 du 17 novembre 2022 du COR sur le
+  rendement interne des cas types ; le code de TRAJECTOiRE au commit 0963b57,
+  lu sans être copié ; l'API SDMX de l'OCDE, Pensions at a Glance 2025.
+trouve: >-
+  Aucun texte de droit. Les définitions des quatre indicateurs, et leurs
+  conventions : le décès à 60 ans plus l'espérance de vie à 60 ans de la
+  génération (COR), à round(60 + e60) plus six mois (TRAJECTOiRE), la mortalité
+  de cohorte de l'ONU (OCDE) ; pour l'État, la seule retenue de l'agent (COR,
+  TRAJECTOiRE). Les tables du dépôt redonnent l'espérance de vie à 60 ans de
+  l'INSEE à 0,07 an près pour les générations 1960 à 2000 ; la génération 1941
+  s'en écarte de 0,6 an, par ses quotients observés.
+reste: >-
+  L'histoire des contributions d'équilibre de l'Agirc-Arrco (ASF, AGFF, CEG,
+  CET), à lire aux accords de 1983, 2001 et 2017 ; celle des prélèvements sur
+  les pensions depuis 1980 ; la décision du conseil d'administration de
+  l'Agirc-Arrco du 14 octobre 2026.
