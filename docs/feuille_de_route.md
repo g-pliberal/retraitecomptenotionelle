@@ -4960,15 +4960,15 @@ de statuts et les `manque` de la page Méthode.
 ### 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats — `en cours`
 
 **Reprise, au 7 octobre 2026.** Fait : le levier 1 (scripts) ; le 3 pour
-l'essentiel — sous Windows, la suite complète passe de 56 à moins de 15 min
-à froid, et de 10 à 7 min à chaud, et sans plus aucun échec : hors de Linux,
-le paquet, les témoins et le bit près du portage se comparent à la dernière
-décimale près, la CI restant au bit près — ; le hook de démarrage ;
-« Économiser le contexte », et l'arbre du dépôt (`scripts/arbre.py`). Reste :
-le levier 2, des tests sans présomptions ; les tests du portage que node
-rejoue ; l'indexation de la mémoire sur le seul code du modèle et
-`actions/cache` sur GitHub ; le 4 et le 5. Commencer par les tests du portage
-que node rejoue. Détail : les notes du 4, du 5 et du 7 octobre.
+l'essentiel (la suite complète sous Windows, de 56 à moins de 15 min à
+froid) ; le hook de démarrage ; « Économiser le contexte » ; l'arbre du dépôt
+(`scripts/arbre.py`). Reste : le levier 2, des tests sans présomptions ; les
+tests du portage que node rejoue, par quoi commencer ; l'indexation de la
+mémoire sur le seul code du modèle et `actions/cache` sur GitHub ; le 4 et
+le 5. En parallèle de ce reste, le contexte en cinq étapes, chacune avec son
+bloc en tête de sa note (`2026-10-07-contexte-*`), la 1 et la 2 d'abord ; ce
+bloc-ci ne se récrit que pour le reste. Détail : les notes du 4, du 5 et du
+7 octobre.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus
