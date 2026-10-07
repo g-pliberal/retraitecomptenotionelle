@@ -251,6 +251,43 @@ def test_avant_decembre_1982_le_minimum_est_servi_entier(simulateur):
     assert round(ligne.montant, 2) == round(10_900 / 6.55957, 2)
 
 
+@pytest.mark.parametrize("base, contributif, montant, motif", [
+    (10000.0, 3000.0, 0.54 * 7000.0, "servie"),
+    (8000.0, 2000.0, 3701.38, "minimum"),
+])
+def test_la_reversion_se_calcule_sans_le_minimum_contributif(
+        simulateur, base, contributif, montant, motif):
+    """La réversion est un pourcentage de la « pension principale » (L. 353-1),
+    et le minimum contributif une « majoration » de la pension (L. 351-10) : la
+    caisse prend « le montant calculé de la retraite de l'assuré décédé, avant
+    comparaison au minimum et au maximum » (exposé de la Cnav, « Retraite de
+    l'assuré décédé »). Le minimum de la réversion se compare à ce qui reste."""
+    carriere = _carriere(simulateur, 1950, 62.0, "1960", "2023-05-10")
+    ligne, = reversion(simulateur.scenario_actuel, [("regime_general", base, HAUTE)],
+                       carriere, 2023, durees={"regime_general": 160},
+                       minima={"regime_general": contributif}).regimes
+    assert (round(ligne.montant, 2), ligne.motif, ligne.base, ligne.minimum_contributif) == (
+        round(montant, 2), motif, base, contributif)
+
+
+def test_l_echeancier_reverse_la_pension_sans_le_minimum_contributif(contexte):
+    """Un petit salaire parti au taux plein et porté au minimum contributif :
+    la part du minimum dans sa pension, menée au décès comme elle, n'entre pas
+    dans la base, et la ligne la dit. La survivante n'a pas l'âge du taux
+    plein : la majoration de 11,1 % attend, hors du montant."""
+    sortie = contexte.simuler(Saisie.depuis_requete({
+        "naissance": "1955", "liquidation": "67", "conjoint": "1962",
+        "deces": "2024-05", "unite_revenu": "moyen", "salaire": "0.3"})).dictionnaire()
+    actuel = sortie["scenarios"]["actuel"]
+    minimum, = (a["montant"] for a in actuel["avantages_appliques"]
+                if a["code"] == "minimum_contributif")
+    pension, = (p["montant"] for p in actuel["par_regime"] if p["regime"] == "regime_general")
+    ligne, = (l for l in sortie["reversion"]["regimes"] if l["regime"] == "regime_general")
+    assert ligne["minimum_contributif"] == pytest.approx(ligne["base"] * minimum / pension)
+    assert (ligne["motif"], ligne["montant"]) == (
+        "servie", pytest.approx(0.54 * (ligne["base"] - ligne["minimum_contributif"])))
+
+
 def test_trois_enfants_majorent_la_reversion_reduite_sans_descendre_sous_le_dixieme_du_minimum(
         simulateur):
     """La réversion, portée au minimum, est réduite du dépassement du plafond ;
@@ -744,6 +781,18 @@ def test_la_page_montre_la_reversion_du_conjoint_declare():
     assert "Si vous décédiez juste après votre départ, en octobre 2026" in page
     assert "aucune réversion" in page
     assert 'name="conjoint" value="1964"' in page
+    assert "que la réversion ne compte pas" not in page
     _, sans = rendre("/simuler", {"naissance": "1962-03-15", "liquidation": "2026-10"})
     assert 'id="resultats-reversion"' not in sans
     assert 'name="conjoint"' in sans
+
+
+def test_la_page_dit_le_minimum_contributif_que_la_reversion_ne_compte_pas():
+    """La pension du défunt portée au minimum contributif : la ligne du régime
+    général dit la part du minimum, que les 54 % ne multiplient pas."""
+    from retraite_notionnelle.web.site import rendre
+
+    _, page = rendre("/simuler", {"naissance": "1955", "liquidation": "67",
+                                  "conjoint": "1962", "deces": "2024-05",
+                                  "unite_revenu": "moyen", "salaire": "0.3"})
+    assert "de minimum contributif, que la réversion ne compte pas" in page

@@ -470,16 +470,6 @@ approximations:
     plafond de la sécurité sociale, comme de 2020 à 2022 ; la majoration forfaitaire,
     que pour le survivant qui élève encore ses enfants. Non mesuré
 - ecart: >-
-    la base de la réversion est la pension du défunt telle que le modèle la sert,
-    minimum contributif compris, quand la Cnav la calcule « sans être comparé[e] au
-    minimum et au maximum » (exposé « Retraite de l'assuré décédé »)
-  effet: >-
-    la réversion d'un défunt porté au minimum contributif est surestimée quand 54 % de
-    ce minimum dépasse le minimum de la réversion : jusqu'à 31 % en 2025 pour une
-    carrière complète au minimum majoré (54 % de 10 720,72 euros contre le minimum
-    de la réversion, 3 983,29 euros, quand la pension calculée en sert moins). Non
-    mesuré sur les témoins
-- ecart: >-
     le minimum de réversion ne s'applique pas, depuis le 1er juillet 2012, à la
     réversion d'une pension inférieure « au minimum prévu à l'article L. 351-9 »
     (L. 353-1) — le seuil du versement forfaitaire unique, 175 francs par an au 1er
@@ -684,6 +674,30 @@ sources:
       s'ajoutent à la réversion, sans être ramenés au maximum
     date: 2022-10-14
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2022_26_14102022.pdf
+  - type: legifrance
+    reference: >-
+      relus le 7 octobre 2026 dans l'index LEGI, pour la base de la réversion : L. 353-1,
+      ses cinq rédactions depuis 1985 (LEGIARTI000006742648 à 047453693) — la réversion
+      est « un pourcentage fixé par décret de la pension principale ou rente dont
+      bénéficiait ou eût bénéficié l'assuré » ; L. 351-10, ses six rédactions depuis
+      1985 (LEGIARTI000006742924 à 048697787) — la pension au taux plein « est
+      assortie, le cas échéant, d'une majoration permettant de porter cette prestation
+      à un montant minimum » : le minimum contributif est une majoration, hors de la
+      pension principale
+    date: 2026-10-07
+  - type: circulaire_cnav
+    reference: >-
+      exposés « Retraite de l'assuré décédé » et « Montant - retraite de réversion »,
+      relus le 7 octobre 2026 par l'API de la base de législation de la Cnav : « Le
+      montant de base est le montant calculé de la retraite de l'assuré décédé, avant
+      comparaison au minimum et au maximum et sans avantages complémentaires. Ce
+      montant est revalorisé par les coefficients intervenus entre la date de décès et
+      le point de départ de la retraite de réversion » ; « La majoration
+      exceptionnelle n'est pas prise en compte » (circulaire Cnav n° 2023-21,
+      § 5.1.3.1), ni la majoration de la retraite anticipée de l'assuré handicapé
+      (circulaire n° 2025-22, § 3.8)
+    date: 2026-10-07
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_reversion_montant_retraite_assure_decede_ex.aspx
 textes_a_rattacher:
 - {id: LEGIARTI000031688429, article: L. 353-5, en_vigueur: 2015-12-23, change: "la majoration forfaitaire pour enfant à charge du survivant sans retraite personnelle"}
 - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22, change: "le partage entre conjoints au prorata de la durée de chaque mariage"}
@@ -693,11 +707,13 @@ code:
   python: >-
     droit/reversion.py : reversion, _a_l_age, _mariage_dure, _part_du_minimum,
     _majorer_les_petites_retraites ; scenarios/actuel.py : Reversions ;
-    echeancier.py : Echeancier._reverser
+    echeancier.py : Echeancier._reverser, Echeancier._pensions_au_deces ;
+    droit/completer.py : completer, la part du minimum contributif de chaque pension
   javascript: >-
     moteur/js/droit/reversion.js : reversion, aLAge, mariageDure, partDuMinimum,
     majorerLesPetitesRetraites ; moteur/js/regimes.js : Reversions ;
-    moteur/js/echeancier.js : Echeancier._reverser
+    moteur/js/echeancier.js : Echeancier._reverser, Echeancier._pensionsAuDeces ;
+    moteur/js/droit/completer.js : completer
   parametres: >-
     contenu.parametres de chaque version : taux, age_minimum, mariage_minimum_annees,
     ressources, plafond_smic_heures, minimum_trimestres, minimum_proratise,
@@ -740,8 +756,14 @@ historique:
   minimum_sous_minimum_contributif, qui lisait le « minimum prévu à l'article
   L. 351-9 » comme le minimum contributif, et que le moteur ne lisait pas, est
   retiré : c'est le seuil du versement forfaitaire unique.
+- >-
+  2026-10-07 — action 138, étape 4 : la réversion se calcule sur la pension du défunt
+  sans le minimum contributif, que la Cnav laisse hors de la base « avant comparaison
+  au minimum » ; la part du minimum dans chaque pension, menée au décès comme elle,
+  est ôtée de la base, et l'approximation qui le déclarait est retirée.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un assuré du régime général ou d'un régime aligné
   qui décède : 4,41 millions de bénéficiaires d'un droit dérivé tous régimes fin 2024
   (DREES, EACR). Le modèle la calcule pour le conjoint que la saisie déclare, minimum et
-  majorations compris, sans le maximum ; sa dépense, publiée, est sur la page Coût.
+  majorations compris, sur la pension du défunt sans son minimum contributif, sans le
+  maximum ; sa dépense, publiée, est sur la page Coût.

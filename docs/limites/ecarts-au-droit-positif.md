@@ -19,9 +19,8 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   défunt (accord du 17 novembre 2017, articles 109 à 111). Le régime général
   sert depuis le 7 octobre 2026 son minimum (D. 353-1), la majoration du
   survivant de trois enfants (R. 353-2) et celle des petites retraites
-  (L. 353-6), mais calcule la
-  réversion sur la pension du défunt minimum contributif compris, quand la
-  caisse l'en retire. Restent dehors le maximum du régime général et sa
+  (L. 353-6), et calcule la réversion, comme la caisse, sur la pension du
+  défunt sans son minimum contributif. Restent dehors le maximum du régime général et sa
   majoration forfaitaire pour enfant à charge, le plafond du ménage, le
   complément de la fonction publique,
   le partage entre ex-conjoints et le remariage, les pensions d'orphelin — à

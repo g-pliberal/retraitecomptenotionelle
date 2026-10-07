@@ -2,13 +2,12 @@
 
 **Reprise, au 7 octobre 2026.** Fait : le minimum de D. 353-1, la majoration
 de 10 % du survivant de trois enfants et celle de 11,1 % (L. 353-6), dans les
-deux moteurs, sur deux séries de la Cnav ; Destinie 2 concorde au centime.
-Reste, dans cet ordre : la base de la réversion sans le minimum contributif
-(exposé « Retraite de l'assuré décédé »), qui demande la part du minimum par
-régime jusqu'à l'échéancier ; le maximum, surcote en sus ; le plafond du
-ménage ; la réversion d'un assuré mort avant son départ ; le partage entre
-ex-conjoints et le remariage ; L. 353-5 et D. 355-1. Commencer par la base.
-Détail : plus bas, « Ce qui reste ».
+deux moteurs, sur deux séries de la Cnav ; Destinie 2 concorde au centime ; la
+base de la réversion sans le minimum contributif. Reste, dans cet ordre : le
+maximum, surcote en sus ; le plafond du ménage ; la réversion d'un assuré mort
+avant son départ ; le partage entre ex-conjoints et le remariage ; L. 353-5 et
+D. 355-1. Commencer par le maximum, dont la Cnav publie le barème (« Montant
+maximum »). Détail : plus bas, « Ce qui reste » et « La base ».
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « Quels sont les écarts
 encore présents avec trajectoire et destinie 2 ? J'aimerais combler les manques
@@ -88,7 +87,8 @@ de trois enfants). C'est l'étape 4 de l'action ; elle commence par là.
 
 **Ce qui reste** de l'étape, dans l'ordre :
 
-1. *La base sans le minimum contributif.* La Cnav calcule la réversion sur la
+1. *La base sans le minimum contributif* — faite le jour même, plus bas. La
+   Cnav calcule la réversion sur la
    pension « avant comparaison au minimum et au maximum », surcote comprise ; le
    modèle y garde le minimum contributif, que `completer.py` ajoute à la ligne
    du régime. Il faut la part du minimum par régime (`par_regime` de
@@ -109,3 +109,25 @@ de trois enfants). C'est l'étape 4 de l'action ; elle commence par là.
 6. Les majorations forfaitaires des réversions d'avant 1995 (3,846 %) et
    d'avant décembre 1982 (4 %), que l'exposé de la Cnav décrit, à vérifier dans
    l'échéancier.
+
+**Le 7 octobre 2026, la base.** La réversion est « un pourcentage fixé par
+décret de la pension principale » (L. 353-1, ses cinq rédactions depuis 1985),
+et le minimum contributif une « majoration permettant de porter cette
+prestation à un montant minimum » (L. 351-10, ses six rédactions) : la Cnav
+prend « le montant calculé de la retraite de l'assuré décédé, avant
+comparaison au minimum et au maximum », revalorisé jusqu'au départ de la
+réversion (exposés relus le jour même par son API). L'avantage du minimum
+contributif porte désormais sa part dans chaque régime (`par_regime`, dans les
+deux moteurs) ; l'échéancier la mène au décès comme la pension qui la porte
+(`_pensions_au_deces`), et la réversion du régime général et des régimes
+alignés multiplie la pension sans elle. La ligne de réversion la dit
+(`minimum_contributif`), et la carte du site aussi, dans la cellule de la
+pension. Aucune pension des six scénarios ne bouge, ni aucune réversion des
+737 témoins : aucun de leurs défunts n'avait le minimum contributif. Un témoin
+neuf, `reversion_minimum_contributif` — le petit salaire parti au taux plein à
+soixante-sept ans en 2022, mort en 2024 —, reçoit 4 112,94 € par an au lieu
+de 5 856,46 € (−29,8 %), les deux moteurs au bit près ; Destinie ne bouge pas,
+ses deux défunts au minimum contributif laissant une réversion portée au
+minimum de D. 353-1. Sous des départs échelonnés, le montant de l'avantage suit
+désormais le coefficient de son régime, et non leur moyenne : aucun témoin ne
+le montre.

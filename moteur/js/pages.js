@@ -5130,9 +5130,14 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
     }
     return parts.length ? ` <span class="discret">(${parts.join(" ; ")})</span>` : "";
   };
+  // Le régime général reverse la pension sans le minimum contributif qui la
+  // relevait : la cellule dit cette part, que le taux ne multiplie pas.
   const lignes = reversion.regimes.map((ligne) => [
     echapper(nomRegime(ligne.regime)),
-    g.euros(mensuel(ligne.base, ligne.regime)),
+    g.euros(mensuel(ligne.base, ligne.regime)) + (ligne.minimum_contributif > 0
+      ? ` <span class="discret">(dont ${g.euros(mensuel(ligne.minimum_contributif,
+        ligne.regime))} de minimum contributif, que la réversion ne compte pas)</span>`
+      : ""),
     ligne.fiche === null ? "—" : g.pourcentage(ligne.taux, false, 0),
     ligne.motif === "servie" ? g.euros(mensuel(ligne.montant, ligne.regime)) + dont(ligne)
       : `${g.euros(mensuel(ligne.montant, ligne.regime))} <span class="discret">`

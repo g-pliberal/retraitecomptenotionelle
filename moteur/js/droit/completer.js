@@ -416,6 +416,10 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         montant: releveMinimum,
         detail: "porté au plancher, au prorata de la durée acquise"
           + (majore ? ", majoration des périodes cotisées comprise" : ""),
+        // La part de chaque pension : la réversion du régime général se
+        // calcule sans elle (`droit/reversion.js`).
+        par_regime: [...complements].filter(([, complement]) => complement > 0)
+          .map(([indice, complement]) => [pensions[indice].regime, complement]),
       });
     }
   }

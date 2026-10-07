@@ -13,7 +13,8 @@
  * (`reversion_agirc_arrco`), le RAFP (`reversion_rafp`),
  * l'Ircantec (`reversion_ircantec`), la complémentaire des indépendants
  * (`reversion_rci`). Les autres régimes n'ont pas encore de fiche : leur ligne
- * le dit, sans montant. Le régime général et les régimes alignés : le taux,
+ * le dit, sans montant. Le régime général et les régimes alignés : le taux de
+ * la pension sans le minimum contributif qui la relevait (L. 351-10),
  * porté au minimum de D. 353-1, réduit du dépassement du plafond, majoré de
  * 10 % pour trois enfants (R. 353-2), puis de 11,1 % sous le plafond de
  * L. 353-6. Ce qui n'est pas encore porté, et les montants — ceux de l'année
@@ -77,7 +78,7 @@ export class ReversionRegime {
   constructor({ regime, base, montant, motif, fiche = null, version = null, texte = null,
     taux = 0.0, date_effet = null, fiabilite = Fiabilite.ESTIMEE, majoration = 0.0,
     minimum = 0.0, majoration_trois_enfants = 0.0, majoration_petites_retraites = 0.0,
-    majoration_petites_retraites_effet = null }) {
+    majoration_petites_retraites_effet = null, minimum_contributif = 0.0 }) {
     this.regime = regime;
     this.base = base;
     this.montant = montant;
@@ -99,6 +100,9 @@ export class ReversionRegime {
     // comprise dans le montant quand elle commence à la date d'effet, à part sinon.
     this.majoration_petites_retraites = majoration_petites_retraites;
     this.majoration_petites_retraites_effet = majoration_petites_retraites_effet;
+    // La part de `base` que le minimum contributif y ajoute (L. 351-10) : la
+    // réversion du régime général et des régimes alignés se calcule sans elle.
+    this.minimum_contributif = minimum_contributif;
     Object.freeze(this);
   }
 
@@ -116,6 +120,7 @@ export class ReversionRegime {
       majoration_trois_enfants: this.majoration_trois_enfants,
       majoration_petites_retraites: this.majoration_petites_retraites,
       majoration_petites_retraites_effet: this.majoration_petites_retraites_effet,
+      minimum_contributif: this.minimum_contributif,
     };
   }
 }
@@ -392,10 +397,13 @@ function enfantsDeMoinsDe(carriere, deces, ans) {
  * `decesSuppose` date le décès que la présomption `deces_apres_le_depart`
  * suppose, quand la chronologie n'en dit pas. `durees` donne la durée
  * d'assurance du défunt dans chaque régime, que le minimum du régime général
- * proratise ; sans elle, il est servi entier. Voir `reversion` du Python.
+ * proratise ; sans elle, il est servi entier. `minima` donne, régime par
+ * régime, la part de la pension que le minimum contributif y ajoute : le
+ * régime général et les régimes alignés reversent la pension sans elle. Voir
+ * `reversion` du Python.
  */
 export function reversion(moteur, pensions, carriere, annee, decesSuppose = null,
-  enCapital = new Set(), majorations = null, durees = null) {
+  enCapital = new Set(), majorations = null, durees = null, minima = null) {
   const conjoint = carriere.conjoint;
   const deces = decesSuppose === null ? carriere.deces : decesSuppose;
   if (deces === null || conjoint === null) {
@@ -546,7 +554,12 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     }
     const parametres = version.parametres;
     const taux = Number(parametres.taux);
-    let montant = taux * base;
+    // La « pension principale » (L. 353-1), que la caisse prend « avant
+    // comparaison au minimum » : sans la majoration qui la portait au minimum
+    // contributif (L. 351-10 ; exposé de la Cnav, « Retraite de l'assuré
+    // décédé »).
+    const contributif = Math.min(base, (minima ?? {})[regime] ?? 0.0);
+    let montant = taux * (base - contributif);
     let motif = "servie";
     let fiabilite = fiabiliteDuRegime;
     // Le minimum de D. 353-1, avant les ressources : la caisse porte la
@@ -585,7 +598,9 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     }
     reduites.set(regime, [montant, parametres]);
     lignes.set(regime, ligne(regime, base, montant + troisEnfants, motif, fiche, version,
-      taux, dateEffet, fiabilite).avec({ minimum, majoration_trois_enfants: troisEnfants }));
+      taux, dateEffet, fiabilite).avec({
+      minimum, majoration_trois_enfants: troisEnfants, minimum_contributif: contributif,
+    }));
   }
 
   // La complémentaire des indépendants en dernier : ses ressources sont celles

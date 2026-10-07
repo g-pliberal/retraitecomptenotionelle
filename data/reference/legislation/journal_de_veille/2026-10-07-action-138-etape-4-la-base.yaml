@@ -1,0 +1,32 @@
+date: "2026-10-07"
+session: "action 138, étape 4 : la base de la réversion du régime général, sans le minimum contributif"
+consulte: >-
+  veille_droit.py (dernière veille consignée : 2026-10-07) ; l'index LEGI, récupéré puis
+  mis à jour des incréments du 6 octobre 2026 (2 incréments, 248 documents), puis
+  textes.py --inscrire (aucune rédaction nouvelle) ; dans l'index : L. 353-1, ses cinq
+  rédactions (LEGIARTI000006742648 à 047453693), L. 351-10, ses six rédactions
+  (LEGIARTI000006742924 à 048697787) ; l'API de la législation de la Cnav : exposés
+  « Montant - retraite de réversion », « Retraite de l'assuré décédé » et « Majoration
+  exceptionnelle » de la retraite personnelle ; le témoin de Destinie 2, pour ses
+  défunts au minimum contributif.
+trouve: >-
+  La réversion est « un pourcentage fixé par décret de la pension principale ou rente
+  dont bénéficiait ou eût bénéficié l'assuré » (L. 353-1), et le minimum contributif une
+  « majoration permettant de porter cette prestation à un montant minimum » (L. 351-10),
+  dans toutes leurs rédactions depuis 1985. La Cnav le lit ainsi : « Le montant de base
+  est le montant calculé de la retraite de l'assuré décédé, avant comparaison au minimum
+  et au maximum et sans avantages complémentaires », revalorisé par les coefficients
+  intervenus jusqu'au départ de la réversion ; la majoration exceptionnelle de 2023 et
+  celle de la retraite anticipée de l'assuré handicapé n'y entrent pas, que le modèle
+  ne sert pas. Le scénario 1 retire désormais de la base la part du minimum
+  contributif de chaque pension, menée au décès comme elle : −29,8 % pour le petit
+  salaire du témoin neuf, dont la réversion reste au-dessus du minimum de D. 353-1 ;
+  rien pour le défunt dont la réversion y est portée, comme les deux défunts au minimum
+  contributif de Destinie.
+reste: >-
+  Le reste de l'étape 4 : le maximum de la réversion (54 % du maximum des pensions,
+  surcote en sus), le plafond du ménage, la réversion d'un assuré mort avant son départ,
+  le partage entre ex-conjoints (L. 353-3), le remariage, la majoration forfaitaire pour
+  enfant à charge (L. 353-5), les limites de cumul d'avant 2004 (D. 355-1) ; les
+  montants du minimum d'avant 2004, à confronter aux décrets du Journal officiel que le
+  barème cite.

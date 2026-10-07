@@ -85,5 +85,6 @@ class AvantageApplique:
     montant: float
     detail: str = ""
     #: Part de chaque régime, dans l'ordre des pensions, quand l'avantage se
-    #: répartit entre eux — la majoration pour enfants, plafond compris.
+    #: répartit entre eux — la majoration pour enfants, plafond compris, et le
+    #: minimum contributif.
     par_regime: tuple[tuple[str, float], ...] = ()

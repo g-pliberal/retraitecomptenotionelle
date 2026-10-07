@@ -39,7 +39,10 @@ Les autres régimes n'ont pas encore de fiche : leur ligne le dit, sans montant.
 
 LE RÉGIME GÉNÉRAL ET LES RÉGIMES ALIGNÉS, dans l'ordre où la caisse calcule
 (exposés « Montant » et « Majoration » de la retraite de réversion ; circulaire
-Cnav n° 2022-26, § 3.6) : le taux de la version, porté au MINIMUM de D. 353-1
+Cnav n° 2022-26, § 3.6) : le taux de la version, appliqué à la pension du
+défunt « avant comparaison au minimum » — sans la majoration de L. 351-10 qui
+la portait au minimum contributif (exposé « Retraite de l'assuré décédé ») —,
+porté au MINIMUM de D. 353-1
 — entier à soixante trimestres du défunt dans le régime, en soixantièmes en
 deçà, et, depuis juillet 2004, au prorata de sa durée dans le régime quand
 plusieurs régimes alignés en comptent plus de soixante ; entier, sans
@@ -159,6 +162,10 @@ class ReversionRegime:
     #: commence au plus tard à la date d'effet de la ligne, à part sinon.
     majoration_petites_retraites: float = 0.0
     majoration_petites_retraites_effet: str | None = None
+    #: La part de ``base`` que le minimum contributif y ajoute (L. 351-10) :
+    #: la réversion du régime général et des régimes alignés se calcule sans
+    #: elle, sur ``base - minimum_contributif``.
+    minimum_contributif: float = 0.0
 
     def donnees(self) -> dict:
         return {"regime": self.regime, "base": self.base, "taux": self.taux,
@@ -170,7 +177,8 @@ class ReversionRegime:
                 "majoration_trois_enfants": self.majoration_trois_enfants,
                 "majoration_petites_retraites": self.majoration_petites_retraites,
                 "majoration_petites_retraites_effet":
-                    self.majoration_petites_retraites_effet}
+                    self.majoration_petites_retraites_effet,
+                "minimum_contributif": self.minimum_contributif}
 
 
 @dataclass(frozen=True)
@@ -408,7 +416,8 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
               deces_suppose: str | None = None,
               en_capital: frozenset[str] = frozenset(),
               majorations: dict[str, float] | None = None,
-              durees: dict[str, int] | None = None) -> Reversion | None:
+              durees: dict[str, int] | None = None,
+              minima: dict[str, float] | None = None) -> Reversion | None:
     """La réversion que le décès de la personne de ``carriere`` ouvre à son
     conjoint, régime par régime ; ``None`` sans décès ou sans conjoint.
 
@@ -423,7 +432,9 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
     qui la dit réversible (``majoration_reversible``) en ajoute cette part.
     ``durees`` donne la durée d'assurance du défunt dans chaque régime, enfants
     compris, que le minimum du régime général proratise ; sans elle, il est
-    servi entier.
+    servi entier. ``minima`` donne, régime par régime, la part de la pension
+    que le minimum contributif y ajoute, aux mêmes euros : le régime général
+    et les régimes alignés reversent la pension sans elle.
     """
     conjoint = carriere.conjoint
     deces = carriere.deces if deces_suppose is None else deces_suppose
@@ -552,7 +563,12 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             date_effet = reportee
         parametres = version["parametres"]
         taux = float(parametres["taux"])
-        montant = taux * base
+        # La « pension principale » (L. 353-1), que la caisse prend « avant
+        # comparaison au minimum » : sans la majoration qui la portait au
+        # minimum contributif (L. 351-10 ; exposé de la Cnav, « Retraite de
+        # l'assuré décédé »).
+        contributif = min(base, (minima or {}).get(regime, 0.0))
+        montant = taux * (base - contributif)
         motif = "servie"
         # Le minimum de D. 353-1, avant les ressources : la caisse porte la
         # réversion au minimum, puis la réduit du dépassement du plafond.
@@ -588,7 +604,8 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         lignes[regime] = replace(
             ligne(regime, base, montant + trois_enfants, motif, fiche, version, taux,
                   date_effet, fiabilite),
-            minimum=minimum, majoration_trois_enfants=trois_enfants)
+            minimum=minimum, majoration_trois_enfants=trois_enfants,
+            minimum_contributif=contributif)
 
     # La complémentaire des indépendants en dernier : ses ressources sont
     # celles de R. 353-1, que les réversions de tous les régimes de base

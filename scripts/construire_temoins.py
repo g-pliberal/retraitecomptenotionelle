@@ -1508,6 +1508,12 @@ def _cas() -> list[dict]:
         **reversion, "statut": "artisan", "ressources_conjoint": "86000"}))
     cas.append(("reversion_rafp_en_capital", {
         **reversion, "statut": "fonctionnaire_etat", "primes": "0.02"}))
+    # Le 7 octobre 2026 (action 138, étape 4), la base de la réversion du
+    # régime général : le petit salaire parti au taux plein, à soixante-sept
+    # ans, et porté au minimum contributif laisse 54 % de sa pension sans lui.
+    cas.append(("reversion_minimum_contributif", {
+        "naissance": "1955", "liquidation": "67", "conjoint": "1962",
+        "deces": "2024-05", "unite_revenu": "moyen", "salaire": "0.3"}))
 
     # Les carrières LUES sur un relevé, plutôt que reconstituées.
     cas.extend(_cas_releve())

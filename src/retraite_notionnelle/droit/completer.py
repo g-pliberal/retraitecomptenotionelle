@@ -513,6 +513,11 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                     + (", majoration des périodes cotisées comprise"
                        if majore else "")
                 ),
+                # La part de chaque pension : la réversion du régime général
+                # se calcule sans elle (:mod:`.reversion`).
+                par_regime=tuple((pensions[indice].regime, complement)
+                                 for indice, complement in complements.items()
+                                 if complement > 0),
             ))
 
     if avantages_non_contributifs and eligibles_garanti:
