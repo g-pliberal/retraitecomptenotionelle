@@ -1,0 +1,167 @@
+schema_version: 1
+id: versement_unique_ircantec
+intitule: >-
+  L'Ircantec ne sert pas d'allocation à qui a moins de 300 points — moins de 500 de 1971 à
+  1975, moins de 100 de 1976 à septembre 2008 — : l'intéressé reçoit à la liquidation un
+  versement unique égal à ses points multipliés par le salaire de référence de l'année
+  qui la précède (arrêté du 30 décembre 1970, article 25). Versé à l'agent, il supprime
+  tout droit du conjoint et des orphelins.
+domaine: points
+regimes:
+- ircantec
+etape: completer_tous_regimes
+face: droit
+etat: approchee
+lit:
+- les points de l'Ircantec (Droits.points_acquis) et sa pension à l'étape qui complète
+- le salaire de référence de l'année qui précède la liquidation (regimes/valeurs_point.csv)
+- la nature de la demande
+- liquidation.date_effet
+ecrit:
+- le versement unique qui remplace l'allocation (PensionRegime.capital), et la formule qui
+  le dit ; le montant annuel reste celui de l'allocation remplacée
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
+# moteur (droit/completer.py, `verser_en_capital`, et son jumeau) lit : `existe` ;
+# `regimes` ; `seuil_points`, sous lequel l'allocation n'est pas servie ;
+# `fiabilite`. Le versement vaut les points par le salaire de référence de l'année
+# qui précède la date d'effet.
+versions:
+- id: avant_l_arrete_de_1970
+  statut: supposee
+  hypothese: >-
+    l'Ircantec naît le 1er janvier 1971 de l'IGRANTE et de l'IPACTE, dont les règles des
+    petites allocations ne sont pas lues ; on ne leur prête aucun versement unique
+  fiabilite: faible
+  bornes:
+    liquidation.date_effet: [null, 1971-02-09]
+  contenu:
+    droit: aucun versement unique lu
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: arrete_du_30_decembre_1970
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006381638, article: 25, en_vigueur: 1971-02-09}
+  nee_de: LEGIARTI000006381638
+  bornes:
+    liquidation.date_effet: [1971-02-09, 1976-01-03]
+  contenu:
+    droit: >-
+      « Dans le cas où le nombre total des points de retraite attribués à un participant,
+      à sa veuve ou à un orphelin est inférieur à 500, il n'est pas versé d'allocation.
+      L'intéressé reçoit, lors de la liquidation, un versement unique égal au produit des
+      points de retraite par le salaire de référence de l'année précédant la date de
+      liquidation. […] Le versement prévu ci-dessus, effectué au profit de l'agent,
+      supprime tout droit pour le conjoint ou les orphelins. »
+    beneficiaire: le participant qui a moins de 500 points
+    parametres:
+      existe: true
+      regimes: [ircantec]
+      seuil_points: 500
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: arrete_de_1976
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006381639, article: 25, en_vigueur: 1976-01-03}
+  - {id: LEGIARTI000006381640, article: 25, en_vigueur: 1987-01-01}
+  - {id: LEGIARTI000006381641, article: 25, en_vigueur: 1999-10-26}
+  nee_de: LEGIARTI000006381639
+  bornes:
+    liquidation.date_effet: [1976-01-03, 2008-09-25]
+  contenu:
+    droit: >-
+      « Lorsque le nombre de points est inférieur à 100, il n'est pas versé d'allocation ;
+      l'intéressé reçoit lors de la liquidation un versement unique égal au produit du
+      total des points de retraite par le salaire de référence de l'année précédant la
+      date de la liquidation » ; de 100 à 500 points, l'allocation se paie une fois l'an.
+      Les rédactions de 1987 et de 1999 ne changent que la périodicité au-dessus de 500
+      points et la répétition de l'indu.
+    beneficiaire: le participant qui a moins de 100 points
+    parametres:
+      existe: true
+      regimes: [ircantec]
+      seuil_points: 100
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: arrete_de_2008
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019511940, article: 25, en_vigueur: 2008-09-25}
+  nee_de: LEGIARTI000019511940
+  bornes:
+    liquidation.date_effet: [2008-09-25, null]
+  contenu:
+    droit: >-
+      « Lorsque le nombre de points est inférieur à 300, il n'est pas versé d'allocation ;
+      l'intéressé reçoit lors de la liquidation un versement unique égal au produit du
+      total des points de retraite par le salaire de référence de l'année précédant la
+      date de la liquidation » ; de 300 à 1 000 points, une fois l'an. « Les seuils de
+      points mentionnés à cet article peuvent être modifiés par décision du conseil
+      d'administration » : aucune décision n'est lue.
+    beneficiaire: le participant qui a moins de 300 points
+    parametres:
+      existe: true
+      regimes: [ircantec]
+      seuil_points: 300
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations:
+- version: [arrete_du_30_decembre_1970, arrete_de_1976, arrete_de_2008]
+  ecart: >-
+    Le montant annuel de la pension reste celui de l'allocation que le versement remplace,
+    comme pour le capital du RAFP : les comparaisons annuelles le lisent, et « faire vivre
+    » le mène encore ; le versement est dit dans la formule et dans le champ capital. Les
+    élus locaux, que le modèle liquide à part (elus_locaux_ircantec), et le versement des
+    réversions, plafonné pour un orphelin, ne sont pas portés.
+  effet: >-
+    non mesuré ; les seuls contractuels de moins de 300 points, deux ou trois ans de
+    services
+- version: [arrete_de_2008]
+  ecart: >-
+    Au-delà du dernier barème publié, le salaire de référence suit la valeur de service du
+    point, au rapport de son dernier barème : il le garde depuis 2018, 10,32 € de salaire
+    par euro de valeur, hors l'année 2022.
+  effet: les liquidations projetées après 2027
+sources:
+  lu_le: 2026-10-08
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Lire la page de l'Ircantec sur le versement unique, et chercher une décision de son
+    conseil d'administration qui changerait le seuil de 300 points ; puis les règles de
+    l'IGRANTE et de l'IPACTE.
+  lectures:
+  - type: legifrance
+    reference: >-
+      arrêté du 30 décembre 1970 relatif aux modalités de fonctionnement du régime de
+      retraites complémentaire des assurances sociales institué par le décret n° 70-1277,
+      article 25, ses cinq rédactions (LEGIARTI000006381638 à LEGIARTI000006381641,
+      LEGIARTI000019511940), lues dans l'index LEGI le 8 octobre 2026
+    date: 2008-09-25
+code:
+  python: >-
+    droit/completer.py : verser_en_capital, salaire_de_reference_ircantec, completer ;
+    scenarios/actuel.py : FichesDatees
+  javascript: >-
+    moteur/js/droit/completer.js : verserEnCapital, salaireDeReferenceIrcantec, completer ;
+    moteur/js/regimes.js : FichesDatees
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_versements_uniques.py]
+referents:
+  trajectoire:
+    equivalent: >-
+      R/fonctionsCalculsPensions.R:3261-3350 (calculeVfu), vfuCoefIrcantec.csv, au commit
+      0963b57 : sous 300 points, les points par le salaire de référence
+    confrontation: aucune exécutée
+historique:
+- >-
+  2026-10-08 — écrite à l'étape 17 de l'action 138, sur le point de TRAJECTOiRE au
+  registre (chantier 138.17).
+effet: >-
+  Le contractuel de la fonction publique qui a moins de 300 points de l'Ircantec reçoit
+  ses points au salaire de référence de l'année précédente, 5,735 € en 2026 : dix fois
+  et un tiers l'allocation annuelle qu'il aurait eue, en une fois.

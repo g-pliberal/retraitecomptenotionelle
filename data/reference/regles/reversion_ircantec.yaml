@@ -63,6 +63,7 @@ versions:
       mariage_leve_par_enfant: false
       deux_enfants_sans_age: [F]
       deux_enfants_moins_de_ans: 21
+      rien_apres_un_capital: true
       perte_au_remariage: true
       fiabilite: haute
   exemples: aucun trouvé
@@ -94,6 +95,7 @@ versions:
       mariage_leve_par_enfant: false
       deux_enfants_sans_age: [F]
       deux_enfants_moins_de_ans: 21
+      rien_apres_un_capital: true
       perte_au_remariage: true
       fiabilite: haute
   exemples: aucun trouvé
@@ -127,6 +129,7 @@ versions:
       mariage_leve_par_enfant: false
       deux_enfants_sans_age: [F]
       deux_enfants_moins_de_ans: 21
+      rien_apres_un_capital: true
       perte_au_remariage: true
       fiabilite: haute
   exemples: aucun trouvé
@@ -158,6 +161,7 @@ versions:
       mariage_leve_par_enfant: true
       deux_enfants_sans_age: [F]
       deux_enfants_moins_de_ans: 21
+      rien_apres_un_capital: true
       perte_au_remariage: true
       fiabilite: haute
   exemples: aucun trouvé
@@ -235,9 +239,10 @@ approximations:
 - ecart: >-
     la condition d'antériorité tient le départ pour la cessation des fonctions, et tout
     enfant déclaré pour un enfant issu du mariage ; l'invalidité de l'agent, qui lève la
-    durée du mariage, n'est pas lue ; le versement unique sous 300 points, au survivant
-    ou à l'agent, n'est pas porté — l'allocation est servie comme une rente, et l'agent
-    payé en une fois laisse une réversion ; le partage entre conjoints, la suppression
+    durée du mariage, n'est pas lue ; le versement unique au survivant, sous le seuil de
+    l'article 25, n'est pas porté — sa réversion est servie comme une rente ; l'agent
+    payé en une fois (fiche versement_unique_ircantec) ne laisse pas de réversion,
+    l'article 25 le disant depuis 1971 ; le partage entre conjoints, la suppression
     au remariage et l'allocation d'orphelin ne sont pas portés ; les montants sont ceux
     de l'année du décès
   effet: non mesuré
@@ -308,6 +313,10 @@ historique:
   2026-10-04 — née et lue par le moteur à l'étape de l'action 142 qui sert la
   réversion du RAFP, de la RCI et de l'Ircantec : les simulateurs anonymes la
   servaient, le modèle disait « non portée ».
+- >-
+  2026-10-08 — action 138, étape 17 : l'agent payé en une fois sous le seuil de
+  l'article 25 ne laisse pas de réversion, à toute date depuis 1971, quand la fiche
+  versement_unique_ircantec verse le capital.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un agent contractuel de l'État, des collectivités ou
   des hôpitaux, ou d'un élu local, qui décède. Le modèle la calcule pour le conjoint

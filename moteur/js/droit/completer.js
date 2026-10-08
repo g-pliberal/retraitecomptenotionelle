@@ -8,8 +8,9 @@
  * publique, la surcote parentale, la majoration pour enfants, plafonnée en
  * euros à la complémentaire (`plafondMajoration`) et au traitement dans les
  * régimes du code des pensions (`majorationSousLeTraitement`), les deux minima des
- * exploitants agricoles enfin (`pensionMajoree`, `complementDifferentiel`).
- * L'ASPA n'en est pas :
+ * exploitants agricoles (`pensionMajoree`, `complementDifferentiel`), les
+ * versements uniques enfin, qui remplacent les petites pensions par un capital
+ * (`verserEnCapital`). L'ASPA n'en est pas :
  * c'est l'étape « foyer et net » (`foyer.js`). Ce que l'étape écrit,
  * `Complements`, suit son schéma, `data/reference/etapes/completer_tous_regimes.yaml`.
  */
@@ -64,6 +65,22 @@ export const PLAFONDS_DE_L18 = ["traitement"];
  * 29 décembre 2020, n° 428626).
  */
 export const SURCOTES_DE_L18 = ["dans_le_plafond", "hors_du_plafond"];
+
+/**
+ * Les fiches des versements uniques, que `FichesDatees` lit à la date d'effet
+ * (`verserEnCapital`) : le régime général, l'Agirc-Arrco et ses deux
+ * devancières, l'Ircantec.
+ */
+export const FICHE_DU_VERSEMENT_FORFAITAIRE = "versement_forfaitaire_unique";
+export const FICHE_DU_VERSEMENT_AGIRC_ARRCO = "versement_unique_agirc_arrco";
+export const FICHE_DU_VERSEMENT_IRCANTEC = "versement_unique_ircantec";
+
+/**
+ * Ce à quoi une version de l'Agirc-Arrco compare son seuil : le nombre de points
+ * de l'allocation (avant 2019), ou son montant, coefficients et majorations
+ * compris (accord du 17 novembre 2017, article 107).
+ */
+export const MESURES_DU_VERSEMENT = ["points", "montant"];
 
 /**
  * La version du plafond de L. 18 qui vaut à la date d'effet de la pension ;
@@ -431,7 +448,8 @@ export class Complements {
  * servie. Voir le Python.
  */
 export function completer(moteur, releve, ouverture, liquidees, contexte = null,
-  servies = 0.0, initiales = [], recalcul = true, nationales = null) {
+  servies = 0.0, initiales = [], recalcul = true, nationales = null,
+  nature = "definitive", premiereRetraite = null) {
   const carriere = releve.carriere;
   const { durees, droits } = releve;
   const anneeLiquidation = carriere.anneeLiquidation;
@@ -980,6 +998,14 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     }
   }
 
+  // LES VERSEMENTS UNIQUES, en dernier : ils lisent la pension complétée,
+  // minimum, majorations et compléments compris.
+  const fiabiliteVersee = verserEnCapital(moteur, carriere, pensions, avantages,
+    pointsAcquis, nature, premiereRetraite);
+  if (fiabiliteVersee !== null) {
+    fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteVersee);
+  }
+
   return new Complements({
     personne: carriere.personne,
     regimes: pensions,
@@ -992,6 +1018,207 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     petitesPensions,
     chef,
   });
+}
+
+/**
+ * Le seuil d'une date d'effet : le dernier du barème, `[[AAAA-MM-JJ, euros], ...]`,
+ * dont la date ne la passe pas ; null avant le premier.
+ */
+function seuilALaDate(seuils, dateEffet) {
+  let retenu = null;
+  for (const [debut, seuil] of seuils) {
+    if (String(debut) <= dateEffet) {
+      retenu = Number(seuil);
+    }
+  }
+  return retenu;
+}
+
+/**
+ * Le coefficient de la table d'une version, à l'âge révolu de `age`, et cet
+ * âge ; un âge hors de la table prend celui de son bout. Voir
+ * `coefficient_du_versement` du Python.
+ */
+export function coefficientDuVersement(regle, age) {
+  const revolu = Math.trunc(age + 1e-9);
+  const coefficients = regle.coefficients;
+  const rang = Math.min(Math.max(revolu - Math.trunc(regle.coefficients_depuis), 0),
+    coefficients.length - 1);
+  return [Number(coefficients[rang]), revolu];
+}
+
+/**
+ * Le salaire de référence, prix d'achat du point, de `regime` en `annee` :
+ * publié, ou, au-delà du dernier barème, le dernier publié mené comme la valeur
+ * de service du point. Voir `salaire_de_reference_points` du Python.
+ */
+export function salaireDeReferencePoints(moteur, regime, annee) {
+  const achat = moteur.valeursPoint.achat(regime, annee);
+  if (achat !== null) {
+    return [achat[0], achat[2]];
+  }
+  const derniere = moteur.valeursPoint.derniereAnneeAchetee(regime);
+  if (derniere === null || annee < derniere) {
+    return null;
+  }
+  const publie = moteur.valeursPoint.achat(regime, derniere);
+  const valeurAlors = liquider.valeurDuPoint(moteur, regime, derniere);
+  const valeur = liquider.valeurDuPoint(moteur, regime, annee);
+  if (publie === null || valeurAlors === null || valeur === null || valeurAlors[0] <= 0) {
+    return null;
+  }
+  return [publie[0] * valeur[0] / valeurAlors[0],
+    Math.min(publie[2], valeur[1], Fiabilite.MOYENNE)];
+}
+
+/**
+ * Les petites pensions que leur régime ne sert pas : un versement unique les
+ * remplace, que `pensions` porte désormais (`capital`), chacune avec la formule
+ * qui le dit ; son montant annuel reste celui de la pension remplacée. Rend la
+ * fiabilité des barèmes lus quand un versement remplace une pension, null
+ * sinon. Le versement forfaitaire unique du régime général, celui de
+ * l'Agirc-Arrco (ou de l'Arrco et de l'Agirc), celui de l'Ircantec ; jamais la
+ * retraite progressive. Voir `verser_en_capital` du Python.
+ */
+export function verserEnCapital(moteur, carriere, pensions, avantages, pointsAcquis,
+  nature = "definitive", premiereRetraite = null) {
+  const dateEffet = dateDEffet(carriere);
+  if (dateEffet === null || nature === "provisoire") {
+    return null;
+  }
+  const enfants = new Map();
+  for (const avantage of avantages) {
+    if (avantage.code === "majoration_enfants") {
+      for (const [code, part] of avantage.par_regime) {
+        enfants.set(code, (enfants.get(code) ?? 0.0) + part);
+      }
+    }
+  }
+  const fiabilites = [];
+  const sansCapital = (pension) => pension.capital === undefined || pension.capital === null;
+  const annuelle = (pension) => pension.montant + (enfants.get(pension.regime) ?? 0.0);
+  const remplacer = (indice, capital, formule) => {
+    pensions[indice] = { ...pensions[indice], capital,
+      detail: pensions[indice].detail + formule };
+  };
+
+  // LE RÉGIME GÉNÉRAL : quinze annuités, sous le seuil de la date d'effet.
+  let regle = moteur.fichesDatees.regle(FICHE_DU_VERSEMENT_FORFAITAIRE, dateEffet);
+  const avant = (regle === null || !regle.existe) ? null
+    : (regle.premiere_retraite_avant ?? null);
+  if (regle !== null && regle.existe
+      && (avant === null || (premiereRetraite !== null && premiereRetraite < String(avant)))) {
+    const seuil = seuilALaDate(regle.seuils, dateEffet);
+    const multiple = Math.trunc(regle.multiple);
+    pensions.forEach((pension, indice) => {
+      if (seuil === null || !regle.regimes.includes(pension.regime)
+          || pension.montant <= 0.0 || !sansCapital(pension)) {
+        return;
+      }
+      const montant = annuelle(pension);
+      if (montant >= seuil) {
+        return;
+      }
+      remplacer(indice, multiple * montant,
+        ` ; ${formatFixe(montant, 2, true)} € par an`
+        + (enfants.has(pension.regime) ? ", majoration pour enfants comprise" : "")
+        + `, sous le seuil de ${formatFixe(seuil, 2, true)} € : remplacée par un versement `
+        + `forfaitaire unique de ${formatFixe(multiple * montant, 2, true)} €, ${multiple} fois `
+        + "la pension annuelle");
+      fiabilites.push(fiabiliteDepuisTexte(regle.fiabilite));
+    });
+  }
+
+  // L'AGIRC-ARRCO, ou l'Arrco et l'Agirc : chaque allocation, un groupe de
+  // régimes, sa valeur viagère au coefficient de l'âge révolu.
+  regle = moteur.fichesDatees.regle(FICHE_DU_VERSEMENT_AGIRC_ARRCO, dateEffet);
+  if (regle !== null && regle.existe) {
+    if (!MESURES_DU_VERSEMENT.includes(regle.mesure)) {
+      throw new Error(`${FICHE_DU_VERSEMENT_AGIRC_ARRCO} : la mesure ${regle.mesure} n'est `
+        + `pas de celles que le moteur connaît, ${MESURES_DU_VERSEMENT}`);
+    }
+    const [coefficient, age] = coefficientDuVersement(regle, carriere.age_liquidation || 0.0);
+    for (const allocation of regle.allocations) {
+      const membres = [];
+      pensions.forEach((pension, indice) => {
+        if (allocation.regimes.includes(pension.regime) && pension.montant > 0.0
+            && sansCapital(pension)) {
+          membres.push(indice);
+        }
+      });
+      if (membres.length === 0) {
+        continue;
+      }
+      const seuilPoints = Number(allocation.seuil_points);
+      let mesure;
+      let seuil;
+      let unite;
+      let dit;
+      if (regle.mesure === "points") {
+        mesure = membres.reduce(
+          (somme, i) => somme + (pointsAcquis.get(pensions[i].regime) ?? 0.0), 0.0);
+        seuil = seuilPoints;
+        unite = "points";
+        dit = `${formatFixe(mesure, 2, true)} points`;
+      } else {
+        const valeur = liquider.valeurDuPoint(moteur, allocation.point,
+          carriere.dateLiquidation);
+        if (valeur === null) {
+          continue;
+        }
+        mesure = membres.reduce((somme, i) => somme + annuelle(pensions[i]), 0.0);
+        seuil = seuilPoints * valeur[0];
+        unite = "€";
+        dit = `${formatFixe(mesure, 2, true)} € par an`;
+        fiabilites.push(valeur[1]);
+      }
+      const sous = allocation.seuil_compris ? mesure <= seuil : mesure < seuil;
+      if (mesure <= 0.0 || !sous) {
+        continue;
+      }
+      let borne = allocation.seuil_compris
+        ? `au plus ${formatFixe(seuilPoints, 0, true)} points`
+        : `moins de ${formatFixe(seuilPoints, 0, true)} points`;
+      if (unite === "€") {
+        borne += `, ${formatFixe(seuil, 2, true)} €`;
+      }
+      for (const indice of membres) {
+        const montant = annuelle(pensions[indice]);
+        remplacer(indice, montant * coefficient,
+          ` ; allocation de ${dit}, ${borne} : versée en capital, `
+          + `${formatFixe(montant * coefficient, 2, true)} € (${formatFixe(montant, 2, true)} € `
+          + `× ${formatFixe(coefficient, 1)} à ${age} ans)`);
+      }
+      fiabilites.push(fiabiliteDepuisTexte(regle.fiabilite));
+    }
+  }
+
+  // L'IRCANTEC : les points, par le salaire de référence de l'année d'avant.
+  regle = moteur.fichesDatees.regle(FICHE_DU_VERSEMENT_IRCANTEC, dateEffet);
+  if (regle !== null && regle.existe) {
+    const annee = carriere.anneeLiquidation - 1;
+    pensions.forEach((pension, indice) => {
+      if (!regle.regimes.includes(pension.regime) || pension.montant <= 0.0
+          || !sansCapital(pension)) {
+        return;
+      }
+      const points = pointsAcquis.get(pension.regime) ?? 0.0;
+      if (!(points > 0.0 && points < Number(regle.seuil_points))) {
+        return;
+      }
+      const reference = salaireDeReferencePoints(moteur, pension.regime, annee);
+      if (reference === null) {
+        return;
+      }
+      remplacer(indice, points * reference[0],
+        ` ; ${formatFixe(points, 2, true)} points, moins de `
+        + `${formatFixe(Number(regle.seuil_points), 0, true)} : versée en capital, `
+        + `${formatFixe(points * reference[0], 2, true)} € (${formatFixe(points, 2, true)} points `
+        + `× salaire de référence de ${annee}, ${formatFixe(reference[0], 4)} €)`);
+      fiabilites.push(reference[1], fiabiliteDepuisTexte(regle.fiabilite));
+    });
+  }
+  return fiabilites.length > 0 ? Math.min(...fiabilites) : null;
 }
 
 /**

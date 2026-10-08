@@ -136,7 +136,7 @@ versions:
   - reference: >-
       accord national interprofessionnel du 17 novembre 2017, « applicable au 1er
       janvier 2019 », annexé à la circulaire Agirc-Arrco 2018-09-DC (hors JORF)
-    article: articles 93, 109, 110, 111 et 112
+    article: articles 93, 107, 109, 110, 111 et 112
     citation: >-
       « bénéficie, à partir de 55 ans, à condition de n'être pas remarié, d'une
       allocation de réversion calculée sur la base de 60 % des droits du participant
@@ -157,7 +157,8 @@ versions:
     droit: >-
       60 % des points de l'assuré décédé, à la valeur du point au paiement ; sans le
       coefficient d'anticipation de l'assuré retraité, mais sans pouvoir dépasser sa
-      retraite
+      retraite ; « Le versement unique au profit des bénéficiaires de droits directs
+      supprime tous droits à réversion » (article 107)
     beneficiaire: le conjoint et l'ex-conjoint marié, non remarié
     conditions: >-
       cinquante-cinq ans, ou aucun âge avec deux enfants à charge ou en invalidité ;
@@ -175,6 +176,7 @@ versions:
       invalidite_sans_age: true
       deux_enfants_a_charge_moins_de_ans: 18
       majoration_reversible: 1.0
+      rien_apres_un_capital: true
       fiabilite: haute
   exemples: [aa_reversion_leila, aa_reversion_kim, aa_reversion_annie, aa_reversion_eric,
              aa_reversion_francois, aa_reversion_david, aa_reversion_simone,
@@ -183,6 +185,13 @@ versions:
              ur_reversion_prive_ressources_plafond_2024,
              ur_reversion_prive_veuve_invalide_52_ans, ur_reversion_salarie_agricole]
 approximations:
+- version: [avant_1990, veufs_1990, agirc_1994, arrco_1996]
+  ecart: >-
+    le droit direct que l'Arrco ou l'Agirc a versé en capital avant 2019 (fiche
+    versement_unique_agirc_arrco) laisse ici une réversion : la règle de l'Arrco et de
+    l'Agirc d'avant l'accord du 17 novembre 2017 n'est pas lue, quand l'article 107 la
+    supprime depuis 2019
+  effet: non mesuré ; les seuls décès d'avant 2019 d'assurés d'au plus cent points
 - ecart: >-
     les 60 % s'appliquent à la retraite servie, coefficient d'anticipation compris,
     quand l'Agirc-Arrco les calcule sur les points de l'assuré, sans ce coefficient,
@@ -304,7 +313,8 @@ code:
   parametres: >-
     contenu.parametres de chaque version : taux, age_minimum, age_minimum_arrco,
     age_minimum_agirc, age_minimum_veuve, age_minimum_veuf, invalidite_sans_age,
-    deux_enfants_a_charge_moins_de_ans, majoration_reversible ; la majoration de chaque
+    deux_enfants_a_charge_moins_de_ans, majoration_reversible, rien_apres_un_capital ;
+    la majoration de chaque
     régime du défunt, que l'échéancier lui passe (echeancier.py : _pensions_au_deces)
   tests: tests/test_reversion.py ; les témoins reversion_* des simulations
 historique:
@@ -322,6 +332,10 @@ historique:
   à charge du survivant au décès lèvent l'âge, pour toujours, et la majoration pour
   enfants du défunt est reversée en entier, que le modèle ne reversait pas du tout.
   L'exemple ur_reversion_prive_50_ans_deux_enfants concorde ; celui de Max entre.
+- >-
+  2026-10-08 — action 138, étape 17 : le droit direct versé en capital ne laisse plus de
+  réversion depuis 2019 (article 107), quand la fiche versement_unique_agirc_arrco le
+  verse.
 effet: >-
   Tout conjoint, ou ex-conjoint marié, d'un salarié ou ancien salarié du privé qui
   décède. Le modèle la calcule pour le conjoint que la saisie déclare, sur la

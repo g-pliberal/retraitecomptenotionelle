@@ -505,10 +505,13 @@ def _examiner(demandees: dict[str, DateMois], par_regime: dict[str, tuple[DateMo
 @dataclass(frozen=True)
 class PensionServie:
     """Une pension déjà liquidée, que les départs suivants voient servie : ce
-    qu'elle vaut au mois de leur date d'effet, et son régime."""
+    qu'elle vaut au mois de leur date d'effet, son régime, et sa propre date
+    d'effet (AAAA-MM-JJ), que le versement forfaitaire unique lit : il ne
+    reste, depuis 2016, qu'à qui a pris sa première retraite avant."""
 
     regime: str
     montant: float
+    date_effet: str | None = None
 
 
 def liquider_les_departs(moteur: ScenarioActuel, carriere: Carriere,
@@ -534,7 +537,7 @@ def liquider_les_departs(moteur: ScenarioActuel, carriere: Carriere,
             date_evenement=depart.date_effet, nature=nature,
             regimes=() if depart.unique else tuple(sorted(depart.regimes)))
         servies = tuple(
-            PensionServie(pension.regime, montant)
+            PensionServie(pension.regime, montant, anterieure.demande.date_effet)
             for anterieure in liquidations
             for pension, montant in zip(anterieure.regimes, mener_au_mois(
                 moteur, anterieure.regimes, anterieure.carriere.date_liquidation,

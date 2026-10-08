@@ -17,7 +17,10 @@ ensemble, dans l'ordre où il l'applique — et l'ordre commande le résultat :
   pensions, majorations pour enfants comprises : la pension majorée de
   référence, qui relève leur pension de base (:func:`pension_majoree`), puis
   le complément différentiel de la RCO, qui porte leurs deux pensions
-  agricoles à un pourcentage du SMIC net (:func:`complement_differentiel`).
+  agricoles à un pourcentage du SMIC net (:func:`complement_differentiel`) ;
+* LES VERSEMENTS UNIQUES, en dernier, sur la pension complétée : la petite
+  pension du régime général, de l'Agirc-Arrco ou de l'Ircantec, que son régime
+  ne sert pas et remplace par un capital (:func:`verser_en_capital`).
 
 L'ASPA n'en est pas : elle regarde toutes les ressources, c'est l'étape
 « foyer et net » (:mod:`.foyer`).
@@ -96,6 +99,20 @@ PLAFONDS_DE_L18 = ("traitement",)
 #: au traitement, ou laissée hors du plafond et servie au-delà (Conseil
 #: d'État, 29 décembre 2020, n° 428626).
 SURCOTES_DE_L18 = ("dans_le_plafond", "hors_du_plafond")
+
+#: Les fiches des versements uniques, que :class:`FichesDatees
+#: <retraite_notionnelle.scenarios.actuel.FichesDatees>` lit à la date d'effet
+#: (:func:`verser_en_capital`) : le régime général, l'Agirc-Arrco et ses deux
+#: devancières, l'Ircantec.
+FICHE_DU_VERSEMENT_FORFAITAIRE = "versement_forfaitaire_unique"
+FICHE_DU_VERSEMENT_AGIRC_ARRCO = "versement_unique_agirc_arrco"
+FICHE_DU_VERSEMENT_IRCANTEC = "versement_unique_ircantec"
+
+#: Ce à quoi une version de l'Agirc-Arrco compare son seuil : le nombre de
+#: points de l'allocation, minorée ou non (avant 2019), ou son montant,
+#: coefficients et majorations compris, à l'équivalent en euros des points
+#: (accord du 17 novembre 2017, article 107).
+MESURES_DU_VERSEMENT = ("points", "montant")
 
 
 def complement_minimum(nue: float, plancher: float, coefficient_surcote: float,
@@ -606,7 +623,9 @@ class Complements:
 def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
               liquidees: Pensions, contexte: Contexte | None = None,
               servies: float = 0.0, initiales: tuple = (),
-              recalcul: bool = True, nationales: Pensions | None = None) -> Complements:
+              recalcul: bool = True, nationales: Pensions | None = None,
+              nature: str = "definitive",
+              premiere_retraite: str | None = None) -> Complements:
     """Les pensions de ``liquidees``, complétées de ce que le droit y ajoute.
 
     Le contexte dit ce que le calcul neutralise : les avantages non
@@ -623,7 +642,10 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
     (:mod:`.etranger`) : la pension proratisée de chaque régime porté au
     minimum contributif se compare à elle, chacune à son minimum, et la plus
     élevée est servie (fiches ``pension_proratisee`` et
-    ``minimum_contributif_international``).
+    ``minimum_contributif_international``). ``nature`` est celle de la
+    demande, et ``premiere_retraite`` la date d'effet de la première pension de
+    base qu'un départ précédent sert déjà : les versements uniques les lisent
+    (:func:`verser_en_capital`).
     """
     carriere = releve.carriere
     durees, droits = releve.durees, releve.droits
@@ -1172,6 +1194,13 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 points=points_acquis.get(RCO, 0.0), gratuits=gratuits,
                 complement=differentiel is not None)
 
+    # LES VERSEMENTS UNIQUES, en dernier : ils lisent la pension complétée,
+    # minimum, majorations et compléments compris.
+    fiabilite_versee = verser_en_capital(moteur, carriere, pensions, avantages,
+                                         points_acquis, nature, premiere_retraite)
+    if fiabilite_versee is not None:
+        fiabilite_globale = min(fiabilite_globale, fiabilite_versee)
+
     return Complements(
         personne=carriere.personne,
         regimes=tuple(pensions),
@@ -1184,6 +1213,184 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         petites_pensions=petites_pensions,
         chef=chef,
     )
+
+
+def _seuil_a_la_date(seuils: list, date_effet: str) -> float | None:
+    """Le seuil d'une date d'effet : le dernier du barème, ``[[AAAA-MM-JJ,
+    euros], ...]``, dont la date ne la passe pas ; ``None`` avant le premier."""
+    retenu = None
+    for debut, seuil in seuils:
+        if str(debut) <= date_effet:
+            retenu = float(seuil)
+    return retenu
+
+
+def coefficient_du_versement(regle: dict, age: float) -> tuple[float, int]:
+    """Le coefficient de la table d'une version, à l'âge révolu de ``age``, et
+    cet âge : « fonction de l'âge révolu du bénéficiaire à la date d'effet de la
+    liquidation des droits ». Un âge hors de la table prend celui de son bout."""
+    revolu = int(age + 1e-9)
+    coefficients = regle["coefficients"]
+    rang = min(max(revolu - int(regle["coefficients_depuis"]), 0), len(coefficients) - 1)
+    return float(coefficients[rang]), revolu
+
+
+def salaire_de_reference_points(moteur, regime: str,
+                                annee: int) -> tuple[float, Fiabilite] | None:
+    """Le salaire de référence, prix d'achat du point, de ``regime`` en
+    ``annee`` : publié, ou, au-delà du dernier barème, le dernier publié mené
+    comme la valeur de service du point, au rapport qu'il garde avec elle —
+    celui de l'Ircantec le garde depuis 2018, 10,32 € par euro de valeur, hors
+    2022. ``None`` sans barème."""
+    achat = moteur.valeurs_point.achat(regime, annee)
+    if achat is not None:
+        return achat[0], achat[2]
+    derniere = moteur.valeurs_point.derniere_annee_achetee(regime)
+    if derniere is None or annee < derniere:
+        return None
+    publie = moteur.valeurs_point.achat(regime, derniere)
+    valeur_alors = liquider.valeur_du_point(moteur, regime, derniere)
+    valeur = liquider.valeur_du_point(moteur, regime, annee)
+    if publie is None or valeur_alors is None or valeur is None or valeur_alors[0] <= 0:
+        return None
+    return (publie[0] * valeur[0] / valeur_alors[0],
+            min(publie[2], valeur[1], Fiabilite.MOYENNE))
+
+
+def verser_en_capital(moteur, carriere: Carriere, pensions: list[PensionRegime],
+                      avantages: list[AvantageApplique], points_acquis: dict[str, float],
+                      nature: str = "definitive",
+                      premiere_retraite: str | None = None) -> Fiabilite | None:
+    """Les petites pensions que leur régime ne sert pas : un versement unique
+    les remplace, que ``pensions`` porte désormais (``PensionRegime.capital``),
+    chacune avec la formule qui le dit ; son montant annuel reste celui de la
+    pension remplacée, comme pour le capital du RAFP. Rend la fiabilité des
+    barèmes lus quand un versement remplace une pension, ``None`` sinon.
+
+    Trois fiches, lues à la date d'effet :
+
+    * LE VERSEMENT FORFAITAIRE UNIQUE du régime général : quinze fois la pension
+      annuelle, avantages complémentaires compris — ici la majoration pour
+      enfants —, quand elle est sous le seuil de R. 351-26 ; depuis 2016, à qui
+      a pris sa première retraite de base avant (loi n° 2014-40, article 44) ;
+    * LE VERSEMENT UNIQUE DE L'AGIRC-ARRCO, la valeur viagère de l'allocation :
+      l'allocation annuelle par le coefficient de l'âge révolu, quand elle
+      n'excède pas l'équivalent de cent points depuis 2019 (accord du 17
+      novembre 2017, article 107) ; avant, l'Arrco jusqu'à cent points, l'Agirc
+      sous cinq cents, chacune sur ses propres régimes ;
+    * CELUI DE L'IRCANTEC, sous 300 points : les points par le salaire de
+      référence de l'année qui précède la liquidation (arrêté du 30 décembre
+      1970, article 25).
+
+    La retraite progressive, provisoire, n'est jamais remplacée : l'allocation
+    de l'Agirc-Arrco y est servie « dans tous les cas », et le versement du
+    régime général fermerait les droits qu'elle continue d'acquérir.
+    """
+    date_effet = date_d_effet(carriere)
+    if date_effet is None or nature == "provisoire":
+        return None
+    enfants: dict[str, float] = {}
+    for avantage in avantages:
+        if avantage.code == "majoration_enfants":
+            for code, part in avantage.par_regime:
+                enfants[code] = enfants.get(code, 0.0) + part
+    fiabilites: list[Fiabilite] = []
+
+    def annuelle(pension: PensionRegime) -> float:
+        return pension.montant + enfants.get(pension.regime, 0.0)
+
+    def remplacer(indice: int, capital: float, formule: str) -> None:
+        pensions[indice] = replace(pensions[indice], capital=capital,
+                                   detail=pensions[indice].detail + formule)
+
+    # LE RÉGIME GÉNÉRAL : quinze annuités, sous le seuil de la date d'effet.
+    regle = moteur.fiches_datees.regle(FICHE_DU_VERSEMENT_FORFAITAIRE, date_effet)
+    avant = None if not regle or not regle["existe"] else regle.get("premiere_retraite_avant")
+    if (regle and regle["existe"]
+            and (avant is None or (premiere_retraite is not None
+                                   and premiere_retraite < str(avant)))):
+        seuil = _seuil_a_la_date(regle["seuils"], date_effet)
+        multiple = int(regle["multiple"])
+        for indice, pension in enumerate(pensions):
+            if (seuil is None or pension.regime not in regle["regimes"]
+                    or pension.montant <= 0.0 or pension.capital is not None):
+                continue
+            montant = annuelle(pension)
+            if montant >= seuil:
+                continue
+            remplacer(indice, multiple * montant, (
+                f" ; {montant:,.2f} € par an"
+                + (", majoration pour enfants comprise" if pension.regime in enfants else "")
+                + f", sous le seuil de {seuil:,.2f} € : remplacée par un versement "
+                f"forfaitaire unique de {multiple * montant:,.2f} €, {multiple} fois "
+                "la pension annuelle"))
+            fiabilites.append(Fiabilite.depuis_texte(regle["fiabilite"]))
+
+    # L'AGIRC-ARRCO, ou l'Arrco et l'Agirc : chaque allocation, un groupe de
+    # régimes, sa valeur viagère au coefficient de l'âge révolu.
+    regle = moteur.fiches_datees.regle(FICHE_DU_VERSEMENT_AGIRC_ARRCO, date_effet)
+    if regle and regle["existe"]:
+        if regle["mesure"] not in MESURES_DU_VERSEMENT:
+            raise ValueError(
+                f"{FICHE_DU_VERSEMENT_AGIRC_ARRCO} : la mesure {regle['mesure']!r} n'est "
+                f"pas de celles que le moteur connaît, {MESURES_DU_VERSEMENT}")
+        coefficient, age = coefficient_du_versement(regle, carriere.age_liquidation or 0.0)
+        for allocation in regle["allocations"]:
+            membres = [indice for indice, pension in enumerate(pensions)
+                       if pension.regime in allocation["regimes"]
+                       and pension.montant > 0.0 and pension.capital is None]
+            if not membres:
+                continue
+            seuil_points = float(allocation["seuil_points"])
+            if regle["mesure"] == "points":
+                mesure = somme_ordonnee(points_acquis.get(pensions[i].regime, 0.0)
+                                        for i in membres)
+                seuil, unite = seuil_points, "points"
+                dit = f"{mesure:,.2f} points"
+            else:
+                valeur = liquider.valeur_du_point(moteur, allocation["point"],
+                                                  carriere.date_liquidation)
+                if valeur is None:
+                    continue
+                mesure = somme_ordonnee(annuelle(pensions[i]) for i in membres)
+                seuil, unite = seuil_points * valeur[0], "€"
+                dit = f"{mesure:,.2f} € par an"
+                fiabilites.append(valeur[1])
+            sous = (mesure <= seuil if allocation["seuil_compris"] else mesure < seuil)
+            if mesure <= 0.0 or not sous:
+                continue
+            borne = (f"au plus {seuil_points:,.0f} points" if allocation["seuil_compris"]
+                     else f"moins de {seuil_points:,.0f} points")
+            if unite == "€":
+                borne += f", {seuil:,.2f} €"
+            for indice in membres:
+                montant = annuelle(pensions[indice])
+                remplacer(indice, montant * coefficient, (
+                    f" ; allocation de {dit}, {borne} : versée en capital, "
+                    f"{montant * coefficient:,.2f} € ({montant:,.2f} € × {coefficient:.1f} "
+                    f"à {age} ans)"))
+            fiabilites.append(Fiabilite.depuis_texte(regle["fiabilite"]))
+
+    # L'IRCANTEC : les points, par le salaire de référence de l'année d'avant.
+    regle = moteur.fiches_datees.regle(FICHE_DU_VERSEMENT_IRCANTEC, date_effet)
+    if regle and regle["existe"]:
+        annee = carriere.annee_liquidation - 1
+        for indice, pension in enumerate(pensions):
+            if (pension.regime not in regle["regimes"] or pension.montant <= 0.0
+                    or pension.capital is not None):
+                continue
+            points = points_acquis.get(pension.regime, 0.0)
+            if not 0.0 < points < float(regle["seuil_points"]):
+                continue
+            reference = salaire_de_reference_points(moteur, pension.regime, annee)
+            if reference is None:
+                continue
+            remplacer(indice, points * reference[0], (
+                f" ; {points:,.2f} points, moins de {float(regle['seuil_points']):,.0f} : "
+                f"versée en capital, {points * reference[0]:,.2f} € ({points:,.2f} points "
+                f"× salaire de référence de {annee}, {reference[0]:.4f} €)"))
+            fiabilites.extend((reference[1], Fiabilite.depuis_texte(regle["fiabilite"])))
+    return min(fiabilites) if fiabilites else None
 
 
 def plafond_majoration(moteur, code: str, periode: PeriodeRegime,

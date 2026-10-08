@@ -62,10 +62,12 @@ class PensionRegime:
     date_effet: str | None = None
     montant_a_l_effet: float | None = None
     #: La prestation versée en une fois, sous le seuil de points d'un régime
-    #: qui en a un (le RAFP, décret n° 2004-569, article 9) : ce capital, en
-    #: euros de la liquidation ; ``None`` pour une rente. ``montant`` reste la
-    #: rente dont il est l'équivalent, et la réversion sait qu'il n'y en a pas
-    #: après lui (fiche ``reversion_rafp``).
+    #: qui en a un (le RAFP, décret n° 2004-569, article 9), ou la petite
+    #: pension que son régime remplace par un versement unique — le régime
+    #: général, l'Agirc-Arrco, l'Ircantec (:func:`~.completer.verser_en_capital`)
+    #: — : ce capital, en euros de la liquidation ; ``None`` pour une rente.
+    #: ``montant`` reste la rente qu'il remplace, et la réversion sait qu'il
+    #: n'y en a pas après lui quand sa fiche le dit (``rien_apres_un_capital``).
     capital: float | None = None
 
 

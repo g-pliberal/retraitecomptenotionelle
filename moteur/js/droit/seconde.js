@@ -16,6 +16,7 @@ import { menerAuMois } from "../revalorisation.js";
 import * as lesDeparts from "./departs.js";
 import * as liquidation from "./liquidation.js";
 import { valeurDuPoint } from "./liquider.js";
+import { dateDEffet } from "./commun.js";
 import { FONCTION_PUBLIQUE, fonctionPubliqueQuittee, jour } from "./cumul.js";
 
 /** Ce que le droit fait d'un mois d'activité après le départ. */
@@ -332,7 +333,8 @@ export function liquiderLesRegimesNouveaux(moteur, carriere, resultat, droits, c
     const menes = menerAuMois(moteur, resultat.pensions_par_regime,
       carriere.dateLiquidation, date);
     const servies = resultat.pensions_par_regime.map((pension, i) => ({
-      regime: pension.regime, montant: menes[i] }));
+      regime: pension.regime, montant: menes[i],
+      date_effet: pension.date_effet ?? dateDEffet(carriere) }));
     const demande = new liquidation.Demande({
       personne: carriere.personne, dateEffet: jour(date), dateEvenement: jour(date),
       regimes: [...parDate.get(rangDate)].sort(),

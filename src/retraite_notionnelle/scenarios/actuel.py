@@ -1107,7 +1107,9 @@ class FichesDatees:
     ``completer.plafond_de_l_article_l18`` lit, et la majoration exceptionnelle
     des petites pensions de septembre 2023, que
     ``revalorisation.majorer_les_petites_pensions`` lit, et le relèvement des
-    exploitants de la même date, que ``revalorisation.relever_les_exploitants`` lit.
+    exploitants de la même date, que ``revalorisation.relever_les_exploitants`` lit,
+    et les versements uniques des petites pensions, que
+    ``completer.verser_en_capital`` lit.
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
@@ -1116,7 +1118,9 @@ class FichesDatees:
             "majoration_duree_hospitaliers_actifs",
             "depart_anticipe_parents_trois_enfants",
             "majoration_enfants_plafond_fonction_publique",
-            "majoration_exceptionnelle_2023", "relevement_des_exploitants_2023")
+            "majoration_exceptionnelle_2023", "relevement_des_exploitants_2023",
+            "versement_forfaitaire_unique", "versement_unique_agirc_arrco",
+            "versement_unique_ircantec")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}
@@ -2816,6 +2820,11 @@ class ValeursPoint:
 
     def derniere_annee_servie(self, regime: str) -> int | None:
         valeurs = self._table.get((regime, "valeur_service"))
+        return max(valeurs) if valeurs else None
+
+    def derniere_annee_achetee(self, regime: str) -> int | None:
+        """La dernière année dont le salaire de référence est publié."""
+        valeurs = self._table.get((regime, "salaire_reference"))
         return max(valeurs) if valeurs else None
 
     def premiere_annee_servie(self, regime: str) -> int | None:

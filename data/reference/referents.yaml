@@ -2513,7 +2513,7 @@ referents:
           versement de la retraite » : « versée en une seule fois
           quand son montant est inférieur ou égal à une somme
           équivalant à 100 points », coefficient selon l'âge.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.17"
       - quoi: >-
           Il plafonne la pension civile majorée pour enfants au
@@ -3505,7 +3505,7 @@ referents:
           2025-21-SG-DRJ (coefficients de versement unique de 2026)
           : capital jusqu'à l'équivalent de 100 points. Ses
           coefficients par âge sont anciens.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.17"
       - quoi: >-
           Ses cas types servent la bonification du cinquième au

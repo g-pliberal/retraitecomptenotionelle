@@ -2907,6 +2907,12 @@ export class ValeursPoint {
     return table === undefined ? null : table.annees[table.annees.length - 1];
   }
 
+  /** La dernière année dont le salaire de référence est publié. */
+  derniereAnneeAchetee(regime) {
+    const table = this._table.get(`${regime}|salaire_reference`);
+    return table === undefined ? null : table.annees[table.annees.length - 1];
+  }
+
   premiereAnneeServie(regime) {
     const table = this._table.get(`${regime}|valeur_service`);
     return table === undefined ? null : table.annees[0];

@@ -1,0 +1,277 @@
+schema_version: 1
+id: versement_forfaitaire_unique
+intitule: >-
+  La pension de vieillesse du régime général dont le montant annuel, avantages
+  complémentaires compris, est inférieur à un seuil — 175 F au 1er juillet 1974,
+  revalorisés comme les pensions — n'est pas servie : un versement forfaitaire unique,
+  égal à quinze fois ce montant, la remplace (L. 351-9, R. 351-26). La loi du 20 janvier
+  2014 abroge L. 351-9 pour l'assuré dont toutes les pensions prennent effet depuis le
+  1er janvier 2016 : le versement ne reste qu'à qui a pris sa première retraite avant.
+domaine: minima
+regimes:
+- regime_general
+etape: completer_tous_regimes
+face: droit
+etat: approchee
+lit:
+- la pension du régime général à l'étape qui complète, minimum contributif compris, et sa
+  part de la majoration pour enfants, l'avantage complémentaire que le modèle connaît
+- la nature de la demande, la retraite progressive n'étant pas remplacée
+- la date d'effet des pensions de base que des départs précédents servent déjà
+- liquidation.date_effet
+ecrit:
+- le versement forfaitaire unique qui remplace la pension (PensionRegime.capital), et la
+  formule qui le dit ; le montant annuel reste celui de la pension remplacée
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
+# moteur (droit/completer.py, `verser_en_capital`, et son jumeau) lit :
+# `existe` ; `regimes`, ceux dont la pension est remplacée ; `multiple`, les
+# annuités que le versement vaut ; `seuils`, le seuil annuel en euros, à chaque
+# date du barème de la Cnav — les francs convertis au taux de 6,55957, à quatre
+# décimales —, celui de la date d'effet étant le dernier qui ne la passe pas ;
+# `premiere_retraite_avant`, la date avant laquelle une pension de base doit
+# avoir pris effet pour que le versement vaille encore ; `fiabilite`, que le
+# résultat prend quand le versement remplace la pension.
+versions:
+- id: avant_le_1er_juillet_1974
+  statut: supposee
+  hypothese: >-
+    la loi n° 75-3 du 3 janvier 1975 et le décret n° 75-109 du 24 février 1975, qui
+    instituent le versement, n'ont pas d'article lisible dans l'index JORF, et le décret
+    n° 45-0179, article 72, n'est dans l'index LEGI que dans sa rédaction de 1975 ; le
+    barème de la Cnav ne commence qu'au 1er juillet 1974. Avant, les petites carrières
+    recevaient une rente, que le modèle ne distingue pas de la pension : aucun versement
+    unique
+  fiabilite: faible
+  bornes:
+    liquidation.date_effet: [null, 1974-07-01]
+  contenu:
+    droit: aucun versement forfaitaire lu
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: decret_du_24_fevrier_1975
+  statut: lue
+  textes:
+  - {id: JORFTEXT000000305864, reference: "décret n° 75-109 du 24 février 1975, article 11", en_vigueur: 1975-02-26}
+  - {id: LEGIARTI000006760609, article: 72, en_vigueur: 1975-02-26}
+  nee_de: JORFTEXT000000305864
+  bornes:
+    liquidation.date_effet: [1974-07-01, 1985-12-21]
+  contenu:
+    droit: >-
+      « Lorsque le montant annuel de la pension de vieillesse à laquelle l'assuré
+      pourrait prétendre, y compris le cas échéant les avantages complémentaires, est
+      inférieur à 175 F, la pension ne peut être servie. Elle est remplacée par un
+      versement forfaitaire unique, égal à quinze fois ce montant. » ; « La somme de 175 F
+      […] est applicable à la date du 1er juillet 1974. Elle est revalorisée en appliquant
+      les coefficients fixés, pour la revalorisation des pensions » (décret n° 45-0179,
+      article 72, rédigé par le décret n° 75-109)
+    beneficiaire: l'assuré dont la pension de vieillesse est inférieure au seuil
+    parametres:
+      existe: true
+      regimes: [regime_general]
+      multiple: 15
+      seuils: [["1974-07-01", 26.6786], ["1975-01-01", 28.3555],
+        ["1975-07-01", 31.0996], ["1976-01-01", 33.6912], ["1976-07-01", 36.4353],
+        ["1977-01-01", 39.6367], ["1977-07-01", 42.3808], ["1978-01-01", 45.8872],
+        ["1978-07-01", 47.869], ["1979-01-01", 50.918], ["1979-07-01", 52.8998],
+        ["1980-01-01", 55.7963], ["1980-07-01", 59.3027], ["1981-01-01", 63.2663],
+        ["1981-07-01", 67.23], ["1982-01-01", 71.8035], ["1982-07-01", 77.1392],
+        ["1983-01-01", 80.1882], ["1983-07-01", 83.3896], ["1984-01-01", 84.9141],
+        ["1984-07-01", 86.7435], ["1985-01-01", 89.64], ["1985-07-01", 92.0792]]
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: code_de_la_securite_sociale
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006742677, article: L. 351-9, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006749367, article: R. 351-26, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000025749165, article: R. 351-26, en_vigueur: 2012-04-27}
+  nee_de: LEGIARTI000006742677
+  bornes:
+    liquidation.date_effet: [1985-12-21, 2016-01-01]
+  contenu:
+    droit: >-
+      « Lorsque le montant de la pension est inférieur à un minimum, un versement
+      forfaitaire unique est substitué à la pension, dans les conditions fixées par décret
+      en Conseil d'Etat » (L. 351-9) ; R. 351-26 reprend mot pour mot l'article 72 du
+      décret de 1945 : le seuil de 175 F au 1er juillet 1974, revalorisé, quinze fois le
+      montant annuel, « effectué à la date à laquelle l'assuré aurait perçu les premiers
+      arrérages de sa pension » ; la rédaction du 27 avril 2012 ne change que la qualité
+      de pensionné
+    beneficiaire: l'assuré dont la pension de vieillesse est inférieure au seuil
+    parametres:
+      existe: true
+      regimes: [regime_general]
+      multiple: 15
+      seuils: [["1985-07-01", 92.0792], ["1986-01-01", 93.2988],
+        ["1986-10-01", 93.7561], ["1987-01-01", 95.4438], ["1987-07-01", 96.3981],
+        ["1988-01-01", 98.9043], ["1988-07-01", 100.1895], ["1989-01-01", 101.4914],
+        ["1989-07-01", 102.708], ["1990-01-01", 104.9154], ["1990-07-01", 106.2783],
+        ["1991-01-01", 108.0848], ["1991-07-01", 108.9492], ["1992-01-01", 110.0377],
+        ["1992-07-01", 112.018], ["1993-01-01", 113.4739], ["1994-01-01", 115.7423],
+        ["1995-01-01", 117.1312], ["1995-07-01", 117.7166], ["1996-01-01", 120.0704],
+        ["1997-01-01", 121.511], ["1998-01-01", 122.8465], ["1999-01-01", 124.3191],
+        ["2000-01-01", 124.9396], ["2001-01-01", 127.6882], ["2002-01-01", 130.49],
+        ["2003-01-01", 132.44], ["2004-01-01", 134.69], ["2005-01-01", 137.38],
+        ["2006-01-01", 139.85], ["2007-01-01", 142.36], ["2008-01-01", 143.92],
+        ["2008-09-01", 145.07], ["2009-04-01", 146.52], ["2010-04-01", 147.83],
+        ["2011-04-01", 150.93], ["2012-04-01", 154.09], ["2013-04-01", 156.09],
+        ["2015-10-01", 156.24]]
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: loi_du_20_janvier_2014
+  statut: lue
+  textes:
+  - {id: JORFARTI000028493878, reference: "loi n° 2014-40 du 20 janvier 2014, article 44", en_vigueur: 2016-01-01}
+  - {id: LEGIARTI000028498063, article: L. 161-22-2, en_vigueur: 2016-01-01}
+  - {id: LEGIARTI000047456834, article: L. 161-22-2, en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000031986254, article: R. 161-19-1, en_vigueur: 2016-02-08}
+  - {id: LEGIARTI000047960988, article: R. 161-19-1, en_vigueur: 2023-09-01}
+  nee_de: JORFARTI000028493878
+  bornes:
+    liquidation.date_effet: [2016-01-01, null]
+  contenu:
+    droit: >-
+      « IV. ― L'article L. 351-9 du même code est abrogé. V. ― Le présent article
+      s'applique aux assurés dont l'ensemble des pensions prend effet à compter du 1er
+      janvier 2016 » (loi n° 2014-40, article 44). La Cnav : « le paiement de la retraite
+      en un versement forfaitaire unique ne peut concerner que l'assuré dont la 1re
+      retraite prend effet avant 2016 », et le seuil se revalorise encore (183,01 € au 1er
+      janvier 2026). À la place, l'assuré d'un seul régime de base qui a huit trimestres
+      au plus reçoit, à sa demande, ses cotisations revalorisées (L. 161-22-2, R.
+      161-19-1)
+    beneficiaire: >-
+      l'assuré dont une pension de base a pris effet avant le 1er janvier 2016 et dont la
+      pension de vieillesse est inférieure au seuil
+    parametres:
+      existe: true
+      regimes: [regime_general]
+      multiple: 15
+      premiere_retraite_avant: "2016-01-01"
+      seuils: [["2015-10-01", 156.24], ["2017-10-01", 157.48], ["2019-01-01", 157.95],
+        ["2020-01-01", 158.42], ["2021-01-01", 159.05], ["2022-01-01", 160.79],
+        ["2022-07-01", 167.22], ["2023-01-01", 168.55], ["2024-01-01", 177.48],
+        ["2025-01-01", 181.38], ["2026-01-01", 183.01]]
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations:
+- version: [decret_du_24_fevrier_1975, code_de_la_securite_sociale, loi_du_20_janvier_2014]
+  ecart: >-
+    Le montant annuel de la pension reste celui de la pension que le versement remplace,
+    comme pour le capital du RAFP : les comparaisons annuelles, le total et le taux de
+    remplacement le lisent, et « faire vivre » le mène encore à l'échéance ; le versement
+    est dit dans la formule et dans le champ capital, et la majoration exceptionnelle de
+    2023 ne le lit pas, comme la circulaire Cnav n° 2023-21 l'exclut.
+  effet: >-
+    non mesuré ; les seules pensions sous le seuil, 156,24 € par an en 2015 : quelques
+    trimestres au régime général
+- version: [decret_du_24_fevrier_1975, code_de_la_securite_sociale, loi_du_20_janvier_2014]
+  ecart: >-
+    Le versement « était payé seulement sur accord de l'assuré » (circulaire Cnav n°
+    62/93, que l'exposé « Modalités de paiement » cite), qui pouvait attendre ; et il «
+    met obstacle à l'ouverture de nouveaux droits » par une activité postérieure (R.
+    351-26) : le modèle le verse sans demander, et ne ferme pas les droits d'après. Les
+    avantages complémentaires que le seuil compte se réduisent à la majoration pour
+    enfants : la majoration pour conjoint à charge n'est pas modélisée.
+  effet: non mesuré
+- version: [loi_du_20_janvier_2014]
+  ecart: >-
+    La première retraite se lit sur les départs que le modèle liquide : une pension de
+    base prise avant 2016 dans un départ précédent. Une retraite progressive ouverte avant
+    2016, une pension étrangère ou une pension qu'aucun départ ne liquide ne la font pas
+    ; le remboursement des cotisations de L. 161-22-2, qui se demande, n'est pas servi :
+    le modèle sert la pension.
+  effet: non mesuré ; les départs échelonnés de part et d'autre du 1er janvier 2016
+sources:
+  lu_le: 2026-10-08
+  prochaine_relecture: 2027-04-30
+  lectures_divergentes:
+  - >-
+    TRAJECTOiRE (R/fonctionsCalculsPensions.R:3296-3306, au commit 0963b57) garde le
+    versement de la Cnav et des salariés agricoles après 2016, pour tous les assurés : «
+    Il a temporairement été décidé de conserver le dispositif de VFU pour l'ensemble des
+    assurés ». La loi n° 2014-40 et la Cnav le réservent à qui a pris une retraite avant
+    2016 : l'écart est le sien, au registre.
+  a_relire:
+  - >-
+    Lire la loi n° 75-3 du 3 janvier 1975 et le décret n° 75-109 au Journal officiel en
+    images, pour dater l'entrée en vigueur et dire la rente d'avant 1974.
+  - >-
+    Lire les versements forfaitaires des régimes alignés et spéciaux que l'index LEGI
+    nomme : salariés agricoles (décret n° 50-1225, article 59, puis le code rural),
+    mines (décret n° 46-2769, article 179), marins (code des transports, L. 5552-19),
+    Banque de France, Comédie-Française, Saint-Pierre-et-Miquelon, Mayotte, et celui des
+    artisans et des commerçants.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 351-9 (LEGIARTI000006742677, 1985-12-21 → 2016-01-01), R. 351-26
+      (LEGIARTI000006749367, LEGIARTI000025749165), décret n° 45-0179, article 72
+      (LEGIARTI000006760609, 1975-02-26 → 1985-12-21), L. 161-22-2 (LEGIARTI000028498063,
+      LEGIARTI000047456834), R. 161-19-1 (LEGIARTI000031986254, LEGIARTI000047960988), lus
+      dans l'index LEGI le 8 octobre 2026
+    date: 2016-01-01
+  - type: jorf
+    reference: >-
+      loi n° 2014-40 du 20 janvier 2014, article 44 (JORFARTI000028493878) : L. 161-22-2,
+      L. 173-1-3, L. 351-9 abrogé pour les assurés dont l'ensemble des pensions prend effet
+      depuis le 1er janvier 2016
+    date: 2014-01-21
+  - type: circulaire_cnav
+    reference: >-
+      barème « Montant minimum permettant le paiement mensuel de la retraite personnelle »
+      (retraite_personnelle_montant_minimum_pour_paiement_mensuel_bar), lu par l'API de la
+      base de législation de la Cnav le 8 octobre 2026 : 71 dates, de 175 F au 1er juillet
+      1974 (« Décret 75/109 du 24/02/75 Art. 11 ») à 183,01 € au 1er janvier 2026, chacune
+      avec son arrêté ou sa circulaire ; « En dessous de ces montants, la retraite est
+      remplacée par un versement forfaitaire unique égal à 15 fois son montant annuel »
+    url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=retraite_personnelle_montant_minimum_pour_paiement_mensuel_bar.aspx
+    date: 2025-12-22
+  - type: circulaire_cnav
+    reference: >-
+      exposés « Montant de la retraite personnelle » (« le paiement de la retraite en un
+      versement forfaitaire unique ne peut concerner que l'assuré dont la 1re retraite
+      prend effet avant 2016 ») et « Modalités de paiement » (le versement « déterminé au
+      point de départ de la retraite », « payé seulement sur accord de l'assuré », «
+      effectué à la date à laquelle l'assuré aurait perçu la 1re mensualité » ; le
+      remboursement des cotisations de qui réunit moins de neuf trimestres), lus par l'API
+      le 8 octobre 2026
+    url: https://legislation.lassuranceretraite.fr/
+    date: 2026-03-06
+code:
+  python: >-
+    droit/completer.py : verser_en_capital, completer ; droit/departs.py :
+    PensionServie.date_effet ; droit/liquidation.py : liquider ; scenarios/actuel.py :
+    FichesDatees
+  javascript: >-
+    moteur/js/droit/completer.js : verserEnCapital, completer ; moteur/js/droit/departs.js
+    ; moteur/js/droit/liquidation.js ; moteur/js/regimes.js : FichesDatees
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_versements_uniques.py]
+referents:
+  destinie_2:
+    equivalent: >-
+      src/DroitsRetr.cpp:1238-1242, au commit 4c1d34b : quinze annuités jusqu'en 2015
+    confrontation: >-
+      aucune exécutée ; la règle est la même jusqu'en 2015, et Destinie 2 n'a pas la
+      suite transitoire
+  trajectoire:
+    equivalent: >-
+      R/fonctionsCalculsPensions.R:3261-3350 (calculeVfu), au commit 0963b57
+    confrontation: >-
+      aucune exécutée ; son versement de la Cnav après 2016 est déclaré plus haut
+      (lectures_divergentes)
+historique:
+- >-
+  2026-10-08 — écrite à l'étape 17 de l'action 138, sur le point de Destinie 2 au
+  registre (chantier 138.17) et l'écart de TRAJECTOiRE, que la loi n° 2014-40 tranche.
+reformes:
+- touraine_2014
+effet: >-
+  L'assuré du régime général dont la pension annuelle, majoration pour enfants comprise,
+  passe sous le seuil — 26,68 € en 1974, 156,24 € en 2015, 183,01 € en 2026 pour la
+  suite transitoire — reçoit quinze annuités en une fois : une carrière de quelques
+  trimestres, ou de bas salaires sans le minimum contributif.

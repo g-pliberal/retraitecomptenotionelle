@@ -432,10 +432,18 @@ def liquider(demande: Demande, etat: Etat, contexte: Contexte) -> Liquidation:
                         f"d'exploitation d'avant {avant}"),
             ))
 
+    # La première pension de base qu'un départ précédent sert déjà : le
+    # versement forfaitaire unique ne reste, depuis 2016, qu'à qui a pris sa
+    # première retraite avant (fiche versement_forfaitaire_unique).
+    premiere_retraite = min(
+        (servie.date_effet for servie in etat.servies
+         if servie.date_effet is not None
+         and moteur.catalogue[servie.regime].etage in ("base", "integre")), default=None)
     complements = _completer.completer(moteur, releve, ouverture, liquidees, contexte,
                                        servies=etat.total_servi,
                                        initiales=etat.initiales, recalcul=etat.recalcul,
-                                       nationales=nationales)
+                                       nationales=nationales, nature=demande.nature,
+                                       premiere_retraite=premiere_retraite)
     # La pension provisoire que la pension complète garde est un droit acquis
     # par cotisation : elle entre au total contributif, comme la pension.
     total_contributif += complements.plancher

@@ -1,0 +1,390 @@
+schema_version: 1
+id: versement_unique_agirc_arrco
+intitule: >-
+  L'allocation de l'Agirc-Arrco dont le montant n'excède pas l'équivalent de 100 points
+  n'est pas attribuée : l'assuré reçoit un versement unique, sa valeur viagère, égal à
+  l'allocation annuelle multipliée par un coefficient de son âge révolu à la date d'effet
+  (accord du 17 novembre 2017, article 107). Avant 2019, l'Arrco versait ce capital à qui
+  avait cent points au plus, l'Agirc à qui en avait moins de cinq cents. Versé à
+  l'assuré, il supprime la réversion.
+domaine: points
+regimes:
+- arrco
+- arrco_tranche_2
+- arrco_tranche_2_entreprises_nouvelles
+- arrco_cultes
+- agirc
+- agirc_entreprises_nouvelles
+- agirc_arrco
+etape: completer_tous_regimes
+face: droit
+etat: approchee
+lit:
+- les pensions des régimes de l'allocation à l'étape qui complète, coefficients
+  d'anticipation et majorations faits, et leur part de la majoration pour enfants
+- les points de chacun (Droits.points_acquis)
+- la valeur de service du point de l'Agirc-Arrco à la date d'effet
+- l'âge révolu à la date d'effet, et la nature de la demande
+- liquidation.date_effet
+ecrit:
+- le versement unique qui remplace l'allocation, réparti entre les régimes qui la forment
+  (PensionRegime.capital), et la formule qui le dit ; le montant annuel reste celui de
+  l'allocation remplacée
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
+# moteur (droit/completer.py, `verser_en_capital`, et son jumeau) lit :
+# `existe` ; `allocations`, chacune un groupe de régimes dont les pensions
+# forment une allocation, son seuil en points (`seuil_points`), compris ou non
+# (`seuil_compris`), et, quand le seuil est un montant, le régime dont la valeur
+# de service le fait (`point`) ; `mesure`, `points` (le nombre de points du
+# groupe, minoré ou non) ou `montant` (l'allocation annuelle, coefficients et
+# majorations compris, comparée au seuil en euros) ; `coefficients`, ceux des
+# droits directs, de l'âge `coefficients_depuis` à 99 ans ; `fiabilite`. Un âge
+# hors de la table prend le coefficient de son bout.
+versions:
+- id: avant_2004
+  statut: supposee
+  hypothese: >-
+    le dispositif que la fiche RET-B100 des éditions GERESO date du 1er janvier 2004 en
+    remplace un plus ancien, que ni les accords de l'Arrco et de l'Agirc ni leurs
+    circulaires, absents des deux index, ne laissent lire ; on ne lui prête aucun
+    versement unique, et l'allocation reste servie, comme le modèle la servait avant cette
+    fiche
+  fiabilite: faible
+  bornes:
+    liquidation.date_effet: [null, 2004-01-01]
+  contenu:
+    droit: aucun versement unique lu
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: dispositif_de_2004
+  statut: supposee
+  hypothese: >-
+    la règle et la table sont celles que reproduit la fiche RET-B100 des éditions GERESO
+    (mises à jour de septembre 2013 et de février 2014) : « L'entrée en vigueur de
+    l'ensemble du nouveau dispositif est fixée au 1er janvier 2004 », et la circulaire
+    Agirc-Arrco n° 2013-4 du 21 mars 2013 en maintient les seuils. Les accords et les
+    circulaires eux-mêmes ne sont pas lus ; Destinie 2 sert les mêmes seuils et la même
+    table
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2019-01-01]
+  contenu:
+    droit: >-
+      « La retraite ARRCO est versée en une seule fois sous forme de capital quand elle est
+      calculée sur un nombre de points inférieur ou égal à 100. La retraite AGIRC est
+      versée en une seule fois sous forme de capital quand elle est calculée sur un nombre
+      de points inférieur à 500. » ; « qu'il s'agisse d'une retraite liquidée avec ou sans
+      minoration » ; « Capital unique = Montant brut annuel x Coefficient », le
+      coefficient « fonction de l'âge révolu du bénéficiaire au point de départ de sa
+      retraite » (fiche RET-B100). L'Arrco sert une fois l'an de cent à deux cents points.
+    beneficiaire: le participant de l'Arrco ou de l'Agirc dont les points sont sous le seuil
+    parametres:
+      existe: true
+      allocations:
+      - regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, arrco_cultes]
+        seuil_points: 100
+        seuil_compris: true
+      - regimes: [agirc, agirc_entreprises_nouvelles]
+        seuil_points: 500
+        seuil_compris: false
+      mesure: points
+      coefficients_depuis: 55
+      coefficients: [21.0, 20.7, 20.3, 19.9, 19.5, 19.1, 18.7, 18.3, 17.9, 17.4, 17.0, 16.5,
+        16.0, 15.5, 15.0, 14.5, 14.0, 13.5, 12.9, 12.4, 11.9, 11.3, 10.8, 10.2, 9.7, 9.2,
+        8.6, 8.1, 7.6, 7.1, 6.7, 6.2, 5.8, 5.4, 5.1, 4.7, 4.4, 4.0, 3.8, 3.5, 3.2, 3.0, 2.8,
+        2.7, 2.5]
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: accord_du_17_novembre_2017
+  statut: lue
+  textes:
+  - {reference: "accord national interprofessionnel du 17 novembre 2017, article 107, étendu par l'arrêté du 24 avril 2018 (JORFTEXT000036847920)", en_vigueur: 2019-01-01}
+  - {reference: "circulaire Agirc-Arrco n° 2020-02-DRJ du 20 janvier 2020, fiche 5, III.2", en_vigueur: 2019-01-01}
+  bornes:
+    liquidation.date_effet: [2019-01-01, 2020-01-01]
+  contenu:
+    droit: >-
+      « Si ce montant est inférieur ou égal à une somme équivalant à 100 points du régime,
+      il n'est pas procédé à l'attribution d'une allocation, et l'intéressé reçoit un
+      versement unique correspondant à la valeur viagère de ses allocations. Le versement
+      unique au profit des bénéficiaires de droits directs supprime tous droits à
+      réversion » (accord, article 107). Les seuils s'apprécient « au regard du montant
+      brut des droits directs […], y compris les montants des différentes majorations ou
+      coefficients applicables » ; le versement « est égal au produit du montant de
+      l'allocation annuelle qui aurait été servie par un coefficient, fonction de l'âge
+      révolu du bénéficiaire à la date d'effet de la liquidation des droits » ; la
+      retraite progressive donne « dans tous les cas » une allocation (circulaire n°
+      2020-02-DRJ, fiche 5, III.2)
+    beneficiaire: le participant dont l'allocation n'excède pas l'équivalent de 100 points
+    parametres:
+      existe: true
+      allocations:
+      - regimes: [agirc_arrco, arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles,
+          arrco_cultes, agirc, agirc_entreprises_nouvelles]
+        seuil_points: 100
+        seuil_compris: true
+        point: agirc_arrco
+      mesure: montant
+      coefficients_depuis: 55
+      coefficients: [21.0, 20.7, 20.3, 19.9, 19.5, 19.1, 18.7, 18.3, 17.9, 17.4, 17.0, 16.5,
+        16.0, 15.5, 15.0, 14.5, 14.0, 13.5, 12.9, 12.4, 11.9, 11.3, 10.8, 10.2, 9.7, 9.2,
+        8.6, 8.1, 7.6, 7.1, 6.7, 6.2, 5.8, 5.4, 5.1, 4.7, 4.4, 4.0, 3.8, 3.5, 3.2, 3.0, 2.8,
+        2.7, 2.5]
+      fiabilite: estimee
+  exemples: aucun trouvé
+- id: table_de_2020
+  statut: lue
+  textes:
+  - {reference: "circulaire Agirc-Arrco n° 2020-05-DRJ, « Coefficients de versement unique 2020 »", en_vigueur: 2020-01-01}
+  - {reference: "accord national interprofessionnel du 17 novembre 2017, article 107", en_vigueur: 2019-01-01}
+  bornes:
+    liquidation.date_effet: [2020-01-01, 2023-01-01]
+  contenu:
+    droit: >-
+      L'article 107, comme en 2019 ; « La commission paritaire a adopté, pour 2020, une
+      nouvelle table des coefficients de versement unique, tenant compte de l'évolution de
+      l'espérance de vie » (circulaire n° 2020-05-DRJ) : 29,6 à 60 ans, 25,2 à 65
+    beneficiaire: le participant dont l'allocation n'excède pas l'équivalent de 100 points
+    parametres:
+      existe: true
+      allocations:
+      - regimes: [agirc_arrco, arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles,
+          arrco_cultes, agirc, agirc_entreprises_nouvelles]
+        seuil_points: 100
+        seuil_compris: true
+        point: agirc_arrco
+      mesure: montant
+      coefficients_depuis: 55
+      coefficients: [33.9, 33.1, 32.2, 31.4, 30.5, 29.6, 28.7, 27.8, 26.9, 26.1, 25.2, 24.3,
+        23.4, 22.5, 21.6, 20.7, 19.8, 18.9, 18.1, 17.2, 16.3, 15.5, 14.6, 13.8, 13.0, 12.2,
+        11.4, 10.6, 9.9, 9.2, 8.5, 7.9, 7.2, 6.7, 6.1, 5.6, 5.1, 4.7, 4.2, 3.8, 3.5, 3.1, 2.8,
+        2.5, 2.3]
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: table_de_2023
+  statut: lue
+  textes:
+  - {reference: "circulaire Agirc-Arrco n° 2022-15-DRJ du 20 décembre 2022, « Coefficients de versement unique 2023 »", en_vigueur: 2023-01-01}
+  - {reference: "accord national interprofessionnel du 17 novembre 2017, article 107", en_vigueur: 2019-01-01}
+  bornes:
+    liquidation.date_effet: [2023-01-01, 2024-01-01]
+  contenu:
+    droit: >-
+      L'article 107 ; la table de 2023, de 50 ans — les coefficients de 50 à 54 ans pour
+      des liquidations particulières — à 99 : 31,2 à 60 ans, 26,1 à 65
+    beneficiaire: le participant dont l'allocation n'excède pas l'équivalent de 100 points
+    parametres:
+      existe: true
+      allocations:
+      - regimes: [agirc_arrco, arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles,
+          arrco_cultes, agirc, agirc_entreprises_nouvelles]
+        seuil_points: 100
+        seuil_compris: true
+        point: agirc_arrco
+      mesure: montant
+      coefficients_depuis: 50
+      coefficients: [41.5, 40.4, 39.4, 38.4, 37.4, 36.4, 35.3, 34.3, 33.3, 32.2, 31.2, 30.1,
+        29.1, 28.1, 27.1, 26.1, 25.0, 24.1, 23.1, 22.2, 21.2, 20.4, 19.5, 18.6, 17.7, 16.9,
+        16.0, 15.2, 14.4, 13.5, 12.7, 11.9, 11.2, 10.4, 9.7, 8.9, 8.2, 7.6, 7.0, 6.4, 5.8,
+        5.3, 4.8, 4.4, 4.0, 3.7, 3.3, 3.1, 2.8, 2.6]
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: table_de_2024
+  statut: lue
+  textes:
+  - {reference: "circulaire Agirc-Arrco n° 2023-15-DRJ du 18 décembre 2023, table des coefficients de versement unique pour 2024", en_vigueur: 2024-01-01}
+  - {reference: "accord national interprofessionnel du 17 novembre 2017, article 107", en_vigueur: 2019-01-01}
+  bornes:
+    liquidation.date_effet: [2024-01-01, 2025-01-01]
+  contenu:
+    droit: L'article 107 ; la table de 2024, de 50 à 99 ans
+    beneficiaire: le participant dont l'allocation n'excède pas l'équivalent de 100 points
+    parametres:
+      existe: true
+      allocations:
+      - regimes: [agirc_arrco, arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles,
+          arrco_cultes, agirc, agirc_entreprises_nouvelles]
+        seuil_points: 100
+        seuil_compris: true
+        point: agirc_arrco
+      mesure: montant
+      coefficients_depuis: 50
+      coefficients: [41.6, 40.6, 39.5, 38.5, 37.5, 36.5, 35.4, 34.4, 33.4, 32.3, 31.3, 30.3,
+        29.2, 28.2, 27.2, 26.2, 25.2, 24.2, 23.2, 22.2, 21.3, 20.4, 19.5, 18.6, 17.8, 16.9,
+        16.1, 15.2, 14.4, 13.6, 12.8, 12.0, 11.2, 10.5, 9.7, 9.0, 8.3, 7.6, 7.0, 6.4, 5.9,
+        5.3, 4.9, 4.4, 4.0, 3.7, 3.4, 3.1, 2.9, 2.7]
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: table_de_2025
+  statut: lue
+  textes:
+  - {reference: "circulaire Agirc-Arrco n° 2024-15-DRJ du 17 décembre 2024, « Coefficients de versement unique 2025 »", en_vigueur: 2025-01-01}
+  - {reference: "accord national interprofessionnel du 17 novembre 2017, article 107", en_vigueur: 2019-01-01}
+  bornes:
+    liquidation.date_effet: [2025-01-01, 2026-01-01]
+  contenu:
+    droit: L'article 107 ; la table de 2025, de 50 à 99 ans
+    beneficiaire: le participant dont l'allocation n'excède pas l'équivalent de 100 points
+    parametres:
+      existe: true
+      allocations:
+      - regimes: [agirc_arrco, arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles,
+          arrco_cultes, agirc, agirc_entreprises_nouvelles]
+        seuil_points: 100
+        seuil_compris: true
+        point: agirc_arrco
+      mesure: montant
+      coefficients_depuis: 50
+      coefficients: [41.7, 40.7, 39.7, 38.6, 37.5, 36.6, 35.6, 34.6, 33.5, 32.5, 31.4, 30.4,
+        29.4, 28.3, 27.3, 26.3, 25.3, 24.3, 23.3, 22.3, 21.4, 20.5, 19.6, 18.7, 17.8, 17.0,
+        16.1, 15.3, 14.4, 13.6, 12.8, 12.0, 11.3, 10.5, 9.8, 9.0, 8.4, 7.7, 7.1, 6.5, 5.9,
+        5.4, 4.9, 4.5, 4.1, 3.7, 3.4, 3.1, 2.9, 2.7]
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: table_de_2026
+  statut: lue
+  textes:
+  - {reference: "circulaire Agirc-Arrco n° 2025-21-SG-DRJ du 15 décembre 2025, « Coefficients de versement unique 2026 »", en_vigueur: 2026-01-01}
+  - {reference: "accord national interprofessionnel du 17 novembre 2017, article 107", en_vigueur: 2019-01-01}
+  bornes:
+    liquidation.date_effet: [2026-01-01, null]
+  contenu:
+    droit: >-
+      L'article 107 ; la table de 2026, de 50 à 99 ans, « tenant compte de l'évolution de
+      l'espérance de vie » : 31,6 à 60 ans ; de 50 à 54 ans, des coefficients « spécifiques
+      à la Nouvelle Calédonie »
+    beneficiaire: le participant dont l'allocation n'excède pas l'équivalent de 100 points
+    parametres:
+      existe: true
+      allocations:
+      - regimes: [agirc_arrco, arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles,
+          arrco_cultes, agirc, agirc_entreprises_nouvelles]
+        seuil_points: 100
+        seuil_compris: true
+        point: agirc_arrco
+      mesure: montant
+      coefficients_depuis: 50
+      coefficients: [41.9, 40.8, 39.8, 38.8, 37.8, 36.8, 35.7, 34.7, 33.7, 32.6, 31.6, 30.5,
+        29.5, 28.5, 27.5, 26.4, 25.4, 24.4, 23.4, 22.5, 21.5, 20.6, 19.6, 18.7, 17.9, 17.0,
+        16.1, 15.3, 14.5, 13.7, 12.8, 12.1, 11.3, 10.5, 9.8, 9.1, 8.4, 7.7, 7.1, 6.5, 5.9,
+        5.4, 4.9, 4.5, 4.1, 3.7, 3.4, 3.1, 2.9, 2.7]
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations:
+- version: [accord_du_17_novembre_2017]
+  ecart: >-
+    La table des coefficients de 2019 n'est pas trouvée : la circulaire de 2020 en adopte «
+    une nouvelle », et le modèle garde en 2019 celle d'avant la fusion, qu'elle remplace.
+  effet: >-
+    non mesuré ; le capital des seules liquidations de 2019, 29,6 au lieu de 19,1 à 60 ans
+    si la table de 2020 valait dès 2019
+- version: [table_de_2020]
+  ecart: >-
+    Aucune table n'est lue pour 2021, et celle de 2022 (circulaire n° 2021-9-DRJ du 17
+    décembre 2021, que le Cleiss annonce) n'est pas trouvée : la table de 2020 vaut
+    jusqu'à celle de 2023, d'un dixième à un point et demi sous elle.
+  effet: non mesuré ; le capital des liquidations de 2021 et de 2022
+- version: [dispositif_de_2004, accord_du_17_novembre_2017, table_de_2020, table_de_2023,
+    table_de_2024, table_de_2025, table_de_2026]
+  ecart: >-
+    Le montant annuel de chaque pension reste celui de l'allocation que le versement
+    remplace, comme pour le capital du RAFP : les comparaisons annuelles le lisent, et «
+    faire vivre » le mène encore ; le versement est dit dans la formule et dans le champ
+    capital, réparti entre les régimes au prorata de leur part de l'allocation. Au-delà de
+    2026, la table de 2026 reste.
+  effet: non mesuré ; les seules allocations d'au plus cent points, quelques années de cotisation
+- version: [dispositif_de_2004, accord_du_17_novembre_2017, table_de_2020, table_de_2023,
+    table_de_2024, table_de_2025, table_de_2026]
+  ecart: >-
+    Seuls les droits directs sont versés en capital : la réversion d'au plus cent points,
+    que l'article 107 verse aussi en une fois au coefficient de l'âge du survivant, reste
+    servie en rente ; et la réversion qu'un capital versé avant 2019 aurait supprimée n'est
+    pas lue (fiche reversion_agirc_arrco).
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-08
+  prochaine_relecture: 2027-01-31
+  lectures_divergentes:
+  - >-
+    L'accord (article 107) et la circulaire n° 2020-02-DRJ versent en capital
+    l'allocation « inférieure ou égale » à l'équivalent de 100 points ; les circulaires des
+    coefficients, de 2020 à 2026, résument « inférieur à ». Le modèle suit l'accord.
+  - >-
+    Destinie 2 (src/DroitsRetr.cpp:1267-1279, au commit 4c1d34b) sert les seuils et la
+    table d'avant la fusion, et laisse l'Agirc-Arrco unifiée « à faire ». TRAJECTOiRE
+    (inst/extdata/trajectoire/vfuSeuilPt.csv, vfuCoefAA.csv, au commit 0963b57) verse le
+    capital jusqu'à 100 points, « pension annuelle × coefficient de l'âge », sur des
+    coefficients anciens.
+  a_relire:
+  - >-
+    Lire la circulaire n° 2021-9-DRJ (table de 2022) et la table de 2019, que le site de
+    l'Agirc-Arrco ne sert plus ; puis les accords de l'Arrco et de l'Agirc d'avant 2004,
+    et la circulaire qui a fixé le dispositif de 2004.
+  - >-
+    Chaque mois de décembre, la table de l'année suivante.
+  lectures:
+  - type: autre
+    reference: >-
+      accord national interprofessionnel du 17 novembre 2017, « applicable au 1er janvier
+      2019 », article 107, « Allocations de faible montant » (circulaire n° 2018-09-DC)
+    url: https://www.agirc-arrco.fr/storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf
+    date: 2017-11-17
+  - type: autre
+    reference: >-
+      circulaire Agirc-Arrco n° 2020-02-DRJ du 20 janvier 2020, « Réglementation
+      applicable aux individus », fiche 5, III.2 : les seuils, le versement unique des
+      droits directs et de réversion, la retraite progressive, la réversion supprimée ; «
+      Ce qui change : Harmonisation des seuils de référence »
+    url: https://gisti.org/IMG/pdf/2020-02-drj_regime_agirc-arrco_reglementation_applicable_aux_individus.pdf
+    date: 2020-01-20
+  - type: autre
+    reference: >-
+      circulaires Agirc-Arrco des coefficients de versement unique : n° 2020-05-DRJ
+      (2020), n° 2022-15-DRJ du 20 décembre 2022 (2023), n° 2023-15-DRJ du 18 décembre
+      2023 (2024), n° 2024-15-DRJ du 17 décembre 2024 (2025), n° 2025-21-SG-DRJ du 15
+      décembre 2025 (2026), lues en PDF le 8 octobre 2026 ; les colonnes des droits
+      directs extraites par programme
+    url: https://www.agirc-arrco.fr/storage/CirculaireAgircArrco2025-21sg-drj.pdf
+    date: 2025-12-15
+  - type: autre
+    reference: >-
+      éditions GERESO, « Les retraites », fiche RET-B100, « Paiement des allocations —
+      modalités de règlement », mises à jour de septembre 2013 et de février 2014 : les
+      seuils de l'Arrco et de l'Agirc, la table des coefficients du capital unique, le
+      dispositif daté du 1er janvier 2004
+    url: https://documents.gereso.com/client/edition/docs-edition/MP-EP-PDF/RET-PDF/RETB-ARRCO/RET-B100.pdf
+    date: 2014-02-01
+code:
+  python: >-
+    droit/completer.py : verser_en_capital, completer ; scenarios/actuel.py : FichesDatees
+  javascript: >-
+    moteur/js/droit/completer.js : verserEnCapital, completer ; moteur/js/regimes.js :
+    FichesDatees
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_versements_uniques.py]
+referents:
+  destinie_2:
+    equivalent: >-
+      src/DroitsRetr.cpp:1267-1279, au commit 4c1d34b : moins de 100 points à l'Arrco,
+      moins de 500 à l'Agirc, jusqu'en 2018 ; coefficient de capital de 21 à 55 ans à 2,5
+      à 99
+    confrontation: aucune exécutée ; sa table est celle du dispositif de 2004
+  trajectoire:
+    equivalent: >-
+      R/fonctionsCalculsPensions.R:3261-3350 (calculeVfu), vfuSeuilPt.csv et vfuCoefAA.csv,
+      au commit 0963b57
+    confrontation: aucune exécutée
+historique:
+- >-
+  2026-10-08 — écrite à l'étape 17 de l'action 138, sur les points de Destinie 2 et de
+  TRAJECTOiRE au registre (chantier 138.17).
+reformes:
+- fusion_agirc_arrco_2019
+effet: >-
+  Le salarié dont l'allocation de l'Agirc-Arrco n'excède pas cent points — 143,86 € par
+  an en 2026 — reçoit sa valeur viagère en une fois : 31,6 annuités à 60 ans, 26,4 à 65,
+  en 2026 ; avant 2019, l'Arrco jusqu'à cent points, l'Agirc sous cinq cents, à 19,1
+  annuités à 60 ans.

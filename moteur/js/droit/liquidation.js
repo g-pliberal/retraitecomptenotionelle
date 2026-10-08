@@ -375,8 +375,16 @@ export function liquider(demande, etat, contexte) {
     }
   }
 
+  // La première pension de base qu'un départ précédent sert déjà : le versement
+  // forfaitaire unique ne reste, depuis 2016, qu'à qui a pris sa première
+  // retraite avant (fiche versement_forfaitaire_unique).
+  const premieres = etat.servies
+    .filter((servie) => servie.date_effet !== undefined && servie.date_effet !== null
+      && ["base", "integre"].includes(moteur.catalogue.obtenir(servie.regime).etage))
+    .map((servie) => servie.date_effet).sort();
   const complements = completer(moteur, releve, ouverture, liquidees, contexte,
-    etat.totalServi, etat.initiales, etat.recalcul, nationales);
+    etat.totalServi, etat.initiales, etat.recalcul, nationales, demande.nature,
+    premieres.length > 0 ? premieres[0] : null);
   // La pension provisoire que la pension complète garde est un droit acquis
   // par cotisation : elle entre au total contributif, comme la pension.
   totalContributif += complements.plancher;

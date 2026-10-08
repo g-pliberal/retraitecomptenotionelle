@@ -51,6 +51,7 @@ from typing import TYPE_CHECKING
 from ..calendrier import DateMois
 from . import departs as _departs
 from . import liquider as _liquider
+from .commun import date_d_effet
 from .cumul import FONCTION_PUBLIQUE, Cumul, fonction_publique_quittee, jour
 from ..somme import somme_ordonnee
 
@@ -402,7 +403,8 @@ def liquider_les_regimes_nouveaux(moteur: ScenarioActuel, carriere: Carriere,
     liquidations = []
     for date in sorted(par_date):
         servies = tuple(
-            _departs.PensionServie(pension.regime, montant)
+            _departs.PensionServie(pension.regime, montant,
+                                   pension.date_effet or date_d_effet(carriere))
             for pension, montant in zip(resultat.pensions_par_regime, mener_au_mois(
                 moteur, resultat.pensions_par_regime, carriere.date_liquidation, date)))
         demande = _liquidation.Demande(

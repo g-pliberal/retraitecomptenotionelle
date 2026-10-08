@@ -564,7 +564,8 @@ export function liquiderLesDeparts(moteur, carriere, contexte, nature = "definit
       const menes = menerAuMois(moteur, anterieure.regimes,
         anterieure.carriere.dateLiquidation, depart.date);
       anterieure.regimes.forEach((pension, i) => {
-        servies.push({ regime: pension.regime, montant: menes[i] });
+        servies.push({ regime: pension.regime, montant: menes[i],
+          date_effet: anterieure.demande.dateEffet });
       });
     }
     let initiales = [];
