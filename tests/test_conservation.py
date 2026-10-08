@@ -109,6 +109,57 @@ def test_le_filet_voit_un_recit_perdu_et_le_retrouve_archive(tmp_path):
     assert conservation.verifier(reference, arbre) == []
 
 
+def test_un_document_tenu_par_son_test_n_est_pas_gele(tmp_path):
+    """Le parcours de présentation suit les pages qu'il décrit, et
+    `tests/test_parcours.py` l'y oblige : déclaré `recit`, il était gelé, et
+    chaque chiffre qui bougeait sur une page le disait perdu, la suite ne
+    reverdissant qu'en acceptant des pertes. `zones.yaml` le dit désormais
+    `tenu`, par ce test, et le filet ne le gèle plus. Rien n'est relâché
+    autour : un `tenu` dont le test manque, ou ne nomme pas le document, se
+    gèle comme un récit ; le récit qu'il enclave, le récit voisin et une
+    archive, même dite `tenu`, restent gelés."""
+    (tmp_path / "data" / "reference" / "prose").mkdir(parents=True)
+    (tmp_path / conservation.ZONES).write_text(
+        "fichiers:\n"
+        "  docs/parcours.md:\n    defaut: tenu\n    test: tests/test_parcours.py\n"
+        "    paragraphes_recit: ['Le 3 mars']\n"
+        "  docs/journal.md:\n    defaut: recit\n"
+        "  docs/archives/parcours.md:\n    defaut: tenu\n    test: tests/test_parcours.py\n",
+        encoding="utf-8")
+    (tmp_path / "docs" / "archives").mkdir(parents=True)
+    parcours = tmp_path / "docs" / "parcours.md"
+    parcours.write_text("# Parcours\n\nLa page affiche 1 515 €.\n\n"
+                        "Le 3 mars, on l'a présenté.\n", encoding="utf-8")
+    journal = tmp_path / "docs" / "journal.md"
+    journal.write_text("# Journal\n\nLa page affichait 1 569 €.\n", encoding="utf-8")
+    archive = tmp_path / "docs" / "archives" / "parcours.md"
+    archive.write_text("# Parcours, archivé\n\nLa page affichait 1 602 €.\n",
+                       encoding="utf-8")
+    arbre = conservation.Arbre(racine=tmp_path)
+    (tmp_path / "tests").mkdir()
+    test = tmp_path / "tests" / "test_parcours.py"
+    for texte in (None, "ARBRE = 'docs/autre.md'\n"):
+        if texte is not None:
+            test.write_text(texte, encoding="utf-8")
+        assert conservation.empreinte("La page affiche 1 515 €.") in conservation.figer(
+            arbre)["paragraphes"]["docs/parcours.md"]["Parcours"]
+
+    test.write_text("PARCOURS = 'docs/parcours.md'\n", encoding="utf-8")
+    reference = conservation.figer(arbre)
+    assert reference["paragraphes"]["docs/parcours.md"] == {
+        "Parcours": [conservation.empreinte("Le 3 mars, on l'a présenté.")]}
+    assert set(reference["paragraphes"]) == {
+        "docs/parcours.md", "docs/journal.md", "docs/archives/parcours.md"}
+    parcours.write_text(parcours.read_text(encoding="utf-8").replace("1 515", "1 498"),
+                        encoding="utf-8")
+    assert conservation.verifier(reference, arbre) == []
+    for fichier, gele in ((parcours, "présenté"), (journal, "1 569"), (archive, "1 602")):
+        texte = fichier.read_text(encoding="utf-8")
+        fichier.write_text(texte.replace(gele, "récrit"), encoding="utf-8")
+        assert conservation.verifier(reference, arbre), fichier.name
+        fichier.write_text(texte, encoding="utf-8")
+
+
 def test_une_version_de_l_architecture_est_gelee_des_son_fichier_ecrit(tmp_path):
     """Depuis l'action 149, une version de l'architecture a son fichier : un
     récit, que le filet gèle sans que `zones.yaml` le déclare — chaque

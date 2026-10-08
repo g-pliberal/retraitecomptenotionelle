@@ -148,6 +148,47 @@ def test_les_deux_cliquets_ne_remontent_jamais(zonage):
     assert not anomalies, "\n".join(a.message for a in anomalies)
 
 
+def test_ce_qui_est_tenu_l_est_par_un_test_qui_le_lit(zonage):
+    """Ni ancré ni gelé, un document `tenu` n'a que son test.
+
+    Le parcours de présentation suit les pages, et `tests/test_parcours.py`,
+    qui les rend, est tout ce qui le tient. Un `tenu` sans test, ou par un
+    test qui ne le nomme pas, ne serait plus tenu par rien : la conservation
+    le gèle alors comme un récit, et ce test dit pourquoi.
+    """
+    anomalies = verifier_prose.controler_tenus(zonage)
+    assert not anomalies, "\n".join(f"{a.fichier}: {a.message}" for a in anomalies)
+
+
+def test_un_tenu_que_son_test_ne_lit_pas_est_refuse(tmp_path, monkeypatch):
+    """Le test nommé est un fichier `tests/test_*.py`, que la suite joue, et
+    il nomme le document ; un test nommé pour un document où rien n'est
+    `tenu` est un divorce."""
+    monkeypatch.setattr(verifier_prose, "RACINE", tmp_path)
+    (tmp_path / "tests").mkdir()
+    (tmp_path / "scripts").mkdir()
+    for chemin in ("tests/test_guide.py", "tests/guide.py", "scripts/test_guide.py"):
+        (tmp_path / chemin).write_text("GUIDE = 'docs/guide.md'\n", encoding="utf-8")
+    (tmp_path / "tests" / "test_autre.py").write_text("AUTRE = 'docs/autre.md'\n",
+                                                      encoding="utf-8")
+
+    def fautes(regle: dict) -> list[str]:
+        zonage = verifier_prose.Zonage({"fichiers": {"docs/guide.md": regle}})
+        return [a.message for a in verifier_prose.controler_tenus(zonage)]
+
+    assert fautes({"defaut": "tenu", "test": "tests/test_guide.py"}) == []
+    assert fautes({"defaut": "etat", "sections": {"Le parcours": "tenu"},
+                   "test": "tests/test_guide.py"}) == []
+    assert fautes({"defaut": "recit"}) == []
+    for regle in ({"defaut": "tenu"},
+                  {"defaut": "tenu", "test": "tests/test_absent.py"},
+                  {"defaut": "tenu", "test": "tests/guide.py"},
+                  {"defaut": "tenu", "test": "scripts/test_guide.py"},
+                  {"defaut": "tenu", "test": "tests/test_autre.py"},
+                  {"defaut": "recit", "test": "tests/test_guide.py"}):
+        assert len(fautes(regle)) == 1, regle
+
+
 def test_tout_document_du_depot_est_declare(zonage):
     """Un document neuf ne peut pas entrer sans qu'on dise ce qu'il affirme."""
     connus = set(verifier_prose.documents(zonage))

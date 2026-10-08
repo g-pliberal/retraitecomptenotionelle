@@ -12,6 +12,12 @@
 #               sont justes à leur date, gelés, et les rafraîchir serait
 #               réécrire l'histoire ; scripts/conservation.py le garde.
 #   produit     le document est écrit par un script, qui a déjà son test.
+#   tenu        le document dit ce qui est vrai aujourd'hui, mais aucune sonde
+#               ne sait le recalculer — ce qu'une page du site affiche : le
+#               test que `test` nomme le confronte à ce qu'il décrit, et lui
+#               seul le tient. Ni ancré, ni gelé ; `verifier_prose.py` refuse
+#               un test absent, ou qui ne nomme pas le document, que
+#               scripts/conservation.py gèle alors comme un récit.
 #
 # Ce qui s'écarte du régime de son document se déclare ici, un à un : une
 # section (`sections`), un paragraphe qui raconte au milieu d'un état
@@ -384,11 +390,15 @@ fichiers:
   # Un parcours de présentation. Ses chiffres ne sont plus ceux d'une matinée
   # : `tests/test_parcours.py` rejoue ses adresses, rend ses pages, et refuse
   # tout montant, tout pourcentage et tout compte que le site n'affiche pas.
-  # La zone reste `recit` parce que les sondes de `verifier_prose.py` mesurent
-  # le dépôt — des lignes, des poids, des entrées de fichier — et ne savent
-  # pas rendre une page ; c'est le test qui tient ce document, et lui seul.
+  # Les sondes de `verifier_prose.py` mesurent le dépôt — des lignes, des
+  # poids, des entrées de fichier — et ne savent pas rendre une page ; c'est
+  # le test qui tient ce document, et lui seul. Déclaré `recit` jusqu'au
+  # 8 octobre 2026, il était aussi gelé par `scripts/conservation.py` : chaque
+  # chiffre qui bougeait sur une page faisait rougir l'un ou l'autre test, et
+  # la suite ne reverdissait qu'en acceptant des pertes (action 135).
   docs/parcours_presentation.md:
-    defaut: recit
+    defaut: tenu
+    test: tests/test_parcours.py
   # Une revue de littérature datée : ses chiffres sont ceux des sources à
   # leur date de lecture, et la page Risque fait foi pour ceux du modèle.
   docs/risque_de_defaut.md:

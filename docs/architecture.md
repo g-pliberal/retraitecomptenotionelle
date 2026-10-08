@@ -2258,7 +2258,7 @@ Ce que les deux fiches montrent :
 | `data/sources_a_explorer.yaml` | le registre des sources : toute source y entre, avec son statut et ce qu'elle a produit (§ 9.2) |
 | (nouveau) `data/reference/referents.yaml` | le registre des autres modèles publics : couverture, dépendances, conditions d'usage, écarts trouvés (§ 3.4) |
 | `data/reference/site/affirmations.yaml` | inchangé, relié aux fiches |
-| `data/reference/prose/zones.yaml` | simplifié : un régime (état, récit, produit) par fichier |
+| `data/reference/prose/zones.yaml` | simplifié : un régime (état, récit, produit, tenu par un test) par fichier |
 | `data/derive/`, `data/brut/` | inchangés : fabriqué, et sources brutes |
 
 **Le code**

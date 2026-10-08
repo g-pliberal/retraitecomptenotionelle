@@ -15,6 +15,7 @@ la règle, et ce qu'une session en fait.
 | `etat` | ce qui est vrai **aujourd'hui** | tout chiffre y est ancré sur une sonde qui le recalcule ; un chiffre nu est refusé |
 | `recit` | ce qui s'est passé **un jour** | qu'on n'y touche plus : ses chiffres sont justes à leur date, et `scripts/conservation.py` refuse qu'il se perde ou se réécrive |
 | `produit` | ce qu'un script écrit | rien ici : le script a son test de péremption |
+| `tenu` | ce qui est vrai **aujourd'hui**, mais qu'aucune sonde ne sait recalculer : ce qu'une page du site affiche | que le test qu'il nomme (`test`) existe, le lise et le confronte à ce qu'il décrit ; ni ancre, ni gel, et sans ce test, `scripts/conservation.py` le gèle comme un récit |
 
 Un récit qui naît dans un document d'état — un défaut trouvé, sa correction,
 ce qu'elle a déplacé — va dans la feuille de route, ou dans l'archive du

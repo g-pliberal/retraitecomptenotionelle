@@ -31,7 +31,11 @@ feuille de route encore en cours, qui vivent, comme leurs notes
 ``docs/archives/``), et les tableaux que ``scripts/chiffrage_plf.py``
 réécrit —, et l'identifiant de chaque entrée des registres. Un récit est
 gelé : s'il manque, il a été perdu ou réécrit. Une section d'état, elle,
-change avec le dépôt, et l'historique git garde ses versions. La référence ne
+change avec le dépôt, et l'historique git garde ses versions. Un document
+``tenu`` aussi, qui dit ce que le site affiche : le test que ``zones.yaml``
+lui nomme le tient, et ce filet ne le gèle pas — il gelait le parcours de
+présentation, et chaque chiffre qui bougeait sur une page le disait perdu,
+quand son test l'obligeait à suivre la page. La référence ne
 se fige pas par dessus une perte : ``--figer`` refuse tant que le filet n'est
 pas vert. Elle se refige à la fin de chaque domaine, pour tenir à leur tour
 les récits nés depuis : ce qui n'est pas encore dans la référence n'est
@@ -254,6 +258,11 @@ def geles(arbre: Arbre) -> dict[str, dict[str, list[str]]]:
     tableau collé à son repère ``<!-- nom:debut -->`` ne commence pas par une
     barre : ceux de ``docs/chiffrage_plf.md`` étaient gelés, et la première
     correction du modèle qui déplaçait leurs chiffres les disait perdus.
+    Une zone ``tenu`` n'est pas un récit, et ne se gèle pas : son test la
+    tient. Mais seulement si ce test existe et nomme le document
+    (``Zonage.faute_de_tenu``) ; sinon, elle se gèle comme un récit. Ce
+    qu'elle enclave de récit (``paragraphes_recit``) reste gelé, et un
+    dossier gelé en entier le reste, quoi que ``zones.yaml`` en dise.
     """
     zonage = Zonage(yaml.safe_load(arbre.lire(ZONES) or "") or {})
     sortie: dict[str, dict[str, list[str]]] = {}
@@ -269,9 +278,12 @@ def geles(arbre: Arbre) -> dict[str, dict[str, list[str]]]:
         recits = paragraphes_geles(lignes, zonage.prefixes_recit(chemin))
         produites = lignes_produites(lignes, zonage.blocs_produits(chemin))
         vivantes = _vivantes(texte) if chemin == FEUILLE else set()
+        sans_test = zonage.faute_de_tenu(chemin, arbre.lire) is not None
         for debut, fin, bloc in paragraphes(texte):
             section = next(s for s in sections if s.debut <= debut <= s.fin)
             regime = "recit" if tout_gele else zonage.regime(chemin, section)
+            if regime == "tenu" and sans_test:
+                regime = "recit"
             if regime != "recit" and debut not in recits:
                 continue
             if debut in vivantes or debut in produites:

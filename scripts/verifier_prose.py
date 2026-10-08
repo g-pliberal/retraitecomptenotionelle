@@ -31,6 +31,11 @@ D'où la distinction que ce script rend mécanique, et qui est tout son objet :
     date. Ses chiffres sont gelés, et il ne faut surtout pas les mettre à jour.
 ``produit``
     La zone est écrite par un script, qui a déjà son test de péremption.
+``tenu``
+    La zone dit ce qui est vrai aujourd'hui, mais aucune sonde ne sait le
+    recalculer — ce qu'une page du site affiche : le test que ``test`` nomme
+    la confronte à ce qu'elle décrit, et lui seul la tient. Ni ancrée, ni
+    gelée (``controler_tenus``).
 ``a_declarer``
     Personne n'a encore tranché. Le cliquet de ``zones.yaml`` compte ces
     sections, et ce compte ne peut que décroître.
@@ -733,6 +738,31 @@ class Zonage:
         regle = self.fichiers.get(fichier) or {}
         return regle.get("blocs_produits", []) or []
 
+    def faute_de_tenu(self, fichier: str, lire) -> str | None:
+        """Ce qui empêche le test nommé (``test``) de tenir ce que le document
+        a de `tenu`, ou rien s'il le tient.
+
+        Le test est un fichier ``tests/test_*.py``, que la suite joue, et il
+        nomme le document. ``lire`` rend le texte d'un fichier du dépôt, ou
+        ``None`` : le répertoire de travail ici, une révision aussi pour
+        ``conservation.py``, qui gèle comme un récit ce qu'un test ne tient pas.
+        """
+        regle = self.fichiers.get(fichier) or {}
+        test = regle.get("test")
+        if "tenu" not in {regle.get("defaut"), *(regle.get("sections") or {}).values()}:
+            return (None if test is None else
+                    f"zones.yaml lui nomme le test {test}, et rien n'y est `tenu`")
+        if test is None:
+            return "`tenu`, sans test nommé : ajouter test: tests/test_….py"
+        joue = (test.startswith("tests/") and Path(test).name.startswith("test_")
+                and test.endswith(".py"))
+        texte = lire(test) if joue else None
+        if texte is None:
+            return f"`tenu` par {test}, qui n'est pas un fichier de tests que la suite joue"
+        if Path(fichier).name not in texte:
+            return f"`tenu` par {test}, qui ne nomme pas {Path(fichier).name}"
+        return None
+
 
 def lignes_produites(lignes: list[str], reperes: list[str]) -> set[int]:
     """Les lignes qu'un script écrit, repère par repère.
@@ -787,7 +817,8 @@ def paragraphes_geles(lignes: list[str], prefixes: list[str]) -> set[int]:
 class Anomalie:
     fichier: str
     ligne: int
-    genre: str      # « derive », « sonde », « nu », « lettres », « section »
+    genre: str      # « derive », « sonde », « nu », « lettres », « section »,
+                    # « cliquet », « tenu »
     message: str
     mesure: str = ""  # celle dont la valeur a dérivé : « portage(identiques) »
 
@@ -1016,6 +1047,29 @@ def controler_cliquet(zonage: Zonage) -> list[Anomalie]:
     )
 
 
+def controler_tenus(zonage: Zonage) -> list[Anomalie]:
+    """Ce qui est `tenu` nomme le test qui le tient, et ce test le lit.
+
+    Ni ancrée ni gelée, une zone `tenu` n'a que son test : sans test nommé,
+    ou nommé sans qu'il lise le document, plus rien ne la tiendrait.
+    ``scripts/conservation.py`` la gèle alors comme un récit, pour que le
+    régime ne soit pas la porte par où un récit sortirait du gel, et ce
+    contrôle le dit. Un test que ``zones.yaml`` nomme pour un document où
+    rien n'est `tenu` est un divorce, comme une section déclarée qui n'existe
+    plus.
+    """
+    def lire(chemin: str) -> str | None:
+        fichier = RACINE / chemin
+        return fichier.read_text(encoding="utf-8") if fichier.is_file() else None
+
+    anomalies: list[Anomalie] = []
+    for fichier in sorted(zonage.fichiers):
+        faute = zonage.faute_de_tenu(fichier, lire)
+        if faute:
+            anomalies.append(Anomalie(fichier, 0, "tenu", faute))
+    return anomalies
+
+
 # --------------------------------------------------------------------------
 
 
@@ -1053,7 +1107,7 @@ def main() -> int:
         return 0
 
     anomalies, reecrits = controler(zonage, arguments.corriger)
-    anomalies += controler_cliquet(zonage)
+    anomalies += controler_cliquet(zonage) + controler_tenus(zonage)
 
     for fichier in reecrits:
         print(f"{fichier} réécrit")

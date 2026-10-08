@@ -42,6 +42,8 @@ from retraite_notionnelle.saisie import Saisie
 from retraite_notionnelle.web.site import disponible, rendre
 
 RACINE = Path(__file__).resolve().parents[1]
+#: Le document que ce test tient, et lui seul : `zones.yaml` le dit `tenu` par
+#: ce fichier, qui doit le nommer, sans quoi la conservation le regèle.
 PARCOURS = RACINE / "docs" / "parcours_presentation.md"
 
 #: La section du parcours, par son titre, et la page dont elle parle. Une
@@ -135,8 +137,8 @@ def _saisie_par_defaut() -> dict[str, str]:
 
 def _rendue(chemin: str) -> str:
     # Le parcours décrit l'exemple en net — « 3 500 € net par mois » —, le
-    # défaut de son temps ; le brut l'est depuis le 4 octobre 2026. Le récit ne
-    # se récrit pas : la page se rend dans le mode qu'il décrit.
+    # défaut de son temps ; le brut l'est depuis le 4 octobre 2026. La page se
+    # rend dans le mode qu'il décrit.
     parametres = ({**_saisie_par_defaut(), "montants": "net"} if chemin == "/simuler"
                   else {})
     return _prose(rendre(chemin, parametres)[1])

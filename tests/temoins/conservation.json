@@ -564,7 +564,8 @@
    "2026-10-07 | action 138, étape 7, première partie : les quotients projetés de l'INSEE au lieu de la loi de Gompertz-Makeham",
    "2026-10-07 | action 138, étape 8 : les minima des exploitants, la pension majorée de référence et le complément différentiel de la RCO",
    "2026-10-07 | action 138, étape 9, première partie : les indicateurs de cycle de vie",
-   "2026-10-07 | action 150, étape 1 : Pourquoi changer et Partager lisent le bilan figé"
+   "2026-10-07 | action 150, étape 1 : Pourquoi changer et Partager lisent le bilan figé",
+   "2026-10-08 | action 135 : le parcours tenu par son test, que la conservation ne gèle plus"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
    "Agirc-Arrco, paramètres annuels",
@@ -1782,6 +1783,12 @@
    "Version du 7 octobre 2026 : les limites par partie": [
     "a005696d13bb2a2e",
     "ce72bb9d15c41562"
+   ]
+  },
+  "docs/architecture/versions/2026-10-08-un-document-tenu-par-son-test.md": {
+   "Version du 8 octobre 2026 : un document tenu par son test": [
+    "fa082b61523e61fa",
+    "0c545fa2e344a344"
    ]
   },
   "docs/archives/conventions.md": {
@@ -6891,106 +6898,6 @@
     "862c7a51f69395cb",
     "ad581c708fc6eca8",
     "9c439a4f9a1bf2fb"
-   ]
-  },
-  "docs/parcours_presentation.md": {
-   "1. Programme — trois minutes": [
-    "4affbd8c4e78027d",
-    "679d82b755a3480f",
-    "bc77cbe2216fffc6"
-   ],
-   "2. Simuler — six minutes, c'est le cœur": [
-    "d745ea9a8aeebb45",
-    "2af21c96c46d97ae",
-    "8b54fd5e1937e909",
-    "0d257cb8ed5931ca",
-    "da9d078a811cdd8c",
-    "6cb7d40406336381",
-    "9e3e659d80b97682",
-    "35e77b79a9d702ee",
-    "832e64567e3e3c6d"
-   ],
-   "3. Cas types — trois minutes": [
-    "97ff69c81eb19473",
-    "773b3cc972166f9e",
-    "967088dee9441d19",
-    "77001543c0cec0af",
-    "22ed574a0dc38854"
-   ],
-   "4 bis. Risque — deux minutes, si on a le temps": [
-    "68969bf92be67711",
-    "f971f23cb7a212f4",
-    "6c133b8f6b2c0247",
-    "2041982c9067894b",
-    "7be0c23682934574",
-    "c8fe453896f43ca8"
-   ],
-   "4. Coût — trois minutes": [
-    "71b2458d77b8439e",
-    "319a1e5d87c5978f",
-    "c8a9d9763663ed95",
-    "f46b68717c4ff999",
-    "afc01ae0e9a5fb8d",
-    "aaf45a937db326ec",
-    "dbcb4c8cab2e02d5"
-   ],
-   "5. Avantages — deux minutes": [
-    "e13190fb11225547",
-    "ebe87d04985e95d3",
-    "86ed5c16f4d34644"
-   ],
-   "6. Méthode et Données — deux minutes, pour finir": [
-    "9a630078d6a3bd10",
-    "d8fe3e7fd9af50b2",
-    "7391483781a1c33b"
-   ],
-   "Avant de partir": [
-    "5d7ed1de7dc7c4d7",
-    "1089457bf8d4fb09"
-   ],
-   "Ce qu'il vaut mieux ne pas faire en salle": [
-    "cee32d279ef36d57",
-    "f298388c3e44a322"
-   ],
-   "L'idée en une phrase": [
-    "943f1b6f4a6e0b05",
-    "bba95ee2e0897210"
-   ],
-   "Le même parcours en diaporama, hors ligne": [
-    "c3980f1299a62cf5",
-    "2b7ec352ba2f618d",
-    "a4289ea17aec0421"
-   ],
-   "Le parcours, page par page": [
-    "10dc4ae6d00723c1",
-    "4bc8488cdc647b44"
-   ],
-   "Les pages qu'on garde pour les questions": [
-    "39c0c8a5379241f8",
-    "f8405e7a910e2dea"
-   ],
-   "Les questions à attendre, et où est la réponse": [
-    "cb942e90fdf35e7f",
-    "5aae538de8fcf481"
-   ],
-   "Présenter le site en vingt minutes": [
-    "4285d4b26901ec3a",
-    "71b9af86fb8ffdab",
-    "343951fdef002523"
-   ],
-   "Trois carrières prêtes à cliquer": [
-    "f4bd4f6659915c98",
-    "2712fab5d274d643",
-    "019a3736392adf66",
-    "1984ab0d16c10477",
-    "e96e70e1d0dacf78",
-    "b638caf9172c7a49",
-    "3e8980b9306340be",
-    "5f719a1303f242e0",
-    "42fbe0590ab543ae",
-    "8f186cb8f9c90d96",
-    "790f142cf35cd7c6",
-    "efa808bc3c21fb03"
    ]
   },
   "docs/risque_de_defaut.md": {

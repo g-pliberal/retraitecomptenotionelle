@@ -147,12 +147,13 @@ qu'elle dure. D'où cinq règles.
   se partagent `tests/outils_web.py`.
 - **La prose** : chaque document a son régime, déclaré dans
   `data/reference/prose/zones.yaml` — `etat` (tout chiffre y est ancré sur
-  une sonde), `recit` (vrai à sa date, gelé) ou `produit` —, et ce qui s'en
-  écarte s'y déclare un à un (`docs/fraicheur.md`). Un récit ne s'écrit pas
-  au milieu d'un état : il va dans la feuille de route ou une archive. Après
-  toute modification de la prose : `python scripts/verifier_prose.py
-  --corriger`. Les tableaux de `docs/chiffrage_plf.md` s'écrivent par
-  `python scripts/chiffrage_plf.py`, jamais à la main.
+  une sonde), `recit` (vrai à sa date, gelé), `produit` ou `tenu` (par le
+  test qu'il nomme, et lui seul) —, et ce qui s'en écarte s'y déclare un à
+  un (`docs/fraicheur.md`). Un récit ne s'écrit pas au milieu d'un état : il
+  va dans la feuille de route ou une archive. Après toute modification de la
+  prose : `python scripts/verifier_prose.py --corriger`. Les tableaux de
+  `docs/chiffrage_plf.md` s'écrivent par `python scripts/chiffrage_plf.py`,
+  jamais à la main.
 - **La documentation, au plus court** : une note de feuille de route par
   étape, au commit qui la clôt, et non une par sous-partie, dans un fichier à
   elle : `docs/feuille_de_route/<action>/<AAAA-MM-JJ>-<sujet>.md`
