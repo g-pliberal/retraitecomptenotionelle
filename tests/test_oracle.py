@@ -1664,6 +1664,13 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # suit l'anniversaire, ou celui-ci pour qui est né un 1er (R. 351-37).
         effet = carriere.date_de_l_age(ouvrir.age_ouverture_droit(actuel, carriere))
         return f"{effet.annee}-{effet.mois:02d}"
+    if cle == "bonifications_des_emplois":
+        # Les trimestres que chaque fiche des bonifications de service ajoute
+        # aux services liquidés, telles que l'étape des durées les écrit.
+        from retraite_notionnelle.droit import releve
+
+        durees = releve.construire(actuel, carriere).durees
+        return {emploi.fiche: emploi.services for emploi in durees.emplois}
     if cle == "trimestres_de_majoration_enfants":
         # La caisse publie le nombre de trimestres qu'elle ajoute par
         # enfant ; le test le mesure en rejouant la MÊME carrière sans

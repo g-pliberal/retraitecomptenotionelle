@@ -64,13 +64,15 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   écrêter au plafond : une carrière du dépôt n'exerce qu'un métier à la fois,
   et la somme n'a jamais lieu.
 - **Bonifications de service.** Bonifications de dépaysement, de campagne
-  militaire, du cinquième des militaires, des douaniers de la branche
+  militaire, pour services aériens ou sous-marins, des douaniers de la branche
   surveillance et des contrôleurs aériens, de la moitié du temps des égoutiers.
   La bonification POUR ENFANTS, elle, est servie : elle demande le nombre
   d'enfants et, à qui la connaît, la naissance de chacun. Celles des policiers,
-  des surveillants pénitentiaires et des sapeurs-pompiers professionnels le
-  sont aussi, et la majoration de durée des hospitaliers actifs, parce qu'un
-  statut porte chacun de ces emplois. Les autres supposent de connaître le
+  des surveillants pénitentiaires, des sapeurs-pompiers professionnels et le
+  cinquième des militaires le sont aussi, et la majoration de durée des
+  hospitaliers actifs, parce qu'un statut porte chacun de ces emplois ; la
+  bonification des militaires ne compte que les années servies sous les deux
+  statuts militaires, sans le service national. Les autres supposent de connaître le
   CORPS d'appartenance et le détail des services, que la saisie ne demande
   pas.
 - **Le temps partiel.** Il compte à temps plein dans la durée d'assurance, et

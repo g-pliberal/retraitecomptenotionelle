@@ -22,9 +22,11 @@ sources:
   - >-
     Aucun exemple chiffré publié : ni le SRE ni service-public ne donnent la durée
     d'un militaire par année d'ouverture, et la Cour la décrit sans la chiffrer.
-    Les bonifications de service (cinquième, campagnes, services aériens), qui portent
-    un quart de la durée validée des militaires selon la Cour, restent hors du modèle
-    : c'est elles qui décideraient si la durée requise mord.
+    Les bonifications de service, qui portent un quart de la durée validée des
+    militaires selon la Cour, sont servies pour le cinquième depuis le 8 octobre 2026
+    (fiche bonification_cinquieme_militaires) ; les bénéfices de campagne et les
+    services aériens restent hors du modèle, et c'est avec eux que se dira si la
+    durée requise mord.
   lectures:
   - type: legifrance
     reference: >-

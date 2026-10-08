@@ -104,11 +104,20 @@ _REGIME_GENERAL = "regime_general"
 CONDITIONS = ("tout_enfant", "ne_en_service", "ne_avant_radiation",
               "accouchement_apres_recrutement")
 
-#: Les fiches des bonifications et des majorations que l'emploi CLASSÉ ouvre
-#: dans le régime qui le pensionne, lues par :class:`FichesDatees
-#: <retraite_notionnelle.scenarios.actuel.FichesDatees>` à la date d'effet.
+#: La fiche de la bonification du cinquième des militaires (L. 12, i), que
+#: l'inventaire des avantages mesure à part des emplois classés.
+FICHE_DES_MILITAIRES = "bonification_cinquieme_militaires"
+
+#: Les fiches des bonifications et des majorations que l'emploi CLASSÉ, ou le
+#: service militaire, ouvre dans le régime qui le pensionne, lues par
+#: :class:`FichesDatees <retraite_notionnelle.scenarios.actuel.FichesDatees>`
+#: à la date d'effet. L'ordre est celui du cumul, que les versions de
+#: septembre 2023 bornent à vingt trimestres : celle des militaires après les
+#: bonifications des emplois classés (L. 12), la majoration des hospitaliers
+#: après toutes (décret n° 2003-1306, article 21, III).
 FICHES_DES_EMPLOIS = ("bonification_cinquieme_police_penitentiaire",
                       "bonification_cinquieme_sapeurs_pompiers",
+                      FICHE_DES_MILITAIRES,
                       "majoration_duree_hospitaliers_actifs")
 
 #: Ce qu'une version de ces fiches accorde (``contenu.parametres.nature``) : une
@@ -130,9 +139,25 @@ NATURES_DES_EMPLOIS = ("bonification", "majoration")
 #: * ``durees_et_age_de_l_emploi`` — les années servies dans les statuts de la
 #:   fiche (``annees_dans_l_emploi``) et celles de la fonction publique civile
 #:   (``annees_de_services``), l'âge anticipé atteint si ``age_anticipe`` ; la
-#:   radiation pour invalidité imputable au service en dispense.
+#:   radiation pour invalidité imputable au service en dispense ;
+#: * ``duree_dans_l_emploi`` — les années servies dans les statuts de la fiche
+#:   (``annees_dans_l_emploi``), et, si ``en_fonction``, la dernière année des
+#:   services qu'elle compte (``services_comptes``) servie dans l'un d'eux : la
+#:   bonification du cinquième « à tous les militaires », qui ne va aux
+#:   « anciens militaires » que depuis septembre 2023 (L. 12, i).
 CONDITIONS_DES_EMPLOIS = ("duree_de_l_age_minore", "categorie_active_en_fonction",
-                          "duree_de_la_categorie_active", "durees_et_age_de_l_emploi")
+                          "duree_de_la_categorie_active", "durees_et_age_de_l_emploi",
+                          "duree_dans_l_emploi")
+
+#: L'âge au-delà duquel une version supprime la bonification
+#: (``contenu.parametres.age_de_suppression``), quand elle ne l'écrit pas en
+#: années : « l'âge mentionné à l'article L. 161-17-2 du code de la sécurité
+#: sociale », l'âge légal de la génération (L. 12, i, de 2011 à 2023).
+AGE_LEGAL = "age_legal"
+
+#: La tolérance des années de service, qu'une somme de fractions de mois laisse
+#: flottantes : un milliardième d'année.
+EPSILON_ANNEES = 1e-9
 
 
 @dataclass(frozen=True)
@@ -219,7 +244,8 @@ class TrimestresEmploi:
     Une BONIFICATION de services — le cinquième des policiers — entre aux
     services liquidés, mais « dans la limite du taux maximal de 75 % »
     (service des retraites de l'État) : seules celles de L. 12 portent le
-    pourcentage au-delà (L. 13), et elle n'en est pas. Elle entre aussi à la
+    pourcentage au-delà (L. 13), et elle n'en est pas ; celle des militaires,
+    au i de L. 12, en est. Elle entre aussi à la
     durée d'assurance, qui « totalise la durée des services et bonifications
     admissibles en liquidation » (L. 14, I), et par elle à la durée tous
     régimes ; mais non à celle qui ouvre la surcote du fonctionnaire : « les
@@ -734,9 +760,14 @@ def trimestres_d_un_emploi(moteur: ScenarioActuel, carriere: Carriere, fiche: st
     article 1er) —, sous son plafond — « cinq annuités » —, diminuée des
     services accomplis au-delà de l'âge qui la réduit — « à concurrence de la
     durée des services accomplis au-delà de cinquante-cinq ans », puis
-    cinquante-sept, jusqu'en août 2023 —, ceux-ci comptés à l'année :
-    l'année de l'anniversaire est réputée servie avant lui. Elle entre aux
-    services liquidés et à la durée tous régimes.
+    cinquante-sept, jusqu'en août 2023 —, ceux-ci comptés au mois
+    (:func:`services_au_dela`). Celle des militaires perd « une annuité pour
+    chaque année supplémentaire de service » (``reduction_par_annee_entiere``),
+    et n'est plus due au-delà de l'âge qui la supprime (``age_de_suppression``)
+    : le service des retraites de l'État n'en accorde « aucune […] au delà de
+    62 ans », sauf au militaire radié « le lendemain de ses 62 ans », à qui il
+    en reste deux ans. Elle entre aux services liquidés et à la durée tous
+    régimes.
 
     Une MAJORATION est une fraction des services effectifs de la fonction
     publique civile — « un an par période de dix années de services
@@ -775,10 +806,16 @@ def trimestres_d_un_emploi(moteur: ScenarioActuel, carriere: Carriere, fiche: st
     annees = base * float(parametres["fraction"])
     if parametres.get("plafond_trimestres") is not None:
         annees = min(annees, int(parametres["plafond_trimestres"]) / 4)
+    if parametres.get("age_de_suppression") is not None:
+        age, lue = age_de_suppression(moteur, carriere, fiche, version)
+        if services_au_dela(carriere, statuts, age, borne, servies) > EPSILON_ANNEES:
+            return None
+        fiabilite = min(fiabilite, lue)
     if parametres.get("age_de_reduction") is not None:
-        annee = carriere.annee_naissance + int(parametres["age_de_reduction"])
-        avant = carriere.duree_de_service(statuts, annee if borne is None else min(annee, borne))
-        annees -= max(0.0, servies - avant)
+        au_dela = services_au_dela(carriere, statuts, float(parametres["age_de_reduction"]),
+                                   borne, servies)
+        annees -= (math.floor(au_dela + EPSILON_ANNEES)
+                   if parametres.get("reduction_par_annee_entiere") else au_dela)
     trimestres = int(annees * 4 + 0.5) if annees > 0 else 0
     if trimestres <= 0:
         return None
@@ -790,6 +827,40 @@ def trimestres_d_un_emploi(moteur: ScenarioActuel, carriere: Carriere, fiche: st
         au_dela_du_maximum=bool(parametres["au_dela_du_maximum"]), fiabilite=fiabilite)
 
 
+def services_au_dela(carriere: Carriere, statuts: list[str], age: float,
+                     borne: int | None, servies: float) -> float:
+    """Les années servies dans ces statuts au-delà de cet âge, ``servies``
+    étant celles de toute la carrière : depuis le premier mois vécu entier à
+    cet âge (:meth:`~retraite_notionnelle.carriere.Carriere.date_de_l_age`),
+    au mois près (:meth:`~retraite_notionnelle.carriere.Carriere.duree_de_service_avant`).
+
+    Le militaire radié le lendemain de ses soixante-deux ans, qui part au
+    premier du mois suivant, n'a rien servi au-delà de cet âge ; il a servi
+    trois ans au-delà de cinquante-neuf.
+    """
+    avant = carriere.duree_de_service_avant(statuts, carriere.date_de_l_age(age), borne)
+    return max(0.0, servies - avant)
+
+
+def age_de_suppression(moteur: ScenarioActuel, carriere: Carriere, fiche: str,
+                       version: dict) -> tuple[float, Fiabilite]:
+    """L'âge au-delà duquel la version supprime la bonification, et la
+    fiabilité de sa lecture : écrit en années, ou l'âge légal de la
+    génération (:data:`AGE_LEGAL`). Une valeur que le moteur ne connaît pas
+    l'arrête (§ 6.7)."""
+    parametres = version["parametres"]
+    age = parametres["age_de_suppression"]
+    if age == AGE_LEGAL:
+        legal = moteur.ages_ouverture.age(carriere.generation)
+        if legal is None:
+            raise ValueError(f"{fiche}.{version['id']} : pas d'âge légal pour la "
+                             f"génération {carriere.generation}")
+        return legal
+    if isinstance(age, bool) or not isinstance(age, (int, float)):
+        raise ValueError(f"{fiche}.{version['id']} : âge de suppression inconnu, {age!r}")
+    return float(age), Fiabilite.depuis_texte(parametres["fiabilite"])
+
+
 def condition_d_un_emploi(moteur: ScenarioActuel, carriere: Carriere, condition: str,
                           parametres: dict, servies: float) -> Fiabilite | None:
     """La condition remplie, et la fiabilité de ce qu'elle a lu ; ``None``
@@ -799,7 +870,19 @@ def condition_d_un_emploi(moteur: ScenarioActuel, carriere: Carriere, condition:
     génération, au classement que la version nomme. Les services actifs
     sont ceux de tous les statuts classés, les super-actifs compris : ils
     « peuvent être comptabilisés comme services actifs » (L. 24, I, 1°).
+    La durée dans l'emploi du militaire ne lit aucun classement : ses dix-sept
+    ans, quinze avant juillet 2011, sont écrits dans la version.
     """
+    if condition == "duree_dans_l_emploi":
+        if servies + EPSILON_ANNEES < float(parametres["annees_dans_l_emploi"]):
+            return None
+        if parametres["en_fonction"]:
+            borne = coordonner.borne_carriere(carriere)
+            comptes = carriere.bornes_de_service(list(parametres["services_comptes"]), borne)
+            dans_l_emploi = carriere.bornes_de_service(list(parametres["statuts"]), borne)
+            if comptes is None or dans_l_emploi is None or dans_l_emploi[1] < comptes[1]:
+                return None
+        return Fiabilite.depuis_texte(parametres["fiabilite"])
     derogation = moteur.ages_categorie_active.derogation(
         parametres["classement"], carriere.generation)
     if condition == "durees_et_age_de_l_emploi":

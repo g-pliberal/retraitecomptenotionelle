@@ -48,9 +48,9 @@ code employé par l'une des trois ait sa ligne, sous son code ou sous un alias.
 | État | Combien | Ce que ça veut dire |
 |---|---|---|
 | **chiffré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=chiffre)-->12<!--/--> | Le scénario 1 le sert, et la cascade en isole le montant en euros. La somme des lignes chiffrées vaut *exactement* `pension_annuelle − total_contributif` : c'est vérifié à chaque simulation. |
-| **intégré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=integre)-->14<!--/--> | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. **Sept le sont désormais**, par retrait : voir les §4 bis et 4 ter. Trois autres ne sont pas des dispositifs ; le dernier, le taux plein par inaptitude ou invalidité, servi depuis le 30 septembre 2026 à qui les déclare, a sa dépense lue dans les comptes de la protection sociale. |
+| **intégré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=integre)-->15<!--/--> | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. **Sept le sont désormais**, par retrait : voir les §4 bis et 4 ter. Trois autres ne sont pas des dispositifs ; le dernier, le taux plein par inaptitude ou invalidité, servi depuis le 30 septembre 2026 à qui les déclare, a sa dépense lue dans les comptes de la protection sociale. |
 | **déclaré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=declare)-->2<!--/--> | Une fiche de régime le déclare, et le scénario 1 ne le sert pas à l'assuré. La réversion, qui est de ceux-là, est la pension d'un autre : le modèle la liquide, depuis le 28 septembre 2026, pour le conjoint qu'on lui déclare, mais pas pour tous les ménages, et son coût est LU dans les séries de la DREES : voir le §4 quater. |
-| **absent** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=absent)-->19<!--/--> | Ni déclaré ni servi. C'est un écart au droit positif — que les comptes de la protection sociale comblent pour dix d'entre eux, qu'ils publient poste par poste : voir les §4 quinquies et 4 sexies. |
+| **absent** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=absent)-->18<!--/--> | Ni déclaré ni servi. C'est un écart au droit positif — que les comptes de la protection sociale comblent pour dix d'entre eux, qu'ils publient poste par poste : voir les §4 quinquies et 4 sexies. |
 
 Et trois façons d'en mesurer le coût : par le **modèle** (la cascade, ou un
 recalcul de même nature), par une **série publiée**, ou par **rien** — ce
@@ -60,9 +60,9 @@ de `data/sources.yaml`, et c'est ce qui fait aujourd'hui <!--chiffre:mesure(avan
 
 ## 3. La liste
 
-Base légale telle qu'elle a été lue dans l'index LEGI du dépôt, sauf les deux
-lignes marquées « à certifier », où la référence est donnée pour la recherche et
-non comme une source. Une déduction n'est pas une lecture.
+Base légale telle qu'elle a été lue dans l'index LEGI du dépôt, sauf la ligne
+marquée « à certifier », où la référence est donnée pour la recherche et non
+comme une source. Une déduction n'est pas une lecture.
 
 | Dispositif | Base légale | Modèle | Coût mesurable par |
 |---|---|---|---|
@@ -100,8 +100,8 @@ non comme une source. Une déduction n'est pas une lecture.
 | Départ anticipé des catégories actives et super-actives | L. 24 I 1° CPCMR; L. 14 bis CPCMR; décret n° 2026-344 du 7 mai 2026 article 3 D | intégré | modèle |
 | Retraite anticipée pour carrière longue | L. 351-1-1 CSS; D. 351-1-1 CSS; L. 351-1-1 3° CSS | intégré | modèle |
 | Jouissance immédiate de la pension militaire | L. 24 CPCMR; L. 25 CPCMR | intégré | modèle |
-| Bonification du cinquième du temps de service des militaires | L. 12 i CPCMR | absent | — |
-| Bonification du cinquième des policiers, pompiers et surveillants | statuts particuliers — à certifier; hors CPCMR | absent | — |
+| Bonification du cinquième du temps de service des militaires | L. 12 i CPCMR; loi n° 71-1061 article 53 | intégré | modèle |
+| Bonification du cinquième des policiers, pompiers et surveillants | loi n° 57-444 article 1er; loi n° 96-452 article 24; loi n° 83-1179 article 125 | intégré | modèle |
 | Bonification de dépaysement | L. 12 a CPCMR | absent | — |
 | Bénéfices de campagne | L. 12 c CPCMR | absent | — |
 | Bonification pour service aérien ou sous-marin commandé | L. 12 d CPCMR | absent | — |

@@ -132,7 +132,10 @@
 #   valeurs_de_service_au_jour — pour chaque régime en points nommé, la valeur
 #     de service qu'une pension prenant effet au départ de l'exemple reçoit,
 #     fusions comprises, au dix-millième d'euro : celle du jour, non celle du
-#     31 décembre.
+#     31 décembre ;
+#   bonifications_des_emplois — pour chaque fiche des bonifications de service
+#     (emplois classés, militaires), les trimestres qu'elle ajoute aux services
+#     liquidés : toutes celles que la carrière reçoit, et elles seules.
 #
 # `carriere.trimestres_valides` demande au test de choisir l'âge d'entrée qui
 # donne exactement ce nombre de trimestres à la liquidation ; `age_debut`
@@ -837,6 +840,24 @@ exemples:
       La pension prend effet le 1er avril 2026.
     carriere: {naissance: "1962-03-20", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2026-04", trimestres_valides: 175}
     attendu: {trimestres_requis: 169, taux_liquidation: 0.80625}
+
+  # La page « Le calcul de la pension » des militaires, dans sa mise à jour du
+  # 6 mai 2021, lue le 8 octobre 2026 dans sa copie de 2022 (web.archive.org) :
+  # la page en ligne ne la porte plus, la règle ayant pris fin en août 2023.
+  # Elle ne dit pas d'officier ; l'exemple en prend un, engagé à vingt-deux
+  # ans, dont les quarante ans de services valent les cinq annuités entières.
+  - id: sre_militaire_radie_le_lendemain_de_ses_62_ans
+    source: {editeur: "SRE", reference: "retraitesdeletat.gouv.fr, Actif, Militaires, « Le calcul de la pension », la bonification du cinquième du temps de service accompli, mise à jour du 6 mai 2021", verifie_le: "2026-10-08"}
+    enonce: >-
+      « Elle peut être écrêtée (1 an par année de service au-delà de 60 ans).
+      Aucune bonification du 1/5ème n'est accordée au delà de 62 ans, sauf si la
+      limite d'âge de l'emploi est fixée à 62 ans et si le militaire est radié des
+      cadres par limite d'âge le lendemain de ses 62 ans. Dans un tel cas, la
+      bonification maximale est de 2 ans. » Un officier né le 15 juin 1955, de la
+      génération de soixante-deux ans, radié le 16 juin 2017 : sa pension prend
+      effet le 1er juillet, avec deux ans de bonification.
+    carriere: {naissance: "1955-06-15", sexe: H, affiliation: militaire_officier, liquidation: "2017-07", age_debut: 22}
+    attendu: {bonifications_des_emplois: {bonification_cinquieme_militaires: 8}}
 
   # ---- CNRACL (documentation juridique de la Caisse des dépôts) ---------
   # juris-cnracl.retraites.fr, lue le 24 septembre 2026 (action 89, lot de la

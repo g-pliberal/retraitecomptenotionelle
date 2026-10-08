@@ -36,7 +36,7 @@
 
 import { CAS_TYPES, ageLiquidationPour } from "./castypes.js";
 import { DEMI_TRANCHE, generations, ponderation } from "./cout.js";
-import { FICHES_DES_EMPLOIS } from "./droit/compter.js";
+import { FICHE_DES_MILITAIRES, FICHES_DES_EMPLOIS } from "./droit/compter.js";
 import { CarriereLongue, CatalogueRegimes } from "./regimes.js";
 import { ScenarioActuel } from "./scenario-actuel.js";
 
@@ -319,17 +319,34 @@ export const NEUTRALISATIONS = [
       + "leurs seuls services",
     par: "table",
   },
+  {
+    code: "bonification_cinquieme_militaires",
+    quoi: "la fiche de la bonification du cinquième des militaires est retirée : "
+      + "le militaire liquide ses seuls services, sans le cinquième de leur durée "
+      + "que la bonification y ajoute",
+    par: "table",
+  },
 ];
 
 /**
- * Les statuts qu'une version des fiches des emplois classés bonifie : les seules
- * carrières que le retrait de ces fiches peut toucher. Voir
- * `statuts_des_emplois` du Python.
+ * Les fiches que retire chacune des neutralisations des bonifications de
+ * service. Voir `FICHES_RETIREES` du Python.
  */
-export function statutsDesEmplois(simulateur) {
+export const FICHES_RETIREES = Object.freeze({
+  bonification_cinquieme_services_actifs: Object.freeze(
+    FICHES_DES_EMPLOIS.filter((nom) => nom !== FICHE_DES_MILITAIRES)),
+  bonification_cinquieme_militaires: Object.freeze([FICHE_DES_MILITAIRES]),
+});
+
+/**
+ * Les statuts qu'une version des fiches que cette neutralisation retire bonifie :
+ * les seules carrières que le retrait peut toucher. Voir `statuts_des_emplois`
+ * du Python.
+ */
+export function statutsDesEmplois(simulateur, code) {
   const fiches = simulateur.scenarioActuel.fichesDatees.fiches();
   const statuts = new Set();
-  for (const nom of FICHES_DES_EMPLOIS) {
+  for (const nom of FICHES_RETIREES[code]) {
     for (const version of fiches[nom]?.versions ?? []) {
       for (const statut of version.parametres.statuts ?? []) {
         statuts.add(statut);
@@ -422,11 +439,14 @@ export function scenariosNeutralises(simulateur) {
   handicap.invalidites = handicap.invalidites.sans("handicap");
   variantes.retraite_anticipee_handicap = handicap;
 
-  // Les fiches des bonifications des emplois classés, retirées : seule une
-  // carrière servie dans un emploi qu'elles bonifient y perd quelque chose.
-  const emplois = neuf(simulateur.catalogue);
-  emplois.fichesDatees = emplois.fichesDatees.sans(...FICHES_DES_EMPLOIS);
-  variantes.bonification_cinquieme_services_actifs = emplois;
+  // Les fiches des bonifications des emplois classés, ou celle des militaires,
+  // retirées : seule une carrière servie dans un emploi qu'elles bonifient y
+  // perd quelque chose.
+  for (const [code, noms] of Object.entries(FICHES_RETIREES)) {
+    const emplois = neuf(simulateur.catalogue);
+    emplois.fichesDatees = emplois.fichesDatees.sans(...noms);
+    variantes[code] = emplois;
+  }
   return variantes;
 }
 
@@ -527,9 +547,10 @@ export function recalculer(simulateur, cas, generation, age, reelle, variantes =
       const variante = retraits[code];
       if (variante === undefined) continue;
       // Une carrière qu'aucune fiche ne bonifie n'a rien à perdre au retrait :
-      // aucun cas type de la grille n'est policier ni pompier.
-      if (code === "bonification_cinquieme_services_actifs"
-          && !statutsDesEmplois(simulateur).has(cas.affiliation)) {
+      // aucun cas type de la grille n'est policier ni pompier, et le militaire
+      // n'a que la sienne.
+      if (code in FICHES_RETIREES
+          && !statutsDesEmplois(simulateur, code).has(cas.affiliation)) {
         continue;
       }
       const carriere = carriereVariante(simulateur, cas, generation, age);

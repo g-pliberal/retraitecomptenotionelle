@@ -6353,9 +6353,9 @@ année.
 | | Part du PIB en 2021 |
 |---|---|
 | Système actuel, convention du COR | **<!--chiffre:mesure(engagement)-->479<!--/--> %** |
-| — dont retraités (pension entière acquise) | <!--chiffre:mesure(engagement?quoi=retraites)-->199<!--/--> % |
+| — dont retraités (pension entière acquise) | <!--chiffre:mesure(engagement?quoi=retraites)-->200<!--/--> % |
 | — dont actifs, au prorata de la carrière faite | <!--chiffre:mesure(engagement?quoi=actifs)-->279<!--/--> % |
-| Proposition (système 6) | <!--chiffre:mesure(engagement?scenario=6)-->339<!--/--> % |
+| Proposition (système 6) | <!--chiffre:mesure(engagement?scenario=6)-->338<!--/--> % |
 | Notionnel part salariale (système 2) | <!--chiffre:mesure(engagement?scenario=2)-->150<!--/--> % |
 | Publié par Eurostat, tableau 29 | <!--chiffre:mesure(engagement?quoi=publie)-->397<!--/--> % |
 

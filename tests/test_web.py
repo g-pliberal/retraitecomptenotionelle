@@ -1232,6 +1232,13 @@ def _refaire_la_formule(detail: str) -> float | None:
     if annuites:
         reference, taux, acquis, requis = annuites.groups()
         montant = sans_virgules(reference) * float(taux) / 100 * int(acquis) / int(requis)
+        # Le taux maximum atteint : les bonifications de L. 12 portent le
+        # pourcentage de 75 à 80 %, et le prorata s'y arrête — à 80/75 dans les
+        # trois régimes du code des pensions, dont le taux plein est de 75 %.
+        maximum = re.search(r"taux maximum (\d+)% atteint", detail)
+        if maximum:
+            montant = min(montant, sans_virgules(reference) * float(taux) / 100
+                          * int(maximum.group(1)) / 75)
         surcote = re.search(r"surcote parentale ([\d.]+)%", detail)
         if surcote:
             montant *= 1 + float(surcote.group(1)) / 100

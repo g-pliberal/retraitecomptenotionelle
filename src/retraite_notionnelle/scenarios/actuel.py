@@ -1101,8 +1101,9 @@ class FichesDatees:
     (``revenu_annuel_moyen_independants``) : quelles années, comment les
     moyenner, lesquelles écarter, et, pour les seconds, quelle table du nombre
     d'années. Une période y renvoie par ``regles_du_salaire_annuel_moyen``.
-    Et les bonifications des emplois classés de la fonction publique, que
-    ``compter.trimestres_des_emplois`` lit (``compter.FICHES_DES_EMPLOIS``),
+    Et les bonifications des emplois classés de la fonction publique et celle
+    des militaires, que ``compter.trimestres_des_emplois`` lit
+    (``compter.FICHES_DES_EMPLOIS``),
     et le départ anticipé des parents de trois enfants, que
     ``ouvrir.depart_parent_trois_enfants`` lit, et le plafond de L. 18, que
     ``completer.plafond_de_l_article_l18`` lit, et la majoration exceptionnelle
@@ -1117,6 +1118,7 @@ class FichesDatees:
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
             "bonification_cinquieme_police_penitentiaire",
             "bonification_cinquieme_sapeurs_pompiers",
+            "bonification_cinquieme_militaires",
             "majoration_duree_hospitaliers_actifs",
             "depart_anticipe_parents_trois_enfants",
             "majoration_enfants_plafond_fonction_publique",

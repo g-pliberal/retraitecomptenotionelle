@@ -3,11 +3,11 @@
 **Reprise, au 8 octobre 2026.** Fait : les bonifications et la majoration des
 emplois classés (cette note) ; le départ des parents de trois enfants, le
 plafond de L. 18, la majoration de septembre 2023, les versements uniques,
-l'arrondi des services et le minimum garanti (notes du 8 octobre). Reste, dans
-cet ordre : la bonification du cinquième des militaires (L. 12, i) ; puis la
-pension maximale du régime général, les taux pleins de L. 351-8, les
-majorations pour enfants à charge et pour conjoint à charge. Détail : plus
-bas, « Ce qui reste », et les notes du 8 octobre pour leurs restes.
+l'arrondi des services et le minimum garanti, la bonification du cinquième des
+militaires (notes du 8 octobre). Reste, dans cet ordre : la pension maximale du
+régime général, les taux pleins de L. 351-8, les majorations pour enfants à
+charge et pour conjoint à charge. Détail : plus bas, « Ce qui reste », et les
+notes du 8 octobre pour leurs restes.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.17 ». L'étape réunit
 neuf règles qui manquent au dépôt ; la plus coûteuse, mesurée par TRAJECTOiRE,

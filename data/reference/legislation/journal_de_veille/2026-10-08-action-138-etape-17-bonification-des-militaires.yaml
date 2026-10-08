@@ -1,0 +1,50 @@
+date: "2026-10-08"
+session: "action 138, étape 17, septième partie : la bonification du cinquième des militaires (L. 12, i)"
+consulte: >-
+  veille_droit.py (quatre fiches à relire, aucune de cette étape) ; l'index LEGI, mis à
+  jour des incréments jusqu'au 7 octobre 2026, puis textes.py --inscrire (aucune
+  rédaction nouvelle) ; L. 161-17-2 et L. 161-17-3 n'ont pas de rédaction postérieure au
+  31 décembre 2025 (fiche fin_de_la_suspension_2028). Dans l'index LEGI : L. 12 du code
+  des pensions, ses huit rédactions, du 14 juillet 1982 au 31 décembre 2025 ; L. 13 et
+  L. 14, rédactions de 1964 à 2004 ; R*76, R*76 bis et R. 76 ter, sur la bonification
+  du cinquième en détachement ; L. 17 d'avant 2004. Dans l'index JORF : la loi n°
+  2003-775, articles 48 et 80 ; la loi n° 2010-1330, articles 33, 38 et 118 ; la loi n°
+  2023-270, article 10, III et XXX ; les notices de la loi de finances pour 1972 et de la
+  loi n° 75-1000, seules gardées. Hors des index : le rapport n° 6 du Sénat (1975-1976)
+  sur le projet de loi modifiant le statut général des militaires, qui transcrit l'article
+  3 du projet et l'article 53 de la loi de finances pour 1972 ; le rapport d'information
+  du Sénat n° 236 (2007-2008) sur les pensions militaires ; la page « Le calcul de la
+  pension » des militaires du service des retraites de l'État, en ligne et dans sa
+  mise à jour du 6 mai 2021, copiée en 2022 par web.archive.org (Légifrance et la page
+  de 2021 refusent l'outil en ligne de commande) ; sa page « Les bonifications » ; le
+  guide « La pension de retraite des militaires » du ministère des armées, juillet 2025.
+trouve: >-
+  La bonification naît de l'article 53 de la loi de finances pour 1972 : un cinquième du
+  temps accompli, trois annuités au plus, à vingt-cinq ans de services, aux militaires
+  rayés des cadres de 1972 à 1980 dont la limite d'âge est inférieure à cinquante-huit
+  ans et aux officiers de gendarmerie. La loi n° 75-1000 du 30 octobre 1975 la rend
+  permanente au i de L. 12 et l'abroge ; son projet la réservait aux mêmes, à quinze ans
+  de services, cinq annuités ; la rédaction de 1982, la plus ancienne que l'index garde,
+  l'accorde « à tous les militaires », le maximum à cinquante-cinq ans, une annuité de
+  moins par année supplémentaire jusqu'à cinquante-huit, et le Sénat en 2008 date cette
+  dégressivité de la création. La loi de 2003 porte ces âges à cinquante-sept et soixante
+  et écrit les 80 % (L. 14 les permettait déjà, « quarante annuités du chef des
+  bonifications prévues à l'article L. 12 ») ; celle de 2010, à dix-sept ans de services,
+  cinquante-neuf ans et l'âge de L. 161-17-2, pour les pensions prenant effet depuis le
+  1er juillet 2011, sans montée en charge ; celle de 2023 supprime la dégressivité,
+  l'étend aux anciens militaires et la borne à vingt trimestres avec celles des emplois
+  classés, au 1er septembre 2023. La caisse lit la dégressivité par années entières et
+  n'accorde rien au-delà de l'âge final : « la bonification maximale est de 2 ans » au
+  militaire radié le lendemain de ses soixante-deux ans — exemple inscrit, que le modèle
+  rejoue. L. 17 d'avant 2004 compte au minimum garanti les bonifications de L. 12 : le
+  militaire de dix-sept ans liquidé en 2000 y gagne quatorze points. Le dépôt ne servait
+  aucune de ces règles ; la fiche bonification_cinquieme_militaires les sert, dans les
+  deux moteurs, et la réduction des policiers se compte désormais au mois.
+reste: >-
+  La loi n° 75-1000 telle qu'elle a été votée, et sa date d'effet : la version de 1975 à
+  1982 est supposée. Si la Cnav compte la bonification dans la durée tous régimes d'un
+  ancien militaire liquidé au régime général. Un exemple chiffré publié depuis 2023. Les
+  bénéfices de campagne et les bonifications pour services aériens, que le modèle ne
+  sert pas. De l'étape 17, ensuite : le régime général et les complémentaires — la
+  pension maximale, les taux pleins de L. 351-8, les majorations pour enfants à charge et
+  pour conjoint à charge.

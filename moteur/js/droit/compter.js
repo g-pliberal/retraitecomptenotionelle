@@ -71,13 +71,20 @@ export const CONDITIONS = Object.freeze([
 ]);
 
 /**
- * Les fiches des bonifications et des majorations que l'emploi CLASSÉ ouvre
- * dans le régime qui le pensionne, lues par `FichesDatees` à la date d'effet.
- * Voir `FICHES_DES_EMPLOIS` du Python.
+ * La fiche de la bonification du cinquième des militaires (L. 12, i), que
+ * l'inventaire des avantages mesure à part. Voir `FICHE_DES_MILITAIRES` du Python.
+ */
+export const FICHE_DES_MILITAIRES = "bonification_cinquieme_militaires";
+
+/**
+ * Les fiches des bonifications et des majorations que l'emploi CLASSÉ, ou le
+ * service militaire, ouvre dans le régime qui le pensionne, lues par
+ * `FichesDatees` à la date d'effet, dans l'ordre du cumul que les versions de
+ * septembre 2023 bornent. Voir `FICHES_DES_EMPLOIS` du Python.
  */
 export const FICHES_DES_EMPLOIS = Object.freeze([
   "bonification_cinquieme_police_penitentiaire", "bonification_cinquieme_sapeurs_pompiers",
-  "majoration_duree_hospitaliers_actifs",
+  FICHE_DES_MILITAIRES, "majoration_duree_hospitaliers_actifs",
 ]);
 
 /**
@@ -94,12 +101,22 @@ export const NATURES_DES_EMPLOIS = Object.freeze(["bonification", "majoration"])
  * catégorie active réunies à la radiation dans l'un de ces statuts, la seule
  * durée de services actifs, ou les années dans l'emploi et dans la fonction
  * publique civile, l'âge anticipé atteint (ou la radiation pour invalidité
- * imputable au service). Voir `CONDITIONS_DES_EMPLOIS` du Python.
+ * imputable au service), ou les seules années dans l'emploi, l'agent y étant à
+ * la fin de ses services s'il le faut. Voir `CONDITIONS_DES_EMPLOIS` du Python.
  */
 export const CONDITIONS_DES_EMPLOIS = Object.freeze([
   "duree_de_l_age_minore", "categorie_active_en_fonction", "duree_de_la_categorie_active",
-  "durees_et_age_de_l_emploi",
+  "durees_et_age_de_l_emploi", "duree_dans_l_emploi",
 ]);
+
+/**
+ * L'âge au-delà duquel une version supprime la bonification, quand elle ne
+ * l'écrit pas en années : l'âge légal de la génération. Voir `AGE_LEGAL` du Python.
+ */
+export const AGE_LEGAL = "age_legal";
+
+/** La tolérance des années de service. Voir `EPSILON_ANNEES` du Python. */
+const EPSILON_ANNEES = 1e-9;
 
 /**
  * Ce que l'emploi classé ajoute dans le régime qui le pensionne : des services
@@ -674,11 +691,12 @@ export function trimestresDesEmplois(moteur, carriere, anneeLiquidation) {
 /**
  * Ce qu'un emploi classé ouvre, ou null s'il n'ouvre rien : une BONIFICATION,
  * fraction du temps servi dans les statuts qui l'ouvrent, sous son plafond,
- * diminuée des services accomplis au-delà de l'âge qui la réduit, comptés à
- * l'année, aux services et à la durée ; ou une MAJORATION, fraction des
- * services effectifs de la fonction publique civile, à la seule durée de la
- * décote. En trimestres, un demi-trimestre et plus comptant pour un. Voir
- * `trimestres_d_un_emploi` du Python.
+ * diminuée des services accomplis au-delà de l'âge qui la réduit, comptés au
+ * mois — d'une annuité par année entière pour le militaire —, nulle au-delà de
+ * l'âge qui la supprime, aux services et à la durée ; ou une MAJORATION,
+ * fraction des services effectifs de la fonction publique civile, à la seule
+ * durée de la décote. En trimestres, un demi-trimestre et plus comptant pour
+ * un. Voir `trimestres_d_un_emploi` du Python.
  */
 export function trimestresDUnEmploi(moteur, carriere, fiche, version) {
   const parametres = version.parametres;
@@ -713,10 +731,19 @@ export function trimestresDUnEmploi(moteur, carriere, fiche, version) {
   if (parametres.plafond_trimestres !== null && parametres.plafond_trimestres !== undefined) {
     annees = Math.min(annees, Math.trunc(parametres.plafond_trimestres) / 4);
   }
+  let fiabiliteLue = fiabilite;
+  if (parametres.age_de_suppression !== null && parametres.age_de_suppression !== undefined) {
+    const [age, lue] = ageDeSuppression(moteur, carriere, fiche, version);
+    if (servicesAuDela(carriere, statuts, age, borne, servies) > EPSILON_ANNEES) {
+      return null;
+    }
+    fiabiliteLue = Math.min(fiabiliteLue, lue);
+  }
   if (parametres.age_de_reduction !== null && parametres.age_de_reduction !== undefined) {
-    const annee = carriere.annee_naissance + Math.trunc(parametres.age_de_reduction);
-    const avant = carriere.dureeDeService(statuts, borne === null ? annee : Math.min(annee, borne));
-    annees -= Math.max(0, servies - avant);
+    const auDela = servicesAuDela(carriere, statuts, Number(parametres.age_de_reduction),
+      borne, servies);
+    annees -= parametres.reduction_par_annee_entiere
+      ? Math.floor(auDela + EPSILON_ANNEES) : auDela;
   }
   const trimestres = annees > 0 ? Math.trunc(annees * 4 + 0.5) : 0;
   if (trimestres <= 0) {
@@ -727,8 +754,40 @@ export function trimestresDUnEmploi(moteur, carriere, fiche, version) {
     services: bonification ? trimestres : 0,
     duree: bonification ? trimestres : 0,
     majoration: bonification ? 0 : trimestres,
-    auDelaDuMaximum: Boolean(parametres.au_dela_du_maximum), fiabilite,
+    auDelaDuMaximum: Boolean(parametres.au_dela_du_maximum), fiabilite: fiabiliteLue,
   });
+}
+
+/**
+ * Les années servies dans ces statuts au-delà de cet âge, `servies` étant celles
+ * de toute la carrière : depuis le premier mois vécu entier à cet âge, au mois
+ * près. Voir `services_au_dela` du Python.
+ */
+export function servicesAuDela(carriere, statuts, age, borne, servies) {
+  const avant = carriere.dureeDeServiceAvant(statuts, carriere.dateDeLAge(age), borne);
+  return Math.max(0, servies - avant);
+}
+
+/**
+ * L'âge au-delà duquel la version supprime la bonification, et la fiabilité de
+ * sa lecture : écrit en années, ou l'âge légal de la génération (`AGE_LEGAL`).
+ * Voir `age_de_suppression` du Python.
+ */
+export function ageDeSuppression(moteur, carriere, fiche, version) {
+  const parametres = version.parametres;
+  const age = parametres.age_de_suppression;
+  if (age === AGE_LEGAL) {
+    const legal = moteur.agesOuverture.age(carriere.generation);
+    if (legal === null) {
+      throw new Error(`${fiche}.${version.id} : pas d'âge légal pour la génération `
+        + `${carriere.generation}`);
+    }
+    return legal;
+  }
+  if (typeof age !== "number") {
+    throw new Error(`${fiche}.${version.id} : âge de suppression inconnu, ${JSON.stringify(age)}`);
+  }
+  return [age, fiabiliteDepuisTexte(parametres.fiabilite)];
 }
 
 /**
@@ -737,6 +796,22 @@ export function trimestresDUnEmploi(moteur, carriere, fiche, version) {
  * Voir `condition_d_un_emploi` du Python.
  */
 export function conditionDUnEmploi(moteur, carriere, condition, parametres, servies) {
+  if (condition === "duree_dans_l_emploi") {
+    // La durée dans l'emploi du militaire ne lit aucun classement ; jusqu'en
+    // août 2023, la dernière année des services comptés doit être dans l'emploi.
+    if (servies + EPSILON_ANNEES < Number(parametres.annees_dans_l_emploi)) {
+      return null;
+    }
+    if (parametres.en_fonction) {
+      const borne = coordonner.borneCarriere(carriere);
+      const comptes = carriere.bornesDeService([...parametres.services_comptes], borne);
+      const dansLEmploi = carriere.bornesDeService([...parametres.statuts], borne);
+      if (comptes === null || dansLEmploi === null || dansLEmploi[1] < comptes[1]) {
+        return null;
+      }
+    }
+    return fiabiliteDepuisTexte(parametres.fiabilite);
+  }
   const derogation = moteur.agesCategorieActive.derogation(
     parametres.classement, carriere.generation);
   if (condition === "durees_et_age_de_l_emploi") {

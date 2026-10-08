@@ -199,14 +199,16 @@ def test_la_pension_servie_avant_le_depart_y_est_revalorisee(simulateur):
 def test_la_pension_militaire_d_avant_2004_a_son_minimum_garanti(simulateur):
     """Liquidée à sa sortie de l'armée en 2000, la pension de dix-sept ans de
     services est portée au minimum garanti de L. 17 d'avant 2004 : 4 % de la
-    référence par année de services (LEGIARTI000006362711)."""
+    référence « par année de services effectifs et de bonifications prévues à
+    l'article L. 12 » (LEGIARTI000006362711) — dix-sept ans, et trois ans et
+    demi de bonification du cinquième (L. 12, i) : 82 %."""
     moteur = simulateur.scenario_actuel
     resultat = moteur.calculer(_militaire_puis_prive(simulateur))
     [militaire] = [p for p in resultat.pensions_par_regime
                    if p.regime == "fonction_publique_etat"]
-    plancher, _ = moteur.minimum_garanti.montant(2000, 68)
+    plancher, _ = moteur.minimum_garanti.montant(2000, 82)
     assert militaire.montant_a_l_effet == pytest.approx(plancher)
-    assert plancher == pytest.approx(0.68 * moteur.minimum_garanti.reference(2000)[0])
+    assert plancher == pytest.approx(0.82 * moteur.minimum_garanti.reference(2000)[0])
     assert "porté au minimum garanti" in militaire.detail
     assert any(a.code == "minimum_garanti" for a in resultat.avantages_appliques)
 

@@ -1318,6 +1318,43 @@ export class Carriere {
     return null;
   }
 
+  /**
+   * Années de service accomplies dans ces statuts avant ce mois, au mois près,
+   * bornes comprises : les mois de chaque année placés comme `dateDeService`
+   * les place. Voir `duree_de_service_avant` du Python.
+   */
+  dureeDeServiceAvant(affiliations, date, jusquA = null) {
+    const lignes = this._lignesDeService(affiliations, jusquA);
+    if (lignes.length === 0) {
+      return 0;
+    }
+    const premiere = lignes[0].annee;
+    let avant = 0;
+    for (const ligne of lignes) {
+      if (ligne.annee < date.annee) {
+        avant += ligne.fraction_annee;
+        continue;
+      }
+      if (ligne.annee > date.annee) {
+        break;
+      }
+      const moisServis = Math.round(ligne.fraction_annee * MOIS_PAR_AN);
+      if (moisServis <= 0) {
+        continue;
+      }
+      let debut = 1;
+      if (ligne.annee === premiere && moisServis < MOIS_PAR_AN) {
+        const entree = this.dateEntree(ligne.affiliation);
+        debut = entree !== null && entree.annee === ligne.annee
+          ? entree.mois
+          : MOIS_PAR_AN - moisServis + 1;
+      }
+      const servisAvant = Math.max(0, Math.min(debut + moisServis, date.mois) - debut);
+      avant += ligne.fraction_annee * servisAvant / moisServis;
+    }
+    return avant;
+  }
+
   /** Âge auquel la durée de service demandée est atteinte. */
   ageDeService(affiliations, annees) {
     const date = this.dateDeService(affiliations, annees);

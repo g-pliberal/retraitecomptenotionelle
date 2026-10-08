@@ -437,7 +437,7 @@ def test_les_variantes_ne_changent_que_ce_qu_elles_retirent(script_cout):
     age = cas.age_liquidation_pour(simulateur, generation)
     carriere = script_cout.carriere_variante(simulateur, cas, generation, age)
     reelle = simulateur.scenario_actuel.calculer(carriere).pension_annuelle
-    for code in ("categorie_active", "carriere_longue"):
+    for code in ("categorie_active", "carriere_longue", "bonification_cinquieme_militaires"):
         obtenue = variantes[code].calculer(carriere).pension_annuelle
         assert obtenue == pytest.approx(reelle), (
             f"le retrait de {code} déplace la pension d'un cadre du privé "

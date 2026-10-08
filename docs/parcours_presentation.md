@@ -240,8 +240,8 @@ moins. Vert : plus.
 Trois choses à montrer :
 
 - Les deux cartes en tête : la carrière la mieux traitée (militaire non
-  officier, +69 % pour la génération 2000) et la moins bien traitée (carrière
-  interrompue, -34 %), et les 103 points qui les séparent. Dire aussitôt
+  officier, +40 % pour la génération 2000) et la moins bien traitée (carrière
+  interrompue, -34 %), et les 75 points qui les séparent. Dire aussitôt
   d'où vient le premier : le droit en vigueur laisse ce militaire partir à
   44 ans, après vingt-cinq ans de services, et la proposition le fait servir
   jusqu'à 65 ans —
@@ -336,8 +336,8 @@ Si le temps manque, garder cette page pour les questions : elle répond seule
 Onglet **Avantages**. La page qui explique les écarts du simulateur : ce que
 le système actuel verse sans que personne l'ait cotisé. Trois chiffres :
 42 dispositifs en vigueur, du minimum vieillesse à la bonification du
-cinquième ; 97,9 Md € en 2024 pour les 21 que le modèle sait chiffrer, dont
-38,3 Md € de réversion, qui est lue et non calculée ; 11,0 Md € de pensions
+cinquième ; 97,6 Md € en 2024 pour les 22 que le modèle sait chiffrer, dont
+38,3 Md € de réversion, qui est lue et non calculée ; 11,4 Md € de pensions
 servies avant l'âge légal. La page dit que ces deux montants sont des
 planchers. Le graphique du haut compte les dispositifs année par année depuis
 1831, où il n'y en avait qu'un.

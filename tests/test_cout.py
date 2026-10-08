@@ -905,12 +905,18 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: régimes spéciaux -34,4 %. L'étape 16 lit l'ancrage du salaire moyen dans les
 #: données et paie le cas type au SMIC le SMIC de chaque année : la pension
 #: relative de la FPE passe de +0,97 à +1,01 %, au-dessus du cliquet de 1 %,
-#: qui remonte d'un point ; celle de l'Agirc-Arrco à +17,6 %.
+#: qui remonte d'un point ; celle de l'Agirc-Arrco à +17,6 %. L'étape 17 de
+#: l'action 138 sert la bonification du cinquième des militaires (L. 12, i) :
+#: vingt trimestres au cas type militaire, dont la pension monte d'un cinquième.
+#: La pension relative de la FPE passe de +1,0 à +4,2 %, sa dépense de +15,8 à
+#: +19,2 %, et les deux cliquets remontent : la règle est le droit, et le cas
+#: type, vingt-cinq ans de services, en reçoit le plafond, quand le militaire
+#: qui liquide en 2023 en reçoit 16,4 trimestres (jaune, tableau 50).
 DECOMPOSITION_GROUPES_CLIQUETS = {
-    ("pension_relative", "fpe"): 0.02,
+    ("pension_relative", "fpe"): 0.05,
     ("pension_relative", "cnracl"): 0.04,
     ("pension_relative", "agirc_arrco"): 0.18,
-    ("depense_part_pib", "fpe"): 0.16,
+    ("depense_part_pib", "fpe"): 0.20,
     ("depense_part_pib", "cnracl"): 0.02,
     ("depense_part_pib", "regimes_speciaux"): 0.35,
 }

@@ -14940,14 +14940,16 @@ export const MESURES_BLOCAGES = {
   // en 2070 à ce qui suit ; le coût des 18 %, de 2,0 à 2,2 points. Le même
   // soir, les minima des exploitants agricoles (étape 8), qui relèvent les
   // pensions du système actuel sur la grille, ont porté la dette de 62 à 60 %,
-  // et le creux du coefficient de 0,84 à 0,85.
+  // et le creux du coefficient de 0,84 à 0,85. Le 8 octobre, la bonification du
+  // cinquième des militaires (étape 17), qui relève celle du cas type militaire,
+  // l'a portée de 60 à 58 %, et le coefficient de 2070 de 1,00 à 1,01.
   solde_moyen_proposition: -0.9,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 60,
+  dette_2070_proposition: 58,
   dette_2070_actuel: 66,
   coefficient_minimum: 0.85,
   decennie_coefficient_minimum: 2040,
-  coefficient_2070: 1.0,
+  coefficient_2070: 1.01,
   // donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
   // quatre taux d'aujourd'hui, en points de PIB ; zéro, la TVA n'étant pas
   // réformée.

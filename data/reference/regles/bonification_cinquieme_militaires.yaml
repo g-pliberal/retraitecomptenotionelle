@@ -1,0 +1,471 @@
+schema_version: 1
+id: bonification_cinquieme_militaires
+intitule: >-
+  Bonification du cinquième du temps de service des militaires (L. 12, i) : un an
+  pour cinq ans de services militaires, cinq annuités au plus, à qui en a servi quinze,
+  dix-sept depuis juillet 2011 ; aux services liquidés au-delà du pourcentage maximum,
+  jusqu'à 80 % ; diminuée d'une annuité par année servie au-delà de cinquante-cinq ans,
+  puis cinquante-sept, puis cinquante-neuf, et nulle au-delà de cinquante-huit, puis
+  soixante, puis l'âge légal, jusqu'en août 2023 ; aux anciens militaires depuis
+  septembre 2023, dans la limite de vingt trimestres avec celles des emplois classés.
+domaine: duree
+regimes:
+- fonction_publique_etat
+etape: compter_les_durees
+face: droit
+etat: approchee
+lit:
+- les années servies dans les statuts militaire et militaire_officier, et celles de
+  services du code des pensions, jusqu'à la liquidation
+- le mois de naissance et le jour, pour les services accomplis au-delà des âges qui
+  réduisent et suppriment la bonification
+- l'âge légal de la génération (legislation/age_ouverture_requis.csv), de juillet 2011
+  à août 2023
+- liquidation.date_effet
+ecrit:
+- les trimestres de bonification, aux services liquidés de la fonction publique de
+  l'État, au-delà du pourcentage maximum, et à la durée d'assurance (Durees.emplois)
+dates_qui_decident:
+- liquidation.date_effet
+# Les paramètres que le moteur lit (droit/compter.py, `trimestres_des_emplois`, et
+# son jumeau) sont ceux des bonifications des emplois classés, et trois de plus.
+# La condition `duree_dans_l_emploi` lit les années servies dans les statuts de la
+# fiche (`annees_dans_l_emploi`) et, si `en_fonction`, exige que la dernière année
+# des services du code des pensions (`services_comptes`) soit servie dans l'un
+# d'eux : le militaire à la liquidation, jusqu'en août 2023. Les services accomplis
+# au-delà de `age_de_reduction` se comptent au mois, depuis le premier mois vécu
+# entier à cet âge, et retirent une annuité par année entière quand
+# `reduction_par_annee_entiere` ; au-delà de `age_de_suppression` — un âge, ou
+# `age_legal`, l'âge de L. 161-17-2 à la génération —, il n'y a plus de bonification.
+# `au_dela_du_maximum` : les bonifications de L. 12 portent le pourcentage à 80 %
+# (L. 14 jusqu'en 2003, L. 12 et L. 13 depuis) ; celle de la loi de finances pour 1972,
+# qui n'est pas de L. 12, ne le fait pas.
+versions:
+- id: avant_la_loi_de_finances_pour_1972
+  statut: lue
+  textes:
+  - id: JORFTEXT000000687436
+    article: 53, IV
+    publie_le: 1971-12-30
+    reference: >-
+      loi n° 71-1061 du 29 décembre 1971 de finances pour 1972, lue telle que le
+      rapport n° 6 du Sénat (1975-1976) la cite en « législation actuellement en
+      vigueur » : l'index du Journal officiel n'en garde que la notice
+    citation: >-
+      « Les dispositions du III ci-dessus sont applicables aux militaires rayés des
+      cadres entre le 1er janvier 1972 et le 31 décembre 1980, ces deux dates
+      incluses. »
+  nee_de: JORFTEXT000000687436
+  bornes:
+    liquidation.date_effet: [null, 1972-01-01]
+  contenu:
+    droit: >-
+      aucune bonification du temps de service : la première, temporaire, est celle de
+      la loi de finances pour 1972, aux militaires rayés des cadres depuis le
+      1er janvier 1972
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: loi_de_finances_pour_1972
+  statut: lue
+  textes:
+  - id: JORFTEXT000000687436
+    article: 53, III et IV
+    publie_le: 1971-12-30
+    reference: >-
+      loi n° 71-1061 du 29 décembre 1971 de finances pour 1972, lue telle que le
+      rapport n° 6 du Sénat (1975-1976) la cite
+    citation: >-
+      « A l'exclusion des officiers généraux, ceux des militaires dont la limite d'âge
+      est, au 1er janvier 1972, inférieure à cinquante-huit ans ainsi que les officiers
+      de gendarmerie bénéficient, pour la liquidation de leur pension de retraite et
+      dans la limite de trois annuités, d'une bonification égale à un cinquième du temps
+      accompli, sous réserve d'avoir effectué vingt-cinq ans de services militaires
+      effectifs ou d'être rayés des cadres pour invalidité. »
+  nee_de: JORFTEXT000000687436
+  bornes:
+    liquidation.date_effet: [1972-01-01, 1975-11-01]
+  contenu:
+    droit: >-
+      un cinquième du temps accompli, trois annuités au plus, hors de L. 12 : elle ne
+      porte pas le maximum des annuités liquidables au-delà de trente-sept et demie
+    conditions: >-
+      vingt-cinq ans de services militaires effectifs, ou la radiation pour invalidité ;
+      rayé des cadres entre le 1er janvier 1972 et le 31 décembre 1980 — la loi de 1975
+      abroge l'article et rend la bonification permanente
+    parametres:
+      existe: true
+      nature: bonification
+      statuts: [militaire, militaire_officier]
+      regime: fonction_publique_etat
+      services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
+                         fonctionnaire_etat_super_actif, militaire, militaire_officier]
+      fraction: 0.2
+      plafond_trimestres: 12
+      condition: duree_dans_l_emploi
+      annees_dans_l_emploi: 25
+      en_fonction: true
+      age_de_reduction: null
+      reduction_par_annee_entiere: false
+      age_de_suppression: null
+      au_dela_du_maximum: false
+      cumul_maximum_trimestres: null
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: loi_du_30_octobre_1975
+  statut: supposee
+  hypothese: >-
+    la loi n° 75-1000 du 30 octobre 1975 crée le i de L. 12, que l'index ne garde que
+    dans sa rédaction du 14 juillet 1982 ; on prête à ses sept premières années la règle
+    de cette rédaction — à tous les militaires, quinze ans de services, le maximum à
+    cinquante-cinq ans, une annuité de moins par année servie au-delà, rien au-delà de
+    cinquante-huit —, que le rapport d'information du Sénat n° 236 (2007-2008) date de
+    la « création, relativement récente (1975) » : « A partir de 56 ans, la
+    bonification était diminuée d'une annuité, puis de deux, puis de trois […]. Au-delà
+    de 58 ans tous les avantages conférés par cette bonification étaient totalement
+    annulés ». Le projet de loi, que le rapport n° 6 du Sénat (1975-1976) transcrit en
+    son article 3, la réservait aux officiers de gendarmerie et aux militaires dont la
+    limite d'âge de grade était inférieure à cinquante-huit ans, sans dégressivité : le
+    texte voté n'est pas relu. La date d'effet est celle du lendemain de la publication
+    de la loi au Journal officiel du 31 octobre 1975, faute d'en avoir lu une autre.
+  fiabilite: estimee
+  textes:
+  - id: JORFTEXT000000513976
+    publie_le: 1975-10-31
+    reference: >-
+      loi n° 75-1000 du 30 octobre 1975, dont l'index du Journal officiel ne garde que
+      la notice ; son projet, article 3, dans le rapport n° 6 du Sénat (1975-1976)
+  nee_de: JORFTEXT000000513976
+  bornes:
+    liquidation.date_effet: [1975-11-01, 1982-07-14]
+  contenu:
+    droit: la bonification de la rédaction de 1982, qui lui est prêtée
+    parametres:
+      existe: true
+      nature: bonification
+      statuts: [militaire, militaire_officier]
+      regime: fonction_publique_etat
+      services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
+                         fonctionnaire_etat_super_actif, militaire, militaire_officier]
+      fraction: 0.2
+      plafond_trimestres: 20
+      condition: duree_dans_l_emploi
+      annees_dans_l_emploi: 15
+      en_fonction: true
+      age_de_reduction: 55
+      reduction_par_annee_entiere: true
+      age_de_suppression: 58
+      au_dela_du_maximum: true
+      cumul_maximum_trimestres: null
+      fiabilite: estimee
+  exemples: aucun trouvé
+- id: redaction_du_14_juillet_1982
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006362695, article: L. 12, en_vigueur: 1982-07-14}
+  - {id: LEGIARTI000006362703, article: L. 14, en_vigueur: 1964-12-01}
+  nee_de: LEGIARTI000006362695
+  bornes:
+    liquidation.date_effet: [1982-07-14, 2004-01-01]
+  contenu:
+    droit: >-
+      « Une bonification du cinquième du temps de service accompli est accordée dans la
+      limite de cinq annuités à tous les militaires » ; « le maximum des annuités
+      liquidables […] peut être porté à quarante annuités du chef des bonifications
+      prévues à l'article L. 12 » (L. 14)
+    conditions: >-
+      « à la condition qu'ils aient accompli au moins quinze ans de services militaires
+      effectifs ou qu'ils aient été rayés des cadres pour invalidité ; le maximum de
+      bonifications est donné aux militaires qui quittent le service à cinquante-cinq
+      ans ; la bonification est diminuée d'une annuité pour chaque année supplémentaire
+      de service jusqu'à l'âge de cinquante-huit ans » — au-delà, rien, lit la caisse
+    parametres:
+      existe: true
+      nature: bonification
+      statuts: [militaire, militaire_officier]
+      regime: fonction_publique_etat
+      services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
+                         fonctionnaire_etat_super_actif, militaire, militaire_officier]
+      fraction: 0.2
+      plafond_trimestres: 20
+      condition: duree_dans_l_emploi
+      annees_dans_l_emploi: 15
+      en_fonction: true
+      age_de_reduction: 55
+      reduction_par_annee_entiere: true
+      age_de_suppression: 58
+      au_dela_du_maximum: true
+      cumul_maximum_trimestres: null
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: loi_du_21_aout_2003
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006362696, article: L. 12, en_vigueur: 2004-01-01}
+  - {id: JORFARTI000001644270, article: 48, publie_le: 2003-08-22}
+  - {id: JORFARTI000001145696, article: 80, publie_le: 2003-08-22}
+  nee_de: JORFARTI000001644270
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2011-07-01]
+  contenu:
+    droit: >-
+      la même bonification ; « Le pourcentage maximum fixé à l'article L 13 peut-être
+      augmenté de cinq points du chef des bonifications prévues au présent article »
+    conditions: >-
+      quinze ans de services militaires effectifs, ou la radiation pour invalidité ; le
+      maximum à qui quitte le service à « cinquante-sept » ans, une annuité de moins par
+      année supplémentaire, jusqu'à « soixante » (loi n° 2003-775, article 48, I, 4°),
+      pour les pensions qui prennent effet depuis le 1er janvier 2004 (article 80)
+    parametres:
+      existe: true
+      nature: bonification
+      statuts: [militaire, militaire_officier]
+      regime: fonction_publique_etat
+      services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
+                         fonctionnaire_etat_super_actif, militaire, militaire_officier]
+      fraction: 0.2
+      plafond_trimestres: 20
+      condition: duree_dans_l_emploi
+      annees_dans_l_emploi: 15
+      en_fonction: true
+      age_de_reduction: 57
+      reduction_par_annee_entiere: true
+      age_de_suppression: 60
+      au_dela_du_maximum: true
+      cumul_maximum_trimestres: null
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: loi_du_9_novembre_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023096747, article: L. 12, en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000030949157, article: L. 12, en_vigueur: 2015-07-30}
+  - {id: LEGIARTI000037200561, article: L. 12, en_vigueur: 2018-07-15}
+  - {id: LEGIARTI000047926152, article: L. 12, en_vigueur: 2023-08-03}
+  - {id: JORFARTI000023022519, article: 38, publie_le: 2010-11-10}
+  - {id: JORFARTI000023022348, article: 118, publie_le: 2010-11-10}
+  nee_de: JORFARTI000023022519
+  bornes:
+    liquidation.date_effet: [2011-07-01, 2023-09-01]
+  contenu:
+    droit: la même bonification, sous le même pourcentage de 80 %
+    conditions: >-
+      « dix-sept » ans de services militaires effectifs, ou la radiation pour
+      invalidité ; le maximum à qui quitte le service à « cinquante-neuf » ans, une
+      annuité de moins par année supplémentaire, « jusqu'à l'âge mentionné à l'article
+      L. 161-17-2 du code de la sécurité sociale » (loi n° 2010-1330, article 38, X),
+      pour les pensions qui prennent effet depuis le 1er juillet 2011 (article 118, II),
+      sans montée en charge. Les congés de longue durée et de longue maladie sont
+      assimilés à des services militaires effectifs depuis 2015, certains services de
+      la réserve opérationnelle comptés depuis 2018
+    parametres:
+      existe: true
+      nature: bonification
+      statuts: [militaire, militaire_officier]
+      regime: fonction_publique_etat
+      services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
+                         fonctionnaire_etat_super_actif, militaire, militaire_officier]
+      fraction: 0.2
+      plafond_trimestres: 20
+      condition: duree_dans_l_emploi
+      annees_dans_l_emploi: 17
+      en_fonction: true
+      age_de_reduction: 59
+      reduction_par_annee_entiere: true
+      age_de_suppression: age_legal
+      au_dela_du_maximum: true
+      cumul_maximum_trimestres: null
+      fiabilite: moyenne
+  exemples: [sre_militaire_radie_le_lendemain_de_ses_62_ans]
+- id: loi_du_14_avril_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047452833, article: L. 12, en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000053280361, article: L. 12, en_vigueur: 2025-12-31}
+  - {id: JORFARTI000047445097, article: 10, publie_le: 2023-04-15}
+  nee_de: JORFARTI000047445097
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: >-
+      la même bonification, « à tous les militaires et anciens militaires », sans
+      réduction avec l'âge ; elle et les bonifications des emplois classés « peuvent se
+      cumuler, dans la limite de vingt trimestres » ; le pourcentage maximum, augmenté
+      de cinq points « du chef des bonifications prévues aux a à i »
+    conditions: >-
+      dix-sept ans de services militaires effectifs, ou la radiation pour invalidité ;
+      pour les pensions qui prennent effet depuis le 1er septembre 2023 (loi n° 2023-270,
+      article 10, III, 1°, et XXX, B), que le militaire soit encore militaire ou non
+      quand il liquide
+    parametres:
+      existe: true
+      nature: bonification
+      statuts: [militaire, militaire_officier]
+      regime: fonction_publique_etat
+      services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
+                         fonctionnaire_etat_super_actif, militaire, militaire_officier]
+      fraction: 0.2
+      plafond_trimestres: 20
+      condition: duree_dans_l_emploi
+      annees_dans_l_emploi: 17
+      en_fonction: false
+      age_de_reduction: null
+      reduction_par_annee_entiere: false
+      age_de_suppression: null
+      au_dela_du_maximum: true
+      cumul_maximum_trimestres: 20
+      fiabilite: moyenne
+  exemples: aucun trouvé
+approximations:
+- version: [loi_de_finances_pour_1972]
+  ecart: >-
+    La loi de finances pour 1972 réserve la bonification aux militaires dont la limite
+    d'âge est, au 1er janvier 1972, inférieure à cinquante-huit ans, et aux officiers de
+    gendarmerie, officiers généraux exclus ; elle ne compte pas l'année où une autre
+    bonification atteint le cinquième de sa durée. Le modèle, qui ne saisit ni le grade
+    ni les autres bonifications, la sert à tout militaire.
+  effet: non mesuré ; les officiers à limite d'âge haute partis de 1972 à 1975 reçoivent trop
+- version: [loi_de_finances_pour_1972, loi_du_30_octobre_1975, redaction_du_14_juillet_1982,
+            loi_du_21_aout_2003, loi_du_9_novembre_2010, loi_du_14_avril_2023]
+  ecart: >-
+    Les services militaires sont les années servies dans les deux statuts militaires :
+    le service national accompli avant l'engagement, les congés de longue durée et de
+    longue maladie, assimilés depuis 2015, et les services de réserve, comptés depuis
+    2018, n'y entrent pas. La bonification se compte en trimestres, un demi-trimestre
+    et plus comptant pour un, et non en jours ajoutés aux services avant le décompte
+    final (R. 26).
+  effet: non mesuré ; un trimestre au plus, sauf au militaire venu du service national
+- version: [loi_de_finances_pour_1972, loi_du_30_octobre_1975, redaction_du_14_juillet_1982,
+            loi_du_21_aout_2003, loi_du_9_novembre_2010]
+  ecart: >-
+    Jusqu'en août 2023, la bonification ne va qu'au militaire, et non à l'ancien
+    militaire qui liquide une pension civile : le modèle l'entend de la dernière année
+    des services du code des pensions, servie ou non dans un statut militaire. Le
+    militaire de dix-sept ans devenu fonctionnaire civil touche au droit sa pension
+    militaire dès sa radiation, bonification comprise, à moins d'y renoncer pour la
+    fondre dans sa pension civile ; le modèle ne liquide qu'une pension du code, à son
+    départ, et la lui retire donc. Le policier devenu militaire, qui jusqu'alors ne
+    cumule pas les deux bonifications, garde la sienne et reçoit l'autre.
+  effet: non mesuré ; touche le militaire devenu fonctionnaire civil de l'État
+- version: [loi_de_finances_pour_1972, loi_du_30_octobre_1975, redaction_du_14_juillet_1982,
+            loi_du_21_aout_2003, loi_du_9_novembre_2010, loi_du_14_avril_2023]
+  ecart: >-
+    La radiation des cadres pour infirmités, qui ouvre la bonification sans la durée de
+    services, n'est pas portée : le modèle ne connaît pas la radiation du militaire
+    (fiche retraite_pour_invalidite_fonction_publique). La pension afférente au grade
+    supérieur, où le service des retraites de l'État ne la prend en compte que « dans
+    la limite de 75 % », ne l'est pas non plus.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-08
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Lire la loi n° 75-1000 du 30 octobre 1975 telle qu'elle a été votée, et sa date
+    d'effet : le dépôt n'en a que le projet, qui réservait la bonification aux officiers
+    de gendarmerie et aux militaires à limite d'âge basse, sans dégressivité.
+  - >-
+    Lire si la Cnav compte la bonification dans la durée tous régimes d'un ancien
+    militaire liquidé au régime général : le modèle l'y compte, comme celle des
+    policiers.
+  - >-
+    Chercher un exemple chiffré publié depuis 2023 : le service des retraites de l'État
+    et le ministère des armées décrivent la règle sans la chiffrer.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 12 CPCMR, ses huit rédactions de l'index LEGI (LEGIARTI000006362695 à
+      LEGIARTI000053280361) ; L. 13 et L. 14, rédactions de 1964 à 2004
+      (LEGIARTI000006362701, LEGIARTI000006362703)
+    date: 2025-12-31
+  - type: jorf
+    reference: >-
+      loi n° 2003-775 du 21 août 2003, articles 48 et 80 (JORFARTI000001644270,
+      JORFARTI000001145696) ; loi n° 2010-1330 du 9 novembre 2010, articles 33, 38, X,
+      et 118, II (JORFARTI000023022498, JORFARTI000023022519, JORFARTI000023022348) ; loi
+      n° 2023-270 du 14 avril 2023, article 10, III, 1°, et XXX, B (JORFARTI000047445097)
+    date: 2023-04-15
+  - type: autre
+    reference: >-
+      Sénat, rapport n° 6 (1975-1976) de la commission des affaires étrangères, de la
+      défense et des forces armées sur le projet de loi modifiant la loi du 13 juillet
+      1972 portant statut général des militaires : l'article 3 du projet et l'article 53
+      de la loi de finances pour 1972, « législation actuellement en vigueur »
+    url: https://www.senat.fr/rap/1975-1976/i1975_1976_0006.pdf
+    date: 1975-10-02
+  - type: autre
+    reference: >-
+      Sénat, rapport d'information n° 236 (2007-2008) de MM. Fréville et Trucy, « Le
+      régime des pensions militaires est-il adapté aux besoins d'une armée
+      professionnelle ? », II, C, 1 : la création en 1975, la dégressivité de cinquante-cinq
+      à cinquante-huit ans, « Au-delà de 58 ans tous les avantages conférés par cette
+      bonification étaient totalement annulés »
+    url: https://www.senat.fr/rap/r07-236/r07-23625.html
+    date: 2008-03-25
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, « Le calcul de la pension » des militaires,
+      dernière mise à jour du 6 mai 2021, lue dans sa copie de 2022 par web.archive.org :
+      « Elle peut être écrêtée (1 an par année de service au-delà de 60 ans). Aucune
+      bonification du 1/5ème n'est accordée au delà de 62 ans, sauf si la limite d'âge
+      de l'emploi est fixée à 62 ans et si le militaire est radié des cadres par limite
+      d'âge le lendemain de ses 62 ans. Dans un tel cas, la bonification maximale est
+      de 2 ans. »
+    url: https://retraitesdeletat.gouv.fr/actif/militaires/calcul
+    date: 2021-05-06
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, « Le calcul de la pension » des militaires, page
+      en ligne : « Pour les pensions prenant effet à compter du 1er septembre 2023 :
+      l'écrêtement de la bonification du cinquième après 60 ans est supprimée ; la
+      bonification du cinquième est également accordée aux agents qui ne sont plus
+      militaires au moment où ils liquident leur pension ; les bonifications du
+      cinquième acquises dans différents emplois de catégorie active ou super-active
+      deviennent cumulables avec la bonification du cinquième des militaires »
+    url: https://retraitesdeletat.gouv.fr/actif/les-specificites-des-militaires/le-calcul-de-la-pension
+    date: 2026-10-08
+  - type: autre
+    reference: >-
+      Ministère des armées, secrétariat général pour l'administration, « La pension de
+      retraite des militaires », juillet 2025 : « Elle majore d'un an chaque tranche de
+      cinq années de services (cinq ans de services = six ans pris en compte pour le
+      calcul de la pension) dans la limite de cinq annuités supplémentaires » ; le taux
+      « porté au maximum à 80% du fait des bonifications »
+    url: >-
+      https://prod-site-internet-minarm-admin.cloud.defense.gouv.fr/sites/default/files/sga/La%20pension%20de%20retraite%20des%20militaires.pdf
+    date: 2025-07-01
+textes_a_rattacher:
+- reference: >-
+    loi n° 75-1000 du 30 octobre 1975, article créant le i de L. 12, dans sa rédaction
+    votée (le dépôt n'a lu que le projet)
+code:
+  python: >-
+    scenarios/actuel.py : FichesDatees ; droit/compter.py : trimestres_des_emplois,
+    trimestres_d_un_emploi, condition_d_un_emploi, services_au_dela ;
+    carriere.py : Carriere.duree_de_service_avant ; droit/liquider.py :
+    liquider_chaque_regime, qui l'ajoute aux services au-delà du maximum ;
+    avantages.py : la neutralisation bonification_cinquieme_militaires
+  javascript: >-
+    moteur/js/regimes.js : FichesDatees ; moteur/js/droit/compter.js :
+    trimestresDesEmplois, trimestresDUnEmploi, conditionDUnEmploi, servicesAuDela ;
+    moteur/js/carriere.js : dureeDeServiceAvant ; moteur/js/avantages.js
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_bonifications_emplois.py, tests/test_oracle.py]
+referents:
+  trajectoire:
+    equivalent: >-
+      bonifDeterministes (R/fonctionsCalculsDivers.R), « 4 trim tous les 5 ans, limites
+      a 20 », aux seuls cas types super-actifs
+    confrontation: >-
+      aucune exécutée : aucun cas type du COR n'est militaire
+historique:
+- >-
+  2026-10-08 — née de l'étape 17 de l'action 138 : le dépôt ne servait aucune
+  bonification de service aux militaires, quand le jaune budgétaire en compte une à
+  98,4 % des militaires liquidants ; l'inventaire des avantages la rangeait en
+  « absent ».
+effet: >-
+  Le militaire qui réunit dix-sept ans de services, quinze avant juillet 2011 : vingt
+  trimestres à qui en a servi vingt-cinq, soit un cinquième de pension en plus au
+  sous-officier radié à quarante-quatre ans, et jusqu'à 80 % de taux à l'officier de
+  carrière complète.

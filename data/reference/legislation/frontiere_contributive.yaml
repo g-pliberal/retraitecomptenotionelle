@@ -881,10 +881,12 @@ bascules:
     version_precedente: LEGIARTI000006362696
     texte: loi n° 2010-1330 du 9 novembre 2010
     lu_le: 2026-09-21
-    portee_modele: non_applique
+    portee_modele: applique
     effet_modele: >-
-      L'inventaire range `bonification_cinquieme_militaires` en `absent` : le
-      moteur ne la sert pas. La condition de durée lui échappe donc aussi.
+      Le moteur sert la bonification depuis le 8 octobre 2026 (fiche
+      bonification_cinquieme_militaires), et coupe sa condition au 1er juillet
+      2011 : quinze ans de services militaires avant, dix-sept depuis, sans
+      montée en charge, la loi n'en écrivant aucune.
 
   - code: depart_trois_enfants_ferme
     date: 2011-07-01
@@ -958,13 +960,14 @@ bascules:
     version_precedente: LEGIARTI000047926152
     texte: loi n° 2023-270 du 14 avril 2023, article 10
     lu_le: 2026-09-21
-    portee_modele: non_applique
+    portee_modele: applique
     effet_modele: >-
-      Le moteur ne sert pas la bonification du i : il n'a rien à cumuler avec
-      elle. Il sert depuis le 7 octobre 2026 celles des policiers, des
-      surveillants pénitentiaires et des sapeurs-pompiers, et la majoration des
-      hospitaliers actifs, dont le cumul se borne à vingt trimestres depuis
-      septembre 2023 (fiches bonification_cinquieme_sapeurs_pompiers et
+      Le moteur sert depuis le 7 octobre 2026 les bonifications des policiers,
+      des surveillants pénitentiaires et des sapeurs-pompiers, et la majoration
+      des hospitaliers actifs, depuis le 8 octobre celle du i : depuis
+      septembre 2023, la bonification des militaires ne garde que ce que celles
+      des emplois classés laissent sous vingt trimestres, et la majoration ce
+      que toutes laissent (fiches bonification_cinquieme_militaires et
       majoration_duree_hospitaliers_actifs).
 
   - code: cinquieme_militaire_non_degressif
@@ -986,9 +989,11 @@ bascules:
     version_precedente: LEGIARTI000047926152
     texte: loi n° 2023-270 du 14 avril 2023, article 10
     lu_le: 2026-09-21
-    portee_modele: non_applique
+    portee_modele: applique
     effet_modele: >-
-      Sans objet : la bonification n'est pas servie.
+      La fiche bonification_cinquieme_militaires réduit la bonification
+      jusqu'en août 2023, et plus depuis : l'officier radié le lendemain de ses
+      soixante-deux ans en garde deux ans en 2017, cinq en 2024.
 
   - code: trimestre_d_accouchement_devient_bonification
     date: 2025-12-31

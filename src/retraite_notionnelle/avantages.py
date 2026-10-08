@@ -58,7 +58,7 @@ from .cout import _DEMI_TRANCHE, _ponderation, generations
 from .donnees.chargement import charger_yaml
 from .donnees.depenses import DepensesRetraite
 from .donnees.population import Population
-from .droit.compter import FICHES_DES_EMPLOIS
+from .droit.compter import FICHE_DES_MILITAIRES, FICHES_DES_EMPLOIS
 from .scenarios.actuel import CarriereLongue, ScenarioActuel
 from .simulateur import Simulateur
 from .somme import somme_ordonnee
@@ -451,14 +451,30 @@ NEUTRALISATIONS: tuple[Neutralisation, ...] = (
              "liquident leurs seuls services",
         par="table",
     ),
+    Neutralisation(
+        code="bonification_cinquieme_militaires",
+        quoi="la fiche de la bonification du cinquième des militaires est "
+             "retirée : le militaire liquide ses seuls services, sans le "
+             "cinquième de leur durée que la bonification y ajoute",
+        par="table",
+    ),
 )
 
+#: Les fiches que retire chacune des neutralisations des bonifications de
+#: service : celles des emplois classés, puis celle des militaires.
+FICHES_RETIREES: dict[str, tuple[str, ...]] = {
+    "bonification_cinquieme_services_actifs": tuple(
+        nom for nom in FICHES_DES_EMPLOIS if nom != FICHE_DES_MILITAIRES),
+    "bonification_cinquieme_militaires": (FICHE_DES_MILITAIRES,),
+}
 
-def statuts_des_emplois(simulateur: Simulateur) -> frozenset[str]:
-    """Les statuts qu'une version des fiches des emplois classés bonifie : les
-    seules carrières que le retrait de ces fiches peut toucher."""
+
+def statuts_des_emplois(simulateur: Simulateur, code: str) -> frozenset[str]:
+    """Les statuts qu'une version des fiches que cette neutralisation retire
+    bonifie (:data:`FICHES_RETIREES`) : les seules carrières que le retrait
+    peut toucher."""
     fiches = simulateur.scenario_actuel.fiches_datees.fiches()
-    return frozenset(statut for nom in FICHES_DES_EMPLOIS if nom in fiches
+    return frozenset(statut for nom in FICHES_RETIREES[code] if nom in fiches
                      for version in fiches[nom]["versions"]
                      for statut in version["parametres"].get("statuts") or ())
 
@@ -547,12 +563,14 @@ def scenarios_neutralises(simulateur: Simulateur) -> dict[str, ScenarioActuel]:
     handicap.invalidites = handicap.invalidites.sans("handicap")
     variantes["retraite_anticipee_handicap"] = handicap
 
-    emplois = ScenarioActuel(simulateur.macro, simulateur.catalogue,
-                             simulateur.affiliations, simulateur.parametres)
-    # Les fiches des bonifications des emplois classés, retirées : seule une
-    # carrière servie dans un emploi qu'elles bonifient y perd quelque chose.
-    emplois.fiches_datees = emplois.fiches_datees.sans(*FICHES_DES_EMPLOIS)
-    variantes["bonification_cinquieme_services_actifs"] = emplois
+    for code, noms in FICHES_RETIREES.items():
+        emplois = ScenarioActuel(simulateur.macro, simulateur.catalogue,
+                                 simulateur.affiliations, simulateur.parametres)
+        # Les fiches des bonifications des emplois classés, ou celle des
+        # militaires, retirées : seule une carrière servie dans un emploi
+        # qu'elles bonifient y perd quelque chose.
+        emplois.fiches_datees = emplois.fiches_datees.sans(*noms)
+        variantes[code] = emplois
     return variantes
 
 
@@ -668,10 +686,11 @@ def recalculer(simulateur: Simulateur, cas: CasType, generation: int,
             variante = variantes.get(code)
             if variante is None:
                 continue
-            if (code == "bonification_cinquieme_services_actifs"
-                    and cas.affiliation not in statuts_des_emplois(simulateur)):
+            if (code in FICHES_RETIREES
+                    and cas.affiliation not in statuts_des_emplois(simulateur, code)):
                 # Une carrière qu'aucune fiche ne bonifie n'a rien à perdre au
-                # retrait : aucun cas type de la grille n'est policier ni pompier.
+                # retrait : aucun cas type de la grille n'est policier ni pompier,
+                # et le militaire n'a que la sienne.
                 continue
             carriere = carriere_variante(simulateur, cas, generation, age)
             if code == "retraite_anticipee_handicap" and carriere.incapacite_permanente is None:

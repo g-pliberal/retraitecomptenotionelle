@@ -46,7 +46,7 @@ objets:
       enfants: {porte: "les trimestres dus au titre des enfants, enfant par enfant", type: objet, objet: enfants, defaut: null}
       trimestres: {porte: "la durée d'assurance tous régimes, plafonnée année par année, enfants et bonifications des emplois classés compris", type: entier, obligatoire: true}
       etranger: {porte: "les trimestres que les périodes hors de France apportent à la durée du taux", type: objet, objet: etranger, defaut: null}
-      emplois: {porte: "ce que les emplois classés ajoutent, régime par régime", type: liste, de: {objet: emploi}, obligatoire: true}
+      emplois: {porte: "ce que les emplois classés et le service militaire ajoutent, régime par régime", type: liste, de: {objet: emploi}, obligatoire: true}
       au_jour: {porte: "les services du code des pensions comptés au jour, quand la version du décompte qui vaut à la date d'effet les y compte", type: objet, objet: au_jour, defaut: null}
 
   au_jour:
@@ -67,7 +67,7 @@ objets:
       regime: {porte: "le régime qui le sert", type: identifiant, obligatoire: true}
       fiche: {porte: "la fiche qui le porte", type: identifiant, obligatoire: true}
       version: {porte: "la version de la fiche qui s'applique", type: identifiant, obligatoire: true}
-      services: {porte: "les trimestres ajoutés aux services liquidés, sous le pourcentage maximum", type: entier, obligatoire: true}
+      services: {porte: "les trimestres ajoutés aux services liquidés, sous le pourcentage maximum ou au-delà, jusqu'à 80 %, quand ce sont ceux de L. 12", type: entier, obligatoire: true}
       duree: {porte: "les trimestres ajoutés à la durée tous régimes, hors de celle qui ouvre la surcote du fonctionnaire", type: entier, obligatoire: true}
       majoration: {porte: "les trimestres ajoutés à la seule durée que ce régime oppose à sa décote", type: entier, obligatoire: true}
       au_dela_du_maximum: {porte: "si ses services portent le pourcentage au-delà du maximum, comme les bonifications de L. 12", type: booleen, obligatoire: true}

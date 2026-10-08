@@ -1157,6 +1157,41 @@ class Carriere:
             cumul += ligne.fraction_annee
         return None
 
+    def duree_de_service_avant(self, affiliations: Iterable[str], date: DateMois,
+                               jusqu_a: int | None = None) -> float:
+        """Années de service accomplies dans ces statuts avant ce mois, au mois
+        près, bornes comprises.
+
+        Les mois de chaque année se placent comme :meth:`date_de_service` les
+        place : une année pleine de janvier à décembre, l'année tronquée qui
+        ouvre le statut depuis son mois d'entrée, les autres depuis janvier.
+        C'est ce qui compte les services accomplis au-delà d'un âge — ceux qui
+        réduisent la bonification du cinquième d'un policier ou d'un militaire.
+        """
+        lignes = self._lignes_de_service(affiliations, jusqu_a)
+        if not lignes:
+            return 0.0
+        premiere = lignes[0].annee
+        avant = 0.0
+        for ligne in lignes:
+            if ligne.annee < date.annee:
+                avant += ligne.fraction_annee
+                continue
+            if ligne.annee > date.annee:
+                break
+            mois_servis = round(ligne.fraction_annee * MOIS_PAR_AN)
+            if mois_servis <= 0:
+                continue
+            if ligne.annee == premiere and mois_servis < MOIS_PAR_AN:
+                entree = self.date_entree(ligne.affiliation)
+                debut = entree.mois if entree is not None and entree.annee == ligne.annee \
+                    else MOIS_PAR_AN - mois_servis + 1
+            else:
+                debut = 1
+            servis_avant = max(0, min(debut + mois_servis, date.mois) - debut)
+            avant += ligne.fraction_annee * servis_avant / mois_servis
+        return avant
+
     def age_de_service(self, affiliations: Iterable[str],
                        annees: float) -> float | None:
         """Âge auquel la durée de service demandée est atteinte : l'âge au

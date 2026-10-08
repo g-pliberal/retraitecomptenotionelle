@@ -74,7 +74,7 @@ un modèle de population complet et une méthode qui n'a rien de commun avec
 celle-ci : il trouve <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> % du PIB en 2024 et **<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/--> % en 2070** (rapport annuel
 de juin 2026, champ « ensemble des régimes légalement obligatoires, y compris
 FSV, hors RAFP »). Le modèle, laissé à lui-même — sa masse de pensions mise à
-l'échelle de la dernière année publiée —, trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(trajectoire_propre?annee=2070)-->14,76<!--/--> %**. Trois dixièmes de point
+l'échelle de la dernière année publiée —, trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(trajectoire_propre?annee=2070)-->14,80<!--/--> %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
 Comptes de la protection sociale n'étant pas exactement celle du COR — et
 **un demi-point à l'arrivée, du même côté** : depuis l'étape 14 de l'action
@@ -92,8 +92,8 @@ demeure dans le rapport, et les deux contrôles qui suivent le mesurent.
 publiée, le coût du système actuel est la masse de pensions des cas types, mise
 à l'échelle par l'ancrage qui la rend égale à la dépense de cette année-là. La
 même formule, appliquée aux années publiées, devrait retrouver ce qui a été
-dépensé (`Avenir.reconstitution`) ; elle s'en écarte de <!--chiffre:mesure(reconstitution?annee=2000)-->−14,5<!--/--> % en 2000, de
-<!--chiffre:mesure(reconstitution?annee=2009)-->−16,3<!--/--> % en 2009 et de <!--chiffre:mesure(reconstitution?annee=2020)-->−3,8<!--/--> % en 2020, et de <!--chiffre:mesure(reconstitution?annee=1990)-->−23,8<!--/--> % en 1990. La masse du
+dépensé (`Avenir.reconstitution`) ; elle s'en écarte de <!--chiffre:mesure(reconstitution?annee=2000)-->−14,6<!--/--> % en 2000, de
+<!--chiffre:mesure(reconstitution?annee=2009)-->−16,4<!--/--> % en 2009 et de <!--chiffre:mesure(reconstitution?annee=2020)-->−3,8<!--/--> % en 2020, et de <!--chiffre:mesure(reconstitution?annee=1990)-->−24,0<!--/--> % en 1990. La masse du
 modèle croît donc plus vite que la dépense réelle, et l'ancrage reporte cette
 dérive sur l'avenir : c'est le symptôme le plus direct de l'écart au COR.
 L'ancrage suppose, sans le vérifier, que l'écart des cas types au réel est le
@@ -127,11 +127,11 @@ retraités de plus, le modèle
 les têtes que la trajectoire s'écarte. La pension moyenne relative, elle, recule
 de <!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070&source=cor)-->−17,2<!--/--> %
 chez le COR et de
-<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070)-->−15,3<!--/--> % seulement
+<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070)-->−15,0<!--/--> % seulement
 dans le modèle ; et sur le passé, de 2005 à 2025, elle a crû de
 <!--chiffre:mesure(decomposition?facteur=pension_relative&de=2005&a=2025&source=cor)-->8,9<!--/--> %
 quand le modèle la fait croître de
-<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2005&a=2025)-->15,4<!--/--> %. L'écart
+<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2005&a=2025)-->15,6<!--/--> %. L'écart
 de 2070 et celui de la reconstitution sont donc un seul et même défaut : la
 pension que la grille sert à chaque retraité progresse, d'une génération à
 l'autre, plus vite que la pension moyenne réelle. Deux tests le tiennent,
@@ -175,7 +175,7 @@ retraités que le COR leur projette, rapportés à ceux de tous les régimes
 faisait croître les retraités de l'État comme ceux de tous les régimes, quand
 le COR les tient stables. La Cnav du modèle suit celle du COR ; la fonction publique
 de l'État du modèle recule de
-<!--chiffre:mesure(decomposition?facteur=pension_relative&groupe=fpe&de=2025&a=2070)-->−36,4<!--/--> %,
+<!--chiffre:mesure(decomposition?facteur=pension_relative&groupe=fpe&de=2025&a=2070)-->−34,4<!--/--> %,
 moins que la sienne, et l'Agirc-Arrco de
 <!--chiffre:mesure(decomposition?facteur=pension_relative&groupe=agirc_arrco&de=2025&a=2070)-->−31,7<!--/--> %.
 Ce qui reste de ce dernier écart tient aux têtes : le COR fait croître les
@@ -296,9 +296,9 @@ doit être multiplié par la dérive de l'année, la croissance de la masse du
 modèle rapportée à celle de la dépense du COR depuis la première année
 projetée, <!--chiffre:mesure(derive_cor?annee=2050)-->−2<!--/--> % en 2050, presque rien à l'horizon
 (`rapport_derive`, `Cout.solde_derive`, `Cout.dette_derive`). La proposition coûte alors <!--chiffre:mesure(part_pib?scenario=6&annee=2070&borne=haute)-->8,2<!--/--> % du PIB en 2070
-(<!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,2<!--/--> dans la première lecture), son solde moyen 2026-2070 est de <!--chiffre:mesure(solde_moyen?scenario=6&borne=haute)-->−0,80<!--/--> %
-(<!--chiffre:mesure(solde_moyen?scenario=6)-->−0,91<!--/-->), son coefficient d'équilibre de <!--chiffre:mesure(coefficient?scenario=6&borne=haute)-->1,00<!--/--> (<!--chiffre:mesure(coefficient?scenario=6)-->1,00<!--/-->), et sa dette en
-2070 de <!--chiffre:mesure(dette?scenario=6&borne=haute)-->53<!--/--> % du PIB (<!--chiffre:mesure(dette?scenario=6)-->60<!--/-->). Le système actuel ne bouge dans aucune
+(<!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,2<!--/--> dans la première lecture), son solde moyen 2026-2070 est de <!--chiffre:mesure(solde_moyen?scenario=6&borne=haute)-->−0,78<!--/--> %
+(<!--chiffre:mesure(solde_moyen?scenario=6)-->−0,88<!--/-->), son coefficient d'équilibre de <!--chiffre:mesure(coefficient?scenario=6&borne=haute)-->1,00<!--/--> (<!--chiffre:mesure(coefficient?scenario=6)-->1,01<!--/-->), et sa dette en
+2070 de <!--chiffre:mesure(dette?scenario=6&borne=haute)-->52<!--/--> % du PIB (<!--chiffre:mesure(dette?scenario=6)-->58<!--/-->). Le système actuel ne bouge dans aucune
 des deux lectures, ni la garantie vieillesse, lue sur la distribution des
 pensions. La page Coût donne les deux lectures côte à côte. La seconde a été la
 borne haute de la proposition jusqu'à l'étape 11 de l'action 147 ; la dérive

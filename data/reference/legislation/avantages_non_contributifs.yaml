@@ -958,36 +958,40 @@ avantages:
     libelle: Bonification du cinquième du temps de service des militaires
     famille: age_et_bonifications
     quoi: >-
-      Une annuité gratuite pour cinq servies, cinq au plus, au militaire
-      réunissant dix-sept ans de services effectifs. Le maximum va à qui part à
-      cinquante-neuf ans, et la bonification décroît d'une annuité par année
-      supplémentaire servie.
-    base_legale: [L. 12 i CPCMR]
-    fiches: []
-    creation: 1964
+      Un cinquième du temps de service, cinq annuités au plus, au militaire
+      réunissant dix-sept ans de services effectifs, quinze avant juillet 2011,
+      jusqu'à 80 % de taux. Jusqu'en août 2023, le maximum allait à qui partait
+      à cinquante-neuf ans — cinquante-cinq avant 2004, cinquante-sept ensuite
+      —, la bonification perdait une annuité par année supplémentaire servie,
+      et rien n'était dû au-delà de l'âge légal. Créée en 1975, après trois
+      annuités au plus de 1972 à 1975 (loi de finances pour 1972, article 53).
+    base_legale: [L. 12 i CPCMR, Loi n° 71-1061 du 29 décembre 1971 art. 53]
+    fiches: [bonification_cinquieme_militaires]
+    creation: 1972
     fin: null
     regimes: militaires
-    etat_modele: absent
+    etat_modele: integre
     ligne_cascade: null
     pourquoi_pas_chiffre: >-
-      Suppose de connaître le corps d'appartenance et le détail des services,
-      que le simulateur ne saisit pas. `Neutralisations` le range explicitement
-      dans « ce que le scénario 1 ne sert pas ».
+      L'avantage est une DURÉE : vingt trimestres au plus, aux services liquidés
+      au-delà du maximum de 75 % et à la durée d'assurance de la décote. Le
+      scénario 1 le sert depuis le 8 octobre 2026 aux deux statuts militaires,
+      à chaque date d'effet sa version (fiche bonification_cinquieme_militaires).
+    chiffre_par: scripts/cout_avantages.py
     sans_chiffre: >-
-      la durée de services militaires effectifs n'est pas saisie ; le jaune la
-      donne à 98,4 % des liquidants, 146 € par mois
+      la cascade ne l'isole pas ; le jaune la donne à 98,4 % des liquidants,
+      146 € par mois
     denombrement:
       source_id: sre_jaune_pensions
       tableau_a7: campagne_ou_cinquieme
       tableau_50: cinquieme_l12
     cout:
-      mesurable_par: aucune
+      mesurable_par: modele
       note: >-
-        Chiffrable dès qu'une carrière porte une durée de services militaires
-        effectifs — l'information est déjà dans
-        `legislation/duree_services_militaires.csv`, mais pour l'ouverture du
-        droit, pas pour la bonification. Dénombrée en attendant : le tableau A-7
-        du jaune budgétaire la confond avec les bénéfices de campagne, 404 478
+        Mesurée par retrait de la fiche (scripts/cout_avantages.py), sur le cas
+        type militaire de la grille, sous-officier de vingt-cinq ans de services,
+        à qui elle donne vingt trimestres. Dénombrée aussi : le tableau A-7 du
+        jaune budgétaire la confond avec les bénéfices de campagne, 404 478
         pensions militaires sur 406 645 en paiement en 2024 pour 27,4
         trimestres. Le tableau 50 l'isole sur le flux 2023 : 98,4 % des
         militaires liquidants, 16,4 trimestres, 146 € de gain mensuel.

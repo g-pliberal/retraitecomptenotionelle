@@ -165,8 +165,9 @@ approximations:
     La radiation par limite d'âge, qui ouvre la bonification sans la durée de services,
     n'est pas portée : le modèle ne l'ouvre qu'à la durée de services super-actifs qui
     ouvre l'âge minoré à la génération, ou à la radiation pour invalidité. Les
-    services accomplis au-delà de l'âge qui réduit la bonification se comptent à
-    l'année : l'année de cet anniversaire est réputée servie avant lui.
+    services accomplis au-delà de l'âge qui réduit la bonification se comptent au
+    mois, depuis le premier mois vécu entier à cet âge, les mois de chaque année
+    placés comme pour la durée de services : le jour de la radiation n'est pas saisi.
   effet: non mesuré ; l'agent entré tard qui part à sa limite d'âge n'a rien
 - version: [loi_de_1957, loi_du_9_novembre_2010, loi_du_14_avril_2023]
   ecart: >-
@@ -275,6 +276,11 @@ historique:
 - >-
   2026-10-07 — née de l'étape 17 de l'action 138 : le dépôt ne servait aucune
   bonification de service, et TRAJECTOiRE servait celle-ci (registre, 138.17).
+- >-
+  2026-10-08 — les services accomplis au-delà de cinquante-cinq ou cinquante-sept ans
+  se comptent au mois, avec la bonification des militaires : l'année de l'anniversaire
+  réputée servie avant lui, le policier né en janvier 1953 et parti en janvier 2013
+  gardait douze trimestres pour trois années servies au-delà ; il en garde huit.
 effet: >-
   Le policier ou le surveillant qui réunit la durée de l'âge minoré : vingt trimestres
   de services à qui en a servi vingt-cinq, soit jusqu'à 15 % de pension à qui part à
