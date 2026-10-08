@@ -201,6 +201,7 @@
    "bareme_minoration_regimes_en_points",
    "baremes_cnbf",
    "bonification_cinquieme_police_penitentiaire",
+   "bonification_cinquieme_sapeurs_pompiers",
    "carcdsf_minoration_age_seul",
    "carmf_asv_minoration_enfants",
    "carpimko_ages_2015",
@@ -230,6 +231,7 @@
    "coefficient_anticipation_ircantec",
    "coefficients_anticipation_agirc_arrco",
    "compagnie_generale_eaux_transfert_1991",
+   "complement_differentiel_rco",
    "cotisation_maladie_des_non_residents",
    "cotisation_maladie_pensions_complementaires",
    "cotisation_par_classes_liberales",
@@ -274,6 +276,7 @@
    "majoration_dix_pour_cent",
    "majoration_duree_apres_65_ans",
    "majoration_duree_assurance_enfants",
+   "majoration_duree_hospitaliers_actifs",
    "majoration_enfants_agirc_arrco",
    "majoration_enfants_ircec",
    "majoration_enfants_liberaux_avocats",
@@ -294,6 +297,7 @@
    "parlement_europeen_affiliation",
    "pension_d_invalidite_substituee",
    "pension_differee_fonction_publique",
+   "pension_majoree_reference",
    "pension_mines",
    "pension_non_salaries_agricoles_2026",
    "pension_proratisee",
@@ -552,11 +556,13 @@
    "2026-10-07 | action 135, contexte, étape 4 : les lignes géantes",
    "2026-10-07 | action 135, contexte, étape 5 : les limites par partie",
    "2026-10-07 | action 138, étape 14, première partie : les pensions de 2020, simulées contre publiées",
+   "2026-10-07 | action 138, étape 17, première partie : les bonifications et la majoration des emplois classés de la fonction publique",
    "2026-10-07 | action 138, étape 3, première partie : la part des reportés en emploi, lue dans les évaluations de 2010",
    "2026-10-07 | action 138, étape 4 : la base de la réversion du régime général, sans le minimum contributif",
    "2026-10-07 | action 138, étape 4 : le minimum et les majorations de la réversion du régime général",
    "2026-10-07 | action 138, étape 6 : l'AVTS, le trimestre d'avant 1972 et le minimum vieillesse d'avant 2007",
    "2026-10-07 | action 138, étape 7, première partie : les quotients projetés de l'INSEE au lieu de la loi de Gompertz-Makeham",
+   "2026-10-07 | action 138, étape 8 : les minima des exploitants, la pension majorée de référence et le complément différentiel de la RCO",
    "2026-10-07 | action 138, étape 9, première partie : les indicateurs de cycle de vie",
    "2026-10-07 | action 150, étape 1 : Pourquoi changer et Partager lisent le bilan figé"
   ],
@@ -1270,6 +1276,7 @@
    "dila_legi_minimum_vieillesse",
    "dila_legi_msa",
    "dila_legi_parametres_retraite",
+   "dila_legi_pension_majoree",
    "dila_legi_point_indice",
    "dila_legi_rci",
    "dila_legi_smic",
@@ -1348,6 +1355,7 @@
    "legifrance_pivots",
    "legifrance_textes",
    "msa_parametres",
+   "msa_revalorisation_retraites",
    "ocde_health_le",
    "ocde_pensions_at_a_glance",
    "opef_rapport_annuel",
@@ -6889,7 +6897,7 @@
    "1. Programme — trois minutes": [
     "4affbd8c4e78027d",
     "679d82b755a3480f",
-    "d648a2542e81c834"
+    "bc77cbe2216fffc6"
    ],
    "2. Simuler — six minutes, c'est le cœur": [
     "d745ea9a8aeebb45",
@@ -6928,8 +6936,8 @@
    ],
    "5. Avantages — deux minutes": [
     "e13190fb11225547",
-    "f82cd0b30eee7f56",
-    "bfbaa9f3a0c8cd0e"
+    "ebe87d04985e95d3",
+    "86ed5c16f4d34644"
    ],
    "6. Méthode et Données — deux minutes, pour finir": [
     "9a630078d6a3bd10",
