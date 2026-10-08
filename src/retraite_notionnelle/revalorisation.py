@@ -303,10 +303,15 @@ class RegimeServi:
     #: 1er septembre 2023, en euros de l'échéance
     #: (:func:`majorer_les_petites_pensions`). La réversion ne la lit pas.
     majoration: float = 0.0
+    #: Ce que le taux plein ouvre depuis le 1er septembre 2023 à la RCO d'un
+    #: chef d'exploitation parti avant — points gratuits et complément
+    #: différentiel —, en euros de l'échéance (:func:`relever_les_exploitants`).
+    relevement: float = 0.0
 
     @property
     def aujourd_hui(self) -> float:
-        return self.au_depart * self.coefficient - self.revision + self.majoration
+        return (self.au_depart * self.coefficient - self.revision + self.majoration
+                + self.relevement)
 
 
 @dataclass(frozen=True)
@@ -341,6 +346,32 @@ class MajorationExceptionnelle:
 
 
 @dataclass(frozen=True)
+class RelevementAgricole:
+    """Ce que le taux plein ouvre, depuis le 1er septembre 2023, à la RCO d'un
+    chef d'exploitation parti avant sans la durée requise tous régimes (fiche
+    ``relevement_des_exploitants_2023``, :func:`relever_les_exploitants`)."""
+
+    #: Le jour où il est dû (AAAA-MM-JJ).
+    date: str
+    #: Les points gratuits de L. 732-56, et ceux du complément différentiel
+    #: de L. 732-63, attribués ce jour-là.
+    points_gratuits: float
+    points_complement: int
+    #: La valeur de service du point de RCO ce jour-là, et le SMIC net
+    #: agricole horaire que le complément a lu.
+    valeur_point: float
+    smic_net: float
+    #: Le coefficient qui mène la valeur du point jusqu'à l'échéance.
+    coefficient: float
+
+    @property
+    def a_l_echeance(self) -> float:
+        """Son montant annuel à l'échéance."""
+        return ((self.points_gratuits + self.points_complement) * self.valeur_point
+                * self.coefficient)
+
+
+@dataclass(frozen=True)
 class Revalorisee:
     """Ce que l'étape « faire vivre » écrit : les pensions du système 1 menées
     à une échéance. Son schéma : ``data/reference/etapes/faire_vivre.yaml``."""
@@ -360,6 +391,9 @@ class Revalorisee:
     #: Les majorations exceptionnelles de septembre 2023, régime par régime,
     #: telles que la caisse les a calculées (:class:`MajorationExceptionnelle`).
     majorations: tuple[MajorationExceptionnelle, ...] = ()
+    #: Le relèvement d'un chef d'exploitation de septembre 2023
+    #: (:class:`RelevementAgricole`) ; ``None`` sans lui.
+    relevement: RelevementAgricole | None = None
 
     def donnees(self) -> dict:
         """La revalorisation, telle que le schéma de l'étape la décrit."""
@@ -370,7 +404,8 @@ class Revalorisee:
             "regimes": [{"regime": r.regime, "coefficient": r.coefficient,
                          "regle": r.regle, "fiabilite": r.fiabilite.name.lower(),
                          "revision": r.revision,
-                         "majoration_exceptionnelle": r.majoration}
+                         "majoration_exceptionnelle": r.majoration,
+                         "relevement_des_exploitants": r.relevement}
                         for r in self.regimes],
             "majoration": self.coefficient_majoration,
             "mensuel_decembre_2019": self.mensuel_decembre_2019,
@@ -714,6 +749,9 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
     regimes, majorations = majorer_les_petites_pensions(
         simulateur.scenario_actuel, resultat, datees, regimes, servie, a_l_effet,
         mensuel_2019, fin)
+    regimes, relevement = relever_les_exploitants(
+        simulateur.scenario_actuel, carriere, resultat, datees, regimes, servie,
+        a_l_effet, mensuel_2019, fin)
     return Revalorisee(
         personne=carriere.personne,
         annee=annee,
@@ -723,6 +761,7 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
         mensuel_decembre_2019=mensuel_2019,
         fiabilite=fiabilite,
         majorations=majorations,
+        relevement=relevement,
     )
 
 
@@ -897,6 +936,102 @@ def majorer_les_petites_pensions(moteur, resultat, datees, regimes: list[RegimeS
     par_regime = {m.regime: m.a_l_echeance for m in majorations}
     return ([replace(r, majoration=par_regime[r.regime]) if par_regime.get(r.regime)
              else r for r in regimes], majorations)
+
+
+#: La fiche du relèvement des exploitants de septembre 2023, que
+#: :class:`~retraite_notionnelle.scenarios.actuel.FichesDatees` lit à la date
+#: d'effet de leur pension de base.
+FICHE_DU_RELEVEMENT = "relevement_des_exploitants_2023"
+
+
+def relever_les_exploitants(moteur, carriere, resultat, datees, regimes: list[RegimeServi],
+                            servie: PensionServie, a_l_effet: dict[str, float],
+                            mensuel_2019: float | None, fin: date
+                            ) -> tuple[list[RegimeServi], RelevementAgricole | None]:
+    """Le relèvement des pensions des exploitants prises avant le 1er septembre
+    2023 (loi n° 2023-270, article 18, VI), mené jusqu'à l'échéance ``fin`` :
+    depuis ce jour, le taux plein, quelle qu'en soit la raison, ouvre les
+    points gratuits de la RCO (L. 732-56) et son complément différentiel
+    (L. 732-63) à qui ne les avait pas, faute de la durée requise tous
+    régimes, « les montants du salaire minimum de croissance et des éléments
+    de calcul du complément différentiel [...] » étant « ceux en vigueur au
+    1er septembre 2023 » (fiche ``relevement_des_exploitants_2023``).
+
+    Les points gratuits sont ceux que la liquidation aurait attribués au taux
+    plein (:func:`~retraite_notionnelle.droit.acquerir.points_gratuits`) ; le
+    complément se calcule ce jour-là, sur ce que les pensions servent alors,
+    ces points compris, à la règle de septembre 2023, au SMIC net agricole et
+    à la PMR qui valent alors pour une pension prise avant
+    (:func:`~retraite_notionnelle.droit.completer.complement_differentiel`).
+    Les uns et les autres suivent ensuite la valeur du point de RCO. Le modèle
+    ne servant la RCO que depuis 2003 et le complément que depuis 2015, à la
+    liquidation, une pension prise avant ne reçoit pas ce qu'ils n'ont pas
+    ouvert.
+
+    Rend les régimes, la RCO portant le relèvement en euros de l'échéance, et
+    le calcul ; rien quand il n'ajoute rien.
+    """
+    from .droit.completer import RCO, complement_differentiel
+
+    chef = getattr(resultat, "chef_d_exploitation", None)
+    if (chef is None or not chef.eligible.taux_plein
+            or chef.eligible.duree_requise_atteinte):
+        return regimes, None
+    servies_au_depart = {p.regime: (p, a, debut, montant) for p, a, debut, montant in datees}
+    if chef.regime not in servies_au_depart or RCO not in servies_au_depart:
+        return regimes, None
+    debut = servies_au_depart[chef.regime][2]
+    regle = moteur.fiches_datees.regle(FICHE_DU_RELEVEMENT, debut.isoformat())
+    if not regle or not regle["existe"]:
+        return regimes, None
+    due = date.fromisoformat(str(regle["due_le"]))
+    valeur = liquider.valeur_du_point(moteur, RCO, due)
+    if (not debut < due <= fin or servies_au_depart[RCO][2] > due
+            or valeur is None or valeur[0] <= 0):
+        return regimes, None
+    smic = (regle["smic_net_horaire"], Fiabilite.depuis_texte(regle["fiabilite"]))
+    points = 0
+    if (not chef.complement
+            and moteur.complement_differentiel_rco.regle(debut.isoformat())["existe"]):
+        # Les pensions servies ce jour-là, majorations pour enfants comprises,
+        # les points gratuits du même jour et les pensions étrangères aussi,
+        # que le plafond tous régimes compte (D. 732-166-5-1).
+        enfants: dict[str, float] = {}
+        for avantage in resultat.avantages_appliques:
+            if avantage.code == "majoration_enfants":
+                for code, part in avantage.par_regime:
+                    enfants[code] = enfants.get(code, 0.0) + part
+        servies: dict[str, tuple[float, float]] = {}
+        for pension, a, depuis, montant in datees:
+            if depuis > due or pension.capital is not None:
+                continue
+            coefficient = servie.coefficient(pension, a, depuis, due, mensuel_2019)[0]
+            servies[pension.regime] = (
+                montant * coefficient,
+                enfants.get(pension.regime, 0.0) * a_l_effet.get(pension.regime, 1.0)
+                * coefficient)
+        gratuits = chef.gratuits * valeur[0]
+        personnelles = (somme_ordonnee(m + e for m, e in servies.values()) + gratuits
+                        + pensions_etrangeres_servies(moteur.macro, carriere,
+                                                      DateMois(due.year, due.month)))
+        pmr = moteur.pension_majoree_reference.montant(
+            moteur.pension_majoree_reference.regle(debut.isoformat())["montant"]
+            or "pmr_chef", due.year, due.month)
+        differentiel = complement_differentiel(
+            moteur, carriere, chef.eligible, servies[chef.regime][0],
+            servies[RCO][0] + gratuits, chef.points + chef.gratuits, valeur[0],
+            personnelles, quand=due.isoformat(), smic=smic, pmr=pmr)
+        points = 0 if differentiel is None else differentiel.points
+    if chef.gratuits <= 0 and points <= 0:
+        return regimes, None
+    pension, a, depuis, _ = servies_au_depart[RCO]
+    coefficient = (servie.coefficient(pension, a, depuis, fin, mensuel_2019)[0]
+                   / servie.coefficient(pension, a, depuis, due, mensuel_2019)[0])
+    relevement = RelevementAgricole(
+        date=due.isoformat(), points_gratuits=chef.gratuits, points_complement=points,
+        valeur_point=valeur[0], smic_net=smic[0], coefficient=coefficient)
+    return ([replace(r, relevement=relevement.a_l_echeance) if r.regime == RCO else r
+             for r in regimes], relevement)
 
 
 def foyer_a_l_echeance(simulateur, carriere, vivante: Revalorisee) -> Foyer:

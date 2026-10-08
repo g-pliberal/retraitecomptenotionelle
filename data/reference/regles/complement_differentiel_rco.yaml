@@ -306,12 +306,12 @@ versions:
   exemples: aucun trouvé
 approximations:
 - ecart: >-
-    le SMIC net agricole n'est lu que pour 2021 et 2024 à 2026, tiré des montants
+    le SMIC net agricole n'est lu que pour 2021, 2023 et 2024 à 2026, tiré des montants
     mensuels que la MSA publie ; les autres années sont estimées, par le rapport au SMIC
     brut que ces montants donnent et les taux salariaux qui ont changé
     (complement_differentiel_rco.csv)
   effet: >-
-    de 2015 à 2020, 2022 et 2023 : la fiabilité du résultat tombe à « estimée »
+    de 2015 à 2020 et en 2022 : la fiabilité du résultat tombe à « estimée »
 - ecart: >-
     de 2015 à octobre 2021, le complément se calcule au 1er octobre de l'année d'effet,
     sur les pensions de ce jour-là ; le modèle le calcule à la date d'effet, la PMR
@@ -323,16 +323,18 @@ approximations:
   effet: non mesuré
 - ecart: >-
     le complément se calcule au départ : servi depuis 2015 aux pensions liquidées avant,
-    revu à chaque changement des pensions, il ne l'est pas ; le plafond tous régimes ne
-    distingue pas les pensions des élus locaux exclues depuis 2026
+    revu à chaque changement des pensions, il ne l'est pas — seul l'est le relèvement de
+    septembre 2023, qui l'ouvre au taux plein aux pensions prises depuis 2015 (fiche
+    relevement_des_exploitants_2023) ; le plafond tous régimes ne distingue pas les
+    pensions des élus locaux exclues depuis 2026
   effet: non mesuré
 sources:
-  lu_le: 2026-10-07
+  lu_le: 2026-10-08
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
-    Lire le SMIC net agricole de 2015 à 2020, de 2022 et de 2023 dans une publication de
-    la MSA (circulaire, communiqué, barème), et identifier les 0,79 point qu'elle déduit
+    Lire le SMIC net agricole de 2015 à 2020 et de 2022 dans une publication de la MSA
+    (circulaire, communiqué, barème), et identifier les 0,79 point qu'elle déduit
     au-delà des taux salariaux d'un salarié non cadre.
   - >-
     Chercher un exemple chiffré publié d'un complément différentiel, et le rejouer dans
@@ -360,6 +362,13 @@ sources:
     date: 2026-10-07
   - type: autre
     reference: >-
+      MSA, Info presse du 14 février 2023, « Les barèmes et montants des prestations
+      retraites versées par les caisses de la MSA sont revalorisées » : « 85% du SMIC
+      net agricole [...] soit un montant de 1 138,63€ net par mois » au 1er janvier 2023
+    url: https://www.msa.fr/lfp/documents/11566/282945655/Info+presse-+Les+bar%C3%A8mes+et+montants+des+prestations+retraites+revaloris%C3%A9es
+    date: 2023-02-14
+  - type: autre
+    reference: >-
       MSA Mayenne-Orne-Sarthe, « Le complément différentiel RCO pour les chefs
       d'exploitation », mis à jour le 7 octobre 2021 : 73 % au 1er janvier 2015, 74 % en
       2016, 75 % en 2017, versé le 9 novembre 2015 avec un rappel depuis le 1er janvier
@@ -380,6 +389,10 @@ code:
   tests: >-
     tests/test_minima_agricoles.py, dans les deux moteurs
 historique:
+- >-
+  2026-10-08 — le SMIC net agricole de 2023, estimé, lu dans une note de presse de la
+  MSA qui le confirme ; le relèvement de septembre 2023 des pensions déjà liquidées,
+  servi (fiche relevement_des_exploitants_2023).
 - >-
   2026-10-07 — servi, à l'étape 138.8 : décrit depuis le 19 septembre 2026 dans
   l'inventaire des avantages non contributifs, sous la ligne de la PMR, sans qu'aucun

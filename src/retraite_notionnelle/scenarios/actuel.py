@@ -241,6 +241,10 @@ class ResultatActuel:
     #: pensions que le minimum contributif regarde, celles de chaque départ
     #: (:func:`~retraite_notionnelle.revalorisation.majorer_les_petites_pensions`).
     petites_pensions: tuple[_completer.PetitePension, ...] = ()
+    #: Ce que le relèvement des exploitants de septembre 2023 relit
+    #: (:func:`~retraite_notionnelle.revalorisation.relever_les_exploitants`) ;
+    #: ``None`` sans RCO.
+    chef_d_exploitation: _completer.ChefDExploitation | None = None
 
     @property
     def pension_mensuelle(self) -> float:
@@ -278,6 +282,7 @@ def resultat_actuel(liquidation: Liquidation, foyer: Foyer) -> ResultatActuel:
         fiabilite=fiabilite,
         minimum_ecrete=liquidation.complements.minimum_ecrete,
         petites_pensions=liquidation.complements.petites_pensions,
+        chef_d_exploitation=liquidation.complements.chef,
     )
 
 
@@ -397,6 +402,8 @@ def resultat_des_departs(moteur, carriere: Carriere, departs, liquidations,
         departs=tuple(servis),
         petites_pensions=tuple(petite for liquidation in liquidations
                                for petite in liquidation.complements.petites_pensions),
+        chef_d_exploitation=next((liquidation.complements.chef for liquidation in liquidations
+                                  if liquidation.complements.chef is not None), None),
     )
 
 
@@ -1099,7 +1106,8 @@ class FichesDatees:
     ``ouvrir.depart_parent_trois_enfants`` lit, et le plafond de L. 18, que
     ``completer.plafond_de_l_article_l18`` lit, et la majoration exceptionnelle
     des petites pensions de septembre 2023, que
-    ``revalorisation.majorer_les_petites_pensions`` lit.
+    ``revalorisation.majorer_les_petites_pensions`` lit, et le relèvement des
+    exploitants de la même date, que ``revalorisation.relever_les_exploitants`` lit.
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
@@ -1108,7 +1116,7 @@ class FichesDatees:
             "majoration_duree_hospitaliers_actifs",
             "depart_anticipe_parents_trois_enfants",
             "majoration_enfants_plafond_fonction_publique",
-            "majoration_exceptionnelle_2023")
+            "majoration_exceptionnelle_2023", "relevement_des_exploitants_2023")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

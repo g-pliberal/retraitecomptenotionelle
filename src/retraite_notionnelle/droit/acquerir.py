@@ -134,7 +134,7 @@ def points_msa(moteur: ScenarioActuel, periode: PeriodeRegime, annee: int,
 
 def points_gratuits(moteur: ScenarioActuel, periode: PeriodeRegime,
                     carriere: Carriere, assurance: dict[str, dict[int, int]],
-                    trimestres: int, age_liquidation: float
+                    trimestres: int, age_liquidation: float, au_taux_plein: bool = False
                     ) -> tuple[float, Fiabilite | None]:
     """Points que ce régime attribue sans cotisation à la liquidation, et
     la fiabilité de la durée requise qui les conditionne.
@@ -157,6 +157,11 @@ def points_gratuits(moteur: ScenarioActuel, periode: PeriodeRegime,
     par quatre et bornés aux trimestres civils de l'année. Le modèle ne
     distingue pas l'activité principale de la secondaire : toute année de
     chef compte.
+
+    ``au_taux_plein`` ouvre les points au taux plein quelle que soit la date
+    d'effet : ceux que le relèvement de septembre 2023 attribue aux pensions
+    prises avant (loi n° 2023-270, article 18, VI ;
+    :func:`~retraite_notionnelle.revalorisation.relever_les_exploitants`).
     """
     regle = periode.points_gratuits
     base = moteur.catalogue[regle.regime]
@@ -174,8 +179,8 @@ def points_gratuits(moteur: ScenarioActuel, periode: PeriodeRegime,
         return 0.0, None
     requis, fiabilite = ouvrir.duree_requise(moteur, periode_base, carriere)
     taux_plein = trimestres >= requis
-    if (not taux_plein and carriere.date_liquidation.rang
-            >= DateMois(*regle.taux_plein_depuis).rang):
+    if not taux_plein and (au_taux_plein or carriere.date_liquidation.rang
+                           >= DateMois(*regle.taux_plein_depuis).rang):
         taux_plein = (age_liquidation
                       >= ouvrir.age_taux_plein(moteur, periode_base, carriere))
     if not taux_plein:

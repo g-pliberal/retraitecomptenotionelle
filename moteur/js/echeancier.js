@@ -537,6 +537,7 @@ export class Echeancier {
     const foyer = foyerALEcheance(this.simulateur, carriere, vivante);
     this.aujourdhui = aujourdHui(vivante, foyer, this.auDepart);
     this._majorer(carriere, vivante);
+    this._relever(carriere, vivante);
     this.journal.inscrire(new Entree({
       id: `revalorisation_${annee}`, evenement: ident, inscriteLe: date, debut: date,
       sorte: "revalorisation", contenu: vivante,
@@ -547,6 +548,10 @@ export class Echeancier {
       if ((regime.majoration ?? 0.0) > 0) {
         detail += ", majoration exceptionnelle de 2023 comprise "
           + `(${formatFixe(regime.majoration, 2, true)} €)`;
+      }
+      if ((regime.relevement ?? 0.0) > 0) {
+        detail += ", relèvement de septembre 2023 compris "
+          + `(${formatFixe(regime.relevement, 2, true)} €)`;
       }
       this.journal.inscrire(new Entree({
         id: `${origine}_${annee}`, evenement: ident, inscriteLe: date, debut: date,
@@ -593,6 +598,34 @@ export class Echeancier {
           + `${formatFixe(majoration.servie, 2, true)} € sous les plafonds`,
       }, quand);
     }
+  }
+
+  /**
+   * Le relèvement des exploitants de septembre 2023, que « faire vivre » a
+   * calculé : un début de composante, que la loi induit, ce jour-là, les points
+   * gratuits et ceux du complément à leur valeur de ce jour. Voir `_relever` du
+   * Python.
+   */
+  _relever(carriere, vivante) {
+    const relevement = vivante.relevement ?? null;
+    if (relevement === null) return;
+    const evenement = new Evenement({
+      id: `relevement_des_exploitants_${carriere.personne}`, date: relevement.date,
+      personnes: [carriere.personne], vise: { regimes: ["msa_rco"] },
+      sorte: "debut_de_composante", origine: "induit",
+    });
+    this._inscrire(evenement, evenement.id, "evenement", evenement, relevement.date);
+    const points = relevement.points_gratuits + relevement.points_complement;
+    this._inscrire(evenement, "relevement_msa_rco", "composante", {
+      id: "relevement_msa_rco", beneficiaire: carriere.personne, regime: "msa_rco",
+      montant: { annuel: points * relevement.valeur_point, monnaie: "EUR" },
+      debut: relevement.date,
+      detail: "relèvement des pensions prises avant le 1er septembre 2023 (loi "
+        + `n° 2023-270, article 18, VI) : ${formatFixe(relevement.points_gratuits, 2, true)} `
+        + `points gratuits et ${formatFixe(relevement.points_complement, 0, true)} points de `
+        + "complément différentiel, au SMIC net agricole de "
+        + `${formatFixe(relevement.smic_net, 4)} €`,
+    }, relevement.date);
   }
 
   _inscrire(evenement, ident, sorte, contenu, debut, remplace = null) {

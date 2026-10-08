@@ -6,13 +6,16 @@ le complément différentiel ajoute des points de RCO jusqu'à un pourcentage du
 SMIC net agricole (L. 732-63). Leurs fiches — ``pension_majoree_reference`` et
 ``complement_differentiel_rco`` — disent la règle de chaque date d'effet ; ces
 tests la rejouent sur des chefs d'exploitation à faible revenu, dans les deux
-moteurs.
+moteurs. Depuis le 1er septembre 2023, le taux plein ouvre aussi les points
+gratuits et le complément aux pensions prises avant sans la durée requise
+(fiche ``relevement_des_exploitants_2023``) : « faire vivre » les sert.
 """
 
 from __future__ import annotations
 
 import importlib.util
 import json
+import math
 import shutil
 import subprocess
 import tempfile
@@ -22,6 +25,9 @@ import pytest
 
 from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.droit import completer
+from retraite_notionnelle.droit.liquider import valeur_du_point
+from retraite_notionnelle.echeancier import Echeancier
+from retraite_notionnelle.revalorisation import faire_vivre
 from retraite_notionnelle.simulateur import Simulateur
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -117,8 +123,8 @@ def test_le_complement_suit_la_version_de_sa_date_d_effet(simulateur):
     assert regle["plafond_tous_regimes"]
     assert complement.regle("2023-09-01")["condition"] == "taux_plein"
     # Les montants que la MSA publie se refont au centime : 1 035,57 € par
-    # mois pour 2021, 1 214,40 € au 1er janvier 2026.
-    for annee, mensuel in ((2021, 1035.57), (2026, 1214.40)):
+    # mois pour 2021, 1 138,63 € au 1er janvier 2023, 1 214,40 € en 2026.
+    for annee, mensuel in ((2021, 1035.57), (2023, 1138.63), (2026, 1214.40)):
         smic, _ = complement.smic_net(annee)
         assert int(0.85 * 1820 * smic / 12 * 100) / 100 == mensuel
 
@@ -196,6 +202,88 @@ def test_la_majoration_pour_enfants_ne_porte_pas_sur_la_pmr(simulateur):
 #: Des chefs d'exploitation à faible revenu, de 2010 à 2030 : la PMR seule,
 #: écrêtée ou non, le complément de 2015 et celui de 2021, une mère de trois
 #: enfants avant et après 2026, une pension décotée.
+# -- le relèvement des pensions prises avant septembre 2023 --------------------
+
+def _rco_et_base(vivante):
+    regimes = {r.regime: r for r in vivante.regimes}
+    return regimes["msa_rco"], regimes["msa_non_salaries"]
+
+
+def test_le_taux_plein_ouvre_en_2023_ce_que_la_duree_refusait(simulateur):
+    """Parti en février 2016 au taux plein par l'âge, avec 124 trimestres de chef
+    et sans la durée requise tous régimes : ni points gratuits ni complément à la
+    liquidation. Le 1er septembre 2023, cent points par année de chef d'avant
+    2003, et le complément différentiel au SMIC net agricole de ce jour, que
+    portent ses deux pensions agricoles jusqu'à la cible proratisée
+    (D. 732-166-5) ; ensuite, la valeur du point. Rien avant."""
+    carriere = _chef(simulateur, 1950, 66, debut=35)
+    resultat, avantages, _ = _resultat(simulateur, carriere)
+    assert not {"points_gratuits_rco", "complement_differentiel_rco"} & set(avantages)
+    chef = resultat.chef_d_exploitation
+    assert chef.eligible.taux_plein and not chef.eligible.duree_requise_atteinte
+    assert (chef.gratuits, chef.complement) == (1800.0, False)
+    assert faire_vivre(simulateur, carriere, resultat, 2022).relevement is None
+    vivante = faire_vivre(simulateur, carriere, resultat, 2023)
+    relevement = vivante.relevement
+    assert (relevement.date, relevement.points_gratuits, relevement.smic_net) == (
+        "2023-09-01", 1800.0, 9.0282)
+    assert relevement.points_complement > 0
+    valeur = valeur_du_point(simulateur.scenario_actuel, "msa_rco", carriere.date_liquidation)[0]
+    rco, base = _rco_et_base(vivante)
+    assert rco.relevement == pytest.approx(
+        (1800 + relevement.points_complement) * relevement.valeur_point, rel=1e-12)
+    # La formule de D. 732-166-4 au SMIC net de septembre 2023 et à la PMR des
+    # pensions prises avant, 8 970,86 €, sous la cible proratisée : le point de
+    # RCO et la pension de base ne bougent pas de septembre à décembre 2023.
+    prorata = chef.eligible.duree / chef.eligible.reference
+    cible = 0.85 * completer.HEURES_DU_COMPLEMENT * 9.0282
+    vp = relevement.valeur_point
+    formule = (cible - 8970.86) * prorata - (chef.points + 1800) * vp
+    sous_la_cible = cible * prorata - (base.aujourd_hui + rco.au_depart * rco.coefficient
+                                       + 1800 * vp)
+    assert relevement.points_complement == math.floor(min(formule, sous_la_cible) / vp + 0.5)
+    assert rco.aujourd_hui + base.aujourd_hui <= cible * prorata + vp
+    assert rco.au_depart == pytest.approx(chef.points * valeur, rel=1e-9)
+    en_2026 = faire_vivre(simulateur, carriere, resultat, 2026)
+    assert _rco_et_base(en_2026)[0].relevement == pytest.approx(
+        rco.relevement * en_2026.relevement.coefficient, rel=1e-12)
+
+
+def test_une_pension_d_avant_2015_n_a_que_les_points_gratuits(simulateur):
+    """Partie en 2012 : le modèle ne servant le complément qu'aux pensions prises
+    depuis 2015, à leur liquidation, le relèvement n'ouvre que les points
+    gratuits, comme il les ouvre depuis 2003 à qui avait la durée requise."""
+    carriere = _chef(simulateur, 1945, 67, debut=40)
+    resultat, _, _ = _resultat(simulateur, carriere)
+    relevement = faire_vivre(simulateur, carriere, resultat, 2026).relevement
+    assert (relevement.points_gratuits, relevement.points_complement) == (1800.0, 0)
+
+
+def test_ce_que_la_duree_ouvrait_deja_n_est_pas_releve(simulateur):
+    """La durée requise atteinte, les points gratuits et le complément sont ceux
+    de la liquidation ; une pension prise depuis septembre 2023 les a reçus du
+    taux plein. Ni l'une ni l'autre n'est relevée."""
+    for carriere in (_chef(simulateur, 1950, 66, debut=20), _chef(simulateur, 1958, 67, debut=45)):
+        resultat, _, _ = _resultat(simulateur, carriere)
+        assert faire_vivre(simulateur, carriere, resultat, 2026).relevement is None
+
+
+def test_l_echeancier_inscrit_le_relevement_a_sa_date(simulateur):
+    """Un début de composante, que la loi induit, le 1er septembre 2023 : les
+    points gratuits et ceux du complément, à la valeur du point de ce jour."""
+    carriere = _chef(simulateur, 1950, 66, debut=35)
+    echeancier = Echeancier(simulateur)
+    entrees = {e.id: e for e in echeancier.parcourir(carriere, 2026)}
+    evenement = entrees["relevement_des_exploitants_" + carriere.personne]
+    assert (evenement.debut, evenement.contenu.sorte, evenement.contenu.origine) == (
+        "2023-09-01", "debut_de_composante", "induit")
+    relevement = faire_vivre(simulateur, carriere, echeancier.au_depart, 2026).relevement
+    composante = entrees["relevement_msa_rco"].contenu
+    assert composante["montant"]["annuel"] == pytest.approx(
+        (relevement.points_gratuits + relevement.points_complement)
+        * relevement.valeur_point, rel=1e-12)
+
+
 REQUETE = {
     "age_reference": "fixe_apres_bascule", "bascule": "2026",
     "conversion_acquis": "reference", "debut": "20", "emploi": "cor_2026",
@@ -212,6 +300,10 @@ CAS = [
     {"naissance": "1962", "liquidation": "67", "salaire": "0.15", "debut": "35"},
     {"naissance": "1957", "liquidation": "62", "debut": "30"},
     {"naissance": "1965", "liquidation": "65", "enfants": "3", "sexe": "F"},
+    # Le relèvement de septembre 2023 : au taux plein par l'âge, sans la durée
+    # requise, parti en 2016 et en 2012.
+    {"naissance": "1950", "liquidation": "66", "debut": "35"},
+    {"naissance": "1945", "liquidation": "67", "debut": "40"},
 ]
 
 
@@ -238,6 +330,8 @@ def test_les_deux_moteurs_servent_les_memes_minima_agricoles():
     codes = {d["code"] for a in attendus for l in a["liquidations"]
              for d in l["complements"]["dispositifs"]}
     assert {"pension_majoree_reference", "complement_differentiel_rco"} <= codes
+    assert sum(any(e["id"] == "relevement_msa_rco" for e in a["journal"])
+               for a in attendus) == 2
     ecarts: list[str] = []
     for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
         _ecarts(obtenu, attendu, f"requête {rang}", ecarts)

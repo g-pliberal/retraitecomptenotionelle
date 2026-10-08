@@ -3443,7 +3443,14 @@ referents:
           pour leur PMR. TRAJECTOiRE ne compare au seuil que les
           pensions de la MSA, non le total tous régimes, et ignore
           les années de chef à titre secondaire que L. 732-63 compte
-          depuis 2026.
+          depuis 2026. Repris le 8 octobre 2026, pour les pensions
+          déjà liquidées, le seul relèvement de septembre 2023 : le
+          taux plein ouvre les points gratuits et le complément à
+          qui n'avait pas la durée requise (fiche
+          relevement_des_exploitants_2023). Restent la PMR de 2009
+          et le complément de 2015 des pensions d'avant, les 85 % de
+          novembre 2021, et le complément revu quand les pensions
+          changent.
         etat: a_reprendre
         chantier: "138.8"
       - quoi: >-

@@ -3720,7 +3720,7 @@
 }
 ]
 },
-"smic_net":[[2015,7.4141,0],[2016,7.4508,0],[2017,7.5152,0],[2018,7.66,0],[2019,7.8605,0],[2020,7.9546,0],[2021,8.0329,2],[2022,8.2837,0],[2023,8.8323,0],[2024,9.1302,1],[2025,9.3104,1],[2026,9.4201,2]]
+"smic_net":[[2015,7.4141,0],[2016,7.4508,0],[2017,7.5152,0],[2018,7.66,0],[2019,7.8605,0],[2020,7.9546,0],[2021,8.0329,2],[2022,8.2837,0],[2023,8.8323,2],[2024,9.1302,1],[2025,9.3104,1],[2026,9.4201,2]]
 },
 "comptes_retraite":{
 "assiette_revenu_mixte":{
@@ -11193,6 +11193,14 @@ null
 "versions":[
 {"bornes":{"liquidation.date_effet":[null,"2023-09-01"]},"exception_de":null,"id":"pensions_d_avant_septembre_2023","parametres":{"due_le":"2023-09-01","existe":true,"montant":1200.0,"plafond":10170.86,"trimestres_cotises":120},"texte":"LEGIARTI000047447828"},
 {"bornes":{"liquidation.date_effet":["2023-09-01",null]},"exception_de":null,"id":"pensions_depuis_septembre_2023","parametres":{"due_le":null,"existe":false,"montant":null,"plafond":null,"trimestres_cotises":null},"texte":"LEGIARTI000047447828"}
+]
+},
+"relevement_des_exploitants_2023":{
+"dates_qui_decident":["liquidation.date_effet"],
+"id":"relevement_des_exploitants_2023",
+"versions":[
+{"bornes":{"liquidation.date_effet":[null,"2023-09-01"]},"exception_de":null,"id":"pensions_d_avant_septembre_2023","parametres":{"due_le":"2023-09-01","existe":true,"fiabilite":"estimee","smic_net_horaire":9.0282},"texte":"LEGIARTI000047447828"},
+{"bornes":{"liquidation.date_effet":["2023-09-01",null]},"exception_de":null,"id":"pensions_depuis_septembre_2023","parametres":{"due_le":null,"existe":false,"smic_net_horaire":null},"texte":"LEGIARTI000047453258"}
 ]
 },
 "revenu_annuel_moyen_independants":{

@@ -339,6 +339,8 @@ export function resultatActuel(resultat, foyer) {
     // Ce que la majoration exceptionnelle de septembre 2023 relit des pensions
     // que le minimum contributif regarde (`majorerLesPetitesPensions`).
     petites_pensions: resultat.complements.petitesPensions ?? [],
+    // Ce que le relèvement des exploitants de septembre 2023 relit.
+    chef_d_exploitation: resultat.complements.chef ?? null,
   };
 }
 
@@ -542,5 +544,7 @@ export function resultatDesDeparts(moteur, carriere, departs, liquidations, cont
     // Ce que la majoration exceptionnelle de septembre 2023 relit, de chaque
     // départ.
     petites_pensions: liquidations.flatMap((l) => l.complements.petitesPensions ?? []),
+    chef_d_exploitation: liquidations.map((l) => l.complements.chef ?? null)
+      .find((chef) => chef !== null) ?? null,
   };
 }

@@ -20,6 +20,9 @@
 #   2021  1 035,57 € (85 %), « dans la limite de 1035,57 € tous régimes de
 #         retraite obligatoires pour 2021 » : communiqué national de la MSA du
 #         3 novembre 2021, lu le 7 octobre 2026                      haute
+#   2023  1 138,63 € (85 %), « soit un montant de 1 138,63€ net par
+#         mois » au 1er janvier 2023 : Info presse de la MSA du 14 février
+#         2023, lue le 8 octobre 2026                                haute
 #   2024  1 177,03 € (85 %), « une garantie de retraite minimale portée à
 #         1177,03 € par mois au 1er janvier 2024 » : la phrase de la page de
 #         la MSA, qui ne la date plus que de 2026, reprise mot pour mot par
@@ -30,7 +33,7 @@
 #         1214,40 € par mois au 1er janvier 2026 » : msa.fr, page mise à jour
 #         le 20 mars 2026, lue le 7 octobre 2026                     haute
 #
-# Les quatre donnent le même rapport au SMIC brut du 1er janvier, 78,37 %, à
+# Les cinq donnent le même rapport au SMIC brut du 1er janvier, 78,37 %, à
 # un cent-millième près : la MSA déduit 21,63 % du SMIC brut. Les taux
 # salariaux d'un salarié non cadre au SMIC n'en font que 20,84 — vieillesse
 # 6,90 et 0,40, Agirc-Arrco 3,15 et 0,86, CSG et CRDS 9,70 sur 98,25 % — :
@@ -51,7 +54,8 @@
 # le 7 octobre 2026, n'a pas laissé relire.
 #
 # Fichier écrit à la main, le 7 octobre 2026 (action 138, étape 8) ; la
-# fiche complement_differentiel_rco dit comment le modèle le lit.
+# fiche complement_differentiel_rco dit comment le modèle le lit. Le
+# 8 octobre 2026, 2023 lu : l'estimation tombait juste.
 annee,smic_net_horaire,fiabilite
 2015,7.4141,estimee
 2016,7.4508,estimee
@@ -61,7 +65,7 @@ annee,smic_net_horaire,fiabilite
 2020,7.9546,estimee
 2021,8.0329,haute
 2022,8.2837,estimee
-2023,8.8323,estimee
+2023,8.8323,haute
 2024,9.1302,moyenne
 2025,9.3104,moyenne
 2026,9.4201,haute

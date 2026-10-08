@@ -18,11 +18,12 @@
 
 import { DateMois } from "./calendrier.js";
 import { RevalorisationStock, SituationFoyer } from "./config.js";
+import { RCO, complementDifferentiel } from "./droit/completer.js";
 import * as liquider from "./droit/liquider.js";
 import { pensionsALEcretement, pensionsEtrangeresServies } from "./droit/etranger.js";
 import { conditionDeResidence, foyerEtNet } from "./droit/foyer.js";
 import { ageDeLAspa } from "./droit/invalidite.js";
-import { Fiabilite, nomFiabilite } from "./serie.js";
+import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "./serie.js";
 
 /** Fin de la péréquation des pensions civiles et militaires. */
 export const FIN_PEREQUATION = "2004-01-01";
@@ -347,6 +348,7 @@ export class Revalorisee {
         regime: r.regime, coefficient: r.coefficient, regle: r.regle,
         fiabilite: nomFiabilite(r.fiabilite), revision: r.revision ?? 0.0,
         majoration_exceptionnelle: r.majoration ?? 0.0,
+        relevement_des_exploitants: r.relevement ?? 0.0,
       })),
       majoration: this.coefficient_majoration,
       mensuel_decembre_2019: this.mensuel_decembre_2019,
@@ -464,11 +466,14 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
       aujourd_hui: montant * coefficient,
       revision: 0.0,
       majoration: 0.0,
+      relevement: 0.0,
     });
   }
   const coefficientMajoration = coefficientDeLaMajoration(coefficients);
   reviserLeMinimum(simulateur.scenarioActuel, carriere, resultat, regimes, an);
   const majorations = majorerLesPetitesPensions(simulateur.scenarioActuel, resultat,
+    datees, regimes, servie, aLEffet, mensuel2019, fin);
+  const relevement = releverLesExploitants(simulateur.scenarioActuel, carriere, resultat,
     datees, regimes, servie, aLEffet, mensuel2019, fin);
 
   return new Revalorisee({
@@ -480,6 +485,7 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
     mensuel_decembre_2019: mensuel2019,
     fiabilite,
     majorations,
+    relevement,
   });
 }
 
@@ -524,7 +530,8 @@ export function reviserLeMinimum(moteur, carriere, resultat, regimes, annee) {
     code, part * coefficient / servi * baisse]));
   for (const r of regimes) {
     r.revision = retraits.get(r.regime) ?? 0.0;
-    r.aujourd_hui = r.au_depart * r.coefficient - r.revision + (r.majoration ?? 0.0);
+    r.aujourd_hui = r.au_depart * r.coefficient - r.revision + (r.majoration ?? 0.0)
+      + (r.relevement ?? 0.0);
   }
 }
 
@@ -661,10 +668,96 @@ export function majorerLesPetitesPensions(moteur, resultat, datees, regimes, ser
     const majoration = parRegime.get(r.regime) ?? 0.0;
     if (majoration > 0) {
       r.majoration = majoration;
-      r.aujourd_hui = r.au_depart * r.coefficient - r.revision + majoration;
+      r.aujourd_hui = r.au_depart * r.coefficient - r.revision + majoration
+        + (r.relevement ?? 0.0);
     }
   }
   return majorations;
+}
+
+/**
+ * La fiche du relèvement des exploitants de septembre 2023, que `FichesDatees`
+ * lit à la date d'effet de leur pension de base.
+ */
+export const FICHE_DU_RELEVEMENT = "relevement_des_exploitants_2023";
+
+/**
+ * Le relèvement des pensions des exploitants prises avant le 1er septembre 2023
+ * (loi n° 2023-270, article 18, VI), mené jusqu'à l'échéance `fin` : le taux
+ * plein ouvre depuis ce jour les points gratuits de la RCO et son complément
+ * différentiel à qui ne les avait pas faute de la durée requise, le complément
+ * au SMIC et aux éléments de ce jour-là ; ils suivent ensuite la valeur du
+ * point. Modifie la RCO de `regimes` en place et rend le calcul, ou `null`.
+ * Voir `relever_les_exploitants` du Python.
+ */
+export function releverLesExploitants(moteur, carriere, resultat, datees, regimes, servie,
+  aLEffet, mensuel2019, fin) {
+  const chef = resultat.chef_d_exploitation ?? null;
+  if (chef === null || !chef.eligible.tauxPlein || chef.eligible.dureeRequiseAtteinte) {
+    return null;
+  }
+  const serviesAuDepart = new Map(datees.map((datee) => [datee[0].regime, datee]));
+  if (!serviesAuDepart.has(chef.regime) || !serviesAuDepart.has(RCO)) return null;
+  const debut = serviesAuDepart.get(chef.regime)[2];
+  const regle = moteur.fichesDatees.regle(FICHE_DU_RELEVEMENT, debut);
+  if (regle === null || !regle.existe) return null;
+  const due = String(regle.due_le);
+  const valeur = liquider.valeurDuPoint(moteur, RCO, due);
+  if (!(debut < due && due <= fin) || serviesAuDepart.get(RCO)[2] > due
+      || valeur === null || valeur[0] <= 0) {
+    return null;
+  }
+  const smic = [regle.smic_net_horaire, fiabiliteDepuisTexte(regle.fiabilite)];
+  let points = 0;
+  if (!chef.complement && moteur.complementDifferentielRco.regle(debut).existe) {
+    // Les pensions servies ce jour-là, majorations pour enfants comprises, les
+    // points gratuits du même jour et les pensions étrangères aussi.
+    const enfants = new Map();
+    for (const avantage of resultat.avantages_appliques) {
+      if (avantage.code !== "majoration_enfants") continue;
+      for (const [code, part] of avantage.par_regime ?? []) {
+        enfants.set(code, (enfants.get(code) ?? 0.0) + part);
+      }
+    }
+    const servies = new Map();
+    for (const [pension, a, depuis, montant] of datees) {
+      if (depuis > due || (pension.capital !== null && pension.capital !== undefined)) continue;
+      const coefficient = servie.coefficient(pension, a, depuis, due, mensuel2019)[0];
+      servies.set(pension.regime, [montant * coefficient,
+        (enfants.get(pension.regime) ?? 0.0) * (aLEffet.get(pension.regime) ?? 1.0)
+          * coefficient]);
+    }
+    const gratuits = chef.gratuits * valeur[0];
+    const [annee, mois] = due.split("-").map(Number);
+    let personnelles = 0.0;
+    for (const [montant, majoration] of servies.values()) personnelles += montant + majoration;
+    personnelles += gratuits
+      + pensionsEtrangeresServies(moteur.macro, carriere, new DateMois(annee, mois));
+    const pmr = moteur.pensionMajoreeReference.montant(
+      moteur.pensionMajoreeReference.regle(debut).montant || "pmr_chef", annee, mois);
+    const differentiel = complementDifferentiel(
+      moteur, carriere, chef.eligible, servies.get(chef.regime)[0],
+      servies.get(RCO)[0] + gratuits, chef.points + chef.gratuits, valeur[0],
+      personnelles, due, smic, pmr);
+    points = differentiel === null ? 0 : differentiel.points;
+  }
+  if (chef.gratuits <= 0 && points <= 0) return null;
+  const [pension, a, depuis] = serviesAuDepart.get(RCO);
+  const coefficient = servie.coefficient(pension, a, depuis, fin, mensuel2019)[0]
+    / servie.coefficient(pension, a, depuis, due, mensuel2019)[0];
+  const relevement = {
+    date: due, points_gratuits: chef.gratuits, points_complement: points,
+    valeur_point: valeur[0], smic_net: smic[0], coefficient,
+    a_l_echeance: (chef.gratuits + points) * valeur[0] * coefficient,
+  };
+  for (const r of regimes) {
+    if (r.regime === RCO) {
+      r.relevement = relevement.a_l_echeance;
+      r.aujourd_hui = r.au_depart * r.coefficient - r.revision + (r.majoration ?? 0.0)
+        + r.relevement;
+    }
+  }
+  return relevement;
 }
 
 /**

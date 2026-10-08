@@ -18,6 +18,7 @@ import { DateMois } from "../calendrier.js";
 import { formatFixe, formatPourcentage } from "../format.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import { dateDEffet, derniereAnnee, ligneCotisee } from "./commun.js";
+import { pointsGratuits } from "./acquerir.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
 import * as etranger from "./etranger.js";
 import * as liquider from "./liquider.js";
@@ -160,9 +161,12 @@ export function pensionMajoree(moteur, carriere, eligible, pension, ressources) 
  * proche. Voir `complement_differentiel` du Python.
  */
 export function complementDifferentiel(moteur, carriere, eligible, base, rco, pointsRco,
-  valeurPoint, personnelles) {
+  valeurPoint, personnelles, quand = null, smicLu = null, pmrLu = null) {
+  // `quand`, `smicLu` et `pmrLu` lisent la règle, le SMIC net agricole et la PMR
+  // du 1er septembre 2023, pour une pension prise avant que le taux plein ouvre
+  // depuis (`releverLesExploitants`).
   const dateEffet = dateDEffet(carriere);
-  const regle = moteur.complementDifferentielRco.regle(dateEffet);
+  const regle = moteur.complementDifferentielRco.regle(quand ?? dateEffet);
   if (!regle.existe || valeurPoint <= 0.0) {
     return null;
   }
@@ -173,8 +177,8 @@ export function complementDifferentiel(moteur, carriere, eligible, base, rco, po
     return null;
   }
   const annee = carriere.anneeLiquidation;
-  const smic = moteur.complementDifferentielRco.smicNet(annee);
-  const pmr = moteur.pensionMajoreeReference.montant(
+  const smic = smicLu ?? moteur.complementDifferentielRco.smicNet(annee);
+  const pmr = pmrLu ?? moteur.pensionMajoreeReference.montant(
     moteur.pensionMajoreeReference.regle(dateEffet).montant || "pmr_chef",
     annee, regle.pmr_au_mois || 1);
   if (smic === null || pmr === null) {
@@ -372,7 +376,7 @@ export function plancherInternational(eligible, montantBase, montantMajore, dure
 /** Ce que l'étape « compléter tous régimes » écrit. */
 export class Complements {
   constructor({ personne, regimes, avantages, total, minimumApplique, fiabilite,
-    plancher = 0.0, minimumEcrete = null, petitesPensions = [] }) {
+    plancher = 0.0, minimumEcrete = null, petitesPensions = [], chef = null }) {
     this.personne = personne;
     this.regimes = regimes;
     this.avantages = avantages;
@@ -392,6 +396,10 @@ export class Complements {
     // cotisee, validee, maximum, cotises_tous_regimes, surcote}`. Voir
     // `PetitePension` du Python.
     this.petitesPensions = petitesPensions;
+    // Ce que le relèvement des exploitants de septembre 2023 relit : `{regime,
+    // eligible, points, gratuits, complement}` ; `null` sans RCO. Voir
+    // `ChefDExploitation` du Python.
+    this.chef = chef;
   }
 
   /** Les compléments, tels que le schéma de l'étape les décrit. */
@@ -449,6 +457,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
   let minimumEcrete = null;
   // Ce que le minimum contributif ajoute à chaque pension, par son indice.
   let ajoutsDuMinimum = new Map();
+  let chef = null;
 
   // La règle du minimum que la date d'effet fait valoir (fiche
   // `minimum_contributif`) : il n'existe que depuis le 1er avril 1983, sa
@@ -924,9 +933,10 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     const valeur = periodeRco !== null
       && periodeRco.avantages_non_contributifs.includes("complement_differentiel_rco")
       ? liquider.valeurDuPoint(moteur, RCO, carriere.dateLiquidation) : null;
+    let differentiel = null;
     if (indiceRco >= 0 && valeur !== null) {
       const rco = pensions[indiceRco];
-      const differentiel = complementDifferentiel(
+      differentiel = complementDifferentiel(
         moteur, carriere, agricole, pensions[agricole.indice].montant, rco.montant,
         pointsAcquis.get(RCO) ?? 0.0, valeur[0], total + servies + etrangeres);
       if (differentiel !== null) {
@@ -952,6 +962,22 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         });
       }
     }
+    // LE RELÈVEMENT DE SEPTEMBRE 2023 ouvre au taux plein les points gratuits et
+    // le complément de la RCO des pensions prises avant (`releverLesExploitants`) :
+    // ce qu'il relira s'écrit ici.
+    if (indiceRco >= 0) {
+      let gratuits = 0.0;
+      if (!droits.gratuits.has(RCO) && periodeRco !== null
+          && periodeRco.points_gratuits !== null && periodeRco.points_gratuits !== undefined
+          && !(contexte !== null && contexte.neutralise("points_gratuits"))) {
+        gratuits = pointsGratuits(moteur, periodeRco, carriere, durees.parAnnee.assurance,
+          durees.trimestres, carriere.age_liquidation || 0.0, true)[0];
+      }
+      chef = {
+        regime: pensions[agricole.indice].regime, eligible: agricole,
+        points: pointsAcquis.get(RCO) ?? 0.0, gratuits, complement: differentiel !== null,
+      };
+    }
   }
 
   return new Complements({
@@ -964,6 +990,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     plancher: plancherProgressive,
     minimumEcrete,
     petitesPensions,
+    chef,
   });
 }
 

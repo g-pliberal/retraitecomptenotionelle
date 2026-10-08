@@ -235,8 +235,13 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   liquidées, et les plans de revalorisation de 1994 à 2002 ; le montant réduit
   des conjoints et des aides familiaux, que le modèle ne distingue pas du chef
   d'exploitation ; la réversion, que le plafond ne compte pas. Le SMIC net
-  agricole qui fixe le complément n'est publié par la MSA que pour 2021 et
-  depuis 2024 : les autres années sont estimées.
+  agricole qui fixe le complément n'est publié par la MSA que pour 2021, 2023
+  et depuis 2024 : les autres années sont estimées. Le relèvement de septembre
+  2023 est servi : le taux plein ouvre les points gratuits et le complément aux
+  pensions déjà liquidées sans la durée requise, celles prises depuis 2003 pour
+  les uns, depuis 2015 pour l'autre (fiche `relevement_des_exploitants_2023`) ;
+  la loi les doit depuis 1997, et le complément des pensions déjà liquidées ne
+  se recalcule pas ensuite.
 - **Coefficients de solidarité et majorants de l'Agirc-Arrco.** Le malus de
   <!--chiffre:illustration()-->10<!--/--> % pendant trois ans (article 98 de l'accord du 17 novembre 2017) ne
   frappe aucune pension prenant effet depuis le 1er décembre 2023, et cesse sur

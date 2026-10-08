@@ -35,6 +35,7 @@ from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
+from . import acquerir
 from . import etranger as _etranger
 from . import liquider, ouvrir
 from .commun import (AvantageApplique, PensionRegime, date_d_effet, derniere_annee,
@@ -395,7 +396,10 @@ class ComplementDifferentiel:
 
 def complement_differentiel(moteur: ScenarioActuel, carriere: Carriere, eligible,
                             base: float, rco: float, points_rco: float,
-                            valeur_point: float, personnelles: float
+                            valeur_point: float, personnelles: float,
+                            quand: str | None = None,
+                            smic: tuple[float, Fiabilite] | None = None,
+                            pmr: tuple[float, Fiabilite] | None = None
                             ) -> ComplementDifferentiel | None:
     """Les points de RCO que le complément différentiel ajoute (L. 732-63) ;
     ``None`` quand il n'en ajoute pas.
@@ -419,9 +423,14 @@ def complement_differentiel(moteur: ScenarioActuel, carriere: Carriere, eligible
     valeur de service de l'année, arrondis à l'entier le plus proche
     (D. 732-166-6). Le modèle ne connaissant que le statut de chef, la durée
     de chef, DCE, est la durée agricole, Dnsa.
+
+    ``quand``, ``smic`` et ``pmr`` lisent la règle, le SMIC net agricole et la
+    PMR d'une autre date que la date d'effet : ceux du 1er septembre 2023, pour
+    une pension prise avant, que le taux plein ouvre depuis (loi n° 2023-270,
+    article 18, VI ; :func:`~retraite_notionnelle.revalorisation.relever_les_exploitants`).
     """
     date_effet = date_d_effet(carriere)
-    regle = moteur.complement_differentiel_rco.regle(date_effet)
+    regle = moteur.complement_differentiel_rco.regle(quand or date_effet)
     if not regle["existe"] or valeur_point <= 0.0:
         return None
     duree = eligible.duree + (eligible.enfants if regle["majorations_de_duree"] else 0)
@@ -430,8 +439,8 @@ def complement_differentiel(moteur: ScenarioActuel, carriere: Carriere, eligible
     if duree < (regle["seuil_chef"] or 0) or not ouvert:
         return None
     annee = carriere.annee_liquidation
-    smic = moteur.complement_differentiel_rco.smic_net(annee)
-    pmr = moteur.pension_majoree_reference.montant(
+    smic = smic or moteur.complement_differentiel_rco.smic_net(annee)
+    pmr = pmr or moteur.pension_majoree_reference.montant(
         moteur.pension_majoree_reference.regle(date_effet)["montant"] or "pmr_chef",
         annee, regle["pmr_au_mois"] or 1)
     if smic is None or pmr is None:
@@ -527,6 +536,30 @@ def surcote_hors_minimum(montant: float, eligible, ajout: float,
 
 
 @dataclass(frozen=True)
+class ChefDExploitation:
+    """Ce que le relèvement de septembre 2023 relit d'un chef d'exploitation
+    parti avant : le taux plein ouvre depuis les points gratuits et le
+    complément différentiel de la RCO à qui n'avait pas la durée requise tous
+    régimes (loi n° 2023-270, article 18, VI) ;
+    :func:`~retraite_notionnelle.revalorisation.relever_les_exploitants` les
+    calcule au 1er septembre 2023, sur ce que ses pensions servent alors."""
+
+    #: Le régime de base des non-salariés agricoles.
+    regime: str
+    #: Son taux plein, la durée requise, ses durées et sa durée de référence
+    #: (:class:`~retraite_notionnelle.droit.liquider.EligibleAgricole`).
+    eligible: object
+    #: Les points de RCO acquis à la liquidation, par cotisation ou à titre
+    #: gratuit : le N du complément (D. 732-166-4).
+    points: float
+    #: Les points gratuits que le taux plein ouvre, quand la durée requise ne
+    #: les avait pas ouverts à la liquidation (L. 732-56, D. 732-154).
+    gratuits: float
+    #: Le complément différentiel a-t-il été servi à la liquidation ?
+    complement: bool
+
+
+@dataclass(frozen=True)
 class Complements:
     """Ce que l'étape « compléter tous régimes » écrit."""
 
@@ -553,6 +586,9 @@ class Complements:
     #: Ce que la majoration exceptionnelle de septembre 2023 relit de chaque
     #: pension que le minimum contributif regarde (:class:`PetitePension`).
     petites_pensions: tuple[PetitePension, ...] = ()
+    #: Ce que le relèvement des exploitants de septembre 2023 relit
+    #: (:class:`ChefDExploitation`) ; ``None`` sans RCO.
+    chef: ChefDExploitation | None = None
 
     def donnees(self) -> dict:
         """Les compléments, tels que le schéma de l'étape les décrit."""
@@ -614,6 +650,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
     minimum_ecrete: MinimumEcrete | None = None
     #: Ce que le minimum contributif ajoute à chaque pension, par son indice.
     ajouts_du_minimum: dict[int, float] = {}
+    chef: ChefDExploitation | None = None
 
     # La règle du minimum que la date d'effet fait valoir (fiche
     # ``minimum_contributif``) : il n'existe que depuis le 1er avril 1983, sa
@@ -1089,6 +1126,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         valeur = (liquider.valeur_du_point(moteur, RCO, carriere.date_liquidation)
                   if periode_rco is not None and "complement_differentiel_rco"
                   in periode_rco.avantages_non_contributifs else None)
+        differentiel = None
         if indice_rco is not None and valeur is not None:
             rco = pensions[indice_rco]
             differentiel = complement_differentiel(
@@ -1115,6 +1153,24 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                             + (", plafonné" if differentiel.plafonne else "")),
                     par_regime=((RCO, differentiel.montant),),
                 ))
+        # LE RELÈVEMENT DE SEPTEMBRE 2023 ouvre au taux plein les points
+        # gratuits et le complément de la RCO des pensions prises avant ; il
+        # se calcule ce jour-là (:func:`~retraite_notionnelle.revalorisation.relever_les_exploitants`).
+        # Ce qu'il relira s'écrit ici : les points gratuits que la durée
+        # requise n'avait pas ouverts, ceux de la liquidation, le complément.
+        if indice_rco is not None:
+            gratuits = 0.0
+            if (RCO not in droits.gratuits and periode_rco is not None
+                    and periode_rco.points_gratuits is not None
+                    and not (contexte is not None and contexte.neutralise("points_gratuits"))):
+                gratuits = acquerir.points_gratuits(
+                    moteur, periode_rco, carriere, durees.par_annee["assurance"],
+                    durees.trimestres, carriere.age_liquidation or 0.0,
+                    au_taux_plein=True)[0]
+            chef = ChefDExploitation(
+                regime=pensions[agricole.indice].regime, eligible=agricole,
+                points=points_acquis.get(RCO, 0.0), gratuits=gratuits,
+                complement=differentiel is not None)
 
     return Complements(
         personne=carriere.personne,
@@ -1126,6 +1182,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         plancher=plancher,
         minimum_ecrete=minimum_ecrete,
         petites_pensions=petites_pensions,
+        chef=chef,
     )
 
 

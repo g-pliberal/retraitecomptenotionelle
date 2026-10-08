@@ -81,9 +81,12 @@ export function pointsMsa(moteur, periode, annee, revenu) {
  * la limite de 37,5 ans moins les années de RCO, à qui a dix-sept ans et
  * demi comme chef (D. 732-151) et le taux plein de son régime de base
  * (L. 732-56, II, 2°) — la durée requise jusqu'au 31 août 2023, la pension
- * liquidée au taux plein depuis. Voir `points_gratuits` dans le Python.
+ * liquidée au taux plein depuis. `auTauxPlein` les ouvre au taux plein quelle
+ * que soit la date d'effet : ceux que le relèvement de septembre 2023 attribue
+ * aux pensions prises avant. Voir `points_gratuits` dans le Python.
  */
-export function pointsGratuits(moteur, periode, carriere, assurance, trimestres, ageLiquidation) {
+export function pointsGratuits(moteur, periode, carriere, assurance, trimestres, ageLiquidation,
+  auTauxPlein = false) {
   const regle = periode.points_gratuits;
   const base = moteur.catalogue.obtenir(regle.regime);
   const periodeBase = base.periode(
@@ -106,8 +109,8 @@ export function pointsGratuits(moteur, periode, carriere, assurance, trimestres,
   const [requis, fiabilite] = ouvrir.dureeRequise(moteur, periodeBase, carriere);
   let tauxPlein = trimestres >= requis;
   const [anneeDepuis, moisDepuis] = regle.taux_plein_depuis;
-  if (!tauxPlein
-      && carriere.dateLiquidation.rang >= new DateMois(anneeDepuis, moisDepuis).rang) {
+  if (!tauxPlein && (auTauxPlein
+      || carriere.dateLiquidation.rang >= new DateMois(anneeDepuis, moisDepuis).rang)) {
     tauxPlein = ageLiquidation >= ouvrir.ageTauxPlein(moteur, periodeBase, carriere);
   }
   if (!tauxPlein) {

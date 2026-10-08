@@ -433,6 +433,7 @@ function resumeAujourdhui(aujourdhui) {
         coefficient: r.coefficient,
         aujourd_hui: r.aujourd_hui,
         majoration_exceptionnelle: r.majoration ?? 0.0,
+        relevement_des_exploitants: r.relevement ?? 0.0,
         regle: r.regle,
         fiabilite: nomFiabilite(r.fiabilite),
       })),

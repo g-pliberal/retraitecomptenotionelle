@@ -486,6 +486,7 @@ class Echeancier:
         foyer = foyer_a_l_echeance(self.simulateur, carriere, vivante)
         self.aujourd_hui = aujourd_hui(vivante, foyer, self.au_depart)
         self._majorer(carriere, vivante)
+        self._relever(carriere, vivante)
         self.journal.inscrire(Entree(f"revalorisation_{annee}", ident, date, date, None,
                                      "revalorisation", vivante))
         for regime in vivante.regimes:
@@ -494,6 +495,9 @@ class Echeancier:
             if regime.majoration > 0:
                 detail += (f", majoration exceptionnelle de 2023 comprise "
                            f"({regime.majoration:,.2f} €)")
+            if regime.relevement > 0:
+                detail += (f", relèvement de septembre 2023 compris "
+                           f"({regime.relevement:,.2f} €)")
             self.journal.inscrire(Entree(
                 f"{origine}_{annee}", ident, date, date, None, "composante",
                 {"id": f"{origine}_{annee}", "regime": regime.regime,
@@ -531,6 +535,31 @@ class Echeancier:
                            f"n° 2023-270, article 18, V) : {majoration.theorique:,.2f} € "
                            f"par mois au prorata de la durée cotisée, "
                            f"{majoration.servie:,.2f} € sous les plafonds")}, quand)
+
+    def _relever(self, carriere: Carriere, vivante) -> None:
+        """Le relèvement des exploitants de septembre 2023, que « faire vivre »
+        a calculé (:func:`~.revalorisation.relever_les_exploitants`) : un début
+        de composante, que la loi induit, ce jour-là, les points gratuits et
+        ceux du complément à leur valeur de ce jour."""
+        relevement = vivante.relevement
+        if relevement is None:
+            return
+        evenement = Evenement(
+            id=f"relevement_des_exploitants_{carriere.personne}", date=relevement.date,
+            personnes=(carriere.personne,), vise={"regimes": ["msa_rco"]},
+            sorte="debut_de_composante", origine="induit")
+        self._inscrire(evenement, evenement.id, "evenement", evenement, relevement.date)
+        points = relevement.points_gratuits + relevement.points_complement
+        self._inscrire(evenement, "relevement_msa_rco", "composante", {
+            "id": "relevement_msa_rco", "beneficiaire": carriere.personne,
+            "regime": "msa_rco",
+            "montant": {"annuel": points * relevement.valeur_point, "monnaie": "EUR"},
+            "debut": relevement.date,
+            "detail": (f"relèvement des pensions prises avant le 1er septembre 2023 (loi "
+                       f"n° 2023-270, article 18, VI) : {relevement.points_gratuits:,.2f} "
+                       f"points gratuits et {relevement.points_complement:,} points de "
+                       f"complément différentiel, au SMIC net agricole de "
+                       f"{relevement.smic_net:.4f} €")}, relevement.date)
 
     def _inscrire(self, evenement: Evenement, ident: str, sorte: str, contenu,
                   debut: str, remplace: str | None = None) -> None:
