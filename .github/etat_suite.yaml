@@ -1,6 +1,8 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: a7dc08bf0f952d0a50d5a58deb75aff539cef7c7
-date: 2026-10-08T22:42:29Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/37854011184
+etat: rouge
+sources: 510d8fad972ff5be165bcc72f4a33e719b199561
+date: 2026-10-08T23:13:36Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/37857165618
+echecs:
+  - "FAILED tests/test_web.py::test_les_modules_sont_tous_precharges - AssertionError: préchargés mais absents du dossier : set() ; présents mais non préchargés : {'droit/categories.js'}"
