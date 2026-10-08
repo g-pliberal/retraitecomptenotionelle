@@ -1575,14 +1575,15 @@ institutions:
         note: >-
           Le montant PLEIN du minimum garanti, celui d'une carrière de quarante
           ans de services : 997,96 € par mois au 1er janvier 2004, date à
-          laquelle l'article gèle sa référence, puis 1 174,33 € en 2020,
-          1 248,33 € en 2023, 1 325,01 € en 2024 et 1 354,16 € en 2025. Ces
-          montants SERVIS priment sur toute projection, comme ceux du minimum
-          contributif et pour la même raison : la revalorisation des pensions à
-          laquelle renvoie l'article a été gelée en 2014 et sous-indexée
-          depuis, si bien qu'une projection sur les prix dépasse de 4,6 % ce qui
-          a été payé en 2024. Transcriptions de publications, non confrontées à
-          un fichier du producteur : niveau `haute`.
+          laquelle l'article gèle sa référence, puis 1 258,32 € en 2023,
+          1 325,01 € en 2024, 1 354,16 € en 2025 et 1 366,35 € en 2026. Entre
+          deux, la chaîne des revalorisations des pensions civiles, que
+          l'article L. 17 désigne et qui redonne ces montants au centime : une
+          projection sur les prix dépasse de 4,6 % ce qui a été payé en 2024.
+          Le montant de 2020 que la ligne portait, 1 174,33 €, revalorisé de
+          0,3 % au lieu de 1 %, est retiré le 8 octobre 2026. Transcriptions de
+          publications, non confrontées à un fichier du producteur : niveau
+          `haute`.
 
   caisse_des_depots:
     nom: Caisse des dépôts (gestionnaire CNRACL, Ircantec, RAFP, FSPOEIE)

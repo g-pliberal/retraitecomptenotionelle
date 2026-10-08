@@ -973,9 +973,13 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         )
         # Les membres d'un groupe liquidé ensemble se somment ANNÉE PAR
         # ANNÉE : deux activités cumulées dans deux régimes alignés ne
-        # valident pas huit trimestres la même année.
+        # valident pas huit trimestres la même année. Le code des pensions
+        # compte ses services au jour, et ne les arrondit qu'au décompte final
+        # (R. 26 ; fiche decompte_des_services_fonction_publique).
+        au_jour = durees_cultes is None and durees.au_jour(membres)
         numerateur = (
             durees_cultes.depuis_1998 if durees_cultes is not None
+            else durees.services_liquidables(membres) if au_jour
             else cumul_plafonne(
                 "services"
                 if moteur.catalogue[code].famille == "fonction_publique"
@@ -983,6 +987,10 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 membres,
             )
         )
+        #: La durée d'assurance que sa décote lit, au jour, sans arrondi
+        #: (L. 14, I) : celle des trimestres entiers, et ce que les fractions
+        #: de ses services y changent.
+        ecart_au_jour = durees.ecart_au_jour if au_jour and durees.duree_au_jour(membres) else 0.0
         if (durees_cultes is None and majoration_enfants is not None
                 and moteur.catalogue[code].famille == "special"):
             # LA MAJORATION DE DURÉE N'ENTRE PAS AUX SERVICES d'un régime
@@ -1069,9 +1077,17 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 periode, carriere, annee_liquidation
             )
             trimestres_decote = trimestres_de_decote(moteur,
-                periode, carriere, trimestres + majorations_emplois, requis, age_liquidation,
-                age_annulation
+                periode, carriere, trimestres + majorations_emplois + ecart_au_jour, requis,
+                age_liquidation, age_annulation
             )
+            if au_jour and durees.duree_au_jour(membres) and trimestres_regime >= proratisation:
+                # La pension que l'arrondi du décompte final porte au
+                # pourcentage maximum ne subit pas de décote, quand même la
+                # durée d'assurance, qui ne s'arrondit pas, n'atteindrait pas la
+                # durée requise : « les dispositions de l'article L. 14 ne
+                # sauraient avoir pour effet de lui appliquer la décote »
+                # (Conseil d'État, 2 février 2010, n° 311495).
+                trimestres_decote = 0.0
             if (taux_plein_des_femmes(periode, carriere, durees, age_liquidation)
                     or invalidite.taux_plein_de_l_inapte(
                         moteur, code, carriere, age_liquidation)
@@ -1305,9 +1321,17 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             minoration = MINORATION_AGE_MINIMUM_GARANTI.get(
                 carriere.mois_de_l_anniversaire(age_ouverture).annee, 0
             ) if fonction_publique else 0
+            # Le minimum compte les SERVICES EFFECTIFS, sans les bonifications
+            # (L. 17), arrondis au décompte final (CNRACL, « Les modalités de
+            # calcul ») ; avant 2004, le décompte de la pension.
             eligibles_garanti.append(EligibleMinimumGaranti(
                 indice=len(pensions),
-                trimestres_services=cumul_plafonne("services", membres),
+                trimestres_services=(
+                    durees.services_effectifs(membres)
+                    if au_jour and durees.decompte["parametres"]["minimum_garanti"]
+                    == "services_effectifs"
+                    else numerateur if au_jour
+                    else cumul_plafonne("services", membres)),
                 # La pension liquidée pour invalidité a le minimum garanti
                 # sans condition de taux plein (« pour les motifs prévus aux
                 # 2° à 5° du I de l'article L. 24 »), et le c de L. 17 sous
@@ -1316,7 +1340,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     pour_invalidite is not None
                     or ancien_droit
                     or trimestres_decote <= 0
-                    or trimestres + majorations_emplois >= requis
+                    or trimestres + majorations_emplois + ecart_au_jour >= requis - 1e-9
                     or (minoration > 0 and age_annulation is not None
                         and age_liquidation + 1e-9
                         >= age_annulation - minoration / 4.0)
@@ -2711,7 +2735,10 @@ def trimestres_de_decote(moteur, periode: PeriodeRegime, carriere: Carriere,
         manquants_services = max(
             0, militaire.trimestres_cible - militaire.trimestres_servis
         )
-        manquants_duree = max(0, requis - trimestres)
+        # Le nombre de trimestres manquants « est arrondi à l'entier
+        # supérieur » (L. 14, II) : la durée d'assurance, au jour, en garde
+        # les fractions.
+        manquants_duree = _au_trimestre_superieur(requis - trimestres)
         return float(min(manquants_services, manquants_duree,
                          TRIMESTRES_DECOTE_MILITAIRE))
     manquants_age = float(_au_trimestre_superieur(
@@ -2730,7 +2757,9 @@ def trimestres_de_decote(moteur, periode: PeriodeRegime, carriere: Carriere,
         # article 35, II) ; partout ailleurs, rien n'est retranché. Et les
         # régimes spéciaux bornent ce décompte (:func:`borne_de_la_duree`).
         cible = requis - retranche_decote(moteur, periode, carriere)
-        par_duree = max(0, cible - trimestres)
+        # Arrondi à l'entier supérieur (L. 14, I) : la durée d'assurance du
+        # code des pensions se compte au jour, et en garde les fractions.
+        par_duree = _au_trimestre_superieur(cible - trimestres)
         if periode.bareme_decote in _BAREMES_REGIMES_SPECIAUX:
             par_duree = min(par_duree, borne_de_la_duree(moteur, periode, carriere, cible))
         trimestres_decote = min(par_duree, manquants_age)

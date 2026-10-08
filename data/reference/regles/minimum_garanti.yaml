@@ -1,8 +1,9 @@
 schema_version: 1
 id: minimum_garanti
 intitule: >-
-  Plancher de la pension civile, barème en escalier sur la durée de services, référence
-  gelée en 2004 puis indexée sur les prix. Sous quinze ans, depuis 2011, la référence
+  Plancher de la pension civile, barème en escalier sur la durée de services effectifs,
+  arrondis au décompte final et sans les bonifications, référence gelée en 2004 puis
+  revalorisée comme les pensions civiles (L. 16). Sous quinze ans, depuis 2011, la référence
   rapportée à la durée qui ouvre le pourcentage maximum (L. 17, d), le quinzième
   de 57,5 % par année restant à l'invalidité et à qui avait atteint l'âge d'ouverture
   avant 2011 (L. 17, c). Sans la durée, ouvert à l'âge d'annulation de la décote,
@@ -22,9 +23,17 @@ effet: >-
   en 2000, qu'un départ par régime fait paraître, perdait 2 378,39 € par an en
   euros de son départ déclaré.
 sources:
-  lu_le: 2026-09-29
-  prochaine_relecture: 2027-03-31
+  lu_le: 2026-10-08
+  prochaine_relecture: 2027-04-30
   a_relire:
+  - >-
+    Le montant de 2020 : la DREES (fiche « Les bénéficiaires d'un minimum de pension »,
+    éditions de 2021 et 2022, citée par une recherche et non lue, son site refusant le
+    téléchargement) donnerait 1 174,34 € par mois pour 2020, revalorisé de 0,3 %, puis
+    1 187,26 € pour 2021, qui suppose 1 % en 2020. La chaîne du modèle prend 1 %, que
+    1 248,33 € en juillet 2022 et chaque montant de 2023 à 2026 confirment au centime ;
+    lire la page du service des retraites de l'État de 2020, ou la circulaire de
+    revalorisation de cette année-là.
   - >-
     L'écrêtement du sixième alinéa de L. 17 — le minimum n'est servi que si le total
     des pensions ne dépasse pas « un montant fixé par décret » — et la condition
@@ -35,8 +44,35 @@ sources:
     du 1er juillet 2022 : il est corrigé le 23 septembre 2026 à 1 258,32 €, valeur
     du 1er janvier 2023, que deux chemins officiels donnent — la revalorisation
     de 0,8 %, et le montant publié de 2024 divisé par la sienne. Aucune page lue
-    ne la publie en toutes lettres.
+    ne la publie en toutes lettres. Depuis le 8 octobre 2026, la chaîne des
+    revalorisations des pensions civiles la donne aussi, partie de 2004.
   lectures:
+  - type: legifrance
+    reference: >-
+      L. 17 CPCMR, rédaction du 28 décembre 2023 (LEGIARTI000048697797), lue dans
+      l'index LEGI du dépôt : « Le montant du minimum garanti est revalorisé dans les
+      conditions prévues à l'article L. 16 » ; le minimum se compte par « années de
+      services effectifs », les bonifications n'entrant qu'aux militaires, de quinze à
+      trente ans
+    date: 2023-12-28
+  - type: autre
+    reference: >-
+      CNRACL, documentation juridique, « Les modalités de calcul » du minimum garanti
+      (publiée le 2 mai 2012) : « il convient de prendre en compte les services
+      effectifs retenus en liquidation du droit et d'appliquer la règle d'arrondi
+      prévue à l'article 16-II du décret n°2003-1306 » ; « Les périodes prises en
+      compte dans le calcul » (31 janvier 2025) : « les bonifications sont exclues »
+    url: https://www.juris-cnracl.retraites.fr/pension-normale/minimum-garanti/nouvelle-reglementation-applicable-suite-la-reforme-des-retraites-de/les-modalites-de-calcul
+    date: 2025-01-31
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, page « Le minimum garanti », relue le 8 octobre
+      2026 : la référence « revalorisé depuis cette date dans les mêmes conditions que
+      les pensions civiles et militaires de retraite », 16 396,19 € au 1er janvier
+      2026, et la table des montants trimestre par trimestre (785,65 € pour soixante
+      trimestres)
+    url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/le-minimum-garanti
+    date: 2026-01-01
   - type: autre
     reference: >-
       Service des retraites de l'État, référence du minimum garanti (sre_minimum_garanti.py)
@@ -95,6 +131,14 @@ textes_a_rattacher:
 - reference: >-
     décret n° 2010-1744 du 30 décembre 2010, article 3 (JORFARTI000023334941)
 historique:
+- >-
+  2026-10-08 — action 138, étape 17, sur l'écart que la confrontation à TRAJECTOiRE
+  laissait ouvert au cas type 10 : la référence suit la chaîne des revalorisations des
+  pensions civiles à la date d'effet, au lieu des prix entre deux montants publiés, à
+  l'année ; le montant de 2020 (1 174,33 €, revalorisé de 0,3 %) est retiré pour
+  1 182,53 € ; le minimum compte les services effectifs arrondis au décompte final,
+  sans les bonifications (fiche decompte_des_services_fonction_publique).
+  TRAJECTOiRE sert une référence de 2,28 % plus basse (registre).
 - >-
   2026-09-29 — servi aux pensions liquidées avant 2004, dans les trois régimes : leurs
   périodes le déclarent depuis le code de 1964 et les décrets de 1965, le barème du

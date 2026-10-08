@@ -6,7 +6,9 @@
  * assimilées comprises ; les services, qui proratisent la pension de la
  * fonction publique ; la durée cotisée —, régime par régime et année par
  * année, et les trimestres des enfants, dans le régime que la priorité entre
- * régimes désigne (R. 173-15) : `majorationPourEnfants`. Ce que l'étape écrit,
+ * régimes désigne (R. 173-15) : `majorationPourEnfants`. Et les services du
+ * code des pensions au jour, que le décompte final arrondit une seule fois
+ * (R. 26) : `joursDeLaLigne`, `arrondirLesServices`. Ce que l'étape écrit,
  * `Durees`, suit son schéma, `data/reference/etapes/compter_les_durees.yaml`.
  */
 
@@ -21,9 +23,30 @@ import { compterLesPeriodes, familleDesRegimes } from "./etranger.js";
  * La version du schéma de l'étape : la deuxième compte les trimestres des
  * enfants enfant par enfant, chacun dans son régime ; la troisième, les
  * trimestres que les périodes hors de France apportent ; la quatrième, ceux
- * que les emplois classés ajoutent.
+ * que les emplois classés ajoutent ; la cinquième, les services du code des
+ * pensions au jour.
  */
-export const SCHEMA_VERSION = 4;
+export const SCHEMA_VERSION = 5;
+
+/**
+ * La fiche du décompte des services du code des pensions, lue à la date
+ * d'effet (`decompteDesServices`). Voir `FICHE_DU_DECOMPTE` du Python.
+ */
+export const FICHE_DU_DECOMPTE = "decompte_des_services_fonction_publique";
+
+/** Le mois des pensions, en jours : l'année de trois cent soixante jours. */
+export const JOURS_PAR_MOIS = 30;
+export const JOURS_PAR_TRIMESTRE = 90;
+export const JOURS_PAR_AN = 360;
+
+/**
+ * Ce que le minimum garanti compte (`contenu.parametres.minimum_garanti`) :
+ * les services effectifs arrondis, ou le décompte de la pension.
+ */
+export const MINIMA_DU_DECOMPTE = Object.freeze(["services_effectifs", "liquidation"]);
+
+/** La tolérance des jours, qu'un produit par une quotité laisse flottants. */
+const EPSILON_JOURS = 1e-6;
 
 /** Les trois comptes, dans l'ordre où l'étape les écrit. */
 export const COMPTES = ["assurance", "services", "cotises"];
@@ -158,7 +181,8 @@ export class MajorationEnfants {
  */
 export class Durees {
   constructor({ carriere, parAnnee, horsAnnee, enfants, trimestres, trimestresParRegime,
-    bonificationsParRegime, etranger = null, emplois = [] }) {
+    bonificationsParRegime, etranger = null, emplois = [], decompte = null,
+    jours = { assurance: new Map(), services: new Map() }, ecartAuJour = 0.0 }) {
     this.carriere = carriere;
     /** Par compte, par régime et par année, les trimestres crédités. */
     this.parAnnee = parAnnee;
@@ -187,6 +211,70 @@ export class Durees {
      * du régime qui les sert les y lit.
      */
     this.emplois = emplois;
+    /**
+     * La version de la fiche du décompte qui vaut à la date d'effet — son
+     * identifiant et ses paramètres —, `null` quand elle ne compte pas au jour.
+     */
+    this.decompte = decompte;
+    /**
+     * Les services du code des pensions AU JOUR, par compte — `assurance` et
+     * `services` —, par régime et par année.
+     */
+    this.jours = jours;
+    /**
+     * Ce que les fractions de trimestre de ces services changent à
+     * `trimestres`, quand la durée de leur décote se compte au jour.
+     */
+    this.ecartAuJour = ecartAuJour;
+  }
+
+  /** Ces régimes comptent-ils leurs services au jour, à la date d'effet ? */
+  auJour(membres) {
+    return this.decompte !== null
+      && membres.some((m) => this.decompte.parametres.regimes.includes(m));
+  }
+
+  /**
+   * La décote de ces régimes lit-elle une durée d'assurance au jour, sans
+   * arrondi (L. 14, I ; Conseil d'État, 2 février 2010, n° 311495) ?
+   */
+  dureeAuJour(membres) {
+    return this.auJour(membres) && Boolean(this.decompte.parametres.duree_au_jour);
+  }
+
+  /**
+   * Les jours de services de ces régimes, sommés année par année, trois cent
+   * soixante au plus par année.
+   */
+  joursDeServices(membres) {
+    const sommes = new Map();
+    for (const membre of membres) {
+      for (const [annee, jours] of this.jours.services.get(membre) ?? []) {
+        sommes.set(annee, (sommes.get(annee) ?? 0.0) + jours);
+      }
+    }
+    let total = 0;
+    for (const jours of sommes.values()) {
+      total += Math.min(JOURS_PAR_AN, jours);
+    }
+    return total;
+  }
+
+  /** Les services effectifs de ces régimes, en trimestres, arrondis. */
+  servicesEffectifs(membres) {
+    return arrondirLesServices(this.joursDeServices(membres), this.decompte.parametres);
+  }
+
+  /**
+   * Le décompte final des trimestres liquidables : les services au jour,
+   * arrondis, et les bonifications qui ne tiennent à aucune année.
+   */
+  servicesLiquidables(membres) {
+    let bonifications = 0;
+    for (const membre of membres) {
+      bonifications += this.horsAnnee.services.get(membre) ?? 0;
+    }
+    return this.servicesEffectifs(membres) + bonifications;
   }
 
   /**
@@ -304,6 +392,13 @@ export class Durees {
         au_dela_du_maximum: e.auDelaDuMaximum,
         fiabilite: nomFiabilite(e.fiabilite),
       })),
+      au_jour: this.decompte === null ? null : {
+        version: this.decompte.id,
+        jours: ["assurance", "services"].flatMap((compte) => [...this.jours[compte]]
+          .flatMap(([regime, annees]) => [...annees]
+            .map(([annee, jours]) => ({ compte, regime, annee, jours })))),
+        ecart: this.ecartAuJour,
+      },
     };
   }
 }
@@ -336,8 +431,52 @@ export function compter(moteur, coordination, avantagesNonContributifs = true) {
     const annees = parAnnee[table].get(code);
     annees.set(annee, (annees.get(annee) ?? 0) + nombre);
   };
+  // LES SERVICES DU CODE DES PENSIONS AU JOUR, à côté des trimestres : le
+  // décompte final les arrondit une seule fois (R. 26), et la durée que la
+  // décote lit ne les arrondit pas (L. 14, I). Voir `compter` du Python.
+  // Les jours se comptent dans toute la famille de la fonction publique : les
+  // trois régimes liquident aussi les services de ceux qu'ils réunissent.
+  const decompte = decompteDesServices(moteur, carriere, anneeLiquidation);
+  const jours = { assurance: new Map(), services: new Map() };
+  const budgetJours = new Map();
+  const joursParAnnee = new Map();
+  const autresParAnnee = new Map();
+  const crediterJours = (compte, code, annee, nombre) => {
+    if (!jours[compte].has(code)) {
+      jours[compte].set(code, new Map());
+    }
+    const annees = jours[compte].get(code);
+    annees.set(annee, (annees.get(annee) ?? 0.0) + nombre);
+  };
   carriere.lignes.forEach((ligne, i) => {
     const retenusLigne = carriere.trimestresRetenus(ligne);
+    const comptesAuJour = decompte === null ? [] : coordination.regimes[i]
+      .filter((code) => moteur.catalogue.contient(code)
+        && moteur.catalogue.obtenir(code).famille === "fonction_publique");
+    if (comptesAuJour.length > 0 && ligne.services_fonction_publique) {
+      // Une ligne de services se compte au jour même quand elle ne valide
+      // aucun trimestre entier : deux mois d'entrée en novembre.
+      const dureeJours = joursDeLaLigne(carriere, ligne);
+      if (dureeJours > 0) {
+        let servicesJours = ligne.quotite >= 1.0 ? dureeJours : dureeJours * ligne.quotite;
+        const plafondEnfants = ligne.services_plafond_trimestres_par_enfant;
+        if (plafondEnfants) {
+          const restant = budgetJours.get(plafondEnfants)
+            ?? plafondEnfants * carriere.nombre_enfants * JOURS_PAR_TRIMESTRE;
+          servicesJours = Math.min(servicesJours, restant);
+          budgetJours.set(plafondEnfants, restant - servicesJours);
+        }
+        for (const code of comptesAuJour) {
+          crediterJours("assurance", code, ligne.annee, dureeJours);
+          if (servicesJours > 0) {
+            crediterJours("services", code, ligne.annee, servicesJours);
+          }
+        }
+        joursParAnnee.set(ligne.annee, (joursParAnnee.get(ligne.annee) ?? 0.0) + dureeJours);
+      }
+    } else if (retenusLigne > 0) {
+      autresParAnnee.set(ligne.annee, (autresParAnnee.get(ligne.annee) ?? 0) + retenusLigne);
+    }
     if (retenusLigne <= 0) {
       return;
     }
@@ -367,6 +506,16 @@ export function compter(moteur, coordination, avantagesNonContributifs = true) {
       }
     }
   });
+  // Ce que la durée au jour change à la durée tous régimes, année par année.
+  let ecartAuJour = 0.0;
+  if (decompte !== null && decompte.parametres.duree_au_jour) {
+    for (const annee of [...joursParAnnee.keys()].sort((a, b) => a - b)) {
+      const entiers = carriere.trimestresParAnnee(carriere.lignesDe(annee)).get(annee) ?? 0;
+      const auJourAnnee = Math.min(4.0, (autresParAnnee.get(annee) ?? 0)
+        + joursParAnnee.get(annee) / JOURS_PAR_TRIMESTRE);
+      ecartAuJour += auJourAnnee - entiers;
+    }
+  }
   const provisoire = new Durees({
     carriere, parAnnee, horsAnnee, enfants: null, trimestres,
     trimestresParRegime: new Map(), bonificationsParRegime: new Map(),
@@ -417,7 +566,69 @@ export function compter(moteur, coordination, avantagesNonContributifs = true) {
   return new Durees({
     carriere, parAnnee, horsAnnee, enfants: majorationEnfants, trimestres,
     trimestresParRegime, bonificationsParRegime, etranger, emplois,
+    decompte, jours: decompte !== null ? jours : { assurance: new Map(), services: new Map() },
+    ecartAuJour,
   });
+}
+
+/**
+ * La version de la fiche du décompte qui vaut à la date d'effet — son
+ * identifiant et ses paramètres —, `null` quand elle ne compte pas au jour.
+ * Un paramètre que le moteur ne connaît pas l'arrête. Voir
+ * `decompte_des_services` du Python.
+ */
+export function decompteDesServices(moteur, carriere, anneeLiquidation) {
+  const mois = carriere.age_liquidation !== null ? carriere.dateLiquidation.mois : 1;
+  const version = moteur.fichesDatees.version(FICHE_DU_DECOMPTE,
+    `${String(anneeLiquidation).padStart(4, "0")}-${String(mois).padStart(2, "0")}-01`);
+  if (version === null || !version.parametres.existe) {
+    return null;
+  }
+  const parametres = version.parametres;
+  const unite = parametres.unite_jours;
+  const seuil = parametres.seuil_jours;
+  if (!(Number.isInteger(unite) && unite > 0 && seuil > 0 && seuil <= unite)) {
+    throw new Error(`${FICHE_DU_DECOMPTE}.${version.id} : unité ${unite}, seuil ${seuil}`);
+  }
+  if (!MINIMA_DU_DECOMPTE.includes(parametres.minimum_garanti)) {
+    throw new Error(`${FICHE_DU_DECOMPTE}.${version.id} : minimum garanti inconnu, `
+      + `${parametres.minimum_garanti}`);
+  }
+  return { id: version.id, parametres };
+}
+
+/**
+ * Les jours de services qu'une ligne compte, l'année de trois cent soixante
+ * jours : ses mois, coupés au départ, de trente jours chacun ; sur un relevé,
+ * les trimestres qu'il porte, à quatre-vingt-dix jours, sans dépasser ces mois.
+ * Voir `jours_de_la_ligne` du Python.
+ */
+export function joursDeLaLigne(carriere, ligne) {
+  const part = carriere.partRetenueLigne(ligne);
+  if (part <= 0) {
+    return 0;
+  }
+  let jours = Math.round(part * 12) * JOURS_PAR_MOIS;
+  if (ligne.jours_de_services !== null && ligne.jours_de_services !== undefined) {
+    jours = Math.min(jours, ligne.jours_de_services);
+  }
+  return jours;
+}
+
+/**
+ * Le décompte final des trimestres liquidables, en trimestres : les jours de
+ * services par unités entières, la fraction d'au moins `seuil_jours` comptée
+ * pour une unité, la fraction plus courte négligée (R. 26). Voir
+ * `arrondir_les_services` du Python.
+ */
+export function arrondirLesServices(jours, parametres) {
+  const unite = parametres.unite_jours;
+  const seuil = parametres.seuil_jours;
+  let entieres = Math.floor((jours + EPSILON_JOURS) / unite);
+  if (jours - entieres * unite + EPSILON_JOURS >= seuil) {
+    entieres += 1;
+  }
+  return Math.floor(entieres * unite / JOURS_PAR_TRIMESTRE);
 }
 
 /**

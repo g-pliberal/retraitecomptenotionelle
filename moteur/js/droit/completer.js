@@ -666,6 +666,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       }
       const plancher = moteur.minimumGaranti.montant(
         anneeLiquidation, eligible.trimestresServices, eligible.dureeMaximum,
+        carriere.moisLiquidation,
       );
       if (plancher === null) {
         continue;

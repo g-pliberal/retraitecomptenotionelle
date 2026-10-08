@@ -1,10 +1,9 @@
 # Étape 17, première partie : les bonifications et la majoration des emplois classés
 
-**Reprise, au 8 octobre 2026.** Fait : les bonifications des policiers, des
-surveillants pénitentiaires et des sapeurs-pompiers, la majoration des
-hospitaliers actifs (cette note) ; le départ anticipé des parents de trois
-enfants, le plafond de L. 18, la majoration exceptionnelle de septembre 2023 et
-les versements uniques des petites pensions (notes du 8 octobre). Reste, dans
+**Reprise, au 8 octobre 2026.** Fait : les bonifications et la majoration des
+emplois classés (cette note) ; le départ des parents de trois enfants, le
+plafond de L. 18, la majoration de septembre 2023, les versements uniques,
+l'arrondi des services et le minimum garanti (notes du 8 octobre). Reste, dans
 cet ordre : la bonification du cinquième des militaires (L. 12, i) ; puis la
 pension maximale du régime général, les taux pleins de L. 351-8, les
 majorations pour enfants à charge et pour conjoint à charge. Détail : plus

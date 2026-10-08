@@ -1491,7 +1491,9 @@ class Saisie:
         l'année, le régime, le revenu de l'année, les trimestres qu'elle a
         validés. Les trois premiers champs sont exigés ; le quatrième est
         facultatif — sans lui, le modèle déduit les trimestres du montant
-        cotisé, comme il le fait d'une carrière paramétrique.
+        cotisé, comme il le fait d'une carrière paramétrique. Les services de
+        la fonction publique, qui se comptent au jour, y prennent leur
+        fraction : « 3.33 » pour dix mois.
 
         **Le revenu est celui de l'année, en euros de cette année-là**, et non
         un multiple du salaire moyen ni un montant mensuel : c'est ce que le
@@ -1580,11 +1582,15 @@ class Saisie:
                 )
             trimestres = None
             if len(parties) == 4 and parties[3]:
-                if not _est_entier(parties[3]) or not 0 <= int(parties[3]) <= 4:
+                # Une fraction se déclare des services de la fonction publique,
+                # qui se comptent au jour : « 3.33 » dit dix mois (R. 26). Le
+                # contexte refuse la fraction d'un autre statut.
+                valeur = _vers_flottant(parties[3])
+                if valeur is None or not 0 <= valeur <= 4:
                     raise ErreurSaisie(
                         f"Relevé « {morceau} » : trimestres attendus entre 0 et 4."
                     )
-                trimestres = int(parties[3])
+                trimestres = int(valeur) if valeur.is_integer() else valeur
             lignes.append(LigneRelevee(
                 annee=annee,
                 affiliation=parties[1],

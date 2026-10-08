@@ -495,8 +495,14 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       ? membres.reduce((somme, m) => somme + (bonificationsParRegime.get(m) ?? 0), 0)
         + durees.bonificationsDesEmplois(membres)
       : 0;
+    // Le code des pensions compte ses services au jour, et ne les arrondit
+    // qu'au décompte final (R. 26 ; fiche decompte_des_services_fonction_publique).
+    const auJour = dureesCultes === null && durees.auJour(membres);
     let numerateur = dureesCultes !== null
-      ? dureesCultes.depuis1998 : cumulPlafonne(acquisParRegime, membres);
+      ? dureesCultes.depuis1998
+      : (auJour ? durees.servicesLiquidables(membres) : cumulPlafonne(acquisParRegime, membres));
+    // La durée d'assurance que sa décote lit, au jour, sans arrondi (L. 14, I).
+    const ecartAuJour = auJour && durees.dureeAuJour(membres) ? durees.ecartAuJour : 0.0;
     if (dureesCultes === null && majorationEnfants !== null
         && moteur.catalogue.obtenir(code).famille === "special") {
       // La majoration de durée n'entre pas aux services d'un régime spécial,
@@ -577,9 +583,15 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       );
       ageAnnulation = ageAnnulationPeriode;
       trimestresDecote = trimestresDeDecote(
-        moteur, periode, carriere, trimestres + majorationsEmplois, requis, ageLiquidation,
-        ageAnnulation,
+        moteur, periode, carriere, trimestres + majorationsEmplois + ecartAuJour, requis,
+        ageLiquidation, ageAnnulation,
       );
+      if (auJour && durees.dureeAuJour(membres) && trimestresRegime >= proratisation) {
+        // La pension que l'arrondi du décompte final porte au pourcentage
+        // maximum ne subit pas de décote (Conseil d'État, 2 février 2010,
+        // n° 311495). Voir liquider.py.
+        trimestresDecote = 0.0;
+      }
       if (tauxPleinDesFemmes(periode, carriere, cumulPlafonne, ageLiquidation)
           || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation)
           || pourInvalidite !== null
@@ -786,15 +798,21 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         ? (MINORATION_AGE_MINIMUM_GARANTI[
           carriere.moisDeLAnniversaire(ageOuverturePeriode).annee] ?? 0)
         : 0;
+      // Le minimum compte les SERVICES EFFECTIFS, sans les bonifications
+      // (L. 17), arrondis au décompte final ; avant 2004, le décompte de la
+      // pension.
       eligiblesGaranti.push({
         indice: indicePension,
-        trimestresServices: cumulPlafonne("services", membres),
+        trimestresServices: auJour
+          && durees.decompte.parametres.minimum_garanti === "services_effectifs"
+          ? durees.servicesEffectifs(membres)
+          : (auJour ? numerateur : cumulPlafonne("services", membres)),
         // La pension liquidée pour invalidité a le minimum garanti sans
         // condition de taux plein, et le c de L. 17 sous quinze ans.
         ouvert: pourInvalidite !== null
           || ancienDroit
           || trimestresDecote <= 0
-          || trimestres + majorationsEmplois >= requis
+          || trimestres + majorationsEmplois + ecartAuJour >= requis - 1e-9
           || (minoration > 0 && ageAnnulation !== null
             && ageLiquidation + 1e-9 >= ageAnnulation - minoration / 4),
         // Le d et la minoration ne valent que pour la fonction publique.
@@ -2072,7 +2090,9 @@ export function trimestresDeDecote(moteur, periode, carriere, trimestres, requis
     const manquantsServices = Math.max(
       0, militaire.trimestresCible - militaire.trimestresServis,
     );
-    const manquantsDuree = Math.max(0, requis - trimestres);
+    // Arrondi à l'entier supérieur (L. 14, II) : la durée d'assurance, au
+    // jour, en garde les fractions.
+    const manquantsDuree = auTrimestreSuperieur(requis - trimestres);
     return Math.min(manquantsServices, manquantsDuree, TRIMESTRES_DECOTE_MILITAIRE);
   }
   // Arrondi à l'entier supérieur, comme le veut l'article R. 351-27 : les
@@ -2089,8 +2109,10 @@ export function trimestresDeDecote(moteur, periode, carriere, trimestres, requis
   if (periode.decote_par_la_duree_seule) {
     trimestresDecote = manquantsAge <= 0 ? 0 : Math.max(0, requis - trimestres);
   } else if (periode.decote_annulee_par_la_duree) {
-    // Et les régimes spéciaux bornent ce décompte (`borneDeLaDuree`).
-    let parDuree = Math.max(0, cible - trimestres);
+    // Et les régimes spéciaux bornent ce décompte (`borneDeLaDuree`). Arrondi
+    // à l'entier supérieur (L. 14, I) : la durée d'assurance du code des
+    // pensions se compte au jour.
+    let parDuree = auTrimestreSuperieur(cible - trimestres);
     if (BAREMES_REGIMES_SPECIAUX.has(periode.bareme_decote)) {
       parDuree = Math.min(parDuree, borneDeLaDuree(moteur, periode, carriere, cible));
     }

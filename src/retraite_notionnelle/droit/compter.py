@@ -16,6 +16,10 @@ régime, celui que la priorité entre régimes désigne (R. 173-15) :
 régime qui le pensionne, bonification de services ou majoration de durée :
 :func:`trimestres_des_emplois`.
 
+Et les services du code des pensions AU JOUR, que le décompte final arrondit
+une seule fois (R. 26) et que la décote lit sans arrondi (L. 14, I) :
+:func:`jours_de_la_ligne`, :func:`arrondir_les_services`.
+
 Ce que l'étape écrit, :class:`Durees`, suit son schéma,
 ``data/reference/etapes/compter_les_durees.yaml``. Son jumeau est
 ``moteur/js/droit/compter.js``.
@@ -23,7 +27,8 @@ Ce que l'étape écrit, :class:`Durees`, suit son schéma,
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+import math
+from dataclasses import dataclass, field, replace
 from typing import TYPE_CHECKING
 
 from .. import chronologie as chrono
@@ -45,8 +50,32 @@ if TYPE_CHECKING:
 #: La version du schéma de l'étape : la deuxième compte les trimestres des
 #: enfants enfant par enfant, chacun dans son régime ; la troisième, les
 #: trimestres que les périodes hors de France apportent ; la quatrième, ceux
-#: que les emplois classés ajoutent.
-SCHEMA_VERSION = 4
+#: que les emplois classés ajoutent ; la cinquième, les services du code des
+#: pensions au jour.
+SCHEMA_VERSION = 5
+
+#: La fiche du décompte des services du code des pensions, lue à la date
+#: d'effet (:func:`decompte_des_services`) : l'unité et le seuil du décompte
+#: final (R. 26 ; décret n° 2003-1306, article 16 ; décret n° 2004-1056,
+#: article 13), et la durée d'assurance comptée au jour (L. 14, I).
+FICHE_DU_DECOMPTE = "decompte_des_services_fonction_publique"
+
+#: Le mois des pensions, en jours : l'année de trois cent soixante jours,
+#: le trimestre de quatre-vingt-dix — « Un trimestre équivaut à 90 jours »
+#: (CNRACL, « Trimestres liquidables »).
+JOURS_PAR_MOIS = 30
+JOURS_PAR_TRIMESTRE = 90
+JOURS_PAR_AN = 360
+
+#: Ce que le minimum garanti compte (``contenu.parametres.minimum_garanti`` de
+#: la fiche) : les ``services_effectifs``, arrondis au décompte final, sans
+#: bonification (L. 17 depuis 2004) ; ou le décompte de la pension,
+#: bonifications comprises (``liquidation``, le b de L. 17 d'avant 2004).
+MINIMA_DU_DECOMPTE = ("services_effectifs", "liquidation")
+
+#: La tolérance des jours, qu'un produit par une quotité laisse flottants : un
+#: millionième de jour, que l'arrondi du décompte n'atteint jamais.
+EPSILON_JOURS = 1e-6
 
 #: Les trois comptes, dans l'ordre où l'étape les écrit.
 COMPTES = ("assurance", "services", "cotises")
@@ -258,6 +287,53 @@ class Durees:
     #: liquidation du régime qui les sert les y lit
     #: (:meth:`services_des_emplois`, :meth:`majorations_des_emplois`).
     emplois: tuple[TrimestresEmploi, ...] = ()
+    #: La version de la fiche du décompte qui vaut à la date d'effet — son
+    #: identifiant et ses paramètres —, ``None`` quand elle ne compte pas au
+    #: jour (:func:`decompte_des_services`).
+    decompte: dict | None = None
+    #: Les services de la fonction publique AU JOUR, par compte —
+    #: ``assurance``, le temps partiel compté plein, et ``services``, à sa
+    #: quotité —, par régime de la famille et par année : des jours de l'année
+    #: de trois cent soixante, que les régimes du code des pensions liquident.
+    jours: dict[str, dict[str, dict[int, float]]] = field(default_factory=dict)
+    #: Ce que les fractions de trimestre de ces services changent à
+    #: :attr:`trimestres`, quand la durée d'assurance de leur décote se compte
+    #: au jour : la somme, année par année, de la durée au jour — leurs jours,
+    #: et les trimestres des autres régimes, quatre au plus (R. 26 bis) —
+    #: moins la durée en trimestres entiers.
+    ecart_au_jour: float = 0.0
+
+    def au_jour(self, membres: tuple[str, ...]) -> bool:
+        """Ces régimes comptent-ils leurs services au jour, à la date d'effet ?"""
+        return (self.decompte is not None
+                and any(m in self.decompte["parametres"]["regimes"] for m in membres))
+
+    def duree_au_jour(self, membres: tuple[str, ...]) -> bool:
+        """La décote de ces régimes lit-elle une durée d'assurance au jour, sans
+        arrondi (L. 14, I ; Conseil d'État, 2 février 2010, n° 311495) ?"""
+        return self.au_jour(membres) and bool(self.decompte["parametres"]["duree_au_jour"])
+
+    def jours_de_services(self, membres: tuple[str, ...]) -> float:
+        """Les jours de services de ces régimes, sommés année par année, trois
+        cent soixante au plus par année."""
+        sommes: dict[int, float] = {}
+        for membre in membres:
+            for annee, jours in self.jours.get("services", {}).get(membre, {}).items():
+                sommes[annee] = sommes.get(annee, 0.0) + jours
+        return somme_ordonnee(min(float(JOURS_PAR_AN), jours) for jours in sommes.values())
+
+    def services_effectifs(self, membres: tuple[str, ...]) -> int:
+        """Les services effectifs de ces régimes, en trimestres, arrondis au
+        décompte final (:func:`arrondir_les_services`)."""
+        return arrondir_les_services(self.jours_de_services(membres),
+                                     self.decompte["parametres"])
+
+    def services_liquidables(self, membres: tuple[str, ...]) -> int:
+        """Le décompte final des trimestres liquidables : les services au jour,
+        arrondis, et les bonifications qui ne tiennent à aucune année, en
+        trimestres entiers — un an par enfant, ce qui ne change pas l'arrondi."""
+        return self.services_effectifs(membres) + somme_ordonnee(
+            self.hors_annee["services"].get(membre, 0) for membre in membres)
 
     def services_des_emplois(self, membres: tuple[str, ...]) -> int:
         """Les trimestres que les emplois classés ajoutent aux services
@@ -344,6 +420,15 @@ class Durees:
                  "au_dela_du_maximum": e.au_dela_du_maximum,
                  "fiabilite": e.fiabilite.name.lower()}
                 for e in self.emplois],
+            "au_jour": None if self.decompte is None else {
+                "version": self.decompte["id"],
+                "jours": [
+                    {"compte": compte, "regime": regime, "annee": annee, "jours": jours}
+                    for compte in ("assurance", "services")
+                    for regime, annees in self.jours.get(compte, {}).items()
+                    for annee, jours in annees.items()],
+                "ecart": self.ecart_au_jour,
+            },
         }
 
 
@@ -381,8 +466,57 @@ def compter(moteur: ScenarioActuel, coordination: Coordination,
     hors_annee: dict[str, dict[str, int]] = {
         "assurance": {}, "services": {}, "cotises": {},
     }
+    # LES SERVICES DU CODE DES PENSIONS AU JOUR, à côté des trimestres : le
+    # décompte final les arrondit une seule fois (R. 26), et la durée que la
+    # décote lit ne les arrondit pas (L. 14, I). Les arrondir année par année
+    # perdait la fraction de l'année d'entrée et celle du départ : dix mois en
+    # 1976 et sept en 2017 font deux mois de plus que 165 trimestres, soit
+    # 166 au décompte final, quand le modèle en comptait 165 et une décote.
+    # Les jours se comptent dans toute la famille de la fonction publique : les
+    # trois régimes liquident aussi les services de ceux qu'ils réunissent —
+    # les pensions civiles d'avant 1948, et les deux autres régimes du code
+    # (:func:`~.coordonner.groupes_de_succession`), que l'étape ne connaît pas
+    # encore. Ne les compter que dans les trois perdait les services d'avant
+    # 1948 d'un fonctionnaire de l'État.
+    decompte = decompte_des_services(moteur, carriere, annee_liquidation)
+    jours: dict[str, dict[str, dict[int, float]]] = {"assurance": {}, "services": {}}
+    budget_jours: dict[int, float] = {}
+    #: Par année, les jours d'assurance au jour, et les trimestres que les
+    #: autres lignes valident : la durée au jour de l'année.
+    jours_par_annee: dict[int, float] = {}
+    autres_par_annee: dict[int, int] = {}
+
+    def crediter_jours(compte: str, code: str, annee: int, nombre: float) -> None:
+        annees = jours[compte].setdefault(code, {})
+        annees[annee] = annees.get(annee, 0.0) + nombre
+
     for ligne, regimes in zip(carriere.lignes, coordination.regimes):
         retenus_ligne = carriere.trimestres_retenus(ligne)
+        comptes_au_jour = ([code for code in regimes if code in moteur.catalogue
+                            and moteur.catalogue[code].famille == "fonction_publique"]
+                           if decompte is not None else [])
+        if comptes_au_jour and ligne.services_fonction_publique:
+            # Une ligne de services se compte au jour même quand elle ne
+            # valide aucun trimestre entier : deux mois d'entrée en novembre.
+            duree_jours = jours_de_la_ligne(carriere, ligne)
+            if duree_jours > 0:
+                services_jours = (duree_jours if ligne.quotite >= 1.0
+                                  else duree_jours * ligne.quotite)
+                plafond_enfants = ligne.services_plafond_trimestres_par_enfant
+                if plafond_enfants:
+                    restant = budget_jours.setdefault(
+                        plafond_enfants,
+                        float(plafond_enfants * carriere.nombre_enfants * JOURS_PAR_TRIMESTRE))
+                    services_jours = min(services_jours, restant)
+                    budget_jours[plafond_enfants] = restant - services_jours
+                for code in comptes_au_jour:
+                    crediter_jours("assurance", code, ligne.annee, float(duree_jours))
+                    if services_jours > 0:
+                        crediter_jours("services", code, ligne.annee, services_jours)
+                jours_par_annee[ligne.annee] = (jours_par_annee.get(ligne.annee, 0.0)
+                                                + duree_jours)
+        elif retenus_ligne > 0:
+            autres_par_annee[ligne.annee] = autres_par_annee.get(ligne.annee, 0) + retenus_ligne
         if retenus_ligne <= 0:
             continue
         # Une année que tous ses régimes valident sans cotisation — l'activité
@@ -408,6 +542,17 @@ def compter(moteur: ScenarioActuel, coordination: Coordination,
                 crediter_trimestres("services", code, ligne.annee, services_ligne)
             if cotisee:
                 crediter_trimestres("cotises", code, ligne.annee, retenus_ligne)
+    # Ce que la durée au jour change à la durée tous régimes, année par année :
+    # les jours de services, et les trimestres que les autres régimes valident,
+    # quatre au plus (R. 26 bis), moins ce que l'année compte en trimestres
+    # entiers.
+    ecart_au_jour = 0.0
+    if decompte is not None and decompte["parametres"]["duree_au_jour"]:
+        for annee in sorted(jours_par_annee):
+            entiers = carriere.trimestres_par_annee(carriere.lignes_de(annee)).get(annee, 0)
+            au_jour_annee = min(4.0, autres_par_annee.get(annee, 0)
+                                + jours_par_annee[annee] / JOURS_PAR_TRIMESTRE)
+            ecart_au_jour += au_jour_annee - entiers
     durees = Durees(carriere, par_annee, hors_annee, None, trimestres, {}, {})
     # Durée d'assurance validée dans chaque régime, PÉRIODES ASSIMILÉES
     # COMPRISES : le coefficient de proratisation du régime général porte
@@ -461,7 +606,73 @@ def compter(moteur: ScenarioActuel, coordination: Coordination,
                if avantages_non_contributifs else ())
     trimestres += somme_ordonnee(emploi.duree for emploi in emplois)
     return Durees(carriere, par_annee, hors_annee, majoration_enfants, trimestres,
-                  trimestres_par_regime, bonifications_par_regime, etranger, emplois)
+                  trimestres_par_regime, bonifications_par_regime, etranger, emplois,
+                  decompte=decompte, jours=jours if decompte is not None else {},
+                  ecart_au_jour=ecart_au_jour)
+
+
+def decompte_des_services(moteur: ScenarioActuel, carriere: Carriere,
+                          annee_liquidation: int) -> dict | None:
+    """La version de la fiche du décompte (:data:`FICHE_DU_DECOMPTE`) qui vaut
+    à la date d'effet — son identifiant et ses paramètres —, ``None`` quand
+    elle ne compte pas au jour : sans version, ou d'avant le code de 1964.
+
+    Un paramètre que le moteur ne connaît pas l'arrête (§ 6.7) : une unité
+    nulle, un seuil hors d'elle, un minimum garanti sans nom connu.
+    """
+    mois = carriere.date_liquidation.mois if carriere.age_liquidation is not None else 1
+    version = moteur.fiches_datees.version(
+        FICHE_DU_DECOMPTE, f"{annee_liquidation:04d}-{mois:02d}-01")
+    if version is None or not version["parametres"].get("existe"):
+        return None
+    parametres = version["parametres"]
+    unite, seuil = parametres["unite_jours"], parametres["seuil_jours"]
+    if not (isinstance(unite, int) and unite > 0 and 0 < seuil <= unite):
+        raise ValueError(f"{FICHE_DU_DECOMPTE}.{version['id']} : unité {unite!r}, "
+                         f"seuil {seuil!r}")
+    if parametres["minimum_garanti"] not in MINIMA_DU_DECOMPTE:
+        raise ValueError(f"{FICHE_DU_DECOMPTE}.{version['id']} : minimum garanti "
+                         f"inconnu, {parametres['minimum_garanti']!r}")
+    return {"id": version["id"], "parametres": parametres}
+
+
+def jours_de_la_ligne(carriere: Carriere, ligne) -> int:
+    """Les jours de services qu'une ligne compte, l'année de trois cent
+    soixante jours : ses mois, coupés au départ, de trente jours chacun ; sur
+    un relevé, les trimestres qu'il porte, fractions comprises, à
+    quatre-vingt-dix jours (:attr:`~retraite_notionnelle.carriere.AnneeCarriere.jours_de_services`),
+    sans dépasser ces mois.
+
+    Le modèle connaît la carrière au mois : la fraction d'un mois se néglige
+    au décompte final, celle de deux mois fait le trimestre — le texte compte
+    au jour, et le seuil de quarante-cinq jours tombe entre les deux.
+    """
+    part = carriere.part_retenue_ligne(ligne)
+    if part <= 0:
+        return 0
+    jours = round(part * 12) * JOURS_PAR_MOIS
+    if ligne.jours_de_services is not None:
+        jours = min(jours, ligne.jours_de_services)
+    return jours
+
+
+def arrondir_les_services(jours: float, parametres: dict) -> int:
+    """Le décompte final des trimestres liquidables, en trimestres : les jours
+    de services par unités entières (le trimestre depuis 2004, le semestre
+    avant), la fraction d'au moins ``seuil_jours`` comptée pour une unité,
+    la fraction plus courte négligée (R. 26).
+
+    « Services liquidables : 20 ans 6 mois et 13 jours ; Bonifications : 1 an
+    1 mois et 2 jours [...] En liquidation du droit : 86 trimestres 1 mois et
+    15 jours soit 86 trimestres et 45 jours donc 87 trimestres » (CNRACL,
+    « Trimestres liquidables »).
+    """
+    unite = int(parametres["unite_jours"])
+    seuil = float(parametres["seuil_jours"])
+    entieres = math.floor((jours + EPSILON_JOURS) / unite)
+    if jours - entieres * unite + EPSILON_JOURS >= seuil:
+        entieres += 1
+    return entieres * unite // JOURS_PAR_TRIMESTRE
 
 
 def services_a_temps_partiel(trimestres: int, quotite: float) -> int:

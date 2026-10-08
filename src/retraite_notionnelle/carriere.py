@@ -24,6 +24,7 @@ elle-même par l'acquisition en étapes.
 
 from __future__ import annotations
 
+import math
 from collections.abc import Iterable
 from dataclasses import dataclass, field, replace
 from functools import cached_property
@@ -172,6 +173,13 @@ class AnneeCarriere:
     #: autre année : seul le scénario 1 le renseigne, sur sa propre copie de
     #: la carrière (voir `droit.coordonner.retablir`).
     revenu_retabli: float = 0.0
+    #: Les jours de services que le RELEVÉ porte pour l'année : ses trimestres,
+    #: fractions comprises, à quatre-vingt-dix jours le trimestre. Le code des
+    #: pensions compte ses services au jour et ne les arrondit qu'au décompte
+    #: final (R. 26) : « 3.33 » dit dix mois. ``None`` hors d'un relevé qui
+    #: les déclare : les mois de la ligne font alors ses jours
+    #: (:func:`~retraite_notionnelle.droit.compter.jours_de_la_ligne`).
+    jours_de_services: int | None = None
 
     @property
     def cotise(self) -> bool:
@@ -321,10 +329,11 @@ class LigneRelevee:
     annee: int
     affiliation: str
     revenu: float
-    #: Trimestres validés cette année-là, tels que le relevé les porte.
-    #: ``None`` laisse le modèle les recalculer du revenu, comme il le fait
-    #: d'une carrière paramétrique.
-    trimestres: int | None = None
+    #: Trimestres validés cette année-là, tels que le relevé les porte : ceux
+    #: de la fonction publique, qui compte ses services au jour, avec leur
+    #: fraction (« 3.33 » pour dix mois). ``None`` laisse le modèle les
+    #: recalculer du revenu, comme il le fait d'une carrière paramétrique.
+    trimestres: int | float | None = None
     #: Nature de la période, au sens de ``PERIODES_NON_COTISEES``.
     type_periode: str = "emploi"
 
@@ -458,7 +467,7 @@ def _ligne_annuelle(
     part: float,
     part_primes: float,
     trimestres_maximum: int,
-    trimestres_declares: int | None = None,
+    trimestres_declares: float | None = None,
     quotite: float = 1.0,
 ) -> AnneeCarriere:
     """Une année de carrière, une fois connus son revenu et sa nature.
@@ -493,7 +502,11 @@ def _ligne_annuelle(
                       if cotise
                       else (regle.trimestres_assimiles if regle else 4))
     else:
-        trimestres = trimestres_declares
+        # Une fraction ne se déclare que des services de la fonction publique,
+        # qui se comptent au jour (``jours_de_services``) ; la durée en
+        # trimestres entiers que les autres régimes lisent l'arrondit au mois
+        # et demi, comme un relevé en trimestres entiers.
+        trimestres = math.floor(trimestres_declares + 0.5)
     return AnneeCarriere(
         annee=annee,
         revenu=revenu if cotise else 0.0,
@@ -530,6 +543,8 @@ def _ligne_annuelle(
         fraction_annee=part,
         part_primes=part_primes,
         quotite=quotite if cotise else 1.0,
+        jours_de_services=(None if trimestres_declares is None
+                           else math.floor(trimestres_declares * 90 + 0.5)),
         # Assurance vieillesse des parents au foyer : la CNAF cotise au régime
         # général sur une assiette forfaitaire de 169 heures par mois du SMIC
         # du 1er juillet de l'année précédente (R. 381-3), que la Cnav publie

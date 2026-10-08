@@ -851,12 +851,19 @@ export class DecoteRegimesSpeciaux extends DecoteFonctionPublique {
  *
  * Ce n'est pas un plancher proratisé mais un BARÈME EN ESCALIER sur la durée de
  * services, rapporté à un traitement de référence gelé : celui de l'indice
- * majoré 227 au 1er janvier 2004, revalorisé sur les prix depuis. Quinze ans de
- * services en ouvrent 57,5 %, trente ans 95 %, quarante ans la totalité.
+ * majoré 227 au 1er janvier 2004, revalorisé depuis comme les pensions civiles
+ * (L. 16). Quinze ans de services en ouvrent 57,5 %, trente ans 95 %, quarante
+ * ans la totalité.
  */
 export class MinimumGaranti {
-  constructor(paquet, macro) {
+  constructor(paquet, macro, revalorisations = null) {
     this.macro = macro;
+    // Les revalorisations des pensions civiles : les décrets jusqu'en 2008,
+    // l'article L. 161-23-1 ensuite. Voir `MinimumGaranti` du Python.
+    this._revalorisations = revalorisations === null ? [] : [
+      ...revalorisations.fonction_publique.filter((r) => r.date_effet < "2009-01-01"),
+      ...revalorisations.generales.filter((r) => r.date_effet >= "2009-01-01"),
+    ];
     const contenu = paquet.minimum_garanti ?? {};
     this._bareme = contenu.bareme ?? {};
     this._point = contenu.point_indice ?? {};
@@ -903,14 +910,17 @@ export class MinimumGaranti {
   }
 
   /**
-   * Montant plein du minimum garanti, quarante ans de services.
+   * Montant plein du minimum garanti, quarante ans de services, pour une
+   * pension prenant effet au premier jour de `mois`.
    *
-   * Un montant SERVI connu prime sur tout calcul ; après 2004 la référence est
-   * le traitement gelé de l'indice majoré 227, projeté sur les prix depuis
-   * l'ancre en vigueur ; avant 2004, le gel n'existe pas et c'est le traitement
-   * de l'indice majoré de l'année, au point d'indice de cette année-là.
+   * Depuis 2004, la valeur de l'indice majoré 227 au 1er janvier 2004,
+   * revalorisée comme les pensions civiles jusqu'à la date d'effet, depuis le
+   * montant publié le plus récent ; au-delà de la dernière revalorisation
+   * connue, sur les prix. Avant 2004, le gel n'existe pas et c'est le
+   * traitement de l'indice majoré de l'année, au point d'indice de cette
+   * année-là. Voir `reference` du Python.
    */
-  reference(anneeLiquidation) {
+  reference(anneeLiquidation, mois = 1) {
     const bareme = this.bareme(anneeLiquidation);
     if (bareme === null || bareme === undefined) {
       return null;
@@ -930,20 +940,46 @@ export class MinimumGaranti {
     if (this._anneesMontants.length === 0) {
       return null;
     }
-    let valeur;
-    let fiabilite;
-    if (this._montants[String(anneeLiquidation)] !== undefined) {
-      [valeur, fiabilite] = this._montants[String(anneeLiquidation)];
-    } else {
-      const anterieures = this._anneesMontants.filter((a) => a < anneeLiquidation);
-      const ancre = anterieures.length
-        ? anterieures[anterieures.length - 1]
-        : this._anneesMontants[0];
-      [valeur, fiabilite] = this._montants[String(ancre)];
-      valeur *= this.macro.coefficientPrix(ancre, anneeLiquidation);
+    const anterieures = this._anneesMontants.filter((a) => a <= anneeLiquidation);
+    const ancre = anterieures.length
+      ? anterieures[anterieures.length - 1]
+      : this._anneesMontants[0];
+    let [valeur, fiabilite] = this._montants[String(ancre)];
+    const [coefficient, fiabiliteChaine] = this.revalorisation(
+      `${String(ancre).padStart(4, "0")}-01-01`,
+      `${String(anneeLiquidation).padStart(4, "0")}-${String(mois).padStart(2, "0")}-01`);
+    valeur *= coefficient;
+    const derniere = this._revalorisations.length
+      ? Number(this._revalorisations[this._revalorisations.length - 1].date_effet.slice(0, 4))
+      : ancre;
+    if (anneeLiquidation > Math.max(derniere, ancre)) {
+      valeur *= this.macro.coefficientPrix(Math.max(derniere, ancre), anneeLiquidation);
     }
     return [valeur * indice / MinimumGaranti.INDICE_REFERENCE,
-      Math.min(fiabiliteBareme, fiabilite)];
+      Math.min(fiabiliteBareme, fiabilite, fiabiliteChaine)];
+  }
+
+  /**
+   * Le coefficient des revalorisations des pensions civiles qui tombent après
+   * `depuis` et au plus tard à `jusqua` (dates ISO), et sa fiabilité ; en
+   * 2020, la tranche du coefficient de l'article L. 161-25, 1 %. Voir
+   * `revalorisation` du Python.
+   */
+  revalorisation(depuis, jusqua) {
+    let coefficient = 1.0;
+    let fiabilite = Fiabilite.CERTIFIEE;
+    for (const ligne of this._revalorisations) {
+      if (ligne.date_effet > jusqua || ligne.date_effet <= depuis) {
+        continue;
+      }
+      if (ligne.par_tranche && !((ligne.superieur_a === null || 0.0 > ligne.superieur_a)
+          && (ligne.au_plus === null || 0.0 <= ligne.au_plus))) {
+        continue;
+      }
+      coefficient *= ligne.coefficient;
+      fiabilite = Math.min(fiabilite, ligne.fiabilite);
+    }
+    return [coefficient, fiabilite];
   }
 
   /**
@@ -970,9 +1006,9 @@ export class MinimumGaranti {
    * durée qui ouvre le pourcentage maximum. `dureeMaximum` est ce dénominateur ;
    * `null` garde le c.
    */
-  montant(anneeLiquidation, trimestresServices, dureeMaximum = null) {
+  montant(anneeLiquidation, trimestresServices, dureeMaximum = null, mois = 1) {
     const bareme = this.bareme(anneeLiquidation);
-    const reference = this.reference(anneeLiquidation);
+    const reference = this.reference(anneeLiquidation, mois);
     if (bareme === null || bareme === undefined || reference === null) {
       return null;
     }
@@ -1002,7 +1038,7 @@ export class MinimumGaranti {
 MinimumGaranti.SEUIL_BAS = 60;
 /** Quarante ans : au-delà, la référence est servie en entier. */
 MinimumGaranti.SEUIL_HAUT = 160;
-/** Année à partir de laquelle la référence est gelée puis indexée sur les prix. */
+/** Année à partir de laquelle la référence est gelée, puis revalorisée comme les pensions. */
 MinimumGaranti.ANNEE_GEL = 2004;
 /** Indice majoré auquel se rapportent les montants transcrits. */
 MinimumGaranti.INDICE_REFERENCE = 227;

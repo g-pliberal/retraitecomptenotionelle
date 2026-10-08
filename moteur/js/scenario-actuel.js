@@ -87,7 +87,8 @@ export class ScenarioActuel {
     this.minimumContributif = new MinimumContributif(paquet, macro);
     this.decoteFonctionPublique = new DecoteFonctionPublique(paquet);
     this.decoteRegimesSpeciaux = new DecoteRegimesSpeciaux(paquet);
-    this.minimumGaranti = new MinimumGaranti(paquet, macro);
+    // Sa référence suit les revalorisations des pensions civiles (L. 17, L. 16).
+    this.minimumGaranti = new MinimumGaranti(paquet, macro, new RevalorisationsPensions(paquet));
     // Les deux minima des exploitants agricoles : voir `pensionMajoree` et
     // `complementDifferentiel` (`droit/completer.js`).
     this.pensionMajoreeReference = new PensionMajoreeReference(paquet, macro);

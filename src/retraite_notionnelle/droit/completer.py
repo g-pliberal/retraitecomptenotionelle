@@ -870,7 +870,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 continue
             plancher = moteur.minimum_garanti.montant(
                 annee_liquidation, eligible.trimestres_services,
-                eligible.duree_maximum,
+                eligible.duree_maximum, carriere.mois_liquidation,
             )
             if plancher is None:
                 continue

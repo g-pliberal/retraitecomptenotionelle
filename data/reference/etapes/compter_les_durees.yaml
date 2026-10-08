@@ -22,11 +22,17 @@
 # seule durée que ce régime oppose à sa décote — la bonification du cinquième
 # des policiers et des surveillants pénitentiaires d'abord.
 #
+# La version 5 (8 octobre 2026) compte les services des trois régimes du code
+# des pensions au jour, en mois de trente jours, régime par régime et année par
+# année, à côté de leurs trimestres : le décompte final les arrondit une seule
+# fois (R. 26), et la durée que leur décote lit ne les arrondit pas (L. 14, I ;
+# fiche decompte_des_services_fonction_publique).
+#
 # src/retraite_notionnelle/droit/compter.py, et son jumeau
 # moteur/js/droit/compter.js.
 
 etape: compter_les_durees
-schema_version: 4
+schema_version: 5
 lit: [coordination]
 ecrit: durees
 
@@ -41,6 +47,20 @@ objets:
       trimestres: {porte: "la durée d'assurance tous régimes, plafonnée année par année, enfants et bonifications des emplois classés compris", type: entier, obligatoire: true}
       etranger: {porte: "les trimestres que les périodes hors de France apportent à la durée du taux", type: objet, objet: etranger, defaut: null}
       emplois: {porte: "ce que les emplois classés ajoutent, régime par régime", type: liste, de: {objet: emploi}, obligatoire: true}
+      au_jour: {porte: "les services du code des pensions comptés au jour, quand la version du décompte qui vaut à la date d'effet les y compte", type: objet, objet: au_jour, defaut: null}
+
+  au_jour:
+    champs:
+      version: {porte: "la version de la fiche decompte_des_services_fonction_publique qui s'applique", type: identifiant, obligatoire: true}
+      jours: {porte: "les jours d'assurance, temps partiel compté plein, et de services, à la quotité, par régime et par année", type: liste, de: {objet: jours_de_services}, obligatoire: true}
+      ecart: {porte: "ce que leurs fractions de trimestre changent à la durée tous régimes que la décote de ces régimes lit, en trimestres", type: nombre, obligatoire: true}
+
+  jours_de_services:
+    champs:
+      compte: {porte: "le compte : assurance ou services", type: valeur, valeurs: comptes_de_duree, obligatoire: true}
+      regime: {porte: "le régime qui les compte", type: identifiant, obligatoire: true}
+      annee: {porte: "l'année qui les ouvre", type: entier, obligatoire: true}
+      jours: {porte: "les jours, l'année de trois cent soixante", type: nombre, obligatoire: true}
 
   emploi:
     champs:

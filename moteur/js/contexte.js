@@ -498,6 +498,15 @@ export class Contexte {
           + `« ${ligne.affiliation} ».`,
         );
       }
+      if (ligne.trimestres !== null && !Number.isInteger(ligne.trimestres)
+          && !auJour(simulateur.affiliations, ligne.affiliation, ligne.annee)) {
+        throw new ErreurSaisie(
+          `Relevé, année ${ligne.annee} : une fraction de trimestre ne se `
+          + "déclare que des services de la fonction publique, qui se "
+          + `comptent au jour ; « ${ligne.affiliation} » valide des `
+          + "trimestres entiers.",
+        );
+      }
     }
     if (prolonger) {
       releve = releveJusquAuDepart(simulateur, saisie, releve, motifs);
@@ -744,6 +753,16 @@ function verifierRadiationPourInvalidite(affiliations, carriere) {
       );
     }
   }
+}
+
+/**
+ * Ce statut verse-t-il, cette année-là, à un régime du code des pensions, qui
+ * compte ses services au jour (R. 26) ? Voir `_au_jour` du Python.
+ */
+function auJour(affiliations, affiliation, annee) {
+  return affiliations.periodes(affiliation).some((periode) => periode.debut <= annee
+    && (periode.fin === null || periode.fin === undefined || annee <= periode.fin)
+    && (periode.regimes ?? []).some((code) => REGIMES_CODE_DES_PENSIONS.has(code)));
 }
 
 function verifierStatutsOuverts(affiliations, carriere, parcours) {

@@ -1396,13 +1396,16 @@ export class Saisie {
       }
       let trimestres = null;
       if (parties.length === 4 && parties[3]) {
-        if (!estEntier(parties[3])
-            || !(Number(parties[3]) >= 0 && Number(parties[3]) <= 4)) {
+        // Une fraction se déclare des services de la fonction publique, qui
+        // se comptent au jour : « 3.33 » dit dix mois (R. 26). Le contexte
+        // refuse la fraction d'un autre statut.
+        const valeur = versFlottant(parties[3]);
+        if (valeur === null || !(valeur >= 0 && valeur <= 4)) {
           throw new ErreurSaisie(
             `Relevé « ${morceau} » : trimestres attendus entre 0 et 4.`,
           );
         }
-        trimestres = Number(parties[3]);
+        trimestres = valeur;
       }
       lignes.push({
         annee,

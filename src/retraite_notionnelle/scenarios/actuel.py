@@ -91,7 +91,8 @@ from ..droit import seconde as _seconde
 # Ce que les étapes créent, que les appelants du scénario 1 lisent ici.
 from ..droit.commun import AvantageApplique, PensionRegime  # noqa: F401
 from ..noyau import versions
-from ..revalorisation import RevalorisationsPensions, mener_au_mois
+from ..revalorisation import (DEBUT_REGLE_GENERALE_PUBLIC, RevalorisationsPensions,
+                              mener_au_mois, produit)
 from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
@@ -1109,7 +1110,8 @@ class FichesDatees:
     ``revalorisation.majorer_les_petites_pensions`` lit, et le relèvement des
     exploitants de la même date, que ``revalorisation.relever_les_exploitants`` lit,
     et les versements uniques des petites pensions, que
-    ``completer.verser_en_capital`` lit.
+    ``completer.verser_en_capital`` lit, et le décompte des services du code
+    des pensions au jour, que ``compter.decompte_des_services`` lit.
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
@@ -1120,7 +1122,7 @@ class FichesDatees:
             "majoration_enfants_plafond_fonction_publique",
             "majoration_exceptionnelle_2023", "relevement_des_exploitants_2023",
             "versement_forfaitaire_unique", "versement_unique_agirc_arrco",
-            "versement_unique_ircantec")
+            "versement_unique_ircantec", "decompte_des_services_fonction_publique")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}
@@ -2208,7 +2210,7 @@ class MinimumGaranti:
     n'en a ni la forme ni la logique : ce n'est pas un plancher proratisé, mais
     un BARÈME EN ESCALIER sur la durée de services, rapporté à un traitement de
     référence gelé — celui de l'indice majoré 227 au 1er janvier 2004,
-    revalorisé sur les prix depuis. Une durée de quinze ans en ouvre 57,5 %,
+    revalorisé depuis comme les pensions civiles. Une durée de quinze ans en ouvre 57,5 %,
     trente ans 95 %, quarante ans la totalité.
 
     Le module ne le servait pas, alors que les fiches de régime le déclarent et
@@ -2222,12 +2224,21 @@ class MinimumGaranti:
     SEUIL_BAS = 60
     #: Quarante ans de services : au-delà, la référence est servie en entier.
     SEUIL_HAUT = 160
-    #: Année à partir de laquelle la référence est gelée puis indexée sur les
-    #: prix, au lieu de suivre le point d'indice.
+    #: Année à partir de laquelle la référence est gelée, puis revalorisée
+    #: comme les pensions civiles, au lieu de suivre le point d'indice.
     ANNEE_GEL = 2004
 
     def __init__(self, racine: Path, macro: DonneesMacro) -> None:
         self.macro = macro
+        # Les revalorisations des pensions civiles, que la référence suit
+        # depuis 2004 : les décrets jusqu'en 2008, l'article L. 161-23-1
+        # ensuite (L. 16).
+        revalorisations = RevalorisationsPensions(racine)
+        self._revalorisations = tuple(
+            [r for r in revalorisations.fonction_publique
+             if r.date_effet < DEBUT_REGLE_GENERALE_PUBLIC]
+            + [r for r in revalorisations.generales
+               if r.date_effet >= DEBUT_REGLE_GENERALE_PUBLIC])
         self._bareme: dict[int, tuple[int, float, float, float, int, Fiabilite]] = {}
         self._point: dict[int, tuple[float, Fiabilite]] = {}
         self._montants: dict[int, tuple[float, Fiabilite]] = {}
@@ -2283,19 +2294,24 @@ class MinimumGaranti:
     #: Indice majoré auquel se rapportent les montants transcrits.
     INDICE_REFERENCE = 227
 
-    def reference(self, annee_liquidation: int) -> tuple[float, Fiabilite] | None:
-        """Montant plein du minimum garanti, quarante ans de services.
+    def reference(self, annee_liquidation: int, mois: int = 1
+                  ) -> tuple[float, Fiabilite] | None:
+        """Montant plein du minimum garanti, quarante ans de services, pour
+        une pension prenant effet au premier jour de ``mois``.
 
-        Trois cas, et dans cet ordre :
+        Deux cas :
 
-        * **un montant servi est connu** pour l'année — il prime sur tout
-          calcul, comme pour le minimum contributif, et pour la même raison :
-          la revalorisation des pensions à laquelle l'article renvoie a été
-          gelée en 2014 et sous-indexée depuis, si bien qu'une projection sur
-          les prix dépasse de plusieurs points ce qui a été payé ;
-        * **après 2004**, la référence est le traitement gelé de l'indice
-          majoré 227 au 1er janvier 2004, projeté sur les prix depuis l'ancre
-          en vigueur ;
+        * **depuis 2004**, la référence est la valeur de l'indice majoré 227
+          au 1er janvier 2004, « revalorisé dans les conditions prévues à
+          l'article L. 16 » (L. 17) : comme les pensions civiles — les décrets
+          jusqu'en 2008, l'article L. 161-23-1 ensuite —, de revalorisation en
+          revalorisation jusqu'à la date d'effet. La chaîne part du montant
+          publié le plus récent (``minimum_garanti_montants.csv``, un 1er
+          janvier), qu'elle redonne au centime ; au-delà de la dernière
+          revalorisation connue, elle se projette sur les prix. Le modèle la
+          projetait sur les prix entre deux montants publiés, à l'année : 2,9 %
+          de trop en 2019, 4,6 % en janvier 2022, qui recevait dès janvier le
+          +4 % de juillet ;
         * **avant 2004**, le gel n'existe pas : c'est le traitement de l'indice
           majoré de l'année, au point d'indice de cette année-là.
 
@@ -2315,15 +2331,31 @@ class MinimumGaranti:
 
         if not self._annees_montants:
             return None
-        if annee_liquidation in self._montants:
-            valeur, fiabilite = self._montants[annee_liquidation]
-        else:
-            anterieures = [a for a in self._annees_montants if a < annee_liquidation]
-            ancre = max(anterieures) if anterieures else self._annees_montants[0]
-            valeur, fiabilite = self._montants[ancre]
-            valeur *= self.macro.coefficient_prix(ancre, annee_liquidation)
+        anterieures = [a for a in self._annees_montants if a <= annee_liquidation]
+        ancre = max(anterieures) if anterieures else self._annees_montants[0]
+        valeur, fiabilite = self._montants[ancre]
+        coefficient, fiabilite_chaine = self.revalorisation(
+            date(ancre, 1, 1), date(annee_liquidation, mois, 1))
+        valeur *= coefficient
+        derniere = self._revalorisations[-1].date_effet.year if self._revalorisations else ancre
+        if annee_liquidation > max(derniere, ancre):
+            valeur *= self.macro.coefficient_prix(max(derniere, ancre), annee_liquidation)
         return (valeur * indice / self.INDICE_REFERENCE,
-                min(fiabilite_bareme, fiabilite))
+                min(fiabilite_bareme, fiabilite, fiabilite_chaine))
+
+    def revalorisation(self, depuis: date, jusqu_a: date) -> tuple[float, Fiabilite]:
+        """Le coefficient des revalorisations des pensions civiles qui tombent
+        après ``depuis`` et au plus tard à ``jusqu_a``, et sa fiabilité.
+
+        En 2020, le coefficient de l'article L. 161-25, 1 %, et non la
+        dérogation de 0,3 % des pensions de plus de 2 000 € : c'est celui que
+        la chaîne des montants publiés depuis porte — 1 187,26 € par mois en
+        2021, 1 248,33 € en juillet 2022, 16 396,19 € par an au 1er janvier
+        2026, que le service des retraites de l'État publie. Avec 0,3 %, elle
+        en manquait 0,69 %, comme le montant de 2020 que le dépôt portait.
+        """
+        return produit(RevalorisationsPensions.retenues(
+            self._revalorisations, depuis, jusqu_a, False, 0.0))
 
     def valeur_d_un_indice(self, indice: int, annee: int) -> tuple[float, Fiabilite] | None:
         """Ce que vaut un indice majoré l'année demandée, revalorisé comme la
@@ -2348,7 +2380,7 @@ class MinimumGaranti:
         return self._bareme[applicable]
 
     def montant(self, annee_liquidation: int, trimestres_services: int,
-                duree_maximum: int | None = None
+                duree_maximum: int | None = None, mois: int = 1
                 ) -> tuple[float, Fiabilite] | None:
         """Plancher opposable pour une durée de services donnée.
 
@@ -2368,7 +2400,7 @@ class MinimumGaranti:
         sert pas.
         """
         bareme = self.bareme(annee_liquidation)
-        reference = self.reference(annee_liquidation)
+        reference = self.reference(annee_liquidation, mois)
         if bareme is None or reference is None:
             return None
         _, part, points_bas, points_haut, seuil, _ = bareme

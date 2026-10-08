@@ -3252,6 +3252,42 @@ referents:
         preuve: >-
           tests/temoins/trajectoire.json, cas cor_8_1955, cor_8_1960,
           cor_9_1955, cor_9_1960, cor_10_1955
+      - constat: >-
+          Il garde les services de la fonction publique en tiers de
+          trimestre, sans les arrondir, proratise la pension civile sur
+          eux et ne fait aucune décote pour une fraction de trimestre
+          manquante. Exécuté : les cas types 5, 7 et 11 de 1970 liquidés
+          sans décote à 171,33 trimestres pour 172, le cas type 6 de 1955
+          proratisé à 165,33/166.
+        tranche: >-
+          R. 26 et l'article 16 du décret n° 2003-1306 n'arrondissent qu'au
+          décompte final, la fraction de quarante-cinq jours faisant le
+          trimestre ; L. 14, I, arrondit les trimestres manquants à
+          l'entier supérieur ; le Conseil d'État écarte la décote quand
+          l'arrondi atteint le pourcentage maximum (2 février 2010,
+          n° 311495 ; fiche decompte_des_services_fonction_publique) ;
+          l'écart est le sien : une décote de 1,25 % omise, 0,4 % de
+          pension en moins au cas type 6
+        preuve: >-
+          tests/temoins/trajectoire.json, cas cor_5_1970, cor_6_1955,
+          cor_7_1970, cor_11_1970 (bases, caisses) ;
+          tests/test_trajectoire.py, ARRONDI_SERVICES
+      - constat: >-
+          La référence de son minimum garanti, l'indice majoré 227
+          revalorisé, est de 2,28 % sous la valeur légale de 2015 à 2023 :
+          1 130,50 € par mois en février 2015, 1 229,59 € en octobre 2023.
+          Exécuté : il ne sert pas le minimum au cas type 10 de 1960, qui y
+          a droit en janvier 2020.
+        tranche: >-
+          L. 17 revalorise la valeur de l'indice majoré 227 au 1er janvier
+          2004 comme les pensions civiles (L. 16) : 1 156,90 € en février
+          2015, 1 182,53 € en 2020, 1 258,32 € en 2023, la chaîne que les
+          montants publiés confirment au centime (fiche minimum_garanti) ;
+          l'écart est le sien : 1,4 à 2,1 % de pension au minimum
+        preuve: >-
+          tests/temoins/trajectoire.json, cas cor_10_1955, cor_10_1960,
+          cor_10_1963, cor_10_1964 (caisses.CNRACL.minimum) ;
+          tests/test_trajectoire.py, MINIMUM_GARANTI
     fait_mieux:
       - quoi: >-
           Il calcule, par cas type et génération, les taux de récupération, de

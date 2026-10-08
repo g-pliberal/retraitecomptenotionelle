@@ -108,6 +108,11 @@ export class AnneeCarriere {
     //: l'année (D. 173-16). Zéro ailleurs : seul le scénario 1 le renseigne,
     //: sur sa propre copie de la carrière. Voir carriere.py.
     revenu_retabli = 0.0,
+    //: Les jours de services que le RELEVÉ porte pour l'année : ses
+    //: trimestres, fractions comprises, à quatre-vingt-dix jours le trimestre
+    //: (R. 26). ``null`` hors d'un relevé qui les déclare : les mois de la
+    //: ligne font alors ses jours (`joursDeLaLigne`). Voir carriere.py.
+    jours_de_services = null,
   }) {
     Object.assign(this, {
       annee, revenu, affiliation, type_periode, quotite,
@@ -116,7 +121,7 @@ export class AnneeCarriere {
       fraction_annee,
       services_fonction_publique, services_plafond_trimestres_par_enfant,
       reputes_cotises_enveloppe, reputes_cotises_plafond,
-      assiette_minimale_base, revenu_retabli,
+      assiette_minimale_base, revenu_retabli, jours_de_services,
     });
   }
 
@@ -462,10 +467,13 @@ function ligneAnnuelle({
         macro.smic_horaire.valeur(annee), part);
     }
   }
+  // Une fraction ne se déclare que des services de la fonction publique, qui
+  // se comptent au jour (`jours_de_services`) ; la durée en trimestres
+  // entiers que les autres régimes lisent l'arrondit au mois et demi.
   const trimestres = trimestresDeclares === null
     ? (cotise ? macro.trimestresValides(Math.max(revenu, minimale), annee)
       : (regle !== null ? regle[0] : 4))
-    : trimestresDeclares;
+    : Math.floor(trimestresDeclares + 0.5);
   return new AnneeCarriere({
     annee,
     revenu: cotise ? revenu : 0.0,
@@ -501,6 +509,8 @@ function ligneAnnuelle({
     services_plafond_trimestres_par_enfant: plafondServices,
     reputes_cotises_enveloppe: enveloppeReputes,
     reputes_cotises_plafond: plafondReputes,
+    jours_de_services: trimestresDeclares === null
+      ? null : Math.floor(trimestresDeclares * 90 + 0.5),
   });
 }
 

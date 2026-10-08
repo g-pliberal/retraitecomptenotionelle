@@ -517,6 +517,14 @@ class Contexte:
                     f"Relevé, année {ligne.annee} : statut d'affiliation "
                     f"inconnu « {ligne.affiliation} »."
                 )
+            if (ligne.trimestres is not None and not float(ligne.trimestres).is_integer()
+                    and not _au_jour(simulateur.affiliations, ligne.affiliation, ligne.annee)):
+                raise ErreurSaisie(
+                    f"Relevé, année {ligne.annee} : une fraction de trimestre ne se "
+                    "déclare que des services de la fonction publique, qui se "
+                    f"comptent au jour ; « {ligne.affiliation} » valide des "
+                    "trimestres entiers."
+                )
         if prolonger:
             releve = _releve_jusqu_au_depart(simulateur, saisie, releve, motifs)
         carriere = simulateur.carriere_releve(
@@ -759,6 +767,16 @@ def _verifier_radiation_pour_invalidite(affiliations: Affiliations, carriere) ->
                 f"Radiation pour invalidité en {radiation.date} : la carrière reste "
                 f"dans la fonction publique en {ligne.annee}. Déclarez à la date de la "
                 "radiation la période qui la suit.")
+
+
+def _au_jour(affiliations: Affiliations, affiliation: str, annee: int) -> bool:
+    """Ce statut verse-t-il, cette année-là, à un régime du code des pensions,
+    qui compte ses services au jour (R. 26) ? Seule sa ligne de relevé peut
+    alors porter une fraction de trimestre."""
+    return any(periode["debut"] <= annee
+               and (periode.get("fin") is None or annee <= periode["fin"])
+               and REGIMES_CODE_DES_PENSIONS & set(periode.get("regimes", ()))
+               for periode in affiliations.periodes(affiliation))
 
 
 def _verifier_statuts_ouverts(affiliations: Affiliations, carriere,

@@ -52,8 +52,21 @@ Ce que la première exécution a montré, le 5 octobre 2026 :
   TRAJECTOiRE, qui borne la bonification (ci-dessous) ; la seconde le même jour
   (fiche majoration_duree_hospitaliers_actifs), au statut hospitalier qui naît
   avec elle, et le taux de l'aide-soignante concorde.
-  L'arrondi des services de la fonction publique : OUVERT.
-* **Contre TRAJECTOiRE** — sa chaîne de coefficients du salaire annuel moyen
+  L'arrondi des services de la fonction publique, tranché le 8 octobre 2026
+  (action 138, étape 17 ; fiche decompte_des_services_fonction_publique) : le
+  dépôt arrondissait année par année, le texte une fois, au décompte final
+  (R. 26), et la durée d'assurance de la décote pas du tout (Conseil d'État,
+  2 février 2010, n° 311495). Le cas type 6 de 1955 — dix mois en 1976, sept
+  en 2017 — a 166 trimestres et aucune décote, au lieu de 165 et 1,25 % ; les
+  requêtes portent depuis les fractions de trimestre de la fonction publique.
+  La référence du minimum garanti, le même jour : 2020 revalorisé de 0,3 % au
+  lieu de 1 %, les autres années projetées sur les prix ; elle suit depuis la
+  chaîne des revalorisations, qui redonne les montants publiés au centime.
+* **Contre TRAJECTOiRE** — ses services de la fonction publique en tiers de
+  trimestre, sans l'arrondi de R. 26, et aucune décote pour une fraction de
+  trimestre manquante, que L. 14 arrondit à l'entier supérieur. La référence
+  de son minimum garanti, 2,3 % sous la chaîne légale de 2015 à 2023. Sa
+  chaîne de coefficients du salaire annuel moyen
   (`revaloSam`), qui ne suit pas les colonnes de la Cnav : de −11 % sur les
   salaires de 1980 à +5,8 % sur ceux de 2016 ; le départ de janvier 2022 y
   compte la hausse de juillet 2022. Son script des cas types donne à chaque
@@ -70,10 +83,9 @@ Ce que la première exécution a montré, le 5 octobre 2026 :
   dépôt les minimaux, TRAJECTOiRE les moyens des entreprises, comme Destinie ;
   refaits, les points du dépôt sont ceux de TRAJECTOiRE aux taux minimaux, à
   0,1 % près.
-* **Ouverts** — le minimum garanti de la CNRACL du cas type 10 (le dépôt plus
-  haut de 1,4 à 2 %), le RAFP des primes variables, que la requête ne sait pas
-  dire année par année, et son coefficient de majoration, au mois au dépôt
-  depuis la délibération de l'ERAFP, à l'âge entier chez TRAJECTOiRE.
+* **Ouverts** — le RAFP des primes variables, que la requête ne sait pas dire
+  année par année, et son coefficient de majoration, au mois au dépôt depuis
+  la délibération de l'ERAFP, à l'âge entier chez TRAJECTOiRE.
 """
 
 from __future__ import annotations
@@ -312,8 +324,10 @@ def montants_confrontes(cas: dict) -> bool:
 
 #: La tolérance de chaque quantité : en trimestres, en années, relative.
 #: Les trimestres : un tiers, la fraction de trimestre que TRAJECTOiRE garde
-#: des mois de services de la fonction publique, quand le relevé du dépôt n'en
-#: porte que d'entiers. Les montants : 0,5 %, comme la confrontation à Destinie.
+#: des mois de services de la fonction publique, quand la durée tous régimes du
+#: dépôt n'en garde que d'entiers — seules la liquidation et la décote des
+#: régimes du code des pensions les lisent au jour. Les montants : 0,5 %, comme
+#: la confrontation à Destinie.
 TOLERANCES = {
     "trimestres": 0.34, "trimestres_requis": 0.0, "taux": 1e-9, "carriere_longue": 0.0,
     "age_ouverture": 1e-9, "regime_general": 0.005, "salaire_annuel_moyen": 0.005,
@@ -425,14 +439,23 @@ PRORATA_80 = (
     "mère de deux enfants a 168/166 au dépôt et chez Destinie, 166/166 chez TRAJECTOiRE ; "
     "l'écart est le sien")
 ARRONDI_SERVICES = (
-    "OUVERT : les services de la fonction publique en trimestres entiers au relevé du "
-    "dépôt, le mois et demi faisant le trimestre, en tiers de trimestre chez TRAJECTOiRE, "
-    "qui n'arrondit pas : un tiers de trimestre manquant fait chez lui une liquidation "
-    "sans décote, au dépôt une décote d'un trimestre ; à lire au code des pensions")
+    "les services de la fonction publique : TRAJECTOiRE les garde en tiers de trimestre, "
+    "proratise sur eux (171,33/172) et ne fait aucune décote pour une fraction de trimestre "
+    "manquante ; le texte arrondit le décompte final des trimestres liquidables, la fraction "
+    "de quarante-cinq jours faisant le trimestre (R. 26 ; décret n° 2003-1306, article 16), "
+    "et les trimestres manquants à l'entier supérieur (L. 14, I), la décote écartée quand "
+    "l'arrondi atteint le pourcentage maximum (Conseil d'État, 2 février 2010, n° 311495 ; "
+    "fiche decompte_des_services_fonction_publique) : un mois de trop peu fait une décote, "
+    "deux mois de plus un trimestre ; l'écart est le sien")
 MINIMUM_GARANTI = (
-    "OUVERT : le minimum garanti de la CNRACL du cas type 10 : le dépôt le sert de 1,4 à "
-    "2 % plus haut que TRAJECTOiRE, qui ne le sert pas en 2020 ; services et traitements "
-    "diffèrent aussi")
+    "le minimum garanti du cas type 10 : la référence de TRAJECTOiRE, l'indice majoré 227 "
+    "revalorisé, est de 2,28 % sous celle que la chaîne des revalorisations des pensions "
+    "civiles donne (L. 17 et L. 16), que les montants publiés confirment au centime — "
+    "1 130,50 € par mois en février 2015 au lieu de 1 156,90 €, 1 229,59 € en octobre 2023 "
+    "au lieu de 1 258,32 € ; en 2025, sa revalorisation projetée de 2,6 % au lieu de 2,2 % "
+    "ramène l'écart à 1,90 % ; en 2020, son minimum (1 037,58 €) tombe sous la pension "
+    "qu'elle calcule, et elle ne le sert pas, quand celui du dépôt, 1 064,28 €, la relève ; "
+    "l'écart est le sien")
 RAFP_PRIMES = (
     "le RAFP des primes variables : la requête ne dit qu'une part de primes pour toute la "
     "carrière, celle de la dernière année, quand TRAJECTOiRE suit les primes de chaque "
@@ -526,11 +549,13 @@ ECARTS.update(_ecarts(TRAITEMENT, "fonction_publique", {
     "cor_5_1963": -0.0149, "cor_5_primes_constantes_1963": -0.0149,
     "cor_6_1960": -0.0053, "cor_9_1955": -0.0104, "cor_9_1963": -0.0100}, 0.002))
 ECARTS.update(_ecarts(ARRONDI_SERVICES, "taux", {c: -0.0125 for c in (
-    "cor_5_1970", "cor_5_primes_constantes_1970", "cor_6_1955", "cor_7_1970",
-    "cor_11_1970")}, 1e-6))
-ECARTS.update(_ecarts(MINIMUM_GARANTI + " ; et " + TRAITEMENT, "fonction_publique", {
-    "cor_10_1955": 0.0205, "cor_10_1960": 0.0053, "cor_10_1963": 0.0139,
-    "cor_10_1964": 0.0148}, 0.002))
+    "cor_5_1970", "cor_5_primes_constantes_1970", "cor_7_1970", "cor_11_1970")}, 1e-6))
+ECARTS.update(_ecarts(ARRONDI_SERVICES + " ; et " + TRAITEMENT, "fonction_publique",
+                      {"cor_6_1955": 0.0199}, 0.002))
+ECARTS.update(_ecarts(MINIMUM_GARANTI + " ; et " + ANNEE_PARTAGEE, "fonction_publique", {
+    "cor_10_1955": 0.0210, "cor_10_1963": 0.0139, "cor_10_1964": 0.0148}, 0.002))
+ECARTS.update(_ecarts(MINIMUM_GARANTI + " ; et " + TRAITEMENT, "fonction_publique",
+                      {"cor_10_1960": 0.0124}, 0.002))
 ECARTS.update(_ecarts(MINIMUM_GARANTI, "minimum", {"cor_10_1960": 1.0}, 1e-6))
 ECARTS.update(_ecarts(PRORATA_80, "fonction_publique", {"fp_mere_deux_enfants": 0.0100},
                       0.002))

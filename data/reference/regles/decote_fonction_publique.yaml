@@ -2,13 +2,23 @@ schema_version: 1
 id: decote_fonction_publique
 intitule: >-
   Décote propre de la pension civile : coefficient et âge d'annulation lus à l'année
-  d'ouverture du droit, montée en charge 2006-2020, limite d'âge du grade.
+  d'ouverture du droit, montée en charge 2006-2020, limite d'âge du grade ; la durée
+  d'assurance qu'elle lit se compte au jour, sans arrondi, ses trimestres manquants
+  arrondis à l'entier supérieur (fiche decompte_des_services_fonction_publique).
 etat: conforme
 effet: Fonctionnaires liquidant avant le taux plein.
 sources:
-  lu_le: 2026-09-24
+  lu_le: 2026-10-08
   prochaine_relecture: 2027-06-30
   lectures:
+  - type: legifrance
+    reference: >-
+      L. 14, I, rédaction du 31 décembre 2023 (LEGIARTI000048844775), et l'article 20
+      du décret n° 2003-1306 (LEGIARTI000054590030), lus dans l'index LEGI : « Le
+      nombre de trimestres correspondant est arrondi à l'entier supérieur » ; Conseil
+      d'État, 2 février 2010, n° 311495, qui écarte la décote de la pension que
+      l'arrondi de R. 26 porte au pourcentage maximum
+    date: 2026-08-01
   - type: service_public
     reference: fiche F20349
     date: 2026-01-01

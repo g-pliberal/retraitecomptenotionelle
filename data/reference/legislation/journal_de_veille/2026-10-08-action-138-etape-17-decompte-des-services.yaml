@@ -1,0 +1,53 @@
+date: "2026-10-08"
+session: "action 138, étape 17, sixième partie : l'arrondi des services de la fonction publique et le minimum garanti du cas type 10, les deux écarts que TRAJECTOiRE laissait ouverts"
+consulte: >-
+  veille_droit.py (quatre fiches à relire, aucune de cette étape) ; l'index LEGI, mis à
+  jour des incréments jusqu'au 7 octobre 2026, puis textes.py --inscrire (aucune
+  rédaction nouvelle) ; dans l'index : R. 26 du code des pensions, ses rédactions du 1er
+  décembre 1964 et du 1er janvier 2004 ; R. 26 bis ; L. 13, L. 14 et L. 17 ; le décret n°
+  2003-1306, articles 16 (quatre rédactions) et 20 ; le décret n° 2004-1056, articles 13
+  et 16 ; le décret n° 65-773, article 14, et le décret n° 65-836, article 7. Hors de
+  l'index : la décision du Conseil d'État du 2 février 2010, n° 311495, sur Légifrance ;
+  la documentation juridique de la CNRACL — « Trimestres liquidables », « Calcul de la
+  pension avec application de la décote », « Conditions d'application du coefficient de
+  minoration », « Périodes prises en compte » de la durée d'assurance, et les pages du
+  minimum garanti (« Les modalités de calcul », « Les conditions d'attribution », « Les
+  périodes prises en compte dans le calcul ») ; les pages du service des retraites de
+  l'État « La formule de calcul », « La durée d'assurance », « La décote » et « Le
+  minimum garanti » ; la table du minimum garanti des barèmes de l'IPP. La fiche de la
+  DREES sur les minima de pension, citée par une recherche, n'a pas pu être lue : son
+  site refuse le téléchargement.
+trouve: >-
+  L'arrondi des services : « Dans le décompte final des trimestres liquidables, la
+  fraction de trimestre égale ou supérieure à quarante-cinq jours est comptée pour un
+  trimestre » (R. 26 ; décret n° 2003-1306, article 16, II ; décret n° 2004-1056, article
+  13, III) — de 1964 à 2003, « la fraction de semestre égale ou supérieure à trois mois
+  est comptée pour six mois » ; la CNRACL : « Il n'y a donc pas lieu de procéder à des
+  arrondis intermédiaires », son exemple de 86 trimestres et 45 jours comptés pour 87. La
+  durée d'assurance de L. 14 « est calculée en trimestres et jours sans règle d'arrondi
+  » (service des retraites de l'État) ; ses trimestres manquants s'arrondissent « à
+  l'entier supérieur » (L. 14, I ; article 20, II) ; le Conseil d'État juge que
+  l'arrondi de R. 26 ne vaut pas pour elle, mais que la pension qu'il porte au
+  pourcentage maximum ne subit pas de décote (2 février 2010, n° 311495 : 155
+  trimestres, deux mois et vingt-deux jours, liquidés à 156 et 75 %). Le dépôt
+  arrondissait année par année : faux, corrigé (fiche
+  decompte_des_services_fonction_publique, deux moteurs, relevé aux trimestres
+  fractionnaires de la fonction publique). TRAJECTOiRE n'arrondit rien et ne fait aucune
+  décote pour une fraction manquante : faux aussi. Le minimum garanti : la valeur de
+  l'indice majoré 227 au 1er janvier 2004 « revalorisé dans les conditions prévues à
+  l'article L. 16 » (L. 17) ; la chaîne des revalorisations des pensions civiles, partie
+  de 2004, redonne au centime 1 248,33 € en juillet 2022 et chaque montant de 2023 à 2026
+  (16 396,19 € par an au 1er janvier 2026, service des retraites de l'État) ; le montant
+  de 2020 du dépôt, 1 174,33 €, revalorisé de 0,3 %, en ôtait 0,69 %, et la projection
+  sur les prix entre deux montants 2,9 % de trop en 2019, 4,6 % en janvier 2022 :
+  corrigé. Le minimum compte « les services effectifs retenus en liquidation » avec
+  l'arrondi de l'article 16, les bonifications exclues (CNRACL ; L. 17) : le dépôt y
+  ajoutait les bonifications pour enfants, corrigé. TRAJECTOiRE sert une référence de
+  2,28 % trop basse, et ne sert pas le minimum dû en janvier 2020 au cas type 10.
+reste: >-
+  L'article 14 du décret n° 65-773 d'avant le 19 novembre 1985, que l'index ne porte pas
+  (la CNRACL y est supposée compter au semestre) ; la façon dont le régime général compte
+  dans sa durée tous régimes les services d'une année entamée dans la fonction publique ;
+  le montant de 2020 du minimum garanti au service des retraites de l'État (la DREES
+  donnerait 1 174,34 €). De l'étape 17, ensuite : la bonification du cinquième des
+  militaires, puis le régime général et les complémentaires.

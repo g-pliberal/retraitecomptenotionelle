@@ -16,11 +16,21 @@
 # 2024 un montant supérieur de 4,6 % à celui que l'État a payé. Une valeur
 # transcrite qui dit vrai vaut mieux qu'une valeur calculée qui dit faux.
 #
-# Entre deux valeurs connues, et au-delà de la dernière, le modèle projette sur
-# les prix depuis l'ancre EN VIGUEUR à la date demandée — la dernière fixée
-# avant elle, jamais une postérieure. Avant 2004, aucune projection : la
-# référence est le traitement de l'indice majoré de l'année, pris au point
-# d'indice de cette année-là (`point_indice_fonction_publique.csv`).
+# ENTRE DEUX VALEURS CONNUES, LA CHAÎNE DES REVALORISATIONS, à la date d'effet
+# (depuis le 8 octobre 2026, action 138, étape 17) : depuis l'ancre en vigueur
+# — la dernière fixée au 1er janvier, jamais une postérieure —, chaque
+# revalorisation des pensions civiles qui tombe avant la date d'effet, comme
+# L. 17 le dit (« revalorisé dans les conditions prévues à l'article L. 16 ») :
+# les décrets jusqu'en 2008 (`revalorisation_pensions_fonction_publique.csv`),
+# l'article L. 161-23-1 ensuite (`revalorisation_pensions.csv`), 1 % en 2020.
+# Partie de 2004, elle redonne au centime chaque montant mensuel ci-dessous, et
+# 1 248,33 € en juillet 2022 (scenarios/actuel.py, `MinimumGaranti.reference` ;
+# tests/test_decompte_des_services.py). Le modèle projetait sur les prix
+# entre deux ancres, à l'année : 2,9 % de trop en 2019, 4,6 % en janvier 2022.
+# Au-delà de la dernière revalorisation connue,
+# il projette sur les prix. Avant 2004, aucune projection : la référence est le
+# traitement de l'indice majoré de l'année, pris au point d'indice de cette
+# année-là (`point_indice_fonction_publique.csv`).
 #
 # Montants EN EUROS PAR AN, l'origine des mensuels étant indiquée en regard.
 #
@@ -28,8 +38,13 @@
 #         que l'article lui-même désigne comme référence. Recoupée : le point
 #         d'indice de 2004 vaut 52,7558 € par point et par an, et
 #         227 × 52,7558 = 11 975,57 €. Deux chemins indépendants, même chiffre.
-#   2020  1 174,33 €/mois — déduit du montant publié pour quinze ans de
-#         services, 675,24 €, qui en représente 57,5 %.
+#   2020  RETIRÉ le 8 octobre 2026 : 1 174,33 €/mois, déduit d'un montant
+#         publié pour quinze ans de services, 675,24 €, revalorisait celui de
+#         2019 (1 170,82 €) de 0,3 %, la dérogation des pensions de plus de
+#         2 000 € (loi n° 2019-1446, art. 81). La chaîne des montants publiés
+#         depuis exige 1 % : 1 182,53 €, que 1 248,33 € en juillet 2022 et
+#         chaque montant de 2023 à 2026 confirment au centime ; la ligne en
+#         ôtait 0,69 % au minimum des pensions de 2020 à 2022.
 #   2023  1 258,32 €/mois — celui du 1er janvier 2023. La ligne portait
 #         1 248,33 €, « publié au 1er mai 2023 » : c'est la valeur du
 #         1er juillet 2022, d'avant la revalorisation de 0,8 % du 1er janvier
@@ -63,7 +78,6 @@
 # le calcul à chaque exécution et signale tout écart.
 annee,valeur,fiabilite
 2004,11975.570000,certifiee
-2020,14091.960000,haute
 2023,15099.840000,haute
 2024,15900.120000,haute
 2025,16249.920000,haute

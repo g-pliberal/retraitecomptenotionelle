@@ -279,9 +279,12 @@ def requete_cor(ident: str, tables: dict[str, list[dict]]) -> tuple[dict[str, st
       deux états le revenu de l'année entière (sa note : « le COR fournit des
       salaires relatifs déjà proratisés ») : la ligne reprend le revenu de
       l'état retenu. `requete_reserves` dit chacune de ces années.
-    * La fonction publique compte ses services au temps : sa ligne porte ses
-      trimestres, les mois divisés par trois, la fraction d'au moins un mois
-      et demi faisant le trimestre.
+    * La fonction publique compte ses services au jour : sa ligne porte ses
+      trimestres, les mois divisés par trois, au centième — « 3.33 » pour dix
+      mois —, que le dépôt n'arrondit qu'au décompte final (R. 26 ; fiche
+      decompte_des_services_fonction_publique). Jusqu'au 8 octobre 2026, la
+      fraction d'au moins un mois et demi y faisait le trimestre, année par
+      année.
     * Le chômage et l'AVPF : le motif dans « Interruptions » ; la ligne d'une
       année de chômage porte le salaire de la dernière année d'emploi, salaire
       de référence des points de l'Agirc-Arrco, celle de l'AVPF un revenu nul ;
@@ -349,11 +352,10 @@ def requete_cor(ident: str, tables: dict[str, list[dict]]) -> tuple[dict[str, st
             montant = compte
         if montant <= 0 and annee == annee_depart:
             continue
-        # La fonction publique compte ses services au temps, pas au revenu : la
-        # ligne dit ses trimestres, comme le relevé d'un fonctionnaire, le mois
-        # et demi faisant le trimestre (la fraction d'au moins quarante-cinq
-        # jours). Le privé valide au revenu, des deux côtés.
-        trimestres = (min(4, int(mois / 3 + 0.5)) if etat.startswith("FP") else None)
+        # La fonction publique compte ses services au jour, pas au revenu : la
+        # ligne dit ses trimestres, fractions comprises, que le dépôt n'arrondit
+        # qu'au décompte final (R. 26). Le privé valide au revenu, des deux côtés.
+        trimestres = (round(min(12, mois) / 3, 2) if etat.startswith("FP") else None)
         lignes.append((annee, statut, round(montant), trimestres))
     if not lignes:
         raise ValueError(f"{ident} : aucune année de carrière")
@@ -361,7 +363,7 @@ def requete_cor(ident: str, tables: dict[str, list[dict]]) -> tuple[dict[str, st
         "naissance": f"{entree['dateNaissance']}-01",
         "sexe": "F" if entree["sexe"] == "Femme" else "H",
         "liquidation": entree["dateLiq"],
-        "releve": ",".join(f"{a}:{s}:{m}" + (f":{t}" if t is not None else "")
+        "releve": ",".join(f"{a}:{s}:{m}" + (f":{t:g}" if t is not None else "")
                            for a, s, m, t in lignes),
     }
     derniere = lignes[-1][0]
