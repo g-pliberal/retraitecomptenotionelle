@@ -791,6 +791,43 @@ export class Carriere {
   }
 
   /**
+   * La carte de déporté ou interné que la personne déclare. Voir
+   * `Carriere.deporte_ou_interne` du Python.
+   */
+  get deporteOuInterne() {
+    return Boolean(this.chronologie) && chrono.titre(
+      this.chronologie, this.personne, "deporte_ou_interne") !== null;
+  }
+
+  /**
+   * Les mois de captivité et de services militaires en temps de guerre que la
+   * personne déclare, zéro sans eux. Voir `Carriere.mois_de_guerre` du Python.
+   */
+  get moisDeGuerre() {
+    const fait = this.chronologie
+      ? chrono.titre(this.chronologie, this.personne, "ancien_combattant_ou_prisonnier")
+      : null;
+    return fait === null ? 0 : Math.trunc(fait.attributs.mois);
+  }
+
+  /**
+   * Le travail manuel des quinze années d'avant le départ, `ouvrier` ou
+   * `penible`, que la personne déclare ; `null` sans lui. Voir
+   * `Carriere.travail_manuel` du Python.
+   */
+  get travailManuel() {
+    const fait = this.chronologie
+      ? chrono.exposition(this.chronologie, this.personne, "travail_manuel")
+      : null;
+    return fait === null ? null : fait.attributs.nature;
+  }
+
+  /** La personne déclare-t-elle un titre au taux plein de L. 351-8 ? */
+  get titresAuTauxPlein() {
+    return this.deporteOuInterne || this.moisDeGuerre > 0 || this.travailManuel !== null;
+  }
+
+  /**
    * La radiation des cadres pour invalidité que la personne déclare : `{date,
    * affiliations, imputable, taux}` — son mois, les affiliations de son année
    * puis de l'année d'avant, dont l'emploi qu'elle clôt, son imputabilité au

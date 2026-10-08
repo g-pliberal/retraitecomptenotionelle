@@ -818,6 +818,28 @@ def _cas() -> list[dict]:
         "naissance": "1962-03-15", "debut": "2000-09", "liquidation": "2024-04",
         "salaire": "0.5", "inaptitude": "oui",
     }))
+    # LES AUTRES TAUX PLEINS DE L. 351-8 (fiches ``taux_plein_*``) : l'ancien
+    # déporté parti à soixante ans en 2010 avec trente ans d'assurance ; l'ancien
+    # combattant d'Algérie, trente mois de services, parti à soixante-deux ans
+    # en 2002 ; l'ouvrière mère de trois enfants, à l'âge légal en 2022 ; le
+    # travailleur manuel de 1978, dès soixante ans, assurances sociales
+    # d'avant 1945 comprises.
+    cas.append(("taux_plein_ancien_deporte", {
+        "naissance": "1950-03-15", "debut": "1980-09", "liquidation": "2010-04",
+        "deporte": "oui",
+    }))
+    cas.append(("taux_plein_ancien_combattant", {
+        "naissance": "1940-03-15", "debut": "1964-09", "liquidation": "2002-04",
+        "guerre": "30",
+    }))
+    cas.append(("taux_plein_mere_ouvriere", {
+        "naissance": "1960-03-15", "sexe": "F", "debut": "1990-09",
+        "liquidation": "2022-04", "enfants": "3", "travail_manuel": "ouvrier",
+    }))
+    cas.append(("taux_plein_travailleur_manuel_1978", {
+        "naissance": "1918-03-15", "debut": "1933-09", "liquidation": "1978-04",
+        "travail_manuel": "penible",
+    }))
     # L'ASPA d'un couple (L. 815-9, D. 815-1, D. 815-2) : une petite carrière
     # partie à soixante-cinq ans en 2020, sous le plafond du couple, ses
     # ressources et celles du conjoint comptées. Un conjoint de cinquante-cinq

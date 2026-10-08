@@ -1,0 +1,177 @@
+schema_version: 1
+id: taux_plein_anciens_deportes_internes
+intitule: >-
+  L'ancien déporté ou interné, titulaire de la carte de déporté ou interné de la
+  Résistance ou de la carte de déporté ou interné politique, a le taux plein quelle que
+  soit sa durée d'assurance (L. 351-8, 3°) : le taux de soixante-cinq ans dès soixante ans
+  depuis le 1er mai 1965, le taux plein dès l'âge légal de sa génération depuis le
+  1er avril 1983.
+domaine: decote_surcote
+regimes: [regime_general, msa_salaries, cancava, organic, rsi]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- la carte de déporté ou interné que la personne déclare (titre deporte_ou_interne)
+- l'âge à la date d'effet de la pension, et l'âge légal de la génération
+- liquidation.date_effet
+ecrit:
+- le taux plein du régime, sans décote, que « liquider chaque régime » applique, celui
+  que le minimum contributif demande et celui que les complémentaires suivent
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
+# moteur (droit/categories.py, `taux_plein_par_categorie`, et son jumeau) lit :
+# `existe` ; `regimes`, ceux qui servent le taux plein ; `age`, l'âge dès lequel
+# il le sert — un nombre, ou `age_legal_par_generation` —, aucun quand la pension
+# l'a dès qu'elle s'ouvre.
+versions:
+- id: avant_le_decret_du_23_avril_1965
+  statut: supposee
+  hypothese: >-
+    le décret n° 65-315 étend aux anciens déportés et internés le taux de soixante-cinq
+    ans que l'inapte avait dès soixante ans ; avant lui, le texte ne leur donne rien de
+    plus qu'aux autres assurés (circulaire ministérielle n° 47 SS du 15 juin 1965)
+  fiabilite: haute
+  bornes:
+    liquidation.date_effet: [null, 1965-05-01]
+  contenu:
+    droit: aucun taux plein propre aux anciens déportés et internés
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: decret_du_23_avril_1965
+  statut: lue
+  textes:
+  - id: JORFTEXT000000852134
+    reference: >-
+      décret n° 65-315 du 23 avril 1965 complétant l'article L. 332 du code de la
+      sécurité sociale, dont l'index JORF ne garde que la notice
+    publie_le: 1965-04-24
+  - {id: LEGIARTI000006760672, article: 70-1, en_vigueur: 1973-01-01}
+  nee_de: JORFTEXT000000852134
+  bornes:
+    liquidation.date_effet: [1965-05-01, 1983-04-01]
+  contenu:
+    droit: >-
+      « la pension liquidée à un âge compris entre 60 et 65 ans est égale à 40 p. 100
+      du salaire de base pour les anciens déportés et internés titulaires de la carte de
+      déporté ou interné de la résistance ou de la carte de déporté ou interné
+      politique, comme elle l'est pour les assurés reconnus inaptes au travail », pour
+      les pensions dont l'entrée en jouissance est « fixée au plus tôt au 1er mai 1965 »
+      (circulaire ministérielle n° 47 SS du 15 juin 1965) ; 50 % du salaire de base
+      depuis 1972 (décret n° 45-0179, article 70-1, rédaction de 1973)
+    beneficiaire: l'ancien déporté ou interné titulaire de la carte
+    parametres:
+      existe: true
+      regimes: [regime_general, msa_salaries, cancava, organic, rsi]
+      age: 60
+  exemples: aucun trouvé
+- id: ordonnance_du_26_mars_1982
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006742632, article: L. 351-8, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000051289852, article: L. 351-8, en_vigueur: 2025-02-28}
+  - {id: LEGIARTI000006736520, article: D. 351-1, en_vigueur: 1985-12-21}
+  nee_de: LEGIARTI000006742632
+  bornes:
+    liquidation.date_effet: [1983-04-01, null]
+  contenu:
+    droit: >-
+      « Bénéficient du taux plein même s'ils ne justifient pas de la durée requise
+      d'assurance ou de périodes équivalentes dans le régime général et un ou plusieurs
+      autres régimes obligatoires : […] 3° Les anciens déportés ou internés titulaires de
+      la carte de déporté ou interné de la Résistance ou de la carte de déporté ou
+      interné politique » (L. 351-8) ; « Les anciens déportés ou internés ont droit
+      également à une retraite au taux maximum de 50%, et ce, dès l'âge légal
+      d'obtention de la retraite correspondant à leur génération » ; « Aucune condition
+      de durée de période n'est prévue par les textes pour les intéressés » (circulaire
+      Cnav n° 2024-29, point 1.4)
+    beneficiaire: l'ancien déporté ou interné titulaire de la carte
+    parametres:
+      existe: true
+      regimes: [regime_general, msa_salaries, cancava, organic, rsi]
+      age: age_legal_par_generation
+  exemples: aucun trouvé
+approximations:
+- version: [decret_du_23_avril_1965, ordonnance_du_26_mars_1982]
+  ecart: >-
+    Le modèle sert la règle du régime général aux salariés agricoles, aux artisans et aux
+    commerçants aux mêmes dates : le décret n° 70-342 l'ouvre aux salariés agricoles en
+    1970, en révisant les pensions déjà liquidées, et la date où les régimes alignés
+    l'ont reçue n'est pas lue.
+  effet: non mesuré ; les seuls anciens déportés de ces régimes partis avant 1983
+- version: [decret_du_23_avril_1965, ordonnance_du_26_mars_1982]
+  ecart: >-
+    Les titulaires de la carte de patriote résistant à l'occupation des départements du
+    Rhin et de la Moselle incarcérés en camps spéciaux, exclus en 1965 (circulaire n° 47
+    SS), y sont assimilés en 2024 (circulaire n° 2024-29) : la saisie ne distingue pas les
+    cartes, et le modèle sert le taux plein à qui déclare l'une ou l'autre.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-08
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Lire la date où les salariés agricoles et les régimes alignés ont reçu la règle — le
+    décret n° 70-342 du 14 avril 1970 chez les salariés agricoles —, et le texte du décret
+    n° 65-315, dont l'index ne garde que la notice.
+  lectures:
+  - type: jorf
+    reference: >-
+      décret n° 65-315 du 23 avril 1965 (JORFTEXT000000852134), « extension de l'art. L332
+      du code de la sécurité sociale aux anciens déportés et internés titulaires de la
+      carte de déporté ou d'interné politique ou de la carte d'interné ou de déporté de la
+      Résistance » ; décret n° 70-342 du 14 avril 1970 (JORFTEXT000000506328), aux
+      salariés agricoles : l'index n'en garde que les notices
+    date: 1965-04-24
+  - type: legifrance
+    reference: >-
+      décret n° 45-0179, article 70-1 (LEGIARTI000006760672, 1973-01-01 → 1982-07-23) :
+      50 % du salaire de base entre soixante et soixante-cinq ans aux inaptes et « anciens
+      déportés et internés titulaires de la carte » ; L. 351-8, 3°, de 1985 à 2025
+      (LEGIARTI000006742632 → LEGIARTI000051289852), sans changement ; D. 351-1
+      (LEGIARTI000006736520), la carte qui en justifie ; lus dans l'index LEGI le 8
+      octobre 2026
+    date: 2025-02-28
+  - type: circulaire_cnav
+    reference: >-
+      circulaire ministérielle n° 47 SS du 15 juin 1965, application du décret n°
+      65-315 : 40 % du salaire de base entre soixante et soixante-cinq ans, « comme elle
+      l'est pour les assurés reconnus inaptes au travail », pour les pensions prenant
+      effet « au plus tôt au 1er mai 1965 », la carte rose ou bleue en justifiant
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_MIN_47SS_15061965.aspx
+    date: 1965-06-15
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2024-29 du 30 octobre 2024, point 1.4 : le taux plein « dès l'âge
+      légal d'obtention de la retraite correspondant à leur génération », sans condition
+      de durée ; point 2.4 : l'allocation de solidarité aux personnes âgées dès l'âge où
+      l'assuré peut prétendre à sa retraite à ce titre
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2024_29_30102024.pdf
+    date: 2024-10-30
+code:
+  python: >-
+    droit/categories.py : taux_plein_par_categorie, remplit ; droit/liquider.py :
+    liquider_chaque_regime, abattement_points ; carriere.py : Carriere.deporte_ou_interne
+  javascript: >-
+    moteur/js/droit/categories.js : tauxPleinParCategorie, remplit ;
+    moteur/js/droit/liquider.js ; moteur/js/carriere.js
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_taux_plein_par_categorie.py]
+referents:
+  openfisca_france_pension:
+    equivalent: >-
+      regimes/regime_general_cnav.py:102-200 (raison_depart_taux_plein_anticipe) et
+      parameters/.../regime_general_cnav/aad.yaml:201-286, au commit 1c45423 : la
+      catégorie en entrée, depuis 1965
+    confrontation: aucune exécutée
+historique:
+- >-
+  2026-10-08 — écrite à l'étape 17 de l'action 138, sur le point d'OpenFisca-France-Pension
+  au registre (chantier 138.17) et la liste de la fiche decote_avant_1983.
+effet: >-
+  L'ancien déporté ou interné qui n'a pas la durée requise reçoit le taux plein, sans
+  décote, au régime général, chez les salariés agricoles, les artisans et les commerçants,
+  et sa complémentaire sans coefficient : avant 1983 dès soixante ans, depuis dès l'âge
+  légal.

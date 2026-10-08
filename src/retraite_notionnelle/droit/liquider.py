@@ -36,7 +36,7 @@ from ..calendrier import DateMois
 from ..carriere import salaire_moyen_annuel
 from ..donnees.chargement import Fiabilite
 from .. import revalorisation
-from . import acquerir, coordonner, cultes, invalidite, ouvrir
+from . import acquerir, categories, coordonner, cultes, invalidite, ouvrir
 from .compter import trimestres_de_la_ligne_entre
 from .commun import PensionRegime, date_d_effet, derniere_annee
 from .etranger import famille_du_regime
@@ -606,6 +606,12 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                            if par_le_handicap else None)
     regimes_du_handicap = (moteur.invalidites.regimes("handicap")
                            if par_le_handicap else frozenset())
+    #: La catégorie de L. 351-8 qui donne au salarié le taux plein du régime
+    #: général — ancien déporté, mère de famille ouvrière, travailleur manuel,
+    #: ancien combattant ou prisonnier —, que ses complémentaires suivent
+    #: (:mod:`.categories`) ; ``None`` sans elle.
+    par_categorie = categories.taux_plein_par_categorie(
+        moteur, invalidite.REGIME_DES_SALARIES, carriere, durees, age_liquidation)
     codes = [code for code in droits.codes if regimes is None or code in regimes]
     groupes = releve.groupes
 
@@ -817,7 +823,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     periode, carriere, trimestres, requis_reference,
                     age_liquidation, annee_liquidation,
                     trimestres_par_regime.get(code, 0),
-                    handicap=par_le_handicap,
+                    handicap=par_le_handicap, categorie=par_categorie is not None,
                 )
                 # LA TRANCHE C D'AVANT 2016 GARDE LE COEFFICIENT POUR ÂGE.
                 # L'exonération au taux plein ne vaut que « sur les tranches
@@ -1099,13 +1105,18 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             if (taux_plein_des_femmes(periode, carriere, durees, age_liquidation)
                     or invalidite.taux_plein_de_l_inapte(
                         moteur, code, carriere, age_liquidation)
+                    or categories.taux_plein_par_categorie(
+                        moteur, code, carriere, durees, age_liquidation) is not None
                     or pour_invalidite is not None
                     or code in regimes_du_handicap
                     or (invalidite.sans_decote_du_fonctionnaire(moteur, code, carriere)
                         and ouvrir.droit_militaire(moteur, periode, carriere) is None)):
                 # Le taux de soixante-cinq ans des femmes d'avant 1983 ; le
                 # taux plein de l'inapte, quelle que soit sa durée (L. 351-8,
-                # 2°), le taux de soixante-cinq ans avant 1983 ; la pension du
+                # 2°), le taux de soixante-cinq ans avant 1983 ; ceux de
+                # l'ancien déporté, de la mère de famille ouvrière, du
+                # travailleur manuel et de l'ancien combattant (L. 351-8, 3° à
+                # 5° ; :mod:`.categories`), de même ; la pension du
                 # fonctionnaire mis à la retraite pour invalidité, que « le
                 # coefficient de minoration » n'atteint pas (L. 14, I) ; le
                 # départ anticipé des assurés handicapés, au taux plein
@@ -1218,6 +1229,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                  or age_liquidation >= ouvrir.age_taux_plein(moteur, periode, carriere)
                  or invalidite.taux_plein_de_l_inapte(
                      moteur, code, carriere, age_liquidation)
+                 or categories.taux_plein_par_categorie(
+                     moteur, code, carriere, durees, age_liquidation) is not None
                  or code in regimes_du_handicap)
         )
         fraction_cultes = (
@@ -3091,7 +3104,7 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
                        age_liquidation: float,
                        annee_liquidation: int,
                        trimestres_regime: int = 0,
-                       handicap: bool = False) -> float:
+                       handicap: bool = False, categorie: bool = False) -> float:
     """Coefficient d'un régime en points : abattu avant le taux plein,
     majoré après.
 
@@ -3153,9 +3166,13 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
         # soixante-cinq ans par la sécurité sociale », dès 1971 à l'Ircantec
         # (arrêté du 30 décembre 1970, article 16), l'âge suivant ensuite
         # celui de l'inapte.
+        # L'ancien déporté, la mère de famille ouvrière, l'ancien combattant ou
+        # prisonnier, au taux plein du régime général (``categorie``), de même :
+        # l'Ircantec les nomme aux 2° à 4° du même article 16.
         inapte = ((not par_age_seul or periode.abattement_points == "ircantec")
-                  and invalidite.taux_plein_de_l_inapte(
-                      moteur, invalidite.REGIME_DES_SALARIES, carriere, age_liquidation))
+                  and (invalidite.taux_plein_de_l_inapte(
+                      moteur, invalidite.REGIME_DES_SALARIES, carriere, age_liquidation)
+                       or categorie))
         # LE DÉPART ANTICIPÉ DES ASSURÉS HANDICAPÉS, au taux plein du régime
         # général, que l'Agirc-Arrco suit « à l'âge auquel il a obtenu la
         # pension [...] à taux plein » (accord du 17 novembre 2017, article

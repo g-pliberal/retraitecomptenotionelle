@@ -841,6 +841,40 @@ class Carriere:
             self.chronologie, self.personne, "inaptitude") is not None
 
     @cached_property
+    def deporte_ou_interne(self) -> bool:
+        """La carte de déporté ou interné de la Résistance ou politique que la
+        personne déclare (fiche ``taux_plein_anciens_deportes_internes``)."""
+        return bool(self.chronologie) and chrono.titre(
+            self.chronologie, self.personne, "deporte_ou_interne") is not None
+
+    @cached_property
+    def mois_de_guerre(self) -> int:
+        """Les mois de captivité et de services militaires en temps de guerre de
+        l'ancien prisonnier ou combattant que la personne déclare, zéro sans eux
+        (fiche ``taux_plein_anciens_combattants_prisonniers``)."""
+        fait = (chrono.titre(self.chronologie, self.personne,
+                             "ancien_combattant_ou_prisonnier")
+                if self.chronologie else None)
+        return 0 if fait is None else int(fait["attributs"]["mois"])
+
+    @cached_property
+    def travail_manuel(self) -> str | None:
+        """Le travail manuel exercé cinq ans au moins au cours des quinze années
+        qui précèdent le départ, ``ouvrier`` ou ``penible``, que la personne
+        déclare ; ``None`` sans lui (fiches ``taux_plein_meres_de_famille_ouvrieres``
+        et ``taux_plein_travailleurs_manuels``)."""
+        fait = (chrono.exposition(self.chronologie, self.personne, "travail_manuel")
+                if self.chronologie else None)
+        return None if fait is None else fait["attributs"]["nature"]
+
+    @cached_property
+    def titres_au_taux_plein(self) -> bool:
+        """La personne déclare-t-elle un des titres au taux plein de L. 351-8
+        que :mod:`~.droit.categories` lit ?"""
+        return (self.deporte_ou_interne or self.mois_de_guerre > 0
+                or self.travail_manuel is not None)
+
+    @cached_property
     def radiation_pour_invalidite(self) -> "RadiationPourInvalidite | None":
         """La radiation des cadres pour invalidité que la personne déclare
         (fiche ``retraite_pour_invalidite_fonction_publique``) : son mois,

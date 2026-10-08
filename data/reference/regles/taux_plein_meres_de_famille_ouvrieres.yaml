@@ -1,0 +1,180 @@
+schema_version: 1
+id: taux_plein_meres_de_famille_ouvrieres
+intitule: >-
+  La mère de famille salariée qui a élevé au moins trois enfants, réunit trente ans
+  d'assurance au régime général ou dans ce régime et celui des salariés agricoles, et a
+  exercé un travail manuel ouvrier pendant cinq ans au moins au cours des quinze années
+  qui précèdent sa demande, a le taux plein quelle que soit sa durée d'assurance
+  (L. 351-8, 4° ; R. 351-23) : le taux de soixante-cinq ans dès soixante ans depuis le
+  1er juillet 1976, le taux plein dès l'âge où sa pension s'ouvre depuis le 1er avril
+  1983.
+domaine: decote_surcote
+regimes: [regime_general, msa_salaries]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- le travail manuel que la personne déclare (exposition travail_manuel)
+- le nombre d'enfants qu'elle a élevés, et son sexe
+- la durée d'assurance au régime général, aux assurances sociales d'avant 1945 et chez les
+  salariés agricoles, majoration pour enfants comprise
+- l'âge à la date d'effet de la pension
+- liquidation.date_effet
+ecrit:
+- le taux plein du régime, sans décote, que « liquider chaque régime » applique, celui
+  que le minimum contributif demande et celui que les complémentaires suivent
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
+# moteur (droit/categories.py, `taux_plein_par_categorie`, et son jumeau) lit :
+# `existe` ; `regimes`, ceux qui servent le taux plein ; `enfants`, ceux que la
+# mère doit avoir élevés ; `trimestres`, la durée qu'elle doit réunir dans les
+# `regimes_de_la_duree`, majoration pour enfants comprise ; `travaux`, le travail
+# manuel déclaré qui la satisfait ; `age`, l'âge dès lequel le taux plein se sert,
+# aucun quand la pension l'a dès qu'elle s'ouvre.
+versions:
+- id: avant_la_loi_du_30_decembre_1975
+  statut: supposee
+  hypothese: >-
+    la loi n° 75-1279 crée le droit, dont « la date d'effet est fixée au 1er juillet
+    1976 » (circulaire ministérielle n° 21 SS du 21 mai 1976) : rien avant
+  fiabilite: haute
+  bornes:
+    liquidation.date_effet: [null, 1976-07-01]
+  contenu:
+    droit: aucun taux plein propre aux mères de famille ouvrières
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: loi_du_30_decembre_1975
+  statut: lue
+  textes:
+  - id: JORFTEXT000000699032
+    reference: >-
+      loi n° 75-1279 du 30 décembre 1975 relative aux conditions d'accès à la retraite de
+      certains travailleurs manuels, dont l'index JORF ne garde que la notice
+    publie_le: 1975-12-31
+  - id: JORFTEXT000000855584
+    reference: >-
+      décret n° 76-404 du 10 mai 1976 portant application de la loi n° 75-1279, dont
+      l'index JORF ne garde que la notice
+    publie_le: 1976-05-12
+  - {id: LEGIARTI000006760658, article: 70-2, en_vigueur: 1978-03-16}
+  nee_de: JORFTEXT000000699032
+  bornes:
+    liquidation.date_effet: [1976-07-01, 1983-04-01]
+  contenu:
+    droit: >-
+      « La pension est également calculée au taux normalement applicable à soixante-cinq
+      ans au profit : […] b) Des mères de famille salariées mentionnées au septième
+      alinéa de l'article L. 332 du code de la sécurité sociale qui réunissent trente ans
+      d'assurance dans le régime général ou dans ce régime et celui des salariés agricoles
+      et justifient avoir exercé un travail manuel ouvrier au sens de l'article 70-4
+      pendant au moins cinq ans au cours des quinze dernières années précédant leur
+      demande de liquidation de pension » (décret n° 45-0179, article 70-2) ; elles «
+      doivent avoir élevé au moins 3 enfants », et « les majorations de durée d'assurance
+      accordées aux mères de famille doivent être prises en compte » (circulaire
+      ministérielle n° 21 SS du 21 mai 1976)
+    beneficiaire: la mère de famille ouvrière de trois enfants et de trente ans d'assurance
+    parametres:
+      existe: true
+      regimes: [regime_general, msa_salaries]
+      enfants: 3
+      trimestres: 120
+      regimes_de_la_duree: [regime_general, assurances_sociales, msa_salaries]
+      travaux: [ouvrier, penible]
+      age: 60
+  exemples: aucun trouvé
+- id: ordonnance_du_26_mars_1982
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006742632, article: L. 351-8, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000051289852, article: L. 351-8, en_vigueur: 2025-02-28}
+  - {id: LEGIARTI000006749363, article: R. 351-23, en_vigueur: 1985-12-21}
+  nee_de: LEGIARTI000006742632
+  bornes:
+    liquidation.date_effet: [1983-04-01, null]
+  contenu:
+    droit: >-
+      « Bénéficient du taux plein même s'ils ne justifient pas de la durée requise […] :
+      4° Les mères de famille salariées justifiant d'une durée minimum d'assurance dans le
+      régime général, ou dans ce régime et celui des salariés agricoles qui ont élevé au
+      moins un nombre minimum d'enfants, dans les conditions prévues au deuxième alinéa
+      de l'article L. 342-4, et qui ont exercé un travail manuel ouvrier pendant une durée
+      déterminée » (L. 351-8) ; « avoir accompli trente années d'assurance dans le régime
+      général ou dans ce régime et celui des salariés agricoles » et « avoir exercé
+      pendant au moins cinq ans, au cours des quinze dernières années précédant leur
+      demande de liquidation de pension, un travail manuel ouvrier », pour qui a « élevé
+      au moins trois enfants » (R. 351-23)
+    beneficiaire: la mère de famille ouvrière de trois enfants et de trente ans d'assurance
+    parametres:
+      existe: true
+      regimes: [regime_general, msa_salaries]
+      enfants: 3
+      trimestres: 120
+      regimes_de_la_duree: [regime_general, assurances_sociales, msa_salaries]
+      travaux: [ouvrier, penible]
+  exemples: aucun trouvé
+approximations:
+- version: [loi_du_30_decembre_1975, ordonnance_du_26_mars_1982]
+  ecart: >-
+    Le modèle lit les enfants élevés dans leur nombre, comme la majoration de 10 % : les
+    neuf ans d'éducation avant leur seizième anniversaire (R. 342-2) sont présumés ; et
+    le travail manuel ouvrier, que R. 351-23 définit par la classification de la
+    convention collective, ou à défaut par la rémunération horaire et l'affectation à
+    des travaux qu'il énumère, la personne le déclare.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-08
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Lire la loi n° 75-1279 et le décret n° 76-404 au Journal officiel, dont l'index ne
+    garde que les notices.
+  lectures:
+  - type: jorf
+    reference: >-
+      loi n° 75-1279 du 30 décembre 1975 (JORFTEXT000000699032), article 1er complétant L.
+      332 et L. 334, article 4, sa date d'entrée en vigueur ; décret n° 76-404 du 10 mai
+      1976 (JORFTEXT000000855584), qui modifie les articles 70, 71, 74 et 76 du décret de
+      1945 : l'index n'en garde que les notices
+    date: 1976-05-12
+  - type: legifrance
+    reference: >-
+      décret n° 45-0179, article 70-2 (LEGIARTI000006760658, 1978-03-16 → 1982-07-23) ;
+      L. 351-8, 4°, de 1985 à 2025, sans changement ; R. 351-23 (LEGIARTI000006749363,
+      depuis 1985), en vigueur ; lus dans l'index LEGI le 8 octobre 2026
+    date: 2025-02-28
+  - type: circulaire_cnav
+    reference: >-
+      circulaire ministérielle n° 21 SS du 21 mai 1976 : la loi, « dont la date d'effet est
+      fixée au 1er juillet 1976 » ; « Pour les ouvrières mères de famille, la durée
+      d'assurance requise a été fixée à 30 ans », les majorations de durée comprises, «
+      n'ont, en fait, à justifier que de 24 ans d'assurance » ; les trois enfants élevés
+      neuf ans avant leur seizième anniversaire
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_MIN_21SS_21051976.aspx
+    date: 1976-05-21
+code:
+  python: >-
+    droit/categories.py : taux_plein_par_categorie, remplit ; droit/liquider.py :
+    liquider_chaque_regime, abattement_points ; carriere.py : Carriere.travail_manuel
+  javascript: >-
+    moteur/js/droit/categories.js : tauxPleinParCategorie, remplit ;
+    moteur/js/droit/liquider.js ; moteur/js/carriere.js
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_taux_plein_par_categorie.py]
+referents:
+  openfisca_france_pension:
+    equivalent: >-
+      regimes/regime_general_cnav.py:102-200 (raison_depart_taux_plein_anticipe) et
+      parameters/.../regime_general_cnav/aad.yaml:201-286, au commit 1c45423 : la
+      catégorie en entrée, depuis 1976
+    confrontation: aucune exécutée
+historique:
+- >-
+  2026-10-08 — écrite à l'étape 17 de l'action 138, sur le point d'OpenFisca-France-Pension
+  au registre (chantier 138.17) et la liste de la fiche decote_avant_1983.
+effet: >-
+  La mère de trois enfants qui a trente ans d'assurance, majoration comprise, et a été
+  ouvrière cinq des quinze dernières années, a le taux plein sans la durée requise : avant
+  1983 dès soixante ans, depuis dès l'âge légal ; sa complémentaire, sans coefficient.

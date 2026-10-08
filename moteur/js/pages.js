@@ -92,7 +92,7 @@ import {
   POPULATIONS, PROFILS, PROJECTIONS, RATTACHEMENTS, REGIMES_FRAIS, REGIMES_TAUX,
   RELEVE_MAXIMUM, REVALORISATIONS_STOCK, SAISIES, SAISIE_DE_LA_SITUATION,
   SALAIRE_DEFAUT, SANS_EMPLOI, SITUATIONS, SITUATIONS_FOYER, Saisie, TABLES,
-  TRAJECTOIRES_EMPLOI, UNITES_REVENU, age, entier, estEntier, jourEnClair,
+  MOIS_DE_GUERRE_MAXIMUM, TRAJECTOIRES_EMPLOI, TRAVAUX_MANUELS, UNITES_REVENU, age, entier, estEntier, jourEnClair,
   nombreBrut, parmi, reel, refus,
 } from "./saisie.js";
 import {
@@ -1245,7 +1245,9 @@ function apresLeDepartFormulaire(saisie, contexte, affiliations, echelle) {
 
 /**
  * L'invalidité et l'inaptitude (le quatrième domaine, docs/architecture.md,
- * § 11) : un bloc facultatif, replié tant qu'il est vide. La pension
+ * § 11), et les autres taux pleins de L. 351-8 — l'ancien déporté ou interné,
+ * l'ancien combattant ou prisonnier de guerre, la mère de famille ouvrière ou le
+ * travailleur manuel — : un bloc facultatif, replié tant qu'il est vide. La pension
  * d'invalidité et la radiation des cadres pour invalidité se datent comme un
  * début d'activité ; l'inaptitude, l'imputabilité au service et le taux
  * d'invalidité se disent ; l'incapacité permanente d'au moins 50 % se date
@@ -1302,12 +1304,30 @@ function invaliditeFormulaire(saisie) {
       + "selon l'âge, le départ s'ouvre dès 55 ans, au taux plein, la pension majorée. "
       + "Sinon, le taux plein à 62 ans au régime général, sans décote dans la "
       + "fonction publique."),
+    g.liste("deporte", "Déporté ou interné", ouiNon, saisie.deporte ? OUI : "",
+      "titulaire de la carte", {},
+      "Le taux plein quelle que soit votre durée d'assurance, à l'âge légal, à "
+      + "soixante ans avant 1983, au régime général, chez les salariés agricoles, les "
+      + "artisans et les commerçants."),
+    g.champ("guerre", "Captivité ou services de guerre",
+      saisie.mois_de_guerre === null ? "" : String(saisie.mois_de_guerre),
+      "en mois", "number", { min: "1", max: String(MOIS_DE_GUERRE_MAXIMUM), step: "1" },
+      "Ancien prisonnier de guerre, ou ancien combattant titulaire de la carte : le taux "
+      + "plein sans la durée requise, d'autant plus tôt que la durée est longue, de "
+      + "66 ans pour six mois à l'âge légal pour cinquante-quatre."),
+    g.liste("travail_manuel", "Travail manuel, cinq des quinze dernières années",
+      TRAVAUX_MANUELS, saisie.travail_manuel, "avant le départ", {},
+      "Ouvrière mère de trois enfants, avec trente ans d'assurance : le taux plein à "
+      + "l'âge légal sans la durée requise. Avant 1983, le travail en continu, à la "
+      + "chaîne, au four ou aux intempéries donnait aussi le taux de 65 ans dès 60 ans, "
+      + "avec quarante et un à quarante-trois ans d'assurance."),
   ].join("");
   const ouvert = saisie.invalidite !== null || saisie.inaptitude
-    || saisie.radiation_invalidite !== null || saisie.handicap !== null;
+    || saisie.radiation_invalidite !== null || saisie.handicap !== null
+    || saisie.deporte || saisie.mois_de_guerre !== null || Boolean(saisie.travail_manuel);
   return `
   <details class="options"${ouvert ? " open" : ""}>
-    ${g.sommaire("Invalidité et inaptitude")}
+    ${g.sommaire("Invalidité, inaptitude et taux plein")}
     <div class="grille">${champs}</div>
   </details>`;
 }

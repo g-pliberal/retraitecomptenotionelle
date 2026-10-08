@@ -367,6 +367,23 @@ EMPLOYEURS_APRES_DEPART = [
     ("dernier", "le dernier employeur"),
 ]
 
+#: Le travail manuel exercé cinq ans au moins au cours des quinze années qui
+#: précèdent le départ : ouvrier, ce que la mère de famille ouvrière doit avoir
+#: exercé (R. 351-23) ; en continu, en semi-continu, à la chaîne, au four ou aux
+#: intempéries, ce que le travailleur manuel devait avoir exercé de 1976 à 1983
+#: (décret n° 45-0179, articles 70-2 et 70-3), et qui est aussi un travail
+#: ouvrier (fiches ``taux_plein_meres_de_famille_ouvrieres`` et
+#: ``taux_plein_travailleurs_manuels``). Le vide dit qu'il n'y en a pas.
+TRAVAUX_MANUELS = [
+    ("", "non"),
+    ("ouvrier", "ouvrier"),
+    ("penible", "en continu, à la chaîne, au four ou aux intempéries"),
+]
+
+#: La durée de captivité et de services militaires en temps de guerre que la
+#: saisie admet, en mois : de un à vingt ans.
+MOIS_DE_GUERRE_MAXIMUM = 240
+
 #: Le préfixe des champs qui disent la date où l'assuré demande la pension
 #: d'un régime : « demande_regime_general=2031-05 ». Le code du régime suit,
 #: en minuscules, chiffres et soulignés ; qu'il existe, c'est au calcul de le
@@ -667,6 +684,15 @@ class Saisie:
     invalidite_imputable: bool = False
     taux_invalidite: int | None = None
     handicap: float | None = None
+    #: Les autres titres au taux plein de L. 351-8 (fiches ``taux_plein_*`` ;
+    #: :mod:`~retraite_notionnelle.droit.categories`) : la carte de déporté ou
+    #: interné (3°), les mois de captivité et de services militaires en temps
+    #: de guerre de l'ancien prisonnier ou combattant (5°), ``None`` sans eux,
+    #: et le travail manuel des quinze années qui précèdent le départ (4°, et
+    #: l'article 70-2 du décret de 1945 avant 1983), vide sans lui.
+    deporte: bool = False
+    mois_de_guerre: int | None = None
+    travail_manuel: str = ""
     #: Les carrières hors de France (fiches
     #: ``totalisation_des_periodes_etrangeres``, ``pension_proratisee``,
     #: ``minimum_contributif_international`` et
@@ -836,6 +862,10 @@ class Saisie:
                              else _entier(parametres, "taux_invalidite", 0)),
             handicap=(None if parametres.get("handicap") in (None, "")
                       else _age_saisi(parametres, "handicap", 0.0, mois_de_naissance)),
+            deporte=_oui(parametres, "deporte"),
+            mois_de_guerre=(None if parametres.get("guerre") in (None, "")
+                            else _entier(parametres, "guerre", 0)),
+            travail_manuel=_parmi(parametres, "travail_manuel", TRAVAUX_MANUELS, ""),
             etranger=_periodes_etrangeres_saisies(parametres, mois_de_naissance, tolerante),
             pensions_etrangeres=_pensions_etrangeres_saisies(parametres, mois_de_naissance,
                                                              tolerante),
@@ -1764,18 +1794,30 @@ class Saisie:
         ``pension`` d'invalidité a commencé, l'``inaptitude``, et la
         ``radiation`` pour invalidité d'un fonctionnaire — son âge, son
         imputabilité, son taux en pour cent —, et l'âge depuis lequel
-        l'incapacité permanente atteint 50 % (``handicap``). ``None`` quand rien
-        n'est dit."""
+        l'incapacité permanente atteint 50 % (``handicap``) ; et les autres
+        titres au taux plein de L. 351-8 : la carte de déporté ou interné
+        (``deporte``), les mois de captivité et de services de guerre
+        (``mois_de_guerre``), le travail manuel (``travail_manuel``). ``None``
+        quand rien n'est dit."""
         if (self.invalidite is None and not self.inaptitude
-                and self.radiation_invalidite is None and self.handicap is None):
+                and self.radiation_invalidite is None and self.handicap is None
+                and not self.deporte and self.mois_de_guerre is None
+                and not self.travail_manuel):
             return None
         radiation = None
         if self.radiation_invalidite is not None:
             radiation = {"age": self.radiation_invalidite,
                          "imputable": self.invalidite_imputable,
                          "taux": self.taux_invalidite}
-        return {"pension": self.invalidite, "inaptitude": self.inaptitude,
-                "radiation": radiation, "handicap": self.handicap}
+        declaree = {"pension": self.invalidite, "inaptitude": self.inaptitude,
+                    "radiation": radiation, "handicap": self.handicap}
+        # Les autres titres, seulement quand ils sont dits.
+        for nom, valeur in (("deporte", self.deporte or None),
+                            ("mois_de_guerre", self.mois_de_guerre),
+                            ("travail_manuel", self.travail_manuel or None)):
+            if valeur is not None:
+                declaree[nom] = valeur
+        return declaree
 
     def _verifier_invalidite(self) -> None:
         """La pension d'invalidité commence dans la carrière, avant le départ ;
@@ -1795,6 +1837,11 @@ class Saisie:
                 "(« radiation_invalidite »).")
         if self.taux_invalidite is not None and not 1 <= self.taux_invalidite <= 100:
             raise ErreurSaisie("Taux d'invalidité : en pour cent, entre 1 et 100.")
+        if (self.mois_de_guerre is not None
+                and not 1 <= self.mois_de_guerre <= MOIS_DE_GUERRE_MAXIMUM):
+            raise ErreurSaisie(
+                "Captivité et services de guerre : en mois, entre 1 et "
+                f"{MOIS_DE_GUERRE_MAXIMUM}.")
         debut = self.date_de(self.debut)
         depart = self.date_de(self.liquidation, depart=True)
         if self.invalidite is not None:
@@ -2023,7 +2070,10 @@ class Saisie:
                 ("invalidite_imputable", OUI if self.invalidite_imputable else None),
                 ("taux_invalidite", self.taux_invalidite),
                 ("handicap", None if self.handicap is None
-                 else self.mois_de(self.handicap))) if valeur is not None},
+                 else self.mois_de(self.handicap)),
+                ("deporte", OUI if self.deporte else None),
+                ("guerre", self.mois_de_guerre),
+                ("travail_manuel", self.travail_manuel or None)) if valeur is not None},
             **({"residence": self.residence} if self.residence else {}),
             **({"mois_en_france": self.mois_en_france}
                if self.mois_en_france is not None else {}),

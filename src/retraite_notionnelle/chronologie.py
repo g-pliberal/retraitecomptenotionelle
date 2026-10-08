@@ -306,8 +306,13 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
     ``age``, compté de même, au plus tard au départ, son ``imputable`` au
     service et son ``taux`` d'invalidité en pour cent ; le ``handicap``,
     l'âge depuis lequel l'incapacité permanente atteint 50 %, compté de même,
-    au plus tard au départ. Trois décisions médicales et une radiation, que
-    :func:`decision_medicale` et :func:`radiation_pour_invalidite` relisent.
+    au plus tard au départ ; le ``deporte`` titulaire de la carte, les
+    ``mois_de_guerre`` de captivité et de services de guerre, le
+    ``travail_manuel`` des quinze années d'avant le départ, constatés au
+    départ. Trois décisions médicales et une radiation, que
+    :func:`decision_medicale` et :func:`radiation_pour_invalidite` relisent,
+    deux titres et une exposition, que :func:`titre` et :func:`exposition`
+    relisent.
     ``etranger`` déclare la carrière hors de France : ses ``periodes`` —
     l'État (``pays``), le ``debut`` et la ``fin``, comptés comme un début
     d'activité, au plus tard au départ, et l'``activite`` —, ses ``pensions``
@@ -426,7 +431,8 @@ def _invalidite(assure: dict, age_liquidation: float | None, invalidite: dict) -
     """Les faits de l'invalidité et de l'inaptitude que la saisie déclare (voir
     :func:`_personne`) : la pension d'invalidité, l'inaptitude et
     l'incapacité permanente, trois décisions médicales, la radiation pour
-    invalidité d'un fonctionnaire."""
+    invalidité d'un fonctionnaire ; et les autres titres au taux plein de
+    L. 351-8, deux titres et une exposition."""
     if age_liquidation is None:
         raise ValueError("l'invalidité ou l'inaptitude déclarée suppose un départ")
     naissance = mois_de(assure["debut"])
@@ -472,6 +478,25 @@ def _invalidite(assure: dict, age_liquidation: float | None, invalidite: dict) -
                           _jour(debut),
                           attributs={"decision": "incapacite_permanente", "age": age,
                                      "taux": TAUX_D_INCAPACITE_DECLARE}))
+    # LES AUTRES TITRES AU TAUX PLEIN DE L. 351-8 (:mod:`.droit.categories`),
+    # que la caisse constate à la demande de la pension, donc au départ : la
+    # carte de déporté ou interné, deux titres ; le travail manuel des quinze
+    # années qui précèdent la demande, une exposition.
+    if invalidite.get("deporte"):
+        faits.append(fait(f"deporte_ou_interne_{ASSURE}", ASSURE, "titre", _jour(depart),
+                          attributs={"titre": "deporte_ou_interne"}))
+    mois = invalidite.get("mois_de_guerre")
+    if mois is not None:
+        if not 0 < int(mois):
+            raise ValueError(f"la captivité et les services de guerre : en mois, reçu {mois}")
+        faits.append(fait(f"ancien_combattant_ou_prisonnier_{ASSURE}", ASSURE, "titre",
+                          _jour(depart),
+                          attributs={"titre": "ancien_combattant_ou_prisonnier",
+                                     "mois": int(mois)}))
+    if invalidite.get("travail_manuel"):
+        faits.append(fait(f"travail_manuel_{ASSURE}", ASSURE, "exposition", _jour(depart),
+                          attributs={"exposition": "travail_manuel",
+                                     "nature": invalidite["travail_manuel"]}))
     return faits
 
 
@@ -857,6 +882,24 @@ def decision_medicale(chronologie: dict, personne: str, decision: str) -> dict |
     conjoint —, si elle est dite."""
     for f in faits_de(chronologie, personne, "decision_medicale"):
         if f["attributs"].get("decision") == decision:
+            return f
+    return None
+
+
+def titre(chronologie: dict, personne: str, nom: str) -> dict | None:
+    """Le titre d'une personne, de ce nom — ``deporte_ou_interne``,
+    ``ancien_combattant_ou_prisonnier`` —, s'il est dit."""
+    for f in faits_de(chronologie, personne, "titre"):
+        if f["attributs"].get("titre") == nom:
+            return f
+    return None
+
+
+def exposition(chronologie: dict, personne: str, nom: str) -> dict | None:
+    """L'exposition d'une personne, de ce nom — ``travail_manuel`` —, si elle est
+    dite."""
+    for f in faits_de(chronologie, personne, "exposition"):
+        if f["attributs"].get("exposition") == nom:
             return f
     return None
 

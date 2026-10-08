@@ -1,0 +1,206 @@
+schema_version: 1
+id: taux_plein_travailleurs_manuels
+intitule: >-
+  Du 1er juillet 1976 au 31 mars 1983, le travailleur manuel salarié qui réunit
+  quarante-trois, puis quarante-deux, puis quarante et un ans d'assurance au régime
+  général ou dans ce régime et celui des salariés agricoles, et a exercé pendant cinq ans
+  au moins au cours des quinze années qui précèdent sa demande un travail en continu, en
+  semi-continu, à la chaîne, au four ou exposé aux intempéries, a le taux de soixante-cinq
+  ans dès soixante ans ; la règle de 1983, qui donne le taux plein à cent cinquante
+  trimestres, la rend sans objet.
+domaine: decote_surcote
+regimes: [regime_general, msa_salaries]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- le travail manuel pénible que la personne déclare (exposition travail_manuel)
+- la durée d'assurance au régime général, aux assurances sociales d'avant 1945 et chez les
+  salariés agricoles
+- l'âge à la date d'effet de la pension
+- liquidation.date_effet
+ecrit:
+- le taux de soixante-cinq ans, sans décote, que « liquider chaque régime » applique, et
+  que les complémentaires suivent
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
+# moteur (droit/categories.py, `taux_plein_par_categorie`, et son jumeau) lit :
+# `existe` ; `regimes` ; `trimestres`, la durée à réunir dans les
+# `regimes_de_la_duree` ; `travaux`, le travail manuel déclaré qui la satisfait ;
+# `age`, l'âge dès lequel le taux se sert.
+versions:
+- id: avant_la_loi_du_30_decembre_1975
+  statut: supposee
+  hypothese: >-
+    la loi n° 75-1279 crée le droit, dont « la date d'effet est fixée au 1er juillet
+    1976 » (circulaire ministérielle n° 21 SS du 21 mai 1976) : rien avant
+  fiabilite: haute
+  bornes:
+    liquidation.date_effet: [null, 1976-07-01]
+  contenu:
+    droit: aucun taux propre aux travailleurs manuels
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: quarante_trois_ans
+  statut: lue
+  textes:
+  - id: JORFTEXT000000699032
+    reference: >-
+      loi n° 75-1279 du 30 décembre 1975 relative aux conditions d'accès à la retraite de
+      certains travailleurs manuels, dont l'index JORF ne garde que la notice
+    publie_le: 1975-12-31
+  - id: JORFTEXT000000855584
+    reference: >-
+      décret n° 76-404 du 10 mai 1976 portant application de la loi n° 75-1279, dont
+      l'index JORF ne garde que la notice
+    publie_le: 1976-05-12
+  nee_de: JORFTEXT000000699032
+  bornes:
+    liquidation.date_effet: [1976-07-01, 1977-07-01]
+  contenu:
+    droit: >-
+      « Pour les cinq catégories de travailleurs manuels visés par la loi, la durée
+      d'assurance requise a été fixée […] à 43 ans pour les pensions de vieillesse
+      attribuées au cours de la période transitoire du 1er juillet 1976 au 30 juin 1977
+      » ; les travaux « en continu, en semi-continu, à la chaîne ou exposé à la chaleur
+      des fours ou aux intempéries sur les chantiers » (circulaire ministérielle n° 21
+      SS du 21 mai 1976)
+    beneficiaire: le travailleur manuel salarié de quarante-trois ans d'assurance
+    parametres:
+      existe: true
+      regimes: [regime_general, msa_salaries]
+      trimestres: 172
+      regimes_de_la_duree: [regime_general, assurances_sociales, msa_salaries]
+      travaux: [penible]
+      age: 60
+  exemples: aucun trouvé
+- id: quarante_deux_ans
+  statut: lue
+  textes:
+  - id: JORFTEXT000000855584
+    reference: >-
+      décret n° 76-404 du 10 mai 1976 portant application de la loi n° 75-1279, dont
+      l'index JORF ne garde que la notice
+    publie_le: 1976-05-12
+  nee_de: JORFTEXT000000855584
+  bornes:
+    liquidation.date_effet: [1977-07-01, 1978-03-16]
+  contenu:
+    droit: >-
+      « la durée d'assurance requise a été fixée à 42 ans pour les pensions de vieillesse
+      qui seront attribuées à partir du 1er juillet 1977 » (circulaire ministérielle n°
+      21 SS du 21 mai 1976)
+    beneficiaire: le travailleur manuel salarié de quarante-deux ans d'assurance
+    parametres:
+      existe: true
+      regimes: [regime_general, msa_salaries]
+      trimestres: 168
+      regimes_de_la_duree: [regime_general, assurances_sociales, msa_salaries]
+      travaux: [penible]
+      age: 60
+  exemples: aucun trouvé
+- id: quarante_et_un_ans
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006760658, article: 70-2, en_vigueur: 1978-03-16}
+  nee_de: LEGIARTI000006760658
+  bornes:
+    liquidation.date_effet: [1978-03-16, 1983-04-01]
+  contenu:
+    droit: >-
+      « La pension est également calculée au taux normalement applicable à soixante-cinq
+      ans au profit : a) Des travailleurs manuels salariés mentionnés au sixième alinéa
+      de l'article L. 332 du code de la sécurité sociale qui réunissent quarante et un
+      ans d'assurance dans le régime général ou dans ce régime et celui des salariés
+      agricoles et justifient avoir exercé un travail défini à l'article 70-3 pendant au
+      moins cinq ans au cours des quinze dernières années précédant leur demande de
+      liquidation de pension » (décret n° 45-0179, article 70-2, rédaction du 16 mars
+      1978)
+    beneficiaire: le travailleur manuel salarié de quarante et un ans d'assurance
+    parametres:
+      existe: true
+      regimes: [regime_general, msa_salaries]
+      trimestres: 164
+      regimes_de_la_duree: [regime_general, assurances_sociales, msa_salaries]
+      travaux: [penible]
+      age: 60
+  exemples: aucun trouvé
+- id: sans_objet_depuis_1983
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006742632, article: L. 351-8, en_vigueur: 1985-12-21}
+  nee_de: LEGIARTI000006742632
+  bornes:
+    liquidation.date_effet: [1983-04-01, null]
+  contenu:
+    droit: >-
+      L. 351-8 ne nomme plus les travailleurs manuels : le taux plein dès soixante ans à
+      cent cinquante trimestres le leur donne, quarante et un ans en faisant cent
+      soixante-quatre
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+approximations:
+- version: [quarante_trois_ans, quarante_deux_ans, quarante_et_un_ans]
+  ecart: >-
+    Les travaux de l'article 70-3 — en continu, en semi-continu, à la chaîne, au four, aux
+    intempéries —, que le décret n° 76-404 définit et que la circulaire n° 21 SS précise
+    métier par métier, la personne les déclare ; le modèle ne compte pas les cinq ans
+    dans les quinze dernières années.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-08
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Lire la loi n° 75-1279 et le décret n° 76-404 au Journal officiel, et le décret n°
+    78-318 qui porte la durée à quarante et un ans, pour dater ce passage, que le modèle
+    tient de la rédaction de l'article 70-2 du 16 mars 1978.
+  lectures:
+  - type: jorf
+    reference: >-
+      loi n° 75-1279 du 30 décembre 1975 (JORFTEXT000000699032) ; décret n° 76-404 du 10
+      mai 1976 (JORFTEXT000000855584) : l'index n'en garde que les notices
+    date: 1976-05-12
+  - type: legifrance
+    reference: >-
+      décret n° 45-0179, article 70-2 (LEGIARTI000006760658, 1978-03-16 → 1982-07-23) :
+      quarante et un ans, « Toutefois, pour les pensions prenant effet avant le 1er juillet
+      1977, la durée d'assurance prévue au a est portée à quarante-trois ans » ; lu dans
+      l'index LEGI le 8 octobre 2026
+    date: 1978-03-16
+  - type: circulaire_cnav
+    reference: >-
+      circulaire ministérielle n° 21 SS du 21 mai 1976 : la loi « dont la date d'effet est
+      fixée au 1er juillet 1976 » ; les cinq catégories de travaux ; 43 ans du 1er juillet
+      1976 au 30 juin 1977, 42 ans ensuite ; la durée totalisée au régime général et chez
+      les salariés agricoles, « ni plus de 22 trimestres pour la période du 1er juillet
+      1930 au 31 décembre 1935 »
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_MIN_21SS_21051976.aspx
+    date: 1976-05-21
+code:
+  python: >-
+    droit/categories.py : taux_plein_par_categorie, remplit ; droit/liquider.py :
+    liquider_chaque_regime, abattement_points ; carriere.py : Carriere.travail_manuel
+  javascript: >-
+    moteur/js/droit/categories.js : tauxPleinParCategorie, remplit ;
+    moteur/js/droit/liquider.js ; moteur/js/carriere.js
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_taux_plein_par_categorie.py]
+referents:
+  openfisca_france_pension:
+    equivalent: >-
+      parameters/.../regime_general_cnav/aad.yaml:282-286, au commit 1c45423 : quarante-deux
+      ans, sans application (« TODO » à regimes/regime_general_cnav.py:115, 136)
+    confrontation: aucune exécutée ; son écart est au registre
+historique:
+- >-
+  2026-10-08 — écrite à l'étape 17 de l'action 138, sur le point d'OpenFisca-France-Pension
+  au registre (chantier 138.17) et la liste de la fiche decote_avant_1983.
+effet: >-
+  Le travailleur manuel parti de 1976 à 1983, entre soixante et soixante-cinq ans, avec
+  quarante et un à quarante-trois ans d'assurance, assurances sociales d'avant 1945
+  comprises, et cinq ans de travail pénible dans les quinze dernières années : le taux de
+  soixante-cinq ans au lieu de la pension minorée de l'âge.

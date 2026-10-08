@@ -113,7 +113,8 @@ listes:
       titularisation: une titularisation
       radiation: une radiation
       decision_medicale: une décision médicale
-      exposition: une exposition (pénibilité, amiante)
+      exposition: une exposition (pénibilité, amiante, travail manuel)
+      titre: un titre reconnu à la personne — la carte de déporté ou interné, la qualité d'ancien combattant ou de prisonnier de guerre
       ressources: des ressources
       acte_de_la_personne: une demande, une option, une renonciation, un rachat, un versement, un accord
       acte_de_la_caisse: une notification

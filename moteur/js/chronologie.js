@@ -428,6 +428,24 @@ function invaliditeDeclaree(assure, ageLiquidation, invalidite) {
       jour(debut), null,
       { decision: "incapacite_permanente", age, taux: TAUX_D_INCAPACITE_DECLARE }));
   }
+  // Les autres titres au taux plein de L. 351-8 (`droit/categories.js`), que la
+  // caisse constate à la demande de la pension, donc au départ.
+  if (invalidite.deporte) {
+    faits.push(fait(`deporte_ou_interne_${ASSURE}`, ASSURE, "titre", jour(depart), null,
+      { titre: "deporte_ou_interne" }));
+  }
+  const mois = invalidite.mois_de_guerre ?? null;
+  if (mois !== null) {
+    if (!(Math.trunc(mois) > 0)) {
+      throw new Error(`la captivité et les services de guerre : en mois, reçu ${mois}`);
+    }
+    faits.push(fait(`ancien_combattant_ou_prisonnier_${ASSURE}`, ASSURE, "titre",
+      jour(depart), null, { titre: "ancien_combattant_ou_prisonnier", mois: Math.trunc(mois) }));
+  }
+  if (invalidite.travail_manuel) {
+    faits.push(fait(`travail_manuel_${ASSURE}`, ASSURE, "exposition", jour(depart), null,
+      { exposition: "travail_manuel", nature: invalidite.travail_manuel }));
+  }
   return faits;
 }
 
@@ -851,6 +869,21 @@ export function retraiteProgressive(chronologie, personne) {
 export function decisionMedicale(chronologie, personne, decision) {
   return faitsDe(chronologie, personne, "decision_medicale")
     .find((f) => f.attributs.decision === decision) ?? null;
+}
+
+/**
+ * Le titre d'une personne, de ce nom — `deporte_ou_interne`,
+ * `ancien_combattant_ou_prisonnier` —, s'il est dit.
+ */
+export function titre(chronologie, personne, nom) {
+  return faitsDe(chronologie, personne, "titre")
+    .find((f) => f.attributs.titre === nom) ?? null;
+}
+
+/** L'exposition d'une personne, de ce nom — `travail_manuel` —, si elle est dite. */
+export function exposition(chronologie, personne, nom) {
+  return faitsDe(chronologie, personne, "exposition")
+    .find((f) => f.attributs.exposition === nom) ?? null;
 }
 
 /** La radiation des cadres pour invalidité d'une personne, si elle est dite. */

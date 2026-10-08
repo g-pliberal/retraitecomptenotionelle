@@ -30,10 +30,12 @@ effet: >-
   `pension_maximale_regime_general`) ; le troisième, qu'un salaire moyen de 1,7 plafond
   décide, est un écart connu. Quatre écarts restent, aucun mesuré. Une pension de janvier à mars 1983 relève encore de l'âge seul : le moteur, qui
   choisit la période à l'année, lui applique la règle d'avril et sert le taux plein à
-  soixante ans à qui a 150 trimestres. Les autres taux pleins d'avant 1983 — inaptitude,
-  travaux pénibles de l'ordonnance de 1945, déportation, services de guerre, travail
-  manuel, ouvrières mères de famille, agents non titulaires de soixante-trois ans dès le
-  1er juillet 1982 — tiennent à des faits que le modèle ne porte pas. Chez les salariés
+  soixante ans à qui a 150 trimestres. Les autres taux pleins d'avant 1983 tiennent à des
+  faits que la personne déclare — l'inaptitude (fiche `inaptitude_au_travail`), la
+  déportation, les services de guerre, le travail manuel des travailleurs manuels et des
+  ouvrières mères de famille (fiches `taux_plein_*`) —, sauf deux, que le modèle ne porte
+  pas : les travaux pénibles de l'ordonnance de 1945, les agents non titulaires de
+  soixante-trois ans dès le 1er juillet 1982. Chez les salariés
   agricoles, la rédaction du 6 juin 1951 ne majorait le taux que pour une liquidation
   demandée « après soixante et un ans » : si la caisse la lisait ainsi, le moteur sert
   jusqu'à trois points de trop entre soixante et soixante et un ans. Pour les artisans et

@@ -1,0 +1,300 @@
+schema_version: 1
+id: taux_plein_anciens_combattants_prisonniers
+intitule: >-
+  L'ancien prisonnier de guerre, ou l'ancien combattant titulaire de la carte du
+  combattant, a le taux plein quelle que soit sa durée d'assurance à un âge qui descend
+  avec la durée de sa captivité et de ses services militaires en temps de guerre
+  (L. 351-8, 5° ; D. 351-2) : de soixante-quatre ans pour six à dix-sept mois à soixante
+  ans pour cinquante-quatre mois depuis 1974, deux ans de plus dans la pratique de la
+  caisse depuis le recul de l'âge légal de 2010, et, depuis le 8 juillet 2024, de
+  soixante-six ans à l'âge légal.
+domaine: decote_surcote
+regimes: [regime_general, msa_salaries, cancava, organic, rsi]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- les mois de captivité et de services militaires en temps de guerre que la personne
+  déclare (titre ancien_combattant_ou_prisonnier)
+- l'âge à la date d'effet de la pension, la génération, son âge légal et l'âge du 1° de
+  L. 351-8
+- liquidation.date_effet
+ecrit:
+- le taux plein du régime, sans décote, que « liquider chaque régime » applique, celui
+  que le minimum contributif demande et celui que les complémentaires suivent
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
+# moteur (droit/categories.py, `age_des_anciens_combattants`, et son jumeau)
+# lit : `existe` ; `regimes` ; `paliers`, chacun dès `des_mois` de captivité et
+# de services de guerre, l'âge du taux plein — un nombre ou
+# `age_legal_par_generation` (`age`), ce qu'il retranche à l'âge du 1° de L. 351-8
+# (`avant_l_age_du_taux_plein`), et les générations dès lesquelles c'est l'âge
+# légal (`age_legal_des_la_generation`) — ; `age_minimum`, sous lequel aucun
+# palier ne descend ; `decalage_age_legal`, ce que la caisse ajoute à chaque âge,
+# l'écart de l'âge légal à soixante ans, `au_plus` deux ans.
+versions:
+- id: avant_la_loi_du_21_novembre_1973
+  statut: supposee
+  hypothese: >-
+    la loi n° 73-1051 et le décret n° 74-54 créent le droit pour les « prestations
+    prenant effet au 1er janvier 1974 ou postérieurement » (circulaire Cnav n° 20/74) :
+    rien avant
+  fiabilite: haute
+  bornes:
+    liquidation.date_effet: [null, 1974-01-01]
+  contenu:
+    droit: aucun taux plein propre aux anciens combattants et prisonniers de guerre
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: premiere_annee_1974
+  statut: lue
+  textes:
+  - id: JORFTEXT000000322528
+    reference: >-
+      loi n° 73-1051 du 21 novembre 1973 permettant aux anciens combattants et aux
+      anciens prisonniers de guerre de bénéficier, entre soixante et soixante-cinq ans,
+      d'une pension de retraite calculée sur le taux de soixante-cinq ans, dont l'index
+      JORF ne garde que la notice
+    publie_le: 1973-11-22
+  - id: JORFTEXT000000337146
+    reference: >-
+      décret n° 74-54 du 23 janvier 1974 fixant les modalités d'application de la loi n°
+      73-1051, dont l'index JORF ne garde que la notice
+    publie_le: 1974-01-24
+  - {id: LEGIARTI000006762026, article: 1, en_vigueur: 1975-01-05}
+  nee_de: JORFTEXT000000322528
+  bornes:
+    liquidation.date_effet: [1974-01-01, 1975-01-01]
+  contenu:
+    droit: >-
+      « La pension accordée aux anciens combattants et anciens prisonniers de guerre sur
+      justification de leur durée de captivité et de services militaires ne peut être
+      liquidée au taux de 50 p. 100 […] que si les intéressés ont atteint, à la date
+      d'entrée en jouissance de leur pension, l'âge de : Soixante-trois ans si l'entrée en
+      jouissance se situe en 1974 » (décret n° 74-54, article 1er, II)
+    beneficiaire: l'ancien prisonnier de guerre ou l'ancien combattant titulaire de la carte
+    parametres:
+      existe: true
+      regimes: [regime_general, msa_salaries, cancava, organic, rsi]
+      paliers:
+      - {des_mois: 6, age: 64}
+      - {des_mois: 18, age: 63}
+      - {des_mois: 30, age: 62}
+      - {des_mois: 42, age: 61}
+      - {des_mois: 54, age: 60}
+      age_minimum: 63
+  exemples: aucun trouvé
+- id: decret_du_23_janvier_1974
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006762026, article: 1, en_vigueur: 1975-01-05}
+  nee_de: LEGIARTI000006762026
+  bornes:
+    liquidation.date_effet: [1975-01-01, 1985-12-21]
+  contenu:
+    droit: >-
+      « La pension des assurés justifiant d'au moins trente-sept ans et demi d'assurance
+      qui sont anciens combattants titulaires de la carte du combattant ou qui ont été
+      détenus comme prisonniers de guerre est égale à 50 p. 100 du salaire de base
+      lorsqu'elle est liquidée avant l'âge de soixante-cinq ans et à partir de :
+      Soixante-quatre ans pour ceux dont la durée de captivité et des services militaires
+      en temps de guerre a été de six à dix-sept mois ; Soixante-trois ans […] de
+      dix-huit à vingt-neuf mois ; Soixante-deux ans […] de trente à quarante et un mois ;
+      Soixante et un ans […] de quarante-deux à cinquante-trois mois ; Soixante ans […]
+      d'au moins cinquante-quatre mois et pour les anciens prisonniers de guerre évadés
+      justifiant d'une captivité d'au moins six mois ou rapatriés pour maladie » ; «
+      Soixante ans si l'entrée en jouissance se situe en 1975 ou postérieurement »
+      (décret n° 74-54, article 1er)
+    beneficiaire: l'ancien prisonnier de guerre ou l'ancien combattant titulaire de la carte
+    parametres:
+      existe: true
+      regimes: [regime_general, msa_salaries, cancava, organic, rsi]
+      paliers:
+      - {des_mois: 6, age: 64}
+      - {des_mois: 18, age: 63}
+      - {des_mois: 30, age: 62}
+      - {des_mois: 42, age: 61}
+      - {des_mois: 54, age: 60}
+  exemples: aucun trouvé
+- id: article_d_351_2
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006736530, article: D. 351-2, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006742632, article: L. 351-8, en_vigueur: 1985-12-21}
+  nee_de: LEGIARTI000006736530
+  bornes:
+    liquidation.date_effet: [1985-12-21, 2011-07-01]
+  contenu:
+    droit: >-
+      « Bénéficient du " taux plein " même s'ils ne justifient pas de la durée requise
+      d'assurance […] les anciens prisonniers de guerre ou les anciens combattants
+      titulaires de la carte du combattant, lorsque, sur leur demande, leur pension est
+      liquidée avant l'âge de soixante-cinq ans et à partir de » soixante-quatre à
+      soixante ans, les mêmes paliers (D. 351-2)
+    beneficiaire: l'ancien prisonnier de guerre ou l'ancien combattant titulaire de la carte
+    parametres:
+      existe: true
+      regimes: [regime_general, msa_salaries, cancava, organic, rsi]
+      paliers:
+      - {des_mois: 6, age: 64}
+      - {des_mois: 18, age: 63}
+      - {des_mois: 30, age: 62}
+      - {des_mois: 42, age: 61}
+      - {des_mois: 54, age: 60}
+  exemples: aucun trouvé
+- id: pratique_de_la_caisse_depuis_2011
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006736530, article: D. 351-2, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000047634554, article: D. 351-2, en_vigueur: 2023-09-01}
+  - reference: >-
+      circulaire Cnav n° 2024-29 du 30 octobre 2024, introduction, base de législation de
+      la Cnav
+    citation: >-
+      « Bien que la loi n° 2010-1330 du 9 novembre 2010 ait relevé de 60 à 62 ans l'âge
+      légal de départ à la retraite, l'article D.351-2 CSS n'a pas été modifié. En
+      pratique, pour corriger cette discordance, il était ajouté à chaque âge de départ
+      AC/PG prévu à l'article D351-2 CSS deux années de plus (exemple 62 ans au lieu de 60
+      ans pour ceux dont la durée de captivité et des services militaires en temps de
+      guerre a été d'au moins cinquante-quatre mois […]) »
+  nee_de: LEGIARTI000006736530
+  bornes:
+    liquidation.date_effet: [2011-07-01, 2024-07-08]
+  contenu:
+    droit: >-
+      les âges de D. 351-2, que le décret de 2023 ne change pas, deux ans plus tard, comme
+      l'âge légal ; le modèle ajoute l'écart de l'âge légal de la génération à soixante
+      ans, deux ans au plus : rien aux générations d'avant juillet 1951, deux ans dès 1955
+    beneficiaire: l'ancien prisonnier de guerre ou l'ancien combattant titulaire de la carte
+    parametres:
+      existe: true
+      regimes: [regime_general, msa_salaries, cancava, organic, rsi]
+      paliers:
+      - {des_mois: 6, age: 64}
+      - {des_mois: 18, age: 63}
+      - {des_mois: 30, age: 62}
+      - {des_mois: 42, age: 61}
+      - {des_mois: 54, age: 60}
+      decalage_age_legal: {au_plus: 2}
+  exemples: aucun trouvé
+- id: decret_du_7_juillet_2024
+  statut: lue
+  textes:
+  - {id: LEGIARTI000049917724, article: D. 351-2, en_vigueur: 2024-07-09}
+  - {id: LEGIARTI000051289852, article: L. 351-8, en_vigueur: 2025-02-28}
+  nee_de: LEGIARTI000049917724
+  bornes:
+    liquidation.date_effet: [2024-07-08, null]
+  contenu:
+    droit: >-
+      le taux plein « lorsque, sur leur demande, leur pension est liquidée avant l'âge
+      prévu au 1° de l'article L. 351-8 et à partir de : 1°) L'âge prévu au 1° de l'article
+      L. 351-8 minoré d'un an pour ceux dont la durée de captivité et des services
+      militaires en temps de guerre a été de six à dix-sept mois ; 2°) […] minoré de deux
+      ans […] de dix-huit à vingt-neuf mois ; 3°) […] minoré de trois ans […] de trente à
+      quarante et un mois ; 4°) L'âge prévu au 1° de l'article L. 351-8 minoré de quatre
+      ans pour ceux nés avant 1965 et de l'âge prévu à l'article L. 161-17-2 pour ceux nés
+      à compter de 1965, pour ceux dont la durée […] a été de quarante-deux à
+      cinquante-trois mois ; 5°) L'âge prévu à l'article L. 161-17-2 pour ceux dont la
+      durée […] a été d'au moins cinquante-quatre mois » (D. 351-2), pour les pensions
+      prenant effet « à compter du lendemain de la publication dudit décret, soit le 8
+      juillet 2024 » ; « à compter du 1er aout 2024 » (circulaire Cnav n° 2024-29)
+    beneficiaire: l'ancien prisonnier de guerre ou l'ancien combattant titulaire de la carte
+    parametres:
+      existe: true
+      regimes: [regime_general, msa_salaries, cancava, organic, rsi]
+      paliers:
+      - {des_mois: 6, avant_l_age_du_taux_plein: 1}
+      - {des_mois: 18, avant_l_age_du_taux_plein: 2}
+      - {des_mois: 30, avant_l_age_du_taux_plein: 3}
+      - {des_mois: 42, avant_l_age_du_taux_plein: 4, age_legal_des_la_generation: 1965}
+      - {des_mois: 54, age: age_legal_par_generation}
+  exemples: aucun trouvé
+approximations:
+- version: [premiere_annee_1974, decret_du_23_janvier_1974, article_d_351_2, pratique_de_la_caisse_depuis_2011, decret_du_7_juillet_2024]
+  ecart: >-
+    L'ancien prisonnier de guerre évadé après six mois de captivité, ou rapatrié pour
+    maladie, a le taux plein à l'âge du dernier palier quelle que soit sa durée : la
+    saisie ne le distingue pas, et le modèle lui applique le palier de ses mois.
+  effet: non mesuré
+- version: [pratique_de_la_caisse_depuis_2011]
+  ecart: >-
+    La circulaire n° 2024-29 dit « deux années de plus », sans dire ce que recevaient les
+    générations de 1951 à 1954, dont l'âge légal montait par mois : le modèle leur ajoute
+    l'écart de leur âge légal à soixante ans.
+  effet: non mesuré ; les seuls anciens combattants de ces générations
+- version: [premiere_annee_1974, decret_du_23_janvier_1974, article_d_351_2, pratique_de_la_caisse_depuis_2011, decret_du_7_juillet_2024]
+  ecart: >-
+    Le modèle sert la règle du régime général aux salariés agricoles (décret n° 74-427), aux
+    artisans et aux commerçants (décrets n° 74-432 et 74-433, puis D. 634-4) aux mêmes
+    dates, que leurs textes ne sont pas lus.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-08
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Lire la loi n° 73-1051 et la rédaction de 1974 du décret n° 74-54, dont l'index ne
+    garde que les notices et la rédaction de 1975, et les décrets n° 74-427, 74-432 et
+    74-433 du 15 mai 1974, aux salariés agricoles, aux artisans et aux commerçants.
+  lectures:
+  - type: jorf
+    reference: >-
+      loi n° 73-1051 du 21 novembre 1973 (JORFTEXT000000322528) ; décret n° 74-54 du 23
+      janvier 1974 (JORFTEXT000000337146) ; décrets n° 74-427, 74-432 et 74-433 du 15 mai
+      1974 (JORFTEXT000000510998, JORFTEXT000000500359, JORFTEXT000000886031) : l'index
+      n'en garde que les notices
+    date: 1974-05-16
+  - type: legifrance
+    reference: >-
+      décret n° 74-54, article 1er (LEGIARTI000006762026, 1975-01-05 → 1985-12-21) ;
+      D. 351-2 (LEGIARTI000006736530, 1985-12-21 → 2023-09-01 ; LEGIARTI000047634554,
+      2023-09-01 → 2024-07-09, aux mêmes paliers ; LEGIARTI000049917724, depuis) ; décret
+      n° 74-191, article 1er (LEGIARTI000006762031), le même droit aux assurés de
+      l'ex-régime local d'Alsace-Moselle ; lus dans l'index LEGI le 8 octobre 2026
+    date: 2024-07-09
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 20/74 du 13 février 1974, point III : la loi et le décret «
+      s'appliquent uniquement aux prestations prenant effet au 1er janvier 1974 ou
+      postérieurement »
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2074_13021974.aspx
+    date: 1974-02-13
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2024-29 du 30 octobre 2024 : les deux ans que la caisse ajoutait
+      depuis 2010 ; le tableau de 2024, 66, 65 et 64 ans, puis 63 ans ou l'âge légal selon
+      la génération, l'âge légal dès cinquante-quatre mois ; le minimum contributif, le
+      maximum des pensions et la majoration pour enfants servis comme à tous ;
+      l'allocation de solidarité aux personnes âgées dès cet âge (R. 815-1) ; la retraite
+      complémentaire des indépendants sans abattement ; pour les retraites prenant effet
+      à compter du 1er août 2024
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2024_29_30102024.pdf
+    date: 2024-10-30
+code:
+  python: >-
+    droit/categories.py : taux_plein_par_categorie, age_des_anciens_combattants ;
+    droit/liquider.py : liquider_chaque_regime, abattement_points ; carriere.py :
+    Carriere.mois_de_guerre
+  javascript: >-
+    moteur/js/droit/categories.js : tauxPleinParCategorie, ageDesAnciensCombattants ;
+    moteur/js/droit/liquider.js ; moteur/js/carriere.js
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_taux_plein_par_categorie.py]
+referents:
+  openfisca_france_pension:
+    equivalent: >-
+      parameters/.../regime_general_cnav/aad.yaml:246-262, au commit 1c45423 : le taux
+      plein à soixante ans à tout ancien combattant dès 1975
+    confrontation: aucune exécutée ; son écart est au registre
+historique:
+- >-
+  2026-10-08 — écrite à l'étape 17 de l'action 138, sur le point d'OpenFisca-France-Pension
+  au registre (chantier 138.17) et la liste de la fiche decote_avant_1983.
+effet: >-
+  L'ancien prisonnier ou combattant qui n'a pas la durée requise reçoit le taux plein
+  avant l'âge du taux plein, d'autant plus tôt que sa captivité et ses services de guerre
+  ont été longs : de 1975 à 2011, dès soixante ans à cinquante-quatre mois ; depuis août
+  2024, de soixante-six ans à l'âge légal.

@@ -1114,7 +1114,8 @@ class FichesDatees:
     ``completer.verser_en_capital`` lit, et le décompte des services du code
     des pensions au jour, que ``compter.decompte_des_services`` lit, et le
     maximum des pensions du régime général, que ``liquider.pension_maximale``
-    lit.
+    lit, et les taux pleins par catégorie de L. 351-8, que
+    ``categories.taux_plein_par_categorie`` lit.
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
@@ -1127,7 +1128,9 @@ class FichesDatees:
             "majoration_exceptionnelle_2023", "relevement_des_exploitants_2023",
             "versement_forfaitaire_unique", "versement_unique_agirc_arrco",
             "versement_unique_ircantec", "decompte_des_services_fonction_publique",
-            "pension_maximale_regime_general")
+            "pension_maximale_regime_general",
+            "taux_plein_anciens_deportes_internes", "taux_plein_meres_de_famille_ouvrieres",
+            "taux_plein_travailleurs_manuels", "taux_plein_anciens_combattants_prisonniers")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

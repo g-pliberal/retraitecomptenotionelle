@@ -1346,8 +1346,17 @@ referents:
           L. 351-8, 3°, 4° et 5°, en vigueur (LEGIARTI000051289852)
           ; décret n° 74-191, art. 1er (LEGIARTI000006762031). Ses
           âges et durées sont faux en partie (écarts ci-dessous) :
-          la règle se reprend des textes, pas de lui.
-        etat: a_reprendre
+          la règle se reprend des textes, pas de lui. Reprise le 8
+          octobre 2026 : fiches taux_plein_anciens_deportes_internes,
+          taux_plein_meres_de_famille_ouvrieres,
+          taux_plein_travailleurs_manuels et
+          taux_plein_anciens_combattants_prisonniers, dans les deux
+          moteurs, sur trois faits que la saisie déclare (la carte, les
+          mois de captivité et de services de guerre, le travail
+          manuel) ; les paliers de D. 351-2, deux ans plus tard depuis
+          2010 comme la Cnav, et ceux du décret du 7 juillet 2024
+          (circulaire Cnav n° 2024-29).
+        etat: repris
         chantier: "138.17"
       - quoi: >-
           Il borne la pension du régime général à la moitié du

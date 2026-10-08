@@ -20,6 +20,7 @@ import { formatFixe, formatPourcentage } from "../format.js";
 import { FIN_PEREQUATION, coefficientTraitementDiffere, dateIso } from "../revalorisation.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import * as acquerir from "./acquerir.js";
+import * as categories from "./categories.js";
 import { dateDEffet, derniereAnnee } from "./commun.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
 import * as coordonner from "./coordonner.js";
@@ -170,6 +171,10 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
   const parLeHandicap = ouverture.motif === "handicap";
   const versionDuHandicap = parLeHandicap ? invalidite.versionDuHandicap(moteur, carriere) : null;
   const regimesDuHandicap = parLeHandicap ? moteur.invalidites.regimes("handicap") : new Set();
+  // La catégorie de L. 351-8 qui donne au salarié le taux plein du régime
+  // général, que ses complémentaires suivent ; `null` sans elle.
+  const parCategorie = categories.tauxPleinParCategorie(
+    moteur, invalidite.REGIME_DES_SALARIES, carriere, durees, ageLiquidation);
   const codes = droits.codes.filter((code) => regimes === null || regimes.has(code));
   const groupes = releve.groupes;
 
@@ -361,6 +366,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         abattement = abattementPoints(
           moteur, periode, carriere, trimestres, requisReference, ageLiquidation,
           anneeLiquidation, trimestresParRegime.get(code) ?? 0, parLeHandicap,
+          parCategorie !== null,
         );
         // LA TRANCHE C D'AVANT 2016 GARDE LE COEFFICIENT POUR ÂGE, même au
         // taux plein : voir le Python. Le coefficient affiché est celui de la
@@ -603,12 +609,15 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       }
       if (tauxPleinDesFemmes(periode, carriere, cumulPlafonne, ageLiquidation)
           || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation)
+          || categories.tauxPleinParCategorie(
+            moteur, code, carriere, durees, ageLiquidation) !== null
           || pourInvalidite !== null
           || regimesDuHandicap.has(code)
           || (invalidite.sansDecoteDuFonctionnaire(moteur, code, carriere)
             && ouvrir.droitMilitaire(moteur, periode, carriere) === null)) {
         // Le taux de soixante-cinq ans des femmes d'avant 1983 ; le taux plein
-        // de l'inapte, quelle que soit sa durée (L. 351-8, 2°) ; la pension du
+        // de l'inapte, quelle que soit sa durée (L. 351-8, 2°), et celui des
+        // catégories des 3° à 5° (`categories.js`) ; la pension du
         // fonctionnaire mis à la retraite pour invalidité, sans décote (L. 14, I) ;
         // le départ anticipé des assurés handicapés, au taux plein ; le
         // fonctionnaire handicapé, sans coefficient de minoration (L. 14, I).
@@ -715,6 +724,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       && (trimestres >= requis
         || ageLiquidation >= ouvrir.ageTauxPlein(moteur, periode, carriere)
         || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation)
+        || categories.tauxPleinParCategorie(
+          moteur, code, carriere, durees, ageLiquidation) !== null
         || regimesDuHandicap.has(code));
     const fractionCultes = dureesCultes !== null
       ? cultes.fractionDAvant1998(
@@ -2348,7 +2359,7 @@ export function coefficientPourAge(moteur, periode, carriere, ageLiquidation) {
 }
 
 export function abattementPoints(moteur, periode, carriere, trimestres, requis, ageLiquidation,
-  anneeLiquidation, trimestresRegime = 0, handicap = false) {
+  anneeLiquidation, trimestresRegime = 0, handicap = false, categorie = false) {
   // L'Ircantec a le même barème que l'Agirc-Arrco, et son texte l'écrit :
   // article 16 de l'arrêté du 30 décembre 1970, mêmes marches et mêmes deux
   // lectures. Voir le docstring du modèle Python. `trimestresRegime` est la
@@ -2367,9 +2378,13 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
     // L'inapte a le taux plein au régime général, et la complémentaire le
     // suit : l'Agirc-Arrco depuis l'ASF (article 84, 3, de l'accord de 2017),
     // l'Ircantec dès 1971 (article 16 de l'arrêté du 30 décembre 1970).
+    // L'ancien déporté, la mère de famille ouvrière, l'ancien combattant ou
+    // prisonnier, au taux plein du régime général (`categorie`), de même :
+    // l'Ircantec les nomme aux 2° à 4° du même article 16.
     const inapte = (!parAgeSeul || periode.abattement_points === "ircantec")
-      && invalidite.tauxPleinDeLInapte(
-        moteur, invalidite.REGIME_DES_SALARIES, carriere, ageLiquidation);
+      && (invalidite.tauxPleinDeLInapte(
+        moteur, invalidite.REGIME_DES_SALARIES, carriere, ageLiquidation)
+        || categorie);
     // Le départ anticipé des assurés handicapés, au taux plein du régime
     // général : l'Agirc-Arrco le suit (article 84, 3), l'Ircantec l'exempte
     // (article 16, 1°, b).
