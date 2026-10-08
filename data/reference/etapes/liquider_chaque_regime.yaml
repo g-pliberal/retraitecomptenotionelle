@@ -8,7 +8,9 @@
 #
 # Elle dit aussi ce que l'étape suivante lit pour compléter : pour chaque
 # régime qui porte le minimum contributif ou le minimum garanti, les durées
-# et la condition de taux plein qui les ouvrent.
+# et la condition de taux plein qui les ouvrent ; pour chaque régime du code
+# des pensions, le traitement auquel le plafond de L. 18 borne sa majoration
+# pour enfants, et ce que la surcote ajoute à la pension.
 #
 # src/retraite_notionnelle/droit/liquider.py, et son jumeau
 # moteur/js/droit/liquider.js.
@@ -39,6 +41,7 @@ objets:
       minimum: {porte: "ce que le minimum contributif lit de ce régime, quand il le porte", type: objet, objet: minimum, defaut: null}
       garanti: {porte: "ce que le minimum garanti lit de ce régime, quand il le porte", type: objet, objet: garanti, defaut: null}
       agricole: {porte: "ce que la pension majorée de référence et le complément différentiel de la RCO lisent de la pension de base des non-salariés agricoles, quand elle porte la PMR", type: objet, objet: agricole, defaut: null}
+      plafond_enfants: {porte: "ce que le plafond de L. 18 lit de la pension d'un régime du code des pensions, qui borne sa majoration pour enfants au traitement", type: objet, objet: plafond_enfants, defaut: null}
 
   minimum:
     champs:
@@ -62,3 +65,8 @@ objets:
       trimestres_services: {porte: "la durée des services acquise dans le régime, en trimestres", type: entier, obligatoire: true}
       ouvert: {porte: "le minimum garanti est-il ouvert : taux plein, ou âge d'ouverture atteint avant 2011", type: booleen, obligatoire: true}
       duree_maximum: {porte: "la durée qui ouvre le pourcentage maximum, que le d de L. 17 lit sous quinze ans de services", type: entier, defaut: null}
+
+  plafond_enfants:
+    champs:
+      traitement: {porte: "le traitement ou la solde de L. 15 qui a liquidé la pension, en euros par an à la date d'effet", type: nombre, obligatoire: true}
+      surcote: {porte: "ce que la surcote ajoute au montant, en euros, que le plafond laisse hors de la pension qu'il compare au traitement depuis le 29 décembre 2020", type: nombre, obligatoire: true}

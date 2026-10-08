@@ -1118,6 +1118,22 @@ referents:
         tranche: un défaut du paquet publié, sans texte à lire
         preuve: >-
           `openfisca_france_pension/parameters/`, au commit 1c45423
+      - constat: >-
+          Il borne au salaire de référence la pension civile et sa
+          majoration pour enfants ensemble, la surcote comprise, à
+          toute date : la pension que la surcote porte au-delà du
+          traitement y est ramenée, majoration ou non
+          (`regimes/fonction_publique.py`, variable `pension`,
+          `min_(pension_brute + majoration_pension, salaire_de_reference)`).
+        tranche: >-
+          L. 18, V, et la décision du Conseil d'État du 29 décembre
+          2020, n° 428626 : la caisse ne retirait que la majoration à
+          qui la surcote portait à 104 % du traitement (point 1), et
+          laisse depuis la surcote hors du plafond ; l'écart est le
+          sien.
+        preuve: >-
+          `openfisca_france_pension/regimes/fonction_publique.py`, au
+          commit 1c45423 ; data/reference/regles/majoration_enfants_plafond_fonction_publique.yaml
     fait_mieux:
       - quoi: >-
           Il code le départ anticipé des fonctionnaires parents de trois
@@ -2236,6 +2252,21 @@ referents:
         preuve: >-
           data/reference/regles/agirc_arrco_valeur_service.yaml ;
           tests/test_destinie.py, VALEUR_DU_JOUR
+      - constat: >-
+          Il borne la majoration pour enfants de la pension civile au
+          salaire de référence, la surcote comprise, à toute date
+          (`src/DroitsRetr.cpp:877-878`) : la pension que la surcote
+          porte au traitement n'a plus de majoration.
+        tranche: >-
+          Conseil d'État, 29 décembre 2020, n° 428626 : appliqué à qui
+          la surcote porte au traitement, le plafond de L. 18, V, crée
+          une différence de traitement « dépourvue de rapport avec
+          l'objet de l'article L. 18 » ; la caisse laisse depuis la
+          surcote hors du plafond. Le dépôt fait comme lui jusqu'à la
+          décision, comme la caisse depuis ; l'écart est le sien.
+        preuve: >-
+          data/reference/regles/majoration_enfants_plafond_fonction_publique.yaml ;
+          tests/test_plafond_majoration_enfants.py
     fait_mieux:
       - quoi: >-
           Il calcule le minimum de la réversion du régime général,
@@ -2497,9 +2528,10 @@ referents:
           montant de la pension majorée puisse excéder le montant du
           traitement […] les montants de la pension et de la
           majoration sont réduits à due proportion ». Il plafonne
-          aussi avec surcote, cas que le SRE excepte : texte à lire
-          avant de reprendre (note du registre).
-        etat: a_reprendre
+          aussi avec surcote, cas que le SRE excepte : le texte qui
+          l'excepte est la décision du Conseil d'État du 29 décembre
+          2020, n° 428626 (son écart, plus haut).
+        etat: repris
         chantier: "138.17"
       - quoi: >-
           Il calcule la retraite nette : CSG, CRDS et CASA nulles,

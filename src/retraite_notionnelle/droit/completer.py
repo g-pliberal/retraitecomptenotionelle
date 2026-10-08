@@ -11,7 +11,8 @@ ensemble, dans l'ordre où il l'applique — et l'ordre commande le résultat :
 * LA SURCOTE PARENTALE, sur la pension relevée, pour les trimestres de
   l'année qui précède l'âge légal ;
 * LA MAJORATION POUR ENFANTS, sur ce plancher, plafonnée en euros à la
-  complémentaire (:func:`plafond_majoration`) ;
+  complémentaire (:func:`plafond_majoration`), et au traitement dans les
+  régimes du code des pensions (:func:`majoration_sous_le_traitement`) ;
 * LES DEUX MINIMA DES EXPLOITANTS AGRICOLES enfin, qui regardent toutes les
   pensions, majorations pour enfants comprises : la pension majorée de
   référence, qui relève leur pension de base (:func:`pension_majoree`), puis
@@ -80,6 +81,20 @@ POINTS_D_UNE_CARRIERE_COMPLETE = 3750
 #: contributif au lieu d'entrer dans la pension qu'on lui compare : décret
 #: n° 2008-1509 du 30 décembre 2008, dernier alinéa de D. 351-2-1.
 SURCOTE_AJOUTEE_AU_MINIMUM_DEPUIS = (2009, 4)
+
+#: La fiche du plafond de L. 18, que :class:`FichesDatees
+#: <retraite_notionnelle.scenarios.actuel.FichesDatees>` lit à la date d'effet
+#: (:func:`plafond_de_l_article_l18`).
+FICHE_DU_PLAFOND_L18 = "majoration_enfants_plafond_fonction_publique"
+
+#: Les plafonds qu'une version de cette fiche peut nommer : le traitement ou
+#: la solde de L. 15 qui a liquidé la pension.
+PLAFONDS_DE_L18 = ("traitement",)
+
+#: Ce qu'elle peut dire de la surcote : comptée dans la pension qu'on compare
+#: au traitement, ou laissée hors du plafond et servie au-delà (Conseil
+#: d'État, 29 décembre 2020, n° 428626).
+SURCOTES_DE_L18 = ("dans_le_plafond", "hors_du_plafond")
 
 
 def complement_minimum(nue: float, plancher: float, coefficient_surcote: float,
@@ -537,6 +552,10 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
     pensions = list(liquidees.regimes)
     eligibles_minimum = liquidees.minimum
     eligibles_garanti = liquidees.garanti
+    #: Ce que la surcote ajoute à chaque pension que le plafond de L. 18 borne :
+    #: le minimum garanti, qui se substitue à la pension, l'efface ; la surcote
+    #: parentale s'y ajoute.
+    surcotes_l18 = {eligible.indice: eligible.surcote for eligible in liquidees.plafonds}
     total = somme_ordonnee(p.montant for p in pensions)
     avantages: list[AvantageApplique] = []
     fiabilite_globale = Fiabilite.CERTIFIEE
@@ -735,6 +754,8 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                     detail=(f"{pension.detail} = {pension.montant:,.2f} €, "
                             f"porté au minimum garanti par + {complement:,.2f} €"),
                 )
+                if eligible.indice in surcotes_l18:
+                    surcotes_l18[eligible.indice] = 0.0
         if releve_garanti > 0:
             total += releve_garanti
             avantages.append(AvantageApplique(
@@ -844,6 +865,10 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
             )
             gain_parental += supplement
             trimestres_parentaux = max(trimestres_parentaux, acquis_parentaux)
+            if indice in surcotes_l18:
+                # La surcote parentale du fonctionnaire majore la pension « dans
+                # les mêmes conditions que celles prévues au III » (L. 14, IV).
+                surcotes_l18[indice] += supplement
         if gain_parental > 0:
             total += gain_parental
             fiabilite_globale = min(fiabilite_globale, fiabilite_parentale)
@@ -869,7 +894,13 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         plafond_commun: float | None = None
         #: (régime, part, soumise au plafond), dans l'ordre des pensions.
         parts: list[tuple[str, float, bool]] = []
-        for pension in pensions:
+        # Le plafond de L. 18, au traitement qui a liquidé la pension de chaque
+        # régime du code des pensions.
+        plafond_l18 = plafond_de_l_article_l18(moteur, carriere)
+        traitements = {eligible.indice: eligible.traitement
+                       for eligible in liquidees.plafonds}
+        bornee_au_traitement = False
+        for indice, pension in enumerate(pensions):
             if pension.montant <= 0.0:
                 continue
             regime = moteur.catalogue[pension.regime]
@@ -893,7 +924,19 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
             if taux <= 0:
                 continue
             part = pension.montant * taux
-            plafond = plafond_majoration(moteur, 
+            if (plafond_l18 is not None and indice in traitements
+                    and pension.regime in plafond_l18["parametres"]["regimes"]):
+                sous = majoration_sous_le_traitement(
+                    pension.montant, part, traitements[indice], surcotes_l18[indice],
+                    plafond_l18["parametres"]["surcote"] == "hors_du_plafond")
+                if sous < part:
+                    bornee_au_traitement = True
+                    fiabilite_globale = min(fiabilite_globale, Fiabilite.depuis_texte(
+                        plafond_l18["parametres"]["fiabilite"]))
+                    part = sous
+                    if part <= 0.0:
+                        continue
+            plafond = plafond_majoration(moteur,
                 pension.regime, periode, carriere, annee_liquidation
             )
             if plafond is None:
@@ -915,6 +958,8 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
             detail = f"jusqu'à {taux_cite:.0%} selon le régime"
             if plafonnee:
                 detail += ", plafonnée en euros à la complémentaire"
+            if bornee_au_traitement:
+                detail += ", bornée au traitement dans la fonction publique"
             avantages.append(AvantageApplique(
                 code="majoration_enfants",
                 libelle=("Majoration pour trois enfants et plus"
@@ -1045,6 +1090,50 @@ def plafond_majoration(moteur, code: str, periode: PeriodeRegime,
     return plafond * servie[0] / publiee[0]
 
 
+def plafond_de_l_article_l18(moteur, carriere: Carriere) -> dict | None:
+    """La version du plafond de L. 18 qui vaut à la date d'effet de la
+    pension (fiche ``majoration_enfants_plafond_fonction_publique``) ;
+    ``None`` quand aucun plafond ne la borne. Un plafond ou une surcote que le
+    moteur ne connaît pas l'arrête (§ 6.7)."""
+    version = moteur.fiches_datees.version(
+        FICHE_DU_PLAFOND_L18, date_d_effet(carriere) or ouvrir.SANS_DATE_D_EFFET)
+    if version is None or not version["parametres"].get("existe"):
+        return None
+    parametres = version["parametres"]
+    if parametres["plafond"] not in PLAFONDS_DE_L18:
+        raise ValueError(f"{FICHE_DU_PLAFOND_L18}.{version['id']} : plafond inconnu, "
+                         f"{parametres['plafond']!r}")
+    if parametres["surcote"] not in SURCOTES_DE_L18:
+        raise ValueError(f"{FICHE_DU_PLAFOND_L18}.{version['id']} : surcote inconnue, "
+                         f"{parametres['surcote']!r}")
+    return version
+
+
+def majoration_sous_le_traitement(montant: float, majoration: float, traitement: float,
+                                  surcote: float, hors_du_plafond: bool) -> float:
+    """La majoration pour enfants d'une pension du code des pensions, sous le
+    plafond de L. 18, V : « sans que le montant de la pension majorée puisse
+    excéder le montant du traitement ».
+
+    La majoration cède seule, la pension jamais : en 2017, la caisse ne
+    servait pas la majoration à qui la surcote portait déjà à 104 % du
+    traitement, sans réduire sa pension (Conseil d'État, 29 décembre 2020,
+    n° 428626, point 1). Le texte réduit, depuis 2004 et 2012, la pension et
+    la majoration « à due proportion » : le total est le même, la part de la
+    majoration plus forte.
+
+    ``hors_du_plafond`` : depuis cette décision, la pension qu'on compare au
+    traitement est celle d'avant ``surcote``, ce que la surcote lui ajoute —
+    elle « ne fait plus l'objet d'un plafonnement depuis la loi du 9 novembre
+    2010 » (point 10) —, et la surcote est servie au-delà (« Pension + ME =
+    100 % ; surcote servie sans plafond », CNRACL). Huit enfants au taux de
+    80 %, avec une surcote de 25 % : le traitement et la surcote, 120 % du
+    traitement ; sans surcote, 100 %.
+    """
+    base = montant - surcote if hors_du_plafond else montant
+    return max(0.0, min(majoration, traitement - base))
+
+
 def _taux_majoration_enfants(regime, nombre_enfants: int,
                              periode: PeriodeRegime | None = None) -> float:
     """Taux de majoration pour enfants, régime par régime.
@@ -1057,7 +1146,8 @@ def _taux_majoration_enfants(regime, nombre_enfants: int,
     l'Agirc-Arrco ont un taux par année d'acquisition, que
     :class:`~retraite_notionnelle.scenarios.actuel.MajorationsEnfantsPoints`
     porte et que l'appelant substitue à celui-ci ; leur plafond en euros est
-    :func:`plafond_majoration`.
+    :func:`plafond_majoration`. Celle de la fonction publique cède au
+    traitement : :func:`majoration_sous_le_traitement`.
     """
     if periode is not None and periode.taux_majoration_enfants:
         bareme = periode.taux_majoration_enfants

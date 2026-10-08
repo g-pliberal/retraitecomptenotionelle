@@ -1,0 +1,46 @@
+date: "2026-10-08"
+session: "action 138, étape 17, troisième partie : le plafond de L. 18, la pension civile majorée pour enfants bornée au traitement"
+consulte: >-
+  veille_droit.py (cinq fiches à relire, dont celle de cette étape, qui demandait le texte
+  qui excepte la surcote) ; l'index LEGI, mis à jour des incréments jusqu'au 7 octobre 2026,
+  et l'index JORF, récupérés, puis textes.py --inscrire (les cent trente et une
+  rédactions de la loi n° 2010-1330, que la fiche des parents de trois enfants cite,
+  entrent « à examiner ») ; dans l'index : L. 18 du code des pensions, ses cinq
+  rédactions de 1982 à 2023 ; L. 14, III, ses rédactions de 2004 à 2023, et son IV, la
+  surcote parentale ; le décret n° 65-773, article 19 ; le décret n° 2003-1306, article
+  24 ; le décret n° 65-836, article 11 ; le décret n° 2004-1056, article 20 ; la loi
+  n° 2011-1977, article 163 ; au JORF, la loi n° 64-1339 du 26 décembre 1964, dont seul
+  le sommaire est indexé. Hors de l'index : la décision du Conseil d'État du 29 décembre
+  2020, n° 428626, sur ArianeWeb ; la page du service des retraites de l'État « La
+  majoration pour enfants » et ses dépliants de janvier 2024 et d'avril 2026 ; la page
+  des employeurs de la CNRACL sur le calcul et le plafonnement du montant définitif, mise
+  à jour le 9 décembre 2025, et sa documentation juridique sur la majoration pour enfants,
+  du 29 novembre 2022 ; le code de Destinie 2 (src/DroitsRetr.cpp) et celui
+  d'OpenFisca-France-Pension (regimes/fonction_publique.py), aux commits du registre,
+  lus sans être recopiés.
+trouve: >-
+  Le code des pensions majore la pension de 10 % pour trois enfants et de 5 % par enfant
+  au-delà, « sans que le montant de la pension majorée puisse excéder le montant des
+  émoluments de base déterminés à l'article L. 15 » (L. 18, V, depuis 1982) ; la CNRACL
+  de même dès 1965 (décret n° 65-773, article 19), et le FSPOEIE (décret n° 65-836,
+  article 11). Depuis 2004, leurs décrets réduisent « à due proportion » la pension et la
+  majoration ; L. 18 depuis 2012, au traitement « revalorisé dans les conditions prévues
+  à l'article L. 16 » (loi n° 2011-1977, article 163). Aucun texte n'excepte la surcote :
+  c'est le Conseil d'État qui l'excepte, le 29 décembre 2020 (n° 428626, aux tables) —
+  le plafond « ne méconnaît pas, en lui-même », la convention européenne, mais son
+  application à qui la surcote, déplafonnée par la loi du 9 novembre 2010, porte au
+  traitement crée une différence de traitement sans rapport avec l'objet de L. 18 ; en
+  2017, la caisse refusait encore la majoration, sans réduire la pension, à une
+  inspectrice générale dont la surcote de 30 % portait la pension à 104 % de son
+  traitement. La CNRACL l'applique en bornant la pension sans sa surcote, majorée, et en
+  servant la surcote « sans plafond » ; le service des retraites de l'État écrit «
+  sauf en cas d'application d'une surcote ». Servi dans les deux moteurs, la majoration
+  cédant seule, la surcote hors du plafond depuis la décision.
+reste: >-
+  Un titre de pension ou un exemple chiffré publié d'une pension plafonnée, à rejouer, et
+  la façon dont le service des retraites de l'État sert la pension que le plafond borne
+  déjà sans sa surcote ; la rédaction de L. 18 du code de 1964, et l'article du code de
+  1948 qui majorait la pension pour enfants, qu'aucun index ne porte ; les plafonds des
+  régimes spéciaux qui copient L. 18 (Opéra, Comédie-Française, RATP, IEG, Banque de
+  France), trouvés en route. De l'étape 17, ensuite : la bonification du cinquième des
+  militaires, puis le régime général et les complémentaires.

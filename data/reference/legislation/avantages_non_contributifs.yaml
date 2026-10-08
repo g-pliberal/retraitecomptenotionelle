@@ -228,7 +228,7 @@ avantages:
       à la pension, donc croissante avec le revenu : c'est le seul avantage
       familial dont le montant augmente avec le salaire.
     base_legale: [L. 351-12 CSS, L. 18 CPCMR, accord national interprofessionnel Agirc-Arrco]
-    fiches: [majoration_dix_pour_cent]
+    fiches: [majoration_dix_pour_cent, majoration_enfants_plafond_fonction_publique]
     creation: 1945
     fin: null
     regimes: tous les régimes de base, Agirc-Arrco, Ircantec

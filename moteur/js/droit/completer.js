@@ -6,7 +6,8 @@
  * toutes ensemble, dans l'ordre où il l'applique — le minimum contributif et
  * son écrêtement (`complementMinimum`), le minimum garanti de la fonction
  * publique, la surcote parentale, la majoration pour enfants, plafonnée en
- * euros à la complémentaire (`plafondMajoration`), les deux minima des
+ * euros à la complémentaire (`plafondMajoration`) et au traitement dans les
+ * régimes du code des pensions (`majorationSousLeTraitement`), les deux minima des
  * exploitants agricoles enfin (`pensionMajoree`, `complementDifferentiel`).
  * L'ASPA n'en est pas :
  * c'est l'étape « foyer et net » (`foyer.js`). Ce que l'étape écrit,
@@ -15,7 +16,7 @@
 
 import { DateMois } from "../calendrier.js";
 import { formatFixe, formatPourcentage } from "../format.js";
-import { Fiabilite, nomFiabilite } from "../serie.js";
+import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import { dateDEffet, derniereAnnee, ligneCotisee } from "./commun.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
 import * as etranger from "./etranger.js";
@@ -46,6 +47,57 @@ export const HEURES_DU_COMPLEMENT = 1820;
  * complément retranche de 2015 à octobre 2021 (D. 732-166-4).
  */
 export const POINTS_D_UNE_CARRIERE_COMPLETE = 3750;
+
+/**
+ * La fiche du plafond de L. 18, que `FichesDatees` lit à la date d'effet
+ * (`plafondDeLArticleL18`).
+ */
+export const FICHE_DU_PLAFOND_L18 = "majoration_enfants_plafond_fonction_publique";
+
+/** Les plafonds qu'une version de cette fiche peut nommer : le traitement. */
+export const PLAFONDS_DE_L18 = ["traitement"];
+
+/**
+ * Ce qu'elle peut dire de la surcote : comptée dans la pension qu'on compare au
+ * traitement, ou laissée hors du plafond et servie au-delà (Conseil d'État,
+ * 29 décembre 2020, n° 428626).
+ */
+export const SURCOTES_DE_L18 = ["dans_le_plafond", "hors_du_plafond"];
+
+/**
+ * La version du plafond de L. 18 qui vaut à la date d'effet de la pension ;
+ * null quand aucun plafond ne la borne. Un plafond ou une surcote que le moteur
+ * ne connaît pas l'arrête. Voir `plafond_de_l_article_l18` du Python.
+ */
+export function plafondDeLArticleL18(moteur, carriere) {
+  const version = moteur.fichesDatees.version(
+    FICHE_DU_PLAFOND_L18, dateDEffet(carriere) ?? ouvrir.SANS_DATE_D_EFFET);
+  if (version === null || !version.parametres.existe) {
+    return null;
+  }
+  const parametres = version.parametres;
+  if (!PLAFONDS_DE_L18.includes(parametres.plafond)) {
+    throw new Error(`${FICHE_DU_PLAFOND_L18}.${version.id} : plafond inconnu, `
+      + `${JSON.stringify(parametres.plafond)}`);
+  }
+  if (!SURCOTES_DE_L18.includes(parametres.surcote)) {
+    throw new Error(`${FICHE_DU_PLAFOND_L18}.${version.id} : surcote inconnue, `
+      + `${JSON.stringify(parametres.surcote)}`);
+  }
+  return version;
+}
+
+/**
+ * La majoration pour enfants d'une pension du code des pensions, sous le
+ * plafond de L. 18, V : elle cède seule, la pension jamais ; hors du plafond,
+ * la pension se compare au traitement sans sa surcote, servie au-delà. Voir
+ * `majoration_sous_le_traitement` du Python.
+ */
+export function majorationSousLeTraitement(montant, majoration, traitement, surcote,
+  horsDuPlafond) {
+  const base = horsDuPlafond ? montant - surcote : montant;
+  return Math.max(0.0, Math.min(majoration, traitement - base));
+}
 
 /**
  * Ce que la pension majorée de référence (PMR) ajoute à la pension de base des
@@ -381,6 +433,10 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
   const pensions = [...liquidees.regimes];
   const eligiblesMinimum = liquidees.minimum;
   const eligiblesGaranti = liquidees.garanti;
+  // Ce que la surcote ajoute à chaque pension que le plafond de L. 18 borne : le
+  // minimum garanti l'efface, la surcote parentale s'y ajoute.
+  const surcotesL18 = new Map(
+    (liquidees.plafonds ?? []).map((eligible) => [eligible.indice, eligible.surcote]));
   let total = pensions.reduce((somme, p) => somme + p.montant, 0.0);
   const avantages = [];
   let fiabiliteGlobale = Fiabilite.CERTIFIEE;
@@ -582,6 +638,9 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
             + `${formatFixe(pension.montant, 2, true)} €, porté au minimum `
             + `garanti par + ${formatFixe(complement, 2, true)} €`,
         };
+        if (surcotesL18.has(eligible.indice)) {
+          surcotesL18.set(eligible.indice, 0.0);
+        }
       }
     }
     if (releveGaranti > 0) {
@@ -678,6 +737,11 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       };
       gainParental += supplement;
       trimestresParentaux = Math.max(trimestresParentaux, trimestres);
+      if (surcotesL18.has(indice)) {
+        // La surcote parentale du fonctionnaire majore la pension « dans les
+        // mêmes conditions que celles prévues au III » (L. 14, IV).
+        surcotesL18.set(indice, surcotesL18.get(indice) + supplement);
+      }
     }
     if (gainParental > 0) {
       total += gainParental;
@@ -705,7 +769,13 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     let plafondCommun = null;
     // [régime, part, soumise au plafond], dans l'ordre des pensions.
     const parts = [];
-    for (const pension of pensions) {
+    // Le plafond de L. 18, au traitement qui a liquidé la pension de chaque
+    // régime du code des pensions.
+    const plafondL18 = plafondDeLArticleL18(moteur, carriere);
+    const traitements = new Map(
+      (liquidees.plafonds ?? []).map((eligible) => [eligible.indice, eligible.traitement]));
+    let borneeAuTraitement = false;
+    for (const [indice, pension] of pensions.entries()) {
       if (pension.montant <= 0.0) {
         continue;
       }
@@ -725,7 +795,22 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       if (taux <= 0) {
         continue;
       }
-      const part = pension.montant * taux;
+      let part = pension.montant * taux;
+      if (plafondL18 !== null && traitements.has(indice)
+          && plafondL18.parametres.regimes.includes(pension.regime)) {
+        const sous = majorationSousLeTraitement(
+          pension.montant, part, traitements.get(indice), surcotesL18.get(indice),
+          plafondL18.parametres.surcote === "hors_du_plafond");
+        if (sous < part) {
+          borneeAuTraitement = true;
+          fiabiliteGlobale = Math.min(fiabiliteGlobale,
+            fiabiliteDepuisTexte(plafondL18.parametres.fiabilite));
+          part = sous;
+          if (part <= 0.0) {
+            continue;
+          }
+        }
+      }
       const plafond = plafondMajoration(
         moteur, pension.regime, periode, carriere, anneeLiquidation,
       );
@@ -751,6 +836,9 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       let detail = `jusqu'à ${formatPourcentage(tauxCite, 0)} selon le régime`;
       if (plafonnee) {
         detail += ", plafonnée en euros à la complémentaire";
+      }
+      if (borneeAuTraitement) {
+        detail += ", bornée au traitement dans la fonction publique";
       }
       avantages.push({
         code: "majoration_enfants",

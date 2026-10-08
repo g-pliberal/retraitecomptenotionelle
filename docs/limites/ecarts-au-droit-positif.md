@@ -394,6 +394,22 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   2026. Le régime des exploitants étant déjà le plus approché du catalogue, la
   porter ici donnerait un chiffre plus précis d'apparence et pas davantage de
   vérité.
+- **Le plafond de la majoration pour enfants des fonctionnaires.** Depuis le
+  8 octobre 2026, la pension majorée du code des pensions est bornée au
+  traitement qui l'a liquidée (L. 18, V, et les décrets de la CNRACL et du
+  FSPOEIE ; fiche `majoration_enfants_plafond_fonction_publique`) : sans
+  surcote, le plafond mord à sept enfants au pourcentage que les bonifications
+  portent à son maximum, à huit au pourcentage ordinaire. Depuis la décision
+  du Conseil d'État du 29 décembre 2020, la surcote reste hors du plafond, et
+  le modèle la sert au-delà aux trois régimes, comme la CNRACL ; le service
+  des retraites de l'État écrit « sauf en cas d'application d'une surcote »,
+  ce qui ne diffère que pour la pension que le plafond borne déjà sans elle.
+  Restent trois écarts : le modèle ne retire que la majoration, quand le
+  texte réduit pension et majoration « à due proportion » — la pension servie
+  est la même, la part de la majoration plus faible — ; il date l'exception de
+  la décision, quand le Conseil d'État date la différence de traitement de la
+  loi du 9 novembre 2010 ; et la rédaction d'avant 1964, qu'aucun index ne
+  porte, n'est pas lue : la pension de ce temps-là n'est pas bornée.
 - **Le minimum de pension des IEG.** Depuis le 1er juillet 2008, la CNIEG
   porte au minimum — huit cents, neuf cents ou mille euros de 2008, selon
   quinze, trente ou trente-cinq ans de services, revalorisés depuis — la

@@ -1397,6 +1397,27 @@ def _cas() -> list[dict]:
         **parents, "statut": "fonctionnaire_hospitalier_actif", "naissance": "1966",
         "debut": "22", "liquidation": "50", "naissances": "1989,1991,1994",
     }))
+    # LE PLAFOND DE L. 18 (action 138, étape 17) : la pension majorée pour
+    # enfants du code des pensions bornée au traitement. Huit enfants au taux de
+    # 80 %, partie en 2017, à l'État puis à la CNRACL : 100 % du traitement. La
+    # surcote qui porte la pension au plafond lui retire sa majoration en 2017,
+    # non plus en 2021, depuis la décision du Conseil d'État du 29 décembre
+    # 2020 ; huit enfants et une surcote en 2022, le traitement et la surcote.
+    huit = {**parents, "enfants": "8", "naissance": "1955", "debut": "22",
+            "naissances": "1977,1979,1981,1983,1985,1987,1989,1991"}
+    cas.append(("plafond_l18_huit_enfants", {**huit, "liquidation": "62"}))
+    cas.append(("plafond_l18_huit_enfants_cnracl", {
+        **huit, "statut": "fonctionnaire_territorial_hospitalier", "liquidation": "62",
+    }))
+    cas.append(("plafond_l18_huit_enfants_surcote", {**huit, "liquidation": "67"}))
+    cas.append(("plafond_l18_surcote_2017", {
+        **parents, "naissance": "1950", "debut": "22", "liquidation": "67",
+        "naissances": "1972,1974,1976",
+    }))
+    cas.append(("plafond_l18_surcote_2021", {
+        **parents, "naissance": "1954", "debut": "22", "liquidation": "67",
+        "naissances": "1976,1978,1980",
+    }))
     # LES BASCULES DES VERSIONS, là où le modèle datait à l'année ce que le
     # droit date au jour : la veille et le lendemain de trois bornes que les
     # fiches du domaine déclarent approchées. Chaque témoin fige ce que le

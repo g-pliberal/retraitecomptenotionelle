@@ -1,28 +1,333 @@
 schema_version: 1
 id: majoration_enfants_plafond_fonction_publique
 intitule: >-
-  La pension civile majorée pour enfants ne peut excéder le traitement qui l'a liquidée,
-  revalorisé ; au-delà, pension et majoration sont réduites à due proportion.
-etat: manquante
-effet: >-
-  Ne mord qu'à partir de sept enfants au taux de 80 %, ou de six avec une surcote
-  que la caisse excepte : quelques familles, que le modèle majore sans plafond.
+  La pension majorée pour enfants du code des pensions ne peut excéder le traitement ou
+  la solde qui l'a liquidée (L. 18, V, et les décrets de la CNRACL et du FSPOEIE) : au-delà,
+  la majoration cède, la pension reste entière. Depuis la décision du Conseil d'État du
+  29 décembre 2020, la surcote n'entre plus dans la pension qu'on compare au traitement :
+  elle est servie au-delà du plafond.
+domaine: enfants
+regimes:
+- fonction_publique_etat
+- cnracl
+- fspoeie
+etape: completer_tous_regimes
+face: droit
+etat: approchee
+lit:
+- la pension du régime à l'étape qui complète, minimum garanti, majoration des assurés
+  handicapés et surcote parentale comprises
+- le traitement ou la solde de L. 15 qui l'a liquidée, et la part que la surcote de L. 14,
+  III, y ajoute (droit/liquider.py, EligiblePlafondEnfants)
+- le taux de la majoration pour enfants, 10 % pour trois enfants et 5 % par enfant au-delà
+- liquidation.date_effet
+ecrit:
+- la majoration pour enfants de la pension, bornée à ce qui la porte au traitement
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
+# moteur (droit/completer.py, `majoration_sous_le_traitement`, et son jumeau)
+# lit : `existe` ; `regimes`, ceux dont la pension est bornée ; `plafond`,
+# `traitement` seul connu — le traitement ou la solde de L. 15 à la date
+# d'effet ; `surcote`, `dans_le_plafond` (la pension surcotée se compare au
+# traitement) ou `hors_du_plafond` (la pension se compare sans sa surcote, et
+# la surcote est servie au-delà) ; `fiabilite`, que le résultat prend quand le
+# plafond mord. Un plafond ou une surcote que le moteur ne connaît pas
+# l'arrête.
+versions:
+- id: avant_le_code_de_1964
+  statut: supposee
+  hypothese: >-
+    le code des pensions de la loi du 20 septembre 1948 n'est ni dans l'index LEGI ni
+    dans celui du JORF ; on ne lui prête aucun plafond, et la majoration reste entière,
+    comme le modèle la servait avant cette fiche
+  fiabilite: faible
+  bornes:
+    liquidation.date_effet: [null, 1964-01-01]
+  contenu:
+    droit: aucun plafond lu
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: code_de_1964
+  statut: supposee
+  hypothese: >-
+    la rédaction de L. 18 d'avant le 14 juillet 1982 n'est pas dans l'index LEGI, ni la
+    loi n° 64-1339 du 26 décembre 1964 dans celui du JORF au-delà de son sommaire ; on
+    lui prête la rédaction de 1982, que le décret n° 65-773 portait pour la CNRACL dès
+    1965 et le décret n° 65-836 pour le FSPOEIE, lu depuis 1978 ; la version part du 1er
+    janvier 1964, comme la période du code de 1964 dans les fiches des régimes
+  fiabilite: faible
+  textes:
+  - {id: LEGIARTI000006368224, article: 19, en_vigueur: 1965-09-12}
+  - {id: LEGIARTI000006368225, article: 19, en_vigueur: 1977-12-31}
+  - {id: LEGIARTI000006766757, article: 11, en_vigueur: 1978-03-19}
+  bornes:
+    liquidation.date_effet: [1964-01-01, 1982-07-14]
+  contenu:
+    droit: >-
+      « Le taux de la majoration de la pension est fixé à 10 p. 100 de son montant pour
+      les trois premiers enfants et à 5 p. 100 par enfant au-delà du troisième, sans que
+      le montant de la pension majorée puisse excéder le montant des émoluments de base
+      déterminés à l'article 15 » (décret n° 65-773, article 19, V) ; le FSPOEIE de même,
+      aux émoluments de base de son article 9 (décret n° 65-836, article 11, V)
+    beneficiaire: le titulaire d'une pension qui a élevé au moins trois enfants
+    parametres:
+      existe: true
+      regimes: [fonction_publique_etat, cnracl, fspoeie]
+      plafond: traitement
+      surcote: dans_le_plafond
+      fiabilite: estimee
+  exemples: aucun trouvé
+- id: code_de_1982
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006362713, article: L. 18, en_vigueur: 1982-07-14}
+  - {id: LEGIARTI000006362714, article: L. 18, en_vigueur: 1991-07-27}
+  - {id: LEGIARTI000006368226, article: 19, en_vigueur: 1985-11-19}
+  - {id: LEGIARTI000006766758, article: 11, en_vigueur: 1985-03-10}
+  - {id: LEGIARTI000006400887, article: 24, en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006400888, article: 24, en_vigueur: 2006-12-13}
+  - {id: LEGIARTI000006781490, article: 20, en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006781491, article: 20, en_vigueur: 2006-12-13}
+  nee_de: LEGIARTI000006362713
+  bornes:
+    liquidation.date_effet: [1982-07-14, 2012-01-01]
+  contenu:
+    droit: >-
+      « sans que le montant de la pension majorée puisse excéder le montant des
+      émoluments de base déterminés à l'article L. 15 » (L. 18, V) ; la CNRACL et le
+      FSPOEIE de même, puis, depuis le 1er janvier 2004, « En cas de dépassement, le
+      montant de la pension et de la majoration pour enfants sont réduits à due
+      proportion par rapport à 100 % du traitement précité revalorisé » (décret n°
+      2003-1306, article 24, V ; décret n° 2004-1056, article 20, V, aux émoluments de
+      base). La surcote, née en 2004, compte dans la pension qu'on compare au traitement.
+    beneficiaire: le titulaire d'une pension qui a élevé au moins trois enfants
+    parametres:
+      existe: true
+      regimes: [fonction_publique_etat, cnracl, fspoeie]
+      plafond: traitement
+      surcote: dans_le_plafond
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: loi_de_finances_pour_2012
+  statut: lue
+  textes:
+  - {id: LEGIARTI000025048273, article: 163, en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000025076852, article: L. 18, en_vigueur: 2012-01-01}
+  nee_de: LEGIARTI000025048273
+  bornes:
+    liquidation.date_effet: [2012-01-01, 2020-12-29]
+  contenu:
+    droit: >-
+      « sans que le montant de la pension majorée puisse excéder le montant du traitement
+      ou de la solde mentionné à l'article L. 15 et revalorisé dans les conditions prévues
+      à l'article L. 16. En cas de dépassement, les montants de la pension et de la
+      majoration sont réduits à due proportion » (L. 18, V, rédigé par la loi n°
+      2011-1977, article 163, I, 1°, qui l'étend par décret à la CNRACL et au FSPOEIE, II).
+      La surcote compte encore dans la pension qu'on compare au traitement : en 2017, la
+      caisse refuse la majoration à qui la surcote porte à 104 % du traitement (Conseil
+      d'État, 29 décembre 2020, n° 428626, point 1).
+    beneficiaire: le titulaire d'une pension qui a élevé au moins trois enfants
+    parametres:
+      existe: true
+      regimes: [fonction_publique_etat, cnracl, fspoeie]
+      plafond: traitement
+      surcote: dans_le_plafond
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: conseil_d_etat_du_29_decembre_2020
+  statut: lue
+  textes:
+  - {id: "ECLI:FR:CECHR:2020:428626.20201229", en_vigueur: 2020-12-29}
+  - {id: LEGIARTI000047453210, article: L. 18, en_vigueur: 2023-04-16}
+  - {id: LEGIARTI000047456782, article: L. 18, en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047985951, article: 24, en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047985989, article: 20, en_vigueur: 2023-09-01}
+  nee_de: "ECLI:FR:CECHR:2020:428626.20201229"
+  bornes:
+    liquidation.date_effet: [2020-12-29, null]
+  contenu:
+    droit: >-
+      Le plafond « ne méconnaît pas, en lui-même », la convention européenne des droits
+      de l'homme (point 5) ; mais « l'application de la règle de plafonnement prévue par
+      le V de l'article L. 18 […], lorsque sont cumulés le bénéfice de la majoration de
+      l'article L. 18 et celui de la surcote résultant du III de l'article L. 14 qui ne
+      fait plus l'objet d'un plafonnement depuis la loi du 9 novembre 2010, a pour effet
+      de créer une différence de traitement […] dépourvue de rapport avec l'objet de
+      l'article L. 18 » (point 10). La CNRACL l'applique ainsi : « Pension + surcote + ME
+      : Pension + ME = 100 % ; surcote servie sans plafond », la majoration « calculée sur
+      la base du montant de la pension après application du coefficient de minoration ou
+      de majoration ». La surcote parentale de L. 14, IV, née en 2023, majore la pension
+      « dans les mêmes conditions que celles prévues au III ».
+    beneficiaire: le titulaire d'une pension qui a élevé au moins trois enfants
+    parametres:
+      existe: true
+      regimes: [fonction_publique_etat, cnracl, fspoeie]
+      plafond: traitement
+      surcote: hors_du_plafond
+      fiabilite: moyenne
+  exemples: aucun trouvé
+approximations:
+- version: [code_de_1982, loi_de_finances_pour_2012, conseil_d_etat_du_29_decembre_2020]
+  ecart: >-
+    En cas de dépassement, le texte réduit « à due proportion » la pension et la
+    majoration ; le modèle ne réduit que la majoration, à ce qui porte la pension au
+    traitement. La pension servie est la même ; la part qu'il attribue à la majoration
+    est plus faible — 20 % du traitement au lieu de 26 %, pour huit enfants au taux de
+    80 %. Quand la surcote porte à elle seule la pension au-delà du traitement, avant
+    2021, il ne retire que la majoration, comme la caisse l'a fait (point 1 de la
+    décision), quand la réduction à due proportion ramènerait la pension sous son
+    montant.
+  effet: aucun sur la pension servie ; sur la part de la majoration des seules pensions plafonnées
+- version: [code_de_1982]
+  regime: fonction_publique_etat
+  ecart: >-
+    Le plafond n'est opposé qu'à la date d'effet, puis le modèle fait vivre la pension et
+    sa majoration au même indice : c'est ce que L. 18 dit depuis 2012, au traitement «
+    revalorisé dans les conditions prévues à l'article L. 16 », et le décret de la CNRACL
+    depuis 2004 ; de 2004 à 2011, la rédaction de l'État opposait les émoluments de base,
+    sans les revaloriser.
+  effet: non mesuré ; les seules pensions de l'État plafonnées entre 2004 et 2011
+- version: [loi_de_finances_pour_2012]
+  ecart: >-
+    Le Conseil d'État date la différence de traitement de la loi du 9 novembre 2010, qui a
+    déplafonné la surcote ; la caisse refusait encore la majoration en 2017, et la sert
+    depuis la décision, aux pensions antérieures sur demande, dans le délai de révision
+    de L. 55 : le modèle date l'exception de la décision.
+  effet: >-
+    non mesuré ; les pensions de 2010 à 2020 que la surcote portait au traitement, dont la
+    majoration n'est servie qu'à qui en a demandé la révision
+- version: [conseil_d_etat_du_29_decembre_2020]
+  ecart: >-
+    La surcote parentale de L. 14, IV, que ni la décision ni les caisses ne nomment, est
+    comptée avec la surcote, hors du plafond : elle majore la pension « dans les mêmes
+    conditions que celles prévues au III ».
+  effet: non mesuré ; au plus quatre trimestres, 5 % de la pension
 sources:
-  lu_le: 2026-09-24
-  prochaine_relecture: 2027-06-30
+  lu_le: 2026-10-08
+  prochaine_relecture: 2027-04-30
+  lectures_divergentes:
+  - >-
+    Le service des retraites de l'État écrit que la pension majorée est « limitée à 100 %
+    de votre dernier traitement indiciaire brut détenu depuis au moins 6 mois, sauf en cas
+    d'application d'une surcote » : lu à la lettre, aucune borne dès un trimestre de
+    surcote. La CNRACL borne la pension sans sa surcote, majorée, et sert la surcote
+    au-delà ; le modèle la suit aux trois régimes, ce qui garde le plafond « en lui-même »
+    (point 5 de la décision) sans que la surcote le fasse mordre. Les deux lectures ne
+    diffèrent que si la pension sans sa surcote, majorée, dépasse déjà le traitement —
+    sept enfants au taux de 80 %, huit à 75 % — : le modèle sert alors le traitement et
+    la surcote, la phrase du SRE la majoration entière.
+  - >-
+    Destinie 2 (src/DroitsRetr.cpp:877-878, au commit 4c1d34b) borne le taux de la
+    majoration à sr_fp/pension_fp − 1, la surcote comprise, à toute date : la règle du
+    modèle jusqu'au 28 décembre 2020, que la décision du Conseil d'État écarte depuis.
+  - >-
+    OpenFisca-France-Pension (regimes/fonction_publique.py, variable pension, au commit
+    1c45423) sert min(pension brute + majoration, salaire de référence) : la surcote
+    comprise, à toute date, et la pension surcotée au-delà du traitement ramenée à lui,
+    quand la caisse ne retire que la majoration (point 1 de la décision).
   a_relire:
   - >-
-    Lire le texte qui excepte la surcote, que L. 18 ne porte pas, avant d'appliquer
-    le plafond.
+    Chercher un titre de pension ou un exemple chiffré publié d'une pension plafonnée,
+    et la façon dont le service des retraites de l'État sert la majoration quand la
+    pension sans sa surcote, majorée, dépasse déjà le traitement.
+  - >-
+    Lire la rédaction de L. 18 du code de 1964, et l'article du code de 1948 qui majorait
+    la pension pour enfants, qu'aucun des deux index ne porte.
   lectures:
   - type: legifrance
-    reference: L. 18 CPCMR, version du 1er septembre 2023, lu dans l'index LEGI
-    date: 2026-09-24
+    reference: >-
+      L. 18 du code des pensions, ses cinq rédactions de 1982 à 2023 (LEGIARTI000006362713,
+      LEGIARTI000006362714, LEGIARTI000025076852, LEGIARTI000047453210,
+      LEGIARTI000047456782), lues dans l'index LEGI
+    date: 2023-09-01
+  - type: legifrance
+    reference: >-
+      décret n° 65-773, article 19, V (LEGIARTI000006368224 à LEGIARTI000006368226) ;
+      décret n° 2003-1306, article 24, V (LEGIARTI000006400887, LEGIARTI000006400888,
+      LEGIARTI000047985951) ; décret n° 65-836, article 11, V (LEGIARTI000006766757,
+      LEGIARTI000006766758) ; décret n° 2004-1056, article 20, V (LEGIARTI000006781490,
+      LEGIARTI000006781491, LEGIARTI000047985989)
+    date: 2023-09-01
+  - type: jorf
+    reference: >-
+      loi n° 2011-1977 du 28 décembre 2011 de finances pour 2012, article 163
+      (JORFARTI000025045594) : le V de L. 18 récrit, étendu à la CNRACL et au FSPOEIE,
+      applicable aux instances en cours au 13 janvier 2011
+    date: 2011-12-29
   - type: autre
     reference: >-
-      Service des retraites de l'État, page « La majoration pour enfants » : « limité
-      à 100 % de votre dernier traitement […] sauf en cas d'application d'une surcote
-      »
-    date: 2026-09-24
-textes_a_rattacher:
-- reference: L. 18, V, CPCMR (LEGIARTI000047456782)
+      Conseil d'État, 4e et 1re chambres réunies, 29 décembre 2020, n° 428626, mentionné
+      aux tables du recueil Lebon (ECLI:FR:CECHR:2020:428626.20201229) : la majoration due
+      à une inspectrice générale de trois enfants dont la surcote de 30 % portait la
+      pension à 104 % de son traitement
+    url: https://www.conseil-etat.fr/fr/arianeweb/CE/decision/2020-12-29/428626
+    date: 2020-12-29
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, page « La majoration pour enfants » : « limité à
+      100 % de votre dernier traitement indiciaire brut détenu depuis au moins 6 mois,
+      sauf en cas d'application d'une surcote » ; dépliant « La majoration pour enfants »
+      d'avril 2026 : « Le total de la retraite et de la majoration ne peut dépasser le
+      montant du traitement servant au calcul de votre pension »
+    url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-majoration-pour-enfants
+    date: 2026-04-01
+  - type: autre
+    reference: >-
+      CNRACL, page des employeurs « Montant définitif de la pension : calcul et
+      plafonnement », mise à jour le 9 décembre 2025 : « Pension + Majoration pour enfants
+      (ME) : 100 % » ; « Pension + surcote + ME : Pension + ME = 100 % ; surcote servie
+      sans plafond »
+    url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-la-pension/montant-definitif-de-la-pension-calcul-et-plafonnement
+    date: 2025-12-09
+  - type: autre
+    reference: >-
+      CNRACL, documentation juridique, « Montant de la majoration pour enfants, mise en
+      paiement et règles de cumul », publiée le 29 novembre 2022 : « En cas de
+      dépassement, la majoration et la pension sont réduits à due proportion » ; la
+      majoration « calculée sur la base du montant de la pension après application du
+      coefficient de minoration ou de majoration, ou sur le montant du minimum garanti si
+      celui-ci est plus favorable »
+    url: https://www.juris-cnracl.retraites.fr/pension-normale/les-accessoires-de-pension/majoration-pour-enfants/montant-de-la-majoration-pour-enfants-mise-en-paiement-et-regles-de-cumul
+    date: 2022-11-29
+code:
+  python: >-
+    droit/liquider.py : EligiblePlafondEnfants, Pensions.plafonds ; droit/completer.py
+    : majoration_sous_le_traitement, completer ; scenarios/actuel.py : FichesDatees
+  javascript: >-
+    moteur/js/droit/liquider.js : Pensions.plafonds ; moteur/js/droit/completer.js :
+    majorationSousLeTraitement, completer ; moteur/js/regimes.js : FichesDatees
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_plafond_majoration_enfants.py]
+referents:
+  destinie_2:
+    equivalent: >-
+      DroitsRetr::AppliqueBonif (src/DroitsRetr.cpp:877-878), tauxmajo_fp =
+      max(0, min(0,1 + 0,05 (n − 3), sr_fp/pension_fp − 1)), au commit 4c1d34b
+    confrontation: >-
+      aucune exécutée ; tests/test_plafond_majoration_enfants.py rejoue sa formule, qui
+      est celle du modèle jusqu'au 28 décembre 2020, et son écart depuis est déclaré plus
+      haut (lectures_divergentes)
+  openfisca_france_pension:
+    equivalent: >-
+      regimes/fonction_publique.py, variable pension, min_(pension_brute +
+      majoration_pension, salaire_de_reference), au commit 1c45423
+    confrontation: aucune exécutée ; son écart est déclaré plus haut (lectures_divergentes)
+historique:
+- >-
+  2026-09-24 — inscrite manquante à la veille de l'action 89, sur la page du service des
+  retraites de l'État, qui excepte la surcote sans citer de texte.
+- >-
+  2026-10-08 — écrite en versions à l'étape 17 de l'action 138, sur le point de Destinie 2
+  au registre (chantier 138.17) : le texte qui excepte la surcote n'est pas une loi, mais
+  la décision du Conseil d'État du 29 décembre 2020.
+reformes:
+- fillon_2003
+- woerth_2010
+effet: >-
+  Les pensions du code des pensions que la majoration pour enfants porterait au-delà du
+  traitement : sans surcote, à partir de sept enfants au taux de 80 %, de huit à 75 % ;
+  la pension majorée y est ramenée au traitement. Jusqu'en 2020, la surcote comptait :
+  une pension que la surcote portait au plafond perdait sa majoration, dès trois
+  enfants ; depuis 2021, la surcote est servie au-delà.

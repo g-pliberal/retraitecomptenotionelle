@@ -71,7 +71,7 @@ export const ANNEE_DES_REVENUS_AGRICOLES = 2016;
 /** Ce que l'étape « liquider chaque régime » écrit. */
 export class Pensions {
   constructor({ personne, regimes, minimum, garanti, requis, taux, fiabilite,
-    agricole = null }) {
+    agricole = null, plafonds = [] }) {
     this.personne = personne;
     this.regimes = regimes;
     this.minimum = minimum;
@@ -84,6 +84,11 @@ export class Pensions {
      * majorée de référence (`eligibleAgricole`) ; null sinon.
      */
     this.agricole = agricole;
+    /**
+     * Les pensions du code des pensions, que le plafond de L. 18 borne : le
+     * traitement qui les a liquidées, et ce que la surcote leur ajoute.
+     */
+    this.plafonds = plafonds;
   }
 
   /** Les pensions, telles que le schéma de l'étape les décrit. */
@@ -118,6 +123,12 @@ export class Pensions {
         duree: this.agricole.duree,
         enfants: this.agricole.enfants,
         reference: this.agricole.reference,
+      };
+    }
+    for (const eligible of this.plafonds) {
+      regimes[eligible.indice].plafond_enfants = {
+        traitement: eligible.traitement,
+        surcote: eligible.surcote,
       };
     }
     return {
@@ -166,6 +177,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
   const eligiblesMinimum = [];
   // Régimes de la fonction publique qui portent le minimum garanti.
   const eligiblesGaranti = [];
+  // Les pensions du code des pensions, que le plafond de L. 18 borne.
+  const eligiblesPlafond = [];
   // La pension des non-salariés agricoles, que la pension majorée de
   // référence relève.
   let agricole = null;
@@ -675,6 +688,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       : null;
     // La fraction d'après 1997 seule, que le détail dit avant l'autre.
     const montantApres1997 = montant;
+    // Ce que la surcote ajoute à la pension, en euros : le plafond de L. 18 la
+    // laisse hors de la pension qu'il compare au traitement.
+    const surcoteDuMontant = Math.max(0.0, montant * (1.0 - 1.0 / coefficientSurcote));
     if (fractionCultes !== null) {
       montant += fractionCultes.montant;
       fiabiliteGlobale = Math.min(fiabiliteGlobale, fractionCultes.fiabilite);
@@ -786,6 +802,14 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           ? proratisation : null,
       });
     }
+    if (REGIMES_CODE_DES_PENSIONS.has(code) && !forfaitaire) {
+      // LE PLAFOND DE L. 18 : la pension majorée pour enfants ne peut excéder
+      // le traitement ou la solde qui l'a liquidée. Voir le Python.
+      eligiblesPlafond.push({
+        indice: indicePension, traitement: salaireReference,
+        surcote: Math.min(surcoteDuMontant, montant),
+      });
+    }
     // Salaire de référence au centime et taux au millième : à l'euro et au
     // centième, refaire « SR × taux × durée » ratait le montant de 1,20 € sur
     // un régime spécial, le taux arrondi pesant à lui seul 0,89 €.
@@ -833,6 +857,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     taux: tauxRetenu,
     fiabilite: fiabiliteGlobale,
     agricole,
+    plafonds: eligiblesPlafond,
   });
 }
 

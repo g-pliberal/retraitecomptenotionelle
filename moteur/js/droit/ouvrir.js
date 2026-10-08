@@ -87,7 +87,7 @@ const REGIMES_DES_SERVICES_DES_PARENTS = new Set(
   [...REGIMES_CODE_DES_PENSIONS, "pensions_civiles_1853"]);
 
 /** La date d'effet à laquelle se lit la fiche d'une carrière sans départ. */
-const SANS_DATE_D_EFFET = "9999-12-01";
+export const SANS_DATE_D_EFFET = "9999-12-01";
 
 /** Ce que l'étape « ouvrir le droit » dit d'une demande. */
 export class Ouverture {

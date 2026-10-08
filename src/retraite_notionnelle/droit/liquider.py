@@ -455,6 +455,23 @@ class EligibleMinimumGaranti:
 
 
 @dataclass(frozen=True)
+class EligiblePlafondEnfants:
+    """La pension d'un régime du code des pensions, dont le plafond de L. 18,
+    V, borne la majoration pour enfants au traitement qui l'a liquidée
+    (:func:`~.completer.majoration_sous_le_traitement`, fiche
+    ``majoration_enfants_plafond_fonction_publique``)."""
+
+    #: Indice de la pension dans :attr:`Pensions.regimes`.
+    indice: int
+    #: Le traitement ou la solde de L. 15, en euros par an à la date d'effet.
+    traitement: float
+    #: La part du montant que la surcote de L. 14, III, y ajoute, en euros :
+    #: depuis la décision du Conseil d'État du 29 décembre 2020, la pension se
+    #: compare au traitement sans elle.
+    surcote: float
+
+
+@dataclass(frozen=True)
 class EligibleAgricole:
     """La pension des non-salariés agricoles, que la pension majorée de
     référence relève et dont le complément différentiel de la RCO lit les
@@ -507,6 +524,8 @@ class Pensions:
     #: La pension des non-salariés agricoles, quand elle porte la pension
     #: majorée de référence ; ``None`` sinon.
     agricole: EligibleAgricole | None = None
+    #: Les pensions du code des pensions, que le plafond de L. 18 borne.
+    plafonds: tuple[EligiblePlafondEnfants, ...] = ()
 
     def donnees(self) -> dict:
         """Les pensions, telles que le schéma de l'étape les décrit."""
@@ -536,6 +555,11 @@ class Pensions:
                 "duree": self.agricole.duree,
                 "enfants": self.agricole.enfants,
                 "reference": self.agricole.reference,
+            }
+        for eligible in self.plafonds:
+            regimes[eligible.indice]["plafond_enfants"] = {
+                "traitement": eligible.traitement,
+                "surcote": eligible.surcote,
             }
         return {"schema_version": SCHEMA_VERSION, "personne": self.personne,
                 "regimes": regimes, "requis": self.requis, "taux": self.taux,
@@ -590,6 +614,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
     eligibles_minimum: list[EligibleMinimum] = []
     #: Régimes de la fonction publique qui portent le minimum garanti.
     eligibles_garanti: list[EligibleMinimumGaranti] = []
+    #: Les pensions du code des pensions, que le plafond de L. 18 borne.
+    eligibles_plafond: list[EligiblePlafondEnfants] = []
     #: La pension des non-salariés agricoles, que la pension majorée de
     #: référence relève.
     agricole: EligibleAgricole | None = None
@@ -1163,6 +1189,9 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         )
         #: La fraction d'après 1997 seule, que le détail dit avant l'autre.
         montant_apres_1997 = montant
+        #: Ce que la surcote ajoute à la pension, en euros : le plafond de L. 18
+        #: la laisse hors de la pension qu'il compare au traitement.
+        surcote_du_montant = max(0.0, montant * (1.0 - 1.0 / coefficient_surcote))
         if fraction_cultes is not None:
             montant += fraction_cultes.montant
             fiabilite_globale = min(fiabilite_globale, fraction_cultes.fiabilite)
@@ -1301,6 +1330,15 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     else None
                 ),
             ))
+        if (code in coordonner.REGIMES_CODE_DES_PENSIONS
+                and periode.pension_forfaitaire_annuelle is None):
+            # LE PLAFOND DE L. 18 : la pension majorée pour enfants ne peut
+            # excéder le traitement ou la solde qui l'a liquidée. L'étape qui
+            # complète lit ce traitement, et ce que la surcote ajoute à la
+            # pension, que la retraite pour invalidité a pu relever.
+            eligibles_plafond.append(EligiblePlafondEnfants(
+                indice=len(pensions), traitement=salaire_reference,
+                surcote=min(surcote_du_montant, montant)))
         detail = (
                 f"{'forfait' if periode.pension_forfaitaire_annuelle is not None else 'SR'} "
                 # Salaire de référence au centime et taux au millième : à
@@ -1350,6 +1388,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         taux=taux_retenu,
         fiabilite=fiabilite_globale,
         agricole=agricole,
+        plafonds=tuple(eligibles_plafond),
     )
 
 
