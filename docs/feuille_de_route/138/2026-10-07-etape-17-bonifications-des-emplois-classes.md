@@ -3,14 +3,12 @@
 **Reprise, au 8 octobre 2026.** Fait : les bonifications des policiers, des
 surveillants pénitentiaires et des sapeurs-pompiers, la majoration des
 hospitaliers actifs (cette note) ; le départ anticipé des parents de trois
-enfants (note « parents de trois enfants ») ; le plafond de L. 18 (note
-« plafond de L. 18 ») ; la majoration exceptionnelle de septembre 2023, servie
-par « faire vivre » dans les deux moteurs (note « majoration exceptionnelle »).
-Reste, dans cet ordre : la bonification du cinquième des militaires (L. 12, i)
-; puis le régime général et les complémentaires — versements uniques, pension
-maximale, taux pleins de L. 351-8, majorations pour enfants à charge et pour
-conjoint à charge. Détail : plus bas, « Ce qui reste », et les notes du
-8 octobre pour leurs restes.
+enfants, le plafond de L. 18 et la majoration exceptionnelle de septembre 2023
+(notes du 8 octobre). Reste, dans cet ordre : la bonification du cinquième des
+militaires (L. 12, i) ; puis le régime général et les complémentaires —
+versements uniques, pension maximale, taux pleins de L. 351-8, majorations pour
+enfants à charge et pour conjoint à charge. Détail : plus bas, « Ce qui
+reste », et les notes du 8 octobre pour leurs restes.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.17 ». L'étape réunit
 neuf règles qui manquent au dépôt ; la plus coûteuse, mesurée par TRAJECTOiRE,
