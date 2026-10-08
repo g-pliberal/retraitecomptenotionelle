@@ -639,8 +639,10 @@ exemples:
   # le droit d'avant le 1er avril 1983, au taux de l'âge atteint le 31 mars,
   # 55 %. La Cnav compare les deux pensions, la nouvelle sur la durée
   # « corrigée » après soixante-cinq ans, chacune ramenée au maximum. Le
-  # salaire annuel moyen de l'exemple ne se reconstruit pas ; le taux retenu,
-  # et la pension rapportée à ce salaire avant le maximum, si.
+  # salaire annuel moyen de l'exemple ne se reconstruit pas ; le taux retenu
+  # et la pension rapportée à ce salaire, si, ou, quand le salaire du témoin
+  # passe aussi le plafond, la pension ramenée à sa part du plafond (fiche
+  # pension_maximale_regime_general).
   - id: cnav_22_83_taux_acquis_60_trimestres
     source: {editeur: "Cnav", reference: "circulaire n° 22/83 du 16 février 1983, point 313, exemples de calculs, 1er cas", verifie_le: "2026-09-27"}
     enonce: >-
@@ -662,9 +664,11 @@ exemples:
       maximum, 48 906 ; durée corrigée 150, 97 859 × 50 × 150 / (100 × 150)
       = 48 929,50, ramenée au maximum, 44 460 : « On retiendra la prestation
       qui résulte des dispositions antérieures au 1-4-83 ». Taux 55 %,
-      pension de 55 % × 145/150 du salaire annuel moyen avant le maximum.
+      pension ramenée au maximum de 55 % du plafond, 48 906 F sur 88 920 F :
+      le salaire annuel moyen du témoin, 1,06 fois le plafond de 1983, la
+      porte au-delà comme celui de la circulaire, 1,10 fois.
     carriere: {naissance: "1917-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "1983-09", trimestres_valides: 145}
-    attendu: {taux_liquidation: 0.55, pension_base_sur_sam: 0.5316666666666666}
+    attendu: {taux_liquidation: 0.55, pension_base_sur_plafond: 0.55}
 
   - id: cnav_22_83_taux_acquis_117_trimestres
     source: {editeur: "Cnav", reference: "circulaire n° 22/83 du 16 février 1983, point 313, exemples de calculs, 3ème cas", verifie_le: "2026-09-27"}
@@ -688,8 +692,9 @@ exemples:
         ne mord qu'au-delà de 150/117 plafond : pour celle du témoin, la
         pension nouvelle sur la durée corrigée, 50 % × 132/150, passe
         l'ancienne, 55 % × 117/150, et c'est elle que le moteur sert, comme
-        la Cnav la servirait. Le moteur ne porte pas non plus le maximum des
-        pensions.
+        la Cnav la servirait. Le moteur porte le maximum, qui décide le cas
+        quand le salaire moyen est celui de la circulaire
+        (tests/test_pension_maximale.py) : seul ce salaire manque au témoin.
       fiche: decote_avant_1983
       depuis: "2026-09-28"
 

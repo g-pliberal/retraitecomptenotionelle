@@ -18,7 +18,7 @@ import { salaireMoyenAnnuel } from "../carriere.js";
 import * as chrono from "../chronologie.js";
 import { formatFixe, formatPourcentage } from "../format.js";
 import { FIN_PEREQUATION, coefficientTraitementDiffere, dateIso } from "../revalorisation.js";
-import { Fiabilite, nomFiabilite } from "../serie.js";
+import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import * as acquerir from "./acquerir.js";
 import { dateDEffet, derniereAnnee } from "./commun.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
@@ -60,6 +60,12 @@ const BAREMES_REGIMES_SPECIAUX = new Set(["regimes_speciaux", "regimes_speciaux_
  * partir de 2016.
  */
 const MINORATION_AGE_MINIMUM_GARANTI = { 2011: 9, 2012: 7, 2013: 5, 2014: 3, 2015: 1 };
+
+/**
+ * La fiche du maximum des pensions du régime général, que `FichesDatees` lit
+ * à la date d'effet (`pensionMaximale`).
+ */
+export const FICHE_DE_LA_PENSION_MAXIMALE = "pension_maximale_regime_general";
 
 /**
  * LA RÉFORME AGRICOLE DE 2026 COUPE LA CARRIÈRE AU 1ER JANVIER 2016 : les
@@ -557,6 +563,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       // n° 50-1225, article 59-1, aux salariés agricoles).
       trimestresRegime = Math.min(trimestresRegime, periode.trimestres_retenus_maximum);
     }
+    // Le maximum des pensions du régime au taux plein, et sa fiabilité :
+    // l'ajournement, le taux acquis ou la surcote le multiplient.
+    const maximum = pensionMaximale(moteur, code, carriere);
 
     let taux = periode.taux_plein || 0.5;
     // La version de la retraite pour invalidité, quand ce régime du code des
@@ -628,13 +637,18 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       // La durée majorée après l'âge du taux plein, puis la garantie du taux
       // acquis au 31 mars 1983 : la Cnav compare la pension à 50 % sur la
       // durée corrigée et celle du taux acquis sur la durée non corrigée
-      // (circulaire n° 8/89, point 21), et sert la plus forte.
+      // (circulaire n° 8/89, point 21), et sert la plus forte, chacune ramenée
+      // à son maximum (circulaire n° 22/83, point 313).
       const majores = dureeMajoreeApresTauxPlein(
         moteur, periode, carriere, durees, membres, trimestresRegime,
         proratisation, ageAnnulation,
       );
       const acquis = tauxAcquisAu31Mars1983(moteur, periode, carriere);
-      if (acquis !== null && acquis * trimestresRegime > taux * majores) {
+      if (acquis !== null && tauxAcquisLEmporte(
+        acquis, trimestresRegime, taux, majores,
+        maximum === null || salaireReference <= 0 ? null
+          : maximum[0] * proratisation / salaireReference,
+        periode.taux_plein || 0.5, coefficientSurcote)) {
         coefficientSurcote = acquis / (periode.taux_plein || 0.5);
         taux = acquis;
       } else if (majores > trimestresRegime) {
@@ -684,6 +698,16 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     tauxRetenu = Math.max(tauxRetenu, taux);
     const prorata = Math.min(trimestresRegime / proratisation, rapportMaximum);
     let montant = salaireReference * taux * prorata;
+    // LE MAXIMUM DES PENSIONS : la pension calculée ne passe pas la part du
+    // plafond de l'année que la date d'effet fixe, multipliée par ce que le taux
+    // gagne au-delà du taux plein ; la surcote s'applique à la pension ramenée
+    // au maximum, et la passe (fiche `pension_maximale_regime_general`).
+    const plafondMaximum = maximum === null ? null : maximum[0] * coefficientSurcote;
+    const rameneeAuMaximum = plafondMaximum !== null && montant > plafondMaximum;
+    if (rameneeAuMaximum) {
+      montant = plafondMaximum;
+      fiabiliteGlobale = Math.min(fiabiliteGlobale, maximum[1]);
+    }
     // Le taux plein, que le minimum contributif et les majorations de la
     // fraction d'avant 1998 des cultes demandent : lu pour eux seuls.
     const tauxPleinDuRegime = (dureesCultes !== null
@@ -727,7 +751,11 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       const coefficient = invalidite.coefficientDeMajoration(
         versionDuHandicap, enSituation, trimestresRegime);
       if (coefficient > 0) {
-        const entiere = salaireReference * (periode.taux_plein || 0.5);
+        // La pension d'une durée entière, que le maximum borne aussi.
+        let entiere = salaireReference * (periode.taux_plein || 0.5);
+        if (maximum !== null) {
+          entiere = Math.min(entiere, maximum[0]);
+        }
         const brute = montant * coefficient;
         majorationHandicap = Math.max(0.0, Math.min(brute, entiere - montant));
         montant += majorationHandicap;
@@ -836,6 +864,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         + `× taux ${formatPourcentage(taux, 3)} × ${trimestresRegime}/${proratisation}`
         + (trimestresRegime / proratisation > rapportMaximum
           ? `, taux maximum ${formatPourcentage(periode.taux_maximum_bonifie, 0)} atteint`
+          : "")
+        + (rameneeAuMaximum
+          ? `, ramenée au maximum des pensions, ${formatFixe(plafondMaximum, 2, true)} €`
           : "")
         + (dureeNonMajoree === null ? ""
           : `, ${dureeNonMajoree} trimestres majorés après l'âge du taux plein`)
@@ -2004,6 +2035,48 @@ export function tauxAcquisAu31Mars1983(moteur, periode, carriere) {
     return null;
   }
   return (ancienne.taux_plein || 0.5) * (1.0 + coefficient * ecoules);
+}
+
+/**
+ * Le maximum que la pension de `code` ne peut passer avant ce que le taux gagne
+ * au-delà du taux plein, et la fiabilité de sa version ; `null` sans maximum :
+ * la part du plafond de l'année de la date d'effet que la fiche
+ * `pension_maximale_regime_general` fixe. Voir `liquider.pension_maximale`.
+ */
+export function pensionMaximale(moteur, code, carriere) {
+  const dateEffet = dateDEffet(carriere);
+  const regle = dateEffet === null ? null
+    : moteur.fichesDatees.regle(FICHE_DE_LA_PENSION_MAXIMALE, dateEffet);
+  if (!regle || !regle.existe || !regle.regimes.includes(code)) {
+    return null;
+  }
+  let pourcentage = null;
+  for (const [debut, valeur] of regle.pourcentages) {
+    if (String(debut) <= dateEffet) {
+      pourcentage = Number(valeur);
+    }
+  }
+  if (pourcentage === null) {
+    return null;
+  }
+  const plafond = moteur.macro.plafond_securite_sociale.valeur(carriere.anneeLiquidation);
+  return [pourcentage * plafond, fiabiliteDepuisTexte(regle.fiabilite)];
+}
+
+/**
+ * La pension au taux acquis au 31 mars 1983 passe-t-elle celle de la règle
+ * nouvelle ? Les deux en « taux × trimestres », chacune ramenée à son maximum
+ * (circulaire n° 22/83, point 313). Voir `liquider.taux_acquis_l_emporte`.
+ */
+export function tauxAcquisLEmporte(acquis, trimestres, taux, majores,
+                                   maximumEnTrimestres, tauxPlein, coefficient) {
+  let ancienne = acquis * trimestres;
+  let nouvelle = taux * majores;
+  if (maximumEnTrimestres !== null) {
+    ancienne = Math.min(ancienne, maximumEnTrimestres * acquis / tauxPlein);
+    nouvelle = Math.min(nouvelle, maximumEnTrimestres * coefficient);
+  }
+  return ancienne > nouvelle;
 }
 
 /**

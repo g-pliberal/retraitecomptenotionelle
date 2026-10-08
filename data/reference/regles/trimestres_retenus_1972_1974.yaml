@@ -16,20 +16,16 @@ effet: >-
   sur la majoration de durée des mères, de cinq enfants et plus en 1972, six en 1973,
   sept en 1974. Une mère de huit enfants partie à soixante-cinq ans en 1972 voit ses 140
   trimestres ramenés à 128, 8,6 % de pension en moins. Aucun des 535 témoins n'est
-  touché.
+  touché. Le 2 de l'article 72-1 renvoie à un arrêté le « montant maximum que ne pourront
+  dépasser les pensions servies » de 1972 à 1974, 44 %, 46 % puis 48 % du plafond : la
+  fiche `pension_maximale_regime_general` le porte, et il ramène la pension de cette mère,
+  au salaire moyen, dès 1973.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Aucun exemple chiffré publié n'a été trouvé : la fiche reste `transcrite`.
-  - >-
-    Le 2 de l'article 72-1 renvoie à un arrêté le « montant maximum que ne pourront dépasser
-    les pensions servies » de 1972 à 1974 ; la circulaire Cnav n° 2/72 le chiffre à 44 %,
-    46 % puis 48 % du plafond à soixante-cinq ans. Le modèle ne le porte pas : avec 128
-    trimestres sur 150, une pension au taux plein reste sous 43 % du plafond, et il ne
-    pèserait qu'avec la majoration d'ajournement au-delà de soixante-cinq ans (fiche
-    `decote_avant_1983`).
   lectures:
   - type: legifrance
     reference: >-

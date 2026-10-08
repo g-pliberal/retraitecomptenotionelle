@@ -1364,8 +1364,14 @@ referents:
           sociale applicable l'année de votre départ », sauf surcote
           ; circulaire Cnav n° 22/83, que cite la fiche du dépôt. Ne
           mord guère qu'avant 1983, par l'ajournement et les taux
-          acquis.
-        etat: a_reprendre
+          acquis. Reprise le 8 octobre 2026 : fiche
+          pension_maximale_regime_general, dans les deux moteurs, sur
+          l'arrêté du 9 octobre 1986 (article 2) et le barème de la
+          Cnav — 40 % du plafond jusqu'en 1971, 44, 46 et 48 % de 1972
+          à 1974 —, la surcote appliquée à la pension ramenée au
+          maximum (circulaire Cnav n° 2007-5) ; il mord aussi de 1973
+          à 1990, le salaire annuel moyen passant le plafond.
+        etat: repris
         chantier: "138.17"
       - quoi: >-
           Il sert la majoration de l'Agirc-Arrco pour enfants à

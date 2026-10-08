@@ -1755,6 +1755,13 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         base = next(p.montant for p in resultat.pensions_par_regime
                     if p.regime == "regime_general")
         return base / sam
+    if cle == "pension_base_sur_plafond":
+        # La pension du régime général rapportée au plafond de l'année : celle
+        # que le maximum ramène, à sa part du plafond (fiche
+        # ``pension_maximale_regime_general``).
+        base = next(p.montant for p in resultat.pensions_par_regime
+                    if p.regime == "regime_general")
+        return base / simulateur.macro.plafond_securite_sociale(carriere.annee_liquidation)
     if cle == "coefficients_des_regimes":
         # Le coefficient d'anticipation ou de majoration qu'une section
         # applique à sa complémentaire, tel que la formule affichée
@@ -1991,6 +1998,7 @@ TOLERANCES = {
     "majoration_enfants_sur_pensions": {"abs": 1e-9},
     "majorations_enfants_des_regimes": {"abs": 1e-9},
     "pension_base_sur_sam": {"abs": 1e-9},
+    "pension_base_sur_plafond": {"abs": 1e-9},
     "coefficients_des_regimes": {"abs": 1e-9},
     "pension_regime_general_mensuelle": {"abs": 0.05},
     # Tronquée au centime, comme la caisse la calcule.

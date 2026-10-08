@@ -61,6 +61,11 @@ SCHEMA_VERSION = 1
 #: Aucun à partir de 2016.
 MINORATION_AGE_MINIMUM_GARANTI = {2011: 9, 2012: 7, 2013: 5, 2014: 3, 2015: 1}
 
+#: La fiche du maximum des pensions du régime général, que :class:`FichesDatees
+#: <retraite_notionnelle.scenarios.actuel.FichesDatees>` lit à la date d'effet
+#: (:func:`pension_maximale`).
+FICHE_DE_LA_PENSION_MAXIMALE = "pension_maximale_regime_general"
+
 #: Coefficients d'anticipation de l'Agirc-Arrco, sous leur forme de barème.
 #: Le régime n'applique pas la décote du régime de base : il a ses propres
 #: coefficients, publiés en deux tables — l'une indexée sur les trimestres
@@ -1051,6 +1056,9 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             # pension normale, non la pension entière.
             trimestres_regime = min(trimestres_regime,
                                     periode.trimestres_retenus_maximum)
+        #: Le maximum des pensions du régime au taux plein, et sa fiabilité :
+        #: l'ajournement, le taux acquis ou la surcote le multiplient.
+        maximum = pension_maximale(moteur, code, carriere)
 
         taux = periode.taux_plein or 0.5
         #: La version de la retraite pour invalidité, quand ce régime du code
@@ -1126,12 +1134,17 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             # corrigée, et une pension au taux supérieur à 50 % déterminé en
             # fonction de l'âge de l'assuré au 31 mars 1983 avec la durée
             # d'assurance au régime général non corrigée » (circulaire
-            # n° 8/89, point 21), et sert la plus forte.
+            # n° 8/89, point 21), et sert la plus forte, chacune ramenée à son
+            # maximum (circulaire n° 22/83, point 313).
             majores = duree_majoree_apres_taux_plein(
                 moteur, periode, carriere, durees, membres, trimestres_regime,
                 proratisation, age_annulation)
             acquis = taux_acquis_au_31_mars_1983(moteur, periode, carriere)
-            if acquis is not None and acquis * trimestres_regime > taux * majores:
+            if acquis is not None and taux_acquis_l_emporte(
+                    acquis, trimestres_regime, taux, majores,
+                    None if maximum is None or salaire_reference <= 0
+                    else maximum[0] * proratisation / salaire_reference,
+                    periode.taux_plein or 0.5, coefficient_surcote):
                 coefficient_surcote = acquis / (periode.taux_plein or 0.5)
                 taux = acquis
             elif majores > trimestres_regime:
@@ -1184,6 +1197,17 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         taux_retenu = max(taux_retenu, taux)
         prorata = min(trimestres_regime / proratisation, rapport_maximum)
         montant = salaire_reference * taux * prorata
+        # LE MAXIMUM DES PENSIONS : la pension calculée ne passe pas la part
+        # du plafond de l'année que la date d'effet fixe, multipliée par ce que
+        # le taux gagne au-delà du taux plein — l'ajournement d'avant 1983 et
+        # le taux acquis au 31 mars 1983 le majorent comme le taux, la surcote
+        # s'applique à la pension ramenée au maximum, et la passe (fiche
+        # ``pension_maximale_regime_general``).
+        plafond_maximum = None if maximum is None else maximum[0] * coefficient_surcote
+        ramenee_au_maximum = plafond_maximum is not None and montant > plafond_maximum
+        if ramenee_au_maximum:
+            montant = plafond_maximum
+            fiabilite_globale = min(fiabilite_globale, maximum[1])
         #: Le taux plein, que le minimum contributif et les majorations de la
         #: fraction d'avant 1998 des cultes demandent : durée requise, ou âge
         #: d'annulation de la décote, ou inaptitude. Lu pour eux seuls.
@@ -1240,7 +1264,10 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             coefficient = invalidite.coefficient_de_majoration(
                 version_du_handicap, en_situation, trimestres_regime)
             if coefficient > 0:
+                # La pension d'une durée entière, que le maximum borne aussi.
                 entiere = salaire_reference * (periode.taux_plein or 0.5)
+                if maximum is not None:
+                    entiere = min(entiere, maximum[0])
                 brute = montant * coefficient
                 majoration_handicap = max(0.0, min(brute, entiere - montant))
                 montant += majoration_handicap
@@ -1373,6 +1400,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 f"× {trimestres_regime}/{proratisation}"
                 + (f", taux maximum {periode.taux_maximum_bonifie:.0%} atteint"
                    if trimestres_regime / proratisation > rapport_maximum else "")
+                + (f", ramenée au maximum des pensions, {plafond_maximum:,.2f} €"
+                   if ramenee_au_maximum else "")
                 + ("" if duree_non_majoree is None else
                    f", {duree_non_majoree} trimestres majorés après l'âge du taux plein")
                 + ("" if pour_invalidite is None else
@@ -2889,6 +2918,60 @@ def taux_acquis_au_31_mars_1983(moteur, periode: PeriodeRegime,
     if ecoules <= 0:
         return None
     return (ancienne.taux_plein or 0.5) * (1.0 + coefficient * ecoules)
+
+
+def pension_maximale(moteur, code: str, carriere: Carriere) -> tuple[float, Fiabilite] | None:
+    """Le maximum que la pension de ``code`` ne peut passer avant ce que le
+    taux gagne au-delà du taux plein, et la fiabilité de sa version ; ``None``
+    sans maximum.
+
+    « Les dispositions qui précèdent ne pourront avoir pour effet : a) De
+    porter une pension ou une rente de vieillesse à une somme supérieure à
+    50% du plafond » (arrêté du 9 octobre 1986, article 2) : 40 % du plafond
+    jusqu'en 1971, 44, 46 puis 48 % de 1972 à 1974, au plafond de l'année de
+    la date d'effet (fiche ``pension_maximale_regime_general``). L'appelant
+    le multiplie par le coefficient de l'ajournement d'avant 1983, du taux
+    acquis au 31 mars 1983 ou de la surcote : « le pourcentage susvisé est
+    majoré de 1,25% par trimestre d'ajournement », et la surcote s'applique à
+    la pension « ramenée au maximum » (circulaire Cnav n° 2007-5).
+    """
+    date_effet = date_d_effet(carriere)
+    regle = (None if date_effet is None
+             else moteur.fiches_datees.regle(FICHE_DE_LA_PENSION_MAXIMALE, date_effet))
+    if not regle or not regle["existe"] or code not in regle["regimes"]:
+        return None
+    pourcentage = None
+    for debut, valeur in regle["pourcentages"]:
+        if str(debut) <= date_effet:
+            pourcentage = float(valeur)
+    if pourcentage is None:
+        return None
+    plafond = moteur.macro.plafond_securite_sociale(carriere.annee_liquidation)
+    return pourcentage * plafond, Fiabilite.depuis_texte(regle["fiabilite"])
+
+
+def taux_acquis_l_emporte(acquis: float, trimestres: int, taux: float, majores: int,
+                          maximum_en_trimestres: float | None, taux_plein: float,
+                          coefficient: float) -> bool:
+    """La pension au taux acquis au 31 mars 1983 passe-t-elle celle de la règle
+    nouvelle ? Les deux en « taux × trimestres », qu'un même salaire annuel
+    moyen et un même dénominateur multiplient : l'ancienne sur la durée non
+    corrigée, la nouvelle sur la durée « corrigée » après soixante-cinq ans.
+
+    La Cnav les compare « ramenée[s] au maximum » (circulaire n° 22/83, point
+    313), le maximum de l'ancienne suivant son taux : « Dispositions
+    antérieures au 1.4.83 Montant maximum de la pension : 48 906 Dispositions
+    applicables à partir du 1-4-83 Montant maximum de la pension : 44 460 ».
+    ``maximum_en_trimestres`` est le maximum au taux plein dans la même
+    unité — maximum × dénominateur / salaire annuel moyen —, ``coefficient``
+    ce que la règle nouvelle gagne au-delà du taux plein ; ``None`` : aucun
+    maximum.
+    """
+    ancienne, nouvelle = acquis * trimestres, taux * majores
+    if maximum_en_trimestres is not None:
+        ancienne = min(ancienne, maximum_en_trimestres * acquis / taux_plein)
+        nouvelle = min(nouvelle, maximum_en_trimestres * coefficient)
+    return ancienne > nouvelle
 
 
 def trimestres_d_ajournement(carriere: Carriere, age_taux_plein: float) -> int:

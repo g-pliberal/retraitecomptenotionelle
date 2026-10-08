@@ -4,8 +4,8 @@
 emplois classés (cette note) ; le départ des parents de trois enfants, le
 plafond de L. 18, la majoration de septembre 2023, les versements uniques,
 l'arrondi des services et le minimum garanti, la bonification du cinquième des
-militaires (notes du 8 octobre). Reste, dans cet ordre : la pension maximale du
-régime général, les taux pleins de L. 351-8, les majorations pour enfants à
+militaires, la pension maximale du régime général (notes du 8 octobre). Reste,
+dans cet ordre : les taux pleins de L. 351-8, les majorations pour enfants à
 charge et pour conjoint à charge. Détail : plus bas, « Ce qui reste », et les
 notes du 8 octobre pour leurs restes.
 

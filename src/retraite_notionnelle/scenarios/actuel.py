@@ -1112,7 +1112,9 @@ class FichesDatees:
     exploitants de la même date, que ``revalorisation.relever_les_exploitants`` lit,
     et les versements uniques des petites pensions, que
     ``completer.verser_en_capital`` lit, et le décompte des services du code
-    des pensions au jour, que ``compter.decompte_des_services`` lit.
+    des pensions au jour, que ``compter.decompte_des_services`` lit, et le
+    maximum des pensions du régime général, que ``liquider.pension_maximale``
+    lit.
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
@@ -1124,7 +1126,8 @@ class FichesDatees:
             "majoration_enfants_plafond_fonction_publique",
             "majoration_exceptionnelle_2023", "relevement_des_exploitants_2023",
             "versement_forfaitaire_unique", "versement_unique_agirc_arrco",
-            "versement_unique_ircantec", "decompte_des_services_fonction_publique")
+            "versement_unique_ircantec", "decompte_des_services_fonction_publique",
+            "pension_maximale_regime_general")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

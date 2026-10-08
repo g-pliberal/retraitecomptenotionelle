@@ -1,0 +1,45 @@
+date: "2026-10-08"
+session: "action 138, étape 17, huitième partie : la pension maximale du régime général"
+consulte: >-
+  veille_droit.py (quatre fiches à relire, aucune de cette étape) ; l'index LEGI, mis à
+  jour des incréments jusqu'au 8 octobre 2026, puis textes.py --inscrire (une rédaction
+  nouvelle, D. 732-166 du code rural, au 9 octobre 2026) ; L. 161-17-2 et L. 161-17-3
+  n'ont pas de rédaction postérieure au 31 décembre 2025 (fiche
+  fin_de_la_suspension_2028). Dans l'index LEGI : R. 351-27, R. 351-29 et ses
+  rédactions, R. 351-29-1, R. 351-30, D. 351-1-4 et D. 351-1-5, dont aucun n'écrit le
+  maximum ; le décret n° 45-0179, article 72-1 (1972-1985) ; l'arrêté du 8 janvier
+  1986, article 3, et celui du 9 octobre 1986, articles 1 à 4 ; le décret n° 51-727,
+  article 2, qui nomme le maximum des assurances sociales agricoles. Dans l'index JORF :
+  les deux arrêtés du 28 janvier 1972 qui fixent le plafond des pensions de vieillesse,
+  dont il ne garde que la notice. Hors des index : le barème « Montant maximum de la
+  retraite personnelle » de la Cnav, par son API ; les circulaires Cnav n° 2/72, n°
+  22/83, n° 2004-37 et n° 2007-5, par sa recherche ; la fiche F21552 de
+  service-public.fr, vérifiée le 1er septembre 2026 ; le code d'OpenFisca-France-Pension
+  (pension_maximale).
+trouve: >-
+  Aucun article du code n'écrit le maximum : la fiche de service-public cite l'arrêté du
+  9 octobre 1986, en vigueur, dont l'article 2 interdit à la revalorisation de « porter
+  une pension ou une rente de vieillesse à une somme supérieure à 50% du plafond »,
+  pourcentage « majoré de 1,25% par trimestre d'ajournement » pour les liquidations
+  d'après soixante-cinq ans et d'avant le 1er avril 1983, et majoré « compte tenu des
+  coefficients de majoration acquis » pour les assurés de plus de soixante-cinq ans au
+  1er avril 1983. De 1972 à 1974, l'arrêté du 28 janvier 1972, que l'article 72-1
+  prévoit et que la circulaire n° 2/72 transcrit : 44 %, 46 % puis 48 % du plafond,
+  majorés de 1,10, 1,15 et 1,20 % par trimestre d'ajournement. Le barème de la Cnav
+  vaut 40 % du plafond de 1949 à 1971, 50 % depuis 1975, au franc près les années où le
+  plafond ne change pas ; il porte en 1965 la valeur de 1966 (lecture divergente). La
+  surcote : la Cnav ne ramenait pas au maximum la pension surcotée en 2004
+  (circulaire n° 2004-37) ; depuis la lettre ministérielle du 1er septembre 2006, elle
+  ramène au maximum la pension calculée, puis y applique la surcote (circulaire n°
+  2007-5) ; OpenFisca-France-Pension calcule la surcote sur la pension non bornée. La
+  fiche pension_maximale_regime_general les sert, dans les deux moteurs ; le deuxième
+  cas de la circulaire n° 22/83, 55 % du plafond, se rejoue, et le troisième se
+  tranche par le maximum, quand le salaire moyen est le sien. Et les 64 650 F de la
+  Compagnie générale des eaux ne sont pas la pension maximale de 1990 ou de 1991.
+reste: >-
+  Le maximum des salariés agricoles, des artisans et des commerçants, et celui de la
+  pension unique des régimes alignés qu'un autre que le régime général liquide. Un texte
+  qui fixe le maximum de 1949 à 1974 et dise s'il suivait l'ajournement avant 1972. Le
+  maximum des arrérages revalorisés, avant 1987 et en 2021-2022. De l'étape 17, ensuite :
+  les taux pleins de L. 351-8, les majorations pour enfants à charge et pour conjoint à
+  charge.

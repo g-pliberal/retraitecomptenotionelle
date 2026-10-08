@@ -26,12 +26,11 @@ effet: >-
   1er avril 1983 garde le taux acquis au 31 mars (`liquider.taux_acquis_au_31_mars_1983`)
   sur la durée non majorée, si cette pension passe celle de 50 % sur la durée majorée
   après soixante-cinq ans (fiche `majoration_duree_apres_65_ans`), comme dans les deux
-  premiers exemples de la circulaire Cnav n° 22/83 ; le troisième, qu'un salaire moyen de
-  1,7 plafond et le maximum décident, est un écart connu. Cinq écarts restent, aucun
-  mesuré. Une pension de janvier à mars 1983 relève encore de l'âge seul : le moteur, qui
+  premiers exemples de la circulaire Cnav n° 22/83, chacune ramenée à son maximum (fiche
+  `pension_maximale_regime_general`) ; le troisième, qu'un salaire moyen de 1,7 plafond
+  décide, est un écart connu. Quatre écarts restent, aucun mesuré. Une pension de janvier à mars 1983 relève encore de l'âge seul : le moteur, qui
   choisit la période à l'année, lui applique la règle d'avril et sert le taux plein à
-  soixante ans à qui a 150 trimestres. Le maximum des pensions n'est pas porté, qui ramène
-  parfois la pension du taux acquis. Les autres taux pleins d'avant 1983 — inaptitude,
+  soixante ans à qui a 150 trimestres. Les autres taux pleins d'avant 1983 — inaptitude,
   travaux pénibles de l'ordonnance de 1945, déportation, services de guerre, travail
   manuel, ouvrières mères de famille, agents non titulaires de soixante-trois ans dès le
   1er juillet 1982 — tiennent à des faits que le modèle ne porte pas. Chez les salariés
@@ -53,11 +52,6 @@ sources:
     sans minimum contributif. Le moteur liquidant au mois de l'anniversaire (fiche
     `date_effet_mois_suivant`), la coupure seule rangerait avant avril les pensions qui
     prennent effet le 1er avril.
-  - >-
-    Porter le maximum des pensions, que la circulaire Cnav n° 22/83 applique aux deux
-    pensions qu'elle compare (point 313, troisième exemple) et que l'article 72-1 du décret
-    de 1945 renvoie, de 1972 à 1974, à un arrêté ; le moteur n'en porte aucun, avant 1983
-    ni après.
   - >-
     Artisans et commerçants : le décret n° 84-560 (article 12-2 du décret n° 73-937) ouvre
     le 1er juillet 1984 le taux plein à soixante ans, pour 150 trimestres, aux prestations

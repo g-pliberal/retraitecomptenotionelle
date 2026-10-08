@@ -1,0 +1,325 @@
+schema_version: 1
+id: pension_maximale_regime_general
+intitule: >-
+  La pension du régime général ne peut dépasser un maximum : 40 % du plafond de la
+  Sécurité sociale de l'année jusqu'en 1971, 44 %, 46 % puis 48 % de 1972 à 1974, 50 %
+  depuis 1975, majoré comme le taux par l'ajournement au-delà de soixante-cinq ans avant
+  le 1er avril 1983, et par le taux acquis au 31 mars 1983 ; la surcote s'applique au
+  montant ramené au maximum, et le passe.
+domaine: salaire_de_reference
+regimes:
+- regime_general
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- la pension calculée du régime, salaire annuel moyen × taux × durée, avant la surcote
+- le coefficient que l'ajournement avant 1983, le taux acquis au 31 mars 1983 ou la
+  surcote appliquent au taux plein
+- le plafond de la Sécurité sociale de l'année de la date d'effet
+  (macro/plafond_securite_sociale.csv)
+- liquidation.date_effet
+ecrit:
+- la pension ramenée au maximum, et la formule qui le dit ; la comparaison de la
+  pension au taux acquis au 31 mars 1983 et de celle sur la durée corrigée, chacune
+  ramenée à son maximum
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
+# moteur (droit/liquider.py, `pension_maximale` et `taux_acquis_l_emporte`, et leur
+# jumeau) lit : `existe` ; `regimes`, ceux dont la pension est bornée ;
+# `pourcentages`, la part du plafond de la Sécurité sociale que le maximum vaut à
+# soixante-cinq ans, à chaque date — celui de la date d'effet est le dernier qui ne
+# la passe pas —, appliquée au plafond annuel de l'année de la date d'effet ;
+# `fiabilite`, que le résultat prend quand le maximum ramène la pension. Le maximum
+# se multiplie par le coefficient que le moteur applique au taux plein au-delà de
+# soixante-cinq ans — l'ajournement avant 1983, le taux acquis au 31 mars 1983 — ou
+# pour la surcote : la pension ramenée au maximum, puis majorée.
+versions:
+- id: avant_1949
+  statut: supposee
+  hypothese: >-
+    le barème de la Cnav « Montant maximum de la retraite personnelle » commence au 1er
+    janvier 1949, avec le montant que fixe un décret du 2 mars 1948, et l'index ne porte
+    aucun texte qui en fixe un avant : aucun maximum
+  fiabilite: estimee
+  bornes:
+    liquidation.date_effet: [null, 1949-01-01]
+  contenu:
+    droit: aucun maximum lu
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: quarante_pour_cent_du_plafond
+  statut: supposee
+  hypothese: >-
+    le barème de la Cnav vaut, à l'euro près, 40 % du plafond de chaque année de 1958 à
+    1971 où le plafond n'a pas changé en cours d'année, la pension de soixante-cinq ans
+    étant de 40 % du salaire annuel moyen ; les textes qu'il cite, un par plafond — la
+    loi n° 49-244 du 24 février 1949 au 1er mars 1949, puis des décrets —, ne sont pas
+    dans l'index, qui n'en garde que les titres. Au-delà de soixante-cinq ans,
+    le maximum suit le taux, qui croît de 1 % par trimestre d'ajournement, comme la
+    circulaire n° 2/72 le dit des maxima de 1972 à 1974 : non lu avant 1972
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [1949-01-01, 1972-01-01]
+  contenu:
+    droit: >-
+      le montant que le barème de la Cnav publie, de 91 200 anciens francs au 1er
+      janvier 1949 à 7 920 F au 1er janvier 1971, chacun avec le décret ou la loi qui le
+      fixe ; 40 % du plafond de l'année
+    beneficiaire: l'assuré dont la pension de vieillesse passe le maximum
+    parametres:
+      existe: true
+      regimes: [regime_general]
+      pourcentages: [["1949-01-01", 0.40]]
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: arrete_du_28_janvier_1972
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006760613, article: 72-1, en_vigueur: 1972-01-29}
+  - id: JORFTEXT000000483786
+    reference: >-
+      arrêté du 28 janvier 1972 fixant le plafond des pensions de vieillesse servies au
+      titre du régime général à partir du 1er janvier 1972, dont l'index JORF ne garde
+      que la notice
+    publie_le: 1972-01-29
+  nee_de: LEGIARTI000006760613
+  bornes:
+    liquidation.date_effet: [1972-01-01, 1975-01-01]
+  contenu:
+    droit: >-
+      « Le montant maximum que ne pourront dépasser les pensions servies au cours de la
+      période du 1er janvier 1972 au 31 décembre 1974 est fixé par arrêté du ministre
+      chargé de la sécurité sociale » (décret n° 45-0179, article 72-1, 2, rédigé par le
+      décret n° 72-78) ; l'arrêté du 28 janvier 1972, que la circulaire Cnav n° 2/72
+      transcrit : « en pourcentage du salaire limite soumis à cotisations, le maximum des
+      arrérages susceptibles d'être servis », 44 % à soixante-cinq ans en 1972, 46 % en
+      1973, 48 % en 1974, majorés de 1,10 %, 1,15 % et 1,20 % par trimestre
+      d'ajournement après soixante-cinq ans
+    beneficiaire: l'assuré dont la pension de vieillesse passe le maximum
+    parametres:
+      existe: true
+      regimes: [regime_general]
+      pourcentages: [["1972-01-01", 0.44], ["1973-01-01", 0.46], ["1974-01-01", 0.48]]
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: cinquante_pour_cent_du_plafond
+  statut: supposee
+  hypothese: >-
+    les décrets que le barème de la Cnav cite de 1975 à 1985, un par plafond, ne sont
+    pas dans l'index ; le barème vaut, au franc près, 50 % du plafond de chaque année
+    où celui-ci n'a pas changé en cours d'année, la circulaire n° 22/83 compte le
+    maximum de 1983 à 50 % du plafond, 44 460 F, et à 55 % pour le taux acquis, 48 906
+    F, et les arrêtés de 1986 écrivent la règle
+  fiabilite: haute
+  bornes:
+    liquidation.date_effet: [1975-01-01, 1986-01-19]
+  contenu:
+    droit: >-
+      50 % du plafond, de 16 500 F au 1er janvier 1975 à 55 320 F au 1er janvier 1986
+      (barème de la Cnav) ; « Dispositions antérieures au 1.4.83 Montant maximum de la
+      pension : 48 906 Dispositions applicables à partir du 1-4-83 Montant maximum de la
+      pension : 44 460 » (circulaire Cnav n° 22/83, point 313)
+    beneficiaire: l'assuré dont la pension de vieillesse passe le maximum
+    parametres:
+      existe: true
+      regimes: [regime_general]
+      pourcentages: [["1975-01-01", 0.50]]
+      fiabilite: haute
+  exemples: [cnav_22_83_taux_acquis_145_trimestres, cnav_22_83_taux_acquis_117_trimestres]
+- id: arretes_de_1986
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006784048, article: 3, en_vigueur: 1986-01-19, reference: "arrêté du 8 janvier 1986 relatif à la revalorisation de divers avantages de vieillesse, d'invalidité et d'accident du travail du régime général"}
+  - {id: LEGIARTI000006784464, article: 2, en_vigueur: 1986-10-11, reference: "arrêté du 9 octobre 1986 relatif à la revalorisation de divers avantages de vieillesse, d'invalidité et d'accident du travail du régime général"}
+  nee_de: LEGIARTI000006784048
+  bornes:
+    liquidation.date_effet: [1986-01-19, null]
+  contenu:
+    droit: >-
+      « Les dispositions qui précèdent ne pourront avoir pour effet : a) De porter une
+      pension ou une rente de vieillesse à une somme supérieure à 50% du plafond de
+      rémunérations entrant en compte pour la détermination de l'assiette de cotisations
+      visé à l'article L. 241-3 du code de la sécurité sociale […]. Lorsque la
+      liquidation des pensions de vieillesse a pris effet au-delà de soixante-cinq ans et
+      antérieurement au 1er avril 1983, le pourcentage susvisé est majoré de 1,25% par
+      trimestre d'ajournement postérieur à cet âge. Lorsque la liquidation des pensions
+      de vieillesse des assurés âgés de plus de soixante-cinq ans au 1er avril 1983 prend
+      effet postérieurement au 31 mars 1983, le pourcentage visé au premier alinéa est
+      majoré dans les mêmes conditions compte tenu des coefficients de majoration acquis
+      à cette dernière date » (arrêté du 9 octobre 1986, article 2, comme l'article 3 de
+      celui du 8 janvier). La surcote, depuis 2004 : « il convient, le cas échéant de
+      ramener la pension calculée au maximum des pensions de vieillesse avant d'appliquer
+      à ce montant la surcote » ; « la somme du montant calculé de la pension
+      (éventuellement limité au maximum) et de la surcote peut dépasser le maximum des
+      pensions. Dans ce cas, elle n'est pas ramenée au maximum » (circulaire Cnav n°
+      2007-5, point 3, lettre ministérielle du 1er septembre 2006)
+    beneficiaire: l'assuré dont la pension de vieillesse passe le maximum
+    parametres:
+      existe: true
+      regimes: [regime_general]
+      pourcentages: [["1986-01-19", 0.50]]
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations:
+- version: [quarante_pour_cent_du_plafond, cinquante_pour_cent_du_plafond, arretes_de_1986]
+  ecart: >-
+    Le maximum se compte sur le plafond annuel de l'année de la date d'effet, que le
+    dépôt tient pour la moyenne des plafonds de l'année : quand le plafond change en
+    cours d'année — en 1949, 1951, 1952, 1955, 1960, 1961, puis chaque 1er juillet de
+    1982 à 1996 —, le maximum de la Cnav est celui du semestre, plus bas de 1 à 4 % au
+    premier, plus haut au second.
+  effet: non mesuré ; les seules pensions que le maximum ramène, ces années-là
+- version: [quarante_pour_cent_du_plafond, arrete_du_28_janvier_1972, cinquante_pour_cent_du_plafond, arretes_de_1986]
+  ecart: >-
+    Le maximum borne la pension que le modèle liquide, non les arrérages qu'il
+    revalorise ensuite : avant 1987, chaque arrêté de revalorisation bornait aussi les
+    pensions en cours de service au maximum de la date ; depuis, les pensions suivent
+    les prix et le plafond les salaires, et le maximum ne mord plus sur la pension
+    servie, sauf de 2021 à 2022, quand le plafond gelé n'a pas suivi la revalorisation
+    des pensions, si la Cnav l'appliquait.
+  effet: non mesuré
+- version: [arretes_de_1986]
+  ecart: >-
+    De 2004 à 2006, la Cnav ne ramenait pas au maximum la pension majorée par la surcote
+    (circulaire n° 2004-37, point 421) ; depuis la lettre ministérielle du 1er septembre
+    2006, elle ramène au maximum la pension calculée, puis la surcote s'y applique, pour
+    les liquidations nouvelles et « aux arrérages à échoir des pensions en cours de
+    service » (circulaire n° 2007-5) : le modèle applique la seconde règle depuis 2004.
+  effet: >-
+    non mesuré ; les seules pensions surcotées de 2004 à 2006 dont le montant calculé
+    passe le maximum, jusqu'en 2007
+- version: [arrete_du_28_janvier_1972]
+  ecart: >-
+    Les pensions de vieillesse substituées à des pensions d'invalidité du deuxième ou du
+    troisième groupe gardaient le maximum de 50 % de 1972 à 1974 (circulaire n° 2/72) :
+    le modèle leur applique celui de l'année.
+  effet: non mesuré
+- version: [quarante_pour_cent_du_plafond, arrete_du_28_janvier_1972, cinquante_pour_cent_du_plafond, arretes_de_1986]
+  ecart: >-
+    Les salariés agricoles avaient leur propre maximum, que les textes de leur régime
+    nomment (décret n° 51-727, article 2), et la liquidation unique de 2017 sert une
+    seule pension aux régimes alignés : le modèle ne borne que la pension du régime
+    général, et celle que la liquidation unique fait liquider par lui ; ni celle des
+    salariés agricoles, ni celle des artisans et commerçants, ni la pension unique que
+    l'un d'eux liquide.
+  effet: non mesuré ; les seules pensions que le maximum ramènerait
+sources:
+  lu_le: 2026-10-08
+  prochaine_relecture: 2027-04-30
+  lectures_divergentes:
+  - >-
+    Le barème de la Cnav porte 5 184 F au 1er janvier 1965 comme au 1er janvier 1966, en
+    citant le décret du 24 décembre 1964 : 40 % du plafond de 1966, 12 960 F. Le plafond
+    de 1965, certifié au Journal officiel, est de 12 240 F (macro/plafond_securite_sociale.csv),
+    dont 40 % font 4 896 F : le modèle compte sur le plafond de l'année.
+  - >-
+    OpenFisca-France-Pension (regimes/regime_general_cnav.py:1022-1037, au commit
+    1c45423) borne la pension à la moitié du plafond annuel, sans le pourcentage de 1949
+    à 1974 ni la majoration de l'ajournement et du taux acquis, et ajoute à la pension
+    bornée une surcote calculée sur la pension non bornée ; la Cnav l'applique à la
+    pension ramenée au maximum (circulaire n° 2007-5).
+  a_relire:
+  - >-
+    Lire le maximum des salariés agricoles et celui des artisans et des commerçants, et
+    dire celui de la pension unique des régimes alignés quand un autre que le régime
+    général la liquide.
+  - >-
+    Lire un texte qui fixe le maximum de 1949 à 1974 — la loi n° 49-244, article 2, et
+    les décrets que le barème de la Cnav cite, celui du 2 mars 1948 d'abord — et dire si
+    le maximum suivait l'ajournement au-delà de soixante-cinq ans avant 1972.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 45-0179, article 72-1 (LEGIARTI000006760613, 1972-01-29 → 1985-12-21) ;
+      arrêté du 8 janvier 1986, article 3 (LEGIARTI000006784048) ; arrêté du 9 octobre
+      1986, article 2 (LEGIARTI000006784464), en vigueur, et article 3, qui applique «
+      les majorations et les plafonds de pensions » aux assurés d'Alsace-Moselle ayant
+      cotisé avant 1946 ; R. 351-27, R. 351-29, D. 351-1-4, qui n'écrivent aucun
+      maximum ; lus dans l'index LEGI le 8 octobre 2026
+    date: 1986-10-11
+  - type: jorf
+    reference: >-
+      loi n° 49-244 du 24 février 1949 relevant le taux de l'allocation temporaire aux
+      vieux travailleurs salariés (JORFTEXT000000521124), que le barème de la Cnav cite
+      au 1er mars 1949 et à laquelle sa base rattache le maximum (article 2) : l'index
+      n'en garde que la notice
+    date: 1949-02-25
+  - type: jorf
+    reference: >-
+      arrêté du 28 janvier 1972 fixant le plafond des pensions de vieillesse servies au
+      titre du régime général à partir du 1er janvier 1972 (JORFTEXT000000483786), et
+      son jumeau des articles L. 365 à L. 382 (JORFTEXT000000307746) : l'index n'en garde
+      que la notice
+    date: 1972-01-29
+  - type: circulaire_cnav
+    reference: >-
+      barème « Montant maximum de la retraite personnelle »
+      (retraite_personnelle_montant_maximum_bar), lu par l'API de la base de législation
+      de la Cnav le 8 octobre 2026 : 92 dates, de 91 200 anciens francs au 1er janvier
+      1949 à 24 030 € au 1er janvier 2026, chacune avec son texte ; 40 % du plafond de
+      1949 à 1971, 44, 46 et 48 % de 1972 à 1974, 50 % depuis 1975
+    url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=retraite_personnelle_montant_maximum_bar.aspx
+    date: 2026-01-05
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2/72 du 31 janvier 1972, maxima de 1972 à 1974 : « Année Taux
+      du maximum à 65 ans Taux de la majoration trimestrielle en cas d'ajournement après
+      65 ans 1972 44 % 1,10 % 1973 46 % 1,15 % 1974 48 % 1,20 % Ces maxima sont à retenir
+      pour toutes les pensions servies au cours des années précitées, quelles que soit
+      leur date d'entrée en jouissance »
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_272_31011972.aspx
+    date: 1972-01-31
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 22/83 du 16 février 1983, point 313 : les deux pensions de
+      l'assuré de plus de soixante-cinq ans au 1er avril 1983, chacune ramenée à son
+      maximum, 48 906 F au taux acquis de 55 %, 44 460 F sous la règle nouvelle
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2283_16021983.aspx
+    date: 1983-02-16
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2004-37 du 15 juillet 2004, point 421 (« le montant annuel
+      majoré par la surcote ne doit pas être ramené au maximum des pensions de
+      vieillesse »), et circulaire Cnav n° 2007-5 du 16 janvier 2007, point 3, qui la
+      précise : la pension calculée ramenée au maximum, puis la surcote
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2007005_16012007.aspx
+    date: 2007-01-16
+  - type: service_public
+    reference: >-
+      F21552, « Montant de la retraite du salarié du secteur privé », vérifiée le 1er
+      septembre 2026 : « Le montant de votre pension de retraite versée par l'Assurance
+      retraite ne peut pas dépasser 50 % du plafond de la Sécurité sociale applicable
+      l'année de votre départ à la retraite », 2 002,50 € brut par mois en 2026, «
+      Toutefois, vous pouvez dépasser ce montant maximum si vous bénéficiez d'une surcote
+      » ; elle cite l'arrêté du 9 octobre 1986
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F21552
+    date: 2026-09-01
+code:
+  python: >-
+    droit/liquider.py : pension_maximale, taux_acquis_l_emporte, liquider_chaque_regime
+    ; scenarios/actuel.py : FichesDatees
+  javascript: >-
+    moteur/js/droit/liquider.js : pensionMaximale, tauxAcquisLEmporte,
+    liquiderChaqueRegime ; moteur/js/regimes.js : FichesDatees
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_pension_maximale.py]
+referents:
+  openfisca_france_pension:
+    equivalent: >-
+      regimes/regime_general_cnav.py:1022-1037 (pension_maximale), au commit 1c45423
+    confrontation: >-
+      aucune exécutée ; ses deux écarts sont déclarés plus haut (lectures_divergentes)
+historique:
+- >-
+  2026-10-08 — écrite à l'étape 17 de l'action 138, sur le point d'OpenFisca-France-Pension
+  au registre (chantier 138.17) et la question que la fiche decote_avant_1983 laissait
+  ouverte.
+effet: >-
+  L'assuré du régime général dont la pension calculée passe la moitié du plafond — un
+  salaire annuel moyen au-dessus du plafond de l'année, quand la revalorisation des
+  salaires portés au compte a couru plus vite que le plafond, et des carrières complètes
+  — la reçoit ramenée au maximum, surcote en sus ; avant 1983, ajournement et taux acquis
+  compris.

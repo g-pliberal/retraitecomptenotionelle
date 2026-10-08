@@ -3247,12 +3247,14 @@ def test_la_loi_boulin_ne_retient_que_128_136_puis_144_trimestres(simulateur):
     de huit enfants, dont la majoration de durée porte le compte au-delà, n'en
     voit retenir que 128, 136 puis 144 ; en 1975, les 150 du dénominateur. Le
     salaire de référence ne dépend pas des enfants : le rapport des deux
-    pensions est celui des trimestres retenus.
+    pensions est celui des trimestres retenus. Au salaire moyen, le maximum
+    des pensions ramènerait la mère de 1973 à 1975 (fiche
+    ``pension_maximale_regime_general``) : à 0,7 fois ce salaire, il ne mord pas.
     """
     def pension(affiliation, regime, annee, enfants):
         carriere = simulateur.carriere_simple(
             annee_naissance=annee - 65, sexe="F", affiliation=affiliation,
-            age_debut=20, age_liquidation=65.0, niveau_salaire=1.0,
+            age_debut=20, age_liquidation=65.0, niveau_salaire=0.7,
             nombre_enfants=enfants,
         )
         resultat = simulateur.scenario_actuel.calculer(carriere)
