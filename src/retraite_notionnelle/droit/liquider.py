@@ -531,6 +531,11 @@ class Pensions:
     agricole: EligibleAgricole | None = None
     #: Les pensions du code des pensions, que le plafond de L. 18 borne.
     plafonds: tuple[EligiblePlafondEnfants, ...] = ()
+    #: Le coefficient d'anticipation de chaque régime en points qu'il réduit :
+    #: la majoration de l'Agirc-Arrco pour enfants à charge se calcule sur les
+    #: droits « sans tenir compte des coefficients d'anticipation » (fiche
+    #: ``majoration_enfants_a_charge_agirc_arrco``).
+    anticipations: tuple[tuple[str, float], ...] = ()
 
     def donnees(self) -> dict:
         """Les pensions, telles que le schéma de l'étape les décrit."""
@@ -627,6 +632,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
     eligibles_garanti: list[EligibleMinimumGaranti] = []
     #: Les pensions du code des pensions, que le plafond de L. 18 borne.
     eligibles_plafond: list[EligiblePlafondEnfants] = []
+    #: Le coefficient d'anticipation des régimes en points qu'il réduit.
+    anticipations: list[tuple[str, float]] = []
     #: La pension des non-salariés agricoles, que la pension majorée de
     #: référence relève.
     agricole: EligibleAgricole | None = None
@@ -901,6 +908,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 fiabilite=fiabilite_regime,
                 capital=capital,
             ))
+            if 0.0 < abattement < 1.0:
+                anticipations.append((code, abattement))
             continue
 
         # Régimes en annuités — et régimes FORFAITAIRES, dont la pension ne
@@ -1455,6 +1464,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         fiabilite=fiabilite_globale,
         agricole=agricole,
         plafonds=tuple(eligibles_plafond),
+        anticipations=tuple(anticipations),
     )
 
 

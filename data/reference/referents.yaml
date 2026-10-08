@@ -1387,6 +1387,12 @@ referents:
           charge, 5 % par enfant, quand elle passe celle des enfants
           nés ou élevés. Le dépôt ne la porte pas
           (`regles/majoration_enfants_agirc_arrco.yaml:22-25`).
+          Reprise le 8 octobre 2026 : fiche
+          majoration_enfants_a_charge_agirc_arrco, dans les deux
+          moteurs, à l'Arrco depuis 1999 et à l'Agirc depuis 2012,
+          sur les droits sans le coefficient d'anticipation, et
+          jusqu'aux dix-huit ans de l'enfant, que la revalorisation
+          suit à chaque échéance.
         preuve: >-
           `regimes/regimes_complementaires_prives.py:87-102` (le
           plus avantageux des deux), `:222-233` (Arrco) et
@@ -1394,7 +1400,7 @@ referents:
         verification: >-
           article 95 de l'accord du 17 novembre 2017, que la fiche
           du dépôt cite pour dire qu'elle manque
-        etat: a_reprendre
+        etat: repris
         chantier: "138.17"
       - quoi: >-
           Il porte la valeur de service des points d'avant 1973 des
@@ -1759,7 +1765,10 @@ referents:
           charge (article 95, 5 % par enfant) n'est pas modélisée »
           (majoration_enfants_agirc_arrco.yaml:22-25). Il connaît
           pourtant les dates de naissance des enfants
-          (carriere.py:600).
+          (carriere.py:600). Reprise le 8 octobre 2026 : fiche
+          majoration_enfants_a_charge_agirc_arrco, la majoration
+          gardant ses étapes, et chaque échéance retirant la part
+          des enfants qui ne sont plus à charge.
         preuve: >-
           til_pension/regime.py:246 (taux_pac) et :272 (return
           maximum(points_born, points_pac)), au commit c4e0d50
@@ -1774,7 +1783,7 @@ referents:
           article 95. Cette majoration est temporaire : il faudra
           que l'échéancier bascule sur l'autre quand l'enfant cesse
           d'être à charge.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.17"
       - quoi: >-
           Il prend pour l'AVPF l'assiette mensuelle publiée,

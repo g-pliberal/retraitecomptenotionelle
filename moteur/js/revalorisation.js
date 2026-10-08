@@ -19,6 +19,7 @@
 import { DateMois } from "./calendrier.js";
 import { RevalorisationStock, SituationFoyer } from "./config.js";
 import { RCO, complementDifferentiel } from "./droit/completer.js";
+import { MAJORATION_ENFANTS, partsDeLaMajoration } from "./droit/commun.js";
 import * as liquider from "./droit/liquider.js";
 import { pensionsALEcretement, pensionsEtrangeresServies } from "./droit/etranger.js";
 import { conditionDeResidence, foyerEtNet } from "./droit/foyer.js";
@@ -393,14 +394,13 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
   const horsRepartition = (p) => isoler
     && Boolean(simulateur.catalogue.obtenir(p.regime).hors_repartition);
   let majoration = 0;
-  // La part de chaque régime dans la majoration pour enfants, plafond compris.
-  const partsMajoration = [];
   for (const a of resultat.avantages_appliques) {
-    if (a.code === "majoration_enfants") {
+    if (a.code === MAJORATION_ENFANTS) {
       majoration += a.montant;
-      partsMajoration.push(...(a.par_regime ?? []));
     }
   }
+  // La part de chaque régime dans la majoration pour enfants, plafond compris.
+  const partsMajoration = partsDeLaMajoration(resultat.avantages_appliques);
 
   const coefficientMoyen = (coefficients) => {
     let masse = 0;
@@ -417,8 +417,9 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
     return pondere / masse;
   };
 
-  // Chaque part suit le régime qui la porte ; sans parts, la moyenne.
-  const coefficientDeLaMajoration = (coefficients) => {
+  // Chaque part suit le régime qui la porte ; sans parts, la moyenne. Celle des
+  // enfants qui ne sont plus à charge à `quand` est retirée.
+  const coefficientDeLaMajoration = (coefficients, quand) => {
     let masse = 0;
     for (const [, part] of partsMajoration) masse += part;
     if (masse <= 0) return coefficientMoyen(coefficients);
@@ -426,7 +427,7 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
     pensions.forEach((p, rang) => { parRegime.set(p.regime, coefficients[rang]); });
     for (const code of aVenir) parRegime.set(code, 0.0);
     let pondere = 0;
-    for (const [code, part] of partsMajoration) {
+    for (const [code, part] of partsDeLaMajoration(resultat.avantages_appliques, quand)) {
       pondere += part * (aLEffet.get(code) ?? 1.0)
         * (parRegime.has(code) ? parRegime.get(code) : 1.0);
     }
@@ -444,7 +445,8 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
       : 0.0));
     let somme = 0;
     datees.forEach(([, , , montant], rang) => { somme += montant * jusqu2019[rang]; });
-    mensuel2019 = (somme + majoration * coefficientDeLaMajoration(jusqu2019)) / 12.0;
+    mensuel2019 = (somme
+      + majoration * coefficientDeLaMajoration(jusqu2019, MOIS_DES_TRANCHES)) / 12.0;
   }
 
   const regimes = [];
@@ -469,7 +471,7 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
       relevement: 0.0,
     });
   }
-  const coefficientMajoration = coefficientDeLaMajoration(coefficients);
+  const coefficientMajoration = coefficientDeLaMajoration(coefficients, fin);
   reviserLeMinimum(simulateur.scenarioActuel, carriere, resultat, regimes, an);
   const majorations = majorerLesPetitesPensions(simulateur.scenarioActuel, resultat,
     datees, regimes, servie, aLEffet, mensuel2019, fin);
@@ -583,11 +585,8 @@ export function majorerLesPetitesPensions(moteur, resultat, datees, regimes, ser
   if (ouvertes.length === 0) return [];
   const due = ouvertes[0][3];
   const enfants = new Map();
-  for (const avantage of resultat.avantages_appliques) {
-    if (avantage.code !== "majoration_enfants") continue;
-    for (const [code, part] of avantage.par_regime ?? []) {
-      enfants.set(code, (enfants.get(code) ?? 0.0) + part);
-    }
+  for (const [code, part] of partsDeLaMajoration(resultat.avantages_appliques, due)) {
+    enfants.set(code, (enfants.get(code) ?? 0.0) + part);
   }
 
   // Chaque pension servie le mois `quand`, en euros par mois, au centime, sans
@@ -713,11 +712,8 @@ export function releverLesExploitants(moteur, carriere, resultat, datees, regime
     // Les pensions servies ce jour-là, majorations pour enfants comprises, les
     // points gratuits du même jour et les pensions étrangères aussi.
     const enfants = new Map();
-    for (const avantage of resultat.avantages_appliques) {
-      if (avantage.code !== "majoration_enfants") continue;
-      for (const [code, part] of avantage.par_regime ?? []) {
-        enfants.set(code, (enfants.get(code) ?? 0.0) + part);
-      }
+    for (const [code, part] of partsDeLaMajoration(resultat.avantages_appliques, due)) {
+      enfants.set(code, (enfants.get(code) ?? 0.0) + part);
     }
     const servies = new Map();
     for (const [pension, a, depuis, montant] of datees) {

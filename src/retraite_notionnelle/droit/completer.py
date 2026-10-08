@@ -12,7 +12,9 @@ ensemble, dans l'ordre où il l'applique — et l'ordre commande le résultat :
   l'année qui précède l'âge légal ;
 * LA MAJORATION POUR ENFANTS, sur ce plancher, plafonnée en euros à la
   complémentaire (:func:`plafond_majoration`), et au traitement dans les
-  régimes du code des pensions (:func:`majoration_sous_le_traitement`) ;
+  régimes du code des pensions (:func:`majoration_sous_le_traitement`) ; à
+  la complémentaire, celle des enfants à charge quand elle est plus forte,
+  tant qu'ils le restent (:func:`majoration_pour_enfants_a_charge`) ;
 * LES DEUX MINIMA DES EXPLOITANTS AGRICOLES enfin, qui regardent toutes les
   pensions, majorations pour enfants comprises : la pension majorée de
   référence, qui relève leur pension de base (:func:`pension_majoree`), puis
@@ -41,8 +43,8 @@ from ..donnees.chargement import Fiabilite
 from . import acquerir
 from . import etranger as _etranger
 from . import liquider, ouvrir
-from .commun import (AvantageApplique, PensionRegime, date_d_effet, derniere_annee,
-                     ligne_cotisee)
+from .commun import (MAJORATION_ENFANTS, AvantageApplique, PensionRegime, date_d_effet,
+                     derniere_annee, ligne_cotisee)
 from .compter import trimestres_de_la_ligne_entre as _trimestres_de_la_ligne_entre
 from ..somme import somme_ordonnee
 
@@ -107,6 +109,14 @@ SURCOTES_DE_L18 = ("dans_le_plafond", "hors_du_plafond")
 FICHE_DU_VERSEMENT_FORFAITAIRE = "versement_forfaitaire_unique"
 FICHE_DU_VERSEMENT_AGIRC_ARRCO = "versement_unique_agirc_arrco"
 FICHE_DU_VERSEMENT_IRCANTEC = "versement_unique_ircantec"
+
+#: La majoration de l'Agirc-Arrco pour enfants à charge, que :class:`FichesDatees
+#: <retraite_notionnelle.scenarios.actuel.FichesDatees>` lit à la date d'effet
+#: (:func:`majoration_pour_enfants_a_charge`), et les assiettes qu'une version
+#: peut nommer : l'allocation servie, ou les droits de l'ensemble de la
+#: carrière sans le coefficient d'anticipation.
+FICHE_DES_ENFANTS_A_CHARGE = "majoration_enfants_a_charge_agirc_arrco"
+ASSIETTES_DES_ENFANTS_A_CHARGE = ("allocation", "droits_bruts")
 
 #: Ce à quoi une version de l'Agirc-Arrco compare son seuil : le nombre de
 #: points de l'allocation, minorée ou non (avant 2019), ou son montant,
@@ -1107,6 +1117,51 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 ),
             ))
 
+    # LA MAJORATION POUR ENFANTS À CHARGE de la complémentaire, qui remplace
+    # celle des enfants nés ou élevés quand elle est plus forte, tant qu'ils
+    # restent à charge : ce qu'elle y ajoute s'écrit dans la même majoration,
+    # et ses étapes disent jusqu'à quand (:func:`majoration_pour_enfants_a_charge`).
+    if avantages_non_contributifs and carriere.nombre_enfants > 0:
+        rang = next((i for i, a in enumerate(avantages) if a.code == MAJORATION_ENFANTS),
+                    None)
+        nes_eleves: dict[str, float] = {}
+        for code, part in (avantages[rang].par_regime if rang is not None else ()):
+            nes_eleves[code] = nes_eleves.get(code, 0.0) + part
+        a_charge = majoration_pour_enfants_a_charge(
+            moteur, carriere, date_d_effet(carriere) or ouvrir.SANS_DATE_D_EFFET,
+            annee_liquidation, pensions, dict(liquidees.anticipations), nes_eleves)
+        if a_charge is not None:
+            ajouts = dict(a_charge.etapes[0][1])
+            ajout = somme_ordonnee(ajouts.values())
+            total += ajout
+            fin = a_charge.etapes[-1][0]
+            texte = (f"{a_charge.enfants} enfant{'s' if a_charge.enfants > 1 else ''} à "
+                     f"charge, {a_charge.taux:.0%} par enfant à la complémentaire jusqu'en "
+                     f"{DateMois(int(fin[:4]), int(fin[5:7]))}")
+            if rang is None:
+                avantages.append(AvantageApplique(
+                    code=MAJORATION_ENFANTS,
+                    libelle="Majoration pour enfants à charge",
+                    montant=ajout,
+                    detail=texte,
+                    par_regime=a_charge.etapes[0][1],
+                    a_charge=a_charge.etapes,
+                ))
+            else:
+                ancienne = avantages[rang]
+                vus = {code for code, _ in ancienne.par_regime}
+                avantages[rang] = replace(
+                    ancienne,
+                    montant=ancienne.montant + ajout,
+                    detail=f"{ancienne.detail} ; {texte}",
+                    par_regime=tuple(
+                        (code, part + ajouts[code] if code in ajouts else part)
+                        for code, part in ancienne.par_regime
+                    ) + tuple((code, part) for code, part in a_charge.etapes[0][1]
+                              if code not in vus),
+                    a_charge=a_charge.etapes,
+                )
+
     # LES DEUX MINIMA DES EXPLOITANTS AGRICOLES, après la majoration pour
     # enfants, que leurs plafonds comptent : la pension majorée de référence
     # relève la pension de base, puis le complément différentiel ajoute des
@@ -1428,6 +1483,98 @@ def plafond_majoration(moteur, code: str, periode: PeriodeRegime,
             annee_reference, annee_liquidation
         )
     return plafond * servie[0] / publiee[0]
+
+
+def fins_de_charge(carriere: Carriere, regle: dict, date_effet: str) -> list[str]:
+    """La date où chaque enfant à charge à ``date_effet`` cesse de l'être,
+    dans l'ordre : l'anniversaire de l'âge que la version écrit. L'enfant né
+    après la date d'effet ne compte pas, ni celui qui a déjà cet âge (accord du
+    17 novembre 2017, article 93)."""
+    age = int(regle["age"])
+    fins = []
+    for _, naissance in carriere.naissances_des_enfants:
+        fin = f"{int(naissance[:4]) + age:04d}{naissance[4:]}"
+        if naissance <= date_effet < fin:
+            fins.append(fin)
+    return sorted(fins)
+
+
+@dataclass(frozen=True)
+class MajorationACharge:
+    """Ce que les enfants à charge ajoutent à la majoration pour enfants de la
+    complémentaire (:func:`majoration_pour_enfants_a_charge`)."""
+
+    #: Les enfants à charge à la date d'effet, et ce que chacun vaut.
+    enfants: int
+    taux: float
+    #: Ce qu'ils ajoutent, régime par régime, depuis chaque date où leur
+    #: nombre change : ``((date, ((régime, part), ...)), ...)``, la première
+    #: date étant la date d'effet et la dernière celle où ils n'ajoutent plus
+    #: rien (``AvantageApplique.a_charge``).
+    etapes: tuple[tuple[str, tuple[tuple[str, float], ...]], ...]
+
+
+def majoration_pour_enfants_a_charge(moteur, carriere: Carriere, date_effet: str,
+                                     annee_liquidation: int,
+                                     pensions: list[PensionRegime],
+                                     anticipations: dict[str, float],
+                                     nes_eleves: dict[str, float]) -> MajorationACharge | None:
+    """Ce que les enfants à charge à la date d'effet ajoutent à la majoration
+    pour enfants de la complémentaire, date par date ; ``None`` quand rien ne
+    s'y ajoute.
+
+    Chaque allocation que la version nomme sert 5 % de son assiette par
+    enfant à charge — l'allocation, ou les droits sans le coefficient
+    d'anticipation (``anticipations``) — au lieu de sa majoration pour enfants
+    nés ou élevés (``nes_eleves``, plafond compris), quand elle est plus forte,
+    et tant qu'ils restent à charge : ce qui passe celle-ci s'y ajoute, réparti
+    entre ses régimes selon leurs assiettes. À montant égal, la majoration pour
+    enfants nés ou élevés est servie. Seuls comptent les régimes dont la
+    période sert la majoration pour enfants (fiche
+    ``majoration_enfants_a_charge_agirc_arrco``). Une assiette que le moteur ne
+    connaît pas l'arrête.
+    """
+    version = moteur.fiches_datees.version(FICHE_DES_ENFANTS_A_CHARGE, date_effet)
+    if version is None or not version["parametres"].get("existe"):
+        return None
+    regle = version["parametres"]
+    if regle["assiette"] not in ASSIETTES_DES_ENFANTS_A_CHARGE:
+        raise ValueError(f"{FICHE_DES_ENFANTS_A_CHARGE}.{version['id']} : assiette "
+                         f"inconnue, {regle['assiette']!r}")
+    fins = fins_de_charge(carriere, regle, date_effet)
+    if not fins:
+        return None
+    montants: dict[str, float] = {}
+    for pension in pensions:
+        regime = moteur.catalogue[pension.regime]
+        periode = regime.periode(min(annee_liquidation, derniere_annee(regime)))
+        if (pension.montant > 0.0 and periode is not None
+                and MAJORATION_ENFANTS in periode.avantages_non_contributifs):
+            montants[pension.regime] = pension.montant
+    coefficients = anticipations if regle["assiette"] == "droits_bruts" else {}
+    allocations = []
+    for allocation in regle["allocations"]:
+        assiettes = [(code, montants[code] / coefficients.get(code, 1.0))
+                     for code in allocation["regimes"] if montants.get(code, 0.0) > 0.0]
+        masse = somme_ordonnee(assiette for _, assiette in assiettes)
+        if masse > 0.0:
+            allocations.append((assiettes, masse, somme_ordonnee(
+                nes_eleves.get(code, 0.0) for code, _ in assiettes)))
+    taux = float(regle["taux_par_enfant"])
+    etapes = []
+    for depuis in (date_effet, *dict.fromkeys(fins)):
+        nombre = len([fin for fin in fins if fin > depuis])
+        parts = []
+        for assiettes, masse, nes in allocations:
+            surplus = taux * nombre * masse - nes
+            if surplus > 1e-9:
+                parts.extend((code, surplus * assiette / masse) for code, assiette in assiettes)
+        etapes.append((depuis, tuple(parts)))
+        if not parts:
+            break
+    if not etapes[0][1]:
+        return None
+    return MajorationACharge(enfants=len(fins), taux=taux, etapes=tuple(etapes))
 
 
 def plafond_de_l_article_l18(moteur, carriere: Carriere) -> dict | None:

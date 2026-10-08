@@ -49,7 +49,7 @@ from .droit import liquidation as _liquidation
 from .droit import progressive as _progressive
 from .droit import reversion as _reversion
 from .droit import seconde as _seconde
-from .droit.commun import date_d_effet
+from .droit.commun import MAJORATION_ENFANTS, date_d_effet, parts_de_la_majoration
 from .journal import Entree, Journal
 from .noyau import vocabulaire
 from .revalorisation import aujourd_hui, faire_vivre, foyer_a_l_echeance
@@ -339,15 +339,19 @@ class Echeancier:
         # La majoration pour enfants est hors des pensions de régime, le
         # minimum contributif dedans : la part de l'une et de l'autre dans
         # chaque régime (``AvantageApplique.par_regime``), en euros du départ,
-        # suit le rapport de la pension servie à celle du départ.
+        # suit le rapport de la pension servie à celle du départ — celle des
+        # enfants qui ne sont plus à charge à l'échéance retirée.
         au_depart = {p.regime: p.montant for p in self.au_depart.pensions_par_regime}
 
         def menees(code: str) -> dict[str, float]:
             parts: dict[str, float] = {}
-            for avantage in self.au_depart.avantages_appliques:
-                if avantage.code == code:
-                    for regime, part in avantage.par_regime:
-                        parts[regime] = parts.get(regime, 0.0) + part
+            entrees = (parts_de_la_majoration(self.au_depart.avantages_appliques,
+                                              f"{annee:04d}-12-31")
+                       if code == MAJORATION_ENFANTS
+                       else [part for avantage in self.au_depart.avantages_appliques
+                             if avantage.code == code for part in avantage.par_regime])
+            for regime, part in entrees:
+                parts[regime] = parts.get(regime, 0.0) + part
             menees = {r.regime: parts[r.regime] * r.au_depart * r.coefficient
                       / au_depart[r.regime]
                       for r in vivante.regimes
@@ -359,7 +363,7 @@ class Echeancier:
         return annee, servies + [(p.regime, p.montant, p.fiabilite)
                                  for p in self.au_depart.pensions_par_regime
                                  if p.regime not in vues], en_capital, menees(
-            "majoration_enfants"), menees("minimum_contributif")
+            MAJORATION_ENFANTS), menees("minimum_contributif")
 
     def _progresser(self, carriere: Carriere) -> None:
         """La retraite progressive que la carrière demande : examinée, et,

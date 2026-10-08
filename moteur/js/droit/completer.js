@@ -18,7 +18,7 @@
 import { DateMois } from "../calendrier.js";
 import { formatFixe, formatPourcentage } from "../format.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
-import { dateDEffet, derniereAnnee, ligneCotisee } from "./commun.js";
+import { MAJORATION_ENFANTS, dateDEffet, derniereAnnee, ligneCotisee } from "./commun.js";
 import { pointsGratuits } from "./acquerir.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
 import * as etranger from "./etranger.js";
@@ -76,11 +76,103 @@ export const FICHE_DU_VERSEMENT_AGIRC_ARRCO = "versement_unique_agirc_arrco";
 export const FICHE_DU_VERSEMENT_IRCANTEC = "versement_unique_ircantec";
 
 /**
+ * La majoration de l'Agirc-Arrco pour enfants à charge, que `FichesDatees` lit à
+ * la date d'effet (`majorationPourEnfantsACharge`), et les assiettes qu'une
+ * version peut nommer : l'allocation servie, ou les droits de l'ensemble de la
+ * carrière sans le coefficient d'anticipation.
+ */
+export const FICHE_DES_ENFANTS_A_CHARGE = "majoration_enfants_a_charge_agirc_arrco";
+export const ASSIETTES_DES_ENFANTS_A_CHARGE = ["allocation", "droits_bruts"];
+
+/**
  * Ce à quoi une version de l'Agirc-Arrco compare son seuil : le nombre de points
  * de l'allocation (avant 2019), ou son montant, coefficients et majorations
  * compris (accord du 17 novembre 2017, article 107).
  */
 export const MESURES_DU_VERSEMENT = ["points", "montant"];
+
+/**
+ * La date où chaque enfant à charge à `dateEffet` cesse de l'être, dans
+ * l'ordre : l'anniversaire de l'âge que la version écrit. Voir
+ * `fins_de_charge` du Python.
+ */
+export function finsDeCharge(carriere, regle, dateEffet) {
+  const age = Math.trunc(Number(regle.age));
+  const fins = [];
+  for (const [, naissance] of carriere.naissancesDesEnfants) {
+    const fin = `${String(Number(naissance.slice(0, 4)) + age).padStart(4, "0")}${naissance.slice(4)}`;
+    if (naissance <= dateEffet && dateEffet < fin) {
+      fins.push(fin);
+    }
+  }
+  return fins.sort();
+}
+
+/**
+ * Ce que les enfants à charge à la date d'effet ajoutent à la majoration pour
+ * enfants de la complémentaire, date par date : `{enfants, taux, etapes}`, les
+ * étapes `[[date, [[régime, part], ...]], ...]` ; `null` quand rien ne s'y
+ * ajoute. Voir `majoration_pour_enfants_a_charge` du Python.
+ */
+export function majorationPourEnfantsACharge(moteur, carriere, dateEffet, anneeLiquidation,
+  pensions, anticipations, nesEleves) {
+  const version = moteur.fichesDatees.version(FICHE_DES_ENFANTS_A_CHARGE, dateEffet);
+  if (version === null || !version.parametres.existe) {
+    return null;
+  }
+  const regle = version.parametres;
+  if (!ASSIETTES_DES_ENFANTS_A_CHARGE.includes(regle.assiette)) {
+    throw new Error(`${FICHE_DES_ENFANTS_A_CHARGE}.${version.id} : assiette inconnue, `
+      + `${JSON.stringify(regle.assiette)}`);
+  }
+  const fins = finsDeCharge(carriere, regle, dateEffet);
+  if (fins.length === 0) {
+    return null;
+  }
+  const montants = new Map();
+  for (const pension of pensions) {
+    const regime = moteur.catalogue.obtenir(pension.regime);
+    const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+    if (pension.montant > 0.0 && periode !== null
+        && periode.avantages_non_contributifs.includes(MAJORATION_ENFANTS)) {
+      montants.set(pension.regime, pension.montant);
+    }
+  }
+  const coefficients = regle.assiette === "droits_bruts" ? anticipations : new Map();
+  const allocations = [];
+  for (const allocation of regle.allocations) {
+    const assiettes = allocation.regimes
+      .filter((code) => (montants.get(code) ?? 0.0) > 0.0)
+      .map((code) => [code, montants.get(code) / (coefficients.get(code) ?? 1.0)]);
+    let masse = 0.0;
+    for (const [, assiette] of assiettes) masse += assiette;
+    if (masse > 0.0) {
+      let nes = 0.0;
+      for (const [code] of assiettes) nes += nesEleves.get(code) ?? 0.0;
+      allocations.push([assiettes, masse, nes]);
+    }
+  }
+  const taux = Number(regle.taux_par_enfant);
+  const etapes = [];
+  for (const depuis of [dateEffet, ...new Set(fins)]) {
+    const nombre = fins.filter((fin) => fin > depuis).length;
+    const parts = [];
+    for (const [assiettes, masse, nes] of allocations) {
+      const surplus = taux * nombre * masse - nes;
+      if (surplus > 1e-9) {
+        for (const [code, assiette] of assiettes) parts.push([code, surplus * assiette / masse]);
+      }
+    }
+    etapes.push([depuis, parts]);
+    if (parts.length === 0) {
+      break;
+    }
+  }
+  if (etapes[0][1].length === 0) {
+    return null;
+  }
+  return { enfants: fins.length, taux, etapes };
+}
 
 /**
  * La version du plafond de L. 18 qui vaut à la date d'effet de la pension ;
@@ -906,6 +998,55 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
           code, part * (soumise ? retenuePlafonnee : 1.0),
         ]),
       });
+    }
+  }
+
+  // LA MAJORATION POUR ENFANTS À CHARGE de la complémentaire, qui remplace
+  // celle des enfants nés ou élevés quand elle est plus forte, tant qu'ils
+  // restent à charge : ce qu'elle y ajoute s'écrit dans la même majoration, et
+  // ses étapes disent jusqu'à quand. Voir le Python.
+  if (avantagesNonContributifs && carriere.nombre_enfants > 0) {
+    const rang = avantages.findIndex((a) => a.code === MAJORATION_ENFANTS);
+    const nesEleves = new Map();
+    for (const [code, part] of (rang >= 0 ? avantages[rang].par_regime : [])) {
+      nesEleves.set(code, (nesEleves.get(code) ?? 0.0) + part);
+    }
+    const aCharge = majorationPourEnfantsACharge(
+      moteur, carriere, dateDEffet(carriere) ?? ouvrir.SANS_DATE_D_EFFET,
+      anneeLiquidation, pensions, new Map(liquidees.anticipations ?? []), nesEleves);
+    if (aCharge !== null) {
+      const ajouts = new Map(aCharge.etapes[0][1]);
+      let ajout = 0.0;
+      for (const valeur of ajouts.values()) ajout += valeur;
+      total += ajout;
+      const fin = aCharge.etapes[aCharge.etapes.length - 1][0];
+      const texte = `${aCharge.enfants} enfant${aCharge.enfants > 1 ? "s" : ""} à charge, `
+        + `${formatPourcentage(aCharge.taux, 0)} par enfant à la complémentaire jusqu'en `
+        + `${new DateMois(Number(fin.slice(0, 4)), Number(fin.slice(5, 7)))}`;
+      if (rang < 0) {
+        avantages.push({
+          code: MAJORATION_ENFANTS,
+          libelle: "Majoration pour enfants à charge",
+          montant: ajout,
+          detail: texte,
+          par_regime: aCharge.etapes[0][1],
+          a_charge: aCharge.etapes,
+        });
+      } else {
+        const ancienne = avantages[rang];
+        const vus = new Set(ancienne.par_regime.map(([code]) => code));
+        avantages[rang] = {
+          ...ancienne,
+          montant: ancienne.montant + ajout,
+          detail: `${ancienne.detail} ; ${texte}`,
+          par_regime: [
+            ...ancienne.par_regime.map(([code, part]) => [
+              code, ajouts.has(code) ? part + ajouts.get(code) : part]),
+            ...aCharge.etapes[0][1].filter(([code]) => !vus.has(code)),
+          ],
+          a_charge: aCharge.etapes,
+        };
+      }
     }
   }
 

@@ -25,7 +25,7 @@
 
 import * as chrono from "./chronologie.js";
 import { formatFixe } from "./format.js";
-import { dateDEffet } from "./droit/commun.js";
+import { MAJORATION_ENFANTS, dateDEffet, partsDeLaMajoration } from "./droit/commun.js";
 import * as leCumul from "./droit/cumul.js";
 import * as lesDeparts from "./droit/departs.js";
 import { foyerEtNet } from "./droit/foyer.js";
@@ -358,16 +358,18 @@ export class Echeancier {
     // La majoration pour enfants est hors des pensions de régime, le minimum
     // contributif dedans : la part de l'une et de l'autre dans chaque régime
     // (`par_regime`), en euros du départ, suit le rapport de la pension servie
-    // à celle du départ.
+    // à celle du départ — celle des enfants qui ne sont plus à charge à
+    // l'échéance retirée.
     const auDepart = new Map(this.auDepart.pensions_par_regime.map((p) => [p.regime, p.montant]));
     const menees = (code) => {
       const parts = new Map();
-      for (const avantage of this.auDepart.avantages_appliques) {
-        if (avantage.code === code) {
-          for (const [regime, part] of avantage.par_regime ?? []) {
-            parts.set(regime, (parts.get(regime) ?? 0.0) + part);
-          }
-        }
+      const entrees = code === MAJORATION_ENFANTS
+        ? partsDeLaMajoration(this.auDepart.avantages_appliques,
+          `${String(annee).padStart(4, "0")}-12-31`)
+        : this.auDepart.avantages_appliques.filter((avantage) => avantage.code === code)
+          .flatMap((avantage) => avantage.par_regime ?? []);
+      for (const [regime, part] of entrees) {
+        parts.set(regime, (parts.get(regime) ?? 0.0) + part);
       }
       const resultat = {};
       for (const r of vivante.regimes) {
@@ -386,7 +388,7 @@ export class Echeancier {
     return [annee, [...servies, ...this.auDepart.pensions_par_regime
       .filter((p) => !vues.has(p.regime))
       .map((p) => [p.regime, p.montant, p.fiabilite])], enCapital,
-    menees("majoration_enfants"), menees("minimum_contributif")];
+    menees(MAJORATION_ENFANTS), menees("minimum_contributif")];
   }
 
   /**

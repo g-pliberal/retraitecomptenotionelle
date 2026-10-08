@@ -1387,6 +1387,14 @@ def _cas() -> list[dict]:
         **enfants, "statut": "clerc_de_notaire", "naissance": "1972",
         "naissances": "2003,2006-09,2009",
     }))
+    # LES ENFANTS À CHARGE de l'Agirc-Arrco (action 138, étape 17) : le salarié
+    # parti en 2022 avec deux enfants de moins de dix-huit ans voit sa
+    # complémentaire majorée de 10 %, puis de 5 % depuis janvier 2026, quand
+    # l'aîné a dix-huit ans, et de rien en mai 2030.
+    cas.append(("enfants_a_charge_agirc_arrco", {
+        "statut": "salarie_prive_non_cadre", "naissance": "1960-03-15", "debut": "1982-09",
+        "liquidation": "2022-04", "enfants": "2", "naissances": "2008,2012-05",
+    }))
     # LE DÉPART ANTICIPÉ DES PARENTS DE TROIS ENFANTS (action 138, étape 17) :
     # la mère qui réunit quinze ans de services et son troisième enfant liquide
     # sa pension civile à tout âge. Avant 2004, à 150 trimestres et sans décote ;

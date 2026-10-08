@@ -22,7 +22,14 @@ sources:
     Le modèle ne connaît pas la caisse Arrco d'avant 1999, et présume que son règlement
     prévoyait la majoration, au barème de l'accord : la Capaves de l'exemple n'en
     servait pas, la Camarca des salariés agricoles servait 2,5 % par enfant. La
-    majoration pour enfants à charge (article 95, 5 % par enfant) n'est pas modélisée.
+    majoration pour enfants à charge (article 95, 5 % par enfant) a sa fiche,
+    majoration_enfants_a_charge_agirc_arrco, depuis le 8 octobre 2026.
+  - >-
+    La circulaire Agirc-Arrco n° 2020-02-DRJ (fiche 4, II.2.1) calcule la majoration
+    « sur les droits de base du participant sans tenir compte des coefficients
+    d'anticipation éventuellement appliqués » : le modèle la calcule sur l'allocation,
+    coefficient compris, et la sous-estime sous un coefficient d'anticipation (relevé le
+    8 octobre 2026, à l'étape 17 de l'action 138).
   lectures:
   - type: legifrance
     reference: >-

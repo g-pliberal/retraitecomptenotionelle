@@ -90,3 +90,57 @@ class AvantageApplique:
     #: répartit entre eux — la majoration pour enfants, plafond compris, et le
     #: minimum contributif.
     par_regime: tuple[tuple[str, float], ...] = ()
+    #: Ce que les enfants À CHARGE à la date d'effet ajoutent à la majoration
+    #: pour enfants, régime par régime, depuis chaque date où leur nombre
+    #: change, la première étant la date d'effet : ``((date, ((régime, part),
+    #: ...)), ...)``. Les parts de la première sont dans ``par_regime`` ; elles
+    #: cessent avec la charge (:func:`parts_de_la_majoration`, fiche
+    #: ``majoration_enfants_a_charge_agirc_arrco``).
+    a_charge: tuple[tuple[str, tuple[tuple[str, float], ...]], ...] = ()
+
+
+#: Le code de la majoration pour enfants, que la revalorisation mène à chaque
+#: échéance.
+MAJORATION_ENFANTS = "majoration_enfants"
+
+
+def _etape_au(etapes, quand: str) -> tuple[tuple[str, float], ...]:
+    """Les parts de la dernière étape commencée à ``quand`` (AAAA-MM-JJ),
+    celles de la première avant elle."""
+    retenues = etapes[0][1]
+    for depuis, parts in etapes:
+        if depuis <= quand:
+            retenues = parts
+    return retenues
+
+
+def parts_de_la_majoration(avantages, quand: str | None = None) -> list[tuple[str, float]]:
+    """Les parts de la majoration pour enfants, régime par régime : celles de
+    la date d'effet, ou, à ``quand`` (AAAA-MM-JJ), celles qu'elle sert alors,
+    les enfants à charge qui ne le sont plus retirés (``AvantageApplique.a_charge``).
+    Un régime peut y revenir : la part qu'elle perd s'y écrit en négatif."""
+    parts: list[tuple[str, float]] = []
+    for avantage in avantages:
+        if avantage.code != MAJORATION_ENFANTS:
+            continue
+        parts.extend(avantage.par_regime)
+        if quand is None or not avantage.a_charge:
+            continue
+        servies = _etape_au(avantage.a_charge, quand)
+        if servies is not avantage.a_charge[0][1]:
+            parts.extend((code, -part) for code, part in avantage.a_charge[0][1])
+            parts.extend(servies)
+    return parts
+
+
+def fusionner_les_charges(une, autre):
+    """Les étapes de deux majorations pour enfants à charge réunies, celles de
+    deux départs que le scénario additionne : à chaque date de l'une ou de
+    l'autre, la somme de leurs parts."""
+    if not une:
+        return autre
+    if not autre:
+        return une
+    dates = sorted({depuis for depuis, _ in une} | {depuis for depuis, _ in autre})
+    return tuple((depuis, _etape_au(une, depuis) + _etape_au(autre, depuis))
+                 for depuis in dates)

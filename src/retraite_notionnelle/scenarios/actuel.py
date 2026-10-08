@@ -90,6 +90,7 @@ from ..droit import progressive as _progressive
 from ..droit import seconde as _seconde
 # Ce que les étapes créent, que les appelants du scénario 1 lisent ici.
 from ..droit.commun import AvantageApplique, PensionRegime  # noqa: F401
+from ..droit.commun import fusionner_les_charges
 from ..noyau import versions
 from ..revalorisation import (DEBUT_REGLE_GENERALE_PUBLIC, RevalorisationsPensions,
                               mener_au_mois, produit)
@@ -359,17 +360,23 @@ def resultat_des_departs(moteur, carriere: Carriere, departs, liquidations,
                           for code, part in avantage.par_regime)
             montant = (somme_ordonnee(part for _, part in parts) if parts
                        else avantage.montant * moyen)
+            # Les étapes des enfants à charge sont ramenées comme les parts.
+            a_charge = tuple(
+                (depuis, tuple((code, part * par_regime.get(code, moyen)) for code, part in etape))
+                for depuis, etape in avantage.a_charge)
             if avantage.code == "majoration_enfants":
                 majoration += montant
             deja = avantages.get(avantage.code)
             if deja is None:
-                avantages[avantage.code] = replace(avantage, montant=montant, par_regime=parts)
+                avantages[avantage.code] = replace(avantage, montant=montant, par_regime=parts,
+                                                   a_charge=a_charge)
             else:
                 details = [d for d in (deja.detail, avantage.detail) if d]
                 avantages[avantage.code] = replace(
                     deja, montant=deja.montant + montant,
                     detail=" ; ".join(dict.fromkeys(details)),
-                    par_regime=deja.par_regime + parts)
+                    par_regime=deja.par_regime + parts,
+                    a_charge=fusionner_les_charges(deja.a_charge, a_charge))
         servi = somme_ordonnee(p.montant * f for p, f in zip(regimes, facteurs)) + majoration
         total += servi
         total_contributif += liquidation.total_contributif * moyen
@@ -1115,7 +1122,9 @@ class FichesDatees:
     des pensions au jour, que ``compter.decompte_des_services`` lit, et le
     maximum des pensions du régime général, que ``liquider.pension_maximale``
     lit, et les taux pleins par catégorie de L. 351-8, que
-    ``categories.taux_plein_par_categorie`` lit.
+    ``categories.taux_plein_par_categorie`` lit, et la majoration de
+    l'Agirc-Arrco pour enfants à charge, que
+    ``completer.majoration_pour_enfants_a_charge`` lit.
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
@@ -1130,7 +1139,8 @@ class FichesDatees:
             "versement_unique_ircantec", "decompte_des_services_fonction_publique",
             "pension_maximale_regime_general",
             "taux_plein_anciens_deportes_internes", "taux_plein_meres_de_famille_ouvrieres",
-            "taux_plein_travailleurs_manuels", "taux_plein_anciens_combattants_prisonniers")
+            "taux_plein_travailleurs_manuels", "taux_plein_anciens_combattants_prisonniers",
+            "majoration_enfants_a_charge_agirc_arrco")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

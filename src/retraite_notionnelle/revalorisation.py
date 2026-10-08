@@ -66,6 +66,7 @@ from .calendrier import DateMois
 from .config import RevalorisationStock, SituationFoyer
 from .donnees.chargement import Fiabilite
 from .droit import invalidite, liquider
+from .droit.commun import parts_de_la_majoration
 from .droit.etranger import pensions_a_l_ecretement, pensions_etrangeres_servies
 from .droit.foyer import Foyer, condition_de_residence, foyer_et_net
 from .somme import somme_ordonnee
@@ -381,7 +382,8 @@ class Revalorisee:
     annee: int
     regimes: tuple[RegimeServi, ...]
     #: La majoration pour enfants à la liquidation, et le coefficient qui la
-    #: mène à l'échéance : chaque part à celui du régime qui la porte.
+    #: mène à l'échéance : chaque part à celui du régime qui la porte, celle
+    #: des enfants qui ne sont plus à charge retirée.
     majoration_enfants: float
     coefficient_majoration: float
     #: Le montant total brut mensuel de décembre 2019 qui a choisi la tranche
@@ -684,8 +686,7 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
 
     #: La part de chaque régime dans la majoration pour enfants, plafond
     #: compris (``AvantageApplique.par_regime``).
-    parts_majoration = [part for a in resultat.avantages_appliques
-                        if a.code == "majoration_enfants" for part in a.par_regime]
+    parts_majoration = parts_de_la_majoration(resultat.avantages_appliques)
 
     def coefficient_moyen(coefficients: list[float]) -> float:
         repartition = [(p.montant, c) for p, c in zip(pensions, coefficients)
@@ -695,17 +696,20 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
             return 1.0
         return somme_ordonnee(montant * c for montant, c in repartition) / masse
 
-    def coefficient_de_la_majoration(coefficients: list[float]) -> float:
+    def coefficient_de_la_majoration(coefficients: list[float], quand: date) -> float:
         """Chaque part suit le régime qui la porte : la base ses coefficients,
         la complémentaire la valeur de son point — comme son plafond, que le
-        scénario 1 revalorise ainsi. Sans parts, la moyenne des régimes."""
+        scénario 1 revalorise ainsi. Sans parts, la moyenne des régimes. Celle
+        des enfants qui ne sont plus à charge à ``quand`` est retirée
+        (:func:`~.droit.commun.parts_de_la_majoration`)."""
         masse = somme_ordonnee(part for _, part in parts_majoration)
         if masse <= 0:
             return coefficient_moyen(coefficients)
         par_regime = {p.regime: c for p, c in zip(pensions, coefficients)}
         par_regime |= {code: 0.0 for code in a_venir}
+        servies = parts_de_la_majoration(resultat.avantages_appliques, quand.isoformat())
         return somme_ordonnee(part * a_l_effet.get(code, 1.0) * par_regime.get(code, 1.0)
-                   for code, part in parts_majoration) / masse
+                   for code, part in servies) / masse
 
     # LA TRANCHE DE 2020 se choisit sur le montant total de décembre 2019 :
     # toutes les retraites, de base, complémentaires et additionnelles,
@@ -724,7 +728,7 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
         ]
         mensuel_2019 = (
             somme_ordonnee(montant * c for (_, _, _, montant), c in zip(datees, jusqu_2019))
-            + majoration * coefficient_de_la_majoration(jusqu_2019)
+            + majoration * coefficient_de_la_majoration(jusqu_2019, MOIS_DES_TRANCHES)
         ) / 12.0
 
     regimes = []
@@ -743,7 +747,7 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
             fiabilite=fiabilite_regime,
             hors_repartition=isoler and simulateur.catalogue[pension.regime].hors_repartition,
         ))
-    coefficient_majoration = coefficient_de_la_majoration(coefficients)
+    coefficient_majoration = coefficient_de_la_majoration(coefficients, fin)
     regimes = reviser_le_minimum(simulateur.scenario_actuel, carriere, resultat,
                                  regimes, annee)
     regimes, majorations = majorer_les_petites_pensions(
@@ -867,10 +871,8 @@ def majorer_les_petites_pensions(moteur, resultat, datees, regimes: list[RegimeS
         return regimes, ()
     due = ouvertes[0][3]
     enfants: dict[str, float] = {}
-    for avantage in resultat.avantages_appliques:
-        if avantage.code == "majoration_enfants":
-            for code, part in avantage.par_regime:
-                enfants[code] = enfants.get(code, 0.0) + part
+    for code, part in parts_de_la_majoration(resultat.avantages_appliques, due.isoformat()):
+        enfants[code] = enfants.get(code, 0.0) + part
 
     def mensuelles_au(quand: date) -> dict[str, tuple[float, float]]:
         """Chaque pension servie le mois ``quand``, en euros par mois, au
@@ -997,10 +999,9 @@ def relever_les_exploitants(moteur, carriere, resultat, datees, regimes: list[Re
         # les points gratuits du même jour et les pensions étrangères aussi,
         # que le plafond tous régimes compte (D. 732-166-5-1).
         enfants: dict[str, float] = {}
-        for avantage in resultat.avantages_appliques:
-            if avantage.code == "majoration_enfants":
-                for code, part in avantage.par_regime:
-                    enfants[code] = enfants.get(code, 0.0) + part
+        for code, part in parts_de_la_majoration(resultat.avantages_appliques,
+                                                 due.isoformat()):
+            enfants[code] = enfants.get(code, 0.0) + part
         servies: dict[str, tuple[float, float]] = {}
         for pension, a, depuis, montant in datees:
             if depuis > due or pension.capital is not None:

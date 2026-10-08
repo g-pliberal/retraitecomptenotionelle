@@ -224,11 +224,14 @@ avantages:
     quoi: >-
       Dix pour cent de la pension, à partir du troisième enfant, au père comme
       à la mère, dans presque tous les régimes de base ; l'Agirc-Arrco sert la
-      sienne, plafonnée. Non imposable jusqu'en 2013. Elle est proportionnelle
-      à la pension, donc croissante avec le revenu : c'est le seul avantage
-      familial dont le montant augmente avec le salaire.
+      sienne, plafonnée, ou, à qui part avec un enfant à charge, 5 % par
+      enfant tant qu'il le reste, quand c'est plus. Non imposable jusqu'en
+      2013. Elle est proportionnelle à la pension, donc croissante avec le
+      revenu : c'est le seul avantage familial dont le montant augmente avec
+      le salaire.
     base_legale: [L. 351-12 CSS, L. 18 CPCMR, accord national interprofessionnel Agirc-Arrco]
-    fiches: [majoration_dix_pour_cent, majoration_enfants_plafond_fonction_publique]
+    fiches: [majoration_dix_pour_cent, majoration_enfants_plafond_fonction_publique,
+             majoration_enfants_a_charge_agirc_arrco]
     creation: 1945
     fin: null
     regimes: tous les régimes de base, Agirc-Arrco, Ircantec

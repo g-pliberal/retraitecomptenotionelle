@@ -45,6 +45,7 @@ import { formatFixe } from "./format.js";
 import { RevalorisationsPensions, menerAuMois } from "./revalorisation.js";
 import { Fiabilite } from "./serie.js";
 import * as lesDeparts from "./droit/departs.js";
+import { fusionnerLesCharges } from "./droit/commun.js";
 import { foyerEtNet } from "./droit/foyer.js";
 import { ageDeLAspa } from "./droit/invalidite.js";
 import * as liquidation from "./droit/liquidation.js";
@@ -490,17 +491,23 @@ export function resultatDesDeparts(moteur, carriere, departs, liquidations, cont
       const montant = parts.length > 0
         ? parts.reduce((somme, [, part]) => somme + part, 0.0)
         : avantage.montant * moyen;
+      // Les étapes des enfants à charge sont ramenées comme les parts.
+      const aCharge = (avantage.a_charge ?? []).map(([depuis, etape]) => [depuis,
+        etape.map(([code, part]) => [code,
+          part * (parRegime.has(code) ? parRegime.get(code) : moyen)])]);
       if (avantage.code === "majoration_enfants") {
         majoration += montant;
       }
       const deja = avantages.get(avantage.code);
       if (deja === undefined) {
-        avantages.set(avantage.code, { ...avantage, montant, par_regime: parts });
+        avantages.set(avantage.code, { ...avantage, montant, par_regime: parts,
+          a_charge: aCharge });
       } else {
         const details = [...new Set([deja.detail, avantage.detail].filter((d) => d))];
         avantages.set(avantage.code, {
           ...deja, montant: deja.montant + montant, detail: details.join(" ; "),
           par_regime: [...deja.par_regime, ...parts],
+          a_charge: fusionnerLesCharges(deja.a_charge ?? [], aCharge),
         });
       }
     }

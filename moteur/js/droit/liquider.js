@@ -78,7 +78,7 @@ export const ANNEE_DES_REVENUS_AGRICOLES = 2016;
 /** Ce que l'étape « liquider chaque régime » écrit. */
 export class Pensions {
   constructor({ personne, regimes, minimum, garanti, requis, taux, fiabilite,
-    agricole = null, plafonds = [] }) {
+    agricole = null, plafonds = [], anticipations = [] }) {
     this.personne = personne;
     this.regimes = regimes;
     this.minimum = minimum;
@@ -96,6 +96,12 @@ export class Pensions {
      * traitement qui les a liquidées, et ce que la surcote leur ajoute.
      */
     this.plafonds = plafonds;
+    /**
+     * Le coefficient d'anticipation de chaque régime en points qu'il réduit,
+     * `[régime, coefficient]` : la majoration de l'Agirc-Arrco pour enfants à
+     * charge se calcule sans lui (fiche `majoration_enfants_a_charge_agirc_arrco`).
+     */
+    this.anticipations = anticipations;
   }
 
   /** Les pensions, telles que le schéma de l'étape les décrit. */
@@ -190,6 +196,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
   const eligiblesGaranti = [];
   // Les pensions du code des pensions, que le plafond de L. 18 borne.
   const eligiblesPlafond = [];
+  // Le coefficient d'anticipation des régimes en points qu'il réduit.
+  const anticipations = [];
   // La pension des non-salariés agricoles, que la pension majorée de
   // référence relève.
   let agricole = null;
@@ -434,6 +442,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         // pas après lui (fiche `reversion_rafp`). Absent pour une rente.
         ...(capital === null ? {} : { capital }),
       });
+      if (abattement > 0.0 && abattement < 1.0) {
+        anticipations.push([code, abattement]);
+      }
       continue;
     }
 
@@ -918,6 +929,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     fiabilite: fiabiliteGlobale,
     agricole,
     plafonds: eligiblesPlafond,
+    anticipations,
   });
 }
 
