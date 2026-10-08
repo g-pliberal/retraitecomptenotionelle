@@ -86,10 +86,10 @@ C'est l'accueil. Descendre lentement, sans rien cliquer.
   régime, et de règle de calcul → rien, le compte est le même » et « Tenir
   l'équilibre : une réforme tous les huit ans en moyenne → un chiffre publié
   chaque année ». Et une à ne pas sauter, parce que la salle la cherche :
-  « Votre retraite : ce que votre régime promet → de l'ordre d'un cinquième à un
-  quart de moins, en médiane ». La première des « Vos questions », « Ma
-  retraite va-t-elle baisser ? », en donne le détail : 22 % pour qui n'est
-  pas encore à la retraite, 12 % s'il place les cinq points rendus, 27 % sur
+  « Votre retraite : ce que votre régime promet → de l'ordre d'un quart de
+  moins, en médiane ». La première des « Vos questions », « Ma
+  retraite va-t-elle baisser ? », en donne le détail : 25 % pour qui n'est
+  pas encore à la retraite, 13 % s'il place les cinq points rendus, 27 % sur
   la pension d'aujourd'hui d'un retraité, garantie vieillesse comprise.
 - Le bloc « Et vous, ça donne combien ? » en haut de page est un raccourci
   vers le simulateur : on peut y saisir une date de naissance et un statut et
@@ -335,17 +335,17 @@ Si le temps manque, garder cette page pour les questions : elle répond seule
 
 Onglet **Avantages**. La page qui explique les écarts du simulateur : ce que
 le système actuel verse sans que personne l'ait cotisé. Trois chiffres :
-41 dispositifs en vigueur, du minimum vieillesse à la bonification du
-cinquième ; 96,8 Md € en 2024 pour les 19 que le modèle sait chiffrer, dont
+42 dispositifs en vigueur, du minimum vieillesse à la bonification du
+cinquième ; 97,9 Md € en 2024 pour les 21 que le modèle sait chiffrer, dont
 38,3 Md € de réversion, qui est lue et non calculée ; 11,0 Md € de pensions
 servies avant l'âge légal. La page dit que ces deux montants sont des
 planchers. Le graphique du haut compte les dispositifs année par année depuis
 1831, où il n'y en avait qu'un.
 
 Deux comptes se croisent sur cette page, et il vaut mieux le savoir avant
-qu'on le demande : **41 dispositifs sont en vigueur aujourd'hui**, et le
-tableau du bas en recense **46 dispositifs** depuis 1831, ceux d'hier
-compris. Les 19 que le modèle chiffre se comptent sur les 46.
+qu'on le demande : **42 dispositifs sont en vigueur aujourd'hui**, et le
+tableau du bas en recense **47 dispositifs** depuis 1831, ceux d'hier
+compris. Les 21 que le modèle chiffre se comptent sur les 47.
 
 ### 6. Méthode et Données — deux minutes, pour finir
 
