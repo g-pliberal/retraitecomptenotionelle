@@ -20,7 +20,7 @@ import {
   GENERATIONS_SUSPENSION, SUSPENSION_2026_EFFET,
   GENERATION_REFORME_2023, REFORME_2023_EFFET,
 } from "../regimes.js";
-import { Fiabilite, nomFiabilite } from "../serie.js";
+import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import { dateDEffet, derniereAnnee, ligneCotisee } from "./commun.js";
 import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
@@ -65,6 +65,29 @@ const SURCOTE_EMPLOIS_CLASSES = {
 
 /** Âge de la surcote d'avant la réforme de 2023, laissé aux classés plus âgés. */
 const AGE_SURCOTE_AVANT_2023 = 62.0;
+
+/** La fiche du départ anticipé des parents de trois enfants. Voir le Python. */
+export const FICHE_PARENTS_DE_TROIS_ENFANTS = "depart_anticipe_parents_trois_enfants";
+
+/** Les bénéficiaires qu'une version de cette fiche peut nommer : la mère seule. */
+const BENEFICIAIRES_DES_PARENTS = ["mere"];
+
+/**
+ * Les calculs qu'elle peut nommer : la durée et la décote de l'année des
+ * conditions réunies, ou celles de l'année des soixante ans, ou de l'âge de la
+ * catégorie active (loi n° 2010-1330, article 44, IV).
+ */
+const CALCULS_DES_PARENTS = ["annee_des_conditions", "loi_du_9_novembre_2010"];
+
+/**
+ * Les régimes dont les années comptent aux quinze ans de services du parent :
+ * les trois du code des pensions, et les pensions civiles d'avant 1948.
+ */
+const REGIMES_DES_SERVICES_DES_PARENTS = new Set(
+  [...REGIMES_CODE_DES_PENSIONS, "pensions_civiles_1853"]);
+
+/** La date d'effet à laquelle se lit la fiche d'une carrière sans départ. */
+const SANS_DATE_D_EFFET = "9999-12-01";
 
 /** Ce que l'étape « ouvrir le droit » dit d'une demande. */
 export class Ouverture {
@@ -271,6 +294,21 @@ export function dureeRequise(moteur, periode, carriere) {
   if (derogation !== null && derogation.dureeRequise !== null) {
     return [derogation.dureeRequise, derogation.fiabilite];
   }
+  // LE PARENT DE TROIS ENFANTS a la durée de l'année que son départ anticipé
+  // retient : celle des conditions réunies, ou celle des fonctionnaires qui ont
+  // soixante ans l'année de ses soixante ans, d'avant la loi du 14 avril 2023.
+  const parent = departParentTroisEnfants(moteur, periode, carriere);
+  if (parent !== null) {
+    const lue = dureeDeLAnnee(moteur, periode, anneeOuvertureDesDroits(
+      moteur, periode, carriere,
+      (carriere.age_liquidation !== null && carriere.age_liquidation !== undefined)
+        ? carriere.anneeLiquidation : 9999,
+    ));
+    if (lue !== null) {
+      return [lue[0], lue[1] === null || lue[1] === undefined
+        ? parent.fiabilite : Math.min(lue[1], parent.fiabilite)];
+    }
+  }
   // Et ceux que ces marches ne visent pas — l'emploi classé né avant elles,
   // le militaire — n'ont pas davantage la durée de leur génération.
   const avantSoixanteAns = dureeRequiseAvantSoixanteAns(moteur, periode, carriere, derogation);
@@ -364,15 +402,27 @@ export function dureeRequiseAvantSoixanteAns(moteur, periode, carriere, derogati
   if ((militaire !== null || carriereLongue) && ouverture.rang >= DUREE_XXIV_C_DEPUIS.rang) {
     return moteur.dureesRequisesAvantSoixanteAns.depuis2023(ouverture);
   }
-  const transitoire = moteur.dureesRequisesFonctionPublique.trimestres(ouverture.annee);
+  return dureeDeLAnnee(moteur, periode, ouverture.annee);
+}
+
+/**
+ * La durée « exigée des fonctionnaires atteignant [soixante ans] » cette
+ * année-là : la montée en charge de 2004 à 2008, la table de L. 13, III, à
+ * compter de 2009 — sa dernière ligne au-delà —, et avant 2004 celle que la
+ * fiche du régime portait cette année-là ; null sans aucune. Voir le Python.
+ *
+ * @returns {[number, number|null] | null}
+ */
+export function dureeDeLAnnee(moteur, periode, annee) {
+  const transitoire = moteur.dureesRequisesFonctionPublique.trimestres(annee);
   if (transitoire !== null) {
     return transitoire;
   }
-  const parAnnee = moteur.dureesRequisesAvantSoixanteAns.parAnnee(ouverture.annee);
+  const parAnnee = moteur.dureesRequisesAvantSoixanteAns.parAnnee(annee);
   if (parAnnee !== null) {
     return parAnnee;
   }
-  const enVigueur = moteur.catalogue.obtenir(periode.regime).periode(ouverture.annee);
+  const enVigueur = moteur.catalogue.obtenir(periode.regime).periode(annee);
   if (enVigueur === null || enVigueur === undefined
       || enVigueur.duree_requise_trimestres === null
       || enVigueur.duree_requise_trimestres === undefined) {
@@ -543,14 +593,146 @@ export function droitMilitaire(moteur, periode, carriere) {
 }
 
 /**
+ * Le départ anticipé que ce régime ouvre au parent de trois enfants, ou null
+ * (fiche `depart_anticipe_parents_trois_enfants`) : l'âge où il réunit quinze
+ * ans de services et son troisième enfant, d'où la pension s'ouvre à tout âge
+ * (L. 24, I, 3°) ; l'année à laquelle se lisent la durée et la décote, celle
+ * des conditions réunies (loi n° 2003-775, article 66, II et III), ou, hors de
+ * l'ancien calcul que garde la loi du 9 novembre 2010, celle des soixante ans,
+ * ou de l'âge de la catégorie active (article 44, IV). L'interruption
+ * d'activité pour chaque enfant est présumée de la mère seule ; le militaire
+ * en est écarté. Voir le Python.
+ *
+ * @returns {{ageOuverture: number, anneeDesParametres: number,
+ *   ancienCalcul: boolean, version: string, fiabilite: number} | null}
+ */
+export function departParentTroisEnfants(moteur, periode, carriere) {
+  if (!REGIMES_CODE_DES_PENSIONS.has(periode.regime)) {
+    return null;
+  }
+  const dateEffet = dateDEffet(carriere);
+  const version = moteur.fichesDatees.version(
+    FICHE_PARENTS_DE_TROIS_ENFANTS, dateEffet ?? SANS_DATE_D_EFFET);
+  if (version === null) {
+    return null;
+  }
+  const parametres = version.parametres;
+  if (!parametres.existe || !parametres.regimes.includes(periode.regime)) {
+    return null;
+  }
+  const { beneficiaire, calcul } = parametres;
+  if (!BENEFICIAIRES_DES_PARENTS.includes(beneficiaire)) {
+    throw new Error(`${FICHE_PARENTS_DE_TROIS_ENFANTS}.${version.id} : `
+      + `bénéficiaire inconnu, ${JSON.stringify(beneficiaire)}`);
+  }
+  if (!CALCULS_DES_PARENTS.includes(calcul)) {
+    throw new Error(`${FICHE_PARENTS_DE_TROIS_ENFANTS}.${version.id} : `
+      + `calcul inconnu, ${JSON.stringify(calcul)}`);
+  }
+  // L'interruption d'activité pour chaque enfant, présumée de la mère seule.
+  if (carriere.sexe !== "F") {
+    return null;
+  }
+  const enfants = Number(parametres.enfants);
+  const naissances = carriere.naissancesDesEnfants.map(([, naissance]) => naissance).sort();
+  if (naissances.length < enfants) {
+    return null;
+  }
+  if (droitMilitaire(moteur, periode, carriere) !== null) {
+    return null;
+  }
+  const statuts = moteur.affiliations.codes.filter((code) => [...coordonner.regimesRoutes(
+    moteur, [code])].some((regime) => REGIMES_DES_SERVICES_DES_PARENTS.has(regime)));
+  const services = carriere.dateDeService(statuts, Number(parametres.services_requis_annees));
+  if (services === null) {
+    return null;
+  }
+  // Le mois où les deux conditions sont réunies : la dernière des deux.
+  const naissance = naissances[enfants - 1];
+  const enfant = new DateMois(Number(naissance.slice(0, 4)), Number(naissance.slice(5, 7)));
+  const reunies = enfant.rang > services.rang ? enfant : services;
+  const avant = parametres.conditions_reunies_avant ?? null;
+  if (avant !== null && reunies.rang >= new DateMois(
+    Number(avant.slice(0, 4)), Number(avant.slice(5, 7))).rang) {
+    return null;
+  }
+  const fiabilite = fiabiliteDepuisTexte(parametres.fiabilite);
+  const age = carriere.ageAu(reunies);
+  if (calcul === "annee_des_conditions"
+      || ancienCalculDesParents(moteur, periode, carriere, parametres, dateEffet)) {
+    return {
+      ageOuverture: age, anneeDesParametres: reunies.annee, ancienCalcul: true,
+      version: version.id, fiabilite,
+    };
+  }
+  const ages = parametres.ages_de_l_annee_retenue;
+  const classement = classementDesParents(moteur, periode, carriere);
+  if (!(classement in ages)) {
+    throw new Error(`${FICHE_PARENTS_DE_TROIS_ENFANTS}.${version.id} : `
+      + `aucun âge pour le classement ${JSON.stringify(classement)}`);
+  }
+  return {
+    ageOuverture: age,
+    anneeDesParametres: carriere.annee_naissance + Number(ages[classement]),
+    ancienCalcul: false,
+    version: version.id,
+    fiabilite,
+  };
+}
+
+/**
+ * L'ancien calcul que le IV de l'article 44 de la loi du 9 novembre 2010 garde :
+ * à la pension qui prend effet au plus tard à `ancien_calcul_jusqu_a`, demandée
+ * avant 2011 par présomption (1°) ; à qui était, à `ancien_calcul_au`, à moins de
+ * `ancien_calcul_a_moins_de` années de son âge d'ouverture d'avant la loi (2°).
+ */
+function ancienCalculDesParents(moteur, periode, carriere, parametres, dateEffet) {
+  const jusquA = parametres.ancien_calcul_jusqu_a ?? null;
+  if (jusquA !== null && dateEffet !== null && dateEffet <= jusquA) {
+    return true;
+  }
+  const ages = parametres.ages_avant_la_loi;
+  const classement = classementDesParents(moteur, periode, carriere);
+  if (!(classement in ages)) {
+    throw new Error(`${FICHE_PARENTS_DE_TROIS_ENFANTS} : aucun âge d'avant la loi `
+      + `pour le classement ${JSON.stringify(classement)}`);
+  }
+  const au = Number(String(parametres.ancien_calcul_au).slice(0, 4));
+  return carriere.annee_naissance + Number(ages[classement])
+    - Number(parametres.ancien_calcul_a_moins_de) < au;
+}
+
+/**
+ * Le classement dont la fiche des parents lit les âges : `sedentaire`, ou celui
+ * de la catégorie active que l'agent remplit à sa liquidation.
+ */
+export function classementDesParents(moteur, periode, carriere) {
+  if (derogationActive(moteur, periode, carriere) === null) {
+    return "sedentaire";
+  }
+  return statutDominant(moteur, carriere, moteur.affiliations.classementsActifs)
+    ?? "sedentaire";
+}
+
+/**
  * Âge légal opposable à cet assuré dans ce régime.
  *
  * Trois droits se superposent, du plus particulier au plus général : la
  * pension militaire, qui s'ouvre à une durée de services ; la catégorie
- * active, qui avance l'âge de cinq ou de dix années ; le droit commun.
+ * active, qui avance l'âge de cinq ou de dix années ; le droit commun. Le
+ * départ anticipé du parent de trois enfants l'avance à la date où il en réunit
+ * les conditions ; `parentsCompris` faux le laisse de côté, pour le minimum
+ * garanti.
  */
-export function ageOuverture(moteur, periode, carriere, invaliditeComprise = true) {
+export function ageOuverture(moteur, periode, carriere, invaliditeComprise = true,
+  parentsCompris = true) {
   let age = ageOuvertureDeDroitCommun(moteur, periode, carriere);
+  if (parentsCompris) {
+    const parent = departParentTroisEnfants(moteur, periode, carriere);
+    if (parent !== null) {
+      age = Math.min(age, parent.ageOuverture);
+    }
+  }
   if (!invaliditeComprise) {
     return age;
   }
@@ -1118,9 +1300,21 @@ export function ageTauxPlein(moteur, periodeLiquidation, carriere) {
  * C'est le millésime auquel se lisent les barèmes de décote en table. L'assuré
  * les réunit quand il atteint l'âge d'ouverture de son régime, au mois près ;
  * s'il liquide avant — carrière longue, catégorie active —, il les réunit au
- * plus tôt à la liquidation, et c'est cette année-là qui vaut.
+ * plus tôt à la liquidation, et c'est cette année-là qui vaut. Le parent de
+ * trois enfants les réunit l'année de ses conditions, quand elle précède son
+ * âge d'ouverture ; hors de l'ancien calcul, c'est l'année de ses soixante ans,
+ * ou de l'âge de sa catégorie active, même postérieure à sa liquidation.
  */
 export function anneeOuvertureDesDroits(moteur, periode, carriere, anneeLiquidation) {
+  const parent = departParentTroisEnfants(moteur, periode, carriere);
+  if (parent !== null) {
+    if (!parent.ancienCalcul) {
+      return parent.anneeDesParametres;
+    }
+    if (parent.ageOuverture < ageOuverture(moteur, periode, carriere, true, false)) {
+      return Math.min(anneeLiquidation, parent.anneeDesParametres);
+    }
+  }
   const ouverture = carriere.moisDeLAnniversaire(
     ageOuverture(moteur, periode, carriere)).annee;
   return Math.min(anneeLiquidation, ouverture);

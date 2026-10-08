@@ -330,10 +330,16 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   2014) : `duree_requise_avant_soixante_ans.csv` la porte, et le super-actif né
   en 1965 se voit opposer <!--chiffre:cellule(data/reference/legislation/duree_requise_avant_soixante_ans.csv:trimestres?regle=l13_iii&annee_ouverture=2017)-->166<!--/--> trimestres, comme le publie la Cour des comptes.
   Le militaire qui peut liquider depuis relève du C du même XXIV : <!--chiffre:cellule(data/reference/legislation/duree_requise_avant_soixante_ans.csv:trimestres?regle=xxiv_c&annee_ouverture=2023.667)-->169<!--/-->
-  trimestres, puis un de plus au 1er janvier 2025 et au 1er janvier 2027. Reste
-  dehors le fonctionnaire CIVIL non classé qui liquide avant soixante ans :
-  parent de trois enfants, le modèle ne sert pas son départ ; handicapé, il le
-  sert depuis le 5 octobre 2026, mais sur la durée de sa génération.
+  trimestres, puis un de plus au 1er janvier 2025 et au 1er janvier 2027. Le
+  parent de trois enfants qui avait quinze ans de services avant 2012 part à
+  tout âge depuis le 8 octobre 2026 (fiche
+  `depart_anticipe_parents_trois_enfants`), à la durée de l'année de ses
+  conditions s'il garde l'ancien calcul, à celle de la génération qui a
+  soixante ans l'année de ses soixante ans sinon ; mais le modèle présume de
+  la mère seule l'interruption d'activité qu'il exige pour chaque enfant, et
+  n'en sert rien au père ni au militaire. Reste dehors le fonctionnaire CIVIL
+  non classé et handicapé qui liquide avant soixante ans : le modèle sert son
+  départ depuis le 5 octobre 2026, mais sur la durée de sa génération.
 - **Ce qui compte en services dans les régimes spéciaux.** La pension des
   dix-huit régimes spéciaux du catalogue se proratise, comme celle de la
   fonction publique, sur des services et non sur une durée d'assurance ; mais

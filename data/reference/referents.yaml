@@ -1131,8 +1131,8 @@ referents:
           (`depart_anticipe_trois_enfants`), et
           `tests/formulas/fonction_publique/parent_trois_enfants.yml`, au
           commit `1c45423`
-        etat: a_reprendre
-        chantier: "136.3"
+        etat: repris
+        chantier: "138.17"
       - quoi: >-
           Sa quotité de travail réduit les services sans réduire la durée
           d'assurance. Au dépôt, `temps_partiel_fonction_publique` est
@@ -2459,7 +2459,7 @@ referents:
           cette date de trois enfants vivants […] conserve la
           possibilité de liquider sa pension par anticipation »,
           sous condition d'interruption d'activité, père compris.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.17"
       - quoi: >-
           Il remplace la petite pension du régime général par un

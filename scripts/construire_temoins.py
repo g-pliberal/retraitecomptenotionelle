@@ -1365,6 +1365,38 @@ def _cas() -> list[dict]:
         **enfants, "statut": "clerc_de_notaire", "naissance": "1972",
         "naissances": "2003,2006-09,2009",
     }))
+    # LE DÉPART ANTICIPÉ DES PARENTS DE TROIS ENFANTS (action 138, étape 17) :
+    # la mère qui réunit quinze ans de services et son troisième enfant liquide
+    # sa pension civile à tout âge. Avant 2004, à 150 trimestres et sans décote ;
+    # née en 1955, elle garde la durée et la décote de 2007 ; née en 1965, elle a
+    # celles de ses soixante ans, en 2025 ; le père n'y a rien. L'hospitalière
+    # active partie en février 2011 garde l'ancien calcul, celle née en 1966 a
+    # la durée de l'année de ses cinquante-sept ans.
+    parents = {**enfants, "statut": "fonctionnaire_etat"}
+    cas.append(("parents_trois_enfants_avant_2004", {
+        **parents, "naissance": "1950", "debut": "25", "liquidation": "50",
+        "naissances": "1976,1978,1981",
+    }))
+    cas.append(("parents_trois_enfants_ancien_calcul_decote", {
+        **parents, "naissance": "1955", "debut": "38", "liquidation": "56",
+        "naissances": "1980,1982,1985",
+    }))
+    cas.append(("parents_trois_enfants_nouveau_calcul", {
+        **parents, "naissance": "1965", "debut": "23", "liquidation": "50",
+        "naissances": "1990,1992,1995",
+    }))
+    cas.append(("parents_trois_enfants_pere", {
+        **parents, "sexe": "H", "naissance": "1965", "debut": "23", "liquidation": "50",
+        "naissances": "1990,1992,1995",
+    }))
+    cas.append(("parents_trois_enfants_active_fevrier_2011", {
+        **parents, "statut": "fonctionnaire_hospitalier_actif", "naissance": "1961",
+        "debut": "22", "liquidation": "50", "naissances": "1984,1986,1988",
+    }))
+    cas.append(("parents_trois_enfants_active_nouveau_calcul", {
+        **parents, "statut": "fonctionnaire_hospitalier_actif", "naissance": "1966",
+        "debut": "22", "liquidation": "50", "naissances": "1989,1991,1994",
+    }))
     # LES BASCULES DES VERSIONS, là où le modèle datait à l'année ce que le
     # droit date au jour : la veille et le lendemain de trois bornes que les
     # fiches du domaine déclarent approchées. Chaque témoin fige ce que le

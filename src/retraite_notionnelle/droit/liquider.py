@@ -1257,9 +1257,15 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             # Les assurés qui atteignaient l'âge d'ouverture de leurs
             # droits avant 2011 gardent le droit inconditionnel, et le c
             # de L. 17 sous quinze ans de services ; les autres ont le d,
-            # que la même loi a créé (voir `MinimumGaranti.montant`).
-            age_ouverture = ouvrir.age_ouverture(moteur, periode, carriere)
-            ancien_droit = carriere.annee_naissance + age_ouverture < 2011
+            # que la même loi a créé (voir `MinimumGaranti.montant`). Le
+            # parent de trois enfants qui garde l'ancien calcul garde aussi
+            # l'ancien L. 17 (article 44, IV, de la loi) ; l'âge qui compte
+            # pour les autres est celui d'avant son départ anticipé.
+            age_ouverture = ouvrir.age_ouverture(moteur, periode, carriere,
+                                                 parents_compris=False)
+            parent = ouvrir.depart_parent_trois_enfants(moteur, periode, carriere)
+            ancien_droit = (carriere.annee_naissance + age_ouverture < 2011
+                            or (parent is not None and parent.ancien_calcul))
             # L'âge qui ouvre le minimum sans la durée est l'âge
             # d'annulation de la décote, MINORÉ à titre transitoire selon
             # l'année où l'âge d'ouverture est atteint (IV de l'article 45

@@ -11046,6 +11046,54 @@ null
 }
 ]
 },
+"depart_anticipe_parents_trois_enfants":{
+"dates_qui_decident":["liquidation.date_effet"],
+"id":"depart_anticipe_parents_trois_enfants",
+"versions":[
+{
+"bornes":{"liquidation.date_effet":[null,"1982-04-02"]},
+"exception_de":null,
+"id":"avant_1982",
+"parametres":{"beneficiaire":"mere","calcul":"annee_des_conditions","conditions_reunies_avant":null,"enfants":3,"existe":true,"fiabilite":"estimee","regimes":["fonction_publique_etat","cnracl","fspoeie"],"services_requis_annees":15},
+"texte":"LEGIARTI000006368228"
+},
+{
+"bornes":{"liquidation.date_effet":["1982-04-02","2004-12-31"]},
+"exception_de":null,
+"id":"code_de_1982",
+"parametres":{"beneficiaire":"mere","calcul":"annee_des_conditions","conditions_reunies_avant":null,"enfants":3,"existe":true,"fiabilite":"moyenne","regimes":["fonction_publique_etat","cnracl","fspoeie"],"services_requis_annees":15},
+"texte":"LEGIARTI000006362725"
+},
+{
+"bornes":{"liquidation.date_effet":["2004-12-31","2011-01-01"]},
+"exception_de":null,
+"id":"loi_du_30_decembre_2004",
+"parametres":{"beneficiaire":"mere","calcul":"annee_des_conditions","conditions_reunies_avant":null,"enfants":3,"existe":true,"fiabilite":"moyenne","regimes":["fonction_publique_etat","cnracl","fspoeie"],"services_requis_annees":15},
+"texte":"LEGIARTI000006362727"
+},
+{
+"bornes":{"liquidation.date_effet":["2011-01-01",null]},
+"exception_de":null,
+"id":"loi_du_9_novembre_2010",
+"parametres":{
+"ages_avant_la_loi":{"active":55,"sedentaire":60,"super_active":50},
+"ages_de_l_annee_retenue":{"active":57,"sedentaire":60,"super_active":52},
+"ancien_calcul_a_moins_de":5,
+"ancien_calcul_au":"2011-01-01",
+"ancien_calcul_jusqu_a":"2011-07-01",
+"beneficiaire":"mere",
+"calcul":"loi_du_9_novembre_2010",
+"conditions_reunies_avant":"2012-01-01",
+"enfants":3,
+"existe":true,
+"fiabilite":"moyenne",
+"regimes":["fonction_publique_etat","cnracl","fspoeie"],
+"services_requis_annees":15
+},
+"texte":"LEGIARTI000023023951"
+}
+]
+},
 "majoration_duree_hospitaliers_actifs":{
 "dates_qui_decident":["liquidation.date_effet"],
 "id":"majoration_duree_hospitaliers_actifs",
@@ -21098,6 +21146,7 @@ null
 "aucun_autre_revenu_que_ses_pensions":{"dit":"le revenu fiscal de référence du foyer est fait de ses seules pensions","valeur":"la pension du système 1, et les ressources du conjoint déclaré, abattues de 10 %"},
 "conjoint_de_l_autre_sexe":{"dit":"le conjoint déclaré est de l'autre sexe que l'assuré","valeur":"l'autre sexe"},
 "deces_apres_le_depart":{"dit":"sans décès déclaré, l'assuré qui déclare un conjoint est supposé décéder juste après son départ, ou au 1er janvier de l'année courante s'il est déjà parti","valeur":"au départ"},
+"demande_de_pension_avant_2011":{"dit":"le parent de trois enfants dont la pension prend effet au plus tard le 1er juillet 2011 l'a demandée avant le 1er janvier 2011","valeur":"demandée avant le 1er janvier 2011"},
 "depart_de_chaque_regime":{"dit":"chaque pension est demandée au départ déclaré ; celle d'un régime qui n'ouvre pas encore à cette date l'est au jour où il s'ouvre, et la pension militaire dès la sortie de l'armée","valeur":"au départ déclaré, à l'ouverture du régime, ou à la sortie de l'armée"},
 "domicile_fiscal_au_pays_de_residence":{"dit":"qui réside hors de France après son départ n'y a pas son domicile fiscal","valeur":"le pays de résidence que la saisie dit"},
 "enfant_eleve_neuf_ans":{"dit":"chaque enfant qui a neuf ans à la date d'effet a été élevé neuf ans avant son seizième anniversaire","valeur":"élevé neuf ans"},

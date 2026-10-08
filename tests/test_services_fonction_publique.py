@@ -179,10 +179,14 @@ def test_les_bonifications_portent_le_taux_au_dela_de_75_pour_cent(simulateur):
         return next(p for p in resultat.pensions_par_regime
                     if p.type_calcul == "annuites")
 
-    # 168 trimestres de services et douze de bonification, pour 169 requis :
-    # le prorata est de 180/169, et non plus de 169/169.
-    mere = pension(3, 22)
-    assert "× 180/169" in mere.detail
+    # 164 trimestres de services et douze de bonification, pour 168 requis :
+    # le prorata est de 176/168, et non plus de 168/168. Mère de trois enfants
+    # qui avait quinze ans de services avant 2012, elle a la durée de l'année
+    # de ses soixante ans, 168 trimestres, et non les 169 de sa génération
+    # (fiche depart_anticipe_parents_trois_enfants, action 138, étape 17).
+    mere = pension(3, 23)
+    assert "× 176/168" in mere.detail
+    assert "taux maximum" not in mere.detail
     # Plus de services que la durée requise, et pas de bonification : le
     # plafond reste la durée requise, soit 75 %.
     sans_enfant = pension(0, 20)

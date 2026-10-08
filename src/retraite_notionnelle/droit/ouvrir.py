@@ -4,8 +4,10 @@
 sert-il au taux plein ? Trois droits se superposent, du plus particulier au
 plus général : l'âge qu'un régime spécial a en propre, celui que la
 catégorie active ou la jouissance militaire ouvrent, et l'âge légal de la
-génération (:func:`age_ouverture`) ; la durée requise suit la génération, le
-calendrier du régime ou l'année d'ouverture des droits
+génération (:func:`age_ouverture`) ; le fonctionnaire parent de trois
+enfants a le sien, la date où il en réunit les conditions
+(:func:`depart_parent_trois_enfants`). La durée requise suit la génération,
+le calendrier du régime ou l'année d'ouverture des droits
 (:func:`duree_requise`). Quand l'âge demandé précède l'âge légal, le
 départ anticipé des assurés handicapés peut encore l'ouvrir, et quand il
 précède tous les autres, la carrière longue.
@@ -76,6 +78,32 @@ SURCOTE_EMPLOIS_CLASSES = {
 #: l'âge de L. 161-17-2 pour les générations nées depuis 1955.
 AGE_SURCOTE_AVANT_2023 = 62.0
 
+#: La fiche du départ anticipé des parents de trois enfants, que
+#: :class:`FichesDatees <retraite_notionnelle.scenarios.actuel.FichesDatees>`
+#: lit à la date d'effet (:func:`depart_parent_trois_enfants`).
+FICHE_PARENTS_DE_TROIS_ENFANTS = "depart_anticipe_parents_trois_enfants"
+
+#: Les bénéficiaires qu'une version de cette fiche peut nommer : la mère seule,
+#: dont l'interruption d'activité pour chaque enfant est présumée.
+BENEFICIAIRES_DES_PARENTS = ("mere",)
+
+#: Les calculs qu'elle peut nommer : ``annee_des_conditions``, la durée et la
+#: décote de l'année où les conditions sont réunies (loi n° 2003-775, article
+#: 66, II et III) ; ``loi_du_9_novembre_2010``, celles de l'année des soixante
+#: ans, ou de l'âge de la catégorie active, hors de l'ancien calcul (article 44,
+#: IV, de cette loi).
+CALCULS_DES_PARENTS = ("annee_des_conditions", "loi_du_9_novembre_2010")
+
+#: Les régimes dont les années comptent aux quinze ans de services du parent :
+#: les trois du code des pensions, qui comptent chacun les services des deux
+#: autres, et les pensions civiles d'avant 1948.
+REGIMES_DES_SERVICES_DES_PARENTS = (coordonner.REGIMES_CODE_DES_PENSIONS
+                                    | {"pensions_civiles_1853"})
+
+#: La date d'effet à laquelle se lit la fiche d'une carrière sans départ : sa
+#: dernière version.
+SANS_DATE_D_EFFET = "9999-12-01"
+
 
 @dataclass(frozen=True)
 class DroitMilitaire:
@@ -91,6 +119,27 @@ class DroitMilitaire:
     trimestres_cible: int
     #: Vrai quand la pension n'est due qu'à l'âge différé, faute de la durée.
     jouissance_differee: bool
+    fiabilite: Fiabilite
+
+
+@dataclass(frozen=True)
+class DepartParentTroisEnfants:
+    """Ce que le départ anticipé du parent de trois enfants ouvre à un
+    fonctionnaire, une fois sa carrière lue (:func:`depart_parent_trois_enfants`)."""
+
+    #: L'âge où les conditions sont réunies — quinze ans de services, le
+    #: troisième enfant —, d'où la pension s'ouvre à tout âge.
+    age_ouverture: float
+    #: L'année à laquelle se lisent la durée requise et le barème de décote :
+    #: celle des conditions réunies, ou, hors de l'ancien calcul, celle des
+    #: soixante ans, ou de l'âge de la catégorie active.
+    annee_des_parametres: int
+    #: Vrai quand l'ancien calcul demeure (loi n° 2010-1330, article 44, IV, 1°
+    #: et 2°) : l'assuré garde aussi l'article L. 17 d'avant cette loi, le
+    #: minimum garanti sans condition.
+    ancien_calcul: bool
+    #: La version de la fiche qui vaut.
+    version: str
     fiabilite: Fiabilite
 
 
@@ -352,7 +401,21 @@ def duree_requise(moteur, periode: PeriodeRegime,
     derogation = derogation_active(moteur, periode, carriere)
     if derogation is not None and derogation.duree_requise is not None:
         return derogation.duree_requise, derogation.fiabilite
-    avant_soixante_ans = duree_requise_avant_soixante_ans(moteur, 
+    # LE PARENT DE TROIS ENFANTS a la durée de l'année que son départ anticipé
+    # retient (:func:`annee_ouverture_des_droits`) : celle des conditions
+    # réunies, ou celle des fonctionnaires qui ont soixante ans l'année de ses
+    # soixante ans, telle que la loi la fixait avant le XXIV de la loi du 14
+    # avril 2023, dont le C, 1°, la garde à qui pouvait liquider avant le
+    # 1er septembre 2023.
+    parent = depart_parent_trois_enfants(moteur, periode, carriere)
+    if parent is not None:
+        lue = duree_de_l_annee(moteur, periode, annee_ouverture_des_droits(
+            moteur, periode, carriere,
+            carriere.annee_liquidation if carriere.age_liquidation is not None else 9999))
+        if lue is not None:
+            return lue[0], (parent.fiabilite if lue[1] is None
+                            else min(lue[1], parent.fiabilite))
+    avant_soixante_ans = duree_requise_avant_soixante_ans(moteur,
         periode, carriere, derogation)
     if avant_soixante_ans is not None:
         return avant_soixante_ans
@@ -425,7 +488,9 @@ def duree_requise_avant_soixante_ans(
     des carrières longues en 2025 aura une durée d'assurance requise de
     170 trimestres (au lieu de 172 trimestres en fonction de sa
     génération) ». Le modèle ne l'opposait qu'au militaire ; de ces
-    départs, il ne connaît que la carrière longue.
+    départs, il connaît la carrière longue, ici, et celui du parent de trois
+    enfants, dont :func:`duree_requise` lit la durée à l'année que la loi du
+    9 novembre 2010 retient (:func:`duree_de_l_annee`).
 
     Avant 2009 la table ne répond pas : de 2004 à 2008, celle de la loi de
     2003 a déjà répondu (:func:`duree_requise` la lit d'abord, à la même
@@ -462,12 +527,23 @@ def duree_requise_avant_soixante_ans(
     if ((militaire is not None or carriere_longue)
             and ouverture.rang >= moteur.DUREE_XXIV_C_DEPUIS.rang):
         return moteur.durees_requises_avant_soixante_ans.depuis_2023(ouverture)
+    return duree_de_l_annee(moteur, periode, ouverture.annee)
+
+
+def duree_de_l_annee(moteur, periode: PeriodeRegime,
+                     annee: int) -> tuple[int, Fiabilite | None] | None:
+    """La durée « exigée des fonctionnaires atteignant [soixante ans] » cette
+    année-là (loi n° 2003-775, article 5, VI ; L. 13, III) : la montée en
+    charge de 2004 à 2008 (article 66, II), la table de L. 13, III, de 2009 à
+    2033 — sa dernière ligne au-delà, « la dernière génération pour laquelle
+    elle a été fixée » —, et avant 2004 celle que la fiche du régime portait
+    cette année-là ; ``None`` sans aucune."""
     for table in (moteur.durees_requises_fonction_publique.trimestres,
                   moteur.durees_requises_avant_soixante_ans.par_annee):
-        lue = table(ouverture.annee)
+        lue = table(annee)
         if lue is not None:
             return lue
-    en_vigueur = moteur.catalogue[periode.regime].periode(ouverture.annee)
+    en_vigueur = moteur.catalogue[periode.regime].periode(annee)
     if en_vigueur is None or en_vigueur.duree_requise_trimestres is None:
         return None
     return en_vigueur.duree_requise_trimestres, None
@@ -620,14 +696,143 @@ def droit_militaire(moteur, periode: PeriodeRegime,
     )
 
 
+def depart_parent_trois_enfants(moteur, periode: PeriodeRegime, carriere: Carriere
+                                ) -> DepartParentTroisEnfants | None:
+    """Le départ anticipé que ce régime ouvre au parent de trois enfants, ou
+    ``None`` (fiche ``depart_anticipe_parents_trois_enfants``).
+
+    Le code des pensions sert la pension, à tout âge, au fonctionnaire parent
+    de trois enfants qui a quinze ans de services (L. 24, I, 3°) — à la mère
+    jusqu'à la loi du 30 décembre 2004, depuis au parent qui a interrompu son
+    activité pour chaque enfant, ce que le modèle présume de la mère seule. La
+    durée requise et le barème de décote sont ceux de l'« Année au cours de
+    laquelle sont réunies les conditions mentionnées au I et au II de l'article
+    L. 24 » (loi n° 2003-775, article 66, II et III) : la mère qui les
+    réunissait avant 2004 garde 150 trimestres et aucune décote, à quelque date
+    qu'elle parte.
+
+    LA LOI DU 9 NOVEMBRE 2010 FERME CE DÉPART À QUI NE LE TIENT PAS AVANT 2012,
+    ET DÉPLACE L'ANNÉE DES AUTRES. Les conditions doivent être réunies avant le
+    1er janvier 2012 (article 44, III) ; la durée et la décote sont alors celles
+    de l'année où l'assuré atteint soixante ans — l'âge du dernier alinéa du I
+    de l'article 5 de la loi n° 2003-775 — ou l'âge de sa catégorie active que
+    l'article 22 fixe, fût-ce longtemps après son départ (article 44, IV). Une
+    mère née en 1965, partie à quarante-cinq ans, a la durée et la décote de
+    2025. L'ancien calcul demeure à qui l'avait demandée avant 2011 pour partir
+    au plus tard le 1er juillet 2011 — la présomption
+    ``demande_de_pension_avant_2011`` —, et à qui était, au 1er janvier 2011, à
+    moins de cinq ans de l'âge d'ouverture que la loi lui opposait avant : les
+    nées avant 1956, avant 1961 en catégorie active, avant 1966 en
+    super-active.
+
+    Le militaire en est écarté : sa pension s'ouvre à sa durée de services
+    (:func:`droit_militaire`). Les quinze ans se comptent sur les trois régimes
+    du code des pensions, comme la coordination les compte. Un bénéficiaire ou
+    un calcul que le moteur ne connaît pas l'arrête (§ 6.7).
+    """
+    if periode.regime not in coordonner.REGIMES_CODE_DES_PENSIONS:
+        return None
+    date_effet = date_d_effet(carriere)
+    version = moteur.fiches_datees.version(FICHE_PARENTS_DE_TROIS_ENFANTS,
+                                           date_effet or SANS_DATE_D_EFFET)
+    if version is None:
+        return None
+    parametres = version["parametres"]
+    if not parametres.get("existe") or periode.regime not in parametres["regimes"]:
+        return None
+    beneficiaire, calcul = parametres["beneficiaire"], parametres["calcul"]
+    if beneficiaire not in BENEFICIAIRES_DES_PARENTS:
+        raise ValueError(f"{FICHE_PARENTS_DE_TROIS_ENFANTS}.{version['id']} : "
+                         f"bénéficiaire inconnu, {beneficiaire!r}")
+    if calcul not in CALCULS_DES_PARENTS:
+        raise ValueError(f"{FICHE_PARENTS_DE_TROIS_ENFANTS}.{version['id']} : "
+                         f"calcul inconnu, {calcul!r}")
+    # L'interruption d'activité pour chaque enfant, présumée de la mère seule.
+    if carriere.sexe != "F":
+        return None
+    enfants = int(parametres["enfants"])
+    naissances = sorted(naissance for _, naissance in carriere.naissances_des_enfants)
+    if len(naissances) < enfants:
+        return None
+    if droit_militaire(moteur, periode, carriere) is not None:
+        return None
+    statuts = [code for code in moteur.affiliations.codes
+               if not coordonner.regimes_routes(moteur, [code]).isdisjoint(
+                   REGIMES_DES_SERVICES_DES_PARENTS)]
+    services = carriere.date_de_service(statuts, float(parametres["services_requis_annees"]))
+    if services is None:
+        return None
+    # Le mois où les deux conditions sont réunies : la dernière des deux.
+    naissance = naissances[enfants - 1]
+    enfant = DateMois(int(naissance[:4]), int(naissance[5:7]))
+    reunies = enfant if enfant.rang > services.rang else services
+    avant = parametres.get("conditions_reunies_avant")
+    if avant is not None and reunies.rang >= DateMois(int(avant[:4]), int(avant[5:7])).rang:
+        return None
+    fiabilite = Fiabilite.depuis_texte(parametres["fiabilite"])
+    age = carriere.age_au(reunies)
+    if calcul == "annee_des_conditions" or _ancien_calcul_des_parents(
+            moteur, periode, carriere, parametres, date_effet):
+        return DepartParentTroisEnfants(
+            age_ouverture=age, annee_des_parametres=reunies.annee, ancien_calcul=True,
+            version=version["id"], fiabilite=fiabilite)
+    ages = parametres["ages_de_l_annee_retenue"]
+    classement = classement_des_parents(moteur, periode, carriere)
+    if classement not in ages:
+        raise ValueError(f"{FICHE_PARENTS_DE_TROIS_ENFANTS}.{version['id']} : "
+                         f"aucun âge pour le classement {classement!r}")
+    return DepartParentTroisEnfants(
+        age_ouverture=age, annee_des_parametres=carriere.annee_naissance + int(ages[classement]),
+        ancien_calcul=False, version=version["id"], fiabilite=fiabilite)
+
+
+def _ancien_calcul_des_parents(moteur, periode: PeriodeRegime, carriere: Carriere,
+                               parametres: dict, date_effet: str | None) -> bool:
+    """L'ancien calcul que le IV de l'article 44 de la loi du 9 novembre 2010
+    garde : à la pension qui prend effet au plus tard à ``ancien_calcul_jusqu_a``,
+    demandée avant 2011 par présomption (1°) ; à qui était, à
+    ``ancien_calcul_au``, à moins de ``ancien_calcul_a_moins_de`` années de son
+    âge d'ouverture d'avant la loi (2°). Né le 1er janvier 1956, le sédentaire
+    en est encore à cinq ans tout juste, et non à moins : la coupure tombe à
+    l'année de naissance."""
+    jusqu_a = parametres.get("ancien_calcul_jusqu_a")
+    if jusqu_a is not None and date_effet is not None and date_effet <= jusqu_a:
+        return True
+    ages = parametres["ages_avant_la_loi"]
+    classement = classement_des_parents(moteur, periode, carriere)
+    if classement not in ages:
+        raise ValueError(f"{FICHE_PARENTS_DE_TROIS_ENFANTS} : aucun âge d'avant la loi "
+                         f"pour le classement {classement!r}")
+    au = int(str(parametres["ancien_calcul_au"])[:4])
+    return (carriere.annee_naissance + int(ages[classement])
+            - int(parametres["ancien_calcul_a_moins_de"]) < au)
+
+
+def classement_des_parents(moteur, periode: PeriodeRegime, carriere: Carriere) -> str:
+    """Le classement dont la fiche des parents lit les âges : ``sedentaire``,
+    ou celui de la catégorie active que l'agent remplit à sa liquidation
+    (:func:`derogation_active`), ``active`` ou ``super_active``."""
+    if derogation_active(moteur, periode, carriere) is None:
+        return "sedentaire"
+    return (statut_dominant(moteur, carriere, moteur.affiliations.classements_actifs)
+            or "sedentaire")
+
+
 def age_ouverture(moteur, periode: PeriodeRegime, carriere: Carriere,
-                  invalidite_comprise: bool = True) -> float:
+                  invalidite_comprise: bool = True,
+                  parents_compris: bool = True) -> float:
     """Âge légal opposable à cet assuré dans ce régime.
 
     Trois droits se superposent, du plus particulier au plus général : la
     pension militaire, qui s'ouvre à une durée de services ; la catégorie
     active, qui avance l'âge de cinq ou de dix années ; le droit commun,
     lu à la génération ou dans la fiche.
+
+    Le départ anticipé du parent de trois enfants l'avance à la date où il en
+    réunit les conditions (:func:`depart_parent_trois_enfants`) ;
+    ``parents_compris`` faux le laisse de côté : c'est l'âge d'ouverture que
+    le minimum garanti lit, la loi du 9 novembre 2010 ne gardant l'ancien
+    L. 17 qu'au parent qui garde l'ancien calcul.
 
     Et l'invalidité l'abaisse, dans les régimes qui la connaissent : le
     fonctionnaire radié des cadres pour invalidité liquide à sa radiation, à
@@ -639,6 +844,10 @@ def age_ouverture(moteur, periode: PeriodeRegime, carriere: Carriere,
     dire ce qui ouvre la liquidation.
     """
     age = _age_ouverture_de_droit_commun(moteur, periode, carriere)
+    if parents_compris:
+        parent = depart_parent_trois_enfants(moteur, periode, carriere)
+        if parent is not None:
+            age = min(age, parent.age_ouverture)
     if not invalidite_comprise:
         return age
     radiation = invalidite.radiation_du_regime(moteur, periode.regime, carriere)
@@ -1303,7 +1512,20 @@ def annee_ouverture_des_droits(moteur, periode: PeriodeRegime,
     quand il atteint l'âge d'ouverture de son régime, au mois près ; s'il
     liquide avant — carrière longue, catégorie active —, il les réunit au
     plus tôt à la liquidation, et c'est cette année-là qui vaut.
+
+    LE PARENT DE TROIS ENFANTS les réunit l'année de son troisième enfant ou
+    de ses quinze ans de services, quand elle précède son âge d'ouverture ;
+    hors de l'ancien calcul, la loi du 9 novembre 2010 retient l'année de ses
+    soixante ans, ou de l'âge de sa catégorie active, même postérieure à sa
+    liquidation (:func:`depart_parent_trois_enfants`).
     """
+    parent = depart_parent_trois_enfants(moteur, periode, carriere)
+    if parent is not None:
+        if not parent.ancien_calcul:
+            return parent.annee_des_parametres
+        if parent.age_ouverture < age_ouverture(moteur, periode, carriere,
+                                                parents_compris=False):
+            return min(annee_liquidation, parent.annee_des_parametres)
     ouverture = carriere.mois_de_l_anniversaire(
         age_ouverture(moteur, periode, carriere)).annee
     return min(annee_liquidation, ouverture)

@@ -1,0 +1,46 @@
+date: "2026-10-08"
+session: "action 138, étape 17, deuxième partie : le départ anticipé des fonctionnaires parents de trois enfants"
+consulte: >-
+  veille_droit.py (cinq fiches à relire, aucune de cette étape) ; l'index LEGI et l'index
+  JORF, récupérés, LEGI mis à jour des incréments jusqu'au 7 octobre 2026, puis textes.py
+  --inscrire (les dix-neuf rédactions de la loi n° 83-1179, que la fiche des
+  sapeurs-pompiers cite, entrent « à examiner ») ; dans l'index : L. 24 du code des
+  pensions, ses rédactions de 1982 à 2012 ; R. 37, ses douze rédactions depuis 2005 ; la
+  loi n° 2010-1330, articles 22 et 44 ; la loi n° 2003-775, article 5 dans ses rédactions
+  de 2010, 2014 et 2017, et article 66 ; le décret n° 65-773, article 21 ; le décret
+  n° 2003-1306, articles 25 et 65-2 ; le décret n° 2004-1056, articles 21 et 50-2 ; au
+  JORF, le décret n° 2010-1741 du 30 décembre 2010, articles 1er à 4. Hors de l'index : la
+  réponse ministérielle à la question écrite n° 97363 (13e législature, JO du 5 juillet
+  2011, p. 7181) ; la fiche de service-public reprise par justice.fr, mise à jour le
+  23 janvier 2026 ; la note du SE-UNSA du 12 novembre 2010 ; le code de Destinie 2 au
+  commit du registre (src/Legislation.cpp), lu sans être recopié. Les diapositives du
+  centre de gestion de l'Orne et la circulaire préfectorale de Haute-Savoie de 2010,
+  qu'une recherche donne, n'ont pas répondu (erreur 503).
+trouve: >-
+  Le code des pensions sert la pension à tout âge au fonctionnaire parent de trois enfants
+  qui a quinze ans de services (L. 24, I, 3°) : aux femmes jusqu'à la loi du 30 décembre
+  2004, au parent qui a interrompu son activité deux mois pour chaque enfant depuis, le
+  congé de maternité de tout régime compris et l'absence de cotisation assimilée (R. 37) ;
+  la CNRACL et le FSPOEIE par renvoi. La durée et la décote sont celles de l'année où les
+  conditions sont réunies (loi n° 2003-775, article 66, II et III) : 150 trimestres et
+  aucune décote avant 2004. La loi du 9 novembre 2010 abroge le 3° au 1er juillet 2011 et
+  n'en garde le bénéfice qu'à qui réunit les conditions avant le 1er janvier 2012 (article
+  44, III) ; elle lui oppose la durée et la décote de l'année de ses soixante ans — l'âge
+  du dernier alinéa du I de l'article 5 de la loi de 2003, que toutes ses rédactions
+  écrivent soixante —, ou de l'âge de sa catégorie active que fixe son article 22, sauf à
+  qui avait demandé sa pension avant 2011 pour partir au plus tard le 1er juillet 2011, et
+  à qui était au 1er janvier 2011 à moins de cinq ans de son âge d'ouverture : ceux-là
+  gardent l'ancien calcul et l'ancien minimum garanti (article 44, IV). Le décret
+  n° 2010-1741 l'écrit de même pour la CNRACL et le FSPOEIE. Le parent qui pouvait
+  liquider avant le 1er septembre 2023 garde la durée d'avant la loi du 14 avril 2023
+  (article 10, XXIV, C, 1°). Servi dans les deux moteurs, à la mère, par présomption ; la
+  date de la demande, que le formulaire ne connaît pas, est une présomption neuve.
+reste: >-
+  Un exemple chiffré publié, à rejouer ; le père qui a pris un congé parental ou une
+  disponibilité pour chaque enfant, avec un champ de saisie ; l'officier parent de trois
+  enfants (L. 24, II, 1° bis) ; les départs des parents de trois enfants des régimes
+  spéciaux, éteints de 2008 à 2011 par leurs propres décrets (CRPCEN, Comédie-Française,
+  SNCF, RATP, IEG, Banque de France, Opéra) ; le dispositif à l'inventaire des avantages
+  non contributifs, et son coût par retrait de la fiche. De l'étape 17, ensuite : la
+  bonification du cinquième des militaires, le plafond de L. 18, puis le régime général
+  et les complémentaires.

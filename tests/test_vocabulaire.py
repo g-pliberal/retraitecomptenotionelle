@@ -109,6 +109,7 @@ PRESOMPTIONS_DU_5_6 = {
     "pas d'accord des parents": "pas_d_accord_des_parents",
     "enfant élevé neuf ans": "enfant_eleve_neuf_ans",
     "interruption d'activité remplie par la mère seule": "interruption_d_activite_par_la_mere",
+    "demande de pension présentée avant 2011": "demande_de_pension_avant_2011",
     "validation de l'Ircantec présumée demandée": "validation_ircantec_demandee",
     "mariage aux": "mariage_des_conjoints",
     "conjoint de l'autre sexe": "conjoint_de_l_autre_sexe",

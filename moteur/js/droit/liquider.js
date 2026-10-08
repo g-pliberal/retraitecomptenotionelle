@@ -755,9 +755,13 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       // Depuis la loi du 9 novembre 2010, le minimum garanti n'est dû qu'au
       // taux plein. Les assurés qui atteignaient l'âge d'ouverture de leurs
       // droits avant 2011 gardent le droit inconditionnel, et le c de L. 17
-      // sous quinze ans ; les autres ont le d.
-      const ageOuverturePeriode = ouvrir.ageOuverture(moteur, periode, carriere);
-      const ancienDroit = carriere.annee_naissance + ageOuverturePeriode < 2011;
+      // sous quinze ans ; les autres ont le d. Le parent de trois enfants qui
+      // garde l'ancien calcul garde aussi l'ancien L. 17 ; l'âge qui compte
+      // pour les autres est celui d'avant son départ anticipé.
+      const ageOuverturePeriode = ouvrir.ageOuverture(moteur, periode, carriere, true, false);
+      const parent = ouvrir.departParentTroisEnfants(moteur, periode, carriere);
+      const ancienDroit = carriere.annee_naissance + ageOuverturePeriode < 2011
+        || (parent !== null && parent.ancienCalcul);
       // L'âge d'annulation de la décote qui ouvre le minimum est minoré à
       // titre transitoire, selon l'année où l'âge d'ouverture est atteint
       // (décret n° 2010-1744, article 3).

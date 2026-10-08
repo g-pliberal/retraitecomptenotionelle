@@ -298,13 +298,29 @@ listes:
       interruption_d_activite_par_la_mere:
         dit: la mère a interrompu ou réduit son activité pour chaque enfant, et elle seule
         valeur: remplie par la mère seule
-        appliquee_par: le paramètre beneficiaire (mere) des versions de la fiche enfants_fonction_publique, lu par MajorationsPourEnfants.par_enfant
+        appliquee_par: le paramètre beneficiaire (mere) des versions de la fiche enfants_fonction_publique, lu par MajorationsPourEnfants.par_enfant, et de la fiche depart_anticipe_parents_trois_enfants, lu par depart_parent_trois_enfants (droit/ouvrir.py, ouvrir.js)
         entrera_a: compter_les_durees
         raison: >-
           depuis la loi du 21 août 2003, la bonification de L. 12 b va à chaque
           parent qui a interrompu ou réduit son activité, dans les conditions
-          de R. 13 ; le formulaire ne demande ni les congés ni la quotité de
-          chacun
+          de R. 13 ; depuis la loi du 30 décembre 2004, le départ anticipé du
+          parent de trois enfants aussi, dans celles de R. 37, que le congé de
+          maternité remplit ; le formulaire ne demande ni les congés ni la
+          quotité de chacun
+      demande_de_pension_avant_2011:
+        dit: le parent de trois enfants dont la pension prend effet au plus tard le 1er juillet 2011 l'a demandée avant le 1er janvier 2011
+        valeur: demandée avant le 1er janvier 2011
+        appliquee_par: le paramètre ancien_calcul_jusqu_a de la version loi_du_9_novembre_2010 de la fiche depart_anticipe_parents_trois_enfants, lu par depart_parent_trois_enfants (droit/ouvrir.py, ouvrir.js)
+        entrera_a: ouvrir_le_droit
+        raison: >-
+          le IV de l'article 44 de la loi du 9 novembre 2010 garde la durée et
+          la décote de l'année des conditions réunies « Aux demandes présentées
+          avant le 1er janvier 2011, sous réserve d'une radiation des cadres
+          prenant effet au plus tard le 1er juillet 2011 » ; le formulaire ne
+          demande pas la date de la demande, et les services devaient informer
+          ces parents avant le 15 décembre 2010 (V du même article) : qui
+          partait au premier semestre 2011 avait demandé sa pension pour garder
+          ses règles
       mariage_des_conjoints:
         dit: l'assuré s'est marié à vingt-sept ans avec le conjoint qu'il déclare
         valeur: 27

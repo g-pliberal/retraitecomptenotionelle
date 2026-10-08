@@ -1,0 +1,391 @@
+schema_version: 1
+id: depart_anticipe_parents_trois_enfants
+intitule: >-
+  Le fonctionnaire parent de trois enfants qui a quinze ans de services liquide sa
+  pension à tout âge (L. 24, I, 3°, du code des pensions), à la durée requise et au
+  barème de décote de l'année où il réunit ces conditions (loi n° 2003-775, article
+  66, II et III). Depuis la loi du 9 novembre 2010, seul le garde celui qui les réunit
+  avant le 1er janvier 2012, et il prend la durée et la décote de l'année de ses soixante
+  ans, ou de l'âge de sa catégorie active, sauf s'il était au 1er janvier 2011 à moins
+  de cinq ans de son âge d'ouverture, ou avait demandé sa pension avant cette date
+  pour partir au plus tard le 1er juillet 2011 (article 44, III et IV).
+domaine: depart_anticipe
+regimes:
+- fonction_publique_etat
+- cnracl
+- fspoeie
+etape: ouvrir_le_droit
+face: droit
+etat: approchee
+lit:
+- le sexe de l'assurée, qui présume l'interruption d'activité
+- la naissance de chaque enfant, déclarée ou présumée
+- les années servies dans les statuts que les trois régimes du code des pensions
+  pensionnent, jusqu'à la liquidation (Carriere.date_de_service)
+- le classement de l'emploi, sédentaire, actif ou super-actif, et la pension militaire
+  (droit/ouvrir.py, derogation_active, droit_militaire)
+- l'année de naissance
+- liquidation.date_effet
+ecrit:
+- l'âge où le droit s'ouvre, celui des conditions réunies, s'il précède l'âge légal
+  ou celui de la catégorie active
+- l'année à laquelle se lisent la durée requise et le barème de décote
+- le minimum garanti d'avant la loi du 9 novembre 2010, à qui garde l'ancien calcul
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
+# moteur (droit/ouvrir.py, `depart_parent_trois_enfants`, et son jumeau) lit :
+# `regimes`, ceux qui servent ce départ ; `beneficiaire`, `mere` seul connu —
+# l'interruption d'activité présumée de la mère seule — ; `enfants` et
+# `services_requis_annees`, les deux conditions ; `conditions_reunies_avant`, la
+# date avant laquelle elles doivent l'être, ou rien ; `calcul`, l'année de la
+# durée et de la décote : `annee_des_conditions`, ou `loi_du_9_novembre_2010`,
+# qui lit alors `ancien_calcul_jusqu_a` (IV, 1° : la date d'effet au plus tard),
+# `ancien_calcul_a_moins_de` et `ancien_calcul_au` (IV, 2° : à moins de tant
+# d'années de l'âge d'ouverture, à cette date), `ages_avant_la_loi` (cet âge,
+# par classement) et `ages_de_l_annee_retenue` (l'âge dont l'année est retenue,
+# par classement : le dernier alinéa du I de l'article 5 de la loi n° 2003-775,
+# puis le I de l'article 22 de la loi n° 2010-1330). Un bénéficiaire, un calcul
+# ou un classement que le moteur ne connaît pas l'arrête.
+versions:
+- id: avant_1982
+  statut: supposee
+  hypothese: >-
+    la rédaction de L. 24 d'avant le 2 avril 1982 n'est pas dans l'index LEGI ; on lui
+    prête celle de 1982, que le décret n° 65-773 portait déjà pour la CNRACL depuis
+    1965 : « Pour les agents du sexe féminin : a) Soit lorsqu'elles sont mères de trois
+    enfants vivants » (article 21, 3°)
+  fiabilite: faible
+  textes:
+  - {id: LEGIARTI000006368228, article: 21, en_vigueur: 1965-09-12}
+  - {id: LEGIARTI000006368229, article: 21, en_vigueur: 1973-03-18}
+  - {id: LEGIARTI000006368230, article: 21, en_vigueur: 1977-07-19}
+  - {id: LEGIARTI000006368231, article: 21, en_vigueur: 1977-12-31}
+  bornes:
+    liquidation.date_effet: [null, 1982-04-02]
+  contenu:
+    droit: >-
+      la pension à jouissance immédiate des femmes fonctionnaires mères de trois enfants
+      vivants ou décédés par faits de guerre, à quinze ans de services
+    beneficiaire: la mère
+    parametres:
+      existe: true
+      regimes: [fonction_publique_etat, cnracl, fspoeie]
+      beneficiaire: mere
+      enfants: 3
+      services_requis_annees: 15
+      conditions_reunies_avant: null
+      calcul: annee_des_conditions
+      fiabilite: estimee
+  exemples: aucun trouvé
+- id: code_de_1982
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006362725, article: L. 24, en_vigueur: 1982-04-02}
+  - {id: LEGIARTI000006362726, article: L. 24, en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006368232, article: 21, en_vigueur: 1982-04-02}
+  - {id: LEGIARTI000006368233, article: 21, en_vigueur: 1985-11-19}
+  - {id: LEGIARTI000006368234, article: 21, en_vigueur: 1989-03-03}
+  - {id: LEGIARTI000006400890, article: 25, en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006781493, article: 21, en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006758610, article: 66, en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000006362725
+  bornes:
+    liquidation.date_effet: [1982-04-02, 2004-12-31]
+  contenu:
+    droit: >-
+      « La liquidation de la pension intervient : […] 3° Pour les femmes fonctionnaires
+      : a) Soit lorsqu'elles sont mères de trois enfants vivants ou décédés par faits
+      de guerre » (L. 24, I) ; la CNRACL de même (décret n° 65-773, article 21, 3°,
+      puis décret n° 2003-1306, article 25, I), et le FSPOEIE par renvoi à L. 24
+      (décret n° 2004-1056, article 21, I, 3°). Depuis 2004, la durée requise et le
+      barème de décote sont ceux de l'« Année au cours de laquelle sont réunies les
+      conditions mentionnées au I et au II de l'article L. 24 » (loi n° 2003-775,
+      article 66, II et III) : 150 trimestres et aucune décote jusqu'en 2003.
+    conditions: >-
+      quinze années de services civils et militaires effectifs, sans lesquelles aucune
+      pension n'est due (L. 4) ; trois enfants
+    beneficiaire: la mère
+    parametres:
+      existe: true
+      regimes: [fonction_publique_etat, cnracl, fspoeie]
+      beneficiaire: mere
+      enfants: 3
+      services_requis_annees: 15
+      conditions_reunies_avant: null
+      calcul: annee_des_conditions
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: loi_du_30_decembre_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006362727, article: L. 24, en_vigueur: 2004-12-31}
+  - {id: LEGIARTI000006362728, article: L. 24, en_vigueur: 2005-02-12}
+  - {id: LEGIARTI000006362729, article: L. 24, en_vigueur: 2005-07-01}
+  - {id: LEGIARTI000006362730, article: L. 24, en_vigueur: 2006-06-28}
+  - {id: LEGIARTI000006362957, article: R. 37, en_vigueur: 2005-05-11}
+  - {id: LEGIARTI000006362958, article: R. 37, en_vigueur: 2006-05-12}
+  - {id: LEGIARTI000006362959, article: R. 37, en_vigueur: 2006-06-30}
+  - {id: LEGIARTI000006362960, article: R. 37, en_vigueur: 2006-08-22}
+  - {id: LEGIARTI000006362961, article: R. 37, en_vigueur: 2006-12-07}
+  - {id: LEGIARTI000020532466, article: R. 37, en_vigueur: 2009-04-19}
+  - {id: LEGIARTI000022304692, article: R. 37, en_vigueur: 2010-05-08}
+  - {id: LEGIARTI000006400891, article: 25, en_vigueur: 2005-05-11}
+  - {id: LEGIARTI000006400892, article: 25, en_vigueur: 2006-12-13}
+  - {id: LEGIARTI000021269243, article: 25, en_vigueur: 2009-11-16}
+  - {id: LEGIARTI000006781494, article: 21, en_vigueur: 2005-05-11}
+  - {id: LEGIARTI000006781495, article: 21, en_vigueur: 2006-12-13}
+  - {id: LEGIARTI000006758610, article: 66, en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000006362727
+  bornes:
+    liquidation.date_effet: [2004-12-31, 2011-01-01]
+  contenu:
+    droit: >-
+      « 3° Lorsque le fonctionnaire civil est parent de trois enfants vivants, ou
+      décédés par faits de guerre, […] à condition qu'il ait, pour chaque enfant,
+      interrompu son activité dans des conditions fixées par décret en Conseil d'Etat.
+      Sont assimilées à l'interruption d'activité […] les périodes n'ayant pas donné
+      lieu à cotisation obligatoire dans un régime de retraite de base » (L. 24, I) ;
+      l'interruption, de deux mois continus au moins, se prend dans un congé de
+      maternité, de paternité, d'adoption, parental, de présence parentale, ou une
+      disponibilité pour élever un enfant, le congé de maternité du régime général
+      compris (R. 37, I et II) ; la CNRACL et le FSPOEIE par renvoi. La durée et la
+      décote sont celles de l'année des conditions réunies (loi n° 2003-775, article
+      66, II et III).
+    conditions: >-
+      quinze années de services ; trois enfants ; pour chacun, l'interruption d'activité,
+      que le modèle présume de la mère seule
+    beneficiaire: >-
+      l'un ou l'autre parent, après une interruption d'activité pour chaque enfant ;
+      la mère, par présomption
+    parametres:
+      existe: true
+      regimes: [fonction_publique_etat, cnracl, fspoeie]
+      beneficiaire: mere
+      enfants: 3
+      services_requis_annees: 15
+      conditions_reunies_avant: null
+      calcul: annee_des_conditions
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: loi_du_9_novembre_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023023951, article: 44, en_vigueur: 2010-11-11}
+  - {id: LEGIARTI000023033603, article: L. 24, en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000023449688, article: R. 37, en_vigueur: 2011-01-01}
+  - {id: LEGIARTI000032726567, article: R. 37, en_vigueur: 2016-06-19}
+  - {id: LEGIARTI000050941566, article: R. 37, en_vigueur: 2025-01-02}
+  - {id: LEGIARTI000051969132, article: R. 37, en_vigueur: 2025-10-01}
+  - {id: LEGIARTI000054175249, article: R. 37, en_vigueur: 2026-06-01}
+  - {id: LEGIARTI000023395017, article: 65-2, en_vigueur: 2011-01-01}
+  - {id: LEGIARTI000023395028, article: 50-2, en_vigueur: 2011-01-01}
+  - {id: JORFTEXT000023334792, en_vigueur: 2011-01-01}
+  nee_de: LEGIARTI000023023951
+  bornes:
+    liquidation.date_effet: [2011-01-01, null]
+  contenu:
+    droit: >-
+      « le fonctionnaire civil et le militaire ayant accompli quinze années de services
+      civils ou militaires effectifs avant le 1er janvier 2012 et parent à cette date
+      de trois enfants vivants, ou décédés par faits de guerre, conserve la
+      possibilité de liquider sa pension par anticipation à condition d'avoir, pour
+      chaque enfant, interrompu ou réduit son activité » (article 44, III), quand le
+      3° de L. 24 ne vise plus, depuis le 1er juillet 2011, que le parent d'un enfant
+      invalide. Pour la durée (article 5, VI, de la loi n° 2003-775) et la décote
+      (article 66, II et III), « l'année prise en compte est celle au cours de laquelle
+      ils atteignent l'âge prévu au dernier alinéa du I de l'article 5 de la loi n°
+      2003-775 […] ou, le cas échéant, l'âge prévu au I de l'article 22 de la présente
+      loi » — soixante ans, ou cinquante-sept et cinquante-deux ans aux catégories
+      active et super-active ; « Si cet âge est atteint après 2019, le coefficient de
+      minoration applicable est celui prévu au I de l'article L. 14 » ; « Lorsque la
+      durée de services et bonifications correspondant à cette année n'est pas fixée,
+      la durée exigée est celle correspondant à la dernière génération pour laquelle
+      elle a été fixée » (article 44, IV). La CNRACL et le FSPOEIE de même (décret n°
+      2003-1306, article 65-2 ; décret n° 2004-1056, article 50-2, décret n° 2010-1741).
+    conditions: >-
+      L'ancien calcul, l'année des conditions réunies, demeure : « 1° Aux demandes
+      présentées avant le 1er janvier 2011, sous réserve d'une radiation des cadres
+      prenant effet au plus tard le 1er juillet 2011 ; 2° Aux pensions des
+      fonctionnaires civils et des militaires qui, au plus tard le 1er janvier 2011,
+      sont à moins de cinq années ou ont atteint l'âge d'ouverture des droits à pension
+      applicable avant l'entrée en vigueur de la présente loi », qui « conservent le
+      bénéfice des dispositions de l'article L. 17 […] dans leur rédaction antérieure
+      » : le minimum garanti sans condition de durée ni d'âge.
+    beneficiaire: >-
+      l'un ou l'autre parent, après une interruption ou une réduction d'activité pour
+      chaque enfant ; la mère, par présomption
+    parametres:
+      existe: true
+      regimes: [fonction_publique_etat, cnracl, fspoeie]
+      beneficiaire: mere
+      enfants: 3
+      services_requis_annees: 15
+      conditions_reunies_avant: 2012-01-01
+      calcul: loi_du_9_novembre_2010
+      ancien_calcul_jusqu_a: 2011-07-01
+      ancien_calcul_a_moins_de: 5
+      ancien_calcul_au: 2011-01-01
+      ages_avant_la_loi: {sedentaire: 60, active: 55, super_active: 50}
+      ages_de_l_annee_retenue: {sedentaire: 60, active: 57, super_active: 52}
+      fiabilite: moyenne
+  exemples: aucun trouvé
+approximations:
+- version: [loi_du_30_decembre_2004, loi_du_9_novembre_2010]
+  ecart: >-
+    L'interruption ou la réduction d'activité pour chaque enfant est présumée de la
+    mère, que son congé de maternité, ou l'absence de cotisation à la naissance,
+    suffit à lui donner (R. 37) ; le père, qui ne la remplit que par un congé parental,
+    une disponibilité ou un temps partiel, n'y a jamais droit.
+  effet: non mesuré ; les pères qui ont pris deux mois de congé parental pour chacun
+- ecart: >-
+    Les enfants comptent à leur naissance, tous vivants ; ceux que L. 18, II, assimile
+    — adoptés, du conjoint, recueillis et élevés neuf ans — et le départ du parent d'un
+    enfant invalide à 80 % ne sont pas saisis.
+  effet: non mesuré
+- ecart: >-
+    Le militaire n'en reçoit rien : sa pension s'ouvre à sa durée de services, et le
+    départ de l'officier parent de trois enfants (L. 24, II, 1° bis, puis l'article 44,
+    III) n'est pas servi ; l'âge de l'article L. 4139-16 du code de la défense, qui
+    décide de son ancien calcul, n'est pas lu.
+  effet: non mesuré ; les officiers partis avant vingt-cinq, puis vingt-sept ans de services
+- version: [loi_du_9_novembre_2010]
+  ecart: >-
+    Le classement qui décide de l'âge — soixante ans, cinquante-cinq ou cinquante — est
+    celui que l'agent remplit à sa liquidation (dix-sept ans de services actifs, vingt-sept
+    en super-active), non celui qu'il remplissait au 1er janvier 2011 ; et la date de la
+    demande n'est pas saisie : la pension qui prend effet au plus tard le 1er juillet 2011
+    la présume faite avant 2011.
+  effet: non mesuré
+- ecart: >-
+    Les quinze ans se comptent à l'année, sur les années servies dans les statuts des
+    trois régimes du code des pensions, comme la coordination les compte.
+  effet: non mesuré
+presomptions:
+  interruption_d_activite_par_la_mere: >-
+    la condition d'interruption ou de réduction d'activité pour chaque enfant, depuis
+    la loi du 30 décembre 2004
+  naissance_des_enfants: >-
+    la naissance de chaque enfant dont la date n'est pas déclarée, qui date le troisième
+    et le compare au 1er janvier 2012
+  demande_de_pension_avant_2011: >-
+    la demande présentée avant le 1er janvier 2011, qui garde l'ancien calcul à la
+    pension prenant effet au plus tard le 1er juillet 2011
+sources:
+  lu_le: 2026-10-08
+  prochaine_relecture: 2027-04-30
+  lectures_divergentes:
+  - >-
+    Destinie 2 (src/Legislation.cpp, au commit 4c1d34b) lit la durée et la décote du
+    nouveau calcul à l'année où la mère atteint l'âge d'ouverture de sa génération —
+    soixante ans et quatre mois à soixante-deux ans —, quand l'article 44, IV, et
+    l'article 65-2 du décret de la CNRACL disent l'âge du dernier alinéa du I de
+    l'article 5 de la loi n° 2003-775, soixante ans, qui est aussi l'âge dont l'année
+    fixe la durée des fonctionnaires (VI du même article) ; la note du SE-UNSA du
+    12 novembre 2010 écrit « un âge d'ouverture des droits correspondant à la date de
+    naissance ». Le modèle suit le texte. Les deux lectures ne diffèrent que de l'âge
+    d'annulation de la décote, de un à quatre trimestres, pour les nés de 1956 à 1959.
+  - >-
+    Destinie 2 ne sert aucune décote à la mère qui garde l'ancien calcul (« jamais de
+    décote pour les mères de trois enfants ») ; l'article 66, III, lui oppose celle de
+    l'année des conditions, nulle jusqu'en 2005, de 0,125 % à 0,75 % par trimestre de
+    2006 à 2011.
+  a_relire:
+  - >-
+    Chercher un exemple chiffré publié par le service des retraites de l'État ou la
+    CNRACL — la circulaire d'application de l'article 44, ou une page d'information —,
+    pour le rejouer.
+  - >-
+    Les régimes spéciaux qui ont eu leur départ des parents de trois enfants, éteint
+    par leurs décrets de 2008 à 2011 avec leurs propres transitions (clercs de notaires,
+    décret n° 2011-1112 ; Comédie-Française, décret n° 2011-1134 ; SNCF, RATP, IEG,
+    Banque de France, Opéra), restent à lire.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 24 du code des pensions, ses sept rédactions de 1982 à 2012 (LEGIARTI000006362725
+      à LEGIARTI000023033603) ; R. 37, ses douze rédactions depuis 2005
+      (LEGIARTI000006362957 à LEGIARTI000054175249)
+    date: 2026-06-01
+  - type: legifrance
+    reference: >-
+      loi n° 2010-1330 du 9 novembre 2010, article 44 (LEGIARTI000023023951, en vigueur)
+      et article 22 (LEGIARTI000025014563) ; loi n° 2003-775, article 5, ses rédactions
+      de 2010, 2014 et 2017 (le dernier alinéa de son I : « l'espérance de vie à l'âge de
+      soixante ans »), et article 66 (LEGIARTI000006758610)
+    date: 2017-01-01
+  - type: legifrance
+    reference: >-
+      décret n° 65-773, article 21 (LEGIARTI000006368228 à LEGIARTI000006368234) ;
+      décret n° 2003-1306, articles 25 et 65-2 (LEGIARTI000023395017) ; décret n°
+      2004-1056, articles 21 et 50-2 (LEGIARTI000023395028)
+    date: 2011-01-01
+  - type: jorf
+    reference: >-
+      décret n° 2010-1741 du 30 décembre 2010 (JORFTEXT000023334792), articles 1er à 4 :
+      R. 37 étendu à la réduction d'activité, articles 65-2 et 50-2 insérés
+    date: 2010-12-31
+  - type: autre
+    reference: >-
+      réponse ministérielle à la question écrite n° 97363 (13e législature), JO du 5
+      juillet 2011, p. 7181 : « Un agent qui souhaite partir de manière anticipée se
+      verra appliquer les mêmes règles que les agents de sa génération » ; à qui a
+      demandé sa pension avant 2011 pour partir au plus tard le 1er juillet 2011, « Les
+      règles appliquées sont celles de l'année où ils ont réuni les deux conditions
+      d'ancienneté (quinze ans) et de parentalité (trois enfants), avec attribution
+      éventuelle du minimum garanti de pension » ; de même à qui était, au 1er janvier
+      2011, à moins de cinq ans de son âge d'ouverture, « sans limitation de durée »
+    url: https://www.assemblee-nationale.fr/dyn/13/questions/QANR5L13QE97363
+    date: 2011-07-05
+  - type: autre
+    reference: >-
+      service-public, « Un fonctionnaire ayant 3 enfants peut-il encore partir à la
+      retraite tôt ? », reprise par justice.fr, mise à jour du 23 janvier 2026 : les
+      conditions réunies « au plus tard le 31 décembre 2011 », la demande « à tout
+      moment » ; deux mois d'interruption, ou quatre, cinq ou sept mois à 50, 60 ou 70 %
+    url: https://www.justice.fr/fiche/fonctionnaire-ayant-3-enfants-encore-partir-retraite-tot
+    date: 2026-01-23
+textes_a_rattacher:
+- reference: loi n° 2003-775 du 21 août 2003, article 5, VI (la durée de l'année des soixante ans)
+code:
+  python: >-
+    scenarios/actuel.py : FichesDatees ; droit/ouvrir.py : depart_parent_trois_enfants,
+    age_ouverture, annee_ouverture_des_droits, duree_requise, duree_de_l_annee ;
+    droit/liquider.py : le minimum garanti d'avant la loi
+  javascript: >-
+    moteur/js/regimes.js : FichesDatees ; moteur/js/droit/ouvrir.js :
+    departParentTroisEnfants, ageOuverture, anneeOuvertureDesDroits, dureeRequise,
+    dureeDeLAnnee ; moteur/js/droit/liquider.js
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_parents_trois_enfants.py]
+referents:
+  destinie_2:
+    equivalent: >-
+      Leg::an_ouv_droit_fp (src/Legislation.cpp:21-28), réservé aux mères ; paramètres
+      de l'ancien calcul (:342-357) et de la génération (:397-414)
+    confrontation: >-
+      aucune exécutée ; tests/test_parents_trois_enfants.py rejoue les trois cas que
+      son code distingue — l'ouverture à la date des conditions, l'ancien calcul des
+      nées avant 1956, la durée de la génération des autres —, et ses deux écarts au
+      texte sont déclarés plus haut (lectures_divergentes)
+  openfisca_france_pension:
+    equivalent: >-
+      regimes/fonction_publique.py, depart_anticipe_trois_enfants et
+      decote_a_date_depart_anticipe_parent_trois_enfants, au commit 1c45423
+    confrontation: aucune exécutée
+historique:
+- >-
+  2026-10-08 — née de l'étape 17 de l'action 138, sur le point de Destinie 2 au registre
+  (chantier 138.17) : le modèle ne servait ce départ à personne, et opposait à la mère
+  de trois enfants partie avant soixante ans un droit « non ouvert ».
+reformes:
+- fillon_2003
+- woerth_2010
+effet: >-
+  La mère de trois enfants fonctionnaire qui avait quinze ans de services avant 2012 :
+  son droit s'ouvre à la date où elle réunit les conditions, à tout âge. Née avant 1956
+  (1961 en catégorie active), ou partie au plus tard en juillet 2011, elle garde la durée
+  et la décote de cette année-là — 150 trimestres et aucune décote si c'est avant 2004
+  — et le minimum garanti d'avant 2011 ; née depuis, elle a la durée de la génération
+  qui a soixante ans l'année de ses soixante ans, et une décote qui peut atteindre vingt
+  trimestres.
