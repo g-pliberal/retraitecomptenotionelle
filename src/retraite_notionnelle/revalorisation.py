@@ -57,6 +57,7 @@ l'affaire de l'appelant.
 from __future__ import annotations
 
 import csv
+import math
 from dataclasses import dataclass, replace
 from datetime import date
 from pathlib import Path
@@ -298,10 +299,45 @@ class RegimeServi:
     #: l'échéance, quand une pension étrangère commence après le départ
     #: (R. 173-8, :func:`reviser_le_minimum`).
     revision: float = 0.0
+    #: La majoration exceptionnelle des petites pensions, due depuis le
+    #: 1er septembre 2023, en euros de l'échéance
+    #: (:func:`majorer_les_petites_pensions`). La réversion ne la lit pas.
+    majoration: float = 0.0
 
     @property
     def aujourd_hui(self) -> float:
-        return self.au_depart * self.coefficient - self.revision
+        return self.au_depart * self.coefficient - self.revision + self.majoration
+
+
+@dataclass(frozen=True)
+class MajorationExceptionnelle:
+    """La majoration exceptionnelle d'une petite pension, telle que la caisse
+    la calcule le mois où elle est due (fiche ``majoration_exceptionnelle_2023``,
+    :func:`majorer_les_petites_pensions`) : en euros par mois, chaque montant
+    tronqué au centime (circulaire Cnav n° 2023-21)."""
+
+    regime: str
+    #: Le premier jour du mois où elle est due (AAAA-MM-JJ), ou celui de sa
+    #: révision, quand une pension commence après.
+    date: str
+    #: La majoration théorique, au prorata de la durée cotisée dans le régime.
+    theorique: float
+    #: Le plafond du régime, au prorata de sa durée validée.
+    plafond: float
+    #: La pension du régime ce mois-là, sans sa surcote, majoration pour
+    #: enfants comprise, que le plafond borne avec la majoration.
+    pension: float
+    #: La majoration retenue sous le plafond du régime.
+    retenue: float
+    #: La majoration servie, sous le plafond tous régimes de L. 173-2.
+    servie: float
+    #: Le coefficient qui la mène de sa date à l'échéance (L. 161-23-1).
+    coefficient: float
+
+    @property
+    def a_l_echeance(self) -> float:
+        """Son montant annuel à l'échéance."""
+        return self.servie * 12.0 * self.coefficient
 
 
 @dataclass(frozen=True)
@@ -321,6 +357,9 @@ class Revalorisee:
     #: de 2020, ou ``None`` quand la pension n'a pas traversé cette date.
     mensuel_decembre_2019: float | None
     fiabilite: Fiabilite
+    #: Les majorations exceptionnelles de septembre 2023, régime par régime,
+    #: telles que la caisse les a calculées (:class:`MajorationExceptionnelle`).
+    majorations: tuple[MajorationExceptionnelle, ...] = ()
 
     def donnees(self) -> dict:
         """La revalorisation, telle que le schéma de l'étape la décrit."""
@@ -330,7 +369,8 @@ class Revalorisee:
             "date": f"{self.annee:04d}-12-31",
             "regimes": [{"regime": r.regime, "coefficient": r.coefficient,
                          "regle": r.regle, "fiabilite": r.fiabilite.name.lower(),
-                         "revision": r.revision}
+                         "revision": r.revision,
+                         "majoration_exceptionnelle": r.majoration}
                         for r in self.regimes],
             "majoration": self.coefficient_majoration,
             "mensuel_decembre_2019": self.mensuel_decembre_2019,
@@ -671,6 +711,9 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
     coefficient_majoration = coefficient_de_la_majoration(coefficients)
     regimes = reviser_le_minimum(simulateur.scenario_actuel, carriere, resultat,
                                  regimes, annee)
+    regimes, majorations = majorer_les_petites_pensions(
+        simulateur.scenario_actuel, resultat, datees, regimes, servie, a_l_effet,
+        mensuel_2019, fin)
     return Revalorisee(
         personne=carriere.personne,
         annee=annee,
@@ -679,6 +722,7 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
         coefficient_majoration=coefficient_majoration,
         mensuel_decembre_2019=mensuel_2019,
         fiabilite=fiabilite,
+        majorations=majorations,
     )
 
 
@@ -717,6 +761,142 @@ def reviser_le_minimum(moteur, carriere, resultat,
     retraits = {code: part * coefficient / servi * baisse
                 for code, part, coefficient in parts}
     return [replace(r, revision=retraits.get(r.regime, 0.0)) for r in regimes]
+
+
+#: La fiche de la majoration exceptionnelle des petites pensions, que
+#: :class:`~retraite_notionnelle.scenarios.actuel.FichesDatees` lit à la date
+#: d'effet de chaque pension.
+FICHE_DE_LA_MAJORATION = "majoration_exceptionnelle_2023"
+
+
+def tronquer(montant: float) -> float:
+    """Au centime inférieur, « sans arrondi » (circulaire Cnav n° 2023-21)."""
+    return math.floor(montant * 100.0 + 1e-6) / 100.0
+
+
+def au_centime(montant: float) -> float:
+    """Au centime le plus proche, le demi-centime au-dessus : le montant
+    mensuel d'une pension, tel que la caisse le sert."""
+    return math.floor(montant * 100.0 + 0.5) / 100.0
+
+
+def majorer_les_petites_pensions(moteur, resultat, datees, regimes: list[RegimeServi],
+                                 servie: PensionServie, a_l_effet: dict[str, float],
+                                 mensuel_2019: float | None, fin: date
+                                 ) -> tuple[list[RegimeServi],
+                                            tuple[MajorationExceptionnelle, ...]]:
+    """La majoration exceptionnelle des petites pensions (loi n° 2023-270,
+    article 18, V ; décret n° 2023-754, article 3 ; circulaire Cnav
+    n° 2023-21), menée jusqu'à l'échéance ``fin`` : celle des pensions de base
+    du régime général, des régimes qu'il a intégrés, des salariés agricoles et
+    des cultes qui ont pris effet avant le 1er septembre 2023 au taux plein,
+    quand l'assuré a cotisé cent vingt trimestres tous régimes, portées ou non
+    au minimum contributif (fiche ``majoration_exceptionnelle_2023``).
+
+    Elle se calcule le mois où elle est due, sur ce que les pensions servent
+    alors, chacune menée par la règle de son régime (``datees``, comme
+    :func:`faire_vivre` les mène), en trois temps, en euros par mois tronqués
+    au centime. THÉORIQUE : 100 € au prorata de la durée cotisée dans le
+    régime sur la durée maximum de la génération. RETENUE : ce que la pension
+    du régime — minimum contributif et majoration pour enfants compris,
+    surcote exclue — laisse sous le PLAFOND DU RÉGIME, 847,57 € au prorata de
+    sa durée validée. SERVIE : ce que toutes les pensions françaises, de base
+    et complémentaires, laissent sous le plafond TOUS RÉGIMES de L. 173-2 du
+    même mois, le dépassement imputé à chaque régime au prorata de sa
+    majoration retenue. Les pensions étrangères n'y entrent pas. Une pension
+    française qui commence après la RÉVISE : le total se compare alors, à sa
+    date, au plafond revalorisé comme les pensions. La majoration suit ensuite
+    l'article L. 161-23-1 jusqu'à l'échéance.
+
+    Rend les régimes, chacun avec sa majoration en euros de l'échéance, et le
+    calcul de la caisse, régime par régime.
+    """
+    petites = {p.regime: p for p in getattr(resultat, "petites_pensions", ())}
+    ouvertes = []
+    for pension, a, debut, montant in datees:
+        petite = petites.get(pension.regime)
+        if petite is None or not petite.taux_plein or petite.maximum <= 0:
+            continue
+        regle = moteur.fiches_datees.regle(FICHE_DE_LA_MAJORATION, debut.isoformat())
+        if not regle or not regle["existe"]:
+            continue
+        due = date.fromisoformat(str(regle["due_le"]))
+        if (debut < due <= fin
+                and petite.cotises_tous_regimes >= regle["trimestres_cotises"]):
+            ouvertes.append((pension.regime, petite, regle, due))
+    if not ouvertes:
+        return regimes, ()
+    due = ouvertes[0][3]
+    enfants: dict[str, float] = {}
+    for avantage in resultat.avantages_appliques:
+        if avantage.code == "majoration_enfants":
+            for code, part in avantage.par_regime:
+                enfants[code] = enfants.get(code, 0.0) + part
+
+    def mensuelles_au(quand: date) -> dict[str, tuple[float, float]]:
+        """Chaque pension servie le mois ``quand``, en euros par mois, au
+        centime, sans sa surcote, majoration pour enfants comprise ; et ce qui
+        l'y a menée. Une prestation versée en capital n'est pas servie."""
+        servies = {}
+        for pension, a, debut, montant in datees:
+            if debut > quand or pension.capital is not None:
+                continue
+            coefficient = servie.coefficient(pension, a, debut, quand, mensuel_2019)[0]
+            petite = petites.get(pension.regime)
+            surcote = 0.0 if petite is None else petite.surcote
+            servies[pension.regime] = (
+                au_centime((montant - surcote + enfants.get(pension.regime, 0.0)
+                            * a_l_effet.get(pension.regime, 1.0)) * coefficient / 12.0),
+                coefficient)
+        return servies
+
+    au_mois = mensuelles_au(due)
+    calculs = {}
+    for code, petite, regle, _ in ouvertes:
+        maximum = petite.maximum
+        theorique = tronquer(regle["montant"] / 12.0
+                             * min(petite.cotisee, maximum) / maximum)
+        plafond = tronquer(tronquer(regle["plafond"] / 12.0)
+                           * min(petite.validee, maximum) / maximum)
+        pension = au_mois[code][0]
+        depassement = max(0.0, pension + theorique - plafond)
+        calculs[code] = (theorique, plafond, pension,
+                         max(0.0, tronquer(theorique - depassement)))
+    retenues = {code: calcul[3] for code, calcul in calculs.items()}
+    total = somme_ordonnee(retenues.values())
+
+    def servies_sous_le_plafond(quand: date, mene: float) -> dict[str, float]:
+        """Les majorations retenues, menées par ``mene``, sous le plafond tous
+        régimes du mois où elles sont dues, mené de même, comparé le mois
+        ``quand`` à toutes les pensions : le dépassement s'impute à chaque
+        régime au prorata de sa majoration (décret n° 2023-754, article 3, II)."""
+        if total <= 0:
+            return dict(retenues)
+        pensions = somme_ordonnee(m for m, _ in mensuelles_au(quand).values())
+        plafond = tronquer(moteur.minimum_contributif.valeurs(due.year, due.month)[2]
+                           / 12.0) * mene
+        depassement = max(0.0, pensions + total * mene - plafond)
+        return {code: max(0.0, tronquer(retenue * mene - depassement * retenue / total))
+                for code, retenue in retenues.items()}
+
+    # Une pension française qui commence après le mois où la majoration est
+    # due la révise, à sa date : la dernière vaut (décret n° 2023-754,
+    # article 3, IV ; circulaire, 4.2).
+    nouvelles = sorted(debut for pension, _, debut, _ in datees
+                       if due < debut <= fin and pension.capital is None)
+    quand = nouvelles[-1] if nouvelles else due
+    mene = servie.revalorisations.generale(due, quand, False, None)[0]
+    servies = servies_sous_le_plafond(quand, mene)
+    jusqu_a_l_echeance = servie.revalorisations.generale(quand, fin, False, None)[0]
+    majorations = tuple(
+        MajorationExceptionnelle(
+            regime=code, date=quand.isoformat(), theorique=theorique, plafond=plafond,
+            pension=pension, retenue=retenue, servie=servies[code],
+            coefficient=jusqu_a_l_echeance)
+        for code, (theorique, plafond, pension, retenue) in calculs.items())
+    par_regime = {m.regime: m.a_l_echeance for m in majorations}
+    return ([replace(r, majoration=par_regime[r.regime]) if par_regime.get(r.regime)
+             else r for r in regimes], majorations)
 
 
 def foyer_a_l_echeance(simulateur, carriere, vivante: Revalorisee) -> Foyer:

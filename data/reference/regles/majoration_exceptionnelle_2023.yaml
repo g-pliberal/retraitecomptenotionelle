@@ -1,0 +1,201 @@
+schema_version: 1
+id: majoration_exceptionnelle_2023
+intitule: >-
+  Les pensions de base du régime général, des régimes qu'il a intégrés, des salariés
+  agricoles et des cultes qui ont pris effet avant le 1er septembre 2023, liquidées au
+  taux plein, sont majorées depuis cette date, quand l'assuré a cotisé cent vingt
+  trimestres tous régimes, de 100 € par mois au prorata de la durée cotisée dans le
+  régime, sous un plafond de 847,57 € au prorata de la durée validée que la pension
+  du régime ne dépasse pas avec elle, et sous le plafond du minimum contributif que
+  toutes les pensions ne dépassent pas avec elle ; elle suit ensuite les pensions.
+domaine: minima
+regimes: [regime_general, rsi, cancava, organic, msa_salaries, cavimac]
+etape: faire_vivre
+face: droit
+etat: approchee
+lit:
+- la pension de chaque régime qui porte le minimum contributif, menée au mois où la
+  majoration est due, minimum contributif et majoration pour enfants compris, sa
+  surcote exclue, et son taux plein
+- la durée cotisée et la durée validée dans le régime, la durée d'assurance maximum de
+  la génération et les trimestres cotisés tous régimes, français et étrangers
+- toutes les pensions françaises, de base et complémentaires, servies ce mois-là, et le
+  plafond de l'article L. 173-2 (legislation/minimum_contributif.csv)
+ecrit:
+- la majoration de chaque régime, théorique, retenue sous le plafond du régime, servie
+  sous le plafond tous régimes, puis menée à l'échéance
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: pensions_d_avant_septembre_2023
+  statut: lue
+  textes:
+  - id: LEGIARTI000047447828
+    article: loi n° 2023-270 du 14 avril 2023, article 18, V
+    en_vigueur: 2023-04-16
+    citation: >-
+      « Les pensions de vieillesse personnelles de base du régime général de sécurité
+      sociale, y compris les pensions servies aux personnes relevant, à la date de
+      prise d'effet de leur pension, d'un régime ultérieurement intégré au régime
+      général, ainsi que les pensions du régime des salariés agricoles ayant pris effet
+      avant le 31 août 2023 sont assorties d'une majoration, dont le montant est défini
+      par décret » ; « La somme de la pension du régime de base concerné et de la
+      majoration [...] ne peut pas excéder un plafond fixé par décret et réduit, le cas
+      échéant, en fonction du nombre de trimestres d'assurance validés par l'assuré
+      dans le régime concerné » ; « La majoration prévue au présent V est due à
+      compter du 1er septembre 2023 »
+    lu_le: 2026-10-08
+  - id: JORFARTI000047956556
+    article: décret n° 2023-754 du 10 août 2023, article 3
+    publie_le: 2023-08-11
+    en_vigueur: 2023-09-01
+    citation: >-
+      « Le montant prévu au premier alinéa du V de l'article 18 de la loi du 14 avril
+      2023 susvisée est fixé à 1 200 euros par an. La durée prévue au 2° du même V est
+      fixée à 120 trimestres. Le plafond prévu au cinquième alinéa du même V est fixé à
+      10 170,86 euros par an » ; « chaque régime concerné impute le dépassement [...]
+      sur la majoration dont il est redevable, à due concurrence du rapport [...] entre
+      le montant de cette majoration et le total des majorations dues par les régimes
+      en cause » ; « La majoration [...] est révisée lorsque le montant des avantages
+      personnels de retraite a varié »
+    lu_le: 2026-10-08
+  bornes:
+    liquidation.date_effet: [null, 2023-09-01]
+  contenu:
+    droit: >-
+      depuis le 1er septembre 2023, 1 200 € par an au prorata de la durée cotisée dans
+      le régime sur la durée maximum de la génération, à qui a liquidé au taux plein et
+      cotisé cent vingt trimestres tous régimes ; la pension du régime ne dépasse pas
+      avec elle 10 170,86 € par an au prorata de sa durée validée, toutes les pensions
+      françaises le plafond de L. 173-2 ; revalorisée ensuite comme les pensions
+      (L. 161-23-1)
+    parametres:
+      existe: true
+      due_le: "2023-09-01"
+      montant: 1200.0
+      trimestres_cotises: 120
+      plafond: 10170.86
+  unites:
+    arrondi: >-
+      en euros par mois, chaque montant tronqué au centime, sans arrondi (circulaire
+      Cnav n° 2023-21, 3.1, 3.2.2, 3.2.5 et 3.3.4)
+  exemples: [cnav_2023_21_majoration_liquidation_unique]
+- id: pensions_depuis_septembre_2023
+  statut: lue
+  textes:
+  - id: LEGIARTI000047447828
+    article: loi n° 2023-270 du 14 avril 2023, article 18, IV
+    en_vigueur: 2023-04-16
+    citation: >-
+      « Les montants des majorations prévues aux première et seconde phrases du premier
+      alinéa de l'article L. 351-10 du code de la sécurité sociale [...] sont augmentés
+      par décret pour les pensions de retraite prenant effet à compter du 1er septembre
+      2023 »
+    lu_le: 2026-10-08
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: >-
+      pas de majoration : la pension qui prend effet depuis le 1er septembre 2023 a le
+      minimum contributif relevé de 25 et de 100 € par mois (fiche minimum_contributif)
+    parametres:
+      existe: false
+      due_le: null
+      montant: null
+      trimestres_cotises: null
+      plafond: null
+  exemples: aucun trouvé
+approximations:
+- ecart: >-
+    la comparaison écarte la surcote des seules pensions qui portent le minimum
+    contributif ; celle d'une autre pension de base, de la fonction publique par
+    exemple, reste dans le total tous régimes
+  effet: non mesuré
+- ecart: >-
+    la révision ne suit que les pensions françaises qui commencent après le 1er
+    septembre 2023 parmi celles que les départs liquident ; la seconde pension de qui
+    retravaille, et une pension modifiée après coup, dont le minimum contributif que
+    révise une pension étrangère, ne la révisent pas
+  effet: non mesuré
+- ecart: >-
+    aux cultes, la durée cotisée et la durée validée sont celles d'après 1997, que le
+    minimum contributif lit
+  regime: cavimac
+  effet: non mesuré
+- ecart: >-
+    une pension prise avant le 1er avril 1983, que le minimum contributif ne regardait
+    pas encore, n'est pas majorée
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-08
+  prochaine_relecture: 2027-10-31
+  a_relire:
+  - >-
+    Les autres exemples de la circulaire Cnav n° 2023-21 (3.1, 3.2.5, exemples 1 et 2,
+    3.3.4) donnent la pension du mois, non la carrière : tests/test_majoration_exceptionnelle.py
+    les rejoue sur la fonction ; une carrière qui rende ces pensions les ferait entrer
+    dans exemples_officiels.yaml.
+  - >-
+    Lire la circulaire de la MSA pour les salariés agricoles et celle de la Cavimac pour
+    les cultes, que la circulaire de la Cnav ne couvre pas.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 2023-270 du 14 avril 2023, article 18, IV, V et VI, dans l'index LEGI du
+      dépôt (LEGIARTI000047447828) et au Journal officiel (JORFARTI000047445105)
+    date: 2026-10-08
+  - type: jorf
+    reference: >-
+      décret n° 2023-754 du 10 août 2023, articles 3 et 6 (JORFARTI000047956556,
+      JORFARTI000047956573), et décret n° 2023-752 du 10 août 2023 (JORFTEXT000047956328),
+      dans l'index JORF du dépôt
+    date: 2026-10-08
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2023-21 du 2 novembre 2023, « La majoration exceptionnelle
+      des retraites personnelles ayant pris effet avant le 1er septembre 2023 » : les
+      régimes débiteurs, les retraites visées (ni la retraite progressive, ni le
+      versement forfaitaire unique), le taux plein, les 120 trimestres cotisés
+      français et étrangers sans l'AVPF, les trois calculs et leurs troncatures, les
+      éléments exclus (surcote, majoration pour tierce personne, pensions étrangères),
+      le mois de référence, la révision, la revalorisation, la réversion qui ne la lit
+      pas et l'ASPA qui la compte
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2023_21_02112023.pdf
+    date: 2023-11-02
+textes_a_rattacher: []
+code:
+  python: >-
+    droit/completer.py : PetitePension, surcote_hors_minimum, completer ;
+    revalorisation.py : majorer_les_petites_pensions, MajorationExceptionnelle,
+    faire_vivre ; echeancier.py : Echeancier._echeance
+  javascript: >-
+    moteur/js/droit/completer.js : completer ; moteur/js/revalorisation.js :
+    majorerLesPetitesPensions, faireVivre ; moteur/js/echeancier.js
+  parametres: >-
+    contenu.parametres de chaque version ; data/reference/legislation/minimum_contributif.csv
+    pour le plafond de L. 173-2
+  tests: >-
+    tests/test_majoration_exceptionnelle.py, dans les deux moteurs ; l'exemple de la
+    circulaire dans tests/test_oracle.py
+historique:
+- >-
+  2026-10-08 — servie, à l'étape 138.17 : la règle que TRAJECTOiRE portait et que le
+  dépôt ignorait (registre des autres modèles, chantier 138.17).
+reformes: [reforme_2023]
+exemples: []
+effet: >-
+  Les retraités du régime général, des indépendants, des salariés agricoles et des
+  cultes partis avant le 1er septembre 2023 au taux plein avec cent vingt trimestres
+  cotisés, dont la pension de base reste sous 847,57 € par mois : jusqu'à 100 € par
+  mois de plus depuis septembre 2023, revalorisés depuis.
+referents:
+  trajectoire:
+    equivalent: >-
+      revaloMicoStockEic et revaloMicoStockEir (R/fonctionsCalculsPensions.R), sur la
+      chronique des pensions servies
+    confrontation: >-
+      TRAJECTOiRE recalcule le minimum contributif de septembre 2023 aux montants
+      relevés et ne garde que la hausse du minimum majoré, bornée à 100 € par personne
+      ; la loi majore toute pension au taux plein, portée ou non au minimum, de 100 €
+      au prorata de la durée cotisée dans le régime, sous un plafond au prorata de sa
+      durée validée, puis sous celui de L. 173-2

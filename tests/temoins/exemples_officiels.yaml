@@ -119,6 +119,10 @@
 #     puis la 2), au centième. L'exemple donne ce salaire, en euros de
 #     l'année, dans `carriere.releve` (année : salaire), que le test porte sur
 #     un relevé de carrière.
+#   majoration_exceptionnelle_mensuelle — la majoration exceptionnelle des
+#     petites pensions (loi n° 2023-270, article 18, V) servie le mois où elle
+#     est due, septembre 2023, en euros par mois, tous régimes : ce que la
+#     caisse calcule des durées cotisée et validée de la carrière ;
 #   minimum_vieillesse_mensuel — l'ASPA que le foyer sert à l'assuré, en euros
 #     par mois, à un demi-centime près : sa part quand son conjoint est aussi
 #     allocataire. L'exemple donne les revenus du couple, non les carrières :
@@ -291,6 +295,33 @@ exemples:
       profil_carriere: plat
       interruptions: {1990: chomage_indemnise}
     attendu: {trimestres_valides: 162, trimestres_requis: 160, taux_liquidation: 0.5, pension_regime_general_mensuelle: 570.04}
+
+  # La majoration exceptionnelle de septembre 2023 (fiche
+  # majoration_exceptionnelle_2023) : 100 € au prorata de la durée cotisée,
+  # sous un plafond au prorata de la durée validée. Le modèle ne la servait pas
+  # jusqu'au 8 octobre 2026. Les autres exemples de la circulaire donnent la
+  # pension du mois, non la carrière : tests/test_majoration_exceptionnelle.py
+  # les rejoue sur la fonction.
+  - id: cnav_2023_21_majoration_liquidation_unique
+    source: {editeur: "Cnav", reference: "circulaire n° 2023-21 du 2 novembre 2023, La majoration exceptionnelle des retraites personnelles ayant pris effet avant le 1er septembre 2023, point 3.2.5, exemple 3", verifie_le: "2026-10-08"}
+    enonce: >-
+      Assuré né le 15 mars 1958, retraité de la liquidation unique depuis le
+      1er avril 2020, « durée d'assurance Lura de 170 trimestres dont 146
+      cotisés ; durée d'assurance selon la génération : 167 trimestres » :
+      « 100 x (146/167) = 87,42 euros », sous le plafond de 847,57 €, retenus
+      entiers. La carrière construite a 170 trimestres dont 146 cotisés, six
+      ans de chômage indemnisé, à un salaire assez bas pour que la pension
+      reste sous le plafond.
+    carriere:
+      naissance: "1958-03-15"
+      sexe: H
+      affiliation: salarie_prive_non_cadre
+      liquidation: "2020-04"
+      age_debut: 19.5
+      niveau_salaire: 0.3
+      profil_carriere: plat
+      interruptions: {2000: chomage_indemnise, 2001: chomage_indemnise, 2002: chomage_indemnise, 2003: chomage_indemnise, 2004: chomage_indemnise, 2005: chomage_indemnise}
+    attendu: {trimestres_valides: 170, trimestres_requis: 167, majoration_exceptionnelle_mensuelle: 87.42}
 
   # L'ASPA d'un couple (fiche minimum_vieillesse) : le plafond du couple sur les
   # ressources des deux (L. 815-9, D. 815-2), servi par moitié à deux

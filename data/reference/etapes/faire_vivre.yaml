@@ -4,6 +4,8 @@
 # tranches de 2020, la péréquation puis les décrets de la fonction publique,
 # le taux des fonctionnaires pour les régimes spéciaux. La majoration pour
 # enfants suit les régimes qui la portent, chaque part au coefficient du sien.
+# Les petites pensions prises avant le 1er septembre 2023 reçoivent depuis la
+# majoration exceptionnelle de la loi n° 2023-270 (article 18, V).
 # Une revalorisation ne relance jamais la liquidation.
 #
 # L'échéancier l'applique à l'échéance qu'on lui demande, sur toutes les
@@ -35,4 +37,5 @@ objets:
       coefficient: {porte: "le coefficient nominal qui mène sa pension du départ à l'échéance", type: nombre, obligatoire: true}
       regle: {porte: "la règle suivie, sous le nom que la page lui donne (point, regime_general, fonction_publique, regime_special, par_defaut)", type: texte, obligatoire: true}
       revision: {porte: "ce que la révision du minimum contributif retire, en euros de l'échéance, quand une pension étrangère commence après le départ (R. 173-8)", type: nombre, defaut: 0}
+      majoration_exceptionnelle: {porte: "la majoration exceptionnelle des petites pensions due depuis le 1er septembre 2023, en euros de l'échéance (loi n° 2023-270, article 18, V)", type: nombre, defaut: 0}
       fiabilite: {porte: "le niveau de ce coefficient", type: texte, obligatoire: true}

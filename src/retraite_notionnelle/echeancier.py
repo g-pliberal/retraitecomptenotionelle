@@ -18,7 +18,9 @@ lignée, celle que la liquidation avait écrite.
 Aujourd'hui, le départ, tiré de la carrière — un par date quand les régimes
 ne liquident pas tous ensemble (:mod:`.droit.departs`) —, et, quand la
 chronologie les dit, le décès de l'assuré et la réversion qu'il ouvre à son
-conjoint (:mod:`.droit.reversion`) : les autres sortes sont réservées
+conjoint (:mod:`.droit.reversion`) ; à l'échéance, la majoration
+exceptionnelle des petites pensions de septembre 2023, un début de
+composante que la loi induit : les autres sortes sont réservées
 (§ 13.5). Un
 conjoint sans décès déclaré reçoit une réversion d'essai, pour un décès
 supposé juste après le départ, qui ne s'inscrit pas au journal.
@@ -483,19 +485,52 @@ class Echeancier:
         vivante = faire_vivre(self.simulateur, carriere, self.au_depart, annee)
         foyer = foyer_a_l_echeance(self.simulateur, carriere, vivante)
         self.aujourd_hui = aujourd_hui(vivante, foyer, self.au_depart)
+        self._majorer(carriere, vivante)
         self.journal.inscrire(Entree(f"revalorisation_{annee}", ident, date, date, None,
                                      "revalorisation", vivante))
         for regime in vivante.regimes:
             origine = f"pension_{regime.regime}"
+            detail = f"× {regime.coefficient:.6f}, règle {regime.regle}"
+            if regime.majoration > 0:
+                detail += (f", majoration exceptionnelle de 2023 comprise "
+                           f"({regime.majoration:,.2f} €)")
             self.journal.inscrire(Entree(
                 f"{origine}_{annee}", ident, date, date, None, "composante",
                 {"id": f"{origine}_{annee}", "regime": regime.regime,
                  "montant": {"annuel": regime.aujourd_hui, "monnaie": "EUR"},
-                 "debut": date, "detail": f"× {regime.coefficient:.6f}, règle {regime.regle}"},
+                 "debut": date, "detail": detail},
                 remplace=origine))
         depart = next(e for e in self.journal if e.sorte == "foyer")
         self.journal.inscrire(Entree(f"foyer_{annee}", ident, date, date, None, "foyer",
                                      foyer, remplace=depart.id))
+
+    def _majorer(self, carriere: Carriere, vivante) -> None:
+        """La majoration exceptionnelle des petites pensions, que « faire
+        vivre » a calculée (:func:`~.revalorisation.majorer_les_petites_pensions`) :
+        un début de composante, que la loi induit, au mois où elle est due —
+        ou à celui de sa révision —, chaque majoration servie inscrite à son
+        montant de ce mois-là."""
+        servies = [m for m in vivante.majorations if m.servie > 0]
+        if not servies:
+            return
+        quand = servies[0].date
+        evenement = Evenement(
+            id=f"majoration_exceptionnelle_{carriere.personne}", date=quand,
+            personnes=(carriere.personne,),
+            vise={"regimes": [m.regime for m in servies]},
+            sorte="debut_de_composante", origine="induit")
+        self._inscrire(evenement, evenement.id, "evenement", evenement, quand)
+        for majoration in servies:
+            ident = f"majoration_exceptionnelle_{majoration.regime}"
+            self._inscrire(evenement, ident, "composante", {
+                "id": ident, "beneficiaire": carriere.personne,
+                "regime": majoration.regime,
+                "montant": {"annuel": majoration.servie * 12.0, "monnaie": "EUR"},
+                "debut": quand,
+                "detail": (f"majoration exceptionnelle des petites pensions (loi "
+                           f"n° 2023-270, article 18, V) : {majoration.theorique:,.2f} € "
+                           f"par mois au prorata de la durée cotisée, "
+                           f"{majoration.servie:,.2f} € sous les plafonds")}, quand)
 
     def _inscrire(self, evenement: Evenement, ident: str, sorte: str, contenu,
                   debut: str, remplace: str | None = None) -> None:

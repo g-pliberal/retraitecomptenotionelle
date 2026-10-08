@@ -11187,6 +11187,14 @@ null
 }
 ]
 },
+"majoration_exceptionnelle_2023":{
+"dates_qui_decident":["liquidation.date_effet"],
+"id":"majoration_exceptionnelle_2023",
+"versions":[
+{"bornes":{"liquidation.date_effet":[null,"2023-09-01"]},"exception_de":null,"id":"pensions_d_avant_septembre_2023","parametres":{"due_le":"2023-09-01","existe":true,"montant":1200.0,"plafond":10170.86,"trimestres_cotises":120},"texte":"LEGIARTI000047447828"},
+{"bornes":{"liquidation.date_effet":["2023-09-01",null]},"exception_de":null,"id":"pensions_depuis_septembre_2023","parametres":{"due_le":null,"existe":false,"montant":null,"plafond":null,"trimestres_cotises":null},"texte":"LEGIARTI000047447828"}
+]
+},
 "revenu_annuel_moyen_independants":{
 "dates_qui_decident":["liquidation.date_effet"],
 "id":"revenu_annuel_moyen_independants",

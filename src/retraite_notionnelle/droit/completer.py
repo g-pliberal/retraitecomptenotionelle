@@ -479,6 +479,54 @@ class MinimumEcrete:
 
 
 @dataclass(frozen=True)
+class PetitePension:
+    """Ce que la majoration exceptionnelle des petites pensions relit d'une
+    pension de base liquidée avant le 1er septembre 2023 (loi n° 2023-270,
+    article 18, V ; décret n° 2023-754, article 3 ; circulaire Cnav
+    n° 2023-21) : :func:`~retraite_notionnelle.revalorisation.majorer_les_petites_pensions`
+    la calcule le mois où elle est due, sur ce que les pensions servent alors.
+    Ses régimes sont ceux qui portent le minimum contributif : le régime
+    général, les régimes des artisans et des commerçants qu'il a intégrés,
+    celui des salariés agricoles et celui des cultes. En euros de la date
+    d'effet de la pension."""
+
+    #: Le régime « concerné », qui sert la pension et doit la majoration.
+    regime: str
+    #: Liquidée au taux plein, par la durée, l'âge ou l'inaptitude
+    #: (circulaire, 2.2).
+    taux_plein: bool
+    #: Les durées cotisée et validée dans le régime, en trimestres, et la
+    #: durée d'assurance maximum de la génération (L. 351-1, troisième
+    #: alinéa), qui proratise la majoration sur la première et son plafond
+    #: sur la seconde (circulaire, 3.1 et 3.2.2).
+    cotisee: int
+    validee: int
+    maximum: int
+    #: Les trimestres cotisés tous régimes de base, français et étrangers,
+    #: quatre par an au plus, l'AVPF exclue : cent vingt ouvrent la majoration
+    #: (circulaire, 2.3).
+    cotises_tous_regimes: int
+    #: Ce que la surcote ajoute à la pension, que la comparaison aux plafonds
+    #: écarte (circulaire, 3.2.3).
+    surcote: float = 0.0
+
+
+def surcote_hors_minimum(montant: float, eligible, ajout: float,
+                         date_effet: tuple[int, int]) -> float:
+    """Ce que la surcote ajoute à ``montant``, la pension d'un régime que le
+    minimum contributif a relevée de ``ajout`` : celle de la pension nue, que
+    le minimum laisse en sus depuis avril 2009 (D. 351-2-1) ; avant, rien
+    quand il l'a relevée, la surcote s'y fondant (:func:`complement_minimum`).
+    ``eligible`` est l':class:`~retraite_notionnelle.droit.liquider.EligibleMinimum`
+    du régime."""
+    if eligible.surcote <= 1.0 or (ajout > 0
+                                   and date_effet < SURCOTE_AJOUTEE_AU_MINIMUM_DEPUIS):
+        return 0.0
+    nue = (montant - ajout - eligible.hors_minimum) / eligible.surcote
+    return max(0.0, nue * (eligible.surcote - 1.0))
+
+
+@dataclass(frozen=True)
 class Complements:
     """Ce que l'étape « compléter tous régimes » écrit."""
 
@@ -502,6 +550,9 @@ class Complements:
     #: Le minimum contributif servi, et ce que sa révision relit
     #: (:class:`MinimumEcrete`) ; ``None`` sans lui.
     minimum_ecrete: MinimumEcrete | None = None
+    #: Ce que la majoration exceptionnelle de septembre 2023 relit de chaque
+    #: pension que le minimum contributif regarde (:class:`PetitePension`).
+    petites_pensions: tuple[PetitePension, ...] = ()
 
     def donnees(self) -> dict:
         """Les compléments, tels que le schéma de l'étape les décrit."""
@@ -561,6 +612,8 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
     fiabilite_globale = Fiabilite.CERTIFIEE
     minimum_applique = False
     minimum_ecrete: MinimumEcrete | None = None
+    #: Ce que le minimum contributif ajoute à chaque pension, par son indice.
+    ajouts_du_minimum: dict[int, float] = {}
 
     # La règle du minimum que la date d'effet fait valoir (fiche
     # ``minimum_contributif``) : il n'existe que depuis le 1er avril 1983, sa
@@ -691,6 +744,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                                  for indice, complement in complements.items()))
             releve_minimum = admissible
         if releve_minimum > 0:
+            ajouts_du_minimum = dict(complements)
             for indice, complement in complements.items():
                 # Le complément est DIT, pas seulement annoncé : sans lui,
                 # refaire la formule donnait la pension d'avant le minimum
@@ -723,6 +777,27 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                                  for indice, complement in complements.items()
                                  if complement > 0),
             ))
+
+    # LA MAJORATION EXCEPTIONNELLE DE SEPTEMBRE 2023 relève les pensions que
+    # le minimum contributif regarde, portées ou non à lui ; elle se calcule
+    # le mois où elle est due, sur ce qu'elles servent alors
+    # (:func:`~retraite_notionnelle.revalorisation.majorer_les_petites_pensions`).
+    # Ce qu'elle relit de chacune s'écrit ici : ses durées, son taux plein et
+    # sa surcote, qu'elle écarte de ses comparaisons.
+    petites_pensions: tuple[PetitePension, ...] = ()
+    if avantages_non_contributifs:
+        mois_d_effet = (annee_liquidation, carriere.mois_liquidation)
+        petites_pensions = tuple(
+            PetitePension(
+                regime=pensions[eligible.indice].regime,
+                taux_plein=eligible.taux_plein,
+                cotisee=eligible.cotisee_regime, validee=eligible.duree_regime,
+                maximum=eligible.proratisation,
+                cotises_tous_regimes=trimestres_cotises,
+                surcote=surcote_hors_minimum(
+                    pensions[eligible.indice].montant, eligible,
+                    ajouts_du_minimum.get(eligible.indice, 0.0), mois_d_effet))
+            for eligible in eligibles_minimum)
 
     if avantages_non_contributifs and eligibles_garanti:
         # Le minimum garanti n'est pas un minimum proratisé mais un BARÈME
@@ -1050,6 +1125,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         fiabilite=fiabilite_globale,
         plancher=plancher,
         minimum_ecrete=minimum_ecrete,
+        petites_pensions=petites_pensions,
     )
 
 

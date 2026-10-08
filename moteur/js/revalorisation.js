@@ -346,6 +346,7 @@ export class Revalorisee {
       regimes: this.regimes.map((r) => ({
         regime: r.regime, coefficient: r.coefficient, regle: r.regle,
         fiabilite: nomFiabilite(r.fiabilite), revision: r.revision ?? 0.0,
+        majoration_exceptionnelle: r.majoration ?? 0.0,
       })),
       majoration: this.coefficient_majoration,
       mensuel_decembre_2019: this.mensuel_decembre_2019,
@@ -462,10 +463,13 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
       hors_repartition: horsRepartition(pension),
       aujourd_hui: montant * coefficient,
       revision: 0.0,
+      majoration: 0.0,
     });
   }
   const coefficientMajoration = coefficientDeLaMajoration(coefficients);
   reviserLeMinimum(simulateur.scenarioActuel, carriere, resultat, regimes, an);
+  const majorations = majorerLesPetitesPensions(simulateur.scenarioActuel, resultat,
+    datees, regimes, servie, aLEffet, mensuel2019, fin);
 
   return new Revalorisee({
     personne: carriere.personne,
@@ -475,6 +479,7 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
     coefficient_majoration: coefficientMajoration,
     mensuel_decembre_2019: mensuel2019,
     fiabilite,
+    majorations,
   });
 }
 
@@ -519,8 +524,147 @@ export function reviserLeMinimum(moteur, carriere, resultat, regimes, annee) {
     code, part * coefficient / servi * baisse]));
   for (const r of regimes) {
     r.revision = retraits.get(r.regime) ?? 0.0;
-    r.aujourd_hui = r.au_depart * r.coefficient - r.revision;
+    r.aujourd_hui = r.au_depart * r.coefficient - r.revision + (r.majoration ?? 0.0);
   }
+}
+
+/**
+ * La fiche de la majoration exceptionnelle des petites pensions, que
+ * `FichesDatees` lit à la date d'effet de chaque pension.
+ */
+export const FICHE_DE_LA_MAJORATION = "majoration_exceptionnelle_2023";
+
+/** Au centime inférieur, « sans arrondi » (circulaire Cnav n° 2023-21). */
+export function tronquer(montant) {
+  return Math.floor(montant * 100.0 + 1e-6) / 100.0;
+}
+
+/**
+ * Au centime le plus proche, le demi-centime au-dessus : le montant mensuel
+ * d'une pension, tel que la caisse le sert.
+ */
+export function auCentime(montant) {
+  return Math.floor(montant * 100.0 + 0.5) / 100.0;
+}
+
+/**
+ * La majoration exceptionnelle des petites pensions (loi n° 2023-270,
+ * article 18, V ; décret n° 2023-754, article 3 ; circulaire Cnav n° 2023-21),
+ * menée jusqu'à l'échéance `fin` : théorique, au prorata de la durée cotisée
+ * dans le régime ; retenue sous le plafond du régime, au prorata de sa durée
+ * validée ; servie sous le plafond tous régimes de L. 173-2 ; révisée quand une
+ * pension française commence après ; revalorisée ensuite par L. 161-23-1.
+ * Modifie `regimes` en place, la majoration de chacun en euros de l'échéance,
+ * et rend le calcul de la caisse, régime par régime. Voir
+ * `majorer_les_petites_pensions` du Python.
+ */
+export function majorerLesPetitesPensions(moteur, resultat, datees, regimes, servie,
+  aLEffet, mensuel2019, fin) {
+  const petites = new Map((resultat.petites_pensions ?? []).map((p) => [p.regime, p]));
+  const ouvertes = [];
+  for (const [pension, , debut] of datees) {
+    const petite = petites.get(pension.regime);
+    if (petite === undefined || !petite.taux_plein || petite.maximum <= 0) continue;
+    const regle = moteur.fichesDatees.regle(FICHE_DE_LA_MAJORATION, debut);
+    if (regle === null || !regle.existe) continue;
+    const due = String(regle.due_le);
+    if (debut < due && due <= fin
+        && petite.cotises_tous_regimes >= regle.trimestres_cotises) {
+      ouvertes.push([pension.regime, petite, regle, due]);
+    }
+  }
+  if (ouvertes.length === 0) return [];
+  const due = ouvertes[0][3];
+  const enfants = new Map();
+  for (const avantage of resultat.avantages_appliques) {
+    if (avantage.code !== "majoration_enfants") continue;
+    for (const [code, part] of avantage.par_regime ?? []) {
+      enfants.set(code, (enfants.get(code) ?? 0.0) + part);
+    }
+  }
+
+  // Chaque pension servie le mois `quand`, en euros par mois, au centime, sans
+  // sa surcote, majoration pour enfants comprise ; et ce qui l'y a menée. Une
+  // prestation versée en capital n'est pas servie.
+  const mensuellesAu = (quand) => {
+    const servies = new Map();
+    for (const [pension, a, debut, montant] of datees) {
+      if (debut > quand || (pension.capital !== null && pension.capital !== undefined)) {
+        continue;
+      }
+      const coefficient = servie.coefficient(pension, a, debut, quand, mensuel2019)[0];
+      const petite = petites.get(pension.regime);
+      const surcote = petite === undefined ? 0.0 : petite.surcote;
+      servies.set(pension.regime, [
+        auCentime((montant - surcote + (enfants.get(pension.regime) ?? 0.0)
+          * (aLEffet.get(pension.regime) ?? 1.0)) * coefficient / 12.0),
+        coefficient]);
+    }
+    return servies;
+  };
+
+  const auMois = mensuellesAu(due);
+  const calculs = new Map();
+  for (const [code, petite, regle] of ouvertes) {
+    const maximum = petite.maximum;
+    const theorique = tronquer(regle.montant / 12.0
+      * Math.min(petite.cotisee, maximum) / maximum);
+    const plafond = tronquer(tronquer(regle.plafond / 12.0)
+      * Math.min(petite.validee, maximum) / maximum);
+    const pension = auMois.get(code)[0];
+    const depassement = Math.max(0.0, pension + theorique - plafond);
+    calculs.set(code, [theorique, plafond, pension,
+      Math.max(0.0, tronquer(theorique - depassement))]);
+  }
+  let total = 0.0;
+  for (const [, calcul] of calculs) total += calcul[3];
+
+  // Les majorations retenues, menées par `mene`, sous le plafond tous régimes
+  // du mois où elles sont dues, mené de même, comparé le mois `quand` à toutes
+  // les pensions : le dépassement s'impute à chaque régime au prorata de sa
+  // majoration.
+  const serviesSousLePlafond = (quand, mene) => {
+    const servies = new Map();
+    if (total <= 0) {
+      for (const [code, calcul] of calculs) servies.set(code, calcul[3]);
+      return servies;
+    }
+    let pensions = 0.0;
+    for (const [mensuelle] of mensuellesAu(quand).values()) pensions += mensuelle;
+    const [annee, mois] = due.split("-").map(Number);
+    const plafond = tronquer(moteur.minimumContributif.valeurs(annee, mois)[2] / 12.0) * mene;
+    const depassement = Math.max(0.0, pensions + total * mene - plafond);
+    for (const [code, calcul] of calculs) {
+      const retenue = calcul[3];
+      servies.set(code, Math.max(0.0, tronquer(retenue * mene - depassement * retenue / total)));
+    }
+    return servies;
+  };
+
+  // Une pension française qui commence après le mois où la majoration est due
+  // la révise, à sa date : la dernière vaut.
+  const nouvelles = datees
+    .filter(([pension, , debut]) => due < debut && debut <= fin
+      && (pension.capital === null || pension.capital === undefined))
+    .map(([, , debut]) => debut).sort();
+  const quand = nouvelles.length > 0 ? nouvelles[nouvelles.length - 1] : due;
+  const mene = servie.revalorisations.generale(due, quand, false, null)[0];
+  const servies = serviesSousLePlafond(quand, mene);
+  const jusquALEcheance = servie.revalorisations.generale(quand, fin, false, null)[0];
+  const majorations = [...calculs].map(([code, [theorique, plafond, pension, retenue]]) => ({
+    regime: code, date: quand, theorique, plafond, pension, retenue,
+    servie: servies.get(code), coefficient: jusquALEcheance,
+    a_l_echeance: servies.get(code) * 12.0 * jusquALEcheance,
+  }));
+  const parRegime = new Map(majorations.map((m) => [m.regime, m.a_l_echeance]));
+  for (const r of regimes) {
+    const majoration = parRegime.get(r.regime) ?? 0.0;
+    if (majoration > 0) {
+      r.majoration = majoration;
+      r.aujourd_hui = r.au_depart * r.coefficient - r.revision + majoration;
+    }
+  }
+  return majorations;
 }
 
 /**

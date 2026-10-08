@@ -1848,6 +1848,16 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         servie = reversion(actuel, [(regime, 12 * montant, Fiabilite.HAUTE)
                                     for regime, montant in pensions.items()], carriere, annee)
         return {r.regime: r.montant / 12 for r in servie.regimes}
+    if cle == "majoration_exceptionnelle_mensuelle":
+        # La majoration exceptionnelle des petites pensions, servie le mois où
+        # elle est due : « faire vivre » la calcule à l'échéance de 2023, où
+        # rien ne l'a encore revalorisée.
+        from retraite_notionnelle.revalorisation import faire_vivre
+
+        majorations = faire_vivre(simulateur, carriere, resultat, 2023).majorations
+        if not majorations:
+            return "aucune majoration exceptionnelle"
+        return sum(m.servie for m in majorations)
     if cle == "minimum_vieillesse_mensuel":
         # L'exemple donne les revenus du couple, pas les carrières : le test
         # prête à l'assuré la pension de l'exemple — le conjoint a déjà ses
@@ -1976,6 +1986,8 @@ TOLERANCES = {
     "pension_base_sur_sam": {"abs": 1e-9},
     "coefficients_des_regimes": {"abs": 1e-9},
     "pension_regime_general_mensuelle": {"abs": 0.05},
+    # Tronquée au centime, comme la caisse la calcule.
+    "majoration_exceptionnelle_mensuelle": {"abs": 1e-9},
     "pensions_annuelles_des_regimes": {"abs": 0.5},
     # Au dix-millième d'euro, que la fédération écrit.
     "valeurs_de_service_au_jour": {"abs": 5e-5},

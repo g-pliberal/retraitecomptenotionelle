@@ -336,6 +336,9 @@ export function resultatActuel(resultat, foyer) {
     droits_apres_depart: null,
     // Le minimum contributif servi, et ce que sa révision relit (R. 173-8).
     minimum_ecrete: resultat.complements.minimumEcrete,
+    // Ce que la majoration exceptionnelle de septembre 2023 relit des pensions
+    // que le minimum contributif regarde (`majorerLesPetitesPensions`).
+    petites_pensions: resultat.complements.petitesPensions ?? [],
   };
 }
 
@@ -536,5 +539,8 @@ export function resultatDesDeparts(moteur, carriere, departs, liquidations, cont
     retraite_progressive: null,
     cumul: null,
     droits_apres_depart: null,
+    // Ce que la majoration exceptionnelle de septembre 2023 relit, de chaque
+    // départ.
+    petites_pensions: liquidations.flatMap((l) => l.complements.petitesPensions ?? []),
   };
 }

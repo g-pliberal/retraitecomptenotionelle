@@ -1,0 +1,40 @@
+date: "2026-10-08"
+session: "action 138, étape 17, quatrième partie : la majoration exceptionnelle des petites pensions de septembre 2023"
+consulte: >-
+  veille_droit.py (quatre fiches à relire, aucune de cette étape) ; l'index LEGI, mis à
+  jour des incréments jusqu'au 7 octobre 2026, et l'index JORF, jusqu'au 8, puis
+  textes.py --inscrire (les rédactions de la loi n° 2011-1977, que la fiche du plafond de
+  L. 18 cite, entrent « à examiner ») ; dans l'index : la loi n° 2023-270, article 18, I à
+  VI (LEGIARTI000047447828, JORFARTI000047445105) ; le décret n° 2023-754 du 10 août
+  2023, articles 3 et 6 (JORFARTI000047956556, JORFARTI000047956573) ; le décret
+  n° 2023-752 du même jour (JORFTEXT000047956328) ; l'arrêté du 26 avril 2023, qui porte
+  le SMIC à 11,52 € au 1er mai 2023 (JORFARTI000047495827). Hors de l'index : la
+  circulaire Cnav n° 2023-21 du 2 novembre 2023, « La majoration exceptionnelle des
+  retraites personnelles ayant pris effet avant le 1er septembre 2023 » ; la réponse
+  ministérielle à la question écrite n° 16179 (JO du 30 avril 2024) ; le code de
+  TRAJECTOiRE (revaloMicoStockEic, R/fonctionsCalculsPensions.R, au commit du registre),
+  lu sans être recopié.
+trouve: >-
+  Les pensions personnelles de base du régime général, des régimes qu'il a intégrés et
+  des salariés agricoles prises avant le 31 août 2023, liquidées au taux plein, avec
+  cent vingt trimestres cotisés tous régimes, sont majorées depuis le 1er septembre
+  2023 de 1 200 € par an au prorata de la durée cotisée dans le régime ; la pension du
+  régime ne dépasse pas avec elle 10 170,86 € par an au prorata de sa durée validée,
+  toutes les pensions le plafond de L. 173-2 (décret n° 2023-754, article 3), le
+  dépassement imputé à chaque régime au prorata de sa majoration ; revalorisée ensuite
+  par L. 161-23-1, révisée quand une pension change. La circulaire de la Cnav y ajoute
+  les cultes, les troncatures au centime, la surcote et la majoration pour tierce
+  personne hors des comparaisons, les pensions étrangères hors du plafond tous régimes
+  mais dans les cent vingt trimestres, l'AVPF hors d'eux, l'ASPA qui la compte et la
+  réversion qui ne la lit pas ; ses exemples, rejoués. La loi ne la réserve pas aux
+  pensions portées au minimum contributif, ce que TRAJECTOiRE fait. Servie par « faire
+  vivre » dans les deux moteurs. Pour les exploitants, le VI ouvre depuis la même date
+  les points gratuits et le complément différentiel de la RCO aux pensions déjà
+  liquidées au taux plein, sans la durée requise, aux montants du 1er septembre 2023 : la
+  réponse ministérielle le dit des pensions prises depuis 1997.
+reste: >-
+  La circulaire de la MSA pour les salariés agricoles et celle de la Cavimac pour les
+  cultes ; une carrière qui rende les pensions des autres exemples de la circulaire. Le
+  relèvement des exploitants, à l'étape 8. De l'étape 17, ensuite : la bonification du
+  cinquième des militaires, puis les versements uniques, la pension maximale, les taux
+  pleins de L. 351-8 et les majorations pour enfants et pour conjoint à charge.

@@ -722,6 +722,7 @@ def _resume_aujourd_hui(aujourd_hui: PensionAujourdhui | None) -> dict | None:
             "par_regime": [
                 {"regime": r.regime, "au_depart": r.au_depart,
                  "coefficient": r.coefficient, "aujourd_hui": r.aujourd_hui,
+                 "majoration_exceptionnelle": r.majoration,
                  "regle": r.regle, "fiabilite": str(r.fiabilite)}
                 for r in actuel.regimes
             ],

@@ -536,19 +536,25 @@ export class Echeancier {
     const vivante = faireVivre(this.simulateur, carriere, this.auDepart, annee);
     const foyer = foyerALEcheance(this.simulateur, carriere, vivante);
     this.aujourdhui = aujourdHui(vivante, foyer, this.auDepart);
+    this._majorer(carriere, vivante);
     this.journal.inscrire(new Entree({
       id: `revalorisation_${annee}`, evenement: ident, inscriteLe: date, debut: date,
       sorte: "revalorisation", contenu: vivante,
     }));
     for (const regime of vivante.regimes) {
       const origine = `pension_${regime.regime}`;
+      let detail = `× ${regime.coefficient.toFixed(6)}, règle ${regime.regle}`;
+      if ((regime.majoration ?? 0.0) > 0) {
+        detail += ", majoration exceptionnelle de 2023 comprise "
+          + `(${formatFixe(regime.majoration, 2, true)} €)`;
+      }
       this.journal.inscrire(new Entree({
         id: `${origine}_${annee}`, evenement: ident, inscriteLe: date, debut: date,
         sorte: "composante",
         contenu: {
           id: `${origine}_${annee}`, regime: regime.regime,
           montant: { annuel: regime.aujourd_hui, monnaie: "EUR" }, debut: date,
-          detail: `× ${regime.coefficient.toFixed(6)}, règle ${regime.regle}`,
+          detail,
         },
         remplace: origine,
       }));
@@ -558,6 +564,35 @@ export class Echeancier {
       id: `foyer_${annee}`, evenement: ident, inscriteLe: date, debut: date,
       sorte: "foyer", contenu: foyer, remplace: depart.id,
     }));
+  }
+
+  /**
+   * La majoration exceptionnelle des petites pensions, que « faire vivre » a
+   * calculée : un début de composante, que la loi induit, au mois où elle est
+   * due — ou à celui de sa révision —, chaque majoration servie inscrite à son
+   * montant de ce mois-là. Voir `_majorer` du Python.
+   */
+  _majorer(carriere, vivante) {
+    const servies = (vivante.majorations ?? []).filter((m) => m.servie > 0);
+    if (servies.length === 0) return;
+    const quand = servies[0].date;
+    const evenement = new Evenement({
+      id: `majoration_exceptionnelle_${carriere.personne}`, date: quand,
+      personnes: [carriere.personne], vise: { regimes: servies.map((m) => m.regime) },
+      sorte: "debut_de_composante", origine: "induit",
+    });
+    this._inscrire(evenement, evenement.id, "evenement", evenement, quand);
+    for (const majoration of servies) {
+      const ident = `majoration_exceptionnelle_${majoration.regime}`;
+      this._inscrire(evenement, ident, "composante", {
+        id: ident, beneficiaire: carriere.personne, regime: majoration.regime,
+        montant: { annuel: majoration.servie * 12.0, monnaie: "EUR" }, debut: quand,
+        detail: "majoration exceptionnelle des petites pensions (loi n° 2023-270, "
+          + `article 18, V) : ${formatFixe(majoration.theorique, 2, true)} € par mois `
+          + "au prorata de la durée cotisée, "
+          + `${formatFixe(majoration.servie, 2, true)} € sous les plafonds`,
+      }, quand);
+    }
   }
 
   _inscrire(evenement, ident, sorte, contenu, debut, remplace = null) {

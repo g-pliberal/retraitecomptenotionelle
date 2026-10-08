@@ -372,7 +372,7 @@ export function plancherInternational(eligible, montantBase, montantMajore, dure
 /** Ce que l'étape « compléter tous régimes » écrit. */
 export class Complements {
   constructor({ personne, regimes, avantages, total, minimumApplique, fiabilite,
-    plancher = 0.0, minimumEcrete = null }) {
+    plancher = 0.0, minimumEcrete = null, petitesPensions = [] }) {
     this.personne = personne;
     this.regimes = regimes;
     this.avantages = avantages;
@@ -387,6 +387,11 @@ export class Complements {
     // départ (R. 173-8) : `{avant_ecretement, marge, par_regime}`, en euros de
     // la liquidation ; `null` sans lui. Voir `MinimumEcrete` du Python.
     this.minimumEcrete = minimumEcrete;
+    // Ce que la majoration exceptionnelle de septembre 2023 relit de chaque
+    // pension que le minimum contributif regarde : `{regime, taux_plein,
+    // cotisee, validee, maximum, cotises_tous_regimes, surcote}`. Voir
+    // `PetitePension` du Python.
+    this.petitesPensions = petitesPensions;
   }
 
   /** Les compléments, tels que le schéma de l'étape les décrit. */
@@ -442,6 +447,8 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
   let fiabiliteGlobale = Fiabilite.CERTIFIEE;
   let minimumApplique = false;
   let minimumEcrete = null;
+  // Ce que le minimum contributif ajoute à chaque pension, par son indice.
+  let ajoutsDuMinimum = new Map();
 
   // La règle du minimum que la date d'effet fait valoir (fiche
   // `minimum_contributif`) : il n'existe que depuis le 1er avril 1983, sa
@@ -570,6 +577,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       releveMinimum = admissible;
     }
     if (releveMinimum > 0) {
+      ajoutsDuMinimum = new Map(complements);
       for (const [indice, complement] of complements) {
         // Le complément est DIT, pas seulement annoncé : sans lui, refaire la
         // formule donnait la pension d'avant le minimum et l'écart restait
@@ -598,6 +606,25 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
           .map(([indice, complement]) => [pensions[indice].regime, complement]),
       });
     }
+  }
+
+  // LA MAJORATION EXCEPTIONNELLE DE SEPTEMBRE 2023 relève les pensions que le
+  // minimum contributif regarde, portées ou non à lui ; elle se calcule le mois
+  // où elle est due (`majorerLesPetitesPensions`). Ce qu'elle relit de chacune
+  // s'écrit ici : ses durées, son taux plein et sa surcote.
+  let petitesPensions = [];
+  if (avantagesNonContributifs) {
+    const moisDEffet = [anneeLiquidation, carriere.moisLiquidation];
+    petitesPensions = eligiblesMinimum.map((eligible) => ({
+      regime: pensions[eligible.indice].regime,
+      taux_plein: eligible.tauxPlein,
+      cotisee: eligible.cotiseeRegime,
+      validee: eligible.dureeRegime,
+      maximum: eligible.proratisation,
+      cotises_tous_regimes: trimestresCotises,
+      surcote: surcoteHorsMinimum(pensions[eligible.indice].montant, eligible,
+        ajoutsDuMinimum.get(eligible.indice) ?? 0.0, moisDEffet),
+    }));
   }
 
   if (avantagesNonContributifs && eligiblesGaranti.length > 0) {
@@ -936,7 +963,25 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     fiabilite: fiabiliteGlobale,
     plancher: plancherProgressive,
     minimumEcrete,
+    petitesPensions,
   });
+}
+
+/**
+ * Ce que la surcote ajoute à `montant`, la pension d'un régime que le minimum
+ * contributif a peut-être relevée de `ajout` : celle de la pension nue, que le
+ * minimum laisse en sus depuis avril 2009 ; avant, rien quand il l'a relevée.
+ * Voir `surcote_hors_minimum` du Python.
+ */
+export function surcoteHorsMinimum(montant, eligible, ajout, dateEffet) {
+  const [annee, mois] = dateEffet;
+  const [anneeRegle, moisRegle] = SURCOTE_AJOUTEE_AU_MINIMUM_DEPUIS;
+  const avant2009 = annee < anneeRegle || (annee === anneeRegle && mois < moisRegle);
+  if (eligible.surcote <= 1.0 || (ajout > 0 && avant2009)) {
+    return 0.0;
+  }
+  const nue = (montant - ajout - (eligible.horsMinimum ?? 0.0)) / eligible.surcote;
+  return Math.max(0.0, nue * (eligible.surcote - 1.0));
 }
 
 /**
