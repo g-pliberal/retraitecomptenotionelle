@@ -74,7 +74,6 @@ il dit encore `a_reprendre` les points des chantiers 138.2, 138.4, 138.6,
 | Les cotisations PCV (ex-ASV) des professions de santé conventionnées | 18 | les deux côtés : la pension du scénario 1 et le compte | infirmiers, kinésithérapeutes, dentistes et sages-femmes, qui n'ont pas cet étage ; le médecin, au tiers du secteur 1, sur un forfait de 2016 | un étage entier de leur retraite (registre, `modele_ti`) | 1 à 2 |
 | Une carrière heurtée dans la grille des cas types | 19 | la page Coût et les cas types | les carrières de chômage puis d'inactivité, qu'aucun des 13 cas types ne porte | là s'écartent les périodes assimilées du scénario 1 et le compte, qui ne porte, pour une année de chômage, que ce que l'Unédic verse aux complémentaires (registre, `osiris`, `maquette_globale_cor`) | 1 |
 | Le statut du non-salarié agricole : conjoint collaborateur, aide familial, chef à titre secondaire | 8 | la pension du scénario 1, trop haute | une part du 1,02 million de retraités non salariés agricoles | le modèle leur sert la PMR et le complément du chef, quand la loi réduisait la PMR de 2009 à 2021 et réserve le complément au chef ; un champ de saisie | 1 |
-| La réversion d'un assuré mort avant son départ (R. 353-6) | 4 | le simulateur seul | les survivants de qui meurt avant sa retraite | toute leur réversion, que la proposition ne sert pas | 1 |
 | Les contributions d'équilibre de l'Agirc-Arrco dans ce qui est versé | 9 | le rendement du scénario 1, sur la page des indicateurs | tous les cotisants de l'Agirc-Arrco | l'ASF, l'AGFF, la CEG et la CET, prélevées sans créer de points | 1 |
 | Le micro-entrepreneur saisi par son chiffre d'affaires, et le chemin de la Cipav | 12 | les deux côtés, par la saisie | les micro-entrepreneurs qui se simulent | l'utilisateur reconstitue aujourd'hui son revenu, sans l'abattement | 1 |
 | La mortalité différentielle des cas types | 7 | la page Coût, cas type par cas type | tous les cas types, qui vivent comme la population générale | la durée de service de chaque pension | 1 |
@@ -99,7 +98,8 @@ soient déclarés, non qu'ils soient calculés : `approchee` ou
   inapte). Seuls les bénéfices de campagne et les services aériens et
   sous-marins des militaires (376 810 retraités militaires en 2024) approchent
   le moyen.
-- *Étape 4*, hors de l'assuré mort avant son départ : le partage entre
+- *Étape 4*, dont la réversion d'un assuré mort avant son départ, du rang
+  moyen, a été faite le même jour par une autre session : le partage entre
   ex-conjoints et le remariage, L. 353-5 et D. 355-1, les majorations
   forfaitaires d'avant 1995 et 1982, la révision du plafond, le plafond
   semestriel de 1982 à 1996, les maxima des salariés agricoles et des
