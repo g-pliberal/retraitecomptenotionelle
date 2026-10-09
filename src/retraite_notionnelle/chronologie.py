@@ -296,8 +296,9 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
     (``revenus_d_activite``), la ``nouvelle_union`` où il vit après le décès
     — mariage, pacs ou concubinage — et les ressources que son nouveau
     conjoint y apporte (``ressources_du_nouveau_conjoint``), depuis le mois
-    qu'il dit (``nouvelle_union_depuis``) ou le décès, et son ``invalidite``,
-    une décision médicale datée, s'il les dit ; et les précédents conjoints de
+    qu'il dit (``nouvelle_union_depuis``) ou le décès, son ``invalidite``,
+    une décision médicale datée, et sa ``retraite``, l'acte de son propre
+    départ, daté, s'il les dit ; et les précédents conjoints de
     l'assuré (``ex_conjoints``) : la naissance de chacun, son mariage, que le
     divorce clôt, et son remariage, s'il le dit. ``deces`` date le décès de
     l'assuré, qui ouvre la réversion de son conjoint : il clôt le mariage.
@@ -463,6 +464,16 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
             faits_naissance.append(fait(
                 f"invalidite_{CONJOINT}", CONJOINT, "decision_medicale", jour,
                 attributs={"decision": "invalidite", "precision": precision}))
+        if conjoint.get("retraite") is not None:
+            # Le jour où sa propre retraite prend effet : ses retraites
+            # personnelles ne commencent qu'alors, et la limite de cumul de sa
+            # réversion d'avant juillet 2004 s'applique ce jour-là.
+            jour, precision = date_declaree(conjoint["retraite"], "la retraite du conjoint")
+            if jour <= epoux["debut"]:
+                raise ValueError(f"une retraite du conjoint le {jour}, avant sa naissance")
+            faits_naissance.append(fait(
+                f"depart_{CONJOINT}", CONJOINT, "acte_de_la_personne", jour,
+                attributs={"acte": "depart", "precision": precision}))
         for rang, ex in enumerate(conjoint.get("ex_conjoints") or (), 1):
             faits, mariage = _ex_conjoint(assure, rang, ex)
             faits_naissance.extend(faits)

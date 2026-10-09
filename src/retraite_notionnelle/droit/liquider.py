@@ -1479,6 +1479,11 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             ecretement_du_maximum=ecretement_du_maximum,
             surcote=surcote_de_la_pension,
             coefficient_du_maximum=coefficient_du_maximum,
+            # La durée maximum que sa date prenait en compte : 120 trimestres
+            # avant 1972, 128 en 1972, 136 en 1973, 144 en 1974.
+            sur_la_duree_maximum=trimestres_regime >= (
+                periode.trimestres_retenus_maximum
+                if periode.trimestres_retenus_maximum is not None else proratisation),
         ))
 
     return Pensions(

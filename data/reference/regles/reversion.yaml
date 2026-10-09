@@ -772,12 +772,16 @@ approximations:
 - ecart: >-
     avant juillet 2004, les retraites personnelles du survivant, que le cumul de
     D. 355-1 retient et que ses ressources ne comptent plus, sont ses ressources
-    déclarées hors de ses revenus d'activité ; la limite se compare une fois, à la
-    date d'effet, aux montants de l'année du décès, et non à l'attribution du second
-    avantage, qui peut la suivre ; ses retraites et la limite forfaitaire se divisent
-    par le nombre de ses réversions de base que le modèle sert, sans celles des
-    régimes qu'il ne porte pas ; la majoration pour enfants de ses retraites, que la
-    limite comptait avant septembre 2003, n'est pas distinguée ; avant juillet 1974, la
+    déclarées hors de ses revenus d'activité, servies toutes à la fois, dès la date
+    d'effet ou dès la date de sa retraite qu'il déclare ; la limite se compare une
+    fois, à celle des deux qui vient la seconde, aux montants de l'année du décès, la
+    limite forfaitaire de l'année de sa retraite ramenée à ces euros par les
+    coefficients des pensions ; la réversion d'avant juillet 2004 que sa retraite,
+    attribuée depuis, « recalcul[e] compte tenu des règles de ressources » de 2004,
+    n'est pas revue ; ses retraites et la limite forfaitaire se divisent par le
+    nombre de ses réversions de base que le modèle sert, sans celles des régimes qu'il
+    ne porte pas ; la majoration pour enfants de ses retraites, que la limite
+    comptait avant septembre 2003, n'est pas distinguée ; avant juillet 1974, la
     réversion complète sa retraite au lieu de s'y ajouter, dans chaque régime aligné,
     sa retraite divisée de même
   effet: >-
@@ -787,10 +791,10 @@ approximations:
     les majorations forfaitaires de 4 % au 1er décembre 1982 et de 3,846 % au 1er
     janvier 1995 (exposé de la Cnav) s'écrivent à leur date, hors du montant, sur la
     réversion calculée, portée au minimum et ramenée au maximum de la date d'effet,
-    sans la réviser pour ressources ni pour cumul ; les majorations des retraites
-    personnelles d'avant 1983 (1972, 1976, 1977, 1982, selon la durée de l'assuré),
-    que la réversion suivait « dès lors que l'assuré décédé aurait pu en bénéficier »,
-    ne sont pas portées
+    sans la réviser pour ressources ni pour cumul ; de même celles des retraites
+    personnelles d'avant 1975 (1972, 1976, 1977, 1982, selon la durée de l'assuré),
+    que la réversion suit « dès lors que l'assuré décédé aurait pu en bénéficier »
+    (fiche majorations_forfaitaires_1972_1982), le même jour avant les siennes
   effet: >-
     quelques pour cent de la réversion attribuée avant 1995, à partir de sa date ;
     non mesuré
@@ -912,6 +916,10 @@ presomptions:
   survivant_seul: >-
     le plafond d'une personne seule, quand la saisie ne dit pas que le survivant vit
     en couple
+  retraites_du_survivant_servies: >-
+    la limite de cumul d'avant juillet 2004 appliquée à la date d'effet, et ses
+    retraites comptées à ses ressources depuis, quand la saisie ne dit pas quand sa
+    propre retraite commence
   reversion_demandee_dans_l_annee: >-
     la date d'effet, au premier jour du mois qui suit le décès, ou qui suit l'âge
     requis
@@ -1308,6 +1316,24 @@ sources:
       de réversion », de 6 300 F au 1er juillet 1974 à 17 541,90 € en 2026
     date: 2025-10-24
     url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_reversion_montant_retraite_reversion_cumulable_avant_2004_ex.aspx
+  - type: circulaire_cnav
+    reference: >-
+      exposé « Retraite de réversion cumulable », relu le 9 octobre 2026 : « Les
+      règles de cumul s'appliquaient à la date d'attribution du 2e avantage : soit au
+      point de départ de l'avantage personnel s'il était attribué après la retraite de
+      réversion » ; la pension du défunt « revalorisée par les coefficients intervenus
+      entre le point de départ de la retraite de réversion et le point de départ de
+      l'avantage personnel » ; « Si un avantage personnel était attribué à partir du
+      01/07/2004, la retraite de réversion était recalculée compte tenu des règles de
+      ressources applicables depuis le 01/07/2004 » ; et la circulaire Cnav n° 105/90
+      du 15 novembre 1990, § 11 à 13, que l'API de la base de législation sert : la
+      « mesure de simplification » d'avant elle, qui tenait la pension du défunt pour
+      « 100/52èmes de la pension de réversion effectivement servie », et son exemple —
+      réversion au 1er janvier 1989, retraite personnelle de 50 000 F au 1er août
+      1990, pension du défunt de 63 000 F menée à 65 973 F, limite de 60 305 F —, que
+      tests/test_reversion.py rejoue
+    date: 1990-11-15
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_10590_15111990.aspx
 textes_a_rattacher:
 - {id: LEGIARTI000024113027, article: R. 353-1-1, en_vigueur: 2011-06-03, change: "la révision de la réversion quand les ressources varient"}
 code:
@@ -1316,7 +1342,8 @@ code:
     _ressources_du_plafond, _majorer_les_petites_retraites, mois_de_mariage,
     _part_du_survivant, _remarie_avant, _admis_au_regime_general, _admis_ailleurs,
     _fin_au_remariage, _jusqu_au_remariage, _premiere_date_d_effet,
-    _date_d_effet_du_regime_general, _cumuler, _majorations_ulterieures ;
+    _date_d_effet_du_regime_general, _cumuler, _retraites_au, _cumul_a_la_retraite,
+    _majorations_ulterieures ;
     scenarios/actuel.py : Reversions ;
     echeancier.py : Echeancier._reverser, Echeancier._pensions_au_deces,
     Echeancier._pensions_eues_au_deces ; carriere.py : Carriere.arretee_au_deces,
@@ -1330,7 +1357,8 @@ code:
     ressourcesDuPlafond, majorerLesPetitesRetraites, moisDeMariage, partDuSurvivant,
     remarieAvant, admisAuRegimeGeneral, admisAilleurs, finAuRemariage,
     jusquAuRemariage, premiereDateDEffet, dateDEffetDuRegimeGeneral, cumuler,
-    majorationsUlterieures ; moteur/js/regimes.js : Reversions ;
+    retraitesAu, cumulALaRetraite, majorationsUlterieures ; moteur/js/regimes.js :
+    Reversions ;
     moteur/js/echeancier.js : Echeancier._reverser, Echeancier._pensionsAuDeces,
     Echeancier._pensionsEuesAuDeces ; moteur/js/carriere.js : Carriere.arreteeAuDeces,
     Carriere.exConjoints ; moteur/js/chronologie.js : exConjoints, debutDuMenage ;
@@ -1429,6 +1457,14 @@ historique:
   fiche, et son approximation, ici, est retirée. La date d'effet est la plus proche que
   chaque version permet : le survivant de cinquante-cinq ans d'un assuré mort en 1970
   la reçoit au 1er janvier 1973.
+- >-
+  2026-10-09 — action 138, étape 4, septième partie : la retraite du survivant, qu'il
+  date, revoit sa réversion d'avant juillet 2004 par la limite de cumul de ce jour,
+  « à la date d'attribution du 2e avantage » — avant le 15 novembre 1990, la pension
+  du défunt tenue pour la réversion servie rapportée au taux de la limite (circulaire
+  Cnav n° 105/90, § 12 et 13, dont l'exemple est rejoué) ; la réversion suit les
+  majorations forfaitaires de 1972 à 1982 de la pension du défunt (fiche
+  majorations_forfaitaires_1972_1982).
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un assuré du régime général ou d'un régime aligné
   qui décède : 4,41 millions de bénéficiaires d'un droit dérivé tous régimes fin 2024

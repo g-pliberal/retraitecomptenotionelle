@@ -193,6 +193,29 @@ function derniereAnneeRegime(regime) {
 }
 
 /** La règle de chaque régime, appliquée d'une date à une autre. */
+/**
+ * La fiche des majorations forfaitaires de 1972 à 1982 des pensions prises
+ * avant 1975. Voir le Python.
+ */
+export const FICHE_DES_MAJORATIONS_FORFAITAIRES = "majorations_forfaitaires_1972_1982";
+
+/**
+ * Les majorations forfaitaires que reçoit, après sa date d'effet `depart`
+ * (AAAA-MM-JJ), la pension `pension` prise avant 1975 : `[jour, taux]`, dans
+ * l'ordre. Voir `majorations_forfaitaires` du Python.
+ */
+export function majorationsForfaitaires(moteur, pension, depart) {
+  const regle = moteur.fichesDatees.regle(FICHE_DES_MAJORATIONS_FORFAITAIRES, depart);
+  if (!regle) {
+    return [];
+  }
+  return (regle.majorations ?? [])
+    .filter((majoration) => majoration.regimes.includes(pension.regime)
+      && String(majoration.date) > depart
+      && (pension.sur_la_duree_maximum || !majoration.duree_maximum))
+    .map((majoration) => [String(majoration.date), Number(majoration.taux)]);
+}
+
 export class PensionServie {
   constructor(simulateur) {
     this.actuel = simulateur.scenarioActuel;
@@ -250,9 +273,16 @@ export class PensionServie {
       const fiabilite = depart < DEBUT_REGLE_GENERALE_PUBLIC ? Fiabilite.ESTIMEE : fiabiliteSerie;
       return [coefficient, REGLE_REGIME_SPECIAL, fiabilite];
     }
-    const [coefficient, fiabilite] = this.revalorisations.generale(
+    const [generale, fiabilite] = this.revalorisations.generale(
       debutAnnee, jusqua, false, mensuel2019,
     );
+    // Les majorations forfaitaires de 1972 à 1982 venues jusqu'à l'échéance.
+    let coefficient = generale;
+    for (const [jour, taux] of majorationsForfaitaires(this.actuel, pension, depart)) {
+      if (jour <= jusqua) {
+        coefficient *= 1 + taux;
+      }
+    }
     if (REGIMES_REGLE_GENERALE.has(code)) {
       return [coefficient, REGLE_GENERALE, fiabilite];
     }

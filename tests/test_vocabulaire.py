@@ -115,6 +115,7 @@ PRESOMPTIONS_DU_5_6 = {
     "conjoint de l'autre sexe": "conjoint_de_l_autre_sexe",
     "survivant sans autres ressources que ses réversions": "ressources_du_survivant",
     "survivant qui vit seul après le décès": "survivant_seul",
+    "retraites du survivant servies dès": "retraites_du_survivant_servies",
     "réversion demandée dans l'année du décès": "reversion_demandee_dans_l_annee",
     "décès supposé juste après le départ": "deces_apres_le_depart",
     "chaque pension demandée au départ déclaré": "depart_de_chaque_regime",

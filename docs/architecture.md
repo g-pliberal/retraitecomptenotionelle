@@ -793,6 +793,10 @@ Le relevé des droits et le résultat le signalent.
   - survivant qui vit seul après le décès, quand la saisie ne dit pas son
     ménage : le plafond de sa réversion est celui d'une personne seule
     (action 138, étape 4) ;
+  - retraites du survivant servies dès la date d'effet de sa réversion, quand
+    la saisie ne dit pas quand la sienne commence : la limite de cumul d'avant
+    juillet 2004 s'y applique, et la majoration pour enfant à charge n'est pas
+    due (action 138, étape 4) ;
   - réversion demandée dans l'année du décès ;
   - décès supposé juste après le départ, ou cette année pour qui est déjà
     parti, quand un conjoint est déclaré sans décès : la page montre ce que

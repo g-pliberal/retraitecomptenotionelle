@@ -365,6 +365,23 @@ listes:
           n° 2005-17, § 141) ; le formulaire ne demande le ménage qu'à qui veut
           le dire, et sa première réponse est « seul ». Un ménage déclaré prend
           la place de la présomption
+      retraites_du_survivant_servies:
+        dit: >-
+          les ressources du survivant hors de ses revenus d'activité, que le
+          modèle tient pour ses retraites personnelles, lui sont servies dès la
+          date d'effet de sa réversion
+        valeur: dès la date d'effet
+        appliquee_par: reversion (droit/reversion.py), qui y applique la limite de cumul d'avant juillet 2004, compte ces retraites aux ressources depuis, et refuse la majoration pour enfant à charge ; son jumeau JavaScript
+        entrera_a: liquider_chaque_regime
+        raison: >-
+          avant juillet 2004, la réversion du régime général se cumule avec les
+          retraites du survivant dans une limite appliquée « à la date
+          d'attribution du 2e avantage » (exposé de la Cnav, « Retraite de
+          réversion cumulable ») ; la majoration pour enfant à charge n'est
+          servie qu'à qui n'a pas de retraite personnelle, et cesse quand elle
+          lui est attribuée (L. 353-5 ; circulaire Cnav n° 76/88, fiche n° 9).
+          Le formulaire ne demande la date de sa retraite qu'à qui veut la
+          dire. Une date déclarée prend la place de la présomption
       ressources_du_conjoint:
         dit: le conjoint qui ne déclare pas ses ressources n'en a aucune
         valeur: 0

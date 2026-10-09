@@ -26,11 +26,14 @@ lit:
 - ses ressources hors de ses revenus d'activité, que le modèle tient pour ses retraites
   personnelles
 - les enfants nés au décès, que le modèle tient pour à la charge du survivant jusqu'à
-  l'âge de la version
-- l'union où il vit après le décès, qui l'écarte avant juillet 2004
+  l'âge de la version en vigueur quand ils l'atteignent
+- l'union où il vit après le décès, qui l'écarte, ou l'arrête quand elle suit, avant
+  juillet 2004
+- le jour où sa propre retraite prend effet, s'il le dit, qui l'arrête
 ecrit:
 - la majoration forfaitaire pour enfant à charge, comprise dans la réversion du régime
-  qui la sert
+  qui la sert, et ce qu'elle devient depuis chaque jour où un enfant n'est plus à charge,
+  jusqu'au dernier
 dates_qui_decident:
 - liquidation.date_effet
 # Les versions forment un partage de la date d'effet de la réversion, qui est
@@ -163,12 +166,13 @@ approximations:
     l'enfant est à charge jusqu'à seize ans, puis, depuis 2016, jusqu'à sa majorité, quand
     l'étudiant, l'apprenti et l'enfant infirme le restent jusqu'à vingt ans (R. 313-12,
     R. 161-4) ; le modèle compte les enfants du défunt nés à la date d'effet, tenus pour
-    à la charge du survivant, et la majoration de cette date, sans dater sa fin quand le
-    dernier enfant passe l'âge, ni son début quand un enfant naît ou que la condition se
-    remplit après la date d'effet (R. 353-10)
+    à la charge du survivant, chacun jusqu'au mois qui suit l'âge de la version en
+    vigueur ce jour-là, sans prolonger l'étudiant, ni rouvrir en 2016 la part de l'enfant
+    qui a eu seize ans juste avant, ni la commencer quand un enfant naît ou que la
+    condition se remplit après la date d'effet (R. 353-10)
   effet: >-
-    la majoration dure tant que l'enfant est à charge ; le modèle la montre à la date
-    d'effet. Non mesuré
+    la majoration de l'étudiant ou de l'apprenti s'arrête deux à quatre ans trop tôt.
+    Non mesuré
 - ecart: >-
     le survivant qui n'a pas de retraite personnelle est celui dont les ressources ne
     comptent que des revenus d'activité, ou qui n'en déclare pas ; la pension
@@ -188,6 +192,9 @@ presomptions:
   reversion_demandee_dans_l_annee: >-
     la majoration examinée à la date d'effet de la réversion, que l'exposé de la Cnav
     dit examinée « lors de la demande d'un avantage de réversion »
+  retraites_du_survivant_servies: >-
+    le survivant qui déclare des ressources hors de son activité, sans dire quand sa
+    propre retraite commence, l'a dès la date d'effet, et n'a pas la majoration
 sources:
   lu_le: 2026-10-09
   prochaine_relecture: 2027-03-31
@@ -195,7 +202,8 @@ sources:
   - >-
     Ouverte le 9 octobre 2026, à l'étape 4 de l'action 138 : lue dans l'index LEGI
     (L. 353-5, R. 353-9 à R. 353-11, D. 353-2, D. 173-21-1) et dans les exposés de la
-    Cnav. Aucun exemple chiffré publié n'a été trouvé : la fiche reste transcrite.
+    Cnav ; sa durée, le même jour, dans la circulaire Cnav n° 76/88. Aucun exemple
+    chiffré publié n'a été trouvé : la fiche reste transcrite.
   lectures:
   - type: legifrance
     reference: >-
@@ -225,26 +233,49 @@ sources:
     url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=mfe_condition_attribution_ex.aspx
   - type: circulaire_cnav
     reference: >-
+      circulaire Cnav n° 76/88 du 29 juin 1988, lue le 9 octobre 2026 par l'API de la
+      base de législation de la Cnav, fiche n° 9 : « La majoration n'est plus servie
+      lorsque son bénéficiaire se remarie, vit maritalement, perçoit [...] une retraite
+      personnelle » ou « lorsque l'enfant n'est plus à charge » ou « atteint l'âge
+      limite » ; « Date de cessation du versement : 1er jour du mois suivant celui au
+      cours duquel l'une des conditions d'attribution n'est plus satisfaite à
+      l'exception de la condition d'âge du titulaire du droit de réversion » ; fiche
+      n° 4 : l'enfant « n'est plus à charge le jour de son » anniversaire ; et l'exposé
+      « Qualité d'enfant à charge » (22 janvier 2026) : la majorité depuis le 1er
+      janvier 2016, seize ans avant, vingt ans pour l'étudiant, l'apprenti et l'enfant
+      infirme
+    date: 1988-06-29
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_7688_29061988.aspx
+  - type: circulaire_cnav
+    reference: >-
       barème « Montant mensuel de la majoration forfaitaire pour charge d'enfant » de la
       Cnav, de 400 F au 1er janvier 1988 à 113,59 € au 1er janvier 2026
     date: 2026-10-09
     url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=mfe_montant_bar.aspx
 code:
   python: >-
-    droit/reversion.py : reversion, _majoration_forfaitaire_enfants ; scenarios/actuel.py :
-    Reversions.majoration_enfant
+    droit/reversion.py : reversion, _majoration_forfaitaire_enfants, _fin_de_la_charge ;
+    scenarios/actuel.py : Reversions.majoration_enfant
   javascript: >-
-    moteur/js/droit/reversion.js : reversion, majorationForfaitaireEnfants ;
+    moteur/js/droit/reversion.js : reversion, majorationForfaitaireEnfants,
+    finDeLaCharge ;
     moteur/js/regimes.js : Reversions.majorationEnfant
   parametres: >-
     contenu.parametres : servie, age_maximum, age_du_taux_plein, enfant_moins_de_ans,
     refusee_en_couple ; le montant annuel par enfant, dans
     legislation/majoration_forfaitaire_enfant_reversion.csv
-  tests: tests/test_reversion.py ; le témoin reversion_enfants_a_charge des simulations
+  tests: >-
+    tests/test_reversion.py ; les témoins reversion_enfants_a_charge et
+    reversion_enfants_jusqu_a_sa_retraite des simulations
 historique:
 - >-
   2026-10-09 — née et lue par le moteur, à l'étape 4 de l'action 138 : la fiche
   reversion la déclarait absente.
+- >-
+  2026-10-09 — sa durée, le même jour : chaque enfant compte jusqu'au mois qui suit
+  l'âge limite, et toute la majoration cesse le mois qui suit la retraite du survivant,
+  qu'il date, ou, avant juillet 2004, son union nouvelle (circulaire Cnav n° 76/88,
+  fiche n° 9).
 effet: >-
   Le survivant d'un assuré du régime général ou d'un régime aligné qui élève encore ses
   enfants, sans retraite personnelle : 1 363,08 euros par an et par enfant en 2026.

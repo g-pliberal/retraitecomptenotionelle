@@ -1129,7 +1129,9 @@ class FichesDatees:
     ``categories.taux_plein_par_categorie`` lit, et la majoration de
     l'Agirc-Arrco pour enfants à charge, que
     ``completer.majoration_pour_enfants_a_charge`` lit, et la majoration pour
-    conjoint à charge, que ``completer.majoration_pour_conjoint_a_charge`` lit.
+    conjoint à charge, que ``completer.majoration_pour_conjoint_a_charge`` lit,
+    et les majorations forfaitaires de 1972 à 1982 des pensions prises avant
+    1975, que ``revalorisation.majorations_forfaitaires`` lit.
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
@@ -1145,7 +1147,8 @@ class FichesDatees:
             "pension_maximale_regime_general",
             "taux_plein_anciens_deportes_internes", "taux_plein_meres_de_famille_ouvrieres",
             "taux_plein_travailleurs_manuels", "taux_plein_anciens_combattants_prisonniers",
-            "majoration_enfants_a_charge_agirc_arrco", "majoration_conjoint_a_charge")
+            "majoration_enfants_a_charge_agirc_arrco", "majoration_conjoint_a_charge",
+            "majorations_forfaitaires_1972_1982")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

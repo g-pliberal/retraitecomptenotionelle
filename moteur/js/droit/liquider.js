@@ -939,6 +939,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       ecretement_du_maximum: ecretementDuMaximum,
       surcote: surcoteDeLaPension,
       coefficient_du_maximum: coefficientDuMaximum,
+      // La durée maximum que sa date prenait en compte : voir le Python.
+      sur_la_duree_maximum: trimestresRegime >= (periode.trimestres_retenus_maximum != null
+        ? periode.trimestres_retenus_maximum : proratisation),
     });
   }
 

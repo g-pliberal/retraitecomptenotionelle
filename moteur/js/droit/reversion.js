@@ -107,7 +107,8 @@ export class ReversionRegime {
     majoration_petites_retraites_effet = null, minimum_contributif = 0.0,
     ecretement_du_maximum = 0.0, maximum = 0.0, plafond = 0.0,
     ressources_retenues = 0.0, part = 1.0, fin = null, limite_cumul = 0.0,
-    majoration_forfaitaire_enfants = 0.0, majorations_forfaitaires = [] }) {
+    majoration_forfaitaire_enfants = 0.0, majoration_forfaitaire_enfants_etapes = [],
+    majorations_forfaitaires = [], cumul_effet = null, reduction_du_cumul = 0.0 }) {
     this.regime = regime;
     this.base = base;
     this.montant = montant;
@@ -151,11 +152,20 @@ export class ReversionRegime {
     // retraites du survivant (D. 355-1) ; 0 sans elle.
     this.limite_cumul = limite_cumul;
     // La majoration forfaitaire pour enfant à charge (L. 353-5), comprise dans
-    // le montant.
+    // le montant, et ce qu'elle devient depuis chaque jour où le nombre des
+    // enfants à charge change, `[jour, montant]`, la dernière étape nulle.
     this.majoration_forfaitaire_enfants = majoration_forfaitaire_enfants;
+    this.majoration_forfaitaire_enfants_etapes = Object.freeze(
+      [...majoration_forfaitaire_enfants_etapes]);
     // Les majorations forfaitaires qui relèvent la réversion après sa date
     // d'effet, chacune `[jour, montant]`, hors du montant.
     this.majorations_forfaitaires = Object.freeze([...majorations_forfaitaires]);
+    // Le jour où la retraite personnelle du survivant, qui suit la date
+    // d'effet, revoit la réversion d'avant juillet 2004 par la limite de cumul
+    // de ce jour, et ce qu'elle en retire alors, hors du montant ; null et 0
+    // sans elle.
+    this.cumul_effet = cumul_effet;
+    this.reduction_du_cumul = reduction_du_cumul;
     Object.freeze(this);
   }
 
@@ -179,8 +189,12 @@ export class ReversionRegime {
       ressources_retenues: this.ressources_retenues, part: this.part, fin: this.fin,
       limite_cumul: this.limite_cumul,
       majoration_forfaitaire_enfants: this.majoration_forfaitaire_enfants,
+      majoration_forfaitaire_enfants_etapes: this.majoration_forfaitaire_enfants_etapes.map(
+        ([date, montant]) => ({ date, montant })),
       majorations_forfaitaires: this.majorations_forfaitaires.map(
         ([date, montant]) => ({ date, montant })),
+      cumul_effet: this.cumul_effet,
+      reduction_du_cumul: this.reduction_du_cumul,
     };
   }
 }
@@ -537,9 +551,102 @@ function cumuler(parametres, montant, retraites, principale, forfaitaire, revers
 }
 
 /**
+ * Les retraites personnelles du survivant servies le jour `jour` : toutes, sauf
+ * quand sa propre retraite, qu'il date, ne prend effet qu'après. Voir
+ * `_retraites_au` du Python.
+ */
+function retraitesAu(conjoint, retraites, jour) {
+  return conjoint.retraite !== null && conjoint.retraite !== undefined && conjoint.retraite > jour
+    ? 0.0 : retraites;
+}
+
+/**
+ * Avant cette date, la limite revue à l'attribution des droits personnels du
+ * survivant tenait la pension du défunt pour la réversion servie rapportée au
+ * taux de la limite ; depuis, pour celle qui a servi de base à la réversion
+ * (circulaire Cnav n° 105/90, § 12 et 13). Voir le Python.
+ */
+export const PRINCIPALE_REVALORISEE_DEPUIS = "1990-11-15";
+
+/**
+ * La réversion d'avant juillet 2004 revue à l'attribution de la retraite
+ * personnelle du survivant, quand elle suit sa date d'effet : `[jour, servie,
+ * ce qu'il en reste, limite, fiabilité]`, ou `null` sans elle. Voir
+ * `_cumul_a_la_retraite` du Python.
+ */
+function cumulALaRetraite(moteur, fiche, conjoint, deces, annee, dateEffet, servie,
+  ulterieures, retraites, principale, reversions, personnelles = []) {
+  const jour = conjoint.retraite ?? null;
+  if (jour === null || jour <= dateEffet || servie <= 0 || retraites <= 0) {
+    return null;
+  }
+  const alors = moteur.reversions.version(fiche, jour, deces);
+  const parametres = alors === null ? {} : alors.parametres;
+  if ((parametres.cumul ?? null) === null) {
+    return null;
+  }
+  let enPaiement = servie;
+  for (const [quand, montant] of ulterieures) {
+    if (quand <= jour) {
+      enPaiement += montant;
+    }
+  }
+  let pensionDuDefunt = principale;
+  for (const [quand, taux] of personnelles) {
+    if (dateEffet < quand && quand <= jour) {
+      pensionDuDefunt *= 1 + taux;
+    }
+  }
+  if (jour < PRINCIPALE_REVALORISEE_DEPUIS && parametres.cumul_taux) {
+    pensionDuDefunt = enPaiement / Number(parametres.cumul_taux);
+  }
+  let fiabilite = fiabiliteDepuisTexte(parametres.fiabilite);
+  const anneeDuJour = Number(jour.slice(0, 4));
+  const forfaitaire = moteur.reversions.limiteCumul(anneeDuJour);
+  let enEuros = null;
+  if (forfaitaire !== null) {
+    const [coefficient, fiabiliteCoefficient] = moteur.revalorisationsPensions.generale(
+      `${String(annee).padStart(4, "0")}-12-31`,
+      `${String(anneeDuJour).padStart(4, "0")}-12-31`, false, null);
+    enEuros = forfaitaire[0] / coefficient;
+    fiabilite = Math.min(fiabilite, forfaitaire[1], fiabiliteCoefficient);
+  }
+  const [reste, limite] = cumuler(parametres, enPaiement, retraites, pensionDuDefunt, enEuros,
+    reversions);
+  return [jour, enPaiement, reste, limite, fiabilite];
+}
+
+/**
+ * Le jour où cesse la part de la majoration forfaitaire d'un enfant à charge à
+ * `dateEffet` : le premier jour du mois qui suit celui où il atteint l'âge
+ * limite de la version en vigueur ce jour-là (circulaire Cnav n° 76/88, fiche
+ * n° 9). Voir `_fin_de_la_charge` du Python.
+ */
+function finDeLaCharge(fiche, naissance, dateEffet) {
+  const bornees = fiche.versions.map((version) => [
+    version.bornes["liquidation.date_effet"] ?? [null, null], version.parametres]);
+  bornees.sort(([[a]], [[b]]) => ((a ?? "") < (b ?? "") ? -1 : ((a ?? "") > (b ?? "") ? 1 : 0)));
+  for (const [[debut, fin], parametres] of bornees) {
+    const ans = parametres.enfant_moins_de_ans ?? null;
+    if (ans === null || (fin !== null && fin <= dateEffet)) {
+      continue;
+    }
+    const jour = [debut ?? dateEffet, dateEffet, chrono.plusAns(naissance, Math.trunc(Number(ans)))]
+      .reduce((a, b) => (a > b ? a : b));
+    if (fin === null || jour < fin) {
+      return moisSuivant(jour);
+    }
+  }
+  throw new Error(`${fiche.id} : aucune version ne borne la charge d'un enfant né le ${naissance}`);
+}
+
+/**
  * La majoration forfaitaire ENTIÈRE pour enfant à charge (L. 353-5), à la date
- * d'effet de la réversion ; `null` quand elle n'est pas due. Voir
- * `_majoration_forfaitaire_enfants` du Python.
+ * d'effet de la réversion : `[montant annuel par enfant, fiabilité, le jour où
+ * cesse la part de chaque enfant, dans l'ordre]` ; `null` quand elle n'est pas
+ * due. Toute entière, elle cesse le mois qui suit la retraite du survivant, ou,
+ * avant juillet 2004, l'union où il entre. Voir `_majoration_forfaitaire_enfants`
+ * du Python.
  */
 function majorationForfaitaireEnfants(moteur, carriere, conjoint, retraites, dateEffet,
   annee) {
@@ -548,7 +655,8 @@ function majorationForfaitaireEnfants(moteur, carriere, conjoint, retraites, dat
   if (fiche === null || retraites > 0) {
     return null;
   }
-  const version = table.version(fiche, dateEffet, carriere.deces ?? dateEffet);
+  const deces = carriere.deces ?? dateEffet;
+  const version = table.version(fiche, dateEffet, deces);
   const parametres = version === null ? {} : version.parametres;
   if (!parametres.servie) {
     return null;
@@ -571,13 +679,33 @@ function majorationForfaitaireEnfants(moteur, carriere, conjoint, retraites, dat
       && (conjoint.nouvelle_union_depuis ?? dateEffet) <= dateEffet) {
     return null;
   }
-  const enfants = enfantsDeMoinsDe(carriere, dateEffet, Number(parametres.enfant_moins_de_ans));
+  const ans = Math.trunc(Number(parametres.enfant_moins_de_ans));
+  const aCharge = carriere.naissancesDesEnfants.map(([, naissance]) => naissance).filter(
+    (naissance) => naissance <= dateEffet && dateEffet < chrono.plusAns(naissance, ans));
   const parEnfant = table.majorationEnfant(annee);
-  if (enfants === 0 || parEnfant === null) {
+  if (aCharge.length === 0 || parEnfant === null) {
     return null;
   }
-  return [enfants * parEnfant[0],
-    Math.min(parEnfant[1], fiabiliteDepuisTexte(parametres.fiabilite))];
+  // Ce qui l'arrête toute entière : sa propre retraite, puis, avant juillet
+  // 2004, l'union où il entre après la date d'effet.
+  const arrets = [];
+  if (conjoint.retraite !== null && conjoint.retraite !== undefined
+      && conjoint.retraite > dateEffet) {
+    arrets.push(moisSuivant(conjoint.retraite));
+  }
+  const union = conjoint.nouvelle_union_depuis ?? null;
+  if (conjoint.nouvelle_union !== null && conjoint.nouvelle_union !== undefined
+      && union !== null && union > dateEffet) {
+    const alors = table.version(fiche, union, deces);
+    if (alors !== null && alors.parametres.refusee_en_couple) {
+      arrets.push(moisSuivant(union));
+    }
+  }
+  const fins = aCharge.map((naissance) => [finDeLaCharge(fiche, naissance, dateEffet), ...arrets]
+    .reduce((a, b) => (a < b ? a : b)));
+  fins.sort();
+  return [parEnfant[0], Math.min(parEnfant[1], fiabiliteDepuisTexte(parametres.fiabilite)),
+    fins];
 }
 
 /**
@@ -586,19 +714,30 @@ function majorationForfaitaireEnfants(moteur, carriere, conjoint, retraites, dat
  * qu'elle ajoute à la réversion portée au minimum et ramenée au maximum,
  * `[jour, montant]`. Voir `_majorations_ulterieures` du Python.
  */
-function majorationsUlterieures(parametres, dateEffet, calcule, minimum, maximum) {
+function majorationsUlterieures(parametres, dateEffet, calcule, minimum, maximum,
+  personnelles = []) {
   const servie = (facteur) => {
     const montant = Math.max(minimum, calcule * facteur);
     return maximum > 0 ? Math.min(montant, maximum) : montant;
   };
+  // Celles de la pension du défunt passent, le même jour, avant celle de la
+  // réversion : voir le Python.
+  const datees = [
+    ...personnelles.filter(([jour]) => jour > dateEffet).map(([jour, taux]) => [jour, 0, taux]),
+    ...(parametres.majorations_forfaitaires ?? [])
+      .filter((majoration) => String(majoration.date) > dateEffet)
+      .map((majoration) => [String(majoration.date), 1, Number(majoration.taux)]),
+  ];
+  datees.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1
+    : a[1] !== b[1] ? a[1] - b[1] : a[2] - b[2]));
   const ecrites = [];
   let facteur = 1.0;
-  for (const majoration of parametres.majorations_forfaitaires ?? []) {
-    if (String(majoration.date) <= dateEffet) {
-      continue;
+  for (const jour of [...new Set(datees.map(([quand]) => quand))]) {
+    let nouveau = facteur;
+    for (const [, , taux] of datees.filter(([quand]) => quand === jour)) {
+      nouveau *= 1 + taux;
     }
-    const nouveau = facteur * (1 + Number(majoration.taux));
-    ecrites.push([String(majoration.date), servie(nouveau) - servie(facteur)]);
+    ecrites.push([jour, servie(nouveau) - servie(facteur)]);
     facteur = nouveau;
   }
   return ecrites;
@@ -682,9 +821,10 @@ function majorerLesPetitesRetraites(moteur, lignes, reduites, conjoint, retraite
     return;
   }
   const debut = auTauxPlein(conjoint.naissance, age[0]);
+  // Ses réversions, revues par la limite de cumul quand sa retraite les suit.
   let servies = 0;
   for (const ligne of lignes.values()) {
-    servies += ligne.montant;
+    servies += ligne.montant - ligne.reduction_du_cumul;
   }
   const retraites = retraitesPersonnelles + servies;
   const theoriques = new Map(eligibles.map(([regime, [montant, parametres]]) => [
@@ -749,7 +889,7 @@ function enfantsDeMoinsDe(carriere, deces, ans) {
  */
 export function reversion(moteur, pensions, carriere, annee, decesSuppose = null,
   enCapital = new Set(), majorations = null, durees = null, minima = null,
-  maxima = null, avantLeDepart = false) {
+  maxima = null, avantLeDepart = false, majorationsDesPensions = null) {
   const conjoint = carriere.conjoint;
   const deces = decesSuppose === null ? carriere.deces : decesSuppose;
   if (deces === null || conjoint === null) {
@@ -900,6 +1040,9 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
   // ressources et le cumul : la majoration pour enfant se réduit dans la
   // proportion de la réduite à l'entière.
   const entieres = new Map();
+  // Leur réversion réduite, revue par la limite de cumul quand la retraite du
+  // survivant la suit : celle que la majoration de 11,1 % multiplie.
+  const revues = new Map();
   // Les réversions de base du survivant, qui divisent ses retraites et la
   // limite forfaitaire du cumul d'avant 2004.
   let reversionsDeBase = servies.filter(
@@ -918,6 +1061,9 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     const version = table.version(fiche, dateEffet, deces);
     const parametres = version.parametres;
     const taux = Number(parametres.taux);
+    // Ses retraites personnelles, servies dès la date d'effet, ou seulement
+    // quand sa propre retraite, qu'il date après elle, commence.
+    const retraites = retraitesAu(conjoint, retraitesPersonnelles, dateEffet);
     // La « pension principale » (L. 353-1), que la caisse prend « avant
     // comparaison au minimum et au maximum » : sans la majoration qui la
     // portait au minimum contributif (L. 351-10), avec ce que le maximum des
@@ -925,12 +1071,21 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     // décédé » ; circulaire n° 105/90, § 22).
     const contributif = Math.min(base, (minima ?? {})[regime] ?? 0.0);
     const [ecretement, surcote, coefficient] = (maxima ?? {})[regime] ?? [0.0, 0.0, 1.0];
+    let principale = base - contributif + ecretement;
+    // Les majorations forfaitaires de sa pension venues entre l'année des
+    // montants et la date d'effet relèvent la pension que la réversion lit.
+    const duDefunt = (majorationsDesPensions ?? {})[regime] ?? [];
+    for (const [jour, tauxMajoration] of duDefunt) {
+      if (jour <= dateEffet) {
+        principale *= 1 + tauxMajoration;
+      }
+    }
     // Partagée avec les précédents conjoints au prorata des mariages, la
     // réversion l'est avec son minimum et son maximum (circulaire Cnav
     // n° 105/90, § 3).
     const part = partDuSurvivant(carriere, conjoint, deces,
       admisAuRegimeGeneral(parametres, deces, enfants));
-    let montant = taux * (base - contributif + ecretement) * part;
+    let montant = taux * principale * part;
     let motif = "servie";
     let fiabilite = fiabiliteDuRegime;
     // Le minimum de D. 353-1, avant les ressources : la caisse porte la
@@ -949,15 +1104,15 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     // réversions des autres régimes de base — avant juillet 2004, ses
     // ressources personnelles « sans tenir compte des avantages de réversion »
     // (R. 353-1, rédactions de 1985 et de 1990).
-    const [personnelles, facteur] = ressourcesDuPlafond(parametres, conjoint, ressources,
-      dateEffet);
+    const [personnelles, facteur] = ressourcesDuPlafond(parametres, conjoint,
+      ressources - (retraitesPersonnelles - retraites), dateEffet);
     const plafondAnnuel = facteur * Number(parametres.plafond_smic_heures)
       * moteur.macro.smic_horaire.valeur(annee);
     const reversions = parametres.ressources === "ecretement" ? autresBases : 0.0;
     // Avant juillet 2004, ses retraites personnelles « n'étaient pas retenues
     // dans les ressources » : elles se cumulaient dans une limite.
     const sansRetraites = (parametres.cumul ?? null) !== null
-      ? personnelles - Math.min(personnelles, retraitesPersonnelles) : personnelles;
+      ? personnelles - Math.min(personnelles, retraites) : personnelles;
     const disponible = plafondAnnuel - sansRetraites - reversions;
     const retenues = sansRetraites + reversions;
     if (!mariageDure(conjoint, deces, enfants, parametres.mariage_minimum_annees)) {
@@ -987,15 +1142,15 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
         fiabilite = Math.min(fiabilite, desPensions[1]);
       }
     }
-    const calcule = taux * (base - contributif + ecretement) * part;
+    const calcule = taux * principale * part;
     entieres.set(regime, maximum > 0 ? Math.min(Math.max(calcule, minimum), maximum)
       : Math.max(calcule, minimum));
     // Le cumul d'avant juillet 2004 avec ses retraites personnelles, après le
     // maximum (D. 355-1).
     const forfaitaire = table.limiteCumul(annee);
-    const [cumulee, limiteCumul] = cumuler(parametres, montant, retraitesPersonnelles,
-      base - contributif + ecretement, forfaitaire === null ? null : forfaitaire[0],
-      reversionsDeBase);
+    const [cumulee, limiteALEffet] = cumuler(parametres, montant, retraites, principale,
+      forfaitaire === null ? null : forfaitaire[0], reversionsDeBase);
+    let limiteCumul = limiteALEffet;
     if (cumulee < montant) {
       montant = cumulee;
       motif = "cumul";
@@ -1006,19 +1161,37 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     autresBases += montant;
     // La majoration de 10 % du survivant de trois enfants, sur la réversion
     // réduite et hors du plafond, au moins le dixième du minimum (R. 353-2).
-    let troisEnfants = 0.0;
-    if (montant > 0 && enfants >= 3) {
-      troisEnfants = Math.max(Number(parametres.majoration_enfants_taux) * montant,
-        Number(parametres.majoration_enfants_minimum ?? 0.0) * minimum);
+    const desTroisEnfants = (reversion_) => (reversion_ <= 0 || enfants < 3 ? 0.0
+      : Math.max(Number(parametres.majoration_enfants_taux) * reversion_,
+        Number(parametres.majoration_enfants_minimum ?? 0.0) * minimum));
+    const troisEnfants = desTroisEnfants(montant);
+    const ulterieures = montant > 0
+      ? majorationsUlterieures(parametres, dateEffet, calcule, minimum, maximum, duDefunt)
+      : [];
+    // La limite revue quand sa propre retraite suit la date d'effet : ce
+    // qu'elle retire alors, la majoration de 10 % suivant la réversion.
+    let cumulEffet = null;
+    let reductionDuCumul = 0.0;
+    let revueA = montant;
+    const revue = cumulALaRetraite(moteur, fiche, conjoint, deces, annee, dateEffet, montant,
+      ulterieures, retraitesPersonnelles, principale, reversionsDeBase, duDefunt);
+    if (revue !== null) {
+      let servieAlors;
+      let fiabiliteRevue;
+      [cumulEffet, servieAlors, revueA, limiteCumul, fiabiliteRevue] = revue;
+      reductionDuCumul = servieAlors + desTroisEnfants(servieAlors)
+        - revueA - desTroisEnfants(revueA);
+      fiabilite = Math.min(fiabilite, fiabiliteRevue);
     }
     reduites.set(regime, [montant, parametres]);
+    revues.set(regime, [revueA, parametres]);
     lignes.set(regime, ligne(regime, base, montant + troisEnfants, motif, fiche, version,
       taux, dateEffet, fiabilite).avec({
       minimum, majoration_trois_enfants: troisEnfants, minimum_contributif: contributif,
       ecretement_du_maximum: ecretement, maximum, plafond: plafondAnnuel,
       ressources_retenues: retenues, part, limite_cumul: limiteCumul,
-      majorations_forfaitaires: montant > 0
-        ? majorationsUlterieures(parametres, dateEffet, calcule, minimum, maximum) : [],
+      majorations_forfaitaires: ulterieures, cumul_effet: cumulEffet,
+      reduction_du_cumul: reductionDuCumul,
     }));
   }
 
@@ -1083,21 +1256,28 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
   if (servant !== null) {
     const ligneDuRegime = lignes.get(servant);
     const entiere = majorationForfaitaireEnfants(moteur, carriere, conjoint,
-      retraitesPersonnelles, ligneDuRegime.date_effet, annee);
+      retraitesAu(conjoint, retraitesPersonnelles, ligneDuRegime.date_effet),
+      ligneDuRegime.date_effet, annee);
     if (entiere !== null) {
+      const [parEnfant, fiabiliteEnfant, fins] = entiere;
       const reduite = reduites.get(servant)[0];
-      const majoration = entiere[0] * (entieres.get(servant) > 0
-        ? Math.min(1.0, reduite / entieres.get(servant)) : 0.0);
+      const facteur = entieres.get(servant) > 0
+        ? Math.min(1.0, reduite / entieres.get(servant)) : 0.0;
+      // Chaque enfant compte jusqu'au jour où sa part cesse.
+      const etapes = [...new Set(fins)].map((jour) => [
+        jour, fins.filter((fin) => fin > jour).length * parEnfant * facteur]);
+      const majoration = fins.length * parEnfant * facteur;
       lignes.set(servant, ligneDuRegime.avec({
         montant: ligneDuRegime.montant + majoration,
         majoration_forfaitaire_enfants: majoration,
-        fiabilite: Math.min(ligneDuRegime.fiabilite, entiere[1]),
+        majoration_forfaitaire_enfants_etapes: etapes,
+        fiabilite: Math.min(ligneDuRegime.fiabilite, fiabiliteEnfant),
       }));
     }
   }
 
   // Ses retraites personnelles, que la majoration de 11,1 % compte.
-  majorerLesPetitesRetraites(moteur, lignes, reduites, conjoint, retraitesPersonnelles,
+  majorerLesPetitesRetraites(moteur, lignes, revues, conjoint, retraitesPersonnelles,
     annee);
 
   return new Reversion({

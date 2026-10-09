@@ -530,6 +530,9 @@ export const DEFAUTS = Object.freeze({
   //: Le mois où cette nouvelle union commence, s'il le dit ; sans lui, au décès.
   nouvelle_union_depuis: "",
   conjoint_invalidite: "",
+  //: Le mois où la propre retraite du conjoint prend effet, s'il le dit. Voir
+  //: le Python.
+  conjoint_retraite: "",
   //: Les précédents conjoints de l'assuré, divorcés : naissance, mariage,
   //: divorce et remariage. Voir `ExConjointSaisi` du Python.
   ex_conjoints: Object.freeze([]),
@@ -713,6 +716,7 @@ export class Saisie {
       revenu_fiscal: [undefined, null, ""].includes(parametres.revenu_fiscal)
         ? null : reel(parametres, "revenu_fiscal", 0.0),
       conjoint_invalidite: (parametres.conjoint_invalidite || "").trim(),
+      conjoint_retraite: (parametres.conjoint_retraite || "").trim(),
       deces: (parametres.deces || "").trim(),
       progressive: [undefined, null, ""].includes(parametres.progressive) ? null
         : ageSaisi(parametres, "progressive", 0.0,
@@ -1624,6 +1628,7 @@ export class Saisie {
       ressources_du_nouveau_conjoint: this.ressources_nouveau_conjoint,
       nouvelle_union_depuis: this.nouvelle_union_depuis || null,
       invalidite: this.conjoint_invalidite || null,
+      retraite: this.conjoint_retraite || null,
       ex_conjoints: this.ex_conjoints.map((ex) => ({
         naissance: ex.naissance, mariage: ex.mariage, divorce: ex.divorce,
         remariage: ex.remariage || null,
@@ -2051,7 +2056,8 @@ export class Saisie {
         ["nouvelle_union", this.nouvelle_union],
         ["ressources_nouveau_conjoint", this.ressources_nouveau_conjoint],
         ["nouvelle_union_depuis", this.nouvelle_union_depuis],
-        ["conjoint_invalidite", this.conjoint_invalidite], ["deces", this.deces],
+        ["conjoint_invalidite", this.conjoint_invalidite],
+        ["conjoint_retraite", this.conjoint_retraite], ["deces", this.deces],
         ["ex1", this.ex_conjoints.length > 0 ? true : null],
       ].filter(([, valeur]) => valeur !== "" && valeur !== null && valeur !== undefined)
         .map(([nom]) => nom);
@@ -2068,6 +2074,7 @@ export class Saisie {
       ["conjoint", this.conjoint, "la naissance du conjoint"],
       ["mariage", this.mariage, "le mariage"],
       ["conjoint_invalidite", this.conjoint_invalidite, "l'invalidité du conjoint"],
+      ["conjoint_retraite", this.conjoint_retraite, "la retraite du conjoint"],
       ["nouvelle_union_depuis", this.nouvelle_union_depuis, "le début de sa nouvelle union"],
       ["deces", this.deces, "le décès"],
     ]) {
@@ -2130,6 +2137,9 @@ export class Saisie {
     }
     if ("conjoint_invalidite" in dates && dates.conjoint_invalidite <= dates.conjoint) {
       throw new ErreurSaisie("L'invalidité du conjoint précède sa naissance.");
+    }
+    if ("conjoint_retraite" in dates && dates.conjoint_retraite <= dates.conjoint) {
+      throw new ErreurSaisie("La retraite du conjoint précède sa naissance.");
     }
     if ("deces" in dates) {
       if ("mariage" in dates && dates.mariage >= dates.deces) {
@@ -2252,6 +2262,7 @@ export class Saisie {
           ? "" : nombreBrut(this.ressources_nouveau_conjoint)],
         ["nouvelle_union_depuis", this.nouvelle_union_depuis],
         ["conjoint_invalidite", this.conjoint_invalidite],
+        ["conjoint_retraite", this.conjoint_retraite],
         ["deces", this.deces],
       ].filter(([, valeur]) => valeur !== "" && valeur !== null)),
       ...Object.fromEntries(this.ex_conjoints.flatMap((ex, i) => [

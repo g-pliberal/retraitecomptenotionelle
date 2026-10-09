@@ -1665,6 +1665,23 @@ def _cas() -> list[dict]:
     cas.append(("reversion_enfants_a_charge", {
         **avant_le_depart, "sexe": "F", "conjoint_sexe": "H", "enfants": "2",
         "naissances": "2012, 2014"}))
+    # Le même jour, la septième partie : la veuve qui date sa propre retraite
+    # après sa réversion de 1999 la voit réduite alors par la limite de cumul de
+    # ce jour ; le veuf qui prend la sienne en 2029 perd la majoration pour
+    # enfant à charge le mois suivant, avant que ses enfants n'aient dix-huit
+    # ans ; le salarié parti en 1970 voit sa pension majorée de 6 % au 1er
+    # décembre 1982, et la veuve de celui parti en 1971, mort en 1975, sa
+    # réversion avec elle (lois n° 71-1132 à n° 82-599).
+    cas.append(("reversion_cumul_a_sa_retraite", {
+        "naissance": "1925", "liquidation": "65", "conjoint": "1940", "deces": "1999-05",
+        "ressources_conjoint": "6000", "conjoint_retraite": "2001-03"}))
+    cas.append(("reversion_enfants_jusqu_a_sa_retraite", {
+        **avant_le_depart, "sexe": "F", "conjoint_sexe": "H", "enfants": "2",
+        "naissances": "2012, 2014", "ressources_conjoint": "12000",
+        "conjoint_retraite": "2029-01"}))
+    cas.append(("retraite_majoree_en_1982", {"naissance": "1905", "liquidation": "65"}))
+    cas.append(("reversion_majorations_avant_1983", {
+        "naissance": "1906", "liquidation": "65", "conjoint": "1916", "deces": "1975-03"}))
 
     # Les carrières LUES sur un relevé, plutôt que reconstituées.
     cas.extend(_cas_releve())

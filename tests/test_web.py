@@ -1665,6 +1665,10 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
         {"conjoint_invalidite": "2024-02"},
         {"conjoint": "1962", "conjoint_invalidite": "2024-13"},
         {"conjoint": "1962", "conjoint_invalidite": "1961-12"},
+        # Sa propre retraite : sans conjoint, illisible, avant sa naissance.
+        {"conjoint_retraite": "2024-02"},
+        {"conjoint": "1962", "conjoint_retraite": "2024-13"},
+        {"conjoint": "1962", "conjoint_retraite": "1961-12"},
         # Son ménage et ses revenus d'activité : sans conjoint, une union que la
         # saisie ne connaît pas, des revenus d'activité au-delà de ses
         # ressources, les ressources d'un nouveau conjoint sans union.
@@ -1706,6 +1710,7 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
          "invalidite_imputable": "oui", "taux_invalidite": "60",
          "metier2_debut": "2010-06", "metier2_statut": "salarie_prive_non_cadre"},
         {"conjoint": "1962", "conjoint_invalidite": "1962-02"},
+        {"conjoint": "1962", "conjoint_retraite": "1962-02"},
         {"conjoint": "1962", "ressources_conjoint": "4000", "activite_conjoint": "4000",
          "nouvelle_union": "concubinage", "ressources_nouveau_conjoint": "0"},
         {"etranger1_pays": "DE", "etranger1_debut": "1989-01", "etranger1_fin": "1992-01",

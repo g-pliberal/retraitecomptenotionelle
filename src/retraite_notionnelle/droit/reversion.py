@@ -60,12 +60,14 @@ au plafond de l'année des montants, que 54 % de la surcote du défunt passent
 avant juillet 2004, réduit par le CUMUL avec ces retraites personnelles, dans
 la limite de 52 % — la moitié avant décembre 1982 — de leur total et de la
 pension du défunt, la limite forfaitaire au moins, quand il ne les complète
-pas seulement, avant juillet 1974 (D. 355-1) ; puis
+pas seulement, avant juillet 1974 (D. 355-1), à sa date d'effet, ou au jour
+où sa propre retraite, qu'il date, la suit, aux règles de ce jour ; puis
 majoré de 10 % pour le survivant de trois enfants, sans
 descendre sous le dixième de son minimum (R. 353-2), hors du plafond, et de la
 majoration forfaitaire par enfant à charge du survivant sans retraite,
 depuis 1988 (L. 353-5, fiche ``majoration_forfaitaire_reversion``), réduite
-comme la réversion ; enfin,
+comme la réversion, tant que chaque enfant est à charge et que le survivant
+n'a pas sa propre retraite ; enfin,
 depuis 2010, majoré de 11,1 % de la réversion réduite quand le survivant a
 l'âge du taux plein et que ses retraites, réversions et majorations comprises,
 restent sous le plafond de L. 353-6, la majoration étant réduite de ce qui le
@@ -97,9 +99,9 @@ au mois qui suit l'union, ou n'est pas servie quand l'union la précède. Au
 régime général, le ménage ne compte au plafond que s'il est formé à la date
 d'effet.
 
-CE QUI N'EST PAS ENCORE PORTÉ, et que les fiches déclarent : la durée de la
-majoration pour enfant à charge, la révision de la
-réversion quand le ménage ou ses ressources changent, le plafonnement du veuf
+CE QUI N'EST PAS ENCORE PORTÉ, et que les fiches déclarent : la révision de la
+réversion quand le ménage ou ses ressources changent, ou que la retraite du
+survivant commence après juillet 2004, le plafonnement du veuf
 de fonctionnaire d'avant 2004,
 la minoration de l'Agirc avant soixante ans, la réversion des précédents
 conjoints eux-mêmes. L'Agirc-Arrco sert 60 % des points sans le coefficient
@@ -135,6 +137,7 @@ Ce qu'elle écrit, :class:`Reversion`, se porte au journal. Son jumeau est
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+from datetime import date
 from typing import TYPE_CHECKING
 
 from .. import chronologie as chrono
@@ -261,12 +264,23 @@ class ReversionRegime:
     #: 0 sans elle.
     limite_cumul: float = 0.0
     #: La majoration forfaitaire pour enfant à charge (L. 353-5), comprise
-    #: dans le montant.
+    #: dans le montant, et ce qu'elle devient ensuite : depuis chaque jour où
+    #: le nombre des enfants à charge change, ``(jour, montant)``, la dernière
+    #: étape nulle — le dernier enfant n'est plus à charge, ou le survivant a
+    #: sa propre retraite.
     majoration_forfaitaire_enfants: float = 0.0
+    majoration_forfaitaire_enfants_etapes: tuple[tuple[str, float], ...] = ()
     #: Les majorations forfaitaires qui relèvent la réversion après sa date
     #: d'effet — 4 % au 1er décembre 1982, 3,846 % au 1er janvier 1995 —,
     #: chacune ``(jour, montant)``, hors du montant.
     majorations_forfaitaires: tuple[tuple[str, float], ...] = ()
+    #: Le jour où la retraite personnelle du survivant, qui suit la date
+    #: d'effet, revoit la réversion d'avant juillet 2004 par la limite de cumul
+    #: de ce jour (D. 355-1), et ce qu'elle en retire alors, majoration de 10 %
+    #: comprise, hors du montant : ``None`` et 0 sans elle. ``limite_cumul``
+    #: est alors la limite de ce jour.
+    cumul_effet: str | None = None
+    reduction_du_cumul: float = 0.0
 
     def donnees(self) -> dict:
         return {"regime": self.regime, "base": self.base, "taux": self.taux,
@@ -285,9 +299,14 @@ class ReversionRegime:
                 "ressources_retenues": self.ressources_retenues, "part": self.part,
                 "fin": self.fin, "limite_cumul": self.limite_cumul,
                 "majoration_forfaitaire_enfants": self.majoration_forfaitaire_enfants,
+                "majoration_forfaitaire_enfants_etapes": [
+                    {"date": jour, "montant": montant}
+                    for jour, montant in self.majoration_forfaitaire_enfants_etapes],
                 "majorations_forfaitaires": [
                     {"date": jour, "montant": montant}
-                    for jour, montant in self.majorations_forfaitaires]}
+                    for jour, montant in self.majorations_forfaitaires],
+                "cumul_effet": self.cumul_effet,
+                "reduction_du_cumul": self.reduction_du_cumul}
 
 
 @dataclass(frozen=True)
@@ -579,24 +598,129 @@ def _cumuler(parametres: dict, montant: float, retraites: float, principale: flo
     return max(0.0, montant - max(0.0, montant + retenues - limite)), limite
 
 
+def _retraites_au(conjoint: Conjoint, retraites: float, jour: str) -> float:
+    """Les retraites personnelles du survivant servies le jour ``jour`` :
+    toutes, sauf quand sa propre retraite, qu'il date, ne prend effet
+    qu'après (présomption ``retraites_du_survivant_servies`` sinon)."""
+    return 0.0 if conjoint.retraite is not None and conjoint.retraite > jour else retraites
+
+
+#: Avant cette date, la limite de cumul revue à l'attribution des droits
+#: personnels du survivant, quand ils suivent la réversion, tenait la pension du
+#: défunt pour « 100/52èmes de la pension de réversion effectivement servie à
+#: la date à laquelle les droits personnels sont attribués », le double avant
+#: le 1er décembre 1982 (circulaire Cnav n° 31/75, § 2521) ; depuis, pour celle
+#: qui a servi de base à la réversion, revalorisée jusque-là (circulaire Cnav
+#: n° 105/90 du 15 novembre 1990, § 12 et 13).
+PRINCIPALE_REVALORISEE_DEPUIS = "1990-11-15"
+
+
+def _cumul_a_la_retraite(moteur: ScenarioActuel, fiche: dict, conjoint: Conjoint,
+                         deces: str, annee: int, date_effet: str, servie: float,
+                         ulterieures: tuple[tuple[str, float], ...], retraites: float,
+                         principale: float, reversions: int,
+                         personnelles: tuple[tuple[str, float], ...] = ()
+                         ) -> tuple[str, float, float, float, Fiabilite] | None:
+    """La réversion d'avant juillet 2004 revue à l'attribution de la retraite
+    personnelle du survivant, quand elle suit sa date d'effet : ``(jour,
+    servie, ce qu'il en reste, limite, fiabilité)``, ou ``None`` sans elle.
+
+    « Les règles de cumul s'appliquaient à la date d'attribution du 2e
+    avantage : soit au point de départ de l'avantage personnel s'il était
+    attribué après la retraite de réversion » (exposé de la Cnav, « Retraite de
+    réversion cumulable ») — celles de ce jour, que la version en vigueur alors
+    dit : sa limite forfaitaire, le taux de sa limite calculée, ou, avant
+    juillet 1974, la réversion qui complète la retraite (D. 355-1). La
+    réversion servie ce jour-là, ``servie`` et les majorations forfaitaires
+    ``ulterieures`` déjà venues, s'y cumule avec ses ``retraites`` ; la pension
+    du défunt est ``principale``, celle qui a servi de base à la réversion, que
+    les montants de l'année tiennent revalorisée jusque-là (circulaire Cnav
+    n° 105/90, § 13), et que les majorations forfaitaires venues depuis la
+    date d'effet relèvent (``personnelles``), ou, avant le 15 novembre 1990,
+    la réversion servie rapportée au taux de la limite
+    (:data:`PRINCIPALE_REVALORISEE_DEPUIS`). La
+    limite forfaitaire de l'année de ce jour se ramène aux euros de ``annee``
+    par les coefficients qui revalorisent les pensions. Une retraite
+    attribuée depuis le 1er juillet 2004 recalcule la réversion « compte tenu
+    des règles de ressources applicables » alors, ce que le modèle ne fait
+    pas : rien ne la revoit."""
+    jour = conjoint.retraite
+    if jour is None or jour <= date_effet or servie <= 0 or retraites <= 0:
+        return None
+    alors = moteur.reversions.version(fiche, jour, deces)
+    parametres = alors["parametres"] if alors is not None else {}
+    if parametres.get("cumul") is None:
+        return None
+    servie += somme_ordonnee(montant for quand, montant in ulterieures if quand <= jour)
+    for quand, taux in personnelles:
+        if date_effet < quand <= jour:
+            principale *= 1 + taux
+    if jour < PRINCIPALE_REVALORISEE_DEPUIS and parametres.get("cumul_taux"):
+        principale = servie / float(parametres["cumul_taux"])
+    fiabilite = Fiabilite.depuis_texte(parametres["fiabilite"])
+    forfaitaire = moteur.reversions.limite_cumul(int(jour[:4]))
+    en_euros = None
+    if forfaitaire is not None:
+        coefficient, fiabilite_coefficient = moteur.revalorisations_pensions.generale(
+            date(annee, 12, 31), date(int(jour[:4]), 12, 31), False, None)
+        en_euros = forfaitaire[0] / coefficient
+        fiabilite = min(fiabilite, forfaitaire[1], fiabilite_coefficient)
+    reste, limite = _cumuler(parametres, servie, retraites, principale, en_euros, reversions)
+    return jour, servie, reste, limite, fiabilite
+
+
+def _fin_de_la_charge(fiche: dict, naissance: str, date_effet: str) -> str:
+    """Le jour où cesse la part de la majoration forfaitaire d'un enfant à
+    charge à ``date_effet`` : le premier jour du mois qui suit celui où il
+    atteint l'âge limite (circulaire Cnav n° 76/88, fiche n° 9 : « 1er jour du
+    mois suivant celui au cours duquel l'une des conditions d'attribution n'est
+    plus satisfaite » ; l'enfant « n'est plus à charge le jour de son »
+    anniversaire). L'âge est celui de la version en vigueur ce jour-là — seize
+    ans, puis la majorité depuis le 1er janvier 2016 (R. 353-9, R. 313-12,
+    R. 161-4) : l'enfant qui a seize ans avant 2016 cesse de compter, celui
+    qui ne les a pas encore compte jusqu'à dix-huit ans."""
+    bornees = sorted(((version["bornes"].get("liquidation.date_effet", [None, None]),
+                       version["parametres"]) for version in fiche["versions"]),
+                     key=lambda element: element[0][0] or "")
+    for (debut, fin), parametres in bornees:
+        ans = parametres.get("enfant_moins_de_ans")
+        if ans is None or (fin is not None and fin <= date_effet):
+            continue
+        jour = max(debut or date_effet, date_effet, chrono._plus_ans(naissance, int(ans)))
+        if fin is None or jour < fin:
+            return mois_suivant(jour)
+    raise ValueError(f"{fiche['id']} : aucune version ne borne la charge d'un enfant "
+                     f"né le {naissance}")
+
+
 def _majoration_forfaitaire_enfants(moteur: ScenarioActuel, carriere: Carriere,
                                     conjoint: Conjoint, retraites: float,
                                     date_effet: str, annee: int
-                                    ) -> tuple[float, Fiabilite] | None:
+                                    ) -> tuple[float, Fiabilite, tuple[str, ...]] | None:
     """La majoration forfaitaire ENTIÈRE pour enfant à charge (L. 353-5), à la
-    date d'effet de la réversion : le montant annuel par enfant, par les enfants
-    nés que le modèle tient pour à la charge du survivant, sous l'âge de la
-    version ; ``None`` quand elle n'est pas due.
+    date d'effet de la réversion : le montant annuel PAR ENFANT, sa fiabilité,
+    et le jour où cesse la part de chacun des enfants nés que le modèle tient
+    pour à la charge du survivant, sous l'âge de la version, dans l'ordre ;
+    ``None`` quand elle n'est pas due.
 
     Le survivant ne doit pas avoir de retraite personnelle d'un régime de base
-    (``retraites``, ses ressources hors de ses revenus d'activité), ni l'âge
-    que R. 353-9 fixe à la demande — soixante-cinq ans, puis l'âge du taux
-    plein depuis le 3 juin 2011 —, ni vivre en couple avant juillet 2004."""
+    (``retraites``, ses ressources hors de ses revenus d'activité, à la date
+    d'effet), ni l'âge que R. 353-9 fixe à la demande — soixante-cinq ans, puis
+    l'âge du taux plein depuis le 3 juin 2011 —, ni vivre en couple avant
+    juillet 2004.
+
+    La majoration cesse avec la charge de chaque enfant (:func:`_fin_de_la_charge`),
+    et toute entière le premier jour du mois qui suit celui où le survivant
+    « perçoit [...] une retraite personnelle » (``conjoint.retraite``, quand elle
+    suit la date d'effet), ou, avant juillet 2004, celui où il « se remarie »
+    ou « vit maritalement » (circulaire Cnav n° 76/88, fiche n° 9) ; jamais
+    quand il atteint l'âge de R. 353-9, que la fiche n° 9 excepte."""
     table = moteur.reversions
     fiche = table.fiche(MAJORATION_FORFAITAIRE)
     if fiche is None or retraites > 0:
         return None
-    version = table.version(fiche, date_effet, carriere.deces or date_effet)
+    deces = carriere.deces or date_effet
+    version = table.version(fiche, date_effet, deces)
     parametres = version["parametres"] if version else {}
     if not parametres.get("servie"):
         return None
@@ -613,33 +737,56 @@ def _majoration_forfaitaire_enfants(moteur: ScenarioActuel, carriere: Carriere,
     if (parametres.get("refusee_en_couple") and conjoint.nouvelle_union is not None
             and (conjoint.nouvelle_union_depuis or date_effet) <= date_effet):
         return None
-    enfants = _enfants_de_moins_de(carriere, date_effet, int(parametres["enfant_moins_de_ans"]))
+    ans = int(parametres["enfant_moins_de_ans"])
+    a_charge = [naissance for _, naissance in carriere.naissances_des_enfants
+                if naissance <= date_effet < chrono._plus_ans(naissance, ans)]
     par_enfant = table.majoration_enfant(annee)
-    if enfants == 0 or par_enfant is None:
+    if not a_charge or par_enfant is None:
         return None
-    return (enfants * par_enfant[0],
-            min(par_enfant[1], Fiabilite.depuis_texte(parametres["fiabilite"])))
+    # Ce qui l'arrête toute entière : sa propre retraite, puis, avant juillet
+    # 2004, l'union où il entre après la date d'effet.
+    arrets = []
+    if conjoint.retraite is not None and conjoint.retraite > date_effet:
+        arrets.append(mois_suivant(conjoint.retraite))
+    union = conjoint.nouvelle_union_depuis
+    if conjoint.nouvelle_union is not None and union is not None and union > date_effet:
+        alors = table.version(fiche, union, deces)
+        if alors is not None and alors["parametres"].get("refusee_en_couple"):
+            arrets.append(mois_suivant(union))
+    fins = sorted(min([_fin_de_la_charge(fiche, naissance, date_effet), *arrets])
+                  for naissance in a_charge)
+    return (par_enfant[0], min(par_enfant[1], Fiabilite.depuis_texte(parametres["fiabilite"])),
+            tuple(fins))
 
 
 def _majorations_ulterieures(parametres: dict, date_effet: str, calcule: float,
-                             minimum: float, maximum: float
+                             minimum: float, maximum: float,
+                             personnelles: tuple[tuple[str, float], ...] = ()
                              ) -> tuple[tuple[str, float], ...]:
     """Les majorations forfaitaires qui relèvent la réversion attribuée avant
     leur date (``majorations_forfaitaires``) : 4 % au 1er décembre 1982, puis
     3,846 % au 1er janvier 1995, qui la portent du taux de 50 % à celui de
     52 %, puis de 54 %. Elles s'appliquent au « montant calculé » de la
-    réversion, avant le minimum, après les précédentes (exposé de la Cnav,
-    « Montant - retraite de réversion ») : chacune est ce qu'elle ajoute à la
+    réversion, avant le minimum, « après application éventuelle des
+    majorations forfaitaires précédentes » (exposé de la Cnav, « Montant -
+    retraite de réversion ») — celles aussi de la pension du défunt, que la
+    réversion suit (``personnelles``, ``(jour, taux)``, fiche
+    ``majorations_forfaitaires_1972_1982``), et qui passent, le même jour,
+    avant la sienne. Chaque jour, ce qu'elles ajoutent ensemble à la
     réversion portée au minimum et ramenée au maximum, ``(jour, montant)``."""
     def servie(facteur: float) -> float:
         montant = max(minimum, calcule * facteur)
         return min(montant, maximum) if maximum > 0 else montant
+    datees = sorted([(jour, 0, taux) for jour, taux in personnelles if jour > date_effet]
+                    + [(str(majoration["date"]), 1, float(majoration["taux"]))
+                       for majoration in parametres.get("majorations_forfaitaires") or ()
+                       if str(majoration["date"]) > date_effet])
     ecrites, facteur = [], 1.0
-    for majoration in parametres.get("majorations_forfaitaires") or ():
-        if str(majoration["date"]) <= date_effet:
-            continue
-        nouveau = facteur * (1 + float(majoration["taux"]))
-        ecrites.append((str(majoration["date"]), servie(nouveau) - servie(facteur)))
+    for jour in dict.fromkeys(jour for jour, _, _ in datees):
+        nouveau = facteur
+        for _, _, taux in (datee for datee in datees if datee[0] == jour):
+            nouveau *= 1 + taux
+        ecrites.append((jour, servie(nouveau) - servie(facteur)))
         facteur = nouveau
     return tuple(ecrites)
 
@@ -758,7 +905,9 @@ def _majorer_les_petites_retraites(moteur: ScenarioActuel,
     if not eligibles or plafond is None or age is None:
         return
     debut = _au_taux_plein(conjoint.naissance, age[0])
-    retraites = retraites_personnelles + somme_ordonnee(l.montant for l in lignes.values())
+    # Ses réversions, revues par la limite de cumul quand sa retraite les suit.
+    retraites = retraites_personnelles + somme_ordonnee(
+        l.montant - l.reduction_du_cumul for l in lignes.values())
     theoriques = {regime: float(parametres["majoration_taux"]) * montant
                   for regime, (montant, parametres) in eligibles.items()}
     marge = 4 * plafond[0] - retraites
@@ -789,7 +938,8 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
               durees: dict[str, int] | None = None,
               minima: dict[str, float] | None = None,
               maxima: dict[str, tuple[float, float, float]] | None = None,
-              avant_le_depart: bool = False
+              avant_le_depart: bool = False,
+              majorations_des_pensions: dict[str, tuple[tuple[str, float], ...]] | None = None
               ) -> Reversion | None:
     """La réversion que le décès de la personne de ``carriere`` ouvre à son
     conjoint, régime par régime ; ``None`` sans décès ou sans conjoint.
@@ -814,7 +964,11 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
     multiplie son maximum : le régime général reverse la pension d'avant son
     maximum, sous le maximum de la réversion. ``avant_le_depart`` dit que le
     défunt est mort avant son départ, et que ``pensions`` sont celles qu'il eût
-    obtenues à son décès.
+    obtenues à son décès. ``majorations_des_pensions`` donne, régime par
+    régime, les majorations forfaitaires de 1972 à 1982 que sa pension reçoit
+    après l'année des montants, ``(jour, taux)`` : la réversion du régime
+    général les suit, comprises dans son montant calculé jusqu'à sa date
+    d'effet, à leur date ensuite.
     """
     conjoint = carriere.conjoint
     deces = carriere.deces if deces_suppose is None else deces_suppose
@@ -947,6 +1101,10 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
     #: les ressources et le cumul, et leur date d'effet : la majoration pour
     #: enfant à charge se réduit dans la proportion de la réduite à l'entière.
     entieres: dict[str, float] = {}
+    #: Leur réversion réduite, revue par la limite de cumul quand la retraite
+    #: du survivant la suit : celle que la majoration de 11,1 %, qui commence
+    #: plus tard, multiplie.
+    revues: dict[str, tuple[float, dict]] = {}
     # Les réversions de base du survivant, qui divisent ses retraites et la
     # limite forfaitaire du cumul d'avant 2004 : celles des régimes alignés,
     # et celles des autres régimes de base servies.
@@ -963,6 +1121,10 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         version = table.version(fiche, date_effet, deces)
         parametres = version["parametres"]
         taux = float(parametres["taux"])
+        # Ses retraites personnelles, servies dès la date d'effet, ou seulement
+        # quand sa propre retraite, qu'il date après elle, commence : ses
+        # ressources n'en ont pas d'autres à la date d'effet.
+        retraites = _retraites_au(conjoint, retraites_personnelles, date_effet)
         # La « pension principale » (L. 353-1), que la caisse prend « avant
         # comparaison au minimum et au maximum » : sans la majoration qui la
         # portait au minimum contributif (L. 351-10), avec ce que le maximum
@@ -970,12 +1132,19 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         # l'assuré décédé » ; circulaire n° 105/90, § 22).
         contributif = min(base, (minima or {}).get(regime, 0.0))
         ecretement, surcote, coefficient = (maxima or {}).get(regime, (0.0, 0.0, 1.0))
+        principale = base - contributif + ecretement
+        # Les majorations forfaitaires de sa pension venues entre l'année des
+        # montants et la date d'effet relèvent la pension que la réversion lit.
+        personnelles = (majorations_des_pensions or {}).get(regime, ())
+        for jour, taux_majoration in personnelles:
+            if jour <= date_effet:
+                principale *= 1 + taux_majoration
         # Partagée avec les précédents conjoints au prorata des mariages, la
         # réversion l'est avec son minimum et son maximum (circulaire Cnav
         # n° 105/90, § 3).
         part = _part_du_survivant(carriere, conjoint, deces,
                                   _admis_au_regime_general(parametres, deces, enfants))
-        montant = taux * (base - contributif + ecretement) * part
+        montant = taux * principale * part
         motif = "servie"
         # Le minimum de D. 353-1, avant les ressources : la caisse porte la
         # réversion au minimum, puis la réduit du dépassement du plafond.
@@ -991,8 +1160,8 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         # les réversions des autres régimes de base — avant juillet 2004, ses
         # ressources personnelles « sans tenir compte des avantages de
         # réversion » (R. 353-1, rédactions de 1985 et de 1990).
-        retenues, facteur = _ressources_du_plafond(parametres, conjoint, ressources,
-                                                   date_effet)
+        retenues, facteur = _ressources_du_plafond(
+            parametres, conjoint, ressources - (retraites_personnelles - retraites), date_effet)
         plafond_annuel = (facteur * float(parametres["plafond_smic_heures"])
                           * moteur.macro.smic_horaire(annee))
         reversions = autres_bases if parametres["ressources"] == "ecretement" else 0.0
@@ -1001,7 +1170,7 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             # retenues dans les ressources » : elles se cumulaient avec la
             # réversion dans une limite (exposé de la Cnav, « Condition de
             # ressources »).
-            retenues -= min(retenues, retraites_personnelles)
+            retenues -= min(retenues, retraites)
         disponible = plafond_annuel - retenues - reversions
         retenues += reversions
         if not _mariage_dure(conjoint, deces, enfants, parametres["mariage_minimum_annees"]):
@@ -1025,44 +1194,57 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             if montant > maximum:
                 montant, motif = maximum, "maximum"
                 fiabilite = min(fiabilite, des_pensions[1])
-        entieres[regime] = (min(max(taux * (base - contributif + ecretement) * part, minimum),
-                                maximum) if maximum > 0
-                            else max(taux * (base - contributif + ecretement) * part, minimum))
+        calcule = taux * principale * part
+        entieres[regime] = (min(max(calcule, minimum), maximum) if maximum > 0
+                            else max(calcule, minimum))
         # Le cumul d'avant juillet 2004 avec ses retraites personnelles, après
         # le maximum : la limite « ne pouvait pas être inférieure à la
         # retraite de réversion portée au minimum ou ramenée au maximum ».
         forfaitaire = table.limite_cumul(annee)
         cumulee, limite_cumul = _cumuler(
-            parametres, montant, retraites_personnelles, base - contributif + ecretement,
+            parametres, montant, retraites, principale,
             None if forfaitaire is None else forfaitaire[0], reversions_de_base)
         if cumulee < montant:
             montant, motif = cumulee, "cumul"
             if forfaitaire is not None and parametres.get("cumul") == "limite":
                 fiabilite = min(fiabilite, forfaitaire[1])
         autres_bases += montant
+
         # La majoration de 10 % du survivant de trois enfants, sur la réversion
         # réduite et hors du plafond (circulaire Cnav n° 2022-26, § 3.6), au
         # moins le dixième du minimum de la réversion (R. 353-2) ; le
         # survivant est tenu pour avoir eu les enfants que déclare le défunt.
-        trois_enfants = 0.0
-        if montant > 0 and enfants >= 3:
-            taux_enfants = float(parametres["majoration_enfants_taux"])
-            trois_enfants = max(taux_enfants * montant,
-                                float(parametres.get("majoration_enfants_minimum") or 0.0)
-                                * minimum)
+        def des_trois_enfants(reversion_: float) -> float:
+            if reversion_ <= 0 or enfants < 3:
+                return 0.0
+            return max(float(parametres["majoration_enfants_taux"]) * reversion_,
+                       float(parametres.get("majoration_enfants_minimum") or 0.0) * minimum)
+
+        trois_enfants = des_trois_enfants(montant)
+        ulterieures = (_majorations_ulterieures(parametres, date_effet, calcule, minimum,
+                                                maximum, personnelles)
+                       if montant > 0 else ())
+        # La limite revue quand sa propre retraite suit la date d'effet : ce
+        # qu'elle retire alors, la majoration de 10 % suivant la réversion.
+        cumul_effet, reduction_du_cumul, revue_a = None, 0.0, montant
+        revue = _cumul_a_la_retraite(moteur, fiche, conjoint, deces, annee, date_effet,
+                                     montant, ulterieures, retraites_personnelles,
+                                     principale, reversions_de_base, personnelles)
+        if revue is not None:
+            cumul_effet, servie_alors, revue_a, limite_cumul, fiabilite_revue = revue
+            reduction_du_cumul = (servie_alors + des_trois_enfants(servie_alors)
+                                  - revue_a - des_trois_enfants(revue_a))
+            fiabilite = min(fiabilite, fiabilite_revue)
         reduites[regime] = (montant, parametres)
+        revues[regime] = (revue_a, parametres)
         lignes[regime] = replace(
             ligne(regime, base, montant + trois_enfants, motif, fiche, version, taux,
                   date_effet, fiabilite),
             minimum=minimum, majoration_trois_enfants=trois_enfants,
             minimum_contributif=contributif, ecretement_du_maximum=ecretement,
             maximum=maximum, plafond=plafond_annuel, ressources_retenues=retenues,
-            part=part, limite_cumul=limite_cumul,
-            majorations_forfaitaires=(
-                _majorations_ulterieures(parametres, date_effet,
-                                         taux * (base - contributif + ecretement) * part,
-                                         minimum, maximum)
-                if montant > 0 else ()))
+            part=part, limite_cumul=limite_cumul, majorations_forfaitaires=ulterieures,
+            cumul_effet=cumul_effet, reduction_du_cumul=reduction_du_cumul)
 
     # La complémentaire des indépendants en dernier : ses ressources sont
     # celles de R. 353-1, « personnelles ou du ménage », que les réversions de
@@ -1118,20 +1300,27 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
     if servant is not None:
         ligne_du_regime = lignes[servant]
         entiere = _majoration_forfaitaire_enfants(
-            moteur, carriere, conjoint, retraites_personnelles,
+            moteur, carriere, conjoint,
+            _retraites_au(conjoint, retraites_personnelles, ligne_du_regime.date_effet),
             ligne_du_regime.date_effet, annee)
         if entiere is not None:
+            par_enfant, fiabilite_enfant, fins = entiere
             reduite = reduites[servant][0]
-            majoration = entiere[0] * (min(1.0, reduite / entieres[servant])
-                                       if entieres[servant] > 0 else 0.0)
+            facteur = (min(1.0, reduite / entieres[servant])
+                       if entieres[servant] > 0 else 0.0)
+            # Chaque enfant compte jusqu'au jour où sa part cesse.
+            etapes = tuple((jour, len([fin for fin in fins if fin > jour]) * par_enfant * facteur)
+                           for jour in dict.fromkeys(fins))
+            majoration = len(fins) * par_enfant * facteur
             lignes[servant] = replace(
                 ligne_du_regime, montant=ligne_du_regime.montant + majoration,
                 majoration_forfaitaire_enfants=majoration,
-                fiabilite=min(ligne_du_regime.fiabilite, entiere[1]))
+                majoration_forfaitaire_enfants_etapes=etapes,
+                fiabilite=min(ligne_du_regime.fiabilite, fiabilite_enfant))
 
     # Ses retraites personnelles, que la majoration de 11,1 % compte.
     _majorer_les_petites_retraites(
-        moteur, lignes, reduites, conjoint, retraites_personnelles, annee)
+        moteur, lignes, revues, conjoint, retraites_personnelles, annee)
 
     return Reversion(
         personne=conjoint.personne, defunt=carriere.personne, deces=deces, annee=annee,

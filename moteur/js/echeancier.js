@@ -38,7 +38,9 @@ import * as lesProgressives from "./droit/progressive.js";
 import { moisSuivant, reversion } from "./droit/reversion.js";
 import * as laSeconde from "./droit/seconde.js";
 import { Entree, Journal } from "./journal.js";
-import { aujourdHui, faireVivre, foyerALEcheance } from "./revalorisation.js";
+import {
+  aujourdHui, faireVivre, foyerALEcheance, majorationsForfaitaires,
+} from "./revalorisation.js";
 import {
   etatDuDepart, progressiveServie, resultatActuel, resultatDesDeparts,
 } from "./scenario-actuel.js";
@@ -100,6 +102,25 @@ export function departDe(carriere) {
 }
 
 /** L'échéancier du droit réel, pour une personne. */
+/**
+ * Les majorations forfaitaires de 1972 à 1982 que les pensions du défunt,
+ * prises le jour `depart` ou à leur propre date d'effet, reçoivent après
+ * l'année `annee` des montants de la réversion, régime par régime. Voir
+ * `_majorations_apres` du Python.
+ */
+function majorationsApres(moteur, pensions, depart, annee) {
+  const fin = `${String(annee).padStart(4, "0")}-12-31`;
+  const apres = {};
+  for (const pension of pensions) {
+    const plusTard = majorationsForfaitaires(moteur, pension, pension.date_effet ?? depart)
+      .filter(([jour]) => jour > fin);
+    if (plusTard.length > 0) {
+      apres[pension.regime] = plusTard;
+    }
+  }
+  return apres;
+}
+
 export class Echeancier {
   constructor(simulateur) {
     this.simulateur = simulateur;
@@ -315,16 +336,17 @@ export class Echeancier {
     let minima;
     let maxima;
     let durees;
+    let apres;
     if (avantLeDepart) {
-      [annee, pensions, enCapital, majorations, minima, maxima, durees] = (
+      [annee, pensions, enCapital, majorations, minima, maxima, durees, apres] = (
         this._pensionsEuesAuDeces(carriere, deces));
     } else {
-      [annee, pensions, enCapital, majorations, minima, maxima] = this._pensionsAuDeces(
+      [annee, pensions, enCapital, majorations, minima, maxima, apres] = this._pensionsAuDeces(
         carriere, carriere.deces);
       durees = this.dureesAuDepart;
     }
     this.reversion = reversion(this.moteur, pensions, carriere, annee, null, enCapital,
-      majorations, durees, minima, maxima, avantLeDepart);
+      majorations, durees, minima, maxima, avantLeDepart, apres);
     const survivant = carriere.conjoint.personne;
     const evenement = new Evenement({
       id: `reversion_${survivant}`, date: moisSuivant(carriere.deces),
@@ -347,10 +369,10 @@ export class Echeancier {
       + `${String(liquidation.mois).padStart(2, "0")}-01`;
     const courante = `${String(this.simulateur.parametres.annee_courante).padStart(4, "0")}-01-01`;
     const deces = depart > courante ? depart : courante;
-    const [annee, pensions, enCapital, majorations, minima, maxima] = this._pensionsAuDeces(
-      carriere, deces);
+    const [annee, pensions, enCapital, majorations, minima, maxima, apres] = (
+      this._pensionsAuDeces(carriere, deces));
     this.reversion = reversion(this.moteur, pensions, carriere, annee, deces, enCapital,
-      majorations, this.dureesAuDepart, minima, maxima);
+      majorations, this.dureesAuDepart, minima, maxima, false, apres);
   }
 
   /**
@@ -399,7 +421,8 @@ export class Echeancier {
       }
     }
     return [annee, pensions, new Set(), majorations, minima, maxima,
-      Object.fromEntries(resultat.releve.durees.trimestresParRegime)];
+      Object.fromEntries(resultat.releve.durees.trimestresParRegime),
+      majorationsApres(this.moteur, resultat.regimes, demande.dateEffet, annee)];
   }
 
   /**
@@ -479,7 +502,9 @@ export class Echeancier {
     return [annee, [...servies, ...this.auDepart.pensions_par_regime
       .filter((p) => !vues.has(p.regime))
       .map((p) => [p.regime, p.montant, p.fiabilite])], enCapital,
-    menees(MAJORATION_ENFANTS), menees("minimum_contributif"), maxima];
+    menees(MAJORATION_ENFANTS), menees("minimum_contributif"), maxima,
+    majorationsApres(this.moteur, departs, `${String(carriere.dateLiquidation.annee)
+      .padStart(4, "0")}-${String(carriere.dateLiquidation.mois).padStart(2, "0")}-01`, annee)];
   }
 
   /**

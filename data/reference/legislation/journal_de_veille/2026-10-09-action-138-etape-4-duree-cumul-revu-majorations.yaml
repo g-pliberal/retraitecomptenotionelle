@@ -1,0 +1,63 @@
+date: "2026-10-09"
+session: "action 138, étape 4, septième partie : la durée de la majoration pour enfant, la limite de cumul revue à la retraite du survivant, les majorations forfaitaires des pensions d'avant 1975"
+consulte: >-
+  veille_droit.py, lancé à l'ouverture de la session (dernière veille consignée :
+  2026-10-09) ; l'index LEGI et l'index JORF, récupérés de la release index-dila et mis
+  à jour par leurs incréments jusqu'au 8 octobre 2026 (LEGI) et au 9 octobre (JORF) ;
+  textes.py --inscrire, qui a fait entrer les lois n° 75-1279, n° 77-657 et n° 82-599
+  et le décret n° 72-1098 dans la liste de contrôle ; dans l'index LEGI : R. 353-9
+  (LEGIARTI000006749456, 457, LEGIARTI000024113067, LEGIARTI000031828755), R. 161-4
+  (LEGIARTI000031827756), R. 313-12 (LEGIARTI000006749964, 965, 966), R. 353-1-1
+  (LEGIARTI000006749403, 404, LEGIARTI000024113027, LEGIARTI000053335692), la loi
+  n° 71-1132 du 31 décembre 1971, articles 8, 10 et 11 (LEGIARTI000006756027, 029,
+  030), la loi n° 75-1279 du 30 décembre 1975, articles 3, 4, 6 et 7
+  (LEGIARTI000006755694, 695, 697, LEGIARTI000006272983), la loi n° 77-657 du 28 juin
+  1977, article 1er (LEGIARTI000006755703), la loi n° 82-599 du 13 juillet 1982,
+  articles 1er, 2 et 7 (LEGIARTI000006756135, 136, 141) ; l'API de la base de
+  législation de la Cnav, dont l'adresse des exposés (expose/exposeByFileLeafRef) et
+  des références (reference/referencesByFileLeafRef) a été relevée dans le code de son
+  site : les exposés « Majoration forfaitaire pour charge d'enfant » (conditions
+  d'attribution, point de départ), « Qualité d'enfant à charge », « Retraite de
+  réversion cumulable » et « Montant - retraite de réversion », et les circulaires
+  Cnav n° 76/88 du 29 juin 1988, n° 105/90 du 15 novembre 1990, n° 15/76 du 22
+  janvier 1976, n° 64/77 du 11 juillet 1977, n° 79/82 du 24 août 1982 et n° 120/82 du
+  28 décembre 1982.
+trouve: >-
+  La majoration forfaitaire pour enfant à charge « n'est plus servie » quand le
+  bénéficiaire se remarie, vit maritalement, perçoit une retraite personnelle, ou que
+  l'enfant n'est plus à charge ou atteint l'âge limite, « 1er jour du mois suivant
+  celui au cours duquel l'une des conditions d'attribution n'est plus satisfaite à
+  l'exception de la condition d'âge du titulaire du droit de réversion » (circulaire
+  n° 76/88, fiche n° 9) ; l'enfant « n'est plus à charge le jour de son »
+  anniversaire, à seize ans avant le 1er janvier 2016, à sa majorité depuis (R. 353-9,
+  R. 313-12, R. 161-4), à vingt ans l'étudiant, l'apprenti et l'enfant infirme ;
+  avant juillet 2004, le remariage et la vie maritale l'arrêtaient. Avant juillet
+  2004, « les règles de cumul s'appliquaient à la date d'attribution du 2e
+  avantage », au point de départ de la retraite personnelle quand elle suit la
+  réversion, sur la pension du défunt revalorisée jusque-là (circulaire n° 105/90,
+  § 13, qui en donne un exemple chiffré : (65 973 + 50 000) × 52 % = 60 305 F), et,
+  avant le 15 novembre 1990, sur « 100/52èmes de la pension de réversion
+  effectivement servie », le double avant décembre 1982 (§ 12) ; la retraite
+  attribuée depuis juillet 2004 recalcule la réversion « compte tenu des règles de
+  ressources applicables » alors. Les pensions du régime général d'avant 1973
+  liquidées sur la durée maximum de leur date — 120 trimestres avant 1972, 128 en 1972
+  — sont majorées de 5 % au 1er janvier 1972 (avant 1972 seulement, salariés agricoles
+  compris), au 1er juillet 1976 et au 1er octobre 1977 ; au 1er décembre 1982, celles
+  d'avant 1972 de 6 %, celles de 1972 de 4 %, quelle que soit leur durée, celles de
+  1973 de 5,5 % sur 136 trimestres, celles de 1974 de 1,5 % sur 144, salariés agricoles
+  compris ; la pension principale et la bonification pour enfants, non le minimum ni
+  la majoration pour conjoint à charge ; la réversion du conjoint de l'assuré qui
+  aurait pu en bénéficier les suit (circulaires n° 15/76, n° 64/77 et n° 79/82, C ;
+  exposé « Montant - retraite de réversion »). Les circulaires donnent les taux de la
+  pension majorée — 46,30 %, 47,04 %, 47,82 %, 48,72 % du salaire annuel moyen —, que
+  les tests rejouent.
+reste: >-
+  L'étudiant, l'apprenti et l'enfant infirme à charge jusqu'à vingt ans, et l'enfant
+  de seize ans à la fin de 2015 que la majorité de 2016 rendait de nouveau à charge ;
+  le recalcul de la réversion d'avant 2004 aux règles de ressources de 2004 quand la
+  retraite du survivant suit le 1er juillet 2004, et la révision de R. 353-1-1, dont
+  la dernière à sa retraite ; les lois qui ont étendu, s'il en est, les majorations de
+  1976 et 1977 aux salariés agricoles, et leur application à l'Alsace-Moselle (décret
+  n° 76-405) ; l'ancien invalide des deuxième et troisième groupes, que les
+  circulaires excluent de certaines majorations ; un exemple chiffré de la Cnav pour
+  la durée de la majoration pour enfant.

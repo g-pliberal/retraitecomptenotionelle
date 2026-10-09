@@ -1144,6 +1144,13 @@ function conjointFormulaire(saisie, contexte) {
       "À cinquante-cinq ans, le régime général n'en compte que 70 % sous son "
       + "plafond. La majoration de 11,1 %, qui ne regarde que les retraites, ne "
       + "les compte pas."),
+    g.champ("conjoint_retraite", "Sa propre retraite, depuis", saisie.conjoint_retraite,
+      "facultatif : « 1990-08 » ; sans lui, dès sa réversion", "text",
+      { autocomplete: "off", spellcheck: "false" },
+      "Le reste de ses ressources, hors de son activité, ne commence qu'alors. "
+      + "Avant juillet 2004, la limite de cumul de la réversion du régime général "
+      + "s'appliquait ce jour-là ; la majoration pour enfant à charge s'arrête le "
+      + "mois suivant."),
     g.liste("nouvelle_union", "Après votre décès, il vit",
       [["", "seul"], ["mariage", "remarié"], ["pacs", "pacsé"],
         ["concubinage", "en concubinage"]],
@@ -5198,8 +5205,20 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
         + "de majoration pour trois enfants");
     }
     if (ligne.majoration_forfaitaire_enfants > 0) {
+      // Ce qu'elle devient quand un enfant n'est plus à charge, ou que sa
+      // propre retraite commence.
+      const suite = (ligne.majoration_forfaitaire_enfants_etapes ?? []).map(
+        ([jour, montant]) => (montant > 0
+          ? `${g.euros(mensuel(montant, ligne.regime))} à partir de ${mois(jour)}`
+          : `plus rien à partir de ${mois(jour)}`));
       parts.push(`dont ${g.euros(mensuel(ligne.majoration_forfaitaire_enfants, ligne.regime))} `
-        + "de majoration pour enfants à charge");
+        + "de majoration pour enfants à charge" + (suite.length ? `, ${suite.join(", ")}` : ""));
+    }
+    // Avant juillet 2004, la limite de cumul revue quand sa propre retraite
+    // suit la réversion.
+    if (ligne.reduction_du_cumul > 0) {
+      parts.push(`${g.euros(mensuel(ligne.reduction_du_cumul, ligne.regime))} de moins à partir `
+        + `de ${mois(ligne.cumul_effet)}, limite de cumul avec sa propre retraite`);
     }
     // Avant 1995, les majorations forfaitaires qui l'ont portée de 50 % ou de
     // 52 % à 54 %, à leur date.

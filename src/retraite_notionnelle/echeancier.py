@@ -54,7 +54,8 @@ from .droit.commun import (MAJORATION_ENFANTS, date_d_effet, majoration_du_conjo
                            parts_de_la_majoration)
 from .journal import Entree, Journal
 from .noyau import vocabulaire
-from .revalorisation import aujourd_hui, faire_vivre, foyer_a_l_echeance
+from .revalorisation import (aujourd_hui, faire_vivre, foyer_a_l_echeance,
+                             majorations_forfaitaires)
 from .scenarios.actuel import (etat_du_depart, progressive_servie, resultat_actuel,
                                resultat_des_departs)
 from .somme import somme_ordonnee
@@ -115,6 +116,25 @@ def depart_de(carriere: Carriere) -> Evenement | None:
     return Evenement(id=f"depart_{carriere.personne}", date=date,
                      personnes=(carriere.personne,), vise={"regimes": "tous"},
                      origine=origine)
+
+
+def _majorations_apres(moteur, pensions, depart: str,
+                       annee: int) -> dict[str, tuple[tuple[str, float], ...]]:
+    """Les majorations forfaitaires de 1972 à 1982 que les pensions du défunt,
+    prises le jour ``depart`` ou à leur propre date d'effet, reçoivent après
+    l'année ``annee`` des montants de la réversion, régime par régime : « les
+    pensions de réversion accordées aux conjoints survivants d'assurés qui
+    auraient pu bénéficier » de ces majorations « doivent être revalorisées dans
+    les mêmes conditions » (circulaires Cnav n° 15/76, n° 64/77 et n° 79/82, C).
+    Celles d'avant la fin de l'année, « faire vivre » les a déjà menées."""
+    fin = f"{annee:04d}-12-31"
+    apres: dict[str, tuple[tuple[str, float], ...]] = {}
+    for pension in pensions:
+        plus_tard = tuple((jour, taux) for jour, taux in majorations_forfaitaires(
+            moteur, pension, pension.date_effet or depart) if jour > fin)
+        if plus_tard:
+            apres[pension.regime] = plus_tard
+    return apres
 
 
 class Echeancier:
@@ -288,10 +308,10 @@ class Echeancier:
         self._inscrire(deces, deces.id, "evenement", deces, deces.date)
         avant_le_depart = carriere.deces < date_d_effet(carriere)
         if avant_le_depart:
-            annee, pensions, en_capital, majorations, minima, maxima, durees = (
+            annee, pensions, en_capital, majorations, minima, maxima, durees, apres = (
                 self._pensions_eues_au_deces(carriere, deces))
         else:
-            annee, pensions, en_capital, majorations, minima, maxima = (
+            annee, pensions, en_capital, majorations, minima, maxima, apres = (
                 self._pensions_au_deces(carriere, carriere.deces))
             durees = self.durees_au_depart
         self.reversion = _reversion.reversion(self.moteur, pensions, carriere, annee,
@@ -299,7 +319,8 @@ class Echeancier:
                                               majorations=majorations,
                                               durees=durees,
                                               minima=minima, maxima=maxima,
-                                              avant_le_depart=avant_le_depart)
+                                              avant_le_depart=avant_le_depart,
+                                              majorations_des_pensions=apres)
         survivant = carriere.conjoint.personne
         evenement = Evenement(id=f"reversion_{survivant}", date=_reversion.mois_suivant(
             carriere.deces), personnes=(survivant,), vise={"regimes": "du défunt"},
@@ -317,13 +338,14 @@ class Echeancier:
         depart = (f"{carriere.date_liquidation.annee:04d}"
                   f"-{carriere.date_liquidation.mois:02d}-01")
         deces = max(depart, f"{self.simulateur.parametres.annee_courante:04d}-01-01")
-        annee, pensions, en_capital, majorations, minima, maxima = self._pensions_au_deces(
-            carriere, deces)
+        annee, pensions, en_capital, majorations, minima, maxima, apres = (
+            self._pensions_au_deces(carriere, deces))
         self.reversion = _reversion.reversion(self.moteur, pensions, carriere, annee,
                                               deces_suppose=deces, en_capital=en_capital,
                                               majorations=majorations,
                                               durees=self.durees_au_depart,
-                                              minima=minima, maxima=maxima)
+                                              minima=minima, maxima=maxima,
+                                              majorations_des_pensions=apres)
 
     def _pensions_eues_au_deces(self, carriere: Carriere, deces: Evenement) -> tuple[
             int, list[tuple[str, float, Fiabilite]], frozenset[str], dict[str, float],
@@ -368,7 +390,8 @@ class Echeancier:
                   for p in liquidation.regimes
                   if p.ecretement_du_maximum or p.surcote or p.coefficient_du_maximum != 1.0}
         return (annee, pensions, frozenset(), majorations, minima, maxima,
-                dict(liquidation.releve.durees.trimestres_par_regime))
+                dict(liquidation.releve.durees.trimestres_par_regime),
+                _majorations_apres(self.moteur, liquidation.regimes, demande.date_effet, annee))
 
     def _pensions_au_deces(self, carriere: Carriere, deces: str) -> tuple[
             int, list[tuple[str, float, Fiabilite]], frozenset[str], dict[str, float],
@@ -436,10 +459,13 @@ class Echeancier:
                   if p.regime in ecretements or p.regime in surcotes
                   or p.coefficient_du_maximum != 1.0}
 
+        depart = (f"{carriere.date_liquidation.annee:04d}"
+                  f"-{carriere.date_liquidation.mois:02d}-01")
         return annee, servies + [(p.regime, p.montant, p.fiabilite)
                                  for p in self.au_depart.pensions_par_regime
                                  if p.regime not in vues], en_capital, menees(
-            MAJORATION_ENFANTS), menees("minimum_contributif"), maxima
+            MAJORATION_ENFANTS), menees("minimum_contributif"), maxima, _majorations_apres(
+            self.moteur, departs, depart, annee)
 
     def _progresser(self, carriere: Carriere) -> None:
         """La retraite progressive que la carrière demande : examinée, et,

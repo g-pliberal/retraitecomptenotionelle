@@ -405,6 +405,16 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
       faitsNaissance.push(fait(`invalidite_${CONJOINT}`, CONJOINT, "decision_medicale",
         jourInvalidite, null, { decision: "invalidite", precision }));
     }
+    if (conjoint.retraite !== null && conjoint.retraite !== undefined) {
+      // Le jour où sa propre retraite prend effet : voir le Python.
+      const [jourRetraite, precision] = dateDeclaree(conjoint.retraite,
+        "la retraite du conjoint");
+      if (jourRetraite <= epoux.debut) {
+        throw new Error(`une retraite du conjoint le ${jourRetraite}, avant sa naissance`);
+      }
+      faitsNaissance.push(fait(`depart_${CONJOINT}`, CONJOINT, "acte_de_la_personne",
+        jourRetraite, null, { acte: "depart", precision }));
+    }
     (conjoint.ex_conjoints ?? []).forEach((ex, i) => {
       const [faits, mariage] = exConjoint(assure, i + 1, ex);
       faitsNaissance.push(...faits);

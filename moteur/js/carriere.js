@@ -990,6 +990,7 @@ export class Carriere {
           nouvelle_union: nouvelleUnion,
           ressources_du_nouveau_conjoint: apport,
           nouvelle_union_depuis: chrono.debutDuMenage(this.chronologie, autre),
+          retraite: chrono.depart(this.chronologie, autre)?.debut ?? null,
         });
       }
     }

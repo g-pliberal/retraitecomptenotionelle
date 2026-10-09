@@ -11543,6 +11543,40 @@ null
 {"bornes":{"liquidation.date_effet":["2023-09-01",null]},"exception_de":null,"id":"pensions_depuis_septembre_2023","parametres":{"due_le":null,"existe":false,"montant":null,"plafond":null,"trimestres_cotises":null},"texte":"LEGIARTI000047447828"}
 ]
 },
+"majorations_forfaitaires_1972_1982":{
+"dates_qui_decident":["liquidation.date_effet"],
+"id":"majorations_forfaitaires_1972_1982",
+"versions":[
+{
+"bornes":{"liquidation.date_effet":[null,"1972-01-01"]},
+"exception_de":null,
+"id":"avant_1972",
+"parametres":{
+"fiabilite":"haute",
+"majorations":[
+{"date":"1972-01-01","duree_maximum":true,"regimes":["regime_general","msa_salaries"],"taux":0.05},
+{"date":"1976-07-01","duree_maximum":true,"regimes":["regime_general"],"taux":0.05},
+{"date":"1977-10-01","duree_maximum":true,"regimes":["regime_general"],"taux":0.05},
+{"date":"1982-12-01","duree_maximum":false,"regimes":["regime_general","msa_salaries"],"taux":0.06}
+]
+},
+"texte":"LEGIARTI000006756027"
+},
+{
+"bornes":{"liquidation.date_effet":["1972-01-01","1973-01-01"]},
+"exception_de":null,
+"id":"en_1972",
+"parametres":{
+"fiabilite":"haute",
+"majorations":[{"date":"1976-07-01","duree_maximum":true,"regimes":["regime_general"],"taux":0.05},{"date":"1977-10-01","duree_maximum":true,"regimes":["regime_general"],"taux":0.05},{"date":"1982-12-01","duree_maximum":false,"regimes":["regime_general","msa_salaries"],"taux":0.04}]
+},
+"texte":"LEGIARTI000006755694"
+},
+{"bornes":{"liquidation.date_effet":["1973-01-01","1974-01-01"]},"exception_de":null,"id":"en_1973","parametres":{"fiabilite":"haute","majorations":[{"date":"1982-12-01","duree_maximum":true,"regimes":["regime_general","msa_salaries"],"taux":0.055}]},"texte":"LEGIARTI000006756135"},
+{"bornes":{"liquidation.date_effet":["1974-01-01","1975-01-01"]},"exception_de":null,"id":"en_1974","parametres":{"fiabilite":"haute","majorations":[{"date":"1982-12-01","duree_maximum":true,"regimes":["regime_general","msa_salaries"],"taux":0.015}]},"texte":"LEGIARTI000006756135"},
+{"bornes":{"liquidation.date_effet":["1975-01-01",null]},"exception_de":null,"id":"depuis_1975","parametres":{"fiabilite":"haute","majorations":[]},"texte":"LEGIARTI000006756135"}
+]
+},
 "pension_maximale_regime_general":{
 "dates_qui_decident":["liquidation.date_effet"],
 "id":"pension_maximale_regime_general",
@@ -21993,6 +22027,7 @@ null
 "residence_en_france":{"dit":"l'assuré qui ne déclare pas de résidence hors de France réside en France après son départ, toute l'année quand il ne dit pas les mois qu'il y passe","valeur":"en France"},
 "ressources_du_conjoint":{"dit":"le conjoint qui ne déclare pas ses ressources n'en a aucune","valeur":0},
 "ressources_du_survivant":{"dit":"le conjoint survivant n'a d'autres ressources que les réversions qu'il reçoit, ni son nouveau conjoint quand il vit en couple","valeur":0},
+"retraites_du_survivant_servies":{"dit":"les ressources du survivant hors de ses revenus d'activité, que le modèle tient pour ses retraites personnelles, lui sont servies dès la date d'effet de sa réversion","valeur":"dès la date d'effet"},
 "reversion_demandee_dans_l_annee":{"dit":"le survivant demande sa réversion dans l'année qui suit le décès","valeur":"dans l'année"},
 "survivant_seul":{"dit":"le conjoint survivant vit seul après le décès : ni remarié, ni pacsé, ni en concubinage","valeur":"seul"},
 "validation_ircantec_demandee":{"dit":"l'agent rétabli au régime général a demandé que l'Ircantec valide ses services","valeur":"demandée"}

@@ -12,6 +12,8 @@ moteurs, eux, sont comparés par les témoins ``reversion_*`` des simulations.
 
 from __future__ import annotations
 
+from datetime import date
+
 import pytest
 
 from retraite_notionnelle.carriere import Carriere
@@ -36,12 +38,14 @@ def _carriere(simulateur, naissance: int, depart: float, conjoint: str, deces: s
               invalidite: str | None = None, sexe: str = "H",
               naissances: tuple[str, ...] = (), activite: float | None = None,
               nouvelle_union: str | None = None, apport: float | None = None,
-              ex_conjoints: tuple[dict, ...] = ()) -> Carriere:
+              ex_conjoints: tuple[dict, ...] = (), retraite: str | None = None,
+              union_depuis: str | None = None) -> Carriere:
     """Un salarié né en janvier ``naissance``, parti à ``depart`` ans, ses
     enfants nés aux dates ``naissances`` quand elles sont dites, et son
     conjoint, invalide depuis ``invalidite`` s'il est dit, ses ressources et ce
     qu'en rapporte son ``activite``, la ``nouvelle_union`` où il vit après le
-    décès et l'``apport`` de son nouveau conjoint ; le décès ouvre la
+    décès, depuis ``union_depuis`` s'il est dit, l'``apport`` de son nouveau
+    conjoint et sa propre ``retraite``, datée ; le décès ouvre la
     réversion. Les pensions, elles, sont données à :func:`reversion` : seule
     la règle est en cause ici."""
     return Carriere.depuis_profil(
@@ -51,6 +55,7 @@ def _carriere(simulateur, naissance: int, depart: float, conjoint: str, deces: s
                   "ressources": ressources, "invalidite": invalidite,
                   "revenus_d_activite": activite, "nouvelle_union": nouvelle_union,
                   "ressources_du_nouveau_conjoint": apport,
+                  "nouvelle_union_depuis": union_depuis, "retraite": retraite,
                   "ex_conjoints": list(ex_conjoints)},
         deces=deces)
 
@@ -1076,6 +1081,227 @@ def test_a_l_age_du_taux_plein_pas_de_majoration_pour_enfant(simulateur):
     assert ligne.majoration_forfaitaire_enfants == 0.0
 
 
+@pytest.mark.parametrize("naissances, etapes", [
+    # Seize ans en mai 2014, avant 2016 : sa part cesse le 1er juin ; l'autre,
+    # qui n'a pas seize ans au 1er janvier 2016, compte jusqu'à sa majorité.
+    (("1998-05-17", "2003-02-01"), (("2014-06-01", 1), ("2021-03-01", 0))),
+    # Seize ans en décembre 2015 : sa part cesse au 1er janvier 2016, et la
+    # majorité de R. 161-4 ne la rouvre pas.
+    (("1999-12-20",), (("2016-01-01", 0),)),
+    # Des jumeaux : une seule étape.
+    (("1996-05-17", "1996-05-17"), (("2012-06-01", 0),)),
+])
+def test_la_majoration_pour_enfant_cesse_avec_la_charge_du_dernier_enfant(
+        simulateur, naissances, etapes):
+    """« Date de cessation du versement : 1er jour du mois suivant celui au
+    cours duquel l'une des conditions d'attribution n'est plus satisfaite » ;
+    l'enfant « n'est plus à charge le jour de son » anniversaire (circulaire
+    Cnav n° 76/88, fiche n° 9) — seize ans avant 2016, la majorité depuis
+    (R. 353-9, R. 313-12, R. 161-4)."""
+    carriere = _carriere(simulateur, 1950, 60.0, "1955-01-10", "2010-03-10", ressources=0.0,
+                         naissances=naissances, enfants=len(naissances))
+    ligne = _servies(simulateur, carriere, [("regime_general", 6000.0)],
+                     2010)["regime_general"]
+    par_enfant = simulateur.scenario_actuel.reversions.majoration_enfant(2010)[0]
+    assert ligne.majoration_forfaitaire_enfants == pytest.approx(len(naissances) * par_enfant)
+    assert tuple((jour, round(montant / par_enfant)) for jour, montant
+                 in ligne.majoration_forfaitaire_enfants_etapes) == etapes
+
+
+def test_la_majoration_pour_enfant_cesse_avec_sa_propre_retraite(simulateur):
+    """« La majoration est supprimée lors de l'attribution de la retraite
+    personnelle » (exposé de la Cnav), le premier jour du mois qui suit
+    (circulaire n° 76/88, fiche n° 9). Le survivant qui ne l'a pas encore à la
+    date d'effet la reçoit, quoiqu'il déclare des ressources hors de son
+    activité, que le modèle tient pour cette retraite ; sans la date, elles
+    sont servies dès la date d'effet, et il n'en a pas."""
+    def ligne(retraite):
+        carriere = _carriere(simulateur, 1950, 60.0, "1955-01-10", "2010-03-10",
+                             ressources=4000.0, naissances=("2003-02-01",), enfants=1,
+                             retraite=retraite)
+        return _servies(simulateur, carriere, [("regime_general", 6000.0)],
+                        2010)["regime_general"]
+    par_enfant = simulateur.scenario_actuel.reversions.majoration_enfant(2010)[0]
+    datee = ligne("2013-04")
+    assert datee.majoration_forfaitaire_enfants == pytest.approx(par_enfant)
+    assert datee.majoration_forfaitaire_enfants_etapes == (("2013-05-01", 0.0),)
+    assert ligne(None).majoration_forfaitaire_enfants == 0.0
+
+
+@pytest.mark.parametrize("union, fin", [
+    # En concubinage en 2001 : la majoration s'arrête le mois suivant.
+    ("2001-09", "2001-10-01"),
+    # En 2005, l'union ne l'arrête plus : l'enfant de 1990 a seize ans en 2006.
+    ("2005-09", "2006-03-01"),
+])
+def test_avant_juillet_2004_l_union_nouvelle_arrete_la_majoration_pour_enfant(
+        simulateur, union, fin):
+    """« La majoration n'était plus servie si le bénéficiaire se remariait ou
+    vivait maritalement » avant juillet 2004 (exposé de la Cnav, « Conditions
+    d'attribution »)."""
+    carriere = _carriere(simulateur, 1935, 60.0, "1940-01-10", "1997-03-10", ressources=0.0,
+                         naissances=("1990-02-01",), enfants=1,
+                         nouvelle_union="concubinage", union_depuis=union)
+    ligne = _servies(simulateur, carriere, [("regime_general", 6000.0)],
+                     1997)["regime_general"]
+    assert ligne.majoration_forfaitaire_enfants > 0
+    assert ligne.majoration_forfaitaire_enfants_etapes == ((fin, 0.0),)
+
+
+def test_la_limite_de_cumul_s_applique_quand_sa_retraite_suit_la_reversion(simulateur):
+    """« Les règles de cumul s'appliquaient à la date d'attribution du 2e
+    avantage : soit au point de départ de l'avantage personnel s'il était
+    attribué après la retraite de réversion » (exposé de la Cnav, « Retraite de
+    réversion cumulable ») : la réversion de juin 1999 est servie entière
+    jusqu'en mars 2001, puis réduite par la limite de ce jour — la limite
+    forfaitaire de 2001, ramenée aux euros de 1999 par les coefficients des
+    pensions, au-dessus de 52 % de sa retraite et de la pension du défunt."""
+    def ligne(retraite):
+        carriere = _carriere(simulateur, 1930, 60.0, "1940-06-10", "1999-03-10",
+                             ressources=6000.0, retraite=retraite)
+        return _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                        1999)["regime_general"]
+    revue = ligne("2001-03")
+    assert (round(revue.montant, 2), revue.motif, revue.cumul_effet) == (
+        5400.0, "servie", "2001-03-01")
+    moteur = simulateur.scenario_actuel
+    coefficient, _ = moteur.revalorisations_pensions.generale(
+        date(1999, 12, 31), date(2001, 12, 31), False, None)
+    forfaitaire = moteur.reversions.limite_cumul(2001)[0] / coefficient
+    assert forfaitaire > 0.52 * (6000.0 + 10000.0)
+    assert revue.limite_cumul == pytest.approx(forfaitaire)
+    assert revue.reduction_du_cumul == pytest.approx(5400.0 + 6000.0 - forfaitaire)
+    # Sans la date de sa retraite, la limite de 1999 dès la date d'effet.
+    d_emblee = ligne(None)
+    assert (d_emblee.motif, d_emblee.cumul_effet, d_emblee.reduction_du_cumul) == (
+        "cumul", None, 0.0)
+    # Prise en 2005, sa retraite recalculerait la réversion aux règles de
+    # ressources de 2004, ce que le modèle ne fait pas : rien ne la revoit.
+    tardive = ligne("2005-01")
+    assert (round(tardive.montant, 2), tardive.cumul_effet, tardive.limite_cumul) == (
+        5400.0, None, 0.0)
+
+
+@pytest.mark.parametrize("retraite, reduction", [
+    # Avant le 15 novembre 1990, la pension du défunt est tenue pour la
+    # réversion servie rapportée à 52 % : la limite laisse 52 % de la
+    # retraite, et en retire 48 %.
+    ("1990-08", 0.48 * 7000.0),
+    # Depuis, pour celle qui a servi de base à la réversion : 52 % de
+    # 37 000 €, au-dessus de la retraite et de la réversion ramenée au maximum.
+    ("1991-01", 0.0),
+])
+def test_avant_le_15_novembre_1990_la_limite_revue_lit_la_reversion_servie(
+        simulateur, retraite, reduction):
+    """Circulaire Cnav n° 105/90, § 12 et 13 : la « mesure de simplification »
+    qui tenait la pension du défunt pour « 100/52èmes de la pension de
+    réversion effectivement servie », abandonnée le 15 novembre 1990, pèse
+    sur la réversion ramenée au maximum."""
+    carriere = _carriere(simulateur, 1925, 60.0, "1928-06-10", "1988-11-10",
+                         ressources=7000.0, retraite=retraite)
+    ligne = _servies(simulateur, carriere, [("regime_general", 30000.0)],
+                     1988)["regime_general"]
+    assert ligne.motif == "maximum"
+    assert ligne.reduction_du_cumul == pytest.approx(reduction)
+
+
+def test_l_exemple_de_la_circulaire_105_90():
+    """Circulaire Cnav n° 105/90, § 13 : la réversion court depuis le 1er
+    janvier 1989, la retraite personnelle, 50 000 F, depuis le 1er août 1990 ;
+    la pension du défunt, 63 000 F au 1er janvier 1989, « amenée à la valeur
+    juillet 1990 soit 63.000 F x 1,012 x 1,0215 x 1,013 », fait 65 973 F, et
+    « la limite de cumul au 1er août 1990 est égale à : (65.973 + 50.000) x
+    52 % = 60.305 F ». Les coefficients des pensions entre les deux dates sont
+    ceux que le modèle lit, et sa limite, la même."""
+    from retraite_notionnelle.droit.reversion import _cumuler
+    moteur = Simulateur().scenario_actuel
+    coefficient, _ = moteur.revalorisations_pensions.generale(
+        date(1989, 1, 1), date(1990, 8, 1), False, None)
+    assert coefficient == pytest.approx(1.012 * 1.0215 * 1.013)
+    principale = round(63000 * coefficient)
+    assert principale == 65973
+    _, limite = _cumuler({"cumul": "limite", "cumul_taux": 0.52}, 0.52 * 62040 * coefficient,
+                         50000.0, principale, None, 1)
+    assert int(limite) == 60305
+
+
+# -- les majorations forfaitaires des pensions d'avant 1975 ----------------------------
+
+def _pension(regime: str = "regime_general", maximum: bool = True):
+    from retraite_notionnelle.droit.commun import PensionRegime
+    return PensionRegime(regime=regime, montant=1000.0, type_calcul="annuites", detail="",
+                         fiabilite=HAUTE, sur_la_duree_maximum=maximum)
+
+
+@pytest.mark.parametrize("regime, depart, maximum, attendues", [
+    # Avant 1972, sur cent vingt trimestres : les quatre.
+    ("regime_general", "1970-02-01", True,
+     (("1972-01-01", 0.05), ("1976-07-01", 0.05), ("1977-10-01", 0.05), ("1982-12-01", 0.06))),
+    # Sur moins : celle de 1982, sans condition de durée.
+    ("regime_general", "1970-02-01", False, (("1982-12-01", 0.06),)),
+    # Les salariés agricoles : celles de 1972 et de 1982 (lois n° 71-1132,
+    # article 10, et n° 82-599, article 1er).
+    ("msa_salaries", "1970-02-01", True, (("1972-01-01", 0.05), ("1982-12-01", 0.06))),
+    ("regime_general", "1972-02-01", True,
+     (("1976-07-01", 0.05), ("1977-10-01", 0.05), ("1982-12-01", 0.04))),
+    ("regime_general", "1973-02-01", True, (("1982-12-01", 0.055),)),
+    ("regime_general", "1973-02-01", False, ()),
+    ("regime_general", "1974-02-01", True, (("1982-12-01", 0.015),)),
+    ("regime_general", "1975-02-01", True, ()),
+    ("arrco", "1970-02-01", True, ()),
+])
+def test_les_majorations_forfaitaires_de_1972_a_1982(simulateur, regime, depart, maximum,
+                                                     attendues):
+    """Lois n° 71-1132, article 8, n° 75-1279, article 3, n° 77-657, article
+    1er, et n° 82-599, articles 1er et 2 : chacune selon la date d'effet de la
+    pension, son régime et sa durée (fiche ``majorations_forfaitaires_1972_1982``)."""
+    from retraite_notionnelle.revalorisation import majorations_forfaitaires
+    assert majorations_forfaitaires(simulateur.scenario_actuel, _pension(regime, maximum),
+                                    depart) == attendues
+
+
+@pytest.mark.parametrize("depart, taux, attendu", [
+    # « 40 % du SAM », porté par les trois majorations de 5 % à 46,30 %
+    # (circulaire Cnav n° 64/77, B).
+    ("1970-02-01", 0.40, 46.30),
+    # « en 1972 à 42,66 % du SAM (50 x 128 / 150) », porté à 47,04 % (même lieu).
+    ("1972-02-01", 0.50 * 128 / 150, 47.04),
+    # « en 1973 à 47,82 % (45,33 % x 1,055) », « en 1974 à 48,72 % (48 % X
+    # 1,015) » (circulaire Cnav n° 79/82, B).
+    ("1973-02-01", 0.50 * 136 / 150, 47.82),
+    ("1974-02-01", 0.50 * 144 / 150, 48.72),
+])
+def test_les_taux_que_les_circulaires_donnent_a_la_pension_majoree(simulateur, depart, taux,
+                                                                   attendu):
+    """Le taux de la pension au maximum de sa date, que les majorations
+    portent avant celle de 1982 pour la pension d'avant 1973, ou que celle de
+    1982 porte pour celles de 1973 et de 1974, au centième, tronqué."""
+    from retraite_notionnelle.revalorisation import majorations_forfaitaires
+    majore = taux
+    for jour, majoration in majorations_forfaitaires(simulateur.scenario_actuel, _pension(),
+                                                     depart):
+        if jour < "1982-12-01" or depart >= "1973-01-01":
+            majore *= 1 + majoration
+    assert int(majore * 10000 + 1e-6) / 100 == attendu
+
+
+def test_la_reversion_suit_les_majorations_de_la_pension_du_defunt(contexte):
+    """La pension du salarié parti en 1971 sur cent quatre trimestres reçoit
+    6 % au 1er décembre 1982 ; sa veuve, à qui la réversion est attribuée au
+    1er janvier 1973, les reçoit avec elle, avant les 4 % de la réversion
+    même : 10,24 % du montant calculé, puis 3,846 % en 1995 (circulaire Cnav
+    n° 79/82, C ; exposé « Montant - retraite de réversion »)."""
+    comparaison = contexte.simuler(Saisie.depuis_requete({
+        "naissance": "1906", "liquidation": "65", "conjoint": "1916", "deces": "1971-03"}))
+    general = next(l for l in comparaison.reversion.regimes if l.regime == "regime_general")
+    assert (general.date_effet, general.motif) == ("1973-01-01", "servie")
+    calcule = 0.5 * general.base
+    assert general.montant == pytest.approx(calcule)
+    assert general.majorations_forfaitaires == (
+        ("1982-12-01", pytest.approx(calcule * (1.06 * 1.04 - 1))),
+        ("1995-01-01", pytest.approx(calcule * 1.06 * 1.04 * 0.03846)))
+
+
 # -- ce qui n'est pas porté ----------------------------------------------------------
 
 def test_un_regime_sans_fiche_le_dit_et_un_regime_vide_ne_reverse_rien(simulateur):
@@ -1468,23 +1694,31 @@ def test_la_page_dit_le_partage_et_le_remariage():
 
 def test_la_page_dit_le_cumul_et_les_majorations_forfaitaires():
     """La carte dit la réversion réduite par la limite de cumul d'avant 2004,
-    les majorations forfaitaires de 1982 et 1995, à leur date, et la
-    majoration pour enfants à charge."""
+    à sa date d'effet ou quand la retraite du survivant la suit, les
+    majorations forfaitaires de 1982 et 1995, à leur date, et la majoration
+    pour enfants à charge, jusqu'à ce que le dernier enfant ne le soit plus ou
+    que la retraite du survivant commence."""
     from retraite_notionnelle.web.site import rendre
 
-    _, cumul = rendre("/simuler", {"naissance": "1925", "liquidation": "65",
-                                   "conjoint": "1930", "deces": "1999-05",
-                                   "ressources_conjoint": "6000"})
+    cumul_de_1999 = {"naissance": "1925", "liquidation": "65", "conjoint": "1930",
+                     "deces": "1999-05", "ressources_conjoint": "6000"}
+    _, cumul = rendre("/simuler", cumul_de_1999)
     assert "avec ses propres retraites, elle dépasserait la limite de cumul" in cumul
+    _, revue = rendre("/simuler", {**cumul_de_1999, "conjoint": "1940",
+                                   "conjoint_retraite": "2001-03"})
+    assert "de moins à partir de mars 2001, limite de cumul avec sa propre retraite" in revue
     _, ancienne = rendre("/simuler", {"naissance": "1906", "liquidation": "65",
                                       "conjoint": "1916", "deces": "1971-03"})
     assert "de plus à partir de décembre 1982, majoration forfaitaire" in ancienne
     assert "de plus à partir de janvier 1995, majoration forfaitaire" in ancienne
-    _, enfants = rendre("/simuler", {"naissance": "1970", "liquidation": "64",
-                                     "conjoint": "1972", "deces": "2024-05", "sexe": "F",
-                                     "conjoint_sexe": "H", "enfants": "2",
-                                     "naissances": "2012, 2014"})
+    enfants_de_2012 = {"naissance": "1970", "liquidation": "64", "conjoint": "1972",
+                       "deces": "2024-05", "sexe": "F", "conjoint_sexe": "H", "enfants": "2",
+                       "naissances": "2012, 2014"}
+    _, enfants = rendre("/simuler", enfants_de_2012)
     assert "de majoration pour enfants à charge" in enfants
+    assert "à partir de février 2030, plus rien à partir de février 2032" in enfants
+    _, retraite = rendre("/simuler", {**enfants_de_2012, "conjoint_retraite": "2029-01"})
+    assert "de majoration pour enfants à charge, plus rien à partir de février 2029" in retraite
 
 
 # -- l'hypothèse de décès et la page ------------------------------------------------

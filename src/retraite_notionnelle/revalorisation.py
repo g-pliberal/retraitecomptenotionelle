@@ -525,6 +525,34 @@ def _derniere_annee(regime) -> int:
     return min(max(annees), 2100) if annees else 2100
 
 
+#: La fiche des majorations forfaitaires de 1972 à 1982 des pensions prises
+#: avant 1975, que :class:`~retraite_notionnelle.scenarios.actuel.FichesDatees`
+#: lit à la date d'effet de chaque pension.
+FICHE_DES_MAJORATIONS_FORFAITAIRES = "majorations_forfaitaires_1972_1982"
+
+
+def majorations_forfaitaires(moteur, pension, depart: str) -> tuple[tuple[str, float], ...]:
+    """Les majorations forfaitaires que reçoit, après sa date d'effet
+    ``depart`` (AAAA-MM-JJ), la pension ``pension`` prise avant 1975 :
+    ``(jour, taux)``, dans l'ordre (fiche ``majorations_forfaitaires_1972_1982``).
+
+    Chacune ne vise que les régimes que sa loi nomme — le régime général, et
+    les salariés agricoles en 1972 et en 1982 —, et, quand elle le dit, que la
+    pension liquidée sur la durée d'assurance maximum de sa date
+    (``PensionRegime.sur_la_duree_maximum``). Elle multiplie « la pension
+    principale non écrêtée résultant des versements et [...] la bonification
+    pour enfants », non la majoration pour conjoint à charge (circulaire Cnav
+    n° 15/76, A) : le coefficient de la pension la porte, et la majoration pour
+    enfants, qui le suit."""
+    regle = moteur.fiches_datees.regle(FICHE_DES_MAJORATIONS_FORFAITAIRES, depart)
+    if not regle:
+        return ()
+    return tuple((str(majoration["date"]), float(majoration["taux"]))
+                 for majoration in regle.get("majorations") or ()
+                 if pension.regime in majoration["regimes"] and str(majoration["date"]) > depart
+                 and (pension.sur_la_duree_maximum or not majoration["duree_maximum"]))
+
+
 class PensionServie:
     """La règle de chaque régime, appliquée d'une date à une autre."""
 
@@ -594,6 +622,10 @@ class PensionServie:
             return coefficient, REGLE_REGIME_SPECIAL, fiabilite
         coefficient, fiabilite = self.revalorisations.generale(
             debut_annee, jusqu_a, False, mensuel_2019)
+        # Les majorations forfaitaires de 1972 à 1982 venues jusqu'à l'échéance.
+        for jour, taux in majorations_forfaitaires(self.actuel, pension, depart.isoformat()):
+            if jour <= jusqu_a.isoformat():
+                coefficient *= 1 + taux
         if code in REGIMES_REGLE_GENERALE:
             return coefficient, REGLE_GENERALE, fiabilite
         return coefficient, REGLE_PAR_DEFAUT, min(fiabilite, Fiabilite.MOYENNE)

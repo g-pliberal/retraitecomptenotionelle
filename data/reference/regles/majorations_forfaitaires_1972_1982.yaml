@@ -1,0 +1,275 @@
+schema_version: 1
+id: majorations_forfaitaires_1972_1982
+intitule: >-
+  Les pensions de vieillesse du régime général qui ont pris effet avant 1975 sont
+  majorées forfaitairement : de 5 % au 1er janvier 1972, au 1er juillet 1976 et au 1er
+  octobre 1977, celles d'avant 1973 liquidées sur la durée d'assurance maximum de leur
+  date — 120 trimestres avant 1972, 128 en 1972 — ; au 1er décembre 1982, de 6 % celles
+  d'avant 1972, de 4 % celles de 1972, de 5,5 % celles de 1973 liquidées sur 136
+  trimestres et de 1,5 % celles de 1974 liquidées sur 144. Celles des salariés agricoles
+  le sont en 1972 et en 1982. La réversion du conjoint de l'assuré qui aurait pu en
+  bénéficier les suit.
+domaine: revalorisation
+regimes: [regime_general, msa_salaries]
+etape: faire_vivre
+face: droit
+etat: transcrite
+lit:
+- la date d'effet de la pension et son régime
+- la durée d'assurance que sa liquidation a retenue, et la durée maximum que sa date
+  prenait en compte
+ecrit:
+- le coefficient qui mène la pension jusqu'à l'échéance, chaque majoration comprise à
+  partir de sa date, et la bonification pour enfants avec elle
+- les majorations que la réversion reçoit après l'année de ses montants
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la PENSION PERSONNELLE ;
+# chacune dit les majorations qui la relèvent après cette date, leur jour, leur
+# taux, les régimes que leur loi nomme, et si elles ne valent que pour la
+# pension liquidée sur la durée maximum de sa date (`duree_maximum`).
+versions:
+- id: avant_1972
+  statut: lue
+  textes:
+  - id: LEGIARTI000006756027
+    article: loi n° 71-1132 du 31 décembre 1971, article 8
+    en_vigueur: 1972-01-01
+    citation: >-
+      « Les pensions dues au titre des articles L. 331 et L. 332 du Code de la sécurité
+      sociale dont l'entrée en jouissance est antérieure au 1er janvier 1972 et qui ont
+      été liquidées sur la base d'une durée d'assurance de trente années sont majorées
+      forfaitairement de 5 % »
+    lu_le: 2026-10-09
+  - id: LEGIARTI000006756029
+    article: loi n° 71-1132 du 31 décembre 1971, article 10
+    en_vigueur: 1972-01-01
+    citation: « La présente loi est applicable aux pensions des travailleurs salariés agricoles. »
+    lu_le: 2026-10-09
+  - id: LEGIARTI000006755694
+    article: loi n° 75-1279 du 30 décembre 1975, article 3
+    en_vigueur: 1976-07-01
+    citation: >-
+      « Sont majorées forfaitairement de 5 p. 100 : Les pensions de vieillesse dues au
+      titre des articles L. 331 à L. 335 du code de la sécurité sociale, dont l'entrée
+      en jouissance est antérieure au 1er janvier 1973 et qui ont été liquidées sur la
+      base de la durée maximum d'assurance susceptible d'être prise en compte à leur
+      date d'entrée en jouissance »
+    lu_le: 2026-10-09
+  - id: LEGIARTI000006755703
+    article: loi n° 77-657 du 28 juin 1977, article 1er
+    en_vigueur: 1977-06-29
+    citation: >-
+      « Sont majorées forfaitairement de 5 p. 100 à compter du 1er octobre 1977 : Les
+      pensions de vieillesse dues au titre des articles L. 331 à L. 335 du code de la
+      sécurité sociale, dont l'entrée en jouissance est antérieure au 1er janvier 1973
+      et qui ont été liquidées sur la base de la durée maximum d'assurance susceptible
+      d'être prise en compte à leur date d'entrée en jouissance »
+    lu_le: 2026-10-09
+  - id: LEGIARTI000006756135
+    article: loi n° 82-599 du 13 juillet 1982, article 1er
+    en_vigueur: 1982-12-01
+    citation: >-
+      « Les pensions de vieillesse dues aux assurés du régime général au titre des
+      articles L. 331 et L. 332 du code de la sécurité sociale ainsi que les pensions
+      de vieillesse des salariés des assurances sociales agricoles sont majorées
+      forfaitairement de : 6 % quand elles ont pris effet avant le 1er janvier 1972 »
+    lu_le: 2026-10-09
+  nee_de: LEGIARTI000006756027
+  bornes:
+    liquidation.date_effet: [null, 1972-01-01]
+  contenu:
+    droit: >-
+      5 % au 1er janvier 1972, au 1er juillet 1976 et au 1er octobre 1977 à la pension
+      liquidée sur cent vingt trimestres, la première aux salariés agricoles aussi ; 6 %
+      au 1er décembre 1982 à toutes, quelle que soit leur durée
+    beneficiaire: >-
+      le retraité du régime général, et des salariés agricoles en 1972 et en 1982, dont
+      la pension a pris effet avant le 1er janvier 1972
+    conditions: >-
+      la pension liquidée sur trente années d'assurance, sauf pour celle de 1982 ; « la
+      pension principale non écrêtée résultant des versements et [...] la bonification
+      pour enfants » sont majorées, non les autres avantages complémentaires ni le
+      minimum des pensions (circulaire Cnav n° 15/76, A)
+    parametres:
+      majorations:
+      - {date: "1972-01-01", taux: 0.05, duree_maximum: true, regimes: [regime_general, msa_salaries]}
+      - {date: "1976-07-01", taux: 0.05, duree_maximum: true, regimes: [regime_general]}
+      - {date: "1977-10-01", taux: 0.05, duree_maximum: true, regimes: [regime_general]}
+      - {date: "1982-12-01", taux: 0.06, duree_maximum: false, regimes: [regime_general, msa_salaries]}
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: en_1972
+  statut: lue
+  textes:
+  - id: LEGIARTI000006755694
+    article: loi n° 75-1279 du 30 décembre 1975, article 3
+    en_vigueur: 1976-07-01
+  - id: LEGIARTI000006755703
+    article: loi n° 77-657 du 28 juin 1977, article 1er
+    en_vigueur: 1977-06-29
+  - id: LEGIARTI000006756135
+    article: loi n° 82-599 du 13 juillet 1982, article 1er
+    en_vigueur: 1982-12-01
+    citation: « 4 % quand elles ont pris effet entre le 1er janvier et le 31 décembre 1972 »
+    lu_le: 2026-10-09
+  nee_de: LEGIARTI000006755694
+  bornes:
+    liquidation.date_effet: [1972-01-01, 1973-01-01]
+  contenu:
+    droit: >-
+      5 % au 1er juillet 1976 et au 1er octobre 1977 à la pension liquidée sur cent
+      vingt-huit trimestres ; 4 % au 1er décembre 1982 à toutes, aux salariés agricoles
+      aussi
+    beneficiaire: le retraité dont la pension a pris effet en 1972
+    conditions: la durée maximum de 1972, cent vingt-huit trimestres, sauf pour celle de 1982
+    parametres:
+      majorations:
+      - {date: "1976-07-01", taux: 0.05, duree_maximum: true, regimes: [regime_general]}
+      - {date: "1977-10-01", taux: 0.05, duree_maximum: true, regimes: [regime_general]}
+      - {date: "1982-12-01", taux: 0.04, duree_maximum: false, regimes: [regime_general, msa_salaries]}
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: en_1973
+  statut: lue
+  textes:
+  - id: LEGIARTI000006756135
+    article: loi n° 82-599 du 13 juillet 1982, article 1er
+    en_vigueur: 1982-12-01
+    citation: >-
+      « 5,5 % quand elles ont pris effet entre le 1er janvier et le 31 décembre 1973 et
+      ont été liquidées sur la base d'une durée d'assurance de trente-quatre années »
+    lu_le: 2026-10-09
+  nee_de: LEGIARTI000006756135
+  bornes:
+    liquidation.date_effet: [1973-01-01, 1974-01-01]
+  contenu:
+    droit: 5,5 % au 1er décembre 1982 à la pension liquidée sur cent trente-six trimestres
+    beneficiaire: le retraité du régime général ou des salariés agricoles dont la pension a pris effet en 1973
+    conditions: trente-quatre années d'assurance
+    parametres:
+      majorations:
+      - {date: "1982-12-01", taux: 0.055, duree_maximum: true, regimes: [regime_general, msa_salaries]}
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: en_1974
+  statut: lue
+  textes:
+  - id: LEGIARTI000006756135
+    article: loi n° 82-599 du 13 juillet 1982, article 1er
+    en_vigueur: 1982-12-01
+    citation: >-
+      « 1,5 % quand elles ont pris effet entre le 1er janvier et le 31 décembre 1974 et
+      ont été liquidées sur la base d'une durée d'assurance de trente-six années »
+    lu_le: 2026-10-09
+  nee_de: LEGIARTI000006756135
+  bornes:
+    liquidation.date_effet: [1974-01-01, 1975-01-01]
+  contenu:
+    droit: 1,5 % au 1er décembre 1982 à la pension liquidée sur cent quarante-quatre trimestres
+    beneficiaire: le retraité du régime général ou des salariés agricoles dont la pension a pris effet en 1974
+    conditions: trente-six années d'assurance
+    parametres:
+      majorations:
+      - {date: "1982-12-01", taux: 0.015, duree_maximum: true, regimes: [regime_general, msa_salaries]}
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: depuis_1975
+  statut: lue
+  textes:
+  - id: LEGIARTI000006756135
+    article: loi n° 82-599 du 13 juillet 1982, article 1er
+    en_vigueur: 1982-12-01
+  bornes:
+    liquidation.date_effet: [1975-01-01, null]
+  contenu:
+    droit: >-
+      aucune majoration forfaitaire : la pension qui prend effet depuis 1975 compte
+      cent cinquante trimestres, la durée de la loi n° 71-1132 entière
+    beneficiaire: aucun
+    conditions: aucune
+    parametres:
+      majorations: []
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations:
+- ecart: >-
+    la durée que la condition lit est celle que la liquidation du régime retient ; la
+    pension liquidée dans le cadre d'une coordination, avec les salariés agricoles ou
+    une convention internationale, qui n'est majorée que si les règles de coordination
+    « n'avaient pas permis la rémunération des années d'assurance accomplies au-delà »
+    de la durée maximum, l'est sur la durée du seul régime
+  effet: non mesuré
+- ecart: >-
+    l'ancien invalide dont la pension de vieillesse a remplacé une pension d'invalidité
+    des deuxième et troisième groupes, à qui les circulaires refusent les majorations de
+    1976, 1977, et celles de 5,5 % et 1,5 % de 1982, est majoré comme les autres
+  effet: non mesuré
+- ecart: >-
+    les majorations de 1976 et de 1977 ne relèvent pas les pensions des salariés
+    agricoles, que leurs lois ne nomment pas, ni celles des assurés d'Alsace-Moselle
+    relevant du code local, que la loi n° 75-1279 vise à son article 7 et que le modèle
+    ne distingue pas
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-09
+  prochaine_relecture: 2027-10-31
+  a_relire:
+  - >-
+    Ouverte le 9 octobre 2026, à l'étape 4 de l'action 138 : lue dans l'index LEGI et
+    dans les circulaires de la Cnav. Les circulaires donnent les taux de la pension au
+    maximum ainsi majorée — 40 % du salaire annuel moyen portés à 42 %, 44,1 % et
+    46,30 %, 42,66 % portés à 47,04 %, 45,33 % à 47,82 %, 48 % à 48,72 % —, que
+    tests/test_reversion.py rejoue ; aucun exemple chiffré d'une carrière n'a été
+    trouvé.
+  - >-
+    Lire les textes qui ont appliqué les majorations de 1976 et de 1977 aux salariés
+    agricoles, s'il en est, et le décret n° 76-405 du 10 mai 1976 pour l'Alsace-Moselle.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 71-1132 du 31 décembre 1971, articles 8, 10 et 11 (LEGIARTI000006756027,
+      029, 030) ; loi n° 75-1279 du 30 décembre 1975, articles 3, 4 et 7
+      (LEGIARTI000006755694, 695, 697) ; loi n° 77-657 du 28 juin 1977, article 1er
+      (LEGIARTI000006755703) ; loi n° 82-599 du 13 juillet 1982, articles 1er et 2
+      (LEGIARTI000006756135, 136), dans l'index LEGI du dépôt
+    date: 2026-10-09
+  - type: circulaire_cnav
+    reference: >-
+      circulaires Cnav n° 15/76 du 22 janvier 1976, n° 64/77 du 11 juillet 1977 et
+      n° 79/82 du 24 août 1982 (A, règles générales ; B, ex-invalides ; C, droits
+      dérivés : « Les pensions de réversion accordées aux conjoints survivants
+      d'assurés qui auraient pu bénéficier de ces majorations doivent être revalorisées
+      dans les mêmes conditions »), lues le 9 octobre 2026 par l'API de la base de
+      législation de la Cnav
+    date: 1982-08-24
+  - type: circulaire_cnav
+    reference: >-
+      exposé « Montant - retraite de réversion », « Avant le 01/12/1982 - Majorations
+      forfaitaires » : le tableau des quatre dates, des durées et des taux ; « Elles
+      s'appliquaient aux retraites de réversion, dès lors que l'assuré décédé aurait pu
+      en bénéficier »
+    date: 2025-10-24
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_reversion_montant_montant_ex.aspx
+textes_a_rattacher: []
+code:
+  python: >-
+    revalorisation.py : majorations_forfaitaires, PensionServie.coefficient ;
+    droit/liquider.py : PensionRegime.sur_la_duree_maximum ; echeancier.py :
+    Echeancier._pensions_au_deces ; droit/reversion.py : reversion,
+    _majorations_ulterieures
+  javascript: >-
+    moteur/js/revalorisation.js : majorationsForfaitaires, PensionServie.coefficient ;
+    moteur/js/droit/liquider.js ; moteur/js/echeancier.js ; moteur/js/droit/reversion.js
+  parametres: contenu.parametres de chaque version
+  tests: >-
+    tests/test_reversion.py ; les témoins retraite_majoree_en_1982 et
+    reversion_majorations_avant_1983 des simulations
+historique:
+- >-
+  2026-10-09 — née et lue par le moteur, à l'étape 4 de l'action 138 : la note du 9
+  octobre (« Ce qui reste », point 4) la déclarait absente.
+effet: >-
+  Les retraités du régime général partis avant 1975 sur la durée maximum de leur date :
+  jusqu'à 22,7 % de plus pour une pension d'avant 1972, depuis décembre 1982 ; et la
+  réversion de leur conjoint.

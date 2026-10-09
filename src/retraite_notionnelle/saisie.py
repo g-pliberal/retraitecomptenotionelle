@@ -668,6 +668,10 @@ class Saisie:
     #: sans lui, au décès.
     nouvelle_union_depuis: str = ""
     conjoint_invalidite: str = ""
+    #: Le mois où la propre retraite du conjoint prend effet (AAAA ou AAAA-MM),
+    #: s'il le dit : la limite de cumul de sa réversion d'avant juillet 2004
+    #: s'applique alors, et sa majoration pour enfant à charge s'arrête.
+    conjoint_retraite: str = ""
     #: Les précédents conjoints de l'assuré, divorcés, entre qui et le conjoint
     #: la réversion se partage (:class:`ExConjointSaisi`).
     ex_conjoints: list[ExConjointSaisi] = field(default_factory=list)
@@ -867,6 +871,7 @@ class Saisie:
             revenu_fiscal=(None if parametres.get("revenu_fiscal") in (None, "")
                            else _reel(parametres, "revenu_fiscal", 0.0)),
             conjoint_invalidite=(parametres.get("conjoint_invalidite") or "").strip(),
+            conjoint_retraite=(parametres.get("conjoint_retraite") or "").strip(),
             deces=(parametres.get("deces") or "").strip(),
             progressive=(None if parametres.get("progressive") in (None, "")
                          else _age_saisi(parametres, "progressive", 0.0,
@@ -1717,6 +1722,7 @@ class Saisie:
                 "ressources_du_nouveau_conjoint": self.ressources_nouveau_conjoint,
                 "nouvelle_union_depuis": self.nouvelle_union_depuis or None,
                 "invalidite": self.conjoint_invalidite or None,
+                "retraite": self.conjoint_retraite or None,
                 "ex_conjoints": [{"naissance": ex.naissance, "mariage": ex.mariage,
                                   "divorce": ex.divorce, "remariage": ex.remariage or None}
                                  for ex in self.ex_conjoints]}
@@ -2038,7 +2044,8 @@ class Saisie:
                 ("nouvelle_union", self.nouvelle_union),
                 ("ressources_nouveau_conjoint", self.ressources_nouveau_conjoint),
                 ("nouvelle_union_depuis", self.nouvelle_union_depuis),
-                ("conjoint_invalidite", self.conjoint_invalidite), ("deces", self.deces))
+                ("conjoint_invalidite", self.conjoint_invalidite),
+                ("conjoint_retraite", self.conjoint_retraite), ("deces", self.deces))
                 if valeur not in ("", None)] + (["ex1"] if self.ex_conjoints else [])
             if orphelins:
                 raise ErreurSaisie(
@@ -2050,6 +2057,8 @@ class Saisie:
                                   ("mariage", self.mariage, "le mariage"),
                                   ("conjoint_invalidite", self.conjoint_invalidite,
                                    "l'invalidité du conjoint"),
+                                  ("conjoint_retraite", self.conjoint_retraite,
+                                   "la retraite du conjoint"),
                                   ("nouvelle_union_depuis", self.nouvelle_union_depuis,
                                    "le début de sa nouvelle union"),
                                   ("deces", self.deces, "le décès")):
@@ -2092,6 +2101,9 @@ class Saisie:
         if ("conjoint_invalidite" in dates
                 and dates["conjoint_invalidite"] <= dates["conjoint"]):
             raise ErreurSaisie("L'invalidité du conjoint précède sa naissance.")
+        if ("conjoint_retraite" in dates
+                and dates["conjoint_retraite"] <= dates["conjoint"]):
+            raise ErreurSaisie("La retraite du conjoint précède sa naissance.")
         if "deces" in dates:
             if "mariage" in dates and dates["mariage"] >= dates["deces"]:
                 raise ErreurSaisie("Le mariage suit le décès.")
@@ -2184,6 +2196,7 @@ class Saisie:
                  else _nombre(self.ressources_nouveau_conjoint)),
                 ("nouvelle_union_depuis", self.nouvelle_union_depuis),
                 ("conjoint_invalidite", self.conjoint_invalidite),
+                ("conjoint_retraite", self.conjoint_retraite),
                 ("deces", self.deces)) if valeur not in ("", None)},
             **{f"ex{rang}{suffixe}": valeur
                for rang, ex in enumerate(self.ex_conjoints, 1)

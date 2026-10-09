@@ -87,6 +87,11 @@ class PensionRegime:
     ecretement_du_maximum: float = 0.0
     surcote: float = 0.0
     coefficient_du_maximum: float = 1.0
+    #: La pension a-t-elle été liquidée sur la durée d'assurance maximum que sa
+    #: date d'effet prenait en compte — 120 trimestres avant 1972, 128 en 1972,
+    #: 136 en 1973, 144 en 1974 — ? Les majorations forfaitaires de 1972 à 1982
+    #: le lisent (fiche ``majorations_forfaitaires_1972_1982``).
+    sur_la_duree_maximum: bool = False
 
 
 def majoration_du_conjoint(etapes, quand: str) -> float:

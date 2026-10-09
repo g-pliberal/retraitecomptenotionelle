@@ -609,6 +609,12 @@ class Conjoint:
     #: Le jour où commence ce ménage (AAAA-MM-JJ) : celui qu'il dit, ou le
     #: décès.
     nouvelle_union_depuis: str | None = None
+    #: Le jour où sa propre retraite prend effet (AAAA-MM-JJ), s'il le dit :
+    #: ses ressources hors de ses revenus d'activité, que le modèle tient pour
+    #: ses retraites personnelles, ne commencent qu'alors. ``None`` laisse la
+    #: présomption ``retraites_du_survivant_servies`` les tenir pour servies
+    #: dès la date d'effet de la réversion.
+    retraite: str | None = None
 
 
 @dataclass(frozen=True)
@@ -1005,8 +1011,8 @@ class Carriere:
     def conjoint(self) -> "Conjoint | None":
         """Le conjoint de la personne, que son mariage lui relie : sa naissance,
         son sexe, la date du mariage, ses ressources, leur part d'activité, le
-        ménage où il vit après le décès et son invalidité, telles que la
-        chronologie les porte. ``None`` sans conjoint déclaré."""
+        ménage où il vit après le décès, son invalidité et sa propre retraite,
+        telles que la chronologie les porte. ``None`` sans conjoint déclaré."""
         if not self.chronologie:
             return None
         autre = chrono.conjoint(self.chronologie, self.personne)
@@ -1015,6 +1021,7 @@ class Carriere:
         naissance = chrono.naissance(self.chronologie, autre)
         union = chrono.union(self.chronologie, self.personne)
         invalidite = chrono.decision_medicale(self.chronologie, autre, "invalidite")
+        retraite = chrono.depart(self.chronologie, autre)
         nouvelle_union, apport = chrono.menage(self.chronologie, autre) or (None, None)
         return Conjoint(
             personne=autre,
@@ -1028,6 +1035,7 @@ class Carriere:
             nouvelle_union=nouvelle_union,
             ressources_du_nouveau_conjoint=apport,
             nouvelle_union_depuis=chrono.debut_du_menage(self.chronologie, autre),
+            retraite=retraite["debut"] if retraite is not None else None,
         )
 
     @cached_property
