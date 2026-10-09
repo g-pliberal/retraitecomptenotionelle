@@ -1230,8 +1230,16 @@ class ConstructeurFiche:
 
 
 def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
-                          ) -> BlocRetraite:
+                          part_primes: float = 0.0) -> BlocRetraite:
     """Ce que le droit en vigueur prélève pour la retraite, par régime.
+
+    **Les primes d'un fonctionnaire.** Le brut de la fiche est la
+    rémunération entière ; un régime dont l'assiette est le seul traitement
+    (``hors_primes`` : la pension civile, la CNRACL) n'en prélève que la part
+    hors primes, ``1 − part_primes``, comme ``PeriodeRegime.part_du_revenu``
+    le fait pour le compte : ses taux en sont réduits d'autant. La retenue
+    n'est pas assise sur les primes ; la RAFP, qui l'est, est provisionnée et
+    hors du bloc.
 
     Un étage par régime : la vieillesse de base et sa part déplafonnée d'un
     côté, la complémentaire de l'autre, chacun avec ses bornes d'assiette et
@@ -1262,13 +1270,14 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
         for periode in regime.periodes_actives(annee):
             basse, haute = periode.bornes_assiette_en_pass()
             part = 1.0 if sans_employeur else periode.part_salariale
-            taux = periode.taux_cotisation_retraite
+            traitement = 1.0 - part_primes if periode.assiette == "hors_primes" else 1.0
+            taux = (periode.taux_cotisation_retraite or 0.0) * traitement
             if taux:
                 salarie.append(Segment(basse, haute, taux * part))
                 employeur.append(Segment(basse, haute, taux * (1.0 - part)))
             # La part déplafonnée porte sur la totalité du salaire, par-dessus
             # la précédente : c'est un segment de plus, non une tranche.
-            taux_deplafonne = periode.taux_cotisation_deplafonnee
+            taux_deplafonne = (periode.taux_cotisation_deplafonnee or 0.0) * traitement
             if taux_deplafonne:
                 part_deplafonnee = (
                     1.0 if sans_employeur else periode.part_salariale_deplafonnee)
@@ -1782,7 +1791,8 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
         brut = ligne.revenu / part if part < 1.0 else ligne.revenu
         plafond = macro.plafond_securite_sociale(annee)
         smic = smic_annuel(macro, annee)
-        actuel_bloc = bloc_droit_en_vigueur(catalogue, affiliations, statut, annee)
+        actuel_bloc = bloc_droit_en_vigueur(catalogue, affiliations, statut, annee,
+                                            ligne.part_primes)
         propose = bloc_propose(annee)
         fiche_actuelle = constructeur.fiche(
             annee, brut, plafond, smic, actuel_bloc, cadre)
@@ -1823,12 +1833,14 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
 
 
 def salaire_brut_depuis_net(racine_donnees, macro, catalogue, affiliations,
-                            statut: str, annee: int, net_annuel: float) -> float:
+                            statut: str, annee: int, net_annuel: float,
+                            part_primes: float = 0.0) -> float:
     """Le revenu brut annuel dont il reste ``net_annuel`` — ou lui-même.
 
     C'est l'entrée du mode « net » de la saisie : le lecteur qui connaît son
     net le tape tel quel, et le modèle, qui ne raisonne qu'en brut, remonte
-    jusqu'à lui par la fiche de paie de son statut.
+    jusqu'à lui par la fiche de paie de son statut, et de sa part de primes
+    (:func:`bloc_droit_en_vigueur`).
 
     Rend le net INCHANGÉ quand le statut n'a pas de fiche de paie — l'exploitant
     agricole, l'élu, l'outre-mer. Mieux vaut un brut approché par un net qu'un
@@ -1846,13 +1858,14 @@ def salaire_brut_depuis_net(racine_donnees, macro, catalogue, affiliations,
         net_annuel,
         macro.plafond_securite_sociale(annee),
         smic_annuel(macro, annee),
-        bloc_droit_en_vigueur(catalogue, affiliations, statut, annee),
+        bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, part_primes),
         cadre,
     )
 
 
 def salaire_net_depuis_brut(racine_donnees, macro, catalogue, affiliations,
-                            statut: str, annee: int, brut_annuel: float) -> float:
+                            statut: str, annee: int, brut_annuel: float,
+                            part_primes: float = 0.0) -> float:
     """Le revenu net annuel que laisse ``brut_annuel`` — ou lui-même.
 
     Le sens direct, et il sert à la BASCULE : passer du mode brut au mode net
@@ -1862,15 +1875,17 @@ def salaire_net_depuis_brut(racine_donnees, macro, catalogue, affiliations,
     if brut_annuel <= 0:
         return brut_annuel
     fiche = fiche_depuis_brut(racine_donnees, macro, catalogue, affiliations,
-                              statut, annee, brut_annuel)
+                              statut, annee, brut_annuel, part_primes)
     return brut_annuel if fiche is None else fiche.net
 
 
 def fiche_depuis_brut(racine_donnees, macro, catalogue, affiliations,
-                      statut: str, annee: int, brut_annuel: float) -> FicheDePaie | None:
+                      statut: str, annee: int, brut_annuel: float,
+                      part_primes: float = 0.0) -> FicheDePaie | None:
     """La fiche de paie du droit en vigueur d'un revenu brut annuel de
-    ``statut``, l'année ``annee`` : celle dont :func:`salaire_net_depuis_brut`
-    lit le net. ``None`` pour un statut sans fiche de paie."""
+    ``statut``, l'année ``annee``, dont ``part_primes`` sont des primes :
+    celle dont :func:`salaire_net_depuis_brut` lit le net. ``None`` pour un
+    statut sans fiche de paie."""
     code_profil = profil_de_la_fiche(affiliations, catalogue, statut, annee)
     if code_profil is None:
         return None
@@ -1880,7 +1895,7 @@ def fiche_depuis_brut(racine_donnees, macro, catalogue, affiliations,
         annee, brut_annuel,
         macro.plafond_securite_sociale(annee),
         smic_annuel(macro, annee),
-        bloc_droit_en_vigueur(catalogue, affiliations, statut, annee),
+        bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, part_primes),
         cadre,
     )
 

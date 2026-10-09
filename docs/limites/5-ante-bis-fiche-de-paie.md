@@ -108,10 +108,11 @@ l'indemnité de fonction n'est pas un salaire, et qui n'a pas d'emploi. Mieux
 vaut rien qu'un net faux, et c'est un test qui le tient.
 
 **5 ter. Ce que chaque profil laisse dehors.** Pour un fonctionnaire, la
-retraite additionnelle de la fonction publique (RAFP), assise sur les PRIMES que
-l'assiette du dépôt — traitement indiciaire brut et NBI — exclut par
-construction : un agent dont les primes pèsent lourd ne voit ici qu'une fraction
-de sa feuille de paie. Pour un indépendant, la contribution à la formation
+retraite additionnelle de la fonction publique (RAFP), assise sur ses PRIMES : la
+fiche porte sa rémunération entière, et n'assied la retenue pour pension et la
+contribution de l'État que sur son traitement, mais elle ne prélève pas sur les
+primes la cotisation de la RAFP, provisionnée et hors de la comparaison, que
+son net surestime d'autant. Pour un indépendant, la contribution à la formation
 professionnelle (un forfait de <!--chiffre:illustration()-->0,25<!--/--> % du plafond, et non un taux, laissé dehors
 par symétrie avec les taxes sur salaires du privé) et l'assiette minimale que la
 loi impose aux très bas revenus, faute de savoir si l'assuré relève d'une de ses
@@ -126,6 +127,13 @@ titulaire, le coefficient maximal de la réduction générale reste celui du dé
 son employeur est plus étroit de la CEG et plus large de l'Ircantec ; ce qui
 borne la réduction est alors la règle générale, qui interdit d'effacer plus que
 ce qui est dû.
+
+**Le 9 octobre 2026, les primes sur la fiche.** Jusque-là, la fiche prélevait la retenue
+pour pension et la contribution de l'État sur les primes aussi : elle sous-estimait
+le net d'un agent qui en touche, et surestimait ce que la proposition lui rend —
++36,9 % de traitement net au lieu de +33,1 % pour la fonctionnaire de l'exemple du
+README, +42,2 % au lieu de +38,3 % de solde nette pour le militaire (action 138,
+étape 9).
 
 **6. Le coût du travail affiché est un plancher.** Ne sont comptées ni la taxe
 d'apprentissage, ni la contribution à la formation, ni la participation à la

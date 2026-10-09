@@ -234,6 +234,9 @@ fichiers:
       # hausse du brut sous le partage inverse sont celles de ce jour-là.
       - "**2. Le partage salarial/patronal du taux unique n'est pas neutre"
       - "**Ce que le choix retenu achète, et ce qu'il coûte**"
+      # La fiche prélevait la retenue et la contribution de l'État sur les
+      # primes : ce que la proposition rendait avant la correction et après.
+      - "**Le 9 octobre 2026, les primes sur la fiche.**"
       - "**Deux réserves subsistent au SMIC"
 
   docs/limites/5-ante-ter-net-et-brut.md:

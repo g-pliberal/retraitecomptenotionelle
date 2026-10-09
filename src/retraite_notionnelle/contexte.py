@@ -283,18 +283,20 @@ class Contexte:
         annee = parametres.annee_courante
         simulateur = self.simulateur(parametres)
 
+        # La part de primes de la saisie : la retenue d'un fonctionnaire n'est
+        # assise que sur son traitement (`remuneration.bloc_droit_en_vigueur`).
         def vers_brut(net_mensuel: float, statut: str) -> float:
             return salaire_brut_depuis_net(
                 parametres.racine_donnees, macro, simulateur.catalogue,
                 simulateur.affiliations, statut, annee,
-                net_mensuel * MOIS_PAR_AN,
+                net_mensuel * MOIS_PAR_AN, saisie.primes,
             ) / MOIS_PAR_AN
 
         def vers_net(brut_mensuel: float, statut: str) -> float:
             return salaire_net_depuis_brut(
                 parametres.racine_donnees, macro, simulateur.catalogue,
                 simulateur.affiliations, statut, annee,
-                brut_mensuel * MOIS_PAR_AN,
+                brut_mensuel * MOIS_PAR_AN, saisie.primes,
             ) / MOIS_PAR_AN
 
         return Echelle(

@@ -912,6 +912,56 @@ def test_le_net_saisi_se_retrouve_par_la_fiche_de_paie(pieces):
             assert brut > net_mensuel * 12, f"{statut} : le brut doit dépasser le net"
 
 
+def test_la_retenue_d_un_fonctionnaire_n_est_pas_assise_sur_ses_primes(pieces):
+    """Le brut d'une fiche est la rémunération entière, primes comprises ;
+    la pension civile n'en prélève que le traitement, comme le compte
+    (``PeriodeRegime.part_du_revenu``). Un quart de primes retire un quart de
+    la retenue, et laisse un net plus fort d'autant ; le salarié du privé, qui
+    cotise sur tout, n'en voit rien. Le net saisi se retrouve de même."""
+    from retraite_notionnelle.remuneration import (
+        fiche_depuis_brut,
+        salaire_brut_depuis_net,
+        salaire_net_depuis_brut,
+    )
+
+    racine = PARAMETRES.racine_donnees
+    brut = 40_000.0
+
+    def fiche(statut: str, part_primes: float):
+        return fiche_depuis_brut(racine, pieces["macro"], pieces["catalogue"],
+                                 pieces["affiliations"], statut, ANNEE, brut, part_primes)
+
+    sans, avec = fiche("fonctionnaire_etat", 0.0), fiche("fonctionnaire_etat", 0.25)
+    assert sans.retraite_salarie > 0.1 * brut
+    assert avec.retraite_salarie == pytest.approx(0.75 * sans.retraite_salarie, rel=1e-12)
+    assert avec.net - sans.net == pytest.approx(0.25 * sans.retraite_salarie, rel=1e-9)
+    prive = fiche("salarie_prive_non_cadre", 0.25)
+    assert prive.net == pytest.approx(fiche("salarie_prive_non_cadre", 0.0).net, rel=1e-12)
+    net = salaire_net_depuis_brut(racine, pieces["macro"], pieces["catalogue"],
+                                  pieces["affiliations"], "fonctionnaire_etat", ANNEE,
+                                  brut, 0.25)
+    assert net == pytest.approx(avec.net, rel=1e-12)
+    assert salaire_brut_depuis_net(racine, pieces["macro"], pieces["catalogue"],
+                                   pieces["affiliations"], "fonctionnaire_etat", ANNEE,
+                                   net, 0.25) == pytest.approx(brut, rel=1e-6)
+
+
+def test_la_fiche_de_paie_d_une_carriere_suit_sa_part_de_primes():
+    """La fiche que le site affiche, année par année, lit la part de primes de
+    la carrière : sa retenue est celle du seul traitement."""
+    simulateur = Simulateur(PARAMETRES)
+
+    def remuneration(part_primes: float):
+        return simulateur.simuler(simulateur.carriere_simple(
+            annee_naissance=1980, sexe="F", affiliation="fonctionnaire_etat", age_debut=23,
+            age_liquidation=64, niveau_salaire=1.2, part_primes=part_primes)).remuneration
+
+    sans, avec = remuneration(0.0).annees[0], remuneration(0.3).annees[0]
+    assert avec.droit_en_vigueur.brut == pytest.approx(sans.droit_en_vigueur.brut, rel=1e-12)
+    assert avec.droit_en_vigueur.retraite_salarie == pytest.approx(
+        0.7 * sans.droit_en_vigueur.retraite_salarie, rel=1e-12)
+
+
 def test_un_statut_sans_fiche_de_paie_rend_le_montant_inchange(pieces):
     """Mieux vaut un brut approché par un net qu'un refus de calculer.
 

@@ -730,11 +730,15 @@ export class ConstructeurFiche {
  * ce que le compte notionnel encaisse. Vaut pour les systèmes 1, 2 et 3, qui ne
  * changent pas ce qui est prélevé — seulement ce qui est porté au compte.
  */
-export function blocDroitEnVigueur(catalogue, affiliations, statut, annee) {
+export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
+  partPrimes = 0) {
   // Un non-salarié paie tout : la fiche d'un régime partagé avec des salariés
   // — un artisan relève du régime général — porte la répartition 45/55 d'un
   // salarié, et elle ne le concerne pas. `moteur/compte.js` en tire déjà la
   // même conséquence pour le compte notionnel.
+  // Les primes d'un fonctionnaire : un régime dont l'assiette est le seul
+  // traitement (`hors_primes`) n'en prélève que la part hors primes, comme
+  // `partDuRevenu` le fait pour le compte ; la RAFP est hors du bloc.
   const sansEmployeur = affiliations.sansEmployeur(statut);
   const composantes = [];
   for (const code of affiliations.regimes(statut, annee)) {
@@ -750,14 +754,15 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee) {
     for (const periode of regime.periodesActives(annee)) {
       const [basse, haute] = periode.bornesAssietteEnPass();
       const part = sansEmployeur ? 1 : periode.part_salariale;
-      const taux = periode.taux_cotisation_retraite;
+      const traitement = periode.assiette === "hors_primes" ? 1 - partPrimes : 1;
+      const taux = (periode.taux_cotisation_retraite || 0) * traitement;
       if (taux) {
         salarie.push({ bas: basse, haut: haute, taux: taux * part });
         employeur.push({ bas: basse, haut: haute, taux: taux * (1 - part) });
       }
       // La part déplafonnée porte sur la totalité du salaire, PAR-DESSUS la
       // précédente : c'est un segment de plus, non une tranche.
-      const deplafonne = periode.taux_cotisation_deplafonnee;
+      const deplafonne = (periode.taux_cotisation_deplafonnee || 0) * traitement;
       if (deplafonne) {
         const partDeplafonnee = sansEmployeur
           ? 1 : periode.part_salariale_deplafonnee;
@@ -1207,7 +1212,9 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
     const brut = part < 1 ? ligne.revenu / part : ligne.revenu;
     const plafond = macro.plafond_securite_sociale.valeur(annee);
     const smic = smicAnnuel(macro, annee);
-    const blocActuel = blocDroitEnVigueur(catalogue, affiliations, statut, annee);
+    const blocActuel = blocDroitEnVigueur(
+      catalogue, affiliations, statut, annee, ligne.part_primes,
+    );
     const propose = blocPropose(annee);
     const ficheActuelle = constructeur.fiche(
       annee, brut, plafond, smic, blocActuel, cadre,
@@ -1268,7 +1275,7 @@ export { Fiabilite };
  * dit alors qu'il n'a pas su convertir.
  */
 export function salaireBrutDepuisNet(bareme, macro, catalogue, affiliations,
-  statut, annee, netAnnuel) {
+  statut, annee, netAnnuel, partPrimes = 0) {
   if (netAnnuel <= 0) {
     return netAnnuel;
   }
@@ -1281,7 +1288,7 @@ export function salaireBrutDepuisNet(bareme, macro, catalogue, affiliations,
     netAnnuel,
     macro.plafond_securite_sociale.valeur(annee),
     smicAnnuel(macro, annee),
-    blocDroitEnVigueur(catalogue, affiliations, statut, annee),
+    blocDroitEnVigueur(catalogue, affiliations, statut, annee, partPrimes),
     cadre,
   );
 }
@@ -1291,7 +1298,7 @@ export function salaireBrutDepuisNet(bareme, macro, catalogue, affiliations,
  * Sert à la BASCULE, qui doit traduire le nombre saisi et non le relire.
  */
 export function salaireNetDepuisBrut(bareme, macro, catalogue, affiliations,
-  statut, annee, brutAnnuel) {
+  statut, annee, brutAnnuel, partPrimes = 0) {
   if (brutAnnuel <= 0) {
     return brutAnnuel;
   }
@@ -1304,7 +1311,7 @@ export function salaireNetDepuisBrut(bareme, macro, catalogue, affiliations,
     annee, brutAnnuel,
     macro.plafond_securite_sociale.valeur(annee),
     smicAnnuel(macro, annee),
-    blocDroitEnVigueur(catalogue, affiliations, statut, annee),
+    blocDroitEnVigueur(catalogue, affiliations, statut, annee, partPrimes),
     cadre,
   ).net;
 }

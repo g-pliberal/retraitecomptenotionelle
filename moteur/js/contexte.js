@@ -263,13 +263,15 @@ export class Contexte {
     const annee = parametres.annee_courante;
     const simulateur = this.simulateur(parametres);
     const bareme = simulateur.baremePrelevements;
+    // La part de primes de la saisie : la retenue d'un fonctionnaire n'est
+    // assise que sur son traitement (`blocDroitEnVigueur`).
     const versBrut = (netMensuel, statut) => salaireBrutDepuisNet(
       bareme, macro, simulateur.catalogue, simulateur.affiliations,
-      statut, annee, netMensuel * MOIS_PAR_AN,
+      statut, annee, netMensuel * MOIS_PAR_AN, saisie.primes,
     ) / MOIS_PAR_AN;
     const versNet = (brutMensuel, statut) => salaireNetDepuisBrut(
       bareme, macro, simulateur.catalogue, simulateur.affiliations,
-      statut, annee, brutMensuel * MOIS_PAR_AN,
+      statut, annee, brutMensuel * MOIS_PAR_AN, saisie.primes,
     ) / MOIS_PAR_AN;
     return new Echelle({
       moyen: salaireMoyenAnnuel(macro, annee),

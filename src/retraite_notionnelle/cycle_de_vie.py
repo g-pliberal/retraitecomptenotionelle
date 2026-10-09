@@ -373,12 +373,10 @@ def revenus_nets(simulateur, carriere) -> dict[int, float] | None:
     courante sur les pensions. La fiche se lit sur le revenu annualisé, sous
     le plafond de l'année entière, puis se ramène aux mois travaillés.
 
-    L'assiette de la fiche d'un fonctionnaire est son traitement, sans les
-    primes (``docs/limites/5-ante-bis-fiche-de-paie.md``, 5 ter) : elle se lit
-    sur le traitement, et les primes perdent les mêmes prélèvements hors
-    retraite, sans la retenue pour pension, que la loi n'assied pas sur
-    elles. La RAFP qu'elles paient reste hors du net, comme elle est hors des
-    deux flux.
+    Les primes d'un fonctionnaire perdent les prélèvements hors retraite,
+    sans la retenue pour pension, que la loi n'assied que sur le traitement
+    (:func:`~retraite_notionnelle.remuneration.bloc_droit_en_vigueur`). La
+    RAFP qu'elles paient reste hors du net, comme elle est hors des deux flux.
 
     La même fiche sert aux six systèmes : ce qu'une réforme change à la paie,
     le taux unique de la proposition qui laisse un net plus fort, n'y entre
@@ -396,19 +394,12 @@ def revenus_nets(simulateur, carriere) -> dict[int, float] | None:
 
 
 def _net_annualise(simulateur, ligne) -> float | None:
-    """Le net du revenu annualisé d'une ligne cotisée : la fiche de son
-    traitement, et ses primes nettes des prélèvements hors retraite."""
-    annualise = ligne.revenu_annualise
-    primes = annualise * ligne.part_primes
+    """Le net du revenu annualisé d'une ligne cotisée, primes comprises."""
     fiche = fiche_depuis_brut(simulateur.parametres.racine_donnees, simulateur.macro,
                               simulateur.catalogue, simulateur.affiliations,
-                              ligne.affiliation, ligne.annee, annualise - primes)
-    if fiche is None:
-        return None
-    if primes <= 0.0 or fiche.brut <= 0.0:
-        return fiche.net
-    hors_retraite = (fiche.brut - fiche.net - fiche.retraite_salarie) / fiche.brut
-    return fiche.net + primes * (1.0 - hors_retraite)
+                              ligne.affiliation, ligne.annee, ligne.revenu_annualise,
+                              ligne.part_primes)
+    return None if fiche is None else fiche.net
 
 
 def _dernier_revenu_net(dernier_revenu: float, revenus: dict[int, float],
