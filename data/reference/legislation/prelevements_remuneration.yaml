@@ -365,7 +365,7 @@ postes_regime_general: &postes_regime_general
       régime ne la porte, et pour cela qu'elle est ici. Elle est propre à
       l'Agirc-Arrco : un agent affilié à l'Ircantec ne la doit pas.
     textes:
-      - "Accord national interprofessionnel du 17 novembre 2017, article 34"
+      - "Accord national interprofessionnel du 17 novembre 2017, articles 37, 1°, et 38"
       - "Article L. 921-4 du code de la sécurité sociale"
 
   - code: equilibre_technique
@@ -388,7 +388,7 @@ postes_regime_general: &postes_regime_general
       assise alors sur la TOTALITÉ du salaire, premier euro compris. N'acquiert
       aucun point.
     textes:
-      - "Accord national interprofessionnel du 17 novembre 2017, article 35"
+      - "Accord national interprofessionnel du 17 novembre 2017, articles 37, 2°, et 38"
 
   - code: apec
     libelle: "Association pour l'emploi des cadres (APEC)"

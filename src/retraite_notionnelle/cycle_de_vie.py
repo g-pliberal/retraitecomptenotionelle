@@ -33,20 +33,24 @@ année civile : ce qu'elle verse, ce qu'elle reçoit.
 
 CE QUI EST VERSÉ, C'EST CE QUE LA PAIE SUPPORTE pour la retraite, et non ce
 qui est porté au compte : la cotisation salariale et la patronale, aux taux
-du droit en vigueur de chaque régime, et de l'État la part de sa contribution
-que la Cour des comptes rattache à la retraite de l'agent
-(:func:`cotisations_versees`). Les scénarios 2 à 5 ne diffèrent entre eux
-que par ce qui est porté au compte, non par ce que la paie supporte :
-l'employeur verse toujours sa part, elle finance toujours le système, elle
-n'ouvre plus de droit à celui qui la voit passer. Ils versent donc tous ce
-que prélève le compte du scénario 4 (:func:`cotisations_reformees`) : les
-cotisations du scénario 1 jusqu'à la bascule, puis le taux du régime
-fusionné, qu'ils prélèvent pour tous. Le 6 verse celles du scénario 1
-jusqu'à la bascule, puis son taux unique et les deux parts de son pilier
-capitalisé, puisque la rente qu'il sert entre dans ce qu'il reçoit
-(:func:`cotisations_liberales`). Ce que les régimes provisionnés — le RAFP —
-encaissent et servent est hors des deux flux, comme il est hors de la
-comparaison des six systèmes.
+du droit en vigueur de chaque régime, de l'État la part de sa contribution
+que la Cour des comptes rattache à la retraite de l'agent, et les
+contributions d'équilibre de l'Agirc-Arrco — l'ASF, l'AGFF, la CET de l'Agirc,
+la CEG et la CET —, que le compte ne porte pas, mais que la paie supporte
+pour la retraite complémentaire (:func:`cotisations_versees`,
+:mod:`~retraite_notionnelle.contributions_equilibre`). Les scénarios 2 à 5
+ne diffèrent entre eux que par ce qui est porté au compte, non par ce que la
+paie supporte : l'employeur verse toujours sa part, elle finance toujours le
+système, elle n'ouvre plus de droit à celui qui la voit passer. Ils versent
+donc tous ce que prélève le compte du scénario 4, et jusqu'à la bascule les
+contributions d'équilibre (:func:`cotisations_reformees`) : ce que verse le
+scénario 1 jusqu'à elle, puis le taux du régime fusionné, qu'ils prélèvent
+pour tous et qui remplace la complémentaire et ses contributions. Le 6 verse
+ce que verse le scénario 1 jusqu'à la bascule, puis son taux unique et les
+deux parts de son pilier capitalisé, puisque la rente qu'il sert entre dans
+ce qu'il reçoit (:func:`cotisations_liberales`). Ce que les régimes
+provisionnés — le RAFP — encaissent et servent est hors des deux flux, comme
+il est hors de la comparaison des six systèmes.
 
 CE QUI EST REÇU, C'EST CE QUI EST SERVI, année après année
 (:func:`niveaux_actuels`, :func:`niveaux_notionnels`). Le scénario 1 suit le
@@ -77,15 +81,12 @@ références n'ont pas la même :
 Les cotisations, elles, ne sont pas pondérées par la survie : comme chez le
 COR et l'OCDE, la carrière est celle de qui atteint le départ.
 
-CE QUE LE MODULE NE FAIT PAS. Il ne compte pas, dans ce qui est versé, les
-contributions d'équilibre de l'Agirc-Arrco — l'ASF, l'AGFF, la CEG, la CET —,
-que le compte notionnel ne porte pas non plus, par un choix que les limites
-déclarent : le rendement du scénario 1 en est un peu relevé. Il ne connaît
-que les prélèvements de 2026 sur les pensions : une pension « nette » l'est
-au taux plein de l'année courante, tenu toute la retraite
-(:func:`taux_de_prelevement`) ; l'histoire de ces prélèvements, que l'IPP
-publie, reste à reprendre. Il ne s'affiche pas encore sur le site, et n'a
-pas de jumeau JavaScript.
+CE QUE LE MODULE NE FAIT PAS. Il ne connaît que les prélèvements de 2026 sur
+les pensions : une pension « nette » l'est au taux plein de l'année courante,
+tenu toute la retraite (:func:`taux_de_prelevement`) ; l'histoire de ces
+prélèvements, que l'IPP publie, reste à reprendre. Il ne s'affiche pas encore
+sur le site, et n'a pas de jumeau JavaScript, pas plus que
+:mod:`~retraite_notionnelle.contributions_equilibre`.
 """
 
 from __future__ import annotations
@@ -95,6 +96,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 
 from .config import RevalorisationStock
+from .contributions_equilibre import contributions_d_une_carriere
 from .cout import coefficient_actuel
 from .donnees.mortalite import AGE_TERMINAL
 from .remuneration import charger_prelevements
@@ -260,7 +262,8 @@ def _par_annee(couples) -> dict[int, float]:
 def cotisations_versees(simulateur, carriere) -> dict[int, float]:
     """Ce que le droit en vigueur prélève sur ``carriere`` pour sa retraite,
     année par année et sans bascule : la cotisation salariale et la patronale,
-    et de l'État la part que ``Parametres.contribution_etat`` lui rattache.
+    de l'État la part que ``Parametres.contribution_etat`` lui rattache, et les
+    contributions d'équilibre de l'Agirc-Arrco.
 
     Le compte des scénarios 4 et 5, bâti sans le régime fusionné de la
     bascule : il porte, chaque année, les taux du droit en vigueur de chaque
@@ -274,24 +277,40 @@ def cotisations_versees(simulateur, carriere) -> dict[int, float]:
     ressources telles que les impôts et taxes affectés et les transferts ».
     Le COR et TRAJECTOiRE ne comptent, pour l'État, que la retenue de l'agent ;
     la recette de la page Coût, le taux entier (``cout.TAUX_REELS``). Ce que
-    les régimes provisionnés encaissent n'y est pas."""
+    les régimes provisionnés encaissent n'y est pas.
+
+    Le compte ne porte pas les contributions d'équilibre de l'Agirc-Arrco,
+    qui n'achètent aucun point et ne sont pas des cotisations (décision du
+    2 octobre 2026) ; la paie du salarié du privé les supporte pour la
+    retraite complémentaire, et TRAJECTOiRE comme le COR les comptent : elles
+    s'ajoutent ici à ce que le compte prélève
+    (:func:`~retraite_notionnelle.contributions_equilibre.contributions_d_une_carriere`)."""
     compte = simulateur.constructeur_employeur.construire(
         carriere,
         annee_liquidation=carriere.annee_liquidation,
         annee_debut=carriere.premiere_annee,
     )
-    return _par_annee((ligne.annee, ligne.cotisation) for ligne in compte.cotisations)
+    return _par_annee([(ligne.annee, ligne.cotisation) for ligne in compte.cotisations]
+                      + sorted(contributions_d_une_carriere(simulateur, carriere).items()))
 
 
-def cotisations_reformees(comparaison) -> dict[int, float]:
+def cotisations_reformees(simulateur, comparaison) -> dict[int, float]:
     """Ce que versent les scénarios 2 à 5 : ce que prélève le compte du
     scénario 4, part patronale comprise — les taux du droit en vigueur
     jusqu'à la bascule, ceux de :func:`cotisations_versees`, puis le taux du
     régime fusionné, celui du statut pivot, que la réforme prélève pour tous.
     Un agent de l'État n'y verse plus, après la bascule, que ce taux-là : la
-    contribution d'équilibre de l'État ne finance plus ses droits."""
+    contribution d'équilibre de l'État ne finance plus ses droits. Les
+    contributions d'équilibre de l'Agirc-Arrco s'y ajoutent jusqu'à la
+    bascule, où la paie les supportait ; après elle, le régime fusionné
+    remplace la complémentaire, et son taux les omet, comme celui du
+    scénario 6."""
     compte = comparaison.notionnel_retroactif_employeur.compte
-    return _par_annee((ligne.annee, ligne.cotisation) for ligne in compte.cotisations)
+    bascule = simulateur.parametres.annee_bascule
+    equilibre = contributions_d_une_carriere(simulateur, comparaison.carriere)
+    return _par_annee([(ligne.annee, ligne.cotisation) for ligne in compte.cotisations]
+                      + [(annee, montant) for annee, montant in sorted(equilibre.items())
+                         if annee < bascule])
 
 
 def cotisations_liberales(simulateur, versees: dict[int, float],
@@ -457,7 +476,7 @@ def flux_des_systemes(simulateur, comparaison) -> dict[str, Flux]:
             dernier_revenu=comparaison.dernier_revenu_annualise,
         ),
     }
-    reformees = cotisations_reformees(comparaison)
+    reformees = cotisations_reformees(simulateur, comparaison)
     for scenario in SCENARIOS[1:]:
         carriere_du_scenario = comparaison.carriere_de(scenario)
         reporte = carriere_du_scenario is not carriere

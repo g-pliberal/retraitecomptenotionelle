@@ -46,6 +46,14 @@ Ce que la première confrontation a montré, le 7 octobre 2026 :
   que l'OCDE projette sert un quart de plus que celui du dépôt, sous la
   convention du COR. La mortalité de l'ONU fait vivre les femmes plus
   longtemps que celle de l'INSEE.
+
+Ce que le 9 octobre 2026 a changé : le dépôt compte les contributions
+d'équilibre (``contributions_equilibre.py``). Son taux de cotisation du privé
+est celui de TRAJECTOiRE à 0,4 % près, aux taux moyens de l'Arrco ; le COR les
+compte aussi, ce que montre le rendement de chaque régime de la génération
+2000. Le rendement du cas type n° 2 en perd 0,22 à 0,25 point, et l'écart au
+COR des générations 1963 à 1970, que l'oubli compensait, apparaît : commun au
+régime général et à l'Agirc-Arrco, sa cause reste à trouver.
 """
 
 from __future__ import annotations
@@ -61,6 +69,7 @@ from retraite_notionnelle import cycle_de_vie
 from retraite_notionnelle.castypes import CAS_TYPES, CasType
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.contexte import Contexte
+from retraite_notionnelle.cout import coefficient_actuel
 from retraite_notionnelle.saisie import Saisie
 from retraite_notionnelle.simulateur import Simulateur
 
@@ -143,19 +152,33 @@ def cas_type_2(trajectoire, contexte, simulateur) -> dict[int, object]:
             for generation in GENERATIONS_CAS_TYPE_2}
 
 
+#: Les générations dont le rendement du cas type n° 2 s'écarte de celui du COR
+#: au-delà de la tolérance, et les bornes de l'écart, dépôt moins COR. La cause
+#: est la même pour toutes, et reste à trouver : voir le test.
+ECARTS_RENDEMENT = {1963: (-0.0040, -0.0020), 1964: (-0.0045, -0.0025),
+                    1970: (-0.0060, -0.0040)}
+
+
 def test_le_rendement_interne_du_cas_type_2_est_celui_du_cor(cor, cas_type_2, simulateur):
     """Le COR publie le rendement interne net de son cas type n° 2, flux
     actualisés selon le salaire moyen (figure 3.7). Sous ses conventions —
     les deux sexes réunis, le décès à 60 ans plus l'espérance de vie à 60 ans
-    de la génération, la pension nette au taux plein, les cotisations seules
-    — et sur les carrières que TRAJECTOiRE a bâties pour lui, le dépôt le
-    retrouve à 0,3 point près, et décroissant comme lui de 1955 à 1970.
+    de la génération, la pension nette au taux plein, les cotisations seules,
+    contributions d'équilibre de l'Agirc-Arrco comprises, comme lui (test
+    suivant) — et sur les carrières que TRAJECTOiRE a bâties pour lui, le
+    dépôt le retrouve à 0,2 point près pour les générations 1955 et 1960, et
+    décroissant comme lui de 1955 à 1970.
 
-    Ce qui sépare encore les deux : le dépôt prélève toute la retraite aux
-    taux de 2026, quand la CSG d'une pension était de 6,6 % jusqu'en 2017 —
-    le rendement des générations 1955 et 1960 en est abaissé — ; il ne porte
-    pas l'AGFF ni la CEG — le rendement en est relevé — ; et ses carrières
-    sont celles de TRAJECTOiRE, non celles du secrétariat général du COR."""
+    Mais il décroît plus vite : de 0,9 point de 1955 à 1970, le COR de 0,4.
+    Jusqu'au 9 octobre 2026, le dépôt ne comptait pas les contributions
+    d'équilibre, et son rendement, relevé de 0,22 à 0,25 point, tenait les
+    cinq générations à 0,3 point : l'oubli compensait l'écart. Celui-ci est
+    aussi grand au régime général seul (génération 2000, test suivant) : il
+    ne tient pas à ce qui est versé à la complémentaire, et sa cause reste à
+    trouver. Le dépôt prélève par ailleurs toute la retraite aux taux de 2026,
+    quand la CSG d'une pension était de 6,6 % jusqu'en 2017 — le rendement
+    des générations 1955 et 1960 en est abaissé —, et ses carrières sont
+    celles de TRAJECTOiRE, non celles du secrétariat général du COR."""
     publie = cor["rendement_cas_type_2"]
     calcules = {}
     for generation, comparaison in cas_type_2.items():
@@ -163,11 +186,92 @@ def test_le_rendement_interne_du_cas_type_2_est_celui_du_cor(cor, cas_type_2, si
         calcules[generation] = cycle_de_vie.indicateurs(
             flux, simulateur, cycle_de_vie.convention_cor(simulateur, comparaison)
         ).rendement_smpt
-        assert abs(calcules[generation] - publie[str(generation)]) <= 0.0035, (
-            generation, calcules[generation], publie[str(generation)])
+        ecart = calcules[generation] - publie[str(generation)]
+        if generation in ECARTS_RENDEMENT:
+            bas, haut = ECARTS_RENDEMENT[generation]
+            assert bas <= ecart <= haut and abs(ecart) > 0.002, (generation, ecart)
+        else:
+            assert abs(ecart) <= 0.002, (generation, calcules[generation],
+                                         publie[str(generation)])
     rangs = list(GENERATIONS_CAS_TYPE_2)
     assert all(calcules[a] > calcules[b] for a, b in zip(rangs, rangs[1:]))
     assert all(publie[str(a)] > publie[str(b)] for a, b in zip(rangs, rangs[1:]))
+    assert ((calcules[1955] - calcules[1970])
+            > 2.0 * (publie["1955"] - publie["1970"]))
+
+
+#: Les régimes que le COR range sous l'Agirc-Arrco.
+REGIMES_AGIRC_ARRCO = {"arrco", "arrco_tranche_2", "agirc", "agirc_arrco"}
+
+
+def _rendements_par_regime(simulateur, comparaison) -> dict[str, float]:
+    """Le rendement interne net de la Cnav et celui de l'Agirc-Arrco, avec et
+    sans les contributions d'équilibre, sous les conventions du COR : chacun
+    sur ses cotisations et sa pension. La carrière part après l'année
+    courante : la pension de la Cnav suit les prix, celle de l'Agirc-Arrco la
+    valeur de service que le COR projette, comme dans
+    :func:`cycle_de_vie.niveaux_actuels`."""
+    flux = cycle_de_vie.flux_des_systemes(simulateur, comparaison)["actuel"]
+    carriere = comparaison.carriere
+    liquidation = carriere.annee_liquidation
+    assert liquidation > simulateur.parametres.annee_courante
+    compte = simulateur.constructeur_employeur.construire(
+        carriere, annee_liquidation=liquidation, annee_debut=carriere.premiere_annee)
+    cotisations: dict[str, dict[int, float]] = {"cnav": {}, "agirc_arrco": {}}
+    for ligne in compte.cotisations:
+        for regime, montant in ligne.par_regime:
+            famille = cotisations["agirc_arrco" if regime in REGIMES_AGIRC_ARRCO else "cnav"]
+            famille[ligne.annee] = famille.get(ligne.annee, 0.0) + montant
+    avec = dict(cotisations["agirc_arrco"])
+    for annee, montant in cycle_de_vie.contributions_d_une_carriere(simulateur, carriere).items():
+        avec[annee] = avec.get(annee, 0.0) + montant
+    pensions = {"cnav": 0.0, "agirc_arrco": 0.0}
+    for pension in comparaison.actuel.pensions_par_regime:
+        pensions["agirc_arrco" if pension.regime in REGIMES_AGIRC_ARRCO else "cnav"] += (
+            pension.montant)
+    revalorisation = cycle_de_vie._revalorisation(simulateur, max(flux.niveaux))
+    prix = {annee: simulateur.macro.coefficient_prix(liquidation, annee) for annee in flux.niveaux}
+    points = {annee: coefficient_actuel({"agirc_arrco": 1.0}, revalorisation, liquidation, annee)
+              for annee in flux.niveaux}
+    convention = cycle_de_vie.convention_cor(simulateur, comparaison)
+
+    def rendement(versees: dict[int, float], niveaux: dict[int, float]) -> float:
+        return cycle_de_vie.indicateurs(replace(flux, cotisations=versees, niveaux=niveaux),
+                                        simulateur, convention).rendement_smpt
+
+    return {
+        "cnav": rendement(cotisations["cnav"],
+                          {a: pensions["cnav"] * prix[a] for a in flux.niveaux}),
+        **{cle: rendement(versees, {a: pensions["agirc_arrco"] * prix[a] * points[a]
+                                    for a in flux.niveaux})
+           for cle, versees in (("agirc_arrco", avec),
+                                ("agirc_arrco_sans_contributions", cotisations["agirc_arrco"]))},
+    }
+
+
+def test_le_cor_compte_les_contributions_d_equilibre_comme_des_cotisations(cor, simulateur):
+    """Le COR ne compte que « les cotisations » ; les contributions
+    d'équilibre de l'Agirc-Arrco en sont-elles ? Il publie, pour la
+    génération 2000, le rendement de chaque régime (figure 3.A). Le dépôt est
+    sous lui au régime général seul, de 0,43 point pour le salarié au salaire
+    moyen et de 0,65 pour le cadre — ce qui ne doit rien à la complémentaire.
+    À l'Agirc-Arrco, avec les contributions d'équilibre, il est sous lui
+    d'autant, à 0,3 point près (0,08 et 0,24) ; sans elles, il serait
+    au-dessus de lui, à 0,8 point de l'écart du régime général. Le COR les
+    compte donc, comme
+    TRAJECTOiRE, dont il tient ses cas types, et le dépôt les compte depuis le
+    9 octobre 2026 (``contributions_equilibre.py``)."""
+    publie = cor["rendement_generation_2000"]
+    for code, profil in (("salaire_moyen", "non_cadre"), ("cadre", "cadre")):
+        cas = next(c for c in CAS_TYPES if c.code == code)
+        rendements = _rendements_par_regime(
+            simulateur, simulateur.simuler(cas.construire(simulateur, 2000)))
+        cnav = rendements["cnav"] - publie[profil]["cnav"]
+        avec = rendements["agirc_arrco"] - publie[profil]["agirc_arrco"]
+        sans = rendements["agirc_arrco_sans_contributions"] - publie[profil]["agirc_arrco"]
+        assert cnav < -0.003, (profil, cnav)
+        assert abs(avec - cnav) <= 0.003, (profil, cnav, avec)
+        assert sans - cnav >= 0.007, (profil, cnav, sans)
 
 
 def test_le_rendement_du_cadre_est_sous_celui_du_non_cadre_comme_au_cor(cor, simulateur):
@@ -175,7 +279,11 @@ def test_le_rendement_du_cadre_est_sous_celui_du_non_cadre_comme_au_cor(cor, sim
     0,83 %, parce qu'une part de la rémunération du cadre cotise au-dessus du
     plafond sans ouvrir de droit au régime général. Sous les mêmes
     conventions, le cadre et le salarié au salaire moyen de la grille
-    s'écartent d'autant, à 0,2 point près."""
+    s'écartent d'autant, à 0,25 point près : de 0,97 point, contre 0,78. Ils
+    s'écartaient de 0,86 point avant que le dépôt compte les contributions
+    d'équilibre, que le cadre verse au taux de la tranche 2 sur une plus
+    grande part de sa rémunération ; les cas types de la grille ne sont pas
+    ceux du COR."""
     publie = cor["rendement_generation_2000"]
     ecart_publie = publie["cadre"]["total"] - publie["non_cadre"]["total"]
     rendements = {}
@@ -188,7 +296,7 @@ def test_le_rendement_du_cadre_est_sous_celui_du_non_cadre_comme_au_cor(cor, sim
         ).rendement_smpt
     ecart = rendements["cadre"] - rendements["salaire_moyen"]
     assert ecart < 0.0 and ecart_publie < 0.0
-    assert abs(ecart - ecart_publie) <= 0.002, (ecart, ecart_publie)
+    assert abs(ecart - ecart_publie) <= 0.0025, (ecart, ecart_publie)
 
 
 # ---------------------------------------------------------------------------
@@ -323,15 +431,16 @@ def _taux_moyens_arrco(trajectoire: dict) -> dict[int, float]:
 
 def test_le_taux_de_cotisation_du_prive_est_celui_de_trajectoire_aux_conventions_pres(
         trajectoire, flux_trajectoire, simulateur):
-    """TRAJECTOiRE cotise davantage, pour deux raisons que le dépôt connaît :
-    il prend à l'Arrco le taux contractuel moyen des entreprises — 5,42 % de
-    1960 à 1998, contre 4 % au minimum —, et il compte les contributions
-    d'équilibre, l'AGFF de 2001 à 2018 et la CEG depuis 2019, que le compte
-    notionnel ne porte pas, par un choix que les limites déclarent. Le taux
-    de cotisation du dépôt est de 9 à 14 % sous le sien ; aux taux moyens de
-    TRAJECTOiRE, l'écart se réduit de 2 à 5 points — d'autant plus que la
-    carrière a d'années d'avant 1999 —, et ce qui en reste, 7 à 8 %, est celui
-    des contributions d'équilibre."""
+    """TRAJECTOiRE compte, comme le dépôt depuis le 9 octobre 2026, les
+    contributions d'équilibre de l'Agirc-Arrco — l'ASF de 1984 au 31 mars
+    2001, l'AGFF jusqu'en 2018, la CEG depuis 2019 —, que le compte
+    notionnel ne porte pas, par un choix que les limites déclarent, mais que
+    la paie supporte. Il ne cotise plus davantage que pour une raison : il
+    prend à l'Arrco le taux contractuel moyen des entreprises — 5,42 % de
+    1960 à 1998, contre 4 % au minimum. Le taux de cotisation du dépôt est de
+    3 à 5 % sous le sien ; aux taux moyens de TRAJECTOiRE, il est le sien à
+    0,4 % près. Le 7 octobre, sans les contributions d'équilibre, il était de
+    10 à 12 % sous le sien, et de 7 à 8 % aux taux moyens."""
     moyens = _taux_moyens_arrco(trajectoire)
     for cle, (comparaison, flux) in flux_trajectoire.items():
         if not cle.startswith(PRIVE_NON_CADRE):
@@ -341,7 +450,7 @@ def test_le_taux_de_cotisation_du_prive_est_celui_de_trajectoire_aux_conventions
         publie = (contenu["trajectoire"]["indicateurs"]["txAnnuite"]
                   / contenu["trajectoire"]["indicateurs"]["txRecuperation"])
         rapport = _taux_de_cotisation(cycle_de_vie.indicateurs(flux, simulateur, convention)) / publie
-        assert 0.86 <= rapport <= 0.91, (cle, rapport)
+        assert 0.94 <= rapport <= 0.98, (cle, rapport)
         carriere = comparaison.carriere
         compte = simulateur.constructeur_employeur.construire(
             carriere, annee_liquidation=carriere.annee_liquidation,
@@ -352,10 +461,12 @@ def test_le_taux_de_cotisation_du_prive_est_celui_de_trajectoire_aux_conventions
                 if regime in ("arrco", "agirc_arrco"):
                     montant *= moyens.get(ligne.annee, 1.0)
                 aux_taux_moyens[ligne.annee] = aux_taux_moyens.get(ligne.annee, 0.0) + montant
+        for annee, montant in cycle_de_vie.contributions_d_une_carriere(simulateur, carriere).items():
+            aux_taux_moyens[annee] = aux_taux_moyens.get(annee, 0.0) + montant
         refait = _taux_de_cotisation(cycle_de_vie.indicateurs(
             replace(flux, cotisations=aux_taux_moyens), simulateur, convention)) / publie
         assert refait - rapport >= 0.02, (cle, rapport, refait)
-        assert 0.91 <= refait <= 0.95, (cle, refait)
+        assert 0.99 <= refait <= 1.005, (cle, refait)
 
 
 #: Les fonctionnaires de l'État des cas types du COR et du témoin de Destinie.

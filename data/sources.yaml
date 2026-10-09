@@ -2089,6 +2089,33 @@ institutions:
           comme la valeur de service du point, opposable aux seuls assurés nés
           à compter du 2 août 1951 — vient des mêmes publications.
 
+      - id: agirc_arrco_accords_contributions_equilibre
+        titre: >-
+          Accords nationaux des partenaires sociaux de l'Agirc et de l'Arrco
+          (recueil de 1993 à 2015), accord du 10 février 2001 et accord
+          national interprofessionnel du 17 novembre 2017 : les contributions
+          d'équilibre — AGFF, contribution exceptionnelle et temporaire de
+          l'Agirc, CEG et CET
+        url: https://www.agirc-arrco.fr/storage/2021/11/liste_accords_paritaires_Agirc_Arrco.pdf
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/legislation/contributions_equilibre_agirc_arrco.yaml
+        note: >-
+          Lus le 9 octobre 2026 (action 138, étape 9), sur les PDF que la
+          fédération publie : l'accord du 10 février 2001 (III.2 : l'AGFF au
+          1er avril 2001, 2,00 % sur la tranche A et 2,20 % sur la tranche B,
+          accords_Agirc_Arcco_10022001-1.pdf), le recueil des accords de 1993
+          à 2015 (accord du 25 avril 1996 relatif au régime des cadres,
+          article 7 : la CET de l'Agirc, de 0,07 % en 1997 à 0,35 % en 2001 ;
+          accord du 18 mars 2011, article 2 ; accord du 30 octobre 2015,
+          articles 3 et 4-1 : l'AGFF sur la tranche C, la CET reconduite), et
+          l'ANI du 17 novembre 2017 (201809dc_ANI_du_17_novembre_2017.pdf,
+          articles 2, 32, 34, 37 et 38 : la fin de l'AGFF et de l'ASF, la CEG,
+          la CET et leur partage). Les accords sont hors JORF : la valeur reste
+          `haute`. Les parts de la CET de l'Agirc de 1997 à 2000 viennent de
+          l'IPP, qui les tient des bulletins de l'époque ; TRAJECTOiRE porte les
+          mêmes taux.
+
   assemblee_nationale:
     nom: Assemblée nationale
     role: >-
@@ -4506,6 +4533,30 @@ institutions:
           2026, des auxiliaires médicaux (CARPIMKO) depuis 1996 et des notaires
           (CPRN) depuis 1949. Ces trois sections n'ont pas de fiche, faute non
           pas du taux mais du PRIX DU POINT — voir la note de `cnavpl`.
+
+      - id: ipp_asf
+        titre: >-
+          Cotisation à l'Association pour la gestion de la structure
+          financière (ASF), de 1984 au 31 mars 2001, chez l'IPP
+        url: https://baremes.ipp.eu/parameters/prelevements-sociaux/prelevements_sociaux.cotisations_regime_assurance_chomage.asf
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/legislation/contributions_equilibre_agirc_arrco.yaml
+        note: >-
+          Lu le 9 octobre 2026 (action 138, étape 9), en CSV, part salariale
+          et part patronale. L'IPP range l'ASF parmi les cotisations
+          d'assurance chômage, qui la recouvrait. Il cite l'accord du
+          10 janvier 1984, les conventions d'assurance chômage du 24 février
+          1984 et du 1er janvier 1994 et le compromis du 25 juin 1990, mais
+          aucun texte que le dépôt puisse lire : la convention de 1994, agréée
+          au Journal officiel (JORFARTI000002363389), renvoie à « l'accord du
+          4 février 1983 ou [à] tout accord le modifiant », sans chiffre. La
+          valeur reste donc `moyenne`. TRAJECTOiRE porte les mêmes taux, à
+          l'année. LE MÊME BARÈME, FAUX PLUS LOIN : celui de l'AGFF des cadres
+          déplace en 2016 la borne de la tranche A à quatre plafonds au lieu
+          d'ajouter la tranche C — l'accord du 30 octobre 2015 (article 3)
+          étend la tranche B à la tranche C, au même taux. Le dépôt lit
+          l'accord.
 
   cepii:
     nom: Centre d'études prospectives et d'informations internationales

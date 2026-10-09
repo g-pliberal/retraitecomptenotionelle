@@ -1,0 +1,41 @@
+date: "2026-10-09"
+session: "action 138, étape 9, deuxième partie : les contributions d'équilibre de l'Agirc-Arrco dans ce qui est versé"
+consulte: >-
+  `python scripts/veille_droit.py` : quatre fiches à relire, aucune touchée par
+  la session, qui n'écrit aucune règle du scénario 1 — les contributions
+  d'équilibre n'ouvrent aucun droit, et seuls les indicateurs de cycle de vie
+  les lisent. Les accords que publie la fédération Agirc-Arrco : l'accord du
+  10 février 2001, le recueil des accords nationaux de 1993 à 2015 (accords du
+  25 avril 1996, du 18 mars 2011 et du 30 octobre 2015), l'accord national
+  interprofessionnel du 17 novembre 2017 dans sa version applicable au
+  1er janvier 2019. Les barèmes de l'IPP de l'ASF, de l'AGFF, de la CET de
+  l'Agirc, de la CEG et de la CET, en CSV. Le JORF par l'index de la DILA :
+  « structure financière », 33 documents jusqu'en 2001, dont les conventions
+  d'assurance chômage du 1er janvier 1993 et du 1er janvier 1994. Le code de
+  TRAJECTOiRE au commit 0963b57 (paramCotis.csv, fonctionsCalculsDivers.R), lu
+  sans être copié. L'annexe méthodologique du rapport du COR de juin 2026
+  (§ 2.3, c).
+trouve: >-
+  Les taux et leurs dates : l'AGFF au 1er avril 2001, 2,00 % sous le plafond et
+  2,20 % au-dessus, jusqu'à quatre plafonds (III.2 de l'accord de 2001), sur la
+  tranche C des cadres au 1er janvier 2016 (article 3 de l'accord de 2015) ; la
+  CET de l'Agirc, de 0,07 % en 1997 à 0,35 % en 2001, sur toute la rémunération
+  du cadre jusqu'à huit plafonds (article 7 de l'accord de 1996, article 4-1 de
+  celui de 2015) ; la CEG, 2,15 % et 2,70 %, et la CET, 0,35 % au-delà du
+  plafond, depuis 2019, à 60 % pour l'employeur (articles 37 et 38 de l'accord
+  de 2017, dont l'article 2 met fin à l'AGFF et à l'ASF). L'ASF ne se lit pas :
+  la convention d'assurance chômage de 1994, qui la recouvre, renvoie à l'accord
+  du 4 février 1983 sans chiffre, et l'exclut à Saint-Pierre-et-Miquelon
+  (article 7, § 2, JORFARTI000002363389) ; ses taux sont ceux de l'IPP et de
+  TRAJECTOiRE. Deux erreurs : le barème de l'AGFF des cadres de l'IPP déplace
+  en 2016 la borne de la tranche A au lieu d'ajouter la tranche C ; la fiche de
+  paie du dépôt citait les articles 34 et 35 de l'accord de 2017 pour la CEG et
+  la CET, qui sont à l'article 37 (corrigé). Le COR compte les contributions
+  dans le rendement interne : son rendement par régime de la génération 2000
+  le montre, l'annexe ne le dit pas.
+reste: >-
+  L'accord du 4 février 1983 et ceux qui l'ont modifié, pour les taux de l'ASF
+  et ce qu'elle prélevait en 1983 ; les « conditions particulières » de
+  l'accord de 2017 à Saint-Pierre-et-Miquelon et en Nouvelle-Calédonie
+  (article 8) ; ce que le ministre du culte versait à l'AGFF avant 2019 ;
+  l'histoire des prélèvements sur les pensions depuis 1980, que l'IPP publie.

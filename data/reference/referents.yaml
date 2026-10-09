@@ -3397,7 +3397,11 @@ referents:
           l'allure près ; son taux de cotisation, aux conventions près
           (taux moyens de l'Arrco, contributions d'équilibre). Ce
           qu'il calcule à plusieurs âges et en net est au point
-          suivant.
+          suivant. Le 9 octobre 2026, le dépôt compte comme lui les
+          contributions d'équilibre de l'Agirc-Arrco — l'ASF, l'AGFF,
+          la CET de l'Agirc, la CEG et la CET
+          (`contributions_equilibre.py`) : son taux de cotisation du
+          privé est le sien à 0,4 % près, aux taux moyens de l'Arrco.
         etat: repris
         chantier: "138.9"
       - quoi: >-

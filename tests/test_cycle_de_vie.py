@@ -232,6 +232,32 @@ def test_les_scenarios_2_a_5_versent_ce_que_preleve_le_compte_du_scenario_4(simu
             assert flux["notionnel_retroactif"].cotisations[annee] < montant
 
 
+def test_le_salarie_du_prive_verse_aussi_les_contributions_d_equilibre(
+        simulateur, parti_en_2044):
+    """Le compte ne porte pas les contributions d'équilibre de l'Agirc-Arrco ;
+    la paie les supporte. Le scénario 1 les verse toute la carrière, en plus
+    de ce que le compte prélève ; les scénarios 2 à 5 jusqu'à la bascule
+    seulement, où le régime fusionné remplace la complémentaire et ses
+    contributions."""
+    flux = cycle_de_vie.flux_des_systemes(simulateur, parti_en_2044)
+    carriere = parti_en_2044.carriere
+    equilibre = cycle_de_vie.contributions_d_une_carriere(simulateur, carriere)
+    bascule = simulateur.parametres.annee_bascule
+    assert min(equilibre) < bascule <= max(equilibre)
+    compte = simulateur.constructeur_employeur.construire(
+        carriere, annee_liquidation=carriere.annee_liquidation,
+        annee_debut=carriere.premiere_annee)
+    sans = {ligne.annee: ligne.cotisation for ligne in compte.cotisations}
+    for annee, montant in equilibre.items():
+        assert flux["actuel"].cotisations[annee] == pytest.approx(sans[annee] + montant)
+    reforme = {ligne.annee: ligne.cotisation
+               for ligne in parti_en_2044.notionnel_retroactif_employeur.compte.cotisations}
+    for scenario in cycle_de_vie.SCENARIOS[1:5]:
+        for annee, montant in flux[scenario].cotisations.items():
+            avant = equilibre.get(annee, 0.0) if annee < bascule else 0.0
+            assert montant == pytest.approx(reforme[annee] + avant), (scenario, annee)
+
+
 def test_le_scenario_6_verse_son_taux_unique_et_son_pilier_apres_la_bascule(
         simulateur, parti_en_2044):
     flux = cycle_de_vie.flux_des_systemes(simulateur, parti_en_2044)

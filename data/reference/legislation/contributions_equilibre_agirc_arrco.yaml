@@ -1,0 +1,241 @@
+# LES CONTRIBUTIONS D'ÉQUILIBRE DE L'AGIRC-ARRCO : ce que la paie d'un salarié
+# du privé supporte pour la retraite complémentaire sans qu'aucun point ne
+# l'achète.
+# source_id: agirc_arrco_accords_contributions_equilibre, ipp_asf
+#
+# Cinq prélèvements se sont succédé, ou ajoutés l'un à l'autre :
+#
+# * l'ASF, l'Association pour la gestion de la structure financière, que
+#   l'accord du 4 février 1983 crée pour payer aux régimes complémentaires la
+#   retraite à soixante ans sans abattement, et les garanties de ressources de
+#   l'assurance chômage, en extinction ; l'assurance chômage la recouvre avec
+#   ses propres contributions, jusqu'au 31 mars 2001 ;
+# * l'AGFF, l'Association pour la gestion du fonds de financement de l'Agirc
+#   et de l'Arrco, qui « se substitue » à l'ASF au 1er avril 2001 (accord du
+#   10 février 2001, III.1), et que les institutions recouvrent « dans les mêmes
+#   conditions que les cotisations des régimes AGIRC et ARRCO » (III.2) ;
+# * la contribution exceptionnelle et temporaire de l'Agirc, « non génératrice
+#   de droits », que les seuls cadres versent de 1997 à 2018 ;
+# * depuis le 1er janvier 2019, la contribution d'équilibre général et la
+#   contribution d'équilibre technique, que l'accord du 17 novembre 2017
+#   institue « dans une perspective de financement des opérations du régime »
+#   (article 37), et dont l'article 34 dit qu'elles « ne sont pas génératrices
+#   de points ». Le même accord « acte le terme » de l'AGFF au 31 décembre 2018
+#   et « met fin » à l'ASF (article 2).
+#
+# CE QUI LES LIT. Les indicateurs de cycle de vie (`cycle_de_vie.py`, action
+# 138, étape 9), qui comptent dans ce qu'une carrière verse tout ce que la paie
+# supporte pour la retraite : la cotisation salariale et la patronale, la
+# majoration du taux d'appel, et ces contributions. Le compte notionnel ne les
+# porte pas, par la décision du 2 octobre 2026 : ce sont des contributions, et
+# non des cotisations (`docs/limites/5-hors-du-modele.md`). La fiche de paie de
+# l'année courante porte la CEG et la CET depuis `prelevements_remuneration.yaml` ;
+# un test vérifie que ses taux sont le dernier barème d'ici.
+#
+# LA FORME. Chaque contribution dit les régimes dont l'affiliation la rend due,
+# une année donnée (`regimes`, ceux d'`affiliations.yaml`, services passés
+# retirés), les statuts que son texte écarte (`statuts_exclus`), son dernier
+# jour (`jusqu_au`, absent tant qu'elle court), et ses barèmes, chacun à compter
+# de son premier jour (`debut`). Un barème découpe le salaire en tranches de
+# PLAFOND DE LA SÉCURITÉ SOCIALE, proratisé sur les mois de l'activité :
+# `jusqu_en_plafonds` borne la tranche par le haut, la précédente la borne par
+# le bas. Il en a un pour tous (`tous`), ou un pour les cadres et un pour les
+# autres (`cadres`, `non_cadres`) : avant 2019, est cadre l'année que son
+# statut affilie à l'Agirc (`regimes_cadres`). Un barème qui change en cours
+# d'année compte pour ses mois : l'année prélève la moyenne de ses douze mois.
+# Une contribution due à un régime dont l'assiette est un forfait — les cultes,
+# sur le SMIC — porte sur ce forfait.
+schema_version: 1
+
+regimes_cadres: [agirc, agirc_entreprises_nouvelles]
+
+contributions:
+
+  - code: asf
+    libelle: "Cotisation à l'Association pour la gestion de la structure financière (ASF)"
+    regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles,
+              agirc, agirc_entreprises_nouvelles]
+    jusqu_au: 2001-03-31
+    statuts_exclus:
+      salarie_saint_pierre_et_miquelon: >-
+        L'assurance chômage recouvre les contributions de la structure
+        financière « conformément aux dispositions de l'accord du 4 février
+        1983 », et « cette disposition ne s'applique pas à la collectivité
+        territoriale de Saint-Pierre-et-Miquelon » (convention du 1er janvier
+        1994 relative à l'assurance chômage, art. 7, § 2, agréée par l'arrêté
+        du 4 janvier 1994, JORFARTI000002363389).
+      salarie_nouvelle_caledonie: >-
+        La CAFAT, et non l'Unédic, y indemnise le chômage : l'assurance chômage
+        qui recouvre l'ASF n'y a pas cours, et l'Arrco n'y est obligatoire que
+        depuis le 1er janvier 1995 (`affiliations.yaml`).
+    note: >-
+      TAUX DE L'IPP, NON LUS AUX ACCORDS. Ni l'accord du 4 février 1983, ni ceux
+      qui l'ont modifié ne sont publiés : la convention d'assurance chômage
+      agréée au Journal officiel renvoie à eux sans écrire de chiffre
+      (« selon les modalités prévues à l'article 7 de la convention », article 9
+      du règlement annexé). Les barèmes sont ceux de l'Institut des politiques
+      publiques (`prelevements_sociaux.cotisations_regime_assurance_chomage.asf`,
+      lus le 9 octobre 2026), avec les références qu'il cite ; TRAJECTOiRE
+      porte les mêmes, à l'année (paramCotis, au commit 0963b57). La tranche B
+      va d'un à quatre plafonds pour tous, l'assiette de l'assurance chômage
+      qui recouvre la contribution ; TRAJECTOiRE l'arrête à trois plafonds pour
+      un non-cadre, celle de la tranche 2 de l'Arrco. L'ASF payait aussi, ses
+      premières années, les garanties de ressources de l'assurance chômage
+      qu'elle éteignait (documentation de l'IPP) : le modèle n'en sépare rien.
+      Avant le 1er janvier 1984, aucune cotisation distincte n'est connue.
+    baremes:
+      - debut: 1984-01-01
+        fiabilite: moyenne
+        texte: "Accord du 10 janvier 1984 (IPP)"
+        tous:
+          - {jusqu_en_plafonds: 1, salarie: 0.0080, employeur: 0.0120}
+      - debut: 1984-04-01
+        fiabilite: moyenne
+        texte: >-
+          Convention et règlement d'assurance chômage du 24 février 1984,
+          agréés par arrêté du 28 mars 1984, JO du 4 avril 1984 (IPP)
+        tous:
+          - {jusqu_en_plafonds: 1, salarie: 0.0080, employeur: 0.0120}
+          - {jusqu_en_plafonds: 4, salarie: 0.0080, employeur: 0.0120}
+      - debut: 1990-10-01
+        fiabilite: moyenne
+        texte: "Compromis du 25 juin 1990 (IPP, d'après Dupeyroux, 1993, p. 791)"
+        tous:
+          - {jusqu_en_plafonds: 1, salarie: 0.0072, employeur: 0.0108}
+          - {jusqu_en_plafonds: 4, salarie: 0.0080, employeur: 0.0120}
+      - debut: 1994-01-01
+        fiabilite: moyenne
+        texte: >-
+          Convention et règlement d'assurance chômage du 1er janvier 1994,
+          agréés par arrêté du 4 janvier 1994, JO du 8 janvier 1994 (IPP)
+        tous:
+          - {jusqu_en_plafonds: 1, salarie: 0.0080, employeur: 0.0116}
+          - {jusqu_en_plafonds: 4, salarie: 0.0089, employeur: 0.0129}
+
+  - code: agff
+    libelle: "Cotisation à l'Association pour la gestion du fonds de financement de l'Agirc et de l'Arrco (AGFF)"
+    regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles,
+              agirc, agirc_entreprises_nouvelles]
+    jusqu_au: 2018-12-31
+    note: >-
+      Lue aux accords que l'Agirc-Arrco publie. L'accord du 10 février 2001
+      affecte à l'AGFF « une cotisation sur les salaires versés à compter du
+      1er avril 2001, supportée par les employeurs et les salariés relevant des
+      régimes de retraite complémentaire AGIRC-ARRCO », de 2,00 % sur la
+      tranche A, « supportés à raison de 1,20 % par les employeurs et 0,80 %
+      par les salariés », et de 2,20 % sur la tranche B, d'un à quatre
+      plafonds, à raison de 1,30 et 0,90 % (III.2) ; l'accord du 18 mars 2011
+      la reconduit aux mêmes taux (article 2), et ceux qui suivent jusqu'au
+      31 décembre 2018. Recouvrée comme les cotisations, elle s'arrête pour un
+      non-cadre à la tranche 2 de l'Arrco, trois plafonds (IPP, TRAJECTOiRE).
+      L'accord du 30 octobre 2015 l'étend à la tranche C des cadres, de quatre
+      à huit plafonds, « à compter du 1er janvier 2016 », au taux de la
+      tranche B (article 3). Le salarié de Saint-Pierre-et-Miquelon et celui
+      de Nouvelle-Calédonie, qui relèvent de l'Arrco, la versent ici au barème
+      de métropole, comme la CEG et la CET ensuite : l'accord de 2017 ne s'y
+      applique que « selon des conditions particulières » (article 8), que le
+      dépôt n'a pas lues.
+    baremes:
+      - debut: 2001-04-01
+        fiabilite: haute
+        texte: "Accord du 10 février 2001, III.2 ; accord du 18 mars 2011, article 2"
+        cadres:
+          - {jusqu_en_plafonds: 1, salarie: 0.0080, employeur: 0.0120}
+          - {jusqu_en_plafonds: 4, salarie: 0.0090, employeur: 0.0130}
+        non_cadres:
+          - {jusqu_en_plafonds: 1, salarie: 0.0080, employeur: 0.0120}
+          - {jusqu_en_plafonds: 3, salarie: 0.0090, employeur: 0.0130}
+      - debut: 2016-01-01
+        fiabilite: haute
+        texte: "Accord national interprofessionnel du 30 octobre 2015, article 3"
+        cadres:
+          - {jusqu_en_plafonds: 1, salarie: 0.0080, employeur: 0.0120}
+          - {jusqu_en_plafonds: 8, salarie: 0.0090, employeur: 0.0130}
+        non_cadres:
+          - {jusqu_en_plafonds: 1, salarie: 0.0080, employeur: 0.0120}
+          - {jusqu_en_plafonds: 3, salarie: 0.0090, employeur: 0.0130}
+
+  - code: cet_agirc
+    libelle: "Contribution exceptionnelle et temporaire de l'Agirc (CET)"
+    regimes: [agirc, agirc_entreprises_nouvelles]
+    jusqu_au: 2018-12-31
+    note: >-
+      L'accord du 25 avril 1996 relatif au régime des cadres supprime par
+      cinquièmes les cotisations forfaitaires autres que la garantie minimale
+      de points, et y substitue « une contribution exceptionnelle et
+      temporaire, non génératrice de droits », « assise sur la totalité des
+      rémunérations perçues par les salariés relevant du régime des cadres »,
+      de 0,07 % en 1997, 0,14 % en 1998, 0,21 % en 1999, 0,28 % en 2000 et
+      0,35 % à compter du 1er janvier 2001, « répartie entre employeur et
+      salarié de la même façon que la cotisation sur la tranche B » (article 7).
+      L'accord du 30 octobre 2015 la reconduit pour 2016 à 2018, à 0,35 %
+      « dans la limite de huit fois le montant du plafond » (article 4-1) : la
+      borne vaut ici depuis 1997, comme chez l'IPP. Les parts de l'employeur et
+      du salarié sont celles de l'IPP (bulletins de 1998 à 2000) et de
+      TRAJECTOiRE. La circulaire 2019-1-DRJ de l'Agirc-Arrco en dit la
+      « suppression » au 1er janvier 2019.
+    baremes:
+      - debut: 1997-01-01
+        fiabilite: haute
+        texte: "Accord du 25 avril 1996 relatif au régime des cadres, article 7"
+        tous:
+          - {jusqu_en_plafonds: 8, salarie: 0.00025, employeur: 0.00045}
+      - debut: 1998-01-01
+        fiabilite: haute
+        texte: "Accord du 25 avril 1996 relatif au régime des cadres, article 7"
+        tous:
+          - {jusqu_en_plafonds: 8, salarie: 0.0005, employeur: 0.0009}
+      - debut: 1999-01-01
+        fiabilite: haute
+        texte: "Accord du 25 avril 1996 relatif au régime des cadres, article 7"
+        tous:
+          - {jusqu_en_plafonds: 8, salarie: 0.0008, employeur: 0.0013}
+      - debut: 2000-01-01
+        fiabilite: haute
+        texte: "Accord du 25 avril 1996 relatif au régime des cadres, article 7"
+        tous:
+          - {jusqu_en_plafonds: 8, salarie: 0.0011, employeur: 0.0017}
+      - debut: 2001-01-01
+        fiabilite: haute
+        texte: >-
+          Accord du 25 avril 1996 relatif au régime des cadres, article 7 ;
+          accord national interprofessionnel du 30 octobre 2015, article 4-1
+        tous:
+          - {jusqu_en_plafonds: 8, salarie: 0.0013, employeur: 0.0022}
+
+  - code: ceg
+    libelle: "Contribution d'équilibre général (CEG)"
+    regimes: [agirc_arrco, arrco_cultes]
+    note: >-
+      Accord national interprofessionnel du 17 novembre 2017, article 37, 1° :
+      « afin de financer plus particulièrement les charges d'anticipation du
+      régime », 2,15 % sur la tranche 1 et 2,70 % sur la tranche 2, la
+      tranche 1 jusqu'au plafond et la tranche 2 jusqu'à huit plafonds
+      (article 32), à 60 % à la charge de l'employeur et 40 % à celle du
+      salarié (article 38). Le ministre du culte la verse sur le forfait de sa
+      cotisation : le « taux de base » de la CAVIMAC, 10,02 %, en porte les
+      2,15 % (fiche `arrco_cultes`) ; avant 2019, aucun texte lu ne lui fait
+      verser l'AGFF.
+    baremes:
+      - debut: 2019-01-01
+        fiabilite: haute
+        texte: "Accord national interprofessionnel du 17 novembre 2017, articles 32, 37 et 38"
+        tous:
+          - {jusqu_en_plafonds: 1, salarie: 0.0086, employeur: 0.0129}
+          - {jusqu_en_plafonds: 8, salarie: 0.0108, employeur: 0.0162}
+
+  - code: cet
+    libelle: "Contribution d'équilibre technique (CET)"
+    regimes: [agirc_arrco]
+    due_au_dela_de_plafonds: 1
+    note: >-
+      Accord national interprofessionnel du 17 novembre 2017, article 37, 2° :
+      « pour les participants dont la rémunération excède le plafond », 0,35 %
+      « sur les tranches 1 et 2 », donc dès le premier euro et jusqu'à huit
+      plafonds, à 60 et 40 % (article 38).
+    baremes:
+      - debut: 2019-01-01
+        fiabilite: haute
+        texte: "Accord national interprofessionnel du 17 novembre 2017, articles 32, 37 et 38"
+        tous:
+          - {jusqu_en_plafonds: 8, salarie: 0.0014, employeur: 0.0021}
