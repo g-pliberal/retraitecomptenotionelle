@@ -1474,8 +1474,9 @@ def test_le_minimum_de_reversion_garde_le_montant_que_l_annee_laisse_en_place():
 
 def test_le_bareme_de_la_reversion_est_refuse_s_il_contredit_les_articles():
     """Le minimum doit redonner celui que D. 353-1 écrit pour 2025, le plafond
-    celui de D. 353-4 pour 2010, et les deux garder le rapport de 2010, puisqu'ils
-    se revalorisent ensemble : sinon, rien ne s'écrit."""
+    celui de D. 353-4 pour 2010, la majoration pour enfant ceux de R. 353-11,
+    et le plafond garder avec le minimum le rapport de 2010, puisqu'ils se
+    revalorisent ensemble : sinon, rien ne s'écrit."""
     module = _reversion_cnav()
 
     def ligne(date, montant):
@@ -1483,13 +1484,21 @@ def test_le_bareme_de_la_reversion_est_refuse_s_il_contredit_les_articles():
 
     minimums = [ligne("2009-04-01", 3193.90), ligne("2025-01-01", 3983.29)]
     plafonds = [ligne("2010-01-01", 2400.00), ligne("2025-01-01", 2993.14)]
-    assert module.controler(minimums, plafonds) == []
-    erreurs = module.controler([ligne("2009-04-01", 3193.90), ligne("2025-01-01", 3983.30)],
-                               [ligne("2010-01-01", 2400.00), ligne("2025-01-01", 2993.14)])
+    enfants = [ligne("1988-01-01", round(12 * 400 / 6.55957, 2)),
+               ligne("2025-01-01", 12 * 112.58)]
+    assert module.controler({"minimum": minimums, "plafond": plafonds, "enfant": enfants}) == []
+    erreurs = module.controler({
+        "minimum": [ligne("2009-04-01", 3193.90), ligne("2025-01-01", 3983.30)],
+        "plafond": plafonds, "enfant": enfants})
     assert any(e.startswith("minimum|2025-01-01 : attendu 3983.29") for e in erreurs), erreurs
-    erreurs = module.controler(minimums, [ligne("2010-01-01", 2400.00),
-                                          ligne("2025-01-01", 3100.00)])
+    erreurs = module.controler({
+        "minimum": minimums, "enfant": enfants,
+        "plafond": [ligne("2010-01-01", 2400.00), ligne("2025-01-01", 3100.00)]})
     assert any(e.startswith("plafond 2025-01-01 :") for e in erreurs), erreurs
+    erreurs = module.controler({
+        "minimum": minimums, "plafond": plafonds,
+        "enfant": [enfants[0], ligne("2025-01-01", 12 * 112.59)]})
+    assert any(e.startswith("enfant|2025-01-01 : attendu 1350.96") for e in erreurs), erreurs
 
 
 def _avts_cnav():
