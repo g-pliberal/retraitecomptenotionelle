@@ -1,6 +1,9 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: 53ccf4ba4fb815682503daa2ec2d4e6e65264135
-date: 2026-10-09T15:05:53Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/37947723875
+etat: rouge
+sources: 5e99841d1711c73b6c0369702f09040e3d29cfb6
+date: 2026-10-09T17:00:43Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/37962449192
+echecs:
+  - "FAILED tests/test_parcours.py::test_chaque_compte_du_parcours_est_sur_sa_page[### 6. M\xe9thode et Donn\xe9es \u2014 deux minutes, pour finir-/donnees] - AssertionError: ### 6. Méthode et Données — deux minutes, pour finir"
+  - "FAILED tests/test_verification.py::test_le_bareme_de_la_reversion_est_refuse_s_il_contredit_les_articles - TypeError: controler() takes 1 positional argument but 2 were given"
