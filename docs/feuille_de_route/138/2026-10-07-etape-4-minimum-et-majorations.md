@@ -2,15 +2,14 @@
 
 **Reprise, au 9 octobre 2026.** Fait : le minimum de D. 353-1, les majorations
 de 10 % et de 11,1 %, la base sans le minimum contributif, le maximum, surcote
-en sus (notes du 7 et du 9 octobre) ; le plafond du ménage, 1,6 fois celui
-d'une personne seule pour le survivant qui déclare vivre en couple, et
-l'abattement de 30 % de ses revenus d'activité à cinquante-cinq ans, dans les
-deux moteurs et la saisie (note « plafond du ménage » du 9 octobre). Reste,
-dans cet ordre : la réversion d'un assuré mort avant son départ (R. 353-6) ;
-le partage entre ex-conjoints et le remariage ; L. 353-5 et D. 355-1.
-Commencer par l'assuré mort avant son départ : la pension qu'il « eût
-obtenue », au taux plein de l'inaptitude. Détail : plus bas, « Ce qui reste »,
-et les deux notes du 9 octobre.
+en sus ; le plafond du ménage, 1,6 fois celui d'une personne seule pour le
+survivant qui déclare vivre en couple, et l'abattement de 30 % de ses revenus
+d'activité à cinquante-cinq ans (notes du 7 et du 9 octobre). Reste, dans cet
+ordre : la réversion d'un assuré mort avant son départ (R. 353-6) ; le partage
+entre ex-conjoints et le remariage ; L. 353-5 et D. 355-1. Commencer par
+l'assuré mort avant son départ : la pension qu'il « eût obtenue », au taux
+plein de l'inaptitude. Détail : plus bas, « Ce qui reste », et les deux notes
+du 9 octobre.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « Quels sont les écarts
 encore présents avec trajectoire et destinie 2 ? J'aimerais combler les manques
