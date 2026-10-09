@@ -1,8 +1,6 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: rouge
-sources: f0c25e1cb3769e638ee162b613e9054c0d64091b
-date: 2026-10-09T00:25:28Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/37863849581
-echecs:
-  - "FAILED tests/test_destinie.py::test_le_scenario_1_concorde_avec_destinie_ou_son_ecart_est_explique - AssertionError: reversion_jeune_deux_enfants, majoration_complementaires : +0.1000, écart non déclaré"
+etat: vert
+sources: 90878e5c438a540931d8effa0d85a288449ce645
+date: 2026-10-09T00:33:33Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/37864885127
