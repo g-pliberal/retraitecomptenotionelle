@@ -603,7 +603,7 @@ referents:
       - quoi: >-
           L'IPP a le minimum de réversion de 1964 à 2021 et le
           plafond de la majoration de 11,1 % de 2010 à 2025. Le
-          dépôt n'applique ni l'un ni l'autre, et n'en garde que
+          dépôt n'appliquait ni l'un ni l'autre, et n'en gardait que
           deux montants : 3 983,29 € (2025) et 2 400 € (2010, à
           revaloriser) (reversion.yaml:405-451).
         preuve: >-
@@ -615,8 +615,13 @@ referents:
           Barèmes Cnav retraite_reversion_montant_minimum_bar et
           retraite_reversion_plafond_ressource_majoration_retraite_reversion_bar
           : mêmes montants, plus ceux que l'IPP n'a pas (4 019,13 €
-          et 3 020,07 € en 2026).
-        etat: a_reprendre
+          et 3 020,07 € en 2026). Repris le 7 octobre 2026 (action
+          138, étape 4), sur ces deux barèmes : le minimum de 1941 à
+          2026 (`legislation/minimum_reversion.csv`) et le plafond de
+          2010 à 2026 (`legislation/plafond_majoration_reversion.csv`),
+          que les deux moteurs appliquent ; ils redonnent les
+          3 492,37 € de 2021 et les 2 993,14 € de 2025 de l'IPP.
+        etat: repris
         chantier: "138.4"
       - quoi: >-
           L'IPP a la valeur de service des points acquis avant 1973
@@ -1322,8 +1327,8 @@ referents:
         chantier: "138.16"
       - quoi: >-
           Il porte le minimum de réversion du régime général de 1964
-          à 2021 (3 492,37 € par an en 2021). Le dépôt ne le sert
-          pas (`droit/reversion.py:19-23`).
+          à 2021 (3 492,37 € par an en 2021). Le dépôt ne le
+          servait pas (`droit/reversion.py:19-23`).
         preuve: >-
           `parameters/retraites/secteur_prive/regime_general_cnav/reversion_minimum.yaml`
           (barème IPP min_rev_RG), au commit 1c45423 ; paramètre
@@ -1333,8 +1338,13 @@ referents:
           minimum de base annuel [...] est égal à 3 983,29 euros au
           1er janvier 2025 », entier à quinze ans d'assurance,
           réduit en soixantièmes en deçà ; sa valeur de 2021
-          revalorisée jusqu'en 2025 donne 3 983,32 €.
-        etat: a_reprendre
+          revalorisée jusqu'en 2025 donne 3 983,32 €. Repris le
+          7 octobre 2026 (action 138, étape 4) : le minimum, au
+          barème de la Cnav de 1941 à 2026
+          (`legislation/minimum_reversion.csv`, 3 492,37 € en 2021,
+          comme ici), entier à soixante trimestres et en soixantièmes
+          en deçà, dans les deux moteurs.
+        etat: repris
         chantier: "138.4"
       - quoi: >-
           Il porte, en entrée, les taux pleins par catégorie de L.

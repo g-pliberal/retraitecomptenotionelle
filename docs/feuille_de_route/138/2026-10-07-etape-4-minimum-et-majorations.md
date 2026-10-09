@@ -4,12 +4,12 @@
 de 10 % et de 11,1 %, la base sans le minimum contributif, le maximum, surcote
 en sus ; le plafond du ménage et l'abattement des revenus d'activité ; la
 réversion d'un assuré mort avant son départ (R. 353-6) ; le partage entre
-ex-conjoints au prorata des mariages et le remariage, dans chaque régime.
-Reste, dans cet ordre : L. 353-5 et D. 355-1, avec lesquelles les retraites
-personnelles du survivant sortent de ses ressources d'avant juillet 2004 ; les
-majorations forfaitaires d'avant 1995 et 1982. Commencer par lire L. 353-5 et
-la limite forfaitaire du barème de la Cnav. Détail : plus bas, « Ce qui
-reste », et les quatre notes du 9 octobre.
+ex-conjoints et le remariage. Reste, dans cet ordre : L. 353-5 et D. 355-1,
+avec lesquelles les retraites personnelles du survivant sortent de ses
+ressources d'avant juillet 2004 ; les majorations forfaitaires d'avant 1995 et
+1982 ; l'âge de 65 ans d'avant 1973 (registre, `baremes_ipp`). Commencer par
+lire L. 353-5 et la limite forfaitaire du barème de la Cnav. Détail : plus
+bas, « Ce qui reste », et les quatre notes du 9 octobre.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « Quels sont les écarts
 encore présents avec trajectoire et destinie 2 ? J'aimerais combler les manques
@@ -114,6 +114,13 @@ de trois enfants). C'est l'étape 4 de l'action ; elle commence par là.
 6. Les majorations forfaitaires des réversions d'avant 1995 (3,846 %) et
    d'avant décembre 1982 (4 %), que l'exposé de la Cnav décrit, à vérifier dans
    l'échéancier.
+7. L'âge de la réversion d'avant 1973 : soixante-cinq ans, soixante en cas
+   d'inaptitude, jusqu'au décret n° 72-1098 (en vigueur le 1er janvier 1973),
+   que le registre porte (`baremes_ipp`, chantier 138.4) et que la version
+   `avant_1982` de la fiche remplace par cinquante-cinq ans, statut
+   `supposee`. Relevé le 9 octobre 2026 à la relecture du registre, dont les
+   deux points du minimum, chez l'IPP et chez OpenFisca, passent à `repris` :
+   aucune note de l'étape ne le portait.
 
 **Le 7 octobre 2026, la base.** La réversion est « un pourcentage fixé par
 décret de la pension principale » (L. 353-1, ses cinq rédactions depuis 1985),
