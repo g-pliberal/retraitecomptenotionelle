@@ -101,3 +101,18 @@ export function fusionnerLesCharges(une, autre) {
     ...autre.map(([depuis]) => depuis)])].sort();
   return dates.map((depuis) => [depuis, [...etapeAu(une, depuis), ...etapeAu(autre, depuis)]]);
 }
+
+/**
+ * La majoration pour conjoint à charge que les étapes d'une pension servent à
+ * `quand` (AAAA-MM-JJ) : celle de la dernière commencée, rien avant la
+ * première (`conjoint` de la pension). Voir `majoration_du_conjoint` du Python.
+ */
+export function majorationDuConjoint(etapes, quand) {
+  let servie = 0.0;
+  for (const [depuis, montant] of etapes ?? []) {
+    if (depuis <= quand) {
+      servie = montant;
+    }
+  }
+  return servie;
+}

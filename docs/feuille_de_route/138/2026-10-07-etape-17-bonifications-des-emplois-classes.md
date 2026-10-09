@@ -1,14 +1,5 @@
 # Étape 17, première partie : les bonifications et la majoration des emplois classés
 
-**Reprise, au 8 octobre 2026.** Fait : les bonifications et la majoration des
-emplois classés (cette note) ; le départ des parents de trois enfants, le
-plafond de L. 18, la majoration de septembre 2023, les versements uniques,
-l'arrondi des services et le minimum garanti, la bonification du cinquième des
-militaires, la pension maximale du régime général, les taux pleins de L. 351-8,
-la majoration de l'Agirc-Arrco pour enfants à charge (notes du 8 octobre).
-Reste : la majoration pour conjoint à charge (L. 351-13). Détail : plus bas, «
-Ce qui reste », et les notes du 8 octobre pour leurs restes.
-
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.17 ». L'étape réunit
 neuf règles qui manquent au dépôt ; la plus coûteuse, mesurée par TRAJECTOiRE,
 était l'absence des bonifications des emplois classés : vingt trimestres au

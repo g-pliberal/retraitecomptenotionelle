@@ -19,7 +19,9 @@
 import { DateMois } from "./calendrier.js";
 import { RevalorisationStock, SituationFoyer } from "./config.js";
 import { RCO, complementDifferentiel } from "./droit/completer.js";
-import { MAJORATION_ENFANTS, partsDeLaMajoration } from "./droit/commun.js";
+import {
+  MAJORATION_ENFANTS, majorationDuConjoint, partsDeLaMajoration,
+} from "./droit/commun.js";
 import * as liquider from "./droit/liquider.js";
 import { pensionsALEcretement, pensionsEtrangeresServies } from "./droit/etranger.js";
 import { conditionDeResidence, foyerEtNet } from "./droit/foyer.js";
@@ -350,12 +352,27 @@ export class Revalorisee {
         fiabilite: nomFiabilite(r.fiabilite), revision: r.revision ?? 0.0,
         majoration_exceptionnelle: r.majoration ?? 0.0,
         relevement_des_exploitants: r.relevement ?? 0.0,
+        ...((r.conjoint || r.conjoint_au_depart)
+          ? { majoration_conjoint_a_charge: r.conjoint } : {}),
       })),
       majoration: this.coefficient_majoration,
       mensuel_decembre_2019: this.mensuel_decembre_2019,
       fiabilite: nomFiabilite(this.fiabilite),
     };
   }
+}
+
+/**
+ * La pension `montant`, de date d'effet `debut`, menée à `quand` par son
+ * coefficient, sa majoration pour conjoint à charge à part : celle de `quand`,
+ * nominale, au lieu de celle du départ menée. Voir `avec_le_conjoint` du Python.
+ */
+export function avecLeConjoint(pension, debut, montant, coefficient, quand) {
+  if (!pension.conjoint || pension.conjoint.length === 0) {
+    return montant * coefficient;
+  }
+  const auDepart = majorationDuConjoint(pension.conjoint, debut);
+  return (montant - auDepart) * coefficient + majorationDuConjoint(pension.conjoint, quand);
 }
 
 /**
@@ -444,7 +461,9 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
       ? servie.coefficient(p, a, debut, MOIS_DES_TRANCHES, null)[0]
       : 0.0));
     let somme = 0;
-    datees.forEach(([, , , montant], rang) => { somme += montant * jusqu2019[rang]; });
+    datees.forEach(([p, , debut, montant], rang) => {
+      somme += avecLeConjoint(p, debut, montant, jusqu2019[rang], MOIS_DES_TRANCHES);
+    });
     mensuel2019 = (somme
       + majoration * coefficientDeLaMajoration(jusqu2019, MOIS_DES_TRANCHES)) / 12.0;
   }
@@ -458,6 +477,10 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
     );
     coefficients.push(coefficient);
     fiabilite = Math.min(fiabilite, fiabiliteRegime);
+    // La majoration pour conjoint à charge : sa part du départ, que le
+    // coefficient ne mène pas, et celle de l'échéance, nominale.
+    const conjointAuDepart = majorationDuConjoint(pension.conjoint, debut);
+    const conjoint = majorationDuConjoint(pension.conjoint, fin);
     regimes.push({
       regime: pension.regime,
       au_depart: montant,
@@ -465,10 +488,12 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
       regle,
       fiabilite: fiabiliteRegime,
       hors_repartition: horsRepartition(pension),
-      aujourd_hui: montant * coefficient,
+      aujourd_hui: avecLeConjoint(pension, debut, montant, coefficient, fin),
       revision: 0.0,
       majoration: 0.0,
       relevement: 0.0,
+      conjoint_au_depart: conjointAuDepart,
+      conjoint,
     });
   }
   const coefficientMajoration = coefficientDeLaMajoration(coefficients, fin);
@@ -532,8 +557,8 @@ export function reviserLeMinimum(moteur, carriere, resultat, regimes, annee) {
     code, part * coefficient / servi * baisse]));
   for (const r of regimes) {
     r.revision = retraits.get(r.regime) ?? 0.0;
-    r.aujourd_hui = r.au_depart * r.coefficient - r.revision + (r.majoration ?? 0.0)
-      + (r.relevement ?? 0.0);
+    r.aujourd_hui = (r.au_depart - (r.conjoint_au_depart ?? 0.0)) * r.coefficient - r.revision
+      + (r.majoration ?? 0.0) + (r.relevement ?? 0.0) + (r.conjoint ?? 0.0);
   }
 }
 
@@ -601,10 +626,12 @@ export function majorerLesPetitesPensions(moteur, resultat, datees, regimes, ser
       const coefficient = servie.coefficient(pension, a, debut, quand, mensuel2019)[0];
       const petite = petites.get(pension.regime);
       const surcote = petite === undefined ? 0.0 : petite.surcote;
-      servies.set(pension.regime, [
-        auCentime((montant - surcote + (enfants.get(pension.regime) ?? 0.0)
-          * (aLEffet.get(pension.regime) ?? 1.0)) * coefficient / 12.0),
-        coefficient]);
+      const enfant = (enfants.get(pension.regime) ?? 0.0) * (aLEffet.get(pension.regime) ?? 1.0);
+      const mensuelle = !pension.conjoint || pension.conjoint.length === 0
+        ? (montant - surcote + enfant) * coefficient / 12.0
+        : (avecLeConjoint(pension, debut, montant, coefficient, quand)
+          + (enfant - surcote) * coefficient) / 12.0;
+      servies.set(pension.regime, [auCentime(mensuelle), coefficient]);
     }
     return servies;
   };
@@ -667,8 +694,8 @@ export function majorerLesPetitesPensions(moteur, resultat, datees, regimes, ser
     const majoration = parRegime.get(r.regime) ?? 0.0;
     if (majoration > 0) {
       r.majoration = majoration;
-      r.aujourd_hui = r.au_depart * r.coefficient - r.revision + majoration
-        + (r.relevement ?? 0.0);
+      r.aujourd_hui = (r.au_depart - (r.conjoint_au_depart ?? 0.0)) * r.coefficient - r.revision
+        + majoration + (r.relevement ?? 0.0) + (r.conjoint ?? 0.0);
     }
   }
   return majorations;
@@ -719,7 +746,7 @@ export function releverLesExploitants(moteur, carriere, resultat, datees, regime
     for (const [pension, a, depuis, montant] of datees) {
       if (depuis > due || (pension.capital !== null && pension.capital !== undefined)) continue;
       const coefficient = servie.coefficient(pension, a, depuis, due, mensuel2019)[0];
-      servies.set(pension.regime, [montant * coefficient,
+      servies.set(pension.regime, [avecLeConjoint(pension, depuis, montant, coefficient, due),
         (enfants.get(pension.regime) ?? 0.0) * (aLEffet.get(pension.regime) ?? 1.0)
           * coefficient]);
     }
@@ -749,8 +776,8 @@ export function releverLesExploitants(moteur, carriere, resultat, datees, regime
   for (const r of regimes) {
     if (r.regime === RCO) {
       r.relevement = relevement.a_l_echeance;
-      r.aujourd_hui = r.au_depart * r.coefficient - r.revision + (r.majoration ?? 0.0)
-        + r.relevement;
+      r.aujourd_hui = (r.au_depart - (r.conjoint_au_depart ?? 0.0)) * r.coefficient - r.revision
+        + (r.majoration ?? 0.0) + r.relevement + (r.conjoint ?? 0.0);
     }
   }
   return relevement;

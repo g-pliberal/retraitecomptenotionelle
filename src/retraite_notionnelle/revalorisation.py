@@ -66,7 +66,7 @@ from .calendrier import DateMois
 from .config import RevalorisationStock, SituationFoyer
 from .donnees.chargement import Fiabilite
 from .droit import invalidite, liquider
-from .droit.commun import parts_de_la_majoration
+from .droit.commun import majoration_du_conjoint, parts_de_la_majoration
 from .droit.etranger import pensions_a_l_ecretement, pensions_etrangeres_servies
 from .droit.foyer import Foyer, condition_de_residence, foyer_et_net
 from .somme import somme_ordonnee
@@ -308,11 +308,17 @@ class RegimeServi:
     #: chef d'exploitation parti avant — points gratuits et complément
     #: différentiel —, en euros de l'échéance (:func:`relever_les_exploitants`).
     relevement: float = 0.0
+    #: La majoration pour conjoint à charge (L. 351-13) : sa part de
+    #: ``au_depart``, que le coefficient ne mène pas, et celle de l'échéance,
+    #: nominale — elle ne se revalorise pas, et commence parfois après le
+    #: départ (``PensionRegime.conjoint``). La réversion ne la lit pas.
+    conjoint_au_depart: float = 0.0
+    conjoint: float = 0.0
 
     @property
     def aujourd_hui(self) -> float:
-        return (self.au_depart * self.coefficient - self.revision + self.majoration
-                + self.relevement)
+        return ((self.au_depart - self.conjoint_au_depart) * self.coefficient
+                - self.revision + self.majoration + self.relevement + self.conjoint)
 
 
 @dataclass(frozen=True)
@@ -408,6 +414,8 @@ class Revalorisee:
                          "revision": r.revision,
                          "majoration_exceptionnelle": r.majoration,
                          "relevement_des_exploitants": r.relevement}
+                        | ({"majoration_conjoint_a_charge": r.conjoint}
+                           if r.conjoint or r.conjoint_au_depart else {})
                         for r in self.regimes],
             "majoration": self.coefficient_majoration,
             "mensuel_decembre_2019": self.mensuel_decembre_2019,
@@ -642,6 +650,19 @@ def mener_au_mois(moteur, pensions, depart, jusqu_a) -> list[float]:
             for p in pensions]
 
 
+def avec_le_conjoint(pension, debut: date, montant: float, coefficient: float,
+                     quand: date) -> float:
+    """La pension ``montant``, de date d'effet ``debut``, menée à ``quand``
+    par son coefficient, sa majoration pour conjoint à charge à part : celle de
+    ``quand``, nominale, au lieu de celle du départ menée
+    (``PensionRegime.conjoint``)."""
+    if not pension.conjoint:
+        return montant * coefficient
+    au_depart = majoration_du_conjoint(pension.conjoint, debut.isoformat())
+    return ((montant - au_depart) * coefficient
+            + majoration_du_conjoint(pension.conjoint, quand.isoformat()))
+
+
 def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Revalorisee:
     """L'étape « faire vivre » (docs/architecture.md, § 7.4) : les pensions
     du système 1 menées jusqu'en ``annee`` — l'année courante par défaut.
@@ -727,7 +748,8 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
             for p, a, debut, _ in datees
         ]
         mensuel_2019 = (
-            somme_ordonnee(montant * c for (_, _, _, montant), c in zip(datees, jusqu_2019))
+            somme_ordonnee(avec_le_conjoint(p, debut, montant, c, MOIS_DES_TRANCHES)
+                           for (p, _, debut, montant), c in zip(datees, jusqu_2019))
             + majoration * coefficient_de_la_majoration(jusqu_2019, MOIS_DES_TRANCHES)
         ) / 12.0
 
@@ -746,6 +768,8 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
             regle=regle,
             fiabilite=fiabilite_regime,
             hors_repartition=isoler and simulateur.catalogue[pension.regime].hors_repartition,
+            conjoint_au_depart=majoration_du_conjoint(pension.conjoint, debut.isoformat()),
+            conjoint=majoration_du_conjoint(pension.conjoint, fin.isoformat()),
         ))
     coefficient_majoration = coefficient_de_la_majoration(coefficients, fin)
     regimes = reviser_le_minimum(simulateur.scenario_actuel, carriere, resultat,
@@ -885,10 +909,13 @@ def majorer_les_petites_pensions(moteur, resultat, datees, regimes: list[RegimeS
             coefficient = servie.coefficient(pension, a, debut, quand, mensuel_2019)[0]
             petite = petites.get(pension.regime)
             surcote = 0.0 if petite is None else petite.surcote
-            servies[pension.regime] = (
-                au_centime((montant - surcote + enfants.get(pension.regime, 0.0)
-                            * a_l_effet.get(pension.regime, 1.0)) * coefficient / 12.0),
-                coefficient)
+            enfant = enfants.get(pension.regime, 0.0) * a_l_effet.get(pension.regime, 1.0)
+            if not pension.conjoint:
+                mensuelle = (montant - surcote + enfant) * coefficient / 12.0
+            else:
+                mensuelle = (avec_le_conjoint(pension, debut, montant, coefficient, quand)
+                             + (enfant - surcote) * coefficient) / 12.0
+            servies[pension.regime] = (au_centime(mensuelle), coefficient)
         return servies
 
     au_mois = mensuelles_au(due)
@@ -1008,7 +1035,7 @@ def relever_les_exploitants(moteur, carriere, resultat, datees, regimes: list[Re
                 continue
             coefficient = servie.coefficient(pension, a, depuis, due, mensuel_2019)[0]
             servies[pension.regime] = (
-                montant * coefficient,
+                avec_le_conjoint(pension, depuis, montant, coefficient, due),
                 enfants.get(pension.regime, 0.0) * a_l_effet.get(pension.regime, 1.0)
                 * coefficient)
         gratuits = chef.gratuits * valeur[0]

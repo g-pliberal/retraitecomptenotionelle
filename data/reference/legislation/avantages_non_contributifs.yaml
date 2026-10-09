@@ -1469,16 +1469,17 @@ avantages:
       pensions prenant effet à compter du 1er janvier 2011 ; les droits ouverts
       avant continuent d'être servis.
     base_legale: [L. 351-13 CSS]
-    fiches: []
+    fiches: [majoration_conjoint_a_charge]
     creation: 1945
     fin: 2010
     regimes: régime général, régimes alignés
-    etat_modele: absent
-    ligne_cascade: null
-    pourquoi_pas_chiffre: >-
-      Le modèle décrit une carrière, pas un ménage : il n'a pas de conjoint.
-      Dispositif en extinction, à porter seulement si les séries anciennes en
-      dépendent.
+    etat_modele: chiffre
+    ligne_cascade: majoration_conjoint_a_charge
+    sans_chiffre: >-
+      servie depuis le 8 octobre 2026 (action 138, étape 17) au conjoint que la
+      saisie déclare, avec ses ressources, des pensions du régime général prenant
+      effet avant 2011 : aucun cas type de la grille ne déclare de conjoint, et le
+      poste publié tient la ligne
     cout:
       mesurable_par: serie_publiee
       source_id: cnav_statistiques

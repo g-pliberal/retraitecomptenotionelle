@@ -440,7 +440,10 @@ Cnav. Les régimes en points : la valeur de service de l'année, le long des
 fusions et des changements d'échelle — le point Arrco d'avant 1999 est converti
 à l'échelle de l'année. La fonction publique depuis 2004 : un décret par an
 jusqu'en 2008, puis l'article L. 161-23-1. La majoration pour enfants suit,
-part par part, le régime qui la porte. Deux contrôles le tiennent : le cas
+part par part, le régime qui la porte, et celle des enfants à charge de la
+complémentaire cesse à leurs dix-huit ans ; la majoration pour conjoint à
+charge, qui ne se revalorise pas, commence aux soixante-cinq ans du conjoint
+quand ils tombent avant 2011. Deux contrôles le tiennent : le cas
 type, refait à la main coefficient par coefficient
 (`tests/test_revalorisation.py`), et les cas types du COR, figure 3.14 du
 rapport de juin 2026, dont le non-cadre des quatre générations est retrouvé en

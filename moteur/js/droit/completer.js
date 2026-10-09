@@ -18,10 +18,13 @@
 import { DateMois } from "../calendrier.js";
 import { formatFixe, formatPourcentage } from "../format.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
-import { MAJORATION_ENFANTS, dateDEffet, derniereAnnee, ligneCotisee } from "./commun.js";
+import {
+  MAJORATION_ENFANTS, dateDEffet, derniereAnnee, ligneCotisee, majorationDuConjoint,
+} from "./commun.js";
 import { pointsGratuits } from "./acquerir.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
 import * as etranger from "./etranger.js";
+import { substitution } from "./invalidite.js";
 import * as liquider from "./liquider.js";
 import * as ouvrir from "./ouvrir.js";
 
@@ -36,6 +39,7 @@ export const FICHES = {
   majoration_enfants: "majoration_dix_pour_cent",
   pension_majoree_reference: "pension_majoree_reference",
   complement_differentiel_rco: "complement_differentiel_rco",
+  majoration_conjoint_a_charge: "majoration_conjoint_a_charge",
 };
 
 /** Le régime de la retraite complémentaire des non-salariés agricoles. */
@@ -74,6 +78,14 @@ export const SURCOTES_DE_L18 = ["dans_le_plafond", "hors_du_plafond"];
 export const FICHE_DU_VERSEMENT_FORFAITAIRE = "versement_forfaitaire_unique";
 export const FICHE_DU_VERSEMENT_AGIRC_ARRCO = "versement_unique_agirc_arrco";
 export const FICHE_DU_VERSEMENT_IRCANTEC = "versement_unique_ircantec";
+
+/**
+ * La majoration pour conjoint à charge, que `FichesDatees` lit à la date d'effet
+ * (`majorationPourConjointACharge`), et les proratas qu'une version peut écrire
+ * outre un nombre de trimestres : aucun, ou la durée qui proratise la pension.
+ */
+export const FICHE_DU_CONJOINT = "majoration_conjoint_a_charge";
+export const PRORATAS_DU_CONJOINT = ["aucun", "duree_requise"];
 
 /**
  * La majoration de l'Agirc-Arrco pour enfants à charge, que `FichesDatees` lit à
@@ -172,6 +184,59 @@ export function majorationPourEnfantsACharge(moteur, carriere, dateEffet, anneeL
     return null;
   }
   return { enfants: fins.length, taux, etapes };
+}
+
+/** Le premier jour du mois qui suit celui de `jour` (AAAA-MM-JJ). */
+function moisSuivant(jour) {
+  const annee = Number(jour.slice(0, 4));
+  const mois = Number(jour.slice(5, 7));
+  return `${String(annee + Math.trunc(mois / 12)).padStart(4, "0")}-`
+    + `${String((mois % 12) + 1).padStart(2, "0")}-01`;
+}
+
+/**
+ * La majoration pour conjoint à charge d'une pension du régime général, depuis
+ * chaque date où elle change : `[[date, montant], ...]`, en euros courants ;
+ * vide sans elle. Voir `majoration_pour_conjoint_a_charge` du Python.
+ */
+export function majorationPourConjointACharge(moteur, carriere, dateEffet, trimestres,
+  proratisation, substituee) {
+  const version = moteur.fichesDatees.version(FICHE_DU_CONJOINT, dateEffet);
+  const conjoint = carriere.conjoint;
+  if (version === null || !version.parametres.existe || conjoint === null
+      || conjoint.ressources === null || conjoint.ressources === undefined) {
+    return [];
+  }
+  const regle = version.parametres;
+  const prorata = regle.prorata;
+  if (!PRORATAS_DU_CONJOINT.includes(prorata) && typeof prorata !== "number") {
+    throw new Error(`${FICHE_DU_CONJOINT}.${version.id} : prorata inconnu, `
+      + `${JSON.stringify(prorata)}`);
+  }
+  const naissance = conjoint.naissance;
+  const anniversaire = `${String(Number(naissance.slice(0, 4)) + Math.trunc(Number(regle.age)))
+    .padStart(4, "0")}${naissance.slice(4)}`;
+  const condition = anniversaire > conjoint.mariage ? anniversaire : conjoint.mariage;
+  const ouverte = condition <= dateEffet ? dateEffet : moisSuivant(condition);
+  if (ouverte >= String(regle.droits_ouverts_avant)) {
+    return [];
+  }
+  let part = 1.0;
+  if (!substituee && prorata !== "aucun") {
+    part = Math.min(1.0, trimestres / (prorata === "duree_requise"
+      ? proratisation : Math.trunc(Number(prorata))));
+  }
+  const ressources = Number(conjoint.ressources);
+  let etapes = [];
+  for (const [depuis, montant] of regle.montants) {
+    const servie = Math.max(0.0, Number(montant) * part - ressources);
+    if (String(depuis) <= ouverte) {
+      etapes = [[ouverte, servie]];
+    } else {
+      etapes.push([String(depuis), servie]);
+    }
+  }
+  return etapes.some(([, servie]) => servie > 0.0) ? etapes : [];
 }
 
 /**
@@ -1046,6 +1111,49 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
           ],
           a_charge: aCharge.etapes,
         };
+      }
+    }
+  }
+
+  // LA MAJORATION POUR CONJOINT À CHARGE de la pension du régime général : celle
+  // de la date d'effet s'ajoute à la pension, et ses étapes s'y écrivent, que la
+  // revalorisation sert à chaque échéance. Voir le Python.
+  if (avantagesNonContributifs && carriere.conjoint !== null) {
+    const dateEffet = dateDEffet(carriere) ?? ouvrir.SANS_DATE_D_EFFET;
+    const regle = moteur.fichesDatees.regle(FICHE_DU_CONJOINT, dateEffet);
+    const indice = (!regle || !regle.existe) ? -1 : pensions.findIndex(
+      (p) => regle.regimes.includes(p.regime) && p.montant > 0.0);
+    if (indice >= 0) {
+      const base = pensions[indice];
+      const regime = moteur.catalogue.obtenir(base.regime);
+      const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+      const proratisation = periode === null ? ouverture.requis
+        : liquider.dureeProratisation(moteur, periode, carriere, ouverture.requis)[0];
+      const etapes = majorationPourConjointACharge(
+        moteur, carriere, dateEffet, durees.trimestresParRegime.get(base.regime) ?? 0,
+        proratisation, substitution(moteur, carriere) !== null);
+      if (etapes.length > 0) {
+        const auDepart = majorationDuConjoint(etapes, dateEffet);
+        const [debut, premiere] = etapes[0];
+        const texte = auDepart > 0.0
+          ? `majoration pour conjoint à charge, ${formatFixe(auDepart, 2, true)} €`
+          : `majoration pour conjoint à charge de ${formatFixe(premiere, 2, true)} € à compter de `
+            + `${new DateMois(Number(debut.slice(0, 4)), Number(debut.slice(5, 7)))}`;
+        pensions[indice] = {
+          ...base, montant: base.montant + auDepart, detail: `${base.detail} ; ${texte}`,
+          conjoint: etapes,
+        };
+        if (auDepart > 0.0) {
+          total += auDepart;
+          avantages.push({
+            code: "majoration_conjoint_a_charge",
+            libelle: "Majoration pour conjoint à charge",
+            montant: auDepart,
+            detail: `le conjoint a ${Math.trunc(Number(regle.age))} ans ; `
+              + `${formatFixe(auDepart, 2, true)} € par an, sans revalorisation`,
+            par_regime: [[base.regime, auDepart]],
+          });
+        }
       }
     }
   }

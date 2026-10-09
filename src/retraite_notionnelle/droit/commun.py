@@ -69,6 +69,23 @@ class PensionRegime:
     #: ``montant`` reste la rente qu'il remplace, et la réversion sait qu'il
     #: n'y en a pas après lui quand sa fiche le dit (``rien_apres_un_capital``).
     capital: float | None = None
+    #: La majoration pour conjoint à charge que la pension porte (L. 351-13),
+    #: depuis chaque date où elle change : ``((date, montant), ...)``, en
+    #: euros courants, sans revalorisation. Celle de la date d'effet est dans
+    #: ``montant`` ; la revalorisation sert celle de chaque échéance
+    #: (:func:`majoration_du_conjoint`, fiche ``majoration_conjoint_a_charge``).
+    conjoint: tuple[tuple[str, float], ...] = ()
+
+
+def majoration_du_conjoint(etapes, quand: str) -> float:
+    """La majoration pour conjoint à charge que les étapes d'une pension
+    servent à ``quand`` (AAAA-MM-JJ) : celle de la dernière commencée, rien
+    avant la première."""
+    servie = 0.0
+    for depuis, montant in etapes:
+        if depuis <= quand:
+            servie = montant
+    return servie
 
 
 @dataclass(frozen=True)

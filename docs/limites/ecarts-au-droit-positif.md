@@ -52,6 +52,16 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   demanderait la série des coefficients réellement appliqués aux pensions,
   lue dans les arrêtés ; le dépôt porte celle des salaires portés au compte,
   qui n'est pas la même chose.
+- **Les petites pensions versées en capital : servies, en partie.** Le régime
+  général — depuis 2016, à qui avait une retraite prenant effet avant (loi du
+  20 janvier 2014) —, l'Arrco et l'Agirc puis l'Agirc-Arrco, et l'Ircantec
+  remplacent la pension sous leur seuil par un capital, dont la pension garde la
+  rente qu'il remplace (fiches `versement_forfaitaire_unique`, `versement_unique_agirc_arrco`
+  et `versement_unique_ircantec`, toutes trois approchées). Restent dehors les
+  accords de l'Arrco et de l'Agirc d'avant 2004, les tables de coefficients de
+  2019 et de 2022, la réversion versée en capital, et les versements
+  forfaitaires des régimes alignés et spéciaux ; le capital reste au journal
+  une composante annuelle.
 - **La troisième condition de la liquidation unique des régimes alignés.** La
   LURA elle-même est servie depuis le 22 septembre 2026 — voir plus bas —, et
   ses deux premières conditions sont opposées : la génération, la date d'effet
@@ -287,7 +297,16 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   que l'ASPA est servie ; l'inaptitude des régimes que la fiche
   `inaptitude_au_travail` ne nomme pas ; les réputés inaptes qui ne se déclarent
   pas (allocation aux adultes handicapés, carte d'invalidité) ; le militaire
-  réformé ; la majoration pour tierce personne. La proposition n'en fait pas
+  réformé ; la majoration pour tierce personne. Les autres taux pleins de
+  L. 351-8 se déclarent aussi : l'ancien déporté ou interné, la mère de famille
+  ouvrière, le travailleur manuel d'avant 1983, l'ancien combattant ou
+  prisonnier de guerre selon ses mois de captivité et de services ont le taux
+  plein sans la durée requise, au régime général et chez les salariés
+  agricoles, aux artisans et aux commerçants pour le premier et le dernier, et
+  leurs complémentaires sans coefficient (fiches `taux_plein_*`). Restent dehors
+  l'ASPA dès l'âge de la catégorie, les évadés et les rapatriés pour maladie,
+  la carte de patriote résistant, que la saisie ne distingue pas, et la date où
+  chaque régime aligné a reçu chaque règle. La proposition n'en fait pas
   exception, le propriétaire l'a décidé : le compte de l'inapte, de
   l'ex-invalide et du fonctionnaire radié se liquide à l'âge de tous, leur
   dernière année prolongée jusque-là — l'invalidité, qui ne cotise pas, ou
@@ -374,7 +393,16 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   parents ont attribué au père les quatre trimestres d'éducation ouverts en
   2010, ni si un père fonctionnaire a interrompu son activité les deux mois
   qu'exige la bonification depuis 2003 : dans les deux cas le modèle retient
-  l'attribution par défaut, celle de la mère.
+  l'attribution par défaut, celle de la mère. Une naissance déclarée fait aussi
+  l'enfant à charge de la complémentaire : à qui part avec un enfant de moins de
+  dix-huit ans, l'Arrco depuis 1999, l'Agirc depuis 2012 et l'Agirc-Arrco
+  servent cinq pour cent par enfant au lieu de la majoration pour enfants nés ou
+  élevés quand c'est plus, jusqu'à ses dix-huit ans (fiche
+  `majoration_enfants_a_charge_agirc_arrco`) ; l'enfant de dix-huit à vingt-cinq
+  ans qui étudie, est apprenti ou cherche un emploi, et l'enfant invalide, n'y
+  sont pas à charge, et la majoration des enfants nés ou élevés à laquelle elle
+  se compare garde le coefficient d'anticipation que la caisse ne lui applique
+  pas.
 - **Les trimestres des enfants dans les régimes spéciaux.** La SNCF, la RATP,
   les IEG et la CRPCEN ont leur fiche, lue article par article
   (`enfants_sncf`, `enfants_ratp`, `enfants_ieg`, `enfants_crpcen`). À la
@@ -438,4 +466,10 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   l'allocation supplémentaire d'invalidité n'y est pas distingué. Et il est
   servi à tous, alors que la DREES estime le non-recours à la moitié des ayants
   droit. C'est pourquoi il apparaît toujours comme une ligne séparée de la
-  cascade, et pourquoi un paramètre le retire d'un seul geste.
+  cascade, et pourquoi un paramètre le retire d'un seul geste. La majoration
+  pour conjoint à charge des pensions du régime général prenant effet avant
+  2011 est servie au conjoint que la saisie déclare avec ses ressources, lues
+  comme ses pensions, qui s'en retranchent, dès qu'il a soixante-cinq ans
+  avant 2011, nominale ensuite (fiche `majoration_conjoint_a_charge`) ; sans
+  ressources dites, elle ne l'est pas, ni au conjoint inapte dès soixante ans,
+  ni dans les régimes alignés.

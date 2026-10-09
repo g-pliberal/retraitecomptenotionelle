@@ -1,0 +1,298 @@
+schema_version: 1
+id: majoration_conjoint_a_charge
+intitule: >-
+  La pension du régime général est majorée quand le conjoint à charge du titulaire a
+  soixante-cinq ans et ne bénéficie d'aucun avantage de vieillesse ou d'invalidité
+  (L. 351-13) : un montant fixé par décret, 4 000 F par an depuis le 1er juillet 1976,
+  609,80 € depuis 2002, que la durée d'assurance proratise depuis le 1er mars 1975 ;
+  supprimée à compter du 1er janvier 2011, elle reste servie à qui l'avait au
+  31 décembre 2010.
+domaine: minima
+regimes: [regime_general]
+etape: completer_tous_regimes
+face: droit
+etat: approchee
+lit:
+- le conjoint que la personne déclare, sa naissance, son mariage et ses ressources (la
+  saisie, `conjoint`, `mariage`, `ressources_conjoint`)
+- la durée d'assurance du régime général, et celle qui proratise sa pension
+- la substitution de la pension de vieillesse à une pension d'invalidité
+- liquidation.date_effet
+ecrit:
+- la majoration de la pension du régime général, à la date d'effet et à chaque date où
+  elle change, nominale, que la revalorisation sert à chaque échéance
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
+# moteur (droit/completer.py, `majoration_pour_conjoint_a_charge`, et son jumeau)
+# lit : `existe` ; `regimes`, ceux dont la pension est majorée ; `age`, celui où le
+# conjoint ouvre le droit ; `prorata`, `aucun`, un nombre de trimestres, ou
+# `duree_requise` — la durée qui proratise la pension du régime général ;
+# `droits_ouverts_avant`, la date avant laquelle le droit doit s'ouvrir ; `montants`,
+# le barème annuel en euros à chaque date de service, que le moteur sert nominal —
+# celui d'une date est le dernier qui ne la passe pas. Un prorata que le moteur ne
+# connaît pas l'arrête.
+versions:
+- id: avant_la_loi_du_23_aout_1948
+  statut: supposee
+  hypothese: >-
+    le barème de la Cnav commence au 1er juillet 1948 (loi du 23 août 1948) ; ce que
+    l'ordonnance de 1945 servait avant lui au conjoint à charge n'est pas lu
+  fiabilite: faible
+  bornes:
+    liquidation.date_effet: [null, 1948-07-01]
+  contenu:
+    droit: aucune majoration pour conjoint à charge lue
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: loi_du_23_aout_1948
+  statut: supposee
+  hypothese: >-
+    avant la réforme de 1975, la majoration est entière quelle que soit la durée : les «
+    anciennes règles demeureront en vigueur chaque fois que la prestation de base aura
+    un point de départ antérieur au 1er mars 1975 », la proratisation en 150es étant
+    nouvelle (circulaire Cnav n° 31/75) ; la majoration de 50 F du conjoint de moins de
+    soixante-cinq ans, que la réforme supprime, n'est pas servie
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [1948-07-01, 1975-03-01]
+  contenu:
+    droit: >-
+      la majoration « de la somme prévue à l'art. L339 lorsque le conjoint à charge
+      atteint l'âge de 65 ans » (décret n° 64-307, notice), au barème que les lois puis
+      les décrets fixent, de 14 500 anciens francs par an au 1er juillet 1948 à 2 450 F
+      au 1er janvier 1974 (barème de la Cnav)
+    beneficiaire: >-
+      le titulaire d'une pension de vieillesse du régime général dont le conjoint à
+      charge a soixante-cinq ans
+    parametres:
+      existe: true
+      regimes: [regime_general]
+      age: 65
+      prorata: aucun
+      droits_ouverts_avant: "2011-01-01"
+      montants: [["1948-07-01", 22.105107], ["1948-10-01", 29.270211],
+        ["1949-04-01", 29.727558], ["1950-01-01", 34.301029], ["1951-01-01", 39.636744],
+        ["1951-10-01", 45.582256], ["1954-01-01", 50.155727], ["1956-01-01", 55.171299],
+        ["1962-04-01", 91.469410], ["1963-07-01", 106.714312], ["1964-01-01", 137.204116],
+        ["1964-11-01", 152.449017], ["1965-07-01", 167.693919], ["1966-01-01", 175.316370],
+        ["1966-07-01", 190.561272], ["1967-01-01", 198.183722], ["1967-10-01", 213.428624],
+        ["1968-01-01", 221.051075], ["1968-07-01", 236.295977], ["1969-10-01", 251.540878],
+        ["1970-10-01", 266.785780], ["1971-10-01", 282.030682], ["1972-10-01", 320.142936],
+        ["1973-07-01", 343.010289], ["1974-01-01", 373.500092], ["1974-07-01", 457.347052],
+        ["1975-01-01", 495.459306], ["1975-04-01", 533.571560], ["1976-01-01", 571.683815],
+        ["1976-07-01", 609.796069], ["2002-01-01", 609.80]]
+  exemples: aucun trouvé
+- id: decret_du_24_fevrier_1975
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006760610, article: 72-2, en_vigueur: 1975-02-28}
+  - {id: LEGIARTI000006760674, article: 72-3, en_vigueur: 1975-02-28}
+  - {id: LEGIARTI000006742678, article: L. 351-13, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006749374, article: R. 351-31, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006749377, article: R. 351-32, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006750048, article: R. 351-33, en_vigueur: 1986-12-01}
+  nee_de: LEGIARTI000006760674
+  bornes:
+    liquidation.date_effet: [1975-03-01, 2007-01-13]
+  contenu:
+    droit: >-
+      « La majoration pour conjoint à charge est attribuée lorsque le conjoint du
+      titulaire : 1 - A atteint l'âge de soixante-cinq ans ou soixante ans en cas
+      d'inaptitude au travail ; 2 - Ne bénéficie pas d'une pension, allocation ou rente
+      acquise au titre de l'assurance vieillesse ou de l'assurance invalidité […] ; 3 - Ne
+      dispose pas de ressources personnelles qui excéderaient, si elles étaient augmentées
+      du montant intégral de la majoration, le chiffre limite de ressources fixé pour
+      l'attribution de l'allocation aux vieux travailleurs salariés aux personnes seules
+      […]. Lorsque le montant des avantages énumérés au 2 ci-dessus est inférieur à la
+      majoration pour conjoint à charge, il est servi un complément différentiel »
+      (article 72-2, puis R. 351-31) ; « accordée pour son montant intégral aux titulaires
+      d'une pension de vieillesse substituée à une pension d'invalidité et aux titulaires
+      d'une pension correspondant à une durée d'assurance d'au moins trente-sept ans et
+      demi (soit 150 trimestres) », réduite sinon « à autant de 150° que la pension
+      rémunère de trimestres d'assurance » (article 72-3, puis R. 351-32) ; due dès
+      l'entrée en jouissance de la pension si les conditions sont remplies, sinon du mois
+      qui suit celui où elles le sont (R. 351-33) ; 4 000 F par an depuis le 1er juillet
+      1976 (décret n° 76-559), 609,80 € depuis 2002
+    beneficiaire: >-
+      le titulaire d'une pension de vieillesse du régime général dont le conjoint à
+      charge a soixante-cinq ans
+    parametres:
+      existe: true
+      regimes: [regime_general]
+      age: 65
+      prorata: 150
+      droits_ouverts_avant: "2011-01-01"
+      montants: [["1948-07-01", 22.105107], ["1948-10-01", 29.270211],
+        ["1949-04-01", 29.727558], ["1950-01-01", 34.301029], ["1951-01-01", 39.636744],
+        ["1951-10-01", 45.582256], ["1954-01-01", 50.155727], ["1956-01-01", 55.171299],
+        ["1962-04-01", 91.469410], ["1963-07-01", 106.714312], ["1964-01-01", 137.204116],
+        ["1964-11-01", 152.449017], ["1965-07-01", 167.693919], ["1966-01-01", 175.316370],
+        ["1966-07-01", 190.561272], ["1967-01-01", 198.183722], ["1967-10-01", 213.428624],
+        ["1968-01-01", 221.051075], ["1968-07-01", 236.295977], ["1969-10-01", 251.540878],
+        ["1970-10-01", 266.785780], ["1971-10-01", 282.030682], ["1972-10-01", 320.142936],
+        ["1973-07-01", 343.010289], ["1974-01-01", 373.500092], ["1974-07-01", 457.347052],
+        ["1975-01-01", 495.459306], ["1975-04-01", 533.571560], ["1976-01-01", 571.683815],
+        ["1976-07-01", 609.796069], ["2002-01-01", 609.80]]
+  exemples: aucun trouvé
+- id: decret_du_12_janvier_2007
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006749378, article: R. 351-32, en_vigueur: 2007-01-13}
+  - {id: LEGIARTI000006749376, article: R. 351-31, en_vigueur: 2007-01-13}
+  nee_de: LEGIARTI000006749378
+  bornes:
+    liquidation.date_effet: [2007-01-13, 2011-01-01]
+  contenu:
+    droit: >-
+      la majoration est entière quand la durée d'assurance accomplie dans le régime
+      général atteint « la limite prévue au troisième alinéa de l'article L. 351-1
+      applicable à l'assuré », réduite sinon « au prorata du nombre de trimestres
+      d'assurance effectivement accomplis rapporté à ladite limite » (R. 351-32) ; « La
+      durée maximum d'assurance retenue pour le calcul des pensions est portée à 160
+      trimestres en 2008, pour les assurés nés en 1948 » (circulaire Cnav n° 2007-31)
+    beneficiaire: >-
+      le titulaire d'une pension de vieillesse du régime général dont le conjoint à
+      charge a soixante-cinq ans
+    parametres:
+      existe: true
+      regimes: [regime_general]
+      age: 65
+      prorata: duree_requise
+      droits_ouverts_avant: "2011-01-01"
+      montants: [["1948-07-01", 22.105107], ["1948-10-01", 29.270211],
+        ["1949-04-01", 29.727558], ["1950-01-01", 34.301029], ["1951-01-01", 39.636744],
+        ["1951-10-01", 45.582256], ["1954-01-01", 50.155727], ["1956-01-01", 55.171299],
+        ["1962-04-01", 91.469410], ["1963-07-01", 106.714312], ["1964-01-01", 137.204116],
+        ["1964-11-01", 152.449017], ["1965-07-01", 167.693919], ["1966-01-01", 175.316370],
+        ["1966-07-01", 190.561272], ["1967-01-01", 198.183722], ["1967-10-01", 213.428624],
+        ["1968-01-01", 221.051075], ["1968-07-01", 236.295977], ["1969-10-01", 251.540878],
+        ["1970-10-01", 266.785780], ["1971-10-01", 282.030682], ["1972-10-01", 320.142936],
+        ["1973-07-01", 343.010289], ["1974-01-01", 373.500092], ["1974-07-01", 457.347052],
+        ["1975-01-01", 495.459306], ["1975-04-01", 533.571560], ["1976-01-01", 571.683815],
+        ["1976-07-01", 609.796069], ["2002-01-01", 609.80]]
+  exemples: aucun trouvé
+- id: loi_du_9_novembre_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023033932, article: L. 351-13, en_vigueur: 2010-11-11}
+  nee_de: LEGIARTI000023033932
+  bornes:
+    liquidation.date_effet: [2011-01-01, null]
+  contenu:
+    droit: >-
+      « La majoration prévue au premier alinéa est supprimée à compter du 1er janvier 2011.
+      Toutefois, elle est maintenue pour les pensionnés qui en bénéficiaient au 31
+      décembre 2010, tant qu'ils en remplissent les conditions d'attribution » (L. 351-13)
+      ; elle n'est pas attribuée à la retraite qui prend effet à compter du 1er janvier
+      2011, ni à celle d'avant dont le droit à la majoration s'ouvre à partir de cette
+      date (circulaire Cnav n° 2011-9)
+    beneficiaire: personne
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+approximations:
+- version: [loi_du_23_aout_1948, decret_du_24_fevrier_1975, decret_du_12_janvier_2007]
+  ecart: >-
+    Le modèle ne la sert qu'au conjoint dont la saisie dit les ressources, et les lit comme
+    ses avantages de vieillesse ou d'invalidité, qu'il retranche de la majoration (le
+    complément différentiel) : des ressources d'une autre nature ne la réduisent pas en
+    droit tant qu'avec elle elles restent sous le plafond de l'allocation aux vieux
+    travailleurs salariés, que le modèle ne lit pas. Sans ressources dites, il ne la sert
+    pas.
+  effet: >-
+    sous-estime la majoration du conjoint dont les ressources ne sont pas une pension ;
+    rien pour qui ne dit pas celles de son conjoint
+- version: [loi_du_23_aout_1948, decret_du_24_fevrier_1975, decret_du_12_janvier_2007]
+  ecart: >-
+    Le conjoint inapte au travail l'ouvrait dès soixante ans : la saisie ne porte pas son
+    inaptitude. Le modèle ne sait pas non plus le décès ou le divorce du conjoint, qui
+    l'arrêtent, et la sert, une fois ouverte, jusqu'au décès du titulaire.
+  effet: non mesuré ; les seuls retraités partis avant 2011 qui déclarent leur conjoint
+- version: [loi_du_23_aout_1948, decret_du_24_fevrier_1975, decret_du_12_janvier_2007]
+  ecart: >-
+    Seul le régime général la sert : les salariés agricoles, les artisans et les
+    commerçants, dont les textes l'ont reprise, n'en ont pas dans le modèle, ni le
+    titulaire de l'allocation aux vieux travailleurs salariés.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-08
+  prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    Lire le texte d'avant 1975 — l'ordonnance de 1945, la loi du 23 août 1948, le décret
+    n° 64-307 —, dont l'index ne garde que des notices, et la date d'effet de la
+    proratisation de 2007 : celle des pensions liquidées depuis, ou de toutes.
+  lectures:
+  - type: jorf
+    reference: >-
+      décret n° 64-307 du 4 avril 1964 abrogeant et remplaçant par des dispositions
+      réglementaires l'article L. 340 du code de la sécurité sociale (JORFTEXT000000327942),
+      « majoration de la somme prévue à l'art. L339 lorsque le conjoint à charge atteint
+      l'âge de 65 ans » : l'index n'en garde que la notice
+    date: 1964-04-11
+  - type: legifrance
+    reference: >-
+      L. 351-13 (LEGIARTI000006742678, 1985-12-21 → 2010-11-11, puis LEGIARTI000023033932)
+      ; décret n° 45-0179, articles 72-2 à 72-4 (1975 → 1985) ; R. 351-31, R. 351-32 et R.
+      351-33, de 1985 à 2011 ; lus dans l'index LEGI le 8 octobre 2026
+    date: 2010-11-11
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 31/75 du 5 mars 1975 : la condition d'âge, la proratisation en
+      150es et la suppression de la majoration de 50 F, applicables aux prestations dont
+      le point de départ est postérieur au 1er mars 1975 « lorsqu'elles sont défavorables
+      aux intéressés »
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_3175_05031975.aspx
+    date: 1975-03-05
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2007-31 du 13 avril 2007 : la majoration proratisée sur la durée
+      maximum d'assurance de la génération (décret n° 2007-56, article 5)
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2007031_13042007.aspx
+    date: 2007-04-13
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2011-9 du 27 janvier 2011 : la suppression au 1er janvier 2011
+      (loi n° 2010-1330, article 51), le maintien de la majoration servie au 31 décembre
+      2010, et ses exemples
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2011009_27012011.aspx
+    date: 2011-01-27
+  - type: autre
+    reference: >-
+      Cnav, barèmes « Majoration pour conjoint à charge - Montant » (de 14 500 AF au 1er
+      juillet 1948 à 609,80 € depuis 2002) et « - Plafond de ressources » (11 913,34 € en
+      2026), base de législation
+    url: https://legislation.lassuranceretraite.fr/api/v1/baremes/baremesByFileLeafRef/ancienne_prestation_mc_montant_bar.aspx
+    date: 2026-10-08
+code:
+  python: >-
+    droit/completer.py : majoration_pour_conjoint_a_charge, completer ; droit/commun.py :
+    PensionRegime.conjoint, majoration_du_conjoint ; revalorisation.py : faire_vivre,
+    RegimeServi ; echeancier.py : la réversion, sans elle
+  javascript: >-
+    moteur/js/droit/completer.js : majorationPourConjointACharge ; moteur/js/droit/commun.js
+    : majorationDuConjoint ; moteur/js/revalorisation.js : faireVivre ;
+    moteur/js/echeancier.js
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_majoration_conjoint_a_charge.py]
+referents:
+  baremes_ipp:
+    equivalent: >-
+      prestations_sociales/solidarite_insertion/minimum_vieillesse/majconj/montant_majoration_conjoint_charge.yaml:3-66
+      et plafond_conjoint_pour_maj_pac.yaml, au commit fe2cdff : le même barème
+    confrontation: aucune exécutée
+  openfisca_france:
+    equivalent: >-
+      minimum_vieillesse/majconj/montant_majoration_conjoint_charge.yaml et
+      plafond_conjoint_pour_maj_pac.yaml, au commit 16b2e69 : des paramètres sans formule
+    confrontation: aucune exécutée
+historique:
+- >-
+  2026-10-08 — écrite à l'étape 17 de l'action 138, sur les points des barèmes IPP et
+  d'OpenFisca-France au registre (chantier 138.17).
+effet: >-
+  Le retraité du régime général parti avant 2011, dont le conjoint sans pension a eu
+  soixante-cinq ans avant 2011, reçoit 609,80 € par an au plus, proratisés par sa durée
+  depuis 1975, que le modèle ne lui servait pas.

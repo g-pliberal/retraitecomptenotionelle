@@ -346,7 +346,10 @@ export class Echeancier {
       Number(deces.slice(0, 4)), this.simulateur.parametres.annee_courante));
     const vivante = faireVivre(this.simulateur, carriere, this.auDepart, annee);
     const servies = vivante.regimes.map(
-      (r) => [r.regime, r.au_depart * r.coefficient, r.fiabilite]);
+      // La réversion lit la pension sans la majoration pour conjoint à charge.
+      (r) => [r.regime, r.conjoint_au_depart
+        ? (r.au_depart - r.conjoint_au_depart) * r.coefficient
+        : r.au_depart * r.coefficient, r.fiabilite]);
     // Une pension qu'un régime ne sert pas encore au décès est celle que le
     // défunt « eût obtenue » : la réversion la lit, au montant du départ
     // déclaré (`droit/departs.js`). Celle qu'il sert déjà, quand elle a été

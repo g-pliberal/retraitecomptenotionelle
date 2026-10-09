@@ -327,7 +327,9 @@ class Echeancier:
         annee = max(carriere.annee_liquidation,
                     min(int(deces[:4]), self.simulateur.parametres.annee_courante))
         vivante = faire_vivre(self.simulateur, carriere, self.au_depart, annee)
-        servies = [(r.regime, r.au_depart * r.coefficient, r.fiabilite)
+        # La réversion lit la pension sans la majoration pour conjoint à charge.
+        servies = [(r.regime, (r.au_depart - r.conjoint_au_depart) * r.coefficient
+                    if r.conjoint_au_depart else r.au_depart * r.coefficient, r.fiabilite)
                    for r in vivante.regimes]
         # Une pension qu'un régime ne sert pas encore au décès est celle que le
         # défunt « eût obtenue » : la réversion la lit, au montant du départ

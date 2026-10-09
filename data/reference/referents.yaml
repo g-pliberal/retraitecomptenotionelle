@@ -535,7 +535,11 @@ referents:
           le modèle … n'a pas de conjoint »
           (avantages_non_contributifs.yaml:1384-1404). Or le moteur
           de réversion connaît désormais le conjoint et l'union
-          (droit/reversion.py).
+          (droit/reversion.py). Reprise le 8 octobre 2026 : fiche
+          majoration_conjoint_a_charge, dans les deux moteurs, au
+          barème de la Cnav, proratisée depuis 1975, ouverte aux
+          soixante-cinq ans du conjoint avant 2011 et servie nominale à
+          chaque échéance.
         preuve: >-
           prestations_sociales/solidarite_insertion/minimum_vieillesse/majconj/montant_majoration_conjoint_charge.yaml:3-66
           et plafond_conjoint_pour_maj_pac.yaml ; commit fe2cdff
@@ -547,7 +551,7 @@ referents:
           propre, sous le plafond de l'AVTS, avec un complément
           différentiel. Barème Cnav
           ancienne_prestation_mc_montant_bar : mêmes montants.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.17"
       - quoi: >-
           L'IPP a des coefficients d'anticipation et de majoration
@@ -872,7 +876,9 @@ referents:
           an depuis 1976, 609,80 € depuis 2002) et le plafond de
           ressources du conjoint jusqu'en 2022. Le dépôt ne la sert
           pas à qui l'avait avant 2011 (aucune occurrence de L.
-          351-13 dans `src/` ni `regles/`).
+          351-13 dans `src/` ni `regles/`). Reprise le 8 octobre
+          2026 : fiche majoration_conjoint_a_charge, dans les deux
+          moteurs.
         preuve: >-
           `minimum_vieillesse/majconj/montant_majoration_conjoint_charge.yaml`
           et `plafond_conjoint_pour_maj_pac.yaml`, au commit 16b2e69
@@ -882,7 +888,7 @@ referents:
           supprimée à compter du 1er janvier 2011 », « maintenue
           pour les pensionnés qui en bénéficiaient au 31 décembre
           2010 », réduite si la durée d'assurance est incomplète
-        etat: a_reprendre
+        etat: repris
         chantier: "138.17"
       - quoi: >-
           Il oppose à l'ASPA et à l'ASI la condition de séjour de

@@ -15,6 +15,9 @@ ensemble, dans l'ordre où il l'applique — et l'ordre commande le résultat :
   régimes du code des pensions (:func:`majoration_sous_le_traitement`) ; à
   la complémentaire, celle des enfants à charge quand elle est plus forte,
   tant qu'ils le restent (:func:`majoration_pour_enfants_a_charge`) ;
+* LA MAJORATION POUR CONJOINT À CHARGE de la pension du régime général,
+  nominale, que les pensions prenant effet avant 2011 portent quand le
+  conjoint a soixante-cinq ans (:func:`majoration_pour_conjoint_a_charge`) ;
 * LES DEUX MINIMA DES EXPLOITANTS AGRICOLES enfin, qui regardent toutes les
   pensions, majorations pour enfants comprises : la pension majorée de
   référence, qui relève leur pension de base (:func:`pension_majoree`), puis
@@ -42,9 +45,9 @@ from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
 from . import acquerir
 from . import etranger as _etranger
-from . import liquider, ouvrir
+from . import invalidite, liquider, ouvrir
 from .commun import (MAJORATION_ENFANTS, AvantageApplique, PensionRegime, date_d_effet,
-                     derniere_annee, ligne_cotisee)
+                     derniere_annee, ligne_cotisee, majoration_du_conjoint)
 from .compter import trimestres_de_la_ligne_entre as _trimestres_de_la_ligne_entre
 from ..somme import somme_ordonnee
 
@@ -68,6 +71,7 @@ FICHES = {
     "majoration_enfants": "majoration_dix_pour_cent",
     "pension_majoree_reference": "pension_majoree_reference",
     "complement_differentiel_rco": "complement_differentiel_rco",
+    "majoration_conjoint_a_charge": "majoration_conjoint_a_charge",
 }
 
 #: Le régime de la retraite complémentaire des non-salariés agricoles, dont
@@ -117,6 +121,14 @@ FICHE_DU_VERSEMENT_IRCANTEC = "versement_unique_ircantec"
 #: carrière sans le coefficient d'anticipation.
 FICHE_DES_ENFANTS_A_CHARGE = "majoration_enfants_a_charge_agirc_arrco"
 ASSIETTES_DES_ENFANTS_A_CHARGE = ("allocation", "droits_bruts")
+
+#: La majoration pour conjoint à charge, que :class:`FichesDatees
+#: <retraite_notionnelle.scenarios.actuel.FichesDatees>` lit à la date d'effet
+#: (:func:`majoration_pour_conjoint_a_charge`), et les proratas qu'une version
+#: peut écrire outre un nombre de trimestres : aucun, ou la durée qui
+#: proratise la pension du régime.
+FICHE_DU_CONJOINT = "majoration_conjoint_a_charge"
+PRORATAS_DU_CONJOINT = ("aucun", "duree_requise")
 
 #: Ce à quoi une version de l'Agirc-Arrco compare son seuil : le nombre de
 #: points de l'allocation, minorée ou non (avant 2019), ou son montant,
@@ -1162,6 +1174,46 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                     a_charge=a_charge.etapes,
                 )
 
+    # LA MAJORATION POUR CONJOINT À CHARGE de la pension du régime général
+    # (:func:`majoration_pour_conjoint_a_charge`) : celle de la date d'effet
+    # s'ajoute à la pension, et ses étapes — elle s'ouvre souvent après, quand
+    # le conjoint a soixante-cinq ans, et ne se revalorise pas — s'y écrivent,
+    # que la revalorisation sert à chaque échéance.
+    if avantages_non_contributifs and carriere.conjoint is not None:
+        date_effet = date_d_effet(carriere) or ouvrir.SANS_DATE_D_EFFET
+        regle = moteur.fiches_datees.regle(FICHE_DU_CONJOINT, date_effet)
+        indice = (None if not regle or not regle["existe"] else next(
+            (i for i, p in enumerate(pensions)
+             if p.regime in regle["regimes"] and p.montant > 0.0), None))
+        if indice is not None:
+            base = pensions[indice]
+            regime = moteur.catalogue[base.regime]
+            periode = regime.periode(min(annee_liquidation, derniere_annee(regime)))
+            proratisation = (ouverture.requis if periode is None else liquider.duree_proratisation(
+                moteur, periode, carriere, ouverture.requis)[0])
+            etapes = majoration_pour_conjoint_a_charge(
+                moteur, carriere, date_effet, durees.trimestres_par_regime.get(base.regime, 0),
+                proratisation, invalidite.substitution(moteur, carriere) is not None)
+            if etapes:
+                au_depart = majoration_du_conjoint(etapes, date_effet)
+                debut, premiere = etapes[0]
+                texte = (f"majoration pour conjoint à charge, {au_depart:,.2f} €"
+                         if au_depart > 0.0 else
+                         f"majoration pour conjoint à charge de {premiere:,.2f} € à compter de "
+                         f"{DateMois(int(debut[:4]), int(debut[5:7]))}")
+                pensions[indice] = replace(base, montant=base.montant + au_depart,
+                                           detail=f"{base.detail} ; {texte}", conjoint=etapes)
+                if au_depart > 0.0:
+                    total += au_depart
+                    avantages.append(AvantageApplique(
+                        code="majoration_conjoint_a_charge",
+                        libelle="Majoration pour conjoint à charge",
+                        montant=au_depart,
+                        detail=(f"le conjoint a {int(regle['age'])} ans ; "
+                                f"{au_depart:,.2f} € par an, sans revalorisation"),
+                        par_regime=((base.regime, au_depart),),
+                    ))
+
     # LES DEUX MINIMA DES EXPLOITANTS AGRICOLES, après la majoration pour
     # enfants, que leurs plafonds comptent : la pension majorée de référence
     # relève la pension de base, puis le complément différentiel ajoute des
@@ -1575,6 +1627,63 @@ def majoration_pour_enfants_a_charge(moteur, carriere: Carriere, date_effet: str
     if not etapes[0][1]:
         return None
     return MajorationACharge(enfants=len(fins), taux=taux, etapes=tuple(etapes))
+
+
+def _mois_suivant(jour: str) -> str:
+    """Le premier jour du mois qui suit celui de ``jour`` (AAAA-MM-JJ)."""
+    annee, mois = int(jour[:4]), int(jour[5:7])
+    return f"{annee + mois // 12:04d}-{mois % 12 + 1:02d}-01"
+
+
+def majoration_pour_conjoint_a_charge(moteur, carriere: Carriere, date_effet: str,
+                                      trimestres: int, proratisation: int,
+                                      substituee: bool) -> tuple[tuple[str, float], ...]:
+    """La majoration pour conjoint à charge d'une pension du régime général,
+    depuis chaque date où elle change : ``((date, montant), ...)``, en euros
+    courants (``PensionRegime.conjoint``) ; vide sans elle.
+
+    Le droit s'ouvre quand le conjoint a l'âge de la version et qu'il est
+    marié : dès la date d'effet, s'il les a déjà, sinon le mois qui suit
+    (R. 351-33) — à condition que ce soit avant la date que la version écrit,
+    le 1er janvier 2011 (L. 351-13). Le montant est celui du barème à chaque
+    date, entier pour la pension substituée à une pension d'invalidité,
+    proratisé sinon par la durée du régime, sur 150 trimestres ou la durée qui
+    proratise sa pension ; les ressources que la saisie déclare au conjoint,
+    que le modèle lit comme ses avantages de vieillesse, s'en retranchent (le
+    complément différentiel). Sans ressources déclarées, le modèle ne sait pas
+    s'il est à charge, et ne la sert pas (fiche ``majoration_conjoint_a_charge``).
+    Un prorata que le moteur ne connaît pas l'arrête.
+    """
+    version = moteur.fiches_datees.version(FICHE_DU_CONJOINT, date_effet)
+    conjoint = carriere.conjoint
+    if (version is None or not version["parametres"].get("existe") or conjoint is None
+            or conjoint.ressources is None):
+        return ()
+    regle = version["parametres"]
+    prorata = regle["prorata"]
+    if prorata not in PRORATAS_DU_CONJOINT and not isinstance(prorata, int):
+        raise ValueError(f"{FICHE_DU_CONJOINT}.{version['id']} : prorata inconnu, "
+                         f"{prorata!r}")
+    naissance = conjoint.naissance
+    condition = max(f"{int(naissance[:4]) + int(regle['age']):04d}{naissance[4:]}",
+                    conjoint.mariage)
+    ouverte = date_effet if condition <= date_effet else _mois_suivant(condition)
+    if ouverte >= str(regle["droits_ouverts_avant"]):
+        return ()
+    if substituee or prorata == "aucun":
+        part = 1.0
+    else:
+        part = min(1.0, trimestres / (proratisation if prorata == "duree_requise"
+                                      else int(prorata)))
+    ressources = float(conjoint.ressources)
+    etapes: list[tuple[str, float]] = []
+    for depuis, montant in regle["montants"]:
+        servie = max(0.0, float(montant) * part - ressources)
+        if str(depuis) <= ouverte:
+            etapes = [(ouverte, servie)]
+        else:
+            etapes.append((str(depuis), servie))
+    return tuple(etapes) if any(servie > 0.0 for _, servie in etapes) else ()
 
 
 def plafond_de_l_article_l18(moteur, carriere: Carriere) -> dict | None:

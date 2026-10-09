@@ -853,6 +853,15 @@ def _cas() -> list[dict]:
         **petite_en_couple, "conjoint": "1965", "ressources_conjoint": "3000"}))
     cas.append(("aspa_couple_deux_allocataires_aujourd_hui", {
         **petite_en_couple, "conjoint": "1957", "ressources_conjoint": "6000"}))
+    # LA MAJORATION POUR CONJOINT À CHARGE (L. 351-13 ; action 138, étape 17) :
+    # le salarié parti en 1995, dont le conjoint sans ressources a déjà
+    # soixante-cinq ans, reçoit 4 000 F par an au départ, 609,80 € aujourd'hui ;
+    # celui dont le conjoint ne les a qu'en juin 1997, à compter de juillet.
+    parti_en_1995 = {"naissance": "1930-03-15", "debut": "1952-09", "liquidation": "1995-04",
+                     "ressources_conjoint": "0"}
+    cas.append(("conjoint_a_charge_au_depart", {**parti_en_1995, "conjoint": "1928"}))
+    cas.append(("conjoint_a_charge_a_ses_soixante_cinq_ans", {
+        **parti_en_1995, "conjoint": "1932-06"}))
     # LA RETRAITE POUR INVALIDITÉ DES FONCTIONNAIRES : à la radiation des
     # cadres, à tout âge, sans décote. L'agent de l'État radié à quarante-cinq
     # ans, invalide à 70 % du fait du service, sa rente viagère et le plafond

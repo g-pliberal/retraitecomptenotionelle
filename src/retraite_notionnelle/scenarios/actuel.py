@@ -1124,7 +1124,8 @@ class FichesDatees:
     lit, et les taux pleins par catégorie de L. 351-8, que
     ``categories.taux_plein_par_categorie`` lit, et la majoration de
     l'Agirc-Arrco pour enfants à charge, que
-    ``completer.majoration_pour_enfants_a_charge`` lit.
+    ``completer.majoration_pour_enfants_a_charge`` lit, et la majoration pour
+    conjoint à charge, que ``completer.majoration_pour_conjoint_a_charge`` lit.
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
@@ -1140,7 +1141,7 @@ class FichesDatees:
             "pension_maximale_regime_general",
             "taux_plein_anciens_deportes_internes", "taux_plein_meres_de_famille_ouvrieres",
             "taux_plein_travailleurs_manuels", "taux_plein_anciens_combattants_prisonniers",
-            "majoration_enfants_a_charge_agirc_arrco")
+            "majoration_enfants_a_charge_agirc_arrco", "majoration_conjoint_a_charge")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}
