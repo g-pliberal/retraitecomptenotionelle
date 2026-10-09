@@ -5,8 +5,9 @@ intitule: >-
   la sécurité sociale) : au conjoint, ou à l'ex-conjoint, de l'assuré décédé, un
   pourcentage de la pension dont celui-ci bénéficiait ou eût bénéficié — 50 %, puis
   52 % en décembre 1982, 54 % depuis 1995 —, à partir d'un âge et sous plafond de
-  ressources ; réduite à due concurrence du dépassement depuis juillet 2004, majorée
-  de 11,1 % depuis 2010 pour le survivant aux petites retraites.
+  ressources, sans passer ce pourcentage du maximum des pensions, la surcote en sus ;
+  réduite à due concurrence du dépassement depuis juillet 2004, majorée de 11,1 %
+  depuis 2010 pour le survivant aux petites retraites.
 domaine: reversion
 regimes:
 - regime_general
@@ -25,6 +26,9 @@ lit:
 - la naissance du survivant, qui dit son âge à la date d'effet
 - les ressources du survivant, et celles du ménage s'il vit en couple
 - la pension principale du défunt, servie ou dont il eût bénéficié à son décès
+- ce que le maximum des pensions en a retiré, sa surcote et le coefficient de son
+  ajournement d'avant 1983, et le maximum des pensions de l'année des montants
+  (fiche pension_maximale_regime_general)
 - les enfants issus du mariage, pour la condition de durée d'avant 2004
 ecrit:
 - la pension de réversion du survivant, dans le régime du défunt, et sa majoration
@@ -44,7 +48,9 @@ dates_qui_decident:
 # depuis décembre 1982, son prorata entre régimes alignés depuis juillet 2004 —,
 # dont le montant de chaque année est dans `legislation/minimum_reversion.csv` ;
 # les taux des deux majorations, celle de 11,1 % sous le plafond de
-# `legislation/plafond_majoration_reversion.csv`.
+# `legislation/plafond_majoration_reversion.csv`. Le maximum de la réversion n'a pas
+# de paramètre : c'est le taux de la version, appliqué au maximum des pensions que
+# la fiche `pension_maximale_regime_general` fixe à la date d'effet de la réversion.
 versions:
 - id: avant_1982
   statut: supposee
@@ -317,7 +323,7 @@ versions:
       majoration_enfants_taux: 0.10
       majoration_enfants_minimum: 0.10
       fiabilite: haute
-  exemples: aucun trouvé
+  exemples: [cnav_2018_4_reversion_surcote_au_maximum]
 - id: majoration_2010_age_51
   statut: lue
   textes:
@@ -462,13 +468,24 @@ versions:
   exemples: aucun trouvé
 approximations:
 - ecart: >-
-    le maximum de la réversion (54 % du maximum des pensions, auquel s'ajoute 54 % de
-    la surcote du défunt) et la majoration forfaitaire pour enfant à charge du
-    survivant sans retraite personnelle (L. 353-5) ne sont pas appliqués
+    la majoration forfaitaire pour enfant à charge du survivant sans retraite
+    personnelle (L. 353-5) n'est pas appliquée
   effet: >-
-    le maximum ne joue que lorsque les pensions sont revalorisées plus vite que le
-    plafond de la sécurité sociale, comme de 2020 à 2022 ; la majoration forfaitaire,
     que pour le survivant qui élève encore ses enfants. Non mesuré
+- ecart: >-
+    le maximum de la réversion se compare une fois, aux montants de l'année du décès,
+    et non « à chaque revalorisation des retraites ou du montant maximum des
+    retraites » (exposé de la Cnav) ; il se compte, comme le maximum des pensions, sur
+    le plafond annuel de l'année, quand celui de la Cnav, de 1982 à 1996, est celui du
+    semestre — au 31 décembre, celui du second, plus haut de 0,5 % (1995) à 3,6 %
+    (1982) que la moyenne de l'année, d'après le barème de la Cnav ; il ne borne que
+    la réversion du régime général, et celle que la liquidation unique fait liquider
+    par lui, comme le maximum des pensions
+  effet: >-
+    non mesuré ; les seules réversions qui l'atteignent, celles des pensions que le
+    maximum avait ramenées, de 1973 à 1990 surtout : moins 3,5 % en 1982 pour la veuve
+    d'un cadre parti à soixante-dix ans en 1982, son maximum de 0,52 × 0,75 plafond
+    compté sur le plafond moyen de l'année
 - ecart: >-
     le minimum de réversion ne s'applique pas, depuis le 1er juillet 2012, à la
     réversion d'une pension inférieure « au minimum prévu à l'article L. 351-9 »
@@ -526,7 +543,7 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-10-07
+  lu_le: 2026-10-09
   prochaine_relecture: 2027-03-31
   lectures_divergentes:
   - >-
@@ -698,6 +715,70 @@ sources:
       (circulaire n° 2025-22, § 3.8)
     date: 2026-10-07
     url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_reversion_montant_retraite_assure_decede_ex.aspx
+  - type: circulaire_cnav
+    reference: >-
+      exposé « Montant - retraite de réversion », section « Maximum », relu le 9 octobre
+      2026 par l'API de la base de législation de la Cnav : « Le montant de retraite de
+      réversion à servir (avantages complémentaires non compris) ne peut pas dépasser
+      un montant maximum égal à 54 % du montant opposable à l'assuré décédé » ; « La
+      comparaison au maximum s'effectue à chaque revalorisation des retraites ou du
+      montant maximum des retraites » ; « Si la retraite de réversion est réduite pour
+      cumul ou ressources, le montant réduit est revalorisé, puis comparé au maximum » ;
+      « Le montant de la retraite de réversion est éventuellement ramené au maximum des
+      retraites de réversion auquel s'ajoute 54 % de la surcote dont bénéficiait ou
+      aurait bénéficié l'assuré » ; partagée, « chaque fraction » se compare « au
+      maximum réduit proportionnellement à la durée du mariage »
+    date: 2026-10-09
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_reversion_montant_montant_ex.aspx
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 120/82 du 28 décembre 1982, § 4, lue le 9 octobre 2026 : « Le
+      montant maximum de la pension principale de réversion et de la pension vieillesse
+      de veuve ou de veuf est égal à 52% du maximum qui était ou aurait été opposable à
+      l'assuré décédé »
+    date: 1982-12-28
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_12082_28121982.aspx
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 3/95 du 5 janvier 1995, lue le 9 octobre 2026 : § 13, le maximum
+      « est égal à 54 % du maximum qui était ou aurait été opposable à l'assuré
+      décédé » ; § 23, le même pour les réversions d'avant 1995, majorées de 3,846 %
+    date: 1995-01-05
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_395_05011995.aspx
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 105/90 du 15 novembre 1990, lue le 9 octobre 2026 : § 22, « Les
+      différents coefficients de revalorisation s'appliquent sur le montant calculé de
+      la pension de réversion. Ce montant après revalorisation sera comparé au maximum
+      qui lui est opposable. Si le montant calculé de la pension de réversion est
+      supérieur au maximum, c'est également sur le montant calculé que s'appliquent les
+      coefficients de revalorisation successifs » ; § 1, la pension principale du
+      défunt, 63 000 F « ramenée au maximum de 62.040 F », menée entière jusqu'en 1990 ;
+      § 3, le minimum et le maximum de chaque ayant droit « réduits au prorata de la
+      durée de mariage »
+    date: 1990-11-15
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_10590_15111990.aspx
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2018-4 du 1er février 2018, § 5, relue le 9 octobre 2026 : « le
+      montant de la retraite de réversion est égal à 54% du droit générateur
+      (éventuellement ramené au plafond maximum de retraite) non majoré par la surcote,
+      auquel s'ajoute 54% du montant de la surcote dont bénéficiait ou aurait dû
+      bénéficier l'assuré décédé. Le total n'est pas ramené au maximum des retraites de
+      réversion » ; son exemple de 2012, rejoué (cnav_2018_4_reversion_surcote_au_maximum)
+    date: 2018-02-01
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2018_04_01022018.pdf
+  - type: circulaire_cnav
+    reference: >-
+      barème « Montant maximum de la retraite de réversion »
+      (retraite_reversion_montant_maximum_bar), lu par l'API le 9 octobre 2026 : 93
+      dates, de 45 600 anciens francs au 1er janvier 1949 à 12 976,20 € au 1er janvier
+      2026, chacune le taux de la réversion du maximum des pensions de la date — 20 % du
+      plafond jusqu'en 1971, 22, 23 et 24 % de 1972 à 1974, 25 % jusqu'en novembre
+      1982, 26 % jusqu'en 1994, 27 % depuis —, de 1982 à 1996 au plafond du semestre ;
+      tests/test_reversion.py le confronte au modèle
+    date: 2026-01-05
+    url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=retraite_reversion_montant_maximum_bar.aspx
 textes_a_rattacher:
 - {id: LEGIARTI000031688429, article: L. 353-5, en_vigueur: 2015-12-23, change: "la majoration forfaitaire pour enfant à charge du survivant sans retraite personnelle"}
 - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22, change: "le partage entre conjoints au prorata de la durée de chaque mariage"}
@@ -708,12 +789,16 @@ code:
     droit/reversion.py : reversion, _a_l_age, _mariage_dure, _part_du_minimum,
     _majorer_les_petites_retraites ; scenarios/actuel.py : Reversions ;
     echeancier.py : Echeancier._reverser, Echeancier._pensions_au_deces ;
-    droit/completer.py : completer, la part du minimum contributif de chaque pension
+    droit/completer.py : completer, la part du minimum contributif de chaque pension ;
+    droit/liquider.py : maximum_des_pensions, et ce que la pension ramenée au maximum
+    porte pour la réversion (PensionRegime.ecretement_du_maximum, surcote,
+    coefficient_du_maximum)
   javascript: >-
     moteur/js/droit/reversion.js : reversion, aLAge, mariageDure, partDuMinimum,
     majorerLesPetitesRetraites ; moteur/js/regimes.js : Reversions ;
     moteur/js/echeancier.js : Echeancier._reverser, Echeancier._pensionsAuDeces ;
-    moteur/js/droit/completer.js : completer
+    moteur/js/droit/completer.js : completer ; moteur/js/droit/liquider.js :
+    maximumDesPensions
   parametres: >-
     contenu.parametres de chaque version : taux, age_minimum, mariage_minimum_annees,
     ressources, plafond_smic_heures, minimum_trimestres, minimum_proratise,
@@ -721,7 +806,9 @@ code:
     majoration_taux ; le SMIC horaire du 1er janvier, dans les séries macro ; le
     minimum et le plafond de la majoration, dans legislation/minimum_reversion.csv et
     legislation/plafond_majoration_reversion.csv ; l'âge du taux plein du survivant,
-    dans legislation/age_annulation_decote.csv
+    dans legislation/age_annulation_decote.csv ; le maximum des pensions, dans les
+    versions de la fiche pension_maximale_regime_general et le plafond de la Sécurité
+    sociale
   tests: >-
     tests/test_reversion.py ; les témoins reversion_* des simulations, dans les deux
     moteurs
@@ -761,9 +848,16 @@ historique:
   sans le minimum contributif, que la Cnav laisse hors de la base « avant comparaison
   au minimum » ; la part du minimum dans chaque pension, menée au décès comme elle,
   est ôtée de la base, et l'approximation qui le déclarait est retirée.
+- >-
+  2026-10-09 — action 138, étape 4 : le maximum de la réversion, son taux du maximum
+  des pensions « opposable à l'assuré décédé », la surcote en sus, sur la pension
+  d'avant le maximum des pensions, que la Cnav mène entière ; l'approximation qui le
+  déclarait absent est remplacée par ce qui reste du maximum : une comparaison par
+  réversion, le plafond moyen de l'année.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un assuré du régime général ou d'un régime aligné
   qui décède : 4,41 millions de bénéficiaires d'un droit dérivé tous régimes fin 2024
-  (DREES, EACR). Le modèle la calcule pour le conjoint que la saisie déclare, minimum et
-  majorations compris, sur la pension du défunt sans son minimum contributif, sans le
-  maximum ; sa dépense, publiée, est sur la page Coût.
+  (DREES, EACR). Le modèle la calcule pour le conjoint que la saisie déclare, minimum,
+  maximum et majorations compris, sur la pension du défunt sans son minimum
+  contributif et d'avant le maximum des pensions ; sa dépense, publiée, est sur la
+  page Coût.

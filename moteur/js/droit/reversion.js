@@ -14,11 +14,13 @@
  * l'Ircantec (`reversion_ircantec`), la complémentaire des indépendants
  * (`reversion_rci`). Les autres régimes n'ont pas encore de fiche : leur ligne
  * le dit, sans montant. Le régime général et les régimes alignés : le taux de
- * la pension sans le minimum contributif qui la relevait (L. 351-10),
- * porté au minimum de D. 353-1, réduit du dépassement du plafond, majoré de
- * 10 % pour trois enfants (R. 353-2), puis de 11,1 % sous le plafond de
- * L. 353-6. Ce qui n'est pas encore porté, et les montants — ceux de l'année
- * du décès —, sont dits dans l'en-tête du Python. Sans décès déclaré,
+ * la pension sans le minimum contributif qui la relevait (L. 351-10), avec ce
+ * que le maximum des pensions en avait retiré, porté au minimum de D. 353-1,
+ * réduit du dépassement du plafond, ramené au maximum de la réversion, la
+ * surcote en sus, majoré de 10 % pour trois enfants (R. 353-2), puis de
+ * 11,1 % sous le plafond de L. 353-6. Ce qui n'est pas encore porté, et les
+ * montants — ceux de l'année du décès —, sont dits dans l'en-tête du Python.
+ * Sans décès déclaré,
  * l'échéancier liquide une réversion d'essai pour un décès supposé juste après
  * le départ (présomption `deces_apres_le_depart`).
  */
@@ -26,6 +28,7 @@
 import * as chrono from "../chronologie.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import { REGIMES_ALIGNES, luraApplicable } from "./coordonner.js";
+import { maximumDesPensions } from "./liquider.js";
 
 /** La version du schéma que `Reversion.donnees` suit. */
 export const SCHEMA_VERSION = 1;
@@ -34,6 +37,7 @@ export const SCHEMA_VERSION = 1;
 export const MOTIFS = Object.freeze({
   servie: "servie",
   minimum: "portée au minimum de la réversion (D. 353-1)",
+  maximum: "ramenée au maximum de la réversion, son taux du maximum des pensions",
   ecretee: "réduite à due concurrence du plafond de ressources",
   ressources: "ressources au-dessus du plafond",
   mariage: "condition d'antériorité ou de durée du mariage non remplie",
@@ -78,7 +82,8 @@ export class ReversionRegime {
   constructor({ regime, base, montant, motif, fiche = null, version = null, texte = null,
     taux = 0.0, date_effet = null, fiabilite = Fiabilite.ESTIMEE, majoration = 0.0,
     minimum = 0.0, majoration_trois_enfants = 0.0, majoration_petites_retraites = 0.0,
-    majoration_petites_retraites_effet = null, minimum_contributif = 0.0 }) {
+    majoration_petites_retraites_effet = null, minimum_contributif = 0.0,
+    ecretement_du_maximum = 0.0, maximum = 0.0 }) {
     this.regime = regime;
     this.base = base;
     this.montant = montant;
@@ -103,6 +108,10 @@ export class ReversionRegime {
     // La part de `base` que le minimum contributif y ajoute (L. 351-10) : la
     // réversion du régime général et des régimes alignés se calcule sans elle.
     this.minimum_contributif = minimum_contributif;
+    // Ce que le maximum des pensions avait retiré de `base`, que la réversion du
+    // régime général reprend, et le maximum de cette réversion ; 0 sans lui.
+    this.ecretement_du_maximum = ecretement_du_maximum;
+    this.maximum = maximum;
     Object.freeze(this);
   }
 
@@ -121,6 +130,8 @@ export class ReversionRegime {
       majoration_petites_retraites: this.majoration_petites_retraites,
       majoration_petites_retraites_effet: this.majoration_petites_retraites_effet,
       minimum_contributif: this.minimum_contributif,
+      ecretement_du_maximum: this.ecretement_du_maximum,
+      maximum: this.maximum,
     };
   }
 }
@@ -399,11 +410,15 @@ function enfantsDeMoinsDe(carriere, deces, ans) {
  * d'assurance du défunt dans chaque régime, que le minimum du régime général
  * proratise ; sans elle, il est servi entier. `minima` donne, régime par
  * régime, la part de la pension que le minimum contributif y ajoute : le
- * régime général et les régimes alignés reversent la pension sans elle. Voir
- * `reversion` du Python.
+ * régime général et les régimes alignés reversent la pension sans elle.
+ * `maxima` donne, régime par régime, `[ce que le maximum des pensions a retiré
+ * de la pension, ce que la surcote y ajoute, le coefficient qui multiplie son
+ * maximum]` : le régime général reverse la pension d'avant son maximum, sous
+ * le maximum de la réversion. Voir `reversion` du Python.
  */
 export function reversion(moteur, pensions, carriere, annee, decesSuppose = null,
-  enCapital = new Set(), majorations = null, durees = null, minima = null) {
+  enCapital = new Set(), majorations = null, durees = null, minima = null,
+  maxima = null) {
   const conjoint = carriere.conjoint;
   const deces = decesSuppose === null ? carriere.deces : decesSuppose;
   if (deces === null || conjoint === null) {
@@ -555,11 +570,13 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     const parametres = version.parametres;
     const taux = Number(parametres.taux);
     // La « pension principale » (L. 353-1), que la caisse prend « avant
-    // comparaison au minimum » : sans la majoration qui la portait au minimum
-    // contributif (L. 351-10 ; exposé de la Cnav, « Retraite de l'assuré
-    // décédé »).
+    // comparaison au minimum et au maximum » : sans la majoration qui la
+    // portait au minimum contributif (L. 351-10), avec ce que le maximum des
+    // pensions en avait retiré (exposé de la Cnav, « Retraite de l'assuré
+    // décédé » ; circulaire n° 105/90, § 22).
     const contributif = Math.min(base, (minima ?? {})[regime] ?? 0.0);
-    let montant = taux * (base - contributif);
+    const [ecretement, surcote, coefficient] = (maxima ?? {})[regime] ?? [0.0, 0.0, 1.0];
+    let montant = taux * (base - contributif + ecretement);
     let motif = "servie";
     let fiabilite = fiabiliteDuRegime;
     // Le minimum de D. 353-1, avant les ressources : la caisse porte la
@@ -588,6 +605,21 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       montant = 0.0;
       motif = "ressources";
     }
+    // Le maximum, ensuite : la réversion réduite est comparée à son taux du
+    // maximum des pensions « opposable à l'assuré décédé », celui de sa date
+    // d'effet, au plafond de l'année des montants, l'ajournement d'avant 1983
+    // le majorant, auquel s'ajoute son taux de la surcote (circulaires Cnav
+    // n° 120/82, § 4, et n° 2018-4, § 5).
+    let maximum = 0.0;
+    const desPensions = maximumDesPensions(moteur, regime, dateEffet, annee);
+    if (desPensions !== null) {
+      maximum = taux * (desPensions[0] * coefficient + surcote);
+      if (montant > maximum) {
+        montant = maximum;
+        motif = "maximum";
+        fiabilite = Math.min(fiabilite, desPensions[1]);
+      }
+    }
     autresBases += montant;
     // La majoration de 10 % du survivant de trois enfants, sur la réversion
     // réduite et hors du plafond, au moins le dixième du minimum (R. 353-2).
@@ -600,6 +632,7 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     lignes.set(regime, ligne(regime, base, montant + troisEnfants, motif, fiche, version,
       taux, dateEffet, fiabilite).avec({
       minimum, majoration_trois_enfants: troisEnfants, minimum_contributif: contributif,
+      ecretement_du_maximum: ecretement, maximum,
     }));
   }
 

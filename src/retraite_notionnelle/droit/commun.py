@@ -75,6 +75,18 @@ class PensionRegime:
     #: ``montant`` ; la revalorisation sert celle de chaque échéance
     #: (:func:`majoration_du_conjoint`, fiche ``majoration_conjoint_a_charge``).
     conjoint: tuple[tuple[str, float], ...] = ()
+    #: Ce que la réversion du régime général lit du maximum des pensions
+    #: (fiche ``pension_maximale_regime_general``), aux euros de ``montant`` :
+    #: ce que le maximum a retiré de la pension calculée, que la réversion
+    #: reprend, la caisse la calculant sur la pension « sans être comparé[e] au
+    #: minimum et au maximum » ; ce que la surcote ajoute à la pension ramenée,
+    #: que le maximum de la réversion laisse passer (circulaire Cnav n° 2018-4,
+    #: § 5) ; le coefficient de l'ajournement d'avant 1983 ou du taux acquis au
+    #: 31 mars 1983, qui multiplie le maximum « opposable à l'assuré »
+    #: (circulaire n° 120/82, § 4).
+    ecretement_du_maximum: float = 0.0
+    surcote: float = 0.0
+    coefficient_du_maximum: float = 1.0
 
 
 def majoration_du_conjoint(etapes, quand: str) -> float:

@@ -1083,6 +1083,11 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         #: compare à la pension AVANT surcote : il faut donc pouvoir la
         #: retirer, puis la rendre.
         coefficient_surcote = 1.0
+        #: La part de ce coefficient qui multiplie aussi le maximum des
+        #: pensions « opposable à l'assuré » : celle de l'ajournement d'avant
+        #: 1983 ou du taux acquis au 31 mars 1983, non celle de la surcote, qui
+        #: s'applique à la pension ramenée au maximum.
+        coefficient_du_maximum = 1.0
         #: Trimestres de décote effectivement retenus : la condition
         #: d'ouverture du minimum garanti en dépend.
         trimestres_decote = 0.0
@@ -1147,6 +1152,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     moteur, periode, carriere, age_liquidation, age_annulation)
                 if ajournement > 0:
                     coefficient_surcote = 1.0 + decote * ajournement
+                    coefficient_du_maximum = coefficient_surcote
                     taux *= coefficient_surcote
             # La durée majorée après l'âge du taux plein, puis la garantie du
             # taux acquis au 31 mars 1983 : la Cnav compare « une pension au
@@ -1166,6 +1172,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     else maximum[0] * proratisation / salaire_reference,
                     periode.taux_plein or 0.5, coefficient_surcote):
                 coefficient_surcote = acquis / (periode.taux_plein or 0.5)
+                coefficient_du_maximum = coefficient_surcote
                 taux = acquis
             elif majores > trimestres_regime:
                 duree_non_majoree = trimestres_regime
@@ -1185,6 +1192,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             if (periode.surcote_par_trimestre and supplementaires > 0
                     and age_liquidation >= age_ouverture
                     and ouvrir.droit_militaire(moteur, periode, carriere) is None):
+                coefficient_du_maximum = 1.0
                 if periode.surcote_bareme:
                     # Barème DATÉ : chaque trimestre civil de surcote au
                     # taux en vigueur quand il a été accompli, depuis le
@@ -1225,9 +1233,17 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         # ``pension_maximale_regime_general``).
         plafond_maximum = None if maximum is None else maximum[0] * coefficient_surcote
         ramenee_au_maximum = plafond_maximum is not None and montant > plafond_maximum
+        #: La part du coefficient qui vient de la surcote, et ce que la
+        #: réversion du régime général lit de ce maximum (``PensionRegime``) :
+        #: ce qu'il retire de la pension calculée, que la surcote ne majore pas,
+        #: et ce que la surcote ajoute à la pension ramenée.
+        coefficient_de_la_surcote = coefficient_surcote / coefficient_du_maximum
+        ecretement_du_maximum = 0.0
         if ramenee_au_maximum:
+            ecretement_du_maximum = (montant - plafond_maximum) / coefficient_de_la_surcote
             montant = plafond_maximum
             fiabilite_globale = min(fiabilite_globale, maximum[1])
+        surcote_de_la_pension = montant * (1.0 - 1.0 / coefficient_de_la_surcote)
         #: Le taux plein, que le minimum contributif et les majorations de la
         #: fraction d'avant 1998 des cultes demandent : durée requise, ou âge
         #: d'annulation de la décote, ou inaptitude. Lu pour eux seuls.
@@ -1452,6 +1468,9 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             regime=code, montant=montant, type_calcul="annuites",
             detail=detail,
             fiabilite=min(moteur.catalogue[m].fiabilite for m in membres),
+            ecretement_du_maximum=ecretement_du_maximum,
+            surcote=surcote_de_la_pension,
+            coefficient_du_maximum=coefficient_du_maximum,
         ))
 
     return Pensions(
@@ -2959,8 +2978,21 @@ def pension_maximale(moteur, code: str, carriere: Carriere) -> tuple[float, Fiab
     la pension « ramenée au maximum » (circulaire Cnav n° 2007-5).
     """
     date_effet = date_d_effet(carriere)
-    regle = (None if date_effet is None
-             else moteur.fiches_datees.regle(FICHE_DE_LA_PENSION_MAXIMALE, date_effet))
+    return (None if date_effet is None
+            else maximum_des_pensions(moteur, code, date_effet, carriere.annee_liquidation))
+
+
+def maximum_des_pensions(moteur, code: str, date_effet: str,
+                         annee: int) -> tuple[float, Fiabilite] | None:
+    """Le maximum des pensions de ``code`` que la version de ``date_effet``
+    (AAAA-MM-JJ) fixe, au plafond de la Sécurité sociale de ``annee``, et la
+    fiabilité de sa version ; ``None`` sans maximum. :func:`pension_maximale`
+    le lit à la date d'effet de la pension ; la réversion du régime général, à
+    la sienne, aux euros de l'année de ses montants : « la comparaison au
+    maximum s'effectue à chaque revalorisation des retraites ou du montant
+    maximum des retraites » (exposé de la Cnav, « Montant - retraite de
+    réversion »)."""
+    regle = moteur.fiches_datees.regle(FICHE_DE_LA_PENSION_MAXIMALE, date_effet)
     if not regle or not regle["existe"] or code not in regle["regimes"]:
         return None
     pourcentage = None
@@ -2969,7 +3001,7 @@ def pension_maximale(moteur, code: str, carriere: Carriere) -> tuple[float, Fiab
             pourcentage = float(valeur)
     if pourcentage is None:
         return None
-    plafond = moteur.macro.plafond_securite_sociale(carriere.annee_liquidation)
+    plafond = moteur.macro.plafond_securite_sociale(annee)
     return pourcentage * plafond, Fiabilite.depuis_texte(regle["fiabilite"])
 
 

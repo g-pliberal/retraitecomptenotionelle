@@ -1,13 +1,15 @@
 # Étape 4, première partie : le minimum et les majorations de la réversion du régime général
 
-**Reprise, au 7 octobre 2026.** Fait : le minimum de D. 353-1, la majoration
+**Reprise, au 9 octobre 2026.** Fait : le minimum de D. 353-1, la majoration
 de 10 % du survivant de trois enfants et celle de 11,1 % (L. 353-6), dans les
 deux moteurs, sur deux séries de la Cnav ; Destinie 2 concorde au centime ; la
-base de la réversion sans le minimum contributif. Reste, dans cet ordre : le
-maximum, surcote en sus ; le plafond du ménage ; la réversion d'un assuré mort
-avant son départ ; le partage entre ex-conjoints et le remariage ; L. 353-5 et
-D. 355-1. Commencer par le maximum, dont la Cnav publie le barème (« Montant
-maximum »). Détail : plus bas, « Ce qui reste » et « La base ».
+base de la réversion sans le minimum contributif ; le maximum, surcote en sus,
+sur la pension d'avant le maximum des pensions (note du 9 octobre). Reste, dans
+cet ordre : le plafond du ménage ; la réversion d'un assuré mort avant son
+départ ; le partage entre ex-conjoints et le remariage ; L. 353-5 et D. 355-1.
+Commencer par le plafond du ménage, 1,6 fois celui d'une personne seule, quand
+le survivant vit en couple, ce que la saisie ne dit pas encore. Détail : plus
+bas, « Ce qui reste », « La base », et la note du 9 octobre.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « Quels sont les écarts
 encore présents avec trajectoire et destinie 2 ? J'aimerais combler les manques
@@ -97,7 +99,7 @@ de trois enfants). C'est l'étape 4 de l'action ; elle commence par là.
    réversion d'une carrière complète au minimum majoré de 2025.
 2. *Le maximum* : 54 % du maximum des pensions (barème de la Cnav, 12 976,20 €
    en 2026), 54 % de la surcote en sus, non ramenée (circulaire n° 2018-4,
-   § 5).
+   § 5) — fait le 9 octobre, note du jour.
 3. *Le plafond du ménage* (1,6 fois celui d'une personne seule), quand le
    survivant vit en couple ; l'abattement de 30 % de ses revenus d'activité
    après cinquante-cinq ans (R. 353-1).

@@ -348,10 +348,14 @@ def resultat_des_departs(moteur, carriere: Carriere, departs, liquidations,
                  if nues else (facteurs[0] if facteurs else 1.0))
         for pension, facteur in zip(regimes, facteurs):
             ramene = pension.montant * facteur
+            # Ce que la réversion lit du maximum des pensions est aux euros du
+            # montant : ramené comme lui.
             pensions.append(replace(
                 pension, montant=ramene, date_effet=depart.date_effet,
                 montant_a_l_effet=pension.montant,
-                detail=_detail_date(pension.detail, depart, declare, pension.montant, ramene)))
+                detail=_detail_date(pension.detail, depart, declare, pension.montant, ramene),
+                ecretement_du_maximum=pension.ecretement_du_maximum * facteur,
+                surcote=pension.surcote * facteur))
             if isoler and moteur.catalogue[pension.regime].hors_repartition:
                 hors_repartition += ramene
         majoration = 0.0

@@ -2335,6 +2335,16 @@ referents:
         preuve: >-
           `src/Reversion.cpp:23-49, 76-106`, `src/Retraite.cpp:235-268,
           300-334, 347-357, 365-380`, au commit `4c1d34b`
+        verification: >-
+          Le maximum, repris le 9 octobre 2026 (action 138, étape 4), sur
+          les textes de la Cnav et non sur Destinie, qui ne s'exécute pas
+          ici : la réversion du régime général part de la pension d'avant le
+          maximum des pensions, sous son taux du maximum « qui était ou
+          aurait été opposable à l'assuré décédé », la surcote en sus
+          (circulaires n° 120/82, § 4, n° 105/90, § 22, n° 2018-4, § 5).
+          Restent, dans l'ordre de l'étape 4, le plafond du ménage, la
+          réversion d'un assuré mort avant son départ, le partage et le
+          remariage.
         etat: a_reprendre
         chantier: "138.4"
       - quoi: >-

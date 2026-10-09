@@ -17,6 +17,7 @@ import pytest
 from retraite_notionnelle.carriere import Carriere
 from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.donnees.chargement import Fiabilite
+from retraite_notionnelle.droit.liquider import maximum_des_pensions
 from retraite_notionnelle.droit.reversion import reversion
 from retraite_notionnelle.saisie import ErreurSaisie, Saisie
 from retraite_notionnelle.simulateur import Simulateur
@@ -65,15 +66,16 @@ def _plafond(simulateur, annee: int) -> float:
 # -- le régime général ------------------------------------------------------------
 
 @pytest.mark.parametrize("deces, attendu", [
-    ("1982-10-15", ("regime_general", 0.50, 5000.0, "servie", "avant_1982", "1982-11-01")),
-    ("1982-11-10", ("regime_general", 0.52, 5200.0, "servie", "taux_52", "1982-12-01")),
+    ("1982-10-15", ("regime_general", 0.50, 2500.0, "servie", "avant_1982", "1982-11-01")),
+    ("1982-11-10", ("regime_general", 0.52, 2600.0, "servie", "taux_52", "1982-12-01")),
 ])
 def test_le_taux_suit_la_date_d_effet(simulateur, deces, attendu):
     """Décret n° 82-1035 : 52 % pour les réversions prenant effet à compter du
     1er décembre 1982 (circulaire Cnav n° 120/82). Un décès d'octobre ouvre la
-    réversion en novembre, à 50 % ; un décès de novembre, en décembre, à 52 %."""
+    réversion en novembre, à 50 % ; un décès de novembre, en décembre, à 52 %. La
+    pension reste sous le maximum de 1982, la moitié du plafond, 6 252 €."""
     carriere = _carriere(simulateur, 1920, 60.0, "1925", deces)
-    assert _lignes(simulateur, carriere, [("regime_general", 10000.0)], 1982) == [attendu]
+    assert _lignes(simulateur, carriere, [("regime_general", 5000.0)], 1982) == [attendu]
 
 
 def test_l_age_requis_reporte_la_date_d_effet(simulateur):
@@ -350,6 +352,122 @@ def test_avant_2010_la_majoration_n_existe_pas(simulateur):
                      {"regime_general": 160})["regime_general"]
     assert (ligne.majoration_petites_retraites, ligne.majoration_petites_retraites_effet) == (
         0.0, None)
+
+
+# -- le maximum du régime général -----------------------------------------------------
+
+FRANC = 6.55957
+
+#: Le barème « Montant maximum de la retraite de réversion » de la Cnav, aux dates
+#: où le plafond n'a pas changé en cours d'année : (date, montant, unité).
+BAREME_DU_MAXIMUM = [
+    ("1958-01-01", 120_000, "AF"), ("1959-01-01", 132_000, "AF"),
+    ("1962-01-01", 1_920, "F"), ("1963-01-01", 2_088, "F"), ("1964-01-01", 2_280, "F"),
+    ("1965-01-01", 2_448, "F"), ("1966-01-01", 2_592, "F"), ("1967-01-01", 2_736, "F"),
+    ("1968-01-01", 2_880, "F"), ("1969-01-01", 3_264, "F"), ("1970-01-01", 3_600, "F"),
+    ("1971-01-01", 3_960, "F"), ("1972-01-01", 4_831.20, "F"),
+    ("1973-01-01", 5_630.40, "F"), ("1974-01-01", 6_681.60, "F"),
+    ("1975-01-01", 8_250, "F"), ("1976-01-01", 9_480, "F"), ("1977-01-01", 10_830, "F"),
+    ("1978-01-01", 12_000, "F"), ("1979-01-01", 13_410, "F"), ("1980-01-01", 15_030, "F"),
+    ("1981-01-01", 17_190, "F"), ("1997-01-01", 44_452.80, "F"),
+    ("2001-01-01", 48_438, "F"), ("2002-01-01", 7_620.48, "€"),
+    ("2005-01-01", 8_151.84, "€"), ("2010-01-01", 9_347.40, "€"),
+    ("2012-01-01", 9_820.44, "€"), ("2020-01-01", 11_106.72, "€"),
+    ("2022-01-01", 11_106.72, "€"), ("2023-01-01", 11_877.84, "€"),
+    ("2025-01-01", 12_717.00, "€"), ("2026-01-01", 12_976.20, "€"),
+]
+
+
+@pytest.mark.parametrize("date, montant, unite", BAREME_DU_MAXIMUM)
+def test_le_maximum_de_la_reversion_est_celui_du_bareme_de_la_cnav(
+        simulateur, date, montant, unite):
+    """« Le montant maximum de la pension principale de réversion [...] est égal à
+    54 % du maximum qui était ou aurait été opposable à l'assuré décédé »
+    (circulaire Cnav n° 3/95, § 13 ; 52 % à la n° 120/82, § 4) : le taux de la
+    version, du maximum des pensions de la date, au plafond de l'année — le barème
+    de la caisse, au franc près, le plafond du dépôt étant arrondi à l'euro. Celui
+    de 1965 est 20 % du plafond de 1965, que le barème du maximum des pensions
+    remplace par celui de 1966."""
+    table = simulateur.scenario_actuel.reversions
+    taux = float(table.version(table.fiche_du_regime("regime_general"), date, date)
+                 ["parametres"]["taux"])
+    maximum, _ = maximum_des_pensions(simulateur.scenario_actuel, "regime_general", date,
+                                      int(date[:4]))
+    euros = montant if unite == "€" else montant / FRANC / (100 if unite == "AF" else 1)
+    assert taux * maximum == pytest.approx(euros, rel=1e-3)
+
+
+def test_la_reversion_part_de_la_pension_d_avant_le_maximum(simulateur):
+    """La caisse calcule la réversion sur la pension « sans être comparé[e] au
+    minimum et au maximum » (exposé de la Cnav), et les revalorisations
+    s'appliquent « sur le montant calculé » (circulaire n° 105/90, § 22) : la
+    pension de 9 000 €, que le maximum avait ramenée de 10 000 €, laisse 54 % de
+    10 000 € en 2005, sous le maximum de la réversion de l'année, 8 151,84 €."""
+    carriere = _carriere(simulateur, 1925, 65.0, "1930", "2005-05-10")
+    ligne, = reversion(simulateur.scenario_actuel, [("regime_general", 9000.0, HAUTE)],
+                       carriere, 2005, maxima={"regime_general": (1000.0, 0.0, 1.0)}).regimes
+    assert (round(ligne.montant, 2), ligne.motif, round(ligne.maximum, 2)) == (
+        5400.0, "servie", 8151.84)
+    assert ligne.ecretement_du_maximum == 1000.0
+
+
+def test_la_reversion_est_ramenee_a_son_maximum(simulateur):
+    """Le plafond gelé de 2020 à 2022 n'a pas suivi la revalorisation des
+    pensions : la pension de 21 000 € en 2022 passe le maximum des pensions de
+    l'année, 20 568 €, et sa réversion est ramenée à 54 % de lui, 11 106,72 € —
+    le barème de la Cnav, la comparaison au maximum s'effectuant « à chaque
+    revalorisation des retraites ou du montant maximum des retraites »."""
+    carriere = _carriere(simulateur, 1955, 64.0, "1957", "2022-05-10")
+    ligne, = reversion(simulateur.scenario_actuel, [("regime_general", 21000.0, HAUTE)],
+                       carriere, 2022).regimes
+    assert (round(ligne.montant, 2), ligne.motif) == (11106.72, "maximum")
+
+
+def test_la_surcote_passe_le_maximum_de_la_reversion(simulateur):
+    """« Le montant de la retraite de réversion est éventuellement ramené au
+    maximum des retraites de réversion auquel s'ajoute 54 % de la surcote »
+    (exposé de la Cnav ; circulaire n° 2018-4, § 5) : 2 000 € de surcote portent
+    le maximum de 2022 à 11 106,72 + 1 080 €."""
+    carriere = _carriere(simulateur, 1955, 64.0, "1957", "2022-05-10")
+    ligne, = reversion(simulateur.scenario_actuel, [("regime_general", 23000.0, HAUTE)],
+                       carriere, 2022,
+                       maxima={"regime_general": (500.0, 2000.0, 1.0)}).regimes
+    assert (round(ligne.montant, 2), ligne.motif) == (round(11106.72 + 1080.0, 2), "maximum")
+
+
+def test_l_ajournement_d_avant_1983_majore_le_maximum_de_la_reversion(simulateur):
+    """« 52% du maximum qui était ou aurait été opposable à l'assuré décédé »
+    (circulaire n° 120/82, § 4) : celui de l'assuré parti à soixante-dix ans en
+    1982, majoré de 1,25 % par trimestre d'ajournement (arrêté du 9 octobre 1986,
+    article 2), vaut une fois et demie le maximum de soixante-cinq ans."""
+    carriere = _carriere(simulateur, 1912, 70.0, "1920", "1984-05-10")
+    plafond = simulateur.macro.plafond_securite_sociale(1984)
+    ligne, = reversion(simulateur.scenario_actuel,
+                       [("regime_general", 0.8 * plafond, HAUTE)], carriere, 1984,
+                       maxima={"regime_general": (0.2 * plafond, 0.0, 1.5)}).regimes
+    assert ligne.motif == "maximum"
+    assert ligne.montant == pytest.approx(0.52 * 0.5 * 1.5 * plafond)
+
+
+@pytest.mark.parametrize("deces, motif", [("2005-05", "servie"), ("1990-09", "maximum")])
+def test_l_echeancier_reverse_la_pension_d_avant_le_maximum(contexte, simulateur, deces,
+                                                             motif):
+    """Le cadre parti à soixante-cinq ans en 1990, dont le salaire annuel moyen
+    passait le plafond : sa pension, ramenée au maximum, laisse à sa veuve le taux
+    de la pension calculée, menée jusqu'au décès comme elle ; mort en 2005, sous le
+    maximum de l'année ; mort en 1990, ramenée au maximum, 52 % de la moitié du
+    plafond de l'année."""
+    sortie = contexte.simuler(Saisie.depuis_requete({
+        "naissance": "1925", "liquidation": "65", "conjoint": "1930", "salaire": "5",
+        "statut": "salarie_prive_cadre", "deces": deces})).dictionnaire()
+    ligne, = (l for l in sortie["reversion"]["regimes"] if l["regime"] == "regime_general")
+    assert ligne["ecretement_du_maximum"] > 0
+    calculee = ligne["taux"] * (ligne["base"] + ligne["ecretement_du_maximum"])
+    assert (ligne["motif"], ligne["montant"]) == (
+        motif, pytest.approx(min(calculee, ligne["maximum"])))
+    if motif == "maximum":
+        plafond = simulateur.macro.plafond_securite_sociale(1990)
+        assert ligne["maximum"] == pytest.approx(0.52 * 0.5 * plafond)
 
 
 # -- la fonction publique -----------------------------------------------------------

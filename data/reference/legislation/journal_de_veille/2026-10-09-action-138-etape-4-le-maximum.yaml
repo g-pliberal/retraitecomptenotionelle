@@ -1,0 +1,36 @@
+date: "2026-10-09"
+session: "action 138, étape 4 : le maximum de la réversion du régime général"
+consulte: >-
+  veille_droit.py (dernière veille consignée : 2026-10-09) ; l'index LEGI, mis à jour
+  des incréments du 8 octobre 2026 (4 incréments), puis textes.py --inscrire, qui
+  inscrit à examiner les rédactions des arrêtés du 8 janvier et du 9 octobre 1986 et
+  des décrets n° 74-54 et 74-191 ; dans l'index : l'article 2 de l'arrêté du 9 octobre
+  1986 (LEGIARTI000006784464), qui ne dit rien de la réversion, et la recherche de
+  « maximum » près de « réversion » (282 documents, les quinze premiers extraits
+  lus, sans article du code qui en écrive le maximum) ; l'API de la législation de
+  la Cnav : l'exposé
+  « Montant - retraite de réversion », section « Maximum » ; le barème « Montant
+  maximum de la retraite de réversion » ; les circulaires n° 120/82 (§ 4), n° 3/95
+  (§ 13 et § 23), n° 105/90 (§ 1, § 22 et § 3) et n° 2018-4 (§ 5, en PDF).
+trouve: >-
+  Le maximum de la réversion est « égal à 52% du maximum qui était ou aurait été
+  opposable à l'assuré décédé » (circulaire n° 120/82, § 4), 54 % depuis 1995, pour
+  les réversions d'avant aussi (n° 3/95) : celui de l'assuré, majoré par l'ajournement
+  d'avant 1983. La caisse calcule la réversion sur la pension « sans être comparé[e]
+  au minimum et au maximum », la revalorise sur ce montant calculé et le compare au
+  maximum à chaque revalorisation (n° 105/90, § 22) ; réduite pour ressources, c'est
+  le montant réduit qu'elle compare. 54 % de la surcote s'ajoutent au maximum, sans
+  être ramenés (n° 2018-4, § 5, et son exemple de 2012, 836,77 € par mois, que le
+  modèle rejoue au centime). Le barème de la Cnav porte le maximum de 1949 à 2026,
+  12 976,20 € en 2026, le taux de la réversion du maximum des pensions de chaque date,
+  au plafond du semestre de 1982 à 1996 ; pour 1965, il compte sur le plafond de
+  1965, quand celui du maximum des pensions reprend celui de 1966. Le scénario 1 sert
+  le maximum, sur la pension d'avant le maximum des pensions, dans les deux moteurs ;
+  aucune pension des témoins ne bouge, ni aucune de leurs dix-neuf réversions.
+reste: >-
+  Le reste de l'étape 4 : le plafond du ménage, la réversion d'un assuré mort avant
+  son départ, le partage entre ex-conjoints — où le maximum se réduit au prorata de
+  la durée du mariage (n° 105/90, § 3) — et le remariage, L. 353-5 et D. 355-1. Du
+  maximum : la comparaison à chaque revalorisation, le plafond du semestre de 1982 à
+  1996, le maximum des salariés agricoles et des indépendants ; les rédactions des
+  arrêtés de 1986 que textes.py a inscrites, à examiner.

@@ -282,13 +282,13 @@ class Echeancier:
         deces = Evenement(id=f"deces_{carriere.personne}", date=carriere.deces,
                           personnes=(carriere.personne,), vise={}, sorte="deces")
         self._inscrire(deces, deces.id, "evenement", deces, deces.date)
-        annee, pensions, en_capital, majorations, minima = self._pensions_au_deces(
+        annee, pensions, en_capital, majorations, minima, maxima = self._pensions_au_deces(
             carriere, carriere.deces)
         self.reversion = _reversion.reversion(self.moteur, pensions, carriere, annee,
                                               en_capital=en_capital,
                                               majorations=majorations,
                                               durees=self.durees_au_depart,
-                                              minima=minima)
+                                              minima=minima, maxima=maxima)
         survivant = carriere.conjoint.personne
         evenement = Evenement(id=f"reversion_{survivant}", date=_reversion.mois_suivant(
             carriere.deces), personnes=(survivant,), vise={"regimes": "du défunt"},
@@ -306,24 +306,26 @@ class Echeancier:
         depart = (f"{carriere.date_liquidation.annee:04d}"
                   f"-{carriere.date_liquidation.mois:02d}-01")
         deces = max(depart, f"{self.simulateur.parametres.annee_courante:04d}-01-01")
-        annee, pensions, en_capital, majorations, minima = self._pensions_au_deces(
+        annee, pensions, en_capital, majorations, minima, maxima = self._pensions_au_deces(
             carriere, deces)
         self.reversion = _reversion.reversion(self.moteur, pensions, carriere, annee,
                                               deces_suppose=deces, en_capital=en_capital,
                                               majorations=majorations,
                                               durees=self.durees_au_depart,
-                                              minima=minima)
+                                              minima=minima, maxima=maxima)
 
     def _pensions_au_deces(self, carriere: Carriere, deces: str) -> tuple[
             int, list[tuple[str, float, Fiabilite]], frozenset[str], dict[str, float],
-            dict[str, float]]:
+            dict[str, float], dict[str, tuple[float, float, float]]]:
         """Les pensions du défunt menées à l'année du décès — l'année courante
         pour un décès à venir, où s'arrêtent les revalorisations publiées ;
         jamais avant le départ, dont les montants sont les euros —, cette
         année, les régimes qui lui ont versé leur droit en capital avant son
         décès, sa majoration pour enfants, régime par régime, menée comme la
         pension qui la porte, et de même la part de chaque pension que le
-        minimum contributif y ajoute."""
+        minimum contributif y ajoute ; enfin, régime par régime, ce que le
+        maximum des pensions en a retiré et ce que la surcote y ajoute, menés
+        de même, et le coefficient qui multiplie son maximum."""
         annee = max(carriere.annee_liquidation,
                     min(int(deces[:4]), self.simulateur.parametres.annee_courante))
         vivante = faire_vivre(self.simulateur, carriere, self.au_depart, annee)
@@ -346,6 +348,15 @@ class Echeancier:
         # 17 novembre 2017, article 109).
         au_depart = {p.regime: p.montant for p in self.au_depart.pensions_par_regime}
 
+        def mener(parts: dict[str, float]) -> dict[str, float]:
+            menees = {r.regime: parts[r.regime] * r.au_depart * r.coefficient
+                      / au_depart[r.regime]
+                      for r in vivante.regimes
+                      if parts.get(r.regime) and au_depart.get(r.regime)}
+            return menees | {p.regime: parts[p.regime]
+                             for p in self.au_depart.pensions_par_regime
+                             if p.regime not in vues and parts.get(p.regime)}
+
         def menees(code: str) -> dict[str, float]:
             parts: dict[str, float] = {}
             entrees = (parts_de_la_majoration(self.au_depart.avantages_appliques,
@@ -355,18 +366,24 @@ class Echeancier:
                              if avantage.code == code for part in avantage.par_regime])
             for regime, part in entrees:
                 parts[regime] = parts.get(regime, 0.0) + part
-            menees = {r.regime: parts[r.regime] * r.au_depart * r.coefficient
-                      / au_depart[r.regime]
-                      for r in vivante.regimes
-                      if parts.get(r.regime) and au_depart.get(r.regime)}
-            return menees | {p.regime: parts[p.regime]
-                             for p in self.au_depart.pensions_par_regime
-                             if p.regime not in vues and parts.get(p.regime)}
+            return mener(parts)
+
+        # Ce que le maximum des pensions a retiré de chacune, et ce que la
+        # surcote y ajoute, aux euros du départ, sont menés comme elle ; le
+        # coefficient de l'ajournement, qui multiplie son maximum, reste le sien.
+        departs = self.au_depart.pensions_par_regime
+        ecretements = mener({p.regime: p.ecretement_du_maximum for p in departs})
+        surcotes = mener({p.regime: p.surcote for p in departs})
+        maxima = {p.regime: (ecretements.get(p.regime, 0.0), surcotes.get(p.regime, 0.0),
+                             p.coefficient_du_maximum)
+                  for p in departs
+                  if p.regime in ecretements or p.regime in surcotes
+                  or p.coefficient_du_maximum != 1.0}
 
         return annee, servies + [(p.regime, p.montant, p.fiabilite)
                                  for p in self.au_depart.pensions_par_regime
                                  if p.regime not in vues], en_capital, menees(
-            MAJORATION_ENFANTS), menees("minimum_contributif")
+            MAJORATION_ENFANTS), menees("minimum_contributif"), maxima
 
     def _progresser(self, carriere: Carriere) -> None:
         """La retraite progressive que la carrière demande : examinée, et,

@@ -475,10 +475,14 @@ export function resultatDesDeparts(moteur, carriere, departs, liquidations, cont
     regimes.forEach((pension, i) => {
       const ramene = pension.montant * facteurs[i];
       servi += ramene;
+      // Ce que la réversion lit du maximum des pensions est aux euros du
+      // montant : ramené comme lui.
       pensions.push({
         ...pension, montant: ramene, date_effet: depart.dateEffet,
         montant_a_l_effet: pension.montant,
         detail: detailDate(pension.detail, depart, declare, pension.montant, ramene),
+        ecretement_du_maximum: (pension.ecretement_du_maximum ?? 0.0) * facteurs[i],
+        surcote: (pension.surcote ?? 0.0) * facteurs[i],
       });
       if (isoler && moteur.catalogue.obtenir(pension.regime).hors_repartition) {
         horsRepartition += ramene;

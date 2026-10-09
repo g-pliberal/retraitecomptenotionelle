@@ -5084,6 +5084,7 @@ ${reserve}
  */
 const MOTIFS_DE_REVERSION = Object.freeze({
   minimum: "portée au minimum de la réversion",
+  maximum: "ramenée au maximum de la réversion",
   ecretee: "réduite : avec ses ressources, elle dépasserait le plafond",
   ressources: "rien : ses ressources dépassent le plafond",
   mariage: "rien : le mariage est trop court ou trop tardif",
@@ -5151,12 +5152,17 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
     return parts.length ? ` <span class="discret">(${parts.join(" ; ")})</span>` : "";
   };
   // Le régime général reverse la pension sans le minimum contributif qui la
-  // relevait : la cellule dit cette part, que le taux ne multiplie pas.
+  // relevait, et avec ce que le maximum des pensions en avait retiré : la
+  // cellule dit ces parts, que le taux ne multiplie pas ou qu'il reprend.
   const lignes = reversion.regimes.map((ligne) => [
     echapper(nomRegime(ligne.regime)),
     g.euros(mensuel(ligne.base, ligne.regime)) + (ligne.minimum_contributif > 0
       ? ` <span class="discret">(dont ${g.euros(mensuel(ligne.minimum_contributif,
         ligne.regime))} de minimum contributif, que la réversion ne compte pas)</span>`
+      : "") + (ligne.ecretement_du_maximum > 0
+      ? ` <span class="discret">(et ${g.euros(mensuel(ligne.ecretement_du_maximum,
+        ligne.regime))} que le maximum des pensions en retirait, `
+        + "que la réversion reprend)</span>"
       : ""),
     ligne.fiche === null ? "—" : g.pourcentage(ligne.taux, false, 0),
     ligne.motif === "servie" ? g.euros(mensuel(ligne.montant, ligne.regime)) + dont(ligne)

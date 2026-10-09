@@ -20,8 +20,10 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   sert depuis le 7 octobre 2026 son minimum (D. 353-1), la majoration du
   survivant de trois enfants (R. 353-2) et celle des petites retraites
   (L. 353-6), et calcule la réversion, comme la caisse, sur la pension du
-  défunt sans son minimum contributif. Restent dehors le maximum du régime général et sa
-  majoration forfaitaire pour enfant à charge, le plafond du ménage, le
+  défunt sans son minimum contributif et, depuis le 9 octobre, d'avant le
+  maximum des pensions, sous le maximum de la réversion, la surcote en sus.
+  Restent dehors la majoration forfaitaire pour enfant à charge du régime
+  général, le plafond du ménage, le
   complément de la fonction publique,
   le partage entre ex-conjoints et le remariage, les pensions d'orphelin — à
   l'Agirc-Arrco, la moitié des droits du parent pour l'orphelin de père et de

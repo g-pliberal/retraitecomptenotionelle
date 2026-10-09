@@ -316,7 +316,7 @@ services liquidés, sous le pourcentage maximum.
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->188<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->189<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -329,7 +329,7 @@ d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
 | actualité A15703 | minimum contributif 2026 : <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->170<!--/--> trimestres dont 135 cotisés, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->873,53<!--/--> € par mois | **exact** au centime |
 | circulaire Cnav 2026-07 | âges légaux et durées de la suspension pour trois dates de naissance, décote d'un né en novembre 1961 (<!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->44,375<!--/--> %) | **exact**, une fois les tables réécrites |
 | circulaire Cnav 2026-29 | carrière longue par génération, 1964 à 1971, ouverte à la borne et refusée un trimestre plus tôt | **exact**, une fois la borne lue par génération |
-| circulaire Cnav 2018-04 | surcote à un, deux et trois taux (<!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->2,5<!--/--> %, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->4,75<!--/--> %, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->10,25<!--/--> %) | **exact**, une fois le barème daté |
+| circulaire Cnav 2018-04 | surcote à un, deux et trois taux (<!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->2,5<!--/--> %, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->4,75<!--/--> %, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->10,25<!--/--> %) ; la réversion d'une pension ramenée au maximum des pensions, la surcote en sus : <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->836,77<!--/--> € par mois en 2012 | **exact**, une fois le barème daté ; au centime pour la réversion, depuis le 9 octobre 2026 |
 | fiche F16336 et circulaire carrière Cnav 2017-01, fiche 6.2b | huit trimestres par enfant au régime général — quatre de maternité, quatre d'éducation | **exact** |
 | fiche F37311 | bonification de la fonction publique : quatre trimestres par enfant né avant 2004, deux pour ceux nés depuis | **exact** |
 | circulaire Cnav 2022-26 | assiette de la majoration pour trois enfants : <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->10<!--/--> % de la retraite telle qu'elle est servie, surcotée, décotée ou pile au taux plein | **exact** |
@@ -416,7 +416,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->188<!--/--> tombent justes ensemble, hors
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->189<!--/--> tombent justes ensemble, hors
 les écarts connus que chacun déclare, sur une douzaine de sources et autant de
 règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.

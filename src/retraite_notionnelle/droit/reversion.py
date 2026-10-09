@@ -40,14 +40,19 @@ Les autres régimes n'ont pas encore de fiche : leur ligne le dit, sans montant.
 LE RÉGIME GÉNÉRAL ET LES RÉGIMES ALIGNÉS, dans l'ordre où la caisse calcule
 (exposés « Montant » et « Majoration » de la retraite de réversion ; circulaire
 Cnav n° 2022-26, § 3.6) : le taux de la version, appliqué à la pension du
-défunt « avant comparaison au minimum » — sans la majoration de L. 351-10 qui
-la portait au minimum contributif (exposé « Retraite de l'assuré décédé ») —,
+défunt « avant comparaison au minimum et au maximum » — sans la majoration de
+L. 351-10 qui la portait au minimum contributif, avec ce que le maximum des
+pensions en avait retiré (exposé « Retraite de l'assuré décédé ») —,
 porté au MINIMUM de D. 353-1
 — entier à soixante trimestres du défunt dans le régime, en soixantièmes en
 deçà, et, depuis juillet 2004, au prorata de sa durée dans le régime quand
 plusieurs régimes alignés en comptent plus de soixante ; entier, sans
 soixantièmes, avant décembre 1982 — ; puis réduit du dépassement du plafond de
-ressources ; puis majoré de 10 % pour le survivant de trois enfants, sans
+ressources ; puis ramené à son MAXIMUM, le taux du maximum des pensions
+« opposable à l'assuré décédé » — l'ajournement d'avant 1983 le majorant —,
+au plafond de l'année des montants, que 54 % de la surcote du défunt passent
+(circulaires Cnav n° 120/82, § 4, n° 105/90, § 22, et n° 2018-4, § 5) ; puis
+majoré de 10 % pour le survivant de trois enfants, sans
 descendre sous le dixième de son minimum (R. 353-2), hors du plafond ; enfin,
 depuis 2010, majoré de 11,1 % de la réversion réduite quand le survivant a
 l'âge du taux plein et que ses retraites, réversions et majorations comprises,
@@ -56,8 +61,8 @@ dépasse (D. 353-4). Une majoration qui commence après la date d'effet de la
 ligne, quand le survivant n'a pas encore l'âge du taux plein, s'écrit à part,
 avec sa date, hors du montant.
 
-CE QUI N'EST PAS ENCORE PORTÉ, et que les fiches déclarent : le maximum de la
-réversion du régime général, sa majoration forfaitaire pour enfant à charge,
+CE QUI N'EST PAS ENCORE PORTÉ, et que les fiches déclarent : la majoration
+forfaitaire pour enfant à charge du régime général,
 le plafond du ménage, le plafonnement du veuf de fonctionnaire d'avant 2004,
 la minoration de l'Agirc avant soixante ans, le partage entre ex-conjoints, le
 remariage. L'Agirc-Arrco sert 60 % des points sans le coefficient
@@ -88,6 +93,7 @@ from .. import chronologie as chrono
 from ..donnees.chargement import Fiabilite
 from ..somme import somme_ordonnee
 from .coordonner import REGIMES_ALIGNES, lura_applicable
+from .liquider import maximum_des_pensions
 
 if TYPE_CHECKING:
     from ..carriere import Carriere, Conjoint
@@ -101,6 +107,7 @@ SCHEMA_VERSION = 1
 MOTIFS = {
     "servie": "servie",
     "minimum": "portée au minimum de la réversion (D. 353-1)",
+    "maximum": "ramenée au maximum de la réversion, son taux du maximum des pensions",
     "ecretee": "réduite à due concurrence du plafond de ressources",
     "ressources": "ressources au-dessus du plafond",
     "mariage": "condition d'antériorité ou de durée du mariage non remplie",
@@ -166,6 +173,12 @@ class ReversionRegime:
     #: la réversion du régime général et des régimes alignés se calcule sans
     #: elle, sur ``base - minimum_contributif``.
     minimum_contributif: float = 0.0
+    #: Ce que le maximum des pensions avait retiré de ``base``, que la
+    #: réversion du régime général reprend, et le maximum de cette réversion :
+    #: son taux du maximum des pensions de l'année, l'ajournement d'avant 1983
+    #: le majorant, et de la surcote du défunt ; 0 sans lui.
+    ecretement_du_maximum: float = 0.0
+    maximum: float = 0.0
 
     def donnees(self) -> dict:
         return {"regime": self.regime, "base": self.base, "taux": self.taux,
@@ -178,7 +191,9 @@ class ReversionRegime:
                 "majoration_petites_retraites": self.majoration_petites_retraites,
                 "majoration_petites_retraites_effet":
                     self.majoration_petites_retraites_effet,
-                "minimum_contributif": self.minimum_contributif}
+                "minimum_contributif": self.minimum_contributif,
+                "ecretement_du_maximum": self.ecretement_du_maximum,
+                "maximum": self.maximum}
 
 
 @dataclass(frozen=True)
@@ -417,7 +432,9 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
               en_capital: frozenset[str] = frozenset(),
               majorations: dict[str, float] | None = None,
               durees: dict[str, int] | None = None,
-              minima: dict[str, float] | None = None) -> Reversion | None:
+              minima: dict[str, float] | None = None,
+              maxima: dict[str, tuple[float, float, float]] | None = None
+              ) -> Reversion | None:
     """La réversion que le décès de la personne de ``carriere`` ouvre à son
     conjoint, régime par régime ; ``None`` sans décès ou sans conjoint.
 
@@ -434,7 +451,12 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
     compris, que le minimum du régime général proratise ; sans elle, il est
     servi entier. ``minima`` donne, régime par régime, la part de la pension
     que le minimum contributif y ajoute, aux mêmes euros : le régime général
-    et les régimes alignés reversent la pension sans elle.
+    et les régimes alignés reversent la pension sans elle. ``maxima`` donne,
+    régime par régime, ce que le maximum des pensions a retiré de la pension,
+    ce que la surcote y ajoute, aux mêmes euros, et le coefficient de
+    l'ajournement d'avant 1983 ou du taux acquis au 31 mars 1983, qui
+    multiplie son maximum : le régime général reverse la pension d'avant son
+    maximum, sous le maximum de la réversion.
     """
     conjoint = carriere.conjoint
     deces = carriere.deces if deces_suppose is None else deces_suppose
@@ -564,11 +586,13 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         parametres = version["parametres"]
         taux = float(parametres["taux"])
         # La « pension principale » (L. 353-1), que la caisse prend « avant
-        # comparaison au minimum » : sans la majoration qui la portait au
-        # minimum contributif (L. 351-10 ; exposé de la Cnav, « Retraite de
-        # l'assuré décédé »).
+        # comparaison au minimum et au maximum » : sans la majoration qui la
+        # portait au minimum contributif (L. 351-10), avec ce que le maximum
+        # des pensions en avait retiré (exposé de la Cnav, « Retraite de
+        # l'assuré décédé » ; circulaire n° 105/90, § 22).
         contributif = min(base, (minima or {}).get(regime, 0.0))
-        montant = taux * (base - contributif)
+        ecretement, surcote, coefficient = (maxima or {}).get(regime, (0.0, 0.0, 1.0))
+        montant = taux * (base - contributif + ecretement)
         motif = "servie"
         # Le minimum de D. 353-1, avant les ressources : la caisse porte la
         # réversion au minimum, puis la réduit du dépassement du plafond.
@@ -589,6 +613,20 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
                 montant, motif = max(0.0, disponible), "ecretee"
         elif disponible < 0:
             montant, motif = 0.0, "ressources"
+        # Le maximum, ensuite : la réversion « réduite pour cumul ou
+        # ressources » est comparée au maximum (exposé de la Cnav), son taux du
+        # maximum des pensions « qui était ou aurait été opposable à l'assuré
+        # décédé » (circulaires n° 120/82, § 4, et n° 3/95, § 13) — celui de
+        # sa date d'effet, au plafond de l'année des montants, l'ajournement
+        # d'avant 1983 le majorant —, auquel s'ajoute son taux de la surcote,
+        # que rien ne ramène (circulaire n° 2018-4, § 5).
+        maximum = 0.0
+        des_pensions = maximum_des_pensions(moteur, regime, date_effet, annee)
+        if des_pensions is not None:
+            maximum = taux * (des_pensions[0] * coefficient + surcote)
+            if montant > maximum:
+                montant, motif = maximum, "maximum"
+                fiabilite = min(fiabilite, des_pensions[1])
         autres_bases += montant
         # La majoration de 10 % du survivant de trois enfants, sur la réversion
         # réduite et hors du plafond (circulaire Cnav n° 2022-26, § 3.6), au
@@ -605,7 +643,8 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             ligne(regime, base, montant + trois_enfants, motif, fiche, version, taux,
                   date_effet, fiabilite),
             minimum=minimum, majoration_trois_enfants=trois_enfants,
-            minimum_contributif=contributif)
+            minimum_contributif=contributif, ecretement_du_maximum=ecretement,
+            maximum=maximum)
 
     # La complémentaire des indépendants en dernier : ses ressources sont
     # celles de R. 353-1, que les réversions de tous les régimes de base

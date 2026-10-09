@@ -302,10 +302,10 @@ export class Echeancier {
       personnes: [carriere.personne], vise: {}, sorte: "deces",
     });
     this._inscrire(deces, deces.id, "evenement", deces, deces.date);
-    const [annee, pensions, enCapital, majorations, minima] = this._pensionsAuDeces(
+    const [annee, pensions, enCapital, majorations, minima, maxima] = this._pensionsAuDeces(
       carriere, carriere.deces);
     this.reversion = reversion(this.moteur, pensions, carriere, annee, null, enCapital,
-      majorations, this.dureesAuDepart, minima);
+      majorations, this.dureesAuDepart, minima, maxima);
     const survivant = carriere.conjoint.personne;
     const evenement = new Evenement({
       id: `reversion_${survivant}`, date: moisSuivant(carriere.deces),
@@ -328,10 +328,10 @@ export class Echeancier {
       + `${String(liquidation.mois).padStart(2, "0")}-01`;
     const courante = `${String(this.simulateur.parametres.annee_courante).padStart(4, "0")}-01-01`;
     const deces = depart > courante ? depart : courante;
-    const [annee, pensions, enCapital, majorations, minima] = this._pensionsAuDeces(
+    const [annee, pensions, enCapital, majorations, minima, maxima] = this._pensionsAuDeces(
       carriere, deces);
     this.reversion = reversion(this.moteur, pensions, carriere, annee, deces, enCapital,
-      majorations, this.dureesAuDepart, minima);
+      majorations, this.dureesAuDepart, minima, maxima);
   }
 
   /**
@@ -339,7 +339,10 @@ export class Echeancier {
    * un décès à venir, jamais avant le départ —, cette année, les régimes qui
    * lui ont versé leur droit en capital avant son décès, sa majoration pour
    * enfants, régime par régime, menée comme la pension qui la porte, et de même
-   * la part de chaque pension que le minimum contributif y ajoute.
+   * la part de chaque pension que le minimum contributif y ajoute ; enfin,
+   * régime par régime, ce que le maximum des pensions en a retiré et ce que la
+   * surcote y ajoute, menés de même, et le coefficient qui multiplie son
+   * maximum.
    */
   _pensionsAuDeces(carriere, deces) {
     const annee = Math.max(carriere.anneeLiquidation, Math.min(
@@ -364,15 +367,7 @@ export class Echeancier {
     // à celle du départ — celle des enfants à charge n'en est pas : elle ne se
     // reverse pas.
     const auDepart = new Map(this.auDepart.pensions_par_regime.map((p) => [p.regime, p.montant]));
-    const menees = (code) => {
-      const parts = new Map();
-      const entrees = code === MAJORATION_ENFANTS
-        ? partsDeLaMajoration(this.auDepart.avantages_appliques, null, false)
-        : this.auDepart.avantages_appliques.filter((avantage) => avantage.code === code)
-          .flatMap((avantage) => avantage.par_regime ?? []);
-      for (const [regime, part] of entrees) {
-        parts.set(regime, (parts.get(regime) ?? 0.0) + part);
-      }
+    const mener = (parts) => {
       const resultat = {};
       for (const r of vivante.regimes) {
         if (parts.get(r.regime) && auDepart.get(r.regime)) {
@@ -387,10 +382,36 @@ export class Echeancier {
       }
       return resultat;
     };
+    const menees = (code) => {
+      const parts = new Map();
+      const entrees = code === MAJORATION_ENFANTS
+        ? partsDeLaMajoration(this.auDepart.avantages_appliques, null, false)
+        : this.auDepart.avantages_appliques.filter((avantage) => avantage.code === code)
+          .flatMap((avantage) => avantage.par_regime ?? []);
+      for (const [regime, part] of entrees) {
+        parts.set(regime, (parts.get(regime) ?? 0.0) + part);
+      }
+      return mener(parts);
+    };
+    // Ce que le maximum des pensions a retiré de chacune, et ce que la surcote
+    // y ajoute, aux euros du départ, sont menés comme elle ; le coefficient de
+    // l'ajournement, qui multiplie son maximum, reste le sien.
+    const departs = this.auDepart.pensions_par_regime;
+    const ecretements = mener(new Map(departs.map(
+      (p) => [p.regime, p.ecretement_du_maximum ?? 0.0])));
+    const surcotes = mener(new Map(departs.map((p) => [p.regime, p.surcote ?? 0.0])));
+    const maxima = {};
+    for (const p of departs) {
+      const coefficient = p.coefficient_du_maximum ?? 1.0;
+      if (p.regime in ecretements || p.regime in surcotes || coefficient !== 1.0) {
+        maxima[p.regime] = [ecretements[p.regime] ?? 0.0, surcotes[p.regime] ?? 0.0,
+          coefficient];
+      }
+    }
     return [annee, [...servies, ...this.auDepart.pensions_par_regime
       .filter((p) => !vues.has(p.regime))
       .map((p) => [p.regime, p.montant, p.fiabilite])], enCapital,
-    menees(MAJORATION_ENFANTS), menees("minimum_contributif")];
+    menees(MAJORATION_ENFANTS), menees("minimum_contributif"), maxima];
   }
 
   /**

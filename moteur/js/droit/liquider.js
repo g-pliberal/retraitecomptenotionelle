@@ -591,6 +591,10 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     // Part du taux qui vient de la surcote : le minimum contributif se
     // compare à la pension AVANT surcote, il faut donc pouvoir la retirer.
     let coefficientSurcote = 1.0;
+    // La part de ce coefficient qui multiplie aussi le maximum des pensions
+    // « opposable à l'assuré » : celle de l'ajournement d'avant 1983 ou du taux
+    // acquis au 31 mars 1983, non celle de la surcote.
+    let coefficientDuMaximum = 1.0;
     // Trimestres de décote effectivement retenus : la condition d'ouverture
     // du minimum garanti en dépend.
     let trimestresDecote = 0.0;
@@ -651,6 +655,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         );
         if (ajournement > 0) {
           coefficientSurcote = 1.0 + decote * ajournement;
+          coefficientDuMaximum = coefficientSurcote;
           taux *= coefficientSurcote;
         }
       }
@@ -670,6 +675,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           : maximum[0] * proratisation / salaireReference,
         periode.taux_plein || 0.5, coefficientSurcote)) {
         coefficientSurcote = acquis / (periode.taux_plein || 0.5);
+        coefficientDuMaximum = coefficientSurcote;
         taux = acquis;
       } else if (majores > trimestresRegime) {
         dureeNonMajoree = trimestresRegime;
@@ -689,6 +695,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       if (periode.surcote_par_trimestre && supplementaires > 0
           && ageLiquidation >= ageOuverture
           && ouvrir.droitMilitaire(moteur, periode, carriere) === null) {
+        coefficientDuMaximum = 1.0;
         if (periode.surcote_bareme) {
           // Barème DATÉ : chaque trimestre civil de surcote au taux en
           // vigueur quand il a été accompli, depuis le trimestre qui suit
@@ -724,10 +731,18 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     // au maximum, et la passe (fiche `pension_maximale_regime_general`).
     const plafondMaximum = maximum === null ? null : maximum[0] * coefficientSurcote;
     const rameneeAuMaximum = plafondMaximum !== null && montant > plafondMaximum;
+    // La part du coefficient qui vient de la surcote, et ce que la réversion du
+    // régime général lit de ce maximum : ce qu'il retire de la pension
+    // calculée, que la surcote ne majore pas, et ce que la surcote ajoute à la
+    // pension ramenée.
+    const coefficientDeLaSurcote = coefficientSurcote / coefficientDuMaximum;
+    let ecretementDuMaximum = 0.0;
     if (rameneeAuMaximum) {
+      ecretementDuMaximum = (montant - plafondMaximum) / coefficientDeLaSurcote;
       montant = plafondMaximum;
       fiabiliteGlobale = Math.min(fiabiliteGlobale, maximum[1]);
     }
+    const surcoteDeLaPension = montant * (1.0 - 1.0 / coefficientDeLaSurcote);
     // Le taux plein, que le minimum contributif et les majorations de la
     // fraction d'avant 1998 des cultes demandent : lu pour eux seuls.
     const tauxPleinDuRegime = (dureesCultes !== null
@@ -916,6 +931,11 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       type_calcul: "annuites",
       detail,
       fiabilite: Math.min(...membres.map((m) => moteur.catalogue.obtenir(m).fiabilite)),
+      // Ce que la réversion du régime général lit du maximum des pensions, aux
+      // euros de `montant`. Voir `PensionRegime` du Python.
+      ecretement_du_maximum: ecretementDuMaximum,
+      surcote: surcoteDeLaPension,
+      coefficient_du_maximum: coefficientDuMaximum,
     });
   }
 
@@ -2068,8 +2088,19 @@ export function tauxAcquisAu31Mars1983(moteur, periode, carriere) {
  */
 export function pensionMaximale(moteur, code, carriere) {
   const dateEffet = dateDEffet(carriere);
-  const regle = dateEffet === null ? null
-    : moteur.fichesDatees.regle(FICHE_DE_LA_PENSION_MAXIMALE, dateEffet);
+  return dateEffet === null ? null
+    : maximumDesPensions(moteur, code, dateEffet, carriere.anneeLiquidation);
+}
+
+/**
+ * Le maximum des pensions de `code` que la version de `dateEffet` fixe, au
+ * plafond de la Sécurité sociale de `annee`, et la fiabilité de sa version ;
+ * `null` sans maximum. La réversion du régime général le lit à sa date
+ * d'effet, aux euros de l'année de ses montants. Voir
+ * `liquider.maximum_des_pensions`.
+ */
+export function maximumDesPensions(moteur, code, dateEffet, annee) {
+  const regle = moteur.fichesDatees.regle(FICHE_DE_LA_PENSION_MAXIMALE, dateEffet);
   if (!regle || !regle.existe || !regle.regimes.includes(code)) {
     return null;
   }
@@ -2082,7 +2113,7 @@ export function pensionMaximale(moteur, code, carriere) {
   if (pourcentage === null) {
     return null;
   }
-  const plafond = moteur.macro.plafond_securite_sociale.valeur(carriere.anneeLiquidation);
+  const plafond = moteur.macro.plafond_securite_sociale.valeur(annee);
   return [pourcentage * plafond, fiabiliteDepuisTexte(regle.fiabilite)];
 }
 

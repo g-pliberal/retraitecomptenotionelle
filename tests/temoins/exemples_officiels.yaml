@@ -107,6 +107,13 @@
 #     L'exemple donne les pensions du défunt, comme le simulateur les demande
 #     (`carriere.pensions_du_defunt_mensuelles`) : le test les prête au
 #     défunt, et le modèle y applique ses taux, ses conditions et son plafond.
+#   reversions_au_maximum_mensuelles — pour chaque régime nommé, la réversion
+#     servie sous son maximum, en euros par mois, à un centime près. L'exemple
+#     donne la pension du défunt, ramenée au maximum des pensions et surcotée
+#     (`carriere.pensions_du_defunt_mensuelles`), ce qu'elle était avant le
+#     maximum (`carriere.pensions_avant_maximum_mensuelles`) et sa surcote
+#     (`carriere.surcotes_mensuelles`) : le test les prête au défunt, et le
+#     modèle applique son taux et le maximum de la réversion de l'année.
 #   cotisation_agirc_de_l_annee — la cotisation Agirc de l'année `annee`, en
 #     euros : la part de l'assuré (`salariale`) et la cotisation entière
 #     (`totale`), telles que le compte notionnel les reçoit. Le scénario 1 n'a
@@ -1594,6 +1601,22 @@ exemples:
       survivant n'a pas cinquante-cinq ans.
     carriere: {naissance: "1940-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2000-01", age_debut: 20, conjoint: "1952-01", ressources_conjoint: 13800, deces: "2005-08", reversions_avant_plafond_mensuelles: {regime_general: 530}}
     attendu: {reversions_ecretees_mensuelles: {regime_general: 169.06}}
+  - id: cnav_2018_4_reversion_surcote_au_maximum
+    source: {editeur: "Cnav", reference: "circulaire n° 2018-4 du 1er février 2018, § 5, Pension de réversion, second exemple", verifie_le: "2026-10-09"}
+    enonce: >-
+      « Retraite au 01/01/2012 : 48 000 x 50 % x 160/160 = 24 000 euros annuel →
+      2 000 euros mensuel ramené au maximum des retraites soit 1 515,50 ; Surcote à
+      2,25 % = 1 515,50 x 2,25 % = 34,09 euros → 1 515,50 + 34,09 = 1 549,59 euros
+      mensuel ; PR au 01/02/2012 : (1 515,50 x 54 %) + (34,09 x 54 %) = 818,37 +
+      18,40 = 836,77 à ne pas comparer au maximum PR ». Ni la naissance de l'assuré,
+      ni son décès, ni son conjoint ne sont dits : le témoin le fait mourir en
+      janvier 2012, sa veuve, née en 1950 et sans ressources déclarées, n'ayant pas
+      l'âge du taux plein, que la majoration de 11,1 % attend. Le modèle reverse 54 %
+      des 2 000 euros d'avant le maximum, sous le maximum de la réversion de 2012 —
+      54 % de la moitié du plafond de 36 372 euros, et 54 % de la surcote en sus — ;
+      il n'arrondit qu'à la fin : 836,7786 euros.
+    carriere: {naissance: "1944-07", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2012-01", age_debut: 20, conjoint: "1950-03", deces: "2012-01", pensions_du_defunt_mensuelles: {regime_general: 1549.59}, pensions_avant_maximum_mensuelles: {regime_general: 2000}, surcotes_mensuelles: {regime_general: 34.09}}
+    attendu: {reversions_au_maximum_mensuelles: {regime_general: 836.77}}
 
   # ---- L'invalidité et l'inaptitude ---------------------------------------
   # Le quatrième domaine (docs/architecture.md, § 11). L'ex-invalide de la

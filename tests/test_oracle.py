@@ -1862,6 +1862,23 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         servie = reversion(actuel, [(regime, 12 * montant, Fiabilite.HAUTE)
                                     for regime, montant in pensions.items()], carriere, annee)
         return {r.regime: r.montant / 12 for r in servie.regimes}
+    if cle == "reversions_au_maximum_mensuelles":
+        # L'exemple donne la pension du défunt, ramenée au maximum des
+        # pensions, surcote en sus, et ce qu'elle était avant lui : le test les
+        # lui prête, et le modèle reverse la pension d'avant le maximum, sous
+        # son propre maximum de l'année, la surcote en sus.
+        pensions = exemple["carriere"]["pensions_du_defunt_mensuelles"]
+        avant = exemple["carriere"]["pensions_avant_maximum_mensuelles"]
+        surcotes = exemple["carriere"].get("surcotes_mensuelles") or {}
+        annee = int(str(exemple["carriere"]["deces"])[:4])
+        maxima = {regime: (12 * (avant[regime] - pensions[regime]
+                                 + surcotes.get(regime, 0.0)),
+                           12 * surcotes.get(regime, 0.0), 1.0)
+                  for regime in avant}
+        servie = reversion(actuel, [(regime, 12 * montant, Fiabilite.HAUTE)
+                                    for regime, montant in pensions.items()], carriere, annee,
+                           maxima=maxima)
+        return {r.regime: r.montant / 12 for r in servie.regimes}
     if cle == "majoration_exceptionnelle_mensuelle":
         # La majoration exceptionnelle des petites pensions, servie le mois où
         # elle est due : « faire vivre » la calcule à l'échéance de 2023, où
@@ -2012,6 +2029,8 @@ TOLERANCES = {
     "cotisation_agirc_de_l_annee": {"abs": 0.10},
     "reversions_ecretees_mensuelles": {"abs": 0.01},
     "reversions_mensuelles": {"abs": 0.5},
+    # La circulaire arrondit chaque part au centime, le modèle le total.
+    "reversions_au_maximum_mensuelles": {"abs": 0.01},
     "deductions_annuelles_du_cumul": {"abs": 0.01},
     "plafond_mensuel_du_cumul": {"abs": 0.01},
     "plafonds_des_nouvelles_pensions": {"abs": 0.01},
@@ -2053,7 +2072,7 @@ def _concorde(cle: str, mesure, valeur) -> bool:
         return not isinstance(mesure, str) and all(
             mesure.get(regime) == str(date) for regime, date in valeur.items())
     if cle in ("reversions_ecretees_mensuelles", "deductions_annuelles_du_cumul",
-               "plafonds_des_nouvelles_pensions"):
+               "plafonds_des_nouvelles_pensions", "reversions_au_maximum_mensuelles"):
         return all(mesure.get(regime, 0.0) == pytest.approx(montant, abs=0.01)
                    for regime, montant in valeur.items())
     if cle == "reversions_mensuelles":

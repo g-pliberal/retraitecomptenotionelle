@@ -214,7 +214,9 @@ sources:
     Le barème de la Cnav porte 5 184 F au 1er janvier 1965 comme au 1er janvier 1966, en
     citant le décret du 24 décembre 1964 : 40 % du plafond de 1966, 12 960 F. Le plafond
     de 1965, certifié au Journal officiel, est de 12 240 F (macro/plafond_securite_sociale.csv),
-    dont 40 % font 4 896 F : le modèle compte sur le plafond de l'année.
+    dont 40 % font 4 896 F : le modèle compte sur le plafond de l'année. Le barème du
+    maximum de la réversion, lu le 9 octobre 2026, lui donne raison : 2 448 F au 1er
+    janvier 1965, la moitié de 4 896 F (fiche reversion).
   - >-
     OpenFisca-France-Pension (regimes/regime_general_cnav.py:1022-1037, au commit
     1c45423) borne la pension à la moitié du plafond annuel, sans le pourcentage de 1949

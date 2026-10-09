@@ -1606,6 +1606,14 @@ def _cas() -> list[dict]:
     cas.append(("reversion_minimum_contributif", {
         "naissance": "1955", "liquidation": "67", "conjoint": "1962",
         "deces": "2024-05", "unite_revenu": "moyen", "salaire": "0.3"}))
+    # Le 9 octobre 2026 (action 138, étape 4), le maximum de la réversion : le
+    # cadre parti en 1990, dont le maximum des pensions a ramené la pension,
+    # laisse à sa veuve 54 % de la pension calculée, menée jusqu'en 2005 ; mort
+    # l'année de son départ, sa réversion est ramenée au maximum de l'année.
+    maximum = {"naissance": "1925", "liquidation": "65", "conjoint": "1930",
+               "salaire": "5", "statut": "salarie_prive_cadre"}
+    cas.append(("reversion_maximum_des_pensions", {**maximum, "deces": "2005-05"}))
+    cas.append(("reversion_au_maximum", {**maximum, "deces": "1990-09"}))
 
     # Les carrières LUES sur un relevé, plutôt que reconstituées.
     cas.extend(_cas_releve())
