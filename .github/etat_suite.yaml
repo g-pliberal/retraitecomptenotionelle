@@ -1,6 +1,8 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: 4cc2e4ae8df775f50d6547747b5880b40bed9644
-date: 2026-10-09T07:07:15Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/37896157227
+etat: rouge
+sources: 290f877ce6f462bf03374fefe3e611513ab2b17a
+date: 2026-10-09T08:10:39Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/37902222978
+echecs:
+  - "FAILED tests/test_prose.py::test_chaque_action_en_cours_s_ouvre_sur_son_bloc_reprise - AssertionError: ['2026-10-07-etape-4-minimum-et-majorations.md : plus de dix lignes de reprise']"
