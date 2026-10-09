@@ -1861,9 +1861,19 @@ def salaire_net_depuis_brut(racine_donnees, macro, catalogue, affiliations,
     """
     if brut_annuel <= 0:
         return brut_annuel
+    fiche = fiche_depuis_brut(racine_donnees, macro, catalogue, affiliations,
+                              statut, annee, brut_annuel)
+    return brut_annuel if fiche is None else fiche.net
+
+
+def fiche_depuis_brut(racine_donnees, macro, catalogue, affiliations,
+                      statut: str, annee: int, brut_annuel: float) -> FicheDePaie | None:
+    """La fiche de paie du droit en vigueur d'un revenu brut annuel de
+    ``statut``, l'année ``annee`` : celle dont :func:`salaire_net_depuis_brut`
+    lit le net. ``None`` pour un statut sans fiche de paie."""
     code_profil = profil_de_la_fiche(affiliations, catalogue, statut, annee)
     if code_profil is None:
-        return brut_annuel
+        return None
     profil = charger_prelevements(racine_donnees).profil(code_profil)
     cadre = "cadre" in statut and "non_cadre" not in statut
     return ConstructeurFiche(profil).fiche(
@@ -1872,7 +1882,7 @@ def salaire_net_depuis_brut(racine_donnees, macro, catalogue, affiliations,
         smic_annuel(macro, annee),
         bloc_droit_en_vigueur(catalogue, affiliations, statut, annee),
         cadre,
-    ).net
+    )
 
 
 def conversion_possible(affiliations, catalogue, statut: str, annee: int) -> bool:

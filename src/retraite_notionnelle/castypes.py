@@ -123,7 +123,13 @@ class CasType:
 
     def construire(self, simulateur: Simulateur, generation: int,
                    variante: str = "droit") -> Carriere:
-        age = self.age_liquidation_pour(simulateur, generation, variante)
+        return self.carriere_a(simulateur, generation,
+                               self.age_liquidation_pour(simulateur, generation, variante))
+
+    def carriere_a(self, simulateur: Simulateur, generation: int, age: float) -> Carriere:
+        """La carrière de ce cas type liquidée à ``age``, et non à l'âge que
+        le pilote fixe : celle que les indicateurs à chaque âge de départ
+        balaient (:func:`~retraite_notionnelle.cycle_de_vie.balayage`)."""
         if self.affiliation_avant_entree and simulateur.parametres.conventions_cor:
             delai = simulateur.macro.delai_entree_fonction_publique(generation)
             if delai > 0.0:

@@ -1,0 +1,36 @@
+date: "2026-10-09"
+session: "action 138, étape 9, troisième partie : les indicateurs de cycle de vie à chaque âge de départ, nets, sous les trois productivités du COR"
+consulte: >-
+  `python scripts/veille_droit.py` : quatre fiches à relire, aucune touchée par
+  la session, qui n'écrit aucune règle du scénario 1 — elle balaie les âges que
+  le droit ouvre déjà, et ne lit que ce que le dépôt sert. Le code de
+  TRAJECTOiRE au commit 0963b57, lu sans être copié (EUPL) : le script des cas
+  types du COR (casTypesCOR.R), son rapport (rapport_casTypesCOR.Rmd), le
+  calcul des indicateurs (fonctionsCalculsPensions.R, fonctionsAgregation.R)
+  et celui des rémunérations, des primes et des pensions nettes
+  (fonctionsCalculsDivers.R). Son témoin, tests/temoins/trajectoire.json, et
+  ses taux de remplacement nets au premier âge du taux plein. Le barème de
+  l'ASPA et du minimum vieillesse à deux étages du dépôt, sans relecture des
+  textes. Aucun texte de droit.
+trouve: >-
+  TRAJECTOiRE balaie chaque cas type de l'âge de la carrière longue, ou de
+  l'âge d'ouverture s'il est plus tôt, à l'âge d'annulation de la décote, par
+  pas de 0,25 an, sous quatre croissances du salaire moyen, dont le 1,3 % que
+  le COR a retiré en juin 2025 ; il rapporte la pension nette à l'ASPA de la
+  date de liquidation, et au dernier revenu net en euros courants, constants
+  et en salaire moyen. Il prélève sur les pensions et les salaires les taux de
+  chaque année — avant 2018, la CSG des pensions au taux plein de 6,6 %, et
+  sur le salaire du privé la cotisation maladie et celle de chômage —, la
+  maladie de 1 % sur l'Agirc-Arrco quelle que soit la catégorie de CSG, et il
+  assied une retenue sur la prime spéciale de sujétion de l'aide-soignante et
+  sur l'indemnité de sujétions spéciales du policier (primes_dans_la_base),
+  que le dépôt ne porte pas. En chemin, une erreur du dépôt : appliquée au
+  revenu entier d'un fonctionnaire, sa fiche de paie, dont l'assiette est le
+  traitement, prélevait la retenue sur ses primes (corrigé dans le revenu net
+  des indicateurs).
+reste: >-
+  L'histoire des prélèvements sur les pensions et sur les salaires depuis
+  1980, que l'IPP publie ; la prime spéciale de sujétion des aides-soignants
+  et l'indemnité de sujétions spéciales des policiers dans l'assiette de la
+  retenue, à la session des données ; la fiche de paie de la proposition pour
+  le revenu net du scénario 6.

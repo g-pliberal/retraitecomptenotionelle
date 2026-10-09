@@ -6,8 +6,10 @@ tire la durée de retraite, le taux de récupération, le rendement interne et l
 patrimoine retraite (action 138, étape 9). Ce module tient les définitions :
 un rendement qu'on connaît d'avance se retrouve, une durée de retraite est
 celle que la convention dit, un taux de récupération est le rapport de deux
-sommes, et chaque système reçoit et verse ce que le modèle lui prête. La
-confrontation aux chiffres publiés par le COR, TRAJECTOiRE et l'OCDE est dans
+sommes, et chaque système reçoit et verse ce que le modèle lui prête ; à
+chaque âge de départ, de l'âge d'ouverture à l'annulation de la décote, en
+net, sous les trois productivités du COR. La confrontation aux chiffres
+publiés par le COR, TRAJECTOiRE et l'OCDE est dans
 ``tests/test_cycle_de_vie_references.py``.
 """
 
@@ -18,8 +20,10 @@ import math
 import pytest
 
 from retraite_notionnelle import cycle_de_vie
+from retraite_notionnelle.castypes import CAS_TYPES
 from retraite_notionnelle.config import RACINE_DONNEES, Parametres
 from retraite_notionnelle.donnees.macro import DonneesMacro
+from retraite_notionnelle.remuneration import fiche_depuis_brut
 from retraite_notionnelle.revalorisation import faire_vivre
 from retraite_notionnelle.simulateur import Simulateur
 
@@ -343,3 +347,176 @@ def test_le_jeu_de_l_ocde_se_nomme_comme_un_scenario_de_projection():
 def test_un_scenario_inconnu_reste_refuse():
     with pytest.raises(KeyError, match="ocde_2025"):
         DonneesMacro(RACINE_DONNEES, scenario_projection="inexistant").inflation(2050)
+
+
+# -- en net ------------------------------------------------------------------------
+
+
+def test_en_net_la_pension_nette_se_rapporte_au_revenu_net(simulateur, parti_en_2044):
+    """Sous une convention nette, ce qui rapporte la pension à un revenu
+    d'activité la rapporte au revenu net : le taux d'annuité net est le brut,
+    fois la part de la pension qui reste, divisé par la part du revenu qui
+    reste. Le patrimoine reste en années de dernier revenu brut, comme l'OCDE
+    l'exprime."""
+    flux = cycle_de_vie.flux_des_systemes(simulateur, parti_en_2044, nets=True)["actuel"]
+    brute = cycle_de_vie.indicateurs(flux, simulateur, cycle_de_vie.Convention(age_deces=87.0))
+    nette = cycle_de_vie.indicateurs(flux, simulateur, cycle_de_vie.Convention(
+        age_deces=87.0, prelevement=0.1))
+    macro = simulateur.macro
+
+    def en_salaire_moyen(montants: dict[int, float]) -> float:
+        return sum(montant / macro.coefficient_salaire_moyen(2000, annee)
+                   for annee, montant in montants.items())
+
+    rapport = en_salaire_moyen(flux.revenus) / en_salaire_moyen(flux.revenus_nets)
+    assert 1.2 < rapport < 1.3
+    assert nette.taux_annuite == pytest.approx(0.9 * brute.taux_annuite * rapport, rel=1e-12)
+    assert nette.taux_remplacement_cycle == pytest.approx(
+        0.9 * brute.taux_remplacement_cycle * rapport, rel=1e-12)
+    assert nette.patrimoine == pytest.approx(0.9 * brute.patrimoine, rel=1e-12)
+    sans_net = cycle_de_vie.flux_des_systemes(simulateur, parti_en_2044)["actuel"]
+    assert sans_net.revenus_nets is None
+    assert cycle_de_vie.indicateurs(sans_net, simulateur, cycle_de_vie.Convention(
+        age_deces=87.0, prelevement=0.1)).taux_annuite is None
+
+
+def test_les_primes_d_un_fonctionnaire_ne_paient_pas_la_retenue(simulateur):
+    """La fiche de paie d'un fonctionnaire a pour assiette son traitement. À
+    revenu égal, un quart de primes laisse un net plus fort, de la retenue
+    pour pension que la loi n'assied pas sur elles."""
+    def carriere(part_primes: float):
+        return simulateur.carriere_simple(
+            annee_naissance=1980, sexe="H", affiliation="fonctionnaire_etat", age_debut=22,
+            age_liquidation=64, niveau_salaire=1.0, part_primes=part_primes)
+
+    sans, avec = carriere(0.0), carriere(0.25)
+    annee = 2030
+    revenu = cycle_de_vie.revenus_d_activite(sans)[annee]
+    assert cycle_de_vie.revenus_d_activite(avec)[annee] == pytest.approx(revenu)
+    fiche = fiche_depuis_brut(simulateur.parametres.racine_donnees, simulateur.macro,
+                              simulateur.catalogue, simulateur.affiliations,
+                              "fonctionnaire_etat", annee, revenu)
+    retenue = fiche.retraite_salarie / fiche.brut
+    assert retenue > 0.1
+    ecart = (cycle_de_vie.revenus_nets(simulateur, avec)[annee]
+             - cycle_de_vie.revenus_nets(simulateur, sans)[annee])
+    assert ecart == pytest.approx(0.25 * revenu * retenue, rel=1e-9)
+
+
+def test_un_statut_sans_fiche_de_paie_n_a_pas_de_revenu_net(simulateur):
+    exploitant = simulateur.carriere_simple(
+        annee_naissance=1980, sexe="H", affiliation="exploitant_agricole", age_debut=20,
+        age_liquidation=64, niveau_salaire=0.5)
+    assert cycle_de_vie.revenus_nets(simulateur, exploitant) is None
+
+
+# -- à chaque âge de départ ---------------------------------------------------------
+
+
+def _cas(code: str):
+    return next(cas for cas in CAS_TYPES if cas.code == code)
+
+
+@pytest.fixture(scope="module")
+def balayage_1970(simulateur):
+    """Le salarié au salaire moyen né en 1970, à chacun de ses âges de départ."""
+    return cycle_de_vie.balayage(simulateur, _cas("salaire_moyen"), 1970)
+
+
+def test_les_ages_vont_de_l_ouverture_a_l_annulation_de_la_decote_par_trimestre(
+        simulateur, balayage_1970):
+    """De trimestre en trimestre, comme TRAJECTOiRE, de l'âge d'ouverture à
+    l'âge d'annulation de la décote : 64 et 67 ans pour la génération 1970,
+    sous la loi du 14 avril 2023. La carrière longue ouvre le droit plus tôt,
+    et le balayage avec elle."""
+    assert [depart.age for depart in balayage_1970] == [64.0 + 0.25 * rang for rang in range(13)]
+    assert all(depart.annee == 1970 + int(depart.age) for depart in balayage_1970)
+    longue = cycle_de_vie.ages_de_depart(simulateur, _cas("smic_carriere_complete"), 1970)
+    assert longue[0] < 64.0
+    assert longue[-1] == 67.0
+
+
+def test_partir_plus_tard_raccourcit_la_retraite_et_releve_la_pension(balayage_1970):
+    """Chaque trimestre de plus : une retraite plus courte, une pension nette
+    plus forte, plus haut sur le minimum vieillesse, un taux de remplacement
+    net plus fort."""
+    for avant, apres in zip(balayage_1970, balayage_1970[1:]):
+        assert (apres.indicateurs["actuel"].duree_retraite
+                < avant.indicateurs["actuel"].duree_retraite)
+        assert apres.pensions_nettes["actuel"] > avant.pensions_nettes["actuel"]
+        assert apres.pensions_aspa["actuel"] > avant.pensions_aspa["actuel"]
+        assert (apres.remplacements["actuel"].salaire_moyen
+                >= avant.remplacements["actuel"].salaire_moyen)
+
+
+def test_la_pension_nette_se_rapporte_au_minimum_vieillesse_de_son_annee(
+        simulateur, balayage_1970):
+    """La pension brute du premier mois servi, moins le taux plein de l'année
+    courante et la maladie de sa part complémentaire, sur le minimum
+    vieillesse d'une personne seule de l'année du départ. Le scénario 6, que
+    son âge légal fait partir à 65 ans, se rapporte à celui de son année."""
+    cas = _cas("salaire_moyen")
+    depart = balayage_1970[0]
+    comparaison = simulateur.simuler(cas.carriere_a(simulateur, 1970, depart.age))
+    taux = cycle_de_vie.taux_de_prelevement(simulateur, comparaison.actuel)
+    for scenario in cycle_de_vie.SCENARIOS:
+        brute = cycle_de_vie.pension_au_depart(simulateur, comparaison, scenario)
+        annee = comparaison.carriere_de(scenario).annee_liquidation
+        assert depart.pensions_nettes[scenario] == pytest.approx(brute * (1.0 - taux))
+        assert depart.pensions_aspa[scenario] == pytest.approx(
+            depart.pensions_nettes[scenario] / cycle_de_vie.minimum_vieillesse(simulateur, annee))
+    assert comparaison.depart_reporte
+    assert comparaison.carriere_de("notionnel_liberal").annee_liquidation == 2035
+
+
+def test_le_minimum_vieillesse_est_l_aspa_ou_ses_deux_etages(simulateur):
+    bareme = simulateur.scenario_actuel.minimum_vieillesse
+    assert cycle_de_vie.minimum_vieillesse(simulateur, 2026) == bareme.plafond(2026)[0]
+    etages = bareme.deux_etages(2005)
+    assert cycle_de_vie.minimum_vieillesse(simulateur, 2005) == pytest.approx(
+        etages.avts + etages.supplementaire)
+    assert cycle_de_vie.minimum_vieillesse(simulateur, 1930) is None
+
+
+def test_les_trois_remplacements_nets_ne_different_que_par_le_deflateur(
+        simulateur, balayage_1970):
+    """La pension nette du départ sur le revenu net de la dernière année
+    travaillée en entier : en euros courants, constants, en salaire moyen."""
+    macro = simulateur.macro
+    cas = _cas("salaire_moyen")
+    for depart in balayage_1970[::4]:
+        carriere = cas.carriere_a(simulateur, 1970, depart.age)
+        annee = cycle_de_vie.derniere_annee_pleine(carriere)
+        assert annee == depart.annee - 1
+        remplacement = depart.remplacements["actuel"]
+        nets = cycle_de_vie.revenus_nets(simulateur, carriere)
+        assert remplacement.courants == pytest.approx(
+            depart.pensions_nettes["actuel"] / nets[annee], rel=1e-12)
+        assert remplacement.constants == pytest.approx(
+            remplacement.courants / macro.coefficient_prix(annee, depart.annee), rel=1e-12)
+        assert remplacement.salaire_moyen == pytest.approx(
+            remplacement.courants / macro.coefficient_salaire_moyen(annee, depart.annee),
+            rel=1e-12)
+
+
+def test_les_hypotheses_de_productivite_sont_les_trois_du_cor():
+    assert cycle_de_vie.hypotheses_de_productivite(RACINE_DONNEES) == (
+        "cor_productivite_basse", "cor_reference", "cor_productivite_haute")
+
+
+def test_sous_une_productivite_plus_forte_la_pension_monte_sur_l_aspa():
+    """La génération 2000, partie à 64 ans en 2064. Plus la productivité est
+    forte, plus les salaires dépassent les prix : sa pension, qui suit les
+    salaires jusqu'au départ, monte sur le minimum vieillesse, qui suit les
+    prix ; ses pensions, qui suivent les prix ensuite, rendent moins en
+    salaire moyen."""
+    cas = _cas("salaire_moyen")
+    departs = []
+    for nom in cycle_de_vie.hypotheses_de_productivite(RACINE_DONNEES):
+        simulateur = Simulateur(Parametres(scenario_projection=nom))
+        comparaison = simulateur.simuler(cas.carriere_a(simulateur, 2000, 64.0))
+        departs.append(cycle_de_vie.depart(simulateur, comparaison))
+    aspa = [depart.pensions_aspa["actuel"] for depart in departs]
+    recuperation = [depart.indicateurs["actuel"].taux_recuperation for depart in departs]
+    assert aspa[0] < aspa[1] < aspa[2]
+    assert recuperation[0] > recuperation[1] > recuperation[2]

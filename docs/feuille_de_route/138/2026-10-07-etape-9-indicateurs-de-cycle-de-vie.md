@@ -2,14 +2,14 @@
 
 **Reprise, au 9 octobre 2026.** Fait : `cycle_de_vie.py`, les flux versés et
 reçus des six systèmes et onze indicateurs, sous la convention de l'OCDE et
-sous celle du COR, deux témoins (COR, OCDE) ; le 9 octobre, les contributions
-d'équilibre de l'Agirc-Arrco dans ce qui est versé, que TRAJECTOiRE et le COR
-comptent aussi (`contributions_equilibre.py`). Reste, dans cet ordre : les
-prélèvements sur les pensions depuis 1980 (IPP) ; l'écart au COR du rendement
-des générations 1963 à 1970, commun aux deux régimes ; les indicateurs à chaque
-âge de départ ; l'âge d'équilibre ; le portage et l'affichage, avec l'étape 10.
-Commencer par les prélèvements. Détail : « Ce qui reste » de la note du
-9 octobre (`2026-10-09-etape-9-contributions-d-equilibre.md`).
+sous celle du COR, deux témoins ; le 9 octobre, les contributions d'équilibre
+de l'Agirc-Arrco dans ce qui est versé, puis les indicateurs à chaque âge de
+départ, nets sur nets, sous les trois productivités du COR, avec la pension
+rapportée à l'ASPA (`balayage`). Reste, dans cet ordre : les prélèvements sur
+les pensions et les salaires depuis 1980 (IPP) ; l'écart au COR du rendement
+des générations 1963 à 1970 ; l'âge d'équilibre ; le portage et l'affichage,
+avec l'étape 10. Commencer par les prélèvements. Détail : « Ce qui reste » de
+la note `2026-10-09-etape-9-ages-de-depart.md`.
 
 **La demande.** L'étape 9 de l'action : « les indicateurs de cycle de vie, par
 cas type et génération, sous les six systèmes : rendement interne, durée de

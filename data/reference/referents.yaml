@@ -3416,7 +3416,22 @@ referents:
           `inst/scripts/casTypesCOR.R:56, 84, 430-433` et
           `inst/templates/rapport_casTypesCOR.Rmd:28-35`, au commit
           `0963b57`
-        etat: a_reprendre
+        verification: >-
+          Repris le 9 octobre 2026 (action 138, étape 9) :
+          `cycle_de_vie.balayage`, de l'âge d'ouverture, carrière
+          longue comprise, à l'âge d'annulation de la décote, de
+          trimestre en trimestre, sous les trois productivités du COR
+          (0,4, 0,7 et 1,0 % ; le COR a retiré le 1,3 % en juin 2025),
+          nets sur nets, avec la pension nette rapportée au minimum
+          vieillesse et le taux de remplacement net en euros courants,
+          constants et en salaire moyen. Son taux de remplacement net
+          (`txRemplacementNet`) se retrouve à 1,1 % près sur les 46 cas
+          du témoin où les deux modèles prélèvent la même chose ; les
+          autres écarts tiennent aux taux d'avant 2018, qu'il prélève à
+          leur année, et à la retenue qu'il assied sur la prime de
+          sujétion de l'aide-soignante et l'indemnité de sujétions
+          spéciales du policier (`tests/test_cycle_de_vie_references.py`).
+        etat: repris
         chantier: "138.9"
       - quoi: >-
           Il refait les treize cas types du COR sans les données du CASD. Le
