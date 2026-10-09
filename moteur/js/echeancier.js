@@ -23,9 +23,12 @@
  * Chaque événement suit le contrat C.7 (`data/reference/contrats/evenement.yaml`).
  */
 
+import { DateMois } from "./calendrier.js";
 import * as chrono from "./chronologie.js";
 import { formatFixe } from "./format.js";
-import { MAJORATION_ENFANTS, dateDEffet, partsDeLaMajoration } from "./droit/commun.js";
+import {
+  MAJORATION_ENFANTS, dateDEffet, majorationDuConjoint, partsDeLaMajoration,
+} from "./droit/commun.js";
 import * as leCumul from "./droit/cumul.js";
 import * as lesDeparts from "./droit/departs.js";
 import { foyerEtNet } from "./droit/foyer.js";
@@ -294,7 +297,9 @@ export class Echeancier {
    * les régimes de sa liquidation (§ 7.3) : sa pension y est menée jusqu'à
    * l'année du décès — l'année courante pour un décès à venir, où s'arrêtent
    * les revalorisations publiées ; jamais avant le départ, dont les montants
-   * sont les euros.
+   * sont les euros. Mort avant son départ, l'assuré n'a pas de pension : la
+   * réversion lit celle qu'il « eût obtenue » à son décès
+   * (`_pensionsEuesAuDeces`).
    */
   _reverser(carriere) {
     const deces = new Evenement({
@@ -302,10 +307,24 @@ export class Echeancier {
       personnes: [carriere.personne], vise: {}, sorte: "deces",
     });
     this._inscrire(deces, deces.id, "evenement", deces, deces.date);
-    const [annee, pensions, enCapital, majorations, minima, maxima] = this._pensionsAuDeces(
-      carriere, carriere.deces);
+    const avantLeDepart = carriere.deces < dateDEffet(carriere);
+    let annee;
+    let pensions;
+    let enCapital;
+    let majorations;
+    let minima;
+    let maxima;
+    let durees;
+    if (avantLeDepart) {
+      [annee, pensions, enCapital, majorations, minima, maxima, durees] = (
+        this._pensionsEuesAuDeces(carriere, deces));
+    } else {
+      [annee, pensions, enCapital, majorations, minima, maxima] = this._pensionsAuDeces(
+        carriere, carriere.deces);
+      durees = this.dureesAuDepart;
+    }
     this.reversion = reversion(this.moteur, pensions, carriere, annee, null, enCapital,
-      majorations, this.dureesAuDepart, minima, maxima);
+      majorations, durees, minima, maxima, avantLeDepart);
     const survivant = carriere.conjoint.personne;
     const evenement = new Evenement({
       id: `reversion_${survivant}`, date: moisSuivant(carriere.deces),
@@ -332,6 +351,55 @@ export class Echeancier {
       carriere, deces);
     this.reversion = reversion(this.moteur, pensions, carriere, annee, deces, enCapital,
       majorations, this.dureesAuDepart, minima, maxima);
+  }
+
+  /**
+   * Les pensions que l'assuré mort avant son départ « eût obtenues » à son
+   * décès, et ce que `_pensionsAuDeces` en dit pour une pension servie, plus
+   * les durées qui proratisent le minimum : une liquidation fictive, sur la
+   * carrière arrêtée au premier jour du trimestre civil du décès, sans décote
+   * ni coefficient d'anticipation (`Carriere.arreteeAuDeces`), inscrite au
+   * journal sous le décès, sans composantes. Voir le Python.
+   */
+  _pensionsEuesAuDeces(carriere, deces) {
+    const annee = Number(carriere.deces.slice(0, 4));
+    const mois = Number(carriere.deces.slice(5, 7));
+    const debut = new DateMois(annee, 3 * Math.floor((mois - 1) / 3) + 1);
+    const demande = new liquidation.Demande({
+      personne: carriere.personne,
+      dateEffet: `${String(annee).padStart(4, "0")}-${String(debut.mois).padStart(2, "0")}-01`,
+      evenement: "deces", dateEvenement: carriere.deces, motif: "reversion",
+      nature: "fictive",
+    });
+    const resultat = liquidation.liquider(
+      demande, new liquidation.Etat(carriere.arreteeAuDeces(debut), this.journal),
+      new liquidation.Contexte(this.moteur));
+    this._inscrire(deces, `liquidation_${deces.id}`, "liquidation", resultat, deces.date);
+    // La réversion lit la pension sans la majoration pour conjoint à charge.
+    const pensions = resultat.regimes.map((p) => [p.regime,
+      p.montant - majorationDuConjoint(p.conjoint, demande.dateEffet), p.fiabilite]);
+    const parts = (entrees) => {
+      const cumul = new Map();
+      for (const [regime, part] of entrees) {
+        cumul.set(regime, (cumul.get(regime) ?? 0.0) + part);
+      }
+      return Object.fromEntries([...cumul].filter(([, part]) => part));
+    };
+    const majorations = parts(partsDeLaMajoration(resultat.avantages, null, false));
+    const minima = parts(resultat.avantages
+      .filter((avantage) => avantage.code === "minimum_contributif")
+      .flatMap((avantage) => avantage.par_regime ?? []));
+    const maxima = {};
+    for (const p of resultat.regimes) {
+      const ecretement = p.ecretement_du_maximum ?? 0.0;
+      const surcote = p.surcote ?? 0.0;
+      const coefficient = p.coefficient_du_maximum ?? 1.0;
+      if (ecretement || surcote || coefficient !== 1.0) {
+        maxima[p.regime] = [ecretement, surcote, coefficient];
+      }
+    }
+    return [annee, pensions, new Set(), majorations, minima, maxima,
+      Object.fromEntries(resultat.releve.durees.trimestresParRegime)];
   }
 
   /**

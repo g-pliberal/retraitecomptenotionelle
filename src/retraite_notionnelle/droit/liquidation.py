@@ -281,7 +281,8 @@ _appels = 0
 #: et, pour qui est déjà parti à la bascule, les scénarios notionnels refont la
 #: liquidation du départ. Quand les régimes liquident à des dates différentes
 #: (:mod:`.departs`), chaque départ ouvre ses pensions et fait les siens : le
-#: nombre vaut pour chacun. Chaque témoin écrit les siens
+#: nombre vaut pour chacun, comme pour la pension qu'un assuré mort avant son
+#: départ « eût obtenue », liquidée à son décès (:mod:`..echeancier`). Chaque témoin écrit les siens
 #: (``tests/temoins/simulations.json``), le portage les refait, et un test
 #: refuse qu'un seul dépasse ce nombre, par départ.
 APPELS_DECLARES = 6

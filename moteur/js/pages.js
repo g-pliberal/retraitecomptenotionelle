@@ -5141,7 +5141,9 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
     Number(date.slice(0, 4)), Number(date.slice(5, 7)))));
 
   let quand;
-  if (!reversion.deces_suppose) {
+  if (reversion.avant_le_depart) {
+    quand = `À votre décès, en ${mois(reversion.deces)}, avant votre départ,`;
+  } else if (!reversion.deces_suppose) {
     quand = `À votre décès, en ${mois(reversion.deces)},`;
   } else if (comparaison.aujourd_hui !== null) {
     quand = `Si vous décédiez cette année, en ${reversion.annee},`;
@@ -5208,6 +5210,14 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
     true,
   );
 
+  // Mort avant son départ, l'assuré n'a pas de pension : la réversion porte sur
+  // celle qu'il eût obtenue à son décès (R. 353-6).
+  const avantLeDepart = reversion.avant_le_depart
+    ? "\n<p>Mort avant votre départ, vous n'auriez pas de pension : la réversion se\n"
+      + "calcule sur celle que vous auriez obtenue à votre décès, sur vos droits de ce\n"
+      + "jour-là et sans décote — au régime général, au taux plein quel que soit votre\n"
+      + "âge.</p>"
+    : "";
   const conjoint = comparaison.carriere.conjoint;
   const reserves = [];
   if (reversion.ressources_presumees) {
@@ -5231,7 +5241,7 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
 <p>${quand} votre conjoint recevrait du système actuel
 <strong>${g.nombre(totalMensuel, 0)} ${montants.unitePension}</strong>
 de pension de réversion, en euros de ${saisie.euros} comme les montants
-ci-dessus.</p>
+ci-dessus.</p>${avantLeDepart}
 ${tableau}
 <p>Dans les systèmes 2, 3 et 4, <strong>aucune réversion</strong> : les comptes
 notionnels ne servent que les droits de qui a cotisé, et notre proposition

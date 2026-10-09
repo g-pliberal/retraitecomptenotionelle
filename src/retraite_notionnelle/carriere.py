@@ -671,6 +671,14 @@ class Carriere:
     #: qu'elle ouvre ou non —, c'est :mod:`~retraite_notionnelle.droit.cumul`
     #: qui le dit.
     lignes_apres_depart: tuple = ()
+    #: La carrière arrêtée au décès de la personne, pour la pension qu'elle
+    #: « eût obtenue » et que sa réversion lit quand elle meurt avant son
+    #: départ (:meth:`arretee_au_deces`) : aucun régime ne lui oppose de décote
+    #: ni de coefficient d'anticipation — le régime général la calcule au taux
+    #: de l'inaptitude, quel que soit l'âge au décès (R. 353-6), le code des
+    #: pensions et les régimes spéciaux sans « coefficient de minoration »
+    #: (L. 14, I), les complémentaires sur les points acquis.
+    au_deces: bool = False
 
     def __post_init__(self) -> None:
         if self.sexe not in ("H", "F"):
@@ -1398,6 +1406,7 @@ class Carriere:
             chronologie=self.chronologie,
             personne=self.personne,
             lignes_apres_depart=self.lignes_apres_depart,
+            au_deces=self.au_deces,
         )
 
     def liquidee_au(self, date: DateMois) -> "Carriere":
@@ -1414,6 +1423,21 @@ class Carriere:
             return self
         return replace(self, lignes=list(self.lignes), age_liquidation=self.age_au(date),
                        dates_entree=dict(self.dates_entree))
+
+    def arretee_au_deces(self, date: DateMois) -> "Carriere":
+        """La même carrière, arrêtée au premier jour de ``date``, pour la
+        pension que la personne « eût obtenue » à son décès (:attr:`au_deces`).
+
+        C'est la vue que lit la réversion d'un assuré mort avant son départ
+        (:mod:`~retraite_notionnelle.echeancier`) : les mêmes lignes, que la
+        date borne comme celle d'un départ (:meth:`part_retenue`), sans
+        l'activité d'après un départ qui n'a pas eu lieu. La date est le
+        premier jour du trimestre civil du décès : la durée d'assurance « est
+        arrêtée au dernier jour du trimestre civil qui précède le décès »
+        (exposé de la Cnav, « Retraite de l'assuré décédé »)."""
+        return replace(self, lignes=list(self.lignes), age_liquidation=self.age_au(date),
+                       dates_entree=dict(self.dates_entree), lignes_apres_depart=(),
+                       au_deces=True)
 
     def prolongee(self, age_liquidation: float, macro: DonneesMacro,
                   attente_travaillee: bool = True) -> "Carriere":

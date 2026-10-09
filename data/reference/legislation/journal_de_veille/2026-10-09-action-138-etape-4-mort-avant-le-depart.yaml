@@ -1,0 +1,34 @@
+date: "2026-10-09"
+session: "action 138, étape 4 : la réversion d'un assuré mort avant son départ"
+consulte: >-
+  veille_droit.py (dernière veille consignée : 2026-10-09) ; l'index LEGI, récupéré de
+  sa release et mis à jour des incréments jusqu'au 8 octobre 2026 (4 incréments), puis
+  textes.py --inscrire, qui n'inscrit aucune rédaction nouvelle ; dans l'index : R. 353-6
+  (LEGIARTI000006749413, 1985, et LEGIARTI000024113077, 2011), L. 14 du code des
+  pensions, ses rédactions depuis 2004 (LEGIARTI000006362704 à 048844775), L. 38
+  (LEGIARTI000006362764 à 053278806), la recherche de « minoration » près de
+  « réversion » et de « décès » (119 documents, les quinze premiers lus : CNRACL,
+  ouvriers de l'État, Banque de France, RATP, IEG, CRPCEN, Comédie-Française, Opéra,
+  SNCF) ; l'API de la législation de la Cnav : l'exposé « Retraite de l'assuré
+  décédé » (6 mars 2026) et la circulaire n° 2005-17 (§ 211 à 218) ; Destinie 2,
+  Reversion.cpp, au commit 4c1d34b.
+trouve: >-
+  Quand l'assuré meurt avant son départ, la réversion du régime général porte sur la
+  pension « qui aurait été allouée au de cujus au titre de l'inaptitude au travail »
+  (R. 353-6) : la Cnav la calcule au taux de 50 % « quel que soit l'âge de l'assuré au
+  moment du décès », sa durée « arrêtée au dernier jour du trimestre civil qui précède
+  le décès », l'année du point de départ de la réversion négligée au salaire annuel
+  moyen. Le code des pensions et les règlements des régimes spéciaux écartent de même
+  le « coefficient de minoration » de la pension liquidée après le décès (L. 14, I,
+  depuis 2004). R. 353-6 nomme aussi « le pensionné », que la Cnav reverse sur sa
+  pension servie : lecture divergente, le modèle suit la caisse. Le scénario 1 sert
+  cette réversion dans les deux moteurs, sur une liquidation fictive au décès ; aucune
+  pension des témoins ne bouge, ni aucune de leurs dix-neuf réversions.
+reste: >-
+  Le reste de l'étape 4 : le partage entre ex-conjoints et le remariage, L. 353-5 et
+  D. 355-1. De R. 353-6 : les règles de la date d'effet de la réversion qu'applique la
+  Cnav (majorations pour enfants, surcote, salaire annuel moyen des polypensionnés), le
+  nombre d'années et la durée de la génération qui avait soixante ans l'année d'un décès
+  de juillet 2004 à juin 2011, la pension déjà servie au décès d'un départ échelonné, et
+  un exemple chiffré publié ; la circulaire du service des retraites de l'État sur la
+  pension du fonctionnaire mort en activité.

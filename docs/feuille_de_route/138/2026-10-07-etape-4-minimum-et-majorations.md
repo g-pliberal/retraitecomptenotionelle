@@ -2,14 +2,14 @@
 
 **Reprise, au 9 octobre 2026.** Fait : le minimum de D. 353-1, les majorations
 de 10 % et de 11,1 %, la base sans le minimum contributif, le maximum, surcote
-en sus ; le plafond du ménage, 1,6 fois celui d'une personne seule pour le
-survivant qui déclare vivre en couple, et l'abattement de 30 % de ses revenus
-d'activité à cinquante-cinq ans (notes du 7 et du 9 octobre). Reste, dans cet
-ordre : la réversion d'un assuré mort avant son départ (R. 353-6) ; le partage
-entre ex-conjoints et le remariage ; L. 353-5 et D. 355-1. Commencer par
-l'assuré mort avant son départ : la pension qu'il « eût obtenue », au taux
-plein de l'inaptitude. Détail : plus bas, « Ce qui reste », et les deux notes
-du 9 octobre.
+en sus ; le plafond du ménage et l'abattement des revenus d'activité ; la
+réversion d'un assuré mort avant son départ, sur la pension qu'il eût obtenue
+à son décès, au taux plein de l'inaptitude (R. 353-6). Reste, dans cet ordre :
+le partage entre ex-conjoints et le remariage ; L. 353-5 et D. 355-1.
+Commencer par le partage : les ex-conjoints datés dans la saisie et la
+chronologie, le prorata des durées de mariage (L. 353-3), le minimum et le
+maximum réduits de même. Détail : plus bas, « Ce qui reste », et les trois
+notes du 9 octobre.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « Quels sont les écarts
 encore présents avec trajectoire et destinie 2 ? J'aimerais combler les manques
@@ -105,7 +105,8 @@ de trois enfants). C'est l'étape 4 de l'action ; elle commence par là.
    après cinquante-cinq ans (R. 353-1) — fait le 9 octobre, note « plafond du
    ménage ».
 4. *La réversion d'un assuré mort avant son départ* : la pension qu'il « eût
-   obtenue », au taux de 50 % (R. 353-6).
+   obtenue », au taux de 50 % (R. 353-6) — fait le 9 octobre, note « assuré
+   mort avant son départ ».
 5. *Le partage entre ex-conjoints* au prorata des mariages (L. 353-3), le
    remariage ; puis L. 353-5 et les limites de cumul d'avant 2004 (D. 355-1),
    dont le barème de la Cnav porte la limite forfaitaire.

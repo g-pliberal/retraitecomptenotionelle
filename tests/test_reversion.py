@@ -953,7 +953,10 @@ def test_sans_conjoint_pas_de_reversion(simulateur):
 
 @pytest.mark.parametrize("requete, message", [
     ({"deces": "2030"}, "« deces » ne sert qu'à la réversion"),
-    ({"conjoint": "1962", "deces": "2020"}, "il précède le départ"),
+    ({"conjoint": "1962", "deces": "1959"}, "Le décès précède la naissance de l'assuré"),
+    ({"conjoint": "1962", "deces": "1985"}, "il précède le mariage, que le modèle présume"),
+    ({"conjoint": "1962", "mariage": "1979", "deces": "1980"},
+     "il précède le début de la carrière"),
     ({"conjoint": "1962", "mariage": "1961"}, "précède la naissance"),
     ({"conjoint": "1962", "conjoint_sexe": "X"}, "Sexe du conjoint"),
     ({"conjoint": "1962-13"}, "La naissance du conjoint « 1962-13 »"),
@@ -1017,6 +1020,119 @@ def test_le_journal_inscrit_le_deces_puis_la_reversion(contexte):
     assert sortie["deces"] == "2023-05-01" and sortie["total"] > 0
     assert "reversion" not in contexte.simuler(Saisie.depuis_requete({
         "naissance": "1958", "liquidation": "62"})).dictionnaire()
+
+
+# -- l'assuré mort avant son départ (R. 353-6) ----------------------------------------
+
+#: Un salarié né en 1970, qui partirait à soixante-quatre ans, mort à cinquante-
+#: quatre ans ; son épouse, née en 1972, attend ses cinquante-cinq ans.
+MORT_AVANT = {"naissance": "1970", "liquidation": "64", "conjoint": "1972",
+              "deces": "2024-05"}
+
+
+def _fictive(comparaison):
+    """La liquidation de la pension que le défunt eût obtenue, au journal."""
+    return next(e.contenu for e in comparaison.journal if e.id == "liquidation_deces_assure")
+
+
+def test_mort_avant_son_depart_la_reversion_lit_la_pension_qu_il_eut_obtenue(contexte):
+    """Mort à cinquante-quatre ans, dix ans avant son départ, l'assuré n'a pas
+    de pension : la réversion se calcule sur celle qu'il « eût obtenue »
+    (L. 353-1), liquidée à son décès, sur sa carrière de ce jour-là, « au titre
+    de l'inaptitude au travail » (R. 353-6), au taux de 50 % « quel que soit
+    l'âge de l'assuré au moment du décès » (exposé de la Cnav, « Retraite de
+    l'assuré décédé »), quoique le droit ne s'ouvre pas à cet âge. Cette
+    liquidation est fictive : elle s'inscrit au journal sous le décès, sans
+    composantes."""
+    comparaison = contexte.simuler(Saisie.depuis_requete(MORT_AVANT))
+    sortie = comparaison.dictionnaire()["reversion"]
+    assert (sortie["avant_le_depart"], sortie["deces"], sortie["annee"]) == (
+        True, "2024-05-01", 2024)
+    fictive = _fictive(comparaison)
+    assert fictive.demande.donnees() == {
+        "personne": "assure", "date_effet": "2024-04-01",
+        "evenement": {"sorte": "deces", "date": "2024-05-01"},
+        "motif": "reversion", "nature": "fictive"}
+    assert fictive.carriere.au_deces and not fictive.ouverture.ouverte
+    assert fictive.pensions.taux == 0.5
+    general = next(l for l in sortie["regimes"] if l["regime"] == "regime_general")
+    pension = next(p for p in fictive.regimes if p.regime == "regime_general")
+    assert general["base"] == pytest.approx(pension.montant)
+    assert general["montant"] == pytest.approx(0.54 * pension.montant)
+    # Le conjoint, né en janvier 1972, a cinquante-cinq ans en janvier 2027.
+    assert general["date_effet"] == "2027-02-01"
+    assert {e.sorte for e in comparaison.journal if e.evenement == "deces_assure"} == {
+        "evenement", "liquidation"}
+
+
+@pytest.mark.parametrize("deces, effet, trimestres", [
+    ("2024-03", "2024-01-01", 132), ("2024-04", "2024-04-01", 133)])
+def test_la_duree_s_arrete_au_trimestre_qui_precede_le_deces(contexte, deces, effet,
+                                                             trimestres):
+    """« La durée d'assurance est arrêtée au dernier jour du trimestre civil qui
+    précède le décès » (exposé de la Cnav) : mort en mars, l'assuré ne compte
+    aucun trimestre de l'année ; en avril, le premier."""
+    fictive = _fictive(contexte.simuler(Saisie.depuis_requete({**MORT_AVANT,
+                                                               "deces": deces})))
+    assert fictive.demande.date_effet == effet
+    assert fictive.releve.durees.trimestres_par_regime["regime_general"] == trimestres
+
+
+def test_sans_decote_ni_coefficient_d_anticipation(contexte, simulateur):
+    """La même carrière, liquidée au même jour d'un assuré vivant, serait
+    décotée au régime général et abattue à l'Agirc-Arrco : la pension que le
+    défunt eût obtenue ne l'est pas — taux plein de l'inaptitude (R. 353-6),
+    points acquis sans coefficient."""
+    from dataclasses import replace
+
+    from retraite_notionnelle.droit import liquidation as _liquidation
+
+    fictive = _fictive(contexte.simuler(Saisie.depuis_requete(MORT_AVANT)))
+    vivant = _liquidation.liquider(
+        fictive.demande, _liquidation.Etat(replace(fictive.carriere, au_deces=False)),
+        _liquidation.Contexte(simulateur.scenario_actuel))
+    assert vivant.pensions.taux < fictive.pensions.taux == 0.5
+    sans = {p.regime: p.montant for p in vivant.regimes}
+    for pension in fictive.regimes:
+        if pension.montant > 0:
+            assert pension.montant > sans[pension.regime], pension.regime
+
+
+def test_le_fonctionnaire_mort_en_activite_sans_coefficient_de_minoration(contexte):
+    """« Le coefficient de minoration n'est pas applicable aux pensions de
+    réversion lorsque la liquidation de la pension dont le fonctionnaire aurait
+    pu bénéficier intervient après son décès » (L. 14, I, du code des
+    pensions) : la pension civile se liquide au taux de 75 %, sur les services
+    accomplis, et sa veuve en reçoit la moitié dès le mois qui suit."""
+    comparaison = contexte.simuler(Saisie.depuis_requete({
+        **MORT_AVANT, "statut": "fonctionnaire_etat"}))
+    assert _fictive(comparaison).pensions.taux == 0.75
+    ligne, = comparaison.dictionnaire()["reversion"]["regimes"]
+    assert (ligne["regime"], ligne["taux"], ligne["motif"], ligne["date_effet"]) == (
+        "fonction_publique_etat", 0.5, "servie", "2024-06-01")
+
+
+@pytest.mark.parametrize("mariage, motif", [("2023-05", "mariage"), ("2022-03", "servie")])
+def test_la_cessation_d_activite_du_fonctionnaire_mort_en_activite_est_son_deces(
+        contexte, mariage, motif):
+    """La condition de L. 39 lit deux ans de services entre le mariage et la
+    cessation d'activité : celle du fonctionnaire mort en activité est son
+    décès, non le départ qu'il n'a pas pris. Marié un an avant sa mort, sans
+    enfant, il ne laisse rien ; deux ans, la moitié de sa pension."""
+    comparaison = contexte.simuler(Saisie.depuis_requete({
+        **MORT_AVANT, "statut": "fonctionnaire_etat", "mariage": mariage}))
+    ligne, = comparaison.dictionnaire()["reversion"]["regimes"]
+    assert ligne["motif"] == motif
+
+
+def test_la_page_dit_la_reversion_d_un_assure_mort_avant_son_depart():
+    """La carte dit le décès avant le départ, et que la réversion se calcule
+    sur la pension que l'assuré aurait obtenue à son décès, sans décote."""
+    from retraite_notionnelle.web.site import rendre
+
+    _, page = rendre("/simuler", MORT_AVANT)
+    assert "À votre décès, en mai 2024, avant votre départ," in page
+    assert "Mort avant votre départ, vous n'auriez pas de pension" in page
 
 
 # -- l'hypothèse de décès et la page ------------------------------------------------

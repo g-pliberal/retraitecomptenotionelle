@@ -559,6 +559,10 @@ export class Carriere {
     //: emploi-retraite : hors des lignes, que le départ arrête. Voir
     //: `carriere.py`.
     lignes_apres_depart = [],
+    //: La carrière arrêtée au décès, pour la pension que la personne « eût
+    //: obtenue » : sans décote ni coefficient d'anticipation (R. 353-6 ;
+    //: L. 14, I, du code des pensions). Voir `carriere.py`.
+    au_deces = false,
   }) {
     if (sexe !== "H" && sexe !== "F") {
       throw new Error(`sexe attendu 'H' ou 'F', reçu ${sexe}`);
@@ -613,6 +617,7 @@ export class Carriere {
       naissances_enfants, jour_naissance));
     this.personne = personne;
     this.lignes_apres_depart = [...lignes_apres_depart];
+    this.au_deces = au_deces;
     this._naissancesDesEnfants = undefined;
     this._origineDesAges = undefined;
     this._conjoint = undefined;
@@ -1097,6 +1102,7 @@ export class Carriere {
       chronologie: this.chronologie,
       personne: this.personne,
       lignes_apres_depart: this.lignes_apres_depart,
+      au_deces: this.au_deces,
     });
   }
 
@@ -1124,6 +1130,32 @@ export class Carriere {
       chronologie: this.chronologie,
       personne: this.personne,
       lignes_apres_depart: this.lignes_apres_depart,
+      au_deces: this.au_deces,
+    });
+  }
+
+  /**
+   * La même carrière, arrêtée au premier jour de `date` — celui du trimestre
+   * civil du décès —, pour la pension que la personne « eût obtenue » à son
+   * décès (`au_deces`) : la vue que lit la réversion d'un assuré mort avant son
+   * départ. Voir `carriere.py`.
+   */
+  arreteeAuDeces(date) {
+    return new Carriere({
+      annee_naissance: this.annee_naissance,
+      sexe: this.sexe,
+      lignes: [...this.lignes],
+      mois_naissance: this.mois_naissance,
+      age_liquidation: this.ageAu(date),
+      jour_naissance: this.jour_naissance,
+      nombre_enfants: this.nombre_enfants,
+      naissances_enfants: this.naissances_enfants,
+      identifiant: this.identifiant,
+      dates_entree: { ...this.dates_entree },
+      chronologie: this.chronologie,
+      personne: this.personne,
+      lignes_apres_depart: [],
+      au_deces: true,
     });
   }
 

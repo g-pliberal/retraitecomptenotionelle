@@ -1993,10 +1993,10 @@ class Saisie:
     def _verifier_conjoint(self) -> None:
         """Le conjoint et le décès : des dates lisibles, dans l'ordre de la vie
         — les naissances, le mariage, le décès, l'invalidité du conjoint après
-        sa naissance —, et un décès qui ne précède pas le départ : la réversion
-        d'une pension que l'assuré n'a pas encore liquidée n'est pas calculée.
-        Ses ressources, positives : ses revenus d'activité en sont une part,
-        et celles d'un nouveau conjoint supposent l'union où il vit."""
+        sa naissance. Un décès avant le départ ouvre la réversion de la pension
+        que l'assuré eût obtenue (R. 353-6), pourvu qu'il suive le début de sa
+        carrière. Ses ressources, positives : ses revenus d'activité en sont une
+        part, et celles d'un nouveau conjoint supposent l'union où il vit."""
         if not self.conjoint:
             orphelins = [nom for nom, valeur in (
                 ("conjoint_sexe", self.conjoint_sexe), ("mariage", self.mariage),
@@ -2055,11 +2055,19 @@ class Saisie:
         if "deces" in dates:
             if "mariage" in dates and dates["mariage"] >= dates["deces"]:
                 raise ErreurSaisie("Le mariage suit le décès.")
-            if dates["deces"] < self.jour_de(self.liquidation):
+            if dates["deces"] <= self.naissance_iso:
+                raise ErreurSaisie("Le décès précède la naissance de l'assuré.")
+            presume = chronologie.valeur("mariage_des_conjoints")
+            if ("mariage" not in dates and dates["deces"]
+                    <= chronologie._plus_ans(self.naissance_iso, int(presume))):
                 raise ErreurSaisie(
-                    f"Décès « {self.deces} » : il précède le départ à la retraite, fixé "
-                    f"en {self.date_de(self.liquidation)} ; la réversion d'une pension "
-                    "que l'assuré n'a pas encore liquidée n'est pas calculée.")
+                    f"Décès « {self.deces} » : il précède le mariage, que le modèle "
+                    f"présume à vos {presume} ans faute de date ; dites-la (« mariage »).")
+            if not self.releve_actif and dates["deces"] <= self.jour_de(self.debut):
+                raise ErreurSaisie(
+                    f"Décès « {self.deces} » : il précède le début de la carrière, en "
+                    f"{self.date_de(self.debut)} ; l'assuré n'aurait aucun droit à "
+                    "reverser.")
 
     def requete(self, **remplacements) -> str:
         champs = {

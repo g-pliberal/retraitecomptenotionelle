@@ -92,6 +92,16 @@ versions:
   - {id: LEGIARTI000053278806, article: L. 38, en_vigueur: 2025-12-31}
   - {id: LEGIARTI000029135000, article: "décret n° 2003-1306, article 40", en_vigueur: 2014-06-26}
   - {id: LEGIARTI000006400910, article: "décret n° 2003-1306, article 41", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006362704, article: L. 14, en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000019959691, article: L. 14, en_vigueur: 2008-12-19}
+  - {id: LEGIARTI000023033613, article: L. 14, en_vigueur: 2010-11-11}
+  - {id: LEGIARTI000023031036, article: L. 14, en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000025014534, article: L. 14, en_vigueur: 2011-12-23}
+  - {id: LEGIARTI000028498863, article: L. 14, en_vigueur: 2014-01-22}
+  - {id: LEGIARTI000037200740, article: L. 14, en_vigueur: 2018-07-15}
+  - {id: LEGIARTI000047452815, article: L. 14, en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000048697778, article: L. 14, en_vigueur: 2023-12-28}
+  - {id: LEGIARTI000048844775, article: L. 14, en_vigueur: 2023-12-31}
   nee_de: LEGIARTI000006362766
   bornes:
     liquidation.date_effet: [2004-01-01, 2025-01-01]
@@ -122,6 +132,7 @@ versions:
   textes:
   - {id: LEGIARTI000053549564, article: L. 38, en_vigueur: 2026-02-21}
   - {reference: "loi n° 2026-103 du 19 février 2026 de finances pour 2026, article 205, II", en_vigueur: 2026-02-21}
+  - {id: LEGIARTI000048844775, article: L. 14, en_vigueur: 2023-12-31}
   nee_de: LEGIARTI000053549564
   bornes:
     liquidation.date_effet: [2025-01-01, null]
@@ -155,12 +166,20 @@ approximations:
     la réversion des petites pensions, et de qui a élevé trois enfants, est
     sous-estimée ; non mesuré
 - ecart: >-
-    la condition de L. 39 tient le départ pour la cessation d'activité, et tout
-    enfant déclaré pour un enfant issu du mariage ; le partage entre conjoints
-    (L. 43), la perte au remariage (L. 46), la pension d'orphelin (L. 40) et la
-    réversion d'un fonctionnaire mort en activité ne sont pas portés ; les montants
-    sont ceux de l'année du décès
+    la condition de L. 39 tient le départ, ou le décès qui le précède, pour la
+    cessation d'activité, et tout enfant déclaré pour un enfant issu du mariage ; le
+    partage entre conjoints (L. 43), la perte au remariage (L. 46), la pension
+    d'orphelin (L. 40) et la pension pour décès en service (L. 50) ne sont pas
+    portés ; les montants sont ceux de l'année du décès
   effet: non mesuré
+- ecart: >-
+    la pension que le fonctionnaire mort en activité « aurait pu obtenir au jour de
+    son décès », sans coefficient de minoration (L. 14, I), se liquide sur ses
+    services au premier jour du trimestre civil du décès, quand le texte les compte
+    jusqu'au décès, et avant 2004 sur la règle de la décote de sa date, nulle
+  effet: >-
+    jusqu'à deux mois de services de moins, soit, sur une carrière de quarante ans,
+    0,4 % de la pension
 presomptions:
   mariage_des_conjoints: >-
     la condition d'antériorité du mariage de L. 39, quand sa date n'est pas déclarée
@@ -170,7 +189,7 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-09-28
+  lu_le: 2026-10-09
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -179,10 +198,10 @@ sources:
     domaine, le même jour.
   - >-
     La pension qu'il « aurait pu obtenir au jour de son décès » : services acquis
-    jusqu'au décès, sans décote (L. 14, « Le coefficient de minoration n'est pas
-    applicable aux pensions de réversion » dans les cas qu'il nomme), à relire avant
-    que le moteur calcule la réversion d'un fonctionnaire mort en activité. La date d'effet de 2004 (loi n° 2003-775) et la
-    circulaire du service des retraites de l'État restent aussi à lire.
+    jusqu'au décès, sans décote (L. 14, I, lu le 9 octobre 2026), que le moteur sert
+    depuis ce jour au survivant du fonctionnaire mort avant son départ. La circulaire
+    du service des retraites de l'État, et l'exemple chiffré qu'elle donnerait,
+    restent à lire.
   - >-
     Les régimes spéciaux qui reprennent la règle — FSPOEIE, ouvriers de l'État, IEG,
     SNCF, RATP, mines, marins — ont chacun leurs textes, à lire avant d'être ajoutés.
@@ -199,6 +218,15 @@ sources:
       décret n° 2003-1306, articles 40, 41 et 45 (CNRACL), dans l'index LEGI : la règle
       de L. 38 et L. 39, mot pour mot
     date: 2026-09-28
+  - type: legifrance
+    reference: >-
+      relus le 9 octobre 2026 dans l'index LEGI : L. 14, I, ses rédactions depuis le 1er
+      janvier 2004 (LEGIARTI000006362704 à 048844775) — « Le coefficient de minoration
+      n'est pas applicable aux pensions de réversion lorsque la liquidation de la
+      pension dont le fonctionnaire aurait pu bénéficier intervient après son décès » ;
+      le décret n° 2003-1306, article 20 (LEGIARTI000006400883), le dit de la CNRACL,
+      mot pour mot
+    date: 2026-10-09
 textes_a_rattacher:
 - {id: LEGIARTI000025076827, article: L. 40, en_vigueur: 2012-01-01, change: "la pension d'orphelin"}
 code:
@@ -210,13 +238,20 @@ code:
   parametres: >-
     contenu.parametres de chaque version : taux, mariage_minimum_annees,
     mariage_services_minimum_annees
-  tests: tests/test_reversion.py ; le témoin reversion_fonctionnaire des simulations
+  tests: >-
+    tests/test_reversion.py ; les témoins reversion_fonctionnaire et
+    reversion_fonctionnaire_mort_en_activite des simulations
 historique:
 - >-
   2026-09-28 — née avec le domaine de la réversion, de la fiche reversion qui ne portait
   que le régime général.
 - >-
   2026-09-28 — lue par le moteur, à la deuxième étape du domaine.
+- >-
+  2026-10-09 — action 138, étape 4 : la réversion du fonctionnaire mort avant son
+  départ, sur la pension qu'il « aurait pu obtenir au jour de son décès », sans
+  coefficient de minoration (L. 14, I) ; sa cessation d'activité, que lit la
+  condition de L. 39, est son décès.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un fonctionnaire de l'État ou d'un agent des
   collectivités qui décède. Le modèle la calcule pour le conjoint que la saisie

@@ -216,7 +216,9 @@ versions:
 approximations:
 - ecart: >-
     la moitié s'applique à la retraite servie, coefficient d'anticipation compris,
-    quand l'arrêté calcule l'allocation sur les points sans ce coefficient
+    quand l'arrêté calcule l'allocation sur les points sans ce coefficient ; de
+    l'agent mort avant son départ, elle porte sur ses points, sans coefficient,
+    depuis le 9 octobre 2026
   effet: >-
     la réversion d'un agent parti avec un coefficient de minoration est sous-estimée
     d'autant ; non mesuré

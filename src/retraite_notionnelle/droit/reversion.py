@@ -80,6 +80,17 @@ par « faire vivre », et le plafond du régime général s'y lit, au SMIC de ce
 année-là. Pour un décès à venir, l'année courante, où s'arrêtent les
 revalorisations publiées.
 
+MORT AVANT SON DÉPART, l'assuré n'a pas de pension : la réversion se calcule
+sur celle qu'il « eût obtenue » (L. 353-1), que l'échéancier liquide sur sa
+carrière arrêtée au décès, sans décote — au régime général, « au titre de
+l'inaptitude au travail » (R. 353-6), donc au taux plein, « quel que soit
+l'âge de l'assuré au moment du décès » (exposé de la Cnav, « Retraite de
+l'assuré décédé ») ; ailleurs, sans « coefficient de minoration » (L. 14, I,
+du code des pensions) ni coefficient d'anticipation. Ses montants sont ceux de
+l'année du décès, et la cessation d'activité que lisent les conditions de
+mariage de la fonction publique, des IEG et de l'Ircantec est le décès.
+:attr:`Reversion.avant_le_depart` le dit.
+
 SANS DÉCÈS DÉCLARÉ, l'échéancier liquide une réversion d'essai pour un décès
 supposé juste après le départ, ou au 1er janvier de l'année courante pour qui
 est déjà parti (présomption ``deces_apres_le_depart``) : ce que le conjoint
@@ -227,6 +238,9 @@ class Reversion:
     #: Le décès est-il supposé (présomption ``deces_apres_le_depart``) plutôt
     #: que déclaré ?
     deces_suppose: bool = False
+    #: Le défunt est-il mort avant son départ ? La réversion porte alors sur
+    #: la pension qu'il « eût obtenue » à son décès (R. 353-6).
+    avant_le_depart: bool = False
 
     @property
     def total(self) -> float:
@@ -235,7 +249,8 @@ class Reversion:
     def donnees(self) -> dict:
         return {"schema_version": SCHEMA_VERSION, "personne": self.personne,
                 "defunt": self.defunt, "deces": self.deces,
-                "deces_suppose": self.deces_suppose, "annee": self.annee,
+                "deces_suppose": self.deces_suppose,
+                "avant_le_depart": self.avant_le_depart, "annee": self.annee,
                 "ressources": self.ressources,
                 "ressources_presumees": self.ressources_presumees,
                 "total": self.total,
@@ -474,7 +489,8 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
               majorations: dict[str, float] | None = None,
               durees: dict[str, int] | None = None,
               minima: dict[str, float] | None = None,
-              maxima: dict[str, tuple[float, float, float]] | None = None
+              maxima: dict[str, tuple[float, float, float]] | None = None,
+              avant_le_depart: bool = False
               ) -> Reversion | None:
     """La réversion que le décès de la personne de ``carriere`` ouvre à son
     conjoint, régime par régime ; ``None`` sans décès ou sans conjoint.
@@ -497,14 +513,19 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
     ce que la surcote y ajoute, aux mêmes euros, et le coefficient de
     l'ajournement d'avant 1983 ou du taux acquis au 31 mars 1983, qui
     multiplie son maximum : le régime général reverse la pension d'avant son
-    maximum, sous le maximum de la réversion.
+    maximum, sous le maximum de la réversion. ``avant_le_depart`` dit que le
+    défunt est mort avant son départ, et que ``pensions`` sont celles qu'il eût
+    obtenues à son décès.
     """
     conjoint = carriere.conjoint
     deces = carriere.deces if deces_suppose is None else deces_suppose
     if deces is None or conjoint is None:
         return None
     lendemain = mois_suivant(deces)
-    depart = f"{carriere.date_liquidation.annee:04d}-{carriere.date_liquidation.mois:02d}-01"
+    # La cessation d'activité que lisent les conditions de mariage : le départ,
+    # ou le décès qui le précède.
+    depart = min(deces, f"{carriere.date_liquidation.annee:04d}"
+                        f"-{carriere.date_liquidation.mois:02d}-01")
     enfants = carriere.nombre_enfants
     presumees = conjoint.ressources is None
     ressources = 0.0 if presumees else float(conjoint.ressources)
@@ -748,4 +769,4 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         personne=conjoint.personne, defunt=carriere.personne, deces=deces, annee=annee,
         ressources=ressources, ressources_presumees=presumees,
         regimes=tuple(lignes[regime] for regime, _, _ in pensions if regime in lignes),
-        deces_suppose=deces_suppose is not None)
+        deces_suppose=deces_suppose is not None, avant_le_depart=avant_le_depart)

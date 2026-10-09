@@ -466,10 +466,12 @@ def test_chaque_temoin_declare_ses_appels_de_liquider_sous_le_nombre_declare():
     sans = sorted(nom for nom, n in appels.items() if not isinstance(n, int))
     assert not sans, f"témoins sans appels déclarés : {sans[:5]}"
     # Les régimes que l'activité après le départ ouvre liquident à leurs dates :
-    # autant de départs de plus (droit/seconde.py).
+    # autant de départs de plus (droit/seconde.py). La pension qu'un assuré mort
+    # avant son départ « eût obtenue » se liquide à son décès : un de plus.
     departs = {nom: (len(temoin["resultat"]["scenarios"]["actuel"].get("departs", ())) or 1)
                + len({p["date_effet"] for p in temoin["resultat"]["scenarios"]["actuel"]
                       .get("droits_apres_depart", {}).get("regimes_nouveaux", [])})
+               + bool(temoin["resultat"].get("reversion", {}).get("avant_le_depart"))
                for nom, temoin in temoins.items()}
     trop = {nom: n for nom, n in appels.items()
             if n > liquidation.APPELS_DECLARES * departs[nom]}

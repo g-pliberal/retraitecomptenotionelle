@@ -195,7 +195,8 @@ approximations:
 - ecart: >-
     les 60 % s'appliquent à la retraite servie, coefficient d'anticipation compris,
     quand l'Agirc-Arrco les calcule sur les points de l'assuré, sans ce coefficient,
-    dans la limite de sa retraite
+    dans la limite de sa retraite ; de l'assuré mort avant son départ, ils portent sur
+    ses points, sans coefficient, depuis le 9 octobre 2026
   effet: >-
     la réversion d'un assuré parti avec un coefficient de minoration est sous-estimée
     d'autant ; non mesuré

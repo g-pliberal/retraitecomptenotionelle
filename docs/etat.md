@@ -38,11 +38,11 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 | Statut | Rédactions |
 |---|---|
-| rattachées à une version | 705 |
+| rattachées à une version | 714 |
 | sans effet | 53 |
-| à rattacher | 366 |
+| à rattacher | 365 |
 | à examiner | 2 159 |
-| sans statut | 9 863 |
+| sans statut | 9 855 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 23 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
@@ -313,7 +313,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `code` | 61 |
   | `approximations` | 30 |
 
-- **Les textes** : 366 rédactions à rattacher à une version de la fiche qui les cite, 2 159 à examiner, et 9 863 sans statut, que le cliquet tient à 9 863 au plus. Les textes qui en ont le plus : `css` 5 081, `decret_46_2769` 946, `rural` 919, `cpcmr` 602, `decret_90_1215` 325 (`python scripts/textes.py`).
+- **Les textes** : 365 rédactions à rattacher à une version de la fiche qui les cite, 2 159 à examiner, et 9 855 sans statut, que le cliquet tient à 9 855 au plus. Les textes qui en ont le plus : `css` 5 079, `decret_46_2769` 946, `rural` 919, `cpcmr` 596, `decret_90_1215` 325 (`python scripts/textes.py`).
 - **Les relectures prévues les plus proches** : 2026-10-31 (`agirc_arrco_valeur_achat`) ; 2026-11-15 (`agirc_arrco_valeur_service`) ; 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`carriere_longue`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 

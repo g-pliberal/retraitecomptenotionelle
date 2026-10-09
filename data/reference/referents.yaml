@@ -2349,9 +2349,16 @@ referents:
           (`matri == MARIE`, `Retraite.cpp:350-354`) ; l'abattement de 30 %
           des revenus d'activité à cinquante-cinq ans (R. 353-1), que
           Destinie applique à tout salaire (`Retraite.h:274`), au commit
-          `4c1d34b`. Restent, dans l'ordre de l'étape
-          4, la réversion d'un assuré mort avant son départ, le partage et le
-          remariage.
+          `4c1d34b`. La réversion d'un assuré mort avant son départ, reprise
+          le 9 octobre 2026 sur les textes et la Cnav : la pension qu'il eût
+          obtenue à son décès, au taux plein de l'inaptitude quel que soit son
+          âge (R. 353-6), sans coefficient de minoration (L. 14, I) ni
+          d'anticipation, la durée arrêtée au trimestre civil qui précède le
+          décès (exposé « Retraite de l'assuré décédé ») — ce que Destinie
+          fait aussi, sans âge minimal et aux taux pleins
+          (`Reversion.cpp:23-48`), en gardant de plus la pension d'un régime
+          déjà liquidé, que le dépôt recalcule au décès. Restent, dans l'ordre
+          de l'étape 4, le partage et le remariage.
         etat: a_reprendre
         chantier: "138.4"
       - quoi: >-

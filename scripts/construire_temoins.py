@@ -1622,6 +1622,17 @@ def _cas() -> list[dict]:
         "ressources_nouveau_conjoint": "16000"}))
     cas.append(("reversion_revenus_d_activite", {
         **reversion, "ressources_conjoint": "15000", "activite_conjoint": "15000"}))
+    # Le 9 octobre 2026 (action 138, étape 4), l'assuré mort avant son départ
+    # laisse la réversion de la pension qu'il eût obtenue à son décès : la mère
+    # de trois enfants morte à cinquante-quatre ans, au taux plein de
+    # l'inaptitude (R. 353-6), son veuf attendant ses cinquante-cinq ans ; le
+    # fonctionnaire mort en activité, sans coefficient de minoration (L. 14, I).
+    avant_le_depart = {"naissance": "1970", "liquidation": "64", "conjoint": "1972",
+                       "deces": "2024-05"}
+    cas.append(("reversion_deces_avant_le_depart", {
+        **avant_le_depart, "sexe": "F", "conjoint_sexe": "H", "enfants": "3"}))
+    cas.append(("reversion_fonctionnaire_mort_en_activite", {
+        **avant_le_depart, "statut": "fonctionnaire_etat", "primes": "0.2"}))
 
     # Les carrières LUES sur un relevé, plutôt que reconstituées.
     cas.extend(_cas_releve())

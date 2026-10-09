@@ -628,6 +628,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
             moteur, code, carriere, durees, ageLiquidation) !== null
           || pourInvalidite !== null
           || regimesDuHandicap.has(code)
+          || carriere.au_deces
           || (invalidite.sansDecoteDuFonctionnaire(moteur, code, carriere)
             && ouvrir.droitMilitaire(moteur, periode, carriere) === null)) {
         // Le taux de soixante-cinq ans des femmes d'avant 1983 ; le taux plein
@@ -635,7 +636,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         // catégories des 3° à 5° (`categories.js`) ; la pension du
         // fonctionnaire mis à la retraite pour invalidité, sans décote (L. 14, I) ;
         // le départ anticipé des assurés handicapés, au taux plein ; le
-        // fonctionnaire handicapé, sans coefficient de minoration (L. 14, I).
+        // fonctionnaire handicapé, sans coefficient de minoration (L. 14, I) ;
+        // la pension que l'assuré eût obtenue à son décès, au taux de
+        // l'inaptitude (R. 353-6) et sans coefficient de minoration (L. 14, I).
         trimestresDecote = 0.0;
       }
       if (decote && trimestresDecote > 0) {
@@ -2409,6 +2412,12 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
   // durée d'affiliation à CE régime, que la CIPAV oppose à sa surcote.
   // `handicap` : la liquidation ouverte par le départ anticipé des assurés
   // handicapés, que ces complémentaires servent sans coefficient.
+  if (carriere.au_deces) {
+    // La pension que l'assuré eût obtenue à son décès : la réversion d'une
+    // complémentaire porte sur les points acquis, sans coefficient. Voir
+    // liquider.py.
+    return 1.0;
+  }
   let abattement;
   if (periode.abattement_points === "agirc_arrco"
     || periode.abattement_points === "ircantec") {

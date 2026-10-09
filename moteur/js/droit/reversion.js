@@ -24,7 +24,9 @@
  * montants — ceux de l'année du décès —, sont dits dans l'en-tête du Python.
  * Sans décès déclaré,
  * l'échéancier liquide une réversion d'essai pour un décès supposé juste après
- * le départ (présomption `deces_apres_le_depart`).
+ * le départ (présomption `deces_apres_le_depart`). Mort avant son départ,
+ * l'assuré laisse la réversion de la pension qu'il « eût obtenue » à son décès,
+ * sans décote (R. 353-6), que l'échéancier liquide.
  */
 
 import * as chrono from "../chronologie.js";
@@ -148,12 +150,15 @@ export class ReversionRegime {
 /** Ce que la liquidation d'une réversion écrit : régime par régime. */
 export class Reversion {
   constructor({ personne, defunt, deces, annee, ressources, ressources_presumees, regimes,
-    deces_suppose = false }) {
+    deces_suppose = false, avant_le_depart = false }) {
     this.personne = personne;
     this.defunt = defunt;
     this.deces = deces;
     // Le décès est-il supposé (présomption `deces_apres_le_depart`) ?
     this.deces_suppose = deces_suppose;
+    // Le défunt est-il mort avant son départ ? La réversion porte alors sur la
+    // pension qu'il « eût obtenue » à son décès (R. 353-6).
+    this.avant_le_depart = avant_le_depart;
     this.annee = annee;
     this.ressources = ressources;
     this.ressources_presumees = ressources_presumees;
@@ -172,7 +177,8 @@ export class Reversion {
   donnees() {
     return {
       schema_version: SCHEMA_VERSION, personne: this.personne, defunt: this.defunt,
-      deces: this.deces, deces_suppose: this.deces_suppose, annee: this.annee,
+      deces: this.deces, deces_suppose: this.deces_suppose,
+      avant_le_depart: this.avant_le_depart, annee: this.annee,
       ressources: this.ressources,
       ressources_presumees: this.ressources_presumees, total: this.total,
       regimes: this.regimes.map((r) => r.donnees()),
@@ -449,20 +455,25 @@ function enfantsDeMoinsDe(carriere, deces, ans) {
  * `maxima` donne, régime par régime, `[ce que le maximum des pensions a retiré
  * de la pension, ce que la surcote y ajoute, le coefficient qui multiplie son
  * maximum]` : le régime général reverse la pension d'avant son maximum, sous
- * le maximum de la réversion. Voir `reversion` du Python.
+ * le maximum de la réversion. `avantLeDepart` dit que le défunt est mort avant
+ * son départ, et que `pensions` sont celles qu'il eût obtenues à son décès.
+ * Voir `reversion` du Python.
  */
 export function reversion(moteur, pensions, carriere, annee, decesSuppose = null,
   enCapital = new Set(), majorations = null, durees = null, minima = null,
-  maxima = null) {
+  maxima = null, avantLeDepart = false) {
   const conjoint = carriere.conjoint;
   const deces = decesSuppose === null ? carriere.deces : decesSuppose;
   if (deces === null || conjoint === null) {
     return null;
   }
   const lendemain = moisSuivant(deces);
+  // La cessation d'activité que lisent les conditions de mariage : le départ,
+  // ou le décès qui le précède.
   const liquidation = carriere.dateLiquidation;
-  const depart = `${String(liquidation.annee).padStart(4, "0")}-`
+  const declare = `${String(liquidation.annee).padStart(4, "0")}-`
     + `${String(liquidation.mois).padStart(2, "0")}-01`;
+  const depart = deces < declare ? deces : declare;
   const enfants = carriere.nombre_enfants;
   const presumees = conjoint.ressources === null;
   const ressources = presumees ? 0.0 : Number(conjoint.ressources);
@@ -738,6 +749,6 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     ressources, ressources_presumees: presumees,
     regimes: servies.filter(([regime]) => lignes.has(regime))
       .map(([regime]) => lignes.get(regime)),
-    deces_suppose: decesSuppose !== null,
+    deces_suppose: decesSuppose !== null, avant_le_depart: avantLeDepart,
   });
 }

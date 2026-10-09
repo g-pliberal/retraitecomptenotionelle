@@ -29,7 +29,9 @@ lit:
 - l'union où il vit après le décès — mariage, PACS ou concubinage — et les
   ressources de son nouveau conjoint, que le plafond du ménage compte avec les
   siennes
-- la pension principale du défunt, servie ou dont il eût bénéficié à son décès
+- la pension principale du défunt, servie ou dont il eût bénéficié à son décès — mort
+  avant son départ, celle qu'il eût obtenue au premier jour du trimestre civil de son
+  décès, sur la carrière de ce jour-là, sans décote
 - ce que le maximum des pensions en a retiré, sa surcote et le coefficient de son
   ajournement d'avant 1983, et le maximum des pensions de l'année des montants
   (fiche pension_maximale_regime_general)
@@ -99,6 +101,7 @@ versions:
   - {id: LEGIARTI000006749451, article: R. 353-1, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006749452, article: R. 353-1, en_vigueur: 1990-11-30}
   - {reference: "décret n° 82-1035 du 6 décembre 1982, article 5 (circulaire Cnav n° 120/82)", en_vigueur: 1982-12-01}
+  - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   nee_de: LEGIARTI000006736586
   bornes:
     liquidation.date_effet: [1982-12-01, 1995-01-01]
@@ -132,6 +135,7 @@ versions:
   - {id: LEGIARTI000006736587, article: D. 353-1, en_vigueur: 1995-01-01}
   - {id: LEGIARTI000006749452, article: R. 353-1, en_vigueur: 1990-11-30}
   - {reference: "décret n° 94-1140 du 27 décembre 1994 (circulaire Cnav n° 3/95)", en_vigueur: 1995-01-01}
+  - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   nee_de: LEGIARTI000006736587
   bornes:
     liquidation.date_effet: [1995-01-01, 2004-07-01]
@@ -168,6 +172,7 @@ versions:
   - {id: LEGIARTI000006736552, article: D. 353-1-1, en_vigueur: 2004-08-25}
   - {id: LEGIARTI000006749453, article: R. 353-1, en_vigueur: 2004-08-25}
   - {id: LEGIARTI000006781419, article: "décret n° 2004-858, article 24", en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   nee_de: LEGIARTI000006742649
   bornes:
     liquidation.date_effet: [2004-07-01, 2005-01-01]
@@ -202,6 +207,7 @@ versions:
   - {id: LEGIARTI000006749454, article: R. 353-1, en_vigueur: 2004-12-30}
   - {id: LEGIARTI000006736552, article: D. 353-1-1, en_vigueur: 2004-08-25}
   - {id: LEGIARTI000006781420, article: "décret n° 2004-858, article 24", en_vigueur: 2004-12-30}
+  - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   nee_de: LEGIARTI000006749454
   bornes:
     liquidation.date_effet: [2005-01-01, 2005-07-01]
@@ -236,6 +242,7 @@ versions:
   textes:
   - {id: LEGIARTI000006781420, article: "décret n° 2004-858, article 24", en_vigueur: 2004-12-30}
   - {id: LEGIARTI000006749454, article: R. 353-1, en_vigueur: 2004-12-30}
+  - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   nee_de: LEGIARTI000006781420
   bornes:
     liquidation.date_effet: [2005-07-01, 2007-07-01]
@@ -268,6 +275,7 @@ versions:
   - {id: LEGIARTI000006781420, article: "décret n° 2004-858, article 24", en_vigueur: 2004-12-30}
   - {id: LEGIARTI000006781421, article: "décret n° 2004-858, article 24", en_vigueur: 2005-08-24}
   - {id: LEGIARTI000006749455, article: R. 353-1, en_vigueur: 2007-01-13}
+  - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   nee_de: LEGIARTI000006781420
   bornes:
     liquidation.date_effet: [2007-07-01, 2009-01-01]
@@ -298,6 +306,7 @@ versions:
   - {id: LEGIARTI000020090020, article: D. 353-3, en_vigueur: 2009-01-01}
   - {id: LEGIARTI000020082979, article: R. 353-1, en_vigueur: 2009-01-01}
   - {id: LEGIARTI000020082988, article: R. 353-7, en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   nee_de: LEGIARTI000020090020
   bornes:
     liquidation.date_effet: [2009-01-01, 2010-01-01]
@@ -330,6 +339,7 @@ versions:
   textes:
   - {id: LEGIARTI000020057504, article: "décret n° 2008-1509, article 2, II", en_vigueur: 2009-01-01}
   - {id: LEGIARTI000020090020, article: D. 353-3, en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   nee_de: LEGIARTI000020057504
   bornes:
     liquidation.date_effet: [2009-01-01, 2010-01-01]
@@ -361,6 +371,8 @@ versions:
   textes:
   - {id: LEGIARTI000019959401, article: L. 353-6, en_vigueur: 2010-01-01}
   - {id: LEGIARTI000020791861, article: D. 353-4, en_vigueur: 2009-06-26}
+  - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
   nee_de: LEGIARTI000019959401
   bornes:
     liquidation.date_effet: [2010-01-01, 2012-07-01]
@@ -392,6 +404,8 @@ versions:
   textes:
   - {id: LEGIARTI000019959401, article: L. 353-6, en_vigueur: 2010-01-01}
   - {id: LEGIARTI000020057504, article: "décret n° 2008-1509, article 2, II", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
   nee_de: LEGIARTI000019959401
   bornes:
     liquidation.date_effet: [2010-01-01, 2012-07-01]
@@ -422,6 +436,7 @@ versions:
   - {id: LEGIARTI000041968528, article: D. 353-1, en_vigueur: 2020-05-25}
   - {id: LEGIARTI000038790257, article: R. 353-1, en_vigueur: 2019-07-08}
   - {id: LEGIARTI000047453693, article: L. 353-1, en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
   nee_de: LEGIARTI000025018616
   bornes:
     liquidation.date_effet: [2012-07-01, 2026-01-01]
@@ -453,6 +468,7 @@ versions:
   textes:
   - {id: LEGIARTI000025018616, article: L. 353-1, en_vigueur: 2011-12-23}
   - {id: LEGIARTI000020057504, article: "décret n° 2008-1509, article 2, II", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
   nee_de: LEGIARTI000025018616
   bornes:
     liquidation.date_effet: [2012-07-01, 2026-01-01]
@@ -482,6 +498,7 @@ versions:
   - {id: LEGIARTI000053356066, article: D. 353-1, en_vigueur: 2026-01-01}
   - {id: LEGIARTI000053335692, article: R. 353-1-1, en_vigueur: 2026-01-01}
   - {id: LEGIARTI000047453693, article: L. 353-1, en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
   nee_de: LEGIARTI000053356066
   bornes:
     liquidation.date_effet: [2026-01-01, null]
@@ -516,6 +533,7 @@ versions:
   textes:
   - {id: LEGIARTI000053356066, article: D. 353-1, en_vigueur: 2026-01-01}
   - {id: LEGIARTI000053355011, article: "décret n° 2008-1509, article 2, II", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
   nee_de: LEGIARTI000053356066
   bornes:
     liquidation.date_effet: [2026-01-01, null]
@@ -606,12 +624,29 @@ approximations:
     venir, l'année du départ s'il la suit —, au SMIC horaire du 1er janvier de cette
     année, même quand l'âge requis reporte la date d'effet ; en 2004, la caisse
     prend celui du 1er juillet (circulaire Cnav n° 2005-17, § 145) : son plafond,
-    15 828,80 euros, est 5,8 % au-dessus de celui du modèle, 14 955,20 ; la
-    réversion d'un assuré mort avant son départ, et le partage entre ex-conjoints
-    (L. 353-3), ne sont pas calculés
+    15 828,80 euros, est 5,8 % au-dessus de celui du modèle, 14 955,20 ; le partage
+    entre ex-conjoints (L. 353-3) n'est pas calculé
   effet: >-
     non mesuré ; pour le plafond de 2004, 873,60 euros de ressources de plus sous le
     plafond, pour une réversion qui prend effet au second semestre
+- ecart: >-
+    la pension que l'assuré mort avant son départ eût obtenue se liquide au premier
+    jour du trimestre civil de son décès, sous les règles de ce jour : la caisse
+    prend celles de la date d'effet de la réversion pour les majorations de durée
+    pour enfants, la surcote et le salaire annuel moyen des polypensionnés, et, pour
+    un décès du 1er juillet 2004 au 30 juin 2011, le nombre d'années du salaire
+    annuel moyen et la durée de référence de la génération qui avait soixante ans
+    l'année du décès, quand le modèle prend toujours ceux de la génération du
+    défunt (circulaire Cnav n° 2005-17, § 211 à 213 ; exposé « Retraite de l'assuré
+    décédé ») ; une pension déjà servie au décès, avant le départ déclaré — la
+    pension militaire, celle de l'ex-invalide, celle du fonctionnaire radié — s'y
+    recalcule au décès au lieu d'être lue telle qu'elle était servie ; la page
+    montre toujours la pension du départ déclaré, comme si l'assuré vivait
+  effet: >-
+    non mesuré ; pour un assuré né en 1960 et mort en 2006, la durée de référence de
+    sa génération, 166 trimestres, au lieu des 156 de la caisse — 6 % de moins sur
+    la pension que la réversion lit, quand sa durée n'atteint pas 156 —, et un
+    salaire annuel moyen sur vingt-cinq années au lieu de vingt-trois
 presomptions:
   mariage_des_conjoints: >-
     la condition de durée de mariage d'avant juillet 2004, quand la date du mariage
@@ -633,6 +668,13 @@ sources:
   lu_le: 2026-10-09
   prochaine_relecture: 2027-03-31
   lectures_divergentes:
+  - >-
+    R. 353-6, dans ses deux rédactions (LEGIARTI000006749413, 024113077), calcule la
+    réversion « lorsque le pensionné ou le titulaire de droits à une pension décède »
+    avant l'âge du taux plein sur la pension « qui aurait été allouée au de cujus au
+    titre de l'inaptitude au travail » ; l'exposé de la Cnav ne l'applique qu'à
+    l'assuré dont la retraite « n'est pas attribuée », et reverse au pensionné « le
+    montant calculé » de sa retraite, décote comprise. Le modèle suit la caisse.
   - >-
     L'article 24 du décret n° 2004-858, dans la rédaction que l'index LEGI date du 24
     août 2005 (LEGIARTI000006781421), porte « 65 ans pour les pensions prenant effet
@@ -656,9 +698,11 @@ sources:
     pension quand les ressources ou le ménage changent (R. 353-1-1), et la pension de
     vieillesse de veuve ou de veuf.
   - >-
-    La pension dont l'assuré « eût bénéficié » : décédé avant l'âge du taux plein, elle
-    est celle qui lui aurait été allouée au titre de l'inaptitude au travail, donc au
-    taux plein (R. 353-6, LEGIARTI000006749413 puis LEGIARTI000024113077).
+    La pension dont l'assuré « eût bénéficié » : mort avant son départ, celle qui lui
+    aurait été allouée au titre de l'inaptitude au travail, au taux plein quel que soit
+    son âge (R. 353-6), que le moteur sert depuis le 9 octobre 2026. Le texte nomme
+    aussi « le pensionné » mort avant l'âge du taux plein, que la caisse reverse sur sa
+    pension servie (lecture divergente) : à confronter à une circulaire qui le dise.
   - >-
     Le minimum de base : D. 353-1 n'écrit son montant que depuis le 1er janvier 2026
     (3 983,29 euros au 1er janvier 2025). Depuis le 7 octobre 2026, les montants de
@@ -901,6 +945,36 @@ sources:
       ont été perçus », et son exemple, rejoué (cnav_2006_37_abattement_*)
     date: 2026-10-09
     url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_reversion_ressource_condition_ressource_ex.aspx
+  - type: legifrance
+    reference: >-
+      relus le 9 octobre 2026 dans l'index LEGI, pour l'assuré mort avant son départ :
+      R. 353-6 (LEGIARTI000006749413, 1985, puis LEGIARTI000024113077, 2011) —
+      « Lorsque le pensionné ou le titulaire de droits à une pension décède
+      antérieurement à son soixante-cinquième anniversaire », puis « à l'âge fixé au 1°
+      de l'article L. 351-8 », la réversion « est calculée en fonction du montant de la
+      pension qui aurait été allouée au de cujus au titre de l'inaptitude au travail » ;
+      L. 14, I, du code des pensions, ses rédactions depuis 2004 (LEGIARTI000006362704 à
+      048844775) — « Le coefficient de minoration n'est pas applicable aux pensions de
+      réversion lorsque la liquidation de la pension dont le fonctionnaire aurait pu
+      bénéficier intervient après son décès », que les règlements de la CNRACL, des
+      ouvriers de l'État, des IEG, de la SNCF, de la RATP et de la CRPCEN reprennent
+    date: 2026-10-09
+  - type: circulaire_cnav
+    reference: >-
+      exposé « Retraite de l'assuré décédé » (6 mars 2026), lu par l'API de la base de
+      législation de la Cnav le 9 octobre 2026 : quand « la retraite personnelle de
+      l'assuré décédé n'est pas attribuée », la réversion est de 54 % « du montant de
+      base de la retraite personnelle que l'assuré décédé ou disparu aurait pu
+      obtenir » ; « Le taux applicable au salaire annuel moyen est de 50 %, quel que
+      soit l'âge de l'assuré au moment du décès » ; « La durée d'assurance est arrêtée
+      au dernier jour du trimestre civil qui précède le décès » ; « L'année qui
+      comprend le point de départ de la retraite de réversion est négligée » ; la
+      durée maximum et le nombre d'années selon l'année de naissance du défunt depuis
+      le 1er juillet 2011 ; circulaire n° 2005-17, § 211 à 218 — avant, ceux de la
+      génération qui avait soixante ans l'année du décès, et les règles de la date
+      d'effet de la réversion pour les majorations pour enfants et la surcote
+    date: 2026-03-06
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_reversion_montant_retraite_assure_decede_ex.aspx
   - type: circulaire_cnav
     reference: >-
       barème « Plafond de ressources pour la retraite de réversion »
@@ -1000,10 +1074,18 @@ historique:
   2004, les réversions des autres régimes de base ne comptent plus aux ressources,
   appréciées « sans tenir compte des avantages de réversion » (R. 353-1, rédactions
   de 1985 et de 1990) : le moteur les y comptait.
+- >-
+  2026-10-09 — action 138, étape 4 : la réversion d'un assuré mort avant son départ, sur
+  la pension qu'il « eût obtenue » à son décès, que l'échéancier liquide sur la
+  carrière arrêtée au trimestre civil qui précède le décès, au taux plein de
+  l'inaptitude quel que soit son âge (R. 353-6), sans coefficient de minoration ni
+  d'anticipation dans les autres régimes ; la saisie, qui refusait un décès avant le
+  départ, l'accepte.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un assuré du régime général ou d'un régime aligné
   qui décède : 4,41 millions de bénéficiaires d'un droit dérivé tous régimes fin 2024
   (DREES, EACR). Le modèle la calcule pour le conjoint que la saisie déclare, minimum,
   maximum et majorations compris, sur la pension du défunt sans son minimum
-  contributif et d'avant le maximum des pensions, sous le plafond d'une personne
-  seule ou du ménage qu'il déclare ; sa dépense, publiée, est sur la page Coût.
+  contributif et d'avant le maximum des pensions — celle qu'il eût obtenue s'il meurt
+  avant son départ —, sous le plafond d'une personne seule ou du ménage qu'il déclare ;
+  sa dépense, publiée, est sur la page Coût.

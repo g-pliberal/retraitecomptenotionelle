@@ -1123,6 +1123,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                         moteur, code, carriere, durees, age_liquidation) is not None
                     or pour_invalidite is not None
                     or code in regimes_du_handicap
+                    or carriere.au_deces
                     or (invalidite.sans_decote_du_fonctionnaire(moteur, code, carriere)
                         and ouvrir.droit_militaire(moteur, periode, carriere) is None)):
                 # Le taux de soixante-cinq ans des femmes d'avant 1983 ; le
@@ -1136,6 +1137,13 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 # départ anticipé des assurés handicapés, au taux plein
                 # (L. 351-8, 4° bis ; R. 37 bis) ; le fonctionnaire handicapé,
                 # que le coefficient de minoration n'atteint jamais (L. 14, I).
+                # La pension que l'assuré eût obtenue à son décès : au taux de
+                # l'inaptitude au régime général, « quel que soit l'âge de
+                # l'assuré au moment du décès » (R. 353-6 ; exposé de la Cnav),
+                # et le « coefficient de minoration n'est pas applicable aux
+                # pensions de réversion lorsque la liquidation de la pension
+                # dont le fonctionnaire aurait pu bénéficier intervient après
+                # son décès » (L. 14, I, et les règlements des régimes spéciaux).
                 trimestres_decote = 0.0
             if decote and trimestres_decote > 0:
                 # Les régimes sans décote (fonction publique avant 2004,
@@ -3187,6 +3195,11 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
     barème — 0,78 à cinq ans, 1,00 à zéro — et nulle part entre les deux :
     à douze trimestres il retirait 13,2 % là où l'arrêté en retire 12.
     """
+    if carriere.au_deces:
+        # La pension que l'assuré eût obtenue à son décès : la réversion d'une
+        # complémentaire porte sur les points qu'il a acquis, sans coefficient
+        # d'anticipation ni majoration (:attr:`Carriere.au_deces`).
+        return 1.0
     if periode.abattement_points in ("agirc_arrco", "ircantec"):
         # AVANT L'ASF, L'ÂGE SEUL. Jusqu'à l'accord du 4 février 1983,
         # l'Agirc et l'Arrco servaient le taux plein à soixante-cinq ans et

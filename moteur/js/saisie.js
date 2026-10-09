@@ -17,7 +17,7 @@ import {
   sousRegimeTaux,
 } from "./config.js";
 import {
-  FORMES_D_UNION, dateDeclaree, naissanceDeclaree, valeur as valeurPresumee,
+  FORMES_D_UNION, dateDeclaree, naissanceDeclaree, plusAns, valeur as valeurPresumee,
 } from "./chronologie.js";
 import { formatG } from "./format.js";
 import * as g from "./gabarit.js";
@@ -774,6 +774,9 @@ export class Saisie {
       // avant.
       demandee: Object.keys(parametres).some((cle) => !CLES_MODELISATION.includes(cle)),
     });
+    // La table des présomptions, que la vérification du décès lit : hors des
+    // champs, elle ne passe pas dans l'adresse.
+    Object.defineProperty(saisie, "presomptions", { value: presomptions, enumerable: false });
     if (!tolerante) { saisie.verifier(); }
     return saisie;
   }
@@ -2104,11 +2107,25 @@ export class Saisie {
       if ("mariage" in dates && dates.mariage >= dates.deces) {
         throw new ErreurSaisie("Le mariage suit le décès.");
       }
-      if (dates.deces < this.jourDe(this.liquidation)) {
+      if (dates.deces <= this.naissanceIso) {
+        throw new ErreurSaisie("Le décès précède la naissance de l'assuré.");
+      }
+      // Le mariage que la saisie ne date pas est présumé, à l'âge que la table
+      // du paquet porte : la saisie la reçoit de la page (`depuisRequete`).
+      const presume = this.presomptions
+        ? valeurPresumee("mariage_des_conjoints", this.presomptions) : null;
+      if (presume !== null && !("mariage" in dates)
+          && dates.deces <= plusAns(this.naissanceIso, Math.trunc(Number(presume)))) {
         throw new ErreurSaisie(
-          `Décès « ${this.deces} » : il précède le départ à la retraite, fixé `
-          + `en ${this.dateDe(this.liquidation)} ; la réversion d'une pension `
-          + "que l'assuré n'a pas encore liquidée n'est pas calculée.",
+          `Décès « ${this.deces} » : il précède le mariage, que le modèle `
+          + `présume à vos ${presume} ans faute de date ; dites-la (« mariage »).`,
+        );
+      }
+      if (!this.releveActif && dates.deces <= this.jourDe(this.debut)) {
+        throw new ErreurSaisie(
+          `Décès « ${this.deces} » : il précède le début de la carrière, en `
+          + `${this.dateDe(this.debut)} ; l'assuré n'aurait aucun droit à `
+          + "reverser.",
         );
       }
     }

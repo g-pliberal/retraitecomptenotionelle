@@ -41,6 +41,7 @@ from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
 
 from . import chronologie as chrono
+from .calendrier import DateMois
 from .droit import cumul as _cumul
 from .droit import departs as _departs
 from .droit import foyer as _foyer
@@ -49,7 +50,8 @@ from .droit import liquidation as _liquidation
 from .droit import progressive as _progressive
 from .droit import reversion as _reversion
 from .droit import seconde as _seconde
-from .droit.commun import MAJORATION_ENFANTS, date_d_effet, parts_de_la_majoration
+from .droit.commun import (MAJORATION_ENFANTS, date_d_effet, majoration_du_conjoint,
+                           parts_de_la_majoration)
 from .journal import Entree, Journal
 from .noyau import vocabulaire
 from .revalorisation import aujourd_hui, faire_vivre, foyer_a_l_echeance
@@ -278,17 +280,26 @@ class Echeancier:
         dans les régimes de sa liquidation (§ 7.3) : sa pension y est menée
         jusqu'à l'année du décès — l'année courante pour un décès à venir, où
         s'arrêtent les revalorisations publiées ; jamais avant le départ, dont
-        les montants sont les euros."""
+        les montants sont les euros. Mort avant son départ, l'assuré n'a pas
+        de pension : la réversion lit celle qu'il « eût obtenue » à son décès
+        (:meth:`_pensions_eues_au_deces`)."""
         deces = Evenement(id=f"deces_{carriere.personne}", date=carriere.deces,
                           personnes=(carriere.personne,), vise={}, sorte="deces")
         self._inscrire(deces, deces.id, "evenement", deces, deces.date)
-        annee, pensions, en_capital, majorations, minima, maxima = self._pensions_au_deces(
-            carriere, carriere.deces)
+        avant_le_depart = carriere.deces < date_d_effet(carriere)
+        if avant_le_depart:
+            annee, pensions, en_capital, majorations, minima, maxima, durees = (
+                self._pensions_eues_au_deces(carriere, deces))
+        else:
+            annee, pensions, en_capital, majorations, minima, maxima = (
+                self._pensions_au_deces(carriere, carriere.deces))
+            durees = self.durees_au_depart
         self.reversion = _reversion.reversion(self.moteur, pensions, carriere, annee,
                                               en_capital=en_capital,
                                               majorations=majorations,
-                                              durees=self.durees_au_depart,
-                                              minima=minima, maxima=maxima)
+                                              durees=durees,
+                                              minima=minima, maxima=maxima,
+                                              avant_le_depart=avant_le_depart)
         survivant = carriere.conjoint.personne
         evenement = Evenement(id=f"reversion_{survivant}", date=_reversion.mois_suivant(
             carriere.deces), personnes=(survivant,), vise={"regimes": "du défunt"},
@@ -313,6 +324,51 @@ class Echeancier:
                                               majorations=majorations,
                                               durees=self.durees_au_depart,
                                               minima=minima, maxima=maxima)
+
+    def _pensions_eues_au_deces(self, carriere: Carriere, deces: Evenement) -> tuple[
+            int, list[tuple[str, float, Fiabilite]], frozenset[str], dict[str, float],
+            dict[str, float], dict[str, tuple[float, float, float]], dict[str, int]]:
+        """Les pensions que l'assuré mort avant son départ « eût obtenues » à
+        son décès (L. 353-1), et ce que :meth:`_pensions_au_deces` en dit pour
+        une pension servie, plus les durées qui proratisent le minimum.
+
+        La liquidation est fictive (§ 7.3) : sur la carrière arrêtée au premier
+        jour du trimestre civil du décès, la durée d'assurance l'étant « au
+        dernier jour du trimestre civil qui précède le décès », sans décote ni
+        coefficient d'anticipation (:meth:`~.carriere.Carriere.arretee_au_deces`).
+        Elle s'inscrit au journal sous le décès, sans composantes, puisqu'elle
+        fonde la réversion sans rien servir. Ses montants sont les euros de
+        l'année du décès ; rien n'a été versé en capital."""
+        annee, mois = int(carriere.deces[:4]), int(carriere.deces[5:7])
+        debut = DateMois(annee, 3 * ((mois - 1) // 3) + 1)
+        demande = _liquidation.Demande(
+            personne=carriere.personne, date_effet=f"{annee:04d}-{debut.mois:02d}-01",
+            evenement="deces", date_evenement=carriere.deces, motif="reversion",
+            nature="fictive")
+        liquidation = _liquidation.liquider(
+            demande, _liquidation.Etat(carriere.arretee_au_deces(debut), self.journal),
+            _liquidation.Contexte(self.moteur))
+        self._inscrire(deces, f"liquidation_{deces.id}", "liquidation", liquidation,
+                       deces.date)
+        # La réversion lit la pension sans la majoration pour conjoint à charge.
+        pensions = [(p.regime, p.montant - majoration_du_conjoint(p.conjoint, demande.date_effet),
+                     p.fiabilite) for p in liquidation.regimes]
+
+        def parts(entrees) -> dict[str, float]:
+            cumul: dict[str, float] = {}
+            for regime, part in entrees:
+                cumul[regime] = cumul.get(regime, 0.0) + part
+            return {regime: part for regime, part in cumul.items() if part}
+
+        majorations = parts(parts_de_la_majoration(liquidation.avantages, a_charge=False))
+        minima = parts(part for avantage in liquidation.avantages
+                       if avantage.code == "minimum_contributif"
+                       for part in avantage.par_regime)
+        maxima = {p.regime: (p.ecretement_du_maximum, p.surcote, p.coefficient_du_maximum)
+                  for p in liquidation.regimes
+                  if p.ecretement_du_maximum or p.surcote or p.coefficient_du_maximum != 1.0}
+        return (annee, pensions, frozenset(), majorations, minima, maxima,
+                dict(liquidation.releve.durees.trimestres_par_regime))
 
     def _pensions_au_deces(self, carriere: Carriere, deces: str) -> tuple[
             int, list[tuple[str, float, Fiabilite]], frozenset[str], dict[str, float],
