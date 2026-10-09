@@ -1,0 +1,222 @@
+# Les prélèvements sur les pensions et sur les salaires, marche par marche
+# -----------------------------------------------------------------------
+# source_id: ipp_prelevements_sociaux
+#
+# ÉCRIT PAR `scripts/fetch/ipp_prelevements_sociaux.py`, jamais à la main : les
+# barèmes de l'Institut des politiques publiques, lus le 2026-10-09, chacun avec la
+# référence que l'IPP cite pour sa marche. Une transcription, non une source
+# productrice : `haute` au plus (data/sources.yaml, `ipp`).
+#
+# QUI LE LIT. Les indicateurs de cycle de vie nets
+# (`retraite_notionnelle/cycle_de_vie.py`, action 138, étape 9) : la pension
+# nette de chaque année aux taux de son année, le salaire net de chaque année
+# aux siens. La fiche de paie du site et la pension nette qu'il affiche restent
+# aux taux de l'année courante (`prelevements_remuneration.yaml`), qui doivent
+# rendre ceux de la dernière marche de chaque série : un test le tient.
+#
+# LES SÉRIES. Un taux s'entend en part de son assiette ; chaque marche dit
+# tous les taux en vigueur à sa date, zéro compris. Une contribution n'existait
+# pas avant sa première marche, sauf celles de `tenues_avant_leur_premiere_marche`,
+# la maladie, que les barèmes de l'IPP ne prennent qu'en 1967 : leurs taux de
+# 1967 valent en deçà.
+#   pensions : la CSG au taux plein, médian, réduit ; la CRDS ; la CASA ; la
+#     cotisation maladie des pensions du régime général et celle des
+#     complémentaires (les régimes de `maladie_complementaire`).
+#   salaires : la CSG et la CRDS d'activité, sur le brut abattu de
+#     `abattement` (sans limite) ou de `abattement_jusqu_a_quatre_plafonds`
+#     (jusqu'à quatre plafonds, depuis 2011) — l'IPP n'en donne pas avant 1998,
+#     et le dépôt n'en retient pas ; la maladie, le veuvage et l'assurance
+#     chômage du salarié du privé, `tout_salaire`, `sous_plafond`,
+#     `au_dela_du_plafond`, `de_un_a_quatre_plafonds` ; la maladie des agents de
+#     l'État et des collectivités ; la contribution exceptionnelle de solidarité
+#     des agents publics, au-delà d'un seuil mensuel en euros.
+#
+# CE QUE L'IPP NE DIT PAS. Le taux de la maladie des pensions des autres régimes
+# de base (la fonction publique, les indépendants) : seule celle du régime
+# général est écrite ; le dépôt n'en prélève donc aucune ailleurs.
+lu_le: "2026-10-09"
+fiabilite: haute
+tenues_avant_leur_premiere_marche: [maladie_prive, maladie_etat, maladie_collectivites]
+
+pensions:
+  csg_taux_plein:
+    - {depuis: "1991-02-01", taux: 0.011, texte: "Loi 90-1168 du 29/12/90, art. 127 à 135 (LF pour 1991)"}
+    - {depuis: "1993-07-01", taux: 0.024, texte: "Loi 93-859 du 22/06/1993, art. 42 (LFR pour 1993)"}
+    - {depuis: "1997-01-01", taux: 0.034, texte: "Loi 96-1160 du 27/12/1996, art. 9 à 17 (LFSS pour 1997) | Article L136-8 du Code de la Sécurité sociale"}
+    - {depuis: "1998-01-01", taux: 0.062, texte: "Loi 97-1164 du 19/12/1997, art. 5 (LFSS pour 1998)"}
+    - {depuis: "2005-01-01", taux: 0.066, texte: "Loi 2004-810 du 13/08/2004, art. 72"}
+    - {depuis: "2018-01-01", taux: 0.083, texte: "Loi 2017-1836 du 30/12/2017, art. 8 (LFSS pour 2018)"}
+  csg_taux_median:
+    - {depuis: "2019-01-01", taux: 0.066, texte: "Article 154 quinquies du Code général des impôts (taux global)"}
+  csg_taux_reduit:
+    - {depuis: "1997-01-01", taux: 0.01, texte: "Loi 96-1160 du 27/12/1996, art. 9 à 17 (LFSS pour 1997) | Article L136-8 du Code de la Sécurité sociale"}
+    - {depuis: "1998-01-01", taux: 0.038, texte: "Loi 97-1164 du 19/12/1997, art. 5 (LFSS pour 1998)"}
+  crds:
+    - {depuis: "1996-02-01", taux: 0.005, texte: "Article 1600-0 J du Code général des impôts"}
+  casa:
+    - {depuis: "2013-04-01", taux: 0.003, texte: "Article L137-41 du Code de la Sécurité Sociale"}
+  maladie_regime_general:
+    - {depuis: "1980-07-01", taux: 0.01, texte: "Décret 80-298 du 24/04/1980"}
+    - {depuis: "1987-07-01", taux: 0.014, texte: "Décret 87-453 du 29/06/1987"}
+    - {depuis: "1996-01-01", taux: 0.026, texte: "Décret 95-1356 du 30/12/1995, art. 1 (V)"}
+    - {depuis: "1997-01-01", taux: 0.028, texte: "Décret 96-1167 du 26/12/1996, art. 5"}
+    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1252 du 29/12/1997, art. 4"}
+  maladie_complementaires:
+    - {depuis: "1980-07-01", taux: 0.02, texte: "Décret 80-298 du 24/04/1980"}
+    - {depuis: "1987-07-01", taux: 0.024, texte: "Décret 87-453 du 29/06/1987"}
+    - {depuis: "1996-01-01", taux: 0.036, texte: "Décret 95-1356 du 30/12/1995, art. 1 (V)"}
+    - {depuis: "1997-01-01", taux: 0.038, texte: "Décret 96-1167 du 26/12/1996, art. 5"}
+    - {depuis: "1998-01-01", taux: 0.01, texte: "Décret 97-1252 du 29/12/1997, art. 4"}
+
+salaires:
+  csg:
+    - {depuis: "1991-02-01", taux: 0.011, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 90-1168 du 29/12/90, art. 127 à 135 (LF pour 1991)"}
+    - {depuis: "1993-07-01", taux: 0.024, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 93-859 du 22/06/1993, art. 42 (LFR pour 1993)"}
+    - {depuis: "1997-01-01", taux: 0.034, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 96-1160 du 27/12/1996, art. 9 à 17 (LFSS pour 1997)"}
+    - {depuis: "1998-01-01", taux: 0.075, abattement: 0.05, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 97-1164 du 19/12/1997, art. 5 (LFSS pour 1998)"}
+    - {depuis: "2005-01-01", taux: 0.075, abattement: 0.03, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 2004-810 du 13/08/2004, art. 72"}
+    - {depuis: "2011-01-01", taux: 0.075, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0.03, texte: "Loi 2010-1594 du 20/12/2010, art. 20 (LFSS pour 2011)"}
+    - {depuis: "2012-01-01", taux: 0.075, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0.0175, texte: "Article L136-2 du Code de la Sécurité sociale"}
+    - {depuis: "2018-01-01", taux: 0.092, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0.0175, texte: "Article 154 quinquies du Code général des impôts"}
+  crds:
+    - {depuis: "1996-02-01", taux: 0.005, texte: "Article 1600-0 J du Code général des impôts"}
+  maladie_prive:
+    - {depuis: "1967-10-01", tout_salaire: 0, sous_plafond: 0.025, au_dela_du_plafond: 0.01, texte: "Décret 67-803 du 20/09/1967"}
+    - {depuis: "1976-01-01", tout_salaire: 0, sous_plafond: 0.025, au_dela_du_plafond: 0.015, texte: "Décret 75-1273 du 29/12/1975"}
+    - {depuis: "1976-10-01", tout_salaire: 0, sous_plafond: 0.03, au_dela_du_plafond: 0.015, texte: "Décret 76-894 du 29/09/1976"}
+    - {depuis: "1979-01-01", tout_salaire: 0, sous_plafond: 0.01, au_dela_du_plafond: 0.035, texte: "Décret 78-1213 du 26/12/1978"}
+    - {depuis: "1979-08-01", tout_salaire: 0, sous_plafond: 0.01, au_dela_du_plafond: 0.045, texte: "Décret 79-650 du 30/07/1979"}
+    - {depuis: "1980-01-01", tout_salaire: 0.055, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 79-650 du 30/07/1979"}
+    - {depuis: "1987-07-01", tout_salaire: 0.059, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 87-453 du 29/06/1987"}
+    - {depuis: "1991-07-01", tout_salaire: 0.068, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 91-614 du 28/06/1991"}
+    - {depuis: "1997-01-01", tout_salaire: 0.055, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 96-1167 du 26/12/1996"}
+    - {depuis: "1998-01-01", tout_salaire: 0.0075, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 97-1249 du 29/12/1997"}
+    - {depuis: "2018-01-01", tout_salaire: 0, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Article D242-3 du Code de la Sécurité Sociale"}
+  veuvage_prive:
+    - {depuis: "1981-01-01", tout_salaire: 0, sous_plafond: 0.001, texte: "Décret 80-1098 du 30/12/1980"}
+    - {depuis: "1982-01-01", tout_salaire: 0.001, sous_plafond: 0, texte: "Loi 82-1 du 04/01/1982"}
+    - {depuis: "2004-07-01", tout_salaire: 0, sous_plafond: 0, texte: "Décret 2004-858 du 24/08/2004"}
+  chomage_prive:
+    - {depuis: "1959-01-01", tout_salaire: 0.002, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Convention du 31/12/1958"}
+    - {depuis: "1962-01-01", tout_salaire: 0.0005, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Décision conseil adm. 27 nov. 1961"}
+    - {depuis: "1968-01-01", tout_salaire: 0.0007, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "IPP, sans référence"}
+    - {depuis: "1969-01-01", tout_salaire: 0.0008, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "IPP, sans référence"}
+    - {depuis: "1973-01-01", tout_salaire: 0.0014, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Bureau Unedic du 22 nov. 1971"}
+    - {depuis: "1974-01-01", tout_salaire: 0.0016, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Décision du conseil administration du 04/12/1973."}
+    - {depuis: "1975-01-01", tout_salaire: 0.0036, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Décision du conseil administration du 27/11/1974."}
+    - {depuis: "1975-07-01", tout_salaire: 0, sous_plafond: 0.0048, de_un_a_quatre_plafonds: 0.0048, texte: "Circulaire Unedic 75-22 du 21/05/1975"}
+    - {depuis: "1977-01-01", tout_salaire: 0, sous_plafond: 0.0044, de_un_a_quatre_plafonds: 0.0044, texte: "Circulaire Unedic 76-22 du 03/12/1976"}
+    - {depuis: "1978-01-01", tout_salaire: 0, sous_plafond: 0.0048, de_un_a_quatre_plafonds: 0.0048, texte: "Circulaire Unedic 77-29 du 05/12/1977"}
+    - {depuis: "1978-05-01", tout_salaire: 0, sous_plafond: 0.006, de_un_a_quatre_plafonds: 0.006, texte: "Circulaire Unedic 78-19 du 27/04/1978"}
+    - {depuis: "1979-04-01", tout_salaire: 0, sous_plafond: 0.0084, de_un_a_quatre_plafonds: 0.0084, texte: "Circulaire Unedic 79-14 du 02/04/1979"}
+    - {depuis: "1982-11-06", tout_salaire: 0, sous_plafond: 0.0132, de_un_a_quatre_plafonds: 0.0132, texte: "Décret 82-940 du 04/11/1982"}
+    - {depuis: "1983-07-01", tout_salaire: 0, sous_plafond: 0.0172, de_un_a_quatre_plafonds: 0.0172, texte: "Décret 83-553 du 30/06/1983."}
+    - {depuis: "1984-04-01", tout_salaire: 0, sous_plafond: 0.0112, de_un_a_quatre_plafonds: 0.0162, texte: "Ordonnance 84-198 du 21/03/1984. Convention et Règlement Unedic du 24/02/1984 agréés par arrêté du 28/03/1984"}
+    - {depuis: "1985-07-01", tout_salaire: 0, sous_plafond: 0.0212, de_un_a_quatre_plafonds: 0.0262, texte: "Arrêté du 12/08/1985 | Protocole d'accord du 18/07/1985 (agréé)"}
+    - {depuis: "1985-11-01", tout_salaire: 0, sous_plafond: 0.0151, de_un_a_quatre_plafonds: 0.0201, texte: "Protocole du 18/07/1985 (agréé) | avenant du 29/10/1985"}
+    - {depuis: "1988-01-01", tout_salaire: 0, sous_plafond: 0.0167, de_un_a_quatre_plafonds: 0.0217, texte: "Convention et Règlement UNEDIC du 19/11/1985. Accord et Convention UNEDIC du 30/12/1987"}
+    - {depuis: "1990-10-01", tout_salaire: 0, sous_plafond: 0.0159, de_un_a_quatre_plafonds: 0.0217, texte: "Compromis du 25/06/1990 (Dupeyroux 1993, p791)"}
+    - {depuis: "1991-01-01", tout_salaire: 0, sous_plafond: 0.0153, de_un_a_quatre_plafonds: 0.0211, texte: "Convention et règlement Unedic du 01/01/1990 agréés par arrêté du 14/05/1990 . Protocole d'accord du 22/12/1989 - Circ. 90-08 du 06/06/1990"}
+    - {depuis: "1992-01-01", tout_salaire: 0, sous_plafond: 0.0167, de_un_a_quatre_plafonds: 0.0217, texte: "Protocole d'accord du 05/12/1991 (avenants n° 1 et 8 du 13/12/91, agréés)"}
+    - {depuis: "1992-08-01", tout_salaire: 0, sous_plafond: 0.0207, de_un_a_quatre_plafonds: 0.0257, texte: "Protocole d'accord du 18/07/1992 (avenants du 24/07/92, agréés) | accord du 30/12/1992"}
+    - {depuis: "1993-08-01", tout_salaire: 0, sous_plafond: 0.0242, de_un_a_quatre_plafonds: 0.0297, texte: "Convention et règlement Unedic du 01/01/93 agréés par l'arrêté du 04/01/93. Avenant n°1 du 30/12/92"}
+    - {depuis: "1997-01-01", tout_salaire: 0, sous_plafond: 0.0221, de_un_a_quatre_plafonds: 0.0271, texte: "Convention et règlement Unedic du 01/01/1997 agréés par l'arrêté du 18/02/1997"}
+    - {depuis: "2001-01-01", tout_salaire: 0, sous_plafond: 0.021, de_un_a_quatre_plafonds: 0.026, texte: "Convention du 01/01/2001 agréé par l'arrêté du 04/12/2000"}
+    - {depuis: "2002-01-01", tout_salaire: 0, sous_plafond: 0.02, de_un_a_quatre_plafonds: 0.02, texte: "Convention du 01/01/2001 agréé par l'arrêté du 04/12/2000"}
+    - {depuis: "2002-07-01", tout_salaire: 0, sous_plafond: 0.021, de_un_a_quatre_plafonds: 0.021, texte: "Convention du 01/01/2001, avenant du 19/06/2002"}
+    - {depuis: "2003-01-01", tout_salaire: 0, sous_plafond: 0.024, de_un_a_quatre_plafonds: 0.024, texte: "Convention du 01/01/2001, avenant du 27/12/2002"}
+    - {depuis: "2006-01-01", tout_salaire: 0, sous_plafond: 0.0244, de_un_a_quatre_plafonds: 0.0244, texte: "Circulaire Unedic 2006-08 du 27/03/2006. Convention du 18/01/2006, agréé par l'arrêté du 23/02/2006"}
+    - {depuis: "2007-01-01", tout_salaire: 0, sous_plafond: 0.024, de_un_a_quatre_plafonds: 0.024, texte: "Circulaire Unedic 2007-02 du 18/01/2007. Convention du 18/01/2006"}
+    - {depuis: "2018-01-01", tout_salaire: 0, sous_plafond: 0.0095, de_un_a_quatre_plafonds: 0.0095, texte: "Loi 2017-1836 du 30/12/2017, art. 8 VI. (LFSS pour 2018)"}
+    - {depuis: "2018-10-01", tout_salaire: 0, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Loi 2017-1836 du 30/12/2017, art. 8 VI. (LFSS pour 2018)"}
+  maladie_etat:
+    - {depuis: "1967-10-01", tout_salaire: 0.01, sous_plafond: 0.0175, texte: "Décret 67-850 du 30/09/1967"}
+    - {depuis: "1976-01-01", tout_salaire: 0.015, sous_plafond: 0.0175, texte: "Décret 75-1270 du 29/12/1975"}
+    - {depuis: "1976-10-01", tout_salaire: 0.015, sous_plafond: 0.0225, texte: "Décret 76-896 du 29/09/1976"}
+    - {depuis: "1979-01-01", tout_salaire: 0.035, sous_plafond: 0.0025, texte: "Décret 78-1215 du 26/12/1978"}
+    - {depuis: "1980-01-01", tout_salaire: 0.0375, sous_plafond: 0, texte: "Décret 78-1215 du 26/12/1978"}
+    - {depuis: "1981-11-01", tout_salaire: 0.0475, sous_plafond: 0, texte: "Décret 81-1015 du 13/11/1981"}
+    - {depuis: "1988-07-01", tout_salaire: 0.0515, sous_plafond: 0, texte: "Décret 88-795 du 22/06/1988, art. 1"}
+    - {depuis: "1991-07-01", tout_salaire: 0.0605, sous_plafond: 0, texte: "Décret 91-615 du 28/06/1991, art. 1"}
+    - {depuis: "1997-01-01", tout_salaire: 0.0475, sous_plafond: 0, texte: "Décret 96-1151 du 26/12/1996, art. 6"}
+    - {depuis: "1998-01-01", tout_salaire: 0, sous_plafond: 0, texte: "Décret 97-1249 du 29/12/1997, art. 5"}
+  maladie_collectivites:
+    - {depuis: "1967-10-01", tout_salaire: 0.01, sous_plafond: 0.0175, texte: "Décret 67-850 du 30/09/1967"}
+    - {depuis: "1976-01-01", tout_salaire: 0.015, sous_plafond: 0.0175, texte: "Décret 75-1270 du 29/12/1975"}
+    - {depuis: "1976-10-01", tout_salaire: 0.015, sous_plafond: 0.0225, texte: "Décret 76-896 du 29/09/1976"}
+    - {depuis: "1979-01-01", tout_salaire: 0.035, sous_plafond: 0.0025, texte: "Décret 78-1215 du 26/12/1978"}
+    - {depuis: "1980-01-01", tout_salaire: 0.0375, sous_plafond: 0, texte: "Décret 78-1215 du 26/12/1978"}
+    - {depuis: "1981-11-01", tout_salaire: 0.0475, sous_plafond: 0, texte: "Décret 81-1015 du 13/11/1981"}
+    - {depuis: "1988-07-01", tout_salaire: 0.0515, sous_plafond: 0, texte: "Décret 88-795 du 22/06/1988, art. 4"}
+    - {depuis: "1991-01-01", tout_salaire: 0.0605, sous_plafond: 0, texte: "Décret 91-615 du 28/06/1991, art. 4"}
+    - {depuis: "1997-01-01", tout_salaire: 0.0475, sous_plafond: 0, texte: "Décret 96-1151 du 26/12/1996, art. 8"}
+    - {depuis: "1998-01-01", tout_salaire: 0, sous_plafond: 0, texte: "Décret 97-1249 du 29/12/1997, art. 8"}
+  solidarite_public:
+    - {depuis: "1982-11-01", taux: 0.01, seuil_mensuel: 683.77, texte: "IPP, sans référence"}
+    - {depuis: "1982-12-01", taux: 0.01, seuil_mensuel: 691.37, texte: "IPP, sans référence"}
+    - {depuis: "1983-01-01", taux: 0.01, seuil_mensuel: 705.75, texte: "IPP, sans référence"}
+    - {depuis: "1983-04-04", taux: 0.01, seuil_mensuel: 724.39, texte: "IPP, sans référence"}
+    - {depuis: "1983-07-06", taux: 0.01, seuil_mensuel: 738.31, texte: "IPP, sans référence"}
+    - {depuis: "1983-11-07", taux: 0.01, seuil_mensuel: 759.77, texte: "IPP, sans référence"}
+    - {depuis: "1984-01-08", taux: 0.01, seuil_mensuel: 773.56, texte: "IPP, sans référence"}
+    - {depuis: "1984-04-10", taux: 0.01, seuil_mensuel: 781.33, texte: "IPP, sans référence"}
+    - {depuis: "1984-11-13", taux: 0.01, seuil_mensuel: 796.79, texte: "IPP, sans référence"}
+    - {depuis: "1985-02-14", taux: 0.01, seuil_mensuel: 808.73, texte: "IPP, sans référence"}
+    - {depuis: "1985-07-16", taux: 0.01, seuil_mensuel: 820.71, texte: "IPP, sans référence"}
+    - {depuis: "1985-11-17", taux: 0.01, seuil_mensuel: 832.64, texte: "IPP, sans référence"}
+    - {depuis: "1986-02-18", taux: 0.01, seuil_mensuel: 839.36, texte: "IPP, sans référence"}
+    - {depuis: "1987-03-22", taux: 0.01, seuil_mensuel: 844.42, texte: "IPP, sans référence"}
+    - {depuis: "1987-05-23", taux: 0.01, seuil_mensuel: 852.8, texte: "IPP, sans référence"}
+    - {depuis: "1987-08-24", taux: 0.01, seuil_mensuel: 856.99, texte: "IPP, sans référence"}
+    - {depuis: "1988-03-21", taux: 0.01, seuil_mensuel: 865.57, texte: "IPP, sans référence"}
+    - {depuis: "1988-09-23", taux: 0.01, seuil_mensuel: 874.14, texte: "IPP, sans référence"}
+    - {depuis: "1989-09-01", taux: 0.01, seuil_mensuel: 907.68, texte: "Décret 89-598 du 30/08/1989"}
+    - {depuis: "1990-01-01", taux: 0.01, seuil_mensuel: 912.23, texte: "Décret 90-321 du 05/04/1990"}
+    - {depuis: "1990-04-01", taux: 0.01, seuil_mensuel: 923.1, texte: "Décret 90-332 du 05/04/1990"}
+    - {depuis: "1990-12-01", taux: 0.01, seuil_mensuel: 934.91, texte: "Décret 90-1058 du 22/11/1990"}
+    - {depuis: "1991-02-01", taux: 0.01, seuil_mensuel: 953.31, texte: "IPP, sans référence"}
+    - {depuis: "1991-08-01", taux: 0.01, seuil_mensuel: 965.48, texte: "Décret 91-1191 du 19/11/1991"}
+    - {depuis: "1991-11-01", taux: 0.01, seuil_mensuel: 975.1, texte: "Décret 91-1191 du 19/11/1991"}
+    - {depuis: "1992-02-01", taux: 0.01, seuil_mensuel: 987.56, texte: "Décret 92-107 du 30/01/1992"}
+    - {depuis: "1992-10-01", taux: 0.01, seuil_mensuel: 1001.03, texte: "Décret 92-993 du 18/09/1992"}
+    - {depuis: "1993-02-01", taux: 0.01, seuil_mensuel: 1018.31, texte: "Décret 93-93 du 25/01/1993"}
+    - {depuis: "1994-01-01", taux: 0.01, seuil_mensuel: 1028.48, texte: "Décret 93-1317 du 20/12/1993"}
+    - {depuis: "1994-08-01", taux: 0.01, seuil_mensuel: 1033.63, texte: "Décret 93-1317 du 20/12/1993"}
+    - {depuis: "1994-12-01", taux: 0.01, seuil_mensuel: 1041.87, texte: "Décret 94-599 du 15/07/1994"}
+    - {depuis: "1995-03-01", taux: 0.01, seuil_mensuel: 1054.38, texte: "Décret 95-167 du 17/02/1995"}
+    - {depuis: "1995-11-01", taux: 0.01, seuil_mensuel: 1069.14, texte: "Décret 95-1099 du 9/10/1995"}
+    - {depuis: "1997-03-01", taux: 0.01, seuil_mensuel: 1074.47, texte: "Décret 97-141 du 13/02/1997"}
+    - {depuis: "1997-10-01", taux: 0.01, seuil_mensuel: 1079.85, texte: "Décret 97-877 du 25/09/1997"}
+    - {depuis: "1998-01-01", taux: 0.01, seuil_mensuel: 1158.46, texte: "IPP, sans référence"}
+    - {depuis: "1998-04-01", taux: 0.01, seuil_mensuel: 1167.73, texte: "Décret 98-143 du 04/03/1998"}
+    - {depuis: "1998-07-01", taux: 0.01, seuil_mensuel: 1176.08, texte: "Décret 98-462 du 10/06/1998"}
+    - {depuis: "1998-11-01", taux: 0.01, seuil_mensuel: 1181.89, texte: "Décret 98-945 du 21/10/1998"}
+    - {depuis: "1999-04-01", taux: 0.01, seuil_mensuel: 1192.01, texte: "Décret 99-208 du 17/03/1999"}
+    - {depuis: "1999-07-01", taux: 0.01, seuil_mensuel: 1209.99, texte: "Décret 99-941 du 10/06/1999"}
+    - {depuis: "1999-12-01", taux: 0.01, seuil_mensuel: 1214.23, texte: "Décret 99-943 du 12/11/1999"}
+    - {depuis: "2000-12-01", taux: 0.01, seuil_mensuel: 1220.3, texte: "Décret 2000-1154 du 29/11/2000"}
+    - {depuis: "2001-05-01", taux: 0.01, seuil_mensuel: 1234.99, texte: "Décret 2001-370 du 25/04/2001"}
+    - {depuis: "2001-11-01", taux: 0.01, seuil_mensuel: 1243.62, texte: "Décret 2001-895 du 26/09/2001"}
+    - {depuis: "2002-01-01", taux: 0.01, seuil_mensuel: 1243.62, texte: "Décret 2001-895 du 26/09/2001"}
+    - {depuis: "2002-03-01", taux: 0.01, seuil_mensuel: 1251.08, texte: "Décret 2002-203 du 14/02/2002"}
+    - {depuis: "2002-12-01", taux: 0.01, seuil_mensuel: 1259.83, texte: "Décret 2002-1295 du 24/10/2002"}
+    - {depuis: "2004-01-01", taux: 0.01, seuil_mensuel: 1266.13, texte: "Décret 2003-1170 du 08/12/2003"}
+    - {depuis: "2005-02-01", taux: 0.01, seuil_mensuel: 1272.47, texte: "Décret 2005-31 du 15/01/2005"}
+    - {depuis: "2005-07-01", taux: 0.01, seuil_mensuel: 1278.83, texte: "Décret 2005-726 du 29/06/2005"}
+    - {depuis: "2005-11-01", taux: 0.01, seuil_mensuel: 1289.06, texte: "Décret 2005-1301 du 20/10/2005"}
+    - {depuis: "2006-07-01", taux: 0.01, seuil_mensuel: 1295.5, texte: "Décret 2006-759 du 29/06/2006"}
+    - {depuis: "2006-11-01", taux: 0.01, seuil_mensuel: 1300, texte: "Décret 2006-1283 du 19/10/2006"}
+    - {depuis: "2007-02-01", taux: 0.01, seuil_mensuel: 1310.4, texte: "Décret 2007-96 du 25/01/2007"}
+    - {depuis: "2008-03-01", taux: 0.01, seuil_mensuel: 1316.95, texte: "Décret 2008-198 du 27/02/2008"}
+    - {depuis: "2008-07-01", taux: 0.01, seuil_mensuel: 1321.51, texte: "Décret 2008-622 du 27/06/2008"}
+    - {depuis: "2008-10-01", taux: 0.01, seuil_mensuel: 1325.48, texte: "Décret 2008-1016 du 02/10/2008"}
+    - {depuis: "2009-07-01", taux: 0.01, seuil_mensuel: 1341.29, texte: "Décret 2009-824 du 03/07/2009"}
+    - {depuis: "2009-10-01", taux: 0.01, seuil_mensuel: 1345.31, texte: "Décret 2009-1158 du 30/09/2009"}
+    - {depuis: "2010-07-01", taux: 0.01, seuil_mensuel: 1352.04, texte: "Décret 2010-761 du 07/07/2010"}
+    - {depuis: "2011-01-01", taux: 0.01, seuil_mensuel: 1365.93, texte: "Décret 2011-51 du 13/01/2011"}
+    - {depuis: "2012-01-01", taux: 0.01, seuil_mensuel: 1398.34, texte: "Décret 2012-37 du 11/01/2012"}
+    - {depuis: "2012-07-01", taux: 0.01, seuil_mensuel: 1426.12, texte: "Décret 2012-853 du 5/07/2012"}
+    - {depuis: "2013-01-01", taux: 0.01, seuil_mensuel: 1430.76, texte: "Décret 2013-33 du 10/01/2013"}
+    - {depuis: "2016-07-01", taux: 0.01, seuil_mensuel: 1447.98, texte: "Décret 2016-670 du 25/05/2016"}
+    - {depuis: "2017-02-01", taux: 0.01, seuil_mensuel: 1439.35, texte: "Décret 2016-670 du 25/05/2016"}
+    - {depuis: "2018-01-01", taux: 0, seuil_mensuel: 0, texte: "Loi 2017-1837 du 30/12/2017 (LF pour 2018)"}

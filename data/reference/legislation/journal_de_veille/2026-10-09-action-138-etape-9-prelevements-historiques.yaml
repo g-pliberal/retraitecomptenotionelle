@@ -1,0 +1,33 @@
+date: "2026-10-09"
+session: "action 138, étape 9, quatrième partie : les prélèvements de chaque année, les primes sur la fiche de paie, le net du scénario 6"
+consulte: >-
+  Les barèmes de l'IPP, en CSV : la CSG de remplacement et d'activité, la CRDS,
+  la CASA, la cotisation maladie des pensions (mmid_ret), la maladie, le veuvage
+  et l'assurance chômage salariés du régime général, la maladie des agents de
+  l'État et des collectivités, la contribution exceptionnelle de solidarité
+  (fds) — chaque marche avec la référence que l'IPP cite, sans relecture au
+  Journal officiel : l'index de la DILA n'était pas présent. Le code de
+  TRAJECTOiRE au commit 0963b57 (calculeRemuNette, calculePensionNette,
+  calculePrimesNettes), lu sans être copié. La saisie du site et
+  `PeriodeRegime.part_du_revenu`, pour l'assiette des primes. Aucune fiche de la
+  carte n'est touchée : aucune règle du scénario 1 ne change.
+trouve: >-
+  Les barèmes de l'IPP sont des photographies : chaque ligne répète tous les
+  taux en vigueur, et une cellule vide après une valeur dit une suppression —
+  la maladie salariale au 1er janvier 2018, le chômage salarié au 1er octobre
+  2018, la maladie des pensions du régime général et celle des agents publics au
+  1er janvier 1998, quand la CSG monte des mêmes points, le veuvage au 1er juillet
+  2004, la solidarité au 1er janvier 2018. La CSG d'activité n'a pas
+  d'abattement chez l'IPP avant 1998. Ses barèmes de la maladie salariale
+  commencent en 1967, quand la cotisation existait depuis 1945. La fiche de
+  paie du dépôt prélevait la retenue pour pension et la contribution de l'État
+  sur les primes d'un fonctionnaire, que la loi n'assied que sur le traitement
+  (corrigé, en Python et en JavaScript). Le policier du COR concorde avec
+  TRAJECTOiRE dès les taux de l'année ; l'aide-soignante non, dont TRAJECTOiRE
+  assujettit la prime spéciale de sujétion à la retenue.
+reste: >-
+  L'ancrage des marches de l'IPP au Journal officiel ; la maladie des pensions
+  des régimes de base autres que le régime général ; la prime spéciale de
+  sujétion des aides-soignants dans l'assiette de la retenue ; l'indemnité
+  compensatrice de la hausse de la CSG des agents publics depuis 2018 et la
+  cotisation de la RAFP, absentes de la fiche de paie.

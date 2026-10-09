@@ -67,17 +67,18 @@ class Bareme:
         return self.cadres if cadre else self.non_cadres
 
 
-def prelevement(tranches: tuple[Tranche, ...], assiette: float, plafond: float) -> float:
+def prelevement(tranches: tuple[Tranche, ...], assiette: float, plafond: float,
+                salarie: bool = False) -> float:
     """Ce que ``tranches`` prélèvent sur ``assiette``, sous un plafond de la
     sécurité sociale de ``plafond`` euros : chaque tranche va de la borne de
-    la précédente à la sienne."""
+    la précédente à la sienne. Avec ``salarie``, la seule part du salarié."""
     total = 0.0
     bas = 0.0
     for tranche in tranches:
         haut = (math.inf if tranche.jusqu_en_plafonds is None
                 else tranche.jusqu_en_plafonds * plafond)
         if assiette > bas and haut > bas:
-            total += (min(assiette, haut) - bas) * tranche.taux
+            total += (min(assiette, haut) - bas) * (tranche.salarie if salarie else tranche.taux)
         bas = max(bas, haut)
     return total
 
@@ -113,11 +114,13 @@ class Contribution:
     def due_pour(self, statut: str, regimes: frozenset[str]) -> bool:
         return bool(regimes & self.regimes) and statut not in self.statuts_exclus
 
-    def montant(self, annee: int, assiette: float, plafond: float, cadre: bool) -> float:
+    def montant(self, annee: int, assiette: float, plafond: float, cadre: bool,
+                salarie: bool = False) -> float:
         """Ce qu'elle prélève sur ``assiette``, revenu d'une activité de
         l'année ``annee``, sous le plafond ``plafond`` proratisé sur les mêmes
         mois : la moyenne de ce que prélève le barème de chacun des douze
-        mois, l'assiette répartie également sur eux."""
+        mois, l'assiette répartie également sur eux. Avec ``salarie``, la
+        seule part du salarié."""
         if (self.due_au_dela_de_plafonds is not None
                 and assiette <= self.due_au_dela_de_plafonds * plafond):
             return 0.0
@@ -125,7 +128,7 @@ class Contribution:
         for rang in range(1, 13):
             bareme = self.bareme(dt.date(annee, rang, 1))
             mois.append(0.0 if bareme is None
-                        else prelevement(bareme.tranches(cadre), assiette, plafond))
+                        else prelevement(bareme.tranches(cadre), assiette, plafond, salarie))
         return somme_ordonnee(mois) / 12.0
 
 
@@ -216,6 +219,24 @@ def _forfait(catalogue, regimes: frozenset[str], annee: int, macro, part: float)
     return None
 
 
+def _dues(regles, simulateur, carriere, ligne):
+    """Les contributions que la paie de ``ligne`` doit, et si elle est celle
+    d'un cadre : ``None`` quand elle n'en doit aucune."""
+    affiliations = simulateur.affiliations
+    annee = ligne.annee
+    entree = carriere.date_entree(ligne.affiliation)
+    plafond_annuel = simulateur.macro.plafond_securite_sociale(annee)
+    codes = frozenset(affiliations.regimes(ligne.affiliation, annee, entree,
+                                           revenu=ligne.revenu, plafond=plafond_annuel))
+    services, _ = affiliations.services_passes(ligne.affiliation, annee, entree)
+    codes -= services
+    if not codes & regles.regimes:
+        return None
+    dues = [contribution for contribution in regles.contributions
+            if contribution.due_pour(ligne.affiliation, codes)]
+    return codes, dues, bool(codes & regles.regimes_cadres)
+
+
 def contributions_d_une_carriere(simulateur, carriere) -> dict[int, float]:
     """Les contributions d'équilibre que la paie de ``carriere`` a supportées,
     année par année, en euros courants, la part du salarié et celle de
@@ -223,7 +244,6 @@ def contributions_d_une_carriere(simulateur, carriere) -> dict[int, float]:
     regles = charger_contributions_equilibre(simulateur.parametres.racine_donnees)
     if not regles.contributions:
         return {}
-    affiliations = simulateur.affiliations
     macro = simulateur.macro
     catalogue = simulateur.catalogue
     sommes: dict[int, float] = {}
@@ -233,24 +253,17 @@ def contributions_d_une_carriere(simulateur, carriere) -> dict[int, float]:
         part = carriere.part_retenue_ligne(ligne)
         if part <= 0 or ligne.fraction_annee <= 0:
             continue
-        annee = ligne.annee
-        entree = carriere.date_entree(ligne.affiliation)
-        plafond_annuel = macro.plafond_securite_sociale(annee)
-        codes = frozenset(affiliations.regimes(ligne.affiliation, annee, entree,
-                                               revenu=ligne.revenu, plafond=plafond_annuel))
-        services, _ = affiliations.services_passes(ligne.affiliation, annee, entree)
-        codes -= services
-        if not codes & regles.regimes:
+        dues = _dues(regles, simulateur, carriere, ligne)
+        if dues is None:
             continue
+        codes, contributions, cadre = dues
+        annee = ligne.annee
         # Comme au compte : l'année du départ ne porte que les mois qui le
         # précèdent, et le plafond se proratise sur les mêmes mois.
         assiette = ligne.revenu * min(1.0, part / ligne.fraction_annee)
-        plafond = plafond_annuel * part
-        cadre = bool(codes & regles.regimes_cadres)
+        plafond = macro.plafond_securite_sociale(annee) * part
         montants = []
-        for contribution in regles.contributions:
-            if not contribution.due_pour(ligne.affiliation, codes):
-                continue
+        for contribution in contributions:
             forfait = _forfait(catalogue, codes & contribution.regimes, annee, macro, part)
             base = assiette if forfait is None else forfait
             montants.append(contribution.montant(annee, base, plafond, cadre))
@@ -258,3 +271,25 @@ def contributions_d_une_carriere(simulateur, carriere) -> dict[int, float]:
         if montant > 0.0:
             sommes[annee] = sommes.get(annee, 0.0) + montant
     return sommes
+
+
+def part_salariale_annualisee(simulateur, carriere, ligne) -> float:
+    """Ce que le salarié supporte des contributions d'équilibre sur le revenu
+    annualisé de ``ligne``, sous le plafond de l'année entière : la part que
+    sa fiche de paie retient, comme la fiche du site lit l'année pleine."""
+    regles = charger_contributions_equilibre(simulateur.parametres.racine_donnees)
+    if not regles.contributions or not ligne.cotise:
+        return 0.0
+    dues = _dues(regles, simulateur, carriere, ligne)
+    if dues is None:
+        return 0.0
+    codes, contributions, cadre = dues
+    annee = ligne.annee
+    macro = simulateur.macro
+    plafond = macro.plafond_securite_sociale(annee)
+    montants = []
+    for contribution in contributions:
+        forfait = _forfait(simulateur.catalogue, codes & contribution.regimes, annee, macro, 1.0)
+        base = ligne.revenu_annualise if forfait is None else forfait
+        montants.append(contribution.montant(annee, base, plafond, cadre, salarie=True))
+    return somme_ordonnee(montants)

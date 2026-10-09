@@ -4557,6 +4557,31 @@ institutions:
           d'ajouter la tranche C — l'accord du 30 octobre 2015 (article 3)
           étend la tranche B à la tranche C, au même taux. Le dépôt lit
           l'accord.
+      - id: ipp_prelevements_sociaux
+        titre: >-
+          Prélèvements sur les pensions et sur les salaires hors retraite —
+          CSG, CRDS, CASA, cotisations maladie, veuvage, assurance chômage,
+          contribution de solidarité — chez l'IPP, marche par marche
+        url: https://baremes.ipp.eu/parameters/prelevements-sociaux
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/legislation/prelevements_historiques.yaml
+        note: >-
+          Lu le 9 octobre 2026 (action 138, étape 9), en CSV, par
+          `scripts/fetch/ipp_prelevements_sociaux.py`, qui écrit la cible :
+          la CSG des pensions au taux plein, médian et réduit, la CRDS, la
+          CASA, la cotisation maladie des pensions du régime général et des
+          complémentaires ; la CSG et la CRDS d'activité et leur abattement,
+          la maladie, le veuvage et le chômage du salarié du privé, la
+          maladie des agents de l'État et des collectivités, la contribution
+          exceptionnelle de solidarité. Chaque ligne de l'IPP est une
+          photographie des taux en vigueur : une cellule vide après une
+          valeur dit une suppression (la maladie salariale en 2018, le
+          chômage salarié en octobre 2018). Les marches ne sont pas ancrées
+          au Journal officiel ; la référence que l'IPP cite est gardée pour
+          chacune. La maladie d'avant 1967, où ses barèmes commencent, tient
+          les taux de 1967. La dernière marche de chaque série est le
+          barème du site de l'année courante (test_prelevements_historiques).
 
   cepii:
     nom: Centre d'études prospectives et d'informations internationales

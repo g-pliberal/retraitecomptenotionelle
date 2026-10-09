@@ -58,6 +58,7 @@ régime général et à l'Agirc-Arrco, sa cause reste à trouver.
 
 from __future__ import annotations
 
+import datetime as dt
 import json
 import re
 from dataclasses import replace
@@ -70,7 +71,9 @@ from retraite_notionnelle.castypes import CAS_TYPES, CasType
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.cout import coefficient_actuel
-from retraite_notionnelle.remuneration import charger_prelevements
+from retraite_notionnelle.donnees.prelevements_historiques import (
+    charger_prelevements_historiques,
+)
 from retraite_notionnelle.saisie import Saisie
 from retraite_notionnelle.simulateur import Simulateur
 
@@ -516,9 +519,9 @@ def test_pour_l_etat_trajectoire_ne_compte_que_la_retenue_de_l_agent(
 # TRAJECTOiRE : le taux de remplacement net
 # ---------------------------------------------------------------------------
 
-#: La catégorie de CSG que TRAJECTOiRE donne à la pension de chaque cas, et la
-#: tranche du barème de L. 136-8 du dépôt qui lui répond.
-CATEGORIES_CSG = {"Normal": "taux plein", "mediane": "taux médian", "reduit": "taux réduit"}
+#: La catégorie de CSG que TRAJECTOiRE donne à la pension de chaque cas, et le
+#: taux de l'histoire des prélèvements qui lui répond.
+CATEGORIES_CSG = {"Normal": "plein", "mediane": "median", "reduit": "reduit"}
 
 #: Les caisses dont TRAJECTOiRE retient la cotisation maladie de la pension,
 #: quelle que soit la catégorie de CSG (``calculePensionNette``).
@@ -529,86 +532,71 @@ CAISSES_MALADIE = ("Agirc-Arrco", "Arrco", "Agirc")
 TOLERANCE_REMPLACEMENT_NET = 0.015
 TOLERANCE_REMPLACEMENT_NET_SMPT = 0.02
 
-#: Les écarts déclarés au taux de remplacement net de TRAJECTOiRE, leur cause,
-#: et les bornes du rapport, dépôt sur TRAJECTOiRE.
+#: Les écarts déclarés au taux de remplacement net de TRAJECTOiRE, par cas
+#: type, leur cause, et les bornes du rapport, dépôt sur TRAJECTOiRE.
 ECARTS_REMPLACEMENT_NET = {
-    "avant_2018": (
-        "TRAJECTOiRE prélève les taux de l'année : avant 2018, la CSG des "
-        "pensions au taux plein de 6,6 %, et sur le salaire du privé la "
-        "cotisation maladie et celle de chômage, que la hausse de la CSG de 1,7 "
-        "point a remplacées ; le dépôt, ceux de l'année courante, sur les "
-        "pensions comme sur les salaires", 0.955, 0.995),
-    "primes_dans_la_base": (
+    "cor_9_": (
         "TRAJECTOiRE assied une retenue pour pension sur la prime spéciale de "
-        "sujétion de l'aide-soignante et sur l'indemnité de sujétions spéciales "
-        "du policier, que le dépôt ne porte pas : leur net est plus bas chez "
-        "lui", 0.94, 0.998),
+        "sujétion de l'aide-soignante (« primes_dans_la_base » : IS), que le "
+        "dépôt ne porte pas : son net est plus bas chez lui, d'autant plus que "
+        "la part des primes croît", 0.94, 0.99),
 }
 
-
-def _cause_d_ecart(simulateur, cle: str, contenu: dict, carriere) -> str | None:
-    """La cause déclarée d'un écart au remplacement net de TRAJECTOiRE, ou
-    ``None`` quand les conventions des deux modèles coïncident. ``chomage`` :
-    TRAJECTOiRE lit le revenu de l'année d'avant le départ, même chômée ; le
-    dépôt, celui de la dernière année travaillée en entier."""
-    if cle.startswith("cor_3_"):
-        return "chomage"
-    fonctionnaire = contenu["trajectoire"].get("fonctionnaire") or {}
-    if any(caisse.get("primes_dans_la_base") in ("IS", "ISS")
-           for caisse in fonctionnaire.values()):
-        return "primes_dans_la_base"
-    annee = cycle_de_vie.derniere_annee_pleine(carriere)
-    statut = next(ligne.affiliation for ligne in carriere.lignes if ligne.annee == annee)
-    prive = simulateur.affiliations.famille(statut) == "prive"
-    if carriere.annee_liquidation < 2018 or (prive and annee < 2018):
-        return "avant_2018"
-    return None
+#: Les cas dont TRAJECTOiRE lit le revenu de l'année d'avant le départ même
+#: chômée : son taux en salaire moyen s'en écarte, non celui en euros
+#: constants. Le dépôt lit la dernière année travaillée en entier.
+SMPT_INCOMPARABLE = ("cor_3_",)
 
 
-def test_le_remplacement_net_de_trajectoire_se_retrouve_aux_prelevements_pres(
+def test_le_remplacement_net_de_trajectoire_se_retrouve_aux_prelevements_de_l_annee(
         trajectoire, flux_trajectoire, simulateur):
     """TRAJECTOiRE rapporte la pension nette du départ, RAFP comprise, au revenu
     net de l'année d'avant (``txRemplacementNet``, en euros constants ;
-    ``txRemplacementNetSmpt``, en salaire moyen). Sa pension, nette au barème
-    de sa catégorie de CSG, rapportée au revenu net que le dépôt tire de la
-    même carrière (``cycle_de_vie.remplacement_net``), retrouve son taux à
-    1,5 % près, sur les 46 cas où les deux modèles prélèvent la même chose :
-    la fiche de paie, la part des primes d'un fonctionnaire, les déflateurs
-    sont les mêmes. Les autres écarts sont déclarés avec leur cause ; ils se
-    referment avec l'histoire des prélèvements, que l'IPP publie."""
-    pensions = charger_prelevements(simulateur.parametres.racine_donnees).pensions
-    tranches = {tranche.libelle: tranche for tranche in pensions.bareme_csg}
-    ecarts: dict[str, list[float]] = {cause: [] for cause in ECARTS_REMPLACEMENT_NET}
+    ``txRemplacementNetSmpt``, en salaire moyen), chacun aux prélèvements de
+    son année, la pension à ceux de sa catégorie de CSG. Sa pension, nette des
+    mêmes prélèvements (l'histoire que l'IPP retrace,
+    ``prelevements_historiques.yaml``), rapportée au revenu net que le dépôt
+    tire de la même carrière (``cycle_de_vie.remplacement_net``), retrouve son
+    taux à 1,5 % près sur 70 des 75 cas du témoin ; l'aide-soignante est
+    déclarée. Jusqu'au 9 octobre 2026, les deux nets étaient aux taux de 2026,
+    et les départs d'avant 2018 s'écartaient de 1,2 à 3,7 %."""
+    historique = charger_prelevements_historiques(simulateur.parametres.racine_donnees)
+    pensions = historique.pensions
+    ecarts: dict[str, list[float]] = {prefixe: [] for prefixe in ECARTS_REMPLACEMENT_NET}
     concordants = 0
     for cle, (comparaison, _) in flux_trajectoire.items():
         contenu = trajectoire["cas"][cle]
-        carriere = comparaison.carriere
-        cause = _cause_d_ecart(simulateur, cle, contenu, carriere)
-        if cause == "chomage":
-            continue
+        liquidation = contenu["trajectoire"]["liquidation"]
+        jour = dt.date.fromisoformat(liquidation["date"] + "-01")
+        taux = CATEGORIES_CSG[liquidation["categorie_csg"]]
         caisses = contenu["trajectoire"]["caisses"]
         brute = 12.0 * sum(caisse["pension_mensuelle"] for caisse in caisses.values())
         maladie = 12.0 * sum(caisses[nom]["pension_mensuelle"] for nom in CAISSES_MALADIE
                              if nom in caisses)
-        tranche = tranches[CATEGORIES_CSG[contenu["trajectoire"]["liquidation"]["categorie_csg"]]]
-        nette = (brute * (1.0 - pensions.taux_de_la_tranche(tranche))
-                 - maladie * pensions.maladie_complementaire)
+        prelevement = (historique.taux_csg_pension(jour, taux) + pensions["crds"].valeur(jour)
+                       + (pensions["casa"].valeur(jour) if taux != "reduit" else 0.0))
+        nette = (brute * (1.0 - prelevement)
+                 - maladie * pensions["maladie_complementaires"].valeur(jour))
+        carriere = comparaison.carriere
         remplacement = cycle_de_vie.remplacement_net(
             simulateur, carriere, cycle_de_vie.revenus_nets(simulateur, carriere), nette)
         indicateurs = contenu["trajectoire"]["indicateurs"]
         rapport = remplacement.constants / indicateurs["txRemplacementNet"]
-        if cause is None:
-            concordants += 1
-            assert rapport == pytest.approx(1.0, abs=TOLERANCE_REMPLACEMENT_NET), (cle, rapport)
+        declare = next((prefixe for prefixe in ECARTS_REMPLACEMENT_NET
+                        if cle.startswith(prefixe)), None)
+        if declare is not None:
+            _, bas, haut = ECARTS_REMPLACEMENT_NET[declare]
+            assert bas <= rapport <= haut, (cle, rapport)
+            ecarts[declare].append(rapport)
+            continue
+        concordants += 1
+        assert rapport == pytest.approx(1.0, abs=TOLERANCE_REMPLACEMENT_NET), (cle, rapport)
+        if not cle.startswith(SMPT_INCOMPARABLE):
             assert remplacement.salaire_moyen / indicateurs["txRemplacementNetSmpt"] == (
                 pytest.approx(1.0, abs=TOLERANCE_REMPLACEMENT_NET_SMPT)), cle
-        else:
-            _, bas, haut = ECARTS_REMPLACEMENT_NET[cause]
-            assert bas <= rapport <= haut, (cle, cause, rapport)
-            ecarts[cause].append(rapport)
-    assert concordants == 46
-    for cause, rapports in ecarts.items():
-        assert sum(rapports) / len(rapports) < 1.0 - TOLERANCE_REMPLACEMENT_NET, cause
+    assert concordants == 70
+    for prefixe, rapports in ecarts.items():
+        assert sum(rapports) / len(rapports) < 1.0 - TOLERANCE_REMPLACEMENT_NET, prefixe
 
 
 # ---------------------------------------------------------------------------

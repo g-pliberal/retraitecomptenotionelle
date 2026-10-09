@@ -704,10 +704,20 @@ referents:
           Un taux de remplacement net au départ, par génération,
           demande les prélèvements de l'année du départ. Pour une
           pension servie aujourd'hui, les taux de 2026 suffisent.
-          Le rendement interne net de l'étape 9 les attend aussi :
-          il prélève toute la retraite aux taux de 2026
-          (`cycle_de_vie.taux_de_prelevement`).
-        etat: a_reprendre
+          Repris le 9 octobre 2026 (action 138, étape 9) : ses
+          barèmes, lus par `scripts/fetch/ipp_prelevements_sociaux.py`
+          dans `prelevements_historiques.yaml` — la CSG, la CRDS, la
+          CASA et la maladie des pensions, et ceux des salaires, la
+          CSG, la CRDS, la maladie, le veuvage, le chômage, la
+          solidarité des agents publics. Les indicateurs de cycle de
+          vie nets prélèvent chaque année de pension et de salaire aux
+          taux de son année (`cycle_de_vie.prelevements_par_annee`,
+          `revenus_nets`) ; la dernière marche de chaque série est le
+          barème du site (`tests/test_prelevements_historiques.py`).
+          Le taux de remplacement net de TRAJECTOiRE, qui prélève de
+          même, se retrouve alors sur les départs d'avant 2018, qui
+          s'en écartaient de 1,2 à 3,7 %.
+        etat: repris
         chantier: "138.9"
     bilan: >-
       L'IPP a raison contre le dépôt sur des règles anciennes ou mal
@@ -3425,12 +3435,11 @@ referents:
           nets sur nets, avec la pension nette rapportée au minimum
           vieillesse et le taux de remplacement net en euros courants,
           constants et en salaire moyen. Son taux de remplacement net
-          (`txRemplacementNet`) se retrouve à 1,1 % près sur les 46 cas
-          du témoin où les deux modèles prélèvent la même chose ; les
-          autres écarts tiennent aux taux d'avant 2018, qu'il prélève à
-          leur année, et à la retenue qu'il assied sur la prime de
-          sujétion de l'aide-soignante et l'indemnité de sujétions
-          spéciales du policier (`tests/test_cycle_de_vie_references.py`).
+          (`txRemplacementNet`), chaque net aux prélèvements de son
+          année, se retrouve à 1,5 % près sur 70 des 75 cas du témoin ;
+          l'écart de l'aide-soignante, dont il assied une retenue sur la
+          prime spéciale de sujétion, est déclaré
+          (`tests/test_cycle_de_vie_references.py`).
         etat: repris
         chantier: "138.9"
       - quoi: >-

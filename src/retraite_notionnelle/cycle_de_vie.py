@@ -81,10 +81,15 @@ références n'ont pas la même :
 Les cotisations, elles, ne sont pas pondérées par la survie : comme chez le
 COR et l'OCDE, la carrière est celle de qui atteint le départ.
 
-EN NET, la pension perd les prélèvements de l'année courante au taux plein
-(:func:`taux_de_prelevement`), et ce qui la rapporte à un revenu d'activité
-le rapporte au revenu net que laisse la fiche de paie (:func:`revenus_nets`) ;
-le patrimoine reste en années de dernier revenu brut, comme l'OCDE l'exprime.
+EN NET, chaque année au taux de son année. La pension perd les prélèvements
+de l'année où elle est servie, au taux plein de CSG (:func:`prelevements_par_annee`) :
+rien avant le 1er juillet 1980, puis la cotisation maladie, la CSG, la CRDS, la
+CASA, que l'IPP retrace (:mod:`~retraite_notionnelle.donnees.prelevements_historiques`),
+dont la dernière marche tient au-delà. Ce qui la rapporte à un revenu
+d'activité le rapporte au revenu net de la même année (:func:`revenus_nets`) :
+la fiche de paie du droit en vigueur, ramenée aux prélèvements de son année,
+et celle de la proposition pour le scénario 6 après la bascule, comme le site.
+Le patrimoine reste en années de dernier revenu brut, comme l'OCDE l'exprime.
 
 À CHAQUE ÂGE DE DÉPART (:func:`balayage`). Calculés au seul âge où un cas type
 part, les indicateurs ne disent pas ce qu'un départ plus tôt ou plus tard
@@ -95,15 +100,13 @@ l'ASPA et le taux de remplacement net en euros courants, constants et en
 salaire moyen ; le dépôt fait de même (:class:`Depart`), sous les trois
 productivités du COR (:func:`hypotheses_de_productivite`).
 
-CE QUE LE MODULE NE FAIT PAS. Il ne connaît que les prélèvements de 2026, sur
-les pensions comme sur les salaires : une pension « nette » l'est au taux
-plein de l'année courante, tenu toute la retraite, et un salaire net, aux
-taux hors retraite de l'année courante, quelle que soit son année ;
-l'histoire de ces prélèvements, que l'IPP publie, reste à reprendre. La
-fiche de paie est celle du droit en vigueur sous les six systèmes : ce que
-la proposition change à la paie n'entre pas dans le revenu net. Il ne
-s'affiche pas encore sur le site, et n'a pas de jumeau JavaScript, pas plus
-que :mod:`~retraite_notionnelle.contributions_equilibre`.
+CE QUE LE MODULE NE FAIT PAS. La pension nette l'est au taux plein de CSG, sans
+le taux réduit ni le médian que le revenu fiscal d'un foyer ouvrirait ; la
+maladie des pensions des régimes de base autres que le régime général, que
+l'IPP n'écrit pas, n'y est pas ; l'indépendant garde les prélèvements hors
+retraite de l'année courante. Il ne s'affiche pas encore sur le site, et n'a
+pas de jumeau JavaScript, pas plus que
+:mod:`~retraite_notionnelle.contributions_equilibre`.
 """
 
 from __future__ import annotations
@@ -116,11 +119,17 @@ from pathlib import Path
 
 from . import pilote
 from .config import RevalorisationStock
-from .contributions_equilibre import contributions_d_une_carriere
+from .contributions_equilibre import contributions_d_une_carriere, part_salariale_annualisee
 from .cout import coefficient_actuel
 from .donnees.chargement import charger_yaml
+from .donnees.prelevements_historiques import FAMILLES, charger_prelevements_historiques
 from .donnees.mortalite import AGE_TERMINAL
-from .remuneration import charger_prelevements, fiche_depuis_brut
+from .remuneration import (
+    charger_prelevements,
+    fiche_depuis_brut,
+    profil_de_la_fiche,
+    remuneration_de_la_carriere,
+)
 from .revalorisation import RevalorisationServie, faire_vivre
 from .somme import somme_ordonnee
 
@@ -165,6 +174,22 @@ class Convention:
     #: des indicateurs nets (:func:`taux_de_prelevement`). Les cotisations ne
     #: changent pas.
     prelevement: float = 0.0
+    #: Le même, année par année, que l'histoire des prélèvements donne
+    #: (:func:`prelevements_par_annee`) : une année qu'il ne porte pas prend
+    #: ``prelevement``.
+    prelevements: dict[int, float] | None = None
+
+    @property
+    def nette(self) -> bool:
+        """La pension est-elle nette des prélèvements ?"""
+        return self.prelevement > 0.0 or bool(self.prelevements)
+
+    def retenu(self, annee: int) -> float:
+        """La part de la pension de l'année ``annee`` que les prélèvements
+        laissent."""
+        if self.prelevements is not None and annee in self.prelevements:
+            return 1.0 - self.prelevements[annee]
+        return 1.0 - self.prelevement
 
 
 @dataclass(frozen=True)
@@ -364,42 +389,87 @@ def revenus_d_activite(carriere) -> dict[int, float]:
                       if ligne.cotise)
 
 
-def revenus_nets(simulateur, carriere) -> dict[int, float] | None:
-    """Ce que la fiche de paie du droit en vigueur laisse de chaque revenu
-    d'activité (:func:`~retraite_notionnelle.remuneration.fiche_depuis_brut`),
-    année par année : les cotisations retraite de l'année, et les autres
-    prélèvements aux taux de l'année courante, que la fiche applique à toute
-    année, comme le module ne connaît que les prélèvements de l'année
-    courante sur les pensions. La fiche se lit sur le revenu annualisé, sous
-    le plafond de l'année entière, puis se ramène aux mois travaillés.
+def revenus_nets(simulateur, carriere, proposition: bool = False) -> dict[int, float] | None:
+    """Ce que la paie laisse de chaque revenu d'activité, année par année,
+    aux prélèvements de son année : la fiche de paie du droit en vigueur
+    (:func:`~retraite_notionnelle.remuneration.fiche_depuis_brut`), qui
+    retient les cotisations retraite de l'année et les autres prélèvements de
+    l'année courante, ramenée à ceux de l'année par l'histoire que l'IPP
+    retrace (:meth:`~.donnees.prelevements_historiques.PrelevementsHistoriques.hors_retraite`)
+    — la CSG et la CRDS depuis 1991 et 1996, la maladie, le veuvage,
+    l'assurance chômage du salarié du privé, la maladie et la contribution de
+    solidarité de l'agent public — et par les contributions d'équilibre de
+    l'Agirc-Arrco de l'année, l'ASF, l'AGFF ou la CEG, au lieu de celles de
+    l'année courante. L'indépendant garde les prélèvements hors retraite de
+    l'année courante. La fiche se lit sur le revenu annualisé, sous le plafond
+    de l'année entière, puis se ramène aux mois travaillés.
 
     Les primes d'un fonctionnaire perdent les prélèvements hors retraite,
     sans la retenue pour pension, que la loi n'assied que sur le traitement
     (:func:`~retraite_notionnelle.remuneration.bloc_droit_en_vigueur`). La
     RAFP qu'elles paient reste hors du net, comme elle est hors des deux flux.
 
-    La même fiche sert aux six systèmes : ce qu'une réforme change à la paie,
-    le taux unique de la proposition qui laisse un net plus fort, n'y entre
-    pas. ``None`` quand un statut de la carrière n'a pas de fiche de paie —
-    l'exploitant agricole —, dont le net ne se calcule pas."""
+    Avec ``proposition``, les années de la bascule au départ se lisent sur la
+    fiche de paie de la proposition (:func:`~.remuneration.remuneration_de_la_carriere`),
+    qui laisse un net plus fort du même brut : son rapport du net au brut,
+    appliqué au revenu de l'année, comme le site le fait pour le taux de
+    remplacement net du scénario 6 (``contexte.Montants``). Les scénarios 2 à 5
+    gardent la fiche du droit en vigueur, comme le site. ``None`` quand un
+    statut de la carrière n'a pas de fiche de paie — l'exploitant agricole —,
+    dont le net ne se calcule pas."""
     couples = []
     for ligne in carriere.lignes:
         if not ligne.cotise:
             continue
-        net = _net_annualise(simulateur, ligne)
+        net = _net_annualise(simulateur, carriere, ligne)
         if net is None:
             return None
         couples.append((ligne.annee, net * ligne.fraction_annee))
-    return _par_annee(couples)
+    nets = _par_annee(couples)
+    if proposition:
+        remuneration = remuneration_de_la_carriere(
+            carriere, simulateur.macro, simulateur.catalogue, simulateur.affiliations,
+            simulateur.parametres)
+        bruts = revenus_d_activite(carriere)
+        for annee in () if remuneration is None else remuneration.annees:
+            fiche = annee.proposition
+            if fiche.brut > 0.0 and annee.annee in bruts:
+                nets[annee.annee] = bruts[annee.annee] * fiche.net / fiche.brut
+    return nets
 
 
-def _net_annualise(simulateur, ligne) -> float | None:
-    """Le net du revenu annualisé d'une ligne cotisée, primes comprises."""
-    fiche = fiche_depuis_brut(simulateur.parametres.racine_donnees, simulateur.macro,
-                              simulateur.catalogue, simulateur.affiliations,
-                              ligne.affiliation, ligne.annee, ligne.revenu_annualise,
-                              ligne.part_primes)
-    return None if fiche is None else fiche.net
+#: Les postes de la fiche de paie que les contributions d'équilibre de l'année
+#: remplacent : la CEG et la CET, que la fiche prélève aux taux de l'année
+#: courante.
+POSTES_EQUILIBRE = ("equilibre_general", "equilibre_technique")
+
+
+def _net_annualise(simulateur, carriere, ligne) -> float | None:
+    """Le net du revenu annualisé d'une ligne cotisée, primes comprises, aux
+    prélèvements de son année (:func:`revenus_nets`)."""
+    racine = simulateur.parametres.racine_donnees
+    macro = simulateur.macro
+    annualise = ligne.revenu_annualise
+    fiche = fiche_depuis_brut(racine, macro, simulateur.catalogue, simulateur.affiliations,
+                              ligne.affiliation, ligne.annee, annualise, ligne.part_primes)
+    if fiche is None:
+        return None
+    profil = profil_de_la_fiche(simulateur.affiliations, simulateur.catalogue,
+                                ligne.affiliation, ligne.annee)
+    famille = FAMILLES.get(profil)
+    if famille is None:
+        return fiche.net
+    historique = charger_prelevements_historiques(racine)
+    plafond = macro.plafond_securite_sociale(ligne.annee)
+    courante = charger_prelevements(racine).annee
+    retraite = fiche.retraite_salarie
+    hors_retraite = (historique.hors_retraite_annuel(famille, courante, annualise, plafond, retraite)
+                     - historique.hors_retraite_annuel(famille, ligne.annee, annualise, plafond,
+                                                       retraite))
+    equilibre = somme_ordonnee(l.salarie for l in fiche.lignes if l.code in POSTES_EQUILIBRE)
+    if equilibre > 0.0:
+        equilibre -= part_salariale_annualisee(simulateur, carriere, ligne)
+    return fiche.net + hors_retraite + equilibre
 
 
 def _dernier_revenu_net(dernier_revenu: float, revenus: dict[int, float],
@@ -553,18 +623,24 @@ def flux_des_systemes(simulateur, comparaison, nets: bool = False) -> dict[str, 
     revalorisation = _revalorisation(simulateur, derniere)
     versees = cotisations_versees(simulateur, carriere)
     actuels = niveaux_actuels(simulateur, comparaison, revalorisation, derniere)
+    # Les revenus de chaque carrière, et leur net : sur la fiche du droit en
+    # vigueur, ou sur celle de la proposition pour le scénario 6.
     revenus = {}
     for scenario in SCENARIOS:
-        carriere_du_scenario = comparaison.carriere_de(scenario)
-        if id(carriere_du_scenario) not in revenus:
-            revenus[id(carriere_du_scenario)] = (
-                revenus_d_activite(carriere_du_scenario),
-                revenus_nets(simulateur, carriere_du_scenario) if nets else None)
+        cle = (id(comparaison.carriere_de(scenario)), simulateur.calculs[scenario].garantie
+               if scenario in simulateur.calculs else False)
+        if cle not in revenus:
+            carriere_du_scenario = comparaison.carriere_de(scenario)
+            revenus[cle] = (revenus_d_activite(carriere_du_scenario),
+                            revenus_nets(simulateur, carriere_du_scenario, cle[1])
+                            if nets else None)
 
     def flux(scenario: str, cotisations: dict[int, float],
              niveaux: dict[int, float]) -> Flux:
         carriere_du_scenario = comparaison.carriere_de(scenario)
-        bruts, nets_du_scenario = revenus[id(carriere_du_scenario)]
+        bruts, nets_du_scenario = revenus[(id(carriere_du_scenario),
+                                           simulateur.calculs[scenario].garantie
+                                           if scenario in simulateur.calculs else False)]
         dernier = (comparaison.dernier_revenu_annualise_liberal
                    if carriere_du_scenario is not carriere
                    else comparaison.dernier_revenu_annualise)
@@ -628,14 +704,13 @@ def pensions_esperees(flux: Flux, simulateur, convention: Convention
     décès. Sous la survie de génération, chaque morceau d'année compte pour
     l'espérance de le vivre, sachant qu'on était en vie au départ.
     """
-    retenu = 1.0 - convention.prelevement
     esperees = []
     if convention.age_deces is not None:
         deces = flux.naissance + convention.age_deces
         for annee, niveau in sorted(flux.niveaux.items()):
             debut, fin = max(annee, flux.debut), min(annee + 1, deces)
             if fin > debut:
-                esperees.append((annee, niveau * (fin - debut) * retenu,
+                esperees.append((annee, niveau * (fin - debut) * convention.retenu(annee),
                                  (debut + fin) / 2.0, fin - debut))
         return esperees
     courbe = simulateur.mortalite.courbe(flux.age, flux.debut,
@@ -646,7 +721,8 @@ def pensions_esperees(flux: Flux, simulateur, convention: Convention
             continue
         vie = _integrale_survie(courbe, debut - flux.debut, fin - flux.debut)
         if vie > 0.0:
-            esperees.append((annee, niveau * vie * retenu, (debut + fin) / 2.0, vie))
+            esperees.append((annee, niveau * vie * convention.retenu(annee),
+                             (debut + fin) / 2.0, vie))
     return esperees
 
 
@@ -664,13 +740,49 @@ def convention_cor(simulateur, comparaison) -> Convention:
     sexes réunis, le décès à 60 ans plus l'espérance de vie à 60 ans de la
     génération, la pension nette — « les cas types de cadre et de non-cadre
     sont soumis au taux plein de la CSG » (rapport annuel de juin 2026, figure
-    3.A, note), ce que :func:`taux_de_prelevement` retient pour tous."""
+    3.A, note), ce que :func:`taux_de_prelevement` retient pour tous, chaque
+    année au taux de son année (:func:`prelevements_par_annee`)."""
     return Convention(
         age_deces=age_de_deces_cor(simulateur.mortalite,
                                    comparaison.carriere.annee_naissance),
         unisexe=True,
         prelevement=taux_de_prelevement(simulateur, comparaison.actuel),
+        prelevements=prelevements_par_annee(simulateur, comparaison),
     )
+
+
+def _parts_assujetties(simulateur, resultat) -> tuple[float, float]:
+    """Les parts de la pension du scénario 1 au départ que servent le régime
+    général et les complémentaires (``regimes_maladie``) : celles qui ont payé
+    une cotisation maladie, la première jusqu'en 1997, la seconde toujours."""
+    prelevements = charger_prelevements(simulateur.parametres.racine_donnees).pensions
+    total = _au_depart(simulateur, resultat)
+    if total <= 0.0:
+        return 0.0, 1.0
+    general = somme_ordonnee(p.montant for p in resultat.pensions_par_regime
+                             if p.regime in prelevements.regimes_generaux)
+    complementaire = somme_ordonnee(p.montant for p in resultat.pensions_par_regime
+                                    if p.regime in prelevements.regimes_maladie)
+    return general / total, complementaire / total
+
+
+def prelevements_par_annee(simulateur, comparaison) -> dict[int, float]:
+    """Ce que les prélèvements de chaque année retirent aux pensions de
+    ``comparaison``, du premier départ de ses systèmes à la dernière année
+    qu'une pension peut atteindre, au taux plein de CSG : l'histoire que
+    l'IPP retrace (:mod:`~retraite_notionnelle.donnees.prelevements_historiques`),
+    dont la dernière marche tient au-delà. Aucun prélèvement avant le
+    1er juillet 1980, où naît la cotisation maladie des pensions ; celle du
+    régime général sur sa part de la pension, jusqu'en 1997, celle des
+    complémentaires sur la leur. Les autres systèmes gardent les parts du
+    scénario 1, comme ils gardent son taux de l'année courante."""
+    historique = charger_prelevements_historiques(simulateur.parametres.racine_donnees)
+    general, complementaire = _parts_assujetties(simulateur, comparaison.actuel)
+    carrieres = [comparaison.carriere_de(scenario) for scenario in SCENARIOS]
+    premiere = min(carriere.annee_liquidation for carriere in carrieres)
+    derniere = max(_derniere_annee(carriere) for carriere in carrieres)
+    return {annee: historique.taux_pension_annuel(annee, general, complementaire)
+            for annee in range(premiere, derniere + 1)}
 
 
 def taux_de_prelevement(simulateur, resultat) -> float:
@@ -756,7 +868,7 @@ def indicateurs(flux: Flux, simulateur, convention: Convention = Convention()
     annees = [annee for annee, _, _, _ in esperees] + list(flux.cotisations) + list(flux.revenus)
     premiere, derniere = min(annees), max(annees)
     prix, salaires = _indices(simulateur.macro, premiere, derniere)
-    nette = convention.prelevement > 0.0
+    nette = convention.nette
     revenus = flux.revenus_nets if nette else flux.revenus
     dernier = flux.dernier_revenu_net if nette else flux.dernier_revenu
 
@@ -795,7 +907,7 @@ def indicateurs(flux: Flux, simulateur, convention: Convention = Convention()
         derniere_servie = int(math.floor(flux.debut + duree - 1e-9))
         if duree > 0.0 and derniere_servie in flux.niveaux and dernier:
             remplacement_au_deces = (
-                flux.niveaux[derniere_servie] * (1.0 - convention.prelevement)
+                flux.niveaux[derniere_servie] * convention.retenu(derniere_servie)
                 / (dernier * salaires[derniere_servie] / salaires[liquidation]))
 
     return Indicateurs(
@@ -821,7 +933,7 @@ def indicateurs_des_systemes(simulateur, comparaison,
                              ) -> dict[str, Indicateurs]:
     """Les indicateurs d'une carrière sous chacun des six systèmes."""
     systemes = flux_des_systemes(simulateur, comparaison,
-                                 nets=convention.prelevement > 0.0)
+                                 nets=convention.nette)
     return {scenario: indicateurs(flux, simulateur, convention)
             for scenario, flux in systemes.items()}
 
@@ -858,10 +970,12 @@ def convention_nette(simulateur, comparaison, cor: bool = False) -> Convention:
     """La convention du balayage : celle du dépôt — la survie de génération
     du sexe de la carrière, le patrimoine à 1,5 % réel —, ou celle du COR
     (:func:`convention_cor`) ; la pension nette des prélèvements de l'année
-    courante au taux plein dans les deux cas (:func:`taux_de_prelevement`)."""
+    courante au taux plein dans les deux cas (:func:`taux_de_prelevement`),
+    chaque année au taux de son année (:func:`prelevements_par_annee`)."""
     if cor:
         return convention_cor(simulateur, comparaison)
-    return Convention(prelevement=taux_de_prelevement(simulateur, comparaison.actuel))
+    return Convention(prelevement=taux_de_prelevement(simulateur, comparaison.actuel),
+                      prelevements=prelevements_par_annee(simulateur, comparaison))
 
 
 def minimum_vieillesse(simulateur, annee: int) -> float | None:
@@ -965,12 +1079,12 @@ def depart(simulateur, comparaison, cor: bool = False,
     """Ce que donne, en net, le départ de ``comparaison`` sous les six
     systèmes (:func:`convention_nette`)."""
     convention = convention_nette(simulateur, comparaison, cor)
-    retenu = 1.0 - convention.prelevement
     systemes = flux_des_systemes(simulateur, comparaison, nets=True)
     pensions, aspa, remplacements = {}, {}, {}
     for scenario, flux in systemes.items():
         carriere = comparaison.carriere_de(scenario)
-        nette = pension_au_depart(simulateur, comparaison, scenario) * retenu
+        nette = (pension_au_depart(simulateur, comparaison, scenario)
+                 * convention.retenu(carriere.annee_liquidation))
         minimum = minimum_vieillesse(simulateur, carriere.annee_liquidation)
         pensions[scenario] = nette
         aspa[scenario] = nette / minimum if minimum else None

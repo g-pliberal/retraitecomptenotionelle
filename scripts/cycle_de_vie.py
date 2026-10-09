@@ -20,7 +20,7 @@ LES DEUX CONVENTIONS. Par défaut, celle de l'OCDE, sur les tables du dépôt :
 la survie de génération du sexe du cas type, le patrimoine actualisé à 1,5 %
 réel, la pension brute. Sous ``--cor``, celle des cas types du COR : les deux
 sexes réunis, le décès à 60 ans plus l'espérance de vie à 60 ans de la
-génération, la pension nette des prélèvements de l'année courante.
+génération, la pension nette des prélèvements de chaque année (IPP).
 
 À CHAQUE ÂGE DE DÉPART (``--ages``, action 138, étape 9) : pour chaque cas type
 nommé, chaque génération et chaque hypothèse de productivité du COR, un

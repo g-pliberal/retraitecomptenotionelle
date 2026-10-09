@@ -380,6 +380,26 @@ def test_en_net_la_pension_nette_se_rapporte_au_revenu_net(simulateur, parti_en_
         age_deces=87.0, prelevement=0.1)).taux_annuite is None
 
 
+def test_le_scenario_6_lit_son_net_sur_la_fiche_de_la_proposition(simulateur, parti_en_2044):
+    """Après la bascule, le revenu net du scénario 6 est celui que la fiche de
+    paie de la proposition laisse du même brut — son rapport du net au brut,
+    comme le site l'applique à son taux de remplacement net
+    (``contexte.Montants``) ; les scénarios 1 à 5 gardent la fiche du droit en
+    vigueur, et tous la gardent avant la bascule."""
+    flux = cycle_de_vie.flux_des_systemes(simulateur, parti_en_2044, nets=True)
+    bascule = simulateur.parametres.annee_bascule
+    annee = bascule + 5
+    remuneration = next(a for a in parti_en_2044.remuneration.annees if a.annee == annee)
+    brut = flux["actuel"].revenus[annee]
+    assert flux["notionnel_liberal"].revenus_nets[annee] == pytest.approx(
+        brut * remuneration.proposition.net / remuneration.proposition.brut, rel=1e-12)
+    assert flux["notionnel_liberal"].revenus_nets[annee] > flux["actuel"].revenus_nets[annee]
+    for scenario in cycle_de_vie.SCENARIOS[1:5]:
+        assert flux[scenario].revenus_nets == flux["actuel"].revenus_nets, scenario
+    assert flux["notionnel_liberal"].revenus_nets[bascule - 1] == pytest.approx(
+        flux["actuel"].revenus_nets[bascule - 1])
+
+
 def test_les_primes_d_un_fonctionnaire_ne_paient_pas_la_retenue(simulateur):
     """La fiche de paie d'un fonctionnaire a pour assiette son traitement. À
     revenu égal, un quart de primes laisse un net plus fort, de la retenue
