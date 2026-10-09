@@ -1,0 +1,250 @@
+schema_version: 1
+id: majoration_forfaitaire_reversion
+intitule: >-
+  Majoration forfaitaire de la réversion pour enfant à charge (L. 353-5 du code de la
+  sécurité sociale) : au survivant qui n'a pas de retraite personnelle d'un régime de
+  base et n'a pas l'âge que R. 353-9 fixe — soixante-cinq ans, puis l'âge du taux
+  plein depuis juin 2011 —, un montant forfaitaire par enfant à sa charge, depuis le
+  1er janvier 1988 (R. 353-11), réduit dans la proportion où la réversion l'est pour
+  ressources ou pour cumul (D. 353-2).
+domaine: reversion
+regimes:
+- regime_general
+- msa_salaries
+- organic
+- cancava
+- rsi
+- assurances_sociales
+etape: liquider_chaque_regime
+face: droit
+etat: transcrite
+lit:
+- la réversion du régime général ou d'un régime aligné, entière et réduite, et sa date
+  d'effet
+- la naissance du survivant, qui dit son âge à la date d'effet, et l'âge du taux plein
+  de sa génération
+- ses ressources hors de ses revenus d'activité, que le modèle tient pour ses retraites
+  personnelles
+- les enfants nés au décès, que le modèle tient pour à la charge du survivant jusqu'à
+  l'âge de la version
+- l'union où il vit après le décès, qui l'écarte avant juillet 2004
+ecrit:
+- la majoration forfaitaire pour enfant à charge, comprise dans la réversion du régime
+  qui la sert
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la réversion, qui est
+# aussi celle de la demande où R. 353-9 apprécie l'âge du survivant
+# (« La condition d'âge est exigée uniquement au moment de l'attribution »,
+# exposé de la Cnav). Le montant annuel par enfant, de chaque année, est dans
+# `legislation/majoration_forfaitaire_enfant_reversion.csv`.
+versions:
+- id: avant_1988
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006742652, article: L. 353-5, en_vigueur: 1988-01-01}
+  - {id: LEGIARTI000006749417, article: R. 353-11, en_vigueur: 1988-05-08}
+  bornes:
+    liquidation.date_effet: [null, 1988-01-01]
+  contenu:
+    droit: aucune majoration forfaitaire ; R. 353-11 la fixe au 1er janvier 1988
+    beneficiaire: aucun
+    conditions: aucune
+    parametres:
+      servie: false
+      age_maximum: null
+      age_du_taux_plein: false
+      enfant_moins_de_ans: null
+      refusee_en_couple: false
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: loi_1987
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006742652, article: L. 353-5, en_vigueur: 1988-01-01}
+  - {id: LEGIARTI000006742653, article: L. 353-5, en_vigueur: 1990-01-25}
+  - {id: LEGIARTI000006749456, article: R. 353-9, en_vigueur: 1988-05-08}
+  - {id: LEGIARTI000006749457, article: R. 353-9, en_vigueur: 1990-11-30}
+  - {id: LEGIARTI000006749416, article: R. 353-10, en_vigueur: 1988-05-08}
+  - {id: LEGIARTI000006749417, article: R. 353-11, en_vigueur: 1988-05-08}
+  - {id: LEGIARTI000006736553, article: D. 353-2, en_vigueur: 1988-05-08}
+  nee_de: LEGIARTI000006742652
+  bornes:
+    liquidation.date_effet: [1988-01-01, 2004-07-01]
+  contenu:
+    droit: >-
+      un montant forfaitaire par enfant à charge, 400 francs par mois au 1er janvier
+      1988, réduit dans la proportion de la réversion réduite par D. 355-1
+    beneficiaire: >-
+      le survivant sans retraite personnelle d'un régime de base, qui n'est ni remarié
+      ni en concubinage
+    conditions: >-
+      moins de soixante-cinq ans ; un enfant à charge au sens de L. 313-3, de moins de
+      seize ans (R. 313-12) ; supprimée « en cas de remariage ou de vie maritale »
+    parametres:
+      servie: true
+      age_maximum: 65
+      age_du_taux_plein: false
+      enfant_moins_de_ans: 16
+      refusee_en_couple: true
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: reforme_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006742654, article: L. 353-5, en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006749457, article: R. 353-9, en_vigueur: 1990-11-30}
+  - {id: LEGIARTI000006736554, article: D. 353-2, en_vigueur: 2004-08-25}
+  nee_de: LEGIARTI000006742654
+  bornes:
+    liquidation.date_effet: [2004-07-01, 2011-06-03]
+  contenu:
+    droit: >-
+      un montant forfaitaire par enfant à charge, réduit dans la proportion de la
+      réversion réduite pour ressources (D. 353-2)
+    beneficiaire: le survivant sans retraite personnelle d'un régime de base
+    conditions: moins de soixante-cinq ans ; un enfant à charge de moins de seize ans
+    parametres:
+      servie: true
+      age_maximum: 65
+      age_du_taux_plein: false
+      enfant_moins_de_ans: 16
+      refusee_en_couple: false
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: taux_plein_2011
+  statut: lue
+  textes:
+  - {id: LEGIARTI000024113067, article: R. 353-9, en_vigueur: 2011-06-03}
+  nee_de: LEGIARTI000024113067
+  bornes:
+    liquidation.date_effet: [2011-06-03, 2016-01-01]
+  contenu:
+    droit: la version reforme_2004
+    beneficiaire: le survivant sans retraite personnelle d'un régime de base
+    conditions: >-
+      ne pas avoir l'âge du taux plein (L. 351-8, 1°) ; un enfant à charge de moins de
+      seize ans
+    parametres:
+      servie: true
+      age_maximum: null
+      age_du_taux_plein: true
+      enfant_moins_de_ans: 16
+      refusee_en_couple: false
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: majorite_2016
+  statut: lue
+  textes:
+  - {id: LEGIARTI000031828755, article: R. 353-9, en_vigueur: 2016-01-01}
+  - {id: LEGIARTI000031688429, article: L. 353-5, en_vigueur: 2015-12-23}
+  - {id: LEGIARTI000053335708, article: R. 353-11, en_vigueur: 2026-01-01}
+  nee_de: LEGIARTI000031828755
+  bornes:
+    liquidation.date_effet: [2016-01-01, null]
+  contenu:
+    droit: >-
+      un montant forfaitaire par enfant à charge, 112,58 euros par mois au 1er janvier
+      2025, réduit dans la proportion de la réversion réduite pour ressources
+    beneficiaire: le survivant sans retraite personnelle d'un régime de base
+    conditions: >-
+      ne pas avoir l'âge du taux plein ; un enfant à charge au sens de L. 161-1, mineur
+      (R. 161-4)
+    parametres:
+      servie: true
+      age_maximum: null
+      age_du_taux_plein: true
+      enfant_moins_de_ans: 18
+      refusee_en_couple: false
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations:
+- ecart: >-
+    l'enfant est à charge jusqu'à seize ans, puis, depuis 2016, jusqu'à sa majorité, quand
+    l'étudiant, l'apprenti et l'enfant infirme le restent jusqu'à vingt ans (R. 313-12,
+    R. 161-4) ; le modèle compte les enfants du défunt nés à la date d'effet, tenus pour
+    à la charge du survivant, et la majoration de cette date, sans dater sa fin quand le
+    dernier enfant passe l'âge, ni son début quand un enfant naît ou que la condition se
+    remplit après la date d'effet (R. 353-10)
+  effet: >-
+    la majoration dure tant que l'enfant est à charge ; le modèle la montre à la date
+    d'effet. Non mesuré
+- ecart: >-
+    le survivant qui n'a pas de retraite personnelle est celui dont les ressources ne
+    comptent que des revenus d'activité, ou qui n'en déclare pas ; la pension
+    d'invalidité, qui n'écarte pas la majoration, et les prestations d'orphelin du chef
+    du défunt, qui l'écartent, ne se distinguent pas dans la saisie
+  effet: non mesuré
+- ecart: >-
+    la majoration est servie par le régime général quand il sert une réversion, sinon par
+    le premier régime aligné qui en sert une, et non par celui de la dernière affiliation
+    du défunt ou de la plus longue durée (D. 173-21-1, D. 173-21-7) ; elle n'est pas
+    partagée entre les conjoints, chacun ayant « autant de majorations que d'enfants à
+    sa charge » (exposé de la Cnav), et le modèle la sert au seul survivant ; elle est
+    réduite dans la proportion de la réversion réduite pour ressources, pour cumul ou
+    par son maximum
+  effet: non mesuré
+presomptions:
+  reversion_demandee_dans_l_annee: >-
+    la majoration examinée à la date d'effet de la réversion, que l'exposé de la Cnav
+    dit examinée « lors de la demande d'un avantage de réversion »
+sources:
+  lu_le: 2026-10-09
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Ouverte le 9 octobre 2026, à l'étape 4 de l'action 138 : lue dans l'index LEGI
+    (L. 353-5, R. 353-9 à R. 353-11, D. 353-2, D. 173-21-1) et dans les exposés de la
+    Cnav. Aucun exemple chiffré publié n'a été trouvé : la fiche reste transcrite.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 353-5, ses quatre rédactions dans l'index LEGI (LEGIARTI000006742652, 653, 654,
+      LEGIARTI000031688429) — « Le conjoint survivant qui n'est pas titulaire d'un
+      avantage personnel de vieillesse d'un régime de base obligatoire et qui satisfait
+      à une condition d'âge a droit à une majoration forfaitaire de sa pension de
+      réversion pour chaque enfant dont il a la charge » ; R. 353-9 (« moins de
+      soixante-cinq ans », puis « ne doit pas avoir atteint l'âge prévu par le 1° de
+      l'article L. 351-8 » depuis le 3 juin 2011 ; l'enfant, au sens de R. 313-12, puis
+      de R. 161-4 depuis 2016) ; R. 353-10 (due à la date d'entrée en jouissance de la
+      réversion, ou au mois qui suit les conditions remplies) ; R. 353-11 (« 400 F au 1er
+      janvier 1988 », puis « 112,58 euros par mois au 1er janvier 2025 ») ; D. 353-2
+      (réduite « dans les mêmes proportions » que la réversion, par D. 355-1, puis par
+      le quatrième alinéa de L. 353-1)
+    date: 2026-10-09
+  - type: circulaire_cnav
+    reference: >-
+      exposés de la base de législation de la Cnav, lus le 9 octobre 2026 par son API :
+      « Majoration forfaitaire pour charge d'enfant - Conditions d'attribution » (21
+      janvier 2026), « - Montant » et « - Point de départ » (24 octobre 2025), « Qualité
+      d'enfant à charge » (22 janvier 2026) ; avant juillet 2004, « n'était pas attribuée
+      au conjoint survivant remarié ou vivant maritalement » ; « MFE réduite = montant de
+      la majoration × (Retraite de réversion réduite ÷ Retraite de réversion entière) »,
+      non réduite au partage entre conjoints
+    date: 2026-01-22
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=mfe_condition_attribution_ex.aspx
+  - type: circulaire_cnav
+    reference: >-
+      barème « Montant mensuel de la majoration forfaitaire pour charge d'enfant » de la
+      Cnav, de 400 F au 1er janvier 1988 à 113,59 € au 1er janvier 2026
+    date: 2026-10-09
+    url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=mfe_montant_bar.aspx
+code:
+  python: >-
+    droit/reversion.py : reversion, _majoration_forfaitaire_enfants ; scenarios/actuel.py :
+    Reversions.majoration_enfant
+  javascript: >-
+    moteur/js/droit/reversion.js : reversion, majorationForfaitaireEnfants ;
+    moteur/js/regimes.js : Reversions.majorationEnfant
+  parametres: >-
+    contenu.parametres : servie, age_maximum, age_du_taux_plein, enfant_moins_de_ans,
+    refusee_en_couple ; le montant annuel par enfant, dans
+    legislation/majoration_forfaitaire_enfant_reversion.csv
+  tests: tests/test_reversion.py ; le témoin reversion_enfants_a_charge des simulations
+historique:
+- >-
+  2026-10-09 — née et lue par le moteur, à l'étape 4 de l'action 138 : la fiche
+  reversion la déclarait absente.
+effet: >-
+  Le survivant d'un assuré du régime général ou d'un régime aligné qui élève encore ses
+  enfants, sans retraite personnelle : 1 363,08 euros par an et par enfant en 2026.

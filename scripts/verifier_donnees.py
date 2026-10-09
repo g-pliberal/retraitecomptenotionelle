@@ -3419,6 +3419,26 @@ def source_plafond_majoration_reversion_cnav() -> dict[tuple, float]:
     return {(annee,): valeur for annee, valeur in sorted(serie.items())}
 
 
+def source_limite_cumul_reversion_cnav() -> dict[tuple, float]:
+    """La limite forfaitaire de cumul de la réversion d'avant juillet 2004
+    (D. 355-1), par la Cnav : 73 % du maximum des pensions depuis décembre
+    1982, que le récupérateur confronte au barème du maximum. Niveau ``haute``.
+    """
+    serie = _lire_json("cnav_reversion.json",
+                       "scripts/fetch/cnav_reversion.py")["serie_limite"]
+    return {(annee,): valeur for annee, valeur in sorted(serie.items())}
+
+
+def source_majoration_forfaitaire_enfant_reversion_cnav() -> dict[tuple, float]:
+    """La majoration forfaitaire de la réversion par enfant à charge (L. 353-5,
+    R. 353-11), par la Cnav, portée à l'année ; le récupérateur a vérifié les
+    deux montants de l'article. Niveau ``haute``.
+    """
+    serie = _lire_json("cnav_reversion.json",
+                       "scripts/fetch/cnav_reversion.py")["serie_enfant"]
+    return {(annee,): valeur for annee, valeur in sorted(serie.items())}
+
+
 def source_minimum_garanti_reference() -> dict[tuple, float]:
     """Traitement de référence du minimum garanti, par le service qui le sert.
 
@@ -6363,6 +6383,32 @@ CERTIFICATIONS = (
         source=source_plafond_majoration_reversion_cnav,
         origine="Cnav, barème « Plafond de ressources pour la majoration de la "
                 "retraite de réversion »",
+        decimales=6,
+        tolerance=5e-3,
+        unite=" €",
+        niveau="haute",
+    ),
+    Certification(
+        nom="limite_cumul_reversion_cnav",
+        chemin=REFERENCE / "legislation" / "limite_cumul_reversion.csv",
+        cles=("annee",),
+        colonne="valeur",
+        source=source_limite_cumul_reversion_cnav,
+        origine="Cnav, barème « Limite forfaitaire de cumul pour la retraite de "
+                "réversion »",
+        decimales=6,
+        tolerance=5e-3,
+        unite=" €",
+        niveau="haute",
+    ),
+    Certification(
+        nom="majoration_forfaitaire_enfant_reversion_cnav",
+        chemin=REFERENCE / "legislation" / "majoration_forfaitaire_enfant_reversion.csv",
+        cles=("annee",),
+        colonne="valeur",
+        source=source_majoration_forfaitaire_enfant_reversion_cnav,
+        origine="Cnav, barème « Montant mensuel de la majoration forfaitaire pour "
+                "charge d'enfant »",
         decimales=6,
         tolerance=5e-3,
         unite=" €",

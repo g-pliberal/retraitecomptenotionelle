@@ -418,8 +418,12 @@ referents:
           de la sécurité sociale est abrogé en tant qu'il fixe à
           soixante-cinq ans, et à soixante ans en cas d'inaptitude
           au travail, l'âge auquel le conjoint survivant a droit à
-          une pension de réversion »
-        etat: a_reprendre
+          une pension de réversion ». Repris le 9 octobre 2026 : la
+          version avant_1973, à soixante-cinq ans, soixante pour le
+          survivant qui déclare son invalidité ; pour un décès
+          antérieur, la réversion à cinquante-cinq ans, au plus tôt au
+          1er janvier 1973 (article 5).
+        etat: repris
         chantier: "138.4"
       - quoi: >-
           L'IPP a trois tables anciennes des coefficients de
@@ -2054,9 +2058,11 @@ referents:
           ne majore que le survivant de trois enfants
           (`src/Reversion.cpp:98-106`).
         tranche: >-
-          L. 353-5 du code de la sécurité sociale ; l'omission est la sienne
+          L. 353-5 du code de la sécurité sociale ; l'omission est la sienne,
+          et le dépôt la sert depuis le 9 octobre 2026
         preuve: >-
-          `src/Reversion.cpp`, au commit `4c1d34b`
+          `src/Reversion.cpp`, au commit `4c1d34b` ;
+          data/reference/regles/majoration_forfaitaire_reversion.yaml
       - constat: >-
           Quand un seul membre du couple a 65 ans, il sert l'ASPA jusqu'au
           barème du couple (`src/Retraite.cpp:12-30`).

@@ -1,16 +1,5 @@
 # Étape 4, première partie : le minimum et les majorations de la réversion du régime général
 
-**Reprise, au 9 octobre 2026.** Fait : le minimum de D. 353-1, les majorations
-de 10 % et de 11,1 %, la base sans le minimum contributif, le maximum, surcote
-en sus ; le plafond du ménage et l'abattement des revenus d'activité ; la
-réversion d'un assuré mort avant son départ (R. 353-6) ; le partage entre
-ex-conjoints et le remariage. Reste, dans cet ordre : L. 353-5 et D. 355-1,
-avec lesquelles les retraites personnelles du survivant sortent de ses
-ressources d'avant juillet 2004 ; les majorations forfaitaires d'avant 1995 et
-1982 ; l'âge de 65 ans d'avant 1973 (registre, `baremes_ipp`). Commencer par
-lire L. 353-5 et la limite forfaitaire du barème de la Cnav. Détail : plus
-bas, « Ce qui reste », et les quatre notes du 9 octobre.
-
 **Le 7 octobre 2026, la demande.** Le propriétaire : « Quels sont les écarts
 encore présents avec trajectoire et destinie 2 ? J'aimerais combler les manques
 de notre modèle. » Le registre des modèles et les deux confrontations exécutées
@@ -110,17 +99,19 @@ de trois enfants). C'est l'étape 4 de l'action ; elle commence par là.
 5. *Le partage entre ex-conjoints* au prorata des mariages (L. 353-3), le
    remariage — fait le 9 octobre, note « partage et remariage » — ; puis
    L. 353-5 et les limites de cumul d'avant 2004 (D. 355-1),
-   dont le barème de la Cnav porte la limite forfaitaire.
+   dont le barème de la Cnav porte la limite forfaitaire — fait le 9 octobre,
+   note « cumul et droit ancien ».
 6. Les majorations forfaitaires des réversions d'avant 1995 (3,846 %) et
    d'avant décembre 1982 (4 %), que l'exposé de la Cnav décrit, à vérifier dans
-   l'échéancier.
+   l'échéancier — fait le 9 octobre, note « cumul et droit ancien ».
 7. L'âge de la réversion d'avant 1973 : soixante-cinq ans, soixante en cas
    d'inaptitude, jusqu'au décret n° 72-1098 (en vigueur le 1er janvier 1973),
    que le registre porte (`baremes_ipp`, chantier 138.4) et que la version
    `avant_1982` de la fiche remplace par cinquante-cinq ans, statut
    `supposee`. Relevé le 9 octobre 2026 à la relecture du registre, dont les
    deux points du minimum, chez l'IPP et chez OpenFisca, passent à `repris` :
-   aucune note de l'étape ne le portait.
+   aucune note de l'étape ne le portait. Fait le 9 octobre, note « cumul et
+   droit ancien ».
 
 **Le 7 octobre 2026, la base.** La réversion est « un pourcentage fixé par
 décret de la pension principale » (L. 353-1, ses cinq rédactions depuis 1985),

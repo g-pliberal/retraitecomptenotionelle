@@ -1190,13 +1190,15 @@ institutions:
           sien ; lu le 5 octobre 2026.
 
       - id: cnav_reversion
-        titre: Barèmes du minimum de la réversion, 1941-2026, et du plafond de sa majoration, 2010-2026
+        titre: Barèmes du minimum de la réversion, 1941-2026, du plafond de sa majoration, 2010-2026, de sa limite forfaitaire de cumul, 1974-2026, et de sa majoration pour enfant à charge, 1988-2026
         url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=retraite_reversion_montant_minimum_bar.aspx
         acces: api
         statut_integration: automatise
         cible: >-
           data/reference/legislation/minimum_reversion.csv ;
-          data/reference/legislation/plafond_majoration_reversion.csv
+          data/reference/legislation/plafond_majoration_reversion.csv ;
+          data/reference/legislation/limite_cumul_reversion.csv ;
+          data/reference/legislation/majoration_forfaitaire_enfant_reversion.csv
         recuperation: scripts/fetch/cnav_reversion.py
         note: >-
           Deux barèmes de la base de législation de la Cnav, servis par son API
@@ -1213,7 +1215,16 @@ institutions:
           minimum que D. 353-1 écrit pour 2025 (3 983,29 €) et le plafond de
           D. 353-4 pour 2010 (2 400 €), si un montant baisse, ou si le plafond
           ne garde pas avec le minimum le rapport de 2010 ; lu le 7 octobre
-          2026.
+          2026. Deux barèmes de plus, lus le 9 octobre 2026 :
+          retraite_reversion_limite_forfaitaire_cumul_bar, la limite forfaitaire
+          de cumul des réversions attribuées avant juillet 2004 (D. 355-1),
+          depuis le 1er juillet 1974, que le récupérateur confronte au barème
+          du maximum de la réversion (retraite_reversion_montant_maximum_bar) —
+          60 %, 70 %, puis 73 % du maximum des pensions — et dont il corrige le
+          montant annuel du 1er janvier 1982 par son mensuel ; mfe_montant_bar,
+          la majoration forfaitaire mensuelle pour enfant à charge (L. 353-5,
+          R. 353-11) depuis 1988, portée à l'année, qui doit redonner les deux
+          montants de R. 353-11.
 
       - id: cnav_avts
         titre: Barèmes de l'allocation aux vieux travailleurs salariés, 1941-2026, de l'allocation supplémentaire et de son plafond, 1956-2026, et du salaire validant un trimestre, 1930-2026

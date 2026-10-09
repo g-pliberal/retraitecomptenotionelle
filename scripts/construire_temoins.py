@@ -1650,6 +1650,21 @@ def _cas() -> list[dict]:
         **reversion, "statut": "fonctionnaire_etat", "primes": "0.2", "mariage": "2000-06",
         "ex1": "1959", "ex1_mariage": "1980-06", "ex1_divorce": "1995-06",
         "nouvelle_union": "concubinage", "nouvelle_union_depuis": "2024-09"}))
+    # Le 9 octobre 2026 encore, le droit d'avant 2004 : la veuve d'un salarié
+    # mort en 1971 attend ses cinquante-cinq ans au 1er janvier 1973 (décret
+    # n° 72-1098), et sa réversion de 50 % est majorée de 4 % en 1982 et de
+    # 3,846 % en 1995 ; celle d'un salarié mort en 1999 se cumule avec la
+    # retraite qu'elle déclare dans la limite de D. 355-1 ; le veuf de la mère
+    # morte avant son départ a ses deux enfants mineurs à charge, et la
+    # majoration forfaitaire de L. 353-5.
+    cas.append(("reversion_avant_1973", {
+        "naissance": "1906", "liquidation": "65", "conjoint": "1916", "deces": "1971-03"}))
+    cas.append(("reversion_cumul_avant_2004", {
+        "naissance": "1925", "liquidation": "65", "conjoint": "1930", "deces": "1999-05",
+        "ressources_conjoint": "6000"}))
+    cas.append(("reversion_enfants_a_charge", {
+        **avant_le_depart, "sexe": "F", "conjoint_sexe": "H", "enfants": "2",
+        "naissances": "2012, 2014"}))
 
     # Les carrières LUES sur un relevé, plutôt que reconstituées.
     cas.extend(_cas_releve())

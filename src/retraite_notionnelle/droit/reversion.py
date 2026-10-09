@@ -52,18 +52,29 @@ soixantièmes, avant décembre 1982 — ; puis réduit du dépassement du plafon
 ressources — 2 080 heures de SMIC, 1,6 fois pour le MÉNAGE du survivant qui
 vit en couple, marié, pacsé ou en concubinage, depuis juillet 2004, ses
 revenus d'activité abattus de 30 % à cinquante-cinq ans depuis 2005 (L. 353-1,
-D. 353-1-1, R. 353-1) — ; puis ramené à son MAXIMUM, le taux du maximum des pensions
+D. 353-1-1, R. 353-1) ; avant juillet 2004, une condition d'ouverture, ses
+retraites personnelles exceptées — ; puis ramené à son MAXIMUM, le taux du maximum des pensions
 « opposable à l'assuré décédé » — l'ajournement d'avant 1983 le majorant —,
 au plafond de l'année des montants, que 54 % de la surcote du défunt passent
-(circulaires Cnav n° 120/82, § 4, n° 105/90, § 22, et n° 2018-4, § 5) ; puis
+(circulaires Cnav n° 120/82, § 4, n° 105/90, § 22, et n° 2018-4, § 5) ; puis,
+avant juillet 2004, réduit par le CUMUL avec ces retraites personnelles, dans
+la limite de 52 % — la moitié avant décembre 1982 — de leur total et de la
+pension du défunt, la limite forfaitaire au moins, quand il ne les complète
+pas seulement, avant juillet 1974 (D. 355-1) ; puis
 majoré de 10 % pour le survivant de trois enfants, sans
-descendre sous le dixième de son minimum (R. 353-2), hors du plafond ; enfin,
+descendre sous le dixième de son minimum (R. 353-2), hors du plafond, et de la
+majoration forfaitaire par enfant à charge du survivant sans retraite,
+depuis 1988 (L. 353-5, fiche ``majoration_forfaitaire_reversion``), réduite
+comme la réversion ; enfin,
 depuis 2010, majoré de 11,1 % de la réversion réduite quand le survivant a
 l'âge du taux plein et que ses retraites, réversions et majorations comprises,
 restent sous le plafond de L. 353-6, la majoration étant réduite de ce qui le
 dépasse (D. 353-4). Une majoration qui commence après la date d'effet de la
 ligne, quand le survivant n'a pas encore l'âge du taux plein, s'écrit à part,
-avec sa date, hors du montant.
+avec sa date, hors du montant, comme les majorations forfaitaires de 4 % et
+de 3,846 % qui relèvent, en décembre 1982 et en janvier 1995, la réversion
+attribuée avant elles. Avant 1973, la réversion attend soixante-cinq ans,
+soixante pour l'inapte (décret n° 72-1098).
 
 LE PARTAGE ENTRE CONJOINTS : quand l'assuré a été marié plusieurs fois, chaque
 régime partage sa réversion entre le conjoint survivant et les précédents
@@ -86,8 +97,8 @@ au mois qui suit l'union, ou n'est pas servie quand l'union la précède. Au
 régime général, le ménage ne compte au plafond que s'il est formé à la date
 d'effet.
 
-CE QUI N'EST PAS ENCORE PORTÉ, et que les fiches déclarent : la majoration
-forfaitaire pour enfant à charge du régime général, la révision de la
+CE QUI N'EST PAS ENCORE PORTÉ, et que les fiches déclarent : la durée de la
+majoration pour enfant à charge, la révision de la
 réversion quand le ménage ou ses ressources changent, le plafonnement du veuf
 de fonctionnaire d'avant 2004,
 la minoration de l'Agirc avant soixante ans, la réversion des précédents
@@ -147,6 +158,7 @@ MOTIFS = {
     "maximum": "ramenée au maximum de la réversion, son taux du maximum des pensions",
     "ecretee": "réduite à due concurrence du plafond de ressources",
     "ressources": "ressources au-dessus du plafond",
+    "cumul": "réduite par la limite de cumul avec ses retraites personnelles (D. 355-1)",
     "mariage": "condition d'antériorité ou de durée du mariage non remplie",
     "remariage": "perdue par l'union qu'il a formée avant sa date d'effet",
     "non_portee": "la réversion de ce régime n'est pas encore portée",
@@ -174,6 +186,17 @@ APRES_LES_BASES = ("reversion", "reversion_rci")
 #: l'article 113 du décret n° 90-1215 rend L. 39 applicable depuis 2006, après
 #: une condition de 1990 qui avait les mêmes termes.
 MOITIE_SOUS_CONDITION_DE_MARIAGE = ("reversion_fonction_publique", "reversion_crpcen")
+
+#: Les fiches des régimes de base autres que le régime général et les régimes
+#: alignés : leurs réversions servies divisent, avec celles des régimes
+#: alignés, les retraites personnelles du survivant que la limite de cumul
+#: d'avant juillet 2004 retient, et sa limite forfaitaire (D. 171-1 ; article
+#: 91 du décret n° 45-179 ; exposé de la Cnav, « Retraite de réversion
+#: cumulable »).
+AUTRES_BASES = MOITIE_SOUS_CONDITION_DE_MARIAGE + ("reversion_ieg",)
+
+#: La fiche de la majoration forfaitaire pour enfant à charge (L. 353-5).
+MAJORATION_FORFAITAIRE = "majoration_forfaitaire_reversion"
 
 
 @dataclass(frozen=True)
@@ -232,6 +255,18 @@ class ReversionRegime:
     #: (``perte_au_remariage``), quand elle suit la date d'effet ; ``None``
     #: sinon.
     fin: str | None = None
+    #: La limite de cumul de la réversion d'avant juillet 2004 avec les
+    #: retraites personnelles du survivant (D. 355-1) : la plus haute de la
+    #: limite forfaitaire, de la limite calculée et de la réversion même ;
+    #: 0 sans elle.
+    limite_cumul: float = 0.0
+    #: La majoration forfaitaire pour enfant à charge (L. 353-5), comprise
+    #: dans le montant.
+    majoration_forfaitaire_enfants: float = 0.0
+    #: Les majorations forfaitaires qui relèvent la réversion après sa date
+    #: d'effet — 4 % au 1er décembre 1982, 3,846 % au 1er janvier 1995 —,
+    #: chacune ``(jour, montant)``, hors du montant.
+    majorations_forfaitaires: tuple[tuple[str, float], ...] = ()
 
     def donnees(self) -> dict:
         return {"regime": self.regime, "base": self.base, "taux": self.taux,
@@ -248,7 +283,11 @@ class ReversionRegime:
                 "ecretement_du_maximum": self.ecretement_du_maximum,
                 "maximum": self.maximum, "plafond": self.plafond,
                 "ressources_retenues": self.ressources_retenues, "part": self.part,
-                "fin": self.fin}
+                "fin": self.fin, "limite_cumul": self.limite_cumul,
+                "majoration_forfaitaire_enfants": self.majoration_forfaitaire_enfants,
+                "majorations_forfaitaires": [
+                    {"date": jour, "montant": montant}
+                    for jour, montant in self.majorations_forfaitaires]}
 
 
 @dataclass(frozen=True)
@@ -475,16 +514,152 @@ def _mariage_ircantec(parametres: dict, conjoint: Conjoint, naissance: str, dece
             or chrono.annees_revolues(conjoint.mariage, depart) >= avant)
 
 
+def _date_d_effet_du_regime_general(parametres: dict, conjoint: Conjoint,
+                                    lendemain: str) -> str:
+    """La date d'effet que l'âge de la version reporte : l'âge requis, ou,
+    avant 1973, soixante ans pour le survivant inapte au travail
+    (``age_inaptitude``), que le modèle tient pour celui qui déclare son
+    invalidité, au plus tôt le mois qui la suit."""
+    date_effet = _a_l_age(conjoint.naissance, lendemain, float(parametres["age_minimum"]))
+    inaptitude = parametres.get("age_inaptitude")
+    if inaptitude is not None and conjoint.invalidite is not None:
+        date_effet = min(date_effet, max(
+            _a_l_age(conjoint.naissance, lendemain, float(inaptitude)),
+            mois_suivant(conjoint.invalidite)))
+    return date_effet
+
+
+def _premiere_date_d_effet(table, fiche: dict, conjoint: Conjoint, lendemain: str,
+                           deces: str) -> str:
+    """La première date d'effet de la réversion du régime général : l'âge
+    requis la reporte, et la date d'effet choisit la version, dont l'âge
+    change — soixante-cinq ans avant 1973, cinquante-cinq ensuite. C'est la
+    plus proche des dates que chaque version permet : au plus tôt à son début
+    et à l'âge qu'elle requiert, avant sa fin. Le survivant de cinquante-cinq
+    ans d'un assuré mort en 1970 la reçoit ainsi au 1er janvier 1973 (décret
+    n° 72-1098, article 5)."""
+    possibles = []
+    for version in fiche["versions"]:
+        debut, fin = version["bornes"].get("liquidation.date_effet", [None, None])
+        jour = max(lendemain, debut or lendemain)
+        jour = _date_d_effet_du_regime_general(version["parametres"], conjoint, jour)
+        if fin is not None and jour >= fin:
+            continue
+        retenue = table.version(fiche, jour, deces)
+        if retenue is not None and retenue["id"] == version["id"]:
+            possibles.append(jour)
+    return min(possibles, default=lendemain)
+
+
+def _cumuler(parametres: dict, montant: float, retraites: float, principale: float,
+             forfaitaire: float | None, reversions: int) -> tuple[float, float]:
+    """La réversion d'avant juillet 2004 qu'il reste quand le survivant a ses
+    propres retraites, et la limite de cumul : ``(montant, limite)``.
+
+    Avant le 1er juillet 1974 (``cumul: aucun``), la réversion ne se cumule
+    pas : elle complète la retraite personnelle, qu'elle dépasse. Depuis
+    (``cumul: limite``), elle se cumule « dans la limite de 52 p. 100 » — la
+    moitié avant décembre 1982 — « du total de ces avantages et de la pension
+    principale » du défunt, prise avant le minimum et le maximum, limite qui
+    ne peut être inférieure à la limite forfaitaire, ni à la réversion portée
+    au minimum ou ramenée au maximum ; au-delà, la réversion « est réduite en
+    conséquence » (D. 355-1 ; article 90 du décret n° 45-179 ; exposé de la
+    Cnav, « Retraite de réversion cumulable »). Les retraites du survivant et
+    la limite forfaitaire se divisent par le nombre de ses ``reversions`` de
+    base (D. 171-1)."""
+    regle = parametres.get("cumul")
+    if regle is None or montant <= 0 or retraites <= 0:
+        return montant, 0.0
+    retenues = retraites / max(1, reversions)
+    if regle == "aucun":
+        return max(0.0, montant - retenues), 0.0
+    limite = max(montant, float(parametres["cumul_taux"]) * (retenues + principale),
+                 (forfaitaire or 0.0) / max(1, reversions))
+    # Elle « n'était pas servie si le dépassement atteignait » son montant.
+    return max(0.0, montant - max(0.0, montant + retenues - limite)), limite
+
+
+def _majoration_forfaitaire_enfants(moteur: ScenarioActuel, carriere: Carriere,
+                                    conjoint: Conjoint, retraites: float,
+                                    date_effet: str, annee: int
+                                    ) -> tuple[float, Fiabilite] | None:
+    """La majoration forfaitaire ENTIÈRE pour enfant à charge (L. 353-5), à la
+    date d'effet de la réversion : le montant annuel par enfant, par les enfants
+    nés que le modèle tient pour à la charge du survivant, sous l'âge de la
+    version ; ``None`` quand elle n'est pas due.
+
+    Le survivant ne doit pas avoir de retraite personnelle d'un régime de base
+    (``retraites``, ses ressources hors de ses revenus d'activité), ni l'âge
+    que R. 353-9 fixe à la demande — soixante-cinq ans, puis l'âge du taux
+    plein depuis le 3 juin 2011 —, ni vivre en couple avant juillet 2004."""
+    table = moteur.reversions
+    fiche = table.fiche(MAJORATION_FORFAITAIRE)
+    if fiche is None or retraites > 0:
+        return None
+    version = table.version(fiche, date_effet, carriere.deces or date_effet)
+    parametres = version["parametres"] if version else {}
+    if not parametres.get("servie"):
+        return None
+    if parametres.get("age_maximum") is not None:
+        if chrono.annees_revolues(conjoint.naissance, date_effet) >= int(
+                parametres["age_maximum"]):
+            return None
+    if parametres.get("age_du_taux_plein"):
+        generation = round(int(conjoint.naissance[:4])
+                           + (int(conjoint.naissance[5:7]) - 1) / 12, 3)
+        age = moteur.ages_annulation_decote.age(generation)
+        if age is None or _atteint(conjoint.naissance, age[0]) <= date_effet:
+            return None
+    if (parametres.get("refusee_en_couple") and conjoint.nouvelle_union is not None
+            and (conjoint.nouvelle_union_depuis or date_effet) <= date_effet):
+        return None
+    enfants = _enfants_de_moins_de(carriere, date_effet, int(parametres["enfant_moins_de_ans"]))
+    par_enfant = table.majoration_enfant(annee)
+    if enfants == 0 or par_enfant is None:
+        return None
+    return (enfants * par_enfant[0],
+            min(par_enfant[1], Fiabilite.depuis_texte(parametres["fiabilite"])))
+
+
+def _majorations_ulterieures(parametres: dict, date_effet: str, calcule: float,
+                             minimum: float, maximum: float
+                             ) -> tuple[tuple[str, float], ...]:
+    """Les majorations forfaitaires qui relèvent la réversion attribuée avant
+    leur date (``majorations_forfaitaires``) : 4 % au 1er décembre 1982, puis
+    3,846 % au 1er janvier 1995, qui la portent du taux de 50 % à celui de
+    52 %, puis de 54 %. Elles s'appliquent au « montant calculé » de la
+    réversion, avant le minimum, après les précédentes (exposé de la Cnav,
+    « Montant - retraite de réversion ») : chacune est ce qu'elle ajoute à la
+    réversion portée au minimum et ramenée au maximum, ``(jour, montant)``."""
+    def servie(facteur: float) -> float:
+        montant = max(minimum, calcule * facteur)
+        return min(montant, maximum) if maximum > 0 else montant
+    ecrites, facteur = [], 1.0
+    for majoration in parametres.get("majorations_forfaitaires") or ():
+        if str(majoration["date"]) <= date_effet:
+            continue
+        nouveau = facteur * (1 + float(majoration["taux"]))
+        ecrites.append((str(majoration["date"]), servie(nouveau) - servie(facteur)))
+        facteur = nouveau
+    return tuple(ecrites)
+
+
+def _atteint(naissance: str, age: float) -> str:
+    """Le jour où le survivant né le jour ``naissance`` atteint ``age``, compté
+    en mois."""
+    mois = round(age * 12)
+    annee = int(naissance[:4]) + (int(naissance[5:7]) - 1 + mois) // 12
+    numero = (int(naissance[5:7]) - 1 + mois) % 12 + 1
+    return f"{annee:04d}-{numero:02d}-{naissance[8:10]}"
+
+
 def _au_taux_plein(naissance: str, age: float) -> str:
     """Le jour où la majoration de L. 353-6 peut commencer : le premier jour du
     mois qui suit l'âge du taux plein, ou l'anniversaire même du survivant né
     le premier jour d'un mois (R. 353-13 ; exposé de la Cnav, « Majoration de
     la retraite de réversion »). L'âge se compte en mois : soixante-six ans et
     deux mois pour la génération 1953."""
-    mois = round(age * 12)
-    annee = int(naissance[:4]) + (int(naissance[5:7]) - 1 + mois) // 12
-    numero = (int(naissance[5:7]) - 1 + mois) % 12 + 1
-    atteint = f"{annee:04d}-{numero:02d}-{naissance[8:10]}"
+    atteint = _atteint(naissance, age)
     return atteint if naissance[8:10] == "01" else mois_suivant(atteint)
 
 
@@ -653,6 +828,11 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
     enfants = carriere.nombre_enfants
     presumees = conjoint.ressources is None
     ressources = 0.0 if presumees else float(conjoint.ressources)
+    # Ses retraites personnelles : ses ressources, moins ce que son activité
+    # lui rapporte ; la limite de cumul d'avant 2004, la majoration pour
+    # enfant à charge et celle de 11,1 % les lisent.
+    retraites_personnelles = ressources - min(ressources,
+                                              float(conjoint.revenus_d_activite or 0.0))
     table = moteur.reversions
     pensions = [(regime, base, fiabilite) for regime, base, fiabilite in pensions if base > 0]
 
@@ -763,20 +943,24 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
     #: La réversion de chaque régime aligné, réduite, avant ses majorations :
     #: ce que la majoration de 11,1 % multiplie.
     reduites: dict[str, tuple[float, dict]] = {}
+    #: Leur réversion entière, portée au minimum et ramenée au maximum, avant
+    #: les ressources et le cumul, et leur date d'effet : la majoration pour
+    #: enfant à charge se réduit dans la proportion de la réduite à l'entière.
+    entieres: dict[str, float] = {}
+    # Les réversions de base du survivant, qui divisent ses retraites et la
+    # limite forfaitaire du cumul d'avant 2004 : celles des régimes alignés,
+    # et celles des autres régimes de base servies.
+    reversions_de_base = (
+        somme_ordonnee(1 for regime, _, _ in pensions
+                       if (table.fiche_du_regime(regime) or {}).get("id") == "reversion")
+        + somme_ordonnee(1 for regime, ligne_ in lignes.items()
+                         if ligne_.montant > 0 and ligne_.fiche in AUTRES_BASES))
     for regime, base, fiabilite in pensions:
         fiche = table.fiche_du_regime(regime)
         if fiche is None or fiche["id"] != "reversion":
             continue
-        # L'âge requis reporte la date d'effet, et la date d'effet choisit la
-        # version, dont l'âge peut changer : deux tours suffisent au plus.
-        date_effet = lendemain
-        for _ in range(3):
-            version = table.version(fiche, date_effet, deces)
-            reportee = _a_l_age(conjoint.naissance, lendemain,
-                                float(version["parametres"]["age_minimum"]))
-            if reportee == date_effet:
-                break
-            date_effet = reportee
+        date_effet = _premiere_date_d_effet(table, fiche, conjoint, lendemain, deces)
+        version = table.version(fiche, date_effet, deces)
         parametres = version["parametres"]
         taux = float(parametres["taux"])
         # La « pension principale » (L. 353-1), que la caisse prend « avant
@@ -812,6 +996,12 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         plafond_annuel = (facteur * float(parametres["plafond_smic_heures"])
                           * moteur.macro.smic_horaire(annee))
         reversions = autres_bases if parametres["ressources"] == "ecretement" else 0.0
+        if parametres.get("cumul") is not None:
+            # Avant juillet 2004, ses retraites personnelles « n'étaient pas
+            # retenues dans les ressources » : elles se cumulaient avec la
+            # réversion dans une limite (exposé de la Cnav, « Condition de
+            # ressources »).
+            retenues -= min(retenues, retraites_personnelles)
         disponible = plafond_annuel - retenues - reversions
         retenues += reversions
         if not _mariage_dure(conjoint, deces, enfants, parametres["mariage_minimum_annees"]):
@@ -835,6 +1025,20 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             if montant > maximum:
                 montant, motif = maximum, "maximum"
                 fiabilite = min(fiabilite, des_pensions[1])
+        entieres[regime] = (min(max(taux * (base - contributif + ecretement) * part, minimum),
+                                maximum) if maximum > 0
+                            else max(taux * (base - contributif + ecretement) * part, minimum))
+        # Le cumul d'avant juillet 2004 avec ses retraites personnelles, après
+        # le maximum : la limite « ne pouvait pas être inférieure à la
+        # retraite de réversion portée au minimum ou ramenée au maximum ».
+        forfaitaire = table.limite_cumul(annee)
+        cumulee, limite_cumul = _cumuler(
+            parametres, montant, retraites_personnelles, base - contributif + ecretement,
+            None if forfaitaire is None else forfaitaire[0], reversions_de_base)
+        if cumulee < montant:
+            montant, motif = cumulee, "cumul"
+            if forfaitaire is not None and parametres.get("cumul") == "limite":
+                fiabilite = min(fiabilite, forfaitaire[1])
         autres_bases += montant
         # La majoration de 10 % du survivant de trois enfants, sur la réversion
         # réduite et hors du plafond (circulaire Cnav n° 2022-26, § 3.6), au
@@ -853,7 +1057,12 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             minimum=minimum, majoration_trois_enfants=trois_enfants,
             minimum_contributif=contributif, ecretement_du_maximum=ecretement,
             maximum=maximum, plafond=plafond_annuel, ressources_retenues=retenues,
-            part=part)
+            part=part, limite_cumul=limite_cumul,
+            majorations_forfaitaires=(
+                _majorations_ulterieures(parametres, date_effet,
+                                         taux * (base - contributif + ecretement) * part,
+                                         minimum, maximum)
+                if montant > 0 else ()))
 
     # La complémentaire des indépendants en dernier : ses ressources sont
     # celles de R. 353-1, « personnelles ou du ménage », que les réversions de
@@ -899,11 +1108,30 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
                       fiabilite),
                 plafond=plafond_annuel, ressources_retenues=retenues, part=part)
 
-    # Ses retraites personnelles, que la majoration de 11,1 % compte : ses
-    # ressources, moins ce que son activité lui rapporte.
+    # La majoration forfaitaire pour enfant à charge, servie par un seul
+    # régime : le régime général s'il sert une réversion, sinon le premier
+    # régime aligné qui en sert une ; réduite dans la proportion de la
+    # réversion réduite à l'entière (D. 353-2 ; exposé de la Cnav).
+    servant = next((regime for regime in sorted(
+        (r for r, (montant, _) in reduites.items() if montant > 0),
+        key=lambda r: r != "regime_general")), None)
+    if servant is not None:
+        ligne_du_regime = lignes[servant]
+        entiere = _majoration_forfaitaire_enfants(
+            moteur, carriere, conjoint, retraites_personnelles,
+            ligne_du_regime.date_effet, annee)
+        if entiere is not None:
+            reduite = reduites[servant][0]
+            majoration = entiere[0] * (min(1.0, reduite / entieres[servant])
+                                       if entieres[servant] > 0 else 0.0)
+            lignes[servant] = replace(
+                ligne_du_regime, montant=ligne_du_regime.montant + majoration,
+                majoration_forfaitaire_enfants=majoration,
+                fiabilite=min(ligne_du_regime.fiabilite, entiere[1]))
+
+    # Ses retraites personnelles, que la majoration de 11,1 % compte.
     _majorer_les_petites_retraites(
-        moteur, lignes, reduites, conjoint,
-        ressources - min(ressources, float(conjoint.revenus_d_activite or 0.0)), annee)
+        moteur, lignes, reduites, conjoint, retraites_personnelles, annee)
 
     return Reversion(
         personne=conjoint.personne, defunt=carriere.personne, deces=deces, annee=annee,

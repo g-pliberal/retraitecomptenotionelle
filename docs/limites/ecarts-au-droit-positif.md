@@ -32,8 +32,14 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   au prorata des mariages en mois (L. 353-3, R. 353-4), avec les seuls non
   remariés là où le texte le dit, et s'éteint au mois qui suit l'union
   nouvelle du survivant dans les régimes qui la retirent (L. 46 du code des
-  pensions, Agirc-Arrco, Ircantec, IEG, RAFP). Restent dehors la majoration
-  forfaitaire pour enfant à charge du régime général, la révision de la
+  pensions, Agirc-Arrco, Ircantec, IEG, RAFP). Toujours le 9 octobre, le droit
+  d'avant 2004 : l'âge de soixante-cinq ans, soixante pour l'inapte, d'avant
+  1973 ; la réversion qui complète la retraite personnelle du survivant avant
+  juillet 1974, puis s'y cumule dans la limite de D. 355-1, ces retraites
+  sorties de ses ressources ; les majorations forfaitaires de décembre 1982 et de
+  janvier 1995, à leur date ; et, depuis 1988, la majoration forfaitaire
+  pour enfant à charge du survivant sans retraite (L. 353-5). Restent dehors la
+  durée de cette majoration, qui finit avec la charge de l'enfant, la révision de la
   réversion quand le ménage, ses ressources ou ses ayants droit changent, le
   complément de la fonction publique,
   le droit que recouvre le survivant quand sa nouvelle union cesse, les

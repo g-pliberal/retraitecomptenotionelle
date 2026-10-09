@@ -5138,6 +5138,7 @@ const MOTIFS_DE_REVERSION = Object.freeze({
   maximum: "ramenée au maximum de la réversion",
   ecretee: "réduite : avec ses ressources, elle dépasserait le plafond",
   ressources: "rien : ses ressources dépassent le plafond",
+  cumul: "réduite : avec ses propres retraites, elle dépasserait la limite de cumul",
   mariage: "rien : le mariage est trop court ou trop tardif",
   remariage: "rien : son union nouvelle la lui retire",
   non_portee: "non calculée : ce régime n'est pas encore porté",
@@ -5195,6 +5196,18 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
     if (ligne.majoration_trois_enfants > 0) {
       parts.push(`dont ${g.euros(mensuel(ligne.majoration_trois_enfants, ligne.regime))} `
         + "de majoration pour trois enfants");
+    }
+    if (ligne.majoration_forfaitaire_enfants > 0) {
+      parts.push(`dont ${g.euros(mensuel(ligne.majoration_forfaitaire_enfants, ligne.regime))} `
+        + "de majoration pour enfants à charge");
+    }
+    // Avant 1995, les majorations forfaitaires qui l'ont portée de 50 % ou de
+    // 52 % à 54 %, à leur date.
+    for (const [jour, montant] of ligne.majorations_forfaitaires ?? []) {
+      if (montant > 0) {
+        parts.push(`${g.euros(mensuel(montant, ligne.regime))} de plus à partir de `
+          + `${mois(jour)}, majoration forfaitaire`);
+      }
     }
     if (ligne.majoration_petites_retraites > 0) {
       const montant = g.euros(mensuel(ligne.majoration_petites_retraites, ligne.regime));

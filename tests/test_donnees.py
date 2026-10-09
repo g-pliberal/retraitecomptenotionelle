@@ -508,6 +508,11 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # majoration, que la Cnav transcrit (action 138, étape 4).
         "minimum_reversion_cnav": "legislation/minimum_reversion.csv",
         "plafond_majoration_reversion_cnav": "legislation/plafond_majoration_reversion.csv",
+        # Sa limite forfaitaire de cumul d'avant 2004 et sa majoration pour
+        # enfant à charge (action 138, étape 4).
+        "limite_cumul_reversion_cnav": "legislation/limite_cumul_reversion.csv",
+        "majoration_forfaitaire_enfant_reversion_cnav":
+            "legislation/majoration_forfaitaire_enfant_reversion.csv",
         # Le salaire qui valide un trimestre de 1946 à 1971 (R. 351-9), que la
         # Cnav date texte par texte (action 138, étape 6).
         "salaire_validant_trimestre_cnav":

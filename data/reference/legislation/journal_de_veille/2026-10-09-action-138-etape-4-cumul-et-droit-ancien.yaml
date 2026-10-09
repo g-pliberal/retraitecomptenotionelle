@@ -1,0 +1,55 @@
+date: "2026-10-09"
+session: "action 138, étape 4 : le cumul d'avant 2004, la majoration pour enfant à charge, les majorations forfaitaires et l'âge d'avant 1973"
+consulte: >-
+  veille_droit.py, lancé à l'ouverture de la session (dernière veille consignée :
+  2026-10-09) ; l'index LEGI et l'index JORF, récupérés de la release index-dila (à
+  jour au 4 octobre 2026) ; dans l'index LEGI : L. 353-5 (LEGIARTI000006742652, 653,
+  654, LEGIARTI000031688429), R. 353-9 (LEGIARTI000006749456, 457,
+  LEGIARTI000024113067, LEGIARTI000031828755), R. 353-10 (LEGIARTI000006749416),
+  R. 353-11 (LEGIARTI000006749417, LEGIARTI000053335708), D. 353-2
+  (LEGIARTI000006736553, 554), D. 173-21-1 (LEGIARTI000006735543, 022266577), D. 355-1
+  (LEGIARTI000006736555), R. 353-1 (LEGIARTI000006749451, 452), l'article 90 du décret
+  n° 45-179 (LEGIARTI000006760643, 644) et son article 91 (LEGIARTI000006760646), la
+  loi n° 75-3 du 3 janvier 1975, article 21 (LEGIARTI000006755945), le décret
+  n° 72-1098 du 11 décembre 1972, articles 1er, 4 et 5 (LEGIARTI000006761979, 983,
+  984) ; l'API de la base de législation de la Cnav : les barèmes « Limite forfaitaire
+  de cumul pour la retraite de réversion », « Montant mensuel de la majoration
+  forfaitaire pour charge d'enfant », « Montant maximum de la retraite de réversion »,
+  et les exposés « Retraite de réversion cumulable », « Condition de ressources »,
+  « Montant - retraite de réversion », « Conditions d'attribution - retraite de
+  réversion », « Majoration forfaitaire pour charge d'enfant » (conditions, montant,
+  point de départ) et « Qualité d'enfant à charge ».
+trouve: >-
+  Avant le 1er juillet 2004, les retraites personnelles du survivant n'entraient pas
+  dans ses ressources : la réversion s'y cumulait dans la limite de 52 % de leur total
+  et de la pension du défunt, prise avant le minimum et le maximum — la moitié avant
+  le 1er décembre 1982 —, limite qui ne descend ni sous la limite forfaitaire (73 % du
+  maximum des pensions depuis décembre 1982 ; 70 % de juillet 1978 à novembre 1982 ;
+  60 % de juillet 1977 à juin 1978 ; l'AVTS et l'allocation supplémentaire de juillet
+  1974 à juin 1977), ni sous la réversion portée au minimum ou ramenée au maximum ;
+  les retraites et la limite forfaitaire se divisent par le nombre des réversions de
+  base (D. 355-1 ; décret n° 45-179, articles 90 et 91 ; exposé de la Cnav). Avant le
+  1er juillet 1974 (loi n° 75-3, article 21), la réversion ne se cumulait pas : elle
+  complétait la retraite personnelle ; l'exposé de la Cnav dit « avant le 01/01/1974 »,
+  le modèle suit la loi. Le barème de la limite forfaitaire écrit 27 278 F au 1er
+  janvier 1982 pour un mensuel de 2 306,50 F : 27 678 F, 70 % du maximum des pensions,
+  et le récupérateur le corrige ; celui du maximum répète au 1er juillet 1987 le
+  montant de janvier 1988. La majoration forfaitaire pour enfant à charge existe
+  depuis le 1er janvier 1988 (400 F par mois), au survivant sans retraite personnelle
+  de moins de soixante-cinq ans, puis de l'âge du taux plein depuis le 3 juin 2011,
+  pour l'enfant de moins de seize ans, mineur depuis 2016, refusée au remarié ou au
+  concubin avant juillet 2004, réduite comme la réversion (D. 353-2). La réversion
+  attribuée avant 1995 est majorée de 3,846 % au 1er janvier 1995, celle d'avant
+  décembre 1982 de 4 % à cette date. Avant 1973, l'âge de la réversion est de
+  soixante-cinq ans, soixante en cas d'inaptitude ; pour un décès antérieur, la
+  réversion s'ouvre à cinquante-cinq ans, au plus tôt le 1er janvier 1973 (décret
+  n° 72-1098, article 5). Aucun exemple chiffré publié n'a été trouvé pour ces
+  règles.
+reste: >-
+  La durée de la majoration pour enfant à charge, qui finit avec la charge de
+  l'enfant, et ses enfants de vingt ans étudiants ou apprentis ; le régime qui la sert
+  (D. 173-21-7) ; le cumul revu à l'attribution du second avantage, quand la retraite
+  du survivant suit la réversion ; les majorations des retraites personnelles d'avant
+  1983 (1972, 1976, 1977, 1982), que la réversion suivait ; un exemple chiffré de la
+  Cnav pour la limite de cumul, à chercher dans la circulaire n° 120/82, § 5, ou
+  n° 105/90, § 11.

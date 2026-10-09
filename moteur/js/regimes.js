@@ -1361,6 +1361,11 @@ export class Reversions {
     // par année, le montant en vigueur à son 31 décembre.
     this._minimum = paquet.minimum_reversion ?? {};
     this._plafondMajoration = paquet.plafond_majoration_reversion ?? {};
+    // La limite forfaitaire annuelle de cumul des réversions d'avant juillet
+    // 2004 (D. 355-1) et la majoration forfaitaire annuelle par enfant à
+    // charge (L. 353-5, R. 353-11).
+    this._limiteCumul = paquet.limite_cumul_reversion ?? {};
+    this._majorationEnfant = paquet.majoration_forfaitaire_enfant_reversion ?? {};
   }
 
   /**
@@ -1383,6 +1388,24 @@ export class Reversions {
   /** Le plafond TRIMESTRIEL de la majoration de 11,1 %, en euros de `annee`. */
   plafondMajoration(annee) {
     return Reversions._enVigueur(this._plafondMajoration, annee);
+  }
+
+  /** La limite forfaitaire ANNUELLE de cumul de D. 355-1, en euros de `annee`. */
+  limiteCumul(annee) {
+    return Reversions._enVigueur(this._limiteCumul, annee);
+  }
+
+  /** La majoration forfaitaire ANNUELLE par enfant à charge, en euros de `annee`. */
+  majorationEnfant(annee) {
+    return Reversions._enVigueur(this._majorationEnfant, annee);
+  }
+
+  /**
+   * La fiche préparée `nom`, ou `null` : celle de la majoration forfaitaire
+   * pour enfant à charge, qui ne sert pas seule.
+   */
+  fiche(nom) {
+    return this._fiches.get(nom) ?? null;
   }
 
   /** La fiche préparée de la réversion d'un régime, ou `null`. */
@@ -1409,7 +1432,7 @@ export class Reversions {
 Reversions.FICHES = Object.freeze([
   "reversion", "reversion_fonction_publique", "reversion_agirc_arrco",
   "reversion_rafp", "reversion_ircantec", "reversion_rci", "reversion_crpcen",
-  "reversion_ieg",
+  "reversion_ieg", "majoration_forfaitaire_reversion",
 ]);
 
 /**

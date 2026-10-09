@@ -1,0 +1,61 @@
+# Majoration forfaitaire de la réversion pour enfant à charge, en euros par an et par enfant
+# --------------------------------------------------------------------
+# source_id: cnav_reversion
+#
+# LA RÈGLE. Le survivant « qui n'est pas titulaire d'un avantage personnel de
+# vieillesse d'un régime de base obligatoire et qui satisfait à une condition
+# d'âge a droit à une majoration forfaitaire de sa pension de réversion pour
+# chaque enfant dont il a la charge » (L. 353-5) ; son montant mensuel est
+# « fixé à 400 F au 1er janvier 1988 » (R. 353-11), puis « à 112,58 euros par
+# mois au 1er janvier 2025 » (R. 353-11 depuis 2026), revalorisé comme les
+# pensions. Le scénario 1 la lit dans `droit/reversion.py`, par la fiche
+# `majoration_forfaitaire_reversion`.
+#
+# D'OÙ VIENNENT CES MONTANTS. Du barème « Montant mensuel de la majoration
+# forfaitaire pour charge d'enfant » de la Cnav
+# (`scripts/fetch/cnav_reversion.py`), qui redonne les deux montants que
+# l'article écrit : `haute`. Le mensuel est porté à l'année, douze mois ; les
+# francs sont convertis au taux de 6,55957.
+#
+# UNE ANCRE PAR ANNÉE, EN EUROS PAR AN : le montant en vigueur au 31 décembre
+# de l'année.
+annee,valeur,fiabilite
+1988,741.268101,haute
+1989,759.891273,haute
+1990,786.307639,haute
+1991,806.046738,haute
+1992,828.749445,haute
+1993,839.506248,haute
+1994,856.281738,haute
+1995,870.861962,haute
+1996,888.277738,haute
+1997,898.924777,haute
+1998,908.803473,haute
+1999,919.706627,haute
+2000,924.298392,haute
+2001,944.622894,haute
+2002,965.400000,haute
+2003,979.800000,haute
+2004,996.360000,haute
+2005,1016.280000,haute
+2006,1034.520000,haute
+2007,1053.120000,haute
+2008,1073.040000,haute
+2009,1083.720000,haute
+2010,1093.440000,haute
+2011,1116.360000,haute
+2012,1139.760000,haute
+2013,1154.520000,haute
+2014,1154.520000,haute
+2015,1155.600000,haute
+2016,1155.600000,haute
+2017,1164.840000,haute
+2018,1164.840000,haute
+2019,1168.320000,haute
+2020,1179.960000,haute
+2021,1184.640000,haute
+2022,1245.480000,haute
+2023,1255.440000,haute
+2024,1321.920000,haute
+2025,1350.960000,haute
+2026,1363.080000,haute

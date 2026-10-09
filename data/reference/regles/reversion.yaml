@@ -26,7 +26,9 @@ lit:
   mariage, leur divorce et leur remariage, que le partage au prorata des mariages lit
 - la naissance du survivant, qui dit son âge à la date d'effet
 - les ressources du survivant, et ce qu'en rapporte son activité, abattu de 30 % à
-  cinquante-cinq ans
+  cinquante-cinq ans ; le reste, que le modèle tient pour ses retraites personnelles,
+  que le cumul d'avant juillet 2004 retient hors de ses ressources (D. 355-1)
+- l'invalidité qu'il déclare, qui le tient pour inapte avant 1973
 - l'union où il vit après le décès — mariage, PACS ou concubinage —, le mois où elle
   commence, et les ressources de son nouveau conjoint, que le plafond du ménage
   compte avec les siennes quand elle est formée à la date d'effet
@@ -62,23 +64,71 @@ dates_qui_decident:
 # de paramètre : c'est le taux de la version, appliqué au maximum des pensions que
 # la fiche `pension_maximale_regime_general` fixe à la date d'effet de la réversion.
 versions:
-- id: avant_1982
+- id: avant_1973
   statut: supposee
   hypothese: >-
-    le taux de 50 % est celui que la circulaire Cnav n° 120/82 dit porté à 52 % au
-    1er décembre 1982 ; les conditions d'âge, de durée de mariage et de ressources
-    sont prêtées à ce texte d'avant la codification de 1985, que l'index ne porte
-    pas, telles que R. 353-1 les codifie en 1985
+    l'âge de soixante-cinq ans, soixante en cas d'inaptitude au travail, est celui que
+    le décret n° 72-1098 abroge au 1er janvier 1973 ; le taux de 50 % est celui que la
+    circulaire Cnav n° 120/82 dit porté à 52 % au 1er décembre 1982 ; la durée de
+    mariage et les ressources sont prêtées à ce texte d'avant la codification de
+    1985, telles que R. 353-1 les codifie en 1985 ; la réversion ne se cumule pas
+    avec une retraite personnelle, mais en complète le montant (exposé de la Cnav,
+    « Retraite de réversion cumulable », d'après la circulaire ministérielle du 29
+    juin 1949)
   fiabilite: moyenne
+  textes:
+  - {id: LEGIARTI000006761979, article: "décret n° 72-1098, article 1er", en_vigueur: 1973-01-01}
   bornes:
-    liquidation.date_effet: [null, 1982-12-01]
+    liquidation.date_effet: [null, 1973-01-01]
   contenu:
-    droit: 50 % de la pension principale dont bénéficiait ou eût bénéficié l'assuré
+    droit: 50 % de la pension principale, que la retraite personnelle du survivant réduit
     beneficiaire: le conjoint survivant, et le conjoint divorcé non remarié
     conditions: >-
-      cinquante-cinq ans ; deux ans de mariage à la date du décès, sauf enfant issu
-      du mariage ; des ressources personnelles qui ne dépassent pas 2 080 fois le SMIC
-      horaire
+      soixante-cinq ans, soixante en cas d'inaptitude au travail ; deux ans de mariage
+      à la date du décès, sauf enfant issu du mariage ; des ressources personnelles qui
+      ne dépassent pas 2 080 fois le SMIC horaire, ses retraites exceptées
+    parametres:
+      taux: 0.50
+      age_minimum: 65
+      mariage_minimum_annees: 2
+      ex_conjoints: non_remaries
+      ressources: condition
+      plafond_smic_heures: 2080
+      facteur_menage: null
+      abattement_activite: null
+      abattement_activite_age: null
+      minimum_trimestres: 60
+      minimum_proratise: false
+      minimum_tous_regimes: false
+      majoration_taux: null
+      majoration_enfants_taux: 0.10
+      majoration_enfants_minimum: 0.10
+      age_inaptitude: 60
+      cumul: aucun
+      cumul_taux: null
+      majorations_forfaitaires:
+      - {date: "1982-12-01", taux: 0.04}
+      - {date: "1995-01-01", taux: 0.03846}
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: avant_juillet_1974
+  statut: supposee
+  hypothese: >-
+    l'âge de cinquante-cinq ans est celui du décret n° 72-1098 ; le reste, comme la
+    version avant_1973 : le cumul avec une retraite personnelle n'est ouvert qu'au 1er
+    juillet 1974 (loi n° 75-3, article 21)
+  fiabilite: moyenne
+  textes:
+  - {id: LEGIARTI000006761979, article: "décret n° 72-1098, article 1er", en_vigueur: 1973-01-01}
+  bornes:
+    liquidation.date_effet: [1973-01-01, 1974-07-01]
+  contenu:
+    droit: 50 % de la pension principale, que la retraite personnelle du survivant réduit
+    beneficiaire: le conjoint survivant, et le conjoint divorcé non remarié
+    conditions: >-
+      cinquante-cinq ans ; deux ans de mariage à la date du décès, sauf enfant issu du
+      mariage ; des ressources personnelles qui ne dépassent pas 2 080 fois le SMIC
+      horaire, ses retraites exceptées
     parametres:
       taux: 0.50
       age_minimum: 55
@@ -95,6 +145,61 @@ versions:
       majoration_taux: null
       majoration_enfants_taux: 0.10
       majoration_enfants_minimum: 0.10
+      age_inaptitude: null
+      cumul: aucun
+      cumul_taux: null
+      majorations_forfaitaires:
+      - {date: "1982-12-01", taux: 0.04}
+      - {date: "1995-01-01", taux: 0.03846}
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: avant_1982
+  statut: supposee
+  hypothese: >-
+    le taux de 50 % est celui que la circulaire Cnav n° 120/82 dit porté à 52 % au
+    1er décembre 1982 ; les conditions d'âge, de durée de mariage et de ressources
+    sont prêtées à ce texte d'avant la codification de 1985, telles que R. 353-1 les
+    codifie en 1985 ; le cumul avec les retraites personnelles, dans la limite de
+    la moitié de leur total et de la pension du défunt, est lu dans l'article 90 du
+    décret n° 45-179, dans sa rédaction de 1975
+  fiabilite: moyenne
+  textes:
+  - {id: LEGIARTI000006755945, article: "loi n° 75-3, article 21", en_vigueur: 1974-07-01}
+  - {id: LEGIARTI000006760643, article: "décret n° 45-179, article 90", en_vigueur: 1975-02-26}
+  bornes:
+    liquidation.date_effet: [1974-07-01, 1982-12-01]
+  contenu:
+    droit: >-
+      50 % de la pension principale dont bénéficiait ou eût bénéficié l'assuré, cumulée
+      avec les retraites du survivant dans la limite de la moitié de leur total et de
+      la pension principale, la limite forfaitaire au moins
+    beneficiaire: le conjoint survivant, et le conjoint divorcé non remarié
+    conditions: >-
+      cinquante-cinq ans ; deux ans de mariage à la date du décès, sauf enfant issu
+      du mariage ; des ressources personnelles qui ne dépassent pas 2 080 fois le SMIC
+      horaire, ses retraites exceptées
+    parametres:
+      taux: 0.50
+      age_minimum: 55
+      mariage_minimum_annees: 2
+      ex_conjoints: non_remaries
+      ressources: condition
+      plafond_smic_heures: 2080
+      facteur_menage: null
+      abattement_activite: null
+      abattement_activite_age: null
+      minimum_trimestres: 60
+      minimum_proratise: false
+      minimum_tous_regimes: false
+      majoration_taux: null
+      majoration_enfants_taux: 0.10
+      majoration_enfants_minimum: 0.10
+      age_inaptitude: null
+      cumul: limite
+      cumul_taux: 0.50
+      majorations_forfaitaires:
+      - {date: "1982-12-01", taux: 0.04}
+      - {date: "1995-01-01", taux: 0.03846}
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: taux_52
@@ -108,6 +213,8 @@ versions:
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006742650, article: L. 353-3, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006749410, article: R. 353-4, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006736555, article: D. 355-1, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006760644, article: "décret n° 45-179, article 90", en_vigueur: 1982-12-07}
   nee_de: LEGIARTI000006736586
   bornes:
     liquidation.date_effet: [1982-12-01, 1995-01-01]
@@ -134,6 +241,11 @@ versions:
       majoration_taux: null
       majoration_enfants_taux: 0.10
       majoration_enfants_minimum: 0.10
+      age_inaptitude: null
+      cumul: limite
+      cumul_taux: 0.52
+      majorations_forfaitaires:
+      - {date: "1995-01-01", taux: 0.03846}
       fiabilite: haute
   exemples: aucun trouvé
 - id: taux_54
@@ -145,6 +257,7 @@ versions:
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006742650, article: L. 353-3, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006749410, article: R. 353-4, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006736555, article: D. 355-1, en_vigueur: 1985-12-21}
   nee_de: LEGIARTI000006736587
   bornes:
     liquidation.date_effet: [1995-01-01, 2004-07-01]
@@ -171,6 +284,10 @@ versions:
       majoration_taux: null
       majoration_enfants_taux: 0.10
       majoration_enfants_minimum: 0.10
+      age_inaptitude: null
+      cumul: limite
+      cumul_taux: 0.52
+      majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
 - id: reforme_2004
@@ -212,6 +329,10 @@ versions:
       majoration_taux: null
       majoration_enfants_taux: 0.10
       majoration_enfants_minimum: 0.10
+      age_inaptitude: null
+      cumul: null
+      cumul_taux: null
+      majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
 - id: abattement_2005
@@ -251,6 +372,10 @@ versions:
       majoration_taux: null
       majoration_enfants_taux: 0.10
       majoration_enfants_minimum: 0.10
+      age_inaptitude: null
+      cumul: null
+      cumul_taux: null
+      majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
 - id: age_52
@@ -284,6 +409,10 @@ versions:
       majoration_taux: null
       majoration_enfants_taux: 0.10
       majoration_enfants_minimum: 0.10
+      age_inaptitude: null
+      cumul: null
+      cumul_taux: null
+      majorations_forfaitaires: []
       fiabilite: haute
   exemples: [cnav_2005_17_reversion_ecretee, cnav_2006_37_abattement_au_1er_aout,
              cnav_2006_37_abattement_au_1er_septembre,
@@ -320,6 +449,10 @@ versions:
       majoration_taux: null
       majoration_enfants_taux: 0.10
       majoration_enfants_minimum: 0.10
+      age_inaptitude: null
+      cumul: null
+      cumul_taux: null
+      majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
 - id: age_55_2009
@@ -357,6 +490,10 @@ versions:
       majoration_taux: null
       majoration_enfants_taux: 0.10
       majoration_enfants_minimum: 0.10
+      age_inaptitude: null
+      cumul: null
+      cumul_taux: null
+      majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
 - id: age_51_2009
@@ -392,6 +529,10 @@ versions:
       majoration_taux: null
       majoration_enfants_taux: 0.10
       majoration_enfants_minimum: 0.10
+      age_inaptitude: null
+      cumul: null
+      cumul_taux: null
+      majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
 - id: majoration_2010
@@ -428,6 +569,10 @@ versions:
       majoration_taux: 0.111
       majoration_enfants_taux: 0.10
       majoration_enfants_minimum: 0.10
+      age_inaptitude: null
+      cumul: null
+      cumul_taux: null
+      majorations_forfaitaires: []
       fiabilite: haute
   exemples: [cnav_2018_4_reversion_surcote_au_maximum]
 - id: majoration_2010_age_51
@@ -461,6 +606,10 @@ versions:
       majoration_taux: 0.111
       majoration_enfants_taux: 0.10
       majoration_enfants_minimum: 0.10
+      age_inaptitude: null
+      cumul: null
+      cumul_taux: null
+      majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
 - id: minimum_2012
@@ -498,6 +647,10 @@ versions:
       majoration_taux: 0.111
       majoration_enfants_taux: 0.10
       majoration_enfants_minimum: 0.10
+      age_inaptitude: null
+      cumul: null
+      cumul_taux: null
+      majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
 - id: minimum_2012_age_51
@@ -530,6 +683,10 @@ versions:
       majoration_taux: 0.111
       majoration_enfants_taux: 0.10
       majoration_enfants_minimum: 0.10
+      age_inaptitude: null
+      cumul: null
+      cumul_taux: null
+      majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
 - id: minimum_2026
@@ -566,6 +723,10 @@ versions:
       majoration_taux: 0.111
       majoration_enfants_taux: 0.10
       majoration_enfants_minimum: 0.10
+      age_inaptitude: null
+      cumul: null
+      cumul_taux: null
+      majorations_forfaitaires: []
       fiabilite: haute
   exemples: [ur_reversion_prive_63_ans, ur_reversion_prive_50_ans_deux_enfants,
              ur_reversion_prive_ressources_plafond_2024,
@@ -601,14 +762,43 @@ versions:
       majoration_taux: 0.111
       majoration_enfants_taux: 0.10
       majoration_enfants_minimum: 0.10
+      age_inaptitude: null
+      cumul: null
+      cumul_taux: null
+      majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
 approximations:
 - ecart: >-
-    la majoration forfaitaire pour enfant à charge du survivant sans retraite
-    personnelle (L. 353-5) n'est pas appliquée
+    avant juillet 2004, les retraites personnelles du survivant, que le cumul de
+    D. 355-1 retient et que ses ressources ne comptent plus, sont ses ressources
+    déclarées hors de ses revenus d'activité ; la limite se compare une fois, à la
+    date d'effet, aux montants de l'année du décès, et non à l'attribution du second
+    avantage, qui peut la suivre ; ses retraites et la limite forfaitaire se divisent
+    par le nombre de ses réversions de base que le modèle sert, sans celles des
+    régimes qu'il ne porte pas ; la majoration pour enfants de ses retraites, que la
+    limite comptait avant septembre 2003, n'est pas distinguée ; avant juillet 1974, la
+    réversion complète sa retraite au lieu de s'y ajouter, dans chaque régime aligné,
+    sa retraite divisée de même
   effet: >-
-    que pour le survivant qui élève encore ses enfants. Non mesuré
+    la réversion d'avant 2004 d'un survivant qui a sa propre retraite : réduite, ou
+    nulle, quand le total passe la limite ; non mesuré sur une population
+- ecart: >-
+    les majorations forfaitaires de 4 % au 1er décembre 1982 et de 3,846 % au 1er
+    janvier 1995 (exposé de la Cnav) s'écrivent à leur date, hors du montant, sur la
+    réversion calculée, portée au minimum et ramenée au maximum de la date d'effet,
+    sans la réviser pour ressources ni pour cumul ; les majorations des retraites
+    personnelles d'avant 1983 (1972, 1976, 1977, 1982, selon la durée de l'assuré),
+    que la réversion suivait « dès lors que l'assuré décédé aurait pu en bénéficier »,
+    ne sont pas portées
+  effet: >-
+    quelques pour cent de la réversion attribuée avant 1995, à partir de sa date ;
+    non mesuré
+- ecart: >-
+    avant 1973, l'âge de soixante ans, au lieu de soixante-cinq, est celui du
+    survivant « inapte au travail », que le modèle tient pour celui qui déclare son
+    invalidité, au plus tôt le mois qui suit
+  effet: non mesuré
 - ecart: >-
     le maximum de la réversion se compare une fois, aux montants de l'année du décès,
     et non « à chaque revalorisation des retraites ou du montant maximum des
@@ -755,11 +945,21 @@ sources:
     deuxième étape du domaine, le même jour : la réversion du survivant d'un assuré
     décédé après son départ.
   - >-
-    Ce que les versions ne portent pas encore : les limites de cumul d'avant juillet
-    2004 (D. 355-1), la majoration forfaitaire pour enfant à charge (L. 353-5), la
-    réversion d'un assuré disparu (L. 353-2), la révision de la pension quand les
-    ressources, le ménage ou les ayants droit changent (R. 353-1-1, R. 353-4), et la
-    pension de vieillesse de veuve ou de veuf.
+    Ce que les versions ne portent pas encore : la réversion d'un assuré disparu
+    (L. 353-2), la révision de la pension quand les ressources, le ménage ou les
+    ayants droit changent (R. 353-1-1, R. 353-4), et la pension de vieillesse de veuve
+    ou de veuf. Les limites de cumul d'avant juillet 2004 (D. 355-1), l'âge d'avant
+    1973 et les majorations forfaitaires de 1982 et de 1995 sont portés depuis le 9
+    octobre 2026, la majoration forfaitaire pour enfant à charge (L. 353-5) dans sa
+    propre fiche, majoration_forfaitaire_reversion.
+  - >-
+    Avant le 1er juillet 1974, la réversion « ne se cumulait pas avec un avantage
+    personnel » : l'exposé de la Cnav dit « avant le 01/01/1974 », quand la loi
+    n° 75-3, qui ouvre le cumul, s'applique « au 1er juillet 1974 » (article 21), date
+    du premier montant de la limite forfaitaire du barème. Le modèle suit la loi. Le
+    même exposé date du 1er juillet 1979 la fin des 70 % du maximum des pensions,
+    quand l'article 90 du décret n° 45-179 et le barème les mènent jusqu'en novembre
+    1982 : le modèle lit le barème, que le récupérateur confronte au maximum.
   - >-
     La pension dont l'assuré « eût bénéficié » : mort avant son départ, celle qui lui
     aurait été allouée au titre de l'inaptitude au travail, au taux plein quel que soit
@@ -1074,16 +1274,50 @@ sources:
       et les revenus d'activité « pris en compte qu'à hauteur de 70 % de leur montant »
     date: 2026-01-01
     url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=retraite_reversion_plafond_ressource_bar.aspx
+  - type: legifrance
+    reference: >-
+      lus le 9 octobre 2026 dans l'index LEGI : D. 355-1 (LEGIARTI000006736555,
+      1985-2004) — la réversion se cumule avec les avantages personnels « dans la
+      limite de 52 p. 100 du total de ces avantages et de la pension principale », qui
+      « ne peut être inférieure à 73 p. 100 du montant maximum de la pension de
+      vieillesse du régime général liquidée à 65 ans » ; l'article 90 du décret
+      n° 45-179, rédactions de 1975 (« la moitié du total », 60 % puis 70 % du maximum
+      de juillet 1977 à juin 1979) et de 1982 (52 % et 73 %) ; son article 91 (la
+      limite divisée par le nombre des régimes) ; la loi n° 75-3, article 21 (« au 1er
+      juillet 1974 ») ; le décret n° 72-1098, articles 1er et 5 (l'âge de soixante-cinq
+      ans, soixante en cas d'inaptitude, abrogé au 1er janvier 1973 ; pour un décès
+      antérieur, la réversion à cinquante-cinq ans, « au plus tôt à compter du 1er
+      janvier 1973 ») ; R. 353-1, rédactions de 1985 et 1990 (les ressources
+      appréciées « dans les conditions fixées par les articles R. 815-25 et suivants »)
+    date: 2026-10-09
+  - type: circulaire_cnav
+    reference: >-
+      exposés de la base de législation de la Cnav, lus le 9 octobre 2026 par son API :
+      « Retraite de réversion cumulable » (24 octobre 2025) — les deux limites, la plus
+      haute retenue, pas moins que la réversion « portée au minimum ou ramenée au
+      maximum », la limite forfaitaire de 1974 à 2004, 52 % de 1982 à 2004, « non
+      modifiée lors de l'augmentation du taux de la retraite de réversion à 54 % »,
+      calculée sur la pension du défunt « sans être porté au minimum, ni ramené au
+      maximum », les avantages et la limite divisés par le nombre des régimes ;
+      « Condition de ressources » — avant juillet 2004, « Les avantages personnels de
+      vieillesse ou d'invalidité du demandeur n'étaient pas retenus dans les
+      ressources » ; « Montant - retraite de réversion », « Anciennes dispositions » —
+      la majoration de 3,846 % au 1er janvier 1995, celle de 4 % au 1er décembre 1982
+      « avant comparaison au minimum et après application éventuelle des majorations
+      forfaitaires précédentes » ; barème « Limite forfaitaire de cumul pour la retraite
+      de réversion », de 6 300 F au 1er juillet 1974 à 17 541,90 € en 2026
+    date: 2025-10-24
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_reversion_montant_retraite_reversion_cumulable_avant_2004_ex.aspx
 textes_a_rattacher:
-- {id: LEGIARTI000031688429, article: L. 353-5, en_vigueur: 2015-12-23, change: "la majoration forfaitaire pour enfant à charge du survivant sans retraite personnelle"}
 - {id: LEGIARTI000024113027, article: R. 353-1-1, en_vigueur: 2011-06-03, change: "la révision de la réversion quand les ressources varient"}
-- reference: D. 355-1 CSS, les limites de cumul d'avant juillet 2004
 code:
   python: >-
     droit/reversion.py : reversion, _a_l_age, _mariage_dure, _part_du_minimum,
     _ressources_du_plafond, _majorer_les_petites_retraites, mois_de_mariage,
     _part_du_survivant, _remarie_avant, _admis_au_regime_general, _admis_ailleurs,
-    _fin_au_remariage, _jusqu_au_remariage ; scenarios/actuel.py : Reversions ;
+    _fin_au_remariage, _jusqu_au_remariage, _premiere_date_d_effet,
+    _date_d_effet_du_regime_general, _cumuler, _majorations_ulterieures ;
+    scenarios/actuel.py : Reversions ;
     echeancier.py : Echeancier._reverser, Echeancier._pensions_au_deces,
     Echeancier._pensions_eues_au_deces ; carriere.py : Carriere.arretee_au_deces,
     Carriere.ex_conjoints ; chronologie.py : ex_conjoints, debut_du_menage ;
@@ -1095,7 +1329,8 @@ code:
     moteur/js/droit/reversion.js : reversion, aLAge, mariageDure, partDuMinimum,
     ressourcesDuPlafond, majorerLesPetitesRetraites, moisDeMariage, partDuSurvivant,
     remarieAvant, admisAuRegimeGeneral, admisAilleurs, finAuRemariage,
-    jusquAuRemariage ; moteur/js/regimes.js : Reversions ;
+    jusquAuRemariage, premiereDateDEffet, dateDEffetDuRegimeGeneral, cumuler,
+    majorationsUlterieures ; moteur/js/regimes.js : Reversions ;
     moteur/js/echeancier.js : Echeancier._reverser, Echeancier._pensionsAuDeces,
     Echeancier._pensionsEuesAuDeces ; moteur/js/carriere.js : Carriere.arreteeAuDeces,
     Carriere.exConjoints ; moteur/js/chronologie.js : exConjoints, debutDuMenage ;
@@ -1106,9 +1341,11 @@ code:
     ressources, plafond_smic_heures, facteur_menage, abattement_activite,
     abattement_activite_age, minimum_trimestres, minimum_proratise,
     minimum_tous_regimes, majoration_enfants_taux, majoration_enfants_minimum,
-    majoration_taux ; le SMIC horaire du 1er janvier, dans les séries macro ; le
-    minimum et le plafond de la majoration, dans legislation/minimum_reversion.csv et
-    legislation/plafond_majoration_reversion.csv ; l'âge du taux plein du survivant,
+    majoration_taux, age_inaptitude, cumul, cumul_taux, majorations_forfaitaires ; le
+    SMIC horaire du 1er janvier, dans les séries macro ; le minimum, le plafond de la
+    majoration et la limite forfaitaire de cumul, dans
+    legislation/minimum_reversion.csv, legislation/plafond_majoration_reversion.csv et
+    legislation/limite_cumul_reversion.csv ; l'âge du taux plein du survivant,
     dans legislation/age_annulation_decote.csv ; le maximum des pensions, dans les
     versions de la fiche pension_maximale_regime_general et le plafond de la Sécurité
     sociale
@@ -1180,6 +1417,18 @@ historique:
   minimum et le maximum (circulaire n° 105/90, § 3) ; les précédents conjoints non
   remariés seuls avant juillet 2004 (paramètre ex_conjoints) ; le ménage du survivant
   ne compte au plafond que formé à la date d'effet.
+- >-
+  2026-10-09 — action 138, étape 4 : le droit d'avant 2004. La version avant_1982 est
+  coupée en trois : avant_1973, à soixante-cinq ans, soixante pour l'inapte (décret
+  n° 72-1098) ; avant_juillet_1974, à cinquante-cinq ans, sans cumul — la réversion
+  complète la retraite personnelle — ; avant_1982, le cumul dans la moitié du total.
+  Jusqu'en juillet 2004, la réversion se cumule avec les retraites du survivant dans la
+  limite de D. 355-1, que la limite forfaitaire du barème de la Cnav borne, et ces
+  retraites sortent de ses ressources ; les majorations forfaitaires de 1982 et 1995
+  s'écrivent à leur date ; la majoration pour enfant à charge (L. 353-5) naît dans sa
+  fiche, et son approximation, ici, est retirée. La date d'effet est la plus proche que
+  chaque version permet : le survivant de cinquante-cinq ans d'un assuré mort en 1970
+  la reçoit au 1er janvier 1973.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un assuré du régime général ou d'un régime aligné
   qui décède : 4,41 millions de bénéficiaires d'un droit dérivé tous régimes fin 2024

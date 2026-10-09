@@ -1333,7 +1333,7 @@ class Reversions:
     #: Les fiches de la réversion que le moteur lit, dans cet ordre.
     FICHES = ("reversion", "reversion_fonction_publique", "reversion_agirc_arrco",
               "reversion_rafp", "reversion_ircantec", "reversion_rci",
-              "reversion_crpcen", "reversion_ieg")
+              "reversion_crpcen", "reversion_ieg", "majoration_forfaitaire_reversion")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}
@@ -1356,6 +1356,12 @@ class Reversions:
         self._minimum = MinimumVieillesse._lire(legislation / "minimum_reversion.csv")
         self._plafond_majoration = MinimumVieillesse._lire(
             legislation / "plafond_majoration_reversion.csv")
+        #: La limite forfaitaire annuelle de cumul des réversions d'avant
+        #: juillet 2004 (D. 355-1), depuis 1974, et la majoration forfaitaire
+        #: annuelle par enfant à charge (L. 353-5, R. 353-11), depuis 1988.
+        self._limite_cumul = MinimumVieillesse._lire(legislation / "limite_cumul_reversion.csv")
+        self._majoration_enfant = MinimumVieillesse._lire(
+            legislation / "majoration_forfaitaire_enfant_reversion.csv")
 
     @staticmethod
     def _en_vigueur(table: dict[int, tuple[float, Fiabilite]],
@@ -1376,14 +1382,31 @@ class Reversions:
         euros de l'année ``annee`` ; ``None`` avant 2010."""
         return self._en_vigueur(self._plafond_majoration, annee)
 
+    def limite_cumul(self, annee: int) -> tuple[float, Fiabilite] | None:
+        """La limite forfaitaire ANNUELLE de cumul de D. 355-1, en euros de
+        l'année ``annee`` ; ``None`` avant le 1er juillet 1974."""
+        return self._en_vigueur(self._limite_cumul, annee)
+
+    def majoration_enfant(self, annee: int) -> tuple[float, Fiabilite] | None:
+        """La majoration forfaitaire ANNUELLE par enfant à charge de L. 353-5, en
+        euros de l'année ``annee`` ; ``None`` avant 1988."""
+        return self._en_vigueur(self._majoration_enfant, annee)
+
     def series(self) -> dict[str, dict]:
-        """Les deux séries, sous le nom que le paquet du site leur donne."""
+        """Les séries, sous le nom que le paquet du site leur donne."""
         return {"minimum_reversion": dict(self._minimum),
-                "plafond_majoration_reversion": dict(self._plafond_majoration)}
+                "plafond_majoration_reversion": dict(self._plafond_majoration),
+                "limite_cumul_reversion": dict(self._limite_cumul),
+                "majoration_forfaitaire_enfant_reversion": dict(self._majoration_enfant)}
 
     def fiches(self) -> dict[str, dict]:
         """Les fiches préparées, sous leur nom : ce que le paquet du site porte."""
         return dict(self._fiches)
+
+    def fiche(self, nom: str) -> dict | None:
+        """La fiche préparée ``nom``, ou ``None`` : celle de la majoration
+        forfaitaire pour enfant à charge, qui ne sert pas seule."""
+        return self._fiches.get(nom)
 
     def fiche_du_regime(self, regime: str) -> dict | None:
         """La fiche préparée de la réversion d'un régime, ou ``None``."""

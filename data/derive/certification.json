@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-10-07",
+ "dernier_passage_le": "2026-10-09",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -637,7 +637,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-10-07"
+   "verifiee_le": "2026-10-09"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -682,6 +682,28 @@
    "source": "INSEE BDM, idbanks 000008965 et 001764363",
    "valeurs": 76,
    "verifiee_le": "2026-10-06"
+  },
+  "limite_cumul_reversion_cnav": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "8d7652a323eb42bb",
+   "identiques": 53,
+   "niveau": "haute",
+   "source": "Cnav, barème « Limite forfaitaire de cumul pour la retraite de réversion »",
+   "valeurs": 53,
+   "verifiee_le": "2026-10-09"
+  },
+  "majoration_forfaitaire_enfant_reversion_cnav": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "26df20643e7c1160",
+   "identiques": 39,
+   "niveau": "haute",
+   "source": "Cnav, barème « Montant mensuel de la majoration forfaitaire pour charge d'enfant »",
+   "valeurs": 39,
+   "verifiee_le": "2026-10-09"
   },
   "masse_salariale": {
    "ajoutees": 0,
@@ -794,15 +816,15 @@
    "verifiee_le": "2026-09-17"
   },
   "minimum_reversion_cnav": {
-   "ajoutees": 86,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "070b199d9c48c59a",
-   "identiques": 0,
+   "identiques": 86,
    "niveau": "haute",
    "source": "Cnav, barème « Montant minimum de la retraite de réversion »",
    "valeurs": 86,
-   "verifiee_le": "2026-10-07"
+   "verifiee_le": "2026-10-09"
   },
   "minimum_vieillesse": {
    "ajoutees": 0,
@@ -948,15 +970,15 @@
    "verifiee_le": "2026-09-17"
   },
   "plafond_majoration_reversion_cnav": {
-   "ajoutees": 17,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "8cbea5cc7a313734",
-   "identiques": 0,
+   "identiques": 17,
    "niveau": "haute",
    "source": "Cnav, barème « Plafond de ressources pour la majoration de la retraite de réversion »",
    "valeurs": 17,
-   "verifiee_le": "2026-10-07"
+   "verifiee_le": "2026-10-09"
   },
   "plafond_minimum_vieillesse_cnav": {
    "ajoutees": 0,
@@ -1253,7 +1275,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-10-07"
+   "verifiee_le": "2026-10-09"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -1407,7 +1429,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
    "valeurs": 29,
-   "verifiee_le": "2026-10-07"
+   "verifiee_le": "2026-10-09"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -1440,7 +1462,7 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-10-07"
+   "verifiee_le": "2026-10-09"
   },
   "valeurs_point_msa": {
    "ajoutees": 0,

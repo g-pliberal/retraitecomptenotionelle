@@ -134,8 +134,9 @@ def test_le_plafond_ecrete_la_reversion(simulateur):
 def test_avant_2004_les_ressources_ferment_le_droit(simulateur):
     """Avant juillet 2004, le plafond est une condition d'ouverture : au-dessus,
     rien n'est servi ; en dessous, tout."""
+    plafond = _plafond(simulateur, 1999)
     carriere = _carriere(simulateur, 1935, 60.0, "1938", "1999-05-10",
-                         ressources=_plafond(simulateur, 1999) + 1.0)
+                         ressources=plafond + 1.0, activite=plafond + 1.0)
     ligne, = _lignes(simulateur, carriere, [("regime_general", 10000.0)], 1999)
     assert (ligne[2], ligne[3]) == (0.0, "ressources")
 
@@ -146,8 +147,9 @@ def test_avant_2004_les_reversions_ne_comptent_pas_aux_ressources(simulateur):
     1990 ; exposé de la Cnav, « Condition de ressources ») : la réversion de la
     fonction publique ne ferme pas celle du régime général, que ses 15 000 €
     auraient portées au-dessus du plafond."""
+    plafond = _plafond(simulateur, 1999)
     carriere = _carriere(simulateur, 1935, 60.0, "1938", "1999-05-10",
-                         ressources=_plafond(simulateur, 1999) - 1000.0)
+                         ressources=plafond - 1000.0, activite=plafond - 1000.0)
     lignes = _lignes(simulateur, carriere, [
         ("fonction_publique_etat", 30000.0), ("regime_general", 10000.0)], 1999)
     assert [l[2:4] for l in lignes] == [(15000.0, "servie"), (5400.0, "servie")]
@@ -552,7 +554,7 @@ def test_avant_juillet_2004_le_menage_ne_compte_pas(simulateur):
     survivant (R. 353-1, rédaction de 1990) : son nouveau conjoint n'y entre pas,
     et son plafond reste celui d'une personne seule."""
     carriere = _carriere(simulateur, 1935, 60.0, "1938", "1999-05-10", ressources=5000.0,
-                         nouvelle_union="mariage", apport=50000.0)
+                         activite=5000.0, nouvelle_union="mariage", apport=50000.0)
     ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
                      1999)["regime_general"]
     assert (ligne.motif, ligne.ressources_retenues) == ("servie", 5000.0)
@@ -925,6 +927,153 @@ def test_la_rci_compte_le_menage_sous_le_meme_plafond(simulateur):
     # 2 400 de réversion : 400 de trop.
     assert (ligne.plafond, ligne.ressources_retenues) == (plafond, plafond - 2000.0)
     assert (round(ligne.montant, 2), ligne.motif) == (2000.0, "ecretee")
+
+
+# -- l'âge d'avant 1973, le cumul d'avant 2004, les majorations forfaitaires -------------
+
+@pytest.mark.parametrize("conjoint, invalidite, version, date_effet", [
+    # Cinquante-cinq ans en juin 1970 : soixante-cinq ans alors, cinquante-cinq
+    # au 1er janvier 1973, « au plus tôt » (décret n° 72-1098, article 5).
+    ("1915-06-10", None, "avant_juillet_1974", "1973-01-01"),
+    # Soixante-cinq ans en juin 1971.
+    ("1906-06-10", None, "avant_1973", "1971-07-01"),
+    # Soixante et un ans, inapte : soixante ans suffisent.
+    ("1908-06-10", "1969-01-01", "avant_1973", "1970-04-01"),
+])
+def test_avant_1973_la_reversion_attend_soixante_cinq_ans(simulateur, conjoint, invalidite,
+                                                           version, date_effet):
+    carriere = _carriere(simulateur, 1910, 60.0, conjoint, "1970-03-10",
+                         invalidite=invalidite)
+    ligne = _servies(simulateur, carriere, [("regime_general", 500.0)],
+                     1970)["regime_general"]
+    assert (ligne.version, ligne.date_effet) == (version, date_effet)
+
+
+def test_avant_juillet_1974_la_reversion_complete_la_retraite_personnelle(simulateur):
+    """Avant la loi n° 75-3, en vigueur au 1er juillet 1974, la réversion ne
+    se cumule pas avec une retraite personnelle : elle la complète (exposé de
+    la Cnav, « Retraite de réversion cumulable »)."""
+    carriere = _carriere(simulateur, 1905, 60.0, "1910", "1973-03-10", ressources=300.0)
+    ligne = _servies(simulateur, carriere, [("regime_general", 1000.0)],
+                     1973)["regime_general"]
+    assert (round(ligne.montant, 2), ligne.motif, ligne.limite_cumul) == (200.0, "cumul", 0.0)
+
+
+@pytest.mark.parametrize("retraites, montant, motif, limite", [
+    # 5 400 € de réversion et 6 000 € de retraite : la limite forfaitaire de
+    # 1999, 73 % du maximum des pensions, au-dessus de 52 % des 16 000 €.
+    (6000.0, 3662.01, "cumul", 9662.01),
+    # 20 000 € de retraite : 52 % de 30 000 €, 15 600 €, que la retraite
+    # dépasse avec la réversion de plus que la réversion même.
+    (20000.0, 0.0, "cumul", 15600.0),
+    # 2 000 € : sous la limite, la réversion entière.
+    (2000.0, 5400.0, "servie", 9662.01),
+])
+def test_avant_2004_la_reversion_se_cumule_dans_une_limite(simulateur, retraites, montant,
+                                                         motif, limite):
+    """D. 355-1 : la réversion se cumule avec les retraites personnelles du
+    survivant dans la limite de 52 % de leur total et de la pension du défunt,
+    pas moins que 73 % du maximum des pensions ; ces retraites, elles, ne
+    comptent plus aux ressources."""
+    carriere = _carriere(simulateur, 1930, 60.0, "1935-06-10", "1999-03-10",
+                         ressources=retraites)
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     1999)["regime_general"]
+    assert (round(ligne.montant, 2), ligne.motif, round(ligne.limite_cumul, 2)) == (
+        montant, motif, limite)
+    assert ligne.ressources_retenues == 0.0
+    assert ligne.limite_cumul >= simulateur.scenario_actuel.reversions.limite_cumul(1999)[0] - 0.01
+
+
+def test_la_limite_forfaitaire_est_celle_de_la_cnav(simulateur):
+    """Le barème de la Cnav : 6 300 F au 1er juillet 1974, 73 % du maximum des
+    pensions, 17 541,90 € en 2026 (24 030 € × 0,73)."""
+    table = simulateur.scenario_actuel.reversions
+    assert table.limite_cumul(1973) is None
+    assert round(table.limite_cumul(1974)[0], 2) == round(6300 / 6.55957, 2)
+    assert table.limite_cumul(2026)[0] == 17541.90
+    assert table.majoration_enfant(1987) is None
+    assert round(table.majoration_enfant(1988)[0], 2) == round(12 * 405.20 / 6.55957, 2)
+    assert table.majoration_enfant(2025)[0] == pytest.approx(12 * 112.58)
+
+
+@pytest.mark.parametrize("deces, base, attendues", [
+    # Attribuée en 1980, au taux de 50 % : 4 % en décembre 1982, puis 3,846 %
+    # du montant majoré en 1995 — 54 % au bout du compte.
+    ("1980-03-10", 4000.0, (("1982-12-01", 80.0), ("1995-01-01", 80.0))),
+    # Attribuée en 1990, au taux de 52 % : 3,846 % en 1995.
+    ("1990-03-10", 8000.0, (("1995-01-01", 160.0),)),
+    # La même, portée au minimum, que 3,846 % ne dépassent pas : rien.
+    ("1990-03-10", 4000.0, (("1995-01-01", 0.0),)),
+    # Attribuée en 1999, au taux de 54 % : aucune.
+    ("1999-03-10", 8000.0, ()),
+])
+def test_les_majorations_forfaitaires_de_1982_et_de_1995(simulateur, deces, base, attendues):
+    """La réversion attribuée avant le 1er décembre 1982 « a été majorée de
+    4 % », celle d'avant le 1er janvier 1995 « de 3,846 % » (exposé de la Cnav,
+    « Montant - retraite de réversion ») : à leur date, hors du montant."""
+    carriere = _carriere(simulateur, 1918, 60.0, "1920-06-10", deces)
+    ligne = _servies(simulateur, carriere, [("regime_general", base)],
+                     int(deces[:4]))["regime_general"]
+    assert tuple((jour, round(montant)) for jour, montant
+                 in ligne.majorations_forfaitaires) == attendues
+
+
+def test_la_majoration_forfaitaire_pour_enfant_a_charge(simulateur):
+    """L. 353-5 : au survivant sans retraite personnelle, par enfant de moins
+    de seize ans en 1997, le montant de R. 353-11 ; rien quand il a une
+    retraite."""
+    sans = _carriere(simulateur, 1935, 60.0, "1940-06-10", "1997-03-10", ressources=0.0,
+                     naissances=("1985-01-01",), enfants=1)
+    ligne = _servies(simulateur, sans, [("regime_general", 6000.0)], 1997)["regime_general"]
+    par_enfant = simulateur.scenario_actuel.reversions.majoration_enfant(1997)[0]
+    assert ligne.majoration_forfaitaire_enfants == par_enfant
+    assert round(ligne.montant, 2) == round(3240.0 + par_enfant, 2)
+    avec = _carriere(simulateur, 1935, 60.0, "1940-06-10", "1997-03-10", ressources=3000.0,
+                     naissances=("1985-01-01",), enfants=1)
+    assert _servies(simulateur, avec, [("regime_general", 6000.0)],
+                    1997)["regime_general"].majoration_forfaitaire_enfants == 0.0
+
+
+@pytest.mark.parametrize("naissances, enfants", [
+    # Depuis 2016, l'enfant mineur (R. 161-4) : seize et dix-sept ans comptent.
+    (("2013-01-01", "2014-01-01", "2020-01-01"), 3),
+    # Dix-huit ans passés : plus à charge.
+    (("2011-01-01",), 0),
+])
+def test_depuis_2016_l_enfant_mineur_est_a_charge(simulateur, naissances, enfants):
+    carriere = _carriere(simulateur, 1975, 60.0, "1975-06-10", "2030-03-10",
+                         naissances=naissances, enfants=len(naissances))
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2026)["regime_general"]
+    par_enfant = simulateur.scenario_actuel.reversions.majoration_enfant(2026)[0]
+    assert ligne.majoration_forfaitaire_enfants == pytest.approx(enfants * par_enfant)
+
+
+def test_la_majoration_pour_enfant_suit_la_reversion_reduite(simulateur):
+    """« MFE réduite = montant de la majoration × (Retraite de réversion réduite
+    ÷ Retraite de réversion entière) » (exposé de la Cnav ; D. 353-2)."""
+    # Un salaire de 1,3 fois le plafond, abattu de 30 % : 0,91 plafond.
+    salaire = 1.3 * _plafond(simulateur, 2026)
+    carriere = _carriere(simulateur, 1965, 60.0, "1970-06-10", "2026-03-10",
+                         ressources=salaire, activite=salaire,
+                         naissances=("2015-01-01",), enfants=1)
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2026)["regime_general"]
+    par_enfant = simulateur.scenario_actuel.reversions.majoration_enfant(2026)[0]
+    reduite = ligne.montant - ligne.majoration_forfaitaire_enfants
+    assert ligne.motif == "ecretee" and reduite < 5400.0
+    assert ligne.majoration_forfaitaire_enfants == pytest.approx(par_enfant * reduite / 5400.0)
+
+
+def test_a_l_age_du_taux_plein_pas_de_majoration_pour_enfant(simulateur):
+    """R. 353-9 depuis juin 2011 : le survivant qui a l'âge du taux plein à la
+    demande n'a pas la majoration."""
+    carriere = _carriere(simulateur, 1950, 62.0, "1945-06-10", "2020-03-10",
+                         naissances=("2008-01-01",), enfants=1)
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2020)["regime_general"]
+    assert ligne.majoration_forfaitaire_enfants == 0.0
 
 
 # -- ce qui n'est pas porté ----------------------------------------------------------
@@ -1314,6 +1463,28 @@ def test_la_page_dit_le_partage_et_le_remariage():
     assert "jusqu'en avril 2025, que son union nouvelle arrête" in page
     assert 'name="ex1_mariage" value="1980-06"' in page
     assert "aucun précédent mariage" not in page
+
+
+
+def test_la_page_dit_le_cumul_et_les_majorations_forfaitaires():
+    """La carte dit la réversion réduite par la limite de cumul d'avant 2004,
+    les majorations forfaitaires de 1982 et 1995, à leur date, et la
+    majoration pour enfants à charge."""
+    from retraite_notionnelle.web.site import rendre
+
+    _, cumul = rendre("/simuler", {"naissance": "1925", "liquidation": "65",
+                                   "conjoint": "1930", "deces": "1999-05",
+                                   "ressources_conjoint": "6000"})
+    assert "avec ses propres retraites, elle dépasserait la limite de cumul" in cumul
+    _, ancienne = rendre("/simuler", {"naissance": "1906", "liquidation": "65",
+                                      "conjoint": "1916", "deces": "1971-03"})
+    assert "de plus à partir de décembre 1982, majoration forfaitaire" in ancienne
+    assert "de plus à partir de janvier 1995, majoration forfaitaire" in ancienne
+    _, enfants = rendre("/simuler", {"naissance": "1970", "liquidation": "64",
+                                     "conjoint": "1972", "deces": "2024-05", "sexe": "F",
+                                     "conjoint_sexe": "H", "enfants": "2",
+                                     "naissances": "2012, 2014"})
+    assert "de majoration pour enfants à charge" in enfants
 
 
 # -- l'hypothèse de décès et la page ------------------------------------------------

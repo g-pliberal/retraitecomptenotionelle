@@ -1,0 +1,83 @@
+# Limite forfaitaire de cumul de la réversion du régime général, en euros par an
+# --------------------------------------------------------------------
+# source_id: cnav_reversion
+#
+# LA RÈGLE. Attribuée avant le 1er juillet 2004, la réversion du régime
+# général et des régimes alignés se cumule avec les retraites personnelles du
+# survivant « dans la limite de 52 p. 100 du total de ces avantages et de la
+# pension principale » du défunt, limite qui « ne peut être inférieure à
+# 73 p. 100 du montant maximum de la pension de vieillesse du régime général
+# liquidée à 65 ans » ; au-delà, la réversion « est réduite en conséquence »
+# (D. 355-1, 1985-2004 ; article 90 du décret n° 45-179 avant 1985). C'est
+# cette seconde limite, dite forfaitaire, que porte ce fichier. Elle naît avec
+# le cumul, au 1er juillet 1974 (loi n° 75-3 du 3 janvier 1975, article 21) :
+# l'AVTS et l'allocation supplémentaire jusqu'en juin 1977, puis 60 % du
+# maximum des pensions, 70 % au 1er juillet 1978, 73 % au 1er décembre 1982
+# (exposé de la Cnav, « Retraite de réversion cumulable » ; circulaire Cnav
+# n° 120/82, § 5). Le scénario 1 la lit dans `droit/reversion.py`.
+#
+# D'OÙ VIENNENT CES MONTANTS. Du barème « Limite forfaitaire de cumul pour la
+# retraite de réversion » de la Cnav (`scripts/fetch/cnav_reversion.py`), que
+# le script confronte, à chaque date commune, au barème du maximum de la
+# réversion : `haute`. Le montant annuel du 1er janvier 1982, que le barème
+# écrit 27 278 F, est pris à 27 678 F, douze fois son mensuel et 70 % du
+# maximum des pensions. Les francs sont convertis au taux de 6,55957.
+#
+# UNE ANCRE PAR ANNÉE, EN EUROS PAR AN : le montant en vigueur au 31 décembre
+# de l'année, celui que le modèle lit aux euros de la pension que « faire
+# vivre » mène jusqu'à ce jour. La caisse le publie encore, pour les
+# réversions d'avant 2004 qu'elle sert.
+annee,valeur,fiabilite
+1974,960.428809,haute
+1975,1112.877826,haute
+1976,1295.816647,haute
+1977,1981.227428,haute
+1978,2561.143490,haute
+1979,2862.077850,haute
+1980,3207.832221,haute
+1981,3668.838049,haute
+1982,4727.505004,haute
+1983,5255.009094,haute
+1984,5668.999645,haute
+1985,6049.603861,haute
+1986,6330.049073,haute
+1987,6570.430684,haute
+1988,6750.716892,haute
+1989,7037.839371,haute
+1990,7371.702718,haute
+1991,7758.984202,haute
+1992,8112.879350,haute
+1993,8420.033630,haute
+1994,8573.610770,haute
+1995,8720.510643,haute
+1996,9041.019457,haute
+1997,9161.210262,haute
+1998,9408.269140,haute
+1999,9662.005284,haute
+2000,9815.582424,haute
+2001,9982.514098,haute
+2002,10301.760000,haute
+2003,10652.160000,haute
+2004,10844.880000,haute
+2005,11020.080000,haute
+2006,11339.820000,haute
+2007,11747.160000,haute
+2008,12145.740000,haute
+2009,12522.420000,haute
+2010,12636.300000,haute
+2011,12903.480000,haute
+2012,13275.780000,haute
+2013,13516.680000,haute
+2014,13705.020000,haute
+2015,13884.600000,haute
+2016,14094.840000,haute
+2017,14318.220000,haute
+2018,14502.180000,haute
+2019,14791.260000,haute
+2020,15014.640000,haute
+2021,15014.640000,haute
+2022,15014.640000,haute
+2023,16057.080000,haute
+2024,16924.320000,haute
+2025,17191.500000,haute
+2026,17541.900000,haute
