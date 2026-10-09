@@ -16,7 +16,9 @@
  * le dit, sans montant. Le régime général et les régimes alignés : le taux de
  * la pension sans le minimum contributif qui la relevait (L. 351-10), avec ce
  * que le maximum des pensions en avait retiré, porté au minimum de D. 353-1,
- * réduit du dépassement du plafond, ramené au maximum de la réversion, la
+ * réduit du dépassement du plafond — d'une personne seule, ou du ménage du
+ * survivant qui vit en couple, ses revenus d'activité abattus à cinquante-cinq
+ * ans —, ramené au maximum de la réversion, la
  * surcote en sus, majoré de 10 % pour trois enfants (R. 353-2), puis de
  * 11,1 % sous le plafond de L. 353-6. Ce qui n'est pas encore porté, et les
  * montants — ceux de l'année du décès —, sont dits dans l'en-tête du Python.
@@ -83,7 +85,8 @@ export class ReversionRegime {
     taux = 0.0, date_effet = null, fiabilite = Fiabilite.ESTIMEE, majoration = 0.0,
     minimum = 0.0, majoration_trois_enfants = 0.0, majoration_petites_retraites = 0.0,
     majoration_petites_retraites_effet = null, minimum_contributif = 0.0,
-    ecretement_du_maximum = 0.0, maximum = 0.0 }) {
+    ecretement_du_maximum = 0.0, maximum = 0.0, plafond = 0.0,
+    ressources_retenues = 0.0 }) {
     this.regime = regime;
     this.base = base;
     this.montant = montant;
@@ -112,6 +115,11 @@ export class ReversionRegime {
     // régime général reprend, et le maximum de cette réversion ; 0 sans lui.
     this.ecretement_du_maximum = ecretement_du_maximum;
     this.maximum = maximum;
+    // Le plafond de ressources auquel la réversion se mesure, d'une personne
+    // seule ou du ménage, et les ressources qu'il retient à côté d'elle ; 0
+    // sans plafond.
+    this.plafond = plafond;
+    this.ressources_retenues = ressources_retenues;
     Object.freeze(this);
   }
 
@@ -131,7 +139,8 @@ export class ReversionRegime {
       majoration_petites_retraites_effet: this.majoration_petites_retraites_effet,
       minimum_contributif: this.minimum_contributif,
       ecretement_du_maximum: this.ecretement_du_maximum,
-      maximum: this.maximum,
+      maximum: this.maximum, plafond: this.plafond,
+      ressources_retenues: this.ressources_retenues,
     };
   }
 }
@@ -338,11 +347,37 @@ function partDuMinimum(parametres, regime, durees, lura = false) {
 }
 
 /**
- * La majoration de 11,1 % des réversions des régimes alignés (L. 353-6),
- * écrite dans `lignes`, une fois toutes les réversions chiffrées : voir
- * `_majorer_les_petites_retraites` du Python.
+ * Les ressources du survivant que retient le plafond de la version, et le
+ * facteur qui multiplie ce plafond : `[ressources, facteur]`. Ses revenus
+ * d'activité abattus de 30 % quand il a cinquante-cinq ans à la date d'effet ;
+ * celles de son nouveau conjoint en plus, sous le plafond du ménage, quand il
+ * vit en couple et que la version dit ce facteur. Voir `_ressources_du_plafond`
+ * du Python.
  */
-function majorerLesPetitesRetraites(moteur, lignes, reduites, conjoint, ressources, annee) {
+function ressourcesDuPlafond(parametres, conjoint, ressources, dateEffet) {
+  let retenues = ressources;
+  const taux = parametres.abattement_activite;
+  if (taux && conjoint.revenus_d_activite
+      && chrono.anneesRevolues(conjoint.naissance, dateEffet)
+        >= Math.trunc(Number(parametres.abattement_activite_age))) {
+    retenues -= Number(taux) * Math.min(retenues, Number(conjoint.revenus_d_activite));
+  }
+  const facteur = parametres.facteur_menage;
+  if (facteur === null || facteur === undefined
+      || conjoint.nouvelle_union === null || conjoint.nouvelle_union === undefined) {
+    return [retenues, 1.0];
+  }
+  return [retenues + Number(conjoint.ressources_du_nouveau_conjoint ?? 0.0), Number(facteur)];
+}
+
+/**
+ * La majoration de 11,1 % des réversions des régimes alignés (L. 353-6),
+ * écrite dans `lignes`, une fois toutes les réversions chiffrées :
+ * `retraitesPersonnelles`, les ressources du survivant hors de ses revenus
+ * d'activité. Voir `_majorer_les_petites_retraites` du Python.
+ */
+function majorerLesPetitesRetraites(moteur, lignes, reduites, conjoint, retraitesPersonnelles,
+  annee) {
   const eligibles = [...reduites].filter(([, [montant, parametres]]) => montant > 0
     && parametres.majoration_taux !== null && parametres.majoration_taux !== undefined);
   const plafond = moteur.reversions.plafondMajoration(annee);
@@ -357,7 +392,7 @@ function majorerLesPetitesRetraites(moteur, lignes, reduites, conjoint, ressourc
   for (const ligne of lignes.values()) {
     servies += ligne.montant;
   }
-  const retraites = ressources + servies;
+  const retraites = retraitesPersonnelles + servies;
   const theoriques = new Map(eligibles.map(([regime, [montant, parametres]]) => [
     regime, Number(parametres.majoration_taux) * montant]));
   const marge = 4 * plafond[0] - retraites;
@@ -590,9 +625,18 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
         fiabilite = Math.min(fiabilite, minimumDeLAnnee[1]);
       }
     }
-    const plafondAnnuel = Number(parametres.plafond_smic_heures)
+    // Le plafond, d'une personne seule ou du ménage, et ce qu'il retient à côté
+    // de la réversion : les ressources du survivant, ou du ménage, et les
+    // réversions des autres régimes de base — avant juillet 2004, ses
+    // ressources personnelles « sans tenir compte des avantages de réversion »
+    // (R. 353-1, rédactions de 1985 et de 1990).
+    const [personnelles, facteur] = ressourcesDuPlafond(parametres, conjoint, ressources,
+      dateEffet);
+    const plafondAnnuel = facteur * Number(parametres.plafond_smic_heures)
       * moteur.macro.smic_horaire.valeur(annee);
-    const disponible = plafondAnnuel - ressources - autresBases;
+    const reversions = parametres.ressources === "ecretement" ? autresBases : 0.0;
+    const disponible = plafondAnnuel - personnelles - reversions;
+    const retenues = personnelles + reversions;
     if (!mariageDure(conjoint, deces, enfants, parametres.mariage_minimum_annees)) {
       montant = 0.0;
       motif = "mariage";
@@ -632,14 +676,16 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     lignes.set(regime, ligne(regime, base, montant + troisEnfants, motif, fiche, version,
       taux, dateEffet, fiabilite).avec({
       minimum, majoration_trois_enfants: troisEnfants, minimum_contributif: contributif,
-      ecretement_du_maximum: ecretement, maximum,
+      ecretement_du_maximum: ecretement, maximum, plafond: plafondAnnuel,
+      ressources_retenues: retenues,
     }));
   }
 
   // La complémentaire des indépendants en dernier : ses ressources sont celles
-  // de R. 353-1, que les réversions de tous les régimes de base grossissent
-  // (articles 17 et 35 de son règlement). Un dépassement de son plafond réduit
-  // ses réversions à due concurrence, chacune au prorata de son montant.
+  // de R. 353-1, « personnelles ou du ménage », que les réversions de tous les
+  // régimes de base grossissent (articles 17 et 35 de son règlement). Un
+  // dépassement de son plafond, le même pour un ménage, réduit ses réversions à
+  // due concurrence, chacune au prorata de son montant.
   const independantes = [];
   for (const [regime, base, fiabilite] of servies) {
     const fiche = table.ficheDuRegime(regime);
@@ -657,13 +703,16 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
   }
   if (independantes.length > 0) {
     const premiers = independantes[0][4].parametres;
-    const plafondAnnuel = Number(premiers.plafond_pass)
+    const [personnelles, facteur] = ressourcesDuPlafond(premiers, conjoint, ressources,
+      aLAge(conjoint.naissance, lendemain, Number(premiers.age_minimum)));
+    const plafondAnnuel = facteur * Number(premiers.plafond_pass)
       * moteur.macro.plafond_securite_sociale.valeur(annee);
+    const retenues = personnelles + autresBases;
     let brut = 0.0;
     for (const [, base, , , version] of independantes) {
       brut += Number(version.parametres.taux) * base;
     }
-    const depassement = Math.max(0.0, ressources + autresBases + brut - plafondAnnuel);
+    const depassement = Math.max(0.0, retenues + brut - plafondAnnuel);
     for (const [regime, base, fiabilite, fiche, version] of independantes) {
       const parametres = version.parametres;
       const taux = Number(parametres.taux);
@@ -675,11 +724,14 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       }
       const dateEffet = aLAge(conjoint.naissance, lendemain, Number(parametres.age_minimum));
       lignes.set(regime, ligne(regime, base, montant, motif, fiche, version, taux,
-        dateEffet, fiabilite));
+        dateEffet, fiabilite).avec({ plafond: plafondAnnuel, ressources_retenues: retenues }));
     }
   }
 
-  majorerLesPetitesRetraites(moteur, lignes, reduites, conjoint, ressources, annee);
+  // Ses retraites personnelles, que la majoration de 11,1 % compte : ses
+  // ressources, moins ce que son activité lui rapporte.
+  majorerLesPetitesRetraites(moteur, lignes, reduites, conjoint,
+    ressources - Math.min(ressources, Number(conjoint.revenus_d_activite ?? 0.0)), annee);
 
   return new Reversion({
     personne: conjoint.personne, defunt: carriere.personne, deces, annee,

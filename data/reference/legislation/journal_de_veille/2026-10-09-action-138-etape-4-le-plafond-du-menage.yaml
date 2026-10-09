@@ -1,0 +1,42 @@
+date: "2026-10-09"
+session: "action 138, étape 4 : le plafond du ménage et l'abattement des revenus d'activité"
+consulte: >-
+  veille_droit.py (dernière veille consignée : 2026-10-09) ; l'index LEGI, mis à jour
+  des incréments jusqu'au 8 octobre 2026 (4 incréments), puis textes.py --inscrire,
+  qui n'inscrit aucune rédaction nouvelle ; L. 161-17-2 et L. 161-17-3, sans
+  rédaction postérieure à celles du 31 décembre 2025 (LEGIARTI000053280889,
+  053280903) ; dans l'index : L. 353-1 (cinq rédactions,
+  de LEGIARTI000006742648 à 047453693), D. 353-1-1 (LEGIARTI000006736552, sa seule
+  rédaction), R. 353-1 (LEGIARTI000006749451 à 038790257), R. 815-18
+  (LEGIARTI000006753648), R. 815-22 (LEGIARTI000047770487), l'article 17 du règlement
+  de la RCI (LEGIARTI000054891949, 054896509) ; l'index JORF, récupéré de sa release :
+  le décret n° 2004-1447 du 23 décembre 2004, articles 1er et 3 (JORFARTI000001074185,
+  001653734) ; l'API de la législation de la Cnav : les exposés « Condition de
+  ressources » et « Évaluation des ressources », le barème « Plafond de ressources pour
+  la retraite de réversion », les circulaires n° 2005-17 (§ 14, § 141 à 146) et
+  n° 2006-37 (§ 7), et, en PDF, la n° 2026-01 (§ 9) ; service-public.gouv.fr, fiche
+  F13104, vérifiée le 1er janvier 2026 ; Destinie 2, Reversion.cpp, Retraite.cpp et
+  Retraite.h, au commit 4c1d34b.
+trouve: >-
+  Depuis juillet 2004, la réversion du régime général compare les ressources du
+  survivant, « ou celles du ménage », à un plafond qui vaut, pour le ménage, 1,6 fois
+  celui d'une personne seule (L. 353-1, D. 353-1-1) ; le ménage est celui du couple
+  marié, des partenaires pacsés ou des concubins (circulaire n° 2005-17, § 141). Le
+  barème de la Cnav, seul et couple, se retrouve au centime de 2005 à 2026 (40 002,56
+  euros en 2026 pour un couple) ; en 2004, la caisse a pris le SMIC du 1er juillet, à
+  titre dérogatoire. L'abattement de 30 % des revenus d'activité du survivant de
+  cinquante-cinq ans entre dans R. 353-1 par le décret n° 2004-1447, publié le 30
+  décembre 2004, et s'applique à tous les revenus de la période de référence dès que
+  le survivant a cet âge (circulaire n° 2006-37, § 7, dont l'exemple est rejoué). Avant
+  juillet 2004, les ressources étaient personnelles, « sans tenir compte des avantages
+  de réversion » : le moteur y comptait celles des autres régimes de base, et ne le
+  fait plus. La RCI compte les ressources « personnelles ou du ménage », selon
+  R. 353-1, sous un seul plafond (article 17). Le scénario 1 sert le plafond du ménage
+  et l'abattement dans les deux moteurs ; aucune pension des témoins ne bouge, ni
+  aucune réversion.
+reste: >-
+  Le reste de l'étape 4 : la réversion d'un assuré mort avant son départ, le partage
+  entre ex-conjoints et le remariage, L. 353-5 et D. 355-1. Du plafond : la révision
+  quand le ménage ou les ressources changent (R. 353-1-1), la période de référence de
+  trois mois, le plafond de 2004 au SMIC de juillet, les ressources que le droit de
+  l'allocation supplémentaire exclut.

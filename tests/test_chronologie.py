@@ -146,6 +146,37 @@ def test_le_conjoint_et_le_deces_suivent_le_contrat():
         "jour_de_naissance", "mariage_des_conjoints"]
 
 
+def test_le_menage_du_survivant_est_un_fait_de_ses_ressources():
+    """Ce que le plafond de la réversion lit du survivant : la part de ses
+    ressources que lui rapporte son activité, et le ménage où il vit après le
+    décès — la forme de son union, une du vocabulaire, et ce que son nouveau
+    conjoint y apporte, quand il le dit. Ce sont des faits de ses ressources, à
+    la date du décès comme elles ; ni l'un ni l'autre ne se présume."""
+    from retraite_notionnelle.noyau import vocabulaire
+
+    assert set(chronologie.FORMES_D_UNION) == vocabulaire.liste("formes_d_union")
+    conjoint = {"naissance": "1962-03", "sexe": "F", "mariage": None,
+                "ressources": 15000.0, "revenus_d_activite": 10000.0,
+                "nouvelle_union": "pacs", "ressources_du_nouveau_conjoint": 12000.0}
+    complete = chronologie.completer(chronologie.du_resume(
+        1960, "H", 5, 64.0, 0, conjoint=conjoint, deces="2031-10"))
+    assert chronologie.controler(complete) == []
+    assert (chronologie.ressources(complete, chronologie.CONJOINT),
+            chronologie.revenus_d_activite(complete, chronologie.CONJOINT),
+            chronologie.menage(complete, chronologie.CONJOINT)) == (
+        15000.0, 10000.0, ("pacs", 12000.0))
+    seul = chronologie.completer(chronologie.du_resume(
+        1960, "H", 5, 64.0, 0, conjoint={**conjoint, "nouvelle_union": None,
+                                         "ressources_du_nouveau_conjoint": None}))
+    assert chronologie.menage(seul, chronologie.CONJOINT) is None
+    sans_apport = chronologie.completer(chronologie.du_resume(
+        1960, "H", 5, 64.0, 0, conjoint={**conjoint, "ressources_du_nouveau_conjoint": None}))
+    assert chronologie.menage(sans_apport, chronologie.CONJOINT) == ("pacs", None)
+    with pytest.raises(ValueError, match="mariage, pacs ou concubinage"):
+        chronologie.du_resume(1960, "H", 5, 64.0, 0,
+                              conjoint={**conjoint, "nouvelle_union": "veuvage"})
+
+
 def test_le_releve_garde_ses_lignes_et_leur_ordre():
     """Une ligne, un fait d'une année civile ; une interruption garde son
     statut, son revenu de référence et son motif ; les trimestres portés
@@ -420,7 +451,8 @@ SAISIES = [
                   "metiers": [{"affiliation": "salarie_prive", "age_debut": 22.0,
                                "niveau_salaire": 1.0, "cumul": False, "age_fin": None}]}},
     # Le conjoint et le décès, qui ouvrent la réversion : un mariage présumé,
-    # puis un mariage déclaré et des ressources ; et ce qui ne tient pas.
+    # puis un mariage déclaré et des ressources, leur part d'activité et le
+    # ménage du survivant ; et ce qui ne tient pas.
     {"parcours": {"annee_naissance": 1960, "sexe": "H", "age_liquidation": 64.0,
                   "conjoint": {"naissance": "1962-03", "sexe": "F", "mariage": None,
                                "ressources": None},
@@ -430,7 +462,9 @@ SAISIES = [
     {"releve": {"annee_naissance": 1958, "sexe": "F", "age_liquidation": 62.0,
                 "nombre_enfants": 1, "naissances_enfants": ["1986"],
                 "conjoint": {"naissance": "1955", "sexe": "H", "mariage": "1984-06-16",
-                             "ressources": 12000},
+                             "ressources": 12000, "revenus_d_activite": 8000,
+                             "nouvelle_union": "pacs",
+                             "ressources_du_nouveau_conjoint": 15000},
                 "deces": "2024-02-11",
                 "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
                             "trimestres": 4, "type_periode": "emploi"}]}},
@@ -442,6 +476,16 @@ SAISIES = [
     {"releve": {"annee_naissance": 1958, "sexe": "F", "age_liquidation": 62.0,
                 "conjoint": {"naissance": "1960", "sexe": "X", "mariage": None,
                              "ressources": None},
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
+    {"releve": {"annee_naissance": 1958, "sexe": "F", "age_liquidation": 62.0,
+                "conjoint": {"naissance": "1960", "sexe": "H", "mariage": None,
+                             "ressources": None, "nouvelle_union": "concubinage"},
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
+    {"releve": {"annee_naissance": 1958, "sexe": "F", "age_liquidation": 62.0,
+                "conjoint": {"naissance": "1960", "sexe": "H", "mariage": None,
+                             "ressources": None, "nouvelle_union": "veuvage"},
                 "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
                             "trimestres": 4, "type_periode": "emploi"}]}},
     {"releve": {"annee_naissance": 1958, "sexe": "F", "age_liquidation": 62.0,

@@ -34,17 +34,22 @@ def _carriere(simulateur, naissance: int, depart: float, conjoint: str, deces: s
               mariage: str | None = None, ressources: float | None = None,
               enfants: int = 0, sexe_conjoint: str = "F",
               invalidite: str | None = None, sexe: str = "H",
-              naissances: tuple[str, ...] = ()) -> Carriere:
+              naissances: tuple[str, ...] = (), activite: float | None = None,
+              nouvelle_union: str | None = None, apport: float | None = None) -> Carriere:
     """Un salarié né en janvier ``naissance``, parti à ``depart`` ans, ses
     enfants nés aux dates ``naissances`` quand elles sont dites, et son
-    conjoint, invalide depuis ``invalidite`` s'il est dit ; le décès ouvre la
+    conjoint, invalide depuis ``invalidite`` s'il est dit, ses ressources et ce
+    qu'en rapporte son ``activite``, la ``nouvelle_union`` où il vit après le
+    décès et l'``apport`` de son nouveau conjoint ; le décès ouvre la
     réversion. Les pensions, elles, sont données à :func:`reversion` : seule
     la règle est en cause ici."""
     return Carriere.depuis_profil(
         naissance, sexe, "salarie_prive", 21.0, depart, simulateur.macro,
         nombre_enfants=enfants, naissances_enfants=naissances,
         conjoint={"naissance": conjoint, "sexe": sexe_conjoint, "mariage": mariage,
-                  "ressources": ressources, "invalidite": invalidite},
+                  "ressources": ressources, "invalidite": invalidite,
+                  "revenus_d_activite": activite, "nouvelle_union": nouvelle_union,
+                  "ressources_du_nouveau_conjoint": apport},
         deces=deces)
 
 
@@ -131,6 +136,19 @@ def test_avant_2004_les_ressources_ferment_le_droit(simulateur):
                          ressources=_plafond(simulateur, 1999) + 1.0)
     ligne, = _lignes(simulateur, carriere, [("regime_general", 10000.0)], 1999)
     assert (ligne[2], ligne[3]) == (0.0, "ressources")
+
+
+def test_avant_2004_les_reversions_ne_comptent_pas_aux_ressources(simulateur):
+    """Avant juillet 2004, les ressources personnelles du survivant, appréciées
+    « sans tenir compte des avantages de réversion » (R. 353-1, rédaction de
+    1990 ; exposé de la Cnav, « Condition de ressources ») : la réversion de la
+    fonction publique ne ferme pas celle du régime général, que ses 15 000 €
+    auraient portées au-dessus du plafond."""
+    carriere = _carriere(simulateur, 1935, 60.0, "1938", "1999-05-10",
+                         ressources=_plafond(simulateur, 1999) - 1000.0)
+    lignes = _lignes(simulateur, carriere, [
+        ("fonction_publique_etat", 30000.0), ("regime_general", 10000.0)], 1999)
+    assert [l[2:4] for l in lignes] == [(15000.0, "servie"), (5400.0, "servie")]
 
 
 def test_la_fonction_publique_compte_au_plafond_du_regime_general(simulateur):
@@ -470,6 +488,108 @@ def test_l_echeancier_reverse_la_pension_d_avant_le_maximum(contexte, simulateur
         assert ligne["maximum"] == pytest.approx(0.52 * 0.5 * plafond)
 
 
+# -- le ménage et les revenus d'activité du survivant -----------------------------------
+
+#: Le barème « Plafond de ressources pour la retraite de réversion » de la Cnav, au
+#: 1er janvier de chaque année depuis 2005 : (année, personne seule, couple).
+BAREME_DU_PLAFOND = [
+    (2005, 15_828.80, 25_326.08), (2006, 16_702.40, 26_723.84),
+    (2007, 17_201.60, 27_522.56), (2008, 17_555.20, 28_088.32),
+    (2009, 18_116.80, 28_986.88), (2010, 18_428.80, 29_486.08),
+    (2011, 18_720.00, 29_952.00), (2012, 19_177.60, 30_684.16),
+    (2013, 19_614.40, 31_383.04), (2014, 19_822.40, 31_715.84),
+    (2015, 19_988.80, 31_982.08), (2016, 20_113.60, 32_181.76),
+    (2017, 20_300.80, 32_481.28), (2018, 20_550.40, 32_880.64),
+    (2019, 20_862.40, 33_379.84), (2020, 21_112.00, 33_779.20),
+    (2021, 21_320.00, 34_112.00), (2022, 21_985.60, 35_176.96),
+    (2023, 23_441.60, 37_506.56), (2024, 24_232.00, 38_771.20),
+    (2025, 24_710.40, 39_536.64), (2026, 25_001.60, 40_002.56),
+]
+
+
+@pytest.mark.parametrize("annee, seul, couple", BAREME_DU_PLAFOND)
+def test_le_plafond_du_menage_est_celui_du_bareme_de_la_cnav(simulateur, annee, seul,
+                                                             couple):
+    """« Le plafond annuel de ressources du ménage [...] est fixé à 1,6 fois le
+    plafond » d'une personne seule, 2 080 fois le SMIC horaire du 1er janvier
+    (D. 353-1-1), et « Le plafond "couple" s'applique aux couples mariés, aux
+    partenaires pacsés et aux concubins » (exposé de la Cnav, « Condition de
+    ressources ») : le barème de la caisse, au centime, de 2005 à 2026 ;
+    service-public le dit pour 2026, « 40 002,56 € si vous vivez en couple »."""
+    for union, attendu in ((None, seul), ("mariage", couple), ("pacs", couple),
+                           ("concubinage", couple)):
+        carriere = _carriere(simulateur, 1938, 62.0, "1940", f"{annee}-03-10",
+                             nouvelle_union=union)
+        ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                         annee)["regime_general"]
+        assert round(ligne.plafond, 2) == attendu
+
+
+def test_le_menage_compte_les_ressources_du_nouveau_conjoint(simulateur):
+    """Le survivant qui vit en couple : ses ressources et celles de son nouveau
+    conjoint, ensemble, sous le plafond du ménage, et la réversion réduite de ce
+    qui le dépasse (L. 353-1). Seul, avec les mêmes ressources, il la garde
+    entière ; pacsé sans dire les ressources de l'autre, aussi (présomption
+    ``ressources_du_survivant``)."""
+    plafond = _plafond(simulateur, 2023)
+    pensions = [("regime_general", 20000.0)]
+    seul = _carriere(simulateur, 1958, 62.0, "1960", "2023-05-10", ressources=10000.0)
+    assert _servies(simulateur, seul, pensions, 2023)["regime_general"].montant == 10800.0
+    pacse = _carriere(simulateur, 1958, 62.0, "1960", "2023-05-10", ressources=10000.0,
+                      nouvelle_union="pacs")
+    assert _servies(simulateur, pacse, pensions, 2023)["regime_general"].montant == 10800.0
+    menage = _carriere(simulateur, 1958, 62.0, "1960", "2023-05-10", ressources=10000.0,
+                       nouvelle_union="pacs", apport=20000.0)
+    ligne = _servies(simulateur, menage, pensions, 2023)["regime_general"]
+    assert (ligne.motif, ligne.ressources_retenues) == ("ecretee", 30000.0)
+    assert round(ligne.montant, 2) == round(1.6 * plafond - 30000.0, 2)
+
+
+def test_avant_juillet_2004_le_menage_ne_compte_pas(simulateur):
+    """Avant la loi du 21 août 2003, les ressources « personnelles » du seul
+    survivant (R. 353-1, rédaction de 1990) : son nouveau conjoint n'y entre pas,
+    et son plafond reste celui d'une personne seule."""
+    carriere = _carriere(simulateur, 1935, 60.0, "1938", "1999-05-10", ressources=5000.0,
+                         nouvelle_union="mariage", apport=50000.0)
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     1999)["regime_general"]
+    assert (ligne.motif, ligne.ressources_retenues) == ("servie", 5000.0)
+    assert ligne.plafond == _plafond(simulateur, 1999)
+
+
+@pytest.mark.parametrize("conjoint, deces, retenues", [
+    # La version de juillet 2004 : R. 353-1 n'abat rien encore.
+    ("1940", "2004-09-10", 15000.0),
+    # Le décret n° 2004-1447, publié le 30 décembre 2004 : 70 % du salaire.
+    ("1940", "2005-02-10", 10500.0),
+    # Cinquante-deux ans à la date d'effet, en 2006 : le salaire entier.
+    ("1953-06", "2006-03-10", 15000.0),
+    ("1960", "2023-05-10", 10500.0),
+])
+def test_les_revenus_d_activite_sont_abattus_a_cinquante_cinq_ans(simulateur, conjoint,
+                                                                  deces, retenues):
+    """« Les revenus d'activité du conjoint survivant font l'objet d'un
+    abattement de 30 % s'il est âgé de 55 ans ou plus » (R. 353-1, depuis le 30
+    décembre 2004), à la date d'effet, « quel que soit l'âge atteint au moment
+    où ces revenus ont été perçus » (circulaire Cnav n° 2006-37, § 7)."""
+    carriere = _carriere(simulateur, 1938, 62.0, conjoint, deces, ressources=15000.0,
+                         activite=15000.0)
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     int(deces[:4]))["regime_general"]
+    assert ligne.ressources_retenues == retenues
+
+
+def test_la_majoration_de_11_1_pour_cent_ne_compte_pas_les_revenus_d_activite(simulateur):
+    """L. 353-6 ne compte que les « retraites personnelles et de réversion » :
+    les 7 200 € d'un salaire laissent la majoration entière, quand 7 200 € de
+    retraite la réduisaient de ce qui dépasse le plafond."""
+    carriere = _carriere(simulateur, 1950, 62.0, "1953-01-15", "2023-05-10",
+                         ressources=7200.0, activite=7200.0)
+    ligne = _servies(simulateur, carriere, [("regime_general", 1000.0)], 2023,
+                     {"regime_general": 160})["regime_general"]
+    assert round(ligne.majoration_petites_retraites, 2) == round(0.111 * 3701.38, 2)
+
+
 # -- la fonction publique -----------------------------------------------------------
 
 @pytest.mark.parametrize("mariage, deces, servie", [
@@ -789,6 +909,22 @@ def test_le_plafond_de_la_rci_compte_les_reversions_des_regimes_de_base(simulate
         ("nric", 3000.0, "ecretee", "plafond_2021")]
 
 
+def test_la_rci_compte_le_menage_sous_le_meme_plafond(simulateur):
+    """Article 17 : des ressources « personnelles ou du ménage », appréciées
+    selon R. 353-1 — les revenus d'activité abattus de 30 % à cinquante-cinq
+    ans —, sous le plafond que le CPSTI fixe, sans plafond propre au ménage :
+    deux plafonds annuels de la Sécurité sociale en 2026."""
+    plafond = 2 * simulateur.macro.plafond_securite_sociale(2026)
+    carriere = _carriere(simulateur, 1958, 62.0, "1960", "2026-05-10",
+                         ressources=plafond - 30000.0, activite=10000.0,
+                         nouvelle_union="concubinage", apport=31000.0)
+    ligne = _servies(simulateur, carriere, [("rci", 4000.0)], 2026)["rci"]
+    # 63 120 euros au survivant, son salaire abattu, 31 000 à son concubin et
+    # 2 400 de réversion : 400 de trop.
+    assert (ligne.plafond, ligne.ressources_retenues) == (plafond, plafond - 2000.0)
+    assert (round(ligne.montant, 2), ligne.motif) == (2000.0, "ecretee")
+
+
 # -- ce qui n'est pas porté ----------------------------------------------------------
 
 def test_un_regime_sans_fiche_le_dit_et_un_regime_vide_ne_reverse_rien(simulateur):
@@ -826,6 +962,18 @@ def test_sans_conjoint_pas_de_reversion(simulateur):
      "L'invalidité du conjoint précède sa naissance"),
     ({"conjoint": "1962", "conjoint_invalidite": "2024-13"},
      "L'invalidité du conjoint « 2024-13 »"),
+    ({"activite_conjoint": "5000"}, "« activite_conjoint » ne sert qu'à la réversion"),
+    ({"conjoint": "1962", "activite_conjoint": "5000"}, "une part de ses ressources"),
+    ({"conjoint": "1962", "ressources_conjoint": "4000", "activite_conjoint": "5000"},
+     "une part de ses ressources"),
+    ({"conjoint": "1962", "ressources_conjoint": "4000", "activite_conjoint": "-1"},
+     "Revenus d'activité du conjoint : un montant annuel positif"),
+    ({"nouvelle_union": "pacs"}, "« nouvelle_union » ne sert qu'à la réversion"),
+    ({"conjoint": "1962", "nouvelle_union": "veuvage"}, "mariage, pacs ou concubinage"),
+    ({"conjoint": "1962", "ressources_nouveau_conjoint": "5000"},
+     "« ressources_nouveau_conjoint » ne sert qu'au ménage du conjoint"),
+    ({"conjoint": "1962", "nouvelle_union": "pacs", "ressources_nouveau_conjoint": "-1"},
+     "Ressources du nouveau conjoint : un montant annuel positif"),
 ])
 def test_la_saisie_refuse_ce_qui_ne_tient_pas(requete, message):
     with pytest.raises(ErreurSaisie, match=message):
@@ -838,11 +986,15 @@ def test_l_adresse_garde_le_conjoint_et_le_deces():
     saisie = Saisie.depuis_requete({
         "naissance": "1960", "liquidation": "2024-01", "conjoint": "1962-03",
         "mariage": "1985-06", "ressources_conjoint": "12000",
+        "activite_conjoint": "9000", "nouvelle_union": "concubinage",
+        "ressources_nouveau_conjoint": "14000",
         "conjoint_invalidite": "2028-04", "deces": "2031-10"})
     relue = Saisie.depuis_requete(dict(parse_qsl(saisie.requete())))
     assert (relue.conjoint, relue.mariage, relue.ressources_conjoint,
-            relue.conjoint_invalidite, relue.deces) == (
-        "1962-03", "1985-06", 12000.0, "2028-04", "2031-10")
+            relue.activite_conjoint, relue.nouvelle_union,
+            relue.ressources_nouveau_conjoint, relue.conjoint_invalidite, relue.deces) == (
+        "1962-03", "1985-06", 12000.0, 9000.0, "concubinage", 14000.0, "2028-04",
+        "2031-10")
     assert "conjoint" not in Saisie.depuis_requete({"naissance": "1960"}).requete()
 
 
@@ -914,3 +1066,27 @@ def test_la_page_dit_le_minimum_contributif_que_la_reversion_ne_compte_pas():
                                   "conjoint": "1962", "deces": "2024-05",
                                   "unite_revenu": "moyen", "salaire": "0.3"})
     assert "de minimum contributif, que la réversion ne compte pas" in page
+
+
+def test_la_page_dit_le_menage_du_conjoint():
+    """Le bloc « Conjoint » demande le ménage où le conjoint vivrait, ses
+    revenus d'activité et les ressources de son nouveau conjoint ; la carte ne
+    suppose plus qu'il vit seul quand la saisie dit le contraire, et dit la
+    ressource qu'elle prête au nouveau conjoint faute de l'avoir dite. Le
+    survivant pacsé dont le ménage dépasse le plafond voit sa réversion
+    réduite « avec les ressources du ménage »."""
+    from retraite_notionnelle.web.site import rendre
+
+    requete = {"naissance": "1958", "liquidation": "62", "conjoint": "1960",
+               "deces": "2023-05", "ressources_conjoint": "15000"}
+    _, seul = rendre("/simuler", requete)
+    assert "un conjoint qui vivrait seul après votre décès" in seul
+    for nom in ("activite_conjoint", "nouvelle_union", "ressources_nouveau_conjoint"):
+        assert f'name="{nom}"' in seul
+    _, pacse = rendre("/simuler", {**requete, "nouvelle_union": "pacs"})
+    assert "un conjoint qui vivrait seul" not in pacse
+    assert "aucune ressource à son nouveau conjoint, faute de l'avoir dite" in pacse
+    assert '<option value="pacs" selected' in pacse
+    _, menage = rendre("/simuler", {**requete, "nouvelle_union": "pacs",
+                                    "ressources_nouveau_conjoint": "30000"})
+    assert "réduite : avec les ressources du ménage, elle dépasserait le plafond" in menage

@@ -2342,8 +2342,15 @@ referents:
           maximum des pensions, sous son taux du maximum « qui était ou
           aurait été opposable à l'assuré décédé », la surcote en sus
           (circulaires n° 120/82, § 4, n° 105/90, § 22, n° 2018-4, § 5).
-          Restent, dans l'ordre de l'étape 4, le plafond du ménage, la
-          réversion d'un assuré mort avant son départ, le partage et le
+          Le plafond du ménage, repris le 9 octobre 2026 sur les textes et la
+          Cnav : 1,6 fois celui d'une personne seule (D. 353-1-1), que le
+          dépôt donne au couple marié, pacsé ou en concubinage (circulaire
+          n° 2005-17, § 141), quand Destinie ne le donne qu'au remarié
+          (`matri == MARIE`, `Retraite.cpp:350-354`) ; l'abattement de 30 %
+          des revenus d'activité à cinquante-cinq ans (R. 353-1), que
+          Destinie applique à tout salaire (`Retraite.h:274`), au commit
+          `4c1d34b`. Restent, dans l'ordre de l'étape
+          4, la réversion d'un assuré mort avant son départ, le partage et le
           remariage.
         etat: a_reprendre
         chantier: "138.4"

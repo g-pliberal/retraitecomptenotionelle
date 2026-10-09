@@ -25,6 +25,11 @@ export const SCHEMA_VERSION = 1;
 export const ASSURE = "assure";
 /** Le conjoint de l'assuré, que le mariage lui relie (§ 5.1). */
 export const CONJOINT = "conjoint";
+/**
+ * Les formes d'une union (vocabulaire, `formes_d_union`) : celle où le conjoint
+ * survivant vit après le décès en est une.
+ */
+export const FORMES_D_UNION = Object.freeze(["mariage", "pacs", "concubinage"]);
 
 /** Les sortes de faits qui sont des périodes de la carrière. */
 export const EMPLOI = "periode_d_activite";
@@ -227,7 +232,10 @@ export function dateDeclaree(valeur, quoi) {
  * filiation. Le départ tombe à l'âge déclaré, compté depuis le mois d'où les
  * âges se comptent. `conjoint` déclare le conjoint (§ 5.1) : sa `naissance`
  * et son `sexe`, la date du `mariage` — que {@link completer} présume sinon —,
- * ses `ressources` annuelles et son `invalidite`, une décision médicale
+ * ses `ressources` annuelles, et ce qui en vient de son activité
+ * (`revenus_d_activite`), la `nouvelle_union` où il vit après le décès et ce
+ * que son nouveau conjoint y apporte (`ressources_du_nouveau_conjoint`), et
+ * son `invalidite`, une décision médicale
  * datée, s'il les dit ; `deces` date le décès de l'assuré, qui clôt le
  * mariage ; `demandesDePension` dit, régime par régime,
  * l'âge auquel il demande sa pension ; `etranger`, la carrière hors de France :
@@ -353,6 +361,28 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
         jourDeces ?? epoux.debut, null,
         { periode: "annuelle" }, null,
         { annuel: Number(conjoint.ressources), monnaie: "EUR" }));
+    }
+    if (conjoint.revenus_d_activite !== null && conjoint.revenus_d_activite !== undefined) {
+      // La part de ces ressources que lui rapporte son activité, que le plafond
+      // de la réversion abat après cinquante-cinq ans (R. 353-1).
+      faitsNaissance.push(fait(`revenus_d_activite_${CONJOINT}`, CONJOINT, "ressources",
+        jourDeces ?? epoux.debut, null,
+        { periode: "annuelle", nature: "revenus_d_activite" }, null,
+        { annuel: Number(conjoint.revenus_d_activite), monnaie: "EUR" }));
+    }
+    if (conjoint.nouvelle_union !== null && conjoint.nouvelle_union !== undefined) {
+      // Le ménage où il vit après le décès : la forme de sa nouvelle union, et ce
+      // que son nouveau conjoint y apporte, s'il le dit (L. 353-1).
+      const forme = conjoint.nouvelle_union;
+      if (!FORMES_D_UNION.includes(forme)) {
+        throw new Error(`une union « ${forme} » : mariage, pacs ou concubinage`);
+      }
+      const apport = conjoint.ressources_du_nouveau_conjoint;
+      faitsNaissance.push(fait(`menage_${CONJOINT}`, CONJOINT, "ressources",
+        jourDeces ?? epoux.debut, null,
+        { periode: "annuelle", nature: "menage", forme }, null,
+        apport === null || apport === undefined
+          ? null : { annuel: Number(apport), monnaie: "EUR" }));
     }
     if (conjoint.invalidite !== null && conjoint.invalidite !== undefined) {
       const [jourInvalidite, precision] = dateDeclaree(conjoint.invalidite,
@@ -834,10 +864,41 @@ export function deces(chronologie, personne) {
   return faitsDe(chronologie, personne, "deces")[0] ?? null;
 }
 
+/**
+ * Le fait de ressources d'une personne qui a cette nature : toutes ses
+ * ressources sans nature dite, une part d'elles, ou celles de son ménage.
+ */
+function ressourcesDeNature(chronologie, personne, nature) {
+  return faitsDe(chronologie, personne, "ressources").find(
+    (f) => (f.attributs.nature ?? null) === nature) ?? null;
+}
+
 /** Les ressources annuelles qu'une personne déclare, ou `null`. */
 export function ressources(chronologie, personne) {
-  const trouves = faitsDe(chronologie, personne, "ressources");
-  return trouves.length > 0 ? Number(trouves[0].montant.annuel) : null;
+  const trouve = ressourcesDeNature(chronologie, personne, null);
+  return trouve === null ? null : Number(trouve.montant.annuel);
+}
+
+/**
+ * La part de ses ressources que son activité rapporte à une personne, si elle
+ * la déclare, ou `null`.
+ */
+export function revenusDActivite(chronologie, personne) {
+  const trouve = ressourcesDeNature(chronologie, personne, "revenus_d_activite");
+  return trouve === null ? null : Number(trouve.montant.annuel);
+}
+
+/**
+ * Le ménage où une personne dit vivre : `[forme de son union, ressources
+ * annuelles que l'autre y apporte, ou null quand il ne les dit pas]` ; `null`
+ * pour qui vit seul. Voir `menage` du Python.
+ */
+export function menage(chronologie, personne) {
+  const trouve = ressourcesDeNature(chronologie, personne, "menage");
+  if (trouve === null) {
+    return null;
+  }
+  return [trouve.attributs.forme, trouve.montant ? Number(trouve.montant.annuel) : null];
 }
 
 /** Le fait de naissance d'une personne, s'il est connu. */

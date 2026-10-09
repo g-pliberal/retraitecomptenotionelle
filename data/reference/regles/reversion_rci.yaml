@@ -18,8 +18,8 @@ lit:
 - conjoint.deces
 - union.debut et union.fin, d'un mariage, présent ou dissous par un divorce
 - la naissance du survivant, qui dit son âge
-- les ressources du survivant, personnelles ou du ménage, et ses réversions des régimes
-  de base
+- les ressources du survivant, personnelles ou du ménage, ses revenus d'activité, abattus
+  de 30 % à cinquante-cinq ans, et ses réversions des régimes de base
 - les points de l'assuré décédé, au régime complémentaire des indépendants et à ceux
   qu'il a repris en 2013
 ecrit:
@@ -32,7 +32,11 @@ dates_qui_decident:
 # règles d'avant 2013 ne sont pas lues, et le moteur n'en sert pas la
 # réversion (`portee: false`). Le plafond, que l'instance délibérante fixe
 # chaque année, n'est lu qu'à partir de 2021, dans les circulaires de la Cnav :
-# deux plafonds annuels de la Sécurité sociale (`plafond_pass`).
+# deux plafonds annuels de la Sécurité sociale (`plafond_pass`). Les
+# ressources sont « personnelles ou du ménage », appréciées comme celles de
+# R. 353-1 (article 17) : celles du nouveau conjoint du survivant qui vit en
+# couple s'y ajoutent sous le même plafond (`facteur_menage: 1`), ses revenus
+# d'activité abattus de 30 % à cinquante-cinq ans (`abattement_activite`).
 versions:
 - id: avant_2013
   statut: supposee
@@ -53,6 +57,7 @@ versions:
   statut: lue
   textes:
   - {id: LEGIARTI000025397326, article: "arrêté du 9 février 2012, règlement, articles 16 à 35", en_vigueur: 2013-01-01}
+  - {id: LEGIARTI000054891949, article: "arrêté du 9 février 2012, règlement, article 17", en_vigueur: 2013-01-01}
   nee_de: LEGIARTI000025397326
   bornes:
     conjoint.deces: [2013-01-01, 2021-01-01]
@@ -75,6 +80,9 @@ versions:
       age_minimum: 55
       ressources: ecretement
       plafond_pass: 2
+      facteur_menage: 1
+      abattement_activite: 0.30
+      abattement_activite_age: 55
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: plafond_2021
@@ -84,6 +92,7 @@ versions:
   - {reference: "circulaire Cnav n° 2024-07 du 16 janvier 2024, § 9", en_vigueur: 2024-01-01}
   - {reference: "circulaire Cnav n° 2026-01 du 5 janvier 2026, § 9", en_vigueur: 2026-01-01}
   - {id: LEGIARTI000049779679, article: "arrêté du 9 février 2012, règlement, articles 16 à 35", en_vigueur: 2024-06-26}
+  - {id: LEGIARTI000054896509, article: "arrêté du 9 février 2012, règlement, article 17", en_vigueur: 2024-06-26}
   - {id: LEGIARTI000049782878, article: "arrêté du 9 février 2012, règlement, articles 16 à 35", en_vigueur: 2025-01-01}
   - {id: LEGIARTI000052379026, article: "arrêté du 9 février 2012, règlement, articles 16 à 35", en_vigueur: 2027-01-01}
   bornes:
@@ -100,6 +109,9 @@ versions:
       age_minimum: 55
       ressources: ecretement
       plafond_pass: 2
+      facteur_menage: 1
+      abattement_activite: 0.30
+      abattement_activite_age: 55
       fiabilite: haute
   exemples: [ur_reversion_independant_rci]
 approximations:
@@ -118,22 +130,25 @@ approximations:
   effet: non mesuré
 - ecart: >-
     les 60 % s'appliquent à la retraite servie, abattement compris, quand le règlement
-    les calcule sans lui ; les ressources sont celles que le survivant déclare, sans
-    celles du ménage ni l'abattement de 30 % de ses revenus d'activité ; le partage
-    entre conjoints, le droit dérivé des conjoints de commerçants et la réversion d'un
+    les calcule sans lui ; les ressources du survivant, et de son ménage, sont celles
+    que la saisie déclare à la date d'effet, comme au régime général (fiche
+    reversion), sans révision quand elles varient ; le partage entre conjoints, le droit dérivé des conjoints de commerçants et la réversion d'un
     assuré mort avant son départ ne sont pas portés ; les montants sont ceux de l'année
     du décès
   effet: non mesuré
 presomptions:
   ressources_du_survivant: >-
-    le plafond de ressources, quand le survivant ne les déclare pas
+    le plafond de ressources, quand le survivant ne les déclare pas, ni celles de son
+    nouveau conjoint
+  survivant_seul: >-
+    les ressources du survivant seul, quand la saisie ne dit pas qu'il vit en couple
   reversion_demandee_dans_l_annee: >-
     la date d'effet, au premier jour du mois qui suit le décès, ou qui suit l'âge requis
   deces_apres_le_depart: >-
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-10-04
+  lu_le: 2026-10-09
   prochaine_relecture: 2027-03-31
   lectures_divergentes:
   - >-
@@ -168,19 +183,35 @@ sources:
       à due concurrence de l'article 35
     date: 2026-01-05
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_01_05012026.pdf
+  - type: legifrance
+    reference: >-
+      relu le 9 octobre 2026 dans l'index LEGI : l'article 17 du règlement, dans sa
+      rédaction du 26 juin 2024 (LEGIARTI000054896509), comme dans celle de 2013
+      (LEGIARTI000054891949) : « disposer de ressources, personnelles ou du ménage,
+      n'excédant pas le plafond de ressources fixé chaque année [...]. Les ressources du
+      conjoint survivant sont appréciées selon les modalités et dans les conditions
+      fixées par les articles R. 353-1 et R. 353-1-1 » — un seul plafond, et
+      l'abattement de 30 % des revenus d'activité de R. 353-1
+    date: 2026-10-09
 code:
   python: >-
     droit/reversion.py : reversion ; scenarios/actuel.py : Reversions
   javascript: >-
     moteur/js/droit/reversion.js : reversion ; moteur/js/regimes.js : Reversions
   parametres: >-
-    contenu.parametres de chaque version : portee, taux, age_minimum, plafond_pass
+    contenu.parametres de chaque version : portee, taux, age_minimum, plafond_pass,
+    facteur_menage, abattement_activite, abattement_activite_age
   tests: tests/test_reversion.py
 historique:
 - >-
   2026-10-04 — née et lue par le moteur à l'étape de l'action 142 qui sert la
   réversion du RAFP, de la RCI et de l'Ircantec : les simulateurs anonymes la
   servaient, le modèle disait « non portée ».
+- >-
+  2026-10-09 — action 138, étape 4 : les ressources du ménage du survivant qui vit en
+  couple, et l'abattement de 30 % de ses revenus d'activité à cinquante-cinq ans,
+  comptés sous le plafond, le même pour un ménage, que l'article 17 renvoie à
+  R. 353-1.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un artisan, d'un commerçant ou d'un industriel qui
   décède depuis 2013. Le modèle la calcule pour le conjoint que la saisie déclare.

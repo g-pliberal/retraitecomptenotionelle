@@ -21894,8 +21894,9 @@ null
 "radiation_au_1er_janvier_suivant":{"dit":"l'agent public est radié des cadres le 1er janvier qui suit sa dernière année de services","valeur":"le 1er janvier qui suit la dernière année de services, ou le départ s'il part en fonctions"},
 "residence_en_france":{"dit":"l'assuré qui ne déclare pas de résidence hors de France réside en France après son départ, toute l'année quand il ne dit pas les mois qu'il y passe","valeur":"en France"},
 "ressources_du_conjoint":{"dit":"le conjoint qui ne déclare pas ses ressources n'en a aucune","valeur":0},
-"ressources_du_survivant":{"dit":"le conjoint survivant n'a d'autres ressources que les réversions qu'il reçoit","valeur":0},
+"ressources_du_survivant":{"dit":"le conjoint survivant n'a d'autres ressources que les réversions qu'il reçoit, ni son nouveau conjoint quand il vit en couple","valeur":0},
 "reversion_demandee_dans_l_annee":{"dit":"le survivant demande sa réversion dans l'année qui suit le décès","valeur":"dans l'année"},
+"survivant_seul":{"dit":"le conjoint survivant vit seul après le décès : ni remarié, ni pacsé, ni en concubinage","valeur":"seul"},
 "validation_ircantec_demandee":{"dit":"l'agent rétabli au régime général a demandé que l'Ircantec valide ses services","valeur":"demandée"}
 },
 "profil_salaire_age":{
@@ -155794,6 +155795,8 @@ null
 "exception_de":null,
 "id":"avant_1982",
 "parametres":{
+"abattement_activite":null,
+"abattement_activite_age":null,
 "age_minimum":55,
 "facteur_menage":null,
 "fiabilite":"moyenne",
@@ -155815,6 +155818,8 @@ null
 "exception_de":null,
 "id":"taux_52",
 "parametres":{
+"abattement_activite":null,
+"abattement_activite_age":null,
 "age_minimum":55,
 "facteur_menage":null,
 "fiabilite":"haute",
@@ -155836,6 +155841,8 @@ null
 "exception_de":null,
 "id":"taux_54",
 "parametres":{
+"abattement_activite":null,
+"abattement_activite_age":null,
 "age_minimum":55,
 "facteur_menage":null,
 "fiabilite":"haute",
@@ -155853,10 +155860,12 @@ null
 "texte":"LEGIARTI000006736587"
 },
 {
-"bornes":{"liquidation.date_effet":["2004-07-01","2005-07-01"]},
+"bornes":{"liquidation.date_effet":["2004-07-01","2005-01-01"]},
 "exception_de":null,
 "id":"reforme_2004",
 "parametres":{
+"abattement_activite":null,
+"abattement_activite_age":null,
 "age_minimum":55,
 "facteur_menage":1.6,
 "fiabilite":"haute",
@@ -155874,10 +155883,35 @@ null
 "texte":"LEGIARTI000006742649"
 },
 {
+"bornes":{"liquidation.date_effet":["2005-01-01","2005-07-01"]},
+"exception_de":null,
+"id":"abattement_2005",
+"parametres":{
+"abattement_activite":0.3,
+"abattement_activite_age":55,
+"age_minimum":55,
+"facteur_menage":1.6,
+"fiabilite":"haute",
+"majoration_enfants_minimum":0.1,
+"majoration_enfants_taux":0.1,
+"majoration_taux":null,
+"mariage_minimum_annees":0,
+"minimum_proratise":true,
+"minimum_tous_regimes":true,
+"minimum_trimestres":60,
+"plafond_smic_heures":2080,
+"ressources":"ecretement",
+"taux":0.54
+},
+"texte":"LEGIARTI000006749454"
+},
+{
 "bornes":{"liquidation.date_effet":["2005-07-01","2007-07-01"]},
 "exception_de":null,
 "id":"age_52",
 "parametres":{
+"abattement_activite":0.3,
+"abattement_activite_age":55,
 "age_minimum":52,
 "facteur_menage":1.6,
 "fiabilite":"haute",
@@ -155899,6 +155933,8 @@ null
 "exception_de":null,
 "id":"age_51",
 "parametres":{
+"abattement_activite":0.3,
+"abattement_activite_age":55,
 "age_minimum":51,
 "facteur_menage":1.6,
 "fiabilite":"haute",
@@ -155920,6 +155956,8 @@ null
 "exception_de":null,
 "id":"age_55_2009",
 "parametres":{
+"abattement_activite":0.3,
+"abattement_activite_age":55,
 "age_minimum":55,
 "facteur_menage":1.6,
 "fiabilite":"haute",
@@ -155941,6 +155979,8 @@ null
 "exception_de":null,
 "id":"age_51_2009",
 "parametres":{
+"abattement_activite":0.3,
+"abattement_activite_age":55,
 "age_minimum":51,
 "facteur_menage":1.6,
 "fiabilite":"haute",
@@ -155962,6 +156002,8 @@ null
 "exception_de":null,
 "id":"majoration_2010",
 "parametres":{
+"abattement_activite":0.3,
+"abattement_activite_age":55,
 "age_minimum":55,
 "facteur_menage":1.6,
 "fiabilite":"haute",
@@ -155983,6 +156025,8 @@ null
 "exception_de":null,
 "id":"majoration_2010_age_51",
 "parametres":{
+"abattement_activite":0.3,
+"abattement_activite_age":55,
 "age_minimum":51,
 "facteur_menage":1.6,
 "fiabilite":"haute",
@@ -156004,6 +156048,8 @@ null
 "exception_de":null,
 "id":"minimum_2012",
 "parametres":{
+"abattement_activite":0.3,
+"abattement_activite_age":55,
 "age_minimum":55,
 "facteur_menage":1.6,
 "fiabilite":"haute",
@@ -156025,6 +156071,8 @@ null
 "exception_de":null,
 "id":"minimum_2012_age_51",
 "parametres":{
+"abattement_activite":0.3,
+"abattement_activite_age":55,
 "age_minimum":51,
 "facteur_menage":1.6,
 "fiabilite":"haute",
@@ -156046,6 +156094,8 @@ null
 "exception_de":null,
 "id":"minimum_2026",
 "parametres":{
+"abattement_activite":0.3,
+"abattement_activite_age":55,
 "age_minimum":55,
 "facteur_menage":1.6,
 "fiabilite":"haute",
@@ -156067,6 +156117,8 @@ null
 "exception_de":null,
 "id":"minimum_2026_age_51",
 "parametres":{
+"abattement_activite":0.3,
+"abattement_activite_age":55,
 "age_minimum":51,
 "facteur_menage":1.6,
 "fiabilite":"haute",
@@ -156315,8 +156367,20 @@ null
 "regimes":["rci","rco_artisans","nric"],
 "versions":[
 {"bornes":{"conjoint.deces":[null,"2013-01-01"]},"exception_de":null,"id":"avant_2013","parametres":{"fiabilite":"estimee","portee":false},"texte":null},
-{"bornes":{"conjoint.deces":["2013-01-01","2021-01-01"]},"exception_de":null,"id":"reglement_2013","parametres":{"age_minimum":55,"fiabilite":"moyenne","plafond_pass":2,"ressources":"ecretement","taux":0.6},"texte":"LEGIARTI000025397326"},
-{"bornes":{"conjoint.deces":["2021-01-01",null]},"exception_de":null,"id":"plafond_2021","parametres":{"age_minimum":55,"fiabilite":"haute","plafond_pass":2,"ressources":"ecretement","taux":0.6},"texte":"circulaire Cnav n° 2021-4 du 25 janvier 2021, § 9"}
+{
+"bornes":{"conjoint.deces":["2013-01-01","2021-01-01"]},
+"exception_de":null,
+"id":"reglement_2013",
+"parametres":{"abattement_activite":0.3,"abattement_activite_age":55,"age_minimum":55,"facteur_menage":1,"fiabilite":"moyenne","plafond_pass":2,"ressources":"ecretement","taux":0.6},
+"texte":"LEGIARTI000025397326"
+},
+{
+"bornes":{"conjoint.deces":["2021-01-01",null]},
+"exception_de":null,
+"id":"plafond_2021",
+"parametres":{"abattement_activite":0.3,"abattement_activite_age":55,"age_minimum":55,"facteur_menage":1,"fiabilite":"haute","plafond_pass":2,"ressources":"ecretement","taux":0.6},
+"texte":"circulaire Cnav n° 2021-4 du 25 janvier 2021, § 9"
+}
 ]
 },
 "totalisation_des_periodes_etrangeres":{

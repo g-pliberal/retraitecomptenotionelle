@@ -1614,6 +1614,14 @@ def _cas() -> list[dict]:
                "salaire": "5", "statut": "salarie_prive_cadre"}
     cas.append(("reversion_maximum_des_pensions", {**maximum, "deces": "2005-05"}))
     cas.append(("reversion_au_maximum", {**maximum, "deces": "1990-09"}))
+    # Le 9 octobre 2026 (action 138, étape 4), le plafond du ménage : la veuve
+    # aux ressources déclarées, pacsée, compte celles de son nouveau conjoint
+    # sous 1,6 fois le plafond ; salariée, elle voit son salaire abattu de 30 %.
+    cas.append(("reversion_menage", {
+        **reversion, "ressources_conjoint": "15000", "nouvelle_union": "pacs",
+        "ressources_nouveau_conjoint": "16000"}))
+    cas.append(("reversion_revenus_d_activite", {
+        **reversion, "ressources_conjoint": "15000", "activite_conjoint": "15000"}))
 
     # Les carrières LUES sur un relevé, plutôt que reconstituées.
     cas.extend(_cas_releve())

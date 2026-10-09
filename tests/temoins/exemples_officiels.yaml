@@ -1601,6 +1601,42 @@ exemples:
       survivant n'a pas cinquante-cinq ans.
     carriere: {naissance: "1940-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2000-01", age_debut: 20, conjoint: "1952-01", ressources_conjoint: 13800, deces: "2005-08", reversions_avant_plafond_mensuelles: {regime_general: 530}}
     attendu: {reversions_ecretees_mensuelles: {regime_general: 169.06}}
+
+  # ---- Cnav : l'abattement des revenus d'activité du survivant -------------
+  # Circulaire n° 2006/37, § 7 : « L'abattement de 30% s'opère dès lors que
+  # l'assuré a 55 ans ou plus, quel que soit l'âge atteint au moment où ces
+  # revenus ont été perçus. [...] Assuré né le 15/09/1951 => 55 ans le
+  # 15/09/2006 => abattement à compter du 01/10/2006 [...] Ressources déclarées
+  # = salaires mensuels de 1000 euros depuis avril 2006 », et, pour chaque date
+  # d'étude, la moyenne mensuelle des trois mois qui la précèdent : 1 000 euros
+  # au 1er août et au 1er septembre, 700 au 1er octobre. Le témoin fait de
+  # chaque date d'étude la date d'effet d'une réversion, le défunt mourant le
+  # mois d'avant ; sa pension n'est pas dite, et ne compte pas.
+  - id: cnav_2006_37_abattement_au_1er_aout
+    source: {editeur: "Cnav", reference: "circulaire n° 2006/37 du 8 juin 2006, § 7, exemple, date d'étude du 01/08/2006", verifie_le: "2026-10-09"}
+    enonce: >-
+      Période de référence du 1er mai au 31 juillet 2006 : 1 000 × 3 = 3 000
+      euros, 1 000 euros de moyenne mensuelle. Le survivant a cinquante-quatre
+      ans : rien n'est abattu.
+    carriere: {naissance: "1945-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2005-02", age_debut: 20, conjoint: "1951-09-15", ressources_conjoint: 12000, activite_conjoint: 12000, deces: "2006-07-20", pensions_du_defunt_mensuelles: {regime_general: 1000}}
+    attendu: {ressources_retenues_mensuelles: {regime_general: 1000}}
+  - id: cnav_2006_37_abattement_au_1er_septembre
+    source: {editeur: "Cnav", reference: "circulaire n° 2006/37 du 8 juin 2006, § 7, exemple, date d'étude du 01/09/2006", verifie_le: "2026-10-09"}
+    enonce: >-
+      Période de référence du 1er juin au 31 août 2006 : 3 000 euros, 1 000 de
+      moyenne mensuelle. Le survivant, qui aura cinquante-cinq ans le 15
+      septembre, n'a encore que cinquante-quatre ans : rien n'est abattu.
+    carriere: {naissance: "1945-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2005-02", age_debut: 20, conjoint: "1951-09-15", ressources_conjoint: 12000, activite_conjoint: 12000, deces: "2006-08-20", pensions_du_defunt_mensuelles: {regime_general: 1000}}
+    attendu: {ressources_retenues_mensuelles: {regime_general: 1000}}
+  - id: cnav_2006_37_abattement_au_1er_octobre
+    source: {editeur: "Cnav", reference: "circulaire n° 2006/37 du 8 juin 2006, § 7, exemple, date d'étude du 01/10/2006", verifie_le: "2026-10-09"}
+    enonce: >-
+      Période de référence du 1er juillet au 30 septembre 2006 : 3 000 × 70 % =
+      2 100 euros, 700 euros de moyenne mensuelle. Le survivant a cinquante-cinq
+      ans : tout le salaire de la période est abattu, celui d'avant son
+      anniversaire compris.
+    carriere: {naissance: "1945-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2005-02", age_debut: 20, conjoint: "1951-09-15", ressources_conjoint: 12000, activite_conjoint: 12000, deces: "2006-09-20", pensions_du_defunt_mensuelles: {regime_general: 1000}}
+    attendu: {ressources_retenues_mensuelles: {regime_general: 700}}
   - id: cnav_2018_4_reversion_surcote_au_maximum
     source: {editeur: "Cnav", reference: "circulaire n° 2018-4 du 1er février 2018, § 5, Pension de réversion, second exemple", verifie_le: "2026-10-09"}
     enonce: >-

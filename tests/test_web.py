@@ -1665,6 +1665,13 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
         {"conjoint_invalidite": "2024-02"},
         {"conjoint": "1962", "conjoint_invalidite": "2024-13"},
         {"conjoint": "1962", "conjoint_invalidite": "1961-12"},
+        # Son ménage et ses revenus d'activité : sans conjoint, une union que la
+        # saisie ne connaît pas, des revenus d'activité au-delà de ses
+        # ressources, les ressources d'un nouveau conjoint sans union.
+        {"nouvelle_union": "pacs"},
+        {"conjoint": "1962", "nouvelle_union": "veuvage"},
+        {"conjoint": "1962", "ressources_conjoint": "4000", "activite_conjoint": "4100"},
+        {"conjoint": "1962", "ressources_nouveau_conjoint": "5000"},
         # Les carrières hors de France (docs/architecture.md, § 11) : une ligne
         # incomplète, une activité ou un État que la saisie ne connaît pas, la
         # France, des dates hors de la carrière ou qui se chevauchent, une
@@ -1699,6 +1706,8 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
          "invalidite_imputable": "oui", "taux_invalidite": "60",
          "metier2_debut": "2010-06", "metier2_statut": "salarie_prive_non_cadre"},
         {"conjoint": "1962", "conjoint_invalidite": "1962-02"},
+        {"conjoint": "1962", "ressources_conjoint": "4000", "activite_conjoint": "4000",
+         "nouvelle_union": "concubinage", "ressources_nouveau_conjoint": "0"},
         {"etranger1_pays": "DE", "etranger1_debut": "1989-01", "etranger1_fin": "1992-01",
          "etranger1_activite": "non_salariee", "pension_etrangere1_pays": "DE",
          "pension_etrangere1": "300", "pension_etrangere1_debut": "2050-01",

@@ -92,6 +92,9 @@ SCHEMA_VERSION = 1
 ASSURE = "assure"
 #: Le conjoint de l'assuré, que le mariage lui relie (§ 5.1).
 CONJOINT = "conjoint"
+#: Les formes d'une union (vocabulaire, ``formes_d_union``) : celle où le
+#: conjoint survivant vit après le décès en est une.
+FORMES_D_UNION = ("mariage", "pacs", "concubinage")
 
 #: Les sortes de faits qui sont des périodes de la carrière.
 EMPLOI, INTERRUPTION = "periode_d_activite", "periode_d_interruption"
@@ -287,9 +290,13 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
     ``conjoint`` déclare le conjoint (docs/architecture.md, § 5.1) : sa
     ``naissance`` et son ``sexe``, la date du ``mariage`` — que
     :func:`completer` présume sinon (``mariage_des_conjoints``) —, ses
-    ``ressources`` annuelles et son ``invalidite``, une décision médicale
-    datée, s'il les dit. ``deces`` date le décès de l'assuré, qui ouvre la
-    réversion de son conjoint : il clôt le mariage.
+    ``ressources`` annuelles, et ce qui en vient de son activité
+    (``revenus_d_activite``), la ``nouvelle_union`` où il vit après le décès
+    — mariage, pacs ou concubinage — et les ressources que son nouveau
+    conjoint y apporte (``ressources_du_nouveau_conjoint``), et son
+    ``invalidite``, une décision médicale datée, s'il les dit. ``deces`` date
+    le décès de l'assuré, qui ouvre la réversion de son conjoint : il clôt le
+    mariage.
     ``retraite_progressive`` déclare la demande d'une retraite progressive :
     son ``age``, compté comme celui du départ, qu'elle précède, et la
     ``quotite`` du temps partiel gardé jusqu'au départ, entre zéro et un.
@@ -417,6 +424,26 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
                 jour_deces or epoux["debut"],
                 attributs={"periode": "annuelle"},
                 montant={"annuel": float(conjoint["ressources"]), "monnaie": "EUR"}))
+        if conjoint.get("revenus_d_activite") is not None:
+            # La part de ces ressources que lui rapporte son activité, que le
+            # plafond de la réversion abat après cinquante-cinq ans (R. 353-1).
+            faits_naissance.append(fait(
+                f"revenus_d_activite_{CONJOINT}", CONJOINT, "ressources",
+                jour_deces or epoux["debut"],
+                attributs={"periode": "annuelle", "nature": "revenus_d_activite"},
+                montant={"annuel": float(conjoint["revenus_d_activite"]), "monnaie": "EUR"}))
+        if conjoint.get("nouvelle_union") is not None:
+            # Le ménage où il vit après le décès : la forme de sa nouvelle union,
+            # et ce que son nouveau conjoint y apporte, s'il le dit — « ses
+            # ressources personnelles ou celles du ménage » (L. 353-1).
+            forme = conjoint["nouvelle_union"]
+            if forme not in FORMES_D_UNION:
+                raise ValueError(f"une union « {forme} » : mariage, pacs ou concubinage")
+            apport = conjoint.get("ressources_du_nouveau_conjoint")
+            faits_naissance.append(fait(
+                f"menage_{CONJOINT}", CONJOINT, "ressources", jour_deces or epoux["debut"],
+                attributs={"periode": "annuelle", "nature": "menage", "forme": forme},
+                montant=None if apport is None else {"annuel": float(apport), "monnaie": "EUR"}))
         if conjoint.get("invalidite") is not None:
             jour, precision = date_declaree(conjoint["invalidite"], "l'invalidité du conjoint")
             if jour <= epoux["debut"]:
@@ -841,10 +868,36 @@ def deces(chronologie: dict, personne: str) -> dict | None:
     return faits[0] if faits else None
 
 
+def _ressources_de_nature(chronologie: dict, personne: str, nature: str | None) -> dict | None:
+    """Le fait de ressources d'une personne qui a cette nature : toutes ses
+    ressources sans nature dite, ou une part d'elles, ou celles de son
+    ménage."""
+    return next((f for f in faits_de(chronologie, personne, "ressources")
+                 if f["attributs"].get("nature") == nature), None)
+
+
 def ressources(chronologie: dict, personne: str) -> float | None:
     """Les ressources annuelles qu'une personne déclare, ou ``None``."""
-    faits = faits_de(chronologie, personne, "ressources")
-    return float(faits[0]["montant"]["annuel"]) if faits else None
+    fait_ = _ressources_de_nature(chronologie, personne, None)
+    return None if fait_ is None else float(fait_["montant"]["annuel"])
+
+
+def revenus_d_activite(chronologie: dict, personne: str) -> float | None:
+    """La part de ses ressources que son activité rapporte à une personne, si
+    elle la déclare, ou ``None``."""
+    fait_ = _ressources_de_nature(chronologie, personne, "revenus_d_activite")
+    return None if fait_ is None else float(fait_["montant"]["annuel"])
+
+
+def menage(chronologie: dict, personne: str) -> tuple[str, float | None] | None:
+    """Le ménage où une personne dit vivre : la forme de son union, et les
+    ressources annuelles que l'autre y apporte, ou ``None`` quand il ne les dit
+    pas ; ``None`` pour qui vit seul."""
+    fait_ = _ressources_de_nature(chronologie, personne, "menage")
+    if fait_ is None:
+        return None
+    montant = fait_.get("montant")
+    return fait_["attributs"]["forme"], None if not montant else float(montant["annuel"])
 
 
 def naissance(chronologie: dict, personne: str) -> dict | None:

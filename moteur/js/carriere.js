@@ -956,7 +956,8 @@ export class Carriere {
 
   /**
    * Le conjoint de la personne, que son mariage lui relie : `{personne,
-   * naissance, sexe, mariage, mariage_presume, ressources, invalidite}`, tel
+   * naissance, sexe, mariage, mariage_presume, ressources, invalidite,
+   * revenus_d_activite, nouvelle_union, ressources_du_nouveau_conjoint}`, tel
    * que la chronologie le porte ; `null` sans conjoint déclaré. Voir
    * `Conjoint` du Python.
    */
@@ -968,6 +969,8 @@ export class Carriere {
       } else {
         const naissance = chrono.naissance(this.chronologie, autre);
         const union = chrono.union(this.chronologie, this.personne);
+        const [nouvelleUnion, apport] = chrono.menage(this.chronologie, autre)
+          ?? [null, null];
         this._conjoint = Object.freeze({
           personne: autre,
           naissance: naissance.debut,
@@ -977,6 +980,9 @@ export class Carriere {
           ressources: chrono.ressources(this.chronologie, autre),
           invalidite: chrono.decisionMedicale(this.chronologie, autre, "invalidite")?.debut
             ?? null,
+          revenus_d_activite: chrono.revenusDActivite(this.chronologie, autre),
+          nouvelle_union: nouvelleUnion,
+          ressources_du_nouveau_conjoint: apport,
         });
       }
     }

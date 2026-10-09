@@ -1,15 +1,16 @@
 # Étape 4, première partie : le minimum et les majorations de la réversion du régime général
 
-**Reprise, au 9 octobre 2026.** Fait : le minimum de D. 353-1, la majoration
-de 10 % du survivant de trois enfants et celle de 11,1 % (L. 353-6), dans les
-deux moteurs, sur deux séries de la Cnav ; Destinie 2 concorde au centime ; la
-base de la réversion sans le minimum contributif ; le maximum, surcote en sus,
-sur la pension d'avant le maximum des pensions (note du 9 octobre). Reste, dans
-cet ordre : le plafond du ménage ; la réversion d'un assuré mort avant son
-départ ; le partage entre ex-conjoints et le remariage ; L. 353-5 et D. 355-1.
-Commencer par le plafond du ménage, 1,6 fois celui d'une personne seule, quand
-le survivant vit en couple, ce que la saisie ne dit pas encore. Détail : plus
-bas, « Ce qui reste », « La base », et la note du 9 octobre.
+**Reprise, au 9 octobre 2026.** Fait : le minimum de D. 353-1, les majorations
+de 10 % et de 11,1 %, la base sans le minimum contributif, le maximum, surcote
+en sus (notes du 7 et du 9 octobre) ; le plafond du ménage, 1,6 fois celui
+d'une personne seule pour le survivant qui déclare vivre en couple, et
+l'abattement de 30 % de ses revenus d'activité à cinquante-cinq ans, dans les
+deux moteurs et la saisie (note « plafond du ménage » du 9 octobre). Reste,
+dans cet ordre : la réversion d'un assuré mort avant son départ (R. 353-6) ;
+le partage entre ex-conjoints et le remariage ; L. 353-5 et D. 355-1.
+Commencer par l'assuré mort avant son départ : la pension qu'il « eût
+obtenue », au taux plein de l'inaptitude. Détail : plus bas, « Ce qui reste »,
+et les deux notes du 9 octobre.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « Quels sont les écarts
 encore présents avec trajectoire et destinie 2 ? J'aimerais combler les manques
@@ -102,7 +103,8 @@ de trois enfants). C'est l'étape 4 de l'action ; elle commence par là.
    § 5) — fait le 9 octobre, note du jour.
 3. *Le plafond du ménage* (1,6 fois celui d'une personne seule), quand le
    survivant vit en couple ; l'abattement de 30 % de ses revenus d'activité
-   après cinquante-cinq ans (R. 353-1).
+   après cinquante-cinq ans (R. 353-1) — fait le 9 octobre, note « plafond du
+   ménage ».
 4. *La réversion d'un assuré mort avant son départ* : la pension qu'il « eût
    obtenue », au taux de 50 % (R. 353-6).
 5. *Le partage entre ex-conjoints* au prorata des mariages (L. 353-3), le

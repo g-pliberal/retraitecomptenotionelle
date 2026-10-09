@@ -597,6 +597,15 @@ class Conjoint:
     #: elle lève l'âge de la réversion de l'Agirc-Arrco (fiche
     #: ``reversion_agirc_arrco``).
     invalidite: str | None = None
+    #: La part de ``ressources`` que son activité lui rapporte, s'il la dit :
+    #: le plafond de la réversion l'abat après cinquante-cinq ans (R. 353-1).
+    revenus_d_activite: float | None = None
+    #: La forme de l'union où il vit après le décès — mariage, pacs ou
+    #: concubinage —, et les ressources annuelles que son nouveau conjoint y
+    #: apporte, s'il les dit : le plafond de la réversion lit alors le
+    #: ménage. ``None`` laisse la présomption ``survivant_seul`` s'appliquer.
+    nouvelle_union: str | None = None
+    ressources_du_nouveau_conjoint: float | None = None
 
 
 @dataclass
@@ -971,8 +980,9 @@ class Carriere:
     @cached_property
     def conjoint(self) -> "Conjoint | None":
         """Le conjoint de la personne, que son mariage lui relie : sa naissance,
-        son sexe, la date du mariage, ses ressources et son invalidité, telles
-        que la chronologie les porte. ``None`` sans conjoint déclaré."""
+        son sexe, la date du mariage, ses ressources, leur part d'activité, le
+        ménage où il vit après le décès et son invalidité, telles que la
+        chronologie les porte. ``None`` sans conjoint déclaré."""
         if not self.chronologie:
             return None
         autre = chrono.conjoint(self.chronologie, self.personne)
@@ -981,6 +991,7 @@ class Carriere:
         naissance = chrono.naissance(self.chronologie, autre)
         union = chrono.union(self.chronologie, self.personne)
         invalidite = chrono.decision_medicale(self.chronologie, autre, "invalidite")
+        nouvelle_union, apport = chrono.menage(self.chronologie, autre) or (None, None)
         return Conjoint(
             personne=autre,
             naissance=naissance["debut"],
@@ -989,6 +1000,9 @@ class Carriere:
             mariage_presume=union.get("origine") == "presume",
             ressources=chrono.ressources(self.chronologie, autre),
             invalidite=invalidite["debut"] if invalidite is not None else None,
+            revenus_d_activite=chrono.revenus_d_activite(self.chronologie, autre),
+            nouvelle_union=nouvelle_union,
+            ressources_du_nouveau_conjoint=apport,
         )
 
     @cached_property

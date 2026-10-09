@@ -32,8 +32,9 @@ applique à chaque régime la version de sa fiche que les dates choisissent :
 * la complémentaire des indépendants (``reversion_rci``) : 60 %, à l'âge du
   régime général, réduite à due concurrence d'un plafond de ressources, deux
   plafonds annuels de la Sécurité sociale, que les réversions des régimes de
-  base comptent aussi ; pour un décès d'avant 2013, sa ligne dit qu'elle n'est
-  pas portée.
+  base comptent aussi, et le ménage du survivant qui vit en couple, sous le
+  même plafond ; pour un décès d'avant 2013, sa ligne dit qu'elle n'est pas
+  portée.
 
 Les autres régimes n'ont pas encore de fiche : leur ligne le dit, sans montant.
 
@@ -48,7 +49,10 @@ porté au MINIMUM de D. 353-1
 deçà, et, depuis juillet 2004, au prorata de sa durée dans le régime quand
 plusieurs régimes alignés en comptent plus de soixante ; entier, sans
 soixantièmes, avant décembre 1982 — ; puis réduit du dépassement du plafond de
-ressources ; puis ramené à son MAXIMUM, le taux du maximum des pensions
+ressources — 2 080 heures de SMIC, 1,6 fois pour le MÉNAGE du survivant qui
+vit en couple, marié, pacsé ou en concubinage, depuis juillet 2004, ses
+revenus d'activité abattus de 30 % à cinquante-cinq ans depuis 2005 (L. 353-1,
+D. 353-1-1, R. 353-1) — ; puis ramené à son MAXIMUM, le taux du maximum des pensions
 « opposable à l'assuré décédé » — l'ajournement d'avant 1983 le majorant —,
 au plafond de l'année des montants, que 54 % de la surcote du défunt passent
 (circulaires Cnav n° 120/82, § 4, n° 105/90, § 22, et n° 2018-4, § 5) ; puis
@@ -62,8 +66,9 @@ ligne, quand le survivant n'a pas encore l'âge du taux plein, s'écrit à part,
 avec sa date, hors du montant.
 
 CE QUI N'EST PAS ENCORE PORTÉ, et que les fiches déclarent : la majoration
-forfaitaire pour enfant à charge du régime général,
-le plafond du ménage, le plafonnement du veuf de fonctionnaire d'avant 2004,
+forfaitaire pour enfant à charge du régime général, la révision de la
+réversion quand le ménage ou ses ressources changent, le plafonnement du veuf
+de fonctionnaire d'avant 2004,
 la minoration de l'Agirc avant soixante ans, le partage entre ex-conjoints, le
 remariage. L'Agirc-Arrco sert 60 % des points sans le coefficient
 d'anticipation de l'assuré retraité, dans la limite de sa retraite, l'Ircantec
@@ -179,6 +184,14 @@ class ReversionRegime:
     #: le majorant, et de la surcote du défunt ; 0 sans lui.
     ecretement_du_maximum: float = 0.0
     maximum: float = 0.0
+    #: Le plafond de ressources auquel la réversion se mesure — celui d'une
+    #: personne seule ou du ménage au régime général, deux plafonds de la
+    #: Sécurité sociale à la complémentaire des indépendants —, et les
+    #: ressources qu'il retient à côté d'elle : celles du survivant, ses
+    #: revenus d'activité abattus, celles de son nouveau conjoint s'il vit en
+    #: couple, les réversions des autres régimes de base ; 0 sans plafond.
+    plafond: float = 0.0
+    ressources_retenues: float = 0.0
 
     def donnees(self) -> dict:
         return {"regime": self.regime, "base": self.base, "taux": self.taux,
@@ -193,7 +206,8 @@ class ReversionRegime:
                     self.majoration_petites_retraites_effet,
                 "minimum_contributif": self.minimum_contributif,
                 "ecretement_du_maximum": self.ecretement_du_maximum,
-                "maximum": self.maximum}
+                "maximum": self.maximum, "plafond": self.plafond,
+                "ressources_retenues": self.ressources_retenues}
 
 
 @dataclass(frozen=True)
@@ -376,18 +390,45 @@ def _enfants_de_moins_de(carriere: Carriere, deces: str, ans: int) -> int:
                if naissance <= deces < chrono._plus_ans(naissance, ans))
 
 
+def _ressources_du_plafond(parametres: dict, conjoint: Conjoint, ressources: float,
+                           date_effet: str) -> tuple[float, float]:
+    """Les ressources du survivant que retient le plafond de la version, et le
+    facteur qui multiplie ce plafond (L. 353-1, D. 353-1-1, R. 353-1).
+
+    Ses revenus d'activité sont abattus de 30 % quand il a cinquante-cinq ans à
+    la date d'effet, « quel que soit l'âge atteint au moment où ces revenus ont
+    été perçus » (circulaire Cnav n° 2006-37, § 7). Quand il vit en couple —
+    marié, pacsé ou en concubinage —, les ressources de son nouveau conjoint
+    s'y ajoutent, entières, sous le plafond du ménage (circulaire Cnav
+    n° 2005-17, § 141 et § 145) : 1,6 fois celui d'une personne seule au
+    régime général, le même à la complémentaire des indépendants. La version
+    qui ne dit pas ce facteur, avant juillet 2004, ne compte que ses ressources
+    personnelles."""
+    taux = parametres.get("abattement_activite")
+    if (taux and conjoint.revenus_d_activite
+            and chrono.annees_revolues(conjoint.naissance, date_effet)
+            >= int(parametres["abattement_activite_age"])):
+        ressources -= float(taux) * min(ressources, float(conjoint.revenus_d_activite))
+    facteur = parametres.get("facteur_menage")
+    if facteur is None or conjoint.nouvelle_union is None:
+        return ressources, 1.0
+    return (ressources + float(conjoint.ressources_du_nouveau_conjoint or 0.0),
+            float(facteur))
+
+
 def _majorer_les_petites_retraites(moteur: ScenarioActuel,
                                    lignes: dict[str, ReversionRegime],
                                    reduites: dict[str, tuple[float, dict]],
-                                   conjoint: Conjoint, ressources: float,
+                                   conjoint: Conjoint, retraites_personnelles: float,
                                    annee: int) -> None:
     """La majoration de 11,1 % des réversions des régimes alignés (L. 353-6),
     écrite dans ``lignes``, une fois toutes les réversions chiffrées.
 
     Elle est due au survivant qui a l'âge du taux plein (L. 351-8, 1°) et dont
-    les retraites — ses ressources déclarées, tenues pour ses retraites
-    personnelles, et toutes ses réversions, de base et complémentaires,
-    majorations comprises — restent sous le plafond de D. 353-4, quatre fois
+    les retraites — ``retraites_personnelles``, ses ressources déclarées hors
+    de ses revenus d'activité, et toutes ses réversions, de base et
+    complémentaires, majorations comprises — restent sous le plafond de
+    D. 353-4, quatre fois
     le plafond trimestriel ; elle vaut 11,1 % de la réversion réduite, et se
     réduit de ce qui dépasserait le plafond, partagée entre les régimes au
     prorata de leurs réversions (R. 353-12 ; exposé de la Cnav, « Majoration à
@@ -403,7 +444,7 @@ def _majorer_les_petites_retraites(moteur: ScenarioActuel,
     if not eligibles or plafond is None or age is None:
         return
     debut = _au_taux_plein(conjoint.naissance, age[0])
-    retraites = ressources + somme_ordonnee(l.montant for l in lignes.values())
+    retraites = retraites_personnelles + somme_ordonnee(l.montant for l in lignes.values())
     theoriques = {regime: float(parametres["majoration_taux"]) * montant
                   for regime, (montant, parametres) in eligibles.items()}
     marge = 4 * plafond[0] - retraites
@@ -603,9 +644,18 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             if minimum > montant:
                 montant, motif = minimum, "minimum"
                 fiabilite = min(fiabilite, minimum_de_l_annee[1])
-        plafond_annuel = (float(parametres["plafond_smic_heures"])
+        # Le plafond, d'une personne seule ou du ménage, et ce qu'il retient à
+        # côté de la réversion : les ressources du survivant, ou du ménage, et
+        # les réversions des autres régimes de base — avant juillet 2004, ses
+        # ressources personnelles « sans tenir compte des avantages de
+        # réversion » (R. 353-1, rédactions de 1985 et de 1990).
+        retenues, facteur = _ressources_du_plafond(parametres, conjoint, ressources,
+                                                   date_effet)
+        plafond_annuel = (facteur * float(parametres["plafond_smic_heures"])
                           * moteur.macro.smic_horaire(annee))
-        disponible = plafond_annuel - ressources - autres_bases
+        reversions = autres_bases if parametres["ressources"] == "ecretement" else 0.0
+        disponible = plafond_annuel - retenues - reversions
+        retenues += reversions
         if not _mariage_dure(conjoint, deces, enfants, parametres["mariage_minimum_annees"]):
             montant, motif = 0.0, "mariage"
         elif parametres["ressources"] == "ecretement":
@@ -644,13 +694,14 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
                   date_effet, fiabilite),
             minimum=minimum, majoration_trois_enfants=trois_enfants,
             minimum_contributif=contributif, ecretement_du_maximum=ecretement,
-            maximum=maximum)
+            maximum=maximum, plafond=plafond_annuel, ressources_retenues=retenues)
 
     # La complémentaire des indépendants en dernier : ses ressources sont
-    # celles de R. 353-1, que les réversions de tous les régimes de base
-    # grossissent (articles 17 et 35 de son règlement). Un dépassement de son
-    # plafond réduit ses réversions à due concurrence, chacune au prorata de
-    # son montant — celles d'une carrière d'artisan et d'une carrière de
+    # celles de R. 353-1, « personnelles ou du ménage », que les réversions de
+    # tous les régimes de base grossissent (articles 17 et 35 de son
+    # règlement). Un dépassement de son plafond, le même pour un ménage,
+    # réduit ses réversions à due concurrence, chacune au prorata de son
+    # montant — celles d'une carrière d'artisan et d'une carrière de
     # commerçant d'avant 2013 comme une seule.
     independantes = []
     for regime, base, fiabilite in pensions:
@@ -664,11 +715,15 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         independantes.append((regime, base, fiabilite, fiche, version))
     if independantes:
         parametres = independantes[0][4]["parametres"]
-        plafond_annuel = (float(parametres["plafond_pass"])
+        retenues, facteur = _ressources_du_plafond(
+            parametres, conjoint, ressources,
+            _a_l_age(conjoint.naissance, lendemain, float(parametres["age_minimum"])))
+        plafond_annuel = (facteur * float(parametres["plafond_pass"])
                           * moteur.macro.plafond_securite_sociale(annee))
+        retenues += autres_bases
         brut = somme_ordonnee(float(version["parametres"]["taux"]) * base
                    for _, base, _, _, version in independantes)
-        depassement = max(0.0, ressources + autres_bases + brut - plafond_annuel)
+        depassement = max(0.0, retenues + brut - plafond_annuel)
         for regime, base, fiabilite, fiche, version in independantes:
             parametres = version["parametres"]
             taux = float(parametres["taux"])
@@ -678,10 +733,16 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
                 montant, motif = max(0.0, montant - depassement * montant / brut), "ecretee"
             date_effet = _a_l_age(conjoint.naissance, lendemain,
                                   float(parametres["age_minimum"]))
-            lignes[regime] = ligne(regime, base, montant, motif, fiche, version, taux,
-                                   date_effet, fiabilite)
+            lignes[regime] = replace(
+                ligne(regime, base, montant, motif, fiche, version, taux, date_effet,
+                      fiabilite),
+                plafond=plafond_annuel, ressources_retenues=retenues)
 
-    _majorer_les_petites_retraites(moteur, lignes, reduites, conjoint, ressources, annee)
+    # Ses retraites personnelles, que la majoration de 11,1 % compte : ses
+    # ressources, moins ce que son activité lui rapporte.
+    _majorer_les_petites_retraites(
+        moteur, lignes, reduites, conjoint,
+        ressources - min(ressources, float(conjoint.revenus_d_activite or 0.0)), annee)
 
     return Reversion(
         personne=conjoint.personne, defunt=carriere.personne, deces=deces, annee=annee,

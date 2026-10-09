@@ -16,7 +16,9 @@ import {
   PartCotisation, SituationFoyer, TableConversion, avec, sousRegimeFrais,
   sousRegimeTaux,
 } from "./config.js";
-import { dateDeclaree, naissanceDeclaree, valeur as valeurPresumee } from "./chronologie.js";
+import {
+  FORMES_D_UNION, dateDeclaree, naissanceDeclaree, valeur as valeurPresumee,
+} from "./chronologie.js";
 import { formatG } from "./format.js";
 import * as g from "./gabarit.js";
 
@@ -507,12 +509,17 @@ export const DEFAUTS = Object.freeze({
   //: Le conjoint, pour la réversion (docs/architecture.md, § 5.1) : sa
   //: naissance (AAAA ou AAAA-MM), son sexe — l'autre que celui de l'assuré
   //: s'il n'est pas dit (présomption `conjoint_de_l_autre_sexe`) —, la date du
-  //: mariage, présumée sinon, ses ressources annuelles et le mois où son
-  //: invalidité est reconnue, s'il les dit. Voir `conjointDeclare`.
+  //: mariage, présumée sinon, ses ressources annuelles et ce qu'en rapporte son
+  //: activité, l'union où il vit après le décès — `mariage`, `pacs` ou
+  //: `concubinage` — et les ressources annuelles de son nouveau conjoint, et le
+  //: mois où son invalidité est reconnue, s'il les dit. Voir `conjointDeclare`.
   conjoint: "",
   conjoint_sexe: "",
   mariage: "",
   ressources_conjoint: null,
+  activite_conjoint: null,
+  nouvelle_union: "",
+  ressources_nouveau_conjoint: null,
   conjoint_invalidite: "",
   //: Le décès de l'assuré (AAAA ou AAAA-MM), qui ouvre la réversion de son
   //: conjoint : au départ ou après lui.
@@ -683,6 +690,12 @@ export class Saisie {
       mariage: (parametres.mariage || "").trim(),
       ressources_conjoint: [undefined, null, ""].includes(parametres.ressources_conjoint)
         ? null : reel(parametres, "ressources_conjoint", 0.0),
+      activite_conjoint: [undefined, null, ""].includes(parametres.activite_conjoint)
+        ? null : reel(parametres, "activite_conjoint", 0.0),
+      nouvelle_union: (parametres.nouvelle_union || "").trim(),
+      ressources_nouveau_conjoint: [undefined, null, ""].includes(
+        parametres.ressources_nouveau_conjoint)
+        ? null : reel(parametres, "ressources_nouveau_conjoint", 0.0),
       revenu_fiscal: [undefined, null, ""].includes(parametres.revenu_fiscal)
         ? null : reel(parametres, "revenu_fiscal", 0.0),
       conjoint_invalidite: (parametres.conjoint_invalidite || "").trim(),
@@ -1589,6 +1602,9 @@ export class Saisie {
       sexe: this.conjoint_sexe || (this.sexe === "F" ? "H" : "F"),
       mariage: this.mariage || null,
       ressources: this.ressources_conjoint,
+      revenus_d_activite: this.activite_conjoint,
+      nouvelle_union: this.nouvelle_union || null,
+      ressources_du_nouveau_conjoint: this.ressources_nouveau_conjoint,
       invalidite: this.conjoint_invalidite || null,
     };
   }
@@ -1999,7 +2015,9 @@ export class Saisie {
    * Le conjoint et le décès : des dates lisibles, dans l'ordre de la vie — les
    * naissances, le mariage, le décès, l'invalidité du conjoint après sa
    * naissance —, et un décès qui ne précède pas le départ : la réversion d'une
-   * pension que l'assuré n'a pas encore liquidée n'est pas calculée. Voir
+   * pension que l'assuré n'a pas encore liquidée n'est pas calculée. Ses
+   * ressources, positives : ses revenus d'activité en sont une part, et celles
+   * d'un nouveau conjoint supposent l'union où il vit. Voir
    * `_verifier_conjoint` du Python.
    */
   verifierConjoint() {
@@ -2007,6 +2025,9 @@ export class Saisie {
       const orphelins = [
         ["conjoint_sexe", this.conjoint_sexe], ["mariage", this.mariage],
         ["ressources_conjoint", this.ressources_conjoint],
+        ["activite_conjoint", this.activite_conjoint],
+        ["nouvelle_union", this.nouvelle_union],
+        ["ressources_nouveau_conjoint", this.ressources_nouveau_conjoint],
         ["conjoint_invalidite", this.conjoint_invalidite], ["deces", this.deces],
       ].filter(([, valeur]) => valeur !== "" && valeur !== null && valeur !== undefined)
         .map(([nom]) => nom);
@@ -2042,6 +2063,33 @@ export class Saisie {
     }
     if (this.ressources_conjoint !== null && this.ressources_conjoint < 0) {
       throw new ErreurSaisie("Ressources du conjoint : un montant annuel positif.");
+    }
+    if (this.activite_conjoint !== null) {
+      if (this.activite_conjoint < 0) {
+        throw new ErreurSaisie("Revenus d'activité du conjoint : un montant annuel positif.");
+      }
+      if (this.ressources_conjoint === null
+          || this.activite_conjoint > this.ressources_conjoint) {
+        throw new ErreurSaisie(
+          "Revenus d'activité du conjoint : une part de ses ressources, à dire "
+          + "aussi et au moins égales (« ressources_conjoint »).",
+        );
+      }
+    }
+    if (!["", ...FORMES_D_UNION].includes(this.nouvelle_union)) {
+      throw new ErreurSaisie(
+        "Union du conjoint après le décès : mariage, pacs ou concubinage.");
+    }
+    if (this.ressources_nouveau_conjoint !== null) {
+      if (this.ressources_nouveau_conjoint < 0) {
+        throw new ErreurSaisie("Ressources du nouveau conjoint : un montant annuel positif.");
+      }
+      if (!this.nouvelle_union) {
+        throw new ErreurSaisie(
+          "« ressources_nouveau_conjoint » ne sert qu'au ménage du conjoint : "
+          + "dites aussi l'union où il vit (« nouvelle_union »).",
+        );
+      }
     }
     if ("mariage" in dates) {
       const aine = dates.conjoint > this.naissanceIso ? dates.conjoint : this.naissanceIso;
@@ -2087,6 +2135,11 @@ export class Saisie {
         ["mariage", this.mariage],
         ["ressources_conjoint", this.ressources_conjoint === null
           ? "" : nombreBrut(this.ressources_conjoint)],
+        ["activite_conjoint", this.activite_conjoint === null
+          ? "" : nombreBrut(this.activite_conjoint)],
+        ["nouvelle_union", this.nouvelle_union],
+        ["ressources_nouveau_conjoint", this.ressources_nouveau_conjoint === null
+          ? "" : nombreBrut(this.ressources_nouveau_conjoint)],
         ["conjoint_invalidite", this.conjoint_invalidite],
         ["deces", this.deces],
       ].filter(([, valeur]) => valeur !== "" && valeur !== null)),

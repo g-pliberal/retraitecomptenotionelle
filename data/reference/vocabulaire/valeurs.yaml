@@ -335,7 +335,9 @@ listes:
           mariage des générations qui partent aujourd'hui (INSEE, état civil) ;
           le formulaire ne demande la date qu'à qui veut la dire
       ressources_du_survivant:
-        dit: le conjoint survivant n'a d'autres ressources que les réversions qu'il reçoit
+        dit: >-
+          le conjoint survivant n'a d'autres ressources que les réversions qu'il
+          reçoit, ni son nouveau conjoint quand il vit en couple
         valeur: 0
         unite: euros par an
         appliquee_par: reversion (droit/reversion.py), qui ne compte au plafond du régime général, et à celui de la complémentaire des indépendants, que les réversions des autres régimes de base ; son jumeau JavaScript
@@ -343,10 +345,26 @@ listes:
         raison: >-
           le plafond du régime général compare la réversion aux ressources du
           survivant — sa propre retraite, ses revenus d'activité, abattus de
-          30 % après cinquante-cinq ans (R. 353-1) ; le formulaire ne les
-          demande pas, et la réversion n'est alors écrêtée que si elle dépasse
-          le plafond avec celles des autres régimes de base. Une ressource
+          30 % après cinquante-cinq ans (R. 353-1) —, et à celles de son ménage
+          quand il vit en couple ; le formulaire ne les demande qu'à qui veut
+          les dire, et la réversion n'est alors écrêtée que si elle dépasse le
+          plafond avec celles des autres régimes de base. Une ressource
           déclarée prend la place de la présomption
+      survivant_seul:
+        dit: >-
+          le conjoint survivant vit seul après le décès : ni remarié, ni pacsé,
+          ni en concubinage
+        valeur: seul
+        appliquee_par: reversion (droit/reversion.py), qui compare ses seules ressources au plafond d'une personne seule, au régime général et à la complémentaire des indépendants ; son jumeau JavaScript
+        entrera_a: liquider_chaque_regime
+        raison: >-
+          depuis juillet 2004, le régime général compare les ressources du
+          survivant qui vit en couple, marié, pacsé ou en concubinage, et celles
+          de son nouveau conjoint, à un plafond 1,6 fois plus haut que celui
+          d'une personne seule (L. 353-1, D. 353-1-1 ; circulaire Cnav
+          n° 2005-17, § 141) ; le formulaire ne demande le ménage qu'à qui veut
+          le dire, et sa première réponse est « seul ». Un ménage déclaré prend
+          la place de la présomption
       ressources_du_conjoint:
         dit: le conjoint qui ne déclare pas ses ressources n'en a aucune
         valeur: 0

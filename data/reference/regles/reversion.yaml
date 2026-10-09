@@ -24,7 +24,11 @@ lit:
 - union.debut, d'un mariage ; ni le PACS ni le concubinage n'ouvrent la réversion
 - union.fin, pour l'ex-conjoint divorcé
 - la naissance du survivant, qui dit son âge à la date d'effet
-- les ressources du survivant, et celles du ménage s'il vit en couple
+- les ressources du survivant, et ce qu'en rapporte son activité, abattu de 30 % à
+  cinquante-cinq ans
+- l'union où il vit après le décès — mariage, PACS ou concubinage — et les
+  ressources de son nouveau conjoint, que le plafond du ménage compte avec les
+  siennes
 - la pension principale du défunt, servie ou dont il eût bénéficié à son décès
 - ce que le maximum des pensions en a retiré, sa surcote et le coefficient de son
   ajournement d'avant 1983, et le maximum des pensions de l'année des montants
@@ -44,7 +48,8 @@ dates_qui_decident:
 # `contenu.parametres` dit ce que le moteur lira : le taux, l'âge, la
 # condition de durée de mariage, le traitement des ressources — condition
 # d'ouverture avant juillet 2004, écrêtement depuis —, le plafond en heures de
-# SMIC et son facteur pour le ménage ; le minimum — sa durée, ses soixantièmes
+# SMIC et son facteur pour le ménage, l'abattement des revenus d'activité du
+# survivant et l'âge qui l'ouvre ; le minimum — sa durée, ses soixantièmes
 # depuis décembre 1982, son prorata entre régimes alignés depuis juillet 2004 —,
 # dont le montant de chaque année est dans `legislation/minimum_reversion.csv` ;
 # les taux des deux majorations, celle de 11,1 % sous le plafond de
@@ -76,6 +81,8 @@ versions:
       ressources: condition
       plafond_smic_heures: 2080
       facteur_menage: null
+      abattement_activite: null
+      abattement_activite_age: null
       minimum_trimestres: 60
       minimum_proratise: false
       minimum_tous_regimes: false
@@ -109,6 +116,8 @@ versions:
       ressources: condition
       plafond_smic_heures: 2080
       facteur_menage: null
+      abattement_activite: null
+      abattement_activite_age: null
       minimum_trimestres: 60
       minimum_proratise: true
       minimum_tous_regimes: false
@@ -140,6 +149,8 @@ versions:
       ressources: condition
       plafond_smic_heures: 2080
       facteur_menage: null
+      abattement_activite: null
+      abattement_activite_age: null
       minimum_trimestres: 60
       minimum_proratise: true
       minimum_tous_regimes: false
@@ -159,14 +170,15 @@ versions:
   - {id: LEGIARTI000006781419, article: "décret n° 2004-858, article 24", en_vigueur: 2004-08-25}
   nee_de: LEGIARTI000006742649
   bornes:
-    liquidation.date_effet: [2004-07-01, 2005-07-01]
+    liquidation.date_effet: [2004-07-01, 2005-01-01]
   contenu:
     droit: 54 %, réduite à due concurrence du dépassement du plafond de ressources
     beneficiaire: le conjoint survivant, et le conjoint divorcé, remarié ou non
     conditions: >-
       cinquante-cinq ans ; plus de condition de durée de mariage ; des ressources
-      personnelles, ou du ménage, sous 2 080 fois le SMIC horaire, 1,6 fois ce montant
-      pour le ménage
+      personnelles, ou du ménage — du couple marié, des partenaires pacsés ou des
+      concubins (circulaire Cnav n° 2005-17, § 141) —, sous 2 080 fois le SMIC horaire,
+      1,6 fois ce montant pour le ménage
     parametres:
       taux: 0.54
       age_minimum: 55
@@ -174,6 +186,43 @@ versions:
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
+      abattement_activite: null
+      abattement_activite_age: null
+      minimum_trimestres: 60
+      minimum_proratise: true
+      minimum_tous_regimes: true
+      majoration_taux: null
+      majoration_enfants_taux: 0.10
+      majoration_enfants_minimum: 0.10
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: abattement_2005
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006749454, article: R. 353-1, en_vigueur: 2004-12-30}
+  - {id: LEGIARTI000006736552, article: D. 353-1-1, en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000006781420, article: "décret n° 2004-858, article 24", en_vigueur: 2004-12-30}
+  nee_de: LEGIARTI000006749454
+  bornes:
+    liquidation.date_effet: [2005-01-01, 2005-07-01]
+  contenu:
+    droit: la version reforme_2004
+    beneficiaire: le conjoint survivant, et le conjoint divorcé, remarié ou non
+    conditions: >-
+      celles de reforme_2004 ; les revenus d'activité du conjoint survivant « font
+      l'objet d'un abattement de 30 % s'il est âgé de 55 ans ou plus » (R. 353-1, dans
+      la rédaction du décret n° 2004-1447 du 23 décembre 2004, publié le 30), quel que
+      soit l'âge atteint quand il les a perçus (circulaire Cnav n° 2006-37, § 7) ; la
+      première date d'effet qui le suit est le 1er janvier 2005
+    parametres:
+      taux: 0.54
+      age_minimum: 55
+      mariage_minimum_annees: 0
+      ressources: ecretement
+      plafond_smic_heures: 2080
+      facteur_menage: 1.6
+      abattement_activite: 0.30
+      abattement_activite_age: 55
       minimum_trimestres: 60
       minimum_proratise: true
       minimum_tous_regimes: true
@@ -193,7 +242,7 @@ versions:
   contenu:
     droit: 54 %, réduite à due concurrence du dépassement du plafond de ressources
     beneficiaire: le conjoint survivant, et le conjoint divorcé
-    conditions: cinquante-deux ans ; le plafond de ressources de 2004
+    conditions: cinquante-deux ans ; le plafond de ressources de 2004, l'abattement de 2005
     parametres:
       taux: 0.54
       age_minimum: 52
@@ -201,6 +250,8 @@ versions:
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
+      abattement_activite: 0.30
+      abattement_activite_age: 55
       minimum_trimestres: 60
       minimum_proratise: true
       minimum_tous_regimes: true
@@ -208,7 +259,9 @@ versions:
       majoration_enfants_taux: 0.10
       majoration_enfants_minimum: 0.10
       fiabilite: haute
-  exemples: [cnav_2005_17_reversion_ecretee]
+  exemples: [cnav_2005_17_reversion_ecretee, cnav_2006_37_abattement_au_1er_aout,
+             cnav_2006_37_abattement_au_1er_septembre,
+             cnav_2006_37_abattement_au_1er_octobre]
 - id: age_51
   statut: lue
   textes:
@@ -221,7 +274,7 @@ versions:
   contenu:
     droit: 54 %, réduite à due concurrence du dépassement du plafond de ressources
     beneficiaire: le conjoint survivant, et le conjoint divorcé
-    conditions: cinquante et un ans ; le plafond de ressources de 2004
+    conditions: cinquante et un ans ; le plafond de ressources de 2004, l'abattement de 2005
     parametres:
       taux: 0.54
       age_minimum: 51
@@ -229,6 +282,8 @@ versions:
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
+      abattement_activite: 0.30
+      abattement_activite_age: 55
       minimum_trimestres: 60
       minimum_proratise: true
       minimum_tous_regimes: true
@@ -250,7 +305,9 @@ versions:
   contenu:
     droit: 54 %, réduite à due concurrence du dépassement du plafond de ressources
     beneficiaire: le conjoint survivant, et le conjoint divorcé
-    conditions: cinquante-cinq ans à la date d'effet ; le plafond de ressources de 2004
+    conditions: >-
+      cinquante-cinq ans à la date d'effet ; le plafond de ressources de 2004,
+      l'abattement de 2005
     parametres:
       taux: 0.54
       age_minimum: 55
@@ -258,6 +315,8 @@ versions:
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
+      abattement_activite: 0.30
+      abattement_activite_age: 55
       minimum_trimestres: 60
       minimum_proratise: true
       minimum_tous_regimes: true
@@ -287,6 +346,8 @@ versions:
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
+      abattement_activite: 0.30
+      abattement_activite_age: 55
       minimum_trimestres: 60
       minimum_proratise: true
       minimum_tous_regimes: true
@@ -316,6 +377,8 @@ versions:
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
+      abattement_activite: 0.30
+      abattement_activite_age: 55
       minimum_trimestres: 60
       minimum_proratise: true
       minimum_tous_regimes: true
@@ -342,6 +405,8 @@ versions:
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
+      abattement_activite: 0.30
+      abattement_activite_age: 55
       minimum_trimestres: 60
       minimum_proratise: true
       minimum_tous_regimes: true
@@ -373,6 +438,8 @@ versions:
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
+      abattement_activite: 0.30
+      abattement_activite_age: 55
       minimum_trimestres: 60
       minimum_proratise: true
       minimum_tous_regimes: true
@@ -399,6 +466,8 @@ versions:
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
+      abattement_activite: 0.30
+      abattement_activite_age: 55
       minimum_trimestres: 60
       minimum_proratise: true
       minimum_tous_regimes: true
@@ -429,6 +498,8 @@ versions:
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
+      abattement_activite: 0.30
+      abattement_activite_age: 55
       minimum_trimestres: 60
       minimum_proratise: true
       minimum_tous_regimes: true
@@ -458,6 +529,8 @@ versions:
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
+      abattement_activite: 0.30
+      abattement_activite_age: 55
       minimum_trimestres: 60
       minimum_proratise: true
       minimum_tous_regimes: true
@@ -505,8 +578,9 @@ approximations:
 - ecart: >-
     le survivant est tenu pour avoir eu ou élevé les enfants que le défunt déclare
     (majoration de 10 %), pour avoir demandé toutes ses retraites, et ses ressources
-    déclarées pour ses retraites personnelles, de base et complémentaires, à l'âge du
-    taux plein (majoration de 11,1 %) ; la majoration de 11,1 % d'une réversion dont
+    déclarées, hors de ses revenus d'activité, pour ses retraites personnelles, de base
+    et complémentaires, à l'âge du taux plein (majoration de 11,1 %) ; la majoration de
+    11,1 % d'une réversion dont
     la date d'effet précède 2010 n'est pas calculée, ni sa révision quand les
     retraites du survivant varient (R. 353-13)
   effet: non mesuré
@@ -517,25 +591,38 @@ approximations:
     condition de durée, est tout enfant déclaré
   effet: non mesuré
 - ecart: >-
-    le survivant vit seul : le plafond du ménage (1,6 fois celui d'une personne
-    seule) n'est pas appliqué ; ses ressources sont celles qu'il déclare, sans
-    l'abattement de 30 % des revenus d'activité après cinquante-cinq ans, et la
-    réversion n'est pas révisée quand elles varient (R. 353-1-1)
+    le ménage du survivant est celui qu'il déclare, sans date : le plafond du ménage
+    s'applique dès la date d'effet, et la réversion n'est révisée ni quand il se
+    forme ou se défait, ni quand les ressources varient (R. 353-1-1) ; elles se
+    comparent sur l'année, et non sur les trois mois qui précèdent la date d'effet,
+    les douze à défaut (R. 353-1), ce qui ne change rien à des ressources égales
+    chaque mois ; les ressources du survivant et de son nouveau conjoint sont celles
+    que la saisie déclare, comptées entières : le modèle n'en ôte ni ce que le droit
+    de l'allocation supplémentaire exclut, ni la majoration pour enfants des
+    retraites du survivant (lettre ministérielle n° 237 du 22 mars 2005)
   effet: non mesuré
 - ecart: >-
     les montants sont ceux de l'année du décès — l'année courante pour un décès à
     venir, l'année du départ s'il la suit —, au SMIC horaire du 1er janvier de cette
-    année, même quand l'âge requis reporte la date d'effet ; la réversion d'un
-    assuré mort avant son départ, et le partage entre ex-conjoints (L. 353-3), ne
-    sont pas calculés
-  effet: non mesuré
+    année, même quand l'âge requis reporte la date d'effet ; en 2004, la caisse
+    prend celui du 1er juillet (circulaire Cnav n° 2005-17, § 145) : son plafond,
+    15 828,80 euros, est 5,8 % au-dessus de celui du modèle, 14 955,20 ; la
+    réversion d'un assuré mort avant son départ, et le partage entre ex-conjoints
+    (L. 353-3), ne sont pas calculés
+  effet: >-
+    non mesuré ; pour le plafond de 2004, 873,60 euros de ressources de plus sous le
+    plafond, pour une réversion qui prend effet au second semestre
 presomptions:
   mariage_des_conjoints: >-
     la condition de durée de mariage d'avant juillet 2004, quand la date du mariage
     n'est pas déclarée
   ressources_du_survivant: >-
     le plafond de ressources, que le survivant qui ne déclare pas les siennes
-    n'atteint que par ses réversions ; de même le plafond de la majoration de 11,1 %
+    n'atteint que par ses réversions, ni son nouveau conjoint quand il vit en couple ;
+    de même le plafond de la majoration de 11,1 %
+  survivant_seul: >-
+    le plafond d'une personne seule, quand la saisie ne dit pas que le survivant vit
+    en couple
   reversion_demandee_dans_l_annee: >-
     la date d'effet, au premier jour du mois qui suit le décès, ou qui suit l'âge
     requis
@@ -566,8 +653,8 @@ sources:
     2004 (D. 355-1), le partage entre conjoints survivant et divorcés au prorata de
     la durée de chaque mariage (L. 353-3), la majoration forfaitaire pour enfant à
     charge (L. 353-5), la réversion d'un assuré disparu (L. 353-2), la révision de la
-    pension quand les ressources varient (R. 353-1-1), et la pension de vieillesse de
-    veuve ou de veuf.
+    pension quand les ressources ou le ménage changent (R. 353-1-1), et la pension de
+    vieillesse de veuve ou de veuf.
   - >-
     La pension dont l'assuré « eût bénéficié » : décédé avant l'âge du taux plein, elle
     est celle qui lui aurait été allouée au titre de l'inaptitude au travail, donc au
@@ -779,6 +866,52 @@ sources:
       tests/test_reversion.py le confronte au modèle
     date: 2026-01-05
     url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=retraite_reversion_montant_maximum_bar.aspx
+  - type: legifrance
+    reference: >-
+      relus le 9 octobre 2026 dans l'index LEGI, pour le plafond du ménage : L. 353-1,
+      « si ses ressources personnelles ou celles du ménage n'excèdent pas des plafonds
+      fixés par décret », depuis la rédaction du 22 août 2003 (LEGIARTI000006742649) ;
+      D. 353-1-1 (LEGIARTI000006736552, sa seule rédaction, du 25 août 2004) : « Le
+      plafond annuel de ressources du ménage [...] est fixé à 1,6 fois le plafond » d'une
+      personne seule ; R. 353-1, ses rédactions de 1990 à 2019 — personnelles avant
+      juillet 2004, « Les revenus d'activité du conjoint survivant font l'objet d'un
+      abattement de 30 % s'il est âgé de 55 ans ou plus » depuis celle du 30 décembre
+      2004 (LEGIARTI000006749454), qui n'y était pas le 25 août (LEGIARTI000006749453) ;
+      R. 815-18 (LEGIARTI000006753648), qui compte les ressources du « conjoint, son
+      concubin ou son partenaire lié par un pacte civil de solidarité » ; dans l'index
+      JORF, le décret n° 2004-1447 du 23 décembre 2004, article 1er
+      (JORFARTI000001074185), publié le 30, qui écrit l'abattement
+    date: 2026-10-09
+  - type: circulaire_cnav
+    reference: >-
+      exposés « Condition de ressources » (16 avril 2026) et « Évaluation des
+      ressources » (23 janvier 2026) de la base de législation de la Cnav, lus par son
+      API le 9 octobre 2026 : « Le plafond "couple" s'applique aux couples mariés, aux
+      partenaires pacsés et aux concubins » ; « toutes les ressources du demandeur ou du
+      ménage sont retenues » ; l'abattement de 30 % des revenus d'activité du demandeur
+      d'au moins cinquante-cinq ans ; la révision de la réversion au remariage « pour
+      tenir compte des ressources du nouveau ménage » ; avant juillet 2004, les
+      ressources personnelles, sans les avantages personnels de vieillesse ni les
+      réversions. Circulaires n° 2005-17 du 11 avril 2005, § 141 à 146 — le nouveau
+      ménage « du couple marié, des partenaires pacsés ou des concubins », le plafond
+      du ménage, 1,6 fois celui d'une personne seule, 25 326,08 euros au 1er juillet
+      2004, que la caisse compte « à titre dérogatoire » au SMIC de cette date — et
+      n° 2006-37 du 8 juin 2006, § 7 : « L'abattement de 30% s'opère dès lors que
+      l'assuré a 55 ans ou plus, quel que soit l'âge atteint au moment où ces revenus
+      ont été perçus », et son exemple, rejoué (cnav_2006_37_abattement_*)
+    date: 2026-10-09
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_reversion_ressource_condition_ressource_ex.aspx
+  - type: circulaire_cnav
+    reference: >-
+      barème « Plafond de ressources pour la retraite de réversion »
+      (retraite_reversion_plafond_ressource_bar), lu par l'API le 9 octobre 2026 : depuis
+      le 1er juillet 2004, le plafond d'une personne seule et celui d'un couple,
+      40 002,56 euros en 2026, 1,6 fois le premier ; de 2005 à 2026, le modèle les
+      redonne au centime (tests/test_reversion.py) ; service-public.gouv.fr, fiche
+      F13104, vérifiée le 1er janvier 2026 : « 40 002,56 € si vous vivez en couple »,
+      et les revenus d'activité « pris en compte qu'à hauteur de 70 % de leur montant »
+    date: 2026-01-01
+    url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=retraite_reversion_plafond_ressource_bar.aspx
 textes_a_rattacher:
 - {id: LEGIARTI000031688429, article: L. 353-5, en_vigueur: 2015-12-23, change: "la majoration forfaitaire pour enfant à charge du survivant sans retraite personnelle"}
 - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22, change: "le partage entre conjoints au prorata de la durée de chaque mariage"}
@@ -787,7 +920,8 @@ textes_a_rattacher:
 code:
   python: >-
     droit/reversion.py : reversion, _a_l_age, _mariage_dure, _part_du_minimum,
-    _majorer_les_petites_retraites ; scenarios/actuel.py : Reversions ;
+    _ressources_du_plafond, _majorer_les_petites_retraites ; scenarios/actuel.py :
+    Reversions ;
     echeancier.py : Echeancier._reverser, Echeancier._pensions_au_deces ;
     droit/completer.py : completer, la part du minimum contributif de chaque pension ;
     droit/liquider.py : maximum_des_pensions, et ce que la pension ramenée au maximum
@@ -795,13 +929,15 @@ code:
     coefficient_du_maximum)
   javascript: >-
     moteur/js/droit/reversion.js : reversion, aLAge, mariageDure, partDuMinimum,
-    majorerLesPetitesRetraites ; moteur/js/regimes.js : Reversions ;
+    ressourcesDuPlafond, majorerLesPetitesRetraites ; moteur/js/regimes.js :
+    Reversions ;
     moteur/js/echeancier.js : Echeancier._reverser, Echeancier._pensionsAuDeces ;
     moteur/js/droit/completer.js : completer ; moteur/js/droit/liquider.js :
     maximumDesPensions
   parametres: >-
     contenu.parametres de chaque version : taux, age_minimum, mariage_minimum_annees,
-    ressources, plafond_smic_heures, minimum_trimestres, minimum_proratise,
+    ressources, plafond_smic_heures, facteur_menage, abattement_activite,
+    abattement_activite_age, minimum_trimestres, minimum_proratise,
     minimum_tous_regimes, majoration_enfants_taux, majoration_enfants_minimum,
     majoration_taux ; le SMIC horaire du 1er janvier, dans les séries macro ; le
     minimum et le plafond de la majoration, dans legislation/minimum_reversion.csv et
@@ -854,10 +990,20 @@ historique:
   d'avant le maximum des pensions, que la Cnav mène entière ; l'approximation qui le
   déclarait absent est remplacée par ce qui reste du maximum : une comparaison par
   réversion, le plafond moyen de l'année.
+- >-
+  2026-10-09 — action 138, étape 4 : le plafond du ménage, 1,6 fois celui d'une
+  personne seule, pour le survivant qui déclare vivre en couple, marié, pacsé ou en
+  concubinage, ses ressources et celles de son nouveau conjoint comptées ensemble ;
+  l'abattement de 30 % de ses revenus d'activité à cinquante-cinq ans, que la
+  version abattement_2005, coupée dans reforme_2004 au 1er janvier 2005, ouvre ; la
+  majoration de 11,1 % ne compte plus ces revenus pour des retraites. Avant juillet
+  2004, les réversions des autres régimes de base ne comptent plus aux ressources,
+  appréciées « sans tenir compte des avantages de réversion » (R. 353-1, rédactions
+  de 1985 et de 1990) : le moteur les y comptait.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un assuré du régime général ou d'un régime aligné
   qui décède : 4,41 millions de bénéficiaires d'un droit dérivé tous régimes fin 2024
   (DREES, EACR). Le modèle la calcule pour le conjoint que la saisie déclare, minimum,
   maximum et majorations compris, sur la pension du défunt sans son minimum
-  contributif et d'avant le maximum des pensions ; sa dépense, publiée, est sur la
-  page Coût.
+  contributif et d'avant le maximum des pensions, sous le plafond d'une personne
+  seule ou du ménage qu'il déclare ; sa dépense, publiée, est sur la page Coût.

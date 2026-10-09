@@ -1578,6 +1578,9 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
             "ressources": c.get("ressources_conjoint"),
             "invalidite": (None if c.get("conjoint_invalidite") is None
                            else str(c["conjoint_invalidite"])),
+            "revenus_d_activite": c.get("activite_conjoint"),
+            "nouvelle_union": c.get("nouvelle_union"),
+            "ressources_du_nouveau_conjoint": c.get("ressources_nouveau_conjoint"),
         }
         communs["deces"] = None if c.get("deces") is None else str(c["deces"])
     if "emploi_retraite" in c:
@@ -1853,6 +1856,15 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         servie = reversion(actuel, [(regime, 12 * montant / taux[regime], Fiabilite.HAUTE)
                                     for regime, montant in avant.items()], carriere, annee)
         return {r.regime: r.montant / 12 for r in servie.regimes}
+    if cle == "ressources_retenues_mensuelles":
+        # L'exemple donne les ressources que la caisse retient à côté de la
+        # réversion, par mois : celles que le modèle retient sous le plafond de
+        # chaque régime, à la date d'effet qu'ouvre le décès de l'exemple.
+        pensions = exemple["carriere"]["pensions_du_defunt_mensuelles"]
+        annee = int(str(exemple["carriere"]["deces"])[:4])
+        servie = reversion(actuel, [(regime, 12 * montant, Fiabilite.HAUTE)
+                                    for regime, montant in pensions.items()], carriere, annee)
+        return {r.regime: r.ressources_retenues / 12 for r in servie.regimes}
     if cle == "reversions_mensuelles":
         # L'exemple donne les pensions du défunt, comme le simulateur les
         # demande, et la réversion qu'il en tire : le test les prête au défunt,
@@ -2028,6 +2040,7 @@ TOLERANCES = {
     # et employeur au dix-millième : 0,3796 pour 6,24 % sur 16,44 %.
     "cotisation_agirc_de_l_annee": {"abs": 0.10},
     "reversions_ecretees_mensuelles": {"abs": 0.01},
+    "ressources_retenues_mensuelles": {"abs": 0.01},
     "reversions_mensuelles": {"abs": 0.5},
     # La circulaire arrondit chaque part au centime, le modèle le total.
     "reversions_au_maximum_mensuelles": {"abs": 0.01},
@@ -2072,7 +2085,8 @@ def _concorde(cle: str, mesure, valeur) -> bool:
         return not isinstance(mesure, str) and all(
             mesure.get(regime) == str(date) for regime, date in valeur.items())
     if cle in ("reversions_ecretees_mensuelles", "deductions_annuelles_du_cumul",
-               "plafonds_des_nouvelles_pensions", "reversions_au_maximum_mensuelles"):
+               "plafonds_des_nouvelles_pensions", "reversions_au_maximum_mensuelles",
+               "ressources_retenues_mensuelles"):
         return all(mesure.get(regime, 0.0) == pytest.approx(montant, abs=0.01)
                    for regime, montant in valeur.items())
     if cle == "reversions_mensuelles":

@@ -21,9 +21,14 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   survivant de trois enfants (R. 353-2) et celle des petites retraites
   (L. 353-6), et calcule la réversion, comme la caisse, sur la pension du
   défunt sans son minimum contributif et, depuis le 9 octobre, d'avant le
-  maximum des pensions, sous le maximum de la réversion, la surcote en sus.
-  Restent dehors la majoration forfaitaire pour enfant à charge du régime
-  général, le plafond du ménage, le
+  maximum des pensions, sous le maximum de la réversion, la surcote en sus ;
+  le même jour, il compte les ressources du ménage du survivant qui déclare
+  vivre en couple, marié, pacsé ou en concubinage, sous un plafond 1,6 fois
+  plus haut (D. 353-1-1), et abat de <!--chiffre:valeur(data/reference/regles/reversion.yaml:versions.id=minimum_2026.contenu.parametres.abattement_activite*100)-->30<!--/--> % ses revenus d'activité à
+  cinquante-cinq ans (R. 353-1), comme la complémentaire des indépendants,
+  sous son plafond. Restent dehors la majoration forfaitaire pour enfant à
+  charge du régime général, la révision de la réversion quand le ménage ou
+  ses ressources changent, le
   complément de la fonction publique,
   le partage entre ex-conjoints et le remariage, les pensions d'orphelin — à
   l'Agirc-Arrco, la moitié des droits du parent pour l'orphelin de père et de

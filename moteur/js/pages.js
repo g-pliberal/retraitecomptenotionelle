@@ -1115,6 +1115,28 @@ function conjointFormulaire(saisie, contexte) {
       "Le régime général réduit la réversion de ce qui dépasse, avec elle, "
       + "2 080 fois le SMIC horaire. Sans ressources dites, le modèle n'en compte "
       + "aucune, et la réversion n'est réduite que par celles des autres régimes."),
+    g.champ("activite_conjoint", "Dont ses revenus d'activité",
+      saisie.activite_conjoint === null ? "" : nombreBrut(saisie.activite_conjoint),
+      "facultatif : son salaire, en euros bruts par an", "number",
+      { min: "0", step: "100" },
+      "À cinquante-cinq ans, le régime général n'en compte que 70 % sous son "
+      + "plafond. La majoration de 11,1 %, qui ne regarde que les retraites, ne "
+      + "les compte pas."),
+    g.liste("nouvelle_union", "Après votre décès, il vit",
+      [["", "seul"], ["mariage", "remarié"], ["pacs", "pacsé"],
+        ["concubinage", "en concubinage"]],
+      saisie.nouvelle_union, "", {},
+      "Remarié, pacsé ou en concubinage, il verrait la réversion du régime "
+      + "général mesurée aux ressources du ménage, sous un plafond 1,6 fois plus "
+      + "haut. Ce que le remariage fait aux réversions des autres régimes n'est "
+      + "pas encore calculé."),
+    g.champ("ressources_nouveau_conjoint", "Ressources de son nouveau conjoint",
+      saisie.ressources_nouveau_conjoint === null
+        ? "" : nombreBrut(saisie.ressources_nouveau_conjoint),
+      "facultatif : en euros bruts par an", "number",
+      { min: "0", step: "100" },
+      "Elles s'ajoutent aux siennes sous le plafond du ménage. Sans elles, le "
+      + "modèle n'en compte aucune."),
     g.champ("conjoint_invalidite", "Son invalidité", saisie.conjoint_invalidite,
       "facultatif : le mois où elle est reconnue, « 2024-02 »", "text",
       { autocomplete: "off", spellcheck: "false" },
@@ -5154,6 +5176,11 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
   // Le régime général reverse la pension sans le minimum contributif qui la
   // relevait, et avec ce que le maximum des pensions en avait retiré : la
   // cellule dit ces parts, que le taux ne multiplie pas ou qu'il reprend.
+  // En couple, c'est avec les ressources du ménage que la réversion dépasse.
+  const motif = (ligne) => (ligne.motif === "ecretee"
+    && comparaison.carriere.conjoint.nouvelle_union !== null
+    ? "réduite : avec les ressources du ménage, elle dépasserait le plafond"
+    : MOTIFS_DE_REVERSION[ligne.motif]);
   const lignes = reversion.regimes.map((ligne) => [
     echapper(nomRegime(ligne.regime)),
     g.euros(mensuel(ligne.base, ligne.regime)) + (ligne.minimum_contributif > 0
@@ -5167,7 +5194,7 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
     ligne.fiche === null ? "—" : g.pourcentage(ligne.taux, false, 0),
     ligne.motif === "servie" ? g.euros(mensuel(ligne.montant, ligne.regime)) + dont(ligne)
       : `${g.euros(mensuel(ligne.montant, ligne.regime))} <span class="discret">`
-        + `(${MOTIFS_DE_REVERSION[ligne.motif]})</span>` + dont(ligne),
+        + `(${motif(ligne)})</span>` + dont(ligne),
     ligne.date_effet === null ? "—" : mois(ligne.date_effet),
   ]);
   lignes.push(["Réversion du système actuel", "", "",
@@ -5181,16 +5208,22 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
     true,
   );
 
+  const conjoint = comparaison.carriere.conjoint;
   const reserves = [];
   if (reversion.ressources_presumees) {
     reserves.push("aucune ressource propre à votre conjoint, faute de l'avoir dite");
   }
-  if (comparaison.carriere.conjoint.mariage_presume) {
+  if (conjoint.mariage_presume) {
     reserves.push("un mariage à vos "
       + `${contexte.paquet.presomptions.mariage_des_conjoints.valeur} ans`);
   }
-  reserves.push("un conjoint qui vivrait seul, sans partage avec un ex-conjoint, ce que "
-    + "le modèle ne sait pas encore autrement");
+  if (conjoint.nouvelle_union === null) {
+    reserves.push("un conjoint qui vivrait seul après votre décès");
+  } else if (conjoint.ressources_du_nouveau_conjoint === null) {
+    reserves.push("aucune ressource à son nouveau conjoint, faute de l'avoir dite");
+  }
+  reserves.push("aucun partage avec un ex-conjoint, ce que le modèle ne sait pas "
+    + "encore faire");
 
   return `
 <div class="carte" id="resultats-reversion">
