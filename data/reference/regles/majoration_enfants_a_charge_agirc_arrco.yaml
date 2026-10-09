@@ -22,7 +22,9 @@ lit:
 ecrit:
 - la majoration pour enfants de la complémentaire, portée à celle des enfants à charge quand
   elle passe celle des enfants nés ou élevés, et ce qu'elle redevient, date par date, quand
-  ils cessent d'être à charge — ce que la revalorisation sert à chaque échéance
+  ils cessent d'être à charge — ce que la revalorisation sert à chaque échéance, et que la
+  réversion ne reprend pas, seules les majorations pour enfants nés ou élevés étant
+  réversibles (accord du 17 novembre 2017, article 109)
 dates_qui_decident:
 - liquidation.date_effet
 # Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le

@@ -131,16 +131,22 @@ def _etape_au(etapes, quand: str) -> tuple[tuple[str, float], ...]:
     return retenues
 
 
-def parts_de_la_majoration(avantages, quand: str | None = None) -> list[tuple[str, float]]:
+def parts_de_la_majoration(avantages, quand: str | None = None,
+                           a_charge: bool = True) -> list[tuple[str, float]]:
     """Les parts de la majoration pour enfants, régime par régime : celles de
     la date d'effet, ou, à ``quand`` (AAAA-MM-JJ), celles qu'elle sert alors,
     les enfants à charge qui ne le sont plus retirés (``AvantageApplique.a_charge``).
-    Un régime peut y revenir : la part qu'elle perd s'y écrit en négatif."""
+    Sans ``a_charge``, celles des seuls enfants nés ou élevés, que la réversion
+    lit (accord du 17 novembre 2017, article 109). Un régime peut y revenir :
+    la part qu'elle perd s'y écrit en négatif."""
     parts: list[tuple[str, float]] = []
     for avantage in avantages:
         if avantage.code != MAJORATION_ENFANTS:
             continue
         parts.extend(avantage.par_regime)
+        if avantage.a_charge and not a_charge:
+            parts.extend((code, -part) for code, part in avantage.a_charge[0][1])
+            continue
         if quand is None or not avantage.a_charge:
             continue
         servies = _etape_au(avantage.a_charge, quand)

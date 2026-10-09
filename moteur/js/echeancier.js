@@ -361,14 +361,13 @@ export class Echeancier {
     // La majoration pour enfants est hors des pensions de régime, le minimum
     // contributif dedans : la part de l'une et de l'autre dans chaque régime
     // (`par_regime`), en euros du départ, suit le rapport de la pension servie
-    // à celle du départ — celle des enfants qui ne sont plus à charge à
-    // l'échéance retirée.
+    // à celle du départ — celle des enfants à charge n'en est pas : elle ne se
+    // reverse pas.
     const auDepart = new Map(this.auDepart.pensions_par_regime.map((p) => [p.regime, p.montant]));
     const menees = (code) => {
       const parts = new Map();
       const entrees = code === MAJORATION_ENFANTS
-        ? partsDeLaMajoration(this.auDepart.avantages_appliques,
-          `${String(annee).padStart(4, "0")}-12-31`)
+        ? partsDeLaMajoration(this.auDepart.avantages_appliques, null, false)
         : this.auDepart.avantages_appliques.filter((avantage) => avantage.code === code)
           .flatMap((avantage) => avantage.par_regime ?? []);
       for (const [regime, part] of entrees) {

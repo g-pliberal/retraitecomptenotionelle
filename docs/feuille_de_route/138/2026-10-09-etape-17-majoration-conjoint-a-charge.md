@@ -46,6 +46,13 @@ fiche `majoration_conjoint_a_charge`).
   neufs de simulation.
 - *La suite rouge* sur les taux pleins de L. 351-8 : le site ne préchargeait pas
   `droit/categories.js` ; réparé le 8 octobre.
+- *La suite rouge* sur la majoration pour enfants à charge : le cas
+  `reversion_jeune_deux_enfants` de Destinie 2, parti en 2018 avec deux enfants
+  de neuf et douze ans, voit sa complémentaire majorée de 10 %, que Destinie ne
+  sert pas ; l'écart est déclaré. La réversion de l'Agirc-Arrco ne reprend plus
+  cette majoration du défunt : seule celle des enfants nés ou élevés est
+  réversible (accord du 17 novembre 2017, article 109 ;
+  `parts_de_la_majoration(..., a_charge=False)`).
 
 **Les mesures.** Aucune carrière de la grille ni aucun témoin ne déclare de
 conjoint avec ses ressources et une pension d'avant 2011 : aucune pension ne

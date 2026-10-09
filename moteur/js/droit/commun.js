@@ -61,11 +61,12 @@ function etapeAu(etapes, quand) {
 /**
  * Les parts de la majoration pour enfants, régime par régime : celles de la
  * date d'effet, ou, à `quand` (AAAA-MM-JJ), celles qu'elle sert alors, les
- * enfants à charge qui ne le sont plus retirés (`a_charge` de l'avantage). Un
- * régime peut y revenir : la part qu'elle perd s'y écrit en négatif. Voir
- * `parts_de_la_majoration` du Python.
+ * enfants à charge qui ne le sont plus retirés (`a_charge` de l'avantage) ;
+ * sans `avecACharge`, celles des seuls enfants nés ou élevés, que la réversion
+ * lit. Un régime peut y revenir : la part qu'elle perd s'y écrit en négatif.
+ * Voir `parts_de_la_majoration` du Python.
  */
-export function partsDeLaMajoration(avantages, quand = null) {
+export function partsDeLaMajoration(avantages, quand = null, avecACharge = true) {
   const parts = [];
   for (const avantage of avantages) {
     if (avantage.code !== MAJORATION_ENFANTS) {
@@ -73,6 +74,10 @@ export function partsDeLaMajoration(avantages, quand = null) {
     }
     parts.push(...(avantage.par_regime ?? []));
     const aCharge = avantage.a_charge ?? [];
+    if (aCharge.length > 0 && !avecACharge) {
+      parts.push(...aCharge[0][1].map(([code, part]) => [code, -part]));
+      continue;
+    }
     if (quand === null || aCharge.length === 0) {
       continue;
     }

@@ -188,6 +188,13 @@ ECARTS = {
     ("rg_pere_trois_enfants", "majoration_complementaires"): (0.015, 0.030, MAJORATION_ARRCO),
     ("reversion_trois_enfants", "majoration_complementaires"): (0.015, 0.030,
                                                                 MAJORATION_ARRCO),
+    ("reversion_jeune_deux_enfants", "majoration_complementaires"): (
+        0.099, 0.101,
+        "le défunt part en 2018 avec deux enfants de moins de dix-huit ans : l'Arrco et "
+        "l'Agirc majorent ses droits de 5 % par enfant à charge (annexe A, article 17, et "
+        "annexe I, article 6 bis ; fiche majoration_enfants_a_charge_agirc_arrco), que "
+        "Destinie ne sert pas ; la réversion, elle, ne la reprend pas (article 109 de "
+        "l'accord du 17 novembre 2017)"),
     ("reversion_fonctionnaire", "reversion_fonction_publique"): (
         0.007, 0.013,
         "la pension civile du défunt (+0,6 %, le point d'indice du 1er janvier) et sa "

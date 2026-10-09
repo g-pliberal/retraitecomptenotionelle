@@ -342,13 +342,14 @@ class Echeancier:
         # minimum contributif dedans : la part de l'une et de l'autre dans
         # chaque régime (``AvantageApplique.par_regime``), en euros du départ,
         # suit le rapport de la pension servie à celle du départ — celle des
-        # enfants qui ne sont plus à charge à l'échéance retirée.
+        # enfants à charge n'en est pas : elle ne se reverse pas (accord du
+        # 17 novembre 2017, article 109).
         au_depart = {p.regime: p.montant for p in self.au_depart.pensions_par_regime}
 
         def menees(code: str) -> dict[str, float]:
             parts: dict[str, float] = {}
             entrees = (parts_de_la_majoration(self.au_depart.avantages_appliques,
-                                              f"{annee:04d}-12-31")
+                                              a_charge=False)
                        if code == MAJORATION_ENFANTS
                        else [part for avantage in self.au_depart.avantages_appliques
                              if avantage.code == code for part in avantage.par_regime])
