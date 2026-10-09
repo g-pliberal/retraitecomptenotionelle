@@ -18,6 +18,9 @@ lit:
 - union.debut, d'un mariage, et la cessation d'activité de l'assuré, pour la
   condition d'antériorité
 - les enfants issus du mariage
+- les précédents conjoints de l'assuré, leur mariage, leur divorce et leur remariage,
+  que le partage au prorata des mariages lit ; une nouvelle union du survivant, qui
+  éteint le droit (L. 46)
 - la pension du défunt, servie ou qu'il aurait pu obtenir au jour de son décès
 ecrit:
 - la pension de réversion du survivant, à la CRPCEN
@@ -41,6 +44,7 @@ versions:
     beneficiaire: la veuve
     parametres:
       taux: 0.50
+      ex_conjoints: aucun
       beneficiaire: veuve
       mariage_services_minimum_annees: 2
       mariage_minimum_annees: 4
@@ -65,6 +69,7 @@ versions:
       n'étant servie, dans ce dernier cas, qu'à soixante ans
     parametres:
       taux: 0.50
+      ex_conjoints: aucun
       beneficiaire: veuve
       mariage_services_minimum_annees: 2
       mariage_minimum_annees: 4
@@ -90,11 +95,12 @@ versions:
       perte au remariage de L. 43 à L. 46
     parametres:
       taux: 0.50
+      ex_conjoints: non_remaries
       beneficiaire: conjoint
       mariage_services_minimum_annees: 2
       mariage_minimum_annees: 4
       age_minimum: null
-      perte_au_remariage: true
+      perte_au_remariage: [mariage, concubinage]
       fiabilite: haute
   exemples: aucun trouvé
 approximations:
@@ -104,11 +110,24 @@ approximations:
     réversion dès le décès, et non à soixante ans ; le veuf la reçoit comme la veuve
   effet: non mesuré
 - ecart: >-
-    la condition de mariage tient le départ pour la cessation d'activité, et tout
-    enfant déclaré pour un enfant issu du mariage ; le partage entre conjoints, la perte
-    au remariage, la pension d'orphelin (L. 40, rendu applicable par l'article 113) et
-    la réversion d'un assuré mort en activité ne sont pas portés ; les montants sont
-    ceux de l'année du décès
+    la condition de mariage tient le départ, ou le décès qui le précède, pour la
+    cessation d'activité, et tout enfant déclaré pour un enfant issu du mariage ; la
+    pension d'orphelin (L. 40, rendu applicable par l'article 113) n'est pas portée ;
+    les montants sont ceux de l'année du décès
+  effet: non mesuré
+- ecart: >-
+    la pension que l'assuré mort avant son départ « aurait pu obtenir au jour de son
+    décès » se liquide sur sa durée au premier jour du trimestre civil du décès, sans
+    décote, comme à la fonction publique (L. 14, I), que l'article 113 ne rend pas
+    applicable
+  effet: non mesuré
+- version: [conjoints_2006]
+  ecart: >-
+    le partage au prorata des mariages (L. 45, puis L. 43 depuis 2012) lit les
+    précédents conjoints que la saisie déclare, deux au plus, non remariés au décès,
+    sans leur opposer la condition de L. 39 ; le remariage ou le concubinage notoire du
+    survivant éteint la réversion au mois qui le suit (L. 46), et ce qu'il recouvre
+    quand cette union cesse n'est pas porté
   effet: non mesuré
 presomptions:
   mariage_des_conjoints: >-
@@ -120,7 +139,7 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-10-05
+  lu_le: 2026-10-09
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -134,6 +153,14 @@ sources:
       d'un pensionné jusqu'au 4 mai 2006, puis le conjoint survivant, L. 39 et L. 43 à
       L. 46 ; L. 40 (les orphelins) passe à la phrase suivante le 31 juillet 2023
     date: 2023-07-31
+  - type: legifrance
+    reference: >-
+      L. 43 à L. 46 du code des pensions civiles et militaires, que l'article 113 rend
+      applicables, relus le 9 octobre 2026 dans l'index LEGI (fiche
+      reversion_fonction_publique) : le partage « au prorata de la durée respective de
+      chaque mariage » (L. 45, puis L. 43), et la perte du droit au conjoint qui
+      « contracte un nouveau mariage ou vit en état de concubinage notoire » (L. 46)
+    date: 2026-10-09
   - type: autre
     reference: >-
       CRPCEN, page « Les pensions de réversion et d'orphelin », lue le 5 octobre 2026
@@ -146,16 +173,24 @@ sources:
 code:
   python: >-
     scenarios/actuel.py : Reversions, qui lit les versions de cette fiche ;
-    droit/reversion.py : reversion, MOITIE_SOUS_CONDITION_DE_MARIAGE, _mariage_suffit
+    droit/reversion.py : reversion, MOITIE_SOUS_CONDITION_DE_MARIAGE, _mariage_suffit,
+    _part_du_survivant, _admis_ailleurs, _jusqu_au_remariage
   javascript: >-
     moteur/js/regimes.js : Reversions ; moteur/js/droit/reversion.js : reversion,
-    MOITIE_SOUS_CONDITION_DE_MARIAGE, mariageSuffit
+    MOITIE_SOUS_CONDITION_DE_MARIAGE, mariageSuffit, partDuSurvivant, admisAilleurs,
+    jusquAuRemariage
   parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
   tests: [tests/test_reversion.py]
 historique:
 - >-
   2026-10-05 — la fiche naît (action 89) : la CRPCEN n'avait pas de réversion, et sa
   ligne disait « la réversion de ce régime n'est pas encore portée ».
+- >-
+  2026-10-09 — action 138, étape 4 : la réversion de l'assuré mort avant son départ,
+  sur la pension qu'il aurait pu obtenir au jour de son décès ; le partage entre
+  conjoints au prorata des mariages, et la perte de la réversion au remariage ou au
+  concubinage notoire du survivant (L. 43 à L. 46).
 effet: >-
   Tout conjoint d'un clerc ou employé de notaire : la moitié de sa pension, sans âge ni
-  ressources, dès que le mariage remplit la condition de L. 39.
+  ressources, dès que le mariage remplit la condition de L. 39, partagée avec les
+  précédents conjoints non remariés.

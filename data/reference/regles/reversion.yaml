@@ -22,13 +22,14 @@ etat: approchee
 lit:
 - conjoint.deces
 - union.debut, d'un mariage ; ni le PACS ni le concubinage n'ouvrent la réversion
-- union.fin, pour l'ex-conjoint divorcé
+- union.fin, pour l'ex-conjoint divorcé ; les précédents conjoints de l'assuré, leur
+  mariage, leur divorce et leur remariage, que le partage au prorata des mariages lit
 - la naissance du survivant, qui dit son âge à la date d'effet
 - les ressources du survivant, et ce qu'en rapporte son activité, abattu de 30 % à
   cinquante-cinq ans
-- l'union où il vit après le décès — mariage, PACS ou concubinage — et les
-  ressources de son nouveau conjoint, que le plafond du ménage compte avec les
-  siennes
+- l'union où il vit après le décès — mariage, PACS ou concubinage —, le mois où elle
+  commence, et les ressources de son nouveau conjoint, que le plafond du ménage
+  compte avec les siennes quand elle est formée à la date d'effet
 - la pension principale du défunt, servie ou dont il eût bénéficié à son décès — mort
   avant son départ, celle qu'il eût obtenue au premier jour du trimestre civil de son
   décès, sur la carrière de ce jour-là, sans décote
@@ -55,7 +56,9 @@ dates_qui_decident:
 # depuis décembre 1982, son prorata entre régimes alignés depuis juillet 2004 —,
 # dont le montant de chaque année est dans `legislation/minimum_reversion.csv` ;
 # les taux des deux majorations, celle de 11,1 % sous le plafond de
-# `legislation/plafond_majoration_reversion.csv`. Le maximum de la réversion n'a pas
+# `legislation/plafond_majoration_reversion.csv` ; les précédents conjoints qui
+# partagent la réversion (`ex_conjoints`) : les non remariés avant juillet 2004,
+# tous depuis. Le maximum de la réversion n'a pas
 # de paramètre : c'est le taux de la version, appliqué au maximum des pensions que
 # la fiche `pension_maximale_regime_general` fixe à la date d'effet de la réversion.
 versions:
@@ -80,6 +83,7 @@ versions:
       taux: 0.50
       age_minimum: 55
       mariage_minimum_annees: 2
+      ex_conjoints: non_remaries
       ressources: condition
       plafond_smic_heures: 2080
       facteur_menage: null
@@ -102,6 +106,8 @@ versions:
   - {id: LEGIARTI000006749452, article: R. 353-1, en_vigueur: 1990-11-30}
   - {reference: "décret n° 82-1035 du 6 décembre 1982, article 5 (circulaire Cnav n° 120/82)", en_vigueur: 1982-12-01}
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006742650, article: L. 353-3, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006749410, article: R. 353-4, en_vigueur: 1985-12-21}
   nee_de: LEGIARTI000006736586
   bornes:
     liquidation.date_effet: [1982-12-01, 1995-01-01]
@@ -116,6 +122,7 @@ versions:
       taux: 0.52
       age_minimum: 55
       mariage_minimum_annees: 2
+      ex_conjoints: non_remaries
       ressources: condition
       plafond_smic_heures: 2080
       facteur_menage: null
@@ -136,6 +143,8 @@ versions:
   - {id: LEGIARTI000006749452, article: R. 353-1, en_vigueur: 1990-11-30}
   - {reference: "décret n° 94-1140 du 27 décembre 1994 (circulaire Cnav n° 3/95)", en_vigueur: 1995-01-01}
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006742650, article: L. 353-3, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006749410, article: R. 353-4, en_vigueur: 1985-12-21}
   nee_de: LEGIARTI000006736587
   bornes:
     liquidation.date_effet: [1995-01-01, 2004-07-01]
@@ -150,6 +159,7 @@ versions:
       taux: 0.54
       age_minimum: 55
       mariage_minimum_annees: 2
+      ex_conjoints: non_remaries
       ressources: condition
       plafond_smic_heures: 2080
       facteur_menage: null
@@ -173,6 +183,8 @@ versions:
   - {id: LEGIARTI000006749453, article: R. 353-1, en_vigueur: 2004-08-25}
   - {id: LEGIARTI000006781419, article: "décret n° 2004-858, article 24", en_vigueur: 2004-08-25}
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006749410, article: R. 353-4, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
   nee_de: LEGIARTI000006742649
   bornes:
     liquidation.date_effet: [2004-07-01, 2005-01-01]
@@ -188,6 +200,7 @@ versions:
       taux: 0.54
       age_minimum: 55
       mariage_minimum_annees: 0
+      ex_conjoints: tous
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
@@ -208,6 +221,8 @@ versions:
   - {id: LEGIARTI000006736552, article: D. 353-1-1, en_vigueur: 2004-08-25}
   - {id: LEGIARTI000006781420, article: "décret n° 2004-858, article 24", en_vigueur: 2004-12-30}
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
   nee_de: LEGIARTI000006749454
   bornes:
     liquidation.date_effet: [2005-01-01, 2005-07-01]
@@ -224,6 +239,7 @@ versions:
       taux: 0.54
       age_minimum: 55
       mariage_minimum_annees: 0
+      ex_conjoints: tous
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
@@ -243,6 +259,8 @@ versions:
   - {id: LEGIARTI000006781420, article: "décret n° 2004-858, article 24", en_vigueur: 2004-12-30}
   - {id: LEGIARTI000006749454, article: R. 353-1, en_vigueur: 2004-12-30}
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
   nee_de: LEGIARTI000006781420
   bornes:
     liquidation.date_effet: [2005-07-01, 2007-07-01]
@@ -254,6 +272,7 @@ versions:
       taux: 0.54
       age_minimum: 52
       mariage_minimum_annees: 0
+      ex_conjoints: tous
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
@@ -276,6 +295,8 @@ versions:
   - {id: LEGIARTI000006781421, article: "décret n° 2004-858, article 24", en_vigueur: 2005-08-24}
   - {id: LEGIARTI000006749455, article: R. 353-1, en_vigueur: 2007-01-13}
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
   nee_de: LEGIARTI000006781420
   bornes:
     liquidation.date_effet: [2007-07-01, 2009-01-01]
@@ -287,6 +308,7 @@ versions:
       taux: 0.54
       age_minimum: 51
       mariage_minimum_annees: 0
+      ex_conjoints: tous
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
@@ -307,6 +329,8 @@ versions:
   - {id: LEGIARTI000020082979, article: R. 353-1, en_vigueur: 2009-01-01}
   - {id: LEGIARTI000020082988, article: R. 353-7, en_vigueur: 2009-01-01}
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
   nee_de: LEGIARTI000020090020
   bornes:
     liquidation.date_effet: [2009-01-01, 2010-01-01]
@@ -321,6 +345,7 @@ versions:
       taux: 0.54
       age_minimum: 55
       mariage_minimum_annees: 0
+      ex_conjoints: tous
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
@@ -340,6 +365,8 @@ versions:
   - {id: LEGIARTI000020057504, article: "décret n° 2008-1509, article 2, II", en_vigueur: 2009-01-01}
   - {id: LEGIARTI000020090020, article: D. 353-3, en_vigueur: 2009-01-01}
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
   nee_de: LEGIARTI000020057504
   bornes:
     liquidation.date_effet: [2009-01-01, 2010-01-01]
@@ -353,6 +380,7 @@ versions:
       taux: 0.54
       age_minimum: 51
       mariage_minimum_annees: 0
+      ex_conjoints: tous
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
@@ -373,6 +401,8 @@ versions:
   - {id: LEGIARTI000020791861, article: D. 353-4, en_vigueur: 2009-06-26}
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
+  - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
   nee_de: LEGIARTI000019959401
   bornes:
     liquidation.date_effet: [2010-01-01, 2012-07-01]
@@ -386,6 +416,7 @@ versions:
       taux: 0.54
       age_minimum: 55
       mariage_minimum_annees: 0
+      ex_conjoints: tous
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
@@ -406,6 +437,8 @@ versions:
   - {id: LEGIARTI000020057504, article: "décret n° 2008-1509, article 2, II", en_vigueur: 2009-01-01}
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
+  - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
   nee_de: LEGIARTI000019959401
   bornes:
     liquidation.date_effet: [2010-01-01, 2012-07-01]
@@ -416,6 +449,7 @@ versions:
       taux: 0.54
       age_minimum: 51
       mariage_minimum_annees: 0
+      ex_conjoints: tous
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
@@ -437,6 +471,8 @@ versions:
   - {id: LEGIARTI000038790257, article: R. 353-1, en_vigueur: 2019-07-08}
   - {id: LEGIARTI000047453693, article: L. 353-1, en_vigueur: 2023-09-01}
   - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
+  - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
   nee_de: LEGIARTI000025018616
   bornes:
     liquidation.date_effet: [2012-07-01, 2026-01-01]
@@ -450,6 +486,7 @@ versions:
       taux: 0.54
       age_minimum: 55
       mariage_minimum_annees: 0
+      ex_conjoints: tous
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
@@ -469,6 +506,8 @@ versions:
   - {id: LEGIARTI000025018616, article: L. 353-1, en_vigueur: 2011-12-23}
   - {id: LEGIARTI000020057504, article: "décret n° 2008-1509, article 2, II", en_vigueur: 2009-01-01}
   - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
+  - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
   nee_de: LEGIARTI000025018616
   bornes:
     liquidation.date_effet: [2012-07-01, 2026-01-01]
@@ -479,6 +518,7 @@ versions:
       taux: 0.54
       age_minimum: 51
       mariage_minimum_annees: 0
+      ex_conjoints: tous
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
@@ -499,6 +539,8 @@ versions:
   - {id: LEGIARTI000053335692, article: R. 353-1-1, en_vigueur: 2026-01-01}
   - {id: LEGIARTI000047453693, article: L. 353-1, en_vigueur: 2023-09-01}
   - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
+  - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
   nee_de: LEGIARTI000053356066
   bornes:
     liquidation.date_effet: [2026-01-01, null]
@@ -512,6 +554,7 @@ versions:
       taux: 0.54
       age_minimum: 55
       mariage_minimum_annees: 0
+      ex_conjoints: tous
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
@@ -534,6 +577,8 @@ versions:
   - {id: LEGIARTI000053356066, article: D. 353-1, en_vigueur: 2026-01-01}
   - {id: LEGIARTI000053355011, article: "décret n° 2008-1509, article 2, II", en_vigueur: 2026-01-01}
   - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
+  - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
   nee_de: LEGIARTI000053356066
   bornes:
     liquidation.date_effet: [2026-01-01, null]
@@ -544,6 +589,7 @@ versions:
       taux: 0.54
       age_minimum: 51
       mariage_minimum_annees: 0
+      ex_conjoints: tous
       ressources: ecretement
       plafond_smic_heures: 2080
       facteur_menage: 1.6
@@ -624,8 +670,7 @@ approximations:
     venir, l'année du départ s'il la suit —, au SMIC horaire du 1er janvier de cette
     année, même quand l'âge requis reporte la date d'effet ; en 2004, la caisse
     prend celui du 1er juillet (circulaire Cnav n° 2005-17, § 145) : son plafond,
-    15 828,80 euros, est 5,8 % au-dessus de celui du modèle, 14 955,20 ; le partage
-    entre ex-conjoints (L. 353-3) n'est pas calculé
+    15 828,80 euros, est 5,8 % au-dessus de celui du modèle, 14 955,20
   effet: >-
     non mesuré ; pour le plafond de 2004, 873,60 euros de ressources de plus sous le
     plafond, pour une réversion qui prend effet au second semestre
@@ -647,6 +692,25 @@ approximations:
     sa génération, 166 trimestres, au lieu des 156 de la caisse — 6 % de moins sur
     la pension que la réversion lit, quand sa durée n'atteint pas 156 —, et un
     salaire annuel moyen sur vingt-cinq années au lieu de vingt-trois
+- ecart: >-
+    le partage entre conjoints lit les précédents conjoints que la saisie déclare,
+    deux au plus, tenus pour vivants au décès ; il se fige au décès, quand la caisse
+    le fige « lors du calcul de la 1re retraite de réversion » et le refait au décès
+    d'un ayant droit, dont la part « accroîtra » celle des autres (R. 353-4) ; la
+    date d'un mariage dite par son année tombe au 1er janvier, quand la caisse la
+    présume au 31 décembre (exposé « Existence d'ex-conjoint(s) ») ; avant le 19
+    juillet 1978, l'ex-conjoint n'avait droit à rien, ou seulement après un divorce
+    pour rupture de la vie commune, et le modèle partage déjà ; avant juillet 2004,
+    l'enfant qui dispense un précédent mariage de ses deux ans est tout enfant
+    déclaré ; la réversion des précédents conjoints eux-mêmes n'est pas calculée
+  effet: >-
+    non mesuré ; une date de mariage dite par l'année déplace jusqu'à onze mois la
+    durée qui fait les parts
+- ecart: >-
+    l'union que le survivant forme après la date d'effet ne révise pas la réversion
+    du régime général, qui compterait alors les ressources du ménage (R. 353-1-1),
+    ni celle de la complémentaire des indépendants
+  effet: non mesuré
 presomptions:
   mariage_des_conjoints: >-
     la condition de durée de mariage d'avant juillet 2004, quand la date du mariage
@@ -692,11 +756,10 @@ sources:
     décédé après son départ.
   - >-
     Ce que les versions ne portent pas encore : les limites de cumul d'avant juillet
-    2004 (D. 355-1), le partage entre conjoints survivant et divorcés au prorata de
-    la durée de chaque mariage (L. 353-3), la majoration forfaitaire pour enfant à
-    charge (L. 353-5), la réversion d'un assuré disparu (L. 353-2), la révision de la
-    pension quand les ressources ou le ménage changent (R. 353-1-1), et la pension de
-    vieillesse de veuve ou de veuf.
+    2004 (D. 355-1), la majoration forfaitaire pour enfant à charge (L. 353-5), la
+    réversion d'un assuré disparu (L. 353-2), la révision de la pension quand les
+    ressources, le ménage ou les ayants droit changent (R. 353-1-1, R. 353-4), et la
+    pension de vieillesse de veuve ou de veuf.
   - >-
     La pension dont l'assuré « eût bénéficié » : mort avant son départ, celle qui lui
     aurait été allouée au titre de l'inaptitude au travail, au taux plein quel que soit
@@ -975,6 +1038,31 @@ sources:
       d'effet de la réversion pour les majorations pour enfants et la surcote
     date: 2026-03-06
     url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_reversion_montant_retraite_assure_decede_ex.aspx
+  - type: legifrance
+    reference: >-
+      relus le 9 octobre 2026 dans l'index LEGI, pour le partage : L. 353-3
+      (LEGIARTI000006742650, 1985, puis 006742651, 2003) — la réversion « est partagée
+      entre son conjoint survivant et le ou les précédents conjoints divorcés [non
+      remariés, jusqu'en 2003] au prorata de la durée respective de chaque mariage »,
+      « Au décès de l'un des bénéficiaires, sa part accroîtra la part de l'autre » ;
+      R. 353-4 (LEGIARTI000006749410, 1985, puis 006749411, 2004) — la durée de chaque
+      mariage, « déterminée de date à date, est arrondie au nombre de mois
+      inférieur » ; jusqu'en 2004, des mariages « respectifs » d'au moins deux ans, sauf
+      enfant
+    date: 2026-10-09
+  - type: circulaire_cnav
+    reference: >-
+      exposés « Existence d'ex-conjoint(s) » (24 octobre 2025) et « Conditions
+      d'attribution - retraite de réversion », lus par l'API de la base de législation
+      de la Cnav le 9 octobre 2026 : la réversion « partagée, entre le conjoint
+      survivant et les ex-conjoints, proportionnellement à la durée de chaque
+      mariage », en mois arrondis au nombre inférieur ; « Le partage est déterminé à
+      titre définitif lors du calcul de la 1re retraite de réversion » ; « Lorsque
+      seule l'année du mariage est connue, la date présumée du mariage est le 31
+      décembre de l'année » ; avant juillet 2004, l'ex-conjoint remarié ne l'avait
+      que sous réserves ; le remariage du survivant ne retire rien au régime général
+    date: 2025-10-24
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_reversion_montant_existence_ex_conjoint_ex.aspx
   - type: circulaire_cnav
     reference: >-
       barème « Plafond de ressources pour la retraite de réversion »
@@ -988,24 +1076,29 @@ sources:
     url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=retraite_reversion_plafond_ressource_bar.aspx
 textes_a_rattacher:
 - {id: LEGIARTI000031688429, article: L. 353-5, en_vigueur: 2015-12-23, change: "la majoration forfaitaire pour enfant à charge du survivant sans retraite personnelle"}
-- {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22, change: "le partage entre conjoints au prorata de la durée de chaque mariage"}
 - {id: LEGIARTI000024113027, article: R. 353-1-1, en_vigueur: 2011-06-03, change: "la révision de la réversion quand les ressources varient"}
 - reference: D. 355-1 CSS, les limites de cumul d'avant juillet 2004
 code:
   python: >-
     droit/reversion.py : reversion, _a_l_age, _mariage_dure, _part_du_minimum,
-    _ressources_du_plafond, _majorer_les_petites_retraites ; scenarios/actuel.py :
-    Reversions ;
-    echeancier.py : Echeancier._reverser, Echeancier._pensions_au_deces ;
+    _ressources_du_plafond, _majorer_les_petites_retraites, mois_de_mariage,
+    _part_du_survivant, _remarie_avant, _admis_au_regime_general, _admis_ailleurs,
+    _fin_au_remariage, _jusqu_au_remariage ; scenarios/actuel.py : Reversions ;
+    echeancier.py : Echeancier._reverser, Echeancier._pensions_au_deces,
+    Echeancier._pensions_eues_au_deces ; carriere.py : Carriere.arretee_au_deces,
+    Carriere.ex_conjoints ; chronologie.py : ex_conjoints, debut_du_menage ;
     droit/completer.py : completer, la part du minimum contributif de chaque pension ;
     droit/liquider.py : maximum_des_pensions, et ce que la pension ramenée au maximum
     porte pour la réversion (PensionRegime.ecretement_du_maximum, surcote,
     coefficient_du_maximum)
   javascript: >-
     moteur/js/droit/reversion.js : reversion, aLAge, mariageDure, partDuMinimum,
-    ressourcesDuPlafond, majorerLesPetitesRetraites ; moteur/js/regimes.js :
-    Reversions ;
-    moteur/js/echeancier.js : Echeancier._reverser, Echeancier._pensionsAuDeces ;
+    ressourcesDuPlafond, majorerLesPetitesRetraites, moisDeMariage, partDuSurvivant,
+    remarieAvant, admisAuRegimeGeneral, admisAilleurs, finAuRemariage,
+    jusquAuRemariage ; moteur/js/regimes.js : Reversions ;
+    moteur/js/echeancier.js : Echeancier._reverser, Echeancier._pensionsAuDeces,
+    Echeancier._pensionsEuesAuDeces ; moteur/js/carriere.js : Carriere.arreteeAuDeces,
+    Carriere.exConjoints ; moteur/js/chronologie.js : exConjoints, debutDuMenage ;
     moteur/js/droit/completer.js : completer ; moteur/js/droit/liquider.js :
     maximumDesPensions
   parametres: >-
@@ -1081,6 +1174,12 @@ historique:
   l'inaptitude quel que soit son âge (R. 353-6), sans coefficient de minoration ni
   d'anticipation dans les autres régimes ; la saisie, qui refusait un décès avant le
   départ, l'accepte.
+- >-
+  2026-10-09 — action 138, étape 4 : le partage entre le conjoint survivant et les
+  précédents conjoints, au prorata des mariages en mois (L. 353-3, R. 353-4), avec le
+  minimum et le maximum (circulaire n° 105/90, § 3) ; les précédents conjoints non
+  remariés seuls avant juillet 2004 (paramètre ex_conjoints) ; le ménage du survivant
+  ne compte au plafond que formé à la date d'effet.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un assuré du régime général ou d'un régime aligné
   qui décède : 4,41 millions de bénéficiaires d'un droit dérivé tous régimes fin 2024

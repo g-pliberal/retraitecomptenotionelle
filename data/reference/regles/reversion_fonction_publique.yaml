@@ -42,11 +42,12 @@ versions:
     beneficiaire: la veuve
     parametres:
       taux: 0.50
+      ex_conjoints: aucun
       beneficiaire: veuve
       mariage_services_minimum_annees: 2
       mariage_minimum_annees: 4
       age_minimum: null
-      perte_au_remariage: true
+      perte_au_remariage: [mariage, concubinage]
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: veuves_1980
@@ -57,6 +58,9 @@ versions:
   - {id: LEGIARTI000006362767, article: L. 39, en_vigueur: 1964-12-01}
   - {id: LEGIARTI000006362786, article: L. 50, en_vigueur: 1982-07-14}
   - {id: LEGIARTI000006362776, article: L. 45, en_vigueur: 1978-07-18}
+  - {id: LEGIARTI000006362773, article: L. 43, en_vigueur: 1982-07-14}
+  - {id: LEGIARTI000006362774, article: L. 44, en_vigueur: 1982-07-14}
+  - {id: LEGIARTI000006362778, article: L. 46, en_vigueur: 1982-07-14}
   nee_de: LEGIARTI000006362764
   bornes:
     liquidation.date_effet: [1980-01-19, 2004-01-01]
@@ -71,14 +75,17 @@ versions:
     beneficiaire: la veuve ; le veuf sous les réserves de L. 50
     conditions: >-
       l'antériorité du mariage de L. 39 : deux ans de services depuis le mariage, sauf
-      enfant issu du mariage, ou quatre ans de mariage
+      enfant issu du mariage, ou quatre ans de mariage ; entre plusieurs conjoints,
+      divorcés ou survivants, un partage au prorata de la durée de chaque mariage
+      (L. 45) ; la perte du droit au remariage ou au concubinage notoire (L. 46)
     parametres:
       taux: 0.50
+      ex_conjoints: non_remaries
       beneficiaire: veuve
       mariage_services_minimum_annees: 2
       mariage_minimum_annees: 4
       age_minimum: null
-      perte_au_remariage: true
+      perte_au_remariage: [mariage, concubinage]
       fiabilite: haute
   exemples: aucun trouvé
 - id: conjoints_2004
@@ -86,6 +93,9 @@ versions:
   textes:
   - {id: LEGIARTI000006362766, article: L. 38, en_vigueur: 2004-01-01}
   - {id: LEGIARTI000006362768, article: L. 39, en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006362773, article: L. 43, en_vigueur: 1982-07-14}
+  - {id: LEGIARTI000006362777, article: L. 45, en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006362778, article: L. 46, en_vigueur: 1982-07-14}
   - {id: LEGIARTI000025076807, article: L. 46, en_vigueur: 2012-01-01}
   - {id: LEGIARTI000025076834, article: L. 43, en_vigueur: 2012-01-01}
   - {id: LEGIARTI000047453630, article: L. 38, en_vigueur: 2023-09-01}
@@ -120,11 +130,12 @@ versions:
       de la durée de chaque mariage, par lit depuis 2012 (L. 43)
     parametres:
       taux: 0.50
+      ex_conjoints: non_remaries
       beneficiaire: conjoint
       mariage_services_minimum_annees: 2
       mariage_minimum_annees: 4
       age_minimum: null
-      perte_au_remariage: true
+      perte_au_remariage: [mariage, concubinage]
       fiabilite: haute
   exemples: aucun trouvé
 - id: complement_aspa_2025
@@ -144,11 +155,12 @@ versions:
       le 1er janvier 2025
     parametres:
       taux: 0.50
+      ex_conjoints: non_remaries
       beneficiaire: conjoint
       mariage_services_minimum_annees: 2
       mariage_minimum_annees: 4
       age_minimum: null
-      perte_au_remariage: true
+      perte_au_remariage: [mariage, concubinage]
       fiabilite: haute
   exemples: [ur_reversion_etat_mariage_3_ans_et_demi, ur_reversion_etat_mariage_4_ans,
              ur_reversion_cnracl_enfant_mariage_1_an]
@@ -167,10 +179,20 @@ approximations:
     sous-estimée ; non mesuré
 - ecart: >-
     la condition de L. 39 tient le départ, ou le décès qui le précède, pour la
-    cessation d'activité, et tout enfant déclaré pour un enfant issu du mariage ; le
-    partage entre conjoints (L. 43), la perte au remariage (L. 46), la pension
-    d'orphelin (L. 40) et la pension pour décès en service (L. 50) ne sont pas
-    portés ; les montants sont ceux de l'année du décès
+    cessation d'activité, et tout enfant déclaré pour un enfant issu du mariage ; la
+    pension d'orphelin (L. 40) et la pension pour décès en service (L. 50) ne sont
+    pas portées ; les montants sont ceux de l'année du décès
+  effet: non mesuré
+- ecart: >-
+    le partage au prorata des mariages (L. 45, puis L. 43 depuis 2012) lit les
+    précédents conjoints que la saisie déclare, deux au plus, non remariés au décès,
+    sans leur opposer la condition d'antériorité de L. 39 ; il ignore les lits que
+    représentent des orphelins seuls (L. 43), le droit que retrouve l'ex-conjoint
+    dont la nouvelle union a cessé (L. 44, L. 46) et le concubinage d'un précédent
+    conjoint, que la saisie ne dit pas ; avant 1980, aucun précédent conjoint ne
+    partage, quand L. 45 les compte depuis le 18 juillet 1978 ; le remariage ou le
+    concubinage notoire du survivant éteint la réversion au mois qui le suit, et ce
+    qu'il recouvre quand cette union cesse n'est pas porté
   effet: non mesuré
 - ecart: >-
     la pension que le fonctionnaire mort en activité « aurait pu obtenir au jour de
@@ -206,7 +228,8 @@ sources:
     Les régimes spéciaux qui reprennent la règle — FSPOEIE, ouvriers de l'État, IEG,
     SNCF, RATP, mines, marins — ont chacun leurs textes, à lire avant d'être ajoutés.
     Les orphelins (L. 40, 10 %) et les pensions pour décès en service (L. 50) ne sont
-    pas portés.
+    pas portés, ni les orphelins qui recueillent la part du conjoint qui la perd
+    (L. 46, jusqu'en 2012).
   lectures:
   - type: legifrance
     reference: >-
@@ -227,20 +250,36 @@ sources:
       le décret n° 2003-1306, article 20 (LEGIARTI000006400883), le dit de la CNRACL,
       mot pour mot
     date: 2026-10-09
+  - type: legifrance
+    reference: >-
+      relus le 9 octobre 2026 dans l'index LEGI, pour le partage et le remariage :
+      L. 45 (LEGIARTI000006362776, 1978, puis 006362777, 2004) — « la pension est
+      répartie entre ces conjoints au prorata de la durée respective de chaque
+      mariage » ; L. 43 (LEGIARTI000006362773, 1982, abrogé au 1er janvier 2012 par la
+      décision n° 2010-108 QPC, puis 025076834) — depuis 2012, les conjoints se
+      partagent la part des lits qu'ils représentent, « au prorata de la durée
+      respective de chaque mariage » ; L. 44 (LEGIARTI000006362774) — le conjoint
+      divorcé a droit à la pension ; L. 46 (LEGIARTI000006362778, puis 025076807) —
+      « Le conjoint survivant ou le conjoint divorcé, qui contracte un nouveau mariage
+      ou vit en état de concubinage notoire, perd son droit à pension »
+    date: 2026-10-09
 textes_a_rattacher:
 - {id: LEGIARTI000025076827, article: L. 40, en_vigueur: 2012-01-01, change: "la pension d'orphelin"}
 code:
   python: >-
-    droit/reversion.py : reversion, _mariage_suffit ; scenarios/actuel.py : Reversions
-  javascript: >-
-    moteur/js/droit/reversion.js : reversion, mariageSuffit ; moteur/js/regimes.js :
+    droit/reversion.py : reversion, _mariage_suffit, _part_du_survivant,
+    _admis_ailleurs, _fin_au_remariage, _jusqu_au_remariage ; scenarios/actuel.py :
     Reversions
+  javascript: >-
+    moteur/js/droit/reversion.js : reversion, mariageSuffit, partDuSurvivant,
+    admisAilleurs, finAuRemariage, jusquAuRemariage ; moteur/js/regimes.js : Reversions
   parametres: >-
     contenu.parametres de chaque version : taux, mariage_minimum_annees,
-    mariage_services_minimum_annees
+    mariage_services_minimum_annees, ex_conjoints, perte_au_remariage
   tests: >-
-    tests/test_reversion.py ; les témoins reversion_fonctionnaire et
-    reversion_fonctionnaire_mort_en_activite des simulations
+    tests/test_reversion.py ; les témoins reversion_fonctionnaire,
+    reversion_fonctionnaire_mort_en_activite et
+    reversion_fonctionnaire_partage_concubinage des simulations
 historique:
 - >-
   2026-09-28 — née avec le domaine de la réversion, de la fiche reversion qui ne portait
@@ -252,7 +291,13 @@ historique:
   départ, sur la pension qu'il « aurait pu obtenir au jour de son décès », sans
   coefficient de minoration (L. 14, I) ; sa cessation d'activité, que lit la
   condition de L. 39, est son décès.
+- >-
+  2026-10-09 — action 138, étape 4 : le partage entre conjoints au prorata des
+  mariages (L. 45, L. 43), avec les précédents conjoints non remariés
+  (ex_conjoints), et la perte de la réversion au remariage ou au concubinage notoire
+  du survivant (L. 46, perte_au_remariage).
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un fonctionnaire de l'État ou d'un agent des
   collectivités qui décède. Le modèle la calcule pour le conjoint que la saisie
-  déclare, sans le complément ni la part de la rente d'invalidité.
+  déclare, partagée avec les précédents conjoints qu'elle déclare, sans le complément
+  ni la part de la rente d'invalidité.

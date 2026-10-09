@@ -397,6 +397,11 @@ _CODE_DE_REGIME = re.compile(r"[a-z][a-z0-9_]*")
 #: la borne est celle du formulaire, pas du moteur.
 ETRANGER_MAXIMUM = 4
 
+#: Les précédents conjoints de l'assuré, divorcés, que l'adresse peut porter :
+#: « ex1 » à « ex2_… ». La réversion se partage entre eux et le conjoint
+#: survivant au prorata de la durée de chaque mariage (L. 353-3, R. 353-4).
+EX_CONJOINTS_MAXIMUM = 2
+
 #: L'État que la personne ne nomme pas, parce que le tableau des accords
 #: (``data/reference/legislation/accords_internationaux.yaml``) ne le nomme
 #: pas : aucun accord ne le lie à la France. Tout autre État s'écrit par son
@@ -539,6 +544,19 @@ class PensionEtrangereSaisie:
     debut: float
 
 
+@dataclass
+class ExConjointSaisi:
+    """Un précédent conjoint de l'assuré, divorcé (AAAA ou AAAA-MM) : sa
+    naissance, le mariage, le divorce, et son remariage s'il le dit — que la
+    réversion de la fonction publique et des complémentaires ne lui laisse
+    pas, quand il précède le décès de l'assuré."""
+
+    naissance: str
+    mariage: str
+    divorce: str
+    remariage: str = ""
+
+
 #: Les clés de requête qui décrivent les RÈGLES, et non la carrière.
 #:
 #: Ce sont exactement les treize que ``Saisie.parametres`` lit pour fabriquer un
@@ -646,7 +664,13 @@ class Saisie:
     activite_conjoint: float | None = None
     nouvelle_union: str = ""
     ressources_nouveau_conjoint: float | None = None
+    #: Le mois où cette nouvelle union commence (AAAA ou AAAA-MM), s'il le dit ;
+    #: sans lui, au décès.
+    nouvelle_union_depuis: str = ""
     conjoint_invalidite: str = ""
+    #: Les précédents conjoints de l'assuré, divorcés, entre qui et le conjoint
+    #: la réversion se partage (:class:`ExConjointSaisi`).
+    ex_conjoints: list[ExConjointSaisi] = field(default_factory=list)
     #: Le décès de l'assuré (AAAA ou AAAA-MM), qui ouvre la réversion de son
     #: conjoint : au départ ou après lui.
     deces: str = ""
@@ -838,6 +862,8 @@ class Saisie:
             ressources_nouveau_conjoint=(
                 None if parametres.get("ressources_nouveau_conjoint") in (None, "")
                 else _reel(parametres, "ressources_nouveau_conjoint", 0.0)),
+            nouvelle_union_depuis=(parametres.get("nouvelle_union_depuis") or "").strip(),
+            ex_conjoints=_ex_conjoints_saisis(parametres, tolerante),
             revenu_fiscal=(None if parametres.get("revenu_fiscal") in (None, "")
                            else _reel(parametres, "revenu_fiscal", 0.0)),
             conjoint_invalidite=(parametres.get("conjoint_invalidite") or "").strip(),
@@ -1689,7 +1715,11 @@ class Saisie:
                 "revenus_d_activite": self.activite_conjoint,
                 "nouvelle_union": self.nouvelle_union or None,
                 "ressources_du_nouveau_conjoint": self.ressources_nouveau_conjoint,
-                "invalidite": self.conjoint_invalidite or None}
+                "nouvelle_union_depuis": self.nouvelle_union_depuis or None,
+                "invalidite": self.conjoint_invalidite or None,
+                "ex_conjoints": [{"naissance": ex.naissance, "mariage": ex.mariage,
+                                  "divorce": ex.divorce, "remariage": ex.remariage or None}
+                                 for ex in self.ex_conjoints]}
 
     def deces_declare(self) -> str | None:
         """Le décès de l'assuré que la saisie déclare, ou ``None``."""
@@ -1996,7 +2026,10 @@ class Saisie:
         sa naissance. Un décès avant le départ ouvre la réversion de la pension
         que l'assuré eût obtenue (R. 353-6), pourvu qu'il suive le début de sa
         carrière. Ses ressources, positives : ses revenus d'activité en sont une
-        part, et celles d'un nouveau conjoint supposent l'union où il vit."""
+        part, et celles d'un nouveau conjoint supposent l'union où il vit, qui
+        suit le décès. Les précédents conjoints, chacun marié après les deux
+        naissances, divorcé avant le mariage suivant — celui du conjoint, qu'il
+        faut alors dater —, remarié après son divorce."""
         if not self.conjoint:
             orphelins = [nom for nom, valeur in (
                 ("conjoint_sexe", self.conjoint_sexe), ("mariage", self.mariage),
@@ -2004,8 +2037,9 @@ class Saisie:
                 ("activite_conjoint", self.activite_conjoint),
                 ("nouvelle_union", self.nouvelle_union),
                 ("ressources_nouveau_conjoint", self.ressources_nouveau_conjoint),
+                ("nouvelle_union_depuis", self.nouvelle_union_depuis),
                 ("conjoint_invalidite", self.conjoint_invalidite), ("deces", self.deces))
-                if valeur not in ("", None)]
+                if valeur not in ("", None)] + (["ex1"] if self.ex_conjoints else [])
             if orphelins:
                 raise ErreurSaisie(
                     f"« {orphelins[0]} » ne sert qu'à la réversion : dites aussi la "
@@ -2016,6 +2050,8 @@ class Saisie:
                                   ("mariage", self.mariage, "le mariage"),
                                   ("conjoint_invalidite", self.conjoint_invalidite,
                                    "l'invalidité du conjoint"),
+                                  ("nouvelle_union_depuis", self.nouvelle_union_depuis,
+                                   "le début de sa nouvelle union"),
                                   ("deces", self.deces, "le décès")):
             if not valeur:
                 continue
@@ -2047,6 +2083,10 @@ class Saisie:
                 raise ErreurSaisie(
                     "« ressources_nouveau_conjoint » ne sert qu'au ménage du conjoint : "
                     "dites aussi l'union où il vit (« nouvelle_union »).")
+        if self.nouvelle_union_depuis and not self.nouvelle_union:
+            raise ErreurSaisie(
+                "« nouvelle_union_depuis » ne sert qu'au ménage du conjoint : dites "
+                "aussi l'union où il vit (« nouvelle_union »).")
         if "mariage" in dates and dates["mariage"] <= max(dates["conjoint"], self.naissance_iso):
             raise ErreurSaisie("Le mariage précède la naissance d'un des époux.")
         if ("conjoint_invalidite" in dates
@@ -2068,6 +2108,53 @@ class Saisie:
                     f"Décès « {self.deces} » : il précède le début de la carrière, en "
                     f"{self.date_de(self.debut)} ; l'assuré n'aurait aucun droit à "
                     "reverser.")
+            if ("nouvelle_union_depuis" in dates
+                    and dates["nouvelle_union_depuis"] <= dates["deces"]):
+                raise ErreurSaisie(
+                    "La nouvelle union du conjoint précède votre décès : elle le suit.")
+        self._verifier_ex_conjoints(dates)
+
+    def _verifier_ex_conjoints(self, dates: dict[str, str]) -> None:
+        """Les précédents conjoints : des dates lisibles, un mariage après les
+        deux naissances, un divorce après lui et avant le mariage suivant, un
+        remariage après le divorce ; leur mariage avec l'assuré précède celui
+        du conjoint, qu'il faut dater, et le décès."""
+        if not self.ex_conjoints:
+            return
+        if "mariage" not in dates:
+            raise ErreurSaisie(
+                "Avec un précédent conjoint, dites aussi la date du mariage avec votre "
+                "conjoint (« mariage »), que le partage de la réversion compte.")
+        fin_precedente = None
+        for rang, ex in enumerate(self.ex_conjoints, 1):
+            jours = {}
+            for nom, valeur, quoi in (("naissance", ex.naissance, "la naissance"),
+                                      ("mariage", ex.mariage, "le mariage"),
+                                      ("divorce", ex.divorce, "le divorce"),
+                                      ("remariage", ex.remariage, "le remariage")):
+                if not valeur:
+                    continue
+                try:
+                    jours[nom], _ = chronologie.date_declaree(valeur, quoi)
+                except ValueError:
+                    raise ErreurSaisie(
+                        f"Précédent conjoint n° {rang}, {quoi} « {valeur} » : attendu en "
+                        "AAAA ou AAAA-MM, par exemple 1962 ou 1962-03.") from None
+            if (jours["mariage"] <= max(jours["naissance"], self.naissance_iso)
+                    or (fin_precedente is not None and jours["mariage"] < fin_precedente)):
+                raise ErreurSaisie(
+                    f"Précédent conjoint n° {rang} : le mariage suit les deux naissances "
+                    "et le divorce d'avant.")
+            if jours["divorce"] <= jours["mariage"]:
+                raise ErreurSaisie(f"Précédent conjoint n° {rang} : le divorce suit le mariage.")
+            if "remariage" in jours and jours["remariage"] <= jours["divorce"]:
+                raise ErreurSaisie(
+                    f"Précédent conjoint n° {rang} : son remariage suit le divorce.")
+            fin_precedente = jours["divorce"]
+        if dates["mariage"] < fin_precedente:
+            raise ErreurSaisie(
+                "Le mariage avec votre conjoint précède le divorce d'un précédent "
+                "mariage : il le suit.")
 
     def requete(self, **remplacements) -> str:
         champs = {
@@ -2095,8 +2182,14 @@ class Saisie:
                 ("nouvelle_union", self.nouvelle_union),
                 ("ressources_nouveau_conjoint", "" if self.ressources_nouveau_conjoint is None
                  else _nombre(self.ressources_nouveau_conjoint)),
+                ("nouvelle_union_depuis", self.nouvelle_union_depuis),
                 ("conjoint_invalidite", self.conjoint_invalidite),
                 ("deces", self.deces)) if valeur not in ("", None)},
+            **{f"ex{rang}{suffixe}": valeur
+               for rang, ex in enumerate(self.ex_conjoints, 1)
+               for suffixe, valeur in (("", ex.naissance), ("_mariage", ex.mariage),
+                                       ("_divorce", ex.divorce),
+                                       ("_remariage", ex.remariage)) if valeur},
             **({"progressive": self.mois_de(self.progressive, depart=True),
                 "quotite": self.quotite_progressive}
                if self.progressive is not None else {}),
@@ -2320,6 +2413,29 @@ def _periodes_etrangeres_saisies(parametres: dict[str, str], mois_de_naissance: 
             activite=activite or activites[0],
         ))
     return periodes
+
+
+def _ex_conjoints_saisis(parametres: dict[str, str],
+                         tolerante: bool = False) -> list[ExConjointSaisi]:
+    """Les précédents conjoints, lus dans « ex1… » et « ex2… » : la naissance
+    (« ex1 »), le mariage (« _mariage »), le divorce (« _divorce ») et le
+    remariage (« _remariage »). Une ligne commencée se refuse sans l'un des
+    trois premiers."""
+    ex_conjoints: list[ExConjointSaisi] = []
+    for rang in range(1, EX_CONJOINTS_MAXIMUM + 1):
+        naissance, mariage, divorce, remariage = (
+            (parametres.get(f"ex{rang}{suffixe}") or "").strip()
+            for suffixe in ("", "_mariage", "_divorce", "_remariage"))
+        if not (naissance or mariage or divorce or remariage):
+            continue
+        if tolerante and not (naissance and mariage and divorce):
+            break
+        if not (naissance and mariage and divorce):
+            raise ErreurSaisie(
+                f"Précédent conjoint n° {rang} : indiquer sa naissance, la date du "
+                "mariage et celle du divorce, ou laisser sa ligne entièrement vide.")
+        ex_conjoints.append(ExConjointSaisi(naissance, mariage, divorce, remariage))
+    return ex_conjoints
 
 
 def _pensions_etrangeres_saisies(parametres: dict[str, str], mois_de_naissance: DateMois,

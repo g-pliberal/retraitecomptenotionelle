@@ -1,0 +1,41 @@
+date: "2026-10-09"
+session: "action 138, étape 4 : le partage entre ex-conjoints et le remariage"
+consulte: >-
+  veille_droit.py, lancé à l'ouverture de la session (dernière veille consignée :
+  2026-10-09) ; dans l'index LEGI : L. 353-3 (LEGIARTI000006742650, 1985, et
+  006742651, 2003), R. 353-4 (LEGIARTI000006749410, 1985, et 006749411, 2004), les
+  articles L. 43 à L. 46 du code des pensions civiles et militaires dans leurs
+  rédactions de 1978 à 2012, l'arrêté du 30 décembre 1970 relatif à l'Ircantec,
+  articles 20 (de 1980 à 2024) et 22, l'annexe 3 au statut national des IEG,
+  articles 22, 25 et 26 (rédaction du 6 août 2025), le décret n° 2004-569, article
+  10, et l'arrêté du 26 novembre 2004, articles 4, 5, 7 et 9 (RAFP), l'article 22
+  du règlement de la complémentaire des indépendants (2013) ; l'API de la
+  législation de la Cnav : les exposés « Existence d'ex-conjoint(s) » (24 octobre
+  2025) et « Conditions d'attribution - retraite de réversion », la circulaire
+  n° 105/90, § 3 ; la page « La pension de réversion » de la fédération
+  Agirc-Arrco, relue — l'accord du 17 novembre 2017, sur le même site, refusé par
+  son filtre ; Destinie 2, Retraite.cpp, au commit 4c1d34b.
+trouve: >-
+  La réversion se partage entre le conjoint survivant et les précédents conjoints
+  au prorata de la durée de chaque mariage, en mois de date à date (R. 353-4,
+  arrêté du RAFP, règlement des indépendants) : au régime général, avec tous les
+  ex-conjoints depuis 2003 (L. 353-3), les non remariés seuls avant, le minimum et
+  le maximum partagés de même (circulaire n° 105/90) ; dans la fonction publique,
+  la CRPCEN, l'Ircantec, les IEG et l'Agirc-Arrco, avec les non remariés ; au RAFP
+  et à la complémentaire des indépendants, avec tous. L'Agirc-Arrco laisse la
+  réversion entière au conjoint marié avant le 13 janvier 1998 quand le mariage
+  précédent du défunt a été dissous avant le 1er juillet 1980. Le remariage du
+  survivant retire la réversion de la fonction publique et du RAFP, avec le
+  concubinage notoire (L. 46, article 4 de l'arrêté), de l'Agirc-Arrco, de
+  l'Ircantec et des IEG ; le régime général et la complémentaire des
+  indépendants n'en comptent que le ménage. Le scénario 1 le calcule dans les deux
+  moteurs ; aucune pension ni réversion des témoins ne bouge.
+reste: >-
+  Le reste de l'étape 4 : L. 353-5 et D. 355-1, les majorations forfaitaires
+  d'avant 1995 et 1982. Du partage : la part qui accroît celle des autres au décès
+  d'un bénéficiaire, plus de deux précédents conjoints, leur propre réversion et
+  leur condition de mariage, les lits d'orphelins de L. 43, l'ex-conjoint seul de
+  l'Agirc-Arrco, le texte de l'accord de 2017 sur la règle du 13 janvier 1998. Du
+  remariage : le droit recouvré quand la nouvelle union cesse, et la révision du
+  régime général quand l'union se forme après la date d'effet ; confirmer auprès de
+  l'ERAFP que le conjoint divorcé remarié compte au partage.

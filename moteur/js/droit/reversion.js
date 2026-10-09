@@ -26,7 +26,10 @@
  * l'échéancier liquide une réversion d'essai pour un décès supposé juste après
  * le départ (présomption `deces_apres_le_depart`). Mort avant son départ,
  * l'assuré laisse la réversion de la pension qu'il « eût obtenue » à son décès,
- * sans décote (R. 353-6), que l'échéancier liquide.
+ * sans décote (R. 353-6), que l'échéancier liquide. Chaque régime la partage
+ * avec les précédents conjoints que sa fiche admet, au prorata des mariages en
+ * mois (`partDuSurvivant`), et l'éteint au mois qui suit l'union nouvelle du
+ * survivant quand sa fiche le dit (`jusquAuRemariage`).
  */
 
 import * as chrono from "../chronologie.js";
@@ -45,6 +48,7 @@ export const MOTIFS = Object.freeze({
   ecretee: "réduite à due concurrence du plafond de ressources",
   ressources: "ressources au-dessus du plafond",
   mariage: "condition d'antériorité ou de durée du mariage non remplie",
+  remariage: "perdue par l'union qu'il a formée avant sa date d'effet",
   non_portee: "la réversion de ce régime n'est pas encore portée",
 });
 
@@ -88,7 +92,7 @@ export class ReversionRegime {
     minimum = 0.0, majoration_trois_enfants = 0.0, majoration_petites_retraites = 0.0,
     majoration_petites_retraites_effet = null, minimum_contributif = 0.0,
     ecretement_du_maximum = 0.0, maximum = 0.0, plafond = 0.0,
-    ressources_retenues = 0.0 }) {
+    ressources_retenues = 0.0, part = 1.0, fin = null }) {
     this.regime = regime;
     this.base = base;
     this.montant = montant;
@@ -122,6 +126,12 @@ export class ReversionRegime {
     // sans plafond.
     this.plafond = plafond;
     this.ressources_retenues = ressources_retenues;
+    // La part du survivant, partagée avec les précédents conjoints au prorata
+    // des mariages (L. 353-3) : 1 sans eux.
+    this.part = part;
+    // Le jour où l'union nouvelle du survivant éteint la réversion, quand elle
+    // suit la date d'effet ; null sinon.
+    this.fin = fin;
     Object.freeze(this);
   }
 
@@ -142,7 +152,7 @@ export class ReversionRegime {
       minimum_contributif: this.minimum_contributif,
       ecretement_du_maximum: this.ecretement_du_maximum,
       maximum: this.maximum, plafond: this.plafond,
-      ressources_retenues: this.ressources_retenues,
+      ressources_retenues: this.ressources_retenues, part: this.part, fin: this.fin,
     };
   }
 }
@@ -203,6 +213,122 @@ export function moisSuivant(jour) {
  * Le premier jour du mois qui suit celui où `age` est atteint (R. 353-7) : un
  * anniversaire le 1er du mois ouvre le mois suivant, comme les autres.
  */
+/**
+ * La durée d'un mariage, en mois : « déterminée de date à date et arrondie au
+ * nombre de mois inférieur » (R. 353-4).
+ */
+export function moisDeMariage(debut, fin) {
+  let mois = (Number(fin.slice(0, 4)) - Number(debut.slice(0, 4))) * 12
+    + Number(fin.slice(5, 7)) - Number(debut.slice(5, 7));
+  if (Number(fin.slice(8, 10)) < Number(debut.slice(8, 10))) {
+    mois -= 1;
+  }
+  return Math.max(0, mois);
+}
+
+/**
+ * La part du conjoint survivant dans la réversion d'un régime : la durée de son
+ * mariage, jusqu'au décès, rapportée à celle de tous les mariages dont les
+ * conjoints y ont droit — les précédents que `admis` retient. Voir
+ * `_part_du_survivant` du Python.
+ */
+function partDuSurvivant(carriere, conjoint, deces, admis) {
+  let autres = 0;
+  for (const ex of carriere.exConjoints) {
+    if (admis(ex)) {
+      autres += moisDeMariage(ex.mariage, ex.divorce);
+    }
+  }
+  if (!autres) {
+    return 1.0;
+  }
+  const propre = moisDeMariage(conjoint.mariage, deces);
+  return propre / (propre + autres);
+}
+
+/** Le précédent conjoint s'est-il remarié avant le décès de l'assuré ? */
+function remarieAvant(ex, deces) {
+  return ex.remariage !== null && ex.remariage !== undefined && ex.remariage <= deces;
+}
+
+/**
+ * Les précédents conjoints qui partagent la réversion du régime général : tous
+ * depuis juillet 2004 ; avant, les seuls non remariés dont le mariage a duré
+ * deux ans, sauf enfant. Voir `_admis_au_regime_general` du Python.
+ */
+function admisAuRegimeGeneral(parametres, deces, enfants) {
+  if (parametres.ex_conjoints === "tous") {
+    return () => true;
+  }
+  const annees = parametres.mariage_minimum_annees;
+  return (ex) => !remarieAvant(ex, deces)
+    && (!annees || enfants > 0 || chrono.anneesRevolues(ex.mariage, ex.divorce) >= annees);
+}
+
+/**
+ * Les précédents conjoints qui partagent la réversion d'un autre régime, selon
+ * ce que la version dit (`ex_conjoints`) : aucun, ceux qui ne se sont pas
+ * remariés avant le décès, ou tous. Voir `_admis_ailleurs` du Python.
+ */
+function admisAilleurs(parametres, deces) {
+  const regle = parametres.ex_conjoints ?? "aucun";
+  if (regle === "tous") {
+    return () => true;
+  }
+  if (regle === "non_remaries") {
+    return (ex) => !remarieAvant(ex, deces);
+  }
+  return () => false;
+}
+
+/**
+ * La réversion entière au conjoint survivant, malgré les précédents conjoints,
+ * quand la version le dit (`entiere_au_conjoint`) : à l'Agirc-Arrco, le
+ * conjoint marié avant le 13 janvier 1998, quand le mariage précédent du
+ * défunt a été dissous avant le 1er juillet 1980. Voir `_entiere_au_conjoint`
+ * du Python.
+ */
+function entiereAuConjoint(parametres, carriere, conjoint) {
+  const regle = parametres.entiere_au_conjoint;
+  if (!regle || carriere.exConjoints.length === 0
+      || conjoint.mariage === null || conjoint.mariage === undefined) {
+    return false;
+  }
+  const dernierDivorce = carriere.exConjoints.reduce(
+    (dernier, ex) => (ex.divorce > dernier ? ex.divorce : dernier), "");
+  return conjoint.mariage < regle.marie_avant
+    && dernierDivorce < regle.precedent_dissous_avant;
+}
+
+/**
+ * Le jour où l'union nouvelle du survivant éteint la réversion d'un régime qui
+ * la retire à cette forme d'union : le premier jour du mois qui suit l'union ;
+ * `null` sinon. Voir `_fin_au_remariage` du Python.
+ */
+function finAuRemariage(parametres, conjoint) {
+  if (conjoint.nouvelle_union === null || conjoint.nouvelle_union === undefined
+      || conjoint.nouvelle_union_depuis === null || conjoint.nouvelle_union_depuis === undefined
+      || !(parametres.perte_au_remariage ?? []).includes(conjoint.nouvelle_union)) {
+    return null;
+  }
+  return moisSuivant(conjoint.nouvelle_union_depuis);
+}
+
+/**
+ * La ligne, arrêtée par l'union nouvelle du survivant : sans montant quand
+ * l'union précède sa date d'effet, jusqu'à elle sinon.
+ */
+function jusquAuRemariage(ligne, parametres, conjoint) {
+  const fin = finAuRemariage(parametres, conjoint);
+  if (fin === null || ligne.date_effet === null || ligne.montant <= 0) {
+    return ligne;
+  }
+  if (fin <= ligne.date_effet) {
+    return ligne.avec({ montant: 0.0, motif: "remariage", majoration: 0.0 });
+  }
+  return ligne.avec({ fin });
+}
+
 function apresLAge(naissance, age) {
   return moisSuivant(chrono.plusAns(naissance, Math.trunc(age)));
 }
@@ -369,8 +495,10 @@ function ressourcesDuPlafond(parametres, conjoint, ressources, dateEffet) {
     retenues -= Number(taux) * Math.min(retenues, Number(conjoint.revenus_d_activite));
   }
   const facteur = parametres.facteur_menage;
+  // Le ménage ne compte que formé à la date d'effet : voir le Python.
   if (facteur === null || facteur === undefined
-      || conjoint.nouvelle_union === null || conjoint.nouvelle_union === undefined) {
+      || conjoint.nouvelle_union === null || conjoint.nouvelle_union === undefined
+      || (conjoint.nouvelle_union_depuis ?? dateEffet) > dateEffet) {
     return [retenues, 1.0];
   }
   return [retenues + Number(conjoint.ressources_du_nouveau_conjoint ?? 0.0), Number(facteur)];
@@ -514,12 +642,17 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       continue;
     }
     const taux = Number(parametres.taux);
+    // La part du survivant, partagée avec les précédents conjoints au prorata
+    // des mariages, et la ligne arrêtée par son union nouvelle.
+    const part = entiereAuConjoint(parametres, carriere, conjoint) ? 1.0
+      : partDuSurvivant(carriere, conjoint, deces, admisAilleurs(parametres, deces));
     if (MOITIE_SOUS_CONDITION_DE_MARIAGE.includes(fiche.id)) {
       const servie = mariageSuffit(parametres, conjoint, deces, depart, enfants);
-      const montant = servie ? taux * base : 0.0;
-      autresBases += montant;
-      lignes.set(regime, ligne(regime, base, montant, servie ? "servie" : "mariage",
-        fiche, version, taux, lendemain, fiabilite));
+      const montant = servie ? taux * base * part : 0.0;
+      lignes.set(regime, jusquAuRemariage(ligne(regime, base, montant,
+        servie ? "servie" : "mariage", fiche, version, taux, lendemain, fiabilite)
+        .avec({ part }), parametres, conjoint));
+      autresBases += lignes.get(regime).montant;
       continue;
     }
     if (fiche.id === "reversion_ieg") {
@@ -528,20 +661,21 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       const servie = mariageIeg(parametres, conjoint, deces, depart, enfants);
       const majoration = servie
         ? Number(parametres.majoration_reversible ?? 0.0) * ((majorations ?? {})[regime] ?? 0.0)
+          * part
         : 0.0;
-      const montant = servie ? taux * base + majoration : 0.0;
-      autresBases += montant;
-      lignes.set(regime, ligne(regime, base, montant, servie ? "servie" : "mariage",
-        fiche, version, taux, lendemain, fiabilite, majoration));
+      const montant = servie ? taux * base * part + majoration : 0.0;
+      lignes.set(regime, jusquAuRemariage(ligne(regime, base, montant,
+        servie ? "servie" : "mariage", fiche, version, taux, lendemain, fiabilite, majoration)
+        .avec({ part }), parametres, conjoint));
+      autresBases += lignes.get(regime).montant;
       continue;
     }
     if (fiche.id === "reversion_rafp") {
-      const montant = taux * base;
+      lignes.set(regime, jusquAuRemariage(ligne(regime, base, taux * base * part, "servie",
+        fiche, version, taux, lendemain, fiabilite).avec({ part }), parametres, conjoint));
       if (parametres.compte_aux_ressources) {
-        autresBases += montant;
+        autresBases += lignes.get(regime).montant;
       }
-      lignes.set(regime, ligne(regime, base, montant, "servie", fiche, version, taux,
-        lendemain, fiabilite));
       continue;
     }
     if (fiche.id === "reversion_ircantec") {
@@ -556,8 +690,9 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
         // l'âge (article 21) : la réversion part au mois qui suit le décès.
         dateEffet = lendemain;
       }
-      lignes.set(regime, ligne(regime, base, servie ? taux * base : 0.0,
-        servie ? "servie" : "mariage", fiche, version, taux, dateEffet, fiabilite));
+      lignes.set(regime, jusquAuRemariage(ligne(regime, base, servie ? taux * base * part : 0.0,
+        servie ? "servie" : "mariage", fiche, version, taux, dateEffet, fiabilite)
+        .avec({ part }), parametres, conjoint));
       continue;
     }
     let dateEffet = aLAge(conjoint.naissance, lendemain,
@@ -583,9 +718,10 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     // La majoration pour enfants du défunt « réversible au taux de 100 % »
     // (article 109) : en plus des 60 %, qui ne la comptent pas.
     const majoration = Number(parametres.majoration_reversible ?? 0.0)
-      * ((majorations ?? {})[regime] ?? 0.0);
-    lignes.set(regime, ligne(regime, base, taux * base + majoration, "servie", fiche,
-      version, taux, dateEffet, fiabilite, majoration));
+      * ((majorations ?? {})[regime] ?? 0.0) * part;
+    lignes.set(regime, jusquAuRemariage(ligne(regime, base, taux * base * part + majoration,
+      "servie", fiche, version, taux, dateEffet, fiabilite, majoration).avec({ part }),
+    parametres, conjoint));
   }
 
   // Le plafond de ressources est un : les réversions des régimes alignés se
@@ -622,14 +758,19 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     // décédé » ; circulaire n° 105/90, § 22).
     const contributif = Math.min(base, (minima ?? {})[regime] ?? 0.0);
     const [ecretement, surcote, coefficient] = (maxima ?? {})[regime] ?? [0.0, 0.0, 1.0];
-    let montant = taux * (base - contributif + ecretement);
+    // Partagée avec les précédents conjoints au prorata des mariages, la
+    // réversion l'est avec son minimum et son maximum (circulaire Cnav
+    // n° 105/90, § 3).
+    const part = partDuSurvivant(carriere, conjoint, deces,
+      admisAuRegimeGeneral(parametres, deces, enfants));
+    let montant = taux * (base - contributif + ecretement) * part;
     let motif = "servie";
     let fiabilite = fiabiliteDuRegime;
     // Le minimum de D. 353-1, avant les ressources : la caisse porte la
     // réversion au minimum, puis la réduit du dépassement du plafond.
     let minimum = 0.0;
     if (minimumDeLAnnee !== null && parametres.minimum_trimestres) {
-      minimum = minimumDeLAnnee[0] * partDuMinimum(parametres, regime, durees, lura);
+      minimum = minimumDeLAnnee[0] * partDuMinimum(parametres, regime, durees, lura) * part;
       if (minimum > montant) {
         montant = minimum;
         motif = "minimum";
@@ -668,7 +809,7 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     let maximum = 0.0;
     const desPensions = maximumDesPensions(moteur, regime, dateEffet, annee);
     if (desPensions !== null) {
-      maximum = taux * (desPensions[0] * coefficient + surcote);
+      maximum = taux * (desPensions[0] * coefficient + surcote) * part;
       if (montant > maximum) {
         montant = maximum;
         motif = "maximum";
@@ -688,7 +829,7 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       taux, dateEffet, fiabilite).avec({
       minimum, majoration_trois_enfants: troisEnfants, minimum_contributif: contributif,
       ecretement_du_maximum: ecretement, maximum, plafond: plafondAnnuel,
-      ressources_retenues: retenues,
+      ressources_retenues: retenues, part,
     }));
   }
 
@@ -710,7 +851,9 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       }));
       continue;
     }
-    independantes.push([regime, base, fiabilite, fiche, version]);
+    const part = partDuSurvivant(carriere, conjoint, deces,
+      admisAilleurs(version.parametres, deces));
+    independantes.push([regime, base, fiabilite, fiche, version, part]);
   }
   if (independantes.length > 0) {
     const premiers = independantes[0][4].parametres;
@@ -720,22 +863,23 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       * moteur.macro.plafond_securite_sociale.valeur(annee);
     const retenues = personnelles + autresBases;
     let brut = 0.0;
-    for (const [, base, , , version] of independantes) {
-      brut += Number(version.parametres.taux) * base;
+    for (const [, base, , , version, part] of independantes) {
+      brut += Number(version.parametres.taux) * base * part;
     }
     const depassement = Math.max(0.0, retenues + brut - plafondAnnuel);
-    for (const [regime, base, fiabilite, fiche, version] of independantes) {
+    for (const [regime, base, fiabilite, fiche, version, part] of independantes) {
       const parametres = version.parametres;
       const taux = Number(parametres.taux);
-      let montant = taux * base;
+      let montant = taux * base * part;
       let motif = "servie";
-      if (depassement > 0) {
+      if (depassement > 0 && brut > 0) {
         montant = Math.max(0.0, montant - depassement * montant / brut);
         motif = "ecretee";
       }
       const dateEffet = aLAge(conjoint.naissance, lendemain, Number(parametres.age_minimum));
       lignes.set(regime, ligne(regime, base, montant, motif, fiche, version, taux,
-        dateEffet, fiabilite).avec({ plafond: plafondAnnuel, ressources_retenues: retenues }));
+        dateEffet, fiabilite).avec({ plafond: plafondAnnuel, ressources_retenues: retenues,
+        part }));
     }
   }
 

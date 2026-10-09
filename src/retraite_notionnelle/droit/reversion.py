@@ -65,12 +65,33 @@ dépasse (D. 353-4). Une majoration qui commence après la date d'effet de la
 ligne, quand le survivant n'a pas encore l'âge du taux plein, s'écrit à part,
 avec sa date, hors du montant.
 
+LE PARTAGE ENTRE CONJOINTS : quand l'assuré a été marié plusieurs fois, chaque
+régime partage sa réversion entre le conjoint survivant et les précédents
+conjoints, divorcés, « au prorata de la durée respective de chaque mariage »,
+« déterminée de date à date et arrondie au nombre de mois inférieur »
+(L. 353-3, R. 353-4 ; L. 43 et L. 45 du code des pensions) ; le minimum et le
+maximum du régime général se réduisent de même (circulaire Cnav n° 105/90,
+§ 3). Chaque version dit qui partage (``ex_conjoints``) : aucun précédent
+conjoint, quand elle ne sert que le survivant ; ceux qui ne se sont pas
+remariés avant le décès, comme au régime général avant juillet 2004 ; ou tous.
+L'Agirc-Arrco laisse la réversion entière au conjoint marié avant le 13
+janvier 1998, quand le mariage précédent du défunt a été dissous avant le 1er
+juillet 1980 (``entiere_au_conjoint``). La ligne du survivant dit sa part.
+
+LE REMARIAGE DU SURVIVANT éteint la réversion des régimes dont la fiche le dit
+(``perte_au_remariage``, les formes d'union qui l'éteignent) : la fonction
+publique et la CRPCEN au mariage ou au concubinage notoire (L. 46), le RAFP
+de même, l'Agirc-Arrco, l'Ircantec et les IEG au mariage ; la ligne s'arrête
+au mois qui suit l'union, ou n'est pas servie quand l'union la précède. Au
+régime général, le ménage ne compte au plafond que s'il est formé à la date
+d'effet.
+
 CE QUI N'EST PAS ENCORE PORTÉ, et que les fiches déclarent : la majoration
 forfaitaire pour enfant à charge du régime général, la révision de la
 réversion quand le ménage ou ses ressources changent, le plafonnement du veuf
 de fonctionnaire d'avant 2004,
-la minoration de l'Agirc avant soixante ans, le partage entre ex-conjoints, le
-remariage. L'Agirc-Arrco sert 60 % des points sans le coefficient
+la minoration de l'Agirc avant soixante ans, la réversion des précédents
+conjoints eux-mêmes. L'Agirc-Arrco sert 60 % des points sans le coefficient
 d'anticipation de l'assuré retraité, dans la limite de sa retraite, l'Ircantec
 la moitié et la RCI 60 % sans lui : le moteur applique les taux à la retraite
 servie, coefficient compris.
@@ -127,6 +148,7 @@ MOTIFS = {
     "ecretee": "réduite à due concurrence du plafond de ressources",
     "ressources": "ressources au-dessus du plafond",
     "mariage": "condition d'antériorité ou de durée du mariage non remplie",
+    "remariage": "perdue par l'union qu'il a formée avant sa date d'effet",
     "non_portee": "la réversion de ce régime n'est pas encore portée",
 }
 
@@ -203,6 +225,13 @@ class ReversionRegime:
     #: couple, les réversions des autres régimes de base ; 0 sans plafond.
     plafond: float = 0.0
     ressources_retenues: float = 0.0
+    #: La part du survivant dans la réversion du régime, partagée avec les
+    #: précédents conjoints au prorata des mariages (L. 353-3) : 1 sans eux.
+    part: float = 1.0
+    #: Le jour où l'union nouvelle du survivant éteint la réversion
+    #: (``perte_au_remariage``), quand elle suit la date d'effet ; ``None``
+    #: sinon.
+    fin: str | None = None
 
     def donnees(self) -> dict:
         return {"regime": self.regime, "base": self.base, "taux": self.taux,
@@ -218,7 +247,8 @@ class ReversionRegime:
                 "minimum_contributif": self.minimum_contributif,
                 "ecretement_du_maximum": self.ecretement_du_maximum,
                 "maximum": self.maximum, "plafond": self.plafond,
-                "ressources_retenues": self.ressources_retenues}
+                "ressources_retenues": self.ressources_retenues, "part": self.part,
+                "fin": self.fin}
 
 
 @dataclass(frozen=True)
@@ -262,6 +292,96 @@ def mois_suivant(jour: str) -> str:
     annee, mois = int(jour[:4]), int(jour[5:7])
     annee, mois = (annee + 1, 1) if mois == 12 else (annee, mois + 1)
     return f"{annee:04d}-{mois:02d}-01"
+
+
+def mois_de_mariage(debut: str, fin: str) -> int:
+    """La durée d'un mariage, en mois : « déterminée de date à date et arrondie
+    au nombre de mois inférieur » (R. 353-4)."""
+    mois = (int(fin[:4]) - int(debut[:4])) * 12 + int(fin[5:7]) - int(debut[5:7])
+    if int(fin[8:10]) < int(debut[8:10]):
+        mois -= 1
+    return max(0, mois)
+
+
+def _part_du_survivant(carriere: Carriere, conjoint: Conjoint, deces: str,
+                       admis) -> float:
+    """La part du conjoint survivant dans la réversion d'un régime : la durée
+    de son mariage, jusqu'au décès, rapportée à celle de tous les mariages
+    dont les conjoints y ont droit — les précédents que ``admis`` retient
+    (L. 353-3, R. 353-4 ; L. 45, puis L. 43, du code des pensions). Sans
+    précédent conjoint retenu, la réversion entière."""
+    autres = somme_ordonnee(mois_de_mariage(ex.mariage, ex.divorce)
+                            for ex in carriere.ex_conjoints if admis(ex))
+    if not autres:
+        return 1.0
+    propre = mois_de_mariage(conjoint.mariage, deces)
+    return propre / (propre + autres)
+
+
+def _remarie_avant(ex, deces: str) -> bool:
+    """Le précédent conjoint s'est-il remarié avant le décès de l'assuré ?"""
+    return ex.remariage is not None and ex.remariage <= deces
+
+
+def _admis_au_regime_general(parametres: dict, deces: str, enfants: int):
+    """Les précédents conjoints qui partagent la réversion du régime général :
+    tous depuis juillet 2004 (L. 353-3) ; avant, les seuls « non remariés »
+    dont le mariage a duré deux ans, sauf enfant issu du mariage (R. 353-4,
+    rédaction de 1985), que le modèle tient pour tout enfant déclaré."""
+    if parametres.get("ex_conjoints") == "tous":
+        return lambda ex: True
+    annees = parametres["mariage_minimum_annees"]
+    return lambda ex: (not _remarie_avant(ex, deces)
+                       and (not annees or enfants > 0
+                            or chrono.annees_revolues(ex.mariage, ex.divorce) >= annees))
+
+
+def _admis_ailleurs(parametres: dict, deces: str):
+    """Les précédents conjoints qui partagent la réversion d'un autre régime,
+    selon ce que la version dit (``ex_conjoints``) : aucun, quand elle ne sert
+    que le conjoint survivant ; ceux qui ne se sont pas remariés avant le
+    décès ; ou tous."""
+    regle = parametres.get("ex_conjoints", "aucun")
+    if regle == "tous":
+        return lambda ex: True
+    if regle == "non_remaries":
+        return lambda ex: not _remarie_avant(ex, deces)
+    return lambda ex: False
+
+
+def _entiere_au_conjoint(parametres: dict, carriere: Carriere, conjoint: Conjoint) -> bool:
+    """La réversion entière au conjoint survivant, malgré les précédents
+    conjoints, quand la version le dit (``entiere_au_conjoint``) : à
+    l'Agirc-Arrco, le conjoint marié avant le 13 janvier 1998, quand le mariage
+    précédent du défunt a été dissous avant le 1er juillet 1980."""
+    regle = parametres.get("entiere_au_conjoint")
+    if not regle or not carriere.ex_conjoints or conjoint.mariage is None:
+        return False
+    return (conjoint.mariage < regle["marie_avant"]
+            and max(ex.divorce for ex in carriere.ex_conjoints)
+            < regle["precedent_dissous_avant"])
+
+
+def _fin_au_remariage(parametres: dict, conjoint: Conjoint) -> str | None:
+    """Le jour où l'union nouvelle du survivant éteint la réversion d'un
+    régime qui la retire à cette forme d'union (``perte_au_remariage``) : le
+    premier jour du mois qui suit l'union ; ``None`` sinon."""
+    if (conjoint.nouvelle_union is None or conjoint.nouvelle_union_depuis is None
+            or conjoint.nouvelle_union not in (parametres.get("perte_au_remariage") or ())):
+        return None
+    return mois_suivant(conjoint.nouvelle_union_depuis)
+
+
+def _jusqu_au_remariage(ligne_: ReversionRegime, parametres: dict,
+                        conjoint: Conjoint) -> ReversionRegime:
+    """La ligne, arrêtée par l'union nouvelle du survivant : sans montant quand
+    l'union précède sa date d'effet, jusqu'à elle sinon."""
+    fin = _fin_au_remariage(parametres, conjoint)
+    if fin is None or ligne_.date_effet is None or ligne_.montant <= 0:
+        return ligne_
+    if fin <= ligne_.date_effet:
+        return replace(ligne_, montant=0.0, motif="remariage", majoration=0.0)
+    return replace(ligne_, fin=fin)
 
 
 def _apres_l_age(naissance: str, age: float) -> str:
@@ -425,7 +545,11 @@ def _ressources_du_plafond(parametres: dict, conjoint: Conjoint, ressources: flo
             >= int(parametres["abattement_activite_age"])):
         ressources -= float(taux) * min(ressources, float(conjoint.revenus_d_activite))
     facteur = parametres.get("facteur_menage")
-    if facteur is None or conjoint.nouvelle_union is None:
+    if (facteur is None or conjoint.nouvelle_union is None
+            or (conjoint.nouvelle_union_depuis or date_effet) > date_effet):
+        # Le ménage ne compte que formé à la date d'effet : celui qui se forme
+        # après réviserait la réversion (R. 353-1-1), ce que le modèle ne fait
+        # pas.
         return ressources, 1.0
     return (ressources + float(conjoint.ressources_du_nouveau_conjoint or 0.0),
             float(facteur))
@@ -559,32 +683,39 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             # ligne ne s'écrit pas, comme celle d'un régime qui ne sert rien.
             continue
         taux = float(parametres["taux"])
+        # La part du survivant, partagée avec les précédents conjoints au
+        # prorata des mariages, et la ligne arrêtée par son union nouvelle.
+        part = (1.0 if _entiere_au_conjoint(parametres, carriere, conjoint)
+                else _part_du_survivant(carriere, conjoint, deces,
+                                        _admis_ailleurs(parametres, deces)))
         if fiche["id"] in MOITIE_SOUS_CONDITION_DE_MARIAGE:
             servie = _mariage_suffit(parametres, conjoint, deces, depart, enfants)
-            montant = taux * base if servie else 0.0
-            autres_bases += montant
-            lignes[regime] = ligne(regime, base, montant, "servie" if servie else "mariage",
-                                   fiche, version, taux, lendemain, fiabilite)
+            montant = taux * base * part if servie else 0.0
+            lignes[regime] = _jusqu_au_remariage(replace(
+                ligne(regime, base, montant, "servie" if servie else "mariage",
+                      fiche, version, taux, lendemain, fiabilite), part=part),
+                parametres, conjoint)
+            autres_bases += lignes[regime].montant
             continue
         if fiche["id"] == "reversion_ieg":
             # La moitié de la pension, « majoration pour enfant comprise »
             # (annexe 3 au statut national des IEG, article 22).
             servie = _mariage_ieg(parametres, conjoint, deces, depart, enfants)
             majoration = (float(parametres.get("majoration_reversible") or 0.0)
-                          * (majorations or {}).get(regime, 0.0)) if servie else 0.0
-            montant = taux * base + majoration if servie else 0.0
-            autres_bases += montant
-            lignes[regime] = replace(
+                          * (majorations or {}).get(regime, 0.0) * part) if servie else 0.0
+            montant = taux * base * part + majoration if servie else 0.0
+            lignes[regime] = _jusqu_au_remariage(replace(
                 ligne(regime, base, montant, "servie" if servie else "mariage", fiche,
                       version, taux, lendemain, fiabilite),
-                majoration=majoration)
+                majoration=majoration, part=part), parametres, conjoint)
+            autres_bases += lignes[regime].montant
             continue
         if fiche["id"] == "reversion_rafp":
-            montant = taux * base
+            lignes[regime] = _jusqu_au_remariage(replace(
+                ligne(regime, base, taux * base * part, "servie", fiche, version, taux,
+                      lendemain, fiabilite), part=part), parametres, conjoint)
             if parametres.get("compte_aux_ressources"):
-                autres_bases += montant
-            lignes[regime] = ligne(regime, base, montant, "servie", fiche, version, taux,
-                                   lendemain, fiabilite)
+                autres_bases += lignes[regime].montant
             continue
         if fiche["id"] == "reversion_ircantec":
             naissance = chrono.naissance(carriere.chronologie, carriere.personne)["debut"]
@@ -598,9 +729,10 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
                 # lèvent l'âge (article 21) : la réversion part au mois qui
                 # suit le décès.
                 date_effet = lendemain
-            lignes[regime] = ligne(regime, base, taux * base if servie else 0.0,
-                                   "servie" if servie else "mariage", fiche, version, taux,
-                                   date_effet, fiabilite)
+            lignes[regime] = _jusqu_au_remariage(replace(
+                ligne(regime, base, taux * base * part if servie else 0.0,
+                      "servie" if servie else "mariage", fiche, version, taux,
+                      date_effet, fiabilite), part=part), parametres, conjoint)
             continue
         date_effet = _a_l_age(conjoint.naissance, lendemain,
                               _age_agirc_arrco(parametres, regime, conjoint.sexe))
@@ -618,11 +750,11 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         # La majoration pour enfants du défunt « réversible au taux de 100 % »
         # (article 109) : en plus des 60 %, qui ne la comptent pas.
         majoration = (float(parametres.get("majoration_reversible") or 0.0)
-                      * (majorations or {}).get(regime, 0.0))
-        lignes[regime] = replace(
-            ligne(regime, base, taux * base + majoration, "servie", fiche, version, taux,
-                  date_effet, fiabilite),
-            majoration=majoration)
+                      * (majorations or {}).get(regime, 0.0) * part)
+        lignes[regime] = _jusqu_au_remariage(replace(
+            ligne(regime, base, taux * base * part + majoration, "servie", fiche, version,
+                  taux, date_effet, fiabilite),
+            majoration=majoration, part=part), parametres, conjoint)
 
     # Le plafond de ressources est un : les réversions des régimes alignés se
     # l'imputent l'une après l'autre, dans l'ordre de la liquidation.
@@ -654,14 +786,19 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         # l'assuré décédé » ; circulaire n° 105/90, § 22).
         contributif = min(base, (minima or {}).get(regime, 0.0))
         ecretement, surcote, coefficient = (maxima or {}).get(regime, (0.0, 0.0, 1.0))
-        montant = taux * (base - contributif + ecretement)
+        # Partagée avec les précédents conjoints au prorata des mariages, la
+        # réversion l'est avec son minimum et son maximum (circulaire Cnav
+        # n° 105/90, § 3).
+        part = _part_du_survivant(carriere, conjoint, deces,
+                                  _admis_au_regime_general(parametres, deces, enfants))
+        montant = taux * (base - contributif + ecretement) * part
         motif = "servie"
         # Le minimum de D. 353-1, avant les ressources : la caisse porte la
         # réversion au minimum, puis la réduit du dépassement du plafond.
         minimum = 0.0
         if minimum_de_l_annee is not None and parametres.get("minimum_trimestres"):
             minimum = minimum_de_l_annee[0] * _part_du_minimum(parametres, regime, durees,
-                                                               lura)
+                                                               lura) * part
             if minimum > montant:
                 montant, motif = minimum, "minimum"
                 fiabilite = min(fiabilite, minimum_de_l_annee[1])
@@ -694,7 +831,7 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         maximum = 0.0
         des_pensions = maximum_des_pensions(moteur, regime, date_effet, annee)
         if des_pensions is not None:
-            maximum = taux * (des_pensions[0] * coefficient + surcote)
+            maximum = taux * (des_pensions[0] * coefficient + surcote) * part
             if montant > maximum:
                 montant, motif = maximum, "maximum"
                 fiabilite = min(fiabilite, des_pensions[1])
@@ -715,7 +852,8 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
                   date_effet, fiabilite),
             minimum=minimum, majoration_trois_enfants=trois_enfants,
             minimum_contributif=contributif, ecretement_du_maximum=ecretement,
-            maximum=maximum, plafond=plafond_annuel, ressources_retenues=retenues)
+            maximum=maximum, plafond=plafond_annuel, ressources_retenues=retenues,
+            part=part)
 
     # La complémentaire des indépendants en dernier : ses ressources sont
     # celles de R. 353-1, « personnelles ou du ménage », que les réversions de
@@ -733,7 +871,9 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         if not version["parametres"].get("portee", True):
             lignes[regime] = ReversionRegime(regime, base, 0.0, "non_portee")
             continue
-        independantes.append((regime, base, fiabilite, fiche, version))
+        part = _part_du_survivant(carriere, conjoint, deces,
+                                  _admis_ailleurs(version["parametres"], deces))
+        independantes.append((regime, base, fiabilite, fiche, version, part))
     if independantes:
         parametres = independantes[0][4]["parametres"]
         retenues, facteur = _ressources_du_plafond(
@@ -742,22 +882,22 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         plafond_annuel = (facteur * float(parametres["plafond_pass"])
                           * moteur.macro.plafond_securite_sociale(annee))
         retenues += autres_bases
-        brut = somme_ordonnee(float(version["parametres"]["taux"]) * base
-                   for _, base, _, _, version in independantes)
+        brut = somme_ordonnee(float(version["parametres"]["taux"]) * base * part
+                   for _, base, _, _, version, part in independantes)
         depassement = max(0.0, retenues + brut - plafond_annuel)
-        for regime, base, fiabilite, fiche, version in independantes:
+        for regime, base, fiabilite, fiche, version, part in independantes:
             parametres = version["parametres"]
             taux = float(parametres["taux"])
-            montant = taux * base
+            montant = taux * base * part
             motif = "servie"
-            if depassement > 0:
+            if depassement > 0 and brut > 0:
                 montant, motif = max(0.0, montant - depassement * montant / brut), "ecretee"
             date_effet = _a_l_age(conjoint.naissance, lendemain,
                                   float(parametres["age_minimum"]))
             lignes[regime] = replace(
                 ligne(regime, base, montant, motif, fiche, version, taux, date_effet,
                       fiabilite),
-                plafond=plafond_annuel, ressources_retenues=retenues)
+                plafond=plafond_annuel, ressources_retenues=retenues, part=part)
 
     # Ses retraites personnelles, que la majoration de 11,1 % compte : ses
     # ressources, moins ce que son activité lui rapporte.

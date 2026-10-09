@@ -3,13 +3,13 @@
 **Reprise, au 9 octobre 2026.** Fait : le minimum de D. 353-1, les majorations
 de 10 % et de 11,1 %, la base sans le minimum contributif, le maximum, surcote
 en sus ; le plafond du ménage et l'abattement des revenus d'activité ; la
-réversion d'un assuré mort avant son départ, sur la pension qu'il eût obtenue
-à son décès, au taux plein de l'inaptitude (R. 353-6). Reste, dans cet ordre :
-le partage entre ex-conjoints et le remariage ; L. 353-5 et D. 355-1.
-Commencer par le partage : les ex-conjoints datés dans la saisie et la
-chronologie, le prorata des durées de mariage (L. 353-3), le minimum et le
-maximum réduits de même. Détail : plus bas, « Ce qui reste », et les trois
-notes du 9 octobre.
+réversion d'un assuré mort avant son départ (R. 353-6) ; le partage entre
+ex-conjoints au prorata des mariages et le remariage, dans chaque régime.
+Reste, dans cet ordre : L. 353-5 et D. 355-1, avec lesquelles les retraites
+personnelles du survivant sortent de ses ressources d'avant juillet 2004 ; les
+majorations forfaitaires d'avant 1995 et 1982. Commencer par lire L. 353-5 et
+la limite forfaitaire du barème de la Cnav. Détail : plus bas, « Ce qui
+reste », et les quatre notes du 9 octobre.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « Quels sont les écarts
 encore présents avec trajectoire et destinie 2 ? J'aimerais combler les manques
@@ -108,7 +108,8 @@ de trois enfants). C'est l'étape 4 de l'action ; elle commence par là.
    obtenue », au taux de 50 % (R. 353-6) — fait le 9 octobre, note « assuré
    mort avant son départ ».
 5. *Le partage entre ex-conjoints* au prorata des mariages (L. 353-3), le
-   remariage ; puis L. 353-5 et les limites de cumul d'avant 2004 (D. 355-1),
+   remariage — fait le 9 octobre, note « partage et remariage » — ; puis
+   L. 353-5 et les limites de cumul d'avant 2004 (D. 355-1),
    dont le barème de la Cnav porte la limite forfaitaire.
 6. Les majorations forfaitaires des réversions d'avant 1995 (3,846 %) et
    d'avant décembre 1982 (4 %), que l'exposé de la Cnav décrit, à vérifier dans

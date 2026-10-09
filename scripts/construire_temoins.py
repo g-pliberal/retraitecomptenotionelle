@@ -1633,6 +1633,23 @@ def _cas() -> list[dict]:
         **avant_le_depart, "sexe": "F", "conjoint_sexe": "H", "enfants": "3"}))
     cas.append(("reversion_fonctionnaire_mort_en_activite", {
         **avant_le_depart, "statut": "fonctionnaire_etat", "primes": "0.2"}))
+    # Le même jour, le partage entre conjoints et le remariage : le salarié marié
+    # deux fois avant son dernier mariage laisse à sa veuve sa part de chaque
+    # réversion, au prorata des mariages, le premier précédent conjoint, remarié,
+    # n'étant plus de celui de l'Agirc-Arrco ; remariée en 2026, elle perd
+    # l'Agirc-Arrco et garde le régime général. Le fonctionnaire divorcé laisse
+    # à sa veuve, en concubinage dès 2024, sa part de la moitié de sa pension et
+    # de son RAFP, jusque-là.
+    partage = {**reversion, "mariage": "2005-06", "ex1": "1959", "ex1_mariage": "1980-06",
+               "ex1_divorce": "1990-06", "ex1_remariage": "1993-02", "ex2": "1961",
+               "ex2_mariage": "1991-03", "ex2_divorce": "2004-11"}
+    cas.append(("reversion_partage_et_remariage", {
+        **partage, "nouvelle_union": "mariage", "nouvelle_union_depuis": "2026-03",
+        "ressources_conjoint": "15000"}))
+    cas.append(("reversion_fonctionnaire_partage_concubinage", {
+        **reversion, "statut": "fonctionnaire_etat", "primes": "0.2", "mariage": "2000-06",
+        "ex1": "1959", "ex1_mariage": "1980-06", "ex1_divorce": "1995-06",
+        "nouvelle_union": "concubinage", "nouvelle_union_depuis": "2024-09"}))
 
     # Les carrières LUES sur un relevé, plutôt que reconstituées.
     cas.extend(_cas_releve())

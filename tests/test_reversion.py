@@ -18,7 +18,7 @@ from retraite_notionnelle.carriere import Carriere
 from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit.liquider import maximum_des_pensions
-from retraite_notionnelle.droit.reversion import reversion
+from retraite_notionnelle.droit.reversion import mois_de_mariage, reversion
 from retraite_notionnelle.saisie import ErreurSaisie, Saisie
 from retraite_notionnelle.simulateur import Simulateur
 
@@ -35,7 +35,8 @@ def _carriere(simulateur, naissance: int, depart: float, conjoint: str, deces: s
               enfants: int = 0, sexe_conjoint: str = "F",
               invalidite: str | None = None, sexe: str = "H",
               naissances: tuple[str, ...] = (), activite: float | None = None,
-              nouvelle_union: str | None = None, apport: float | None = None) -> Carriere:
+              nouvelle_union: str | None = None, apport: float | None = None,
+              ex_conjoints: tuple[dict, ...] = ()) -> Carriere:
     """Un salarié né en janvier ``naissance``, parti à ``depart`` ans, ses
     enfants nés aux dates ``naissances`` quand elles sont dites, et son
     conjoint, invalide depuis ``invalidite`` s'il est dit, ses ressources et ce
@@ -49,7 +50,8 @@ def _carriere(simulateur, naissance: int, depart: float, conjoint: str, deces: s
         conjoint={"naissance": conjoint, "sexe": sexe_conjoint, "mariage": mariage,
                   "ressources": ressources, "invalidite": invalidite,
                   "revenus_d_activite": activite, "nouvelle_union": nouvelle_union,
-                  "ressources_du_nouveau_conjoint": apport},
+                  "ressources_du_nouveau_conjoint": apport,
+                  "ex_conjoints": list(ex_conjoints)},
         deces=deces)
 
 
@@ -977,6 +979,25 @@ def test_sans_conjoint_pas_de_reversion(simulateur):
      "« ressources_nouveau_conjoint » ne sert qu'au ménage du conjoint"),
     ({"conjoint": "1962", "nouvelle_union": "pacs", "ressources_nouveau_conjoint": "-1"},
      "Ressources du nouveau conjoint : un montant annuel positif"),
+    ({"conjoint": "1962", "nouvelle_union_depuis": "2031"},
+     "« nouvelle_union_depuis » ne sert qu'au ménage du conjoint"),
+    ({"conjoint": "1962", "mariage": "1990", "deces": "2030", "nouvelle_union": "mariage",
+      "nouvelle_union_depuis": "2029"}, "La nouvelle union du conjoint précède votre décès"),
+    ({"ex1": "1958", "ex1_mariage": "1980", "ex1_divorce": "1985"},
+     "« ex1 » ne sert qu'à la réversion"),
+    ({"conjoint": "1962", "mariage": "1990", "ex1": "1958"},
+     "Précédent conjoint n° 1 : indiquer sa naissance, la date du mariage"),
+    ({"conjoint": "1962", "ex1": "1958", "ex1_mariage": "1980", "ex1_divorce": "1985"},
+     "dites aussi la date du mariage avec votre conjoint"),
+    ({"conjoint": "1962", "mariage": "1990", "ex1": "1958", "ex1_mariage": "1980",
+      "ex1_divorce": "1979"}, "le divorce suit le mariage"),
+    ({"conjoint": "1962", "mariage": "1990", "ex1": "1958", "ex1_mariage": "1980",
+      "ex1_divorce": "1985", "ex1_remariage": "1984"}, "son remariage suit le divorce"),
+    ({"conjoint": "1962", "mariage": "1984", "ex1": "1958", "ex1_mariage": "1980",
+      "ex1_divorce": "1985"}, "précède le divorce d'un précédent mariage"),
+    ({"conjoint": "1962", "mariage": "1990", "ex1": "1958", "ex1_mariage": "1980",
+      "ex1_divorce": "1985", "ex2": "1959", "ex2_mariage": "1984", "ex2_divorce": "1988"},
+     "Précédent conjoint n° 2 : le mariage suit les deux naissances"),
 ])
 def test_la_saisie_refuse_ce_qui_ne_tient_pas(requete, message):
     with pytest.raises(ErreurSaisie, match=message):
@@ -1133,6 +1154,166 @@ def test_la_page_dit_la_reversion_d_un_assure_mort_avant_son_depart():
     _, page = rendre("/simuler", MORT_AVANT)
     assert "À votre décès, en mai 2024, avant votre départ," in page
     assert "Mort avant votre départ, vous n'auriez pas de pension" in page
+
+
+# -- le partage entre conjoints et le remariage -------------------------------------
+
+#: Un salarié né en 1958, parti à soixante-deux ans, mort en mai 2023 : marié à
+#: son conjoint en juin 2000, il l'avait été de juin 1980 à juin 1995 à un autre.
+PARTAGE = {"naissance": "1958", "liquidation": "62", "conjoint": "1960",
+           "mariage": "2000-06", "deces": "2023-05", "ex1": "1959",
+           "ex1_mariage": "1980-06", "ex1_divorce": "1995-06"}
+
+
+def _sortie(contexte, requete):
+    return contexte.simuler(Saisie.depuis_requete(requete)).dictionnaire()["reversion"]
+
+
+def test_la_duree_d_un_mariage_se_compte_en_mois_de_date_a_date():
+    """« Cette durée, déterminée de date à date, est arrondie au nombre de mois
+    inférieur » (R. 353-4)."""
+    assert mois_de_mariage("1990-06-15", "2000-03-10") == 116
+    assert mois_de_mariage("1990-06-15", "2000-03-15") == 117
+    assert mois_de_mariage("2000-06-01", "2023-05-01") == 275
+
+
+def test_la_reversion_se_partage_au_prorata_des_mariages(contexte):
+    """275 mois de mariage avec le survivant, 180 avec le précédent conjoint :
+    le survivant reçoit 275/455 de la réversion de chaque régime (L. 353-3,
+    R. 353-4), et du minimum du régime général (circulaire Cnav n° 105/90,
+    § 3)."""
+    seul = _sortie(contexte, {cle: valeur for cle, valeur in PARTAGE.items()
+                              if not cle.startswith("ex1")})
+    partage = _sortie(contexte, PARTAGE)
+    part = 275 / 455
+    assert [l["regime"] for l in partage["regimes"]] == [l["regime"] for l in seul["regimes"]]
+    for avant, apres in zip(seul["regimes"], partage["regimes"]):
+        assert apres["part"] == pytest.approx(part), apres["regime"]
+        assert apres["montant"] == pytest.approx(avant["montant"] * part), apres["regime"]
+    general = next(l for l in partage["regimes"] if l["regime"] == "regime_general")
+    avant = next(l for l in seul["regimes"] if l["regime"] == "regime_general")
+    assert general["minimum"] == pytest.approx(avant["minimum"] * part)
+
+
+def test_le_precedent_conjoint_remarie_avant_le_deces(contexte):
+    """Remarié en 1998, le précédent conjoint ne partage plus la réversion de
+    l'Agirc-Arrco, qui la retire au remariage, mais toujours celle du régime
+    général, ouverte au conjoint divorcé « remarié ou non » depuis juillet
+    2004 (L. 353-3)."""
+    parts = {l["regime"]: l["part"]
+             for l in _sortie(contexte, {**PARTAGE, "ex1_remariage": "1998-01"})["regimes"]}
+    assert parts["regime_general"] == pytest.approx(275 / 455)
+    assert parts["arrco"] == parts["agirc_arrco"] == 1.0
+
+
+def test_le_conjoint_marie_avant_1998_garde_l_agirc_arrco_entiere(contexte):
+    """« Le conjoint marié avant le 13 janvier 1998 » reçoit la réversion de
+    l'Agirc-Arrco entière « à condition que le mariage précédent de la personne
+    décédée ait été dissous avant le 1er juillet 1980 » (fédération
+    Agirc-Arrco) ; le régime général la partage toujours."""
+    requete = {"naissance": "1940", "liquidation": "60", "conjoint": "1945",
+               "mariage": "1985-06", "deces": "2010-05", "ex1": "1941",
+               "ex1_mariage": "1962-06", "ex1_divorce": "1979-06"}
+    parts = {l["regime"]: l["part"] for l in _sortie(contexte, requete)["regimes"]}
+    assert parts["regime_general"] == pytest.approx(299 / (299 + 204))
+    assert parts["arrco"] == 1.0
+    apres = {l["regime"]: l["part"]
+             for l in _sortie(contexte, {**requete, "ex1_divorce": "1980-07"})["regimes"]}
+    assert apres["arrco"] == pytest.approx(299 / (299 + 217))
+
+
+def test_le_precedent_conjoint_remarie_partage_le_rafp_mais_pas_la_pension_civile(
+        contexte):
+    """Le conjoint divorcé remarié « perd son droit à pension » civile (L. 46
+    du code des pensions) ; au RAFP, son paiement seul est « suspendu », et la
+    prestation se partage toujours avec lui (arrêté du 26 novembre 2004,
+    article 4)."""
+    parts = {l["regime"]: l["part"] for l in _sortie(contexte, {
+        **PARTAGE, "statut": "fonctionnaire_etat", "primes": "0.2",
+        "ex1_remariage": "1998-01"})["regimes"]}
+    assert parts["fonction_publique_etat"] == 1.0
+    assert parts["rafp"] == pytest.approx(275 / 455)
+
+
+@pytest.mark.parametrize("ex, part", [
+    ({"naissance": "1932", "mariage": "1955-06", "divorce": "1965-06"}, 360 / 480),
+    ({"naissance": "1932", "mariage": "1955-06", "divorce": "1965-06",
+      "remariage": "1970-01"}, 1.0),
+    ({"naissance": "1932", "mariage": "1955-06", "divorce": "1956-12"}, 1.0),
+])
+def test_avant_juillet_2004_le_conjoint_divorce_non_remarie_et_marie_deux_ans(
+        simulateur, ex, part):
+    """Avant juillet 2004, seuls partagent « le ou les précédents conjoints
+    divorcés non remariés », dont le mariage « a duré au moins deux ans sauf
+    lorsqu'un enfant au moins en est issu » (L. 353-3 et R. 353-4, rédactions
+    de 1985) : 360 mois avec le survivant, 120 avec un précédent conjoint."""
+    carriere = _carriere(simulateur, 1930, 65.0, "1935", "2003-06", mariage="1973-06",
+                         ex_conjoints=({"remariage": None, **ex},))
+    general, = reversion(simulateur.scenario_actuel, [("regime_general", 10_000.0, HAUTE)],
+                         carriere, 2003).regimes
+    assert (general.version, general.part) == ("taux_54", pytest.approx(part))
+
+
+def test_le_remariage_du_survivant_eteint_les_reversions_qui_le_disent(contexte):
+    """Remarié en mars 2025, le survivant perd la réversion de l'Agirc-Arrco au
+    mois qui suit, et garde celle du régime général, qui ne mesure le ménage
+    qu'à sa date d'effet ; remarié dès le décès, il ne reçoit rien de
+    l'Agirc-Arrco, et le régime général compte le ménage ; pacsé, il garde
+    tout."""
+    base = {"naissance": "1958", "liquidation": "62", "conjoint": "1960",
+            "deces": "2023-05", "ressources_conjoint": "15000"}
+    seul = {l["regime"]: l for l in _sortie(contexte, base)["regimes"]}
+    plus_tard = {l["regime"]: l for l in _sortie(contexte, {
+        **base, "nouvelle_union": "mariage", "nouvelle_union_depuis": "2025-03"})["regimes"]}
+    assert (plus_tard["arrco"]["fin"], plus_tard["arrco"]["montant"]) == (
+        "2025-04-01", seul["arrco"]["montant"])
+    assert plus_tard["regime_general"]["plafond"] == seul["regime_general"]["plafond"]
+    assert plus_tard["regime_general"]["fin"] is None
+    des_le_deces = {l["regime"]: l for l in _sortie(contexte, {
+        **base, "nouvelle_union": "mariage"})["regimes"]}
+    assert (des_le_deces["arrco"]["motif"], des_le_deces["arrco"]["montant"]) == (
+        "remariage", 0.0)
+    assert des_le_deces["regime_general"]["plafond"] == pytest.approx(
+        1.6 * seul["regime_general"]["plafond"])
+    pacse = {l["regime"]: l for l in _sortie(contexte, {
+        **base, "nouvelle_union": "pacs", "nouvelle_union_depuis": "2024-01"})["regimes"]}
+    assert (pacse["arrco"]["fin"], pacse["arrco"]["montant"]) == (
+        None, seul["arrco"]["montant"])
+
+
+@pytest.mark.parametrize("union, motif", [("concubinage", "remariage"), ("pacs", "servie")])
+def test_le_concubinage_eteint_la_reversion_de_la_fonction_publique(contexte, union, motif):
+    """« Le conjoint survivant ou le conjoint divorcé, qui contracte un nouveau
+    mariage ou vit en état de concubinage notoire, perd son droit à pension »
+    (L. 46 du code des pensions) ; le pacs, que le texte ne nomme pas, non."""
+    lignes = {l["regime"]: l for l in _sortie(contexte, {
+        "naissance": "1958", "liquidation": "62", "conjoint": "1960", "deces": "2023-05",
+        "statut": "fonctionnaire_etat", "nouvelle_union": union})["regimes"]}
+    assert lignes["fonction_publique_etat"]["motif"] == motif
+
+
+def test_l_adresse_garde_les_precedents_conjoints():
+    from urllib.parse import parse_qsl
+
+    saisie = Saisie.depuis_requete({**PARTAGE, "ex1_remariage": "1998-01",
+                                    "nouvelle_union": "mariage",
+                                    "nouvelle_union_depuis": "2025-03"})
+    relue = Saisie.depuis_requete(dict(parse_qsl(saisie.requete())))
+    assert relue.ex_conjoints == saisie.ex_conjoints
+    assert relue.nouvelle_union_depuis == "2025-03"
+
+
+def test_la_page_dit_le_partage_et_le_remariage():
+    """La carte dit la part du survivant et la fin de la réversion que son
+    union nouvelle arrête ; le formulaire demande les précédents conjoints."""
+    from retraite_notionnelle.web.site import rendre
+
+    _, page = rendre("/simuler", {**PARTAGE, "nouvelle_union": "mariage",
+                                  "nouvelle_union_depuis": "2025-03"})
+    assert "au prorata des mariages" in page
+    assert "jusqu'en avril 2025, que son union nouvelle arrête" in page
+    assert 'name="ex1_mariage" value="1980-06"' in page
+    assert "aucun précédent mariage" not in page
 
 
 # -- l'hypothèse de décès et la page ------------------------------------------------

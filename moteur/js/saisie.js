@@ -303,6 +303,13 @@ const CODE_DE_REGIME = /^[a-z][a-z0-9_]*$/;
 export const ETRANGER_MAXIMUM = 4;
 
 /**
+ * Les précédents conjoints de l'assuré, divorcés, que l'adresse peut porter :
+ * « ex1 » à « ex2_… ». La réversion se partage entre eux et le conjoint
+ * survivant au prorata de la durée de chaque mariage. Voir le Python.
+ */
+export const EX_CONJOINTS_MAXIMUM = 2;
+
+/**
  * L'État que la personne ne nomme pas, parce que le tableau des accords ne le
  * nomme pas : aucun accord ne le lie à la France. Tout autre État s'écrit par
  * son code à deux majuscules, celui du tableau ; qu'il y soit, c'est au
@@ -520,7 +527,12 @@ export const DEFAUTS = Object.freeze({
   activite_conjoint: null,
   nouvelle_union: "",
   ressources_nouveau_conjoint: null,
+  //: Le mois où cette nouvelle union commence, s'il le dit ; sans lui, au décès.
+  nouvelle_union_depuis: "",
   conjoint_invalidite: "",
+  //: Les précédents conjoints de l'assuré, divorcés : naissance, mariage,
+  //: divorce et remariage. Voir `ExConjointSaisi` du Python.
+  ex_conjoints: Object.freeze([]),
   //: Le décès de l'assuré (AAAA ou AAAA-MM), qui ouvre la réversion de son
   //: conjoint : au départ ou après lui.
   deces: "",
@@ -696,6 +708,8 @@ export class Saisie {
       ressources_nouveau_conjoint: [undefined, null, ""].includes(
         parametres.ressources_nouveau_conjoint)
         ? null : reel(parametres, "ressources_nouveau_conjoint", 0.0),
+      nouvelle_union_depuis: String(parametres.nouvelle_union_depuis ?? "").trim(),
+      ex_conjoints: exConjointsSaisis(parametres, tolerante),
       revenu_fiscal: [undefined, null, ""].includes(parametres.revenu_fiscal)
         ? null : reel(parametres, "revenu_fiscal", 0.0),
       conjoint_invalidite: (parametres.conjoint_invalidite || "").trim(),
@@ -1608,7 +1622,12 @@ export class Saisie {
       revenus_d_activite: this.activite_conjoint,
       nouvelle_union: this.nouvelle_union || null,
       ressources_du_nouveau_conjoint: this.ressources_nouveau_conjoint,
+      nouvelle_union_depuis: this.nouvelle_union_depuis || null,
       invalidite: this.conjoint_invalidite || null,
+      ex_conjoints: this.ex_conjoints.map((ex) => ({
+        naissance: ex.naissance, mariage: ex.mariage, divorce: ex.divorce,
+        remariage: ex.remariage || null,
+      })),
     };
   }
 
@@ -2031,7 +2050,9 @@ export class Saisie {
         ["activite_conjoint", this.activite_conjoint],
         ["nouvelle_union", this.nouvelle_union],
         ["ressources_nouveau_conjoint", this.ressources_nouveau_conjoint],
+        ["nouvelle_union_depuis", this.nouvelle_union_depuis],
         ["conjoint_invalidite", this.conjoint_invalidite], ["deces", this.deces],
+        ["ex1", this.ex_conjoints.length > 0 ? true : null],
       ].filter(([, valeur]) => valeur !== "" && valeur !== null && valeur !== undefined)
         .map(([nom]) => nom);
       if (orphelins.length) {
@@ -2047,6 +2068,7 @@ export class Saisie {
       ["conjoint", this.conjoint, "la naissance du conjoint"],
       ["mariage", this.mariage, "le mariage"],
       ["conjoint_invalidite", this.conjoint_invalidite, "l'invalidité du conjoint"],
+      ["nouvelle_union_depuis", this.nouvelle_union_depuis, "le début de sa nouvelle union"],
       ["deces", this.deces, "le décès"],
     ]) {
       if (!valeur) {
@@ -2094,6 +2116,12 @@ export class Saisie {
         );
       }
     }
+    if (this.nouvelle_union_depuis && !this.nouvelle_union) {
+      throw new ErreurSaisie(
+        "« nouvelle_union_depuis » ne sert qu'au ménage du conjoint : dites "
+        + "aussi l'union où il vit (« nouvelle_union »).",
+      );
+    }
     if ("mariage" in dates) {
       const aine = dates.conjoint > this.naissanceIso ? dates.conjoint : this.naissanceIso;
       if (dates.mariage <= aine) {
@@ -2128,6 +2156,71 @@ export class Saisie {
           + "reverser.",
         );
       }
+      if ("nouvelle_union_depuis" in dates && dates.nouvelle_union_depuis <= dates.deces) {
+        throw new ErreurSaisie(
+          "La nouvelle union du conjoint précède votre décès : elle le suit.");
+      }
+    }
+    this.verifierExConjoints(dates);
+  }
+
+  /**
+   * Les précédents conjoints : des dates lisibles, un mariage après les deux
+   * naissances, un divorce après lui et avant le mariage suivant, un remariage
+   * après le divorce ; le mariage du conjoint, qu'il faut dater, les suit.
+   * Voir `_verifier_ex_conjoints` du Python.
+   */
+  verifierExConjoints(dates) {
+    if (this.ex_conjoints.length === 0) {
+      return;
+    }
+    if (!("mariage" in dates)) {
+      throw new ErreurSaisie(
+        "Avec un précédent conjoint, dites aussi la date du mariage avec votre "
+        + "conjoint (« mariage »), que le partage de la réversion compte.",
+      );
+    }
+    let finPrecedente = null;
+    this.ex_conjoints.forEach((ex, i) => {
+      const rang = i + 1;
+      const jours = {};
+      for (const [nom, valeur, quoi] of [
+        ["naissance", ex.naissance, "la naissance"], ["mariage", ex.mariage, "le mariage"],
+        ["divorce", ex.divorce, "le divorce"], ["remariage", ex.remariage, "le remariage"],
+      ]) {
+        if (!valeur) {
+          continue;
+        }
+        try {
+          [jours[nom]] = dateDeclaree(valeur, quoi);
+        } catch {
+          throw new ErreurSaisie(
+            `Précédent conjoint n° ${rang}, ${quoi} « ${valeur} » : attendu en `
+            + "AAAA ou AAAA-MM, par exemple 1962 ou 1962-03.",
+          );
+        }
+      }
+      const aine = jours.naissance > this.naissanceIso ? jours.naissance : this.naissanceIso;
+      if (jours.mariage <= aine || (finPrecedente !== null && jours.mariage < finPrecedente)) {
+        throw new ErreurSaisie(
+          `Précédent conjoint n° ${rang} : le mariage suit les deux naissances `
+          + "et le divorce d'avant.",
+        );
+      }
+      if (jours.divorce <= jours.mariage) {
+        throw new ErreurSaisie(`Précédent conjoint n° ${rang} : le divorce suit le mariage.`);
+      }
+      if ("remariage" in jours && jours.remariage <= jours.divorce) {
+        throw new ErreurSaisie(
+          `Précédent conjoint n° ${rang} : son remariage suit le divorce.`);
+      }
+      finPrecedente = jours.divorce;
+    });
+    if (dates.mariage < finPrecedente) {
+      throw new ErreurSaisie(
+        "Le mariage avec votre conjoint précède le divorce d'un précédent "
+        + "mariage : il le suit.",
+      );
     }
   }
 
@@ -2157,9 +2250,14 @@ export class Saisie {
         ["nouvelle_union", this.nouvelle_union],
         ["ressources_nouveau_conjoint", this.ressources_nouveau_conjoint === null
           ? "" : nombreBrut(this.ressources_nouveau_conjoint)],
+        ["nouvelle_union_depuis", this.nouvelle_union_depuis],
         ["conjoint_invalidite", this.conjoint_invalidite],
         ["deces", this.deces],
       ].filter(([, valeur]) => valeur !== "" && valeur !== null)),
+      ...Object.fromEntries(this.ex_conjoints.flatMap((ex, i) => [
+        [`ex${i + 1}`, ex.naissance], [`ex${i + 1}_mariage`, ex.mariage],
+        [`ex${i + 1}_divorce`, ex.divorce], [`ex${i + 1}_remariage`, ex.remariage],
+      ]).filter(([, valeur]) => valeur)),
       ...(this.progressive !== null
         ? { progressive: this.moisDe(this.progressive, true),
           quotite: this.quotite_progressive }
@@ -2372,6 +2470,33 @@ function metiersSaisis(parametres, salairePrecedent, moisDeNaissance, tolerante 
     });
   }
   return metiers;
+}
+
+/**
+ * Les précédents conjoints, lus dans « ex1… » et « ex2… » : la naissance, le
+ * mariage, le divorce et le remariage. Une ligne commencée se refuse sans l'un
+ * des trois premiers. Voir `_ex_conjoints_saisis` du Python.
+ */
+function exConjointsSaisis(parametres, tolerante = false) {
+  const exConjoints = [];
+  for (let rang = 1; rang <= EX_CONJOINTS_MAXIMUM; rang += 1) {
+    const [naissance, mariage, divorce, remariage] = ["", "_mariage", "_divorce", "_remariage"]
+      .map((suffixe) => String(parametres[`ex${rang}${suffixe}`] ?? "").trim());
+    if (!naissance && !mariage && !divorce && !remariage) {
+      continue;
+    }
+    if (tolerante && (!naissance || !mariage || !divorce)) {
+      break;
+    }
+    if (!naissance || !mariage || !divorce) {
+      throw new ErreurSaisie(
+        `Précédent conjoint n° ${rang} : indiquer sa naissance, la date du `
+        + "mariage et celle du divorce, ou laisser sa ligne entièrement vide.",
+      );
+    }
+    exConjoints.push({ naissance, mariage, divorce, remariage });
+  }
+  return exConjoints;
 }
 
 /**

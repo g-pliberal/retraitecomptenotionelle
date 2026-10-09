@@ -53,6 +53,7 @@ versions:
       avec deux enfants mineurs à charge, jusqu'à la majorité du dernier
     parametres:
       taux: 0.50
+      ex_conjoints: aucun
       beneficiaire: veuve
       age_minimum: null
       age_minimum_veuve: 50
@@ -64,7 +65,7 @@ versions:
       deux_enfants_sans_age: [F]
       deux_enfants_moins_de_ans: 21
       rien_apres_un_capital: true
-      perte_au_remariage: true
+      perte_au_remariage: [mariage]
       fiabilite: haute
   exemples: aucun trouvé
 - id: veufs_1976
@@ -85,6 +86,7 @@ versions:
       le 23 mars 1978, dispensent la veuve de l'âge
     parametres:
       taux: 0.50
+      ex_conjoints: aucun
       beneficiaire: conjoint
       age_minimum: null
       age_minimum_veuve: 50
@@ -96,7 +98,7 @@ versions:
       deux_enfants_sans_age: [F]
       deux_enfants_moins_de_ans: 21
       rien_apres_un_capital: true
-      perte_au_remariage: true
+      perte_au_remariage: [mariage]
       fiabilite: haute
   exemples: aucun trouvé
 - id: divorces_1980
@@ -119,6 +121,7 @@ versions:
       moins de vingt et un ans à charge dispensent la veuve ou l'ancienne épouse de l'âge
     parametres:
       taux: 0.50
+      ex_conjoints: non_remaries
       beneficiaire: conjoint
       age_minimum: null
       age_minimum_veuve: 50
@@ -130,7 +133,7 @@ versions:
       deux_enfants_sans_age: [F]
       deux_enfants_moins_de_ans: 21
       rien_apres_un_capital: true
-      perte_au_remariage: true
+      perte_au_remariage: [mariage]
       fiabilite: haute
   exemples: aucun trouvé
 - id: enfant_1994
@@ -151,6 +154,7 @@ versions:
       d'invalidité d'un régime de base ou en situation de l'obtenir
     parametres:
       taux: 0.50
+      ex_conjoints: non_remaries
       beneficiaire: conjoint
       age_minimum: null
       age_minimum_veuve: 50
@@ -162,7 +166,7 @@ versions:
       deux_enfants_sans_age: [F]
       deux_enfants_moins_de_ans: 21
       rien_apres_un_capital: true
-      perte_au_remariage: true
+      perte_au_remariage: [mariage]
       fiabilite: haute
   exemples: aucun trouvé
 - id: conjoints_2004
@@ -200,6 +204,7 @@ versions:
       ou au divorce qui suit ; à chaque orphelin, le cinquième des points
     parametres:
       taux: 0.50
+      ex_conjoints: non_remaries
       beneficiaire: conjoint
       age_minimum: 50
       mariage_minimum_annees: 4
@@ -210,7 +215,7 @@ versions:
       deux_enfants_moins_de_ans: 21
       seuil_versement_unique_points: 300
       rien_apres_un_capital: true
-      perte_au_remariage: true
+      perte_au_remariage: [mariage]
       fiabilite: haute
   exemples: [ur_reversion_contractuel_ircantec_52_ans]
 approximations:
@@ -244,9 +249,15 @@ approximations:
     durée du mariage, n'est pas lue ; le versement unique au survivant, sous le seuil de
     l'article 25, n'est pas porté — sa réversion est servie comme une rente ; l'agent
     payé en une fois (fiche versement_unique_ircantec) ne laisse pas de réversion,
-    l'article 25 le disant depuis 1971 ; le partage entre conjoints, la suppression
-    au remariage et l'allocation d'orphelin ne sont pas portés ; les montants sont ceux
-    de l'année du décès
+    l'article 25 le disant depuis 1971 ; l'allocation d'orphelin n'est pas portée ; les
+    montants sont ceux de l'année du décès
+  effet: non mesuré
+- ecart: >-
+    le partage au prorata des mariages (article 20, depuis 1980) lit les précédents
+    conjoints que la saisie déclare, deux au plus, non remariés au décès, sans leur
+    opposer la condition de durée ou d'antériorité de leur mariage ; le remariage du
+    survivant éteint l'allocation au mois qui le suit (article 22), et le droit qu'il
+    recouvre, redevenu veuf ou divorcé, n'est pas porté
   effet: non mesuré
 presomptions:
   conjoint_de_l_autre_sexe: >-
@@ -262,7 +273,7 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-10-04
+  lu_le: 2026-10-09
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -282,6 +293,17 @@ sources:
       1971, 1976, 1980, 1994, 2004, 2018 et 2024, article 21 dans celles de 1971, 1976,
       1980, 2004 et 2018, articles 22 à 25 en vigueur ; décret n° 70-1277, article 11
     date: 2026-10-04
+  - type: legifrance
+    reference: >-
+      relus le 9 octobre 2026 dans l'index LEGI, pour le partage et le remariage :
+      l'article 20 de l'arrêté, de 1980 (LEGIARTI000006381625) à 2024
+      (LEGIARTI000049864855) — « l'allocation est répartie entre le conjoint survivant
+      et le ou les anciens conjoints divorcés non remariés, au prorata de la durée
+      respective de chaque mariage. Ce partage est opéré à titre définitif lors de la
+      liquidation des droits du premier d'entre eux qui en fait la demande » ;
+      l'article 22 (LEGIARTI000036755337) — l'allocation « est supprimée lorsque le
+      bénéficiaire vient à se remarier », recouvrée s'il « redevient veuf ou divorcé »
+    date: 2026-10-09
   - type: autre
     reference: >-
       base documentaire de l'Ircantec, « Conditions d'attribution des droits de
@@ -300,15 +322,17 @@ sources:
 code:
   python: >-
     droit/reversion.py : reversion, _age_ircantec, _mariage_ircantec,
-    _enfants_de_moins_de ; scenarios/actuel.py : Reversions
+    _enfants_de_moins_de, _part_du_survivant, _admis_ailleurs, _jusqu_au_remariage ;
+    scenarios/actuel.py : Reversions
   javascript: >-
     moteur/js/droit/reversion.js : reversion, ageIrcantec, mariageIrcantec,
-    enfantsDeMoinsDe ; moteur/js/regimes.js : Reversions
+    enfantsDeMoinsDe, partDuSurvivant, admisAilleurs, jusquAuRemariage ;
+    moteur/js/regimes.js : Reversions
   parametres: >-
     contenu.parametres de chaque version : taux, age_minimum, age_minimum_veuve,
     age_minimum_veuf, mariage_minimum_annees, mariage_avant_annees, mariage_avant_age,
     mariage_leve_par_enfant, deux_enfants_sans_age, deux_enfants_moins_de_ans,
-    rien_apres_un_capital
+    rien_apres_un_capital, ex_conjoints, perte_au_remariage
   tests: tests/test_reversion.py
 historique:
 - >-
@@ -319,7 +343,12 @@ historique:
   2026-10-08 — action 138, étape 17 : l'agent payé en une fois sous le seuil de
   l'article 25 ne laisse pas de réversion, à toute date depuis 1971, quand la fiche
   versement_unique_ircantec verse le capital.
+- >-
+  2026-10-09 — action 138, étape 4 : le partage entre conjoints au prorata des
+  mariages, avec les anciens conjoints divorcés non remariés, depuis 1980 (article 20),
+  et la suppression de l'allocation au remariage du survivant (article 22).
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un agent contractuel de l'État, des collectivités ou
   des hôpitaux, ou d'un élu local, qui décède. Le modèle la calcule pour le conjoint
-  que la saisie déclare, sur la retraite servie.
+  que la saisie déclare, sur la retraite servie, partagée avec les précédents
+  conjoints qu'elle déclare.

@@ -21,7 +21,9 @@ face: droit
 etat: approchee
 lit:
 - conjoint.deces
-- union.debut et union.fin, d'un mariage ; un remariage éteint le droit
+- union.debut et union.fin, d'un mariage ; un remariage éteint le droit ; les
+  précédents conjoints de l'assuré, leur mariage, leur divorce et leur remariage, que
+  le partage au prorata des mariages lit
 - la naissance du survivant, qui dit son âge
 - les enfants à charge du survivant, et son invalidité, qui lèvent la condition d'âge
 - les points de l'assuré décédé, par régime avant 2019
@@ -34,7 +36,9 @@ dates_qui_decident:
 # `contenu.parametres` dit l'âge de chaque régime ; `age_minimum_minore` est
 # l'âge auquel l'Agirc sert une réversion minorée, avant soixante ans ;
 # `invalidite_sans_age`, que l'invalidité du survivant lève la condition d'âge,
-# « quel que soit la date du décès », dit la fédération.
+# « quel que soit la date du décès », dit la fédération ; `ex_conjoints`, les
+# précédents conjoints qui partagent la réversion, et `entiere_au_conjoint`, les
+# dates qui la laissent entière au conjoint survivant.
 versions:
 - id: avant_1990
   statut: supposee
@@ -50,10 +54,12 @@ versions:
     beneficiaire: la veuve à cinquante ans ; le veuf à soixante-cinq ans à l'Agirc, selon la caisse à l'Arrco
     parametres:
       taux: 0.60
+      ex_conjoints: non_remaries
+      entiere_au_conjoint: {marie_avant: "1998-01-13", precedent_dissous_avant: "1980-07-01"}
       age_minimum_veuve: 50
       age_minimum_veuf: 65
       age_minimum_minore: null
-      perte_au_remariage: true
+      perte_au_remariage: [mariage]
       invalidite_sans_age: true
       deux_enfants_a_charge_moins_de_ans: 18
       fiabilite: moyenne
@@ -74,10 +80,12 @@ versions:
       le 1er janvier 1990, soixante-cinq ans à l'Agirc pour les autres
     parametres:
       taux: 0.60
+      ex_conjoints: non_remaries
+      entiere_au_conjoint: {marie_avant: "1998-01-13", precedent_dissous_avant: "1980-07-01"}
       age_minimum_veuve: 50
       age_minimum_veuf: 65
       age_minimum_minore: null
-      perte_au_remariage: true
+      perte_au_remariage: [mariage]
       invalidite_sans_age: true
       deux_enfants_a_charge_moins_de_ans: 18
       fiabilite: moyenne
@@ -98,10 +106,12 @@ versions:
       de 60 %, sauf si le survivant obtient la réversion du régime de base
     parametres:
       taux: 0.60
+      ex_conjoints: non_remaries
+      entiere_au_conjoint: {marie_avant: "1998-01-13", precedent_dissous_avant: "1980-07-01"}
       age_minimum_arrco: 50
       age_minimum_agirc: 60
       age_minimum_minore: 55
-      perte_au_remariage: true
+      perte_au_remariage: [mariage]
       invalidite_sans_age: true
       deux_enfants_a_charge_moins_de_ans: 18
       fiabilite: moyenne
@@ -121,10 +131,12 @@ versions:
       minorée dès cinquante-cinq
     parametres:
       taux: 0.60
+      ex_conjoints: non_remaries
+      entiere_au_conjoint: {marie_avant: "1998-01-13", precedent_dissous_avant: "1980-07-01"}
       age_minimum_arrco: 55
       age_minimum_agirc: 60
       age_minimum_minore: 55
-      perte_au_remariage: true
+      perte_au_remariage: [mariage]
       invalidite_sans_age: true
       deux_enfants_a_charge_moins_de_ans: 18
       fiabilite: haute
@@ -162,7 +174,9 @@ versions:
     beneficiaire: le conjoint et l'ex-conjoint marié, non remarié
     conditions: >-
       cinquante-cinq ans, ou aucun âge avec deux enfants à charge ou en invalidité ;
-      entre conjoint et ex-conjoints, un partage au prorata de la durée des mariages ;
+      entre conjoint et ex-conjoints, un partage au prorata de la durée des mariages,
+      sauf au conjoint marié avant le 13 janvier 1998 quand le mariage précédent du
+      défunt a été dissous avant le 1er juillet 1980, qui la reçoit entière ;
       l'ex-conjoint seul reçoit la part de la durée de son mariage dans la durée
       d'assurance du défunt, plafonnée à 172 trimestres par l'article 112 dans sa
       rédaction de 2019, à 169 trimestres depuis décembre 2023, 170 depuis octobre 2025,
@@ -170,9 +184,11 @@ versions:
       enfants du défunt reversée en entier
     parametres:
       taux: 0.60
+      ex_conjoints: non_remaries
+      entiere_au_conjoint: {marie_avant: "1998-01-13", precedent_dissous_avant: "1980-07-01"}
       age_minimum: 55
       age_minimum_minore: null
-      perte_au_remariage: true
+      perte_au_remariage: [mariage]
       invalidite_sans_age: true
       deux_enfants_a_charge_moins_de_ans: 18
       majoration_reversible: 1.0
@@ -220,10 +236,18 @@ approximations:
     les enfants à charge du survivant sont ceux du défunt que la chronologie porte, et
     seuls comptent ceux de moins de dix-huit ans au décès : ni l'étudiant, l'apprenti
     ou le demandeur d'emploi non indemnisé de dix-huit à vingt-cinq ans, ni l'enfant
-    invalide, ni l'enfant du seul survivant ; le partage entre ex-conjoints et la perte
-    au remariage ne sont pas portés ; les régimes absorbés — l'UNIRS, les régimes
+    invalide, ni l'enfant du seul survivant ; les régimes absorbés — l'UNIRS, les régimes
     professionnels intégrés — suivent les âges de l'Arrco ; les montants sont ceux de
     l'année du décès
+  effet: non mesuré
+- ecart: >-
+    le partage au prorata des mariages compte leur durée en mois, comme le régime
+    général, quand la fédération ne dit pas son unité ; il lit les précédents
+    conjoints que la saisie déclare, deux au plus, non remariés au décès ; la
+    réversion de l'ex-conjoint seul, que l'article 112 rapporte à la durée
+    d'assurance du défunt, n'est pas calculée ; avant 2019, les règles que la
+    fédération dit aujourd'hui sont prêtées à l'Arrco et à l'Agirc ; le remariage du
+    survivant éteint la réversion au mois qui le suit
   effet: non mesuré
 - version: [avant_1990, veufs_1990, agirc_1994, arrco_1996]
   ecart: >-
@@ -250,7 +274,7 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-10-01
+  lu_le: 2026-10-09
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -304,17 +328,32 @@ sources:
       le versement de la pension est interrompu »
     date: 2026-10-01
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/la-pension-de-reversion/
+  - type: autre
+    reference: >-
+      la même page, relue le 9 octobre 2026 pour le partage et le remariage : « La
+      pension de réversion Agirc-Arrco est partagée entre le conjoint et l'ex-conjoint ou
+      les ex-conjoints », chacun selon « la durée de leur mariage rapportée à la durée
+      totale des mariages » ; le conjoint marié avant le 13 janvier 1998 la reçoit
+      entière « à condition que le mariage précédent de la personne décédée ait été
+      dissous avant le 1er juillet 1980 » ; « En cas de remariage, la pension de
+      réversion n'est pas attribuée », et, versée, elle est « définitivement
+      supprimée » ; le PACS et le concubinage n'y ouvrent pas droit
+    date: 2026-10-09
+    url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/la-pension-de-reversion/
 code:
   python: >-
-    droit/reversion.py : reversion, _age_agirc_arrco, _a_l_age ; scenarios/actuel.py :
+    droit/reversion.py : reversion, _age_agirc_arrco, _a_l_age, _part_du_survivant,
+    _admis_ailleurs, _entiere_au_conjoint, _jusqu_au_remariage ; scenarios/actuel.py :
     Reversions
   javascript: >-
-    moteur/js/droit/reversion.js : reversion, ageAgircArrco, aLAge ;
-    moteur/js/regimes.js : Reversions
+    moteur/js/droit/reversion.js : reversion, ageAgircArrco, aLAge, partDuSurvivant,
+    admisAilleurs, entiereAuConjoint, jusquAuRemariage ; moteur/js/regimes.js :
+    Reversions
   parametres: >-
     contenu.parametres de chaque version : taux, age_minimum, age_minimum_arrco,
     age_minimum_agirc, age_minimum_veuve, age_minimum_veuf, invalidite_sans_age,
-    deux_enfants_a_charge_moins_de_ans, majoration_reversible, rien_apres_un_capital ;
+    deux_enfants_a_charge_moins_de_ans, majoration_reversible, rien_apres_un_capital,
+    ex_conjoints, entiere_au_conjoint, perte_au_remariage ;
     la majoration de chaque
     régime du défunt, que l'échéancier lui passe (echeancier.py : _pensions_au_deces)
   tests: tests/test_reversion.py ; les témoins reversion_* des simulations
@@ -337,7 +376,12 @@ historique:
   2026-10-08 — action 138, étape 17 : le droit direct versé en capital ne laisse plus de
   réversion depuis 2019 (article 107), quand la fiche versement_unique_agirc_arrco le
   verse.
+- >-
+  2026-10-09 — action 138, étape 4 : le partage entre conjoints au prorata des
+  mariages, avec les précédents conjoints non remariés, la réversion entière au
+  conjoint marié avant le 13 janvier 1998 quand le mariage précédent a été dissous
+  avant le 1er juillet 1980, et la perte de la réversion au remariage du survivant.
 effet: >-
   Tout conjoint, ou ex-conjoint marié, d'un salarié ou ancien salarié du privé qui
   décède. Le modèle la calcule pour le conjoint que la saisie déclare, sur la
-  retraite servie.
+  retraite servie, partagée avec les précédents conjoints qu'elle déclare.

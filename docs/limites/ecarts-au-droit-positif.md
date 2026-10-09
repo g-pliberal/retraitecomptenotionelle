@@ -27,11 +27,17 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   vivre en couple, marié, pacsé ou en concubinage, sous un plafond 1,6 fois
   plus haut (D. 353-1-1), et abat de <!--chiffre:valeur(data/reference/regles/reversion.yaml:versions.id=minimum_2026.contenu.parametres.abattement_activite*100)-->30<!--/--> % ses revenus d'activité à
   cinquante-cinq ans (R. 353-1), comme la complémentaire des indépendants,
-  sous son plafond. Restent dehors la majoration forfaitaire pour enfant à
-  charge du régime général, la révision de la réversion quand le ménage ou
-  ses ressources changent, le
+  sous son plafond. Depuis le même jour, la réversion de chaque régime se
+  partage avec les précédents conjoints que la saisie déclare, deux au plus,
+  au prorata des mariages en mois (L. 353-3, R. 353-4), avec les seuls non
+  remariés là où le texte le dit, et s'éteint au mois qui suit l'union
+  nouvelle du survivant dans les régimes qui la retirent (L. 46 du code des
+  pensions, Agirc-Arrco, Ircantec, IEG, RAFP). Restent dehors la majoration
+  forfaitaire pour enfant à charge du régime général, la révision de la
+  réversion quand le ménage, ses ressources ou ses ayants droit changent, le
   complément de la fonction publique,
-  le partage entre ex-conjoints et le remariage, les pensions d'orphelin — à
+  le droit que recouvre le survivant quand sa nouvelle union cesse, les
+  pensions d'orphelin — à
   l'Agirc-Arrco, la moitié des droits du parent pour l'orphelin de père et de
   mère de moins de vingt et un ans, ou de vingt-cinq à charge (articles 114 et
   115 de l'accord de 2017) ; au RAFP, aux IEG et à la CRPCEN, un dixième par

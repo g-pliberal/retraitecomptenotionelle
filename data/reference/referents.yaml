@@ -2330,7 +2330,7 @@ referents:
           Il calcule le reste de la réversion du régime général : le
           maximum, la réversion d'un assuré mort avant son départ, le
           plafond de ressources du ménage, le partage entre ex-conjoints au
-          prorata des mariages, le remariage. Le dépôt les déclare absents
+          prorata des mariages, le remariage. Le dépôt les déclarait absents
           (`data/reference/regles/reversion.yaml`, approximations).
         preuve: >-
           `src/Reversion.cpp:23-49, 76-106`, `src/Retraite.cpp:235-268,
@@ -2357,9 +2357,21 @@ referents:
           décès (exposé « Retraite de l'assuré décédé ») — ce que Destinie
           fait aussi, sans âge minimal et aux taux pleins
           (`Reversion.cpp:23-48`), en gardant de plus la pension d'un régime
-          déjà liquidé, que le dépôt recalcule au décès. Restent, dans l'ordre
-          de l'étape 4, le partage et le remariage.
-        etat: a_reprendre
+          déjà liquidé, que le dépôt recalcule au décès. Le partage et le
+          remariage, repris le 9 octobre 2026 sur les textes : la réversion
+          partagée au prorata des mariages, comptés en mois de date à date
+          (R. 353-4), avec tous les précédents conjoints depuis juillet 2004
+          (L. 353-3) et les seuls non remariés dans les régimes qui le disent ;
+          perdue au mois qui suit l'union nouvelle du survivant là où le texte
+          la retire (L. 46 du code des pensions, accord Agirc-Arrco, article
+          22 de l'arrêté de l'Ircantec, article 25 de l'annexe 3 des IEG), et
+          gardée au régime général, qui ne compte que le ménage. Destinie
+          compte des années de mariage, ne partage les régimes de base et la
+          fonction publique qu'entre conjoints vivants, l'Agirc-Arrco entre
+          tous, et retire l'Agirc-Arrco au survivant remarié
+          (`Retraite.cpp:253-334`, au commit `4c1d34b`) ; le dépôt tient les
+          précédents conjoints pour vivants au décès, ce qu'il déclare.
+        etat: repris
         chantier: "138.4"
       - quoi: >-
           Il sert l'ASPA au ménage, sur ses ressources, celles du conjoint
@@ -5594,16 +5606,22 @@ referents:
           avec les conditions de ressources, de non-remariage et de
           durée de mariage. Il traite le partage entre ex-conjoints
           et calcule une pension fictive pour l'assuré mort avant
-          d'avoir liquidé. Le dépôt laisse dehors le partage, le
+          d'avoir liquidé. Le dépôt laissait dehors le partage, le
           remariage et la réversion d'un assuré mort avant son
           départ (`limites.md:79-82`).
         preuve: doc. n° 6, p. 9-10 du PDF
         verification: >-
           L. 353-3 (LEGIARTI000006742651, en vigueur depuis le 22
           août 2003) : partage « au prorata de la durée respective
-          de chaque mariage ». L'étape 4 de l'action 138 le prévoit
-          déjà.
-        etat: a_reprendre
+          de chaque mariage ». Repris le 9 octobre 2026 (action 138,
+          étape 4), sur les textes : la réversion d'un assuré mort
+          avant son départ, sur la pension qu'il eût obtenue à son
+          décès (R. 353-6) ; le partage au prorata des mariages,
+          comptés en mois (R. 353-4), avec deux précédents conjoints
+          au plus, quand Aphrodite en suit quatre ; et la perte de
+          la réversion au remariage, dans les régimes qui la
+          retirent.
+        etat: repris
         chantier: "138.4"
       - quoi: >-
           Il se boucle avec Mésange : réforme simulée, effets sur

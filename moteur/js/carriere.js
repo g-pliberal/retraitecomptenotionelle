@@ -621,6 +621,7 @@ export class Carriere {
     this._naissancesDesEnfants = undefined;
     this._origineDesAges = undefined;
     this._conjoint = undefined;
+    this._exConjoints = undefined;
     this._demandesDePension = undefined;
     this._pensionDInvalidite = undefined;
     this._radiationPourInvalidite = undefined;
@@ -962,9 +963,9 @@ export class Carriere {
   /**
    * Le conjoint de la personne, que son mariage lui relie : `{personne,
    * naissance, sexe, mariage, mariage_presume, ressources, invalidite,
-   * revenus_d_activite, nouvelle_union, ressources_du_nouveau_conjoint}`, tel
-   * que la chronologie le porte ; `null` sans conjoint déclaré. Voir
-   * `Conjoint` du Python.
+   * revenus_d_activite, nouvelle_union, ressources_du_nouveau_conjoint,
+   * nouvelle_union_depuis}`, tel que la chronologie le porte ; `null` sans
+   * conjoint déclaré. Voir `Conjoint` du Python.
    */
   get conjoint() {
     if (this._conjoint === undefined) {
@@ -988,10 +989,29 @@ export class Carriere {
           revenus_d_activite: chrono.revenusDActivite(this.chronologie, autre),
           nouvelle_union: nouvelleUnion,
           ressources_du_nouveau_conjoint: apport,
+          nouvelle_union_depuis: chrono.debutDuMenage(this.chronologie, autre),
         });
       }
     }
     return this._conjoint;
+  }
+
+  /**
+   * Les précédents conjoints de la personne, divorcés : `[{personne, mariage,
+   * divorce, remariage}, …]`, dans l'ordre de leurs mariages ; vide sans eux.
+   * Voir `ex_conjoints` du Python.
+   */
+  get exConjoints() {
+    if (this._exConjoints === undefined) {
+      this._exConjoints = this.chronologie
+        ? Object.freeze(chrono.exConjoints(this.chronologie, this.personne).map(
+          ([autre, union]) => Object.freeze({
+            personne: autre, mariage: union.debut, divorce: union.fin.date,
+            remariage: chrono.debutDuMenage(this.chronologie, autre),
+          })))
+        : Object.freeze([]);
+    }
+    return this._exConjoints;
   }
 
   /**

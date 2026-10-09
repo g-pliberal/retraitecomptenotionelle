@@ -15,6 +15,8 @@ etat: approchee
 lit:
 - conjoint.deces
 - union.debut et union.fin, d'un mariage ; une nouvelle union du survivant suspend le droit
+- les précédents conjoints du défunt, leur mariage et leur divorce, que le partage au
+  prorata des mariages lit
 - la prestation du défunt, servie ou qu'il aurait pu obtenir au jour de son décès, et sa
   forme, rente ou capital
 ecrit:
@@ -62,11 +64,12 @@ versions:
       10 %, réduits si le total dépasse la prestation du défunt
     parametres:
       taux: 0.50
+      ex_conjoints: tous
       age_minimum: null
       seuil_capital_points: 5125
       rien_apres_un_capital: true
       compte_aux_ressources: true
-      perte_au_remariage: true
+      perte_au_remariage: [mariage, concubinage]
       fiabilite: haute
   exemples: [ur_reversion_etat_mariage_3_ans_et_demi, ur_reversion_etat_mariage_4_ans,
              ur_reversion_cnracl_enfant_mariage_1_an]
@@ -91,9 +94,17 @@ approximations:
     la réversion du régime général d'un fonctionnaire qui a aussi cotisé au privé,
     près du plafond, baisse de la moitié de son RAFP ; non mesuré
 - ecart: >-
-    le partage entre conjoints successifs, la suspension au remariage, la prestation
-    d'orphelin et la réversion d'un fonctionnaire mort en activité, à l'âge de son
-    décès, ne sont pas portés ; les montants sont ceux de l'année du décès
+    la prestation d'orphelin n'est pas portée ; la prestation du fonctionnaire mort
+    avant son départ se liquide sur ses points au premier jour du trimestre civil du
+    décès, quand l'article 10 compte les droits acquis au jour du décès ; les montants
+    sont ceux de l'année du décès
+  effet: non mesuré
+- ecart: >-
+    le partage au prorata des mariages lit les précédents conjoints que la saisie
+    déclare, deux au plus, remariés ou non : l'article 4 de l'arrêté suspend le paiement
+    du conjoint divorcé remarié sans l'écarter du partage ; le remariage ou le
+    concubinage notoire du survivant suspend la prestation au mois qui le suit, et son
+    rétablissement, sur demande, quand l'union cesse, n'est pas porté
   effet: non mesuré
 presomptions:
   reversion_demandee_dans_l_annee: >-
@@ -102,7 +113,7 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-10-04
+  lu_le: 2026-10-09
   prochaine_relecture: 2027-03-31
   lectures_divergentes:
   - >-
@@ -131,7 +142,9 @@ sources:
     Ouverte le 4 octobre 2026, à l'étape de l'action 142 qui sert la réversion du RAFP,
     de la RCI et de l'Ircantec, lue dans l'index LEGI et sur la fiche pratique de
     l'ERAFP. À confirmer auprès de l'ERAFP : qu'aucune condition de durée du mariage ne
-    s'applique, quand le simulateur d'info-retraite en applique une.
+    s'applique, quand le simulateur d'info-retraite en applique une ; et que le
+    conjoint divorcé remarié avant le décès compte au partage, son paiement seul
+    suspendu, comme l'article 4 de l'arrêté se lit.
   - >-
     La circulaire de la Cnav qui énumère les ressources de R. 353-1 : y compte-t-elle
     la réversion du RAFP, que le texte ne range pas parmi celles qu'il écarte ?
@@ -142,6 +155,18 @@ sources:
       2017 et 2018) ; arrêté du 26 novembre 2004 portant application du décret, articles
       4 à 10 (rédactions de 2004, et du 31 décembre 2011 pour l'article 6)
     date: 2026-10-04
+  - type: legifrance
+    reference: >-
+      relus le 9 octobre 2026 dans l'index LEGI : l'article 10 du décret
+      (LEGIARTI000036070850) — « En cas d'unions successives, la prestation de
+      réversion est calculée au prorata de la durée des différentes unions » ; l'article
+      4 de l'arrêté (LEGIARTI000019412507) — « En cas de remariage ou de concubinage
+      notoire du conjoint survivant ou divorcé, le paiement de la prestation de
+      réversion est suspendu », et elle « est partagée entre le conjoint survivant ou
+      séparé de corps et le ou les précédents conjoints divorcés au prorata de la durée
+      respective de chaque mariage déterminée de date à date et arrondie au nombre de
+      mois inférieur »
+    date: 2026-10-09
   - type: autre
     reference: >-
       ERAFP, fiche pratique « La réversion », 20 décembre 2024 : « Le conjoint survivant
@@ -179,15 +204,21 @@ sources:
     url: https://media.rafp.fr/s3fs-public/2022-12/2012-RAFP-Rapport-Annuel.pdf
 code:
   python: >-
-    droit/reversion.py : reversion ; droit/liquider.py et droit/commun.py :
-    PensionRegime.capital ; echeancier.py : _pensions_au_deces ; scenarios/actuel.py :
+    droit/reversion.py : reversion, _part_du_survivant, _admis_ailleurs,
+    _jusqu_au_remariage ; droit/liquider.py et droit/commun.py : PensionRegime.capital ;
+    echeancier.py : _pensions_au_deces, _pensions_eues_au_deces ; scenarios/actuel.py :
     Reversions
   javascript: >-
-    moteur/js/droit/reversion.js : reversion ; moteur/js/droit/liquider.js ;
-    moteur/js/echeancier.js : _pensionsAuDeces ; moteur/js/regimes.js : Reversions
+    moteur/js/droit/reversion.js : reversion, partDuSurvivant, admisAilleurs,
+    jusquAuRemariage ; moteur/js/droit/liquider.js ; moteur/js/echeancier.js :
+    _pensionsAuDeces, _pensionsEuesAuDeces ; moteur/js/regimes.js : Reversions
   parametres: >-
-    contenu.parametres : taux, rien_apres_un_capital, compte_aux_ressources
-  tests: tests/test_reversion.py ; le témoin reversion_fonctionnaire des simulations
+    contenu.parametres : taux, rien_apres_un_capital, compte_aux_ressources,
+    ex_conjoints, perte_au_remariage
+  tests: >-
+    tests/test_reversion.py ; les témoins reversion_fonctionnaire,
+    reversion_fonctionnaire_mort_en_activite et
+    reversion_fonctionnaire_partage_concubinage des simulations
 historique:
 - >-
   2026-10-04 — née et lue par le moteur à l'étape de l'action 142 qui sert la
@@ -198,7 +229,13 @@ historique:
   l'orphelin de 2022, et celui de l'orphelin de 2005, lus et non portés ; deux lectures
   divergentes de la page de l'ERAFP, son exemple converti par 29 et le plafond de 50 %
   des orphelins.
+- >-
+  2026-10-09 — action 138, étape 4 : la prestation du fonctionnaire mort avant son
+  départ, liquidée à son décès ; le partage entre conjoints au prorata des mariages,
+  avec tous les précédents conjoints divorcés (article 4 de l'arrêté), et la
+  suspension au remariage ou au concubinage notoire du survivant.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un fonctionnaire de l'État ou d'un agent des
   collectivités et des hôpitaux qui décède. Le modèle la calcule pour le conjoint que
-  la saisie déclare, sauf quand le défunt a touché son droit en capital.
+  la saisie déclare, partagée avec les précédents conjoints qu'elle déclare, sauf quand
+  le défunt a touché son droit en capital.

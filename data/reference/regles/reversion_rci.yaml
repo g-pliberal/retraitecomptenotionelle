@@ -16,7 +16,9 @@ face: droit
 etat: approchee
 lit:
 - conjoint.deces
-- union.debut et union.fin, d'un mariage, présent ou dissous par un divorce
+- union.debut et union.fin, d'un mariage, présent ou dissous par un divorce ; les
+  précédents conjoints de l'assuré, leur mariage et leur divorce, que le partage au
+  prorata des mariages lit
 - la naissance du survivant, qui dit son âge
 - les ressources du survivant, personnelles ou du ménage, ses revenus d'activité, abattus
   de 30 % à cinquante-cinq ans, et ses réversions des régimes de base
@@ -58,6 +60,7 @@ versions:
   textes:
   - {id: LEGIARTI000025397326, article: "arrêté du 9 février 2012, règlement, articles 16 à 35", en_vigueur: 2013-01-01}
   - {id: LEGIARTI000054891949, article: "arrêté du 9 février 2012, règlement, article 17", en_vigueur: 2013-01-01}
+  - {id: LEGIARTI000054892008, article: "arrêté du 9 février 2012, règlement, article 22", en_vigueur: 2013-01-01}
   nee_de: LEGIARTI000025397326
   bornes:
     conjoint.deces: [2013-01-01, 2021-01-01]
@@ -77,6 +80,7 @@ versions:
       la demande vient dans l'année ; aucune condition de durée du mariage
     parametres:
       taux: 0.60
+      ex_conjoints: tous
       age_minimum: 55
       ressources: ecretement
       plafond_pass: 2
@@ -93,6 +97,7 @@ versions:
   - {reference: "circulaire Cnav n° 2026-01 du 5 janvier 2026, § 9", en_vigueur: 2026-01-01}
   - {id: LEGIARTI000049779679, article: "arrêté du 9 février 2012, règlement, articles 16 à 35", en_vigueur: 2024-06-26}
   - {id: LEGIARTI000054896509, article: "arrêté du 9 février 2012, règlement, article 17", en_vigueur: 2024-06-26}
+  - {id: LEGIARTI000054892008, article: "arrêté du 9 février 2012, règlement, article 22", en_vigueur: 2013-01-01}
   - {id: LEGIARTI000049782878, article: "arrêté du 9 février 2012, règlement, articles 16 à 35", en_vigueur: 2025-01-01}
   - {id: LEGIARTI000052379026, article: "arrêté du 9 février 2012, règlement, articles 16 à 35", en_vigueur: 2027-01-01}
   bornes:
@@ -106,6 +111,7 @@ versions:
       Sécurité sociale : 96 120 euros par an en 2026, quel que soit le ménage
     parametres:
       taux: 0.60
+      ex_conjoints: tous
       age_minimum: 55
       ressources: ecretement
       plafond_pass: 2
@@ -132,9 +138,15 @@ approximations:
     les 60 % s'appliquent à la retraite servie, abattement compris, quand le règlement
     les calcule sans lui ; les ressources du survivant, et de son ménage, sont celles
     que la saisie déclare à la date d'effet, comme au régime général (fiche
-    reversion), sans révision quand elles varient ; le partage entre conjoints, le droit dérivé des conjoints de commerçants et la réversion d'un
-    assuré mort avant son départ ne sont pas portés ; les montants sont ceux de l'année
-    du décès
+    reversion), sans révision quand elles varient, ni quand le survivant forme une
+    union après la date d'effet ; le droit dérivé des conjoints de commerçants n'est
+    pas porté ; les montants sont ceux de l'année du décès
+  effet: non mesuré
+- ecart: >-
+    le partage au prorata des mariages (article 22) lit les précédents conjoints que la
+    saisie déclare, deux au plus, remariés ou non ; il s'applique à la réversion
+    entière, non catégorie de points par catégorie de points, sans arrondi comptable,
+    et se fige au décès
   effet: non mesuré
 presomptions:
   ressources_du_survivant: >-
@@ -193,14 +205,26 @@ sources:
       fixées par les articles R. 353-1 et R. 353-1-1 » — un seul plafond, et
       l'abattement de 30 % des revenus d'activité de R. 353-1
     date: 2026-10-09
+  - type: legifrance
+    reference: >-
+      relu le 9 octobre 2026 dans l'index LEGI : l'article 22 du règlement
+      (LEGIARTI000054892008, depuis 2013) — la réversion de l'assuré remarié après un
+      divorce « est partagée entre son conjoint survivant et le ou les précédents
+      conjoints divorcés au prorata de la durée respective de chaque mariage, la durée de
+      chaque mariage étant déterminée de date à date et arrondie au nombre de mois
+      inférieur », catégorie de points par catégorie de points
+    date: 2026-10-09
 code:
   python: >-
-    droit/reversion.py : reversion ; scenarios/actuel.py : Reversions
+    droit/reversion.py : reversion, _part_du_survivant, _admis_ailleurs ;
+    scenarios/actuel.py : Reversions ; echeancier.py : Echeancier._pensions_eues_au_deces
   javascript: >-
-    moteur/js/droit/reversion.js : reversion ; moteur/js/regimes.js : Reversions
+    moteur/js/droit/reversion.js : reversion, partDuSurvivant, admisAilleurs ;
+    moteur/js/regimes.js : Reversions ; moteur/js/echeancier.js :
+    Echeancier._pensionsEuesAuDeces
   parametres: >-
     contenu.parametres de chaque version : portee, taux, age_minimum, plafond_pass,
-    facteur_menage, abattement_activite, abattement_activite_age
+    facteur_menage, abattement_activite, abattement_activite_age, ex_conjoints
   tests: tests/test_reversion.py
 historique:
 - >-
@@ -212,6 +236,12 @@ historique:
   couple, et l'abattement de 30 % de ses revenus d'activité à cinquante-cinq ans,
   comptés sous le plafond, le même pour un ménage, que l'article 17 renvoie à
   R. 353-1.
+- >-
+  2026-10-09 — action 138, étape 4 : la réversion de l'assuré mort avant son départ,
+  sur ses points au dernier jour du trimestre civil qui précède le décès, sans
+  abattement ; le partage entre conjoints au prorata des mariages, avec tous les
+  précédents conjoints divorcés (article 22).
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un artisan, d'un commerçant ou d'un industriel qui
-  décède depuis 2013. Le modèle la calcule pour le conjoint que la saisie déclare.
+  décède depuis 2013. Le modèle la calcule pour le conjoint que la saisie déclare,
+  partagée avec les précédents conjoints qu'elle déclare.

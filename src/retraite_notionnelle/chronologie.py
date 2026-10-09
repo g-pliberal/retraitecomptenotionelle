@@ -92,6 +92,8 @@ SCHEMA_VERSION = 1
 ASSURE = "assure"
 #: Le conjoint de l'assuré, que le mariage lui relie (§ 5.1).
 CONJOINT = "conjoint"
+#: Ses précédents conjoints, divorcés : « ex_conjoint_1 », « ex_conjoint_2 ».
+EX_CONJOINT = "ex_conjoint"
 #: Les formes d'une union (vocabulaire, ``formes_d_union``) : celle où le
 #: conjoint survivant vit après le décès en est une.
 FORMES_D_UNION = ("mariage", "pacs", "concubinage")
@@ -293,10 +295,12 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
     ``ressources`` annuelles, et ce qui en vient de son activité
     (``revenus_d_activite``), la ``nouvelle_union`` où il vit après le décès
     — mariage, pacs ou concubinage — et les ressources que son nouveau
-    conjoint y apporte (``ressources_du_nouveau_conjoint``), et son
-    ``invalidite``, une décision médicale datée, s'il les dit. ``deces`` date
-    le décès de l'assuré, qui ouvre la réversion de son conjoint : il clôt le
-    mariage.
+    conjoint y apporte (``ressources_du_nouveau_conjoint``), depuis le mois
+    qu'il dit (``nouvelle_union_depuis``) ou le décès, et son ``invalidite``,
+    une décision médicale datée, s'il les dit ; et les précédents conjoints de
+    l'assuré (``ex_conjoints``) : la naissance de chacun, son mariage, que le
+    divorce clôt, et son remariage, s'il le dit. ``deces`` date le décès de
+    l'assuré, qui ouvre la réversion de son conjoint : il clôt le mariage.
     ``retraite_progressive`` déclare la demande d'une retraite progressive :
     son ``age``, compté comme celui du départ, qu'elle précède, et la
     ``quotite`` du temps partiel gardé jusqu'au départ, entre zéro et un.
@@ -440,8 +444,16 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
             if forme not in FORMES_D_UNION:
                 raise ValueError(f"une union « {forme} » : mariage, pacs ou concubinage")
             apport = conjoint.get("ressources_du_nouveau_conjoint")
+            debut = jour_deces or epoux["debut"]
+            if conjoint.get("nouvelle_union_depuis") is not None:
+                # Le mois où elle commence, s'il le dit : la réversion d'un
+                # régime qui la perd au remariage s'arrête là.
+                debut = date_declaree(conjoint["nouvelle_union_depuis"],
+                                      "le début de sa nouvelle union")[0]
+                if jour_deces is not None and debut <= jour_deces:
+                    raise ValueError(f"une nouvelle union le {debut}, avant le décès")
             faits_naissance.append(fait(
-                f"menage_{CONJOINT}", CONJOINT, "ressources", jour_deces or epoux["debut"],
+                f"menage_{CONJOINT}", CONJOINT, "ressources", debut,
                 attributs={"periode": "annuelle", "nature": "menage", "forme": forme},
                 montant=None if apport is None else {"annuel": float(apport), "monnaie": "EUR"}))
         if conjoint.get("invalidite") is not None:
@@ -451,7 +463,39 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
             faits_naissance.append(fait(
                 f"invalidite_{CONJOINT}", CONJOINT, "decision_medicale", jour,
                 attributs={"decision": "invalidite", "precision": precision}))
+        for rang, ex in enumerate(conjoint.get("ex_conjoints") or (), 1):
+            faits, mariage = _ex_conjoint(assure, rang, ex)
+            faits_naissance.extend(faits)
+            liens.append(mariage)
     return faits_naissance, depart, liens
+
+
+def _ex_conjoint(assure: dict, rang: int, ex: dict) -> tuple[list[dict], dict]:
+    """Un précédent conjoint de l'assuré : sa naissance, le mariage qui les a
+    unis, que le divorce clôt, et, s'il le dit, son remariage — le ménage où il
+    vit depuis, comme celui du conjoint survivant."""
+    personne = f"{EX_CONJOINT}_{rang}"
+    jour, precision = date_declaree(ex["naissance"], "la naissance d'un précédent conjoint")
+    faits = [fait(f"naissance_{personne}", personne, "naissance", jour,
+                  attributs={"precision": precision})]
+    mariage = lien(f"union_{personne}", ASSURE, personne, "union",
+                   {ASSURE: "conjoint", personne: "conjoint"},
+                   debut=date_declaree(ex["mariage"], "le mariage")[0])
+    mariage["forme"] = "mariage"
+    if mariage["debut"] <= max(assure["debut"], jour):
+        raise ValueError(f"un mariage le {mariage['debut']}, avant la naissance d'un époux")
+    divorce = date_declaree(ex["divorce"], "le divorce")[0]
+    if divorce <= mariage["debut"]:
+        raise ValueError(f"un divorce le {divorce}, avant le mariage")
+    mariage["fin"] = {"date": divorce, "cause": "divorce"}
+    if ex.get("remariage") is not None:
+        remariage = date_declaree(ex["remariage"], "le remariage")[0]
+        if remariage <= divorce:
+            raise ValueError(f"un remariage le {remariage}, avant le divorce")
+        faits.append(fait(f"menage_{personne}", personne, "ressources", remariage,
+                          attributs={"periode": "annuelle", "nature": "menage",
+                                     "forme": "mariage"}))
+    return faits, mariage
 
 
 def _invalidite(assure: dict, age_liquidation: float | None, invalidite: dict) -> list[dict]:
@@ -845,21 +889,37 @@ def faits_de(chronologie: dict, personne: str, sorte: str | None = None) -> list
             if f["personne"] == personne and (sorte is None or f["sorte"] == sorte)]
 
 
+def _divorce(union_: dict) -> bool:
+    """L'union est-elle close par un divorce ?"""
+    return (union_.get("fin") or {}).get("cause") == "divorce"
+
+
 def conjoint(chronologie: dict, personne: str) -> str | None:
-    """Le conjoint d'une personne : celui que son mariage lui relie, ou
-    ``None``. Le modèle n'en connaît qu'un, qui lui survit."""
-    for union in chronologie.get("liens") or []:
-        if union["sorte"] == "union" and personne in (union["de"], union["vers"]):
-            return union["vers"] if union["de"] == personne else union["de"]
-    return None
+    """Le conjoint d'une personne : celui que son mariage lui relie, que le
+    divorce n'a pas clos, ou ``None``. Le modèle n'en connaît qu'un, qui lui
+    survit."""
+    union_ = union(chronologie, personne)
+    if union_ is None:
+        return None
+    return union_["vers"] if union_["de"] == personne else union_["de"]
 
 
 def union(chronologie: dict, personne: str) -> dict | None:
-    """Le mariage d'une personne, s'il est dit."""
+    """Le mariage d'une personne que le divorce n'a pas clos, s'il est dit."""
     for lien_ in chronologie.get("liens") or []:
-        if lien_["sorte"] == "union" and personne in (lien_["de"], lien_["vers"]):
+        if (lien_["sorte"] == "union" and personne in (lien_["de"], lien_["vers"])
+                and not _divorce(lien_)):
             return lien_
     return None
+
+
+def ex_conjoints(chronologie: dict, personne: str) -> list[tuple[str, dict]]:
+    """Les précédents conjoints d'une personne, et le mariage que le divorce a
+    clos, dans l'ordre de la chronologie."""
+    return [(lien_["vers"] if lien_["de"] == personne else lien_["de"], lien_)
+            for lien_ in chronologie.get("liens") or []
+            if lien_["sorte"] == "union" and personne in (lien_["de"], lien_["vers"])
+            and _divorce(lien_)]
 
 
 def deces(chronologie: dict, personne: str) -> dict | None:
@@ -898,6 +958,13 @@ def menage(chronologie: dict, personne: str) -> tuple[str, float | None] | None:
         return None
     montant = fait_.get("montant")
     return fait_["attributs"]["forme"], None if not montant else float(montant["annuel"])
+
+
+def debut_du_menage(chronologie: dict, personne: str) -> str | None:
+    """Le jour où commence le ménage où une personne dit vivre — son union
+    nouvelle, ou son remariage —, ou ``None`` pour qui vit seul."""
+    fait_ = _ressources_de_nature(chronologie, personne, "menage")
+    return None if fait_ is None else fait_["debut"]
 
 
 def naissance(chronologie: dict, personne: str) -> dict | None:

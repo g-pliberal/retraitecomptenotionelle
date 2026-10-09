@@ -1087,6 +1087,28 @@ export function formulaire(saisie, contexte, comparaison = null) {
  * que l'adresse porte est gardé, en champ caché, comme tout ce dont le
  * formulaire dépend.
  */
+function exConjointFormulaire(saisie, rang) {
+  const ex = saisie.ex_conjoints[rang - 1] ?? {};
+  const date = { autocomplete: "off", spellcheck: "false" };
+  return [
+    g.champ(`ex${rang}`, `Précédent conjoint n° ${rang} : sa naissance`, ex.naissance ?? "",
+      "facultatif : « 1958 » ou « 1958-03 »", "text", date,
+      rang === 1
+        ? "Un époux dont vous avez divorcé, encore en vie. La réversion se partage "
+          + "entre lui et votre conjoint au prorata de la durée de chaque mariage, "
+          + "comptée en mois ; remarié avant votre décès, il n'en reçoit rien dans "
+          + "la fonction publique et aux complémentaires, ni au régime général "
+          + "avant juillet 2004."
+        : ""),
+    g.champ(`ex${rang}_mariage`, "Votre mariage", ex.mariage ?? "", "« 1985-06 »", "text",
+      date),
+    g.champ(`ex${rang}_divorce`, "Votre divorce", ex.divorce ?? "", "« 1998-02 »", "text",
+      date),
+    g.champ(`ex${rang}_remariage`, "Son remariage", ex.remariage ?? "",
+      "facultatif : « 2001-09 »", "text", date),
+  ].join("");
+}
+
 function conjointFormulaire(saisie, contexte) {
   const presomptions = contexte.paquet.presomptions;
   const champs = [
@@ -1128,8 +1150,14 @@ function conjointFormulaire(saisie, contexte) {
       saisie.nouvelle_union, "", {},
       "Remarié, pacsé ou en concubinage, il verrait la réversion du régime "
       + "général mesurée aux ressources du ménage, sous un plafond 1,6 fois plus "
-      + "haut. Ce que le remariage fait aux réversions des autres régimes n'est "
-      + "pas encore calculé."),
+      + "haut. Remarié, il perdrait celles de la fonction publique, de "
+      + "l'Agirc-Arrco, de l'Ircantec, des IEG et du RAFP ; en concubinage, "
+      + "celles de la fonction publique et du RAFP."),
+    g.champ("nouvelle_union_depuis", "Depuis", saisie.nouvelle_union_depuis,
+      "facultatif : « 2031-06 » ; sans lui, dès votre décès", "text",
+      { autocomplete: "off", spellcheck: "false" },
+      "La réversion qu'elle lui retire est servie jusque-là. Le régime général "
+      + "ne compte le ménage que s'il est formé quand sa réversion commence."),
     g.champ("ressources_nouveau_conjoint", "Ressources de son nouveau conjoint",
       saisie.ressources_nouveau_conjoint === null
         ? "" : nombreBrut(saisie.ressources_nouveau_conjoint),
@@ -1143,6 +1171,7 @@ function conjointFormulaire(saisie, contexte) {
       "Invalide, votre conjoint n'attend pas cinquante-cinq ans pour la réversion "
       + "de l'Agirc-Arrco : elle part au mois qui suit votre décès, ou son "
       + "invalidité si elle vient après. Le régime général attend cet âge."),
+    ...[1, 2].map((rang) => exConjointFormulaire(saisie, rang)),
   ].join("");
   return `
   <details class="options"${saisie.conjoint ? " open" : ""}>
@@ -5110,6 +5139,7 @@ const MOTIFS_DE_REVERSION = Object.freeze({
   ecretee: "réduite : avec ses ressources, elle dépasserait le plafond",
   ressources: "rien : ses ressources dépassent le plafond",
   mariage: "rien : le mariage est trop court ou trop tardif",
+  remariage: "rien : son union nouvelle la lui retire",
   non_portee: "non calculée : ce régime n'est pas encore porté",
 });
 
@@ -5173,6 +5203,14 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
         : `${montant} de plus à partir de ${mois(ligne.majoration_petites_retraites_effet)}, `
           + "majoration de 11,1 %");
     }
+    // Partagée avec les précédents conjoints, la ligne dit sa part ; arrêtée par
+    // l'union nouvelle du survivant, jusqu'à quand.
+    if (ligne.part < 1) {
+      parts.push(`sa part, ${g.pourcentage(ligne.part, false, 0)}, au prorata des mariages`);
+    }
+    if (ligne.fin !== null) {
+      parts.push(`jusqu'en ${mois(ligne.fin)}, que son union nouvelle arrête`);
+    }
     return parts.length ? ` <span class="discret">(${parts.join(" ; ")})</span>` : "";
   };
   // Le régime général reverse la pension sans le minimum contributif qui la
@@ -5232,8 +5270,9 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
   } else if (conjoint.ressources_du_nouveau_conjoint === null) {
     reserves.push("aucune ressource à son nouveau conjoint, faute de l'avoir dite");
   }
-  reserves.push("aucun partage avec un ex-conjoint, ce que le modèle ne sait pas "
-    + "encore faire");
+  if (comparaison.carriere.exConjoints.length === 0) {
+    reserves.push("aucun précédent mariage, faute d'en avoir déclaré");
+  }
 
   return `
 <div class="carte" id="resultats-reversion">

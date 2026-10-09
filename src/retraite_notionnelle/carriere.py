@@ -606,6 +606,22 @@ class Conjoint:
     #: ménage. ``None`` laisse la présomption ``survivant_seul`` s'appliquer.
     nouvelle_union: str | None = None
     ressources_du_nouveau_conjoint: float | None = None
+    #: Le jour où commence ce ménage (AAAA-MM-JJ) : celui qu'il dit, ou le
+    #: décès.
+    nouvelle_union_depuis: str | None = None
+
+
+@dataclass(frozen=True)
+class ExConjoint:
+    """Un précédent conjoint de la personne, divorcé, tel que la chronologie le
+    porte : ce que le partage de la réversion lit (L. 353-3)."""
+
+    personne: str
+    #: Le mariage et le divorce qui l'a clos (AAAA-MM-JJ).
+    mariage: str
+    divorce: str
+    #: Son remariage (AAAA-MM-JJ), s'il le dit.
+    remariage: str | None = None
 
 
 @dataclass
@@ -1011,7 +1027,19 @@ class Carriere:
             revenus_d_activite=chrono.revenus_d_activite(self.chronologie, autre),
             nouvelle_union=nouvelle_union,
             ressources_du_nouveau_conjoint=apport,
+            nouvelle_union_depuis=chrono.debut_du_menage(self.chronologie, autre),
         )
+
+    @cached_property
+    def ex_conjoints(self) -> tuple[ExConjoint, ...]:
+        """Les précédents conjoints de la personne, divorcés, tels que la
+        chronologie les porte, dans l'ordre de leurs mariages : vide sans eux."""
+        if not self.chronologie:
+            return ()
+        return tuple(
+            ExConjoint(personne=autre, mariage=union["debut"], divorce=union["fin"]["date"],
+                       remariage=chrono.debut_du_menage(self.chronologie, autre))
+            for autre, union in chrono.ex_conjoints(self.chronologie, self.personne))
 
     @cached_property
     def naissances_des_enfants(self) -> tuple[tuple[str, str], ...]:

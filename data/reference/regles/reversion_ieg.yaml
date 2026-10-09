@@ -16,6 +16,9 @@ etat: approchee
 lit:
 - conjoint.deces
 - union.debut, d'un mariage, et la liquidation de la pension de l'agent
+- les précédents conjoints de l'agent, leur mariage, leur divorce et leur remariage,
+  que le partage au prorata des mariages lit ; le remariage du survivant, qui suspend
+  son droit (article 25)
 - les enfants nés de l'union
 - la pension du défunt, servie ou qu'il aurait pu obtenir au jour de son décès, et sa
   majoration pour enfants
@@ -44,6 +47,7 @@ versions:
     conditions: aucune durée du mariage
     parametres:
       taux: 0.50
+      ex_conjoints: aucun
       beneficiaire: veuve
       mariage_minimum_annees: null
       majoration_reversible: 0.50
@@ -74,11 +78,12 @@ versions:
       (article 25)
     parametres:
       taux: 0.50
+      ex_conjoints: non_remaries
       beneficiaire: conjoint
       mariage_minimum_annees: 2
       majoration_reversible: 0.50
       age_minimum: null
-      perte_au_remariage: true
+      perte_au_remariage: [mariage]
       fiabilite: haute
   exemples: aucun trouvé
 approximations:
@@ -92,10 +97,18 @@ approximations:
     ne sont pas portés : le complément de réversion de 4 %, sous condition de
     ressources (article 23) ; le capital qui remplace la réversion quand l'agent compte
     dix trimestres de services au plus (article 22, IV) ; le minimum de soixante
-    trimestres après un accident du travail ; le partage entre conjoints, la
-    suspension au remariage et la pension d'orphelin ; la condition d'antériorité
-    tient le départ pour la liquidation, et tout enfant déclaré pour un enfant né de
-    l'union ; les montants sont ceux de l'année du décès
+    trimestres après un accident du travail ; la pension d'orphelin ; la condition
+    d'antériorité tient le départ pour la liquidation, et tout enfant déclaré pour un
+    enfant né de l'union ; les montants sont ceux de l'année du décès
+  effet: non mesuré
+- version: [conjoints_2008]
+  ecart: >-
+    le partage au prorata des mariages (article 22, I) lit les précédents conjoints
+    que la saisie déclare, deux au plus, non remariés au décès, sans leur opposer la
+    condition de l'article 24 ; la part de l'ex-conjoint qui ne l'a pas demandée dans
+    les trois ans, que l'article 26 attribue au conjoint survivant, ne lui revient
+    pas ; le remariage du survivant suspend la réversion au mois qui le suit, et le
+    droit qu'il recouvre quand la nouvelle union cesse n'est pas porté
   effet: non mesuré
 presomptions:
   mariage_des_conjoints: >-
@@ -107,7 +120,7 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-10-05
+  lu_le: 2026-10-09
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -121,19 +134,36 @@ sources:
       6 de la rédaction de 1946 (LEGIARTI000006632496), et les articles 22 à 25 des
       rédactions du 30 juin 2008 et du 6 août 2025 (LEGIARTI000052046924)
     date: 2025-08-06
+  - type: legifrance
+    reference: >-
+      relus le 9 octobre 2026 dans l'index LEGI, pour le partage et le remariage :
+      l'annexe 3, articles 22, I et II, 25 et 26 (LEGIARTI000052046924) — la pension
+      des « conjoints, conjoints séparés de corps et ex-conjoints non remariés avant le
+      décès », « répartie au prorata de la durée respective de chaque mariage » ;
+      « L'ex-conjoint remarié avant le décès de l'ouvrant droit est exclu du droit à
+      pension de réversion », sauf veuvage sans autre droit ; « Le remariage des
+      bénéficiaires de pension de réversion, conjoints ou ex-conjoints, suspend leurs
+      droits »
+    date: 2025-08-06
 code:
   python: >-
     scenarios/actuel.py : Reversions, qui lit les versions de cette fiche ;
-    droit/reversion.py : reversion, _mariage_ieg
+    droit/reversion.py : reversion, _mariage_ieg, _part_du_survivant, _admis_ailleurs,
+    _jusqu_au_remariage
   javascript: >-
     moteur/js/regimes.js : Reversions ; moteur/js/droit/reversion.js : reversion,
-    mariageIeg
+    mariageIeg, partDuSurvivant, admisAilleurs, jusquAuRemariage
   parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
   tests: [tests/test_reversion.py]
 historique:
 - >-
   2026-10-05 — la fiche naît (action 89) : les IEG n'avaient pas de réversion, et leur
   ligne disait « la réversion de ce régime n'est pas encore portée ».
+- >-
+  2026-10-09 — action 138, étape 4 : le partage entre conjoints au prorata des
+  mariages, avec les ex-conjoints non remariés avant le décès (article 22), et la
+  suspension de la réversion au remariage du survivant (article 25), depuis le
+  1er juillet 2008.
 effet: >-
   Tout conjoint d'un agent des IEG : la moitié de sa pension, majoration pour enfants
-  comprise, sans âge ni ressources.
+  comprise, sans âge ni ressources, partagée avec les ex-conjoints non remariés.

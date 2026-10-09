@@ -25,6 +25,8 @@ export const SCHEMA_VERSION = 1;
 export const ASSURE = "assure";
 /** Le conjoint de l'assuré, que le mariage lui relie (§ 5.1). */
 export const CONJOINT = "conjoint";
+/** Ses précédents conjoints, divorcés : « ex_conjoint_1 », « ex_conjoint_2 ». */
+export const EX_CONJOINT = "ex_conjoint";
 /**
  * Les formes d'une union (vocabulaire, `formes_d_union`) : celle où le conjoint
  * survivant vit après le décès en est une.
@@ -234,10 +236,11 @@ export function dateDeclaree(valeur, quoi) {
  * et son `sexe`, la date du `mariage` — que {@link completer} présume sinon —,
  * ses `ressources` annuelles, et ce qui en vient de son activité
  * (`revenus_d_activite`), la `nouvelle_union` où il vit après le décès et ce
- * que son nouveau conjoint y apporte (`ressources_du_nouveau_conjoint`), et
- * son `invalidite`, une décision médicale
- * datée, s'il les dit ; `deces` date le décès de l'assuré, qui clôt le
- * mariage ; `demandesDePension` dit, régime par régime,
+ * que son nouveau conjoint y apporte (`ressources_du_nouveau_conjoint`),
+ * depuis le mois qu'il dit (`nouvelle_union_depuis`) ou le décès, et son
+ * `invalidite`, une décision médicale datée, s'il les dit, et les précédents
+ * conjoints de l'assuré (`ex_conjoints`) ; `deces` date le décès de l'assuré,
+ * qui clôt le mariage ; `demandesDePension` dit, régime par régime,
  * l'âge auquel il demande sa pension ; `etranger`, la carrière hors de France :
  * ses périodes, ses pensions étrangères et l'État de sa résidence après le
  * départ. Voir `_personne` du Python.
@@ -378,8 +381,17 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
         throw new Error(`une union « ${forme} » : mariage, pacs ou concubinage`);
       }
       const apport = conjoint.ressources_du_nouveau_conjoint;
+      let debut = jourDeces ?? epoux.debut;
+      if (conjoint.nouvelle_union_depuis !== null && conjoint.nouvelle_union_depuis !== undefined) {
+        // Le mois où elle commence, s'il le dit : la réversion d'un régime qui la
+        // perd au remariage s'arrête là.
+        [debut] = dateDeclaree(conjoint.nouvelle_union_depuis, "le début de sa nouvelle union");
+        if (jourDeces !== null && debut <= jourDeces) {
+          throw new Error(`une nouvelle union le ${debut}, avant le décès`);
+        }
+      }
       faitsNaissance.push(fait(`menage_${CONJOINT}`, CONJOINT, "ressources",
-        jourDeces ?? epoux.debut, null,
+        debut, null,
         { periode: "annuelle", nature: "menage", forme }, null,
         apport === null || apport === undefined
           ? null : { annuel: Number(apport), monnaie: "EUR" }));
@@ -393,8 +405,46 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
       faitsNaissance.push(fait(`invalidite_${CONJOINT}`, CONJOINT, "decision_medicale",
         jourInvalidite, null, { decision: "invalidite", precision }));
     }
+    (conjoint.ex_conjoints ?? []).forEach((ex, i) => {
+      const [faits, mariage] = exConjoint(assure, i + 1, ex);
+      faitsNaissance.push(...faits);
+      liens.push(mariage);
+    });
   }
   return [faitsNaissance, depart, liens];
+}
+
+/**
+ * Un précédent conjoint de l'assuré : sa naissance, le mariage qui les a unis,
+ * que le divorce clôt, et, s'il le dit, son remariage. Voir `_ex_conjoint` du
+ * Python.
+ */
+function exConjoint(assure, rang, ex) {
+  const personneEx = `${EX_CONJOINT}_${rang}`;
+  const [jour, precision] = dateDeclaree(ex.naissance, "la naissance d'un précédent conjoint");
+  const faits = [fait(`naissance_${personneEx}`, personneEx, "naissance", jour, null,
+    { precision })];
+  const mariage = lien(`union_${personneEx}`, ASSURE, personneEx, "union",
+    { [ASSURE]: "conjoint", [personneEx]: "conjoint" },
+    dateDeclaree(ex.mariage, "le mariage")[0]);
+  mariage.forme = "mariage";
+  if (mariage.debut <= (assure.debut > jour ? assure.debut : jour)) {
+    throw new Error(`un mariage le ${mariage.debut}, avant la naissance d'un époux`);
+  }
+  const [divorce] = dateDeclaree(ex.divorce, "le divorce");
+  if (divorce <= mariage.debut) {
+    throw new Error(`un divorce le ${divorce}, avant le mariage`);
+  }
+  mariage.fin = { date: divorce, cause: "divorce" };
+  if (ex.remariage !== null && ex.remariage !== undefined) {
+    const [remariage] = dateDeclaree(ex.remariage, "le remariage");
+    if (remariage <= divorce) {
+      throw new Error(`un remariage le ${remariage}, avant le divorce`);
+    }
+    faits.push(fait(`menage_${personneEx}`, personneEx, "ressources", remariage, null,
+      { periode: "annuelle", nature: "menage", forme: "mariage" }));
+  }
+  return [faits, mariage];
 }
 
 /**
@@ -840,9 +890,14 @@ export function faitsDe(chronologie, personne, sorte = null) {
   );
 }
 
+/** L'union est-elle close par un divorce ? */
+function divorce(union_) {
+  return (union_.fin ?? {}).cause === "divorce";
+}
+
 /**
- * Le conjoint d'une personne : celui que son mariage lui relie, ou `null`. Le
- * modèle n'en connaît qu'un, qui lui survit.
+ * Le conjoint d'une personne : celui que son mariage lui relie, que le divorce
+ * n'a pas clos, ou `null`. Le modèle n'en connaît qu'un, qui lui survit.
  */
 export function conjoint(chronologie, personne) {
   const trouvee = union(chronologie, personne);
@@ -852,11 +907,22 @@ export function conjoint(chronologie, personne) {
   return trouvee.de === personne ? trouvee.vers : trouvee.de;
 }
 
-/** Le mariage d'une personne, s'il est dit. */
+/** Le mariage d'une personne que le divorce n'a pas clos, s'il est dit. */
 export function union(chronologie, personne) {
   return (chronologie.liens ?? []).find(
-    (l) => l.sorte === "union" && (l.de === personne || l.vers === personne),
+    (l) => l.sorte === "union" && (l.de === personne || l.vers === personne) && !divorce(l),
   ) ?? null;
+}
+
+/**
+ * Les précédents conjoints d'une personne, et le mariage que le divorce a
+ * clos : `[[personne, union], …]`, dans l'ordre de la chronologie.
+ */
+export function exConjoints(chronologie, personne) {
+  return (chronologie.liens ?? [])
+    .filter((l) => l.sorte === "union" && (l.de === personne || l.vers === personne)
+      && divorce(l))
+    .map((l) => [l.de === personne ? l.vers : l.de, l]);
 }
 
 /** Le décès d'une personne, s'il est dit. */
@@ -899,6 +965,15 @@ export function menage(chronologie, personne) {
     return null;
   }
   return [trouve.attributs.forme, trouve.montant ? Number(trouve.montant.annuel) : null];
+}
+
+/**
+ * Le jour où commence le ménage où une personne dit vivre — son union nouvelle,
+ * ou son remariage —, ou `null` pour qui vit seul.
+ */
+export function debutDuMenage(chronologie, personne) {
+  const trouve = ressourcesDeNature(chronologie, personne, "menage");
+  return trouve === null ? null : trouve.debut;
 }
 
 /** Le fait de naissance d'une personne, s'il est connu. */
