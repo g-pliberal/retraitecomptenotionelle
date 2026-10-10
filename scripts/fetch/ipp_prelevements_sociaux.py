@@ -97,6 +97,14 @@ SERIES = {
     ("pensions", "maladie_complementaires"): (
         "prelevements_sociaux.cotisations_securite_sociale_regime_general.mmid_ret",
         {"taux": "avantages_de_retraite.regimes_comp"}),
+    # Les retraités des artisans et commerçants, dans la branche des
+    # indépendants : les libéraux de mmid_pl paient les mêmes taux (D. 612-4).
+    ("pensions", "maladie_independants"): (
+        "prelevements_sociaux.cotisations_taxes_independants_artisans_commercants.mmid.mmid_ac",
+        {"tout_revenu": "assures_retraites.pension_totale",
+         "sous_plafond": "assures_retraites.sous_pss",
+         "sous_quatre_plafonds": "assures_retraites.sous_4_pss",
+         "sous_cinq_plafonds": "assures_retraites.pensions_sous_5_pss"}),
     ("salaires", "csg"): (
         "prelevements_sociaux.contributions_sociales.csg.activite",
         {"taux": "taux_global", "abattement": "abattement.0-",
@@ -285,6 +293,57 @@ ASSIETTE_CSG = [
               "(LEGIARTI000048683641)"},
 ]
 
+#: LA MALADIE DES PENSIONS DES AUTRES RÉGIMES DE BASE, que la branche du régime
+#: général de l'IPP n'écrit pas. Celle des retraités indépendants est dans la
+#: branche des indépendants (``maladie_independants``) ; ses tranches se lisent
+#: pour une pension sous le plafond, et le 3,1 % que l'IPP met au 1er janvier
+#: 1986 n'est dans aucun texte : D. 612-4 dit 3 % jusqu'au décret n° 87-483 du
+#: 1er juillet 1987, qui le porte « de 3 % à 3,4 % ».
+CORRECTIONS["maladie_independants"] = [{"ipp": "1986-01-01", "lue": None}]
+
+#: Celle des pensions de la fonction publique — État, militaires, ouvriers de
+#: l'État, collectivités locales —, précomptée dans la limite du plafond, lue
+#: dans LEGI : D. 712-39, D. 713-16 et l'article 3 du décret n° 67-850, que LEGI
+#: date du 30 septembre 1976. Avant le décret n° 76-896, son taux n'est pas lu.
+LUES_AUX_TEXTES["maladie_fonction_publique"] = [
+    {"depuis": "1976-10-01", "taux": 0.0225,
+     "texte": "Décret 76-896 du 29/09/1976 (JORFTEXT000000861798) : décret 67-850 du "
+              "30/09/1967, art. 3 (LEGIARTI000006770629)"},
+    {"depuis": "1988-07-01", "taux": 0.0265,
+     "texte": "Décret 88-795 du 22/06/1988 (JORFTEXT000000693584) : CSS, D. 712-39 et D. 713-16 ; "
+              "décret 67-850, art. 3"},
+    {"depuis": "1996-03-01", "taux": 0.0305,
+     "texte": "Décret 96-155 du 28/02/1996, art. 1 et 2 (JORFTEXT000000557800)"},
+    {"depuis": "1997-01-01", "taux": 0.028,
+     "texte": "Décret 96-1151 du 26/12/1996, art. 10 : CSS, D. 712-39 (LEGIARTI000006739102) ; "
+              "décret 67-850, art. 3 (LEGIARTI000006770632)"},
+    {"depuis": "1998-01-01", "taux": 0.0,
+     "texte": "Décret 97-1249 du 29/12/1997 : CSS, D. 712-39 (LEGIARTI000006739103), les seuls "
+              "non-résidents"},
+]
+
+#: Les régimes dont chaque série de pensions prélève la part, hors des
+#: complémentaires (``maladie_complementaire`` de ``prelevements_remuneration.yaml``).
+#: Le régime des salariés agricoles suit celui du régime général, taux pour taux :
+#: 1 % en 1980 (décret n° 80-481), 1,4 % en 1987 (n° 87-453), 2,6 % en 1996
+#: (n° 95-1401), 2,8 % en 1997 (n° 96-1167), rien depuis 1998 (n° 97-1252). La
+#: cotisation des retraités indépendants ne porte que sur leur pension de base
+#: (D. 612-3).
+REGIMES_DES_PENSIONS = {
+    "maladie_regime_general": ("regime_general", "msa_salaries"),
+    "maladie_fonction_publique": ("fonction_publique_etat", "cnracl", "fspoeie"),
+    "maladie_independants": ("cancava", "organic", "cnavpl", "cnbf"),
+}
+
+
+def pension_sous_le_plafond(marche: dict) -> dict:
+    """Une marche de la maladie des retraités indépendants, en un taux : celui
+    d'une pension sous le plafond, ses tranches réunies."""
+    taux = sum(marche.get(cle, 0.0) for cle in ("tout_revenu", "sous_plafond",
+                                                 "sous_quatre_plafonds", "sous_cinq_plafonds"))
+    return {"depuis": marche["depuis"], "taux": round(taux, 8), "texte": marche["texte"]}
+
+
 #: L'ordre des colonnes d'une marche d'indépendant dans la donnée.
 ORDRE_INDEPENDANTS = (
     "tout_revenu", "sous_plafond", "sous_trois_plafonds", "sous_quatre_plafonds",
@@ -393,6 +452,17 @@ def _normaliser(lues: list[dict]) -> list[dict]:
     return sorties
 
 
+def _sans_redite(lues: list[dict]) -> list[dict]:
+    """Les marches qui changent un taux, la première de chaque palier."""
+    gardees: list[dict] = []
+    for marche in lues:
+        if gardees and all(gardees[-1].get(k) == v for k, v in marche.items()
+                           if k not in ("depuis", "texte")):
+            continue
+        gardees.append(marche)
+    return gardees
+
+
 def independant(nom: str, lues: list[dict]) -> list[dict]:
     """Une série d'indépendant : l'IPP corrigé, ses taux modulés en paliers, puis
     les marches lues aux textes, qui prennent le relais à leur première date."""
@@ -446,8 +516,11 @@ ENTETE = """\
 # la maladie, que les barèmes de l'IPP ne prennent qu'en 1967 : leurs taux de
 # 1967 valent en deçà.
 #   pensions : la CSG au taux plein, médian, réduit ; la CRDS ; la CASA ; la
-#     cotisation maladie des pensions du régime général et celle des
-#     complémentaires (les régimes de `maladie_complementaire`).
+#     cotisation maladie des pensions du régime général, celle des
+#     complémentaires (les régimes de `maladie_complementaire`), celle des
+#     retraités indépendants sur leur pension de base, pour une pension sous le
+#     plafond, et celle des pensions de la fonction publique ;
+#     `regimes_des_pensions` dit les régimes dont chacune prélève la part.
 #   salaires : la CSG et la CRDS d'activité, sur le brut abattu de
 #     `abattement` (sans limite) ou de `abattement_jusqu_a_quatre_plafonds`
 #     (jusqu'à quatre plafonds, depuis 2011) — l'IPP n'en donne pas avant 1998,
@@ -485,15 +558,30 @@ ENTETE = """\
 # 0,25 % pour l'année 2000 (D. 612-9) ; l'invalidité-décès n'y est pas, et garde
 # les taux de l'année courante.
 #
-# CE QUE L'IPP NE DIT PAS. Le taux de la maladie des pensions des autres régimes
-# de base (la fonction publique, les indépendants) : seule celle du régime
-# général est écrite ; le dépôt n'en prélève donc aucune ailleurs.
+# LA MALADIE DES PENSIONS DES AUTRES RÉGIMES DE BASE, que la branche du régime
+# général de l'IPP n'écrit pas. Celle des retraités indépendants est dans sa
+# branche des indépendants : le dépôt la prend, sans le 3,1 % du 1er janvier
+# 1986, qu'aucun texte ne porte. Celle de la fonction publique est lue dans
+# LEGI (D. 712-39, D. 713-16, article 3 du décret n° 67-850), depuis le
+# 1er octobre 1976 : son taux d'avant n'est pas lu, et le plafond qui borne son
+# assiette n'est pas appliqué. Les salariés agricoles paient celle du régime
+# général, taux pour taux (décret n° 80-481 et ceux qui l'ont modifié). Ne
+# sont pas écrites : celle des exploitants agricoles retraités — 2,8 % de leur
+# pension en 1997, 1,8 % de part technique et 1 % de part complémentaire
+# (décret n° 97-140), rien depuis 1998 —, dont les taux d'avant 1997 tiennent à
+# des décrets annuels que l'index n'a qu'en titre, et dont le dépôt ne calcule
+# pas le net, faute de fiche de paie ; celle des régimes spéciaux (D. 711-3 à
+# D. 711-5 ; 1,5 % en 1985, 1,9 % en 1988), dont il faudrait savoir, régime par
+# régime, s'il relève du régime général pour la maladie. Les exonérations des
+# retraités non imposables ne jouent pas : le dépôt prélève au taux plein.
 """
 
 
 def ecrire(series: dict[tuple[str, str], list[dict]], lu_le: str) -> str:
     lignes = [ENTETE.format(lu_le=lu_le).rstrip("\n"), f'lu_le: "{lu_le}"', "fiabilite: haute",
               f"tenues_avant_leur_premiere_marche: [{', '.join(TENUES_AVANT)}]"]
+    lignes += ["", "regimes_des_pensions:"]
+    lignes += [f"  {serie}: [{', '.join(regimes)}]" for serie, regimes in REGIMES_DES_PENSIONS.items()]
     for partie in ("pensions", "salaires", "independants"):
         lignes += ["", f"{partie}:"]
         for (bloc, nom), marches_lues in series.items():
@@ -516,6 +604,10 @@ def main(argv: list[str] | None = None) -> int:
         series[cle] = marches(telecharges[parametre], colonnes)
         if cle[0] == "independants":
             series[cle] = independant(cle[1], series[cle])
+    retraites = corriger("maladie_independants", series[("pensions", "maladie_independants")])
+    series[("pensions", "maladie_independants")] = _sans_redite(
+        [pension_sous_le_plafond(marche) for marche in retraites])
+    series[("pensions", "maladie_fonction_publique")] = LUES_AUX_TEXTES["maladie_fonction_publique"]
     series[("independants", "assiette_csg")] = _normaliser(ASSIETTE_CSG)
     texte = ecrire(series, dt.date.today().isoformat())
     if arguments.lister:

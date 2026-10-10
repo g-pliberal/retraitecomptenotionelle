@@ -106,9 +106,54 @@ def test_la_maladie_d_avant_1967_tient_les_taux_de_1967(historique):
 def test_une_annee_qui_change_de_taux_preleve_la_moyenne_de_ses_mois(historique):
     """La maladie des pensions naît le 1er juillet 1980 : 1 % sur le régime
     général, 2 % sur les complémentaires, la moitié de l'année."""
-    assert historique.taux_pension_annuel(1980, 0.6, 0.4) == pytest.approx(
+    parts = {"maladie_regime_general": 0.6, "maladie_complementaires": 0.4}
+    assert historique.taux_pension_annuel(1980, parts) == pytest.approx(
         0.5 * (0.01 * 0.6 + 0.02 * 0.4))
-    assert historique.taux_pension_annuel(1979, 0.6, 0.4) == 0.0
+    assert historique.taux_pension_annuel(1979, parts) == 0.0
+
+
+def test_la_maladie_des_pensions_des_autres_regimes_de_base(historique, courants):
+    """La fonction publique, de 2,25 % en 1976 à 2,80 % en 1997 ; les retraités
+    indépendants sur leur pension de base, 3 % jusqu'au 1er juillet 1987, que
+    l'IPP porte à tort à 3,1 % au 1er janvier 1986 ; les salariés agricoles au
+    taux du régime général ; plus rien depuis 1998, comme le site."""
+    pensions = historique.pensions
+    fonction_publique = pensions["maladie_fonction_publique"]
+    assert fonction_publique.valeur(dt.date(1976, 6, 1)) == 0.0
+    assert fonction_publique.valeur(dt.date(1980, 6, 1)) == pytest.approx(0.0225)
+    assert fonction_publique.valeur(dt.date(1990, 6, 1)) == pytest.approx(0.0265)
+    assert fonction_publique.valeur(dt.date(1996, 6, 1)) == pytest.approx(0.0305)
+    assert fonction_publique.valeur(dt.date(1997, 6, 1)) == pytest.approx(0.028)
+    independants = pensions["maladie_independants"]
+    assert independants.valeur(dt.date(1984, 6, 1)) == pytest.approx(0.05)
+    assert independants.valeur(dt.date(1986, 6, 1)) == pytest.approx(0.03)
+    assert independants.valeur(dt.date(1990, 6, 1)) == pytest.approx(0.034)
+    assert independants.valeur(dt.date(1997, 6, 1)) == pytest.approx(0.024)
+    for serie in ("maladie_fonction_publique", "maladie_independants"):
+        assert pensions[serie].valeur(APRES) == 0.0, serie
+    regimes = historique.regimes_des_pensions
+    assert {"regime_general", "msa_salaries"} <= regimes["maladie_regime_general"]
+    assert {"fonction_publique_etat", "cnracl"} <= regimes["maladie_fonction_publique"]
+    assert {"cancava", "organic", "cnavpl", "cnbf"} == regimes["maladie_independants"]
+    # Une pension n'est comptée que dans une cotisation.
+    groupes = [*regimes.values(), courants.pensions.regimes_maladie]
+    assert sum(len(g) for g in groupes) == len(frozenset().union(*groupes))
+
+
+def test_la_pension_d_un_fonctionnaire_parti_avant_1998_paie_sa_maladie(simulateur):
+    """Une fonctionnaire de la catégorie active, partie à 55 ans en 1995 : sa
+    pension civile paie 2,65 % de maladie en 1995 et 2,80 % en 1997, en plus de
+    la CSG, puis rien en 1998, quand la CSG monte de 2,8 points."""
+    comparaison = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1940, sexe="F", affiliation="fonctionnaire_etat_actif", age_debut=22,
+        age_liquidation=55, niveau_salaire=1.0))
+    taux = cycle_de_vie.prelevements_par_annee(simulateur, comparaison)
+    part = cycle_de_vie._parts_assujetties(simulateur, comparaison.actuel)[
+        "maladie_fonction_publique"]
+    assert part == pytest.approx(1.0)
+    assert taux[1995] == pytest.approx(0.024 + 0.0265)
+    assert taux[1997] == pytest.approx(0.034 + 0.005 + 0.028)
+    assert taux[1998] == pytest.approx(0.062 + 0.005)
 
 
 def test_le_prive_de_1995_paie_maladie_veuvage_chomage_et_csg(historique, simulateur):

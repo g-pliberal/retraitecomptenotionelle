@@ -181,26 +181,27 @@ class PrelevementsHistoriques:
     salaires: dict[str, Serie]
     lu_le: str
     independants: dict[str, Serie] = field(default_factory=dict)
+    #: Les régimes dont chaque cotisation maladie des pensions prélève la part,
+    #: hors des complémentaires, que ``prelevements_remuneration.yaml`` nomme.
+    regimes_des_pensions: dict[str, frozenset[str]] = field(default_factory=dict)
 
     # -- les pensions ------------------------------------------------------
 
-    def taux_pension(self, jour: dt.date, part_regime_general: float,
-                     part_complementaires: float) -> float:
+    def taux_pension(self, jour: dt.date, parts: dict[str, float]) -> float:
         """Ce que les prélèvements du ``jour`` retirent à une pension, en part
-        du brut, au taux plein de CSG : la CSG, la CRDS, la CASA, la maladie
-        du régime général sur sa part de la pension, celle des complémentaires
-        sur la leur."""
+        du brut, au taux plein de CSG : la CSG, la CRDS, la CASA, et chaque
+        cotisation maladie — du régime général, des complémentaires, de la
+        fonction publique, des retraités indépendants — sur la part de la
+        pension que ``parts`` lui donne (:attr:`regimes_des_pensions`)."""
         p = self.pensions
         return (p["csg_taux_plein"].valeur(jour) + p["crds"].valeur(jour)
                 + p["casa"].valeur(jour)
-                + p["maladie_regime_general"].valeur(jour) * part_regime_general
-                + p["maladie_complementaires"].valeur(jour) * part_complementaires)
+                + somme_ordonnee(p[serie].valeur(jour) * part
+                                 for serie, part in sorted(parts.items())))
 
-    def taux_pension_annuel(self, annee: int, part_regime_general: float,
-                            part_complementaires: float) -> float:
+    def taux_pension_annuel(self, annee: int, parts: dict[str, float]) -> float:
         """La moyenne des douze mois de l'année."""
-        return somme_ordonnee(self.taux_pension(jour, part_regime_general, part_complementaires)
-                              for jour in _mois(annee)) / 12.0
+        return somme_ordonnee(self.taux_pension(jour, parts) for jour in _mois(annee)) / 12.0
 
     def taux_csg_pension(self, jour: dt.date, taux: str) -> float:
         """La CSG d'une pension, au taux ``plein``, ``median`` ou ``reduit`` ;
@@ -319,6 +320,8 @@ def _charger(chemin: str, signature: tuple) -> PrelevementsHistoriques:
         lu_le=str(contenu.get("lu_le", "")),
         independants={nom: _serie(nom, marches, nom in tenues)
                       for nom, marches in (contenu.get("independants") or {}).items()},
+        regimes_des_pensions={serie: frozenset(regimes) for serie, regimes
+                              in (contenu.get("regimes_des_pensions") or {}).items()},
     )
 
 

@@ -20,8 +20,11 @@
 # la maladie, que les barèmes de l'IPP ne prennent qu'en 1967 : leurs taux de
 # 1967 valent en deçà.
 #   pensions : la CSG au taux plein, médian, réduit ; la CRDS ; la CASA ; la
-#     cotisation maladie des pensions du régime général et celle des
-#     complémentaires (les régimes de `maladie_complementaire`).
+#     cotisation maladie des pensions du régime général, celle des
+#     complémentaires (les régimes de `maladie_complementaire`), celle des
+#     retraités indépendants sur leur pension de base, pour une pension sous le
+#     plafond, et celle des pensions de la fonction publique ;
+#     `regimes_des_pensions` dit les régimes dont chacune prélève la part.
 #   salaires : la CSG et la CRDS d'activité, sur le brut abattu de
 #     `abattement` (sans limite) ou de `abattement_jusqu_a_quatre_plafonds`
 #     (jusqu'à quatre plafonds, depuis 2011) — l'IPP n'en donne pas avant 1998,
@@ -59,12 +62,30 @@
 # 0,25 % pour l'année 2000 (D. 612-9) ; l'invalidité-décès n'y est pas, et garde
 # les taux de l'année courante.
 #
-# CE QUE L'IPP NE DIT PAS. Le taux de la maladie des pensions des autres régimes
-# de base (la fonction publique, les indépendants) : seule celle du régime
-# général est écrite ; le dépôt n'en prélève donc aucune ailleurs.
+# LA MALADIE DES PENSIONS DES AUTRES RÉGIMES DE BASE, que la branche du régime
+# général de l'IPP n'écrit pas. Celle des retraités indépendants est dans sa
+# branche des indépendants : le dépôt la prend, sans le 3,1 % du 1er janvier
+# 1986, qu'aucun texte ne porte. Celle de la fonction publique est lue dans
+# LEGI (D. 712-39, D. 713-16, article 3 du décret n° 67-850), depuis le
+# 1er octobre 1976 : son taux d'avant n'est pas lu, et le plafond qui borne son
+# assiette n'est pas appliqué. Les salariés agricoles paient celle du régime
+# général, taux pour taux (décret n° 80-481 et ceux qui l'ont modifié). Ne
+# sont pas écrites : celle des exploitants agricoles retraités — 2,8 % de leur
+# pension en 1997, 1,8 % de part technique et 1 % de part complémentaire
+# (décret n° 97-140), rien depuis 1998 —, dont les taux d'avant 1997 tiennent à
+# des décrets annuels que l'index n'a qu'en titre, et dont le dépôt ne calcule
+# pas le net, faute de fiche de paie ; celle des régimes spéciaux (D. 711-3 à
+# D. 711-5 ; 1,5 % en 1985, 1,9 % en 1988), dont il faudrait savoir, régime par
+# régime, s'il relève du régime général pour la maladie. Les exonérations des
+# retraités non imposables ne jouent pas : le dépôt prélève au taux plein.
 lu_le: "2026-10-10"
 fiabilite: haute
 tenues_avant_leur_premiere_marche: [maladie_prive, maladie_etat, maladie_collectivites, famille]
+
+regimes_des_pensions:
+  maladie_regime_general: [regime_general, msa_salaries]
+  maladie_fonction_publique: [fonction_publique_etat, cnracl, fspoeie]
+  maladie_independants: [cancava, organic, cnavpl, cnbf]
 
 pensions:
   csg_taux_plein:
@@ -95,6 +116,26 @@ pensions:
     - {depuis: "1996-01-01", taux: 0.036, texte: "Décret 95-1356 du 30/12/1995, art. 1 (V)"}
     - {depuis: "1997-01-01", taux: 0.038, texte: "Décret 96-1167 du 26/12/1996, art. 5"}
     - {depuis: "1998-01-01", taux: 0.01, texte: "Décret 97-1252 du 29/12/1997, art. 4"}
+  maladie_independants:
+    - {depuis: "1970-04-01", taux: 0.145, texte: "Arrêté du 26/03/1971"}
+    - {depuis: "1973-04-01", taux: 0.107, texte: "Arrêté du 29/12/1972"}
+    - {depuis: "1974-10-01", taux: 0.0875, texte: "Décret 74-810 du 28/09/1974"}
+    - {depuis: "1975-04-01", taux: 0.092, texte: "Décret 75-85 du 11/01/1975"}
+    - {depuis: "1975-10-01", taux: 0.094, texte: "Décret 75-710 du 07/08/1975"}
+    - {depuis: "1976-10-01", taux: 0.1085, texte: "Décret 76-641 du 15/07/1976"}
+    - {depuis: "1977-10-01", taux: 0.1165, texte: "Décret 77-857 du 26/07/1977"}
+    - {depuis: "1981-04-01", taux: 0.1, texte: "Décret 81-266 du 18/03/1981"}
+    - {depuis: "1981-10-01", taux: 0.05, texte: "Décret 81-813 du 27/08/1981"}
+    - {depuis: "1985-09-01", taux: 0.03, texte: "Décret 85-852 du 09/08/1985, art. 2"}
+    - {depuis: "1987-07-01", taux: 0.034, texte: "Décret 87-483 du 01/07/1987"}
+    - {depuis: "1997-01-01", taux: 0.024, texte: "Décret 96-1167 du 26/12/1996, art. 3"}
+    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1252 du 29/12/1997, art. 3"}
+  maladie_fonction_publique:
+    - {depuis: "1976-10-01", taux: 0.0225, texte: "Décret 76-896 du 29/09/1976 (JORFTEXT000000861798) : décret 67-850 du 30/09/1967, art. 3 (LEGIARTI000006770629)"}
+    - {depuis: "1988-07-01", taux: 0.0265, texte: "Décret 88-795 du 22/06/1988 (JORFTEXT000000693584) : CSS, D. 712-39 et D. 713-16 ; décret 67-850, art. 3"}
+    - {depuis: "1996-03-01", taux: 0.0305, texte: "Décret 96-155 du 28/02/1996, art. 1 et 2 (JORFTEXT000000557800)"}
+    - {depuis: "1997-01-01", taux: 0.028, texte: "Décret 96-1151 du 26/12/1996, art. 10 : CSS, D. 712-39 (LEGIARTI000006739102) ; décret 67-850, art. 3 (LEGIARTI000006770632)"}
+    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1249 du 29/12/1997 : CSS, D. 712-39 (LEGIARTI000006739103), les seuls non-résidents"}
 
 salaires:
   csg:

@@ -804,19 +804,22 @@ def convention_cor(simulateur, comparaison) -> Convention:
     )
 
 
-def _parts_assujetties(simulateur, resultat) -> tuple[float, float]:
-    """Les parts de la pension du scénario 1 au départ que servent le régime
-    général et les complémentaires (``regimes_maladie``) : celles qui ont payé
-    une cotisation maladie, la première jusqu'en 1997, la seconde toujours."""
-    prelevements = charger_prelevements(simulateur.parametres.racine_donnees).pensions
+def _parts_assujetties(simulateur, resultat) -> dict[str, float]:
+    """Les parts de la pension du scénario 1 au départ qui ont payé une
+    cotisation maladie, par cotisation : celle des complémentaires
+    (``regimes_maladie``), toujours ; jusqu'en 1997, celle du régime général et
+    des salariés agricoles, de la fonction publique, des retraités indépendants
+    sur leur pension de base (``regimes_des_pensions`` de l'histoire)."""
+    racine = simulateur.parametres.racine_donnees
+    prelevements = charger_prelevements(racine).pensions
     total = _au_depart(simulateur, resultat)
     if total <= 0.0:
-        return 0.0, 1.0
-    general = somme_ordonnee(p.montant for p in resultat.pensions_par_regime
-                             if p.regime in prelevements.regimes_generaux)
-    complementaire = somme_ordonnee(p.montant for p in resultat.pensions_par_regime
-                                    if p.regime in prelevements.regimes_maladie)
-    return general / total, complementaire / total
+        return {"maladie_complementaires": 1.0}
+    groupes = {**charger_prelevements_historiques(racine).regimes_des_pensions,
+               "maladie_complementaires": prelevements.regimes_maladie}
+    return {serie: somme_ordonnee(p.montant for p in resultat.pensions_par_regime
+                                  if p.regime in regimes) / total
+            for serie, regimes in groupes.items()}
 
 
 def prelevements_par_annee(simulateur, comparaison) -> dict[int, float]:
@@ -824,17 +827,19 @@ def prelevements_par_annee(simulateur, comparaison) -> dict[int, float]:
     ``comparaison``, du premier départ de ses systèmes à la dernière année
     qu'une pension peut atteindre, au taux plein de CSG : l'histoire que
     l'IPP retrace (:mod:`~retraite_notionnelle.donnees.prelevements_historiques`),
-    dont la dernière marche tient au-delà. Aucun prélèvement avant le
-    1er juillet 1980, où naît la cotisation maladie des pensions ; celle du
-    régime général sur sa part de la pension, jusqu'en 1997, celle des
-    complémentaires sur la leur. Les autres systèmes gardent les parts du
+    dont la dernière marche tient au-delà. La cotisation maladie des pensions
+    du régime général et des salariés agricoles naît le 1er juillet 1980 et
+    s'éteint en 1998, sur leur part de la pension ; celle des complémentaires
+    vaut toujours, sur la leur ; celle de la fonction publique, de 1976 à 1997,
+    et celle des retraités indépendants, de 1970 à 1997, sur la leur
+    (:func:`_parts_assujetties`). Les autres systèmes gardent les parts du
     scénario 1, comme ils gardent son taux de l'année courante."""
     historique = charger_prelevements_historiques(simulateur.parametres.racine_donnees)
-    general, complementaire = _parts_assujetties(simulateur, comparaison.actuel)
+    parts = _parts_assujetties(simulateur, comparaison.actuel)
     carrieres = [comparaison.carriere_de(scenario) for scenario in SCENARIOS]
     premiere = min(carriere.annee_liquidation for carriere in carrieres)
     derniere = max(_derniere_annee(carriere) for carriere in carrieres)
-    return {annee: historique.taux_pension_annuel(annee, general, complementaire)
+    return {annee: historique.taux_pension_annuel(annee, parts)
             for annee in range(premiere, derniere + 1)}
 
 

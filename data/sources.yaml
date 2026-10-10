@@ -4627,7 +4627,18 @@ institutions:
           92-295), l'indemnité journalière des artisans à 0,50 % dès 1996
           (n° 95-556), le 1er octobre 1984 des libéraux (n° 84-817). La CSG
           d'un indépendant porte, de 1991 à 2024, sur son revenu augmenté de
-          ses cotisations (loi n° 90-1168, art. 129 ; L. 136-3).
+          ses cotisations (loi n° 90-1168, art. 129 ; L. 136-3). LA MALADIE
+          DES PENSIONS DES AUTRES RÉGIMES DE BASE : celle des retraités
+          indépendants est dans la branche des indépendants de l'IPP
+          (assures_retraites), sur leur seule pension de base (D. 612-3), sans
+          le 3,1 % du 1er janvier 1986 qu'aucun texte ne porte ; celle de la
+          fonction publique, 2,25 % en 1976, 2,65 % en 1988, 3,05 % en mars
+          1996, 2,80 % en 1997, est lue dans LEGI (D. 712-39, D. 713-16,
+          décret n° 67-850, art. 3) ; les salariés agricoles paient celle du
+          régime général (décret n° 80-481 et ses modificatifs). Ne sont pas
+          écrites celle des exploitants agricoles retraités, connue en 1997
+          seulement (décret n° 97-140), et celle des régimes spéciaux (D. 711-3
+          à D. 711-5).
 
   cepii:
     nom: Centre d'études prospectives et d'informations internationales
