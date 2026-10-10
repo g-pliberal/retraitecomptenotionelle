@@ -94,6 +94,11 @@ et `prime_speciale_sujetion_aides_soignants` ; leur table, année par année,
   entières ; le troisième est celui de l'ancien sapeur-pompier, que le dépôt ne
   suit pas. Quatorze témoins neufs, les deux statuts à chaque génération, que le
   jumeau rejoue.
+- *La suite rouge*, trouvée en publiant : la mortalité de l'étape 7 (35401ae)
+  avait déplacé quatre chiffres du site écrits à la main — le coefficient de 2070
+  de l'accueil, la correction de la génération 1920 de la page Méthode, deux
+  passages du parcours de présentation — ; et cette partie-ci, le compte des
+  options du menu des statuts (`test_web_revues.py`). Réparés le jour même.
 
 **Les mesures.**
 
