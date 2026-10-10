@@ -21,6 +21,9 @@ import pytest
 
 from retraite_notionnelle import memoire
 
+#: La vraie, que ``memoire_isolee`` remplace pour les calculs factices.
+_CODE_HORS_DU_MODELE = memoire._code_hors_du_modele
+
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "scripts"))
 
@@ -362,46 +365,68 @@ def test_un_verrou_qui_ne_se_leve_pas_n_empeche_pas_de_calculer(monkeypatch, mem
         os.close(tenu)
 
 
-def test_la_moitie_python_d_une_confrontation_se_garde_sous_le_texte_du_test(
+def test_un_calcul_ecrit_hors_du_modele_se_garde_sous_son_code(
         monkeypatch, memoire_isolee, tmp_path):
-    """``outils_portage.moitie_python`` : un même calcul ne se refait pas ; un
-    autre argument, ou le fichier du test récrit, le refont ; un fichier
-    retouché depuis le chargement du modèle se calcule sans mémoire."""
-    import sys
+    """Un calcul écrit dans un test ou un script — ici par
+    ``outils_portage.moitie_python`` — porte son code dans sa clé : un même
+    calcul ne se refait pas ; un autre argument, son fichier récrit ou un
+    fichier qu'il importe à côté de lui le refont ; retouché depuis le
+    chargement du modèle, il se fait sans mémoire. Un calcul du modèle n'en
+    porte pas : l'empreinte le couvre."""
     import time
-    import types
 
-    import outils_portage
+    import retraite_notionnelle
+    from outils_portage import moitie_python
 
+    monkeypatch.setattr(memoire_isolee, "_code_hors_du_modele", _CODE_HORS_DU_MODELE)
     monkeypatch.setattr(memoire_isolee, "empreinte", lambda: "e1")
-    monkeypatch.setattr(outils_portage, "CHARGE_A", time.time() + 3600)
-    fichier = tmp_path / "test_factice.py"
-    module = types.ModuleType("test_factice")
-    module.__file__ = str(fichier)
-    monkeypatch.setitem(sys.modules, "test_factice", module)
+    monkeypatch.setattr(retraite_notionnelle, "CHARGE_A", time.time() + 3600)
+    fichier, voisin = tmp_path / "test_factice.py", tmp_path / "outils_factices.py"
+    voisin.write_text("TAUX = 2\n", encoding="utf-8")
+    faits = []
 
-    def ecrire(texte: str):
+    def charger(texte: str):
         fichier.write_text(texte, encoding="utf-8")
-        exec(texte, module.__dict__)
+        espace = {"__name__": "test_factice", "FAITS": faits}
+        exec(compile(texte, str(fichier), "exec"), espace)
+        return espace["calcul"]
 
-    ecrire("FAITS = []\ndef calcul(x):\n    FAITS.append(x)\n    return [x]\n")
-    faits = module.FAITS
-    assert outils_portage.moitie_python(module.calcul, 1) == [1]
+    texte = ("def calcul(x):\n    if False:\n        import outils_factices\n"
+             "    FAITS.append(x)\n    return [x]\n")
+    calcul = charger(texte)
+    assert moitie_python(calcul, 1) == [1]
     monkeypatch.setattr(memoire_isolee, "_EN_MEMOIRE", {})     # un autre processus
-    assert outils_portage.moitie_python(module.calcul, 1) == [1]
+    assert moitie_python(calcul, 1) == [1]
     assert faits == [1]
-    outils_portage.moitie_python(module.calcul, 2)
+    moitie_python(calcul, 2)
     assert faits == [1, 2]
-    # Le fichier du test récrit : son calcul se refait.
-    ecrire(fichier.read_text(encoding="utf-8") + "# retouché\n")
-    module.FAITS = faits
-    outils_portage.moitie_python(module.calcul, 1)
+    voisin.write_text("TAUX = 3\n", encoding="utf-8")            # ce qu'il importe
+    moitie_python(calcul, 1)
     assert faits == [1, 2, 1]
-    # Retouché depuis le chargement du modèle : ni lu, ni gardé.
-    monkeypatch.setattr(outils_portage, "CHARGE_A", 0.0)
-    outils_portage.moitie_python(module.calcul, 3)
-    outils_portage.moitie_python(module.calcul, 3)
-    assert faits == [1, 2, 1, 3, 3]
+    calcul = charger(texte + "# retouché\n")                     # son propre texte
+    moitie_python(calcul, 1)
+    assert faits == [1, 2, 1, 1]
+    monkeypatch.setattr(retraite_notionnelle, "CHARGE_A", 0.0)  # retouché depuis le chargement
+    moitie_python(calcul, 3)
+    moitie_python(calcul, 3)
+    assert faits == [1, 2, 1, 1, 3, 3]
+    assert memoire_isolee._code_hors_du_modele(memoire_isolee.nom) == ()
+
+
+def test_aucun_calcul_garde_ne_lit_ce_que_l_empreinte_ignore():
+    """L'empreinte de la mémoire ignore ce qu'aucun calcul gardé ne lit
+    (``memoire.HORS_DU_MODELE``) : deux simulations par statut, le coût agrégé
+    et les avantages, relevés dans un processus neuf, n'en ouvrent, n'en
+    listent ni n'en chargent rien. Le relevé prend une minute ; il se garde
+    sous l'empreinte du modèle et ne se refait que quand celui-ci bouge."""
+    import lectures_du_modele
+
+    releve = memoire.memoriser(("lectures_du_modele",), lectures_du_modele.relever)
+    assert len(releve["lus"]) > 100
+    assert any(c.startswith("data/reference/regimes/") for c in releve["lus"])
+    hors = [c for cle in ("lus", "listes", "modules") for c in releve[cle]
+            if lectures_du_modele.hors_du_modele(c)]
+    assert not hors, f"lu par un calcul gardé, et pourtant hors de l'empreinte : {hors}"
 
 
 def test_les_worktrees_partagent_la_memoire_du_depot_principal(tmp_path):
@@ -424,8 +449,9 @@ def test_les_worktrees_partagent_la_memoire_du_depot_principal(tmp_path):
 
 
 def test_l_empreinte_suit_les_sources_que_git_voit(monkeypatch, memoire_isolee, tmp_path):
-    """Un fichier suivi, ou nouveau, change l'empreinte ; ce que git ignore
-    ne la change pas. Hors d'un dépôt, pas d'empreinte, et rien ne se garde."""
+    """Un fichier suivi, ou nouveau, change l'empreinte ; ce que git ignore, ou
+    ce qu'aucun calcul ne lit, ne la change pas. Hors d'un dépôt, pas
+    d'empreinte, et rien ne se garde."""
     depot = tmp_path / "depot"
     (depot / "src").mkdir(parents=True)
     (depot / "data" / "brut").mkdir(parents=True)
@@ -437,6 +463,14 @@ def test_l_empreinte_suit_les_sources_que_git_voit(monkeypatch, memoire_isolee, 
     assert premiere
     (depot / "data" / "brut" / "gros.csv").write_text("ignoré", encoding="utf-8")
     assert memoire_isolee.empreinte() == premiere
+    for chemin in ("scripts/outil.py", "data/reference/legislation/journal_de_veille/e.yaml",
+                   "data/sources.yaml", "data/CLAUDE.md"):
+        (depot / chemin).parent.mkdir(parents=True, exist_ok=True)
+        (depot / chemin).write_text("hors du modèle", encoding="utf-8")
+    assert memoire_isolee.empreinte() == premiere
+    (depot / "data" / "reference" / "regimes").mkdir(parents=True)
+    (depot / "data" / "reference" / "regimes" / "r.yaml").write_text("taux: 1\n", encoding="utf-8")
+    assert memoire_isolee.empreinte() != premiere
     (depot / "src" / "modele.py").write_text("TAUX = 2\n", encoding="utf-8")
     assert memoire_isolee.empreinte() != premiere
     ailleurs = tmp_path / "ailleurs"

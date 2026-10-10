@@ -18,10 +18,14 @@ gardait le sien dans une fixture, et aucun ne pouvait prendre celui d'un autre.
 CE QUI SE GARDE, ET SOUS QUOI
 -----------------------------
 Un calcul se garde sous sa CLÉ — ses paramètres, ses options, ce qu'il ne
-tient pas des sources — et sous l'EMPREINTE des sources : tout ce que git voit
-sous ``src/``, ``data/`` et ``scripts/``, octet par octet, et la version de
-Python. Qu'un de ces fichiers bouge, et tout se refait ; un calcul pendant
-lequel l'un d'eux a bougé ne se garde pas. Il se relit d'abord du processus,
+tient pas des sources — et sous l'EMPREINTE du modèle : tout ce que git voit
+sous ``src/`` et ``data/``, octet par octet, hors de ce qu'aucun calcul ne lit
+(:data:`HORS_DU_MODELE`), et la version de Python. Qu'un de ces fichiers
+bouge, et tout se refait ; un calcul pendant lequel l'un d'eux a bougé ne se
+garde pas. Un calcul écrit hors du modèle, dans un script ou un test, porte en
+plus dans sa clé son propre code et celui qu'il importe à côté de lui
+(:func:`_code_hors_du_modele`) : une retouche de ``scripts/`` ne refait que
+les calculs des scripts qu'elle touche. Il se relit d'abord du processus,
 puis de ``.cache/calculs/<empreinte>/``, que git ignore, dans le dépôt
 principal, que tous ses worktrees partagent (:func:`dossier_commun`) ; les
 seize empreintes les plus récentes y restent. Un calcul ne se fait
@@ -45,6 +49,8 @@ ceux que la clé décrit. Un script qui garde un calcul à lui
 
 from __future__ import annotations
 
+import ast
+import functools
 import hashlib
 import os
 import pickle
@@ -103,10 +109,26 @@ EMPREINTES_GARDEES = 16
 #: on le refait soi-même. La recherche d'âges a pris un quart d'heure sous
 #: Windows, la machine chargée de trois suites.
 ATTENTE_MAX = 30 * 60
-#: Ce dont un calcul dépend, tel que git le voit. Ce qu'il ignore n'en est pas :
-#: ``data/brut``, les téléchargements, ne se lit que par les scripts de
-#: récupération. Les scripts en sont : certains calculs gardés y sont écrits.
-SOURCES = ("src", "data", "scripts")
+#: Ce dont un calcul du modèle dépend, tel que git le voit. Ce qu'il ignore n'en
+#: est pas : ``data/brut``, les téléchargements, ne se lit que par les scripts
+#: de récupération. Les scripts n'en sont plus : un calcul qui y est écrit porte
+#: son code dans sa clé (:func:`_code_hors_du_modele`).
+SOURCES = ("src", "data")
+#: Ce que git voit sous les sources et qu'aucun calcul gardé ne lit : la veille,
+#: les registres, la prose, le catalogue du site, les textes, l'outillage du
+#: site et des tests ; et, partout, les consignes de Claude Code
+#: (``CLAUDE.md``). Relevé le 10 octobre 2026 sur ce qu'ouvrent les
+#: simulations, le coût et les avantages (feuille de route, action 135), et
+#: tenu par ``scripts/lectures_du_modele.py``, que ``tests/test_outillage.py``
+#: relance : un calcul qui se mettrait à les lire ferait échouer la suite.
+HORS_DU_MODELE = (
+    "data/reference/legislation/journal_de_veille/",
+    "data/reference/legislation/veille.yaml",
+    "data/reference/prose/", "data/reference/site/", "data/reference/textes/",
+    "data/reference/referents.yaml", "data/sources.yaml", "data/sources_a_explorer.yaml",
+    "src/retraite_notionnelle/web/", "src/retraite_notionnelle/fabrique.py",
+    "src/retraite_notionnelle/pytest_parallele.py",
+)
 
 #: Les calculs de ce processus, par leur nom : l'objet picklé, dont chaque
 #: lecture tire un objet neuf.
@@ -125,6 +147,13 @@ class Absent(Exception):
     """En lecture seule : le calcul n'est pas gardé, et ne se fait pas ici."""
 
 
+def du_modele(chemin: str) -> bool:
+    """Un chemin du dépôt, en barres obliques, est-il de ce que l'empreinte lit ?"""
+    return (chemin.startswith(tuple(f"{s}/" for s in SOURCES))
+            and not chemin.startswith(HORS_DU_MODELE)
+            and chemin.rsplit("/", 1)[-1] != "CLAUDE.md")
+
+
 def _sources() -> list[bytes] | None:
     try:
         listes = subprocess.run(
@@ -132,7 +161,8 @@ def _sources() -> list[bytes] | None:
              "--", *SOURCES], cwd=RACINE_PROJET, capture_output=True, check=True).stdout
     except (OSError, subprocess.CalledProcessError):
         return None
-    return sorted(set(filter(None, listes.split(b"\0"))))
+    return sorted(chemin for chemin in set(filter(None, listes.split(b"\0")))
+                  if du_modele(os.fsdecode(chemin)))
 
 
 def empreinte() -> str | None:
@@ -168,6 +198,79 @@ def _code_retouche() -> bool:
             except OSError:
                 continue
     return False
+
+
+#: Les modules qu'un fichier importe et les fichiers ``.py`` qu'il nomme, par
+#: chemin et signature : un fichier ne s'analyse qu'une fois par processus.
+_NOMS: dict[tuple, frozenset[str]] = {}
+
+
+def _noms_cites(fichier: Path) -> frozenset[str]:
+    etat = fichier.stat()
+    signature = (fichier, etat.st_mtime_ns, etat.st_size)
+    if signature not in _NOMS:
+        noms = set()
+        for noeud in ast.walk(ast.parse(fichier.read_bytes())):
+            if isinstance(noeud, ast.Import):
+                noms.update(alias.name.split(".")[0] for alias in noeud.names)
+            elif isinstance(noeud, ast.ImportFrom) and not noeud.level and noeud.module:
+                noms.add(noeud.module.split(".")[0])
+            elif (isinstance(noeud, ast.Constant) and isinstance(noeud.value, str)
+                  and noeud.value.endswith(".py")):
+                noms.add(Path(noeud.value).stem)
+        _NOMS[signature] = frozenset(noms)
+    return _NOMS[signature]
+
+
+def _relatif(fichier: Path) -> str:
+    try:
+        return fichier.relative_to(RACINE_PROJET.resolve()).as_posix()
+    except ValueError:
+        return fichier.as_posix()
+
+
+def _code_hors_du_modele(calcul) -> tuple | None:
+    """Le code d'un calcul écrit hors du modèle, que l'empreinte ne lit pas.
+
+    Écrit dans ``src/`` : rien, l'empreinte le couvre. Écrit dans un script ou
+    un test : son fichier et, de proche en proche, ceux qu'il importe ou nomme
+    (« x.py ») à côté de lui ou dans ``scripts/``, chacun avec l'empreinte de
+    son texte. ``None``, et le calcul se fait sans mémoire, si ce code ne se
+    lit pas, ou si l'un de ces fichiers a changé depuis le chargement du
+    modèle : le code qui tourne n'est peut-être plus celui que son texte dit.
+    """
+    from . import CHARGE_A
+
+    fonction = calcul
+    while isinstance(fonction, functools.partial):
+        fonction = fonction.func
+    fonction = getattr(fonction, "__func__", fonction)
+    code = getattr(fonction, "__code__", None) or getattr(
+        getattr(type(fonction), "__call__", None), "__code__", None)
+    if code is None:
+        return None
+    fichier = Path(code.co_filename).resolve()
+    if fichier.is_relative_to((RACINE_PROJET / "src").resolve()):
+        return ()
+    scripts = RACINE_PROJET / "scripts"
+    vus: dict[Path, str] = {}
+    a_voir = [fichier]
+    try:
+        while a_voir:
+            courant = a_voir.pop()
+            if courant in vus:
+                continue
+            if courant.stat().st_mtime > CHARGE_A:
+                return None
+            vus[courant] = hashlib.sha256(courant.read_bytes()).hexdigest()[:16]
+            for cite in _noms_cites(courant):
+                for dossier in (courant.parent, scripts):
+                    voisin = dossier / f"{cite}.py"
+                    if voisin.is_file():
+                        a_voir.append(voisin.resolve())
+    except (OSError, SyntaxError, ValueError):
+        return None
+    return tuple(sorted((_relatif(f), somme) for f, somme in vus.items()))
 
 
 def nom(cle: tuple) -> str:
@@ -217,13 +320,17 @@ def memoriser(cle: tuple, calcul: Callable[[], T]) -> T:
 
     ``cle`` dit tout ce dont le calcul dépend hors des sources, en commençant
     par son genre (``("cout", parametres, …)``) ; deux calculs qui ne font pas
-    la même chose ne partagent jamais une clé. Un objet que pickle ne sait pas
-    écrire se rend sans se garder.
+    la même chose ne partagent jamais une clé. Un calcul écrit hors du modèle y
+    ajoute son code (:func:`_code_hors_du_modele`). Un objet que pickle ne sait
+    pas écrire se rend sans se garder.
     """
-    if not _active():
+    code = _code_hors_du_modele(calcul) if _active() else None
+    if code is None:
         if _en_lecture_seule():
             raise Absent(cle[0])
         return calcul()
+    if code:
+        cle = (*cle, ("code", code))
     nom_ = nom(cle)
     if nom_ in _EN_MEMOIRE:
         return pickle.loads(_EN_MEMOIRE[nom_])

@@ -4963,11 +4963,11 @@ de statuts et les `manque` de la page Méthode.
 l'essentiel (la suite complète sous Windows, de 56 à moins de 15 min à
 froid) ; le hook de démarrage ; « Économiser le contexte » ; l'arbre du dépôt ;
 le parcours `tenu` par son test ; le contexte en cinq étapes, closes ; le
-portage que node rejoue, pour l'essentiel : les pages ne s'y comparent plus
-deux fois, et la moitié Python des confrontations se garde
-(`2026-10-10-portage-que-node-rejoue.md`). Reste : l'indexation de la mémoire
-sur le seul code du modèle, par quoi commencer ; `actions/cache` ; la fin du
-portage rejoué (même note) ; le levier 2 ; le 4 et le 5.
+portage que node rejoue, pour l'essentiel ; la mémoire indexée sur le seul
+modèle (`2026-10-10-memoire-du-seul-modele.md`). Reste : le levier 2, des
+tests sans présomptions, par quoi commencer ; `actions/cache` sur GitHub, que
+le propriétaire décide ; les fiches de règles dans l'empreinte, et la fin du
+portage rejoué (notes du 10 octobre) ; le 4 et le 5.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus

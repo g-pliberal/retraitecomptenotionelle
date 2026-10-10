@@ -27,8 +27,10 @@ proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   l'empreinte de leurs entrées est celle du jour ; le coût agrégé, ses
   variantes et le coût des avantages, que `memoire.py` garde dans le
   `.cache/calculs/` du dépôt principal, commun à tous ses worktrees, sous
-  l'empreinte de `src/`, `data/` et `scripts/`, un seul processus faisant
-  chaque calcul pendant que les autres l'attendent
+  l'empreinte du modèle — `src/` et `data/`, hors de ce qu'aucun calcul ne
+  lit (`HORS_DU_MODELE`, que `scripts/lectures_du_modele.py` relève) — et,
+  pour un calcul écrit dans un script ou un test, de son code, un seul
+  processus faisant chaque calcul pendant que les autres l'attendent
   (`CALCULS_SANS_MEMOIRE=1` s'en passe) et ne sert que sur le modèle intact :
   qui en remplace une fonction s'ouvre sous `memoire.modele_modifie()`, et
   `monkeypatch` la fait taire. `SerieAnnuelle` et

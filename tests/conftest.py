@@ -281,9 +281,11 @@ def monkeypatch(monkeypatch, request):
 def memoire_isolee(monkeypatch, tmp_path):
     """La mémoire des calculs, vide, dans un dossier propre à ce test, et qui
     ne regarde pas le dépôt : qu'un fichier Python y change pendant la suite ne
-    l'empêche pas de garder."""
+    l'empêche pas de garder, et les calculs factices des tests, écrits hors du
+    modèle, s'y gardent sous leur seule clé."""
     monkeypatch.setattr(memoire, "DOSSIER", tmp_path / "calculs")
     monkeypatch.setattr(memoire, "_EN_MEMOIRE", {})
     monkeypatch.setattr(memoire, "_code_retouche", lambda: False)
+    monkeypatch.setattr(memoire, "_code_hors_du_modele", lambda calcul: ())
     monkeypatch.delenv(memoire.SANS_MEMOIRE, raising=False)
     return memoire
