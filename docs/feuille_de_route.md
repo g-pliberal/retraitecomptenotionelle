@@ -8371,16 +8371,15 @@ avait relevé, le cas type au SMIC écrit 0,55 fois le salaire moyen.
 
 ### 150. Ce que le lecteur n'a pas à calculer : les pages sans réglage lisent des résultats fabriqués à l'avance — `en cours`
 
-**Reprise, au 7 octobre 2026.** Fait, l'étape 1 : « Pourquoi changer » et
-« Partager » lisent le bilan figé du paquet, qui porte désormais la dépense et
-le PIB de chaque année et les trois carrières d'exemple de « Pourquoi
-changer » : 7 et 5 ms au lieu de 6 et 5 s, pages identiques à leurs témoins.
-Reste une décision du propriétaire : garder ou non les réglages libres de
-Coût, Carrières types et Droits non cotisés. Sans eux, ces pages liraient
-aussi des résultats fabriqués par le Python, et le portage JavaScript du coût
-(environ 5 000 lignes) partirait avec ses tests de parité ; avec eux, rien ne
-se supprime. Rien à commencer avant sa réponse. Détail : la note du
-7 octobre.
+**Reprise, au 10 octobre 2026.** Fait, l'étape 1 : « Pourquoi changer » et
+« Partager » lisent le bilan figé. Décidé par le propriétaire, le 10 octobre :
+Coût, Carrières types et Droits non cotisés perdent leurs réglages libres,
+sans tableau de sensibilité ; le simulateur garde les siens. Reste l'étape 2 :
+fabriquer en Python, sous les réglages de référence, ce que ces trois pages
+lisent, cascade de chaque année offerte comprise ; dire, à qui y arrive avec
+des réglages, qu'elles montrent la référence ; retirer le portage JavaScript
+du coût et ses tests de parité. Commencer par relever ce que les trois pages
+lisent du modèle. Détail : la note du 10 octobre.
 
 **Demande**, le 6 octobre 2026 : « Est-ce que tous les calculs dans le
 calculateur sont obligatoires ? J'ai l'impression qu'il y a des calculs que
