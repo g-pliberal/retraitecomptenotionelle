@@ -21,8 +21,11 @@ export const PREMIERE_ANNEE_EN_EUROS = 2002;
 export const PREMIERE_ANNEE_EN_NOUVEAUX_FRANCS = 1960;
 
 /**
- * Les bornes de `saisie.js`, reprises ici pour ne pas lire comme une année de
- * carrière un nombre à quatre chiffres qui n'en est pas une.
+ * Les années qu'un relevé peut porter, pour ne pas lire comme une année de
+ * carrière un nombre à quatre chiffres qui n'en est pas une. Elles reprenaient
+ * les bornes de `saisie.js` ; la saisie va désormais jusqu'en 2139, mais un
+ * relevé n'écrit que des années vécues, et élargir la fenêtre ne ferait que
+ * prendre plus de nombres pour des millésimes.
  */
 export const ANNEE_MINIMALE = 1914;
 export const ANNEE_MAXIMALE = 2095;

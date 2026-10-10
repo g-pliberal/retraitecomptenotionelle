@@ -23,6 +23,7 @@ from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.droit import departs, liquidation
 from retraite_notionnelle.revalorisation import faire_vivre
+from retraite_notionnelle.saisie import AGE_LIQUIDATION_MAXIMAL
 from retraite_notionnelle.simulateur import Simulateur
 
 
@@ -359,7 +360,8 @@ def test_un_seul_regime_differe_se_liquide_a_la_date_demandee(simulateur):
 @pytest.mark.parametrize("requete, refus", [
     ({"demande_Regime": "2027-06"}, "minuscules"),
     ({"demande_regime_general": "1980-01"}, "début de la carrière"),
-    ({"demande_regime_general": "2036-01"}, "au-delà de 75 ans"),
+    ({"demande_regime_general": f"{1960 + AGE_LIQUIDATION_MAXIMAL + 1}-01"},
+     f"au-delà de {AGE_LIQUIDATION_MAXIMAL} ans"),
 ])
 def test_la_saisie_refuse_une_date_de_pension_illisible(requete, refus):
     from retraite_notionnelle.saisie import ErreurSaisie, Saisie

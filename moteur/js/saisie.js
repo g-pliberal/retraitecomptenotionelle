@@ -21,6 +21,7 @@ import {
 } from "./chronologie.js";
 import { formatG } from "./format.js";
 import * as g from "./gabarit.js";
+import { AGE_TERMINAL } from "./mortalite.js";
 
 export const PROFILS = [
   ["auto", "Déduit du statut (défaut)"],
@@ -329,16 +330,6 @@ export const ACTIVITES_A_L_ETRANGER = [
 ];
 
 /**
- * Nombre de lignes qu'un relevé de carrière peut porter. Une carrière tient
- * entre quatorze ans — l'âge de début minimal — et soixante-quinze, soit
- * soixante et une années civiles au plus ; la borne laisse deux lignes de marge
- * et ferme surtout la porte que les interruptions avaient ouverte : le calcul
- * se fait chez le lecteur et l'adresse EST la saisie, si bien qu'un relevé de
- * cent mille lignes forgé dans un lien figeait l'onglet de celui qui le suivait.
- */
-export const RELEVE_MAXIMUM = 63;
-
-/**
  * Bornes des deux années que l'utilisateur peut choisir : celle de la bascule
  * au régime unique, et celle des euros constants dans lesquels les montants
  * sont exprimés. Elles étaient déclarées sur les champs du formulaire, donc
@@ -361,13 +352,20 @@ export const ENFANTS_MAXIMUM = 12;
  * deux fois — une fois dans `verifier`, une fois sur le champ du formulaire —,
  * comme l'étaient les années de bascule avant `ANNEE_MINIMALE`. Elles se disent
  * ici, une fois, et le formulaire les lit.
+ *
+ * Le départ le plus tardif est le dernier âge entier que les tables de mortalité
+ * convertissent en rente : à leur âge terminal, cent vingt ans, nul ne survit
+ * plus, et le diviseur du compte notionnel est nul. La borne valait
+ * soixante-quinze ans depuis le premier commit, sans que rien ne le justifie :
+ * le moteur calculait au-delà. Elle suit les tables depuis le 10 octobre 2026
+ * (action 151), pour qu'on puisse simuler qui travaille très tard.
  */
 export const NAISSANCE_MINIMALE = 1900;
 export const NAISSANCE_MAXIMALE = 2020;
 export const AGE_DEBUT_MINIMAL = 14;
 export const AGE_DEBUT_MAXIMAL = 40;
 export const AGE_LIQUIDATION_MINIMAL = 40;
-export const AGE_LIQUIDATION_MAXIMAL = 75;
+export const AGE_LIQUIDATION_MAXIMAL = Math.trunc(AGE_TERMINAL) - 1;
 
 /**
  * Toute année qu'une carrière peut couvrir, quel qu'en soit l'auteur : né au
@@ -379,6 +377,16 @@ export const AGE_LIQUIDATION_MAXIMAL = 75;
  */
 export const ANNEE_CARRIERE_MINIMALE = NAISSANCE_MINIMALE + AGE_DEBUT_MINIMAL;
 export const ANNEE_CARRIERE_MAXIMALE = NAISSANCE_MAXIMALE + AGE_LIQUIDATION_MAXIMAL;
+
+/**
+ * Nombre de lignes qu'un relevé de carrière peut porter. Une carrière tient
+ * entre l'âge de début minimal et le départ le plus tardif, soit cent cinq
+ * années civiles au plus ; la borne laisse deux lignes de marge et ferme
+ * surtout la porte que les interruptions avaient ouverte : le calcul se fait
+ * chez le lecteur et l'adresse EST la saisie, si bien qu'un relevé de cent
+ * mille lignes forgé dans un lien figeait l'onglet de celui qui le suivait.
+ */
+export const RELEVE_MAXIMUM = AGE_LIQUIDATION_MAXIMAL - AGE_DEBUT_MINIMAL + 2;
 
 /**
  * Ce qu'une ligne de carrière peut décrire à la place d'un métier.

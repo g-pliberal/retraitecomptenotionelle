@@ -33,6 +33,8 @@ from retraite_notionnelle.saisie import (
     ANNEE_MAXIMALE,
     ANNEE_MINIMALE,
     ENFANTS_MAXIMUM,
+    NAISSANCE_MAXIMALE,
+    NAISSANCE_MINIMALE,
     INDEXATIONS,
     LISSAGE_MAXIMUM,
     METIERS_MAXIMUM,
@@ -70,7 +72,7 @@ def test_saisie_par_defaut_est_valide():
 @pytest.mark.parametrize("champs", [
     {"naissance": "1700"},
     {"debut": "12"},
-    {"liquidation": "90"},
+    {"liquidation": "120"},
     {"naissance": "1980", "debut": "30", "liquidation": "25"},
     {"salaire": "50"},
 ])
@@ -163,6 +165,36 @@ def test_les_bornes_des_calendriers_sont_opposables_hors_du_navigateur():
                 requete[f"{nom.split('_')[0]}_statut"] = "artisan"
             with pytest.raises(ErreurSaisie, match=r"."):
                 Saisie.depuis_requete(requete)
+
+
+def test_le_depart_le_plus_tardif_se_convertit_encore_en_rente():
+    """La saisie accepte un départ jusqu'au dernier âge entier que les tables de
+    mortalité convertissent en rente (action 151). À cet âge, pour la
+    génération la plus ancienne comme pour la plus jeune, le diviseur du compte
+    notionnel est encore positif ; un an plus tard, à l'âge terminal des
+    tables, il est nul, et le moteur refuse de diviser."""
+    from retraite_notionnelle.config import Parametres
+    from retraite_notionnelle.moteur.conversion import Convertisseur
+    from retraite_notionnelle.simulateur import Simulateur
+
+    simulateur = Simulateur(Parametres())
+    convertisseur = Convertisseur(simulateur.mortalite, simulateur.parametres)
+    for naissance in (NAISSANCE_MINIMALE, NAISSANCE_MAXIMALE):
+        depart = naissance + AGE_LIQUIDATION_MAXIMAL
+        assert convertisseur.coefficient(AGE_LIQUIDATION_MAXIMAL, depart).diviseur > 0
+        with pytest.raises(ValueError, match="diviseur nul"):
+            convertisseur.coefficient(AGE_LIQUIDATION_MAXIMAL + 1, depart + 1)
+
+
+def test_le_site_simule_le_depart_le_plus_tardif(page):
+    """Né en janvier 2020 et parti au dernier âge que la saisie accepte : la
+    carrière court jusqu'en 2139, au-delà de toutes les projections, et le
+    site la calcule comme une autre (action 151)."""
+    depart = f"{NAISSANCE_MAXIMALE + AGE_LIQUIDATION_MAXIMAL}-02"
+    texte = page("/simuler", naissance=f"{NAISSANCE_MAXIMALE}-01-15",
+                 debut=f"{NAISSANCE_MAXIMALE + 22}-09", liquidation=depart)
+    assert "Saisie refusée" not in texte
+    assert f"à {AGE_LIQUIDATION_MAXIMAL} ans" in texte
 
 
 def test_les_adresses_d_avant_le_calendrier_valent_toujours():

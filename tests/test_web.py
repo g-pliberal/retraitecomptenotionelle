@@ -1650,7 +1650,7 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
         {"unite_revenu": "euros_mois", "salaire": "1e400"},
         {"unite_revenu": "euros_mois", "salaire": "1"},
         {"debut": "12"},
-        {"liquidation": "90"},
+        {"liquidation": "120"},
         {"enfants": "99"},
         {"primes": "0.99"},
         {"euros": "9999"},
@@ -1696,7 +1696,7 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
          "etranger2_pays": "AT", "etranger2_debut": "1998-12", "etranger2_fin": "2001-01"},
         {"pension_etrangere1_pays": "DE", "pension_etrangere1_debut": "2040-01"},
         {"pension_etrangere1_pays": "DE", "pension_etrangere1": "300",
-         "pension_etrangere1_debut": "2051-01"},
+         "pension_etrangere1_debut": f"{1975 + AGE_LIQUIDATION_MAXIMAL + 1}-01"},
         {"etranger1_pays": "ZZ", "etranger1_debut": "1995-01", "etranger1_fin": "1999-01"},
         {"residence": "OI"},
     ]

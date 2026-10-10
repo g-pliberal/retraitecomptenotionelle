@@ -8411,3 +8411,50 @@ agrègent : les fabriquer en Python sous les réglages de référence — avec, 
 le veut, un tableau de sensibilité fabriqué de même pour les variantes qui
 comptent —, puis retirer le portage du coût et ses tests de parité. S'il les
 garde, l'action se clôt sur l'étape 1.
+
+### 151. Partir très tard : le départ jusqu'au bout des tables de mortalité, puis la limite d'âge des fonctionnaires et ses exceptions — `en cours`
+
+**Reprise, au 10 octobre 2026.** Fait, l'étape 1 : la saisie accepte un départ
+jusqu'à 119 ans, le dernier âge entier que les tables de mortalité convertissent
+en rente ; les deux moteurs le calculent, deux témoins le rejouent, à 90 et à
+119 ans. Reste l'étape 2, au scénario 1 : la limite d'âge des fonctionnaires,
+que le modèle n'applique pas — le site simule un fonctionnaire en activité
+jusqu'à 119 ans. Commencer par la veille (`docs/veille_droit.md`) : lire, texte
+en main, la limite d'âge de chaque fonction publique et chacune des exceptions
+qui la reculent, puis proposer au propriétaire ce que fait le simulateur
+au-delà. Détail : la note du 10 octobre.
+
+**Demande**, le 10 octobre 2026 : « Pourquoi on bloque à 75 ans ? Est-ce que
+c'est uniquement une raison technique ? Ou est-ce qu'il y a un vrai problème
+dans notre système ? » ; puis : « Met une limite d'âge très élevée. Par
+exemple, dans certains pays, certaines personnes travaillent jusqu'à très tard
+dans la vie. Il faut qu'on puisse simuler ça. Pour les fonctionnaires, il faut
+voir si c'est vraiment un blocage. Je pense qu'il existe des exceptions. Il
+faut traiter chaque exception. »
+
+**Le constat, le 10 octobre 2026.** La borne de 75 ans était dans le premier
+commit, le 8 septembre 2026 (« Âge de liquidation attendu entre 40 et 75
+ans »), sans rien qui la justifie. Le moteur n'en dépendait pas : quatorze
+statuts, trois générations — 1960, 2000, 2020 — et des départs de 74 à 90 ans,
+294 simulations, se calculaient dans les six scénarios sans erreur, sans
+pension nulle ni pension qui baisse d'un âge au suivant. Sa seule limite est
+l'âge terminal des tables, 120 ans, où le diviseur du compte notionnel est nul
+et où la conversion lève une erreur. Ce que la borne protégeait — l'onglet du
+lecteur, contre une adresse forgée — tient par les bornes qui en dérivent : la
+dernière année d'une carrière et la longueur d'un relevé.
+
+**Le plan.** Étape 1 : relever la borne (faite le 10 octobre). Étape 2 : la
+limite d'âge des fonctionnaires, texte en main — sa valeur par fonction
+publique, par corps et par génération, et chacune des exceptions qui la
+reculent ou la lèvent. Pistes à lire, dont aucune n'est encore vérifiée : un
+recul pour enfants à charge ; une prolongation pour qui n'a pas la durée ; le
+maintien des catégories actives jusqu'à la limite du droit commun ; les
+maintiens en surnombre de corps particuliers ; les limites par grade des
+militaires ; la reprise d'activité sous un autre statut après la radiation des
+cadres, que le simulateur décrit déjà par un second métier. Étape 3 : ce que le
+simulateur fait au-delà de la limite, à décider par le propriétaire sur la
+proposition de l'étape 2 — refuser la saisie, ou arrêter la carrière de
+fonctionnaire à la limite et liquider sa pension à la radiation des cadres —,
+puis chaque exception modélisée, en Python puis en JavaScript, avec ses
+témoins. La note du 10 octobre liste en outre deux règles du scénario 1 que les
+départs très tardifs atteignent pour la première fois, à relire au texte.

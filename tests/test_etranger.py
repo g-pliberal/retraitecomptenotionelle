@@ -23,7 +23,7 @@ from retraite_notionnelle.carriere import (
     Carriere, LigneRelevee, Metier, PensionEtrangere, PeriodeALEtranger,
 )
 from retraite_notionnelle.donnees.chargement import charger_accords_internationaux
-from retraite_notionnelle.saisie import ErreurSaisie, Saisie
+from retraite_notionnelle.saisie import AGE_LIQUIDATION_MAXIMAL, ErreurSaisie, Saisie
 from retraite_notionnelle.simulateur import Simulateur
 
 DONNEES = Path(__file__).resolve().parents[1] / "data"
@@ -185,7 +185,8 @@ def test_une_annee_passee_hors_de_france_n_est_pas_travaillee_en_france():
     ({"pension_etrangere1_pays": "DE", "pension_etrangere1": "0",
       "pension_etrangere1_debut": "2032-07"}, "strictement positif"),
     ({"pension_etrangere1_pays": "DE", "pension_etrangere1": "250",
-      "pension_etrangere1_debut": "2045-07"}, "soit de 14 à 75 ans"),
+      "pension_etrangere1_debut": f"{1965 + AGE_LIQUIDATION_MAXIMAL + 1}-07"},
+     f"soit de 14 à {AGE_LIQUIDATION_MAXIMAL} ans"),
     ({"residence": "FR"}, "Résidence après le départ : la France n'est pas un État étranger"),
     ({"mois_en_france": "13"}, "Mois en France chaque année : de 0 à 12"),
     ({"mois_en_france": "-1"}, "Mois en France chaque année : de 0 à 12"),

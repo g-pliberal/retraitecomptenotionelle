@@ -39,6 +39,7 @@ from .config import (
     SituationFoyer,
     TableConversion,
 )
+from .donnees.mortalite import AGE_TERMINAL
 
 
 # -- les nombres des messages --------------------------------------------------
@@ -309,15 +310,6 @@ HEURES_SMIC_PAR_MOIS = 35 * 52 / 12
 #: borné par ``RELEVE_MAXIMUM``.
 METIERS_MAXIMUM = 6
 
-#: Nombre de lignes qu'un relevé de carrière peut porter. Une carrière tient
-#: entre quatorze ans — l'âge de début minimal — et soixante-quinze, soit
-#: soixante et une années civiles au plus ; la borne laisse deux lignes de
-#: marge et ferme surtout la porte que les interruptions avaient ouverte : le
-#: calcul se fait chez le lecteur et l'adresse EST la saisie, si bien qu'un
-#: relevé de cent mille lignes forgé dans un lien figeait l'onglet de celui qui
-#: le suivait.
-RELEVE_MAXIMUM = 63
-
 #: Bornes des deux années que l'utilisateur peut choisir : celle de la bascule
 #: au régime unique, et celle des euros constants dans lesquels les montants
 #: sont exprimés. Elles étaient déclarées sur les champs du formulaire, donc
@@ -336,12 +328,19 @@ ENFANTS_MAXIMUM = 12
 #: écrites deux fois — une fois dans ``verifier``, une fois sur le champ du
 #: formulaire —, comme l'étaient les années de bascule avant ``ANNEE_MINIMALE``.
 #: Elles se disent ici, une fois, et le formulaire les lit.
+#:
+#: Le départ le plus tardif est le dernier âge entier que les tables de
+#: mortalité convertissent en rente : à leur âge terminal, cent vingt ans, nul
+#: ne survit plus, et le diviseur du compte notionnel est nul. La borne valait
+#: soixante-quinze ans depuis le premier commit, sans que rien ne le justifie :
+#: le moteur calculait au-delà. Elle suit les tables depuis le 10 octobre 2026
+#: (action 151), pour qu'on puisse simuler qui travaille très tard.
 NAISSANCE_MINIMALE = 1900
 NAISSANCE_MAXIMALE = 2020
 AGE_DEBUT_MINIMAL = 14
 AGE_DEBUT_MAXIMAL = 40
 AGE_LIQUIDATION_MINIMAL = 40
-AGE_LIQUIDATION_MAXIMAL = 75
+AGE_LIQUIDATION_MAXIMAL = int(AGE_TERMINAL) - 1
 
 #: Toute année qu'une carrière peut couvrir, quel qu'en soit l'auteur : né au
 #: plus tôt et entré au plus jeune d'un côté, né au plus tard et parti au plus
@@ -351,6 +350,14 @@ AGE_LIQUIDATION_MAXIMAL = 75
 #: décrit aucune carrière, et se refuse au lieu de se calculer.
 ANNEE_CARRIERE_MINIMALE = NAISSANCE_MINIMALE + AGE_DEBUT_MINIMAL
 ANNEE_CARRIERE_MAXIMALE = NAISSANCE_MAXIMALE + AGE_LIQUIDATION_MAXIMAL
+
+#: Nombre de lignes qu'un relevé de carrière peut porter. Une carrière tient
+#: entre l'âge de début minimal et le départ le plus tardif, soit cent cinq
+#: années civiles au plus ; la borne laisse deux lignes de marge et ferme
+#: surtout la porte que les interruptions avaient ouverte : le calcul se fait
+#: chez le lecteur et l'adresse EST la saisie, si bien qu'un relevé de cent
+#: mille lignes forgé dans un lien figeait l'onglet de celui qui le suivait.
+RELEVE_MAXIMUM = AGE_LIQUIDATION_MAXIMAL - AGE_DEBUT_MINIMAL + 2
 
 #: La réponse qui dit qu'une activité S'AJOUTE à celle en cours. Toute autre
 #: réponse que celle-ci ou le vide est refusée.

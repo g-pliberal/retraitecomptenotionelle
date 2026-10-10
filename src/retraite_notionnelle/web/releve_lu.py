@@ -54,9 +54,12 @@ PREMIERE_ANNEE_EN_EUROS = 2002
 #: La première année en nouveaux francs.
 PREMIERE_ANNEE_EN_NOUVEAUX_FRANCS = 1960
 
-#: Les bornes des années qu'une carrière peut couvrir (``ANNEE_CARRIERE_MINIMALE``
-#: et ``ANNEE_CARRIERE_MAXIMALE`` de ``saisie.py``), reprises ici pour ne pas lire
-#: comme une année de carrière un nombre à quatre chiffres qui n'en est pas une.
+#: Les années qu'un relevé peut porter, pour ne pas lire comme une année de
+#: carrière un nombre à quatre chiffres qui n'en est pas une. Elles reprenaient
+#: les bornes de la saisie (``ANNEE_CARRIERE_MINIMALE`` et
+#: ``ANNEE_CARRIERE_MAXIMALE`` de ``saisie.py``) ; la saisie va désormais
+#: jusqu'en 2139, mais un relevé n'écrit que des années vécues, et élargir la
+#: fenêtre ne ferait que prendre plus de nombres pour des millésimes.
 ANNEE_MINIMALE = 1914
 ANNEE_MAXIMALE = 2095
 

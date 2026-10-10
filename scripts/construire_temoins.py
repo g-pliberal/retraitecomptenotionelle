@@ -39,7 +39,9 @@ sys.path.insert(0, str(RACINE / "src"))
 from retraite_notionnelle.carriere import Affiliations  # noqa: E402
 from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
 from retraite_notionnelle.droit import liquidation as _liquidation  # noqa: E402
-from retraite_notionnelle.saisie import AGE_DEBUT_MINIMAL, Saisie  # noqa: E402
+from retraite_notionnelle.saisie import (  # noqa: E402
+    AGE_DEBUT_MINIMAL, AGE_LIQUIDATION_MAXIMAL, Saisie,
+)
 from retraite_notionnelle.contexte import Contexte  # noqa: E402
 from retraite_notionnelle.lignes import html_en_morceaux  # noqa: E402
 from retraite_notionnelle.web.site import rendre  # noqa: E402
@@ -292,6 +294,12 @@ def _cas() -> list[dict]:
 
     # Âges de liquidation : départ très anticipé, à l'heure, très différé.
     for age in ("52", "57", "60", "62", "64", "67", "70"):
+        cas.append((f"liquidation_{age}", {"liquidation": age}))
+    # LES DÉPARTS TRÈS TARDIFS, que la saisie accepte depuis le 10 octobre 2026
+    # (action 151) : jusqu'au dernier âge que les tables de mortalité
+    # convertissent en rente. Aucun témoin ne partait après soixante-dix ans, et
+    # le diviseur n'était jamais pris si près de la fin des tables.
+    for age in ("90", str(AGE_LIQUIDATION_MAXIMAL)):
         cas.append((f"liquidation_{age}", {"liquidation": age}))
     cas.append(("liquidation_demi", {"liquidation": "64.5", "debut": "20.5"}))
     # LA DURÉE MAJORÉE APRÈS L'ÂGE DU TAUX PLEIN : 2,5 % de la durée par
