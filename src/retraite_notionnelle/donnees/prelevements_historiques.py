@@ -12,12 +12,21 @@ l'IPP.
 
 Une année qui change de taux prélève la moyenne de ses douze mois, comme les
 contributions d'équilibre (:mod:`~retraite_notionnelle.contributions_equilibre`).
+
+L'indépendant a ses barèmes : la maladie des artisans et commerçants ou celle
+des professions libérales, la cotisation d'allocations familiales des
+travailleurs indépendants, et la CSG et la CRDS de l'activité, sans abattement,
+sur son revenu augmenté de ses cotisations jusqu'en 2024. Un barème
+d'indépendant s'écrit en tranches qui s'ajoutent (:data:`TRANCHES`) et, depuis
+2015, en paliers : en deçà d'un certain revenu, un taux réduit sur tout le
+revenu, interpolé comme :class:`~retraite_notionnelle.remuneration.BaremeProgressif`
+l'interpole pour la fiche de paie.
 """
 
 from __future__ import annotations
 
 import datetime as dt
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
 
@@ -31,10 +40,96 @@ CHEMIN = Path("reference") / "legislation" / "prelevements_historiques.yaml"
 #: l'agent non titulaire, salarié du régime général pour sa maladie et agent
 #: public pour la solidarité, et l'agent à retenue — fonctionnaire ou agent d'un
 #: régime spécial, dont les taux de maladie sont ceux des agents de l'État.
-#: L'indépendant n'y est pas : ses prélèvements hors retraite restent ceux de
-#: l'année courante.
+#: L'indépendant a la sienne selon ses régimes de base (:func:`famille_de_la_fiche`).
 FAMILLES = {"salarie_prive": "prive", "salarie_ircantec": "contractuel",
             "agent_seul": "agent"}
+
+#: Les familles d'indépendants : l'artisan et le commerçant, sous la maladie
+#: des artisans et commerçants, que l'indemnité journalière de 1995 à 2000 sépare ;
+#: le libéral de la CNAVPL (L. 640-1) et l'avocat (L. 651-1), sous celle des
+#: professions libérales, que l'indemnité journalière de 2021 sépare.
+FAMILLES_INDEPENDANTES = ("artisan", "commercant", "liberal", "avocat")
+
+#: Les régimes de base qui font d'un indépendant un avocat, un libéral, un
+#: artisan ; les autres sont commerçants — l'Organic, le RSI, et depuis 2018 la
+#: sécurité sociale des indépendants au régime général.
+REGIMES_AVOCATS = frozenset({"cnbf"})
+REGIMES_LIBERAUX = frozenset({"cnavpl"})
+REGIMES_ARTISANS = frozenset({"cancava"})
+
+#: Les tranches d'un barème d'indépendant, par la colonne qui porte leur taux :
+#: leurs bornes, en plafonds de l'année, ``None`` pour l'infini. Elles
+#: s'ajoutent : 3,10 % sous le plafond et 8,45 % sous cinq plafonds font
+#: 11,55 % sous le plafond, 8,45 % au-dessus.
+TRANCHES = {
+    "tout_revenu": (0.0, None), "sous_plafond": (0.0, 1.0),
+    "sous_trois_plafonds": (0.0, 3.0), "sous_quatre_plafonds": (0.0, 4.0),
+    "sous_cinq_plafonds": (0.0, 5.0), "au_dela_de_trois_plafonds": (3.0, None),
+    "au_dela_de_cinq_plafonds": (5.0, None),
+}
+
+#: L'indemnité journalière, que le taux réduit ne touche pas : ses bornes, et
+#: les familles qui la paient.
+INDEMNITES = {
+    "ij_sous_cinq_plafonds": ((0.0, 5.0), ("artisan", "commercant")),
+    "ij_artisans_sous_cinq_plafonds": ((0.0, 5.0), ("artisan",)),
+    "ij_sous_trois_plafonds": ((0.0, 3.0), ("liberal",)),
+}
+
+
+def famille_de_la_fiche(profil: str | None, regimes) -> str | None:
+    """La famille dont l'histoire prélève une fiche de paie : celle du profil
+    (:data:`FAMILLES`), ou, pour un indépendant, celle de ses régimes de base de
+    l'année (:data:`FAMILLES_INDEPENDANTES`). ``None`` hors de l'histoire."""
+    if profil != "independant":
+        return FAMILLES.get(profil)
+    regimes = frozenset(regimes)
+    if regimes & REGIMES_AVOCATS:
+        return "avocat"
+    if regimes & REGIMES_LIBERAUX:
+        return "liberal"
+    if regimes & REGIMES_ARTISANS:
+        return "artisan"
+    return "commercant"
+
+
+def _tranche(revenu: float, plafond: float, bas: float, haut: float | None) -> float:
+    plus_haut = revenu if haut is None else min(revenu, haut * plafond)
+    return max(plus_haut - bas * plafond, 0.0)
+
+
+def _taux_progressif(paliers, en_plafonds: float) -> float:
+    """Le taux réduit, sur tout le revenu, à ce niveau : interpolé entre deux
+    paliers, celui du premier en deçà, celui du dernier au-delà — la règle de
+    :meth:`~retraite_notionnelle.remuneration.BaremeProgressif.taux`."""
+    precedent_seuil, precedent_taux = paliers[0]
+    if en_plafonds <= precedent_seuil:
+        return precedent_taux
+    for seuil, taux in paliers[1:]:
+        if en_plafonds <= seuil:
+            largeur = seuil - precedent_seuil
+            if largeur <= 0:
+                return taux
+            part = (en_plafonds - precedent_seuil) / largeur
+            return precedent_taux + part * (taux - precedent_taux)
+        precedent_seuil, precedent_taux = seuil, taux
+    return precedent_taux
+
+
+def bareme_independant(valeurs: dict, revenu: float, plafond: float) -> float:
+    """Ce qu'un barème d'indépendant prélève d'un revenu annuel, indemnité
+    journalière à part : son taux réduit sur tout le revenu en deçà de
+    ``progressif_jusqu_a`` plafonds (partout sans lui), ses tranches au-delà,
+    et le seuil en euros de la cotisation familiale de 1974 à 1982."""
+    paliers = valeurs.get("paliers")
+    jusqu_a = valeurs.get("progressif_jusqu_a")
+    if paliers and (not jusqu_a or revenu < jusqu_a * plafond):
+        return _taux_progressif(paliers, revenu / plafond) * revenu
+    total = somme_ordonnee(valeurs.get(cle, 0.0) * _tranche(revenu, plafond, bas, haut)
+                           for cle, (bas, haut) in TRANCHES.items())
+    seuil = valeurs.get("seuil_euros", 0.0)
+    return (total + valeurs.get("sous_seuil", 0.0) * min(revenu, seuil)
+            + valeurs.get("du_seuil_au_plafond", 0.0) * max(min(revenu, plafond) - seuil, 0.0))
 
 
 @dataclass(frozen=True)
@@ -42,7 +137,8 @@ class Serie:
     """Les marches d'un prélèvement, de la plus ancienne à la plus récente."""
 
     nom: str
-    marches: tuple[tuple[dt.date, dict[str, float]], ...]
+    #: Chaque marche : sa date, et ses taux — ses ``paliers`` en couples.
+    marches: tuple[tuple[dt.date, dict[str, float | tuple]], ...]
     #: La première marche vaut-elle en deçà d'elle ? Vrai pour la maladie, que
     #: les barèmes de l'IPP ne prennent qu'en 1967 ; faux pour ce qui est né à
     #: sa première marche.
@@ -65,8 +161,9 @@ class Serie:
 def _serie(nom: str, marches, tenue_avant: bool) -> Serie:
     lues = []
     for marche in marches:
-        valeurs = {cle: float(valeur) for cle, valeur in marche.items()
-                   if cle not in ("depuis", "texte")}
+        valeurs = {cle: (tuple((float(seuil), float(taux)) for seuil, taux in valeur)
+                         if cle == "paliers" else float(valeur))
+                   for cle, valeur in marche.items() if cle not in ("depuis", "texte")}
         lues.append((dt.date.fromisoformat(str(marche["depuis"])), valeurs))
     return Serie(nom=nom, marches=tuple(sorted(lues, key=lambda m: m[0])),
                  tenue_avant=tenue_avant)
@@ -83,6 +180,7 @@ class PrelevementsHistoriques:
     pensions: dict[str, Serie]
     salaires: dict[str, Serie]
     lu_le: str
+    independants: dict[str, Serie] = field(default_factory=dict)
 
     # -- les pensions ------------------------------------------------------
 
@@ -141,12 +239,53 @@ class PrelevementsHistoriques:
             return 0.0
         return taux["taux"] * min(max(brut - cotisations, 0.0), 4.0 * plafond)
 
+    # -- les indépendants --------------------------------------------------
+
+    def maladie_independant(self, famille: str, jour: dt.date, revenu: float,
+                            plafond: float) -> float:
+        """La cotisation maladie du ``jour`` d'un revenu annuel d'indépendant,
+        indemnité journalière comprise : celle des artisans et commerçants, ou
+        celle des professions libérales pour le libéral et l'avocat."""
+        nom = ("maladie_professions_liberales" if famille in ("liberal", "avocat")
+               else "maladie_artisans_commercants")
+        valeurs = self.independants[nom].en_vigueur(jour)
+        indemnites = somme_ordonnee(
+            valeurs.get(cle, 0.0) * _tranche(revenu, plafond, bas, haut)
+            for cle, ((bas, haut), familles) in INDEMNITES.items() if famille in familles)
+        return bareme_independant(valeurs, revenu, plafond) + indemnites
+
+    def famille_independant(self, jour: dt.date, revenu: float, plafond: float) -> float:
+        """La cotisation d'allocations familiales du ``jour`` d'un revenu annuel
+        d'indépendant."""
+        return bareme_independant(self.independants["famille"].en_vigueur(jour), revenu,
+                                  plafond)
+
+    def _independant(self, famille: str, jour: dt.date, revenu: float, plafond: float,
+                     cotisations: float) -> float:
+        """La maladie, les allocations familiales, et la CSG et la CRDS de
+        l'activité sans abattement, sur le revenu augmenté, jusqu'en 2024, des
+        cotisations personnelles de l'année (L. 136-3)."""
+        maladie = self.maladie_independant(famille, jour, revenu, plafond)
+        allocations = self.famille_independant(jour, revenu, plafond)
+        assiette = revenu
+        if self.independants["assiette_csg"].valeur(jour, "cotisations_ajoutees"):
+            assiette += cotisations + maladie + allocations
+        taux = self.salaires["csg"].valeur(jour) + self.salaires["crds"].valeur(jour)
+        return maladie + allocations + taux * assiette
+
     def hors_retraite(self, famille: str, jour: dt.date, brut: float, plafond: float,
                       retraite_salarie: float = 0.0) -> float:
         """Ce que les prélèvements salariaux hors retraite du ``jour`` retirent
         d'un brut annuel, sous un plafond annuel : la CSG et la CRDS sur le
         brut abattu, et selon la famille (:data:`FAMILLES`) la maladie, le
-        veuvage, l'assurance chômage, la contribution de solidarité."""
+        veuvage, l'assurance chômage, la contribution de solidarité.
+
+        Pour un indépendant (:data:`FAMILLES_INDEPENDANTES`), ``brut`` est son
+        revenu, et ``retraite_salarie`` ses cotisations que l'histoire ne refait
+        pas — la retraite, l'invalidité-décès —, que sa CSG d'avant 2025 ajoute
+        à son assiette."""
+        if famille in FAMILLES_INDEPENDANTES:
+            return self._independant(famille, jour, brut, plafond, retraite_salarie)
         assiette = self._assiette_csg(jour, brut, plafond)
         total = (self.salaires["csg"].valeur(jour) + self.salaires["crds"].valeur(jour)) * assiette
         if famille in ("prive", "contractuel"):
@@ -178,6 +317,8 @@ def _charger(chemin: str, signature: tuple) -> PrelevementsHistoriques:
         salaires={nom: _serie(nom, marches, nom in tenues)
                   for nom, marches in contenu["salaires"].items()},
         lu_le=str(contenu.get("lu_le", "")),
+        independants={nom: _serie(nom, marches, nom in tenues)
+                      for nom, marches in (contenu.get("independants") or {}).items()},
     )
 
 

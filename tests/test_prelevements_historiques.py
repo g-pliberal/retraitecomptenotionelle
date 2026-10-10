@@ -137,6 +137,121 @@ def test_le_salaire_net_de_l_annee_courante_est_celui_de_la_fiche(simulateur):
     assert nets[1995] / bruts[1995] < nets[courante] / bruts[courante]
 
 
+#: Les postes de la fiche d'un indépendant que l'histoire refait.
+REFAITS = ("maladie_maternite", "indemnites_journalieres", "famille", "csg_crds")
+
+
+def test_l_annee_courante_d_un_independant_est_la_fiche_du_site(historique, courants,
+                                                                 simulateur):
+    """L'année courante, la maladie et l'indemnité journalière des artisans et
+    commerçants, les allocations familiales, la CSG et la CRDS de l'histoire
+    sont, au centime, celles de la fiche de paie, du taux réduit des petits
+    revenus aux tranches des plus grands."""
+    annee = courants.annee
+    plafond = simulateur.macro.plafond_securite_sociale(annee)
+    for niveau in (0.1, 0.3, 0.5, 0.8, 1.2, 1.6, 2.5, 3.5, 6.0):
+        revenu = niveau * plafond
+        fiche = fiche_depuis_brut(RACINE_DONNEES, simulateur.macro, simulateur.catalogue,
+                                  simulateur.affiliations, "commercant", annee, revenu)
+        refaits = sum(l.salarie for l in fiche.lignes if l.code in REFAITS)
+        autres = sum(l.salarie for l in fiche.lignes if l.code not in REFAITS)
+        assert historique.hors_retraite_annuel("commercant", annee, revenu, plafond, autres) == (
+            pytest.approx(refaits, rel=1e-9)), niveau
+
+
+def test_les_marches_des_independants_y_sont(historique):
+    """Les tranches de l'IPP qui s'ajoutent, ses marches corrigées par les
+    décrets, et les barèmes des textes depuis 2013 ; l'indemnité journalière des
+    seuls artisans de 1995 à 2000, des libéraux depuis 2021, que l'avocat ne
+    paie pas."""
+    plafond = 40_000.0
+
+    def taux(famille, jour, niveau):
+        revenu = niveau * plafond
+        return historique.maladie_independant(famille, jour, revenu, plafond) / revenu
+
+    assert taux("commercant", dt.date(1985, 6, 1), 0.8) == pytest.approx(0.031 + 0.0845)
+    assert taux("commercant", dt.date(1985, 6, 1), 2.0) == pytest.approx(
+        (0.031 + 0.0845 * 2.0) / 2.0)
+    # Le décret n° 91-745 vaut à l'échéance du 1er octobre 1991, et le décret
+    # n° 92-295 porte 9,75 % à celle du 1er octobre 1992 : l'IPP les avance.
+    assert taux("commercant", dt.date(1991, 9, 1), 0.8) == pytest.approx(0.031 + 0.0885)
+    assert taux("commercant", dt.date(1991, 11, 1), 0.8) == pytest.approx(0.031 + 0.0915)
+    assert taux("commercant", dt.date(1993, 6, 1), 0.8) == pytest.approx(0.031 + 0.0975)
+    assert taux("liberal", dt.date(1984, 6, 1), 0.8) == pytest.approx(0.037 + 0.0795)
+    assert taux("liberal", dt.date(1984, 11, 1), 0.8) == pytest.approx(0.031 + 0.0845)
+    assert taux("artisan", dt.date(1996, 6, 1), 0.8) - taux("commercant", dt.date(1996, 6, 1),
+                                                             0.8) == pytest.approx(0.005)
+    assert taux("commercant", dt.date(2015, 6, 1), 0.8) == pytest.approx(0.065 + 0.007)
+    # 2018 : le taux réduit sous 40 % du plafond, et 6,5 % sur tout le revenu
+    # au-delà de cinq plafonds ; la fraction au-delà seulement depuis mai 2020.
+    assert taux("commercant", dt.date(2018, 6, 1), 0.2) == pytest.approx(
+        0.0085 + (0.022 + 0.05 / 1.1 * 0.4 - 0.0085) / 2.0)
+    assert taux("commercant", dt.date(2018, 6, 1), 6.0) == pytest.approx(0.065)
+    assert taux("commercant", dt.date(2021, 6, 1), 6.0) == pytest.approx(
+        (0.072 * 5.0 + 0.065) / 6.0)
+    assert taux("liberal", dt.date(2022, 6, 1), 0.3) == pytest.approx(0.003)
+    assert taux("avocat", dt.date(2022, 6, 1), 0.3) == 0.0
+    assert taux("commercant", dt.date(1969, 6, 1), 0.8) == 0.0
+
+    def famille(jour, niveau):
+        revenu = niveau * plafond
+        return historique.famille_independant(jour, revenu, plafond) / revenu
+
+    assert famille(dt.date(1990, 6, 1), 0.8) == pytest.approx(0.021 + 0.049)
+    assert famille(dt.date(2010, 6, 1), 0.8) == pytest.approx(0.054)
+    assert famille(dt.date(2016, 6, 1), 1.25) == pytest.approx(0.0215 + 0.031 / 2.0)
+    assert famille(dt.date(2016, 6, 1), 0.8) == pytest.approx(0.0215)
+    # Forfaitaire avant 1974, que l'IPP ne chiffre pas : ses taux de 1974 valent
+    # en deçà.
+    assert famille(dt.date(1970, 6, 1), 0.8) == famille(dt.date(1975, 6, 1), 0.8)
+
+
+def test_la_csg_d_un_independant_porte_sur_ses_cotisations_jusqu_en_2024(historique):
+    """Jusqu'en 2024, la CSG et la CRDS d'un indépendant portent sur son revenu
+    augmenté de ses cotisations personnelles (L. 136-3) ; depuis l'assiette
+    unique, sur son revenu."""
+    plafond, revenu, autres = 46_000.0, 40_000.0, 9_000.0
+    for annee, ajoutees in ((1995, True), (2024, True), (2025, False)):
+        jour = dt.date(annee, 6, 1)
+        cotisations = (historique.maladie_independant("commercant", jour, revenu, plafond)
+                       + historique.famille_independant(jour, revenu, plafond))
+        taux = historique.salaires["csg"].valeur(jour) + historique.salaires["crds"].valeur(jour)
+        assiette = revenu + (autres + cotisations if ajoutees else 0.0)
+        assert historique.hors_retraite("commercant", jour, revenu, plafond, autres) == (
+            pytest.approx(cotisations + taux * assiette)), annee
+
+
+def test_le_net_d_un_independant_suit_les_prelevements_de_son_annee(simulateur):
+    """L'année courante, le net d'un commerçant est celui de sa fiche de paie ;
+    en 1985, il perd 11,55 % de maladie et 9 % d'allocations familiales sous le
+    plafond, et pas de CSG."""
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1950, sexe="H", affiliation="commercant", age_debut=21,
+        age_liquidation=64, niveau_salaire=1.0)
+    nets = cycle_de_vie.revenus_nets(simulateur, carriere)
+    bruts = cycle_de_vie.revenus_d_activite(carriere)
+    courante = simulateur.parametres.annee_courante
+    jeune = simulateur.carriere_simple(
+        annee_naissance=1975, sexe="H", affiliation="commercant", age_debut=25,
+        age_liquidation=64, niveau_salaire=1.0)
+    revenu = cycle_de_vie.revenus_d_activite(jeune)[courante]
+    fiche = fiche_depuis_brut(simulateur.parametres.racine_donnees, simulateur.macro,
+                              simulateur.catalogue, simulateur.affiliations, "commercant",
+                              courante, revenu)
+    assert cycle_de_vie.revenus_nets(simulateur, jeune)[courante] == pytest.approx(
+        fiche.net, rel=1e-12)
+    ligne = next(l for l in carriere.lignes if l.annee == 1985)
+    fiche_1985 = fiche_depuis_brut(simulateur.parametres.racine_donnees, simulateur.macro,
+                                   simulateur.catalogue, simulateur.affiliations,
+                                   "commercant", 1985, ligne.revenu_annualise)
+    refaits = sum(l.salarie for l in fiche_1985.lignes if l.code in REFAITS)
+    plafond = simulateur.macro.plafond_securite_sociale(1985)
+    assert ligne.revenu_annualise < plafond
+    attendu = fiche_1985.net + refaits - ligne.revenu_annualise * (0.031 + 0.0845 + 0.09)
+    assert nets[1985] == pytest.approx(attendu * ligne.fraction_annee, rel=1e-9)
+
+
 def test_une_pension_nette_suit_les_prelevements_de_chaque_annee(simulateur):
     """Partie en 2014 : sa pension perd 7,4 % et la maladie des
     complémentaires en 2015, 9,1 % et la même maladie depuis 2018, dernière

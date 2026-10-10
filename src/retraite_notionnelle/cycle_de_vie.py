@@ -150,7 +150,11 @@ from .config import RevalorisationStock
 from .contributions_equilibre import contributions_d_une_carriere, part_salariale_annualisee
 from .cout import coefficient_actuel
 from .donnees.chargement import charger_yaml
-from .donnees.prelevements_historiques import FAMILLES, charger_prelevements_historiques
+from .donnees.prelevements_historiques import (
+    FAMILLES_INDEPENDANTES,
+    charger_prelevements_historiques,
+    famille_de_la_fiche,
+)
 from .donnees.mortalite import AGE_TERMINAL
 from .remuneration import (
     charger_prelevements,
@@ -428,9 +432,12 @@ def revenus_nets(simulateur, carriere, proposition: bool = False) -> dict[int, f
     l'assurance chômage du salarié du privé, la maladie et la contribution de
     solidarité de l'agent public — et par les contributions d'équilibre de
     l'Agirc-Arrco de l'année, l'ASF, l'AGFF ou la CEG, au lieu de celles de
-    l'année courante. L'indépendant garde les prélèvements hors retraite de
-    l'année courante. La fiche se lit sur le revenu annualisé, sous le plafond
-    de l'année entière, puis se ramène aux mois travaillés.
+    l'année courante. L'indépendant a les siens : la maladie des artisans et
+    commerçants ou celle des professions libérales, les allocations familiales,
+    la CSG et la CRDS sur son revenu augmenté, jusqu'en 2024, de ses
+    cotisations ; son invalidité-décès reste celle de l'année courante. La
+    fiche se lit sur le revenu annualisé, sous le plafond de l'année entière,
+    puis se ramène aux mois travaillés.
 
     Les primes d'un fonctionnaire perdent les prélèvements hors retraite,
     sans la retenue pour pension, que la loi n'assied que sur le traitement
@@ -471,6 +478,13 @@ def revenus_nets(simulateur, carriere, proposition: bool = False) -> dict[int, f
 #: courante.
 POSTES_EQUILIBRE = ("equilibre_general", "equilibre_technique")
 
+#: Les postes de la fiche d'un indépendant que l'histoire refait à l'année : la
+#: maladie et l'indemnité journalière, les allocations familiales, la CSG et la
+#: CRDS. Les autres — la retraite, l'invalidité-décès — entrent, avant 2025,
+#: dans l'assiette de sa CSG.
+POSTES_REFAITS_INDEPENDANT = ("maladie_maternite", "indemnites_journalieres", "famille",
+                              "csg_crds")
+
 
 def _net_annualise(simulateur, carriere, ligne) -> float | None:
     """Le net du revenu annualisé d'une ligne cotisée, primes comprises, aux
@@ -484,13 +498,20 @@ def _net_annualise(simulateur, carriere, ligne) -> float | None:
         return None
     profil = profil_de_la_fiche(simulateur.affiliations, simulateur.catalogue,
                                 ligne.affiliation, ligne.annee)
-    famille = FAMILLES.get(profil)
+    regimes = (simulateur.affiliations.regimes(ligne.affiliation, ligne.annee,
+                                               carriere.date_entree(ligne.affiliation))
+               if profil == "independant" else ())
+    famille = famille_de_la_fiche(profil, regimes)
     if famille is None:
         return fiche.net
     historique = charger_prelevements_historiques(racine)
     plafond = macro.plafond_securite_sociale(ligne.annee)
     courante = charger_prelevements(racine).annee
-    retraite = fiche.retraite_salarie
+    if famille in FAMILLES_INDEPENDANTES:
+        retraite = somme_ordonnee(l.salarie for l in fiche.lignes
+                                  if l.code not in POSTES_REFAITS_INDEPENDANT)
+    else:
+        retraite = fiche.retraite_salarie
     hors_retraite = (historique.hors_retraite_annuel(famille, courante, annualise, plafond, retraite)
                      - historique.hors_retraite_annuel(famille, ligne.annee, annualise, plafond,
                                                        retraite))
