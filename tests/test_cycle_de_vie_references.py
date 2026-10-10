@@ -1,9 +1,9 @@
-"""Les indicateurs de cycle de vie confrontés au COR, à TRAJECTOiRE et à l'OCDE.
+"""Les indicateurs de cycle de vie confrontés au COR, à TRAJECTOiRE, à l'OCDE et à l'ETK.
 
 Le dépôt calcule depuis l'action 138 (étape 9) la durée de retraite, le taux de
 récupération, le rendement interne et le patrimoine retraite de ses carrières
 (``retraite_notionnelle.cycle_de_vie`` ; définitions dans
-``tests/test_cycle_de_vie.py``). Trois références en publient, chacune sous ses
+``tests/test_cycle_de_vie.py``). Cinq références en publient, chacune sous ses
 conventions, et ce module les refait sous les mêmes :
 
 * LE COR, rapport annuel de juin 2026 (``tests/temoins/cor_cycle_de_vie.json``,
@@ -16,7 +16,13 @@ conventions, et ce module les refait sous les mêmes :
 * L'OCDE, *Pensions at a Glance 2025* (``tests/temoins/ocde_pensions.json``,
   ``scripts/fetch/ocde_pensions.py``) : le taux de remplacement et le patrimoine
   retraite d'un salarié entré à 22 ans en 2024, sous ses hypothèses
-  macroéconomiques (jeu ``ocde_2025``).
+  macroéconomiques (jeu ``ocde_2025``) ;
+* L'ETK, le Centre finlandais des pensions, son mémo du 26 octobre 2023 sur
+  le coefficient d'espérance de vie de 2024 : l'âge cible de la génération
+  1962, et la règle qui le donne ;
+* LE SIMULATEUR DU COR, réécrit par B. Scherrer et M. Baudin
+  (``brunoscherrer/retraites``, au commit ``f3c2d92``) : la part de la vie
+  passée en retraite en 2020 et en 2070, et l'âge qui tiendrait la première.
 
 Chaque grandeur concorde à sa tolérance, ou son écart est DÉCLARÉ avec sa cause
 et sa borne ; un écart déclaré qui rentrerait dans la tolérance fait échouer le
@@ -70,6 +76,17 @@ démentent. Les quotients observés se calculent désormais génération par
 génération, comme l'INSEE (``scripts/fetch/eurostat_mortalite.py``) : son
 espérance de vie à 60 ans rejoint celle de l'INSEE à 0,06 an près, et celle
 des générations 1940 à 1959 à moins de 0,08 an.
+
+Encore le 10 octobre 2026, l'âge d'équilibre : la règle de l'âge cible de
+l'ETK, appliquée au compte, est l'égalité des diviseurs, la majoration pour
+report y étant actuarielle, 0,30 à 0,31 % par mois à 65 ans au lieu de 0,4 % ;
+elle redonne l'âge cible finlandais de la génération 1962 sur le mémo de
+l'ETK. La part de la vie en retraite du simulateur du COR est celle du dépôt
+sous la convention du COR, et ses chiffres se retrouvent sur ses espérances
+de vie ; sur celles du dépôt, plus basses que celles du COR de 2019 de 1,2 an
+(génération 1958) à 3,2 ans (génération 2007), l'âge qui tiendrait en 2070 la
+part de 2020 est 65,4 ans au lieu de 66,7. Celle du COR de 2026, génération
+par génération, se retrouve à 0,1 point près.
 """
 
 from __future__ import annotations
@@ -774,3 +791,168 @@ def test_le_patrimoine_retraite_de_l_ocde_se_retrouve_a_la_mortalite_pres(
                              / (ocde["taux_remplacement_brut"][qui][multiple] / 100.0))
             ecart = rente / rente_publiee - 1.0
             assert bas <= ecart <= haut, (sexe, multiple, ecart)
+
+
+# ---------------------------------------------------------------------------
+# L'ETK : l'âge cible de chaque génération
+# ---------------------------------------------------------------------------
+
+#: Le mémo de l'ETK du 26 octobre 2023 sur le coefficient d'espérance de vie
+#: de 2024 (``eak2024.pdf``, p. 2 et 3, lu le 10 octobre 2026) : les valeurs en
+#: capital d'une pension à 62 ans en 2009 et en 2024, le coefficient de la
+#: génération 1962, son âge minimal et son âge cible.
+ETK_GENERATION_1962 = {"eal_2009": 16.778288, "eal_2024": 17.718722,
+                       "coefficient": 0.94692, "age_minimal": 65.0, "age_cible": 66.25}
+
+#: La majoration pour report, par mois, comptée depuis l'âge minimal de la
+#: génération : etk.fi, « Vanhuuseläke », « Lykkäyskorotus on 0,4 %
+#: kuukautta kohti », lu le 10 octobre 2026.
+MAJORATION_ETK = 0.004
+
+
+def _majoration_finlandaise(mois: int) -> float:
+    return 1.0 + MAJORATION_ETK * mois
+
+
+def test_l_age_cible_de_l_etk_se_retrouve_sur_son_memo():
+    """L'âge cible (« tavoite-eläkeikä ») est le premier mois où la majoration
+    pour report, comptée depuis l'âge minimal, est « au moins aussi grande »
+    que ce que le coefficient retire. La génération 1962, d'âge minimal 65
+    ans, doit reporter de quinze mois : son âge cible est 66 ans et 3 mois.
+    Une génération que le coefficient ne réduit pas part à son âge minimal."""
+    memo = ETK_GENERATION_1962
+    coefficient = round(memo["eal_2009"] / memo["eal_2024"], 5)
+    assert coefficient == memo["coefficient"]
+    assert cycle_de_vie.age_cible(coefficient, _majoration_finlandaise,
+                                  memo["age_minimal"]) == memo["age_cible"]
+    assert coefficient * _majoration_finlandaise(14) < 1.0 <= coefficient * _majoration_finlandaise(15)
+    assert cycle_de_vie.age_cible(1.0, _majoration_finlandaise, 65.0) == 65.0
+
+
+def test_sous_le_compte_le_critere_de_l_etk_est_l_egalite_des_diviseurs(simulateur):
+    """Transposé au compte, le coefficient est le rapport du diviseur de la
+    référence à celui de la génération au même âge, et la majoration pour
+    report, ce dont le diviseur baisse quand l'âge monte : actuarielle, 0,31 %
+    par mois à 65 ans pour la génération 1961 et 0,30 % pour 2000, contre
+    0,4 % fixés en Finlande. Le premier mois où elle compense le coefficient
+    est l'âge d'équilibre au mois. La génération 1962 y reporte de deux mois,
+    sur une référence de 2026 et non de 2009 ; sous la majoration finlandaise,
+    plus généreuse, la génération 2000 partirait à 68 ans et 2 mois, et non à
+    69 ans."""
+    for generation in (1961, 2000):
+        a_65 = cycle_de_vie.diviseur_a(simulateur, generation, 65.0)
+        mensuelle = a_65 / cycle_de_vie.diviseur_a(simulateur, generation, 65.0 + 1 / 12) - 1.0
+        assert 0.0029 <= mensuelle <= 0.0032, (generation, mensuelle)
+    for generation in (1962, 1970, 1980, 2000):
+        equilibre = cycle_de_vie.age_d_equilibre(simulateur, generation)
+        a_65 = equilibre.diviseur_a_l_age_de_reference
+        assert cycle_de_vie.age_cible(
+            equilibre.coefficient,
+            lambda mois: a_65 / cycle_de_vie.diviseur_a(simulateur, generation, 65.0 + mois / 12),
+            65.0) == equilibre.au_mois
+    assert cycle_de_vie.age_d_equilibre(simulateur, 1962).au_mois == 65.0 + 2 / 12
+    equilibre = cycle_de_vie.age_d_equilibre(simulateur, 2000)
+    assert equilibre.au_mois == 69.0
+    assert cycle_de_vie.age_cible(equilibre.coefficient, _majoration_finlandaise,
+                                  65.0) == 68.0 + 2 / 12
+
+
+# ---------------------------------------------------------------------------
+# Le simulateur du COR : la part de la vie passée en retraite
+# ---------------------------------------------------------------------------
+
+#: Le simulateur du COR réécrit par B. Scherrer et M. Baudin, au commit
+#: ``f3c2d92`` (``doc/pilotage-vie-en-retraite.ipynb`` et
+#: ``retraites/fileProjection.json``, lus le 10 octobre 2026) : l'année ;
+#: l'âge effectif moyen de départ que le COR de juin 2019 projetait ; la
+#: génération qui part cette année-là à cet âge, ``round(année + 0,5 − âge)`` ;
+#: son espérance de vie à 60 ans, du COR de juin 2019 ; la part de la vie
+#: passée en retraite qu'il en tire, 29,05 % et 32,25 %.
+SIMULATEUR_DU_COR = {
+    2020: (62.165131135, 1958, 27.617116506, 0.2904910180336402),
+    2070: (63.913405939, 2007, 34.331382642, 0.3224587178843781),
+}
+
+#: L'âge qui tiendrait en 2070 la part de 2020, par sa méthode
+#: (``SimulateurRetraites.calculeAge``) et sur ses espérances de vie : celui
+#: de la génération 2004, qu'il lit « proche de 66 ans » sur sa figure ; et
+#: l'espérance de vie à 60 ans de cette génération dans son fichier.
+SIMULATEUR_DU_COR_2070 = (2004, 34.008010774)
+
+#: L'écart de ses espérances de vie à 60 ans à celles du dépôt, en années, et
+#: l'écart de la part de vie qui s'ensuit, dépôt moins simulateur, par année.
+#: Une seule cause : les siennes sont celles du COR de juin 2019, celles du
+#: dépôt sont celles de l'INSEE de 2026, que le COR de juin 2026 emploie
+#: (figure 3.6 : le test suivant).
+ECARTS_SIMULATEUR_DU_COR = {2020: ((1.0, 1.4), (-0.012, -0.008)),
+                            2070: ((3.0, 3.4), (-0.027, -0.021))}
+
+
+def _age_qui_tient(simulateur, annee: int, part: float) -> float:
+    """L'âge auquel partir l'année ``annee`` pour passer en retraite la part
+    ``part`` de sa vie, par la méthode du simulateur du COR : la génération est
+    celle qui part cette année-là à cet âge, d'où un point fixe."""
+    mortalite = simulateur.mortalite
+    for generation in range(annee - 75, annee - 50):
+        age = (1.0 - part) * cycle_de_vie.age_de_deces_cor(mortalite, generation)
+        if round(annee + 0.5 - age) == generation:
+            return age
+    raise AssertionError(f"pas d'âge qui tienne {part} en {annee}")
+
+
+def test_la_part_de_vie_du_simulateur_du_cor_se_retrouve_a_ses_esperances_de_vie_pres(
+        simulateur):
+    """Sa part de vie est celle du dépôt sous la convention du COR,
+    (60 + e60 − âge) / (60 + e60) : sur ses espérances de vie, la formule rend
+    ses 29,05 % de 2020 et 32,25 % de 2070. Sur les tables du dépôt, les mêmes
+    départs passent en retraite 28,1 % et 29,9 % de leur vie : ses
+    espérances de vie à 60 ans dépassent celles du dépôt de 1,2 an pour la
+    génération 1958, de 3,2 ans pour la génération 2007."""
+    mortalite = simulateur.mortalite
+    for annee, (age, generation, esperance, part) in SIMULATEUR_DU_COR.items():
+        assert round(annee + 0.5 - age) == generation
+        assert (60.0 + esperance - age) / (60.0 + esperance) == pytest.approx(part, abs=1e-12)
+        e60 = cycle_de_vie.age_de_deces_cor(mortalite, generation) - 60.0
+        depot = cycle_de_vie.part_de_vie(simulateur, age, generation + age, cor=True)
+        assert depot == pytest.approx((60.0 + e60 - age) / (60.0 + e60), abs=1e-12)
+        (bas_e60, haut_e60), (bas, haut) = ECARTS_SIMULATEUR_DU_COR[annee]
+        assert bas_e60 <= esperance - e60 <= haut_e60, (annee, esperance - e60)
+        assert bas <= depot - part <= haut, (annee, depot - part)
+
+
+def test_l_age_qui_tient_la_part_de_2020_monte_moins_sur_les_tables_du_depot(simulateur):
+    """Par la méthode du simulateur, l'âge qui tiendrait en 2070 la part de
+    2020 est 66,7 ans sur ses espérances de vie. Sur celles du dépôt, il est
+    65,4 ans, pour tenir la part de 2020 du dépôt, 28,09 % ; 64,6 ans pour
+    tenir la sienne. Ses espérances de vie à 60 ans gagnent 6,4 ans de la
+    génération 1958 à la génération 2004, celles du dépôt 4,5 ans de 1958 à
+    2005."""
+    generation, esperance = SIMULATEUR_DU_COR_2070
+    age_2020, generation_2020, esperance_2020, part_2020 = SIMULATEUR_DU_COR[2020]
+    sien = (1.0 - part_2020) * (60.0 + esperance)
+    assert round(2070 + 0.5 - sien) == generation
+    assert sien == pytest.approx(66.70, abs=0.005)
+    part_du_depot = cycle_de_vie.part_de_vie(simulateur, age_2020, generation_2020 + age_2020,
+                                             cor=True)
+    assert part_du_depot == pytest.approx(0.2809, abs=0.0005)
+    assert _age_qui_tient(simulateur, 2070, part_du_depot) == pytest.approx(65.41, abs=0.05)
+    assert _age_qui_tient(simulateur, 2070, part_2020) == pytest.approx(64.59, abs=0.05)
+    mortalite = simulateur.mortalite
+    assert esperance - esperance_2020 == pytest.approx(6.39, abs=0.01)
+    assert (cycle_de_vie.age_de_deces_cor(mortalite, 2005)
+            - cycle_de_vie.age_de_deces_cor(mortalite, 1958)) == pytest.approx(4.51, abs=0.1)
+
+
+def test_la_part_de_vie_de_chaque_generation_est_celle_du_cor_de_2026(cor, simulateur):
+    """Le COR de juin 2026 publie, génération par génération, la durée de la
+    retraite et sa part dans la vie (figure 3.6), à l'âge moyen de départ
+    qu'il projette, 60 + e60 − durée. À cet âge, la part de vie du dépôt, sous
+    la convention du COR, est la sienne à 0,1 point près, de la génération
+    1940 à la génération 2000 : leurs espérances de vie sont les mêmes, ce que
+    celles du simulateur, du COR de 2019, ne sont plus."""
+    duree = cor["duree_retraite"]
+    for generation in range(1940, 2001):
+        cle = str(generation)
+        age = 60.0 + duree["esperance_60"]["ensemble"][cle] - duree["annees"][cle]
+        depot = cycle_de_vie.part_de_vie(simulateur, age, generation + age, cor=True)
+        assert depot == pytest.approx(duree["part_de_vie"][cle], abs=0.001), generation

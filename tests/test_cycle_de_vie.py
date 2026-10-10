@@ -8,9 +8,10 @@ un rendement qu'on connaît d'avance se retrouve, une durée de retraite est
 celle que la convention dit, un taux de récupération est le rapport de deux
 sommes, et chaque système reçoit et verse ce que le modèle lui prête ; à
 chaque âge de départ, de l'âge d'ouverture à l'annulation de la décote, en
-net, sous les trois productivités du COR. La confrontation aux chiffres
-publiés par le COR, TRAJECTOiRE et l'OCDE est dans
-``tests/test_cycle_de_vie_references.py``.
+net, sous les trois productivités du COR ; l'âge d'équilibre, où une
+génération retrouve le diviseur ou la part de vie de la référence du compte.
+La confrontation aux chiffres publiés par le COR, TRAJECTOiRE, l'OCDE, l'ETK
+et le simulateur du COR est dans ``tests/test_cycle_de_vie_references.py``.
 """
 
 from __future__ import annotations
@@ -540,3 +541,110 @@ def test_sous_une_productivite_plus_forte_la_pension_monte_sur_l_aspa():
     recuperation = [depart.indicateurs["actuel"].taux_recuperation for depart in departs]
     assert aspa[0] < aspa[1] < aspa[2]
     assert recuperation[0] > recuperation[1] > recuperation[2]
+
+
+# ---------------------------------------------------------------------------
+# L'âge d'équilibre
+# ---------------------------------------------------------------------------
+
+
+def test_la_reference_est_la_generation_qui_a_l_age_de_reference_a_la_bascule(simulateur):
+    """Le diviseur de référence est celui que le compte prend pour convertir
+    les droits acquis : l'âge de référence, 65 ans, au 1er janvier de l'année
+    de la bascule, 2026 ; la génération 1961 y retrouve le sien à 65 ans
+    exactement."""
+    reference = cycle_de_vie.reference_du_compte(simulateur)
+    assert (reference.naissance, reference.age, reference.annee) == (1961.0, 65.0, 2026)
+    equilibre = cycle_de_vie.age_d_equilibre(simulateur, 1961)
+    assert equilibre.diviseur_reference == simulateur.convertisseur.coefficient(
+        65.0, 2026).diviseur
+    assert (equilibre.age, equilibre.au_mois, equilibre.coefficient) == (65.0, 65.0, 1.0)
+
+
+def test_a_l_age_d_equilibre_le_capital_rend_la_pension_de_la_reference(simulateur):
+    """Au premier mois de l'âge d'équilibre, le diviseur ne dépasse plus celui
+    de la référence : à capital égal, la pension l'atteint ; le mois d'avant,
+    non. Les générations nées avant la référence y sont plus tôt qu'elle, les
+    suivantes plus tard, d'autant plus qu'elles vivront plus longtemps."""
+    ages = []
+    for generation in (1940, 1950, 1970, 1980, 2000):
+        equilibre = cycle_de_vie.age_d_equilibre(simulateur, generation)
+        au_mois = equilibre.au_mois
+        assert (cycle_de_vie.diviseur_a(simulateur, generation, au_mois)
+                <= equilibre.diviseur_reference
+                < cycle_de_vie.diviseur_a(simulateur, generation, au_mois - 1 / 12))
+        assert au_mois - 1 / 12 < equilibre.age <= au_mois
+        assert (equilibre.coefficient > 1.0) == (generation < 1961)
+        ages.append(equilibre.age)
+    assert ages == sorted(ages)
+    assert ages[0] < 65.0 < ages[2]
+
+
+def test_sans_prefinancement_l_age_d_equilibre_tient_la_duree_de_retraite(simulateur):
+    """Le taux de préfinancement étant nul, le diviseur est l'espérance de vie
+    résiduelle : à l'âge d'équilibre, chaque génération espère la retraite de
+    la référence, en années, à l'interpolation entre deux mois près."""
+    mortalite = simulateur.mortalite
+    attendue = mortalite.esperance_residuelle(65.0, 2026.0, None)
+    for generation in (1940, 1970, 2000):
+        age = cycle_de_vie.age_d_equilibre(simulateur, generation).age
+        assert mortalite.esperance_residuelle(age, generation + age, None) == pytest.approx(
+            attendue, abs=0.001)
+
+
+def test_l_age_de_part_de_vie_constante_est_celui_que_croise_le_balayage(
+        simulateur, balayage_1970):
+    """La part de vie de :func:`part_de_vie` est celle que le balayage calcule
+    à chaque âge de départ, au millionième ; l'âge où elle rejoint celle de la
+    référence, un homme de la génération 1961 parti à 65 ans, est celui où la
+    courbe du balayage la croise, à l'interpolation entre deux trimestres
+    près."""
+    cas = _cas("salaire_moyen")
+    cible = cycle_de_vie.part_de_vie(simulateur, 65.0, 2026.0, "H")
+    points = []
+    for depart in balayage_1970:
+        carriere = cas.carriere_a(simulateur, 1970, depart.age)
+        debut = carriere.annee_liquidation + carriere.fraction_annee_liquidation
+        part = depart.indicateurs["actuel"].part_de_vie
+        assert cycle_de_vie.part_de_vie(simulateur, depart.age, debut, "H") == pytest.approx(
+            part, abs=1e-6)
+        points.append((depart.age, part, debut - depart.age))
+    (age_avant, avant, naissance), (age_apres, apres, _) = next(
+        (un, deux) for un, deux in zip(points, points[1:]) if un[1] > cible >= deux[1])
+    croisement = age_avant + (avant - cible) / (avant - apres) * (age_apres - age_avant)
+    assert cycle_de_vie.age_de_part_de_vie_constante(simulateur, naissance, "H") == pytest.approx(
+        croisement, abs=0.002)
+
+
+def test_sous_la_convention_du_cor_l_age_suit_l_age_de_deces(simulateur):
+    """Sous la convention du COR, la part de vie est (D − âge) / D : l'âge qui
+    la tient est celui de référence fois le rapport des âges de décès."""
+    mortalite = simulateur.mortalite
+    for generation in (1940, 2000):
+        age = cycle_de_vie.age_de_part_de_vie_constante(simulateur, generation, cor=True)
+        assert age == pytest.approx(65.0 * cycle_de_vie.age_de_deces_cor(mortalite, generation)
+                                    / cycle_de_vie.age_de_deces_cor(mortalite, 1961), abs=1e-12)
+        assert cycle_de_vie.part_de_vie(simulateur, age, generation + age, cor=True) == (
+            pytest.approx(cycle_de_vie.part_de_vie(simulateur, 65.0, 2026.0, cor=True),
+                          abs=1e-12))
+
+
+def test_les_ages_d_un_cas_type_ne_tiennent_qu_a_sa_mortalite(simulateur):
+    """Le cas type n'entre dans ses âges d'équilibre que par la mortalité de
+    son diviseur, la population où son salaire le range, et par son sexe pour
+    la part de vie : le salarié au salaire moyen et le fonctionnaire de
+    catégorie active, du même vingtile, ont les mêmes âges, à des âges de
+    départ que cinq années séparent. Le salarié au SMIC, d'un vingtile qui
+    vit moins longtemps, retrouve plus tard la référence : de 1961 à 2000,
+    son diviseur à 65 ans gagne 3,58 ans, contre 3,38, et il baisse moins
+    vite avec l'âge, de 0,83 an par an, contre 0,88."""
+    moyen = cycle_de_vie.ages_d_equilibre(simulateur, _cas("salaire_moyen"), 2000)
+    actif = cycle_de_vie.ages_d_equilibre(simulateur, _cas("fonctionnaire_actif"), 2000)
+    smic = cycle_de_vie.ages_d_equilibre(simulateur, _cas("smic_carriere_complete"), 2000)
+    assert moyen.population == actif.population == "niveau_de_vie_v14"
+    assert moyen.age_de_depart - actif.age_de_depart == 5.0
+    assert (moyen.diviseur, moyen.part_de_vie) == (actif.diviseur, actif.part_de_vie)
+    assert moyen.diviseur == cycle_de_vie.age_d_equilibre(simulateur, 2000, "H", moyen.population)
+    assert smic.population == "niveau_de_vie_v04"
+    assert smic.diviseur.age > moyen.diviseur.age
+    assert smic.part_de_vie > moyen.part_de_vie

@@ -3,12 +3,13 @@
 **Reprise, au 10 octobre 2026.** Fait : `cycle_de_vie.py`, onze indicateurs
 des six systèmes, sous la convention de l'OCDE et sous celle du COR, les
 contributions d'équilibre, chaque âge de départ, les prélèvements de chaque
-année ; le 10 octobre, l'écart au COR des générations 1963 à 1970, trouvé :
-le dépôt retrouve la série brute du COR de 2025, et celle de 2026 en est une
-révision que le COR ne dit pas, déclarée. Reste, dans cet ordre : l'âge
-d'équilibre ; le portage et l'affichage, avec l'étape 10 ; la génération
-1941. Commencer par l'âge d'équilibre. Détail : « Ce qui reste » de la note
-`2026-10-10-etape-9-ecart-au-cor.md`.
+année ; l'écart au COR des générations 1963 à 1970, trouvé et déclaré ; le
+10 octobre, l'âge d'équilibre, du diviseur et de la part de vie, confronté à
+l'ETK et au simulateur du COR, deux points du registre repris ; la génération
+1941, aux données (étape 7). Reste, dans cet ordre : le portage et
+l'affichage, avec l'étape 10 ; la révision de 2026, au COR ; la rémunération
+moyenne par tête du COR, aux données ; Typfallsmodellen, au registre.
+Commencer par le portage. Détail : `2026-10-10-etape-9-age-d-equilibre.md`.
 
 **La demande.** L'étape 9 de l'action : « les indicateurs de cycle de vie, par
 cas type et génération, sous les six systèmes : rendement interne, durée de

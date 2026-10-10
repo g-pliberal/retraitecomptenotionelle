@@ -103,6 +103,31 @@ l'ASPA et le taux de remplacement net en euros courants, constants et en
 salaire moyen ; le dépôt fait de même (:class:`Depart`), sous les trois
 productivités du COR (:func:`hypotheses_de_productivite`).
 
+L'ÂGE D'ÉQUILIBRE (:func:`age_d_equilibre`). Les indicateurs disent ce qu'une
+génération reçoit à l'âge où elle part ; deux modèles disent en plus à quel
+âge elle devrait partir pour retrouver une génération de référence. L'ETK, le
+Centre finlandais des pensions, publie pour chaque génération son âge cible
+(« tavoite-eläkeikä ») : le premier mois où la majoration pour report, 0,4 %
+par mois depuis l'âge minimal, compense au moins le coefficient d'espérance
+de vie, qui rapporte la valeur en capital d'une pension en 2009 à celle de
+l'année (:func:`age_cible`) ; 66 ans et 3 mois pour la génération 1962.
+Transposé au compte, le coefficient est le rapport du diviseur de la
+référence à celui de la génération au même âge, et la majoration pour report,
+ce dont le diviseur baisse quand l'âge monte : l'âge d'équilibre est celui où
+le diviseur de la génération rejoint celui de la référence, et où, à
+cotisations égales, elle en retrouve la pension. La référence est celle du
+compte (:func:`reference_du_compte`) : la conversion des droits acquis prend le
+diviseur de l'âge de référence au 1er janvier de l'année de la bascule, 65 ans
+en 2026, la génération 1961. Le taux de préfinancement étant nul par défaut,
+le diviseur est l'espérance de vie résiduelle, et l'âge d'équilibre tient
+constante la DURÉE de la retraite. Le simulateur du COR, réécrit par B. Scherrer et M.
+Baudin, tient constante sa PART dans la vie, (60 + e60 − âge) / (60 + e60) ;
+:func:`age_de_part_de_vie_constante` le fait sous les deux conventions de
+:attr:`Indicateurs.part_de_vie`, pour la même référence. Par cas type
+(:func:`ages_d_equilibre`), le diviseur suit la population de la carrière, la
+même des deux côtés de l'égalité, et la part de vie aussi, avec le sexe du cas
+type.
+
 CE QUE LE MODULE NE FAIT PAS. La pension nette l'est au taux plein de CSG, sans
 le taux réduit ni le médian que le revenu fiscal d'un foyer ouvrirait ; la
 maladie des pensions des régimes de base autres que le régime général, que
@@ -1139,3 +1164,223 @@ def balayage(simulateur, cas, generation: int, cor: bool = False,
         depart(simulateur, simulateur.simuler(cas.carriere_a(simulateur, generation, age)),
                cor, age)
         for age in ages_de_depart(simulateur, cas, generation, pas))
+
+
+# -- l'âge d'équilibre -------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class Reference:
+    """La génération à laquelle le compte rapporte les autres : celle qui a
+    l'âge de référence au 1er janvier de l'année de la bascule."""
+
+    #: Sa naissance, en date décimale : l'année de la bascule moins l'âge de
+    #: référence, un 1er janvier pour un âge en années entières.
+    naissance: float
+    #: L'âge de référence, et l'année de la bascule, où elle l'atteint.
+    age: float
+    annee: int
+
+
+def reference_du_compte(simulateur) -> Reference:
+    """La référence du compte : la conversion des droits acquis prend le
+    diviseur de l'âge de référence au 1er janvier de l'année de la bascule
+    (:meth:`~retraite_notionnelle.scenarios.notionnel.ScenarioNotionnel._droits_acquis`),
+    65 ans en 2026, la génération 1961."""
+    annee = simulateur.parametres.annee_bascule
+    age = simulateur.age_reference.age(annee)
+    return Reference(naissance=annee - age, age=age, annee=annee)
+
+
+def diviseur_a(simulateur, naissance: float, age: float, sexe: str | None = None,
+               population: str | None = None) -> float:
+    """Le diviseur du compte de qui est né à la date ``naissance`` — un 1er
+    janvier pour une génération — et part à ``age``, en mois entiers : celui
+    de :meth:`~retraite_notionnelle.moteur.conversion.Convertisseur.coefficient`,
+    le mois du départ. ``sexe`` ne compte que sous une table par sexe."""
+    mois = int(round((naissance + age) * 12.0))
+    return simulateur.convertisseur.coefficient(
+        age, mois // 12, sexe, mois % 12 + 1, population).diviseur
+
+
+#: Le report le plus long que :func:`age_cible` cherche, en mois.
+REPORT_MAXIMAL = 600
+
+
+def age_cible(coefficient: float, majoration, age_minimal: float,
+              mois_minimum: int = 0) -> float:
+    """Le critère de l'âge cible de l'ETK (« tavoite-eläkeikä », TyEL 75 c §) :
+    le premier mois entier où la majoration pour report, comptée depuis
+    ``age_minimal``, compense au moins ce que le coefficient retire à la
+    pension — où ``coefficient × majoration(mois)`` atteint un. La majoration
+    croît avec le report : en Finlande, ``1 + 0,004 × mois``. ``mois_minimum``
+    borne la recherche en deçà de l'âge minimal : zéro en Finlande, où l'on ne
+    part pas avant lui ; moins sous le compte, où une génération plus ancienne
+    que la référence retrouve son diviseur plus tôt."""
+
+    def compense(mois: int) -> bool:
+        return coefficient * majoration(mois) >= 1.0
+
+    mois = 0
+    if compense(mois):
+        while mois > mois_minimum and compense(mois - 1):
+            mois -= 1
+    else:
+        while not compense(mois):
+            mois += 1
+            if mois > REPORT_MAXIMAL:
+                raise ValueError(f"aucun report de {REPORT_MAXIMAL} mois au plus ne "
+                                 f"compense le coefficient {coefficient}")
+    return age_minimal + mois / 12.0
+
+
+@dataclass(frozen=True)
+class AgeEquilibre:
+    """L'âge auquel une génération retrouve le diviseur de la référence."""
+
+    generation: int
+    #: L'âge où son diviseur égale celui de la référence, interpolé entre les
+    #: deux mois qui l'encadrent.
+    age: float
+    #: Le premier mois entier où il ne le dépasse plus, où la pension, à
+    #: capital égal, est au moins celle de la référence : l'âge cible de
+    #: l'ETK, compté comme le sien.
+    au_mois: float
+    #: Le diviseur de la référence, et celui de la génération à l'âge de
+    #: référence.
+    diviseur_reference: float
+    diviseur_a_l_age_de_reference: float
+
+    @property
+    def coefficient(self) -> float:
+        """Ce que la longévité de la génération retire à sa pension à l'âge de
+        référence, à capital égal : le rapport des deux diviseurs, comme le
+        coefficient de l'ETK est le rapport de deux valeurs en capital."""
+        return self.diviseur_reference / self.diviseur_a_l_age_de_reference
+
+
+#: L'âge le plus bas où l'on cherche un âge d'équilibre, en années.
+AGE_EQUILIBRE_MINIMAL = 40.0
+
+
+def age_d_equilibre(simulateur, generation: int, sexe: str | None = None,
+                    population: str | None = None) -> AgeEquilibre:
+    """L'âge d'équilibre du diviseur de la génération ``generation``, née un
+    1er janvier, sous la mortalité de ``population`` : la même des deux côtés
+    de l'égalité, pour que l'âge ne mesure que la longévité des générations.
+    C'est :func:`age_cible`, le coefficient et la majoration lus sur le
+    diviseur, le report compté depuis l'âge de référence ; puis l'âge exact,
+    entre le mois trouvé et le précédent, où les deux diviseurs sont égaux."""
+    reference = reference_du_compte(simulateur)
+    cible = diviseur_a(simulateur, reference.naissance, reference.age, sexe, population)
+
+    def diviseur(mois: int) -> float:
+        return diviseur_a(simulateur, generation, reference.age + mois / 12.0,
+                          sexe, population)
+
+    a_la_reference = diviseur(0)
+    minimum = int(round((AGE_EQUILIBRE_MINIMAL - reference.age) * 12.0))
+    au_mois = age_cible(cible / a_la_reference, lambda mois: a_la_reference / diviseur(mois),
+                        reference.age, mois_minimum=minimum)
+    mois = int(round((au_mois - reference.age) * 12.0))
+    if mois <= minimum:
+        raise ValueError(f"génération {generation} : pas d'âge d'équilibre "
+                         f"au-dessus de {AGE_EQUILIBRE_MINIMAL:g} ans")
+    avant, apres = diviseur(mois - 1), diviseur(mois)
+    return AgeEquilibre(
+        generation=generation,
+        age=au_mois - (cible - apres) / (avant - apres) / 12.0,
+        au_mois=au_mois,
+        diviseur_reference=cible,
+        diviseur_a_l_age_de_reference=a_la_reference,
+    )
+
+
+def duree_esperee(simulateur, age: float, debut: float, sexe: str | None = None,
+                  population: str | None = None) -> float:
+    """Les années de retraite qu'espère qui part à ``age`` à la date ``debut``,
+    sous la survie de génération du sexe ``sexe``, les deux réunis pour
+    ``None``, et de ``population``, la population générale pour ``None`` : la
+    durée de :func:`pensions_esperees`, d'un seul tenant."""
+    courbe = simulateur.mortalite.courbe(age, debut, sexe, True, population)
+    return _integrale_survie(courbe, 0.0, float(len(courbe) - 1))
+
+
+def part_de_vie(simulateur, age: float, debut: float, sexe: str | None = None,
+                cor: bool = False, population: str | None = None) -> float:
+    """La part de la vie passée en retraite de qui part à ``age`` à la date
+    ``debut`` : la durée espérée sur l'âge plus elle, celle de
+    :attr:`Indicateurs.part_de_vie` pour la population générale ; sous la
+    convention du COR, (D − âge) / D, D l'âge de décès de sa génération
+    (:func:`age_de_deces_cor`), les deux sexes réunis, la population générale."""
+    if cor:
+        deces = age_de_deces_cor(simulateur.mortalite, math.floor(debut - age + 1e-9))
+        return (deces - age) / deces
+    duree = duree_esperee(simulateur, age, debut, sexe, population)
+    return duree / (age + duree)
+
+
+def age_de_part_de_vie_constante(simulateur, naissance: float, sexe: str | None = None,
+                                 cor: bool = False, population: str | None = None) -> float:
+    """L'âge auquel qui est né à la date ``naissance`` passe en retraite la
+    même part de sa vie que la référence (:func:`reference_du_compte`) partie
+    à l'âge de référence, de même sexe et de même population
+    (:func:`part_de_vie`). Sous la convention du COR, la part ne dépend que de
+    l'âge et de l'âge de décès D : l'âge est celui de référence fois le
+    rapport des deux D. Sous celle du dépôt, il se cherche par dichotomie, la
+    part baissant quand l'âge monte."""
+    reference = reference_du_compte(simulateur)
+    if cor:
+        mortalite = simulateur.mortalite
+        return reference.age * (
+            age_de_deces_cor(mortalite, math.floor(naissance + 1e-9))
+            / age_de_deces_cor(mortalite, math.floor(reference.naissance + 1e-9)))
+    cible = part_de_vie(simulateur, reference.age, float(reference.annee), sexe,
+                        population=population)
+    bas, haut = AGE_EQUILIBRE_MINIMAL, AGE_EQUILIBRE_MINIMAL + 50.0
+    while haut - bas > 1e-9:
+        milieu = 0.5 * (bas + haut)
+        if part_de_vie(simulateur, milieu, naissance + milieu, sexe,
+                       population=population) > cible:
+            bas = milieu
+        else:
+            haut = milieu
+    return 0.5 * (bas + haut)
+
+
+@dataclass(frozen=True)
+class AgesDEquilibre:
+    """Les âges d'équilibre d'un cas type né en ``generation``, et celui où il
+    part."""
+
+    generation: int
+    #: L'âge où il part sous le droit de sa génération, que le pilote fixe.
+    age_de_depart: float
+    #: La population dont la mortalité entre dans son diviseur.
+    population: str | None
+    diviseur: AgeEquilibre
+    #: L'âge qui lui laisse la part de vie de la référence, sous la survie de
+    #: génération de son sexe et de sa population.
+    part_de_vie: float
+
+
+def ages_d_equilibre(simulateur, cas, generation: int) -> AgesDEquilibre:
+    """Les âges d'équilibre du cas type ``cas`` né en ``generation``, sur la
+    mortalité de la population où son salaire le range
+    (:meth:`~retraite_notionnelle.moteur.conversion.Convertisseur.population_de`),
+    celle de son diviseur ; sous le rattachement par la pension, une variante,
+    qui la lit sur une pension que l'âge d'équilibre ne connaît pas, celle du
+    salaire reste. Sa part de vie suit aussi son sexe. Ni l'une ni l'autre
+    n'entrent dans :attr:`Indicateurs.part_de_vie`, ni dans l'âge de part de
+    vie constante sous la convention du COR, qui ne dépend que de la
+    génération."""
+    carriere = cas.construire(simulateur, generation)
+    population = simulateur.convertisseur.population_de(carriere)
+    return AgesDEquilibre(
+        generation=generation,
+        age_de_depart=carriere.age_liquidation,
+        population=population,
+        diviseur=age_d_equilibre(simulateur, generation, carriere.sexe, population),
+        part_de_vie=age_de_part_de_vie_constante(simulateur, generation, carriere.sexe,
+                                                 population=population),
+    )

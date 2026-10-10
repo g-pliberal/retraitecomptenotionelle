@@ -8,6 +8,8 @@
     python scripts/cycle_de_vie.py --ages salaire_moyen --generations 1970,2000
     python scripts/cycle_de_vie.py --ages cadre --productivites cor_reference \
         --scenarios actuel,notionnel_liberal --cor
+    python scripts/cycle_de_vie.py --equilibre        # les âges d'équilibre
+    python scripts/cycle_de_vie.py --equilibre --generations 1962,1970 --json equilibre.json
 
 Ce qu'il imprime : pour chaque indicateur et chaque système, un tableau des
 treize cas types sur les sept générations de la grille
@@ -29,6 +31,14 @@ décote, de trimestre en trimestre (``cycle_de_vie.balayage``), en net — la
 pension nette rapportée au minimum vieillesse, le taux de remplacement net en
 euros courants, constants et en salaire moyen, et les indicateurs de cycle de
 vie. Le scénario 1 seul, sauf ``--scenarios``.
+
+L'ÂGE D'ÉQUILIBRE (``--equilibre``, action 138, étape 9) : pour chaque
+génération, sur la table commune, puis pour chaque cas type de la grille, sur
+la mortalité de sa population, l'âge où le diviseur du compte rejoint celui de
+la génération de référence à l'âge de référence — exact, et au premier mois,
+comme l'ETK compte son âge cible —, et l'âge qui tient la part de la vie
+passée en retraite de la référence, sous la convention du COR et sous celle du
+dépôt (``cycle_de_vie.age_d_equilibre``, ``age_de_part_de_vie_constante``).
 """
 
 from __future__ import annotations
@@ -42,6 +52,7 @@ RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle import cycle_de_vie  # noqa: E402
+from retraite_notionnelle.calendrier import decomposer, formater_age  # noqa: E402
 from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS, calculer_cas_types  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
@@ -204,6 +215,97 @@ def _imprimer_les_ages(arguments, analyseur, scenarios: list[str]) -> None:
             ensure_ascii=False, indent=1), encoding="utf-8")
 
 
+#: Les générations de la table commune, sauf ``--generations``.
+GENERATIONS_EQUILIBRE = tuple(range(1940, 2001, 5))
+
+LEGENDE_EQUILIBRE = (
+    "Div : diviseur à l'âge de référence ; Coef : celui de la référence sur lui, "
+    "le coefficient de l'ETK ; Équil. : âge où le diviseur rejoint celui de la "
+    "référence, et premier mois où il le rejoint ; P COR, P 2 sx, P H, P F : âge qui "
+    "tient la part de vie de la référence, sous la convention du COR, puis sous la "
+    "survie de génération des deux sexes, des hommes, des femmes.")
+
+#: Les tableaux des cas types : le titre, et ce qu'il lit de leurs âges.
+TABLEAUX_EQUILIBRE = (
+    ("Vingtile de niveau de vie de la mortalité de son diviseur",
+     lambda ages: (ages.population or "commune").replace("niveau_de_vie_", "")),
+    ("Âge de départ du droit de sa génération", lambda ages: ages.age_de_depart),
+    ("Âge d'équilibre du diviseur, sur la mortalité de sa population",
+     lambda ages: ages.diviseur.age),
+    ("Âge de part de vie constante, survie de génération de son sexe et de sa population",
+     lambda ages: ages.part_de_vie),
+)
+
+
+def equilibres_communs(simulateur: Simulateur, generations) -> dict[int, dict]:
+    """Les âges d'équilibre de chaque génération, sur la table commune."""
+    resultats = {}
+    for generation in generations:
+        resultats[generation] = {
+            "diviseur": cycle_de_vie.age_d_equilibre(simulateur, generation),
+            "part_de_vie_cor": cycle_de_vie.age_de_part_de_vie_constante(
+                simulateur, generation, cor=True),
+            **{f"part_de_vie_{qui}": cycle_de_vie.age_de_part_de_vie_constante(
+                simulateur, generation, sexe)
+               for qui, sexe in (("unisexe", None), ("hommes", "H"), ("femmes", "F"))},
+        }
+    return resultats
+
+
+def _valeur(valeur) -> str:
+    return f"{valeur:>6}" if isinstance(valeur, str) else f"{valeur:>6.2f}"
+
+
+def _mois(age: float) -> str:
+    annees, mois = decomposer(age)
+    return f"{annees}a{mois:02d}m"
+
+
+def _imprimer_l_equilibre(arguments) -> None:
+    simulateur = Simulateur(Parametres())
+    reference = cycle_de_vie.reference_du_compte(simulateur)
+    choisies = ([int(g) for g in arguments.generations.split(",") if g]
+                if arguments.generations else None)
+    communs = equilibres_communs(simulateur, choisies or GENERATIONS_EQUILIBRE)
+    cas_types = {(cas.code, generation): cycle_de_vie.ages_d_equilibre(simulateur, cas, generation)
+                 for cas in CAS_TYPES for generation in choisies or GENERATIONS}
+    print(f"Référence du compte : la génération {reference.naissance:.0f}, "
+          f"{formater_age(reference.age)} au 1er janvier {reference.annee}.")
+    print(LEGENDE_EQUILIBRE)
+    print()
+    print("Table commune")
+    print(f"{'génér.':>6} {'Div':>6} {'Coef':>7} {'Équil.':>6} {'au mois':>8} "
+          + " ".join(f"{entete:>6}" for entete in ("P COR", "P 2 sx", "P H", "P F")))
+    for generation, ages in communs.items():
+        diviseur = ages["diviseur"]
+        print(f"{generation:>6} {diviseur.diviseur_a_l_age_de_reference:>6.2f} "
+              f"{diviseur.coefficient:>7.4f} {diviseur.age:>6.2f} {_mois(diviseur.au_mois):>8} "
+              + " ".join(f"{ages[cle]:>6.2f}" for cle in (
+                  "part_de_vie_cor", "part_de_vie_unisexe", "part_de_vie_hommes",
+                  "part_de_vie_femmes")))
+    colonnes = sorted({generation for _, generation in cas_types})
+    for titre, lire in TABLEAUX_EQUILIBRE:
+        print()
+        print(titre)
+        print(f"{'':<46}" + " ".join(f"{generation:>6}" for generation in colonnes))
+        for cas in CAS_TYPES:
+            print(f"{cas.libelle[:45]:<46}" + " ".join(
+                _valeur(lire(cas_types[(cas.code, generation)])) for generation in colonnes))
+    if arguments.json:
+        Path(arguments.json).write_text(json.dumps({
+            "reference": vars(reference),
+            "table_commune": {str(generation): {
+                **{cle: valeur for cle, valeur in ages.items() if cle != "diviseur"},
+                "diviseur": {**vars(ages["diviseur"]),
+                             "coefficient": ages["diviseur"].coefficient}}
+                for generation, ages in communs.items()},
+            "cas_types": {f"{code}|{generation}": {
+                **{cle: valeur for cle, valeur in vars(ages).items() if cle != "diviseur"},
+                "diviseur": {**vars(ages.diviseur), "coefficient": ages.diviseur.coefficient}}
+                for (code, generation), ages in cas_types.items()},
+        }, ensure_ascii=False, indent=1), encoding="utf-8")
+
+
 def main(argv: list[str] | None = None) -> int:
     analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     analyseur.add_argument("--cor", action="store_true",
@@ -216,11 +318,16 @@ def main(argv: list[str] | None = None) -> int:
     analyseur.add_argument("--json", help="écrit toute la grille dans ce fichier")
     analyseur.add_argument("--ages", help="les cas types à balayer âge par âge, "
                                           "séparés par des virgules")
-    analyseur.add_argument("--generations", help="avec --ages : les générations, "
-                                                 "séparées par des virgules")
+    analyseur.add_argument("--generations", help="avec --ages ou --equilibre : les "
+                                                 "générations, séparées par des virgules")
     analyseur.add_argument("--productivites", help="avec --ages : les hypothèses de "
                                                    "productivité, séparées par des virgules")
+    analyseur.add_argument("--equilibre", action="store_true",
+                           help="les âges d'équilibre de chaque génération et des cas types")
     arguments = analyseur.parse_args(argv)
+    if arguments.equilibre:
+        _imprimer_l_equilibre(arguments)
+        return 0
 
     indicateurs = [nom for nom in arguments.indicateurs.split(",") if nom]
     defaut = "actuel" if arguments.ages else ",".join(cycle_de_vie.SCENARIOS)

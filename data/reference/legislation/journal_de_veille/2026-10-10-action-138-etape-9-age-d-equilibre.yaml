@@ -1,0 +1,26 @@
+date: "2026-10-10"
+session: "action 138, étape 9, sixième partie : l'âge d'équilibre, du diviseur et de la part de vie, confronté à l'ETK et au simulateur du COR"
+consulte: >-
+  `python scripts/veille_droit.py` : quatre fiches à relire, aucune touchée par
+  la session, qui n'écrit aucune règle du scénario 1. Le mémo de l'ETK du
+  26 octobre 2023 sur le coefficient d'espérance de vie de 2024 (eak2024.pdf),
+  et les pages « Elinaikakerroin » et « Vanhuuseläke » d'etk.fi : l'âge cible
+  de chaque génération et la majoration pour report. Le simulateur du COR
+  réécrit par B. Scherrer et M. Baudin, au commit f3c2d92, lu sans être copié
+  (GPL) : doc/pilotage-vie-en-retraite.ipynb, SimulateurRetraites.py
+  (_calcule_S_RNV_REV, calculeAge) et ses projections du COR de juin 2019
+  (fileProjection.json). Aucun texte de droit français.
+trouve: >-
+  L'âge cible de l'ETK est le premier mois où la majoration pour report,
+  0,4 % par mois depuis l'âge minimal, compense le coefficient : appliquée au
+  compte, la règle est l'égalité des diviseurs, la majoration y étant
+  actuarielle, 0,30 à 0,31 % par mois à 65 ans. Sur la référence du compte,
+  la génération 1961 à 65 ans, l'âge d'équilibre du diviseur va de 63 ans et
+  7 mois (génération 1940) à 69 ans (2000), l'âge qui tient la part de vie, de
+  64,1 à 67,8 ans. Les espérances de vie du simulateur du COR, celles du COR
+  de juin 2019, passent celles du dépôt, qui sont celles du COR de 2026, de
+  0,4 à 3,2 ans : l'âge qui tiendrait en 2070 la part de vie de 2020 y est
+  66,7 ans, 65,4 sur les tables du dépôt.
+reste: >-
+  Le portage de l'âge d'équilibre, avec celui de cycle_de_vie.py, à l'étape
+  10. Le point de Typfallsmodellen, le dernier du chantier 138.9 au registre.

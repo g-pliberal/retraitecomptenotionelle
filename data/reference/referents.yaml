@@ -6859,8 +6859,20 @@ referents:
           espérances de vie datent de 2019 : il faudrait prendre les
           tables du dépôt. La part de la vie en retraite est reprise
           le 7 octobre 2026 (action 138, étape 9), sur ces tables ;
-          reste l'âge qui la tient constante.
-        etat: a_reprendre
+          l'âge qui la tient constante, le 10 octobre 2026 :
+          `cycle_de_vie.age_de_part_de_vie_constante`, l'âge où une
+          génération passe en retraite la part de sa vie qu'y passe
+          la référence du compte, la génération 1961 partie à 65 ans
+          — sous la convention du COR, 65,7 ans pour la génération
+          1970, 67,8 ans pour 2000 —, et, sous la survie de
+          génération, du sexe et du vingtile de chaque cas type. Sa
+          méthode redonne ses 29,05 % de 2020 et 32,25 % de 2070 sur
+          ses espérances de vie, qui passent celles du dépôt,
+          l'INSEE de 2026 comme le COR de 2026, de 1,2 an (génération
+          1958) à 3,2 ans (2007) : sur celles du dépôt, l'âge qui
+          tiendrait en 2070 la part de 2020 est 65,4 ans, et non 66,7
+          (tests/test_cycle_de_vie_references.py).
+        etat: repris
         chantier: "138.9"
     bilan: >-
       Il reste le seul à piloter le système par l'âge et par la part de
@@ -9366,8 +9378,22 @@ referents:
           Méthode : le diviseur du dépôt le donne directement, c'est
           l'âge où le diviseur d'une génération égale celui de la
           génération de référence à 65 ans. Il servirait l'étape
-          138.9 et l'action 143.
-        etat: a_reprendre
+          138.9 et l'action 143. Repris le 10 octobre 2026 (action
+          138, étape 9) : `cycle_de_vie.age_d_equilibre`, l'âge où le
+          diviseur d'une génération rejoint celui de la référence du
+          compte, l'âge de référence au 1er janvier de la bascule —
+          65 ans en 2026, la génération 1961 —, exact et au premier
+          mois, compté par la règle de l'âge cible (`age_cible`), qui
+          redonne sur le mémo de l'ETK les 66 ans et 3 mois de la
+          génération 1962. Sous le compte, la majoration pour report
+          est actuarielle, 0,30 à 0,31 % par mois à 65 ans, et non 0,4
+          % : sur la table commune, 65 ans et 2 mois pour la
+          génération 1962, 66 ans et 1 mois pour 1970, 69 ans pour
+          2000 ; sur la mortalité de leur vingtile, de 68,6 à 69,3 ans
+          pour les cas types de la génération 2000 (`python
+          scripts/cycle_de_vie.py --equilibre` ;
+          tests/test_cycle_de_vie_references.py).
+        etat: repris
         chantier: "138.9"
       - quoi: >-
           Depuis la réforme de 2017, l'âge minimal des générations
