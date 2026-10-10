@@ -1,0 +1,116 @@
+schema_version: 1
+id: plafond_limite_age_fonction_publique
+intitule: >-
+  Les reculs et les prolongations de la limite d'âge du fonctionnaire civil
+  s'appliquent dans un ordre que la loi fixe — les reculs pour enfants d'abord, puis la
+  prolongation pour carrière incomplète, puis celle de l'actif jusqu'à la limite des
+  sédentaires ou le maintien du sédentaire jusqu'à soixante-dix ans —, et depuis le 14
+  juin 2023 leur bénéfice cumulé ne mène pas au-delà de soixante-dix ans. Avant, chaque
+  recul avait son plafond, jusqu'en 2022, et la prolongation ses dix trimestres.
+sorte: plafond
+fiches:
+- fiche: limite_age_fonction_publique
+  role: la limite d'âge de l'emploi, d'où partent les reculs et les prolongations
+- fiche: recul_limite_age_enfants
+  role: >-
+    les reculs pour enfants, appliqués les premiers ; plafonnés chacun, de 1986 à 2022,
+    à soixante-treize ou soixante-huit ans et à soixante et onze ou soixante-six ans
+- fiche: prolongation_activite_carriere_incomplete
+  role: >-
+    la prolongation de dix trimestres au plus, « après application des possibilités de
+    recul de la limite d'âge » (L. 556-5)
+- fiche: prolongation_activite_categorie_active
+  role: >-
+    le maintien de l'actif jusqu'à la limite des sédentaires, « sous réserve des
+    possibilités de recul » de L. 556-2, L. 556-3 et L. 556-5 (L. 556-7)
+- fiche: maintien_en_fonctions_jusqu_a_70_ans
+  role: >-
+    le maintien du sédentaire jusqu'à soixante-dix ans, dont L. 556-1 fait la borne de
+    tout le reste depuis le 14 juin 2023
+rang: 1
+domaine: age
+regimes: [fonction_publique_etat, cnracl]
+etape: preparer_la_chronologie
+face: droit
+etat: manquante
+lit:
+- la limite d'âge de l'emploi, et chaque recul et chaque prolongation que les fiches
+  reliées accordent
+ecrit:
+- l'âge où le fonctionnaire est radié des cadres, au plus tard
+dates_qui_decident:
+- age_atteint
+versions:
+- id: sans_plafond_commun
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006451372, article: "loi du 18 août 1936, article 4", en_vigueur: 1986-12-26}
+  - {id: LEGIARTI000006450727, article: "loi n° 84-834, article 1-1", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000044425138, article: "L. 556-5 CGFP", en_vigueur: 2022-03-01}
+  - {id: LEGIARTI000044425134, article: "L. 556-7 CGFP", en_vigueur: 2022-03-01}
+  nee_de: LEGIARTI000006451372
+  bornes:
+    age_atteint: [null, 2023-06-14]
+  contenu:
+    droit: >-
+      aucun plafond commun : de 1986 à 2022, le recul par enfant ne passe pas soixante-
+      treize ans pour la catégorie A et soixante-huit pour la B, celui du parent de trois
+      enfants soixante et onze et soixante-six ans (loi de 1936, article 4) ; la
+      prolongation pour carrière incomplète vient « Sous réserve des droits au recul »,
+      dix trimestres au plus (loi n° 84-834, article 1-1, puis L. 556-5) ; le maintien de
+      l'actif, sous réserve des reculs et de cette prolongation (article 1-3, puis L.
+      556-7) ; le code de 2022 ne reprend aucun des plafonds de la loi de 1936
+  exemples: aucun trouvé
+- id: soixante_dix_ans
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047452904, article: "L. 556-1 CGFP", en_vigueur: 2023-06-14}
+  - {id: LEGIARTI000044425138, article: "L. 556-5 CGFP", en_vigueur: 2022-03-01}
+  - {id: LEGIARTI000047452899, article: "L. 556-7 CGFP", en_vigueur: 2023-06-14}
+  nee_de: LEGIARTI000047452904
+  bornes:
+    age_atteint: [2023-06-14, null]
+  contenu:
+    droit: >-
+      « Le bénéfice cumulé de ce maintien en fonctions, des prolongations d'activité et des
+      reculs de limite d'âge prévus aux articles L. 556-2 à L. 556-5 ne peut conduire le
+      fonctionnaire à être maintenu en fonctions au delà de soixante-dix ans » (L. 556-1)
+    ordre: >-
+      les reculs de L. 556-2 à L. 556-4 ; la prolongation de L. 556-5, « après application »
+      des reculs ; pour l'actif, la prolongation jusqu'à soixante-sept ans de L. 556-7 ;
+      pour le sédentaire, le maintien jusqu'à soixante-dix ans de L. 556-1
+    parametres:
+      age_maximal: 70
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-10
+  prochaine_relecture: 2027-10-10
+  a_relire:
+  - >-
+    Le plafond de soixante-dix ans vaut-il sans le maintien ? L. 556-1 parle du « bénéfice
+    cumulé de ce maintien en fonctions, des prolongations d'activité et des reculs » ;
+    service-public l'écrit de tout cumul — « Le bénéfice cumulé des prolongations
+    d'activité ne peut pas conduire à vous maintenir en activité au-delà de 70 ans » —,
+    pour le sédentaire comme pour le contractuel, et ne le nomme pas pour l'actif.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 556-1, L. 556-5 et L. 556-7 CGFP ; loi du 18 août 1936, article 4 ; loi n° 84-834,
+      articles 1-1 et 1-3. Lus dans l'index LEGI du dépôt
+    date: 2026-10-10
+  - type: service_public
+    reference: >-
+      fiche F12395 : les reculs pour enfants d'abord, la prolongation pour carrière
+      incomplète « après application » de ceux-ci, et le plafond de soixante-dix ans de
+      leur cumul
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F12395
+    date: 2026-01-01
+historique:
+- >-
+  2026-10-10 — née avec l'action 151, étape 2 : la relation qui ordonne les exceptions à
+  la limite d'âge, et le plafond qui les borne depuis 2023.
+effet: >-
+  Aucun aujourd'hui, le modèle n'appliquant aucune limite d'âge. La limite appliquée, cette
+  relation fixe l'âge le plus tardif où un fonctionnaire civil peut servir : soixante-dix
+  ans depuis le 14 juin 2023, hors les corps de la fiche
+  `maintiens_en_fonctions_de_certains_corps`.

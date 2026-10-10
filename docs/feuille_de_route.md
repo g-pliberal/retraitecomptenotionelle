@@ -8414,15 +8414,16 @@ garde, l'action se clôt sur l'étape 1.
 
 ### 151. Partir très tard : le départ jusqu'au bout des tables de mortalité, puis la limite d'âge des fonctionnaires et ses exceptions — `en cours`
 
-**Reprise, au 10 octobre 2026.** Fait, l'étape 1 : la saisie accepte un départ
-jusqu'à 119 ans, le dernier âge entier que les tables de mortalité convertissent
-en rente ; les deux moteurs le calculent, deux témoins le rejouent, à 90 et à
-119 ans. Reste l'étape 2, au scénario 1 : la limite d'âge des fonctionnaires,
-que le modèle n'applique pas — le site simule un fonctionnaire en activité
-jusqu'à 119 ans. Commencer par la veille (`docs/veille_droit.md`) : lire, texte
-en main, la limite d'âge de chaque fonction publique et chacune des exceptions
-qui la reculent, puis proposer au propriétaire ce que fait le simulateur
-au-delà. Détail : la note du 10 octobre.
+**Reprise, au 10 octobre 2026.** Faites, l'étape 1 (le départ jusqu'à 119 ans)
+et l'étape 2 : la limite d'âge des civils et des militaires, et chacune de ses
+exceptions, lues de 1936 à 2026, en huit fiches que le modèle n'applique pas
+encore (`limite_age_fonction_publique` et les fiches qu'elle relie). Reste
+l'étape 3 : ATTENDRE la décision du propriétaire sur la proposition de la note
+de l'étape 2 — radier des cadres à la limite, les exceptions présumées autant
+que le départ saisi les demande —, la lui demander si elle n'est pas venue, puis
+modéliser la limite et chaque exception, en Python puis en JavaScript. La CARMF
+avant 2017 et le taux acquis au 31 mars 1983 attendent une étape à elles.
+Détail : la note de l'étape 2.
 
 **Demande**, le 10 octobre 2026 : « Pourquoi on bloque à 75 ans ? Est-ce que
 c'est uniquement une raison technique ? Ou est-ce qu'il y a un vrai problème

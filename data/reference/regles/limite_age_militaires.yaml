@@ -1,0 +1,147 @@
+schema_version: 1
+id: limite_age_militaires
+intitule: >-
+  Le militaire de carrière est rayé des cadres à la limite d'âge de son grade et de son
+  corps, de quarante-sept à soixante-sept ans, et le militaire sous contrat à sa limite
+  de durée de services ; la loi de 2010 les a relevées de deux ans. Il peut être maintenu
+  au-delà : trois ans au plus pour les besoins des forces depuis 2023, dix trimestres
+  pour l'officier sous contrat ou le commissionné à qui manque la durée du taux maximum,
+  jusqu'à l'âge maximal de la première section pour l'officier général — sans limite
+  d'âge pour celui qui a commandé en chef en temps de guerre —, et par périodes de deux
+  ans renouvelables pour les chefs et les musiciens des orchestres de la Garde
+  républicaine.
+domaine: age
+regimes: [fonction_publique_etat, pensions_civiles_1853]
+etape: preparer_la_chronologie
+face: droit
+etat: manquante
+lit:
+- le grade, le corps et le lien au service du militaire — de carrière ou sous contrat —,
+  que la saisie ne porte pas ; elle ne distingue que l'officier du non-officier
+- l'année où la limite d'avant 2011 est atteinte, pour la marche de 2011 à 2014
+ecrit:
+- la date de la radiation des cadres ou des contrôles par limite d'âge ou de durée de
+  services, qui ouvre la pension
+dates_qui_decident:
+- age_atteint
+versions:
+- id: avant_2011
+  statut: supposee
+  hypothese: >-
+    les limites par grade et par corps de L. 4139-16 dans ses rédactions de 2007 à 2011,
+    dont l'index LEGI ne reproduit pas les tableaux, et celles du statut général des
+    militaires avant 2007 (lois n° 72-662 et n° 2005-270) : deux ans de moins que depuis
+    2015 pour les limites inférieures à soixante-cinq ans (loi n° 2010-1330, article 33)
+  fiabilite: faible pour les valeurs, que les tableaux non lus portent ; haute pour la règle
+  textes:
+  - {id: LEGIARTI000006540342, article: "L. 4139-16 code de la défense", en_vigueur: 2007-03-30}
+  nee_de: LEGIARTI000006540342
+  bornes:
+    age_atteint: [null, 2011-07-01]
+  contenu:
+    droit: >-
+      « Les limites d'âge et âges maximaux de maintien en première section des
+      militaires » par grade et par corps ; les limites de durée de service des militaires
+      sous contrat ; « Les officiers sous contrat et les militaires commissionnés atteignant
+      leur limite de durée de service sont, sur leur demande, maintenus en service pour une
+      durée maximum de dix trimestres et dans la limite de la durée d'assurance nécessaire
+      pour obtenir le pourcentage maximum de la pension » ; les chefs et les musiciens des
+      orchestres de la Garde républicaine, « sur demande agréée, [...] maintenus en service
+      au-delà de la limite d'âge par périodes de deux ans renouvelables » (L. 4139-16,
+      2007)
+  exemples: aucun trouvé
+- id: loi_de_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000025014602, article: "loi n° 2010-1330, article 33", en_vigueur: 2011-12-23}
+  - reference: >-
+      décret n° 2011-2103 du 30 décembre 2011, articles 3 à 5 (JORFARTI000025061566,
+      JORFARTI000025061571, JORFARTI000025061574)
+    en_vigueur: 2011-12-31
+  - {id: LEGIARTI000023033635, article: "L. 4139-16 code de la défense", en_vigueur: 2011-07-01}
+  nee_de: LEGIARTI000023033635
+  bornes:
+    age_atteint: [2011-07-01, 2023-07-01]
+  contenu:
+    droit: >-
+      « la limite d'âge est fixée, à compter du 1er janvier 2015 : 1° A quarante-sept ans
+      lorsque cette limite d'âge était fixée antérieurement à quarante-cinq ans ; 2° A
+      cinquante-deux ans [...] cinquante ans ; 3° A cinquante-six ans [...] cinquante-quatre
+      ans ; 4° A cinquante-huit ans [...] cinquante-six ans ; 5° A cinquante-neuf ans [...]
+      cinquante-sept ans ; 6° A soixante ans [...] cinquante-huit ans ; 7° A soixante-deux
+      ans [...] soixante ans ; 8° A soixante-six ans [...] soixante-quatre ans » ; l'âge
+      maximal de maintien en première section, deux ans de plus ; les limites de durée de
+      services de quinze et vingt-cinq ans, dix-sept et vingt-sept ans (article 33)
+    transition: >-
+      selon l'année où la limite antérieure est atteinte : rien avant le 1er juillet 2011 ;
+      quatre mois de plus du 1er juillet au 31 décembre 2011, neuf en 2012, un an et deux
+      mois en 2013, un an et sept mois en 2014, deux ans à partir de 2015 (décret n°
+      2011-2103, articles 3 à 5)
+  exemples: aucun trouvé
+- id: reforme_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047769684, article: "L. 4139-16 code de la défense", en_vigueur: 2023-07-01}
+  - {id: LEGIARTI000054703007, article: "L. 4139-16 code de la défense", en_vigueur: 2026-08-19}
+  - {id: LEGIARTI000047920354, article: "L. 4139-17 code de la défense", en_vigueur: 2023-08-03}
+  - {id: LEGIARTI000047452945, article: "L. 4141-5 code de la défense", en_vigueur: 2023-09-01}
+  nee_de: LEGIARTI000047769684
+  bornes:
+    age_atteint: [2023-07-01, null]
+  contenu:
+    droit: >-
+      les limites par grade et par corps de L. 4139-16, rédaction du 19 août 2026 : pour les
+      sous-officiers de carrière de l'armée de terre, de la marine ou de l'air, quarante-sept
+      ans au grade de sergent, cinquante-deux à celui de sergent-chef, cinquante-huit à
+      celui d'adjudant, cinquante-neuf au-dessus ; pour les officiers des armes de l'armée
+      de terre et de marine, cinquante-neuf ans, l'âge maximal de maintien en première
+      section des officiers généraux étant soixante-trois ans ; jusqu'à soixante-six ans
+      pour les ingénieurs de l'armement et au contrôle général des armées, dont l'âge
+      maximal de maintien en première section est soixante-sept ans. Les tableaux, aplatis
+      dans l'index, se lisent colonne par colonne sur Légifrance. Les limites de durée de
+      service : vingt ans pour l'officier sous contrat,
+      dix-sept pour le commissionné, vingt-sept pour l'engagé, cinq pour le volontaire
+    maintiens: >-
+      « sur demande agréée, être maintenus en service pour répondre aux besoins des forces
+      armées [...] pendant une période qui ne peut excéder trois ans à compter de
+      l'atteinte de leur limite d'âge ou de leur limite de durée de service », exclusif des
+      maintiens de L. 4139-16 (L. 4139-17, depuis le 3 août 2023) ; l'officier général
+      maintenu en première section « Sans limite d'âge, quand il a commandé en chef en temps
+      de guerre ou a exercé avec distinction devant l'ennemi le commandement d'une armée »,
+      ou « Temporairement au-delà de la limite d'âge de son grade [...] sans toutefois
+      pouvoir servir au-delà de l'âge maximal de maintien en première section » (L.
+      4141-5) ; les orchestres de la Garde républicaine, par périodes de deux ans
+      renouvelables, sans âge qui les borne (L. 4139-16)
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-10
+  prochaine_relecture: 2027-10-10
+  a_relire:
+  - >-
+    Les tableaux de L. 4139-16 dans leurs rédactions de 2007 à 2023, que l'index LEGI ne
+    reproduit pas (« voir le fac-similé ») : lire leurs fac-similés au Journal officiel.
+    Et le statut général des militaires avant 2007 (lois n° 72-662 et n° 2005-270).
+  - >-
+    Le simulateur ne connaît que l'officier et le non-officier : quelle limite opposer à
+    chacun, sans le grade ni le corps, est à décider à l'étape 3.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 4139-16 du code de la défense, rédactions du 30 mars 2007 et du 19 août 2026
+      (LEGIARTI000006540342, LEGIARTI000054703007) ; L. 4139-17 (LEGIARTI000047920354) ; L.
+      4141-5 (LEGIARTI000047452945) ; loi n° 2010-1330, article 33 (LEGIARTI000025014602).
+      Lus dans l'index LEGI du dépôt
+    date: 2026-10-10
+  - type: jorf
+    reference: >-
+      décret n° 2011-2103 du 30 décembre 2011, articles 3 à 5, dans l'index JORF du dépôt
+    date: 2026-10-10
+historique:
+- >-
+  2026-10-10 — née avec l'action 151, étape 2, avec la fiche `limite_age_fonction_publique`
+  des civils.
+effet: >-
+  Tout militaire dont le départ saisi passe sa limite d'âge ou de durée de services : le
+  modèle, qui ne connaît ni le grade ni le corps, le garde en service jusqu'au départ
+  saisi, jusqu'à 119 ans depuis l'étape 1 de l'action 151, quand la loi le raye des
+  cadres de quarante-sept à soixante-sept ans, trois de plus s'il est maintenu.

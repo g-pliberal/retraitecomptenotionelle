@@ -1,0 +1,164 @@
+schema_version: 1
+id: recul_limite_age_enfants
+intitule: >-
+  La limite d'âge du fonctionnaire civil est reculée d'un an par enfant à sa charge
+  quand il l'atteint, trois ans au plus ; d'un an pour qui était parent de trois enfants
+  vivants à ses cinquante ans, s'il est apte, ce recul ne se cumulant avec le premier que
+  si un enfant à charge est invalide à 80 % au moins ou ouvre droit à l'allocation aux
+  adultes handicapés ; d'un an par enfant mort pour la France. Le recul est de droit,
+  que l'employeur ne peut refuser ; depuis le 14 juin 2023, avec les prolongations, il ne
+  mène pas au-delà de soixante-dix ans.
+domaine: enfants
+regimes: [fonction_publique_etat, pensions_civiles_1853, cnracl]
+etape: preparer_la_chronologie
+face: droit
+etat: manquante
+lit:
+- la limite d'âge de l'emploi (fiche `limite_age_fonction_publique`)
+- les enfants de l'assuré, leurs naissances, et ceux qui sont à sa charge — au sens des
+  prestations familiales ou de l'allocation aux adultes handicapés — quand il atteint
+  la limite
+- le nombre d'enfants vivants à ses cinquante ans, et l'invalidité d'un enfant à charge
+ecrit:
+- la limite d'âge reculée, que la radiation des cadres suit
+dates_qui_decident:
+- age_atteint
+versions:
+- id: avant_1986
+  statut: supposee
+  hypothese: >-
+    l'article 4 de la loi du 18 août 1936 recule déjà la limite d'un an par enfant à
+    charge, trois ans au plus, et d'un an le parent de trois enfants vivants à cinquante
+    ans : le décret n° 53-711 le maintient en vigueur en 1953 ; sa rédaction d'avant le
+    26 décembre 1986, que la loi n° 86-1304 modifie (article 5), n'est pas lue, ni les
+    plafonds qu'elle portait
+  fiabilite: moyenne, le recul est attesté en 1953, sa lettre d'avant 1986 non
+  textes:
+  - {id: LEGIARTI000006501737, article: "décret n° 53-711 du 9 août 1953, article 1er", en_vigueur: 1953-08-10}
+  nee_de: LEGIARTI000006501737
+  bornes:
+    age_atteint: [null, 1986-12-26]
+  contenu:
+    droit: >-
+      « Sont maintenues en vigueur les dispositions de l'article 4 de la loi du 18 août
+      1936 et de l'article 18 de la loi du 27 février 1948 relatives au recul de la limite
+      d'âge » (décret n° 53-711, article 1er)
+  exemples: aucun trouvé
+- id: loi_de_1986
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006451372, article: "loi du 18 août 1936, article 4", en_vigueur: 1986-12-26}
+  nee_de: LEGIARTI000006451372
+  bornes:
+    age_atteint: [1986-12-26, 2022-03-01]
+  contenu:
+    droit: >-
+      « Les limites d'âge sont reculées d'une année par enfant à charge, sans que la
+      prolongation d'activité puisse être supérieure à trois ans. Les enfants pris en
+      compte [...] sont ceux qui sont définis par les lois et règlements régissant
+      l'attribution des prestations familiales, ainsi que ceux qui ouvrent droit au
+      versement de l'allocation aux adultes handicapés. Les limites d'âge seront également
+      reculées d'une année pour tout fonctionnaire et employé civil qui, au moment où il
+      atteignait sa cinquantième année, était parent d'au moins trois enfants vivants, à la
+      condition qu'il soit en état de continuer à exercer son emploi. Toutefois, cet
+      avantage ne peut se cumuler avec celui prévu à l'alinéa précédent que si l'un des
+      enfants à charge est atteint d'une invalidité égale ou supérieure à 80 p. 100 ou ouvre
+      droit au versement de l'allocation aux adultes handicapés »
+    plafonds: >-
+      le recul par enfant à charge ne peut « retarder la limite d'âge au-delà de
+      soixante-treize ans pour les fonctionnaires et employés civils classés dans la
+      catégorie A et au-delà de soixante-huit ans pour les fonctionnaires et employés civils
+      de la catégorie B », celui du parent de trois enfants au-delà « de soixante et onze ans
+      et soixante-six ans » : la catégorie A est la sédentaire, la B l'active, au sens de
+      l'article 1er
+  exemples: aucun trouvé
+- id: code_general_2022
+  statut: lue
+  textes:
+  - {id: LEGIARTI000044425144, article: "L. 556-2 CGFP", en_vigueur: 2022-03-01}
+  - {id: LEGIARTI000044425142, article: "L. 556-3 CGFP", en_vigueur: 2022-03-01}
+  - {id: LEGIARTI000044425140, article: "L. 556-4 CGFP", en_vigueur: 2022-03-01}
+  nee_de: LEGIARTI000044425144
+  bornes:
+    age_atteint: [2022-03-01, 2023-06-14]
+  contenu:
+    droit: >-
+      « La limite d'âge est reculée d'une année par enfant à la charge de l'agent public,
+      sans que la prolongation d'activité puisse être supérieure à trois ans. Les enfants
+      pris en compte sont ceux ouvrant droit à l'attribution des prestations familiales et
+      ceux ouvrant droit au versement de l'allocation aux adultes handicapés » (L. 556-2) ;
+      reculée d'une année pour le fonctionnaire qui, à cinquante ans, « était parent d'au
+      moins trois enfants vivants, à la condition qu'il soit apte à l'exercice de ses
+      fonctions », ce recul ne se cumulant avec le premier « que si l'un des enfants à
+      charge est atteint d'une invalidité égale ou supérieure à 80 % ou ouvre droit au
+      versement de l'allocation aux adultes handicapés » (L. 556-3) ; « d'une année par
+      enfant décédé » pour l'ascendant d'enfants morts pour la France, ou qui en a élevé un
+      (L. 556-4)
+    plafonds: >-
+      aucun : les plafonds de soixante-treize, soixante-huit, soixante et onze et soixante-six
+      ans de la loi de 1936 ne passent pas dans le code
+  exemples: aucun trouvé
+- id: plafond_de_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000044425144, article: "L. 556-2 CGFP", en_vigueur: 2022-03-01}
+  - {id: LEGIARTI000044425142, article: "L. 556-3 CGFP", en_vigueur: 2022-03-01}
+  - {id: LEGIARTI000044425140, article: "L. 556-4 CGFP", en_vigueur: 2022-03-01}
+  - {id: LEGIARTI000047452904, article: "L. 556-1 CGFP", en_vigueur: 2023-06-14}
+  nee_de: LEGIARTI000047452904
+  bornes:
+    age_atteint: [2023-06-14, null]
+  contenu:
+    droit: >-
+      les mêmes reculs (L. 556-2 à L. 556-4), sous le plafond commun de soixante-dix ans :
+      « Le bénéfice cumulé de ce maintien en fonctions, des prolongations d'activité et des
+      reculs de limite d'âge prévus aux articles L. 556-2 à L. 556-5 ne peut conduire le
+      fonctionnaire à être maintenu en fonctions au delà de soixante-dix ans » (L. 556-1),
+      relation `plafond_limite_age_fonction_publique`
+    application: >-
+      selon service-public, « Votre administration employeur ne peut pas vous refuser » le
+      recul pour enfants, qui se compte à la limite d'âge, soixante-sept ans pour le
+      sédentaire, et s'accorde aux actifs comme aux sédentaires
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-10
+  prochaine_relecture: 2027-10-10
+  a_relire:
+  - >-
+    La rédaction de l'article 4 de la loi du 18 août 1936 avant le 26 décembre 1986, et
+    l'article 18 de la loi du 27 février 1948, l'article 16 de la loi du 14 septembre 1948
+    et la loi du 25 mars 1952, que le décret n° 53-711 maintient « relatives au recul de la
+    limite d'âge » : d'où vient le recul pour enfant mort pour la France, avant L. 556-4 ?
+  - >-
+    Le militaire n'a pas ce recul : la loi de 1936 nomme les « fonctionnaires et employés
+    civils », et L. 4139-16 du code de la défense, lu, n'en porte aucun (fiche
+    `limite_age_militaires`).
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi du 18 août 1936, article 4, rédaction du 26 décembre 1986 (LEGIARTI000006451372)
+      ; L. 556-3 et L. 556-4 CGFP (LEGIARTI000044425142, LEGIARTI000044425140) ; décret
+      n° 53-711, article 1er (LEGIARTI000006501737). Lus dans l'index LEGI du dépôt
+    date: 2026-10-10
+  - type: legifrance
+    reference: >-
+      L. 556-2 CGFP (LEGIARTI000044425144), en vigueur depuis le 1er mars 2022, lu sur la
+      page de Légifrance, que l'index du champ social ne porte pas
+    date: 2026-10-10
+  - type: service_public
+    reference: >-
+      fiche F12395 : un an « par enfant à charge » à soixante-sept ans, « dans la limite de 3
+      ans au total », un an pour le parent de trois enfants vivants à cinquante ans, un an
+      par enfant mort pour la France ; « Votre administration employeur ne peut pas vous
+      refuser l'autorisation » ; les mêmes reculs pour l'actif, à partir de sa limite
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F12395
+    date: 2026-01-01
+historique:
+- >-
+  2026-10-10 — née avec l'action 151, étape 2, avec la fiche `limite_age_fonction_publique`
+  qu'elle recule.
+effet: >-
+  Aucun aujourd'hui, le modèle n'appliquant pas la limite d'âge qu'elle recule : il garde
+  tout fonctionnaire en activité jusqu'au départ saisi. Dès que la limite s'appliquera, le
+  parent d'enfants encore à charge à soixante-sept ans pourra rester jusqu'à trois ans de
+  plus — soixante-dix ans au plus depuis 2023.

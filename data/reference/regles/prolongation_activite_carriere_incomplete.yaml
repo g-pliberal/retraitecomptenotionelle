@@ -1,0 +1,134 @@
+schema_version: 1
+id: prolongation_activite_carriere_incomplete
+intitule: >-
+  Le fonctionnaire civil qui atteint sa limite d'âge sans la durée de services et de
+  bonifications du taux maximum (L. 13 CPCMR) peut, sur sa demande, sous réserve de
+  l'intérêt du service et de son aptitude physique, prolonger son activité jusqu'à cette
+  durée, dix trimestres au plus, après les reculs pour enfants ; la prolongation compte
+  dans la constitution et la liquidation de sa pension. Depuis 2004 ; depuis le 14 juin
+  2023, pas au-delà de soixante-dix ans.
+domaine: age
+regimes: [fonction_publique_etat, cnracl]
+etape: preparer_la_chronologie
+face: droit
+etat: manquante
+lit:
+- la limite d'âge de l'emploi, reculée le cas échéant (fiches `limite_age_fonction_publique`
+  et `recul_limite_age_enfants`)
+- la durée des services liquidables à cette date, et la durée de L. 13 de sa génération
+ecrit:
+- la date où la prolongation finit, que la radiation des cadres suit
+dates_qui_decident:
+- age_atteint
+versions:
+- id: avant_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006501737, article: "décret n° 53-711 du 9 août 1953, article 1er", en_vigueur: 1953-08-10}
+  - {id: LEGIARTI000006362689, article: "L. 10 CPCMR", en_vigueur: 1964-12-01}
+  nee_de: LEGIARTI000006501737
+  bornes:
+    age_atteint: [null, 2004-01-01]
+  contenu:
+    droit: >-
+      aucune prolongation pour une carrière incomplète : depuis 1953, les limites d'âge
+      « sont exclusives de toute prolongation au-delà de la limite d'âge résultant de
+      textes législatifs ou réglementaires en vigueur », hors les reculs que le décret
+      maintient (décret n° 53-711, article 1er), et « Les services accomplis
+      postérieurement à la limite d'âge ne peuvent être pris en compte dans une pension,
+      sauf dans les cas exceptionnels prévus par une loi » (L. 10)
+  exemples: aucun trouvé
+- id: loi_de_2003
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006450727, article: "loi n° 84-834, article 1-1", en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000006450727
+  bornes:
+    age_atteint: [2004-01-01, 2022-03-01]
+  contenu:
+    droit: >-
+      « Sous réserve des droits au recul des limites d'âge reconnus au titre des
+      dispositions de la loi du 18 août 1936 [...], les fonctionnaires dont la durée des
+      services liquidables est inférieure à celle définie à l'article L. 13 du code des
+      pensions civiles et militaires de retraite peuvent, lorsqu'ils atteignent les limites
+      d'âge applicables aux corps auxquels ils appartiennent, sur leur demande, sous réserve
+      de l'intérêt du service et de leur aptitude physique, être maintenus en activité. La
+      prolongation d'activité [...] ne peut avoir pour effet de maintenir le fonctionnaire
+      concerné en activité au-delà de la durée des services liquidables prévue à l'article
+      L. 13 du même code ni au-delà d'une durée de dix trimestres. Cette prolongation
+      d'activité est prise en compte au titre de la constitution et de la liquidation du
+      droit à pension »
+    parametres:
+      trimestres_au_plus: 10
+  exemples: aucun trouvé
+- id: code_general_2022
+  statut: lue
+  textes:
+  - {id: LEGIARTI000044425138, article: "L. 556-5 CGFP", en_vigueur: 2022-03-01}
+  nee_de: LEGIARTI000044425138
+  bornes:
+    age_atteint: [2022-03-01, 2023-06-14]
+  contenu:
+    droit: >-
+      la même prolongation, « sur sa demande, lorsqu'il atteint la limite d'âge qui lui est
+      applicable dans le corps ou le cadre d'emplois auquel il appartient [...], sous
+      réserve de l'intérêt du service et de son aptitude physique », « ni au-delà d'une
+      durée de dix trimestres » ; elle « intervient, le cas échéant, après application des
+      possibilités de recul de la limite d'âge prévues aux articles L. 556-2 et L. 556-3 »
+      (L. 556-5)
+    parametres:
+      trimestres_au_plus: 10
+  exemples: aucun trouvé
+- id: plafond_de_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000044425138, article: "L. 556-5 CGFP", en_vigueur: 2022-03-01}
+  - {id: LEGIARTI000047452904, article: "L. 556-1 CGFP", en_vigueur: 2023-06-14}
+  nee_de: LEGIARTI000047452904
+  bornes:
+    age_atteint: [2023-06-14, null]
+  contenu:
+    droit: >-
+      la même prolongation (L. 556-5), sous le plafond de soixante-dix ans que L. 556-1
+      pose à « Le bénéfice cumulé de ce maintien en fonctions, des prolongations
+      d'activité et des reculs de limite d'âge » (relation
+      `plafond_limite_age_fonction_publique`)
+    parametres:
+      trimestres_au_plus: 10
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-10
+  prochaine_relecture: 2027-10-10
+  a_relire:
+  - >-
+    Avant 2004 : l'article 2 du décret n° 48-1907 du 18 décembre 1948, que le décret n°
+    53-711 laisse aux fonctionnaires actifs dont la limite est inférieure à soixante-cinq
+    ans, et les prolongations que la CNRACL comptait « dans les mêmes conditions » (décret
+    n° 65-773, article 2) : lus, ils peuvent faire une version de plus.
+  - >-
+    « sous réserve de l'intérêt du service » : un refus est possible, que le simulateur
+    ne connaîtra pas. L'étape 3 dira s'il la présume accordée quand le départ saisi la
+    demande.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 84-834, article 1-1, rédaction du 1er janvier 2004 (LEGIARTI000006450727) ; L.
+      556-5 CGFP (LEGIARTI000044425138) ; L. 556-1, rédaction du 14 juin 2023
+      (LEGIARTI000047452904). Lus dans l'index LEGI du dépôt
+    date: 2026-10-10
+  - type: service_public
+    reference: >-
+      fiche F12395 : « 10 trimestres maximum » (2 ans et demi), jusqu'au nombre de
+      trimestres requis, sous réserve de « l'intérêt du service » et de l'aptitude physique,
+      sans dépasser soixante-dix ans ; accordée « après application » des reculs pour
+      enfants ; ouverte à l'actif, demande six mois avant sa limite
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F12395
+    date: 2026-01-01
+historique:
+- >-
+  2026-10-10 — née avec l'action 151, étape 2, avec la fiche `limite_age_fonction_publique`.
+effet: >-
+  Aucun aujourd'hui, le modèle n'appliquant pas la limite d'âge : il garde tout
+  fonctionnaire en activité jusqu'au départ saisi, que sa durée soit complète ou non. La
+  limite appliquée, le fonctionnaire entré tard pourra rester jusqu'à dix trimestres de
+  plus, s'il lui manque cette durée.

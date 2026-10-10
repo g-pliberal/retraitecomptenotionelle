@@ -1,0 +1,134 @@
+schema_version: 1
+id: maintiens_en_fonctions_de_certains_corps
+intitule: >-
+  Des corps ont leur propre limite d'âge ou leur propre maintien au-delà : les plus hauts
+  magistrats administratifs et financiers, les membres du Conseil d'État et de la Cour
+  des comptes, les magistrats judiciaires, maintenus en surnombre jusqu'à soixante-huit
+  puis soixante-dix ans ; les professeurs de l'enseignement supérieur, maintenus en
+  surnombre, et ceux du Collège de France, à soixante-dix puis soixante-treize ans ; les
+  enseignants, jusqu'à la fin de l'année scolaire ; les emplois supérieurs de l'État et
+  les emplois fonctionnels des collectivités, quelques mois ou années de plus.
+domaine: age
+regimes: [fonction_publique_etat, cnracl]
+etape: preparer_la_chronologie
+face: droit
+etat: pas_encore_modelisee
+lit:
+- le corps, l'emploi ou la fonction de l'assuré à sa limite d'âge, que la saisie ne porte
+  pas
+ecrit:
+- la limite d'âge du corps, ou la date où le maintien finit, que la radiation des cadres
+  suit
+dates_qui_decident:
+- age_atteint
+versions:
+- id: corps_particuliers
+  statut: lue
+  textes:
+  - id: JORFTEXT000000320891
+    article: >-
+      loi n° 84-834, articles 1er et 3, version initiale et rédaction du 14 juin 2023, lus
+      sur Légifrance
+    publie_le: 1984-09-14
+    en_vigueur: 1984-09-14
+  - {id: LEGIARTI000006450494, article: "loi n° 86-1304, article 4", en_vigueur: 1986-12-26}
+  - {id: LEGIARTI000023096763, article: "L. 952-10 code de l'éducation", en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000042813109, article: "L. 952-10 code de l'éducation", en_vigueur: 2020-12-27}
+  - {id: LEGIARTI000044588867, article: "L. 952-10 code de l'éducation", en_vigueur: 2022-01-01}
+  - {id: LEGIARTI000023035776, article: "ordonnance n° 58-1270, article 76-1-1", en_vigueur: 2010-11-12}
+  - {id: LEGIARTI000048434714, article: "ordonnance n° 58-1270, article 76-1-1", en_vigueur: 2023-11-22}
+  - {id: LEGIARTI000048438958, article: "ordonnance n° 58-1270, article 76-1-1", en_vigueur: 2025-12-01}
+  - {id: LEGIARTI000024106623, article: "loi n° 84-834, article 3", en_vigueur: 2011-06-01}
+  - {id: LEGIARTI000032443343, article: "loi n° 84-834, article 3", en_vigueur: 2016-04-22}
+  - {id: LEGIARTI000006450736, article: "loi n° 84-834, article 7-1", en_vigueur: 2007-02-21}
+  - {id: LEGIARTI000025500308, article: "loi n° 84-834, article 7-1", en_vigueur: 2012-03-14}
+  - reference: >-
+      L. 911-9 du code de l'éducation et L. 133-7-1 et L. 233-7 du code de justice
+      administrative, dans la rédaction de l'article 10, VII et X, de la loi n° 2023-270
+      (JORFARTI000047445097) ; loi n° 86-1304, articles 1er et 2, par le résumé que l'index
+      JORF en porte (JORFTEXT000000693693)
+    en_vigueur: 2023-06-14
+  nee_de: JORFTEXT000000320891
+  bornes:
+    age_atteint: [null, null]
+  contenu:
+    hauts_magistrats: >-
+      soixante-huit ans pour le vice-président du Conseil d'État, le premier président et le
+      procureur général de la Cour des comptes (loi n° 84-834, article 1er, depuis 1984)
+    conseil_d_etat_et_cour_des_comptes: >-
+      maintien en activité, sur demande, jusqu'à soixante-huit ans des membres du Conseil
+      d'État, des magistrats de la Cour des comptes et des inspecteurs généraux des
+      finances (loi n° 86-1304, article 1er), qui « conservent la rémunération afférente aux
+      grade, classe et échelon qu'ils détenaient » (article 4, jusqu'au 14 juin 2023) ;
+      depuis, jusqu'à l'âge du « cinquième alinéa de l'article L. 556-1 », soixante-dix ans,
+      pour exercer les fonctions de conseiller d'État ou de premier conseiller (code de
+      justice administrative, L. 133-7-1 et L. 233-7)
+    magistrats_judiciaires: >-
+      ceux de la Cour de cassation, des cours d'appel et des tribunaux, à leur limite d'âge,
+      « sur leur demande, maintenus en activité en surnombre » jusqu'à soixante-huit ans
+      (ordonnance n° 58-1270, article 76-1-1, depuis le 12 novembre 2010), soixante-dix ans
+      depuis le 22 novembre 2023
+    enseignement_superieur: >-
+      limite de soixante-cinq ans (loi n° 84-834, article 3), soixante-sept depuis le 1er
+      juillet 2011 ; soixante-dix ans au Collège de France, soixante-treize depuis le 27
+      décembre 2020 ; à la limite, « maintenus en activité, en surnombre, jusqu'au 31 août
+      suivant la date à laquelle ils atteignent l'âge de soixante-huit ans » (L. 952-10,
+      2011), « pour une durée d'un an » depuis le 1er janvier 2022 ; « restent en fonctions
+      jusqu'au 31 août » quand la limite tombe en cours d'année universitaire
+    enseignants: >-
+      depuis le 14 juin 2023, l'enseignant du premier ou du second degré, le personnel
+      d'inspection et le maître du privé sous contrat qui atteignent la limite d'âge en
+      cours d'année scolaire « restent en fonction à leur demande, si les besoins du
+      service le justifient, jusqu'à la fin de l'année scolaire » (L. 911-9 du code de
+      l'éducation)
+    emplois_superieurs: >-
+      le fonctionnaire qui occupe à sa limite d'âge un emploi supérieur de l'article 25 de
+      la loi n° 84-16 peut y être maintenu « pour une durée maximale de deux ans », d'une
+      année de plus pour les emplois de la défense des intérêts fondamentaux de la nation
+      depuis 2016, sa radiation et sa pension « différées à la date de cessation de leur
+      prolongation d'activité » (loi n° 84-834, article 3, de 2011 à 2022)
+    emplois_fonctionnels_territoriaux: >-
+      le fonctionnaire ou le contractuel recruté directement sur un emploi fonctionnel
+      d'une collectivité peut être maintenu « jusqu'au renouvellement de l'assemblée
+      délibérante », si celui-ci intervient dans les dix-huit mois jusqu'en 2012, sa
+      pension liquidée à la cessation de ses fonctions (loi n° 84-834, article 7-1, de 2007
+      à 2022)
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-10
+  prochaine_relecture: 2027-10-10
+  a_relire:
+  - >-
+    Où les articles 3 et 7-1 de la loi n° 84-834, abrogés le 1er mars 2022, ont été
+    codifiés, et ce qu'ils sont devenus ; l'article 76 de l'ordonnance n° 58-1270, qui fixe
+    la limite des magistrats judiciaires, et les articles 1er et 2 de la loi n° 86-1304
+    dans leur lettre.
+  - >-
+    La saisie ne porte ni le corps ni la fonction : ces maintiens restent hors du modèle
+    tant que l'étape 3 n'ajoute pas un statut ou une question qui les nomme.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 952-10 du code de l'éducation (LEGIARTI000023096763, …042813109, …044588867) ;
+      ordonnance n° 58-1270, article 76-1-1, de 2010 à 2025 ; loi n° 84-834, articles 3 et
+      7-1 ; loi n° 86-1304, article 4. Lus dans l'index LEGI du dépôt
+    date: 2026-10-10
+  - type: legifrance
+    reference: >-
+      loi n° 84-834, version initiale (articles 1er et 3) et article 1er au 10 octobre
+      2026, sur les pages de Légifrance
+    date: 2026-10-10
+  - type: jorf
+    reference: >-
+      loi n° 2023-270, article 10, VII, X et XV (JORFARTI000047445097) ; loi n° 86-1304,
+      résumé de ses articles 1er à 6 (JORFTEXT000000693693). Lus dans l'index JORF du dépôt
+    date: 2026-10-10
+historique:
+- >-
+  2026-10-10 — née avec l'action 151, étape 2 : les exceptions à la limite d'âge qui ne
+  tiennent qu'à un corps ou à une fonction, que le simulateur ne connaît pas.
+effet: >-
+  Les membres de ces corps, que le simulateur ne distingue pas : il les simule comme
+  tout fonctionnaire de l'État, sans limite d'âge. Un professeur au Collège de France peut
+  servir jusqu'à soixante-treize ans, un magistrat jusqu'à soixante-dix, au-delà du
+  plafond commun des sédentaires partis avant le 14 juin 2023.

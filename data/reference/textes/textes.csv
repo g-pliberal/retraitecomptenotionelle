@@ -11,7 +11,9 @@ arrete_2026_07_10_carpimko,"Arrêté du 10 juillet 2026 portant approbation des 
 arrete_2026_07_10_cavp,"Arrêté du 10 juillet 2026 portant approbation des règlements d'assurance vieillesse complémentaire, d'assurance invalidité-décès et de prestations complémentaires de vieillesse de la section professionnelle des pharmaciens (CAVP)"
 arrete_2026_07_10_cprn,Arrêté du 10 juillet 2026 portant approbation des règlements d'assurance vieillesse complémentaire et d'assurance invalidité-décès de la section professionnelle des notaires (CPRN)
 code_de_l_education,Code de l'éducation
+code_de_la_defense,Code de la défense
 code_du_travail,Code du travail
+code_general_de_la_fonction_publique,Code général de la fonction publique
 code_general_des_impots,Code général des impôts
 code_rural_ancien,Code rural (ancien)
 cpcmr,Code des pensions civiles et militaires de retraite
@@ -24,6 +26,7 @@ decret_2003_1280,Décret n°2003-1280 du 26 décembre 2003 portant application d
 decret_2003_1306,Décret n°2003-1306 du 26 décembre 2003 relatif au régime de retraite des fonctionnaires affiliés à la Caisse nationale de retraites des agents des collectivités locales
 decret_2003_146,"Décret n°2003-146 du 20 février 2003 relatif aux conditions d'application et à l'organisation du régime de retraite complémentaire obligatoire pour les non-salariés agricoles, créé en application de la loi n° 2002-308 du 4 mars 2002"
 decret_2004_1056,Décret n°2004-1056 du 5 octobre 2004 relatif au régime des pensions des ouvriers des établissements industriels de l'Etat
+decret_2004_240,Décret n°2004-240 du 18 mars 2004 relatif à la prise en compte de la prime spéciale de sujétion au regard du droit à pension des agents du corps des aides-soignants de la fonction publique hospitalière.
 decret_2004_569,Décret n°2004-569 du 18 juin 2004 relatif à la retraite additionnelle de la fonction publique.
 decret_2004_858,Décret n°2004-858 du 24 août 2004 relatif aux droits à l'assurance vieillesse des conjoints survivants
 decret_2004_878,Décret n°2004-878 du 26 août 2004 relatif au compte épargne-temps dans la fonction publique territoriale.
@@ -39,6 +42,7 @@ decret_2011_1644,Décret n° 2011-1644 du 25 novembre 2011 relatif au régime de
 decret_2011_934,Décret n° 2011-934 du 1er août 2011 relatif à la comptabilisation des périodes de chômage involontaire non indemnisé comme périodes d'assurance pour l'ouverture du droit à pension d'assurance vieillesse
 decret_2012_478,Décret n° 2012-478 du 12 avril 2012 fixant pour l'année 2012 les cotisations aux régimes d'assurance vieillesse complémentaire des professions libérales ainsi qu'aux régimes d'assurance invalidité-décès des professions libérales
 decret_2013_1081,Décret n° 2013-1081 du 29 novembre 2013 fixant pour l'année 2013 les cotisations aux régimes d'assurance vieillesse complémentaire des professions libérales et des artistes et auteurs relevant de l'article L. 382-1 du code de la sécurité sociale et les cotisations aux régimes d'assurance invalidité-décès des professions libérales
+decret_2013_617,Décret n° 2013-617 du 11 juillet 2013 relatif à l'attribution de l'indemnité de sujétions spéciales de police allouée aux fonctionnaires actifs de la police nationale
 decret_2014_452,Décret n° 2014-452 du 2 mai 2014 modifiant le décret n° 2008-964 du 16 septembre 2008 relatif aux modalités de prise en compte dans la retraite additionnelle de la fonction publique de l'indemnité dite de garantie individuelle du pouvoir d'achat
 decret_2015_1802,Décret n° 2015-1802 du 29 décembre 2015 fixant pour les années 2015 et 2016 les cotisations aux régimes d'assurance vieillesse complémentaire des professions libérales et des artistes et auteurs et les cotisations aux régimes d'assurance invalidité-décès des professions libérales
 decret_2019_797,Décret n° 2019-797 du 26 juillet 2019 relatif au régime d'assurance chômage
@@ -56,6 +60,7 @@ decret_50_1225,Décret n°50-1225 du 21 septembre 1950 PORTANT REGLEMENT D'ADMIN
 decret_50_1318,Décret n°50-1318 du 21 octobre 1950 relatif au régime d'assurance vieillesse complémentaire des vétérinaires.
 decret_51_727,Décret n°51-727 du 6 juin 1951 FIXANT LE REGIME DES PENSIONS DE VIEILLESSE ET D'INVALIDITE DE L'ASSURANCE SOCIALE OBLIGATOIRE AGRICOLE.
 decret_53_506,Décret n°53-506 du 21 mai 1953 relatif au régime d'assurance vieillesse complémentaire des experts comptables et des comptables agréés.
+decret_53_711,Décret n°53-711 du 9 août 1953 relatif au régime des retraites des personnels de l'Etat et des services publics.
 decret_55_753,Décret n°55-753 du 31 mai 1955 TENDANT A MODIFIER ET A COMPLETER LE DU 18 OCTOBRE 1952 ET FIXANT LES CONDITIONS D'APPLICATION DE LA LOI DU 5 JANVIER 1955 RELATIVE A L'ALLOCATION VIEILLESSE AGRICOLE.
 decret_62_420,"Décret n°62-420 du 11 avril 1962 relatif au régime d'assurance vieillesse complémentaire commun aux artistes graphiques et plastiques et aux professeurs de musique, musiciens, auteurs et compositeurs."
 decret_62_766,Décret n°62-766 du 6 juillet 1962 portant statut des personnels du service d'exploitation industrielle des tabacs et allumettes
@@ -84,8 +89,10 @@ decret_90_498,"Décret n°90-498 du 21 juin 1990 relatif au calcul des cotisatio
 decret_91_613,Décret n°91-613 du 28 juin 1991 fixant les taux des cotisations de divers régimes spéciaux de sécurité sociale.
 decret_92_326,Décret n°92-326 du 27 mars 1992 fixant pour l'année 1992 les cotisations des régimes d'assurance vieillesse complémentaires et d'assurance invalidité-décès des travailleurs non salariés des professions libérales.
 decret_94_690,Décret n°94-690 du 9 août 1994 relatif au calcul des cotisations sociales dues au régime de protection sociale des personnes non salariées des professions agricoles et assises sur les revenus mentionnés à l'article 1003-12 du code rural
+decret_97_1022,Décret n°97-1022 du 6 novembre 1997 relatif à l'attribution de l'indemnité de sujétions spéciales de police allouée aux fonctionnaires actifs de la police nationale.
 decret_98_183,"Décret n°98-183 du 17 mars 1998 fixant les modalités d'intégration au régime général de sécurité sociale, au 1er janvier 1998, des personnes relevant avant cette date du régime spécial de retraite de l'ancienne chambre de commerce et d'industrie de Roubaix"
 decret_98_599,Décret n°98-599 du 13 juillet 1998 fixant pour l'année 1998 les cotisations du régime de retraite de base et des régimes de retraite complémentaires des professions libérales
+loi_2003_1199,Loi n° 2003-1199 du 18 décembre 2003 de financement de la sécurité sociale pour 2004 (1)
 loi_2003_775,Loi n° 2003-775 du 21 août 2003 portant réforme des retraites (1).
 loi_2010_1330,LOI n° 2010-1330 du 9 novembre 2010 portant réforme des retraites (1)
 loi_2011_1977,LOI n° 2011-1977 du 28 décembre 2011 de finances pour 2012 (1)
@@ -93,16 +100,22 @@ loi_2023_270,LOI n° 2023-270 du 14 avril 2023 de financement rectificative de l
 loi_57_444,Loi n° 57-444 du 8 avril 1957 instituant un régime particulier de retraites en faveur des personnels actifs de police (1).
 loi_71_1132,Loi n° 71-1132 du 31 décembre 1971 portant amélioration des pensions de vieillesse du régime général de sécurité sociale et du régime des travailleurs salariés agricoles.
 loi_75_1279,Loi n° 75-1279 du 30 décembre 1975 RELATIVE AUX CONDITIONS D'ACCES A LA RETRAITE DE CERTAINS TRAVAILLEURS MANUELS.
+loi_75_1280,Loi n° 75-1280 du 30 décembre 1975 relative à la limite d'âge des fonctionnaires de l'Etat
 loi_75_3,"Loi n° 75-3 du 3 janvier 1975 PORTANT DIVERSES AMELIORATIONS ET SIMPLIFICATIONS EN MATIERE DE PENSIONS OU ALLOCATIONS DES CONJOINTS SURVIVANTS, DES MERES DE FAMILLE ET DES PERSONNES AGEES."
 loi_77_657,Loi n° 77-657 du 28 juin 1977 PORTANT MAJORATION DES PENSIONS DE VIEILLESSE DE CERTAINS RETRAITES.
 loi_79_563,Loi n°79-563 du 6 juillet 1979 relative à l'indemnité des représentants au Parlement européen.
 loi_82_599,Loi n° 82-599 du 13 juillet 1982 RELATIVE AUX PRESTATIONS DE VIEILLESSE D'INVALIDITE ET DE VEUVAGE
 loi_83_1179,Loi n° 83-1179 du 29 décembre 1983 de finances pour 1984 (1)
 loi_84_575,Loi n° 84-575 du 9 juillet 1984 portant diverses dispositions d'ordre social.
+loi_84_834,Loi n° 84-834 du 13 septembre 1984 relative à la limite d'âge dans la fonction publique et le secteur public
+loi_86_1304,Loi n° 86-1304 du 23 décembre 1986 relative à la limite d'âge et aux modalités de recrutement de certains fonctionnaires civils de l'Etat (1)
 loi_89_1007,Loi n° 89-1007 du 31 décembre 1989 relative au corps des ingénieurs du contrôle de la navigation aérienne (1)
+loi_90_1067,Loi n° 90-1067 du 28 novembre 1990 relative à la fonction publique territoriale et portant modification de certains articles du code des communes (1)
 loi_96_452,"Loi n° 96-452 du 28 mai 1996 portant diverses mesures d'ordre sanitaire, social et statutaire (1)"
 loi_97_1164,Loi n° 97-1164 du 19 décembre 1997 de financement de la sécurité sociale pour 1998 (1)
+loi_du_18_aout_1936_concernant_les_mises_a_la_retraite_par_a,Loi du 18 août 1936 concernant les mises à la retraite par ancienneté.
 marins,"Code des pensions de retraite des marins français du commerce, de pêche ou de plaisance"
+ordonnance_58_1270,Ordonnance n° 58-1270 du 22 décembre 1958 portant loi organique relative au statut de la magistrature.
 ordonnance_82_270,Ordonnance n° 82-270 du 26 mars 1982 RELATIVE A L'ABAISSEMENT DE L'AGE DE LA RETRAITE DES ASSURES DU REGIME GENERAL ET DU REGIME DES ASSURANCES SOCIALES AGRICOLES.
 rural,Code rural (nouveau)
 transports,Code des transports

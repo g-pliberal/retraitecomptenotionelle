@@ -1,0 +1,319 @@
+schema_version: 1
+id: limite_age_fonction_publique
+intitule: >-
+  Le fonctionnaire civil — de l'État, territorial ou hospitalier — ne peut être maintenu
+  en fonctions au-delà de la limite d'âge de son emploi, sauf les exceptions que la loi
+  prévoit : il est radié des cadres d'office quand il l'atteint, sa pension est due du
+  jour où il cesse son activité, et les services accomplis au-delà ne comptent dans sa
+  pension que dans les cas que la loi prévoit. Soixante-sept ans pour l'emploi
+  sédentaire depuis la génération 1955, soixante-cinq de 1986 aux générations nées avant
+  juillet 1951 ; pour l'emploi de la catégorie active, un âge au plus égal, que son
+  statut fixe — cinquante-sept ans pour le surveillant pénitentiaire et la plupart des
+  policiers, cinquante-neuf pour l'ingénieur du contrôle de la navigation aérienne,
+  soixante-deux pour les autres emplois actifs.
+domaine: age
+regimes: [fonction_publique_etat, pensions_civiles_1853, cnracl]
+etape: preparer_la_chronologie
+face: droit
+etat: manquante
+lit:
+- la date de naissance de l'assuré, et sa génération
+- l'emploi de chaque période de la fonction publique — sédentaire, de la catégorie active
+  ou super-active —, et son corps quand le corps fixe la limite
+- les reculs et les prolongations que les fiches d'exception accordent, sous le plafond
+  de la fiche `plafond_limite_age_fonction_publique`
+ecrit:
+- la date de la radiation des cadres par limite d'âge, qui clôt les services du
+  fonctionnaire et date sa pension (L. 90 CPCMR, fiche `date_effet_mois_suivant`)
+- les services accomplis au-delà, comptés ou non dans la pension
+dates_qui_decident:
+- age_atteint
+- assure.generation
+versions:
+- id: loi_de_1936
+  statut: supposee
+  hypothese: >-
+    le tableau de l'article 1er de la loi du 18 août 1936, lu dans sa rédaction de 1954,
+    vaut depuis 1936 pour un fonctionnaire de l'État ; les abaissements de la loi du 15
+    février 1946 (article 10) et de la loi du 8 août 1947 (article 21), et le relèvement
+    de deux ans du décret n° 53-711 au 1er septembre 1953, ne sont lus que par ce que ce
+    décret en dit
+  fiabilite: moyenne, le tableau et le décret de 1953 sont lus, les lois de 1946 et 1947 ne le sont pas
+  textes:
+  - {id: LEGIARTI000006451369, article: "loi du 18 août 1936, article 1er", en_vigueur: 1954-06-12}
+  - {id: LEGIARTI000006501737, article: "décret n° 53-711 du 9 août 1953, article 1er", en_vigueur: 1953-08-10}
+  - {id: LEGIARTI000006501739, article: "décret n° 53-711 du 9 août 1953, article 3", en_vigueur: 1953-08-10}
+  bornes:
+    age_atteint: [null, 1976-01-01]
+  contenu:
+    droit: >-
+      « La limite d'âge est abaissée, pour les fonctionnaires et employés civils des
+      services de l'Etat de la catégorie A et de la catégorie B » : catégorie A, la
+      sédentaire, soixante-dix ans aux trois premiers échelons, soixante-sept au quatrième,
+      soixante-cinq au cinquième ; catégorie B, l'active, soixante-sept, soixante-cinq,
+      soixante-deux et soixante ans, la police soixante, cinquante-neuf, cinquante-six et
+      cinquante-cinq ans (loi de 1936, article 1er). En 1953, les limites fixées en 1946 et
+      1947 « sont relevées de deux ans sans pouvoir excéder soixante-dix ans, et sont
+      exclusives de toute prolongation au-delà de la limite d'âge », hors les reculs que
+      le décret maintient, dont celui de l'article 4 de la loi de 1936 (décret n° 53-711,
+      article 1er)
+    beneficiaire: >-
+      les fonctionnaires civils de l'État, selon l'échelon de leur corps, que le modèle ne
+      connaît pas ; les agents des collectivités locales, sous des limites « qui ne pourront
+      être inférieures à celles des fonctionnaires civils » (décret n° 53-711, article 3)
+  exemples: aucun trouvé
+- id: loi_de_1975
+  statut: lue
+  textes:
+  - id: JORFTEXT000000699206
+    article: >-
+      loi n° 75-1280 du 30 décembre 1975 relative à la limite d'âge des fonctionnaires de
+      l'État, articles 1er à 3, lus sur Légifrance
+    publie_le: 1975-12-31
+    en_vigueur: 1975-12-31
+  - {id: LEGIARTI000006272985, article: "loi n° 75-1280, article 4", en_vigueur: 1975-12-31}
+  nee_de: JORFTEXT000000699206
+  bornes:
+    age_atteint: [1976-01-01, 1985-01-01]
+  contenu:
+    droit: >-
+      « la limite d'âge des fonctionnaires civils de l'Etat est fixée à soixante-huit ans
+      lorsqu'elle était de soixante-dix ans avant l'intervention de la présente loi et à
+      soixante-cinq ans lorsqu'elle était de soixante-sept ans » ; soixante-treize ans pour
+      les professeurs titulaires du Collège de France (article 1er) ; soixante-huit ou
+      soixante-cinq ans pour les membres du Conseil d'État, de la Cour des comptes et des
+      tribunaux administratifs (article 2)
+    transition: >-
+      la limite de soixante-dix ans reste soixante-dix ans jusqu'au 31 décembre 1976, puis
+      soixante-neuf en 1977 ; celle de soixante-sept ans, soixante-sept jusqu'au 31 décembre
+      1976, soixante-six ans et six mois en 1977, soixante-six en 1978, soixante-cinq ans et
+      six mois en 1979 (article 3)
+  exemples: aucun trouvé
+- id: loi_de_1984
+  statut: lue
+  textes:
+  - id: JORFTEXT000000320891
+    article: >-
+      loi n° 84-834 du 13 septembre 1984 relative à la limite d'âge dans la fonction
+      publique et le secteur public, articles 1er, 2, 3 et 5 dans leur version initiale,
+      lus sur Légifrance au 1er janvier 1985
+    publie_le: 1984-09-14
+    en_vigueur: 1984-09-14
+  - {id: LEGIARTI000006368179, article: "décret n° 65-773 du 9 septembre 1965, article 2", en_vigueur: 1985-11-19}
+  - {id: LEGIARTI000006362689, article: "L. 10 CPCMR", en_vigueur: 1964-12-01}
+  - {id: LEGIARTI000006362690, article: "L. 10 CPCMR", en_vigueur: 2004-01-01}
+  nee_de: JORFTEXT000000320891
+  bornes:
+    age_atteint: [1985-01-01, 2011-07-01]
+  contenu:
+    droit: >-
+      « la limite d'âge des fonctionnaires civils de l'Etat est fixée à soixante-cinq ans
+      lorsqu'elle était, avant l'intervention de la présente loi, fixée à un âge
+      supérieur », soixante-huit ans restant celle du vice-président du Conseil d'État, du
+      premier président et du procureur général de la Cour des comptes (article 1er) ;
+      soixante-cinq ans pour les professeurs de l'enseignement supérieur, qui « restent en
+      fonctions jusqu'à la fin de l'année universitaire », soixante-dix pour ceux du
+      Collège de France (article 3)
+    transition: >-
+      soixante-huit ans jusqu'au 31 décembre 1984, soixante-sept du 1er janvier au 30 juin
+      1985, soixante-six du 1er juillet au 31 décembre 1985 (article 2) ; pour les
+      professeurs, soixante-huit, soixante-sept, soixante-six ans et six mois puis
+      soixante-six, de 1984 à 1987 (article 5)
+    territoriaux_et_hospitaliers: >-
+      l'agent affilié à la CNRACL « doit être admis d'office à la retraite dès qu'il
+      atteint la limite d'âge qui lui est applicable » ; « Si aucune limite d'âge n'est
+      déterminée par le statut particulier, la limite d'âge à prendre en considération est
+      celle fixée pour les agents de l'Etat » (décret n° 65-773, article 2)
+    services_au_dela: >-
+      « Les services accomplis postérieurement à la limite d'âge ne peuvent être pris en
+      compte dans une pension, sauf dans les cas exceptionnels prévus par une loi » (L. 10,
+      jusqu'au 31 décembre 2003) ; « Les services accomplis postérieurement à la limite
+      d'âge dans les conditions prévues par la loi sont pris en compte dans la pension »
+      (L. 10, depuis le 1er janvier 2004)
+  exemples: aucun trouvé
+- id: loi_de_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023031762, article: "loi n° 84-834, article 1er", en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000025014566, article: "loi n° 2010-1330, article 28", en_vigueur: 2011-12-23}
+  - {id: LEGIARTI000025014560, article: "loi n° 2010-1330, article 31", en_vigueur: 2011-12-23}
+  - reference: >-
+      décret n° 2011-2103 du 30 décembre 2011, articles 1er et 8 (JORFARTI000025061553,
+      JORFARTI000025061595)
+    en_vigueur: 2011-12-31
+  - {id: LEGIARTI000006362690, article: "L. 10 CPCMR", en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000023031762
+  bornes:
+    age_atteint: [2011-07-01, 2022-03-01]
+  contenu:
+    droit: >-
+      « la limite d'âge des fonctionnaires civils de l'Etat est fixée à soixante-sept ans
+      lorsqu'elle était, avant l'intervention de la loi n° 2010-1330 [...], fixée à
+      soixante-cinq ans » (loi n° 84-834, article 1er), pour les nés à compter du 1er
+      janvier 1955 (loi n° 2010-1330, article 28, I) ; pour ceux qui atteignent l'âge
+      d'ouverture d'avant la loi entre le 1er juillet 2011 et le 31 décembre 2014, elle
+      croît « De quatre mois par génération » en 2011, « De cinq mois par génération » de
+      2012 à 2014 (article 28, II ; décret n° 2011-2103, article 8)
+    valeurs: >-
+      soixante-cinq ans pour les nés avant le 1er juillet 1951 ; soixante-cinq ans et quatre
+      mois du 1er juillet au 31 décembre 1951 ; soixante-cinq ans et neuf mois en 1952 ;
+      soixante-six ans et deux mois en 1953 ; soixante-six ans et sept mois en 1954 ;
+      soixante-sept ans à compter de 1955. Ces valeurs se déduisent du pas de l'article 28,
+      II, compté depuis l'âge d'ouverture antérieur, soixante ans : c'est l'âge d'ouverture
+      du tableau de l'article 1er du décret n° 2011-2103, majoré de cinq ans
+    categorie_active: >-
+      deux ans de plus (article 31, I) : cinquante-sept ans au lieu de cinquante-cinq pour
+      les nés à compter de 1965, cinquante-neuf au lieu de cinquante-sept à compter de 1963,
+      soixante au lieu de cinquante-huit à compter de 1962, soixante et un au lieu de
+      cinquante-neuf à compter de 1961, soixante-deux au lieu de soixante à compter de 1960,
+      soixante-quatre au lieu de soixante-deux à compter de 1958 ; les générations d'avant,
+      au même pas de quatre puis cinq mois (article 31, II)
+  exemples: aucun trouvé
+- id: code_general_2022
+  statut: lue
+  textes:
+  - {id: LEGIARTI000044425146, article: "L. 556-1 CGFP", en_vigueur: 2022-03-01}
+  - {id: LEGIARTI000044425136, article: "L. 556-6 CGFP", en_vigueur: 2022-03-01}
+  - {id: LEGIARTI000044425132, article: "L. 556-8 CGFP", en_vigueur: 2022-03-01}
+  - {id: LEGIARTI000044425130, article: "L. 556-9 CGFP", en_vigueur: 2022-03-01}
+  - {id: LEGIARTI000044425128, article: "L. 556-10 CGFP", en_vigueur: 2022-03-01}
+  - {id: LEGIARTI000006362690, article: "L. 10 CPCMR", en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000044425146
+  bornes:
+    age_atteint: [2022-03-01, 2023-06-14]
+  contenu:
+    droit: >-
+      « Le fonctionnaire ne peut être maintenu en fonctions au-delà de l'âge limite de
+      l'activité dans l'emploi qu'il occupe, sous réserve des exceptions prévues par les
+      dispositions en vigueur. Cette limite d'âge est fixée à : 1° Soixante-sept ans pour
+      celui occupant un emploi ne relevant pas de la catégorie active [...] ; 2° Un âge au
+      plus égal à la limite définie au 1° ci-dessus pour celui occupant un emploi de la
+      catégorie active » (L. 556-1)
+    categorie_active: >-
+      « comprise entre cinquante-sept et soixante-deux ans » pour les fonctionnaires actifs
+      de la police nationale (L. 556-8) ; cinquante-sept ans pour le personnel de
+      surveillance de l'administration pénitentiaire (L. 556-9) ; cinquante-neuf ans pour
+      les ingénieurs du contrôle de la navigation aérienne, « sans possibilité de report »
+      (L. 556-10) ; pour les autres, celle de leur statut particulier. Après quinze ans dans
+      un emploi actif, le fonctionnaire intégré dans un corps sédentaire « conserve, sur sa
+      demande et à titre individuel, le bénéfice de la limite d'âge de cet emploi » (L.
+      556-6)
+  exemples: aucun trouvé
+- id: reforme_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047452904, article: "L. 556-1 CGFP", en_vigueur: 2023-06-14}
+  - {id: LEGIARTI000044425136, article: "L. 556-6 CGFP", en_vigueur: 2022-03-01}
+  - reference: >-
+      L. 556-8 et L. 556-8-1 CGFP, dans la rédaction du VIII, 3° et 4°, de l'article 10 de
+      la loi n° 2023-270 du 14 avril 2023 (JORFARTI000047445097)
+    en_vigueur: 2023-06-14
+  - {id: LEGIARTI000044425130, article: "L. 556-9 CGFP", en_vigueur: 2022-03-01}
+  - {id: LEGIARTI000044425128, article: "L. 556-10 CGFP", en_vigueur: 2022-03-01}
+  - reference: >-
+      loi n° 84-834, article 1er, rédaction du 14 juin 2023 (JORFTEXT000000320891), lu sur
+      Légifrance
+    en_vigueur: 2023-06-14
+  - {id: LEGIARTI000006362690, article: "L. 10 CPCMR", en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000047452904
+  bornes:
+    age_atteint: [2023-06-14, null]
+  contenu:
+    droit: >-
+      soixante-sept ans pour l'emploi qui ne relève pas de la catégorie active, au sens du
+      deuxième alinéa du 1° du I de L. 24 CPCMR, un âge au plus égal pour l'emploi actif
+      (L. 556-1) ; le maintien jusqu'à soixante-dix ans qu'il ajoute est la fiche
+      `maintien_en_fonctions_jusqu_a_70_ans`
+    categorie_active: >-
+      police nationale : cinquante-sept ans pour les corps d'encadrement et d'application et
+      de commandement, soixante pour les commissaires, soixante et un pour les commissaires
+      divisionnaires et généraux, soixante-deux pour les contrôleurs et inspecteurs généraux
+      et les directeurs des services actifs (L. 556-8) ; sapeurs-pompiers professionnels,
+      soixante-deux ans (L. 556-8-1) ; surveillance pénitentiaire, cinquante-sept ans (L.
+      556-9) ; ingénieurs du contrôle de la navigation aérienne, cinquante-neuf ans, sans
+      report (L. 556-10) ; « Autres emplois de catégorie active : 62 ans », selon la fiche
+      F12395 de service-public
+    exception_de_corps: >-
+      « la limite d'âge du vice-président du Conseil d'Etat, du premier président et du
+      procureur général de la Cour des comptes reste fixée à soixante-huit ans » (loi n°
+      84-834, article 1er) ; les autres sont dans la fiche
+      `maintiens_en_fonctions_de_certains_corps`
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-10
+  prochaine_relecture: 2027-10-10
+  a_relire:
+  - >-
+    De 1936 à 1975 : lire les lois du 15 février 1946 (article 10) et du 8 août 1947
+    (article 21), le décret n° 48-1907 du 18 décembre 1948 et la rédaction de 1936 de
+    l'article 1er de la loi du 18 août 1936, que l'index LEGI ne porte pas ; et dire ce
+    qu'est un « échelon » du tableau. Le modèle ne connaît pas le corps : un sédentaire
+    se lirait au cinquième échelon, soixante-cinq ans, sauf décision contraire.
+  - >-
+    Les territoriaux et les hospitaliers avant 1985 : l'article 2 du décret n° 65-773 dans
+    sa rédaction de 1965, et le code des communes.
+  - >-
+    Les limites de la catégorie active avant 2010, statut par statut — cinquante-cinq,
+    cinquante-sept, cinquante-huit, cinquante-neuf, soixante ou soixante-deux ans —, pour
+    les statuts actifs du simulateur : policier, aide-soignant, sapeur-pompier
+    professionnel, actifs et super-actifs de l'État, des collectivités et des hôpitaux.
+  - >-
+    Les agents contractuels (L. 556-11 à L. 556-13 CGFP ; loi n° 84-834, article 6-1,
+    LEGIARTI000025494907), les ouvriers de l'État (décret n° 2004-1057) et les régimes
+    spéciaux (IEG, SNCF, RATP, Banque de France) ont leur propre limite d'âge, que le
+    modèle n'applique pas davantage : une fiche chacun, à l'étape qui les modélisera.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 556-1 CGFP, rédactions du 1er mars 2022 et du 14 juin 2023 (LEGIARTI000044425146,
+      LEGIARTI000047452904) ; L. 556-3 à L. 556-5 et L. 556-7 (LEGIARTI000044425142,
+      …425140, …425138, …425134, LEGIARTI000047452899) ; loi du 18 août 1936, articles 1er
+      et 4 (LEGIARTI000006451369, LEGIARTI000006451372) ; loi n° 84-834, articles 1er,
+      1-1, 1-2, 1-3, 3, 6-1 et 7-1 dans leurs rédactions de 2004 à 2022 ; loi n° 2010-1330,
+      articles 28, 31 et 33 ; décret n° 53-711, articles 1er et 3 ; décret n° 65-773,
+      article 2 ; L. 10 CPCMR. Lus dans l'index LEGI du dépôt, à jour du 9 octobre 2026
+    date: 2026-10-10
+  - type: legifrance
+    reference: >-
+      Pages de Légifrance, que l'outil en ligne de commande ne peut lire : L. 556-2, L.
+      556-6, L. 556-8 (rédaction du 1er mars 2022), L. 556-9, L. 556-10 et L. 556-11 CGFP ;
+      loi n° 75-1280, articles 1er à 3 ; loi n° 84-834, version au 1er janvier 1985
+      (articles 1er, 2, 3 et 5) et au 10 octobre 2026 (article 1er)
+    date: 2026-10-10
+  - type: jorf
+    reference: >-
+      loi n° 2023-270 du 14 avril 2023, article 10 (JORFARTI000047445097), IV, VII, VIII,
+      X, XI, XIV, XV, XXIX et XXX ; décret n° 2011-2103 du 30 décembre 2011, articles 1er
+      à 8. Lus dans l'index JORF du dépôt
+    date: 2026-10-10
+  - type: service_public
+    reference: >-
+      fiche F12395, « Jusqu'à quel âge peut-on travailler dans la fonction publique ? » :
+      soixante-sept ans pour le sédentaire, radié des cadres « le lendemain » ; les limites
+      de la catégorie active par emploi — soixante-deux ans pour l'identificateur de
+      l'institut médico-légal, les réseaux souterrains des égouts et les « Autres emplois de
+      catégorie active », cinquante-sept pour la surveillance pénitentiaire, cinquante-sept
+      à soixante-deux pour la police, cinquante-neuf pour le contrôle aérien
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F12395
+    date: 2026-01-01
+historique:
+- >-
+  2026-10-10 — née avec l'action 151, étape 2. L'étape 1 avait porté le départ jusqu'à
+  119 ans, et le modèle, qui n'applique aucune limite d'âge, gardait en activité un
+  fonctionnaire jusqu'à cet âge. La veille a lu la limite d'âge de 1936 à 2026, et les
+  exceptions qui la reculent, chacune dans sa fiche. Ce que le simulateur fait au-delà,
+  le propriétaire en décide (étape 3).
+effet: >-
+  Tout fonctionnaire civil dont le départ saisi passe sa limite d'âge : le modèle le garde
+  en activité jusqu'au départ, traitement, services et surcote compris, jusqu'à 119 ans
+  depuis l'étape 1 de l'action 151. Un sédentaire de l'État né en 1990 et entré à 22 ans
+  touche, au scénario 1, 5 219 € brut par mois s'il part à 70 ans, le plus tard que le
+  droit le garde, 10 775 € à 90 ans et 18 987 € à 119 ans ; un policier de la même
+  génération, dont la limite est 57 ans et 67 avec la prolongation de L. 556-7, se simule
+  en activité jusqu'à 119 ans. Mesuré le 10 octobre 2026, en euros constants du
+  simulateur.
+textes_a_rattacher:
+- reference: >-
+    loi du 15 février 1946 relative aux effectifs, au recrutement et aux limites d'âge des
+    fonctionnaires, article 10 ; loi du 8 août 1947, article 21 ; décret n° 48-1907 du 18
+    décembre 1948 relatif aux limites d'âge des personnels civils de l'État

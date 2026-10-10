@@ -259,6 +259,20 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   les <!--chiffre:illustration()-->17<!--/--> années des ingénieurs du contrôle de la navigation aérienne et les <!--chiffre:illustration()-->32<!--/-->
   des égoutiers et des identificateurs de l'institut médico-légal ne sont pas
   distinguées, faute d'un corps déclaré.
+- **La limite d'âge des fonctionnaires : lue, pas encore appliquée.** Le
+  fonctionnaire civil est radié des cadres à la limite d'âge de son emploi —
+  soixante-sept ans pour le sédentaire depuis la génération 1955, un âge plus bas
+  pour l'actif, que son statut fixe —, et n'est maintenu au-delà que par les
+  exceptions que la loi prévoit : un an par enfant à charge, trois au plus, la
+  prolongation de la carrière incomplète, celle de l'actif jusqu'à la limite des
+  sédentaires et, depuis le 14 juin 2023, le maintien sur autorisation jusqu'à
+  soixante-dix ans, qui borne le tout. Le modèle n'en applique aucune : il garde
+  le fonctionnaire en activité, traitement, services et surcote compris, jusqu'au
+  départ saisi, que la saisie accepte depuis le 10 octobre 2026 jusqu'au dernier
+  âge que les tables de mortalité convertissent. La fiche
+  `limite_age_fonction_publique` et celles qu'elle relie portent le droit ; ce que
+  le simulateur fera au-delà de la limite attend la décision du propriétaire
+  (action 151, étape 3).
 - **Pension militaire : la durée est servie, le grade ne l'est pas.** Les deux
   statuts militaires opposent la durée de services qui ouvre la pension —
   <!--chiffre:maximum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=non_officier)-->17<!--/--> ans pour un non-officier, <!--chiffre:maximum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=officier)-->27<!--/--> pour un officier, <!--chiffre:minimum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=non_officier)-->15<!--/--> et <!--chiffre:minimum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=officier)-->25<!--/--> avant la loi du

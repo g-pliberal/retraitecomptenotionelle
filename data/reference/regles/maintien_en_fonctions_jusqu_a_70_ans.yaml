@@ -1,0 +1,108 @@
+schema_version: 1
+id: maintien_en_fonctions_jusqu_a_70_ans
+intitule: >-
+  Depuis le 14 juin 2023, le fonctionnaire civil d'un emploi qui ne relève pas de la
+  catégorie active, et dont la limite d'âge est soixante-sept ans ou davantage, peut, sur
+  autorisation, être maintenu en fonctions sans radiation des cadres jusqu'à soixante-dix
+  ans ; le refus est motivé. Ce maintien, les prolongations et les reculs ne le mènent
+  pas, ensemble, au-delà de soixante-dix ans. L'agent contractuel a le même maintien.
+domaine: age
+regimes: [fonction_publique_etat, cnracl]
+etape: preparer_la_chronologie
+face: droit
+etat: manquante
+lit:
+- l'emploi de l'assuré à sa limite d'âge, sédentaire ou de la catégorie active, et sa
+  limite (fiche `limite_age_fonction_publique`)
+- l'autorisation de l'employeur, que la saisie ne porte pas
+ecrit:
+- la date où le maintien finit, soixante-dix ans au plus, que la radiation des cadres suit
+dates_qui_decident:
+- age_atteint
+versions:
+- id: avant_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000044425146, article: "L. 556-1 CGFP", en_vigueur: 2022-03-01}
+  - {id: LEGIARTI000006362689, article: "L. 10 CPCMR", en_vigueur: 1964-12-01}
+  nee_de: LEGIARTI000006362689
+  bornes:
+    age_atteint: [null, 2023-06-14]
+  contenu:
+    droit: >-
+      aucun maintien de droit commun au-delà de la limite d'âge et de ses reculs et
+      prolongations : « Le fonctionnaire ne peut être maintenu en fonctions au-delà de
+      l'âge limite de l'activité dans l'emploi qu'il occupe, sous réserve des exceptions
+      prévues par les dispositions en vigueur » (L. 556-1, rédaction de 2022) ; les seules
+      exceptions sont celles de corps particuliers (fiche
+      `maintiens_en_fonctions_de_certains_corps`)
+  exemples: aucun trouvé
+- id: reforme_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047452904, article: "L. 556-1 CGFP", en_vigueur: 2023-06-14}
+  - {id: LEGIARTI000044425124, article: "L. 556-11 CGFP", en_vigueur: 2023-06-14}
+  - reference: >-
+      loi n° 2023-270 du 14 avril 2023, article 10, VIII, 1° et 5°, et XXX, A
+      (JORFARTI000047445097)
+    publie_le: 2023-04-15
+    en_vigueur: 2023-06-14
+  nee_de: LEGIARTI000047452904
+  bornes:
+    age_atteint: [2023-06-14, null]
+  contenu:
+    droit: >-
+      « Toutefois, le fonctionnaire occupant un emploi qui ne relève pas de la catégorie
+      active et auquel s'applique la limite d'âge mentionnée au 1° du présent article ou
+      une limite d'âge qui lui est égale ou supérieure peut, sur autorisation, être
+      maintenu en fonctions sans radiation des cadres préalable, jusqu'à l'âge de
+      soixante-dix ans. Le refus d'autorisation est motivé. Le bénéfice cumulé de ce
+      maintien en fonctions, des prolongations d'activité et des reculs de limite d'âge
+      prévus aux articles L. 556-2 à L. 556-5 ne peut conduire le fonctionnaire à être
+      maintenu en fonctions au delà de soixante-dix ans » (L. 556-1) ; l'agent contractuel,
+      de même, sous les reculs de L. 556-12 (L. 556-11)
+    transition: >-
+      « Les VIII, X, XIV et XV entrent en vigueur deux mois après la promulgation de la
+      présente loi » ; ceux que le code de justice administrative ou la loi n° 86-1304
+      maintenaient déjà en activité gardent leur régime (article 10, XXX, A)
+    application: >-
+      selon service-public, aptitude physique exigée, demande écrite six mois au moins
+      avant le soixante-septième anniversaire, réponse de l'employeur trois mois au moins
+      avant
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-10
+  prochaine_relecture: 2027-10-10
+  a_relire:
+  - >-
+    L'autorisation est discrétionnaire, et la saisie ne la porte pas : l'étape 3 dira si
+    le simulateur la présume accordée quand le départ saisi la demande, et comment la
+    page le dit.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 556-1 CGFP, rédactions du 1er mars 2022 et du 14 juin 2023 (LEGIARTI000044425146,
+      LEGIARTI000047452904), dans l'index LEGI du dépôt ; L. 556-11 (LEGIARTI000044425124),
+      sur la page de Légifrance
+    date: 2026-10-10
+  - type: jorf
+    reference: >-
+      loi n° 2023-270 du 14 avril 2023, article 10 (JORFARTI000047445097), VIII, 1° et 5°,
+      X, XV et XXX, dans l'index JORF du dépôt
+    date: 2026-10-10
+  - type: service_public
+    reference: >-
+      fiche F12395 : « Maintien jusqu'à 70 ans », sur autorisation, refus motivé, aptitude
+      physique ; « Le bénéfice cumulé des prolongations d'activité ne peut pas conduire à
+      vous maintenir en activité au-delà de 70 ans »
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F12395
+    date: 2026-01-01
+historique:
+- >-
+  2026-10-10 — née avec l'action 151, étape 2, avec la fiche `limite_age_fonction_publique`.
+effet: >-
+  Aucun aujourd'hui, le modèle n'appliquant aucune limite d'âge. La limite appliquée, ce
+  maintien est ce qui permet à un sédentaire parti depuis le 14 juin 2023 de servir de
+  soixante-sept à soixante-dix ans, et soixante-dix ans est l'âge au-delà duquel le droit
+  ne garde plus aucun fonctionnaire civil, hors les corps de la fiche
+  `maintiens_en_fonctions_de_certains_corps`.
