@@ -1,10 +1,6 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: rouge
-sources: 724b881ceaabb83356c0b2073215aafdf773a6fb
-date: 2026-10-10T13:40:02Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38055829110
-echecs:
-  - "FAILED tests/test_parcours.py::test_le_parcours_rejoue_ses_carrieres - AssertionError: [fonctionnaire_etat 3000] ligne 1 : le parcours annonce 2 755 €, la page affiche 2730.00 €"
-  - "FAILED tests/test_parcours.py::test_chaque_compte_du_parcours_est_sur_sa_page[### 6. M\xe9thode et Donn\xe9es \u2014 deux minutes, pour finir-/donnees] - AssertionError: ### 6. Méthode et Données — deux minutes, pour finir"
-  - "FAILED tests/test_web.py::test_les_modules_sont_tous_precharges - AssertionError: préchargés mais absents du dossier : set() ; présents mais non préchargés : {'indemnite_csg.js'}"
+etat: vert
+sources: 225870a3aa3bc1bae3e078333987c27308409537
+date: 2026-10-10T13:52:46Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38056629070
