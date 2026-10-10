@@ -716,7 +716,13 @@ referents:
           barème du site (`tests/test_prelevements_historiques.py`).
           Le taux de remplacement net de TRAJECTOiRE, qui prélève de
           même, se retrouve alors sur les départs d'avant 2018, qui
-          s'en écartaient de 1,2 à 3,7 %.
+          s'en écartaient de 1,2 à 3,7 %. Complété le 10 octobre 2026
+          (étape 9, septième partie) : les barèmes des indépendants —
+          la maladie des artisans et commerçants et des libéraux, la
+          cotisation familiale —, corrigés et prolongés par les textes
+          de l'index LEGI ; la maladie des pensions des retraités
+          indépendants et de la fonction publique ; chaque marche
+          ancrée au Journal officiel.
         etat: repris
         chantier: "138.9"
     bilan: >-

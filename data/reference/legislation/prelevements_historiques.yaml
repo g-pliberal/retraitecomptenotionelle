@@ -146,7 +146,7 @@ pensions:
     - {depuis: "1988-07-01", taux: 0.0265, texte: "Décret 88-795 du 22/06/1988 (JORFTEXT000000693584) : CSS, D. 712-39 et D. 713-16 ; décret 67-850, art. 3", jorf: "JORFTEXT000000693584"}
     - {depuis: "1996-03-01", taux: 0.0305, texte: "Décret 96-155 du 28/02/1996, art. 1 et 2 (JORFTEXT000000557800)", jorf: "JORFTEXT000000557800"}
     - {depuis: "1997-01-01", taux: 0.028, texte: "Décret 96-1151 du 26/12/1996, art. 10 : CSS, D. 712-39 (LEGIARTI000006739102) ; décret 67-850, art. 3 (LEGIARTI000006770632)", jorf: "JORFTEXT000000381201"}
-    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1249 du 29/12/1997 : CSS, D. 712-39 (LEGIARTI000006739103), les seuls non-résidents", jorf: "JORFTEXT000000753405"}
+    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1249 du 29/12/1997, art. 4, 9 et 17 : CSS, D. 712-39 (LEGIARTI000006739103) et décret 67-850, art. 3, les seuls non-résidents", jorf: "JORFTEXT000000753405"}
 
 salaires:
   csg:

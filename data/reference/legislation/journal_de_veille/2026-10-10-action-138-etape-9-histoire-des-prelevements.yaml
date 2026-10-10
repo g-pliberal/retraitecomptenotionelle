@@ -1,0 +1,42 @@
+date: "2026-10-10"
+session: "action 138, étape 9, septième partie : l'histoire des prélèvements complétée — les indépendants, la maladie des pensions des autres régimes, l'ancrage au Journal officiel"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche de la carte touchée, la
+  session n'écrivant aucune règle du scénario 1. Les barèmes de l'IPP, en CSV
+  et dans son dépôt YAML au commit fe2cdff : la maladie des artisans et
+  commerçants (mmid_ac) et des professions libérales (mmid_pl), actifs et
+  retraités, la cotisation familiale des indépendants (famille). L'index LEGI
+  de la DILA, version par version : D. 612-3, D. 612-4, D. 612-5, D. 612-9,
+  D. 613-1, D. 621-1 à D. 621-3, D. 621-6, L. 131-6, L. 136-3, D. 711-3 à
+  D. 711-5, D. 712-38, D. 712-39, D. 713-16, l'article 3 du décret n° 67-850.
+  L'index JORF : la loi n° 90-1168 (art. 129), les décrets n° 76-896, 80-298,
+  80-475, 80-481, 84-817, 85-852, 87-453, 87-466, 87-483, 88-772, 88-789,
+  88-795, 89-143, 91-745, 92-295, 95-337, 95-556, 95-1356, 95-1401, 96-155,
+  96-1151, 96-1167, 97-140, 97-1249, 97-1252, 2012-1551, 2017-1894, 2020-621
+  et 2021-755, et chacun des textes que l'IPP cite, à sa date de publication ;
+  les décrets n° 2022-1529 et 2024-688 par les notes de LEGI.
+trouve: >-
+  La CSG d'un indépendant porte, de 1991 à 2024, sur son revenu augmenté de
+  ses cotisations personnelles (loi n° 90-1168, art. 129 ; L. 136-3), sur
+  l'assiette de ses cotisations depuis 2025. L'IPP se trompe de marche aux
+  échéances du 1er octobre 1991 et du 1er octobre 1992 (décrets n° 91-745 et
+  92-295), sur l'indemnité journalière des artisans de 1996 (n° 95-556), sur
+  le 1er octobre 1984 des libéraux (n° 84-817), sur le 3,1 % des retraités
+  indépendants de 1986 (D. 612-4 et n° 87-483 disent 3 %), sur les 7,35 % de
+  2018 au-delà de cinq plafonds (D. 621-1 dit 6,5 %) ; il n'a ni l'indemnité
+  journalière de 2013 à 2017, ni la réduction de 2017 des libéraux (D. 612-5),
+  ni rien après 2018. La maladie des retraités indépendants est dans sa
+  branche des indépendants. Celle des pensions de la fonction publique vaut
+  2,25 % de 1976, 2,65 % au 1er juillet 1988, 3,05 % au 1er mars 1996, 2,80 %
+  en 1997, rien depuis 1998 hors des non-résidents ; celle des salariés
+  agricoles est celle du régime général, taux pour taux ; celle des
+  exploitants, 2,8 % en 1997 (n° 97-140). 159 des 223 marches de l'IPP sont
+  au Journal officiel au numéro et à la date qu'il annonce ; l'index dément
+  six de ses dates de publication (n° 93-93, 98-945, 2002-1295, 2009-1158,
+  2012-853, 2014-1531).
+reste: >-
+  La maladie des pensions des exploitants d'avant 1997, fixée par des décrets
+  annuels que l'index n'a qu'en titre ; celle des régimes spéciaux (D. 711-3
+  à D. 711-5), dont il faut savoir, régime par régime, s'il relève du régime
+  général pour la maladie ; le plafond de l'assiette de la fonction publique ;
+  les décrets qu'aucune marche ne rejoint.

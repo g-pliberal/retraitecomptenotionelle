@@ -33,7 +33,7 @@ rien avant. La maladie des salariés et des agents publics existait avant 1967,
 où commencent les barèmes de l'IPP : ses taux de 1967 sont tenus en deçà
 (`tenues_avant_leur_premiere_marche`), et le dépôt le dit.
 
-LES INDÉPENDANTS (action 138, étape 9, sixième partie). La maladie des
+LES INDÉPENDANTS (action 138, étape 9, septième partie). La maladie des
 artisans et commerçants et celle des professions libérales, la cotisation
 d'allocations familiales des travailleurs indépendants, chez l'IPP de 1970 et
 de 1974 ; leur CSG et leur CRDS, aux taux de l'activité, sur leur revenu
@@ -331,8 +331,8 @@ LUES_AUX_TEXTES["maladie_fonction_publique"] = [
      "texte": "Décret 96-1151 du 26/12/1996, art. 10 : CSS, D. 712-39 (LEGIARTI000006739102) ; "
               "décret 67-850, art. 3 (LEGIARTI000006770632)"},
     {"depuis": "1998-01-01", "taux": 0.0,
-     "texte": "Décret 97-1249 du 29/12/1997 : CSS, D. 712-39 (LEGIARTI000006739103), les seuls "
-              "non-résidents"},
+     "texte": "Décret 97-1249 du 29/12/1997, art. 4, 9 et 17 : CSS, D. 712-39 "
+              "(LEGIARTI000006739103) et décret 67-850, art. 3, les seuls non-résidents"},
 ]
 
 #: Les régimes dont chaque série de pensions prélève la part, hors des
