@@ -34,15 +34,15 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 - Découpées en versions : **94 sur 199**, soit 385 versions, dont 57 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 115, dont 10 déclarées non appliquées.
 
-**La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 13 446 rédactions d'articles, de 120 textes, lues le 2026-10-10 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20261009-214339). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
+**La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 13 446 rédactions d'articles, de 120 textes, lues le 2026-10-10 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20261010-211641). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
 
 | Statut | Rédactions |
 |---|---|
 | rattachées à une version | 801 |
 | sans effet | 53 |
-| à rattacher | 365 |
+| à rattacher | 368 |
 | à examiner | 2 402 |
-| sans statut | 9 825 |
+| sans statut | 9 822 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 24 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
@@ -325,7 +325,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `code` | 68 |
   | `approximations` | 30 |
 
-- **Les textes** : 365 rédactions à rattacher à une version de la fiche qui les cite, 2 402 à examiner, et 9 825 sans statut, que le cliquet tient à 9 825 au plus. Les textes qui en ont le plus : `css` 5 063, `decret_46_2769` 946, `rural` 919, `cpcmr` 590, `decret_90_1215` 325 (`python scripts/textes.py`).
+- **Les textes** : 368 rédactions à rattacher à une version de la fiche qui les cite, 2 402 à examiner, et 9 822 sans statut, que le cliquet tient à 9 822 au plus. Les textes qui en ont le plus : `css` 5 063, `decret_46_2769` 946, `rural` 919, `cpcmr` 589, `decret_90_1215` 325 (`python scripts/textes.py`).
 - **Les relectures prévues les plus proches** : 2026-10-31 (`agirc_arrco_valeur_achat`) ; 2026-11-15 (`agirc_arrco_valeur_service`) ; 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`carriere_longue`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 
