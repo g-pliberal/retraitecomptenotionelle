@@ -4,11 +4,12 @@
 personne seule ou couple, enfants ou non, salaires et pensions imposables —,
 des revenus de 1960 à ceux de 2025 puis sur un barème projeté, et son revenu
 fiscal de référence (`impot_revenu.py`), à l'euro des tableaux de la brochure
-pratique, des exemples du BOFiP et du BOI, en francs et en euros, et
-d'OpenFisca exécuté à part. Branché nulle part. Reste, dans cet ordre :
-l'impôt dans les indicateurs de cycle de vie (la session suivante), avec la
-CSG déductible de chaque année (la session de la CSG) ; l'effet retour de la
-page Coût ; les règles d'avant 1981 sans texte lu. Détail : « Ce qui reste ».
+pratique, de 77 exemples de l'administration, un par année au moins de 1998
+à 2025, et d'OpenFisca exécuté à part. Branché nulle part. Reste, dans cet
+ordre : l'impôt dans les indicateurs de cycle de vie (la session suivante),
+avec la CSG déductible de chaque année (la session de la CSG) ; l'effet
+retour de la page Coût ; les règles d'avant 1981 sans texte lu. Détail :
+« Ce qui reste ».
 
 **La demande.** Le propriétaire, le 10 octobre 2026 : l'impôt sur le revenu
 d'un foyer, de son barème à son montant, chaque année ; les barèmes de l'IPP
@@ -35,11 +36,16 @@ ce que le module reprend.
 - *Le BOFiP*, qui garde chaque version d'un document depuis 2012 : un exemple
   de décote par année de 2011 à 2019, réduction sous condition de revenus
   comprise de 2016 à 2019, et un de plafonnement du quotient familial par
-  année de 2011 à 2025. Ses archives, cherchées par formulaire : le Bulletin
-  officiel des impôts et la documentation de base d'avant 2012, en francs
-  avant 2002 ; l'instruction qui commente chaque loi de finances y chiffre
-  une réduction complémentaire et une décote, des revenus de 2000 à 2004
-  (BOI 5 B-9-01, 5 B-3-02, 5 B-6-03, 5 B-8-04, 5 B-9-05).
+  année de 2011 à 2025 ; la prime pour l'emploi de 2010 et 2011, les
+  abattements de 10 % de 2011. Ses archives, cherchées par formulaire : le
+  Bulletin officiel des impôts depuis 1999 et la documentation de base de
+  1999 et 2000, rien d'avant. L'instruction qui commente chaque loi de
+  finances y chiffre une réduction complémentaire et une décote par année,
+  des revenus de 1998 à 2010 ; d'autres, la prime pour l'emploi, le crédit
+  d'impôt exceptionnel de 2008 ; la documentation de base, les abattements
+  de 10 % et de 20 % de 1998, les barèmes et les seuils de 1993 à 1999. Leurs
+  tableaux et leurs calculs sont souvent des images, lues une à une. Aucun
+  exemple chiffré de l'abattement des personnes âgées, à aucune époque.
 - *La brochure pratique* de 2024 et de 2025 : un barème « par lecture
   directe », l'impôt de chaque revenu imposable et de chaque nombre de parts,
   plafonnement et décote compris, pour quatre situations ; quelque 4 600
@@ -53,7 +59,8 @@ ce que le module reprend.
   `data/reference/legislation/impot_revenu.yaml`, chaque montant dans sa
   monnaie, francs jusqu'en 2000 ; il y ajoute, chaque fois avec sa source
   (`origine`), les revenus de 2024 et de 2025 lus dans LEGI, et ce que l'IPP
-  porte mal (ci-dessous). Entrée au manifeste : `ipp_impot_revenu`.
+  porte mal (ci-dessous), et deux mesures d'une seule année qu'il ne porte
+  pas. Entrée au manifeste : `ipp_impot_revenu`.
 - `donnees/impot_revenu.py` rend les paramètres d'une année de revenus, et les
   projette au-delà de 2025 : chaque montant relevé de l'inflation de l'année,
   ou de la croissance du salaire moyen, et arrondi à l'euro, les taux et le
@@ -63,14 +70,16 @@ ce que le module reprend.
   personnes âgées ou invalides ; les parts ; le barème, son plafonnement et
   les réductions complémentaires ; la décote, dont la règle a changé six
   fois ; la réduction sous condition de revenus ; les majorations et
-  minorations exceptionnelles ; la réduction exceptionnelle de 2013 ; la prime
-  pour l'emploi ; le seuil de recouvrement. Il rend chaque étape, et le revenu
-  fiscal de référence. Une année en francs se calcule en francs.
+  minorations exceptionnelles ; la réduction exceptionnelle de 2013 et les
+  5 % de 2001 ; la prime pour l'emploi et le crédit d'impôt exceptionnel de
+  2008, restitués en entier au foyer qui n'est pas imposable ; le seuil de
+  recouvrement. Il rend chaque étape, et le revenu fiscal de référence. Une
+  année en francs se calcule en francs.
 - Les tests (`tests/test_impot_revenu.py`) : toutes les cases de la brochure
   qu'un foyer du module atteint, de 2023 et 2024
   (`tests/temoins/brochure_impot_revenu.json`, `dgfip_brochure_impot.py`) ;
-  les exemples chiffrés (`tests/temoins/exemples_impot_revenu.yaml`), du
-  franc de 2000 aux euros de 2001 à 2025 ;
+  77 exemples chiffrés (`tests/temoins/exemples_impot_revenu.yaml`), de
+  chaque année de 1998 à 2025, en francs jusqu'en 2000 ;
   OpenFisca sur quinze foyers de 2002 à 2025
   (`tests/temoins/impot_revenu_openfisca.json`, `openfisca_impot_revenu.py`) ;
   chaque année de 1960 à 2025 dans sa monnaie ; la projection ; les valeurs
@@ -87,20 +96,43 @@ ce que le module reprend.
   porte qu'à partir de 2007 ; la part entière du troisième enfant, datée de
   1995 dans sa table et de 1980 dans ses notes ; trois années sans montant de
   l'abattement des personnes âgées (1982, 1983, 1989), que la règle
-  d'indexation de l'article 157 bis comble, et qui retrouve 1984. Au registre :
-  `baremes_ipp`, écarts IR1 à IR4.
+  d'indexation de l'article 157 bis comble, et qui retrouve 1984 ; la
+  réduction complémentaire de 2009 (651 €, non 661 €) ; les taux de la prime
+  pour l'emploi de 2005 (6 % et 15 %, non ceux de 2006). Tranché par la
+  documentation de base, aucun index n'ayant la loi de finances de l'année :
+  le barème de 1994 (48 570 F, non 48 750 F) ; l'abattement des personnes
+  âgées de 1993 (jusqu'à 57 500 F de revenu, non 57 000 F). Et deux mesures
+  d'une seule année que ses paramètres ne portent pas : les 5 % retranchés de
+  l'impôt des revenus de 2001 (loi n° 2002-1050), le crédit d'impôt
+  exceptionnel des revenus de 2008, les deux tiers de l'impôt sous 11 673 €
+  par part, dégressif jusqu'à 12 475 € (loi n° 2009-431). Au registre :
+  `baremes_ipp`, écarts IR1 à IR9.
 - *Chez OpenFisca*, tranché par le code : 1,5 part au veuf ayant un enfant
   avant 2008 (article 194 : 2,5) ; l'abattement de 20 % des pensions appliqué
-  avant leur plafond, jusqu'en 2005 (article 158, 5, a : après). Et trois
+  avant leur plafond, jusqu'en 2005 (article 158, 5, a : après) ; les taux
+  de la prime pour l'emploi de 2005, ceux de l'IPP ; au foyer dont la
+  cotisation n'atteint pas le seuil de recouvrement, la seule part des
+  crédits qui dépasse l'impôt, et non la prime entière (BOI 5 B-12-01,
+  n° 53), lu dans son code et non dans le témoin, qui ne compare pas ce que
+  le foyer paie. Et trois
   conventions qui ne sont pas des désaccords : il arrondit les corrections sur
   l'impôt non arrondi, quand le BOFiP arrondit chaque élément (un euro, au
   plus) ; sa décote n'est pas bornée par l'impôt ; il retire de la prime pour
   l'emploi le RSA activité, de 2010 à 2015, que le module ne calcule pas.
-- *Chez nous*, trouvé par OpenFisca et corrigé : la majoration de la prime
-  pour l'emploi du parent isolé, qui suivait l'IPP.
-- *Les exemples du BOFiP* : la décote de 2013, publiée le 12 février 2014 à
-  173 €, que la réduction exceptionnelle votée le 8 août 2014 efface ; le
-  témoin la garde en écart connu.
+- *Chez nous*, et corrigé : la majoration de la prime pour l'emploi du
+  parent isolé, qui suivait l'IPP (trouvé par OpenFisca) ; le montant minimal
+  de la prime, lu comme un seuil à toute époque quand le code en fait un
+  plancher jusqu'en 2004 (« ne peut être inférieur à 160 F », puis 25 €) ;
+  la restitution partielle au foyer non imposable, comme OpenFisca (trouvées
+  par les exemples du BOI et l'article 200 sexies).
+- *Les exemples de l'administration* que le module ne reproduit pas, gardés
+  en écart connu parce qu'une loi postérieure a changé leur résultat : la
+  décote de 2013, que la réduction exceptionnelle votée en août 2014 efface ;
+  celle de 2001, avant les 5 % d'août 2002 ; le plafonnement de 1999, au
+  barème initial que la loi du 13 juillet 2000 a baissé ; trois primes pour
+  l'emploi de 2000, avant leur doublement de décembre 2001. La décote de 2008
+  se rejoue sur l'impôt publié, l'énoncé du BOI reprenant le revenu de
+  l'année précédente.
 
 **Le registre.** Les cinq points du chantier 138.5 qui calculent l'impôt
 disent, chacun, ce que le module reprend. Saphir passe à `repris` : il ne
@@ -112,8 +144,10 @@ guerre, que le module ne calcule pas.
 
 **Ce que le module ne fait pas** (`HORS_CHAMP`, et ses remarques). Les revenus
 autres que les salaires et les pensions, les charges déductibles, les
-réductions et crédits d'impôt hors la prime pour l'emploi et la réduction de
-2013 ; la case L, les anciens combattants, les enfants en résidence alternée
+réductions et crédits d'impôt hors la prime pour l'emploi, les réductions de
+2001 et de 2013 et le crédit de 2008 ; le seuil sous lequel une restitution
+n'est pas faite (50 F, puis 8 €) ; la case L, les anciens combattants, les
+enfants en résidence alternée
 ou majeurs rattachés ; les départements d'outre-mer ; la contribution sur les
 hauts revenus ; le temps partiel de la prime pour l'emploi, et le RSA
 activité qui la diminue de 2009 à 2015. Et, sans texte lu, sur les colonnes

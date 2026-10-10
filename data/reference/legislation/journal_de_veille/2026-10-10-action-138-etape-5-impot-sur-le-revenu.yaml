@@ -10,9 +10,13 @@ consulte: >-
   lois de finances pour 2025 (n° 2025-127) et pour 2026 (n° 2026-103).
   L'index du JORF, qui n'a pas le texte des lois de finances d'avant 1980. Le
   BOFiP : BOI-IR-LIQ-20-10, 20-20-20, 20-20-30 et 20-20-40, toutes leurs
-  versions depuis 2012 ; ses archives : le BOI 5 B-9-01 du 2 mars 2001 et
-  les BOI 5 B-3-02, 5 B-6-03, 5 B-8-04 et 5 B-9-05, qui commentent les lois de
-  finances pour 2002 à 2005, la documentation de base 5 B 321 et 5 F 3122 ; les brochures pratiques de 2024
+  versions depuis 2012, BOI-IR-RICI-310-20, BOI-RSA-BASE-30-50-20 et
+  BOI-RSA-PENS-30-10-10 ; ses archives, qui commencent en 1999 : les BOI qui
+  commentent chaque loi de finances, de 2000 à 2011 (5 B-5-00 à 5 B-7-11),
+  ceux de la prime pour l'emploi (5 B-12-01, 5 B-11-04, 5 B-16-06), celui du
+  crédit d'impôt exceptionnel de 2008 (5 B-25-09), la documentation de base
+  5 B 25, 5 B 321, 5 B 3123, 5 F 252, 5 F 311, 5 F 3121 et 5 F 3122, leurs
+  tableaux en images lus un à un ; les brochures pratiques de 2024
   et de 2025, chapitre « Calcul de l'impôt ». OpenFisca-France 176.1.2,
   exécuté à part.
 trouve: >-
@@ -31,7 +35,21 @@ trouve: >-
   âgées. Les règles d'arrondi de chaque époque (articles 193 et 1657) ; le
   seuil de mise en recouvrement depuis 1977 (article 1657). Deux erreurs
   d'OpenFisca : 1,5 part au veuf ayant un enfant avant 2008 ; l'abattement de
-  20 % des pensions appliqué avant leur plafond, jusqu'en 2005.
+  20 % des pensions appliqué avant leur plafond, jusqu'en 2005. Puis, par les
+  exemples et les tableaux des archives du BOFiP : quatre erreurs de l'IPP,
+  le barème de 1994 (48 570 F, non 48 750 F) et l'abattement des personnes
+  âgées de 1993 (57 500 F, non 57 000 F), tranchés par la documentation de
+  base faute de loi de finances dans les index, la réduction complémentaire
+  de 2009 (651 €, non 661 €, LEGIARTI000021625085), les taux de la prime pour
+  l'emploi de 2005 (6 % et 15 %, LEGIARTI000006303356), qu'OpenFisca partage
+  ; deux mesures d'une seule année absentes de ses paramètres, les 5 % de
+  l'impôt des revenus de 2001 (loi n° 2002-1050, BOI 5 B-6-03) et le crédit
+  d'impôt exceptionnel des revenus de 2008 (loi n° 2009-431, reproduite au
+  BOI 5 B-25-09) ; le minimum de la prime pour l'emploi, plancher jusqu'aux
+  revenus de 2004 (« ne peut être inférieur à »), seuil depuis 2005 (« n'est
+  pas due lorsque ») ; la prime entière au foyer non imposable (art. 200
+  sexies, IV ; BOI 5 B-12-01, n° 53), qu'OpenFisca ne restitue qu'au-delà de
+  l'impôt.
 reste: >-
   Ce que seules les colonnes et les notes de l'IPP décrivent, sans texte lu :
   la franchise et la décote de 1961 à 1972, les majorations et minorations
@@ -39,4 +57,7 @@ reste: >-
   finances de chaque année, dont l'index du JORF n'a que le titre. Le seuil de
   mise en recouvrement de 1978 et de 1985 à 1990, que le code ne chiffre pas.
   La relecture de l'index LEGI par ses incréments, refusés par le serveur de
-  la DILA depuis la fin de septembre.
+  la DILA depuis la fin de septembre. Aucun exemple officiel d'avant 1998 :
+  les archives du BOFiP commencent en 1999 ; aucun de l'abattement des
+  personnes âgées, à aucune époque. Le seuil de restitution de l'article
+  1965 L (50 F, puis 8 €), que le module ne calcule pas.

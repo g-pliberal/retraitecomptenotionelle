@@ -4737,7 +4737,8 @@ institutions:
         titre: >-
           Exemples chiffrés de l'impôt sur le revenu — BOFiP (BOI-IR-LIQ-20-20-20
           et 20-30, une version par année depuis 2012), brochures pratiques,
-          Bulletin officiel des impôts (archives, en francs)
+          Bulletin officiel des impôts et documentation de base (archives,
+          1998-2011)
         url: https://bofip.impots.gouv.fr/bofip/2495-PGP.html
         acces: document
         statut_integration: saisi
@@ -4749,10 +4750,15 @@ institutions:
           la décote et la réduction sous condition de revenus de 2011 à 2019, le
           plafonnement du quotient familial de 2011 à 2025. Les archives
           (bofip-archives.impots.gouv.fr, recherche par formulaire et cookie)
-          portent les Bulletins officiels des impôts d'avant 2012 et la
-          documentation de base, en francs avant 2002 : l'instruction qui
-          commente chaque loi de finances y chiffre une réduction
-          complémentaire et une décote (revenus de 2000 à 2004).
+          portent les Bulletins officiels des impôts depuis 1999 et la
+          documentation de base de 1999 et 2000, rien d'avant : l'instruction
+          qui commente chaque loi de finances y chiffre une réduction
+          complémentaire et une décote (revenus de 1998 à 2010), d'autres la
+          prime pour l'emploi et le crédit d'impôt exceptionnel de 2008, la
+          documentation de base les abattements de 10 % et de 20 %. Leurs
+          tableaux sont souvent des images, transcrites une à une ; chaque
+          exemple porte l'adresse de sa page. 77 exemples, de chaque année de
+          1998 à 2025.
 
   cepii:
     nom: Centre d'études prospectives et d'informations internationales

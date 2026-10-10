@@ -42,9 +42,10 @@ successives :
 5. la décote, dont la règle a changé six fois (:func:`decote`) ; la réduction
    sous condition de revenus de 2016 à 2019 ; les majorations et minorations
    exceptionnelles des années 1960 à 1992 ; la réduction exceptionnelle des
-   revenus de 2013 ;
-6. le seuil de mise en recouvrement, et la prime pour l'emploi de 2000 à 2015,
-   un crédit d'impôt restitué au-delà de l'impôt.
+   revenus de 2013 ; les 5 % retranchés de l'impôt des revenus de 2001 ;
+6. le seuil de mise en recouvrement ; la prime pour l'emploi de 2000 à 2015 et
+   le crédit d'impôt exceptionnel des revenus de 2008, restitués au-delà de
+   l'impôt dû, en entier au foyer qui n'est pas imposable.
 
 LES MONNAIES ET LES ARRONDIS. L'impôt d'une année en francs se calcule en
 francs : ``unite="euro"`` (le défaut) prend et rend des euros, convertis au
@@ -57,12 +58,13 @@ franc le plus proche depuis 1979, à la dizaine de centimes avant (art. 1657,
 
 CE QU'IL NE FAIT PAS, et que :data:`HORS_CHAMP` énumère : les revenus autres
 que les salaires et les pensions, les charges déductibles, les réductions et
-crédits d'impôt autres que la prime pour l'emploi et la réduction de 2013,
-les demi-parts des anciens combattants et de qui vit seul après avoir élevé
-un enfant (case L), les enfants en résidence alternée ou majeurs rattachés,
-les départements d'outre-mer, la contribution exceptionnelle sur les hauts
-revenus, le travail à temps partiel de la prime pour l'emploi (le foyer
-travaille à temps plein, toute l'année).
+crédits d'impôt autres que la prime pour l'emploi, les réductions de 2001 et
+de 2013 et le crédit de 2008, les demi-parts des anciens combattants et de
+qui vit seul après avoir élevé un enfant (case L), les enfants en résidence
+alternée ou majeurs rattachés, les départements d'outre-mer, la contribution
+exceptionnelle sur les hauts revenus, le travail à temps partiel de la prime
+pour l'emploi (le foyer travaille à temps plein, toute l'année), le seuil
+sous lequel une restitution n'est pas faite (art. 1965 L : 50 F, puis 8 €).
 """
 
 from __future__ import annotations
@@ -78,12 +80,14 @@ from .somme import somme_ordonnee
 HORS_CHAMP = (
     "revenus autres que les salaires et les pensions",
     "charges déductibles et pensions alimentaires",
-    "réductions et crédits d'impôt autres que la prime pour l'emploi et la réduction de 2013",
+    "réductions et crédits d'impôt autres que la prime pour l'emploi, les réductions de 2001 "
+    "et de 2013 et le crédit de 2008",
     "demi-parts des anciens combattants et de qui vit seul après avoir élevé un enfant (case L)",
     "enfants en résidence alternée ou majeurs rattachés",
     "abattement des départements d'outre-mer",
     "contribution exceptionnelle sur les hauts revenus",
     "temps partiel et activité sur une partie de l'année, pour la prime pour l'emploi",
+    "seuil de restitution de l'article 1965 L (50 F, puis 8 €)",
 )
 
 #: L'âge, atteint au 31 décembre de l'année des revenus, qui ouvre
@@ -103,6 +107,14 @@ PREMIERE_ANNEE_ENFANT_INVALIDE = 1979
 #: LEGIARTI000006308325, « Ce plafond était de 7.500 F pour l'imposition des
 #: revenus de 1981 »).
 PREMIERE_ANNEE_PLAFONNEMENT = 1981
+
+#: Jusqu'aux revenus de 2004, le montant minimal de la prime pour l'emploi est
+#: un plancher : « Le montant total de la prime accordée au foyer fiscal ne
+#: peut être inférieur à 160 F » (art. 200 sexies, IV, LEGIARTI000006303351),
+#: puis à 25 euros ; depuis les revenus de 2005, un seuil : « La prime n'est
+#: pas due lorsque son montant avant imputation est inférieur à 30 Euros »
+#: (LEGIARTI000006303356).
+PREMIERE_ANNEE_SEUIL_DE_LA_PPE = 2005
 
 
 @dataclass(frozen=True)
@@ -187,9 +199,11 @@ class ImpotDuFoyer:
     minoration_exceptionnelle: float
     majoration_exceptionnelle: float
     reduction_exceptionnelle: float
+    reduction_proportionnelle: float
     #: La cotisation : l'impôt avant les crédits d'impôt.
     impot_avant_credits: float
     prime_pour_l_emploi: float
+    credit_exceptionnel: float
     #: La cotisation atteint-elle le seuil de mise en recouvrement ?
     mis_en_recouvrement: bool
     #: Ce que le foyer paie ; négatif, ce qui lui est restitué.
@@ -537,6 +551,42 @@ def _reduction_exceptionnelle(foyer: Foyer, parametres: ParametresImpot, impot: 
     return _arrondir_impot(parametres.annee, min(reduction, impot))
 
 
+def _reduction_proportionnelle(parametres: ParametresImpot, impot: float) -> float:
+    """Les 5 % retranchés de l'impôt des revenus de 2001 (loi n° 2002-1050,
+    art. 1 ; BOI 5 B-6-03, n° 1) : « sur les droits bruts après application
+    des effets du plafonnement du quotient familial et de la décote mais avant
+    imputation des réductions et crédits d'impôt, de la prime pour l'emploi »."""
+    r = parametres["reduction_proportionnelle"]
+    if not r or impot <= 0:
+        return 0.0
+    return _arrondir_impot(parametres.annee, impot * r["taux"])
+
+
+def _credit_exceptionnel(foyer: Foyer, parametres: ParametresImpot, impot: float,
+                         revenu: float, rfr: float, parts: float) -> float:
+    """Le crédit d'impôt exceptionnel des revenus de 2008 (loi n° 2009-431,
+    art. 1 ; BOI 5 B-25-09) : les deux tiers de l'``impot`` après plafonnement
+    et décote sous le premier seuil de revenu imposable par part ; au-delà,
+    jusqu'au second, le crédit du foyer au premier seuil, arrondi comme le
+    tableau de l'annexe 2 du BOI, décroissant linéairement jusqu'à zéro. Le
+    revenu fiscal de référence par part ne dépasse pas le second seuil."""
+    c = parametres["credit_exceptionnel"]
+    if not c or impot <= 0:
+        return 0.0
+    plein, maximum = c["revenu_par_part_plein"], c["revenu_par_part_maximum"]
+    par_part = revenu / parts
+    if par_part >= maximum or rfr / parts > maximum:
+        return 0.0
+    if par_part <= plein:
+        return _arrondir_impot(parametres.annee, impot * c["taux"])
+    au_seuil = impot_du_bareme(parametres, plein * parts, parts)
+    au_seuil, _, _ = _plafonnement(foyer, parametres, plein * parts, parts, au_seuil)
+    au_seuil -= decote(foyer, parametres, au_seuil, parts)
+    credit_maximum = _arrondir_impot(parametres.annee, au_seuil * c["taux"])
+    return _arrondir_impot(parametres.annee,
+                           credit_maximum * (maximum - par_part) / (maximum - plein))
+
+
 def prime_pour_l_emploi(foyer: Foyer, parametres: ParametresImpot,
                         salaires: tuple[float, ...], rfr: float, parts: float) -> float:
     """La prime pour l'emploi (art. 200 sexies), de 2000 à 2015, pour un foyer
@@ -585,12 +635,17 @@ def prime_pour_l_emploi(foyer: Foyer, parametres: ParametresImpot,
             prime += premier
         else:
             prime += premier + p["majoration_par_personne_a_charge"] * (foyer.enfants - 1)
-    if parametres.annee == 2000:
-        # Le complément de la loi n° 2001-458 : la prime des revenus de 2000
-        # versée deux fois (IPP, note de la prime pour l'emploi).
-        prime *= 2
     prime = _arrondir_impot(parametres.annee, prime)
-    return prime if prime >= p["montant_minimum"] else 0.0
+    if parametres.annee < PREMIERE_ANNEE_SEUIL_DE_LA_PPE:
+        prime = max(prime, p["montant_minimum"]) if prime > 0 else 0.0
+    elif prime < p["montant_minimum"]:
+        prime = 0.0
+    if parametres.annee == 2000:
+        # La prime des revenus de 2000 versée deux fois : loi n° 2001-1276,
+        # art. 1er, reproduit au BOI 5 B-12-02 : « un complément égal au
+        # montant de cette prime ».
+        prime *= 2
+    return prime
 
 
 def _remarques(foyer: Foyer, parametres: ParametresImpot, la_decote: float,
@@ -690,13 +745,19 @@ def _liquider(foyer: Foyer, parametres: ParametresImpot, revenu: float,
     impot += majoration
     reduction_exc = _reduction_exceptionnelle(foyer, parametres, impot, rfr, parts)
     impot = max(impot - reduction_exc, 0.0)
+    reduction_prop = _reduction_proportionnelle(parametres, impot)
+    impot -= reduction_prop
 
     ppe = prime_pour_l_emploi(foyer, parametres, salaires, rfr, parts) if salaires else 0.0
+    credit = _credit_exceptionnel(foyer, parametres, impot_brut - la_decote, revenu, rfr, parts)
     recouvrement = parametres["recouvrement"]
     mis_en_recouvrement = impot > 0 and impot >= recouvrement.get("seuil", 0.0)
-    net = impot - ppe
-    if net >= 0 and (not mis_en_recouvrement
-                     or net < recouvrement.get("seuil_apres_credits", 0.0)):
+    # Le foyer dont la cotisation n'est pas mise en recouvrement n'est pas
+    # imposable : ses crédits lui sont restitués en entier (art. 200 sexies,
+    # IV ; BOI 5 B-12-01, n° 53 : « la totalité de la prime pour l'emploi
+    # lorsque le contribuable n'est pas imposable »).
+    net = (impot if mis_en_recouvrement else 0.0) - ppe - credit
+    if 0 <= net < recouvrement.get("seuil_apres_credits", 0.0):
         net = 0.0
     retour = 1.0 / vers
     return ImpotDuFoyer(
@@ -717,8 +778,10 @@ def _liquider(foyer: Foyer, parametres: ParametresImpot, revenu: float,
         minoration_exceptionnelle=minoration * retour,
         majoration_exceptionnelle=majoration * retour,
         reduction_exceptionnelle=reduction_exc * retour,
+        reduction_proportionnelle=reduction_prop * retour,
         impot_avant_credits=impot * retour,
         prime_pour_l_emploi=ppe * retour,
+        credit_exceptionnel=credit * retour,
         mis_en_recouvrement=mis_en_recouvrement,
         impot=net * retour,
         fiabilite=parametres.fiabilite,

@@ -284,23 +284,79 @@ COMPLEMENTS: dict[str, list[dict]] = {
 }
 
 #: Les valeurs de l'IPP que le code dément, corrigées clé par clé : la série,
-#: l'année, les valeurs lues, et la rédaction qui les porte.
-CORRECTIONS: dict[tuple[str, int], tuple[dict, str]] = {
+#: l'année, les valeurs lues, le texte qui les porte et son origine — `legi`,
+#: une rédaction du code que l'index LEGI conserve ; `doctrine`, une
+#: publication de l'administration, quand aucun des deux index n'a la loi de
+#: finances de l'année.
+CORRECTIONS: dict[tuple[str, int], tuple[dict, str, str]] = {
+    ("bareme", 1994): (
+        {"seuils": [0, 22210, 48570, 85480, 138410, 225210, 277730]},
+        "DB 5 B 321 du 23 juin 2000, annexe I, « revenus de l'année 1994 (loi de finances pour "
+        "1995 n° 94-1162 du 29 décembre 1994) », image db5b321.057 : « 22 210 et 48 570 [...] "
+        "48 570 et 85 480 » ; l'IPP porte 48 750 F",
+        "doctrine"),
+    ("abattement_age_invalidite", 1993): (
+        {"seuil_plein": 57500},
+        "DB 5 B 25 du 1er septembre 1999, image db5b25.025 : « 1993 [...] R ≤ 57 500 [...] "
+        "9 300 » ; l'IPP porte 57 000 F",
+        "doctrine"),
     ("plafonds_quotient_familial", 1998): (
         {"reduction_complementaire_invalide": 5380},
         "CGI, art. 197, I, 2, LEGIARTI000006308341 : « 5 380 F pour chacune de ces demi-parts » ; "
-        "l'IPP porte 4 336 F de 1998 à 2000"),
+        "l'IPP porte 4 336 F de 1998 à 2000",
+        "legi"),
     ("plafonds_quotient_familial", 1999): (
         {"reduction_complementaire_invalide": 5410},
-        "CGI, art. 197, I, 2, LEGIARTI000006308342 : « 5 410 F pour chacune de ces demi-parts »"),
+        "CGI, art. 197, I, 2, LEGIARTI000006308342 : « 5 410 F pour chacune de ces demi-parts »",
+        "legi"),
     ("plafonds_quotient_familial", 2000): (
         {"reduction_complementaire_invalide": 4260},
-        "CGI, art. 197, I, 2, LEGIARTI000006308344 : « 4 260 F pour chacune de ces demi-parts »"),
+        "CGI, art. 197, I, 2, LEGIARTI000006308344 : « 4 260 F pour chacune de ces demi-parts »",
+        "legi"),
+    ("plafonds_quotient_familial", 2009): (
+        {"reduction_complementaire_invalide": 651},
+        "CGI, art. 197, I, 2, LEGIARTI000021625085 : « une réduction d'impôt égale à 651 euros "
+        "pour chacune de ces demi-parts » ; l'IPP porte 661 €, le montant des revenus de 2010",
+        "legi"),
     ("decote", 2000): (
         {"taux": 0.5},
         "CGI, art. 197, I, 4, LEGIARTI000006308344 : « la différence entre 2 450 F et la moitié "
-        "de son montant » ; l'IPP n'en donne pas le taux"),
+        "de son montant » ; l'IPP n'en donne pas le taux",
+        "legi"),
+    ("prime_pour_l_emploi", 2005): (
+        {"taux_entree": 0.06, "taux_sortie": 0.15},
+        "CGI, art. 200 sexies, I, A, 1°, LEGIARTI000006303356 : « 4,6 % (1) 6,0 % (2) 6,8 % (3) "
+        "[...] 11,5 % (1) 15,0 % (2) 17,0 % (3) [...] (2) applicable aux revenus 2005 » ; l'IPP "
+        "porte aux revenus de 2005 les taux que la loi de finances pour 2006 donnait à ceux de "
+        "2006",
+        "legi"),
 }
+
+#: Deux mesures d'une seule année que l'IPP ne porte pas, lues dans le
+#: commentaire de l'administration, qui cite la loi : aucun des deux index n'a
+#: l'article de loi de finances rectificative qui les crée.
+REDUCTION_PROPORTIONNELLE = [
+    {"annee": 2001, "monnaie": "EUR", "taux": 0.05, "origine": "doctrine",
+     "texte": "Loi n° 2002-1050 du 6 août 2002 (LFR pour 2002), art. 1 ; BOI 5 B-6-03, n° 1 : "
+              "« Une réduction de 5 % de l'impôt sur le revenu au titre des revenus 2001, "
+              "pratiquée sur les droits bruts après application des effets du plafonnement du "
+              "quotient familial et de la décote mais avant imputation des réductions et "
+              "crédits d'impôt, de la prime pour l'emploi et de l'avoir fiscal »"},
+    {"annee": 2002, "supprimee": True,
+     "texte": "BOI 5 B-6-03, n° 1 : une réduction « au titre des revenus 2001 »"},
+]
+CREDIT_EXCEPTIONNEL = [
+    {"annee": 2008, "monnaie": "EUR", "taux": 2 / 3, "revenu_par_part_plein": 11673,
+     "revenu_par_part_maximum": 12475, "origine": "doctrine",
+     "texte": "Loi n° 2009-431 du 20 avril 2009 (LFR pour 2009), art. 1, reproduit à l'annexe 1 "
+              "du BOI 5 B-25-09 : « dont le revenu imposable par part [...] est inférieur à "
+              "12 475 € [...] aux deux tiers de l'impôt calculé conformément aux 1 à 4 du I de "
+              "l'article 197 [...] pour les contribuables dont le revenu net imposable par part "
+              "n'excède pas 11 673 € [...] décroissant linéairement [...] S'il excède l'impôt "
+              "dû, l'excédent est restitué »"},
+    {"annee": 2009, "supprimee": True,
+     "texte": "BOI 5 B-25-09, n° 2 : « limité à l'imposition des revenus de 2008 »"},
+]
 
 #: Le seuil de mise en recouvrement avant que l'IPP ne le porte (2002), lu dans
 #: les rédactions de l'article 1657 du code que l'index LEGI conserve ; une
@@ -526,11 +582,13 @@ def _recouvrement_avant_2002(bareme: list[dict]) -> list[dict]:
 def corriger(series: dict[str, list[dict]]) -> dict[str, list[dict]]:
     """Ajoute à l'IPP ce que l'en-tête dit qu'il ne porte pas, ou porte mal."""
     bareme = series["bareme"]
-    for (nom, annee), (valeurs, texte) in CORRECTIONS.items():
+    for (nom, annee), (valeurs, texte, origine) in CORRECTIONS.items():
         marche = next(m for m in series[nom] if m["annee"] == annee)
         marche.update(valeurs)
-        marche["origine"] = "legi"
+        marche["origine"] = origine
         marche["texte"] = f"{marche['texte']} ; {texte}"
+    series["reduction_proportionnelle"] = [dict(m) for m in REDUCTION_PROPORTIONNELLE]
+    series["credit_exceptionnel"] = [dict(m) for m in CREDIT_EXCEPTIONNEL]
     for nom, complements in COMPLEMENTS.items():
         annees = {m["annee"] for m in complements}
         series[nom] = sorted([m for m in series[nom] if m["annee"] not in annees] + complements,
@@ -593,7 +651,10 @@ ENTETE = """\
 # fois avec sa source (`origine`) : `legi` pour une valeur lue dans une
 # rédaction du code général des impôts que l'index LEGI de la DILA conserve,
 # `indexation` pour une année que le code ne chiffre pas, calculée par la règle
-# qu'il écrit, `note_ipp` pour une règle que seules les notes de l'IPP datent.
+# qu'il écrit, `note_ipp` pour une règle que seules les notes de l'IPP datent,
+# `doctrine` pour une valeur que l'administration publie (documentation de
+# base, Bulletin officiel des impôts) quand aucun des index de la DILA n'a la
+# loi de finances qui la porte.
 # Une transcription, non une source productrice : `haute` au plus
 # (data/sources.yaml, `ipp_impot_revenu`).
 #
@@ -630,7 +691,11 @@ ENTETE = """\
 #   majorations_exceptionnelles, minorations_exceptionnelles : leurs seuils et
 #     leurs taux, et la note de l'IPP qui dit comment ils s'appliquent.
 #   reduction_exceptionnelle : celle des revenus de 2013.
+#   reduction_proportionnelle : les 5 % retranchés de l'impôt des revenus de
+#     2001, après la décote, avant les crédits d'impôt.
 #   prime_pour_l_emploi : de 2000 à 2015.
+#   credit_exceptionnel : celui des revenus de 2008, les deux tiers de l'impôt
+#     sous le premier seuil de revenu par part, dégressif jusqu'au second.
 """
 
 ORDRE = ("bareme", "quotient_familial", "parts_par_rang_d_enfant",
@@ -638,7 +703,8 @@ ORDRE = ("bareme", "quotient_familial", "parts_par_rang_d_enfant",
          "recouvrement", "deductions", "abattement_age_invalidite",
          "abattement_exceptionnel_ages_invalides", "abattement_exceptionnel_personnes_seules",
          "majorations_exceptionnelles", "minorations_exceptionnelles",
-         "reduction_exceptionnelle", "prime_pour_l_emploi")
+         "reduction_exceptionnelle", "reduction_proportionnelle", "prime_pour_l_emploi",
+         "credit_exceptionnel")
 
 
 def ecrire(series: dict[str, list[dict]], lu_le: str) -> str:

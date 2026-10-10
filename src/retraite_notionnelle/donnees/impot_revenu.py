@@ -64,7 +64,8 @@ SERIES = ("bareme", "quotient_familial", "parts_par_rang_d_enfant",
           "recouvrement", "deductions", "abattement_age_invalidite",
           "abattement_exceptionnel_ages_invalides", "abattement_exceptionnel_personnes_seules",
           "majorations_exceptionnelles", "minorations_exceptionnelles",
-          "reduction_exceptionnelle", "prime_pour_l_emploi")
+          "reduction_exceptionnelle", "reduction_proportionnelle", "prime_pour_l_emploi",
+          "credit_exceptionnel")
 
 #: Les clés qui ne sont pas des valeurs : elles disent d'où vient la marche.
 CLES_DE_SOURCE = ("annee", "texte", "note", "origine")

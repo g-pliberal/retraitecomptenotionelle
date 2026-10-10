@@ -169,6 +169,13 @@ DESACCORDS_OPENFISCA = (
     ("couple_retraites_aises", range(2002, 2006),
      {"rng", "rni", "rfr", "ir_plaf_qf", "ip_net", "iai"},
      "Le même abattement de 20 % (voir couple_retraites)."),
+    ("celibataire_bas_salaire", range(2005, 2006), {"ppe"},
+     "OpenFisca prend pour la prime pour l'emploi des revenus de 2005 les taux de 6,8 % et "
+     "17 % ; l'article 200 sexies (LEGIARTI000006303356) donne « 6,0 % (2) » et « 15,0 % "
+     "(2) », « (2) applicable aux revenus 2005 », les premiers étant ceux qu'il donnait aux "
+     "revenus de 2006. L'IPP, qui partage ses paramètres, porte la même erreur."),
+    ("couple_un_salaire", range(2005, 2006), {"ppe"},
+     "Les mêmes taux de 2005 (voir celibataire_bas_salaire)."),
 )
 
 
@@ -238,13 +245,17 @@ def test_openfisca_france_confirme_le_calcul(baremes):
 def test_les_desaccords_avec_openfisca_sont_ceux_du_texte(baremes):
     """Ce que le module rend là où il désaccorde OpenFisca est ce que le texte
     dit : 2,5 parts au veuf qui a un enfant à charge en 2003 ; 80 % des pensions
-    après leur abattement plafonné en 2002."""
+    après leur abattement plafonné en 2002 ; la prime pour l'emploi de 2005 à
+    6,0 % du revenu d'activité."""
     veuf = Foyer((Declarant(salaires=45000),), enfants=1, veuf=True)
     assert impot_du_foyer(veuf, 2003, baremes).parts == 2.5
     couple = Foyer((Declarant(pensions=60000, age=75), Declarant(pensions=30000, age=74)))
     calcul = impot_du_foyer(couple, 2002, baremes, unite="monnaie")
     # 10 % de 90 000 € plafonnés à 3 214 € par foyer, puis 80 % du reste.
     assert calcul.revenu_net_global == pytest.approx(round((90000 - 3214) * 0.8), abs=1)
+    # 10 000 € de salaire, sous le seuil du taux plein de 11 899 € : 6,0 %.
+    seul = Foyer((Declarant(salaires=10000),))
+    assert impot_du_foyer(seul, 2005, baremes).prime_pour_l_emploi == 600
 
 
 # -- Ce que la donnée doit tenir ---------------------------------------------------
@@ -304,6 +315,17 @@ def test_l_abattement_des_pensions_a_un_minimum_par_pensionne_et_un_maximum_par_
     grosses = impot_du_foyer(Foyer((Declarant(pensions=40000, age=70),
                                     Declarant(pensions=20000, age=70))), 2024, baremes)
     assert sum(grosses.pensions_nettes) == 60000 - 4399
+    # Les exemples de l'administration, sans la pension de l'enfant à charge
+    # qu'ils comptent aussi : DB 5 F 311 du 10 février 1999 (revenus de 1998),
+    # « Abattement effectif global plafonné accordé : 20 000 F » ;
+    # BOI-RSA-PENS-30-10-10-20121211, § 180 (revenus de 2011), « 3 660 € ».
+    francs = impot_du_foyer(Foyer((Declarant(pensions=280000, age=70),
+                                   Declarant(pensions=15000, age=70))), 1998, baremes,
+                            unite="monnaie")
+    assert sum(francs.pensions_nettes) == 295000 - 20000
+    euros = impot_du_foyer(Foyer((Declarant(pensions=40000, age=70),
+                                  Declarant(pensions=2000, age=70))), 2011, baremes)
+    assert sum(euros.pensions_nettes) == 42000 - 3660
 
 
 def test_l_abattement_des_personnes_agees_suit_le_revenu_net_global(baremes):
@@ -348,6 +370,46 @@ def test_la_prime_pour_l_emploi_suit_l_article_200_sexies(baremes):
     assert prime([20000, 0]) == 83
     assert prime([10000, 9000], enfants=2) == round(0.077 * 10000 + 0.077 * 9000 + 2 * 36)
     assert prime([40000]) == 0
+
+
+def test_le_minimum_de_la_prime_est_un_plancher_puis_un_seuil(baremes):
+    """« ne peut être inférieur à 25 euros » jusqu'aux revenus de 2004
+    (LEGIARTI000006303353) ; « n'est pas due lorsque son montant avant
+    imputation est inférieur à 30 Euros » depuis ceux de 2005
+    (LEGIARTI000006303356)."""
+    def prime(annee, salaire):
+        return impot_du_foyer(Foyer((Declarant(salaires=salaire),)), annee,
+                              baremes).prime_pour_l_emploi
+    # (15 735 - 15 600) x 11,5 % = 16 €, porté à 25 €.
+    assert prime(2003, 15600) == 25
+    # (16 659 - 16 500) x 15 % = 24 €, qui n'est pas dû.
+    assert prime(2005, 16500) == 0
+
+
+def test_le_foyer_qui_n_est_pas_imposable_recoit_toute_sa_prime(baremes):
+    """Une cotisation sous le seuil de mise en recouvrement n'est pas due (art.
+    1657, 1 bis) : la prime pour l'emploi est versée en entier (art. 200 sexies,
+    IV : « Si l'impôt sur le revenu n'est pas dû [...] la différence est versée
+    aux intéressés » ; BOI 5 B-12-01, n° 53)."""
+    calcul = impot_du_foyer(Foyer((Declarant(salaires=11650),)), 2005, baremes)
+    assert 0 < calcul.impot_avant_credits < 61 and not calcul.mis_en_recouvrement
+    assert calcul.impot == -calcul.prime_pour_l_emploi
+
+
+def test_les_mesures_des_revenus_de_2001_et_de_2008(baremes):
+    """Les 5 % retranchés de l'impôt après la décote, aux revenus de 2001 (loi
+    n° 2002-1050, art. 1) ; le crédit d'impôt exceptionnel des revenus de 2008,
+    refusé à partir de 12 475 € de revenu par part (loi n° 2009-431, art. 1)."""
+    seul = Foyer((Declarant(),))
+    calcul = impot_d_un_revenu_imposable(seul, 2001, 20000, baremes)
+    # 3 370 € au barème, sans décote ; 5 % font 168,50 €, arrondis à 169 €.
+    assert (calcul.impot_brut, calcul.reduction_proportionnelle,
+            calcul.impot_avant_credits) == (3370, 169, 3201)
+    assert impot_d_un_revenu_imposable(seul, 2002, 20000, baremes).reduction_proportionnelle == 0
+    # Une part : 33 € au premier seuil, x (12 475 - 12 000) / 802 = 19,55 €.
+    assert impot_d_un_revenu_imposable(seul, 2008, 12000, baremes).credit_exceptionnel == 20
+    assert impot_d_un_revenu_imposable(seul, 2008, 12475, baremes).credit_exceptionnel == 0
+    assert impot_d_un_revenu_imposable(seul, 2009, 11000, baremes).credit_exceptionnel == 0
 
 
 def test_la_projection_suit_les_prix_par_defaut_et_le_salaire_moyen_en_variante(baremes):
@@ -398,9 +460,9 @@ def test_les_valeurs_lues_dans_legi_y_sont():
     import ipp_impot_revenu as script
 
     verifiees = 0
-    corrections = {serie: [{"annee": annee, "texte": texte, **valeurs}]
-                   for (serie, annee), (valeurs, texte) in script.CORRECTIONS.items()}
-    for serie, marches in [*script.COMPLEMENTS.items(), *corrections.items()]:
+    corrections = [(serie, [{"annee": annee, "texte": texte, **valeurs}])
+                   for (serie, annee), (valeurs, texte, _) in script.CORRECTIONS.items()]
+    for serie, marches in [*script.COMPLEMENTS.items(), *corrections]:
         for marche in marches:
             identifiants = [mot.strip(",;()") for mot in marche["texte"].split()
                             if mot.startswith("LEGIARTI")]

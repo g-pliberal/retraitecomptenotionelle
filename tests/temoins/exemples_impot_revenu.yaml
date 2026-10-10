@@ -11,11 +11,15 @@
 # Un exemple qui part du revenu imposable le donne en `revenu_net_imposable` :
 # les revenus des déclarants n'y servent pas.
 #
-# Les grandeurs comparées sont des champs de `ImpotDuFoyer` : `parts`,
-# `revenu_net_imposable`, `impot_sans_plafonnement` (l'impôt du barème avec
-# toutes les parts), `impot_brut` (après plafonnement et réduction
-# complémentaire), `decote`, `reduction_sous_condition_de_revenus`,
-# `impot_avant_credits` (la cotisation), `prime_pour_l_emploi`, `impot`.
+# Les grandeurs comparées sont des champs de `ImpotDuFoyer` : `salaires_nets`
+# (par déclarant, après la déduction de 10 %), `abattement_vingt_pour_cent`,
+# `revenu_net_global`, `parts`, `revenu_net_imposable`,
+# `impot_sans_plafonnement` (l'impôt du barème avec toutes les parts),
+# `plafonnement` (ce qu'il y ajoute), `reduction_complementaire`, `impot_brut`
+# (après plafonnement et réduction complémentaire), `decote`,
+# `reduction_sous_condition_de_revenus`, `impot_avant_credits` (la cotisation),
+# `prime_pour_l_emploi`, `credit_exceptionnel`, `impot`. Un exemple qui ne
+# donne que l'impôt brut et sa décote se rejoue par `decote_de`.
 #
 # Un exemple que le module ne reproduit pas entre quand même, en écart connu
 # (`ecart_connu`) : la valeur publiée, celle que rend le module, et pourquoi ;
@@ -568,7 +572,7 @@ exemples:
       décote s'élève à 2 140 € – 476 € = 1 664 €.
     attendu: {decote: 476}
 
-  # -- En francs : le Bulletin officiel des impôts -----------------------------------
+  # -- En francs : le Bulletin officiel des impôts et la documentation de base ------
 
   - id: boi_5b_9_01_invalide_2000
     source: BOI 5 B-9-01, n° 44 du 2 mars 2001, § 23 et 24
@@ -586,6 +590,224 @@ exemples:
       égale à 4 249 F, et la cotisation d'impôt [...] est égale à 104 431 F.
     attendu: {parts: 2.5, impot_sans_plafonnement: 104431, reduction_complementaire: 4249,
               impot_brut: 104431}
+
+  - id: db_5b321_decote_1999
+    source: DB 5 B 321 du 23 juin 2000, n° 4 ; BOI 5 B-5-00, n° 11 du 17 janvier 2000, § 38
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/27938-AIDA.html/identifiant%3D5B321-20000623
+    annee: 1999
+    foyer: {declarants: [{}]}
+    decote_de: 2500
+    citation: >-
+      Le montant de la décote est égal à la différence entre son plafond (3 350 F
+      pour 1999) et l'impôt brut [...] Soit un contribuable dont l'impôt brut
+      résultant de l'application du barème s'élève [...] à : 2 500 F. [Image :]
+      montant de la décote : 3 350 F - 2 500 F = 850 F ; impôt à payer : 2 500 F -
+      850 F = 1 650 F.
+    attendu: {decote: 850}
+
+  - id: boi_5b_9_01_decote_2000
+    source: BOI 5 B-9-01, n° 44 du 2 mars 2001, § 41 à 44
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/20136-AIDA.html/identifiant%3D-20010302
+    annee: 2000
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 60000
+    citation: >-
+      Soit un contribuable célibataire dont le revenu imposable s'élève au titre
+      de l'année 2000 à 60 000 F. L'impôt brut [...] est égal [...] à 3 792 F.
+      [Image :] montant de la décote : [2 450 F – (3 792 : 2)] = 554 F ; impôt à
+      payer : 3 792 F – 554 F = 3 238 F.
+    attendu: {impot_brut: 3792, decote: 554, impot_avant_credits: 3238}
+
+  - id: db_5b3123_invalide_1998
+    source: DB 5 B 3123 du 1er septembre 1999, § 13 à 15
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/27929-AIDA.html/identifiant%3D5B3123-19990901
+    annee: 1998
+    foyer: {declarants: [{invalide: true}, {}]}
+    revenu_net_imposable: 450000
+    citation: >-
+      Soit un contribuable marié invalide [...] imposé avec un quotient familial
+      de 2,5 parts [...] Ce contribuable a disposé en 1998 d'un revenu imposable de
+      450 000 F. [Image :] cotisation d'impôt calculée sur la base de 2,5 parts
+      (sans application du dispositif du plafonnement) : 112 408 F ; cotisation
+      d'impôt tenant compte du plafonnement à 11 000 F [...] : 117 627 F. La
+      différence entre ces deux cotisations est égale à 5 219 F [...] inférieur au
+      plafond de 5 380 F [...] la cotisation d'impôt [...] est égale à 112 408 F.
+    attendu: {parts: 2.5, impot_sans_plafonnement: 112408, plafonnement: 5219,
+              reduction_complementaire: 5219, impot_brut: 112408}
+
+  - id: boi_5b_5_00_invalide_1999
+    source: BOI 5 B-5-00, n° 11 du 17 janvier 2000, § 15 à 19
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/20154-AIDA.html/identifiant%3D5B-5-00-20000117
+    annee: 1999
+    foyer: {declarants: [{invalide: true}, {}]}
+    revenu_net_imposable: 450000
+    citation: >-
+      Ce contribuable a disposé en 1999 d'un revenu imposable de 450 000 F [...]
+      plafonné à 11 060 F [...] [Image :] cotisation d'impôt calculée sur la base
+      de 2,5 parts [...] : 112 003 F ; cotisation d'impôt tenant compte du
+      plafonnement à 11 060 F [...] : 117 242 F. La différence entre ces deux
+      cotisations est égale à 5 239 F [...] la cotisation d'impôt [...] est égale à
+      112 003 F.
+    attendu: {parts: 2.5}
+    ecart_connu:
+      impot_sans_plafonnement:
+        publie: 112003
+        obtenu: 110388
+        raison: &bareme_1999 >-
+          L'instruction applique le barème initial des revenus de 1999, à 10,5 % et
+          24 % ; la loi de finances rectificative du 13 juillet 2000 (BOI 5 B-19-00)
+          a ramené ces deux taux à 9,5 % et 23 % pour les mêmes revenus, et le
+          module applique le barème définitif.
+      plafonnement:
+        publie: 5239
+        obtenu: 5562
+        raison: *bareme_1999
+      reduction_complementaire:
+        publie: 5239
+        obtenu: 5410
+        raison: *bareme_1999
+      impot_brut:
+        publie: 112003
+        obtenu: 110540
+        raison: *bareme_1999
+
+  - id: db_5f252_deduction_minimum_1998
+    source: DB 5 F 252 du 10 février 1999, § 7 à 11
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/28587-AIDA.html/identifiant%3D5F252-19990210
+    annee: 1998
+    foyer: {declarants: [{salaires: 100000}, {salaires: 17000}]}
+    citation: >-
+      Soit un ménage de salariés ayant deux enfants à charge [...] Mari 100 000 F ;
+      Épouse [...] 17 000 F [...] Déduction forfaitaire (10 % ou minimum de
+      déduction) : 10 000 / 2 310 [...] Revenu net de frais : 90 000 / 14 690. Les
+      salaires des deux enfants, que le foyer du module ne porte pas, sont laissés
+      de côté.
+    attendu: {salaires_nets: [90000, 14690]}
+
+  - id: db_5f252_deduction_plafond_1998
+    source: DB 5 F 252 du 10 février 1999, § 21 à 26
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/28588-AIDA.html/identifiant%3D5F252-19990210
+    annee: 1998
+    foyer: {declarants: [{salaires: 780000}]}
+    citation: >-
+      [Image :] épouse : 780 000 F x 10 % = 78 000 F (chiffre limité à 77 460 F)
+      77 460 ; 702 540 ; abattement de 20 % : 140 508 ; revenu net imposable
+      562 032. L'épouse seule : le mari, représentant à déduction supplémentaire
+      de 30 %, est hors du champ du module.
+    attendu: {salaires_nets: [702540], abattement_vingt_pour_cent: 140508,
+              revenu_net_global: 562032}
+
+  - id: db_5f3121_abattement_1998
+    source: DB 5 F 3121 du 10 février 1999, § 12
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/28621-AIDA.html/identifiant%3D5F3121-19990210
+    annee: 1998
+    foyer: {declarants: [{salaires: 630000}]}
+    citation: >-
+      Le contribuable a déclaré [...] un salaire de 630 000 F au titre de 1998.
+      [Image :] Déduction forfaitaire pour frais de 10 % : - 63 000 F ; Salaire net
+      de frais : 567 000 F ; Abattement de 20 % : - 113 400 F ; Base nette
+      imposable : 453 600 F.
+    attendu: {salaires_nets: [567000], abattement_vingt_pour_cent: 113400,
+              revenu_net_global: 453600}
+
+  - id: db_5f3122_limite_1998
+    source: DB 5 F 3122 du 10 février 1999, § 6
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/28622-AIDA.html/identifiant%3D5F3122-19990210
+    annee: 1998
+    foyer: {declarants: [{salaires: 500000, pensions: 400000}]}
+    citation: >-
+      Soit un contribuable ayant perçu en 1998 un salaire de 500 000 F et une
+      pension de 400 000 F, ce qui correspond, après application de la déduction
+      pour frais professionnels et de l'abattement spécifique de 10 % sur les
+      pensions limité à 20 000 F, à un revenu net de 830 000 F. [Image :] 830 000 F
+      - 707 000 F = 123 000 F ; 707 000 F x 0,80 = 565 600 F ; 688 600 F.
+    attendu: {revenu_net_global: 688600}
+
+  - id: db_5f3122_limite_salaire_1998
+    source: DB 5 F 3122 du 10 février 1999, § 7
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/28622-AIDA.html/identifiant%3D5F3122-19990210
+    annee: 1998
+    foyer: {declarants: [{salaires: 770000}]}
+    citation: >-
+      [Image :] Rémunération brute 770 000 F ; Déduction de 10 % pour frais
+      professionnels : 77 000 F ; Rémunération nette 693 000 F ; 693 000 F x 0,80
+      = 554 400 F. Le salaire de 750 000 F et la fraction de 20 000 F de
+      l'indemnité de mise à la retraite, ensemble.
+    attendu: {salaires_nets: [693000], abattement_vingt_pour_cent: 138600,
+              revenu_net_global: 554400}
+
+  - id: db_5b321_arrondis
+    source: DB 5 B 321 du 23 juin 2000, § 28
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/27940-AIDA.html/identifiant%3D5B321-20000623
+    annee: 1999
+    foyer: {declarants: [{salaires: 100009}, {salaires: 50001}], enfants: 1}
+    citation: >-
+      Tout élément venant modifier les bases (abattements, ...) [...] est arrondi à
+      l'unité la plus proche. [Image :] Contribuable marié ayant un enfant mineur.
+      Salaires déclarés : Monsieur 100 009 ; Madame 50 001 — Déduction de 10 % :
+      10 000, 9 arrondi à 10 001 ; 5 000, 1 arrondi à 5 000 — Net : 90 008 ; 45 001
+      — Abattement de 20 % : 18 001, 6 arrondi à 18 002 ; 9 000, 2 arrondi à 9 000
+      — Salaires nets imposables : 72 006 ; 36 001. L'année n'est pas dite : la
+      règle vaut depuis les revenus de 1998.
+    attendu: {salaires_nets: [90008, 45001], abattement_vingt_pour_cent: 27002,
+              revenu_net_global: 108007}
+
+  - id: boi_5b_12_01_ppe_couple_2000
+    source: BOI 5 B-12-01, n° 114 du 26 juin 2001, § 41 à 46
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/20128-AIDA.html/identifiant%3D-20010626
+    annee: 2000
+    foyer: {declarants: [{salaires: 72000}, {}], enfants: 2}
+    citation: >-
+      Un couple marié dont un seul des conjoints exerce une activité
+      professionnelle à temps plein a deux enfants à charge. Le revenu d'activité
+      professionnelle déclaré [...] s'élève à 72 000 F. [...] (96 016 F - 72 000 F)
+      × 5,5 % = 1 321 F [...] 1 321 F + 500 F + 400 F = 2 221 F.
+    attendu: {}
+    ecart_connu:
+      prime_pour_l_emploi:
+        publie: 2221
+        obtenu: 4442
+        raison: &ppe_2000 >-
+          La loi de finances rectificative pour 2001 (n° 2001-1276, art. 1er),
+          postérieure à l'instruction, a versé un complément égal à la prime des
+          revenus de 2000 (BOI 5 B-12-02 : « Ce complément est égal au montant
+          initial versé au titre de cette même année ») : le module la rend
+          doublée.
+
+  - id: boi_5b_12_01_ppe_parent_isole_2000
+    source: BOI 5 B-12-01, n° 114 du 26 juin 2001, § 47 et 48
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/20128-AIDA.html/identifiant%3D-20010626
+    annee: 2000
+    foyer: {declarants: [{salaires: 120000}], enfants: 2, vit_seul: true}
+    citation: >-
+      une personne divorcée vivant seule supporte effectivement la charge de deux
+      enfants [...] (case T cochée [...]). Cette personne a déclaré un salaire de
+      120 000 F [...] Cette personne bénéficie toutefois de la majoration pour
+      charges de famille fixée forfaitairement à 400 F puisque son salaire est
+      compris entre 96 016 F et 146 257 F.
+    attendu: {}
+    ecart_connu:
+      prime_pour_l_emploi:
+        publie: 400
+        obtenu: 800
+        raison: *ppe_2000
+
+  - id: boi_5b_12_01_ppe_minimum_2000
+    source: BOI 5 B-12-01, n° 114 du 26 juin 2001, § 49
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/20128-AIDA.html/identifiant%3D-20010626
+    annee: 2000
+    foyer: {declarants: [{salaires: 95000}]}
+    citation: >-
+      Le montant total de la prime accordée à un même foyer fiscal ne peut être
+      inférieur à 160 F. Exemple : une personne célibataire [...] a déclaré [...]
+      95 000 F de salaires. [...] (96 016 F - 95 000 F) × 5,5 % = 56 F. Le montant
+      de la prime dont bénéficie cette personne est porté au minimum de 160 F.
+    attendu: {}
+    ecart_connu:
+      prime_pour_l_emploi:
+        publie: 160
+        obtenu: 320
+        raison: *ppe_2000
 
   # -- En euros, avant la réforme de 2006 : le Bulletin officiel des impôts ----------
   #
@@ -622,7 +844,15 @@ exemples:
       de l'année 2001 à 9 200 €. L'impôt brut résultant de l'application du barème
       est égal [...] à 529 €. [Image :] montant de la décote : [380 € – (529 : 2)]
       = 116 € ; impôt à payer : 529 € – 116 € = 413 €.
-    attendu: {impot_brut: 529, decote: 116, impot_avant_credits: 413}
+    attendu: {impot_brut: 529, decote: 116}
+    ecart_connu:
+      impot_avant_credits:
+        publie: 413
+        obtenu: 392
+        raison: >-
+          La loi de finances rectificative du 6 août 2002 (n° 2002-1050, art. 1),
+          postérieure à l'instruction, a retranché 5 % de l'impôt des revenus de
+          2001 après la décote (BOI 5 B-6-03, n° 1) : 413 € - 21 € = 392 €.
 
   - id: boi_5b_6_03_invalide_2002
     source: BOI 5 B-6-03, n° 16 du 27 janvier 2003, § 22
@@ -709,3 +939,189 @@ exemples:
       est égal [...] à 473 € : montant de la décote : [400 € - (473 / 2)] = 164 € ;
       impôt à payer : 473 € - 164 € = 309 €.
     attendu: {impot_brut: 473, decote: 164, impot_avant_credits: 309}
+
+  - id: boi_5b_6_06_invalide_2005
+    source: BOI 5 B-6-06, n° 8 du 18 janvier 2006, § 21
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/19924-AIDA.html/identifiant%3D5B-6-06-20060118
+    annee: 2005
+    foyer: {declarants: [{invalide: true}, {}]}
+    revenu_net_imposable: 76000
+    citation: >-
+      [...] Ce contribuable a disposé en 2005 d'un revenu imposable de 76 000 €.
+      [Image :] cotisation d'impôt calculée sur la base de 2,5 parts [...] :
+      15 864 € ; cotisation d'impôt tenant compte du plafonnement à 2 159 € [...] :
+      16 214 €. La différence entre ces deux cotisations est égale à 350 € [...]
+      inférieur au plafond de 611 € [...] la cotisation d'impôt [...] est égale à
+      15 864 €.
+    attendu: {parts: 2.5, impot_sans_plafonnement: 15864, plafonnement: 350,
+              reduction_complementaire: 350, impot_brut: 15864}
+
+  - id: boi_5b_6_06_decote_2005
+    source: BOI 5 B-6-06, n° 8 du 18 janvier 2006, § 39
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/19926-AIDA.html/identifiant%3D-20060118
+    annee: 2005
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 9500
+    citation: >-
+      Soit un contribuable célibataire dont le revenu imposable s'élève au titre
+      de l'année 2005 à 9 500 €. L'impôt brut [...] est égal [...] à 449 € :
+      montant de la décote : [407 € - (449 € / 2)] = 183 € ; impôt à payer : 449 €
+      - 183 € = 266 €.
+    attendu: {impot_brut: 449, decote: 183, impot_avant_credits: 266}
+
+  - id: boi_5b_11_04_ppe_2002
+    source: BOI 5 B-11-04, n° 103 du 22 juin 2004, § 9
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/20028-AIDA.html/identifiant%3D5B-11-04-20040622
+    annee: 2002
+    foyer: {declarants: [{salaires: 11212}]}
+    citation: >-
+      Soit un contribuable rémunéré au SMIC sur la base de 39 heures [...] En
+      2002 et 2003 ses revenus déclarés s'élèvent respectivement à 11 212 € et
+      11 712 €. [...] PPE 2003 : (15 235 € - 11 212 €) x 11 % = 443 €.
+    attendu: {prime_pour_l_emploi: 443}
+
+  - id: boi_5b_11_04_ppe_2003
+    source: BOI 5 B-11-04, n° 103 du 22 juin 2004, § 9
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/20028-AIDA.html/identifiant%3D5B-11-04-20040622
+    annee: 2003
+    foyer: {declarants: [{salaires: 11712}]}
+    citation: >-
+      [...] PPE 2004 : (15 735 € - 11 712 €) x 11,5 % = 463 €.
+    attendu: {prime_pour_l_emploi: 463}
+
+  # -- Après la réforme de 2006 : le Bulletin officiel des impôts jusqu'en 2011 ------
+
+  - id: boi_5b_10_07_decote_2006
+    source: BOI 5 B-10-07, n° 47 du 29 mars 2007, § 79
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/19823-AIDA.html/identifiant%3D-20070329
+    annee: 2006
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 12000
+    citation: >-
+      Soit un contribuable célibataire dont le revenu imposable s'élève au titre
+      de l'année 2006 à 12 000 €. L'impôt brut [...] est égal [...] à 419 € :
+      montant de la décote : [414 € - (419 € / 2)] = 204,50 € arrondi à 205 € ;
+      impôt à payer : 419 € - 205 € = 214 €.
+    attendu: {impot_brut: 419, decote: 205, impot_avant_credits: 214}
+
+  - id: boi_5b_11_08_decote_2007
+    source: BOI 5 B-11-08, n° 28 du 4 mars 2008, § 37
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/19766-AIDA.html/identifiant%3D-20080304
+    annee: 2007
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 12500
+    citation: >-
+      Soit un contribuable célibataire dont le revenu imposable s'élève au titre
+      de l'année 2007 à 12 500 €. L'impôt brut [...] est égal [...] à 473 € :
+      montant de la décote : [419 € - ( 473 € / 2)] = 183 € ; impôt à payer : 473 €
+      - 183 € = 290 €.
+    attendu: {impot_brut: 473, decote: 183, impot_avant_credits: 290}
+
+  - id: boi_5b_9_09_decote_2008
+    source: BOI 5 B-9-09, n° 35 du 31 mars 2009, § 37
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/19718-AIDA.html/identifiant%3D-20090331
+    annee: 2008
+    foyer: {declarants: [{}]}
+    decote_de: 418
+    citation: >-
+      Le plafond de la décote s'élève à 431 €. Exemple : Soit un contribuable
+      célibataire dont le revenu imposable s'élève au titre de l'année 2007 à
+      12 500 €. L'impôt brut [...] est égal [...] à 418 € : montant de la décote :
+      [431 € – ( 418 € / 2)] = 222 € ; impôt à payer : 418 € – 222 € = 196 €.
+      L'énoncé reprend celui de l'année précédente : au barème de 2008, 12 500 €
+      font 436 € ; la décote se rejoue donc sur les 418 € publiés.
+    attendu: {decote: 222}
+
+  - id: boi_5b_13_10_decote_2009
+    source: BOI 5 B-13-10, n° 22 du 16 février 2010, § 39
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/19602-AIDA.html/identifiant%3D-20100216
+    annee: 2009
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 12375
+    citation: >-
+      Soit un contribuable célibataire dont le revenu imposable s'élève au titre
+      de l'année 2009 à 12 375 €. L'impôt brut [...] est égal [...] à 413 € :
+      montant de la décote : [433 € – ( 413 € / 2)] = 227 € ; impôt à payer : 413 €
+      – 227 € = 186 €.
+    attendu: {impot_brut: 413, decote: 227, impot_avant_credits: 186}
+
+  - id: boi_5b_7_11_decote_2010
+    source: BOI 5 B-7-11, n° 26 du 28 mars 2011, § 40
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/19563-AIDA.html/identifiant%3D-20110328
+    annee: 2010
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 12375
+    citation: >-
+      Soit un contribuable célibataire dont le revenu imposable s'élève au titre
+      de l'année 2010 à 12 375 €. L'impôt brut [...] est égal [...] à 393 € :
+      montant de la décote : [439 € – (393 € / 2)] = 243 € ; impôt à payer : 393 € –
+      243 € = 150 €.
+    attendu: {impot_brut: 393, decote: 243, impot_avant_credits: 150}
+
+  - id: boi_5b_25_09_credit_2008
+    source: BOI 5 B-25-09, n° 87 du 14 octobre 2009, § 14 à 16
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/19651-AIDA.html/identifiant%3D5B-25-09-20091014
+    annee: 2008
+    foyer: {declarants: [{salaires: 36000}, {}], enfants: 2}
+    citation: >-
+      Le crédit d'impôt est égal aux deux tiers de la base mentionnée ci-dessus.
+      Exemple 1 : un foyer fiscal composé d'un couple marié avec deux enfants
+      déclare un revenu salarial au titre de l'année 2008 de 36 000 euros. Il
+      relève de la première tranche d'imposition à 5,5 %. Le montant de l'impôt
+      issu du barème est de 793 euros. [...] Ce crédit d'impôt est égal aux deux
+      tiers de l'impôt, soit 529 euros.
+    attendu: {parts: 3, impot_avant_credits: 793, credit_exceptionnel: 529}
+
+  - id: boi_5b_25_09_credit_degressif_2008
+    source: BOI 5 B-25-09, n° 87 du 14 octobre 2009, § 18 à 22
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/19651-AIDA.html/identifiant%3D5B-25-09-20091014
+    annee: 2008
+    foyer: {declarants: [{salaires: 40000}, {}], enfants: 2}
+    citation: >-
+      Exemple 3 : Un foyer fiscal métropolitain composé d'un couple marié avec deux
+      enfants déclare de 40 000 euros de salaires au titre de l'année 2008. [...]
+      le montant du revenu imposable par part est égal à 12 000 euros (soit 36 000
+      euros après application de l'abattement de 10 % divisé par 3 parts) [...] Le
+      « crédit d'impôt maximum » pour un foyer métropolitain bénéficiant de 3 parts
+      est égal à 640 euros [...] Le crédit d'impôt sera égal à 379 euros, soit 640 x
+      (12 475 – 12 000) / 802.
+    attendu: {revenu_net_imposable: 36000, credit_exceptionnel: 379}
+
+  - id: bofip_deduction_minimum_2011
+    source: BOI-RSA-BASE-30-50-20-20120912, § 100
+    adresse: https://bofip.impots.gouv.fr/bofip/2287-PGP.html/identifiant%3DBOI-RSA-BASE-30-50-20-20120912
+    annee: 2011
+    foyer: {declarants: [{salaires: 100000}, {salaires: 4000}]}
+    citation: >-
+      Soit un ménage de salariés ayant deux enfants à charge [...] Revenu déclaré
+      | 100 000 € | 4 000 € | [...] Déduction forfaitaire (10 % ou minimum de
+      déduction) | 10 000 € | 421 € | [...] Revenu net de frais | 90 000 € | 3 579 €.
+      L'énoncé de cette version donne 3 000 € à l'épouse, son tableau et les
+      versions suivantes 4 000 € ; les salaires des enfants sont laissés de côté.
+    attendu: {salaires_nets: [90000, 3579]}
+
+  - id: bofip_ppe_couple_2011
+    source: BOI-IR-RICI-310-20-20140625, § 110
+    adresse: https://bofip.impots.gouv.fr/bofip/3940-PGP.html/identifiant%3DBOI-IR-RICI-310-20-20140625
+    annee: 2011
+    foyer: {declarants: [{salaires: 15000}, {}], enfants: 2}
+    citation: >-
+      Un couple marié dont un seul des conjoints exerce une activité
+      professionnelle à temps plein a deux enfants à charge. Le revenu d'activité
+      professionnelle déclaré pour l'imposition des revenus de l'année 2011
+      s'élève à 15 000 euros. [...] (17 451 – 15 000) x 19,3 % = 473 euros [...]
+      473 euros + 83 euros + 72 euros = 628 euros.
+    attendu: {prime_pour_l_emploi: 628}
+
+  - id: bofip_ppe_parent_isole_2010
+    source: BOI-IR-RICI-310-20-20140625, § 120
+    adresse: https://bofip.impots.gouv.fr/bofip/3940-PGP.html/identifiant%3DBOI-IR-RICI-310-20-20140625
+    annee: 2010
+    foyer: {declarants: [{salaires: 20000}], enfants: 2, vit_seul: true}
+    citation: >-
+      Une personne divorcée vivant seule supporte effectivement la charge de deux
+      enfants [...] (case T cochée [...]). Cette personne a déclaré un salaire de
+      20 000 euros [...] toute l'année 2010. [...] Cette personne bénéficie
+      toutefois de la majoration pour charges de famille fixée forfaitairement à
+      72 euros puisque son salaire est compris entre 17 451 euros et 26 572 euros.
+    attendu: {prime_pour_l_emploi: 72}

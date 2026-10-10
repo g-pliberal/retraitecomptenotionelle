@@ -348,6 +348,63 @@ referents:
           (LEGIARTI000006308344) ; l'IPP a tort.
         preuve: >-
           index LEGI du dépôt, lu le 10 octobre 2026
+      - constat: >-
+          IR5. Le barème des revenus de 1994 porte 48 750 F
+          pour la limite de la tranche à 12 %
+          (bareme_ir_depuis_1945).
+        tranche: >-
+          La documentation de base 5 B 321 (annexe I, revenus
+          de 1994, loi n° 94-1162) écrit 48 570 F, et ses
+          constantes de calcul direct (8 979,30 F par part) ne
+          s'obtiennent qu'avec ce montant ; l'IPP a tort.
+        preuve: >-
+          DB 5 B 321 du 23 juin 2000, image db5b321.057
+          (bofip-archives) ; aucun des index de la DILA n'a la
+          loi de finances pour 1995
+      - constat: >-
+          IR6. L'abattement plein des personnes âgées des
+          revenus de 1993 s'arrête à 57 000 F de revenu
+          (abat_rni.contribuable_age_invalide).
+        tranche: >-
+          La documentation de base 5 B 25 écrit 57 500 F, que
+          la progression de 1994 (58 400 F) confirme ; l'IPP a
+          tort.
+        preuve: >-
+          DB 5 B 25 du 1er septembre 1999, image db5b25.025
+          (bofip-archives)
+      - constat: >-
+          IR7. La réduction complémentaire de l'invalide des
+          revenus de 2009 vaut 661 €, le montant de 2010.
+        tranche: >-
+          L'article 197 dit 651 € (LEGIARTI000021625085) ;
+          l'IPP a tort.
+        preuve: >-
+          index LEGI du dépôt, lu le 10 octobre 2026
+      - constat: >-
+          IR8. La prime pour l'emploi des revenus de 2005 a les
+          taux de 6,8 % et de 17 % (credits_impots.ppe.taux).
+        tranche: >-
+          L'article 200 sexies dit 6,0 % et 15,0 % pour les
+          revenus de 2005, 6,8 % et 17 % pour ceux de 2006,
+          que la loi de finances pour 2007 a portés à 7,7 % et
+          19,3 % (LEGIARTI000006303356) ; l'IPP a tort, et
+          OpenFisca, qui partage ses paramètres, avec lui.
+        preuve: >-
+          index LEGI du dépôt, lu le 10 octobre 2026
+      - constat: >-
+          IR9. Les quinze paramètres de l'impôt que le dépôt en
+          lit ne portent ni les 5 % retranchés de l'impôt des
+          revenus de 2001, ni le crédit d'impôt exceptionnel
+          des revenus de 2008.
+        tranche: >-
+          Loi n° 2002-1050, art. 1 (BOI 5 B-6-03, n° 1) ; loi
+          n° 2009-431, art. 1 (BOI 5 B-25-09, qui la
+          reproduit) : le dépôt les ajoute
+          (scripts/fetch/ipp_impot_revenu.py,
+          REDUCTION_PROPORTIONNELLE, CREDIT_EXCEPTIONNEL).
+        preuve: >-
+          BOI 5 B-6-03 du 27 janvier 2003 et 5 B-25-09 du 14
+          octobre 2009 (bofip-archives)
     fait_mieux:
       - quoi: >-
           Il porte les séries de l'AVTS (1962-2026, 4 023,51 € en 2025) et de
@@ -903,6 +960,36 @@ referents:
           tests/temoins/impot_revenu_openfisca.json
           (couple_retraites, couple_retraites_aises, 2002 à
           2005), version 176.1.2
+      - constat: >-
+          Sa prime pour l'emploi des revenus de 2005 a les taux
+          de 6,8 % et de 17 % (le paramètre qu'il partage avec
+          l'IPP).
+        tranche: >-
+          CGI, art. 200 sexies, LEGIARTI000006303356 : « 6,0 %
+          (2) [...] 15,0 % (2) [...] (2) applicable aux
+          revenus 2005 » ; l'écart est le sien
+        preuve: >-
+          tests/temoins/impot_revenu_openfisca.json
+          (celibataire_bas_salaire, couple_un_salaire, 2005),
+          version 176.1.2
+      - constat: >-
+          Quand la cotisation n'atteint pas le seuil de mise en
+          recouvrement, il ne restitue des crédits d'impôt que
+          ce qui dépasse l'impôt, et non la prime pour l'emploi
+          entière.
+        tranche: >-
+          CGI, art. 1657, 1 bis (LEGIARTI000006312658) : la
+          cotisation n'est pas mise en recouvrement ; art. 200
+          sexies, IV : « Si l'impôt sur le revenu n'est pas dû
+          [...] la différence est versée aux intéressés » ; BOI
+          5 B-12-01, n° 53 : « la totalité de la prime pour
+          l'emploi lorsque le contribuable n'est pas imposable
+          » ; l'écart est le sien
+        preuve: >-
+          model/prelevements_obligatoires/impot_revenu/ir.py,
+          correction_ir_seuils_recouvrement, version 176.1.2 :
+          la correction ne joue que si l'impôt reste positif
+          après les crédits
     fait_mieux:
       - quoi: >-
           Il calcule la CSG, la CRDS et la CASA des pensions selon le revenu
@@ -961,8 +1048,9 @@ referents:
           OpenFisca, exécuté à part sur quinze foyers de
           2002 à 2025, les confirme
           (`tests/temoins/impot_revenu_openfisca.json`) ;
-          ses deux désaccords sont les siens (le veuf
-          d'avant 2008, les 20 % des pensions d'avant 2006,
+          ses désaccords sont les siens (le veuf d'avant
+          2008, les 20 % des pensions d'avant 2006, les taux
+          de la prime pour l'emploi de 2005,
           `tests/test_impot_revenu.py`). Reste ce que le
           point reproche encore : l'impôt n'entre ni dans la
           pension nette ni dans l'effet retour de la page
