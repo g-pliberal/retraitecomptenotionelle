@@ -301,7 +301,7 @@ def test_un_assure_jeune_se_confronte_comme_un_autre(contexte, catalogue):
     a_64_ans = {"age": "64 ans", "date": dt.date(2057, 10, 1),
                 "regimes": [{"libelle": "Assurance retraite", "brut": 1500},
                             {"libelle": "Agirc-Arrco", "brut": 500}]}
-    trop_tard = dict(a_64_ans, age="82 ans", date=dt.date(2075, 10, 1))
+    trop_tard = dict(a_64_ans, age="120 ans", date=dt.date(2113, 10, 1))
     confrontation = _confrontation(contexte, catalogue, texte=jeune,
                                    departs=[a_64_ans, trop_tard])
     (premier, second) = confrontation.estimation.departs
