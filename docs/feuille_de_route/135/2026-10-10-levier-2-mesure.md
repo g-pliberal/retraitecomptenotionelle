@@ -1,12 +1,14 @@
 # Le levier 2, étape 1 : mesurer les tests qui dépendent des présomptions
 
-**Reprise, au 10 octobre 2026.** Fait : la mesure, et les tests du mécanisme
-(`test_chronologie.py`, deux de `test_moteur.py`). Reste : 41 tests rapides
-dans 20 fichiers, par lots, du plus chargé au moins chargé (liste plus bas) ;
-puis, la liste vide, une garde sur GitHub. Commencer par
+**Reprise, au 10 octobre 2026.** Fait : la mesure, les tests du mécanisme
+(`test_chronologie.py`, deux de `test_moteur.py`), et un premier lot de trois
+fichiers. Reste : 23 tests rapides dans 17 fichiers, que liste
+`2026-10-10-levier-2-premier-lot.md`, par lots, du plus chargé au moins
+chargé ; puis, la liste vide, une garde sur GitHub. Commencer par
 `PRESOMPTIONS_DECALEES=1 python -m pytest -m rapide --tb=no -rf`, qui en
-donne la liste, et `test_emploi_retraite.py`. Les trois exemples officiels de
-`test_oracle.py` touchent au scénario 1 : leur date se relit à la source.
+donne la liste, et `test_parents_trois_enfants.py`. Les trois exemples
+officiels de `test_oracle.py` touchent au scénario 1 : leur date se relit à
+la source.
 
 **Le 10 octobre 2026, la demande** : l'étape suivante de l'action 135, le
 levier 2 du diagnostic du 28 septembre. À l'action 132, le jour de naissance

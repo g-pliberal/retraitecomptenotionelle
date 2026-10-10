@@ -24,7 +24,11 @@ def simulateur() -> Simulateur:
     return Simulateur()
 
 
-BASE = {"naissance": "1960", "sexe": "F", "debut": "20", "liquidation": "62",
+#: L'assurée naît le 15 janvier : le jour se déclare, puisque les dates de
+#: l'activité et du cumul se comptent depuis lui ; celui que la présomption
+#: pose a son test (``test_chronologie.py`` ; feuille de route, action 135,
+#: levier 2).
+BASE = {"naissance": "1960-01-15", "sexe": "F", "debut": "20", "liquidation": "62",
         "unite_revenu": "moyen", "salaire": "1"}
 
 #: Deux ans d'activité après le départ, chez un autre employeur, à la moitié
@@ -36,7 +40,8 @@ EMPLOI = {"age": 63.0, "fin": 65.0, "affiliation": "salarie_prive_non_cadre",
 def _carriere(simulateur: Simulateur, emploi: dict | None = EMPLOI) -> Carriere:
     return Carriere.depuis_parcours(
         annee_naissance=1960, sexe="F", metiers=[Metier("salarie_prive_non_cadre", 20.0)],
-        age_liquidation=62, macro=simulateur.macro, emploi_retraite=emploi)
+        age_liquidation=62, macro=simulateur.macro, jour_naissance=15,
+        emploi_retraite=emploi)
 
 
 # -- la saisie ----------------------------------------------------------------------
@@ -113,11 +118,13 @@ from retraite_notionnelle.droit import cumul  # noqa: E402
 
 def _cumul(simulateur: Simulateur, naissance: int, depart: float, emploi: dict,
            metiers: list[Metier] | None = None):
-    """Le cumul que l'échéancier calcule pour cette carrière, et l'échéancier."""
+    """Le cumul que l'échéancier calcule pour cette carrière, d'une assurée
+    née le 15 janvier, et l'échéancier."""
     carriere = Carriere.depuis_parcours(
         annee_naissance=naissance, sexe="F",
         metiers=metiers or [Metier("salarie_prive_non_cadre", 26.0)],
-        age_liquidation=depart, macro=simulateur.macro, emploi_retraite=emploi)
+        age_liquidation=depart, macro=simulateur.macro, jour_naissance=15,
+        emploi_retraite=emploi)
     echeancier = simulateur.echeancier(carriere)
     return echeancier.au_depart.cumul, echeancier
 

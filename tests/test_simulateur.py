@@ -72,9 +72,13 @@ def test_la_trajectoire_d_emploi_ne_deplace_que_les_systemes_reformes():
 
 @pytest.fixture(scope="module")
 def salarie_moyen(simulateur) -> Carriere:
+    """Né le 15 janvier 1960 : le jour se déclare, puisque les années de sa
+    carrière se comptent depuis lui ; celui que la présomption pose a son
+    test (``test_chronologie.py`` ; feuille de route, action 135, levier 2)."""
     return simulateur.carriere_simple(
         annee_naissance=1960, sexe="H", affiliation="salarie_prive_non_cadre",
         age_debut=21, age_liquidation=62, identifiant="salarié moyen",
+        jour_naissance=15,
     )
 
 
@@ -82,8 +86,8 @@ def salarie_moyen(simulateur) -> Carriere:
 
 
 def test_carriere_couvre_les_bonnes_annees(salarie_moyen):
-    # Né en janvier 1960 — le 15, faute de jour dit —, il a 62 ans au
-    # 1er février 2022 : janvier 2022 est travaillé.
+    # Né le 15 janvier 1960, il a 62 ans au 1er février 2022 : janvier 2022
+    # est travaillé.
     assert salarie_moyen.premiere_annee == 1981
     assert salarie_moyen.derniere_annee == 2022
     assert salarie_moyen.annee_liquidation == 2022
@@ -1012,13 +1016,13 @@ def test_une_carriere_sncf_a_cheval_sur_1992_melange_les_deux(simulateur):
     """
     carriere = simulateur.carriere_simple(
         annee_naissance=1955, sexe="H", affiliation="agent_sncf",
-        age_debut=20, age_liquidation=50,
+        age_debut=20, age_liquidation=50, jour_naissance=15,
     )
     employeur = simulateur.simuler(carriere).contribution_employeur
     assert set(employeur.annees_par_origine) == {"repli", "appelee"}
-    # 1975-1991 estimées, 1992-2005 lues dans le décret : né en janvier 1955
-    # — le 15, faute de jour dit —, l'agent a cinquante ans au 1er février
-    # 2005, et janvier 2005 compte.
+    # 1975-1991 estimées, 1992-2005 lues dans le décret : né le 15 janvier
+    # 1955 — le jour déclaré, puisque les années en dépendent —, l'agent a
+    # cinquante ans au 1er février 2005, et janvier 2005 compte.
     assert employeur.annees_par_origine["repli"] == 17
     assert employeur.annees_trouvees == 14
 
@@ -1277,15 +1281,16 @@ def test_le_scenario_6_preleve_18_pour_cent_pour_tous_a_compter_de_la_bascule(si
     for affiliation in ("salarie_prive_non_cadre", "fonctionnaire_etat"):
         comparaison = simulateur.simuler(simulateur.carriere_simple(
             annee_naissance=1975, sexe="F", affiliation=affiliation,
-            age_debut=21, age_liquidation=64, niveau_salaire=0.5,
+            age_debut=21, age_liquidation=64, niveau_salaire=0.5, jour_naissance=15,
         ))
         liberal = {c.annee: c for c in comparaison.notionnel_liberal.compte.cotisations}
         quatre = {c.annee: c for c in
                   comparaison.notionnel_retroactif_employeur.compte.cotisations}
         # La proposition la fait partir à 65 ans et non à 64 : son compte a
-        # les années du scénario 4, et celle que l'âge légal ajoute. Née en
-        # janvier 1975 — le 15, faute de jour dit —, elle part au 1er février :
-        # l'année ajoutée est celle du départ, dont janvier est travaillé.
+        # les années du scénario 4, et celle que l'âge légal ajoute. Née le
+        # 15 janvier 1975 — le jour déclaré, puisque les années en dépendent —,
+        # elle part au 1er février : l'année ajoutée est celle du départ, dont
+        # janvier est travaillé.
         assert comparaison.depart_reporte
         assert set(quatre) <= set(liberal)
         assert set(liberal) - set(quatre) == {
@@ -3170,9 +3175,8 @@ def test_les_trimestres_pour_enfants_suivent_la_date_le_sexe_et_le_regime(simula
         reglages.update(kw)
         carriere = simulateur.carriere_simple(**reglages)
         resultat = simulateur.scenario_actuel.calculer(carriere)
-        sans = simulateur.scenario_actuel.calculer(
-            simulateur.carriere_simple(**{**reglages, "nombre_enfants": 0})
-        )
+        sans = simulateur.scenario_actuel.calculer(simulateur.carriere_simple(
+            **{**reglages, "nombre_enfants": 0, "naissances_enfants": ()}))
         return resultat.trimestres_valides - sans.trimestres_valides
 
     # La MDA se lit à l'ANNÉE DE LIQUIDATION : rien avant la loi Boulin, un an
@@ -3187,10 +3191,13 @@ def test_les_trimestres_pour_enfants_suivent_la_date_le_sexe_et_le_regime(simula
     assert trimestres(annee_naissance=1960, sexe="H") == 0
 
     # La fonction publique sert sa propre bonification, lue à l'année de
-    # naissance de l'enfant — présumé né aux trente ans de sa mère.
+    # naissance de l'enfant : le test la déclare, aux trente ans de sa mère,
+    # plutôt que de la tenir de la présomption (action 135, levier 2).
     fonctionnaire = dict(affiliation="fonctionnaire_etat")
-    assert trimestres(annee_naissance=1960, **fonctionnaire) == 8   # nés en 1990
-    assert trimestres(annee_naissance=1985, **fonctionnaire) == 4   # nés en 2015
+    assert trimestres(annee_naissance=1960, naissances_enfants=("1990", "1990"),
+                      **fonctionnaire) == 8
+    assert trimestres(annee_naissance=1985, naissances_enfants=("2015", "2015"),
+                      **fonctionnaire) == 4
 
     # Les régimes alignés appliquent les règles familiales du régime général
     # (article L. 634-2), ce que leur fiche ne disait pas.
@@ -4688,10 +4695,11 @@ def test_la_tranche_c_d_avant_2016_garde_le_coefficient_pour_age(simulateur):
     points de l'Agirc constitués sur la tranche C jusqu'au 31 décembre 2015
     gardent le coefficient pour âge avant l'âge du 1° de l'article L. 351-8,
     et « ne peuvent pas être attribués à taux plein avant l'âge de 67 ans »
-    (Agirc-Arrco). Un cadre né en 1955, payé huit fois le salaire moyen et
-    parti à soixante-deux ans avec la durée, a 41 % de ses points Agirc sur
-    la tranche C d'avant 2016 : ils prennent 0,78, cinq ans avant
-    soixante-sept ans, les autres rien.
+    (Agirc-Arrco). Un cadre né le 15 janvier 1955 — le jour déclaré, puisque
+    le mois du départ en dépend —, payé huit fois le salaire moyen et parti à
+    soixante-deux ans avec la durée, a 41 % de ses points Agirc sur la
+    tranche C d'avant 2016 : ils prennent 0,78, cinq ans avant soixante-sept
+    ans, les autres rien.
     """
     scenario = simulateur.scenario_actuel
 
@@ -4699,7 +4707,7 @@ def test_la_tranche_c_d_avant_2016_garde_le_coefficient_pour_age(simulateur):
         resultat = scenario.calculer(simulateur.carriere_simple(
             annee_naissance=1955, sexe="H", affiliation="salarie_prive_cadre",
             age_debut=20, age_liquidation=age, niveau_salaire=niveau,
-            profil_carriere="plat",
+            profil_carriere="plat", jour_naissance=15,
         ))
         return next(p for p in resultat.pensions_par_regime if p.regime == "agirc")
 
@@ -4846,9 +4854,12 @@ def test_la_pension_agricole_de_2026_prend_le_plus_favorable_des_deux_calculs(si
     scenario = simulateur.scenario_actuel
 
     def pension(naissance, niveau=1.0, debut=21):
+        # Né un 15 janvier : le jour déclaré, puisque le mois du départ, et
+        # les points qu'il compte, en dépendent.
         carriere = simulateur.carriere_simple(
             annee_naissance=naissance, sexe="H", affiliation="exploitant_agricole",
-            age_debut=debut, age_liquidation=64, niveau_salaire=niveau)
+            age_debut=debut, age_liquidation=64, niveau_salaire=niveau,
+            jour_naissance=15)
         return next(p for p in scenario.calculer(carriere).pensions_par_regime
                     if p.regime == "msa_non_salaries")
 

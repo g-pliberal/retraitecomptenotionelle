@@ -4964,7 +4964,7 @@ l'essentiel (la suite complète sous Windows, de 56 à moins de 15 min à
 froid) ; le hook de démarrage ; « Économiser le contexte » ; l'arbre du dépôt ;
 le parcours `tenu` par son test ; le contexte en cinq étapes, closes ; le
 portage que node rejoue, pour l'essentiel ; la mémoire indexée sur le seul
-modèle. En cours : le levier 2 — 41 tests rapides à déclarer leur date, par
+modèle. En cours : le levier 2 — 23 tests rapides à déclarer leur date, par
 lots, que le bloc de `2026-10-10-levier-2-mesure.md` ouvre. Reste :
 `actions/cache` sur GitHub, que le propriétaire décide ; les fiches de règles
 dans l'empreinte, la fin du portage rejoué (notes du 10 octobre) ; le 4 et 5.

@@ -30,9 +30,13 @@ def simulateur() -> Simulateur:
 
 def _carriere(simulateur: Simulateur, metiers: list[Metier], naissance: int = 1965,
               liquidation: float = 64, sexe: str = "F", **kwargs) -> Carriere:
+    """La carrière d'un assuré né le 15 janvier : le jour se déclare, puisque
+    les dates de la demande et du départ se comptent depuis lui ; celui que
+    la présomption pose a son test (``test_chronologie.py`` ; feuille de
+    route, action 135, levier 2)."""
     return Carriere.depuis_parcours(
         annee_naissance=naissance, sexe=sexe, metiers=metiers,
-        age_liquidation=liquidation, macro=simulateur.macro, **kwargs)
+        age_liquidation=liquidation, macro=simulateur.macro, jour_naissance=15, **kwargs)
 
 
 def _salariee(simulateur: Simulateur, age: float | None = 60.75, quotite: float = 0.6,
@@ -309,7 +313,7 @@ def test_l_echeancier_inscrit_la_fraction_puis_la_pension_complete(simulateur):
 # -- la saisie ----------------------------------------------------------------------
 
 def test_la_saisie_porte_la_retraite_progressive():
-    base = {"naissance": "1965", "sexe": "F", "debut": "20", "liquidation": "64"}
+    base = {"naissance": "1965-01-15", "sexe": "F", "debut": "20", "liquidation": "64"}
     saisie = Saisie.depuis_requete({**base, "progressive": "2025-11", "quotite": "60"})
     assert saisie.retraite_progressive_declaree() == {
         "age": pytest.approx(60.75), "quotite": pytest.approx(0.6)}
