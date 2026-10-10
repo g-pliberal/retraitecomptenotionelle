@@ -952,9 +952,12 @@ def test_la_liquidation_est_datee_au_mois_et_non_arrondie_a_l_annee():
     assert date(1961, 1, 64.5)[1] == date(1962, 1, 64.5)[1] == 7
     # Un âge entier et une naissance au 1er janvier tombent au 1er janvier.
     assert date(1975, 1, 64) == (2039, 1)
-    # Né en mars sans dire le jour, l'assuré est présumé né le 15 : il a
-    # 64 ans et 6 mois au 1er octobre.
-    assert date(1962, 3, 64.5, jour=None) == (2026, 10)
+    # Né en mars sans dire le jour, l'assuré part comme s'il avait déclaré
+    # celui que la présomption pose — le 15 : 64 ans et 6 mois au 1er octobre.
+    from retraite_notionnelle.chronologie import valeur
+
+    assert date(1962, 3, 64.5, jour=None) == date(1962, 3, 64.5, valeur("jour_de_naissance"))
+    assert date(1962, 3, 64.5, jour=15) == (2026, 10)
 
 
 def test_les_ages_se_comptent_du_mois_qui_suit_la_naissance():
@@ -963,9 +966,11 @@ def test_les_ages_se_comptent_du_mois_qui_suit_la_naissance():
     1964, l'assuré a 62 ans et 9 mois le 16 février 2027 et part au 1er mars au
     plus tôt (circulaire Cnav n° 2026-07, point 1.1) ; né le 1er mai, au 1er
     février. La génération reste au vrai mois, comme le mois où tombe
-    l'anniversaire, et le jour qu'on ne dit pas est présumé le 15."""
+    l'anniversaire, et le jour qu'on ne dit pas est celui que la présomption
+    pose."""
     from retraite_notionnelle.calendrier import DateMois, origine_des_ages
     from retraite_notionnelle.carriere import Carriere
+    from retraite_notionnelle.chronologie import valeur
 
     assert origine_des_ages(DateMois(1964, 5), 1) == DateMois(1964, 5)
     assert origine_des_ages(DateMois(1964, 5), 16) == DateMois(1964, 6)
@@ -982,8 +987,8 @@ def test_les_ages_se_comptent_du_mois_qui_suit_la_naissance():
     assert seize.age_au(DateMois(2027, 3)) == pytest.approx(62.75)
     assert premier.age_au(DateMois(2027, 3)) == pytest.approx(62 + 10 / 12)
     assert seize.generation == premier.generation == presume.generation
-    assert presume.jour_de_naissance == 15
-    assert presume.date_liquidation == DateMois(2027, 3)
+    assert presume.jour_de_naissance == valeur("jour_de_naissance")
+    assert presume.date_liquidation == ne_le(valeur("jour_de_naissance")).date_liquidation
 
 
 def test_l_annee_de_liquidation_est_portee_au_compte_au_prorata(macro):

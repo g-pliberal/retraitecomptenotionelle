@@ -39,7 +39,9 @@ n'a bougé.
 from __future__ import annotations
 
 import hashlib
+import inspect
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -160,18 +162,72 @@ def pytest_configure(config):
         config.addinivalue_line("markers", f"{nom}: {sens}")
     config.addinivalue_line(
         "markers", "site: le filet du site, après une retouche des pages ou de la saisie")
+    if os.environ.get(PRESOMPTIONS_DECALEES):
+        _decaler_les_presomptions()
+
+
+# -- les présomptions décalées : les tests qui en dépendent ---------------------
+
+#: Posée, cette variable rejoue les tests sous d'autres présomptions que celles
+#: du vocabulaire (``data/reference/vocabulaire/valeurs.yaml``) : ceux qui
+#: échouent en dépendent, quand un test qui raconte une date doit la déclarer
+#: entière (feuille de route, action 135, levier 2). Le portage, qui lit les
+#: siennes dans le paquet, n'est pas décalé : ses confrontations au Python
+#: échouent sans rien dire des tests. Les mémoires se taisent le temps de la
+#: mesure : rien de ce qui s'y calcule ne se garde.
+PRESOMPTIONS_DECALEES = "PRESOMPTIONS_DECALEES"
+#: Les valeurs de la mesure : le 1er du mois, l'autre branche de R. 351-37 ;
+#: les enfants et le mariage trois ans plus tôt et plus tard.
+DECALAGES = {"jour_de_naissance": 1, "naissance_des_enfants": 27, "mariage_des_conjoints": 30}
+
+
+def _decaler_les_presomptions() -> None:
+    """Le vocabulaire lui-même dit d'autres valeurs : un test qui y lit la
+    sienne passe, un test qui l'écrit en dur échoue."""
+    from retraite_notionnelle import chronologie
+    from retraite_notionnelle.noyau import vocabulaire
+
+    lire = vocabulaire.presomptions
+
+    def decalees(dossier=vocabulaire.VOCABULAIRE):
+        table = lire(dossier)
+        if Path(dossier) == vocabulaire.VOCABULAIRE:
+            for nom, valeur in DECALAGES.items():
+                table[nom] = {**table[nom], "valeur": valeur}
+        return table
+
+    vocabulaire.presomptions = decalees
+    chronologie._vocabulaire = decalees
+    for variable in (memoire.SANS_MEMOIRE, "TESTS_SANS_MEMOIRE", "FABRIQUE_SANS_MEMOIRE"):
+        os.environ[variable] = "1"
+
+
+#: Un test qui confronte le Python au portage, que node fait tourner.
+_CONFRONTE_AU_PORTAGE = re.compile(r'"node"|tests/js/|comparer[-\w]*\.mjs')
+
+
+def _confronte_au_portage(item) -> bool:
+    try:
+        return bool(_CONFRONTE_AU_PORTAGE.search(inspect.getsource(item.function)))
+    except (AttributeError, OSError, TypeError):
+        return False
 
 
 @pytest.hookimpl(tryfirst=True)
 def pytest_collection_modifyitems(config, items):
     """Marque chaque test de son niveau, avant que ``-m`` ne choisisse ; passe
-    ceux d'un fichier isolé qui ont réussi tels quels (:data:`ISOLES`)."""
+    ceux d'un fichier isolé qui ont réussi tels quels (:data:`ISOLES`), et,
+    les présomptions décalées, ceux qui confrontent le Python au portage."""
     vises = {Path(str(argument).split("::")[0]).name for argument in config.args}
+    decalees = os.environ.get(PRESOMPTIONS_DECALEES)
     for item in items:
         nom = getattr(item, "originalname", None) or item.name
         item.add_marker(niveau(item.path.name, nom))
         if (item.path.name, nom) in SITE:
             item.add_marker("site")
+        if decalees and _confronte_au_portage(item):
+            item.add_marker(pytest.mark.skip(
+                reason="le portage lit ses présomptions dans le paquet, que la mesure ne décale pas"))
         fichier = item.path.name
         if fichier not in ISOLES or os.environ.get(TESTS_SANS_MEMOIRE):
             continue

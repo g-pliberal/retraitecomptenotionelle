@@ -29,17 +29,36 @@ def _complete(**modifications) -> dict:
     return chronologie.completer(chronologie.du_parcours(**{**PARCOURS, **modifications}))
 
 
+def _presume(nom: str):
+    """La valeur d'une présomption, lue au vocabulaire : un test du mécanisme
+    ne l'écrit pas en dur, et passe quelle qu'elle soit (feuille de route,
+    action 135, levier 2 ; ``PRESOMPTIONS_DECALEES``, ``tests/conftest.py``)."""
+    return chronologie.valeur(nom)
+
+
+def _au_jour_presume(annee: int, mois: int) -> str:
+    """La date que la présomption du jour de naissance pose dans un mois."""
+    return f"{annee}-{mois:02d}-{_presume('jour_de_naissance'):02d}"
+
+
+def _enfant_presume() -> str:
+    """La naissance présumée d'un enfant de l'assurée de ``PARCOURS``."""
+    return _au_jour_presume(PARCOURS["annee_naissance"] + _presume("naissance_des_enfants"),
+                            PARCOURS["mois_naissance"])
+
+
 def test_un_parcours_devient_des_faits_dates():
     """Un fait par métier, daté au mois et borné [début, fin) ; les métiers
     principaux bout à bout jusqu'au départ, l'activité cumulée à côté ; une
-    année d'interruption par motif ; le départ déclaré, et la naissance
-    déclarée au mois, dont la présomption pose le jour. Née le 15 mars 1965,
-    l'assurée commence ses métiers dans le mois de ses âges, et part au premier
-    mois où elle a 64 ans et 3 mois révolus : juillet 2029."""
-    brute = chronologie.du_parcours(**PARCOURS)
+    année d'interruption par motif ; le départ et la naissance déclarés. Née
+    le 15 mars 1965 — le jour déclaré, puisque les dates en dépendent ; celui
+    que la présomption pose a son test —, l'assurée commence ses métiers dans
+    le mois de ses âges, et part au premier mois où elle a 64 ans et 3 mois
+    révolus : juillet 2029."""
+    brute = chronologie.du_parcours(**PARCOURS, jour_naissance=15)
     faits = {f["id"]: f for f in brute["faits"]}
     assert faits["naissance_assure"]["debut"] == "1965-03-15"
-    assert faits["naissance_assure"]["attributs"] == {"sexe": "F", "precision": "mois"}
+    assert faits["naissance_assure"]["attributs"] == {"sexe": "F", "precision": "jour"}
     assert (faits["emploi_1"]["debut"], faits["emploi_1"]["fin"]) == ("1987-09-01", "1995-03-01")
     assert (faits["emploi_2"]["debut"], faits["emploi_2"]["fin"]) == ("1995-03-01", "2029-07-01")
     assert (faits["cumul_1"]["debut"], faits["cumul_1"]["fin"]) == ("2005-03-01", "2010-03-01")
@@ -48,9 +67,7 @@ def test_un_parcours_devient_des_faits_dates():
         "interruption_1992", "interruption_1996"]
     assert faits["depart_assure"]["debut"] == "2029-07-01"
     assert faits["depart_assure"]["attributs"]["age"] == 64.25
-    assert all(f["origine"] == "declare" for f in brute["faits"]
-               if f["id"] != "naissance_assure")
-    assert faits["naissance_assure"]["presomption"] == "jour_de_naissance"
+    assert all(f["origine"] == "declare" for f in brute["faits"])
 
 
 def test_les_enfants_sont_des_personnes_liees():
@@ -65,19 +82,17 @@ def test_les_enfants_sont_des_personnes_liees():
 
 
 def test_la_presomption_pose_la_naissance_des_enfants_en_son_nom():
-    """Aux trente ans de l'assurée — la valeur du vocabulaire —, chaque
-    enfant dont la date n'est pas déclarée ; la filiation commence là. Le
-    fait présumé nomme sa présomption, et la chronologie la liste. L'assurée,
-    dont le jour est présumé le 15, a ses enfants le 15."""
+    """À l'âge de l'assurée que dit le vocabulaire, chaque enfant dont la date
+    n'est pas déclarée ; la filiation commence là. Le fait présumé nomme sa
+    présomption, et la chronologie la liste. L'assurée, dont le jour est
+    présumé, a ses enfants ce jour-là."""
     complete = _complete()
-    age = vocabulaire.presomptions()["naissance_des_enfants"]["valeur"]
-    assert age == 30
     for enfant in ("enfant_1", "enfant_2"):
         ne = chronologie.naissance(complete, enfant)
-        assert ne["debut"] == "1995-03-15"
+        assert ne["debut"] == _enfant_presume()
         assert (ne["origine"], ne["presomption"], ne["fiabilite"]) == (
             "presume", "naissance_des_enfants", "estimee")
-    assert all(l["debut"] == "1995-03-15" for l in complete["liens"])
+    assert all(l["debut"] == _enfant_presume() for l in complete["liens"])
     assert chronologie.presomptions_employees(complete) == [
         "jour_de_naissance", "naissance_des_enfants"]
     assert chronologie.presomptions_employees(_complete(nombre_enfants=0)) == [
@@ -127,8 +142,9 @@ def test_chaque_saisie_donne_une_chronologie_qui_suit_le_contrat(saisie):
 def test_le_conjoint_et_le_deces_suivent_le_contrat():
     """Le conjoint est une personne, née, que le mariage relie à l'assuré ; le
     décès de l'assuré clôt ce mariage. Sans date déclarée, le mariage est
-    présumé aux vingt-sept ans de l'assuré, au nom de sa présomption — au jour
-    de son anniversaire, le 15 faute de jour dit."""
+    présumé à l'âge de l'assuré que dit le vocabulaire, au nom de sa
+    présomption — au jour de son anniversaire, le jour présumé faute de jour
+    dit."""
     brute = chronologie.du_resume(
         1960, "H", 5, 64.0, 0, conjoint={"naissance": "1962-03", "sexe": "F",
                                          "mariage": None, "ressources": 9000.0},
@@ -137,7 +153,8 @@ def test_le_conjoint_et_le_deces_suivent_le_contrat():
     assert chronologie.controler(complete) == []
     union = chronologie.union(complete, chronologie.ASSURE)
     assert (union["forme"], union["debut"], union["fin"]) == (
-        "mariage", "1987-05-15", {"date": "2031-10-01", "cause": "deces"})
+        "mariage", _au_jour_presume(1960 + _presume("mariage_des_conjoints"), 5),
+        {"date": "2031-10-01", "cause": "deces"})
     assert union["presomption"] == "mariage_des_conjoints"
     assert chronologie.conjoint(complete, chronologie.ASSURE) == chronologie.CONJOINT
     assert chronologie.deces(complete, chronologie.ASSURE)["debut"] == "2031-10-01"
@@ -240,8 +257,8 @@ def test_la_carriere_porte_la_chronologie_dont_elle_est_la_vue(macro):
     assert carriere.chronologie == _complete()
     assert (carriere.annee_naissance, carriere.mois_naissance, carriere.sexe) == (1965, 3, "F")
     assert (carriere.age_liquidation, carriere.nombre_enfants) == (64.25, 2)
-    assert carriere.naissances_des_enfants == (("enfant_1", "1995-03-15"),
-                                               ("enfant_2", "1995-03-15"))
+    assert carriere.naissances_des_enfants == (("enfant_1", _enfant_presume()),
+                                               ("enfant_2", _enfant_presume()))
     assert carriere.date_entree("fonctionnaire_etat").mois == 3
 
 
@@ -250,7 +267,8 @@ def test_une_carriere_construite_ligne_a_ligne_recoit_sa_chronologie():
     présomptions qui les complètent."""
     carriere = Carriere(annee_naissance=1980, sexe="F", nombre_enfants=3, age_liquidation=64.0)
     assert chronologie.enfants(carriere.chronologie, "assure") == ["enfant_1", "enfant_2", "enfant_3"]
-    assert {naissance for _, naissance in carriere.naissances_des_enfants} == {"2010-01-15"}
+    assert {naissance for _, naissance in carriere.naissances_des_enfants} == {
+        _au_jour_presume(1980 + _presume("naissance_des_enfants"), 1)}
     assert Carriere(annee_naissance=1980, sexe="H").naissances_des_enfants == ()
 
 
@@ -276,7 +294,7 @@ def test_chaque_enfant_garde_sa_date(macro):
                                            "1993-07-14"))
     carriere = Carriere.depuis_chronologie(chronologie.completer(brute), macro)
     assert carriere.naissances_des_enfants == (("enfant_1", "1993-07-14"),
-                                               ("enfant_2", "1995-03-15"))
+                                               ("enfant_2", _enfant_presume()))
     assert chronologie.presomptions_employees(carriere.chronologie) == [
         "jour_de_naissance", "naissance_des_enfants"]
 
@@ -300,13 +318,14 @@ def test_la_saisie_declare_la_naissance_des_premiers_enfants(macro):
     carriere = Carriere.depuis_parcours(macro=macro, **{**PARCOURS, "nombre_enfants": 3},
                                         naissances_enfants=["1990", "1993-06"])
     assert carriere.naissances_des_enfants == (
-        ("enfant_1", "1990-01-01"), ("enfant_2", "1993-06-01"), ("enfant_3", "1995-03-15"))
+        ("enfant_1", "1990-01-01"), ("enfant_2", "1993-06-01"), ("enfant_3", _enfant_presume()))
     assert carriere.naissances_enfants == ("1990-01-01", "1993-06-01")
     assert carriere.avec_lignes(carriere.lignes).naissances_des_enfants == carriere.naissances_des_enfants
     ligne_a_ligne = Carriere(annee_naissance=1965, sexe="F", nombre_enfants=2,
                              naissances_enfants=("1991-02-03",), age_liquidation=64.0)
-    assert ligne_a_ligne.naissances_des_enfants == (("enfant_1", "1991-02-03"),
-                                                    ("enfant_2", "1995-01-15"))
+    assert ligne_a_ligne.naissances_des_enfants == (
+        ("enfant_1", "1991-02-03"),
+        ("enfant_2", _au_jour_presume(1965 + _presume("naissance_des_enfants"), 1)))
 
 
 @pytest.mark.parametrize("naissances, message", [
@@ -611,11 +630,11 @@ def test_le_portage_construit_la_meme_chronologie():
 
 
 def test_le_moteur_lit_la_naissance_que_la_chronologie_porte():
-    """Pour une fonctionnaire née en 1975, la présomption place ses enfants
-    en 2005, sous L. 12 bis : deux trimestres chacun, dont un de services
-    depuis le b ter. Déclarés nés en 2002, ils tombent sous L. 12 b : quatre
-    chacun, tous de services. Le moteur lit la chronologie, et rien
-    d'autre."""
+    """Pour une fonctionnaire née en 1975, des enfants nés en 2005 tombent
+    sous L. 12 bis : deux trimestres chacun, dont un de services depuis le
+    b ter ; nés en 2002, sous L. 12 b : quatre chacun, tous de services. Les
+    dates sont déclarées : le test ne dépend pas de l'âge que la présomption
+    donne aux parents. Le moteur lit la chronologie, et rien d'autre."""
     from retraite_notionnelle.simulateur import Simulateur
 
     simulateur = Simulateur()
@@ -628,13 +647,13 @@ def test_le_moteur_lit_la_naissance_que_la_chronologie_porte():
                                                      carriere.annee_liquidation)
         return majoration.trimestres, majoration.services
 
-    brute = chronologie.du_parcours(1975, "F", [Metier("fonctionnaire_etat", 22.0)],
-                                    age_liquidation=62.0, nombre_enfants=2)
-    assert trimestres(chronologie.completer(brute)) == (4, 2)
-    for enfant in ("enfant_1", "enfant_2"):
-        brute["faits"].append(chronologie.fait(f"naissance_{enfant}", enfant, "naissance",
-                                               "2002-03-01"))
-    assert trimestres(chronologie.completer(brute)) == (8, 8)
+    def nes_en(*naissances: str) -> dict:
+        return chronologie.completer(chronologie.du_parcours(
+            1975, "F", [Metier("fonctionnaire_etat", 22.0)], age_liquidation=62.0,
+            nombre_enfants=2, naissances_enfants=list(naissances)))
+
+    assert trimestres(nes_en("2005-01", "2005-01")) == (4, 2)
+    assert trimestres(nes_en("2002-03", "2002-03")) == (8, 8)
     # Un enfant de chaque côté de 2004 : chacun reçoit ce que sa version
     # accorde, quatre et quatre de services, puis deux dont un de services.
     deux_dates = chronologie.du_parcours(1975, "F", [Metier("fonctionnaire_etat", 22.0)],
