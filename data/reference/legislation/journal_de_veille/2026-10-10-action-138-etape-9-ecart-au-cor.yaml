@@ -1,0 +1,33 @@
+date: "2026-10-10"
+session: "action 138, étape 9, cinquième partie : l'écart au COR du rendement interne des générations 1963 à 1970"
+consulte: >-
+  `python scripts/veille_droit.py` : quatre fiches à relire, aucune touchée par
+  la session, qui n'écrit aucune règle du scénario 1. Le rapport annuel du COR
+  de juin 2026 (partie 3, chapitres 1 et 3 ; classeurs des parties 1, 2 et 3,
+  et de l'annexe méthodologique) et son annexe méthodologique en ligne,
+  § 2.1 et 2.3 ; le classeur de la partie 3 et l'annexe méthodologique du
+  rapport de juin 2025 ; les documents du COR n° 10 du 17 mai 2017 et n° 6 du
+  21 avril 2022, sur le rendement interne de ses cas types. Le code de
+  TRAJECTOiRE au commit 0963b57, lu sans être copié (EUPL) : le script des cas
+  types (casTypesCOR.R), le rendement interne (fonctionsAgregation.R,
+  indicAgreg), et les hypothèses du COR de 2024 qu'il livre (salaires,
+  profils des cas types). Aucun texte de droit.
+trouve: >-
+  Le COR compte les cotisations aux taux du dépôt (figure 3.1 : 27,89 % en
+  2025), et, selon son annexe et sa note de 2017, « sans les allègements ».
+  Son rendement de juin 2025 était brut (note 140 du rapport de 2026) : le
+  rendement brut du dépôt le retrouve, pente comprise, à 0,2 point près, à
+  0,07 point sur la rémunération moyenne par tête du COR, qu'il actualise ;
+  celui de 2026 n'en est pas la version nette, le COR l'a révisé d'autre
+  chose, +0,17 à +0,44 point de 1963 à 1970, sans le dire. Son encadré de 2026
+  fait jouer les allègements de cotisations pour le SMIC et les cas types
+  genrés. TRAJECTOiRE bâtit les cas types sur le salaire moyen de la Cnav,
+  1,055 fois la rémunération moyenne par tête du COR. En chemin, une docstring
+  fausse du dépôt : la valeur de service que le COR projette ne mène
+  l'Agirc-Arrco que sous le simulateur de la page Coût (corrigée).
+reste: >-
+  La révision du rendement de 2026, à demander au secrétariat général du COR ;
+  si ce sont les allègements généraux, leur histoire depuis 1993 et leur clé
+  d'imputation à la retraite, que le dépôt n'a que pour 2026. La rémunération
+  moyenne par tête du COR, revenu mixte et salaires sur l'emploi total, à la
+  session des données.

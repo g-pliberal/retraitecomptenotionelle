@@ -57,10 +57,13 @@ CE QUI EST REÇU, C'EST CE QUI EST SERVI, année après année
 droit : chaque régime revalorisé par ses textes jusqu'à l'année courante
 (:func:`~retraite_notionnelle.revalorisation.faire_vivre`), puis par la
 convention de projection de la page Coût — les prix, et pour l'Agirc-Arrco la
-valeur de service que le COR projette (:func:`~.cout.coefficient_actuel`).
-Les systèmes notionnels suivent la règle de leur compte, et celle du stock à
-la bascule (:class:`~.revalorisation.RevalorisationServie`), sur toute la
-retraite et non jusqu'à l'année courante seulement. Le niveau d'une année est
+valeur de service que le COR projette (:func:`~.cout.coefficient_actuel`),
+sous le simulateur de la page Coût seulement (``Parametres.conventions_cor``) :
+le simulateur individuel, que les confrontations au COR emploient, n'a pas la
+convention, et mène l'Agirc-Arrco sur les prix. Les systèmes notionnels
+suivent la règle de leur compte, et celle du stock à la bascule
+(:class:`~.revalorisation.RevalorisationServie`), sur toute la retraite et non
+jusqu'à l'année courante seulement. Le niveau d'une année est
 celui du 31 décembre, revalorisations de l'année comprises : une
 revalorisation d'octobre (le régime général de 2014 à 2018) ou de novembre
 (l'Agirc-Arrco) y compte pour l'année entière. N'y entrent ni l'ASPA ni la
@@ -545,7 +548,11 @@ def niveaux_actuels(simulateur, comparaison, revalorisation,
     Ce que le droit a servi jusqu'à l'année courante, régime par régime
     (:func:`faire_vivre`) ; au-delà, ou pour un départ à venir, la convention
     de projection de la page Coût : les prix, et la valeur de service que le
-    COR projette pour l'Agirc-Arrco (:func:`~.cout.coefficient_actuel`).
+    COR projette pour l'Agirc-Arrco (:func:`~.cout.coefficient_actuel`) —
+    quand le simulateur porte ses conventions (``Parametres.conventions_cor``) ;
+    sinon, les prix pour tous. Pour le cas type n° 2 du COR, ces conventions,
+    cette valeur de service et le taux moyen des entreprises, abaissent le
+    rendement de 0,02 à 0,05 point (note du 10 octobre 2026).
     """
     carriere = comparaison.carriere
     resultat = comparaison.actuel

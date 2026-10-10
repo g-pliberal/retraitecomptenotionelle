@@ -1,15 +1,14 @@
 # Étape 9, première partie : les indicateurs de cycle de vie, confrontés au COR, à TRAJECTOiRE et à l'OCDE
 
-**Reprise, au 9 octobre 2026.** Fait : `cycle_de_vie.py`, onze indicateurs des
-six systèmes, sous la convention de l'OCDE et sous celle du COR ; le
-9 octobre, les contributions d'équilibre dans ce qui est versé, les
-indicateurs à chaque âge de départ sous les trois productivités du COR, avec
-la pension rapportée à l'ASPA (`balayage`), puis chaque pension et chaque
-salaire nets aux prélèvements de leur année (IPP), le net du scénario 6 sur
-la fiche de la proposition. Reste, dans cet ordre : l'écart au COR du
-rendement des générations 1963 à 1970 ; l'âge d'équilibre ; le portage et
-l'affichage, avec l'étape 10. Commencer par l'écart au COR. Détail : « Ce qui
-reste » de la note `2026-10-09-etape-9-prelevements-historiques.md`.
+**Reprise, au 10 octobre 2026.** Fait : `cycle_de_vie.py`, onze indicateurs
+des six systèmes, sous la convention de l'OCDE et sous celle du COR, les
+contributions d'équilibre, chaque âge de départ, les prélèvements de chaque
+année ; le 10 octobre, l'écart au COR des générations 1963 à 1970, trouvé :
+le dépôt retrouve la série brute du COR de 2025, et celle de 2026 en est une
+révision que le COR ne dit pas, déclarée. Reste, dans cet ordre : l'âge
+d'équilibre ; le portage et l'affichage, avec l'étape 10 ; la génération
+1941. Commencer par l'âge d'équilibre. Détail : « Ce qui reste » de la note
+`2026-10-10-etape-9-ecart-au-cor.md`.
 
 **La demande.** L'étape 9 de l'action : « les indicateurs de cycle de vie, par
 cas type et génération, sous les six systèmes : rendement interne, durée de

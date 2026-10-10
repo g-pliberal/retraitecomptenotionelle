@@ -54,6 +54,13 @@ compte aussi, ce que montre le rendement de chaque régime de la génération
 2000. Le rendement du cas type n° 2 en perd 0,22 à 0,25 point, et l'écart au
 COR des générations 1963 à 1970, que l'oubli compensait, apparaît : commun au
 régime général et à l'Agirc-Arrco, sa cause reste à trouver.
+
+Ce que le 10 octobre 2026 a trouvé : la cause est au COR. Le rendement brut du
+dépôt retrouve, pente comprise, la série brute que le COR publiait en juin
+2025 ; sa série nette de 2026 n'en est pas la version nette, il l'a révisée
+d'autre chose, qu'il ne dit pas, négative ou nulle pour les générations 1955
+et 1960, croissante ensuite. Ni ses projections, ni les carrières, ni les
+cotisations ne referment l'écart.
 """
 
 from __future__ import annotations
@@ -157,10 +164,22 @@ def cas_type_2(trajectoire, contexte, simulateur) -> dict[int, object]:
 
 
 #: Les générations dont le rendement du cas type n° 2 s'écarte de celui du COR
-#: au-delà de la tolérance, et les bornes de l'écart, dépôt moins COR. La cause
-#: est la même pour toutes, et reste à trouver : voir le test.
+#: de juin 2026 au-delà de la tolérance, et les bornes de l'écart, dépôt moins
+#: COR. La cause est la même pour toutes : la série de 2026 n'est pas celle de
+#: 2025, que le dépôt retrouve, rendue nette ; le COR l'a révisée d'autre chose
+#: (:data:`REVISION_DE_2026`), que ni son rapport ni son annexe ne disent.
 ECARTS_RENDEMENT = {1963: (-0.0040, -0.0020), 1964: (-0.0045, -0.0025),
                     1970: (-0.0060, -0.0040)}
+
+#: Ce que le COR a changé au rendement du cas type n° 2 entre juin 2025 et juin
+#: 2026, au-delà du passage au net : sa série de 2026 moins celle de 2025, moins
+#: ce que les prélèvements retirent au rendement du dépôt (0,30 point pour
+#: chacune). Bornes, en points de rendement, par génération : −0,14 pour 1955,
+#: rien pour 1960, puis croissante — +0,17 pour 1963, +0,31 pour 1964, +0,44
+#: pour 1970 (mesures du 10 octobre 2026).
+REVISION_DE_2026 = {1955: (-0.0020, 0.0000), 1960: (-0.0010, 0.0010),
+                    1963: (0.0010, 0.0025), 1964: (0.0025, 0.0040),
+                    1970: (0.0035, 0.0050)}
 
 
 def test_le_rendement_interne_du_cas_type_2_est_celui_du_cor(cor, cas_type_2, simulateur):
@@ -168,21 +187,22 @@ def test_le_rendement_interne_du_cas_type_2_est_celui_du_cor(cor, cas_type_2, si
     actualisés selon le salaire moyen (figure 3.7). Sous ses conventions —
     les deux sexes réunis, le décès à 60 ans plus l'espérance de vie à 60 ans
     de la génération, la pension nette au taux plein, les cotisations seules,
-    contributions d'équilibre de l'Agirc-Arrco comprises, comme lui (test
-    suivant) — et sur les carrières que TRAJECTOiRE a bâties pour lui, le
-    dépôt le retrouve à 0,2 point près pour les générations 1955 et 1960, et
-    décroissant comme lui de 1955 à 1970.
+    contributions d'équilibre de l'Agirc-Arrco comprises, comme lui (test du
+    rendement par régime) — et sur les carrières que TRAJECTOiRE a bâties
+    pour lui, le dépôt le retrouve à 0,2 point près pour les générations 1955
+    et 1960, et décroissant comme lui de 1955 à 1970.
 
     Mais il décroît plus vite : de 0,9 point de 1955 à 1970, le COR de 0,4.
-    Jusqu'au 9 octobre 2026, le dépôt ne comptait pas les contributions
-    d'équilibre, et son rendement, relevé de 0,22 à 0,25 point, tenait les
-    cinq générations à 0,3 point : l'oubli compensait l'écart. Celui-ci est
-    aussi grand au régime général seul (génération 2000, test suivant) : il
-    ne tient pas à ce qui est versé à la complémentaire, et sa cause reste à
-    trouver. Le dépôt prélève par ailleurs toute la retraite aux taux de 2026,
-    quand la CSG d'une pension était de 6,6 % jusqu'en 2017 — le rendement
-    des générations 1955 et 1960 en est abaissé —, et ses carrières sont
-    celles de TRAJECTOiRE, non celles du secrétariat général du COR."""
+    La cause est au COR (test suivant) : le rendement brut du dépôt retrouve,
+    pente comprise, la série brute que le COR publiait en juin 2025, et sa
+    série nette de 2026 n'en est pas la version nette ; il l'a révisée d'autre
+    chose, qui croît avec la génération (:data:`REVISION_DE_2026`). Ni sa
+    trajectoire du salaire moyen (+0,02 à +0,03 point), ni ses conventions de
+    l'Agirc-Arrco, taux moyen et valeur de service (−0,02 à −0,05), ni les
+    carrières refaites sur le profil qu'il décrit (−0,03 à +0,04) ne
+    referment l'écart ; il compte les cotisations comme le dépôt (figure 3.1 :
+    27,9 % en 2025), et, selon son annexe, sans les allègements (note du 10
+    octobre 2026)."""
     publie = cor["rendement_cas_type_2"]
     calcules = {}
     for generation, comparaison in cas_type_2.items():
@@ -204,6 +224,49 @@ def test_le_rendement_interne_du_cas_type_2_est_celui_du_cor(cor, cas_type_2, si
             > 2.0 * (publie["1955"] - publie["1970"]))
 
 
+def test_le_rendement_brut_du_cas_type_2_est_celui_du_cor_de_2025(cor, cas_type_2, simulateur):
+    """Jusqu'en juin 2025, le COR publiait le rendement interne BRUT de son
+    cas type n° 2 : il « était évalué à partir des rémunérations brutes »
+    (rapport de juin 2026, note 140). Sous les mêmes conventions, pension
+    brute, le dépôt le retrouve à 0,2 point près pour les cinq générations, et
+    sa pente avec lui : de 1955 à 1970, 0,90 point de baisse au dépôt, 0,94
+    au COR. Ce qui reste, 0,17 point au plus, tient au salaire moyen : le COR
+    actualise selon sa rémunération moyenne par tête — revenu mixte et
+    salaires sur l'emploi total —, qui a crû de 0,26 point par an de moins que
+    le salaire moyen des salariés, celui du dépôt, de 2004 à 2024 ; déflaté par
+    elle, le dépôt le retrouve à 0,07 point près.
+
+    Le passage au net retire 0,30 point au rendement du dépôt, à chaque
+    génération. La série de 2026 n'est pas celle de 2025 moins autant : le
+    COR l'a révisée d'autre chose (:data:`REVISION_DE_2026`) : −0,14 point
+    pour 1955, rien pour 1960, de +0,17 à +0,44 de 1963 à 1970, +0,6 pour la
+    génération 2000 — l'écart déclaré du test précédent, à ce reste près. Ni
+    la mortalité (l'Insee de 2026 retire 0,7 an à l'espérance de vie à 60 ans
+    de la génération 2000), ni la productivité (0,7 % les deux années), ni les
+    taux de cotisation ne l'expliquent ; les allègements généraux, que le
+    rapport de 2026 fait jouer pour le SMIC et les cas types genrés, quand son
+    annexe dit les cotisations « sans les allègements », en sont le seul
+    candidat trouvé, et pour une part seulement (note du 10 octobre 2026)."""
+    brut_2025 = cor["rendement_cas_type_2_brut_2025"]
+    net_2026 = cor["rendement_cas_type_2"]
+    bruts = {}
+    for generation, comparaison in cas_type_2.items():
+        flux = cycle_de_vie.flux_des_systemes(simulateur, comparaison)["actuel"]
+        convention = cycle_de_vie.convention_cor(simulateur, comparaison)
+        net = cycle_de_vie.indicateurs(flux, simulateur, convention).rendement_smpt
+        bruts[generation] = cycle_de_vie.indicateurs(
+            flux, simulateur, replace(convention, prelevement=0.0, prelevements=None)
+        ).rendement_smpt
+        cle = str(generation)
+        assert abs(bruts[generation] - brut_2025[cle]) <= 0.002, (generation, bruts[generation])
+        assert -0.0035 <= net - bruts[generation] <= -0.0025, (generation, net - bruts[generation])
+        revision = (net_2026[cle] - brut_2025[cle]) - (net - bruts[generation])
+        bas, haut = REVISION_DE_2026[generation]
+        assert bas <= revision <= haut, (generation, revision)
+    assert abs((bruts[1955] - bruts[1970])
+               - (brut_2025["1955"] - brut_2025["1970"])) <= 0.001
+
+
 #: Les régimes que le COR range sous l'Agirc-Arrco.
 REGIMES_AGIRC_ARRCO = {"arrco", "arrco_tranche_2", "agirc", "agirc_arrco"}
 
@@ -213,8 +276,9 @@ def _rendements_par_regime(simulateur, comparaison) -> dict[str, float]:
     sans les contributions d'équilibre, sous les conventions du COR : chacun
     sur ses cotisations et sa pension. La carrière part après l'année
     courante : la pension de la Cnav suit les prix, celle de l'Agirc-Arrco la
-    valeur de service que le COR projette, comme dans
-    :func:`cycle_de_vie.niveaux_actuels`."""
+    règle de :func:`cycle_de_vie.niveaux_actuels`, les prix aussi sous le
+    simulateur individuel, qui n'a pas la valeur de service que le COR
+    projette (``Parametres.conventions_cor``)."""
     flux = cycle_de_vie.flux_des_systemes(simulateur, comparaison)["actuel"]
     carriere = comparaison.carriere
     liquidation = carriere.annee_liquidation

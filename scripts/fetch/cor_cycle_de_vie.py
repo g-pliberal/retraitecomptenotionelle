@@ -2,7 +2,8 @@
 """La durée de retraite et le rendement interne publiés par le COR.
 
     python scripts/fetch/cor_cycle_de_vie.py
-    python scripts/fetch/cor_cycle_de_vie.py --fichier Donnees_RA2026_P3_2.xlsx
+    python scripts/fetch/cor_cycle_de_vie.py --fichier Donnees_RA2026_P3_2.xlsx \
+        --fichier-2025 Donnees_RA2025_P3.xlsx
 
 POURQUOI CE TÉMOIN. Le dépôt calcule, depuis l'action 138 (étape 9), les
 indicateurs de cycle de vie de ses carrières : la durée de retraite, le
@@ -25,6 +26,12 @@ méthodologique en ligne (§ 2.3) : le décès à 60 ans plus l'espérance de vi
 à 60 ans de la génération, les cotisations seules, les droits propres hors
 droits familiaux, l'actualisation selon le salaire moyen par tête.
 
+ET LA SÉRIE DE 2025. Le rendement du cas type n° 2 que le rapport de juin 2025
+publiait (classeur de la partie 3, feuille « Fig 3.7 »), BRUT : le rapport de
+2026 dit que le rendement « était évalué à partir des rémunérations brutes »
+(note 140). Le dépôt la retrouve, quand celle de 2026 n'en est pas la
+version nette (action 138, étape 9, note du 10 octobre 2026).
+
 Le témoin est versionné : les tests le relisent sans réseau.
 """
 
@@ -42,6 +49,8 @@ from lecture_xlsx import feuilles  # noqa: E402
 RACINE = Path(__file__).resolve().parents[2]
 URL = ("https://www.cor-retraites.fr/sites/default/files/2026-06/"
        "Donn%C3%A9es_RA2026_P3_2.xlsx")
+URL_2025 = ("https://www.cor-retraites.fr/sites/default/files/2025-10/"
+            "Donn%C3%A9es_RA2025_P3.xlsx")
 SORTIE = RACINE / "tests" / "temoins" / "cor_cycle_de_vie.json"
 ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
 
@@ -145,7 +154,8 @@ def controler(temoin: dict) -> list[str]:
     attendues = [str(annee) for annee in range(1940, 2001)]
     for nom, serie in (("durée", temoin["duree_retraite"]["annees"]),
                        ("part de vie", temoin["duree_retraite"]["part_de_vie"]),
-                       ("rendement", temoin["rendement_cas_type_2"])):
+                       ("rendement", temoin["rendement_cas_type_2"]),
+                       ("rendement brut de 2025", temoin["rendement_cas_type_2_brut_2025"])):
         if sorted(serie) != attendues:
             erreurs.append(f"{nom} : générations {sorted(serie)[:3]}…")
     for qui in ("ensemble", "femmes", "hommes"):
@@ -161,18 +171,24 @@ def controler(temoin: dict) -> list[str]:
     return erreurs
 
 
+def _classeur(fichier: Path | None, url: str) -> bytes:
+    """Le classeur déjà téléchargé, ou celui du réseau."""
+    if fichier:
+        return fichier.read_bytes()
+    requete = urllib.request.Request(url, headers=ENTETES)
+    with urllib.request.urlopen(requete, timeout=120) as reponse:
+        return reponse.read()
+
+
 def main(argv: list[str] | None = None) -> int:
     analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     analyseur.add_argument("--fichier", type=Path,
-                           help="classeur déjà téléchargé, lu au lieu du réseau")
+                           help="classeur de 2026 déjà téléchargé, lu au lieu du réseau")
+    analyseur.add_argument("--fichier-2025", type=Path,
+                           help="classeur de 2025 déjà téléchargé, lu au lieu du réseau")
     arguments = analyseur.parse_args(argv)
-    if arguments.fichier:
-        classeur = arguments.fichier.read_bytes()
-    else:
-        requete = urllib.request.Request(URL, headers=ENTETES)
-        with urllib.request.urlopen(requete, timeout=120) as reponse:
-            classeur = reponse.read()
-    grilles = feuilles(classeur)
+    grilles = feuilles(_classeur(arguments.fichier, URL))
+    grilles_2025 = feuilles(_classeur(arguments.fichier_2025, URL_2025))
     temoin = {
         "source": {
             "editeur": "Conseil d'orientation des retraites",
@@ -196,6 +212,9 @@ def main(argv: list[str] | None = None) -> int:
                           "plus l'espérance de vie à 60 ans de la génération"),
             "cas_type_2": ("non-cadre du privé à carrière continue, au salaire moyen "
                            "du tiers inférieur de la distribution à chaque âge"),
+            "rendement_brut_2025": ("celui du rapport de juin 2025 : les mêmes "
+                                    "conventions, la pension brute, et la mortalité "
+                                    "des projections de l'Insee de 2021"),
             "profils_2000": ("sans genre et sans enfant pour les profils de revenu : "
                              "cadre et non-cadre au taux plein de CSG, le SMIC au "
                              "taux réduit ; le cadre a l'espérance de vie la plus "
@@ -204,6 +223,15 @@ def main(argv: list[str] | None = None) -> int:
         "duree_retraite": lire_duree(grilles["Fig 3.6"]),
         "rendement_cas_type_2": lire_rendement(grilles["Fig 3.7"]),
         "rendement_generation_2000": lire_profils(grilles["Fig. 3.A"]),
+        "source_2025": {
+            "editeur": "Conseil d'orientation des retraites",
+            "reference": "Rapport annuel de juin 2025, figure 3.7 ; le rapport de juin "
+                         "2026, note 140 : le rendement « était évalué à partir des "
+                         "rémunérations brutes »",
+            "url": URL_2025,
+            "lu_le": "2026-10-10",
+        },
+        "rendement_cas_type_2_brut_2025": lire_rendement(grilles_2025["Fig 3.7"]),
     }
     erreurs = controler(temoin)
     if erreurs:
