@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-10-09",
+ "dernier_passage_le": "2026-10-10",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -637,7 +637,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-10-09"
+   "verifiee_le": "2026-10-10"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -1126,13 +1126,13 @@
   "quotients_mortalite": {
    "ajoutees": 0,
    "colonne": "qx",
-   "corrigees": 0,
-   "empreinte": "428254319c1001b4",
-   "identiques": 6850,
+   "corrigees": 156,
+   "empreinte": "196025dfc611db23",
+   "identiques": 6694,
    "niveau": "certifiee",
-   "source": "Eurostat demo_mlifetable, quotients de mortalité par âge",
+   "source": "Eurostat, décès par année de naissance et population au 1er janvier, quotients par génération convertis à l'âge exact",
    "valeurs": 6850,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-10"
   },
   "quotients_mortalite_anciens": {
    "ajoutees": 0,
@@ -1143,7 +1143,7 @@
    "niveau": "certifiee",
    "source": "INED, tables de Vallin et Meslé, quotients du moment par âge",
    "valeurs": 18466,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-10"
   },
   "quotients_mortalite_projetes": {
    "ajoutees": 24200,
@@ -1275,7 +1275,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-10-09"
+   "verifiee_le": "2026-10-10"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -1429,7 +1429,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
    "valeurs": 29,
-   "verifiee_le": "2026-10-09"
+   "verifiee_le": "2026-10-10"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -1462,7 +1462,7 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-10-09"
+   "verifiee_le": "2026-10-10"
   },
   "valeurs_point_msa": {
    "ajoutees": 0,

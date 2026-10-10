@@ -467,8 +467,10 @@ institutions:
         note: >-
           Seule source de quotients par âge antérieurs à 1986, et seule à
           couvrir les grands âges. Diffusée en tableurs seulement : ni la BDM
-          ni Melodi ne l'exposent. Pour 1986-2024, la table vient d'Eurostat
-          (eurostat_mlifetable).
+          ni Melodi ne l'exposent. Pour 1986-2024, les quotients se calculent
+          des décès d'Eurostat (eurostat_deces_generation) ; le tableau 69 de
+          cette page, les quotients par âge atteint de 1962 à 2019, les
+          contrôle à chaque récupération.
 
       - id: insee_projections_mortalite
         titre: >-
@@ -3910,18 +3912,42 @@ institutions:
           retenue est l'OCDE (couverture plus longue). Les deux coïncident
           exactement sur leurs 78 valeurs communes.
 
-      - id: eurostat_mlifetable
-        titre: Table de mortalité par âge et par sexe (demo_mlifetable)
-        url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_mlifetable
+      - id: eurostat_deces_generation
+        titre: >-
+          Décès par année de naissance (demo_mager) et population au
+          1er janvier (demo_pjan), par âge et par sexe
+        url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_mager
+        complement_url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_pjan
         acces: api
         statut_integration: certifie
         cible: data/reference/mortalite/quotients_periode.csv
         recuperation: scripts/fetch/eurostat_mortalite.py
         note: >-
-          Quotients de mortalité par âge, 1986-2024 : les vraies tables du
-          moment, qui dispensent le modèle de sa calibration paramétrique aux
-          âges et années couverts. Territoires FX (1986-2012) puis FR
-          (1998-2024). Classes ouvertes (85 et plus, 95 et plus) écartées.
+          Quotients de mortalité par âge, 1986-2024, qui dispensent le modèle de
+          sa calibration paramétrique aux âges et années couverts : calculés
+          génération par génération, comme l'INSEE, puis convertis à l'âge
+          exact comme les quotients projetés (action 138, étape 7, 10 octobre
+          2026). Les quotients par âge atteint qu'on en tire retrouvent ceux de
+          l'INSEE (insee_tables_mortalite, tableau 69) à l'arrondi près.
+          Territoires FX (1986-2012) puis FR (1998-2024).
+
+      - id: eurostat_mlifetable
+        titre: Table de mortalité par âge et par sexe (demo_mlifetable)
+        url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_mlifetable
+        acces: api
+        statut_integration: controle
+        cible: data/brut/eurostat_quotients.json
+        recuperation: scripts/fetch/eurostat_mortalite.py
+        note: >-
+          La table du moment qu'Eurostat publie, que le dépôt lisait telle
+          quelle jusqu'au 10 octobre 2026. Elle suppose que chaque génération
+          passe une demi-année dans chaque carré de Lexis, ce que démentent les
+          générations nées pendant les deux guerres : leurs diagonales font des
+          marches de 5 à 10 %, et la génération 1941 y gagnait 0,3 an
+          d'espérance de vie à 60 ans. Elle ne donne plus que ses cases — 0 à
+          84 ans jusqu'en 2013, 0 à 94 ensuite, classes ouvertes écartées — et
+          un contrôle : les quotients refaits restent à 1 % près en médiane des
+          siens, chaque année.
 
   ocde:
     nom: Organisation de coopération et de développement économiques

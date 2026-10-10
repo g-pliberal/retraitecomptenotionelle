@@ -2258,9 +2258,21 @@ def source_quotients() -> dict[tuple, float]:
     """Quotients de mortalité par âge — les vraies tables du moment.
 
     Leur présence dispense le modèle de sa calibration paramétrique aux âges
-    couverts. Les classes ouvertes (85 ans et plus, puis 95 ans et plus selon
-    les millésimes) sont écartées à la récupération : au-delà du dernier âge
-    publié, la loi de Gompertz-Makeham reprend la main.
+    couverts. Ils couvrent les cases de la table d'Eurostat, jusqu'à 84 puis
+    94 ans selon les millésimes : au-delà, la loi de Gompertz-Makeham reprend
+    la main.
+
+    Ils ne sont plus la table d'Eurostat telle quelle depuis le 10 octobre 2026
+    (action 138, étape 7) : le récupérateur les refait des décès par année de
+    naissance et des populations au 1er janvier, génération par génération,
+    comme l'INSEE, puis les convertit à l'âge exact comme les quotients
+    projetés. La table d'Eurostat suppose que chaque génération passe une
+    demi-année dans chaque carré de Lexis, ce qui est faux aux générations
+    nées pendant les deux guerres : la génération 1941 y gagnait 0,3 an
+    d'espérance de vie à 60 ans. Niveau ``certifiee`` : les décès et les
+    populations sont ceux du producteur, et les quotients par âge atteint
+    qu'on en tire retrouvent ceux que l'INSEE publie, à l'arrondi près, ce que
+    le récupérateur contrôle à chaque exécution.
     """
     serie = _serie_json("eurostat_quotients.json", "scripts/fetch/eurostat_mortalite.py")
     return {
@@ -7133,23 +7145,27 @@ CERTIFICATIONS = (
         cles=("annee", "sexe", "age"),
         colonne="qx",
         source=source_quotients,
-        origine="Eurostat demo_mlifetable, quotients de mortalité par âge",
+        origine="Eurostat, décès par année de naissance et population au 1er "
+                "janvier, quotients par génération convertis à l'âge exact",
         decimales=6,
         tolerance=5e-7,
         entete=(
             "# Quotients de mortalité par âge — tables du moment, France",
-            "# source_id: eurostat_mlifetable",
-            "# unite: probabilité de décès dans l'année, entre 0 et 1",
+            "# source_id: eurostat_deces_generation",
+            "# unite: probabilité de décès entre deux âges exacts, entre 0 et 1",
             "#",
             "# Ce fichier PRIME sur la calibration paramétrique : dès qu'un couple",
             "# (année, sexe, âge) y figure, le moteur l'utilise tel quel et n'appelle",
-            "# pas la loi de Gompertz-Makeham. Au-delà du dernier âge publié — 84 ans",
-            "# jusqu'en 2011, 94 ans ensuite — et hors des années couvertes, la loi",
-            "# paramétrique reprend la main : c'est un raccord assumé, pas un oubli.",
+            "# pas la loi de Gompertz-Makeham. Au-delà du dernier âge de la table",
+            "# d'Eurostat — 84 ans jusqu'en 2013, 94 ans ensuite — et hors des années",
+            "# couvertes, la loi paramétrique reprend la main : c'est un raccord",
+            "# assumé, pas un oubli.",
+            "#",
+            "# CALCULÉS PAR GÉNÉRATION, comme l'INSEE, des décès par année de",
+            "# naissance et des populations au 1er janvier, puis convertis à l'âge",
+            "# exact comme les quotients projetés (scripts/fetch/eurostat_mortalite.py).",
             "#",
             "# Champ : France métropolitaine jusqu'en 1997, France entière ensuite.",
-            "# Avant 1986, Eurostat ne publie pas de table française ; les tables TD/TV",
-            "# de l'INSEE, seules à remonter plus haut, ne sont diffusées qu'en tableurs.",
             "#",
             "# Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas",
             "# modifier à la main.",

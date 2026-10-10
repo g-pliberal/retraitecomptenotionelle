@@ -61,6 +61,15 @@ dépôt retrouve, pente comprise, la série brute que le COR publiait en juin
 d'autre chose, qu'il ne dit pas, négative ou nulle pour les générations 1955
 et 1960, croissante ensuite. Ni ses projections, ni les carrières, ni les
 cotisations ne referment l'écart.
+
+Le même jour, aux données : la marche de la génération 1941 n'était pas dans
+sa mortalité, mais dans la table d'Eurostat, qui suppose que chaque
+génération passe une demi-année dans chaque carré de Lexis : la génération
+1940, née plutôt en début d'année, et celle de 1941, plutôt en fin, le
+démentent. Les quotients observés se calculent désormais génération par
+génération, comme l'INSEE (``scripts/fetch/eurostat_mortalite.py``) : son
+espérance de vie à 60 ans rejoint celle de l'INSEE à 0,06 an près, et celle
+des générations 1940 à 1959 à moins de 0,08 an.
 """
 
 from __future__ import annotations
@@ -122,12 +131,11 @@ def simulateur(contexte) -> Simulateur:
 # ---------------------------------------------------------------------------
 
 #: Les générations dont l'espérance de vie à 60 ans s'écarte de celle de
-#: l'INSEE, la cause, et la borne de l'écart (en années, par sexe).
-ECARTS_ESPERANCE = {
-    1941: ("les quotients observés de la génération 1941 sont de 5 à 10 % sous "
-           "ceux de 1940 et de 1942 à chaque âge de 60 à 83 ans ; la table de "
-           "génération de l'INSEE ne montre pas cette marche", 0.18, 0.40),
-}
+#: l'INSEE, la cause, et la borne de l'écart (en années, par sexe). Aucune
+#: depuis le 10 octobre 2026 : la génération 1941, qui la dépassait de 0,32 an
+#: pour les hommes et de 0,22 pour les femmes, devait sa marche à la table
+#: d'Eurostat, non à sa mortalité (``test_donnees.py``).
+ECARTS_ESPERANCE: dict[int, tuple[str, float, float]] = {}
 
 
 def test_l_esperance_de_vie_a_60_ans_des_generations_est_celle_de_l_insee(cor, simulateur):
@@ -136,8 +144,9 @@ def test_l_esperance_de_vie_a_60_ans_des_generations_est_celle_de_l_insee(cor, s
     projections de l'INSEE (figure 3.6, données complémentaires). Le dépôt la
     retrouve sur ses tables de génération : à 0,05 an près dès la génération
     1960, dont il lit les quotients projetés de l'INSEE depuis l'étape 7 ; à
-    0,15 an près avant, où ses quotients observés d'Eurostat ne sont pas
-    exactement ceux que l'INSEE retient."""
+    0,1 an près avant, où ses quotients observés, calculés comme ceux de
+    l'INSEE sur les décès et les populations d'Eurostat depuis le 10 octobre
+    2026, ne sont pas exactement ceux que l'INSEE retient."""
     mortalite = simulateur.mortalite
     esperances = cor["duree_retraite"]["esperance_60"]
     for generation in range(1940, 2001):
@@ -148,7 +157,7 @@ def test_l_esperance_de_vie_a_60_ans_des_generations_est_celle_de_l_insee(cor, s
                 _, bas, haut = ECARTS_ESPERANCE[generation]
                 assert bas <= ecart <= haut, (generation, sexe, ecart)
             else:
-                tolerance = 0.05 if generation >= 1960 else 0.15
+                tolerance = 0.05 if generation >= 1960 else 0.10
                 assert abs(ecart) <= tolerance, (generation, sexe, ecart)
 
 

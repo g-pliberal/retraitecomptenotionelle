@@ -2070,6 +2070,36 @@ def test_la_loi_parametrique_sous_estime_la_mortalite_des_grands_ages(mortalite)
     assert statistics.median(ecarts) < 0
 
 
+def test_les_quotients_observes_ne_font_pas_de_marche_aux_generations_de_guerre(quotients):
+    """La table qu'Eurostat publie, que le dépôt lisait telle quelle jusqu'au
+    10 octobre 2026, suppose que chaque génération passe une demi-année dans
+    chaque carré de Lexis. Celles des deux guerres, nées surtout en début ou
+    en fin d'année, le démentent, et la table de génération qu'on en lit le
+    long de la diagonale faisait des marches : de 60 à 94 ans, les quotients
+    des générations 1915 et 1920 dépassaient de 10 % ceux de leurs voisines,
+    ceux de 1916 et de 1919 leur restaient inférieurs de 10 %, et ceux de 1941
+    de 5 à 6 % — son espérance de vie à 60 ans dépassait de 0,3 an celle de
+    l'INSEE. Les quotients se calculent désormais
+    génération par génération, comme l'INSEE (scripts/fetch/eurostat_mortalite.py) :
+    chacune de ces diagonales suit ses voisines à 2 % près, en moyenne sur les
+    années observées par Eurostat. Une table refaite à l'ancienne échoue ici."""
+    import statistics
+
+    for generation in (1915, 1916, 1919, 1920, 1940, 1941, 1942):
+        for sexe in ("H", "F"):
+            rapports = []
+            for age in range(60, 95):
+                cellules = [quotients.get((generation + decalage + age, sexe, age))
+                            for decalage in (-1, 0, 1)]
+                if (generation - 1 + age < 1986 or generation + 1 + age > 2024
+                        or None in cellules):
+                    continue
+                rapports.append(cellules[1] / (0.5 * (cellules[0] + cellules[2])))
+            assert len(rapports) >= 10, (generation, sexe, len(rapports))
+            assert abs(statistics.mean(rapports) - 1.0) < 0.02, (
+                generation, sexe, statistics.mean(rapports))
+
+
 # -- contribution employeur des régimes publics -------------------------------
 
 

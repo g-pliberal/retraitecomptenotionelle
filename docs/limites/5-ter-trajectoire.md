@@ -296,9 +296,9 @@ doit être multiplié par la dérive de l'année, la croissance de la masse du
 modèle rapportée à celle de la dépense du COR depuis la première année
 projetée, <!--chiffre:mesure(derive_cor?annee=2050)-->−2<!--/--> % en 2050, presque rien à l'horizon
 (`rapport_derive`, `Cout.solde_derive`, `Cout.dette_derive`). La proposition coûte alors <!--chiffre:mesure(part_pib?scenario=6&annee=2070&borne=haute)-->8,2<!--/--> % du PIB en 2070
-(<!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,2<!--/--> dans la première lecture), son solde moyen 2026-2070 est de <!--chiffre:mesure(solde_moyen?scenario=6&borne=haute)-->−0,78<!--/--> %
-(<!--chiffre:mesure(solde_moyen?scenario=6)-->−0,88<!--/-->), son coefficient d'équilibre de <!--chiffre:mesure(coefficient?scenario=6&borne=haute)-->1,00<!--/--> (<!--chiffre:mesure(coefficient?scenario=6)-->1,01<!--/-->), et sa dette en
-2070 de <!--chiffre:mesure(dette?scenario=6&borne=haute)-->52<!--/--> % du PIB (<!--chiffre:mesure(dette?scenario=6)-->58<!--/-->). Le système actuel ne bouge dans aucune
+(<!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,2<!--/--> dans la première lecture), son solde moyen 2026-2070 est de <!--chiffre:mesure(solde_moyen?scenario=6&borne=haute)-->−0,79<!--/--> %
+(<!--chiffre:mesure(solde_moyen?scenario=6)-->−0,89<!--/-->), son coefficient d'équilibre de <!--chiffre:mesure(coefficient?scenario=6&borne=haute)-->1,00<!--/--> (<!--chiffre:mesure(coefficient?scenario=6)-->1,00<!--/-->), et sa dette en
+2070 de <!--chiffre:mesure(dette?scenario=6&borne=haute)-->53<!--/--> % du PIB (<!--chiffre:mesure(dette?scenario=6)-->58<!--/-->). Le système actuel ne bouge dans aucune
 des deux lectures, ni la garantie vieillesse, lue sur la distribution des
 pensions. La page Coût donne les deux lectures côte à côte. La seconde a été la
 borne haute de la proposition jusqu'à l'étape 11 de l'action 147 ; la dérive

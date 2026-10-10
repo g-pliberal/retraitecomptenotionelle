@@ -530,10 +530,10 @@ taux était de <!--chiffre:cellule(data/reference/legislation/contribution_emplo
 la Cour — qui impute cinq points de l'écart avec l'Institut des politiques
 publiques à la seule différence d'année (annexe n° 6) — environ <!--chiffre:illustration()-->39<!--/-->.
 Ce que ce choix déplace est considérable. Sous le taux entier, la fonctionnaire
-de l'exemple du README, née en 1975, aurait <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4&contribution_etat=entiere)-->+42,0<!--/--> % d'écart au système
+de l'exemple du README, née en 1975, aurait <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4&contribution_etat=entiere)-->+42,1<!--/--> % d'écart au système
 actuel dans le scénario 4 ; sous la part de la Cour, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4)-->−3,3<!--/--> %. Dans la
-proposition, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6&contribution_etat=entiere)-->+41,9<!--/--> % deviennent <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6)-->−5,4<!--/--> %, et le solde moyen de la proposition
-passe de <!--chiffre:mesure(solde_moyen?scenario=6&contribution_etat=entiere)-->−1,45<!--/--> % à <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,88<!--/--> % du PIB, de <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards&contribution_etat=entiere)-->−43<!--/--> à <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−26<!--/--> milliards
+proposition, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6&contribution_etat=entiere)-->+41,9<!--/--> % deviennent <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6)-->−5,3<!--/--> %, et le solde moyen de la proposition
+passe de <!--chiffre:mesure(solde_moyen?scenario=6&contribution_etat=entiere)-->−1,45<!--/--> % à <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,89<!--/--> % du PIB, de <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards&contribution_etat=entiere)-->−43<!--/--> à <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−26<!--/--> milliards
 d'euros par an, parce que les droits qu'elle reprend à la bascule étaient
 gonflés de ce qui payait d'autres pensions. Le privé, la CNRACL, le scénario 1
 et la part salariale ne bougent pas, ni les années d'avant 1995, où le compte
@@ -630,10 +630,10 @@ appliqué, année par année, à la distribution des pensions de l'échantillon
 interrégimes de 2020, déplacée du facteur que la grille donne : la pension
 moyenne que la garantie regarde, rapportée à celle du système actuel en 2020.
 Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,61<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->0,98<!--/--> en 2070. La garantie coûte
-<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,47<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->14<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->2,8<!--/--> millions de
+<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,46<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->14<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->2,8<!--/--> millions de
 bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,35<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->14<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,7<!--/--> millions —, soit
-<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->616<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
-déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 405<!--/--> depuis 1959. Ces chiffres
+<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->615<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
+déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 406<!--/--> depuis 1959. Ces chiffres
 sont bruts des reprises sur succession ; la sous-section qui suit dit comment
 chacun a été établi.
 
@@ -716,9 +716,9 @@ plafond. Les trois portent sur le secteur privé et sur un report de 60 à
 la proposition fait attendre jusqu'à <!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans.
 
 C'est de cette part que dépend l'essentiel de ce que l'âge légal fait au
-solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,88<!--/--> point de PIB quand
-la moitié des reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=1)-->−0,73<!--/--> quand tous le font, de
-<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−1,03<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−1,23<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
+solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,89<!--/--> point de PIB quand
+la moitié des reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=1)-->−0,74<!--/--> quand tous le font, de
+<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−1,03<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−1,24<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
 actuel : sans emploi, le report n'épargne guère que des années de pension, et
 sert ensuite des pensions plus fortes. Aucun impôt ne couvre ce qui reste —
 la TVA à taux unique qui le faisait du 23 au 24 septembre 2026 est retirée —,
@@ -729,7 +729,7 @@ la proposition sans âge légal. L'ampleur de son avantage sur le système actue
 tient donc à ce que les reportés travaillent. Elle serait bien moindre si le
 compte d'un fonctionnaire d'État recevait le taux de l'État entier, et non sa
 seule part « retraite » : la dette atteindrait alors
-<!--chiffre:mesure(dette?scenario=6&emploi_reportes=0&contribution_etat=entiere)-->107<!--/--> % si aucun ne travaillait.
+<!--chiffre:mesure(dette?scenario=6&emploi_reportes=0&contribution_etat=entiere)-->108<!--/--> % si aucun ne travaillait.
 
 **Le PIB ne bouge pas.** Plus d'emploi ferait plus de production, et le modèle
 garde le PIB que le COR projette aux âges d'aujourd'hui. Toutes les parts de

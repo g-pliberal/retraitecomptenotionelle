@@ -24,7 +24,7 @@ scénario 4 :
 | 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−23,5<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=3)-->−27,4<!--/--> % |
 | 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−26,5<!--/--> % | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->−8,0<!--/--> %** |
 | 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=5)-->−9,4<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=5)-->−16,1<!--/--> % |
-| 6. Proposition libérale (<!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026) | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=6)-->−29,6<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=6)-->−9,0<!--/--> % |
+| 6. Proposition libérale (<!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026) | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=6)-->−29,5<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=6)-->−9,0<!--/--> % |
 
 ## Ce n'est pas une contradiction : c'est la somme de quatre choix
 

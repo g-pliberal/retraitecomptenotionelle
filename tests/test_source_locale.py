@@ -29,6 +29,7 @@ LECTEURS_DE_DOCUMENTS = (
     "cnbf_baremes.py",
     "cnavpl_recueils.py",
     "insee_projections_mortalite.py",
+    "eurostat_mortalite.py",
 )
 
 
