@@ -1,12 +1,6 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: rouge
-sources: e846170b52c5996209c9905b57adf400dd4f3fa6
-date: 2026-10-10T10:50:21Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38045817663
-echecs:
-  - "FAILED tests/test_parcours.py::test_le_parcours_rejoue_ses_carrieres - AssertionError: [salarie_prive_non_cadre 1443] ligne 3 : le parcours annonce 1 028 €, la page affiche 1027.00 €"
-  - "FAILED tests/test_parcours.py::test_chaque_chiffre_du_parcours_est_sur_sa_page[### 1. Programme \u2014 trois minutes-/] - AssertionError: ### 1. Programme — trois minutes"
-  - "FAILED tests/test_solde_fusion.py::test_l_accueil_cite_le_solde_la_dette_et_le_coefficient_du_cout_par_defaut - AssertionError: assert 1.0 == 1.01"
-  - "FAILED tests/test_web_revues.py::test_le_menu_des_statuts_est_groupe_par_famille - assert 67 == 65"
-  - "FAILED tests/test_web.py::test_la_correction_des_trois_generations_se_retrouve - AssertionError: génération 1920 : la page annonce +5.5 point(s), le modèle en donne +5.4"
+etat: vert
+sources: a89274f73fced11fc6f4ae16ebdd85ad0519e5dc
+date: 2026-10-10T11:14:07Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38046658690
