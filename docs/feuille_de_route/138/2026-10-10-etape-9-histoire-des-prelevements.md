@@ -145,5 +145,6 @@ avant et après) :
    maladie des pensions de la fonction publique, que le dépôt n'applique pas.
 6. *Hors de cette partie*, inchangés : la prime spéciale de sujétion des
    aides-soignants, le taux de CSG d'une pension selon le revenu fiscal du
-   foyer, l'indemnité compensatrice de la hausse de la CSG des agents publics
-   et la cotisation de la RAFP, absentes de la fiche.
+   foyer. L'indemnité compensatrice de la hausse de la CSG des agents publics
+   et la cotisation de la RAFP sont sur la fiche depuis l'étape 12, publiée
+   le même jour.
