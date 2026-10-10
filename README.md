@@ -248,7 +248,7 @@ Il est traité de front : **le Python de `src/` reste la référence**, et
 `scripts/construire_temoins.py` fige depuis lui
 <!--chiffre:entrees(tests/temoins/simulations.json:)-->801<!--/--> simulations complètes, et depuis le site
 <!--chiffre:entrees(tests/temoins/pages.json:)-->75<!--/--> rendus de page, dans `tests/temoins/`.
-`node --test` rejoue le tout côté JavaScript et compare valeur par valeur —
+`node --test` rejoue les simulations côté JavaScript et les compare valeur par valeur —
 <!--chiffre:portage(valeurs)-->149 079<!--/--> nombres,
 dont <!--chiffre:portage(identiques)-->97,4<!--/--> % identiques
 au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->9,1<!--/--> · 10⁻¹⁵ (un *ulp*, la précision d'un flottant, vaut 2 · 10⁻¹⁶). Ce pire

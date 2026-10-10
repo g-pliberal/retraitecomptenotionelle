@@ -8,8 +8,9 @@
  *
  * Les pages sont figées en témoins, dans ``tests/temoins/pages.json``, par
  * ``scripts/construire_temoins.py``, qui les fait rendre par ce fichier ;
- * ``tests/js/moteur.test.js`` les rejoue, et un changement de texte se lit, mot
- * par mot, dans le diff de ces témoins.
+ * ``tests/test_web.py`` les rend de nouveau et les compare
+ * (``test_les_temoins_du_portage_sont_a_jour``), et un changement de texte se
+ * lit, mot par mot, dans le diff de ces témoins.
  *
  * L'ancien rendu Python, ``web/pages.py``, se relit dans l'historique git au
  * repère `phase-7` : ses docstrings y gardent l'histoire complète des choix que

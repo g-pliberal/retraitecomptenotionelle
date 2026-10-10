@@ -61,6 +61,7 @@ from outils_web import (
     FEUILLE_DE_STYLE, SIMULATION_TEMOIN, TITRES, _hors_depliants, _sans_blocs, contexte,
     g, page, pages,
 )
+from outils_portage import moitie_python
 
 
 #: Le site, en JavaScript : ses pages et ses modules se lisent par node
@@ -651,22 +652,10 @@ def test_le_portage_javascript_retrouve_les_chiffres_du_modele():
     assert execution.returncode == 0, execution.stdout + execution.stderr
 
 
-def test_le_portage_javascript_concorde_sur_des_carrieres_tirees_au_hasard():
-    """Les témoins figés couvrent des cas choisis ; celui-ci, des cas non prévus.
-
-    Un portage se trompe rarement là où on l'a regardé. On tire donc des
-    carrières au hasard — graine fixe, donc reproductible —, on les calcule ici,
-    et ``tests/js/comparer.mjs`` vérifie que le site retrouve chaque valeur.
-    """
-    import json
+def _carrieres_au_hasard() -> list[dict]:
+    """Les carrières du test suivant, et ce que le modèle en calcule, ou le
+    refus qu'il leur oppose."""
     import random
-    import shutil
-    import subprocess
-    import tempfile
-    from pathlib import Path
-
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
 
     contexte = Contexte()
     alea = random.Random(20260828)
@@ -725,7 +714,28 @@ def test_le_portage_javascript_concorde_sur_des_carrieres_tirees_au_hasard():
             cas.append({"nom": nom, "requete": requete, "erreur": str(erreur)})
             continue
         cas.append({"nom": nom, "requete": requete, "resultat": _sans_nan(resultat)})
+    return cas
 
+
+def test_le_portage_javascript_concorde_sur_des_carrieres_tirees_au_hasard():
+    """Les témoins figés couvrent des cas choisis ; celui-ci, des cas non prévus.
+
+    Un portage se trompe rarement là où on l'a regardé. On tire donc des
+    carrières au hasard — graine fixe, donc reproductible —, on les calcule ici,
+    et ``tests/js/comparer.mjs`` vérifie que le site retrouve chaque valeur. Le
+    calcul Python se garde tant que rien de ce qu'il lit ne bouge
+    (``outils_portage.py``) ; le site, lui, se rejoue à chaque passage.
+    """
+    import json
+    import shutil
+    import subprocess
+    import tempfile
+    from pathlib import Path
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+
+    cas = moitie_python(_carrieres_au_hasard)
     racine = Path(__file__).resolve().parents[1]
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:

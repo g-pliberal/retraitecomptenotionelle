@@ -362,6 +362,48 @@ def test_un_verrou_qui_ne_se_leve_pas_n_empeche_pas_de_calculer(monkeypatch, mem
         os.close(tenu)
 
 
+def test_la_moitie_python_d_une_confrontation_se_garde_sous_le_texte_du_test(
+        monkeypatch, memoire_isolee, tmp_path):
+    """``outils_portage.moitie_python`` : un même calcul ne se refait pas ; un
+    autre argument, ou le fichier du test récrit, le refont ; un fichier
+    retouché depuis le chargement du modèle se calcule sans mémoire."""
+    import sys
+    import time
+    import types
+
+    import outils_portage
+
+    monkeypatch.setattr(memoire_isolee, "empreinte", lambda: "e1")
+    monkeypatch.setattr(outils_portage, "CHARGE_A", time.time() + 3600)
+    fichier = tmp_path / "test_factice.py"
+    module = types.ModuleType("test_factice")
+    module.__file__ = str(fichier)
+    monkeypatch.setitem(sys.modules, "test_factice", module)
+
+    def ecrire(texte: str):
+        fichier.write_text(texte, encoding="utf-8")
+        exec(texte, module.__dict__)
+
+    ecrire("FAITS = []\ndef calcul(x):\n    FAITS.append(x)\n    return [x]\n")
+    faits = module.FAITS
+    assert outils_portage.moitie_python(module.calcul, 1) == [1]
+    monkeypatch.setattr(memoire_isolee, "_EN_MEMOIRE", {})     # un autre processus
+    assert outils_portage.moitie_python(module.calcul, 1) == [1]
+    assert faits == [1]
+    outils_portage.moitie_python(module.calcul, 2)
+    assert faits == [1, 2]
+    # Le fichier du test récrit : son calcul se refait.
+    ecrire(fichier.read_text(encoding="utf-8") + "# retouché\n")
+    module.FAITS = faits
+    outils_portage.moitie_python(module.calcul, 1)
+    assert faits == [1, 2, 1]
+    # Retouché depuis le chargement du modèle : ni lu, ni gardé.
+    monkeypatch.setattr(outils_portage, "CHARGE_A", 0.0)
+    outils_portage.moitie_python(module.calcul, 3)
+    outils_portage.moitie_python(module.calcul, 3)
+    assert faits == [1, 2, 1, 3, 3]
+
+
 def test_les_worktrees_partagent_la_memoire_du_depot_principal(tmp_path):
     """La clé et l'empreinte disent tout d'un calcul : un worktree neuf relit
     ce que le dépôt principal, ou un autre worktree, a déjà calculé."""

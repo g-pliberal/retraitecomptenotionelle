@@ -25,6 +25,8 @@ from retraite_notionnelle.droit import acquerir, compter, coordonner, releve
 from retraite_notionnelle.noyau import contrats
 from retraite_notionnelle.simulateur import Simulateur
 
+from outils_portage import moitie_python
+
 RACINE = Path(__file__).resolve().parents[1]
 
 
@@ -356,7 +358,7 @@ def test_les_deux_moteurs_ecrivent_les_memes_etapes():
         Path(chemin).unlink()
     assert execution.returncode == 0, execution.stderr[-2000:]
     obtenus = json.loads(execution.stdout)
-    attendus = _python(requetes)
+    attendus = moitie_python(_python, requetes)
     assert len(obtenus) == len(attendus) == len(requetes)
     assert sum("releve" in a for a in attendus) > 0.9 * len(requetes)
     ecarts: list[str] = []

@@ -142,16 +142,11 @@ test("une faute de programme n'est pas présentée comme une faute de saisie", (
   }
 });
 
-test("les pages rendent le HTML que leurs témoins ont figé", () => {
-  const contexte = new Contexte(paquet);
-  for (const [nom, temoin] of Object.entries(temoinsPages)) {
-    const [titre, corps] = rendre(contexte, temoin.chemin, temoin.parametres);
-    assert.equal(titre, temoin.titre, `titre de la page « ${nom} »`);
-    const rendu = sansBlocJson(corps);
-    assert.equal(temoin.formulaire_retire ? sansFormulaire(rendu) : rendu, recousu(temoin),
-      `corps de la page « ${nom} »`);
-  }
-});
+// Les pages ne se rejouent pas toutes ici : leurs témoins sont rendus par ce
+// même portage, sur ce même paquet (`scripts/construire_temoins.py`), et
+// `test_les_temoins_du_portage_sont_a_jour` les rend de nouveau et les compare,
+// titre et corps. Les rejouer ici refaisait cette comparaison, vingt secondes
+// de plus (feuille de route, action 135, 10 octobre 2026).
 
 test("un paquet d'avant les écarts médians ne fait pas tomber l'accueil", () => {
   // Un bilan écrit avant les écarts médians : l'accueil se tait sur le chiffre.

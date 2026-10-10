@@ -33,6 +33,8 @@ from retraite_notionnelle.noyau import contrats
 from retraite_notionnelle.revalorisation import actuel_aujourd_hui, faire_vivre
 from retraite_notionnelle.simulateur import Simulateur
 
+from outils_portage import moitie_python
+
 RACINE = Path(__file__).resolve().parents[1]
 
 @pytest.fixture(scope="module")
@@ -587,7 +589,7 @@ def test_les_deux_moteurs_liquident_et_journalisent_a_l_identique():
         Path(chemin).unlink()
     assert execution.returncode == 0, execution.stderr[-2000:]
     obtenus = json.loads(execution.stdout)
-    attendus = _python(requetes)
+    attendus = moitie_python(_python, requetes)
     assert len(obtenus) == len(attendus) == len(requetes)
     assert sum("journal" in a for a in attendus) > 0.9 * len(requetes)
     assert any(any(e["contenu"]["sorte"] == "revalorisation" for e in a["journal"])
