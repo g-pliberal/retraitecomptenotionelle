@@ -50,11 +50,18 @@ déplafonnement de 2013, ignore la réduction de 2017 des libéraux, prête 7,35
 au revenu de plus de cinq plafonds de 2018 quand le décret n° 2017-1894 dit
 6,5 %, et n'a rien après 2018.
 
+L'ANCRAGE, comme ``ipp_taux_cotisation.py`` pour la vieillesse : chaque marche de
+l'IPP nomme un texte et sa date au *Journal officiel* ; le récupérateur cherche
+ce texte dans l'index JORF de la DILA (``dila_index.py``, récupéré s'il est
+absent), à son numéro et à cette date, et écrit dans la marche ce qu'il trouve
+(``jorf``) ou ce qui manque (``ancrage``), avec la date où l'index le trouve
+quand ce n'est pas celle de l'IPP. Une marche lue aux textes est liée au texte
+qu'elle cite.
+
 Ce qu'il ne fait pas. L'IPP est une transcription, non une source productrice :
-la donnée plafonne à ``haute``. Il n'ancre pas chaque marche au Journal officiel
-(``ipp_taux_cotisation.py`` le fait pour la vieillesse) : l'index de la DILA
-n'était pas présent quand il a été écrit ; les références que l'IPP cite sont
-gardées, marche par marche.
+la donnée plafonne à ``haute``, et l'ancrage n'y change rien : il vérifie la
+chronologie, non la valeur. Il ne cherche pas, comme ``ipp_taux_cotisation.py``,
+les décrets du Journal officiel qu'aucune marche ne rejoint.
 """
 
 from __future__ import annotations
@@ -63,9 +70,15 @@ import argparse
 import csv
 import datetime as dt
 import io
+import re
+import sqlite3
 import sys
 import urllib.request
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from dila_index import chemin_index, meta, recuperer  # noqa: E402
 
 RACINE_DEPOT = Path(__file__).resolve().parents[2]
 SORTIE = RACINE_DEPOT / "data" / "reference" / "legislation" / "prelevements_historiques.yaml"
@@ -336,12 +349,24 @@ REGIMES_DES_PENSIONS = {
 }
 
 
+def _hors_taux(cle: str) -> bool:
+    """Une clé de marche qui n'est pas un taux : la date, le texte, et ce que
+    l'IPP dit du texte qu'il cite (``_reference``, ``_journal_officiel``), que
+    l'ancrage lit et que la donnée n'écrit pas."""
+    return cle in ("depuis", "texte", "jorf", "ancrage") or cle.startswith("_")
+
+
+def _cites(marche: dict) -> dict:
+    return {cle: valeur for cle, valeur in marche.items() if cle.startswith("_")}
+
+
 def pension_sous_le_plafond(marche: dict) -> dict:
     """Une marche de la maladie des retraités indépendants, en un taux : celui
     d'une pension sous le plafond, ses tranches réunies."""
     taux = sum(marche.get(cle, 0.0) for cle in ("tout_revenu", "sous_plafond",
                                                  "sous_quatre_plafonds", "sous_cinq_plafonds"))
-    return {"depuis": marche["depuis"], "taux": round(taux, 8), "texte": marche["texte"]}
+    return {"depuis": marche["depuis"], "taux": round(taux, 8), "texte": marche["texte"],
+            **_cites(marche)}
 
 
 #: L'ordre des colonnes d'une marche d'indépendant dans la donnée.
@@ -351,6 +376,15 @@ ORDRE_INDEPENDANTS = (
     "sous_seuil", "du_seuil_au_plafond", "seuil_euros", "ij_sous_trois_plafonds",
     "ij_sous_cinq_plafonds", "ij_artisans_sous_cinq_plafonds", "progressif_jusqu_a", "paliers",
     "cotisations_ajoutees")
+
+
+def _ouvrir(base: str) -> sqlite3.Connection:
+    """L'index de la DILA, récupéré s'il est absent (``dila_index.py``)."""
+    chemin = chemin_index(base)
+    if not chemin.exists():
+        print(f"Index {base} absent : récupération de l'index publié.")
+        recuperer(base, chemin)
+    return sqlite3.connect(f"file:{chemin}?mode=ro", uri=True)
 
 
 def _telecharger(parametre: str) -> list[dict[str, str]]:
@@ -393,7 +427,9 @@ def marches(lignes: list[dict[str, str]], colonnes: dict[str, str]) -> list[dict
             continue
         reference = " ".join((ligne.get("reference") or "").split())
         lues.append({"depuis": _jour(ligne["date"]), **valeurs,
-                     "texte": reference.split(";")[0].strip() or "IPP, sans référence"})
+                     "texte": reference.split(";")[0].strip() or "IPP, sans référence",
+                     "_reference": reference,
+                     "_journal_officiel": (ligne.get("official_journal_date") or "").strip()})
     # Une colonne qui n'est jamais en vigueur ne s'écrit pas.
     vides = [nom for nom in colonnes if all(m[nom] == 0.0 for m in lues)]
     return [{k: v for k, v in m.items() if k not in vides} for m in lues]
@@ -412,8 +448,7 @@ def corriger(nom: str, lues: list[dict]) -> list[dict]:
         if lue is None:
             continue
         avant = [m for depuis, m in sorted(par_date.items()) if depuis <= lue["depuis"]]
-        precedente = {k: v for k, v in (avant[-1] if avant else {}).items()
-                      if k not in ("depuis", "texte")}
+        precedente = {k: v for k, v in (avant[-1] if avant else {}).items() if not _hors_taux(k)}
         par_date[lue["depuis"]] = {**precedente, **lue, "texte": correction["texte"]}
     return [par_date[depuis] for depuis in sorted(par_date)]
 
@@ -434,9 +469,10 @@ def _famille(marche: dict) -> dict:
 
 
 def _normaliser(lues: list[dict]) -> list[dict]:
-    """Chaque marche dit tous les taux de sa série, zéro compris, dans l'ordre de
-    :data:`ORDRE_INDEPENDANTS` ; une marche qui ne change rien s'efface, une
-    colonne jamais en vigueur ne s'écrit pas."""
+    """Chaque marche dit les taux de sa série dans l'ordre de
+    :data:`ORDRE_INDEPENDANTS`, les seuls qui ne sont pas nuls — une colonne
+    absente vaut zéro, et une marche qui supprime tout en garde une, à zéro — ;
+    une marche qui ne change rien s'efface."""
     taux = [cle for cle in ORDRE_INDEPENDANTS if cle not in ("paliers", "progressif_jusqu_a")
             and any(marche.get(cle) for marche in lues)]
     sorties: list[dict] = []
@@ -445,11 +481,14 @@ def _normaliser(lues: list[dict]) -> list[dict]:
         for cle in ("progressif_jusqu_a", "paliers"):
             if marche.get(cle):
                 sortie[cle] = marche[cle]
-        if sorties and {k: v for k, v in sorties[-1].items() if k not in ("depuis", "texte")} == {
-                k: v for k, v in sortie.items() if k != "depuis"}:
+        if sorties and sorties[-1][0] == {k: v for k, v in sortie.items() if k != "depuis"}:
             continue
-        sorties.append({**sortie, "texte": marche["texte"]})
-    return sorties
+        ecrite = {k: v for k, v in sortie.items() if k == "depuis" or v}
+        if len(ecrite) == 1:
+            ecrite[taux[0]] = 0.0
+        sorties.append(({k: v for k, v in sortie.items() if k != "depuis"},
+                        {**ecrite, "texte": marche["texte"], **_cites(marche)}))
+    return [ecrite for _, ecrite in sorties]
 
 
 def _sans_redite(lues: list[dict]) -> list[dict]:
@@ -457,10 +496,124 @@ def _sans_redite(lues: list[dict]) -> list[dict]:
     gardees: list[dict] = []
     for marche in lues:
         if gardees and all(gardees[-1].get(k) == v for k, v in marche.items()
-                           if k not in ("depuis", "texte")):
+                           if not _hors_taux(k)):
             continue
         gardees.append(marche)
     return gardees
+
+
+# -- l'ancrage au Journal officiel -------------------------------------------
+
+#: Un numéro de texte dans une référence : « Décret 78-1213 du 26/12/1978 »,
+#: « Loi 90-1168 du 29/12/90 » — comme ``ipp_taux_cotisation.py``.
+NUMERO = re.compile(r"(?:D[ée]cret|Loi|Ordonnance)\s+n?[°o]?\s*(\d{2,4}-\d{1,5})", re.I)
+#: Un arrêté, qui n'a pas de numéro : « Arrêté du 26/03/1971 ».
+ARRETE = re.compile(r"Arr[êe]t[ée]\s+du\s+(\d{1,2})/(\d{1,2})/(\d{2,4})", re.I)
+#: Comment le JORF écrit un numéro dans un titre, selon l'époque.
+TITRE_NUMERO = ("%n°{num} %", "%n° {num} %", "%no {num} %", "%n°{num},%")
+IDENTIFIANT_JORF = re.compile(r"JORF(?:TEXT|ARTI)\d{12}")
+IDENTIFIANT_LEGI = re.compile(r"LEGIARTI\d{12}")
+MOIS = ("janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août",
+        "septembre", "octobre", "novembre", "décembre")
+
+
+def _motifs(titre: str) -> tuple[str, ...]:
+    """Ce qu'on cherche dans les titres du JORF pour ce texte : son numéro, ou,
+    pour un arrêté, son jour."""
+    numero = NUMERO.search(titre)
+    if numero:
+        return tuple(gabarit.format(num=numero.group(1)) for gabarit in TITRE_NUMERO)
+    arrete = ARRETE.search(titre)
+    if arrete:
+        jour, mois, annee = (int(x) for x in arrete.groups())
+        annee += 1900 if annee < 100 else 0
+        date = f"{'1er' if jour == 1 else jour} {MOIS[mois - 1]} {annee}"
+        return (f"Arrêté du {date}%", f"Arrete du {date}%", f"ARRETE DU {date.upper()}%")
+    return ()
+
+
+def _chercher(db, motifs: tuple[str, ...], publie: str | None) -> tuple[str, str] | None:
+    """Le premier texte du JORF dont le titre répond à un motif, publié ce
+    jour-là quand ``publie`` le dit : le texte plutôt que l'un de ses articles."""
+    if not motifs:
+        return None
+    requete = ("SELECT id, date FROM doc WHERE num = '' AND ("
+               + " OR ".join("titre LIKE ?" for _ in motifs) + ")")
+    valeurs = list(motifs)
+    if publie is not None:
+        requete += " AND date = ?"
+        valeurs.append(publie)
+    return db.execute(requete + " ORDER BY id LIKE 'JORFARTI%', date LIMIT 1",
+                      valeurs).fetchone()
+
+
+def ancrer(db, reference: str, journal_officiel: str) -> dict:
+    """Le texte que l'IPP cite est-il au Journal officiel, à la date de
+    publication qu'il annonce, sous ce numéro (sous ce jour pour un arrêté) ?
+    ``{"jorf": identifiant}`` s'il y est ; sinon ``{"ancrage": ce qui manque}``,
+    et la date où l'index le trouve quand ce n'est pas celle de l'IPP."""
+    titres = [partie.split(";")[0].strip() for partie in reference.split("|") if partie.strip()]
+    dates = [d.strip() for d in journal_officiel.split(";") if d.strip()]
+    if not titres:
+        return {"ancrage": "sans référence"}
+    raisons = []
+    for rang, titre in enumerate(titres):
+        motifs = _motifs(titre)
+        if not motifs:
+            raisons.append("un article de code, à lire dans LEGI" if titre.startswith("Article")
+                           else "sans texte numéroté du Journal officiel")
+            continue
+        candidates = [dates[rang]] if len(dates) == len(titres) else dates
+        if not candidates:
+            raisons.append("sans date au Journal officiel")
+            continue
+        for publie in candidates:
+            trouve = _chercher(db, motifs, publie)
+            if trouve:
+                return {"jorf": trouve[0]}
+        # Un arrêté n'a que son jour, que d'autres partagent : il ne se cherche
+        # qu'à la date annoncée.
+        ailleurs = None if ARRETE.search(titre) and not NUMERO.search(titre) else (
+            _chercher(db, motifs, None))
+        if ailleurs:
+            raisons.append(f"l'index le date du {ailleurs[1]} ({ailleurs[0]}), "
+                           f"non du {candidates[0]}")
+        else:
+            raisons.append("absente de l'index à cette date" if ARRETE.search(titre)
+                           else "absente de l'index")
+    return {"ancrage": raisons[0]}
+
+
+def ancrer_lue(db, texte: str) -> dict:
+    """Une marche lue aux textes : le texte du Journal officiel qu'elle cite, par
+    son identifiant ou par son numéro ; sinon l'article de LEGI qu'elle cite."""
+    for identifiant in IDENTIFIANT_JORF.findall(texte):
+        if db.execute("SELECT 1 FROM doc WHERE id = ?", (identifiant,)).fetchone():
+            return {"jorf": identifiant}
+    trouve = _chercher(db, _motifs(texte), None)
+    if trouve:
+        return {"jorf": trouve[0]}
+    legi = IDENTIFIANT_LEGI.search(texte)
+    return {"ancrage": f"lue dans LEGI ({legi.group(0)})" if legi
+            else "sans texte numéroté du Journal officiel"}
+
+
+def ancrer_series(db, series: dict[tuple[str, str], list[dict]]) -> dict[str, int]:
+    """Chaque marche reçoit son ancrage, et perd ce que l'IPP en disait ; rend
+    le compte des marches de l'IPP, et de celles qui sont ancrées."""
+    compte = {"ipp": 0, "ancrees": 0}
+    for marches_lues in series.values():
+        for marche in marches_lues:
+            if "_reference" in marche:
+                lien = ancrer(db, marche["_reference"], marche["_journal_officiel"])
+                compte["ipp"] += 1
+                compte["ancrees"] += "jorf" in lien
+            else:
+                lien = ancrer_lue(db, marche["texte"])
+            for cle in [k for k in marche if k.startswith("_")]:
+                del marche[cle]
+            marche.update(lien)
+    return compte
 
 
 def independant(nom: str, lues: list[dict]) -> list[dict]:
@@ -484,8 +637,8 @@ def _valeur(valeur) -> str:
 def _yaml(marche: dict) -> str:
     champs = []
     for cle, valeur in marche.items():
-        if cle == "texte":
-            champs.append(f'texte: "{valeur.replace(chr(34), chr(39))}"')
+        if cle in ("texte", "jorf", "ancrage"):
+            champs.append(f'{cle}: "{valeur.replace(chr(34), chr(39))}"')
         elif cle == "depuis":
             champs.append(f'depuis: "{valeur}"')
         else:
@@ -502,6 +655,16 @@ ENTETE = """\
 # barèmes de l'Institut des politiques publiques, lus le {lu_le}, chacun avec la
 # référence que l'IPP cite pour sa marche. Une transcription, non une source
 # productrice : `haute` au plus (data/sources.yaml, `ipp`).
+#
+# L'ANCRAGE. Chaque marche de l'IPP porte, en `jorf`, le texte qu'il cite tel
+# que l'index JORF de la DILA le trouve, au numéro — au jour pour un arrêté —
+# et à la date de publication qu'il annonce : {ancrees} des {ipp} marches de
+# l'IPP le sont (index à jour au {index}). Les autres disent, en `ancrage`, ce
+# qui manque : une date au Journal officiel, un texte numéroté — un article de
+# code, une convention, une circulaire —, ou la date que l'index donne quand
+# il dément celle de l'IPP. Une marche lue aux textes porte le texte du Journal
+# officiel qu'elle cite, ou l'article de LEGI. L'ancrage rend vérifiable la
+# CHRONOLOGIE d'une série, non sa valeur : il ne la certifie pas.
 #
 # QUI LE LIT. Les indicateurs de cycle de vie nets
 # (`retraite_notionnelle/cycle_de_vie.py`, action 138, étape 9) : la pension
@@ -529,8 +692,9 @@ ENTETE = """\
 #     `au_dela_du_plafond`, `de_un_a_quatre_plafonds` ; la maladie des agents de
 #     l'État et des collectivités ; la contribution exceptionnelle de solidarité
 #     des agents publics, au-delà d'un seuil mensuel en euros.
-#   independants : la maladie des artisans et commerçants (D. 612-4, puis
-#     D. 621-1 et D. 621-2) et celle des professions libérales (D. 621-3), leur
+#   independants, où une colonne absente d'une marche vaut zéro : la maladie
+#     des artisans et commerçants (D. 612-4, puis D. 621-1 et D. 621-2) et
+#     celle des professions libérales (D. 621-3), leur
 #     indemnité journalière ; la cotisation d'allocations familiales des
 #     travailleurs indépendants ; l'assiette de leur CSG et de leur CRDS, aux
 #     taux de `salaires` et sans abattement. Les colonnes sont des tranches qui
@@ -577,11 +741,13 @@ ENTETE = """\
 """
 
 
-def ecrire(series: dict[tuple[str, str], list[dict]], lu_le: str) -> str:
-    lignes = [ENTETE.format(lu_le=lu_le).rstrip("\n"), f'lu_le: "{lu_le}"', "fiabilite: haute",
+def ecrire(series: dict[tuple[str, str], list[dict]], lu_le: str, ancrage: dict) -> str:
+    lignes = [ENTETE.format(lu_le=lu_le, **ancrage).rstrip("\n"), f'lu_le: "{lu_le}"',
+              "fiabilite: haute",
               f"tenues_avant_leur_premiere_marche: [{', '.join(TENUES_AVANT)}]"]
     lignes += ["", "regimes_des_pensions:"]
-    lignes += [f"  {serie}: [{', '.join(regimes)}]" for serie, regimes in REGIMES_DES_PENSIONS.items()]
+    lignes += [f"  {serie}: [{', '.join(regimes)}]"
+               for serie, regimes in REGIMES_DES_PENSIONS.items()]
     for partie in ("pensions", "salaires", "independants"):
         lignes += ["", f"{partie}:"]
         for (bloc, nom), marches_lues in series.items():
@@ -609,7 +775,11 @@ def main(argv: list[str] | None = None) -> int:
         [pension_sous_le_plafond(marche) for marche in retraites])
     series[("pensions", "maladie_fonction_publique")] = LUES_AUX_TEXTES["maladie_fonction_publique"]
     series[("independants", "assiette_csg")] = _normaliser(ASSIETTE_CSG)
-    texte = ecrire(series, dt.date.today().isoformat())
+    jorf = _ouvrir("jorf")
+    compte = ancrer_series(jorf, series)
+    ancrage = {**compte, "index": meta(jorf, "dernier_increment") or "?"}
+    print(f"Ancrage : {compte['ancrees']} des {compte['ipp']} marches de l'IPP au Journal officiel")
+    texte = ecrire(series, dt.date.today().isoformat(), ancrage)
     if arguments.lister:
         print(texte)
         return 0

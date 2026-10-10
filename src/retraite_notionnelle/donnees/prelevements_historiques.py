@@ -163,7 +163,8 @@ def _serie(nom: str, marches, tenue_avant: bool) -> Serie:
     for marche in marches:
         valeurs = {cle: (tuple((float(seuil), float(taux)) for seuil, taux in valeur)
                          if cle == "paliers" else float(valeur))
-                   for cle, valeur in marche.items() if cle not in ("depuis", "texte")}
+                   for cle, valeur in marche.items()
+                   if cle not in ("depuis", "texte", "jorf", "ancrage")}
         lues.append((dt.date.fromisoformat(str(marche["depuis"])), valeurs))
     return Serie(nom=nom, marches=tuple(sorted(lues, key=lambda m: m[0])),
                  tenue_avant=tenue_avant)

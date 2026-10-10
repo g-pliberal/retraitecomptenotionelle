@@ -17,7 +17,9 @@ import pytest
 
 from retraite_notionnelle import cycle_de_vie
 from retraite_notionnelle.config import RACINE_DONNEES, Parametres
+from retraite_notionnelle.donnees.chargement import charger_yaml
 from retraite_notionnelle.donnees.prelevements_historiques import (
+    CHEMIN,
     charger_prelevements_historiques,
 )
 from retraite_notionnelle.remuneration import charger_prelevements, fiche_depuis_brut
@@ -295,6 +297,25 @@ def test_le_net_d_un_independant_suit_les_prelevements_de_son_annee(simulateur):
     assert ligne.revenu_annualise < plafond
     attendu = fiche_1985.net + refaits - ligne.revenu_annualise * (0.031 + 0.0845 + 0.09)
     assert nets[1985] == pytest.approx(attendu * ligne.fraction_annee, rel=1e-9)
+
+
+def test_chaque_marche_dit_son_ancrage_au_journal_officiel():
+    """Chaque marche porte le texte du Journal officiel qu'elle cite, tel que
+    l'index JORF de la DILA le trouve à la date que l'IPP annonce (``jorf``), ou
+    ce qui manque pour l'y trouver (``ancrage``) : la cotisation maladie des
+    pensions de 1980 est le décret n° 80-298, publié le 26 avril 1980 ; la date
+    de publication du décret n° 2012-853, que l'IPP met un an trop tard, se
+    voit."""
+    contenu = charger_yaml(RACINE_DONNEES / CHEMIN)
+    for partie in ("pensions", "salaires", "independants"):
+        for nom, marches in contenu[partie].items():
+            for marche in marches:
+                assert ("jorf" in marche) != ("ancrage" in marche), (partie, nom, marche["depuis"])
+    assert contenu["pensions"]["maladie_regime_general"][0]["jorf"] == "JORFTEXT000000328902"
+    solidarite = {m["depuis"]: m for m in contenu["salaires"]["solidarite_public"]}
+    assert "2012-07-06" in solidarite["2012-07-01"]["ancrage"]
+    fonction_publique = contenu["pensions"]["maladie_fonction_publique"]
+    assert fonction_publique[1]["jorf"] == "JORFTEXT000000693584"
 
 
 def test_une_pension_nette_suit_les_prelevements_de_chaque_annee(simulateur):

@@ -7,6 +7,16 @@
 # référence que l'IPP cite pour sa marche. Une transcription, non une source
 # productrice : `haute` au plus (data/sources.yaml, `ipp`).
 #
+# L'ANCRAGE. Chaque marche de l'IPP porte, en `jorf`, le texte qu'il cite tel
+# que l'index JORF de la DILA le trouve, au numéro — au jour pour un arrêté —
+# et à la date de publication qu'il annonce : 159 des 223 marches de
+# l'IPP le sont (index à jour au 20261004-204228). Les autres disent, en `ancrage`, ce
+# qui manque : une date au Journal officiel, un texte numéroté — un article de
+# code, une convention, une circulaire —, ou la date que l'index donne quand
+# il dément celle de l'IPP. Une marche lue aux textes porte le texte du Journal
+# officiel qu'elle cite, ou l'article de LEGI. L'ancrage rend vérifiable la
+# CHRONOLOGIE d'une série, non sa valeur : il ne la certifie pas.
+#
 # QUI LE LIT. Les indicateurs de cycle de vie nets
 # (`retraite_notionnelle/cycle_de_vie.py`, action 138, étape 9) : la pension
 # nette de chaque année aux taux de son année, le salaire net de chaque année
@@ -33,8 +43,9 @@
 #     `au_dela_du_plafond`, `de_un_a_quatre_plafonds` ; la maladie des agents de
 #     l'État et des collectivités ; la contribution exceptionnelle de solidarité
 #     des agents publics, au-delà d'un seuil mensuel en euros.
-#   independants : la maladie des artisans et commerçants (D. 612-4, puis
-#     D. 621-1 et D. 621-2) et celle des professions libérales (D. 621-3), leur
+#   independants, où une colonne absente d'une marche vaut zéro : la maladie
+#     des artisans et commerçants (D. 612-4, puis D. 621-1 et D. 621-2) et
+#     celle des professions libérales (D. 621-3), leur
 #     indemnité journalière ; la cotisation d'allocations familiales des
 #     travailleurs indépendants ; l'assiette de leur CSG et de leur CRDS, aux
 #     taux de `salaires` et sans abattement. Les colonnes sont des tranches qui
@@ -89,274 +100,274 @@ regimes_des_pensions:
 
 pensions:
   csg_taux_plein:
-    - {depuis: "1991-02-01", taux: 0.011, texte: "Loi 90-1168 du 29/12/90, art. 127 à 135 (LF pour 1991)"}
-    - {depuis: "1993-07-01", taux: 0.024, texte: "Loi 93-859 du 22/06/1993, art. 42 (LFR pour 1993)"}
-    - {depuis: "1997-01-01", taux: 0.034, texte: "Loi 96-1160 du 27/12/1996, art. 9 à 17 (LFSS pour 1997) | Article L136-8 du Code de la Sécurité sociale"}
-    - {depuis: "1998-01-01", taux: 0.062, texte: "Loi 97-1164 du 19/12/1997, art. 5 (LFSS pour 1998)"}
-    - {depuis: "2005-01-01", taux: 0.066, texte: "Loi 2004-810 du 13/08/2004, art. 72"}
-    - {depuis: "2018-01-01", taux: 0.083, texte: "Loi 2017-1836 du 30/12/2017, art. 8 (LFSS pour 2018)"}
+    - {depuis: "1991-02-01", taux: 0.011, texte: "Loi 90-1168 du 29/12/90, art. 127 à 135 (LF pour 1991)", jorf: "JORFARTI000001951881"}
+    - {depuis: "1993-07-01", taux: 0.024, texte: "Loi 93-859 du 22/06/1993, art. 42 (LFR pour 1993)", jorf: "JORFARTI000001707069"}
+    - {depuis: "1997-01-01", taux: 0.034, texte: "Loi 96-1160 du 27/12/1996, art. 9 à 17 (LFSS pour 1997) | Article L136-8 du Code de la Sécurité sociale", jorf: "JORFTEXT000000198309"}
+    - {depuis: "1998-01-01", taux: 0.062, texte: "Loi 97-1164 du 19/12/1997, art. 5 (LFSS pour 1998)", jorf: "JORFTEXT000000569121"}
+    - {depuis: "2005-01-01", taux: 0.066, texte: "Loi 2004-810 du 13/08/2004, art. 72", jorf: "JORFTEXT000000625158"}
+    - {depuis: "2018-01-01", taux: 0.083, texte: "Loi 2017-1836 du 30/12/2017, art. 8 (LFSS pour 2018)", jorf: "JORFTEXT000036339090"}
   csg_taux_median:
-    - {depuis: "2019-01-01", taux: 0.066, texte: "Article 154 quinquies du Code général des impôts (taux global)"}
+    - {depuis: "2019-01-01", taux: 0.066, texte: "Article 154 quinquies du Code général des impôts (taux global)", ancrage: "un article de code, à lire dans LEGI"}
   csg_taux_reduit:
-    - {depuis: "1997-01-01", taux: 0.01, texte: "Loi 96-1160 du 27/12/1996, art. 9 à 17 (LFSS pour 1997) | Article L136-8 du Code de la Sécurité sociale"}
-    - {depuis: "1998-01-01", taux: 0.038, texte: "Loi 97-1164 du 19/12/1997, art. 5 (LFSS pour 1998)"}
+    - {depuis: "1997-01-01", taux: 0.01, texte: "Loi 96-1160 du 27/12/1996, art. 9 à 17 (LFSS pour 1997) | Article L136-8 du Code de la Sécurité sociale", jorf: "JORFTEXT000000198309"}
+    - {depuis: "1998-01-01", taux: 0.038, texte: "Loi 97-1164 du 19/12/1997, art. 5 (LFSS pour 1998)", jorf: "JORFTEXT000000569121"}
   crds:
-    - {depuis: "1996-02-01", taux: 0.005, texte: "Article 1600-0 J du Code général des impôts"}
+    - {depuis: "1996-02-01", taux: 0.005, texte: "Article 1600-0 J du Code général des impôts", jorf: "JORFTEXT000000190291"}
   casa:
-    - {depuis: "2013-04-01", taux: 0.003, texte: "Article L137-41 du Code de la Sécurité Sociale"}
+    - {depuis: "2013-04-01", taux: 0.003, texte: "Article L137-41 du Code de la Sécurité Sociale", jorf: "JORFTEXT000026785322"}
   maladie_regime_general:
-    - {depuis: "1980-07-01", taux: 0.01, texte: "Décret 80-298 du 24/04/1980"}
-    - {depuis: "1987-07-01", taux: 0.014, texte: "Décret 87-453 du 29/06/1987"}
-    - {depuis: "1996-01-01", taux: 0.026, texte: "Décret 95-1356 du 30/12/1995, art. 1 (V)"}
-    - {depuis: "1997-01-01", taux: 0.028, texte: "Décret 96-1167 du 26/12/1996, art. 5"}
-    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1252 du 29/12/1997, art. 4"}
+    - {depuis: "1980-07-01", taux: 0.01, texte: "Décret 80-298 du 24/04/1980", jorf: "JORFTEXT000000328902"}
+    - {depuis: "1987-07-01", taux: 0.014, texte: "Décret 87-453 du 29/06/1987", jorf: "JORFTEXT000000516870"}
+    - {depuis: "1996-01-01", taux: 0.026, texte: "Décret 95-1356 du 30/12/1995, art. 1 (V)", jorf: "JORFTEXT000000372944"}
+    - {depuis: "1997-01-01", taux: 0.028, texte: "Décret 96-1167 du 26/12/1996, art. 5", jorf: "JORFTEXT000000197223"}
+    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1252 du 29/12/1997, art. 4", jorf: "JORFTEXT000000753406"}
   maladie_complementaires:
-    - {depuis: "1980-07-01", taux: 0.02, texte: "Décret 80-298 du 24/04/1980"}
-    - {depuis: "1987-07-01", taux: 0.024, texte: "Décret 87-453 du 29/06/1987"}
-    - {depuis: "1996-01-01", taux: 0.036, texte: "Décret 95-1356 du 30/12/1995, art. 1 (V)"}
-    - {depuis: "1997-01-01", taux: 0.038, texte: "Décret 96-1167 du 26/12/1996, art. 5"}
-    - {depuis: "1998-01-01", taux: 0.01, texte: "Décret 97-1252 du 29/12/1997, art. 4"}
+    - {depuis: "1980-07-01", taux: 0.02, texte: "Décret 80-298 du 24/04/1980", jorf: "JORFTEXT000000328902"}
+    - {depuis: "1987-07-01", taux: 0.024, texte: "Décret 87-453 du 29/06/1987", jorf: "JORFTEXT000000516870"}
+    - {depuis: "1996-01-01", taux: 0.036, texte: "Décret 95-1356 du 30/12/1995, art. 1 (V)", jorf: "JORFTEXT000000372944"}
+    - {depuis: "1997-01-01", taux: 0.038, texte: "Décret 96-1167 du 26/12/1996, art. 5", jorf: "JORFTEXT000000197223"}
+    - {depuis: "1998-01-01", taux: 0.01, texte: "Décret 97-1252 du 29/12/1997, art. 4", jorf: "JORFTEXT000000753406"}
   maladie_independants:
-    - {depuis: "1970-04-01", taux: 0.145, texte: "Arrêté du 26/03/1971"}
-    - {depuis: "1973-04-01", taux: 0.107, texte: "Arrêté du 29/12/1972"}
-    - {depuis: "1974-10-01", taux: 0.0875, texte: "Décret 74-810 du 28/09/1974"}
-    - {depuis: "1975-04-01", taux: 0.092, texte: "Décret 75-85 du 11/01/1975"}
-    - {depuis: "1975-10-01", taux: 0.094, texte: "Décret 75-710 du 07/08/1975"}
-    - {depuis: "1976-10-01", taux: 0.1085, texte: "Décret 76-641 du 15/07/1976"}
-    - {depuis: "1977-10-01", taux: 0.1165, texte: "Décret 77-857 du 26/07/1977"}
-    - {depuis: "1981-04-01", taux: 0.1, texte: "Décret 81-266 du 18/03/1981"}
-    - {depuis: "1981-10-01", taux: 0.05, texte: "Décret 81-813 du 27/08/1981"}
-    - {depuis: "1985-09-01", taux: 0.03, texte: "Décret 85-852 du 09/08/1985, art. 2"}
-    - {depuis: "1987-07-01", taux: 0.034, texte: "Décret 87-483 du 01/07/1987"}
-    - {depuis: "1997-01-01", taux: 0.024, texte: "Décret 96-1167 du 26/12/1996, art. 3"}
-    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1252 du 29/12/1997, art. 3"}
+    - {depuis: "1970-04-01", taux: 0.145, texte: "Arrêté du 26/03/1971", ancrage: "absente de l'index à cette date"}
+    - {depuis: "1973-04-01", taux: 0.107, texte: "Arrêté du 29/12/1972", ancrage: "absente de l'index à cette date"}
+    - {depuis: "1974-10-01", taux: 0.0875, texte: "Décret 74-810 du 28/09/1974", jorf: "JORFTEXT000000509757"}
+    - {depuis: "1975-04-01", taux: 0.092, texte: "Décret 75-85 du 11/01/1975", jorf: "JORFTEXT000000689438"}
+    - {depuis: "1975-10-01", taux: 0.094, texte: "Décret 75-710 du 07/08/1975", jorf: "JORFTEXT000000518772"}
+    - {depuis: "1976-10-01", taux: 0.1085, texte: "Décret 76-641 du 15/07/1976", jorf: "JORFTEXT000000507288"}
+    - {depuis: "1977-10-01", taux: 0.1165, texte: "Décret 77-857 du 26/07/1977", jorf: "JORFTEXT000000864145"}
+    - {depuis: "1981-04-01", taux: 0.1, texte: "Décret 81-266 du 18/03/1981", jorf: "JORFTEXT000000503013"}
+    - {depuis: "1981-10-01", taux: 0.05, texte: "Décret 81-813 du 27/08/1981", jorf: "JORFTEXT000000519483"}
+    - {depuis: "1985-09-01", taux: 0.03, texte: "Décret 85-852 du 09/08/1985, art. 2", jorf: "JORFTEXT000000323146"}
+    - {depuis: "1987-07-01", taux: 0.034, texte: "Décret 87-483 du 01/07/1987", jorf: "JORFTEXT000000700929"}
+    - {depuis: "1997-01-01", taux: 0.024, texte: "Décret 96-1167 du 26/12/1996, art. 3", jorf: "JORFTEXT000000197223"}
+    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1252 du 29/12/1997, art. 3", jorf: "JORFTEXT000000753406"}
   maladie_fonction_publique:
-    - {depuis: "1976-10-01", taux: 0.0225, texte: "Décret 76-896 du 29/09/1976 (JORFTEXT000000861798) : décret 67-850 du 30/09/1967, art. 3 (LEGIARTI000006770629)"}
-    - {depuis: "1988-07-01", taux: 0.0265, texte: "Décret 88-795 du 22/06/1988 (JORFTEXT000000693584) : CSS, D. 712-39 et D. 713-16 ; décret 67-850, art. 3"}
-    - {depuis: "1996-03-01", taux: 0.0305, texte: "Décret 96-155 du 28/02/1996, art. 1 et 2 (JORFTEXT000000557800)"}
-    - {depuis: "1997-01-01", taux: 0.028, texte: "Décret 96-1151 du 26/12/1996, art. 10 : CSS, D. 712-39 (LEGIARTI000006739102) ; décret 67-850, art. 3 (LEGIARTI000006770632)"}
-    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1249 du 29/12/1997 : CSS, D. 712-39 (LEGIARTI000006739103), les seuls non-résidents"}
+    - {depuis: "1976-10-01", taux: 0.0225, texte: "Décret 76-896 du 29/09/1976 (JORFTEXT000000861798) : décret 67-850 du 30/09/1967, art. 3 (LEGIARTI000006770629)", jorf: "JORFTEXT000000861798"}
+    - {depuis: "1988-07-01", taux: 0.0265, texte: "Décret 88-795 du 22/06/1988 (JORFTEXT000000693584) : CSS, D. 712-39 et D. 713-16 ; décret 67-850, art. 3", jorf: "JORFTEXT000000693584"}
+    - {depuis: "1996-03-01", taux: 0.0305, texte: "Décret 96-155 du 28/02/1996, art. 1 et 2 (JORFTEXT000000557800)", jorf: "JORFTEXT000000557800"}
+    - {depuis: "1997-01-01", taux: 0.028, texte: "Décret 96-1151 du 26/12/1996, art. 10 : CSS, D. 712-39 (LEGIARTI000006739102) ; décret 67-850, art. 3 (LEGIARTI000006770632)", jorf: "JORFTEXT000000381201"}
+    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1249 du 29/12/1997 : CSS, D. 712-39 (LEGIARTI000006739103), les seuls non-résidents", jorf: "JORFTEXT000000753405"}
 
 salaires:
   csg:
-    - {depuis: "1991-02-01", taux: 0.011, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 90-1168 du 29/12/90, art. 127 à 135 (LF pour 1991)"}
-    - {depuis: "1993-07-01", taux: 0.024, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 93-859 du 22/06/1993, art. 42 (LFR pour 1993)"}
-    - {depuis: "1997-01-01", taux: 0.034, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 96-1160 du 27/12/1996, art. 9 à 17 (LFSS pour 1997)"}
-    - {depuis: "1998-01-01", taux: 0.075, abattement: 0.05, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 97-1164 du 19/12/1997, art. 5 (LFSS pour 1998)"}
-    - {depuis: "2005-01-01", taux: 0.075, abattement: 0.03, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 2004-810 du 13/08/2004, art. 72"}
-    - {depuis: "2011-01-01", taux: 0.075, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0.03, texte: "Loi 2010-1594 du 20/12/2010, art. 20 (LFSS pour 2011)"}
-    - {depuis: "2012-01-01", taux: 0.075, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0.0175, texte: "Article L136-2 du Code de la Sécurité sociale"}
-    - {depuis: "2018-01-01", taux: 0.092, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0.0175, texte: "Article 154 quinquies du Code général des impôts"}
+    - {depuis: "1991-02-01", taux: 0.011, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 90-1168 du 29/12/90, art. 127 à 135 (LF pour 1991)", jorf: "JORFARTI000001951881"}
+    - {depuis: "1993-07-01", taux: 0.024, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 93-859 du 22/06/1993, art. 42 (LFR pour 1993)", jorf: "JORFARTI000001707069"}
+    - {depuis: "1997-01-01", taux: 0.034, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 96-1160 du 27/12/1996, art. 9 à 17 (LFSS pour 1997)", jorf: "JORFTEXT000000198309"}
+    - {depuis: "1998-01-01", taux: 0.075, abattement: 0.05, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 97-1164 du 19/12/1997, art. 5 (LFSS pour 1998)", jorf: "JORFTEXT000000569121"}
+    - {depuis: "2005-01-01", taux: 0.075, abattement: 0.03, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 2004-810 du 13/08/2004, art. 72", jorf: "JORFTEXT000000625158"}
+    - {depuis: "2011-01-01", taux: 0.075, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0.03, texte: "Loi 2010-1594 du 20/12/2010, art. 20 (LFSS pour 2011)", jorf: "JORFTEXT000023261006"}
+    - {depuis: "2012-01-01", taux: 0.075, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0.0175, texte: "Article L136-2 du Code de la Sécurité sociale", ancrage: "un article de code, à lire dans LEGI"}
+    - {depuis: "2018-01-01", taux: 0.092, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0.0175, texte: "Article 154 quinquies du Code général des impôts", ancrage: "un article de code, à lire dans LEGI"}
   crds:
-    - {depuis: "1996-02-01", taux: 0.005, texte: "Article 1600-0 J du Code général des impôts"}
+    - {depuis: "1996-02-01", taux: 0.005, texte: "Article 1600-0 J du Code général des impôts", jorf: "JORFTEXT000000190291"}
   maladie_prive:
-    - {depuis: "1967-10-01", tout_salaire: 0, sous_plafond: 0.025, au_dela_du_plafond: 0.01, texte: "Décret 67-803 du 20/09/1967"}
-    - {depuis: "1976-01-01", tout_salaire: 0, sous_plafond: 0.025, au_dela_du_plafond: 0.015, texte: "Décret 75-1273 du 29/12/1975"}
-    - {depuis: "1976-10-01", tout_salaire: 0, sous_plafond: 0.03, au_dela_du_plafond: 0.015, texte: "Décret 76-894 du 29/09/1976"}
-    - {depuis: "1979-01-01", tout_salaire: 0, sous_plafond: 0.01, au_dela_du_plafond: 0.035, texte: "Décret 78-1213 du 26/12/1978"}
-    - {depuis: "1979-08-01", tout_salaire: 0, sous_plafond: 0.01, au_dela_du_plafond: 0.045, texte: "Décret 79-650 du 30/07/1979"}
-    - {depuis: "1980-01-01", tout_salaire: 0.055, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 79-650 du 30/07/1979"}
-    - {depuis: "1987-07-01", tout_salaire: 0.059, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 87-453 du 29/06/1987"}
-    - {depuis: "1991-07-01", tout_salaire: 0.068, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 91-614 du 28/06/1991"}
-    - {depuis: "1997-01-01", tout_salaire: 0.055, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 96-1167 du 26/12/1996"}
-    - {depuis: "1998-01-01", tout_salaire: 0.0075, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 97-1249 du 29/12/1997"}
-    - {depuis: "2018-01-01", tout_salaire: 0, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Article D242-3 du Code de la Sécurité Sociale"}
+    - {depuis: "1967-10-01", tout_salaire: 0, sous_plafond: 0.025, au_dela_du_plafond: 0.01, texte: "Décret 67-803 du 20/09/1967", jorf: "JORFTEXT000000330826"}
+    - {depuis: "1976-01-01", tout_salaire: 0, sous_plafond: 0.025, au_dela_du_plafond: 0.015, texte: "Décret 75-1273 du 29/12/1975", jorf: "JORFTEXT000000861785"}
+    - {depuis: "1976-10-01", tout_salaire: 0, sous_plafond: 0.03, au_dela_du_plafond: 0.015, texte: "Décret 76-894 du 29/09/1976", jorf: "JORFTEXT000000689446"}
+    - {depuis: "1979-01-01", tout_salaire: 0, sous_plafond: 0.01, au_dela_du_plafond: 0.035, texte: "Décret 78-1213 du 26/12/1978", jorf: "JORFTEXT000000328707"}
+    - {depuis: "1979-08-01", tout_salaire: 0, sous_plafond: 0.01, au_dela_du_plafond: 0.045, texte: "Décret 79-650 du 30/07/1979", jorf: "JORFTEXT000000518706"}
+    - {depuis: "1980-01-01", tout_salaire: 0.055, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 79-650 du 30/07/1979", jorf: "JORFTEXT000000518706"}
+    - {depuis: "1987-07-01", tout_salaire: 0.059, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 87-453 du 29/06/1987", jorf: "JORFTEXT000000516870"}
+    - {depuis: "1991-07-01", tout_salaire: 0.068, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 91-614 du 28/06/1991", jorf: "JORFTEXT000000719897"}
+    - {depuis: "1997-01-01", tout_salaire: 0.055, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 96-1167 du 26/12/1996", jorf: "JORFTEXT000000197223"}
+    - {depuis: "1998-01-01", tout_salaire: 0.0075, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 97-1249 du 29/12/1997", jorf: "JORFTEXT000000753405"}
+    - {depuis: "2018-01-01", tout_salaire: 0, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Article D242-3 du Code de la Sécurité Sociale", jorf: "JORFTEXT000036342284"}
   veuvage_prive:
-    - {depuis: "1981-01-01", tout_salaire: 0, sous_plafond: 0.001, texte: "Décret 80-1098 du 30/12/1980"}
-    - {depuis: "1982-01-01", tout_salaire: 0.001, sous_plafond: 0, texte: "Loi 82-1 du 04/01/1982"}
-    - {depuis: "2004-07-01", tout_salaire: 0, sous_plafond: 0, texte: "Décret 2004-858 du 24/08/2004"}
+    - {depuis: "1981-01-01", tout_salaire: 0, sous_plafond: 0.001, texte: "Décret 80-1098 du 30/12/1980", jorf: "JORFTEXT000000861526"}
+    - {depuis: "1982-01-01", tout_salaire: 0.001, sous_plafond: 0, texte: "Loi 82-1 du 04/01/1982", jorf: "JORFTEXT000000319734"}
+    - {depuis: "2004-07-01", tout_salaire: 0, sous_plafond: 0, texte: "Décret 2004-858 du 24/08/2004", jorf: "JORFTEXT000000802356"}
   chomage_prive:
-    - {depuis: "1959-01-01", tout_salaire: 0.002, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Convention du 31/12/1958"}
-    - {depuis: "1962-01-01", tout_salaire: 0.0005, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Décision conseil adm. 27 nov. 1961"}
-    - {depuis: "1968-01-01", tout_salaire: 0.0007, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "IPP, sans référence"}
-    - {depuis: "1969-01-01", tout_salaire: 0.0008, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "IPP, sans référence"}
-    - {depuis: "1973-01-01", tout_salaire: 0.0014, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Bureau Unedic du 22 nov. 1971"}
-    - {depuis: "1974-01-01", tout_salaire: 0.0016, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Décision du conseil administration du 04/12/1973."}
-    - {depuis: "1975-01-01", tout_salaire: 0.0036, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Décision du conseil administration du 27/11/1974."}
-    - {depuis: "1975-07-01", tout_salaire: 0, sous_plafond: 0.0048, de_un_a_quatre_plafonds: 0.0048, texte: "Circulaire Unedic 75-22 du 21/05/1975"}
-    - {depuis: "1977-01-01", tout_salaire: 0, sous_plafond: 0.0044, de_un_a_quatre_plafonds: 0.0044, texte: "Circulaire Unedic 76-22 du 03/12/1976"}
-    - {depuis: "1978-01-01", tout_salaire: 0, sous_plafond: 0.0048, de_un_a_quatre_plafonds: 0.0048, texte: "Circulaire Unedic 77-29 du 05/12/1977"}
-    - {depuis: "1978-05-01", tout_salaire: 0, sous_plafond: 0.006, de_un_a_quatre_plafonds: 0.006, texte: "Circulaire Unedic 78-19 du 27/04/1978"}
-    - {depuis: "1979-04-01", tout_salaire: 0, sous_plafond: 0.0084, de_un_a_quatre_plafonds: 0.0084, texte: "Circulaire Unedic 79-14 du 02/04/1979"}
-    - {depuis: "1982-11-06", tout_salaire: 0, sous_plafond: 0.0132, de_un_a_quatre_plafonds: 0.0132, texte: "Décret 82-940 du 04/11/1982"}
-    - {depuis: "1983-07-01", tout_salaire: 0, sous_plafond: 0.0172, de_un_a_quatre_plafonds: 0.0172, texte: "Décret 83-553 du 30/06/1983."}
-    - {depuis: "1984-04-01", tout_salaire: 0, sous_plafond: 0.0112, de_un_a_quatre_plafonds: 0.0162, texte: "Ordonnance 84-198 du 21/03/1984. Convention et Règlement Unedic du 24/02/1984 agréés par arrêté du 28/03/1984"}
-    - {depuis: "1985-07-01", tout_salaire: 0, sous_plafond: 0.0212, de_un_a_quatre_plafonds: 0.0262, texte: "Arrêté du 12/08/1985 | Protocole d'accord du 18/07/1985 (agréé)"}
-    - {depuis: "1985-11-01", tout_salaire: 0, sous_plafond: 0.0151, de_un_a_quatre_plafonds: 0.0201, texte: "Protocole du 18/07/1985 (agréé) | avenant du 29/10/1985"}
-    - {depuis: "1988-01-01", tout_salaire: 0, sous_plafond: 0.0167, de_un_a_quatre_plafonds: 0.0217, texte: "Convention et Règlement UNEDIC du 19/11/1985. Accord et Convention UNEDIC du 30/12/1987"}
-    - {depuis: "1990-10-01", tout_salaire: 0, sous_plafond: 0.0159, de_un_a_quatre_plafonds: 0.0217, texte: "Compromis du 25/06/1990 (Dupeyroux 1993, p791)"}
-    - {depuis: "1991-01-01", tout_salaire: 0, sous_plafond: 0.0153, de_un_a_quatre_plafonds: 0.0211, texte: "Convention et règlement Unedic du 01/01/1990 agréés par arrêté du 14/05/1990 . Protocole d'accord du 22/12/1989 - Circ. 90-08 du 06/06/1990"}
-    - {depuis: "1992-01-01", tout_salaire: 0, sous_plafond: 0.0167, de_un_a_quatre_plafonds: 0.0217, texte: "Protocole d'accord du 05/12/1991 (avenants n° 1 et 8 du 13/12/91, agréés)"}
-    - {depuis: "1992-08-01", tout_salaire: 0, sous_plafond: 0.0207, de_un_a_quatre_plafonds: 0.0257, texte: "Protocole d'accord du 18/07/1992 (avenants du 24/07/92, agréés) | accord du 30/12/1992"}
-    - {depuis: "1993-08-01", tout_salaire: 0, sous_plafond: 0.0242, de_un_a_quatre_plafonds: 0.0297, texte: "Convention et règlement Unedic du 01/01/93 agréés par l'arrêté du 04/01/93. Avenant n°1 du 30/12/92"}
-    - {depuis: "1997-01-01", tout_salaire: 0, sous_plafond: 0.0221, de_un_a_quatre_plafonds: 0.0271, texte: "Convention et règlement Unedic du 01/01/1997 agréés par l'arrêté du 18/02/1997"}
-    - {depuis: "2001-01-01", tout_salaire: 0, sous_plafond: 0.021, de_un_a_quatre_plafonds: 0.026, texte: "Convention du 01/01/2001 agréé par l'arrêté du 04/12/2000"}
-    - {depuis: "2002-01-01", tout_salaire: 0, sous_plafond: 0.02, de_un_a_quatre_plafonds: 0.02, texte: "Convention du 01/01/2001 agréé par l'arrêté du 04/12/2000"}
-    - {depuis: "2002-07-01", tout_salaire: 0, sous_plafond: 0.021, de_un_a_quatre_plafonds: 0.021, texte: "Convention du 01/01/2001, avenant du 19/06/2002"}
-    - {depuis: "2003-01-01", tout_salaire: 0, sous_plafond: 0.024, de_un_a_quatre_plafonds: 0.024, texte: "Convention du 01/01/2001, avenant du 27/12/2002"}
-    - {depuis: "2006-01-01", tout_salaire: 0, sous_plafond: 0.0244, de_un_a_quatre_plafonds: 0.0244, texte: "Circulaire Unedic 2006-08 du 27/03/2006. Convention du 18/01/2006, agréé par l'arrêté du 23/02/2006"}
-    - {depuis: "2007-01-01", tout_salaire: 0, sous_plafond: 0.024, de_un_a_quatre_plafonds: 0.024, texte: "Circulaire Unedic 2007-02 du 18/01/2007. Convention du 18/01/2006"}
-    - {depuis: "2018-01-01", tout_salaire: 0, sous_plafond: 0.0095, de_un_a_quatre_plafonds: 0.0095, texte: "Loi 2017-1836 du 30/12/2017, art. 8 VI. (LFSS pour 2018)"}
-    - {depuis: "2018-10-01", tout_salaire: 0, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Loi 2017-1836 du 30/12/2017, art. 8 VI. (LFSS pour 2018)"}
+    - {depuis: "1959-01-01", tout_salaire: 0.002, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Convention du 31/12/1958", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "1962-01-01", tout_salaire: 0.0005, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Décision conseil adm. 27 nov. 1961", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "1968-01-01", tout_salaire: 0.0007, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1969-01-01", tout_salaire: 0.0008, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1973-01-01", tout_salaire: 0.0014, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Bureau Unedic du 22 nov. 1971", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "1974-01-01", tout_salaire: 0.0016, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Décision du conseil administration du 04/12/1973.", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "1975-01-01", tout_salaire: 0.0036, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Décision du conseil administration du 27/11/1974.", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "1975-07-01", tout_salaire: 0, sous_plafond: 0.0048, de_un_a_quatre_plafonds: 0.0048, texte: "Circulaire Unedic 75-22 du 21/05/1975", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "1977-01-01", tout_salaire: 0, sous_plafond: 0.0044, de_un_a_quatre_plafonds: 0.0044, texte: "Circulaire Unedic 76-22 du 03/12/1976", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "1978-01-01", tout_salaire: 0, sous_plafond: 0.0048, de_un_a_quatre_plafonds: 0.0048, texte: "Circulaire Unedic 77-29 du 05/12/1977", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "1978-05-01", tout_salaire: 0, sous_plafond: 0.006, de_un_a_quatre_plafonds: 0.006, texte: "Circulaire Unedic 78-19 du 27/04/1978", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "1979-04-01", tout_salaire: 0, sous_plafond: 0.0084, de_un_a_quatre_plafonds: 0.0084, texte: "Circulaire Unedic 79-14 du 02/04/1979", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "1982-11-06", tout_salaire: 0, sous_plafond: 0.0132, de_un_a_quatre_plafonds: 0.0132, texte: "Décret 82-940 du 04/11/1982", jorf: "JORFTEXT000000331503"}
+    - {depuis: "1983-07-01", tout_salaire: 0, sous_plafond: 0.0172, de_un_a_quatre_plafonds: 0.0172, texte: "Décret 83-553 du 30/06/1983.", ancrage: "absente de l'index"}
+    - {depuis: "1984-04-01", tout_salaire: 0, sous_plafond: 0.0112, de_un_a_quatre_plafonds: 0.0162, texte: "Ordonnance 84-198 du 21/03/1984. Convention et Règlement Unedic du 24/02/1984 agréés par arrêté du 28/03/1984", ancrage: "absente de l'index à cette date"}
+    - {depuis: "1985-07-01", tout_salaire: 0, sous_plafond: 0.0212, de_un_a_quatre_plafonds: 0.0262, texte: "Arrêté du 12/08/1985 | Protocole d'accord du 18/07/1985 (agréé)", jorf: "JORFTEXT000000497155"}
+    - {depuis: "1985-11-01", tout_salaire: 0, sous_plafond: 0.0151, de_un_a_quatre_plafonds: 0.0201, texte: "Protocole du 18/07/1985 (agréé) | avenant du 29/10/1985", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "1988-01-01", tout_salaire: 0, sous_plafond: 0.0167, de_un_a_quatre_plafonds: 0.0217, texte: "Convention et Règlement UNEDIC du 19/11/1985. Accord et Convention UNEDIC du 30/12/1987", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "1990-10-01", tout_salaire: 0, sous_plafond: 0.0159, de_un_a_quatre_plafonds: 0.0217, texte: "Compromis du 25/06/1990 (Dupeyroux 1993, p791)", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "1991-01-01", tout_salaire: 0, sous_plafond: 0.0153, de_un_a_quatre_plafonds: 0.0211, texte: "Convention et règlement Unedic du 01/01/1990 agréés par arrêté du 14/05/1990 . Protocole d'accord du 22/12/1989 - Circ. 90-08 du 06/06/1990", ancrage: "absente de l'index à cette date"}
+    - {depuis: "1992-01-01", tout_salaire: 0, sous_plafond: 0.0167, de_un_a_quatre_plafonds: 0.0217, texte: "Protocole d'accord du 05/12/1991 (avenants n° 1 et 8 du 13/12/91, agréés)", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "1992-08-01", tout_salaire: 0, sous_plafond: 0.0207, de_un_a_quatre_plafonds: 0.0257, texte: "Protocole d'accord du 18/07/1992 (avenants du 24/07/92, agréés) | accord du 30/12/1992", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "1993-08-01", tout_salaire: 0, sous_plafond: 0.0242, de_un_a_quatre_plafonds: 0.0297, texte: "Convention et règlement Unedic du 01/01/93 agréés par l'arrêté du 04/01/93. Avenant n°1 du 30/12/92", jorf: "JORFTEXT000000359380"}
+    - {depuis: "1997-01-01", tout_salaire: 0, sous_plafond: 0.0221, de_un_a_quatre_plafonds: 0.0271, texte: "Convention et règlement Unedic du 01/01/1997 agréés par l'arrêté du 18/02/1997", jorf: "JORFARTI000001797659"}
+    - {depuis: "2001-01-01", tout_salaire: 0, sous_plafond: 0.021, de_un_a_quatre_plafonds: 0.026, texte: "Convention du 01/01/2001 agréé par l'arrêté du 04/12/2000", jorf: "JORFARTI000001906411"}
+    - {depuis: "2002-01-01", tout_salaire: 0, sous_plafond: 0.02, de_un_a_quatre_plafonds: 0.02, texte: "Convention du 01/01/2001 agréé par l'arrêté du 04/12/2000", jorf: "JORFARTI000001906411"}
+    - {depuis: "2002-07-01", tout_salaire: 0, sous_plafond: 0.021, de_un_a_quatre_plafonds: 0.021, texte: "Convention du 01/01/2001, avenant du 19/06/2002", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "2003-01-01", tout_salaire: 0, sous_plafond: 0.024, de_un_a_quatre_plafonds: 0.024, texte: "Convention du 01/01/2001, avenant du 27/12/2002", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "2006-01-01", tout_salaire: 0, sous_plafond: 0.0244, de_un_a_quatre_plafonds: 0.0244, texte: "Circulaire Unedic 2006-08 du 27/03/2006. Convention du 18/01/2006, agréé par l'arrêté du 23/02/2006", jorf: "JORFTEXT000000454533"}
+    - {depuis: "2007-01-01", tout_salaire: 0, sous_plafond: 0.024, de_un_a_quatre_plafonds: 0.024, texte: "Circulaire Unedic 2007-02 du 18/01/2007. Convention du 18/01/2006", ancrage: "sans texte numéroté du Journal officiel"}
+    - {depuis: "2018-01-01", tout_salaire: 0, sous_plafond: 0.0095, de_un_a_quatre_plafonds: 0.0095, texte: "Loi 2017-1836 du 30/12/2017, art. 8 VI. (LFSS pour 2018)", jorf: "JORFTEXT000036339090"}
+    - {depuis: "2018-10-01", tout_salaire: 0, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Loi 2017-1836 du 30/12/2017, art. 8 VI. (LFSS pour 2018)", jorf: "JORFTEXT000036339090"}
   maladie_etat:
-    - {depuis: "1967-10-01", tout_salaire: 0.01, sous_plafond: 0.0175, texte: "Décret 67-850 du 30/09/1967"}
-    - {depuis: "1976-01-01", tout_salaire: 0.015, sous_plafond: 0.0175, texte: "Décret 75-1270 du 29/12/1975"}
-    - {depuis: "1976-10-01", tout_salaire: 0.015, sous_plafond: 0.0225, texte: "Décret 76-896 du 29/09/1976"}
-    - {depuis: "1979-01-01", tout_salaire: 0.035, sous_plafond: 0.0025, texte: "Décret 78-1215 du 26/12/1978"}
-    - {depuis: "1980-01-01", tout_salaire: 0.0375, sous_plafond: 0, texte: "Décret 78-1215 du 26/12/1978"}
-    - {depuis: "1981-11-01", tout_salaire: 0.0475, sous_plafond: 0, texte: "Décret 81-1015 du 13/11/1981"}
-    - {depuis: "1988-07-01", tout_salaire: 0.0515, sous_plafond: 0, texte: "Décret 88-795 du 22/06/1988, art. 1"}
-    - {depuis: "1991-07-01", tout_salaire: 0.0605, sous_plafond: 0, texte: "Décret 91-615 du 28/06/1991, art. 1"}
-    - {depuis: "1997-01-01", tout_salaire: 0.0475, sous_plafond: 0, texte: "Décret 96-1151 du 26/12/1996, art. 6"}
-    - {depuis: "1998-01-01", tout_salaire: 0, sous_plafond: 0, texte: "Décret 97-1249 du 29/12/1997, art. 5"}
+    - {depuis: "1967-10-01", tout_salaire: 0.01, sous_plafond: 0.0175, texte: "Décret 67-850 du 30/09/1967", jorf: "JORFTEXT000000877738"}
+    - {depuis: "1976-01-01", tout_salaire: 0.015, sous_plafond: 0.0175, texte: "Décret 75-1270 du 29/12/1975", jorf: "JORFTEXT000000306827"}
+    - {depuis: "1976-10-01", tout_salaire: 0.015, sous_plafond: 0.0225, texte: "Décret 76-896 du 29/09/1976", jorf: "JORFTEXT000000861798"}
+    - {depuis: "1979-01-01", tout_salaire: 0.035, sous_plafond: 0.0025, texte: "Décret 78-1215 du 26/12/1978", jorf: "JORFTEXT000000697278"}
+    - {depuis: "1980-01-01", tout_salaire: 0.0375, sous_plafond: 0, texte: "Décret 78-1215 du 26/12/1978", jorf: "JORFTEXT000000697278"}
+    - {depuis: "1981-11-01", tout_salaire: 0.0475, sous_plafond: 0, texte: "Décret 81-1015 du 13/11/1981", jorf: "JORFTEXT000000680650"}
+    - {depuis: "1988-07-01", tout_salaire: 0.0515, sous_plafond: 0, texte: "Décret 88-795 du 22/06/1988, art. 1", jorf: "JORFTEXT000000693584"}
+    - {depuis: "1991-07-01", tout_salaire: 0.0605, sous_plafond: 0, texte: "Décret 91-615 du 28/06/1991, art. 1", jorf: "JORFTEXT000000719893"}
+    - {depuis: "1997-01-01", tout_salaire: 0.0475, sous_plafond: 0, texte: "Décret 96-1151 du 26/12/1996, art. 6", jorf: "JORFTEXT000000381201"}
+    - {depuis: "1998-01-01", tout_salaire: 0, sous_plafond: 0, texte: "Décret 97-1249 du 29/12/1997, art. 5", jorf: "JORFTEXT000000753405"}
   maladie_collectivites:
-    - {depuis: "1967-10-01", tout_salaire: 0.01, sous_plafond: 0.0175, texte: "Décret 67-850 du 30/09/1967"}
-    - {depuis: "1976-01-01", tout_salaire: 0.015, sous_plafond: 0.0175, texte: "Décret 75-1270 du 29/12/1975"}
-    - {depuis: "1976-10-01", tout_salaire: 0.015, sous_plafond: 0.0225, texte: "Décret 76-896 du 29/09/1976"}
-    - {depuis: "1979-01-01", tout_salaire: 0.035, sous_plafond: 0.0025, texte: "Décret 78-1215 du 26/12/1978"}
-    - {depuis: "1980-01-01", tout_salaire: 0.0375, sous_plafond: 0, texte: "Décret 78-1215 du 26/12/1978"}
-    - {depuis: "1981-11-01", tout_salaire: 0.0475, sous_plafond: 0, texte: "Décret 81-1015 du 13/11/1981"}
-    - {depuis: "1988-07-01", tout_salaire: 0.0515, sous_plafond: 0, texte: "Décret 88-795 du 22/06/1988, art. 4"}
-    - {depuis: "1991-01-01", tout_salaire: 0.0605, sous_plafond: 0, texte: "Décret 91-615 du 28/06/1991, art. 4"}
-    - {depuis: "1997-01-01", tout_salaire: 0.0475, sous_plafond: 0, texte: "Décret 96-1151 du 26/12/1996, art. 8"}
-    - {depuis: "1998-01-01", tout_salaire: 0, sous_plafond: 0, texte: "Décret 97-1249 du 29/12/1997, art. 8"}
+    - {depuis: "1967-10-01", tout_salaire: 0.01, sous_plafond: 0.0175, texte: "Décret 67-850 du 30/09/1967", jorf: "JORFTEXT000000877738"}
+    - {depuis: "1976-01-01", tout_salaire: 0.015, sous_plafond: 0.0175, texte: "Décret 75-1270 du 29/12/1975", jorf: "JORFTEXT000000306827"}
+    - {depuis: "1976-10-01", tout_salaire: 0.015, sous_plafond: 0.0225, texte: "Décret 76-896 du 29/09/1976", jorf: "JORFTEXT000000861798"}
+    - {depuis: "1979-01-01", tout_salaire: 0.035, sous_plafond: 0.0025, texte: "Décret 78-1215 du 26/12/1978", jorf: "JORFTEXT000000697278"}
+    - {depuis: "1980-01-01", tout_salaire: 0.0375, sous_plafond: 0, texte: "Décret 78-1215 du 26/12/1978", jorf: "JORFTEXT000000697278"}
+    - {depuis: "1981-11-01", tout_salaire: 0.0475, sous_plafond: 0, texte: "Décret 81-1015 du 13/11/1981", jorf: "JORFTEXT000000680650"}
+    - {depuis: "1988-07-01", tout_salaire: 0.0515, sous_plafond: 0, texte: "Décret 88-795 du 22/06/1988, art. 4", jorf: "JORFTEXT000000693584"}
+    - {depuis: "1991-01-01", tout_salaire: 0.0605, sous_plafond: 0, texte: "Décret 91-615 du 28/06/1991, art. 4", jorf: "JORFTEXT000000719893"}
+    - {depuis: "1997-01-01", tout_salaire: 0.0475, sous_plafond: 0, texte: "Décret 96-1151 du 26/12/1996, art. 8", jorf: "JORFTEXT000000381201"}
+    - {depuis: "1998-01-01", tout_salaire: 0, sous_plafond: 0, texte: "Décret 97-1249 du 29/12/1997, art. 8", jorf: "JORFTEXT000000753405"}
   solidarite_public:
-    - {depuis: "1982-11-01", taux: 0.01, seuil_mensuel: 683.77, texte: "IPP, sans référence"}
-    - {depuis: "1982-12-01", taux: 0.01, seuil_mensuel: 691.37, texte: "IPP, sans référence"}
-    - {depuis: "1983-01-01", taux: 0.01, seuil_mensuel: 705.75, texte: "IPP, sans référence"}
-    - {depuis: "1983-04-04", taux: 0.01, seuil_mensuel: 724.39, texte: "IPP, sans référence"}
-    - {depuis: "1983-07-06", taux: 0.01, seuil_mensuel: 738.31, texte: "IPP, sans référence"}
-    - {depuis: "1983-11-07", taux: 0.01, seuil_mensuel: 759.77, texte: "IPP, sans référence"}
-    - {depuis: "1984-01-08", taux: 0.01, seuil_mensuel: 773.56, texte: "IPP, sans référence"}
-    - {depuis: "1984-04-10", taux: 0.01, seuil_mensuel: 781.33, texte: "IPP, sans référence"}
-    - {depuis: "1984-11-13", taux: 0.01, seuil_mensuel: 796.79, texte: "IPP, sans référence"}
-    - {depuis: "1985-02-14", taux: 0.01, seuil_mensuel: 808.73, texte: "IPP, sans référence"}
-    - {depuis: "1985-07-16", taux: 0.01, seuil_mensuel: 820.71, texte: "IPP, sans référence"}
-    - {depuis: "1985-11-17", taux: 0.01, seuil_mensuel: 832.64, texte: "IPP, sans référence"}
-    - {depuis: "1986-02-18", taux: 0.01, seuil_mensuel: 839.36, texte: "IPP, sans référence"}
-    - {depuis: "1987-03-22", taux: 0.01, seuil_mensuel: 844.42, texte: "IPP, sans référence"}
-    - {depuis: "1987-05-23", taux: 0.01, seuil_mensuel: 852.8, texte: "IPP, sans référence"}
-    - {depuis: "1987-08-24", taux: 0.01, seuil_mensuel: 856.99, texte: "IPP, sans référence"}
-    - {depuis: "1988-03-21", taux: 0.01, seuil_mensuel: 865.57, texte: "IPP, sans référence"}
-    - {depuis: "1988-09-23", taux: 0.01, seuil_mensuel: 874.14, texte: "IPP, sans référence"}
-    - {depuis: "1989-09-01", taux: 0.01, seuil_mensuel: 907.68, texte: "Décret 89-598 du 30/08/1989"}
-    - {depuis: "1990-01-01", taux: 0.01, seuil_mensuel: 912.23, texte: "Décret 90-321 du 05/04/1990"}
-    - {depuis: "1990-04-01", taux: 0.01, seuil_mensuel: 923.1, texte: "Décret 90-332 du 05/04/1990"}
-    - {depuis: "1990-12-01", taux: 0.01, seuil_mensuel: 934.91, texte: "Décret 90-1058 du 22/11/1990"}
-    - {depuis: "1991-02-01", taux: 0.01, seuil_mensuel: 953.31, texte: "IPP, sans référence"}
-    - {depuis: "1991-08-01", taux: 0.01, seuil_mensuel: 965.48, texte: "Décret 91-1191 du 19/11/1991"}
-    - {depuis: "1991-11-01", taux: 0.01, seuil_mensuel: 975.1, texte: "Décret 91-1191 du 19/11/1991"}
-    - {depuis: "1992-02-01", taux: 0.01, seuil_mensuel: 987.56, texte: "Décret 92-107 du 30/01/1992"}
-    - {depuis: "1992-10-01", taux: 0.01, seuil_mensuel: 1001.03, texte: "Décret 92-993 du 18/09/1992"}
-    - {depuis: "1993-02-01", taux: 0.01, seuil_mensuel: 1018.31, texte: "Décret 93-93 du 25/01/1993"}
-    - {depuis: "1994-01-01", taux: 0.01, seuil_mensuel: 1028.48, texte: "Décret 93-1317 du 20/12/1993"}
-    - {depuis: "1994-08-01", taux: 0.01, seuil_mensuel: 1033.63, texte: "Décret 93-1317 du 20/12/1993"}
-    - {depuis: "1994-12-01", taux: 0.01, seuil_mensuel: 1041.87, texte: "Décret 94-599 du 15/07/1994"}
-    - {depuis: "1995-03-01", taux: 0.01, seuil_mensuel: 1054.38, texte: "Décret 95-167 du 17/02/1995"}
-    - {depuis: "1995-11-01", taux: 0.01, seuil_mensuel: 1069.14, texte: "Décret 95-1099 du 9/10/1995"}
-    - {depuis: "1997-03-01", taux: 0.01, seuil_mensuel: 1074.47, texte: "Décret 97-141 du 13/02/1997"}
-    - {depuis: "1997-10-01", taux: 0.01, seuil_mensuel: 1079.85, texte: "Décret 97-877 du 25/09/1997"}
-    - {depuis: "1998-01-01", taux: 0.01, seuil_mensuel: 1158.46, texte: "IPP, sans référence"}
-    - {depuis: "1998-04-01", taux: 0.01, seuil_mensuel: 1167.73, texte: "Décret 98-143 du 04/03/1998"}
-    - {depuis: "1998-07-01", taux: 0.01, seuil_mensuel: 1176.08, texte: "Décret 98-462 du 10/06/1998"}
-    - {depuis: "1998-11-01", taux: 0.01, seuil_mensuel: 1181.89, texte: "Décret 98-945 du 21/10/1998"}
-    - {depuis: "1999-04-01", taux: 0.01, seuil_mensuel: 1192.01, texte: "Décret 99-208 du 17/03/1999"}
-    - {depuis: "1999-07-01", taux: 0.01, seuil_mensuel: 1209.99, texte: "Décret 99-941 du 10/06/1999"}
-    - {depuis: "1999-12-01", taux: 0.01, seuil_mensuel: 1214.23, texte: "Décret 99-943 du 12/11/1999"}
-    - {depuis: "2000-12-01", taux: 0.01, seuil_mensuel: 1220.3, texte: "Décret 2000-1154 du 29/11/2000"}
-    - {depuis: "2001-05-01", taux: 0.01, seuil_mensuel: 1234.99, texte: "Décret 2001-370 du 25/04/2001"}
-    - {depuis: "2001-11-01", taux: 0.01, seuil_mensuel: 1243.62, texte: "Décret 2001-895 du 26/09/2001"}
-    - {depuis: "2002-01-01", taux: 0.01, seuil_mensuel: 1243.62, texte: "Décret 2001-895 du 26/09/2001"}
-    - {depuis: "2002-03-01", taux: 0.01, seuil_mensuel: 1251.08, texte: "Décret 2002-203 du 14/02/2002"}
-    - {depuis: "2002-12-01", taux: 0.01, seuil_mensuel: 1259.83, texte: "Décret 2002-1295 du 24/10/2002"}
-    - {depuis: "2004-01-01", taux: 0.01, seuil_mensuel: 1266.13, texte: "Décret 2003-1170 du 08/12/2003"}
-    - {depuis: "2005-02-01", taux: 0.01, seuil_mensuel: 1272.47, texte: "Décret 2005-31 du 15/01/2005"}
-    - {depuis: "2005-07-01", taux: 0.01, seuil_mensuel: 1278.83, texte: "Décret 2005-726 du 29/06/2005"}
-    - {depuis: "2005-11-01", taux: 0.01, seuil_mensuel: 1289.06, texte: "Décret 2005-1301 du 20/10/2005"}
-    - {depuis: "2006-07-01", taux: 0.01, seuil_mensuel: 1295.5, texte: "Décret 2006-759 du 29/06/2006"}
-    - {depuis: "2006-11-01", taux: 0.01, seuil_mensuel: 1300, texte: "Décret 2006-1283 du 19/10/2006"}
-    - {depuis: "2007-02-01", taux: 0.01, seuil_mensuel: 1310.4, texte: "Décret 2007-96 du 25/01/2007"}
-    - {depuis: "2008-03-01", taux: 0.01, seuil_mensuel: 1316.95, texte: "Décret 2008-198 du 27/02/2008"}
-    - {depuis: "2008-07-01", taux: 0.01, seuil_mensuel: 1321.51, texte: "Décret 2008-622 du 27/06/2008"}
-    - {depuis: "2008-10-01", taux: 0.01, seuil_mensuel: 1325.48, texte: "Décret 2008-1016 du 02/10/2008"}
-    - {depuis: "2009-07-01", taux: 0.01, seuil_mensuel: 1341.29, texte: "Décret 2009-824 du 03/07/2009"}
-    - {depuis: "2009-10-01", taux: 0.01, seuil_mensuel: 1345.31, texte: "Décret 2009-1158 du 30/09/2009"}
-    - {depuis: "2010-07-01", taux: 0.01, seuil_mensuel: 1352.04, texte: "Décret 2010-761 du 07/07/2010"}
-    - {depuis: "2011-01-01", taux: 0.01, seuil_mensuel: 1365.93, texte: "Décret 2011-51 du 13/01/2011"}
-    - {depuis: "2012-01-01", taux: 0.01, seuil_mensuel: 1398.34, texte: "Décret 2012-37 du 11/01/2012"}
-    - {depuis: "2012-07-01", taux: 0.01, seuil_mensuel: 1426.12, texte: "Décret 2012-853 du 5/07/2012"}
-    - {depuis: "2013-01-01", taux: 0.01, seuil_mensuel: 1430.76, texte: "Décret 2013-33 du 10/01/2013"}
-    - {depuis: "2016-07-01", taux: 0.01, seuil_mensuel: 1447.98, texte: "Décret 2016-670 du 25/05/2016"}
-    - {depuis: "2017-02-01", taux: 0.01, seuil_mensuel: 1439.35, texte: "Décret 2016-670 du 25/05/2016"}
-    - {depuis: "2018-01-01", taux: 0, seuil_mensuel: 0, texte: "Loi 2017-1837 du 30/12/2017 (LF pour 2018)"}
+    - {depuis: "1982-11-01", taux: 0.01, seuil_mensuel: 683.77, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1982-12-01", taux: 0.01, seuil_mensuel: 691.37, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1983-01-01", taux: 0.01, seuil_mensuel: 705.75, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1983-04-04", taux: 0.01, seuil_mensuel: 724.39, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1983-07-06", taux: 0.01, seuil_mensuel: 738.31, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1983-11-07", taux: 0.01, seuil_mensuel: 759.77, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1984-01-08", taux: 0.01, seuil_mensuel: 773.56, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1984-04-10", taux: 0.01, seuil_mensuel: 781.33, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1984-11-13", taux: 0.01, seuil_mensuel: 796.79, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1985-02-14", taux: 0.01, seuil_mensuel: 808.73, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1985-07-16", taux: 0.01, seuil_mensuel: 820.71, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1985-11-17", taux: 0.01, seuil_mensuel: 832.64, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1986-02-18", taux: 0.01, seuil_mensuel: 839.36, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1987-03-22", taux: 0.01, seuil_mensuel: 844.42, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1987-05-23", taux: 0.01, seuil_mensuel: 852.8, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1987-08-24", taux: 0.01, seuil_mensuel: 856.99, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1988-03-21", taux: 0.01, seuil_mensuel: 865.57, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1988-09-23", taux: 0.01, seuil_mensuel: 874.14, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1989-09-01", taux: 0.01, seuil_mensuel: 907.68, texte: "Décret 89-598 du 30/08/1989", ancrage: "absente de l'index"}
+    - {depuis: "1990-01-01", taux: 0.01, seuil_mensuel: 912.23, texte: "Décret 90-321 du 05/04/1990", jorf: "JORFTEXT000000166950"}
+    - {depuis: "1990-04-01", taux: 0.01, seuil_mensuel: 923.1, texte: "Décret 90-332 du 05/04/1990", ancrage: "absente de l'index"}
+    - {depuis: "1990-12-01", taux: 0.01, seuil_mensuel: 934.91, texte: "Décret 90-1058 du 22/11/1990", jorf: "JORFTEXT000000352399"}
+    - {depuis: "1991-02-01", taux: 0.01, seuil_mensuel: 953.31, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1991-08-01", taux: 0.01, seuil_mensuel: 965.48, texte: "Décret 91-1191 du 19/11/1991", jorf: "JORFTEXT000000538342"}
+    - {depuis: "1991-11-01", taux: 0.01, seuil_mensuel: 975.1, texte: "Décret 91-1191 du 19/11/1991", jorf: "JORFTEXT000000538342"}
+    - {depuis: "1992-02-01", taux: 0.01, seuil_mensuel: 987.56, texte: "Décret 92-107 du 30/01/1992", jorf: "JORFTEXT000000710574"}
+    - {depuis: "1992-10-01", taux: 0.01, seuil_mensuel: 1001.03, texte: "Décret 92-993 du 18/09/1992", jorf: "JORFTEXT000000177462"}
+    - {depuis: "1993-02-01", taux: 0.01, seuil_mensuel: 1018.31, texte: "Décret 93-93 du 25/01/1993", ancrage: "l'index le date du 1993-01-25 (JORFTEXT000000725384), non du 1993-01-26"}
+    - {depuis: "1994-01-01", taux: 0.01, seuil_mensuel: 1028.48, texte: "Décret 93-1317 du 20/12/1993", ancrage: "absente de l'index"}
+    - {depuis: "1994-08-01", taux: 0.01, seuil_mensuel: 1033.63, texte: "Décret 93-1317 du 20/12/1993", ancrage: "absente de l'index"}
+    - {depuis: "1994-12-01", taux: 0.01, seuil_mensuel: 1041.87, texte: "Décret 94-599 du 15/07/1994", jorf: "JORFTEXT000000531157"}
+    - {depuis: "1995-03-01", taux: 0.01, seuil_mensuel: 1054.38, texte: "Décret 95-167 du 17/02/1995", jorf: "JORFTEXT000000735678"}
+    - {depuis: "1995-11-01", taux: 0.01, seuil_mensuel: 1069.14, texte: "Décret 95-1099 du 9/10/1995", jorf: "JORFTEXT000000189590"}
+    - {depuis: "1997-03-01", taux: 0.01, seuil_mensuel: 1074.47, texte: "Décret 97-141 du 13/02/1997", jorf: "JORFTEXT000000564762"}
+    - {depuis: "1997-10-01", taux: 0.01, seuil_mensuel: 1079.85, texte: "Décret 97-877 du 25/09/1997", jorf: "JORFTEXT000000202306"}
+    - {depuis: "1998-01-01", taux: 0.01, seuil_mensuel: 1158.46, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1998-04-01", taux: 0.01, seuil_mensuel: 1167.73, texte: "Décret 98-143 du 04/03/1998", jorf: "JORFTEXT000000556219"}
+    - {depuis: "1998-07-01", taux: 0.01, seuil_mensuel: 1176.08, texte: "Décret 98-462 du 10/06/1998", jorf: "JORFTEXT000000740811"}
+    - {depuis: "1998-11-01", taux: 0.01, seuil_mensuel: 1181.89, texte: "Décret 98-945 du 21/10/1998", ancrage: "l'index le date du 1998-10-23 (JORFTEXT000000557774), non du 1998-10-21"}
+    - {depuis: "1999-04-01", taux: 0.01, seuil_mensuel: 1192.01, texte: "Décret 99-208 du 17/03/1999", jorf: "JORFTEXT000000393446"}
+    - {depuis: "1999-07-01", taux: 0.01, seuil_mensuel: 1209.99, texte: "Décret 99-941 du 10/06/1999", ancrage: "absente de l'index"}
+    - {depuis: "1999-12-01", taux: 0.01, seuil_mensuel: 1214.23, texte: "Décret 99-943 du 12/11/1999", jorf: "JORFTEXT000000397436"}
+    - {depuis: "2000-12-01", taux: 0.01, seuil_mensuel: 1220.3, texte: "Décret 2000-1154 du 29/11/2000", jorf: "JORFTEXT000000587481"}
+    - {depuis: "2001-05-01", taux: 0.01, seuil_mensuel: 1234.99, texte: "Décret 2001-370 du 25/04/2001", jorf: "JORFTEXT000000210853"}
+    - {depuis: "2001-11-01", taux: 0.01, seuil_mensuel: 1243.62, texte: "Décret 2001-895 du 26/09/2001", jorf: "JORFTEXT000000773694"}
+    - {depuis: "2002-01-01", taux: 0.01, seuil_mensuel: 1243.62, texte: "Décret 2001-895 du 26/09/2001", jorf: "JORFTEXT000000773694"}
+    - {depuis: "2002-03-01", taux: 0.01, seuil_mensuel: 1251.08, texte: "Décret 2002-203 du 14/02/2002", jorf: "JORFTEXT000000226175"}
+    - {depuis: "2002-12-01", taux: 0.01, seuil_mensuel: 1259.83, texte: "Décret 2002-1295 du 24/10/2002", ancrage: "l'index le date du 2002-10-26 (JORFTEXT000000227909), non du 2002-12-26"}
+    - {depuis: "2004-01-01", taux: 0.01, seuil_mensuel: 1266.13, texte: "Décret 2003-1170 du 08/12/2003", jorf: "JORFTEXT000000431431"}
+    - {depuis: "2005-02-01", taux: 0.01, seuil_mensuel: 1272.47, texte: "Décret 2005-31 du 15/01/2005", jorf: "JORFTEXT000000445092"}
+    - {depuis: "2005-07-01", taux: 0.01, seuil_mensuel: 1278.83, texte: "Décret 2005-726 du 29/06/2005", jorf: "JORFTEXT000000810890"}
+    - {depuis: "2005-11-01", taux: 0.01, seuil_mensuel: 1289.06, texte: "Décret 2005-1301 du 20/10/2005", jorf: "JORFTEXT000000240944"}
+    - {depuis: "2006-07-01", taux: 0.01, seuil_mensuel: 1295.5, texte: "Décret 2006-759 du 29/06/2006", jorf: "JORFTEXT000000422923"}
+    - {depuis: "2006-11-01", taux: 0.01, seuil_mensuel: 1300, texte: "Décret 2006-1283 du 19/10/2006", jorf: "JORFTEXT000000615828"}
+    - {depuis: "2007-02-01", taux: 0.01, seuil_mensuel: 1310.4, texte: "Décret 2007-96 du 25/01/2007", jorf: "JORFTEXT000000646481"}
+    - {depuis: "2008-03-01", taux: 0.01, seuil_mensuel: 1316.95, texte: "Décret 2008-198 du 27/02/2008", jorf: "JORFTEXT000018194389"}
+    - {depuis: "2008-07-01", taux: 0.01, seuil_mensuel: 1321.51, texte: "Décret 2008-622 du 27/06/2008", jorf: "JORFTEXT000019108374"}
+    - {depuis: "2008-10-01", taux: 0.01, seuil_mensuel: 1325.48, texte: "Décret 2008-1016 du 02/10/2008", jorf: "JORFTEXT000019564067"}
+    - {depuis: "2009-07-01", taux: 0.01, seuil_mensuel: 1341.29, texte: "Décret 2009-824 du 03/07/2009", jorf: "JORFTEXT000020815910"}
+    - {depuis: "2009-10-01", taux: 0.01, seuil_mensuel: 1345.31, texte: "Décret 2009-1158 du 30/09/2009", ancrage: "l'index le date du 2009-10-01 (JORFTEXT000021089930), non du 2009-10-10"}
+    - {depuis: "2010-07-01", taux: 0.01, seuil_mensuel: 1352.04, texte: "Décret 2010-761 du 07/07/2010", jorf: "JORFTEXT000022447551"}
+    - {depuis: "2011-01-01", taux: 0.01, seuil_mensuel: 1365.93, texte: "Décret 2011-51 du 13/01/2011", jorf: "JORFTEXT000023417934"}
+    - {depuis: "2012-01-01", taux: 0.01, seuil_mensuel: 1398.34, texte: "Décret 2012-37 du 11/01/2012", jorf: "JORFTEXT000025135486"}
+    - {depuis: "2012-07-01", taux: 0.01, seuil_mensuel: 1426.12, texte: "Décret 2012-853 du 5/07/2012", ancrage: "l'index le date du 2012-07-06 (JORFTEXT000026149212), non du 2013-07-06"}
+    - {depuis: "2013-01-01", taux: 0.01, seuil_mensuel: 1430.76, texte: "Décret 2013-33 du 10/01/2013", jorf: "JORFTEXT000026924624"}
+    - {depuis: "2016-07-01", taux: 0.01, seuil_mensuel: 1447.98, texte: "Décret 2016-670 du 25/05/2016", jorf: "JORFTEXT000032584286"}
+    - {depuis: "2017-02-01", taux: 0.01, seuil_mensuel: 1439.35, texte: "Décret 2016-670 du 25/05/2016", jorf: "JORFTEXT000032584286"}
+    - {depuis: "2018-01-01", taux: 0, seuil_mensuel: 0, texte: "Loi 2017-1837 du 30/12/2017 (LF pour 2018)", jorf: "JORFTEXT000036342240"}
 
 independants:
   maladie_artisans_commercants:
-    - {depuis: "1970-04-01", tout_revenu: 0.145, sous_plafond: 0, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Arrêté du 26/03/1971"}
-    - {depuis: "1973-04-01", tout_revenu: 0.107, sous_plafond: 0, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Arrêté du 29/12/1972"}
-    - {depuis: "1974-10-01", tout_revenu: 0, sous_plafond: 0.0625, sous_trois_plafonds: 0, sous_quatre_plafonds: 0.025, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Décret 74-810 du 28/09/1974"}
-    - {depuis: "1975-04-01", tout_revenu: 0, sous_plafond: 0.067, sous_trois_plafonds: 0, sous_quatre_plafonds: 0.025, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Décret 75-85 du 11/01/1975"}
-    - {depuis: "1975-10-01", tout_revenu: 0, sous_plafond: 0.069, sous_trois_plafonds: 0, sous_quatre_plafonds: 0.025, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Décret 75-710 du 07/08/1975"}
-    - {depuis: "1976-10-01", tout_revenu: 0, sous_plafond: 0.0735, sous_trois_plafonds: 0, sous_quatre_plafonds: 0.035, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Décret 76-641 du 15/07/1976"}
-    - {depuis: "1977-10-01", tout_revenu: 0, sous_plafond: 0.0765, sous_trois_plafonds: 0, sous_quatre_plafonds: 0.04, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Décret 77-857 du 26/07/1977"}
-    - {depuis: "1979-04-01", tout_revenu: 0, sous_plafond: 0.0465, sous_trois_plafonds: 0, sous_quatre_plafonds: 0.07, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Décret 79-203 du 12/03/1979"}
-    - {depuis: "1981-10-01", tout_revenu: 0, sous_plafond: 0.037, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.0795, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Décret 81-813 du 27/08/1981"}
-    - {depuis: "1984-10-01", tout_revenu: 0, sous_plafond: 0.031, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.0845, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Décret 84-817 du 03/09/1984, art. 1"}
-    - {depuis: "1987-07-01", tout_revenu: 0, sous_plafond: 0.031, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.0865, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Décret 87-483 du 01/07/1987"}
-    - {depuis: "1989-04-01", tout_revenu: 0, sous_plafond: 0.031, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.0885, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Décret 89-143 du 03/03/1989, art. 3"}
-    - {depuis: "1991-10-01", tout_revenu: 0, sous_plafond: 0.031, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.0915, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Décret 91-745 du 31/07/1991, art. 1 : à l'échéance du 1er octobre 1991 (JORFTEXT000000571495)"}
-    - {depuis: "1992-04-01", tout_revenu: 0, sous_plafond: 0.031, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.0945, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Décret 92-295 du 30/03/1992, art. 1"}
-    - {depuis: "1992-10-01", tout_revenu: 0, sous_plafond: 0.031, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.0975, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Décret 92-295 du 30/03/1992, art. 1 : à l'échéance du 1er octobre 1992 (JORFARTI000001372694)"}
-    - {depuis: "1995-04-01", tout_revenu: 0, sous_plafond: 0.031, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.098, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Décret 95-337 du 30/03/1995, art. 1"}
-    - {depuis: "1995-07-01", tout_revenu: 0, sous_plafond: 0.031, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.098, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0.0025, texte: "Décret 95-556 du 06/05/1995"}
-    - {depuis: "1996-01-01", tout_revenu: 0, sous_plafond: 0.031, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.098, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0.005, texte: "Décret 95-556 du 06/05/1995, art. 1 et 5 : 0,25 % pour la seule année 1995 (JORFARTI000001398418)"}
-    - {depuis: "1997-01-01", tout_revenu: 0, sous_plafond: 0.024, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.09, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0.005, texte: "Décret 96-1167 du 26/12/1996, art. 3"}
-    - {depuis: "1998-01-01", tout_revenu: 0, sous_plafond: 0.006, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.053, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0.005, texte: "Décret 97-1252 du 29/12/1997, art. 3"}
-    - {depuis: "2001-01-01", tout_revenu: 0, sous_plafond: 0.006, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.064, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Décret 2000-1285 du 26/12/2000, art. 1"}
-    - {depuis: "2007-01-01", tout_revenu: 0, sous_plafond: 0.006, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.066, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, texte: "Décret 2007-50 du 11/01/2007, art. 1"}
-    - {depuis: "2013-01-01", tout_revenu: 0.065, sous_plafond: 0, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0.007, ij_artisans_sous_cinq_plafonds: 0, texte: "Décret 2012-1551 du 28/12/2012, art. 2 : CSS, D. 612-4 (LEGIARTI000026885410) ; D. 612-9 (LEGIARTI000025629824)"}
-    - {depuis: "2017-01-01", tout_revenu: 0.065, sous_plafond: 0, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0.007, ij_artisans_sous_cinq_plafonds: 0, progressif_jusqu_a: 0.7, paliers: [[0, 0.03], [0.7, 0.065]], texte: "Décret 2017-301 du 8/03/2017, art. 3 et 5 : CSS, D. 612-4 et D. 612-5 (LEGIARTI000034163552, LEGIARTI000034163561)"}
-    - {depuis: "2018-01-01", tout_revenu: 0, sous_plafond: 0, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, paliers: [[0, 0.0085], [0.4, 0.0401818], [1.1, 0.072], [5, 0.072], [5, 0.065]], texte: "Décret 2017-1894 du 30/12/2017, art. 5 et 8 : CSS, D. 621-1 et D. 621-2 (LEGIARTI000036469673, LEGIARTI000036469691)"}
-    - {depuis: "2020-05-25", tout_revenu: 0, sous_plafond: 0, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.072, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0.065, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, progressif_jusqu_a: 1.1, paliers: [[0, 0.0085], [0.4, 0.0401818], [1.1, 0.072]], texte: "Décret 2020-621 du 22/05/2020, art. 1 (II, 8°) et 5 : CSS, D. 621-1 (LEGIARTI000041966835)"}
-    - {depuis: "2022-01-01", tout_revenu: 0, sous_plafond: 0, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.072, au_dela_de_trois_plafonds: 0, au_dela_de_cinq_plafonds: 0.065, ij_sous_cinq_plafonds: 0, ij_artisans_sous_cinq_plafonds: 0, progressif_jusqu_a: 1.1, paliers: [[0.4, 0.005], [0.6, 0.045], [1.1, 0.072]], texte: "Décret 2022-1529 du 7/12/2022, art. 4 : CSS, D. 621-1 et D. 621-2 (LEGIARTI000046714760, LEGIARTI000046714747)"}
-    - {depuis: "2025-01-01", tout_revenu: 0, sous_plafond: 0, sous_trois_plafonds: 0.085, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0.065, au_dela_de_cinq_plafonds: 0, ij_sous_cinq_plafonds: 0.005, ij_artisans_sous_cinq_plafonds: 0, progressif_jusqu_a: 3, paliers: [[0.2, 0], [0.4, 0.015], [0.6, 0.04], [1.1, 0.065], [2, 0.077], [3, 0.085]], texte: "Décret 2024-688 du 5/07/2024, art. 6 : CSS, D. 621-1, D. 621-2 et D. 621-3 (LEGIARTI000049904610, LEGIARTI000049904592, LEGIARTI000049904537)"}
+    - {depuis: "1970-04-01", tout_revenu: 0.145, texte: "Arrêté du 26/03/1971", ancrage: "absente de l'index à cette date"}
+    - {depuis: "1973-04-01", tout_revenu: 0.107, texte: "Arrêté du 29/12/1972", ancrage: "absente de l'index à cette date"}
+    - {depuis: "1974-10-01", sous_plafond: 0.0625, sous_quatre_plafonds: 0.025, texte: "Décret 74-810 du 28/09/1974", jorf: "JORFTEXT000000509757"}
+    - {depuis: "1975-04-01", sous_plafond: 0.067, sous_quatre_plafonds: 0.025, texte: "Décret 75-85 du 11/01/1975", jorf: "JORFTEXT000000689438"}
+    - {depuis: "1975-10-01", sous_plafond: 0.069, sous_quatre_plafonds: 0.025, texte: "Décret 75-710 du 07/08/1975", jorf: "JORFTEXT000000518772"}
+    - {depuis: "1976-10-01", sous_plafond: 0.0735, sous_quatre_plafonds: 0.035, texte: "Décret 76-641 du 15/07/1976", jorf: "JORFTEXT000000507288"}
+    - {depuis: "1977-10-01", sous_plafond: 0.0765, sous_quatre_plafonds: 0.04, texte: "Décret 77-857 du 26/07/1977", jorf: "JORFTEXT000000864145"}
+    - {depuis: "1979-04-01", sous_plafond: 0.0465, sous_quatre_plafonds: 0.07, texte: "Décret 79-203 du 12/03/1979", jorf: "JORFTEXT000000874409"}
+    - {depuis: "1981-10-01", sous_plafond: 0.037, sous_cinq_plafonds: 0.0795, texte: "Décret 81-813 du 27/08/1981", jorf: "JORFTEXT000000519483"}
+    - {depuis: "1984-10-01", sous_plafond: 0.031, sous_cinq_plafonds: 0.0845, texte: "Décret 84-817 du 03/09/1984, art. 1", jorf: "JORFTEXT000000873004"}
+    - {depuis: "1987-07-01", sous_plafond: 0.031, sous_cinq_plafonds: 0.0865, texte: "Décret 87-483 du 01/07/1987", jorf: "JORFTEXT000000700929"}
+    - {depuis: "1989-04-01", sous_plafond: 0.031, sous_cinq_plafonds: 0.0885, texte: "Décret 89-143 du 03/03/1989, art. 3", jorf: "JORFTEXT000000881840"}
+    - {depuis: "1991-10-01", sous_plafond: 0.031, sous_cinq_plafonds: 0.0915, texte: "Décret 91-745 du 31/07/1991, art. 1 : à l'échéance du 1er octobre 1991 (JORFTEXT000000571495)", jorf: "JORFTEXT000000571495"}
+    - {depuis: "1992-04-01", sous_plafond: 0.031, sous_cinq_plafonds: 0.0945, texte: "Décret 92-295 du 30/03/1992, art. 1", jorf: "JORFTEXT000000722788"}
+    - {depuis: "1992-10-01", sous_plafond: 0.031, sous_cinq_plafonds: 0.0975, texte: "Décret 92-295 du 30/03/1992, art. 1 : à l'échéance du 1er octobre 1992 (JORFARTI000001372694)", jorf: "JORFARTI000001372694"}
+    - {depuis: "1995-04-01", sous_plafond: 0.031, sous_cinq_plafonds: 0.098, texte: "Décret 95-337 du 30/03/1995, art. 1", jorf: "JORFTEXT000000553219"}
+    - {depuis: "1995-07-01", sous_plafond: 0.031, sous_cinq_plafonds: 0.098, ij_artisans_sous_cinq_plafonds: 0.0025, texte: "Décret 95-556 du 06/05/1995", jorf: "JORFTEXT000000187184"}
+    - {depuis: "1996-01-01", sous_plafond: 0.031, sous_cinq_plafonds: 0.098, ij_artisans_sous_cinq_plafonds: 0.005, texte: "Décret 95-556 du 06/05/1995, art. 1 et 5 : 0,25 % pour la seule année 1995 (JORFARTI000001398418)", jorf: "JORFARTI000001398418"}
+    - {depuis: "1997-01-01", sous_plafond: 0.024, sous_cinq_plafonds: 0.09, ij_artisans_sous_cinq_plafonds: 0.005, texte: "Décret 96-1167 du 26/12/1996, art. 3", jorf: "JORFTEXT000000197223"}
+    - {depuis: "1998-01-01", sous_plafond: 0.006, sous_cinq_plafonds: 0.053, ij_artisans_sous_cinq_plafonds: 0.005, texte: "Décret 97-1252 du 29/12/1997, art. 3", jorf: "JORFTEXT000000753406"}
+    - {depuis: "2001-01-01", sous_plafond: 0.006, sous_cinq_plafonds: 0.064, texte: "Décret 2000-1285 du 26/12/2000, art. 1", jorf: "JORFTEXT000000219610"}
+    - {depuis: "2007-01-01", sous_plafond: 0.006, sous_cinq_plafonds: 0.066, texte: "Décret 2007-50 du 11/01/2007, art. 1", jorf: "JORFTEXT000000427775"}
+    - {depuis: "2013-01-01", tout_revenu: 0.065, ij_sous_cinq_plafonds: 0.007, texte: "Décret 2012-1551 du 28/12/2012, art. 2 : CSS, D. 612-4 (LEGIARTI000026885410) ; D. 612-9 (LEGIARTI000025629824)", jorf: "JORFTEXT000026864962"}
+    - {depuis: "2017-01-01", tout_revenu: 0.065, ij_sous_cinq_plafonds: 0.007, progressif_jusqu_a: 0.7, paliers: [[0, 0.03], [0.7, 0.065]], texte: "Décret 2017-301 du 8/03/2017, art. 3 et 5 : CSS, D. 612-4 et D. 612-5 (LEGIARTI000034163552, LEGIARTI000034163561)", jorf: "JORFTEXT000034159956"}
+    - {depuis: "2018-01-01", paliers: [[0, 0.0085], [0.4, 0.0401818], [1.1, 0.072], [5, 0.072], [5, 0.065]], texte: "Décret 2017-1894 du 30/12/2017, art. 5 et 8 : CSS, D. 621-1 et D. 621-2 (LEGIARTI000036469673, LEGIARTI000036469691)", jorf: "JORFTEXT000036342439"}
+    - {depuis: "2020-05-25", sous_cinq_plafonds: 0.072, au_dela_de_cinq_plafonds: 0.065, progressif_jusqu_a: 1.1, paliers: [[0, 0.0085], [0.4, 0.0401818], [1.1, 0.072]], texte: "Décret 2020-621 du 22/05/2020, art. 1 (II, 8°) et 5 : CSS, D. 621-1 (LEGIARTI000041966835)", jorf: "JORFTEXT000041904619"}
+    - {depuis: "2022-01-01", sous_cinq_plafonds: 0.072, au_dela_de_cinq_plafonds: 0.065, progressif_jusqu_a: 1.1, paliers: [[0.4, 0.005], [0.6, 0.045], [1.1, 0.072]], texte: "Décret 2022-1529 du 7/12/2022, art. 4 : CSS, D. 621-1 et D. 621-2 (LEGIARTI000046714760, LEGIARTI000046714747)", jorf: "JORFTEXT000046710841"}
+    - {depuis: "2025-01-01", sous_trois_plafonds: 0.085, au_dela_de_trois_plafonds: 0.065, ij_sous_cinq_plafonds: 0.005, progressif_jusqu_a: 3, paliers: [[0.2, 0], [0.4, 0.015], [0.6, 0.04], [1.1, 0.065], [2, 0.077], [3, 0.085]], texte: "Décret 2024-688 du 5/07/2024, art. 6 : CSS, D. 621-1, D. 621-2 et D. 621-3 (LEGIARTI000049904610, LEGIARTI000049904592, LEGIARTI000049904537)", jorf: "JORFTEXT000049888566"}
   maladie_professions_liberales:
-    - {depuis: "1970-04-01", tout_revenu: 0.145, sous_plafond: 0, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Arrêté du 26/03/1971"}
-    - {depuis: "1973-04-01", tout_revenu: 0.107, sous_plafond: 0, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Arrêté du 29/12/1972"}
-    - {depuis: "1974-10-01", tout_revenu: 0, sous_plafond: 0.0625, sous_trois_plafonds: 0, sous_quatre_plafonds: 0.025, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 74-810 du 28/09/1974"}
-    - {depuis: "1975-04-01", tout_revenu: 0, sous_plafond: 0.067, sous_trois_plafonds: 0, sous_quatre_plafonds: 0.025, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 75-85 du 11/01/1975"}
-    - {depuis: "1975-10-01", tout_revenu: 0, sous_plafond: 0.069, sous_trois_plafonds: 0, sous_quatre_plafonds: 0.025, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 75-710 du 7/08/1975"}
-    - {depuis: "1976-10-01", tout_revenu: 0, sous_plafond: 0.0735, sous_trois_plafonds: 0, sous_quatre_plafonds: 0.035, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 76-641 du 15/07/1976"}
-    - {depuis: "1977-10-01", tout_revenu: 0, sous_plafond: 0.0765, sous_trois_plafonds: 0, sous_quatre_plafonds: 0.04, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 77-857 du 26/07/1977"}
-    - {depuis: "1979-04-01", tout_revenu: 0, sous_plafond: 0.0465, sous_trois_plafonds: 0, sous_quatre_plafonds: 0.07, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 79-203 du 12/03/1979"}
-    - {depuis: "1981-10-01", tout_revenu: 0, sous_plafond: 0.037, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.0795, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 81-813 du 27/08/1981"}
-    - {depuis: "1984-10-01", tout_revenu: 0, sous_plafond: 0.031, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.0845, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 84-817 du 03/09/1984, art. 1 : à compter du 1er octobre 1984 (JORFTEXT000000873004)"}
-    - {depuis: "1987-07-01", tout_revenu: 0, sous_plafond: 0.031, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.0865, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 87-483 du 1/07/1987"}
-    - {depuis: "1989-04-01", tout_revenu: 0, sous_plafond: 0.031, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.0885, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 89-143 du 3/03/1989 - art. 3"}
-    - {depuis: "1991-10-01", tout_revenu: 0, sous_plafond: 0.031, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.0915, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 91-745 du 31/07/1991, art. 1 : à l'échéance du 1er octobre 1991 (JORFTEXT000000571495)"}
-    - {depuis: "1992-04-01", tout_revenu: 0, sous_plafond: 0.031, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.0945, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 92-295 du 30/03/1992 - art. 1"}
-    - {depuis: "1992-10-01", tout_revenu: 0, sous_plafond: 0.031, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.0975, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 92-295 du 30/03/1992, art. 1 : à l'échéance du 1er octobre 1992 (JORFARTI000001372694)"}
-    - {depuis: "1995-04-01", tout_revenu: 0, sous_plafond: 0.031, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.098, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 95-337 du 30/03/1995 - art. 1"}
-    - {depuis: "1997-01-01", tout_revenu: 0, sous_plafond: 0.024, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.09, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 96-1167 du 26/12/1996 - art. 3"}
-    - {depuis: "1998-01-01", tout_revenu: 0, sous_plafond: 0.006, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.053, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 97-1252 du 29/121997 - art. 3"}
-    - {depuis: "2001-01-01", tout_revenu: 0, sous_plafond: 0.006, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0.059, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 2000-1285 du 26/12/2000 - art. 1"}
-    - {depuis: "2013-01-01", tout_revenu: 0.065, sous_plafond: 0, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, texte: "Décret 2012-1551 du 28/12/2012 - art. 2"}
-    - {depuis: "2017-01-01", tout_revenu: 0.065, sous_plafond: 0, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, progressif_jusqu_a: 0.7, paliers: [[0, 0.03], [0.7, 0.065]], texte: "Décret 2017-301 du 8/03/2017, art. 3 et 5 : CSS, D. 612-4 et D. 612-5 (LEGIARTI000034163552, LEGIARTI000034163561)"}
-    - {depuis: "2018-01-01", tout_revenu: 0.065, sous_plafond: 0, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0, progressif_jusqu_a: 1.1, paliers: [[0, 0.015], [1.1, 0.065]], texte: "Décret 2017-1894 du 30/12/2017, art. 5 et 8 : CSS, D. 621-3 (LEGIARTI000036469693)"}
-    - {depuis: "2021-01-01", tout_revenu: 0.065, sous_plafond: 0, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0.0015, progressif_jusqu_a: 1.1, paliers: [[0, 0.015], [1.1, 0.065]], texte: "Décret 2021-755 du 12/06/2021, art. 2 et 3 : 0,15 % pour la seule année 2021 ; CSS, D. 621-3 (LEGIARTI000043656764)"}
-    - {depuis: "2022-01-01", tout_revenu: 0.065, sous_plafond: 0, sous_trois_plafonds: 0, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0, ij_sous_trois_plafonds: 0.003, progressif_jusqu_a: 1.1, paliers: [[0.4, 0], [0.6, 0.04], [1.1, 0.065]], texte: "Décret 2022-1529 du 7/12/2022, art. 4 : CSS, D. 621-3 (LEGIARTI000046714732)"}
-    - {depuis: "2025-01-01", tout_revenu: 0, sous_plafond: 0, sous_trois_plafonds: 0.085, sous_quatre_plafonds: 0, sous_cinq_plafonds: 0, au_dela_de_trois_plafonds: 0.065, ij_sous_trois_plafonds: 0.003, progressif_jusqu_a: 3, paliers: [[0.2, 0], [0.4, 0.015], [0.6, 0.04], [1.1, 0.065], [2, 0.077], [3, 0.085]], texte: "Décret 2024-688 du 5/07/2024, art. 6 : CSS, D. 621-1, D. 621-2 et D. 621-3 (LEGIARTI000049904610, LEGIARTI000049904592, LEGIARTI000049904537)"}
+    - {depuis: "1970-04-01", tout_revenu: 0.145, texte: "Arrêté du 26/03/1971", ancrage: "absente de l'index à cette date"}
+    - {depuis: "1973-04-01", tout_revenu: 0.107, texte: "Arrêté du 29/12/1972", ancrage: "absente de l'index à cette date"}
+    - {depuis: "1974-10-01", sous_plafond: 0.0625, sous_quatre_plafonds: 0.025, texte: "Décret 74-810 du 28/09/1974", jorf: "JORFTEXT000000509757"}
+    - {depuis: "1975-04-01", sous_plafond: 0.067, sous_quatre_plafonds: 0.025, texte: "Décret 75-85 du 11/01/1975", jorf: "JORFTEXT000000689438"}
+    - {depuis: "1975-10-01", sous_plafond: 0.069, sous_quatre_plafonds: 0.025, texte: "Décret 75-710 du 7/08/1975", jorf: "JORFTEXT000000518772"}
+    - {depuis: "1976-10-01", sous_plafond: 0.0735, sous_quatre_plafonds: 0.035, texte: "Décret 76-641 du 15/07/1976", jorf: "JORFTEXT000000507288"}
+    - {depuis: "1977-10-01", sous_plafond: 0.0765, sous_quatre_plafonds: 0.04, texte: "Décret 77-857 du 26/07/1977", jorf: "JORFTEXT000000864145"}
+    - {depuis: "1979-04-01", sous_plafond: 0.0465, sous_quatre_plafonds: 0.07, texte: "Décret 79-203 du 12/03/1979", jorf: "JORFTEXT000000874409"}
+    - {depuis: "1981-10-01", sous_plafond: 0.037, sous_cinq_plafonds: 0.0795, texte: "Décret 81-813 du 27/08/1981", jorf: "JORFTEXT000000519483"}
+    - {depuis: "1984-10-01", sous_plafond: 0.031, sous_cinq_plafonds: 0.0845, texte: "Décret 84-817 du 03/09/1984, art. 1 : à compter du 1er octobre 1984 (JORFTEXT000000873004)", jorf: "JORFTEXT000000873004"}
+    - {depuis: "1987-07-01", sous_plafond: 0.031, sous_cinq_plafonds: 0.0865, texte: "Décret 87-483 du 1/07/1987", jorf: "JORFTEXT000000700929"}
+    - {depuis: "1989-04-01", sous_plafond: 0.031, sous_cinq_plafonds: 0.0885, texte: "Décret 89-143 du 3/03/1989 - art. 3", jorf: "JORFTEXT000000881840"}
+    - {depuis: "1991-10-01", sous_plafond: 0.031, sous_cinq_plafonds: 0.0915, texte: "Décret 91-745 du 31/07/1991, art. 1 : à l'échéance du 1er octobre 1991 (JORFTEXT000000571495)", jorf: "JORFTEXT000000571495"}
+    - {depuis: "1992-04-01", sous_plafond: 0.031, sous_cinq_plafonds: 0.0945, texte: "Décret 92-295 du 30/03/1992 - art. 1", jorf: "JORFTEXT000000722788"}
+    - {depuis: "1992-10-01", sous_plafond: 0.031, sous_cinq_plafonds: 0.0975, texte: "Décret 92-295 du 30/03/1992, art. 1 : à l'échéance du 1er octobre 1992 (JORFARTI000001372694)", jorf: "JORFARTI000001372694"}
+    - {depuis: "1995-04-01", sous_plafond: 0.031, sous_cinq_plafonds: 0.098, texte: "Décret 95-337 du 30/03/1995 - art. 1", jorf: "JORFTEXT000000553219"}
+    - {depuis: "1997-01-01", sous_plafond: 0.024, sous_cinq_plafonds: 0.09, texte: "Décret 96-1167 du 26/12/1996 - art. 3", jorf: "JORFTEXT000000197223"}
+    - {depuis: "1998-01-01", sous_plafond: 0.006, sous_cinq_plafonds: 0.053, texte: "Décret 97-1252 du 29/121997 - art. 3", jorf: "JORFTEXT000000753406"}
+    - {depuis: "2001-01-01", sous_plafond: 0.006, sous_cinq_plafonds: 0.059, texte: "Décret 2000-1285 du 26/12/2000 - art. 1", jorf: "JORFTEXT000000219610"}
+    - {depuis: "2013-01-01", tout_revenu: 0.065, texte: "Décret 2012-1551 du 28/12/2012 - art. 2", jorf: "JORFTEXT000026864962"}
+    - {depuis: "2017-01-01", tout_revenu: 0.065, progressif_jusqu_a: 0.7, paliers: [[0, 0.03], [0.7, 0.065]], texte: "Décret 2017-301 du 8/03/2017, art. 3 et 5 : CSS, D. 612-4 et D. 612-5 (LEGIARTI000034163552, LEGIARTI000034163561)", jorf: "JORFTEXT000034159956"}
+    - {depuis: "2018-01-01", tout_revenu: 0.065, progressif_jusqu_a: 1.1, paliers: [[0, 0.015], [1.1, 0.065]], texte: "Décret 2017-1894 du 30/12/2017, art. 5 et 8 : CSS, D. 621-3 (LEGIARTI000036469693)", jorf: "JORFTEXT000036342439"}
+    - {depuis: "2021-01-01", tout_revenu: 0.065, ij_sous_trois_plafonds: 0.0015, progressif_jusqu_a: 1.1, paliers: [[0, 0.015], [1.1, 0.065]], texte: "Décret 2021-755 du 12/06/2021, art. 2 et 3 : 0,15 % pour la seule année 2021 ; CSS, D. 621-3 (LEGIARTI000043656764)", jorf: "JORFTEXT000043648366"}
+    - {depuis: "2022-01-01", tout_revenu: 0.065, ij_sous_trois_plafonds: 0.003, progressif_jusqu_a: 1.1, paliers: [[0.4, 0], [0.6, 0.04], [1.1, 0.065]], texte: "Décret 2022-1529 du 7/12/2022, art. 4 : CSS, D. 621-3 (LEGIARTI000046714732)", jorf: "JORFTEXT000046710841"}
+    - {depuis: "2025-01-01", sous_trois_plafonds: 0.085, au_dela_de_trois_plafonds: 0.065, ij_sous_trois_plafonds: 0.003, progressif_jusqu_a: 3, paliers: [[0.2, 0], [0.4, 0.015], [0.6, 0.04], [1.1, 0.065], [2, 0.077], [3, 0.085]], texte: "Décret 2024-688 du 5/07/2024, art. 6 : CSS, D. 621-1, D. 621-2 et D. 621-3 (LEGIARTI000049904610, LEGIARTI000049904592, LEGIARTI000049904537)", jorf: "JORFTEXT000049888566"}
   famille:
-    - {depuis: "1974-04-01", tout_revenu: 0, sous_plafond: 0, sous_seuil: 0.0325, du_seuil_au_plafond: 0.09, seuil_euros: 1524.49, texte: "Décret 74-313 du 29/03/1974"}
-    - {depuis: "1982-04-01", tout_revenu: 0, sous_plafond: 0, sous_seuil: 0.055, du_seuil_au_plafond: 0.09, seuil_euros: 1524.49, texte: "Décret 82-292 du 30/03/1982"}
-    - {depuis: "1983-01-01", tout_revenu: 0, sous_plafond: 0.09, sous_seuil: 0, du_seuil_au_plafond: 0, seuil_euros: 0, texte: "Décret 82-1117 du 27/12/1982"}
-    - {depuis: "1989-01-01", tout_revenu: 0.035, sous_plafond: 0.045, sous_seuil: 0, du_seuil_au_plafond: 0, seuil_euros: 0, texte: "Décret 89-48 du 27/01/1989"}
-    - {depuis: "1990-01-01", tout_revenu: 0.049, sous_plafond: 0.021, sous_seuil: 0, du_seuil_au_plafond: 0, seuil_euros: 0, texte: "Décret 90-288 du 30/03/1990"}
-    - {depuis: "1991-02-01", tout_revenu: 0.049, sous_plafond: 0.005, sous_seuil: 0, du_seuil_au_plafond: 0, seuil_euros: 0, texte: "Décret 91-91 du 23/01/1991"}
-    - {depuis: "1998-01-01", tout_revenu: 0.054, sous_plafond: 0, sous_seuil: 0, du_seuil_au_plafond: 0, seuil_euros: 0, texte: "Loi 97-1164 du 19/12/1997"}
-    - {depuis: "2014-01-01", tout_revenu: 0.0525, sous_plafond: 0, sous_seuil: 0, du_seuil_au_plafond: 0, seuil_euros: 0, texte: "Décret 2013-1290 du 27/12/2013"}
-    - {depuis: "2015-01-01", tout_revenu: 0.0525, sous_plafond: 0, sous_seuil: 0, du_seuil_au_plafond: 0, seuil_euros: 0, progressif_jusqu_a: 1.4, paliers: [[1.1, 0.0215], [1.4, 0.0525]], texte: "Décret 2014-1531 du 17/12/2014, art. 1"}
-    - {depuis: "2018-01-01", tout_revenu: 0.031, sous_plafond: 0, sous_seuil: 0, du_seuil_au_plafond: 0, seuil_euros: 0, progressif_jusqu_a: 1.4, paliers: [[1.1, 0], [1.4, 0.031]], texte: "Décret 2017-1894 du 30/12/2017, art. 4"}
+    - {depuis: "1974-04-01", sous_seuil: 0.0325, du_seuil_au_plafond: 0.09, seuil_euros: 1524.49, texte: "Décret 74-313 du 29/03/1974", ancrage: "absente de l'index"}
+    - {depuis: "1982-04-01", sous_seuil: 0.055, du_seuil_au_plafond: 0.09, seuil_euros: 1524.49, texte: "Décret 82-292 du 30/03/1982", jorf: "JORFTEXT000000701319"}
+    - {depuis: "1983-01-01", sous_plafond: 0.09, texte: "Décret 82-1117 du 27/12/1982", jorf: "JORFTEXT000000703768"}
+    - {depuis: "1989-01-01", tout_revenu: 0.035, sous_plafond: 0.045, texte: "Décret 89-48 du 27/01/1989", jorf: "JORFTEXT000000332517"}
+    - {depuis: "1990-01-01", tout_revenu: 0.049, sous_plafond: 0.021, texte: "Décret 90-288 du 30/03/1990", jorf: "JORFTEXT000000526049"}
+    - {depuis: "1991-02-01", tout_revenu: 0.049, sous_plafond: 0.005, texte: "Décret 91-91 du 23/01/1991", jorf: "JORFTEXT000000718256"}
+    - {depuis: "1998-01-01", tout_revenu: 0.054, texte: "Loi 97-1164 du 19/12/1997", jorf: "JORFTEXT000000569121"}
+    - {depuis: "2014-01-01", tout_revenu: 0.0525, texte: "Décret 2013-1290 du 27/12/2013", jorf: "JORFTEXT000028408271"}
+    - {depuis: "2015-01-01", tout_revenu: 0.0525, progressif_jusqu_a: 1.4, paliers: [[1.1, 0.0215], [1.4, 0.0525]], texte: "Décret 2014-1531 du 17/12/2014, art. 1", ancrage: "l'index le date du 2014-12-19 (JORFTEXT000029920824), non du 2013-12-31"}
+    - {depuis: "2018-01-01", tout_revenu: 0.031, progressif_jusqu_a: 1.4, paliers: [[1.1, 0], [1.4, 0.031]], texte: "Décret 2017-1894 du 30/12/2017, art. 4", jorf: "JORFTEXT000036342439"}
   assiette_csg:
-    - {depuis: "1991-02-01", cotisations_ajoutees: 1, texte: "Loi 90-1168 du 29/12/1990, art. 129 (LF pour 1991) : les cotisations personnelles de sécurité sociale sont ajoutées au bénéfice (JORFARTI000002299239) ; CSS, L. 136-3"}
-    - {depuis: "2025-01-01", cotisations_ajoutees: 0, texte: "Loi 2023-1250 du 26/12/2023, art. 18 VII (LFSS pour 2024) : CSS, L. 136-3 (LEGIARTI000048683641)"}
+    - {depuis: "1991-02-01", cotisations_ajoutees: 1, texte: "Loi 90-1168 du 29/12/1990, art. 129 (LF pour 1991) : les cotisations personnelles de sécurité sociale sont ajoutées au bénéfice (JORFARTI000002299239) ; CSS, L. 136-3", jorf: "JORFARTI000002299239"}
+    - {depuis: "2025-01-01", cotisations_ajoutees: 0, texte: "Loi 2023-1250 du 26/12/2023, art. 18 VII (LFSS pour 2024) : CSS, L. 136-3 (LEGIARTI000048683641)", jorf: "JORFTEXT000048668665"}

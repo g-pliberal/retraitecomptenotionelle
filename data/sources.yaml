@@ -4609,9 +4609,16 @@ institutions:
           exceptionnelle de solidarité. Chaque ligne de l'IPP est une
           photographie des taux en vigueur : une cellule vide après une
           valeur dit une suppression (la maladie salariale en 2018, le
-          chômage salarié en octobre 2018). Les marches ne sont pas ancrées
-          au Journal officiel ; la référence que l'IPP cite est gardée pour
-          chacune. La maladie d'avant 1967, où ses barèmes commencent, tient
+          chômage salarié en octobre 2018). La référence que l'IPP cite est
+          gardée pour chacune, et, depuis le 10 octobre 2026, ANCRÉE au
+          Journal officiel par l'index JORF de la DILA, au numéro et à la
+          date de publication que l'IPP annonce, comme ipp_taux_cotisation :
+          159 des 223 marches de l'IPP le sont ; les autres citent un
+          accord, une circulaire, un article de code, rien, ou un texte que
+          l'index n'a pas — sauf six, dont l'index dément la date : les
+          décrets n° 93-93, 98-945, 2002-1295, 2009-1158, 2012-853 et
+          2014-1531, que l'IPP date de quelques jours, de deux mois ou d'un
+          an de travers. La maladie d'avant 1967, où ses barèmes commencent, tient
           les taux de 1967. La dernière marche de chaque série est le
           barème du site de l'année courante (test_prelevements_historiques).
           LES INDÉPENDANTS, relus le 10 octobre 2026 (étape 9, sixième
