@@ -89,7 +89,7 @@ C'est l'accueil. Descendre lentement, sans rien cliquer.
   « Votre retraite : ce que votre régime promet → de l'ordre d'un quart de
   moins, en médiane ». La première des « Vos questions », « Ma
   retraite va-t-elle baisser ? », en donne le détail : 25 % pour qui n'est
-  pas encore à la retraite, 13 % s'il place les cinq points rendus, 27 % sur
+  pas encore à la retraite, 12 % s'il place les cinq points rendus, 27 % sur
   la pension d'aujourd'hui d'un retraité, garantie vieillesse comprise.
 - Le bloc « Et vous, ça donne combien ? » en haut de page est un raccourci
   vers le simulateur : on peut y saisir une date de naissance et un statut et
@@ -177,8 +177,8 @@ net :
 | Système | Pension nette par mois | Écart |
 |---|---|---|
 | 1. Actuel | 1 295 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 1 028 € | -20,6 % |
-| 4. La proposition | 1 127 € | -13,0 % |
+| 3. Ce qui a été cotisé, deux parts | 1 027 € | -20,7 % |
+| 4. La proposition | 1 126 € | -13,1 % |
 
 À montrer avec le plancher en tête : la garantie vieillesse, 1 050 € brut
 pour une personne seule dès 65 ans. Sous la proposition, cette carrière part
@@ -193,8 +193,8 @@ l'impôt », sous les résultats, en donne la règle.
 | Système | Pension nette par mois | Écart |
 |---|---|---|
 | 1. Actuel | 2 755 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 2 366 € | -14,1 % |
-| 4. La proposition | 2 563 € | -7,0 % |
+| 3. Ce qui a été cotisé, deux parts | 2 368 € | -14,0 % |
+| 4. La proposition | 2 564 € | -6,9 % |
 
 C'est le cas qu'on attend au tournant, et il faut savoir le dire : l'État
 employeur verse pour ses fonctionnaires bien au-delà de ce qu'un employeur
@@ -215,8 +215,8 @@ septembre 2022, départ en janvier 2064 à 64 ans :
 | Système | Pension nette par mois | Écart |
 |---|---|---|
 | 1. Actuel | 2 351 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 1 554 € | -33,9 % |
-| 4. La proposition | 1 915 € | -18,5 % |
+| 3. Ce qui a été cotisé, deux parts | 1 555 € | -33,9 % |
+| 4. La proposition | 1 916 € | -18,5 % |
 
 C'est la carrière qui cotise presque entièrement après la bascule : la
 rente capitalisée y pèse le plus, et l'écart entre 3 et 4 est le plus large

@@ -530,6 +530,16 @@
 "releve_par":"salarie_prive_non_cadre",
 "sans_employeur":false
 },
+"aide_soignant":{
+"categorie_active":"active",
+"famille":"public",
+"libelle":"Aide-soignant de la fonction publique hospitalière (catégorie active)",
+"part_salariale_seule":false,
+"pension_militaire":null,
+"periodes":[{"debut":1945,"fin":2004,"regimes":["cnracl"]},{"debut":2005,"fin":null,"regimes":["cnracl","rafp"]}],
+"releve_par":null,
+"sans_employeur":false
+},
 "artisan":{
 "categorie_active":null,
 "famille":"independant",
@@ -663,7 +673,7 @@
 "fonctionnaire_etat_super_actif":{
 "categorie_active":"super_active",
 "famille":"public",
-"libelle":"Fonctionnaire de l'État, emploi de catégorie super-active (police, pénitentiaire)",
+"libelle":"Fonctionnaire de l'État, emploi de catégorie super-active (pénitentiaire)",
 "part_salariale_seule":false,
 "pension_militaire":null,
 "periodes":[{"debut":1930,"fin":1947,"regimes":["pensions_civiles_1853"]},{"debut":1948,"fin":2004,"regimes":["fonction_publique_etat"]},{"debut":2005,"fin":null,"regimes":["fonction_publique_etat","rafp"]}],
@@ -673,7 +683,7 @@
 "fonctionnaire_hospitalier_actif":{
 "categorie_active":"active",
 "famille":"public",
-"libelle":"Fonctionnaire hospitalier, emploi de catégorie active (aide-soignant)",
+"libelle":"Fonctionnaire hospitalier, emploi de catégorie active (agent de service hospitalier)",
 "part_salariale_seule":false,
 "pension_militaire":null,
 "periodes":[{"debut":1945,"fin":2004,"regimes":["cnracl"]},{"debut":2005,"fin":null,"regimes":["cnracl","rafp"]}],
@@ -876,6 +886,16 @@
 },
 "personnel_opera":{"categorie_active":null,"famille":"special","libelle":"Personnel de l'Opéra national de Paris","part_salariale_seule":false,"pension_militaire":null,"periodes":[{"debut":1930,"fin":null,"regimes":["opera_de_paris"]}],"releve_par":null,"sans_employeur":false},
 "pharmacien":{"categorie_active":null,"famille":"independant","libelle":"Pharmacien ou biologiste libéral","part_salariale_seule":false,"pension_militaire":null,"periodes":[{"debut":1949,"fin":null,"regimes":["cnavpl","cavp_complementaire"]}],"releve_par":null,"sans_employeur":true},
+"policier":{
+"categorie_active":"super_active",
+"famille":"public",
+"libelle":"Policier, services actifs de la police nationale (catégorie super-active)",
+"part_salariale_seule":false,
+"pension_militaire":null,
+"periodes":[{"debut":1930,"fin":1947,"regimes":["pensions_civiles_1853"]},{"debut":1948,"fin":2004,"regimes":["fonction_publique_etat"]},{"debut":2005,"fin":null,"regimes":["fonction_publique_etat","rafp"]}],
+"releve_par":null,
+"sans_employeur":false
+},
 "profession_liberale":{
 "categorie_active":null,
 "famille":"independant",
@@ -10902,7 +10922,7 @@ null
 "plafond_trimestres":12,
 "reduction_par_annee_entiere":false,
 "regime":"fonction_publique_etat",
-"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","militaire","militaire_officier"],
+"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","policier","militaire","militaire_officier"],
 "statuts":["militaire","militaire_officier"]
 },
 "texte":"JORFTEXT000000687436"
@@ -10926,7 +10946,7 @@ null
 "plafond_trimestres":20,
 "reduction_par_annee_entiere":true,
 "regime":"fonction_publique_etat",
-"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","militaire","militaire_officier"],
+"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","policier","militaire","militaire_officier"],
 "statuts":["militaire","militaire_officier"]
 },
 "texte":"JORFTEXT000000513976"
@@ -10950,7 +10970,7 @@ null
 "plafond_trimestres":20,
 "reduction_par_annee_entiere":true,
 "regime":"fonction_publique_etat",
-"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","militaire","militaire_officier"],
+"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","policier","militaire","militaire_officier"],
 "statuts":["militaire","militaire_officier"]
 },
 "texte":"LEGIARTI000006362695"
@@ -10974,7 +10994,7 @@ null
 "plafond_trimestres":20,
 "reduction_par_annee_entiere":true,
 "regime":"fonction_publique_etat",
-"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","militaire","militaire_officier"],
+"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","policier","militaire","militaire_officier"],
 "statuts":["militaire","militaire_officier"]
 },
 "texte":"JORFARTI000001644270"
@@ -10998,7 +11018,7 @@ null
 "plafond_trimestres":20,
 "reduction_par_annee_entiere":true,
 "regime":"fonction_publique_etat",
-"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","militaire","militaire_officier"],
+"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","policier","militaire","militaire_officier"],
 "statuts":["militaire","militaire_officier"]
 },
 "texte":"JORFARTI000023022519"
@@ -11022,7 +11042,7 @@ null
 "plafond_trimestres":20,
 "reduction_par_annee_entiere":false,
 "regime":"fonction_publique_etat",
-"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","militaire","militaire_officier"],
+"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","policier","militaire","militaire_officier"],
 "statuts":["militaire","militaire_officier"]
 },
 "texte":"JORFARTI000047445097"
@@ -11050,7 +11070,7 @@ null
 "nature":"bonification",
 "plafond_trimestres":20,
 "regime":"fonction_publique_etat",
-"statuts":["fonctionnaire_etat_super_actif"]
+"statuts":["fonctionnaire_etat_super_actif","policier"]
 },
 "texte":"LEGIARTI000006451453"
 },
@@ -11070,7 +11090,7 @@ null
 "nature":"bonification",
 "plafond_trimestres":20,
 "regime":"fonction_publique_etat",
-"statuts":["fonctionnaire_etat_super_actif"]
+"statuts":["fonctionnaire_etat_super_actif","policier"]
 },
 "texte":"LEGIARTI000023033645"
 },
@@ -11090,7 +11110,7 @@ null
 "nature":"bonification",
 "plafond_trimestres":20,
 "regime":"fonction_publique_etat",
-"statuts":["fonctionnaire_etat_super_actif"]
+"statuts":["fonctionnaire_etat_super_actif","policier"]
 },
 "texte":"LEGIARTI000047452953"
 }
@@ -11120,7 +11140,18 @@ null
 "nature":"bonification",
 "plafond_trimestres":20,
 "regime":"cnracl",
-"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif","sapeur_pompier_professionnel"],
+"services_comptes":[
+"fonctionnaire_etat",
+"fonctionnaire_etat_actif",
+"fonctionnaire_etat_super_actif",
+"policier",
+"fonctionnaire_territorial_hospitalier",
+"fonctionnaire_territorial_hospitalier_actif",
+"fonctionnaire_hospitalier_actif",
+"aide_soignant",
+"fonctionnaire_territorial_hospitalier_super_actif",
+"sapeur_pompier_professionnel"
+],
 "statuts":["sapeur_pompier_professionnel"]
 },
 "texte":"JORFTEXT000000700722"
@@ -11144,7 +11175,18 @@ null
 "nature":"bonification",
 "plafond_trimestres":20,
 "regime":"cnracl",
-"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif","sapeur_pompier_professionnel"],
+"services_comptes":[
+"fonctionnaire_etat",
+"fonctionnaire_etat_actif",
+"fonctionnaire_etat_super_actif",
+"policier",
+"fonctionnaire_territorial_hospitalier",
+"fonctionnaire_territorial_hospitalier_actif",
+"fonctionnaire_hospitalier_actif",
+"aide_soignant",
+"fonctionnaire_territorial_hospitalier_super_actif",
+"sapeur_pompier_professionnel"
+],
 "statuts":["sapeur_pompier_professionnel"]
 },
 "texte":"LEGIARTI000006400876"
@@ -11168,7 +11210,18 @@ null
 "nature":"bonification",
 "plafond_trimestres":20,
 "regime":"cnracl",
-"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif","sapeur_pompier_professionnel"],
+"services_comptes":[
+"fonctionnaire_etat",
+"fonctionnaire_etat_actif",
+"fonctionnaire_etat_super_actif",
+"policier",
+"fonctionnaire_territorial_hospitalier",
+"fonctionnaire_territorial_hospitalier_actif",
+"fonctionnaire_hospitalier_actif",
+"aide_soignant",
+"fonctionnaire_territorial_hospitalier_super_actif",
+"sapeur_pompier_professionnel"
+],
 "statuts":["sapeur_pompier_professionnel"]
 },
 "texte":"LEGIARTI000023414050"
@@ -11192,7 +11245,18 @@ null
 "nature":"bonification",
 "plafond_trimestres":20,
 "regime":"cnracl",
-"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif","sapeur_pompier_professionnel"],
+"services_comptes":[
+"fonctionnaire_etat",
+"fonctionnaire_etat_actif",
+"fonctionnaire_etat_super_actif",
+"policier",
+"fonctionnaire_territorial_hospitalier",
+"fonctionnaire_territorial_hospitalier_actif",
+"fonctionnaire_hospitalier_actif",
+"aide_soignant",
+"fonctionnaire_territorial_hospitalier_super_actif",
+"sapeur_pompier_professionnel"
+],
 "statuts":["sapeur_pompier_professionnel"]
 },
 "texte":"LEGIARTI000047633112"
@@ -11265,6 +11329,90 @@ null
 "services_requis_annees":15
 },
 "texte":"LEGIARTI000023023951"
+}
+]
+},
+"indemnite_de_feu_sapeurs_pompiers":{
+"dates_qui_decident":["liquidation.date_effet"],
+"id":"indemnite_de_feu_sapeurs_pompiers",
+"versions":[
+{"bornes":{"liquidation.date_effet":[null,"1991-01-01"]},"exception_de":null,"id":"avant_1991","parametres":{"existe":false},"texte":"LEGIARTI000006367430"},
+{
+"bornes":{"liquidation.date_effet":["1991-01-01","2011-07-01"]},
+"exception_de":null,
+"id":"loi_du_28_novembre_1990",
+"parametres":{
+"age_anticipe":false,
+"annees_dans_l_emploi":15,
+"annees_de_services":0,
+"classement":"active",
+"condition":"durees_et_age_de_l_emploi",
+"existe":true,
+"fiabilite":"moyenne",
+"nature":"traitement",
+"plafond":null,
+"prorata":"services_du_statut",
+"regime":"cnracl",
+"services_comptes":["sapeur_pompier_professionnel"],
+"statuts":["sapeur_pompier_professionnel"]
+},
+"texte":"LEGIARTI000006367430"
+},
+{
+"bornes":{"liquidation.date_effet":["2011-07-01","2025-01-02"]},
+"exception_de":null,
+"id":"decret_du_30_decembre_2010",
+"parametres":{
+"age_anticipe":false,
+"annees_dans_l_emploi":17,
+"annees_de_services":0,
+"classement":"active",
+"condition":"durees_et_age_de_l_emploi",
+"existe":true,
+"fiabilite":"moyenne",
+"nature":"traitement",
+"plafond":null,
+"prorata":"services_du_statut",
+"regime":"cnracl",
+"services_comptes":["sapeur_pompier_professionnel"],
+"statuts":["sapeur_pompier_professionnel"]
+},
+"texte":"LEGIARTI000023414111"
+},
+{
+"bornes":{"liquidation.date_effet":["2025-01-02",null]},
+"exception_de":null,
+"id":"decret_du_31_decembre_2024",
+"parametres":{
+"age_anticipe":false,
+"annees_dans_l_emploi":17,
+"annees_de_services":0,
+"classement":"active",
+"condition":"durees_et_age_de_l_emploi",
+"existe":true,
+"fiabilite":"moyenne",
+"nature":"traitement",
+"plafond":null,
+"prorata":"services_du_statut_hors_maximum",
+"regime":"cnracl",
+"services_comptes":["sapeur_pompier_professionnel"],
+"statuts":["sapeur_pompier_professionnel"]
+},
+"texte":"LEGIARTI000050941686"
+}
+]
+},
+"indemnite_sujetions_speciales_police":{
+"dates_qui_decident":["liquidation.date_effet"],
+"id":"indemnite_sujetions_speciales_police",
+"versions":[
+{"bornes":{"liquidation.date_effet":[null,"1983-01-01"]},"exception_de":null,"id":"avant_1983","parametres":{"existe":false},"texte":"LEGIARTI000006451460"},
+{
+"bornes":{"liquidation.date_effet":["1983-01-01",null]},
+"exception_de":null,
+"id":"loi_de_finances_pour_1983",
+"parametres":{"condition":"aucune","existe":true,"fiabilite":"moyenne","nature":"traitement","plafond":null,"prorata":"aucun","regime":"fonction_publique_etat","statuts":["policier"]},
+"texte":"LEGIARTI000006451460"
 }
 ]
 },
@@ -11435,8 +11583,19 @@ null
 "nature":"majoration",
 "plafond_trimestres":null,
 "regime":"cnracl",
-"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif","sapeur_pompier_professionnel"],
-"statuts":["fonctionnaire_hospitalier_actif"]
+"services_comptes":[
+"fonctionnaire_etat",
+"fonctionnaire_etat_actif",
+"fonctionnaire_etat_super_actif",
+"policier",
+"fonctionnaire_territorial_hospitalier",
+"fonctionnaire_territorial_hospitalier_actif",
+"fonctionnaire_hospitalier_actif",
+"aide_soignant",
+"fonctionnaire_territorial_hospitalier_super_actif",
+"sapeur_pompier_professionnel"
+],
+"statuts":["fonctionnaire_hospitalier_actif","aide_soignant"]
 },
 "texte":"LEGIARTI000006758626"
 },
@@ -11456,8 +11615,19 @@ null
 "nature":"majoration",
 "plafond_trimestres":null,
 "regime":"cnracl",
-"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif","sapeur_pompier_professionnel"],
-"statuts":["fonctionnaire_hospitalier_actif"]
+"services_comptes":[
+"fonctionnaire_etat",
+"fonctionnaire_etat_actif",
+"fonctionnaire_etat_super_actif",
+"policier",
+"fonctionnaire_territorial_hospitalier",
+"fonctionnaire_territorial_hospitalier_actif",
+"fonctionnaire_hospitalier_actif",
+"aide_soignant",
+"fonctionnaire_territorial_hospitalier_super_actif",
+"sapeur_pompier_professionnel"
+],
+"statuts":["fonctionnaire_hospitalier_actif","aide_soignant"]
 },
 "texte":"LEGIARTI000023096779"
 },
@@ -11477,8 +11647,19 @@ null
 "nature":"majoration",
 "plafond_trimestres":null,
 "regime":"cnracl",
-"services_comptes":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif","sapeur_pompier_professionnel"],
-"statuts":["fonctionnaire_hospitalier_actif"]
+"services_comptes":[
+"fonctionnaire_etat",
+"fonctionnaire_etat_actif",
+"fonctionnaire_etat_super_actif",
+"policier",
+"fonctionnaire_territorial_hospitalier",
+"fonctionnaire_territorial_hospitalier_actif",
+"fonctionnaire_hospitalier_actif",
+"aide_soignant",
+"fonctionnaire_territorial_hospitalier_super_actif",
+"sapeur_pompier_professionnel"
+],
+"statuts":["fonctionnaire_hospitalier_actif","aide_soignant"]
 },
 "texte":"LEGIARTI000047453001"
 }
@@ -11592,6 +11773,55 @@ null
 },
 {"bornes":{"liquidation.date_effet":["1975-01-01","1986-01-19"]},"exception_de":null,"id":"cinquante_pour_cent_du_plafond","parametres":{"existe":true,"fiabilite":"haute","pourcentages":[["1975-01-01",0.5]],"regimes":["regime_general"]},"texte":null},
 {"bornes":{"liquidation.date_effet":["1986-01-19",null]},"exception_de":null,"id":"arretes_de_1986","parametres":{"existe":true,"fiabilite":"haute","pourcentages":[["1986-01-19",0.5]],"regimes":["regime_general"]},"texte":"LEGIARTI000006784048"}
+]
+},
+"prime_speciale_sujetion_aides_soignants":{
+"dates_qui_decident":["liquidation.date_effet"],
+"id":"prime_speciale_sujetion_aides_soignants",
+"versions":[
+{"bornes":{"liquidation.date_effet":[null,"2004-01-01"]},"exception_de":null,"id":"avant_2004","parametres":{"existe":false},"texte":"LEGIARTI000006758879"},
+{
+"bornes":{"liquidation.date_effet":["2004-01-01","2011-07-01"]},
+"exception_de":null,
+"id":"loi_de_financement_pour_2004",
+"parametres":{
+"age_anticipe":false,
+"annees_dans_l_emploi":0,
+"annees_de_services":15,
+"classement":"active",
+"condition":"durees_et_age_de_l_emploi",
+"existe":true,
+"fiabilite":"moyenne",
+"nature":"supplement",
+"plafond":0.1,
+"prorata":"services_du_statut_depuis_2004",
+"regime":"cnracl",
+"services_comptes":["aide_soignant","fonctionnaire_hospitalier_actif"],
+"statuts":["aide_soignant"]
+},
+"texte":"LEGIARTI000006758879"
+},
+{
+"bornes":{"liquidation.date_effet":["2011-07-01",null]},
+"exception_de":null,
+"id":"loi_du_9_novembre_2010",
+"parametres":{
+"age_anticipe":false,
+"annees_dans_l_emploi":0,
+"annees_de_services":17,
+"classement":"active",
+"condition":"durees_et_age_de_l_emploi",
+"existe":true,
+"fiabilite":"moyenne",
+"nature":"supplement",
+"plafond":0.1,
+"prorata":"services_du_statut_depuis_2004",
+"regime":"cnracl",
+"services_comptes":["aide_soignant","fonctionnaire_hospitalier_actif"],
+"statuts":["aide_soignant"]
+},
+"texte":"LEGIARTI000023096769"
+}
 ]
 },
 "relevement_des_exploitants_2023":{
@@ -12807,7 +13037,7 @@ null
 "nom":"Pensions civiles et militaires, loi de 1853",
 "population":"Fonctionnaires de l'État et militaires, avant 1948",
 "raison_hors_champ":"",
-"statuts":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","militaire","militaire_officier"],
+"statuts":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","policier","militaire","militaire_officier"],
 "succede_a":[],
 "textes":[{"id":null,"reference":"loi du 9 juin 1853 sur les pensions civiles"},{"id":null,"reference":"loi du 14 avril 1924 portant réforme du régime des pensions civiles et militaires"}]
 },
@@ -12823,7 +13053,7 @@ null
 "nom":"Pensions civiles et militaires de retraite (Service des retraites de l'État)",
 "population":"Fonctionnaires civils de l'État, magistrats, militaires",
 "raison_hors_champ":"",
-"statuts":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","militaire","militaire_officier"],
+"statuts":["fonctionnaire_etat","fonctionnaire_etat_actif","fonctionnaire_etat_super_actif","policier","militaire","militaire_officier"],
 "succede_a":["pensions_civiles_1853"],
 "textes":[
 {"id":null,"reference":"loi n° 48-1450 du 20 septembre 1948 portant réforme du régime des pensions civiles et militaires"},
@@ -12848,7 +13078,7 @@ null
 "nom":"Caisse nationale de retraites des agents des collectivités locales",
 "population":"Fonctionnaires territoriaux et hospitaliers",
 "raison_hors_champ":"",
-"statuts":["fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","fonctionnaire_territorial_hospitalier_super_actif","sapeur_pompier_professionnel"],
+"statuts":["fonctionnaire_territorial_hospitalier","fonctionnaire_territorial_hospitalier_actif","fonctionnaire_hospitalier_actif","aide_soignant","fonctionnaire_territorial_hospitalier_super_actif","sapeur_pompier_professionnel"],
 "succede_a":[],
 "textes":[{"id":null,"reference":"ordonnance n° 45-993 du 17 mai 1945"},{"id":null,"reference":"décret n° 47-1846 du 19 septembre 1947"},{"id":null,"reference":"décret n° 2003-1306 du 26 décembre 2003 relatif au régime de retraite des fonctionnaires affiliés à la CNRACL"}]
 },
@@ -12904,9 +13134,11 @@ null
 "fonctionnaire_etat",
 "fonctionnaire_etat_actif",
 "fonctionnaire_etat_super_actif",
+"policier",
 "fonctionnaire_territorial_hospitalier",
 "fonctionnaire_territorial_hospitalier_actif",
 "fonctionnaire_hospitalier_actif",
+"aide_soignant",
 "fonctionnaire_territorial_hospitalier_super_actif",
 "sapeur_pompier_professionnel",
 "militaire",
@@ -22031,6 +22263,41 @@ null
 "reversion_demandee_dans_l_annee":{"dit":"le survivant demande sa réversion dans l'année qui suit le décès","valeur":"dans l'année"},
 "survivant_seul":{"dit":"le conjoint survivant vit seul après le décès : ni remarié, ni pacsé, ni en concubinage","valeur":"seul"},
 "validation_ircantec_demandee":{"dit":"l'agent rétabli au régime général a demandé que l'Ircantec valide ses services","valeur":"demandée"}
+},
+"primes_soumises_a_retenue":{
+"primes":[
+{
+"code":"indemnite_sujetions_speciales_police",
+"fiche":"indemnite_sujetions_speciales_police",
+"integration":[[1983,0.1],[1984,0.2],[1985,0.3],[1986,0.4],[1987,0.5],[1988,0.6],[1989,0.7],[1990,0.8],[1991,0.9],[1992,1.0]],
+"regime":"fonction_publique_etat",
+"statuts":["policier"],
+"taux":[["1983-01-01",0.2],["1997-01-01",0.21],["2002-01-01",0.22],["2003-01-01",0.24],["2009-01-01",0.245],["2010-01-01",0.255],["2010-07-01",0.26],["2017-01-01",0.265],["2018-01-01",0.27],["2019-01-01",0.28],["2020-01-01",0.285]]
+},
+{"code":"prime_speciale_sujetion_aides_soignants","fiche":"prime_speciale_sujetion_aides_soignants","integration":[[2004,0.2],[2005,0.4],[2006,0.6],[2007,0.8],[2008,1.0]],"regime":"cnracl","statuts":["aide_soignant"],"taux":[["2004-01-01",0.1]]},
+{
+"code":"indemnite_de_feu",
+"fiche":"indemnite_de_feu_sapeurs_pompiers",
+"integration":[[1991,0.133333],[1992,0.266667],[1993,0.333333],[1994,0.4],[1995,0.466667],[1996,0.533333],[1997,0.6],[1998,0.666667],[1999,0.733333],[2000,0.8],[2001,0.866667],[2002,0.933333],[2003,1.0]],
+"regime":"cnracl",
+"statuts":["sapeur_pompier_professionnel"],
+"taux":[["1991-01-01",0.19],["2020-07-26",0.25]]
+}
+],
+"supplementaires":[
+{"assiette":"remuneration_soumise","motif":"la bonification du cinquième (loi n° 57-444, article 3)","regime":"fonction_publique_etat","statuts":["policier"],"taux":[["1957-01-01",0.01,0.0]]},
+{"assiette":"remuneration_soumise","motif":"la prise en compte de l'indemnité de sujétions spéciales (article 6 bis)","regime":"fonction_publique_etat","statuts":["policier"],"taux":[["1983-01-01",0.005,0.0],["1987-01-01",0.01,0.0],["1991-01-01",0.012,0.0]]},
+{"assiette":"traitement","motif":"la bonification du cinquième (décret n° 2003-1306, article 15, II, 2°)","regime":"cnracl","statuts":["sapeur_pompier_professionnel"],"taux":[["1986-02-09",0.02,0.0],["1991-01-01",0.0,0.0]]},
+{"assiette":"traitement_et_prime","motif":"la bonification du cinquième, depuis l'intégration de l'indemnité de feu","regime":"cnracl","statuts":["sapeur_pompier_professionnel"],"taux":[["1991-01-01",0.02,0.0]]},
+{
+"assiette":"traitement_et_prime",
+"motif":"l'intégration de l'indemnité de feu (loi n° 90-1067, article 17)",
+"regime":"cnracl",
+"statuts":["sapeur_pompier_professionnel"],
+"taux":[["1991-01-01",0.006,0.012],["1996-01-01",0.012,0.024],["2001-01-01",0.018,0.036],["2021-01-01",0.018,0.0],["2022-01-01",0.0,0.0]]
+},
+{"assiette":"prime_soumise","motif":"la prime spéciale de sujétion (loi n° 2003-1199, article 37)","regime":"cnracl","statuts":["aide_soignant"],"taux":[["2004-01-01",0.015,0.035]]}
+]
 },
 "profil_salaire_age":{
 "1962":{"Y26T30":0.9508,"Y31T40":1.1247,"Y41T50":1.1427,"Y51T60":1.1321},
