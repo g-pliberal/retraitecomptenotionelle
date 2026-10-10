@@ -1,8 +1,6 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: rouge
-sources: 30fb55fca85c45ff1a527ff3b2bd24a51d74affd
-date: 2026-10-10T14:38:09Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38059569471
-echecs:
-  - "FAILED tests/test_estimation_officielle.py::test_un_assure_jeune_se_confronte_comme_un_autre - Failed: DID NOT RAISE Refus"
+etat: vert
+sources: 308eafc9a8cb3d9ab3d7022265f2dadac93a199e
+date: 2026-10-10T15:19:49Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38062324918
