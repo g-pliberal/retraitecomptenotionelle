@@ -1,0 +1,25 @@
+date: "2026-10-10"
+session: "action 135 : le traitement de référence à temps plein du fonctionnaire qui part un 1er janvier"
+consulte: >-
+  L'index LEGI du dossier principal, mis à jour jusqu'au 10 octobre 2026 (quatorze
+  incréments, aucune rédaction nouvelle à inscrire) : L. 15 CPCMR, ses rédactions depuis
+  1982 ; l'article 17 du décret n° 2003-1306 et l'article 14 du décret n° 2004-1056, toutes
+  leurs rédactions ; l'article 15 du décret n° 65-773 et l'article 9 du décret n° 65-836,
+  qui les précèdent ; L. 5 et L. 89 bis CPCMR.
+trouve: >-
+  Le traitement de référence d'un fonctionnaire à temps partiel est celui d'un temps plein :
+  à l'État, L. 15, I (LEGIARTI000006362708, depuis 2004, la même phrase depuis 1982) ; à la
+  CNRACL, l'article 17 du décret n° 2003-1306 (LEGIARTI000049428958, du 18 avril 2024),
+  « dans le cadre d'un emploi à temps complet » ; chez les ouvriers de l'État, l'article
+  14, III du décret n° 2004-1056 (LEGIARTI000051969271, du 1er octobre 2025). Aucune
+  rédaction plus récente. La pension partielle de L. 89 bis est servie au fonctionnaire à
+  temps partiel du code général de la fonction publique : c'est le temps partiel que L. 15
+  vise. Le modèle l'appliquait quand l'année du départ avait une ligne, et non au départ
+  d'un 1er janvier ni dans la pension différée : corrigé dans les deux moteurs, la lecture
+  portée à la fiche retraite_progressive. Le cliquet des textes passe de 9 825 à 9 822.
+reste: >-
+  Aucun exemple chiffré publié de la pension d'un fonctionnaire en retraite progressive :
+  la fiche retraite_progressive reste approchée. La fiche temps_partiel_fonction_publique
+  dit que le champ quotite des lignes n'est lu nulle part : vrai du temps partiel ordinaire,
+  que la saisie ne porte pas, faux de la retraite progressive depuis le 29 septembre 2026 ;
+  à redire à sa prochaine relecture.

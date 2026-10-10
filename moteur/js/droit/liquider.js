@@ -1633,7 +1633,9 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
   // activités qui versent au même régime, ou à deux régimes alignés que la
   // liquidation unique réunit, forment un seul revenu annuel, écrêté UNE fois
   // au plafond (R. 173-4-4-1, 1°). Une année d'une seule activité n'a qu'un
-  // terme, et rien ne bouge.
+  // terme, et rien ne bouge. Chaque année porte aussi son revenu À TEMPS
+  // PLEIN, chaque ligne rendue à sa quotité : ce que liquide, plus bas, le
+  // régime à dernier traitement dont l'année du départ n'a pas de ligne.
   const parAnnee = new Map();
   // Les trimestres de chaque année au régime, cotisés (AVPF comprise) puis
   // assimilés : le dénominateur d'avant juillet 1995. Voir le Python.
@@ -1690,18 +1692,14 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
     if (borneBasse > 0) {
       revenu = Math.max(0.0, Math.min(revenu, borneHaute || revenu) - borneBasse);
     }
-    const [somme, fraction] = parAnnee.get(ligne.annee) ?? [0.0, 0.0];
+    const [somme, fraction, plein] = parAnnee.get(ligne.annee) ?? [0.0, 0.0, 0.0];
     parAnnee.set(ligne.annee,
-      [somme + revenu, Math.max(fraction, ligne.fraction_annee)]);
+      [somme + revenu, Math.max(fraction, ligne.fraction_annee),
+        plein + revenu / ligne.quotite]);
   }
 
-  const revenus = [];
-  const anneesDesRevenus = [];
-  // Le dernier revenu avant revalorisation, et son année : ce qu'une pension
-  // différée revalorise autrement (voir plus bas).
-  let dernierBrut = null;
-  for (const annee of [...parAnnee.keys()].sort((a, b) => a - b)) {
-    let [revenu, fraction] = parAnnee.get(annee);
+  const borner = (revenuBrut, annee, fraction) => {
+    let revenu = revenuBrut;
     if (plafonner) {
       // Le plafond se proratise sur les mois travaillés : l'année d'entrée
       // dans la vie active n'est pas pleine.
@@ -1718,8 +1716,14 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
       revenu = Math.min(revenu, seuil * plafond)
         + part * Math.max(0.0, Math.min(revenu, haut * plafond) - seuil * plafond);
     }
-    dernierBrut = [annee, revenu];
-    revenus.push(revenu * revaloriser(annee, anneeLiquidation));
+    return revenu;
+  };
+
+  const revenus = [];
+  const anneesDesRevenus = [];
+  for (const annee of [...parAnnee.keys()].sort((a, b) => a - b)) {
+    const [revenu, fraction] = parAnnee.get(annee);
+    revenus.push(borner(revenu, annee, fraction) * revaloriser(annee, anneeLiquidation));
     anneesDesRevenus.push(annee);
   }
 
@@ -1780,11 +1784,18 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
       }
       return traitement;
     }
+    // SANS LIGNE L'ANNÉE DU DÉPART, LE TRAITEMENT RESTE À TEMPS PLEIN : celui
+    // de la dernière année, rendu à sa quotité et à l'année pleine — le
+    // départ d'un 1er janvier, la pension différée (L. 15, I du code des
+    // pensions). Voir le Python.
+    const derniereAnnee = anneesDesRevenus[anneesDesRevenus.length - 1];
+    const [, fractionDerniere, plein] = parAnnee.get(derniereAnnee);
+    const traitement = borner(
+      fractionDerniere > 0 ? plein / fractionDerniere : plein, derniereAnnee, 1.0);
     // LA PENSION DIFFÉRÉE : le traitement de l'agent radié suit les
     // revalorisations des pensions de la radiation à la mise en paiement
     // (L. 25 du code des pensions), et non le point d'indice. Voir le Python.
-    if (dernierBrut !== null && REGIMES_CODE_DES_PENSIONS.has(code)) {
-      const [derniereAnnee, brut] = dernierBrut;
+    if (REGIMES_CODE_DES_PENSIONS.has(code)) {
       const radiation = dateIso(derniereAnnee + 1, 1, 1);
       const paiement = dateIso(anneeLiquidation, moisLiquidation, 1);
       if (radiation < paiement && paiement >= FIN_PEREQUATION) {
@@ -1794,11 +1805,11 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
           derniereAnnee, radiation, paiement,
         );
         if (coefficient !== null) {
-          return brut * coefficient;
+          return traitement * coefficient;
         }
       }
     }
-    return revenus[revenus.length - 1];
+    return traitement * revaloriser(derniereAnnee, anneeLiquidation);
   } else {
     retenus = revenus;
   }

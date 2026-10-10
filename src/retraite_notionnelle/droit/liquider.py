@@ -2323,6 +2323,9 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
     # annuel, écrêté UNE fois au plafond : c'est la somme des salaires et
     # revenus d'une même année que la LURA écrête (R. 173-4-4-1, 1°).
     # Une année d'une seule activité n'a qu'un terme, et rien ne bouge.
+    # Chaque année porte aussi son revenu À TEMPS PLEIN, chaque ligne rendue
+    # à sa quotité : ce que liquide, plus bas, le régime à dernier traitement
+    # dont l'année du départ n'a pas de ligne.
     par_annee: dict[int, list[float]] = {}
     # Les trimestres de chaque année au régime, cotisés — assurance vieillesse
     # des parents au foyer comprise — puis assimilés : ce que la moyenne
@@ -2381,17 +2384,12 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
         )
         if borne_basse > 0:
             revenu = max(0.0, min(revenu, borne_haute or revenu) - borne_basse)
-        cumul = par_annee.setdefault(ligne.annee, [0.0, 0.0])
+        cumul = par_annee.setdefault(ligne.annee, [0.0, 0.0, 0.0])
         cumul[0] += revenu
         cumul[1] = max(cumul[1], ligne.fraction_annee)
+        cumul[2] += revenu / ligne.quotite
 
-    revenus: list[float] = []
-    annees_des_revenus: list[int] = []
-    # Le dernier revenu avant revalorisation, et son année : ce qu'une
-    # pension différée revalorise autrement (voir plus bas).
-    dernier_brut: tuple[int, float] | None = None
-    for annee in sorted(par_annee):
-        revenu, fraction = par_annee[annee]
+    def borner(revenu: float, annee: int, fraction: float) -> float:
         if plafonner:
             # Le plafond se proratise sur les mois travaillés : l'année
             # d'entrée dans la vie active n'est pas pleine, et un plafond
@@ -2411,8 +2409,13 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
             plafond = moteur.macro.plafond_securite_sociale(annee) * fraction
             revenu = (min(revenu, seuil * plafond)
                       + part * max(0.0, min(revenu, haut * plafond) - seuil * plafond))
-        dernier_brut = (annee, revenu)
-        revenus.append(revenu * revaloriser(annee, annee_liquidation))
+        return revenu
+
+    revenus: list[float] = []
+    annees_des_revenus: list[int] = []
+    for annee in sorted(par_annee):
+        revenu, fraction, _ = par_annee[annee]
+        revenus.append(borner(revenu, annee, fraction) * revaloriser(annee, annee_liquidation))
         annees_des_revenus.append(annee)
 
     if not revenus:
@@ -2472,6 +2475,22 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
                     moteur.macro.plafond_securite_sociale(annee_liquidation),
                 )
             return traitement
+        # SANS LIGNE L'ANNÉE DU DÉPART, LE TRAITEMENT RESTE À TEMPS PLEIN.
+        # Qui part un 1er janvier n'a travaillé aucun mois de l'année de sa
+        # liquidation, et l'agent radié avant elle n'y a plus de service :
+        # leur traitement est celui de leur dernière année, que le temps
+        # partiel d'une retraite progressive réduit sans le changer — ce
+        # sont ceux « auxquels les intéressés pourraient prétendre s'ils
+        # accomplissaient des services à plein temps » (L. 15, I du code
+        # des pensions ; article 17 du décret n° 2003-1306, article 14 du
+        # décret n° 2004-1056) —, et qu'une année incomplète ne réduit pas
+        # davantage. Le moteur liquidait le revenu de cette année tel quel :
+        # la fonctionnaire à 70 % qui part un 1er janvier liquidait 70 % de
+        # son traitement, celle qui part un 1er février le liquidait entier.
+        derniere_annee = annees_des_revenus[-1]
+        _, fraction, plein = par_annee[derniere_annee]
+        traitement = borner(plein / fraction if fraction > 0 else plein,
+                            derniere_annee, 1.0)
         # LA PENSION DIFFÉRÉE. L'agent n'est plus en service l'année de la
         # liquidation : il a été radié des cadres au plus tard à la fin de
         # sa dernière année de service, et sa pension attend l'âge. Le
@@ -2482,9 +2501,7 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
         # le moteur lui appliquait : +6,3 % de 2011 à 2026, quand les
         # pensions prenaient près d'un quart. Avant 2004, la péréquation
         # faisait suivre le point à toute pension : rien ne change.
-        if (dernier_brut is not None
-                and code in coordonner.REGIMES_CODE_DES_PENSIONS):
-            derniere_annee, brut = dernier_brut
+        if code in coordonner.REGIMES_CODE_DES_PENSIONS:
             radiation = date(derniere_annee + 1, 1, 1)
             paiement = date(annee_liquidation, mois_liquidation, 1)
             if radiation < paiement and paiement >= revalorisation.FIN_PEREQUATION:
@@ -2493,8 +2510,8 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
                     moteur.minimum_garanti.ratio_point_indice,
                     derniere_annee, radiation, paiement)
                 if coefficient is not None:
-                    return brut * coefficient
-        return revenus[-1]
+                    return traitement * coefficient
+        return traitement * revaloriser(derniere_annee, annee_liquidation)
     elif reference == "carriere_entiere":
         retenus = revenus
     else:

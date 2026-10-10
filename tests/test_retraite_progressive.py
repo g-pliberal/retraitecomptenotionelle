@@ -29,14 +29,15 @@ def simulateur() -> Simulateur:
 
 
 def _carriere(simulateur: Simulateur, metiers: list[Metier], naissance: int = 1965,
-              liquidation: float = 64, sexe: str = "F", **kwargs) -> Carriere:
-    """La carrière d'un assuré né le 15 janvier : le jour se déclare, puisque
-    les dates de la demande et du départ se comptent depuis lui ; celui que
-    la présomption pose a son test (``test_chronologie.py`` ; feuille de
-    route, action 135, levier 2)."""
+              liquidation: float = 64, sexe: str = "F", jour: int = 15,
+              **kwargs) -> Carriere:
+    """La carrière d'un assuré né le 15 janvier, ou le ``jour`` dit : le jour
+    se déclare, puisque les dates de la demande et du départ se comptent
+    depuis lui ; celui que la présomption pose a son test
+    (``test_chronologie.py`` ; feuille de route, action 135, levier 2)."""
     return Carriere.depuis_parcours(
         annee_naissance=naissance, sexe=sexe, metiers=metiers,
-        age_liquidation=liquidation, macro=simulateur.macro, jour_naissance=15, **kwargs)
+        age_liquidation=liquidation, macro=simulateur.macro, jour_naissance=jour, **kwargs)
 
 
 def _salariee(simulateur: Simulateur, age: float | None = 60.75, quotite: float = 0.6,
@@ -135,17 +136,50 @@ def test_les_services_d_un_temps_partiel_comptent_leur_duree_reelle(
     assert services_a_temps_partiel(trimestres, quotite) == services
 
 
-def test_le_fonctionnaire_liquide_son_traitement_a_temps_plein(simulateur):
-    """Le temps partiel réduit ses services, pas son traitement indiciaire."""
+def _pension_de_l_etat(moteur, carriere: Carriere):
+    [etat] = [p for p in moteur.calculer(carriere).pensions_par_regime
+              if p.regime == "fonction_publique_etat"]
+    return etat
+
+
+@pytest.mark.parametrize("jour, depart", [(15, DateMois(2027, 2)), (1, DateMois(2027, 1))])
+def test_le_fonctionnaire_liquide_son_traitement_a_temps_plein(simulateur, jour, depart):
+    """Le temps partiel réduit ses services, pas son traitement indiciaire,
+    qui reste celui du temps plein : « ceux auxquels les intéressés
+    pourraient prétendre s'ils accomplissaient des services à plein temps »
+    (L. 15, I du code des pensions). Née le 1er janvier, la fonctionnaire
+    part un 1er janvier : l'année du départ n'a aucun mois travaillé, et son
+    traitement est celui de l'année d'avant, à temps plein lui aussi — le
+    modèle en liquidait 70 %."""
     moteur = simulateur.scenario_actuel
     metiers = [Metier("fonctionnaire_etat", 23.0)]
-    avec = moteur.calculer(_carriere(simulateur, metiers, naissance=1963, part_primes=0.2,
-                                     retraite_progressive={"age": 61.0, "quotite": 0.7}))
-    sans = moteur.calculer(_carriere(simulateur, metiers, naissance=1963, part_primes=0.2))
-    [etat_avec] = [p for p in avec.pensions_par_regime if p.regime == "fonction_publique_etat"]
-    [etat_sans] = [p for p in sans.pensions_par_regime if p.regime == "fonction_publique_etat"]
+    carriere = _carriere(simulateur, metiers, naissance=1963, jour=jour, part_primes=0.2,
+                         retraite_progressive={"age": 61.0, "quotite": 0.7})
+    assert carriere.date_liquidation == depart
+    etat_avec = _pension_de_l_etat(moteur, carriere)
+    etat_sans = _pension_de_l_etat(moteur, _carriere(simulateur, metiers, naissance=1963,
+                                                     jour=jour, part_primes=0.2))
     assert etat_avec.detail.split(" × ")[0] == etat_sans.detail.split(" × ")[0]
-    assert etat_avec.montant < etat_sans.montant
+    assert etat_sans.montant > etat_avec.montant > 0.9 * etat_sans.montant
+
+
+def test_la_pension_differee_liquide_le_traitement_a_temps_plein(simulateur):
+    """Radiée des cadres à soixante-deux ans pour le privé, après une année
+    de service à 70 %, la fonctionnaire liquide à soixante-quatre ans le
+    traitement de cette dernière année rendu à temps plein, revalorisé comme
+    les pensions jusqu'à la mise en paiement (L. 15 et L. 25 du code des
+    pensions)."""
+    moteur = simulateur.scenario_actuel
+    metiers = [Metier("fonctionnaire_etat", 23.0), Metier("salarie_prive_non_cadre", 62.0)]
+    carriere = _carriere(simulateur, metiers, naissance=1963, jour=1, part_primes=0.2,
+                         retraite_progressive={"age": 61.0, "quotite": 0.7})
+    service = [l for l in carriere.lignes if l.affiliation == "fonctionnaire_etat"]
+    assert service[-1].annee == 2024 and service[-1].quotite == pytest.approx(0.7)
+    etat_avec = _pension_de_l_etat(moteur, carriere)
+    etat_sans = _pension_de_l_etat(moteur, _carriere(simulateur, metiers, naissance=1963,
+                                                     jour=1, part_primes=0.2))
+    assert etat_avec.detail.split(" × ")[0] == etat_sans.detail.split(" × ")[0]
+    assert etat_sans.montant > etat_avec.montant > 0.9 * etat_sans.montant
 
 
 def test_la_pension_complete_du_fonctionnaire_n_a_pas_de_plancher(simulateur):

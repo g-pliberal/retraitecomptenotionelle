@@ -312,6 +312,18 @@ sources:
       49 sexies, décret n° 2004-1056, articles 34 ter à 34 sexies, dans l'index LEGI :
       le droit de 2023, et la pension complète du fonctionnaire sans plancher
     date: 2026-09-29
+  - type: legifrance
+    reference: >-
+      L. 15, I CPCMR (LEGIARTI000006362708, depuis le 1er janvier 2004), article 17 du
+      décret n° 2003-1306 (LEGIARTI000049428958, depuis le 18 avril 2024) et article 14,
+      III du décret n° 2004-1056 (LEGIARTI000051969271, depuis le 1er octobre 2025), dans
+      l'index LEGI mis à jour le 10 octobre 2026 : le traitement ou la solde des services
+      à temps partiel « sont ceux auxquels les intéressés pourraient prétendre s'ils
+      accomplissaient des services à plein temps », et L. 89 bis sert la pension partielle au
+      fonctionnaire à temps partiel du code général de la fonction publique ; le
+      traitement de référence se lit donc à temps plein, au départ d'un 1er janvier comme
+      dans la pension différée
+    date: 2026-10-10
 textes_a_rattacher:
 - {id: LEGIARTI000006749395, article: "R. 351-40 CSS", en_vigueur: 1988-05-04, change: "les pièces de la demande"}
 - {id: LEGIARTI000006749398, article: "R. 351-42 CSS", en_vigueur: 1988-05-04, change: "la fraction révisée quand la quotité change"}
@@ -347,6 +359,15 @@ historique:
   trois lectures : les libéraux et les avocats ne la demandent que depuis 2023, la
   pension de libéral d'un salarié se liquide avec la sienne depuis 1988, et la pension
   complète du fonctionnaire n'a pas de plancher.
+- >-
+  2026-10-10 — le traitement de référence à temps plein, aussi quand l'année du départ
+  n'a pas de ligne, dans les deux moteurs. Le fonctionnaire qui part un 1er janvier, et
+  l'agent radié des cadres avant de liquider, liquidaient le revenu de leur dernière
+  année à sa quotité : née le 1er janvier 1963, à 70 % depuis ses soixante et un ans,
+  partie au 1er janvier 2027, l'assurée liquidait 29 631,12 € de traitement au lieu de
+  42 330,16 €. La conversion des droits acquis à la bascule du 1er janvier 2026 en sort
+  corrigée (feuille de route, action 135, note du 10 octobre 2026 sur le traitement de
+  janvier).
 effet: >-
   Les salariés, les indépendants et, depuis 2023, les fonctionnaires, les libéraux et les
   avocats qui passent à temps partiel en fin de carrière. Une salariée née en 1965,
