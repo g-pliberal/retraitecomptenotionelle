@@ -1,0 +1,42 @@
+date: "2026-10-10"
+session: "action 138, étape 5, première partie : l'impôt sur le revenu d'un foyer, de son barème à son montant, chaque année"
+consulte: >-
+  `python scripts/veille_droit.py` : quatre fiches à relire, aucune touchée par
+  la session, qui n'écrit aucune règle du scénario 1 — l'impôt n'est branché
+  nulle part. Les barèmes de l'impôt sur le revenu de l'IPP, quinze paramètres
+  en CSV. L'index LEGI de la DILA, récupéré (à jour au 4 octobre 2026) : les
+  rédactions des articles 83, 157 bis, 158, 193, 194, 195, 197, 200 sexies,
+  1417 et 1657 du code général des impôts, de 1950 à 2026, dont celles des
+  lois de finances pour 2025 (n° 2025-127) et pour 2026 (n° 2026-103).
+  L'index du JORF, qui n'a pas le texte des lois de finances d'avant 1980. Le
+  BOFiP : BOI-IR-LIQ-20-10, 20-20-20, 20-20-30 et 20-20-40, toutes leurs
+  versions depuis 2012 ; ses archives : le BOI 5 B-9-01 du 2 mars 2001 et
+  les BOI 5 B-3-02, 5 B-6-03, 5 B-8-04 et 5 B-9-05, qui commentent les lois de
+  finances pour 2002 à 2005, la documentation de base 5 B 321 et 5 F 3122 ; les brochures pratiques de 2024
+  et de 2025, chapitre « Calcul de l'impôt ». OpenFisca-France 176.1.2,
+  exécuté à part.
+trouve: >-
+  Les revenus de 2024 et de 2025, que l'IPP n'a pas, dans les rédactions de
+  l'article 197 écrites par les deux lois de finances : barème 11 497, 29 315,
+  83 823 et 180 294 €, puis 11 600, 29 579, 84 577 et 181 917 € ; plafond du
+  quotient familial 1 791 puis 1 807 € ; décote 889 et 1 470 €, puis 897 et
+  1 483 € ; et les abattements des articles 83, 158 et 157 bis de 2025. Des
+  erreurs et des trous de l'IPP, tranchés par le code : l'abattement des
+  personnes âgées de 2024 (2 796 €, non 2 795 €), la réduction complémentaire
+  des invalides de 1998 à 2000 (5 380, 5 410 et 4 260 F, non 4 336 F), le taux
+  de la décote de 2000 (la moitié de l'impôt), la part du veuf ayant un enfant
+  avant 2008, la majoration de la prime pour l'emploi du premier enfant d'un
+  parent isolé avant 2007, la part entière du troisième enfant datée de 1995
+  au lieu de 1980, les années 1982, 1983 et 1989 de l'abattement des personnes
+  âgées. Les règles d'arrondi de chaque époque (articles 193 et 1657) ; le
+  seuil de mise en recouvrement depuis 1977 (article 1657). Deux erreurs
+  d'OpenFisca : 1,5 part au veuf ayant un enfant avant 2008 ; l'abattement de
+  20 % des pensions appliqué avant leur plafond, jusqu'en 2005.
+reste: >-
+  Ce que seules les colonnes et les notes de l'IPP décrivent, sans texte lu :
+  la franchise et la décote de 1961 à 1972, les majorations et minorations
+  exceptionnelles, l'arrondi d'avant 1980 ; elles sont dans les lois de
+  finances de chaque année, dont l'index du JORF n'a que le titre. Le seuil de
+  mise en recouvrement de 1978 et de 1985 à 1990, que le code ne chiffre pas.
+  La relecture de l'index LEGI par ses incréments, refusés par le serveur de
+  la DILA depuis la fin de septembre.

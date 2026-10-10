@@ -293,6 +293,61 @@ referents:
         preuve: >-
           notice JORFTEXT000000693828 : « ABROGATION DE L'ART. L343
           … ENTREE EN VIGUEUR : 01-01-1973 »
+      - constat: >-
+          IR1. Ses barèmes de l'impôt sur le revenu
+          (impot_revenu.*) datent de 1995 la part entière du
+          troisième enfant à charge, la date de la rédaction
+          de l'article 194 que LEGI conserve.
+        tranche: >-
+          Ses propres notes la datent des revenus de 1980 (loi
+          du 30 décembre 1980), celle du cinquième des revenus
+          de 1979, celle de chaque enfant après le troisième
+          de 1986 ; le dépôt suit les notes
+          (scripts/fetch/ipp_impot_revenu.py,
+          PARTS_PAR_RANG_D_ENFANT).
+        preuve: >-
+          plaf_qf.quotient_familial.cas_general, ligne du
+          01/01/1995 ; notes des tables de la décote (1986) et
+          des plafonds (1979)
+      - constat: >-
+          IR2. La réduction complémentaire de la demi-part
+          d'un invalide vaut 4 336 F de 1998 à 2000 (plafond_a
+          vantages_procures_par_demi_part.reduc_postplafond).
+        tranche: >-
+          L'article 197 dit 5 380 F, 5 410 F et 4 260 F
+          (LEGIARTI000006308341, 000006308342, 000006308344),
+          comme le BOI 5 B-9-01 pour 1999 et 2000 ; l'IPP a
+          tort.
+        preuve: >-
+          index LEGI du dépôt, lu le 10 octobre 2026
+      - constat: >-
+          IR3. L'abattement des personnes âgées ou invalides
+          des revenus de 2024 vaut 2 795 €
+          (abat_rni.contribuable_age_invalide) ; ceux de 1982,
+          1983 et 1989 n'ont pas de montant.
+        tranche: >-
+          L'article 157 bis dit 2 796 € (LEGIARTI000051765211)
+          ; les trois années manquantes suivent sa règle
+          d'indexation, qui retrouve la valeur publiée de
+          1984.
+        preuve: >-
+          LEGIARTI000051765211 et LEGIARTI000006307952, index
+          LEGI du dépôt
+      - constat: >-
+          IR4. La part du veuf ayant un enfant à charge n'y
+          naît qu'en 2008, la majoration de la prime pour
+          l'emploi du premier enfant d'un parent isolé qu'en
+          2007, et le taux de la décote des revenus de 2000
+          manque.
+        tranche: >-
+          L'article 194 donne la part au veuf dès sa rédaction
+          de 1996 (LEGIARTI000006308279), l'article 200 sexies
+          la majoration double dès 2001
+          (LEGIARTI000006303351), l'article 197 la moitié de
+          l'impôt pour la décote de 2000
+          (LEGIARTI000006308344) ; l'IPP a tort.
+        preuve: >-
+          index LEGI du dépôt, lu le 10 octobre 2026
     fait_mieux:
       - quoi: >-
           Il porte les séries de l'AVTS (1962-2026, 4 023,51 € en 2025) et de
@@ -823,6 +878,31 @@ referents:
           L. 816-1, 1° et 2° (LEGIARTI000042920144) ; l'écart est le
           sien
         preuve: LEGIARTI000042920144
+      - constat: >-
+          Son impôt sur le revenu compte 1,5 part, et non 2,5,
+          au veuf ayant un enfant à charge avant les revenus
+          de 2008 (le paramètre que partagent l'IPP et
+          OpenFisca n'y naît qu'en 2008).
+        tranche: >-
+          CGI, art. 194, LEGIARTI000006308280, revenus de 2003
+          et suivants : « Marié ou veuf ayant un enfant à
+          charge = 2,5 » ; l'écart est le sien
+        preuve: >-
+          tests/temoins/impot_revenu_openfisca.json
+          (veuf_un_enfant, 2002 à 2007), version 176.1.2
+      - constat: >-
+          Jusqu'aux revenus de 2005, il applique l'abattement
+          de 20 % aux pensions diminuées de leur abattement de
+          10 % avant son plafond par foyer.
+        tranche: >-
+          CGI, art. 158, 5, a, LEGIARTI000006307985 : 80 % du
+          revenu net des pensions « après application des
+          dispositions des deuxième et troisième alinéas »,
+          plafond compris ; l'écart est le sien
+        preuve: >-
+          tests/temoins/impot_revenu_openfisca.json
+          (couple_retraites, couple_retraites_aises, 2002 à
+          2005), version 176.1.2
     fait_mieux:
       - quoi: >-
           Il calcule la CSG, la CRDS et la CASA des pensions selon le revenu
@@ -870,6 +950,23 @@ referents:
           par foyer fiscal », égal à ses paramètres ; CGI, art. 157
           bis, pour l'abattement des personnes âgées (BOFiP
           2036-PGP, qu'il cite)
+          Le 10 octobre 2026 (138.5, première partie), le
+          dépôt calcule l'impôt d'un foyer, des revenus de
+          1960 à ceux de 2025 puis sur un barème projeté
+          (`retraite_notionnelle/impot_revenu.py`) : les
+          quatre règles du point y sont — l'abattement de 10
+          % des pensions, son minimum par pensionné et son
+          maximum par foyer, l'abattement des personnes
+          âgées ou invalides, les parts, la décote —, et
+          OpenFisca, exécuté à part sur quinze foyers de
+          2002 à 2025, les confirme
+          (`tests/temoins/impot_revenu_openfisca.json`) ;
+          ses deux désaccords sont les siens (le veuf
+          d'avant 2008, les 20 % des pensions d'avant 2006,
+          `tests/test_impot_revenu.py`). Reste ce que le
+          point reproche encore : l'impôt n'entre ni dans la
+          pension nette ni dans l'effet retour de la page
+          Coût.
         etat: a_reprendre
         chantier: "138.5"
       - quoi: >-
@@ -2954,6 +3051,18 @@ referents:
           depuis le 1er juillet 2026 (LEGIARTI000054373673) : 4 439
           € et 454 €. Il est à jour pour 2024 et 2025, les années
           qu'il simule.
+          Le 10 octobre 2026 (138.5, première partie), le
+          dépôt calcule l'impôt d'un foyer de 1960 à 2025
+          (`retraite_notionnelle/impot_revenu.py`) :
+          l'abattement de 10 % des pensions, plancher par
+          pensionné et plafond par foyer, l'abattement des
+          personnes âgées ou invalides, les parts et les
+          demi-parts du foyer, et le revenu fiscal de
+          référence, que la CSG des pensions lira (138.2).
+          Restent la CSG déductible de chaque année, qui
+          fait le net imposable et revient à la session de
+          la CSG, le net du site et l'effet retour de la
+          page Coût.
         etat: a_reprendre
         chantier: "138.5"
       - quoi: >-
@@ -5805,7 +5914,18 @@ referents:
         verification: >-
           CGI art. 158, 5 a (plafond par foyer, plancher par
           pensionné). Juste pour 2016 et 2017 seulement.
-        etat: a_reprendre
+          Repris le 10 octobre 2026 (138.5, première partie)
+          : le dépôt calcule l'impôt des pensions de chaque
+          année, 2016 et 2017 compris
+          (`retraite_notionnelle/impot_revenu.py`),
+          abattement de 10 % par pensionné et par foyer et
+          abattement des personnes âgées ou invalides, à
+          l'euro des exemples du BOFiP de ces deux années
+          (`tests/temoins/exemples_impot_revenu.yaml`). Les
+          rentes viagères à titre onéreux n'ont pas de place
+          dans les foyers du dépôt, qui n'ont que des
+          salaires et des pensions.
+        etat: repris
         chantier: "138.5"
     bilan: >-
       Saphir ne fait rien qu'Ines ne fasse à jour. Il confirme, pour
@@ -6600,6 +6720,16 @@ referents:
           CGI 195, version LEGIARTI000046860994, en vigueur dans
           l'index du 27 septembre 2026 : « f. Sont âgés de plus de
           74 ans et titulaires de la carte du combattant »
+          Le 10 octobre 2026 (138.5, première partie), le
+          dépôt calcule l'impôt
+          (`retraite_notionnelle/impot_revenu.py`) et le
+          quotient familial de son foyer, avec la demi-part
+          de l'invalide, déclarant ou enfant, et sa
+          réduction complémentaire, à l'euro des exemples du
+          BOFiP de 2011 à 2025. Restent les demi-parts des
+          anciens combattants de plus de 74 ans et des
+          veuves de guerre, que le module ne calcule pas
+          (`HORS_CHAMP`).
         etat: a_reprendre
         chantier: "138.5"
     bilan: >-
@@ -6771,6 +6901,16 @@ referents:
           juillet 2026) : 10 %, 4 439 € par foyer, au moins 454 €.
           Mais il applique le plafond par personne (écart
           ci-dessous).
+          Le 10 octobre 2026 (138.5, première partie), le
+          dépôt calcule l'impôt de ces revenus de 2025
+          (`retraite_notionnelle/impot_revenu.py`) : 454 €
+          et 4 439 €, 2 822 € et 1 411 €, lus dans les
+          articles 158 et 157 bis (LEGIARTI000054373673,
+          LEGIARTI000054373677), le maximum par foyer et non
+          par personne, et le quotient familial. Restent la
+          CSG déductible, qui revient à la session de la
+          CSG, et le net du site (`pages.js`), qui n'en
+          affiche aucun.
         etat: a_reprendre
         chantier: "138.5"
     bilan: >-

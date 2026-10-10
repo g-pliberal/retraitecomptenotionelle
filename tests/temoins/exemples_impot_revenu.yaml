@@ -1,0 +1,711 @@
+# Exemples chiffrés de l'impôt sur le revenu publiés par l'administration,
+# rejoués par `tests/test_impot_revenu.py` contre `retraite_notionnelle/impot_revenu.py`
+# ------------------------------------------------------------------------------
+# Action 138, étape 5. Chaque exemple est transcrit tel que sa source l'écrit,
+# avec un extrait de son texte (`citation`) ; le test construit le foyer et
+# compare chaque grandeur nommée sous `attendu`, à l'euro (au franc avant 2001),
+# dans la monnaie de l'année.
+#
+# Le foyer : `declarants`, une liste d'un ou deux déclarants (`invalide`, `age`,
+# `salaires`, `pensions`), `enfants`, `enfants_invalides`, `veuf`, `vit_seul`.
+# Un exemple qui part du revenu imposable le donne en `revenu_net_imposable` :
+# les revenus des déclarants n'y servent pas.
+#
+# Les grandeurs comparées sont des champs de `ImpotDuFoyer` : `parts`,
+# `revenu_net_imposable`, `impot_sans_plafonnement` (l'impôt du barème avec
+# toutes les parts), `impot_brut` (après plafonnement et réduction
+# complémentaire), `decote`, `reduction_sous_condition_de_revenus`,
+# `impot_avant_credits` (la cotisation), `prime_pour_l_emploi`, `impot`.
+#
+# Un exemple que le module ne reproduit pas entre quand même, en écart connu
+# (`ecart_connu`) : la valeur publiée, celle que rend le module, et pourquoi ;
+# le test tient la seconde, pour qu'elle ne change pas en silence.
+#
+# Les tableaux de la brochure pratique, qui donnent l'impôt de milliers de
+# couples revenu-parts, sont dans `brochure_impot_revenu.json`, à part.
+
+exemples:
+
+  # -- La décote, BOI-IR-LIQ-20-20-30, une version par année ---------------------
+
+  - id: bofip_decote_2011
+    source: BOI-IR-LIQ-20-20-30-20120912, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20120912
+    annee: 2011
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 12375
+    citation: >-
+      Soit un contribuable célibataire dont le revenu imposable s'élève au titre
+      de l'année 2011 à 12 375 €. L'impôt brut [...] est égal [...] à 393 € :
+      montant de la décote : [439 € – (393 € / 2)] = 243 € ; impôt à payer :
+      393 € - 243 € = 150 €.
+    attendu: {impot_brut: 393, decote: 243, impot_avant_credits: 150}
+
+  - id: bofip_decote_2012
+    source: BOI-IR-LIQ-20-20-30-20130703, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20130703
+    annee: 2012
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 12780
+    citation: >-
+      Soit un contribuable célibataire dont le revenu imposable s'élève au titre
+      de l'année 2012 à 12 780 €. L'impôt brut [...] est égal [...] à 450 € :
+      montant de la décote : [480 € – (450 € / 2)] = 255 € ; impôt à payer :
+      450 € - 255 € = 195 €
+    attendu: {impot_brut: 450, decote: 255, impot_avant_credits: 195}
+
+  - id: bofip_decote_2013
+    source: BOI-IR-LIQ-20-20-30-20140212, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20140212
+    annee: 2013
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 12882
+    citation: >-
+      Soit un contribuable célibataire dont le revenu imposable s'élève au titre
+      de l'année 2013 à 12 882 €. L'impôt brut [...] est égal [...] à 454 € :
+      montant de la décote : [508 € – (454 € / 2)] = 281 € ; impôt à payer :
+      454 € - 281 € = 173 €
+    attendu: {impot_brut: 454, decote: 281}
+    ecart_connu:
+      impot_avant_credits:
+        publie: 173
+        obtenu: 0
+        raison: >-
+          L'exemple date du 12 février 2014. La loi de finances rectificative du
+          8 août 2014 (n° 2014-891, art. 1) a ensuite accordé, sur les revenus
+          de 2013, une réduction de 350 € aux personnes seules dont le revenu
+          fiscal de référence n'excède pas 13 795 € : elle efface les 173 € de ce
+          célibataire, que le module impose donc à zéro.
+
+  - id: bofip_decote_2014_celibataire
+    source: BOI-IR-LIQ-20-20-30-20150325, § 40, exemple 1
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20150325
+    annee: 2014
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 15000
+    citation: >-
+      Soit un contribuable célibataire dont le revenu imposable s'élève au titre
+      de l'année 2014 à 15 000 €. L'impôt brut [...] est égal [...] à 743 € :
+      montant de la décote : 1 135 € - 743 € = 392 € ; impôt à payer : 743 € -
+      392 € = 351 €
+    attendu: {impot_brut: 743, decote: 392, impot_avant_credits: 351}
+
+  - id: bofip_decote_2014_couple
+    source: BOI-IR-LIQ-20-20-30-20150325, § 40, exemple 2
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20150325
+    annee: 2014
+    foyer: {declarants: [{}, {}]}
+    revenu_net_imposable: 30000
+    citation: >-
+      Soit un couple marié, dont le revenu imposable s'élève au titre de l'année
+      2014 à 30 000 €. L'impôt brut [...] est égal [...] à 1 487 € : montant de
+      la décote : 1 870 € - 1 487 € = 383 € ; impôt à payer : 1 487 € - 383 € =
+      1 104 €
+    attendu: {impot_brut: 1487, decote: 383, impot_avant_credits: 1104}
+
+  - id: bofip_decote_2015_celibataire
+    source: BOI-IR-LIQ-20-20-30-20160229, § 40, exemple 1
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20160229
+    annee: 2015
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 15000
+    citation: >-
+      [...] célibataire [...] 2015 à 15 000 € [...] 742 € : montant de la décote
+      : 1 165 € - (3/4 x 742 €) = 608,5 € arrondis à 609 € ; impôt à payer :
+      742 € - 609 € = 133 €.
+    attendu: {impot_brut: 742, decote: 609, impot_avant_credits: 133}
+
+  - id: bofip_decote_2015_couple
+    source: BOI-IR-LIQ-20-20-30-20160229, § 40, exemple 2
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20160229
+    annee: 2015
+    foyer: {declarants: [{}, {}]}
+    revenu_net_imposable: 30000
+    citation: >-
+      Soit un couple marié, dont le revenu imposable s'élève au titre de l'année
+      2015 à 30 000 € [...] 1 484 € : montant de la décote : 1 920 € - (3/4 x
+      1 484 €) = 807 € ; impôt à payer : 1 484 € - 807 € = 677 €.
+    attendu: {impot_brut: 1484, decote: 807, impot_avant_credits: 677}
+
+  - id: bofip_decote_2016_celibataire
+    source: BOI-IR-LIQ-20-20-30-20170406, § 40, exemple 1
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20170406
+    annee: 2016
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 15000
+    citation: >-
+      [...] célibataire [...] 2016 à 15 000 € [...] 741 € : montant de la décote
+      : 1 165 € - (3/4 x 741 €) = 609,25 € arrondi à 609 € ; montant de la
+      réduction d'impôt : 0,2 x (741 € - 609 €) = 26,4 € arrondi à 26 € ; impôt
+      final à payer : 741 € - 609 € - 26 € = 106 €.
+    attendu: {impot_brut: 741, decote: 609, reduction_sous_condition_de_revenus: 26,
+              impot_avant_credits: 106}
+
+  - id: bofip_decote_2016_couple_deux_enfants
+    source: BOI-IR-LIQ-20-20-30-20170406, § 40, exemple 2
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20170406
+    annee: 2016
+    foyer: {declarants: [{}, {}], enfants: 2}
+    revenu_net_imposable: 45000
+    citation: >-
+      Soit un foyer fiscal constitué d'un couple et de 2 enfants, dont le revenu
+      imposable [...] s'élève au titre de l'année 2016 à 45 000 € [...] 2 222 € :
+      montant de la décote : 1 920 € - (3/4 x 2 222 €) = 253,5 € arrondi à 254 € ;
+      montant de la réduction d'impôt : (0,2 x [(48 400 € - 45 000 €) / 4 000]) x
+      (2 222 € - 254 €) = 334,6 € arrondi à 335 € [...] impôt final à payer :
+      2 222 € - 254 € - 335 € = 1 633 €.
+    attendu: {impot_brut: 2222, decote: 254, reduction_sous_condition_de_revenus: 335,
+              impot_avant_credits: 1633}
+
+  - id: bofip_decote_2016_couple
+    source: BOI-IR-LIQ-20-20-30-20170406, § 40, exemple 3
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20170406
+    annee: 2016
+    foyer: {declarants: [{}, {}]}
+    revenu_net_imposable: 39000
+    citation: >-
+      [...] couple sans enfant [...] 2016 à 39 000 € [...] 2 741 € : montant de la
+      décote : 0 € [...] (2 741 € > 2 560 €) ; montant de la réduction d'impôt :
+      (0,2 x [(41 000 € - 39 000 €) / 4 000]) x 2 741 = 274,1 € arrondi à 274 €
+      [...] impôt final à payer : 2 741 € - 274 € = 2 467 €.
+    attendu: {impot_brut: 2741, decote: 0, reduction_sous_condition_de_revenus: 274,
+              impot_avant_credits: 2467}
+
+  - id: bofip_decote_2017_celibataire
+    source: BOI-IR-LIQ-20-20-30-20180126, § 40, exemple 1
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20180126
+    annee: 2017
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 15000
+    citation: >-
+      [...] 2017 à 15 000 € [...] 727 € : montant de la décote : 1 177 € - (3/4 x
+      727 €) = 631,75 € arrondi à 632 € ; montant de la réduction d'impôt : 0,2 x
+      (727 € - 632 €) = 19 € ; impôt final à payer : 727 € - 632 € - 19 € = 76 €.
+    attendu: {impot_brut: 727, decote: 632, reduction_sous_condition_de_revenus: 19,
+              impot_avant_credits: 76}
+
+  - id: bofip_decote_2017_couple_deux_enfants
+    source: BOI-IR-LIQ-20-20-30-20180126, § 40, exemple 2
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20180126
+    annee: 2017
+    foyer: {declarants: [{}, {}], enfants: 2}
+    revenu_net_imposable: 45000
+    citation: >-
+      [...] couple et de 2 enfants [...] 2017 à 45 000 € [...] 2 181 € : montant
+      de la décote : 1 939 € - (3/4 x 2 181 €) = 303,25 € arrondi à 303 € ;
+      montant de la réduction d'impôt : (0,2 x [(48 884 € - 45 000 €) / 4 040]) x
+      (2 181 € - 303 €) = 361,1 € arrondi à 361 € [...] impôt final à payer :
+      2 181 € - 303 € - 361 € = 1 517 €.
+    attendu: {impot_brut: 2181, decote: 303, reduction_sous_condition_de_revenus: 361,
+              impot_avant_credits: 1517}
+
+  - id: bofip_decote_2017_couple
+    source: BOI-IR-LIQ-20-20-30-20180126, § 40, exemple 3
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20180126
+    annee: 2017
+    foyer: {declarants: [{}, {}]}
+    revenu_net_imposable: 39000
+    citation: >-
+      [...] couple sans enfant [...] 2017 à 39 000 € [...] 2 714 € : montant de la
+      décote : 0 € [...] montant de la réduction d'impôt : (0,2 x [(41 410 € -
+      39 000 €) / 4 040]) x 2 714 = 323,8 € arrondi à 324 € [...] impôt final à
+      payer : 2 714 € - 324 € = 2 390 €.
+    attendu: {impot_brut: 2714, decote: 0, reduction_sous_condition_de_revenus: 324,
+              impot_avant_credits: 2390}
+
+  - id: bofip_decote_2018_celibataire
+    source: BOI-IR-LIQ-20-20-30-20190218, § 40, exemple 1
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20190218
+    annee: 2018
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 15000
+    citation: >-
+      [...] 2018 à 15 000 € [...] 705 € : montant de la décote : 1 196 € - (3/4 x
+      705 €) = 667,25 € arrondi à 667 € ; montant de la réduction d'impôt : 0,2 x
+      (705 € - 667 €) = 7,6 € arrondi à 8 € ; impôt final à payer : 705 € - 667 €
+      - 8 € = 30 €.
+    attendu: {impot_brut: 705, decote: 667, reduction_sous_condition_de_revenus: 8,
+              impot_avant_credits: 30}
+
+  - id: bofip_decote_2018_couple_deux_enfants
+    source: BOI-IR-LIQ-20-20-30-20190218, § 40, exemple 2
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20190218
+    annee: 2018
+    foyer: {declarants: [{}, {}], enfants: 2}
+    revenu_net_imposable: 46000
+    citation: >-
+      [...] couple et de 2 enfants [...] 2018 à 46 000 € [...] 2 255 € : montant
+      de la décote : 1 970 € - (3/4 x 2 255 €) = 278,75 € arrondi à 279 € ;
+      montant de la réduction d'impôt : (0,2 x [(49 668 € - 46 000 €) / 4 104]) x
+      (2 255 € - 279 €) = 353,21 € arrondi à 353 € [...] impôt final à payer :
+      2 255 € - 279 € - 353 € = 1 623 €.
+    attendu: {impot_brut: 2255, decote: 279, reduction_sous_condition_de_revenus: 353,
+              impot_avant_credits: 1623}
+
+  - id: bofip_decote_2018_couple
+    source: BOI-IR-LIQ-20-20-30-20190218, § 40, exemple 3
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20190218
+    annee: 2018
+    foyer: {declarants: [{}, {}]}
+    revenu_net_imposable: 39000
+    citation: >-
+      [...] couple sans enfant [...] 2018 à 39 000 € [...] 2 670 € : montant de la
+      décote : 0 € [...] montant de la réduction d'impôt : (0,2 x [(42 074 € -
+      39 000 €) / 4 104]) x 2 670 = 399,98 € arrondi à 400 € [...] impôt final à
+      payer : 2 670 € - 400 € = 2 270 €.
+    attendu: {impot_brut: 2670, decote: 0, reduction_sous_condition_de_revenus: 400,
+              impot_avant_credits: 2270}
+
+  - id: bofip_decote_2019_celibataire
+    source: BOI-IR-LIQ-20-20-30-20200515, § 40, exemple 1
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20200515
+    annee: 2019
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 15500
+    citation: >-
+      [...] 2019 à 15 500 euros [...] 761 euros : montant de la décote : 1 208
+      euros - (3/4 x 761 euros) = 637,25 euros arrondi à 637 euros ; montant de la
+      réduction d'impôt : 0,2 x (761 euros - 637 euros) = 24,8 euros arrondi à 25
+      euros ; impôt final à payer : 761 euros - 637 euros - 25 euros = 99 euros.
+    attendu: {impot_brut: 761, decote: 637, reduction_sous_condition_de_revenus: 25,
+              impot_avant_credits: 99}
+
+  - id: bofip_decote_2019_couple_deux_enfants
+    source: BOI-IR-LIQ-20-20-30-20200515, § 40, exemple 2
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20200515
+    annee: 2019
+    foyer: {declarants: [{}, {}], enfants: 2}
+    revenu_net_imposable: 47000
+    citation: >-
+      [...] couple et de 2 enfants [...] 2019 à 47 000 euros [...] 2 353 euros :
+      montant de la décote : 1 990 euros - (3/4 x 2 353 euros) = 225,25 euros
+      arrondi à 225 euros ; montant de la réduction d'impôt : (0,2 x [(50 170
+      euros - 47 000 euros) / 4 146]) x (2 353 euros - 225 euros) = 325,41 euros
+      arrondi à 325 euros [...] impôt final à payer : 2 353 euros - 225 euros -
+      325 euros = 1 803 euros.
+    attendu: {impot_brut: 2353, decote: 225, reduction_sous_condition_de_revenus: 325,
+              impot_avant_credits: 1803}
+
+  - id: bofip_decote_2019_couple
+    source: BOI-IR-LIQ-20-20-30-20200515, § 40, exemple 3
+    adresse: https://bofip.impots.gouv.fr/bofip/2495-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-30-20200515
+    annee: 2019
+    foyer: {declarants: [{}, {}]}
+    revenu_net_imposable: 39500
+    citation: >-
+      [...] couple sans enfant [...] 2019 à 39 500 euros [...] 2 712 euros :
+      montant de la décote : 0 euro [...] montant de la réduction d'impôt : (0,2 x
+      [(42 498 euros - 39 500 euros) / 4 146]) x 2 712 = 392,21 euros arrondi à
+      392 euros [...] impôt final à payer : 2 712 euros - 392 euros = 2 320 euros.
+    attendu: {impot_brut: 2712, decote: 0, reduction_sous_condition_de_revenus: 392,
+              impot_avant_credits: 2320}
+
+  # -- Le plafonnement du quotient familial, BOI-IR-LIQ-20-20-20 ------------------
+  # Un couple marié, quatre enfants à charge dont, le plus souvent, un invalide
+  # (5,5 parts) ; 130 000 € de revenu imposable ; l'impôt dû.
+
+  - id: bofip_plafonnement_2011
+    source: BOI-IR-LIQ-20-20-20-20120912, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20120912
+    annee: 2011
+    foyer: {declarants: [{}, {}], enfants: 4, enfants_invalides: 1}
+    revenu_net_imposable: 130000
+    citation: >-
+      Un contribuable marié ayant quatre enfants à charge dont l'un est invalide
+      (5,5 parts) a, pour 2011, un revenu imposable de 130 000 € : premier terme
+      : impôt correspondant à 5,5 parts : 10 835 € ; deuxième terme : impôt
+      correspondant à 2 parts : 27 867 € ; réduction maximale correspondant à 7
+      demi-parts supplémentaires : 14 016 € (2 336 € × 6) + 2 997 € (pour la
+      demi-part correspondant à l'invalidité) = 17 013 € ; impôt avec
+      plafonnement : 27 867 € - 17 013 € = 10 854 €.
+    attendu: {parts: 5.5, impot_sans_plafonnement: 10835, impot_brut: 10854}
+
+  - id: bofip_plafonnement_2012
+    source: BOI-IR-LIQ-20-20-20-20130613, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20130613
+    annee: 2012
+    foyer: {declarants: [{}, {}], enfants: 4, enfants_invalides: 1}
+    revenu_net_imposable: 130000
+    citation: >-
+      [...] quatre enfants à charge dont l'un est invalide (5,5 parts) a, pour
+      2012, un revenu imposable de 130 000 € [...] l'impôt dû est donc égal à
+      12 870 €.
+    attendu: {parts: 5.5, impot_brut: 12870}
+
+  - id: bofip_plafonnement_2013
+    source: BOI-IR-LIQ-20-20-20-20140326, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20140326
+    annee: 2013
+    foyer: {declarants: [{}, {}], enfants: 4, enfants_invalides: 1}
+    revenu_net_imposable: 130000
+    citation: >-
+      [...] pour 2013, un revenu imposable de 130 000 € : premier terme : calcul
+      de l'impôt avec 5,5 parts [...] soit 10 776 € [...] l'impôt dû est donc
+      égal à 15 781 €.
+    attendu: {parts: 5.5, impot_sans_plafonnement: 10776, impot_brut: 15781}
+
+  - id: bofip_plafonnement_2014
+    source: BOI-IR-LIQ-20-20-20-20150325, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20150325
+    annee: 2014
+    foyer: {declarants: [{}, {}], enfants: 4, enfants_invalides: 1}
+    revenu_net_imposable: 130000
+    citation: >-
+      [...] pour 2014, un revenu imposable de 130 000 € : premier terme : calcul
+      de l'impôt avec 5,5 parts [...] soit 10 739 € [...] 15 662 €.
+    attendu: {parts: 5.5, impot_sans_plafonnement: 10739, impot_brut: 15662}
+
+  - id: bofip_plafonnement_2015
+    source: BOI-IR-LIQ-20-20-20-20160229, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20160229
+    annee: 2015
+    foyer: {declarants: [{}, {}], enfants: 4, enfants_invalides: 1}
+    revenu_net_imposable: 130000
+    citation: >-
+      [...] pour 2015, un revenu imposable de 130 000 €. Premier terme : calcul de
+      l'impôt avec 5,5 parts [...] soit 10 731 € [...] 15 635 €.
+    attendu: {parts: 5.5, impot_sans_plafonnement: 10731, impot_brut: 15635}
+
+  - id: bofip_plafonnement_2016
+    source: BOI-IR-LIQ-20-20-20-20170406, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20170406
+    annee: 2016
+    foyer: {declarants: [{}, {}], enfants: 4, enfants_invalides: 1}
+    revenu_net_imposable: 130000
+    citation: >-
+      [...] pour 2016 [...] soit 10 723,3 arrondi à 10 723 € [...] 15 607 €.
+    attendu: {parts: 5.5, impot_sans_plafonnement: 10723, impot_brut: 15607}
+
+  - id: bofip_plafonnement_2017
+    source: BOI-IR-LIQ-20-20-20-20180126, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20180126
+    annee: 2017
+    foyer: {declarants: [{}, {}], enfants: 4, enfants_invalides: 1}
+    revenu_net_imposable: 130000
+    citation: >-
+      [...] pour 2017 [...] soit 10 648,61 arrondi à 10 649 € [...] 15 375 €.
+    attendu: {parts: 5.5, impot_sans_plafonnement: 10649, impot_brut: 15375}
+
+  - id: bofip_plafonnement_2018
+    source: BOI-IR-LIQ-20-20-20-20190218, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20190218
+    annee: 2018
+    foyer: {declarants: [{}, {}], enfants: 4, enfants_invalides: 1}
+    revenu_net_imposable: 130000
+    citation: >-
+      [...] pour 2018 [...] soit 10 527,72 arrondi à 10 528 € [...] 15 000 €.
+    attendu: {parts: 5.5, impot_sans_plafonnement: 10528, impot_brut: 15000}
+
+  - id: bofip_plafonnement_2019
+    source: BOI-IR-LIQ-20-20-20-20200515, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20200515
+    annee: 2019
+    foyer: {declarants: [{}, {}], enfants: 4, enfants_invalides: 1}
+    revenu_net_imposable: 130000
+    citation: >-
+      [...] pour 2019 [...] soit 10 450,72 arrondi à 10 451 euros [...] 14 757 euros.
+    attendu: {parts: 5.5, impot_sans_plafonnement: 10451, impot_brut: 14757}
+
+  - id: bofip_plafonnement_2020
+    source: BOI-IR-LIQ-20-20-20-20210330, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20210330
+    annee: 2020
+    foyer: {declarants: [{}, {}], enfants: 4, enfants_invalides: 1}
+    revenu_net_imposable: 130000
+    citation: >-
+      [...] pour 2020 [...] (130 000 euros x 0,11) - (1 109,24 euros x 5,5), soit
+      8 199,18 arrondi à 8 199 euros. [...] (130 000 euros x 0,30) - (5 994,14
+      euros x 2), soit 27 011,72 arrondi à 27 012 euros. [...] soit 14 457 euros.
+    attendu: {parts: 5.5, impot_sans_plafonnement: 8199, impot_brut: 14457}
+
+  - id: bofip_plafonnement_2021
+    source: BOI-IR-LIQ-20-20-20-20220516, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20220516
+    annee: 2021
+    foyer: {declarants: [{}, {}], enfants: 4, enfants_invalides: 1}
+    revenu_net_imposable: 130000
+    citation: >-
+      [...] pour 2021 [...] (130 000 euros x 0,11) - (1 124,75 euros x 5,5), soit
+      8 113,875 arrondi à 8 114 euros. [...] soit 14 113 euros.
+    attendu: {parts: 5.5, impot_sans_plafonnement: 8114, impot_brut: 14113}
+
+  - id: bofip_plafonnement_2022
+    source: BOI-IR-LIQ-20-20-20-20230626, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20230626
+    annee: 2022
+    foyer: {declarants: [{}, {}], enfants: 4, enfants_invalides: 1}
+    revenu_net_imposable: 130000
+    citation: >-
+      [...] pour 2022 [...] (130 000 € x 0,11) - (1 185,47 € x 5,5), soit 7 779,915
+      arrondi à 7 780 €. [...] soit 12 768 €.
+    attendu: {parts: 5.5, impot_sans_plafonnement: 7780, impot_brut: 12768}
+
+  - id: bofip_plafonnement_2023
+    source: BOI-IR-LIQ-20-20-20-20240618, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20240618
+    annee: 2023
+    foyer: {declarants: [{}, {}], enfants: 4}
+    revenu_net_imposable: 130000
+    citation: >-
+      Un contribuable marié ayant quatre enfants à charge (5 parts) a, pour 2023,
+      un revenu imposable de 130 000 € [...] (130 000 € x 0,11) - (1 242,34 € x
+      5), soit 8 088,30 arrondi à 8 088 € [...] (130 000 € x 0,30) - (6 713,77 € x
+      2), soit 25 572,46 arrondi à 25 572 € [...] soit 1 759 € x 6 = 10 554 €
+      [...] 25 572 € - 10 554 € = 15 018 €
+    attendu: {parts: 5, impot_sans_plafonnement: 8088, impot_brut: 15018}
+
+  - id: bofip_plafonnement_2023_invalide
+    source: BOI-IR-LIQ-20-20-20-20240618, § 185
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20240618
+    annee: 2023
+    foyer: {declarants: [{}, {}], enfants: 4, enfants_invalides: 1}
+    revenu_net_imposable: 130000
+    citation: >-
+      [...] dont l'un est invalide (5,5 parts) a, pour 2023 [...] (1 759 € x 7) +
+      1 753 €, soit 14 066 € [...] 25 572 € - 14 066 € = 11 506 €
+    attendu: {parts: 5.5, impot_brut: 11506}
+
+  - id: bofip_plafonnement_2024
+    source: BOI-IR-LIQ-20-20-20-20250414, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20250414
+    annee: 2024
+    foyer: {declarants: [{}, {}], enfants: 4}
+    revenu_net_imposable: 130000
+    citation: >-
+      Un contribuable marié ayant quatre enfants à charge (5 parts) a, pour 2024,
+      un revenu imposable de 130 000 € [...] soit 1 791 € x 6 = 10 746 € [...]
+      soit 14 585 €.
+    attendu: {parts: 5, impot_brut: 14585}
+
+  - id: bofip_plafonnement_2024_invalide
+    source: BOI-IR-LIQ-20-20-20-20250414, § 185
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20250414
+    annee: 2024
+    foyer: {declarants: [{}, {}], enfants: 4, enfants_invalides: 1}
+    revenu_net_imposable: 130000
+    citation: >-
+      [...] dont l'un est invalide (5,5 parts) a, pour 2024 [...] (1 791 € x 7) +
+      1 785 €, soit 14 322 € [...] soit 11 009 €.
+    attendu: {parts: 5.5, impot_brut: 11009}
+
+  - id: bofip_plafonnement_2025
+    source: BOI-IR-LIQ-20-20-20-20260407, § 40
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20260407
+    annee: 2025
+    foyer: {declarants: [{}, {}], enfants: 4}
+    revenu_net_imposable: 130000
+    citation: >-
+      Un contribuable marié ayant quatre enfants à charge (5 parts) a, pour 2025,
+      un revenu imposable de 130 000 €. [...] (130 000 € x 0,11) - (1 276 € x 5),
+      soit 7 920 €. [...] (130 000 € x 0,30) - (6 896,01 € x 2), soit 25 207,98
+      arrondi à 25 208 €. [...] soit 1 807 € x 6 = 10 842 €. L'impôt avec
+      application du plafonnement est égal à : 25 208 € - 10 842 € = 14 366 €.
+    attendu: {parts: 5, impot_sans_plafonnement: 7920, impot_brut: 14366}
+
+  - id: bofip_plafonnement_2025_invalide
+    source: BOI-IR-LIQ-20-20-20-20260407, § 185
+    adresse: https://bofip.impots.gouv.fr/bofip/2494-PGP.html/identifiant%3DBOI-IR-LIQ-20-20-20-20260407
+    annee: 2025
+    foyer: {declarants: [{}, {}], enfants: 4, enfants_invalides: 1}
+    revenu_net_imposable: 130000
+    citation: >-
+      [...] dont l'un est invalide (5,5 parts) a, pour 2025 [...] (130 000 € x
+      0,11) - (1 276 € x 5,5), soit 7 282 €. [...] (1 807 € x 7) + 1 801 €, soit
+      14 450 €. L'impôt avec application du plafonnement est égal à : 25 208 € -
+      14 450 € = 10 758 €.
+    attendu: {parts: 5.5, impot_sans_plafonnement: 7282, impot_brut: 10758}
+
+  # -- La brochure pratique, chapitre « Calcul de l'impôt » ------------------------
+
+  - id: brochure_2025_bareme
+    source: DGFiP, brochure pratique 2025 (revenus de 2024), p. 361, « Tableau de calcul de l'impôt »
+    adresse: https://www.impots.gouv.fr/www2/fichiers/documentation/brochure/ir_2025/pdf_som/21-calcul_impot_359a372.pdf
+    annee: 2024
+    foyer: {declarants: [{}, {}], enfants: 2}
+    revenu_net_imposable: 54000
+    citation: >-
+      Un couple marié avec deux enfants à charge (3 parts) dispose d'un revenu net
+      imposable de 54 000 €. [...] 54 000 € × 0,11 = 5 940 € – Déduire du
+      résultat 1 264,67 € × 3 = 3 794,01 € – Impôt brut : 5 940 € – 3 794,01 € =
+      2 145,99 € arrondi à 2 146 €
+    attendu: {parts: 3, impot_brut: 2146}
+
+  - id: brochure_2024_bareme
+    source: DGFiP, brochure pratique 2024 (revenus de 2023), p. 363, « Tableau de calcul de l'impôt »
+    adresse: https://www.impots.gouv.fr/www2/fichiers/documentation/brochure/ir_2024/pdf_som/21-calcul_impot_361a374.pdf
+    annee: 2023
+    foyer: {declarants: [{}, {}], enfants: 2}
+    revenu_net_imposable: 54000
+    citation: >-
+      Un couple marié avec deux enfants à charge (3 parts) dispose d'un revenu net
+      imposable de 54 000 €. [...] Déduire du résultat 1 242,34 € × 3 = 3 727,02 €
+      – Impôt brut : 5 940 € – 3 727,02 € = 2 212,98 € arrondi à 2 213 €
+    attendu: {parts: 3, impot_brut: 2213}
+
+  # La décote d'un impôt brut donné (`decote_de`) : la brochure part de l'impôt.
+
+  - id: brochure_2025_decote
+    source: DGFiP, brochure pratique 2025 (revenus de 2024), p. 361, « Décote »
+    adresse: https://www.impots.gouv.fr/www2/fichiers/documentation/brochure/ir_2025/pdf_som/21-calcul_impot_359a372.pdf
+    annee: 2024
+    foyer: {declarants: [{}, {}]}
+    decote_de: 2140
+    citation: >-
+      Vous êtes mariés et votre impôt avant décote s'élève à 2 140 €. La décote
+      est égale à 1 470 € – 968 € (2 140 × 45,25 %) = 502 €. Votre impôt après
+      décote s'élève à 2 140 € – 502 € = 1 638 €.
+    attendu: {decote: 502}
+
+  - id: brochure_2024_decote
+    source: DGFiP, brochure pratique 2024 (revenus de 2023), p. 363, « Décote »
+    adresse: https://www.impots.gouv.fr/www2/fichiers/documentation/brochure/ir_2024/pdf_som/21-calcul_impot_361a374.pdf
+    annee: 2023
+    foyer: {declarants: [{}, {}]}
+    decote_de: 2140
+    citation: >-
+      Vous êtes mariés et votre impôt avant décote s'élève à 2 140 €. La décote
+      est égale à 1 444 € – 968 € (2 140 × 45,25 %) = 476 €. Votre impôt après
+      décote s'élève à 2 140 € – 476 € = 1 664 €.
+    attendu: {decote: 476}
+
+  # -- En francs : le Bulletin officiel des impôts -----------------------------------
+
+  - id: boi_5b_9_01_invalide_2000
+    source: BOI 5 B-9-01, n° 44 du 2 mars 2001, § 23 et 24
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/20135-AIDA.html/identifiant%3D5B-9-01-20010302
+    annee: 2000
+    foyer: {declarants: [{invalide: true}, {}]}
+    revenu_net_imposable: 450000
+    citation: >-
+      Soit un contribuable marié invalide, titulaire de la carte d'invalidité [...]
+      imposé en fonction d'un quotient familial de 2,5 parts [...] Ce contribuable
+      a disposé en 2000 d'un revenu imposable de 450 000 F. [...] La différence
+      entre ces deux cotisations est égale à 4 249 F (108 680 F - 104 431 F), soit
+      un montant inférieur au plafond de 4 260 F. La réduction d'impôt
+      complémentaire au plafonnement à 12 440 F de la demi-part est par conséquent
+      égale à 4 249 F, et la cotisation d'impôt [...] est égale à 104 431 F.
+    attendu: {parts: 2.5, impot_sans_plafonnement: 104431, reduction_complementaire: 4249,
+              impot_brut: 104431}
+
+  # -- En euros, avant la réforme de 2006 : le Bulletin officiel des impôts ----------
+  #
+  # L'instruction qui commente chaque année l'article 2 de la loi de finances :
+  # la réduction complémentaire d'un couple dont un conjoint est invalide, et la
+  # décote d'un célibataire. Le calcul de la décote des revenus de 2001 est une
+  # image (BOI5B-3-02.005.png), transcrite ici.
+
+  - id: boi_5b_3_02_invalide_2001
+    source: BOI 5 B-3-02, n° 18 du 25 janvier 2002, § 23
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/20104-AIDA.html/identifiant%3D5B-3-02-20020125
+    annee: 2001
+    foyer: {declarants: [{invalide: true}, {}]}
+    revenu_net_imposable: 75000
+    citation: >-
+      Soit un contribuable marié invalide, titulaire de la carte d'invalidité [...]
+      imposé en fonction d'un quotient familial de 2,5 parts [...] Ce contribuable
+      a disposé en 2001 d'un revenu imposable de 75 000 €. [...] La différence
+      entre ces deux cotisations est égale à 553 € (18 455 - 17 902), soit un
+      montant inférieur au plafond de 570 €. La réduction d'impôt complémentaire
+      au plafonnement à 2 017 € de la demi-part est par conséquent égale à 553 €,
+      et la cotisation d'impôt [...] est égale à 17 902 €.
+    attendu: {parts: 2.5, impot_sans_plafonnement: 17902, plafonnement: 553,
+              reduction_complementaire: 553, impot_brut: 17902}
+
+  - id: boi_5b_3_02_decote_2001
+    source: BOI 5 B-3-02, n° 18 du 25 janvier 2002, § 39
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/20105-AIDA.html/identifiant%3D-20020125
+    annee: 2001
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 9200
+    citation: >-
+      Soit un contribuable célibataire dont le revenu imposable s'élève au titre
+      de l'année 2001 à 9 200 €. L'impôt brut résultant de l'application du barème
+      est égal [...] à 529 €. [Image :] montant de la décote : [380 € – (529 : 2)]
+      = 116 € ; impôt à payer : 529 € – 116 € = 413 €.
+    attendu: {impot_brut: 529, decote: 116, impot_avant_credits: 413}
+
+  - id: boi_5b_6_03_invalide_2002
+    source: BOI 5 B-6-03, n° 16 du 27 janvier 2003, § 22
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/20063-AIDA.html/identifiant%3D5B-6-03-20030127
+    annee: 2002
+    foyer: {declarants: [{invalide: true}, {}]}
+    revenu_net_imposable: 75000
+    citation: >-
+      [...] Ce contribuable a disposé en 2002 d'un revenu imposable de 75 000 €.
+      [...] cotisation d'impôt calculée sur la base de 2,5 parts (sans application
+      du dispositif du plafonnement) : 16 623 € ; cotisation d'impôt tenant compte
+      du plafonnement à 2 051 € de l'avantage en impôt procuré par la demi-part
+      accordée au titre de l'invalidité : 17 028 €. La différence entre ces deux
+      cotisations est égale à 405 € (17 028 - 16 623), soit un montant inférieur
+      au plafond de 580 €. [...] la cotisation d'impôt [...] est égale à 16 623 €.
+    attendu: {parts: 2.5, impot_sans_plafonnement: 16623, plafonnement: 405,
+              reduction_complementaire: 405, impot_brut: 16623}
+
+  - id: boi_5b_6_03_decote_2002
+    source: BOI 5 B-6-03, n° 16 du 27 janvier 2003, § 38
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/20063-AIDA.html/identifiant%3D5B-6-03-20030127
+    annee: 2002
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 9500
+    citation: >-
+      Soit un contribuable célibataire dont le revenu imposable s'élève au titre
+      de l'année 2002 à 9 500 €. L'impôt brut résultant de l'application du barème
+      est égal [...] à 534 €. Montant de la décote : [386 € - (534 : 2)] = 119 € ;
+      impôt à payer : 534 € - 119 € = 415 €.
+    attendu: {impot_brut: 534, decote: 119, impot_avant_credits: 415}
+
+  - id: boi_5b_8_04_invalide_2003
+    source: BOI 5 B-8-04, n° 37 du 25 février 2004, § 19
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/20036-AIDA.html/identifiant%3D5B-8-04-20040225
+    annee: 2003
+    foyer: {declarants: [{invalide: true}, {}]}
+    revenu_net_imposable: 75500
+    citation: >-
+      [...] Ce contribuable a disposé en 2003 d'un revenu imposable de 75 500 €.
+      [...] La différence entre ces deux cotisations est égale à 338 € (16 442 -
+      16 104), soit un montant inférieur au plafond de 590 €. La réduction d'impôt
+      complémentaire au plafonnement à 2 086 € de la demi-part est par conséquent
+      égale à 338 €, et la cotisation d'impôt [...] est égale à 16 104 €.
+    attendu: {parts: 2.5, impot_sans_plafonnement: 16104, plafonnement: 338,
+              reduction_complementaire: 338, impot_brut: 16104}
+
+  - id: boi_5b_8_04_decote_2003
+    source: BOI 5 B-8-04, n° 37 du 25 février 2004, chapitre 3
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/20038-AIDA.html/identifiant%3D-20040225
+    annee: 2003
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 9500
+    citation: >-
+      Soit un contribuable célibataire dont le revenu imposable s'élève au titre
+      de l'année 2003 à 9 500 €. L'impôt brut résultant de l'application du barème
+      est égal [...] à 495 € : montant de la décote : [393 € - (495 / 2)] = 146 € ;
+      impôt à payer : 495 € - 146 € = 349 €.
+    attendu: {impot_brut: 495, decote: 146, impot_avant_credits: 349}
+
+  - id: boi_5b_9_05_invalide_2004
+    source: BOI 5 B-9-05, n° 33 du 18 février 2005, § 21
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/20005-AIDA.html/identifiant%3D5B-9-05-20050218
+    annee: 2004
+    foyer: {declarants: [{invalide: true}, {}]}
+    revenu_net_imposable: 76000
+    citation: >-
+      [...] Ce contribuable a disposé en 2004 d'un revenu imposable de 76 000 €.
+      [...] La différence entre ces deux cotisations est égale à 343 € (16 429 -
+      16 086), soit un montant inférieur au plafond de 600 €. La réduction d'impôt
+      complémentaire au plafonnement à 2 121 € de la demi-part est par conséquent
+      égale à 343 €, et la cotisation d'impôt [...] est égale à 16 086 €.
+    attendu: {parts: 2.5, impot_sans_plafonnement: 16086, plafonnement: 343,
+              reduction_complementaire: 343, impot_brut: 16086}
+
+  - id: boi_5b_9_05_decote_2004
+    source: BOI 5 B-9-05, n° 33 du 18 février 2005, § 39
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/20007-AIDA.html/identifiant%3D-20050218
+    annee: 2004
+    foyer: {declarants: [{}]}
+    revenu_net_imposable: 9500
+    citation: >-
+      Soit un contribuable célibataire dont le revenu imposable s'élève au titre
+      de l'année 2004 à 9 500 €. L'impôt brut résultant de l'application du barème
+      est égal [...] à 473 € : montant de la décote : [400 € - (473 / 2)] = 164 € ;
+      impôt à payer : 473 € - 164 € = 309 €.
+    attendu: {impot_brut: 473, decote: 164, impot_avant_credits: 309}
