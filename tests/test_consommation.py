@@ -145,6 +145,31 @@ def test_une_compaction_ouvre_un_segment_neuf(tmp_path):
     assert resume.relu == pytest.approx(3000)
 
 
+def test_une_interruption_n_est_ni_un_appel_ni_une_compaction(tmp_path):
+    # Claude Code écrit une entrée `<synthetic>`, d'usage nul, quand un appel
+    # est interrompu ou échoue : comptée, elle passait pour une compaction, et
+    # le contexte rechargé ensuite allait au rappel qui la suivait.
+    synthetique = {
+        "type": "assistant",
+        "message": {"id": "s", "model": "<synthetic>", "content": [{"type": "text"}],
+                    "usage": {"input_tokens": 0, "output_tokens": 0}},
+    }
+    chemin = _ecrire(
+        tmp_path / "s.jsonl",
+        [
+            *_appel("r1", 1000, 0, [{"type": "text"}]),
+            synthetique,
+            _piece("total_tokens_reminder", "w" * 35),
+            *_appel("r2", 1010, 0, [{"type": "text"}]),
+        ],
+    )
+    session = consommation.lire(chemin)
+    assert [a.contexte for a in session.appels] == [1000, 1010]
+    assert session.compactions == 0
+    rappel = next(p for p in session.parts if p.etiquette == "total_tokens_reminder")
+    assert rappel.jetons == pytest.approx(10)
+
+
 def test_une_image_se_compte_a_ses_dimensions_et_non_a_son_base64():
     entete = b"\x89PNG\r\n\x1a\n" + b"\0\0\0\rIHDR" + struct.pack(">II", 750, 100)
     image = {"type": "image", "source": {"data": base64.b64encode(entete + b"\0" * 300_000).decode()}}

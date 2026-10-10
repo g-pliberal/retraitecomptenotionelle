@@ -1,13 +1,5 @@
 # Le contexte, étape 1 : mesurer ce que les sessions consomment
 
-**Reprise, au 7 octobre 2026.** Fait : `scripts/consommation.py` et ses
-tests (`tests/test_consommation.py`, sur des transcriptions factices). Reste :
-le lancer sur le poste du propriétaire, `python scripts/consommation.py`, où
-vivent les sessions locales des trente derniers jours, et écrire ici, chiffres
-à l'appui, ce qui coûte et laquelle des étapes 4 et 5 vaut son prix. Un
-conteneur du cloud ne voit que sa propre session. Détail : plus bas,
-« Le script ».
-
 **Le 7 octobre 2026, la demande.** Le propriétaire, l'arbre du dépôt en main
 (`2026-10-07-arbre-du-depot.md`) : « Maintenant que nous avons une vision
 objective, qu'est-il possible de faire ? » L'arbre dit ce qui existe ; la
@@ -83,3 +75,47 @@ contextes de chaque appel, ce que le test vérifie.
 
 En finissant, la session ôte le bloc « Reprise » de cette note, et ne touche
 à celui de l'action que si elle est la dernière des cinq étapes.
+
+**Le 10 octobre 2026, le relevé du poste.** `python scripts/consommation.py`
+sur les seuls dossiers de ce dépôt sous `~/.claude/projects/` : ceux des
+autres projets du poste ne regardent pas le dépôt, et n'y sont pas nommés.
+Trente et une sessions, du 22 septembre au 10 octobre ; aucune du 7 au
+9 octobre, menées dans le cloud, de sorte que l'effet des étapes 2 à 5 ne se
+lit pas ici.
+
+- *Une correction d'abord.* Une entrée `<synthetic>` — un appel interrompu,
+  une erreur de l'API —, d'usage nul, comptait pour un appel de contexte nul :
+  elle passait pour une compaction, et le contexte rechargé à l'appel suivant,
+  jusqu'à 456 000 jetons, allait au rappel de vingt-cinq jetons qui la
+  précédait. Les ajouts du harnais montaient ainsi à 11 % des jetons relus,
+  et en font 3 %. Le script les écarte, et un test le tient.
+- *Le total.* 9 451 appels, 3,70 milliards de jetons relus, 1 142 $ pour les
+  vingt-trois sessions qui notent leur coût.
+- *Ce qui est relu.* La sortie du modèle, réflexion comprise, 37,1 % ; les
+  résultats de Bash, 32,9 %, dont `sed` 13,1 % et `grep` 5,7 % ; le départ
+  « système et outils », que le dépôt ne commande pas, 12,1 % ; `Read`,
+  5,3 % ; `CLAUDE.md`, 1,3 % ; la liste des skills, 1,0 %.
+- *Les fichiers.* Toute lecture de fichier, par `Read` ou par Bash, fait
+  20,5 % ; celles des 76 fichiers de plus de 50 000 octets, 10,1 % : la
+  feuille de route 1,3 %, `scenarios/actuel.py` et `pages.js` 0,7 % chacun,
+  `droit/liquider.py` 0,6 %, `docs/limites.md` 0,2 %, quand l'historique git
+  le désignait le premier (étape 5). Le paquet, les témoins et
+  `data/derive/`, les lignes géantes de l'étape 4, 0,3 %.
+- *La longueur des sessions.* Un appel relit tout ce qui précède : le coût
+  croît comme le carré du nombre d'appels. Les treize sessions de trois cents
+  appels et plus font 72 % des lectures, et finissent entre 300 000 et
+  960 000 jetons de contexte.
+- *Le prix.* Aux tarifs relatifs de l'API — la lecture du cache au dixième de
+  l'entrée, son écriture pour une heure au double, la sortie au quintuple —,
+  la lecture du cache fait 79 % du coût, son écriture 12 %, la sortie 9 %.
+  Les vingt-cinq recharges de plus de 50 000 jetons en font 5 % : vingt-trois
+  suivent une pause de plus d'une heure, qui a laissé expirer le cache.
+
+**Le verdict.** L'étape 4 ne valait pas son prix, et l'étape 5 peu : à
+elles deux, elles visaient moins d'un dixième de la facture, et un découpage
+n'y gagne que sur les lectures entières, que la garde de l'étape 2 empêche
+déjà. Ce qui coûte, c'est la longueur des sessions : « une session, une
+étape » est le levier, bien avant le rangement des fichiers. Viennent
+ensuite les sorties de Bash, qu'une fenêtre plus étroite réduit, et la
+sortie du modèle elle-même. Aucune étape de plus n'est ouverte : les cinq
+sont closes.

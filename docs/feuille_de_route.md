@@ -4959,16 +4959,16 @@ de statuts et les `manque` de la page Méthode.
 
 ### 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats — `en cours`
 
-**Reprise, au 8 octobre 2026.** Fait : le levier 1 (scripts) ; le 3 pour
+**Reprise, au 10 octobre 2026.** Fait : le levier 1 (scripts) ; le 3 pour
 l'essentiel (la suite complète sous Windows, de 56 à moins de 15 min à
-froid) ; le hook de démarrage ; « Économiser le contexte » ; l'arbre du dépôt
-(`scripts/arbre.py`) ; le parcours `tenu` par son test, que la conservation
-ne gèle plus. Reste : le levier 2, des tests sans présomptions ; les tests du
-portage que node rejoue, par quoi commencer ; l'indexation de la mémoire sur
-le seul code du modèle et `actions/cache` sur GitHub ; le 4 et le 5. En
-parallèle de ce reste, le contexte en cinq étapes, chacune avec son bloc en
-tête de sa note (`2026-10-07-contexte-*`), la 1 et la 2 d'abord ; ce bloc-ci
-ne se récrit que pour le reste. Détail : les notes du 4 au 8 octobre.
+froid) ; le hook de démarrage ; « Économiser le contexte » ; l'arbre du dépôt ;
+le parcours `tenu` par son test ; le contexte en cinq étapes, closes : la
+longueur des sessions fait l'essentiel de la facture, les gros fichiers un
+dixième au plus (`2026-10-07-contexte-1-mesurer.md`). Reste : le levier 2 ;
+les tests du portage que node rejoue, par quoi commencer — le 10 octobre,
+`node --test` prenait 29 s, dont 21 pour rendre les pages, ce que
+`test_les_temoins_du_portage_sont_a_jour` fait déjà ; l'indexation de la
+mémoire sur le seul code du modèle et `actions/cache` ; le 4 et le 5.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus

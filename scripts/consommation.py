@@ -243,7 +243,11 @@ def lire(chemin: Path, nom: str | None = None) -> Session:
                         )
                 cle = entree.get("requestId") or message.get("id") or entree.get("uuid")
                 usage = message.get("usage")
-                if cle in vus or not usage:
+                # Une entrée `<synthetic>` (une interruption, une erreur de
+                # l'API) n'est pas un appel : son contexte nul passerait pour
+                # une compaction, et le contexte rechargé à l'appel suivant
+                # irait tout entier à ce qui le précède.
+                if cle in vus or not usage or not _contexte(usage):
                     continue
                 vus.add(cle)
                 session.appels.append(Appel(_contexte(usage), usage.get("output_tokens", 0)))
