@@ -4325,7 +4325,11 @@ sources:
       (prime spéciale de sujétion), et le fait que la NBI est cotisée au même
       taux que le traitement depuis 2012 pour la retenue et 2013 pour la
       contribution. Deux morceaux d'assiette à chiffrer ou à déclarer dans
-      `docs/limites.md`.
+      `docs/limites.md`. Le 10 octobre 2026 (action 138, étape 17, douzième
+      partie), les cotisations supplémentaires sont entrées, lues aux textes
+      et à ses pages « Les Sapeurs pompiers professionnels » et « Les
+      Aides-soignants » : data/reference/legislation/primes_soumises_a_retenue.yaml.
+      Reste la NBI.
 
   - id: juris_cnracl_taux_historique
     url: https://www.juris-cnracl.retraites.fr/cotisations/taux-de-cotisations/cotisations-historique-des-taux-applicables

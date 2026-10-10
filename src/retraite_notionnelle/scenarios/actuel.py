@@ -1131,7 +1131,9 @@ class FichesDatees:
     ``completer.majoration_pour_enfants_a_charge`` lit, et la majoration pour
     conjoint à charge, que ``completer.majoration_pour_conjoint_a_charge`` lit,
     et les majorations forfaitaires de 1972 à 1982 des pensions prises avant
-    1975, que ``revalorisation.majorations_forfaitaires`` lit.
+    1975, que ``revalorisation.majorations_forfaitaires`` lit, et les primes que
+    la loi assujettit à la retenue pour pension, que ``primes.prime_de_la_pension``
+    lit.
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
@@ -1148,7 +1150,10 @@ class FichesDatees:
             "taux_plein_anciens_deportes_internes", "taux_plein_meres_de_famille_ouvrieres",
             "taux_plein_travailleurs_manuels", "taux_plein_anciens_combattants_prisonniers",
             "majoration_enfants_a_charge_agirc_arrco", "majoration_conjoint_a_charge",
-            "majorations_forfaitaires_1972_1982")
+            "majorations_forfaitaires_1972_1982",
+            "indemnite_sujetions_speciales_police",
+            "prime_speciale_sujetion_aides_soignants",
+            "indemnite_de_feu_sapeurs_pompiers")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

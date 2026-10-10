@@ -447,7 +447,7 @@ affiliations:
       dans ce statut les compte.
 
   fonctionnaire_etat_super_actif:
-    libelle: Fonctionnaire de l'État, emploi de catégorie super-active (police, pénitentiaire)
+    libelle: Fonctionnaire de l'État, emploi de catégorie super-active (pénitentiaire)
     famille: public
     categorie_active: super_active
     periodes:
@@ -457,13 +457,34 @@ affiliations:
     note: >-
       « L'occupation de certains de ces emplois permet de porter l'âge anticipé
       à un âge minoré », l'âge légal diminué de dix années (L. 24, I, 1°) :
-      services actifs de la police nationale, surveillance de l'administration
-      pénitentiaire, ingénieurs du contrôle de la navigation aérienne,
-      identificateurs de l'institut médico-légal, égoutiers. La durée exigée est
-      de vingt-sept années de services super-actifs pour les policiers et les
-      surveillants pénitentiaires, et c'est elle que porte la table : les
-      dix-sept années des contrôleurs aériens et les trente-deux des égoutiers
-      ne sont pas distinguées, faute d'un corps déclaré.
+      surveillance de l'administration pénitentiaire, ingénieurs du contrôle de
+      la navigation aérienne, identificateurs de l'institut médico-légal,
+      égoutiers. La durée exigée est de vingt-sept années de services
+      super-actifs pour les surveillants pénitentiaires, et c'est elle que
+      porte la table : les dix-sept années des contrôleurs aériens et les
+      trente-deux des égoutiers ne sont pas distinguées, faute d'un corps
+      déclaré. Le policier a son statut depuis le 10 octobre 2026, qui porte
+      son indemnité de sujétions spéciales ; la prime de sujétions spéciales
+      des surveillants pénitentiaires, que la loi n° 85-1403 (article 76) fait
+      entrer à leur pension de 1986 à 2000, n'est pas servie.
+
+  policier:
+    libelle: Policier, services actifs de la police nationale (catégorie super-active)
+    famille: public
+    categorie_active: super_active
+    periodes:
+      - {debut: 1930, fin: 1947, regimes: [pensions_civiles_1853]}
+      - {debut: 1948, fin: 2004, regimes: [fonction_publique_etat]}
+      - {debut: 2005, fin: null, regimes: [fonction_publique_etat, rafp]}
+    note: >-
+      Les « personnels des services actifs de police » (loi n° 57-444 du
+      8 avril 1957) : l'âge minoré et ses vingt-sept années de services
+      super-actifs, la bonification du cinquième (article 1er) et sa retenue
+      supplémentaire de 1 % (article 3), et, depuis 1983, l'indemnité de
+      sujétions spéciales dans le calcul de la pension et dans l'assiette de la
+      retenue, majorée de 1,2 point (article 6 bis ; fiche
+      indemnite_sujetions_speciales_police). La part de primes reste
+      l'assiette du RAFP : l'indemnité, soumise à retenue, n'en est pas.
 
   fonctionnaire_territorial_hospitalier_actif:
     libelle: Fonctionnaire territorial ou hospitalier, emploi de catégorie active
@@ -481,19 +502,38 @@ affiliations:
       qu'à eux, est celle du statut suivant.
 
   fonctionnaire_hospitalier_actif:
-    libelle: Fonctionnaire hospitalier, emploi de catégorie active (aide-soignant)
+    libelle: Fonctionnaire hospitalier, emploi de catégorie active (agent de service hospitalier)
     famille: public
     categorie_active: active
     periodes:
       - {debut: 1945, fin: 2004, regimes: [cnracl]}
       - {debut: 2005, fin: null, regimes: [cnracl, rafp]}
     note: >-
-      Aide-soignant, agent de service hospitalier, infirmier resté en catégorie
-      active : le même emploi classé de la CNRACL que le statut précédent, et
-      de plus la majoration de durée d'assurance que l'article 78 de la loi
-      n° 2003-775 réserve aux fonctionnaires hospitaliers, quatre trimestres
-      par dix années de services effectifs, pour la décote seule (fiche
-      majoration_duree_hospitaliers_actifs).
+      Agent de service hospitalier, infirmier resté en catégorie active : le
+      même emploi classé de la CNRACL que le statut précédent, et de plus la
+      majoration de durée d'assurance que l'article 78 de la loi n° 2003-775
+      réserve aux fonctionnaires hospitaliers, quatre trimestres par dix années
+      de services effectifs, pour la décote seule (fiche
+      majoration_duree_hospitaliers_actifs). L'aide-soignant a son statut
+      depuis le 10 octobre 2026, qui porte sa prime spéciale de sujétion.
+
+  aide_soignant:
+    libelle: Aide-soignant de la fonction publique hospitalière (catégorie active)
+    famille: public
+    categorie_active: active
+    periodes:
+      - {debut: 1945, fin: 2004, regimes: [cnracl]}
+      - {debut: 2005, fin: null, regimes: [cnracl, rafp]}
+    note: >-
+      Le corps des aides-soignants de la fonction publique hospitalière, celui
+      des auxiliaires de puériculture qui l'a rejoint en octobre 2021 : l'emploi
+      classé et la majoration de durée des hospitaliers actifs du statut
+      précédent, et, depuis 2004, la prime spéciale de sujétion, dans la limite
+      de 10 % du traitement, soumise à la retenue ordinaire et à une retenue
+      supplémentaire de 1,5 %, qui ouvre un supplément de pension (loi
+      n° 2003-1199, article 37 ; fiche prime_speciale_sujetion_aides_soignants).
+      La part de primes reste l'assiette du RAFP : la prime, soumise à
+      retenue, n'en est pas.
 
   fonctionnaire_territorial_hospitalier_super_actif:
     libelle: Fonctionnaire territorial ou hospitalier, emploi de catégorie super-active (égoutier)
@@ -524,7 +564,12 @@ affiliations:
       bonification du cinquième du temps de service accompli en qualité de
       sapeur-pompier professionnel, cinq ans au plus, sous le pourcentage
       maximum (loi n° 83-1179, article 125, III ; décret n° 2003-1306, article
-      15, II, 2° ; fiche bonification_cinquieme_sapeurs_pompiers).
+      15, II, 2° ; fiche bonification_cinquieme_sapeurs_pompiers), et sa
+      retenue supplémentaire de 2 %. Depuis 1991, l'indemnité de feu dans
+      l'assiette des retenues et dans le calcul de la pension, avec ses
+      cotisations supplémentaires jusqu'en 2021 (loi n° 90-1067, article 17 ;
+      fiche indemnite_de_feu_sapeurs_pompiers). La part de primes reste
+      l'assiette du RAFP : l'indemnité, soumise à retenue, n'en est pas.
 
   ouvrier_etat_actif:
     libelle: Ouvrier de l'État, emploi insalubre ou de catégorie active

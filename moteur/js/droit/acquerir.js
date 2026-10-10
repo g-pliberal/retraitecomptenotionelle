@@ -15,6 +15,7 @@ import {
   assietteMinimale as assietteMinimaleDe, chomageComplementaires, salaireMoyenAnnuel,
 } from "../carriere.js";
 import { nomFiabilite, Fiabilite } from "../serie.js";
+import { primesSoumises } from "../primes.js";
 import { derniereAnnee } from "./commun.js";
 import * as compter from "./compter.js";
 import * as liquider from "./liquider.js";
@@ -22,6 +23,16 @@ import * as ouvrir from "./ouvrir.js";
 
 /** La version du schéma de l'étape. */
 export const SCHEMA_VERSION = 1;
+
+/**
+ * La part de la rémunération de la ligne qu'est la prime soumise à retenue de
+ * son statut, que le RAFP ne compte ni dans ses primes ni dans le traitement
+ * qui les plafonne. Voir acquerir.py.
+ */
+export function partSoumise(moteur, ligne) {
+  return primesSoumises(moteur.macro.paquet).parts(
+    ligne.affiliation, ligne.annee, ligne.part_primes).soumise;
+}
 
 /**
  * L'assiette minimale que la ligne oppose à l'un de ces régimes : celle du
@@ -306,8 +317,11 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           borneHaute = borneHaute === null ? null : borneHaute * part;
         }
         // Traitement seul, primes seules — celles du RAFP dans la limite de
-        // 20 % du traitement : voir `partDuRevenu`.
-        let base = periode.partDuRevenu(baseLigne, ligne.part_primes);
+        // 20 % du traitement, sans la prime soumise à retenue : voir
+        // `partDuRevenu`.
+        let base = periode.partDuRevenu(
+          baseLigne, ligne.part_primes,
+          periode.assiette === "primes_uniquement" ? partSoumise(moteur, ligne) : 0.0);
         if (ligne.revenu_retabli > 0 && periode.assiette !== "primes_uniquement") {
           // Une année RÉTABLIE : l'Ircantec valide le traitement de l'année,
           // les primes restent au RAFP.

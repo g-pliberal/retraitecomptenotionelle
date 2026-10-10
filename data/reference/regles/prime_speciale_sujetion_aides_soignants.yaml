@@ -1,0 +1,220 @@
+schema_version: 1
+id: prime_speciale_sujetion_aides_soignants
+intitule: >-
+  La prime spéciale de sujétion des aides-soignants de la fonction publique
+  hospitalière, depuis 2004 : dans la limite de 10 % du traitement, soumise à la
+  retenue ordinaire et à une retenue supplémentaire de 1,5 %, et un supplément de
+  pension égal à la prime des six derniers mois, intégrée de 2004 à 2008, proratisé
+  sur les services d'aide-soignant de qui est entré dans le corps depuis 2004.
+domaine: salaire_de_reference
+regimes:
+- cnracl
+etape: liquider_chaque_regime
+face: droit
+etat: transcrite
+lit:
+- le statut aide_soignant de la dernière ligne de services, et sa part de primes,
+  l'assiette du RAFP
+- le taux de la prime et la part comptée, année par année
+  (legislation/primes_soumises_a_retenue.yaml)
+- les années servies dans le statut, et dans la fonction publique hospitalière
+- la radiation pour invalidité et son imputabilité
+- liquidation.date_effet
+ecrit:
+- le supplément de pension, que l'étape qui complète ajoute après le minimum garanti et
+  les majorations
+- la retenue et la contribution supplémentaires, à la fiche de paie et au compte
+  (droit en vigueur)
+dates_qui_decident:
+- liquidation.date_effet
+# Les paramètres que le moteur lit (droit/primes.py, `prime_de_la_pension`, et son
+# jumeau) ; la condition est celle des emplois classés (droit/compter.py,
+# `condition_d_un_emploi`) : les années de services de la fonction publique
+# hospitalière (`annees_de_services`, sur `services_comptes`), sans l'âge, qui diffère
+# le versement sans le retirer (`age_anticipe` à faux).
+versions:
+- id: avant_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006758879, article: 37, en_vigueur: 2003-12-19}
+  nee_de: LEGIARTI000006758879
+  bornes:
+    liquidation.date_effet: [null, 2004-01-01]
+  contenu:
+    droit: aucun ; la prime n'est ni soumise à retenue ni comptée dans la pension
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: loi_de_financement_pour_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006758879, article: 37, en_vigueur: 2003-12-19}
+  - {id: LEGIARTI000006229484, article: 2, en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006400881, article: 18-1, en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000006758879
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2011-07-01]
+  contenu:
+    droit: >-
+      « la prise en compte de la prime spéciale de sujétion, dans la limite de 10 % de
+      leur traitement indiciaire, pour le calcul de la pension de retraite ainsi que
+      pour les retenues pour pension » ; le supplément « est liquidé sur la base de la
+      moyenne des montants mensuels de la prime spéciale de sujétion perçue pendant les
+      six derniers mois d'activité » (décret n° 2003-1306, article 18-1), « pour 20 %
+      de son montant en 2004, 40 % en 2005, 60 % en 2006, 80 % en 2007 et 100 % à partir
+      de l'année 2008 » (décret n° 2004-240, article 2), « calculé à due proportion des
+      années de services accomplis dans le corps des aides-soignants »
+    conditions: >-
+      « à partir de l'âge de cinquante-cinq ans et à condition d'avoir accompli quinze
+      ans de services effectifs dans la fonction publique hospitalière », sauf
+      radiation pour invalidité ; à taux complet pour l'agent du corps au 31 décembre
+      2003 qui réunit quinze ans de services effectifs à son départ
+    parametres:
+      existe: true
+      statuts: [aide_soignant]
+      regime: cnracl
+      nature: supplement
+      plafond: 0.10
+      prorata: services_du_statut_depuis_2004
+      condition: durees_et_age_de_l_emploi
+      classement: active
+      services_comptes: [aide_soignant, fonctionnaire_hospitalier_actif]
+      annees_dans_l_emploi: 0
+      annees_de_services: 15
+      age_anticipe: false
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: loi_du_9_novembre_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023096769, article: 37, en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000023414181, article: 18-1, en_vigueur: 2011-01-01}
+  - {id: LEGIARTI000044810809, article: 18-1, en_vigueur: 2022-01-01}
+  nee_de: LEGIARTI000023096769
+  bornes:
+    liquidation.date_effet: [2011-07-01, null]
+  contenu:
+    droit: >-
+      le même supplément, aux auxiliaires de puériculture du corps depuis le 1er
+      octobre 2021, aux accompagnants éducatifs et sociaux depuis le 1er janvier 2022
+    conditions: >-
+      « à partir de l'âge de cinquante-sept ans et à condition d'avoir accompli
+      dix-sept ans de services effectifs dans la fonction publique hospitalière »,
+      sauf radiation pour invalidité ; à taux complet pour l'agent du corps au 31
+      décembre 2003 qui réunit quinze ans de services effectifs à son départ
+    parametres:
+      existe: true
+      statuts: [aide_soignant]
+      regime: cnracl
+      nature: supplement
+      plafond: 0.10
+      prorata: services_du_statut_depuis_2004
+      condition: durees_et_age_de_l_emploi
+      classement: active
+      services_comptes: [aide_soignant, fonctionnaire_hospitalier_actif]
+      annees_dans_l_emploi: 0
+      annees_de_services: 17
+      age_anticipe: false
+      fiabilite: moyenne
+  exemples: aucun trouvé
+approximations:
+- version: [loi_de_financement_pour_2004, loi_du_9_novembre_2010]
+  ecart: >-
+    Le supplément est la prime, au taux de la date d'effet, sur le traitement liquidé :
+    la formule de la CNRACL ne la multiplie par aucun pourcentage de la pension, que le
+    texte ne nomme pas non plus (« liquidé sur la base de la moyenne des montants
+    mensuels ») ; TRAJECTOiRE et le COR rangent la prime dans le traitement, sous le
+    pourcentage et la décote. Le supplément s'ajoute après le minimum garanti et les
+    majorations, comme celui du complément de traitement indiciaire.
+  effet: >-
+    l'aide-soignante du cas type 9 du COR : 4 % de pension de plus que TRAJECTOiRE
+    (tests/test_trajectoire.py)
+- version: [loi_de_financement_pour_2004, loi_du_9_novembre_2010]
+  ecart: >-
+    La durée de dix-sept ans vaut pour toute pension prise depuis le 1er juillet 2011,
+    sans la montée en charge que la CNRACL écrit (quinze ans et quatre mois au second
+    semestre 2011, dix-sept ans en 2015) ; les services hospitaliers sont ceux des deux
+    statuts hospitaliers actifs, le statut territorial ou hospitalier sédentaire ne
+    disant pas le versant ; seule la radiation pour invalidité imputable au service
+    dispense de la durée. Le supplément, que la loi verse « à partir de l'âge », court
+    dès la date d'effet : la pension prise plus tôt, une carrière longue, le compte trop
+    tôt, et la valorisation des droits acquis, qui liquide à l'âge de la bascule, le
+    compte, le droit étant acquis par les années de services.
+  effet: non mesuré ; les départs anticipés avant l'âge de la catégorie active
+sources:
+  lu_le: 2026-10-10
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Trouver un exemple chiffré de la CNRACL (titre de pension) qui dise si le supplément
+    est la prime seule, comme sa documentation l'écrit, ou la prime sous le pourcentage
+    de la pension.
+  - >-
+    L'âge du supplément depuis la loi du 14 avril 2023 : le texte dit cinquante-sept
+    ans, la page de la CNRACL « l'âge légal de la retraite d'un agent de catégorie
+    active ».
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 2003-1199 du 18 décembre 2003, article 37, ses deux rédactions
+      (LEGIARTI000006758879, LEGIARTI000023096769) ; décret n° 2004-240, article 2
+      (LEGIARTI000006229484) ; décret n° 2003-1306, article 18-1, ses trois rédactions
+      (LEGIARTI000006400881 à LEGIARTI000044810809) ; décret n° 91-613, article 5
+      (LEGIARTI000006775966) ; décret n° 2007-173, articles 3 et 5
+    date: 2026-01-22
+  - type: autre
+    reference: >-
+      CNRACL, documentation juridique, « Supplément de pension des aides-soignants, des
+      auxiliaires de puériculture, des accompagnants éducatifs et sociaux et des aides
+      médico-psychologiques de la fonction publique hospitalière » (publié le 2 février
+      2022) : la formule, la progressivité, le coefficient de proratisation, la table
+      des durées de 2011 à 2015
+    url: https://www.juris-cnracl.retraites.fr/pension-normale/les-accessoires-de-pension/supplement-de-pension-des-aides-soignants-des-auxiliaires-de-puericulture-des-accompagnants
+    date: 2022-02-02
+  - type: autre
+    reference: >-
+      CNRACL, documentation juridique, « Les Aides-soignants » (cotisations
+      supplémentaires, publié le 9 janvier 2013) : l'assiette, 20 à 100 % de la prime
+      de 2004 à 2008, retenue de 1,5 % et contribution de 3,5 %
+    url: https://www.juris-cnracl.retraites.fr/cotisations/taux-de-cotisations/cotisations-supplementaires/les-aides-soignants
+    date: 2013-01-09
+  - type: autre
+    reference: >-
+      CNRACL, « Suppléments et accessoires de pension » (employeur, mis à jour le 10
+      décembre 2025) : la prime « égale à 10 % de leur traitement indiciaire brut et de
+      la NBI », les suppléments ajoutés « après application éventuelle de la décote ou
+      de la surcote »
+    url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-la-pension/supplements-et-accessoires-de-pension
+    date: 2025-12-10
+code:
+  python: >-
+    donnees/primes.py : PrimesSoumises ; droit/primes.py : prime_de_la_pension ;
+    droit/liquider.py : liquider_chaque_regime ; droit/completer.py : completer ;
+    moteur/compte.py ; remuneration.py : bloc_droit_en_vigueur
+  javascript: >-
+    moteur/js/primes.js ; moteur/js/droit/primes.js ; moteur/js/droit/liquider.js ;
+    moteur/js/droit/completer.js ; moteur/js/compte.js ; moteur/js/remuneration.js
+  parametres: >-
+    legislation/primes_soumises_a_retenue.yaml, et les versions de cette fiche
+    (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_primes_soumises_a_retenue.py, tests/test_trajectoire.py,
+          tests/test_cycle_de_vie_references.py]
+referents:
+  trajectoire:
+    equivalent: >-
+      primesDansCotiseBase « IS » (R/fonctionsCalculsDivers.R, calculeCotisBase) : le
+      script des cas types range la prime, au taux du COR (TxIS, de 2 à 10 % de 2004 à
+      2008), avec le traitement que la pension liquide, et calcule la retenue
+      supplémentaire sur les autres primes (partIS × primes)
+    confrontation: >-
+      cas type 9 du COR : la pension du dépôt passe la sienne de 4 % ; son revenu net
+      est plus bas de ce que sa retenue prend aux autres primes (ECARTS_REMPLACEMENT_NET,
+      tests/test_cycle_de_vie_references.py)
+historique:
+- >-
+  2026-10-10 — née de l'étape 17 de l'action 138, douzième partie, avec le statut
+  aide_soignant : le dépôt rangeait l'aide-soignant au statut hospitalier actif, sans la
+  prime ni son supplément.
+effet: >-
+  L'aide-soignant parti depuis 2008 : un supplément de 10 % de son traitement, et une
+  retenue de 1,5 % de sa prime de plus.

@@ -46,6 +46,7 @@
 
 import { tauxCapitalisationVolontaireApplique } from "./config.js";
 import { ContributionsEmployeurPubliques, PartRetraiteSeuleEtat } from "./regimes.js";
+import { primesSoumises } from "./primes.js";
 import { pointsCsgRendus } from "./restitution.js";
 import { Fiabilite } from "./serie.js";
 
@@ -759,6 +760,19 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
       if (taux) {
         salarie.push({ bas: basse, haut: haute, taux: taux * part });
         employeur.push({ bas: basse, haut: haute, taux: taux * (1 - part) });
+      }
+      // Les retenues et contributions supplémentaires du policier, de
+      // l'aide-soignant et du sapeur-pompier professionnel, chacune sur son
+      // assiette, en taux de la rémunération entière, comme le compte les
+      // porte (`primes.js`).
+      if (periode.assiette === "hors_primes") {
+        let [supSalarie, supEmployeur] = primesSoumises(catalogue.paquet)
+          .tauxSupplementaires(statut, code, annee, partPrimes);
+        if (sansEmployeur) {
+          [supSalarie, supEmployeur] = [supSalarie + supEmployeur, 0.0];
+        }
+        if (supSalarie) salarie.push({ bas: 0.0, haut: null, taux: supSalarie });
+        if (supEmployeur) employeur.push({ bas: 0.0, haut: null, taux: supEmployeur });
       }
       // La part déplafonnée porte sur la totalité du salaire, PAR-DESSUS la
       // précédente : c'est un segment de plus, non une tranche.

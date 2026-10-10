@@ -23,7 +23,7 @@ inventaire:
   couverture: modelise
   statuts: [fonctionnaire_territorial_hospitalier,
             fonctionnaire_territorial_hospitalier_actif,
-            fonctionnaire_hospitalier_actif,
+            fonctionnaire_hospitalier_actif, aide_soignant,
             fonctionnaire_territorial_hospitalier_super_actif,
             sapeur_pompier_professionnel]
   textes:

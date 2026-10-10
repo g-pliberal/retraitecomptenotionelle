@@ -72,9 +72,9 @@ versions:
       regime: cnracl
       classement: active
       services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
-                         fonctionnaire_etat_super_actif, fonctionnaire_territorial_hospitalier,
+                         fonctionnaire_etat_super_actif, policier, fonctionnaire_territorial_hospitalier,
                          fonctionnaire_territorial_hospitalier_actif,
-                         fonctionnaire_hospitalier_actif,
+                         fonctionnaire_hospitalier_actif, aide_soignant,
                          fonctionnaire_territorial_hospitalier_super_actif,
                          sapeur_pompier_professionnel]
       fraction: 0.2
@@ -112,9 +112,9 @@ versions:
       regime: cnracl
       classement: active
       services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
-                         fonctionnaire_etat_super_actif, fonctionnaire_territorial_hospitalier,
+                         fonctionnaire_etat_super_actif, policier, fonctionnaire_territorial_hospitalier,
                          fonctionnaire_territorial_hospitalier_actif,
-                         fonctionnaire_hospitalier_actif,
+                         fonctionnaire_hospitalier_actif, aide_soignant,
                          fonctionnaire_territorial_hospitalier_super_actif,
                          sapeur_pompier_professionnel]
       fraction: 0.2
@@ -150,9 +150,9 @@ versions:
       regime: cnracl
       classement: active
       services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
-                         fonctionnaire_etat_super_actif, fonctionnaire_territorial_hospitalier,
+                         fonctionnaire_etat_super_actif, policier, fonctionnaire_territorial_hospitalier,
                          fonctionnaire_territorial_hospitalier_actif,
-                         fonctionnaire_hospitalier_actif,
+                         fonctionnaire_hospitalier_actif, aide_soignant,
                          fonctionnaire_territorial_hospitalier_super_actif,
                          sapeur_pompier_professionnel]
       fraction: 0.2
@@ -193,9 +193,9 @@ versions:
       regime: cnracl
       classement: active
       services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
-                         fonctionnaire_etat_super_actif, fonctionnaire_territorial_hospitalier,
+                         fonctionnaire_etat_super_actif, policier, fonctionnaire_territorial_hospitalier,
                          fonctionnaire_territorial_hospitalier_actif,
-                         fonctionnaire_hospitalier_actif,
+                         fonctionnaire_hospitalier_actif, aide_soignant,
                          fonctionnaire_territorial_hospitalier_super_actif,
                          sapeur_pompier_professionnel]
       fraction: 0.2

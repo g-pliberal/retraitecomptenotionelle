@@ -3439,7 +3439,12 @@ referents:
           année, se retrouve à 1,5 % près sur 70 des 75 cas du témoin ;
           l'écart de l'aide-soignante, dont il assied une retenue sur la
           prime spéciale de sujétion, est déclaré
-          (`tests/test_cycle_de_vie_references.py`).
+          (`tests/test_cycle_de_vie_references.py`). Depuis le 10 octobre
+          2026 (étape 17, douzième partie), où le dépôt porte les primes
+          que la loi assujettit à la retenue, sur 65 des 75 : le policier
+          est déclaré aussi, dont il ne prélève pas les retenues
+          supplémentaires, et l'écart de l'aide-soignante tient à ce qu'il
+          prélève la retenue de sa prime sur ses autres primes.
         etat: repris
         chantier: "138.9"
       - quoi: >-

@@ -24,6 +24,7 @@ from functools import cached_property
 from ..carriere import Affiliations, Carriere, salaire_moyen_annuel
 from ..config import ContributionEtat, Parametres, PartCotisation, SourceCotisations
 from ..donnees.chargement import Fiabilite, charger_chomage_complementaires
+from ..donnees.primes import charger_primes_soumises
 from ..donnees.macro import DonneesMacro
 from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation,
                               ContributionsEmployeurPubliques, PartRetraiteSeuleEtat,
@@ -150,6 +151,9 @@ class ConstructeurCompte:
         )
         self.classes = ClassesCotisation(parametres.racine_donnees)
         self.grilles = SalairesForfaitaires(parametres.racine_donnees)
+        # Les primes que la loi assujettit à la retenue pour pension, et les
+        # retenues et contributions supplémentaires de leur statut.
+        self.primes = charger_primes_soumises(parametres.racine_donnees)
         # Le prix d'achat du point, que la garantie minimale de points de
         # l'Agirc demande. Import tardif : le scénario 1 importe ce module.
         from ..scenarios.actuel import ValeursPoint
@@ -723,9 +727,13 @@ class ConstructeurCompte:
                 )
 
                 # Traitement seul ou primes seules, celles du RAFP dans la
-                # limite de 20 % du traitement : `PeriodeRegime.part_du_revenu`,
-                # le découpage même du scénario 1.
-                base = periode.part_du_revenu(base_ligne, ligne.part_primes)
+                # limite de 20 % du traitement, sans la prime soumise à
+                # retenue : `PeriodeRegime.part_du_revenu`, le découpage même
+                # du scénario 1.
+                base = periode.part_du_revenu(
+                    base_ligne, ligne.part_primes,
+                    self.primes.parts(ligne.affiliation, annee, ligne.part_primes).soumise
+                    if periode.assiette == "primes_uniquement" else 0.0)
                 # L'ASSIETTE N'EST PAS TOUJOURS LE REVENU. La CAVAMAC prélève
                 # sur les commissions que les compagnies versent à l'agent
                 # général, la CPRN sur les produits de l'office du notaire :
@@ -875,6 +883,22 @@ class ConstructeurCompte:
                                 is PartCotisation.SALARIALE
                                 or part_salariale_seule else deplafonnee)
 
+                # LES RETENUES ET CONTRIBUTIONS SUPPLÉMENTAIRES du policier, de
+                # l'aide-soignant et du sapeur-pompier professionnel, sur
+                # l'assiette que chacune prend (`legislation/
+                # primes_soumises_a_retenue.yaml`) : versées pour la pension,
+                # elles sont au compte comme la retenue ordinaire. La part de
+                # l'employeur suit la convention, comme `taux_effectif`.
+                supplement_employeur = 0.0
+                if ligne.cotise and classe is None and periode.assiette == "hors_primes":
+                    sup_salarie, sup_employeur = self.primes.taux_supplementaires(
+                        ligne.affiliation, code, annee, ligne.part_primes)
+                    if (sans_employeur or part_salariale_seule
+                            or self.parametres.part_cotisation is not PartCotisation.TOTALE):
+                        sup_employeur = 0.0
+                    supplement_employeur = base_ligne * sup_employeur
+                    montant += base_ligne * sup_salarie + supplement_employeur
+
                 if validee < 1.0:
                     montant *= validee
                     assiette *= validee
@@ -895,7 +919,7 @@ class ConstructeurCompte:
                     cotisation += montant
                     par_regime[code] = par_regime.get(code, 0.0) + montant
                     assiette_totale += assiette
-                    part_employeur += assiette * taux_employeur
+                    part_employeur += assiette * taux_employeur + supplement_employeur
                     if (deplafonnee > 0 and not sans_employeur
                             and not part_salariale_seule
                             and self.parametres.part_cotisation

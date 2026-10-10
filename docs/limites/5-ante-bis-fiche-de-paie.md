@@ -110,9 +110,12 @@ vaut rien qu'un net faux, et c'est un test qui le tient.
 **5 ter. Ce que chaque profil laisse dehors.** Pour un fonctionnaire, la
 retraite additionnelle de la fonction publique (RAFP), assise sur ses PRIMES : la
 fiche porte sa rémunération entière, et n'assied la retenue pour pension et la
-contribution de l'État que sur son traitement, mais elle ne prélève pas sur les
-primes la cotisation de la RAFP, provisionnée et hors de la comparaison, que
-son net surestime d'autant. Pour un indépendant, la contribution à la formation
+contribution de l'État que sur son traitement, et sur la prime que la loi y
+assujettit — l'indemnité de sujétions spéciales du policier, la prime spéciale de
+sujétion de l'aide-soignant, l'indemnité de feu du sapeur-pompier —, avec leurs
+retenues supplémentaires ; mais elle ne prélève pas sur les autres primes la
+cotisation de la RAFP, provisionnée et hors de la comparaison, que son net
+surestime d'autant. Pour un indépendant, la contribution à la formation
 professionnelle (un forfait de <!--chiffre:illustration()-->0,25<!--/--> % du plafond, et non un taux, laissé dehors
 par symétrie avec les taxes sur salaires du privé) et l'assiette minimale que la
 loi impose aux très bas revenus, faute de savoir si l'assuré relève d'une de ses

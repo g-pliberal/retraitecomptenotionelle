@@ -2445,8 +2445,10 @@ def test_les_statuts_classes_et_militaires_sont_ceux_qu_on_attend():
     assert affiliations.classements_actifs == {
         "fonctionnaire_etat_actif": "active",
         "fonctionnaire_etat_super_actif": "super_active",
+        "policier": "super_active",
         "fonctionnaire_territorial_hospitalier_actif": "active",
         "fonctionnaire_hospitalier_actif": "active",
+        "aide_soignant": "active",
         "fonctionnaire_territorial_hospitalier_super_actif": "super_active",
         "sapeur_pompier_professionnel": "active",
         "ouvrier_etat_actif": "active",
@@ -2461,9 +2463,11 @@ def test_les_statuts_classes_et_militaires_sont_ceux_qu_on_attend():
     for classe, commun in (
         ("fonctionnaire_etat_actif", "fonctionnaire_etat"),
         ("fonctionnaire_etat_super_actif", "fonctionnaire_etat"),
+        ("policier", "fonctionnaire_etat"),
         ("fonctionnaire_territorial_hospitalier_actif",
          "fonctionnaire_territorial_hospitalier"),
         ("fonctionnaire_hospitalier_actif", "fonctionnaire_territorial_hospitalier"),
+        ("aide_soignant", "fonctionnaire_territorial_hospitalier"),
         ("fonctionnaire_territorial_hospitalier_super_actif",
          "fonctionnaire_territorial_hospitalier"),
         ("sapeur_pompier_professionnel", "fonctionnaire_territorial_hospitalier"),

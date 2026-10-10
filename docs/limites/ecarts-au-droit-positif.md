@@ -108,6 +108,17 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   statuts militaires, sans le service national. Les autres supposent de connaître le
   CORPS d'appartenance et le détail des services, que la saisie ne demande
   pas.
+- **Les primes soumises à retenue.** L'indemnité de sujétions spéciales des
+  policiers et l'indemnité de feu des sapeurs-pompiers professionnels majorent le
+  traitement que leur pension liquide ; la prime spéciale de sujétion des
+  aides-soignants ouvre un supplément de pension ; toutes trois paient la retenue,
+  avec leurs retenues supplémentaires, parce qu'un statut porte chacun de ces
+  emplois. Le taux de l'indemnité des policiers est celui des gardiens de la paix
+  et des brigadiers. La jouissance de la majoration et du supplément, que la loi
+  diffère jusqu'à l'âge de la catégorie active, court dès la date d'effet ;
+  l'ancien sapeur-pompier n'a pas sa majoration. Ne sont pas portées la prime de
+  sujétions spéciales des surveillants pénitentiaires, l'indemnité des gendarmes,
+  ni la nouvelle bonification indiciaire, faute de statut ou de saisie.
 - **Le temps partiel.** Il compte à temps plein dans la durée d'assurance, et
   seulement à sa quotité dans les services qui liquident une pension de la
   fonction publique — sauf le temps partiel thérapeutique, le temps partiel de

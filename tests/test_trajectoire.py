@@ -383,7 +383,8 @@ BONIFICATION_CINQUIEME = (
     "80 % au policier né en 1960, quand la loi la fait entrer « pour la liquidation de "
     "ladite pension » (loi n° 57-444, article 1er) : 152/162 de 75 % au dépôt, sous le "
     "maximum de 75 % (fiche bonification_cinquieme_police_penitentiaire) ; l'écart est "
-    "le sien. TRAJECTOiRE porte aussi l'ISS dans l'assiette, que le dépôt n'a pas")
+    "le sien. L'un et l'autre liquident le traitement majoré de l'indemnité de "
+    "sujétions spéciales (fiche indemnite_sujetions_speciales_police)")
 MAJORATION_HOSPITALIERS = (
     "la majoration de durée d'assurance de l'hospitalier de catégorie active (loi "
     "n° 2003-775, art. 78) : quinze trimestres à l'aide-soignante du cas type 9, des deux "
@@ -465,6 +466,23 @@ RAFP_COEFFICIENT = (
     "le coefficient de majoration du RAFP : au mois au dépôt, entre deux âges entiers du "
     "barème de la date d'effet (délibération de l'ERAFP, fiche rafp_majoration_capital), "
     "à l'âge entier chez TRAJECTOiRE (surcoteRafp)")
+RAFP_PLAFOND = (
+    "le plafond du RAFP, « 20 % du traitement indiciaire brut total perçu au cours de "
+    "l'année » (décret n° 2004-569, article 2) : le dépôt le prend sur le traitement "
+    "seul, sans l'indemnité de sujétions spéciales du policier ni la prime spéciale de "
+    "sujétion de l'aide-soignante, soumises à retenue (fiches "
+    "indemnite_sujetions_speciales_police, prime_speciale_sujetion_aides_soignants) ; "
+    "TRAJECTOiRE, sur sa rémunération (`pmin(remuneration * 0.2, primes)`), où son "
+    "script des cas types les range ; l'écart est le sien")
+SUPPLEMENT_AIDE_SOIGNANTE = (
+    "la prime spéciale de sujétion de l'aide-soignante du cas type 9 : le dépôt liquide "
+    "le traitement seul, et sert la prime en supplément, « moyenne du montant de la "
+    "prime de sujétion perçue les 6 derniers mois précédant la radiation des cadres x "
+    "Pourcentage de progressivité x coefficient de proratisation » (CNRACL), sans "
+    "pourcentage de la pension, après la décote, hors minimum garanti (fiche "
+    "prime_speciale_sujetion_aides_soignants) ; TRAJECTOiRE range la prime avec le "
+    "traitement que sa pension liquide (TxIS du COR), sous le pourcentage et la décote. "
+    "La fiche garde la formule de la CNRACL en question")
 RAFP_CAPITAL = (
     "le RAFP sous 5 125 points se verse en capital (décret n° 2004-569, art. 9, fiche "
     "rafp_majoration_capital) : le dépôt le verse, TRAJECTOiRE sert une rente ; l'écart "
@@ -502,10 +520,12 @@ ECARTS.update(_ecarts(MAJORATION_HOSPITALIERS, "trimestres", {
     "cor_9_1970": -15.0}, 0.01))
 ECARTS.update(_ecarts(DUREE_ACTIFS + " ; et " + ARRONDI_SERVICES, "taux",
                       {"cor_9_1964": -0.025}, 1e-6))
-ECARTS.update(_ecarts(DUREE_ACTIFS + " ; " + ARRONDI_SERVICES + " ; et " + TRAITEMENT,
-                      "fonction_publique", {"cor_9_1964": -0.0368}, 0.002))
-ECARTS.update(_ecarts(ARRONDI_SERVICES + " ; et " + TRAITEMENT, "fonction_publique",
-                      {"cor_9_1960": 0.0082}, 0.002))
+ECARTS.update(_ecarts(DUREE_ACTIFS + " ; " + ARRONDI_SERVICES + " ; " + TRAITEMENT
+                      + " ; et " + SUPPLEMENT_AIDE_SOIGNANTE,
+                      "fonction_publique", {"cor_9_1964": 0.0088}, 0.002))
+ECARTS.update(_ecarts(ARRONDI_SERVICES + " ; " + TRAITEMENT + " ; et "
+                      + SUPPLEMENT_AIDE_SOIGNANTE, "fonction_publique",
+                      {"cor_9_1960": 0.0483}, 0.002))
 ECARTS.update(_ecarts(ANNEE_PARTAGEE, "trimestres", {"cor_10_1970": -2.0, "cor_3_1964": -1.0},
                       1e-6))
 ECARTS.update(_ecarts(ANNEE_PARTAGEE, "carriere_longue", {"cor_10_1970": -1.0}, 1e-6))
@@ -542,12 +562,19 @@ _TRAITEMENTS = {
 }
 ECARTS.update(_ecarts(TRAITEMENT, "traitement_de_reference", {
     **_TRAITEMENTS, "cor_8_1955": -0.0058, "cor_8_1960": -0.0195, "cor_8_1963": 0.0224,
-    "cor_8_1964": 0.0255, "cor_9_1955": -0.0104, "cor_9_1960": 0.0060, "cor_9_1963": -0.0100,
-    "cor_10_1955": 0.0194, "cor_10_1960": -0.0099, "cor_10_1964": -0.0069}, 0.001))
+    "cor_8_1964": 0.0255, "cor_10_1955": 0.0194, "cor_10_1960": -0.0099,
+    "cor_10_1964": -0.0069}, 0.001))
+ECARTS.update(_ecarts(SUPPLEMENT_AIDE_SOIGNANTE + " ; et " + TRAITEMENT,
+                      "traitement_de_reference", {
+    "cor_9_1955": -0.1004, "cor_9_1960": -0.0855, "cor_9_1963": -0.1000,
+    "cor_9_1964": -0.0946}, 0.001))
 ECARTS.update(_ecarts(TRAITEMENT, "fonction_publique", {
     k: v for k, v in _TRAITEMENTS.items() if k not in ("cor_6_1955",)} | {
     "cor_5_1963": -0.0149, "cor_5_primes_constantes_1963": -0.0149,
-    "cor_6_1960": -0.0053, "cor_9_1955": -0.0104, "cor_9_1963": -0.0100}, 0.002))
+    "cor_6_1960": -0.0053}, 0.002))
+ECARTS.update(_ecarts(SUPPLEMENT_AIDE_SOIGNANTE + " ; et " + TRAITEMENT, "fonction_publique",
+                      {"cor_9_1955": 0.0318, "cor_9_1963": 0.0675}, 0.002))
+ECARTS.update(_ecarts(SUPPLEMENT_AIDE_SOIGNANTE, "minimum", {"cor_9_1963": 1.0}, 1e-6))
 ECARTS.update(_ecarts(ARRONDI_SERVICES, "taux", {c: -0.0125 for c in (
     "cor_5_1970", "cor_5_primes_constantes_1970", "cor_7_1970", "cor_11_1970")}, 1e-6))
 ECARTS.update(_ecarts(ARRONDI_SERVICES + " ; et " + TRAITEMENT, "fonction_publique",
@@ -565,21 +592,25 @@ _RAFP_POINTS = {
     "cor_5_1955": -0.0710, "cor_5_1960": 0.0130, "cor_5_1963": -0.0276,
     "cor_5_primes_constantes_1955": -0.0710, "cor_5_primes_constantes_1960": 0.0130,
     "cor_5_primes_constantes_1963": -0.0276, "cor_6_1955": -0.0190, "cor_6_1960": -0.1350,
-    "cor_7_1955": -0.0065, "cor_8_1955": -0.3373, "cor_8_1960": -0.1447, "cor_8_1963": -0.0140,
-    "cor_8_1964": -0.0127, "cor_9_1955": -0.1749, "cor_9_1960": -0.0612, "cor_9_1963": -0.0316,
-    "cor_9_1964": -0.0265, "cor_10_1955": -0.0799, "cor_10_1960": -0.0673,
+    "cor_7_1955": -0.0065, "cor_9_1955": -0.1749, "cor_10_1955": -0.0799, "cor_10_1960": -0.0673,
     "cor_10_1963": 0.0083, "cor_11_1955": 0.0185, "cor_11_1960": 0.0423, "cor_11_1963": 0.0145,
 }
 ECARTS.update(_ecarts(RAFP_PRIMES, "points_rafp", _RAFP_POINTS, 0.001))
+ECARTS.update(_ecarts(RAFP_PRIMES + " ; et " + RAFP_PLAFOND, "points_rafp", {
+    "cor_8_1955": -0.4656, "cor_8_1960": -0.2847, "cor_8_1963": -0.2129,
+    "cor_8_1964": -0.2133, "cor_9_1960": -0.1386, "cor_9_1963": -0.1130,
+    "cor_9_1964": -0.1087}, 0.001))
 ECARTS.update(_ecarts(RAFP_PRIMES + " ; " + RAFP_COEFFICIENT, "rafp", {
     "cor_5_1955": -0.0806, "cor_5_1960": -0.0179, "cor_5_1963": 0.0539,
     "cor_5_primes_constantes_1955": -0.0806, "cor_5_primes_constantes_1960": -0.0179,
     "cor_5_primes_constantes_1963": 0.0539, "cor_6_1960": -0.1035, "cor_7_1960": 0.0314,
-    "cor_8_1955": -0.4065, "cor_8_1960": -0.2700, "cor_8_1963": -0.1117, "cor_8_1964": -0.1175,
-    "cor_9_1955": -0.2279, "cor_9_1960": -0.1775, "cor_9_1963": -0.0972, "cor_9_1964": -0.1112,
-    "cor_10_1955": -0.0909, "cor_10_1960": -0.1545, "cor_10_1963": 0.0543,
+    "cor_9_1955": -0.2279, "cor_10_1955": -0.0909, "cor_10_1960": -0.1545, "cor_10_1963": 0.0543,
     "cor_10_1964": 0.0329, "cor_11_1955": 0.0219, "cor_11_1960": 0.0106,
     "cor_11_1963": 0.0923}, 0.002))
+ECARTS.update(_ecarts(RAFP_PRIMES + " ; " + RAFP_COEFFICIENT + " ; et " + RAFP_PLAFOND, "rafp", {
+    "cor_8_1955": -0.5213, "cor_8_1960": -0.3895, "cor_8_1963": -0.2908,
+    "cor_8_1964": -0.2967, "cor_9_1960": -0.2452, "cor_9_1963": -0.1731,
+    "cor_9_1964": -0.1863}, 0.002))
 ECARTS.update(_ecarts(VALEURS_PROJETEES + " (0,05215 € au lieu de 0,05378 €) ; "
                       + RAFP_COEFFICIENT + " ; les points du RAFP concordent", "rafp",
                       {"loi_2023_fp_etat": 0.0511}, 0.002))

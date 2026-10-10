@@ -1245,8 +1245,13 @@ def _refaire_la_formule(detail: str) -> float | None:
         # Les deux planchers disent de combien ils relèvent la pension.
         plancher = re.search(
             r"porté au minimum (?:contributif|garanti) par \+ ([\d,]+\.\d+) €", detail)
+        # Le supplément de pension de l'aide-soignant, servi après la décote et
+        # le minimum garanti, dit son montant.
+        supplements = re.findall(
+            r"supplément de [\d.]+% du traitement[^,]*, ([\d,]+\.\d+) €", detail)
         return (montant + fraction_des_cultes()
-                + (sans_virgules(plancher.group(1)) if plancher else 0.0))
+                + (sans_virgules(plancher.group(1)) if plancher else 0.0)
+                + sum(sans_virgules(supplement) for supplement in supplements))
 
     # La pension agricole que borne la moitié du plafond (L. 732-24, III) :
     # le plafond, et la surcote qui le majore.

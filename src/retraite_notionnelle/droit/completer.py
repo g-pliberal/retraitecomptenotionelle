@@ -23,6 +23,8 @@ ensemble, dans l'ordre où il l'applique — et l'ordre commande le résultat :
   référence, qui relève leur pension de base (:func:`pension_majoree`), puis
   le complément différentiel de la RCO, qui porte leurs deux pensions
   agricoles à un pourcentage du SMIC net (:func:`complement_differentiel`) ;
+* LES SUPPLÉMENTS DE PENSION des primes soumises à retenue, hors minimum
+  garanti et majorations : celui de l'aide-soignant (:mod:`.primes`) ;
 * LES VERSEMENTS UNIQUES, en dernier, sur la pension complétée : la petite
   pension du régime général, de l'Agirc-Arrco ou de l'Ircantec, que son régime
   ne sert pas et remplace par un capital (:func:`verser_en_capital`).
@@ -1300,6 +1302,20 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 regime=pensions[agricole.indice].regime, eligible=agricole,
                 points=points_acquis.get(RCO, 0.0), gratuits=gratuits,
                 complement=differentiel is not None)
+
+    # LES SUPPLÉMENTS DE PENSION des primes soumises à retenue — celui de
+    # l'aide-soignant (:mod:`.primes`) —, après le minimum garanti et les
+    # majorations, qui ne les lisent pas : « Ces accessoires et suppléments
+    # s'intègrent au montant initial de la pension, après application
+    # éventuelle de la décote ou de la surcote » (CNRACL), comme celui du
+    # complément de traitement indiciaire, « hors minimum garanti » et « hors
+    # majoration pour enfants ».
+    for supplement in liquidees.supplements:
+        pension = pensions[supplement.indice]
+        pensions[supplement.indice] = replace(
+            pension, montant=pension.montant + supplement.montant,
+            detail=f"{pension.detail} ; {supplement.detail}")
+        total += supplement.montant
 
     # LES VERSEMENTS UNIQUES, en dernier : ils lisent la pension complétée,
     # minimum, majorations et compléments compris.

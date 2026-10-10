@@ -34,6 +34,7 @@ from ..donnees.chargement import (
     assiette_minimale as _assiette_minimale_de,
     charger_assiettes_minimales,
 )
+from ..donnees.primes import charger_primes_soumises
 from . import compter
 from .commun import derniere_annee
 from . import liquider, ouvrir
@@ -48,6 +49,15 @@ if TYPE_CHECKING:
 
 #: La version du schéma de l'étape.
 SCHEMA_VERSION = 1
+
+
+def part_soumise(moteur: ScenarioActuel, ligne) -> float:
+    """La part de la rémunération de la ligne qu'est la prime soumise à
+    retenue de son statut (``legislation/primes_soumises_a_retenue.yaml``),
+    que le RAFP ne compte ni dans ses primes ni dans le traitement qui les
+    plafonne."""
+    return charger_primes_soumises(moteur.macro.racine).parts(
+        ligne.affiliation, ligne.annee, ligne.part_primes).soumise
 
 
 def assiette_minimale(moteur: ScenarioActuel, codes, ligne) -> float:
@@ -400,8 +410,12 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     borne_haute = (None if borne_haute is None
                                    else borne_haute * part)
                 # Traitement seul, primes seules — celles du RAFP dans la
-                # limite de 20 % du traitement : voir `part_du_revenu`.
-                base = periode.part_du_revenu(base_ligne, ligne.part_primes)
+                # limite de 20 % du traitement, sans la prime soumise à
+                # retenue : voir `part_du_revenu`.
+                base = periode.part_du_revenu(
+                    base_ligne, ligne.part_primes,
+                    part_soumise(moteur, ligne) if periode.assiette == "primes_uniquement"
+                    else 0.0)
                 if (ligne.revenu_retabli > 0
                         and periode.assiette != "primes_uniquement"):
                     # Une année RÉTABLIE : l'Ircantec valide le

@@ -13,7 +13,8 @@ etape: compter_les_durees
 face: droit
 etat: approchee
 lit:
-- les années servies dans le statut fonctionnaire_etat_super_actif, jusqu'à la liquidation
+- les années servies dans les statuts fonctionnaire_etat_super_actif et policier,
+  jusqu'à la liquidation
 - la durée de services super-actifs qui ouvre l'âge minoré à la génération
   (legislation/categorie_active.csv)
 - la radiation des cadres pour invalidité
@@ -72,7 +73,7 @@ versions:
     parametres:
       existe: true
       nature: bonification
-      statuts: [fonctionnaire_etat_super_actif]
+      statuts: [fonctionnaire_etat_super_actif, policier]
       regime: fonction_publique_etat
       classement: super_active
       fraction: 0.2
@@ -101,7 +102,7 @@ versions:
     parametres:
       existe: true
       nature: bonification
-      statuts: [fonctionnaire_etat_super_actif]
+      statuts: [fonctionnaire_etat_super_actif, policier]
       regime: fonction_publique_etat
       classement: super_active
       fraction: 0.2
@@ -137,7 +138,7 @@ versions:
     parametres:
       existe: true
       nature: bonification
-      statuts: [fonctionnaire_etat_super_actif]
+      statuts: [fonctionnaire_etat_super_actif, policier]
       regime: fonction_publique_etat
       classement: super_active
       fraction: 0.2

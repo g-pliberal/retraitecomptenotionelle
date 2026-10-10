@@ -1117,6 +1117,29 @@ def _periodes_non_travaillees() -> dict:
     }
 
 
+def _primes_soumises_a_retenue() -> dict:
+    """Les primes que la loi assujettit à la retenue pour pension, et les
+    retenues supplémentaires de leur statut
+    (``legislation/primes_soumises_a_retenue.yaml``), telles que le Python les
+    lit (:mod:`retraite_notionnelle.donnees.primes`)."""
+    from retraite_notionnelle.donnees.primes import charger_primes_soumises
+
+    table = charger_primes_soumises(DONNEES)
+    return {
+        "primes": [
+            {"code": p.code, "fiche": p.fiche, "statuts": sorted(p.statuts),
+             "regime": p.regime,
+             "taux": [[d.isoformat(), t] for d, t in p.taux],
+             "integration": [[a, part] for a, part in p.integration]}
+            for p in table.primes],
+        "supplementaires": [
+            {"statuts": sorted(s.statuts), "regime": s.regime, "motif": s.motif,
+             "assiette": s.assiette,
+             "taux": [[d.isoformat(), sal, emp] for d, sal, emp in s.taux]}
+            for s in table.supplementaires],
+    }
+
+
 def _chomage_complementaires() -> dict:
     """Ce que les régimes complémentaires font d'une année de chômage
     (``legislation/chomage_complementaires.yaml``), tel que le Python le lit."""
@@ -1958,6 +1981,7 @@ def construire(bilan: bytes) -> bytes:
         "fiches_datees": FichesDatees(DONNEES).fiches(),
         "periodes_non_travaillees": _periodes_non_travaillees(),
         "chomage_complementaires": _chomage_complementaires(),
+        "primes_soumises_a_retenue": _primes_soumises_a_retenue(),
         "assiette_minimale_independants": _assiette_minimale_independants(),
         "profil_salaire_age": _profil_salaire("profil_salaire_age.csv", "annee"),
         "profil_salaire_categorie": _profil_salaire(

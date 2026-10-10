@@ -21,7 +21,7 @@ inventaire:
   nom: Pensions civiles et militaires de retraite (Service des retraites de l'État)
   population: Fonctionnaires civils de l'État, magistrats, militaires
   couverture: partiel
-  statuts: [fonctionnaire_etat, fonctionnaire_etat_actif, fonctionnaire_etat_super_actif,
+  statuts: [fonctionnaire_etat, fonctionnaire_etat_actif, fonctionnaire_etat_super_actif, policier,
             militaire, militaire_officier]
   textes:
     - {reference: "loi n° 48-1450 du 20 septembre 1948 portant réforme du régime des pensions civiles et militaires", id: null}

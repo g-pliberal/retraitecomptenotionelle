@@ -227,6 +227,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from .donnees.chargement import Fiabilite, charger_yaml
+from .donnees.primes import charger_primes_soumises
 from .donnees.regimes import ContributionsEmployeurPubliques, PartRetraiteSeuleEtat
 from .restitution import points_csg_rendus
 from .somme import somme_ordonnee
@@ -1239,7 +1240,12 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
     hors primes, ``1 − part_primes``, comme ``PeriodeRegime.part_du_revenu``
     le fait pour le compte : ses taux en sont réduits d'autant. La retenue
     n'est pas assise sur les primes ; la RAFP, qui l'est, est provisionnée et
-    hors du bloc.
+    hors du bloc. La prime que la loi assujettit à la retenue — l'indemnité
+    de sujétions spéciales du policier, la prime spéciale de sujétion de
+    l'aide-soignant, l'indemnité de feu du sapeur-pompier — n'est pas dans la
+    part de primes, l'assiette du RAFP : elle est dans le reste, et ses
+    retenues et contributions supplémentaires s'y ajoutent
+    (:meth:`~.donnees.primes.PrimesSoumises.taux_supplementaires`).
 
     Un étage par régime : la vieillesse de base et sa part déplafonnée d'un
     côté, la complémentaire de l'autre, chacun avec ses bornes d'assiette et
@@ -1275,6 +1281,19 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
             if taux:
                 salarie.append(Segment(basse, haute, taux * part))
                 employeur.append(Segment(basse, haute, taux * (1.0 - part)))
+            # Les retenues et contributions supplémentaires du policier, de
+            # l'aide-soignant et du sapeur-pompier professionnel, chacune sur
+            # son assiette, en taux de la rémunération entière, comme le
+            # compte les porte (`legislation/primes_soumises_a_retenue.yaml`).
+            if periode.assiette == "hors_primes":
+                sup_salarie, sup_employeur = charger_primes_soumises(
+                    catalogue.racine).taux_supplementaires(statut, code, annee, part_primes)
+                if sans_employeur:
+                    sup_salarie, sup_employeur = sup_salarie + sup_employeur, 0.0
+                if sup_salarie:
+                    salarie.append(Segment(0.0, None, sup_salarie))
+                if sup_employeur:
+                    employeur.append(Segment(0.0, None, sup_employeur))
             # La part déplafonnée porte sur la totalité du salaire, par-dessus
             # la précédente : c'est un segment de plus, non une tranche.
             taux_deplafonne = (periode.taux_cotisation_deplafonnee or 0.0) * traitement

@@ -111,16 +111,20 @@ CAISSES_FONCTIONNAIRES = {"fonctionnaire_etat": "SRE",
 #: Le statut du dépôt d'un état de TRAJECTOiRE, selon la catégorie de la
 #: fonction publique que le cas type déclare (`categFonctionPublique`). L'actif
 #: de la territoriale ou de l'hospitalière est l'aide-soignante du cas type 9, à
-#: qui TRAJECTOiRE sert la majoration de durée des hospitaliers : le statut
-#: hospitalier du dépôt, qui la sert aussi (action 138, étape 17).
+#: qui TRAJECTOiRE sert la majoration de durée des hospitaliers et la prime
+#: spéciale de sujétion ; le super-actif de l'État, le policier du cas type 8,
+#: avec son indemnité de sujétions spéciales : les statuts du dépôt qui les
+#: servent aussi (action 138, étape 17). Leur part de primes est, des deux
+#: côtés, celle des primes que la retenue ne prend pas : le script des cas
+#: types range l'indemnité et la prime avec le traitement.
 STATUTS_COR = {
     ("Salarie du prive non cadre", None): "salarie_prive_non_cadre",
     ("Salarie du prive cadre", None): "salarie_prive_cadre",
     ("FPE", "Sedentaire"): "fonctionnaire_etat",
-    ("FPE", "Superactif"): "fonctionnaire_etat_super_actif",
+    ("FPE", "Superactif"): "policier",
     ("FPE", "Actif"): "fonctionnaire_etat_actif",
     ("FPT ou FPH", "Sedentaire"): "fonctionnaire_territorial_hospitalier",
-    ("FPT ou FPH", "Actif"): "fonctionnaire_hospitalier_actif",
+    ("FPT ou FPH", "Actif"): "aide_soignant",
     ("FPT ou FPH", "Superactif"): "fonctionnaire_territorial_hospitalier_super_actif",
 }
 #: Les états sans revenu d'activité, et le motif d'interruption du dépôt.

@@ -2086,15 +2086,18 @@ export class PeriodeRegime {
    * celles-ci dans la limite de `plafond_primes_traitement` du traitement,
    * 20 % (décret n° 2004-569, art. 2) —, la rémunération entière ailleurs.
    * Le scénario 1 et le compte notionnel découpent tous deux par ici.
+   * `partSoumise` : la part de la rémunération qu'est la prime soumise à
+   * retenue du statut (`primes.js`), hors des primes du RAFP et du
+   * traitement qui les plafonne.
    */
-  partDuRevenu(revenu, partPrimes) {
+  partDuRevenu(revenu, partPrimes, partSoumise = 0.0) {
     if (this.assiette === "primes_uniquement") {
       const primes = revenu * partPrimes;
       const plafond = this.plafond_primes_traitement;
       if (plafond === null || plafond === undefined) {
         return primes;
       }
-      return Math.min(primes, plafond * revenu * (1.0 - partPrimes));
+      return Math.min(primes, plafond * revenu * (1.0 - partPrimes - partSoumise));
     }
     if (this.assiette === "hors_primes") {
       return revenu * (1.0 - partPrimes);
@@ -2221,6 +2224,9 @@ export class CatalogueRegimes {
    */
   constructor(paquet, { tauxMoyens = false } = {}) {
     this.tauxMoyens = tauxMoyens;
+    // Le paquet, comme le catalogue Python garde sa racine : la fiche de
+    // paie y lit les primes soumises à retenue.
+    this.paquet = paquet;
     const moyens = tauxMoyens ? (paquet.taux_moyens ?? {}) : {};
     const appels = new Map();
     for (const [cle, valeurs] of Object.entries(tauxMoyens ? paquet.valeurs_point : {})) {

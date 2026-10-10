@@ -36,7 +36,8 @@ from ..calendrier import DateMois
 from ..carriere import salaire_moyen_annuel
 from ..donnees.chargement import Fiabilite
 from .. import revalorisation
-from . import acquerir, categories, coordonner, cultes, invalidite, ouvrir
+from ..donnees.primes import charger_primes_soumises
+from . import acquerir, categories, coordonner, cultes, invalidite, ouvrir, primes
 from .compter import trimestres_de_la_ligne_entre
 from .commun import PensionRegime, date_d_effet, derniere_annee
 from .etranger import famille_du_regime
@@ -477,6 +478,23 @@ class EligiblePlafondEnfants:
 
 
 @dataclass(frozen=True)
+class EligibleSupplement:
+    """Le supplément de pension qu'une prime soumise à retenue ouvre — celui de
+    l'aide-soignant (:mod:`.primes`) —, que l'étape qui complète ajoute après le
+    minimum garanti et les majorations, « après application éventuelle de la
+    décote ou de la surcote » (CNRACL)."""
+
+    #: Indice de la pension dans :attr:`Pensions.regimes`.
+    indice: int
+    #: Le supplément, en euros par an à la date d'effet.
+    montant: float
+    #: Ce que la page en écrit.
+    detail: str
+    #: La fiche qui l'ouvre.
+    fiche: str
+
+
+@dataclass(frozen=True)
 class EligibleAgricole:
     """La pension des non-salariés agricoles, que la pension majorée de
     référence relève et dont le complément différentiel de la RCO lit les
@@ -536,6 +554,8 @@ class Pensions:
     #: droits « sans tenir compte des coefficients d'anticipation » (fiche
     #: ``majoration_enfants_a_charge_agirc_arrco``).
     anticipations: tuple[tuple[str, float], ...] = ()
+    #: Les suppléments de pension des primes soumises à retenue.
+    supplements: tuple[EligibleSupplement, ...] = ()
 
     def donnees(self) -> dict:
         """Les pensions, telles que le schéma de l'étape les décrit."""
@@ -570,6 +590,11 @@ class Pensions:
             regimes[eligible.indice]["plafond_enfants"] = {
                 "traitement": eligible.traitement,
                 "surcote": eligible.surcote,
+            }
+        for eligible in self.supplements:
+            regimes[eligible.indice]["supplement"] = {
+                "montant": eligible.montant, "detail": eligible.detail,
+                "fiche": eligible.fiche,
             }
         return {"schema_version": SCHEMA_VERSION, "personne": self.personne,
                 "regimes": regimes, "requis": self.requis, "taux": self.taux,
@@ -632,6 +657,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
     eligibles_garanti: list[EligibleMinimumGaranti] = []
     #: Les pensions du code des pensions, que le plafond de L. 18 borne.
     eligibles_plafond: list[EligiblePlafondEnfants] = []
+    eligibles_supplement: list[EligibleSupplement] = []
     #: Le coefficient d'anticipation des régimes en points qu'il réduit.
     anticipations: list[tuple[str, float]] = []
     #: La pension des non-salariés agricoles, que la pension majorée de
@@ -977,6 +1003,23 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         )
         if fiabilite_proratisation is not None:
             fiabilite_globale = min(fiabilite_globale, fiabilite_proratisation)
+        # LA PRIME SOUMISE À RETENUE du policier, de l'aide-soignant, du
+        # sapeur-pompier professionnel (:mod:`.primes`) : le régime a liquidé le
+        # traitement seul ; la fiche de la prime dit, à la date d'effet, s'il se
+        # majore d'elle — l'indice majoré du policier et du sapeur-pompier —, ou
+        # si elle ouvre un supplément, que l'étape qui complète ajoute.
+        prime_de_la_pension = (
+            primes.prime_de_la_pension(moteur, code, carriere, annee_liquidation,
+                                       durees, proratisation)
+            if (code in coordonner.REGIMES_CODE_DES_PENSIONS
+                and periode.pension_forfaitaire_annuelle is None)
+            else None
+        )
+        traitement_liquide = salaire_reference
+        if prime_de_la_pension is not None:
+            fiabilite_globale = min(fiabilite_globale, prime_de_la_pension.fiabilite)
+            if prime_de_la_pension.nature == "traitement":
+                salaire_reference *= 1.0 + prime_de_la_pension.part
         # Le numérateur n'est pas le même selon le régime : services et
         # bonifications dans la fonction publique (L. 13), durée
         # d'assurance partout ailleurs (R. 351-1).
@@ -1436,14 +1479,23 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             eligibles_plafond.append(EligiblePlafondEnfants(
                 indice=len(pensions), traitement=salaire_reference,
                 surcote=min(surcote_du_montant, montant)))
+        if prime_de_la_pension is not None and prime_de_la_pension.nature == "supplement":
+            supplement = salaire_reference * prime_de_la_pension.part
+            eligibles_supplement.append(EligibleSupplement(
+                indice=len(pensions), montant=supplement,
+                detail=prime_de_la_pension.detail(supplement),
+                fiche=prime_de_la_pension.fiche))
         detail = (
                 f"{'forfait' if periode.pension_forfaitaire_annuelle is not None else 'SR'} "
                 # Salaire de référence au centime et taux au millième : à
                 # l'euro et au centième, refaire « SR × taux × durée »
                 # ratait le montant de 1,20 € sur un régime spécial, le
                 # taux arrondi pesant à lui seul 0,89 €.
-                f"{salaire_reference:,.2f} € × taux {taux:.3%} "
-                f"× {trimestres_regime}/{proratisation}"
+                + f"{salaire_reference:,.2f} € "
+                + (f"({traitement_liquide:,.2f} € {prime_de_la_pension.detail()}) "
+                   if prime_de_la_pension is not None
+                   and prime_de_la_pension.nature == "traitement" else "")
+                + f"× taux {taux:.3%} × {trimestres_regime}/{proratisation}"
                 + (f", taux maximum {periode.taux_maximum_bonifie:.0%} atteint"
                    if trimestres_regime / proratisation > rapport_maximum else "")
                 + (f", ramenée au maximum des pensions, {plafond_maximum:,.2f} €"
@@ -1496,6 +1548,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         fiabilite=fiabilite_globale,
         agricole=agricole,
         plafonds=tuple(eligibles_plafond),
+        supplements=tuple(eligibles_supplement),
         anticipations=tuple(anticipations),
     )
 
@@ -2144,7 +2197,7 @@ def assiette_de_reference(moteur, periode: PeriodeRegime, ligne) -> float:
         if annuelle.assiette_repere_smic is not None:
             return (annuelle.assiette_repere_smic
                     * moteur.macro.smic_horaire(ligne.annee) * ligne.fraction_annee)
-    return _assiette_de_reference(periode, ligne)
+    return _assiette_de_reference(moteur, periode, ligne)
 
 
 def salaire_de_reference(moteur, code: str, carriere: Carriere,
@@ -3815,12 +3868,20 @@ def _fenetre_ircantec(carriere: Carriere, trimestres: int, age_bas: float,
     return cotises, min(trimestres, avant)
 
 
-def _assiette_de_reference(periode: PeriodeRegime, ligne) -> float:
+def _assiette_de_reference(moteur, periode: PeriodeRegime, ligne) -> float:
     """Part de la rémunération que ce régime prend en compte.
 
     Même découpage que dans la boucle de cotisation : un régime qui ne cotise
     que sur le traitement indiciaire ne peut pas liquider sur la rémunération
     primes comprises, sans quoi les primes ouvriraient deux fois des droits —
     au RAFP et à la pension civile — alors qu'elles n'en ouvrent qu'au RAFP.
+
+    La prime soumise à retenue d'un policier, d'un aide-soignant ou d'un
+    sapeur-pompier n'y est pas : le régime liquide le TRAITEMENT, et la fiche
+    de la prime dit ce que la pension en fait, à sa date d'effet — le
+    traitement majoré, ou un supplément (:mod:`.primes`).
     """
+    if periode.assiette == "hors_primes":
+        return ligne.revenu * charger_primes_soumises(moteur.macro.racine).parts(
+            ligne.affiliation, ligne.annee, ligne.part_primes).traitement
     return periode.part_du_revenu(ligne.revenu, ligne.part_primes)

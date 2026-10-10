@@ -13,7 +13,8 @@ etape: compter_les_durees
 face: droit
 etat: approchee
 lit:
-- les années servies dans le statut fonctionnaire_hospitalier_actif, et la dernière
+- les années servies dans les statuts fonctionnaire_hospitalier_actif et aide_soignant,
+  et la dernière
   année servie dans la fonction publique civile
 - les années de services effectifs dans les statuts de la fonction publique civile
 - la durée de services actifs et l'âge anticipé de la génération
@@ -71,13 +72,13 @@ versions:
     parametres:
       existe: true
       nature: majoration
-      statuts: [fonctionnaire_hospitalier_actif]
+      statuts: [fonctionnaire_hospitalier_actif, aide_soignant]
       regime: cnracl
       classement: active
       services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
-                         fonctionnaire_etat_super_actif, fonctionnaire_territorial_hospitalier,
+                         fonctionnaire_etat_super_actif, policier, fonctionnaire_territorial_hospitalier,
                          fonctionnaire_territorial_hospitalier_actif,
-                         fonctionnaire_hospitalier_actif,
+                         fonctionnaire_hospitalier_actif, aide_soignant,
                          fonctionnaire_territorial_hospitalier_super_actif,
                          sapeur_pompier_professionnel]
       fraction: 0.1
@@ -104,13 +105,13 @@ versions:
     parametres:
       existe: true
       nature: majoration
-      statuts: [fonctionnaire_hospitalier_actif]
+      statuts: [fonctionnaire_hospitalier_actif, aide_soignant]
       regime: cnracl
       classement: active
       services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
-                         fonctionnaire_etat_super_actif, fonctionnaire_territorial_hospitalier,
+                         fonctionnaire_etat_super_actif, policier, fonctionnaire_territorial_hospitalier,
                          fonctionnaire_territorial_hospitalier_actif,
-                         fonctionnaire_hospitalier_actif,
+                         fonctionnaire_hospitalier_actif, aide_soignant,
                          fonctionnaire_territorial_hospitalier_super_actif,
                          sapeur_pompier_professionnel]
       fraction: 0.1
@@ -143,13 +144,13 @@ versions:
     parametres:
       existe: true
       nature: majoration
-      statuts: [fonctionnaire_hospitalier_actif]
+      statuts: [fonctionnaire_hospitalier_actif, aide_soignant]
       regime: cnracl
       classement: active
       services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
-                         fonctionnaire_etat_super_actif, fonctionnaire_territorial_hospitalier,
+                         fonctionnaire_etat_super_actif, policier, fonctionnaire_territorial_hospitalier,
                          fonctionnaire_territorial_hospitalier_actif,
-                         fonctionnaire_hospitalier_actif,
+                         fonctionnaire_hospitalier_actif, aide_soignant,
                          fonctionnaire_territorial_hospitalier_super_actif,
                          sapeur_pompier_professionnel]
       fraction: 0.1
@@ -171,7 +172,8 @@ approximations:
   effet: non mesuré ; un trimestre au plus
 - version: [loi_de_2003, loi_du_9_novembre_2010, loi_du_14_avril_2023]
   ecart: >-
-    Seul le statut fonctionnaire_hospitalier_actif ouvre la majoration : le statut
+    Seuls les statuts fonctionnaire_hospitalier_actif et aide_soignant, qui en est né
+    le 10 octobre 2026, ouvrent la majoration : le statut
     fonctionnaire_territorial_hospitalier_actif, qui ne dit pas le versant, ne la reçoit
     pas, et les services hospitaliers sédentaires ne se distinguent pas des
     territoriaux.

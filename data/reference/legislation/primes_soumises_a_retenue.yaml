@@ -1,0 +1,208 @@
+# LES PRIMES QUE LA LOI ASSUJETTIT À LA RETENUE POUR PENSION : ce que les deux
+# moteurs lisent, année par année, de l'indemnité de sujétions spéciales des
+# policiers, de la prime spéciale de sujétion des aides-soignants et de
+# l'indemnité de feu des sapeurs-pompiers professionnels — le taux de la prime,
+# la part que l'assiette en compte, et les retenues et contributions
+# supplémentaires de leur statut. Ce que la pension en fait, à sa date d'effet,
+# est dans leurs fiches, `data/reference/regles/` : une par prime, que la clé
+# `fiche` nomme. Action 138, étape 17, douzième partie (octobre 2026).
+#
+# LA PART DE PRIMES DE LA SAISIE reste l'assiette du RAFP, les primes que la
+# pension ne compte pas (décret n° 2004-569, article 2) : la prime soumise à
+# retenue est, avec le traitement, dans le reste de la rémunération. Pour une
+# année et un statut qui en portent une, ce reste se partage au taux de la
+# prime : le traitement t = (1 − part de primes) / (1 + taux × part comptée),
+# la prime perçue taux × t, sa part soumise à retenue taux × part comptée × t.
+# L'assiette de la retenue ordinaire, traitement et prime soumise, est le reste
+# entier, comme avant ; le RAFP plafonne ses primes à 20 % du traitement seul.
+schema_version: 1
+
+primes:
+  # « A partir du 1er janvier 1983, le calcul de la pension de retraite, ainsi
+  # que les retenues pour pension des personnels des services actifs de police,
+  # seront déterminés, par dérogation aux articles L. 15 et L. 61 du code des
+  # pensions civiles et militaires de retraite, dans des conditions fixées par
+  # décret en Conseil d'Etat » (loi n° 57-444 du 8 avril 1957, article 6 bis,
+  # LEGIARTI000006451461). Le décret du 15 mai 1983, non publié au Journal
+  # officiel, intègre l'indemnité « un dixième par an » sur dix ans (réponse
+  # ministérielle, JO Sénat du 17 janvier 1991, question n° 13318).
+  - code: indemnite_sujetions_speciales_police
+    fiche: indemnite_sujetions_speciales_police
+    statuts: [policier]
+    regime: fonction_publique_etat
+    # Le taux du corps d'encadrement et d'application — gardiens de la paix,
+    # brigadiers —, « en pourcentage des émoluments soumis à retenues pour
+    # pension », à la date qui le fixe.
+    taux:
+      # « de 20 à 21 p. 100 suivant la circonscription d'affectation » pour les
+      # gradés et gardiens (réponse ministérielle du 17 janvier 1991) ; « 20 ou
+      # 21 » au décret n° 97-1022 (LEGIARTI000006505446). Le plus bas, faute de
+      # connaître l'affectation ; avant 1991, le taux n'est pas lu.
+      - {depuis: 1983-01-01, taux: 0.20}
+      # « 21 % au lieu de 20 % » sous l'indice brut 585 (décret n° 97-1022,
+      # LEGIARTI000006505447).
+      - {depuis: 1997-01-01, taux: 0.21}
+      - {depuis: 2002-01-01, taux: 0.22}   # décret n° 2002-78, LEGIARTI000006207533
+      - {depuis: 2003-01-01, taux: 0.24}   # LEGIARTI000006207534, LEGIARTI000006207535
+      - {depuis: 2009-01-01, taux: 0.245}  # décret n° 2009-441, LEGIARTI000020538517
+      - {depuis: 2010-01-01, taux: 0.255}  # décret n° 2009-1633, art. 1, LEGIARTI000021537738
+      - {depuis: 2010-07-01, taux: 0.26}   # même décret, art. 2, LEGIARTI000021537734
+      - {depuis: 2017-01-01, taux: 0.265}  # décret n° 2013-617, LEGIARTI000033663050
+      - {depuis: 2018-01-01, taux: 0.27}   # LEGIARTI000033663074
+      - {depuis: 2019-01-01, taux: 0.28}   # LEGIARTI000038035321
+      - {depuis: 2020-01-01, taux: 0.285}  # LEGIARTI000038035457, LEGIARTI000047043575
+    # La part de l'indemnité que la retenue et la pension comptent, l'année de
+    # son versement et celle de la date d'effet : un dixième par an.
+    integration:
+      - {depuis: 1983, part: 0.1}
+      - {depuis: 1984, part: 0.2}
+      - {depuis: 1985, part: 0.3}
+      - {depuis: 1986, part: 0.4}
+      - {depuis: 1987, part: 0.5}
+      - {depuis: 1988, part: 0.6}
+      - {depuis: 1989, part: 0.7}
+      - {depuis: 1990, part: 0.8}
+      - {depuis: 1991, part: 0.9}
+      - {depuis: 1992, part: 1.0}
+
+  # « A partir du 1er janvier 2004, les agents classés dans le corps des
+  # aides-soignants de la fonction publique hospitalière bénéficient de la prise
+  # en compte de la prime spéciale de sujétion, dans la limite de 10 % de leur
+  # traitement indiciaire, pour le calcul de la pension de retraite ainsi que
+  # pour les retenues pour pension » (loi n° 2003-1199, article 37,
+  # LEGIARTI000023096769) ; la prime est « égale à 10 % de leur traitement
+  # indiciaire brut et de la NBI » (CNRACL, « Suppléments et accessoires de
+  # pension », mis à jour le 10 décembre 2025). Le modèle ne connaît pas la NBI.
+  - code: prime_speciale_sujetion_aides_soignants
+    fiche: prime_speciale_sujetion_aides_soignants
+    statuts: [aide_soignant]
+    regime: cnracl
+    taux:
+      - {depuis: 2004-01-01, taux: 0.10}
+    # « pour 20 % de son montant en 2004, 40 % en 2005, 60 % en 2006, 80 % en
+    # 2007 et 100 % à partir de l'année 2008 » (décret n° 2004-240, article 2,
+    # LEGIARTI000006229484).
+    integration:
+      - {depuis: 2004, part: 0.2}
+      - {depuis: 2005, part: 0.4}
+      - {depuis: 2006, part: 0.6}
+      - {depuis: 2007, part: 0.8}
+      - {depuis: 2008, part: 1.0}
+
+  # « A partir du 1er janvier 1991, les sapeurs-pompiers professionnels
+  # bénéficient de la prise en compte de l'indemnité de feu pour le calcul de
+  # la pension de retraite ainsi que pour les retenues pour pension » (loi
+  # n° 90-1067 du 28 novembre 1990, article 17, LEGIARTI000006367430) : « les
+  # indices servant au calcul des cotisations pour pension des sapeurs-pompiers
+  # professionnels sont majorés de la prime de feu » (CNRACL, « Cotisations
+  # applicables aux sapeurs-pompiers professionnels », 21 avril 2022).
+  - code: indemnite_de_feu
+    fiche: indemnite_de_feu_sapeurs_pompiers
+    statuts: [sapeur_pompier_professionnel]
+    regime: cnracl
+    taux:
+      # « 19 p. 100 du traitement soumis à retenue pour pension » des sapeurs
+      # aux adjudants-chefs depuis le 1er octobre 1990, des officiers depuis le
+      # 1er janvier 1991 (arrêté du 2 juillet 1990, LEGIARTI000006382508 et
+      # LEGIARTI000006382509 ; décret n° 90-850, article 6-3,
+      # LEGIARTI000006372675).
+      - {depuis: 1991-01-01, taux: 0.19}
+      # « 25 % du traitement soumis à retenue pour pension » (LEGIARTI000042155025).
+      - {depuis: 2020-07-26, taux: 0.25}
+    # « une proportion du montant de l'indemnité de feu fixée à deux quinzièmes
+    # pour chacune des années 1991 et 1992 et à un quinzième pour chacune des
+    # onze années suivantes » (décret n° 65-773, article 15 bis,
+    # LEGIARTI000006368215 ; décret n° 47-1846, article 2,
+    # LEGIARTI000006368351, pour les retenues).
+    integration:
+      - {depuis: 1991, part: 0.133333}
+      - {depuis: 1992, part: 0.266667}
+      - {depuis: 1993, part: 0.333333}
+      - {depuis: 1994, part: 0.4}
+      - {depuis: 1995, part: 0.466667}
+      - {depuis: 1996, part: 0.533333}
+      - {depuis: 1997, part: 0.6}
+      - {depuis: 1998, part: 0.666667}
+      - {depuis: 1999, part: 0.733333}
+      - {depuis: 2000, part: 0.8}
+      - {depuis: 2001, part: 0.866667}
+      - {depuis: 2002, part: 0.933333}
+      - {depuis: 2003, part: 1.0}
+
+# LES RETENUES ET CONTRIBUTIONS SUPPLÉMENTAIRES du statut, en plus des taux
+# ordinaires de son régime, chacune sur son assiette :
+# `remuneration_soumise` (traitement et part soumise de la prime : le reste de
+# la rémunération), `traitement_et_prime` (traitement et prime perçue entière),
+# `traitement`, `prime_soumise`. Un taux vaut jusqu'à la ligne suivante.
+supplementaires:
+  # « Les personnels titulaires visés à l'article 1er ci-dessus sont assujettis
+  # à une retenue supplémentaire pour la retraite de 1 p. 100 » (loi n° 57-444,
+  # article 3, LEGIARTI000006451456), depuis le 1er janvier 1957 (article 6).
+  - statuts: [policier]
+    regime: fonction_publique_etat
+    motif: la bonification du cinquième (loi n° 57-444, article 3)
+    assiette: remuneration_soumise
+    taux:
+      - {depuis: 1957-01-01, salarie: 0.01, employeur: 0.0}
+  # « la retenue pour pension supportée par les intéressés sera majorée de 0,5
+  # p. 100 à compter du 1er janvier 1983, 1 p. 100 à compter du 1er janvier
+  # 1987 et 1,2 p. 100 à compter du 1er janvier 1991 » (article 6 bis) ; en
+  # 2018, « 12,76 % » en tout, « taux normal de retenue pour pension (10,56 %) »,
+  # article 3 « (1 point) » et article 6 bis « (1,2 point) », sur « l'ensemble
+  # de la rémunération, hors NBI, soumise à retenue pour pension » (annexe au
+  # projet de loi de finances, budget.gouv.fr).
+  - statuts: [policier]
+    regime: fonction_publique_etat
+    motif: la prise en compte de l'indemnité de sujétions spéciales (article 6 bis)
+    assiette: remuneration_soumise
+    taux:
+      - {depuis: 1983-01-01, salarie: 0.005, employeur: 0.0}
+      - {depuis: 1987-01-01, salarie: 0.01, employeur: 0.0}
+      - {depuis: 1991-01-01, salarie: 0.012, employeur: 0.0}
+  # La retenue de 2 % de la bonification du cinquième, depuis le 9 février
+  # 1986, « sur la somme de leur traitement indiciaire et de l'indemnité de
+  # feu », sans contribution de l'employeur (décret n° 2007-173, article 3,
+  # III ; décret n° 91-613, article 5, LEGIARTI000006775966 à
+  # LEGIARTI000051100064 ; CNRACL, « Les sapeurs-pompiers professionnels »,
+  # 24 janvier 2022). Avant 1991, l'indemnité n'était pas soumise.
+  - statuts: [sapeur_pompier_professionnel]
+    regime: cnracl
+    motif: la bonification du cinquième (décret n° 2003-1306, article 15, II, 2°)
+    assiette: traitement
+    taux:
+      - {depuis: 1986-02-09, salarie: 0.02, employeur: 0.0}
+      - {depuis: 1991-01-01, salarie: 0.0, employeur: 0.0}
+  - statuts: [sapeur_pompier_professionnel]
+    regime: cnracl
+    motif: la bonification du cinquième, depuis l'intégration de l'indemnité de feu
+    assiette: traitement_et_prime
+    taux:
+      - {depuis: 1991-01-01, salarie: 0.02, employeur: 0.0}
+  # La cotisation et la contribution supplémentaires de l'intégration de
+  # l'indemnité de feu (décret n° 91-613, article 5), sur la même assiette ;
+  # supprimée pour l'employeur sur les indemnités versées depuis le 1er janvier
+  # 2021 (loi n° 2020-1576, article 20 ; décret n° 2021-281,
+  # LEGIARTI000043252235), pour l'agent depuis le 1er janvier 2022 (loi
+  # n° 2021-1754, article 17 ; décret n° 2007-173, article 3, IV,
+  # LEGIARTI000044813266).
+  - statuts: [sapeur_pompier_professionnel]
+    regime: cnracl
+    motif: l'intégration de l'indemnité de feu (loi n° 90-1067, article 17)
+    assiette: traitement_et_prime
+    taux:
+      - {depuis: 1991-01-01, salarie: 0.006, employeur: 0.012}
+      - {depuis: 1996-01-01, salarie: 0.012, employeur: 0.024}
+      - {depuis: 2001-01-01, salarie: 0.018, employeur: 0.036}
+      - {depuis: 2021-01-01, salarie: 0.018, employeur: 0.0}
+      - {depuis: 2022-01-01, salarie: 0.0, employeur: 0.0}
+  # « Le taux de la retenue supplémentaire prévue au I de l'article 37 de la loi
+  # n° 2003-1199 [...] est fixé à 1,5 % » ; « Le taux de la contribution
+  # supplémentaire [...] est fixé à 3,5 % » (décret n° 91-613, article 5,
+  # LEGIARTI000006775966), sur la prime « dans la même limite » (décret
+  # n° 2003-1306, article 18-1).
+  - statuts: [aide_soignant]
+    regime: cnracl
+    motif: la prime spéciale de sujétion (loi n° 2003-1199, article 37)
+    assiette: prime_soumise
+    taux:
+      - {depuis: 2004-01-01, salarie: 0.015, employeur: 0.035}

@@ -663,7 +663,8 @@ class PeriodeRegime:
             return None
         return self.points_minimum_annuels * part * quotite
 
-    def part_du_revenu(self, revenu: float, part_primes: float) -> float:
+    def part_du_revenu(self, revenu: float, part_primes: float,
+                       part_soumise: float = 0.0) -> float:
         """Part de la rémunération que ce régime prend en compte.
 
         Un fonctionnaire cotise à la pension civile sur son seul traitement
@@ -671,13 +672,21 @@ class PeriodeRegime:
         que jusqu'à ``plafond_primes_traitement`` du traitement. Les autres
         régimes prennent la rémunération entière. Le scénario 1 et le compte
         notionnel découpent tous deux par ici, pour ne pas diverger.
+
+        ``part_soumise`` : la part de la rémunération qu'est la prime soumise
+        à retenue d'un policier, d'un aide-soignant ou d'un sapeur-pompier
+        (:meth:`~retraite_notionnelle.donnees.primes.PrimesSoumises.parts`).
+        Elle est dans l'assiette de la pension civile, avec le traitement, et
+        hors de celle du RAFP, qui plafonne les primes à 20 % du « traitement
+        indiciaire brut total perçu au cours de l'année » (décret
+        n° 2004-569, article 2) : du traitement seul.
         """
         if self.assiette == "primes_uniquement":
             primes = revenu * part_primes
             if self.plafond_primes_traitement is None:
                 return primes
             return min(primes, self.plafond_primes_traitement
-                       * revenu * (1.0 - part_primes))
+                       * revenu * (1.0 - part_primes - part_soumise))
         if self.assiette == "hors_primes":
             return revenu * (1.0 - part_primes)
         return revenu

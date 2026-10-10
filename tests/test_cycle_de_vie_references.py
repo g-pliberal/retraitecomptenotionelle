@@ -608,11 +608,23 @@ TOLERANCE_REMPLACEMENT_NET_SMPT = 0.02
 #: Les écarts déclarés au taux de remplacement net de TRAJECTOiRE, par cas
 #: type, leur cause, et les bornes du rapport, dépôt sur TRAJECTOiRE.
 ECARTS_REMPLACEMENT_NET = {
+    "cor_8_": (
+        "TRAJECTOiRE ne prélève au policier ni la retenue supplémentaire de 1 % de la "
+        "bonification du cinquième (loi n° 57-444, article 3) ni la majoration de 1,2 "
+        "point de l'indemnité de sujétions spéciales (article 6 bis), que le dépôt "
+        "prélève depuis le 10 octobre 2026 (fiche indemnite_sujetions_speciales_police) : "
+        "il multiplie son taux txISS par les autres primes et par la retenue ordinaire, "
+        "« (remuneration + txISS*primes) * txCotFP_sal » ; son net est plus haut de "
+        "2,2 % du traitement et de l'indemnité", 1.01, 1.03),
     "cor_9_": (
-        "TRAJECTOiRE assied une retenue pour pension sur la prime spéciale de "
-        "sujétion de l'aide-soignante (« primes_dans_la_base » : IS), que le "
-        "dépôt ne porte pas : son net est plus bas chez lui, d'autant plus que "
-        "la part des primes croît", 0.94, 0.99),
+        "TRAJECTOiRE prélève la retenue de la prime spéciale de sujétion, ordinaire et "
+        "supplémentaire, sur les autres primes de l'aide-soignante, « partIS*primes*"
+        "(txCotFP_sal + txSurcotIS_sal) », quand son script des cas types range la prime "
+        "avec le traitement, qui paie déjà la retenue ordinaire : son net est plus bas, "
+        "d'autant plus que la part des primes croît. La retenue supplémentaire de 1,5 % "
+        "de la prime, que le dépôt prélève depuis le 10 octobre 2026 (fiche "
+        "prime_speciale_sujetion_aides_soignants), ne déplace le rapport que d'un "
+        "millième", 0.94, 0.99),
 }
 
 #: Les cas dont TRAJECTOiRE lit le revenu de l'année d'avant le départ même
@@ -630,9 +642,11 @@ def test_le_remplacement_net_de_trajectoire_se_retrouve_aux_prelevements_de_l_an
     mêmes prélèvements (l'histoire que l'IPP retrace,
     ``prelevements_historiques.yaml``), rapportée au revenu net que le dépôt
     tire de la même carrière (``cycle_de_vie.remplacement_net``), retrouve son
-    taux à 1,5 % près sur 70 des 75 cas du témoin ; l'aide-soignante est
-    déclarée. Jusqu'au 9 octobre 2026, les deux nets étaient aux taux de 2026,
-    et les départs d'avant 2018 s'écartaient de 1,2 à 3,7 %."""
+    taux à 1,5 % près sur 65 des 75 cas du témoin ; le policier et
+    l'aide-soignante sont déclarés, dont TRAJECTOiRE prélève autrement les
+    retenues de l'indemnité et de la prime. Jusqu'au 9 octobre 2026, les deux
+    nets étaient aux taux de 2026, et les départs d'avant 2018 s'écartaient de
+    1,2 à 3,7 %."""
     historique = charger_prelevements_historiques(simulateur.parametres.racine_donnees)
     pensions = historique.pensions
     ecarts: dict[str, list[float]] = {prefixe: [] for prefixe in ECARTS_REMPLACEMENT_NET}
@@ -667,9 +681,9 @@ def test_le_remplacement_net_de_trajectoire_se_retrouve_aux_prelevements_de_l_an
         if not cle.startswith(SMPT_INCOMPARABLE):
             assert remplacement.salaire_moyen / indicateurs["txRemplacementNetSmpt"] == (
                 pytest.approx(1.0, abs=TOLERANCE_REMPLACEMENT_NET_SMPT)), cle
-    assert concordants == 70
+    assert concordants == 65
     for prefixe, rapports in ecarts.items():
-        assert sum(rapports) / len(rapports) < 1.0 - TOLERANCE_REMPLACEMENT_NET, prefixe
+        assert abs(sum(rapports) / len(rapports) - 1.0) > TOLERANCE_REMPLACEMENT_NET, prefixe
 
 
 # ---------------------------------------------------------------------------

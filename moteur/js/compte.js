@@ -19,6 +19,7 @@ import {
   SalairesForfaitaires, ValeursPoint,
 } from "./regimes.js";
 import { Fiabilite } from "./serie.js";
+import { primesSoumises } from "./primes.js";
 
 /** Le seul régime dont la contribution employeur est un taux d'équilibre. */
 const REGIME_ETAT = "fonction_publique_etat";
@@ -35,6 +36,9 @@ export class ConstructeurCompte {
     this.contributionsPubliques = new ContributionsEmployeurPubliques(macro.paquet);
     this.classes = new ClassesCotisation(macro.paquet);
     this.grilles = new SalairesForfaitaires(macro.paquet);
+    // Les primes que la loi assujettit à la retenue pour pension, et les
+    // retenues et contributions supplémentaires de leur statut.
+    this.primes = primesSoumises(macro.paquet);
     // Le prix d'achat du point, que la garantie minimale de points de l'Agirc
     // demande.
     this.valeursPoint = new ValeursPoint(macro.paquet);
@@ -585,9 +589,13 @@ export class ConstructeurCompte {
         );
 
         // Traitement seul ou primes seules, celles du RAFP dans la limite de
-        // 20 % du traitement : `PeriodeRegime.partDuRevenu`, le découpage
-        // même du scénario 1.
-        let base = periode.partDuRevenu(baseLigne, ligne.part_primes);
+        // 20 % du traitement, sans la prime soumise à retenue :
+        // `PeriodeRegime.partDuRevenu`, le découpage même du scénario 1.
+        let base = periode.partDuRevenu(
+          baseLigne, ligne.part_primes,
+          periode.assiette === "primes_uniquement"
+            ? this.primes.parts(ligne.affiliation, annee, ligne.part_primes).soumise
+            : 0.0);
         // L'ASSIETTE N'EST PAS TOUJOURS LE REVENU : commissions versées par
         // les compagnies pour la CAVAMAC, produits de l'office pour la CPRN.
         // Le facteur les reconstitue AVANT les bornes.
@@ -719,6 +727,20 @@ export class ConstructeurCompte {
             ? deplafonnee * partAgent : deplafonnee;
         }
 
+        // LES RETENUES ET CONTRIBUTIONS SUPPLÉMENTAIRES du policier, de
+        // l'aide-soignant et du sapeur-pompier professionnel : voir compte.py.
+        let supplementEmployeur = 0.0;
+        if (ligne.cotise && classe === null && periode.assiette === "hors_primes") {
+          let [supSalarie, supEmployeur] = this.primes.tauxSupplementaires(
+            ligne.affiliation, code, annee, ligne.part_primes);
+          if (sansEmployeur || partSalarialeSeule
+              || this.parametres.part_cotisation !== PartCotisation.TOTALE) {
+            supEmployeur = 0.0;
+          }
+          supplementEmployeur = baseLigne * supEmployeur;
+          montant += baseLigne * supSalarie + supplementEmployeur;
+        }
+
         if (validee < 1.0) {
           montant *= validee;
           assiette *= validee;
@@ -745,7 +767,7 @@ export class ConstructeurCompte {
           cotisation += montant;
           parRegime.set(code, (parRegime.get(code) ?? 0.0) + montant);
           assietteTotale += assiette;
-          partEmployeur += assiette * tauxEmployeur;
+          partEmployeur += assiette * tauxEmployeur + supplementEmployeur;
           if (deplafonnee > 0 && !sansEmployeur && !partSalarialeSeule
               && this.parametres.part_cotisation !== PartCotisation.SALARIALE) {
             // Même règle que pour `tauxEmployeur` ci-dessus : sous

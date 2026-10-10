@@ -99,7 +99,7 @@ versions:
       statuts: [militaire, militaire_officier]
       regime: fonction_publique_etat
       services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
-                         fonctionnaire_etat_super_actif, militaire, militaire_officier]
+                         fonctionnaire_etat_super_actif, policier, militaire, militaire_officier]
       fraction: 0.2
       plafond_trimestres: 12
       condition: duree_dans_l_emploi
@@ -146,7 +146,7 @@ versions:
       statuts: [militaire, militaire_officier]
       regime: fonction_publique_etat
       services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
-                         fonctionnaire_etat_super_actif, militaire, militaire_officier]
+                         fonctionnaire_etat_super_actif, policier, militaire, militaire_officier]
       fraction: 0.2
       plafond_trimestres: 20
       condition: duree_dans_l_emploi
@@ -185,7 +185,7 @@ versions:
       statuts: [militaire, militaire_officier]
       regime: fonction_publique_etat
       services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
-                         fonctionnaire_etat_super_actif, militaire, militaire_officier]
+                         fonctionnaire_etat_super_actif, policier, militaire, militaire_officier]
       fraction: 0.2
       plafond_trimestres: 20
       condition: duree_dans_l_emploi
@@ -222,7 +222,7 @@ versions:
       statuts: [militaire, militaire_officier]
       regime: fonction_publique_etat
       services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
-                         fonctionnaire_etat_super_actif, militaire, militaire_officier]
+                         fonctionnaire_etat_super_actif, policier, militaire, militaire_officier]
       fraction: 0.2
       plafond_trimestres: 20
       condition: duree_dans_l_emploi
@@ -264,7 +264,7 @@ versions:
       statuts: [militaire, militaire_officier]
       regime: fonction_publique_etat
       services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
-                         fonctionnaire_etat_super_actif, militaire, militaire_officier]
+                         fonctionnaire_etat_super_actif, policier, militaire, militaire_officier]
       fraction: 0.2
       plafond_trimestres: 20
       condition: duree_dans_l_emploi
@@ -303,7 +303,7 @@ versions:
       statuts: [militaire, militaire_officier]
       regime: fonction_publique_etat
       services_comptes: [fonctionnaire_etat, fonctionnaire_etat_actif,
-                         fonctionnaire_etat_super_actif, militaire, militaire_officier]
+                         fonctionnaire_etat_super_actif, policier, militaire, militaire_officier]
       fraction: 0.2
       plafond_trimestres: 20
       condition: duree_dans_l_emploi

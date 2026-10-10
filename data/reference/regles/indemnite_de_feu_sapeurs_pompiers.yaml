@@ -1,0 +1,233 @@
+schema_version: 1
+id: indemnite_de_feu_sapeurs_pompiers
+intitule: >-
+  L'indemnité de feu des sapeurs-pompiers professionnels, depuis 1991, dans l'assiette
+  de leurs retenues et dans le traitement que leur pension liquide, intégrée de 1991 à
+  2003 et proratisée sur les années de sapeur-pompier, à qui en compte quinze, puis
+  dix-sept ; et ses cotisations supplémentaires, jusqu'en 2021.
+domaine: salaire_de_reference
+regimes:
+- cnracl
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- le statut sapeur_pompier_professionnel de la dernière ligne de services, et sa part de
+  primes, l'assiette du RAFP
+- le taux de l'indemnité et la part comptée, année par année
+  (legislation/primes_soumises_a_retenue.yaml)
+- les années servies dans le statut, et tous les services que la liquidation retient
+- la bonification du cinquième des sapeurs-pompiers (Durees.emplois)
+- la radiation pour invalidité et son imputabilité
+- liquidation.date_effet
+ecrit:
+- le traitement de référence majoré de l'indemnité, que la pension liquide
+- les retenues et contributions supplémentaires, à la fiche de paie et au compte
+  (droit en vigueur)
+dates_qui_decident:
+- liquidation.date_effet
+# Les paramètres que le moteur lit (droit/primes.py, `prime_de_la_pension`, et son
+# jumeau) ; la condition est celle des emplois classés (droit/compter.py,
+# `condition_d_un_emploi`) : les années servies dans le statut (`annees_dans_l_emploi`),
+# sans l'âge, qui diffère la jouissance sans la retirer (`age_anticipe` à faux).
+versions:
+- id: avant_1991
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006367430, article: 17, en_vigueur: 1990-12-02}
+  nee_de: LEGIARTI000006367430
+  bornes:
+    liquidation.date_effet: [null, 1991-01-01]
+  contenu:
+    droit: aucun ; l'indemnité n'est ni soumise à retenue ni comptée dans la pension
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: loi_du_28_novembre_1990
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006367430, article: 17, en_vigueur: 1990-12-02}
+  - {id: LEGIARTI000006368215, article: 15 bis, en_vigueur: 1991-09-24}
+  - {id: LEGIARTI000006400880, article: 18, en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000006367430
+  bornes:
+    liquidation.date_effet: [1991-01-01, 2011-07-01]
+  contenu:
+    droit: >-
+      « A partir du 1er janvier 1991, les sapeurs-pompiers professionnels bénéficient
+      de la prise en compte de l'indemnité de feu pour le calcul de la pension de
+      retraite ainsi que pour les retenues pour pension » ; les indices de liquidation
+      « sont majorés », d'une « proportion du montant de l'indemnité de feu fixée à
+      deux quinzièmes pour chacune des années 1991 et 1992 et à un quinzième pour
+      chacune des onze années suivantes » (décret n° 65-773, article 15 bis), et « seules
+      les années de services accomplies en qualité de sapeur-pompier professionnel
+      entrent en ligne de compte pour le calcul de cette majoration »
+    conditions: >-
+      « une durée de service de quinze ans en qualité de sapeur-pompier professionnel »,
+      la jouissance « différée jusqu'à l'âge de cinquante-cinq ans », sauf radiation
+      pour invalidité
+    parametres:
+      existe: true
+      statuts: [sapeur_pompier_professionnel]
+      regime: cnracl
+      nature: traitement
+      plafond: null
+      prorata: services_du_statut
+      condition: durees_et_age_de_l_emploi
+      classement: active
+      services_comptes: [sapeur_pompier_professionnel]
+      annees_dans_l_emploi: 15
+      annees_de_services: 0
+      age_anticipe: false
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: decret_du_30_decembre_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023414111, article: 18, en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000023096771, article: 17, en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000042683770, article: 17, en_vigueur: 2021-01-01}
+  - {id: LEGIARTI000048697305, article: 17, en_vigueur: 2023-12-28}
+  nee_de: LEGIARTI000023414111
+  bornes:
+    liquidation.date_effet: [2011-07-01, 2025-01-02]
+  contenu:
+    droit: >-
+      la même majoration, « déterminée sur la base du taux de l'indemnité de feu
+      effectivement perçue, appliqué au dernier traitement indiciaire brut détenu
+      depuis six mois au moins en qualité de sapeur-pompier professionnel, et
+      proratisée sur les seules années de service accomplies en cette qualité »
+      (rédaction du 28 décembre 2023)
+    conditions: >-
+      dix-sept ans de services en qualité de sapeur-pompier ; la jouissance différée
+      jusqu'à cinquante-sept ans, puis, depuis le 28 décembre 2023, jusqu'à l'âge du
+      départ anticipé de la catégorie active (L. 24, I, 1°) ; sauf radiation pour
+      invalidité
+    parametres:
+      existe: true
+      statuts: [sapeur_pompier_professionnel]
+      regime: cnracl
+      nature: traitement
+      plafond: null
+      prorata: services_du_statut
+      condition: durees_et_age_de_l_emploi
+      classement: active
+      services_comptes: [sapeur_pompier_professionnel]
+      annees_dans_l_emploi: 17
+      annees_de_services: 0
+      age_anticipe: false
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: decret_du_31_decembre_2024
+  statut: lue
+  textes:
+  - {id: LEGIARTI000050941686, article: 18, en_vigueur: 2025-01-02}
+  - {id: JORFTEXT000050935358, en_vigueur: 2025-01-01}
+  nee_de: LEGIARTI000050941686
+  bornes:
+    liquidation.date_effet: [2025-01-02, null]
+  contenu:
+    droit: >-
+      la même majoration ; « Toutefois, la majoration n'est pas proratisée pour les
+      sapeurs-pompiers ou anciens sapeurs-pompiers professionnels qui bénéficient du
+      pourcentage maximum de la pension, sans qu'ils aient recours aux autres services
+      accomplis au sein du régime du présent décret ni aux éventuelles bonifications
+      liées à l'exercice d'un autre emploi particulier que celui de sapeur-pompier »
+    conditions: les mêmes
+    parametres:
+      existe: true
+      statuts: [sapeur_pompier_professionnel]
+      regime: cnracl
+      nature: traitement
+      plafond: null
+      prorata: services_du_statut_hors_maximum
+      condition: durees_et_age_de_l_emploi
+      classement: active
+      services_comptes: [sapeur_pompier_professionnel]
+      annees_dans_l_emploi: 17
+      annees_de_services: 0
+      age_anticipe: false
+      fiabilite: moyenne
+  exemples: aucun trouvé
+approximations:
+- version: [loi_du_28_novembre_1990, decret_du_30_decembre_2010, decret_du_31_decembre_2024]
+  ecart: >-
+    La majoration n'est servie qu'à qui est sapeur-pompier à la radiation : l'ancien
+    sapeur-pompier, que la loi y admet depuis 2021 sur le traitement de son dernier
+    grade de sapeur-pompier, n'est pas suivi. Les services se comptent à l'année dans le
+    statut, au jour pour l'ensemble ; dix-sept ans valent pour toute pension prise
+    depuis le 1er juillet 2011, sans la montée en charge de la loi du 9 novembre 2010 ;
+    seule la radiation pour invalidité imputable au service dispense de la condition.
+    La jouissance, que la loi diffère jusqu'à l'âge de la catégorie active, court dès
+    la date d'effet : la pension prise plus tôt, une carrière longue, la compte trop tôt,
+    et la valorisation des droits acquis, qui liquide à l'âge de la bascule, la compte,
+    le droit étant acquis par les années de services.
+  effet: >-
+    non mesuré, sinon sur la valorisation des droits acquis : le sapeur-pompier né en
+    1975 garde la majoration de ses trente années de services à la bascule de 2026
+- version: [loi_du_28_novembre_1990]
+  ecart: >-
+    Les cotisations supplémentaires de 1991 à 2021 et la retenue de 2 % de la
+    bonification se prennent sur le traitement et l'indemnité entière, l'intégration ne
+    jouant que sur l'assiette de la retenue ordinaire, comme la CNRACL l'écrit ; les
+    pensions concédées avant 1991, que la loi révise, ne le sont pas.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-10
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Rejouer les quatre exemples de la CNRACL (« Majoration de pension Prime de feu ») :
+    un relevé au traitement de l'indice brut 486, la carrière d'un sapeur-pompier né en
+    1968 ; leur pourcentage est arrondi à 0,74 et leur prorata à 0,81.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 90-1067 du 28 novembre 1990, article 17, ses rédactions de 1990 à 2023
+      (LEGIARTI000006367430 à LEGIARTI000048697305) ; décret n° 65-773, article 15 bis
+      (LEGIARTI000006368215) ; décret n° 2003-1306, article 18, ses trois rédactions
+      (LEGIARTI000006400880, LEGIARTI000023414111, LEGIARTI000050941686) ; décret
+      n° 2007-173, article 3 ; décret n° 91-613, article 5 ; décret n° 90-850, article
+      6-3 ; arrêté du 2 juillet 1990
+    date: 2026-01-22
+  - type: autre
+    reference: >-
+      CNRACL, documentation juridique, « Majoration de pension Prime de feu » : la
+      formule, le taux de proratisation, l'exception du pourcentage maximum, quatre
+      exemples de 2025 à 2027
+    url: https://www.juris-cnracl.retraites.fr/motifs-conditions-de-depart/depart-au-titre-de-la-categorie-active/sapeurs-pompiers-professionnels/majoration-de-pension-prime-de-feu
+    date: 2022-06-02
+  - type: autre
+    reference: >-
+      CNRACL, documentation juridique, « Cotisations applicables aux sapeurs-pompiers
+      professionnels » (21 avril 2022) et « Les Sapeurs pompiers professionnels »
+      (24 janvier 2022) : les indices majorés de la prime de feu depuis 1991, la
+      retenue de 2 %, les taux supplémentaires de 1991 à 2021
+    url: https://www.juris-cnracl.retraites.fr/cotisations/taux-de-cotisations/cotisations-supplementaires/les-sapeurs-pompiers-professionnels
+    date: 2022-01-24
+code:
+  python: >-
+    donnees/primes.py : PrimesSoumises ; droit/primes.py : prime_de_la_pension,
+    proratiser ; droit/liquider.py : liquider_chaque_regime ; moteur/compte.py ;
+    remuneration.py : bloc_droit_en_vigueur
+  javascript: >-
+    moteur/js/primes.js ; moteur/js/droit/primes.js ; moteur/js/droit/liquider.js ;
+    moteur/js/compte.js ; moteur/js/remuneration.js
+  parametres: >-
+    legislation/primes_soumises_a_retenue.yaml, et les versions de cette fiche
+    (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_primes_soumises_a_retenue.py]
+referents:
+  trajectoire:
+    equivalent: aucun ; ses cas types n'ont pas de sapeur-pompier
+    confrontation: aucune exécutée
+historique:
+- >-
+  2026-10-10 — née de l'étape 17 de l'action 138, douzième partie : le sapeur-pompier
+  professionnel, qui a son statut depuis le 7 octobre 2026, liquidait sur sa
+  rémunération hors primes sans l'indemnité de feu à part, et sans ses retenues
+  supplémentaires.
+effet: >-
+  Le sapeur-pompier professionnel : sa pension se liquide sur son traitement majoré de
+  l'indemnité au prorata de ses années de sapeur-pompier ; sa retenue compte 2 % de
+  plus, et 1,8 % de 2001 à 2021.

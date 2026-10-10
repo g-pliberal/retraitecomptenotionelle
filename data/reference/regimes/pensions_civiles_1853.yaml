@@ -20,7 +20,7 @@ inventaire:
   nom: Pensions civiles et militaires, loi de 1853
   population: Fonctionnaires de l'État et militaires, avant 1948
   couverture: modelise
-  statuts: [fonctionnaire_etat, fonctionnaire_etat_actif, fonctionnaire_etat_super_actif,
+  statuts: [fonctionnaire_etat, fonctionnaire_etat_actif, fonctionnaire_etat_super_actif, policier,
             militaire, militaire_officier]
   textes:
     - {reference: "loi du 9 juin 1853 sur les pensions civiles", id: null}

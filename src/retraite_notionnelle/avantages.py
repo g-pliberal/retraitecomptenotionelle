@@ -140,10 +140,12 @@ RECALCULS: tuple[str, ...] = (
 SEDENTAIRE: dict[str, tuple[str, str]] = {
     "fonctionnaire_etat_actif": ("fonctionnaire_etat", "categorie_active"),
     "fonctionnaire_etat_super_actif": ("fonctionnaire_etat", "categorie_active"),
+    "policier": ("fonctionnaire_etat", "categorie_active"),
     "fonctionnaire_territorial_hospitalier_actif": (
         "fonctionnaire_territorial_hospitalier", "categorie_active"),
     "fonctionnaire_hospitalier_actif": (
         "fonctionnaire_territorial_hospitalier", "categorie_active"),
+    "aide_soignant": ("fonctionnaire_territorial_hospitalier", "categorie_active"),
     "fonctionnaire_territorial_hospitalier_super_actif": (
         "fonctionnaire_territorial_hospitalier", "categorie_active"),
     "sapeur_pompier_professionnel": (

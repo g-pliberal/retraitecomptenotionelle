@@ -1,0 +1,166 @@
+schema_version: 1
+id: indemnite_sujetions_speciales_police
+intitule: >-
+  L'indemnité de sujétions spéciales des policiers des services actifs, depuis 1983,
+  dans l'assiette de leur retenue pour pension, majorée de 0,5 puis 1 puis 1,2 point,
+  et dans le traitement que leur pension liquide, à raison d'un dixième par an jusqu'en
+  1992.
+domaine: salaire_de_reference
+regimes:
+- fonction_publique_etat
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- le statut policier de la dernière ligne de services, et sa part de primes, l'assiette
+  du RAFP
+- le taux de l'indemnité et la part comptée, année par année
+  (legislation/primes_soumises_a_retenue.yaml)
+- liquidation.date_effet
+ecrit:
+- le traitement de référence majoré de l'indemnité, que la pension liquide
+- les retenues supplémentaires de l'article 3 et de l'article 6 bis, à la fiche de paie
+  et au compte (droit en vigueur)
+dates_qui_decident:
+- liquidation.date_effet
+# Les paramètres que le moteur lit (droit/primes.py, `prime_de_la_pension`, et son
+# jumeau) : la nature (`traitement` : la prime majore le traitement de référence), le
+# prorata, la condition. Le taux de la prime et la part que chaque année en compte sont
+# dans la table de législation, que la fiche de paie et le compte lisent aussi.
+versions:
+- id: avant_1983
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006451460, article: 6 bis, en_vigueur: 1983-12-30}
+  nee_de: LEGIARTI000006451460
+  bornes:
+    liquidation.date_effet: [null, 1983-01-01]
+  contenu:
+    droit: >-
+      aucune : la pension se liquide sur les « émoluments de base » de L. 15,
+      l'indemnité n'en étant pas
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: loi_de_finances_pour_1983
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006451460, article: 6 bis, en_vigueur: 1983-12-30}
+  - {id: LEGIARTI000006451461, article: 6 bis, en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006451456, article: 3, en_vigueur: 1957-04-09}
+  nee_de: LEGIARTI000006451460
+  bornes:
+    liquidation.date_effet: [1983-01-01, null]
+  contenu:
+    droit: >-
+      « A partir du 1er janvier 1983, le calcul de la pension de retraite, ainsi que
+      les retenues pour pension des personnels des services actifs de police, seront
+      déterminés, par dérogation aux articles L. 15 et L. 61 du code des pensions
+      civiles et militaires de retraite, dans des conditions fixées par décret en
+      Conseil d'Etat. Pour permettre la prise en compte progressive de leurs
+      indemnités de sujétions spéciales dans leur pension, la retenue pour pension
+      supportée par les intéressés sera majorée de 0,5 p. 100 à compter du 1er
+      janvier 1983, 1 p. 100 à compter du 1er janvier 1987 et 1,2 p. 100 à compter
+      du 1er janvier 1991. »
+    conditions: >-
+      aucune que le texte publié écrive ; le décret du 15 mai 1983, non publié,
+      intègre l'indemnité « un dixième par an » de 1983 à 1992
+    parametres:
+      existe: true
+      statuts: [policier]
+      regime: fonction_publique_etat
+      nature: traitement
+      prorata: aucun
+      condition: aucune
+      plafond: null
+      fiabilite: moyenne
+  exemples: aucun trouvé
+approximations:
+- version: [loi_de_finances_pour_1983]
+  ecart: >-
+    Le décret du 15 mai 1983 n'est pas publié : l'intégration d'un dixième par an se lit
+    dans une réponse ministérielle (JO Sénat du 17 janvier 1991), et le modèle la
+    prend aussi pour l'assiette de la retenue, comme le décret n° 47-1846 le fait de
+    l'indemnité de feu ; la majoration de taux s'applique à toute l'assiette. Les
+    pensions concédées avant 1983, révisées par le même article, ne le sont pas.
+  effet: non mesuré ; les seuls départs de 1983 à 1992
+- version: [loi_de_finances_pour_1983]
+  ecart: >-
+    Le taux est celui du corps d'encadrement et d'application, gardiens de la paix et
+    brigadiers, le plus bas des deux que la circonscription d'affectation donnait
+    jusqu'en 1996 ; les officiers et les commissaires, à 17 puis 19 à 20 %, ne se
+    distinguent pas. Il ne change que le partage entre traitement et indemnité dans la
+    part de la rémunération hors primes du RAFP : après 1992, la pension n'en dépend
+    pas.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-10
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Lire le décret du 15 mai 1983 (non publié) ou la documentation du service des
+    retraites de l'État : l'âge de jouissance, que les réponses ministérielles disent
+    de cinquante ans, et l'assiette de la retenue pendant l'intégration.
+  - >-
+    Les taux de l'indemnité avant 1997, que la réponse de 1991 dit de 20 à 21 % pour
+    les gradés et gardiens, sans dire depuis quand.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 57-444 du 8 avril 1957, articles 3, 6 et 6 bis (LEGIARTI000006451456,
+      LEGIARTI000006451459, LEGIARTI000006451460, LEGIARTI000006451461)
+    date: 2004-01-01
+  - type: legifrance
+    reference: >-
+      décrets n° 97-1022, 2002-78, 2009-441, 2009-1633 et 2013-617 : les taux de
+      l'indemnité de sujétions spéciales de police, de 1997 à 2023 (LEGIARTI000006505446
+      à LEGIARTI000047043575)
+    date: 2023-01-25
+  - type: autre
+    reference: >-
+      réponse ministérielle à la question écrite n° 13318, JO Sénat du 17 janvier 1991 :
+      « un dixième des points correspondant à l'application du taux de l'indemnité de
+      sujétion spéciale » par an depuis 1983, « de 20 à 21 p. 100 suivant la
+      circonscription d'affectation » pour les gradés et gardiens
+    url: https://www.senat.fr/questions/base/1991/qSEQ910113318.html
+    date: 1991-01-17
+  - type: autre
+    reference: >-
+      annexe au projet de loi de finances, budget.gouv.fr : le taux spécial de retenue
+      des policiers, « 12,76 % » en 2018, taux normal de 10,56 %, article 3 « (1
+      point) », article 6 bis « (1,2 point) », sur « l'ensemble de la rémunération,
+      hors NBI, soumise à retenue pour pension »
+    url: https://www.budget.gouv.fr/documentation/fid-download/28951
+    date: 2018-10-01
+code:
+  python: >-
+    donnees/primes.py : PrimesSoumises ; droit/primes.py : prime_de_la_pension ;
+    droit/liquider.py : liquider_chaque_regime ; moteur/compte.py ;
+    remuneration.py : bloc_droit_en_vigueur
+  javascript: >-
+    moteur/js/primes.js ; moteur/js/droit/primes.js ; moteur/js/droit/liquider.js ;
+    moteur/js/compte.js ; moteur/js/remuneration.js
+  parametres: >-
+    legislation/primes_soumises_a_retenue.yaml, et les versions de cette fiche
+    (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_primes_soumises_a_retenue.py, tests/test_trajectoire.py]
+referents:
+  trajectoire:
+    equivalent: >-
+      primesDansCotiseBase « ISS » (R/fonctionsCalculsDivers.R, calculeCotisBase) : le
+      script des cas types range l'indemnité, au taux du COR (TxISSbase), avec le
+      traitement que la pension liquide
+    confrontation: >-
+      cas type 8 du COR (tests/test_trajectoire.py) : la pension ne bouge pas, le
+      traitement liquidé comprenant déjà l'indemnité des deux côtés ; TRAJECTOiRE
+      n'applique ni la retenue de 1 % de l'article 3 ni la majoration de 1,2 point,
+      qu'il prend pour une part des autres primes (txISS × primes × taux)
+historique:
+- >-
+  2026-10-10 — née de l'étape 17 de l'action 138, douzième partie, avec le statut
+  policier : le dépôt rangeait le policier au statut super-actif de l'État, sans
+  l'indemnité ni ses retenues supplémentaires.
+effet: >-
+  Le policier : sa retenue pour pension passe de 11,10 à 13,30 % de son traitement et
+  de son indemnité ; sa pension, liquidée sur l'un et l'autre, ne change que pour un
+  départ de 1983 à 1992, et le RAFP plafonne ses autres primes au traitement seul.

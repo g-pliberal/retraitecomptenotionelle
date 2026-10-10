@@ -28,6 +28,8 @@ import { REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
 import * as cultes from "./cultes.js";
 import { familleDuRegime } from "./etranger.js";
 import * as invalidite from "./invalidite.js";
+import * as primes from "./primes.js";
+import { primesSoumises } from "../primes.js";
 import * as ouvrir from "./ouvrir.js";
 import { TRIMESTRES_DECOTE_MILITAIRE } from "./ouvrir.js";
 
@@ -78,7 +80,7 @@ export const ANNEE_DES_REVENUS_AGRICOLES = 2016;
 /** Ce que l'étape « liquider chaque régime » écrit. */
 export class Pensions {
   constructor({ personne, regimes, minimum, garanti, requis, taux, fiabilite,
-    agricole = null, plafonds = [], anticipations = [] }) {
+    agricole = null, plafonds = [], anticipations = [], supplements = [] }) {
     this.personne = personne;
     this.regimes = regimes;
     this.minimum = minimum;
@@ -102,6 +104,11 @@ export class Pensions {
      * charge se calcule sans lui (fiche `majoration_enfants_a_charge_agirc_arrco`).
      */
     this.anticipations = anticipations;
+    /**
+     * Les suppléments de pension des primes soumises à retenue, que l'étape
+     * qui complète ajoute : `{indice, montant, detail, fiche}`.
+     */
+    this.supplements = supplements;
   }
 
   /** Les pensions, telles que le schéma de l'étape les décrit. */
@@ -142,6 +149,11 @@ export class Pensions {
       regimes[eligible.indice].plafond_enfants = {
         traitement: eligible.traitement,
         surcote: eligible.surcote,
+      };
+    }
+    for (const eligible of this.supplements) {
+      regimes[eligible.indice].supplement = {
+        montant: eligible.montant, detail: eligible.detail, fiche: eligible.fiche,
       };
     }
     return {
@@ -196,6 +208,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
   const eligiblesGaranti = [];
   // Les pensions du code des pensions, que le plafond de L. 18 borne.
   const eligiblesPlafond = [];
+  // Les suppléments de pension des primes soumises à retenue.
+  const eligiblesSupplement = [];
   // Le coefficient d'anticipation des régimes en points qu'il réduit.
   const anticipations = [];
   // La pension des non-salariés agricoles, que la pension majorée de
@@ -475,7 +489,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         moteur, periode, carriere, carriere.annee_naissance, enfantsMajores),
       nationale ? 0 : trimestresEtrangersAuSalaireMoyen(moteur, carriere, durees, famille))
       : null;
-    const salaireReference = forfaitaire
+    let salaireReference = forfaitaire
       ? periode.pension_forfaitaire_annuelle * moteur.macro.coefficientPrix(
         periode.pension_forfaitaire_annee ?? anneeLiquidation, anneeLiquidation,
       )
@@ -500,6 +514,20 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     );
     if (fiabiliteProratisation !== null) {
       fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteProratisation);
+    }
+    // LA PRIME SOUMISE À RETENUE du policier, de l'aide-soignant, du
+    // sapeur-pompier professionnel (`primes.js`) : le traitement majoré, ou
+    // un supplément que l'étape qui complète ajoute. Voir le Python.
+    const primeDeLaPension = REGIMES_CODE_DES_PENSIONS.has(code) && !forfaitaire
+      ? primes.primeDeLaPension(moteur, code, carriere, anneeLiquidation, durees,
+        proratisation)
+      : null;
+    const traitementLiquide = salaireReference;
+    if (primeDeLaPension !== null) {
+      fiabiliteGlobale = Math.min(fiabiliteGlobale, primeDeLaPension.fiabilite);
+      if (primeDeLaPension.nature === "traitement") {
+        salaireReference *= 1.0 + primeDeLaPension.part;
+      }
     }
     // Le numérateur n'est pas le même selon le régime : services et
     // bonifications dans la fonction publique (L. 13), durée d'assurance
@@ -896,11 +924,21 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         surcote: Math.min(surcoteDuMontant, montant),
       });
     }
+    if (primeDeLaPension !== null && primeDeLaPension.nature === "supplement") {
+      const supplement = salaireReference * primeDeLaPension.part;
+      eligiblesSupplement.push({
+        indice: indicePension, montant: supplement,
+        detail: primeDeLaPension.detail(supplement), fiche: primeDeLaPension.fiche,
+      });
+    }
     // Salaire de référence au centime et taux au millième : à l'euro et au
     // centième, refaire « SR × taux × durée » ratait le montant de 1,20 € sur
     // un régime spécial, le taux arrondi pesant à lui seul 0,89 €.
     let detail = `${forfaitaire ? "forfait" : "SR"} `
         + `${formatFixe(salaireReference, 2, true)} € `
+        + (primeDeLaPension !== null && primeDeLaPension.nature === "traitement"
+          ? `(${formatFixe(traitementLiquide, 2, true)} € ${primeDeLaPension.detail()}) `
+          : "")
         + `× taux ${formatPourcentage(taux, 3)} × ${trimestresRegime}/${proratisation}`
         + (trimestresRegime / proratisation > rapportMaximum
           ? `, taux maximum ${formatPourcentage(periode.taux_maximum_bonifie, 0)} atteint`
@@ -956,6 +994,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     agricole,
     plafonds: eligiblesPlafond,
     anticipations,
+    supplements: eligiblesSupplement,
   });
 }
 
@@ -1533,7 +1572,7 @@ export function assietteDeReference(moteur, periode, ligne) {
         * moteur.macro.smic_horaire.valeur(ligne.annee) * ligne.fraction_annee;
     }
   }
-  return _assietteDeReference(periode, ligne);
+  return _assietteDeReference(moteur, periode, ligne);
 }
 
 /**
@@ -2953,7 +2992,13 @@ function coefficientAnticipation(trimestresManquants, maximum) {
 }
 
 /** Part de la rémunération que ce régime prend en compte. */
-function _assietteDeReference(periode, ligne) {
+function _assietteDeReference(moteur, periode, ligne) {
+  // La prime soumise à retenue n'y est pas : le régime liquide le traitement,
+  // et la fiche de la prime dit ce que la pension en fait. Voir le Python.
+  if (periode.assiette === "hors_primes") {
+    return ligne.revenu * primesSoumises(moteur.macro.paquet).parts(
+      ligne.affiliation, ligne.annee, ligne.part_primes).traitement;
+  }
   return periode.partDuRevenu(ligne.revenu, ligne.part_primes);
 }
 

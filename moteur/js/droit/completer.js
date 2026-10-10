@@ -1248,6 +1248,18 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     }
   }
 
+  // LES SUPPLÉMENTS DE PENSION des primes soumises à retenue — celui de
+  // l'aide-soignant —, après le minimum garanti et les majorations, qui ne
+  // les lisent pas. Voir le Python.
+  for (const supplement of liquidees.supplements ?? []) {
+    const pension = pensions[supplement.indice];
+    pensions[supplement.indice] = {
+      ...pension, montant: pension.montant + supplement.montant,
+      detail: `${pension.detail} ; ${supplement.detail}`,
+    };
+    total += supplement.montant;
+  }
+
   // LES VERSEMENTS UNIQUES, en dernier : ils lisent la pension complétée,
   // minimum, majorations et compléments compris.
   const fiabiliteVersee = verserEnCapital(moteur, carriere, pensions, avantages,
