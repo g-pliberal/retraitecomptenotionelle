@@ -24,7 +24,7 @@ from retraite_notionnelle import cycle_de_vie
 from retraite_notionnelle.castypes import CAS_TYPES
 from retraite_notionnelle.config import RACINE_DONNEES, Parametres
 from retraite_notionnelle.donnees.macro import DonneesMacro
-from retraite_notionnelle.remuneration import fiche_depuis_brut
+from retraite_notionnelle.remuneration import fiche_depuis_brut, indemnites_de_la_carriere
 from retraite_notionnelle.revalorisation import faire_vivre
 from retraite_notionnelle.simulateur import Simulateur
 
@@ -403,8 +403,10 @@ def test_le_scenario_6_lit_son_net_sur_la_fiche_de_la_proposition(simulateur, pa
 
 def test_les_primes_d_un_fonctionnaire_ne_paient_pas_la_retenue(simulateur):
     """La fiche de paie d'un fonctionnaire a pour assiette son traitement. À
-    revenu égal, un quart de primes laisse un net plus fort, de la retenue
-    pour pension que la loi n'assied pas sur elles."""
+    revenu égal, un quart de primes ôte un quart de la retenue pour pension,
+    que la loi n'assied pas sur elles, et paie la RAFP, 5 % des primes dans la
+    limite de 20 % du traitement ; le net de chaque année est celui de sa
+    fiche, l'indemnité compensatrice de la CSG de sa carrière comprise."""
     def carriere(part_primes: float):
         return simulateur.carriere_simple(
             annee_naissance=1980, sexe="H", affiliation="fonctionnaire_etat", age_debut=22,
@@ -414,14 +416,25 @@ def test_les_primes_d_un_fonctionnaire_ne_paient_pas_la_retenue(simulateur):
     annee = 2030
     revenu = cycle_de_vie.revenus_d_activite(sans)[annee]
     assert cycle_de_vie.revenus_d_activite(avec)[annee] == pytest.approx(revenu)
-    fiche = fiche_depuis_brut(simulateur.parametres.racine_donnees, simulateur.macro,
-                              simulateur.catalogue, simulateur.affiliations,
-                              "fonctionnaire_etat", annee, revenu)
-    retenue = fiche.retraite_salarie / fiche.brut
-    assert retenue > 0.1
+
+    def fiche(carriere, part_primes: float):
+        indemnite = indemnites_de_la_carriere(carriere, simulateur.macro, simulateur.catalogue,
+                                              simulateur.affiliations)[annee]
+        return fiche_depuis_brut(simulateur.parametres.racine_donnees, simulateur.macro,
+                                 simulateur.catalogue, simulateur.affiliations,
+                                 "fonctionnaire_etat", annee, revenu, part_primes, indemnite)
+
+    def ligne(fiche, code: str) -> float:
+        return sum(l.salarie for l in fiche.lignes if l.code == code)
+
+    fiche_sans, fiche_avec = fiche(sans, 0.0), fiche(avec, 0.25)
+    retenue = ligne(fiche_sans, "fonction_publique_etat")
+    assert retenue > 0.1 * revenu
+    assert ligne(fiche_avec, "fonction_publique_etat") == pytest.approx(0.75 * retenue, rel=1e-12)
+    assert ligne(fiche_avec, "rafp") == pytest.approx(0.05 * 0.20 * 0.75 * revenu, rel=1e-12)
     ecart = (cycle_de_vie.revenus_nets(simulateur, avec)[annee]
              - cycle_de_vie.revenus_nets(simulateur, sans)[annee])
-    assert ecart == pytest.approx(0.25 * revenu * retenue, rel=1e-9)
+    assert ecart == pytest.approx(fiche_avec.net - fiche_sans.net, rel=1e-9)
 
 
 def test_un_statut_sans_fiche_de_paie_n_a_pas_de_revenu_net(simulateur):

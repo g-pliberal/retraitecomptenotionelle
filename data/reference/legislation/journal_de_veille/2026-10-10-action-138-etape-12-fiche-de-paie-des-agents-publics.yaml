@@ -1,0 +1,46 @@
+date: "2026-10-10"
+session: "action 138, étape 12, première partie : la RAFP, l'indemnité compensatrice de la hausse de la CSG et le taux d'équilibre sur la fiche de paie d'un agent public"
+consulte: >-
+  L'index de la DILA, à jour au 4 octobre 2026. Au JORF : la loi n° 2017-1837 du
+  30 décembre 2017 de finances pour 2018, article 113 (JORFARTI000036339321) ; le
+  décret n° 2017-1889 du 30 décembre 2017 (JORFTEXT000036342240), son article 2
+  (JORFARTI000036342256 ; consolidé LEGIARTI000036501673, sans autre version). À
+  LEGI : la contribution exceptionnelle de solidarité de 2017, code du travail
+  L. 5423-27 (LEGIARTI000033817991) et L. 5423-32 (LEGIARTI000033817984), en
+  vigueur jusqu'au 1er janvier 2018, et R. 5423-52 (LEGIARTI000034096490,
+  l'indice majoré 313 depuis le 1er mars 2017). Hors de l'index, qui ne porte
+  que le champ social : l'article 5 du décret dans ses trois rédactions, par
+  Légifrance (version d'origine, au 1er janvier 2019) et par les deux décrets
+  qui l'ont modifié, lus au Journal officiel en PDF — n° 2019-1595 du
+  31 décembre 2019 (JO du 1er janvier 2020, texte 43, NOR CPAF1919352D) et
+  n° 2020-1626 du 18 décembre 2020 (JO du 20 décembre 2020, texte 56, NOR
+  TFPF2023750D). La circulaire du 15 janvier 2018 (NOR CPAF1735515C, cir_42916),
+  ses annexes 1 à 6. La fiche de service-public reprise par justice.fr, mise à
+  jour le 1er janvier 2026. La fiche de la RAFP (`rafp.yaml`, décret
+  n° 2004-569, article 2). Le code de TRAJECTOiRE au commit 0963b57
+  (calculeRemuNette, calculePrimesNettes), lu sans être copié.
+trouve: >-
+  L'indemnité : 1,6702 % de la rémunération brute de 2017, moins la CES, la
+  maladie et le chômage dus sur elle, le tout par 1,1053 ; 0,76 % de la première
+  rémunération mensuelle pour l'agent nommé, ou réintégré, depuis 2018, sauf le
+  contractuel couvert par le régime général. Réévaluée au 1er janvier 2019 et au
+  1er janvier 2020 si la rémunération a progressé, chaque 1er janvier depuis
+  2021 si elle « a évolué ». Soumise à la RAFP, à la CSG et à la CRDS, pas à la
+  retenue pour pension. L'exemple du réexamen de 2019 que donne la circulaire
+  (23 500 € puis 25 200 €, 17 € portés à 18,23 € par mois) se rejoue au centime.
+  La fiche de paie du dépôt ne prélevait pas la RAFP, n'ajoutait pas
+  l'indemnité, et asseyait le taux d'équilibre de l'État sur les primes aussi,
+  quand sa série dit « fraction de l'assiette de la retenue pour pension » :
+  corrigé, en Python et en JavaScript. TRAJECTOiRE prélève la RAFP sur le net et
+  ne porte pas l'indemnité. La fiche `prelevements_remuneration.yaml` attribuait
+  la fin de la CES à l'article 143 de la loi n° 2016-1918, qui supprime le Fonds
+  de solidarité : c'est l'article 112 de la loi de finances pour 2018, corrigé.
+  Aucune fiche de la carte n'est touchée, et aucun témoin de pension ne bouge ;
+  mais le net saisi d'un agent public remonte à un autre brut, de −1 % à +0,1 %
+  selon ses primes et son niveau, et sa pension le suit.
+reste: >-
+  L'indemnité dans l'assiette de la pension de la RAFP (scénario 1), que la
+  fiche de paie prélève ; la GIPA et les jours de compte épargne-temps, que la
+  RAFP prend sans plafond ; le sens de la réévaluation depuis 2021, « a
+  évolué », qu'aucune source lue n'applique à une baisse ; la quotité et les
+  congés de maladie, que l'article 4 répercute et que le dépôt ne porte pas.

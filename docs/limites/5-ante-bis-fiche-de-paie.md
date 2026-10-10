@@ -107,15 +107,30 @@ retraite —, l'outre-mer, dont chaque collectivité a sa caisse, les élus, don
 l'indemnité de fonction n'est pas un salaire, et qui n'a pas d'emploi. Mieux
 vaut rien qu'un net faux, et c'est un test qui le tient.
 
-**5 ter. Ce que chaque profil laisse dehors.** Pour un fonctionnaire, la
-retraite additionnelle de la fonction publique (RAFP), assise sur ses PRIMES : la
-fiche porte sa rémunération entière, et n'assied la retenue pour pension et la
-contribution de l'État que sur son traitement, et sur la prime que la loi y
-assujettit — l'indemnité de sujétions spéciales du policier, la prime spéciale de
-sujétion de l'aide-soignant, l'indemnité de feu du sapeur-pompier —, avec leurs
-retenues supplémentaires ; mais elle ne prélève pas sur les autres primes la
-cotisation de la RAFP, provisionnée et hors de la comparaison, que son net
-surestime d'autant. Pour un indépendant, la contribution à la formation
+**5 ter. Ce que chaque profil laisse dehors.** Pour un fonctionnaire, peu de
+chose. La fiche porte sa rémunération entière : son traitement, ses primes et,
+depuis 2018, l'indemnité compensatrice de la hausse de la CSG (décret
+n° 2017-1889), <!--chiffre:mesure(indemnite_csg?exemple=fonctionnaire)-->31,90<!--/--> € par mois en 2026 pour la fonctionnaire de l'exemple du README.
+Elle n'assied la retenue pour pension et la contribution de l'État que sur son
+traitement, et sur la prime que la loi y assujettit — l'indemnité de sujétions
+spéciales du policier, la prime spéciale de sujétion de l'aide-soignant,
+l'indemnité de feu du sapeur-pompier —, avec leurs retenues supplémentaires ;
+elle prélève sur les autres primes et sur l'indemnité la cotisation de la RAFP,
+<!--chiffre:valeur(data/reference/regimes/rafp.yaml:periodes.debut=2011.taux_cotisation_retraite*100)-->10<!--/--> % partagés par moitié avec l'employeur, dans la limite de <!--chiffre:valeur(data/reference/regimes/rafp.yaml:periodes.debut=2011.plafond_primes_traitement*100)-->20<!--/--> % du traitement,
+sous les deux systèmes : une réforme de la répartition ne l'atteint pas. Restent
+dehors la GIPA et les jours de compte épargne-temps, que la RAFP prend sans
+plafond, et l'indemnité exacte de chacun : la fiche la tire du décret et de la
+carrière, la rémunération annualisée de l'année d'entrée tenant lieu du premier
+mois complet, sans quotité ni congé de maladie ; la saisie d'un net la prête à
+un agent payé fin 2017 dont la rémunération a suivi le salaire moyen ; un brut
+saisi se lit sans elle, comme le traitement et les primes. La pension de la RAFP
+ne compte pas encore l'indemnité, que la fiche prélève : rien n'y manque quand
+les primes atteignent déjà le plafond, un douzième des points à qui en touche un
+dixième. La proposition ne dit rien de l'indemnité : le dépôt la garde, assise
+comme le reste de la rémunération à son taux unique. Le contractuel n'en a pas :
+en poste fin 2017, sa cotisation maladie et la contribution de solidarité qu'il
+payait en absorbaient presque tout ; recruté depuis, le décret l'exclut. Pour un
+indépendant, la contribution à la formation
 professionnelle (un forfait de <!--chiffre:illustration()-->0,25<!--/--> % du plafond, et non un taux, laissé dehors
 par symétrie avec les taxes sur salaires du privé) et l'assiette minimale que la
 loi impose aux très bas revenus, faute de savoir si l'assuré relève d'une de ses
@@ -137,6 +152,22 @@ le net d'un agent qui en touche, et surestimait ce que la proposition lui rend �
 +36,9 % de traitement net au lieu de +33,1 % pour la fonctionnaire de l'exemple du
 README, +42,2 % au lieu de +38,3 % de solde nette pour le militaire (action 138,
 étape 9).
+
+**Le 10 octobre 2026, la RAFP, l'indemnité et le taux d'équilibre.** La correction
+du 9 octobre avait ôté les primes de la retenue, non de la contribution de
+l'État : la dépense que la proposition libère comptait encore 82,28 % des primes,
+quand le taux d'équilibre n'est assis que sur le traitement. La fiche ne
+prélevait pas non plus la RAFP, 31,15 € par mois pour la fonctionnaire de
+l'exemple du README, et ne lui ajoutait pas son indemnité compensatrice de la
+CSG, 31,90 €. Corrigé le même jour (action 138, étape 12) : son traitement net
+passe de 3 177,20 € à 3 174,90 €, et ce que la proposition lui rend, de
++1 052,91 € à +808,83 € par mois, soit +25,5 % au lieu de +33,1 % — l'assiette
+du taux d'équilibre en ôte 7,2 points, la RAFP et l'indemnité 0,1 chacune ; le
+militaire passe de +38,3 % à +29,6 %. Le revenu net des indicateurs de cycle de
+vie perd 0,8 point de son brut par la RAFP depuis 2005, et en regagne 0,7 par
+l'indemnité depuis 2018 ; confronté à TRAJECTOiRE, qui prélève la RAFP et ne
+porte pas l'indemnité, le taux de remplacement net des fonctionnaires reste à
+0,8 % près.
 
 **6. Le coût du travail affiché est un plancher.** Ne sont comptées ni la taxe
 d'apprentissage, ni la contribution à la formation, ni la participation à la
@@ -187,14 +218,15 @@ la fiche affiche.** C'est vrai depuis toujours et cela ne pesait presque rien :
 sous l'incidence intégrale, le brut d'un salarié du privé monte de quelques
 pour cent, et la pension calculée sur l'ancien brut est sous-estimée d'autant.
 Depuis que la contribution d'équilibre d'un employeur public est partagée, cela
-pèse beaucoup plus : le traitement d'un fonctionnaire d'État monte d'un tiers
-sur la fiche, et sa pension continue d'être calculée sur le traitement
-d'avant. **Le dépôt sous-estime donc la pension de la proposition pour les
+pèse beaucoup plus : le traitement d'un fonctionnaire d'État monte d'un quart
+sur la fiche sans primes, d'un cinquième à un cinquième de primes, et sa pension
+continue d'être calculée sur le traitement d'avant. **Le dépôt sous-estime donc la pension de la proposition pour les
 agents publics**, et l'écart est du même ordre que la hausse du traitement. Le
 corriger demanderait de reboucler la fiche de paie sur la carrière — le brut
 sous la proposition devenant l'assiette de la cotisation —, ce qui est une
 boucle de point fixe et non un calcul de plus. La fiche de paie et la pension
 restent, pour l'instant, deux lectures d'un même monde qui ne se parlent pas.
 
-Rien de tout cela ne touche une pension : retiré, le modèle calcule exactement
-les mêmes six scénarios.
+Rien de tout cela ne touche une pension, sinon par le brut que la saisie d'un
+net tire de la fiche : retiré, le modèle calcule exactement les mêmes six
+scénarios d'une carrière saisie en brut.

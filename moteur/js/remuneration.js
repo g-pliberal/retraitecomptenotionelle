@@ -47,6 +47,8 @@
 import { tauxCapitalisationVolontaireApplique } from "./config.js";
 import { ContributionsEmployeurPubliques, PartRetraiteSeuleEtat } from "./regimes.js";
 import { primesSoumises } from "./primes.js";
+import { indemniteCsg } from "./indemnite_csg.js";
+import { salaireMoyenAnnuel } from "./carriere.js";
 import { pointsCsgRendus } from "./restitution.js";
 import { Fiabilite } from "./serie.js";
 
@@ -396,12 +398,18 @@ export class BaremePrelevements {
  * l'une ni l'autre.
  */
 export class ComposanteRetraite {
-  constructor({ code, libelle, salarie, employeur, dansLaReductionGenerale = true }) {
+  constructor({
+    code, libelle, salarie, employeur, dansLaReductionGenerale = true,
+    horsRepartition = false,
+  }) {
     this.code = code;
     this.libelle = libelle;
     this.salarie = salarie;
     this.employeur = employeur;
     this.dansLaReductionGenerale = dansLaReductionGenerale;
+    // Un régime provisionné, la RAFP : hors du compte notionnel, mais prélevé
+    // sur la fiche, et que la proposition garde.
+    this.horsRepartition = horsRepartition;
   }
 
   /** Taux patronal sur la première tranche — celui qu'un décret additionne. */
@@ -417,7 +425,7 @@ export class BlocRetraite {
   constructor({
     libelle, composantes, remplaceLesContributionsDEquilibre = false,
     csgRendue = 0, partRendueAuxSalaires = 0, contributionEquilibreActuelle = 0,
-    departsAnticipes = 0,
+    departsAnticipes = 0, partTraitement = 1,
   }) {
     this.libelle = libelle;
     this.composantes = composantes;
@@ -434,6 +442,10 @@ export class BlocRetraite {
     this.partRendueAuxSalaires = partRendueAuxSalaires;
     this.contributionEquilibreActuelle = contributionEquilibreActuelle;
     this.departsAnticipes = departsAnticipes;
+    // La part du brut de la fiche qui est le traitement, l'assiette de la
+    // retenue et du taux d'équilibre : sans les primes ni l'indemnité
+    // compensatrice de la CSG.
+    this.partTraitement = partTraitement;
   }
 
   /**
@@ -683,21 +695,25 @@ export class ConstructeurFiche {
    *                        − (1 − part rendue) × (libéré − gardé)
    *
    * et le traitement est celui qui épuise la dépense retenue sous les nouveaux
-   * taux. Sans taux d'équilibre connu on retombe sur l'assiette fixe : un
-   * régime dont la série employeur ne couvre pas l'année ne libère rien qu'on
-   * sache chiffrer, et lui appliquer la formule ferait BAISSER le traitement.
+   * taux. Le taux d'équilibre et les départs anticipés sont des parts du
+   * TRAITEMENT, l'assiette de la retenue : `partTraitement` en retire les
+   * primes et l'indemnité compensatrice de la CSG, que la fiche porte. Sans
+   * taux d'équilibre connu on retombe sur l'assiette fixe : un régime dont la
+   * série employeur ne couvre pas l'année ne libère rien qu'on sache chiffrer,
+   * et lui appliquer la formule ferait BAISSER le traitement.
    */
   brutPartage(actuelle, plafondAnnuel, smicAnnuel, bloc, cadre = false) {
     if (bloc.contributionEquilibreActuelle <= 0) {
       return actuelle.brut;
     }
-    const equilibre = actuelle.brut * bloc.contributionEquilibreActuelle;
+    const traitement = actuelle.brut * bloc.partTraitement;
+    const equilibre = traitement * bloc.contributionEquilibreActuelle;
     const depenseActuelle = actuelle.coutDuTravail + equilibre;
     const aTraitementInchange = this.fiche(
       0, actuelle.brut, plafondAnnuel, smicAnnuel, bloc, cadre,
     ).coutDuTravail;
     const libere = Math.max(0, depenseActuelle - aTraitementInchange);
-    const garde = Math.min(libere, actuelle.brut * bloc.departsAnticipes);
+    const garde = Math.min(libere, traitement * bloc.departsAnticipes);
     const retenue = depenseActuelle - garde
       - (1 - bloc.partRendueAuxSalaires) * (libere - garde);
     return this.brutACoutDonne(retenue, plafondAnnuel, smicAnnuel, bloc, cadre);
@@ -739,7 +755,9 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
   // même conséquence pour le compte notionnel.
   // Les primes d'un fonctionnaire : un régime dont l'assiette est le seul
   // traitement (`hors_primes`) n'en prélève que la part hors primes, comme
-  // `partDuRevenu` le fait pour le compte ; la RAFP est hors du bloc.
+  // `partDuRevenu` le fait pour le compte. La RAFP, assise sur les primes dans
+  // la limite de 20 % du traitement seul, est un étage à part
+  // (`etageHorsRepartition`), prélevé sur la fiche depuis le 10 octobre 2026.
   const sansEmployeur = affiliations.sansEmployeur(statut);
   const composantes = [];
   for (const code of affiliations.regimes(statut, annee)) {
@@ -748,6 +766,11 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
     }
     const regime = catalogue.obtenir(code);
     if (regime.hors_repartition) {
+      const etage = etageHorsRepartition(catalogue, regime, statut, annee,
+        partPrimes, sansEmployeur);
+      if (etage !== null) {
+        composantes.push(etage);
+      }
       continue;
     }
     const salarie = [];
@@ -802,6 +825,52 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
 }
 
 /**
+ * L'étage d'un régime provisionné : la RAFP, sur les primes dans la limite de
+ * 20 % du traitement seul, la prime soumise à retenue n'y entrant pas, en taux
+ * de la rémunération entière — l'assiette même du compte (`partDuRevenu`).
+ * Hors du périmètre de la réduction générale. `null` quand rien n'est prélevé.
+ */
+function etageHorsRepartition(catalogue, regime, statut, annee, partPrimes,
+  sansEmployeur) {
+  const salarie = [];
+  const employeur = [];
+  for (const periode of regime.periodesActives(annee)) {
+    const soumise = periode.assiette === "primes_uniquement"
+      ? primesSoumises(catalogue.paquet).parts(statut, annee, partPrimes).soumise
+      : 0.0;
+    const taux = (periode.taux_cotisation_retraite || 0)
+      * periode.partDuRevenu(1.0, partPrimes, soumise);
+    if (!taux) {
+      continue;
+    }
+    const [basse, haute] = periode.bornesAssietteEnPass();
+    const part = sansEmployeur ? 1 : periode.part_salariale;
+    salarie.push({ bas: basse, haut: haute, taux: taux * part });
+    employeur.push({ bas: basse, haut: haute, taux: taux * (1 - part) });
+  }
+  if (!salarie.length) {
+    return null;
+  }
+  return new ComposanteRetraite({
+    code: regime.code, libelle: regime.nom, salarie, employeur,
+    dansLaReductionGenerale: false, horsRepartition: true,
+  });
+}
+
+/**
+ * La part de primes du brut de la fiche, `revenu + indemnite` : l'indemnité
+ * compensatrice de la CSG compte avec les primes, hors de la retenue et dans
+ * la RAFP, si bien que le traitement garde ses euros.
+ */
+export function partPrimesDeLaFiche(revenu, partPrimes, indemnite) {
+  const brut = revenu + indemnite;
+  if (indemnite <= 0 || brut <= 0) {
+    return partPrimes;
+  }
+  return (partPrimes * revenu + indemnite) / brut;
+}
+
+/**
  * Le bloc de la proposition : un taux unique, au premier euro, sans plafond.
  *
  * Le pilier capitalisé est un étage à part, et hors du périmètre de la
@@ -820,7 +889,8 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
  */
 export function blocTauxUnique(tauxRepartition, tauxCapitalisation = 0,
   partSalariale = 0.0633 / 0.23, csgRendue = 0, partRendueAuxSalaires = 0,
-  contributionEquilibreActuelle = 0, departsAnticipes = 0) {
+  contributionEquilibreActuelle = 0, departsAnticipes = 0, conservees = [],
+  partTraitement = 1) {
   const composantes = [new ComposanteRetraite({
     code: "regime_unifie",
     libelle: "Retraite, compte notionnel",
@@ -839,6 +909,9 @@ export function blocTauxUnique(tauxRepartition, tauxCapitalisation = 0,
       dansLaReductionGenerale: false,
     }));
   }
+  // Ce qu'elle garde : les étages provisionnés du droit en vigueur, la RAFP,
+  // qu'une réforme de la répartition n'atteint pas.
+  composantes.push(...conservees);
   return new BlocRetraite({
     libelle: "Retraite (proposition)",
     composantes,
@@ -847,6 +920,7 @@ export function blocTauxUnique(tauxRepartition, tauxCapitalisation = 0,
     partRendueAuxSalaires,
     contributionEquilibreActuelle,
     departsAnticipes,
+    partTraitement,
   });
 }
 
@@ -857,8 +931,9 @@ export function blocTauxUnique(tauxRepartition, tauxCapitalisation = 0,
  * moitié de la charge fabriquerait un gain qui n'existe pas.
  */
 export function blocTauxUniqueSansEmployeur(tauxRepartition, tauxCapitalisation = 0,
-  csgRendue = 0) {
-  return blocTauxUnique(tauxRepartition, tauxCapitalisation, 1, csgRendue);
+  csgRendue = 0, conservees = []) {
+  return blocTauxUnique(tauxRepartition, tauxCapitalisation, 1, csgRendue, 0, 0, 0,
+    conservees);
 }
 
 /**
@@ -1006,6 +1081,144 @@ export function profilDeLaFiche(affiliations, catalogue, statut, annee) {
 }
 
 /** SMIC annuel d'un temps plein, en euros courants de l'année. */
+// -- l'indemnité compensatrice de la hausse de la CSG ------------------------
+//
+// Depuis le 1er janvier 2018, l'agent public touche, en plus de son traitement
+// et de ses primes, une indemnité qui compense la hausse de 1,7 point de la CSG
+// (décret n° 2017-1889). La ligne de carrière ne la porte pas : la fiche de
+// paie l'y ajoute. Voir le Python.
+
+/**
+ * Le statut ouvre-t-il l'indemnité, cette année-là ? Un agent public que la
+ * fiche décrit au profil `agent_seul` : fonctionnaire, militaire, ouvrier de
+ * l'État. Ni le contractuel, ni les statuts spéciaux.
+ */
+export function beneficiaireIndemniteCsg(affiliations, catalogue, statut, annee) {
+  const table = indemniteCsg(catalogue.paquet);
+  let famille;
+  try {
+    famille = affiliations.famille(statut);
+  } catch {
+    return false;
+  }
+  return table.familles.has(famille)
+    && table.profils.has(profilDeLaFiche(affiliations, catalogue, statut, annee));
+}
+
+/**
+ * Ce que le I de l'article 2 déduit de la rémunération de 2017 : la CES
+ * qu'elle payait, sur sa rémunération nette de la retenue et de la RAFP.
+ */
+function deduitsDeReference(catalogue, affiliations, macro, statut, remuneration,
+  partPrimes, blocDeReference = null) {
+  const table = indemniteCsg(catalogue.paquet);
+  const annee = table.anneeDeReference;
+  const plafond = macro.plafond_securite_sociale.valeur(annee);
+  const bloc = blocDeReference
+    ?? blocDroitEnVigueur(catalogue, affiliations, statut, annee, partPrimes);
+  let retenue = 0;
+  let rafp = 0;
+  for (const c of bloc.composantes) {
+    if (c.horsRepartition) {
+      rafp += montant(c.salarie, remuneration, plafond);
+    } else {
+      retenue += montant(c.salarie, remuneration, plafond);
+    }
+  }
+  return table.contributionDeSolidarite(
+    remuneration, retenue + rafp, (1 - partPrimes) * remuneration - retenue, plafond,
+  );
+}
+
+/**
+ * Les lignes d'agent public bénéficiaire depuis 2017, et la rémunération
+ * annualisée de chacune de leurs années.
+ */
+function remunerationsDAgentPublic(carriere, catalogue, affiliations) {
+  const table = indemniteCsg(catalogue.paquet);
+  const lignes = [];
+  const remunerations = new Map();
+  const parts = new Map();
+  for (const ligne of carriere.lignes) {
+    if (ligne.annee < table.anneeDeReference || !ligne.cotise) {
+      continue;
+    }
+    if (!beneficiaireIndemniteCsg(affiliations, catalogue, ligne.affiliation,
+      ligne.annee)) {
+      continue;
+    }
+    const part = carriere.partRetenueLigne(ligne);
+    if (part <= 0) {
+      continue;
+    }
+    lignes.push(ligne);
+    remunerations.set(ligne.annee, (remunerations.get(ligne.annee) ?? 0) + ligne.revenu);
+    parts.set(ligne.annee, (parts.get(ligne.annee) ?? 0) + part);
+  }
+  const annualisees = new Map();
+  for (const [annee, revenu] of remunerations) {
+    annualisees.set(annee, revenu / Math.min(1, parts.get(annee)));
+  }
+  return [lignes, annualisees];
+}
+
+/**
+ * L'indemnité de chaque année d'agent public bénéficiaire, en euros de
+ * l'année, pour une année pleine, tirée de la carrière elle-même.
+ */
+export function indemnitesDeLaCarriere(carriere, macro, catalogue, affiliations) {
+  const table = indemniteCsg(catalogue.paquet);
+  const [lignes, annualisees] = remunerationsDAgentPublic(carriere, catalogue, affiliations);
+  const reference = lignes.find((l) => l.annee === table.anneeDeReference) ?? null;
+  let deduits = 0;
+  if (reference !== null) {
+    deduits = deduitsDeReference(catalogue, affiliations, macro, reference.affiliation,
+      annualisees.get(table.anneeDeReference), reference.part_primes);
+  }
+  return table.montants(annualisees, deduits);
+}
+
+/**
+ * Ce que la saisie, qui ne connaît qu'un montant, prête d'indemnité : un agent
+ * du même statut, payé fin 2017, dont la rémunération a suivi le salaire
+ * moyen. Une fonction du revenu, ou `null` quand le statut n'y a pas droit.
+ */
+export function indemniteStylisee(macro, catalogue, affiliations, statut, annee,
+  partPrimes) {
+  const table = indemniteCsg(catalogue.paquet);
+  if (annee < table.debut
+    || !beneficiaireIndemniteCsg(affiliations, catalogue, statut, annee)) {
+    return null;
+  }
+  const reference = table.anneeDeReference;
+  const courant = salaireMoyenAnnuel(macro, annee);
+  const poids = new Map();
+  for (let a = reference; a <= annee; a += 1) {
+    poids.set(a, salaireMoyenAnnuel(macro, a) / courant);
+  }
+  const bloc = blocDroitEnVigueur(catalogue, affiliations, statut, reference, partPrimes);
+  return (revenu) => {
+    if (revenu <= 0) {
+      return 0;
+    }
+    const remunerations = new Map();
+    for (const [a, p] of poids) {
+      remunerations.set(a, revenu * p);
+    }
+    const deduits = deduitsDeReference(catalogue, affiliations, macro, statut,
+      remunerations.get(reference), partPrimes, bloc);
+    return table.montants(remunerations, deduits).get(annee) ?? 0;
+  };
+}
+
+/** La fiche du droit en vigueur de `revenu`, l'indemnité ajoutée au brut. */
+function ficheAvecIndemnite(constructeur, catalogue, affiliations, statut, annee,
+  revenu, partPrimes, indemnite, plafond, smic, cadre) {
+  const primes = partPrimesDeLaFiche(revenu, partPrimes, indemnite);
+  return constructeur.fiche(annee, revenu + indemnite, plafond, smic,
+    blocDroitEnVigueur(catalogue, affiliations, statut, annee, primes), cadre);
+}
+
 export function smicAnnuel(macro, annee) {
   return macro.smic_horaire.valeur(annee) * HEURES_ANNUELLES_TEMPS_PLEIN;
 }
@@ -1102,6 +1315,11 @@ export class RemunerationActif {
     return this.reference.departsAnticipes ?? 0;
   }
 
+  /** L'indemnité compensatrice de la CSG de l'année de référence, par mois. */
+  get indemniteCsgMensuelle() {
+    return (this.reference.indemniteCsg ?? 0) / 12;
+  }
+
   get gainNetMensuel() {
     return this.reference.gainNet / 12;
   }
@@ -1188,6 +1406,12 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
   // verse une : la chercher pour un salarié du privé la trouverait nulle, et
   // coûterait un chargement de série par carrière.
   const partage = profil.incidence === Incidence.PARTAGEE;
+  // L'indemnité compensatrice de la CSG d'un agent public, tirée de toute la
+  // carrière : celle de 2017, ou de l'entrée, et ses réévaluations.
+  const indemnites = beneficiaireIndemniteCsg(affiliations, catalogue, statut,
+    anneesActives[0])
+    ? indemnitesDeLaCarriere(carriere, macro, catalogue, affiliations)
+    : new Map();
 
   /**
    * Le bloc de la proposition l'année `annee`.
@@ -1195,13 +1419,17 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
    * Reconstruit à chaque année parce que deux de ses trois nouveautés en
    * dépendent : les points de CSG rendus suivent le poste abandonné, que le
    * COR projette année par année, et le taux d'équilibre de l'employeur public
-   * suit sa propre série. Le coût est nul — le bloc est trois segments.
+   * suit sa propre série. Le coût est nul — le bloc est trois segments. Il
+   * garde les étages provisionnés du droit en vigueur de l'année, la RAFP,
+   * sauf quand le compte les convertit (`isoler_capitalisation` à faux).
    */
-  const blocPropose = (annee) => {
+  const blocPropose = (annee, actuel, partTraitement) => {
     const csg = paquet ? pointsCsgRendus(paquet, annee, rendue) : 0;
+    const conservees = parametres.isoler_capitalisation
+      ? actuel.composantes.filter((c) => c.horsRepartition) : [];
     if (sansEmployeur) {
       return blocTauxUniqueSansEmployeur(
-        parametres.taux_cotisation_liberal, capitalisation, csg,
+        parametres.taux_cotisation_liberal, capitalisation, csg, conservees,
       );
     }
     return blocTauxUnique(
@@ -1211,6 +1439,7 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
         ? contributionEquilibre(paquet, affiliations, statut, annee) : 0,
       partage && paquet
         ? departsAnticipes(paquet, affiliations, statut, annee) : 0,
+      conservees, partTraitement,
     );
   };
 
@@ -1223,13 +1452,18 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
     }
     // Une année incomplète ne se compare pas à une année pleine : on annualise
     // le revenu, le plafond et le SMIC restant annuels.
-    const brut = part < 1 ? ligne.revenu / part : ligne.revenu;
+    const revenu = part < 1 ? ligne.revenu / part : ligne.revenu;
+    // L'indemnité compensatrice s'ajoute au traitement et aux primes, et
+    // compte avec les primes : hors de la retenue, dans la RAFP.
+    const indemnite = indemnites.get(annee) ?? 0;
+    const brut = revenu + indemnite;
+    const primes = partPrimesDeLaFiche(revenu, ligne.part_primes, indemnite);
     const plafond = macro.plafond_securite_sociale.valeur(annee);
     const smic = smicAnnuel(macro, annee);
     const blocActuel = blocDroitEnVigueur(
-      catalogue, affiliations, statut, annee, ligne.part_primes,
+      catalogue, affiliations, statut, annee, primes,
     );
-    const propose = blocPropose(annee);
+    const propose = blocPropose(annee, blocActuel, 1 - primes);
     const ficheActuelle = constructeur.fiche(
       annee, brut, plafond, smic, blocActuel, cadre,
     );
@@ -1244,6 +1478,9 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
       csgRendue: propose.csgRendue,
       contributionEquilibre: propose.contributionEquilibreActuelle,
       departsAnticipes: propose.departsAnticipes,
+      // L'indemnité compensatrice de la CSG, déjà dans le brut du droit en
+      // vigueur ; la proposition la garde.
+      indemniteCsg: indemnite,
       droitEnVigueur: ficheActuelle,
       proposition: constructeur.fiche(
         annee, brutPropose, plafond, smic, propose, cadre,
@@ -1286,7 +1523,9 @@ export { Fiabilite };
  * C'est l'entrée du mode « net » de la saisie. Rend le net INCHANGÉ quand le
  * statut n'a pas de fiche de paie — l'exploitant agricole, l'élu, l'outre-mer :
  * mieux vaut un brut approché par un net qu'un refus de calculer, et le site
- * dit alors qu'il n'a pas su convertir.
+ * dit alors qu'il n'a pas su convertir. Le net d'un agent public comprend son
+ * indemnité compensatrice de la CSG, que le brut rendu ne porte pas, et que la
+ * saisie lui prête stylisée (`indemniteStylisee`).
  */
 export function salaireBrutDepuisNet(bareme, macro, catalogue, affiliations,
   statut, annee, netAnnuel, partPrimes = 0) {
@@ -1298,13 +1537,32 @@ export function salaireBrutDepuisNet(bareme, macro, catalogue, affiliations,
     return netAnnuel;
   }
   const cadre = statut.includes("cadre") && !statut.includes("non_cadre");
-  return new ConstructeurFiche(bareme.profil(codeProfil)).brutANetDonne(
-    netAnnuel,
-    macro.plafond_securite_sociale.valeur(annee),
-    smicAnnuel(macro, annee),
-    blocDroitEnVigueur(catalogue, affiliations, statut, annee, partPrimes),
-    cadre,
-  );
+  const plafond = macro.plafond_securite_sociale.valeur(annee);
+  const smic = smicAnnuel(macro, annee);
+  const constructeur = new ConstructeurFiche(bareme.profil(codeProfil));
+  const indemnite = indemniteStylisee(macro, catalogue, affiliations, statut, annee,
+    partPrimes);
+  if (indemnite === null) {
+    return constructeur.brutANetDonne(
+      netAnnuel, plafond, smic,
+      blocDroitEnVigueur(catalogue, affiliations, statut, annee, partPrimes),
+      cadre,
+    );
+  }
+  // La même dichotomie que `brutANetDonne`, sur le traitement et les primes.
+  let bas = 0;
+  let haut = netAnnuel * 3;
+  for (let pas = 0; pas < 80; pas += 1) {
+    const milieu = (bas + haut) / 2;
+    const fiche = ficheAvecIndemnite(constructeur, catalogue, affiliations, statut,
+      annee, milieu, partPrimes, indemnite(milieu), plafond, smic, cadre);
+    if (fiche.net < netAnnuel) {
+      bas = milieu;
+    } else {
+      haut = milieu;
+    }
+  }
+  return (bas + haut) / 2;
 }
 
 /**
@@ -1321,11 +1579,11 @@ export function salaireNetDepuisBrut(bareme, macro, catalogue, affiliations,
     return brutAnnuel;
   }
   const cadre = statut.includes("cadre") && !statut.includes("non_cadre");
-  return new ConstructeurFiche(bareme.profil(codeProfil)).fiche(
-    annee, brutAnnuel,
-    macro.plafond_securite_sociale.valeur(annee),
-    smicAnnuel(macro, annee),
-    blocDroitEnVigueur(catalogue, affiliations, statut, annee, partPrimes),
-    cadre,
+  const stylisee = indemniteStylisee(macro, catalogue, affiliations, statut, annee,
+    partPrimes);
+  return ficheAvecIndemnite(
+    new ConstructeurFiche(bareme.profil(codeProfil)), catalogue, affiliations, statut,
+    annee, brutAnnuel, partPrimes, stylisee === null ? 0 : stylisee(brutAnnuel),
+    macro.plafond_securite_sociale.valeur(annee), smicAnnuel(macro, annee), cadre,
   ).net;
 }

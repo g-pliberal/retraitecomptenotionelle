@@ -237,6 +237,9 @@ fichiers:
       # La fiche prélevait la retenue et la contribution de l'État sur les
       # primes : ce que la proposition rendait avant la correction et après.
       - "**Le 9 octobre 2026, les primes sur la fiche.**"
+      # La RAFP, l'indemnité compensatrice de la CSG et l'assiette du taux
+      # d'équilibre, portées le 10 octobre 2026 : l'avant et l'après.
+      - "**Le 10 octobre 2026, la RAFP, l'indemnité et le taux d'équilibre.**"
       - "**Deux réserves subsistent au SMIC"
 
   docs/limites/5-ante-ter-net-et-brut.md:

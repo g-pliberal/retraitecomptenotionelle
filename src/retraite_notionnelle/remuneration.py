@@ -206,13 +206,29 @@ années dans la même proportion du taux versé que la part « retraite seule »
 compte. Les autres employeurs publics n'ont pas de décomposition : rien n'y est
 gardé.
 
-Le traitement d'un fonctionnaire d'État monte ainsi d'un tiers. C'est beaucoup,
-et deux réserves l'accompagnent dans ``docs/limites.md`` : la pension, elle,
-reste calculée sur le revenu de la carrière et non sur ce traitement-là ; et le
-partage est un état d'arrivée, pas un calendrier.
+Le traitement d'un fonctionnaire d'État monte ainsi d'un quart sans primes,
+d'un cinquième à un cinquième de primes, sur lesquelles l'État ne verse aucun
+taux d'équilibre. C'est beaucoup, et deux réserves l'accompagnent dans
+``docs/limites.md`` : la pension, elle, reste calculée sur le revenu de la
+carrière et non sur ce traitement-là ; et le partage est un état d'arrivée, pas
+un calendrier.
 
 ``independant`` tient l'assiette fixe, et ce n'est pas une hypothèse : il n'y a
 pas d'employeur, donc rien à répercuter.
+
+CE QUE PORTE LA FICHE D'UN AGENT PUBLIC
+---------------------------------------
+Sa rémunération entière : son traitement, ses primes et, depuis 2018,
+l'indemnité compensatrice de la hausse de la CSG (décret n° 2017-1889), que la
+ligne de carrière ne porte pas et que la fiche ajoute, calculée sur la carrière
+(:func:`indemnites_de_la_carriere`). La retenue pour pension ne prend que le
+traitement ; la RAFP, les primes et l'indemnité, dans la limite de 20 % du
+traitement, 5 % à l'agent et 5 % à l'employeur, et la proposition la garde, une
+réforme de la répartition ne l'atteignant pas. Le taux d'équilibre de
+l'employeur public, enfin, est une part du traitement seul. Les trois depuis le
+10 octobre 2026 (action 138, étape 12) : la fiche ne prélevait pas la RAFP,
+n'ajoutait pas l'indemnité, et asseyait le taux d'équilibre sur les primes
+aussi.
 
 ``profil_de_la_fiche`` choisit le profil ; ``fiche_de_paie_possible`` dit si le
 statut est couvert ; le site n'affiche rien quand il ne l'est pas, et dit
@@ -227,6 +243,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from .donnees.chargement import Fiabilite, charger_yaml
+from .donnees.indemnite_csg import charger_indemnite_csg
 from .donnees.primes import charger_primes_soumises
 from .donnees.regimes import ContributionsEmployeurPubliques, PartRetraiteSeuleEtat
 from .restitution import points_csg_rendus
@@ -826,6 +843,10 @@ class ComposanteRetraite:
     #: le I de l'article L. 241-13 nomme l'une et l'autre. Faux du pilier
     #: capitalisé de la proposition, qui n'est ni l'une ni l'autre.
     dans_la_reduction_generale: bool = True
+    #: Un régime provisionné, la RAFP : hors du compte notionnel, mais prélevé
+    #: sur la fiche, et que la proposition garde, puisqu'une réforme de la
+    #: répartition ne l'atteint pas.
+    hors_repartition: bool = False
 
     def taux_employeur_premiere_tranche(self) -> float:
         """Taux patronal sur la première tranche — celui qu'un décret additionne.
@@ -870,6 +891,10 @@ class BlocRetraite:
     #: l'employeur le GARDE en entier, et seul le reste se partage. Ne sert
     #: qu'à ``Incidence.PARTAGEE``.
     departs_anticipes: float = 0.0
+    #: La part du brut de la fiche qui est le traitement, l'assiette de la
+    #: retenue et du taux d'équilibre : sans les primes ni l'indemnité
+    #: compensatrice de la CSG. Ne sert qu'à ``Incidence.PARTAGEE``.
+    part_traitement: float = 1.0
 
     def taux_employeur(self, brut: float, plafond_annuel: float) -> float:
         """Ce que l'employeur verse pour la retraite, rapporté au brut."""
@@ -1184,6 +1209,13 @@ class ConstructeurFiche:
         part revient exactement à la retirer du taux d'équilibre : la dépense
         actuelle et le libéré baissent du même montant.
 
+        **Le taux d'équilibre et les départs anticipés sont des parts du
+        TRAITEMENT**, l'assiette de la retenue (``contribution_employeur_public.csv``) :
+        ``part_traitement`` en retire les primes et l'indemnité compensatrice
+        de la CSG, que la fiche porte. Jusqu'au 10 octobre 2026, ils portaient
+        sur la rémunération entière, et la dépense libérée d'une fonctionnaire
+        à un cinquième de primes était trop haute d'un tiers.
+
         **Sans taux d'équilibre connu, on retombe sur l'assiette fixe.** Un
         régime dont la série employeur ne couvre pas l'année ne libère rien
         qu'on sache chiffrer, et lui appliquer la formule ferait BAISSER le
@@ -1192,13 +1224,14 @@ class ConstructeurFiche:
         """
         if bloc.contribution_equilibre_actuelle <= 0.0:
             return actuelle.brut
-        equilibre = actuelle.brut * bloc.contribution_equilibre_actuelle
+        traitement = actuelle.brut * bloc.part_traitement
+        equilibre = traitement * bloc.contribution_equilibre_actuelle
         depense_actuelle = actuelle.cout_du_travail + equilibre
         a_traitement_inchange = self.fiche(
             0, actuelle.brut, plafond_annuel, smic_annuel, bloc, cadre
         ).cout_du_travail
         libere = max(0.0, depense_actuelle - a_traitement_inchange)
-        garde = min(libere, actuelle.brut * bloc.departs_anticipes)
+        garde = min(libere, traitement * bloc.departs_anticipes)
         retenue = (depense_actuelle - garde
                    - (1.0 - bloc.part_rendue_aux_salaires) * (libere - garde))
         return self.brut_a_cout_donne(
@@ -1239,13 +1272,20 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
     (``hors_primes`` : la pension civile, la CNRACL) n'en prélève que la part
     hors primes, ``1 − part_primes``, comme ``PeriodeRegime.part_du_revenu``
     le fait pour le compte : ses taux en sont réduits d'autant. La retenue
-    n'est pas assise sur les primes ; la RAFP, qui l'est, est provisionnée et
-    hors du bloc. La prime que la loi assujettit à la retenue — l'indemnité
-    de sujétions spéciales du policier, la prime spéciale de sujétion de
-    l'aide-soignant, l'indemnité de feu du sapeur-pompier — n'est pas dans la
-    part de primes, l'assiette du RAFP : elle est dans le reste, et ses
-    retenues et contributions supplémentaires s'y ajoutent
-    (:meth:`~.donnees.primes.PrimesSoumises.taux_supplementaires`).
+    n'est pas assise sur les primes. La prime que la loi assujettit à la
+    retenue — l'indemnité de sujétions spéciales du policier, la prime
+    spéciale de sujétion de l'aide-soignant, l'indemnité de feu du
+    sapeur-pompier — n'est pas dans la part de primes, l'assiette du RAFP :
+    elle est dans le reste, et ses retenues et contributions supplémentaires
+    s'y ajoutent (:meth:`~.donnees.primes.PrimesSoumises.taux_supplementaires`).
+
+    **La RAFP**, assise sur les primes dans la limite de 20 % du traitement
+    seul, est un étage à part (:func:`_etage_hors_repartition`) : provisionnée,
+    hors du compte notionnel, elle est prélevée sur la fiche comme sur la paie,
+    5 % par l'agent et 5 % par l'employeur. Elle ne l'était pas jusqu'au
+    10 octobre 2026 : le net d'un agent à primes était trop haut d'autant.
+    L'indemnité compensatrice de la CSG compte avec les primes dans
+    ``part_primes`` quand la fiche la porte (:func:`part_primes_de_la_fiche`).
 
     Un étage par régime : la vieillesse de base et sa part déplafonnée d'un
     côté, la complémentaire de l'autre, chacun avec ses bornes d'assiette et
@@ -1270,6 +1310,10 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
             continue
         regime = catalogue[code]
         if regime.hors_repartition:
+            etage = _etage_hors_repartition(catalogue, regime, statut, annee,
+                                            part_primes, sans_employeur)
+            if etage is not None:
+                composantes.append(etage)
             continue
         salarie: list[Segment] = []
         employeur: list[Segment] = []
@@ -1317,6 +1361,49 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
     )
 
 
+def _etage_hors_repartition(catalogue, regime, statut: str, annee: int,
+                            part_primes: float,
+                            sans_employeur: bool) -> ComposanteRetraite | None:
+    """L'étage d'un régime provisionné : la RAFP, sur les primes dans la
+    limite de 20 % du traitement seul, la prime soumise à retenue n'y entrant
+    pas, en taux de la rémunération entière — l'assiette même du compte et du
+    scénario 1 (``PeriodeRegime.part_du_revenu``). Hors du périmètre de la
+    réduction générale, qui ne connaît ni la RAFP ni la fonction publique.
+    ``None`` quand rien n'est prélevé : pas de primes, ou pas de période."""
+    salarie: list[Segment] = []
+    employeur: list[Segment] = []
+    for periode in regime.periodes_actives(annee):
+        soumise = (charger_primes_soumises(catalogue.racine).parts(
+            statut, annee, part_primes).soumise
+            if periode.assiette == "primes_uniquement" else 0.0)
+        taux = (periode.taux_cotisation_retraite or 0.0) * periode.part_du_revenu(
+            1.0, part_primes, soumise)
+        if not taux:
+            continue
+        basse, haute = periode.bornes_assiette_en_pass()
+        part = 1.0 if sans_employeur else periode.part_salariale
+        salarie.append(Segment(basse, haute, taux * part))
+        employeur.append(Segment(basse, haute, taux * (1.0 - part)))
+    if not salarie:
+        return None
+    return ComposanteRetraite(
+        code=regime.code, libelle=regime.nom, salarie=tuple(salarie),
+        employeur=tuple(employeur), dans_la_reduction_generale=False,
+        hors_repartition=True,
+    )
+
+
+def part_primes_de_la_fiche(revenu: float, part_primes: float, indemnite: float) -> float:
+    """La part de primes du brut de la fiche, ``revenu + indemnite`` :
+    l'indemnité compensatrice de la CSG compte avec les primes, hors de
+    l'assiette de la retenue et dans celle de la RAFP (circulaire du 15 janvier
+    2018, IV, 3), si bien que le traitement garde ses euros."""
+    brut = revenu + indemnite
+    if indemnite <= 0.0 or brut <= 0.0:
+        return part_primes
+    return (part_primes * revenu + indemnite) / brut
+
+
 def bloc_taux_unique(taux_repartition: float, taux_capitalisation: float = 0.0,
                      part_salariale: float = 0.0633 / 0.23,
                      libelle_repartition: str = "Retraite, compte notionnel",
@@ -1325,6 +1412,8 @@ def bloc_taux_unique(taux_repartition: float, taux_capitalisation: float = 0.0,
                      part_rendue_aux_salaires: float = 0.0,
                      contribution_equilibre_actuelle: float = 0.0,
                      departs_anticipes: float = 0.0,
+                     conservees: tuple[ComposanteRetraite, ...] = (),
+                     part_traitement: float = 1.0,
                      ) -> BlocRetraite:
     """Le bloc de la proposition : un taux unique, au premier euro, sans plafond.
 
@@ -1344,6 +1433,12 @@ def bloc_taux_unique(taux_repartition: float, taux_capitalisation: float = 0.0,
     retenue sur salaire, et la mettre ici ferait baisser un net que la
     proposition ne baisse pas. Elle est chiffrée à part, sur le net, par
     :attr:`AnneeComparee.epargne_volontaire`.
+
+    **Ce qu'elle garde** (``conservees``) : les étages des régimes provisionnés
+    du droit en vigueur, la RAFP. « Une réforme de la répartition ne les atteint
+    pas » : le README les sert à l'identique dans les six scénarios, cotisés
+    jusqu'au départ ; la fiche les prélève donc sous les deux systèmes, au même
+    taux de la rémunération entière.
     """
     composantes = [ComposanteRetraite(
         code="regime_unifie", libelle=libelle_repartition,
@@ -1359,6 +1454,7 @@ def bloc_taux_unique(taux_repartition: float, taux_capitalisation: float = 0.0,
                                taux_capitalisation * (1.0 - part_salariale)),),
             dans_la_reduction_generale=False,
         ))
+    composantes.extend(conservees)
     return BlocRetraite(
         libelle="Retraite (proposition)",
         composantes=tuple(composantes),
@@ -1367,12 +1463,14 @@ def bloc_taux_unique(taux_repartition: float, taux_capitalisation: float = 0.0,
         part_rendue_aux_salaires=part_rendue_aux_salaires,
         contribution_equilibre_actuelle=contribution_equilibre_actuelle,
         departs_anticipes=departs_anticipes,
+        part_traitement=part_traitement,
     )
 
 
 def bloc_taux_unique_sans_employeur(
         taux_repartition: float, taux_capitalisation: float = 0.0,
         csg_rendue: float = 0.0,
+        conservees: tuple[ComposanteRetraite, ...] = (),
         ) -> BlocRetraite:
     """Le même bloc pour qui n'a pas d'employeur : il porte les 18 % en entier.
 
@@ -1382,7 +1480,8 @@ def bloc_taux_unique_sans_employeur(
     n'existe pas.
     """
     return bloc_taux_unique(taux_repartition, taux_capitalisation,
-                            part_salariale=1.0, csg_rendue=csg_rendue)
+                            part_salariale=1.0, csg_rendue=csg_rendue,
+                            conservees=conservees)
 
 
 def contribution_equilibre(racine_donnees: Path, affiliations, statut: str,
@@ -1454,6 +1553,147 @@ def _contributions_publiques(racine: Path) -> ContributionsEmployeurPubliques:
 @lru_cache(maxsize=4)
 def _part_retraite_seule(racine: Path) -> PartRetraiteSeuleEtat:
     return PartRetraiteSeuleEtat(racine)
+
+
+# -- l'indemnité compensatrice de la hausse de la CSG ------------------------
+#
+# Depuis le 1er janvier 2018, l'agent public touche, en plus de son traitement
+# et de ses primes, une indemnité qui compense la hausse de 1,7 point de la CSG
+# (décret n° 2017-1889 ; ``legislation/indemnite_compensatrice_csg.yaml``). La
+# ligne de carrière ne la porte pas : la fiche de paie l'y ajoute.
+
+
+def beneficiaire_indemnite_csg(affiliations, catalogue, statut: str, annee: int) -> bool:
+    """Le statut ouvre-t-il l'indemnité, cette année-là ? Un agent public que
+    la fiche décrit au profil ``agent_seul`` : fonctionnaire, militaire,
+    ouvrier de l'État. Ni le contractuel, ni les statuts spéciaux. L'année ne
+    sert qu'au profil : depuis quand l'indemnité est due, c'est la table qui
+    le dit."""
+    table = _table_indemnite(catalogue)
+    try:
+        famille = affiliations.famille(statut)
+    except KeyError:
+        return False
+    return (famille in table.familles
+            and profil_de_la_fiche(affiliations, catalogue, statut, annee) in table.profils)
+
+
+def _table_indemnite(catalogue):
+    """La table du décret, lue à la racine des données du catalogue."""
+    return charger_indemnite_csg(catalogue.racine)
+
+
+def _deduits_de_reference(catalogue, affiliations, macro, statut: str,
+                          remuneration: float, part_primes: float,
+                          bloc: BlocRetraite | None = None) -> float:
+    """Ce que le I de l'article 2 déduit de la rémunération de 2017 : la CES
+    qu'elle payait, sur sa rémunération nette de la retenue et de la RAFP,
+    que le bloc du droit en vigueur de 2017 prélève — ``bloc``, quand
+    l'appelant l'a déjà —, le traitement net de sa retenue décidant du seuil."""
+    table = _table_indemnite(catalogue)
+    annee = table.annee_de_reference
+    plafond = macro.plafond_securite_sociale(annee)
+    if bloc is None:
+        bloc = bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, part_primes)
+    retenue = somme_ordonnee(_montant(c.salarie, remuneration, plafond)
+                             for c in bloc.composantes if not c.hors_repartition)
+    rafp = somme_ordonnee(_montant(c.salarie, remuneration, plafond)
+                          for c in bloc.composantes if c.hors_repartition)
+    return table.contribution_de_solidarite(
+        remuneration, retenue + rafp, (1.0 - part_primes) * remuneration - retenue, plafond)
+
+
+def _remunerations_d_agent_public(carriere, catalogue, affiliations):
+    """Les lignes d'agent public bénéficiaire depuis 2017, et la rémunération
+    annualisée de chacune de leurs années : deux lignes la même année
+    s'additionnent, leurs mois aussi, jusqu'à l'année pleine."""
+    table = _table_indemnite(catalogue)
+    lignes = []
+    remunerations: dict[int, float] = {}
+    parts: dict[int, float] = {}
+    for ligne in carriere.lignes:
+        if ligne.annee < table.annee_de_reference or not ligne.cotise:
+            continue
+        if not beneficiaire_indemnite_csg(affiliations, catalogue, ligne.affiliation,
+                                          ligne.annee):
+            continue
+        part = carriere.part_retenue_ligne(ligne)
+        if part <= 0.0:
+            continue
+        lignes.append(ligne)
+        remunerations[ligne.annee] = remunerations.get(ligne.annee, 0.0) + ligne.revenu
+        parts[ligne.annee] = parts.get(ligne.annee, 0.0) + part
+    annualisees = {annee: revenu / min(1.0, parts[annee])
+                   for annee, revenu in remunerations.items()}
+    return lignes, annualisees
+
+
+def indemnites_de_la_carriere(carriere, macro, catalogue, affiliations) -> dict[int, float]:
+    """L'indemnité de chaque année d'agent public bénéficiaire, en euros de
+    l'année, pour une année pleine, tirée de la carrière elle-même : la
+    rémunération annualisée de 2017 et la CES qu'elle payait, ou celle de la
+    première année depuis 2018, puis chaque réévaluation
+    (:meth:`~.donnees.indemnite_csg.IndemniteCompensatrice.montants`)."""
+    table = _table_indemnite(catalogue)
+    lignes, annualisees = _remunerations_d_agent_public(carriere, catalogue, affiliations)
+    reference = next((l for l in lignes if l.annee == table.annee_de_reference), None)
+    deduits = 0.0
+    if reference is not None:
+        deduits = _deduits_de_reference(
+            catalogue, affiliations, macro, reference.affiliation,
+            annualisees[table.annee_de_reference], reference.part_primes)
+    return table.montants(annualisees, deduits)
+
+
+def indemnites_des_lignes(carriere, macro, catalogue, affiliations) -> list[float]:
+    """L'indemnité de chaque ligne de la carrière, dans leur ordre, pour une
+    année pleine : celle de son année, au prorata de son revenu annualisé dans
+    la rémunération annualisée de l'année — l'année entière pour qui change de
+    statut en cours d'année, la part de chaque emploi pour qui en cumule deux.
+    Nulle hors des lignes d'agent public bénéficiaire."""
+    montants = indemnites_de_la_carriere(carriere, macro, catalogue, affiliations)
+    if not montants:
+        return [0.0] * len(carriere.lignes)
+    eligibles, annualisees = _remunerations_d_agent_public(carriere, catalogue, affiliations)
+    retenues = {id(ligne) for ligne in eligibles}
+    resultat = []
+    for ligne in carriere.lignes:
+        montant = montants.get(ligne.annee, 0.0)
+        annee = annualisees.get(ligne.annee, 0.0)
+        if id(ligne) not in retenues or montant <= 0.0 or annee <= 0.0:
+            resultat.append(0.0)
+            continue
+        resultat.append(montant * ligne.revenu_annualise / annee)
+    return resultat
+
+
+def indemnite_stylisee(macro, catalogue, affiliations, statut: str, annee: int,
+                       part_primes: float):
+    """Ce que la saisie, qui ne connaît qu'un montant, prête d'indemnité à qui
+    gagne ``revenu`` l'année ``annee`` : un agent du même statut, payé fin
+    2017, dont la rémunération a suivi le salaire moyen. Une fonction du
+    revenu, ou ``None`` quand le statut n'y a pas droit."""
+    from .carriere import salaire_moyen_annuel
+
+    table = _table_indemnite(catalogue)
+    if annee < table.debut or not beneficiaire_indemnite_csg(
+            affiliations, catalogue, statut, annee):
+        return None
+    reference = table.annee_de_reference
+    courant = salaire_moyen_annuel(macro, annee)
+    poids = {a: salaire_moyen_annuel(macro, a) / courant
+             for a in range(reference, annee + 1)}
+    bloc = bloc_droit_en_vigueur(catalogue, affiliations, statut, reference, part_primes)
+
+    def indemnite(revenu: float) -> float:
+        if revenu <= 0.0:
+            return 0.0
+        remunerations = {a: revenu * p for a, p in poids.items()}
+        deduits = _deduits_de_reference(catalogue, affiliations, macro, statut,
+                                        remunerations[reference], part_primes, bloc)
+        return table.montants(remunerations, deduits).get(annee, 0.0)
+
+    return indemnite
 
 
 # -- à quel profil un statut appartient --------------------------------------
@@ -1567,6 +1807,10 @@ class AnneeComparee:
     #: Ce que ce taux paie de départs anticipés, que l'employeur garde en
     #: entier. Gardé pour que la page dise ce qui ne se partage pas.
     departs_anticipes: float = 0.0
+    #: L'indemnité compensatrice de la hausse de la CSG, en euros de l'année,
+    #: déjà dans le brut du droit en vigueur ; nulle hors des agents publics.
+    #: La proposition la garde : elle est dans son brut aussi.
+    indemnite_csg: float = 0.0
 
     @property
     def gain_net(self) -> float:
@@ -1685,6 +1929,11 @@ class RemunerationActif:
         return self.reference.departs_anticipes
 
     @property
+    def indemnite_csg_mensuelle(self) -> float:
+        """L'indemnité compensatrice de la CSG de l'année de référence, par mois."""
+        return self.reference.indemnite_csg / 12.0
+
+    @property
     def reference(self) -> AnneeComparee:
         """La première année pleine sous le nouveau système : celle qu'on affiche."""
         return self.annees[0]
@@ -1771,8 +2020,15 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
     # verse une : la chercher pour un salarié du privé la trouverait nulle, et
     # coûterait un chargement de série par carrière.
     partage = profil.incidence is Incidence.PARTAGEE
+    # L'indemnité compensatrice de la CSG d'un agent public, tirée de toute la
+    # carrière : celle de 2017, ou de l'entrée, et ses réévaluations.
+    indemnites = (indemnites_de_la_carriere(carriere, macro, catalogue, affiliations)
+                  if beneficiaire_indemnite_csg(affiliations, catalogue, statut,
+                                                annees_actives[0])
+                  else {})
 
-    def bloc_propose(annee: int) -> BlocRetraite:
+    def bloc_propose(annee: int, actuel: BlocRetraite,
+                     part_traitement: float) -> BlocRetraite:
         """Le bloc de la proposition l'année ``annee``.
 
         Il est reconstruit à chaque année parce que deux de ses trois nouveautés
@@ -1780,12 +2036,18 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
         le COR projette année par année, et le taux d'équilibre de l'employeur
         public suit sa propre série. Le coût est nul — le bloc est trois
         segments — et l'alternative aurait figé un taux sur toute une carrière.
+        Il garde les étages provisionnés du droit en vigueur de l'année, la
+        RAFP, que la proposition n'atteint pas — sauf quand le compte les
+        convertit (``isoler_capitalisation`` à faux) : ils sont alors de la
+        répartition, et le taux unique les remplace.
         """
         csg = points_csg_rendus(parametres.racine_donnees, annee, rendue)
+        conservees = (tuple(c for c in actuel.composantes if c.hors_repartition)
+                      if parametres.isoler_capitalisation else ())
         if sans_employeur:
             return bloc_taux_unique_sans_employeur(
                 parametres.taux_cotisation_liberal, capitalisation,
-                csg_rendue=csg)
+                csg_rendue=csg, conservees=conservees)
         return bloc_taux_unique(
             parametres.taux_cotisation_liberal, capitalisation,
             part_salariale=parametres.part_salariale_taux_unique,
@@ -1797,6 +2059,8 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
             departs_anticipes=departs_anticipes(
                 parametres.racine_donnees, affiliations, statut, annee)
             if partage else 0.0,
+            conservees=conservees,
+            part_traitement=part_traitement,
         )
 
     comparees: list[AnneeComparee] = []
@@ -1807,12 +2071,17 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
             continue
         # Une année incomplète ne se compare pas à une année pleine : on
         # annualise le revenu, et le plafond comme le SMIC restent annuels.
-        brut = ligne.revenu / part if part < 1.0 else ligne.revenu
+        revenu = ligne.revenu / part if part < 1.0 else ligne.revenu
+        # L'indemnité compensatrice s'ajoute au traitement et aux primes, et
+        # compte avec les primes : hors de la retenue, dans la RAFP.
+        indemnite = indemnites.get(annee, 0.0)
+        brut = revenu + indemnite
+        primes = part_primes_de_la_fiche(revenu, ligne.part_primes, indemnite)
         plafond = macro.plafond_securite_sociale(annee)
         smic = smic_annuel(macro, annee)
         actuel_bloc = bloc_droit_en_vigueur(catalogue, affiliations, statut, annee,
-                                            ligne.part_primes)
-        propose = bloc_propose(annee)
+                                            primes)
+        propose = bloc_propose(annee, actuel_bloc, 1.0 - primes)
         fiche_actuelle = constructeur.fiche(
             annee, brut, plafond, smic, actuel_bloc, cadre)
         brut_propose = constructeur.brut_sous_la_proposition(
@@ -1829,6 +2098,7 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
             csg_rendue=propose.csg_rendue,
             contribution_equilibre=propose.contribution_equilibre_actuelle,
             departs_anticipes=propose.departs_anticipes,
+            indemnite_csg=indemnite,
             _smic=smic,
         ))
 
@@ -1865,6 +2135,12 @@ def salaire_brut_depuis_net(racine_donnees, macro, catalogue, affiliations,
     agricole, l'élu, l'outre-mer. Mieux vaut un brut approché par un net qu'un
     refus de calculer ; le site dit alors, sous le champ, qu'il n'a pas su
     convertir et que le nombre est lu comme un brut.
+
+    **Le net d'un agent public comprend son indemnité compensatrice de la
+    CSG**, que le brut rendu ne porte pas — c'est son traitement et ses
+    primes —, et que la saisie lui prête stylisée (:func:`indemnite_stylisee`) :
+    la fiche de paie de sa carrière retrouve alors le net saisi, à l'écart près
+    entre sa carrière et le salaire moyen.
     """
     if net_annuel <= 0:
         return net_annuel
@@ -1873,13 +2149,42 @@ def salaire_brut_depuis_net(racine_donnees, macro, catalogue, affiliations,
         return net_annuel
     profil = charger_prelevements(racine_donnees).profil(code_profil)
     cadre = "cadre" in statut and "non_cadre" not in statut
-    return ConstructeurFiche(profil).brut_a_net_donne(
-        net_annuel,
-        macro.plafond_securite_sociale(annee),
-        smic_annuel(macro, annee),
-        bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, part_primes),
-        cadre,
-    )
+    plafond = macro.plafond_securite_sociale(annee)
+    smic = smic_annuel(macro, annee)
+    constructeur = ConstructeurFiche(profil)
+    indemnite = indemnite_stylisee(macro, catalogue, affiliations, statut, annee,
+                                   part_primes)
+    if indemnite is None:
+        return constructeur.brut_a_net_donne(
+            net_annuel, plafond, smic,
+            bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, part_primes),
+            cadre,
+        )
+    # La même dichotomie que `brut_a_net_donne`, sur le traitement et les
+    # primes : le net croît avec eux, l'indemnité aussi.
+    bas, haut = 0.0, net_annuel * 3.0
+    for _ in range(80):
+        milieu = (bas + haut) / 2
+        fiche = _fiche_avec_indemnite(constructeur, catalogue, affiliations, statut,
+                                      annee, milieu, part_primes, indemnite(milieu),
+                                      plafond, smic, cadre)
+        if fiche.net < net_annuel:
+            bas = milieu
+        else:
+            haut = milieu
+    return (bas + haut) / 2
+
+
+def _fiche_avec_indemnite(constructeur: ConstructeurFiche, catalogue, affiliations,
+                          statut: str, annee: int, revenu: float, part_primes: float,
+                          indemnite: float, plafond: float, smic: float,
+                          cadre: bool) -> FicheDePaie:
+    """La fiche du droit en vigueur de ``revenu``, l'indemnité compensatrice
+    ajoutée au brut et comptée avec les primes."""
+    primes = part_primes_de_la_fiche(revenu, part_primes, indemnite)
+    return constructeur.fiche(
+        annee, revenu + indemnite, plafond, smic,
+        bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, primes), cadre)
 
 
 def salaire_net_depuis_brut(racine_donnees, macro, catalogue, affiliations,
@@ -1900,23 +2205,30 @@ def salaire_net_depuis_brut(racine_donnees, macro, catalogue, affiliations,
 
 def fiche_depuis_brut(racine_donnees, macro, catalogue, affiliations,
                       statut: str, annee: int, brut_annuel: float,
-                      part_primes: float = 0.0) -> FicheDePaie | None:
+                      part_primes: float = 0.0,
+                      indemnite: float | None = None) -> FicheDePaie | None:
     """La fiche de paie du droit en vigueur d'un revenu brut annuel de
     ``statut``, l'année ``annee``, dont ``part_primes`` sont des primes :
     celle dont :func:`salaire_net_depuis_brut` lit le net. ``None`` pour un
-    statut sans fiche de paie."""
+    statut sans fiche de paie.
+
+    ``indemnite`` : l'indemnité compensatrice de la CSG que le brut de la
+    fiche ajoute au revenu, celle que la carrière donne
+    (:func:`indemnites_de_la_carriere`) ; à défaut, celle que la saisie prête
+    (:func:`indemnite_stylisee`)."""
     code_profil = profil_de_la_fiche(affiliations, catalogue, statut, annee)
     if code_profil is None:
         return None
     profil = charger_prelevements(racine_donnees).profil(code_profil)
     cadre = "cadre" in statut and "non_cadre" not in statut
-    return ConstructeurFiche(profil).fiche(
-        annee, brut_annuel,
-        macro.plafond_securite_sociale(annee),
-        smic_annuel(macro, annee),
-        bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, part_primes),
-        cadre,
-    )
+    if indemnite is None:
+        stylisee = indemnite_stylisee(macro, catalogue, affiliations, statut, annee,
+                                      part_primes)
+        indemnite = stylisee(brut_annuel) if stylisee is not None else 0.0
+    return _fiche_avec_indemnite(
+        ConstructeurFiche(profil), catalogue, affiliations, statut, annee,
+        brut_annuel, part_primes, indemnite,
+        macro.plafond_securite_sociale(annee), smic_annuel(macro, annee), cadre)
 
 
 def conversion_possible(affiliations, catalogue, statut: str, annee: int) -> bool:

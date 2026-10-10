@@ -1468,6 +1468,13 @@ def fiche(**reglages: str) -> float:
     return montants[quoi] / fiche.brut * 100
 
 
+def indemnite_csg(**reglages: str) -> float:
+    """L'indemnité compensatrice de la hausse de la CSG que la fiche de paie
+    ajoute au brut d'un agent public, en euros par mois, l'année de
+    référence. Mêmes réglages que ``ecart``."""
+    return _comparaison_de(reglages).remuneration.indemnite_csg_mensuelle
+
+
 def avance(**reglages: str) -> float:
     """Les années d'anticipation d'un départ sur l'âge de référence, sur une carrière."""
     ecart = _comparaison_de(reglages).notionnel_retroactif.ecart_age
@@ -1706,6 +1713,7 @@ MESURES = {
     "restitution": restitution,
     "gain_net": gain_net,
     "fiche": fiche,
+    "indemnite_csg": indemnite_csg,
     "garantie_complement": garantie_complement,
     "garantie_foyer": garantie_foyer,
     "frais_reserve": frais_reserve,

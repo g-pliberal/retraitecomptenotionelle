@@ -104,9 +104,12 @@
 # droit mais de la branche ou de l'accord d'entreprise. Le coût du travail
 # affiché est donc un PLANCHER, et l'écart brut-net un plancher lui aussi.
 #
-# N'y est pas non plus la retraite additionnelle de la fonction publique
-# (RAFP) : elle est assise sur les PRIMES, que l'assiette de ce dépôt — le
-# traitement indiciaire brut et la NBI — exclut par construction.
+# La retraite additionnelle de la fonction publique (RAFP) n'y est pas non
+# plus, pour une autre raison : c'est une retraite, que sa fiche de régime
+# porte, et que la fiche de paie prélève sur les primes d'un fonctionnaire
+# depuis le 10 octobre 2026 (`remuneration.bloc_droit_en_vigueur`), comme
+# l'indemnité compensatrice de la hausse de la CSG qu'elle ajoute à son
+# traitement (`indemnite_compensatrice_csg.yaml`).
 #
 # SOURCE ET FIABILITÉ
 # -------------------
@@ -633,17 +636,20 @@ profils:
     # toujours pas un prix du travail, et l'afficher comme tel dirait le
     # contraire de ce que ce partage suppose.
     incidence: partagee
-    # Rien d'autre que la retenue pour pension, que la fiche de régime porte, et
-    # la CSG-CRDS. Un fonctionnaire titulaire ne cotise ni à la maladie — la
-    # cotisation salariale a disparu en 2018 comme dans le privé —, ni au
-    # chômage, dont il n'est pas assuré ; et la contribution exceptionnelle de
-    # solidarité de 1 % a été supprimée le 1er janvier 2018 en contrepartie de
-    # la hausse de CSG. Cette liste vide est donc un résultat, pas un oubli.
+    # Rien d'autre que la retraite — la retenue pour pension et la RAFP, que
+    # les fiches de régime portent — et la CSG-CRDS. Un fonctionnaire
+    # titulaire ne cotise ni à la maladie — la cotisation salariale a disparu
+    # en 2018 comme dans le privé —, ni au chômage, dont il n'est pas assuré ;
+    # et la contribution exceptionnelle de solidarité de 1 % a été supprimée le
+    # 1er janvier 2018, la hausse de CSG étant compensée par une indemnité
+    # (`indemnite_compensatrice_csg.yaml`). Cette liste vide est donc un
+    # résultat, pas un oubli.
     postes: []
     contributions_sociales: *csg_salariee
     reduction_generale: null
     textes:
-      - "Article 2 de la loi n° 82-939 du 4 novembre 1982 (contribution de solidarité), abrogé par l'article 143 de la loi n° 2016-1918 du 29 décembre 2016"
+      - "Articles L. 5423-26 à L. 5423-32 du code du travail (contribution exceptionnelle de solidarité), abrogés par l'article 112 de la loi n° 2017-1837 du 30 décembre 2017 de finances pour 2018"
+      - "Article 113 de la loi n° 2017-1837 et décret n° 2017-1889 du 30 décembre 2017 (indemnité compensatrice de la hausse de la CSG)"
       - "Article L. 5424-1 du code du travail (fonctionnaires non assurés contre le chômage)"
       - "Article L. 61 du code des pensions civiles et militaires de retraite (retenue pour pension)"
 

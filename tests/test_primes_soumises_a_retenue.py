@@ -141,11 +141,13 @@ def test_le_rafp_plafonne_les_primes_au_cinquieme_du_seul_traitement(simulateur,
 
 def _taux_salarie(statut: str, annee: int, part_primes: float = 0.0) -> float:
     """Ce que le droit en vigueur retient au salarié pour sa retraite, en part
-    de sa rémunération entière."""
+    de sa rémunération entière, hors de la RAFP, que la fiche prélève à part
+    sur les autres primes."""
     bloc = bloc_droit_en_vigueur(CatalogueRegimes(PARAMETRES.racine_donnees),
                                  Affiliations(PARAMETRES.racine_donnees), statut, annee,
                                  part_primes)
     return sum(segment.taux for composante in bloc.composantes
+               if not composante.hors_repartition
                for segment in composante.salarie)
 
 

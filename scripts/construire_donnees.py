@@ -1117,6 +1117,31 @@ def _periodes_non_travaillees() -> dict:
     }
 
 
+def _indemnite_compensatrice_csg() -> dict:
+    """L'indemnité compensatrice de la hausse de la CSG des agents publics
+    (``legislation/indemnite_compensatrice_csg.yaml``), telle que le Python la
+    lit (:mod:`retraite_notionnelle.donnees.indemnite_csg`)."""
+    from retraite_notionnelle.donnees.indemnite_csg import charger_indemnite_csg
+
+    table = charger_indemnite_csg(DONNEES)
+    return {
+        "debut": table.debut,
+        "familles": sorted(table.familles),
+        "profils": sorted(table.profils),
+        "annee_de_reference": table.annee_de_reference,
+        "taux_hausse_csg": table.taux_hausse_csg,
+        "coefficient": table.coefficient,
+        "taux_ces": table.taux_ces,
+        "plafond_ces_en_pss": table.plafond_ces_en_pss,
+        "seuil_ces_annuel": table.seuil_ces_annuel,
+        "taux_recrutes": table.taux_recrutes,
+        "reevaluations": [
+            {"annee": r.annee, "chaque_annee": r.chaque_annee, "sens": r.sens,
+             "seulement_remuneres_fin_2017": r.seulement_remuneres_fin_2017}
+            for r in table.reevaluations],
+    }
+
+
 def _primes_soumises_a_retenue() -> dict:
     """Les primes que la loi assujettit à la retenue pour pension, et les
     retenues supplémentaires de leur statut
@@ -1982,6 +2007,7 @@ def construire(bilan: bytes) -> bytes:
         "periodes_non_travaillees": _periodes_non_travaillees(),
         "chomage_complementaires": _chomage_complementaires(),
         "primes_soumises_a_retenue": _primes_soumises_a_retenue(),
+        "indemnite_compensatrice_csg": _indemnite_compensatrice_csg(),
         "assiette_minimale_independants": _assiette_minimale_independants(),
         "profil_salaire_age": _profil_salaire("profil_salaire_age.csv", "annee"),
         "profil_salaire_categorie": _profil_salaire(

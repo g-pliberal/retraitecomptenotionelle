@@ -912,12 +912,19 @@ def test_le_net_saisi_se_retrouve_par_la_fiche_de_paie(pieces):
             assert brut > net_mensuel * 12, f"{statut} : le brut doit dépasser le net"
 
 
+def _ligne(fiche, code: str) -> float:
+    """Ce que la ligne ``code`` d'une fiche prélève à l'assuré ; zéro sans elle."""
+    return sum(ligne.salarie for ligne in fiche.lignes if ligne.code == code)
+
+
 def test_la_retenue_d_un_fonctionnaire_n_est_pas_assise_sur_ses_primes(pieces):
     """Le brut d'une fiche est la rémunération entière, primes comprises ;
     la pension civile n'en prélève que le traitement, comme le compte
     (``PeriodeRegime.part_du_revenu``). Un quart de primes retire un quart de
-    la retenue, et laisse un net plus fort d'autant ; le salarié du privé, qui
-    cotise sur tout, n'en voit rien. Le net saisi se retrouve de même."""
+    la retenue ; la RAFP en prend 5 %, dans la limite de 20 % du traitement
+    (décret n° 2004-569, article 2), soit 5 % de 15 % du brut ; le salarié du
+    privé, qui cotise sur tout, n'en voit rien. Le net saisi se retrouve de
+    même, l'indemnité compensatrice de la CSG comprise."""
     from retraite_notionnelle.remuneration import (
         fiche_depuis_brut,
         salaire_brut_depuis_net,
@@ -927,20 +934,26 @@ def test_la_retenue_d_un_fonctionnaire_n_est_pas_assise_sur_ses_primes(pieces):
     racine = PARAMETRES.racine_donnees
     brut = 40_000.0
 
-    def fiche(statut: str, part_primes: float):
+    def fiche(statut: str, part_primes: float, indemnite: float | None = 0.0):
         return fiche_depuis_brut(racine, pieces["macro"], pieces["catalogue"],
-                                 pieces["affiliations"], statut, ANNEE, brut, part_primes)
+                                 pieces["affiliations"], statut, ANNEE, brut, part_primes,
+                                 indemnite)
 
     sans, avec = fiche("fonctionnaire_etat", 0.0), fiche("fonctionnaire_etat", 0.25)
-    assert sans.retraite_salarie > 0.1 * brut
-    assert avec.retraite_salarie == pytest.approx(0.75 * sans.retraite_salarie, rel=1e-12)
-    assert avec.net - sans.net == pytest.approx(0.25 * sans.retraite_salarie, rel=1e-9)
+    retenue = _ligne(sans, "fonction_publique_etat")
+    assert retenue > 0.1 * brut
+    assert _ligne(avec, "fonction_publique_etat") == pytest.approx(0.75 * retenue, rel=1e-12)
+    assert _ligne(sans, "rafp") == 0.0
+    assert _ligne(avec, "rafp") == pytest.approx(0.05 * 0.20 * 0.75 * brut, rel=1e-12)
+    assert avec.net - sans.net == pytest.approx(
+        0.25 * retenue - 0.05 * 0.20 * 0.75 * brut, rel=1e-9)
     prive = fiche("salarie_prive_non_cadre", 0.25)
     assert prive.net == pytest.approx(fiche("salarie_prive_non_cadre", 0.0).net, rel=1e-12)
     net = salaire_net_depuis_brut(racine, pieces["macro"], pieces["catalogue"],
                                   pieces["affiliations"], "fonctionnaire_etat", ANNEE,
                                   brut, 0.25)
-    assert net == pytest.approx(avec.net, rel=1e-12)
+    assert net == pytest.approx(fiche("fonctionnaire_etat", 0.25, None).net, rel=1e-12)
+    assert net > avec.net
     assert salaire_brut_depuis_net(racine, pieces["macro"], pieces["catalogue"],
                                    pieces["affiliations"], "fonctionnaire_etat", ANNEE,
                                    net, 0.25) == pytest.approx(brut, rel=1e-6)
@@ -948,7 +961,8 @@ def test_la_retenue_d_un_fonctionnaire_n_est_pas_assise_sur_ses_primes(pieces):
 
 def test_la_fiche_de_paie_d_une_carriere_suit_sa_part_de_primes():
     """La fiche que le site affiche, année par année, lit la part de primes de
-    la carrière : sa retenue est celle du seul traitement."""
+    la carrière : sa retenue est celle du seul traitement, que l'indemnité
+    compensatrice de la CSG, ajoutée au brut, ne grossit pas."""
     simulateur = Simulateur(PARAMETRES)
 
     def remuneration(part_primes: float):
@@ -957,9 +971,11 @@ def test_la_fiche_de_paie_d_une_carriere_suit_sa_part_de_primes():
             age_liquidation=64, niveau_salaire=1.2, part_primes=part_primes)).remuneration
 
     sans, avec = remuneration(0.0).annees[0], remuneration(0.3).annees[0]
-    assert avec.droit_en_vigueur.brut == pytest.approx(sans.droit_en_vigueur.brut, rel=1e-12)
-    assert avec.droit_en_vigueur.retraite_salarie == pytest.approx(
-        0.7 * sans.droit_en_vigueur.retraite_salarie, rel=1e-12)
+    assert sans.indemnite_csg > 0.0 and avec.indemnite_csg > 0.0
+    assert (avec.droit_en_vigueur.brut - avec.indemnite_csg == pytest.approx(
+        sans.droit_en_vigueur.brut - sans.indemnite_csg, rel=1e-12))
+    assert _ligne(avec.droit_en_vigueur, "fonction_publique_etat") == pytest.approx(
+        0.7 * _ligne(sans.droit_en_vigueur, "fonction_publique_etat"), rel=1e-12)
 
 
 def test_un_statut_sans_fiche_de_paie_rend_le_montant_inchange(pieces):

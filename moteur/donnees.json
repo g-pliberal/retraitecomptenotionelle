@@ -12330,6 +12330,19 @@ null
 "trajectoire_emploi_par_defaut":"cor_2026",
 "trajectoires_emploi":{"constant":{"libelle":"Emploi constant après la dernière observation"},"cor_2026":{"fichier":"emploi_projete.csv","libelle":"Emploi du scénario de référence du COR — juin 2026"}}
 },
+"indemnite_compensatrice_csg":{
+"annee_de_reference":2017,
+"coefficient":1.1053,
+"debut":2018,
+"familles":["public"],
+"plafond_ces_en_pss":4.0,
+"profils":["agent_seul"],
+"reevaluations":[{"annee":2019,"chaque_annee":false,"sens":"hausse","seulement_remuneres_fin_2017":true},{"annee":2020,"chaque_annee":false,"sens":"hausse","seulement_remuneres_fin_2017":false},{"annee":2021,"chaque_annee":true,"sens":"evolution","seulement_remuneres_fin_2017":false}],
+"seuil_ces_annuel":17600.7099,
+"taux_ces":0.01,
+"taux_hausse_csg":0.016702,
+"taux_recrutes":0.0076
+},
 "institutions_citees":39,
 "inventaire":[
 {

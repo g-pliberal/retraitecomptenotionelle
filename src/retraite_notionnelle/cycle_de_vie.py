@@ -159,6 +159,7 @@ from .donnees.mortalite import AGE_TERMINAL
 from .remuneration import (
     charger_prelevements,
     fiche_depuis_brut,
+    indemnites_des_lignes,
     profil_de_la_fiche,
     remuneration_de_la_carriere,
 )
@@ -441,8 +442,12 @@ def revenus_nets(simulateur, carriere, proposition: bool = False) -> dict[int, f
 
     Les primes d'un fonctionnaire perdent les prélèvements hors retraite,
     sans la retenue pour pension, que la loi n'assied que sur le traitement
-    (:func:`~retraite_notionnelle.remuneration.bloc_droit_en_vigueur`). La
-    RAFP qu'elles paient reste hors du net, comme elle est hors des deux flux.
+    (:func:`~retraite_notionnelle.remuneration.bloc_droit_en_vigueur`), et la
+    RAFP, que la fiche prélève depuis le 10 octobre 2026 comme TRAJECTOiRE :
+    elle sort du net, quand sa cotisation et sa rente restent hors des deux
+    flux, servies à part. Depuis 2018, le net d'un agent public compte son
+    indemnité compensatrice de la hausse de la CSG, que la fiche ajoute au
+    revenu de la ligne (:func:`~retraite_notionnelle.remuneration.indemnites_des_lignes`).
 
     Avec ``proposition``, les années de la bascule au départ se lisent sur la
     fiche de paie de la proposition (:func:`~.remuneration.remuneration_de_la_carriere`),
@@ -453,10 +458,12 @@ def revenus_nets(simulateur, carriere, proposition: bool = False) -> dict[int, f
     statut de la carrière n'a pas de fiche de paie — l'exploitant agricole —,
     dont le net ne se calcule pas."""
     couples = []
-    for ligne in carriere.lignes:
+    indemnites = indemnites_des_lignes(carriere, simulateur.macro, simulateur.catalogue,
+                                       simulateur.affiliations)
+    for ligne, indemnite in zip(carriere.lignes, indemnites):
         if not ligne.cotise:
             continue
-        net = _net_annualise(simulateur, carriere, ligne)
+        net = _net_annualise(simulateur, carriere, ligne, indemnite)
         if net is None:
             return None
         couples.append((ligne.annee, net * ligne.fraction_annee))
@@ -469,7 +476,13 @@ def revenus_nets(simulateur, carriere, proposition: bool = False) -> dict[int, f
         for annee in () if remuneration is None else remuneration.annees:
             fiche = annee.proposition
             if fiche.brut > 0.0 and annee.annee in bruts:
-                nets[annee.annee] = bruts[annee.annee] * fiche.net / fiche.brut
+                # Le même brut que la fiche du droit en vigueur : le revenu de
+                # l'année et l'indemnité compensatrice qu'elle lui ajoute, au
+                # prorata des mois payés.
+                revenu = annee.droit_en_vigueur.brut - annee.indemnite_csg
+                paye = (annee.indemnite_csg * bruts[annee.annee] / revenu
+                        if revenu > 0.0 else 0.0)
+                nets[annee.annee] = (bruts[annee.annee] + paye) * fiche.net / fiche.brut
     return nets
 
 
@@ -486,16 +499,18 @@ POSTES_REFAITS_INDEPENDANT = ("maladie_maternite", "indemnites_journalieres", "f
                               "csg_crds")
 
 
-def _net_annualise(simulateur, carriere, ligne) -> float | None:
-    """Le net du revenu annualisé d'une ligne cotisée, primes comprises, aux
-    prélèvements de son année (:func:`revenus_nets`)."""
+def _net_annualise(simulateur, carriere, ligne, indemnite: float = 0.0) -> float | None:
+    """Le net du revenu annualisé d'une ligne cotisée, primes et indemnité
+    compensatrice de la CSG comprises, aux prélèvements de son année
+    (:func:`revenus_nets`)."""
     racine = simulateur.parametres.racine_donnees
     macro = simulateur.macro
-    annualise = ligne.revenu_annualise
     fiche = fiche_depuis_brut(racine, macro, simulateur.catalogue, simulateur.affiliations,
-                              ligne.affiliation, ligne.annee, annualise, ligne.part_primes)
+                              ligne.affiliation, ligne.annee, ligne.revenu_annualise,
+                              ligne.part_primes, indemnite)
     if fiche is None:
         return None
+    annualise = fiche.brut
     profil = profil_de_la_fiche(simulateur.affiliations, simulateur.catalogue,
                                 ligne.affiliation, ligne.annee)
     regimes = (simulateur.affiliations.regimes(ligne.affiliation, ligne.annee,

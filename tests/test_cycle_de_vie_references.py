@@ -632,7 +632,9 @@ ECARTS_REMPLACEMENT_NET = {
         "prélève depuis le 10 octobre 2026 (fiche indemnite_sujetions_speciales_police) : "
         "il multiplie son taux txISS par les autres primes et par la retenue ordinaire, "
         "« (remuneration + txISS*primes) * txCotFP_sal » ; son net est plus haut de "
-        "2,2 % du traitement et de l'indemnité", 1.01, 1.03),
+        "2,2 % du traitement et de l'indemnité. L'indemnité compensatrice de la CSG, que "
+        "TRAJECTOiRE ne porte pas, ramène les départs depuis 2019 d'un point vers lui",
+        1.01, 1.03),
     "cor_9_": (
         "TRAJECTOiRE prélève la retenue de la prime spéciale de sujétion, ordinaire et "
         "supplémentaire, sur les autres primes de l'aide-soignante, « partIS*primes*"
@@ -641,7 +643,8 @@ ECARTS_REMPLACEMENT_NET = {
         "d'autant plus que la part des primes croît. La retenue supplémentaire de 1,5 % "
         "de la prime, que le dépôt prélève depuis le 10 octobre 2026 (fiche "
         "prime_speciale_sujetion_aides_soignants), ne déplace le rapport que d'un "
-        "millième", 0.94, 0.99),
+        "millième. L'indemnité compensatrice de la CSG, que TRAJECTOiRE ne porte pas, "
+        "l'en écarte d'un point de plus pour les départs depuis 2019", 0.93, 1.0),
 }
 
 #: Les cas dont TRAJECTOiRE lit le revenu de l'année d'avant le départ même
@@ -663,7 +666,11 @@ def test_le_remplacement_net_de_trajectoire_se_retrouve_aux_prelevements_de_l_an
     l'aide-soignante sont déclarés, dont TRAJECTOiRE prélève autrement les
     retenues de l'indemnité et de la prime. Jusqu'au 9 octobre 2026, les deux
     nets étaient aux taux de 2026, et les départs d'avant 2018 s'écartaient de
-    1,2 à 3,7 %."""
+    1,2 à 3,7 %. Depuis le 10 octobre 2026, le revenu net du dépôt retire la
+    RAFP, comme TRAJECTOiRE, ce qui rapproche les fonctionnaires de près d'un
+    point, et compte l'indemnité compensatrice de la hausse de la CSG, que
+    TRAJECTOiRE ne porte pas, ce qui les en éloigne d'autant pour les départs
+    depuis 2019 : les deux se compensent, à 0,8 % près."""
     historique = charger_prelevements_historiques(simulateur.parametres.racine_donnees)
     pensions = historique.pensions
     ecarts: dict[str, list[float]] = {prefixe: [] for prefixe in ECARTS_REMPLACEMENT_NET}

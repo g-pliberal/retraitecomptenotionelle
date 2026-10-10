@@ -188,8 +188,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1409<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->7 395<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1413<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->7 412<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Neuf pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -1095,7 +1095,7 @@ traitement — l'autre moitié paie la dette de pensions déjà promises, qui re
 due. Une part n'entre pas dans ce partage : ce que le taux payait de départs
 anticipés, que la proposition supprime, et que l'État garde en entier. Sur la
 fiche de paie de la fonctionnaire de l'exemple du §3, c'est
-**+<!--chiffre:mesure(gain_net?exemple=fonctionnaire)-->33,1<!--/--> % de traitement net** en 2026, et à tous les niveaux de traitement :
+**+<!--chiffre:mesure(gain_net?exemple=fonctionnaire)-->25,5<!--/--> % de traitement net** en 2026, et à tous les niveaux de traitement :
 ni réduction générale ni plafond ne viennent courber le calcul. Ce n'est ni
 l'incidence intégrale, qui lui prêterait toute la contribution comme si elle
 avait été son salaire différé, ni l'assiette fixe, qui ne lui en rendrait
@@ -1103,7 +1103,7 @@ rien : mettre le partage à zéro rend l'ancienne convention. Pour un militaire,
 l'État verse <!--chiffre:cellule(data/reference/legislation/contribution_employeur_militaires.csv:taux*100?annee=2026)-->126,07<!--/--> % de la solde, dont <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*-100?population=militaires&poste=avantages_professionnels)-->33,8<!--/--> points paient ses départs anticipés (<!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*-100?population=civils&poste=avantages_professionnels)-->1,5<!--/--> point
 pour un civil, au tableau n° 15 de la Cour des comptes). L'État garde ces
 points ; la même moitié de ce qui reste, un écart plus grand que celui d'un
-civil, fait **+<!--chiffre:mesure(gain_net?exemple=fonctionnaire&affiliation=militaire)-->38,3<!--/--> %** de solde nette sur la même carrière.
+civil, fait **+<!--chiffre:mesure(gain_net?exemple=fonctionnaire&affiliation=militaire)-->29,6<!--/--> %** de solde nette sur la même carrière.
 
 **Et les pensions LIQUIDÉES suivent la règle d'indexation, comme le compte qui
 les a produites.** Un système notionnel a deux règles d'indexation — celle du

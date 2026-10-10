@@ -1,0 +1,124 @@
+# L'INDEMNITÉ COMPENSATRICE DE LA HAUSSE DE LA CSG DES AGENTS PUBLICS, depuis
+# le 1er janvier 2018 : ce que la fiche de paie d'un agent public ajoute à son
+# traitement et à ses primes. Action 138, étape 12 (octobre 2026).
+#
+# POURQUOI ELLE EXISTE. Le 1er janvier 2018, la CSG d'activité monte de
+# 1,7 point. Le salarié du privé est compensé par la suppression de sa
+# cotisation maladie (0,75 %) et de sa contribution chômage (2,40 %) ; un
+# fonctionnaire ne payait ni l'une ni l'autre, mais la contribution
+# exceptionnelle de solidarité (CES, 1 %), supprimée le même jour (loi
+# n° 2017-1837 du 30 décembre 2017 de finances pour 2018, article 112). La loi
+# lui crée une indemnité pour le reste (même loi, article 113,
+# JORFARTI000036339321).
+#
+# CE QUE DISENT LES TEXTES, lus le 10 octobre 2026 au Journal officiel :
+#
+# - Décret n° 2017-1889 du 30 décembre 2017 (JORFTEXT000036342240 ; consolidé,
+#   LEGITEXT000036501657), article 2 (LEGIARTI000036501673, en vigueur depuis
+#   le 1er janvier 2018, sans autre version) :
+#   « I. - Les agents publics […] nommés ou recrutés en cette qualité avant le
+#   1er janvier 2018, bénéficient d'une indemnité dont le montant annuel est
+#   calculé comme suit : La rémunération brute annuelle perçue au cours de
+#   l'année 2017 est multipliée par 1,6702 %. Sont déduits du montant obtenu
+#   les montants dus sur cette même rémunération […] au titre de : 1° La
+#   contribution exceptionnelle de solidarité […] ; 2° La cotisation salariale
+#   d'assurance maladie du régime général […] ; 3° La contribution salariale
+#   d'assurance chômage […]. Le résultat obtenu […] est ensuite multiplié par
+#   1,1053. » Le II (agents non rémunérés au 31 décembre 2017, à leur
+#   réintégration) et le III (agents nommés ou recrutés depuis le 1er janvier
+#   2018, sauf ceux que le régime général couvre pour les indemnités
+#   journalières de maladie, les contractuels) : « La rémunération mensuelle
+#   brute à la date de la nomination ou du recrutement est multipliée par
+#   0,76 %. » Le IV : la rémunération brute « comprend les éléments de
+#   rémunération perçus au titre de l'activité publique assujettis à la
+#   contribution sociale généralisée », hors activités accessoires ; une année
+#   2017 incomplète « est ramenée à une rémunération brute équivalente à
+#   l'année complète ».
+# - Article 5, sa réévaluation, en trois rédactions. D'origine : au
+#   1er janvier 2019, si la rémunération a progressé entre 2017 et 2018, dans
+#   la même proportion (circulaire du 15 janvier 2018, VI : « sous réserve
+#   qu'il soit plus favorable à l'agent », et pour les seuls agents du I).
+#   Complété par le décret n° 2019-1595 du 31 décembre 2019 (JO du 1er janvier
+#   2020, texte 43, NOR CPAF1919352D) : « Au 1er janvier 2020, si la
+#   rémunération […] a progressé entre 2018 et 2019, le montant de
+#   l'indemnité est réévalué proportionnellement à cette progression. »
+#   Réécrit par le décret n° 2020-1626 du 18 décembre 2020 (JO du 20 décembre
+#   2020, texte 56, NOR TFPF2023750D), depuis le 1er janvier 2021 : « Au
+#   1er janvier de chaque année, si la rémunération […] a évolué entre l'année
+#   civile écoulée et la précédente, le montant de l'indemnité est réévalué
+#   proportionnellement à cette évolution », les changements de quotité et les
+#   congés de maladie neutralisés. « A évolué », et non plus « a progressé » :
+#   le dépôt lit les deux sens, ce que la fiche de service-public (mise à jour
+#   le 1er janvier 2026) ne tranche pas.
+# - La circulaire du 15 janvier 2018 (NOR CPAF1735515C) : 1,6702 % = 1,7 ×
+#   98,25 %, l'abattement d'assiette de la CSG ; 1,1053 = 1 / (1 − 9,7 % ×
+#   98,25 %), qui neutralise la CSG et la CRDS que l'indemnité paie elle-même ;
+#   0,76 % = (1,7 − 1) × 98,25 % × 1,1053. L'indemnité est « soumise à
+#   cotisations et contributions salariales […] au titre des régimes de
+#   retraite additionnelle ou complémentaire de la fonction publique » et de la
+#   CSG et de la CRDS ; elle « n'est pas prise en compte dans l'assiette de
+#   calcul des cotisations pensions » du code des pensions, de la CNRACL et du
+#   FSPOEIE. Son exemple du réexamen de 2019 : 23 500 € en 2017, 25 200 € en
+#   2018, une indemnité de 17 € par mois portée à 18,23 €
+#   (`tests/test_indemnite_csg.py`).
+# - La CES de 2017, que le I déduit : 1 % (code du travail, L. 5423-32,
+#   LEGIARTI000033817984) de « la rémunération nette totale […], y compris
+#   l'ensemble des éléments ayant le caractère d'accessoire du traitement […],
+#   dans la limite du plafond mentionné à l'article L. 5422-3 », quatre
+#   plafonds de la Sécurité sociale (L. 5423-27, LEGIARTI000033817991) ; en
+#   sont exonérés les agents dont « la rémunération de base mensuelle brute
+#   augmentée de l'indemnité de résidence et diminuée des cotisations de
+#   sécurité sociale obligatoires, des prélèvements pour pension » est
+#   inférieure au « traitement mensuel brut afférent à l'indice majoré 313 »
+#   (R. 5423-52, LEGIARTI000034096490, depuis le 1er mars 2017), au point de
+#   56,2323 € par an depuis le 1er février 2017
+#   (`point_indice_fonction_publique.csv`, au 1er janvier 2018).
+#
+# CE QUE LE DÉPÔT EN FAIT. La rémunération d'une ligne de carrière d'agent
+# public est son traitement et ses primes, SANS l'indemnité : la fiche de paie
+# l'y ajoute, calculée par le décret sur la carrière elle-même — la
+# rémunération de 2017 annualisée, ou celle de la première année d'agent
+# public depuis 2018, puis chaque réévaluation (`donnees/indemnite_csg.py`).
+# Elle n'entre pas dans l'assiette de la retenue, entre dans celle de la RAFP
+# avec les primes, dans la limite de 20 % du traitement, et paie la CSG et la
+# CRDS. Bénéficiaires : les statuts de la famille `public` que la fiche de paie
+# décrit au profil `agent_seul` — fonctionnaires, militaires, ouvriers de
+# l'État. Restent dehors le contractuel, dont la cotisation maladie et la CES
+# de 2017 absorbaient presque tout (environ 0,03 % de sa rémunération de 2017,
+# rien s'il est recruté depuis 2018), et les statuts de la famille `special`,
+# qui ne sont pas des agents publics.
+#
+# CE QUE LA PROPOSITION EN FAIT : rien. Elle ne touche que la retraite ; ni le
+# README ni le programme ne nomment l'indemnité, qui reste versée. Elle est
+# alors une part de la rémunération comme une autre : la proposition y assied
+# son taux unique, quand le droit en vigueur n'y prélève que la RAFP.
+schema_version: 1
+
+debut: 2018
+
+beneficiaires:
+  familles: [public]
+  profils: [agent_seul]
+
+# Le I de l'article 2 : l'agent rémunéré au 31 décembre 2017.
+remuneres_au_31_decembre_2017:
+  annee_de_reference: 2017
+  taux_hausse_csg: 0.016702
+  coefficient_neutralisation: 1.1053
+  contribution_exceptionnelle_de_solidarite:
+    taux: 0.01
+    plafond_en_pss: 4
+    seuil_indice_majore: 313
+    valeur_annuelle_du_point: 56.2323
+
+# Le II et le III : l'agent réintégré, ou nommé, depuis le 1er janvier 2018.
+recrutes_depuis_2018:
+  taux: 0.0076
+
+# L'article 5. `hausse` : seulement si la rémunération a progressé ;
+# `evolution` : dans les deux sens. La réévaluation de l'année compare les deux
+# années civiles qui la précèdent.
+reevaluations:
+  - {annee: 2019, sens: hausse, seulement_remuneres_au_31_decembre_2017: true}
+  - {annee: 2020, sens: hausse}
+  - {depuis: 2021, sens: evolution}

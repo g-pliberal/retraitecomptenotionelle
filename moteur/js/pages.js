@@ -6018,15 +6018,30 @@ régime général : c'est la convention du modèle entier, et elle vaut ici comm
 pour la pension.</p>`;
   }
   if (!remuneration.afficheCoutDuTravail) {
-    return `<p><strong>Ce que la fiche ne porte pas</strong> : la retraite
-additionnelle de la fonction publique, assise sur les PRIMES, que l'assiette de
-ce modèle — le traitement indiciaire brut et la nouvelle bonification
-indiciaire — exclut par construction. Un agent dont les primes pèsent lourd voit
-donc ici une fraction de sa rémunération, et non sa feuille de paie entière. Les
-autres prélèvements salariaux sont nuls, et c'est un résultat : la cotisation
-maladie salariale a disparu en 2018 comme dans le privé, un titulaire n'est pas
-assuré contre le chômage, et la contribution exceptionnelle de solidarité de 1 %
-a été supprimée la même année.</p>`;
+    // Depuis le 10 octobre 2026, la fiche d'un agent public porte la RAFP et
+    // l'indemnité compensatrice de la CSG ; un marin ou un artiste de l'Opéra
+    // n'a ni l'une ni l'autre.
+    const rafp = remuneration.reference.droitEnVigueur.lignes
+      .some((ligne) => ligne.code === "rafp");
+    const indemnite = remuneration.indemniteCsgMensuelle;
+    const additionnelle = rafp
+      ? ` La retraite, c'est la retenue pour pension, sur le traitement, et la
+retraite additionnelle de la fonction publique (RAFP), 5 % de vos primes et
+autant pour votre employeur, dans la limite de 20 % du traitement ; une réforme
+de la répartition ne l'atteint pas, et le système 4 la prélève aussi.`
+      : "";
+    const compensation = indemnite > 0
+      ? ` La hausse de la CSG de 2018 vous est compensée par une indemnité,
+${g.eurosCentimes(indemnite)} par mois cette année, comprise dans la première
+ligne : la retenue pour pension ne la prend pas, la RAFP si. La proposition ne la
+supprime pas, et son taux unique la prélève comme le reste de votre
+rémunération.`
+      : "";
+    return `<p><strong>Ce que la fiche ne porte pas</strong> : aucun prélèvement
+salarial hors de la retraite, de la CSG et de la CRDS, et c'est un résultat : la
+cotisation maladie salariale a disparu en 2018 comme dans le privé, un titulaire
+n'est pas assuré contre le chômage, et la contribution exceptionnelle de
+solidarité de 1 % a été supprimée la même année.${additionnelle}${compensation}</p>`;
   }
   return `<p><strong>Ce que la fiche ne porte pas</strong> : la taxe
 d'apprentissage, la formation professionnelle, la participation à la
