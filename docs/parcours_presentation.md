@@ -192,9 +192,9 @@ l'impôt », sous les résultats, en donne la règle.
 
 | Système | Pension nette par mois | Écart |
 |---|---|---|
-| 1. Actuel | 2 755 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 2 368 € | -14,0 % |
-| 4. La proposition | 2 564 € | -6,9 % |
+| 1. Actuel | 2 730 € | référence |
+| 3. Ce qui a été cotisé, deux parts | 2 347 € | -14,0 % |
+| 4. La proposition | 2 542 € | -6,9 % |
 
 C'est le cas qu'on attend au tournant, et il faut savoir le dire : l'État
 employeur verse pour ses fonctionnaires bien au-delà de ce qu'un employeur
@@ -355,7 +355,7 @@ Onglet **Méthode** : les trois opérations, en une phrase chacune, puis
 Onglet **Données**, et c'est la bonne page pour conclure : « Rien ici n'est à
 croire sur parole. » 70 241 valeurs recontrôlées automatiquement contre le
 fichier de l'institution qui les produit, sur 140 séries ; 108 régimes
-recensés dont 74 calculés ; 39 institutions citées. Ce compte mesure la
+recensés dont 74 calculés ; 40 institutions citées. Ce compte mesure la
 fidélité de la recopie, non la justesse des pensions : si on vous le demande,
 la réponse est que les pensions se contrôlent ailleurs, sur les exemples
 publiés par les caisses, et que `docs/limites.md` dit lesquels. Le code et
