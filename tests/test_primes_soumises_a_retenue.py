@@ -67,10 +67,14 @@ def _pension(simulateur: Simulateur, carriere: Carriere, regime: str):
 
 def _parcours(simulateur: Simulateur, metiers: list[Metier], naissance: int,
               liquidation: float, sexe: str = "H") -> Carriere:
+    """Le parcours d'un assuré né le 15 janvier : le jour se déclare, puisque
+    les services et le départ se comptent depuis lui ; celui que la
+    présomption pose a son test (``test_chronologie.py`` ; feuille de route,
+    action 135, levier 2)."""
     return Carriere.depuis_parcours(
         annee_naissance=naissance, sexe=sexe, metiers=metiers,
         age_liquidation=liquidation, macro=simulateur.macro, mois_naissance=1,
-        part_primes=0.15)
+        jour_naissance=15, part_primes=0.15)
 
 
 def _sr_et_traitement(detail: str) -> tuple[float, float]:
@@ -292,7 +296,7 @@ def test_avant_2025_la_meme_carriere_se_proratisait(simulateur):
 
 def test_dix_sept_ans_de_sapeur_pompier_depuis_2011_quinze_avant(simulateur):
     """Seize ans de sapeur-pompier ne suffisent pas depuis le 1er juillet
-    2011 ; ils suffisaient avant, au prorata : né à la mi-janvier 1950, parti
+    2011 ; ils suffisaient avant, au prorata : né le 15 janvier 1950, parti
     en février 2010, seize ans et un mois sur trente-huit ans et un mois."""
     metiers = [Metier(SEDENTAIRE, 22.0, 1.0), Metier(POMPIER, 48.0, 1.0)]
     _, pension = _pension(simulateur, _parcours(simulateur, metiers, 1960, 64.0), "cnracl")
@@ -369,7 +373,7 @@ def test_entree_dans_le_corps_depuis_2004_au_prorata(simulateur):
     """Agent hospitalier de 1995 à 2010, aide-soignante ensuite jusqu'en
     2037 : le supplément « calculé à due proportion des années de services
     accomplis dans le corps des aides-soignants », vingt-sept ans et un mois
-    sur quarante-deux ans et un mois, née à la mi-janvier 1975 et partie en
+    sur quarante-deux ans et un mois, née le 15 janvier 1975 et partie en
     février 2037."""
     metiers = [Metier(HOSPITALIER_ACTIF, 20.0, 1.0), Metier(AIDE_SOIGNANT, 35.0, 1.0)]
     _, pension = _pension(simulateur, _parcours(simulateur, metiers, 1975, 62.0, "F"),
