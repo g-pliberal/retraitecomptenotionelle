@@ -690,10 +690,10 @@ reprises et net, d'après le patrimoine des ménages (INSEE, COR), que le
 patrimoine des défunts de 2018 recoupe (`macro/patrimoine_defunts.csv`) : une
 succession y couvre une avance de trois à neuf points de moins qu'un ménage.
 Le fichier individuel de l'enquête Histoire de vie et Patrimoine est hors de
-portée, le propriétaire ne pouvant pas s'inscrire à Progedo-ADISP. Restent une
-phrase du programme, le document de travail n° 2021/5 de la DG Trésor, au
-vivier et non lu, et, au propriétaire, le choix de reprendre sur le patrimoine
-des défunts. Détail : les notes des 11 et 12 octobre 2026.
+portée (Progedo-ADISP), et le document de la DG Trésor, lu, ne ventile ce
+patrimoine ni par âge ni par niveau de vie. Restent une phrase du programme
+et, au propriétaire, le choix de reprendre sur le patrimoine des défunts.
+Détail : les notes des 11 et 12 octobre 2026.
 
 **Demande.** « Dans notre cas, la reprise sur succession est dès le premier
 euro + on prend des intérêts pour ne pas y perdre au niveau des finances

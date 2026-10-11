@@ -5330,12 +5330,24 @@ sources:
       déciles du graphique n° 18 de la Cour, pour la reprise sur succession de
       l'action 47, à la place du fichier individuel de l'enquête Histoire de
       vie et Patrimoine, hors de portée.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-10-12"
     note: >-
       Repéré le 12 octobre 2026 : Documents de travail de la DG Trésor
       n° 2021/5, « Modèles de microsimulation des impôts liés au patrimoine
       des ménages », décembre 2021, d'où la Cour tire son graphique n° 18. Le
-      PDF répond 200 en `curl` depuis le poste du propriétaire ; non lu.
+      PDF répond 200 en `curl` depuis le poste du propriétaire. Lu le même
+      jour : il ne ventile le patrimoine des défunts ni par âge, ni par niveau
+      de vie, ni par pension. Son graphique 12 redonne les déciles de la Cour
+      (de 0 à 1,35 M€, défunts de 2018), son graphique 11 leur composition, et
+      il répartit les 136 Md€ transmis en 2018 : 65 % en ligne directe, 20 %
+      au conjoint, 6 % aux frères et sœurs, 9 % ailleurs. Il dit son champ
+      (p. 28) : l'enquête Patrimoine 2014-2015 exclut l'habitat collectif,
+      dont 728 000 résidents d'Ehpad fin 2015, qu'il suppose moins riches à
+      âge égal ; elle sous-déclare le patrimoine, l'assurance-vie corrigée de
+      50 %. Il s'appuie sur Dherbécourt (France Stratégie, note d'analyse
+      n° 51 et son annexe, 2017), sur l'enquête 2009-2010, sans indice
+      qu'elle soit plus détaillée.
 
   - id: catala_examples
     url: https://github.com/CatalaLang/catala-examples

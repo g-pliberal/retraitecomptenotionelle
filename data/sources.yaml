@@ -2034,7 +2034,13 @@ institutions:
           (`memoire.HORS_DU_MODELE`) : il sert au recoupement de la reprise sur
           succession (action 47). Le site sert le zip sous un nom qui finit par
           une espace insécable ; `fichier_local` lui en donne un simple, celui
-          de son asset sur la release, déposé le 11 octobre 2026.
+          de son asset sur la release, déposé le 11 octobre 2026. Ses déciles
+          viennent de la DG Trésor (Documents de travail n° 2021/5,
+          graphique 12, lu le 12 octobre 2026), une microsimulation de
+          l'enquête Patrimoine 2014-2015 qui dit son champ : l'habitat
+          collectif en est exclu, dont les résidents d'Ehpad, supposés moins
+          riches à âge égal, et le patrimoine y est sous-déclaré. Un ordre de
+          grandeur, donc, sans ventilation par âge ni par niveau de vie.
 
       - id: ccomptes_retraites_fpe_2026
         titre: >-
