@@ -16726,3 +16726,829 @@ coût est parti, et les deux moteurs ne sont plus jumeaux que sur une
 carrière (`docs/architecture/versions/2026-10-11-le-cout-sans-jumeau.md`).
 Les notes des deux étapes et de la décision sont sous
 `docs/archives/feuille_de_route/150/`.
+
+### 142. Les simulateurs officiels, sans y passer ses journées — `fait`
+
+**Demande**, le 4 octobre 2026 : « J'aimerais que tu puisses me dire si on
+peut automatiser avec du computer use ou d'autres techniques l'exploitation de
+simulateurs officiels ? J'aimerais que l'on se base le plus possible sur des
+simulateurs officiels pour corriger nos erreurs. Il n'est cependant pas exclu
+que des simulateurs officiels se trompent, il faut toujours vérifier avec des
+sources officielles. On a déjà fait des simulations manuelles mais ce serait
+mieux si on arrivait à les automatiser. C'est vraiment trop long à faire
+manuellement. Je suis notamment intéressé par des simulateurs qui donnent des
+chiffres. […] je souhaite que tout le monde comprenne et puisse comparer les
+chiffres avec ceux qu'ils connaissent déjà. »
+
+**Ce que la recherche a établi, le 4 octobre 2026.**
+
+- Les quatre simulateurs de `les-simulateurs.info-retraite.fr` — âge légal,
+  carrière longue, handicap, réversion — sont anonymes, sans captcha, de
+  simples formulaires : techniquement, ils s'automatisent en quelques lignes.
+  Leurs conditions d'utilisation (article 7) limitent l'usage au personnel et
+  interdisent la rediffusion « des éléments du Site ».
+- Aucun simulateur anonyme ne chiffre une pension entière. Seul « Mon
+  estimation retraite » le fait — brut mensuel, en euros constants, par
+  régime, pour chaque âge de départ, la convention de l'estimation indicative
+  globale que chacun reçoit —, derrière FranceConnect et sur la carrière
+  réelle de l'assuré, sans carrière fictive possible.
+- Les moteurs publics tournent en local, sans conditions d'utilisation à
+  ménager : `modele-social` de l'Urssaf (publicodes, licence MIT, version
+  11.1.0, ses règles `protection sociale . retraite . trimestres` et
+  `… . complémentaire . points acquis`), Destinie 2 de l'Insee (mis à jour le
+  15 octobre 2025), TRAJECTOiRE de la DREES ; c'est l'action 137.
+- Les sites qui se disent « simulateur Agirc-Arrco sans connexion » ne sont
+  pas officiels, et n'entrent pas.
+
+**Les décisions du propriétaire**, le même jour : Claude saisit à sa place,
+dans le budget, dans les seuls simulateurs anonymes sans captcha, chaque lot
+approuvé avant la première saisie — plutôt que de garder la règle d'avant, ou
+qu'un script tourne seul chaque semaine, que la session déconseillait ; le
+brut en tête sur le site, comme l'estimation officielle ; la saisie outillée
+d'abord. Puis, à la fin de l'étape 1 : Claude peut lire la page de « Mon
+estimation retraite » que le propriétaire a ouverte, connecté lui-même.
+
+**Étape 1, le 4 octobre 2026 : la saisie outillée.**
+
+- *La règle.* Le § 3.5 de l'architecture (version 5.35) ouvre sa deuxième
+  voie à Claude, avec ses conditions ; la quatrième devient « jamais de robot
+  sans surveillance ». `docs/exploration_sources.md` en décrit la marche, dans
+  une section datée : le conseil de « balayer une grille », antérieur à la
+  règle du 25 septembre, y est déclaré remplacé, sans être effacé.
+- *Le budget.* Il est au registre (`budget`), dû dès la première saisie, et
+  compte des saisies, non des exemples. À la première, il vaut le quart des
+  entrées que le formulaire offre, dix s'il est ouvert : une saisie par borne
+  ne borne rien quand chaque entrée en est une. Les quatre simulateurs
+  d'info-retraite ont leur ligne : l'âge légal à 2 (8 entrées), la carrière
+  longue à 7 (28 entrées, 5 faites), la réversion à 10 (4 faites) ; le
+  handicap n'en a pas encore. Les exemples tirés d'un simulateur nomment sa
+  ligne et la saisie ; les neuf du 1er octobre les ont reçues.
+- *L'outil.* `scripts/simulateurs.py budget | fiche | transcrire`. La feuille
+  choisit les entrées — jamais une saisie faite, d'abord les générations
+  qu'aucun exemple ne couvre, les plus jeunes en tête — et écrit la
+  prédiction du modèle par les fonctions mêmes de `tests/test_oracle.py`. Ses
+  prédictions retrouvent les cinq saisies manuelles de la carrière longue et
+  la coupure de 1965 de la circulaire Cnav 2026-07. La transcription lit la
+  réponse, vérifie que chaque nombre lu y figure, écrit l'exemple et le
+  rejoue. `tests/test_simulateurs.py` tient le tout.
+- *Le premier lot.* Deux saisies approuvées, faites par Claude dans le
+  navigateur intégré, cookies refusés : « 1969 et après », 64 ans, et
+  « 1968 », 63 ans et 9 mois, 172 trimestres dans les deux cas. Le modèle les
+  avait prédites, et L. 161-17-2, relu sur Légifrance le même jour, dit la
+  même chose. Le simulateur écrit la durée « est de 172 », sans le mot
+  « trimestres » après, et l'âge du taux plein automatique, 67 ans, à côté de
+  l'âge légal : sa lecture en tient compte. Le budget de l'âge légal est
+  épuisé.
+- *Ailleurs.* `docs/limites.md` ne dit plus qu'aucun simulateur n'est
+  automatisable, et son tableau des exemples publiés a sa ligne Union
+  Retraite.
+
+**Les étapes suivantes.**
+
+2. *La carrière du propriétaire contre « Mon estimation retraite ».* Un
+   script qui lit le relevé de carrière (PDF, par `lecture_pdf` puis
+   `web/releve_lu.lire_releve`) et l'estimation recopiée âge par âge, fait
+   liquider le scénario 1 à chaque date, dans la même convention — brut
+   mensuel, euros de l'année de lecture, par régime —, et dit l'écart en
+   euros et en pour cent. Rien de personnel n'entre au dépôt ; le script
+   refuse un chemin suivi par git. La convention affichée par l'estimation se
+   recopie le jour de la lecture. Le propriétaire se connecte lui-même ;
+   Claude lit la page de l'estimation, n'y tape aucun identifiant, et n'y
+   change une hypothèse qu'avec son accord (§ 3.5, troisième voie).
+3. *Le brut en tête.* Le format de l'estimation officielle : brut mensuel par
+   étage, en euros d'aujourd'hui, âge par âge, le net en second, et un champ
+   où chacun compare son estimation. Le net aux prélèvements officiels — le
+   point de maladie des complémentaires, le taux de CSG selon le revenu du
+   foyer — est l'étape 2 de l'action 138 : la faire d'abord, ou montrer le
+   brut sans attendre. *Faite, le 4 octobre 2026, sans attendre.*
+4. *Les moteurs publics en local*, avec l'action 137 : TRAJECTOiRE en cas
+   types du COR, puis Destinie 2, sorties figées en témoins.
+
+**Étape 2, le 4 octobre 2026 : la carrière du propriétaire contre « Mon
+estimation retraite ».** Le propriétaire a demandé, le même jour : « Je ne veux
+aucune de mes données personnelles sur le dépôt Github, c'est très important ».
+Ce qui suit n'en garde que des écarts relatifs.
+
+- *L'outil.* `scripts/estimation_officielle.py` : `--modele` imprime le gabarit
+  de l'estimation ; `--releve` et `--estimation` lisent le relevé, par
+  `lecture_pdf` puis `lire_releve`, et l'estimation recopiée âge par âge dans un
+  fichier privé, hors du dépôt. Pour chaque âge, le scénario 1 est liquidé à la
+  même date, en brut mensuel et en euros de l'année de la page, régime par
+  régime puis étage par étage. La carrière à venir part du revenu que la page
+  prête à la situation actuelle ; elle suit le salaire moyen (par défaut) ou les
+  prix, plus ce que `--croissance` y ajoute, ou s'arrête au relevé. Une année
+  mal lue se corrige à la main dans l'estimation privée, et le rapport le dit.
+  Le script n'écrit rien, refuse un fichier rangé dans un dépôt git sans y être
+  ignoré, et dit si le relevé qu'il a lu est plafonné. Ses tests, sur des
+  relevés fictifs, sont au niveau `controle` (`tests/test_estimation_officielle.py`).
+- *Le passage.* Le propriétaire s'est connecté lui-même, par FranceConnect, et
+  a téléchargé son relevé ; Claude a lu l'« estimation rapide » (simulateur
+  27.50.5, moteur 10.0.0-rc6 du 18 août 2026, qui « prend en compte la
+  suspension de la réforme des retraites ») sans y changer d'hypothèse :
+  l'affichage du net, basculé pour être lu, a été remis en brut. Trois âges y
+  sont chiffrés : l'âge légal, le taux plein, l'âge du taux plein automatique.
+  La page ne nomme pas l'année de ses euros : elle compte les points à leur
+  « valeur actuelle », et applique par défaut « une évolution régulière de vos
+  revenus ».
+- *Ce qui concorde.* Les trimestres aux trois âges, l'année du départ comprise ;
+  la durée requise ; la décote et la surcote du régime général, sa
+  proratisation ; la minoration de l'Agirc-Arrco à l'âge légal sans le taux
+  plein. La retraite de base concorde À L'EURO aux trois âges, du même salaire
+  annuel moyen, quand la carrière à venir suit les prix plus 1,0 % par an :
+  c'est la croissance que la page applique. Sous la convention du modèle — le
+  salaire moyen, 0,69 % par an au-delà des prix —, elle ressort de 6 à 7 % plus
+  bas : une hypothèse de projection, non une règle. Les points Agirc-Arrco déjà
+  acquis concordent à moins d'un demi pour cent.
+- *Ce qui ne concorde pas : la projection de l'Agirc-Arrco.* Avec la carrière à
+  venir de la page, la complémentaire du modèle ressort de 8,8 à 9,0 % au-dessus
+  (de 3,6 à 3,9 % sous sa propre convention). Au-delà du dernier barème publié,
+  `rendements_points.csv` garde le rendement de 2026 jusqu'en 2100 : le prix
+  d'achat du point y suit les prix, comme sa valeur de service. L'accord
+  national interprofessionnel du 10 mai 2019, lu le même jour sur le site de
+  l'Agirc-Arrco, le fait évoluer « comme le salaire annuel moyen des
+  ressortissants du régime » (article 2), et son annexe projette de même.
+  Recompté à part, avec un prix d'achat qui croît de 0,55 à 0,6 % par an
+  au-delà des prix, le nombre de points de la page se retrouve à un demi pour
+  cent près. La correction, au modèle et à son jumeau, a sa tâche, qui lira
+  d'abord l'accord du 5 octobre 2023 ; `docs/limites.md` porte la limite.
+- *Ce que la lecture du relevé a appris.* Le relevé tous régimes qu'info-retraite
+  délivre en 2026 se lit mal. Son texte sort à l'envers, page par page : un
+  repère retourné que `lecture_pdf` ignore. Une même paie, déclarée à part à la
+  base et à la complémentaire, s'additionne : deux années ici, corrigées à la
+  main. La note « plafonné » est fausse pour lui, qui porte le revenu entier. Et
+  une année Ircantec s'y lit comme un emploi du privé : le modèle n'y voit pas
+  l'Ircantec, que la page sert en capital, en versement unique sous 300 points.
+  La correction des deux lectures jumelles a sa tâche.
+
+**La lecture du relevé de 2026, le 4 octobre 2026.** La tâche de l'étape 2,
+faite dans les deux lectures jumelles et dans leurs portages JavaScript. Le
+relevé réel n'a été lu que sur le poste du propriétaire, texte masqué : la
+structure de ses opérateurs, la forme de ses lignes, et des comptes.
+
+- *Le lecteur de PDF.* Le composeur d'info-retraite (`KslPrn`) ouvre chaque
+  page par un repère retourné, « 0.05 0 0 -0.05 0 841.9 cm », et coupe ses
+  premières pages en plusieurs flux `/Contents`, une `Tm` à la fin de l'un, la
+  chaîne qu'elle place au début du suivant. `lecture_pdf.py` et
+  `lecture-pdf.js` suivent désormais le repère de la page (`cm`, que `q` et `Q`
+  sauvent et rendent), gardent la matrice de texte entière, rangent les
+  fragments en points de la feuille, et lisent bout à bout les flux d'une page.
+  Sur les cinq PDF publics du dossier principal (jaune et PAP du PLF 2026,
+  retraites de l'État, CDC), la lecture ne change que là où elle le devait :
+  deux libellés tournés réordonnés, une phrase d'encadré remise à l'endroit,
+  une page en deux flux recollée. Les jumeaux divergeaient déjà sur quelques
+  pages de ces documents, les mêmes avant et après : laissé. Ordonner chaque
+  ligne par abscisse remettrait les exposants à leur place, mais changerait un
+  millier de lignes que lisent les scripts de certification : laissé aussi.
+- *La même paie, vue deux fois.* La règle demandée — ne compter que les lignes
+  qui nomment la base — a été éprouvée sur le relevé réel avant d'être écrite.
+  Elle corrigeait les deux années doublées, mais en abîmait une troisième, où
+  une ligne « Agirc-Arrco » seule suit une ligne commune aux deux caisses :
+  sans elle, la base y validerait un trimestre que ses propres lignes
+  n'atteignent pas. La règle retenue est plus étroite : une ligne de
+  complémentaire seule ne compte pas l'année où une autre ne nomme que la
+  base. Seules les deux années corrigées à la main changent, et dans chaque
+  année du relevé, le revenu lu valide exactement les trimestres que la base
+  compte. L'assertion du relevé d'essai du 22 septembre, qui comptait une telle
+  période, reste vraie.
+- *Le reste de la lecture.* Les régimes d'une ligne se lisent tous
+  (`_regimes_de`) ; la ligne qui ouvre un bloc les donne à celles qui le
+  poursuivent ; l'en-tête de colonnes d'un tableau ferme la section du tableau
+  d'avant. « L'Assurance retraite, Ircantec » se lit en contractuel public
+  (`PRECISIONS`), et `estimation_officielle.py` compte ce statut parmi ceux
+  dont le relevé du régime général plafonne le revenu. La note « plafonné »
+  tombe quand le relevé dit porter le « revenu d'activité soumis à
+  cotisations retraite ». La naissance absente n'appelle rien : le site garde
+  son champ, l'estimation privée sa ligne `assure.naissance`. Deux notes
+  disent au lecteur la paie comptée une fois et le contractuel.
+- *Les tests.* `RELEVE_2026`, relevé inventé de bout en bout à la forme réelle,
+  passe par les deux lectures et par un PDF fabriqué comme celui de `KslPrn` ;
+  deux documents minimaux tiennent le repère et les flux, en Python et en
+  JavaScript. Chaque test nouveau échoue avec le code d'avant, sauf celui de
+  la période que seule l'Agirc-Arrco écrit : l'ancien code la comptait déjà,
+  et la règle trop large l'aurait perdue.
+- *Reste.* `releve.corrections` n'a plus rien à corriger dans ce relevé. Le
+  versement unique de l'Ircantec, que le modèle ne sert pas, a sa limite à
+  écrire avec la tâche qui le traitera.
+
+**La naissance par le numéro de sécurité sociale, le 4 octobre 2026.** Le
+propriétaire l'a relevé le même jour : « il y a la date de naissance dans le
+numéro de sécurité sociale en partie ». Les deux lectures jumelles en tirent
+désormais l'année et le mois (`mois_de_naissance`), le siècle étant le dernier
+qui ne place pas la naissance après la première année travaillée ; un mois
+hors de 01 à 12 ne se lit pas, et le numéro sort de la ligne avant toute
+lecture, si bien qu'aucun de ses chiffres ne ressort. Le site remplit le
+calendrier au jour que présume `jour_de_naissance` et le dit, pour qu'on le
+corrige ; `estimation_officielle.py` garde la date recopiée, dont le jour
+compte, mais la confronte au mois du numéro. Vérifié dans le navigateur, sur
+le relevé fictif déposé, et sur le relevé réel, sans en rien imprimer : mois
+trouvé, siècle plausible, jumeaux identiques. Chemin faisant, le tableau des
+années collé sans le résumé qui le précède perdait sa première année, que
+plus rien ne rattachait à une base : une ligne de complémentaire qui précède
+toute base prend la première que le document nomme.
+
+**La valeur d'achat de l'Agirc-Arrco, le 4 octobre 2026 : projetée sur le
+salaire moyen.** L'autre correction de l'étape 2.
+
+- *Le texte (§ 3.3 de l'architecture).* L'accord du 17 novembre 2017, conclu
+  sans terme, détermine la valeur d'achat « en fonction du taux d'évolution du
+  salaire moyen des ressortissants du régime, éventuellement corrigé d'un
+  facteur de soutenabilité », avec effet au 1er janvier suivant (article 28,
+  lu sur Légifrance, KALITEXT000036731682). Les accords du 10 mai 2019
+  (article 2) et du 5 octobre 2023 (article 5.1, KALITEXT000048674954) la font
+  évoluer « comme le salaire annuel moyen des ressortissants du régime tel
+  qu'estimé pour l'exercice précédent », et leurs annexes la projettent sur le
+  salaire moyen. Le conseil d'administration ne l'a pas modifiée au 1er janvier
+  2026, faute d'accord (communiqué du 17 octobre 2025) : ce gel est le barème
+  de 2026, que le dépôt certifiait déjà. L'accord de 2023 échoit le 31 décembre
+  2026 ; celui de 2027 à 2030 se négocie, et le conseil décide le 14 octobre
+  2026 de la valeur de service de novembre et de la valeur d'achat de 2027.
+- *La correction.* Au-delà du dernier barème, le dernier salaire de référence
+  publié suit la croissance du salaire moyen par tête du modèle, celle de
+  l'année précédente, au taux d'appel de 127 % : 20,6823 € en 2027 au scénario
+  de référence. `regimes/prolongement_points.csv` le déclare ;
+  `ValeursPoint.achat_prolonge` et `DonneesMacro.coefficient_salaire_moyen` le
+  servent, et leurs jumeaux `achatProlonge` et `coefficientSalaireMoyen`, par
+  le paquet (`prolongement_points`). Les années d'après 2026 ont des points, et
+  non plus des cotisations converties au rendement de 2026 — qui faisait suivre
+  les prix au prix d'achat, et ne sert plus que de filet ; la seconde pension, dont le
+  prix suivait le plafond de la sécurité sociale, prend le même, aux mêmes
+  valeurs à l'arrondi près. La valeur de service reste prolongée par les prix.
+  Fiche `agirc_arrco_valeur_achat`, sans manque : versions lues de 2019 à
+  2026, supposée au-delà ; `ircantec_valeurs_point` ne parle plus que de
+  l'Ircantec.
+- *Ce que ça déplace.* 146 témoins de simulation sur 712. Au scénario 1, 146
+  pensions baissent et aucune ne monte : −0,37 % en médiane, jusqu'à −3,63 %
+  (`generation_2005`), −2,92 % (`generation_2000`) et −1,73 % (`salaire_8`),
+  treize de plus de 1 %. Aux scénarios 3 et 5, les deux bascules futures
+  seules, de −0,45 % à −1,66 %, par les droits qu'elles convertissent ; les
+  scénarios 2, 4 et 6 ne bougent pas. Sur des carrières fictives entrées à
+  22 ans et parties à 64, l'Agirc-Arrco baisse de 2,8 % (née en 1975) à 14,6 %
+  (née en 2005) en non-cadre, de 3,2 % à 16,0 % en cadre, la pension totale de
+  0,4 % à 4,1 %. Le système actuel coûte en 2070 17,8 % du PIB au lieu de 18,2,
+  693 Md€ au lieu de 710 : l'écart d'arrivée au COR passe de trois points à deux
+  et demi. La dette de la proposition en 2070 passe de 31 à 35 % du PIB : sa
+  dépense est celle du COR multipliée par son rapport au système actuel, que la
+  baisse du système actuel fait monter (`cout.py`). L'accueil le cite
+  (`MESURES_BLOCAGES` : dette de 35 %, coefficient de 0,89 au plus bas et de
+  1,04 en 2070, variante prospective à −2,8 points), et le parcours de
+  présentation suit, sa référence de conservation refigée. Entre les variantes
+  de productivité, le solde de la proposition en 2070 varie désormais de 0,61
+  point et non de 0,44 : une croissance forte n'achète plus de points de
+  surcroît au système actuel ; la borne du test passe d'un demi-point aux trois
+  quarts (`test_la_proposition_ne_perd_plus_un_point_a_la_croissance`). 54
+  rendus de page sur 69.
+- *Ce qui reste ouvert.* La valeur de service : l'accord de 2017 la détermine
+  sur le salaire moyen « éventuellement corrigé », l'annexe de 2023 la projette
+  de 2027 à 2037 au salaire moyen moins 1,16 %, « Mon estimation retraite »
+  compte les points à leur valeur actuelle ; le modèle garde les prix, la
+  convention de la page, et la fiche déclare la lecture divergente. Le salaire
+  moyen est celui du modèle, non celui des ressortissants. La carrière du
+  propriétaire n'a pas été reconfrontée, ses fichiers privés n'étant pas dans
+  la session : sur des carrières fictives, la complémentaire passe de 2,4 % à
+  15,7 % au-dessus d'un prix d'achat qui croîtrait de 0,575 % par an au-delà
+  des prix, celui que la page semble prêter, à 0,5 % à 2,8 % au-dessous.
+  L'Ircantec garde son rendement de prolongation, faute d'avoir lu le texte de
+  son salaire de référence.
+
+**Les simulateurs anonymes, le 4 octobre 2026.** Le propriétaire a demandé
+« de vérifier beaucoup plus de choses dans les simulateurs officiels », et
+approuvé quatre lots : « Mon estimation retraite » en faisant varier l'âge et
+les revenus, le RAFP, le reste de la réversion et de la carrière longue, le
+handicap. Le navigateur intégré suffit : le computer use ne donne à Chrome
+qu'un accès en lecture, et ces formulaires se remplissent par leur page.
+
+- *La carrière longue.* Les deux saisies restantes, génération 1970, avant
+  16 et avant 18 ans : 58 et 60 ans, 172 trimestres, comme prévu
+  (`ur_racl_1970_avant_16`, `…_18`). Le budget est épuisé.
+- *Le RAFP.* Dix saisies, budget épuisé, réponses dans la fiche
+  `rafp_majoration_capital`, aucune encore en exemple officiel : il faut un
+  adaptateur à `scripts/simulateurs.py`. Le simulateur interpole la
+  majoration au mois, arrondie au centième, et retient 1,81 à 75 ans ; le
+  barème publié va par âge entier jusqu'à 1,80, et le décret (art. 8 et 9)
+  renvoie barème et capital fractionné au conseil d'administration. Le
+  moteur reste tel quel tant que la délibération n'est pas lue : un
+  simulateur peut se tromper. L'écart vaut jusqu'à 2 % de la rente (68 ans
+  et 4 mois : 1,30 contre 1,28). La conversion en capital et les âges
+  légaux concordent ; le simulateur prête 64 ans à la génération 1958.
+- *« Mon estimation retraite », personnalisée.* Le propriétaire connecté,
+  Claude a ajouté des âges de départ (« Ajouter un âge de départ », par
+  années et mois), lu le détail par régime, puis changé les revenus à venir
+  en « Pas d'évolution » ; rien n'a été enregistré. Onze âges, de l'âge
+  légal à 70 ans, sous la projection par défaut, dix sous des revenus
+  plats : le régime général concorde À L'EURO à chacun des vingt et un,
+  trimestres, décote et surcote compris ; le modèle ne dit rien de neuf
+  sur ses règles. « Lire les données de l'évolution des revenus » donne la
+  série de la page : + 1,00 % par an exactement, ce que l'étape 2 avait
+  déduit. L'Agirc-Arrco du modèle reste en dessous, de 1,6 % à l'âge légal
+  à 3,3 % à 70 ans sous la projection par défaut, de 1,1 % à 2,6 % sous des
+  revenus plats, l'écart croissant à chaque année travaillée. Sous des
+  revenus plats, la page acquiert le MÊME nombre de points chaque année :
+  son prix d'achat ne suit pas le salaire moyen, comme l'accord le veut et
+  le modèle le fait, et vaut, rapporté au revenu, 11,6 % de plus que celui
+  de 2026, ce qui reste à expliquer. L'Ircantec, sous 300 points, se verse
+  en capital unique, avec sa propre majoration par trimestre.
+- *La réversion*, à la demande du propriétaire (« Continue avec la réversion
+  et le handicap ») : les six saisies du budget, budget épuisé, aux exemples
+  `ur_reversion_` du 4 octobre. Le simulateur ne pose que les questions des
+  régimes cochés, ne demande plus la pension d'un régime qu'il a écarté, et
+  garde ses réponses dans `sessionStorage` d'une simulation à l'autre : la
+  vider avant chacune. Concordent la CNRACL et l'enfant commun qui lève la
+  durée du mariage, la MSA des salariés, l'invalidité qui lève l'âge à
+  l'Agirc-Arrco et non au régime général, la base des indépendants. Le
+  simulateur se trompe sur le plafond de ressources : ses tranches sont
+  celles de 2024 (24 232 € par an), quand D. 353-1-1 et la circulaire Cnav
+  2025-33 donnent 25 001,60 € en 2026 ; il refuse à tort entre les deux,
+  écart déclaré, le modèle suivant le texte. Le RAFP (50 %), la RCI (60 %)
+  et l'Ircantec (50 %, servie à 52 ans) restent dans les énoncés : le modèle
+  ne les sert pas en réversion.
+- *Le handicap* : budget ouvert au quart de ses 94 entrées, 24 ; dix saisies.
+  Le modèle ne traite pas ce départ, la prédiction a donc été celle du
+  texte, D. 351-1-5 du 1er septembre 2026 : les dix concordent (fiche
+  `retraite_anticipee_handicap`). Pour que le budget décompte les saisies
+  qu'aucun exemple ne porte, celles-ci et celles du RAFP, le registre prend
+  un champ `saisies_hors_exemples`, que `scripts/simulateurs.py` lit. Puis,
+  à la demande du propriétaire (« Continue avec le reste du budget
+  handicap »), les quatorze autres, budget épuisé : les bascules de
+  génération et la ligne « 1973 ou plus tard » entière. Treize concordent ;
+  pour un fonctionnaire né en 1961 parti à 59 ans, le simulateur demande
+  « un total de 88 trimestres, dont 68 cotisés », l'ancienne double
+  condition, que l'article 25, II, du décret n° 2003-1306, lu le même jour,
+  n'écrit plus : la CNRACL a le barème du régime général.
+
+**Le net dit « avant impôt », le 4 octobre 2026.** Le mot de l'estimation
+officielle : le menu, la bascule des montants et la clé de lecture disent
+« net avant impôt », non plus « ce qui arrive sur le compte », faux depuis le
+prélèvement à la source. Aucun chiffre ne bouge ; le budget de mots du
+formulaire monte de deux, pour la bascule. Le 1 % des complémentaires, que
+le net du dépôt omet, est décidé à l'étape 2 de l'action 138.
+
+**Le salaire de référence de l'Ircantec, le 4 octobre 2026 : les prix, que le
+moteur suivait déjà.** Ce que la note sur la valeur d'achat de l'Agirc-Arrco
+laissait ouvert.
+
+- *Le texte (§ 3.3 de l'architecture).* Depuis 2018, la valeur de service, le
+  salaire de référence et le rendement réel sont fixés « en application de la
+  règle d'évolution arrêtée dans le cadre du plan quadriennal » (arrêté du
+  30 décembre 1970, article 9 bis, LEGIARTI000053281114, lu dans l'index LEGI ;
+  l'article 16, que la fiche citait, porte l'anticipation), dont le décret
+  n° 70-1277 charge le conseil d'administration (article 2, III). À défaut de
+  plan, l'arrêté majore le salaire de référence des cinq tiers et la valeur de
+  service des deux tiers de la revalorisation des pensions. Les deux premiers
+  plans ont gardé le rendement réel de 7,75 % de 2018 à 2025, les deux
+  paramètres indexés sur l'inflation (rapport d'activité 2025 de l'Ircantec,
+  actualité du 28 décembre 2023) ; en 2026, l'un et l'autre montent de 0,9 %,
+  et le taux d'appel passe de 125 à 127 % (arrêté du 19 décembre 2025). Les
+  prix toujours, jamais les salaires : le rendement du dernier barème, que le
+  moteur prolongeait, fait exactement cela, et l'Ircantec n'entre pas dans
+  `prolongement_points.csv`.
+- *Ce qui reste ouvert.* Le plan de 2026 à 2029 (délibération n° 2025-12-15 du
+  11 décembre 2025) n'est pas publié, et le rapport d'activité n'en donne pas
+  les paramètres. Une dépêche AEF du 19 décembre 2025, seule source, lui prête
+  « à partir de 2028 » un salaire de référence surindexé de 2,6 points sur la
+  revalorisation des pensions, sans dire si c'est une fois ou chaque année : le
+  modèle ne le suit pas (§ 3.3, point 5). Mesuré sur des contractuels entrés à
+  22 ans et partis à 64, en prolongeant le prix d'achat par les prix — ce qui
+  redonne le modèle à 0,01 % près —, puis surindexé : des générations 1975 à
+  2005, la part Ircantec baisserait de 0,8 à 2,5 % pour la seule année 2028,
+  de 1,6 à 4,8 % pour 2028 et 2029, l'horizon du plan, et de 5 à 42 % si
+  c'était chaque année. Le salaire de référence de janvier 2028 tranchera ; il
+  faudrait alors un indice que le moteur ne connaît pas, les prix majorés.
+- *Ce qui change.* La fiche `ircantec_valeurs_point` passe en versions : les
+  barèmes publiés, lus, puis les prix supposés au-delà, la surindexation en
+  approximation mesurée, avec les copies datées de ses sources hors JORF ;
+  quatre rédactions de l'arrêté et du décret y sont rattachées (cliquet des
+  textes à 10 127). `test_l_ircantec_prolonge_le_rendement_de_son_dernier_bareme`
+  exige que la ligne de prolongation de `rendements_points.csv` porte le
+  rendement du dernier barème. `limites.md` le dit. Aucun chiffre ne bouge.
+- *Décidé le 4 octobre 2026 par le propriétaire* : « tant que ce n'est pas
+  officiel, on ne prend pas en compte ; on ne surinterprète pas ce qui
+  pourrait se produire dans le futur, nous n'avons pas de boule de cristal ».
+  La surindexation de 2028 quitte les approximations de la fiche, qui ne la
+  chiffre plus, et `limites.md` ; elle reste à lire le jour où elle sera
+  officielle. Au-delà du dernier texte officiel, la dernière règle officielle
+  reste en vigueur.
+
+**Étape 3, le 4 octobre 2026 : le brut en tête.**
+
+- *Les décisions du propriétaire*, le même jour, avant toute ligne : le brut
+  sans attendre l'étape 2 de l'action 138, le net du site en second, tel
+  qu'il est ; le brut par défaut sur tout le site, et non dans un seul bloc ;
+  la comparaison du total, âge par âge.
+- *Le défaut.* `montants` vaut `brut` dans les deux saisies, et la bascule
+  écrit le brut d'abord. Les adresses que le site écrit portent toujours leur
+  mode et ne changent pas de sens ; les deux témoins de simulation qui
+  saisissaient des euros sans le dire le disent désormais, en net, et leurs
+  chiffres ne bougent pas ; la pension saisie dans l'autre mode a son témoin
+  de page (`simuler_par_pension_nette`). Le salaire et la pension par défaut
+  gardent leurs nombres, lus en brut. Le pied de page et son affirmation
+  disent le brut d'abord (`pied.net_ou_brut`) ; les tests qui portaient sur le
+  net le demandent ; le parcours de présentation, récit qui décrit l'exemple
+  en net, se rend en net pour son test.
+- *Les âges.* `age_annulation_droit` (ouvrir) dit l'âge du taux plein
+  automatique ; `point_fixe`, la boucle d'`age_de_depart` que celui-ci
+  emprunte désormais, à l'identique sur les 221 âges des cas types, et
+  `ages_de_l_estimation` datent les trois départs de la synthèse officielle
+  (pilote). `Contexte.carriere` et `Contexte.departs_de_l_estimation`
+  refont la carrière de la saisie à chaque âge et la liquident : le brut de
+  chaque étage, en euros constants, le minimum vieillesse à part. Leurs
+  jumeaux JavaScript, et `tests/test_estimation_du_site.py`, qui les tient
+  d'accord sur onze saisies fictives (`tests/js/comparer-estimation.mjs`).
+- *La page.* « Comme votre estimation officielle », sous la carte des
+  repères : une rangée par âge — l'âge, sa date, ce qu'il est —, la base et
+  la complémentaire (ou le régime intégré et l'additionnelle), arrondies pour
+  faire le total brut, le net avant impôt — le mot que la bascule a pris le
+  même jour —, puis un champ où recopier le total de
+  l'estimation officielle, et l'écart. Les champs appartiennent au formulaire
+  du haut (`form="simulateur"`) : ils partent dans l'adresse et restent dans
+  le navigateur. « Comparer », ou Entrée dans un champ, recalcule sur place,
+  le focus rendu au champ (`index.html`). Rien pour qui est déjà parti, qui
+  saisit sa pension, ou dont la saisie date elle-même une pension — demandes
+  régime par régime, invalidité, radiation — ; rien non plus quand la saisie
+  refuse la carrière à l'un des âges. `docs/limites.md` (§ 5 ante ter) en dit
+  les trois réserves. Vérifié dans le navigateur intégré, au bureau et au
+  téléphone.
+- *Ce que ça déplace.* Aucun chiffre du modèle : les 712 témoins de
+  simulation recalculés ici restent à moins d'un milliardième de ceux de
+  Linux. 56 rendus de page sur 70, par le défaut et par le bloc, dont un
+  témoin neuf, `simuler_estimation_recopiee`.
+- *Reste.* Le net aux prélèvements officiels, à l'étape 2 de l'action 138,
+  qui le mettra dans le bloc. Et la carrière d'un relevé, que le site arrête à
+  sa dernière année quand l'estimation officielle prolonge les revenus
+  jusqu'au départ : `estimation_officielle.py` sait la prolonger, le site
+  pas encore.
+
+**Le restant, le 4 octobre 2026.** Le propriétaire, ce soir-là : « fait le
+restant ». Il a choisi, parmi trois périmètres, « tout ce que l'action 142
+garde en suspens » : le prix d'achat Agirc-Arrco implicite de « Mon
+estimation retraite » (il se reconnectera), la délibération de l'ERAFP, la
+réversion du RAFP, de la RCI et de l'Ircantec, le départ anticipé des
+assurés handicapés, le net officiel dans le bloc, le relevé prolongé — qu'une
+autre session fait déjà — et les moteurs publics. Pour la CSG d'une pension,
+« les deux » : la présomption « aucun autre revenu que ses pensions » par
+défaut, et un champ facultatif dans les réglages (action 138, étape 13).
+Pour les moteurs publics, R dans la distribution Ubuntu de la WSL, que le
+propriétaire installe lui-même, son mot de passe `sudo` n'étant tapé que par
+lui ; Destinie 2 importe `xlsx`, donc Java.
+
+**Étape 3, suite, le 4 octobre 2026 : le relevé prolongé jusqu'au départ.**
+
+- *Les décisions du propriétaire*, le même jour, avant toute ligne : la
+  carrière d'un relevé se prolonge sur tout le site, et non dans le seul
+  bloc — les quatre montants, le détail et le bloc partent de la même
+  carrière — ; qui ne travaille plus le déclare dans « Interruptions », sans
+  champ nouveau.
+- *La convention*, celle de `Carriere.prolongee` : la dernière année se
+  prolonge (`prolonger_releve`, dans `carriere.py`). Chacune de ses lignes,
+  sous son statut, avec la nature de sa période et son revenu avancé au
+  rythme du salaire moyen ; l'année du départ au prorata de ses mois ; les
+  trimestres déduits du revenu. `_releve_jusqu_au_depart` (contexte) dit
+  quand et jusqu'où : rien pour qui est parti une année passée ; jusqu'au
+  départ, ou jusqu'à la radiation pour invalidité qui clôt l'emploi de
+  fonctionnaire, faute de quoi son contrôle refusait la carrière prolongée.
+  Les années ajoutées prennent leur motif comme celles d'une carrière de
+  métiers (`Saisie.interruptions_apres`, qui partage avec
+  `interruptions_de_carriere` la règle des périodes à l'étranger) : une
+  période à l'étranger les vide, le champ « Interruptions » garde le dernier
+  mot ; la retraite progressive les met à temps partiel. Déclarées
+  `sans_activite`, elles rendent dans les six scénarios la pension du relevé
+  arrêté, à l'identique. `Contexte.releve_prolonge` les donne à la page. Les
+  jumeaux JavaScript concordent au bit près. `estimation_officielle.py`
+  garde sa propre prolongation (`prolonger=False`), que `--revenus-futurs`
+  règle.
+- *La page.* Le résumé du relevé dit les années ajoutées et la ligne à
+  écrire pour qui ne travaille plus (`2025:2039:sans_activite`), ou combien
+  en sont déclarées sans emploi ; l'aide du relevé le dit d'une incise ; la
+  réserve du bloc « Comme votre estimation officielle » tombe.
+  `docs/limites.md` le dit au § 5 (« Les carrières réelles »), au § 4 (le
+  report) et au § 5 ante ter.
+- *Ce que ça déplace.* Sept témoins de simulation sur 712, tous des relevés
+  qui finissent en 2038 pour un départ au 1er février 2039 : janvier 2039
+  s'y ajoute. Au scénario 1, de +0,06 % à +2,45 % (la fonction publique, dont
+  le traitement de référence se lit alors sur la ligne de 2039 : le point 1
+  de l'action 134, que la carrière de métiers subissait déjà). Au scénario 6,
+  `releve_deux_statuts` regagne +2,53 % (le point 3 de l'action 134, réglé
+  pour le site) ; cinq relevés modestes du privé baissent de 1,3 à 1,4 %,
+  mais pension et rente capitalisée obligatoire font la même somme au
+  centime : ils sont au plancher de la garantie vieillesse, et le mois de
+  plus déplace le complément vers la rente. Cinq témoins neufs
+  (`releve_prolonge_*`) tiennent le portage sur chaque branche. Dix rendus de
+  page sur 70 : l'incise de l'aide, et `simuler_releve`.
+- *Les témoins sous Linux.* Copiés sur le disque de la WSL (`git archive
+  HEAD data`, puis `src` et `scripts` du dossier), les 717 témoins s'y
+  calculent en 84 secondes, contre 13 minutes depuis `/mnt/c` ; les 705 que
+  le changement ne touche pas sortent identiques à `main` au bit près.
+- *Tests.* `tests/test_releve_prolonge.py` (huit, niveau rapide), deux
+  relevés de plus dans `test_estimation_du_site.py`, la phrase de la page dans
+  `test_web_saisie.py`. Les relevés sont fictifs.
+
+**La réversion du RAFP, de l'Ircantec et de la RCI, le 4 octobre 2026.** Les
+trois régimes que le simulateur de réversion servait et que le modèle disait
+« non portés » ont chacun leur fiche, lue dans l'index LEGI (incréments du 27
+septembre, la DILA refusant les suivants). `reversion_rafp` : décret
+n° 2004-569, articles 6, 9 et 10, arrêté du 26 novembre 2004, articles 4 à 10,
+et la fiche pratique de l'ERAFP — la moitié, sans âge, ressources ni durée du
+mariage, et rien quand le droit direct a été versé en capital, ce que
+`PensionRegime.capital` dit désormais à l'échéancier. `reversion_ircantec` :
+arrêté du 30 décembre 1970, articles 20 à 25 dans toutes leurs rédactions,
+cinq versions de 1971 à 2004, le décret n° 70-1277 lui renvoyant tout
+(article 11) — la moitié à cinquante ans, ou dès le décès avec deux enfants de
+moins de vingt et un ans, sous la condition de mariage de l'article 20.
+`reversion_rci` : le règlement approuvé par l'arrêté du 9 février 2012,
+articles 16 à 35, dans ses rédactions de 2013 à 2027, et les circulaires Cnav
+2021-4, 2024-07 et 2026-01 (§ 9) — 60 % à cinquante-cinq ans, réduite au
+prorata quand les ressources, réversions des régimes de base comprises,
+dépassent deux plafonds annuels de la Sécurité sociale. Le Python d'abord,
+puis son jumeau ; quatre témoins de simulation naissent, et
+`reversion_fonctionnaire` sert désormais son RAFP. Les exemples `ur_reversion_`
+se comparent sur les trois régimes et concordent, sauf le mariage de trois ans
+et demi, en écart connu : le simulateur y refuse le RAFP sous la condition de
+mariage de la pension civile, qu'aucun texte du RAFP ne pose. Restent : le
+confirmer auprès de l'ERAFP ; la circulaire Cnav qui dirait si la réversion du
+RAFP compte aux ressources de R. 353-1, ce que le modèle fait à la lettre du
+2° ; le plafond de la RCI de 2013 à 2020 et les complémentaires des artisans
+et des commerçants d'avant 2013 ; le versement unique de l'Ircantec sous 300
+points.
+
+**Étape 4, le 5 octobre 2026 : Destinie 2 exécuté à part, ses sorties en
+témoins.** Avec l'action 137 ; l'étape 4 de l'action 138 y trouve sa mesure.
+
+- *L'installation, hors du dépôt.* Dans la distribution Ubuntu de la WSL :
+  l'archive du dépôt de l'INSEE au commit `4c1d34b` (15 octobre 2025), dans
+  `~/modeles/Destinie-2` — téléchargée, et non clonée, la garde d'isolement
+  des sessions refusant tout `git` hors de leur worktree ; `xlsx` 0.6.5 et
+  `xlsxjars` 0.9.0 du CRAN dans la bibliothèque de l'utilisateur ; le paquet
+  `destinie` 2.0 compilé par `R CMD INSTALL` (R 4.3.3, Rcpp 1.0.12). Aucune
+  installation système. Le code de Destinie n'entre pas au dépôt.
+- *L'exécution.* `scripts/fetch/destinie_2.py` écrit dix-huit cas deux fois :
+  en requête du simulateur (le relevé de carrière en euros de chaque année,
+  les enfants, le conjoint, le décès) et en tables de Destinie (`ech`, `emp`,
+  `fam`, `union_base`, `union`) ; `destinie_2.R` lance `destinieSim` sans
+  simuler de population, sous `anLeg` 2023, les hypothèses du COR de 2023 que
+  le paquet livre, deux fois (tel quel, puis sans les majorations pour trois
+  enfants, dont l'écart dit leur montant). Chacun part au taux plein, que sa
+  carrière atteint à l'âge d'ouverture : `comp_exo` ne liquide pas (sa branche
+  de `TestLiq` n'appelle pas `Liq()`). Trois pièges, dits dans le script : le
+  scénario démographique de 2022 que le paquet ne livre pas entier,
+  `FinEtudeMoy` à lire, le facteur `NomVar` que R 4 rend en chaînes.
+- *Le témoin.* `tests/temoins/destinie_2.json` : la version, le commit, la
+  date, la législation, la licence (GPL-3.0, paramètres sous ODbL), les
+  requêtes, les sorties et les paramètres que Destinie a lus.
+  `tests/test_destinie.py` (niveau contrôle) rejoue chaque requête dans le
+  scénario 1 et confronte durées, taux, pensions, majorations et réversions ;
+  chaque écart est déclaré avec sa cause et sa borne, et un écart déclaré qui
+  rentre dans la tolérance fait échouer le test. `DESTINIE_2=Ubuntu` rejoue
+  Destinie et compare au témoin ; sans lui, le test se saute.
+- *Ce qui concorde.* Les durées, la majoration de durée d'assurance de la mère
+  (vingt-quatre trimestres, rien au père), la bonification de la mère
+  fonctionnaire, qui compte à la liquidation ; le taux plein, sous la loi de
+  2023 aussi ; le régime général à 0,2 % près, la pension civile à 0,6 % (le
+  dépôt ramène le revenu de 2017 au départ par le point du 1er janvier 2017,
+  relevé le 1er février) ; le minimum contributif daté, au centime en 2018 —
+  rebasé sur l'étape 15 de l'action 138, publiée pendant cette étape, qui
+  retire les deux écarts que la première exécution mesurait (+3,9 et +1,6 %) ;
+  les majorations de 10 % ; la réversion de 54, 50 et 60 % ; la valeur du
+  point de l'Agirc-Arrco.
+- *Contre le scénario 1* : le minimum de réversion (−41 %), la majoration de
+  11,1 % (−47 % avec lui), celle de 10 % de la survivante de trois enfants
+  (−9,6 %, L. 353-1, qui renvoie à L. 351-12), que la fiche `reversion`
+  portait en paramètres sans les dire toutes absentes — elle le dit
+  désormais ; la réversion de l'Agirc-Arrco que deux enfants à charge doivent
+  dès le décès, écart déjà déclaré. Rien n'est corrigé ici : l'étape 4 de
+  l'action 138 a ses mesures.
+- *Contre Destinie* (le registre) : la chaîne des coefficients des salaires
+  décalée d'un an (SAM de 2024 +3,75 %), trois trimestres de surcote au né
+  d'octobre avant son âge d'ouverture, la revalorisation moyenne de 2020, la
+  base et le plafond de la réversion majorée, la valeur du point de 2024
+  projetée ; confirmés à l'exécution, l'âge de la réversion levé par deux
+  enfants et la réversion complémentaire comptée aux ressources (−13 %).
+- *À trancher, au propriétaire* : Destinie acquiert les points aux taux
+  contractuels moyens des entreprises, le dépôt aux taux minimaux de l'accord
+  — 15 à 26 % de points de plus chez lui (registre, 138.13).
+- *Restent* : l'Agirc-Arrco reverse-t-elle la majoration pour enfants du
+  défunt, comme Destinie ? (l'accord du 17 novembre 2017 à lire ; écart
+  ouvert, déclaré au test) ; le point d'indice du 1er janvier que le dépôt
+  prête à toute l'année d'une hausse en cours d'année (+0,6 % en 2018,
+  peut-être +1,7 % pour un départ de 2023), à vérifier sur un exemple ; la
+  valeur de service de l'année de la liquidation, prise en fin d'année des
+  deux côtés, quand la caisse sert celle du jour ; TRAJECTOiRE.
+
+**La délibération de l'ERAFP, le 5 octobre 2026.** Le décret n° 2004-569
+renvoie au conseil d'administration de l'ERAFP le barème qui module la valeur
+de service selon l'âge (article 8), celui de la conversion en capital et le
+capital fractionné (article 9) ; ses délibérations deviennent exécutoires faute
+d'opposition dans le mois (article 27), et aucune n'est au JORF, dont l'index
+n'a que les budgets de l'établissement. Lues sur rafp.fr, copies datées dans
+`data/brut/rafp` du dossier principal, empreintes dans la fiche
+`rafp_majoration_capital`, réécrite en six versions :
+
+- *La majoration.* La délibération du 5 février 2015 : « ≤ 62 1,00 » …
+  « ≥ 75 1,81 », aux prestations qui prennent effet depuis le 1er mars 2015 ;
+  avant, le barème de la délibération du 10 novembre 2005, que le site ne
+  publie pas et que le rapport annuel 2012 reproduit, au pivot de soixante
+  ans : 1,08 à 62 ans, 1,18 à 64, 2,08 à 75. Le 1,80 du tableau que l'ERAFP
+  publie à part est démenti par la délibération, les rapports annuels 2014 et
+  2015 et le simulateur, qui disent 1,81 ; aucune délibération lue depuis
+  (2016 à 2025) ne touche le barème.
+- *Au mois, sans arrondi.* La délibération donne un barème par âge ; les
+  rapports annuels 2012, 2014 et 2015 le disent calculé « en tenant compte du
+  nombre d'années et du nombre de mois », comme le tableau des coefficients de
+  conversion : le modèle interpole au prorata des mois révolus. Le simulateur
+  arrondit en plus au centième, ce qu'aucun texte ne dit — le SNES écrivait
+  1,105 en 2014 — : le modèle ne le suit pas, au plus 0,5 % de la rente.
+- *La conversion* : le barème de 2005 (24,62 à 62 ans) jusqu'au 31 décembre
+  2021, celui de la délibération n° 2 du 16 décembre 2021 (27,11) depuis ; le
+  modèle servait le second à toutes les dates.
+- *Le capital fractionné* : délibérations n° 3 du 28 mars 2019 (de 4 600 à
+  5 124 points, quinze mois de rente, le solde au seizième mois), n° 5 du 30
+  avril 2020 (en une fois quand le RAFP suit la retraite de base de plus de
+  quinze mois) et n° 7 du 8 février 2024 (dès 4 900 points, quatre mois, le
+  solde au cinquième ; au-delà de quatre mois, en une fois). Le détail de la
+  pension le dit, la retraite de base datée par le départ déclaré. L'article
+  9-1 (la cotisation exceptionnelle unique, 2024) n'est pas porté, la
+  cotisation non plus.
+- *Le modèle.* `majoration_rafp`, `conversion_capital_rafp`,
+  `fractionnement_rafp`, `prestation_rafp` et `mois_apres_le_depart`
+  (`droit/liquider.py`), puis leurs jumeaux, au bit près.
+- *L'adaptateur.* `PrestationRafp` dans `scripts/simulateurs.py`, où chaque
+  adaptateur dit son éditeur et fait ses exemples ; la grandeur
+  `prestation_rafp` de l'oracle prête les points saisis et la valeur de
+  service affichée. Les dix saisies deviennent les exemples `erafp_…` : huit
+  concordent ; deux en écart connu, l'arrondi, et l'âge légal de 64 ans que le
+  simulateur prête à la génération 1958, quand L. 161-17-2 lui donne 62 ans.
+  Le registre ne déclare plus de saisie hors exemple.
+- *Les calculs que l'ERAFP publie* : les prestations-types de ses rapports
+  annuels 2015 et 2022 et l'exemple de 2026 de sa page « Calcul et
+  paiement », neuf exemples `erafp_ra…` et `erafp_page…`, tous concordants :
+  ils datent ce que le simulateur, qui n'accepte que des dates futures, ne
+  montre pas — le barème de conversion de 2005, la fraction de quinze mois,
+  le capital en une fois après une retraite de base trop ancienne (un champ
+  `retraite_de_base` le date). L'exemple d'avant avril 2024 de la même page
+  n'est pas retenu : son résultat est calculé à la valeur de service de 2026,
+  pas à celle qu'il écrit.
+- *Ce que ça déplace.* Un témoin de simulation sur 721,
+  `reversion_rafp_en_capital` : son capital, pris en 2020, passe de 1 205 € à
+  1 095 €, au barème de conversion de 2005 ; aucune pension ne bouge, dans
+  aucun scénario, ni aucun rendu de page. Les autres témoins ne bougeant sous
+  Windows qu'aux derniers chiffres, la chaîne est greffée sur les témoins de
+  `main`, et les notes du RAFP sur son paquet, sans la WSL.
+- *Tests.* `tests/test_rafp.py` (huit, rapides, le jumeau compris), trois de
+  plus dans `tests/test_simulateurs.py`. Carrières fictives.
+- *Restent* : demander à l'ERAFP si ses liquidations arrondissent comme son
+  simulateur, et ses délibérations de 2005 et de 2019.
+
+**Le départ anticipé des assurés handicapés, le 5 octobre 2026.** L'étape « au
+modèle » du restant.
+
+- *Lu*, dans l'index LEGI du dépôt (incréments du 27 septembre) : L. 351-1-3
+  dans ses cinq rédactions, D. 351-1-5 dans ses sept, D. 351-1-6 dans ses
+  quatre, L. 351-8 (4° bis ; 1° ter de 2011 à 2023 ; 2° depuis), R. 351-24-3,
+  R. 815-1, L. 161-21-1, L. 634-2 et L. 742-3 du code rural ; au code des
+  pensions L. 14, L. 24, I, 5°, D. 14, R. 33 bis et R. 37 bis ; le décret
+  n° 2003-1306, articles 20, 24 bis et 25, le décret n° 2004-1056, articles 16,
+  20 bis et 22 bis, le décret n° 2023-435, article 13, II, F, dans ses deux
+  rédactions, la seconde par l'article 3, 5°, du décret n° 2026-344 ; l'arrêté
+  du 30 décembre 1970, article 16 (Ircantec) ; le règlement de la RCI,
+  article 12. Et la circulaire Cnav n° 2026-18, qui applique, et la fiche
+  F16337. D. 351-1-7 et D. 351-1-8 ne portent pas sur ce départ : l'enfant
+  handicapé, l'incapacité permanente de L. 351-1-4.
+- *La saisie.* `handicap=AAAA-MM`, « Incapacité d'au moins 50 %, depuis »,
+  dans le dépliant « Invalidité et inaptitude » : le mois depuis lequel
+  l'incapacité permanente atteint 50 %, qui peut précéder la carrière, jamais la
+  naissance ni le départ, ce que la saisie oppose comme le champ ; une décision
+  médicale de la chronologie, dans les deux moteurs.
+- *Le droit, au modèle.* La fiche coupée en sept versions : rien avant juillet
+  2004 ; 80 % jusqu'en 2014, que la saisie n'établit pas ; la double condition
+  de 2015, durées validée et cotisée ; la seule durée cotisée depuis septembre
+  2023, avec les trimestres retranchés en plus aux nés avant 1973 (I bis) ; la
+  durée d'avant 2023 de ces générations depuis septembre 2026. `ouvrir` ouvre
+  le motif `handicap` avant l'âge légal de droit commun, de préférence à
+  l'inaptitude et à la carrière longue, qui ne majorent pas ; la concomitance
+  se lit année civile par année civile (circulaire, 1.1.3.1). Le taux plein ;
+  la majoration, le tiers du rapport arrondi au centième, écrêtée à la pension
+  entière, hors de ce que le minimum contributif relève (circulaire, 3.3.3,
+  règle 3) ; au fonctionnaire, sur ses services (R. 33 bis), et sans
+  coefficient de minoration à tout âge depuis 2015 (L. 14, I). L'Agirc-Arrco,
+  l'Ircantec et la RCI sans coefficient. Depuis 2015, la même incapacité fait
+  réputer inapte : la version `age_legal_2011` de `inaptitude_au_travail` est
+  coupée au 1er janvier 2015. Les âges du pilote et les départs par régime la
+  lisent. Le tout dans `droit/invalidite.py`, `ouvrir.py` et `liquider.py`,
+  puis leurs jumeaux. À l'inventaire des avantages, les deux lignes passent à
+  `integre` : la majoration lue dans les comptes, le départ mesuré par le
+  retrait de sa fiche, nul sur la grille, qu'aucun cas type ne déclare.
+- *Les exemples.* Les vingt-quatre saisies du simulateur deviennent les
+  exemples `ur_handicap_*`, chacune à la seule date d'effet que sa génération
+  et son âge permettent : toutes concordent. Celle du fonctionnaire né en 1961
+  n'est pas un écart : parti à 59 ans, il partait en 2020, sous la double
+  condition de 2015 que le simulateur lui oppose. Et trois de la circulaire
+  2026-18 : les coefficients 0,28 et 0,29, l'écrêtement.
+- *Ce que ça déplace.* Six témoins de simulation naissent (`handicap_*`),
+  calculés sous la WSL ; aucun des autres ne bouge, dans aucun scénario, et le
+  portage en retrouve toujours 93,1 % au bit près. Treize rendus de page
+  changent, et un naît, `simuler_handicap` : le champ, dans les formulaires
+  figés entiers ; le refus d'ouverture, qui nomme le handicap ; les deux pages
+  des avantages.
+- *Tests.* `tests/test_invalidite.py`, neuf de plus, et la parité des deux
+  saisies ; les vingt-sept exemples, par `tests/test_oracle.py`. Carrières
+  fictives.
+- *Restent* : les régimes que la fiche ne nomme pas (non-salariés agricoles,
+  libéraux, avocats, cultes, régimes spéciaux) ; la qualité de travailleur
+  handicapé d'avant 2016 et la commission de L. 161-21-1 ; la retraite
+  anticipée fictive de qui part à l'âge légal ; la réversion sur la pension non
+  majorée ; la durée de L. 13, III, du fonctionnaire qui part avant soixante
+  ans ; le mot « handicap » dans la colonne de l'estimation officielle
+  (`departEnClair`, que la session du net travaille) ; la ligne « handicap :
+  hors modèle » de `docs/architecture.md`, à sa prochaine version.
+
+**Le bloc nomme le handicap, le 5 octobre 2026.** Dans « Comme votre
+estimation officielle », le premier départ se disait « âge légal » quand le
+handicap l'ouvrait (`63707568`) : il dit désormais « handicap, taux plein »,
+comme la carrière longue (`OUVERTURES_EN_CLAIR`, `pages.js`). Un cas fictif de
+plus tient les deux moteurs d'accord sur ce départ
+(`tests/test_estimation_du_site.py`) ; un rendu change, `simuler_handicap`.
+
+**Étape 4, suite, le 5 octobre 2026 : TRAJECTOiRE exécuté à part, les cas
+types du COR en témoins.** Avec l'action 137 ; les étapes 4 et 9 de l'action
+138 y trouvent leur mesure.
+
+- *L'installation, hors du dépôt.* Dans la distribution Ubuntu de la WSL :
+  l'archive du commit `0963b57` (« trajectoire v1.1.2 », 4 avril 2025 ; son
+  DESCRIPTION dit 1.1.1), prise sous Windows par l'API du GitLab de la DREES —
+  le réseau de la WSL coupe les connexions —, dans `~/modeles/trajectoire`,
+  puis `R CMD INSTALL` dans la bibliothèque de l'utilisateur. Ce qu'Ubuntu
+  n'avait pas, téléchargé sous Windows depuis le CRAN : data.table 1.18.6.1,
+  logger 0.4.3, icarus 0.3.3, RApiSerialize, assertthat, arrow 25.0.1 et sa
+  bibliothèque C++ précompilée du projet Apache Arrow (somme SHA-512 de celle
+  que le paquet livre) ; qs 0.27.3, retiré du CRAN, et stringfish 0.18.0,
+  pris dans ses archives (la 0.19 voudrait un RcppParallel que seul cmake
+  construit). arrow se lie à libcurl et à OpenSSL sans leurs paquets de
+  développement : trois liens symboliques, dans `~/modeles/liens`, servent à
+  sa seule édition de liens. Aucune installation système, aucune donnée
+  confidentielle ; le code de TRAJECTOiRE n'entre pas au dépôt.
+- *L'exécution.* `scripts/fetch/trajectoire.R` évalue le script des cas types
+  que le paquet livre (`casTypesCOR.R`) tel quel, à trois substitutions près —
+  les générations 1955, 1960, 1963, 1964 et 1970, une seule hypothèse de SMPT
+  (1 %), ni rapport ni classeur — et garde le premier âge au taux plein de
+  chaque cas type : soixante-quatre cas (le cas type 4 né en 1970 n'en a pas).
+  Il calcule aussi les onze droits directs de Destinie 2 par
+  `calculePension()`. `trajectoire.py` réécrit chaque cas type en requête du
+  simulateur : naissance au 1er du mois, une ligne par année, les trimestres
+  de la fonction publique au temps, le salaire de référence du chômage, une
+  part de primes pour la carrière. Un piège, dit dans le script : TRAJECTOiRE
+  veut le revenu ANNUEL de l'année du départ et le coupe lui-même ; le lui
+  donner coupé le coupe deux fois.
+- *Le témoin.* `tests/temoins/trajectoire.json` : version, commit, date,
+  législation (sa table des âges et des durées), licence, les sorties de
+  chaque cas, ses années et ses points, et ses paramètres (revaloSam,
+  plafond, taux d'acquisition moyens et minimaux, valeurs d'achat et de
+  service). `tests/test_trajectoire.py` (niveau contrôle) confronte quinze
+  grandeurs, chaque écart déclaré avec sa cause et sa borne ; trois
+  mécanismes y sont refaits : son salaire annuel moyen sur ses paramètres,
+  au millionième, et l'écart du dépôt, qui n'est que la chaîne des
+  coefficients, au millième ; les points du dépôt, ceux de TRAJECTOiRE aux
+  taux minimaux, à 0,1 % ; sa valeur de service, celle du mois du départ.
+  `TRAJECTOIRE=Ubuntu` le rejoue, à l'identique (22 secondes).
+- *Ce qui concorde.* Les durées, au tiers de trimestre de la fonction
+  publique ; la majoration de durée d'assurance (24 et 16 trimestres) ; la
+  durée requise et l'âge d'ouverture, hors suspension ; la carrière longue
+  (cas types 1, 2, 2 bis, 5 et 10) ; le taux plein ; le minimum contributif,
+  à dix centimes par an près ; les majorations de 10 % et le taux de celle de
+  l'Arrco, là où Destinie différait ; le RAFP d'une carrière à primes
+  constantes.
+- *Contre le dépôt.* La valeur de service de l'Agirc-Arrco : le dépôt (et
+  Destinie) sert celle du 31 décembre de l'année de la liquidation,
+  TRAJECTOiRE et la caisse celle du jour : +0,6 % en février 2018, +5,1 % en
+  janvier 2022, +4,9 % en octobre 2023, +1,6 % en 2024 — le reste de
+  l'étape 4 tranché, à corriger à part (étape 20 de l'action 138). La
+  bonification du cinquième et la majoration des hospitaliers actifs,
+  absentes (138.17) : vingt et quinze trimestres, une décote de 5,6 à 21 % à
+  l'aide-soignante. Ouverts : l'arrondi des services de la fonction publique
+  (un tiers de trimestre manquant fait une décote au dépôt, pas chez lui) ;
+  le minimum garanti de la CNRACL du cas type 10 (1,4 à 2 % plus haut au
+  dépôt) ; au relevé, le chômage indemnisé ne vaut de points que si sa ligne
+  porte le salaire de référence, quand un relevé réel porte zéro.
+- *Contre TRAJECTOiRE* (registre, huit écarts nouveaux, et trois anciens que
+  l'exécution chiffre) : sa chaîne revaloSam (de −11 % à +5,8 % selon l'année
+  du salaire ; 4,75 % sur 2022 pour un départ de janvier 2022) ; les années
+  partagées de ses cas types (un revenu entier par état, compté jusqu'à seize
+  fois : 232 541 € au régime général en 1986 au cadre du cas type 1 ; quatre
+  trimestres pour un mois de privé) ; l'AVPF multipliée par douze ; le
+  chômage hors de la proratisation (0,86) ; les âges et les durées des
+  super-actifs ; le traitement de référence revalorisé comme les pensions ; la
+  proratisation bornée à 1 malgré les bonifications (L. 12) ; le RAFP en rente
+  sous 5 125 points ; et, déjà au registre, la suspension qu'il n'a pas, ses
+  paramètres projetés depuis 2024 et la minoration temporaire de
+  l'Agirc-Arrco qu'il garde aux départs de 2024 à 2035.
+- *À trancher, au propriétaire.* Les taux d'acquisition des points :
+  TRAJECTOiRE, comme Destinie, aux taux contractuels moyens (le dépôt en a
+  6 à 29 % de moins) ; refaits, ils sont toute la différence (138.13). La
+  convention de projection des départs futurs (1964, 1970), dont les montants
+  ne se confrontent pas.
+- *Restent* : Ines, sur ce modèle ; les indicateurs de cycle de vie (138.9),
+  que le témoin garde sans les lire ; le RAFP année par année, qu'une requête
+  ne sait pas dire.
+
+**Le 12 octobre 2026, le propriétaire connecté : la fin.** Le prix d'achat
+Agirc-Arrco que projette « Mon estimation retraite », sa carrière
+reconfrontée au modèle du jour, puis ce que la page fait des revenus au-delà
+de l'âge de départ choisi ; l'action close. Les deux notes sont sous
+`docs/archives/feuille_de_route/142/`.

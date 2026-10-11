@@ -1,0 +1,20 @@
+date: "2026-10-12"
+session: "action 142, la fin : ce que « Mon estimation retraite » fait des revenus au-delà de l'âge de départ choisi, puis l'action close"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1. Le
+  simulateur « Mon estimation retraite », le propriétaire toujours connecté, sur la même
+  situation fictive que la nuit précédente, salarié du privé à 30 000 € bruts par an, rien
+  n'étant enregistré ; la série de « Lire les données de l'évolution des revenus » et les
+  points Agirc-Arrco de départs successifs, sous des revenus plats puis sous une
+  croissance régulière, un départ plus tardif ajouté.
+trouve: >-
+  Aucun texte de droit. La série de revenus de la page s'arrête à l'année de l'« âge de
+  départ choisi » ; au-delà, la page prolonge le revenu de 1 % par an, composé, à compter
+  du 1er janvier suivant, quelle que soit l'évolution choisie, et la règle redonne les
+  points au centième avec le prix d'achat figé après 2037. Les « 1 % de points » de plus
+  par année ajoutée après l'âge légal étaient ce revenu prolongé. La fiche
+  agirc_arrco_valeur_achat le dit ; le modèle ne change pas.
+reste: >-
+  Rien de l'action 142 : elle passe à l'archive de la feuille de route, ses notes sous
+  docs/archives/feuille_de_route/142/ ; Ines, le dernier modèle à exécuter à part, reste
+  à l'action 137.

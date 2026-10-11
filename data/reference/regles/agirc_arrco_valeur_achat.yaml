@@ -326,8 +326,13 @@ sources:
     au salaire moyen et que le modèle le fait. D'où les « 11,6 % » du 4 octobre, qui ne valaient que pour une année postérieure
     à 2037, et la complémentaire du modèle sous celle de la page, d'autant plus qu'on
     travaille après 2037. Après l'âge légal de la carrière d'essai, chaque année ajoutée
-    gagne encore 1 % de points : la page y prolonge peut-être le revenu au-delà de la fin
-    de carrière saisie ; non vérifié.
+    gagne encore 1 % de points, et le prix n'y est pour rien : la série de revenus que la
+    page laisse saisir s'arrête à l'année de l'« âge de départ choisi » (le premier des
+    âges, puis la dernière ligne de départ dépliée), et pour un départ plus tardif la page
+    prolonge le revenu de cette année-là de 1 % par an, composé, à compter du 1er janvier
+    suivant, quelle que soit l'évolution choisie. Mesuré le même jour, sous des revenus
+    plats puis sous une croissance régulière, sur les mois qui séparent deux départs : la
+    règle redonne les points au centième.
   lectures:
   - type: legifrance
     reference: >-
