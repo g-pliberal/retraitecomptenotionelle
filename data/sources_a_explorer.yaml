@@ -1543,12 +1543,30 @@ sources:
       titre, elle « augmente la pension de 185 000 nouveaux retraités ». Un
       résultat publié, à confronter à la fiche minimum_contributif.yaml et à
       ce que le dépôt en calcule.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-10-11"
     note: >-
       Repérée le 11 octobre 2026 parmi les publications de référence de la
       page TRAJECTOiRE (`drees_trajectoire_page`) : Martin Chopard, Études et
       résultats n° 1297, février 2024. Le site refuse les sessions du cloud :
-      à lire depuis une session locale, ou dans Internet Archive.
+      à lire depuis une session locale, ou dans Internet Archive. Lue le même
+      jour dans sa copie d'Internet Archive du 8 juin 2026
+      (web.archive.org/web/20260608023545/, suivi de l'adresse) ; son PDF,
+      /sites/default/files/2024-02/ER1297.pdf, y a une copie du 17 août 2026
+      (20260817202642), non lue. Paru le 29 février 2024, chiffré par
+      TRAJECTOiRE sur les régimes alignés, avant la loi du 30 décembre 2025.
+      La réforme de 2023 ajoute 100 € au 1er septembre 2023 (aux pensions
+      servies, sur la majoration ; aux futures, 75 € sur la majoration et
+      25 € sur la base) et fait suivre au Mico le Smic : la fiche
+      minimum_contributif.yaml porte déjà ces montants et cette
+      revalorisation. En 2024, 185 000 nouveaux retraités y gagnent 30 € en
+      moyenne, et la part des bénéficiaires parmi eux passe de 26 à 30 % ;
+      sans la réforme, elle serait tombée à 10 % en 2070, elle se tient entre
+      25 et 30 %. Pour la génération 1975, le Mico relève le premier décile
+      de pension de 23 % ; 32 % des femmes en bénéficient, contre 18 % des
+      hommes, pour 112 € contre 90 € (euros constants de 2023), et l'écart de
+      pension de base du privé entre femmes et hommes passe de 16,6 à 14,5 %.
+      Reste à confronter ces résultats à ce que le dépôt calcule.
 
   - id: drees_er_1283_mda_enfants
     url: https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/etudes-et-resultats/retraite-parmi-les-femmes-beneficiant-de
@@ -1561,12 +1579,28 @@ sources:
       voient leur pension augmenter grâce à ces trimestres ». Un résultat
       publié, à confronter à la fiche majoration_duree_assurance_enfants.yaml
       et à la page Droits non cotisés.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-10-11"
     note: >-
       Repérée le 11 octobre 2026 parmi les publications de référence de la
       page TRAJECTOiRE (`drees_trajectoire_page`) : Romain Guirriec, Études
       et résultats n° 1283, 2023. Le site refuse les sessions du cloud : à
-      lire depuis une session locale, ou dans Internet Archive.
+      lire depuis une session locale, ou dans Internet Archive. Lue le même
+      jour dans sa copie d'Internet Archive du 11 avril 2026
+      (web.archive.org/web/20260411205633/, suivi de l'adresse) ; son PDF,
+      /sites/default/files/2023-10/ER1283MAJ1210.pdf, y a une copie du 9 mai
+      2026 (20260509142641), non lue. Paru le 12 octobre 2023, chiffré par
+      TRAJECTOiRE, avant la loi du 30 décembre 2025. Parmi les femmes nées en
+      1958, 85 % ont des MDA pour enfants ; 64 % en ont au moins un trimestre
+      utile à la proratisation, 29 % au taux, 65 % à l'un ou l'autre : trois
+      sur quatre de celles qui en ont. Sur « une moyenne de 14,8 trimestres de
+      MDA pour enfants attribués par femme de cette génération », 9,0 sont
+      utiles à la proratisation, 2,3 au taux, 9,1 à l'un ou l'autre. Au-delà
+      des générations des années 1960, la part utile au taux se tiendrait
+      près de 35 %. La surcote ouverte dès 63 ans aux parents à carrière
+      complète, que porte la fiche surcote_parentale.yaml, toucherait une
+      femme sur six de la génération 1980, pour 0,35 trimestre utile de plus
+      au taux. Reste à confronter ces résultats à ce que le dépôt calcule.
 
   - id: drees_calcul_pension
     url: https://gitlab.com/DREES_code/public/outils/calcul_pension

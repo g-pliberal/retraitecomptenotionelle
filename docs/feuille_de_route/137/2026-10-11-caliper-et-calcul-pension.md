@@ -60,6 +60,17 @@ disent ce que le registre des modèles sait depuis le 4 octobre.**
   contributif augmente la pension, et le n° 1283 (2023), sur les trois
   femmes sur quatre que leurs majorations de durée d'assurance pour enfants
   font gagner.
+- *Les deux Études et résultats, dans Internet Archive.* Leurs pages se
+  lisent dans leurs copies d'avril et de juin 2026, et leurs PDF y ont
+  chacun une copie, non lue. Le n° 1297 (29 février 2024) chiffre la réforme
+  du minimum contributif de 2023, que la fiche minimum_contributif.yaml porte
+  déjà : 185 000 nouveaux retraités de 2024 y gagnent 30 € en moyenne, et la
+  part des bénéficiaires parmi eux passe de 26 à 30 %. Le n° 1283
+  (12 octobre 2023) mesure l'utilité des majorations pour enfants : 65 % des
+  femmes nées en 1958 en ont au moins un trimestre utile, trois sur quatre
+  de celles qui en ont. Toutes deux passent en `explore` au registre des
+  sources ; leurs chiffres, d'avant la loi du 30 décembre 2025, attendent
+  d'être confrontés à ce que le dépôt calcule.
 - *Ce que le GitLab ne règle pas.* Il ne rend pas à CALIPER ce qui faisait
   son prix : sa validation sur les pensions réelles de l'EIR 2004 (chantier
   138.14) demande des données qu'on ne lit qu'au CASD. Et `calcul_pension`

@@ -6,8 +6,9 @@ consulte: >-
   par git ls-remote et un clone sans contenu, rien n'étant exécuté ; cette adresse
   et la page CALIPER de la DREES, par scripts/fetch/sonder_sources.py ; le site de
   la DREES par curl, Chromium et WebFetch ; les copies d'Internet Archive de la page
-  CALIPER (10 juin 2026), du communiqué de la DREES du 23 décembre 2021 et de la
-  page TRAJECTOiRE (10 juin 2026) ; les captures d'écran de ces trois pages, prises
+  CALIPER (10 juin 2026), du communiqué de la DREES du 23 décembre 2021, de la page
+  TRAJECTOiRE (10 juin 2026) et des Études et résultats n° 1297 (8 juin 2026) et
+  n° 1283 (11 avril 2026) ; les captures d'écran des trois premières pages, prises
   par le propriétaire sur son téléphone.
 trouve: >-
   Aucun texte de droit. La branche principale de calcul_pension est toujours au
@@ -18,9 +19,12 @@ trouve: >-
   s'ouvre chez le propriétaire, tel que les copies d'Internet Archive le donnent.
   Le communiqué du 23 décembre 2021 ne nomme pas CALIPER : il ouvre calculPension
   comme « le moteur de calcul des droits » de TRAJECTOiRE. La page TRAJECTOiRE cite
-  deux Études et résultats que le dépôt n'avait pas : le n° 1297 (2024), sur le
-  minimum contributif, et le n° 1283 (2023), sur les majorations pour enfants.
+  deux Études et résultats que le dépôt n'avait pas. Le n° 1297 (2024) : la réforme
+  du minimum contributif de 2023, que la fiche porte déjà, fait gagner 30 € en
+  moyenne à 185 000 nouveaux retraités de 2024. Le n° 1283 (2023) : 65 % des femmes
+  nées en 1958 ont au moins un trimestre de majoration pour enfants utile.
 reste: >-
   Les branches de 2022 de calcul_pension, non lues ; la liste des simplifications de
-  CALIPER, à confronter à docs/limites/ ; les Études et résultats n° 1297 et 1283,
-  à lire depuis une session locale ou dans Internet Archive.
+  CALIPER, à confronter à docs/limites/ ; les résultats des Études et résultats
+  n° 1297 et 1283, à confronter à ce que le dépôt calcule, et leurs PDF, archivés,
+  non lus.
