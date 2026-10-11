@@ -121,6 +121,14 @@ niveau, celle de leur sexe. Les poids, comme ceux de toutes les grilles, sont
 ceux des retraités de 2020 pour toutes les générations : la grille ne sait
 pas donner à une carrière un poids qui dépende de sa génération.
 
+La seconde version (le 11 octobre 2026) y ajoute trois choses, chacune
+débrayable pour en mesurer l'effet : une dispersion de CARRIÈRE, la coupe de
+l'année resserrée de l'âge, que le profil de carrière porte déjà, et des chocs
+transitoires (:data:`DISPERSION_DE_CARRIERE`) ; aucun temps complet sous le
+Smic (:data:`PLANCHER_SMIC`) ; les carrières courtes à la part que l'EIR donne
+à tous les retraités du sexe, et non à ceux des seuls régimes qui en ont
+(:data:`COURTES_A_LA_PART_DE_TOUS`).
+
 CE QUE LA MESURE N'EST PAS
 ---------------------------
 Une population. Les axes sont tenus pour indépendants — le salaire ne dépend
@@ -156,7 +164,9 @@ sys.path.insert(0, str(RACINE / "src"))
 from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import cout as C  # noqa: E402
 from retraite_notionnelle import memoire  # noqa: E402
-from retraite_notionnelle.carriere import Metier  # noqa: E402
+from retraite_notionnelle.carriere import (  # noqa: E402
+    PROFIL_SMIC, Metier, salaire_moyen_annuel,
+)
 from retraite_notionnelle.castypes import CAS_TYPES, CasType  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
@@ -285,6 +295,32 @@ AGES_PARTIEL = (25.0, 50.0)
 #: tranche des 25-54 ans.
 AGE_DE_LA_QUOTITE = 40
 
+#: La dispersion d'un salaire de CARRIÈRE, en écart au centre du logarithme,
+#: rapportée à celle de la coupe de l'année. La coupe tous âges compte l'âge,
+#: que le profil de carrière porte déjà : 23 % de la variance du logarithme du
+#: salaire en 2024 (``profil_salaire_age.csv``, ``dispersion_salaires.csv``).
+#: Et des chocs transitoires, qu'une carrière moyenne efface : un cinquième à
+#: trois dixièmes de ce qui reste, pour le salaire journalier des hommes du
+#: privé de 36 à 54 ans (Ceci-Renaud, Charnoz et Gaini, « Évolutions de la
+#: volatilité des revenus salariaux du secteur privé en France depuis 1968 »,
+#: Insee, document de travail G 2014/03, tableau 6). Une carrière en garde les
+#: trois quarts de 77 % : 0,76 de l'écart, la racine de 0,58.
+DISPERSION_DE_CARRIERE = 0.76
+
+#: Aucun temps complet ne se paie sous le Smic : une carrière du salariat privé
+#: dont le rang tombe sous le Smic, l'année où sa génération a
+#: :data:`AGE_DU_RANG` ans, est payée le Smic de chaque année. Le centile 10
+#: des femmes l'était à 0,43 fois le salaire moyen pour la génération 1950,
+#: quand le Smic en valait 0,535.
+PLANCHER_SMIC = True
+
+#: Les carrières courtes, à la part que l'EIR donne à TOUS les retraités de
+#: chaque sexe : les régimes statutaires n'en ayant pas dans la grille, les
+#: autres en portent d'autant plus. La grille élargie leur donnait la part de
+#: tous, et la population de 2020 comptait 26,9 % de femmes sous trente
+#: années validées, pour 33,7 % dans l'EIR.
+COURTES_A_LA_PART_DE_TOUS = True
+
 
 def _par_generation(paires: tuple[tuple[int, float], ...], generation: int,
                     defaut: float) -> float:
@@ -321,10 +357,21 @@ class CasTypeLarge(CasType):
     niveaux: tuple[tuple[int, float], ...] = ()
     ages_partiel: tuple[float, ...] = ()
     quotites: tuple[tuple[int, float], ...] = ()
+    plancher_smic: bool = False
 
     def niveau_de(self, generation: int) -> float:
         """Le niveau de salaire de cette génération."""
         return _par_generation(self.niveaux, generation, self.niveau_salaire)
+
+    def au_smic(self, simulateur: Simulateur, generation: int) -> bool:
+        """Vrai si la carrière, sous plancher, se paie au Smic : son rang
+        tombe sous lui l'année où sa génération a :data:`AGE_DU_RANG` ans."""
+        if not self.plancher_smic:
+            return False
+        annee = generation + AGE_DU_RANG
+        macro = simulateur.macro
+        return self.niveau_de(generation) < (macro.smic_annuel(annee)
+                                             / salaire_moyen_annuel(macro, annee))
 
     def niveau_relatif(self, simulateur: Simulateur, generation: int) -> float:
         if self.niveaux:
@@ -348,7 +395,9 @@ class CasTypeLarge(CasType):
             int(generation + self.age_debut + decalage): motif
             for decalage, motif in self.interruptions_relatives
         }
-        niveau = self.niveau_de(generation)
+        niveau, profil = self.niveau_de(generation), self.profil_carriere
+        if self.au_smic(simulateur, generation):
+            niveau, profil = 1.0, PROFIL_SMIC
         metiers, age = [], self.age_debut
         for affiliation, annees in self.avant:
             metiers.append(Metier(affiliation=affiliation, age_debut=age,
@@ -358,7 +407,7 @@ class CasTypeLarge(CasType):
                               niveau_salaire=niveau))
         return simulateur.carriere_parcours(
             annee_naissance=generation, sexe=self.sexe, metiers=metiers,
-            age_liquidation=age_liquidation, profil_carriere=self.profil_carriere,
+            age_liquidation=age_liquidation, profil_carriere=profil,
             interruptions=interruptions,
             temps_partiel=self._temps_partiel(generation, interruptions),
             nombre_enfants=self.nombre_enfants, part_primes=self.part_primes,
@@ -480,17 +529,30 @@ class DonneesPopulation:
     points: dict[str, tuple[tuple[str, float, float], ...]]
 
 
+def resserrer(relatifs: dict[str, float], moyenne: float) -> dict[str, float]:
+    """D'une coupe de l'année, une carrière : les écarts des sept points au
+    centre du logarithme ramenés à :data:`DISPERSION_DE_CARRIERE` fois les
+    leurs, et leur moyenne discrétisée portée à ``moyenne``."""
+    centre = somme_ordonnee(math.log(relatifs[n]) * part for n, part in CENTILES)
+    resserres = {n: math.exp(centre + DISPERSION_DE_CARRIERE
+                             * (math.log(relatifs[n]) - centre))
+                 for n, _ in CENTILES}
+    discrete = somme_ordonnee(resserres[n] * part for n, part in CENTILES)
+    return {n: valeur / discrete * moyenne for n, valeur in resserres.items()}
+
+
 def niveaux_par_generation(valeurs: dict[tuple[int, str, str], float], sexe: str,
                            centile: str) -> tuple[tuple[int, float], ...]:
     """Le niveau d'un centile de ce sexe, génération par génération, en
     multiples du salaire moyen des deux sexes.
 
     La FORME de la distribution du sexe — ses centiles rapportés à sa moyenne,
-    discrétisés en :data:`CENTILES` —, au niveau de cette moyenne, l'année où
-    la génération a :data:`AGE_DU_RANG` ans : chaque sexe garde sa moyenne, et
-    chaque génération l'écart de son temps. Les sept centiles ne se publient
-    par sexe que depuis 1994 ; avant, la forme est celle de 1994, et seule la
-    moyenne bouge. Elle ne se lit pas aux années de l'activité partielle
+    discrétisés en :data:`CENTILES` et resserrés en carrière (:func:`resserrer`)
+    —, au niveau de cette moyenne, l'année où la génération a
+    :data:`AGE_DU_RANG` ans : chaque sexe garde sa moyenne, et chaque
+    génération l'écart de son temps. Les sept centiles ne se publient par sexe
+    que depuis 1994 ; avant, la forme est celle de 1994, et seule la moyenne
+    bouge. Elle ne se lit pas aux années de l'activité partielle
     (:data:`ANNEES_ACTIVITE_PARTIELLE`), mais à la plus proche.
     """
     moyennes = sorted(a for a, s, c in valeurs if s == sexe and c == "moyenne")
@@ -501,9 +563,8 @@ def niveaux_par_generation(valeurs: dict[tuple[int, str, str], float], sexe: str
         forme = min(formes, key=lambda candidate: (abs(candidate - annee), candidate))
         relatifs = {n: valeurs[(forme, sexe, n)] / valeurs[(forme, sexe, "moyenne")]
                     for n, _ in CENTILES}
-        discrete = somme_ordonnee(relatifs[n] * part for n, part in CENTILES)
-        paires.append((annee - AGE_DU_RANG,
-                       relatifs[centile] / discrete * valeurs[(annee, sexe, "moyenne")]))
+        niveaux = resserrer(relatifs, valeurs[(annee, sexe, "moyenne")])
+        paires.append((annee - AGE_DU_RANG, niveaux[centile]))
     return tuple(paires)
 
 
@@ -525,13 +586,18 @@ def donnees_population(racine: Path) -> DonneesPopulation:
             (int(l["annee"]) - AGE_DE_LA_QUOTITE, float(l["quotite"]))
             for l in quotites if l["sexe"] == sexe and l["tranche"] == "Y25T54"))
     # Les autres groupes : les centiles de chaque sexe, l'année des centiles de
-    # la grille élargie, divisés par la moyenne discrétisée des deux sexes
-    # réunis — un cas type garde son niveau sur ses deux sexes, à peu près.
+    # la grille élargie, resserrés en carrière autour de la moyenne du sexe,
+    # puis divisés par la moyenne discrétisée des deux sexes réunis — un cas
+    # type garde son niveau sur ses deux sexes, à peu près.
     annee, tous = centiles(racine)
     moyenne = somme_ordonnee(tous[nom] * part for nom, part in CENTILES)
-    points = {sexe: tuple((nom, part, valeurs[(annee, sexe, nom)] / moyenne)
-                          for nom, part in CENTILES)
-              for sexe in ("F", "H")}
+    points = {}
+    for sexe in ("F", "H"):
+        relatifs = {nom: valeurs[(annee, sexe, nom)] for nom, _ in CENTILES}
+        resserres = resserrer(relatifs, somme_ordonnee(relatifs[nom] * part
+                                                       for nom, part in CENTILES))
+        points[sexe] = tuple((nom, part, resserres[nom] / moyenne)
+                             for nom, part in CENTILES)
     return DonneesPopulation(niveaux, parts, par_generation, points)
 
 
@@ -724,16 +790,40 @@ def femmes(variantes: list[Variante], effectifs,
     return sexuees
 
 
+def parts_tranches_de_tous(variantes: list[Variante], effectifs,
+                           source: CaracteristiquesRetraites,
+                           sexe: str) -> dict[str, float]:
+    """Les parts des tranches de durée, hors des régimes statutaires, qui
+    redonnent à TOUS les retraités du sexe celles de l'EIR : les régimes
+    statutaires n'ayant que des carrières entières, les autres portent
+    d'autant plus de carrières courtes."""
+    poids = poids_retraites(variantes, effectifs, source.millesime)
+    siens = [(v, p) for v, p in zip(variantes, poids) if v.cas.sexe == sexe]
+    total = somme_ordonnee(p for _, p in siens)
+    hors = somme_ordonnee(p for v, p in siens if v.groupe not in GROUPES_INTERROMPUS)
+    facteur = total / (total - hors)
+    courtes = {nom: part * facteur for nom, part in parts_tranches(source, sexe).items()
+               if nom != "40_plus"}
+    return {"40_plus": 1.0 - somme_ordonnee(courtes.values()), **courtes}
+
+
 def interruptions(variantes: list[Variante], effectifs,
-                  source: CaracteristiquesRetraites) -> list[Variante]:
+                  source: CaracteristiquesRetraites,
+                  de_tous: bool = False) -> list[Variante]:
     """Les femmes, puis, hors des régimes statutaires, les carrières courtes et
-    les périodes assimilées, sexe par sexe."""
+    les périodes assimilées, sexe par sexe : aux parts de l'EIR, ou, sous
+    ``de_tous``, à celles qui les redonnent à tous les retraités
+    (:func:`parts_tranches_de_tous`)."""
+    sexuees = femmes(variantes, effectifs, source)
+    parts = {sexe: (parts_tranches_de_tous(sexuees, effectifs, source, sexe) if de_tous
+                    else parts_tranches(source, sexe))
+             for sexe in ("F", "H")}
     sortie = []
-    for v in femmes(variantes, effectifs, source):
+    for v in sexuees:
         if v.groupe not in GROUPES_INTERROMPUS:
             sortie.append(v)
             continue
-        tranches = parts_tranches(source, v.cas.sexe)
+        tranches = parts[v.cas.sexe]
         assimilee = part_assimilee(source, v.cas.sexe)
         restes = 0.0
         declinees = []
@@ -780,10 +870,11 @@ def salaires_population(variantes: list[Variante],
     """Chaque variante aux sept centiles du salaire de SON sexe.
 
     Le salariat privé y prend son niveau génération par génération, cadre aux
-    trois centiles du haut, et, pour la part des carrières que son sexe passe à
-    temps partiel, la quotité de sa génération de 25 à 49 ans. Les autres
-    groupes gardent la dispersion de la grille élargie autour de leur niveau,
-    celle de leur sexe.
+    trois centiles du haut, au Smic au moins sous :data:`PLANCHER_SMIC`, et,
+    pour la part des carrières que son sexe passe à temps partiel, la quotité
+    de sa génération de 25 à 49 ans. Les autres groupes gardent la dispersion
+    de la grille élargie autour de leur niveau, celle de leur sexe, resserrée
+    en carrière.
     """
     sortie = []
     for v in variantes:
@@ -799,7 +890,8 @@ def salaires_population(variantes: list[Variante],
             rang = replace(cas, code=f"{cas.code}~{nom}",
                            affiliation=("salarie_prive_cadre" if nom in CENTILES_CADRES
                                         else "salarie_prive_non_cadre"),
-                           niveaux=donnees.niveaux[(cas.sexe, nom)])
+                           niveaux=donnees.niveaux[(cas.sexe, nom)],
+                           plancher_smic=PLANCHER_SMIC)
             sortie.append(v.fois(part * (1.0 - partiel), cas=rang))
             sortie.append(v.fois(part * partiel, cas=replace(
                 rang, code=f"{rang.code}~partiel", ages_partiel=AGES_PARTIEL,
@@ -813,7 +905,8 @@ def population(effectifs, source: CaracteristiquesRetraites,
     distributions de chaque sexe plutôt que de quatre cas types étalés sur
     celle des deux sexes réunis."""
     variantes = interruptions(melees(personnes(reference_population(), effectifs, source),
-                                     source), effectifs, source)
+                                     source), effectifs, source,
+                              de_tous=COURTES_A_LA_PART_DE_TOUS)
     return salaires_population(variantes, donnees_population(racine))
 
 

@@ -5385,16 +5385,16 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 
 ### 136. Ce qu'OpenFisca fait mieux que le dépôt : deux règles, un oracle borné aux carrières simples, la trace d'un calcul, une population — `en cours`
 
-**Reprise, au 11 octobre 2026.** Fait : l'étape 6, sa première moitié — la
-page Coût sur 791 carrières, l'ASPA retirée de sa grille — et, de la seconde,
-ses données certifiées et une première population, mesurée à côté de la page
-(`grille_large.py --grille population`) : le minimum contributif à moins de
-trois points de l'EACR sexe par sexe, mais un montant de six dixièmes ;
-l'écart des pensions des sexes à 26 %, pour 40 dans l'EIR. Reste : une
-dispersion de carrière et des parts par génération, puis la mesure ; la
-bascule de la page, au propriétaire ; de l'étape 3, la surcotisation et
-l'oracle ; les étapes 1, 2, 4 et 5. Le détail : la note de la population, du
-11 octobre.
+**Reprise, au 11 octobre 2026.** Fait : l'étape 6, sa première moitié, et, de
+la seconde, ses données certifiées et deux versions de la population, mesurées
+à côté de la page (`grille_large.py --grille population`). La seconde —
+dispersion de carrière, plancher au Smic, carrières courtes de l'EIR —
+rapproche les pensions de 2020 de l'EIR et éloigne le minimum contributif de
+l'EACR (14,7 % en 2023 pour 18,8), son montant restant de moitié. Reste : le
+bas de l'échelle (la persistance au Smic, le volume de travail), puis la
+mesure ; la bascule de la page, au propriétaire ; de l'étape 3, la
+surcotisation et l'oracle ; les étapes 1, 2, 4 et 5. Le détail : les notes du
+11 octobre sur la population.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais que tu analyses ce qu'on fait
 moins bien que openfisca pensions et que tu ajoutes une action sur ce sujet

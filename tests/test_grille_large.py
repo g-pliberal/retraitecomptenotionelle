@@ -231,6 +231,51 @@ def test_le_temps_partiel_reduit_le_revenu_de_25_a_49_ans(simulateur, source):
         assert revenus[annee] == pytest.approx(pleins[annee])
 
 
+def test_une_carriere_resserre_la_coupe_sans_toucher_a_sa_moyenne():
+    """D'une coupe à une carrière, chaque écart au centre du logarithme est
+    ramené à ``DISPERSION_DE_CARRIERE`` fois le sien, et la moyenne
+    discrétisée reste celle qu'on demande."""
+    import math
+
+    relatifs = {"p10": 0.5, "p25": 0.65, "p50": 0.82, "p75": 1.12, "p90": 1.6,
+                "p95": 2.05, "p99": 3.7}
+    resserres = G.resserrer(relatifs, 0.9)
+    assert sum(resserres[n] * part for n, part in G.CENTILES) == pytest.approx(0.9)
+    ecart = math.log(relatifs["p99"] / relatifs["p10"])
+    assert math.log(resserres["p99"] / resserres["p10"]) == pytest.approx(
+        G.DISPERSION_DE_CARRIERE * ecart)
+
+
+def test_un_temps_complet_ne_se_paie_pas_sous_le_smic(simulateur, source):
+    """Le salariat privé dont le rang tombe sous le Smic, l'année où sa
+    génération a quarante-cinq ans, est payé le Smic de chaque année ; au-dessus,
+    son rang, et l'homme du dixième centile l'est toujours."""
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    femme = next(v for v in variantes
+                 if v.cas.code == f"{G.GABARIT}~f~40_plus~p10").cas
+    homme = next(v for v in variantes
+                 if v.cas.code == f"{G.GABARIT}~h~40_plus~p10").cas
+    assert femme.au_smic(simulateur, 1940)
+    assert not homme.au_smic(simulateur, 1940)
+    carriere = femme.carriere_a(simulateur, 1940, 62)
+    revenus = {ligne.annee: ligne.revenu for ligne in carriere.lignes}
+    for annee in (1970, 1985):
+        assert revenus[annee] == pytest.approx(simulateur.macro.smic_annuel(annee))
+
+
+def test_les_carrieres_courtes_de_la_population_sont_celles_de_tous(simulateur, source):
+    """Les régimes statutaires n'ayant que des carrières entières, les autres
+    portent d'autant plus de carrières courtes : sur tous les retraités de
+    chaque sexe, la population redonne la part que l'EIR donne aux carrières
+    de moins de trente années validées."""
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    composition = G.composition(variantes, simulateur.effectifs, source)
+    publiee = G.composition_eir(source)
+    for sexe in ("F", "H"):
+        assert composition["moins_de_30_ans"][sexe] == pytest.approx(
+            publiee["moins_de_30_ans"][sexe], abs=1e-9), sexe
+
+
 def test_la_grille_du_depot_reecrite_redonne_la_page(parametres):
     """Les pseudo-caisses et la grille simulée à part donnent la page au
     millième : la mesure ne mesure rien d'autre que la grille."""
