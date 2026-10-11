@@ -3,9 +3,11 @@
 `scripts/grille_large.py` dit ce que les treize cas types déplacent (action
 136, étape 6). La mesure entière prend plusieurs minutes et ne se rejoue pas
 ici ; ce qui se tient ici est ce qui la rend lisible : chaque déclinaison
-reçoit la part que l'EIR ou l'INSEE lui donne, la grille du dépôt réécrite en
-parts redonne la page, et l'ASPA que la page compte aux premières générations
-ne touche que les années observées.
+reçoit la part que l'EIR ou l'INSEE lui donne, et la grille du dépôt réécrite
+en parts redonne la page. L'ASPA que la page comptait aux premières
+générations, et que la mesure avait trouvée, n'y est plus depuis le
+11 octobre 2026 : `test_cout.py` le tient
+(`test_la_page_ne_sert_pas_le_minimum_vieillesse`).
 """
 
 from __future__ import annotations
@@ -174,26 +176,6 @@ def test_la_grille_du_depot_reecrite_redonne_la_page(parametres):
     assert G.ecart_maximal(en_parts, page) < 1e-6
 
 
-def test_l_aspa_des_premieres_generations_ne_touche_que_le_passe(parametres):
-    """La grille du dépôt déclenche l'ASPA aux non-salariés des premières
-    générations — l'artisan né de 1885 à 1905, le libéral jusqu'en 1915,
-    l'exploitant agricole jusqu'en 1920 —, que leurs régimes, nés après la
-    guerre, servaient mal : la page la compte dans la masse du scénario 1,
-    quand la dépense qu'elle multiplie l'exclut. Le retirer ne déplace que
-    l'écart des années observées, et dans le sens d'une économie moindre ; la
-    trajectoire, le solde et le coefficient ne bougent pas d'un millième,
-    l'exploitant né en 1920 vivant encore, à peine, aux années où la page se
-    cale."""
-    page = G.indicateurs(memoire.cout(parametres))
-    sans = G.indicateurs(G.calculer(G.parametres_de_la_grille(parametres), G.reference()))
-    for scenario, _ in C.SCENARIOS:
-        for cle in ("part_pib_horizon", "solde_moyen", "coefficient_horizon"):
-            assert sans[scenario][cle] == pytest.approx(page[scenario][cle], abs=1e-3)
-        assert sans[scenario]["ecart_passe"] >= page[scenario]["ecart_passe"] - 1e-9
-    assert sans["notionnel_retroactif"]["ecart_passe"] > (
-        page["notionnel_retroactif"]["ecart_passe"] + 0.1)
-
-
 # -- la distribution de l'année de l'enquête (action 138, étape 14) -------------
 
 def test_le_quantile_d_une_grille_est_l_un_de_ses_montants():
@@ -214,14 +196,13 @@ def test_la_distribution_compte_les_tetes_et_les_euros_de_la_page(parametres):
     à ceux de l'année et au mois près."""
     from dataclasses import replace
 
-    sans = G.parametres_de_la_grille(parametres)
-    grille = G.en_tetes(sans, G.reference())
+    grille = G.en_tetes(parametres, G.reference())
     annee = 2020
     lignes = grille.pensions(annee)
     entieres = [replace(p, completudes=()) for p in grille.pensionnes]
     masses, _, tetes = C._masses(entieres, grille.population, annee,
                                  grille.poids(annee), grille.revalorisation)
-    vers = grille.macro.coefficient_prix(sans.annee_euros_constants, annee) / 12
+    vers = grille.macro.coefficient_prix(parametres.annee_euros_constants, annee) / 12
     assert sum(p for _, p, _ in lignes) == pytest.approx(tetes[C.TETES_TOUTES], rel=1e-12)
     assert sum(m * p for m, p, _ in lignes) == pytest.approx(masses["actuel"] * vers,
                                                              rel=1e-12)

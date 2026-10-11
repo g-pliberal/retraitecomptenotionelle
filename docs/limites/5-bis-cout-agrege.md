@@ -59,8 +59,8 @@ le 19 septembre 2026 :
    **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
    affiché « plutôt un plancher », les départs très précoces que le notionnel
    pénalise le plus étant surreprésentés. C'est vrai des scénarios qui portent
-   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−53,5<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,1<!--/--> % — et faux du
-   scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−75,6<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,2<!--/--> % : la pondération donne aux
+   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−53,3<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−51,7<!--/--> % — et faux du
+   scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−75,5<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−78,9<!--/--> % : la pondération donne aux
    carrières du privé, que le compte salarial seul pénalise davantage encore,
    les deux tiers du poids. C'était un plancher pour les uns, un plafond pour
    l'autre.
@@ -204,6 +204,16 @@ la dépense que la page multiplie l'exclut depuis le 23 septembre 2026. L'écart
 des années observées en est grossi : −78,70 % au lieu de −77,87 au scénario 2,
 −52,13 % au lieu de −50,38 aux scénarios 4 et 6. La projection ne bouge pas
 d'un millième de point.
+
+**Le 11 octobre 2026, le minimum vieillesse retiré de la grille.** La page ne
+le sert plus au scénario 1 de sa grille (`Simulateur.pour_la_projection`,
+action 136), quand le simulateur le sert toujours. L'écart des années
+observées passe de −79,16 % à −78,95 % au scénario 2, et de −52,14 % à
+−51,69 % aux scénarios 4 et 6 : quatre fois moins que la mesure ne
+l'annonçait, le modèle ayant bougé entre-temps. La projection ne bouge
+toujours pas ; le passé qu'elle refait à rebours s'éloigne un peu de la
+dépense observée, de 16,4 à 16,6 % au pire depuis 2000, le minimum vieillesse
+ayant grossi la masse des plus vieilles cohortes.
 
 **Ce qui, en revanche, n'est pas une approximation** : l'égalité des scénarios
 3 et 5 avec le système actuel sur toute la période observée. Elle est EXACTE, et

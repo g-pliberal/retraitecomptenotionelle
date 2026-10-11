@@ -262,6 +262,8 @@ fichiers:
       # masse du scénario 1 : deux mesures de quelques minutes, faites un jour.
       - "**Ce que la grille de treize cas types déplace, mesuré le 5 octobre 2026**"
       - "**La page compte encore le minimum vieillesse des premiers non-salariés**"
+      # Et sa correction, le 11 octobre 2026 : l'avant et l'après.
+      - "**Le 11 octobre 2026, le minimum vieillesse retiré de la grille.**"
 
   docs/limites/5-ter-trajectoire.md:
     defaut: etat

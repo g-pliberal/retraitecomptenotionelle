@@ -1936,10 +1936,12 @@ coût du système S en t = pensions de répartition observées en t × (masse S 
 ```
 
 La masse d'une année est reconstituée en croisant les treize cas types avec les
-générations de 1880 à 2015, de cinq en cinq. Chaque couple pèse le produit de
-trois choses : sa pension en euros constants, l'effectif réel des classes d'âge
-que sa génération représente — lu dans la pyramide des âges de l'INSEE, non
-supposé —, et le POIDS DE SON CAS TYPE.
+générations de 1880 à 2015, de cinq en cinq. Celle du système actuel ne compte
+pas davantage le minimum vieillesse : la grille ne le sert pas, quand le
+scénario 1 du simulateur le sert (`Simulateur.pour_la_projection`). Chaque
+couple pèse le produit de trois choses : sa pension en euros constants,
+l'effectif réel des classes d'âge que sa génération représente — lu dans la
+pyramide des âges de l'INSEE, non supposé —, et le POIDS DE SON CAS TYPE.
 
 Ce troisième terme est le dernier à avoir cessé d'être une convention. Les cas
 types ont longtemps pesé à égalité, faute de source ; chacun porte désormais

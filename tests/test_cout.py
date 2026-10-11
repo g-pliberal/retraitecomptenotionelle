@@ -678,8 +678,11 @@ RECONSTITUTION_DEPUIS = 2000
 #: -14,3 % le même jour, l'étape 10 comptant l'Agirc-Arrco au taux moyen des
 #: entreprises ; -16,1 % le 6 octobre, l'étape 14 pesant chaque génération de
 #: sa durée validée : les carrières plus courtes des femmes nées avant 1945
-#: abaissent le passé, que d'autres défauts tenaient déjà trop bas.
-RECONSTITUTION_CLIQUET = 0.165
+#: abaissent le passé, que d'autres défauts tenaient déjà trop bas ; -16,6 %
+#: le 11 octobre, l'action 136 retirant de la grille de la page le minimum
+#: vieillesse des premiers non-salariés, que la dépense observée ne compte pas
+#: — un défaut qui en compensait un autre (voir le test).
+RECONSTITUTION_CLIQUET = 0.17
 #: Ce que vise le cliquet : quelques pour cent, chaque année.
 RECONSTITUTION_CIBLE = 0.05
 
@@ -731,6 +734,13 @@ def test_la_projection_refait_le_passe(avenir, depenses):
     moyen des entreprises, et non au minimum de l'accord, plus haut d'un tiers
     avant 1999 ; les pensions des générations anciennes remontent, et la
     masse du passé avec elles.
+
+    *Le 11 octobre 2026*, l'action 136 le relève de -16,4 % à -16,6 % en 2009
+    (-15,3 % en 2000, -25,4 % en 1990), et c'est encore le second cas : la
+    grille de la page ne sert plus le minimum vieillesse, que la dépense
+    observée ne compte pas, aux non-salariés des premières générations. Il
+    grossissait la masse des plus vieilles cohortes, et masquait d'autant la
+    dérive que ce test mesure.
     """
     reconstitution = avenir.reconstitution()
     # L'année d'ancrage est refaite par construction : sinon, la formule de
@@ -1146,6 +1156,33 @@ def test_le_fonctionnaire_de_l_etat_entre_tard_dans_son_regime():
     # Le portage JavaScript refaisait le délai et la complétude des carrières,
     # et un test l'y confrontait : ils ne servaient qu'au coût, figé depuis le
     # 11 octobre 2026 (action 150).
+
+
+def test_la_page_ne_sert_pas_le_minimum_vieillesse():
+    """Action 136 : le scénario 1 du simulateur sert l'ASPA aux non-salariés
+    des premières générations, que leurs régimes, nés après la guerre,
+    servaient mal — à l'artisan et à l'exploitant agricole nés en 1905, à
+    l'exploitant né en 1920. La grille de la page Coût ne la sert pas : la
+    dépense qu'elle multiplie ne compte pas le minimum vieillesse
+    (``part_repartition``), et la masse du système actuel qu'elle lui oppose
+    ne le compte pas davantage. Jusqu'au 11 octobre 2026, elle le comptait, et
+    l'économie des années observées en était grossie."""
+    from retraite_notionnelle.castypes import calculer_cas_types
+
+    individuel = Simulateur(Parametres())
+    projection = individuel.pour_la_projection()
+    assert projection.pour_la_projection() is projection
+    assert projection.parametres.conventions_cor
+    cas_types = tuple(c for c in CAS_TYPES if c.code in ("artisan", "exploitant_agricole"))
+
+    def servie(simulateur) -> dict:
+        grille = calculer_cas_types(simulateur, cas_types, (1905, 1920))
+        return {cle: sum(a.montant for a in comparaison.actuel.avantages_appliques
+                         if a.code == "minimum_vieillesse")
+                for cle, comparaison in grille.resultats.items()}
+
+    assert any(servie(individuel).values())
+    assert not any(servie(projection).values())
 
 
 def test_les_caisses_qui_se_ferment_rendent_leur_part_au_prive():

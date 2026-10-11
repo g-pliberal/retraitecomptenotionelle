@@ -707,7 +707,10 @@ class Parametres:
     #: sans autre ressource que ses pensions — celui du couple quand un
     #: conjoint est déclaré, ses ressources comptées —, et toujours comme une
     #: LIGNE SÉPARÉE de la cascade, de sorte qu'on puisse la retrancher d'un
-    #: coup d'œil. Mettre ce paramètre à ``False`` la retire du calcul.
+    #: coup d'œil. Mettre ce paramètre à ``False`` la retire du calcul. La
+    #: page Coût la retire toujours
+    #: (:meth:`~retraite_notionnelle.simulateur.Simulateur.pour_la_projection`) :
+    #: la dépense qu'elle multiplie ne compte pas le minimum vieillesse.
     minimum_vieillesse_dans_le_scenario_actuel: bool = True
 
     # --- Scénario 6 : la proposition libérale --------------------------------

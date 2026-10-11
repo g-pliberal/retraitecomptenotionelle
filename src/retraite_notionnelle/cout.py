@@ -2019,7 +2019,11 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
     """Simule la grille et en tire, pour chaque couple, sa pension par système."""
     # La page Coût se lit contre le COR : elle suit ses conventions de
     # projection (``Parametres.conventions_cor``), que le simulateur
-    # individuel ne suit pas.
+    # individuel ne suit pas. Et son scénario 1 ne sert pas l'ASPA, que la
+    # dépense qu'elle multiplie ne compte pas (``part_repartition``). Jusqu'au
+    # 11 octobre 2026, la grille la servait à l'artisan né de 1885 à 1905, à
+    # l'exploitant agricole de 1890 à 1920, au libéral de 1885 à 1900, et
+    # l'économie des années observées en était grossie (action 136).
     simulateur = simulateur.pour_la_projection()
     grille = calculer_cas_types(simulateur, cas_types, generations(), liquidation)
     # Ce que le droit en vigueur prélève sur chacune de ces carrières, année par

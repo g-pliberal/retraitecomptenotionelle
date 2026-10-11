@@ -65,21 +65,22 @@ le passé que la projection refait à rebours (``Avenir.reconstitution``, action
 L'ASPA, RETIRÉE DE TOUTES LES GRILLES
 -------------------------------------
 Le scénario 1 sert l'ASPA à qui n'a pas assez, et la range dans la pension qu'il
-rend. Les carrières courtes la déclenchent ; la garder dans la grille élargie
+rend. Les carrières courtes la déclenchent ; la garder dans une grille
 compterait le minimum vieillesse comme une pension, quand la dépense que la
-page multiplie l'exclut depuis le 23 septembre 2026. Toutes les grilles se
-calculent donc sans elle (``minimum_vieillesse_dans_le_scenario_actuel``), et
-c'est à la grille du dépôt SANS ASPA que chacune se compare.
+page multiplie l'exclut depuis le 23 septembre 2026. La page la retire donc de
+sa grille (``Simulateur.pour_la_projection``), et chaque grille de ce script
+avec elle.
 
-La mesure a trouvé en chemin que la grille du dépôt la déclenche aussi, aux
+La mesure du 5 octobre 2026 l'avait trouvée dans la grille du dépôt, aux
 non-salariés des premières générations — l'artisan né de 1885 à 1905, le
 libéral jusqu'en 1915, l'exploitant agricole jusqu'en 1920 : leurs régimes,
 nés après la guerre, ne leur servaient que des pensions courtes ou
 forfaitaires, que le scénario 1 complète au minimum vieillesse, quand les
-scénarios notionnels ne le servent pas. La page compte donc, dans les années
-observées, une économie qui n'est que le minimum vieillesse retiré ; le script
-la chiffre à part. Il vérifie aussi que la grille du dépôt, réécrite en parts
-et avec l'ASPA, redonne la page au chiffre près.
+scénarios notionnels ne le servent pas. La page comptait donc, dans les années
+observées, une économie qui n'était que le minimum vieillesse retiré, et la
+mesure se comparait à la grille du dépôt sans ASPA ; depuis le 11 octobre 2026,
+elle se compare à la page elle-même. Le script vérifie que la grille du dépôt,
+réécrite en parts, la redonne au chiffre près.
 
 LA DISTRIBUTION DES PENSIONS, CONTRE CELLE DE L'ENQUÊTE (action 138, étape 14)
 -------------------------------------------------------------------------------
@@ -598,11 +599,6 @@ def grille(nom: str, effectifs, source: CaracteristiquesRetraites,
 
 # -- le calcul -------------------------------------------------------------------
 
-def parametres_de_la_grille(parametres: Parametres) -> Parametres:
-    """Les paramètres de la page, l'ASPA retirée du scénario 1."""
-    return replace(parametres, minimum_vieillesse_dans_le_scenario_actuel=False)
-
-
 def pseudo(variantes: list[Variante]) -> tuple[tuple[CasType, ...], dict, dict]:
     """Les cas types de la grille, chacun réclamant sa pseudo-caisse, et les
     parts de chaque pseudo-caisse."""
@@ -878,16 +874,14 @@ def processus_par_defaut() -> int:
 def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
             parametres: Parametres | None = None, page: bool = True) -> dict:
     """Chaque grille, sa composition, la distribution de ses pensions l'année de
-    l'enquête et ce que la page y affiche, sans ASPA ; la page elle-même, et la
-    grille du dépôt réécrite en parts avec l'ASPA, qui doit la redonner.
-    ``page=False`` s'en tient à la composition et à la distribution, que la
-    simulation seule donne."""
+    l'enquête et ce que la page y affiche ; la page elle-même, que la grille du
+    dépôt, réécrite en parts, doit redonner. ``page=False`` s'en tient à la
+    composition et à la distribution, que la simulation seule donne."""
     parametres = parametres if parametres is not None else Parametres()
     racine = parametres.racine_donnees
     source = eir(racine)
     annee_centiles, valeurs = centiles(racine)
     points = multiplicateurs(valeurs)
-    sans_aspa = parametres_de_la_grille(parametres)
     effectifs = Simulateur(parametres).effectifs
     residence = ResidenceRetraites(racine, source.millesime)
     distributions = {sexe: DistributionPensions(racine, sexe, source.millesime, "france")
@@ -901,15 +895,14 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
     }
     if page:
         resultat["page"] = indicateurs(memoire.cout(parametres))
-        resultat["page_en_parts"] = indicateurs(calculer(parametres, reference(), processus))
     noms = ("reference",) + tuple(n for n in noms if n != "reference")
     for nom in noms:
         debut = time.time()
         variantes = grille(nom, effectifs, source, points)
         mesure = {"cas_types": len(variantes)}
         if page:
-            mesure.update(indicateurs(calculer(sans_aspa, variantes, processus)))
-        tetes = en_tetes(sans_aspa, variantes, processus)
+            mesure.update(indicateurs(calculer(parametres, variantes, processus)))
+        tetes = en_tetes(parametres, variantes, processus)
         mesure["echecs"] = somme_ordonnee(tetes.echecs.values())
         mesure["composition"] = composition(variantes, effectifs, source)
         mesure["distribution"] = confronter(tetes.pensions(source.millesime),
@@ -962,17 +955,7 @@ def imprimer(resultat: dict) -> None:
     page = resultat.get("page")
     if page is not None:
         print(f"La grille du dépôt, réécrite en parts, redonne la page à "
-              f"{ecart_maximal(resultat['page_en_parts'], page):.1e} près.")
-        print("Sans l'ASPA que le scénario 1 sert aux premières générations de "
-              "non-salariés, l'écart passé devient :")
-        print("  " + " ; ".join(
-            f"sc. {NUMEROS[s]} {page[s]['ecart_passe']:.2f} → {base[s]['ecart_passe']:.2f}"
-            for s, _ in C.SCENARIOS
-            if abs(base[s]['ecart_passe'] - page[s]['ecart_passe']) > 5e-3))
-        autres = max(abs(base[s][k] - page[s][k]) for s, _ in C.SCENARIOS
-                     for k in page[s] if k != "ecart_passe")
-        print(f"  et rien d'autre ne bouge de plus de {autres:.1e}. Les grilles se "
-              "comparent à celle du dépôt sans ASPA.\n")
+              f"{ecart_maximal(base, page):.1e} près.\n")
 
     print("Composition, retraités de l'année de l'enquête :")
     entete = f"{'':16}{'femmes':>8}{'poly':>7}{'durée F':>9}{'durée H':>9}{'<30 F':>7}{'<30 H':>7}"

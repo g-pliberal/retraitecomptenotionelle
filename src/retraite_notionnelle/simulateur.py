@@ -1175,15 +1175,19 @@ class Simulateur:
 
     def pour_la_projection(self) -> "Simulateur":
         """Le même simulateur, sous les conventions de projection du COR
-        (``Parametres.conventions_cor``) : celui de la page Coût. Construit
+        (``Parametres.conventions_cor``), et sans le minimum vieillesse au
+        scénario 1 (``Parametres.minimum_vieillesse_dans_le_scenario_actuel``) :
+        celui de la page Coût, dont la dépense ne compte pas l'ASPA. Construit
         une fois, puis gardé."""
-        if self.parametres.conventions_cor:
+        if (self.parametres.conventions_cor
+                and not self.parametres.minimum_vieillesse_dans_le_scenario_actuel):
             return self
         jumeau = self.__dict__.get("_projection")
         if jumeau is None:
             from dataclasses import replace
 
-            jumeau = Simulateur(replace(self.parametres, conventions_cor=True))
+            jumeau = Simulateur(replace(self.parametres, conventions_cor=True,
+                                        minimum_vieillesse_dans_le_scenario_actuel=False))
             self.__dict__["_projection"] = jumeau
         return jumeau
 
