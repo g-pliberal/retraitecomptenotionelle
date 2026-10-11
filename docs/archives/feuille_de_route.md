@@ -16683,3 +16683,46 @@ endroit : rejoués sur l'historique comme menés en parallèle, 19 des 33
 couples de versions successives ne buteraient plus, les 14 autres tenant au
 corps du document (la note du 6 octobre, sous
 `docs/archives/feuille_de_route/149/`).
+
+### 150. Ce que le lecteur n'a pas à calculer : les pages sans réglage lisent des résultats fabriqués à l'avance — `fait`
+
+**Demande**, le 6 octobre 2026 : « Est-ce que tous les calculs dans le
+calculateur sont obligatoires ? J'ai l'impression qu'il y a des calculs que
+nous pourrions faire de notre côté et servir les résultats uniquement » ;
+puis, la liste remise : « il faut précalculer Pourquoi changer et Partager le
+plus possible », et, des réglages de Coût, Carrières types et Droits non
+cotisés : « on a vraiment besoin de ça ? […] j'hésite à le garder ».
+
+**Le constat, le 6 octobre 2026.** Le paquet du site ne portait qu'un
+résultat fabriqué d'avance, le bilan figé (`data/derive/equilibre.json`), que
+le simulateur et l'accueil lisent ; les autres pages calculaient chez le
+lecteur. Mesuré sous node, page ouverte directement : Coût 9,1 s, Carrières
+types 6,6 s, Pourquoi changer 6,1 s, Partager 5,2 s, Droits non cotisés
+4,7 s, une simulation 0,67 s, Méthode et l'accueil quelques millisecondes.
+Pourquoi changer et Partager ne prennent aucun réglage : elles refaisaient le
+coût entier pour en lire quelques chiffres — deux pour Partager, le manque et
+la dépense de 2070. Les trois pages qui agrègent prennent les dix-huit
+réglages du simulateur (seize champs, deux par l'adresse) : 4 478 976
+combinaisons pour les seuls menus, 422 variantes à un réglage à la fois. Le
+portage JavaScript qui ne sert qu'à elles — `cout.js`, `avantages.js`,
+`castypes.js` et neuf autres modules — compte environ 5 500 lignes, dont
+5 000 partiraient si elles lisaient des résultats fabriqués par le Python.
+
+**Le plan.** Étape 1 : Pourquoi changer et Partager, sans rien trancher.
+Étape 2, si le propriétaire renonce aux réglages libres des trois pages qui
+agrègent : les fabriquer en Python sous les réglages de référence — avec, s'il
+le veut, un tableau de sensibilité fabriqué de même pour les variantes qui
+comptent —, puis retirer le portage du coût et ses tests de parité. S'il les
+garde, l'action se clôt sur l'étape 1.
+
+**Ce que ça a déplacé.** Aucun chiffre du modèle ni du site sous les réglages
+de référence : chaque page rendue est celle d'avant, au caractère près, hors
+du bloc de réglages retiré et de l'écran d'attente de Partager. Les cinq
+pages qui calculaient chez le lecteur ce qui ne dépend pas de sa carrière
+s'ouvrent aussitôt : Pourquoi changer et Partager depuis l'étape 1, Coût,
+Carrières types et Droits non cotisés depuis l'étape 2, en 25 à 129 ms au
+lieu de 3,8 à 8,0 s. Le portage JavaScript du
+coût est parti, et les deux moteurs ne sont plus jumeaux que sur une
+carrière (`docs/architecture/versions/2026-10-11-le-cout-sans-jumeau.md`).
+Les notes des deux étapes et de la décision sont sous
+`docs/archives/feuille_de_route/150/`.

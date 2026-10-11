@@ -323,7 +323,7 @@ code:
   javascript: >-
     moteur/js/droit/invalidite.js ; moteur/js/droit/ouvrir.js ;
     moteur/js/droit/departs.js ; moteur/js/droit/liquider.js ; moteur/js/regimes.js :
-    Invalidites ; moteur/js/avantages.js
+    Invalidites
   parametres: >-
     contenu.parametres de chaque version : existe, taux_incapacite, ages,
     cotisees_retranchees, validees_retranchees, retranches_en_plus,

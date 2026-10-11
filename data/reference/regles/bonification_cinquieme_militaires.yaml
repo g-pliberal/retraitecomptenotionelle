@@ -448,7 +448,7 @@ code:
   javascript: >-
     moteur/js/regimes.js : FichesDatees ; moteur/js/droit/compter.js :
     trimestresDesEmplois, trimestresDUnEmploi, conditionDUnEmploi, servicesAuDela ;
-    moteur/js/carriere.js : dureeDeServiceAvant ; moteur/js/avantages.js
+    moteur/js/carriere.js : dureeDeServiceAvant
   parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
   tests: [tests/test_bonifications_emplois.py, tests/test_oracle.py]
 referents:

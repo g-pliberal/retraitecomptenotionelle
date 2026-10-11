@@ -1655,9 +1655,10 @@ anticipations pures.
 
 **Trois régimes de taux, un réglage.** Le site propose ce paramètre comme un
 réglage des règles du calcul, « Taux futurs du pilier capitalisé », qui voyage
-dans l'adresse et s'applique au simulateur comme aux pages qui agrègent, à côté
-de celui des frais : `Parametres.sous_regime_taux` définit une fois les trois
-régimes, et le portage les applique sans les redéfinir.
+dans l'adresse et s'applique au simulateur, à côté de celui des frais ; les
+pages qui agrègent montrent la référence. `Parametres.sous_regime_taux`
+définit une fois les trois régimes, et le portage les applique sans les
+redéfinir.
 
 | Réglage | Prime à <!--chiffre:mesure(constante?de=retraite_notionnelle.donnees.taux&nom=MATURITE_PRIME)-->30<!--/--> ans | Ce qu'il dit |
 |---|---:|---|
@@ -1794,12 +1795,12 @@ rente = capital / G(a, L) × Σ p_t / Σ p_t (1 − f_réserve)^(−t) × (1 −
 
 **Six régimes de frais, un réglage.** Le site propose ces frais comme un
 réglage des règles du calcul, « Frais du pilier capitalisé », qui voyage dans
-l'adresse et s'applique au simulateur comme aux pages qui agrègent :
-`Parametres.sous_regime_frais` définit une fois les six régimes (marché 2025
-et paliers, paliers avec plafond, paliers avec contrats, marché 2025 figé,
-PER vendu, aucun frais), et le portage les applique sans les redéfinir. La
-page Coût compte le pilier de tous les cotisants sous ce réglage, par euro
-versé : la grille ne lui donne que des rapports, le niveau vient des
+l'adresse et s'applique au simulateur ; les pages qui agrègent montrent la
+référence. `Parametres.sous_regime_frais` définit une fois les six régimes
+(marché 2025 et paliers, paliers avec plafond, paliers avec contrats, marché
+2025 figé, PER vendu, aucun frais), et le portage les applique sans les
+redéfinir. La page Coût compte le pilier de tous les cotisants sous le
+réglage de référence, par euro versé : la grille ne lui donne que des rapports, le niveau vient des
 cotisations du système 4 ancrées sur le compte du COR.
 
 Prélever `f_réserve` par an sur la réserve d'une rente nivelée, à taux

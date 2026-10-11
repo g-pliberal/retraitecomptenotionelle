@@ -3,7 +3,10 @@
 Claude Code les charge à la première lecture d'un fichier de `moteur/`, en
 plus de `CLAUDE.md`. Le dossier porte deux zones : le portage JavaScript du
 modèle, jumeau du Python de `src/`, qui fait foi et se modifie le premier
-(`src/CLAUDE.md`), et le site.
+(`src/CLAUDE.md`), et le site. Le portage ne copie que ce que le simulateur
+calcule, une carrière : le coût n'y est pas, et Coût, Carrières types et
+Droits non cotisés lisent ce que le Python en a fabriqué (`agregats.js`,
+`docs/architecture.md`, § 7.1).
 
 - **Le texte du site ne s'écrit qu'en JavaScript** : `moteur/js/pages.js`,
   `gabarit.js`, et `moteur/style.css`, sa propre source. Le Python le lit par
@@ -27,3 +30,9 @@ modèle, jumeau du Python de `src/`, qui fait foi et se modifie le premier
   toute borne `min` ou `max` du formulaire opposée aussi par la saisie ; les
   deux contextes ; la chronologie s'il porte un fait ; un témoin de
   simulation, et de page si la page change ; `python -m pytest -m site`.
+- **Un chiffre de plus sur une page qui agrège** : il se fabrique en Python,
+  dans `_agregats` (`scripts/construire_donnees.py`) et `donnees/agregats.py`,
+  se lit par l'accesseur jumeau de `agregats.js`, sans rien calculer qu'une
+  règle décide, et la version du paquet monte des deux côtés (`VERSION`,
+  `VERSION_PAQUET`) ; `tests/test_agregats.py`, puis la liste d'une retouche
+  de `pages.js`.

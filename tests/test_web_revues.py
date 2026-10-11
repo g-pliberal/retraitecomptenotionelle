@@ -1628,7 +1628,7 @@ def test_la_page_donnees_ne_promet_que_la_plus_ancienne_verification():
 # -- les trois pages agrégées montrent la référence, et elle seule ------------
 #
 # Elles ne calculent aucune carrière saisie — elles croisent des carrières
-# types avec des générations. Du 19 septembre au 10 octobre 2026, elles se
+# types avec des générations. Du 19 septembre au 11 octobre 2026, elles se
 # calculaient sous les règles de l'adresse, celles du simulateur, et portaient
 # un bloc pour les changer ; le propriétaire les a retirées (action 150). Elles
 # montrent la référence, une adresse réglée ne les déplace pas, et un encadré
@@ -1772,7 +1772,7 @@ def test_un_contexte_derive_partage_ce_qui_ne_depend_pas_des_regles(contexte):
 
 
 def test_les_champs_de_modelisation_sont_ceux_du_simulateur():
-    """Les règles ne se changent plus qu'au simulateur, depuis le 10 octobre 2026.
+    """Les règles ne se changent plus qu'au simulateur, depuis le 11 octobre 2026.
 
     Les pages agrégées en portaient le même jeu de champs, écrit par la même
     fonction ; elles n'en ont plus aucun.

@@ -45,6 +45,8 @@ carrières commencées en 1930 aux départs de 2070.
    le JavaScript du site, en sont la copie étape par étape, écrite à la main
    ou produite d'une source commune. Toutes s'échangent les mêmes données entre
    étapes, et les témoins garantissent qu'elles donnent les mêmes chiffres.
+   Le JavaScript ne copie que ce qui dépend de la saisie du lecteur ; le
+   reste, il le lit, fabriqué par le Python (§ 7.1).
 5. **Le temps est explicite.** Chaque version d'une règle dit à quelles
    situations elle s'applique, par des bornes sur des dates nommées. Les
    versions d'une règle forment un partage, sans trou ni chevauchement qui ne
@@ -1069,6 +1071,20 @@ fonction par fonction, avec les mêmes noms : recopier une règle devient un
 geste local. Les versions, les relations et les paramètres sont des données,
 écrites une fois et lues par les deux moteurs.
 
+**Le coût n'a pas de jumeau.** Le JavaScript ne copie que ce qui dépend de
+la saisie du lecteur : une carrière, ses droits et sa pension, sous les
+réglages du simulateur. Ce que le site ne montre que sous les réglages de
+référence — le coût agrégé, chaque année de sa cascade et sa vue des flux, le
+coût des avantages non contributifs, les carrières types, les départs qui
+classent les écarts — ne se calcule qu'en Python (action 150) :
+`scripts/construire_donnees.py` le fabrique dans la table figée,
+`data/derive/agregats.json`, que le paquet porte à côté du bilan figé, et les
+deux langages la lisent par les mêmes accesseurs, `donnees/agregats.py` et
+`moteur/js/agregats.js`, qui ne calculent rien qu'une règle décide. Une page
+qui veut un chiffre de plus le fait fabriquer ; la version du paquet monte
+alors des deux côtés, et le site qui reçoit un paquet d'une autre version
+le redemande une fois, puis dit au lecteur de recharger la page.
+
 Les étapes portent un nom, pas un numéro : en insérer une ne renumérote rien.
 Elles s'échangent des **données** au format JSON, les mêmes dans les deux
 moteurs, décrites chacune par un schéma. Le schéma d'une étape s'écrit à la
@@ -1371,9 +1387,9 @@ Hors du moteur, un **pilote** fixe ce que le droit ne décide pas.
   appliqué aux pensions. Sa valeur se tire de l'agrégat de toute une
   population, du même univers. Il vient donc du pilote, déclaré comme tel, et
   entre dans l'univers comme un paramètre daté. Il ne vient jamais du moteur.
-  `moteur/js/cout.js` calcule déjà ce coefficient, et dit : « Le modèle le
-  calcule ; il ne l'applique jamais. » L'appliquer un jour ne changera pas le
-  moteur. S'il se reporte d'une année sur l'autre, le pilote devra le calculer
+  `cout.py` calcule déjà ce coefficient (`SoldeAnnuel`), et le README le
+  dit : « Le modèle calcule ce facteur ; il ne l'applique jamais. »
+  L'appliquer un jour ne changera pas le moteur. S'il se reporte d'une année sur l'autre, le pilote devra le calculer
   année par année, dans l'ordre.
 
 ### 7.8 Le budget de calcul
@@ -1416,14 +1432,16 @@ grossit pas quand les domaines s'ajoutent.
   couche ne vise (§ 4.8), et les droits en cours à la bascule, comme une
   retraite progressive.
 - **La page Coût** passe le même moteur sur une population, par le pilote
-  (§ 7.7). Elle tourne aujourd'hui dans le navigateur : le pilote de ses cas
-  types est donc écrit dans les deux langages. Une microsimulation de toute la
-  population n'y tiendrait pas : la page lirait alors des agrégats fabriqués à
-  l'avance. Les faces du relevé et des composantes disent qui paie quoi.
+  (§ 7.7), en Python seulement : elle lit des agrégats fabriqués à l'avance
+  sous les réglages de référence (§ 7.1), comme Carrières types et Droits
+  non cotisés, et une microsimulation de toute la population s'y fabriquera
+  de même. Les faces du relevé et des composantes disent qui paie quoi.
 - **Le site** ne contient que la présentation, écrite une fois, en
   JavaScript. Le résultat montre les présomptions, les hypothèses et le relevé
-  des droits. Les réglages du site sont des couches de paramètres et de
-  neutralisations, appliquées au calcul dans les deux moteurs.
+  des droits. Les réglages du simulateur sont des couches de paramètres et
+  de neutralisations, appliquées au calcul dans les deux moteurs ; les pages
+  qui agrègent n'en prennent aucun, et une adresse qui leur en porte rend la
+  référence, sous un encadré qui le dit.
 - **Ce que d'autres utilisent** — les adresses du site, les paramètres d'une
   simulation dans l'adresse, les variables de thème qu'un hôte redéfinit — est
   la surface publique (annexe C). `docs/integration-partiliberalfrancais.md`

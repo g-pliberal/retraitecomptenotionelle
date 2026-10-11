@@ -8,7 +8,7 @@
  * chaque système coûterait jusqu'en 2070. Elles se calculaient ici, chez le
  * lecteur, par le portage JavaScript du coût et sous les réglages de
  * l'adresse : de trois à huit secondes à la première visite. Elles ne montrent
- * plus que la référence depuis le 10 octobre 2026 (action 150), et ce qu'elles
+ * plus que la référence depuis le 11 octobre 2026 (action 150), et ce qu'elles
  * lisent d'une règle du modèle vient de cette table, que
  * `scripts/construire_donnees.py` calcule une fois et que le paquet embarque
  * (`agregats`). Ce qui n'est qu'une donnée lue — les comptes du COR, les

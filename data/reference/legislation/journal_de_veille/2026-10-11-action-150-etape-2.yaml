@@ -1,0 +1,15 @@
+date: "2026-10-11"
+session: "action 150, étape 2 : Coût, Carrières types et Droits non cotisés lisent des résultats fabriqués à l'avance"
+consulte: >-
+  Aucune source de droit : la session ne touche ni au scénario 1 ni à une règle.
+  Ce que les trois pages qui agrègent lisent du modèle, relevé sous node accès par
+  accès, et leurs rendus, avant et après, comparés au caractère près.
+trouve: >-
+  Aucun texte de droit. Les trois pages ne montrent plus que la référence, qu'elles
+  lisent dans une table fabriquée par le Python (data/derive/agregats.json) : Coût
+  s'ouvre en 129 ms au lieu de 8,0 s, Carrières types en 25 ms au lieu de 5,2 s,
+  Droits non cotisés en 69 ms au lieu de 3,8 s. Le portage JavaScript du coût est
+  parti avec ses tests de parité ; aucun chiffre du modèle n'a bougé.
+reste: >-
+  Rien de l'action 150, close. La décision du conseil d'administration de
+  l'Agirc-Arrco du 14 octobre 2026.

@@ -372,7 +372,8 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   part_reprise_garantie: null,
   // Les trois règles de la reprise (action 47), qui ne jouent que sur la
   // couverture calculée : voir `Parametres` dans `config.py` pour les sources
-  // et les hypothèses, et `recouvrement` dans `cout.js`.
+  // et les hypothèses, et `_recouvrement` dans `cout.py`, que seul le
+  // Python calcule.
   // 1. Le logement attend le décès du conjoint survivant qui l'occupe.
   reprise_report_logement: true,
   part_logement_proprietaires: 0.75,

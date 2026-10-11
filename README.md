@@ -230,8 +230,11 @@ consultable en JSON au bas de la page.
 `index.html` charge deux choses : `moteur/donnees.json`
 (<!--chiffre:poids(moteur/donnees.json)-->5 167<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
-2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->74<!--/--> fiches de régime) et
-`moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
+2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->74<!--/--> fiches de régime, et ce que le Python a calculé une fois pour toutes
+sous les réglages de référence : le coût et les carrières types, que les pages
+qui agrègent lisent sans rien recalculer) et `moteur/js/`, un portage en
+JavaScript, sans aucune bibliothèque, de ce qui dépend de ce que le lecteur
+saisit : sa carrière, ses droits et sa pension. Le site est servi depuis la racine
 du dépôt, telle quelle : c'est ce que GitHub Pages publie sans aucun réglage, et
 `.nojekyll` demande que les fichiers soient servis sans transformation. Rien
 n'est chargé depuis un CDN ou un service tiers, ce qu'un test vérifie : le site

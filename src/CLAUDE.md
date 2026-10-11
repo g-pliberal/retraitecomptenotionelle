@@ -1,17 +1,22 @@
 # Consignes de `src/` : le modèle
 
 Claude Code les charge à la première lecture d'un fichier de `src/`, en plus
-de `CLAUDE.md`. Le modèle a son portage dans `moteur/js/` et ses données dans
-`data/`, qui ont leurs consignes. Ne s'écrivent pas ici : le texte du site,
-qui s'écrit en JavaScript (`moteur/CLAUDE.md`), ni une variante de la
-proposition, qui s'écrit en couche (`data/CLAUDE.md`).
+de `CLAUDE.md`. Le modèle a son portage dans `moteur/js/`, sauf le coût, et
+ses données dans `data/`, qui ont leurs consignes. Ne s'écrivent pas ici : le
+texte du site, qui s'écrit en JavaScript (`moteur/CLAUDE.md`), ni une variante
+de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
 
 - **Le Python de `src/` fait foi.** Toute modification du modèle se porte
-  dans `moteur/js/`. Après elle, ou après toute modification des données,
-  `python scripts/regenerer.py` refait tout ce qu'un script fabrique — le
-  paquet, les témoins, le chiffrage, les tableaux, le tableau de bord, les
-  chiffres ancrés —, dans l'ordre (`--verifier` dit ce qui est périmé sans
-  rien écrire) ; `python scripts/resumer_temoins.py` dit ce qu'elle déplace,
+  dans `moteur/js/`, sauf celle du coût, qui ne se calcule qu'ici : le coût
+  agrégé, celui des avantages, les carrières types et leurs départs, que
+  `scripts/construire_donnees.py` fige sous les réglages de référence dans la
+  table du paquet (`data/derive/agregats.json`), lue des deux côtés par les
+  mêmes accesseurs (`donnees/agregats.py`, `moteur/js/agregats.js`). Après
+  elle, ou après toute modification des données, `python scripts/regenerer.py`
+  refait tout ce qu'un script fabrique — le paquet, les témoins, le
+  chiffrage, les tableaux, le tableau de bord, les chiffres ancrés —, dans
+  l'ordre (`--verifier` dit ce qui est périmé sans rien écrire) ;
+  `python scripts/resumer_temoins.py` dit ce qu'elle déplace,
   scénario par scénario, et le diff des témoins, chiffre par chiffre. Une
   étape dont rien n'a bougé ne se relance pas, et la suite ne revérifie pas
   ce qu'elle vient de fabriquer (`.cache/fabrique.json`, que
@@ -39,6 +44,7 @@ proposition, qui s'écrit en couche (`data/CLAUDE.md`).
 
 ## Liste de contrôle
 
-- **Un changement du modèle** : le Python d'abord, puis son jumeau ;
+- **Un changement du modèle** : le Python d'abord, puis son jumeau s'il
+  touche une carrière, le coût n'en ayant pas ;
   `python scripts/regenerer.py`, puis `python scripts/resumer_temoins.py`, pour
   voir ce qu'il déplace ; `-m rapide` et les tests de sa zone, puis le commit.

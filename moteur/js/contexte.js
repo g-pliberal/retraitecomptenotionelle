@@ -98,7 +98,7 @@ const AGREGATS_MEMORISES = 6;
  *
  * Les trois pages qui AGRÈGENT — Cas types, Coût, Avantages — se rendaient
  * sous un contexte dérivé par `pour`, portant les réglages de l'adresse. Elles
- * ne montrent plus que la référence depuis le 10 octobre 2026, et lisent ce que
+ * ne montrent plus que la référence depuis le 11 octobre 2026, et lisent ce que
  * le Python a fabriqué sous elle (`agregats()`) : seul le simulateur dérive
  * encore un contexte.
  *

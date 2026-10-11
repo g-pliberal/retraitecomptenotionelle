@@ -6,7 +6,7 @@ chaque système coûterait, année par année jusqu'en 2070. Elles se calculaien
 chez le lecteur, par le portage JavaScript du coût, sous les réglages de
 l'adresse : de trois à huit secondes à la première visite. Le propriétaire a
 retiré leurs réglages le 10 octobre 2026 (action 150) : elles ne montrent plus
-que la référence. Ce qu'elles lisent du modèle est donc calculé une fois, par
+que la référence depuis le lendemain. Ce qu'elles lisent du modèle est donc calculé une fois, par
 ``scripts/construire_donnees.py``, écrit dans ``data/derive/agregats.json``,
 embarqué dans le paquet que le navigateur charge, et lu ici et dans
 ``moteur/js/agregats.js`` par les mêmes accesseurs.

@@ -115,7 +115,7 @@ PAQUET = RACINE / "moteur" / "donnees.json"
 EQUILIBRE = DONNEES / "derive" / "equilibre.json"
 #: Ce que les trois pages qui agrègent lisent du modèle, fabriqué sous les
 #: réglages de référence : elles ne calculent plus chez le lecteur depuis le
-#: 10 octobre 2026 (action 150). ``donnees/agregats.py`` la relit, et le paquet
+#: 11 octobre 2026 (action 150). ``donnees/agregats.py`` la relit, et le paquet
 #: l'embarque telle quelle.
 AGREGATS = DONNEES / "derive" / "agregats.json"
 #: Les lois de mortalité calibrées, avec l'empreinte de leurs entrées. Écrites
@@ -1953,7 +1953,7 @@ def _agregats(contexte=None) -> dict:
     Coût, Carrières types et Droits non cotisés se calculaient chez le
     lecteur, sous les réglages de l'adresse, par le portage JavaScript du
     coût : de trois à huit secondes à la première visite. Elles ne montrent
-    plus que la référence depuis le 10 octobre 2026 (action 150), et ce
+    plus que la référence depuis le 11 octobre 2026 (action 150), et ce
     qu'elles lisent d'une règle du modèle est calculé ici, une fois.
     ``donnees/agregats.py`` dit ce que la table porte, et ce qu'elle laisse au
     paquet.

@@ -311,7 +311,7 @@ export const ANCIENNES_ROUTES = {
  * `/simuler` lit `parametres` en entier : c'est la page que l'adresse paramètre
  * carrière comprise. Les trois pages qui AGRÈGENT — Cas types, Coût, Avantages —
  * n'en lisent que ce qu'elles REGARDENT : elles montrent la référence, et elle
- * seule, depuis le 10 octobre 2026 (`agregee`). Les adresses de
+ * seule, depuis le 11 octobre 2026 (`agregee`). Les adresses de
  * `ANCIENNES_ROUTES` rendent la page qui les a remplacées ; toute autre adresse
  * inconnue retombe sur l'accueil.
  *
@@ -466,7 +466,7 @@ export const PAGES_AGREGEES = {
  * Une page qui agrège, rendue sous les réglages de RÉFÉRENCE, quoi que
  * l'adresse demande.
  *
- * ELLE A PORTÉ LES RÉGLAGES DU SIMULATEUR jusqu'au 10 octobre 2026 : seize
+ * ELLE A PORTÉ LES RÉGLAGES DU SIMULATEUR jusqu'au 11 octobre 2026 : seize
  * champs, sous un bloc « Les règles du calcul », et deux réglages par
  * l'adresse, sous lesquels la page se recalculait chez le lecteur — cinq à neuf
  * secondes à la première visite. Le propriétaire les a retirés, sans rien
@@ -760,7 +760,7 @@ function reglagesSansChamp(saisie) {
  * Les huit réglages qui décrivent les RÈGLES, et non la carrière.
  *
  * Ils sont écrits ici une fois, et servent aux options du simulateur. Ils
- * servaient aussi, jusqu'au 10 octobre 2026, au bloc de réglages des trois
+ * servaient aussi, jusqu'au 11 octobre 2026, au bloc de réglages des trois
  * pages qui agrègent, qui n'en ont plus (`agregee`) : les écrire une seule
  * fois empêchait deux pages du même site de proposer deux jeux de règles qui
  * n'en sont qu'un.
