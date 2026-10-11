@@ -38,3 +38,28 @@ estimation retraite », le dernier point de l'action est mesuré.**
   lecture divergente. Le modèle ne change pas : il suit l'accord, et le
   simulateur individuel dit déjà, dans sa bulle, que la convention de la page
   est autre. L'action n'a plus rien qui demande le propriétaire : elle se clôt.
+
+**La même nuit : la carrière du propriétaire, reconfrontée au modèle d'aujourd'hui.**
+
+- *Les pièces.* L'estimation rapide recopiée le 4 octobre, hors du dépôt, et le
+  relevé de carrière tous régimes, retéléchargé par le propriétaire connecté et
+  rangé dans le répertoire de la session ; `scripts/estimation_officielle.py`,
+  qui n'imprime rien d'autre que des écarts au dépôt. Trois choses apprises en
+  chemin : le texte d'un relevé gardé par une session du 4 octobre n'en était
+  qu'un extrait, qui perdait onze trimestres ; les deux corrections manuelles
+  de l'estimation visaient le relevé du seul régime général, et le relevé tous
+  régimes n'en demande aucune ; et le script prolonge, pour les années à venir,
+  le statut de la ligne principale de la dernière année du relevé, quand la page
+  prolonge la situation actuelle — l'extrait, qui finissait sur un contrat
+  public, envoyait ainsi toute la complémentaire à l'Ircantec, ce que le relevé
+  entier ne fait pas.
+- *Ce qui concorde.* Les trimestres, aux trois âges de la page ; la retraite de
+  base, à moins d'un millième près, quand la carrière à venir suit la
+  convention de la page, les prix plus 1 % par an — comme le 4 octobre, après
+  plus de deux cents commits.
+- *Ce qui ne concorde pas.* La complémentaire du modèle ressort de 3,2 à 4,1 %
+  sous celle de la page, et le total de 0,8 à 0,9 % : le sens et l'ordre de ce
+  que donne la valeur d'achat que la page fige après 2037, pour une carrière
+  qui continue longtemps au-delà. Sous la convention du modèle, le salaire
+  moyen, la base ressort de 6,2 à 7,1 % plus bas, la complémentaire de 7,3 à
+  8,6 %, le total de 6,5 à 7,5 % : une hypothèse de projection, non une règle.
