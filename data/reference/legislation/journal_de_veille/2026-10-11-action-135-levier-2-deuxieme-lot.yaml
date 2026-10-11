@@ -1,0 +1,20 @@
+date: "2026-10-11"
+session: "action 135, levier 2, étape 3 : un deuxième lot de tests déclare sa date"
+consulte: >-
+  La circulaire Cnav n° 22/83 du 16 février 1983, point 313, ses exemples de
+  calculs, par la recherche de la base de législation de la Cnav
+  (/api/v1/search/custom) ; la fiche F37311 de service-public.gouv.fr, « Comment
+  les enfants sont-ils pris en compte pour la retraite de l'agent public ? »,
+  vérifiée le 1er septembre 2026. La vue de la carte (scripts/veille_droit.py) :
+  aucune des fiches que ces exemples rejouent n'est à relire.
+trouve: >-
+  Aucune règle n'a changé. La circulaire ne dit pas le jour de naissance de son
+  assuré, « né en mars 1917 » ; son « 60 x 12,50 % », cinq trimestres postérieurs
+  au soixante-cinquième anniversaire jusqu'au 1er septembre 1983, l'écarte du 1er,
+  qui en donnerait six : le témoin le fait naître le 15. La fiche F37311 ne date
+  aucun enfant ; elle accorde deux trimestres pour chaque enfant né depuis le
+  1er janvier 2004 et après le recrutement : le témoin déclare deux naissances,
+  mai 2004 et mai 2006, au lieu de les tenir de la présomption.
+reste: >-
+  Les treize derniers tests rapides qui dépendent des présomptions, dont aucun
+  exemple officiel.

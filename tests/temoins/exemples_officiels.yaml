@@ -655,7 +655,7 @@ exemples:
   # 1er septembre 1983, quand l'assuré né le 1er mars en compterait six
   # (circulaire n° 8/89, point 12). Le témoin le fait naître le 15.
   - id: cnav_22_83_taux_acquis_60_trimestres
-    source: {editeur: "Cnav", reference: "circulaire n° 22/83 du 16 février 1983, point 313, exemples de calculs, 1er cas", verifie_le: "2026-09-27"}
+    source: {editeur: "Cnav", reference: "circulaire n° 22/83 du 16 février 1983, point 313, exemples de calculs, 1er cas", verifie_le: "2026-10-11"}
     enonce: >-
       « Assuré né en mars 1917 - fixe l'entrée en jouissance de sa pension au
       1er septembre 1983 » ; « L'assuré totalise 60 trimestres » ;
@@ -668,7 +668,7 @@ exemples:
     attendu: {taux_liquidation: 0.5, pension_base_sur_sam: 0.22666666666666666}
 
   - id: cnav_22_83_taux_acquis_145_trimestres
-    source: {editeur: "Cnav", reference: "circulaire n° 22/83 du 16 février 1983, point 313, exemples de calculs, 2ème cas", verifie_le: "2026-09-27"}
+    source: {editeur: "Cnav", reference: "circulaire n° 22/83 du 16 février 1983, point 313, exemples de calculs, 2ème cas", verifie_le: "2026-10-11"}
     enonce: >-
       « L'assuré totalise 145 trimestres » ; « Coefficient acquis au 31-3-83 :
       55 % », 97 859 × 55 × 145 / (100 × 150) = 52 028,36, ramenée au
@@ -682,7 +682,7 @@ exemples:
     attendu: {taux_liquidation: 0.55, pension_base_sur_plafond: 0.55}
 
   - id: cnav_22_83_taux_acquis_117_trimestres
-    source: {editeur: "Cnav", reference: "circulaire n° 22/83 du 16 février 1983, point 313, exemples de calculs, 3ème cas", verifie_le: "2026-09-27"}
+    source: {editeur: "Cnav", reference: "circulaire n° 22/83 du 16 février 1983, point 313, exemples de calculs, 3ème cas", verifie_le: "2026-10-11"}
     enonce: >-
       « L'assuré totalise 117 trimestres », salaire annuel moyen de 152 000
       F ; « Coefficient acquis au 31-3-83 : 55 % », 152 000 × 55 × 117 / (100
