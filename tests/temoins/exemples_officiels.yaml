@@ -649,7 +649,11 @@ exemples:
   # salaire annuel moyen de l'exemple ne se reconstruit pas ; le taux retenu
   # et la pension rapportée à ce salaire, si, ou, quand le salaire du témoin
   # passe aussi le plafond, la pension ramenée à sa part du plafond (fiche
-  # pension_maximale_regime_general).
+  # pension_maximale_regime_general). La circulaire ne dit pas le jour de
+  # naissance, mais son « 60 x 12,50 % » l'écarte du 1er : cinq trimestres
+  # postérieurs au soixante-cinquième anniversaire (point 312) jusqu'au
+  # 1er septembre 1983, quand l'assuré né le 1er mars en compterait six
+  # (circulaire n° 8/89, point 12). Le témoin le fait naître le 15.
   - id: cnav_22_83_taux_acquis_60_trimestres
     source: {editeur: "Cnav", reference: "circulaire n° 22/83 du 16 février 1983, point 313, exemples de calculs, 1er cas", verifie_le: "2026-09-27"}
     enonce: >-
@@ -660,7 +664,7 @@ exemples:
       à 68 », 97 859 × 50 × 68 / (100 × 150) = 22 181,37 : « On retiendra la
       pension qui résulte des dispositions applicables à partir du 1-4-83 ».
       Taux 50 %, pension de 50 % × 68/150 du salaire annuel moyen.
-    carriere: {naissance: "1917-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "1983-09", trimestres_valides: 60}
+    carriere: {naissance: "1917-03-15", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "1983-09", trimestres_valides: 60}
     attendu: {taux_liquidation: 0.5, pension_base_sur_sam: 0.22666666666666666}
 
   - id: cnav_22_83_taux_acquis_145_trimestres
@@ -674,7 +678,7 @@ exemples:
       pension ramenée au maximum de 55 % du plafond, 48 906 F sur 88 920 F :
       le salaire annuel moyen du témoin, 1,06 fois le plafond de 1983, la
       porte au-delà comme celui de la circulaire, 1,10 fois.
-    carriere: {naissance: "1917-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "1983-09", trimestres_valides: 145}
+    carriere: {naissance: "1917-03-15", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "1983-09", trimestres_valides: 145}
     attendu: {taux_liquidation: 0.55, pension_base_sur_plafond: 0.55}
 
   - id: cnav_22_83_taux_acquis_117_trimestres
@@ -687,7 +691,7 @@ exemples:
       retiendra la pension qui résulte de cette dernière législation ». Taux
       55 %, pension de 55 % × 117/150 du salaire annuel moyen avant le
       maximum.
-    carriere: {naissance: "1917-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "1983-09", trimestres_valides: 117}
+    carriere: {naissance: "1917-03-15", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "1983-09", trimestres_valides: 117}
     attendu: {taux_liquidation: 0.55, pension_base_sur_sam: 0.429}
     ecart_connu:
       modele: {taux_liquidation: 0.5, pension_base_sur_sam: 0.44}
@@ -755,10 +759,10 @@ exemples:
     source: {editeur: "service-public.gouv.fr", reference: "fiche F37311, Comment les enfants sont-ils pris en compte pour la retraite de l'agent public ?", verifie_le: "2026-09-01"}
     enonce: >-
       Pour les enfants nés à compter du 1er janvier 2004, la bonification d'un
-      an disparaît et laisse 2 trimestres par enfant. Une mère née en 1974 —
-      dont le modèle présume les enfants nés à ses trente ans, donc en 2004 —
-      réunit 4 trimestres pour deux enfants, et non 8.
-    carriere: {naissance: "1974-05", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2038-05", age_debut: 22, nombre_enfants: 2}
+      an disparaît et laisse 2 trimestres par enfant. Une mère née en 1974,
+      recrutée à vingt-deux ans, dont les deux enfants naissent en mai 2004 et
+      en mai 2006, réunit 4 trimestres pour deux enfants, et non 8.
+    carriere: {naissance: "1974-05", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2038-05", age_debut: 22, nombre_enfants: 2, naissances_enfants: ["2004-05", "2006-05"]}
     attendu: {trimestres_de_majoration_enfants: 4}
 
   # Les mêmes règles, aux enfants datés : chacun compte à sa date, et la
