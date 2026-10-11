@@ -6,8 +6,7 @@
  * rapport de MASSES : ce que le système encaisse une année, sur ce qu'il verse
  * cette année-là. Le calculer suppose la grille des cas types simulée sous
  * chaque système, pondérée par les effectifs, année par année jusqu'en 2070 —
- * dix-huit secondes de calcul. C'est le prix de la page Coût, et elle le paie
- * une fois.
+ * dix-huit secondes de calcul, que le Python fait une fois, pour le paquet.
  *
  * La page des résultats du simulateur ne peut pas le payer : elle est la page
  * d'entrée du site, elle se recalcule à chaque changement de champ, et elle
@@ -20,7 +19,9 @@
  * 2026 : elles ne prennent aucun réglage, et refaisaient le coût entier — cinq
  * secondes — pour y lire la dépense, la recette et le solde de quelques années.
  * La table porte donc la dépense et le PIB de chaque année, et les trois
- * carrières d'exemple de « Pourquoi changer » (`ExempleFige`).
+ * carrières d'exemple de « Pourquoi changer » (`ExempleFige`). Carrières types
+ * y lit le coefficient de chaque système depuis le 11 octobre ; la page Coût
+ * lit le coût entier dans une table voisine (`agregats.js`).
  *
  * CE QUE LE FIGEAGE COÛTE. La table est calculée sous les réglages de
  * RÉFÉRENCE. Le coefficient du système actuel n'en dépend pas : il est le
@@ -29,9 +30,9 @@
  * de pensions notionnelles, qui bouge avec la règle d'indexation ou la table
  * de mortalité. La page le dit en toutes lettres.
  *
- * STRUCTURELLEMENT IDENTIQUE À `Solde` : mêmes accesseurs, mêmes unités — la
- * part de PIB partout. C'est ce qui garantit que la table figée et le calcul
- * complet ne peuvent pas dire deux choses.
+ * STRUCTURELLEMENT IDENTIQUE AU `Solde` DU PYTHON : mêmes accesseurs, mêmes
+ * unités — la part de PIB partout. C'est ce qui garantit que la table figée et
+ * le calcul complet ne peuvent pas dire deux choses.
  */
 
 /** Une année du bilan figé, dans l'unité du COR : la part de PIB. */
@@ -158,7 +159,9 @@ export class EcartsFiges {
  * Une carrière d'exemple de « Pourquoi changer », simulée une fois.
  *
  * `saisie` est la saisie simulée, champ par champ : la page ne lit l'exemple
- * que si elle demande exactement celle-là, et simule sinon. `pensionFinancee`
+ * que si elle demande exactement celle-là. Elle simulait sinon, jusqu'au
+ * 11 octobre 2026 ; un paquet qui ne la porte pas est désormais à refaire, et
+ * la page le dit en levant une erreur. `pensionFinancee`
  * est la pension du système 3 — le scénario `notionnel_retroactif_employeur` —,
  * ce que les cotisations de l'assuré financeraient au rendement d'équilibre.
  * Les champs sont ceux d'`ExempleFige` côté Python.
@@ -174,19 +177,100 @@ export class ExempleFige {
   }
 }
 
-/** Ce que « Pourquoi changer » lit d'une simulation, et rien d'autre. */
-export function exempleDe(saisie, comparaison) {
-  const fiche = comparaison.remuneration.reference.droitEnVigueur;
-  return new ExempleFige(
-    { ...saisie },
-    {
-      annee: fiche.annee, brut: fiche.brut, net: fiche.net,
-      retraiteTotale: fiche.retraiteTotale, retraiteEmployeur: fiche.retraiteEmployeur,
-    },
-    comparaison.coefficient_euros_constants,
-    comparaison.actuel.pension_annuelle,
-    comparaison.notionnel_retroactif_employeur.pension_annuelle,
-  );
+/**
+ * Ce que les comptes financent d'une pension promise, sur la durée du service.
+ * Portage de `cout.PensionFinancee`, venu ici de `cout.js` quand le portage du
+ * coût est parti (11 octobre 2026) : le simulateur la lit sur ce bilan.
+ *
+ * Le site affiche quatre pensions calculées sur une même carrière, et la
+ * première — le droit en vigueur — se lit comme une promesse tenue. Elle ne
+ * l'est pas : le système qui la sert est en déficit, et le COR projette ce
+ * déficit jusqu'en 2070. Le coefficient d'équilibre dit de combien ; celui de
+ * la seule année du départ flatte qui part tôt, puisqu'il ignore les années où
+ * le déficit se creuse, et le coefficient retenu est donc la moyenne des
+ * coefficients annuels PONDÉRÉE PAR LA SURVIE.
+ *
+ * Ce n'est pas une prévision : rogner toutes les pensions d'un même facteur est
+ * UNE façon d'équilibrer une année, et les deux autres — lever davantage de
+ * cotisations, emprunter — sont chiffrées à côté.
+ */
+export class PensionFinancee {
+  constructor(donnees) {
+    Object.assign(this, donnees);
+  }
+
+  /** De combien il faudrait rogner, en part de la pension. Négatif : une marge. */
+  get manque() {
+    return 1.0 - this.coefficient;
+  }
+
+  /** Les comptes couvrent-ils l'année du départ elle-même ? */
+  get departCouvert() {
+    return this.premiereAnnee === this.anneeLiquidation;
+  }
+
+  /** La fenêtre couvre-t-elle toute la durée de service de la pension ? */
+  get entiere() {
+    return this.partCouverte >= 0.999;
+  }
+
+  /**
+   * Le montant que les comptes financent, la capitalisation mise à part : une
+   * rente capitalisée sort d'un placement déjà constitué, qu'aucun déficit de
+   * la répartition n'atteint.
+   */
+  servie(montant, horsRepartition = 0.0) {
+    return (montant - horsRepartition) * this.coefficient + horsRepartition;
+  }
+}
+
+/**
+ * Ce que les comptes financent de la pension du scénario, à cette date.
+ * Portage de `cout.financer`.
+ *
+ * `poids` porte, rang par rang à compter de l'année de liquidation, la part des
+ * partants encore en vie pendant l'année. `solde` est le bilan figé du paquet,
+ * ou tout objet qui en porte les accesseurs — le `Solde` du Python les porte.
+ *
+ * Rend `null` quand aucune année du service n'est couverte par les comptes du
+ * COR : un départ de 1980 n'a rien à lire dans un bilan qui commence en 2002.
+ */
+export function financer(solde, assiette, scenario, anneeLiquidation, poids) {
+  if (!solde || !solde.annees.length) return null;
+  const debut = Math.max(anneeLiquidation, solde.premiereAnnee);
+  let numerateur = 0.0;
+  let couvert = 0.0;
+  let total = 0.0;
+  for (let rang = 0; rang < poids.length; rang += 1) {
+    const part = poids[rang];
+    if (part <= 0) continue;
+    const annee = anneeLiquidation + rang;
+    total += part;
+    const ligne = solde.annee(annee);
+    if (annee < debut || ligne === null) continue;
+    numerateur += part * ligne.coefficient(scenario);
+    couvert += part;
+  }
+  if (couvert <= 0 || total <= 0) return null;
+  const ligneDepart = solde.annee(debut);
+  if (ligneDepart === null) return null;
+  const manque = -ligneDepart.solde(scenario);
+  const anneeAssiette = assiette ? assiette.derniereAnnee : 0;
+  const partAssiette = assiette ? assiette.partPib(anneeAssiette) : 0.0;
+  const cotisees = ligneDepart.ressourcesDe(scenario) * ligneDepart.partContributive;
+  return new PensionFinancee({
+    scenario,
+    anneeLiquidation,
+    premiereAnnee: debut,
+    derniereAnnee: Math.min(anneeLiquidation + poids.length - 1, solde.derniereAnnee),
+    coefficientDepart: ligneDepart.coefficient(scenario),
+    coefficient: numerateur / couvert,
+    partCouverte: couvert / total,
+    manquePib: manque,
+    pointsAssiette: partAssiette > 0 ? manque / partAssiette : 0.0,
+    hausseCotisations: cotisees > 0 ? manque / cotisees : 0.0,
+    anneeAssiette,
+  });
 }
 
 /** Deux saisies écrites comme des objets : les mêmes champs, les mêmes valeurs. */
@@ -199,7 +283,7 @@ function memesChamps(une, autre) {
 /** Le bilan des quatre systèmes comparés, tel que la table le porte. */
 export class BilanFige {
   constructor(annees, premiereAnneeProjetee, assiette, pib = 0.0, anneePib = 0,
-              engagements = null, ecarts = null, exemples = [], depensesFigees = false) {
+              engagements = null, ecarts = null, exemples = []) {
     this.annees = annees;
     this.premiereAnneeProjetee = premiereAnneeProjetee;
     this.assiette = assiette;
@@ -214,11 +298,6 @@ export class BilanFige {
     this.ecarts = ecarts;
     // Les carrières d'exemple de « Pourquoi changer ».
     this.exemples = exemples;
-    // La table porte-t-elle la dépense et le PIB de chaque année ? Une table
-    // écrite avant le 7 octobre 2026 ne les porte pas, et le navigateur peut
-    // la garder (`force-cache`) : les pages qui les lisent refont alors le
-    // calcul complet.
-    this.depensesFigees = depensesFigees;
     this.premiereAnnee = annees.length ? annees[0].annee : 0;
     this.derniereAnnee = annees.length ? annees[annees.length - 1].annee : 0;
     this.derniereAnneeObservee = premiereAnneeProjetee - 1;
@@ -242,15 +321,14 @@ export function chargerBilan(donnees) {
   return new BilanFige(
     donnees.annees.map((ligne) => new AnneeBilan(
       ligne.annee, ligne.projete, ligne.part_contributive,
-      ligne.coefficients, ligne.soldes, ligne.ressources,
-      ligne.depenses ?? {}, ligne.pib ?? 0.0,
+      ligne.coefficients, ligne.soldes, ligne.ressources, ligne.depenses, ligne.pib,
     )),
     donnees.premiere_annee_projetee,
     new AssietteFigee(donnees.annee_assiette, donnees.part_pib_assiette),
     donnees.pib, donnees.annee_pib,
     donnees.engagements ? new EngagementFige(donnees.engagements) : null,
     donnees.ecarts_medians ? new EcartsFiges(donnees.ecarts_medians) : null,
-    (donnees.exemples_risque ?? []).map((brut) => new ExempleFige(
+    donnees.exemples_risque.map((brut) => new ExempleFige(
       brut.saisie,
       {
         annee: brut.fiche.annee, brut: brut.fiche.brut, net: brut.fiche.net,
@@ -259,6 +337,5 @@ export function chargerBilan(donnees) {
       },
       brut.coefficient_euros_constants, brut.pension_actuel, brut.pension_financee,
     )),
-    donnees.annees.length > 0 && donnees.annees.every((ligne) => ligne.depenses !== undefined),
   );
 }

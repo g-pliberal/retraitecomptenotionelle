@@ -957,11 +957,6 @@ def test_la_fonction_publique_suit_ses_retraites_et_son_traitement_au_cor():
     porte désormais le décrochage que la figure 1.14 du rapport de juin 2026
     publie de 2019 à 2024, le premier point reconduit avant lui.
     """
-    import json
-    import shutil
-    import subprocess
-    from pathlib import Path
-
     from retraite_notionnelle.donnees.chargement import charger_yaml
     from retraite_notionnelle.donnees.macro import DonneesMacro
 
@@ -998,26 +993,8 @@ def test_la_fonction_publique_suit_ses_retraites_et_son_traitement_au_cor():
     # plongeant avec l'activité partielle.
     assert 1.03 < attendus[2019] < 1.05 < attendus[2020]
     assert macro.traitement_indiciaire_relatif(2025) == 1.0
-
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    annees = sorted(attendus) + [2025, 2030, 2037, 2050]
-    script = """
-import { readFileSync } from "node:fs";
-import { DonneesMacro } from "./moteur/js/macro.js";
-const annees = JSON.parse(process.argv[1]);
-const macro = new DonneesMacro(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
-console.log(JSON.stringify(annees.map((annee) => macro.traitementIndiciaireRelatif(annee))));
-"""
-    calcul = subprocess.run(
-        ["node", "--input-type=module", "-e", script, json.dumps(annees)],
-        capture_output=True, text=True, encoding="utf-8",
-        cwd=Path(__file__).resolve().parents[1], check=False,
-    )
-    assert calcul.returncode == 0, calcul.stderr[-2000:]
-    for annee, valeur in zip(annees, json.loads(calcul.stdout)):
-        assert valeur == pytest.approx(macro.traitement_indiciaire_relatif(annee),
-                                       rel=1e-12), annee
+    # Le portage JavaScript le refaisait, et un test l'y confrontait : il ne
+    # servait qu'au coût, figé depuis le 11 octobre 2026 (action 150).
 
 
 def test_les_arrivees_tardives_se_lisent_dans_la_pyramide():
@@ -1143,11 +1120,6 @@ def test_le_fonctionnaire_de_l_etat_entre_tard_dans_son_regime():
     du rapport de juin 2026), en ligne droite entre les deux. Il part au même
     âge, sa pension seule se partage ; le simulateur individuel et la page Cas
     types gardent la carrière d'un seul statut."""
-    import json
-    import shutil
-    import subprocess
-    from pathlib import Path
-
     from retraite_notionnelle.donnees.macro import DonneesMacro
 
     macro = DonneesMacro(RACINE_DONNEES)
@@ -1171,33 +1143,9 @@ def test_le_fonctionnaire_de_l_etat_entre_tard_dans_son_regime():
         assert sum(ligne.fraction_annee for ligne in avant) == pytest.approx(
             delai, abs=1.0), generation
         assert all(ligne.annee < generation + cas.age_debut + delai + 1 for ligne in avant)
-
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    generations = [1930, 1962, 1970, 1981, 1999, 2000, 2015]
-    script = """
-import { readFileSync } from "node:fs";
-import { DonneesMacro } from "./moteur/js/macro.js";
-import { CarrieresIncompletes } from "./moteur/js/population.js";
-const generations = JSON.parse(process.argv[1]);
-const paquet = JSON.parse(readFileSync("moteur/donnees.json", "utf8"));
-const macro = new DonneesMacro(paquet);
-const carrieres = new CarrieresIncompletes(paquet);
-console.log(JSON.stringify(generations.map((g) => [
-  macro.delaiEntreeFonctionPublique(g), carrieres.completude(g)])));
-"""
-    calcul = subprocess.run(
-        ["node", "--input-type=module", "-e", script, json.dumps(generations)],
-        capture_output=True, text=True, encoding="utf-8",
-        cwd=Path(__file__).resolve().parents[1], check=False,
-    )
-    assert calcul.returncode == 0, calcul.stderr[-2000:]
-    from retraite_notionnelle.donnees.population import CarrieresIncompletes
-
-    carrieres = CarrieresIncompletes(RACINE_DONNEES)
-    for generation, (delai, completude) in zip(generations, json.loads(calcul.stdout)):
-        assert delai == macro.delai_entree_fonction_publique(generation), generation
-        assert completude == carrieres.completude(generation), generation
+    # Le portage JavaScript refaisait le délai et la complétude des carrières,
+    # et un test l'y confrontait : ils ne servaient qu'au coût, figé depuis le
+    # 11 octobre 2026 (action 150).
 
 
 def test_les_caisses_qui_se_ferment_rendent_leur_part_au_prive():
@@ -3713,7 +3661,6 @@ def test_le_bilan_fige_dit_ce_que_le_modele_calcule(solde):
     # Ce que « Pourquoi changer » et « Partager » lisent du système actuel,
     # sans plus refaire le coût : la recette, le PIB publié et le solde en
     # euros de la dernière année observée.
-    assert bilan.depenses_figees
     for annee in (solde.premiere_annee, solde.derniere_annee_observee, 2050,
                   solde.derniere_annee):
         ligne, figee = solde.annee(annee), bilan.annee(annee)

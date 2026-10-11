@@ -19,6 +19,13 @@
  * un zéro à la place se tromperait sans bruit.
  */
 
+/**
+ * La clé sous laquelle la table porte la garantie vieillesse, que le passé et
+ * l'avenir de chaque système comptent à part : celle que le Python lui donne
+ * (`cout.COMPOSANTE_GARANTIE`), et qu'un test tient égale.
+ */
+export const COMPOSANTE_GARANTIE = "garantie_vieillesse_liberal";
+
 /** `table[cle]`, ou une erreur qui dit ce que la table ne porte pas. */
 function lire(table, cle, quoi) {
   if (!Object.prototype.hasOwnProperty.call(table, cle)) {
@@ -54,12 +61,16 @@ class ComparaisonFigee {
   }
 }
 
-/** Un cas type, tel que les pages le nomment, et l'âge où chaque génération le fait partir. */
+/**
+ * Un cas type, tel que les pages le nomment, les caisses dont il porte les
+ * retraités, et l'âge où chaque génération le fait partir.
+ */
 class CasFige {
   constructor(brut, generations) {
     this.code = brut.code;
     this.libelle = brut.libelle;
     this.commentaire = brut.commentaire;
+    this.caisses = brut.caisses;
     this._ages = Object.fromEntries(
       generations.map((generation, rang) => [generation, brut.ages[rang]]));
   }
@@ -113,7 +124,12 @@ class AnneeAvantagesFigee {
   }
 }
 
-/** Ce que les avantages non contributifs coûtent, année par année. */
+/**
+ * Ce que les avantages non contributifs coûtent, année par année ; et la
+ * nomenclature sous laquelle la page les lit : les lignes que les comptes
+ * publient (`lignesLues`), les avantages mesurés par retrait
+ * (`neutralisations`), les motifs d'un départ anticipé et leur libellé.
+ */
 export class AvantagesFiges {
   constructor(brut) {
     this.annees = brut.annees.map((annee) => new AnneeAvantagesFigee(annee));
@@ -121,6 +137,10 @@ export class AvantagesFiges {
     this.lignesModele = brut.lignes_modele;
     this.refus = brut.refus;
     this.ponderation = brut.ponderation;
+    this.lignesLues = brut.lignes_lues;
+    this.neutralisations = brut.neutralisations;
+    this.motifs = brut.libelles_motifs.map(([motif]) => motif);
+    this.libellesMotifs = Object.fromEntries(brut.libelles_motifs);
   }
 
   get derniere() {
@@ -501,6 +521,12 @@ export class CoutFige {
   annee(millesime) {
     return this.annees.find((ligne) => ligne.annee === millesime) ?? null;
   }
+
+  /**
+   * Le taux de TVA unique qui couvrirait juste chaque année, garantie comprise,
+   * et l'année qui le fixe : ce que la page tirait de `tauxTvaRequis`.
+   */
+  tauxTvaRequis() { return [...this._brut.taux_tva_requis]; }
 
   /** La dette au taux de la courbe décalé de `ecart`, citée à l'horizon. */
   detteDecalee(ecart) {

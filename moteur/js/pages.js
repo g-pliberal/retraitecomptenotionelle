@@ -27,9 +27,6 @@ import {
   ContributionsEmployeurPubliques, FAMILLES_STATUT, MinimumVieillesse, formaterBorne,
 } from "./regimes.js";
 import {
-  CAS_TYPES, GENERATIONS, ageLiquidationPour, calculerCasTypes,
-} from "./castypes.js";
-import {
   AgeConversionDroitsAcquis, ContributionEtat, ModeAgeReference, ModeIndexation,
   PARAMETRES_DEFAUT, PartCotisation,
   RevalorisationStock, SituationFoyer, TableConversion, avec, cleParametres,
@@ -40,24 +37,12 @@ import {
 } from "./config.js";
 import { AssietteActivite } from "./assiette.js";
 import { AssietteTva } from "./tva.js";
-import {
-  LIBELLES_MOTIFS, LIGNES_LUES, MOTIFS, NEUTRALISATIONS, calculerAvantages,
-  carriereVariante, chargerAvantages,
-} from "./avantages.js";
 import { chargerFrontiere } from "./frontiere.js";
 import {
   AGIRC_ARRCO as AGIRC_ARRCO_DU_CUMUL, PRIORITE as PRIORITE_DU_CUMUL,
 } from "./droit/cumul.js";
-import {
-  COMPOSANTE_GARANTIE,
-  SCENARIOS,
-  calculerCout,
-  calculerDette,
-  financer,
-  masseDuScenario,
-  tauxTvaRequis,
-} from "./cout.js";
-import { chargerBilan, exempleDe } from "./bilan.js";
+import { financer } from "./bilan.js";
+import { COMPOSANTE_GARANTIE } from "./agregats.js";
 import { CaracteristiquesRetraites } from "./caracteristiques.js";
 import { DistributionPensions } from "./distribution.js";
 import { coutGarantie, coutGarantieParSexe } from "./garantie.js";
@@ -73,7 +58,6 @@ import {
 } from "./equilibre.js";
 import { Restitution } from "./restitution.js";
 import { Indexation } from "./indexation.js";
-import { Population } from "./population.js";
 import { echapper, formatFixe, formatG } from "./format.js";
 import * as g from "./gabarit.js";
 import { Fiabilite, nomFiabilite } from "./serie.js";
@@ -2478,7 +2462,7 @@ function cartePartage(nom, surtitre, chiffre, phrase, detail, classes = "",
  */
 function partager(contexte) {
   const base = contexte.base;
-  const solde = soldeDeReference(contexte);
+  const solde = contexte.bilan();
   const horizon = solde.annee(solde.derniereAnnee);
   const taux = g.pourcentage(base.taux_cotisation_liberal, false, 0);
   const capitalise = g.pourcentage(base.taux_capitalisation_obligatoire, false, 0);
@@ -8103,7 +8087,7 @@ function avantages(contexte, regards = null) {
   // lignes calculées depuis 1959 — un minimum vieillesse qui pesait le tiers de
   // la dépense en 1960 et qui s'est éteint depuis.
   const anneesCout = c.annees.map((ligne) => ligne.annee);
-  const lues = LIGNES_LUES.filter((ligne) => c.lignes.includes(ligne));
+  const lues = c.lignesLues.filter((ligne) => c.lignes.includes(ligne));
   const fenetre = c.annees.filter(
     (ligne) => lues.every((lue) => ligne.lignes[lue] !== undefined));
   const anneesPubliees = fenetre.map((ligne) => ligne.annee);
@@ -8192,8 +8176,8 @@ function avantages(contexte, regards = null) {
     ? derniere.gratuitModele / derniere.observee : 0;
 
   // -- troisième graphique : les annuités servies trop tôt -----------------
-  const anticipees = MOTIFS.map((motif) => new g.Serie(
-    LIBELLES_MOTIFS[motif],
+  const anticipees = c.motifs.map((motif) => new g.Serie(
+    c.libellesMotifs[motif],
     c.annees.map((annee) => (annee.anticipees[motif] || 0) / 1000),
     COULEURS_MOTIFS[motif],
   ));
@@ -8551,7 +8535,7 @@ function avantagesTableComplete(contexte) {
         ]);
       } else if (montant) {
         vues.add(ligne);
-        const origine = LIGNES_LUES.includes(ligne) ? "lu" : "calculé";
+        const origine = c.lignesLues.includes(ligne) ? "lu" : "calculé";
         lignes.push([
           avantage.libelle,
           milliards(montant, 2),
@@ -8610,10 +8594,10 @@ function avantagesDetailEtats(contexte) {
   const c = contexte.avantages();
   // Les lignes intégrées que ni un retrait ne mesure, ni un écart structurel
   // n'explique : celles dont un poste publié donne la dépense, lue dans les
-  // comptes de la protection sociale (`LIGNES_LUES`).
-  const neutralisees = new Set(NEUTRALISATIONS.map((n) => n.code));
+  // comptes de la protection sociale (`lignesLues`).
+  const neutralisees = new Set(c.neutralisations);
   const integreesLues = inventaire.avantages.filter((a) => a.etat_modele === "integre"
-    && !neutralisees.has(a.code) && LIGNES_LUES.includes(a.code));
+    && !neutralisees.has(a.code) && c.lignesLues.includes(a.code));
   const lues = integreesLues.length === 0 ? ""
     : `${integreesLues.length === 1 ? "Un est lu" : `${integreesLues.length} sont lus`} `
       + "dans les comptes de la protection sociale : "
@@ -8625,9 +8609,9 @@ function avantagesDetailEtats(contexte) {
       + "ces lignes vaut exactement la pension moins sa part cotisée."],
     ["servi, chiffré à part", String(inventaire.compte("integre")),
       "Le scénario 1 les sert, mais l'effet passe par un trimestre, un âge "
-      + `ou une assiette. ${NEUTRALISATIONS.length} sont mesurés par retrait : on `
+      + `ou une assiette. ${c.neutralisations.length} sont mesurés par retrait : on `
       + `refait la pension sans l'avantage, et l'écart est le chiffre. ${lues}Les `
-      + `${inventaire.compte("integre") - NEUTRALISATIONS.length - integreesLues.length} `
+      + `${inventaire.compte("integre") - c.neutralisations.length - integreesLues.length} `
       + "derniers ne sont pas des dispositifs, et se lisent ailleurs."],
     ["déclaré, non servi", String(inventaire.compte("declare")),
       "Une fiche de régime les déclare, et le scénario 1 ne les sert pas à "
@@ -9600,12 +9584,12 @@ function marcheCascade(code, valeur, libelles) {
  * Les marches qui vont du système actuel à la proposition, dans l'ordre de
  * `SCENARIOS_MONTRES`.
  *
- * ELLES SONT EXACTEMENT ADDITIVES, et ce n'est pas un hasard : `masseDuScenario`
- * écrit la masse d'un système comme la part DIRECTE de la base multipliée par
- * son rapport, plus la réversion s'il la sert. Une différence de deux rapports
- * appliquée à la même part directe est donc la contribution propre du
- * changement qui les sépare, et leur somme vaut l'écart des deux totaux au
- * centime. Un contrôle des affirmations le vérifie plutôt que d'en croire ce
+ * ELLES SONT EXACTEMENT ADDITIVES, et ce n'est pas un hasard : le modèle
+ * (`masse_du_scenario`, dans le Python) écrit la masse d'un système comme la
+ * part DIRECTE de la base multipliée par son rapport, plus la réversion s'il
+ * la sert. Une différence de deux rapports appliquée à la même part directe
+ * est donc la contribution propre du changement qui les sépare, et leur somme
+ * vaut l'écart des deux totaux au centime. Un contrôle des affirmations le vérifie plutôt que d'en croire ce
  * commentaire (`cascade_somme_exactement`, dans ``tests/test_affirmations.py``).
  *
  * L'ORDRE EST CELUI DE `SCENARIOS_MONTRES`, et il n'est écrit nulle part
@@ -10170,7 +10154,7 @@ function coutNoteTva(contexte, annee, ligne, pib, anneePib) {
   // La règle qui a fixé le taux jusqu'au 24 septembre 2026, devenue un
   // indicateur : ce que les hypothèses de la page demanderaient, à côté du
   // taux fixé, qui ne les suit plus.
-  const [requis, anneeRequise] = tauxTvaRequis(contexte.cout().solde, contexte.base, tva);
+  const [requis, anneeRequise] = contexte.cout().tauxTvaRequis();
   let indicateur = "";
   if (anneeRequise) {
     const couverture = requis <= taux + 1e-12
@@ -11723,14 +11707,15 @@ répartition.</div>`,
 function coutDetailPoids(contexte) {
   const c = contexte.cout();
   const derniere = contexte.depenses().derniereAnnee;
-  const lignes = [...CAS_TYPES]
+  const casTypesDeLaGrille = contexte.casTypes().cas;
+  const lignes = [...casTypesDeLaGrille]
     .sort((a, b) => (c.poids[b.code] || 0) - (c.poids[a.code] || 0))
     .map((cas) => [
       echapper(cas.libelle),
       cas.caisses.map((caisse) => caisse.replace(/_/g, " ")).join(", "),
       g.pourcentage(c.poids[cas.code] || 0, false, 1),
       g.pourcentage(c.poidsCotisants[cas.code] || 0, false, 1),
-      g.pourcentage(1 / CAS_TYPES.length, false, 1),
+      g.pourcentage(1 / casTypesDeLaGrille.length, false, 1),
     ]);
   return g.depliant("Ce que chaque carrière type pèse dans ces chiffres", `
 <p><strong>Deux pondérations se composent.</strong> Celle de la génération est
@@ -12160,28 +12145,19 @@ export function saisieRisque(niveau) {
 
 /**
  * La carrière de référence de la page Risque, à un niveau de salaire : lue
- * dans le bilan figé, simulée s'il ne la porte pas — un paquet d'avant le
- * 7 octobre 2026, ou une carrière changée ici sans que le paquet soit refait.
+ * dans le bilan figé. Elle était simulée quand il ne la portait pas, jusqu'au
+ * 11 octobre 2026 ; le site redemande désormais tout paquet d'une autre
+ * version que la sienne (`VERSION_PAQUET`), et un bilan qui ne la porte pas est
+ * à refaire — la page le dit plutôt que de simuler.
  */
 function risqueExemple(contexte, niveau) {
   const saisie = saisieRisque(niveau);
-  return contexte.bilan().exemple(saisie)
-    ?? exempleDe(saisie, contexte.simuler(new Saisie(saisie)));
-}
-
-/**
- * Le solde du système sous les réglages de référence, pour les pages qui n'en
- * prennent aucun : « Pourquoi changer » et « Partager ».
- *
- * Le bilan figé du paquet porte, depuis le 7 octobre 2026, tout ce qu'elles en
- * lisent — la dépense, la recette, le solde et le PIB de chaque année —, avec
- * les accesseurs du calcul complet : il leur épargne les cinq secondes du coût
- * agrégé. Un paquet d'avant, que le navigateur peut garder (`force-cache`), ne
- * les porte pas : la page refait alors le calcul, comme avant.
- */
-function soldeDeReference(contexte) {
-  const bilan = contexte.bilan();
-  return bilan.depensesFigees ? bilan : contexte.cout().solde;
+  const exemple = contexte.bilan().exemple(saisie);
+  if (exemple === null) {
+    throw new Error("le bilan figé ne porte pas cette carrière d'exemple : refaire le "
+      + "paquet (python scripts/construire_donnees.py)");
+  }
+  return exemple;
 }
 
 /**
@@ -12215,7 +12191,7 @@ function soldeDeReference(contexte) {
  * recherche n'en connaît pas, et le dire vaut mieux que d'en inventer une.
  */
 function risque(contexte) {
-  const solde = soldeDeReference(contexte);
+  const solde = contexte.bilan();
   const comptes = contexte.comptes();
   const obs = solde.derniereAnneeObservee;
   const observe = solde.annee(obs);
@@ -12814,7 +12790,7 @@ facile de faire défaut sur une promesse de retraite que sur une obligation,
  * l'inverse de ce qu'on lui fait porter.
  */
 function risqueObjections(contexte) {
-  const solde = soldeDeReference(contexte);
+  const solde = contexte.bilan();
   const fin = solde.derniereAnnee;
   // Les points de PIB que le COR publie, dits aussi en milliards au PIB de la
   // dernière année publiée. Les « 2,4 » qui reviennent trois fois sont le solde

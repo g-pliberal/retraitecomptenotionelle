@@ -61,7 +61,8 @@ def test_les_cas_figes_sont_ceux_du_modele(contexte):
     simulateur = contexte.simulateur()
     for cas in CAS_TYPES:
         fige = figee.cas_type(cas.code)
-        assert (fige.libelle, fige.commentaire) == (cas.libelle, cas.commentaire)
+        assert (fige.libelle, fige.commentaire, fige.caisses) == (
+            cas.libelle, cas.commentaire, cas.caisses)
         for generation in GENERATIONS:
             assert fige.age_liquidation(generation) == cas.age_liquidation_pour(
                 simulateur, generation), (cas.code, generation)
@@ -114,6 +115,21 @@ def test_les_avantages_figes_sont_ceux_que_le_modele_calcule(contexte):
         assert (figee.gratuit, figee.gratuit_modele, figee.anticipee) == (
             calculee.gratuit, calculee.gratuit_modele, calculee.anticipee), figee.annee
     assert fige.derniere.annee == modele.derniere.annee
+
+
+def test_la_nomenclature_figee_est_celle_du_modele():
+    """Ce que la page Droits non cotisés lit de la nomenclature du modèle, et
+    qu'elle tenait du portage du coût : les lignes publiées, les avantages
+    mesurés par retrait, les motifs d'un départ anticipé, dans leur ordre."""
+    from retraite_notionnelle.avantages import (
+        LIBELLES_MOTIFS, LIGNES_LUES, MOTIFS, NEUTRALISATIONS,
+    )
+
+    fige = AGREGATS.avantages
+    assert fige.lignes_lues == LIGNES_LUES
+    assert fige.neutralisations == tuple(n.code for n in NEUTRALISATIONS)
+    assert fige.motifs == MOTIFS
+    assert fige.libelles_motifs == LIBELLES_MOTIFS
 
 
 @sans_node
@@ -289,6 +305,23 @@ def test_la_dette_figee_est_celle_que_le_modele_calcule(contexte, cout, montres)
         for scenario in montres:
             assert AGREGATS.cout.dette_decalee(decalage).horizon(scenario) == (
                 decalee.horizon(scenario))
+
+
+def test_le_taux_de_tva_requis_est_celui_du_modele(contexte, cout):
+    """Il ne s'écrit que si la TVA est réformée, ce que la référence ne fait
+    pas : la table porte alors (0, 0), comme le modèle."""
+    from retraite_notionnelle.cout import taux_tva_requis
+    from retraite_notionnelle.donnees.tva import AssietteTva
+
+    assert AGREGATS.cout.taux_tva_requis() == taux_tva_requis(
+        cout.solde, contexte.base, AssietteTva(RACINE_DONNEES))
+
+
+@sans_node
+def test_la_cle_de_la_garantie_est_celle_du_modele():
+    from retraite_notionnelle.cout import COMPOSANTE_GARANTIE
+
+    assert module("agregats").COMPOSANTE_GARANTIE == COMPOSANTE_GARANTIE
 
 
 def test_le_cout_fige_refuse_ce_qu_il_ne_porte_pas():

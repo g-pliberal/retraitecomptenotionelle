@@ -184,21 +184,6 @@ export class DepensesRetraite {
     return this.systemes.get(code).valeur(annee);
   }
 
-  /**
-   * Quelle fraction de la masse versée est une pension de RÉVERSION. Un
-   * huitième en 2010, un dixième en 2024, un dix-huitième en 2070 : la
-   * réversion recule dans la projection du COR, les carrières des femmes se
-   * rapprochant de celles des hommes.
-   *
-   * Elle sert à une chose : le rapport de masses par lequel un scénario
-   * notionnel fait réagir la dépense est celui des droits DIRECTS des cas
-   * types, et sans cette part il s'appliquait aussi à la réversion, que le
-   * modèle ne calcule pas.
-   */
-  partDroitsDerives(annee) {
-    return this.partDerives.valeur(annee);
-  }
-
   /** Pensions de droit direct ou de droit dérivé selon la DREES, 2020-2024. */
   pensionsDroit(categorie, annee) {
     return this.pensionsDroits.get(categorie).valeur(annee);

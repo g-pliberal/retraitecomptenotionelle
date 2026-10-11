@@ -81,16 +81,6 @@ export class AssietteTva {
     return pib ? this.montant(nette) / pib : 0.0;
   }
 
-  /**
-   * Ce qu'un taux unique rapporte DE PLUS que les quatre, en part de PIB.
-   * Négatif sous le taux moyen ; zéro quand `tauxUnique` est nul, qui veut dire
-   * « la TVA n'est pas réformée » et non « une TVA à zéro ».
-   */
-  recetteSupplementaire(tauxUnique, nette = true) {
-    if (tauxUnique <= 0 || !this.chargee) return 0.0;
-    return (tauxUnique - this.tauxMoyen(nette)) * this.partPib(nette);
-  }
-
   /** Ce que le passage au taux unique fait au prix TTC, répercussion intégrale. */
   variationPrix(tauxUnique, tauxActuel) {
     return (1 + tauxUnique) / (1 + tauxActuel) - 1;

@@ -1961,10 +1961,15 @@ def _agregats(contexte=None) -> dict:
     Les systèmes sont ceux que le site compare (``SCENARIOS_MONTRES`` de
     ``moteur/js/pages.js``), comme dans le bilan.
     """
-    from retraite_notionnelle.avantages import carriere_variante
+    from retraite_notionnelle.avantages import (
+        LIBELLES_MOTIFS, LIGNES_LUES, MOTIFS, NEUTRALISATIONS, carriere_variante,
+    )
     from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS, calculer_cas_types
     from retraite_notionnelle.contexte import Contexte
-    from retraite_notionnelle.cout import COMPOSANTE_GARANTIE, calculer_dette, masse_du_scenario
+    from retraite_notionnelle.cout import (
+        COMPOSANTE_GARANTIE, calculer_dette, masse_du_scenario, taux_tva_requis,
+    )
+    from retraite_notionnelle.donnees.tva import AssietteTva
     from retraite_notionnelle.donnees.agregats import (
         figer_avantages, figer_cas_types, figer_cout, figer_departs,
     )
@@ -1999,14 +2004,16 @@ def _agregats(contexte=None) -> dict:
         # de chaque année et la dette qu'il accumule. La page Coût le lit en
         # entier, la cascade de chaque année que son sélecteur offre comprise.
         "cout": figer_cout(cout, list(pages.SCENARIOS_MONTRES), list(pages.SYSTEMES_BILAN),
-                           COMPOSANTE_GARANTIE, masse_du_scenario, decalees),
+                           COMPOSANTE_GARANTIE, masse_du_scenario, decalees,
+                           taux_tva_requis(cout.solde, contexte.base, AssietteTva(DONNEES))),
         # LA GRILLE DE CARRIÈRES TYPES : treize cas, sept générations, et
         # l'âge où chacun part. La page la montre telle quelle.
         "cas_types": figer_cas_types(calculer_cas_types(simulateur), simulateur,
                                      CAS_TYPES, GENERATIONS, compares),
         # CE QUE COÛTENT LES AVANTAGES NON CONTRIBUTIFS, année par année, que
         # Droits non cotisés montre et que Coût cite.
-        "avantages": figer_avantages(contexte.avantages()),
+        "avantages": figer_avantages(contexte.avantages(), LIGNES_LUES, NEUTRALISATIONS,
+                                     {motif: LIBELLES_MOTIFS[motif] for motif in MOTIFS}),
         "classement": {
             "cas": classement["cas"], "age": classement["age"],
             "declassement": classement["declassement"], "departs": departs,

@@ -570,11 +570,6 @@ export class ComptesRetraite {
     return this.engagementsAcquis.get(regime).valeur(annee);
   }
 
-  profilTaux(annee, reference) {
-    const base = this.tauxPrelevement.valeur(reference);
-    return base ? this.tauxPrelevement.valeur(annee) / base : 1.0;
-  }
-
   part(code, annee) {
     return this.structure.get(code).valeur(annee);
   }
@@ -686,49 +681,6 @@ export class ComptesRetraite {
    * est l'hypothèse qui n'en ajoute aucune autre. `parImpot` passe à
    * `transfertSupprimePartPib` et y dit lesquels des quatre organismes compter.
    */
-  /**
-   * Ce qu'un payeur verse au système de retraite, en part du PIB, qu'un
-   * scénario notionnel le garde ou le perde : le « dont » du poste où ce
-   * versement arrive. Même fenêtre et même part constante hors d'elle que
-   * `recetteNonAcquise`.
-   */
-  versement(annee, organisme) {
-    const premiere = this.premiereAnneeTransferts;
-    const derniere = this.derniereAnneeTransferts;
-    if (annee >= premiere && annee <= derniere) {
-      return this.transfertPartPib(organisme, annee);
-    }
-    const reference = Math.min(Math.max(annee, premiere), derniere);
-    return this.transfertPartPib(organisme, reference) / this.ressource(reference)
-      * this.ressource(annee);
-  }
-
-  /**
-   * Ce qu'une seule ligne de transfert verse, en part du PIB : la règle de
-   * `versement`, pour une ligne au lieu d'un payeur. La branche famille paie
-   * l'AVPF et les majorations, et un scénario qui ne supprime que la première
-   * doit pouvoir garder la seconde. Voir `versement_ligne` dans equilibre.py.
-   */
-  versementLigne(annee, code) {
-    const premiere = this.premiereAnneeTransferts;
-    const derniere = this.derniereAnneeTransferts;
-    const reference = Math.min(Math.max(annee, premiere), derniere);
-    const part = this.transfert(code, reference) / this.pib.valeur(reference);
-    if (reference === annee) return part;
-    return part / this.ressource(reference) * this.ressource(annee);
-  }
-
-  recetteNonAcquise(annee, parImpot = null, organisme = null) {
-    const premiere = this.premiereAnneeTransferts;
-    const derniere = this.derniereAnneeTransferts;
-    if (annee >= premiere && annee <= derniere) {
-      return this.transfertSupprimePartPib(annee, parImpot, organisme);
-    }
-    const reference = Math.min(Math.max(annee, premiere), derniere);
-    const part = this.transfertSupprimePartPib(reference, parImpot, organisme)
-      / this.ressource(reference);
-    return part * this.ressource(annee);
-  }
 
   /**
    * La fenêtre où les QUATRE lignes sont connues. Elles ne commencent ni ne

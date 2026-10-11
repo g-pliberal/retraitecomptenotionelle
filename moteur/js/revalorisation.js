@@ -990,10 +990,8 @@ export class RevalorisationServie {
   constructor(simulateur, premiereAnnee, derniereAnnee) {
     const macro = simulateur.macro;
     const indexation = simulateur.indexation;
-    // Les prix, pour ce qui n'est revalorisé sur RIEN : `coefficientNominal`.
-    this._macro = macro;
     // L'année à partir de laquelle une réforme PROSPECTIVE revalorise ce
-    // qu'elle sert : voir CLES_PROSPECTIVES dans `cout.js`.
+    // qu'elle sert : voir CLES_PROSPECTIVES dans `cout.py`.
     this.anneeBascule = simulateur.parametres.annee_bascule;
     // Le stock à la bascule garde-t-il les prix ? Voir `coefficientStock`.
     this.stockSurLesPrix = simulateur.parametres.revalorisation_stock === "prix";
@@ -1012,69 +1010,10 @@ export class RevalorisationServie {
         * macro.coefficientPrix(annee, annee - 1);
       this._index.set(annee, index);
     }
-    // Le scénario 1 n'est pas tout entier sur les prix : la valeur de service
-    // de l'Agirc-Arrco suit la convention du COR (`conventions_points`). Pour
-    // chaque régime qu'elle couvre, sa valeur en euros constants, 1 jusqu'au
-    // dernier barème publié. Voir revalorisation.py.
-    const actuel = simulateur.scenarioActuel;
-    const valeurs = actuel.valeursPoint;
-    this._catalogue = actuel.catalogue;
-    this._points = new Map();
-    for (const regime of valeurs.regimesConvenus("valeur_service")) {
-      const derniere = valeurs.derniereAnneeServie(regime);
-      let reelle = 1.0;
-      const serie = new Map([[this.premiereAnnee, reelle]]);
-      for (let annee = this.premiereAnnee + 1; annee <= this.derniereAnnee; annee += 1) {
-        if (derniere !== null && annee > derniere) {
-          reelle *= valeurs.indiceConvenu(regime, "valeur_service", annee - 1, annee,
-            macro, ["prix", 1]) * macro.coefficientPrix(annee, annee - 1);
-        }
-        serie.set(annee, reelle);
-      }
-      this._points.set(regime, serie);
-    }
-  }
-
-  /**
-   * Le régime qui sert, au bout de ses fusions, les points de `regime`, s'il a
-   * une valeur de service convenue ; null sinon.
-   */
-  /** Portage de `RevalorisationServie.regime_de_tete`. */
-  regimeDeTete(regime) {
-    let courant = regime;
-    for (let garde = 0; garde < this._catalogue.taille + 1; garde += 1) {
-      const successeur = this._catalogue.contient(courant)
-        ? this._catalogue.obtenir(courant).integre_dans : null;
-      if (!successeur) return courant;
-      courant = successeur;
-    }
-    return courant;
-  }
-
-  regimeConvenu(regime) {
-    let courant = regime;
-    for (let garde = 0; garde < this._catalogue.taille + 1; garde += 1) {
-      if (this._points.has(courant)) return courant;
-      const successeur = this._catalogue.contient(courant)
-        ? this._catalogue.obtenir(courant).integre_dans : null;
-      if (!successeur) return null;
-      courant = successeur;
-    }
-    return null;
-  }
-
-  /**
-   * Ce que vaut en `annee`, en euros constants, un euro de pension servie en
-   * points de `regime` liquidé en `anneeLiquidation` : le rapport des valeurs
-   * de service convenues, déflaté des prix ; 1 sans convention. Voir
-   * revalorisation.py.
-   */
-  coefficientPoints(regime, anneeLiquidation, annee) {
-    const serie = this._points.get(regime);
-    if (serie === undefined || annee <= anneeLiquidation) return 1.0;
-    const valeur = (millesime) => serie.get(
-      Math.min(Math.max(millesime, this.premiereAnnee), this.derniereAnnee));
-    return valeur(annee) / valeur(anneeLiquidation);
+    // Le Python tient aussi la valeur de service convenue de chaque régime en
+    // points (`coefficient_points`), et la rente nominale du pilier
+    // (`coefficient_nominal`) : le coût agrégé seul les lisait, et elles ne
+    // sont plus portées depuis qu'il est figé (11 octobre 2026).
   }
 
   _valeur(annee) {
@@ -1090,16 +1029,6 @@ export class RevalorisationServie {
     if (annee <= anneeLiquidation) return 1;
     const depart = this._valeur(anneeLiquidation);
     return depart ? this._valeur(annee) / depart : 1;
-  }
-
-  /**
-   * Ce que vaut en `annee`, en euros constants, un euro de rente NOMINALE et
-   * constante liquidé en `anneeLiquidation` : la rente du pilier capitalisé,
-   * que rien ne revalorise et que les prix seuls déprécient. Voir le Python.
-   */
-  coefficientNominal(anneeLiquidation, annee) {
-    if (annee <= anneeLiquidation) return 1;
-    return this._macro.coefficientPrix(annee, anneeLiquidation);
   }
 
   /**

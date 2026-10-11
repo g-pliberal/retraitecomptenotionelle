@@ -2194,6 +2194,7 @@
 "observee":426665.3
 }
 ],
+"libelles_motifs":[["carriere_longue","Carrière longue"],["classement","Catégorie active"],["regime_special","Régimes spéciaux"]],
 "lignes":[
 "reversion",
 "inaptitude_invalidite",
@@ -2216,55 +2217,63 @@
 "majoration_conjoint_a_charge",
 "majoration_assures_handicapes"
 ],
+"lignes_lues":["reversion","majoration_enfants","minimum_vieillesse","majoration_tierce_personne","majoration_conjoint_a_charge","majoration_reversion","pension_orphelin","inaptitude_invalidite","indemnite_temporaire_retraite","retraite_du_combattant","majoration_assures_handicapes"],
 "lignes_modele":["periodes_assimilees","majoration_duree_assurance","minimum_contributif","complement_differentiel_rco","categorie_active","points_gratuits_rco","minimum_garanti","bonification_cinquieme_militaires","pension_majoree_reference","minimum_vieillesse"],
+"neutralisations":["periodes_assimilees","points_gratuits_complementaires","service_national","categorie_active","age_jouissance_militaire","salaire_de_reference_des_parents","carriere_longue","retraite_anticipee_handicap","bonification_cinquieme_services_actifs","bonification_cinquieme_militaires"],
 "ponderation":"effectifs",
 "refus":{"age_jouissance_militaire":"militaire : le retrait déplace la durée requise, 172 trimestres contre 170 — la proratisation change avec lui, et l'écart ne mesure plus l'avantage seul"}
 },
 "cas_types":{
 "cas":[
-{"ages":[60.0,60.0,60.0,61.75,62.0,62.0,62.0],"code":"smic_carriere_complete","commentaire":"Carrière longue à bas salaire : le cas où les minima pèsent le plus.","libelle":"Salarié au niveau du SMIC, carrière complète"},
-{"ages":[60.25,61.5,62.75,64,64,64,64],"code":"salaire_moyen","commentaire":"Référence centrale.","libelle":"Salarié au salaire moyen"},
-{"ages":[62.25,63.5,64.75,66.0,66.0,66.0,66.0],"code":"cadre","commentaire":"Forte part de rémunération au-dessus du plafond.","libelle":"Cadre du privé"},
+{"ages":[60.0,60.0,60.0,61.75,62.0,62.0,62.0],"caisses":["cnav"],"code":"smic_carriere_complete","commentaire":"Carrière longue à bas salaire : le cas où les minima pèsent le plus.","libelle":"Salarié au niveau du SMIC, carrière complète"},
+{"ages":[60.25,61.5,62.75,64,64,64,64],"caisses":["cnav"],"code":"salaire_moyen","commentaire":"Référence centrale.","libelle":"Salarié au salaire moyen"},
+{"ages":[62.25,63.5,64.75,66.0,66.0,66.0,66.0],"caisses":["cnav"],"code":"cadre","commentaire":"Forte part de rémunération au-dessus du plafond.","libelle":"Cadre du privé"},
 {
 "ages":[60.0,60.0,62.0,64,64,64,64],
+"caisses":["cnav"],
 "code":"carriere_interrompue",
 "commentaire":"Cinq années sans cotisation. Le système actuel les couvre par des trimestres assimilés, par l'AVPF (qui porte au compte un salaire au SMIC) et par la majoration de durée d'assurance ; le compte notionnel ne couvre rien. Les deux premiers ne se voient guère ici : sur une carrière de plus de vingt-cinq années portées au compte, les années au SMIC n'entrent pas dans les vingt-cinq meilleures, et les trimestres assimilés ne servent que si la durée requise n'est pas atteinte. C'est un résultat, pas une omission.",
 "libelle":"Carrière interrompue (5 ans hors emploi)"
 },
-{"ages":[60.0,62.5,63.75,65.0,65.0,65.0,65.0],"code":"fonctionnaire_sedentaire","commentaire":"Traitement indiciaire hors primes ; les primes relèvent du RAFP.","libelle":"Fonctionnaire sédentaire (catégorie B)"},
+{"ages":[60.0,62.5,63.75,65.0,65.0,65.0,65.0],"caisses":["fonction_publique_etat_civile"],"code":"fonctionnaire_sedentaire","commentaire":"Traitement indiciaire hors primes ; les primes relèvent du RAFP.","libelle":"Fonctionnaire sédentaire (catégorie B)"},
 {
 "ages":[55.0,55.0,57,57.75,59.0,59.0,59.0],
+"caisses":["cnracl"],
 "code":"fonctionnaire_actif",
 "commentaire":"Aide-soignant, agent technique territorial : l'emploi est classé, et le départ anticipé de cinq années est celui que l'article L. 24 lui ouvre, non une anticipation sanctionnée. Le cas type était calculé comme un sédentaire tant qu'aucun statut ne portait le classement. L'âge suit sa génération : cinquante-cinq ans jusqu'à celle de 1956, cinquante-sept ensuite, cinquante-neuf pour celles que la réforme de 2023 atteint.",
 "libelle":"Fonctionnaire de catégorie active (départ anticipé)"
 },
 {
 "ages":[44,44,44,44,44,44,44],
+"caisses":["fonction_publique_etat_militaire"],
 "code":"militaire",
 "commentaire":"La pension militaire ne s'ouvre pas à un âge mais à une durée : dix-sept ans de services pour un non-officier. C'est le départ le plus précoce du système, et celui qu'un compte notionnel déplace le plus : quarante ans de rente pour vingt-cinq ans de cotisations. La solde indiciaire seule ouvre des droits ; les indemnités, plus lourdes que les primes de la fonction publique civile, relèvent du RAFP.",
 "libelle":"Militaire non officier (radiation après vingt-cinq ans de services)"
 },
 {
 "ages":[50.0,50.0,50.0,51.33,54.0,54.0,63.0],
+"caisses":["sncf"],
 "code":"agent_sncf_conduite",
 "commentaire":"Écart à l'âge de référence parmi les plus élevés du système : cinquante ans jusqu'aux départs de 2016, cinquante-quatre au terme de la montée en charge. Le régime est fermé aux embauches depuis 2020, et la règle en tire la conséquence : la génération 2000, entrée après la fermeture, relève du régime général et liquide à l'âge de celui-ci.",
 "libelle":"Agent de conduite SNCF"
 },
 {
 "ages":[55.0,55.0,55.0,57.75,59.0,59.0,59.0],
+"caisses":["cnieg"],
 "code":"agent_ieg",
 "commentaire":"Régime spécial fermé aux embauches depuis 2023. L'âge d'ouverture y est celui du millésime de départ : cinquante-cinq ans jusqu'en 2016, cinquante-neuf à compter de 2034.",
 "libelle":"Agent des industries électriques et gazières"
 },
-{"ages":[63.25,64.5,65.75,67.0,67.0,67.0,67.0],"code":"artisan","commentaire":"Assiette de cotisation plus faible que celle d'un salarié.","libelle":"Artisan"},
-{"ages":[60.0,60.5,62.0,63.0,63.0,63.0,63.0],"code":"exploitant_agricole","commentaire":"Retraite majoritairement forfaitaire aujourd'hui : la part non contributive disparaît intégralement dans les scénarios notionnels.","libelle":"Chef d'exploitation agricole"},
+{"ages":[63.25,64.5,65.75,67.0,67.0,67.0,67.0],"caisses":["rci_complementaire"],"code":"artisan","commentaire":"Assiette de cotisation plus faible que celle d'un salarié.","libelle":"Artisan"},
+{"ages":[60.0,60.5,62.0,63.0,63.0,63.0,63.0],"caisses":["msa_exploitants"],"code":"exploitant_agricole","commentaire":"Retraite majoritairement forfaitaire aujourd'hui : la part non contributive disparaît intégralement dans les scénarios notionnels.","libelle":"Chef d'exploitation agricole"},
 {
 "ages":[65.0,65.0,67.0,67.0,67.0,67.0,67.0],
+"caisses":["cnavpl"],
 "code":"profession_liberale",
 "commentaire":"Régime de base CNAVPL et complémentaire Cipav, la section par défaut. Un libéral d'une section spécialisée — auxiliaires médicaux, pharmaciens, notaires — aurait un complémentaire différent, et celui-là n'est pas paramétré. Il a porté jusqu'au 22 septembre 2026 une règle à lui, « ouverture plus deux ans », qui n'était qu'un contournement : le moteur ne savait pas opposer de durée à une carrière tout en points, et le taux plein lui rendait donc l'âge d'ouverture. Le défaut corrigé, la règle ordinaire le date comme les autres, et le COR la confirme — son cas type n° 13, un médecin libéral de secteur 1 né en 1960, « peut prétendre à un départ à 62 ans » et « atteint le taux plein à 66 ans et 9 mois », quand cette fiche donne 62,00 et 67,00 pour la même génération.",
 "libelle":"Profession libérale"
 },
-{"ages":[63.25,64.5,65.75,67.0,67.0,67.0,67.0],"code":"contractuel_public","commentaire":"Régime général + Ircantec.","libelle":"Agent contractuel de la fonction publique"}
+{"ages":[63.25,64.5,65.75,67.0,67.0,67.0,67.0],"caisses":["ircantec"],"code":"contractuel_public","commentaire":"Régime général + Ircantec.","libelle":"Agent contractuel de la fonction publique"}
 ],
 "echecs":{},
 "generations":[1940,1950,1960,1970,1980,1990,2000],
@@ -13516,7 +13525,8 @@
 ],
 "premiere_annee_projetee":2026,
 "premieres_annees_equilibrees":{"actuel":null,"notionnel_liberal":2070,"notionnel_retroactif":2026,"notionnel_retroactif_employeur":2026}
-}
+},
+"taux_tva_requis":[0.0,0]
 }
 },
 "annees_revenu_annuel_moyen_independants":{

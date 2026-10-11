@@ -9,7 +9,7 @@ import { prolongerReleve, salaireMoyenAnnuel } from "./carriere.js";
 import { formaterBorne } from "./regimes.js";
 import { PARAMETRES_DEFAUT, cleParametres } from "./config.js";
 import { AssietteActivite } from "./assiette.js";
-import { chargerAvantages } from "./avantages.js";
+import { chargerAvantages } from "./inventaire.js";
 import { chargerFrontiere } from "./frontiere.js";
 import { chargerBilan } from "./bilan.js";
 import { chargerAgregats } from "./agregats.js";
@@ -17,7 +17,6 @@ import { DistributionPensions } from "./distribution.js";
 import { DepensesRetraite } from "./depenses.js";
 import { ComptesRetraite, varianteDuScenario } from "./equilibre.js";
 import { Restitution } from "./restitution.js";
-import { Population } from "./population.js";
 import { assietteMaladie, salaireBrutDepuisNet, salaireNetDepuisBrut } from "./remuneration.js";
 import { Simulateur, niveauPourPension } from "./simulateur.js";
 import { REGIMES_CODE_DES_PENSIONS } from "./droit/coordonner.js";
@@ -82,8 +81,9 @@ export const VERSION_PAQUET = 18;
 
 /**
  * Combien d'agrégats le contexte garde en mémoire, tous jeux de règles
- * confondus. Deux par jeu — le coût et les avantages —, donc trois jeux de
- * règles : celui par défaut, et les deux derniers essayés.
+ * confondus. Il n'en reste qu'un par jeu, la restitution, depuis que le coût et
+ * les avantages sont lus dans la table figée (11 octobre 2026) : la borne n'est
+ * plus atteinte qu'au sixième jeu de règles essayé.
  */
 const AGREGATS_MEMORISES = 6;
 
@@ -92,8 +92,9 @@ const AGREGATS_MEMORISES = 6;
  *
  * Un contexte, c'est deux choses : des données coûteuses à charger, et UN jeu
  * de paramètres — `base` — sous lequel tout ce que la page demande est
- * calculé. `simulateur()`, `cout()` et `avantages()` répondent tous trois sous
- * ce jeu-là, sans qu'aucune page ait à le leur redire.
+ * calculé. `simulateur()` et `restitution()` répondent sous ce jeu-là, sans
+ * qu'aucune page ait à le leur redire ; `cout()`, `avantages()` et
+ * `casTypes()` rendent la table que le Python a fabriquée sous la référence.
  *
  * Les trois pages qui AGRÈGENT — Cas types, Coût, Avantages — se rendaient
  * sous un contexte dérivé par `pour`, portant les réglages de l'adresse. Elles
@@ -114,11 +115,12 @@ export class Contexte {
     // Un simulateur par jeu de paramètres rencontré.
     this._instances = memoires ? memoires.instances : new Map();
     // Ce qui ne dépend d'AUCUN paramètre : dépense observée, comptes du COR,
-    // population, distribution des pensions, assiette, inventaire des
-    // avantages. Ces séries sont lues, jamais calculées : un changement de
-    // règle ne les déplace pas.
+    // distribution des pensions, assiette, inventaire des avantages, et les
+    // deux tables figées. Ces séries sont lues, jamais calculées : un
+    // changement de règle ne les déplace pas.
     this._donnees = memoires ? memoires.donnees : new Map();
-    // Les agrégats, eux, dépendent des règles : un coût par jeu de paramètres.
+    // Les agrégats, eux, dépendent des règles : une restitution par jeu de
+    // paramètres.
     this._agregats = memoires ? memoires.agregats : new Map();
   }
 
@@ -204,10 +206,6 @@ export class Contexte {
     return this._agregat("restitution", () => new Restitution(
       this.paquet, this.base.part_rendue_aux_salaires,
     ));
-  }
-
-  population() {
-    return this._donnee("population", () => new Population(this.paquet));
   }
 
   /** La distribution des pensions — elle seule chiffre un plancher. */

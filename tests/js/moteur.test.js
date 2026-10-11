@@ -43,7 +43,6 @@ const lire = (chemin) => JSON.parse(readFileSync(join(RACINE, chemin), "utf8"));
 
 const paquet = lire("moteur/donnees.json");
 const temoinsSimulations = lire("tests/temoins/simulations.json");
-const temoinsPages = lire("tests/temoins/pages.json");
 
 /**
  * Tolérance relative. Python et JavaScript s'appuient sur la libm de leur
@@ -191,64 +190,20 @@ test("Carrières types lit la grille figée, sans rien calculer", () => {
   assert.doesNotThrow(() => rendre(contexte, "/cas-types", {}));
 });
 
-test("Droits non cotisés lit ses avantages et ses départs figés, sans rien calculer", () => {
-  // Elle calculait le coût des avantages chez le lecteur — trois secondes —,
-  // et simulait quatre carrières pour dire ce que le classement ajoute. Le
-  // paquet les porte depuis le 11 octobre 2026. Le simulateur, elle le lit
-  // encore : le catalogue des régimes lui dit combien déclarent la réversion.
+test("Coût et Droits non cotisés lisent leurs agrégats figés, sans rien simuler", () => {
+  // Elles calculaient le coût agrégé et celui des avantages chez le lecteur —
+  // huit et trois secondes —, et Droits non cotisés simulait quatre carrières
+  // pour dire ce que le classement ajoute. Le paquet les porte depuis le
+  // 11 octobre 2026, et le portage du coût est parti. Le simulateur, elles le
+  // lisent encore pour des données : le catalogue des régimes, les effectifs,
+  // la mortalité de la garantie.
   const contexte = new Contexte(paquet);
   contexte.simulateur().simuler = () => { throw new Error("la page a simulé une carrière"); };
-  contexte.cout = () => { throw new Error("la page a recalculé le coût agrégé"); };
   contexte.simuler = () => { throw new Error("la page a simulé une carrière"); };
-  assert.doesNotThrow(() => rendre(contexte, "/avantages", {}));
-});
-
-test("un paquet d'avant les dépenses figées rend Pourquoi changer et Partager comme avant", () => {
-  // Le site lit son paquet en `force-cache` : un lecteur peut recevoir le
-  // nouveau code et un paquet d'avant le 7 octobre 2026, dont le bilan ne
-  // porte ni la dépense ni le PIB de chaque année, ni les carrières d'exemple.
-  // Les deux pages refont alors le calcul, et rendent la même page.
-  const bilan = {
-    ...paquet.bilan_equilibre,
-    annees: paquet.bilan_equilibre.annees.map(({ depenses, pib, ...reste }) => reste),
-  };
-  delete bilan.exemples_risque;
-  const contexte = new Contexte({ ...paquet, bilan_equilibre: bilan });
-  for (const nom of ["risque", "partager"]) {
-    const temoin = temoinsPages[nom];
-    const rendu = sansBlocJson(rendre(contexte, temoin.chemin, temoin.parametres)[1]);
-    assert.equal(temoin.formulaire_retire ? sansFormulaire(rendu) : rendu, recousu(temoin),
-      `corps de la page « ${nom} »`);
+  for (const chemin of ["/avantages", "/cout"]) {
+    assert.doesNotThrow(() => rendre(contexte, chemin, {}), chemin);
   }
 });
-
-/**
- * Le HTML qu'un témoin a figé, en morceaux d'une ligne ou d'un élément
- * (`retraite_notionnelle/lignes.py`) : une page tenait sur des lignes de
- * centaines de milliers de caractères, que son diff rendait entières.
- */
-function recousu(temoin) {
-  return temoin.corps.join("");
-}
-
-/**
- * Le bloc JSON de la page reprend les chiffres déjà comparés un à un ; ne
- * subsisterait que l'écriture des flottants, que Python et JavaScript ne
- * formatent pas de la même façon. On le retire des deux côtés, comme le fait le
- * générateur de témoins.
- */
-function sansBlocJson(html) {
-  return html.replace(/(<pre class="json">)[\s\S]*?(<\/pre>)/g, "$1$2");
-}
-
-/**
- * Le formulaire d'une page dont il n'est pas le sujet : son témoin n'en fige
- * que la balise (`FORMULAIRE_ENTIER`, dans `scripts/construire_temoins.py`), et
- * la comparaison retire le même bloc.
- */
-function sansFormulaire(html) {
-  return html.replace(/(<form class="carte"[^>]*>)[\s\S]*?(<\/form>)/g, "$1$2");
-}
 
 /**
  * La liquidation unique des régimes alignés, portée dans le moteur du site.
@@ -444,35 +399,6 @@ test("une année non mesurée ne se dit pas certifiée", () => {
   // Les années publiées gardent le leur.
   assert.equal(enquête.brut(2000).fiabilite, 3);
   assert.equal(enquête.brut(2004).fiabilite, 3);
-});
-
-/**
- * La pyramide refuse l'année que l'INSEE ne projette pas.
- *
- * Les témoins de pages ne peuvent pas atteindre ce chemin : rien, dans le
- * site, ne demande la pyramide au-delà de 2070. C'est justement pourquoi il
- * faut un test — un portage qui emprunterait la dernière pyramide rendrait des
- * chiffres PLAUSIBLES, du bon ordre de grandeur, et sous le nom d'une cohorte
- * qui n'est pas la leur. Le Python refuse ; le JavaScript doit refuser de la
- * même façon, et sur les mêmes bornes.
- */
-test("la pyramide refuse l'année que l'INSEE ne projette pas", () => {
-  const population = new Contexte(paquet).population();
-  const horizon = population.derniereAnnee;
-
-  // En deçà, on emprunte : la dépense observée commence trois ans avant la
-  // pyramide, et ces années-là prennent celle de 1962.
-  assert.equal(population.effectif(80, 1959), population.effectif(80, 1962));
-  assert.ok(population.effectif(80, horizon) > 0);
-
-  // Au-delà, on refuse — y compris pour un âge hors plage, qui rendrait zéro
-  // sans que la question ait eu de sens.
-  assert.throws(() => population.effectif(85, horizon + 15), /au-delà/);
-  assert.throws(() => population.effectif(200, horizon + 1), /au-delà/);
-  // La tranche refuse aussi, VIDE comprise : déléguer le refus aux âges la
-  // laisserait passer.
-  assert.throws(() => population.effectifTranche(65, 80, horizon + 1), /au-delà/);
-  assert.throws(() => population.effectifTranche(80, 65, horizon + 1), /au-delà/);
 });
 
 /**

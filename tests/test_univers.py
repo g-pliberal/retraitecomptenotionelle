@@ -407,15 +407,14 @@ def test_le_paquet_porte_les_univers_resolus(tous):
 
 def test_les_deux_moteurs_tirent_la_meme_chose_des_univers(calculs):
     """Le portage résout les renvois sous ses réglages comme le Python sous
-    les siens, bâtit les mêmes scénarios, partage les mêmes comptes, et range
-    les mêmes univers parmi les prospectifs de la page Coût."""
-    from retraite_notionnelle import cout
+    les siens, bâtit les mêmes scénarios et partage les mêmes comptes. Il
+    rangeait aussi les mêmes univers parmi les prospectifs de la page Coût,
+    jusqu'au 11 octobre 2026 : le coût n'est plus porté (action 150)."""
     from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS
 
     lu = _node(
         'import { readFileSync } from "node:fs";'
         'import { Simulateur } from "./moteur/js/simulateur.js";'
-        'import { CLES_PROSPECTIVES } from "./moteur/js/cout.js";'
         'const s = new Simulateur(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));'
         'const c = s.calculs;'
         "process.stdout.write(JSON.stringify({"
@@ -427,7 +426,6 @@ def test_les_deux_moteurs_tirent_la_meme_chose_des_univers(calculs):
         "    s.scenarioDe(c.notionnel_prospectif_employeur).constructeur === s.constructeurEmployeur,"
         "    s.scenarioLiberal.capitalisation !== null,"
         "    s.scenarioNotionnel.capitalisation === null],"
-        "  prospectives: [...CLES_PROSPECTIVES].sort(),"
         "}));")
     assert [tuple(s) for s in lu["scenarios"]] == list(SCENARIOS_NOTIONNELS)
     for cle, calcul in calculs.items():
@@ -435,4 +433,3 @@ def test_les_deux_moteurs_tirent_la_meme_chose_des_univers(calculs):
         attendu["neutralisations"] = sorted(calcul.neutralisations)
         assert lu["calculs"][cle] == attendu, cle
     assert lu["partages"] == [True, True, True, True]
-    assert lu["prospectives"] == sorted(cout.CLES_PROSPECTIVES)

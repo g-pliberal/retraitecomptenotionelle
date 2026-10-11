@@ -218,9 +218,6 @@ class BilanFige:
     ecarts: EcartsFiges | None = None
     #: Les carrières d'exemple de « Pourquoi changer ».
     exemples: tuple[ExempleFige, ...] = ()
-    #: La table porte-t-elle la dépense et le PIB de chaque année ? Une table
-    #: écrite avant le 7 octobre 2026 ne les porte pas.
-    depenses_figees: bool = False
 
     def exemple(self, saisie: dict) -> ExempleFige | None:
         """L'exemple de cette saisie exactement, ou rien."""
@@ -278,8 +275,6 @@ def depuis_dictionnaire(donnees: dict) -> BilanFige:
         engagements=_engagements(donnees.get("engagements")),
         ecarts=_ecarts(donnees.get("ecarts_medians")),
         exemples=tuple(_exemple(brut) for brut in donnees.get("exemples_risque", ())),
-        depenses_figees=bool(donnees["annees"]) and all(
-            "depenses" in ligne for ligne in donnees["annees"]),
     )
 
 

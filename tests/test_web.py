@@ -1982,7 +1982,7 @@ def test_le_moteur_javascript_est_versionne():
         "format.js", "serie.js", "config.js", "macro.js", "mortalite.js",
         "regimes.js", "indexation.js", "conversion.js", "fusion.js",
         "age-reference.js", "carriere.js", "compte.js", "scenario-actuel.js",
-        "scenario-notionnel.js", "simulateur.js", "castypes.js", "gabarit.js",
+        "scenario-notionnel.js", "simulateur.js", "gabarit.js",
         "pages.js", "saisie.js", "contexte.js", "restitution.js",
     }
     assert attendus <= modules, f"manquant : {attendus - modules}"

@@ -527,20 +527,6 @@ export class FichesDatees {
   }
 
   /**
-   * Les mêmes fiches, celles-ci retirées : la contrefactuelle qui mesure ce
-   * qu'elles servent (`avantages.js`). Voir `sans` du Python.
-   */
-  sans(...noms) {
-    const fiches = {};
-    for (const [nom, fiche] of Object.entries(this._fiches)) {
-      if (!noms.includes(nom)) {
-        fiches[nom] = fiche;
-      }
-    }
-    return new FichesDatees({ fiches_datees: fiches });
-  }
-
-  /**
    * Les paramètres de la version de `nom` qui vaut pour une pension prenant
    * effet à `dateEffet` (AAAA-MM-JJ) ; `null` sans fiche ou sans version.
    */
@@ -1479,18 +1465,6 @@ export class Invalidites {
       return null;
     }
     return applicable(preparee, { "liquidation.date_effet": dateEffet });
-  }
-
-  /**
-   * Les mêmes fiches, celle-ci retirée : ses régimes n'appliquent plus rien de
-   * ses règles. Voir `sans` du Python.
-   */
-  sans(fiche) {
-    const nom = Invalidites.FICHES[fiche];
-    return new Invalidites({
-      versions_des_fiches: Object.fromEntries(
-        Object.entries(this._fiches).filter(([cle]) => cle !== nom)),
-    });
   }
 }
 

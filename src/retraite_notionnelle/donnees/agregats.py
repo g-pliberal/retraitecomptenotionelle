@@ -81,12 +81,13 @@ class ComparaisonFigee:
 
 @dataclass(frozen=True)
 class CasFige:
-    """Un cas type, tel que les pages le nomment, et l'âge où chaque
-    génération le fait partir."""
+    """Un cas type, tel que les pages le nomment, les caisses dont il porte les
+    retraités, et l'âge où chaque génération le fait partir."""
 
     code: str
     libelle: str
     commentaire: str
+    caisses: tuple[str, ...] = ()
     _ages: dict[int, float] = field(default_factory=dict)
 
     def age_liquidation(self, generation: int) -> float:
@@ -121,6 +122,7 @@ def figer_cas_types(resultat, simulateur, cas_types, generations,
                 "code": cas.code,
                 "libelle": cas.libelle,
                 "commentaire": cas.commentaire,
+                "caisses": list(cas.caisses),
                 "ages": [cas.age_liquidation_pour(simulateur, generation)
                          for generation in generations],
             }
@@ -155,7 +157,7 @@ def _cas_types(brut: dict) -> CasTypesFiges:
         cas=tuple(
             CasFige(
                 code=cas["code"], libelle=cas["libelle"],
-                commentaire=cas["commentaire"],
+                commentaire=cas["commentaire"], caisses=tuple(cas["caisses"]),
                 _ages=dict(zip(generations, (float(age) for age in cas["ages"]))),
             )
             for cas in brut["cas"]
@@ -196,22 +198,38 @@ class AnneeAvantagesFigee:
 @dataclass(frozen=True)
 class AvantagesFiges:
     """Ce que les avantages non contributifs coûtent, année par année, sous les
-    accesseurs de ``avantages.CoutAvantages``."""
+    accesseurs de ``avantages.CoutAvantages`` ; et la nomenclature sous laquelle
+    la page Droits non cotisés les lit : les lignes que les comptes publient
+    (``LIGNES_LUES``), les avantages mesurés par retrait (``NEUTRALISATIONS``),
+    les motifs d'un départ anticipé et leur libellé."""
 
     annees: tuple[AnneeAvantagesFigee, ...]
     lignes: tuple[str, ...]
     lignes_modele: tuple[str, ...]
     refus: dict[str, str]
     ponderation: str
+    lignes_lues: tuple[str, ...] = ()
+    neutralisations: tuple[str, ...] = ()
+    libelles_motifs: dict[str, str] = field(default_factory=dict)
+
+    @property
+    def motifs(self) -> tuple[str, ...]:
+        return tuple(self.libelles_motifs)
 
     @property
     def derniere(self) -> AnneeAvantagesFigee | None:
         return self.annees[-1] if self.annees else None
 
 
-def figer_avantages(cout) -> dict:
-    """Le coût des avantages de ``avantages.calculer_avantages``."""
+def figer_avantages(cout, lignes_lues, neutralisations, libelles_motifs) -> dict:
+    """Le coût des avantages de ``avantages.calculer_avantages``, et la
+    nomenclature du modèle qui le décompose : ``LIGNES_LUES``, le code de
+    chaque ``NEUTRALISATIONS``, ``LIBELLES_MOTIFS`` dans l'ordre des
+    ``MOTIFS``."""
     return {
+        "lignes_lues": list(lignes_lues),
+        "neutralisations": [neutralisation.code for neutralisation in neutralisations],
+        "libelles_motifs": [[motif, libelle] for motif, libelle in libelles_motifs.items()],
         "annees": [
             {
                 "annee": annee.annee, "observee": annee.observee,
@@ -248,6 +266,9 @@ def _avantages(brut: dict) -> AvantagesFiges:
         lignes_modele=tuple(brut["lignes_modele"]),
         refus=dict(brut["refus"]),
         ponderation=brut["ponderation"],
+        lignes_lues=tuple(brut["lignes_lues"]),
+        neutralisations=tuple(brut["neutralisations"]),
+        libelles_motifs=dict((motif, libelle) for motif, libelle in brut["libelles_motifs"]),
     )
 
 
@@ -437,7 +458,7 @@ def _figer_dette(dette, scenarios) -> dict:
 
 
 def figer_cout(cout, scenarios, bilan, garantie: str, masse_du_scenario,
-               dettes_decalees: dict) -> dict:
+               dettes_decalees: dict, taux_tva_requis: tuple[float, int]) -> dict:
     """Le coût agrégé de ``cout.calculer_cout``.
 
     ``scenarios`` sont les systèmes que le site compare, ``bilan`` ceux du
@@ -445,7 +466,8 @@ def figer_cout(cout, scenarios, bilan, garantie: str, masse_du_scenario,
     le passé et l'avenir comptent à part ; ``masse_du_scenario`` est celle du
     modèle, qui dit la part de PIB de chaque système une année passée
     (``CoutAnnuel.part_pib_de``) ; ``dettes_decalees``, la dette recalculée
-    sous un taux décalé, par écart.
+    sous un taux décalé, par écart ; ``taux_tva_requis``, ce que
+    ``cout.taux_tva_requis`` rend sous la référence.
     """
     avec_garantie = (*scenarios, garantie)
     avenir = cout.avenir
@@ -521,6 +543,7 @@ def figer_cout(cout, scenarios, bilan, garantie: str, masse_du_scenario,
         # De la dette de la variante dérivée, la page ne cite que l'horizon.
         "dette_derive": {scenario: cout.dette_derive.horizon(scenario)
                          for scenario in scenarios},
+        "taux_tva_requis": list(taux_tva_requis),
         # Ce que la page cite de la dette sous un taux décalé : l'horizon.
         "dettes_decalees": {
             ecart: {scenario: dette.horizon(scenario) for scenario in scenarios}
@@ -878,6 +901,12 @@ class CoutFige:
             if ligne.annee == millesime:
                 return ligne
         return None
+
+    def taux_tva_requis(self) -> tuple[float, int]:
+        """Le taux de TVA unique qui couvrirait juste chaque année, garantie
+        comprise, et l'année qui le fixe (``cout.taux_tva_requis``)."""
+        requis, annee = self._brut["taux_tva_requis"]
+        return requis, annee
 
     def dette_decalee(self, ecart: float) -> HorizonsFiges:
         """La dette recalculée au taux de la courbe décalé de ``ecart``
