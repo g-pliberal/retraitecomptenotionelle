@@ -3,9 +3,11 @@
 `scripts/part_minimum_contributif.py` confronte les grilles de la page Coût à
 l'enquête annuelle auprès des caisses de retraite et à TRAJECTOiRE (action
 137). La mesure entière prend trois minutes et ne se rejoue pas ici ; ce qui se
-tient ici la rend lisible : le fichier certifié redonne ce que la DREES en
-publie, une génération s'étale sur ses mois de naissance, et le minimum se lit
-dans le scénario 1 tel que le moteur le sert.
+tient ici la rend lisible : les fichiers certifiés redonnent ce que la DREES en
+publie, la part des régimes alignés réunis comme le montant moyen du minimum,
+que son contrôle borne ; une génération s'étale sur ses mois de naissance ; les
+montants se confrontent en euros de 2023 ; et le minimum se lit dans le
+scénario 1 tel que le moteur le sert.
 """
 
 from __future__ import annotations
@@ -21,6 +23,7 @@ from retraite_notionnelle.config import Parametres
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 import part_minimum_contributif as P  # noqa: E402
+import verifier_donnees as V  # noqa: E402
 
 
 def test_le_fichier_de_l_eacr_redonne_l_etude_de_la_drees():
@@ -37,6 +40,75 @@ def test_le_fichier_de_l_eacr_redonne_l_etude_de_la_drees():
     for annee in (2022, 2023, 2024):
         femmes, hommes, ensemble = (parts[(annee, "cnav", s)] for s in ("F", "H", "ensemble"))
         assert hommes < ensemble < femmes
+
+
+def test_la_part_des_regimes_alignes_compte_des_personnes_depuis_2019():
+    """Le champ de TRAJECTOiRE : le régime général, indépendants compris, et la
+    MSA salariés, leurs bénéficiaires rapportés à leurs deux flux. Avant la
+    liquidation unique de juillet 2017, qui ne s'installe qu'en deux ans, un
+    polypensionné des deux caisses comptait dans les deux : la série commence
+    en 2019. 17,95 % en 2021, 18,9 % en 2022, 18,8 % en 2023, 18,6 % dans
+    l'estimation de 2024 ; et une part de deux caisses tombe entre les leurs."""
+    parts = P.observees(Parametres().racine_donnees)
+    alignes = {annee for annee, caisse, _ in parts if caisse == "regimes_alignes"}
+    assert min(alignes) == V.PREMIERE_ANNEE_REGIMES_ALIGNES == 2019
+    assert max(alignes) == 2024
+    attendues = {2021: 17.95, 2022: 18.93, 2023: 18.82, 2024: 18.55}
+    for annee, attendue in attendues.items():
+        assert parts[(annee, "regimes_alignes", "ensemble")] == pytest.approx(attendue)
+    for (annee, caisse, sexe), part in parts.items():
+        if caisse == "regimes_alignes":
+            cnav, msa = parts[(annee, "cnav", sexe)], parts[(annee, "msa_salaries", sexe)]
+            assert min(cnav, msa) < part < max(cnav, msa)
+
+
+def test_le_montant_moyen_de_l_eacr_reste_sous_le_minimum_majore():
+    """La colonne ``m1`` de la feuille E-Minima est, pour le privé, le montant
+    moyen du minimum : le complément qu'il sert, en euros courants par mois,
+    128 € à la Cnav en 2012, 137,7 € en 2023. Le contrôle de la certification
+    rejette ce qui dépasse le minimum majoré mensuel de l'année, la MSA
+    salariés de 2022 qui y recopie l'effectif ; et la liquidation unique se
+    lit à la MSA salariés : un minimum proratisé jusqu'en 2017, entier depuis
+    2019."""
+    montants = P.montants_observes(Parametres().racine_donnees)
+    assert montants[(2012, "cnav", "ensemble")] == 128.0
+    assert montants[(2023, "cnav", "ensemble")] == 137.7
+    assert (montants[(2023, "cnav", "F")], montants[(2023, "cnav", "H")]) == (139.8, 132.6)
+    # Ni la MSA salariés de 2022, rejetée, ni 2024, que l'estimation ne chiffre pas.
+    assert (2022, "msa_salaries", "ensemble") not in montants
+    assert (2022, "regimes_alignes", "ensemble") not in montants
+    assert not [cle for cle in montants if cle[0] == 2024]
+    msa = {annee: montant for (annee, caisse, sexe), montant in montants.items()
+           if caisse == "msa_salaries" and sexe == "ensemble"}
+    assert max(m for a, m in msa.items() if a <= 2017) < 50.0
+    assert min(m for a, m in msa.items() if a >= 2019) > 90.0
+
+    bareme = V._bareme_minimum_majore()
+    assert V._minimum_majore_mensuel(2023, bareme) == pytest.approx(847.57, abs=0.01)
+    assert V._minimum_majore_mensuel(2022, bareme) == pytest.approx(741.64, abs=0.01)
+    assert 5771.0 > V._minimum_majore_mensuel(2022, bareme)
+    for (annee, _, _), montant in montants.items():
+        assert 0.0 < montant <= V._minimum_majore_mensuel(annee, bareme)
+
+
+def test_les_montants_se_confrontent_en_euros_de_2023():
+    """Le modèle dit son minimum moyen en euros de 2023, comme le tableau 3 de
+    TRAJECTOiRE ; l'EACR et son tableau 1 publient en euros courants. Chaque
+    montant passe par le coefficient de SON année."""
+    coefficients = {2012: 1.25, 2023: 1.0, 2024: 0.98}
+
+    def coefficient_prix(depart: int, arrivee: int) -> float:
+        assert arrivee == P.ANNEE_EUROS
+        return coefficients[depart]
+
+    convertis = P.en_euros_de_reference(
+        {(2012, "cnav", "ensemble"): 128.0, (2023, "cnav", "ensemble"): 137.7,
+         (2024, "regimes_alignes", "ensemble"): 136.0}, coefficient_prix)
+    assert convertis == pytest.approx({(2012, "cnav", "ensemble"): 160.0,
+                                       (2023, "cnav", "ensemble"): 137.7,
+                                       (2024, "regimes_alignes", "ensemble"): 133.28})
+    assert P.TRAJECTOIRE["liquidants_2024"]["euros_de"] == 2024
+    assert P.TRAJECTOIRE["generation_1975"]["euros_de"] == P.ANNEE_EUROS
 
 
 def test_une_generation_s_etale_sur_ses_mois_de_naissance():

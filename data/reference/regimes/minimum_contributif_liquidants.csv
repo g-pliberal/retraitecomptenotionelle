@@ -38,6 +38,26 @@
 # le seul qui les porte. En 2019, seule année où les deux flux
 # coexistent, le nouveau compte 5 % de liquidants de plus.
 #
+# LES RÉGIMES ALIGNÉS RÉUNIS
+# ---------------------------
+# La caisse regimes_alignes est le champ de TRAJECTOiRE : le régime
+# général, indépendants compris, et la MSA salariés, leurs
+# bénéficiaires rapportés à leurs deux flux. Elle commence en 2019,
+# première année où la somme compte des PERSONNES. Avant la
+# liquidation unique des régimes alignés (Lura, pensions prenant effet
+# depuis le 1er juillet 2017), un polypensionné des deux caisses
+# liquide dans chacune et compte dans les deux flux : 96 % des
+# liquidants de la MSA salariés étaient polypensionnés en 2012, selon
+# l'étude. La Lura s'installe en deux ans : 19 % du flux de la MSA
+# salariés en 2017, 60 % en 2018, 72 % en 2019, 76 à 78 % ensuite
+# (modalité Liq = Lura du cadrage), et le minimum moyen que la caisse
+# sert n'atteint qu'en 2019 son niveau d'après la Lura
+# (minimum_contributif_montant.csv). 2019 est aussi la première année
+# que la Cnav porte sous le code 0015 aux deux termes de la part, un
+# même champ, indépendants compris : le nouveau code y compte 32 287
+# liquidants de plus que l'ancien, dont 32 751 de plus au titre de la
+# Lura, ce que la Sécurité sociale des indépendants liquidait.
+#
 # À QUOI CETTE SÉRIE SERT
 # ------------------------
 # À CONFRONTER : le modèle ne la lit pas. scripts/part_minimum_contributif.py
@@ -64,25 +84,37 @@ annee,caisse,sexe,part,fiabilite
 2018,msa_salaries,ensemble,32.98,certifiee
 2019,cnav,ensemble,19.76,certifiee
 2019,msa_salaries,ensemble,28.90,certifiee
+2019,regimes_alignes,ensemble,20.36,certifiee
 2020,cnav,ensemble,17.77,certifiee
 2020,msa_salaries,ensemble,27.26,certifiee
+2020,regimes_alignes,ensemble,18.37,certifiee
 2021,cnav,ensemble,17.48,certifiee
 2021,msa_salaries,ensemble,25.07,certifiee
+2021,regimes_alignes,ensemble,17.95,certifiee
 2022,cnav,F,24.85,certifiee
 2022,cnav,H,10.95,certifiee
 2022,cnav,ensemble,18.29,certifiee
 2022,msa_salaries,F,31.34,certifiee
 2022,msa_salaries,H,26.78,certifiee
 2022,msa_salaries,ensemble,28.59,certifiee
+2022,regimes_alignes,F,25.16,certifiee
+2022,regimes_alignes,H,12.19,certifiee
+2022,regimes_alignes,ensemble,18.93,certifiee
 2023,cnav,F,24.53,certifiee
 2023,cnav,H,10.72,certifiee
 2023,cnav,ensemble,17.89,certifiee
 2023,msa_salaries,F,38.29,certifiee
 2023,msa_salaries,H,29.62,certifiee
 2023,msa_salaries,ensemble,33.06,certifiee
+2023,regimes_alignes,F,25.18,certifiee
+2023,regimes_alignes,H,12.15,certifiee
+2023,regimes_alignes,ensemble,18.82,certifiee
 2024,cnav,F,23.13,certifiee
 2024,cnav,H,11.14,certifiee
 2024,cnav,ensemble,17.41,certifiee
 2024,msa_salaries,F,42.00,certifiee
 2024,msa_salaries,H,31.24,certifiee
 2024,msa_salaries,ensemble,35.63,certifiee
+2024,regimes_alignes,F,24.07,certifiee
+2024,regimes_alignes,H,12.69,certifiee
+2024,regimes_alignes,ensemble,18.55,certifiee

@@ -9,11 +9,15 @@
 LA QUESTION
 -----------
 Combien de nouveaux retraités voient leur pension portée au minimum
-contributif ? L'enquête annuelle auprès des caisses de retraite le compte,
-année de liquidation par année (``regimes/minimum_contributif_liquidants.csv``).
-TRAJECTOiRE, le modèle de la DREES, le projette, et prévient qu'il surestime
-cette part (Études et résultats n° 1297, février 2024, note 7). L'action 137
-demande ce que le modèle en sait, et de le confronter aux deux.
+contributif, et de combien ? L'enquête annuelle auprès des caisses de retraite
+le compte, année de liquidation par année : la part des nouveaux retraités
+(``regimes/minimum_contributif_liquidants.csv``), à la Cnav, à la MSA salariés
+et, depuis 2019, aux régimes alignés réunis, le champ de TRAJECTOiRE ; et le
+complément moyen qu'il leur sert (``regimes/minimum_contributif_montant.csv``,
+en euros courants par mois). TRAJECTOiRE, le modèle de la DREES, les projette,
+et prévient qu'il surestime la part (Études et résultats n° 1297, février 2024,
+note 7). L'action 137 demande ce que le modèle en sait, et de le confronter aux
+deux : la part, et le minimum moyen d'un bénéficiaire, en euros de 2023.
 
 CE QUE LE MODÈLE EN SAIT
 ------------------------
@@ -112,13 +116,15 @@ ANNEE_EUROS = 2023
 #: Ce que TRAJECTOiRE publie, sur les régimes alignés, avant la loi du 30
 #: décembre 2025 et aux hypothèses du COR de juin 2023 : Martin Chopard,
 #: Études et résultats n° 1297, DREES, février 2024 (``drees_er_1297_minimum_contributif``
-#: au registre des sources). Les parts en pour cent, les montants en euros par
-#: mois.
+#: au registre des sources). Les parts en pour cent, les montants en euros bruts
+#: par mois : le gain moyen que le minimum donne à ses bénéficiaires, en euros
+#: de l'année ``euros_de``.
 TRAJECTOIRE = {
     "liquidants_2024": {
-        "source": "tableau 1 : les liquidants de 2024",
+        "source": "tableau 1 : les liquidants de 2024, euros courants",
         "sans_reforme_de_2023": 25.7, "avec_reforme_de_2023": 30.0,
         "montant_avant_relevement": 110, "montant_apres_relevement": 136,
+        "euros_de": 2024,
     },
     "liquidants_2050": {
         "source": "graphique 2b, sa lecture : les liquidants de 2050",
@@ -128,8 +134,14 @@ TRAJECTOIRE = {
         "source": "tableau 3 : la génération 1975, euros de 2023",
         "F": 31.6, "H": 18.1, "majore_F": 15.0, "majore_H": 5.2,
         "montant_F": 106, "montant_H": 82,
+        "euros_de": ANNEE_EUROS,
     },
 }
+
+#: Les caisses de l'EACR que la mesure imprime : le champ de TRAJECTOiRE, les
+#: régimes alignés réunis, est le plus proche de la grille, dont le régime
+#: général tient lieu des trois (:data:`REGIME`).
+CAISSES = ("cnav", "msa_salaries", "regimes_alignes")
 
 SEXES = ("ensemble", "F", "H")
 
@@ -258,12 +270,29 @@ def parts(variantes: list, poids: list[float], lignes: list[tuple],
             for groupe, par_sexe in sorted(groupes.items())}
 
 
-def observees(racine: Path) -> dict[tuple[int, str, str], float]:
-    """La part que l'EACR observe : ``(année, caisse, sexe) -> part``."""
-    chemin = racine / "reference" / "regimes" / "minimum_contributif_liquidants.csv"
+def _lire_eacr(racine: Path, nom: str, colonne: str) -> dict[tuple[int, str, str], float]:
+    chemin = racine / "reference" / "regimes" / nom
     with chemin.open(encoding="utf-8") as flux:
         lignes = csv.DictReader(l for l in flux if not l.lstrip().startswith("#"))
-        return {(int(l["annee"]), l["caisse"], l["sexe"]): float(l["part"]) for l in lignes}
+        return {(int(l["annee"]), l["caisse"], l["sexe"]): float(l[colonne]) for l in lignes}
+
+
+def observees(racine: Path) -> dict[tuple[int, str, str], float]:
+    """La part que l'EACR observe : ``(année, caisse, sexe) -> part``."""
+    return _lire_eacr(racine, "minimum_contributif_liquidants.csv", "part")
+
+
+def montants_observes(racine: Path) -> dict[tuple[int, str, str], float]:
+    """Le minimum moyen que l'EACR observe, en euros courants par mois :
+    ``(année, caisse, sexe) -> montant``."""
+    return _lire_eacr(racine, "minimum_contributif_montant.csv", "montant")
+
+
+def en_euros_de_reference(montants: dict[tuple, float], coefficient_prix) -> dict[tuple, float]:
+    """Des montants en euros courants de l'année qui ouvre leur clé, passés en
+    euros de :data:`ANNEE_EUROS` par ``coefficient_prix(année, ANNEE_EUROS)``."""
+    return {cle: montant * coefficient_prix(cle[0], ANNEE_EUROS)
+            for cle, montant in sorted(montants.items())}
 
 
 def generations_requises(annees: tuple[int, ...]) -> tuple[int, ...]:
@@ -277,7 +306,8 @@ def generations_requises(annees: tuple[int, ...]) -> tuple[int, ...]:
 def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
             annees: tuple[int, ...] = ANNEES, parametres: Parametres | None = None) -> dict:
     """Chaque grille, ses parts par année de liquidation et par génération, à côté
-    de ce que l'EACR observe et de ce que TRAJECTOiRE publie."""
+    de ce que l'EACR observe et de ce que TRAJECTOiRE publie, les montants en
+    euros de :data:`ANNEE_EUROS`."""
     parametres = parametres if parametres is not None else Parametres()
     racine = parametres.racine_donnees
     source = G.eir(racine)
@@ -286,9 +316,18 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
     simulateur = Simulateur(parametres)
     effectifs = simulateur.effectifs
     generations = generations_requises(annees)
+    coefficient_prix = simulateur.macro.coefficient_prix
+    publies = TRAJECTOIRE["liquidants_2024"]
     resultat = {"millesime_des_poids": source.millesime, "generations": list(generations),
                 "eacr": {f"{a}/{c}/{s}": v for (a, c, s), v in sorted(observees(racine).items())},
-                "trajectoire": TRAJECTOIRE, "grilles": {}}
+                "eacr_montants": {
+                    f"{a}/{c}/{s}": v for (a, c, s), v
+                    in en_euros_de_reference(montants_observes(racine), coefficient_prix).items()},
+                "trajectoire": TRAJECTOIRE,
+                "trajectoire_montants_2024": {
+                    cle: publies[cle] * coefficient_prix(publies["euros_de"], ANNEE_EUROS)
+                    for cle in ("montant_avant_relevement", "montant_apres_relevement")},
+                "grilles": {}}
     for nom in noms:
         debut = time.time()
         variantes = G.grille(nom, effectifs, source, points)
@@ -321,31 +360,57 @@ def _pc(valeur: float | None) -> str:
         else f"{valeur:5.1f} %"
 
 
+def _points(modele: float | None, observe: float | None) -> str:
+    return "     —" if modele is None or observe is None else f"{modele - observe:+6.1f}"
+
+
+def _euros(valeur: float | None) -> str:
+    return "    —" if valeur is None else f"{valeur:3.0f} €"
+
+
 def imprimer(resultat: dict) -> None:
     eacr = {tuple(cle.split("/")): v for cle, v in resultat["eacr"].items()}
+    montants = {tuple(cle.split("/")): v for cle, v in resultat["eacr_montants"].items()}
     trajectoire = resultat["trajectoire"]
     for nom, grille in resultat["grilles"].items():
         print(f"\nGrille « {nom} » : {grille['carrieres']} carrières, poids de personnes "
               f"de {resultat['millesime_des_poids']}, {grille['refusees']} couples refusés "
               f"par le moteur, {grille['secondes']} s")
-        print("\nPar année de liquidation de la pension du régime général")
-        print("  année    modèle  dont maj.   EACR Cnav  EACR MSA sal.   femmes (EACR)"
-              "     hommes (EACR)")
+        print("\nPar année de liquidation de la pension du régime général : la part")
+        print("  année    modèle  dont maj.   EACR Cnav    MSA sal.     alignés   écart"
+              "    femmes (alignés)   hommes (alignés)")
         for annee, par_sexe in grille["par_annee"].items():
             e = par_sexe.get("ensemble", {})
             f, h = par_sexe.get("F", {}), par_sexe.get("H", {})
-            cnav = eacr.get((annee, "cnav", "ensemble"))
-            msa = eacr.get((annee, "msa_salaries", "ensemble"))
-            ef, eh = eacr.get((annee, "cnav", "F")), eacr.get((annee, "cnav", "H"))
+            cnav, msa, alignes = (eacr.get((annee, caisse, "ensemble")) for caisse in CAISSES)
+            ef, eh = (eacr.get((annee, "regimes_alignes", sexe)) for sexe in ("F", "H"))
             marque = "*" if annee == "2024" else " "
             print(f"  {annee}   {_pc(e.get('part'))}   {_pc(e.get('part_majoree'))}   "
-                  f"{_pc(cnav)}{marque}   {_pc(msa)}{marque}     "
+                  f"{_pc(cnav)}{marque}   {_pc(msa)}{marque}   {_pc(alignes)}{marque}  "
+                  f"{_points(e.get('part'), alignes)}    "
                   f"{_pc(f.get('part'))} ({_pc(ef).strip()})   "
                   f"{_pc(h.get('part'))} ({_pc(eh).strip()})")
-        print("  * l'estimation de la DREES ; TRAJECTOiRE, liquidants des régimes alignés : "
+        print("  * l'estimation de la DREES ; les régimes alignés réunis depuis 2019, "
+              "première année où ils comptent des personnes ;")
+        print("    TRAJECTOiRE, liquidants des régimes alignés : "
               f"{trajectoire['liquidants_2024']['avec_reforme_de_2023']} % en 2024 "
               f"({trajectoire['liquidants_2024']['sans_reforme_de_2023']} % sans la réforme "
               f"de 2023), {trajectoire['liquidants_2050']['avec_reforme_de_2023']} % en 2050")
+        print(f"\nPar année de liquidation : le minimum moyen d'un bénéficiaire, "
+              f"en euros de {ANNEE_EUROS} par mois")
+        print("  année   modèle   femmes   hommes   EACR Cnav   MSA sal.   alignés")
+        for annee, par_sexe in grille["par_annee"].items():
+            e = par_sexe.get("ensemble", {})
+            f, h = par_sexe.get("F", {}), par_sexe.get("H", {})
+            cnav, msa, alignes = (montants.get((annee, caisse, "ensemble")) for caisse in CAISSES)
+            print(f"  {annee}    {_euros(e.get('montant'))}    {_euros(f.get('montant'))}    "
+                  f"{_euros(h.get('montant'))}      {_euros(cnav)}      {_euros(msa)}     "
+                  f"{_euros(alignes)}")
+        publies, courants = resultat["trajectoire_montants_2024"], trajectoire["liquidants_2024"]
+        print(f"  TRAJECTOiRE, liquidants de 2024 : {publies['montant_avant_relevement']:.0f} € "
+              f"avant le relèvement de 2023, {publies['montant_apres_relevement']:.0f} € après "
+              f"({courants['montant_avant_relevement']} et {courants['montant_apres_relevement']} "
+              f"€ de {courants['euros_de']})")
         print("\nPar génération")
         print("  génér.   ensemble    femmes    hommes   majorée F   majorée H   "
               f"Mico moyen F / H (€ {ANNEE_EUROS})   éligibles privés")

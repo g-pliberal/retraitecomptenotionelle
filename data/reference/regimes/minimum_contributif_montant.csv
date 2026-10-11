@@ -1,0 +1,96 @@
+# Montant moyen du minimum contributif des nouveaux retraités qui en bénéficient
+# source_id: drees_eacr
+# unite: euros courants bruts par mois
+# fiabilite:
+#   certifiee (2012-2023) : colonne m1 de la feuille E-Minima du second
+#             classeur de l'EACR diffusé par la DREES, recontrôlée par
+#             scripts/verifier_donnees.py, qui rejette toute valeur
+#             au-delà du minimum contributif majoré mensuel de l'année.
+#
+# CE QUE LE MONTANT EST
+# ----------------------
+# Pour les régimes du privé, la colonne m1 de la table E-Minima est le
+# « montant moyen de mico » (documentation de l'EACR, version du 18 mai
+# 2026) : le complément moyen que le minimum ajoute à la pension des
+# nouveaux retraités qu'il relève, non la pension portée au minimum,
+# en euros bruts par mois comme tous les montants de l'enquête. C'est
+# ce que l'Études et résultats n° 1297 de la DREES appelle le montant
+# moyen du Mico, ou le gain mensuel moyen (tableaux 1 et 3). Les
+# nouveaux retraités, leurs caisses et leurs années sont ceux de
+# minimum_contributif_liquidants.csv, sous la même règle des deux
+# codes de la Cnav : le plus récent l'emporte.
+#
+# LE CONTRÔLE
+# ------------
+# Un complément ne peut dépasser le minimum lui-même : une valeur
+# au-delà du plus haut minimum majoré mensuel en vigueur dans l'année
+# (legislation/minimum_contributif.csv : 847,57 € en 2023) est rejetée,
+# et non corrigée. La MSA salariés de 2022 l'est : sa colonne y recopie
+# l'effectif (13 227 ; 5 771 femmes ; 7 456 hommes). 2024 n'a pas de
+# montant : l'estimation de la DREES ne porte que l'effectif.
+#
+# LA MSA SALARIÉS ET LA LIQUIDATION UNIQUE
+# -----------------------------------------
+# 34 à 47 € de 2012 à 2017, 74 € en 2018, 95 à 99 € depuis 2019. Avant
+# la liquidation unique des régimes alignés (Lura, pensions prenant
+# effet depuis le 1er juillet 2017), chaque caisse proratisait son
+# minimum à sa part de la carrière, et 96 % des liquidants de la MSA
+# salariés étaient polypensionnés en 2012 ; depuis, la caisse qui
+# liquide sert un seul minimum, pour toute la carrière alignée. La
+# documentation de l'EACR le dit de la pension moyenne de ses
+# nouveaux liquidants, en forte hausse à partir de 2017. La Lura
+# s'installe en deux ans : 19 % du flux de la caisse en 2017, 60 % en
+# 2018, 72 % en 2019, 76 à 78 % ensuite.
+#
+# LES RÉGIMES ALIGNÉS RÉUNIS
+# ---------------------------
+# La caisse regimes_alignes, depuis 2019, comme dans
+# minimum_contributif_liquidants.csv : la moyenne des deux caisses,
+# pondérée par leurs bénéficiaires, les années où l'une et l'autre
+# passent le contrôle, donc ni 2022 ni 2024.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À CONFRONTER : le modèle ne la lit pas. scripts/part_minimum_contributif.py
+# y oppose, en euros de 2023, le minimum moyen que les grilles de
+# carrières de la page Coût servent au scénario 1, et celui que
+# TRAJECTOiRE publie (action 137).
+#
+# Ne pas modifier ces valeurs à la main : elles seraient écrasées
+# au prochain scripts/verifier_donnees.py --appliquer.
+annee,caisse,sexe,montant,fiabilite
+2012,cnav,ensemble,128.0,certifiee
+2012,msa_salaries,ensemble,46.0,certifiee
+2013,cnav,ensemble,126.0,certifiee
+2013,msa_salaries,ensemble,38.0,certifiee
+2014,cnav,ensemble,123.0,certifiee
+2014,msa_salaries,ensemble,35.0,certifiee
+2015,cnav,ensemble,122.0,certifiee
+2015,msa_salaries,ensemble,36.0,certifiee
+2016,cnav,ensemble,120.0,certifiee
+2016,msa_salaries,ensemble,34.0,certifiee
+2017,cnav,ensemble,123.0,certifiee
+2017,msa_salaries,ensemble,47.0,certifiee
+2018,cnav,ensemble,127.0,certifiee
+2018,msa_salaries,ensemble,74.0,certifiee
+2019,cnav,ensemble,126.0,certifiee
+2019,msa_salaries,ensemble,96.0,certifiee
+2019,regimes_alignes,ensemble,123.2,certifiee
+2020,cnav,ensemble,125.0,certifiee
+2020,msa_salaries,ensemble,95.0,certifiee
+2020,regimes_alignes,ensemble,122.2,certifiee
+2021,cnav,ensemble,125.0,certifiee
+2021,msa_salaries,ensemble,95.0,certifiee
+2021,regimes_alignes,ensemble,122.4,certifiee
+2022,cnav,F,135.0,certifiee
+2022,cnav,H,125.0,certifiee
+2022,cnav,ensemble,132.0,certifiee
+2023,cnav,F,139.8,certifiee
+2023,cnav,H,132.6,certifiee
+2023,cnav,ensemble,137.7,certifiee
+2023,msa_salaries,F,114.7,certifiee
+2023,msa_salaries,H,86.1,certifiee
+2023,msa_salaries,ensemble,99.1,certifiee
+2023,regimes_alignes,F,138.0,certifiee
+2023,regimes_alignes,H,124.1,certifiee
+2023,regimes_alignes,ensemble,133.6,certifiee

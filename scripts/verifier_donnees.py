@@ -2073,17 +2073,30 @@ CAISSES_MINIMUM_CONTRIBUTIF: tuple[tuple[str, str], ...] = (
     ("0021", "msa_salaries"),
 )
 
+#: Les régimes alignés, au sens de l'Études et résultats n° 1297 et de
+#: TRAJECTOiRE : le régime général, indépendants compris, et la MSA salariés.
+CAISSES_ALIGNEES = ("cnav", "msa_salaries")
 
-def source_minimum_contributif_liquidants() -> dict[tuple, float]:
-    """La part des nouveaux retraités dont la pension est portée au minimum contributif.
+#: La première année de liquidation où la somme des deux caisses compte des
+#: PERSONNES. Avant la liquidation unique des régimes alignés (Lura, pensions
+#: prenant effet depuis le 1er juillet 2017), un polypensionné des deux caisses
+#: liquide dans chacune et compte dans les deux flux : 96 % des liquidants de
+#: la MSA salariés étaient polypensionnés en 2012, selon l'étude. La Lura se
+#: met en place sur deux ans : les liquidations uniques font 19 % du flux de la
+#: MSA salariés en 2017, 60 % en 2018, 72 % en 2019, 76 à 78 % ensuite (champ
+#: ``nl_ddir``, modalité ``Liq = Lura`` du cadrage), et le minimum moyen que
+#: la caisse sert, proratisé jusque-là à sa part de la carrière, passe de 34 €
+#: en 2016 à 47 € en 2017, 74 € en 2018, puis 95 à 99 € depuis 2019. Et 2019 est la
+#: première année que la Cnav porte sous le code 0015 au dénominateur comme au
+#: numérateur : un même champ, indépendants compris — le nouveau code y compte
+#: 32 287 liquidants de plus que l'ancien, dont 32 751 de plus au titre de la
+#: Lura, ce que la Sécurité sociale des indépendants liquidait.
+PREMIERE_ANNEE_REGIMES_ALIGNES = 2019
 
-    Caisse par caisse, sexe par sexe, année de liquidation par année : les
-    bénéficiaires de la feuille E-Minima du second classeur de l'EACR,
-    rapportés aux nouveaux retraités de droit direct de la même caisse, vivants
-    au 31 décembre (champ ``nl_ddir`` du cadrage). C'est la part que l'Études et
-    résultats n° 1297 de la DREES trace (graphique 1), et la mesure que le
-    dépôt oppose à ses grilles de carrières (action 137) : TRAJECTOiRE la
-    surestime, dit l'étude elle-même (note 7).
+
+def _minimum_contributif_eacr() -> tuple[dict[tuple, list], dict[tuple, float]]:
+    """Les bénéficiaires du minimum contributif et le flux des nouveaux retraités
+    de l'EACR, aux caisses du dépôt : ``(année, caisse, sexe) -> cellule``.
 
     Le numérateur et le dénominateur passent chacun par la règle des effectifs :
     où les deux codes de la Cnav se recouvrent, le plus récent l'emporte. Les
@@ -2101,23 +2114,124 @@ def source_minimum_contributif_liquidants() -> dict[tuple, float]:
             "relancer scripts/fetch/drees_eacr.py"
         )
 
-    def par_caisse(series: dict, valeur: Callable) -> dict[tuple, float]:
-        retenues: dict[tuple, tuple[str, float]] = {}
+    def par_caisse(series: dict) -> dict[tuple, object]:
+        retenues: dict[tuple, tuple[str, object]] = {}
         for code, nom in CAISSES_MINIMUM_CONTRIBUTIF:
             for sexe, serie in series.get(code, {}).items():
                 for annee, cellule in serie.items():
                     cle = (annee, nom, sexe)
-                    if code >= retenues.get(cle, ("", 0.0))[0]:
-                        retenues[cle] = (code, valeur(cellule))
-        return {cle: nombre for cle, (_, nombre) in retenues.items()}
+                    if code >= retenues.get(cle, ("", None))[0]:
+                        retenues[cle] = (code, cellule)
+        return {cle: cellule for cle, (_, cellule) in retenues.items()}
 
-    nombres = par_caisse(beneficiaires, lambda cellule: cellule[0])
-    liquidants = par_caisse(flux, lambda cellule: cellule)
-    return {
+    return par_caisse(beneficiaires), par_caisse(flux)
+
+
+def _alignes(valeurs: dict[tuple, float]) -> list[tuple[tuple, list[tuple]]]:
+    """Les ``(année, régimes alignés, sexe)`` dont les deux caisses ont une
+    valeur, chacun avec les clés de ses deux caisses, depuis
+    :data:`PREMIERE_ANNEE_REGIMES_ALIGNES`."""
+    couples = sorted({(annee, sexe) for annee, _, sexe in valeurs
+                      if int(annee) >= PREMIERE_ANNEE_REGIMES_ALIGNES})
+    sortie = []
+    for annee, sexe in couples:
+        cles = [(annee, caisse, sexe) for caisse in CAISSES_ALIGNEES]
+        if all(cle in valeurs for cle in cles):
+            sortie.append(((annee, "regimes_alignes", sexe), cles))
+    return sortie
+
+
+def source_minimum_contributif_liquidants() -> dict[tuple, float]:
+    """La part des nouveaux retraités dont la pension est portée au minimum contributif.
+
+    Caisse par caisse, sexe par sexe, année de liquidation par année : les
+    bénéficiaires de la feuille E-Minima du second classeur de l'EACR,
+    rapportés aux nouveaux retraités de droit direct de la même caisse, vivants
+    au 31 décembre (champ ``nl_ddir`` du cadrage). C'est la part que l'Études et
+    résultats n° 1297 de la DREES trace (graphique 1), et la mesure que le
+    dépôt oppose à ses grilles de carrières (action 137) : TRAJECTOiRE la
+    surestime, dit l'étude elle-même (note 7).
+
+    Et la part des régimes alignés réunis (``regimes_alignes``), le champ de
+    TRAJECTOiRE : les bénéficiaires des deux caisses rapportés à leurs deux
+    flux, depuis la première année où la somme compte des personnes
+    (:data:`PREMIERE_ANNEE_REGIMES_ALIGNES`).
+    """
+    beneficiaires, flux = _minimum_contributif_eacr()
+    nombres = {cle: cellule[0] for cle, cellule in beneficiaires.items()}
+    liquidants = {cle: nombre for cle, nombre in flux.items() if nombre}
+    parts = {
         cle: 100.0 * nombre / liquidants[cle]
         for cle, nombre in sorted(nombres.items())
-        if liquidants.get(cle)
+        if cle in liquidants
     }
+    for cle, cles in _alignes(parts):
+        parts[cle] = (100.0 * somme_ordonnee(nombres[c] for c in cles)
+                      / somme_ordonnee(liquidants[c] for c in cles))
+    return dict(sorted(parts.items()))
+
+
+def _bareme_minimum_majore() -> list[tuple[str, float]]:
+    """Le minimum contributif majoré annuel, à chaque date où il change, dans
+    l'ordre."""
+    return sorted(
+        (ligne["date"], float(ligne["valeur"]))
+        for ligne in charger_csv(REFERENCE / "legislation" / "minimum_contributif.csv")
+        if ligne["mesure"] == "montant_majore"
+    )
+
+
+def _minimum_majore_mensuel(annee: int, bareme: list[tuple[str, float]]) -> float | None:
+    """Le plus haut minimum contributif majoré MENSUEL en vigueur dans l'année :
+    celui du 1er janvier, et ceux qui le relèvent en cours d'année — 847,57 €
+    en 2023, après les 747,57 € de janvier. ``bareme`` : les montants annuels
+    datés, dans l'ordre."""
+    debut, fin = f"{annee}-01-01", f"{annee}-12-31"
+    en_vigueur = [valeur for jour, valeur in bareme if jour <= debut][-1:]
+    en_vigueur += [valeur for jour, valeur in bareme if debut < jour <= fin]
+    return max(en_vigueur) / 12.0 if en_vigueur else None
+
+
+def _montants_minimum_contributif() -> tuple[dict[tuple, float], dict[tuple, tuple]]:
+    """Les montants moyens du minimum contributif des nouveaux retraités que la
+    certification retient, et ceux que son contrôle rejette, chacun avec le
+    minimum majoré mensuel de son année.
+
+    La colonne ``m1`` de la feuille E-Minima est, pour les régimes du privé, le
+    « montant moyen de mico » (documentation de l'EACR, table E-Minima) : le
+    complément moyen que le minimum ajoute, en euros bruts par mois, comme
+    tous les montants de l'enquête. Il ne peut dépasser le minimum majoré
+    lui-même : une valeur au-delà n'est pas un montant, et se rejette sans se
+    corriger — la MSA salariés de 2022 y recopie l'effectif (13 227 ; 5 771
+    femmes ; 7 456 hommes).
+
+    Les régimes alignés, depuis :data:`PREMIERE_ANNEE_REGIMES_ALIGNES` : la
+    moyenne des deux caisses, pondérée par leurs bénéficiaires, quand l'une et
+    l'autre passent le contrôle.
+    """
+    beneficiaires, _ = _minimum_contributif_eacr()
+    bareme = _bareme_minimum_majore()
+    retenus: dict[tuple, float] = {}
+    rejetes: dict[tuple, tuple[float, float | None]] = {}
+    for cle, (_, montant, _, _) in sorted(beneficiaires.items()):
+        if montant is None:
+            continue
+        plafond = _minimum_majore_mensuel(int(cle[0]), bareme)
+        if plafond is not None and 0.0 < montant <= plafond:
+            retenus[cle] = montant
+        else:
+            rejetes[cle] = (montant, plafond)
+    for cle, cles in _alignes(retenus):
+        poids = [beneficiaires[c][0] for c in cles]
+        retenus[cle] = (somme_ordonnee(p * retenus[c] for p, c in zip(poids, cles))
+                        / somme_ordonnee(poids))
+    return dict(sorted(retenus.items())), rejetes
+
+
+def source_minimum_contributif_montant() -> dict[tuple, float]:
+    """Le montant moyen du minimum contributif servi aux nouveaux retraités qui
+    en bénéficient, en euros bruts par mois (:func:`_montants_minimum_contributif`)."""
+    return _montants_minimum_contributif()[0]
 
 
 def source_distribution_pensions() -> dict[tuple, float]:
@@ -6083,11 +6197,104 @@ CERTIFICATIONS = (
             "# le seul qui les porte. En 2019, seule année où les deux flux",
             "# coexistent, le nouveau compte 5 % de liquidants de plus.",
             "#",
+            "# LES RÉGIMES ALIGNÉS RÉUNIS",
+            "# ---------------------------",
+            "# La caisse regimes_alignes est le champ de TRAJECTOiRE : le régime",
+            "# général, indépendants compris, et la MSA salariés, leurs",
+            "# bénéficiaires rapportés à leurs deux flux. Elle commence en 2019,",
+            "# première année où la somme compte des PERSONNES. Avant la",
+            "# liquidation unique des régimes alignés (Lura, pensions prenant effet",
+            "# depuis le 1er juillet 2017), un polypensionné des deux caisses",
+            "# liquide dans chacune et compte dans les deux flux : 96 % des",
+            "# liquidants de la MSA salariés étaient polypensionnés en 2012, selon",
+            "# l'étude. La Lura s'installe en deux ans : 19 % du flux de la MSA",
+            "# salariés en 2017, 60 % en 2018, 72 % en 2019, 76 à 78 % ensuite",
+            "# (modalité Liq = Lura du cadrage), et le minimum moyen que la caisse",
+            "# sert n'atteint qu'en 2019 son niveau d'après la Lura",
+            "# (minimum_contributif_montant.csv). 2019 est aussi la première année",
+            "# que la Cnav porte sous le code 0015 aux deux termes de la part, un",
+            "# même champ, indépendants compris : le nouveau code y compte 32 287",
+            "# liquidants de plus que l'ancien, dont 32 751 de plus au titre de la",
+            "# Lura, ce que la Sécurité sociale des indépendants liquidait.",
+            "#",
             "# À QUOI CETTE SÉRIE SERT",
             "# ------------------------",
             "# À CONFRONTER : le modèle ne la lit pas. scripts/part_minimum_contributif.py",
             "# y oppose la part que les grilles de carrières de la page Coût",
             "# calculent au scénario 1, et data/reference/referents.yaml celle que",
+            "# TRAJECTOiRE publie (action 137).",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="minimum_contributif_montant",
+        chemin=REFERENCE / "regimes" / "minimum_contributif_montant.csv",
+        cles=("annee", "caisse", "sexe"),
+        colonne="montant",
+        source=source_minimum_contributif_montant,
+        origine="DREES, enquête annuelle auprès des caisses de retraite (EACR)",
+        decimales=1,
+        tolerance=0.05,
+        unite=" €",
+        entete=(
+            "# Montant moyen du minimum contributif des nouveaux retraités qui en bénéficient",
+            "# source_id: drees_eacr",
+            "# unite: euros courants bruts par mois",
+            "# fiabilite:",
+            "#   certifiee (2012-2023) : colonne m1 de la feuille E-Minima du second",
+            "#             classeur de l'EACR diffusé par la DREES, recontrôlée par",
+            "#             scripts/verifier_donnees.py, qui rejette toute valeur",
+            "#             au-delà du minimum contributif majoré mensuel de l'année.",
+            "#",
+            "# CE QUE LE MONTANT EST",
+            "# ----------------------",
+            "# Pour les régimes du privé, la colonne m1 de la table E-Minima est le",
+            "# « montant moyen de mico » (documentation de l'EACR, version du 18 mai",
+            "# 2026) : le complément moyen que le minimum ajoute à la pension des",
+            "# nouveaux retraités qu'il relève, non la pension portée au minimum,",
+            "# en euros bruts par mois comme tous les montants de l'enquête. C'est",
+            "# ce que l'Études et résultats n° 1297 de la DREES appelle le montant",
+            "# moyen du Mico, ou le gain mensuel moyen (tableaux 1 et 3). Les",
+            "# nouveaux retraités, leurs caisses et leurs années sont ceux de",
+            "# minimum_contributif_liquidants.csv, sous la même règle des deux",
+            "# codes de la Cnav : le plus récent l'emporte.",
+            "#",
+            "# LE CONTRÔLE",
+            "# ------------",
+            "# Un complément ne peut dépasser le minimum lui-même : une valeur",
+            "# au-delà du plus haut minimum majoré mensuel en vigueur dans l'année",
+            "# (legislation/minimum_contributif.csv : 847,57 € en 2023) est rejetée,",
+            "# et non corrigée. La MSA salariés de 2022 l'est : sa colonne y recopie",
+            "# l'effectif (13 227 ; 5 771 femmes ; 7 456 hommes). 2024 n'a pas de",
+            "# montant : l'estimation de la DREES ne porte que l'effectif.",
+            "#",
+            "# LA MSA SALARIÉS ET LA LIQUIDATION UNIQUE",
+            "# -----------------------------------------",
+            "# 34 à 47 € de 2012 à 2017, 74 € en 2018, 95 à 99 € depuis 2019. Avant",
+            "# la liquidation unique des régimes alignés (Lura, pensions prenant",
+            "# effet depuis le 1er juillet 2017), chaque caisse proratisait son",
+            "# minimum à sa part de la carrière, et 96 % des liquidants de la MSA",
+            "# salariés étaient polypensionnés en 2012 ; depuis, la caisse qui",
+            "# liquide sert un seul minimum, pour toute la carrière alignée. La",
+            "# documentation de l'EACR le dit de la pension moyenne de ses",
+            "# nouveaux liquidants, en forte hausse à partir de 2017. La Lura",
+            "# s'installe en deux ans : 19 % du flux de la caisse en 2017, 60 % en",
+            "# 2018, 72 % en 2019, 76 à 78 % ensuite.",
+            "#",
+            "# LES RÉGIMES ALIGNÉS RÉUNIS",
+            "# ---------------------------",
+            "# La caisse regimes_alignes, depuis 2019, comme dans",
+            "# minimum_contributif_liquidants.csv : la moyenne des deux caisses,",
+            "# pondérée par leurs bénéficiaires, les années où l'une et l'autre",
+            "# passent le contrôle, donc ni 2022 ni 2024.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À CONFRONTER : le modèle ne la lit pas. scripts/part_minimum_contributif.py",
+            "# y oppose, en euros de 2023, le minimum moyen que les grilles de",
+            "# carrières de la page Coût servent au scénario 1, et celui que",
             "# TRAJECTOiRE publie (action 137).",
             "#",
             "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
@@ -8779,6 +8986,31 @@ def controle_vraisemblance_minimum_contributif() -> list[str]:
     ] + ecarts
 
 
+def controle_montant_minimum_contributif() -> list[str]:
+    """Dit les montants moyens du minimum contributif que la certification
+    rejette, parce qu'ils dépassent le minimum majoré mensuel de leur année
+    (:func:`_montants_minimum_contributif`).
+
+    Un rejet n'est pas une anomalie à examiner : la valeur reste hors du
+    fichier, et la ligne dit pourquoi, pour qu'aucune ne disparaisse sans
+    bruit.
+    """
+    try:
+        retenus, rejetes = _montants_minimum_contributif()
+    except SourceAbsente as erreur:
+        return [f"IGNORÉ  montant du minimum contributif : {erreur}"]
+    messages = [
+        f"OK      montant du minimum contributif : {len(retenus)} montants moyens "
+        f"sous le minimum majoré mensuel de leur année, {len(rejetes)} rejetés"
+    ]
+    for cle, (montant, plafond) in rejetes.items():
+        borne = (f"un minimum majoré de {plafond:.2f} € par mois" if plafond is not None
+                 else "aucun minimum majoré connu cette année-là")
+        messages.append(f"REJETÉ  minimum_contributif_montant {'/'.join(cle)} : "
+                        f"{montant:.1f} € pour {borne}")
+    return messages
+
+
 def controle_vraisemblance_prix_anciens() -> list[str]:
     """Confronte l'inflation reconstituée d'avant 1950 à la seule série de
     l'INSEE qui remonte plus haut.
@@ -9036,6 +9268,7 @@ def main(argv: list[str] | None = None) -> int:
     messages.extend(controle_vraisemblance_cotisations())
     messages.extend(controle_ancrage_taux_cotisation())
     messages.extend(controle_vraisemblance_minimum_contributif())
+    messages.extend(controle_montant_minimum_contributif())
     messages.extend(controle_vraisemblance_rendements())
     messages.extend(controle_vraisemblance_ircantec())
     messages.extend(controle_vraisemblance_point_insee())

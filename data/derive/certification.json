@@ -750,14 +750,25 @@
    "verifiee_le": "2026-10-04"
   },
   "minimum_contributif_liquidants": {
-   "ajoutees": 38,
+   "ajoutees": 12,
    "colonne": "part",
    "corrigees": 0,
-   "empreinte": "95655e06817b87cf",
+   "empreinte": "758941d6119bc8b6",
+   "identiques": 38,
+   "niveau": "certifiee",
+   "source": "DREES, enquête annuelle auprès des caisses de retraite (EACR)",
+   "valeurs": 50,
+   "verifiee_le": "2026-10-11"
+  },
+  "minimum_contributif_montant": {
+   "ajoutees": 35,
+   "colonne": "montant",
+   "corrigees": 0,
+   "empreinte": "e3b2f2b708d6706d",
    "identiques": 0,
    "niveau": "certifiee",
    "source": "DREES, enquête annuelle auprès des caisses de retraite (EACR)",
-   "valeurs": 38,
+   "valeurs": 35,
    "verifiee_le": "2026-10-11"
   },
   "minimum_garanti_indice": {

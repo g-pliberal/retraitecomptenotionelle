@@ -56,8 +56,9 @@ savoir :
 Le fichier produit, ``data/brut/drees_eacr.json``, est le document source : il
 n'est pas lu par le modèle, seulement par ``scripts/verifier_donnees.py``, qui
 en écrit ``data/reference/regimes/effectifs_retraites.csv``, la réversion de
-``data/reference/macro/droits_derives.csv``, et la part des nouveaux retraités
-au minimum contributif, ``data/reference/regimes/minimum_contributif_liquidants.csv``.
+``data/reference/macro/droits_derives.csv``, la part des nouveaux retraités
+au minimum contributif, ``data/reference/regimes/minimum_contributif_liquidants.csv``,
+et le montant moyen qu'il leur sert, ``data/reference/regimes/minimum_contributif_montant.csv``.
 """
 
 from __future__ import annotations
@@ -236,7 +237,8 @@ def lire_minima(contenu: bytes) -> dict[str, dict[str, dict[str, list]]]:
     elle, le premier des :data:`TYPES_MINIMUM` présent. Le montant moyen du
     complément (colonne ``m1``, en euros par mois) suit, ``None`` quand la
     feuille n'en porte pas ; à la MSA salariés, la campagne de 2023 y recopie
-    l'effectif, et il ne se lit donc pas sans contrôle. La feuille ventile aussi
+    l'effectif, et il ne se lit donc pas sans le contrôle que
+    ``scripts/verifier_donnees.py`` lui fait passer. La feuille ventile aussi
     par nombre de trimestres, pour le seul minimum garanti : on ne lit que la
     modalité « Ensemble ».
     """
