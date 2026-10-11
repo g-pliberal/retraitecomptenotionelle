@@ -1441,7 +1441,10 @@ sources:
       complémentaires » ; avec lui, les données de l'EACR, que le manifeste a
       déjà (`drees_eacr`), et deux modèles de la perte d'autonomie, LIVIA et
       Autonomix. Le registre des modèles, data/reference/referents.yaml, le
-      disait déjà de `calcul_pension` : rien n'y change.
+      disait déjà de `calcul_pension` : rien n'y change. Le même jour, la page
+      s'ouvre dans le navigateur du propriétaire, sur un réseau mobile ; ses
+      captures d'écran en montrent les listes de données et de codes ouverts,
+      telles que la copie les donne.
 
   - id: drees_caliper
     url: https://drees.solidarites-sante.gouv.fr/sources-outils-et-enquetes/loutil-caliper-calcul-interregimes-des-pensions-de-retraite
@@ -1480,7 +1483,12 @@ sources:
       l'adresse) dit ce que la page disait le 4 octobre : « Paru le
       23/07/2020 », et « Cet outil a été réécrit en R et son code est ouvert
       sur le lien suivant » : celui de `calcul_pension`. Son communiqué de
-      2021 est `drees_codes_sources_communique`, plus haut.
+      2021 est `drees_codes_sources_communique`, plus haut. Le même jour, la
+      page s'ouvre dans le navigateur du propriétaire, sur un réseau mobile,
+      et ses captures d'écran montrent la même phrase et les deux mêmes
+      publications de référence (le Panorama de juin 2023 et le DT 111) : le
+      refus vise le réseau de sortie des sessions dans le cloud, non le site.
+      Une session locale, sur le poste du propriétaire, est l'autre voie.
 
   - id: drees_trajectoire
     url: https://git.drees.fr/drees_code_public/modeles/trajectoire
@@ -1492,6 +1500,23 @@ sources:
       d'emploi, et la manière dont il projette les carrières. À confronter à
       la trajectoire d'emploi du COR que le dépôt a adoptée à l'action 46.
     statut: a_explorer
+
+  - id: drees_trajectoire_page
+    url: https://drees.solidarites-sante.gouv.fr/sources-outils-et-enquetes/le-modele-trajectoire
+    nature: index
+    acces: refus
+    regimes: []
+    a_en_tirer: >-
+      La présentation de TRAJECTOiRE par la DREES, et ce qui en part :
+      documentation et publications, à rapprocher de son code
+      (`drees_trajectoire`) et du registre des modèles (`trajectoire`).
+    statut: a_explorer
+    note: >-
+      Repérée le 11 octobre 2026 au bas du communiqué de 2021
+      (`drees_codes_sources_communique`) : « Consulter la page consacrée au
+      modèle de simulation Trajectoire ». Le site refuse les sessions du
+      cloud (voir `drees_caliper`) : à lire depuis une session locale, ou
+      dans une copie d'Internet Archive, s'il en a une.
 
   - id: drees_calcul_pension
     url: https://gitlab.com/DREES_code/public/outils/calcul_pension

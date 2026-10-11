@@ -111,7 +111,11 @@ failed » qu'il affiche vient de ce proxy, dont la requête a échoué, et non d
 site. Les copies d'Internet Archive se lisent, elles :
 `https://web.archive.org/cdx/search/cdx?url=<adresse>*` les liste, et
 `https://web.archive.org/web/<horodatage>id_/<adresse>` sert la page telle
-qu'elle était.
+qu'elle était. Le même jour, le site s'ouvre dans le navigateur du
+propriétaire, sur un réseau mobile : c'est le réseau de sortie des sessions
+dans le cloud qu'il refuse. Une session locale — l'application Claude Desktop,
+ou `claude remote-control` dans le dossier du dépôt — sort par le réseau du
+poste, et devrait le lire.
 
 ---
 

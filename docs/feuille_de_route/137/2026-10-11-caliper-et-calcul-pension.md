@@ -39,6 +39,16 @@ disent ce que le registre des modèles sait depuis le 4 octobre.**
   droits (calculPension) du modèle Trajectoire ». La copie du 10 juin 2026
   de la page CALIPER dit ce que WebFetch y avait lu le 4 octobre. La reprise
   ne garde de CALIPER que la confrontation de ses simplifications.
+- *Chez le propriétaire.* Les deux pages s'ouvrent dans son navigateur, sur
+  un téléphone en réseau mobile, et ses captures d'écran en montrent ce qu'il
+  y trouve d'utile, tel que les copies d'Internet Archive le donnent : sur la
+  page CALIPER, la phrase sur la réécriture en R, le lien vers
+  `calcul_pension` et les deux publications de référence ; sur le communiqué,
+  les données ouvertes (l'EACR, l'enquête Aide sociale, l'APA) et les codes
+  (LIVIA, Autonomix, calculPension). Le refus vise donc le réseau de sortie
+  des sessions dans le cloud, et le registre des sources le dit. Une seule
+  piste neuve : la page de la DREES sur le modèle TRAJECTOiRE, que le
+  communiqué cite et que le dépôt n'avait pas (`drees_trajectoire_page`).
 - *Ce que le GitLab ne règle pas.* Il ne rend pas à CALIPER ce qui faisait
   son prix : sa validation sur les pensions réelles de l'EIR 2004 (chantier
   138.14) demande des données qu'on ne lit qu'au CASD. Et `calcul_pension`
