@@ -16,6 +16,7 @@ from retraite_notionnelle.avantages import carriere_variante
 from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS, calculer_cas_types
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.contexte import Contexte
+from retraite_notionnelle.donnees import agregats
 from retraite_notionnelle.donnees.agregats import charger_agregats
 from retraite_notionnelle.web.site import disponible, module, site
 
@@ -157,3 +158,176 @@ def test_les_deux_lecteurs_lisent_les_memes_departs():
     for generation in fige.generations:
         assert [(d.pension_annuelle, d.trimestres_requis) for d in js.departs(generation)] == [
             (d.pension_annuelle, d.trimestres_requis) for d in fige.departs(generation)]
+
+
+# -- le coût agrégé ------------------------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def cout(contexte):
+    return contexte.cout()
+
+
+@pytest.fixture(scope="module")
+def montres():
+    return tuple(module("pages").SCENARIOS_MONTRES)
+
+
+@pytest.fixture(scope="module")
+def bilan():
+    return tuple(module("pages").SYSTEMES_BILAN)
+
+
+def _memes_champs(fige, calcule, champs, ou):
+    for champ in champs:
+        if hasattr(fige, champ):
+            assert getattr(fige, champ) == getattr(calcule, champ), (ou, champ)
+
+
+def test_le_solde_fige_est_celui_que_le_modele_calcule(cout, montres, bilan):
+    fige = AGREGATS.cout.solde
+    solde = cout.solde
+    assert [ligne.annee for ligne in fige.annees] == [ligne.annee for ligne in solde.annees]
+    assert (fige.premiere_annee_projetee, fige.derniere_annee_observee) == (
+        solde.premiere_annee_projetee, solde.derniere_annee_observee)
+    for figee, calculee in zip(fige.annees, solde.annees):
+        _memes_champs(figee, calculee, agregats.CHAMPS_SOLDE_ANNUEL, figee.annee)
+        assert figee.recette_par_assiette == calculee.recette_par_assiette
+        assert figee.ressources_meur() == calculee.ressources_meur()
+        for accesseur, _, du_bilan in agregats.PAR_SYSTEME_SOLDE_ANNUEL:
+            for scenario in (bilan if du_bilan else montres):
+                assert getattr(figee, accesseur)(scenario) == getattr(calculee, accesseur)(
+                    scenario), (figee.annee, accesseur, scenario)
+    for scenario in montres:
+        assert fige.premiere_annee_equilibree(scenario) == solde.premiere_annee_equilibree(
+            scenario)
+        for debut in (solde.premiere_annee, solde.premiere_annee_projetee, 2040):
+            assert fige.solde_moyen(scenario, debut, solde.derniere_annee) == (
+                solde.solde_moyen(scenario, debut, solde.derniere_annee))
+    derive = AGREGATS.cout.solde_derive
+    for figee, calculee in zip(derive.annees, cout.solde_derive.annees, strict=True):
+        assert figee.coefficient("notionnel_liberal") == calculee.coefficient(
+            "notionnel_liberal")
+    assert derive.solde_moyen("notionnel_liberal", 2026, 2070) == (
+        cout.solde_derive.solde_moyen("notionnel_liberal", 2026, 2070))
+
+
+def test_le_passe_et_l_avenir_figes_sont_ceux_que_le_modele_calcule(cout, montres):
+    from retraite_notionnelle.cout import COMPOSANTE_GARANTIE, masse_du_scenario
+
+    fige = AGREGATS.cout
+    avec_garantie = (*montres, COMPOSANTE_GARANTIE)
+    assert (fige.premiere_annee, fige.annee_euros, fige.generations) == (
+        cout.premiere_annee, cout.annee_euros, cout.generations)
+    assert (fige.poids, fige.poids_cotisants) == (cout.poids, cout.poids_cotisants)
+    assert fige.confondus_avec_actuel() == cout.confondus_avec_actuel()
+    assert fige.cumul_observe() == cout.cumul_observe()
+    for figee, calculee in zip(fige.annees, cout.annees, strict=True):
+        _memes_champs(figee, calculee, agregats.CHAMPS_COUT_ANNUEL, figee.annee)
+        assert (figee.garantie is None) == (calculee.garantie is None)
+        if calculee.garantie is not None:
+            assert figee.garantie.facteur == calculee.garantie.facteur
+        for scenario in avec_garantie:
+            assert figee.cout(scenario) == calculee.cout(scenario)
+            assert figee.cout_constants(scenario) == calculee.cout_constants(scenario)
+            assert figee.part_pib_de(scenario) == masse_du_scenario(
+                calculee.part_pib_pensions, calculee.part_derives,
+                calculee.rapports[scenario], scenario, calculee.reversion_servie,
+                calculee.reforme_en_vigueur)
+    for scenario in avec_garantie:
+        assert fige.cumul(scenario) == cout.cumul(scenario)
+        assert fige.avenir.cumul(scenario) == cout.avenir.cumul(scenario)
+    avenir = cout.avenir
+    assert fige.avenir.cumul_reprises() == avenir.cumul_reprises()
+    for scenario in montres[1:]:
+        assert fige.avenir.ecart_cumule(scenario) == avenir.ecart_cumule(scenario)
+    depuis = avenir.premiere_annee_projetee
+    assert fige.avenir.decomposition(depuis) == avenir.decomposition(depuis)
+    for figee, calculee in zip(fige.avenir.annees, avenir.annees, strict=True):
+        _memes_champs(figee, calculee, agregats.CHAMPS_AVENIR_ANNUEL, figee.annee)
+        for scenario in avec_garantie:
+            assert figee.cout_constants(scenario) == calculee.cout_constants(scenario)
+            assert figee.part_pib(scenario) == calculee.part_pib(scenario)
+        assert figee.part_pib_derive("notionnel_liberal") == calculee.part_pib_derive(
+            "notionnel_liberal")
+        assert (figee.reprises_constants(), figee.reprises(), figee.part_pib_reprises(),
+                figee.garantie_nette_constants()) == (
+            calculee.reprises_constants(), calculee.reprises(),
+            calculee.part_pib_reprises(), calculee.garantie_nette_constants())
+        if calculee.garantie is not None:
+            _memes_champs(figee.garantie, calculee.garantie, agregats.CHAMPS_GARANTIE,
+                          figee.annee)
+        if calculee.pilier is not None:
+            _memes_champs(figee.pilier, calculee.pilier, agregats.CHAMPS_PILIER, figee.annee)
+            assert figee.pilier.niveaux(1234.5) == calculee.pilier.niveaux(1234.5)
+
+
+def test_la_dette_figee_est_celle_que_le_modele_calcule(contexte, cout, montres):
+    from retraite_notionnelle.cout import calculer_dette
+
+    fige = AGREGATS.cout.dette
+    dette = cout.dette
+    assert [ligne.annee for ligne in fige.annees] == [ligne.annee for ligne in dette.annees]
+    assert (fige.annee_depart, fige.date_courbe, fige.derniere_annee_cotee,
+            fige.dette_publique_observee, fige.dette_publique_depart) == (
+        dette.annee_depart, dette.date_courbe, dette.derniere_annee_cotee,
+        dette.dette_publique_observee, dette.dette_publique_depart)
+    for scenario in montres:
+        assert fige.horizon(scenario) == dette.horizon(scenario)
+        assert fige.cumul_soldes(scenario) == dette.cumul_soldes(scenario)
+        assert AGREGATS.cout.dette_derive.horizon(scenario) == cout.dette_derive.horizon(
+            scenario)
+        for ligne in dette.annees:
+            assert fige.stock(scenario, ligne.annee) == dette.stock(scenario, ligne.annee)
+            assert fige.dette_publique(scenario, ligne.annee) == dette.dette_publique(
+                scenario, ligne.annee)
+            assert fige.annee(ligne.annee).interet(scenario) == ligne.interet(scenario)
+    ecart = module("pages").ECART_TAUX_DETTE
+    for decalage in (-ecart, ecart):
+        decalee = calculer_dette(cout.solde, cout.avenir,
+                                 contexte.simulateur().courbe_taux, decalage)
+        for scenario in montres:
+            assert AGREGATS.cout.dette_decalee(decalage).horizon(scenario) == (
+                decalee.horizon(scenario))
+
+
+def test_le_cout_fige_refuse_ce_qu_il_ne_porte_pas():
+    ligne = AGREGATS.cout.solde.annee(2030)
+    with pytest.raises(KeyError, match="absent de la table figée"):
+        ligne.postes_ressources("notionnel_retroactif")
+    with pytest.raises(KeyError, match="absent de la table figée"):
+        AGREGATS.cout.dette_decalee(0.02)
+    with pytest.raises(KeyError, match="absent de la table figée"):
+        AGREGATS.cout.avenir.decomposition(1990)
+
+
+@sans_node
+def test_les_deux_lecteurs_lisent_le_meme_cout(montres, bilan):
+    """Le lecteur du site rend, sous les noms du portage, ce que rend celui du
+    Python : chaque accesseur d'une année sur dix, chaque système."""
+    js = site().contexte.cout()
+    fige = AGREGATS.cout
+    assert list(js.generations) == list(fige.generations)
+    assert js.anneeEuros == fige.annee_euros
+    for scenario in montres:
+        assert js.cumul(scenario) == fige.cumul(scenario)
+        assert js.dette.horizon(scenario) == fige.dette.horizon(scenario)
+        assert js.solde.soldeMoyen(scenario, 2026, 2070) == fige.solde.solde_moyen(
+            scenario, 2026, 2070)
+    for annee in range(fige.solde.premiere_annee, fige.solde.derniere_annee + 1, 10):
+        lue, figee = js.solde.annee(annee), fige.solde.annee(annee)
+        for scenario in montres:
+            assert (lue.coefficient(scenario), lue.depense(scenario), lue.solde(scenario),
+                    lue.ressources_de(scenario)) == (
+                figee.coefficient(scenario), figee.depense(scenario),
+                figee.solde(scenario), figee.ressources_de(scenario))
+        for scenario in bilan:
+            assert dict(lue.postes_ressources(scenario)) == figee.postes_ressources(scenario)
+        assert lue.facteur_assiette == figee.facteur_assiette
+    for annee in range(fige.avenir.premiere_annee, fige.avenir.derniere_annee + 1, 10):
+        lue, figee = js.avenir.annee(annee), fige.avenir.annee(annee)
+        for scenario in montres:
+            assert lue.part_pib(scenario) == figee.part_pib(scenario)
+        assert lue.reprises_constants() == figee.reprises_constants()
+        if figee.pilier is not None:
+            assert dict(lue.pilier.niveaux(1000.0)) == figee.pilier.niveaux(1000.0)

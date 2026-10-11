@@ -1964,8 +1964,9 @@ def _agregats(contexte=None) -> dict:
     from retraite_notionnelle.avantages import carriere_variante
     from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS, calculer_cas_types
     from retraite_notionnelle.contexte import Contexte
+    from retraite_notionnelle.cout import COMPOSANTE_GARANTIE, calculer_dette, masse_du_scenario
     from retraite_notionnelle.donnees.agregats import (
-        figer_avantages, figer_cas_types, figer_departs,
+        figer_avantages, figer_cas_types, figer_cout, figer_departs,
     )
     from retraite_notionnelle.web.site import module
 
@@ -1985,7 +1986,20 @@ def _agregats(contexte=None) -> dict:
             for affiliation in (None, classement["declassement"])))
         for generation in classement["generations"]
     }
+    # LA DETTE SOUS UN TAUX DÉCALÉ, dans les deux sens : la page Coût cite ce
+    # qu'un point de taux de plus ou de moins ferait du stock à l'horizon
+    # (``ECART_TAUX_DETTE``).
+    cout = contexte.cout()
+    ecart = pages.ECART_TAUX_DETTE
+    decalees = {decalage: calculer_dette(cout.solde, cout.avenir, simulateur.courbe_taux,
+                                         decalage)
+                for decalage in (-ecart, ecart)}
     return {
+        # LE COÛT AGRÉGÉ : le passé et l'avenir de chaque système, le bilan
+        # de chaque année et la dette qu'il accumule. La page Coût le lit en
+        # entier, la cascade de chaque année que son sélecteur offre comprise.
+        "cout": figer_cout(cout, list(pages.SCENARIOS_MONTRES), list(pages.SYSTEMES_BILAN),
+                           COMPOSANTE_GARANTIE, masse_du_scenario, decalees),
         # LA GRILLE DE CARRIÈRES TYPES : treize cas, sept générations, et
         # l'âge où chacun part. La page la montre telle quelle.
         "cas_types": figer_cas_types(calculer_cas_types(simulateur), simulateur,

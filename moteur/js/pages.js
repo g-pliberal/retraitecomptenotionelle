@@ -9211,16 +9211,11 @@ function coutDetailScenarios(contexte) {
       milliards(dernier.cout(scenario), 1),
       // La part de PIB suit la même règle que le coût : le rapport ne
       // multiplie que les droits directs de la base.
-      g.pourcentage(masseDuScenario(dernier.partPibPensions, dernier.partDerives,
-                                    dernier.rapports[scenario], scenario,
-                                    dernier.reversionServie,
-                                    dernier.reformeEnVigueur), false, 1),
+      g.pourcentage(dernier.partPibDe(scenario), false, 1),
     ];
   });
   // La part de PIB d'un scénario l'année « derniere », règle comprise.
-  const partPibPasse = (scenario) => masseDuScenario(
-    dernier.partPibPensions, dernier.partDerives, dernier.rapports[scenario], scenario,
-    dernier.reversionServie, dernier.reformeEnVigueur);
+  const partPibPasse = (scenario) => dernier.partPibDe(scenario);
 
   // CETTE LIGNE N'EST PAS UN « DONT ». La garantie a quitté la masse
   // contributive du scénario 6 — elle est financée par l'impôt, hors du compte
@@ -9233,10 +9228,7 @@ function coutDetailScenarios(contexte) {
     milliards(c.cumul(COMPOSANTE_GARANTIE), 0),
     "—",
     milliards(dernier.cout(COMPOSANTE_GARANTIE), 1),
-    g.pourcentage(masseDuScenario(dernier.partPibPensions, dernier.partDerives,
-                                  dernier.rapports[COMPOSANTE_GARANTIE],
-                                  COMPOSANTE_GARANTIE, dernier.reversionServie),
-                  false, 1),
+    g.pourcentage(dernier.partPibDe(COMPOSANTE_GARANTIE), false, 1),
   ]);
   // Et le total, qui est ce que le lecteur vient chercher.
   const cumulTotal = c.cumul("notionnel_liberal") + c.cumul(COMPOSANTE_GARANTIE);
@@ -10060,7 +10052,7 @@ ${noteLectureCoefficient(reglageProposition(solde))}
  * moins. Le seul réglage que la section montre, parce que le taux est la
  * seule chose qu'elle LIT au lieu de la calculer.
  */
-const ECART_TAUX_DETTE = 0.01;
+export const ECART_TAUX_DETTE = 0.01;
 
 // Les systèmes que le graphique de la dette publique trace : le droit en
 // vigueur et la proposition, ceux entre lesquels la décision se prend. Les deux
@@ -10250,7 +10242,7 @@ function sansNumero(libelle) {
 }
 
 /** Le droit en vigueur et la proposition : ceux que le bilan de la bascule oppose. */
-const SYSTEMES_BILAN = ["actuel", "notionnel_liberal"];
+export const SYSTEMES_BILAN = ["actuel", "notionnel_liberal"];
 
 /**
  * Le compte de l'année de bascule, poste par poste, et ce qui est hors du
@@ -10776,15 +10768,14 @@ function coutDetailDette(contexte) {
   const solde = c.solde;
   const avenir = c.avenir;
   const comptes = contexte.comptes();
-  const courbe = contexte.simulateur().courbeTaux;
   const depart = dette.anneeDepart;
   const fin = dette.derniereAnnee;
   // Un stock en part du PIB se dit en euros comme un flux : à la même part du
   // PIB de la dernière année publiée, pour toute année projetée.
   const pibFin = pibDeConversion(comptes, fin);
   const auPibFin = auPib(comptes, fin);
-  const moins = calculerDette(solde, avenir, courbe, -ECART_TAUX_DETTE);
-  const plus = calculerDette(solde, avenir, courbe, ECART_TAUX_DETTE);
+  const moins = c.detteDecalee(-ECART_TAUX_DETTE);
+  const plus = c.detteDecalee(ECART_TAUX_DETTE);
   const annees = [];
   for (let annee = depart; annee <= fin; annee += 1) annees.push(annee);
   const series = SCENARIOS_COMPARES.map(([scenario, libelle]) => new g.Serie(

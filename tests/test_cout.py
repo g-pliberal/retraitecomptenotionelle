@@ -3092,69 +3092,6 @@ def test_une_reforme_prospective_garde_le_remboursement_des_majorations_qu_elle_
     assert ligne.postes_ressources("notionnel_retroactif")["transferts_famille"] == 0.0
 
 
-def test_le_portage_javascript_rend_les_memes_recettes_aux_six_scenarios():
-    """Les recettes de chaque scénario, Python et JavaScript, au milliardième.
-
-    Les témoins du portage passent par les pages, et les pages ne montrent que
-    quatre systèmes : les scénarios 3 et 5 n'y paraissent pas, et une
-    divergence de leurs recettes n'aurait fait échouer aucun test. Celui-ci
-    demande au moteur JavaScript les recettes des six scénarios, et ce que la
-    branche famille verse à chacun, trois années après la bascule.
-    """
-    import json
-    import shutil
-    import subprocess
-    from pathlib import Path
-
-    from retraite_notionnelle.contexte import Contexte
-
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    racine = Path(__file__).resolve().parents[1]
-    bascule = Parametres().annee_bascule
-    annees = [bascule, bascule + 14, bascule + 34]
-    scenarios = [cle for cle, _ in SCENARIOS]
-    script = """
-import { readFileSync } from "node:fs";
-import { Contexte } from "./moteur/js/contexte.js";
-const [annees, scenarios] = process.argv.slice(1).map((texte) => JSON.parse(texte));
-const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
-const solde = contexte.cout().solde;
-const sortie = {};
-for (const annee of annees) {
-  const ligne = solde.annee(annee);
-  sortie[annee] = {
-    majorations_stock: ligne.majorationsStock,
-    ressources: Object.fromEntries(scenarios.map((s) => [s, ligne.ressourcesDe(s)])),
-    famille: Object.fromEntries(
-      scenarios.map((s) => [s, ligne.postesRessources(s).transferts_famille])),
-  };
-}
-console.log(JSON.stringify(sortie));
-"""
-    calcul = subprocess.run(
-        ["node", "--input-type=module", "-e", script,
-         json.dumps(annees), json.dumps(scenarios)],
-        capture_output=True, text=True, encoding="utf-8", cwd=racine, check=False,
-    )
-    assert calcul.returncode == 0, calcul.stderr[-2000:]
-    portage = json.loads(calcul.stdout)
-
-    solde = Contexte().cout().solde
-    for annee in annees:
-        ligne = solde.annee(annee)
-        attendu = portage[str(annee)]
-        assert ligne.majorations_stock > 0.0, annee
-        assert attendu["majorations_stock"] == pytest.approx(
-            ligne.majorations_stock, rel=1e-9), annee
-        for scenario in scenarios:
-            assert attendu["ressources"][scenario] == pytest.approx(
-                ligne.ressources_de(scenario), rel=1e-9), (annee, scenario)
-            assert attendu["famille"][scenario] == pytest.approx(
-                ligne.postes_ressources(scenario)["transferts_famille"],
-                rel=1e-9, abs=1e-15), (annee, scenario)
-
-
 def test_le_systeme_actuel_garde_sa_base_intacte(cout_assiette: Cout):
     """La ventilation ne doit rien déplacer du scénario 1, qui est le réel.
 
@@ -3959,39 +3896,6 @@ def test_la_proposition_ne_perd_plus_un_point_a_la_croissance():
     assert 0.0 < amplitude < 0.0075, soldes
 
 
-def test_la_carte_du_solde_garde_le_meme_axe_sous_tous_les_scenarios():
-    """UN AXE QUI SUIT SES DONNÉES TROMPE L'ŒIL DÈS QU'ON COMPARE.
-
-    La carte du solde est la seule du site qu'un réglage redessine ET qu'on
-    lit en comparant deux réglages : l'écart entre les deux courbes EST son
-    sujet. Le 21 septembre 2026, elle montait à 20 % du PIB sous le scénario
-    de référence et à 15 % sous la variante haute de productivité. L'écart de
-    2070 perdait alors 29 % de sa valeur entre les deux tracés — 2,39 point
-    contre 1,69 — et 5 % seulement de sa hauteur à l'écran. Le chiffre disait
-    le vrai, le dessin le contredisait.
-
-    Le test lit les graduations rendues, et non le paramètre : ce qui doit
-    tenir est ce que le lecteur voit.
-    """
-    import re
-
-    from retraite_notionnelle.web.site import disponible, rendre
-
-    if not disponible():
-        pytest.skip("node absent : le site ne se lit pas sans lui")
-    axes = {}
-    for scenario in ("cor_reference", "cor_productivite_haute",
-                     "cor_productivite_basse"):
-        _, corps = rendre("/cout", {"projection": scenario})
-        carte = next(
-            m.group(0) for m in re.finditer(r"<svg\b.*?</svg>", corps, re.S)
-            if "% du PIB" in m.group(0) and "projection" in m.group(0)
-        )
-        axes[scenario] = re.findall(
-            r'<text class="graduation"[^>]*>([^<]*)</text>', carte)[:6]
-    assert len(set(map(tuple, axes.values()))) == 1, axes
-
-
 def test_le_plafond_de_l_axe_est_lu_sur_les_variantes():
     """Et non écrit en dur : un 20 % figé tiendrait jusqu'au prochain rapport
     du COR, puis mentirait en silence. Le plafond doit couvrir la variante la
@@ -4149,7 +4053,7 @@ def test_deux_volets_se_melent_par_tete():
 
 @pytest.fixture(scope="module")
 def cout_tous_en_emploi():
-    """La page Coût quand tous les reportés travaillent : le plafond, défaut
+    """Le coût quand tous les reportés travaillent : le plafond, défaut
     jusqu'au 7 octobre 2026."""
     return memoire.cout(Parametres(part_reportes_en_emploi=1.0),
                         convention_recette=CONVENTION_ASSIETTE)
@@ -4190,112 +4094,6 @@ def test_la_part_des_reportes_en_emploi_elargit_l_assiette_en_proportion(
     debut, fin = moitie.premiere_annee_projetee, moitie.derniere_annee
     moyens = [s.solde_moyen("notionnel_liberal", debut, fin) for s in (sans, moitie, tous)]
     assert moyens == sorted(moyens) and len(set(moyens)) == 3, moyens
-
-
-#: Les années dont ``tests/js/comparer-cout.mjs`` rend le solde.
-ANNEES_PORTAGE = [2025, 2026, 2030, 2040, 2050, 2070]
-
-
-@pytest.fixture(scope="module")
-def portage_tous_en_emploi(tmp_path_factory):
-    """Le coût refait en JavaScript sous la même part de reportés en emploi
-    que ``cout_tous_en_emploi`` : ``tests/js/comparer-cout.mjs`` le calcule une
-    fois, et chaque test en compare un morceau."""
-    import json
-    import shutil
-    import subprocess
-    from pathlib import Path
-
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    racine = Path(__file__).resolve().parents[1]
-    demande = tmp_path_factory.mktemp("portage") / "cout.json"
-    demande.write_text(json.dumps({"parametres": {"part_reportes_en_emploi": 1.0},
-                                   "annees": ANNEES_PORTAGE,
-                                   "groupes": GROUPES_DU_MODELE}), encoding="utf-8")
-    calcul = subprocess.run(
-        ["node", str(racine / "tests" / "js" / "comparer-cout.mjs"), str(demande)],
-        capture_output=True, text=True, encoding="utf-8", cwd=racine, check=False,
-    )
-    assert calcul.returncode == 0, calcul.stderr[-2000:]
-    return json.loads(calcul.stdout)
-
-
-def test_le_portage_suit_la_part_des_reportes_en_emploi(cout_tous_en_emploi,
-                                                        portage_tous_en_emploi):
-    """Le site n'expose pas la part des reportés en emploi, et ses pages
-    témoins n'en montrent que le défaut, la moitié :
-    ``tests/js/comparer-cout.mjs`` refait le coût en JavaScript quand tous
-    travaillent, et chaque solde doit être celui du Python."""
-    portage = portage_tous_en_emploi
-    solde = cout_tous_en_emploi.solde
-    for annee in ANNEES_PORTAGE:
-        ligne = solde.annee(annee)
-        lu = portage["annees"][str(annee)]
-        assert lu["facteur_assiette"] == pytest.approx(ligne.facteur_assiette, rel=1e-12)
-        for scenario, valeur in lu["soldes"].items():
-            assert valeur == pytest.approx(ligne.solde(scenario), rel=1e-9, abs=1e-15), (
-                annee, scenario)
-    for scenario, valeur in portage["soldes_moyens"].items():
-        assert valeur == pytest.approx(solde.solde_moyen(
-            scenario, solde.premiere_annee_projetee, solde.derniere_annee), rel=1e-9)
-
-
-def test_le_portage_refait_le_meme_passe(cout_tous_en_emploi, portage_tous_en_emploi):
-    """Aucune page ne montre la reconstitution du passé
-    (:meth:`Avenir.reconstitution`) : le comparateur la rend, et chaque année
-    publiée doit être refaite comme le fait le Python."""
-    attendue = cout_tous_en_emploi.avenir.reconstitution()
-    lue = {int(annee): rapport
-           for annee, rapport in portage_tous_en_emploi["reconstitution"].items()}
-    assert lue.keys() == attendue.keys()
-    for annee, rapport in attendue.items():
-        assert lue[annee] == pytest.approx(rapport, rel=1e-9), annee
-
-
-def test_le_portage_decompose_la_trajectoire_de_meme(cout_tous_en_emploi,
-                                                     portage_tous_en_emploi):
-    """La décomposition en retraités et en pension moyenne relative
-    (:meth:`Avenir.decomposition`), refaite en JavaScript année par année."""
-    avenir = cout_tous_en_emploi.avenir
-    attendue = avenir.decomposition(avenir.premiere_annee_projetee)
-    lue = {int(annee): valeurs
-           for annee, valeurs in portage_tous_en_emploi["decomposition"].items()}
-    assert attendue and lue.keys() == attendue.keys()
-    for annee, (tetes, pension) in attendue.items():
-        assert lue[annee][0] == pytest.approx(tetes, rel=1e-9), annee
-        assert lue[annee][1] == pytest.approx(pension, rel=1e-9), annee
-
-
-def test_le_portage_decompose_groupe_par_groupe_de_meme(cout_tous_en_emploi,
-                                                        portage_tous_en_emploi):
-    """La décomposition par groupe de régimes
-    (:meth:`Avenir.decomposition_groupes`), refaite en JavaScript."""
-    avenir = cout_tous_en_emploi.avenir
-    attendue = avenir.decomposition_groupes(avenir.premiere_annee_projetee,
-                                            GROUPES_DU_MODELE)
-    lue = portage_tous_en_emploi["decomposition_groupes"]
-    assert attendue and lue.keys() == attendue.keys()
-    for groupe, serie in attendue.items():
-        assert {int(annee) for annee in lue[groupe]} == serie.keys(), groupe
-        for annee, valeurs in serie.items():
-            assert lue[groupe][str(annee)] == pytest.approx(valeurs, rel=1e-9), (groupe, annee)
-
-
-def test_le_portage_borne_la_fourchette_de_meme(cout_tous_en_emploi, portage_tous_en_emploi):
-    """La borne haute de la fourchette, refaite en JavaScript : la dérive de
-    chaque année, les soldes moyens et la dette à l'horizon."""
-    portage = portage_tous_en_emploi
-    lue = {int(annee): derive for annee, derive in portage["derive"].items()}
-    for ligne in cout_tous_en_emploi.avenir.annees:
-        assert lue[ligne.annee] == pytest.approx(ligne.derive, rel=1e-12), ligne.annee
-    solde = cout_tous_en_emploi.solde_derive
-    for scenario, valeur in portage["soldes_moyens_derive"].items():
-        assert valeur == pytest.approx(solde.solde_moyen(
-            scenario, solde.premiere_annee_projetee, solde.derniere_annee), rel=1e-9)
-    for scenario, valeur in portage["dette_derive"].items():
-        assert valeur == pytest.approx(cout_tous_en_emploi.dette_derive.horizon(scenario),
-                                       rel=1e-9, abs=1e-12), scenario
 
 
 # -- la TVA, que la proposition ne réforme plus -------------------------------

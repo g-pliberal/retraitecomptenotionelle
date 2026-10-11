@@ -11,7 +11,6 @@ import { PARAMETRES_DEFAUT, cleParametres } from "./config.js";
 import { AssietteActivite } from "./assiette.js";
 import { chargerAvantages } from "./avantages.js";
 import { chargerFrontiere } from "./frontiere.js";
-import { calculerCout } from "./cout.js";
 import { chargerBilan } from "./bilan.js";
 import { chargerAgregats } from "./agregats.js";
 import { DistributionPensions } from "./distribution.js";
@@ -268,16 +267,12 @@ export class Contexte {
   }
 
   /**
-   * Le coût agrégé de tous les systèmes — une seconde de calcul, une fois.
-   *
-   * Sous les règles de `base`, et non sous celles par défaut : c'est ce qui
-   * fait que la page Coût chiffre ce que le simulateur calcule.
+   * Le coût agrégé de tous les systèmes : figé sous la référence comme la
+   * grille (`agregats()`). Il se calculait ici, sous les règles de `base` —
+   * cinq secondes chez le lecteur —, jusqu'au 11 octobre 2026.
    */
   cout() {
-    return this._agregat("cout", () => calculerCout(
-      this.simulateur(), this.depenses(), this.population(), this.comptes(),
-      undefined, undefined, undefined, this.assiette(),
-    ));
+    return this.agregats().cout;
   }
 
   /**

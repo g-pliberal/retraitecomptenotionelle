@@ -162,14 +162,362 @@ export class ClassementFige {
   }
 }
 
+// -- le coût agrégé -----------------------------------------------------------
+//
+// La page Coût lit le coût entier : le passé de chaque système, son avenir, le
+// bilan de chaque année et la dette qu'il accumule. Chaque ligne figée porte les
+// champs de la ligne du modèle que la page lit, sous les noms que le portage
+// leur donnait, et ce que ses accesseurs rendent pour les systèmes qu'elle leur
+// demande — un autre lève une erreur. Un accesseur qui prend un nombre
+// quelconque — le solde moyen d'une fenêtre, le pilier à un niveau de
+// versements, le stock d'une année — se rend depuis ce que la ligne porte, par
+// la même opération que le modèle.
+
+/** `snake_case` -> `camelCase` : les noms que le portage donnait aux champs. */
+function enCamel(nom) {
+  return nom.replace(/_([a-z])/g, (_, lettre) => lettre.toUpperCase());
+}
+
+/** Les champs qu'une ligne de la table porte, sous leurs noms du portage. */
+function champs(brut, cles) {
+  const sortie = {};
+  for (const cle of cles) {
+    if (cle in brut) sortie[enCamel(cle)] = brut[cle];
+  }
+  return sortie;
+}
+
+const CHAMPS_SOLDE_ANNUEL = [
+  "annee", "projete", "ressources", "depenses", "rapports", "pib", "retrait",
+  "rapports_recettes", "part_contributive", "part_impots", "retrait_par_impot",
+  "part_subventions", "taux_prelevement", "taux_liberal", "facteur_assiette",
+  "annee_bascule", "convention_recette", "part_derives", "reversion_servie",
+  "reforme_en_vigueur", "tva_liberal", "garantie_liberal", "majorations_stock",
+];
+const CHAMPS_COUT_ANNUEL = [
+  "annee", "observee", "coefficient_constants", "part_pib", "rapports", "pensionnes",
+  "part_derives", "reversion_servie", "reforme_en_vigueur", "part_repartition",
+];
+const CHAMPS_AVENIR_ANNUEL = [
+  "annee", "projete", "base", "coefficient_constants", "pib", "dependance",
+  "facteur_assiette_liberal", "part_derives", "reversion_servie",
+  "reforme_en_vigueur", "part_stock", "base_modele", "facteur_reversion", "tetes",
+  "salaire_reel", "derive",
+];
+
+/** Une ligne figée : ses champs, et ce que ses accesseurs rendent par système. */
+class LigneFigee {
+  constructor(brut, cles) {
+    Object.assign(this, champs(brut, cles));
+    this._brut = brut;
+  }
+
+  _parSysteme(cle, scenario) {
+    return lire(this._brut[cle], scenario, `${cle} du système`);
+  }
+}
+
+/**
+ * Une année du bilan, sous les accesseurs de `SoldeAnnuel`. Celle de la
+ * variante dérivée ne porte que son coefficient et son solde.
+ */
+class SoldeAnnuelFige extends LigneFigee {
+  constructor(brut) {
+    super(brut, CHAMPS_SOLDE_ANNUEL);
+    if ("recette_par_assiette" in brut) this.recetteParAssiette = brut.recette_par_assiette;
+  }
+
+  coefficient(scenario) { return this._parSysteme("coefficients", scenario); }
+
+  depense(scenario) { return this._parSysteme("depenses_par_systeme", scenario); }
+
+  solde(scenario) { return this._parSysteme("soldes", scenario); }
+
+  ressourcesDe(scenario) { return this._parSysteme("ressources_par_systeme", scenario); }
+
+  soldeMeur(scenario) { return this._parSysteme("soldes_meur", scenario); }
+
+  depenseMeur(scenario) { return this._parSysteme("depenses_meur", scenario); }
+
+  ressourcesMeur() { return this._brut.ressources_meur; }
+
+  tvaDe(scenario) { return this._parSysteme("tva", scenario); }
+
+  tvaGarantie(scenario) { return this._parSysteme("tva_garantie", scenario); }
+
+  postesRessources(scenario) { return { ...this._parSysteme("postes_ressources", scenario) }; }
+
+  postesDepenses(scenario) { return { ...this._parSysteme("postes_depenses", scenario) }; }
+}
+
+/** Le bilan de chaque année, sous les accesseurs de `Solde`. */
+export class SoldeFige {
+  constructor(brut) {
+    this.annees = brut.annees.map((ligne) => new SoldeAnnuelFige(ligne));
+    this.premiereAnneeProjetee = brut.premiere_annee_projetee;
+    this._equilibrees = brut.premieres_annees_equilibrees;
+    this.premiereAnnee = this.annees.length ? this.annees[0].annee : 0;
+    this.derniereAnnee = this.annees.length ? this.annees[this.annees.length - 1].annee : 0;
+    this.derniereAnneeObservee = this.premiereAnneeProjetee - 1;
+  }
+
+  observees() {
+    return this.annees.filter((ligne) => !ligne.projete);
+  }
+
+  projetees() {
+    return this.annees.filter((ligne) => ligne.projete);
+  }
+
+  annee(millesime) {
+    return this.annees.find((ligne) => ligne.annee === millesime) ?? null;
+  }
+
+  /** La moyenne des soldes de la fenêtre, additionnés de gauche à droite. */
+  soldeMoyen(scenario, debut, fin) {
+    const lignes = this.annees.filter((l) => l.annee >= debut && l.annee <= fin);
+    if (!lignes.length) return 0.0;
+    let somme = 0;
+    for (const ligne of lignes) somme += ligne.solde(scenario);
+    return somme / lignes.length;
+  }
+
+  premiereAnneeEquilibree(scenario) {
+    return lire(this._equilibrees, scenario, "première année équilibrée du système");
+  }
+}
+
+/**
+ * Le pilier d'une année, par euro versé, sous les accesseurs de `PilierAnnuel`
+ * — dont les noms n'ont jamais quitté le `snake_case` du modèle.
+ */
+class PilierFige {
+  constructor(brut) {
+    Object.assign(this, brut);
+  }
+
+  /** Chaque grandeur au niveau des `versements` donnés, même unité. */
+  niveaux(versements) {
+    return {
+      versements,
+      frais_versement: this.frais_versement * versements,
+      frais_gestion: this.frais_gestion * versements,
+      frais_accumulation: this.frais_accumulation * versements,
+      encours: this.encours * versements,
+      rentes_brutes: this.rentes_brutes * versements,
+      rentes: this.rentes * versements,
+      frais_rentes: this.frais_rentes * versements,
+      frais: this.frais * versements,
+    };
+  }
+}
+
+/** La garantie d'une année : un objet de données, sous les noms du portage. */
+function garantie(brut) {
+  if (brut === null) return null;
+  return Object.fromEntries(Object.entries(brut).map(([cle, valeur]) => [enCamel(cle), valeur]));
+}
+
+/** Une année passée, sous les accesseurs de `CoutAnnuel`. */
+class CoutAnnuelFige extends LigneFigee {
+  constructor(brut) {
+    super(brut, CHAMPS_COUT_ANNUEL);
+    this.garantie = garantie(brut.garantie);
+    this.pensions = brut.pensions;
+    this.partPibPensions = brut.part_pib_pensions;
+    this.observeeConstants = brut.observee_constants;
+  }
+
+  cout(scenario) { return this._parSysteme("couts", scenario); }
+
+  coutConstants(scenario) { return this._parSysteme("couts_constants", scenario); }
+
+  /**
+   * La part de PIB du système cette année, règle de la réversion comprise :
+   * ce que la page tirait de `masseDuScenario`, que le Python applique.
+   */
+  partPibDe(scenario) { return this._parSysteme("parts_pib", scenario); }
+}
+
+/** Une année projetée, sous les accesseurs de `AvenirAnnuel`. */
+class AvenirAnnuelFige extends LigneFigee {
+  constructor(brut) {
+    super(brut, CHAMPS_AVENIR_ANNUEL);
+    this.garantie = garantie(brut.garantie);
+    this.pilier = brut.pilier === null ? null : new PilierFige(brut.pilier);
+  }
+
+  coutConstants(scenario) { return this._parSysteme("couts_constants", scenario); }
+
+  partPibDerive(scenario) { return this._parSysteme("parts_pib_derive", scenario); }
+
+  partPib(scenario) { return this._parSysteme("parts_pib", scenario); }
+
+  reprisesConstants() { return this._brut.reprises_constants; }
+
+  reprises() { return this._brut.reprises; }
+
+  partPibReprises() { return this._brut.part_pib_reprises; }
+
+  garantieNetteConstants() { return this._brut.garantie_nette_constants; }
+}
+
+/** L'avenir de chaque système, sous les accesseurs de `Avenir`. */
+class AvenirFige {
+  constructor(brut) {
+    this.annees = brut.annees.map((ligne) => new AvenirAnnuelFige(ligne));
+    this.premiereAnneeProjetee = brut.premiere_annee_projetee;
+    this.anneeBascule = brut.annee_bascule;
+    this.anneeEuros = brut.annee_euros;
+    this.premiereAnnee = this.annees.length ? this.annees[0].annee : 0;
+    this.derniereAnnee = this.annees.length ? this.annees[this.annees.length - 1].annee : 0;
+    this._brut = brut;
+  }
+
+  projetees() {
+    return this.annees.filter((ligne) => ligne.projete);
+  }
+
+  annee(millesime) {
+    return this.annees.find((ligne) => ligne.annee === millesime) ?? null;
+  }
+
+  cumul(scenario) { return lire(this._brut.cumuls, scenario, "cumul du système"); }
+
+  ecartCumule(scenario) {
+    return lire(this._brut.ecarts_cumules, scenario, "écart cumulé du système");
+  }
+
+  cumulReprises() { return this._brut.cumul_reprises; }
+
+  /** Par année, les têtes et la pension relatives à `depuis`, en `Map`. */
+  decomposition(depuis) {
+    const table = lire(this._brut.decompositions, depuis, "décomposition depuis");
+    return new Map(Object.entries(table).map(([annee, valeurs]) => [Number(annee), valeurs]));
+  }
+}
+
+/** Une année du stock, sous les accesseurs de `DetteAnnuelle`. */
+class DetteAnnuelleFigee {
+  constructor(brut) {
+    this.annee = brut.annee;
+    this.croissance = brut.croissance;
+    this.taux = brut.taux;
+    this.stocks = brut.stocks;
+    this.interets = brut.interets;
+    this.soldes = brut.soldes;
+  }
+
+  stock(scenario) { return this.stocks[scenario]; }
+
+  interet(scenario) { return this.interets[scenario]; }
+
+  solde(scenario) { return this.soldes[scenario]; }
+}
+
+/** Le stock que les soldes accumulent, sous les accesseurs de `Dette`. */
+class DetteFigee {
+  constructor(brut) {
+    this.annees = brut.annees.map((ligne) => new DetteAnnuelleFigee(ligne));
+    this.anneeDepart = brut.annee_depart;
+    this.ecartTaux = brut.ecart_taux;
+    this.dateCourbe = brut.date_courbe;
+    this.derniereAnneeCotee = brut.derniere_annee_cotee;
+    this.dettePubliqueObservee = brut.dette_publique_observee;
+    this.anneeDettePublique = brut.annee_dette_publique;
+    this.premiereAnnee = this.annees.length ? this.annees[0].annee : 0;
+    this.derniereAnnee = this.annees.length ? this.annees[this.annees.length - 1].annee : 0;
+    this._brut = brut;
+  }
+
+  /** Ce que le pays doit au départ, en part de PIB ; zéro sans série. */
+  get dettePubliqueDepart() {
+    const valeur = this.dettePubliqueObservee[this.anneeDettePublique];
+    return valeur === undefined ? 0.0 : valeur;
+  }
+
+  dettePublique(scenario, millesime) {
+    return this.dettePubliqueDepart + this.stock(scenario, millesime);
+  }
+
+  annee(millesime) {
+    return this.annees.find((ligne) => ligne.annee === millesime) ?? null;
+  }
+
+  /** Le stock en fin d'année, et zéro à l'année de départ ou avant. */
+  stock(scenario, millesime) {
+    const ligne = this.annee(millesime);
+    return ligne ? ligne.stock(scenario) : 0.0;
+  }
+
+  horizon(scenario) { return lire(this._brut.horizons, scenario, "horizon du système"); }
+
+  cumulSoldes(scenario) {
+    return lire(this._brut.cumuls_soldes, scenario, "cumul des soldes du système");
+  }
+
+  cumulInterets(scenario) {
+    return lire(this._brut.cumuls_interets, scenario, "cumul des intérêts du système");
+  }
+}
+
+/** Une dette réduite à ce que la page en cite : son stock à l'horizon. */
+class HorizonsFiges {
+  constructor(horizons) {
+    this._horizons = horizons;
+  }
+
+  horizon(scenario) { return lire(this._horizons, scenario, "horizon du système"); }
+}
+
+/**
+ * Le coût agrégé de tous les systèmes, sous les accesseurs de `Cout`, et la
+ * dette sous un taux décalé (`detteDecalee`), que la page tirait de
+ * `calculerDette`.
+ */
+export class CoutFige {
+  constructor(brut) {
+    this.annees = brut.annees.map((ligne) => new CoutAnnuelFige(ligne));
+    this.avenir = new AvenirFige(brut.avenir);
+    this.solde = new SoldeFige(brut.solde);
+    this.soldeDerive = new SoldeFige(brut.solde_derive);
+    this.dette = new DetteFigee(brut.dette);
+    this.detteDerive = new HorizonsFiges(brut.dette_derive);
+    this.anneeEuros = brut.annee_euros;
+    this.generations = brut.generations;
+    this.poids = brut.poids;
+    this.poidsCotisants = brut.poids_cotisants;
+    this.premiereAnnee = this.annees.length ? this.annees[0].annee : 0;
+    this.derniereAnnee = this.annees.length ? this.annees[this.annees.length - 1].annee : 0;
+    this._brut = brut;
+  }
+
+  cumul(scenario) { return lire(this._brut.cumuls, scenario, "cumul du système"); }
+
+  cumulObserve() { return this._brut.cumul_observe; }
+
+  confondusAvecActuel() { return [...this._brut.confondus_avec_actuel]; }
+
+  annee(millesime) {
+    return this.annees.find((ligne) => ligne.annee === millesime) ?? null;
+  }
+
+  /** La dette au taux de la courbe décalé de `ecart`, citée à l'horizon. */
+  detteDecalee(ecart) {
+    return new HorizonsFiges(lire(this._brut.dettes_decalees, String(ecart),
+      "dette au taux décalé de"));
+  }
+}
+
 // -- la table -----------------------------------------------------------------
 
 /** Ce que les trois pages qui agrègent lisent, tel que la table le porte. */
 export class AgregatsFiges {
-  constructor(casTypes, avantages, classement) {
+  constructor(casTypes, avantages, classement, cout) {
     this.casTypes = casTypes;
     this.avantages = avantages;
     this.classement = classement;
+    this.cout = cout;
   }
 }
 
@@ -179,5 +527,6 @@ export function chargerAgregats(donnees) {
     new CasTypesFiges(donnees.cas_types),
     new AvantagesFiges(donnees.avantages),
     new ClassementFige(donnees.classement),
+    new CoutFige(donnees.cout),
   );
 }
