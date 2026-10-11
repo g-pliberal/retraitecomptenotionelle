@@ -1189,6 +1189,17 @@
    "valeurs": 24200,
    "verifiee_le": "2026-10-07"
   },
+  "quotite_temps_partiel": {
+   "ajoutees": 516,
+   "colonne": "quotite",
+   "corrigees": 0,
+   "empreinte": "4cb2911e40ef665e",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "Eurostat, lfsa_ewhuis (France, salariés, durée habituelle)",
+   "valeurs": 516,
+   "verifiee_le": "2026-10-11"
+  },
   "ressources_eec_retraite": {
    "ajoutees": 0,
    "colonne": "part_pib",

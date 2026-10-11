@@ -378,6 +378,30 @@ institutions:
           identique en intra-catégorie et en agrégé. C'est l'hypothèse la plus
           forte du profil salarial, et docs/limites.md la nomme.
 
+      - id: eurostat_duree_temps_partiel
+        titre: Enquête sur les forces de travail — durée habituelle du travail des salariés à temps partiel et à temps complet
+        url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/lfsa_ewhuis
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/quotite_temps_partiel.csv
+        recuperation: scripts/fetch/eurostat_duree_temps_partiel.py
+        note: >-
+          La durée habituelle hebdomadaire des salariés dans leur emploi
+          principal, toutes professions, à temps partiel et à temps complet,
+          par sexe et par tranche d'âge (15-24, 25-54, 50 ans ou plus, tous
+          âges), de 1983 à 2025 : le dépôt en certifie le rapport, la QUOTITÉ
+          d'un temps partiel, que la population de la page Coût (action 136,
+          étape 6) multipliera au salaire en équivalent temps plein. L'INSEE
+          produit la donnée par l'enquête Emploi, mais ne la publie par sexe
+          que dans le texte de sa fiche « Temps partiel », une année par
+          édition, sans la durée d'un temps complet, et aucun jeu de Melodi ne
+          la porte ; Eurostat la redonne (23,5 heures pour les femmes à temps
+          partiel en 2025, comme la fiche ; 22,1 pour les hommes, quand la
+          fiche, hors apprentis, dit 21,9). Les séries se rompent en 2003,
+          2005, 2006, 2014, 2021 et 2024, et la définition change en 2021. Sans
+          les filtres, la table ne se sert qu'en différé. Aucun calcul du site
+          ne la lit.
+
       - id: insee_assiette_activite
         titre: Assiette des revenus d'activité — salaires bruts (D11) et revenu mixte (B3G)
         url: https://api.insee.fr/melodi/data/DD_CNA_TEE

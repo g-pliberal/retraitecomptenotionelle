@@ -668,6 +668,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # Le temps partiel, que les centiles en équivalent temps plein n'ont
         # pas : l'enquête Emploi, par sexe et âge.
         "temps_partiel": "macro/temps_partiel.csv",
+        # Et sa quotité, la durée d'un temps partiel rapportée à celle d'un
+        # temps complet, qu'Eurostat seul publie en série par sexe.
+        "quotite_temps_partiel": "macro/quotite_temps_partiel.csv",
         # Le seul qui vienne d'Eurostat : aucune source française ne ventile le
         # salaire par âge pour les régimes spéciaux.
         "profil_salaire_secteur": "macro/profil_salaire_secteur.csv",

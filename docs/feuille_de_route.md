@@ -5387,14 +5387,14 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 
 **Reprise, au 11 octobre 2026.** Fait : l'étape 6, sa première moitié — la
 page Coût sur 791 carrières, l'ASPA retirée de sa grille — et, de la seconde,
-les centiles du salaire par sexe et la part du temps partiel par sexe et âge,
-certifiés ; l'étape 3, ses deux règles. Reste : la quotité du temps partiel
-par sexe, ou le volume de travail du revenu salarial, à chercher ; puis la
+ses données, certifiées : les centiles du salaire par sexe, la part du temps
+partiel par sexe et âge, sa quotité ; l'étape 3, ses deux règles. Reste : la
 population par génération et par sexe, construite à côté de la page et mesurée
 — minimum contributif, part et montant, contre l'EACR ; pensions contre
 l'EIR —, dont la bascule revient au propriétaire, chiffres en main ; de
 l'étape 3, la surcotisation et l'oracle ; les étapes 1, 2, 4 et 5. Le détail :
-les notes du 11 octobre, salaires par sexe et temps partiel d'abord.
+les notes du 11 octobre, celles des salaires par sexe, du temps partiel et de
+sa quotité d'abord.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais que tu analyses ce qu'on fait
 moins bien que openfisca pensions et que tu ajoutes une action sur ce sujet

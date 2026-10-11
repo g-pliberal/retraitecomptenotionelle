@@ -571,6 +571,56 @@ def source_temps_partiel() -> dict[tuple, float]:
     return dict(sorted(valeurs.items()))
 
 
+#: Les tranches d'âge d'Eurostat, nommées comme celles de l'INSEE ; tous âges,
+#: ``ensemble``. Celle des 25-54 ans chevauche celle des 50 ans ou plus :
+#: Eurostat ne publie pas les 25-49 ans.
+TRANCHES_QUOTITE = {"Y15-24": "Y15T24", "Y25-54": "Y25T54", "Y_GE50": "Y_GE50",
+                    "Y_GE15": "ensemble"}
+
+#: Les sexes d'Eurostat, sous le nom que le dépôt leur donne.
+SEXES_EUROSTAT = {"F": "F", "M": "H", "T": "ensemble"}
+
+
+def source_quotite_temps_partiel() -> dict[tuple, float]:
+    """La quotité d'un temps partiel salarié : sa durée habituelle rapportée à
+    celle d'un temps complet du même sexe et de la même tranche d'âge.
+
+    Un RAPPORT, comme les centiles du salaire : c'est ce que la population de la
+    page Coût multipliera au salaire en équivalent temps plein pour en faire
+    le salaire de l'année. Une année qu'Eurostat dit peu fiable (drapeau ``u``)
+    ne se certifie pas ; ses ruptures de série (``b``) et ses changements de
+    définition (``d``) se gardent, et l'en-tête du fichier les dit.
+    """
+    chemin = BRUT / "eurostat_duree_temps_partiel.json"
+    if not chemin.exists():
+        raise SourceAbsente(
+            f"{chemin} absent (lancer scripts/fetch/eurostat_duree_temps_partiel.py)"
+        )
+    charge = json.loads(chemin.read_text(encoding="utf-8"))
+    attendus = ("format=JSON&geo=FR&isco08=TOTAL&wstatus=SAL&unit=HR"
+                "&worktime=PT&worktime=FT&sex=F&sex=M&sex=T"
+                "&age=Y15-24&age=Y25-54&age=Y_GE50&age=Y_GE15")
+    if charge.get("filtres") != attendus:
+        raise SourceAbsente(
+            f"{chemin} n'a pas été téléchargé avec les filtres attendus "
+            f"{attendus} mais avec {charge.get('filtres')} "
+            "(relancer scripts/fetch/eurostat_duree_temps_partiel.py)"
+        )
+    heures, drapeaux = charge["heures"], charge.get("drapeaux", {})
+    valeurs: dict[tuple, float] = {}
+    for cle, partiel in heures.items():
+        temps, age, sexe, annee = cle.split("|")
+        if temps != "PT":
+            continue
+        complet = heures.get(f"FT|{age}|{sexe}|{annee}")
+        peu_fiable = any("u" in drapeaux.get(f"{t}|{age}|{sexe}|{annee}", "")
+                         for t in ("PT", "FT"))
+        if not complet or peu_fiable:
+            continue
+        valeurs[(annee, SEXES_EUROSTAT[sexe], TRANCHES_QUOTITE[age])] = partiel / complet
+    return dict(sorted(valeurs.items()))
+
+
 def source_profil_salaire_categorie() -> dict[tuple, float]:
     """Profil d'âge INTRA-CATÉGORIE, rapporté à la moyenne de la catégorie.
 
@@ -4792,6 +4842,54 @@ CERTIFICATIONS = (
             "# temps partiel, non combien d'heures, qu'aucun jeu de Melodi ne donne",
             "# par sexe. Ni le seul secteur privé : elle compte aussi les",
             "# non-salariés et la fonction publique.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="quotite_temps_partiel",
+        chemin=REFERENCE / "macro" / "quotite_temps_partiel.csv",
+        cles=("annee", "sexe", "tranche"),
+        colonne="quotite",
+        source=source_quotite_temps_partiel,
+        origine="Eurostat, lfsa_ewhuis (France, salariés, durée habituelle)",
+        decimales=4,
+        tolerance=5e-4,
+        entete=(
+            "# Quotité du temps partiel des salariés, par sexe et âge : la durée",
+            "# habituelle d'un temps partiel rapportée à celle d'un temps complet",
+            "# source_id: eurostat_duree_temps_partiel",
+            "# unite: rapport sans dimension (1,00 = durée habituelle d'un temps",
+            "#        complet du même sexe et de la même tranche d'âge)",
+            "# fiabilite:",
+            "#   certifiee (1983-2025) : enquête française sur les forces de",
+            "#             travail, rediffusée par Eurostat ; salariés, toutes",
+            "#             professions, durée habituelle hebdomadaire dans",
+            "#             l'emploi principal ; une année dite peu fiable ne se",
+            "#             certifierait pas ; recontrôlé par",
+            "#             scripts/verifier_donnees.py.",
+            "#",
+            "# POURQUOI EUROSTAT. L'INSEE mesure la durée, mais ne la publie par",
+            "# sexe que dans le texte de sa fiche « Temps partiel », une année par",
+            "# édition, sans celle d'un temps complet. Eurostat la redonne : 23,5",
+            "# heures pour les femmes à temps partiel en 2025, comme la fiche, et",
+            "# 22,1 pour les hommes, quand la fiche, hors apprentis, dit 21,9.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# Au volume de travail de la population de la page Coût (action 136,",
+            "# étape 6), avec la part du temps partiel (temps_partiel.csv) : la",
+            "# quotité est ce qui reste du salaire en équivalent temps plein dans",
+            "# le salaire de l'année. Un temps partiel de femme vaut 0,53 temps",
+            "# complet en 1983, 0,61 en 2000, 0,62 en 2025 ; d'homme, 0,63, 0,58",
+            "# et 0,56. Aucun calcul du site ne la lit.",
+            "#",
+            "# CE QU'ELLE N'EST PAS. La quotité d'une personne : une moyenne, quand",
+            "# un temps partiel va de moins de 15 heures à plus de 30. Et une série",
+            "# d'un seul tenant : elle se rompt en 2003 (l'enquête en continu),",
+            "# 2005, 2006, 2014, 2021 et 2024, et sa définition change en 2021.",
+            "# La tranche des 25-54 ans chevauche celle des 50 ans ou plus.",
             "#",
             "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
             "# scripts/verifier_donnees.py --appliquer.",
