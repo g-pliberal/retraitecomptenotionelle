@@ -65,7 +65,8 @@
 #   navigateur ......... demande Chromium : Cloudflare, ou page construite en
 #                        JavaScript. Playwright est installé (voir le doc)
 #   git ................ la page HTML est refusée, `git clone` passe
-#   refus .............. 403 : le site ou la politique de sortie refuse
+#   refus .............. 403, ou une connexion fermée sans réponse : le site
+#                        ou la politique de sortie refuse
 #   ferme .............. hors de portée d'une session, et pour une raison qui
 #                        ne se contourne pas (certificat expiré, FranceConnect)
 
@@ -1415,22 +1416,37 @@ sources:
   - id: drees_codes_sources_communique
     url: https://drees.solidarites-sante.gouv.fr/communique-de-presse/la-drees-met-disposition-de-nouveaux-codes-sources-et-des-nouvelles-bases-de
     nature: index
-    acces: session
+    acces: refus
     regimes: []
     a_en_tirer: >-
       L'inventaire de ce que la DREES a ouvert : modèles, bases, dépôts. Point
       d'entrée des trois lignes qui suivent, et de ce qu'elles ne disent pas.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-10-11"
     note: >-
       Le 22 septembre 2026 au soir, le serveur ferme la connexion sans rien
       répondre (« Empty reply from server »), à `curl` comme à Python, quand il
       répondait 200 le matin même. Un zéro n'est pas un refus : à resonder seul
-      et lentement avant de conclure, l'accès reste `session`.
+      et lentement avant de conclure, l'accès reste `session`. Le 11 octobre,
+      le site ne sert plus aucune session (voir `drees_caliper`) : l'accès
+      passe à `refus`. Lu ce jour-là dans sa copie d'Internet Archive du
+      13 janvier 2025 (web.archive.org/web/20250113161010/, suivi de
+      l'adresse ; première copie le 23 décembre 2021). Paru le 23 décembre
+      2021, c'est le « communiqué de 2021 » que l'action 137 cherchait. Il ne
+      nomme pas CALIPER : il ouvre « le code source du moteur de calcul des
+      droits (calculPension) du modèle Trajectoire » (`drees_calcul_pension`),
+      pour simuler « sur des carrières types paramétrées par l'utilisateur »
+      les pensions des régimes, sous EUPL, qui « engage les réutilisateurs à
+      rendre également publics les utilisations et développements
+      complémentaires » ; avec lui, les données de l'EACR, que le manifeste a
+      déjà (`drees_eacr`), et deux modèles de la perte d'autonomie, LIVIA et
+      Autonomix. Le registre des modèles, data/reference/referents.yaml, le
+      disait déjà de `calcul_pension` : rien n'y change.
 
   - id: drees_caliper
     url: https://drees.solidarites-sante.gouv.fr/sources-outils-et-enquetes/loutil-caliper-calcul-interregimes-des-pensions-de-retraite
     nature: code
-    acces: session
+    acces: refus
     regimes: []
     a_en_tirer: >-
       CALIPER calcule une pension INTERRÉGIMES, régime par régime : c'est le
@@ -1453,11 +1469,18 @@ sources:
       depuis 2004, repris (chantier 138.16) ; sa validation sur les pensions
       réelles de l'EIR 2004, à reprendre (138.14), avec des données qu'on ne
       lit qu'au CASD. La liste de ses simplifications n'a pas été confrontée à
-      docs/limites/. Le 11 octobre, `sonder_sources.py` n'obtient toujours
-      aucune réponse : l'accès déclaré, mesuré le 22 septembre, est démenti,
-      mais aucune classe de docs/exploration_sources.md ne dit « WebFetch
-      seul », et Chromium n'a pas été essayé. Reste son communiqué de 2021,
-      dont le dépôt n'a pas l'adresse.
+      docs/limites/. Le 11 octobre, aucun client d'une session n'atteint plus
+      le site, page d'accueil comprise : `curl` et Python, dont la connexion
+      chiffrée va jusqu'au vrai serveur (certificat DigiCert, vérifié), en
+      reçoivent une réponse vide ; Chromium, que le proxy de sortie
+      intercepte, reçoit de ce proxy un 502 « upstream request failed », sa
+      propre requête ayant échoué ; WebFetch, un 503. Par la même voie,
+      Chromium lit l'INSEE : l'accès passe à `refus`. La copie d'Internet
+      Archive du 10 juin 2026 (web.archive.org/web/20260610064930/, suivi de
+      l'adresse) dit ce que la page disait le 4 octobre : « Paru le
+      23/07/2020 », et « Cet outil a été réécrit en R et son code est ouvert
+      sur le lien suivant » : celui de `calcul_pension`. Son communiqué de
+      2021 est `drees_codes_sources_communique`, plus haut.
 
   - id: drees_trajectoire
     url: https://git.drees.fr/drees_code_public/modeles/trajectoire

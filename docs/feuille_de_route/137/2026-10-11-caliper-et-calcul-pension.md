@@ -15,7 +15,8 @@ disent ce que le registre des modèles sait depuis le 4 octobre.**
   registre des sources rangeait `drees_caliper` et `drees_calcul_pension` en
   `a_explorer`. Les deux lignes passent en `explore`, datées du 4 octobre,
   avec ce qu'elles ont donné et ce qui en reste ; la reprise ne garde de
-  CALIPER que son communiqué de 2021, dont le dépôt n'a pas l'adresse.
+  CALIPER que son communiqué de 2021, que la session croit d'abord sans
+  adresse (voir plus bas).
 - *La mesure du jour.* Sur le GitLab, par `git ls-remote` et un clone sans
   contenu, rien n'étant exécuté : `main` est toujours à `ec5a871`, du
   20 janvier 2023 ; `dev`, `racl` et `3-cas-types-du-cor` portent des
@@ -25,6 +26,19 @@ disent ce que le registre des modèles sait depuis le 4 octobre.**
   démenti ; il reste en l'état, aucune classe de
   `docs/exploration_sources.md` ne disant « WebFetch seul », et Chromium
   n'ayant pas été essayé.
+- *Chromium, puis Internet Archive, le même jour.* Chromium, que le proxy de
+  sortie intercepte, ne reçoit de la DREES que le 502 « upstream request
+  failed » de ce proxy, dont la requête échoue ; `curl`, dont la connexion
+  chiffrée va jusqu'au vrai serveur, une réponse vide, page d'accueil
+  comprise ; WebFetch, un 503 ; et Chromium lit l'INSEE par la même voie.
+  `drees_caliper` et `drees_codes_sources_communique` passent donc à
+  `refus`, et `docs/exploration_sources.md` le dit. Cette seconde ligne, que
+  la recherche du matin avait manquée, est le communiqué de 2021 : paru le
+  23 décembre 2021, lu dans sa copie d'Internet Archive, il ne nomme pas
+  CALIPER, et présente `calcul_pension` comme « le moteur de calcul des
+  droits (calculPension) du modèle Trajectoire ». La copie du 10 juin 2026
+  de la page CALIPER dit ce que WebFetch y avait lu le 4 octobre. La reprise
+  ne garde de CALIPER que la confrontation de ses simplifications.
 - *Ce que le GitLab ne règle pas.* Il ne rend pas à CALIPER ce qui faisait
   son prix : sa validation sur les pensions réelles de l'EIR 2004 (chantier
   138.14) demande des données qu'on ne lit qu'au CASD. Et `calcul_pension`

@@ -102,6 +102,17 @@ ne doit passer outre.
   longtemps. L'index plein texte LEGI du dépôt sert le même contenu :
   `python scripts/fetch/dila_cherche.py legi '...' --num R351-9`.
 
+Le 11 octobre 2026, `drees.solidarites-sante.gouv.fr` achève la poignée de
+main TLS, avec son vrai certificat, puis ferme sans répondre (« Empty reply
+from server »), page d'accueil comprise : un `refus`. Chromium n'y change
+rien : le proxy de sortie l'intercepte (le certificat qu'il reçoit est signé
+par l'autorité d'interception du proxy), et le 502 « upstream request
+failed » qu'il affiche vient de ce proxy, dont la requête a échoué, et non du
+site. Les copies d'Internet Archive se lisent, elles :
+`https://web.archive.org/cdx/search/cdx?url=<adresse>*` les liste, et
+`https://web.archive.org/web/<horodatage>id_/<adresse>` sert la page telle
+qu'elle était.
+
 ---
 
 ## Un simulateur est un oracle, pas un site à lire
