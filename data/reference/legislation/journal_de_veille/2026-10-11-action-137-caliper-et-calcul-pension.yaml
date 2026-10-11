@@ -1,0 +1,16 @@
+date: "2026-10-11"
+session: "action 137 : CALIPER et calcul_pension, deux mentions périmées corrigées"
+consulte: >-
+  Aucune source de droit : la session ne touche ni au scénario 1 ni à une règle.
+  Le dépôt de la DREES https://gitlab.com/DREES_code/public/outils/calcul_pension,
+  par git ls-remote et un clone sans contenu, rien n'étant exécuté ; cette adresse
+  et la page CALIPER de la DREES, par scripts/fetch/sonder_sources.py.
+trouve: >-
+  Aucun texte de droit. La branche principale de calcul_pension est toujours au
+  commit ec5a871 du 20 janvier 2023, celui que le registre des modèles a lu ; dev,
+  racl et 3-cas-types-du-cor portent des commits qu'elle n'a pas, tous de 2022. Le
+  site de la DREES ne répond toujours pas à une session ; le GitLab, si.
+reste: >-
+  Le communiqué de la DREES de 2021 sur CALIPER, sans adresse connue ; les branches
+  de 2022 de calcul_pension, non lues ; la liste des simplifications de CALIPER, à
+  confronter à docs/limites/.

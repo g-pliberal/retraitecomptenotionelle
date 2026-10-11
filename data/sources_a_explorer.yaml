@@ -1435,12 +1435,27 @@ sources:
       jumeau administratif du scénario 1. Sa documentation dit quelles règles
       il applique et lesquelles il simplifie — la liste des simplifications
       d'un modèle officiel est un étalon pour docs/limites.md.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-10-04"
     note: >-
       Le 22 septembre 2026 au soir, le serveur ferme la connexion sans rien
       répondre (« Empty reply from server »), à `curl` comme à Python, quand il
       répondait 200 le matin même. Un zéro n'est pas un refus : à resonder seul
-      et lentement avant de conclure, l'accès reste `session`.
+      et lentement avant de conclure, l'accès reste `session`. Le 4 octobre,
+      `curl` reçoit une page de test anti-robot, et WebFetch lit la page :
+      l'outil « a été réécrit en R », son code est celui de `calcul_pension`
+      (`drees_calcul_pension`, plus bas). Ce que sa documentation a donné — le
+      Dossier solidarité et santé n° 37, lu par un miroir, et le DT 111 — est
+      au registre des modèles, data/reference/referents.yaml (`caliper`) : le
+      SAM trimestrialisé d'avant 1995 et l'exclusion des années sans trimestre
+      depuis 2004, repris (chantier 138.16) ; sa validation sur les pensions
+      réelles de l'EIR 2004, à reprendre (138.14), avec des données qu'on ne
+      lit qu'au CASD. La liste de ses simplifications n'a pas été confrontée à
+      docs/limites/. Le 11 octobre, `sonder_sources.py` n'obtient toujours
+      aucune réponse : l'accès déclaré, mesuré le 22 septembre, est démenti,
+      mais aucune classe de docs/exploration_sources.md ne dit « WebFetch
+      seul », et Chromium n'a pas été essayé. Reste son communiqué de 2021,
+      dont le dépôt n'a pas l'adresse.
 
   - id: drees_trajectoire
     url: https://git.drees.fr/drees_code_public/modeles/trajectoire
@@ -1463,7 +1478,18 @@ sources:
       depuis une session (vérifié). Le lire, c'est lire une transcription
       ADMINISTRATIVE du droit — deuxième avis, à côté d'OpenFisca, sur chaque
       règle du scénario 1.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-10-04"
+    note: >-
+      Cloné le 1er octobre 2026 et lu le 4 au commit `ec5a871`, le dernier de
+      sa branche principale (20 janvier 2023). Ce qu'il a donné est au registre
+      des modèles, data/reference/referents.yaml (`calcul_pension`) : les
+      minima des exploitants agricoles (chantier 138.8) et le SAM sans les
+      années qui ne valident aucun trimestre (138.16), repris ; les règles de
+      TRAJECTOiRE qu'il porte (138.17), à reprendre ; ses écarts, dont une
+      législation arrêtée avant la réforme de 2023. Le 11 octobre, `main` est
+      toujours à `ec5a871` ; `dev`, `racl` et `3-cas-types-du-cor` portent
+      des commits que `main` n'a pas, tous de 2022, non lus.
 
   - id: openfisca_france_pension
     url: https://github.com/openfisca/openfisca-france-pension

@@ -5618,16 +5618,16 @@ sexe —, et les centiles du salaire du privé de l'INSEE, de 1951 à 2024
 
 ### 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation — `en cours`
 
-**Reprise, au 5 octobre 2026.** Fait : le registre (69 modèles, 47 en
+**Reprise, au 11 octobre 2026.** Fait : le registre (69 modèles, 47 en
 France) ; sa relecture, pour ce que chaque modèle fait mieux que le dépôt, à
 l'action 138, qui a lu le code de Destinie 2, d'Ines, de `legiretraite` et
 d'EDIFIS, et refait les diviseurs suédois, norvégien, finlandais, italien et
 polonais : ce qu'elle en tire est au registre, en `fait_mieux` et en
 `ecarts` ; Destinie 2 puis TRAJECTOiRE (les cas types du COR) exécutés à
-part, leurs sorties en témoins (action 142, étape 4, leurs notes). Reste ici :
-Ines, sur ce modèle ; relire la page de la DREES sur CALIPER, quand son
-serveur répondra ; les pistes non vérifiées (le moteur réel de M@rel, l'usage
-d'Oscar) ; les `referents` des fiches, à leur relecture.
+part, leurs sorties en témoins (action 142, étape 4) ; CALIPER, réécrit en
+`calcul_pension` et lu (note du 11 octobre). Reste ici : Ines, sur ce modèle ;
+le communiqué de 2021 sur CALIPER ; les pistes non vérifiées (le moteur réel
+de M@rel, l'usage d'Oscar) ; les `referents` des fiches, à leur relecture.
 
 **Demande**, le 1er octobre 2026 : « Quels sont les autres modèles publics
 autres que openfisca ? », puis : « Ajoute les modèles qui ne sont pas encore
