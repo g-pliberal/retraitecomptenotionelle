@@ -630,6 +630,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "employeur_public_etat_militaires":
             "legislation/contribution_employeur_militaires.csv",
         "effectifs_retraites": "regimes/effectifs_retraites.csv",
+        # La part des nouveaux retraités au minimum contributif, que le modèle
+        # ne lit pas : ses grilles s'y confrontent (action 137).
+        "minimum_contributif_liquidants": "regimes/minimum_contributif_liquidants.csv",
         "droits_derives": "macro/droits_derives.csv",
         "prestations_non_contributives":
             "macro/prestations_non_contributives.csv",

@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-10-10",
+ "dernier_passage_le": "2026-10-11",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -748,6 +748,17 @@
    "source": "Cnav, barèmes « Montant minimum de la retraite personnelle » et « Plafond de retraites personnelles pour l'attribution du minimum »",
    "valeurs": 90,
    "verifiee_le": "2026-10-04"
+  },
+  "minimum_contributif_liquidants": {
+   "ajoutees": 38,
+   "colonne": "part",
+   "corrigees": 0,
+   "empreinte": "95655e06817b87cf",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, enquête annuelle auprès des caisses de retraite (EACR)",
+   "valeurs": 38,
+   "verifiee_le": "2026-10-11"
   },
   "minimum_garanti_indice": {
    "ajoutees": 0,

@@ -264,6 +264,10 @@ fichiers:
       - "**La page compte encore le minimum vieillesse des premiers non-salariés**"
       # Et sa correction, le 11 octobre 2026 : l'avant et l'après.
       - "**Le 11 octobre 2026, le minimum vieillesse retiré de la grille.**"
+      # La part des nouveaux retraités au minimum contributif, que les deux
+      # grilles calculent et que l'EACR observe : une mesure de trois minutes,
+      # faite un jour (action 137).
+      - "**La part des nouveaux retraités au minimum contributif, mesurée le 11 octobre"
 
   docs/limites/5-ter-trajectoire.md:
     defaut: etat

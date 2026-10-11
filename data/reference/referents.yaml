@@ -3344,6 +3344,12 @@ referents:
       « dans les faits », l'ordre de R. 173-15, que le dépôt suit, et le
       code public aussi (`determinerCaisseCompetente`,
       `R/fonctionsCalculsDivers.R:1082`, au commit 0963b57).
+      Une autre, le même jour : l'Études et résultats n° 1297, sur le
+      minimum contributif. Sa part des nouveaux retraités au minimum, un
+      agrégat de sa population elle aussi, se confronte à celle que l'EACR
+      observe, qu'elle surestime, et, sous les réserves que la limite du
+      coût agrégé dit, à celle des grilles de la page Coût
+      (`scripts/part_minimum_contributif.py`) : au dernier écart.
     ecarts:
       - constat: >-
           Sans la loi du 30 décembre 2025, il ouvre les droits de la
@@ -3628,6 +3634,37 @@ referents:
           tests/temoins/trajectoire.json, cas cor_10_1955, cor_10_1960,
           cor_10_1963, cor_10_1964 (caisses.CNRACL.minimum) ;
           tests/test_trajectoire.py, MINIMUM_GARANTI
+      - constat: >-
+          Ses résultats publiés surestiment la part des nouveaux retraités
+          que le minimum contributif relève (Études et résultats n° 1297,
+          février 2024, chiffré avant la loi du 30 décembre 2025) : 25,7 %
+          des liquidants des régimes alignés de 2024 sans la réforme de
+          2023, 30 % avec (tableau 1) ; 31,6 % des femmes de la génération
+          1975 et 18,1 % des hommes, dont 15,0 et 5,2 % à la majoration,
+          pour 106 et 82 € de 2023 (tableau 3). L'étude le dit (note 7), et
+          en donne trois causes : le non-recours, les départs au taux plein,
+          la liquidation de tous les droits à la fois.
+        tranche: >-
+          l'EACR, qui compte les pensions servies : 17,5 % des liquidants du
+          régime général en 2021, 18,3 % en 2022, 17,9 % en 2023, et 33,1 % en
+          2023 à la MSA salariés, dont les liquidants sont quinze fois moins
+          nombreux ; 24,9 % des femmes et 10,9 % des hommes du régime général
+          en 2022. La surestimation, que l'étude dit légère, est de sept à
+          huit points ; et la hausse que la réforme devait donner en 2024
+          (+4,3 points) n'est pas dans l'estimation que la DREES tire de la
+          campagne de 2024 (17,4 %), que la suivante remplacera. L'écart est
+          le sien. La grille élargie de la page Coût, passée au scénario 1,
+          surestime aussi, avec deux de ses causes, le taux plein pour tous et
+          aucun non-recours, et une à elle, le salaire de ses hommes : 24,6 %
+          des liquidants de 2023, les femmes au niveau observé, les hommes
+          deux fois au-dessus, et 22,4 % des hommes de la génération 1975 à la
+          majoration (docs/limites/5-bis-cout-agrege.md).
+        preuve: >-
+          data/reference/regimes/minimum_contributif_liquidants.csv (EACR,
+          feuille E-Minima rapportée aux nouveaux retraités de la feuille
+          A-Cadrage) ; Études et résultats n° 1297, tableaux 1 et 3 et note
+          7, lu dans sa copie d'Internet Archive du 17 août 2026 ;
+          scripts/part_minimum_contributif.py
     fait_mieux:
       - quoi: >-
           Il calcule, par cas type et génération, les taux de récupération, de
@@ -4059,13 +4096,14 @@ referents:
       chaîne du salaire annuel moyen, les années partagées, l'AVPF et le
       chômage de ses cas types, les emplois super-actifs.
     manifeste: [cor_pouvoir_achat_retraite, drees_trajectoire_taux_moyens]
-    sas: [drees_trajectoire]
-    lu_le: 2026-10-05
+    sas: [drees_trajectoire, drees_er_1297_minimum_contributif]
+    lu_le: 2026-10-11
     lu_dans:
       - https://git.drees.fr/drees_code_public/modeles/trajectoire
       - https://drees_code_public.pages.drees.fr/modeles/trajectoire/premiers-pas.html
       - https://www.cor-retraites.fr/sites/default/files/2026-07/RA_2026_def.pdf
       - https://web.archive.org/web/20260509142641/https://drees.solidarites-sante.gouv.fr/sites/default/files/2023-10/ER1283MAJ1210.pdf
+      - https://web.archive.org/web/20260817202642id_/https://drees.solidarites-sante.gouv.fr/sites/default/files/2024-02/ER1297.pdf
     note: >-
       Version 1.1.2 du 4 avril 2025, ouverte en 2024. Le rapport du COR de
       juin 2026 calcule ses cas types « à l'aide d'un module du modèle

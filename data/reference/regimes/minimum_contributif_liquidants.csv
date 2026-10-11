@@ -1,0 +1,88 @@
+# Part des nouveaux retraités dont la pension est portée au minimum contributif
+# source_id: drees_eacr
+# unite: pour cent des nouveaux retraités de droit direct de la caisse
+# fiabilite:
+#   certifiee (2012-2024) : feuille E-Minima du second classeur de
+#             l'EACR diffusé par la DREES, rapportée au champ nl_ddir de
+#             sa feuille A-Cadrage, recontrôlées par
+#             scripts/verifier_donnees.py. L'année 2024 est une
+#             ESTIMATION de la DREES, que la campagne de 2025 remplacera.
+#
+# CE QUE LA PART COMPTE
+# ----------------------
+# Au numérateur, les nouveaux retraités de l'année dont la pension a été
+# portée au minimum contributif ; au dénominateur, les nouveaux
+# retraités de droit direct de la même caisse, vivants au 31 décembre.
+# C'est la part que l'Études et résultats n° 1297 de la DREES trace
+# (février 2024, graphique 1) : 17,5 % au régime général et 25,1 % à la
+# MSA salariés pour les liquidants de 2021, que ce fichier redonne. Le
+# sexe n'est ventilé que depuis 2022.
+#
+# UNE ANNÉE GROSSIT D'UNE CAMPAGNE À L'AUTRE
+# -------------------------------------------
+# La Cnav transmet ses chiffres avec un an de retard, et ceux d'une
+# année croissent à mesure que ses dossiers se traitent : les
+# liquidants de 2021 comptent 14,9 % de bénéficiaires à la campagne de
+# 2021, 17,5 % à celle de 2022. Le millésime le plus RÉCENT est
+# retenu, comme pour les effectifs : 27,1 % en 2012, là où l'étude,
+# plus ancienne, lisait 27,6 %. Le type a changé de nom
+# (mico_servi jusqu'à la campagne de 2022, mico_traité_servi depuis,
+# la Cnav ne distinguant plus les dossiers traités) ; la dernière année
+# est l'estimation de la DREES (mico_estimation_drees).
+#
+# LES DEUX CODES DE LA CNAV
+# --------------------------
+# Le plus récent l'emporte, au numérateur comme au dénominateur : les
+# bénéficiaires viennent du code 0015, qui reprend toutes les années
+# depuis 2012, et les liquidants de 2012 à 2018 de l'ancien code 0010,
+# le seul qui les porte. En 2019, seule année où les deux flux
+# coexistent, le nouveau compte 5 % de liquidants de plus.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À CONFRONTER : le modèle ne la lit pas. scripts/part_minimum_contributif.py
+# y oppose la part que les grilles de carrières de la page Coût
+# calculent au scénario 1, et data/reference/referents.yaml celle que
+# TRAJECTOiRE publie (action 137).
+#
+# Ne pas modifier ces valeurs à la main : elles seraient écrasées
+# au prochain scripts/verifier_donnees.py --appliquer.
+annee,caisse,sexe,part,fiabilite
+2012,cnav,ensemble,27.08,certifiee
+2012,msa_salaries,ensemble,38.27,certifiee
+2013,cnav,ensemble,24.82,certifiee
+2013,msa_salaries,ensemble,29.60,certifiee
+2014,cnav,ensemble,24.89,certifiee
+2014,msa_salaries,ensemble,30.08,certifiee
+2015,cnav,ensemble,24.85,certifiee
+2015,msa_salaries,ensemble,30.27,certifiee
+2016,cnav,ensemble,22.05,certifiee
+2016,msa_salaries,ensemble,27.25,certifiee
+2017,cnav,ensemble,20.88,certifiee
+2017,msa_salaries,ensemble,28.22,certifiee
+2018,cnav,ensemble,22.01,certifiee
+2018,msa_salaries,ensemble,32.98,certifiee
+2019,cnav,ensemble,19.76,certifiee
+2019,msa_salaries,ensemble,28.90,certifiee
+2020,cnav,ensemble,17.77,certifiee
+2020,msa_salaries,ensemble,27.26,certifiee
+2021,cnav,ensemble,17.48,certifiee
+2021,msa_salaries,ensemble,25.07,certifiee
+2022,cnav,F,24.85,certifiee
+2022,cnav,H,10.95,certifiee
+2022,cnav,ensemble,18.29,certifiee
+2022,msa_salaries,F,31.34,certifiee
+2022,msa_salaries,H,26.78,certifiee
+2022,msa_salaries,ensemble,28.59,certifiee
+2023,cnav,F,24.53,certifiee
+2023,cnav,H,10.72,certifiee
+2023,cnav,ensemble,17.89,certifiee
+2023,msa_salaries,F,38.29,certifiee
+2023,msa_salaries,H,29.62,certifiee
+2023,msa_salaries,ensemble,33.06,certifiee
+2024,cnav,F,23.13,certifiee
+2024,cnav,H,11.14,certifiee
+2024,cnav,ensemble,17.41,certifiee
+2024,msa_salaries,F,42.00,certifiee
+2024,msa_salaries,H,31.24,certifiee
+2024,msa_salaries,ensemble,35.63,certifiee

@@ -215,6 +215,28 @@ toujours pas ; le passé qu'elle refait à rebours s'éloigne un peu de la
 dépense observée, de 16,4 à 16,6 % au pire depuis 2000, le minimum vieillesse
 ayant grossi la masse des plus vieilles cohortes.
 
+**La part des nouveaux retraités au minimum contributif, mesurée le 11 octobre
+2026** (`scripts/part_minimum_contributif.py`, action 137). L'enquête annuelle
+auprès des caisses de retraite compte, parmi les nouveaux retraités du régime
+général, ceux dont la pension est portée au minimum contributif : 27,1 % en
+2012, 17,5 % en 2021, 17,9 % en 2023 (`regimes/minimum_contributif_liquidants.csv`).
+La grille de la page n'en dit rien : un seul de ses cas types l'atteint, celui
+du Smic, et sa seule femme, non. La grille élargie, passée au scénario 1
+génération par génération, suit l'enquête jusqu'en 2019, de 1,8 point en
+dessous à 3,1 au-dessus, puis s'en écarte : 21,5 % des liquidants de 2020,
+24,6 % de ceux de 2023, quatre à sept points de trop. L'écart est celui des
+hommes. En 2022 et 2023, elle porte au minimum 24,8 et
+25,2 % des femmes, autant que l'enquête (24,9 et 24,5 %), et 22,3 et 23,8 % des
+hommes, plus du double (10,9 et 10,7 %). Ses axes étant indépendants, ses
+hommes ont les salaires de ses femmes, et leurs carrières complètes au bas de
+l'échelle touchent la majoration : 22,4 % des hommes de la génération 1975,
+quand TRAJECTOiRE en compte 5,2 %, pour un minimum moyen de 189 € de 2023 contre
+82. Une population tirée des distributions publiées (action 136, étape 6)
+aurait donc à lier le salaire au sexe. La grille a aussi deux des causes que
+TRAJECTOiRE donne à sa propre surestimation, de sept à huit points, que le
+registre des modèles consigne (`trajectoire`) : chacun y part au taux plein, et
+personne n'y renonce au minimum.
+
 **Ce qui, en revanche, n'est pas une approximation** : l'égalité des scénarios
 3 et 5 avec le système actuel sur toute la période observée. Elle est EXACTE, et
 au sens strict — le scénario prospectif recopie la pension du scénario actuel

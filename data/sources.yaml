@@ -889,7 +889,10 @@ institutions:
         acces: api
         statut_integration: certifie
         recuperation: scripts/fetch/drees_eacr.py
-        cible: data/reference/regimes/effectifs_retraites.csv
+        cible: >-
+          data/reference/regimes/effectifs_retraites.csv,
+          data/reference/macro/droits_derives.csv,
+          data/reference/regimes/minimum_contributif_liquidants.csv
         note: >-
           Le dénombrement exhaustif des retraités, caisse par caisse et année par
           année depuis 2004 — vingt-huit caisses, la ligne « tous régimes »
@@ -902,6 +905,15 @@ institutions:
           c'est le millésime le plus récent qui est retenu ; les désaccords sont
           nuls pour la moitié des couples et de 2,5 % au pire. Cette série ne
           porte AUCUNE pension : elle pondère les cas types de la page « Coût ».
+          Depuis le 11 octobre 2026 (action 137), le second classeur est lu
+          aussi : sa feuille `E-Minima` compte, année de liquidation par année,
+          les nouveaux retraités du régime général et de la MSA salariés dont la
+          pension est portée au minimum contributif, que le récupérateur
+          rapporte au flux des nouveaux retraités de droit direct du cadrage
+          (`nl_ddir`). La part qui en sort, de 2012 à 2024, par sexe depuis
+          2022, la dernière année étant une estimation de la DREES, est celle
+          que l'Études et résultats n° 1297 trace ; le modèle ne la lit pas,
+          ses grilles s'y confrontent (scripts/part_minimum_contributif.py).
       - id: drees_eir_caracteristiques
         titre: Caractéristiques des retraités (échantillon interrégimes de retraités)
         url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/3013_donnees-statistiques-sur-les-caracteristiques-des-retraites/

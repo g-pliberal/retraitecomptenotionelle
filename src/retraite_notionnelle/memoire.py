@@ -131,6 +131,9 @@ HORS_DU_MODELE = (
     # Ce que les pages qui agrègent lisent du modèle : fabriqué depuis ses
     # calculs, et qu'aucun ne relit (action 150).
     "data/derive/agregats.json", "src/retraite_notionnelle/donnees/agregats.py",
+    # Une mesure publiée que les grilles confrontent, et qu'aucun calcul ne
+    # lit (action 137).
+    "data/reference/regimes/minimum_contributif_liquidants.csv",
 )
 
 #: Les calculs de ce processus, par leur nom : l'objet picklé, dont chaque

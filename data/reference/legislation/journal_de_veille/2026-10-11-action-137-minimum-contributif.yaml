@@ -1,0 +1,24 @@
+date: "2026-10-11"
+session: "action 137 : la part des nouveaux retraités au minimum contributif, de l'EACR au dépôt, confrontée aux grilles du modèle et à TRAJECTOiRE"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1, qu'elle
+  ne fait que lire. Les deux classeurs et la documentation de l'EACR diffusés par la
+  DREES (version du 26 mai 2026), sur son portail de données, depuis le poste du
+  propriétaire ; le PDF de l'Études et résultats n° 1297 dans sa copie d'Internet
+  Archive du 17 août 2026 ; les montants du minimum contributif du dépôt
+  (legislation/minimum_contributif.csv), pour un contrôle.
+trouve: >-
+  Aucun texte de droit. Le second classeur de l'EACR porte la feuille E-Minima, que le
+  dépôt ne lisait pas : la part des nouveaux retraités du régime général portés au
+  minimum contributif tombe de 27,1 % en 2012 à 17,5 % en 2021 et 17,9 % en 2023, celle
+  de la MSA salariés de 38,3 à 25,1 puis 33,1 % ; 24,9 % des femmes et 10,9 % des hommes
+  du régime général en 2022. Elle entre au dépôt, certifiée
+  (regimes/minimum_contributif_liquidants.csv). Les grilles de la page Coût, passées au
+  scénario 1, la surestiment depuis 2020 de quatre à sept points, par les hommes, à qui
+  leurs axes indépendants donnent les salaires des femmes ; TRAJECTOiRE la surestime de
+  sept à huit points, comme l'étude le dit. Le cas type au Smic né en 1960 n'est pas au
+  minimum en 2020, et à raison : sa pension de base, 8 453 €, passe le minimum majoré de
+  l'année, 8 430,56 €.
+reste: >-
+  L'estimation de 2024, que la campagne de 2025 de l'EACR remplacera ; et, pour une
+  population (action 136, étape 6), un salaire qui dépende du sexe.

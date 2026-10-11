@@ -42,16 +42,23 @@ def _colonne(lettres: str) -> int:
     return indice - 1
 
 
-def feuilles(donnees: bytes) -> dict[str, dict[tuple[int, int], float | str]]:
+def feuilles(donnees: bytes, noms: tuple[str, ...] | None = None,
+             ) -> dict[str, dict[tuple[int, int], float | str]]:
     """Grilles du classeur, par nom de feuille.
 
     Chaque grille associe un couple ``(ligne, colonne)``, en indices commençant
     à zéro, à la valeur de la cellule — un ``float`` pour un nombre, une ``str``
     pour un texte. Les cellules vides sont absentes.
+
+    ``noms`` restreint la lecture à ces feuilles, celles du classeur qui n'en
+    sont pas étant absentes du résultat : les deux classeurs de l'EACR portent
+    des feuilles de 40 à 125 Mo de XML que la plupart des lectures n'ouvrent
+    pas. ``()`` ne lit aucune feuille, et le résultat est vide.
     """
+    voulues = None if noms is None else set(noms)
     with zipfile.ZipFile(io.BytesIO(donnees)) as archive:
-        noms = archive.namelist()
-        if "xl/workbook.xml" not in noms:
+        membres = archive.namelist()
+        if "xl/workbook.xml" not in membres:
             raise ValueError("ce n'est pas un classeur Excel 2007+")
 
         relations = dict(re.findall(
@@ -67,13 +74,13 @@ def feuilles(donnees: bytes) -> dict[str, dict[tuple[int, int], float | str]]:
         }
 
         chaines: list[str] = []
-        if "xl/sharedStrings.xml" in noms:
+        if "xl/sharedStrings.xml" in membres:
             for si in ET.fromstring(archive.read("xl/sharedStrings.xml")):
                 chaines.append("".join(t.text or "" for t in si.iter(NS + "t")))
 
         grilles: dict[str, dict[tuple[int, int], float | str]] = {}
         for nom, chemin in chemins.items():
-            if chemin not in noms:
+            if chemin not in membres or (voulues is not None and nom not in voulues):
                 continue
             grille: dict[tuple[int, int], float | str] = {}
             for cellule in ET.fromstring(archive.read(chemin)).iter(NS + "c"):
@@ -88,4 +95,13 @@ def feuilles(donnees: bytes) -> dict[str, dict[tuple[int, int], float | str]]:
                     grille[position] = float(valeur.text)
             grilles[nom] = grille
     return grilles
+
+
+def noms_des_feuilles(donnees: bytes) -> tuple[str, ...]:
+    """Les noms des feuilles du classeur, dans son ordre, sans en lire aucune."""
+    with zipfile.ZipFile(io.BytesIO(donnees)) as archive:
+        if "xl/workbook.xml" not in archive.namelist():
+            raise ValueError("ce n'est pas un classeur Excel 2007+")
+        return tuple(re.findall(r'<sheet name="([^"]+)"',
+                                archive.read("xl/workbook.xml").decode("utf-8")))
 

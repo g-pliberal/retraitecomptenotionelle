@@ -1576,8 +1576,14 @@ sources:
       7,3 ; 31,6 % des femmes en bénéficient, contre 18,1 % des hommes, pour
       106 € contre 82 €, et l'écart de pension des régimes alignés entre
       femmes et hommes passe de 16,6 à 14,6 % (tableau 3 ; la page résume
-      112 €, 90 € et 14,5 %). Reste à confronter ces résultats à ce que le
-      dépôt calcule.
+      112 €, 90 € et 14,5 %). Confrontés le même jour (action 137) : la
+      série de l'EACR que le graphique 1 trace est au dépôt, lue dans la
+      feuille E-Minima du classeur que le manifeste récupère déjà
+      (`drees_eacr`, regimes/minimum_contributif_liquidants.csv), et en
+      redonne 17,5 % et 25,1 % pour 2021 ; 2012 y vaut 27,1 % au millésime
+      le plus récent, 27,6 % à celui de 2021, que l'étude lisait. Ce que
+      TRAJECTOiRE en surestime, et ce que les grilles du dépôt en font, est
+      au registre des modèles (`trajectoire`, dernier écart).
 
   - id: drees_er_1283_mda_enfants
     url: https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/etudes-et-resultats/retraite-parmi-les-femmes-beneficiant-de

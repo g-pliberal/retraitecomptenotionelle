@@ -2063,6 +2063,63 @@ def source_droits_derives() -> dict[tuple, float]:
     return {cle: valeur for cle, (_, valeur) in par_caisse.items()}
 
 
+#: Les caisses qui servent le minimum contributif dans l'EACR : la Cnav sous
+#: ses deux codes, que la feuille des minima relaie aussi — 0010 jusqu'à la
+#: campagne de 2019, 0015 depuis, qui reprend toutes les années depuis 2012 —,
+#: et la MSA salariés.
+CAISSES_MINIMUM_CONTRIBUTIF: tuple[tuple[str, str], ...] = (
+    ("0010", "cnav"),
+    ("0015", "cnav"),
+    ("0021", "msa_salaries"),
+)
+
+
+def source_minimum_contributif_liquidants() -> dict[tuple, float]:
+    """La part des nouveaux retraités dont la pension est portée au minimum contributif.
+
+    Caisse par caisse, sexe par sexe, année de liquidation par année : les
+    bénéficiaires de la feuille E-Minima du second classeur de l'EACR,
+    rapportés aux nouveaux retraités de droit direct de la même caisse, vivants
+    au 31 décembre (champ ``nl_ddir`` du cadrage). C'est la part que l'Études et
+    résultats n° 1297 de la DREES trace (graphique 1), et la mesure que le
+    dépôt oppose à ses grilles de carrières (action 137) : TRAJECTOiRE la
+    surestime, dit l'étude elle-même (note 7).
+
+    Le numérateur et le dénominateur passent chacun par la règle des effectifs :
+    où les deux codes de la Cnav se recouvrent, le plus récent l'emporte. Les
+    bénéficiaires des années 2012 à 2018 viennent donc des campagnes récentes,
+    sous le code 0015, et leurs liquidants de l'ancien code, le seul qui les
+    porte ; en 2019, seule année où les deux flux coexistent, le nouveau compte
+    5 % de liquidants de plus.
+    """
+    charge = _eacr().get("minimum_contributif") or {}
+    beneficiaires = charge.get("beneficiaires") or {}
+    flux = (charge.get("liquidants") or {}).get("series") or {}
+    if not beneficiaires or not flux:
+        raise SourceAbsente(
+            "data/brut/drees_eacr.json ne porte pas le minimum contributif — "
+            "relancer scripts/fetch/drees_eacr.py"
+        )
+
+    def par_caisse(series: dict, valeur: Callable) -> dict[tuple, float]:
+        retenues: dict[tuple, tuple[str, float]] = {}
+        for code, nom in CAISSES_MINIMUM_CONTRIBUTIF:
+            for sexe, serie in series.get(code, {}).items():
+                for annee, cellule in serie.items():
+                    cle = (annee, nom, sexe)
+                    if code >= retenues.get(cle, ("", 0.0))[0]:
+                        retenues[cle] = (code, valeur(cellule))
+        return {cle: nombre for cle, (_, nombre) in retenues.items()}
+
+    nombres = par_caisse(beneficiaires, lambda cellule: cellule[0])
+    liquidants = par_caisse(flux, lambda cellule: cellule)
+    return {
+        cle: 100.0 * nombre / liquidants[cle]
+        for cle, nombre in sorted(nombres.items())
+        if liquidants.get(cle)
+    }
+
+
 def source_distribution_pensions() -> dict[tuple, float]:
     """Part des retraités par tranche de cent euros de pension brute mensuelle.
 
@@ -5972,6 +6029,68 @@ CERTIFICATIONS = (
             "# docs/limites.md §5 bis dit le sens du biais qui reste.",
             "#",
             "# Ne pas modifier les années certifiées à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="minimum_contributif_liquidants",
+        chemin=REFERENCE / "regimes" / "minimum_contributif_liquidants.csv",
+        cles=("annee", "caisse", "sexe"),
+        colonne="part",
+        source=source_minimum_contributif_liquidants,
+        origine="DREES, enquête annuelle auprès des caisses de retraite (EACR)",
+        decimales=2,
+        tolerance=0.005,
+        unite=" %",
+        entete=(
+            "# Part des nouveaux retraités dont la pension est portée au minimum contributif",
+            "# source_id: drees_eacr",
+            "# unite: pour cent des nouveaux retraités de droit direct de la caisse",
+            "# fiabilite:",
+            "#   certifiee (2012-2024) : feuille E-Minima du second classeur de",
+            "#             l'EACR diffusé par la DREES, rapportée au champ nl_ddir de",
+            "#             sa feuille A-Cadrage, recontrôlées par",
+            "#             scripts/verifier_donnees.py. L'année 2024 est une",
+            "#             ESTIMATION de la DREES, que la campagne de 2025 remplacera.",
+            "#",
+            "# CE QUE LA PART COMPTE",
+            "# ----------------------",
+            "# Au numérateur, les nouveaux retraités de l'année dont la pension a été",
+            "# portée au minimum contributif ; au dénominateur, les nouveaux",
+            "# retraités de droit direct de la même caisse, vivants au 31 décembre.",
+            "# C'est la part que l'Études et résultats n° 1297 de la DREES trace",
+            "# (février 2024, graphique 1) : 17,5 % au régime général et 25,1 % à la",
+            "# MSA salariés pour les liquidants de 2021, que ce fichier redonne. Le",
+            "# sexe n'est ventilé que depuis 2022.",
+            "#",
+            "# UNE ANNÉE GROSSIT D'UNE CAMPAGNE À L'AUTRE",
+            "# -------------------------------------------",
+            "# La Cnav transmet ses chiffres avec un an de retard, et ceux d'une",
+            "# année croissent à mesure que ses dossiers se traitent : les",
+            "# liquidants de 2021 comptent 14,9 % de bénéficiaires à la campagne de",
+            "# 2021, 17,5 % à celle de 2022. Le millésime le plus RÉCENT est",
+            "# retenu, comme pour les effectifs : 27,1 % en 2012, là où l'étude,",
+            "# plus ancienne, lisait 27,6 %. Le type a changé de nom",
+            "# (mico_servi jusqu'à la campagne de 2022, mico_traité_servi depuis,",
+            "# la Cnav ne distinguant plus les dossiers traités) ; la dernière année",
+            "# est l'estimation de la DREES (mico_estimation_drees).",
+            "#",
+            "# LES DEUX CODES DE LA CNAV",
+            "# --------------------------",
+            "# Le plus récent l'emporte, au numérateur comme au dénominateur : les",
+            "# bénéficiaires viennent du code 0015, qui reprend toutes les années",
+            "# depuis 2012, et les liquidants de 2012 à 2018 de l'ancien code 0010,",
+            "# le seul qui les porte. En 2019, seule année où les deux flux",
+            "# coexistent, le nouveau compte 5 % de liquidants de plus.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À CONFRONTER : le modèle ne la lit pas. scripts/part_minimum_contributif.py",
+            "# y oppose la part que les grilles de carrières de la page Coût",
+            "# calculent au scénario 1, et data/reference/referents.yaml celle que",
+            "# TRAJECTOiRE publie (action 137).",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
             "# au prochain scripts/verifier_donnees.py --appliquer.",
         ),
     ),
