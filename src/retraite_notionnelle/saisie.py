@@ -752,6 +752,13 @@ class Saisie:
     #: présomption ``aucun_autre_revenu_que_ses_pensions``.
     revenu_fiscal: float | None = None
     interruptions: str = ""
+    #: Les années travaillées à temps partiel et leur quotité, en pour cent :
+    #: « 2005:2014:80 » (fiche ``temps_partiel_fonction_publique``). Les revenus
+    #: saisis sont ceux d'un temps plein, que ces années touchent à leur
+    #: quotité ; la fonction publique les compte à leur quotité dans ses
+    #: services, en entier dans la durée d'assurance. Voir
+    #: :meth:`temps_partiel_analyse`.
+    temps_partiel: str = ""
     indexation: str = "masse_salariale"
     lissage: int = 1
     age_reference: str = "fixe_apres_bascule"
@@ -923,6 +930,7 @@ class Saisie:
             mois_en_france=(None if parametres.get("mois_en_france") in (None, "")
                             else _entier(parametres, "mois_en_france", MOIS_PAR_AN)),
             interruptions=(parametres.get("interruptions") or "").strip(),
+            temps_partiel=(parametres.get("temps_partiel") or "").strip(),
             indexation=_parmi(parametres, "indexation", INDEXATIONS, defauts.indexation),
             lissage=_entier(parametres, "lissage", defauts.lissage),
             age_reference=_parmi(
@@ -1018,6 +1026,7 @@ class Saisie:
             )
         if self.revenu_fiscal is not None and self.revenu_fiscal < 0:
             raise ErreurSaisie("Revenu fiscal de référence : un montant annuel positif.")
+        self.temps_partiel_analyse()
         self._verifier_naissances()
         self._verifier_conjoint()
         self._verifier_progressive()
@@ -1546,6 +1555,57 @@ class Saisie:
                 plages[annee] = motif
         return plages
 
+    def temps_partiel_analyse(self) -> dict[int, float]:
+        """« 2005:2014:80, 2016:2016:50 » -> {année: quotité, entre zéro et un}.
+
+        La forme est celle des interruptions, la quotité en pour cent à la
+        place du motif : un entier de 1 à 99, cent étant le temps plein, que
+        rien ne déclare. Les refus sont les leurs — une ligne mal formée, une
+        année hors de toute carrière possible, une plage à l'envers —, et un
+        de plus : deux quotités pour une même année, que rien ne départage.
+        Une année d'interruption n'a pas de quotité : l'interruption la prend
+        tout entière (fiche ``temps_partiel_fonction_publique``).
+        """
+        quotites: dict[int, float] = {}
+        for morceau in self.temps_partiel.replace("\n", ",").split(","):
+            morceau = morceau.strip()
+            if not morceau:
+                continue
+            parties = morceau.split(":")
+            if len(parties) != 3 or not all(_est_entier(partie) for partie in parties):
+                raise ErreurSaisie(
+                    f"Temps partiel mal formé : « {morceau} ». Attendu "
+                    "« année_début:année_fin:quotité », par exemple 2005:2014:80."
+                )
+            debut, fin, quotite = (int(partie) for partie in parties)
+            # Les années sont citées telles qu'elles ont été écrites, comme
+            # celles d'une interruption : les deux moteurs disent la même phrase.
+            for texte, annee in ((parties[0], debut), (parties[1], fin)):
+                if not ANNEE_CARRIERE_MINIMALE <= annee <= ANNEE_CARRIERE_MAXIMALE:
+                    raise ErreurSaisie(
+                        f"Temps partiel « {morceau} » : {texte.strip()} ne tombe "
+                        "dans aucune carrière possible. Attendu entre "
+                        f"{ANNEE_CARRIERE_MINIMALE} et {ANNEE_CARRIERE_MAXIMALE}."
+                    )
+            if fin < debut:
+                raise ErreurSaisie(
+                    f"Temps partiel « {morceau} » : il finit ({fin}) avant de "
+                    f"commencer ({debut})."
+                )
+            if not 1 <= quotite <= 99:
+                raise ErreurSaisie(
+                    f"Temps partiel « {morceau} » : quotité attendue entre 1 et "
+                    "99 %, le temps plein n'ayant rien à déclarer."
+                )
+            for annee in range(debut, fin + 1):
+                if annee in quotites:
+                    raise ErreurSaisie(
+                        f"Temps partiel « {morceau} » : l'année {annee} a déjà "
+                        "sa quotité."
+                    )
+                quotites[annee] = quotite / 100.0
+        return quotites
+
     @property
     def releve_actif(self) -> bool:
         """Vrai si la carrière est LUE plutôt que reconstituée."""
@@ -1586,6 +1646,10 @@ class Saisie:
         l'année garde alors ses trimestres — le relevé fait foi — et son revenu
         devient le salaire de référence d'avant l'interruption.
 
+        **Les années à temps partiel** se déclarent de même, dans le champ
+        « Temps partiel » : la ligne en prend la quotité, et garde son revenu,
+        que le relevé porte déjà réduit.
+
         Les refus sont ceux qu'``interruptions_analysees`` a appris à
         prononcer : une année hors de toute carrière possible, une ligne mal
         formée, un doublon. S'y ajoute la seule borne que le relevé rende
@@ -1593,6 +1657,7 @@ class Saisie:
         un relevé forgé dans un lien figerait l'onglet de celui qui le suit.
         """
         interruptions = self.interruptions_analysees(motifs_connus)
+        temps_partiel = self.temps_partiel_analyse()
         depart = self.date_liquidation
         # Les lignes sont COMPTÉES avant d'être lues : le refus doit coûter le
         # découpage du texte, et rien de plus. Les analyser d'abord pour les
@@ -1671,12 +1736,14 @@ class Saisie:
                         f"Relevé « {morceau} » : trimestres attendus entre 0 et 4."
                     )
                 trimestres = int(valeur) if valeur.is_integer() else valeur
+            type_periode = interruptions.get(annee, "emploi")
             lignes.append(LigneRelevee(
                 annee=annee,
                 affiliation=parties[1],
                 revenu=revenu,
                 trimestres=trimestres,
-                type_periode=interruptions.get(annee, "emploi"),
+                type_periode=type_periode,
+                quotite=temps_partiel.get(annee, 1.0) if type_periode == "emploi" else 1.0,
             ))
         return lignes
 
@@ -2243,6 +2310,7 @@ class Saisie:
                if self.mois_en_france is not None else {}),
             **({"revenu_fiscal": _nombre(self.revenu_fiscal)}
                if self.revenu_fiscal is not None else {}),
+            **({"temps_partiel": self.temps_partiel} if self.temps_partiel else {}),
             "interruptions": self.interruptions, "indexation": self.indexation,
             "lissage": self.lissage,
             "age_reference": self.age_reference, "table": self.table,

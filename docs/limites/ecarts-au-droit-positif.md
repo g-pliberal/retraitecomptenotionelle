@@ -123,10 +123,17 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   seulement à sa quotité dans les services qui liquident une pension de la
   fonction publique — sauf le temps partiel thérapeutique, le temps partiel de
   droit pour un enfant né depuis 2004 et la surcotisation, bornée à quatre
-  trimestres. La saisie ne demande la quotité que d'une retraite progressive
-  (ci-dessous), dont les années la portent ; un temps partiel plus ancien
-  compte ici à temps plein, et un fonctionnaire qui a travaillé à temps partiel
-  sans surcotiser reçoit la pension d'un temps plein.
+  trimestres. Le champ « Temps partiel » du formulaire en déclare les années
+  et la quotité, comme la retraite progressive (ci-dessous) celle de ses
+  mois : le revenu d'un parcours en est réduit, celui d'un relevé, déjà
+  perçu, gardé, et les services de la fonction publique la comptent, dans les
+  deux moteurs (fiche `temps_partiel_fonction_publique`). Restent dehors : la
+  surcotisation, un temps partiel surcotisé se déclarant à sa quotité ; les
+  temps partiels que la loi compte à temps plein, qui ne se déclarent pas et
+  gardent le revenu d'un temps plein ; la rémunération des services à quatre
+  cinquièmes et à neuf dixièmes du temps plein, six septièmes et
+  trente-deux trente-cinquièmes du traitement, que le modèle ramène à la
+  quotité ; et l'année entamée, la quotité se déclarant par années entières.
 - **Rachats, surcotisation.**
   Le modèle liquide chaque régime une fois, à sa date (« Les départs
   échelonnés », ci-dessous), sur la carrière saisie, la retraite progressive

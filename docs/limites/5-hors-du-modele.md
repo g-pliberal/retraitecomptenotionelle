@@ -283,10 +283,11 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   métiers : une période à l'étranger les vide, le champ « Interruptions »
   garde le dernier mot, et qui ne travaille plus les y déclare
   `sans_activite`, ce que la page lui propose — il retrouve alors, dans les
-  six scénarios, la pension de son relevé arrêté. La retraite progressive les
-  met à temps partiel ; la radiation pour invalidité d'un fonctionnaire les
-  arrête à sa date. Rien ne s'ajoute à qui est parti une année déjà passée :
-  son relevé dit toute sa carrière.
+  six scénarios, la pension de son relevé arrêté. Le champ « Temps partiel »
+  et la retraite progressive les mettent à temps partiel, la dernière année
+  ramenée au temps plein par sa quotité ; la radiation pour invalidité d'un
+  fonctionnaire les arrête à sa date. Rien ne s'ajoute à qui est parti une
+  année déjà passée : son relevé dit toute sa carrière.
 
   L'impossibilité reste l'INTERROGATION AUTOMATIQUE du répertoire de gestion
   des carrières uniques : il n'est pas ouvert au public, et son accès passe par

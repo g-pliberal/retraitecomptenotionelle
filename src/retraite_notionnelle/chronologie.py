@@ -45,7 +45,9 @@ Ce que les faits portent, par sorte :
   ``profil`` de progression, et ``cumul`` pour une activité qui s'ajoute à la
   principale ; d'un relevé, le ``revenu`` de l'année, en euros courants, et
   ses ``trimestres`` quand le relevé les porte ; dans les deux cas, la
-  ``part_primes`` de la rémunération ;
+  ``part_primes`` de la rémunération, et la ``quotite`` d'une période à temps
+  partiel, entre zéro et un, absente à temps plein — un parcours coupe ses
+  métiers au 1er janvier des années où elle change ;
 * ``periode_d_interruption`` — le ``motif`` ; d'un relevé, aussi
   l'``affiliation``, le ``revenu`` de référence et les ``trimestres`` ;
 * ``acte_de_la_personne`` — pour le départ : ``acte: depart``, le ``motif``,
@@ -685,6 +687,7 @@ def du_resume(annee_naissance: int, sexe: str, mois_naissance: int = 1,
 def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                 age_liquidation: float, mois_naissance: int = 1,
                 profil_carriere: str = "auto", interruptions: dict[int, str] | None = None,
+                temps_partiel: dict[int, float] | None = None,
                 nombre_enfants: int = 0, part_primes: float = 0.0,
                 naissances_enfants: list | tuple = (), jour_naissance: int | None = None,
                 presomptions: dict | None = None, conjoint: dict | None = None,
@@ -704,6 +707,10 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
     la pension prend effet le premier du mois qui suit l'anniversaire. Les
     contrôles sont ceux du parcours : les métiers se suivent, le premier n'est
     pas cumulé, rien ne dépasse le départ.
+
+    ``temps_partiel`` donne à une année la quotité de l'activité principale :
+    chaque métier principal se coupe au 1er janvier des années où elle change,
+    et chaque morceau à temps partiel la porte (:func:`_au_temps_partiel`).
     """
     if not metiers:
         raise ValueError("une carrière compte au moins un métier")
@@ -745,9 +752,15 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
     periodes = []
     for rang, (metier, ouverture, cloture) in enumerate(
             zip(principaux, bornes, bornes[1:] + [fin]), 1):
-        periodes.append(fait(f"emploi_{rang}", ASSURE, EMPLOI, _jour(ouverture), _jour(cloture), {
-            "affiliation": metier.affiliation, "niveau_salaire": metier.niveau_salaire,
-            "profil": profil_carriere, "part_primes": part_primes}))
+        for morceau, (de, a, quotite) in enumerate(
+                _au_temps_partiel(ouverture, cloture, temps_partiel or {}), 1):
+            attributs = {"affiliation": metier.affiliation,
+                         "niveau_salaire": metier.niveau_salaire,
+                         "profil": profil_carriere, "part_primes": part_primes}
+            if quotite < 1.0:
+                attributs["quotite"] = quotite
+            periodes.append(fait(f"emploi_{rang}" if morceau == 1 else f"emploi_{rang}_{morceau}",
+                                 ASSURE, EMPLOI, _jour(de), _jour(a), attributs))
     for rang, metier in enumerate(cumuls, 1):
         ouverture = mois_de_naissance.plus_mois(en_mois(metier.age_debut))
         cloture = (fin if metier.age_fin is None
@@ -777,6 +790,24 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
             "liens": liens}
 
 
+def _au_temps_partiel(ouverture: DateMois, cloture: DateMois,
+                      temps_partiel: dict[int, float]) -> list[tuple[DateMois, DateMois, float]]:
+    """La période [ouverture, cloture), coupée au 1er janvier de chaque année
+    où la quotité change : des morceaux de quotité constante, chacun avec la
+    sienne, un à temps plein. Sans temps partiel, la période reste entière."""
+    morceaux = []
+    debut = ouverture
+    for annee in range(ouverture.annee + 1, cloture.annee + 1):
+        coupure = DateMois(annee, 1)
+        if coupure.rang >= cloture.rang:
+            break
+        if temps_partiel.get(annee, 1.0) != temps_partiel.get(annee - 1, 1.0):
+            morceaux.append((debut, coupure, temps_partiel.get(annee - 1, 1.0)))
+            debut = coupure
+    morceaux.append((debut, cloture, temps_partiel.get(debut.annee, 1.0)))
+    return morceaux
+
+
 def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
               age_liquidation: float, mois_naissance: int = 1,
               nombre_enfants: int = 0, part_primes: float = 0.0,
@@ -788,7 +819,7 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
               invalidite: dict | None = None, etranger: dict | None = None) -> dict:
     """La chronologie d'un relevé : un fait par ligne, une année civile
     chacun, dans l'ordre du relevé — la première ligne d'une année est
-    l'activité principale."""
+    l'activité principale —, avec la quotité d'une année à temps partiel."""
     if not releve:
         raise ValueError("un relevé compte au moins une ligne")
     periodes = []
@@ -798,6 +829,8 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
         emploi = ligne.type_periode == "emploi"
         if not emploi:
             attributs["motif"] = ligne.type_periode
+        elif ligne.quotite < 1.0:
+            attributs["quotite"] = ligne.quotite
         periodes.append(fait(f"releve_{rang}", ASSURE, EMPLOI if emploi else INTERRUPTION,
                              f"{ligne.annee:04d}-01-01", f"{ligne.annee + 1:04d}-01-01",
                              attributs))

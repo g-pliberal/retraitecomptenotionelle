@@ -1,0 +1,30 @@
+date: "2026-10-11"
+session: "action 136, étape 3 : le temps partiel des fonctionnaires, porté dans la saisie et dans les services"
+consulte: >-
+  L'index LEGI, mis à jour jusqu'au 10 octobre 2026 (six incréments, aucune rédaction
+  nouvelle à inscrire) : L. 5, L. 9, L. 11, L. 11 bis et L. 14 CPCMR et R. 9, toutes leurs
+  rédactions ; l'article 13 du décret n° 2003-1306 et l'article 10 du décret n° 65-773 ;
+  l'article 60 de la loi n° 84-53. La page « La formule de calcul » du Service des
+  retraites de l'État, relue le jour même.
+trouve: >-
+  La règle est L. 11, 1° (LEGIARTI000047453636, du 1er septembre 2023 ; la même phrase
+  depuis le 2 avril 1982) : la période à temps partiel est « comptée pour la fraction de sa
+  durée ». La fiche la fondait sur L. 14, I, qui compte au contraire le temps partiel à
+  temps complet dans la durée d'assurance, depuis 2004 ; L. 5 le compte en entier pour
+  ouvrir le droit. Depuis le 1er septembre 2023 (loi n° 2023-270), cinq temps partiels
+  comptent à temps plein, dont le thérapeutique et celui de droit pour élever un enfant,
+  que L. 9, 1°, et R. 9 comptaient déjà depuis 2004 ; à la CNRACL, l'article 13 du décret
+  n° 2003-1306 (LEGIARTI000047633115) dit de même. L. 11 bis (LEGIARTI000006362694) : la
+  surcotisation, quatre trimestres au plus. L'article 60 de la loi n° 84-53
+  (LEGIARTI000033160293) paie six septièmes et trente-deux trente-cinquièmes du traitement
+  à 80 et 90 % : la fiche le cite sans son identifiant, dans une approximation que le modèle
+  n'applique pas, pour ne pas inscrire la loi entière, deux cent quatorze rédactions, à la
+  liste des textes. L'exemple de Pierre P., dix ans à 80 % sur trente-neuf, 148 trimestres
+  retenus, entre aux témoins officiels sur ses services, sa pension divisant par 168
+  trimestres requis au lieu de 167. La fiche temps_partiel_fonction_publique passe de
+  manquante à approchée ; le cliquet des textes, de 9 822 à 9 812.
+reste: >-
+  La surcotisation, à porter comme un choix borné à quatre trimestres, avec le taux de sa
+  retenue ; le mi-temps d'avant 1982 (loi n° 70-523), que l'index ne porte pas ; la lecture
+  du minimum garanti sur des services réduits, à vérifier à la documentation des caisses ;
+  la confrontation d'un profil à temps partiel à OpenFisca-France-Pension.

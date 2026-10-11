@@ -662,6 +662,31 @@ def _cas() -> list[dict]:
         "naissance": "1965", "sexe": "F", "debut": "20", "liquidation": "64",
         "progressive": "2023-05", "quotite": "60",
     }))
+    # LE TEMPS PARTIEL (fiche temps_partiel_fonction_publique ; action 136,
+    # étape 3) : le fonctionnaire de l'État de l'exemple du SRE, trente-neuf
+    # ans de services dont dix à 80 %, que ses services comptent pour huit, et
+    # sa durée d'assurance pour dix ; une salariée à mi-temps, dont la retraite
+    # progressive reprend la quotité à son mois ; une agente territoriale dont
+    # le relevé porte les années à 70 %, prolongé jusqu'au départ à 90 %.
+    cas.append(("temps_partiel_fonctionnaire_etat", {
+        "naissance": "1958-04-10", "statut": "fonctionnaire_etat", "debut": "1986-05",
+        "liquidation": "2025-05", "temps_partiel": "2000:2009:80",
+    }))
+    cas.append(("temps_partiel_puis_progressive", {
+        "naissance": "1965", "sexe": "F", "debut": "20", "liquidation": "64",
+        "temps_partiel": "2020:2026:50", "progressive": "2025-11", "quotite": "60",
+    }))
+    cas.append(("temps_partiel_releve_territorial", {
+        "naissance": "1966", "sexe": "F", "statut": "fonctionnaire_territorial_hospitalier",
+        "debut": "22", "liquidation": "64",
+        "releve": "2019:fonctionnaire_territorial_hospitalier:21000:4\n"
+                  "2020:fonctionnaire_territorial_hospitalier:21500:4\n"
+                  "2021:fonctionnaire_territorial_hospitalier:22000:4\n"
+                  "2022:fonctionnaire_territorial_hospitalier:16100:4\n"
+                  "2023:fonctionnaire_territorial_hospitalier:16700:4\n"
+                  "2024:fonctionnaire_territorial_hospitalier:17200:4",
+        "temps_partiel": "2022:2024:70, 2027:2030:90",
+    }))
     # LE CUMUL EMPLOI-RETRAITE : l'activité exercée après le départ, et ce que
     # chaque pension en garde (droit/cumul.py). Le cumul plafonné de la
     # première pension de 2022, réduite du dépassement, l'Agirc-Arrco

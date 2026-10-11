@@ -1670,7 +1670,8 @@ export class Carriere {
    * vie active, et il vaut pour la carrière ENTIÈRE, changements de métier
    * compris : le niveau propre à chaque métier s'y superpose, il ne remet pas
    * la progression à zéro. ``interruptions`` associe une année à une période
-   * non cotisée.
+   * non cotisée ; ``temps_partiel`` (une `Map`), à la quotité de l'activité
+   * principale, qui réduit son revenu et les services de la fonction publique.
    *
    * **Une activité CUMULÉE ne remplace pas, elle s'ajoute** : un métier qui
    * porte `cumul: true` court de `age_debut` à `age_fin` (ou jusqu'à la
@@ -1686,6 +1687,7 @@ export class Carriere {
     mois_naissance = 1,
     profil_carriere = PROFIL_AUTOMATIQUE,
     interruptions = null,
+    temps_partiel = null,
     nombre_enfants = 0,
     part_primes = 0.0,
     identifiant = "assuré",
@@ -1701,7 +1703,8 @@ export class Carriere {
   }) {
     const chronologie = preparer(chrono.duParcours({
       annee_naissance, sexe, metiers, age_liquidation, mois_naissance,
-      profil_carriere, interruptions, nombre_enfants, part_primes, naissances_enfants,
+      profil_carriere, interruptions, temps_partiel, nombre_enfants, part_primes,
+      naissances_enfants,
       jour_naissance, presomptions: macro.paquet.presomptions, conjoint, deces,
       retraite_progressive, emploi_retraite, demandes_de_pension, invalidite, etranger,
     }), macro.paquet.presomptions);
@@ -1861,7 +1864,9 @@ function lignesDuReleve(dateNaissance, periodes, fin, macro, identifiant,
       trimestresMaximum: trimestresCivils(mois),
       trimestresDeclares: attributs.trimestres,
       quotite: periode.sorte === chrono.EMPLOI
-        ? quotiteDeLAnnee(annee, new DateMois(annee, 1), fin, progressive) : 1.0,
+        ? quotiteDeLAnnee(annee, new DateMois(annee, 1), fin, progressive,
+          attributs.quotite ?? 1.0)
+        : 1.0,
     });
   });
   return limiterChomageNonIndemnise(
@@ -1872,23 +1877,24 @@ function lignesDuReleve(dateNaissance, periodes, fin, macro, identifiant,
 }
 
 /**
- * La quotité moyenne des mois travaillés d'une année : un, sauf pour les mois
- * de retraite progressive, travaillés à leur quotité. Voir `carriere.py`.
+ * La quotité moyenne des mois travaillés d'une année : celle du temps partiel
+ * que l'année déclare (`tempsPartiel`), un sans lui, sauf pour les mois de
+ * retraite progressive, travaillés à leur quotité. Voir `carriere.py`.
  */
-function quotiteDeLAnnee(annee, debut, fin, progressive) {
+function quotiteDeLAnnee(annee, debut, fin, progressive, tempsPartiel = 1.0) {
   if (progressive === null) {
-    return 1.0;
+    return tempsPartiel;
   }
   const [depuis, quotite] = progressive;
   const travailles = moisTravailles(annee, debut, fin);
   if (travailles <= 0) {
-    return 1.0;
+    return tempsPartiel;
   }
   const partiels = moisTravailles(annee, depuis.rang > debut.rang ? depuis : debut, fin);
   if (partiels <= 0) {
-    return 1.0;
+    return tempsPartiel;
   }
-  return (travailles - partiels + partiels * quotite) / travailles;
+  return ((travailles - partiels) * tempsPartiel + partiels * quotite) / travailles;
 }
 
 /**
@@ -1899,30 +1905,36 @@ function quotiteDeLAnnee(annee, debut, fin, progressive) {
  * avancé au rythme du salaire moyen, l'année de `fin` au prorata de ses mois,
  * les trimestres déduits du revenu. `interruptions` (une `Map` année → motif)
  * donne à une année ajoutée son motif ; `progressive` met à temps partiel les
- * mois qu'elle touche. Voir `prolonger_releve` du Python.
+ * mois qu'elle touche, et `tempsPartiel` (une `Map` année → quotité) les
+ * années qu'il nomme, dont la ligne ajoutée porte la quotité. Voir
+ * `prolonger_releve` du Python.
  */
 export function prolongerReleve(releve, fin, macro, interruptions = new Map(),
-  progressive = null) {
+  progressive = null, tempsPartiel = new Map()) {
   const lignes = [...releve];
   if (lignes.length === 0) {
     return lignes;
   }
   const derniere = Math.max(...lignes.map((ligne) => ligne.annee));
   const sources = lignes.filter((ligne) => ligne.annee === derniere);
+  // Le revenu de chaque ligne de la dernière année, ramené au temps plein.
+  const bases = sources.map((source) => (source.type_periode === "emploi"
+    ? source.revenu / quotiteDeLAnnee(derniere, new DateMois(derniere, 1), fin, progressive,
+      source.quotite ?? 1.0)
+    : source.revenu));
   const reference = salaireMoyenAnnuel(macro, derniere);
-  const quotite = quotiteDeLAnnee(derniere, new DateMois(derniere, 1), fin, progressive);
   for (let annee = derniere + 1; annee <= fin.annee; annee += 1) {
     const mois = annee < fin.annee ? MOIS_PAR_AN : fin.mois - 1;
     if (mois <= 0) {
       continue;
     }
     const facteur = reference > 0 ? salaireMoyenAnnuel(macro, annee) / reference : 1.0;
-    for (const source of sources) {
+    sources.forEach((source, rang) => {
       const typePeriode = interruptions.get(annee) ?? source.type_periode;
-      const base = source.type_periode === "emploi" ? source.revenu / quotite : source.revenu;
-      let revenu = base * facteur * mois / MOIS_PAR_AN;
+      let revenu = bases[rang] * facteur * mois / MOIS_PAR_AN;
+      const quotite = typePeriode === "emploi" ? tempsPartiel.get(annee) ?? 1.0 : 1.0;
       if (typePeriode === "emploi") {
-        revenu *= quotiteDeLAnnee(annee, new DateMois(annee, 1), fin, progressive);
+        revenu *= quotiteDeLAnnee(annee, new DateMois(annee, 1), fin, progressive, quotite);
       }
       lignes.push({
         annee,
@@ -1930,8 +1942,9 @@ export function prolongerReleve(releve, fin, macro, interruptions = new Map(),
         revenu,
         trimestres: null,
         type_periode: typePeriode,
+        quotite,
       });
-    }
+    });
   }
   return lignes;
 }
@@ -1942,7 +1955,8 @@ export function prolongerReleve(releve, fin, macro, interruptions = new Map(),
  * cumulées s'y ajoutent, chacune sur ses mois ; une année d'interruption
  * déclarée arrête l'activité principale, pas les cumulées. Une retraite
  * progressive fait travailler l'activité principale à sa quotité, de son mois
- * au départ. Voir `carriere.py`.
+ * au départ ; le temps partiel que la chronologie porte sur ses périodes
+ * (`quotite`), les années qu'il touche. Voir `carriere.py`.
  */
 function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progressive = null) {
   const anneeNaissance = dateNaissance.annee;
@@ -1987,15 +2001,6 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
     const moisParMetier = periodes.map(
       ({ ouverture, cloture }) => moisTravailles(annee, ouverture, cloture),
     );
-    const quotite = quotiteDeLAnnee(annee, debut, fin, progressive);
-    let revenu = 0;
-    periodes.forEach(({ metier }, i) => {
-      if (moisParMetier[i] > 0) {
-        revenu += revenuAnnuel(macro, metier, ageAnnee, annee, salaireMoyen)
-          * (moisParMetier[i] / MOIS_PAR_AN);
-      }
-    });
-    revenu *= quotite;
     // Le moteur ne connaît qu'une ligne, donc qu'un statut, par année civile :
     // les régimes liquident à l'année. L'année d'un changement de métier est
     // donc rattachée à celui qui en occupe le plus de mois — et, à égalité, à
@@ -2008,6 +2013,18 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
       }
     });
     const principal = periodes[dominant].metier;
+    // Le temps partiel se déclare par années entières, et la chronologie coupe
+    // les périodes au 1er janvier : toutes celles qui touchent l'année portent
+    // sa quotité, que la dominante dit donc pour elles.
+    const quotite = quotiteDeLAnnee(annee, debut, fin, progressive, principal.quotite ?? 1.0);
+    let revenu = 0;
+    periodes.forEach(({ metier }, i) => {
+      if (moisParMetier[i] > 0) {
+        revenu += revenuAnnuel(macro, metier, ageAnnee, annee, salaireMoyen)
+          * (moisParMetier[i] / MOIS_PAR_AN);
+      }
+    });
+    revenu *= quotite;
 
     lignes.push(ligneAnnuelle({
       annee,

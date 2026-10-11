@@ -1386,7 +1386,16 @@ referents:
         preuve: >-
           `variables/fonction_publique.py:332-335` (CNRACL) et `:1193-1195`
           (État), au commit `1c45423`
-        etat: a_reprendre
+        verification: >-
+          L. 11, 1°, du code des pensions (LEGIARTI000047453636) et l'article
+          13 du décret n° 2003-1306 (LEGIARTI000047633115) : la période à
+          temps partiel « comptée pour la fraction de sa durée » ; L. 14, I :
+          la durée d'assurance à temps complet. Repris le 11 octobre 2026 : le
+          champ « Temps partiel » du formulaire, la quotité des périodes
+          d'activité, et les services qui la comptent, dans les deux moteurs ;
+          l'exemple du SRE rend ses 148 trimestres (`sre_temps_partiel_pierre`).
+          La surcotisation ne l'est pas : la fiche reste `approchee`.
+        etat: repris
         chantier: "136.3"
       - quoi: >-
           Il calcule, et le plus souvent teste, la majoration de durée et la

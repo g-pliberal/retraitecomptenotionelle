@@ -975,6 +975,18 @@ export function formulaire(saisie, contexte, comparaison = null) {
       + `${contexte.paquet.presomptions.naissance_des_enfants.valeur} ans.`),
     g.champ("interruptions", "Interruptions", saisie.interruptions,
       "« 1995:1999:education_enfant », séparées par des virgules"),
+    // LE TEMPS PARTIEL (action 136, étape 3 ; fiche temps_partiel_fonction_publique) :
+    // facultatif, par années entières comme les interruptions. Sans lui, chaque
+    // année d'emploi est à temps plein.
+    g.champ("temps_partiel", "Temps partiel", saisie.temps_partiel,
+      "« 2005:2014:80 » : 80 % de 2005 à 2014, séparés par des virgules", "text",
+      { autocomplete: "off", spellcheck: "false" },
+      "Les revenus que vous saisissez sont ceux d'un temps plein : ces années "
+      + "en touchent la quotité, sauf sur un relevé, qui porte déjà ce que vous "
+      + "avez perçu. Dans la fonction publique, elles comptent à leur quotité "
+      + "dans les services, et en entier dans la durée d'assurance. Le temps "
+      + "partiel thérapeutique, et celui de droit pour élever un enfant né depuis "
+      + "2004, jusqu'à ses trois ans, comptent à temps plein : ne les déclarez pas."),
     // LE REVENU FISCAL DU FOYER (action 138, étapes 2 et 13) : facultatif. Il
     // fixe la tranche de CSG de la pension ; sans lui, le net présume un foyer
     // sans autre revenu que ses pensions.

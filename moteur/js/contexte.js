@@ -420,6 +420,7 @@ export class Contexte {
       age_liquidation: saisie.liquidation,
       profil_carriere: saisie.profil,
       interruptions: saisie.interruptionsDeCarriere(motifs),
+      temps_partiel: saisie.tempsPartielAnalyse(),
       nombre_enfants: saisie.enfants,
       naissances_enfants: saisie.naissancesEnfants(),
       conjoint: saisie.conjointDeclare(),
@@ -625,8 +626,9 @@ function etrangerDeclare(simulateur, saisie) {
  * Le relevé, sa dernière année poursuivie jusqu'au départ (`prolongerReleve`) :
  * comme le dernier métier d'un parcours court jusqu'à lui, et comme « Mon
  * estimation retraite » prolonge les revenus. Les années ajoutées prennent leur
- * motif comme celles d'une carrière de métiers (`interruptionsApres`) ; la
- * retraite progressive les met à temps partiel ; la radiation pour invalidité
+ * motif comme celles d'une carrière de métiers (`interruptionsApres`) ; le
+ * champ « Temps partiel » et la retraite progressive les mettent à temps
+ * partiel ; la radiation pour invalidité
  * les arrête à sa date quand elle ne tombe pas avant la dernière année du
  * relevé. Rien ne s'ajoute à qui est parti une année déjà passée. Voir
  * `_releve_jusqu_au_depart` du Python.
@@ -648,7 +650,8 @@ function releveJusquAuDepart(simulateur, saisie, releve, motifs) {
   const progressive = declaree === null ? null
     : [saisie.dateDe(declaree.age, true), declaree.quotite];
   return prolongerReleve(releve, fin, simulateur.macro,
-    saisie.interruptionsApres(new DateMois(derniere + 1, 1), motifs), progressive);
+    saisie.interruptionsApres(new DateMois(derniere + 1, 1), motifs), progressive,
+    saisie.tempsPartielAnalyse());
 }
 
 /**

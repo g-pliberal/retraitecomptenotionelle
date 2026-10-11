@@ -67,6 +67,7 @@ from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import AnneeCarriere, Carriere
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
+from retraite_notionnelle.saisie import Saisie
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit import departs, invalidite, liquider, ouvrir
@@ -1567,6 +1568,9 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
         naissances_enfants=() if sans_enfants else tuple(
             str(jour) for jour in c.get("naissances_enfants") or ()),
         interruptions={int(k): v for k, v in (c.get("interruptions") or {}).items()},
+        # Le temps partiel, comme le formulaire l'écrit : « 2000:2009:80 ».
+        temps_partiel=Saisie(temps_partiel=str(c.get("temps_partiel") or "")
+                             ).temps_partiel_analyse(),
     )
     if "conjoint" in c:
         # Le conjoint et le décès, comme la saisie les déclare : le sexe du
@@ -1674,6 +1678,14 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
 
         durees = releve.construire(actuel, carriere).durees
         return {emploi.fiche: emploi.services for emploi in durees.emplois}
+    if cle == "services_liquidables":
+        # Les trimestres de services que chaque régime nommé liquide, au
+        # décompte final (R. 26), tels que l'étape des durées les écrit.
+        from retraite_notionnelle.droit import releve
+
+        durees = releve.construire(actuel, carriere).durees
+        return {regime: durees.services_liquidables((regime,))
+                for regime in exemple["attendu"][cle]}
     if cle == "trimestres_de_majoration_enfants":
         # La caisse publie le nombre de trimestres qu'elle ajoute par
         # enfant ; le test le mesure en rejouant la MÊME carrière sans

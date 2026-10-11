@@ -143,6 +143,8 @@
 #   bonifications_des_emplois — pour chaque fiche des bonifications de service
 #     (emplois classés, militaires), les trimestres qu'elle ajoute aux services
 #     liquidés : toutes celles que la carrière reçoit, et elles seules.
+#   services_liquidables — pour chaque régime nommé, les trimestres de services
+#     qu'il liquide, au décompte final (R. 26 du code des pensions).
 #
 # `carriere.trimestres_valides` demande au test de choisir l'âge d'entrée qui
 # donne exactement ce nombre de trimestres à la liquidation ; `age_debut`
@@ -150,7 +152,8 @@
 # de France. `etranger` liste les périodes hors de France comme la saisie les
 # déclare — `pays`, le code de l'État au tableau des accords, `debut` et `fin`
 # au mois, `activite` salariée quand elle n'est pas dite —, `residence` l'État
-# où l'assuré réside hors de France. Les dates s'écrivent année-mois, et la pension prend effet le
+# où l'assuré réside hors de France. `temps_partiel` dit les années à temps
+# partiel comme le formulaire : « 2000:2009:80 ». Les dates s'écrivent année-mois, et la pension prend effet le
 # premier du mois. La naissance dit son jour quand l'exemple le donne
 # (« 1964-05-16 ») : la pension prend effet au premier du mois qui suit
 # l'anniversaire, sauf pour qui est né un 1er (R. 351-37). Un exemple qui ne le
@@ -856,6 +859,24 @@ exemples:
       La pension prend effet le 1er avril 2026.
     carriere: {naissance: "1962-03-20", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2026-04", trimestres_valides: 175}
     attendu: {trimestres_requis: 169, taux_liquidation: 0.80625}
+
+  # La page « La formule de calcul », relue le 11 octobre 2026 (action 136,
+  # étape 3) : son exemple compte les services d'un temps partiel. Il ne dit
+  # pas lesquelles de ses années sont à 80 % ; la carrière les place de 2000
+  # à 2009, ce qui ne change rien aux services. Il se rejoue sur eux seuls : la
+  # page divise par 168 trimestres requis, quand sa propre table et L. 161-17-3
+  # en donnent 167 à la génération 1958 (`sre_formule_de_calcul`, au registre
+  # des sources à explorer).
+  - id: sre_temps_partiel_pierre
+    source: {editeur: "SRE", reference: "retraitesdeletat.gouv.fr, Actif, Le calcul de ma retraite, « La formule de calcul », exemple de Pierre P.", verifie_le: "2026-10-11"}
+    enonce: >-
+      Pierre P., fonctionnaire né le 10 avril 1958, admis à la retraite par
+      limite d'âge le 10 avril 2025 après trente-neuf ans dans la fonction
+      publique, dont dix à temps partiel à 80 % : vingt-neuf années à temps
+      plein font 116 trimestres, les dix autres 10 × 0,80 × 4 = 32 ; la
+      pension retient 148 trimestres de services.
+    carriere: {naissance: "1958-04-10", sexe: H, affiliation: fonctionnaire_etat, debut: "1986-05", liquidation: "2025-05", temps_partiel: "2000:2009:80"}
+    attendu: {services_liquidables: {fonction_publique_etat: 148}}
 
   # La page « Le calcul de la pension » des militaires, dans sa mise à jour du
   # 6 mai 2021, lue le 8 octobre 2026 dans sa copie de 2022 (web.archive.org) :

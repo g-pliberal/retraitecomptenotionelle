@@ -602,6 +602,9 @@ export const DEFAUTS = Object.freeze({
   // dans `saisie.py`.
   revenu_fiscal: null,
   interruptions: "",
+  // Les années à temps partiel et leur quotité, en pour cent : « 2005:2014:80 ».
+  // Voir `temps_partiel` dans `saisie.py`.
+  temps_partiel: "",
   indexation: "masse_salariale",
   lissage: 1,
   age_reference: "fixe_apres_bascule",
@@ -765,6 +768,7 @@ export class Saisie {
       mois_en_france: [undefined, null, ""].includes(parametres.mois_en_france)
         ? null : entier(parametres, "mois_en_france", MOIS_PAR_AN),
       interruptions: (parametres.interruptions || "").trim(),
+      temps_partiel: (parametres.temps_partiel || "").trim(),
       indexation: parmi(parametres, "indexation", INDEXATIONS, DEFAUTS.indexation),
       lissage: entier(parametres, "lissage", DEFAUTS.lissage),
       age_reference: parmi(parametres, "age_reference", AGES_REFERENCE, DEFAUTS.age_reference),
@@ -870,6 +874,7 @@ export class Saisie {
     if (this.revenu_fiscal !== null && this.revenu_fiscal < 0) {
       throw new ErreurSaisie("Revenu fiscal de référence : un montant annuel positif.");
     }
+    this.tempsPartielAnalyse();
     this.verifierNaissances();
     this.verifierConjoint();
     this.verifierProgressive();
@@ -1347,6 +1352,63 @@ export class Saisie {
     return plages;
   }
 
+  /**
+   * « 2005:2014:80, 2016:2016:50 » → `Map` année → quotité, entre zéro et un.
+   * La forme est celle des interruptions, la quotité en pour cent à la place
+   * du motif : un entier de 1 à 99. Les refus sont les leurs, et deux quotités
+   * pour une même année. Voir `temps_partiel_analyse` du Python.
+   */
+  tempsPartielAnalyse() {
+    const quotites = new Map();
+    for (const brut of this.temps_partiel.replace(/\n/g, ",").split(",")) {
+      const morceau = brut.trim();
+      if (!morceau) {
+        continue;
+      }
+      const parties = morceau.split(":");
+      if (parties.length !== 3 || !parties.every((partie) => estEntier(partie))) {
+        throw new ErreurSaisie(
+          `Temps partiel mal formé : « ${morceau} ». Attendu `
+          + "« année_début:année_fin:quotité », par exemple 2005:2014:80.",
+        );
+      }
+      const [debut, fin, quotite] = parties.map(Number);
+      // Les années sont citées telles qu'elles ont été écrites, comme celles
+      // d'une interruption : les deux moteurs disent la même phrase.
+      for (const [texte, annee] of [[parties[0], debut], [parties[1], fin]]) {
+        if (!(annee >= ANNEE_CARRIERE_MINIMALE && annee <= ANNEE_CARRIERE_MAXIMALE)) {
+          throw new ErreurSaisie(
+            `Temps partiel « ${morceau} » : ${texte.trim()} ne tombe dans aucune `
+            + `carrière possible. Attendu entre ${ANNEE_CARRIERE_MINIMALE} et `
+            + `${ANNEE_CARRIERE_MAXIMALE}.`,
+          );
+        }
+      }
+      if (fin < debut) {
+        throw new ErreurSaisie(
+          `Temps partiel « ${morceau} » : il finit (${fin}) avant de `
+          + `commencer (${debut}).`,
+        );
+      }
+      if (!(quotite >= 1 && quotite <= 99)) {
+        throw new ErreurSaisie(
+          `Temps partiel « ${morceau} » : quotité attendue entre 1 et `
+          + "99 %, le temps plein n'ayant rien à déclarer.",
+        );
+      }
+      for (let annee = debut; annee <= fin; annee += 1) {
+        if (quotites.has(annee)) {
+          throw new ErreurSaisie(
+            `Temps partiel « ${morceau} » : l'année ${annee} a déjà `
+            + "sa quotité.",
+          );
+        }
+        quotites.set(annee, quotite / 100.0);
+      }
+    }
+    return quotites;
+  }
+
   /** Vrai si la carrière est LUE plutôt que reconstituée. */
   get releveActif() {
     return this.releve.trim().length > 0;
@@ -1382,10 +1444,13 @@ export class Saisie {
    * qui reste lu quand un relevé est saisi : il associe une année à un motif,
    * ce que le relevé ne sait pas dire. La ligne de l'année garde alors ses
    * trimestres — le relevé fait foi — et son revenu devient le salaire de
-   * référence d'avant l'interruption.
+   * référence d'avant l'interruption. **Les années à temps partiel** se
+   * déclarent de même, dans le champ « Temps partiel » : la ligne en prend la
+   * quotité, et garde son revenu, que le relevé porte déjà réduit.
    */
   releveAnalyse(motifsConnus = null) {
     const interruptions = this.interruptionsAnalysees(motifsConnus);
+    const tempsPartiel = this.tempsPartielAnalyse();
     const depart = this.dateLiquidation;
     // Les lignes sont COMPTÉES avant d'être lues : le refus doit coûter le
     // découpage du texte, et rien de plus. Les analyser d'abord pour les
@@ -1474,12 +1539,14 @@ export class Saisie {
         }
         trimestres = valeur;
       }
+      const typePeriode = interruptions.get(annee) ?? "emploi";
       lignes.push({
         annee,
         affiliation: parties[1],
         revenu,
         trimestres,
-        type_periode: interruptions.get(annee) ?? "emploi",
+        type_periode: typePeriode,
+        quotite: typePeriode === "emploi" ? tempsPartiel.get(annee) ?? 1.0 : 1.0,
       });
     }
     return lignes;
@@ -2310,6 +2377,7 @@ export class Saisie {
       ...(this.residence ? { residence: this.residence } : {}),
       ...(this.mois_en_france !== null ? { mois_en_france: this.mois_en_france } : {}),
       ...(this.revenu_fiscal !== null ? { revenu_fiscal: nombreBrut(this.revenu_fiscal) } : {}),
+      ...(this.temps_partiel ? { temps_partiel: this.temps_partiel } : {}),
       interruptions: this.interruptions, indexation: this.indexation,
       lissage: this.lissage,
       age_reference: this.age_reference, table: this.table,

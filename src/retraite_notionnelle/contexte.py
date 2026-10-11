@@ -409,6 +409,7 @@ class Contexte:
                 age_liquidation=saisie.liquidation,
                 profil_carriere=saisie.profil,
                 interruptions=saisie.interruptions_de_carriere(motifs),
+                temps_partiel=saisie.temps_partiel_analyse(),
                 nombre_enfants=saisie.enfants,
                 naissances_enfants=saisie.naissances_enfants(),
                 conjoint=saisie.conjoint_declare(),
@@ -657,8 +658,8 @@ def _releve_jusqu_au_depart(simulateur: Simulateur, saisie: Saisie,
     Les années ajoutées prennent leur motif comme celles d'une carrière de
     métiers (:meth:`Saisie.interruptions_apres`) : une période à l'étranger,
     puis le champ « Interruptions », qui garde le dernier mot —
-    ``sans_activite`` pour qui ne travaille plus. La retraite progressive
-    les met à temps partiel. La radiation pour invalidité, qui clôt l'emploi
+    ``sans_activite`` pour qui ne travaille plus. Le champ « Temps partiel »
+    et la retraite progressive les mettent à temps partiel. La radiation pour invalidité, qui clôt l'emploi
     de fonctionnaire, les arrête à sa date quand elle ne tombe pas avant la
     dernière année du relevé : ce qui la suit, le relevé ne le dit pas.
 
@@ -679,7 +680,7 @@ def _releve_jusqu_au_depart(simulateur: Simulateur, saisie: Saisie,
                    (saisie.date_de(declaree["age"], depart=True), declaree["quotite"]))
     return prolonger_releve(releve, fin, simulateur.macro,
                             saisie.interruptions_apres(DateMois(derniere + 1, 1), motifs),
-                            progressive)
+                            progressive, saisie.temps_partiel_analyse())
 
 
 def _demandes_de_pension(simulateur: Simulateur, saisie: Saisie) -> dict[str, float] | None:

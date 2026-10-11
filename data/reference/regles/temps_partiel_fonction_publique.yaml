@@ -1,37 +1,150 @@
 schema_version: 1
 id: temps_partiel_fonction_publique
 intitule: >-
-  Le temps partiel compte à temps plein dans la durée d'assurance, et seulement
-  à sa quotité dans les services qui liquident la pension (L. 5 et L. 14 I CPCMR)
-  — sauf le temps partiel thérapeutique, le temps partiel de droit pour un enfant
-  né depuis 2004 (trois ans par enfant) et la surcotisation, quatre trimestres au
-  plus (L. 11 bis).
-etat: manquante
+  Le temps partiel compte en entier pour ouvrir le droit (L. 5 CPCMR) et dans la
+  durée d'assurance (L. 14, I), et seulement à sa quotité dans les services que la
+  pension liquide (L. 11, 1° ; article 13 du décret n° 2003-1306 pour la CNRACL)
+  — sauf, comptés à temps plein, le temps partiel de droit pour élever un enfant
+  né depuis 2004, jusqu'à ses trois ans (L. 9, 1°, et R. 9), et, depuis le
+  1er septembre 2023, ceux du congé de présence parentale et du congé de proche
+  aidant et le temps partiel thérapeutique (L. 11, 1°, a à e) ; et la
+  surcotisation, depuis 2004, qui rend le temps plein à quatre trimestres de
+  services au plus, huit à l'agent handicapé à 80 % (L. 11 bis).
+etat: approchee
 effet: >-
-  Tout fonctionnaire qui a travaillé à temps partiel sans surcotiser : le modèle
-  compte chaque année à temps plein, aucune saisie ne portant la quotité (le champ
-  `quotite` des lignes de carrière n'est lu nulle part). Dix ans à 80 % valent huit
-  trimestres de services de trop : 3,5 points des 75 % du taux plein à 170 trimestres,
-  près d'un vingtième de la pension.
+  Tout fonctionnaire qui a travaillé à temps partiel. Jusqu'au 11 octobre 2026, le
+  modèle comptait chaque année à temps plein, aucune saisie ne portant la quotité :
+  dix ans à 80 % valent huit trimestres de services de moins, 3,6 points des 75 %
+  du taux plein à 167 trimestres requis, près d'un vingtième de la pension. Le
+  champ « Temps partiel » du formulaire les déclare désormais, par années entières
+  (« 2000:2009:80 ») ; l'exemple du SRE, dix ans à 80 % sur trente-neuf ans de
+  services, rend ses 148 trimestres au lieu de 156 (`sre_temps_partiel_pierre`).
+exemples:
+- sre_temps_partiel_pierre
+approximations:
+- ecart: >-
+    La surcotisation n'est pas portée : un temps partiel surcotisé depuis 2004 se
+    déclare à sa quotité, et perd les trimestres que la caisse lui rend.
+  effet: >-
+    quatre trimestres de services au plus, huit à l'agent handicapé à 80 % :
+    1,8 point des 75 % du taux plein à 167 trimestres requis, 3,6 au second.
+- ecart: >-
+    Les temps partiels que la loi compte à temps plein ne se distinguent pas des
+    autres : le formulaire demande de ne pas les déclarer, et leurs années gardent
+    alors le revenu d'un temps plein.
+  effet: >-
+    ni les services ni la durée ; le revenu de ces années seulement, que lisent
+    l'assiette du RAFP et les cotisations des systèmes 2 à 6.
+- ecart: >-
+    Le revenu d'une année à temps partiel est celui du temps plein réduit à la
+    quotité, quand la rémunération d'un service à 80 ou 90 % est des six septièmes
+    ou des trente-deux trente-cinquièmes du traitement (loi n° 84-53, article 60) ;
+    sur un relevé, qui porte la rémunération perçue, le traitement à temps plein
+    que la liquidation lit se déduit de même, par la quotité.
+  effet: >-
+    sur un parcours, 6,7 % de revenu en moins à 80 %, 1,6 % à 90 %, ces années-là
+    (le RAFP et les cotisations des systèmes 2 à 6) ; sur un relevé dont la
+    dernière année est à 80 ou 90 %, un traitement de référence 7,1 ou 1,6 % trop
+    haut. La retraite progressive fait de même.
+- ecart: >-
+    La quotité se déclare par années civiles entières, et l'interruption d'une
+    année l'emporte sur elle ; la carrière prolongée au-delà de la dernière année
+    (`Carriere.prolongee`) ne la porte pas.
+  effet: non mesuré
 sources:
-  lu_le: 2026-09-24
+  lu_le: 2026-10-11
   prochaine_relecture: 2027-06-30
   a_relire:
   - >-
-    Porter la quotité dans la saisie et dans les services de la famille fonction_publique
-    ; la surcotisation se lit alors comme un choix, borné à quatre trimestres.
+    La surcotisation, à porter comme un choix borné à quatre trimestres : une saisie
+    de plus, et la retenue sur le traitement à temps plein, dont le taux est fixé
+    par décret, à lire.
+  - >-
+    Avant 1982 : le mi-temps de la loi n° 70-523 du 19 juin 1970, et sa prise en
+    compte dans les services, que l'index LEGI ne porte pas (L. 11 n'y commence
+    qu'au 2 avril 1982) ; la CNRACL avant le 19 novembre 1985 (décret n° 65-773,
+    article 10).
+  - >-
+    Le minimum garanti (L. 17) lit les services liquidés, réduits du temps
+    partiel : vérifier, à la documentation de la caisse, qu'il les lit ainsi.
+  - >-
+    La confrontation à l'oracle (action 136, étape 3) : OpenFisca-France-Pension
+    réduit les services de la quotité ; un profil à temps partiel n'a pas encore
+    été passé par lui.
   lectures:
+  - type: legifrance
+    reference: >-
+      L. 11 CPCMR, 1° : « La période pendant laquelle les intéressés ont accompli
+      un service à temps partiel est comptée pour la fraction de sa durée égale au
+      rapport entre la durée hebdomadaire du service effectué et les obligations
+      hebdomadaires de service réglementairement fixées pour les agents de même
+      grade exerçant à temps plein les mêmes fonctions », et, depuis le
+      1er septembre 2023 (loi n° 2023-270), les cinq temps partiels « pris en compte
+      comme des périodes de travail à temps plein » ; la même règle, sous
+      l'autorisation de l'article 37 de la loi n° 84-16, du 27 juillet 1991 au
+      1er septembre 2023, sous l'article 34 du statut général du 2 avril 1982 au
+      27 juillet 1991, lues dans l'index LEGI
+    date: 2026-10-11
+  - type: legifrance
+    reference: >-
+      L. 5 CPCMR : « Les périodes de services accomplies à temps partiel sont
+      comptées pour la totalité de leur durée » pour la constitution du droit ;
+      L. 14, I : « Pour le calcul de la durée d'assurance, les périodes de
+      services accomplis à temps partiel [...] sont décomptées comme des périodes
+      de services à temps complet », depuis le 1er janvier 2004 ; L. 11 bis : la
+      surcotisation des périodes à temps partiel à compter du 1er janvier 2004,
+      « ne peut avoir pour effet d'augmenter la durée de services [...] de plus
+      de quatre trimestres », huit à l'agent handicapé dont l'incapacité atteint
+      80 % ; L. 9, 1°, et R. 9 : le temps partiel de droit pour élever un enfant né
+      ou adopté depuis le 1er janvier 2004, jusqu'à ses trois ans, la part non
+      travaillée comptée (six trimestres à 50 %, 2,4 à 80 %)
+    date: 2026-10-11
+  - type: legifrance
+    reference: >-
+      décret n° 2003-1306 (CNRACL), article 13 : la même fraction « pour les
+      fonctionnaires à temps non complet ou à temps partiel », et, depuis le
+      1er septembre 2023, les temps partiels que l'article 11 compte en entier
+      pour le droit comptés en entier pour la liquidation ; décret n° 65-773,
+      article 10, du 19 novembre 1985 au 1er janvier 2004 ; loi n° 84-53, article 60
+      : six septièmes et trente-deux trente-cinquièmes du traitement à 80 et 90 %
+    date: 2026-10-11
   - type: autre
     reference: >-
-      Service des retraites de l'État, pages « Les services valables pour ma retraite
-      », « Mes cotisations » et « La formule de calcul » (exemple de Pierre P.,
-      dix ans à 80 %)
-    date: 2026-09-24
+      Service des retraites de l'État, « La formule de calcul » : les périodes à
+      temps partiel comptées au prorata de la durée accomplie, sauf surcotisation,
+      le temps partiel de droit d'un enfant né depuis 2004 compté à temps plein
+      jusqu'à ses trois ans ; l'exemple de Pierre P., dix ans à 80 % sur
+      trente-neuf, 148 trimestres retenus. Relue le 11 octobre 2026
+    date: 2026-10-11
+    url: >-
+      https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-formule-de-calcul
   - type: service_public
     reference: fiche F21142, « 5 ans à temps partiel à 80 % comptent pour 4 ans
       »
     date: 2026-09-01
+code:
+  moteur: >-
+    Le champ « Temps partiel » (`temps_partiel`, `Saisie.temps_partiel_analyse`,
+    `saisie.py` et `saisie.js`) donne à une année la quotité de l'activité
+    principale ; la chronologie la porte sur les périodes d'activité, coupées au
+    1er janvier où elle change (`chronologie.du_parcours`, `du_releve`) ; la
+    carrière en fait la quotité de la ligne (`_quotite_de_l_annee`, avec la
+    retraite progressive), qui réduit le revenu d'un parcours et laisse celui
+    d'un relevé. Les services de la famille fonction_publique la lisent déjà
+    (`droit/compter.py`, `compter.js`), et la liquidation le traitement à temps
+    plein (`droit/liquider.py`).
+  tests: tests/test_temps_partiel.py, et l'exemple `sre_temps_partiel_pierre`
 textes_a_rattacher:
-- reference: L. 5 CPCMR
-- reference: L. 11 bis CPCMR
-- reference: L. 14 I CPCMR, avant-dernier alinéa
+- reference: >-
+    L. 11 CPCMR, 1° : LEGIARTI000006362691 (2 avril 1982), LEGIARTI000006362692,
+    LEGIARTI000006362693 (27 juillet 1991), LEGIARTI000047453636 (1er septembre
+    2023)
+- reference: >-
+    L. 5 CPCMR (LEGIARTI000047453644) ; L. 14, I (LEGIARTI000006362704 à
+    LEGIARTI000048844775) ; L. 11 bis (LEGIARTI000006362694)
+- reference: >-
+    L. 9, 1° (LEGIARTI000006362679 à LEGIARTI000053279095), R. 9
+    (LEGIARTI000006362896, LEGIARTI000047985825, LEGIARTI000050941558)
+- reference: >-
+    décret n° 2003-1306, article 13 (LEGIARTI000006400874, LEGIARTI000047633115) ;
+    décret n° 65-773, article 10 (LEGIARTI000006368197)

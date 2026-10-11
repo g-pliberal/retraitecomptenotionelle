@@ -647,7 +647,10 @@ export function duResume(anneeNaissance, sexe, moisNaissance = 1, ageLiquidation
  * l'âge est atteint, compté du mois de naissance ; le départ, au premier mois
  * où l'âge est révolu, compté du mois que le jour de naissance désigne. Les
  * contrôles sont ceux du parcours : les métiers se suivent, le premier n'est
- * pas cumulé, rien ne dépasse le départ.
+ * pas cumulé, rien ne dépasse le départ. `temps_partiel` donne à une année la
+ * quotité de l'activité principale : chaque métier principal se coupe au
+ * 1er janvier des années où elle change, et chaque morceau à temps partiel la
+ * porte (`auTempsPartiel`).
  */
 export function duParcours({
   annee_naissance,
@@ -657,6 +660,7 @@ export function duParcours({
   mois_naissance = 1,
   profil_carriere = "auto",
   interruptions = null,
+  temps_partiel = null,
   nombre_enfants = 0,
   part_primes = 0.0,
   naissances_enfants = [],
@@ -710,15 +714,24 @@ export function duParcours({
     throw new Error("le dernier métier commence après la liquidation");
   }
 
-  const periodes = principaux.map((metier, i) => fait(
-    `emploi_${i + 1}`, ASSURE, EMPLOI, jour(bornes[i]),
-    jour(i + 1 < bornes.length ? bornes[i + 1] : fin), {
-      affiliation: metier.affiliation,
-      niveau_salaire: metier.niveau_salaire,
-      profil: profil_carriere,
-      part_primes,
-    },
-  ));
+  const periodes = [];
+  principaux.forEach((metier, i) => {
+    const cloture = i + 1 < bornes.length ? bornes[i + 1] : fin;
+    auTempsPartiel(bornes[i], cloture, temps_partiel ?? new Map())
+      .forEach(([de, a, quotite], morceau) => {
+        const attributs = {
+          affiliation: metier.affiliation,
+          niveau_salaire: metier.niveau_salaire,
+          profil: profil_carriere,
+          part_primes,
+        };
+        if (quotite < 1.0) {
+          attributs.quotite = quotite;
+        }
+        periodes.push(fait(morceau === 0 ? `emploi_${i + 1}` : `emploi_${i + 1}_${morceau + 1}`,
+          ASSURE, EMPLOI, jour(de), jour(a), attributs));
+      });
+  });
   cumuls.forEach((metier, i) => {
     const ouverture = moisDeNaissance.plusMois(enMois(metier.age_debut));
     const cloture = metier.age_fin === null || metier.age_fin === undefined
@@ -759,9 +772,32 @@ export function duParcours({
 }
 
 /**
+ * La période [ouverture, cloture), coupée au 1er janvier de chaque année où la
+ * quotité change : des morceaux de quotité constante, chacun avec la sienne, un
+ * à temps plein. Sans temps partiel, la période reste entière. Voir
+ * `_au_temps_partiel` du Python.
+ */
+function auTempsPartiel(ouverture, cloture, tempsPartiel) {
+  const morceaux = [];
+  let debut = ouverture;
+  for (let annee = ouverture.annee + 1; annee <= cloture.annee; annee += 1) {
+    const coupure = new DateMois(annee, 1);
+    if (coupure.rang >= cloture.rang) {
+      break;
+    }
+    if ((tempsPartiel.get(annee) ?? 1.0) !== (tempsPartiel.get(annee - 1) ?? 1.0)) {
+      morceaux.push([debut, coupure, tempsPartiel.get(annee - 1) ?? 1.0]);
+      debut = coupure;
+    }
+  }
+  morceaux.push([debut, cloture, tempsPartiel.get(debut.annee) ?? 1.0]);
+  return morceaux;
+}
+
+/**
  * La chronologie d'un relevé : un fait par ligne, une année civile chacun,
  * dans l'ordre du relevé — la première ligne d'une année est l'activité
- * principale.
+ * principale —, avec la quotité d'une année à temps partiel.
  */
 export function duReleve({
   annee_naissance,
@@ -796,6 +832,8 @@ export function duReleve({
     const emploi = typePeriode === "emploi";
     if (!emploi) {
       attributs.motif = typePeriode;
+    } else if ((ligne.quotite ?? 1.0) < 1.0) {
+      attributs.quotite = ligne.quotite;
     }
     return fait(`releve_${i + 1}`, ASSURE, emploi ? EMPLOI : INTERRUPTION,
       `${quatre(ligne.annee)}-01-01`, `${quatre(ligne.annee + 1)}-01-01`, attributs);
