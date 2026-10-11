@@ -3,6 +3,7 @@
 
     python scripts/part_minimum_contributif.py                     # les deux grilles
     python scripts/part_minimum_contributif.py --grille ensemble   # une seule
+    python scripts/part_minimum_contributif.py --grille population # la population
     python scripts/part_minimum_contributif.py --processus 4       # sur quatre cœurs
     python scripts/part_minimum_contributif.py --json part.json
 
@@ -60,7 +61,9 @@ exige, quand une part des liquidants part avec une décote ; personne ne renonce
 à ce qu'il peut demander ; et toutes les pensions se liquident ensemble, la
 condition de subsidiarité étant toujours remplie. Et les axes de la grille sont
 indépendants : le salaire d'une femme y est celui d'un homme, ce qui efface une
-part de ce que l'EACR mesure entre les sexes.
+part de ce que l'EACR mesure entre les sexes. La population de
+``scripts/grille_large.py`` (``--grille population``, action 136, étape 6)
+donne à chaque sexe les siens, et au salariat privé le temps partiel.
 """
 
 from __future__ import annotations

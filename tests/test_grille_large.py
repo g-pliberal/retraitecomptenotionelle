@@ -168,6 +168,69 @@ def test_les_salaires_gardent_la_moyenne_et_passent_la_grille_du_depot(source, s
     assert max(v.cas.niveau_salaire for v in variantes) > 2.5 * 3
 
 
+def test_la_population_garde_les_parts_de_l_eir(simulateur, source):
+    """La population remplace les quatre cas types de la Cnav par le gabarit
+    du salariat privé sans rien changer aux poids : chaque groupe garde sa
+    part de personnes et sa part de femmes."""
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    assert not any(v.cas.code.split("~", 1)[0] in G.SALARIAT_PRIVE for v in variantes)
+    poids = _poids(variantes, simulateur.effectifs, source.millesime)
+    groupes = _par(variantes, poids, lambda v: v.groupe)
+    femmes = _par(variantes, poids, lambda v: (v.groupe, v.cas.sexe))
+    for groupe, part in G.parts_personnes(source).items():
+        assert groupes[groupe] == pytest.approx(part, abs=1e-12), groupe
+    for groupe, part in G.parts_femmes(source).items():
+        assert femmes[(groupe, "F")] / groupes[groupe] == pytest.approx(part, abs=1e-12)
+
+
+def test_le_salariat_prive_a_les_salaires_de_son_sexe_et_de_son_temps(simulateur, source,
+                                                                     parametres):
+    """Au salariat privé, chaque sexe a, génération par génération, le salaire
+    moyen que l'INSEE lui donne l'année de ses quarante-cinq ans ; les trois
+    centiles du haut sont cadres ; la part du temps partiel est, sexe par
+    sexe, la moyenne de celle des 25-49 ans."""
+    donnees = G.donnees_population(parametres.racine_donnees)
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    gabarit = [v for v in variantes if v.cas.code.startswith(f"{G.GABARIT}~")]
+    lignes = G._lire_macro(parametres.racine_donnees, "dispersion_salaires_sexe.csv")
+    moyennes = {(int(l["annee"]), l["sexe"]): float(l["salaire_relatif"])
+                for l in lignes if l["centile"] == "moyenne"}
+    for sexe in ("F", "H"):
+        siens = [v for v in gabarit if v.cas.sexe == sexe]
+        poids = sum(v.retraites[0][1] for v in siens)
+        for generation in (1906, 1955, 1979):
+            moyenne = sum(v.retraites[0][1] * v.cas.niveau_de(generation)
+                          for v in siens) / poids
+            assert moyenne == pytest.approx(moyennes[(generation + G.AGE_DU_RANG, sexe)])
+        partiels = sum(v.retraites[0][1] for v in siens if v.cas.ages_partiel) / poids
+        assert partiels == pytest.approx(donnees.parts_partiel[sexe])
+        cadres = sum(v.retraites[0][1] for v in siens
+                     if v.cas.affiliation == "salarie_prive_cadre") / poids
+        assert cadres == pytest.approx(0.175)
+    assert moyennes[(2000, "F")] < moyennes[(2000, "H")]
+
+
+def test_le_temps_partiel_reduit_le_revenu_de_25_a_49_ans(simulateur, source):
+    """Une carrière à temps partiel est, de 25 à 49 ans, celle de son jumeau à
+    temps complet à la quotité de sa génération, et la même ailleurs."""
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    partiel = next(v for v in variantes
+                   if v.cas.code == f"{G.GABARIT}~f~40_plus~p50~partiel").cas
+    complet = next(v for v in variantes if v.cas.code == f"{G.GABARIT}~f~40_plus~p50").cas
+    generation = 1960
+    quotite = G._par_generation(partiel.quotites, generation, 1.0)
+    assert 0.5 < quotite < 0.7
+    ages = 62
+    revenus = {ligne.annee: ligne.revenu
+               for ligne in partiel.carriere_a(simulateur, generation, ages).lignes}
+    pleins = {ligne.annee: ligne.revenu
+              for ligne in complet.carriere_a(simulateur, generation, ages).lignes}
+    for annee in (generation + 25, generation + 37, generation + 49):
+        assert revenus[annee] == pytest.approx(pleins[annee] * quotite)
+    for annee in (generation + 24, generation + 50):
+        assert revenus[annee] == pytest.approx(pleins[annee])
+
+
 def test_la_grille_du_depot_reecrite_redonne_la_page(parametres):
     """Les pseudo-caisses et la grille simulée à part donnent la page au
     millième : la mesure ne mesure rien d'autre que la grille."""
