@@ -248,7 +248,8 @@ approximations:
     le modèle les achète à 0,69 %. Sur des carrières fictives parties à 64 ans, la
     complémentaire ressort désormais de 0,5 % (née en 1975) à 2,8 % (née en 2005)
     au-dessous d'un prix croissant de 0,575 %, quand elle ressortait de 2,4 % à 15,7 %
-    au-dessus
+    au-dessus. Le 12 octobre 2026, la forme du prix de la page est mesurée (lecture
+    divergente plus bas) : 1 % de plus chaque année jusqu'en 2037, puis figé
 - version: salaire_moyen_au_dela_du_bareme
   ecart: >-
     La valeur de service des liquidations postérieures au dernier barème suit les prix,
@@ -274,7 +275,7 @@ approximations:
     simulation du scénario 1 baissaient, −1,20 % en médiane, jusqu'à −4,1 % pour une
     carrière qui liquide loin dans l'avenir
 sources:
-  lu_le: 2026-10-05
+  lu_le: 2026-10-12
   prochaine_relecture: 2026-10-31
   a_relire:
   - >-
@@ -311,6 +312,22 @@ sources:
     2023 fonde jusqu'en 2037, et qui reste une hypothèse, que la fédération dit
     « purement conventionnelle » ; le simulateur garde les prix, et une bulle, sous la
     pension du système actuel, dit les deux conventions.
+  - >-
+    La valeur d'achat que projette « Mon estimation retraite ». Mesurée le 12 octobre 2026
+    sur une carrière fictive de salarié du privé à revenu constant, 30 000 € bruts par an
+    sous le plafond, le propriétaire connecté, par les points Agirc-Arrco « retenus pour
+    le calcul » à plusieurs âges de départ et sous un temps partiel commencé un 1er janvier
+    ou le suivant : la page achète les points de 2027 à un prix supérieur de 1 % à celui de
+    2026, ceux de 2037 et des années suivantes à 1,01¹¹ fois celui de 2026 (+11,6 %), et
+    cette règle — 1 % de plus par an jusqu'en 2037, puis plus rien — redonne à 0,01 % près
+    la somme de toutes les années de la carrière d'essai jusqu'à l'âge légal. 2037 est
+    l'horizon jusqu'où l'annexe de l'accord du 5 octobre 2023 projette les valeurs du
+    régime ; au-delà, la page ne fait plus croître le prix, quand l'accord le fait suivre
+    au salaire moyen et que le modèle le fait. D'où les « 11,6 % » du 4 octobre, qui ne valaient que pour une année postérieure
+    à 2037, et la complémentaire du modèle sous celle de la page, d'autant plus qu'on
+    travaille après 2037. Après l'âge légal de la carrière d'essai, chaque année ajoutée
+    gagne encore 1 % de points : la page y prolonge peut-être le revenu au-delà de la fin
+    de carrière saisie ; non vérifié.
   lectures:
   - type: legifrance
     reference: >-

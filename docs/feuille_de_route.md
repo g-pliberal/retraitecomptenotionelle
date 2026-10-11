@@ -6345,15 +6345,15 @@ la décision du 1er novembre, une ligne de plus à la table datée.
 
 ### 142. Les simulateurs officiels, sans y passer ses journées — `en cours`
 
-**Reprise, au 5 octobre 2026.** Faites : les étapes 1 à 3, le relevé prolongé
-jusqu'au départ, la réversion du RAFP, de la RCI et de l'Ircantec, l'étape 4
-(Destinie 2 puis TRAJECTOiRE exécutés à part, leurs sorties en témoins ; la
-valeur de service du jour, erreur du dépôt, va en 138.20), la délibération de
-l'ERAFP et le départ anticipé des handicapés ; le net officiel du bloc, que
-l'action 138 a fait (le 1 %, puis la CSG du foyer, présomption et champ).
-Reste le seul point qui demande le propriétaire, connecté à « Mon estimation
-retraite » : le prix d'achat Agirc-Arrco implicite de la page ; l'action se
-clôt ensuite. Ines va à l'action 137. Détail : en fin d'action.
+**Reprise, au 12 octobre 2026.** Faites : les étapes 1 à 4, le relevé
+prolongé jusqu'au départ, la réversion du RAFP, de la RCI et de l'Ircantec, la
+délibération de l'ERAFP, le départ anticipé des handicapés, le net officiel du
+bloc ; et, le propriétaire connecté, le prix d'achat Agirc-Arrco implicite de
+« Mon estimation retraite » : 1 % de plus par an jusqu'en 2037, puis figé
+(note du 12 octobre). Rien ne reste qui demande le propriétaire : l'action se
+clôt, telle quelle, à la fin de `docs/archives/feuille_de_route.md`, son
+dossier de notes sous `docs/archives/feuille_de_route/`, après
+`python scripts/conservation.py --depuis HEAD`. Ines va à l'action 137.
 
 **Demande**, le 4 octobre 2026 : « J'aimerais que tu puisses me dire si on
 peut automatiser avec du computer use ou d'autres techniques l'exploitation de

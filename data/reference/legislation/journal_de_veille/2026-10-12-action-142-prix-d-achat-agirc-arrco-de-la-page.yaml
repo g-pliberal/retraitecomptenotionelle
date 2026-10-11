@@ -1,0 +1,19 @@
+date: "2026-10-12"
+session: "action 142 : le prix d'achat Agirc-Arrco implicite de « Mon estimation retraite », mesuré le propriétaire connecté"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1. Le
+  simulateur « Mon estimation retraite » (version 27.50.5, moteur 10.0.0-rc6 du 18 août
+  2026), le propriétaire connecté lui-même par FranceConnect, sur une situation fictive
+  qui n'a pas été enregistrée ; la fiche agirc_arrco_valeur_achat et la valeur d'achat
+  de 2026 du dépôt (regimes/valeurs_point.csv).
+trouve: >-
+  Aucun texte de droit. La page projette la valeur d'achat de l'Agirc-Arrco à 1 % de plus
+  par an jusqu'en 2037, puis la fige : les points de 2027 au prix de 2026 plus 1 %, ceux
+  des années postérieures à 2037 au prix de 2026 multiplié par 1,01¹¹, et la règle
+  redonne à 0,01 % près la somme des années mesurées. Les « 11,6 % » du 4 octobre étaient
+  ce prix figé. L'accord fait suivre la valeur d'achat au salaire moyen, comme le modèle :
+  l'écart est une convention de la page, déclarée dans la fiche.
+reste: >-
+  Ce que la page fait du revenu après l'âge légal de la carrière d'essai, où chaque année
+  ajoutée gagne encore 1 % de points ; la clôture de l'action 142, à déplacer à
+  l'archive de la feuille de route.
