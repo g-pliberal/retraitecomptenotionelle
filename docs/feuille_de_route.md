@@ -2223,16 +2223,16 @@ vaut pour elle. C'est le test à écrire à la fin de ce chantier.
 
 ### 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, puis le défaut — `en cours`
 
-**Reprise, au 1er octobre 2026.** Le réglage `contribution_etat` est fait, et
-`retraite_seule` en est le défaut depuis le 24 septembre, sur décision du
-propriétaire. Reste le point 1 : une vraie série année par année de la part
-« retraite seule », au lieu de la proportion de 2025 prêtée aux autres années
-(fiabilité `estimee`). Il attend le projet de loi de finances pour 2027, à
-déposer au plus tard le 6 octobre, où la Cour demande que la décomposition
-soit publiée. Commencer par voir s'il est déposé, en tirer le jaune pensions
-du miroir de l'Assemblée nationale, comme celui de 2026, puis faire accepter
-plusieurs années à `PartRetraiteSeuleEtat` (`donnees/regimes.py`,
-`moteur/js/regimes.js`). Détail : « Le point 1 reste ouvert ».
+**Reprise, au 11 octobre 2026.** Le réglage et le défaut sont faits ; reste le
+point 1, une vraie série année par année de la part « retraite seule », au lieu
+de la proportion de 2025 prêtée aux autres années. Le PLF 2027 est déposé
+(n° 3210, 1er octobre), mais son jaune pensions n'était pas en ligne le 11 : la
+page du dossier de l'Assemblée n'a pas encore de « Jaunes annexés », et la LOLF
+(art. 39) le veut déposé avant la séance publique, ouverte le 13. L'y tirer,
+voir s'il décompose le taux — l'article 75 du projet n'y promet que la part des
+budgets ministériels et les enjeux de l'équilibre —, puis faire accepter
+plusieurs années à `PartRetraiteSeuleEtat` (`regimes.py`, `regimes.js`).
+Détail : « Le point 1 reste ouvert », et le journal de veille du 11 octobre.
 
 **Demande.** « Dis-moi en plus sur le taux seulement dédié à la retraite, ça
 m'intéresse — ça peut changer beaucoup de choses », puis : « intègre-le comme

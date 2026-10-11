@@ -1,0 +1,37 @@
+date: "2026-10-11"
+session: "action 129 : le PLF 2027 déposé, son jaune pensions pas encore en ligne"
+consulte: >-
+  Le dossier législatif du projet de loi de finances pour 2027 sur le site de
+  l'Assemblée nationale (dyn/17/dossiers/PLF_2027) et le texte du projet,
+  n° 3210 : son exposé général et son article 75. Le projet annuel de
+  performances « Pensions » 2027, tiré de la même page. L'article 39 de la loi
+  organique relative aux lois de finances, version en vigueur depuis le
+  26 septembre 2022 (Légifrance, LEGIARTI000044611960), lu par WebFetch, curl
+  butant sur la page d'attente du site. budget.gouv.fr refuse toujours les
+  adresses du proxy (403), page comme fichier, et WebFetch aussi.
+trouve: >-
+  Le projet est déposé le jeudi 1er octobre 2026, sous le n° 3210, et renvoyé
+  à la commission des finances ; la séance publique s'ouvre le mardi
+  13 octobre. Mais la page du dossier ne porte encore, le 11 octobre, ni
+  section « Jaunes annexés » ni jaune pensions, quand celle du PLF 2026 porte
+  les deux, et les chemins statiques plausibles de www2 répondent 404. La LOLF
+  n'exige le dépôt de chaque annexe générale qu'« avant le début de l'examen
+  du projet de loi de finances de l'année en séance publique par l'Assemblée
+  nationale ». L'article 75 du projet complète le 14° du I de l'article 179 de
+  la loi n° 2019-1479 du 28 décembre 2019, qui prévoit le jaune pensions :
+  « Il présente la part des budgets ministériels dédiée au paiement des
+  pensions et les enjeux relatifs à la mise à l'équilibre du régime de
+  retraite de l'État. » Son exposé des motifs reconnaît que les taux de
+  82,28 % et 126,07 % « ne permettent pas de distinguer l'effort contributif
+  des employeurs de la subvention d'équilibre versée par l'État », et
+  l'exposé général dit le jaune annexé au projet déjà enrichi. Rien n'y
+  promet la décomposition par poste du tableau n° 15 de la Cour. Le projet
+  annuel de performances « Pensions » ne la porte pas non plus ; il tient le
+  taux civil stable à 82,28 % en 2027, le militaire à 126,07 % depuis 2013.
+reste: >-
+  Tirer le jaune pensions 2027 de la page du dossier dès qu'il y paraît, au
+  plus tard pour la séance du 13 octobre, et voir s'il décompose le taux
+  année par année ; s'il ne donne que la part des budgets ministériels, le
+  point 1 de l'action 129 attend encore. Sinon, faire accepter plusieurs
+  années à `PartRetraiteSeuleEtat`, dans les deux moteurs.
+prochaine_veille: "2026-10-13"
