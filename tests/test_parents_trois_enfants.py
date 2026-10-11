@@ -38,10 +38,15 @@ def simulateur() -> Simulateur:
 def _carriere(simulateur: Simulateur, naissance: int, debut: float, liquidation: float,
               naissances: tuple[str, ...], sexe: str = "F", statut: str = ETAT,
               salaire: float = 1.0) -> Carriere:
+    """La carrière d'un assuré né le 15 janvier : le jour se déclare, puisque
+    l'âge des conditions et la date du départ se comptent depuis lui ; celui
+    que la présomption pose a son test (``test_chronologie.py`` ; feuille de
+    route, action 135, levier 2)."""
     return Carriere.depuis_parcours(
         annee_naissance=naissance, sexe=sexe, metiers=[Metier(statut, debut, salaire)],
         age_liquidation=liquidation, macro=simulateur.macro, mois_naissance=1,
-        part_primes=0.15, nombre_enfants=len(naissances), naissances_enfants=naissances)
+        jour_naissance=15, part_primes=0.15, nombre_enfants=len(naissances),
+        naissances_enfants=naissances)
 
 
 def _depart(simulateur: Simulateur, carriere: Carriere, regime: str = "fonction_publique_etat"):
@@ -56,11 +61,11 @@ def _pension(simulateur: Simulateur, carriere: Carriere, regime: str = "fonction
 
 
 def test_la_mere_partie_a_cinquante_ans_en_2000_a_150_trimestres_sans_decote(simulateur):
-    """Née en 1950, fonctionnaire de l'État depuis 1975, trois enfants de 1976 à
-    1981 : ses quinze ans de services, en décembre 1989, réunissent les
-    conditions. Partie à cinquante ans, en 2000, son droit est ouvert ; la
-    durée est celle d'avant 2004, 150 trimestres, sans décote. Le premier cas
-    de Destinie 2 : l'ouverture à la date des conditions."""
+    """Née le 15 janvier 1950, fonctionnaire de l'État depuis 1975, trois
+    enfants de 1976 à 1981 : ses quinze ans de services, en décembre 1989,
+    réunissent les conditions. Partie à cinquante ans, en 2000, son droit est
+    ouvert ; la durée est celle d'avant 2004, 150 trimestres, sans décote. Le
+    premier cas de Destinie 2 : l'ouverture à la date des conditions."""
     carriere = _carriere(simulateur, 1950, 25.0, 50.0, ("1976", "1978", "1981"))
     depart = _depart(simulateur, carriere)
     assert depart is not None
@@ -118,8 +123,8 @@ def test_le_nouveau_calcul_prend_l_annee_des_soixante_ans(simulateur):
 @pytest.mark.parametrize(("liquidation", "ancien"), [(50 + 5 / 12, True), (50.5, False)])
 def test_la_pension_de_juillet_2011_garde_l_ancien_calcul_celle_d_aout_non(
         simulateur, liquidation, ancien):
-    """Née en janvier 1961, sédentaire : à plus de cinq ans de soixante ans au
-    1er janvier 2011. Partie en juillet 2011, sa demande est présumée faite
+    """Née le 15 janvier 1961, sédentaire : à plus de cinq ans de soixante ans
+    au 1er janvier 2011. Partie en juillet 2011, sa demande est présumée faite
     avant 2011 (IV, 1°) et l'ancien calcul demeure ; partie en août, non."""
     carriere = _carriere(simulateur, 1961, 22.0, liquidation, ("1984", "1986", "1988"))
     assert carriere.date_liquidation.mois == (7 if ancien else 8)
