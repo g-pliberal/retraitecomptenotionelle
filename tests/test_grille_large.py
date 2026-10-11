@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import math
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -259,7 +260,8 @@ def test_un_temps_complet_ne_se_paie_pas_sous_le_smic(simulateur, source):
     carriere = femme.carriere_a(simulateur, 1940, 62)
     revenus = {ligne.annee: ligne.revenu for ligne in carriere.lignes}
     for annee in (1970, 1985):
-        assert revenus[annee] == pytest.approx(simulateur.macro.smic_annuel(annee))
+        part = G._par_generation(femme.volumes, annee - 1940, 1.0)
+        assert revenus[annee] == pytest.approx(simulateur.macro.smic_annuel(annee) * part)
 
 
 def test_la_persistance_se_lit_dans_le_fichier_certifie(parametres):
@@ -307,12 +309,49 @@ def test_une_part_du_bas_reste_au_smic_toute_la_carriere(simulateur, source, par
                for ligne in homme.carriere_a(simulateur, generation, 62).lignes}
     # 2000 à 2003 sont les années assimilées de la variante : sans salaire.
     for annee in (1985, 1990, 2015):
-        assert revenus[annee] == pytest.approx(simulateur.macro.smic_annuel(annee))
+        part = G._par_generation(homme.volumes, annee - generation, 1.0)
+        assert revenus[annee] == pytest.approx(simulateur.macro.smic_annuel(annee) * part)
     part, poids_du_bas = donnees.persistants["H"], G.CENTILES[0][1]
     moyenne = (part * homme.niveau_de(generation)
                + (poids_du_bas - part) * bas.niveau_de(generation)) / poids_du_bas
     assert moyenne == pytest.approx(G._par_generation(
         donnees.niveaux[("H", "p10")], generation, None))
+
+
+def test_le_volume_se_lit_dans_le_fichier_certifie(parametres):
+    """La part de l'année travaillée à un âge : le volume de sa tranche,
+    rapporté à celui de l'ensemble (0,77), fois celui d'un temps complet
+    (0,85) ; le rang, le volume de sa catégorie rapporté à l'ensemble."""
+    volumes, rangs = G.volumes_de_travail(parametres.racine_donnees)
+    attendus = {0: 0.48, 25: 0.79, 40: 0.84, 50: 0.86, 55: 0.77}
+    assert [age for age, _ in volumes] == sorted(attendus)
+    for age, part in volumes:
+        assert part == pytest.approx(attendus[age] / 0.77 * 0.85)
+    assert rangs["p10"] == pytest.approx(0.68 / 0.77)
+    assert rangs["p50"] == 1.0
+    assert rangs["p99"] == pytest.approx(0.87 / 0.77)
+
+
+def test_une_annee_d_activite_se_paie_a_la_part_travaillee_a_son_age(simulateur, source):
+    """Sous ``VOLUME_DE_TRAVAIL``, le salariat privé est payé, chaque année
+    d'activité, la part de l'année travaillée à son âge : son revenu est celui
+    de la même carrière sans volume, fois cette part ; et le temps partiel
+    s'y ajoute."""
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    cas = next(v for v in variantes if v.cas.code == f"{G.GABARIT}~h~40_plus~p50").cas
+    partiel = next(v for v in variantes
+                   if v.cas.code == f"{G.GABARIT}~f~40_plus~p50~partiel").cas
+    assert cas.volumes
+    generation, age_de_depart = 1960, 62
+    for carriere in (cas, partiel):
+        avec = {l.annee: l.revenu
+                for l in carriere.carriere_a(simulateur, generation, age_de_depart).lignes}
+        sans = {l.annee: l.revenu for l in replace(carriere, volumes=()).carriere_a(
+            simulateur, generation, age_de_depart).lignes}
+        for age in (22, 30, 45, 52, 58):
+            part = G._par_generation(carriere.volumes, age, 1.0)
+            assert part < 1.0
+            assert avec[generation + age] == pytest.approx(sans[generation + age] * part), age
 
 
 def test_les_carrieres_courtes_de_la_population_sont_celles_de_tous(simulateur, source):

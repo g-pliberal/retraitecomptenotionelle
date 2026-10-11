@@ -131,7 +131,11 @@ Smic (:data:`PLANCHER_SMIC`) ; les carrières courtes à la part que l'EIR donne
 persistance au Smic (:data:`PERSISTANCE_SMIC`) : une part de la classe du bas
 de chaque sexe, celle que la DG Trésor trouve encore au voisinage du Smic six
 ans plus tard (``persistance_smic.csv``), y est payée toute la carrière, et le
-reste de la classe en garde la moyenne.
+reste de la classe en garde la moyenne. La quatrième y met le volume de
+travail (:data:`VOLUME_DE_TRAVAIL`) : chaque année d'activité du salariat
+privé est payée à la part de l'année que l'INSEE mesure à son âge
+(``volume_travail.csv``), et, en variante, à son rang aussi
+(:data:`VOLUME_SELON_LE_RANG`).
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -339,6 +343,35 @@ PERSISTANCE_SMIC = True
 #: Le voisinage du Smic, en multiple de lui : celui de la DG Trésor.
 SEUIL_VOISINAGE = 1.05
 
+#: Le volume de travail : une année travaillée ne l'est pas toute — les
+#: entrées, les sorties, le chômage et les contrats courts la coupent. Chaque
+#: année d'activité du salariat privé est payée à la part de l'année que
+#: l'INSEE mesure à son âge (``volume_travail.csv``) : le volume de la tranche,
+#: rapporté à celui de l'ensemble, fois celui d'un temps complet, 0,85 — soit
+#: 0,53 avant 25 ans, 0,87 de 25 à 39, 0,93 de 40 à 49, 0,95 de 50 à 54, 0,85
+#: ensuite —, et le temps partiel s'y ajoute. Le sexe n'y entre pas : le
+#: volume de chacun, divisé par ce que lui retire son temps partiel
+#: (``temps_partiel.csv``, ``quotite_temps_partiel.csv``), laisse la même part
+#: de l'année, 0,825 pour les femmes et 0,821 pour les hommes en 2023.
+VOLUME_DE_TRAVAIL = True
+
+#: Le volume selon le rang : la classe de chaque centile du salariat privé
+#: prend en outre le volume de la catégorie qu'elle représente, rapporté à
+#: celui de l'ensemble — employés au dixième centile (0,88), ouvriers au
+#: vingt-cinquième (0,95), professions intermédiaires au soixante-quinzième
+#: (1,08), cadres au-delà (1,13) —, sans jamais dépasser l'année entière. Une
+#: convention, que la mesure essaie : l'INSEE ne croise pas le rang du salaire
+#: et le volume, et celui des employés compte aussi leur temps partiel.
+VOLUME_SELON_LE_RANG = False
+
+#: Les catégories que le volume selon le rang prête aux classes de centiles.
+CATEGORIE_DU_RANG = {"p10": "employes", "p25": "ouvriers", "p50": "ensemble",
+                     "p75": "professions_intermediaires", "p90": "cadres",
+                     "p95": "cadres", "p99": "cadres"}
+
+#: Les tranches d'âge de ``volume_travail.csv``, par leur premier âge.
+AGES_DU_VOLUME = {"Y_LT25": 0, "Y25T39": 25, "Y40T49": 40, "Y50T54": 50, "Y_GE55": 55}
+
 
 def _par_generation(paires: tuple[tuple[int, float], ...], generation: int,
                     defaut: float) -> float:
@@ -369,7 +402,9 @@ class CasTypeLarge(CasType):
     ``ages_partiel[0]`` à l'âge ``ages_partiel[1]`` exclu, à la quotité de la
     génération (``quotites``). Les années d'interruption restent ce qu'elles
     sont. Une carrière ``persistante`` est payée le Smic de chaque année, et
-    ses ``niveaux`` sont ceux du Smic.
+    ses ``niveaux`` sont ceux du Smic. ``volumes`` — paires ``(âge, part de
+    l'année)`` triées — paie chaque année d'activité à la part de l'année
+    travaillée à son âge.
     """
 
     avant: tuple[tuple[str, float], ...] = ()
@@ -378,6 +413,7 @@ class CasTypeLarge(CasType):
     quotites: tuple[tuple[int, float], ...] = ()
     plancher_smic: bool = False
     persistante: bool = False
+    volumes: tuple[tuple[int, float], ...] = ()
 
     def niveau_de(self, generation: int) -> float:
         """Le niveau de salaire de cette génération."""
@@ -403,16 +439,26 @@ class CasTypeLarge(CasType):
 
     def _temps_partiel(self, generation: int, interruptions: dict[int, str]
                        ) -> dict[int, float] | None:
-        if not self.ages_partiel:
+        """La part de chaque année d'activité que la carrière travaille : la
+        quotité de son temps partiel, fois la part de l'année à son âge."""
+        if not (self.ages_partiel or self.volumes):
             return None
         quotite = _par_generation(self.quotites, generation, 1.0)
-        debut, fin = self.ages_partiel
-        return {annee: quotite
-                for annee in range(int(generation + debut), int(generation + fin))
-                if annee not in interruptions}
+        debut, fin = self.ages_partiel or (0.0, 0.0)
+        parts = {}
+        for age in range(int(self.age_debut), AGE_FIN_INACTIVITE + 1):
+            annee = generation + age
+            if annee in interruptions:
+                continue
+            part = _par_generation(self.volumes, age, 1.0)
+            if int(generation + debut) <= annee < int(generation + fin):
+                part *= quotite
+            if part != 1.0:
+                parts[annee] = part
+        return parts or None
 
     def _carriere(self, simulateur: Simulateur, generation: int, age_liquidation: float):
-        if not (self.avant or self.niveaux or self.ages_partiel):
+        if not (self.avant or self.niveaux or self.ages_partiel or self.volumes):
             return super()._carriere(simulateur, generation, age_liquidation)
         interruptions = {
             int(generation + self.age_debut + decalage): motif
@@ -548,7 +594,9 @@ class DonneesPopulation:
     (:data:`PERSISTANCE_SMIC`) ; ``smic`` : le Smic, en multiple du salaire
     moyen, l'année où chaque génération a :data:`AGE_DU_RANG` ans ;
     ``reste_du_bas`` : le niveau du reste de la classe du bas, qui en garde la
-    moyenne.
+    moyenne ; ``volumes`` : la part de l'année travaillée, par âge
+    (:data:`VOLUME_DE_TRAVAIL`) ; ``rangs`` : le volume relatif que chaque
+    classe de centiles prend sous :data:`VOLUME_SELON_LE_RANG`.
     """
 
     niveaux: dict[tuple[str, str], tuple[tuple[int, float], ...]]
@@ -558,6 +606,8 @@ class DonneesPopulation:
     persistants: dict[str, float]
     smic: tuple[tuple[int, float], ...]
     reste_du_bas: dict[str, tuple[tuple[int, float], ...]]
+    volumes: tuple[tuple[int, float], ...]
+    rangs: dict[str, float]
 
 
 def resserrer(relatifs: dict[str, float], moyenne: float) -> dict[str, float]:
@@ -630,6 +680,29 @@ def persistance_a_six_ans(racine: Path) -> dict[str, float]:
     return {sexe: restes(sexe, "ensemble") * milieu for sexe in ("F", "H")}
 
 
+def volumes_de_travail(racine: Path) -> tuple[tuple[tuple[int, float], ...], dict[str, float]]:
+    """La part de l'année travaillée à chaque âge, et le volume relatif de
+    chaque classe de centiles : ceux de ``volume_travail.csv``, la dernière
+    année publiée.
+
+    La part de l'année d'une tranche d'âge est son volume, rapporté à celui de
+    l'ensemble des salariés, fois celui d'un temps complet : la part de l'année
+    qu'un temps complet travaille, que l'âge fait varier.
+    """
+    lignes = _lire_macro(racine, "volume_travail.csv")
+    derniere = max(l["annee"] for l in lignes)
+    volume = {(l["caracteristique"], l["modalite"]): float(l["volume"])
+              for l in lignes if l["annee"] == derniere}
+    ensemble = volume[("ensemble", "ensemble")]
+    complet = volume[("quotite", "temps_complet")]
+    volumes = tuple(sorted((age, volume[("age", tranche)] / ensemble * complet)
+                           for tranche, age in AGES_DU_VOLUME.items()))
+    rangs = {nom: (1.0 if categorie == "ensemble"
+                   else volume[("categorie", categorie)] / ensemble)
+             for nom, categorie in CATEGORIE_DU_RANG.items()}
+    return volumes, rangs
+
+
 def donnees_population(racine: Path) -> DonneesPopulation:
     """Les centiles du salaire par sexe, la part du temps partiel à 25-49 ans et
     sa quotité à 25-54 ans, certifiés le 11 octobre 2026, et la persistance au
@@ -684,8 +757,9 @@ def donnees_population(racine: Path) -> DonneesPopulation:
              / (poids_du_bas - persistants[sexe]))
             for g, niveau in niveaux[(sexe, bas)])
     au_smic = tuple((g, smic(g + AGE_DU_RANG)) for g, _ in niveaux[("F", bas)])
+    volumes, rangs = volumes_de_travail(racine)
     return DonneesPopulation(niveaux, parts, par_generation, points, persistants,
-                             au_smic, reste)
+                             au_smic, reste, volumes, rangs)
 
 
 def _part_eir(source: CaracteristiquesRetraites, groupe: str, sexe: str) -> float:
@@ -961,9 +1035,11 @@ def salaires_population(variantes: list[Variante],
     pour la part des carrières que son sexe passe à temps partiel, la quotité
     de sa génération de 25 à 49 ans. Sous :data:`PERSISTANCE_SMIC`, une part
     de sa classe du bas est payée le Smic toute la carrière, et le reste de la
-    classe en garde la moyenne. Les autres groupes gardent la dispersion de la
-    grille élargie autour de leur niveau, celle de leur sexe, resserrée en
-    carrière.
+    classe en garde la moyenne ; sous :data:`VOLUME_DE_TRAVAIL`, chaque année
+    d'activité est payée à la part de l'année travaillée à son âge, selon son
+    rang aussi sous :data:`VOLUME_SELON_LE_RANG`. Les autres groupes gardent
+    la dispersion de la grille élargie autour de leur niveau, celle de leur
+    sexe, resserrée en carrière, et des années entières.
     """
     sortie = []
     for v in variantes:
@@ -976,11 +1052,15 @@ def salaires_population(variantes: list[Variante],
             continue
         partiel = donnees.parts_partiel[cas.sexe]
         for nom, part in CENTILES:
+            relatif = donnees.rangs[nom] if VOLUME_SELON_LE_RANG else 1.0
+            volumes = (tuple((age, min(1.0, annee * relatif))
+                             for age, annee in donnees.volumes)
+                       if VOLUME_DE_TRAVAIL else ())
             rang = replace(cas, code=f"{cas.code}~{nom}",
                            affiliation=("salarie_prive_cadre" if nom in CENTILES_CADRES
                                         else "salarie_prive_non_cadre"),
                            niveaux=donnees.niveaux[(cas.sexe, nom)],
-                           plancher_smic=PLANCHER_SMIC)
+                           plancher_smic=PLANCHER_SMIC, volumes=volumes)
             classes = [(rang, part)]
             if PERSISTANCE_SMIC and nom == CENTILES[0][0]:
                 persistants = donnees.persistants[cas.sexe]
