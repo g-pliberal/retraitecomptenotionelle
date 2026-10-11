@@ -5386,15 +5386,15 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 ### 136. Ce qu'OpenFisca fait mieux que le dépôt : deux règles, un oracle borné aux carrières simples, la trace d'un calcul, une population — `en cours`
 
 **Reprise, au 11 octobre 2026.** Fait : l'étape 6, sa première moitié — la
-page Coût sur 791 carrières ancrées sur l'EIR de 2020, dont l'écart justifie
-la population — et l'ASPA des premiers non-salariés retirée de sa grille, en
-Python seul ; l'étape 3, ses deux règles — le départ des parents de trois
-enfants, repris par l'action 138, et le temps partiel des fonctionnaires,
-porté dans la saisie, la chronologie et les services des deux moteurs. Reste :
-la seconde moitié de l'étape 6, la population, dont le propriétaire tranche
-la forme ; de l'étape 3, la surcotisation et l'oracle ; les étapes 1, 2, 4 et
-5. Commencer par ce qu'il lance. Le détail : « Fait, le 5 octobre 2026 :
-l'étape 6, la mesure », en fin d'action, et les notes du 11 octobre.
+page Coût sur 791 carrières, l'ASPA retirée de sa grille — et, de la seconde,
+les centiles du salaire par sexe, certifiés, que les trois formes de
+population proposées ont en commun ; l'étape 3, ses deux règles. Reste : le
+temps partiel par sexe et âge (enquête Emploi), à certifier ; puis la
+population par génération et par sexe, construite à côté de la page et mesurée
+— minimum contributif, part et montant, contre l'EACR ; pensions contre
+l'EIR —, dont la bascule de la page revient au propriétaire, chiffres en main ;
+de l'étape 3, la surcotisation et l'oracle ; les étapes 1, 2, 4 et 5. Le
+détail : les notes du 11 octobre, celle des salaires par sexe d'abord.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais que tu analyses ce qu'on fait
 moins bien que openfisca pensions et que tu ajoutes une action sur ce sujet

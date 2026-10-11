@@ -479,6 +479,52 @@ def source_dispersion_salaires() -> dict[tuple, float]:
     return valeurs
 
 
+#: Les sexes de la série longue, sous le nom que le dépôt leur donne : celui de
+#: l'EIR et des cas types.
+SEXES_SALAIRE = {"F": "F", "M": "H"}
+
+
+def source_dispersion_salaires_sexe() -> dict[tuple, float]:
+    """Les centiles du salaire du privé de chaque sexe, et sa moyenne, rapportés
+    au salaire moyen des DEUX sexes de l'année.
+
+    Le dénominateur commun garde l'écart entre les sexes, que la série tous
+    sexes efface : la grille élargie de la page Coût donnait aux hommes les
+    salaires des femmes, et ses hommes touchaient le minimum contributif deux
+    fois plus souvent que ceux de l'EACR (action 137). Le salaire moyen des
+    femmes vaut 0,65 fois celui des hommes en 1955, 0,87 en 2024. La ligne
+    ``moyenne`` d'un sexe porte sa moyenne : un centile divisé par elle se
+    rapporte à la moyenne de son sexe.
+    """
+    attendus = {
+        "DERA_MEASURE": "SALAIRE_NET_EQTP_MENSUEL_MOYEN_EUROS_CONSTANTS",
+        "PCS_ESE": "_T", "ACTIVITY": "_T", "AGE": "_T", "WKTIME": "FT",
+    }
+    observations = _charge_profil_salaire("insee_dispersion_salaires_sexe.json", attendus)
+    par_annee: dict[int, dict[tuple[str, str], float]] = {}
+    for observation in observations:
+        dimensions = observation["dimensions"]
+        valeur = observation["measures"].get("OBS_VALUE_NIVEAU", {}).get("value")
+        if valeur is None:
+            continue
+        annee = int(dimensions["TIME_PERIOD"])
+        par_annee.setdefault(annee, {})[(dimensions["SEX"], dimensions["QUANTILE"])] = (
+            float(valeur))
+
+    points = {**CENTILES_SALAIRE, "_T": "moyenne"}
+    valeurs: dict[tuple, float] = {}
+    for annee in sorted(par_annee):
+        moyenne = par_annee[annee].get(("_T", "_T"))
+        if not moyenne:
+            continue
+        for code_sexe, sexe in SEXES_SALAIRE.items():
+            for code, centile in points.items():
+                brut = par_annee[annee].get((code_sexe, code))
+                if brut is not None:
+                    valeurs[(str(annee), sexe, centile)] = brut / moyenne
+    return valeurs
+
+
 def source_profil_salaire_categorie() -> dict[tuple, float]:
     """Profil d'âge INTRA-CATÉGORIE, rapporté à la moyenne de la catégorie.
 
@@ -4605,7 +4651,7 @@ CERTIFICATIONS = (
             "# fiabilite:",
             "#   certifiee : salaire net mensuel en équivalent temps plein, à temps",
             "#             complet, tous âges, euros constants ; trois centiles",
-            "#             avant 1980, cinq jusqu'en 1994, sept ensuite ;",
+            "#             avant 1976, cinq de 1976 à 1993, sept depuis 1994 ;",
             "#             recontrôlé par scripts/verifier_donnees.py.",
             "#",
             "# À QUOI CETTE SÉRIE SERT",
@@ -4620,6 +4666,49 @@ CERTIFICATIONS = (
             "# coupe de l'année, à temps complet, plus dispersée que la moyenne",
             "# d'une vie de travail, qu'une mobilité rapproche du centre, et sans",
             "# le temps partiel, qui étirerait le bas.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="dispersion_salaires_sexe",
+        chemin=REFERENCE / "macro" / "dispersion_salaires_sexe.csv",
+        cles=("annee", "sexe", "centile"),
+        colonne="salaire_relatif",
+        source=source_dispersion_salaires_sexe,
+        origine="INSEE Melodi, DS_DERA_PRIVE_SERIES_LONGUES (centiles par sexe)",
+        decimales=4,
+        tolerance=5e-4,
+        entete=(
+            "# Centiles du salaire du privé par sexe, rapportés au salaire moyen des",
+            "# deux sexes de l'année",
+            "# source_id: insee_dispersion_salaires_sexe",
+            "# unite: rapport sans dimension (1,00 = salaire moyen des deux sexes)",
+            "# fiabilite:",
+            "#   certifiee : salaire net mensuel en équivalent temps plein, à temps",
+            "#             complet, tous âges, euros constants ; la moyenne de",
+            "#             chaque sexe depuis 1951 ; p10 et p50 en 1955, 1960, 1965",
+            "#             et 1970, puis chaque année depuis 1975, p90 de même",
+            "#             depuis 1960 ; p25 et p75 depuis 1976 ; p95 et p99 depuis",
+            "#             1994 ; recontrôlé par scripts/verifier_donnees.py.",
+            "#",
+            "# LE DÉNOMINATEUR EST COMMUN AUX DEUX SEXES, et c'est ce qui garde leur",
+            "# écart : la ligne « moyenne » d'un sexe porte son salaire moyen — 0,92",
+            "# pour les femmes et 1,06 pour les hommes en 2024 —, et un centile",
+            "# divisé par elle se rapporte à la moyenne de son sexe.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À donner à chaque sexe ses salaires dans la population de la page",
+            "# Coût (action 136, étape 6) : la grille élargie prêtait aux hommes",
+            "# ceux des femmes, et ses hommes touchaient le minimum contributif deux",
+            "# fois plus souvent que ceux de l'EACR (action 137). Aucun calcul du",
+            "# site ne la lit.",
+            "#",
+            "# CE QU'ELLE N'EST PAS. Le salaire que la pension compte : une coupe de",
+            "# l'année, à temps complet, sans le temps partiel ni l'année",
+            "# incomplète, et plus dispersée qu'un salaire de carrière.",
             "#",
             "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
             "# scripts/verifier_donnees.py --appliquer.",

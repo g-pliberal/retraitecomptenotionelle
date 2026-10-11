@@ -353,6 +353,17 @@
    "valeurs": 382,
    "verifiee_le": "2026-10-05"
   },
+  "dispersion_salaires_sexe": {
+   "ajoutees": 790,
+   "colonne": "salaire_relatif",
+   "corrigees": 0,
+   "empreinte": "75e2be11f8981a38",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "INSEE Melodi, DS_DERA_PRIVE_SERIES_LONGUES (centiles par sexe)",
+   "valeurs": 790,
+   "verifiee_le": "2026-10-11"
+  },
   "distribution_pensions": {
    "ajoutees": 138,
    "colonne": "part_pct",

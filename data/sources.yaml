@@ -284,12 +284,35 @@ institutions:
         note: >-
           Le jeu de la série longue, lu par sa dimension QUANTILE : les centiles
           10, 50 et 90 du salaire net en équivalent temps plein depuis 1951, 25
-          et 75 depuis 1980, 95 et 99 depuis 1995, rapportés à la moyenne de
+          et 75 depuis 1976, 95 et 99 depuis 1994, rapportés à la moyenne de
           l'année. La forme est stable depuis 1980 — le centile 10 entre 0,46
           et 0,51 fois la moyenne, le 90 entre 1,60 et 1,64, hors les deux
           années de l'activité partielle. Aucun calcul du site ne la lit :
           `scripts/grille_large.py` en donne la dispersion à la grille élargie
           qui dit ce que les treize cas types de la page Coût déplacent.
+
+      - id: insee_dispersion_salaires_sexe
+        titre: Centiles du salaire du secteur privé par sexe (séries longues)
+        url: https://api.insee.fr/melodi/data/DS_DERA_PRIVE_SERIES_LONGUES
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/dispersion_salaires_sexe.csv
+        recuperation: scripts/fetch/insee_profil_salaire_age.py
+        note: >-
+          Le même jeu, sa dimension SEX laissée libre : les centiles et la
+          moyenne de chaque sexe, rapportés au salaire moyen des deux sexes,
+          dont le dénominateur commun garde l'écart — le salaire moyen des
+          femmes vaut 0,65 fois celui des hommes en 1955, 0,87 en 2024. Moins
+          d'années que la série tous sexes : le centile 10 et la médiane tous
+          les cinq ans de 1955 à 1970, puis chaque année depuis 1975, le 90
+          depuis 1960, le 25 et le 75 depuis 1976, le 95 et le 99 depuis 1994.
+          Le même jeu porte les sept centiles de chaque sexe tous temps de
+          travail confondus, de 1996 à 2024, mais toujours en équivalent temps
+          plein, donc sans les heures du temps partiel ; aucun centile n'y
+          croise le sexe avec l'âge ou la catégorie. La grille élargie prêtait
+          aux hommes les salaires des femmes (action 137) : la population de
+          la page Coût (action 136, étape 6) donnera à chacun les siens. Aucun
+          calcul du site ne la lit.
 
       - id: insee_profil_salaire_public
         titre: Salaires de la fonction publique par âge, statut et versant

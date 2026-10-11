@@ -47,10 +47,18 @@ moyenne, qu'aucun des treize cas types n'a : un cas type est UN niveau de
 salaire, quand le centile 99 du privé vaut 3,7 fois la moyenne en 2024 et le
 centile 10 la moitié.
 
+Les mêmes centiles existent SEXE PAR SEXE, la dimension ``SEX`` laissée
+libre : la grille élargie donnait aux hommes les salaires des femmes, et ses
+hommes touchaient le minimum contributif deux fois plus souvent que ceux de
+l'EACR (action 137). Le salaire moyen des femmes vaut 0,65 fois celui des
+hommes en 1955, 0,87 en 2024.
+
 Les fichiers produits, ``data/brut/insee_profil_salaire_age.json``,
-``data/brut/insee_profil_salaire_categorie.json`` et
-``data/brut/insee_dispersion_salaires.json``, sont les documents sources : ils
-ne sont pas lus par le modèle, seulement par ``scripts/verifier_donnees.py``.
+``data/brut/insee_profil_salaire_categorie.json``,
+``data/brut/insee_dispersion_salaires.json`` et
+``data/brut/insee_dispersion_salaires_sexe.json``, sont les documents
+sources : ils ne sont pas lus par le modèle, seulement par
+``scripts/verifier_donnees.py``.
 """
 
 from __future__ import annotations
@@ -110,10 +118,16 @@ FILTRES_DISPERSION = {
     "WKTIME": "FT",
 }
 
+#: Les mêmes centiles, la dimension ``SEX`` libre : les femmes, les hommes, et
+#: l'ensemble, dont la moyenne sert de dénominateur commun aux deux sexes.
+FILTRES_DISPERSION_SEXE = {cle: valeur for cle, valeur in FILTRES_DISPERSION.items()
+                           if cle != "SEX"}
+
 SORTIE_SERIES = Path("data/brut/insee_profil_salaire_age.json")
 SORTIE_CATEGORIES = Path("data/brut/insee_profil_salaire_categorie.json")
 SORTIE_PUBLIC = Path("data/brut/insee_profil_salaire_public.json")
 SORTIE_DISPERSION = Path("data/brut/insee_dispersion_salaires.json")
+SORTIE_DISPERSION_SEXE = Path("data/brut/insee_dispersion_salaires_sexe.json")
 
 
 def main() -> int:
@@ -122,6 +136,7 @@ def main() -> int:
         (JEU_CATEGORIES, FILTRES_CATEGORIES, SORTIE_CATEGORIES),
         (JEU_PUBLIC, FILTRES_PUBLIC, SORTIE_PUBLIC),
         (JEU_SERIES, FILTRES_DISPERSION, SORTIE_DISPERSION),
+        (JEU_SERIES, FILTRES_DISPERSION_SEXE, SORTIE_DISPERSION_SEXE),
     ):
         try:
             chemin = telecharger(jeu, filtres, sortie)

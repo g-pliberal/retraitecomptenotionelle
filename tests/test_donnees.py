@@ -661,8 +661,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "profil_salaire_categorie": "macro/profil_salaire_categorie.csv",
         "profil_salaire_public": "macro/profil_salaire_statut_public.csv",
         # La dispersion, que la grille élargie de la page Coût emprunte : le
-        # même jeu que le profil par âge, lu par ses centiles.
+        # même jeu que le profil par âge, lu par ses centiles ; puis sexe par
+        # sexe, pour la population de la page (action 136, étape 6).
         "dispersion_salaires": "macro/dispersion_salaires.csv",
+        "dispersion_salaires_sexe": "macro/dispersion_salaires_sexe.csv",
         # Le seul qui vienne d'Eurostat : aucune source française ne ventile le
         # salaire par âge pour les régimes spéciaux.
         "profil_salaire_secteur": "macro/profil_salaire_secteur.csv",
