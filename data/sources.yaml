@@ -314,6 +314,26 @@ institutions:
           la page Coût (action 136, étape 6) donnera à chacun les siens. Aucun
           calcul du site ne la lit.
 
+      - id: insee_temps_partiel
+        titre: Part du temps partiel dans l'emploi par sexe et âge (enquête Emploi, séries longues)
+        url: https://api.insee.fr/melodi/data/DD_EEC_SERIES
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/temps_partiel.csv
+        recuperation: scripts/fetch/insee_temps_partiel.py
+        note: >-
+          Les séries longues de l'enquête Emploi, de 1975 à 2025, en France
+          entière : la part du temps partiel parmi les personnes en emploi,
+          salariées ou non, par sexe et par trois tranches d'âge (15-24,
+          25-49, 50 ans ou plus). Les centiles du salaire sont en équivalent
+          temps plein ; la population de la page Coût (action 136, étape 6) y
+          prend le volume de travail que la pension compte. Le temps partiel
+          des femmes monte de 17,2 % en 1975 à 32,0 % en 2000, puis redescend
+          à 26,7 % en 2024 ; celui des hommes passe de 3,3 % à 8,7 %. Les
+          résultats annuels (DD_EEC_ANNUEL) détaillent l'âge par cinq ans pour
+          la seule dernière année ; la quotité d'un temps partiel, par sexe,
+          n'est dans aucun jeu de Melodi. Aucun calcul du site ne la lit.
+
       - id: insee_profil_salaire_public
         titre: Salaires de la fonction publique par âge, statut et versant
         url: https://api.insee.fr/melodi/data/DS_DERA_PUBLIC_ANNUEL

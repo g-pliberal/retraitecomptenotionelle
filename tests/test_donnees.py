@@ -665,6 +665,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # sexe, pour la population de la page (action 136, étape 6).
         "dispersion_salaires": "macro/dispersion_salaires.csv",
         "dispersion_salaires_sexe": "macro/dispersion_salaires_sexe.csv",
+        # Le temps partiel, que les centiles en équivalent temps plein n'ont
+        # pas : l'enquête Emploi, par sexe et âge.
+        "temps_partiel": "macro/temps_partiel.csv",
         # Le seul qui vienne d'Eurostat : aucune source française ne ventile le
         # salaire par âge pour les régimes spéciaux.
         "profil_salaire_secteur": "macro/profil_salaire_secteur.csv",

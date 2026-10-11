@@ -1376,6 +1376,17 @@
    "valeurs": 45,
    "verifiee_le": "2026-10-06"
   },
+  "temps_partiel": {
+   "ajoutees": 612,
+   "colonne": "part",
+   "corrigees": 0,
+   "empreinte": "8edd48371f108569",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "INSEE Melodi, DD_EEC_SERIES (enquête Emploi, temps partiel)",
+   "valeurs": 612,
+   "verifiee_le": "2026-10-11"
+  },
   "transferts_retraite": {
    "ajoutees": 30,
    "colonne": "montant_meur",

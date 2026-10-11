@@ -525,6 +525,52 @@ def source_dispersion_salaires_sexe() -> dict[tuple, float]:
     return valeurs
 
 
+#: Les tranches d'âge que la série longue de l'enquête Emploi croise avec le
+#: sexe, sous leur code INSEE ; toutes ensemble, ``ensemble``.
+TRANCHES_TEMPS_PARTIEL = {"Y15T24": "Y15T24", "Y25T49": "Y25T49", "Y_GE50": "Y_GE50",
+                          "_T": "ensemble"}
+
+
+def source_temps_partiel() -> dict[tuple, float]:
+    """La part du temps partiel parmi les personnes en emploi, en pour cent, par
+    sexe et par tranche d'âge.
+
+    Les centiles du salaire sont en équivalent temps plein : ils disent ce que
+    vaut une heure, non combien d'heures une année en compte, quand la pension
+    compte le salaire de l'année. Cette part est la première pièce du volume de
+    travail de la population de la page Coût (action 136, étape 6) ; la
+    quotité d'un temps partiel, qu'aucun jeu de Melodi ne donne par sexe, en
+    serait la seconde. Une valeur que l'INSEE dit non significative ne se
+    certifie pas.
+    """
+    chemin = BRUT / "insee_temps_partiel.json"
+    if not chemin.exists():
+        raise SourceAbsente(
+            f"{chemin} absent (lancer scripts/fetch/insee_temps_partiel.py)"
+        )
+    charge = json.loads(chemin.read_text(encoding="utf-8"))
+    attendus = {"EEC_MEASURE": "PT_WKTIME_IN_EMP_BY_SEX_AGE", "WKTIME": "PT",
+                "EMPSTA": "1", "EMPFORM": "_T", "PCS": "_T", "EDUC": "_T"}
+    if charge.get("filtres") != attendus:
+        raise SourceAbsente(
+            f"{chemin} n'a pas été téléchargé avec les filtres attendus "
+            f"{attendus} mais avec {charge.get('filtres')} "
+            "(relancer scripts/fetch/insee_temps_partiel.py)"
+        )
+    sexes = {**SEXES_SALAIRE, "_T": "ensemble"}
+    valeurs: dict[tuple, float] = {}
+    for observation in charge["observations"]:
+        if observation.get("attributes", {}).get("OBS_STATUS") == "N":
+            continue
+        dimensions = observation["dimensions"]
+        valeur = observation["measures"].get("OBS_VALUE_NIVEAU", {}).get("value")
+        if valeur is None:
+            continue
+        valeurs[(dimensions["TIME_PERIOD"], sexes[dimensions["SEX"]],
+                 TRANCHES_TEMPS_PARTIEL[dimensions["AGE"]])] = float(valeur)
+    return dict(sorted(valeurs.items()))
+
+
 def source_profil_salaire_categorie() -> dict[tuple, float]:
     """Profil d'âge INTRA-CATÉGORIE, rapporté à la moyenne de la catégorie.
 
@@ -4709,6 +4755,43 @@ CERTIFICATIONS = (
             "# CE QU'ELLE N'EST PAS. Le salaire que la pension compte : une coupe de",
             "# l'année, à temps complet, sans le temps partiel ni l'année",
             "# incomplète, et plus dispersée qu'un salaire de carrière.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="temps_partiel",
+        chemin=REFERENCE / "macro" / "temps_partiel.csv",
+        cles=("annee", "sexe", "tranche"),
+        colonne="part",
+        source=source_temps_partiel,
+        origine="INSEE Melodi, DD_EEC_SERIES (enquête Emploi, temps partiel)",
+        decimales=1,
+        tolerance=0.05,
+        unite=" %",
+        entete=(
+            "# Part du temps partiel parmi les personnes en emploi, par sexe et âge",
+            "# source_id: insee_temps_partiel",
+            "# unite: pour cent des personnes en emploi du sexe et de la tranche",
+            "# fiabilite:",
+            "#   certifiee (1975-2025) : séries longues de l'enquête Emploi, France",
+            "#             entière, personnes en emploi, salariées ou non ;",
+            "#             recontrôlé par scripts/verifier_donnees.py.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# Au volume de travail de la population de la page Coût (action 136,",
+            "# étape 6) : les centiles du salaire (dispersion_salaires_sexe.csv)",
+            "# sont en équivalent temps plein, quand la pension compte le salaire",
+            "# de l'année. Le temps partiel des femmes passe de 17,2 % en 1975 à",
+            "# 32,0 % en 2000, puis 26,7 % en 2024 ; celui des hommes, de 3,3 % à",
+            "# 8,7 %. Aucun calcul du site ne la lit.",
+            "#",
+            "# CE QU'ELLE N'EST PAS. Une quotité : elle dit combien travaillent à",
+            "# temps partiel, non combien d'heures, qu'aucun jeu de Melodi ne donne",
+            "# par sexe. Ni le seul secteur privé : elle compte aussi les",
+            "# non-salariés et la fonction publique.",
             "#",
             "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
             "# scripts/verifier_donnees.py --appliquer.",
