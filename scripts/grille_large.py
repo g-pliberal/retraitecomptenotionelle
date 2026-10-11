@@ -127,7 +127,11 @@ l'année resserrée de l'âge, que le profil de carrière porte déjà, et des c
 transitoires (:data:`DISPERSION_DE_CARRIERE`) ; aucun temps complet sous le
 Smic (:data:`PLANCHER_SMIC`) ; les carrières courtes à la part que l'EIR donne
 à tous les retraités du sexe, et non à ceux des seuls régimes qui en ont
-(:data:`COURTES_A_LA_PART_DE_TOUS`).
+(:data:`COURTES_A_LA_PART_DE_TOUS`). La troisième (le même jour) y ajoute la
+persistance au Smic (:data:`PERSISTANCE_SMIC`) : une part de la classe du bas
+de chaque sexe, celle que la DG Trésor trouve encore au voisinage du Smic six
+ans plus tard (``persistance_smic.csv``), y est payée toute la carrière, et le
+reste de la classe en garde la moyenne.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -321,6 +325,20 @@ PLANCHER_SMIC = True
 #: années validées, pour 33,7 % dans l'EIR.
 COURTES_A_LA_PART_DE_TOUS = True
 
+#: La persistance au Smic : une part des carrières du salariat privé de chaque
+#: sexe est payée le Smic toute la carrière. Celle de la coupe de l'année à
+#: temps complet sous :data:`SEUIL_VOISINAGE` fois le Smic, en moyenne des
+#: années où les centiles se publient par sexe, multipliée par la part de ceux
+#: payés au voisinage du Smic qui y sont encore six ans plus tard, parmi ceux
+#: restés salariés du privé (``persistance_smic.csv``) : celle des 35-49 ans,
+#: l'âge où la population lit le rang, au rapport des sexes de tous âges, que
+#: le document ne croise pas avec l'âge. Elle sort de la classe du bas, dont
+#: le reste garde la moyenne : la masse des salaires ne bouge pas.
+PERSISTANCE_SMIC = True
+
+#: Le voisinage du Smic, en multiple de lui : celui de la DG Trésor.
+SEUIL_VOISINAGE = 1.05
+
 
 def _par_generation(paires: tuple[tuple[int, float], ...], generation: int,
                     defaut: float) -> float:
@@ -350,7 +368,8 @@ class CasTypeLarge(CasType):
     paires ``(génération, niveau)`` triées), et le temps partiel, de l'âge
     ``ages_partiel[0]`` à l'âge ``ages_partiel[1]`` exclu, à la quotité de la
     génération (``quotites``). Les années d'interruption restent ce qu'elles
-    sont.
+    sont. Une carrière ``persistante`` est payée le Smic de chaque année, et
+    ses ``niveaux`` sont ceux du Smic.
     """
 
     avant: tuple[tuple[str, float], ...] = ()
@@ -358,14 +377,18 @@ class CasTypeLarge(CasType):
     ages_partiel: tuple[float, ...] = ()
     quotites: tuple[tuple[int, float], ...] = ()
     plancher_smic: bool = False
+    persistante: bool = False
 
     def niveau_de(self, generation: int) -> float:
         """Le niveau de salaire de cette génération."""
         return _par_generation(self.niveaux, generation, self.niveau_salaire)
 
     def au_smic(self, simulateur: Simulateur, generation: int) -> bool:
-        """Vrai si la carrière, sous plancher, se paie au Smic : son rang
-        tombe sous lui l'année où sa génération a :data:`AGE_DU_RANG` ans."""
+        """Vrai si la carrière se paie au Smic : persistante, ou, sous
+        plancher, si son rang tombe sous lui l'année où sa génération a
+        :data:`AGE_DU_RANG` ans."""
+        if self.persistante:
+            return True
         if not self.plancher_smic:
             return False
         annee = generation + AGE_DU_RANG
@@ -520,13 +543,21 @@ class DonneesPopulation:
     génération ; ``parts_partiel`` : la part des carrières à temps partiel ;
     ``quotites`` : la quotité de ce temps partiel, génération par génération ;
     ``points`` : les multiplicateurs que les autres groupes gardent autour de
-    leur niveau, ceux de la grille élargie, mais de leur sexe.
+    leur niveau, ceux de la grille élargie, mais de leur sexe ;
+    ``persistants`` : la part des carrières payées le Smic toute la carrière
+    (:data:`PERSISTANCE_SMIC`) ; ``smic`` : le Smic, en multiple du salaire
+    moyen, l'année où chaque génération a :data:`AGE_DU_RANG` ans ;
+    ``reste_du_bas`` : le niveau du reste de la classe du bas, qui en garde la
+    moyenne.
     """
 
     niveaux: dict[tuple[str, str], tuple[tuple[int, float], ...]]
     parts_partiel: dict[str, float]
     quotites: dict[str, tuple[tuple[int, float], ...]]
     points: dict[str, tuple[tuple[str, float, float], ...]]
+    persistants: dict[str, float]
+    smic: tuple[tuple[int, float], ...]
+    reste_du_bas: dict[str, tuple[tuple[int, float], ...]]
 
 
 def resserrer(relatifs: dict[str, float], moyenne: float) -> dict[str, float]:
@@ -568,9 +599,41 @@ def niveaux_par_generation(valeurs: dict[tuple[int, str, str], float], sexe: str
     return tuple(paires)
 
 
+def part_de_la_coupe_sous(niveau: float, centiles: dict[str, float]) -> float:
+    """La part de la coupe de l'année sous ``niveau`` : interpolée au
+    logarithme entre les deux centiles publiés qui l'encadrent, prolongée sous
+    le premier par la pente des deux premiers, jamais négative."""
+    points = sorted((int(nom[1:]) / 100.0, valeur) for nom, valeur in centiles.items())
+    (r0, v0), (r1, v1) = points[0], points[1]
+    if niveau <= v1:
+        return max(0.0, r0 + (r1 - r0) * math.log(niveau / v0) / math.log(v1 / v0))
+    for (ra, va), (rb, vb) in zip(points[1:], points[2:]):
+        if niveau <= vb:
+            return ra + (rb - ra) * math.log(niveau / va) / math.log(vb / va)
+    return points[-1][0]
+
+
+def persistance_a_six_ans(racine: Path) -> dict[str, float]:
+    """La part des salariés payés au voisinage du Smic en 2007 qui le sont
+    encore en 2013, parmi ceux restés salariés du privé : celle des 35-49 ans,
+    au rapport de chaque sexe à l'ensemble des âges, le document ne croisant
+    pas le sexe et l'âge (``persistance_smic.csv``)."""
+    parts = {(l["sexe"], l["age"], l["etat"]): float(l["part"])
+             for l in _lire_macro(racine, "persistance_smic.csv")
+             if l["origine"] == "voisinage" and l["annee"] == "2013"}
+
+    def restes(sexe: str, age: str) -> float:
+        voisinage = parts[(sexe, age, "voisinage")]
+        return voisinage / (voisinage + parts[(sexe, age, "superieur")])
+
+    milieu = restes("ensemble", "Y35T49") / restes("ensemble", "ensemble")
+    return {sexe: restes(sexe, "ensemble") * milieu for sexe in ("F", "H")}
+
+
 def donnees_population(racine: Path) -> DonneesPopulation:
     """Les centiles du salaire par sexe, la part du temps partiel à 25-49 ans et
-    sa quotité à 25-54 ans, certifiés le 11 octobre 2026."""
+    sa quotité à 25-54 ans, certifiés le 11 octobre 2026, et la persistance au
+    Smic, certifiée le même jour."""
     valeurs = {(int(l["annee"]), l["sexe"], l["centile"]): float(l["salaire_relatif"])
                for l in _lire_macro(racine, "dispersion_salaires_sexe.csv")}
     niveaux = {(sexe, nom): niveaux_par_generation(valeurs, sexe, nom)
@@ -598,7 +661,31 @@ def donnees_population(racine: Path) -> DonneesPopulation:
                                                        for nom, part in CENTILES))
         points[sexe] = tuple((nom, part, resserres[nom] / moyenne)
                              for nom, part in CENTILES)
-    return DonneesPopulation(niveaux, parts, par_generation, points)
+    # La persistance au Smic : la part de la coupe au voisinage du Smic, en
+    # moyenne des années où le vingt-cinquième centile se publie par sexe, hors
+    # de celles de l'activité partielle, fois la part qui y reste six ans.
+    macro = DonneesMacro(racine)
+
+    def smic(annee: int) -> float:
+        return macro.smic_annuel(annee) / salaire_moyen_annuel(macro, annee)
+
+    persistance = persistance_a_six_ans(racine)
+    bas, poids_du_bas = CENTILES[0]
+    persistants, reste = {}, {}
+    for sexe in ("F", "H"):
+        annees = sorted(a for a, s, n in valeurs if s == sexe and n == "p25"
+                        and a not in ANNEES_ACTIVITE_PARTIELLE)
+        stocks = [part_de_la_coupe_sous(SEUIL_VOISINAGE * smic(a), {
+            n: valeurs[(a, sexe, n)] for n, _ in CENTILES if (a, sexe, n) in valeurs})
+            for a in annees]
+        persistants[sexe] = somme_ordonnee(stocks) / len(stocks) * persistance[sexe]
+        reste[sexe] = tuple(
+            (g, (poids_du_bas * niveau - persistants[sexe] * smic(g + AGE_DU_RANG))
+             / (poids_du_bas - persistants[sexe]))
+            for g, niveau in niveaux[(sexe, bas)])
+    au_smic = tuple((g, smic(g + AGE_DU_RANG)) for g, _ in niveaux[("F", bas)])
+    return DonneesPopulation(niveaux, parts, par_generation, points, persistants,
+                             au_smic, reste)
 
 
 def _part_eir(source: CaracteristiquesRetraites, groupe: str, sexe: str) -> float:
@@ -872,9 +959,11 @@ def salaires_population(variantes: list[Variante],
     Le salariat privé y prend son niveau génération par génération, cadre aux
     trois centiles du haut, au Smic au moins sous :data:`PLANCHER_SMIC`, et,
     pour la part des carrières que son sexe passe à temps partiel, la quotité
-    de sa génération de 25 à 49 ans. Les autres groupes gardent la dispersion
-    de la grille élargie autour de leur niveau, celle de leur sexe, resserrée
-    en carrière.
+    de sa génération de 25 à 49 ans. Sous :data:`PERSISTANCE_SMIC`, une part
+    de sa classe du bas est payée le Smic toute la carrière, et le reste de la
+    classe en garde la moyenne. Les autres groupes gardent la dispersion de la
+    grille élargie autour de leur niveau, celle de leur sexe, resserrée en
+    carrière.
     """
     sortie = []
     for v in variantes:
@@ -892,10 +981,20 @@ def salaires_population(variantes: list[Variante],
                                         else "salarie_prive_non_cadre"),
                            niveaux=donnees.niveaux[(cas.sexe, nom)],
                            plancher_smic=PLANCHER_SMIC)
-            sortie.append(v.fois(part * (1.0 - partiel), cas=rang))
-            sortie.append(v.fois(part * partiel, cas=replace(
-                rang, code=f"{rang.code}~partiel", ages_partiel=AGES_PARTIEL,
-                quotites=donnees.quotites[cas.sexe])))
+            classes = [(rang, part)]
+            if PERSISTANCE_SMIC and nom == CENTILES[0][0]:
+                persistants = donnees.persistants[cas.sexe]
+                classes = [
+                    (replace(rang, niveaux=donnees.reste_du_bas[cas.sexe]),
+                     part - persistants),
+                    (replace(rang, code=f"{rang.code}~smic", niveaux=donnees.smic,
+                             persistante=True), persistants),
+                ]
+            for classe, poids in classes:
+                sortie.append(v.fois(poids * (1.0 - partiel), cas=classe))
+                sortie.append(v.fois(poids * partiel, cas=replace(
+                    classe, code=f"{classe.code}~partiel", ages_partiel=AGES_PARTIEL,
+                    quotites=donnees.quotites[cas.sexe])))
     return sortie
 
 
