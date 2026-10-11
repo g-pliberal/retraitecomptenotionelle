@@ -5320,6 +5320,23 @@ sources:
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
 
+  - id: dgtresor_dt_2021_5
+    url: https://www.tresor.economie.gouv.fr/Articles/3c47cb70-d0bf-46c7-b159-c5d710f4d3bb/files/01908fa8-153b-4c87-abb1-639a7782a28f
+    nature: document
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Le patrimoine des défunts par âge ou par niveau de vie, au-delà des
+      déciles du graphique n° 18 de la Cour, pour la reprise sur succession de
+      l'action 47, à la place du fichier individuel de l'enquête Histoire de
+      vie et Patrimoine, hors de portée.
+    statut: a_explorer
+    note: >-
+      Repéré le 12 octobre 2026 : Documents de travail de la DG Trésor
+      n° 2021/5, « Modèles de microsimulation des impôts liés au patrimoine
+      des ménages », décembre 2021, d'où la Cour tire son graphique n° 18. Le
+      PDF répond 200 en `curl` depuis le poste du propriétaire ; non lu.
+
   - id: catala_examples
     url: https://github.com/CatalaLang/catala-examples
     nature: code

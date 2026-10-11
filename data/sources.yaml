@@ -2221,7 +2221,12 @@ institutions:
           fichier individuel d'enquête n'entre pas dans un dépôt public ; ce
           qui entrerait est la TABLE AGRÉGÉE qu'un script en tirerait, avec ce
           script. À vérifier au dictionnaire des variables que le montant
-          individuel des pensions y figure.
+          individuel des pensions y figure. Le 12 octobre 2026, le
+          propriétaire a dit ne pas avoir la possibilité de s'y inscrire : le
+          fichier est hors de portée du dépôt, et aucune session, locale ou
+          non, ne lève ce blocage. La log-normale sur les moments du COR
+          reste l'hypothèse, que le patrimoine des défunts de la Cour
+          (`cdc_successions_2024_donnees`) recoupe.
 
   agirc_arrco:
     nom: Agirc-Arrco
