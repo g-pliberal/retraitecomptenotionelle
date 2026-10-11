@@ -1,0 +1,23 @@
+date: "2026-10-11"
+session: "action 47 : le rapport de la Cour des comptes sur les droits de succession, lu depuis le poste du propriétaire, déposé sur la release et recoupé avec la reprise sur succession"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1. Le
+  rapport public thématique « Les droits de succession » de la Cour des comptes
+  (septembre 2024) et le zip des données de ses graphiques et tableaux, apportés le
+  22 septembre 2026 et retéléchargés de ccomptes.fr le 11 octobre 2026 depuis le poste
+  du propriétaire, à l'empreinte identique ; les mentions légales du site, rubrique
+  « Crédits et reproduction des contenus ».
+trouve: >-
+  Aucun texte de droit. Le rapport ne donne pas la distribution des successions
+  déclarées par tranche d'actif net que le manifeste lui prêtait. Son graphique n° 18
+  donne le patrimoine moyen des personnes décédées en 2018 par décile, d'après la DG
+  Trésor : de zéro au premier décile à 1,35 M€ au dernier, 261 300 € en moyenne. Il
+  entre au dépôt hors du modèle (macro/patrimoine_defunts.csv) et recoupe la reprise :
+  à toute avance de 5 000 à 150 000 €, une succession y couvre de trois à neuf points
+  de moins qu'un ménage de retraités du COR. Le tableau 7 compte 354 443 déclarations
+  de succession en 2022, dont 47 % payantes, pour 673 637 décès. Le PDF et le zip sont
+  sur la release documents-apportes.
+reste: >-
+  Le document de travail n° 2021/5 de la DG Trésor, non lu ; le fichier individuel de
+  l'enquête Histoire de vie et Patrimoine ; le choix, au propriétaire, de reprendre ou
+  non sur le patrimoine des défunts plutôt que sur celui des ménages.

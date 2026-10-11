@@ -1,0 +1,43 @@
+# Patrimoine moyen des personnes décédées en 2018, par décile de leur patrimoine
+# source_id: cdc_successions_2024_donnees (Cour des comptes, « Les droits de
+#            succession », septembre 2024, graphique n° 18, d'après la
+#            direction générale du Trésor, document de travail n° 2021/5)
+# unite: euros courants de 2018, par PERSONNE décédée : la moyenne du décile
+# decile: 1 (le dixième des défunts au patrimoine le plus faible) … 10
+# fiabilite:
+#   haute : valeur publiée, lue telle quelle dans le G18.csv des données que
+#           la Cour publie avec son rapport (en milliers d'euros, écrite ici
+#           en euros) par scripts/fetch/cdc_droits_succession.py. Le texte de
+#           la page 65 en écrit trois — nul, 7 000 € et 1,35 M€ —, que le
+#           lecteur confronte ; aucune certification ne recontrôle les autres.
+#
+# CE QUE LA SÉRIE MESURE
+# ----------------------
+# Les personnes décédées en 2018, classées par décile de leur patrimoine, et
+# la moyenne de chaque dixième : une microsimulation de la DG Trésor sur
+# l'enquête Patrimoine 2014-2015 de l'INSEE, que la Cour reproduit. Le
+# document de travail n'a pas été lu ; le rapport parle du « patrimoine moyen
+# transmis lors d'une succession », sans dire s'il est brut ou net. Un
+# défunt sur dix ne laisse rien.
+#
+# À QUOI ELLE SERT
+# ----------------
+# Au recoupement de la reprise sur succession de la garantie vieillesse
+# (action 47) : `donnees/patrimoine.py` tire la couverture d'une avance du
+# patrimoine des MÉNAGES de retraités (COR, 2018), et celle-ci est celle des
+# PERSONNES décédées, toutes pensions confondues. Aucun calcul ne la lit
+# (`memoire.HORS_DU_MODELE`).
+#
+# Ne pas modifier à la main : le script réécrit le fichier en entier.
+# recupere_le: 2026-10-11
+annee,decile,patrimoine_moyen,source_id,fiabilite
+2018,1,0,cdc_successions_2024_donnees,haute
+2018,2,7000,cdc_successions_2024_donnees,haute
+2018,3,42000,cdc_successions_2024_donnees,haute
+2018,4,81000,cdc_successions_2024_donnees,haute
+2018,5,110000,cdc_successions_2024_donnees,haute
+2018,6,149000,cdc_successions_2024_donnees,haute
+2018,7,198000,cdc_successions_2024_donnees,haute
+2018,8,268000,cdc_successions_2024_donnees,haute
+2018,9,408000,cdc_successions_2024_donnees,haute
+2018,10,1350000,cdc_successions_2024_donnees,haute

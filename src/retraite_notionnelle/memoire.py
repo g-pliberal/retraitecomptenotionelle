@@ -135,6 +135,9 @@ HORS_DU_MODELE = (
     # ne lit (action 137).
     "data/reference/regimes/minimum_contributif_liquidants.csv",
     "data/reference/regimes/minimum_contributif_montant.csv",
+    # Le patrimoine des personnes décédées, que la reprise sur succession
+    # confronte à celui des ménages, et qu'aucun calcul ne lit (action 47).
+    "data/reference/macro/patrimoine_defunts.csv",
 )
 
 #: Les calculs de ce processus, par leur nom : l'objet picklé, dont chaque

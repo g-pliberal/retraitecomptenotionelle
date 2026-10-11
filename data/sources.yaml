@@ -1874,23 +1874,108 @@ institutions:
         acces: document
         blocage: reseau
         fichier_local: cdc_droits_succession_2024.pdf
+        miroir: https://github.com/g-pliberal/retraitecomptenotionelle/releases/download/documents-apportes/cdc_droits_succession_2024.pdf
         sha256: f32e42b18788f6ef760f4f2e6b30b27ee71cf73ac655cb6f861c274168f11384
-        statut_integration: a_faire
+        rediffusion:
+          statut: libre
+          licence: >-
+            les conditions de reproduction de www.ccomptes.fr (source citée,
+            document intact)
+          texte: >-
+            « À l'exception de l'iconographie (photos tmaubert - Cour des
+            comptes), sauf mention spécifiée (droits réservés), la reproduction
+            des contenus de ce site est autorisée, sous réserve du respect : de
+            la mention explicite du site www.ccomptes.fr comme source des
+            éléments reproduits et des mentions permettant de déterminer la
+            nature et l'origine des documents reproduits (date, intitulé,
+            formation juridictionnelle...) ; de l'intégrité des données qui
+            suppose que la teneur et la portée des textes et informations
+            reproduits ne soient pas altérées […] »
+          lu_dans: >-
+            les mentions légales de ccomptes.fr, rubrique « Crédits et
+            reproduction des contenus »
+            (https://www.ccomptes.fr/fr/mentions-legales), lues sur le site
+            depuis une session de bureau : la même clause que la lecture du
+            26 septembre 2026 dans l'archive du web
+          lu_le: "2026-10-11"
+          mention: >-
+            Source : www.ccomptes.fr — Cour des comptes (première chambre),
+            « Les droits de succession », rapport public thématique, septembre
+            2024. Reproduit tel quel.
+          note: >-
+            Passé de `a_lire` à `libre` le 11 octobre 2026, sur la lecture
+            ci-dessus, et déposé le même jour sur la release avec l'accord du
+            propriétaire. La réserve du rapport sur les retraites des
+            fonctionnaires de l'État vaut ici : la rubrique exclut les contenus
+            où figurent des données à caractère personnel, et le rapport nomme
+            les magistrats qui l'ont délibéré. Le dépôt le reproduit entier,
+            sans en extraire aucune ; si la Cour le demande, l'asset se retire.
+        statut_integration: saisi
         note: >-
-          Le rapport donne la distribution des SUCCESSIONS DÉCLARÉES, actif net
-          par tranche. C'est le recoupement d'ensemble que l'action 47 de la
-          feuille de route attend pour la reprise de la garantie vieillesse :
-          le dépôt calcule aujourd'hui la couverture d'une avance sur le
-          patrimoine des MÉNAGES retraités, jamais sur ce que les successions
-          portent réellement. LE DOCUMENT EST LÀ : 92 pages, apporté le
-          22 septembre 2026 depuis un poste ordinaire, qui joint `ccomptes.fr`
-          sans un mot — le blocage était bien la machine, pas la source. La
-          Cour publie à côté les données de ses graphiques
-          (`20240925-donnees-Droits-de-succession .zip`, dix-huit CSV, déposé
-          sous `cdc_droits_succession_2024_donnees.zip`) : `T9`, `Source T10`
-          et `Source T14` sont les tableaux à lire d'abord. Reste à écrire le
-          lecteur, et le blocage reste `reseau` tant qu'une session ne joint
-          pas l'hôte.
+          Quatre-vingt-douze pages, apportées le 22 septembre 2026 depuis un
+          poste ordinaire, lues le 11 octobre 2026 depuis une session de
+          bureau, et retéléchargées ce jour-là à l'empreinte identique. Le
+          manifeste lui prêtait la distribution des SUCCESSIONS DÉCLARÉES par
+          tranche d'actif net : il ne la donne pas, l'application où la DGFiP
+          les enregistre n'en produisant pas (p. 78), et ses tableaux 9, 10 et
+          14, qu'on disait à lire d'abord, portent le contrôle fiscal. Ce qu'il
+          donne à l'action 47 est son graphique n° 18 (p. 65) : le patrimoine
+          moyen des personnes décédées en 2018 par décile, d'après la DG Trésor
+          (document de travail n° 2021/5). Le jeu suivant, ses données, en tire
+          `macro/patrimoine_defunts.csv`, dont le lecteur confronte trois
+          valeurs au texte de la page 65. Le tableau 7 compte les déclarations
+          de 2022 : 354 443, dont 47 % payantes, pour 673 637 décès. Le
+          blocage reste `reseau` : `ccomptes.fr` ne répond à aucune session du
+          cloud, et la release `documents-apportes` sert le PDF depuis le
+          11 octobre 2026.
+
+      - id: cdc_successions_2024_donnees
+        titre: >-
+          Les droits de succession, septembre 2024 : les données des graphiques
+          et des tableaux, publiées en données ouvertes
+        url: https://www.ccomptes.fr/fr/publications/les-droits-de-succession
+        document: https://www.ccomptes.fr/sites/default/files/2025-04/20240925-donnees-Droits-de-succession%C2%A0.zip
+        acces: document
+        blocage: reseau
+        fichier_local: cdc_droits_succession_2024_donnees.zip
+        miroir: https://github.com/g-pliberal/retraitecomptenotionelle/releases/download/documents-apportes/cdc_droits_succession_2024_donnees.zip
+        sha256: 00511510d003b082bbf341739ae387b04453a8c5bc79565a761db60031c6b795
+        rediffusion:
+          statut: libre
+          licence: >-
+            les conditions de reproduction de www.ccomptes.fr (source citée,
+            données intactes)
+          texte: >-
+            « À l'exception de l'iconographie (photos tmaubert - Cour des
+            comptes), sauf mention spécifiée (droits réservés), la reproduction
+            des contenus de ce site est autorisée, sous réserve du respect : de
+            la mention explicite du site www.ccomptes.fr comme source des
+            éléments reproduits et des mentions permettant de déterminer la
+            nature et l'origine des documents reproduits (date, intitulé,
+            formation juridictionnelle...) ; de l'intégrité des données qui
+            suppose que la teneur et la portée des textes et informations
+            reproduits ne soient pas altérées […] »
+          lu_dans: >-
+            les mentions légales de ccomptes.fr, rubrique « Crédits et
+            reproduction des contenus »
+            (https://www.ccomptes.fr/fr/mentions-legales), lues sur le site
+            depuis une session de bureau
+          lu_le: "2026-10-11"
+          mention: >-
+            Source : www.ccomptes.fr — données des graphiques et tableaux de
+            « Les droits de succession », Cour des comptes (première chambre),
+            rapport public thématique, septembre 2024. Reproduites telles
+            quelles.
+        statut_integration: automatise
+        note: >-
+          Dix-huit CSV sans donnée personnelle : les graphiques 1, 2, 5 à 11,
+          14 à 16 et 18, les tableaux 9, 10 et 12 à 14. Un seul entre au dépôt,
+          `G18.csv`, que `scripts/fetch/cdc_droits_succession.py` écrit dans
+          `macro/patrimoine_defunts.csv`. Aucun calcul ne le lit
+          (`memoire.HORS_DU_MODELE`) : il sert au recoupement de la reprise sur
+          succession (action 47). Le site sert le zip sous un nom qui finit par
+          une espace insécable ; `fichier_local` lui en donne un simple, celui
+          de son asset sur la release, déposé le 11 octobre 2026.
 
       - id: ccomptes_retraites_fpe_2026
         titre: >-

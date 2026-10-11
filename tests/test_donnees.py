@@ -3061,6 +3061,40 @@ def test_le_patrimoine_des_menages_dit_ce_qu_une_succession_couvre():
     assert retraites.couverture(1e7) < 0.05
 
 
+def test_le_patrimoine_des_defunts_recoupe_celui_des_menages():
+    """Le patrimoine des personnes décédées en 2018, par décile (Cour des
+    comptes, graphique n° 18, d'après la DG Trésor), recoupe la reprise sur
+    succession (action 47) sans qu'aucun calcul le lise.
+
+    Le recoupement : chaque décile porté à sa moyenne, une succession couvre
+    au plus ``Σ 0,1·min(avance, moyenne)`` d'une avance — une borne HAUTE, la
+    fonction ``min`` étant concave. Elle reste pourtant sous la couverture
+    que le modèle tire des ménages de retraités, à toute avance de 5 000 à
+    150 000 € : un ménage n'est pas une personne, et un défunt sur dix ne
+    laisse rien.
+    """
+    from retraite_notionnelle import memoire
+    from retraite_notionnelle.donnees.patrimoine import PatrimoineMenages
+
+    chemin = "data/reference/macro/patrimoine_defunts.csv"
+    assert chemin in memoire.HORS_DU_MODELE
+    with (RACINE_DONNEES.parent / chemin).open(encoding="utf-8") as flux:
+        lignes = list(csv.DictReader(l for l in flux if not l.lstrip().startswith("#")))
+    assert {ligne["annee"] for ligne in lignes} == {"2018"}
+    assert {ligne["source_id"] for ligne in lignes} == {"cdc_successions_2024_donnees"}
+    moyennes = [int(ligne["patrimoine_moyen"])
+                for ligne in sorted(lignes, key=lambda l: int(l["decile"]))]
+    assert len(moyennes) == 10 and moyennes == sorted(moyennes)
+    # Les trois valeurs que le texte du rapport écrit (p. 65).
+    assert (moyennes[0], moyennes[1], moyennes[9]) == (0, 7_000, 1_350_000)
+
+    retraites = PatrimoineMenages(RACINE_DONNEES).distribution("retraites")
+    assert retraites.annee == 2018
+    for avance in (5_000, 10_000, 20_000, 50_000, 100_000, 150_000):
+        defunts = sum(0.1 * min(avance, moyenne) for moyenne in moyennes) / avance
+        assert defunts < retraites.couverture(avance), avance
+
+
 # -- la veille du droit : ses sources et son journal ----------------------------
 
 

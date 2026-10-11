@@ -684,16 +684,16 @@ un réglage change le modèle, un regard ne vaut que pour sa page
 
 ### 47. La garantie vieillesse est une avance : la reprise sur succession, sa règle et son chiffrage — `en cours`
 
-**Reprise, au 1er octobre 2026.** La garantie, avance de l'État reprise sur la
-succession dès le premier euro, est écrite au programme et chiffrée sur la
-page Coût en brut, reprises et net, d'après des patrimoines publiés (INSEE,
-COR) et des hypothèses. Restent le fichier individuel de l'enquête Histoire de
-vie et Patrimoine, qui remplacerait ces estimations par des données, et une
-phrase du programme disant pourquoi il reprend là où le Parlement renonce
-(aucune note ne la dit écrite). L'action attend une personne : le fichier
-standard se commande sur inscription à Progedo-ADISP ; à vérifier au
-dictionnaire que la pension individuelle y est ; seule la table agrégée
-entrerait au dépôt, avec son script. Détail : « Ce qui reste du point 1 ».
+**Reprise, au 11 octobre 2026.** La garantie, avance reprise sur la succession
+dès le premier euro, est au programme et chiffrée sur la page Coût en brut,
+reprises et net, d'après le patrimoine des ménages (INSEE, COR). Le rapport de
+la Cour sur les droits de succession, lu et sur la release, la recoupe par le
+patrimoine des défunts de 2018 (`macro/patrimoine_defunts.csv`) : une
+succession y couvre une avance de trois à neuf points de moins qu'un ménage.
+Restent le fichier individuel de l'enquête Histoire de vie et Patrimoine, sur
+inscription à Progedo-ADISP, et une phrase du programme ; au propriétaire, le
+choix de reprendre sur le patrimoine des défunts. Détail : « Ce qui reste du
+point 1 », et la note du 11 octobre 2026.
 
 **Demande.** « Dans notre cas, la reprise sur succession est dès le premier
 euro + on prend des intérêts pour ne pas y perdre au niveau des finances
