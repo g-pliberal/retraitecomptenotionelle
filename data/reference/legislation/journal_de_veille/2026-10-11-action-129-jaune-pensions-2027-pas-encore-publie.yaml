@@ -1,0 +1,22 @@
+date: "2026-10-11"
+session: "action 129 : le jaune pensions du PLF 2027 cherché le soir depuis le poste du propriétaire, à l'Assemblée et sur budget.gouv.fr"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1. Depuis le
+  poste du propriétaire, la page du dossier du PLF 2027 de l'Assemblée nationale, sa
+  section « Documents et annexes », comparée à celle du PLF 2026 ; budget.gouv.fr, que
+  son pare-feu ferme à curl et au navigateur intégré de l'application, lu dans le Chrome
+  du propriétaire après une vérification « Je suis un humain » qu'il a passée lui-même :
+  la page du PLF 2027 et de ses documents annexés, et celle du PLF 2026.
+trouve: >-
+  Le jaune pensions 2027 n'est publié nulle part le 11 octobre au soir. L'Assemblée n'a
+  pas de section « Jaunes annexés » pour 2027, quand celle de 2026 en porte une.
+  budget.gouv.fr range ceux de 2026 sous « PLF 2026 - Jaunes budgétaires »
+  (documents-budgetaires-lois/exercice-2026/projet-loi-finances-les/plf-2026-jaunes-budgetaires) ;
+  sa page du PLF 2027 n'a pas cette rubrique, et l'adresse équivalente pour 2027 répond
+  « Accès refusé », quand une adresse inexistante répond « Page non trouvée » : la page
+  paraît préparée, et pas encore publique.
+reste: >-
+  Tirer le jaune de la page de l'Assemblée, que le cloud joint, dès qu'il y paraît, au
+  plus tard pour la séance publique du 13 octobre. budget.gouv.fr demande une
+  vérification qu'aucune session ne passe, et que seul le propriétaire passe depuis son
+  navigateur.

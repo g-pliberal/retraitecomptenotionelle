@@ -2225,14 +2225,14 @@ vaut pour elle. C'est le test à écrire à la fin de ce chantier.
 
 **Reprise, au 11 octobre 2026.** Le réglage et le défaut sont faits ; reste le
 point 1, une vraie série année par année de la part « retraite seule », au lieu
-de la proportion de 2025 prêtée aux autres années. Le PLF 2027 est déposé
-(n° 3210, 1er octobre), mais son jaune pensions n'était pas en ligne le 11 : la
-page du dossier de l'Assemblée n'a pas encore de « Jaunes annexés », et la LOLF
-(art. 39) le veut déposé avant la séance publique, ouverte le 13. L'y tirer,
-voir s'il décompose le taux — l'article 75 du projet n'y promet que la part des
-budgets ministériels et les enjeux de l'équilibre —, puis faire accepter
-plusieurs années à `PartRetraiteSeuleEtat` (`regimes.py`, `regimes.js`).
-Détail : « Le point 1 reste ouvert », et le journal de veille du 11 octobre.
+de la proportion de 2025 prêtée aux autres années. Le jaune pensions du PLF 2027
+(n° 3210) n'était en ligne nulle part le 11 au soir : ni à l'Assemblée, sans
+« Jaunes annexés », ni sur budget.gouv.fr, dont la page des jaunes 2027 répond
+« Accès refusé » (2026 : « plf-2026-jaunes-budgetaires »). La LOLF le veut avant
+la séance du 13 : le tirer de l'Assemblée, que le cloud joint, voir s'il
+décompose le taux, puis faire accepter plusieurs années à
+`PartRetraiteSeuleEtat` (`regimes.py`, `regimes.js`). Détail : « Le point 1
+reste ouvert », et les deux entrées du journal de veille du 11 octobre.
 
 **Demande.** « Dis-moi en plus sur le taux seulement dédié à la retraite, ça
 m'intéresse — ça peut changer beaucoup de choses », puis : « intègre-le comme
