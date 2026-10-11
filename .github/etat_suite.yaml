@@ -1,8 +1,6 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: rouge
-sources: 1c571e8aee8cf34bd9701d0f118efc21ce242501
-date: 2026-10-11T13:56:29Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38144775299
-echecs:
-  - "FAILED tests/test_parcours.py::test_chaque_compte_du_parcours_est_sur_sa_page[### 6. M\xe9thode et Donn\xe9es \u2014 deux minutes, pour finir-/donnees] - AssertionError: ### 6. Méthode et Données — deux minutes, pour finir"
+etat: vert
+sources: dc9773aac31019ddc720d5dd7a13fff1cea94c5e
+date: 2026-10-11T16:18:03Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38154293405

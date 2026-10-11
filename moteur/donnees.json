@@ -15613,7 +15613,7 @@
 }
 },
 "certification":{
-"dernier_passage_le":"2026-10-10",
+"dernier_passage_le":"2026-10-11",
 "series":{
 "age_annulation_decote_openfisca":{"ajoutees":0,"colonne":"age","corrigees":0,"empreinte":"f44dd24f01ee5d98","identiques":8,"niveau":"haute","source":"OpenFisca-France-Pension, aad.yaml du régime général","valeurs":8,"verifiee_le":"2026-09-14"},
 "age_conjoncturel_depart":{"ajoutees":0,"colonne":"age","corrigees":0,"empreinte":"1a04519c9e9e0628","identiques":57,"niveau":"certifiee","source":"DREES, panorama « Les retraités et les retraites »","valeurs":57,"verifiee_le":"2026-09-21"},
@@ -15713,6 +15713,7 @@
 "masse_salariale_privee":{"ajoutees":29,"colonne":"montant_meur","corrigees":0,"empreinte":"5f1c6d45c61d9641","identiques":0,"niveau":"certifiee","source":"Urssaf, jeu open data « masse salariale du secteur privé, France entière »","valeurs":29,"verifiee_le":"2026-09-21"},
 "minimum_contributif":{"ajoutees":11,"colonne":"valeur","corrigees":0,"empreinte":"639c45e9e772a7d3","identiques":0,"niveau":"certifiee","source":"DILA, base LEGI, code de la sécurité sociale R. 351-25, D. 351-2-1 et D. 173-21-0-0-1","valeurs":11,"verifiee_le":"2026-10-04"},
 "minimum_contributif_cnav":{"ajoutees":90,"colonne":"valeur","corrigees":0,"empreinte":"a22b5d886e0a199d","identiques":0,"niveau":"haute","source":"Cnav, barèmes « Montant minimum de la retraite personnelle » et « Plafond de retraites personnelles pour l'attribution du minimum »","valeurs":90,"verifiee_le":"2026-10-04"},
+"minimum_contributif_liquidants":{"ajoutees":38,"colonne":"part","corrigees":0,"empreinte":"95655e06817b87cf","identiques":0,"niveau":"certifiee","source":"DREES, enquête annuelle auprès des caisses de retraite (EACR)","valeurs":38,"verifiee_le":"2026-10-11"},
 "minimum_garanti_indice":{"ajoutees":0,"colonne":"indice_majore","corrigees":0,"empreinte":"edcee2bbabc6d02b","identiques":10,"niveau":"certifiee","source":"DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V","valeurs":10,"verifiee_le":"2026-09-17"},
 "minimum_garanti_part":{"ajoutees":0,"colonne":"part_15_ans","corrigees":0,"empreinte":"c55abedf9a3ebfb5","identiques":10,"niveau":"certifiee","source":"DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V","valeurs":10,"verifiee_le":"2026-09-17"},
 "minimum_garanti_points_15_30":{"ajoutees":0,"colonne":"points_15_30","corrigees":0,"empreinte":"9cb988adb4af7778","identiques":10,"niveau":"certifiee","source":"DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V","valeurs":10,"verifiee_le":"2026-09-17"},
