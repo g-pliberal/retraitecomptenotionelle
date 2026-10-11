@@ -75,7 +75,6 @@ from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.cout import COMPOSANTE_GARANTIE
 from retraite_notionnelle.donnees.equilibre import ORGANISMES, POSTES_TRANSFERTS
 from retraite_notionnelle.saisie import (
-    CLES_MODELISATION,
     INDEXATIONS,
     MODES_MONTANT,
     ErreurSaisie,
@@ -1665,27 +1664,6 @@ def _(m: Modele):
     assert "162, 71, 46" in g.Cellule("x", intensite=-0.5).style()
     assert "90, 116, 80" in g.Cellule("x", intensite=0.5).style()
     assert g.Cellule("x", intensite=0.0).style() == ""
-
-
-@controle("avertissement_des_reglages")
-def _(m: Modele):
-    """L'avertissement paraît sous d'autres réglages, et seulement là.
-
-    LE CRITÈRE EST LA SAISIE, ET NON LE NOM DU TÉMOIN. Il l'a été jusqu'au
-    21 septembre 2026 — « le nom finit par `_regles` » —, et c'était un proxy
-    qui a tenu tant qu'un seul témoin agrégé portait d'autres règles. Le
-    témoin de la variante de compte en porte aussi, sous un autre nom, et le
-    proxy l'a dénoncé à tort. Ce qui décide est qu'une CLÉ DE MODÉLISATION
-    soit saisie : `cascade` n'en est pas une — elle choisit l'année qu'on
-    regarde, pas la règle qu'on applique —, et son témoin ne doit donc porter
-    aucun avertissement.
-    """
-    extrait = PAR_ID["reglages.avertissement"]["extrait"]
-    for nom, temoin in TEMOINS_PAR_NOM.items():
-        if temoin["chemin"] not in ("/cas-types", "/cout", "/avantages"):
-            continue
-        regles = set(temoin["parametres"]) & set(CLES_MODELISATION)
-        assert (extrait in temoin["texte"]) == bool(regles), nom
 
 
 @controle("portage_compare_aux_temoins")

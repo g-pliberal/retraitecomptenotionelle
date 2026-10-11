@@ -326,7 +326,8 @@ export const ANCIENNES_ROUTES = {
  *
  * `/simuler` lit `parametres` en entier : c'est la page que l'adresse paramètre
  * carrière comprise. Les trois pages qui AGRÈGENT — Cas types, Coût, Avantages —
- * n'en lisent que les RÈGLES, et se calculent sous elles. Les adresses de
+ * n'en lisent que ce qu'elles REGARDENT : elles montrent la référence, et elle
+ * seule, depuis le 10 octobre 2026 (`agregee`). Les adresses de
  * `ANCIENNES_ROUTES` rendent la page qui les a remplacées ; toute autre adresse
  * inconnue retombe sur l'accueil.
  *
@@ -452,15 +453,6 @@ export function rendre(contexte, cheminDemande, parametres = null) {
 }
 
 /**
- * Une page qui agrège, calculée sous les règles que l'adresse demande.
- *
- * Le corps de la page n'en sait rien : il reçoit un contexte DÉRIVÉ, dont
- * `base` porte ces règles, et lit `contexte.base`, `contexte.cout()` ou
- * `contexte.simulateur()` comme il l'a toujours fait. C'est le contexte qui
- * sait sous quelles règles on l'interroge, et non chacune des trente lignes qui
- * l'interrogent.
- */
-/**
  * Ce qu'une page REGARDE, page par page — à distinguer des RÉGLAGES, qui disent
  * sous quelles règles le modèle tourne et voyagent vers toutes les pages. Un
  * regard ne change aucun chiffre : il choisit lequel on montre, il ne vaut que
@@ -477,8 +469,8 @@ export const VUES_DE_PAGE = {
 };
 
 /**
- * Les trois pages qui AGRÈGENT : elles ne calculent aucune carrière saisie,
- * mais elles obéissent aux mêmes règles que le simulateur. Voir `agregee`.
+ * Les trois pages qui AGRÈGENT : elles ne calculent aucune carrière saisie, et
+ * ne montrent que la référence. Voir `agregee`.
  */
 export const PAGES_AGREGEES = {
   "/cas-types": casTypes,
@@ -487,11 +479,21 @@ export const PAGES_AGREGEES = {
 };
 
 /**
- * `requete` passe en plus des réglages, et ne dit RIEN des règles : elle porte
- * ce qu'une page REGARDE — l'année que la cascade de Coût décompose — là où les
- * réglages disent sous quelles règles elle se calcule. Les deux ne se mélangent
- * pas : un réglage change le modèle, et voyage vers toutes les pages ; un
- * regard ne change rien, et ne vaut que pour la sienne.
+ * Une page qui agrège, rendue sous les réglages de RÉFÉRENCE, quoi que
+ * l'adresse demande.
+ *
+ * ELLE A PORTÉ LES RÉGLAGES DU SIMULATEUR jusqu'au 10 octobre 2026 : seize
+ * champs, sous un bloc « Les règles du calcul », et deux réglages par
+ * l'adresse, sous lesquels la page se recalculait chez le lecteur — cinq à neuf
+ * secondes à la première visite. Le propriétaire les a retirés, sans rien
+ * mettre à leur place (action 150) : la page montre la référence, et les
+ * règles ne se changent plus qu'au simulateur, sur une carrière.
+ *
+ * `requete` ne lui sert donc plus qu'à ce qu'elle REGARDE — l'année que la
+ * cascade de Coût décompose. Une adresse qui porte des réglages ne déplace
+ * aucun chiffre : elle rend la référence sous un encadré qui le dit
+ * (`encadreReference`), et les liens de la page continuent de les emporter
+ * vers le simulateur, où ils valent.
  */
 function agregee(chemin, contexte, saisie, requete = null) {
   const vues = VUES_DE_PAGE[chemin] || [];
@@ -499,9 +501,8 @@ function agregee(chemin, contexte, saisie, requete = null) {
   for (const [cle, valeur] of Object.entries(requete || {})) {
     if (vues.includes(cle)) { regards[cle] = valeur; }
   }
-  return avertissementReglages(saisie, chemin)
-    + PAGES_AGREGEES[chemin](contexte.pour(saisie.parametres(contexte.base)), regards)
-    + reglages(saisie, chemin, regards);
+  return encadreReference(saisie)
+    + PAGES_AGREGEES[chemin](contexte.pour(PARAMETRES_DEFAUT), regards);
 }
 
 /**
@@ -689,8 +690,8 @@ function bulleDesPeriodes() {
 
 /**
  * Le nom de chaque réglage en français, et la liste où lire le libellé de sa
- * valeur quand elle en a un. Elle sert à DIRE ce que la page a fait : « la
- * page a été calculée sous d'autres règles » n'apprend rien si l'on ne dit pas
+ * valeur quand elle en a un. Elle sert à DIRE quelles règles l'adresse porte :
+ * « ces chiffres ne sont pas les vôtres » n'apprend rien si l'on ne dit pas
  * lesquelles.
  */
 const LIBELLES_MODELISATION = Object.freeze({
@@ -730,56 +731,29 @@ function reglagesEnClair(saisie) {
 }
 
 /**
- * Un encadré, en tête de page, dès que les chiffres ne sont plus ceux du défaut.
+ * L'encadré d'une page qui agrège, quand l'adresse porte des réglages.
  *
- * Sans lui, une adresse partagée afficherait des chiffres qui ne sont pas ceux
- * du site sans que rien ne le dise — exactement la faute que cette page
- * reproche au reste du débat public. Il ne paraît que si quelque chose a été
- * changé : tant que tout est au défaut, la page est celle d'avant, au
- * caractère près.
+ * La page ne les applique pas : elle montre la référence, calculée une fois
+ * pour toutes (`agregee`). Sans l'encadré, un lecteur arrivé avec d'autres
+ * règles — par un lien partagé, ou depuis le simulateur — prendrait les
+ * chiffres de la référence pour les siens. Il dit lesquelles la page laisse de
+ * côté, et où elles valent : au simulateur, sur une carrière, où tous les liens
+ * du site les emportent. Au défaut, rien n'est écrit, et la page est celle de
+ * tout le monde.
+ *
+ * IL DISAIT L'INVERSE JUSQU'AU 10 OCTOBRE 2026 : « ces chiffres ne sont pas
+ * ceux des réglages par défaut », quand la page se recalculait sous les règles
+ * de l'adresse.
  */
-function avertissementReglages(saisie, chemin) {
+function encadreReference(saisie) {
   if (!saisie.requeteModelisation()) { return ""; }
   return `<div class="encadre">
-<p><strong>Ces chiffres ne sont pas ceux des réglages par défaut.</strong>
-La page a été calculée sous les règles que vous avez choisies —
-${echapper(reglagesEnClair(saisie))}. Tous les liens du site les emportent
-tant que vous ne les remettez pas :
-<a href="${g.route(chemin)}">revenir aux réglages par défaut</a>.</p>
+<p><strong>Ces chiffres sont ceux des réglages par défaut, pas des vôtres.</strong>
+Cette page est calculée une fois pour toutes, sous les règles de référence.
+Celles que porte votre adresse — ${echapper(reglagesEnClair(saisie))} — ne
+valent qu'au <a href="${g.lien("/simuler")}">simulateur</a>, sur une carrière,
+et tous les liens du site les y emportent.</p>
 </div>`;
-}
-
-/**
- * Les règles du calcul, et de quoi les changer sans quitter la page.
- *
- * C'est le même jeu de champs que les options du simulateur, et c'est le même
- * code qui les écrit : une page qui agrège et une page qui simule ne peuvent
- * pas proposer deux jeux de règles différents.
- *
- * Le formulaire vise la ROUTE et non le lien — voir `gabarit.route` : il écrit
- * lui-même sa requête, à partir de ses champs.
- */
-function reglages(saisie, chemin, regards = null) {
-  let caches = reglagesSansChamp(saisie);
-  // Et les regards de la page, pour la même raison : ce que le lecteur
-  // regardait, « Recalculer cette page » le lui rendait autrement au défaut.
-  caches += Object.entries(regards || {}).sort()
-    .map(([cle, valeur]) => g.cache(cle, valeur)).join("");
-  const change = Boolean(saisie.requeteModelisation());
-  return `
-<details class="section options reglages"${change ? " open" : ""}>
-  ${g.sommaire("Les règles du calcul (indexation, projection, bascule…)")}
-  <p class="discret">Cette page croise des carrières types avec des
-  générations : elle ne calcule aucune carrière saisie. Mais elle obéit aux
-  mêmes règles que le simulateur, et ces règles se changent ici. La page est
-  recalculée, et l'adresse les emporte vers les autres pages.</p>
-  <form class="carte" method="get" action="${g.route(chemin)}">
-    ${caches}
-    <div class="grille">${champsModelisation(saisie)}</div>
-    <p style="margin-top:1.4rem"><button type="submit">Recalculer cette page</button></p>
-  </form>
-</details>
-`;
 }
 
 /**
@@ -788,9 +762,8 @@ function reglages(saisie, chemin, regards = null) {
  * L'âge de référence et l'âge de conversion des droits acquis ne se règlent
  * que par l'adresse : un formulaire qui ne les porte pas les perd, et une
  * adresse qui les portait se retrouvait silencieusement ramenée au défaut au
- * premier « Recalculer » — ou au premier « Calculer », le formulaire du
- * simulateur ne les portant pas davantage. Au défaut, rien n'est écrit : le
- * défaut n'a pas besoin de voyager.
+ * premier « Calculer » du simulateur. Au défaut, rien n'est écrit : le défaut
+ * n'a pas besoin de voyager.
  */
 function reglagesSansChamp(saisie) {
   return ["age_reference", "conversion_acquis"]
@@ -802,16 +775,16 @@ function reglagesSansChamp(saisie) {
 /**
  * Les huit réglages qui décrivent les RÈGLES, et non la carrière.
  *
- * Ils sont écrits ici une fois, et servent deux fois : dans les options du
- * simulateur, et dans le bloc de réglages des trois pages agrégées. Les écrire
- * deux fois aurait suffi à les faire diverger — un libellé ici, une borne là —,
- * et deux pages du même site auraient alors proposé deux jeux de règles qui
+ * Ils sont écrits ici une fois, et servent aux options du simulateur. Ils
+ * servaient aussi, jusqu'au 10 octobre 2026, au bloc de réglages des trois
+ * pages qui agrègent, qui n'en ont plus (`agregee`) : les écrire une seule
+ * fois empêchait deux pages du même site de proposer deux jeux de règles qui
  * n'en sont qu'un.
  *
  * Les deux réglages restants — l'âge de référence et l'âge de conversion des
  * droits acquis — n'ont jamais eu de champ : ils ne se règlent que par
- * l'adresse. Le bloc de réglages les emporte en champs cachés pour ne pas les
- * perdre au passage du formulaire.
+ * l'adresse. Le formulaire les emporte en champs cachés pour ne pas les perdre
+ * à son passage (`reglagesSansChamp`).
  */
 export function champsModelisation(saisie) {
   return [

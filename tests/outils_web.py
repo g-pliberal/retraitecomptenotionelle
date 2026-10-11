@@ -176,15 +176,6 @@ SIMULATION_TEMOIN = {
 
 
 def _prose(corps: str) -> str:
-    """Le texte d'une page hors de ses tableaux, où « — » est une case vide.
-
-    Le bloc de réglages des pages agrégées en sort aussi : ce sont les champs
-    du simulateur, rendus une seconde fois, et le tiret de « Masse salariale —
-    règle d'équilibre » y sépare un libellé de sa glose, il n'y ouvre pas une
-    incise. Les compter sur trois pages de plus ne dirait rien de leur prose ;
-    ils restent comptés là où ils sont écrits, dans les options du simulateur.
-    """
-    sans_reglages = re.sub(r'<details class="section options reglages"[^>]*>.*?</details>', " ",
-                           corps, flags=re.S)
-    sans_tables = re.sub(r"<table.*?</table>", " ", sans_reglages, flags=re.S)
+    """Le texte d'une page hors de ses tableaux, où « — » est une case vide."""
+    sans_tables = re.sub(r"<table.*?</table>", " ", corps, flags=re.S)
     return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", sans_tables)))

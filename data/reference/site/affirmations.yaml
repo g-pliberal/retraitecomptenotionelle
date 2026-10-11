@@ -973,43 +973,6 @@ affirmations:
     etat: verifiee
     controle: les_ecarts_bougent_si_chaque_systeme_s_equilibre
 
-  # LA BRANCHE « INFÉRIEUR À UN » N'A PAS ÉTÉ RENDUE du 23 septembre au
-  # 7 octobre 2026 : le coefficient de la proposition passait au-dessus de un
-  # en fin d'horizon, et la page écrivait la lecture mêlée, qui n'a pas de
-  # phrase forte ; l'entrée était retirée. Elle revient le 7 octobre : la
-  # moitié seulement des reportés en emploi (action 138, étape 3), le
-  # coefficient est sous un chaque année de 2026 à 2070, 0,9997 en 2070, et
-  # `test_rien_n_echappe_au_catalogue` l'a dit. Le même soir, les minima des
-  # exploitants agricoles (action 138, étape 8) relèvent les pensions du
-  # système actuel sur la grille, et le coefficient repasse au-dessus de un en
-  # 2070 sous les réglages par défaut : 1,0007. Plutôt que de retirer l'entrée
-  # une fois de plus, ce que la conservation refuse désormais, la branche a son
-  # témoin, comme l'autre : `cas_types_etat_entier`, la contribution de l'État
-  # portée entière au compte, sous laquelle le coefficient est sous un de 2026
-  # à 2070, 0,96 en 2070. Le contrôle est celui de l'autre branche, qui éprouve
-  # les trois lectures.
-  - id: cas_types.facteur_inferieur_a_un
-    page: /cas-types
-    extrait: "Un coefficient inférieur à un est un manque"
-    porte: la lecture du coefficient est calculée depuis le solde, et suit son signe
-    etat: verifiee
-    controle: note_du_coefficient_suit_son_signe
-
-  # L'AUTRE BRANCHE DE LA MÊME PHRASE. Elle existait dans le code depuis que la
-  # lecture suit le signe, et rien ne la rendait : sous les réglages par
-  # défaut, le coefficient de la proposition est sous un partout. Il est passé
-  # au-dessus sous d'autres réglages le 20 septembre 2026, quand le taux de
-  # prélèvement projeté a cessé d'être gelé au bord (action 65), et la page a
-  # écrit une phrase forte que le catalogue ne connaissait pas. Le contrôle est
-  # le même : il éprouve les deux côtés de un, et c'est lui qui refuserait que
-  # la page commente une marge par un manque.
-  - id: cas_types.facteur_superieur_a_un
-    page: /cas-types
-    extrait: "Un coefficient supérieur à un est une marge"
-    porte: la lecture du coefficient est calculée depuis le solde, et suit son signe
-    etat: verifiee
-    controle: note_du_coefficient_suit_son_signe
-
   # LA CONVENTION COMPTABLE, DITE AU LECTEUR POUR LA PREMIÈRE FOIS le
   # 20 septembre 2026. Elle était dans les en-têtes de données depuis toujours
   # et nulle part dans la prose : le site affichait un déficit sans dire qu'il
@@ -1071,13 +1034,6 @@ affirmations:
     porte: l'écart entre l'engagement du dépôt et celui publié s'explique par un écart de taux d'actualisation, chiffré
     etat: verifiee
     controle: engagement_acquis_du_depot
-
-  - id: reglages.avertissement
-    page: [/cas-types, /cout, /avantages]
-    extrait: "Ces chiffres ne sont pas ceux des réglages par défaut."
-    porte: l'avertissement paraît sous d'autres réglages, et seulement là
-    etat: verifiee
-    controle: avertissement_des_reglages
 
   # ------------------------------------------------------------------------
   # Coût

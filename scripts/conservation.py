@@ -89,8 +89,12 @@ REGISTRES = {
 
 #: Où une entrée peut aller quand elle se déplace : les archives d'un
 #: registre (docs/architecture.md, annexe B). Un registre qui n'en a pas
-#: garde ses entrées.
-ARCHIVES_DES_REGISTRES: dict[str, list[str]] = {}
+#: garde ses entrées. Le catalogue des affirmations a les siennes depuis le
+#: 11 octobre 2026 (action 150) : une phrase que plus aucun témoin ne rend
+#: n'y fait plus échouer son test, et son identifiant reste gardé.
+ARCHIVES_DES_REGISTRES: dict[str, list[str]] = {
+    "data/reference/site/affirmations.yaml": ["docs/archives/affirmations.yaml"],
+}
 
 #: Les registres dont les entrées sont passées dans la carte des règles
 #: (docs/architecture.md, § 6.5), et la vue qui les y retrouve. Tant que le

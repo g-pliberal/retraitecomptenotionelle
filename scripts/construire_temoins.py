@@ -1752,16 +1752,17 @@ def sans_bloc_json(html: str) -> str:
 #: Les pages dont le formulaire est le sujet, qui le gardent entier dans leur
 #: témoin : le simulateur vierge, la saisie refusée, chaque état du formulaire
 #: — plusieurs métiers, un relevé, une pension saisie, les multiples du salaire
-#: moyen, le conjoint, l'après-départ —, et une page par bloc de réglages. Les
-#: autres n'en figent que la balise : un changement du formulaire réécrivait
-#: les cinquante et une pages du simulateur, il ne réécrit plus que celles-ci
-#: (30 septembre 2026). Le portage retire le même bloc avant de comparer
+#: moyen, le conjoint, l'après-départ. Les autres n'en figent que la balise :
+#: un changement du formulaire réécrivait les cinquante et une pages du
+#: simulateur, il ne réécrit plus que celles-ci (30 septembre 2026). Les trois
+#: pages qui agrègent y étaient pour leur bloc de réglages, qu'elles n'ont plus
+#: depuis le 10 octobre 2026. Le portage retire le même bloc avant de comparer
 #: (``tests/js/moteur.test.js``).
 FORMULAIRE_ENTIER = frozenset({
     "simuler", "simuler_saisie_refusee", "simuler_plusieurs_metiers",
     "simuler_releve", "simuler_par_pension", "simuler_revenu_en_multiples",
     "simuler_reversion", "simuler_demande_de_pension", "simuler_radiation_invalidite",
-    "simuler_carriere_hors_de_france", "simuler_handicap", "cout", "avantages", "cas_types",
+    "simuler_carriere_hors_de_france", "simuler_handicap",
 })
 _FORMULAIRE = re.compile(r'(<form class="carte"[^>]*>).*?(</form>)', re.DOTALL)
 
@@ -1770,18 +1771,18 @@ def sans_formulaire(html: str) -> str:
     return _FORMULAIRE.sub(r"\1\2", html)
 
 
-#: Un jeu de règles qui n'est pas celui par défaut, pour les trois pages qui
-#: agrègent : l'indexation sur les prix au lieu de la masse salariale, la
-#: bascule décalée de quatre ans, et la part patronale portée au compte.
+#: Un jeu de règles qui n'est pas celui par défaut : l'indexation sur les prix
+#: au lieu de la masse salariale, la bascule décalée de quatre ans, et la part
+#: patronale portée au compte. Il servait aussi aux trois pages qui agrègent,
+#: jusqu'au 10 octobre 2026 ; seul le simulateur l'applique désormais.
 REGLES_AUTRES = {
     "indexation": "prix", "bascule": "2030", "part_cotisation": "totale",
     # Et le stock réindexé à la bascule : la convention d'avant le
-    # 20 septembre 2026, qui ne touche que la page Coût.
+    # 20 septembre 2026.
     "stock": "reindexe",
-    # Et le taux de l'État porté entier au compte : ce que la page Coût
-    # chiffre quand le compte d'un fonctionnaire reçoit tout ce que l'État a
-    # versé, et non la seule part que la Cour des comptes rattache à sa
-    # retraite — le défaut depuis le 24 septembre 2026.
+    # Et le taux de l'État porté entier au compte, et non la seule part que la
+    # Cour des comptes rattache à la retraite — le défaut depuis le
+    # 24 septembre 2026.
     "contribution_etat": "entiere",
 }
 
@@ -2119,54 +2120,30 @@ def _pages() -> dict:
         ("cas_types", "/cas-types", {}),
         ("cout", "/cout", {}),
         ("avantages", "/avantages", {}),
-        # Les trois pages agrégées sous d'autres règles que celles par défaut.
-        # C'est le seul témoin qui compare les deux portages sur un AGRÉGAT
-        # recalculé : l'avertissement, le bloc de réglages, les liens qui
-        # portent la requête, et surtout les chiffres, qui bougent tous.
-        # Trois réglages, choisis pour toucher trois mécanismes distincts —
-        # la revalorisation des comptes, la date du changement de régime, et
-        # ce que la cotisation porte au compte.
+        # Les trois pages agrégées n'ont plus de témoin sous d'autres règles
+        # depuis le 10 octobre 2026 : elles ne montrent que la référence, et
+        # une adresse réglée les rend à l'identique, sous un encadré
+        # (`test_une_adresse_reglee_rend_la_reference_sous_un_encadre`).
         # Une adresse qui ne porte QUE des réglages : le formulaire s'affiche
         # réglé, et aucun résultat n'est calculé — c'est ce qui permet aux
         # liens du site d'emporter les réglages jusqu'au simulateur sans y
         # déclencher le calcul d'une carrière que personne n'a saisie.
         ("simuler_regles_seules", "/simuler", REGLES_AUTRES),
-        ("cas_types_regles", "/cas-types", REGLES_AUTRES),
-        # La lecture du coefficient a trois branches, et le défaut n'en rend
-        # qu'une, qui suit le modèle : il frôle un en 2070 — 1,0007 depuis
-        # le 7 octobre 2026 —, et chaque correction qui le fait changer de
-        # côté effaçait du site une phrase du catalogue des affirmations.
-        # Celle d'au-dessus rend la marge ; celle-ci, le manque, sous la
-        # contribution de l'État portée entière au compte (0,96 en 2070).
-        ("cas_types_etat_entier", "/cas-types", {"contribution_etat": "entiere"}),
-        ("cout_regles", "/cout", REGLES_AUTRES),
         # La cascade posée sur l'horizon : le seul témoin qui emprunte l'autre
         # branche du sélecteur d'année, celle où le PIB n'est plus publié mais
         # projeté, où la cotisation unique pèse enfin, et où les reprises sur
-        # successions ont une marche. Sans lui, le portage du sélecteur n'était
-        # comparé que sur son année par défaut — c'est-à-dire sur la seule
-        # branche où la moitié du code ne passe pas.
+        # successions ont une marche.
         ("cout_cascade_horizon", "/cout", {"cascade": "2070"}),
         # Les schémas des flux sur l'horizon, la cascade ailleurs : le seul
         # témoin où les successions paient une vraie part de la garantie, et
         # où chacun des deux sélecteurs doit garder dans ses liens l'année que
         # l'autre a posée.
         ("cout_flux_horizon", "/cout", {"flux": "2070", "cascade": "2040"}),
-        # Et une année refusée : elle doit retomber sur l'année mesurée, des
-        # deux côtés du portage, plutôt que lever quoi que ce soit. Celle des
-        # schémas retombe sur la bascule : 2025 est une année de la cascade,
-        # pas des schémas, qui ne dessinent pas une caisse qui n'existe pas.
+        # Et une année refusée : elle doit retomber sur l'année mesurée plutôt
+        # que lever quoi que ce soit. Celle des schémas retombe sur la
+        # bascule : 2025 est une année de la cascade, pas des schémas, qui ne
+        # dessinent pas une caisse qui n'existe pas.
         ("cout_cascade_hors_liste", "/cout", {"cascade": "1999", "flux": "2025"}),
-        # La page Coût sous une VARIANTE DE COMPTE, et c'est le seul témoin qui
-        # emprunte ce chemin. Depuis le 21 septembre 2026, le scénario demandé
-        # ne déplace plus seulement ce que le modèle calcule : il choisit aussi
-        # la colonne du COR que la section « solde » lit — dépense et ressource
-        # du système, sous la variante correspondante de ses figures de
-        # sensibilité. Sans ce témoin, les deux portages pouvaient diverger sur
-        # la moitié du bilan qui est empruntée, et rien ne l'aurait dit.
-        ("cout_variante_productivite", "/cout",
-         {"projection": "cor_productivite_haute"}),
-        ("avantages_regles", "/avantages", REGLES_AUTRES),
         ("methode", "/methode", {}),
         ("risque", "/risque", {}),
         ("partager", "/partager", {}),

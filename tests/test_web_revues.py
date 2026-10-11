@@ -1625,40 +1625,40 @@ def test_la_page_donnees_ne_promet_que_la_plus_ancienne_verification():
     assert table.count(f">{dates[0]}<") >= 1
 
 
-# -- les trois pages agrégées obéissent aux réglages du simulateur ------------
+# -- les trois pages agrégées montrent la référence, et elle seule ------------
 #
 # Elles ne calculent aucune carrière saisie — elles croisent des carrières
-# types avec des générations —, mais elles doivent le faire sous les MÊMES
-# règles que le simulateur. Jusqu'au 19 septembre 2026, elles calculaient
-# toujours sous les paramètres par défaut : changer l'indexation dans le
-# simulateur déplaçait la pension affichée, et pas un chiffre de la page Coût.
-# Les deux pages disaient alors, sans le dire, deux choses différentes.
+# types avec des générations. Du 19 septembre au 10 octobre 2026, elles se
+# calculaient sous les règles de l'adresse, celles du simulateur, et portaient
+# un bloc pour les changer ; le propriétaire les a retirées (action 150). Elles
+# montrent la référence, une adresse réglée ne les déplace pas, et un encadré
+# le dit à qui y arrive avec d'autres règles.
+
+ENCADRE_REFERENCE = "Ces chiffres sont ceux des réglages par défaut, pas des vôtres."
 
 
 @pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))
-def test_une_page_agregee_porte_son_bloc_de_reglages(page, chemin):
+def test_une_page_agregee_n_a_plus_de_reglages(page, chemin):
     corps = page(chemin)
-    assert 'class="section options reglages"' in corps
-    assert "Recalculer cette page" in corps
-    # Le formulaire vise la route NUE : le routeur colle la requête derrière
-    # l'action, et une action qui en porterait déjà une en donnerait deux.
-    assert f'action="#{chemin}"' in corps
+    assert "Les règles du calcul" not in corps
+    assert "<form" not in corps
+    assert 'name="indexation"' not in corps
 
 
 @pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))
 def test_une_page_agregee_au_defaut_ne_dit_rien_des_reglages(page, chemin):
-    """Tant que rien n'est changé, la page est celle d'avant.
+    """Tant que rien n'est changé, l'encadré ne paraît pas.
 
-    CE QUE CE TEST GARDE, c'est qu'aucun RÉGLAGE ne voyage dans un lien que le
-    lecteur n'a pas demandé : une adresse partagée ne doit porter que ce que
-    son auteur a effectivement changé. Les VUES sont l'autre chose — l'année
+    CE QUE CE TEST GARDE AUSSI, c'est qu'aucun RÉGLAGE ne voyage dans un lien
+    que le lecteur n'a pas demandé : une adresse partagée ne doit porter que ce
+    que son auteur a effectivement changé. Les VUES sont l'autre chose — l'année
     que la cascade de Coût décompose —, et celles-là voyagent par construction,
     puisqu'un sélecteur n'a pas d'autre façon de dire où il mène. La
     distinction est dans ``_VUES_DE_PAGE`` ; ici on vérifie qu'un lien ne porte
     rien D'AUTRE qu'une vue.
     """
     corps = page(chemin)
-    assert "ne sont pas ceux des réglages par défaut" not in corps
+    assert ENCADRE_REFERENCE not in corps
     assert '<a href="#/cout"' in corps or '<a href="#/simuler"' in corps
     vues = {cle for cles in pages._VUES_DE_PAGE.values() for cle in cles}
     for requete in re.findall(r'<a href="#/[a-z-]+\?([^"]*)"', corps):
@@ -1670,11 +1670,7 @@ def test_une_page_agregee_au_defaut_ne_dit_rien_des_reglages(page, chemin):
 
 @pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))
 def test_un_reglage_explicite_au_defaut_rend_la_page_du_defaut(page, chemin):
-    """« indexation=masse_salariale » est le défaut : la page ne doit pas bouger.
-
-    C'est ce qui garantit que la lecture des réglages est ADDITIVE : une
-    adresse qui ne demande rien de neuf rend exactement la page d'avant.
-    """
+    """« indexation=masse_salariale » est le défaut : la page ne doit pas bouger."""
     assert page(chemin, indexation="masse_salariale") == page(chemin)
 
 
@@ -1691,19 +1687,28 @@ def test_une_page_agregee_ignore_la_carriere_de_l_adresse(page, chemin):
 
 
 @pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))
-def test_une_page_agregee_dit_quand_elle_n_est_plus_au_defaut(page, chemin):
-    corps = page(chemin, indexation="prix", bascule="2030")
-    assert "ne sont pas ceux des réglages par défaut" in corps
+def test_une_adresse_reglee_rend_la_reference_sous_un_encadre(chemin):
+    """Les réglages ne déplacent aucun chiffre : la page est celle du défaut.
+
+    L'encadré dit lesquels l'adresse porte, et renvoie au simulateur, où ils
+    valent ; hors de lui et des liens, qui les emportent, la page est celle de
+    tout le monde, au caractère près.
+    """
+    corps = rendre(chemin, {"indexation": "prix", "bascule": "2030"})[1]
+    encadre, reste = corps.split("</div>", 1)
+    assert ENCADRE_REFERENCE in encadre
     # L'apostrophe est échappée dans la page : on compare sur le texte lu.
-    assert "règle d'indexation : Prix" in html.unescape(corps)
-    assert "année de bascule : 2030" in corps
-    # Et de quoi revenir en arrière, sans avoir à effacer une adresse à la main.
-    assert f'<a href="#{chemin}">revenir aux réglages par défaut</a>' in corps
+    assert "règle d'indexation : Prix" in html.unescape(encadre)
+    assert "année de bascule : 2030" in encadre
+    requete = re.search(r'<a href="#/simuler\?([^"]+)">simulateur</a>', encadre).group(1)
+    assert sorted(requete.split("&")) == ["bascule=2030", "indexation=prix"]
+    reste = reste.replace(f"?{requete}&", "?").replace(f"?{requete}\"", '"')
+    assert reste == rendre(chemin, {})[1]
 
 
 @pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))
 def test_les_reglages_suivent_le_lecteur_d_une_page_a_l_autre(page, chemin):
-    """Sans cela, changer une règle ici et cliquer là ramènerait au défaut."""
+    """Une page qui ne les applique pas les garde pour le simulateur."""
     corps = page(chemin, indexation="prix")
     assert '<a href="#/simuler?indexation=prix"' in corps
     assert '#/methode?indexation=prix' in corps
@@ -1711,13 +1716,14 @@ def test_les_reglages_suivent_le_lecteur_d_une_page_a_l_autre(page, chemin):
     assert '#/cout?indexation=prix' in g.entete(chemin)
 
 
-def test_un_reglage_deplace_les_chiffres_de_la_page_cout(contexte):
-    """Le cœur de l'affaire : ce sont les CHIFFRES qui doivent bouger.
+def test_un_reglage_deplace_le_cout_du_modele(contexte):
+    """Le Python garde tous ses réglages, et ce sont les CHIFFRES qui bougent.
 
-    L'indexation sur les prix, au lieu de la croissance de la masse salariale,
-    écrase la valeur réelle des comptes notionnels : la masse de pensions que
-    chaque système notionnel servirait s'en trouve nettement réduite. Le
-    rapport que la page trace est celui-là.
+    La page Coût ne montre plus que la référence ; le modèle, lui, se calcule
+    sous toute règle qu'on lui donne. L'indexation sur les prix, au lieu de la
+    croissance de la masse salariale, écrase la valeur réelle des comptes
+    notionnels : la masse de pensions que chaque système notionnel servirait
+    s'en trouve nettement réduite.
     """
     defaut = contexte.cout()
     prix = contexte.pour(
@@ -1734,9 +1740,10 @@ def test_un_reglage_hors_bornes_ne_fait_pas_tomber_la_page(page):
     """Une adresse mal formée doit afficher une phrase, pas une trace d'exécution."""
     corps = page("/cout", bascule="1800")
     assert "Saisie refusée" in corps
-    # Et la page est rendue derrière, sous les règles par défaut.
-    assert "ne sont pas ceux des réglages par défaut" not in corps
-    assert 'class="section options reglages"' in corps
+    # Et la page est rendue derrière, celle de la référence, sans encadré :
+    # aucun réglage lu, aucun à emporter.
+    assert ENCADRE_REFERENCE not in corps
+    assert rendre("/cout", {"bascule": "1800"})[1].endswith(rendre("/cout", {})[1])
 
 
 def test_une_adresse_qui_ne_porte_que_des_reglages_ne_demande_pas_de_calcul(page):
@@ -1764,15 +1771,16 @@ def test_un_contexte_derive_partage_ce_qui_ne_depend_pas_des_regles(contexte):
     assert contexte.pour(contexte.base) is contexte
 
 
-def test_les_champs_de_modelisation_sont_ecrits_une_seule_fois():
-    """Le simulateur et les pages agrégées proposent le MÊME jeu de règles.
+def test_les_champs_de_modelisation_sont_ceux_du_simulateur():
+    """Les règles ne se changent plus qu'au simulateur, depuis le 10 octobre 2026.
 
-    Deux listes de champs auraient suffi à les faire diverger, et deux pages du
-    même site auraient alors proposé deux jeux de règles qui n'en sont qu'un.
+    Les pages agrégées en portaient le même jeu de champs, écrit par la même
+    fonction ; elles n'en ont plus aucun.
     """
     champs = pages._champs_modelisation(module("saisie").Saisie())
     assert champs in rendre("/simuler", {})[1]
-    assert champs in rendre("/cout", {})[1]
+    for chemin in PAGES_AGREGEES:
+        assert champs not in rendre(chemin, {})[1]
 
 
 def test_le_routeur_ne_prend_pas_une_adresse_reglee_pour_une_simulation():
