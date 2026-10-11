@@ -46,7 +46,7 @@ versions:
   - id: JORFTEXT000000852134
     reference: >-
       décret n° 65-315 du 23 avril 1965 complétant l'article L. 332 du code de la
-      sécurité sociale, dont l'index JORF ne garde que la notice
+      sécurité sociale, lu au fac-similé du Journal officiel du 24 avril 1965, p. 3200
     publie_le: 1965-04-24
   - {id: LEGIARTI000006760672, article: 70-1, en_vigueur: 1973-01-01}
   nee_de: JORFTEXT000000852134
@@ -54,6 +54,10 @@ versions:
     liquidation.date_effet: [1965-05-01, 1983-04-01]
   contenu:
     droit: >-
+      le décret insère au premier alinéa de L. 332, après « caisse d'assurance
+      vieillesse », « ainsi que pour les anciens déportés et internés titulaires de la
+      carte de déporté ou interné de la Résistance ou de la carte de déporté ou interné
+      politique » (article 1er) ;
       « la pension liquidée à un âge compris entre 60 et 65 ans est égale à 40 p. 100
       du salaire de base pour les anciens déportés et internés titulaires de la carte de
       déporté ou interné de la résistance ou de la carte de déporté ou interné
@@ -97,9 +101,13 @@ approximations:
 - version: [decret_du_23_avril_1965, ordonnance_du_26_mars_1982]
   ecart: >-
     Le modèle sert la règle du régime général aux salariés agricoles, aux artisans et aux
-    commerçants aux mêmes dates : le décret n° 70-342 l'ouvre aux salariés agricoles en
-    1970, en révisant les pensions déjà liquidées, et la date où les régimes alignés
-    l'ont reçue n'est pas lue.
+    commerçants aux mêmes dates. Chez les salariés agricoles, le décret n° 70-342 du 14
+    avril 1970, lu au Journal officiel du 19 avril 1970 (p. 3751), leur ouvre « la
+    révision de leur pension de vieillesse à compter du 1er mai 1965 », dans les
+    conditions de l'article 1er bis (§ 2) du décret du 6 juin 1951 modifié par celui du
+    25 octobre 1965 : la même date qu'au régime général, mais sur leur demande, que le
+    modèle présume faite. La date où les artisans et les commerçants l'ont reçue n'est
+    pas lue.
   effet: non mesuré ; les seuls anciens déportés de ces régimes partis avant 1983
 - version: [decret_du_23_avril_1965, ordonnance_du_26_mars_1982]
   ecart: >-
@@ -109,22 +117,31 @@ approximations:
     cartes, et le modèle sert le taux plein à qui déclare l'une ou l'autre.
   effet: non mesuré
 sources:
-  lu_le: 2026-10-08
+  lu_le: 2026-10-11
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
-    Lire la date où les salariés agricoles et les régimes alignés ont reçu la règle — le
-    décret n° 70-342 du 14 avril 1970 chez les salariés agricoles —, et le texte du décret
-    n° 65-315, dont l'index ne garde que la notice.
+    Lire la date où les artisans et les commerçants ont reçu la règle.
   lectures:
   - type: jorf
     reference: >-
-      décret n° 65-315 du 23 avril 1965 (JORFTEXT000000852134), « extension de l'art. L332
-      du code de la sécurité sociale aux anciens déportés et internés titulaires de la
-      carte de déporté ou d'interné politique ou de la carte d'interné ou de déporté de la
-      Résistance » ; décret n° 70-342 du 14 avril 1970 (JORFTEXT000000506328), aux
-      salariés agricoles : l'index n'en garde que les notices
+      décret n° 65-315 du 23 avril 1965 (JORFTEXT000000852134), lu au fac-similé du
+      Journal officiel du 24 avril 1965, p. 3200 (version papier numérisée de Légifrance,
+      téléchargée le 11 octobre 2026 depuis le poste du propriétaire, l'index n'en
+      gardant que la notice) : l'article 1er insère au premier alinéa de L. 332 le
+      membre de phrase « ainsi que pour les anciens déportés et internés titulaires de
+      la carte de déporté ou interné de la Résistance ou de la carte de déporté ou
+      interné politique »
     date: 1965-04-24
+  - type: jorf
+    reference: >-
+      décret n° 70-342 du 14 avril 1970 (JORFTEXT000000506328), lu au fac-similé du
+      Journal officiel du 19 avril 1970, p. 3751, de la même façon : les anciens déportés
+      et internés titulaires de la carte « peuvent obtenir dans les conditions prévues à
+      l'article 1er bis (§ 2) du décret du 6 juin 1951, modifié par le décret du 25
+      octobre 1965, la révision de leur pension de vieillesse à compter du 1er mai 1965 »
+      (article 1er)
+    date: 1970-04-19
   - type: legifrance
     reference: >-
       décret n° 45-0179, article 70-1 (LEGIARTI000006760672, 1973-01-01 → 1982-07-23) :
@@ -170,6 +187,10 @@ historique:
 - >-
   2026-10-08 — écrite à l'étape 17 de l'action 138, sur le point d'OpenFisca-France-Pension
   au registre (chantier 138.17) et la liste de la fiche decote_avant_1983.
+- >-
+  2026-10-11 — les décrets n° 65-315 et n° 70-342 lus au fac-similé du Journal officiel,
+  depuis le poste du propriétaire : le premier confirme la version de 1965 ; le second
+  donne aux salariés agricoles la même date, sur demande.
 effet: >-
   L'ancien déporté ou interné qui n'a pas la durée requise reçoit le taux plein, sans
   décote, au régime général, chez les salariés agricoles, les artisans et les commerçants,

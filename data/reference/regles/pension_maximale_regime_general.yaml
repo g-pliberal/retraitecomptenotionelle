@@ -41,7 +41,12 @@ versions:
   hypothese: >-
     le barème de la Cnav « Montant maximum de la retraite personnelle » commence au 1er
     janvier 1949, avec le montant que fixe un décret du 2 mars 1948, et l'index ne porte
-    aucun texte qui en fixe un avant : aucun maximum
+    aucun texte qui en fixe un avant. Lu au Journal officiel, ce décret, le n° 48-361,
+    ne fixe aucun maximum de pension : il porte la rémunération maximum soumise à
+    cotisation à 228 000 F par an, dont le maximum de 1949, 91 200 F, est les 40 % ; la
+    borne naît de la loi n° 49-244 (article 2), pour les revalorisations qui prennent
+    effet du 1er janvier 1949, sans renvoyer à une borne antérieure. La loi n° 48-1306
+    du 23 août 1948, qu'elle modifie, n'est pas lue : aucun maximum
   fiabilite: estimee
   bornes:
     liquidation.date_effet: [null, 1949-01-01]
@@ -53,13 +58,18 @@ versions:
 - id: quarante_pour_cent_du_plafond
   statut: supposee
   hypothese: >-
-    le barème de la Cnav vaut, à l'euro près, 40 % du plafond de chaque année de 1958 à
-    1971 où le plafond n'a pas changé en cours d'année, la pension de soixante-cinq ans
-    étant de 40 % du salaire annuel moyen ; les textes qu'il cite, un par plafond — la
-    loi n° 49-244 du 24 février 1949 au 1er mars 1949, puis des décrets —, ne sont pas
-    dans l'index, qui n'en garde que les titres. Au-delà de soixante-cinq ans,
-    le maximum suit le taux, qui croît de 1 % par trimestre d'ajournement, comme la
-    circulaire n° 2/72 le dit des maxima de 1972 à 1974 : non lu avant 1972
+    la loi n° 49-244 du 24 février 1949, lue au Journal officiel, borne pour 1949, « à
+    titre exceptionnel », toute pension ou rente de vieillesse revalorisée à « 40 p.
+    100 du chiffre limite » de l'article 31 de l'ordonnance du 4 octobre 1945, le
+    plafond, porté à 228 000 F par le décret n° 48-361 : 91 200 F, le premier montant
+    du barème de la Cnav. De 1950 à 1971, le barème vaut, à l'euro près, 40 % du plafond
+    de chaque année de 1958 à 1971 où le plafond n'a pas changé en cours d'année, la
+    pension de soixante-cinq ans étant de 40 % du salaire annuel moyen ; les décrets
+    qu'il cite, un par plafond, ne sont pas dans l'index, qui n'en garde que les titres.
+    Au-delà de soixante-cinq ans, la loi de 1949 ne majore pas la borne, qui ne tient
+    compte que des coefficients des articles 120 et 121 de l'ordonnance du 19 octobre
+    1945, non lus ; la circulaire n° 2/72 la majore par trimestre d'ajournement de 1972
+    à 1974 : de 1950 à 1971, non lu
   fiabilite: moyenne
   bornes:
     liquidation.date_effet: [1949-01-01, 1972-01-01]
@@ -164,6 +174,17 @@ versions:
       fiabilite: haute
   exemples: aucun trouvé
 approximations:
+- version: [quarante_pour_cent_du_plafond]
+  ecart: >-
+    Le modèle majore le maximum de 1949 à 1971 comme le taux, par l'ajournement au-delà de
+    soixante-cinq ans. La loi n° 49-244 borne la pension de 1949 à 40 % du chiffre limite
+    sans égard à l'âge, et la majoration n'est lue qu'à partir de 1972 (circulaire n°
+    2/72) : une pension de 1949 liquidée après soixante-cinq ans sur un salaire annuel
+    moyen proche du plafond sort trop haute, et celles de 1950 à 1971 si les décrets de
+    ces années disent comme elle.
+  effet: >-
+    non mesuré ; les seules pensions liquidées après soixante-cinq ans de 1949 à 1971 que
+    le maximum ramène, d'assurés nés avant 1907
 - version: [quarante_pour_cent_du_plafond, cinquante_pour_cent_du_plafond, arretes_de_1986]
   ecart: >-
     Le maximum se compte sur le plafond annuel de l'année de la date d'effet, que le
@@ -207,7 +228,7 @@ approximations:
     l'un d'eux liquide.
   effet: non mesuré ; les seules pensions que le maximum ramènerait
 sources:
-  lu_le: 2026-10-08
+  lu_le: 2026-10-11
   prochaine_relecture: 2027-04-30
   lectures_divergentes:
   - >-
@@ -229,9 +250,10 @@ sources:
     dire celui de la pension unique des régimes alignés quand un autre que le régime
     général la liquide.
   - >-
-    Lire un texte qui fixe le maximum de 1949 à 1974 — la loi n° 49-244, article 2, et
-    les décrets que le barème de la Cnav cite, celui du 2 mars 1948 d'abord — et dire si
-    le maximum suivait l'ajournement au-delà de soixante-cinq ans avant 1972.
+    Lire les décrets que le barème de la Cnav cite de 1950 à 1971, et la loi n° 48-1306
+    du 23 août 1948 : le maximum restait-il de 40 % du plafond sans égard à l'âge jusqu'en
+    1972, comme la loi n° 49-244 l'écrit pour 1949 ? Si oui, ne plus le majorer par
+    l'ajournement avant 1972, en Python puis en JavaScript (première approximation).
   lectures:
   - type: legifrance
     reference: >-
@@ -249,9 +271,28 @@ sources:
       au 1er mars 1949 et à laquelle sa base rattache le maximum (article 2) — « Le
       montant de la retraite pour ancien combattant et prisonnier de guerre doit être
       comparé au montant maximum des retraites » (circulaire Cnav n° 2024-29, point
-      2.2.5, sous « Loi n° 49-244 du 24 février 1949 article 2 ») : l'index n'en garde
-      que la notice
+      2.2.5, sous « Loi n° 49-244 du 24 février 1949 article 2 »). L'index n'en garde que
+      la notice ; lue au fac-similé du Journal officiel du 25 février 1949, p. 2019
+      (version papier numérisée de Légifrance, téléchargée le 11 octobre 2026 depuis le
+      poste du propriétaire), l'article 2 dispose : « A titre exceptionnel, pour l'année
+      1949, les arrêtés prévus aux articles 56 (§ 1er), 71 (§ 2) et 120 (§ 2) de
+      l'ordonnance n° 45-2454 du 19 octobre 1945, modifiée par la loi n° 48-1306 du 23
+      août 1948 prendront effet du 1er janvier 1949. L'application de ces arrêtés ne
+      pourra avoir pour conséquence de porter une pension ou rente de vieillesse, compte
+      tenu du jeu des coefficients prévus aux articles 120 et 121 de ladite ordonnance, à
+      une somme supérieure à 40 p. 100 du chiffre limite fixé en application de l'article
+      31 de l'ordonnance n° 45-2250 du 4 octobre 1945, modifiée, pour la détermination
+      des cotisations maxima »
     date: 1949-02-25
+  - type: jorf
+    reference: >-
+      décret n° 48-361 du 2 mars 1948 portant relèvement du salaire limite prévu pour le
+      calcul des cotisations de sécurité sociale (JORFTEXT000000499844), lu au fac-similé
+      du Journal officiel du 3 mars 1948, p. 2236, de la même façon : « La rémunération
+      maximum prévue par l'article 31 de l'ordonnance n° 45-2250 du 4 octobre 1945
+      portant organisation de la sécurité sociale est portée à 228.000 F par an »
+      (article 1er), 19 000 F par mois ; aucun maximum de pension
+    date: 1948-03-03
   - type: jorf
     reference: >-
       arrêté du 28 janvier 1972 fixant le plafond des pensions de vieillesse servies au
@@ -322,6 +363,10 @@ historique:
   2026-10-08 — écrite à l'étape 17 de l'action 138, sur le point d'OpenFisca-France-Pension
   au registre (chantier 138.17) et la question que la fiche decote_avant_1983 laissait
   ouverte.
+- >-
+  2026-10-11 — la loi n° 49-244 et le décret n° 48-361 lus au fac-similé du Journal
+  officiel, depuis le poste du propriétaire : les 40 % de 1949 sont lus, sans majoration
+  pour l'ajournement, que le modèle applique (première approximation).
 effet: >-
   L'assuré du régime général dont la pension calculée passe la moitié du plafond — un
   salaire annuel moyen au-dessus du plafond de l'année, quand la revalorisation des
