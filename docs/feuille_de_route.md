@@ -5385,16 +5385,16 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 
 ### 136. Ce qu'OpenFisca fait mieux que le dépôt : deux règles, un oracle borné aux carrières simples, la trace d'un calcul, une population — `en cours`
 
-**Reprise, au 5 octobre 2026.** Fait : l'étape 6, sa première moitié — la
-page Coût refaite sur une grille de 791 carrières ancrée sur l'EIR de 2020 et
-les centiles de l'INSEE (`scripts/grille_large.py`) : l'écart des années
-observées s'y creuse de 4,5 à 8,0 points, le solde moyen de la proposition
-passe de −0,52 à −0,25 point de PIB, et le passé se refait mieux (action 147) ;
-l'écart justifie la population. Reste : retirer de la grille l'ASPA des
-premiers non-salariés, dans les deux moteurs ; la seconde moitié de l'étape 6,
-dont le propriétaire tranche la forme ; les étapes 1 à 5. Commencer par
-l'ASPA. Le détail : « Fait, le 5 octobre 2026 : l'étape 6, la mesure », en fin
-d'action.
+**Reprise, au 11 octobre 2026.** Fait : l'étape 6, sa première moitié — la page
+Coût refaite sur une grille de 791 carrières ancrée sur l'EIR de 2020 et les
+centiles de l'INSEE (`scripts/grille_large.py`), dont l'écart justifie la
+population — et l'ASPA des premiers non-salariés retirée de la grille de la
+page, en Python seul, le coût n'ayant plus de portage JavaScript : l'économie
+des années observées en perd 0,2 point au scénario 2 et 0,4 aux scénarios 4 et
+6, la projection ne bouge pas. Reste : la seconde moitié de l'étape 6, la
+population, dont le propriétaire tranche la forme ; les étapes 1 à 5. Commencer
+par ce qu'il lance. Le détail : « Fait, le 5 octobre 2026 : l'étape 6, la
+mesure », en fin d'action, et la note `136/2026-10-11-l-aspa-de-la-grille.md`.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais que tu analyses ce qu'on fait
 moins bien que openfisca pensions et que tu ajoutes une action sur ce sujet

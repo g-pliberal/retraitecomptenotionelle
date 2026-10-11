@@ -1,0 +1,17 @@
+date: "2026-10-11"
+session: "action 136, étape 6 : l'ASPA des premiers non-salariés retirée de la grille de la page Coût"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1, que le
+  simulateur sert toujours. Ce que la grille de la page Coût sert au scénario 1,
+  couple par couple, avant et après le correctif, et ce que la page en affiche.
+trouve: >-
+  Aucun texte de droit. La grille de la page Coût servait l'ASPA à l'artisan né de
+  1885 à 1905, à l'exploitant agricole de 1890 à 1920 et au libéral de 1885 à 1900,
+  quand la dépense qu'elle multiplie l'exclut ; elle ne la sert plus
+  (Simulateur.pour_la_projection). L'écart des années observées passe de −79,16 % à
+  −78,95 % au scénario 2, et de −52,14 % à −51,69 % aux scénarios 4 et 6 ; la
+  projection ne bouge pas. Rien à porter en JavaScript : le coût ne s'y calcule plus
+  depuis l'action 150.
+reste: >-
+  De l'action 136 : la population (étape 6, seconde moitié), dont le propriétaire
+  tranche la forme, et les étapes 1 à 5.
