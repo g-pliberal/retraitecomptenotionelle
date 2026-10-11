@@ -49,6 +49,17 @@ disent ce que le registre des modèles sait depuis le 4 octobre.**
   des sessions dans le cloud, et le registre des sources le dit. Une seule
   piste neuve : la page de la DREES sur le modèle TRAJECTOiRE, que le
   communiqué cite et que le dépôt n'avait pas (`drees_trajectoire_page`).
+- *La page TRAJECTOiRE.* Le propriétaire l'ouvre aussi, et ses captures
+  concordent avec la copie d'Internet Archive du 10 juin 2026, qui donne les
+  adresses de ses liens. Sa documentation et son code sont ceux que le
+  registre des modèles a déjà lus. De ses quatre publications de référence,
+  deux sont connues (le Dossier de la DREES n° 103, sur la fonction publique
+  et le privé, et le Panorama de 2023) ; deux Études et résultats sont
+  neuves, et entrent au registre des sources pour être lues : le n° 1297
+  (2024), sur les 185 000 nouveaux retraités dont la réforme du minimum
+  contributif augmente la pension, et le n° 1283 (2023), sur les trois
+  femmes sur quatre que leurs majorations de durée d'assurance pour enfants
+  font gagner.
 - *Ce que le GitLab ne règle pas.* Il ne rend pas à CALIPER ce qui faisait
   son prix : sa validation sur les pensions réelles de l'EIR 2004 (chantier
   138.14) demande des données qu'on ne lit qu'au CASD. Et `calcul_pension`

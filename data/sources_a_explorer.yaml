@@ -1510,13 +1510,63 @@ sources:
       La présentation de TRAJECTOiRE par la DREES, et ce qui en part :
       documentation et publications, à rapprocher de son code
       (`drees_trajectoire`) et du registre des modèles (`trajectoire`).
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-10-11"
     note: >-
       Repérée le 11 octobre 2026 au bas du communiqué de 2021
       (`drees_codes_sources_communique`) : « Consulter la page consacrée au
       modèle de simulation Trajectoire ». Le site refuse les sessions du
-      cloud (voir `drees_caliper`) : à lire depuis une session locale, ou
-      dans une copie d'Internet Archive, s'il en a une.
+      cloud (voir `drees_caliper`) : lue le même jour dans les captures
+      d'écran du propriétaire, et dans sa copie d'Internet Archive du 10 juin
+      2026 (web.archive.org/web/20260610063515/, suivi de l'adresse), qui
+      concordent. Parue le 2 décembre 2020, elle décrit un modèle qui projette
+      les carrières d'un échantillon de cotisants, estime leurs rémunérations
+      et calcule leurs pensions, en deux fonctionnalités, « cas-type » et
+      « population ». Sa documentation (premiers-pas.html) et son code
+      (git.drees.fr) sont ceux du registre des modèles,
+      data/reference/referents.yaml (`trajectoire`). De ses quatre
+      publications de référence, deux sont connues : le Dossier de la DREES
+      n° 103 (Chopard et al., 2022, la fonction publique et le privé
+      comparés), cité par une note archivée de la feuille de route
+      (docs/archives/feuille_de_route.md) ; le Panorama « Les retraités et les
+      retraites », édition 2023, d'une série que le manifeste porte. Les deux
+      autres, des Études et résultats, entrent ici :
+      `drees_er_1297_minimum_contributif` et `drees_er_1283_mda_enfants`.
+
+  - id: drees_er_1297_minimum_contributif
+    url: https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/etudes-et-resultats/en-2024-la-reforme-du-minimum-contributif
+    nature: document
+    acces: refus
+    regimes: []
+    a_en_tirer: >-
+      Ce que la réforme du minimum contributif a donné en 2024 : selon son
+      titre, elle « augmente la pension de 185 000 nouveaux retraités ». Un
+      résultat publié, à confronter à la fiche minimum_contributif.yaml et à
+      ce que le dépôt en calcule.
+    statut: a_explorer
+    note: >-
+      Repérée le 11 octobre 2026 parmi les publications de référence de la
+      page TRAJECTOiRE (`drees_trajectoire_page`) : Martin Chopard, Études et
+      résultats n° 1297, février 2024. Le site refuse les sessions du cloud :
+      à lire depuis une session locale, ou dans Internet Archive.
+
+  - id: drees_er_1283_mda_enfants
+    url: https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/etudes-et-resultats/retraite-parmi-les-femmes-beneficiant-de
+    nature: document
+    acces: refus
+    regimes: []
+    a_en_tirer: >-
+      Ce que rapportent les majorations de durée d'assurance pour enfants :
+      selon son titre, parmi les femmes qui en bénéficient, « trois sur quatre
+      voient leur pension augmenter grâce à ces trimestres ». Un résultat
+      publié, à confronter à la fiche majoration_duree_assurance_enfants.yaml
+      et à la page Droits non cotisés.
+    statut: a_explorer
+    note: >-
+      Repérée le 11 octobre 2026 parmi les publications de référence de la
+      page TRAJECTOiRE (`drees_trajectoire_page`) : Romain Guirriec, Études
+      et résultats n° 1283, 2023. Le site refuse les sessions du cloud : à
+      lire depuis une session locale, ou dans Internet Archive.
 
   - id: drees_calcul_pension
     url: https://gitlab.com/DREES_code/public/outils/calcul_pension
