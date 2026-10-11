@@ -9,7 +9,7 @@ import { prolongerReleve, salaireMoyenAnnuel } from "./carriere.js";
 import { formaterBorne } from "./regimes.js";
 import { PARAMETRES_DEFAUT, cleParametres } from "./config.js";
 import { AssietteActivite } from "./assiette.js";
-import { calculerAvantages, chargerAvantages } from "./avantages.js";
+import { chargerAvantages } from "./avantages.js";
 import { chargerFrontiere } from "./frontiere.js";
 import { calculerCout } from "./cout.js";
 import { chargerBilan } from "./bilan.js";
@@ -258,11 +258,13 @@ export class Contexte {
     return this._donnee("frontiere", () => chargerFrontiere(this.paquet));
   }
 
-  /** Ce que les avantages non contributifs coûtent — une seconde, une fois. */
+  /**
+   * Ce que les avantages non contributifs coûtent, année par année : figé sous
+   * la référence comme la grille (`agregats()`). Il se calculait ici, sous les
+   * règles de `base`, jusqu'au 11 octobre 2026.
+   */
   avantages() {
-    return this._agregat("avantages", () => calculerAvantages(
-      this.simulateur(), this.depenses(), this.population(),
-    ));
+    return this.agregats().avantages;
   }
 
   /**

@@ -92,16 +92,92 @@ export class CasTypesFiges {
   }
 }
 
+// -- les avantages non contributifs -------------------------------------------
+
+/**
+ * Une année de la décomposition. Les lignes sont des objets que la page lit
+ * par leur code, une ligne absente y valant `undefined` ; les trois sommes sont
+ * celles du modèle, dans son ordre d'addition, que la table porte plutôt que de
+ * les refaire.
+ */
+class AnneeAvantagesFigee {
+  constructor(brut) {
+    this.annee = brut.annee;
+    this.observee = brut.observee;
+    this.lignes = brut.lignes;
+    this.modele = brut.modele;
+    this.anticipees = brut.anticipees;
+    this.gratuit = brut.gratuit;
+    this.gratuitModele = brut.gratuit_modele;
+    this.anticipee = brut.anticipee;
+  }
+}
+
+/** Ce que les avantages non contributifs coûtent, année par année. */
+export class AvantagesFiges {
+  constructor(brut) {
+    this.annees = brut.annees.map((annee) => new AnneeAvantagesFigee(annee));
+    this.lignes = brut.lignes;
+    this.lignesModele = brut.lignes_modele;
+    this.refus = brut.refus;
+    this.ponderation = brut.ponderation;
+  }
+
+  get derniere() {
+    return this.annees.length > 0 ? this.annees[this.annees.length - 1] : null;
+  }
+}
+
+// -- le classement de l'emploi ------------------------------------------------
+
+/** D'une carrière simulée, ce que la page lit du système actuel. */
+class DepartFige {
+  constructor(brut) {
+    this.pensionAnnuelle = brut.pension_annuelle;
+    this.trimestresRequis = brut.trimestres_requis;
+  }
+}
+
+/**
+ * Le cas type `cas` parti à `age`, contre la même carrière sous
+ * `declassement`, partie le même jour, pour chaque génération que la page
+ * compare (`CLASSEMENT_COMPARE`, dans `pages.js`).
+ */
+export class ClassementFige {
+  constructor(brut) {
+    this.cas = brut.cas;
+    this.age = brut.age;
+    this.declassement = brut.declassement;
+    this._departs = Object.fromEntries(Object.entries(brut.departs)
+      .map(([generation, departs]) => [generation, departs.map((d) => new DepartFige(d))]));
+  }
+
+  get generations() {
+    return Object.keys(this._departs).map(Number);
+  }
+
+  /** L'agent actif, puis l'agent déclassé. */
+  departs(generation) {
+    return lire(this._departs, generation, "départ de la génération");
+  }
+}
+
 // -- la table -----------------------------------------------------------------
 
 /** Ce que les trois pages qui agrègent lisent, tel que la table le porte. */
 export class AgregatsFiges {
-  constructor(casTypes) {
+  constructor(casTypes, avantages, classement) {
     this.casTypes = casTypes;
+    this.avantages = avantages;
+    this.classement = classement;
   }
 }
 
 /** Reconstruit la table depuis la clé `agregats` du paquet. */
 export function chargerAgregats(donnees) {
-  return new AgregatsFiges(new CasTypesFiges(donnees.cas_types));
+  return new AgregatsFiges(
+    new CasTypesFiges(donnees.cas_types),
+    new AvantagesFiges(donnees.avantages),
+    new ClassementFige(donnees.classement),
+  );
 }

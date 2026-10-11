@@ -191,6 +191,18 @@ test("Carrières types lit la grille figée, sans rien calculer", () => {
   assert.doesNotThrow(() => rendre(contexte, "/cas-types", {}));
 });
 
+test("Droits non cotisés lit ses avantages et ses départs figés, sans rien calculer", () => {
+  // Elle calculait le coût des avantages chez le lecteur — trois secondes —,
+  // et simulait quatre carrières pour dire ce que le classement ajoute. Le
+  // paquet les porte depuis le 11 octobre 2026. Le simulateur, elle le lit
+  // encore : le catalogue des régimes lui dit combien déclarent la réversion.
+  const contexte = new Contexte(paquet);
+  contexte.simulateur().simuler = () => { throw new Error("la page a simulé une carrière"); };
+  contexte.cout = () => { throw new Error("la page a recalculé le coût agrégé"); };
+  contexte.simuler = () => { throw new Error("la page a simulé une carrière"); };
+  assert.doesNotThrow(() => rendre(contexte, "/avantages", {}));
+});
+
 test("un paquet d'avant les dépenses figées rend Pourquoi changer et Partager comme avant", () => {
   // Le site lit son paquet en `force-cache` : un lecteur peut recevoir le
   // nouveau code et un paquet d'avant le 7 octobre 2026, dont le bilan ne

@@ -1961,27 +1961,55 @@ def _agregats(contexte=None) -> dict:
     Les systèmes sont ceux que le site compare (``SCENARIOS_MONTRES`` de
     ``moteur/js/pages.js``), comme dans le bilan.
     """
+    from retraite_notionnelle.avantages import carriere_variante
     from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS, calculer_cas_types
     from retraite_notionnelle.contexte import Contexte
-    from retraite_notionnelle.donnees.agregats import figer_cas_types
+    from retraite_notionnelle.donnees.agregats import (
+        figer_avantages, figer_cas_types, figer_departs,
+    )
     from retraite_notionnelle.web.site import module
 
     contexte = contexte or Contexte()
     simulateur = contexte.simulateur()
-    compares = [scenario for scenario in module("pages").SCENARIOS_MONTRES
-                if scenario != "actuel"]
+    pages = module("pages")
+    compares = [scenario for scenario in pages.SCENARIOS_MONTRES if scenario != "actuel"]
+    # LES DEUX DÉPARTS QUE COMPARE DROITS NON COTISÉS : le cas type actif, et
+    # la même carrière déclassée, partis au même âge. C'est la page qui les
+    # choisit (``CLASSEMENT_COMPARE``), et la table la suit.
+    classement = pages.CLASSEMENT_COMPARE
+    cas = next(cas for cas in CAS_TYPES if cas.code == classement["cas"])
+    departs = {
+        generation: figer_departs(*(
+            simulateur.simuler(carriere_variante(
+                simulateur, cas, generation, classement["age"], affiliation)).actuel
+            for affiliation in (None, classement["declassement"])))
+        for generation in classement["generations"]
+    }
     return {
         # LA GRILLE DE CARRIÈRES TYPES : treize cas, sept générations, et
         # l'âge où chacun part. La page la montre telle quelle.
         "cas_types": figer_cas_types(calculer_cas_types(simulateur), simulateur,
                                      CAS_TYPES, GENERATIONS, compares),
+        # CE QUE COÛTENT LES AVANTAGES NON CONTRIBUTIFS, année par année, que
+        # Droits non cotisés montre et que Coût cite.
+        "avantages": figer_avantages(contexte.avantages()),
+        "classement": {
+            "cas": classement["cas"], "age": classement["age"],
+            "declassement": classement["declassement"], "departs": departs,
+        },
     }
 
 
 def construire_agregats(contexte=None) -> bytes:
     """La table des pages qui agrègent, écrite dans ``data/derive/``, chaque
-    élément sur sa ligne (``json_en_lignes``)."""
-    return (json_en_lignes(_agregats(contexte)) + "\n").encode("utf-8")
+    élément sur sa ligne (``json_en_lignes``).
+
+    Un NaN ne passerait pas : le JSON ne l'écrit pas, et le navigateur
+    refuserait le paquet entier. Mieux vaut que la fabrication s'arrête ici.
+    """
+    table = _agregats(contexte)
+    json.dumps(table, allow_nan=False)
+    return (json_en_lignes(table) + "\n").encode("utf-8")
 
 
 def construire_bilan(contexte=None) -> bytes:

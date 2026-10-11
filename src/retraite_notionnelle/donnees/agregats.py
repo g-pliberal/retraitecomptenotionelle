@@ -12,7 +12,9 @@ embarqué dans le paquet que le navigateur charge, et lu ici et dans
 ``moteur/js/agregats.js`` par les mêmes accesseurs.
 
 CE QUI EST FIGÉ, ET CE QUI NE L'EST PAS. Tout ce qu'une règle du modèle
-décide : la grille des cas types, l'âge auquel chacun part. Ce qui n'est
+décide : la grille des cas types, l'âge auquel chacun part, ce que coûtent les
+avantages non contributifs, les deux départs qui disent ce que le classement
+d'un emploi ajoute. Ce qui n'est
 qu'une donnée lue — les comptes du COR, les dépenses publiées, la
 distribution des pensions — reste dans le paquet, où les pages la lisent
 comme avant. Les lecteurs ne calculent rien qu'une règle décide : ils rendent
@@ -170,6 +172,137 @@ def _cas_types(brut: dict) -> CasTypesFiges:
     )
 
 
+# -- les avantages non contributifs --------------------------------------------
+
+
+@dataclass(frozen=True)
+class AnneeAvantagesFigee:
+    """Une année de la décomposition, sous les accesseurs de
+    ``avantages.AnneeAvantages``. Les trois sommes sont celles du modèle, dans
+    son ordre d'addition : la table les porte plutôt que de les refaire."""
+
+    annee: int
+    observee: float
+    lignes: dict[str, float]
+    modele: dict[str, float]
+    anticipees: dict[str, float]
+    gratuit: float
+    gratuit_modele: float
+    anticipee: float
+
+
+@dataclass(frozen=True)
+class AvantagesFiges:
+    """Ce que les avantages non contributifs coûtent, année par année, sous les
+    accesseurs de ``avantages.CoutAvantages``."""
+
+    annees: tuple[AnneeAvantagesFigee, ...]
+    lignes: tuple[str, ...]
+    lignes_modele: tuple[str, ...]
+    refus: dict[str, str]
+    ponderation: str
+
+    @property
+    def derniere(self) -> AnneeAvantagesFigee | None:
+        return self.annees[-1] if self.annees else None
+
+
+def figer_avantages(cout) -> dict:
+    """Le coût des avantages de ``avantages.calculer_avantages``."""
+    return {
+        "annees": [
+            {
+                "annee": annee.annee, "observee": annee.observee,
+                "lignes": dict(annee.lignes), "modele": dict(annee.modele),
+                "anticipees": dict(annee.anticipees),
+                "gratuit": annee.gratuit, "gratuit_modele": annee.gratuit_modele,
+                "anticipee": annee.anticipee,
+            }
+            for annee in cout.annees
+        ],
+        "lignes": list(cout.lignes),
+        "lignes_modele": list(cout.lignes_modele),
+        "refus": dict(cout.refus),
+        "ponderation": cout.ponderation,
+    }
+
+
+def _avantages(brut: dict) -> AvantagesFiges:
+    return AvantagesFiges(
+        annees=tuple(
+            AnneeAvantagesFigee(
+                annee=int(annee["annee"]), observee=float(annee["observee"]),
+                lignes={cle: float(valeur) for cle, valeur in annee["lignes"].items()},
+                modele={cle: float(valeur) for cle, valeur in annee["modele"].items()},
+                anticipees={cle: float(valeur)
+                            for cle, valeur in annee["anticipees"].items()},
+                gratuit=float(annee["gratuit"]),
+                gratuit_modele=float(annee["gratuit_modele"]),
+                anticipee=float(annee["anticipee"]),
+            )
+            for annee in brut["annees"]
+        ),
+        lignes=tuple(brut["lignes"]),
+        lignes_modele=tuple(brut["lignes_modele"]),
+        refus=dict(brut["refus"]),
+        ponderation=brut["ponderation"],
+    )
+
+
+# -- le classement de l'emploi --------------------------------------------------
+
+
+@dataclass(frozen=True)
+class DepartFige:
+    """D'une carrière simulée, ce que la page Droits non cotisés lit du système
+    actuel : sa pension, et la durée qu'il requiert."""
+
+    pension_annuelle: float
+    trimestres_requis: int
+
+
+@dataclass(frozen=True)
+class ClassementFige:
+    """Ce que le classement d'un emploi en catégorie active change à un départ :
+    le cas type ``cas`` parti à ``age``, contre la même carrière sous
+    ``declassement``, partie le même jour, pour chacune des ``generations``.
+    La page Droits non cotisés en tire l'écart de pension et de durée requise."""
+
+    cas: str
+    age: float
+    declassement: str
+    _departs: dict[int, tuple[DepartFige, DepartFige]] = field(default_factory=dict)
+
+    @property
+    def generations(self) -> tuple[int, ...]:
+        return tuple(self._departs)
+
+    def departs(self, generation: int) -> tuple[DepartFige, DepartFige]:
+        """L'agent actif, puis l'agent déclassé."""
+        return _lire(self._departs, generation, "départ de la génération")
+
+
+def figer_departs(actif, declasse) -> list[dict]:
+    """Les deux départs comparés, depuis le système actuel de chacune des deux
+    simulations (``Comparaison.actuel``)."""
+    return [{"pension_annuelle": actuel.pension_annuelle,
+             "trimestres_requis": actuel.trimestres_requis}
+            for actuel in (actif, declasse)]
+
+
+def _classement(brut: dict) -> ClassementFige:
+    return ClassementFige(
+        cas=brut["cas"], age=float(brut["age"]), declassement=brut["declassement"],
+        _departs={
+            int(generation): tuple(
+                DepartFige(pension_annuelle=float(depart["pension_annuelle"]),
+                           trimestres_requis=int(depart["trimestres_requis"]))
+                for depart in departs)
+            for generation, departs in brut["departs"].items()
+        },
+    )
+
+
 # -- la table ------------------------------------------------------------------
 
 
@@ -178,11 +311,17 @@ class AgregatsFiges:
     """Ce que les trois pages qui agrègent lisent, tel que la table le porte."""
 
     cas_types: CasTypesFiges
+    avantages: AvantagesFiges
+    classement: ClassementFige
 
 
 def depuis_dictionnaire(donnees: dict) -> AgregatsFiges:
     """Reconstruit la table, JSON du dépôt ou clé du paquet."""
-    return AgregatsFiges(cas_types=_cas_types(donnees["cas_types"]))
+    return AgregatsFiges(
+        cas_types=_cas_types(donnees["cas_types"]),
+        avantages=_avantages(donnees["avantages"]),
+        classement=_classement(donnees["classement"]),
+    )
 
 
 def charger_agregats(racine: Path) -> AgregatsFiges:

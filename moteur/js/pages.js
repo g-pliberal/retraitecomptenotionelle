@@ -7964,22 +7964,32 @@ const LIBELLES_ETATS = {
  * quarante : elle doit pouvoir les nommer.
  */
 /**
+ * Les deux départs que la page compare pour dire ce que le classement ajoute :
+ * le cas type actif, et la même carrière déclassée, partis au même âge, pour
+ * deux générations. Le Python les simule une fois, sous la référence, et la
+ * table figée les porte (`classement`, `scripts/construire_donnees.py`) : la
+ * page les choisit ici, et n'en simule plus aucun.
+ */
+export const CLASSEMENT_COMPARE = Object.freeze({
+  cas: "fonctionnaire_actif",
+  age: 57,
+  declassement: "fonctionnaire_territorial_hospitalier",
+  generations: Object.freeze([1960, 1965]),
+});
+
+/**
  * Ce que le classement ajoute, par an, à la pension d'un agent parti à 57 ans.
  *
  * Le cas type actif contre la même carrière déclassée, au même âge : la décote
  * plafonnée à vingt trimestres rattrape presque tout l'écart d'âge, et ce qui
  * reste est ce que le montant sait dire de l'avantage. Ce chiffre était écrit
  * en dur dans la page — 825 € pour 1960, 102 € pour 1965 — et avait dérivé
- * sans que rien ne le dise ; il est calculé depuis le 22 septembre 2026.
+ * sans que rien ne le dise ; il est calculé depuis le 22 septembre 2026, et lu
+ * dans la table figée depuis le 11 octobre.
  */
-function ecartPlafondDecote(simulateur, generation) {
-  const cas = CAS_TYPES.find((c) => c.code === "fonctionnaire_actif");
-  const [actif, sedentaire] = [null, "fonctionnaire_territorial_hospitalier"].map(
-    (affiliation) => simulateur.simuler(carriereVariante(
-      simulateur, cas, generation, 57, affiliation,
-    )).actuel.pension_annuelle,
-  );
-  return actif - sedentaire;
+function ecartPlafondDecote(contexte, generation) {
+  const [actif, declasse] = contexte.agregats().classement.departs(generation);
+  return actif.pensionAnnuelle - declasse.pensionAnnuelle;
 }
 
 /**
@@ -7992,14 +8002,9 @@ function ecartPlafondDecote(simulateur, generation) {
  * la génération 1965, qui en perd quatre depuis que le modèle lit cette règle
  * (23 septembre 2026). Il se calcule.
  */
-function ecartDureeClassement(simulateur, generation) {
-  const cas = CAS_TYPES.find((c) => c.code === "fonctionnaire_actif");
-  const [actif, sedentaire] = [null, "fonctionnaire_territorial_hospitalier"].map(
-    (affiliation) => simulateur.simuler(carriereVariante(
-      simulateur, cas, generation, 57, affiliation,
-    )).actuel.trimestres_requis,
-  );
-  const ecart = sedentaire - actif;
+function ecartDureeClassement(contexte, generation) {
+  const [actif, declasse] = contexte.agregats().classement.departs(generation);
+  const ecart = declasse.trimestresRequis - actif.trimestresRequis;
   return ecart === 1 ? "d'un trimestre" : `de ${ecart} trimestres`;
 }
 
@@ -8299,6 +8304,7 @@ par année.`,
     ? `, soit ${g.nombre(derniere.anticipee / montantAge, 0)} fois ce que `
       + "les mêmes dispositifs ajoutent au <em>montant</em> des pensions"
     : "";
+  const [premiereClassee, secondeClassee] = CLASSEMENT_COMPARE.generations;
   const carteAge = g.cle(
     "Et partir plus tôt, combien cela coûte-t-il ?",
     `<strong>${milliards(derniere.anticipee, 1)} de pensions servies avant
@@ -8307,13 +8313,13 @@ l'âge légal n'est rattrapée par aucune décote.`,
     courbeAge + g.depliant(
       "Pourquoi le montant ne suffit pas à le dire",
       `<p>La décote est <strong>plafonnée à vingt trimestres</strong>.
-Un agent de catégorie active parti à 57 ans et un agent sédentaire parti le même
+Un agent de catégorie active parti à ${CLASSEMENT_COMPARE.age} ans et un agent sédentaire parti le même
 jour butent donc tous deux sur le même plafond : leurs pensions ne diffèrent que
-de ${g.euros(ecartPlafondDecote(contexte.simulateur(), 1960))} par an pour la
-génération 1960, et de ${g.euros(ecartPlafondDecote(contexte.simulateur(), 1965))}
-pour celle de 1965 ; le classement y abaisse par ailleurs la durée requise
-${ecartDureeClassement(contexte.simulateur(), 1960)} pour la première,
-${ecartDureeClassement(contexte.simulateur(), 1965)} pour la seconde. Le montant ne
+de ${g.euros(ecartPlafondDecote(contexte, premiereClassee))} par an pour la
+génération ${premiereClassee}, et de ${g.euros(ecartPlafondDecote(contexte, secondeClassee))}
+pour celle de ${secondeClassee} ; le classement y abaisse par ailleurs la durée requise
+${ecartDureeClassement(contexte, premiereClassee)} pour la première,
+${ecartDureeClassement(contexte, secondeClassee)} pour la seconde. Le montant ne
 sait pas distinguer celui qui part cinq ans trop tôt ; la durée le sait.</p>
 <p>Le classement de l'emploi en porte
 ${g.pourcentage(partClassement, false, 0)}. Le reste se partage entre les
