@@ -15696,6 +15696,7 @@
 "esperance_65_derivee":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"eb9ed5da75656a7a","identiques":28,"niveau":"haute","source":"dérivée des quotients INED de Vallin et Meslé","valeurs":28,"verifiee_le":"2026-10-10"},
 "esperances_projetees":{"ajoutees":0,"colonne":"valeur","corrigees":508,"empreinte":"9344898fd5a7bd97","identiques":92,"niveau":"projetee","source":"INSEE, projections de population 2026, espérances publiées sous les quotients projetés","valeurs":600,"verifiee_le":"2026-10-07"},
 "esperances_vie":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"0ddd59a38e01cfd9","identiques":450,"niveau":"certifiee","source":"INSEE BDM (e0, e60) et OCDE DSD_HEALTH_STAT@DF_LE (e65)","valeurs":450,"verifiee_le":"2026-09-13"},
+"heures_salariees":{"ajoutees":200,"colonne":"heures","corrigees":0,"empreinte":"4a4fb580e1e753ef","identiques":0,"niveau":"certifiee","source":"INSEE et Dares, Emploi, chômage, revenus du travail 2024, dossier bas revenus salariaux","valeurs":200,"verifiee_le":"2026-10-11"},
 "impots_retraite_remuneration":{
 "ajoutees":0,
 "colonne":"montant_meur",
@@ -15830,7 +15831,8 @@
 },
 "valeurs_point_unirs":{"ajoutees":0,"colonne":"valeur","corrigees":9,"empreinte":"87a69f6bafc82068","identiques":114,"niveau":"moyenne","source":"UNIRS tenant lieu de point Arrco avant 1999 — barème de la fédération Agirc-Arrco, substitution du dépôt","valeurs":123,"verifiee_le":"2026-10-05"},
 "valeurs_service_cnavpl":{"ajoutees":18,"colonne":"valeur","corrigees":1,"empreinte":"91cd4e6fb29dd908","identiques":4,"niveau":"certifiee","source":"CNAVPL, « Cotiser pour sa retraite », valeur de service du point depuis 2004, au 31 décembre","valeurs":23,"verifiee_le":"2026-09-23"},
-"validation_trimestres":{"ajoutees":0,"colonne":"heures","corrigees":0,"empreinte":"37614b2a66b3bf4e","identiques":2,"niveau":"certifiee","source":"DILA, base LEGI, code de la sécurité sociale R. 351-9","valeurs":2,"verifiee_le":"2026-09-17"}
+"validation_trimestres":{"ajoutees":0,"colonne":"heures","corrigees":0,"empreinte":"37614b2a66b3bf4e","identiques":2,"niveau":"certifiee","source":"DILA, base LEGI, code de la sécurité sociale R. 351-9","valeurs":2,"verifiee_le":"2026-09-17"},
+"volume_travail":{"ajoutees":0,"colonne":"volume","corrigees":0,"empreinte":"e2b772fd0367a6b0","identiques":21,"niveau":"certifiee","source":"INSEE, Emploi, chômage, revenus du travail 2026, fiche Revenu salarial","valeurs":21,"verifiee_le":"2026-10-11"}
 }
 },
 "chomage_complementaires":{
