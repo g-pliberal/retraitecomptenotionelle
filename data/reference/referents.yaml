@@ -3349,7 +3349,8 @@ referents:
       agrégat de sa population elle aussi, se confronte à celle que l'EACR
       observe, qu'elle surestime, et, sous les réserves que la limite du
       coût agrégé dit, à celle des grilles de la page Coût
-      (`scripts/part_minimum_contributif.py`) : au dernier écart.
+      (`scripts/part_minimum_contributif.py`) ; son gain moyen aussi, sous
+      l'observé : au dernier écart.
     ecarts:
       - constat: >-
           Sans la loi du 30 décembre 2025, il ouvre les droits de la
@@ -3645,26 +3646,41 @@ referents:
           en donne trois causes : le non-recours, les départs au taux plein,
           la liquidation de tous les droits à la fois.
         tranche: >-
-          l'EACR, qui compte les pensions servies : 17,5 % des liquidants du
-          régime général en 2021, 18,3 % en 2022, 17,9 % en 2023, et 33,1 % en
-          2023 à la MSA salariés, dont les liquidants sont quinze fois moins
-          nombreux ; 24,9 % des femmes et 10,9 % des hommes du régime général
-          en 2022. La surestimation, que l'étude dit légère, est de sept à
-          huit points ; et la hausse que la réforme devait donner en 2024
+          l'EACR, qui compte les pensions servies, sur son champ, les régimes
+          alignés réunis : 17,95 % des liquidants en 2021, 18,9 % en 2022,
+          18,8 % en 2023 (au seul régime général, 17,5, 18,3 et 17,9 % ; à la
+          MSA salariés, dont les liquidants sont quinze fois moins nombreux,
+          33,1 % en 2023) ; 25,2 % des femmes et 12,2 % des hommes en 2022 et
+          en 2023. La somme des deux caisses ne compte des personnes que
+          depuis 2019 : avant, la liquidation unique de juillet 2017 ne s'est
+          pas encore installée. La surestimation, que l'étude dit légère, est
+          de près de sept points : 25,7 % sans la réforme de 2023, pour 18,9 et
+          18,8 % observés en 2022 et en 2023 (sept à huit contre le seul
+          régime général). La hausse que la réforme devait donner en 2024
           (+4,3 points) n'est pas dans l'estimation que la DREES tire de la
-          campagne de 2024 (17,4 %), que la suivante remplacera. L'écart est
-          le sien. La grille élargie de la page Coût, passée au scénario 1,
+          campagne de 2024 (18,6 %, −0,3 point), que la suivante remplacera :
+          contre elle, l'écart est de onze points et demi. Son gain moyen, à
+          l'inverse, est sous l'observé : 110 € courants de 2024 avant le
+          relèvement, 108 € de 2023, quand l'EACR en sert 135 à 139 € de 2023
+          aux régimes alignés de 2019 à 2021 ; la masse par liquidant, part
+          fois gain, n'est surestimée que de 10 à 14 % (27,7 € de 2023 par mois
+          chez lui, 24,2 et 25,1 € observés en 2021 et en 2023). L'écart est le
+          sien. La grille élargie de la page Coût, passée au scénario 1,
           surestime aussi, avec deux de ses causes, le taux plein pour tous et
           aucun non-recours, et une à elle, le salaire de ses hommes : 24,6 %
-          des liquidants de 2023, les femmes au niveau observé, les hommes
-          deux fois au-dessus, et 22,4 % des hommes de la génération 1975 à la
-          majoration (docs/limites/5-bis-cout-agrege.md).
+          des liquidants de 2023, 5,8 points de trop, les femmes au niveau
+          observé, les hommes deux fois au-dessus, et 22,4 % des hommes de la
+          génération 1975 à la majoration ; son gain moyen, 123 € de 2023 en
+          2023 pour 134 observés, est de 104 € chez ses femmes et de 149 € chez
+          ses hommes, pour 138 et 124 € (docs/limites/5-bis-cout-agrege.md).
         preuve: >-
           data/reference/regimes/minimum_contributif_liquidants.csv (EACR,
           feuille E-Minima rapportée aux nouveaux retraités de la feuille
-          A-Cadrage) ; Études et résultats n° 1297, tableaux 1 et 3 et note
-          7, lu dans sa copie d'Internet Archive du 17 août 2026 ;
-          scripts/part_minimum_contributif.py
+          A-Cadrage, la caisse regimes_alignes depuis 2019) ;
+          data/reference/regimes/minimum_contributif_montant.csv (sa colonne
+          m1, bornée au minimum majoré de l'année) ; Études et résultats n°
+          1297, tableaux 1 et 3 et note 7, lu dans sa copie d'Internet Archive
+          du 17 août 2026 ; scripts/part_minimum_contributif.py
     fait_mieux:
       - quoi: >-
           Il calcule, par cas type et génération, les taux de récupération, de

@@ -5620,14 +5620,14 @@ sexe —, et les centiles du salaire du privé de l'INSEE, de 1951 à 2024
 
 **Reprise, au 11 octobre 2026.** Fait : le registre (69 modèles, 47 en
 France) ; sa relecture à l'action 138 (le code de Destinie 2, d'Ines, de
-`legiretraite` et d'EDIFIS, cinq diviseurs étrangers), au registre en
-`fait_mieux` et en `ecarts` ; Destinie 2 puis TRAJECTOiRE exécutés à part
-(action 142, étape 4) ; CALIPER, `calcul_pension` et le communiqué de 2021,
-lus ; l'Études et résultats n° 1283, ses cinq exemples devenus cas d'essai ;
-la part des nouveaux retraités au minimum contributif, de l'EACR au dépôt,
-confrontée aux grilles et à TRAJECTOiRE (notes du 11 octobre). Reste ici :
-Ines, sur ce modèle ; les simplifications de CALIPER ; les pistes non
-vérifiées (M@rel, Oscar) ; les `referents` des fiches, à leur relecture.
+`legiretraite` et d'EDIFIS, cinq diviseurs étrangers), au registre ;
+Destinie 2 puis TRAJECTOiRE exécutés à part (action 142, étape 4) ; CALIPER,
+`calcul_pension` et le communiqué de 2021, lus ; l'Études et résultats
+n° 1283, ses cinq exemples devenus cas d'essai ; le minimum contributif de
+l'EACR, part et montant, régimes alignés compris, confronté aux grilles et à
+TRAJECTOiRE (notes du 11 octobre). Reste ici : Ines, sur ce modèle ; les
+simplifications de CALIPER ; les pistes non vérifiées (M@rel, Oscar) ; les
+`referents` des fiches, à leur relecture ; la campagne 2025 de l'EACR.
 
 **Demande**, le 1er octobre 2026 : « Quels sont les autres modèles publics
 autres que openfisca ? », puis : « Ajoute les modèles qui ne sont pas encore

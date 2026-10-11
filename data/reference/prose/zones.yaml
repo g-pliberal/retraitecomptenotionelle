@@ -268,6 +268,9 @@ fichiers:
       # grilles calculent et que l'EACR observe : une mesure de trois minutes,
       # faite un jour (action 137).
       - "**La part des nouveaux retraités au minimum contributif, mesurée le 11 octobre"
+      # La même mesure, refaite le même jour sur les régimes alignés réunis, et
+      # le complément moyen que l'EACR observe, en euros de 2023 (action 137).
+      - "**Sur les régimes alignés réunis, et en euros, le 11 octobre 2026**"
 
   docs/limites/5-ter-trajectoire.md:
     defaut: etat

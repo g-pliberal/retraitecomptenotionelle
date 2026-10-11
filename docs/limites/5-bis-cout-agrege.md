@@ -237,6 +237,26 @@ TRAJECTOiRE donne à sa propre surestimation, de sept à huit points, que le
 registre des modèles consigne (`trajectoire`) : chacun y part au taux plein, et
 personne n'y renonce au minimum.
 
+**Sur les régimes alignés réunis, et en euros, le 11 octobre 2026**
+(`scripts/part_minimum_contributif.py`, action 137). L'enquête porte désormais
+la part des régimes alignés réunis, le champ de TRAJECTOiRE, depuis 2019,
+première année où la somme du régime général et de la MSA salariés compte des
+personnes, la liquidation unique de juillet 2017 ayant mis deux ans à
+s'installer : 20,4 % des liquidants de 2019, 17,95 % en 2021, 18,8 % en 2023
+(`regimes/minimum_contributif_liquidants.csv`). La grille élargie s'en écarte
+un peu moins que du seul régime général : de 1,9 point en 2019 à 5,8 en 2023,
+et 9,0 contre l'estimation de 2024. L'enquête dit aussi le complément moyen que
+le minimum sert à ses bénéficiaires (`regimes/minimum_contributif_montant.csv`),
+et la grille s'y confronte en euros de 2023 : au-dessus jusqu'en 2021, 144 €
+contre 135 aux régimes alignés, elle passe dessous en 2022 et en 2023, 123 €
+contre 134, avec 104 € pour ses femmes et 149 pour ses hommes, quand l'enquête
+en sert 138 et 124. Part et complément se composent : la masse par liquidant,
+de 30 à 34 € de 2023 par mois dans la grille de 2019 à 2023, est de 24 à 28 €
+dans l'enquête, un cinquième à près d'un tiers de trop. TRAJECTOiRE, lui,
+compense sa part par son gain : 108 € de 2023 avant le relèvement, et une masse
+de 27,7 €, 10 à 14 % au-dessus de l'observé, pour une part surestimée de près
+de sept points sur ce champ (registre des modèles, `trajectoire`).
+
 **Ce qui, en revanche, n'est pas une approximation** : l'égalité des scénarios
 3 et 5 avec le système actuel sur toute la période observée. Elle est EXACTE, et
 au sens strict — le scénario prospectif recopie la pension du scénario actuel

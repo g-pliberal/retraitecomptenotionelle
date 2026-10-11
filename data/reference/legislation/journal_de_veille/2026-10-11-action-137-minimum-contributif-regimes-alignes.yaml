@@ -1,0 +1,30 @@
+date: "2026-10-11"
+session: "action 137 : la série du minimum contributif de l'EACR complétée — la part des régimes alignés réunis et le montant moyen servi, certifiés —, puis confrontée de nouveau au modèle et à TRAJECTOiRE"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1, qu'elle
+  ne fait que lire. Les deux classeurs de l'EACR diffusés par la DREES (version du 26
+  mai 2026) et sa documentation (version du 18 mai 2026), jointe au jeu sur le portail
+  de données, qui répond aussi aux sessions du cloud ; le PDF de l'Études et résultats
+  n° 1297 dans sa copie d'Internet Archive du 17 août 2026 ; les montants du minimum
+  contributif majoré du dépôt (legislation/minimum_contributif.csv), pour borner le
+  montant moyen.
+trouve: >-
+  Aucun texte de droit. La colonne m1 de la table E-Minima est, pour le privé, le
+  montant moyen du minimum servi, en euros bruts par mois ; la MSA salariés de 2022 y
+  recopie l'effectif, et le contrôle au minimum majoré mensuel de l'année la rejette,
+  elle seule. Le code 0015 de la Cnav compte les indépendants dès les liquidants de
+  2019 ; la liquidation unique de juillet 2017 s'installe en deux ans (19, 60 puis 72 %
+  du flux de la MSA salariés de 2017 à 2019), et la somme des deux caisses ne compte
+  des personnes qu'à partir de 2019. Certifiés : la part des régimes alignés réunis
+  (17,95 % en 2021, 18,9 % en 2022, 18,8 % en 2023, 18,6 % dans l'estimation de
+  2024), et le montant moyen (regimes/minimum_contributif_montant.csv, 137,7 € à la
+  Cnav en 2023). Recomptée sur ce champ, la surestimation de TRAJECTOiRE est de près
+  de sept points, et son gain moyen, 108 € de 2023 avant le relèvement, est sous les
+  135 à 139 € observés ; la grille élargie du dépôt surestime la part de 1,9 à 5,8
+  points de 2019 à 2023, et sert à ses femmes un minimum trop bas, à ses hommes un
+  minimum trop haut.
+reste: >-
+  L'estimation de 2024, que la campagne de 2025 de l'EACR remplacera ; la part de la
+  Cnav en 2017 et en 2018, que les liquidations uniques de la SSI grossissent
+  peut-être ; et, pour une population (action 136, étape 6), un salaire qui dépende
+  du sexe.
