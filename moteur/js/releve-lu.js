@@ -827,6 +827,19 @@ export function lireReleve(lignes, anneeMaximale = null, revenuDesPoints = null)
       + "simulation lit ce que le relevé porte.",
     );
   }
+  // Un relevé n'est souvent complet qu'à la liquidation : certaines périodes
+  // n'entrent au compte qu'à une régularisation tardive, le plus souvent au
+  // départ (DREES, Dossier solidarité et santé n° 37, 2013, encadré 1 ;
+  // docs/limites/5-hors-du-modele.md). Rien, dans le document, ne dit s'il
+  // l'est déjà : la note vaut pour toute carrière lue.
+  if (lues.length) {
+    notes.push(
+      "Un relevé peut être incomplet avant le départ : certaines périodes, "
+      + "comme le chômage non indemnisé, le service militaire ou le travail "
+      + "à l'étranger, ne sont souvent prises en compte qu'à la demande de "
+      + "retraite, et la simulation lit ce qu'il porte.",
+    );
+  }
   let moisDeNaissance = naissance ? naissance.slice(0, 7) : null;
   if (moisDeNaissance === null && nir !== null && lues.length) {
     // Le siècle, que le numéro tait, se lit dans la carrière : l'année de

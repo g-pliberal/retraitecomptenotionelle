@@ -971,6 +971,18 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None,
             "Sécurité sociale, le salaire n'y figure pas en entier, et la "
             "simulation lit ce que le relevé porte."
         )
+    # Un relevé n'est souvent complet qu'à la liquidation : certaines périodes
+    # n'entrent au compte qu'à une régularisation tardive, le plus souvent au
+    # départ (DREES, Dossier solidarité et santé n° 37, 2013, encadré 1 ;
+    # docs/limites/5-hors-du-modele.md). Rien, dans le document, ne dit s'il
+    # l'est déjà : la note vaut pour toute carrière lue.
+    if lues:
+        notes.append(
+            "Un relevé peut être incomplet avant le départ : certaines périodes, "
+            "comme le chômage non indemnisé, le service militaire ou le travail "
+            "à l'étranger, ne sont souvent prises en compte qu'à la demande de "
+            "retraite, et la simulation lit ce qu'il porte."
+        )
     mois_de_naissance = naissance[:7] if naissance else None
     if mois_de_naissance is None and nir is not None and lues:
         # Le siècle, que le numéro tait, se lit dans la carrière : l'année de

@@ -339,7 +339,9 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   départ — le chômage non indemnisé, le service militaire, les périodes
   reconnues équivalentes accomplies à l'étranger. Un relevé déposé avant le
   départ peut donc les omettre, et la simulation compte ce qu'il porte ; le
-  site ne le dit pas encore à qui le dépose.
+  site le dit à qui le dépose, parmi les notes qui suivent la lecture, sous
+  toute carrière lue — le document ne dit pas s'il est déjà complet
+  (`releve_lu.py`, et son jumeau `releve-lu.js`).
 
   **Ce qu'un vrai document a appris, le 22 septembre 2026 — et ce qu'il ne
   prouve pas.** La lecture avait été écrite contre des relevés d'essai, faute

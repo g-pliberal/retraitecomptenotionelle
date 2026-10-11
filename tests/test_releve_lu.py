@@ -673,6 +673,20 @@ def test_le_plafond_du_releve_est_dit():
     assert not any("plafonné" in note for note in _lire("releve_2026").notes)
 
 
+def test_le_releve_incomplet_avant_le_depart_est_dit():
+    """Un relevé n'est souvent complet qu'à la liquidation : le chômage non
+    indemnisé, le service militaire, les périodes reconnues équivalentes
+    accomplies à l'étranger n'entrent au compte qu'à une régularisation
+    tardive, le plus souvent au départ (DREES, Dossier solidarité et santé
+    n° 37, mars 2013, encadré 1). Un relevé déposé plus tôt peut les omettre,
+    et rien, dans le document, ne dit s'il est déjà complet : la note
+    accompagne toute carrière lue, et aucun document dont rien n'a été lu."""
+    for nom in RELEVES:
+        lecture = _lire(nom)
+        dite = any("incomplet avant le départ" in note for note in lecture.notes)
+        assert dite == bool(lecture.lignes), nom
+
+
 def test_tous_les_statuts_cites_existent_au_catalogue():
     """Un statut mal orthographié ferait un refus de saisie à l'import, et
     l'assuré n'aurait aucun moyen de comprendre pourquoi."""
