@@ -8,23 +8,28 @@ consulte: >-
   la DREES par curl, Chromium et WebFetch ; les copies d'Internet Archive de la page
   CALIPER (10 juin 2026), du communiqué de la DREES du 23 décembre 2021, de la page
   TRAJECTOiRE (10 juin 2026) et des Études et résultats n° 1297 (8 juin 2026) et
-  n° 1283 (11 avril 2026) ; les captures d'écran des trois premières pages, prises
-  par le propriétaire sur son téléphone.
+  n° 1283 (11 avril 2026), pages et PDF ; les captures d'écran des trois premières
+  pages, prises par le propriétaire sur son téléphone.
 trouve: >-
-  Aucun texte de droit. La branche principale de calcul_pension est toujours au
-  commit ec5a871 du 20 janvier 2023, celui que le registre des modèles a lu ; dev,
-  racl et 3-cas-types-du-cor portent des commits qu'elle n'a pas, tous de 2022. Le
-  site de la DREES ne sert plus aucune session du cloud : réponse vide à curl, 502
-  du proxy de sortie à Chromium, 503 à WebFetch ; le GitLab répond, et le site
-  s'ouvre chez le propriétaire, tel que les copies d'Internet Archive le donnent.
+  Aucun texte de droit n'a été lu. La branche principale de calcul_pension est
+  toujours au commit ec5a871 du 20 janvier 2023, celui que le registre des modèles a
+  lu ; dev, racl et 3-cas-types-du-cor portent des commits qu'elle n'a pas, tous de
+  2022. Le site de la DREES ne sert plus aucune session du cloud : réponse vide à
+  curl, 502 du proxy de sortie à Chromium, 503 à WebFetch ; le GitLab répond, et le
+  site s'ouvre chez le propriétaire, tel que les copies d'Internet Archive le donnent.
   Le communiqué du 23 décembre 2021 ne nomme pas CALIPER : il ouvre calculPension
   comme « le moteur de calcul des droits » de TRAJECTOiRE. La page TRAJECTOiRE cite
   deux Études et résultats que le dépôt n'avait pas. Le n° 1297 (2024) : la réforme
-  du minimum contributif de 2023, que la fiche porte déjà, fait gagner 30 € en
-  moyenne à 185 000 nouveaux retraités de 2024. Le n° 1283 (2023) : 65 % des femmes
-  nées en 1958 ont au moins un trimestre de majoration pour enfants utile.
+  du minimum contributif de 2023, dont la fiche porte déjà les montants (733 € par
+  mois au 1er janvier 2024, des deux côtés), fait gagner 30 € en moyenne à 185 000
+  nouveaux retraités de 2024 ; TRAJECTOiRE surestime la part des bénéficiaires, que
+  l'EACR observe à 17,5 % au régime général en 2021 ; le PDF corrige trois chiffres
+  de la page. Le n° 1283 (2023) : 65 % des femmes nées en 1958 ont au moins un
+  trimestre de majoration pour enfants utile ; depuis 2023, deux trimestres
+  d'éducation seulement se partagent entre les parents.
 reste: >-
   Les branches de 2022 de calcul_pension, non lues ; la liste des simplifications de
   CALIPER, à confronter à docs/limites/ ; les résultats des Études et résultats
-  n° 1297 et 1283, à confronter à ce que le dépôt calcule, et leurs PDF, archivés,
-  non lus.
+  n° 1297 et 1283, à confronter à ce que le dépôt calcule ; les rédactions de
+  L. 351-4 postérieures à 2013, dont le partage limité de 2023, à couper dans la
+  fiche des majorations pour enfants.

@@ -1553,20 +1553,31 @@ sources:
       jour dans sa copie d'Internet Archive du 8 juin 2026
       (web.archive.org/web/20260608023545/, suivi de l'adresse) ; son PDF,
       /sites/default/files/2024-02/ER1297.pdf, y a une copie du 17 août 2026
-      (20260817202642), non lue. Paru le 29 février 2024, chiffré par
-      TRAJECTOiRE sur les régimes alignés, avant la loi du 30 décembre 2025.
-      La réforme de 2023 ajoute 100 € au 1er septembre 2023 (aux pensions
-      servies, sur la majoration ; aux futures, 75 € sur la majoration et
-      25 € sur la base) et fait suivre au Mico le Smic : la fiche
-      minimum_contributif.yaml porte déjà ces montants et cette
-      revalorisation. En 2024, 185 000 nouveaux retraités y gagnent 30 € en
-      moyenne, et la part des bénéficiaires parmi eux passe de 26 à 30 % ;
-      sans la réforme, elle serait tombée à 10 % en 2070, elle se tient entre
-      25 et 30 %. Pour la génération 1975, le Mico relève le premier décile
-      de pension de 23 % ; 32 % des femmes en bénéficient, contre 18 % des
-      hommes, pour 112 € contre 90 € (euros constants de 2023), et l'écart de
-      pension de base du privé entre femmes et hommes passe de 16,6 à 14,5 %.
-      Reste à confronter ces résultats à ce que le dépôt calcule.
+      (20260817202642), lue le même jour. Paru le 29 février 2024, chiffré
+      par TRAJECTOiRE sur les régimes alignés, avant la loi du 30 décembre
+      2025, aux hypothèses du COR de juin 2023, sans l'Aspa. La réforme de
+      2023 ajoute 100 € au 1er septembre 2023 (aux pensions servies, sur la
+      majoration ; aux futures, 75 € sur la majoration et 25 € sur la base),
+      fait suivre au Mico le Smic jusqu'à la liquidation, puis les pensions,
+      et compte pour la majoration les trimestres d'AVPF et d'AVA : la fiche
+      minimum_contributif.yaml porte tout cela, et ses montants concordent
+      (733 € par mois au 1er janvier 2024, encadré 1 ; 8 796,38 € par an dans
+      data/reference/legislation/minimum_contributif.csv). En 2024, 185 000
+      nouveaux retraités y gagnent 30 € en moyenne (tableau 1 : 24,9 % des
+      liquidants, déjà bénéficiaires, +27 € ; 4,3 %, nouveaux, +49 €), et la
+      part des bénéficiaires passe de 25,7 à 30 % ; sans la réforme, elle
+      serait tombée à 10 % en 2070, elle se tient entre 25 et 30 %. Mais
+      TRAJECTOiRE « surestime légèrement » cette part (note 7) : celle que
+      l'EACR observe (graphique 1), 17,5 % des nouveaux retraités du régime
+      général et 25,1 % de la MSA salariés en 2021, après la chute de 2012 (de
+      47 à 28 % au régime général), est la mesure à viser. Pour la génération
+      1975 (tableau 2), le Mico relève le premier décile de pension tous
+      régimes de 338 à 414 € (euros 2023) et ramène le rapport D9/D1 de 9,0 à
+      7,3 ; 31,6 % des femmes en bénéficient, contre 18,1 % des hommes, pour
+      106 € contre 82 €, et l'écart de pension des régimes alignés entre
+      femmes et hommes passe de 16,6 à 14,6 % (tableau 3 ; la page résume
+      112 €, 90 € et 14,5 %). Reste à confronter ces résultats à ce que le
+      dépôt calcule.
 
   - id: drees_er_1283_mda_enfants
     url: https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/etudes-et-resultats/retraite-parmi-les-femmes-beneficiant-de
@@ -1589,18 +1600,33 @@ sources:
       jour dans sa copie d'Internet Archive du 11 avril 2026
       (web.archive.org/web/20260411205633/, suivi de l'adresse) ; son PDF,
       /sites/default/files/2023-10/ER1283MAJ1210.pdf, y a une copie du 9 mai
-      2026 (20260509142641), non lue. Paru le 12 octobre 2023, chiffré par
-      TRAJECTOiRE, avant la loi du 30 décembre 2025. Parmi les femmes nées en
-      1958, 85 % ont des MDA pour enfants ; 64 % en ont au moins un trimestre
-      utile à la proratisation, 29 % au taux, 65 % à l'un ou l'autre : trois
-      sur quatre de celles qui en ont. Sur « une moyenne de 14,8 trimestres de
-      MDA pour enfants attribués par femme de cette génération », 9,0 sont
-      utiles à la proratisation, 2,3 au taux, 9,1 à l'un ou l'autre. Au-delà
-      des générations des années 1960, la part utile au taux se tiendrait
-      près de 35 %. La surcote ouverte dès 63 ans aux parents à carrière
-      complète, que porte la fiche surcote_parentale.yaml, toucherait une
-      femme sur six de la génération 1980, pour 0,35 trimestre utile de plus
-      au taux. Reste à confronter ces résultats à ce que le dépôt calcule.
+      2026 (20260509142641), lue le même jour. Paru le 12 octobre 2023,
+      chiffré par TRAJECTOiRE, avant la loi du 30 décembre 2025 ; le modèle
+      donne toutes les MDA aux femmes, et sous-estime d'environ deux points la
+      part des femmes sans enfant. Parmi les femmes nées en 1958, 85 % ont des
+      MDA pour enfants ; 64 % en ont au moins un trimestre utile à la
+      proratisation, 29 % au taux, 65 % à l'un ou l'autre : trois sur quatre
+      de celles qui en ont. Sur 14,8 trimestres de MDA attribués en moyenne
+      par femme (17,3 parmi celles qui en ont), 9,0 sont utiles à la
+      proratisation, 2,3 au taux, 9,1 à l'un ou l'autre (tableau 2). Le
+      tableau 1 les décrit selon le nombre d'enfants : pension moyenne de
+      1 519 € sans enfant, 1 397 € avec un, 1 297 € avec deux, 1 289 € avec
+      trois ou plus (euros 2020), pour 0, 6, 13 et 24 trimestres de MDA. Un
+      trimestre est « utile » si, retiré, il change la pension à âge inchangé
+      ; l'encadré 3 en donne quatre exemples chiffrés pour la génération 1958
+      (âge légal de 62 ans, taux plein à 67 ans, 167 trimestres requis), qui
+      pourraient servir de cas d'essai. Au-delà des générations des années
+      1960, la part des femmes dont un trimestre est utile au taux se
+      tiendrait près de 35 %, et la part des trimestres utiles monterait de
+      60 à près de 70 %. La surcote ouverte dès 63 ans aux parents à carrière
+      complète, que porte la fiche surcote_parentale.yaml, toucherait environ
+      17 % des femmes de la génération 1980 (tableau 3), pour 0,35 trimestre
+      utile de plus au taux. L'encadré 1 rappelle que, depuis la réforme de
+      2023, deux seulement des quatre trimestres d'éducation se partagent
+      entre les parents : la fiche majoration_duree_assurance_enfants.yaml
+      tient encore les rédactions de L. 351-4 postérieures à 2013 pour « à
+      couper », et sert tout à la mère. Reste à confronter ces résultats à ce
+      que le dépôt calcule.
 
   - id: drees_calcul_pension
     url: https://gitlab.com/DREES_code/public/outils/calcul_pension

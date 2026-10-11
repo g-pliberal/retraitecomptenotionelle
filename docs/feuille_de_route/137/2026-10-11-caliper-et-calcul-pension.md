@@ -71,6 +71,18 @@ disent ce que le registre des modèles sait depuis le 4 octobre.**
   de celles qui en ont. Toutes deux passent en `explore` au registre des
   sources ; leurs chiffres, d'avant la loi du 30 décembre 2025, attendent
   d'être confrontés à ce que le dépôt calcule.
+- *Les deux PDF.* Lus dans leurs copies d'Internet Archive, ils précisent
+  les pages. Les montants du minimum contributif concordent avec le dépôt
+  (733 € par mois au 1er janvier 2024). L'étude n° 1297 prévient que
+  TRAJECTOiRE surestime la part des bénéficiaires : celle que l'EACR
+  observe, 17,5 % des nouveaux retraités du régime général en 2021, est la
+  mesure à viser ; son tableau 3 corrige la page (106 € et 82 €, un écart
+  ramené à 14,6 %, non 112 €, 90 € et 14,5 %). L'étude n° 1283 donne la
+  méthode des trimestres « utiles », avec quatre exemples chiffrés qui
+  pourraient servir de cas d'essai, et rappelle que deux trimestres
+  d'éducation seulement se partagent entre les parents depuis 2023, une
+  rédaction de L. 351-4 que la fiche des majorations tient encore pour « à
+  couper ». Le registre des sources porte le détail.
 - *Ce que le GitLab ne règle pas.* Il ne rend pas à CALIPER ce qui faisait
   son prix : sa validation sur les pensions réelles de l'EIR 2004 (chantier
   138.14) demande des données qu'on ne lit qu'au CASD. Et `calcul_pension`
