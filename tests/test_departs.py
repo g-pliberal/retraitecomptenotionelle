@@ -39,11 +39,16 @@ def _carriere(simulateur: Simulateur, metiers: list[Metier], naissance: int = 19
         age_liquidation=liquidation, macro=simulateur.macro, **kwargs)
 
 
-def _aide_soignante(simulateur: Simulateur, liquidation: float = 57) -> Carriere:
-    """Dix ans dans le privé, puis vingt-sept à l'hôpital en catégorie active."""
+def _aide_soignante(simulateur: Simulateur, liquidation: float = 57, **kwargs) -> Carriere:
+    """Dix ans dans le privé, puis vingt-sept à l'hôpital en catégorie active,
+    d'une assurée née le 15 janvier 1965 : le jour se déclare, puisque les
+    dates des départs se comptent depuis lui ; celui que la présomption pose
+    a son test (``test_chronologie.py`` ; feuille de route, action 135,
+    levier 2)."""
     return _carriere(simulateur, [Metier("salarie_prive_non_cadre", 20.0),
                                   Metier("fonctionnaire_territorial_hospitalier_actif", 30.0)],
-                     naissance=1965, liquidation=liquidation, sexe="F")
+                     naissance=1965, liquidation=liquidation, sexe="F", jour_naissance=15,
+                     **kwargs)
 
 
 def _militaire_puis_prive(simulateur: Simulateur) -> Carriere:
@@ -307,10 +312,7 @@ def test_une_demande_n_avance_jamais_une_pension(simulateur):
     assert (demande.retenue, demande.motif) == (carriere.date_liquidation,
                                                 departs.MOTIF_DEPART)
     soignante = _aide_soignante(simulateur)
-    tot = _carriere(simulateur, [Metier("salarie_prive_non_cadre", 20.0),
-                                 Metier("fonctionnaire_territorial_hospitalier_actif", 30.0)],
-                    naissance=1965, liquidation=57, sexe="F",
-                    demandes_de_pension={"regime_general": 60})
+    tot = _aide_soignante(simulateur, demandes_de_pension={"regime_general": 60})
     legal = soignante.date_de_l_age(departs.age_legal(moteur, soignante))
     liste, [demande] = departs.departs_et_demandes(moteur, tot)
     assert _resume(liste) == _resume(departs.departs(moteur, soignante))
