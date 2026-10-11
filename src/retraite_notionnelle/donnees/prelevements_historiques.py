@@ -21,6 +21,15 @@ d'indépendant s'écrit en tranches qui s'ajoutent (:data:`TRANCHES`) et, depuis
 2015, en paliers : en deçà d'un certain revenu, un taux réduit sur tout le
 revenu, interpolé comme :class:`~retraite_notionnelle.remuneration.BaremeProgressif`
 l'interpole pour la fiche de paie.
+
+Le net imposable (action 138, étape 5) : l'impôt sur le revenu
+(:mod:`~retraite_notionnelle.impot_revenu`) part du revenu que la loi laisse
+imposer, le brut moins les cotisations et la part de la CSG que l'article 154
+quinquies du code général des impôts admet en déduction — rien avant 1997, et
+depuis, la colonne ``deductible`` de chaque marche de CSG. Le reste de la CSG,
+la CRDS et la CASA restent imposables ; les cotisations, maladie des pensions
+et contribution de solidarité des agents publics comprises, se déduisent
+(art. 83).
 """
 
 from __future__ import annotations
@@ -209,6 +218,28 @@ class PrelevementsHistoriques:
         zéro pour un taux qui n'existe pas encore."""
         return self.pensions[f"csg_taux_{taux}"].valeur(jour)
 
+    def csg_deductible_pension(self, jour: dt.date, taux: str = "plein") -> float:
+        """La part de la CSG d'une pension, au taux ``plein``, ``median`` ou
+        ``reduit``, que le revenu imposable déduit (CGI, art. 154 quinquies) :
+        zéro avant 1997."""
+        return self.pensions[f"csg_taux_{taux}"].valeur(jour, "deductible")
+
+    def taux_deductible_pension(self, jour: dt.date, parts: dict[str, float]) -> float:
+        """Ce que le revenu imposable du ``jour`` déduit d'une pension, en part
+        du brut, au taux plein de CSG : la CSG déductible, et chaque cotisation
+        maladie sur la part de la pension que ``parts`` lui donne, une
+        cotisation de sécurité sociale (CGI, art. 83). La CRDS, la CASA et le
+        reste de la CSG restent imposables."""
+        p = self.pensions
+        return (self.csg_deductible_pension(jour)
+                + somme_ordonnee(p[serie].valeur(jour) * part
+                                 for serie, part in sorted(parts.items())))
+
+    def taux_deductible_pension_annuel(self, annee: int, parts: dict[str, float]) -> float:
+        """La moyenne des douze mois de l'année."""
+        return somme_ordonnee(self.taux_deductible_pension(jour, parts)
+                              for jour in _mois(annee)) / 12.0
+
     # -- les salaires ------------------------------------------------------
 
     def _assiette_csg(self, jour: dt.date, brut: float, plafond: float) -> float:
@@ -262,16 +293,26 @@ class PrelevementsHistoriques:
         return bareme_independant(self.independants["famille"].en_vigueur(jour), revenu,
                                   plafond)
 
-    def _independant(self, famille: str, jour: dt.date, revenu: float, plafond: float,
-                     cotisations: float) -> float:
-        """La maladie, les allocations familiales, et la CSG et la CRDS de
-        l'activité sans abattement, sur le revenu augmenté, jusqu'en 2024, des
-        cotisations personnelles de l'année (L. 136-3)."""
+    def _assiette_independant(self, famille: str, jour: dt.date, revenu: float,
+                              plafond: float, cotisations: float
+                              ) -> tuple[float, float, float]:
+        """La maladie et les allocations familiales d'un indépendant, et
+        l'assiette de sa CSG et de sa CRDS : son revenu, sans abattement,
+        augmenté jusqu'en 2024 de ses cotisations personnelles de l'année
+        (L. 136-3)."""
         maladie = self.maladie_independant(famille, jour, revenu, plafond)
         allocations = self.famille_independant(jour, revenu, plafond)
         assiette = revenu
         if self.independants["assiette_csg"].valeur(jour, "cotisations_ajoutees"):
             assiette += cotisations + maladie + allocations
+        return maladie, allocations, assiette
+
+    def _independant(self, famille: str, jour: dt.date, revenu: float, plafond: float,
+                     cotisations: float) -> float:
+        """La maladie, les allocations familiales, et la CSG et la CRDS de
+        l'activité sur leur assiette (:meth:`_assiette_independant`)."""
+        maladie, allocations, assiette = self._assiette_independant(
+            famille, jour, revenu, plafond, cotisations)
         taux = self.salaires["csg"].valeur(jour) + self.salaires["crds"].valeur(jour)
         return maladie + allocations + taux * assiette
 
@@ -306,6 +347,37 @@ class PrelevementsHistoriques:
                              retraite_salarie: float = 0.0) -> float:
         """La moyenne des douze mois de l'année."""
         return somme_ordonnee(self.hors_retraite(famille, jour, brut, plafond, retraite_salarie)
+                              for jour in _mois(annee)) / 12.0
+
+    # -- le net imposable --------------------------------------------------
+
+    def non_deductibles(self, famille: str | None, jour: dt.date, brut: float, plafond: float,
+                        retraite_salarie: float = 0.0) -> float:
+        """Ce que les prélèvements du ``jour`` retirent d'un brut annuel sans
+        que le revenu imposable le déduise : la CSG au-delà de sa part
+        déductible (CGI, art. 154 quinquies) et la CRDS, sur l'assiette de
+        :meth:`hors_retraite` — le brut abattu ; pour un indépendant, son
+        revenu augmenté de ses cotisations jusqu'en 2024, ``retraite_salarie``
+        comprises. Le net imposable est le net de la paie plus ce montant :
+        les cotisations, la contribution de solidarité des agents publics
+        comprise (CGI, art. 83, 2° ter), se déduisent. Une famille que
+        l'histoire ne connaît pas (``None``) a l'assiette d'un salarié."""
+        csg = self.salaires["csg"].en_vigueur(jour)
+        taux = (csg.get("taux", 0.0) - csg.get("deductible", 0.0)
+                + self.salaires["crds"].valeur(jour))
+        if not taux:
+            return 0.0
+        if famille in FAMILLES_INDEPENDANTES:
+            assiette = self._assiette_independant(famille, jour, brut, plafond,
+                                                  retraite_salarie)[2]
+        else:
+            assiette = self._assiette_csg(jour, brut, plafond)
+        return taux * assiette
+
+    def non_deductibles_annuel(self, famille: str | None, annee: int, brut: float,
+                               plafond: float, retraite_salarie: float = 0.0) -> float:
+        """La moyenne des douze mois de l'année."""
+        return somme_ordonnee(self.non_deductibles(famille, jour, brut, plafond, retraite_salarie)
                               for jour in _mois(annee)) / 12.0
 
 

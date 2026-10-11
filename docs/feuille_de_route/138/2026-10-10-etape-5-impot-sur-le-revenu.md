@@ -1,15 +1,15 @@
 # Étape 5, première partie : l'impôt sur le revenu d'un foyer, de son barème à son montant, chaque année
 
-**Reprise, au 10 octobre 2026.** Fait : l'impôt sur le revenu d'un foyer —
-personne seule ou couple, enfants ou non, salaires et pensions imposables —,
+**Reprise, au 11 octobre 2026.** Fait : l'impôt sur le revenu d'un foyer,
 des revenus de 1960 à ceux de 2025 puis sur un barème projeté, et son revenu
-fiscal de référence (`impot_revenu.py`), à l'euro des tableaux de la brochure
-pratique, de 77 exemples de l'administration, un par année au moins de 1998
-à 2025, et d'OpenFisca exécuté à part. Branché nulle part. Reste, dans cet
-ordre : l'impôt dans les indicateurs de cycle de vie (la session suivante),
-avec la CSG déductible de chaque année (la session de la CSG) ; l'effet
-retour de la page Coût ; les règles d'avant 1981 sans texte lu. Détail :
-« Ce qui reste ».
+fiscal de référence (`impot_revenu.py`), à l'euro de la brochure pratique, de
+77 exemples de l'administration et d'OpenFisca ; le 11 octobre, la CSG
+déductible de chaque année, lue dans l'article 154 quinquies, et le net
+imposable des salaires et des pensions (`cycle_de_vie.revenus_imposables`,
+`parts_imposables_par_annee`). Branché nulle part. Reste, dans cet ordre :
+l'impôt dans les indicateurs de cycle de vie ; l'effet retour de la page
+Coût ; les règles d'avant 1981 sans texte lu. Détail :
+`2026-10-11-etape-5-csg-deductible.md`.
 
 **La demande.** Le propriétaire, le 10 octobre 2026 : l'impôt sur le revenu
 d'un foyer, de son barème à son montant, chaque année ; les barèmes de l'IPP

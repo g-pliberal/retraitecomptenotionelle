@@ -4667,7 +4667,14 @@ institutions:
           régime général (décret n° 80-481 et ses modificatifs). Ne sont pas
           écrites celle des exploitants agricoles retraités, connue en 1997
           seulement (décret n° 97-140), et celle des régimes spéciaux (D. 711-3
-          à D. 711-5).
+          à D. 711-5). LA CSG DÉDUCTIBLE, relue le 11 octobre 2026 (étape 5,
+          deuxième partie) : la colonne `deductible` des barèmes de CSG
+          d'activité et des pensions, à chaque taux, que le script confronte
+          aux versions de l'article 154 quinquies du code général des impôts
+          (index LEGI) et qui fait le net imposable des salaires et des
+          pensions : rien avant 1997, puis 1 point, 5,1 et 3,8 points en 1998,
+          4,2 au taux de 6,6 % en 2005, 6,8 et 5,9 en 2018. L'IPP et les
+          textes concordent à chaque marche.
 
       - id: ipp_impot_revenu
         titre: >-

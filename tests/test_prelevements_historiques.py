@@ -7,16 +7,23 @@ dernière marche de chaque série est le barème de l'année courante que le sit
 applique (``prelevements_remuneration.yaml``) ; que les marches connues y sont,
 suppressions comprises ; que le salaire net de l'année courante est celui de la
 fiche de paie, et qu'une année ancienne en change ce que l'histoire dit.
+
+Et la CSG déductible (action 138, étape 5) : la part que l'article 154
+quinquies du code général des impôts déduit du revenu imposable, à chaque date
+où ses versions la disent, et le net imposable qu'elle donne aux salaires et
+aux pensions de chaque année.
 """
 
 from __future__ import annotations
 
 import datetime as dt
+import sqlite3
+import sys
 
 import pytest
 
 from retraite_notionnelle import cycle_de_vie
-from retraite_notionnelle.config import RACINE_DONNEES, Parametres
+from retraite_notionnelle.config import RACINE_DONNEES, RACINE_PROJET, Parametres
 from retraite_notionnelle.donnees.chargement import charger_yaml
 from retraite_notionnelle.donnees.prelevements_historiques import (
     CHEMIN,
@@ -333,3 +340,137 @@ def test_une_pension_nette_suit_les_prelevements_de_chaque_annee(simulateur):
     convention = cycle_de_vie.convention_nette(simulateur, comparaison)
     assert convention.nette
     assert convention.retenu(2015) == pytest.approx(1.0 - taux[2015])
+
+
+# -- La CSG déductible et le net imposable (action 138, étape 5) ----------------
+
+def _script():
+    """Le récupérateur, qui dit ce que les textes déduisent."""
+    sys.path.insert(0, str(RACINE_PROJET / "scripts" / "fetch"))
+    import ipp_prelevements_sociaux
+
+    return ipp_prelevements_sociaux
+
+
+def test_la_csg_deductible_est_celle_des_textes(historique, courants):
+    """La part de la CSG que le revenu imposable déduit (CGI, art. 154
+    quinquies), à chaque date où les textes la disent : rien avant 1997, un
+    point en 1997, puis la part de l'assurance maladie. Sa dernière marche,
+    6,8 points d'un revenu d'activité, est celle de la fiche de paie du site."""
+    for texte in _script().DEDUCTIBLE_AUX_TEXTES:
+        jour = dt.date.fromisoformat(texte["depuis"])
+        for cle, attendu in texte["taux"].items():
+            partie, nom = cle.split(".")
+            serie = getattr(historique, partie)[nom]
+            assert serie.valeur(jour, "deductible") == pytest.approx(attendu), (cle, jour)
+    avant = dt.date(1996, 12, 1)
+    assert historique.salaires["csg"].valeur(avant, "deductible") == 0.0
+    for taux in ("plein", "median", "reduit"):
+        assert historique.csg_deductible_pension(avant, taux) == 0.0
+    for profil in ("salarie_prive", "agent_seul", "independant"):
+        assert historique.salaires["csg"].valeur(APRES, "deductible") == pytest.approx(
+            courants.profil(profil).csg_deductible), profil
+
+
+def test_les_parts_deductibles_se_lisent_dans_legi():
+    """Les versions de l'article 154 quinquies, et de L. 136-8 pour 1998, que
+    le récupérateur cite disent, mot pour mot, la part qu'il en tire, quand
+    l'index LEGI est là (``python scripts/fetch/dila_index.py legi --recuperer``)."""
+    base = RACINE_DONNEES / "brut" / "dila" / "legi.sqlite"
+    if not base.exists():
+        pytest.skip("l'index LEGI n'est pas là")
+    connexion = sqlite3.connect(f"file:{base}?mode=ro", uri=True)
+    try:
+        for texte in _script().DEDUCTIBLE_AUX_TEXTES:
+            lus = [connexion.execute("select texte from doc where id = ?", (identifiant,))
+                   .fetchone() for identifiant in texte["legi"]]
+            assert all(lus), texte["legi"]
+            tout = " ".join(" ".join(lu[0].replace("\u202f", " ").replace("\xa0", " ").split())
+                            for lu in lus)
+            for mots in texte["lu"]:
+                assert mots in tout, (texte["depuis"], mots)
+    finally:
+        connexion.close()
+
+
+def test_le_salaire_imposable_de_l_annee_courante_est_celui_de_la_fiche(simulateur, courants):
+    """L'année courante, le salaire imposable est le brut de la fiche de paie
+    moins ses cotisations et sa CSG déductible, sur le brut abattu de 1,75 %."""
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1970, sexe="H", affiliation="salarie_prive_non_cadre", age_debut=21,
+        age_liquidation=67, niveau_salaire=1.0)
+    imposables = cycle_de_vie.revenus_imposables(simulateur, carriere)
+    bruts = cycle_de_vie.revenus_d_activite(carriere)
+    courante = simulateur.parametres.annee_courante
+    fiche = fiche_depuis_brut(simulateur.parametres.racine_donnees, simulateur.macro,
+                              simulateur.catalogue, simulateur.affiliations,
+                              "salarie_prive_non_cadre", courante, bruts[courante])
+    profil = courants.profil("salarie_prive")
+    cotisations = sum(l.salarie for l in fiche.lignes if l.code != "csg_crds")
+    assiette = fiche.brut * (1.0 - profil.abattement_frais[0].taux)
+    assert imposables[courante] == pytest.approx(
+        fiche.brut - cotisations - profil.csg_deductible * assiette, rel=1e-9)
+    assert set(imposables) == set(cycle_de_vie.revenus_nets(simulateur, carriere))
+
+
+def test_ce_qu_un_salaire_paie_sans_le_deduire_suit_les_textes(historique, simulateur):
+    """Sous le plafond, ce que la paie retire sans que le revenu imposable le
+    déduise : toute la CSG jusqu'en 1996, la CRDS depuis 1996 ; 2,4 points de
+    CSG depuis 1997, sur le brut abattu de 5 % en 1998, de 3 % en 2005, de
+    1,75 % depuis 2012. La contribution de solidarité d'un agent public se
+    déduit (CGI, art. 83, 2° ter) ; la CSG d'un indépendant porte sur son
+    revenu augmenté de ses cotisations."""
+    for annee, part in ((1990, 0.0), (1995, 0.024), (1997, 0.029), (1998, 0.029 * 0.95),
+                        (2005, 0.029 * 0.97), (2012, 0.029 * 0.9825), (2020, 0.029 * 0.9825)):
+        plafond = simulateur.macro.plafond_securite_sociale(annee)
+        for famille in ("prive", "contractuel", "agent"):
+            assert historique.non_deductibles_annuel(famille, annee, 0.8 * plafond, plafond) == (
+                pytest.approx(part * 0.8 * plafond)), (famille, annee)
+    jour, plafond, revenu, autres = dt.date(2020, 6, 1), 41_136.0, 40_000.0, 9_000.0
+    cotisations = (historique.maladie_independant("commercant", jour, revenu, plafond)
+                   + historique.famille_independant(jour, revenu, plafond))
+    assert historique.non_deductibles("commercant", jour, revenu, plafond, autres) == (
+        pytest.approx(0.029 * (revenu + autres + cotisations)))
+
+
+def test_la_pension_imposable_suit_la_csg_deductible_de_chaque_annee(simulateur):
+    """Partie en 2014, la pension d'un salarié du privé est imposable moins
+    4,2 % de CSG et la maladie de sa part complémentaire jusqu'en 2017, moins
+    5,9 % depuis : la CRDS, la CASA et 2,4 points de CSG restent imposables.
+    Celle d'une fonctionnaire partie en 1995 ne déduit que sa maladie jusqu'en
+    1996, un point de CSG de plus en 1997, 3,8 points seuls depuis 1998."""
+    comparaison = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1950, sexe="H", affiliation="salarie_prive_non_cadre", age_debut=21,
+        age_liquidation=64, niveau_salaire=1.0))
+    parts = cycle_de_vie.parts_imposables_par_annee(simulateur, comparaison)
+    prelevements = cycle_de_vie.prelevements_par_annee(simulateur, comparaison)
+    assert set(parts) == set(prelevements)
+    maladie = prelevements[2015] - (0.066 + 0.005 + 0.003)
+    assert maladie > 0.0
+    assert parts[2015] == pytest.approx(1.0 - 0.042 - maladie)
+    assert parts[2020] == pytest.approx(1.0 - 0.059 - maladie)
+    assert prelevements[2020] - (1.0 - parts[2020]) == pytest.approx(0.024 + 0.005 + 0.003)
+    fonctionnaire = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1940, sexe="F", affiliation="fonctionnaire_etat_actif", age_debut=22,
+        age_liquidation=55, niveau_salaire=1.0))
+    parts = cycle_de_vie.parts_imposables_par_annee(simulateur, fonctionnaire)
+    assert parts[1995] == pytest.approx(1.0 - 0.0265)
+    assert parts[1997] == pytest.approx(1.0 - 0.01 - 0.028)
+    assert parts[1998] == pytest.approx(1.0 - 0.038)
+
+
+def test_la_csg_que_rend_la_proposition_baisse_la_part_deductible(simulateur):
+    """Après la bascule, le scénario 6 laisse un net plus fort du même brut ;
+    son net imposable garde la part non déductible du droit en vigueur."""
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1985, sexe="H", affiliation="salarie_prive_cadre", age_debut=22,
+        age_liquidation=64, niveau_salaire=1.0)
+    nets = cycle_de_vie.revenus_nets(simulateur, carriere)
+    imposables = cycle_de_vie.revenus_imposables(simulateur, carriere)
+    nets_6 = cycle_de_vie.revenus_nets(simulateur, carriere, proposition=True)
+    imposables_6 = cycle_de_vie.revenus_imposables(simulateur, carriere, proposition=True)
+    apres = [annee for annee in nets if nets_6[annee] > nets[annee] + 1.0]
+    assert apres
+    for annee in apres:
+        assert imposables_6[annee] - nets_6[annee] == pytest.approx(
+            imposables[annee] - nets[annee]), annee

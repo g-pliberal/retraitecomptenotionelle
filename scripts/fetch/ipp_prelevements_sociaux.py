@@ -50,6 +50,14 @@ déplafonnement de 2013, ignore la réduction de 2017 des libéraux, prête 7,35
 au revenu de plus de cinq plafonds de 2018 quand le décret n° 2017-1894 dit
 6,5 %, et n'a rien après 2018.
 
+LA CSG DÉDUCTIBLE (action 138, étape 5, deuxième partie). L'impôt sur le revenu
+(``retraite_notionnelle/impot_revenu.py``) part des salaires et des pensions
+imposables, nets de la part de la CSG que l'article 154 quinquies du code
+général des impôts admet en déduction. L'IPP la donne pour la CSG d'activité et
+pour chaque taux de celle des pensions (colonne ``deductible``) ; le script la
+confronte aux versions de l'article, lues dans l'index LEGI
+(``DEDUCTIBLE_AUX_TEXTES``), et s'arrête si l'IPP en dit une autre.
+
 L'ANCRAGE, comme ``ipp_taux_cotisation.py`` pour la vieillesse : chaque marche de
 l'IPP nomme un texte et sa date au *Journal officiel* ; le récupérateur cherche
 ce texte dans l'index JORF de la DILA (``dila_index.py``, récupéré s'il est
@@ -91,13 +99,16 @@ FRANC = 6.55957
 SERIES = {
     ("pensions", "csg_taux_plein"): (
         "prelevements_sociaux.contributions_sociales.csg.remplacement",
-        {"taux": "pensions_retraite_invalidite.taux_plein"}),
+        {"taux": "pensions_retraite_invalidite.taux_plein",
+         "deductible": "pensions_retraite_invalidite.deductible.taux_plein"}),
     ("pensions", "csg_taux_median"): (
         "prelevements_sociaux.contributions_sociales.csg.remplacement",
-        {"taux": "pensions_retraite_invalidite.taux_median"}),
+        {"taux": "pensions_retraite_invalidite.taux_median",
+         "deductible": "pensions_retraite_invalidite.deductible.taux_median"}),
     ("pensions", "csg_taux_reduit"): (
         "prelevements_sociaux.contributions_sociales.csg.remplacement",
-        {"taux": "pensions_retraite_invalidite.taux_reduit"}),
+        {"taux": "pensions_retraite_invalidite.taux_reduit",
+         "deductible": "pensions_retraite_invalidite.deductible.taux_reduit"}),
     ("pensions", "crds"): (
         "prelevements_sociaux.contributions_sociales.crds",
         {"taux": "prelevements_sociaux.contributions_sociales.crds"}),
@@ -120,7 +131,7 @@ SERIES = {
          "sous_cinq_plafonds": "assures_retraites.pensions_sous_5_pss"}),
     ("salaires", "csg"): (
         "prelevements_sociaux.contributions_sociales.csg.activite",
-        {"taux": "taux_global", "abattement": "abattement.0-",
+        {"taux": "taux_global", "deductible": "deductible", "abattement": "abattement.0-",
          "abattement_jusqu_a_quatre_plafonds": "abattement.0-4"}),
     ("salaires", "crds"): (
         "prelevements_sociaux.contributions_sociales.crds",
@@ -348,6 +359,65 @@ REGIMES_DES_PENSIONS = {
     "maladie_independants": ("cancava", "organic", "cnavpl", "cnbf"),
 }
 
+#: LA CSG DÉDUCTIBLE (action 138, étape 5, deuxième partie) : la part de la CSG
+#: que le revenu imposable déduit (CGI, art. 154 quinquies). La colonne
+#: ``deductible`` de l'IPP doit rendre, à chaque date, le taux que les textes
+#: disent pour chaque série ; ``legi`` nomme les versions de l'index LEGI qui le
+#: disent, ``lu`` leurs mots, qu'un test y relit, ``loi`` le texte qui l'a écrit
+#: (index JORF). Avant 1997, rien : l'article naît de la loi de finances pour
+#: 1997, et « la C.S.G. […] n'est pas déductible » (circulaire du 14 mai 1993,
+#: JORFARTI000001162800). En 1998, l'article déduit « la fraction affectée en
+#: application du IV de l'article L. 136-8 » à l'assurance maladie, que ce IV
+#: chiffre, et que la rédaction de 2001 écrit en points. La dernière ligne est
+#: la version en vigueur.
+DEDUCTIBLE_AUX_TEXTES = (
+    {"depuis": "1997-01-01",
+     "taux": {"salaires.csg": 0.01, "pensions.csg_taux_plein": 0.01,
+              "pensions.csg_taux_reduit": 0.01},
+     "legi": ("LEGIARTI000006302866",),
+     "lu": ("pour la fraction correspondant au taux de 1 p. 100",
+            "perçus à compter du 1er janvier 1997"),
+     "loi": "Loi 96-1181 du 30/12/1996 (LF pour 1997), art. 94 (JORFARTI000001220261)"},
+    {"depuis": "1998-01-01",
+     "taux": {"salaires.csg": 0.051, "pensions.csg_taux_plein": 0.038,
+              "pensions.csg_taux_reduit": 0.038},
+     "legi": ("LEGIARTI000006302867", "LEGIARTI000006740335", "LEGIARTI000006302868"),
+     "lu": ("pour la fraction affectée en application du IV de l'article L.136-8",
+            "un taux de 5,1 % ou de 3,8 % pour les revenus visés au II et au III",
+            "à hauteur de 5,1 points ou de 3,8 points pour les revenus visés aux II et III"),
+     "loi": "Loi 97-1269 du 30/12/1997 (LF pour 1998), art. 80 (JORFARTI000001707991) ; "
+            "loi 2000-1257 (LFSS pour 2001), en points"},
+    {"depuis": "2005-01-01",
+     "taux": {"salaires.csg": 0.051, "pensions.csg_taux_plein": 0.042,
+              "pensions.csg_taux_reduit": 0.038},
+     "legi": ("LEGIARTI000006302871",),
+     "lu": ("à hauteur de 5,1 points", "à hauteur respectivement de 3,8 points et 4,2 points",
+            "revenus perçus à compter du 1er janvier 2005"),
+     "loi": "Loi 2004-1485 du 30/12/2004 (LFR pour 2004), art. 37 (JORFARTI000001654425)"},
+    {"depuis": "2018-01-01",
+     "taux": {"salaires.csg": 0.068, "pensions.csg_taux_plein": 0.059,
+              "pensions.csg_taux_reduit": 0.038},
+     "legi": ("LEGIARTI000036431149",),
+     "lu": ("à hauteur de 6,8 points",
+            "à hauteur de 3,8 points lorsqu'elle est prélevée au taux de 3,8 % ou 6,2 %",
+            "à hauteur de 5,9 points lorsqu'elle est prélevée au taux de 8,3 %"),
+     "loi": "Loi 2017-1837 du 30/12/2017 (LF pour 2018), art. 67 (JORFARTI000036339275)"},
+    {"depuis": "2019-01-01",
+     "taux": {"pensions.csg_taux_median": 0.042},
+     "legi": ("LEGIARTI000037995064",),
+     "lu": ("à hauteur de 4,2 points lorsqu'elle est prélevée au taux de 6,6 %",),
+     "loi": "Loi 2018-1213 du 24/12/2018, art. 3 (JORFARTI000037851902)"},
+    {"depuis": "2026-06-27",
+     "taux": {"salaires.csg": 0.068, "pensions.csg_taux_plein": 0.059,
+              "pensions.csg_taux_median": 0.042, "pensions.csg_taux_reduit": 0.038},
+     "legi": ("LEGIARTI000054336634",),
+     "lu": ("à hauteur de 6,8 points",
+            "à hauteur de 3,8 points lorsqu'elle est prélevée au taux de 3,8 % ou 6,2 %",
+            "à hauteur de 4,2 points lorsqu'elle est prélevée au taux de 6,6 %",
+            "à hauteur de 5,9 points lorsqu'elle est prélevée au taux de 8,3 %"),
+     "loi": "la version en vigueur"},
+)
+
 
 def _hors_taux(cle: str) -> bool:
     """Une clé de marche qui n'est pas un taux : la date, le texte, et ce que
@@ -500,6 +570,24 @@ def _sans_redite(lues: list[dict]) -> list[dict]:
             continue
         gardees.append(marche)
     return gardees
+
+
+def verifier_deductible(series: dict[tuple[str, str], list[dict]]) -> None:
+    """La part déductible de chaque série de CSG est, à chaque date des textes,
+    celle qu'ils disent (:data:`DEDUCTIBLE_AUX_TEXTES`), et nulle avant 1997 :
+    l'IPP qui en dirait une autre arrête le script."""
+    for texte in DEDUCTIBLE_AUX_TEXTES:
+        for cle, attendu in texte["taux"].items():
+            en_vigueur = [m for m in series[tuple(cle.split("."))]
+                          if m["depuis"] <= texte["depuis"]]
+            lu = en_vigueur[-1].get("deductible", 0.0) if en_vigueur else 0.0
+            if abs(lu - attendu) > 1e-9:
+                raise SystemExit(f"{cle} au {texte['depuis']} : l'IPP déduit {lu}, "
+                                 f"{texte['legi'][0]} dit {attendu}")
+    premiere = min(texte["depuis"] for texte in DEDUCTIBLE_AUX_TEXTES)
+    for (bloc, nom), lues in series.items():
+        if any(m.get("deductible") for m in lues if m["depuis"] < premiere):
+            raise SystemExit(f"{bloc}.{nom} : une part déductible avant {premiere}")
 
 
 # -- l'ancrage au Journal officiel -------------------------------------------
@@ -669,9 +757,10 @@ ENTETE = """\
 # QUI LE LIT. Les indicateurs de cycle de vie nets
 # (`retraite_notionnelle/cycle_de_vie.py`, action 138, étape 9) : la pension
 # nette de chaque année aux taux de son année, le salaire net de chaque année
-# aux siens. La fiche de paie du site et la pension nette qu'il affiche restent
-# aux taux de l'année courante (`prelevements_remuneration.yaml`), qui doivent
-# rendre ceux de la dernière marche de chaque série : un test le tient.
+# aux siens, et leur net imposable (étape 5). La fiche de paie du site et la
+# pension nette qu'il affiche restent aux taux de l'année courante
+# (`prelevements_remuneration.yaml`), qui doivent rendre ceux de la dernière
+# marche de chaque série : un test le tient.
 #
 # LES SÉRIES. Un taux s'entend en part de son assiette ; chaque marche dit
 # tous les taux en vigueur à sa date, zéro compris. Une contribution n'existait
@@ -738,6 +827,16 @@ ENTETE = """\
 # D. 711-5 ; 1,5 % en 1985, 1,9 % en 1988), dont il faudrait savoir, régime par
 # régime, s'il relève du régime général pour la maladie. Les exonérations des
 # retraités non imposables ne jouent pas : le dépôt prélève au taux plein.
+#
+# LA CSG DÉDUCTIBLE. `deductible` dit la part de la CSG que le revenu imposable
+# déduit (CGI, art. 154 quinquies) : rien avant 1997 ; 1 point en 1997 (loi
+# n° 96-1181, art. 94) ; la part de l'assurance maladie en 1998, 5,1 points d'un
+# salaire, 3,8 d'une pension (loi n° 97-1269, art. 80 ; CSS, L. 136-8, IV) ;
+# 4,2 au taux de 6,6 % en 2005 (loi n° 2004-1485, art. 37) ; 6,8 et 5,9 en 2018
+# (loi n° 2017-1837, art. 67) ; 4,2 au taux médian en 2019 (loi n° 2018-1213,
+# art. 3). Ce sont les valeurs de l'IPP, que le script confronte aux versions
+# de l'article (`DEDUCTIBLE_AUX_TEXTES`). Le reste de la CSG, la CRDS et la
+# CASA ne se déduisent pas ; les cotisations, si (CGI, art. 83).
 """
 
 
@@ -775,6 +874,7 @@ def main(argv: list[str] | None = None) -> int:
         [pension_sous_le_plafond(marche) for marche in retraites])
     series[("pensions", "maladie_fonction_publique")] = LUES_AUX_TEXTES["maladie_fonction_publique"]
     series[("independants", "assiette_csg")] = _normaliser(ASSIETTE_CSG)
+    verifier_deductible(series)
     jorf = _ouvrir("jorf")
     compte = ancrer_series(jorf, series)
     ancrage = {**compte, "index": meta(jorf, "dernier_increment") or "?"}

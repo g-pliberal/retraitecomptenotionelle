@@ -1,0 +1,25 @@
+date: "2026-10-11"
+session: "action 138, étape 5, deuxième partie : la CSG déductible de chaque année, le net imposable des salaires et des pensions"
+consulte: >-
+  L'index LEGI (à jour au 4 octobre 2026) : les dix-neuf versions de l'article 154 quinquies
+  du code général des impôts, de 1997 à celle du 27 juin 2026 (LEGIARTI000054336634) ;
+  L. 136-8 dans sa rédaction de 1998 (LEGIARTI000006740335) ; l'article 83 du code, ses
+  rédactions de 1983 et de 2026. L'index JORF : les lois qui ont écrit l'article — finances
+  pour 1997, art. 94, et pour 1998, art. 80 ; LFSS pour 2001 ; loi n° 2004-1485, art. 37 ;
+  finances pour 2018, art. 67 ; loi n° 2018-1213, art. 3 — et la circulaire du 14 mai 1993
+  sur les indemnités des élus locaux. Les barèmes de CSG de l'IPP, en CSV. Le code
+  d'OpenFisca-France, sa pension imposable.
+trouve: >-
+  La CSG n'était pas déductible avant 1997 ; un point l'est en 1997, la part de l'assurance
+  maladie en 1998 (5,1 points d'un revenu d'activité, 3,8 d'une pension), 4,2 points d'une
+  pension au taux de 6,6 % en 2005, 6,8 et 5,9 en 2018, 4,2 au taux médian en 2019 ; aucune
+  version plus récente n'en change le partage. L'IPP rend ces valeurs marche pour marche, et
+  `prelevements_historiques.yaml` les porte, vérifiées par son récupérateur. Les cotisations
+  se déduisent (art. 83), la contribution exceptionnelle de solidarité des agents publics et
+  la maladie des pensions comprises ; la CRDS et la CASA, non. OpenFisca ne déduit de la
+  pension que la CSG. Le scénario 1 ne change pas : le net imposable n'entre dans aucun
+  indicateur encore.
+reste: >-
+  Le texte de la loi de finances pour 1991 qui dit la CSG non déductible, que l'index JORF
+  n'a qu'en partie : la circulaire de 1993 le rappelle seule. La part de la proposition qui
+  baisse, déductible ou non, est une convention à confirmer par le propriétaire.

@@ -3,7 +3,7 @@
 # source_id: ipp_prelevements_sociaux
 #
 # ÉCRIT PAR `scripts/fetch/ipp_prelevements_sociaux.py`, jamais à la main : les
-# barèmes de l'Institut des politiques publiques, lus le 2026-10-10, chacun avec la
+# barèmes de l'Institut des politiques publiques, lus le 2026-10-11, chacun avec la
 # référence que l'IPP cite pour sa marche. Une transcription, non une source
 # productrice : `haute` au plus (data/sources.yaml, `ipp`).
 #
@@ -20,9 +20,10 @@
 # QUI LE LIT. Les indicateurs de cycle de vie nets
 # (`retraite_notionnelle/cycle_de_vie.py`, action 138, étape 9) : la pension
 # nette de chaque année aux taux de son année, le salaire net de chaque année
-# aux siens. La fiche de paie du site et la pension nette qu'il affiche restent
-# aux taux de l'année courante (`prelevements_remuneration.yaml`), qui doivent
-# rendre ceux de la dernière marche de chaque série : un test le tient.
+# aux siens, et leur net imposable (étape 5). La fiche de paie du site et la
+# pension nette qu'il affiche restent aux taux de l'année courante
+# (`prelevements_remuneration.yaml`), qui doivent rendre ceux de la dernière
+# marche de chaque série : un test le tient.
 #
 # LES SÉRIES. Un taux s'entend en part de son assiette ; chaque marche dit
 # tous les taux en vigueur à sa date, zéro compris. Une contribution n'existait
@@ -89,7 +90,17 @@
 # D. 711-5 ; 1,5 % en 1985, 1,9 % en 1988), dont il faudrait savoir, régime par
 # régime, s'il relève du régime général pour la maladie. Les exonérations des
 # retraités non imposables ne jouent pas : le dépôt prélève au taux plein.
-lu_le: "2026-10-10"
+#
+# LA CSG DÉDUCTIBLE. `deductible` dit la part de la CSG que le revenu imposable
+# déduit (CGI, art. 154 quinquies) : rien avant 1997 ; 1 point en 1997 (loi
+# n° 96-1181, art. 94) ; la part de l'assurance maladie en 1998, 5,1 points d'un
+# salaire, 3,8 d'une pension (loi n° 97-1269, art. 80 ; CSS, L. 136-8, IV) ;
+# 4,2 au taux de 6,6 % en 2005 (loi n° 2004-1485, art. 37) ; 6,8 et 5,9 en 2018
+# (loi n° 2017-1837, art. 67) ; 4,2 au taux médian en 2019 (loi n° 2018-1213,
+# art. 3). Ce sont les valeurs de l'IPP, que le script confronte aux versions
+# de l'article (`DEDUCTIBLE_AUX_TEXTES`). Le reste de la CSG, la CRDS et la
+# CASA ne se déduisent pas ; les cotisations, si (CGI, art. 83).
+lu_le: "2026-10-11"
 fiabilite: haute
 tenues_avant_leur_premiere_marche: [maladie_prive, maladie_etat, maladie_collectivites, famille]
 
@@ -100,17 +111,17 @@ regimes_des_pensions:
 
 pensions:
   csg_taux_plein:
-    - {depuis: "1991-02-01", taux: 0.011, texte: "Loi 90-1168 du 29/12/90, art. 127 à 135 (LF pour 1991)", jorf: "JORFARTI000001951881"}
-    - {depuis: "1993-07-01", taux: 0.024, texte: "Loi 93-859 du 22/06/1993, art. 42 (LFR pour 1993)", jorf: "JORFARTI000001707069"}
-    - {depuis: "1997-01-01", taux: 0.034, texte: "Loi 96-1160 du 27/12/1996, art. 9 à 17 (LFSS pour 1997) | Article L136-8 du Code de la Sécurité sociale", jorf: "JORFTEXT000000198309"}
-    - {depuis: "1998-01-01", taux: 0.062, texte: "Loi 97-1164 du 19/12/1997, art. 5 (LFSS pour 1998)", jorf: "JORFTEXT000000569121"}
-    - {depuis: "2005-01-01", taux: 0.066, texte: "Loi 2004-810 du 13/08/2004, art. 72", jorf: "JORFTEXT000000625158"}
-    - {depuis: "2018-01-01", taux: 0.083, texte: "Loi 2017-1836 du 30/12/2017, art. 8 (LFSS pour 2018)", jorf: "JORFTEXT000036339090"}
+    - {depuis: "1991-02-01", taux: 0.011, deductible: 0, texte: "Loi 90-1168 du 29/12/90, art. 127 à 135 (LF pour 1991)", jorf: "JORFARTI000001951881"}
+    - {depuis: "1993-07-01", taux: 0.024, deductible: 0, texte: "Loi 93-859 du 22/06/1993, art. 42 (LFR pour 1993)", jorf: "JORFARTI000001707069"}
+    - {depuis: "1997-01-01", taux: 0.034, deductible: 0.01, texte: "Loi 96-1160 du 27/12/1996, art. 9 à 17 (LFSS pour 1997) | Article L136-8 du Code de la Sécurité sociale", jorf: "JORFTEXT000000198309"}
+    - {depuis: "1998-01-01", taux: 0.062, deductible: 0.038, texte: "Loi 97-1164 du 19/12/1997, art. 5 (LFSS pour 1998)", jorf: "JORFTEXT000000569121"}
+    - {depuis: "2005-01-01", taux: 0.066, deductible: 0.042, texte: "Loi 2004-810 du 13/08/2004, art. 72", jorf: "JORFTEXT000000625158"}
+    - {depuis: "2018-01-01", taux: 0.083, deductible: 0.059, texte: "Loi 2017-1836 du 30/12/2017, art. 8 (LFSS pour 2018)", jorf: "JORFTEXT000036339090"}
   csg_taux_median:
-    - {depuis: "2019-01-01", taux: 0.066, texte: "Article 154 quinquies du Code général des impôts (taux global)", ancrage: "un article de code, à lire dans LEGI"}
+    - {depuis: "2019-01-01", taux: 0.066, deductible: 0.042, texte: "Article 154 quinquies du Code général des impôts (taux global)", ancrage: "un article de code, à lire dans LEGI"}
   csg_taux_reduit:
-    - {depuis: "1997-01-01", taux: 0.01, texte: "Loi 96-1160 du 27/12/1996, art. 9 à 17 (LFSS pour 1997) | Article L136-8 du Code de la Sécurité sociale", jorf: "JORFTEXT000000198309"}
-    - {depuis: "1998-01-01", taux: 0.038, texte: "Loi 97-1164 du 19/12/1997, art. 5 (LFSS pour 1998)", jorf: "JORFTEXT000000569121"}
+    - {depuis: "1997-01-01", taux: 0.01, deductible: 0.01, texte: "Loi 96-1160 du 27/12/1996, art. 9 à 17 (LFSS pour 1997) | Article L136-8 du Code de la Sécurité sociale", jorf: "JORFTEXT000000198309"}
+    - {depuis: "1998-01-01", taux: 0.038, deductible: 0.038, texte: "Loi 97-1164 du 19/12/1997, art. 5 (LFSS pour 1998)", jorf: "JORFTEXT000000569121"}
   crds:
     - {depuis: "1996-02-01", taux: 0.005, texte: "Article 1600-0 J du Code général des impôts", jorf: "JORFTEXT000000190291"}
   casa:
@@ -150,14 +161,14 @@ pensions:
 
 salaires:
   csg:
-    - {depuis: "1991-02-01", taux: 0.011, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 90-1168 du 29/12/90, art. 127 à 135 (LF pour 1991)", jorf: "JORFARTI000001951881"}
-    - {depuis: "1993-07-01", taux: 0.024, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 93-859 du 22/06/1993, art. 42 (LFR pour 1993)", jorf: "JORFARTI000001707069"}
-    - {depuis: "1997-01-01", taux: 0.034, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 96-1160 du 27/12/1996, art. 9 à 17 (LFSS pour 1997)", jorf: "JORFTEXT000000198309"}
-    - {depuis: "1998-01-01", taux: 0.075, abattement: 0.05, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 97-1164 du 19/12/1997, art. 5 (LFSS pour 1998)", jorf: "JORFTEXT000000569121"}
-    - {depuis: "2005-01-01", taux: 0.075, abattement: 0.03, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 2004-810 du 13/08/2004, art. 72", jorf: "JORFTEXT000000625158"}
-    - {depuis: "2011-01-01", taux: 0.075, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0.03, texte: "Loi 2010-1594 du 20/12/2010, art. 20 (LFSS pour 2011)", jorf: "JORFTEXT000023261006"}
-    - {depuis: "2012-01-01", taux: 0.075, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0.0175, texte: "Article L136-2 du Code de la Sécurité sociale", ancrage: "un article de code, à lire dans LEGI"}
-    - {depuis: "2018-01-01", taux: 0.092, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0.0175, texte: "Article 154 quinquies du Code général des impôts", ancrage: "un article de code, à lire dans LEGI"}
+    - {depuis: "1991-02-01", taux: 0.011, deductible: 0, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 90-1168 du 29/12/90, art. 127 à 135 (LF pour 1991)", jorf: "JORFARTI000001951881"}
+    - {depuis: "1993-07-01", taux: 0.024, deductible: 0, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 93-859 du 22/06/1993, art. 42 (LFR pour 1993)", jorf: "JORFARTI000001707069"}
+    - {depuis: "1997-01-01", taux: 0.034, deductible: 0.01, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 96-1160 du 27/12/1996, art. 9 à 17 (LFSS pour 1997)", jorf: "JORFTEXT000000198309"}
+    - {depuis: "1998-01-01", taux: 0.075, deductible: 0.051, abattement: 0.05, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 97-1164 du 19/12/1997, art. 5 (LFSS pour 1998)", jorf: "JORFTEXT000000569121"}
+    - {depuis: "2005-01-01", taux: 0.075, deductible: 0.051, abattement: 0.03, abattement_jusqu_a_quatre_plafonds: 0, texte: "Loi 2004-810 du 13/08/2004, art. 72", jorf: "JORFTEXT000000625158"}
+    - {depuis: "2011-01-01", taux: 0.075, deductible: 0.051, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0.03, texte: "Loi 2010-1594 du 20/12/2010, art. 20 (LFSS pour 2011)", jorf: "JORFTEXT000023261006"}
+    - {depuis: "2012-01-01", taux: 0.075, deductible: 0.051, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0.0175, texte: "Article L136-2 du Code de la Sécurité sociale", ancrage: "un article de code, à lire dans LEGI"}
+    - {depuis: "2018-01-01", taux: 0.092, deductible: 0.068, abattement: 0, abattement_jusqu_a_quatre_plafonds: 0.0175, texte: "Article 154 quinquies du Code général des impôts", ancrage: "un article de code, à lire dans LEGI"}
   crds:
     - {depuis: "1996-02-01", taux: 0.005, texte: "Article 1600-0 J du Code général des impôts", jorf: "JORFTEXT000000190291"}
   maladie_prive:

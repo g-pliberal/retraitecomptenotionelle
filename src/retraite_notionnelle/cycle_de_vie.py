@@ -94,6 +94,12 @@ la fiche de paie du droit en vigueur, ramenée aux prélèvements de son année,
 et celle de la proposition pour le scénario 6 après la bascule, comme le site.
 Le patrimoine reste en années de dernier revenu brut, comme l'OCDE l'exprime.
 
+LE NET IMPOSABLE, que l'impôt sur le revenu (:mod:`~retraite_notionnelle.impot_revenu`)
+attend, et qu'aucun indicateur ne prend encore (action 138, étape 5) : le
+revenu d'activité moins ses cotisations et la CSG déductible de son année
+(:func:`revenus_imposables`), la pension moins la CSG déductible et la
+cotisation maladie de l'année où elle est servie (:func:`parts_imposables_par_annee`).
+
 À CHAQUE ÂGE DE DÉPART (:func:`balayage`). Calculés au seul âge où un cas type
 part, les indicateurs ne disent pas ce qu'un départ plus tôt ou plus tard
 change. TRAJECTOiRE les calcule de trimestre en trimestre, de l'âge
@@ -457,32 +463,80 @@ def revenus_nets(simulateur, carriere, proposition: bool = False) -> dict[int, f
     gardent la fiche du droit en vigueur, comme le site. ``None`` quand un
     statut de la carrière n'a pas de fiche de paie — l'exploitant agricole —,
     dont le net ne se calcule pas."""
-    couples = []
+    paies = _paies(simulateur, carriere, imposable=False)
+    if paies is None:
+        return None
+    nets = _par_annee((annee, net) for annee, net, _ in paies)
+    return _avec_la_proposition(simulateur, carriere, nets) if proposition else nets
+
+
+def revenus_imposables(simulateur, carriere, proposition: bool = False
+                       ) -> dict[int, float] | None:
+    """Les revenus d'activité nets imposables, année par année : ce que la
+    paie en laisse (:func:`revenus_nets`), plus ce qu'elle en retire sans que
+    le revenu imposable le déduise — la CSG au-delà de sa part déductible, la
+    CRDS —, aux taux de son année
+    (:meth:`~.donnees.prelevements_historiques.PrelevementsHistoriques.non_deductibles`).
+    Autrement dit, le brut moins les cotisations de l'année et la CSG
+    déductible (CGI, art. 83 et 154 quinquies) : le salaire imposable
+    qu'attend :mod:`~retraite_notionnelle.impot_revenu`, avant l'abattement de
+    10 %. Pour un indépendant, c'est son bénéfice imposable, qui n'a pas cet
+    abattement et que ce module de l'impôt ne calcule pas (``HORS_CHAMP``).
+
+    Avec ``proposition``, le net du scénario 6 après la bascule garde la part
+    non déductible du droit en vigueur : la CSG que la proposition rend
+    (:func:`~retraite_notionnelle.restitution.points_csg_rendus`) baisse la
+    part déductible, comme chaque hausse et chaque baisse de la CSG l'a fait
+    depuis 1997 — une convention, que le README ne tranche pas. ``None``
+    comme :func:`revenus_nets`."""
+    paies = _paies(simulateur, carriere, imposable=True)
+    if paies is None:
+        return None
+    nets = _par_annee((annee, net) for annee, net, _ in paies)
+    if proposition:
+        nets = _avec_la_proposition(simulateur, carriere, nets)
+    retires = _par_annee((annee, part) for annee, _, part in paies)
+    return {annee: net + retires.get(annee, 0.0) for annee, net in nets.items()}
+
+
+def _paies(simulateur, carriere, imposable: bool
+           ) -> list[tuple[int, float, float]] | None:
+    """Chaque ligne cotisée, dans l'ordre : son année, son net et, avec
+    ``imposable``, ce que sa paie retire sans que le revenu imposable le
+    déduise (:func:`_net_annualise`), ramenés aux mois travaillés ; ``None``
+    quand un statut de la carrière n'a pas de fiche de paie."""
+    paies = []
     indemnites = indemnites_des_lignes(carriere, simulateur.macro, simulateur.catalogue,
                                        simulateur.affiliations)
     for ligne, indemnite in zip(carriere.lignes, indemnites):
         if not ligne.cotise:
             continue
-        net = _net_annualise(simulateur, carriere, ligne, indemnite)
-        if net is None:
+        paie = _net_annualise(simulateur, carriere, ligne, indemnite, imposable)
+        if paie is None:
             return None
-        couples.append((ligne.annee, net * ligne.fraction_annee))
-    nets = _par_annee(couples)
-    if proposition:
-        remuneration = remuneration_de_la_carriere(
-            carriere, simulateur.macro, simulateur.catalogue, simulateur.affiliations,
-            simulateur.parametres)
-        bruts = revenus_d_activite(carriere)
-        for annee in () if remuneration is None else remuneration.annees:
-            fiche = annee.proposition
-            if fiche.brut > 0.0 and annee.annee in bruts:
-                # Le même brut que la fiche du droit en vigueur : le revenu de
-                # l'année et l'indemnité compensatrice qu'elle lui ajoute, au
-                # prorata des mois payés.
-                revenu = annee.droit_en_vigueur.brut - annee.indemnite_csg
-                paye = (annee.indemnite_csg * bruts[annee.annee] / revenu
-                        if revenu > 0.0 else 0.0)
-                nets[annee.annee] = (bruts[annee.annee] + paye) * fiche.net / fiche.brut
+        net, non_deductible = paie
+        paies.append((ligne.annee, net * ligne.fraction_annee,
+                      non_deductible * ligne.fraction_annee))
+    return paies
+
+
+def _avec_la_proposition(simulateur, carriere, nets: dict[int, float]) -> dict[int, float]:
+    """Les nets des années de la bascule au départ, lus sur la fiche de paie
+    de la proposition (:func:`revenus_nets`)."""
+    remuneration = remuneration_de_la_carriere(
+        carriere, simulateur.macro, simulateur.catalogue, simulateur.affiliations,
+        simulateur.parametres)
+    bruts = revenus_d_activite(carriere)
+    for annee in () if remuneration is None else remuneration.annees:
+        fiche = annee.proposition
+        if fiche.brut > 0.0 and annee.annee in bruts:
+            # Le même brut que la fiche du droit en vigueur : le revenu de
+            # l'année et l'indemnité compensatrice qu'elle lui ajoute, au
+            # prorata des mois payés.
+            revenu = annee.droit_en_vigueur.brut - annee.indemnite_csg
+            paye = (annee.indemnite_csg * bruts[annee.annee] / revenu
+                    if revenu > 0.0 else 0.0)
+            nets[annee.annee] = (bruts[annee.annee] + paye) * fiche.net / fiche.brut
     return nets
 
 
@@ -499,10 +553,14 @@ POSTES_REFAITS_INDEPENDANT = ("maladie_maternite", "indemnites_journalieres", "f
                               "csg_crds")
 
 
-def _net_annualise(simulateur, carriere, ligne, indemnite: float = 0.0) -> float | None:
+def _net_annualise(simulateur, carriere, ligne, indemnite: float = 0.0,
+                   imposable: bool = False) -> tuple[float, float] | None:
     """Le net du revenu annualisé d'une ligne cotisée, primes et indemnité
     compensatrice de la CSG comprises, aux prélèvements de son année
-    (:func:`revenus_nets`)."""
+    (:func:`revenus_nets`), et, avec ``imposable``, ce que ces prélèvements en
+    retirent sans que le revenu imposable le déduise (:func:`revenus_imposables`),
+    zéro sans lui. Une famille que l'histoire ne connaît pas garde les
+    prélèvements de l'année courante."""
     racine = simulateur.parametres.racine_donnees
     macro = simulateur.macro
     fiche = fiche_depuis_brut(racine, macro, simulateur.catalogue, simulateur.affiliations,
@@ -517,11 +575,12 @@ def _net_annualise(simulateur, carriere, ligne, indemnite: float = 0.0) -> float
                                                carriere.date_entree(ligne.affiliation))
                if profil == "independant" else ())
     famille = famille_de_la_fiche(profil, regimes)
-    if famille is None:
-        return fiche.net
     historique = charger_prelevements_historiques(racine)
     plafond = macro.plafond_securite_sociale(ligne.annee)
     courante = charger_prelevements(racine).annee
+    if famille is None:
+        return fiche.net, (historique.non_deductibles_annuel(None, courante, annualise, plafond)
+                           if imposable else 0.0)
     if famille in FAMILLES_INDEPENDANTES:
         retraite = somme_ordonnee(l.salarie for l in fiche.lignes
                                   if l.code not in POSTES_REFAITS_INDEPENDANT)
@@ -533,7 +592,10 @@ def _net_annualise(simulateur, carriere, ligne, indemnite: float = 0.0) -> float
     equilibre = somme_ordonnee(l.salarie for l in fiche.lignes if l.code in POSTES_EQUILIBRE)
     if equilibre > 0.0:
         equilibre -= part_salariale_annualisee(simulateur, carriere, ligne)
-    return fiche.net + hors_retraite + equilibre
+    non_deductibles = (historique.non_deductibles_annuel(famille, ligne.annee, annualise,
+                                                         plafond, retraite)
+                       if imposable else 0.0)
+    return fiche.net + hors_retraite + equilibre, non_deductibles
 
 
 def _dernier_revenu_net(dernier_revenu: float, revenus: dict[int, float],
@@ -851,11 +913,34 @@ def prelevements_par_annee(simulateur, comparaison) -> dict[int, float]:
     scénario 1, comme ils gardent son taux de l'année courante."""
     historique = charger_prelevements_historiques(simulateur.parametres.racine_donnees)
     parts = _parts_assujetties(simulateur, comparaison.actuel)
+    return {annee: historique.taux_pension_annuel(annee, parts)
+            for annee in _annees_des_pensions(comparaison)}
+
+
+def parts_imposables_par_annee(simulateur, comparaison) -> dict[int, float]:
+    """La part des pensions de ``comparaison`` que le revenu imposable de
+    chaque année retient, au taux plein de CSG, les années de
+    :func:`prelevements_par_annee` : la pension moins la CSG déductible de
+    l'année — rien avant 1997, 1 point en 1997, 3,8 points de 1998 à 2004,
+    4,2 de 2005 à 2017, 5,9 depuis 2018 (CGI, art. 154 quinquies) — et ses
+    cotisations maladie de l'année, sur leurs parts (:func:`_parts_assujetties`),
+    des cotisations de sécurité sociale (CGI, art. 83). La CRDS, la CASA et le
+    reste de la CSG restent imposables. Appliquée à la pension brute, c'est la
+    pension imposable qu'attend :mod:`~retraite_notionnelle.impot_revenu`,
+    avant l'abattement de 10 %."""
+    historique = charger_prelevements_historiques(simulateur.parametres.racine_donnees)
+    parts = _parts_assujetties(simulateur, comparaison.actuel)
+    return {annee: 1.0 - historique.taux_deductible_pension_annuel(annee, parts)
+            for annee in _annees_des_pensions(comparaison)}
+
+
+def _annees_des_pensions(comparaison) -> range:
+    """Du premier départ des systèmes de ``comparaison`` à la dernière année
+    qu'une de leurs pensions peut atteindre."""
     carrieres = [comparaison.carriere_de(scenario) for scenario in SCENARIOS]
     premiere = min(carriere.annee_liquidation for carriere in carrieres)
     derniere = max(_derniere_annee(carriere) for carriere in carrieres)
-    return {annee: historique.taux_pension_annuel(annee, parts)
-            for annee in range(premiere, derniere + 1)}
+    return range(premiere, derniere + 1)
 
 
 def taux_de_prelevement(simulateur, resultat) -> float:
