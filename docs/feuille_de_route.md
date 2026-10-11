@@ -5386,15 +5386,15 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 ### 136. Ce qu'OpenFisca fait mieux que le dépôt : deux règles, un oracle borné aux carrières simples, la trace d'un calcul, une population — `en cours`
 
 **Reprise, au 11 octobre 2026.** Fait : l'étape 6, sa première moitié, et, de
-la seconde, ses données certifiées et trois versions de la population,
-mesurées à côté de la page (`grille_large.py --grille population`). La
-troisième y met la persistance au Smic : 0,4 à 1,4 point de minimum
-contributif pour les hommes (5,7 % en 2023, pour 12,2 dans l'EACR), et la
-preuve qu'une classe du bas de 17,5 % fait basculer deux points d'un côté du
-seuil. Reste : le volume de travail du bas de l'échelle, à chercher et
-certifier, puis un bas d'échelle plus fin ; la bascule de la page, au
-propriétaire ; de l'étape 3, la surcotisation et l'oracle ; les étapes 1, 2, 4
-et 5. Le détail : les notes du 11 octobre sur la population.
+la seconde, ses données certifiées, dont le volume de travail (0,74 année pour
+les femmes, 0,79 pour les hommes) et les heures de l'année, et trois versions
+de la population, mesurées à côté de la page (`grille_large.py --grille
+population`). La troisième y met la persistance au Smic : 0,4 à 1,4 point de
+minimum contributif pour les hommes (5,7 % en 2023, 12,2 dans l'EACR). Reste :
+le volume de travail mis dans la population et mesuré, puis un bas d'échelle
+plus fin ; la bascule de la page, au propriétaire ; de l'étape 3, la
+surcotisation et l'oracle ; les étapes 1, 2, 4 et 5. Le détail : les notes du
+11 octobre sur la population et sur le volume de travail.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais que tu analyses ce qu'on fait
 moins bien que openfisca pensions et que tu ajoutes une action sur ce sujet

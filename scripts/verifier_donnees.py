@@ -637,6 +637,46 @@ def source_persistance_smic() -> dict[tuple, float]:
             for cle, valeur in sorted(charge["serie"].items())}
 
 
+def source_volume_travail() -> dict[tuple, float]:
+    """Le volume de travail annuel moyen en équivalent temps plein, par sexe,
+    âge, diplôme, catégorie, quotité et secteur : la figure 1 de la fiche
+    « Revenu salarial » de l'INSEE (``Emploi, chômage, revenus du travail``,
+    édition 2026), pour 2023.
+
+    Clé (annee, caracteristique, modalite). Le classeur porte aussi le revenu
+    salarial et le salaire en équivalent temps plein, dont le volume est à peu
+    près le rapport : le récupérateur le vérifie, et seul le volume se certifie.
+    """
+    charge = _lire_json("insee_volume_travail.json", "scripts/fetch/insee_volume_travail.py")
+    annee = str(charge["volume"]["annee"])
+    valeurs: dict[tuple, float] = {}
+    for cle, valeur in charge["volume"]["serie"].items():
+        caracteristique, modalite, mesure = cle.split("|")
+        if mesure == "volume_eqtp":
+            valeurs[(annee, caracteristique, modalite)] = float(valeur)
+    return dict(sorted(valeurs.items()))
+
+
+def source_heures_salariees() -> dict[tuple, float]:
+    """Les heures salariées dans l'année, centile par centile, des salariés du
+    privé de 24 à 62 ans et de ceux d'entre eux à bas revenu salarial : la
+    figure 5 du dossier de l'INSEE et de la Dares sur les bas revenus
+    salariaux (``Emploi, chômage, revenus du travail``, édition 2024), pour
+    2019.
+
+    Clé (annee, population, centile), le centile sur deux chiffres pour que le
+    fichier se range dans son ordre. Le centième, non significatif, n'est pas
+    publié.
+    """
+    charge = _lire_json("insee_volume_travail.json", "scripts/fetch/insee_volume_travail.py")
+    annee = str(charge["heures"]["annee"])
+    valeurs: dict[tuple, float] = {}
+    for cle, valeur in charge["heures"]["serie"].items():
+        population, centile = cle.split("|")
+        valeurs[(annee, population, f"{int(centile):02d}")] = float(valeur)
+    return dict(sorted(valeurs.items()))
+
+
 def source_profil_salaire_categorie() -> dict[tuple, float]:
     """Profil d'âge INTRA-CATÉGORIE, rapporté à la moyenne de la catégorie.
 
@@ -4958,6 +4998,94 @@ CERTIFICATIONS = (
             "# CE QU'ELLE N'EST PAS. Une carrière : six années d'une cohorte, celle",
             "# d'une crise, et une sortie du champ qui ne dit pas si l'on revient.",
             "# Ni un salaire de l'année : un salaire HORAIRE, temps partiel compris.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="volume_travail",
+        chemin=REFERENCE / "macro" / "volume_travail.csv",
+        cles=("annee", "caracteristique", "modalite"),
+        colonne="volume",
+        source=source_volume_travail,
+        origine="INSEE, Emploi, chômage, revenus du travail 2026, fiche Revenu salarial",
+        decimales=2,
+        tolerance=0.005,
+        entete=(
+            "# Volume de travail annuel moyen en équivalent temps plein, par sexe,",
+            "# âge, diplôme, catégorie, quotité et secteur",
+            "# source_id: insee_volume_travail",
+            "# unite: année d'équivalent temps plein par salarié et par an (1,00 = une",
+            "#        année entière à temps complet)",
+            "# fiabilite:",
+            "#   certifiee (2023) : INSEE, « Emploi, chômage, revenus du travail »,",
+            "#             édition 2026, fiche « Revenu salarial », figure 1 ; panel",
+            "#             Tous salariés, privé et fonction publique, hors",
+            "#             apprentis, stagiaires, élus, salariés agricoles et des",
+            "#             particuliers employeurs ; le diplôme, en 2022 ;",
+            "#             recontrôlé par scripts/verifier_donnees.py.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# Au volume de travail de la population de la page Coût (action 136,",
+            "# étape 6) : ses salaires sont ceux d'une année entière, quand un",
+            "# salarié en travaille 0,74 s'il est une femme, 0,79 s'il est un",
+            "# homme ; 0,48 avant 25 ans, 0,86 de 50 à 54 ; 0,85 à temps complet,",
+            "# que les entrées, les sorties et le chômage coupent, 0,51 à temps",
+            "# partiel. Aucun calcul du site ne la lit.",
+            "#",
+            "# CE QU'ELLE N'EST PAS. Le volume d'une carrière : celui des salariés",
+            "# présents dans l'année, une année sans salaire n'y comptant pas. Ni un",
+            "# croisement : le sexe et l'âge s'y lisent l'un sans l'autre.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="heures_salariees",
+        chemin=REFERENCE / "macro" / "heures_salariees.csv",
+        cles=("annee", "population", "centile"),
+        colonne="heures",
+        source=source_heures_salariees,
+        origine="INSEE et Dares, Emploi, chômage, revenus du travail 2024, dossier bas revenus salariaux",
+        decimales=0,
+        tolerance=0.5,
+        unite=" h",
+        entete=(
+            "# Heures salariées dans l'année, centile par centile : les salariés du",
+            "# privé, et ceux d'entre eux à bas revenu salarial",
+            "# source_id: insee_heures_salariees",
+            "# unite: heures salariées dans l'année (1 820 = un temps complet de",
+            "#        35 heures toute l'année)",
+            "# fiabilite:",
+            "#   certifiee (2019) : INSEE, « Emploi, chômage, revenus du travail »,",
+            "#             édition 2024, dossier « Dans le secteur privé, la",
+            "#             moitié des salariés qui avaient un bas revenu salarial",
+            "#             en 2011 sont dans la même situation 8 ans plus tard »",
+            "#             (Emmanuel Berger, Dares), figure 5 ; panel Tous",
+            "#             salariés ; recontrôlé par scripts/verifier_donnees.py.",
+            "#",
+            "# LES COLONNES",
+            "# ------------",
+            "# population : ensemble, les salariés du privé de 24 à 62 ans payés au",
+            "#   moins 0,8 Smic de l'heure, un mois et 152 heures dans l'année, hors",
+            "#   apprentis, stagiaires et salariés des particuliers employeurs ;",
+            "#   bas_revenus, ceux d'entre eux dans les 20 % des revenus salariaux",
+            "#   les plus bas deux années de suite.",
+            "# centile : de 00 à 99 ; le centième, non significatif, n'est pas publié.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# Au volume de travail des carrières du bas, dans la population de la",
+            "# page Coût (action 136, étape 6) : la moitié des salariés du privé",
+            "# travaillent moins de 1 813 heures dans l'année, la moitié de ceux à",
+            "# bas revenu salarial moins de 755. Aucun calcul du site ne la lit.",
+            "#",
+            "# CE QU'ELLE N'EST PAS. Une distribution par sexe : le dossier n'en",
+            "# donne que la composition (57 % de femmes parmi les bas revenus",
+            "# salariaux). Ni celle des carrières : celle des salariés d'une année.",
             "#",
             "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
             "# scripts/verifier_donnees.py --appliquer.",

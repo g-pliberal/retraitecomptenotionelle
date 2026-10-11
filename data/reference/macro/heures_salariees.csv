@@ -1,0 +1,236 @@
+# Heures salariées dans l'année, centile par centile : les salariés du
+# privé, et ceux d'entre eux à bas revenu salarial
+# source_id: insee_heures_salariees
+# unite: heures salariées dans l'année (1 820 = un temps complet de
+#        35 heures toute l'année)
+# fiabilite:
+#   certifiee (2019) : INSEE, « Emploi, chômage, revenus du travail »,
+#             édition 2024, dossier « Dans le secteur privé, la
+#             moitié des salariés qui avaient un bas revenu salarial
+#             en 2011 sont dans la même situation 8 ans plus tard »
+#             (Emmanuel Berger, Dares), figure 5 ; panel Tous
+#             salariés ; recontrôlé par scripts/verifier_donnees.py.
+#
+# LES COLONNES
+# ------------
+# population : ensemble, les salariés du privé de 24 à 62 ans payés au
+#   moins 0,8 Smic de l'heure, un mois et 152 heures dans l'année, hors
+#   apprentis, stagiaires et salariés des particuliers employeurs ;
+#   bas_revenus, ceux d'entre eux dans les 20 % des revenus salariaux
+#   les plus bas deux années de suite.
+# centile : de 00 à 99 ; le centième, non significatif, n'est pas publié.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# Au volume de travail des carrières du bas, dans la population de la
+# page Coût (action 136, étape 6) : la moitié des salariés du privé
+# travaillent moins de 1 813 heures dans l'année, la moitié de ceux à
+# bas revenu salarial moins de 755. Aucun calcul du site ne la lit.
+#
+# CE QU'ELLE N'EST PAS. Une distribution par sexe : le dossier n'en
+# donne que la composition (57 % de femmes parmi les bas revenus
+# salariaux). Ni celle des carrières : celle des salariés d'une année.
+#
+# Ne pas modifier à la main : les valeurs seraient écrasées au prochain
+# scripts/verifier_donnees.py --appliquer.
+annee,population,centile,heures,fiabilite
+2019,bas_revenus,00,152,certifiee
+2019,bas_revenus,01,166,certifiee
+2019,bas_revenus,02,181,certifiee
+2019,bas_revenus,03,195,certifiee
+2019,bas_revenus,04,209,certifiee
+2019,bas_revenus,05,223,certifiee
+2019,bas_revenus,06,235,certifiee
+2019,bas_revenus,07,248,certifiee
+2019,bas_revenus,08,260,certifiee
+2019,bas_revenus,09,273,certifiee
+2019,bas_revenus,10,286,certifiee
+2019,bas_revenus,11,298,certifiee
+2019,bas_revenus,12,306,certifiee
+2019,bas_revenus,13,317,certifiee
+2019,bas_revenus,14,329,certifiee
+2019,bas_revenus,15,341,certifiee
+2019,bas_revenus,16,354,certifiee
+2019,bas_revenus,17,365,certifiee
+2019,bas_revenus,18,378,certifiee
+2019,bas_revenus,19,390,certifiee
+2019,bas_revenus,20,402,certifiee
+2019,bas_revenus,21,415,certifiee
+2019,bas_revenus,22,425,certifiee
+2019,bas_revenus,23,437,certifiee
+2019,bas_revenus,24,450,certifiee
+2019,bas_revenus,25,458,certifiee
+2019,bas_revenus,26,470,certifiee
+2019,bas_revenus,27,482,certifiee
+2019,bas_revenus,28,495,certifiee
+2019,bas_revenus,29,507,certifiee
+2019,bas_revenus,30,520,certifiee
+2019,bas_revenus,31,528,certifiee
+2019,bas_revenus,32,540,certifiee
+2019,bas_revenus,33,553,certifiee
+2019,bas_revenus,34,565,certifiee
+2019,bas_revenus,35,577,certifiee
+2019,bas_revenus,36,590,certifiee
+2019,bas_revenus,37,602,certifiee
+2019,bas_revenus,38,610,certifiee
+2019,bas_revenus,39,622,certifiee
+2019,bas_revenus,40,632,certifiee
+2019,bas_revenus,41,644,certifiee
+2019,bas_revenus,42,657,certifiee
+2019,bas_revenus,43,670,certifiee
+2019,bas_revenus,44,682,certifiee
+2019,bas_revenus,45,694,certifiee
+2019,bas_revenus,46,706,certifiee
+2019,bas_revenus,47,720,certifiee
+2019,bas_revenus,48,730,certifiee
+2019,bas_revenus,49,743,certifiee
+2019,bas_revenus,50,755,certifiee
+2019,bas_revenus,51,765,certifiee
+2019,bas_revenus,52,777,certifiee
+2019,bas_revenus,53,786,certifiee
+2019,bas_revenus,54,798,certifiee
+2019,bas_revenus,55,810,certifiee
+2019,bas_revenus,56,823,certifiee
+2019,bas_revenus,57,833,certifiee
+2019,bas_revenus,58,844,certifiee
+2019,bas_revenus,59,856,certifiee
+2019,bas_revenus,60,868,certifiee
+2019,bas_revenus,61,880,certifiee
+2019,bas_revenus,62,892,certifiee
+2019,bas_revenus,63,902,certifiee
+2019,bas_revenus,64,910,certifiee
+2019,bas_revenus,65,912,certifiee
+2019,bas_revenus,66,922,certifiee
+2019,bas_revenus,67,934,certifiee
+2019,bas_revenus,68,944,certifiee
+2019,bas_revenus,69,956,certifiee
+2019,bas_revenus,70,967,certifiee
+2019,bas_revenus,71,980,certifiee
+2019,bas_revenus,72,992,certifiee
+2019,bas_revenus,73,1005,certifiee
+2019,bas_revenus,74,1016,certifiee
+2019,bas_revenus,75,1030,certifiee
+2019,bas_revenus,76,1040,certifiee
+2019,bas_revenus,77,1044,certifiee
+2019,bas_revenus,78,1056,certifiee
+2019,bas_revenus,79,1067,certifiee
+2019,bas_revenus,80,1080,certifiee
+2019,bas_revenus,81,1093,certifiee
+2019,bas_revenus,82,1108,certifiee
+2019,bas_revenus,83,1123,certifiee
+2019,bas_revenus,84,1139,certifiee
+2019,bas_revenus,85,1154,certifiee
+2019,bas_revenus,86,1172,certifiee
+2019,bas_revenus,87,1190,certifiee
+2019,bas_revenus,88,1207,certifiee
+2019,bas_revenus,89,1222,certifiee
+2019,bas_revenus,90,1241,certifiee
+2019,bas_revenus,91,1248,certifiee
+2019,bas_revenus,92,1265,certifiee
+2019,bas_revenus,93,1286,certifiee
+2019,bas_revenus,94,1303,certifiee
+2019,bas_revenus,95,1328,certifiee
+2019,bas_revenus,96,1353,certifiee
+2019,bas_revenus,97,1382,certifiee
+2019,bas_revenus,98,1430,certifiee
+2019,bas_revenus,99,1489,certifiee
+2019,ensemble,00,152,certifiee
+2019,ensemble,01,208,certifiee
+2019,ensemble,02,260,certifiee
+2019,ensemble,03,306,certifiee
+2019,ensemble,04,359,certifiee
+2019,ensemble,05,413,certifiee
+2019,ensemble,06,455,certifiee
+2019,ensemble,07,508,certifiee
+2019,ensemble,08,560,certifiee
+2019,ensemble,09,607,certifiee
+2019,ensemble,10,655,certifiee
+2019,ensemble,11,708,certifiee
+2019,ensemble,12,759,certifiee
+2019,ensemble,13,805,certifiee
+2019,ensemble,14,854,certifiee
+2019,ensemble,15,900,certifiee
+2019,ensemble,16,929,certifiee
+2019,ensemble,17,975,certifiee
+2019,ensemble,18,1022,certifiee
+2019,ensemble,19,1062,certifiee
+2019,ensemble,20,1101,certifiee
+2019,ensemble,21,1148,certifiee
+2019,ensemble,22,1195,certifiee
+2019,ensemble,23,1232,certifiee
+2019,ensemble,24,1271,certifiee
+2019,ensemble,25,1308,certifiee
+2019,ensemble,26,1350,certifiee
+2019,ensemble,27,1380,certifiee
+2019,ensemble,28,1419,certifiee
+2019,ensemble,29,1454,certifiee
+2019,ensemble,30,1473,certifiee
+2019,ensemble,31,1506,certifiee
+2019,ensemble,32,1531,certifiee
+2019,ensemble,33,1560,certifiee
+2019,ensemble,34,1587,certifiee
+2019,ensemble,35,1614,certifiee
+2019,ensemble,36,1638,certifiee
+2019,ensemble,37,1660,certifiee
+2019,ensemble,38,1672,certifiee
+2019,ensemble,39,1694,certifiee
+2019,ensemble,40,1715,certifiee
+2019,ensemble,41,1732,certifiee
+2019,ensemble,42,1748,certifiee
+2019,ensemble,43,1757,certifiee
+2019,ensemble,44,1768,certifiee
+2019,ensemble,45,1778,certifiee
+2019,ensemble,46,1785,certifiee
+2019,ensemble,47,1793,certifiee
+2019,ensemble,48,1801,certifiee
+2019,ensemble,49,1806,certifiee
+2019,ensemble,50,1813,certifiee
+2019,ensemble,51,1818,certifiee
+2019,ensemble,52,1820,certifiee
+2019,ensemble,53,1820,certifiee
+2019,ensemble,54,1820,certifiee
+2019,ensemble,55,1820,certifiee
+2019,ensemble,56,1820,certifiee
+2019,ensemble,57,1820,certifiee
+2019,ensemble,58,1820,certifiee
+2019,ensemble,59,1820,certifiee
+2019,ensemble,60,1820,certifiee
+2019,ensemble,61,1820,certifiee
+2019,ensemble,62,1820,certifiee
+2019,ensemble,63,1820,certifiee
+2019,ensemble,64,1820,certifiee
+2019,ensemble,65,1820,certifiee
+2019,ensemble,66,1820,certifiee
+2019,ensemble,67,1820,certifiee
+2019,ensemble,68,1820,certifiee
+2019,ensemble,69,1820,certifiee
+2019,ensemble,70,1820,certifiee
+2019,ensemble,71,1820,certifiee
+2019,ensemble,72,1820,certifiee
+2019,ensemble,73,1820,certifiee
+2019,ensemble,74,1821,certifiee
+2019,ensemble,75,1824,certifiee
+2019,ensemble,76,1827,certifiee
+2019,ensemble,77,1829,certifiee
+2019,ensemble,78,1835,certifiee
+2019,ensemble,79,1842,certifiee
+2019,ensemble,80,1851,certifiee
+2019,ensemble,81,1861,certifiee
+2019,ensemble,82,1872,certifiee
+2019,ensemble,83,1885,certifiee
+2019,ensemble,84,1899,certifiee
+2019,ensemble,85,1913,certifiee
+2019,ensemble,86,1926,certifiee
+2019,ensemble,87,1942,certifiee
+2019,ensemble,88,1958,certifiee
+2019,ensemble,89,1973,certifiee
+2019,ensemble,90,1989,certifiee
+2019,ensemble,91,2008,certifiee
+2019,ensemble,92,2028,certifiee
+2019,ensemble,93,2028,certifiee
+2019,ensemble,94,2036,certifiee
+2019,ensemble,95,2063,certifiee
+2019,ensemble,96,2100,certifiee
+2019,ensemble,97,2164,certifiee
+2019,ensemble,98,2200,certifiee
+2019,ensemble,99,2324,certifiee

@@ -672,6 +672,17 @@
    "valeurs": 450,
    "verifiee_le": "2026-09-13"
   },
+  "heures_salariees": {
+   "ajoutees": 200,
+   "colonne": "heures",
+   "corrigees": 0,
+   "empreinte": "4a4fb580e1e753ef",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "INSEE et Dares, Emploi, chômage, revenus du travail 2024, dossier bas revenus salariaux",
+   "valeurs": 200,
+   "verifiee_le": "2026-10-11"
+  },
   "impots_retraite_remuneration": {
    "ajoutees": 0,
    "colonne": "montant_meur",
@@ -1606,6 +1617,17 @@
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-9",
    "valeurs": 2,
    "verifiee_le": "2026-09-17"
+  },
+  "volume_travail": {
+   "ajoutees": 0,
+   "colonne": "volume",
+   "corrigees": 0,
+   "empreinte": "e2b772fd0367a6b0",
+   "identiques": 21,
+   "niveau": "certifiee",
+   "source": "INSEE, Emploi, chômage, revenus du travail 2026, fiche Revenu salarial",
+   "valeurs": 21,
+   "verifiee_le": "2026-10-11"
   }
  }
 }

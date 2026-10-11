@@ -334,6 +334,65 @@ institutions:
           la seule dernière année ; la quotité d'un temps partiel, par sexe,
           n'est dans aucun jeu de Melodi. Aucun calcul du site ne la lit.
 
+      - id: insee_volume_travail
+        titre: >-
+          Volume de travail annuel moyen en équivalent temps plein, par sexe,
+          âge, diplôme, catégorie, quotité et secteur (« Emploi, chômage,
+          revenus du travail », édition 2026, fiche « Revenu salarial »,
+          figure 1)
+        url: https://www.insee.fr/fr/statistiques/8733097
+        acces: fichier
+        millesime: 2023
+        statut_integration: certifie
+        cible: data/reference/macro/volume_travail.csv
+        recuperation: scripts/fetch/insee_volume_travail.py
+        note: >-
+          Combien d'une année un salarié travaille, en 2023, tous salariés du
+          privé et de la fonction publique : 0,74 année d'équivalent temps
+          plein pour les femmes, 0,79 pour les hommes ; 0,48 avant 25 ans,
+          0,84 de 40 à 49, 0,86 de 50 à 54, 0,77 après ; 0,85 à temps complet,
+          que les entrées, les sorties et le chômage coupent, 0,51 à temps
+          partiel ; 0,68 pour les employés. Les centiles du salaire, eux, sont
+          ceux d'une année entière à temps complet : c'est le volume qui manque
+          à la population de la page Coût (action 136, étape 6), dont les
+          bénéficiaires hommes du minimum contributif sont des carrières
+          courtes. Le classeur (ECRT2026_F30.xlsx) donne aussi le revenu
+          salarial et le salaire en équivalent temps plein ; le volume en est
+          à peu près le rapport, à −0,001 près à +0,016 selon la ligne, l'INSEE
+          ne calculant pas ses trois moyennes sur la même pondération : le
+          récupérateur le vérifie à deux centièmes, et seul le volume se
+          certifie. Le diplôme y est de 2022. Le sexe et l'âge ne s'y croisent
+          pas, et une seule année se publie par édition. Aucun calcul du site
+          ne la lit.
+
+      - id: insee_heures_salariees
+        titre: >-
+          Heures salariées dans l'année, centile par centile, des salariés du
+          privé et de ceux à bas revenu salarial (« Emploi, chômage, revenus
+          du travail », édition 2024, dossier sur les bas revenus salariaux,
+          figure 5)
+        url: https://www.insee.fr/fr/statistiques/8195699
+        acces: fichier
+        millesime: 2019
+        statut_integration: certifie
+        cible: data/reference/macro/heures_salariees.csv
+        recuperation: scripts/fetch/insee_volume_travail.py
+        note: >-
+          Le dossier « Dans le secteur privé, la moitié des salariés qui
+          avaient un bas revenu salarial en 2011 sont dans la même situation 8
+          ans plus tard » (Emmanuel Berger, Dares) donne, pour 2019, les heures
+          salariées dans l'année de chaque centile des salariés du privé de 24
+          à 62 ans, et de ceux d'entre eux dans les 20 % des revenus salariaux
+          les plus bas deux années de suite. La moitié des premiers travaillent
+          moins de 1 813 heures — un temps complet d'une année en compte
+          1 820 —, la moitié des seconds moins de 755 ; le dixième centile des
+          premiers est à 655 heures. C'est la forme du volume de travail, que
+          la moyenne de la fiche « Revenu salarial » ne dit pas : la
+          population de la page Coût (action 136, étape 6) y lira sur qui il
+          pèse. Les centiles croissent, le récupérateur le vérifie ; le
+          centième n'est pas publié. Pas de distribution par sexe : les femmes
+          font 57 % des bas revenus salariaux. Aucun calcul du site ne la lit.
+
       - id: insee_profil_salaire_public
         titre: Salaires de la fonction publique par âge, statut et versant
         url: https://api.insee.fr/melodi/data/DS_DERA_PUBLIC_ANNUEL

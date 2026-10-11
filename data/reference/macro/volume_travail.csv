@@ -1,0 +1,50 @@
+# Volume de travail annuel moyen en équivalent temps plein, par sexe,
+# âge, diplôme, catégorie, quotité et secteur
+# source_id: insee_volume_travail
+# unite: année d'équivalent temps plein par salarié et par an (1,00 = une
+#        année entière à temps complet)
+# fiabilite:
+#   certifiee (2023) : INSEE, « Emploi, chômage, revenus du travail »,
+#             édition 2026, fiche « Revenu salarial », figure 1 ; panel
+#             Tous salariés, privé et fonction publique, hors
+#             apprentis, stagiaires, élus, salariés agricoles et des
+#             particuliers employeurs ; le diplôme, en 2022 ;
+#             recontrôlé par scripts/verifier_donnees.py.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# Au volume de travail de la population de la page Coût (action 136,
+# étape 6) : ses salaires sont ceux d'une année entière, quand un
+# salarié en travaille 0,74 s'il est une femme, 0,79 s'il est un
+# homme ; 0,48 avant 25 ans, 0,86 de 50 à 54 ; 0,85 à temps complet,
+# que les entrées, les sorties et le chômage coupent, 0,51 à temps
+# partiel. Aucun calcul du site ne la lit.
+#
+# CE QU'ELLE N'EST PAS. Le volume d'une carrière : celui des salariés
+# présents dans l'année, une année sans salaire n'y comptant pas. Ni un
+# croisement : le sexe et l'âge s'y lisent l'un sans l'autre.
+#
+# Ne pas modifier à la main : les valeurs seraient écrasées au prochain
+# scripts/verifier_donnees.py --appliquer.
+annee,caracteristique,modalite,volume,fiabilite
+2023,age,Y25T39,0.79,certifiee
+2023,age,Y40T49,0.84,certifiee
+2023,age,Y50T54,0.86,certifiee
+2023,age,Y_GE55,0.77,certifiee
+2023,age,Y_LT25,0.48,certifiee
+2023,categorie,cadres,0.87,certifiee
+2023,categorie,employes,0.68,certifiee
+2023,categorie,ouvriers,0.73,certifiee
+2023,categorie,professions_intermediaires,0.83,certifiee
+2023,diplome,bac,0.82,certifiee
+2023,diplome,bac_2,0.86,certifiee
+2023,diplome,cap_bep,0.77,certifiee
+2023,diplome,sans_diplome,0.71,certifiee
+2023,diplome,superieur_bac_2,0.87,certifiee
+2023,ensemble,ensemble,0.77,certifiee
+2023,quotite,temps_complet,0.85,certifiee
+2023,quotite,temps_partiel,0.51,certifiee
+2023,secteur,fonction_publique,0.83,certifiee
+2023,secteur,prive,0.75,certifiee
+2023,sexe,F,0.74,certifiee
+2023,sexe,H,0.79,certifiee
