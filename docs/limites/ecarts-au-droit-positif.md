@@ -446,8 +446,10 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   quand chaque naissance déclarée la place à sa date. Le modèle ne peut pas
   non plus savoir si les
   parents ont attribué au père les quatre trimestres d'éducation ouverts en
-  2010, ni si un père fonctionnaire a interrompu son activité les deux mois
-  qu'exige la bonification depuis 2003 : dans les deux cas le modèle retient
+  2010, deux au plus depuis le 16 avril 2023, la mère gardant les deux autres
+  (loi n° 2023-270, article 13), ni si un père fonctionnaire a interrompu son
+  activité les deux mois qu'exige la bonification depuis 2003 : dans les deux
+  cas le modèle retient
   l'attribution par défaut, celle de la mère. Une naissance déclarée fait aussi
   l'enfant à charge de la complémentaire : à qui part avec un enfant de moins de
   dix-huit ans, l'Arrco depuis 1999, l'Agirc depuis 2012 et l'Agirc-Arrco

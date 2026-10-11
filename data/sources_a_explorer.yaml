@@ -1590,7 +1590,7 @@ sources:
       voient leur pension augmenter grâce à ces trimestres ». Un résultat
       publié, à confronter à la fiche majoration_duree_assurance_enfants.yaml
       et à la page Droits non cotisés.
-    statut: explore
+    statut: epuise
     explore_le: "2026-10-11"
     note: >-
       Repérée le 11 octobre 2026 parmi les publications de référence de la
@@ -1613,10 +1613,11 @@ sources:
       1 519 € sans enfant, 1 397 € avec un, 1 297 € avec deux, 1 289 € avec
       trois ou plus (euros 2020), pour 0, 6, 13 et 24 trimestres de MDA. Un
       trimestre est « utile » si, retiré, il change la pension à âge inchangé
-      ; l'encadré 3 en donne quatre exemples chiffrés pour la génération 1958
-      (âge légal de 62 ans, taux plein à 67 ans, 167 trimestres requis), qui
-      pourraient servir de cas d'essai. Au-delà des générations des années
-      1960, la part des femmes dont un trimestre est utile au taux se
+      ; l'encadré 3 en donne cinq exemples chiffrés pour la génération 1958
+      (âge légal de 62 ans, taux plein à 67 ans, 167 trimestres requis), et
+      non quatre, comme cette note le disait d'abord : le troisième part à
+      67 ans avec dix-huit trimestres de surcote. Au-delà des générations des
+      années 1960, la part des femmes dont un trimestre est utile au taux se
       tiendrait près de 35 %, et la part des trimestres utiles monterait de
       60 à près de 70 %. La surcote ouverte dès 63 ans aux parents à carrière
       complète, que porte la fiche surcote_parentale.yaml, toucherait environ
@@ -1625,8 +1626,16 @@ sources:
       2023, deux seulement des quatre trimestres d'éducation se partagent
       entre les parents : la fiche majoration_duree_assurance_enfants.yaml
       tient encore les rédactions de L. 351-4 postérieures à 2013 pour « à
-      couper », et sert tout à la mère. Reste à confronter ces résultats à ce
-      que le dépôt calcule.
+      couper », et sert tout à la mère, qui garde ainsi les deux trimestres
+      que la règle de 2023 lui réserve. Confrontée le même jour au scénario 1
+      : les cinq exemples de l'encadré 3, décote, surcote, coefficients et
+      trimestres utiles, concordent au trimestre, et sont devenus des cas
+      d'essai (tests/test_trimestres_utiles.py) ; les tableaux 1 à 3, des
+      agrégats de population, ne se confrontent pas, le dépôt n'ayant pas de
+      population (registre des modèles, `trajectoire`). Son encadré 1 range
+      la majoration dans le régime de la naissance, sa note 2 dit que la
+      fonction publique passe d'abord « dans les faits » : R. 173-15, que le
+      dépôt et le code public de TRAJECTOiRE suivent.
 
   - id: drees_calcul_pension
     url: https://gitlab.com/DREES_code/public/outils/calcul_pension

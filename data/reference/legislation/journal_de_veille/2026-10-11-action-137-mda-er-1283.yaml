@@ -1,0 +1,25 @@
+date: "2026-10-11"
+session: "action 137 : les majorations pour enfants de l'Études et résultats n° 1283 de la DREES, confrontées au scénario 1"
+consulte: >-
+  Le PDF de l'Études et résultats n° 1283 de la DREES (octobre 2023), dans sa copie
+  d'Internet Archive du 9 mai 2026 ; le code public de TRAJECTOiRE au commit 0963b57,
+  lu dans la WSL sans rien exécuter (R/fonctionsCalculsDivers.R, calculeTrimMDAEnfant
+  et determinerCaisseCompetente) ; dans l'index de la DILA du dossier principal,
+  sans retélécharger, L. 351-4 du code de la sécurité sociale dans sa version du
+  16 avril 2023 (LEGIARTI000047453184) et l'article 13 de la loi n° 2023-270 du
+  14 avril 2023 (JORFARTI000047445100). Aucune règle du scénario 1 n'a été touchée.
+trouve: >-
+  Les cinq exemples de l'encadré 3 de l'étude (génération 1958) concordent au
+  trimestre avec le scénario 1 — décote, surcote, coefficient de chaque régime,
+  trimestres de majoration utiles au taux et à la proratisation — et deviennent des
+  cas d'essai (tests/test_trimestres_utiles.py). L'étude range la majoration dans le
+  régime de la naissance, quand R. 173-15 fait passer la fonction publique d'abord,
+  ce que sa note 2 admet et que le code public de TRAJECTOiRE suit, comme le dépôt.
+  L'article 13 de la loi du 14 avril 2023 garde à la mère au moins deux des quatre
+  trimestres d'éducation : sans effet sur le scénario 1, qui les lui sert tous, il
+  précise la limite des trimestres attribués au père.
+reste: >-
+  Les tableaux de l'étude, agrégats d'une population que le dépôt n'a pas, ne se
+  confrontent pas. Les rédactions de L. 351-4 postérieures à 2013, dont celle du
+  16 avril 2023, restent à couper en versions dans la fiche
+  majoration_duree_assurance_enfants, par une veille du droit.
