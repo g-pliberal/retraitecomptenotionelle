@@ -13,16 +13,20 @@ la saisie qu'elles rendent doit être la même au caractère près.
 
 from __future__ import annotations
 
+import functools
 import json
 import shutil
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
 from retraite_notionnelle.contexte import Contexte
+from retraite_notionnelle.droit.releve import points_de_l_annee, revenu_des_points
+from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.releve_lu import REGIMES, lire_releve
 from retraite_notionnelle.web.site import disponible, rendre
 
@@ -87,6 +91,45 @@ CARMF - Caisse autonome de retraite des médecins de France
 Année Régime Points Trimestres retenus
 2015 Régime de base 550 4
 2016 Régime de base 560 4
+"""
+
+#: La même caisse sur trois années, dont les points disent plus ou moins le
+#: revenu : en 2003, cent points par trimestre, quel que soit le revenu ; en
+#: 2015, 412 points, sous le plafond ; en 2016, 550, le plus haut du barème.
+LIBERAL_EN_POINTS = """
+CARMF - Caisse autonome de retraite des médecins de France
+Année Régime Points Trimestres retenus
+2003 Régime de base 400 4
+2015 Régime de base 412 4
+2016 Régime de base 550 4
+"""
+
+#: Un exploitant agricole, sous une forme inventée : la retraite
+#: proportionnelle et la complémentaire obligatoire comptent toutes deux en
+#: points, chacune dans son tableau. En 2019, les 23 points du plancher.
+EXPLOITANT = """
+Relevé de carrière
+MSA - Exploitants agricoles
+Retraite de base
+2018 Retraite proportionnelle 4 trim. 80 pts
+2019 Retraite proportionnelle 4 trim. 23 pts
+Retraite complémentaire obligatoire
+2018 4 trim. 221,89 pts
+"""
+
+#: Des années que seules les complémentaires chiffrent, sous une forme
+#: inventée : deux emplois en 2018, un du privé et un de la fonction publique ;
+#: une année de cadre en 2010 ; une période assimilée en 2012, dont les points
+#: sont ceux du salaire d'avant ; une année sans montant ni points en 2013.
+DEUX_EMPLOIS = """
+Relevé de carrière
+Régime général
+2012 Maladie 0 4
+2013 Salarié 0 4
+Agirc-Arrco 2018 0 trim. 12 pts
+Ircantec 2018 1 trim. 30 pts
+Agirc 2010 0 trim. 15 pts
+Agirc-Arrco 2012 0 trim. 40 pts
 """
 
 #: Rien qui ressemble à un relevé : la lecture doit rendre une carrière vide
@@ -240,12 +283,37 @@ RELEVES = {
     "tous_regimes": TOUS_REGIMES,
     "ancienne": ANCIENNE,
     "liberal": LIBERAL,
+    "liberal_en_points": LIBERAL_EN_POINTS,
+    "exploitant": EXPLOITANT,
+    "deux_emplois": DEUX_EMPLOIS,
     "sans_rien": SANS_RIEN,
 }
 
 
-def _lire(nom: str):
-    return lire_releve(RELEVES[nom].strip().split("\n"))
+def _lire(nom: str, revenu_des_points=None):
+    return lire_releve(RELEVES[nom].strip().split("\n"),
+                       revenu_des_points=revenu_des_points)
+
+
+@pytest.fixture(scope="module")
+def moteur():
+    """Le scénario 1, dont le barème convertit les points en revenu."""
+    return Simulateur().scenario_actuel
+
+
+@pytest.fixture(scope="module")
+def convertir(moteur):
+    """Le convertisseur que le site passe à la lecture : celui du modèle."""
+    return functools.partial(revenu_des_points, moteur)
+
+
+def _par_cent(statut, annee, etage, points, trimestres):
+    """Un convertisseur d'essai, pour la mécanique de la lecture seule : cent
+    euros le point, au plafond à partir de cinq cents, rien sous dix."""
+    if points < 10:
+        return None
+    return SimpleNamespace(revenu=round(points * 100), au_plafond=points >= 500,
+                           appel=(statut, annee, etage, points, trimestres))
 
 
 def test_une_annee_coupee_par_employeur_est_recollee():
@@ -311,12 +379,73 @@ def test_un_etat_de_services_sur_plusieurs_annees_est_montre_et_non_devine():
 
 def test_un_regime_en_points_ne_rend_aucun_revenu():
     """La CARMF compte en points : lire 550 comme un revenu de 550 € écrirait
-    un chiffre que le relevé ne porte pas."""
+    un chiffre que le relevé ne porte pas. Sans le barème que l'appelant passe,
+    l'année reste sans montant, et la note le dit."""
     lecture = _lire("liberal")
     assert [ligne.annee for ligne in lecture.lignes] == [2015, 2016]
     assert all(ligne.revenu == 0 for ligne in lecture.lignes)
     assert all(ligne.trimestres == 4 for ligne in lecture.lignes)
     assert any("points" in note for note in lecture.notes)
+
+
+def test_les_points_d_un_liberal_disent_son_revenu(moteur, convertir):
+    """Le barème du régime de base des libéraux convertit les points en
+    revenu : le plus bas qui les ouvre, que la pension recalculée de la saisie
+    retrouve. En 2016, ce sont les 550 points du plafond, et la note dit que le
+    revenu a pu le dépasser ; en 2003, cent points par trimestre ne disent
+    aucun revenu, et l'année reste sans montant, signalée comme telle."""
+    lecture = _lire("liberal_en_points", convertir)
+    lues = {ligne.annee: ligne for ligne in lecture.lignes}
+    assert lues[2003].revenu == 0
+    assert points_de_l_annee(moteur, "medecin_liberal", 2015, "base",
+                             lues[2015].revenu, 4) >= 412 - 1e-6
+    assert lues[2016].revenu == round(5 * moteur.macro.plafond_securite_sociale(2016))
+    (convertie,) = [note for note in lecture.notes if "ne chiffre qu'en points" in note]
+    assert "2015 et 2016" in convertie and "En 2016, ce sont les points du plafond" in convertie
+    (sans_revenu,) = [note for note in lecture.notes if "sans revenu" in note]
+    assert sans_revenu.startswith("L'année 2003 est lue sans revenu")
+
+
+def test_une_annee_que_seule_la_complementaire_chiffre(moteur, convertir):
+    """Le tableau des années du relevé de 2026, collé seul, ne porte aucun
+    revenu : les points de l'Agirc-Arrco et de l'Ircantec le disent, chacun au
+    barème du statut qui les ouvre."""
+    lecture = _lire("tableau_des_annees", convertir)
+    lues = {ligne.annee: ligne for ligne in lecture.lignes}
+    assert lues[2018].statut == "salarie_prive_non_cadre"
+    assert lues[2019].statut == "contractuel_public"
+    assert points_de_l_annee(moteur, "salarie_prive_non_cadre", 2018, "complementaire",
+                             lues[2018].revenu, 0) >= 2.90 - 1e-6
+    assert points_de_l_annee(moteur, "contractuel_public", 2019, "complementaire",
+                             lues[2019].revenu, 1) >= 7 - 1e-6
+    assert not any("sans revenu" in note for note in lecture.notes)
+    # Une année qui porte un revenu le garde : ses points ne s'y ajoutent pas.
+    assert _lire("releve_2026", convertir).parametres() == _lire("releve_2026").parametres()
+
+
+def test_la_base_et_la_complementaire_d_un_emploi_disent_chacune_un_plancher(convertir):
+    """Les points de la retraite proportionnelle et ceux de la complémentaire
+    disent chacun un revenu que l'exploitant a au moins atteint : l'année prend
+    le plus haut. Les 23 points du plancher ne disent rien."""
+    lues = {ligne.annee: ligne for ligne in _lire("exploitant", convertir).lignes}
+    base = convertir("exploitant_agricole", 2018, "base", 80, 4)
+    complementaire = convertir("exploitant_agricole", 2018, "complementaire", 221.89, 4)
+    assert lues[2018].revenu == max(base.revenu, complementaire.revenu)
+    assert lues[2019].revenu == 0
+
+
+def test_deux_emplois_chiffres_en_points_s_ajoutent():
+    """Deux statuts la même année sont deux emplois : leurs revenus s'ajoutent,
+    et l'année prend le statut du plus grand. Une année de cadre convertit
+    ses points au barème du cadre ; une période assimilée ne convertit rien,
+    ses points étant ceux du salaire d'avant."""
+    lecture = _lire("deux_emplois", _par_cent)
+    lues = {ligne.annee: ligne for ligne in lecture.lignes}
+    assert (lues[2018].revenu, lues[2018].statut) == (4200, "contractuel_public")
+    assert (lues[2010].revenu, lues[2010].statut) == (1500, "salarie_prive_cadre")
+    assert lues[2012].revenu == 0 and lecture.interruptions == ((2012, 2012, "maladie"),)
+    (sans_revenu,) = [note for note in lecture.notes if "sans revenu" in note]
+    assert sans_revenu.startswith("L'année 2013 est lue sans revenu")
 
 
 def test_l_estimation_d_info_retraite_se_lit_en_entier():
@@ -566,12 +695,16 @@ def test_la_saisie_produite_se_simule_sans_refus():
     assert 'class="erreur"' not in corps, corps[:400]
 
 
-def test_le_portage_javascript_lit_les_memes_releves():
+@pytest.mark.parametrize("points", [False, True], ids=["sans_bareme", "points_convertis"])
+def test_le_portage_javascript_lit_les_memes_releves(points, request):
     """Le site lit le PDF déposé avec `moteur/js/releve-lu.js` ; ce fichier-ci
     fait foi. Les deux doivent rendre la MÊME saisie — le relevé, les
-    interruptions, les lignes ignorées, les régimes et les notes."""
+    interruptions, les lignes ignorées, les régimes et les notes —, avec les
+    points convertis au barème de chaque moteur (`droit/releve`) comme
+    sans."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    convertisseur = request.getfixturevalue("convertir") if points else None
 
     noms = sorted(RELEVES)
     entree = [RELEVES[nom].strip().split("\n") for nom in noms]
@@ -579,7 +712,8 @@ def test_le_portage_javascript_lit_les_memes_releves():
         json.dump(entree, fichier, ensure_ascii=False)
         fichier.flush()
         execution = subprocess.run(
-            ["node", "tests/js/comparer-releve.mjs", fichier.name],
+            ["node", "tests/js/comparer-releve.mjs", fichier.name,
+             *(["points"] if points else [])],
             cwd=RACINE, capture_output=True, text=True, encoding="utf-8",
             check=False,
         )
@@ -587,7 +721,8 @@ def test_le_portage_javascript_lit_les_memes_releves():
     rendu = json.loads(execution.stdout)
 
     for nom, javascript in zip(noms, rendu):
-        lecture = lire_releve(RELEVES[nom].strip().split("\n"))
+        lecture = lire_releve(RELEVES[nom].strip().split("\n"),
+                              revenu_des_points=convertisseur)
         attendu = dict(lecture.parametres())
         attendu["ignorees"] = list(lecture.ignorees)
         attendu["regimes"] = list(lecture.regimes)

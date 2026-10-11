@@ -90,8 +90,9 @@ const AVANT_LA_DATE = 24;
  * Les régimes qu'un relevé nomme, et le statut du simulateur qui leur
  * correspond. `genre` vaut « base » pour un régime qui porte une carrière en
  * euros, « points » pour un régime de base qui compte en points — professions
- * libérales, exploitants agricoles —, dont on lit les années et les trimestres
- * mais jamais un revenu qu'il ne porte pas, et « indice » pour un régime
+ * libérales, exploitants agricoles —, dont on lit les années, les trimestres et
+ * les points, mais jamais un revenu qu'il ne porte pas : c'est le barème du
+ * régime qui l'en déduit, quand l'appelant le passe, et « indice » pour un régime
  * complémentaire, qui ne porte aucune carrière mais dit le statut : des points
  * Agirc dans une année disent que l'emploi était un emploi de cadre.
  *
@@ -212,6 +213,12 @@ export const MARQUEURS = ["trimestres retenus", "trimestres cotises",
  */
 export const EMPLOIS = ["salarie", "emploi", "activite", "apprentissage",
   "employeur", "travailleur", "stage", "titulaire", "services"];
+
+/**
+ * Ce qui dit qu'une ligne d'un régime qui compte en points chiffre sa
+ * complémentaire, et non sa base : « 2018 Régime complémentaire 36 pts ».
+ */
+export const COMPLEMENTAIRES = ["complementaire", "rco"];
 
 /**
  * L'euro le plus proche, la moitié vers le haut. Ni `Math.round`, qui arrondit
@@ -469,8 +476,17 @@ function anneeEtNombres(ligne) {
  *
  * `anneeMaximale` borne les années lues — le site passe l'année courante. La
  * date d'édition du document, quand il la porte, la resserre encore.
+ *
+ * Les points d'une année que le relevé ne chiffre pas en euros, hors d'une
+ * période assimilée, disent son revenu quand l'appelant passe
+ * `revenuDesPoints(statut, annee, etage, points, trimestres)` — celui du
+ * modèle, `droit/releve.js` sur le scénario 1 —, qui rend `null` ou le
+ * revenu le plus bas qui les ouvre et s'il est au plafond du barème,
+ * `{ revenu, auPlafond }`. Les points de la base et ceux de la complémentaire
+ * d'un même emploi disent chacun un revenu qu'il a au moins atteint, et
+ * l'année prend le plus haut ; ceux de deux emplois s'ajoutent.
  */
-export function lireReleve(lignes, anneeMaximale = null) {
+export function lireReleve(lignes, anneeMaximale = null, revenuDesPoints = null) {
   let courant = null;
   let section = null;
   // Les régimes que nommait la ligne qui a ouvert la section : sous chaque
@@ -482,7 +498,6 @@ export function lireReleve(lignes, anneeMaximale = null) {
   const regimes = [];
   const cadres = new Set();
   let francs = false;
-  let points = false;
   let vues = false;
   let precises = false;
   let naissance = null;
@@ -615,6 +630,9 @@ export function lireReleve(lignes, anneeMaximale = null) {
     const etiquetes = nombres.filter(([, unite]) => unite).map(([, unite]) => unite);
     let revenu = 0.0;
     let trimestres = null;
+    // Les points de la ligne : ce n'est pas un revenu, mais le barème de leur
+    // régime le dit, et l'année les garde pour qui sait le lire.
+    let lus = 0.0;
     if (etiquetes.length) {
       for (const [valeur, unite] of nombres) {
         if (unite === "revenu") revenu = Math.max(revenu, valeur);
@@ -622,8 +640,9 @@ export function lireReleve(lignes, anneeMaximale = null) {
           // Le dernier l'emporte, et jamais un cumul de carrière : « 172
           // trimestres » est un total, pas une année.
           trimestres = valeur;
+        } else if (unite === "point") {
+          lus += valeur;
         }
-        // Les points sont lus, et jetés : ce n'est pas un revenu.
       }
     } else if (indiceSeul) {
       // Une ligne qui ne relève que d'un régime complémentaire et n'écrit
@@ -657,10 +676,18 @@ export function lireReleve(lignes, anneeMaximale = null) {
     }
     if (base.genre === "points") {
       // Le nombre lu est un nombre de POINTS, pas un revenu. L'année et ses
-      // trimestres se gardent ; le revenu reste à compléter.
-      if (revenu) points = true;
+      // trimestres se gardent, et ses points, quand aucune unité ne les dit —
+      // un montant écrit en euros sur une telle ligne est une cotisation plus
+      // souvent qu'un revenu, et ne se lit pas.
+      if (!etiquetes.length) lus += revenu;
       revenu = 0.0;
     }
+    // Les points disent l'étage qui les compte : la base, pour un régime qui
+    // compte en points, sauf quand la ligne nomme sa complémentaire ; la
+    // complémentaire, pour tout autre.
+    const etage = base.genre === "points" && !indiceSeul
+      && !plat.split(" ").some((mot) => COMPLEMENTAIRES.includes(mot))
+      ? "base" : "complementaire";
     if (parLaDate && !etiquetes.length) {
       // L'année ne vient que d'une date, et aucun nombre ne porte son unité :
       // la ligne ne dit pas de carrière. Si elle nomme tout de même un régime,
@@ -678,11 +705,18 @@ export function lireReleve(lignes, anneeMaximale = null) {
       annees.set(annee, {
         revenu: 0.0, trimestres: null, statut: "", revenuDuStatut: -1.0,
         motif: null, source: "", vu: 0.0, baseSeule: false,
+        // Les points des lignes de l'année, par statut et par étage, dans
+        // l'ordre où elles les portent.
+        points: new Map(),
       });
     }
     const cumul = annees.get(annee);
     cumul.revenu += montant;
     cumul.vu += enEuros(vu, annee);
+    if (lus > 0) {
+      const cle = `${statut} ${etage}`;
+      cumul.points.set(cle, (cumul.points.get(cle) ?? 0.0) + lus);
+    }
     if (baseSeule && montant > 0) cumul.baseSeule = true;
     if (trimestres !== null) {
       cumul.trimestres = Math.min(TRIMESTRES_PAR_AN, (cumul.trimestres ?? 0) + trimestres);
@@ -699,6 +733,9 @@ export function lireReleve(lignes, anneeMaximale = null) {
 
   const lues = [];
   const interruptions = [];
+  const converties = [];
+  const auPlafond = [];
+  const sansRevenu = [];
   for (const annee of [...annees.keys()].sort((a, b) => a - b)) {
     const cumul = annees.get(annee);
     if (cumul.vu && cumul.baseSeule) vues = true;
@@ -707,6 +744,20 @@ export function lireReleve(lignes, anneeMaximale = null) {
     if (cadres.has(annee) && statut === "salarie_prive_non_cadre") {
       statut = "salarie_prive_cadre";
     }
+    // UNE ANNÉE QUE LE RELEVÉ NE CHIFFRE QU'EN POINTS reçoit le revenu qu'ils
+    // disent ; celle qui n'a ni montant ni points qui le disent reste à zéro,
+    // et la note le dit. Une période assimilée n'est ni l'une ni l'autre.
+    if (cumul.revenu <= 0 && !cumul.motif && cumul.points.size
+        && revenuDesPoints !== null) {
+      const converti = revenuDesPointsDeLAnnee(cumul, annee, cadres.has(annee),
+        revenuDesPoints);
+      if (converti !== null) {
+        [cumul.revenu, statut] = converti;
+        converties.push(annee);
+        if (converti[2]) auPlafond.push(annee);
+      }
+    }
+    if (cumul.revenu <= 0 && !cumul.motif) sansRevenu.push(annee);
     if (cumul.revenu <= 0 && cumul.motif) interruptions.push([annee, annee, cumul.motif]);
     lues.push({
       annee, statut, revenu: cumul.revenu, trimestres: cumul.trimestres,
@@ -728,11 +779,29 @@ export function lireReleve(lignes, anneeMaximale = null) {
       + "lues comme des années de cadre.",
     );
   }
-  if (points) {
+  if (converties.length) {
     notes.push(
-      "Un régime qui compte en points — professions libérales, exploitants "
-      + "agricoles — ne porte pas de revenu au relevé : ses années sont lues "
-      + "sans montant, à compléter à la main.",
+      (converties.length === 1
+        ? `L'année ${enClair(converties)}, que le relevé ne chiffre qu'en `
+          + "points, a reçu le revenu le plus bas qui les ouvre, au barème de "
+          + "son régime et de son année."
+        : `Les années ${enClair(converties)}, que le relevé ne chiffre `
+          + "qu'en points, ont reçu le revenu le plus bas qui les ouvre, au "
+          + "barème de leur régime et de leur année.")
+      + (auPlafond.length
+        ? ` En ${enClair(auPlafond)}, ce sont les points du plafond du `
+          + "barème : le revenu a pu le dépasser."
+        : ""),
+    );
+  }
+  if (sansRevenu.length) {
+    notes.push(
+      (sansRevenu.length === 1
+        ? `L'année ${enClair(sansRevenu)} est lue sans revenu`
+        : `Les années ${enClair(sansRevenu)} sont lues sans revenu`)
+      + " : la lecture n'en a trouvé aucun au relevé, ni en euros, ni en "
+      + "points qu'elle sache convertir. À compléter à la main ; à défaut, "
+      + `la simulation ${sansRevenu.length === 1 ? "lui" : "leur"} prête un revenu nul.`,
     );
   }
   if (vues) {
@@ -776,6 +845,59 @@ export function lireReleve(lignes, anneeMaximale = null) {
   };
 }
 
+
+/**
+ * Le revenu que disent les points d'une année, le statut qui le porte, et s'il
+ * est au plafond d'un barème : `[revenu, statut, auPlafond]`, ou `null` s'ils
+ * n'en disent aucun. Voir `_revenu_des_points` dans le Python.
+ */
+function revenuDesPointsDeLAnnee(cumul, annee, cadre, convertir) {
+  const parStatut = new Map();
+  for (const [cle, points] of cumul.points) {
+    const [lu, etage] = cle.split(" ");
+    const statut = cadre && lu === "salarie_prive_non_cadre" ? "salarie_prive_cadre" : lu;
+    const resultat = convertir(statut, annee, etage, points, cumul.trimestres);
+    if (resultat !== null && resultat.revenu > (parStatut.get(statut)?.[0] ?? 0.0)) {
+      parStatut.set(statut, [resultat.revenu, Boolean(resultat.auPlafond)]);
+    }
+  }
+  if (!parStatut.size) return null;
+  let statut = null;
+  let total = 0.0;
+  let plafond = false;
+  for (const [code, [revenu, auPlafond]] of parStatut) {
+    if (statut === null || revenu > parStatut.get(statut)[0]) statut = code;
+    total += revenu;
+    plafond = plafond || auPlafond;
+  }
+  return [total, statut, plafond];
+}
+
+/**
+ * Des années, comme une phrase les écrit : « 2015 et 2016 », « 1990 à 2003 et
+ * 2010 » — trois années qui se suivent font une plage.
+ */
+function enClair(annees) {
+  const plages = [];
+  for (const annee of [...annees].sort((a, b) => a - b)) {
+    const derniere = plages[plages.length - 1];
+    if (derniere && derniere[1] === annee - 1) {
+      derniere[1] = annee;
+    } else {
+      plages.push([annee, annee]);
+    }
+  }
+  const morceaux = [];
+  for (const [debut, fin] of plages) {
+    if (fin - debut >= 2) {
+      morceaux.push(`${debut} à ${fin}`);
+    } else {
+      for (let annee = debut; annee <= fin; annee++) morceaux.push(String(annee));
+    }
+  }
+  if (morceaux.length === 1) return morceaux[0];
+  return `${morceaux.slice(0, -1).join(", ")} et ${morceaux[morceaux.length - 1]}`;
+}
 
 /**
  * Recolle les années voisines de même motif en une seule plage : le champ

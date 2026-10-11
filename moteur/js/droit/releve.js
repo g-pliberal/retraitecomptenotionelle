@@ -5,9 +5,11 @@
  * les étapes de l'acquisition — coordonner les affiliations, compter les
  * durées, acquérir les droits —, puis réunit en groupes les régimes où un
  * droit est acquis ; la liquidation du scénario 1 lit ce qu'il rend. Le relevé
- * se publie en lignes, que le contrat C.5 décrit : `Releve.lignes`.
+ * se publie en lignes, que le contrat C.5 décrit : `Releve.lignes`. Lu à
+ * rebours, il dit le revenu que des points supposent : `revenuDesPoints`.
  */
 
+import { Carriere } from "../carriere.js";
 import * as chrono from "../chronologie.js";
 import { nomFiabilite } from "../serie.js";
 import * as acquerirEtape from "./acquerir.js";
@@ -227,6 +229,107 @@ export function construire(moteur, carriereSaisie, {
     }
   });
   return new Releve(coordination, durees, droits, groupes, servicesLus, gratuites);
+}
+
+// -- Le relevé à rebours : le revenu que des points supposent ----------------
+//
+// Voir le Python, qui dit pourquoi : un relevé de carrière chiffre en points,
+// non en euros, les années d'un régime qui compte en points, et celles que
+// seule la complémentaire chiffre. Le revenu rendu est le plus bas, en euros
+// entiers, dont une année du statut crédite au moins ces points dans les
+// régimes de l'étage, cherché par dichotomie sur le relevé des droits
+// lui-même ; `null` quand les points ne disent aucun revenu.
+
+/** Les étages dont les points disent un revenu. */
+export const ETAGES_CONVERTIS = ["base", "complementaire"];
+
+/** L'assuré fictif qui cotise l'année : quarante ans, parti à soixante-sept. */
+export const AGE_DANS_L_ANNEE = 40;
+export const AGE_DE_DEPART_FICTIF = 67.0;
+
+/** La borne haute de la recherche, en plafonds de la Sécurité sociale. */
+export const PLAFONDS_AU_PLUS = 16;
+
+/** Ce dont des points lus peuvent dépasser le plus haut du barème. */
+export const DEMI_POINT = 0.5;
+
+/** Le bruit du calcul en virgule flottante, en points. */
+export const EPSILON_POINTS = 1e-6;
+
+/**
+ * Les points qu'une année de `statut`, au revenu `revenu`, ouvre dans les
+ * régimes de cet étage que le statut cotise cette année-là — les siens, et non
+ * ceux où la coordination route une carrière d'un an.
+ */
+export function pointsDeLAnnee(moteur, statut, annee, etage, revenu, trimestres = null) {
+  const regimes = new Set(moteur.affiliations.regimes(statut, annee).filter(
+    (code) => moteur.catalogue.contient(code)
+      && moteur.catalogue.obtenir(code).etage === etage,
+  ));
+  if (regimes.size === 0) {
+    return 0.0;
+  }
+  const carriere = Carriere.depuisReleve({
+    annee_naissance: annee - AGE_DANS_L_ANNEE,
+    sexe: "H",
+    releve: [{ annee, affiliation: statut, revenu, trimestres, type_periode: "emploi" }],
+    age_liquidation: AGE_DE_DEPART_FICTIF,
+    macro: moteur.macro,
+    identifiant: `points de ${annee}`,
+  });
+  const releve = construire(moteur, carriere, {
+    avantagesNonContributifs: false, pointsGratuits: false, liquiderSuccessions: false,
+  });
+  let somme = 0.0;
+  for (const [code, an, points] of releve.droits.points) {
+    if (an === annee && regimes.has(code)) {
+      somme += points;
+    }
+  }
+  return somme;
+}
+
+/**
+ * Le revenu entier le plus bas dont une année de `statut` ouvre au moins
+ * `points` dans les régimes de l'étage `etage`, et s'il est au plafond du
+ * barème : `{ revenu, auPlafond }`, ou `null` quand ces points ne disent aucun
+ * revenu.
+ */
+export function revenuDesPoints(moteur, statut, annee, etage, points, trimestres = null) {
+  if (!ETAGES_CONVERTIS.includes(etage) || !(points > 0)) {
+    return null;
+  }
+  let haut = Math.ceil(PLAFONDS_AU_PLUS * moteur.macro.plafond_securite_sociale.valeur(annee));
+  if (!(haut >= 2)) {
+    return null;
+  }
+  const vus = new Map();
+  const acquis = (revenu) => {
+    if (!vus.has(revenu)) {
+      vus.set(revenu, pointsDeLAnnee(moteur, statut, annee, etage, revenu, trimestres));
+    }
+    return vus.get(revenu);
+  };
+  // Le plus petit revenu qui cotise ouvre déjà le plancher : des points qui ne
+  // le dépassent pas ne disent pas le revenu, ni ceux d'un barème que le
+  // revenu ne fait pas bouger.
+  const plancher = acquis(1);
+  const plusHaut = acquis(haut);
+  if (plusHaut <= plancher + EPSILON_POINTS || points <= plancher + EPSILON_POINTS
+      || points > plusHaut + DEMI_POINT) {
+    return null;
+  }
+  const cible = Math.min(points, plusHaut) - EPSILON_POINTS;
+  let bas = 1;
+  while (haut - bas > 1) {
+    const milieu = Math.floor((bas + haut) / 2);
+    if (acquis(milieu) >= cible) {
+      haut = milieu;
+    } else {
+      bas = milieu;
+    }
+  }
+  return { revenu: haut, auPlafond: plusHaut <= acquis(haut) + EPSILON_POINTS };
 }
 
 /**

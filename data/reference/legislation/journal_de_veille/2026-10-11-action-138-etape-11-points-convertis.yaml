@@ -1,0 +1,21 @@
+date: "2026-10-11"
+session: "action 138, étape 11, première partie : les points du relevé convertis en revenus"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  dont elle inverse le barème d'acquisition tel qu'il est écrit. Le registre des
+  autres modèles, chantier 138.11 : la Pologne (Dz.U. 2025 poz. 1749), la
+  Lettonie (« Par valsts pensijām »), PROST (« Calculus for PROST 15 »), sur les
+  années sans montant, tels que le relevé de l'étape 1 les a lus.
+trouve: >-
+  Aucun texte de droit. Les points d'un relevé disent le revenu au barème de
+  leur régime : le relevé des droits du scénario 1, fait à rebours sur une année
+  fictive, rend le revenu entier le plus bas qui les ouvre, dans les deux
+  moteurs, et la lecture des relevés s'en sert pour une année sans montant.
+  Des points ne disent rien quand aucun revenu ne les fait varier : les cent
+  points par trimestre des libéraux d'avant 2004, le plancher d'une assiette
+  minimale. Aucune pension ne bouge : seule la lecture d'un relevé déposé change.
+reste: >-
+  Le branchement dans index.html, à la session du site ; au propriétaire, ce que
+  reçoit une année sans montant ni points (trois points du registre, a_trancher) ;
+  les autres parties de l'étape 11, des exemples officiels du diviseur aux chocs
+  stylisés du COR.

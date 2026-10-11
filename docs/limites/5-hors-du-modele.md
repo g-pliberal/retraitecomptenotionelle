@@ -308,9 +308,15 @@ n'est plus une limite : c'est un paramètre connu du résultat.
     lecture ne le dit pas plafonné. La carrière paramétrique ne l'est pas.
   - **Un régime qui compte en points ne porte aucun revenu.** Les professions
     libérales depuis 2004, les exploitants agricoles : leur relevé donne des
-    points et des trimestres. La lecture prend les années et les trimestres,
-    laisse le revenu à zéro et le dit — déduire un revenu du barème de la
-    caisse serait écrire un chiffre que le document ne porte pas.
+    points et des trimestres, et une complémentaire chiffre parfois seule une
+    année que la base ne chiffre pas. Ces points disent le revenu, au barème
+    de leur régime : le modèle le retrouve, le plus bas qui les ouvre
+    (`revenu_des_points`, action 138, étape 11), et la lecture s'en sert
+    quand on le lui passe — ce que le site ne fait pas encore : il lit ces
+    années à zéro, et le dit. Une année qui n'a ni montant ni points qui le
+    disent reste à zéro, et la note invite à la compléter : ce que le compte
+    notionnel en reçoit est un choix du programme, que le propriétaire n'a pas
+    tranché.
   - **Un état de services couvrant plusieurs années n'est pas réparti.** « Du
     01/09/1996 au 31/08/2001 », tel que la fonction publique l'écrit, ne dit ni
     le revenu de chaque année ni leur partage : la ligne ressort telle quelle

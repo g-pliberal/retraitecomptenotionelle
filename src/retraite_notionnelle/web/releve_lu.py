@@ -33,6 +33,17 @@ colonnes se lisent l'une contre l'autre. La conversion se fait donc ici, au
 taux légal — 6,55957 francs pour un euro, cent anciens francs pour un franc —,
 et la lecture dit dans son rapport ce qu'elle a converti.
 
+**Les points.** Un régime qui compte en points — le régime de base des
+libéraux depuis 2004, la retraite proportionnelle des exploitants agricoles —
+n'écrit pas de revenu au relevé, et une complémentaire chiffre parfois seule
+une année que la base ne chiffre pas. Ces points disent le revenu, au barème
+de leur régime et de leur année : quand l'appelant passe ``revenu_des_points``
+— celui du modèle, ``droit/releve.py`` —, une année sans montant reçoit le
+revenu le plus bas qui les ouvre, et la lecture le dit. Une année qui n'a ni
+montant ni points qui le disent reste à zéro, et la lecture le dit aussi : ce
+qu'on lui porte au compte notionnel est un choix du programme, qu'elle ne fait
+pas (action 138, étape 11).
+
 Le module ne dépend que de la bibliothèque standard, et son portage JavaScript,
 ``moteur/js/releve-lu.js``, en reprend les fonctions une à une : c'est ce
 fichier-ci qui fait foi, et ``tests/test_releve_lu.py`` tient les deux.
@@ -43,7 +54,8 @@ from __future__ import annotations
 import re
 import unicodedata
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Callable
 
 #: Le taux légal de conversion, fixé le 31 décembre 1998 et jamais révisé.
 FRANCS_PAR_EURO = 6.55957
@@ -119,9 +131,9 @@ class Regime:
       deviennent des lignes de relevé ;
     - ``"points"`` pour un régime de base qui compte en POINTS et non en
       euros : les professions libérales depuis 2004, les exploitants
-      agricoles. Ses années et ses trimestres se lisent, son revenu non — un
-      nombre de points n'est pas un revenu, et le déduire du barème de la
-      caisse serait inventer un chiffre que le relevé ne porte pas ;
+      agricoles. Ses années, ses trimestres et ses points se lisent, son
+      revenu non — un nombre de points n'est pas un revenu : c'est le barème
+      du régime qui l'en déduit, quand l'appelant le passe ;
     - ``"indice"`` pour un régime complémentaire, qui ne porte aucune carrière
       mais RENSEIGNE le statut : des points Agirc dans une année disent que
       l'emploi de cette année-là était un emploi de cadre, ce qu'aucune colonne
@@ -254,6 +266,10 @@ MARQUEURS = ("trimestres retenus", "trimestres cotises", "trimestres valides",
 #: revenu inconnu reste une année d'emploi.
 EMPLOIS = ("salarie", "emploi", "activite", "apprentissage", "employeur",
            "travailleur", "stage", "titulaire", "services")
+
+#: Ce qui dit qu'une ligne d'un régime qui compte en points chiffre sa
+#: complémentaire, et non sa base : « 2018 Régime complémentaire 36 pts ».
+COMPLEMENTAIRES = ("complementaire", "rco")
 
 
 def arrondi(montant: float) -> int:
@@ -486,6 +502,9 @@ class _Annee:
     vu: float = 0.0
     #: Si une ligne de l'année ne nomme que le régime de base, revenu à l'appui.
     base_seule: bool = False
+    #: Les points que les lignes de l'année portent, par statut et par étage
+    #: — « base » ou « complementaire » —, dans l'ordre où elles les portent.
+    points: dict[tuple[str, str], float] = field(default_factory=dict)
 
 
 def _annee_et_nombres(
@@ -563,7 +582,8 @@ def _annee_du_document(lignes: list[str]) -> int | None:
     return derniere
 
 
-def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture:
+def lire_releve(lignes: list[str], annee_maximale: int | None = None,
+                revenu_des_points: Callable[..., object] | None = None) -> Lecture:
     """Lit un relevé, ligne à ligne, et rend la carrière qu'il décrit.
 
     Quatre règles, et elles suffisent à lire les relevés des deux formes —
@@ -590,6 +610,17 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
        année sans qu'on sache lire ce qui l'accompagne ressort telle quelle
        dans ``ignorees``, et le site la montre : c'est au lecteur de trancher,
        pas au programme de choisir à sa place un chiffre vraisemblable.
+
+    Les points d'une année que le relevé ne chiffre pas en euros, hors d'une
+    période assimilée, disent son revenu quand l'appelant passe
+    ``revenu_des_points(statut, annee, etage, points, trimestres)`` — celui
+    du modèle, :func:`~retraite_notionnelle.droit.releve.revenu_des_points`
+    sur le scénario 1 —, qui rend ``None`` ou le revenu le plus bas qui les
+    ouvre (``revenu``) et s'il est au plafond du barème (``au_plafond``). Les
+    points de chaque statut et de chaque étage se convertissent à part : ceux
+    de la base et ceux de la complémentaire d'un même emploi disent chacun un
+    revenu qu'il a au moins atteint, et l'année prend le plus haut ; ceux de
+    deux emplois s'ajoutent.
     """
     courant: Regime | None = None
     section: Regime | None = None
@@ -602,7 +633,6 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
     regimes: list[str] = []
     cadres: set[int] = set()
     francs = False
-    points = False
     vues = False
     precises = False
     naissance: str | None = None
@@ -752,6 +782,9 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
         etiquetes = [unite for _, unite in nombres if unite]
         revenu = 0.0
         trimestres = None
+        # Les points de la ligne : ce n'est pas un revenu, mais le barème de
+        # leur régime le dit, et l'année les garde pour qui sait le lire.
+        lus = 0.0
         if etiquetes:
             for valeur, unite in nombres:
                 if unite == "revenu":
@@ -760,7 +793,8 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
                     # Le dernier l'emporte, et jamais un cumul de carrière :
                     # « 172 trimestres » est un total, pas une année.
                     trimestres = int(valeur)
-                # Les points sont lus, et jetés : ce n'est pas un revenu.
+                elif unite == "point":
+                    lus += valeur
         elif indice_seul:
             # Une ligne qui ne nomme qu'un régime complémentaire et n'écrit
             # aucune unité ne dit rien qu'on sache lire : ses nombres sont des
@@ -794,10 +828,18 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
             vu, revenu = revenu, 0.0
         if base.genre == "points":
             # Le nombre lu est un nombre de POINTS, pas un revenu. L'année et
-            # ses trimestres se gardent ; le revenu reste à compléter.
-            if revenu:
-                points = True
+            # ses trimestres se gardent, et ses points, quand aucune unité ne
+            # les dit — un montant écrit en euros sur une telle ligne est une
+            # cotisation plus souvent qu'un revenu, et ne se lit pas.
+            if not etiquetes:
+                lus += revenu
             revenu = 0.0
+        # Les points disent l'étage qui les compte : la base, pour un régime
+        # qui compte en points, sauf quand la ligne nomme sa complémentaire ;
+        # la complémentaire, pour tout autre.
+        etage = ("base" if base.genre == "points" and not indice_seul
+                 and not any(mot in COMPLEMENTAIRES for mot in plat.split(" "))
+                 else "complementaire")
         if par_la_date and not etiquetes:
             # L'année ne vient que d'une date, et aucun nombre ne porte son
             # unité : la ligne ne dit pas de carrière. Si elle nomme tout de
@@ -815,6 +857,8 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
         cumul = annees.setdefault(annee, _Annee())
         cumul.revenu += montant
         cumul.vu += _en_euros(vu, annee)
+        if lus > 0:
+            cumul.points[(statut, etage)] = cumul.points.get((statut, etage), 0.0) + lus
         if base_seule and montant > 0:
             cumul.base_seule = True
         if trimestres is not None:
@@ -836,6 +880,9 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
 
     lues: list[LigneLue] = []
     interruptions: list[tuple[int, int, str]] = []
+    converties: list[int] = []
+    au_plafond: list[int] = []
+    sans_revenu: list[int] = []
     for annee in sorted(annees):
         cumul = annees[annee]
         if cumul.vu and cumul.base_seule:
@@ -845,6 +892,22 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
         statut = cumul.statut
         if annee in cadres and statut == "salarie_prive_non_cadre":
             statut = "salarie_prive_cadre"
+        # UNE ANNÉE QUE LE RELEVÉ NE CHIFFRE QU'EN POINTS reçoit le revenu
+        # qu'ils disent ; celle qui n'a ni montant ni points qui le disent
+        # reste à zéro, et la note le dit — ce qu'on lui porte au compte est un
+        # choix du programme, que la lecture ne fait pas. Une période assimilée
+        # n'est ni l'une ni l'autre : ses points sont ceux du salaire d'avant.
+        if (cumul.revenu <= 0 and not cumul.motif and cumul.points
+                and revenu_des_points is not None):
+            converti = _revenu_des_points(cumul, annee, annee in cadres,
+                                          revenu_des_points)
+            if converti is not None:
+                cumul.revenu, statut, plafond = converti
+                converties.append(annee)
+                if plafond:
+                    au_plafond.append(annee)
+        if cumul.revenu <= 0 and not cumul.motif:
+            sans_revenu.append(annee)
         # Une année sans revenu n'est pas une année travaillée : le relevé y
         # porte une période assimilée, que le formulaire décrit par son motif
         # et non par une ligne de carrière à zéro euro.
@@ -865,11 +928,27 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
             "Des points Agirc figurent au relevé : les années qu'ils couvrent "
             "sont lues comme des années de cadre."
         )
-    if points:
+    if converties:
         notes.append(
-            "Un régime qui compte en points — professions libérales, "
-            "exploitants agricoles — ne porte pas de revenu au relevé : ses "
-            "années sont lues sans montant, à compléter à la main."
+            (f"L'année {_en_clair(converties)}, que le relevé ne chiffre qu'en "
+             "points, a reçu le revenu le plus bas qui les ouvre, au barème de "
+             "son régime et de son année."
+             if len(converties) == 1 else
+             f"Les années {_en_clair(converties)}, que le relevé ne chiffre "
+             "qu'en points, ont reçu le revenu le plus bas qui les ouvre, au "
+             "barème de leur régime et de leur année.")
+            + (f" En {_en_clair(au_plafond)}, ce sont les points du plafond du "
+               "barème : le revenu a pu le dépasser." if au_plafond else "")
+        )
+    if sans_revenu:
+        notes.append(
+            (f"L'année {_en_clair(sans_revenu)} est lue sans revenu"
+             if len(sans_revenu) == 1 else
+             f"Les années {_en_clair(sans_revenu)} sont lues sans revenu")
+            + " : la lecture n'en a trouvé aucun au relevé, ni en euros, ni en "
+            "points qu'elle sache convertir. À compléter à la main ; à défaut, "
+            "la simulation " + ("lui" if len(sans_revenu) == 1 else "leur")
+            + " prête un revenu nul."
         )
     if vues:
         notes.append(
@@ -907,6 +986,55 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
                    tuple(ignorees), tuple(regimes), tuple(notes), naissance,
                    mois_de_naissance)
 
+
+
+def _revenu_des_points(cumul: _Annee, annee: int, cadre: bool,
+                       convertir: Callable[..., object]
+                       ) -> tuple[float, str, bool] | None:
+    """Le revenu que disent les points d'une année, le statut qui le porte, et
+    s'il est au plafond d'un barème ; ``None`` s'ils n'en disent aucun.
+
+    Les points de chaque étage d'un même statut disent chacun un revenu que
+    l'emploi a au moins atteint : l'année prend le plus haut. Ceux de deux
+    statuts sont deux emplois, et s'ajoutent ; le statut de l'année est celui
+    qui y a porté le plus, comme partout ailleurs.
+    """
+    par_statut: dict[str, tuple[float, bool]] = {}
+    for (statut, etage), points in cumul.points.items():
+        if cadre and statut == "salarie_prive_non_cadre":
+            statut = "salarie_prive_cadre"
+        resultat = convertir(statut, annee, etage, points, cumul.trimestres)
+        if resultat is not None and resultat.revenu > par_statut.get(statut, (0.0, False))[0]:
+            par_statut[statut] = (float(resultat.revenu), bool(resultat.au_plafond))
+    if not par_statut:
+        return None
+    statut = max(par_statut, key=lambda code: par_statut[code][0])
+    # De gauche à droite, comme le portage : ``sum`` additionne autrement
+    # depuis Python 3.12.
+    total = 0.0
+    for revenu, _ in par_statut.values():
+        total += revenu
+    return total, statut, any(plafond for _, plafond in par_statut.values())
+
+
+def _en_clair(annees: list[int]) -> str:
+    """Des années, comme une phrase les écrit : « 2015 et 2016 », « 1990 à
+    2003 et 2010 » — trois années qui se suivent font une plage."""
+    plages: list[list[int]] = []
+    for annee in sorted(annees):
+        if plages and plages[-1][1] == annee - 1:
+            plages[-1][1] = annee
+        else:
+            plages.append([annee, annee])
+    morceaux: list[str] = []
+    for debut, fin in plages:
+        if fin - debut >= 2:
+            morceaux.append(f"{debut} à {fin}")
+        else:
+            morceaux.extend(str(annee) for annee in range(debut, fin + 1))
+    if len(morceaux) == 1:
+        return morceaux[0]
+    return ", ".join(morceaux[:-1]) + " et " + morceaux[-1]
 
 
 def _fusionner(interruptions: list[tuple[int, int, str]]

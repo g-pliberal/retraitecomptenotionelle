@@ -9209,8 +9209,19 @@ referents:
           (`web/releve_lu.py:634, 648-654`).
         preuve: >-
           Dz.U. 2025 poz. 1749, art. 173, art. 174 ust. 8 et art. 15 ust. 2a
-        etat: a_reprendre
-        chantier: "138.11"
+        etat: a_trancher
+        chantier: "138.13"
+        raison: >-
+          Les points du relevé ne sont plus jetés depuis le 11 octobre 2026 :
+          une année qui n'en porte pas d'autre montant reçoit le revenu le
+          plus bas qui les ouvre, au barème du scénario 1
+          (`droit/releve.py`, `revenu_des_points` ; action 138, étape 11).
+          Reste l'année qui n'a ni montant ni points qui le disent : lui
+          porter zéro, comme aujourd'hui, le salaire minimum, comme la
+          Pologne, ou une moyenne, comme la Lettonie et PROST, est un choix
+          du programme, que le propriétaire tranche. Chaque année laissée à
+          zéro ôte au compte notionnel environ un quarante-troisième du
+          capital d'une carrière complète au même salaire relatif.
       - quoi: >-
           L'année du départ, la revalorisation y est trimestrielle. Le dépôt
           compte l'année entière quel que soit le mois
@@ -9389,8 +9400,15 @@ referents:
         preuve: >-
           « Par valsts pensijām », art. 12(4) et dispositions transitoires 13
           et 33
-        etat: a_reprendre
-        chantier: "138.11"
+        etat: a_trancher
+        chantier: "138.13"
+        raison: >-
+          Une imputation de repli est un choix du programme, que le
+          propriétaire tranche : la moyenne nationale, comme ici, le salaire
+          minimum, comme la Pologne, ou zéro, comme le dépôt. Elle ne vaut
+          plus que pour l'année qui n'a ni montant ni points qui le disent :
+          depuis le 11 octobre 2026, les points du relevé se convertissent en
+          revenu (action 138, étape 11 ; voir le point de la Pologne).
       - quoi: >-
           Le capital se revalorise sur la somme des salaires
           cotisés, et la fiche précise que cette assiette compte les
@@ -9743,8 +9761,16 @@ referents:
           le dépôt, une année sans montant vaut zéro (`web/releve_lu.py:634,
           648-654`).
         preuve: « Calculus for PROST 15 », éq. 116
-        etat: a_reprendre
-        chantier: "138.11"
+        etat: a_trancher
+        chantier: "138.13"
+        raison: >-
+          Imputer un salaire manquant est un choix du programme, que le
+          propriétaire tranche : la moyenne revalorisée de la carrière, comme
+          ici, le salaire minimum, comme la Pologne, ou zéro, comme le dépôt.
+          Il ne vaut plus que pour l'année qui n'a ni montant ni points qui
+          le disent : depuis le 11 octobre 2026, les points du relevé se
+          convertissent en revenu (action 138, étape 11 ; voir le point de la
+          Pologne).
       - quoi: >-
           Il produit, par individu, le taux de remplacement initial
           (sur le salaire moyen et sur le dernier salaire), le taux

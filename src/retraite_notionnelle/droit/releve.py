@@ -20,15 +20,23 @@ fait naître : les trimestres des enfants, depuis le 27 septembre 2026. Les
 autres attendent que leurs fiches le soient : ce sont des manques, que le
 tableau de bord compte.
 
+Lu à rebours, il dit aussi le revenu que des points supposent
+(:func:`revenu_des_points`) : celui qu'une année d'un statut doit porter pour
+que les régimes d'un étage en créditent autant. La lecture d'un relevé de
+carrière s'en sert pour les années qu'il ne chiffre qu'en points (action 138,
+étape 11).
+
 Son jumeau est ``moteur/js/droit/releve.js``.
 """
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from .. import chronologie as chrono
+from ..somme import somme_ordonnee
 from . import acquerir as _acquerir
 from . import compter as _compter
 from . import coordonner as _coordonner
@@ -221,6 +229,153 @@ def construire(moteur: ScenarioActuel, carriere: Carriere, *,
         if ligne.cotise and not _ligne_cotisee(moteur, coordination.carriere, ligne)
         for code in regimes)
     return Releve(coordination, durees, droits, groupes, services_lus, gratuites)
+
+
+# --------------------------------------------------------------------------
+# Le relevé à rebours : le revenu que des points supposent.
+# --------------------------------------------------------------------------
+#
+# Un relevé de carrière porte, pour les années d'un régime qui compte en points
+# — le régime de base des libéraux depuis 2004, la retraite proportionnelle des
+# exploitants agricoles —, des points et non un revenu ; et, pour une année que
+# la base ne chiffre pas, les points de la seule complémentaire. Lues sans
+# montant, ces années valaient zéro au compte notionnel, et leurs points étaient
+# « lus, et jetés » (action 138, étape 11). Ils disent pourtant le revenu, à la
+# résolution du barème près : c'est lui qui les a ouverts.
+#
+# `revenu_des_points` le retrouve par le relevé des droits lui-même. Il fait
+# cotiser une année, sous le statut que le relevé lui donne, à un assuré
+# fictif, et cherche par dichotomie le revenu entier le plus bas dont les
+# régimes de cet étage — la base, ou la complémentaire — créditent au moins les
+# points lus. Le barème n'est pas recopié : c'est celui que la pension du
+# scénario 1 applique, tranches, assiettes minimales, paliers et arrondis
+# compris, si bien que la pension recalculée du revenu rendu retrouve les
+# points du relevé.
+#
+# LE PLUS BAS, parce que des points ne disent pas toujours un seul revenu : au
+# plafond d'un barème, tout revenu plus haut ouvre les mêmes, et sur un palier
+# — les trente points des exploitants, de 800 SMIC horaires à deux fois le
+# minimum contributif —, tout revenu de la marche. Le revenu rendu est alors le
+# seul que les points prouvent ; `RevenuDesPoints.au_plafond` dit le premier
+# cas. Des points qu'aucun revenu ne fait varier — les cent points par
+# trimestre des libéraux d'avant 2004, ceux qu'ouvre le plancher d'une assiette
+# minimale — ne disent aucun revenu, ni ceux qui dépassent le plus haut que le
+# barème ouvre : la fonction ne rend rien, et l'année reste sans montant. Ce
+# qu'on lui porte au compte notionnel est un choix du programme, qu'elle ne
+# fait pas.
+#
+# L'UNITÉ est celle d'un relevé d'aujourd'hui : les points de l'Arrco d'avant
+# 1999 en points de l'Arrco, ceux de la CARMF d'avant 1991 dans son échelle
+# d'après, comme l'acquisition les sert à une liquidation lointaine. Ceux de
+# l'Agirc d'avant 2019 restent dans l'unité de l'Agirc, celle d'un relevé de
+# leur temps : le relevé d'aujourd'hui les fond dans ceux de l'Agirc-Arrco,
+# sans plus nommer l'Agirc, et l'année s'y lit en non-cadre.
+
+#: Les étages dont les points disent un revenu : la base qui compte en points,
+#: et la complémentaire. L'additionnel de la fonction publique compte les
+#: primes, non la rémunération : ses points n'en diraient qu'une part.
+ETAGES_CONVERTIS = ("base", "complementaire")
+
+#: L'assuré fictif qui cotise l'année : quarante ans cette année-là, parti à
+#: soixante-sept. Une année au milieu d'une carrière, dont l'acquisition sert
+#: les points dans l'unité d'aujourd'hui.
+AGE_DANS_L_ANNEE = 40
+AGE_DE_DEPART_FICTIF = 67.0
+
+#: La borne haute de la recherche, en plafonds de la Sécurité sociale de
+#: l'année : au-delà du plus haut plafond d'assiette — huit à l'Agirc-Arrco et
+#: à l'Ircantec —, un barème n'ouvre plus de points.
+PLAFONDS_AU_PLUS = 16
+
+#: Ce dont des points lus peuvent dépasser le plus haut que le barème ouvre et
+#: s'y lire encore : l'arrondi d'un relevé qui les écrit entiers.
+DEMI_POINT = 0.5
+
+#: Le bruit du calcul en virgule flottante, en points.
+EPSILON_POINTS = 1e-6
+
+
+@dataclass(frozen=True)
+class RevenuDesPoints:
+    """Le revenu que des points supposent."""
+
+    #: Le revenu entier le plus bas, en euros de l'année, dont l'étage crédite
+    #: au moins les points lus.
+    revenu: int
+    #: Les points sont le plus haut que le barème ouvre : tout revenu au-delà
+    #: de ``revenu`` aurait ouvert les mêmes, et celui de l'assuré a pu le
+    #: dépasser.
+    au_plafond: bool
+
+
+def points_de_l_annee(moteur: ScenarioActuel, statut: str, annee: int, etage: str,
+                      revenu: float, trimestres: int | float | None = None) -> float:
+    """Les points qu'une année de ``statut``, au revenu ``revenu``, ouvre dans
+    les régimes de cet étage que le statut cotise cette année-là.
+
+    Les régimes sont ceux du statut, et non ceux où la coordination route une
+    carrière d'un an : un fonctionnaire qui part au bout d'un an est rétabli au
+    régime général et à l'Ircantec, et ses points d'Ircantec ne disent rien de
+    sa rémunération de fonctionnaire.
+    """
+    from ..carriere import Carriere, LigneRelevee
+
+    regimes = {code for code in moteur.affiliations.regimes(statut, annee)
+               if code in moteur.catalogue and moteur.catalogue[code].etage == etage}
+    if not regimes:
+        return 0.0
+    carriere = Carriere.depuis_releve(
+        annee - AGE_DANS_L_ANNEE, "H",
+        [LigneRelevee(annee, statut, float(revenu), trimestres)],
+        AGE_DE_DEPART_FICTIF, moteur.macro,
+        identifiant=f"points de {annee}",
+    )
+    releve = construire(moteur, carriere, avantages_non_contributifs=False,
+                        points_gratuits=False, liquider_successions=False)
+    return somme_ordonnee((points for code, an, points, _ in releve.droits.points
+                           if an == annee and code in regimes), 0.0)
+
+
+def revenu_des_points(moteur: ScenarioActuel, statut: str, annee: int, etage: str,
+                      points: float, trimestres: int | float | None = None
+                      ) -> RevenuDesPoints | None:
+    """Le revenu entier le plus bas dont une année de ``statut`` ouvre au moins
+    ``points`` dans les régimes de l'étage ``etage`` ; ``None`` quand ces
+    points ne disent aucun revenu.
+
+    ``trimestres`` sont ceux que le relevé porte pour l'année : le régime de
+    base des libéraux d'avant 2004 compte ses points par trimestre, et c'est
+    eux, non le revenu, qui les font.
+    """
+    if etage not in ETAGES_CONVERTIS or points <= 0:
+        return None
+    haut = math.ceil(PLAFONDS_AU_PLUS * moteur.macro.plafond_securite_sociale(annee))
+    if haut < 2:
+        return None
+    vus: dict[int, float] = {}
+
+    def acquis(revenu: int) -> float:
+        if revenu not in vus:
+            vus[revenu] = points_de_l_annee(moteur, statut, annee, etage, revenu,
+                                            trimestres)
+        return vus[revenu]
+
+    # Le plus petit revenu qui cotise ouvre déjà le plancher : des points qui
+    # ne le dépassent pas ne disent pas le revenu, ni ceux d'un barème que le
+    # revenu ne fait pas bouger.
+    plancher, plus_haut = acquis(1), acquis(haut)
+    if (plus_haut <= plancher + EPSILON_POINTS or points <= plancher + EPSILON_POINTS
+            or points > plus_haut + DEMI_POINT):
+        return None
+    cible = min(points, plus_haut) - EPSILON_POINTS
+    bas = 1
+    while haut - bas > 1:
+        milieu = (bas + haut) // 2
+        if acquis(milieu) >= cible:
+            haut = milieu
+        else:
+            bas = milieu
+    return RevenuDesPoints(haut, plus_haut <= acquis(haut) + EPSILON_POINTS)
 
 
 def _ligne(ident: str, personne: str, fait: str | None, date: str | None,
