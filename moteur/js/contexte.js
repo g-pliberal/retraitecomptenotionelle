@@ -13,6 +13,7 @@ import { calculerAvantages, chargerAvantages } from "./avantages.js";
 import { chargerFrontiere } from "./frontiere.js";
 import { calculerCout } from "./cout.js";
 import { chargerBilan } from "./bilan.js";
+import { chargerAgregats } from "./agregats.js";
 import { DistributionPensions } from "./distribution.js";
 import { DepensesRetraite } from "./depenses.js";
 import { ComptesRetraite, varianteDuScenario } from "./equilibre.js";
@@ -68,6 +69,19 @@ function refusDePension(trouve, constants) {
 }
 
 /**
+ * La version du paquet que ce code lit (`VERSION`, dans
+ * `scripts/construire_donnees.py`).
+ *
+ * Le site lit son paquet en `force-cache` : un lecteur peut recevoir ce code et
+ * un paquet plus ancien, que son navigateur a gardé. Les pages qui le lisaient
+ * le rattrapaient chacune à sa façon — « Pourquoi changer » et « Partager »
+ * refaisaient le calcul que le paquet ne portait pas encore. Depuis le
+ * 11 octobre 2026, `index.html` redemande au serveur tout paquet qui n'a pas
+ * cette version, et aucune page n'a plus à savoir qu'il en existe d'autres.
+ */
+export const VERSION_PAQUET = 18;
+
+/**
  * Combien d'agrégats le contexte garde en mémoire, tous jeux de règles
  * confondus. Deux par jeu — le coût et les avantages —, donc trois jeux de
  * règles : celui par défaut, et les deux derniers essayés.
@@ -82,12 +96,11 @@ const AGREGATS_MEMORISES = 6;
  * calculé. `simulateur()`, `cout()` et `avantages()` répondent tous trois sous
  * ce jeu-là, sans qu'aucune page ait à le leur redire.
  *
- * Les trois pages qui AGRÈGENT — Cas types, Coût, Avantages — se rendent donc
- * sous un contexte dérivé par `pour`, portant les réglages que l'adresse
- * demande. Le corps des pages n'en sait rien : il lit `contexte.base` comme il
- * l'a toujours fait, et y trouve les règles en vigueur au lieu des règles par
- * défaut. C'est ce qui évite de faire passer un jeu de paramètres à la main
- * dans la trentaine d'endroits qui les lisent.
+ * Les trois pages qui AGRÈGENT — Cas types, Coût, Avantages — se rendaient
+ * sous un contexte dérivé par `pour`, portant les réglages de l'adresse. Elles
+ * ne montrent plus que la référence depuis le 10 octobre 2026, et lisent ce que
+ * le Python a fabriqué sous elle (`agregats()`) : seul le simulateur dérive
+ * encore un contexte.
  *
  * Les mémoires sont des `Map` partagées, et c'est ce qui fait tenir la
  * dérivation : un contexte dérivé PARTAGE ce que le contexte d'origine a déjà
@@ -219,6 +232,20 @@ export class Contexte {
    */
   bilan() {
     return this._donnee("bilan", () => chargerBilan(this.paquet.bilan_equilibre));
+  }
+
+  /**
+   * Ce que les trois pages qui agrègent lisent du modèle — une DONNÉE, pas un
+   * agrégat : la table que `scripts/construire_donnees.py` a fabriquée sous les
+   * réglages de référence (`agregats.js`), quels que soient ceux de `base`.
+   */
+  agregats() {
+    return this._donnee("agregats", () => chargerAgregats(this.paquet.agregats));
+  }
+
+  /** La grille des carrières types, figée sous la référence. */
+  casTypes() {
+    return this.agregats().casTypes;
   }
 
   /** L'inventaire des avantages non contributifs — une donnée, pas un calcul. */

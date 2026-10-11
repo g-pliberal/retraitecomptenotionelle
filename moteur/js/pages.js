@@ -7256,8 +7256,8 @@ qui sont la seule chose que ce site mesure.</div>`;
  */
 export function deplacementDesEcarts(resultat, solde, scenario) {
   const deplacements = [];
-  for (const cas of CAS_TYPES) {
-    for (const generation of GENERATIONS) {
+  for (const cas of resultat.cas) {
+    for (const generation of resultat.generations) {
       const comparaison = resultat.resultats.get(`${cas.code}|${generation}`);
       if (comparaison === undefined) continue;
       const ligne = solde.annee(comparaison.carriere.anneeLiquidation);
@@ -7280,28 +7280,31 @@ export function deplacementDesEcarts(resultat, solde, scenario) {
 }
 
 function casTypes(contexte, regards = null) {
-  const simulateur = contexte.simulateur();
-  const resultat = calculerCasTypes(simulateur);
+  // La grille, fabriquée sous la référence par le Python : la page la lit, et
+  // ne simule rien (`agregats.js`). Elle porte aussi les cas qui la composent
+  // et l'âge où chaque génération les fait partir.
+  const resultat = contexte.casTypes();
+  const { cas: casTypesDeLaGrille, generations } = resultat;
   const montre = GRILLES_CAS_TYPES[0][0];
   // Le solde du système actuel, observé puis projeté par le COR : il est dans
-  // les comptes, et ne coûte rien. Le coût agrégé, lui, coûte deux secondes
-  // une fois, et la page le demande pour une seule phrase : celle qui dit de
-  // quel côté de un se trouve le réglage de la proposition.
+  // les comptes, et ne coûte rien. Le coefficient d'équilibre de chaque
+  // système est dans le bilan figé, qui le porte pour les phrases qui disent
+  // de quel côté de un se trouve le réglage de la proposition.
   const comptes = contexte.comptes();
   const obs = comptes.derniereAnneeObservee;
   const horizon = comptes.derniereAnnee;
-  const solde = contexte.cout().solde;
+  const solde = contexte.bilan();
   const reglage = reglageProposition(solde);
   // Ce que la grille ne mesure pas, chiffré plutôt qu'affirmé : de combien ses
   // écarts bougeraient si chaque système était ramené à son équilibre.
   const [deplacement, cases] = deplacementDesEcarts(resultat, solde, montre);
 
   const grille = (scenario, intitule) => {
-    const lignes = CAS_TYPES.map((cas) => {
+    const lignes = casTypesDeLaGrille.map((cas) => {
       // Le libellé seul : ce qu'il recouvre est dit une fois pour toutes sous
       // la grille, et non dans une infobulle de survol.
       const cellules = [echapper(cas.libelle)];
-      for (const generation of GENERATIONS) {
+      for (const generation of generations) {
         const comparaison = resultat.resultats.get(`${cas.code}|${generation}`);
         if (comparaison === undefined) {
           cellules.push("—");
@@ -7317,9 +7320,9 @@ function casTypes(contexte, regards = null) {
       return cellules;
     });
     return g.tableau(
-      ["Cas type"].concat(GENERATIONS.map(String)),
+      ["Cas type"].concat(generations.map(String)),
       lignes,
-      [""].concat(GENERATIONS.map(() => "nombre")),
+      [""].concat(generations.map(() => "nombre")),
       `${intitule} : écart de pension au système actuel, par cas `
       + "type et par génération",
       true,
@@ -7330,9 +7333,9 @@ function casTypes(contexte, regards = null) {
   // que la grille mesure, et non son niveau, qu'elle ne mesure pas. Ils sont
   // lus sur la dernière génération, et sur la grille qui s'affiche à
   // l'ouverture.
-  const derniere = GENERATIONS[GENERATIONS.length - 1];
+  const derniere = generations[generations.length - 1];
   const ecarts = [];
-  for (const cas of CAS_TYPES) {
+  for (const cas of casTypesDeLaGrille) {
     const comparaison = resultat.resultats.get(`${cas.code}|${derniere}`);
     if (comparaison !== undefined) {
       ecarts.push([comparaison.variationTotale(montre), cas.libelle]);
@@ -7373,13 +7376,11 @@ function casTypes(contexte, regards = null) {
   )).join("");
 
   const ages = g.tableau(
-    ["Cas type"].concat(GENERATIONS.map(String)),
-    CAS_TYPES.map((cas) => [echapper(cas.libelle)].concat(
-      GENERATIONS.map((generation) => age(
-        ageLiquidationPour(cas, simulateur, generation),
-      )),
+    ["Cas type"].concat(generations.map(String)),
+    casTypesDeLaGrille.map((cas) => [echapper(cas.libelle)].concat(
+      generations.map((generation) => age(cas.ageLiquidation(generation))),
     )),
-    [""].concat(GENERATIONS.map(() => "nombre")),
+    [""].concat(generations.map(() => "nombre")),
     "Âge de liquidation de chaque cas type, par génération",
     true,
   );
@@ -7400,15 +7401,15 @@ function casTypes(contexte, regards = null) {
 
   const depliantCas = g.depliant(
     "Qui sont ces treize carrières",
-    g.gloses(CAS_TYPES.map((cas) => [cas.libelle, cas.commentaire])),
+    g.gloses(casTypesDeLaGrille.map((cas) => [cas.libelle, cas.commentaire])),
   );
   // Les âges du tableau sont ceux du droit en vigueur ; la proposition en a
   // un autre, et la grille de son onglet le suit.
-  const ageLegal = simulateur.parametres.age_legal_liberal ?? null;
+  const ageLegal = contexte.base.age_legal_liberal ?? null;
   const mentionProposition = ageLegal === null ? "" : (
     " Ce sont les âges du tableau ci-dessous, ceux des systèmes 1 à 3. La "
     + `proposition, elle, fixe un âge légal de ${age(ageLegal)} : qui part `
-    + `plus tôt à compter de ${simulateur.parametres.annee_bascule} part à `
+    + `plus tôt à compter de ${contexte.base.annee_bascule} part à `
     + "cet âge dans la grille du système 4, et travaille jusque-là."
   );
   const depliantAges = g.depliant(

@@ -41,6 +41,7 @@
 <link rel="modulepreload" href="moteur/js/avantages.js">
 <link rel="modulepreload" href="moteur/js/frontiere.js">
 <link rel="modulepreload" href="moteur/js/bilan.js">
+<link rel="modulepreload" href="moteur/js/agregats.js">
 <link rel="modulepreload" href="moteur/js/depenses.js">
 <link rel="modulepreload" href="moteur/js/distribution.js">
 <link rel="modulepreload" href="moteur/js/patrimoine.js">
@@ -147,7 +148,7 @@
 import {
   CLES_MODELISATION, CODES_SANS_EMPLOI, RELEVE_MAXIMUM, Saisie,
 } from "./moteur/js/saisie.js";
-import { Contexte } from "./moteur/js/contexte.js";
+import { Contexte, VERSION_PAQUET } from "./moteur/js/contexte.js";
 import {
   ANCIENNES_ROUTES, DESCRIPTIONS, TITRES, rendre, requeteBasculee,
 } from "./moteur/js/pages.js";
@@ -183,7 +184,20 @@ async function preparer() {
   if (!reponse.ok) {
     throw new Error(`moteur/donnees.json introuvable (${reponse.status})`);
   }
-  const paquet = await reponse.json();
+  let paquet = await reponse.json();
+  // UN PAQUET D'AVANT CE CODE, que le navigateur a gardé : on le redemande au
+  // serveur, sans cache. Les pages qui le lisaient le rattrapaient chacune à
+  // sa façon — deux refaisaient le calcul qu'il ne portait pas encore — ;
+  // depuis le 11 octobre 2026, aucune n'a plus à savoir qu'il en existe
+  // d'autres que celui de sa version (`VERSION_PAQUET`, contexte.js).
+  if (paquet.version !== VERSION_PAQUET) {
+    const frais = await fetch("moteur/donnees.json", { cache: "reload" });
+    if (frais.ok) { paquet = await frais.json(); }
+    if (paquet.version !== VERSION_PAQUET) {
+      throw new Error(`moteur/donnees.json est en version ${paquet.version}, `
+        + `et ce code lit la ${VERSION_PAQUET} : rechargez la page dans un moment`);
+    }
+  }
 
   contexte = new Contexte(paquet);
   // Construit le simulateur du jeu de paramètres par défaut — séries, tables de

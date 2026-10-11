@@ -179,6 +179,18 @@ test("Pourquoi changer et Partager lisent le bilan figé, sans rien calculer", (
   }
 });
 
+test("Carrières types lit la grille figée, sans rien calculer", () => {
+  // Elle simulait les quatre-vingt-onze cases de sa grille chez le lecteur —
+  // cinq secondes —, et cherchait l'âge de départ de chacune. Le paquet les
+  // porte depuis le 11 octobre 2026 (`agregats`) : la page ne doit plus même
+  // construire un simulateur.
+  const contexte = new Contexte(paquet);
+  contexte.simulateur = () => { throw new Error("la page a construit un simulateur"); };
+  contexte.cout = () => { throw new Error("la page a recalculé le coût agrégé"); };
+  contexte.simuler = () => { throw new Error("la page a simulé une carrière"); };
+  assert.doesNotThrow(() => rendre(contexte, "/cas-types", {}));
+});
+
 test("un paquet d'avant les dépenses figées rend Pourquoi changer et Partager comme avant", () => {
   // Le site lit son paquet en `force-cache` : un lecteur peut recevoir le
   // nouveau code et un paquet d'avant le 7 octobre 2026, dont le bilan ne

@@ -128,6 +128,9 @@ HORS_DU_MODELE = (
     "data/reference/referents.yaml", "data/sources.yaml", "data/sources_a_explorer.yaml",
     "src/retraite_notionnelle/web/", "src/retraite_notionnelle/fabrique.py",
     "src/retraite_notionnelle/pytest_parallele.py",
+    # Ce que les pages qui agrègent lisent du modèle : fabriqué depuis ses
+    # calculs, et qu'aucun ne relit (action 150).
+    "data/derive/agregats.json", "src/retraite_notionnelle/donnees/agregats.py",
 )
 
 #: Les calculs de ce processus, par leur nom : l'objet picklé, dont chaque

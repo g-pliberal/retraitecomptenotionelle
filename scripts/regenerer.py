@@ -77,7 +77,7 @@ REGIMES = Etape("régimes", "construire_regimes_md.py", (), ("--verifier",),
                 "docs/regimes.md")
 PAQUET = Etape("paquet", "construire_donnees.py", (), ("--verifier",),
                "moteur/donnees.json, data/derive/equilibre.json, "
-               "data/derive/calibrations_mortalite.json")
+               "data/derive/agregats.json, data/derive/calibrations_mortalite.json")
 TEMOINS = Etape("témoins", "construire_temoins.py", (), ("--verifier",),
                 "tests/temoins/simulations.json, tests/temoins/pages.json")
 CHIFFRAGE = Etape("chiffrage", "chiffrage_plf.py", (), ("--verifier",),

@@ -148,7 +148,7 @@ def test_rien_ne_se_perd_aux_bords():
 
 
 @pytest.mark.parametrize("chemin", ["moteur/donnees.json", "data/derive/equilibre.json",
-                                    "tests/temoins/pages.json"])
+                                    "data/derive/agregats.json", "tests/temoins/pages.json"])
 def test_aucun_fichier_fabrique_n_a_de_ligne_demesuree(chemin):
     """Le paquet, le bilan et le témoin des pages tenaient chacun une ligne de
     55 000 à 4 millions de caractères. Qu'un écrivain revienne au JSON compact,

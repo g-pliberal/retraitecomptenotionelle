@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Fabrique ce que le site charge : ``moteur/donnees.json``, le paquet de données.
 
-Et deux tables que le modèle Python relit comme des données :
-``data/derive/equilibre.json``, le bilan figé, et
-``data/derive/calibrations_mortalite.json``, les lois de mortalité calibrées.
+Et trois tables, dans ``data/derive/`` : deux que le modèle Python relit comme
+des données, ``equilibre.json``, le bilan figé, et
+``calibrations_mortalite.json``, les lois de mortalité calibrées ; et
+``agregats.json``, ce que les pages qui agrègent lisent du modèle.
 
 Le site s'exécute en JavaScript ; les données, elles, restent écrites en YAML et
 en CSV dans ``data/``, où elles sont lisibles, commentées et recontrôlées contre
@@ -112,14 +113,21 @@ PAQUET = RACINE / "moteur" / "donnees.json"
 #: dans ``data/`` parce que le modèle Python le relit comme une donnée — voir
 #: ``donnees/bilan.py`` —, et embarqué tel quel dans le paquet du navigateur.
 EQUILIBRE = DONNEES / "derive" / "equilibre.json"
+#: Ce que les trois pages qui agrègent lisent du modèle, fabriqué sous les
+#: réglages de référence : elles ne calculent plus chez le lecteur depuis le
+#: 10 octobre 2026 (action 150). ``donnees/agregats.py`` la relit, et le paquet
+#: l'embarque telle quelle.
+AGREGATS = DONNEES / "derive" / "agregats.json"
 #: Les lois de mortalité calibrées, avec l'empreinte de leurs entrées. Écrites
 #: ici et nulle part ailleurs : le test de fraîcheur du paquet les vérifie, et
 #: une loi calée sur des cibles qui ont changé ne peut plus survivre en silence.
 CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 
 #: Version du format. À incrémenter si la structure du paquet change, pour
-#: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas.
-VERSION = 17
+#: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
+#: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
+#: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
+VERSION = 18
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -1939,6 +1947,43 @@ def _bilan(contexte=None) -> dict:
     }
 
 
+def _agregats(contexte=None) -> dict:
+    """Ce que les trois pages qui agrègent lisent du modèle, sous la référence.
+
+    Coût, Carrières types et Droits non cotisés se calculaient chez le
+    lecteur, sous les réglages de l'adresse, par le portage JavaScript du
+    coût : de trois à huit secondes à la première visite. Elles ne montrent
+    plus que la référence depuis le 10 octobre 2026 (action 150), et ce
+    qu'elles lisent d'une règle du modèle est calculé ici, une fois.
+    ``donnees/agregats.py`` dit ce que la table porte, et ce qu'elle laisse au
+    paquet.
+
+    Les systèmes sont ceux que le site compare (``SCENARIOS_MONTRES`` de
+    ``moteur/js/pages.js``), comme dans le bilan.
+    """
+    from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS, calculer_cas_types
+    from retraite_notionnelle.contexte import Contexte
+    from retraite_notionnelle.donnees.agregats import figer_cas_types
+    from retraite_notionnelle.web.site import module
+
+    contexte = contexte or Contexte()
+    simulateur = contexte.simulateur()
+    compares = [scenario for scenario in module("pages").SCENARIOS_MONTRES
+                if scenario != "actuel"]
+    return {
+        # LA GRILLE DE CARRIÈRES TYPES : treize cas, sept générations, et
+        # l'âge où chacun part. La page la montre telle quelle.
+        "cas_types": figer_cas_types(calculer_cas_types(simulateur), simulateur,
+                                     CAS_TYPES, GENERATIONS, compares),
+    }
+
+
+def construire_agregats(contexte=None) -> bytes:
+    """La table des pages qui agrègent, écrite dans ``data/derive/``, chaque
+    élément sur sa ligne (``json_en_lignes``)."""
+    return (json_en_lignes(_agregats(contexte)) + "\n").encode("utf-8")
+
+
 def construire_bilan(contexte=None) -> bytes:
     """La table figée, écrite dans ``data/derive/`` et relue par le modèle.
 
@@ -1947,12 +1992,13 @@ def construire_bilan(contexte=None) -> bytes:
     """
     return (json_en_lignes(_bilan(contexte)) + "\n").encode("utf-8")
 
-def construire(bilan: bytes) -> bytes:
+def construire(bilan: bytes, agregats: bytes) -> bytes:
     """Paquet complet, à contenu identique pour des données identiques.
 
-    ``bilan`` est le contenu de ``data/derive/equilibre.json``, passé plutôt
-    que relu : ``--verifier`` ne doit rien écrire, et les deux fichiers
-    doivent porter les mêmes octets.
+    ``bilan`` est le contenu de ``data/derive/equilibre.json``, et ``agregats``
+    celui de ``data/derive/agregats.json``, passés plutôt que relus :
+    ``--verifier`` ne doit rien écrire, et les fichiers doivent porter les
+    mêmes octets que le paquet.
     """
     paquet = {
         "version": VERSION,
@@ -2064,6 +2110,8 @@ def construire(bilan: bytes) -> bytes:
         # octets, et un écart de la table au modèle se voit à un seul
         # endroit — le diff de ce fichier.
         "bilan_equilibre": json.loads(bilan.decode("utf-8")),
+        # Ce que les pages qui agrègent lisent du modèle, pour la même raison.
+        "agregats": json.loads(agregats.decode("utf-8")),
     }
     # Le JSON compact, passé à la ligne entre les éléments de ce qui dépasse
     # trois cents caractères : un ``grep`` rend une ligne courte, non le
@@ -2072,14 +2120,15 @@ def construire(bilan: bytes) -> bytes:
 
 
 def sorties(contexte=None) -> dict[Path, bytes]:
-    """Les trois fichiers versionnés, dans l'ordre où ils se construisent.
+    """Les quatre fichiers versionnés, dans l'ordre où ils se construisent.
 
-    Le bilan vient d'abord, et le paquet reçoit ses octets plutôt que de le
-    recalculer : la table de ``data/`` et celle du navigateur ne peuvent alors
-    pas diverger d'un chiffre.
+    Le bilan et les agrégats viennent d'abord, et le paquet reçoit leurs
+    octets plutôt que de les recalculer : les tables de ``data/`` et celles du
+    navigateur ne peuvent alors pas diverger d'un chiffre.
     """
     bilan = construire_bilan(contexte)
-    return {EQUILIBRE: bilan, PAQUET: construire(bilan),
+    agregats = construire_agregats(contexte)
+    return {EQUILIBRE: bilan, AGREGATS: agregats, PAQUET: construire(bilan, agregats),
             CALIBRATIONS: serialiser_calibrations(_table_calibrations()).encode("utf-8")}
 
 

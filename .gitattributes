@@ -36,11 +36,12 @@ tests/temoins/conservation.json merge=ensembles
 # Les fichiers fabriqués par un script ne se fusionnent pas ligne à ligne.
 #
 # `pages.json`, `simulations.json` et `donnees.json` — plusieurs mégaoctets
-# chacun —, `equilibre.json` et la série du chiffrage budgétaire sont écrits
-# par un script depuis le modèle Python ; le tableau de bord, `docs/etat.md`,
-# par le sien depuis les registres ; l'inventaire des régimes, depuis les
-# fichiers de régimes. `moteur/style.css` n'en est plus depuis la phase 8 :
-# il est sa propre source, écrit à la main, et se fusionne comme tel.
+# chacun —, `equilibre.json`, `agregats.json` et la série du chiffrage
+# budgétaire sont écrits par un script depuis le modèle Python ; le tableau de
+# bord, `docs/etat.md`, par le sien depuis les registres ; l'inventaire des
+# régimes, depuis les fichiers de régimes. `moteur/style.css` n'en est plus
+# depuis la phase 8 : il est sa propre source, écrit à la main, et se fusionne
+# comme tel.
 # Quand deux sessions les ont régénérés chacune de son côté, la fusion à trois
 # branches de git y réussit souvent — et c'est le danger : elle rend un fichier
 # que ni l'une ni l'autre n'a produit, qui ne correspond à aucun état du
@@ -62,6 +63,7 @@ moteur/donnees.json            -merge
 tests/temoins/pages.json       -merge
 tests/temoins/simulations.json -merge
 data/derive/equilibre.json     -merge
+data/derive/agregats.json      -merge
 docs/chiffrage_plf.csv         -merge
 docs/etat.md                   -merge
 data/reference/regimes/inventaire.yaml -merge

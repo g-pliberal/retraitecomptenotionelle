@@ -1726,10 +1726,10 @@ def _(m: Modele):
                     for scenario in pages.SCENARIOS_MONTRES}
     assert len(set(round(valeur, 6) for valeur in coefficients.values())) == len(
         pages.SCENARIOS_MONTRES), coefficients
-    # La grille et le solde du site, ceux que sa page Cas types lit.
-    grille = module("castypes").calculer_cas_types(site().contexte.simulateur())
+    # La grille et le solde du site, ceux que sa page Cas types lit : figés
+    # sous la référence depuis le 11 octobre 2026 (action 150).
     deplacement, cases = pages._deplacement_des_ecarts(
-        grille, site().contexte.cout().solde, "notionnel_liberal")
+        site().contexte.cas_types(), site().contexte.bilan(), "notionnel_liberal")
     assert cases > 50, cases
     # « Déplacerait les écarts » n'est pas une figure de style : le
     # déplacement médian se compte en points, pas en centièmes de point.

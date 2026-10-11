@@ -1826,6 +1826,26 @@ def test_le_prechargement_du_paquet_correspond_a_la_requete():
     )
 
 
+def test_le_site_attend_la_version_du_paquet():
+    """Le paquet porte sa version, et le site attend la même.
+
+    ``index.html`` redemande au serveur, sans cache, tout paquet qui n'a pas la
+    version que son code lit (``VERSION_PAQUET``, ``moteur/js/contexte.js``) :
+    un navigateur qui garde un paquet d'avant ne le donne plus à des pages qui
+    ne le comprennent pas (11 octobre 2026). Les deux nombres ne doivent donc
+    jamais se quitter.
+    """
+    from pathlib import Path
+
+    paquet = json.loads((Path(__file__).resolve().parents[1] / "moteur" / "donnees.json")
+                        .read_text(encoding="utf-8"))
+    assert paquet["version"] == _construction().VERSION
+    assert module("contexte").VERSION_PAQUET == paquet["version"]
+    page = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+    assert "paquet.version !== VERSION_PAQUET" in page
+    assert re.search(r'fetch\("moteur/donnees\.json", \{ cache: "reload" \}\)', page)
+
+
 def test_les_modules_sont_tous_precharges():
     """La liste de préchargement doit suivre le contenu de ``moteur/js/``.
 
