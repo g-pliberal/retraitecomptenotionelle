@@ -332,6 +332,15 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   d'écran — ne porte aucun texte : rien ne s'y lit, et la page le dit plutôt
   que de rendre une carrière vide sans explication.
 
+  Un relevé, enfin, n'est souvent complet qu'à la liquidation. La DREES
+  l'écrivait des données des caisses en présentant CALIPER (Dossier
+  solidarité et santé n° 37, mars 2013, encadré 1) : certaines périodes
+  n'entrent au compte qu'à une régularisation tardive, le plus souvent au
+  départ — le chômage non indemnisé, le service militaire, les périodes
+  reconnues équivalentes accomplies à l'étranger. Un relevé déposé avant le
+  départ peut donc les omettre, et la simulation compte ce qu'il porte ; le
+  site ne le dit pas encore à qui le dépose.
+
   **Ce qu'un vrai document a appris, le 22 septembre 2026 — et ce qu'il ne
   prouve pas.** La lecture avait été écrite contre des relevés d'essai, faute
   d'en avoir un vrai : aucun n'est public. La première estimation retraite
@@ -423,3 +432,11 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   retraite de même nature déjà obtenue avant le 1er juillet 2017 —, qu'une
   carrière du dépôt, dont les régimes alignés liquident à la même date, ne
   peut pas porter.
+- **Une règle s'applique à sa date légale, même quand les caisses l'ont mise
+  en œuvre plus tard.** La DREES l'a constaté en validant CALIPER sur les
+  pensions réelles : la réglementation s'applique parfois, en pratique, avec un
+  décalage sur sa date officielle, et le minimum contributif majoré, en vigueur
+  au 1er janvier 2004, n'a été servi que plus tard (Dossier solidarité et santé
+  n° 37, mars 2013, p. 12). Le modèle sert chaque règle à sa date d'effet : une
+  pension liquidée dans un tel intervalle est calculée comme le droit la
+  voulait, et aucun décalage n'est suivi, faute d'en connaître les dates.

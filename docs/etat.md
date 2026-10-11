@@ -294,7 +294,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés
   - 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR
   - 151. Partir très tard : le départ jusqu'au bout des tables de mortalité, puis la limite d'âge des fonctionnaires et ses exceptions
-- **Les sources à exploiter** : 114 à explorer sur 323 (96 explorées, 113 épuisées). 11 d'entre elles visent un régime partiel, et pourraient le compléter :
+- **Les sources à exploiter** : 114 à explorer sur 323 (95 explorées, 114 épuisées). 11 d'entre elles visent un régime partiel, et pourraient le compléter :
   - Caisse nationale d'assurance vieillesse des professions libérales, régime de base : 7 source(s) (mon_entreprise_comparaison_ei, cnavpl_wordpress, cavec_wordpress…)
   - Régime des artistes-auteurs professionnels (IRCEC) : 2 source(s) (cnav_arrierees_artiste_auteur, mon_entreprise_artiste_auteur)
   - Complémentaire des agents généraux d'assurance (CAVAMAC) : 1 source(s) (cavamac_wordpress)

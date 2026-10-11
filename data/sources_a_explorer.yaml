@@ -1456,8 +1456,8 @@ sources:
       jumeau administratif du scénario 1. Sa documentation dit quelles règles
       il applique et lesquelles il simplifie — la liste des simplifications
       d'un modèle officiel est un étalon pour docs/limites.md.
-    statut: explore
-    explore_le: "2026-10-04"
+    statut: epuise
+    explore_le: "2026-10-11"
     note: >-
       Le 22 septembre 2026 au soir, le serveur ferme la connexion sans rien
       répondre (« Empty reply from server »), à `curl` comme à Python, quand il
@@ -1488,7 +1488,20 @@ sources:
       et ses captures d'écran montrent la même phrase et les deux mêmes
       publications de référence (le Panorama de juin 2023 et le DT 111) : le
       refus vise le réseau de sortie des sessions dans le cloud, non le site.
-      Une session locale, sur le poste du propriétaire, est l'autre voie.
+      Une session locale, sur le poste du propriétaire, est l'autre voie. Elle
+      l'a prise le soir même : depuis le poste, le site répond à `curl`, et la
+      page, le DT 111 (novembre 2011) et le Dossier solidarité et santé n° 37
+      (mars 2013, désormais sous /publications/dossiers-solidarite-et-sante-1998-2016/,
+      l'ancienne adresse rendant 404) y ont été lus. Ni l'un ni l'autre n'a de
+      liste de « simplifications » : leurs limites sont dans « Développements
+      et limites de l'outil » et l'encadré 1. Confrontées une à une à
+      docs/limites/ (note de l'action 137 du 11 octobre,
+      docs/feuille_de_route/137/2026-10-11-les-limites-de-caliper.md), elles
+      sont presque toutes levées par le dépôt ; il en partageait deux sans les
+      dire, qu'il déclare désormais dans docs/limites/5-hors-du-modele.md : le
+      relevé complété à la liquidation, la règle servie après sa date
+      officielle. La source n'a plus rien à rendre ; l'accès reste `refus`
+      pour le cloud.
 
   - id: drees_trajectoire
     url: https://git.drees.fr/drees_code_public/modeles/trajectoire

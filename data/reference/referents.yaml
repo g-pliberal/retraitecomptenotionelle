@@ -4290,7 +4290,7 @@ referents:
     publication: documente
     documentation:
       - https://drees.solidarites-sante.gouv.fr/sources-outils-et-enquetes/loutil-caliper-calcul-interregimes-des-pensions-de-retraite
-      - https://drees.solidarites-sante.gouv.fr/etudes-et-statistiques/publications/les-dossiers-de-la-drees/dossiers-solidarite-et-sante/article/caliper-un-outil-de-simulation-pour-le-calcul-interregimes-des-pensions-de
+      - https://drees.solidarites-sante.gouv.fr/publications/dossiers-solidarite-et-sante-1998-2016/caliper-un-outil-de-simulation-pour-le-calcul
     licence: sans objet
     usage: resultats_publies
     confronte: [scenario_1]
@@ -4367,9 +4367,10 @@ referents:
       une précision à viser, celle d'une validation sur des pensions
       réelles ; elle décrit la législation de 2010.
     sas: [drees_caliper]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-11
     lu_dans:
       - http://gesd.free.fr/caliper.pdf
+      - https://drees.solidarites-sante.gouv.fr/sites/default/files/2020-08/dss37.pdf
       - https://drees.solidarites-sante.gouv.fr/sources-outils-et-enquetes/loutil-caliper-calcul-interregimes-des-pensions-de-retraite
       - https://www.drees.solidarites-sante.gouv.fr/sites/default/files/2020-10/dt111.pdf
       - https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1071.pdf
@@ -4382,7 +4383,12 @@ referents:
       cas types du COR. Le 4 octobre 2026, la page de la DREES répond à
       nouveau : l'outil « a été réécrit en R », et son code est celui de
       `calcul_pension`. CALIPER ne compte donc que pour une confirmation
-      avec `calcul_pension` et TRAJECTOiRE.
+      avec `calcul_pension` et TRAJECTOiRE. Le 11 octobre 2026, depuis le
+      poste du propriétaire, le DT 111 et le Dossier n° 37 sont relus sur le
+      site de la DREES, et leurs limites confrontées à docs/limites/ (note de
+      l'action 137 du même jour) : le dépôt lève presque toutes celles qui
+      tiennent à l'outil ; il en partageait deux sans les dire, qu'il déclare
+      désormais.
 
   - id: promess
     nom: PROMESS
