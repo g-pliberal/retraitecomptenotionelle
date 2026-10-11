@@ -621,6 +621,22 @@ def source_quotite_temps_partiel() -> dict[tuple, float]:
     return dict(sorted(valeurs.items()))
 
 
+def source_persistance_smic() -> dict[tuple, float]:
+    """Ce que deviennent, de 2008 à 2013, les salariés du privé payés au
+    voisinage du Smic en 2007, en pour cent de la cohorte, par sexe ou par âge.
+
+    Clé (origine, sexe, age, annee, etat). Le document de travail de la DG
+    Trésor n° 2018/3 est le producteur : ses auteurs ont fait le calcul sur le
+    panel DADS de l'Insee. Le récupérateur lit ses tableaux dans le PDF et en
+    contrôle les comptes avant de rien écrire ; le PDF, que sa licence ne
+    permet pas de republier, reste dans data/brut/.
+    """
+    charge = _lire_json("dgtresor_trajectoires_smic.json",
+                        "scripts/fetch/dgtresor_trajectoires_smic.py")
+    return {tuple(cle.split("|")): float(valeur)
+            for cle, valeur in sorted(charge["serie"].items())}
+
+
 def source_profil_salaire_categorie() -> dict[tuple, float]:
     """Profil d'âge INTRA-CATÉGORIE, rapporté à la moyenne de la catégorie.
 
@@ -4890,6 +4906,58 @@ CERTIFICATIONS = (
             "# d'un seul tenant : elle se rompt en 2003 (l'enquête en continu),",
             "# 2005, 2006, 2014, 2021 et 2024, et sa définition change en 2021.",
             "# La tranche des 25-54 ans chevauche celle des 50 ans ou plus.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="persistance_smic",
+        chemin=REFERENCE / "macro" / "persistance_smic.csv",
+        cles=("origine", "sexe", "age", "annee", "etat"),
+        colonne="part",
+        source=source_persistance_smic,
+        origine="DG Trésor, document de travail n° 2018/3 (panel DADS 2007-2013)",
+        decimales=1,
+        tolerance=0.05,
+        unite=" %",
+        entete=(
+            "# Persistance au voisinage du Smic : ce que deviennent, de 2008 à 2013,",
+            "# les salariés du privé payés au voisinage du Smic en 2007, par sexe ou",
+            "# par âge",
+            "# source_id: dgtresor_trajectoires_smic",
+            "# unite: pour cent de la cohorte de 2007 (une origine, un sexe, un âge)",
+            "# fiabilite:",
+            "#   certifiee (2008-2013) : DG Trésor, document de travail n° 2018/3,",
+            "#             tableau 7 et annexe 3 (tableaux A et B), sur le panel",
+            "#             DADS de l'Insee ; lus dans le document, dont les comptes",
+            "#             sont contrôlés ; recontrôlé par scripts/verifier_donnees.py.",
+            "#",
+            "# LES COLONNES",
+            "# ------------",
+            "# origine : voisinage, les salariés de 18 à 65 ans payés au voisinage",
+            "#   du Smic en 2007, de 80 % à 105 % du Smic horaire net ; superieur,",
+            "#   ceux payés au-dessus, tous âges et deux sexes.",
+            "# sexe, age : F ou H, de Y18T24 à Y50T65 (l'âge en 2007), ou ensemble.",
+            "#   Le document croise l'origine avec le sexe OU avec l'âge, jamais",
+            "#   avec les deux.",
+            "# etat : hors_champ (sorti de l'emploi salarié privé : chômage,",
+            "#   inactivité, retraite, fonction publique, étranger), voisinage,",
+            "#   superieur ; puis, dans superieur, de_1_05_a_1_10, de_1_10_a_1_30,",
+            "#   de_1_30_a_1_60 et plus_de_1_60, en Smic horaire.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# Au bas de l'échelle de la population de la page Coût (action 136,",
+            "# étape 6), dont la seconde version n'a plus d'homme au Smic toute sa",
+            "# carrière. Six ans après, 7,8 % des hommes et 13,3 % des femmes payés",
+            "# au voisinage du Smic en 2007 y sont encore, 13 et 22 % de ceux restés",
+            "# dans le champ, comme 25 % des 35-49 ans et un sur huit des 18-24 ans.",
+            "# Aucun calcul du site ne la lit.",
+            "#",
+            "# CE QU'ELLE N'EST PAS. Une carrière : six années d'une cohorte, celle",
+            "# d'une crise, et une sortie du champ qui ne dit pas si l'on revient.",
+            "# Ni un salaire de l'année : un salaire HORAIRE, temps partiel compris.",
             "#",
             "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
             "# scripts/verifier_donnees.py --appliquer.",

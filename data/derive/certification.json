@@ -936,6 +936,17 @@
    "valeurs": 126,
    "verifiee_le": "2026-10-05"
   },
+  "persistance_smic": {
+   "ajoutees": 336,
+   "colonne": "part",
+   "corrigees": 0,
+   "empreinte": "0d95129720d55220",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DG Trésor, document de travail n° 2018/3 (panel DADS 2007-2013)",
+   "valeurs": 336,
+   "verifiee_le": "2026-10-11"
+  },
   "pib_courant": {
    "ajoutees": 0,
    "colonne": "pib_meur",

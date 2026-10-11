@@ -2716,7 +2716,8 @@ institutions:
     nom: Direction générale du Trésor
     role: >-
       Modèle de la TVA théorique : assiettes de la TVA par taux, rendement
-      d'un point.
+      d'un point. Trajectoires des salariés payés au voisinage du Smic, sur le
+      panel DADS de l'Insee.
     jeux:
       - id: dgtresor_point_tva
         titre: >-
@@ -2743,6 +2744,61 @@ institutions:
           Conseil des prélèvements obligatoires chiffrait le coût des taux
           réduits à 47 Md€ en 2021 (rapport de 2023 sur la TVA) ; ces
           assiettes en donnent 52 en 2025.
+
+      - id: dgtresor_trajectoires_smic
+        titre: >-
+          « Les trajectoires des individus payés au voisinage du Smic pendant
+          la crise », Documents de travail de la DG Trésor n° 2018/3, juin
+          2018 (Claire Bernard, Mathilde Caurier, Sévane Ananian, Amine
+          Chamkhi) : tableau 7 et annexe 3, tableaux A et B
+        url: https://www.tresor.economie.gouv.fr/Articles/2018/06/07/documents-de-travail-n-2018-3-les-trajectoires-des-individus-payes-au-voisinage-du-smic-pendant-la-crise
+        document: https://www.tresor.economie.gouv.fr/Articles/d5aa8c3b-2e65-4002-84a1-61f4c82b675d/files/35d099ae-3cd7-4a00-9110-0c00b8f29e6c
+        acces: document
+        millesime: juin 2018
+        rediffusion:
+          statut: interdite
+          texte: >-
+            « La réutilisation non commerciale, et notamment pédagogique, est
+            autorisée à la condition de respecter l'intégrité des informations
+            et de n'en altérer ni le sens, ni la portée, ni l'application et
+            d'en préciser l'origine et la date de publication. […] Toute
+            reprise de contenus du site doit avoir obtenu l'autorisation du
+            directeur de la publication […]. Le téléchargement de document PDF
+            n'est autorisé qu'à des fins personnelles ou associatives. »
+          lu_dans: >-
+            mentions légales du site de la DG Trésor,
+            https://www.tresor.economie.gouv.fr/Institutionnel/mentions-legales
+          lu_le: 2026-10-11
+        recuperation: scripts/fetch/dgtresor_trajectoires_smic.py
+        statut_integration: certifie
+        cible: data/reference/macro/persistance_smic.csv
+        note: >-
+          La persistance au voisinage du Smic, par sexe et par âge : ce que
+          deviennent, de 2008 à 2013, les salariés du privé de 18 à 65 ans
+          payés en 2007 de 80 % à 105 % du Smic horaire net (panel DADS de
+          l'Insee, base Dares-Urssaf, France métropolitaine, hors fonction
+          publique, intérim, apprentis et stagiaires). Chaque année, la part
+          de la cohorte sortie du champ, encore au voisinage, au-dessus, et
+          par tranche au-dessus. Six ans après, 7,8 % des hommes et 13,3 %
+          des femmes y sont encore ; 13 et 22 % de ceux restés dans le
+          champ. C'est ce qui manque à la population de la page Coût (action
+          136, étape 6), qui n'a plus d'homme au Smic toute sa carrière.
+          LE PRODUCTEUR : les auteurs ont fait le calcul sur le panel ; le
+          récupérateur lit leurs tableaux dans le PDF, avec le lecteur du
+          dépôt, et en contrôle les comptes — trois états qui font 100,
+          quatre tranches qui font leur total, deux sexes qui, pondérés par
+          leur part dans la cohorte (tableau 1 : 38,1 % d'hommes), redonnent
+          le tableau d'ensemble à 0,22 point près. Les âges, pondérés par la
+          composition du tableau 1, s'en écartent de 0,9 point : ce tableau ne
+          décrit pas exactement, par l'âge, la cohorte suivie.
+          LA LICENCE ne permet pas de republier le document : il reste dans
+          data/brut/, et le récupérateur en vérifie l'empreinte. Les chiffres
+          s'en citent, avec la source et la date.
+          D'AUTRES MESURES, non versées : la cohorte de 1995 suivie douze ans,
+          deux sexes réunis (Ananian et Calavrezo, Économie et Statistique
+          n° 448-449, 2011, tableau 1 : 6,7 % encore au voisinage en 2007) ;
+          la typologie 2013-2019 du Trésor-Éco n° 365 (juin 2025), sans
+          répartition par sexe.
 
   erafp:
     nom: Établissement de retraite additionnelle de la fonction publique

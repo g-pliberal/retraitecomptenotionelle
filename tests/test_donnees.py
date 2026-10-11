@@ -671,6 +671,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # Et sa quotité, la durée d'un temps partiel rapportée à celle d'un
         # temps complet, qu'Eurostat seul publie en série par sexe.
         "quotite_temps_partiel": "macro/quotite_temps_partiel.csv",
+        # Et qui reste au Smic : la cohorte de 2007, suivie six ans par la DG
+        # Trésor, par sexe ou par âge.
+        "persistance_smic": "macro/persistance_smic.csv",
         # Le seul qui vienne d'Eurostat : aucune source française ne ventile le
         # salaire par âge pour les régimes spéciaux.
         "profil_salaire_secteur": "macro/profil_salaire_secteur.csv",
