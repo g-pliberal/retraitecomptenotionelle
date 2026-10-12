@@ -108,8 +108,7 @@ têtes ; puis, sexe par sexe, la part de chaque tranche de durée qui tombe dans
 le premier quintile, contre celle de l'EIR. Les grilles ne comptant que des
 résidents, l'EIR est celui des résidents en France
 (``quintiles_eqcc_residents.csv``), depuis le 12 octobre 2026 ; la population
-lit encore, pour se construire, les quintiles de tous les retraités
-(``quintiles_eqcc.csv``).
+s'y construit aussi (:data:`DUREES_DES_RESIDENTS`).
 
 LA POPULATION (action 136, étape 6, seconde moitié)
 ---------------------------------------------------
@@ -176,7 +175,9 @@ chaque génération, les années qui portent la durée moyenne des femmes à cel
 que l'EIR mesure aux résidentes. La treizième (le même jour) garde le temps
 partiel jusqu'au départ (:data:`PARTIEL_JUSQU_AU_DEPART`), et non jusqu'à 49
 ans : les années d'après cinquante ans n'entrent plus entières dans le salaire
-annuel moyen des carrières à temps partiel.
+annuel moyen des carrières à temps partiel. La quatorzième (le même jour)
+prend les durées des seuls résidents en France (:data:`DUREES_DES_RESIDENTS`) :
+la population se mesure contre eux.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -353,6 +354,21 @@ AGES_PARTIEL = (25.0, 50.0)
 #: temps partiel jusqu'au bout, le minimum la relève à 911 €. La part des
 #: carrières à temps partiel reste celle des 25 à 49 ans. La treizième version.
 PARTIEL_JUSQU_AU_DEPART = True
+
+#: Les durées des résidents : la population se mesure contre les seuls
+#: résidents en France (``quintiles_eqcc_residents.csv``), et elle prend
+#: désormais leurs durées — la part de chaque tranche de durée validée hors
+#: majorations, cette durée et la durée cotisée, le rang de salaire de chaque
+#: tranche et le minimum de chaque quintile (:class:`DureesDesResidents`) —, et
+#: non plus celles de tous les retraités, dont ceux de l'étranger, aux carrières
+#: françaises courtes : 11,5 % des hommes de tous valident moins de trente
+#: années hors majorations, 7,9 % des résidents. Les parts des régimes, des
+#: polypensionnés et des femmes restent celles de tous, que le dépôt ne
+#: certifie pas chez les résidents ; la durée des carrières pleines aussi
+#: (:func:`durees_pleines`) : l'EIR arrondit ses durées moyennes à l'année, et
+#: celle des résidentes, au même arrondi, la déplacerait d'une année sans rien
+#: en apprendre. La quatorzième version.
+DUREES_DES_RESIDENTS = True
 
 #: L'âge auquel une génération lit la quotité de son temps partiel, dans la
 #: tranche des 25-54 ans.
@@ -747,7 +763,36 @@ class EffectifsRepartis:
 # -- les données ------------------------------------------------------------------
 
 def eir(racine: Path) -> CaracteristiquesRetraites:
-    return CaracteristiquesRetraites(racine)
+    """Les caractéristiques des retraités de l'EIR, et, sous
+    :data:`DUREES_DES_RESIDENTS`, les durées des seuls résidents en France."""
+    tous = CaracteristiquesRetraites(racine)
+    return DureesDesResidents(tous, racine) if DUREES_DES_RESIDENTS else tous
+
+
+class DureesDesResidents:
+    """Les caractéristiques de tous les retraités, leurs durées remplacées par
+    celles des seuls résidents en France (:data:`DUREES_DES_RESIDENTS`) : la
+    colonne « ensemble » de leurs quintiles en équivalent carrière complète
+    (``quintiles_eqcc_residents.csv``). Le reste, ce qu'en dit tous."""
+
+    INDICATEURS = ("duree_validee_hors_majoration", "duree_cotisee",
+                   "part_duree_validee_hors_majoration_moins_10",
+                   "part_duree_validee_hors_majoration_10_20",
+                   "part_duree_validee_hors_majoration_20_30",
+                   "part_duree_validee_hors_majoration_30_40",
+                   "part_duree_validee_hors_majoration_40_plus")
+
+    def __init__(self, tous: CaracteristiquesRetraites, racine: Path) -> None:
+        self.tous = tous
+        self.residents = quintiles_eqcc(racine, residents=True)
+
+    def valeur(self, indicateur: str, sexe: str) -> float:
+        if indicateur in self.INDICATEURS:
+            return self.residents[("ensemble", indicateur, sexe)]
+        return self.tous.valeur(indicateur, sexe)
+
+    def __getattr__(self, nom: str):
+        return getattr(self.tous, nom)
 
 
 def centiles(racine: Path) -> tuple[int, dict[str, float]]:
@@ -1119,7 +1164,8 @@ def donnees_population(racine: Path) -> DonneesPopulation:
                                   SOUS_CLASSES_DU_BAS)
               for sexe in ("F", "H")}
     return DonneesPopulation(niveaux, parts, par_generation, points, persistants,
-                             au_smic, reste, volumes, rangs, quintiles_eqcc(racine), ecarts,
+                             au_smic, reste, volumes, rangs,
+                             quintiles_eqcc(racine, residents=DUREES_DES_RESIDENTS), ecarts,
                              entrees_des_carrieres_pleines(racine))
 
 
@@ -1133,8 +1179,9 @@ def durees_pleines(racine: Path) -> dict[str, tuple[tuple[int, float], ...]]:
     génération à l'autre, elle suit la durée d'assurance des hommes autour de
     sa moyenne des générations certifiées (``duree_assurance_generations.csv``) :
     celle des femmes monte surtout de ce que leurs carrières courtes se
-    raréfient, que la grille ne sait pas faire varier."""
-    source = eir(racine)
+    raréfient, que la grille ne sait pas faire varier. Celle de tous les
+    retraités, même sous :data:`DUREES_DES_RESIDENTS`."""
+    source = CaracteristiquesRetraites(racine)
     hommes = [(int(l["generation"]), float(l["trimestres"]) / 4.0, l["fiabilite"])
               for l in _lire_macro(racine, "duree_assurance_generations.csv")
               if l["sexe"] == "hommes"]
@@ -1822,8 +1869,8 @@ def composition_eir(source: CaracteristiquesRetraites) -> dict:
     poly = (source.valeur("part_poly_2_regimes", "ensemble")
             + source.valeur("part_poly_3_regimes", "ensemble")) / 100
     duree = {s: source.valeur("duree_validee_hors_majoration", s) for s in ("F", "H")}
-    courtes = {s: somme_ordonnee(source.valeur(f"part_duree_validee_hors_majoration_{t}", s)
-                      for t in ("moins_10", "10_20", "20_30")) / 100 for s in ("F", "H")}
+    courtes = {s: somme_ordonnee(parts_tranches(source, s)[t]
+                                 for t in ("moins_10", "10_20", "20_30")) for s in ("F", "H")}
     return {"femmes": femmes, "polypensionnes": poly, "duree_validee": duree,
             "moins_de_30_ans": courtes, "groupes": parts_personnes(source)}
 

@@ -616,7 +616,8 @@ def test_la_population_donne_aux_carrieres_courtes_le_rang_de_leur_duree(
     avant = G.interruptions(G.melees(G.personnes(G.reference_population(), effectifs, source),
                                      source), effectifs, source,
                             de_tous=G.COURTES_A_LA_PART_DE_TOUS, etalees=G.COURTES_ETALEES)
-    rangs = G.rangs_selon_la_duree(G.quintiles_eqcc(parametres.racine_donnees),
+    rangs = G.rangs_selon_la_duree(G.quintiles_eqcc(parametres.racine_donnees,
+                                                    residents=G.DUREES_DES_RESIDENTS),
                                    G.parts_des_tranches(avant))
     variantes = G.grille("population", effectifs, source, ())
     poids = _poids(variantes, effectifs, source.millesime)
@@ -679,6 +680,31 @@ def test_une_grille_se_range_en_quintiles_comme_l_eir(parametres):
     assert confrontee["F"]["duree_validee"] == [20.0, 40.0, 40.0, 40.0, 40.0]
     assert confrontee["F"]["duree_validee_eir"] == [28.0, 38.0, 41.0, 41.0, 41.0]
     assert confrontee["F"]["minimum_eir"][1] == pytest.approx(0.527, abs=1e-3)
+
+
+def test_la_population_prend_les_durees_des_residents(simulateur, source, parametres):
+    """Sous ``DUREES_DES_RESIDENTS``, la population prend les durées des seuls
+    résidents en France — 1,0 % des hommes résidents valident moins de dix
+    années hors majorations, 2,7 % de tous les retraités —, et le reste chez
+    tous : la part des femmes, celle des régimes. Sa composition redonne la part
+    des carrières de moins de trente années des résidents ; la durée des
+    carrières pleines reste celle de tous."""
+    assert G.DUREES_DES_RESIDENTS
+    racine = parametres.racine_donnees
+    tous = G.CaracteristiquesRetraites(racine)
+    assert source.valeur("part_duree_validee_hors_majoration_moins_10", "H") == 1.0
+    assert tous.valeur("part_duree_validee_hors_majoration_moins_10", "H") == 2.7
+    assert source.valeur("effectifs", "F") == tous.valeur("effectifs", "F")
+    assert source.millesime == tous.millesime
+    composition = G.composition(G.grille("population", simulateur.effectifs, source, ()),
+                                simulateur.effectifs, source)
+    residents = G.quintiles_eqcc(racine, residents=True)
+    for sexe in ("F", "H"):
+        courtes = sum(residents[("ensemble", f"part_duree_validee_hors_majoration_{t}", sexe)]
+                      for t in ("moins_10", "10_20", "20_30")) / sum(
+            residents[("ensemble", f"part_duree_validee_hors_majoration_{t}", sexe)]
+            for t, _ in G.TRANCHES)
+        assert composition["moins_de_30_ans"][sexe] == pytest.approx(courtes, abs=1e-9), sexe
 
 
 def test_les_quintiles_des_residents_se_lisent_dans_le_fichier_certifie(parametres):
