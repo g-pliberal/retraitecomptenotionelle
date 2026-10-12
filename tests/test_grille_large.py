@@ -537,6 +537,9 @@ def test_une_grille_se_range_en_quintiles_comme_l_eir(parametres):
     assert confrontee["F"]["minimum"] == [1.0, 1.0, 0.0, 0.0, 0.0]
     assert confrontee["H"]["minimum"] == [1.0, 0.0, 0.0, 0.0, 0.0]
     assert confrontee["F"]["minimum_eir"][1] == pytest.approx(0.599, abs=1e-3)
+    assert confrontee["F"]["minimum_ensemble"] == pytest.approx(0.4)
+    assert confrontee["H"]["minimum_ensemble"] == pytest.approx(0.2)
+    assert confrontee["F"]["minimum_ensemble_eir"] == pytest.approx(0.385, abs=1e-3)
 
 
 def test_la_grille_du_depot_reecrite_redonne_la_page(parametres):

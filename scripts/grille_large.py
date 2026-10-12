@@ -331,6 +331,13 @@ AGE_DE_LA_QUOTITE = 40
 #: volatilité des revenus salariaux du secteur privé en France depuis 1968 »,
 #: Insee, document de travail G 2014/03, tableau 6). Une carrière en garde les
 #: trois quarts de 77 % : 0,76 de l'écart, la racine de 0,58.
+#: Le bas s'y resserre comme le milieu. Qui est payé le Smic dans la coupe a
+#: pour salaire de carrière attendu la médiane, fois le Smic rapporté à elle à
+#: la puissance 0,58 — 0,75 à âge donné : 1,20 Smic, 1,14 à 35-49 ans, en 2007.
+#: La DG Trésor en mesure 1,20 et 1,15, la médiane, six ans plus tard, de ceux
+#: payés au voisinage du Smic restés salariés du privé (``persistance_smic.csv``,
+#: les bandes interpolées) : un resserrement de 0,72 à 0,75 selon le sexe et
+#: l'âge.
 DISPERSION_DE_CARRIERE = 0.76
 
 #: Aucun temps complet ne se paie sous le Smic : une carrière du salariat privé
@@ -1790,7 +1797,10 @@ def confronter_eqcc(lignes: list[tuple], quintiles: dict) -> dict:
                         "minimum": [au_minimum / masse if masse else None
                                     for au_minimum, masse in zip(minima, par_quintile)],
                         "minimum_eir": [quintiles[(q, "part_minimum_pension_regime_principal",
-                                                   sexe)] / 100.0 for q in QUINTILES_EQCC]}
+                                                   sexe)] / 100.0 for q in QUINTILES_EQCC],
+                        "minimum_ensemble": somme_ordonnee(minima) / total,
+                        "minimum_ensemble_eir": quintiles[
+                            ("ensemble", "part_minimum_pension_regime_principal", sexe)] / 100.0}
     return sortie
 
 
@@ -1935,14 +1945,17 @@ def imprimer_eqcc(resultat: dict) -> None:
     print("\nLa part au minimum de pension, quintile par quintile — l'EIR, au minimum du "
           "régime principal")
     for sexe in ("F", "H"):
-        print(f"\n{INTITULES_SEXES[sexe]:16}" + "".join(f"{q:>8}" for q in QUINTILES_EQCC))
+        print(f"\n{INTITULES_SEXES[sexe]:16}" + "".join(f"{q:>8}" for q in QUINTILES_EQCC)
+              + f"{'ensemble':>10}")
         _, premiere = lues[0]
         print(f"{'  EIR':16}" + "".join(f"{p * 100:>7.1f}%"
-                                        for p in premiere[sexe]["minimum_eir"]))
+                                        for p in premiere[sexe]["minimum_eir"])
+              + f"{premiere[sexe]['minimum_ensemble_eir'] * 100:>9.1f}%")
         for nom, mesure in lues:
             print(f"{'  ' + nom:16}" + "".join(
                 f"{p * 100:>7.1f}%" if p is not None else f"{'—':>8}"
-                for p in mesure[sexe]["minimum"]))
+                for p in mesure[sexe]["minimum"])
+                + f"{mesure[sexe]['minimum_ensemble'] * 100:>9.1f}%")
 
 
 def imprimer(resultat: dict) -> None:
