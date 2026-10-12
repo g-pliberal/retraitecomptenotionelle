@@ -1,0 +1,22 @@
+date: "2026-10-12"
+session: "action 158 ouverte, à faire : les grilles indiciaires de la fonction publique, pour pré-remplir la carrière d'un fonctionnaire"
+consulte: >-
+  Aucun texte de droit lu à la source. Dans le dépôt : la limite du relevé déposé
+  (`docs/limites/5-hors-du-modele.md`), la saisie (`saisie.py`), les primes soumises à
+  retenue (`donnees/primes.py`), l'assiette du compte (`moteur/compte.py`), le filtre
+  thématique de l'index de la DILA (`scripts/fetch/dila_index.py`). Au dehors, par des
+  recherches seulement : le jeu « Noyau RH FPE » du CISIRH sur data.gouv.fr (licence
+  ouverte 2.0, mis à jour le 3 février 2026) ; le décret n° 82-1105 du 23 décembre 1982
+  et le décret n° 2023-519 du 28 juin 2023, qui le modifie, vus par des pages qui les
+  citent ; la part des primes selon le rapport annuel de la DGAFP, rapportée par Acteurs
+  publics.
+trouve: >-
+  Le relevé ne donne au fonctionnaire que ses services, sans traitement : la grille
+  comblerait le trou que le dépôt du PDF laisse. Le traitement porte l'essentiel de sa
+  pension, l'assiette excluant les primes, qui n'entrent que par la RAFP. Aucune base
+  ouverte et datée des grilles n'a été trouvée ; le LEGI les a, version par version, mais
+  le filtre de l'index retient « indice brut » sans « indices bruts » ni « échelonnement
+  indiciaire ».
+reste: >-
+  L'action 158, à faire, que le propriétaire lance : les sources et le périmètre d'abord,
+  puis les grilles certifiées, la carrière qu'elles donnent, le formulaire, les primes.

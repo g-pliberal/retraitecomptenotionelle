@@ -852,6 +852,110 @@ types :
 
 **Ce que le propriétaire tranche** : s'il bascule la page, et quand.
 
+### 158. Les grilles indiciaires de la fonction publique : la carrière d'un fonctionnaire pré-remplie depuis son corps, plutôt que de mémoire — `à faire`
+
+**D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller
+chercher les grilles de salaire connues, celles des métiers publics d'abord,
+pour que l'assuré parte d'une carrière pré-remplie plutôt que de ses
+souvenirs. Le besoin est là où le simulateur est le plus faible. Le relevé
+déposé en PDF donne au salarié ses revenus, année par année, mais au
+fonctionnaire ses seuls services — « Du 01/09/1996 au 31/08/2001 » —, sans
+traitement : la ligne « reste à saisir » (`docs/limites/5-hors-du-modele.md`).
+Reste la carrière paramétrique, qui ne connaît qu'un niveau rapporté au
+salaire moyen, le profil moyen que le modèle lit chez l'INSEE pour le statut,
+et une seule part de primes pour toute la carrière (`saisie.py`).
+
+**Ce que le dépôt a, ce qui lui manque.** Le traitement indiciaire brut est
+l'indice majoré multiplié par la valeur du point, que le dépôt tient du LEGI
+(`legislation/point_indice_fonction_publique.csv`), et la fiche de paie d'un
+agent public l'entoure déjà : la RAFP, l'indemnité compensatrice de la CSG
+(action 138, étape 12), les primes soumises à retenue (étape 17), le temps
+partiel. Manque l'indice de chaque année, que donnent le corps, le grade,
+l'échelon et la grille en vigueur à la date. Le décret de chaque corps fixe
+l'indice brut de ses échelons et leurs durées ; l'indice majoré se lit au
+barème du décret n° 82-1105 du 23 décembre 1982, qui bouge seul : cinq points
+pour tous au 1er janvier 2024, par le décret n° 2023-519 du 28 juin 2023.
+
+**Les primes pèsent moins qu'on ne le craint sur la pension.** Celle d'un
+fonctionnaire se compte sur son traitement et sa nouvelle bonification
+indiciaire, primes exclues — l'assiette `hors_primes` de sa fiche, sur
+laquelle le modèle rebâtit aussi le compte notionnel des cotisations passées.
+Les primes n'y entrent que par la RAFP, plafonnée à 20 % du traitement, et
+par les quelques primes soumises à retenue ; le réglage du taux uniforme, qui
+porte un seul taux sur toute la rémunération, leur en donne davantage. La
+grille porte donc l'essentiel, et les primes se rangent en trois familles :
+
+- celles qu'une règle fixe pour tous, qui se calculent : l'indemnité de
+  résidence selon la commune, le supplément familial de traitement selon les
+  enfants, les indemnités forfaitaires d'un corps, comme celles des
+  enseignants ;
+- celles que décident l'employeur et le poste — le RIFSEEP, les heures
+  supplémentaires, la nouvelle bonification indiciaire elle-même — : aucune
+  grille ne les donne, et un taux moyen par corps ou par catégorie en
+  tiendrait lieu, que l'assuré corrige. En moyenne, près du quart du salaire
+  brut des fonctionnaires (23,8 % en 2021, chiffre du rapport annuel de la
+  DGAFP relevé dans la presse, à lire à la source), très inégal d'un corps à
+  l'autre ;
+- ce que disent, depuis 2005, les points du RAFP, si le relevé les porte
+  année par année : ce que l'agent a touché hors traitement, ou, le plafond
+  atteint, le traitement lui-même, qui contrôlerait la grille.
+
+**Ce qui est difficile**, outre les primes. Le nombre et l'histoire : des
+centaines de corps et de cadres d'emplois, des grilles refaites à chaque
+réforme — la dernière grande, le protocole « parcours professionnels,
+carrières et rémunérations » (PPCR), appliqué à partir de 2016 —, chacune
+avec son tableau de reclassement, qu'une carrière commencée en 1990 traverse
+plusieurs fois. Le chemin, ensuite, qui n'est pas écrit d'avance : l'échelon
+avance à la durée que fixe le statut, mais qui variait avec la notation avant
+PPCR — trois rythmes chez les enseignants jusqu'en 2017 —, et le grade se
+gagne au choix. Une carrière pré-remplie suppose donc un chemin type, que
+l'assuré corrige de ce qu'il sait : son grade et son échelon d'aujourd'hui,
+qui sont sur sa fiche de paie, et la date de ses promotions.
+
+**Ce qui est à faire**, une étape par session :
+
+1. **Les sources et le périmètre**, sans une ligne de code. Les corps les plus
+   nombreux de chaque versant, et la part des titulaires qu'ils couvrent ;
+   pour chacun, le décret de son échelonnement indiciaire, et jusqu'où le LEGI
+   en garde les versions. L'index de la DILA ne les a peut-être pas : son
+   filtre (`THEMATIQUE`, `scripts/fetch/dila_index.py`) retient « indice
+   brut », mais ni « indices bruts » ni « échelonnement indiciaire », essayé
+   le 12 octobre 2026. Puis ce que le noyau RH de l'État publie en licence
+   ouverte (le CISIRH, sur data.gouv.fr : nomenclatures des corps et des
+   grades, recueil des fiches carrières, guide de l'avancement d'échelon), et
+   s'il date ses grilles ; les circulaires des centres de gestion, pour
+   recouper la territoriale ; ce que le relevé porte des points du RAFP ; les
+   taux de primes par corps de la DGAFP et de l'INSEE.
+2. **Les grilles, en données certifiées** sous `data/reference/` : par corps,
+   ses grades, ses échelons, leurs indices bruts et leurs durées, chaque
+   version datée de son texte, et le reclassement d'une version à la suivante.
+   Un test y recompose le traitement mensuel qu'une source publiée affiche
+   pour quelques échelons.
+3. **La carrière que la grille donne**, en Python puis dans son jumeau : du
+   corps, de la date d'entrée, des dates de promotion que l'assuré connaît et
+   de la quotité, l'indice de chaque année, donc le traitement. Le chemin type
+   par défaut est un choix écrit ; avant la plus ancienne grille connue, le
+   profil de l'INSEE reprend la main, et la page le dit.
+4. **Le formulaire** : « pré-remplir depuis une grille » écrit les lignes du
+   relevé, que l'assuré voit et corrige, plutôt qu'un calcul caché ; l'adresse
+   garde ainsi toute la simulation. Une ligne de relevé porte la rémunération
+   entière, que la part de primes partage : le pré-remplissage écrit le
+   traitement divisé par un moins cette part, ou la saisie apprend à recevoir
+   le traitement seul. Puis la liste d'un champ de saisie de plus
+   (`moteur/CLAUDE.md`).
+5. **Les primes** : celles qu'une règle fixe, calculées ; pour les autres, le
+   taux moyen du corps, année par année, en défaut de la part de primes ;
+   puis les points du RAFP du relevé, s'ils la disent mieux.
+
+**Ce que le propriétaire tranche** : le périmètre de départ — quelques corps
+d'un versant, ou les trois versants ensemble, et les militaires, dont les
+grilles et les primes sont à part ; le chemin type, à la durée moyenne ou à la
+plus lente ; une part de primes par période plutôt qu'une pour toute la
+carrière ; si les grilles servent aussi aux cas types statutaires de
+l'action 152, le fonctionnaire de catégorie C et le militaire ; et si les
+grilles des entreprises à statut (SNCF, RATP, IEG) suivent, les minima des
+conventions collectives ne disant qu'un plancher, non un salaire.
+
 ---
 
 ## Les actions en cours
