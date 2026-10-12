@@ -99,6 +99,14 @@ quantiles que l'EIR publie des résidents en France, majorations pour enfants
 comprises, et à leur distribution par tranches de cent euros
 (``--distribution`` : la composition et la distribution seules, sans la page).
 
+Une grille qui a des tranches de durée est aussi rangée comme l'EIR range les
+retraités par quintile de leur pension en équivalent carrière complète — la
+pension divisée par la proratisation, ce qu'une carrière acquiert par année
+validée (``quintiles_eqcc.csv``) : chaque cohorte de l'année de l'enquête à sa
+pension, divisée par sa durée d'assurance tous régimes rapportée à la durée
+requise et bornée à un, en têtes ; puis, sexe par sexe, la part de chaque
+tranche de durée qui tombe dans le premier quintile, contre celle de l'EIR.
+
 LA POPULATION (action 136, étape 6, seconde moitié)
 ---------------------------------------------------
 La grille « ensemble » donnait aux hommes les salaires des femmes, et ses
@@ -139,6 +147,10 @@ privé est payée à la part de l'année que l'INSEE mesure à son âge
 années validées des carrières courtes de l'entrée à soixante ans, comme
 l'échantillon interrégimes de cotisants date celles de tous les affiliés
 (:data:`COURTES_ETALEES`) : elles étaient les premières, celles de la jeunesse.
+La sixième (le même jour) donne à chaque tranche de durée le rang de salaire
+que l'EIR lui mesure (:data:`RANG_SELON_LA_DUREE`) : les carrières courtes au
+bas de l'échelle, les longues au-dessus, la distribution de chaque sexe
+gardée.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -394,6 +406,27 @@ CATEGORIE_DU_RANG = {"p10": "employes", "p25": "ouvriers", "p50": "ensemble",
 #: Les tranches d'âge de ``volume_travail.csv``, par leur premier âge.
 AGES_DU_VOLUME = {"Y_LT25": 0, "Y25T39": 25, "Y40T49": 40, "Y50T54": 50, "Y_GE55": 55}
 
+#: Le rang de salaire selon la durée : hors des régimes statutaires, chaque
+#: tranche de durée validée prend les classes de centiles de son sexe dans la
+#: proportion que l'EIR mesure, et non plus dans celle de tous. L'EIR range les
+#: retraités par quintile de leur pension en équivalent carrière complète — ce
+#: qu'ils ont acquis par année validée — et croise ces quintiles avec les
+#: tranches (``quintiles_eqcc.csv``) : 80,5 % des femmes et 74,0 % des hommes
+#: de moins de dix années validées sont au premier, pour 10,1 % et 3,7 % de
+#: ceux de quarante ans et plus. Chaque quintile se lit comme une bande de
+#: rangs du sexe, de la largeur de sa part des retraités du sexe ; une classe
+#: de centiles reçoit de chaque bande la part de ses rangs qui y tombe. Ce
+#: tableau croisé de l'EIR est ensuite calé, par la méthode des marges, sur
+#: les parts des tranches de la population et le poids de chaque classe : la
+#: distribution des salaires de chaque sexe ne bouge pas, et l'association de
+#: la durée et du rang reste celle de l'EIR. Une convention : le rang de la
+#: pension par année validée est tenu pour celui du salaire, et celui de tous
+#: les retraités du sexe pour celui des salariés du privé.
+RANG_SELON_LA_DUREE = True
+
+#: Les quintiles de la pension en équivalent carrière complète, dans l'ordre.
+QUINTILES_EQCC = ("q1", "q2", "q3", "q4", "q5")
+
 
 def _par_generation(paires: tuple[tuple[int, float], ...], generation: int,
                     defaut: float) -> float:
@@ -534,6 +567,9 @@ class Variante:
     poly: bool = False
     #: Le multiplicateur de salaire, la moyenne du cas type valant un.
     salaire: float = 1.0
+    #: La tranche de durée de :data:`TRANCHES` où les interruptions l'ont
+    #: rangée ; ``None`` hors d'elles.
+    tranche: str | None = None
 
     def fois(self, part: float, **changements) -> "Variante":
         """La même, pour ``part`` de son poids, avec ces changements."""
@@ -618,7 +654,9 @@ class DonneesPopulation:
     ``reste_du_bas`` : le niveau du reste de la classe du bas, qui en garde la
     moyenne ; ``volumes`` : la part de l'année travaillée, par âge
     (:data:`VOLUME_DE_TRAVAIL`) ; ``rangs`` : le volume relatif que chaque
-    classe de centiles prend sous :data:`VOLUME_SELON_LE_RANG`.
+    classe de centiles prend sous :data:`VOLUME_SELON_LE_RANG` ;
+    ``quintiles`` : les quintiles de la pension en équivalent carrière
+    complète de l'EIR (:data:`RANG_SELON_LA_DUREE`).
     """
 
     niveaux: dict[tuple[str, str], tuple[tuple[int, float], ...]]
@@ -630,6 +668,7 @@ class DonneesPopulation:
     reste_du_bas: dict[str, tuple[tuple[int, float], ...]]
     volumes: tuple[tuple[int, float], ...]
     rangs: dict[str, float]
+    quintiles: dict[tuple[str, str, str], float]
 
 
 def resserrer(relatifs: dict[str, float], moyenne: float) -> dict[str, float]:
@@ -725,6 +764,102 @@ def volumes_de_travail(racine: Path) -> tuple[tuple[tuple[int, float], ...], dic
     return volumes, rangs
 
 
+def quintiles_eqcc(racine: Path) -> dict[tuple[str, str, str], float]:
+    """Les quintiles de la pension en équivalent carrière complète, tels que
+    l'EIR les publie (``quintiles_eqcc.csv``) : ``(quintile, indicateur,
+    sexe)``."""
+    return {(l["quintile"], l["indicateur"], l["sexe"]): float(l["valeur"])
+            for l in _lire_macro(racine, "quintiles_eqcc.csv")}
+
+
+def association_rang_duree(quintiles: dict, sexe: str) -> dict[str, dict[str, float]]:
+    """Le tableau croisé des tranches de durée et des classes de centiles d'un
+    sexe, en parts de ses retraités, que l'EIR donne (:data:`RANG_SELON_LA_DUREE`).
+
+    Chaque quintile est une bande de rangs du sexe, de la largeur de sa part des
+    retraités du sexe que les quintiles rangent ; la masse d'une tranche dans
+    un quintile se répartit sur sa bande, et chaque classe de centiles en
+    reçoit la part que ses rangs couvrent."""
+    effectifs = [quintiles[(q, "effectifs", sexe)] for q in QUINTILES_EQCC]
+    total = somme_ordonnee(effectifs)
+    bandes, debut = [], 0.0
+    for effectif in effectifs:
+        bandes.append((debut, debut + effectif / total))
+        debut += effectif / total
+    classes, debut = [], 0.0
+    for nom, part in CENTILES:
+        classes.append((nom, debut, debut + part))
+        debut += part
+    tableau = {}
+    for tranche, _ in TRANCHES:
+        masses = [effectif / total
+                  * quintiles[(q, f"part_duree_validee_hors_majoration_{tranche}", sexe)] / 100.0
+                  for q, effectif in zip(QUINTILES_EQCC, effectifs)]
+        tableau[tranche] = {
+            nom: somme_ordonnee(masse * max(0.0, min(fin, haut) - max(bas, plancher))
+                                / (haut - plancher)
+                                for masse, (plancher, haut) in zip(masses, bandes))
+            for nom, bas, fin in classes}
+    return tableau
+
+
+def caler(tableau: dict[str, dict[str, float]], lignes: dict[str, float],
+          colonnes: dict[str, float], tolerance: float = 1e-12) -> dict[str, dict[str, float]]:
+    """Le tableau croisé calé sur ces marges par la méthode des marges (ajustement
+    proportionnel itératif) : il en prend les sommes de lignes et de colonnes,
+    et garde ses rapports croisés — l'association de ses lignes et de ses
+    colonnes."""
+    cale = {ligne: dict(cases) for ligne, cases in tableau.items() if ligne in lignes}
+    for _ in range(100_000):
+        for ligne, cible in lignes.items():
+            somme = somme_ordonnee(cale[ligne].values())
+            cale[ligne] = {colonne: case * cible / somme
+                           for colonne, case in cale[ligne].items()}
+        ecart = 0.0
+        for colonne, cible in colonnes.items():
+            somme = somme_ordonnee(cases[colonne] for cases in cale.values())
+            ecart = max(ecart, abs(somme - cible))
+            for cases in cale.values():
+                cases[colonne] *= cible / somme
+        if ecart < tolerance:
+            return cale
+    raise RuntimeError("le calage du rang selon la durée ne converge pas")
+
+
+def rangs_selon_la_duree(quintiles: dict, parts: dict[str, dict[str, float]]
+                         ) -> dict[str, dict[str, dict[str, float]]]:
+    """Les poids des classes de centiles de chaque tranche de durée, sexe par
+    sexe : le tableau croisé de l'EIR (:func:`association_rang_duree`) calé
+    sur ``parts``, la part de chaque tranche dans la population, et sur le
+    poids de chaque classe (:data:`CENTILES`), puis lu tranche par tranche."""
+    rangs = {}
+    for sexe, lignes in parts.items():
+        cale = caler(association_rang_duree(quintiles, sexe), lignes, dict(CENTILES))
+        rangs[sexe] = {tranche: {nom: case / somme_ordonnee(cases.values())
+                                 for nom, case in cases.items()}
+                       for tranche, cases in cale.items()}
+    return rangs
+
+
+def parts_des_tranches(variantes: list[Variante]) -> dict[str, dict[str, float]]:
+    """La part de chaque tranche de durée dans le salariat privé de chaque sexe,
+    que les interruptions lui ont donnée ; les autres groupes qui en ont la
+    partagent. Elle se lit sur la part de la Cnav, la première caisse du
+    salariat privé : celle de l'Ircantec, que la Cnav compte aussi, s'y
+    retranche à la même part."""
+    masses: dict[str, dict[str, float]] = {}
+    for v in variantes:
+        if v.tranche is None or v.cas.code.split("~", 1)[0] != GABARIT:
+            continue
+        parts = masses.setdefault(v.cas.sexe, {})
+        parts[v.tranche] = parts.get(v.tranche, 0.0) + v.retraites[0][1]
+    sortie = {}
+    for sexe, parts in masses.items():
+        total = somme_ordonnee(parts.values())
+        sortie[sexe] = {tranche: masse / total for tranche, masse in parts.items()}
+    return sortie
+
+
 def donnees_population(racine: Path) -> DonneesPopulation:
     """Les centiles du salaire par sexe, la part du temps partiel à 25-49 ans et
     sa quotité à 25-54 ans, certifiés le 11 octobre 2026, et la persistance au
@@ -781,7 +916,7 @@ def donnees_population(racine: Path) -> DonneesPopulation:
     au_smic = tuple((g, smic(g + AGE_DU_RANG)) for g, _ in niveaux[("F", bas)])
     volumes, rangs = volumes_de_travail(racine)
     return DonneesPopulation(niveaux, parts, par_generation, points, persistants,
-                             au_smic, reste, volumes, rangs)
+                             au_smic, reste, volumes, rangs, quintiles_eqcc(racine))
 
 
 def _part_eir(source: CaracteristiquesRetraites, groupe: str, sexe: str) -> float:
@@ -955,7 +1090,7 @@ def _interrompre(v: Variante, nom: str, cible: int | None, part: float,
                 occupes[decalage] = "inactivite"
     nouveau = elargi(cas, code=f"{cas.code}~{nom}",
                      interruptions_relatives=tuple(sorted(occupes.items())))
-    return v.fois(part, cas=nouveau, duree=validee, assimilees=assimilees)
+    return v.fois(part, cas=nouveau, duree=validee, assimilees=assimilees, tranche=nom)
 
 
 def femmes(variantes: list[Variante], effectifs,
@@ -1076,19 +1211,27 @@ def salaires_population(variantes: list[Variante],
     d'activité est payée à la part de l'année travaillée à son âge, selon son
     rang aussi sous :data:`VOLUME_SELON_LE_RANG`. Les autres groupes gardent
     la dispersion de la grille élargie autour de leur niveau, celle de leur
-    sexe, resserrée en carrière, et des années entières.
+    sexe, resserrée en carrière, et des années entières. Sous
+    :data:`RANG_SELON_LA_DUREE`, chaque tranche de durée prend les classes de
+    centiles dans la proportion que l'EIR lui mesure
+    (:func:`rangs_selon_la_duree`), et la part de sa classe du bas payée le
+    Smic toute la carrière la suit.
     """
+    rangs = (rangs_selon_la_duree(donnees.quintiles, parts_des_tranches(variantes))
+             if RANG_SELON_LA_DUREE else {})
     sortie = []
     for v in variantes:
         cas = elargi(v.cas)
+        selon = rangs.get(cas.sexe, {}).get(v.tranche, {})
         if cas.code.split("~", 1)[0] != GABARIT:
             for nom, part, facteur in donnees.points[cas.sexe]:
-                sortie.append(v.fois(part, salaire=v.salaire * facteur, cas=replace(
-                    cas, code=f"{cas.code}~{nom}",
-                    niveau_salaire=cas.niveau_salaire * facteur)))
+                sortie.append(v.fois(selon.get(nom, part), salaire=v.salaire * facteur,
+                                     cas=replace(cas, code=f"{cas.code}~{nom}",
+                                                 niveau_salaire=cas.niveau_salaire * facteur)))
             continue
         partiel = donnees.parts_partiel[cas.sexe]
-        for nom, part in CENTILES:
+        for nom, base in CENTILES:
+            part = selon.get(nom, base)
             relatif = donnees.rangs[nom] if VOLUME_SELON_LE_RANG else 1.0
             volumes = (tuple((age, min(1.0, annee * relatif))
                              for age, annee in donnees.volumes)
@@ -1100,7 +1243,7 @@ def salaires_population(variantes: list[Variante],
                            plancher_smic=PLANCHER_SMIC, volumes=volumes)
             classes = [(rang, part)]
             if PERSISTANCE_SMIC and nom == CENTILES[0][0]:
-                persistants = donnees.persistants[cas.sexe]
+                persistants = donnees.persistants[cas.sexe] * part / base
                 classes = [
                     (replace(rang, niveaux=donnees.reste_du_bas[cas.sexe]),
                      part - persistants),
@@ -1299,8 +1442,17 @@ def pensions_de_l_annee(pensionnes: list, cas_types: tuple[CasType, ...],
     pas répartir entre ses membres ; chaque ligne décrit une carrière.
     """
     sexes = {cas.code: cas.sexe for cas in cas_types}
+    return [(montant, poids_tete, sexes[pensionne.code])
+            for pensionne, montant, poids_tete in cohortes_de_l_annee(
+                pensionnes, poids, population, revalorisation, macro, annee_euros, annee)]
+
+
+def cohortes_de_l_annee(pensionnes: list, poids: dict[str, float], population: Population,
+                        revalorisation: RevalorisationServie, macro: DonneesMacro,
+                        annee_euros: int, annee: int):
+    """Les cohortes de :func:`pensions_de_l_annee`, chacune avec son couple :
+    ``(couple, pension mensuelle, poids en têtes)``."""
     vers_l_annee = macro.coefficient_prix(annee_euros, annee) / 12.0
-    lignes = []
     for pensionne in pensionnes:
         part = poids.get(pensionne.code, 0.0)
         if part <= 0.0:
@@ -1315,8 +1467,7 @@ def pensions_de_l_annee(pensionnes: list, cas_types: tuple[CasType, ...],
                 continue
             montant = pensionne.pensions["actuel"] * vers_l_annee * C.coefficient_actuel(
                 convenues, revalorisation, liquidation, annee)
-            lignes.append((montant, part * effectif, sexes[pensionne.code]))
-    return lignes
+            yield pensionne, montant, part * effectif
 
 
 def quantile_pondere(lot: list[tuple[float, float]], rang: float) -> float:
@@ -1398,6 +1549,12 @@ class GrilleEnTetes:
                                    self.population, self.revalorisation, self.macro,
                                    self.annee_euros, annee)
 
+    def cohortes(self, annee: int) -> list:
+        """:func:`cohortes_de_l_annee`, pour cette grille."""
+        return list(cohortes_de_l_annee(self.pensionnes, self.poids(annee), self.population,
+                                        self.revalorisation, self.macro, self.annee_euros,
+                                        annee))
+
 
 def en_tetes(parametres: Parametres, variantes: list[Variante],
              processus: int = 1) -> GrilleEnTetes:
@@ -1420,6 +1577,140 @@ def en_tetes(parametres: Parametres, variantes: list[Variante],
                          simulateur.macro, parametres.annee_euros_constants, echecs)
 
 
+# -- la pension en équivalent carrière complète, contre l'EIR ---------------------
+
+def tranche_de_duree(duree: float) -> str:
+    """La tranche de durée validée où tombe ``duree``, en années : celles de
+    l'EIR, de moins de dix ans à quarante ans et plus."""
+    for borne, nom in ((10, "moins_10"), (20, "10_20"), (30, "20_30"), (40, "30_40")):
+        if duree < borne:
+            return nom
+    return "40_plus"
+
+
+def duree_de(v: Variante) -> float:
+    """La durée validée hors majorations d'une carrière : celle de sa tranche,
+    ou celle de son cas type."""
+    return v.duree if v.duree is not None else v.cas.age_liquidation - v.cas.age_debut
+
+
+def _proratisations(parametres: Parametres, morceau: tuple) -> list[tuple[str, int, float]]:
+    """La proratisation de chaque couple du morceau, au scénario 1 de la page :
+    sa durée d'assurance tous régimes, enfants compris, rapportée à la durée
+    requise de sa génération, bornée à un. Gardée sous l'empreinte du modèle
+    et le code de ce script."""
+
+    def calcul():
+        simulateur = Simulateur(parametres).pour_la_projection()
+        sortie = []
+        for cas, generation in morceau:
+            try:
+                actuel = simulateur.echeancier(cas.construire(simulateur, generation)).au_depart
+            except (ValueError, KeyError):
+                continue
+            requis = actuel.trimestres_requis
+            sortie.append((cas.code, generation,
+                           min(1.0, actuel.trimestres_valides / requis) if requis else 1.0))
+        return sortie
+
+    return memoire.memoriser_pour(
+        parametres, ("proratisation_de_la_grille", parametres, morceau), calcul)
+
+
+def proratisations(parametres: Parametres, couples, processus: int
+                   ) -> dict[tuple[str, int], float]:
+    """La proratisation de chaque couple ``(cas type, génération)`` : par
+    morceaux, chacun gardé, sur ``processus`` cœurs quand il y en a plusieurs."""
+    couples = sorted(couples, key=lambda couple: (couple[0].code, couple[1]))
+    taille = max(1, math.ceil(len(couples) / max(1, 2 * processus)))
+    morceaux = [tuple(couples[i:i + taille]) for i in range(0, len(couples), taille)]
+    if processus <= 1 or len(morceaux) <= 1:
+        resultats = [_proratisations(parametres, morceau) for morceau in morceaux]
+    else:
+        with ProcessPoolExecutor(max_workers=processus,
+                                 mp_context=multiprocessing.get_context("spawn")) as pool:
+            resultats = list(pool.map(_proratisations, [parametres] * len(morceaux),
+                                      morceaux))
+    return {(code, generation): coefficient for resultat in resultats
+            for code, generation, coefficient in resultat}
+
+
+def quintiles_ponderes(lignes: list[tuple[float, float, str, str]]) -> dict:
+    """Une grille rangée comme l'EIR range les retraités : les bornes des
+    quintiles de la pension en équivalent carrière complète, les deux sexes
+    réunis, et, sexe par sexe, le poids de chaque tranche de durée dans chaque
+    quintile. ``lignes`` : ``(pension, poids, sexe, tranche)``. Une ligne à
+    cheval sur une borne va au quintile de son milieu."""
+    tries = sorted(lignes, key=lambda ligne: ligne[0])
+    total = somme_ordonnee(ligne[1] for ligne in tries)
+    bornes: list[float] = []
+    masses: dict[str, dict[str, list[float]]] = {}
+    cumul = 0.0
+    for montant, poids, sexe, tranche in tries:
+        rang = min(len(QUINTILES_EQCC) - 1, int(5.0 * (cumul + poids / 2.0) / total))
+        while len(bornes) < 4 and cumul + poids >= (len(bornes) + 1) * total / 5.0:
+            bornes.append(montant)
+        cumul += poids
+        for cle in (sexe, "ensemble"):
+            masses.setdefault(cle, {}).setdefault(
+                tranche, [0.0] * len(QUINTILES_EQCC))[rang] += poids
+    return {"bornes": bornes, "masses": masses}
+
+
+def confronter_eqcc(lignes: list[tuple[float, float, str, str]], quintiles: dict) -> dict:
+    """La grille contre l'EIR (``quintiles_eqcc.csv``), sexe par sexe : la part
+    du sexe dans chaque quintile de la pension en équivalent carrière complète,
+    et la part de chaque tranche de durée qui tombe dans le premier."""
+    rangees = quintiles_ponderes(lignes)
+    sortie: dict = {"bornes": rangees["bornes"]}
+    for sexe in ("F", "H"):
+        par_tranche = rangees["masses"].get(sexe)
+        if not par_tranche:
+            continue
+        par_quintile = [somme_ordonnee(masses[i] for masses in par_tranche.values())
+                        for i in range(len(QUINTILES_EQCC))]
+        total = somme_ordonnee(par_quintile)
+        effectifs = [quintiles[(q, "effectifs", sexe)] for q in QUINTILES_EQCC]
+        tous = somme_ordonnee(effectifs)
+        tranches = {}
+        for tranche, _ in TRANCHES:
+            masses = par_tranche.get(tranche, [0.0] * len(QUINTILES_EQCC))
+            publiees = [effectif * quintiles[(q, f"part_duree_validee_hors_majoration_{tranche}",
+                                              sexe)]
+                        for q, effectif in zip(QUINTILES_EQCC, effectifs)]
+            masse = somme_ordonnee(masses)
+            tranches[tranche] = {
+                "premier_quintile": masses[0] / masse if masse else None,
+                "premier_quintile_eir": publiees[0] / somme_ordonnee(publiees),
+            }
+        sortie[sexe] = {"quintiles": [masse / total for masse in par_quintile],
+                        "quintiles_eir": [effectif / tous for effectif in effectifs],
+                        "tranches": tranches}
+    return sortie
+
+
+def eqcc(parametres: Parametres, variantes: list[Variante], tetes: GrilleEnTetes,
+         quintiles: dict, annee: int, processus: int = 1) -> dict:
+    """La grille l'année de l'enquête, chaque cohorte à sa pension divisée par
+    sa proratisation (:func:`proratisations`), rangée comme l'EIR range les
+    retraités (:func:`confronter_eqcc`) : ce qu'une carrière acquiert par année
+    validée, selon sa durée."""
+    par_code = {v.cas.code: v for v in variantes}
+    cas_par_code = {cas.code: cas for cas in tetes.cas_types}
+    cohortes = tetes.cohortes(annee)
+    coefficients = proratisations(
+        parametres, {(cas_par_code[pensionne.code], pensionne.generation)
+                     for pensionne, _, _ in cohortes}, processus)
+    lignes = []
+    for pensionne, montant, poids in cohortes:
+        coefficient = coefficients.get((pensionne.code, pensionne.generation))
+        if not coefficient:
+            continue
+        v = par_code[pensionne.code]
+        lignes.append((montant / coefficient, poids, v.cas.sexe, tranche_de_duree(duree_de(v))))
+    return confronter_eqcc(lignes, quintiles)
+
+
 def processus_par_defaut() -> int:
     try:
         return len(os.sched_getaffinity(0))
@@ -1432,10 +1723,13 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
     """Chaque grille, sa composition, la distribution de ses pensions l'année de
     l'enquête et ce que la page y affiche ; la page elle-même, que la grille du
     dépôt, réécrite en parts, doit redonner. ``page=False`` s'en tient à la
-    composition et à la distribution, que la simulation seule donne."""
+    composition et à la distribution, que la simulation seule donne. Une grille
+    qui a des tranches de durée est en outre rangée par quintile de sa pension
+    en équivalent carrière complète, contre l'EIR (:func:`eqcc`)."""
     parametres = parametres if parametres is not None else Parametres()
     racine = parametres.racine_donnees
     source = eir(racine)
+    publies = quintiles_eqcc(racine)
     annee_centiles, valeurs = centiles(racine)
     points = multiplicateurs(valeurs)
     effectifs = Simulateur(parametres).effectifs
@@ -1463,6 +1757,9 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
         mesure["composition"] = composition(variantes, effectifs, source)
         mesure["distribution"] = confronter(tetes.pensions(source.millesime),
                                             residence, distributions)
+        if any(v.tranche is not None for v in variantes):
+            mesure["eqcc"] = eqcc(parametres, variantes, tetes, publies, source.millesime,
+                                  processus)
         mesure["secondes"] = round(time.time() - debut, 1)
         resultat["grilles"][nom] = mesure
     return resultat
@@ -1502,6 +1799,34 @@ def imprimer_distribution(resultat: dict) -> None:
                   + f"{d['kolmogorov'] * 100:>+8.1f} pt à {d['borne_kolmogorov']:.0f}")
 
 
+def imprimer_eqcc(resultat: dict) -> None:
+    """Les grilles qui ont des tranches de durée, rangées par quintile de leur
+    pension en équivalent carrière complète, contre l'EIR."""
+    lues = [(nom, g["eqcc"]) for nom, g in resultat["grilles"].items() if "eqcc" in g]
+    if not lues:
+        return
+    millesime = resultat["eir"]["millesime"]
+    print(f"\nLa pension en équivalent carrière complète en {millesime} — la pension "
+          "divisée par la proratisation, ce qu'une carrière acquiert par année validée — "
+          "contre l'EIR : la part de chaque tranche de durée au premier quintile, et celle "
+          "du sexe")
+    tranches = [nom for nom, _ in reversed(TRANCHES)]
+    for sexe in ("F", "H"):
+        print(f"\n{INTITULES_SEXES[sexe]:16}" + "".join(f"{t:>10}" for t in tranches)
+              + f"{'sexe':>8}")
+        _, premiere = lues[0]
+        print(f"{'  EIR':16}" + "".join(
+            f"{premiere[sexe]['tranches'][t]['premier_quintile_eir'] * 100:>9.1f}%"
+            for t in tranches) + f"{premiere[sexe]['quintiles_eir'][0] * 100:>7.1f}%")
+        for nom, mesure in lues:
+            print(f"{'  ' + nom:16}" + "".join(
+                f"{mesure[sexe]['tranches'][t]['premier_quintile'] * 100:>9.1f}%"
+                if mesure[sexe]["tranches"][t]["premier_quintile"] is not None else f"{'—':>10}"
+                for t in tranches) + f"{mesure[sexe]['quintiles'][0] * 100:>7.1f}%")
+    print("\n" + "  ".join(f"{nom} : bornes {', '.join(f'{b:.0f}' for b in m['bornes'])} €"
+                           for nom, m in lues))
+
+
 def imprimer(resultat: dict) -> None:
     grilles = resultat["grilles"]
     base = grilles["reference"]
@@ -1522,6 +1847,7 @@ def imprimer(resultat: dict) -> None:
               f"{d.get('F', float('nan')):>9.1f}{d.get('H', float('nan')):>9.1f}"
               f"{c.get('F', float('nan'))*100:>6.1f}%{c.get('H', float('nan'))*100:>6.1f}%")
     imprimer_distribution(resultat)
+    imprimer_eqcc(resultat)
 
     if page is not None:
         horizon = page["annee_horizon"]

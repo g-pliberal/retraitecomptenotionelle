@@ -402,6 +402,100 @@ def test_une_carriere_courte_de_la_population_s_etale_sur_la_vie_active(simulate
     assert types == {"inactivite"}
 
 
+def test_les_quintiles_eqcc_se_lisent_dans_le_fichier_certifie(parametres):
+    """Les quintiles de la pension en équivalent carrière complète de l'EIR
+    2020 : 23,1 % des femmes du premier ont moins de dix années validées hors
+    majorations, 0,4 % de celles du dernier."""
+    quintiles = G.quintiles_eqcc(parametres.racine_donnees)
+    assert quintiles[("q1", "part_duree_validee_hors_majoration_moins_10", "F")] == 23.1
+    assert quintiles[("q5", "part_duree_validee_hors_majoration_moins_10", "F")] == 0.4
+    assert quintiles[("ensemble", "effectifs", "ensemble")] == 16552.0
+
+
+def test_le_rang_selon_la_duree_tient_les_marges_et_garde_l_association_de_l_eir(parametres):
+    """Le tableau croisé de l'EIR redonne, à l'arrondi de ses parts près, le
+    poids de chaque classe de centiles ; calé sur d'autres parts de tranches,
+    il les prend, garde le poids des classes, et ses rapports croisés — la
+    façon dont la durée et le rang vont ensemble."""
+    quintiles = G.quintiles_eqcc(parametres.racine_donnees)
+    classes = dict(G.CENTILES)
+    parts = {"F": {"moins_10": 0.105, "10_20": 0.143, "20_30": 0.174, "30_40": 0.386,
+                   "40_plus": 0.192},
+             "H": {"moins_10": 0.035, "10_20": 0.047, "20_30": 0.068, "30_40": 0.286,
+                   "40_plus": 0.564}}
+    rangs = G.rangs_selon_la_duree(quintiles, parts)
+    for sexe in ("F", "H"):
+        graine = G.association_rang_duree(quintiles, sexe)
+        for nom, poids in classes.items():
+            assert sum(cases[nom] for cases in graine.values()) == pytest.approx(poids, abs=2e-3)
+            assert sum(parts[sexe][t] * rangs[sexe][t][nom] for t in parts[sexe]) == (
+                pytest.approx(poids, abs=1e-9))
+        for tranche, poids in rangs[sexe].items():
+            assert sum(poids.values()) == pytest.approx(1.0, abs=1e-12)
+
+        def croise(table, t1, t2, c1, c2):
+            return table[t1][c1] * table[t2][c2] / (table[t1][c2] * table[t2][c1])
+
+        for t1, t2, c1, c2 in (("moins_10", "40_plus", "p10", "p75"),
+                               ("10_20", "30_40", "p25", "p90")):
+            assert croise(rangs[sexe], t1, t2, c1, c2) == pytest.approx(
+                croise(graine, t1, t2, c1, c2), rel=1e-6)
+        assert rangs[sexe]["moins_10"]["p10"] > 2 * rangs[sexe]["40_plus"]["p10"]
+
+
+def test_la_population_donne_aux_carrieres_courtes_le_rang_de_leur_duree(
+        simulateur, source, parametres):
+    """Sous ``RANG_SELON_LA_DUREE``, chaque tranche de durée du salariat privé
+    prend les classes de centiles dans la proportion calée sur l'EIR, la part
+    de sa classe du bas au Smic toute la carrière comprise ; toutes tranches
+    réunies, chaque classe garde son poids."""
+    assert G.RANG_SELON_LA_DUREE
+    effectifs = simulateur.effectifs
+    avant = G.interruptions(G.melees(G.personnes(G.reference_population(), effectifs, source),
+                                     source), effectifs, source,
+                            de_tous=G.COURTES_A_LA_PART_DE_TOUS, etalees=G.COURTES_ETALEES)
+    rangs = G.rangs_selon_la_duree(G.quintiles_eqcc(parametres.racine_donnees),
+                                   G.parts_des_tranches(avant))
+    variantes = G.grille("population", effectifs, source, ())
+    poids = _poids(variantes, effectifs, source.millesime)
+    for sexe in ("F", "H"):
+        par: dict = {}
+        for v in variantes:
+            if v.cas.sexe != sexe or not v.cas.code.startswith(f"{G.GABARIT}~"):
+                continue
+            classe = next(c for c in v.cas.code.split("~") if c in dict(G.CENTILES))
+            par.setdefault(v.tranche, {}).setdefault(classe, 0.0)
+            par[v.tranche][classe] += poids[v.cas.code]
+        total = sum(sum(cases.values()) for cases in par.values())
+        for nom, part in G.CENTILES:
+            assert sum(cases[nom] for cases in par.values()) / total == pytest.approx(
+                part, abs=1e-9), (sexe, nom)
+        for tranche, cases in par.items():
+            masse = sum(cases.values())
+            for nom, _ in G.CENTILES:
+                assert cases[nom] / masse == pytest.approx(rangs[sexe][tranche][nom],
+                                                           abs=1e-9), (sexe, tranche, nom)
+
+
+def test_une_grille_se_range_en_quintiles_comme_l_eir(parametres):
+    """Dix carrières de même poids : les bornes tombent au deuxième, quatrième,
+    sixième et huitième montant, deux carrières par quintile ; une carrière à
+    cheval sur une borne va au quintile de son milieu. Contre l'EIR, une tranche
+    rangée tout en bas a toute sa masse au premier quintile."""
+    lignes = [(float(montant), 1.0, "F" if montant % 2 else "H",
+               "moins_10" if montant <= 2 else "40_plus") for montant in range(1, 11)]
+    rangees = G.quintiles_ponderes(lignes)
+    assert rangees["bornes"] == [2.0, 4.0, 6.0, 8.0]
+    assert rangees["masses"]["ensemble"]["40_plus"] == [0.0, 2.0, 2.0, 2.0, 2.0]
+    a_cheval = G.quintiles_ponderes([(1.0, 1.0, "F", "40_plus"), (2.0, 3.0, "F", "40_plus"),
+                                     (3.0, 1.0, "F", "40_plus")])
+    assert a_cheval["masses"]["F"]["40_plus"] == [1.0, 0.0, 3.0, 0.0, 1.0]
+    confrontee = G.confronter_eqcc(lignes, G.quintiles_eqcc(parametres.racine_donnees))
+    assert confrontee["F"]["tranches"]["moins_10"]["premier_quintile"] == 1.0
+    assert confrontee["F"]["tranches"]["moins_10"]["premier_quintile_eir"] == pytest.approx(
+        0.805, abs=1e-3)
+
+
 def test_la_grille_du_depot_reecrite_redonne_la_page(parametres):
     """Les pseudo-caisses et la grille simulée à part donnent la page au
     millième : la mesure ne mesure rien d'autre que la grille."""
