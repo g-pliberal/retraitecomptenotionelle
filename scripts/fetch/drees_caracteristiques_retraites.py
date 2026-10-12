@@ -60,8 +60,9 @@ quintiles redonnent l'effectif, et chacun compte un cinquième des retraités.
 Le jeu porte la même feuille pour les seuls RÉSIDENTS en France, dans le
 classeur qui leur est propre, et le récupérateur la lit aussi : la population
 de la page ne compte que des résidents, et c'est contre eux qu'elle se mesure.
-Il y lit, de plus, la durée validée majorations comprises, la durée cotisée et
-la part des départs avec décote.
+Il y lit, de plus, la durée validée majorations comprises, la durée cotisée,
+la part des départs avec décote, et la part de chaque régime principal,
+monopensionnés et polypensionnés de deux régimes, une case vide se lisant zéro.
 """
 
 from __future__ import annotations
@@ -343,7 +344,18 @@ INDICATEURS_EQCC_RESIDENTS: dict[str, str] = {
     "duree_validee": "Moyenne de la durée validée (en années)",
     "duree_cotisee": "Moyenne de la durée cotisée (en années)",
     "part_decote": "Part de départ avec décote (en %)",
+    # Et le régime principal, quintile par quintile : la place de chaque
+    # régime, que la population confronte à la sienne.
+    **{code: libelle for code, libelle in INDICATEURS.items()
+       if code.startswith(("part_mono_", "part_poly_"))
+       and code not in ("part_poly_2_regimes", "part_poly_3_regimes")},
 }
+
+#: Les indicateurs dont une case vide se lit zéro : la part d'un régime dans
+#: un quintile où la DREES n'en compte aucun retraité — aucun militaire au
+#: premier quintile des hommes.
+VIDES_NULS_EQCC = tuple(code for code in INDICATEURS_EQCC_RESIDENTS
+                        if code.startswith(("part_mono_", "part_poly_")))
 
 
 def classeur_le_plus_recent(motif: re.Pattern = _TITRE) -> tuple[int, str, bytes]:
@@ -496,10 +508,12 @@ def lire_residence(contenu: bytes) -> dict[str, dict[str, dict[str, float]]]:
     return valeurs
 
 
-def lire_quintiles_eqcc(contenu: bytes, indicateurs: dict[str, str] = INDICATEURS_EQCC
+def lire_quintiles_eqcc(contenu: bytes, indicateurs: dict[str, str] = INDICATEURS_EQCC,
+                        vides_nuls: tuple[str, ...] = ()
                         ) -> dict[str, dict[str, dict[str, float]]]:
     """Les ``indicateurs`` de la feuille des quintiles en équivalent carrière
-    complète : colonne, indicateur, sexe.
+    complète : colonne, indicateur, sexe ; une case vide d'un indicateur de
+    ``vides_nuls`` se lit zéro.
 
     Les colonnes sont cherchées par leur en-tête exact, les indicateurs par le
     début de leur libellé, à sa première occurrence. Ce qui est lu se vérifie :
@@ -536,9 +550,12 @@ def lire_quintiles_eqcc(contenu: bytes, indicateurs: dict[str, str] = INDICATEUR
                 continue
             for quintile, colonne in colonnes.items():
                 valeur = grille.get((ligne, colonne))
-                if (isinstance(valeur, (int, float))
-                        and sexe not in valeurs[quintile][code]):
+                if sexe in valeurs[quintile][code]:
+                    continue
+                if isinstance(valeur, (int, float)):
                     valeurs[quintile][code][sexe] = float(valeur)
+                elif code in vides_nuls and str(valeur if valeur is not None else "").strip() == "":
+                    valeurs[quintile][code][sexe] = 0.0
     manquants = [f"{quintile}/{code}" for quintile, serie in valeurs.items()
                  for code, parsexe in serie.items() if len(parsexe) < 3]
     if manquants:
@@ -592,7 +609,8 @@ def main() -> int:
         "quintiles_eqcc": lire_quintiles_eqcc(contenu),
         "fichier_residents": titre_residents,
         "quintiles_eqcc_residents": lire_quintiles_eqcc(residents,
-                                                        INDICATEURS_EQCC_RESIDENTS),
+                                                        INDICATEURS_EQCC_RESIDENTS,
+                                                        VIDES_NULS_EQCC),
     }
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(

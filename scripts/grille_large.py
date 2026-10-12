@@ -266,6 +266,14 @@ GROUPES: dict[str, tuple[tuple[str, ...], tuple[str, ...]]] = {
 GROUPES_MELES = ("fonction_publique_etat_civile", "cnracl", "regimes_speciaux",
                  "msa_non_salaries", "professions_liberales")
 
+#: L'intitulé de chaque groupe, à l'impression.
+INTITULES_GROUPES = {"regime_general": "régime général",
+                     "fonction_publique_etat_civile": "État, civils",
+                     "fonction_publique_etat_militaire": "État, militaires",
+                     "cnracl": "CNRACL", "regimes_speciaux": "régimes spéciaux",
+                     "msa_non_salaries": "MSA non-salariés",
+                     "professions_liberales": "professions libérales"}
+
 #: Les groupes où une carrière peut être courte. Les autres sont des carrières
 #: STATUTAIRES — une pension qui s'ouvre à une durée de services ou à un âge
 #: d'emploi —, et l'EIR range leurs retraités dans les trois quintiles du haut ;
@@ -2115,7 +2123,8 @@ def quintiles_ponderes(lignes: list[tuple]) -> dict:
     quintile, celui des retraités au minimum, et celui de leur proratisation.
     ``lignes`` : ``(pension, poids, sexe, tranche)``, et en cinquième, s'il y
     est, le minimum, en sixième la proratisation, en septième les années
-    validées. Une ligne à cheval sur une borne va au quintile de son milieu."""
+    validées, en huitième le groupe. Une ligne à cheval sur une borne va au
+    quintile de son milieu."""
     tries = sorted(lignes, key=lambda ligne: ligne[0])
     total = somme_ordonnee(ligne[1] for ligne in tries)
     bornes: list[float] = []
@@ -2123,6 +2132,7 @@ def quintiles_ponderes(lignes: list[tuple]) -> dict:
     minima: dict[str, list[float]] = {}
     proratisees: dict[str, list[float]] = {}
     validees: dict[str, list[float]] = {}
+    groupes: dict[str, dict[str, list[float]]] = {}
     cumul = 0.0
     for ligne in tries:
         montant, poids, sexe, tranche = ligne[:4]
@@ -2141,8 +2151,11 @@ def quintiles_ponderes(lignes: list[tuple]) -> dict:
             if len(ligne) > 6:
                 validees.setdefault(cle, [0.0] * len(QUINTILES_EQCC))[rang] += (
                     poids * ligne[6])
+            if len(ligne) > 7:
+                groupes.setdefault(cle, {}).setdefault(
+                    ligne[7], [0.0] * len(QUINTILES_EQCC))[rang] += poids
     return {"bornes": bornes, "masses": masses, "minima": minima,
-            "proratisees": proratisees, "validees": validees}
+            "proratisees": proratisees, "validees": validees, "groupes": groupes}
 
 
 def confronter_eqcc(lignes: list[tuple], quintiles: dict) -> dict:
@@ -2150,8 +2163,10 @@ def confronter_eqcc(lignes: list[tuple], quintiles: dict) -> dict:
     du sexe dans chaque quintile de la pension en équivalent carrière complète,
     celle de chaque tranche de durée qui tombe dans le premier, celle des
     retraités au minimum dans chaque quintile — l'EIR, au minimum de leur régime
-    principal —, leur proratisation et, là où l'EIR la publie, leur durée
-    validée, majorations comprises."""
+    principal —, leur proratisation et, là où l'EIR les publie, leur durée
+    validée, majorations comprises, et la place de chaque groupe — la part de
+    ses retraités dans chaque quintile, monopensionnés et polypensionnés de
+    deux régimes dont c'est le régime principal."""
     rangees = quintiles_ponderes(lignes)
     sortie: dict = {"bornes": rangees["bornes"]}
     for sexe in ("F", "H"):
@@ -2200,7 +2215,35 @@ def confronter_eqcc(lignes: list[tuple], quintiles: dict) -> dict:
                                                   sexe, [None] * len(QUINTILES_EQCC)),
                                               par_quintile)],
                         "duree_validee_eir": [quintiles.get((q, "duree_validee", sexe))
-                                              for q in QUINTILES_EQCC]}
+                                              for q in QUINTILES_EQCC],
+                        "groupes": places_des_groupes(rangees["groupes"].get(sexe, {}),
+                                                      quintiles, sexe)}
+    return sortie
+
+
+def places_des_groupes(masses: dict[str, list[float]], quintiles: dict,
+                       sexe: str) -> dict[str, dict[str, list[float]]]:
+    """La part des retraités de chaque groupe dans chaque quintile, celle de
+    la grille et celle de l'EIR, là où il publie le régime principal
+    (``quintiles_eqcc_residents.csv``) : ses monopensionnés et ses
+    polypensionnés de deux régimes, aux effectifs de chaque quintile."""
+    sortie = {}
+    for groupe, (indicateurs, _) in GROUPES.items():
+        publies = [quintiles[(q, "effectifs", sexe)] * somme_ordonnee(
+                       quintiles[(q, f"part_{statut}_{indicateur}", sexe)]
+                       for statut in ("mono", "poly") for indicateur in indicateurs)
+                   if all((q, f"part_{statut}_{indicateur}", sexe) in quintiles
+                          for statut in ("mono", "poly") for indicateur in indicateurs)
+                   else None
+                   for q in QUINTILES_EQCC]
+        siennes = masses.get(groupe)
+        if siennes is None or any(p is None for p in publies):
+            continue
+        total, tous = somme_ordonnee(siennes), somme_ordonnee(publies)
+        if not total or not tous:
+            continue
+        sortie[groupe] = {"grille": [m / total for m in siennes],
+                          "eir": [p / tous for p in publies]}
     return sortie
 
 
@@ -2225,7 +2268,8 @@ def eqcc(parametres: Parametres, variantes: list[Variante], tetes: GrilleEnTetes
             continue
         v = par_code[pensionne.code]
         lignes.append((montant / coefficient, poids, v.cas.sexe,
-                       tranche_de_duree(duree_de(v)), minimum, coefficient, annees))
+                       tranche_de_duree(duree_de(v)), minimum, coefficient, annees,
+                       v.groupe))
         durees.append((pensionne.generation, v.cas.sexe, annees, poids))
     sortie = confronter_eqcc(lignes, quintiles)
     sortie["durees"] = durees_par_generation(
@@ -2418,6 +2462,19 @@ def imprimer_eqcc(resultat: dict) -> None:
                 print(f"{'  ' + nom:16}" + "".join(
                     f"{d:>8.1f}" if d is not None else f"{'—':>8}"
                     for d in mesure[sexe]["duree_validee"]))
+    if all(premiere[sexe]["groupes"] for sexe in ("F", "H")):
+        print("\nLa place de chaque régime, quintile par quintile — la part de ses "
+              "retraités dans chaque quintile ; l'EIR, ses monopensionnés et ses "
+              "polypensionnés de deux régimes")
+        for sexe in ("F", "H"):
+            print(f"\n{INTITULES_SEXES[sexe]:30}" + "".join(f"{q:>8}" for q in QUINTILES_EQCC))
+            for nom, mesure in lues:
+                for groupe, place in mesure[sexe]["groupes"].items():
+                    intitule = INTITULES_GROUPES.get(groupe, groupe)
+                    print(f"{'  ' + intitule + ', EIR':30}" + "".join(
+                        f"{p * 100:>7.1f}%" for p in place["eir"]))
+                    print(f"{'  ' + intitule + ', ' + nom:30}" + "".join(
+                        f"{p * 100:>7.1f}%" for p in place["grille"]))
     print("\nLa durée validée, génération par génération, en années — l'EIR, la durée "
           "d'assurance des résidents, majorations comprises ; la part de chaque génération")
     for sexe in ("F", "H"):

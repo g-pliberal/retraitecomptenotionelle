@@ -2543,10 +2543,10 @@ def source_quintiles_eqcc_residents() -> dict[tuple, float]:
 
     Le classeur des résidents du même jeu et du même millésime, feuille
     « QuintilesEQCC » : les mêmes indicateurs que ``source_quintiles_eqcc``,
-    et trois de plus — la durée validée majorations comprises, la durée
-    cotisée, la part des départs avec décote. La population de la page ne
-    compte que des résidents : c'est contre eux qu'elle se mesure (action 136,
-    étape 6).
+    et d'autres — la durée validée majorations comprises, la durée cotisée,
+    la part des départs avec décote, la part de chaque régime principal. La
+    population de la page ne compte que des résidents : c'est contre eux
+    qu'elle se mesure (action 136, étape 6).
     """
     charge = _lire_json(
         "drees_caracteristiques_retraites.json",
@@ -7011,10 +7011,14 @@ CERTIFICATIONS = (
             "# pension_droit_direct et pension_droit_direct_majorations ;",
             "# part_minimum_pension_regime_principal ;",
             "# duree_validee_hors_majoration, que le classeur intitule « durée",
-            "# cotisée hors majoration », et ses cinq tranches —, et trois de",
-            "# plus : duree_validee, majorations comprises ; duree_cotisee ;",
-            "# part_decote, la part des départs avec décote, en pour cent des",
-            "# retraités du quintile.",
+            "# cotisée hors majoration », et ses cinq tranches —, et d'autres :",
+            "# duree_validee, majorations comprises ; duree_cotisee ;",
+            "# part_decote, la part des départs avec décote ; part_mono_<régime>",
+            "# et part_poly_<régime>, la part des monopensionnés et des",
+            "# polypensionnés de deux régimes de base dont c'est le régime",
+            "# principal, aux codes de caracteristiques_retraites.csv — en pour",
+            "# cent des retraités du quintile. Une case vide du classeur s'y lit",
+            "# zéro : aucun militaire au premier quintile des hommes.",
             "#",
             "# À QUOI CETTE SÉRIE SERT",
             "# ------------------------",

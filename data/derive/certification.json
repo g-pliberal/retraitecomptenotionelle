@@ -1190,14 +1190,14 @@
    "verifiee_le": "2026-10-12"
   },
   "quintiles_eqcc_residents": {
-   "ajoutees": 252,
+   "ajoutees": 288,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "651d329d9b6b188f",
-   "identiques": 0,
+   "empreinte": "9f2c235f1083598c",
+   "identiques": 252,
    "niveau": "certifiee",
    "source": "DREES, échantillon interrégimes de retraités (EIR)",
-   "valeurs": 252,
+   "valeurs": 540,
    "verifiee_le": "2026-10-12"
   },
   "quotients_mortalite": {
