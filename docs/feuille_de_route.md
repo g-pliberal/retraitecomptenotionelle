@@ -5386,15 +5386,15 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 ### 136. Ce qu'OpenFisca fait mieux que le dépôt : deux règles, un oracle borné aux carrières simples, la trace d'un calcul, une population — `en cours`
 
 **Reprise, au 12 octobre 2026.** Fait : l'étape 6, sa première moitié, et, de
-la seconde, ses données certifiées et sept versions de la population, mesurées
-à côté de la page (`grille_large.py --grille population`). La DG Trésor confirme
-le niveau du bas, que le resserrement en carrière porte ; le minimum contributif
-de 2023 reste à 13,6 % (EACR 18,8), et manque au deuxième quintile de la pension
-en équivalent carrière complète, où la sixième version a payé trop haut les
-longues carrières au minimum. Reste : le rang selon la durée, corrigé du minimum ;
-les pensions des femmes, trop hautes, et des hommes, trop basses ; la bascule, au
-propriétaire ; de l'étape 3, la surcotisation et l'oracle ; les étapes 1, 2, 4
-et 5. Le détail : les notes du 12 octobre, la dernière sur le niveau du bas.
+la seconde, ses données certifiées et huit versions de la population, mesurées
+à côté de la page (`grille_large.py --grille population`). La huitième lit au
+premier quintile le rang des retraités au minimum : les carrières courtes de
+femmes s'y rapprochent de l'EIR, mais le minimum contributif de 2023 reste à
+13,6 % (EACR 18,8) ; essayé dessus, le volume de travail selon le rang le porte
+à 17,2. Reste : ce volume, remesuré avec les pensions, celles des hommes trop
+basses, celles des femmes trop hautes ; la bascule, au propriétaire ; de
+l'étape 3, la surcotisation et l'oracle ; les étapes 1, 2, 4 et 5. Le détail :
+les notes du 12 octobre, la dernière sur la huitième version.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais que tu analyses ce qu'on fait
 moins bien que openfisca pensions et que tu ajoutes une action sur ce sujet
