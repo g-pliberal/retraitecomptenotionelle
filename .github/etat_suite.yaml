@@ -1,6 +1,10 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: f14ea8b973fb0419ac7835ac406cbfc4c2e4969e
-date: 2026-10-12T22:18:38Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38314860137
+etat: rouge
+sources: 2e35ab9c607d21353ac1ab9296208a18e895dc97
+date: 2026-10-12T22:59:51Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38318744288
+echecs:
+  - "FAILED tests/test_age_conjoncturel.py::test_la_grille_ne_part_pas_plus_tard_que_la_france_reelle - assert 0.06752631578947368 <= 0.0"
+  - "FAILED tests/test_proposition_prospective.py::test_l_accueil_cite_le_solde_de_la_variante_prospective - assert -3.0 == -3.1"
+  - "FAILED tests/test_solde_fusion.py::test_l_accueil_cite_le_solde_la_dette_et_le_coefficient_du_cout_par_defaut - AssertionError: assert -0.8 == -0.9"
