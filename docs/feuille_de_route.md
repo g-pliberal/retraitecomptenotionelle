@@ -5386,15 +5386,15 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 ### 136. Ce qu'OpenFisca fait mieux que le dépôt : deux règles, un oracle borné aux carrières simples, la trace d'un calcul, une population — `en cours`
 
 **Reprise, au 12 octobre 2026.** Fait : l'étape 6, sa première moitié, et, de
-la seconde, ses données certifiées et onze versions de la population, mesurées
-à côté de la page (`grille_large.py --grille population`). Le bas des femmes
-n'est pas trop haut par année validée, il manque de générations : la
-population donne à toutes les mêmes carrières, 34,7 années, quand l'EIR monte
-de 33,8 autour de 1940 à 38,2 autour de 1950. Reste : les carrières des
-femmes selon la génération, calées sur l'EIR ; le minimum selon la génération ;
-la bascule, au propriétaire ; de l'étape 3, la surcotisation et l'oracle ; les
-étapes 1, 2, 4 et 5. Le détail : les notes du 12 octobre, la dernière sur le
-bas des femmes.
+la seconde, ses données certifiées et douze versions de la population,
+mesurées à côté de la page (`grille_large.py --grille population`). Les
+carrières des femmes suivent désormais leur génération, à la durée de l'EIR ;
+leur pension de 2020 s'éloigne de celle de l'EIR, trop haute par année validée
+au deuxième quintile, où l'EIR compte 60 % de femmes au minimum, la population
+18. Reste : ce deuxième quintile ; le minimum selon la génération ; la
+bascule, au propriétaire ; de l'étape 3, la surcotisation et l'oracle ; les
+étapes 1, 2, 4 et 5. Le détail : les notes du 12 octobre, la dernière sur la
+douzième version.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais que tu analyses ce qu'on fait
 moins bien que openfisca pensions et que tu ajoutes une action sur ce sujet
