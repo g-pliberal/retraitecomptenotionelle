@@ -410,16 +410,36 @@ def test_chaque_classe_travaille_le_volume_de_sa_categorie(simulateur, source, p
 
 
 def test_les_carrieres_courtes_de_la_population_sont_celles_de_tous(simulateur, source):
-    """Les régimes statutaires n'ayant que des carrières entières, les autres
-    portent d'autant plus de carrières courtes : sur tous les retraités de
-    chaque sexe, la population redonne la part que l'EIR donne aux carrières
-    de moins de trente années validées."""
+    """Les régimes statutaires n'ayant pas de carrières courtes, les autres en
+    portent d'autant plus : sur tous les retraités de chaque sexe, le militaire
+    et ses vingt-cinq années compris, la population redonne la part que l'EIR
+    donne aux carrières de moins de trente années validées."""
     variantes = G.grille("population", simulateur.effectifs, source, ())
     composition = G.composition(variantes, simulateur.effectifs, source)
     publiee = G.composition_eir(source)
     for sexe in ("F", "H"):
         assert composition["moins_de_30_ans"][sexe] == pytest.approx(
             publiee["moins_de_30_ans"][sexe], abs=1e-9), sexe
+
+
+def test_les_carrieres_statutaires_comptent_a_leur_duree(simulateur, source):
+    """Sous ``STATUTAIRES_A_LEUR_DUREE``, la population redonne à tous les
+    retraités de chaque sexe la part de CHAQUE tranche de durée que l'EIR
+    publie : les carrières statutaires dans la tranche de leur durée — le
+    militaire à vingt-cinq ans, l'agent de conduite à trente-deux —, les autres
+    dans celle qui leur est donnée."""
+    assert G.STATUTAIRES_A_LEUR_DUREE
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    poids = G.poids_retraites(variantes, simulateur.effectifs, source.millesime)
+    for sexe in ("F", "H"):
+        lot = [(v, p) for v, p in zip(variantes, poids) if v.cas.sexe == sexe]
+        total = sum(p for _, p in lot)
+        publiees = G.parts_tranches(source, sexe)
+        for nom, _ in G.TRANCHES:
+            masse = sum(p for v, p in lot
+                        if (v.tranche if v.groupe in G.GROUPES_INTERROMPUS
+                            else G.tranche_de_duree(G.duree_de(v))) == nom)
+            assert masse / total == pytest.approx(publiees[nom], abs=1e-9), (sexe, nom)
 
 
 def test_des_annees_etalees_tombent_au_milieu_de_parts_egales():

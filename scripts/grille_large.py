@@ -158,7 +158,10 @@ l'EIR trouve au minimum au premier quintile, et non au leur
 (:data:`MINIMUM_AU_PREMIER_QUINTILE`) : leur quintile dit le minimum, non
 leur salaire. La neuvième (le même jour) embraye le volume selon le rang
 (:data:`VOLUME_SELON_LE_RANG`), que la quatrième laissait en variante : les
-classes du bas travaillent moins d'heures dans l'année que celles du haut.
+classes du bas travaillent moins d'heures dans l'année que celles du haut. La
+dixième (le même jour) compte chaque carrière statutaire dans la tranche de
+sa durée, et non dans la plus longue (:data:`STATUTAIRES_A_LEUR_DUREE`) : les
+autres groupes ne portent plus seuls la tranche de trente à quarante ans.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -358,6 +361,17 @@ PLANCHER_SMIC = True
 #: tous, et la population de 2020 comptait 26,9 % de femmes sous trente
 #: années validées, pour 33,7 % dans l'EIR.
 COURTES_A_LA_PART_DE_TOUS = True
+
+#: Les carrières statutaires à leur durée : sous
+#: :data:`COURTES_A_LA_PART_DE_TOUS`, chacune compte dans la tranche de sa
+#: durée — le militaire, 25 ans ; l'agent de conduite, 32 ; le fonctionnaire
+#: actif, 35 ; l'agent des IEG, 36 —, et non toutes dans la plus longue ; les
+#: autres groupes complètent chaque tranche jusqu'à la part que l'EIR donne à
+#: tous les retraités du sexe. Tenues pour entières, elles laissaient aux
+#: autres groupes la tranche de trente à quarante ans de tous : la neuvième
+#: version comptait 32,8 % d'hommes de trente à quarante années, pour 22,0 %
+#: dans l'EIR, et 51,5 % à quarante et plus, pour 66,5 %.
+STATUTAIRES_A_LEUR_DUREE = True
 
 #: Les carrières courtes, ÉTALÉES sur la vie active : les années validées d'une
 #: tranche courte, régulièrement espacées de l'âge d'entrée du cas type à
@@ -1228,12 +1242,25 @@ def parts_tranches_de_tous(variantes: list[Variante], effectifs,
                            sexe: str) -> dict[str, float]:
     """Les parts des tranches de durée, hors des régimes statutaires, qui
     redonnent à TOUS les retraités du sexe celles de l'EIR : les régimes
-    statutaires n'ayant que des carrières entières, les autres portent
-    d'autant plus de carrières courtes."""
+    statutaires n'ayant pas de carrières courtes, les autres en portent
+    d'autant plus. Sous :data:`STATUTAIRES_A_LEUR_DUREE`, chaque carrière
+    statutaire compte dans la tranche de sa durée, et les autres groupes
+    complètent chaque tranche ; sinon, elles comptent toutes dans la plus
+    longue."""
     poids = poids_retraites(variantes, effectifs, source.millesime)
     siens = [(v, p) for v, p in zip(variantes, poids) if v.cas.sexe == sexe]
     total = somme_ordonnee(p for _, p in siens)
     hors = somme_ordonnee(p for v, p in siens if v.groupe not in GROUPES_INTERROMPUS)
+    if STATUTAIRES_A_LEUR_DUREE:
+        statutaires = {nom: 0.0 for nom, _ in TRANCHES}
+        for v, p in siens:
+            if v.groupe not in GROUPES_INTERROMPUS:
+                statutaires[tranche_de_duree(duree_de(v))] += p
+        publiees = parts_tranches(source, sexe)
+        restes = {nom: max(0.0, publiees[nom] * total - statutaires[nom])
+                  for nom, _ in TRANCHES}
+        somme = somme_ordonnee(restes.values())
+        return {nom: reste / somme for nom, reste in restes.items()}
     facteur = total / (total - hors)
     courtes = {nom: part * facteur for nom, part in parts_tranches(source, sexe).items()
                if nom != "40_plus"}
@@ -1517,7 +1544,7 @@ def composition(variantes: list[Variante], effectifs, source: CaracteristiquesRe
         duree[sexe] = somme_ordonnee(p * (v.duree if v.duree is not None
                                else v.cas.age_liquidation - v.cas.age_debut)
                           for v, p in lot) / masse
-        courtes[sexe] = somme_ordonnee(p for v, p in lot if v.duree is not None and v.duree < 30) / masse
+        courtes[sexe] = somme_ordonnee(p for v, p in lot if duree_de(v) < 30) / masse
     groupes = {}
     for v, p in zip(variantes, poids):
         groupes[v.groupe] = groupes.get(v.groupe, 0.0) + p / total
