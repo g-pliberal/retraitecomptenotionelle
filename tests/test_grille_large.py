@@ -249,12 +249,12 @@ def test_une_carriere_resserre_la_coupe_sans_toucher_a_sa_moyenne():
 def test_un_temps_complet_ne_se_paie_pas_sous_le_smic(simulateur, source):
     """Le salariat privé dont le rang tombe sous le Smic, l'année où sa
     génération a quarante-cinq ans, est payé le Smic de chaque année ; au-dessus,
-    son rang, et l'homme du dixième centile l'est toujours."""
+    son rang, et l'homme de la première sous-classe du bas l'est toujours."""
     variantes = G.grille("population", simulateur.effectifs, source, ())
     femme = next(v for v in variantes
-                 if v.cas.code == f"{G.GABARIT}~f~40_plus~p10").cas
+                 if v.cas.code == f"{G.GABARIT}~f~40_plus~p10~bas1").cas
     homme = next(v for v in variantes
-                 if v.cas.code == f"{G.GABARIT}~h~40_plus~p10").cas
+                 if v.cas.code == f"{G.GABARIT}~h~40_plus~p10~bas1").cas
     assert femme.au_smic(simulateur, 1940)
     assert not homme.au_smic(simulateur, 1940)
     carriere = femme.carriere_a(simulateur, 1940, 62)
@@ -275,6 +275,38 @@ def test_la_persistance_se_lit_dans_le_fichier_certifie(parametres):
     assert persistance["F"] == pytest.approx(13.3 / 59.5 * milieu)
 
 
+def test_le_reste_de_la_classe_du_bas_se_decline_en_sous_classes_de_rang(
+        simulateur, source, parametres):
+    """Sous ``SOUS_CLASSES_DU_BAS``, le reste de la classe du bas du salariat
+    privé — hors le Smic de toute une carrière — se décline en sous-classes de
+    poids égal, de plus en plus payées, dont la moyenne est celle du reste ;
+    leurs écarts sont ceux de la coupe, au logarithme la droite des deux
+    premiers centiles, resserrés comme les classes."""
+    assert G.SOUS_CLASSES_DU_BAS > 1
+    k = G.SOUS_CLASSES_DU_BAS
+    donnees = G.donnees_population(parametres.racine_donnees)
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    racine = f"{G.GABARIT}~f~40_plus~p10"
+    sous = [next(v for v in variantes if v.cas.code == f"{racine}~bas{i + 1}")
+            for i in range(k)]
+    poids = _poids(variantes, simulateur.effectifs, source.millesime)
+    assert len({round(poids[v.cas.code], 9) for v in sous}) == 1
+    reste = dict(donnees.reste_du_bas["F"])
+    for generation in (1950, 1965, 1975):
+        niveaux = [v.cas.niveau_de(generation) for v in sous]
+        assert niveaux == sorted(niveaux)
+        assert sum(niveaux) / k == pytest.approx(reste[generation], rel=1e-12)
+    valeurs = {(int(l["annee"]), l["sexe"], l["centile"]): float(l["salaire_relatif"])
+               for l in G._lire_macro(parametres.racine_donnees,
+                                      "dispersion_salaires_sexe.csv")}
+    forme = G.forme_de(valeurs, "F", 1965 + G.AGE_DU_RANG)
+    pente = math.log(valeurs[(forme, "F", "p25")] / valeurs[(forme, "F", "p10")]) / 0.15
+    largeur = (G.CENTILES[0][1] - donnees.persistants["F"]) / k
+    niveaux = [v.cas.niveau_de(1965) for v in sous]
+    assert niveaux[-1] / niveaux[0] == pytest.approx(
+        math.exp(G.DISPERSION_DE_CARRIERE * pente * largeur * (k - 1)), rel=1e-9)
+
+
 def test_la_coupe_s_interpole_au_logarithme_entre_ses_centiles():
     centiles = {"p10": 0.5, "p25": 0.6, "p50": 0.8}
     assert G.part_de_la_coupe_sous(0.5, centiles) == pytest.approx(0.10)
@@ -289,7 +321,7 @@ def test_la_coupe_s_interpole_au_logarithme_entre_ses_centiles():
 def test_une_part_du_bas_reste_au_smic_toute_la_carriere(simulateur, source, parametres):
     """Sous ``PERSISTANCE_SMIC``, une part du salariat privé de chaque sexe,
     prise dans sa classe du bas, est payée le Smic de chaque année ; le reste
-    de la classe en garde la moyenne."""
+    de la classe, décliné en sous-classes, en garde la moyenne."""
     donnees = G.donnees_population(parametres.racine_donnees)
     variantes = G.grille("population", simulateur.effectifs, source, ())
     for sexe in ("F", "H"):
@@ -302,9 +334,12 @@ def test_une_part_du_bas_reste_au_smic_toute_la_carriere(simulateur, source, par
     assert donnees.persistants["F"] > donnees.persistants["H"]
     homme = next(v for v in variantes
                  if v.cas.code == f"{G.GABARIT}~h~40_plus~p10~smic").cas
-    bas = next(v for v in variantes if v.cas.code == f"{G.GABARIT}~h~40_plus~p10").cas
+    bas = [v.cas for v in variantes
+           if v.cas.code.startswith(f"{G.GABARIT}~h~40_plus~p10~bas")
+           and not v.cas.code.endswith("~partiel")]
+    assert len(bas) == G.SOUS_CLASSES_DU_BAS
     generation = 1960
-    assert not bas.au_smic(simulateur, generation)
+    assert not any(cas.au_smic(simulateur, generation) for cas in bas)
     revenus = {ligne.annee: ligne.revenu
                for ligne in homme.carriere_a(simulateur, generation, 62).lignes}
     # 2000 à 2003 sont les années assimilées de la variante : sans salaire.
@@ -312,8 +347,9 @@ def test_une_part_du_bas_reste_au_smic_toute_la_carriere(simulateur, source, par
         part = G._par_generation(homme.volumes, annee - generation, 1.0)
         assert revenus[annee] == pytest.approx(simulateur.macro.smic_annuel(annee) * part)
     part, poids_du_bas = donnees.persistants["H"], G.CENTILES[0][1]
+    reste = sum(cas.niveau_de(generation) for cas in bas) / len(bas)
     moyenne = (part * homme.niveau_de(generation)
-               + (poids_du_bas - part) * bas.niveau_de(generation)) / poids_du_bas
+               + (poids_du_bas - part) * reste) / poids_du_bas
     assert moyenne == pytest.approx(G._par_generation(
         donnees.niveaux[("H", "p10")], generation, None))
 

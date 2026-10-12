@@ -150,7 +150,10 @@ l'échantillon interrégimes de cotisants date celles de tous les affiliés
 La sixième (le même jour) donne à chaque tranche de durée le rang de salaire
 que l'EIR lui mesure (:data:`RANG_SELON_LA_DUREE`) : les carrières courtes au
 bas de l'échelle, les longues au-dessus, la distribution de chaque sexe
-gardée.
+gardée. La septième (le même jour) affine le bas de l'échelle
+(:data:`SOUS_CLASSES_DU_BAS`) : le reste de la classe du bas se décline en
+sous-classes de rang, que le seuil du minimum contributif ne fait plus
+basculer d'un bloc.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -376,6 +379,19 @@ PERSISTANCE_SMIC = True
 
 #: Le voisinage du Smic, en multiple de lui : celui de la DG Trésor.
 SEUIL_VOISINAGE = 1.05
+
+#: Le bas de l'échelle, plus fin : le reste de la classe du bas — hors la part
+#: payée le Smic toute la carrière — se décline en autant de sous-classes de
+#: rang égales, chacune au niveau que la coupe de l'année donne au milieu de ses
+#: rangs, son écart resserré en carrière comme celui des classes
+#: (:func:`resserrer`), la moyenne du reste gardée (:func:`ecarts_du_bas`).
+#: Sous le dixième centile, la coupe se prolonge par la pente des deux premiers,
+#: comme dans :func:`part_de_la_coupe_sous` ; une sous-classe qui tombe sous le
+#: Smic y est payée (:data:`PLANCHER_SMIC`). La classe ne bascule plus entière
+#: d'un côté du seuil du minimum contributif : abaissé d'un dixième, le reste de
+#: la classe des hommes faisait passer leur part au minimum, en 2023, de 4,9 à
+#: 9,9 %. Un : le reste à un seul niveau.
+SOUS_CLASSES_DU_BAS = 4
 
 #: Le volume de travail : une année travaillée ne l'est pas toute — les
 #: entrées, les sorties, le chômage et les contrats courts la coupent. Chaque
@@ -656,7 +672,9 @@ class DonneesPopulation:
     (:data:`VOLUME_DE_TRAVAIL`) ; ``rangs`` : le volume relatif que chaque
     classe de centiles prend sous :data:`VOLUME_SELON_LE_RANG` ;
     ``quintiles`` : les quintiles de la pension en équivalent carrière
-    complète de l'EIR (:data:`RANG_SELON_LA_DUREE`).
+    complète de l'EIR (:data:`RANG_SELON_LA_DUREE`) ; ``ecarts_du_bas`` : les
+    niveaux relatifs des sous-classes du reste de la classe du bas
+    (:data:`SOUS_CLASSES_DU_BAS`).
     """
 
     niveaux: dict[tuple[str, str], tuple[tuple[int, float], ...]]
@@ -669,6 +687,7 @@ class DonneesPopulation:
     volumes: tuple[tuple[int, float], ...]
     rangs: dict[str, float]
     quintiles: dict[tuple[str, str, str], float]
+    ecarts_du_bas: dict[str, tuple[tuple[int, tuple[float, ...]], ...]]
 
 
 def resserrer(relatifs: dict[str, float], moyenne: float) -> dict[str, float]:
@@ -698,15 +717,53 @@ def niveaux_par_generation(valeurs: dict[tuple[int, str, str], float], sexe: str
     (:data:`ANNEES_ACTIVITE_PARTIELLE`), mais à la plus proche.
     """
     moyennes = sorted(a for a, s, c in valeurs if s == sexe and c == "moyenne")
-    formes = [a for a in moyennes if a not in ANNEES_ACTIVITE_PARTIELLE
-              and all((a, sexe, n) in valeurs for n, _ in CENTILES)]
     paires = []
     for annee in moyennes:
-        forme = min(formes, key=lambda candidate: (abs(candidate - annee), candidate))
+        forme = forme_de(valeurs, sexe, annee)
         relatifs = {n: valeurs[(forme, sexe, n)] / valeurs[(forme, sexe, "moyenne")]
                     for n, _ in CENTILES}
         niveaux = resserrer(relatifs, valeurs[(annee, sexe, "moyenne")])
         paires.append((annee - AGE_DU_RANG, niveaux[centile]))
+    return tuple(paires)
+
+
+def forme_de(valeurs: dict[tuple[int, str, str], float], sexe: str, annee: int) -> int:
+    """L'année dont la coupe donne sa forme à ``annee`` : la plus proche où
+    les sept centiles du sexe se publient, hors des années de l'activité
+    partielle (:data:`ANNEES_ACTIVITE_PARTIELLE`)."""
+    formes = [a for a, s, c in valeurs if s == sexe and c == "moyenne"
+              and a not in ANNEES_ACTIVITE_PARTIELLE
+              and all((a, sexe, n) in valeurs for n, _ in CENTILES)]
+    return min(formes, key=lambda candidate: (abs(candidate - annee), candidate))
+
+
+def ecarts_du_bas(valeurs: dict[tuple[int, str, str], float], sexe: str,
+                  persistants: float, sous_classes: int
+                  ) -> tuple[tuple[int, tuple[float, ...]], ...]:
+    """Les niveaux des sous-classes du reste de la classe du bas, rapportés à
+    celui du reste, génération par génération : leur moyenne vaut un
+    (:data:`SOUS_CLASSES_DU_BAS`).
+
+    Le reste couvre les rangs de la coupe de ``persistants`` au haut de la
+    classe ; chaque sous-classe en prend une part égale, au niveau que la coupe
+    de la forme de l'année (:func:`forme_de`) donne au milieu de ses rangs —
+    au logarithme, la droite des deux premiers centiles, prolongée sous le
+    premier —, son écart ramené à :data:`DISPERSION_DE_CARRIERE` fois le sien.
+    """
+    (bas, poids_du_bas), (second, _) = CENTILES[0], CENTILES[1]
+    rang_bas, rang_second = int(bas[1:]) / 100.0, int(second[1:]) / 100.0
+    largeur = (poids_du_bas - persistants) / sous_classes
+    milieux = [persistants + (k + 0.5) * largeur for k in range(sous_classes)]
+    centre = somme_ordonnee(milieux) / sous_classes
+    paires = []
+    for annee in sorted(a for a, s, c in valeurs if s == sexe and c == "moyenne"):
+        forme = forme_de(valeurs, sexe, annee)
+        pente = (math.log(valeurs[(forme, sexe, second)] / valeurs[(forme, sexe, bas)])
+                 / (rang_second - rang_bas))
+        bruts = [math.exp(DISPERSION_DE_CARRIERE * pente * (milieu - centre))
+                 for milieu in milieux]
+        moyenne = somme_ordonnee(bruts) / sous_classes
+        paires.append((annee - AGE_DU_RANG, tuple(brut / moyenne for brut in bruts)))
     return tuple(paires)
 
 
@@ -915,8 +972,12 @@ def donnees_population(racine: Path) -> DonneesPopulation:
             for g, niveau in niveaux[(sexe, bas)])
     au_smic = tuple((g, smic(g + AGE_DU_RANG)) for g, _ in niveaux[("F", bas)])
     volumes, rangs = volumes_de_travail(racine)
+    ecarts = {sexe: ecarts_du_bas(valeurs, sexe,
+                                  persistants[sexe] if PERSISTANCE_SMIC else 0.0,
+                                  SOUS_CLASSES_DU_BAS)
+              for sexe in ("F", "H")}
     return DonneesPopulation(niveaux, parts, par_generation, points, persistants,
-                             au_smic, reste, volumes, rangs, quintiles_eqcc(racine))
+                             au_smic, reste, volumes, rangs, quintiles_eqcc(racine), ecarts)
 
 
 def _part_eir(source: CaracteristiquesRetraites, groupe: str, sexe: str) -> float:
@@ -1215,7 +1276,9 @@ def salaires_population(variantes: list[Variante],
     :data:`RANG_SELON_LA_DUREE`, chaque tranche de durée prend les classes de
     centiles dans la proportion que l'EIR lui mesure
     (:func:`rangs_selon_la_duree`), et la part de sa classe du bas payée le
-    Smic toute la carrière la suit.
+    Smic toute la carrière la suit ; sous :data:`SOUS_CLASSES_DU_BAS`, le
+    reste de la classe du bas se décline en sous-classes de rang
+    (:func:`sous_classes_du_bas`).
     """
     rangs = (rangs_selon_la_duree(donnees.quintiles, parts_des_tranches(variantes))
              if RANG_SELON_LA_DUREE else {})
@@ -1242,20 +1305,38 @@ def salaires_population(variantes: list[Variante],
                            niveaux=donnees.niveaux[(cas.sexe, nom)],
                            plancher_smic=PLANCHER_SMIC, volumes=volumes)
             classes = [(rang, part)]
-            if PERSISTANCE_SMIC and nom == CENTILES[0][0]:
-                persistants = donnees.persistants[cas.sexe] * part / base
-                classes = [
-                    (replace(rang, niveaux=donnees.reste_du_bas[cas.sexe]),
-                     part - persistants),
-                    (replace(rang, code=f"{rang.code}~smic", niveaux=donnees.smic,
-                             persistante=True), persistants),
-                ]
+            if nom == CENTILES[0][0] and (PERSISTANCE_SMIC or SOUS_CLASSES_DU_BAS > 1):
+                persistants = (donnees.persistants[cas.sexe] * part / base
+                               if PERSISTANCE_SMIC else 0.0)
+                reste = (donnees.reste_du_bas[cas.sexe] if PERSISTANCE_SMIC
+                         else donnees.niveaux[(cas.sexe, nom)])
+                classes = sous_classes_du_bas(rang, reste, donnees.ecarts_du_bas[cas.sexe],
+                                              part - persistants)
+                if PERSISTANCE_SMIC:
+                    classes.append((replace(rang, code=f"{rang.code}~smic",
+                                            niveaux=donnees.smic, persistante=True),
+                                    persistants))
             for classe, poids in classes:
                 sortie.append(v.fois(poids * (1.0 - partiel), cas=classe))
                 sortie.append(v.fois(poids * partiel, cas=replace(
                     classe, code=f"{classe.code}~partiel", ages_partiel=AGES_PARTIEL,
                     quotites=donnees.quotites[cas.sexe])))
     return sortie
+
+
+def sous_classes_du_bas(rang: CasTypeLarge, reste: tuple[tuple[int, float], ...],
+                        ecarts: tuple[tuple[int, tuple[float, ...]], ...],
+                        poids: float) -> list[tuple[CasTypeLarge, float]]:
+    """Le reste de la classe du bas, de ce ``poids``, au niveau ``reste`` : en
+    une classe, ou décliné en sous-classes de poids égal (:data:`SOUS_CLASSES_DU_BAS`),
+    chacune à son écart génération par génération (:func:`ecarts_du_bas`)."""
+    if SOUS_CLASSES_DU_BAS <= 1:
+        return [(replace(rang, niveaux=reste), poids)]
+    par_generation = dict(ecarts)
+    return [(replace(rang, code=f"{rang.code}~bas{k + 1}",
+                     niveaux=tuple((g, niveau * par_generation[g][k]) for g, niveau in reste)),
+             poids / SOUS_CLASSES_DU_BAS)
+            for k in range(SOUS_CLASSES_DU_BAS)]
 
 
 def population(effectifs, source: CaracteristiquesRetraites,
