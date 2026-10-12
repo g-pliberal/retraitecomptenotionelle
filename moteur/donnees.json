@@ -15613,7 +15613,7 @@
 }
 },
 "certification":{
-"dernier_passage_le":"2026-10-11",
+"dernier_passage_le":"2026-10-12",
 "series":{
 "age_annulation_decote_openfisca":{"ajoutees":0,"colonne":"age","corrigees":0,"empreinte":"f44dd24f01ee5d98","identiques":8,"niveau":"haute","source":"OpenFisca-France-Pension, aad.yaml du régime général","valeurs":8,"verifiee_le":"2026-09-14"},
 "age_conjoncturel_depart":{"ajoutees":0,"colonne":"age","corrigees":0,"empreinte":"1a04519c9e9e0628","identiques":57,"niveau":"certifiee","source":"DREES, panorama « Les retraités et les retraites »","valeurs":57,"verifiee_le":"2026-09-21"},
@@ -15639,7 +15639,7 @@
 "verifiee_le":"2026-09-20"
 },
 "bonifications_jaune_taux":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"63be9fb4f7475a5b","identiques":75,"niveau":"certifiee","source":"Direction du budget, jaune pensions annexé au PLF 2026, tableaux A-7 et 50 (durées et proportions)","valeurs":75,"verifiee_le":"2026-09-20"},
-"caracteristiques_retraites":{"ajoutees":15,"colonne":"valeur","corrigees":0,"empreinte":"cf4d03030ccaca8c","identiques":105,"niveau":"certifiee","source":"DREES, échantillon interrégimes de retraités (EIR)","valeurs":120,"verifiee_le":"2026-10-05"},
+"caracteristiques_retraites":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"cf4d03030ccaca8c","identiques":120,"niveau":"certifiee","source":"DREES, échantillon interrégimes de retraités (EIR)","valeurs":120,"verifiee_le":"2026-10-12"},
 "carriere_longue":{"ajoutees":0,"colonne":"age_depart","corrigees":0,"empreinte":"3874767d2af11938","identiques":80,"niveau":"certifiee","source":"DILA, base LEGI, code de la sécurité sociale L. 351-1-1 et D. 351-1-1 (I et II)","valeurs":80,"verifiee_le":"2026-09-17"},
 "coefficient_minoration":{"ajoutees":0,"colonne":"coefficient","corrigees":0,"empreinte":"4b9bcbfdd6753594","identiques":76,"niveau":"certifiee","source":"DILA, base LEGI, code de la sécurité sociale R. 351-27","valeurs":76,"verifiee_le":"2026-09-17"},
 "comptes_retraite":{"ajoutees":0,"colonne":"part_pib","corrigees":0,"empreinte":"ec20cca8112cb3b5","identiques":48,"niveau":"haute","source":"COR, rapport annuel, comptes du système de retraite (rapports à la CCSS consolidés)","valeurs":48,"verifiee_le":"2026-10-06"},
@@ -15693,7 +15693,7 @@
 "employeur_public_sncf_avant_2007":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"f093d49ffbf5ef09","identiques":15,"niveau":"certifiee","source":"DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 8 II","valeurs":15,"verifiee_le":"2026-09-24"},
 "employeur_public_sncf_textes":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"1cd4a73db65abbc8","identiques":5,"niveau":"certifiee","source":"DILA, arrêtés annuels du taux T1 (base JORF) et décret n° 2007-1056 du 28 juin 2007, article 2 IV (base LEGI)","valeurs":5,"verifiee_le":"2026-09-22"},
 "engagements_retraite":{"ajoutees":0,"colonne":"part_pib","corrigees":0,"empreinte":"5e0e4e97aded5479","identiques":6,"niveau":"haute","source":"Eurostat, tableau supplémentaire sur les retraites du SEC 2010 (nasa_10_pens1, poste F63_LE)","valeurs":6,"verifiee_le":"2026-09-20"},
-"esperance_65_derivee":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"eb9ed5da75656a7a","identiques":28,"niveau":"haute","source":"dérivée des quotients INED de Vallin et Meslé","valeurs":28,"verifiee_le":"2026-10-10"},
+"esperance_65_derivee":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"eb9ed5da75656a7a","identiques":28,"niveau":"haute","source":"dérivée des quotients INED de Vallin et Meslé","valeurs":28,"verifiee_le":"2026-10-12"},
 "esperances_projetees":{"ajoutees":0,"colonne":"valeur","corrigees":508,"empreinte":"9344898fd5a7bd97","identiques":92,"niveau":"projetee","source":"INSEE, projections de population 2026, espérances publiées sous les quotients projetés","valeurs":600,"verifiee_le":"2026-10-07"},
 "esperances_vie":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"0ddd59a38e01cfd9","identiques":450,"niveau":"certifiee","source":"INSEE BDM (e0, e60) et OCDE DSD_HEALTH_STAT@DF_LE (e65)","valeurs":450,"verifiee_le":"2026-09-13"},
 "heures_salariees":{"ajoutees":200,"colonne":"heures","corrigees":0,"empreinte":"4a4fb580e1e753ef","identiques":0,"niveau":"certifiee","source":"INSEE et Dares, Emploi, chômage, revenus du travail 2024, dossier bas revenus salariaux","valeurs":200,"verifiee_le":"2026-10-11"},
@@ -15750,7 +15750,7 @@
 },
 "part_droits_derives":{"ajoutees":0,"colonne":"part","corrigees":0,"empreinte":"513a1110b9cd20e9","identiques":61,"niveau":"haute","source":"COR, compléments du rapport annuel de juin 2024, masses de pensions de droit direct et de droit dérivé","valeurs":61,"verifiee_le":"2026-10-05"},
 "pensions_droits":{"ajoutees":0,"colonne":"montant_meur","corrigees":0,"empreinte":"cff0ca2df0b52cad","identiques":10,"niveau":"certifiee","source":"DREES, Comptes de la protection sociale, postes E11-21.1 et E11-22.1","valeurs":10,"verifiee_le":"2026-09-19"},
-"pensions_residence":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"fa5346aba8cad5d3","identiques":126,"niveau":"certifiee","source":"DREES, échantillon interrégimes de retraités (EIR)","valeurs":126,"verifiee_le":"2026-10-05"},
+"pensions_residence":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"fa5346aba8cad5d3","identiques":126,"niveau":"certifiee","source":"DREES, échantillon interrégimes de retraités (EIR)","valeurs":126,"verifiee_le":"2026-10-12"},
 "persistance_smic":{"ajoutees":336,"colonne":"part","corrigees":0,"empreinte":"0d95129720d55220","identiques":0,"niveau":"certifiee","source":"DG Trésor, document de travail n° 2018/3 (panel DADS 2007-2013)","valeurs":336,"verifiee_le":"2026-10-11"},
 "pib_courant":{"ajoutees":0,"colonne":"pib_meur","corrigees":0,"empreinte":"209ce398e76b837a","identiques":77,"niveau":"certifiee","source":"INSEE BDM, idbank 011779992","valeurs":77,"verifiee_le":"2026-10-06"},
 "pib_nominal":{"ajoutees":0,"colonne":"variation_nominale","corrigees":0,"empreinte":"e4e5db4f2d0dabe0","identiques":76,"niveau":"certifiee","source":"INSEE BDM, idbank 011779992","valeurs":76,"verifiee_le":"2026-10-06"},
@@ -15772,6 +15772,7 @@
 "profil_salaire_categorie":{"ajoutees":0,"colonne":"salaire_relatif","corrigees":0,"empreinte":"fbaa827c59b5c3d8","identiques":20,"niveau":"certifiee","source":"INSEE Melodi, DS_DERA_PRIVE_ANNUEL (2024)","valeurs":20,"verifiee_le":"2026-10-05"},
 "profil_salaire_public":{"ajoutees":0,"colonne":"salaire_relatif","corrigees":0,"empreinte":"2b299744d82292e7","identiques":35,"niveau":"certifiee","source":"INSEE Melodi, DS_DERA_PUBLIC_ANNUEL (2023)","valeurs":35,"verifiee_le":"2026-10-05"},
 "profil_salaire_secteur":{"ajoutees":174,"colonne":"salaire_relatif","corrigees":0,"empreinte":"eda1bffba32bd3ca","identiques":0,"niveau":"certifiee","source":"Eurostat, earn_ses18_20 et earn_ses22_20 (France)","valeurs":174,"verifiee_le":"2026-09-19"},
+"quintiles_eqcc":{"ajoutees":198,"colonne":"valeur","corrigees":0,"empreinte":"117f92b4c8e984b5","identiques":0,"niveau":"certifiee","source":"DREES, échantillon interrégimes de retraités (EIR)","valeurs":198,"verifiee_le":"2026-10-12"},
 "quotients_mortalite":{"ajoutees":0,"colonne":"qx","corrigees":156,"empreinte":"196025dfc611db23","identiques":6694,"niveau":"certifiee","source":"Eurostat, décès par année de naissance et population au 1er janvier, quotients par génération convertis à l'âge exact","valeurs":6850,"verifiee_le":"2026-10-10"},
 "quotients_mortalite_anciens":{"ajoutees":0,"colonne":"qx","corrigees":0,"empreinte":"ccd29a507d00e837","identiques":18466,"niveau":"certifiee","source":"INED, tables de Vallin et Meslé, quotients du moment par âge","valeurs":18466,"verifiee_le":"2026-10-10"},
 "quotients_mortalite_projetes":{"ajoutees":24200,"colonne":"qx","corrigees":0,"empreinte":"ffae96fff6f0002d","identiques":0,"niveau":"projetee","source":"INSEE, projections de population 2026, quotients de l'hypothèse centrale convertis à l'âge exact","valeurs":24200,"verifiee_le":"2026-10-07"},
@@ -15786,7 +15787,7 @@
 "smic_horaire":{"ajoutees":0,"colonne":"smic_horaire","corrigees":0,"empreinte":"1e664f4810d8ce5f","identiques":20,"niveau":"certifiee","source":"DILA, base LEGI, décrets portant relèvement du salaire minimum de croissance","valeurs":20,"verifiee_le":"2026-09-17"},
 "structure_financement_regimes":{"ajoutees":0,"colonne":"part","corrigees":0,"empreinte":"d79e8592a3ac0fe8","identiques":930,"niveau":"haute","source":"COR, compléments du rapport annuel de juin 2024, projections détaillées par régime","valeurs":930,"verifiee_le":"2026-10-05"},
 "structure_ressources_retraite":{"ajoutees":0,"colonne":"part","corrigees":0,"empreinte":"22f206f06f991dc0","identiques":132,"niveau":"haute","source":"COR, rapport annuel, structure des ressources du système de retraite","valeurs":132,"verifiee_le":"2026-10-06"},
-"taux_cotisation_alignes":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"788c0e4df2673be1","identiques":512,"niveau":"haute","source":"la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre","valeurs":512,"verifiee_le":"2026-10-10"},
+"taux_cotisation_alignes":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"788c0e4df2673be1","identiques":512,"niveau":"haute","source":"la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre","valeurs":512,"verifiee_le":"2026-10-12"},
 "taux_cotisation_annuels":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"221f749af3a0886c","identiques":194,"niveau":"haute","source":"OpenFisca-France, barèmes datés de la cotisation vieillesse (cnav, artisans, commerçants, indépendants)","valeurs":194,"verifiee_le":"2026-09-15"},
 "taux_cotisation_avant_1967":{"ajoutees":132,"colonne":"valeur","corrigees":0,"empreinte":"a508951393a0aece","identiques":0,"niveau":"estimee","source":"COR d'après la Cnav, taux des assurances sociales 1945-1967 ; part vieillesse conventionnelle de 8,5/21","valeurs":132,"verifiee_le":"2026-09-14"},
 "taux_cotisation_journal_officiel":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"9c16ff1ba3178b7c","identiques":368,"niveau":"certifiee","source":"DILA, base LEGI, code de la sécurité sociale D. 242-4 et décret n° 81-1013 ; code rural D. 741-35 et décret n° 50-444","valeurs":368,"verifiee_le":"2026-09-15"},
@@ -15810,11 +15811,11 @@
 "niveau":"haute",
 "source":"OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
 "valeurs":29,
-"verifiee_le":"2026-10-10"
+"verifiee_le":"2026-10-12"
 },
 "valeurs_point_independants":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"3b912b67d18682a1","identiques":85,"niveau":"haute","source":"IPP, barèmes des régimes de retraite des indépendants","valeurs":85,"verifiee_le":"2026-09-13"},
 "valeurs_point_ircantec":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"08dba684ba1976e6","identiques":153,"niveau":"certifiee","source":"Caisse des dépôts, barèmes Ircantec (IRC_BAR_01 et IRC_BAR_02)","valeurs":153,"verifiee_le":"2026-10-05"},
-"valeurs_point_ircantec_publiees":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"7341e6669d5f7a9d","identiques":23,"niveau":"haute","source":"Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026","valeurs":23,"verifiee_le":"2026-10-10"},
+"valeurs_point_ircantec_publiees":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"7341e6669d5f7a9d","identiques":23,"niveau":"haute","source":"Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026","valeurs":23,"verifiee_le":"2026-10-12"},
 "valeurs_point_msa":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"6b9c64c70e7af64e","identiques":21,"niveau":"certifiee","source":"DILA, base LEGI, code rural D. 732-166","valeurs":21,"verifiee_le":"2026-09-17"},
 "valeurs_point_rafp":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"105e66ec7c4bbe5d","identiques":44,"niveau":"certifiee","source":"ERAFP, évolution des valeurs du point depuis la création du RAFP","valeurs":44,"verifiee_le":"2026-10-05"},
 "valeurs_point_rci_cnav":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"ac79db347e9e4d0e","identiques":6,"niveau":"haute","source":"Cnav, base de législation : barèmes du point RCI (circulaires Cnav 2023/33, 2024/36 et 2025/31)","valeurs":6,"verifiee_le":"2026-10-05"},
