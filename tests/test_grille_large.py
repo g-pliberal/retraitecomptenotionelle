@@ -212,9 +212,12 @@ def test_le_salariat_prive_a_les_salaires_de_son_sexe_et_de_son_temps(simulateur
     assert moyennes[(2000, "F")] < moyennes[(2000, "H")]
 
 
-def test_le_temps_partiel_reduit_le_revenu_de_25_a_49_ans(simulateur, source):
-    """Une carrière à temps partiel est, de 25 à 49 ans, celle de son jumeau à
-    temps complet à la quotité de sa génération, et la même ailleurs."""
+def test_le_temps_partiel_reduit_le_revenu_de_25_ans_au_depart(simulateur, source):
+    """Une carrière à temps partiel est, de 25 ans à son départ, celle de son
+    jumeau à temps complet à la quotité de sa génération, et la même avant :
+    sous ``PARTIEL_JUSQU_AU_DEPART``, les années d'après cinquante ans
+    n'entrent plus entières dans son salaire annuel moyen."""
+    assert G.PARTIEL_JUSQU_AU_DEPART
     variantes = G.grille("population", simulateur.effectifs, source, ())
     partiel = next(v for v in variantes
                    if v.cas.code == f"{G.GABARIT}~f~40_plus~p50~partiel").cas
@@ -227,10 +230,10 @@ def test_le_temps_partiel_reduit_le_revenu_de_25_a_49_ans(simulateur, source):
                for ligne in partiel.carriere_a(simulateur, generation, ages).lignes}
     pleins = {ligne.annee: ligne.revenu
               for ligne in complet.carriere_a(simulateur, generation, ages).lignes}
-    for annee in (generation + 25, generation + 37, generation + 49):
+    for annee in (generation + 25, generation + 37, generation + 49, generation + 50,
+                  generation + 61):
         assert revenus[annee] == pytest.approx(pleins[annee] * quotite)
-    for annee in (generation + 24, generation + 50):
-        assert revenus[annee] == pytest.approx(pleins[annee])
+    assert revenus[generation + 24] == pytest.approx(pleins[generation + 24])
 
 
 def test_une_carriere_resserre_la_coupe_sans_toucher_a_sa_moyenne():

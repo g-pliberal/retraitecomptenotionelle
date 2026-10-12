@@ -169,7 +169,10 @@ quarante-quatre années environ avant l'âge légal de leur génération
 même jour) fait suivre leur génération aux carrières incomplètes des femmes
 (:data:`DUREE_DES_FEMMES_SELON_LA_GENERATION`) : elles gagnent ou perdent, à
 chaque génération, les années qui portent la durée moyenne des femmes à celle
-que l'EIR mesure aux résidentes.
+que l'EIR mesure aux résidentes. La treizième (le même jour) garde le temps
+partiel jusqu'au départ (:data:`PARTIEL_JUSQU_AU_DEPART`), et non jusqu'à 49
+ans : les années d'après cinquante ans n'entrent plus entières dans le salaire
+annuel moyen des carrières à temps partiel.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -333,6 +336,19 @@ CENTILES_CADRES = ("p90", "p95", "p99")
 #: dit combien d'années une même personne passe à temps partiel, et le salaire
 #: annuel moyen ne retenant que les vingt-cinq meilleures, sa durée compte.
 AGES_PARTIEL = (25.0, 50.0)
+
+#: Le temps partiel jusqu'au départ : la carrière à temps partiel le reste de
+#: 25 ans à son départ, et non plus jusqu'à 49 ans seulement. L'INSEE publie
+#: aussi la part des 50 ans et plus, et elle est plus haute encore chez les
+#: femmes — 33,4 % en 2020, pour 25,8 de 25 à 49 ans ; 32,3 % en moyenne de
+#: 1975 à 2025, pour 25,4 (``temps_partiel.csv``). Le salaire annuel moyen ne
+#: retenant que les vingt-cinq meilleures années, une carrière rendue au temps
+#: complet à cinquante ans y comptait ses dernières années entières, et passait
+#: au-dessus du minimum contributif : une femme née en 1950, à carrière pleine
+#: et à temps partiel dans la classe médiane, touchait 964 € à son départ ; à
+#: temps partiel jusqu'au bout, le minimum la relève à 911 €. La part des
+#: carrières à temps partiel reste celle des 25 à 49 ans. La treizième version.
+PARTIEL_JUSQU_AU_DEPART = True
 
 #: L'âge auquel une génération lit la quotité de son temps partiel, dans la
 #: tranche des 25-54 ans.
@@ -1521,9 +1537,17 @@ def salaires_population(variantes: list[Variante],
             for classe, poids in classes:
                 sortie.append(v.fois(poids * (1.0 - partiel), cas=classe))
                 sortie.append(v.fois(poids * partiel, cas=replace(
-                    classe, code=f"{classe.code}~partiel", ages_partiel=AGES_PARTIEL,
+                    classe, code=f"{classe.code}~partiel", ages_partiel=ages_du_partiel(),
                     quotites=donnees.quotites[cas.sexe])))
     return sortie
+
+
+def ages_du_partiel() -> tuple[float, float]:
+    """Les âges du temps partiel d'une carrière à temps partiel : de 25 à 49
+    ans (:data:`AGES_PARTIEL`), ou de 25 ans à son départ
+    (:data:`PARTIEL_JUSQU_AU_DEPART`)."""
+    debut, fin = AGES_PARTIEL
+    return (debut, float(AGE_FIN_INACTIVITE + 1)) if PARTIEL_JUSQU_AU_DEPART else (debut, fin)
 
 
 def sous_classes_du_bas(rang: CasTypeLarge, reste: tuple[tuple[int, float], ...],
