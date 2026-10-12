@@ -107,7 +107,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 **Ce qui est hors de la page Coût.** La réversion, par exemple, pèse 10,4 % de la masse des prestations en 2024 (COR) : le modèle en calcule une pour une personne (scénario 1), mais la page Coût n'en connaît que cette part publiée, qu'elle ne calcule pas.
 
-**La feuille de route** compte 152 actions : 131 fait, 15 en cours, 3 à faire, 2 abandonnée, 1 archivée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
+**La feuille de route** compte 158 actions : 131 fait, 14 en cours, 9 à faire, 2 archivée, 2 abandonnée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
 
 ## 2. Ce qui ne va pas encore
 
@@ -277,7 +277,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 
 ## 3. Ce qui reste à faire, et par quoi commencer
 
-- **Les 15 actions en cours** de la feuille de route :
+- **Les 14 actions en cours** de la feuille de route :
   - 47. La garantie vieillesse est une avance : la reprise sur succession, sa règle et son chiffrage
   - 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026
   - 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait
@@ -287,7 +287,6 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger
   - 133. La retraite de base et ses complémentaires, sous le montant du système 1
   - 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats
-  - 136. Ce qu'OpenFisca fait mieux que le dépôt : deux règles, un oracle borné aux carrières simples, la trace d'un calcul, une population
   - 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation
   - 138. Meilleur en tous points : ce que les autres modèles font mieux, vérifié, puis repris
   - 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés
@@ -306,7 +305,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - Régime des auteurs et compositeurs lyriques (IRCEC) : 1 source(s) (mon_entreprise_artiste_auteur)
   - et 56 sources sans régime désigné.
 - **Les autres modèles** (§ 3.4) : 69 au registre (`data/reference/referents.yaml`) : 32 au code ouvert, 1 sur demande, 13 documenté(s) sans leur code, 23 non public(s). 12 ont déjà été confrontés au dépôt ou lui donnent des valeurs (Barèmes IPP, OpenFisca-France, OpenFisca-France-Pension, Destinie 2, TRAJECTOiRE, ANCETRE, Maquette globale de projection du COR, Maquette simplifiée du secrétariat général du COR, PRISME (Projection des Retraites, Simulations, Modélisation et Évaluations), modele-ti, modele-social, Les modèles de pension de l'OCDE), et 179 écarts y ont été trouvés. 15 sont à confronter au scénario 1 en premier, parce que leur code est ouvert, qu'ils ne l'ont jamais été et qu'ils ne dépendent d'aucune autre source du registre ; dans l'ordre du registre, qui range les administrations d'abord : `ines`, `legiretraite`, `edifis`, `saphir`, `modele_as`, `catala`, et 9 autres.
-- **Ce que les autres modèles font mieux** (action 138) : 283 points, lus chez 65 modèles : 149 à reprendre, 46 à trancher par le propriétaire (des choix du programme), 78 repris, 10 écartés. Les points à reprendre, par chantier de la feuille de route : 136.2 (1), 136.4 (5), 136.5 (1), 136.6 (1), 138.2 (18), 138.3 (24), 138.5 (6), 138.6 (3), 138.7 (15), 138.8 (1), 138.9 (1), 138.10 (9), 138.11 (13), 138.12 (12), 138.14 (13), 138.16 (1), 138.17 (1), 138.18 (17), 138.19 (7).
+- **Ce que les autres modèles font mieux** (action 138) : 283 points, lus chez 65 modèles : 149 à reprendre, 46 à trancher par le propriétaire (des choix du programme), 78 repris, 10 écartés. Les points à reprendre, par chantier de la feuille de route : 138.2 (18), 138.3 (24), 138.5 (6), 138.6 (3), 138.7 (15), 138.8 (1), 138.9 (1), 138.10 (9), 138.11 (13), 138.12 (12), 138.14 (13), 138.16 (1), 138.17 (1), 138.18 (17), 138.19 (7), 153.2 (1), 155.1 (1), 155.2 (1), 155.3 (3), 156.1 (1), 157.1 (1).
 - **Les fiches sans exemple officiel** : 145.
 - **Les domaines sans décision** (§ 8) : 103 fiches du droit réel qu'aucun des 5 univers de la proposition ne décide. 42 disent leur étape, et c'est une décision qui manque : `agirc_arrco_valeur_achat`, `assiette_minimale_independants`, `asv_medecins_ajustement`, `cci_paris_transfert_2006`, `cci_roubaix_transfert_1998`, `chomage_retraite_complementaire`, `compagnie_generale_eaux_transfert_1991`, `cotisation_maladie_des_non_residents`, `cotisation_maladie_pensions_complementaires`, `csg_des_pensions_selon_le_revenu`, `cumul_emploi_retraite_et_retraite_progressive`, `cumul_emploi_retraite_fonction_publique`, `droits_apres_la_premiere_pension`, `financement_chomage_complementaire`, `interpenetration_fonction_publique`, `ircantec_valeurs_point`, `limite_age_fonction_publique`, `limite_age_militaires`, `liquidation_regime_par_regime`, `liquidation_unique_regimes_alignes`, `maintien_en_fonctions_jusqu_a_70_ans`, `maintiens_en_fonctions_de_certains_corps`, `majoration_exceptionnelle_2023`, `majorations_forfaitaires_1972_1982`, `parlement_europeen_affiliation`, `pension_d_invalidite_substituee`, `plafond_limite_age_fonction_publique`, `prolongation_activite_carriere_incomplete`, `prolongation_activite_categorie_active`, `rafp_age_d_ouverture`, `rafp_compte_epargne_temps`, `rafp_cotisation_volontaire_outre_mer`, `rafp_gipa_hors_plafond`, `rco_points_gratuits_66`, `recul_limite_age_enfants`, `relevement_des_exploitants_2023`, `residence_et_minimum_vieillesse`, `retablissement_fonction_publique`, `retraite_progressive`, `retraite_proportionnelle_msa`, `services_passes_outre_mer`, `totalisation_des_periodes_etrangeres`. Les 61 autres ne disent pas encore leur étape, et une couche ne les atteint que par leur nom : la plupart sont des règles de la liquidation, que le compte notionnel remplace, et leur étape les rangera.
 - **Faire mûrir la carte** : 802 champs obligatoires manquent, à 114 fiches. Par champ :

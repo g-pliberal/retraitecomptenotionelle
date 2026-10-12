@@ -271,6 +271,10 @@ fichiers:
       # La même mesure, refaite le même jour sur les régimes alignés réunis, et
       # le complément moyen que l'EACR observe, en euros de 2023 (action 137).
       - "**Sur les régimes alignés réunis, et en euros, le 11 octobre 2026**"
+      # La population de l'action 136, arrêtée à sa première version : ses
+      # écarts aux résidents de l'EIR, ce qui lui manque, et ce qu'elle
+      # déplacerait sur la page, mesurés les 11 et 12 octobre 2026.
+      - "**La population, arrêtée le 12 octobre 2026**"
 
   docs/limites/5-ter-trajectoire.md:
     defaut: etat

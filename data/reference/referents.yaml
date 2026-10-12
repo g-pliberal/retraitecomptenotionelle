@@ -1409,7 +1409,7 @@ referents:
         preuve: >-
           ses 140 tests de formules (`tests/formulas/`), au commit `1c45423`
         etat: a_reprendre
-        chantier: "136.2"
+        chantier: "153.2"
       - quoi: >-
           Il rend, pour toute simulation, chaque variable calculée, sa valeur,
           et les variables et paramètres qu'elle a lus ; toute variable peut
@@ -1420,7 +1420,7 @@ referents:
           `openfisca test -v`, et `/trace` sur l'interface web
           d'openfisca-core
         etat: a_reprendre
-        chantier: "136.4"
+        chantier: "155.2"
       - quoi: >-
           Il calcule une population d'un coup, en vecteurs, et sa
           documentation dit l'avoir essayé sur les données de Destinie et sur
@@ -1435,7 +1435,7 @@ referents:
           `doc/Proposition.md:36, 141` (« Sont testés avec EIR 2012 Régime
           général et Arrco »), au commit `1c45423`
         etat: a_reprendre
-        chantier: "136.6"
+        chantier: "157.1"
       - quoi: >-
           `openfisca serve` expose `/calculate`, `/trace`, `/variables`,
           `/parameters` et une description OpenAPI (`/spec`) ; le paquet se
@@ -1448,7 +1448,7 @@ referents:
           intégration continue et son journal des changements, au commit
           `1c45423`
         etat: a_reprendre
-        chantier: "136.5"
+        chantier: "156.1"
       - quoi: >-
           Il écrit chaque règle une fois, dans un moteur Python que d'autres
           appellent ; le dépôt l'écrit deux fois, en Python (`src/`) et en
@@ -6216,7 +6216,7 @@ referents:
           vous conformer à l'obligation de transparence des algorithmes
           publics »
         etat: a_reprendre
-        chantier: "136.4"
+        chantier: "155.3"
       - quoi: >-
           Il calcule l'assiette sociale depuis le revenu brut :
           abattement de 26 % borné entre 1,76 % et 130 % du PASS,
@@ -6574,7 +6574,7 @@ referents:
           des résultats de calculs permet de vous conformer à l'obligation de
           transparence des algorithmes publics »
         etat: a_reprendre
-        chantier: "136.4"
+        chantier: "155.3"
       - quoi: >-
           Il porte le plafond de première tranche du RCI de 2021 à
           2025 (38 493, 38 916, 40 784, 42 946, 43 891 €). Le dépôt
@@ -6727,7 +6727,7 @@ referents:
           des résultats de calculs permet de vous conformer à l'obligation de
           transparence des algorithmes publics »
         etat: a_reprendre
-        chantier: "136.4"
+        chantier: "155.3"
       - quoi: >-
           Il décrit la fiche de paie du dirigeant assimilé salarié
           (président de SAS) : régime général et Agirc-Arrco, mais
@@ -6824,7 +6824,7 @@ referents:
           `aides_logement/code_sécurité_sociale.catala_fr:460-468`, au commit
           `2694b17` : l'alinéa, puis sa transcription
         etat: a_reprendre
-        chantier: "136.4"
+        chantier: "155.1"
       - quoi: >-
           Il recopie, décret par décret, le SMIC de Mayotte de 2019
           à novembre 2024 (7,57 € à 8,98 €) ; modele-social le

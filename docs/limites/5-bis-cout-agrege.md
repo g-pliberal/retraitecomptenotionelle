@@ -257,6 +257,29 @@ compense sa part par son gain : 108 € de 2023 avant le relèvement, et une mas
 de 27,7 €, 10 à 14 % au-dessus de l'observé, pour une part surestimée de près
 de sept points sur ce champ (registre des modèles, `trajectoire`).
 
+**La population, arrêtée le 12 octobre 2026** (`scripts/grille_large.py
+--grille population`, action 136, étape 6). Tirée des distributions publiées
+et certifiées — les durées, le temps partiel, la persistance au voisinage du
+Smic, les salaires de chaque sexe —, passée en quatorze versions les 11 et
+12 octobre, mesurée contre les résidents de l'EIR 2020, elle décline les cas
+types de la page sans en changer le niveau ; la page ne la lit pas. Contre
+l'enquête, elle garde des écarts : la pension moyenne des femmes, 1 349 € par
+mois pour 1 177, celle des hommes, 1 803 € pour 1 957 ; 16,7 % des hommes au
+minimum, pour 9,8 ; les militaires, la CNRACL et les exploitants agricoles
+trop bas dans les quintiles de la pension en équivalent carrière complète,
+les professions libérales trop haut — les niveaux des cas types statutaires
+et non salariés, que l'action 152 reprend. Deux choses lui manquent. Les
+départs avec décote : 8,8 % des résidentes sont parties avec une décote,
+17,5 % de celles du premier quintile, quand la population part au taux plein.
+Une part au minimum qui suive les générations : la neuvième version passait
+au-dessus de l'enquête annuelle auprès des caisses pour les liquidants
+d'avant 2017, en dessous depuis 2019, et la quatorzième porte au minimum
+contributif 15,3 % des liquidants de 2023, pour 18,8. Contre la page du jour,
+elle creuse l'écart des années observées de 1,38 point au scénario 2 et de
+3,11 aux scénarios 4 et 6, ajoute 0,046 point de PIB à la garantie vieillesse
+en 2070, et refait le passé à 17,2 % au pire depuis 2000, pour 16,6 sur la
+page. Sa bascule sur la page est l'action 157.
+
 **Ce qui, en revanche, n'est pas une approximation** : l'égalité des scénarios
 3 et 5 avec le système actuel sur toute la période observée. Elle est EXACTE, et
 au sens strict — le scénario prospectif recopie la pension du scénario actuel
