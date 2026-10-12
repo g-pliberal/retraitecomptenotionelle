@@ -1069,7 +1069,15 @@ institutions:
           effectifs, les pensions moyennes et les onze quantiles des retraités
           qui résident en France et de ceux qui résident à l'étranger. La
           garantie vieillesse, qui ne sert que les premiers, s'en sert pour
-          retirer les seconds de la distribution.
+          retirer les seconds de la distribution. Sa feuille « QuintilesEQCC »
+          aussi, depuis le 12 octobre 2026, écrite dans
+          data/reference/macro/quintiles_eqcc.csv : les retraités par quintile
+          de leur pension en équivalent carrière complète — la pension divisée
+          par la somme des coefficients de proratisation de leurs régimes de
+          base —, avec leurs effectifs, leur proratisation, leurs pensions,
+          leur part au minimum de pension et leurs tranches de durée validée
+          hors majorations. Elle dit ce qu'une carrière courte acquiert par
+          année validée (action 136, étape 6).
 
       - id: drees_age_conjoncturel
         titre: Âge conjoncturel moyen de départ à la retraite, selon le sexe

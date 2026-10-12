@@ -2507,6 +2507,36 @@ def source_pensions_residence() -> dict[tuple, float]:
     }
 
 
+def source_quintiles_eqcc() -> dict[tuple, float]:
+    """Les retraités selon le quintile de leur pension en équivalent carrière
+    complète.
+
+    Le même classeur que ``source_caracteristiques_retraites``, feuille
+    « QuintilesEQCC » : la pension de droit direct divisée par la somme des
+    coefficients de proratisation des régimes de base, la durée retirée. Pour
+    chaque quintile et l'ensemble, chaque sexe : les effectifs, la
+    proratisation et les pensions moyennes, la part au minimum de pension du
+    régime principal, la durée validée hors majorations et ses cinq tranches.
+    Ce qu'une carrière courte acquiert par année validée s'y lit (action 136,
+    étape 6).
+    """
+    charge = _lire_json(
+        "drees_caracteristiques_retraites.json",
+        "scripts/fetch/drees_caracteristiques_retraites.py",
+    )
+    if "quintiles_eqcc" not in charge:
+        raise SourceAbsente(
+            "drees_caracteristiques_retraites.json sans feuille des quintiles EQCC "
+            "(relancer scripts/fetch/drees_caracteristiques_retraites.py)")
+    annee = str(charge["millesime"])
+    return {
+        (annee, quintile, indicateur, sexe): valeur
+        for quintile, indicateurs in charge["quintiles_eqcc"].items()
+        for indicateur, serie in indicateurs.items()
+        for sexe, valeur in serie.items()
+    }
+
+
 def source_age_conjoncturel() -> dict[tuple, float]:
     """L'âge conjoncturel de départ à la retraite, par sexe, depuis 2004.
 
@@ -6866,6 +6896,60 @@ CERTIFICATIONS = (
             "# pension française moyenne est de 437 € brut par mois, parce que leur",
             "# carrière française a été courte. Les compter gonflait le coût de la",
             "# garantie d'un sixième environ.",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="quintiles_eqcc",
+        chemin=REFERENCE / "macro" / "quintiles_eqcc.csv",
+        cles=("annee", "quintile", "indicateur", "sexe"),
+        colonne="valeur",
+        source=source_quintiles_eqcc,
+        origine="DREES, échantillon interrégimes de retraités (EIR)",
+        decimales=1,
+        tolerance=0.05,
+        entete=(
+            "# Les retraités selon le quintile de leur pension en équivalent",
+            "# carrière complète",
+            "# source_id: drees_eir_caracteristiques",
+            "# unite: milliers de retraités (effectifs), pour cent (proratisation,",
+            "#        parts), euros bruts par mois (pensions), années (durée)",
+            "# fiabilite:",
+            "#   certifiee : feuille « QuintilesEQCC » du classeur « Caractéristiques",
+            "#             de tous les retraités » de l'EIR, diffusé par la DREES",
+            "#             et recontrôlé par scripts/verifier_donnees.py.",
+            "#",
+            "# `quintile` : q1 à q5, les quintiles de la pension de droit direct",
+            "# en équivalent carrière complète de tous les retraités, les deux",
+            "# sexes réunis, et ensemble — un retraité sur cent n'a pas de",
+            "# quintile, que l'ensemble compte. La pension en équivalent carrière",
+            "# complète est la pension divisée par la somme des coefficients de",
+            "# proratisation des régimes de base : « 950 / (20 % + 60 %) =",
+            "# 1 188 € » ; elle « neutralise l'effet de la proratisation » sans",
+            "# dire ce qu'aurait été la pension d'une carrière complète (DREES,",
+            "# Conseil d'orientation des retraites, séance du 24 novembre 2022).",
+            "# `indicateur` : effectifs ; coefficient_proratisation, moyen ;",
+            "# pension_droit_direct et pension_droit_direct_majorations, les deux",
+            "# moyennes de droit direct, sans et avec les majorations pour",
+            "# enfants ; part_minimum_pension_regime_principal ;",
+            "# duree_validee_hors_majoration, moyenne, que le classeur intitule",
+            "# « durée cotisée hors majoration » ; et ses cinq tranches,",
+            "# part_duree_validee_hors_majoration_moins_10 à _40_plus, en pour",
+            "# cent des retraités du quintile.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À dire ce qu'une carrière courte acquiert par année validée. La",
+            "# proratisation retirée, le quintile est celui du gain d'une année ;",
+            "# croisé avec les tranches de durée, il range les carrières courtes",
+            "# au bas de l'échelle : chez les femmes, le premier quintile compte",
+            "# 23,1 % de carrières de moins de dix années validées hors",
+            "# majorations, le dernier 0,4 %. La population de",
+            "# scripts/grille_large.py (action 136, étape 6) donne aux carrières",
+            "# courtes les salaires de tout leur sexe, à des années pleines : la",
+            "# série dit où elle devrait les ranger.",
             "#",
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",

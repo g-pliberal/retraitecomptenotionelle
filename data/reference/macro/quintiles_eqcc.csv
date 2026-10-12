@@ -1,0 +1,241 @@
+# Les retraités selon le quintile de leur pension en équivalent
+# carrière complète
+# source_id: drees_eir_caracteristiques
+# unite: milliers de retraités (effectifs), pour cent (proratisation,
+#        parts), euros bruts par mois (pensions), années (durée)
+# fiabilite:
+#   certifiee : feuille « QuintilesEQCC » du classeur « Caractéristiques
+#             de tous les retraités » de l'EIR, diffusé par la DREES
+#             et recontrôlé par scripts/verifier_donnees.py.
+#
+# `quintile` : q1 à q5, les quintiles de la pension de droit direct
+# en équivalent carrière complète de tous les retraités, les deux
+# sexes réunis, et ensemble — un retraité sur cent n'a pas de
+# quintile, que l'ensemble compte. La pension en équivalent carrière
+# complète est la pension divisée par la somme des coefficients de
+# proratisation des régimes de base : « 950 / (20 % + 60 %) =
+# 1 188 € » ; elle « neutralise l'effet de la proratisation » sans
+# dire ce qu'aurait été la pension d'une carrière complète (DREES,
+# Conseil d'orientation des retraites, séance du 24 novembre 2022).
+# `indicateur` : effectifs ; coefficient_proratisation, moyen ;
+# pension_droit_direct et pension_droit_direct_majorations, les deux
+# moyennes de droit direct, sans et avec les majorations pour
+# enfants ; part_minimum_pension_regime_principal ;
+# duree_validee_hors_majoration, moyenne, que le classeur intitule
+# « durée cotisée hors majoration » ; et ses cinq tranches,
+# part_duree_validee_hors_majoration_moins_10 à _40_plus, en pour
+# cent des retraités du quintile.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À dire ce qu'une carrière courte acquiert par année validée. La
+# proratisation retirée, le quintile est celui du gain d'une année ;
+# croisé avec les tranches de durée, il range les carrières courtes
+# au bas de l'échelle : chez les femmes, le premier quintile compte
+# 23,1 % de carrières de moins de dix années validées hors
+# majorations, le dernier 0,4 %. La population de
+# scripts/grille_large.py (action 136, étape 6) donne aux carrières
+# courtes les salaires de tout leur sexe, à des années pleines : la
+# série dit où elle devrait les ranger.
+#
+# Ne pas modifier les valeurs certifiées à la main : elles seraient
+# écrasées au prochain scripts/verifier_donnees.py --appliquer.
+annee,quintile,indicateur,sexe,valeur,fiabilite
+2020,ensemble,coefficient_proratisation,F,83.3,certifiee
+2020,ensemble,coefficient_proratisation,H,90.4,certifiee
+2020,ensemble,coefficient_proratisation,ensemble,86.9,certifiee
+2020,ensemble,duree_validee_hors_majoration,F,32.0,certifiee
+2020,ensemble,duree_validee_hors_majoration,H,39.0,certifiee
+2020,ensemble,duree_validee_hors_majoration,ensemble,35.0,certifiee
+2020,ensemble,effectifs,F,8736.0,certifiee
+2020,ensemble,effectifs,H,7816.0,certifiee
+2020,ensemble,effectifs,ensemble,16552.0,certifiee
+2020,ensemble,part_duree_validee_hors_majoration_10_20,F,11.4,certifiee
+2020,ensemble,part_duree_validee_hors_majoration_10_20,H,3.6,certifiee
+2020,ensemble,part_duree_validee_hors_majoration_10_20,ensemble,7.7,certifiee
+2020,ensemble,part_duree_validee_hors_majoration_20_30,F,13.9,certifiee
+2020,ensemble,part_duree_validee_hors_majoration_20_30,H,5.2,certifiee
+2020,ensemble,part_duree_validee_hors_majoration_20_30,ensemble,9.8,certifiee
+2020,ensemble,part_duree_validee_hors_majoration_30_40,F,30.8,certifiee
+2020,ensemble,part_duree_validee_hors_majoration_30_40,H,22.0,certifiee
+2020,ensemble,part_duree_validee_hors_majoration_30_40,ensemble,26.7,certifiee
+2020,ensemble,part_duree_validee_hors_majoration_40_plus,F,35.5,certifiee
+2020,ensemble,part_duree_validee_hors_majoration_40_plus,H,66.5,certifiee
+2020,ensemble,part_duree_validee_hors_majoration_40_plus,ensemble,50.1,certifiee
+2020,ensemble,part_duree_validee_hors_majoration_moins_10,F,8.4,certifiee
+2020,ensemble,part_duree_validee_hors_majoration_moins_10,H,2.7,certifiee
+2020,ensemble,part_duree_validee_hors_majoration_moins_10,ensemble,5.7,certifiee
+2020,ensemble,part_minimum_pension_regime_principal,F,38.5,certifiee
+2020,ensemble,part_minimum_pension_regime_principal,H,12.4,certifiee
+2020,ensemble,part_minimum_pension_regime_principal,ensemble,26.1,certifiee
+2020,ensemble,pension_droit_direct,F,1122.0,certifiee
+2020,ensemble,pension_droit_direct,H,1784.0,certifiee
+2020,ensemble,pension_droit_direct,ensemble,1435.0,certifiee
+2020,ensemble,pension_droit_direct_majorations,F,1152.0,certifiee
+2020,ensemble,pension_droit_direct_majorations,H,1840.0,certifiee
+2020,ensemble,pension_droit_direct_majorations,ensemble,1476.0,certifiee
+2020,q1,coefficient_proratisation,F,66.5,certifiee
+2020,q1,coefficient_proratisation,H,47.6,certifiee
+2020,q1,coefficient_proratisation,ensemble,61.4,certifiee
+2020,q1,duree_validee_hors_majoration,F,22.0,certifiee
+2020,q1,duree_validee_hors_majoration,H,26.0,certifiee
+2020,q1,duree_validee_hors_majoration,ensemble,23.0,certifiee
+2020,q1,effectifs,F,2530.0,certifiee
+2020,q1,effectifs,H,746.0,certifiee
+2020,q1,effectifs,ensemble,3276.0,certifiee
+2020,q1,part_duree_validee_hors_majoration_10_20,F,24.1,certifiee
+2020,q1,part_duree_validee_hors_majoration_10_20,H,15.6,certifiee
+2020,q1,part_duree_validee_hors_majoration_10_20,ensemble,22.2,certifiee
+2020,q1,part_duree_validee_hors_majoration_20_30,F,20.9,certifiee
+2020,q1,part_duree_validee_hors_majoration_20_30,H,15.7,certifiee
+2020,q1,part_duree_validee_hors_majoration_20_30,ensemble,19.7,certifiee
+2020,q1,part_duree_validee_hors_majoration_30_40,F,19.5,certifiee
+2020,q1,part_duree_validee_hors_majoration_30_40,H,22.6,certifiee
+2020,q1,part_duree_validee_hors_majoration_30_40,ensemble,20.2,certifiee
+2020,q1,part_duree_validee_hors_majoration_40_plus,F,12.3,certifiee
+2020,q1,part_duree_validee_hors_majoration_40_plus,H,25.3,certifiee
+2020,q1,part_duree_validee_hors_majoration_40_plus,ensemble,15.3,certifiee
+2020,q1,part_duree_validee_hors_majoration_moins_10,F,23.1,certifiee
+2020,q1,part_duree_validee_hors_majoration_moins_10,H,20.7,certifiee
+2020,q1,part_duree_validee_hors_majoration_moins_10,ensemble,22.6,certifiee
+2020,q1,part_minimum_pension_regime_principal,F,64.3,certifiee
+2020,q1,part_minimum_pension_regime_principal,H,51.5,certifiee
+2020,q1,part_minimum_pension_regime_principal,ensemble,61.4,certifiee
+2020,q1,pension_droit_direct,F,413.0,certifiee
+2020,q1,pension_droit_direct,H,342.0,certifiee
+2020,q1,pension_droit_direct,ensemble,397.0,certifiee
+2020,q1,pension_droit_direct_majorations,F,431.0,certifiee
+2020,q1,pension_droit_direct_majorations,H,350.0,certifiee
+2020,q1,pension_droit_direct_majorations,ensemble,413.0,certifiee
+2020,q2,coefficient_proratisation,F,87.0,certifiee
+2020,q2,coefficient_proratisation,H,88.5,certifiee
+2020,q2,coefficient_proratisation,ensemble,87.6,certifiee
+2020,q2,duree_validee_hors_majoration,F,32.0,certifiee
+2020,q2,duree_validee_hors_majoration,H,38.0,certifiee
+2020,q2,duree_validee_hors_majoration,ensemble,34.0,certifiee
+2020,q2,effectifs,F,2119.0,certifiee
+2020,q2,effectifs,H,1157.0,certifiee
+2020,q2,effectifs,ensemble,3276.0,certifiee
+2020,q2,part_duree_validee_hors_majoration_10_20,F,11.1,certifiee
+2020,q2,part_duree_validee_hors_majoration_10_20,H,4.8,certifiee
+2020,q2,part_duree_validee_hors_majoration_10_20,ensemble,8.9,certifiee
+2020,q2,part_duree_validee_hors_majoration_20_30,F,16.7,certifiee
+2020,q2,part_duree_validee_hors_majoration_20_30,H,8.2,certifiee
+2020,q2,part_duree_validee_hors_majoration_20_30,ensemble,13.7,certifiee
+2020,q2,part_duree_validee_hors_majoration_30_40,F,35.0,certifiee
+2020,q2,part_duree_validee_hors_majoration_30_40,H,22.5,certifiee
+2020,q2,part_duree_validee_hors_majoration_30_40,ensemble,30.6,certifiee
+2020,q2,part_duree_validee_hors_majoration_40_plus,F,31.8,certifiee
+2020,q2,part_duree_validee_hors_majoration_40_plus,H,61.4,certifiee
+2020,q2,part_duree_validee_hors_majoration_40_plus,ensemble,42.3,certifiee
+2020,q2,part_duree_validee_hors_majoration_moins_10,F,5.4,certifiee
+2020,q2,part_duree_validee_hors_majoration_moins_10,H,3.1,certifiee
+2020,q2,part_duree_validee_hors_majoration_moins_10,ensemble,4.6,certifiee
+2020,q2,part_minimum_pension_regime_principal,F,59.9,certifiee
+2020,q2,part_minimum_pension_regime_principal,H,32.6,certifiee
+2020,q2,part_minimum_pension_regime_principal,ensemble,50.3,certifiee
+2020,q2,pension_droit_direct,F,784.0,certifiee
+2020,q2,pension_droit_direct,H,881.0,certifiee
+2020,q2,pension_droit_direct,ensemble,818.0,certifiee
+2020,q2,pension_droit_direct_majorations,F,812.0,certifiee
+2020,q2,pension_droit_direct_majorations,H,908.0,certifiee
+2020,q2,pension_droit_direct_majorations,ensemble,846.0,certifiee
+2020,q3,coefficient_proratisation,F,96.0,certifiee
+2020,q3,coefficient_proratisation,H,99.1,certifiee
+2020,q3,coefficient_proratisation,ensemble,97.9,certifiee
+2020,q3,duree_validee_hors_majoration,F,38.0,certifiee
+2020,q3,duree_validee_hors_majoration,H,41.0,certifiee
+2020,q3,duree_validee_hors_majoration,ensemble,40.0,certifiee
+2020,q3,effectifs,F,1570.0,certifiee
+2020,q3,effectifs,H,1706.0,certifiee
+2020,q3,effectifs,ensemble,3276.0,certifiee
+2020,q3,part_duree_validee_hors_majoration_10_20,F,3.4,certifiee
+2020,q3,part_duree_validee_hors_majoration_10_20,H,2.3,certifiee
+2020,q3,part_duree_validee_hors_majoration_10_20,ensemble,2.8,certifiee
+2020,q3,part_duree_validee_hors_majoration_20_30,F,8.7,certifiee
+2020,q3,part_duree_validee_hors_majoration_20_30,H,2.9,certifiee
+2020,q3,part_duree_validee_hors_majoration_20_30,ensemble,5.7,certifiee
+2020,q3,part_duree_validee_hors_majoration_30_40,F,33.9,certifiee
+2020,q3,part_duree_validee_hors_majoration_30_40,H,15.9,certifiee
+2020,q3,part_duree_validee_hors_majoration_30_40,ensemble,24.5,certifiee
+2020,q3,part_duree_validee_hors_majoration_40_plus,F,53.0,certifiee
+2020,q3,part_duree_validee_hors_majoration_40_plus,H,78.4,certifiee
+2020,q3,part_duree_validee_hors_majoration_40_plus,ensemble,66.2,certifiee
+2020,q3,part_duree_validee_hors_majoration_moins_10,F,1.1,certifiee
+2020,q3,part_duree_validee_hors_majoration_moins_10,H,0.6,certifiee
+2020,q3,part_duree_validee_hors_majoration_moins_10,ensemble,0.8,certifiee
+2020,q3,part_minimum_pension_regime_principal,F,18.4,certifiee
+2020,q3,part_minimum_pension_regime_principal,H,6.2,certifiee
+2020,q3,part_minimum_pension_regime_principal,ensemble,12.0,certifiee
+2020,q3,pension_droit_direct,F,1267.0,certifiee
+2020,q3,pension_droit_direct,H,1367.0,certifiee
+2020,q3,pension_droit_direct,ensemble,1319.0,certifiee
+2020,q3,pension_droit_direct_majorations,F,1297.0,certifiee
+2020,q3,pension_droit_direct_majorations,H,1404.0,certifiee
+2020,q3,pension_droit_direct_majorations,ensemble,1353.0,certifiee
+2020,q4,coefficient_proratisation,F,98.6,certifiee
+2020,q4,coefficient_proratisation,H,100.0,certifiee
+2020,q4,coefficient_proratisation,ensemble,99.5,certifiee
+2020,q4,duree_validee_hors_majoration,F,38.0,certifiee
+2020,q4,duree_validee_hors_majoration,H,40.0,certifiee
+2020,q4,duree_validee_hors_majoration,ensemble,39.0,certifiee
+2020,q4,effectifs,F,1368.0,certifiee
+2020,q4,effectifs,H,1908.0,certifiee
+2020,q4,effectifs,ensemble,3276.0,certifiee
+2020,q4,part_duree_validee_hors_majoration_10_20,F,5.1,certifiee
+2020,q4,part_duree_validee_hors_majoration_10_20,H,2.7,certifiee
+2020,q4,part_duree_validee_hors_majoration_10_20,ensemble,3.7,certifiee
+2020,q4,part_duree_validee_hors_majoration_20_30,F,8.9,certifiee
+2020,q4,part_duree_validee_hors_majoration_20_30,H,4.1,certifiee
+2020,q4,part_duree_validee_hors_majoration_20_30,ensemble,6.1,certifiee
+2020,q4,part_duree_validee_hors_majoration_30_40,F,31.1,certifiee
+2020,q4,part_duree_validee_hors_majoration_30_40,H,19.9,certifiee
+2020,q4,part_duree_validee_hors_majoration_30_40,ensemble,24.6,certifiee
+2020,q4,part_duree_validee_hors_majoration_40_plus,F,54.6,certifiee
+2020,q4,part_duree_validee_hors_majoration_40_plus,H,73.1,certifiee
+2020,q4,part_duree_validee_hors_majoration_40_plus,ensemble,65.3,certifiee
+2020,q4,part_duree_validee_hors_majoration_moins_10,F,0.4,certifiee
+2020,q4,part_duree_validee_hors_majoration_moins_10,H,0.2,certifiee
+2020,q4,part_duree_validee_hors_majoration_moins_10,ensemble,0.3,certifiee
+2020,q4,part_minimum_pension_regime_principal,F,9.9,certifiee
+2020,q4,part_minimum_pension_regime_principal,H,3.9,certifiee
+2020,q4,part_minimum_pension_regime_principal,ensemble,6.4,certifiee
+2020,q4,pension_droit_direct,F,1693.0,certifiee
+2020,q4,pension_droit_direct,H,1818.0,certifiee
+2020,q4,pension_droit_direct,ensemble,1766.0,certifiee
+2020,q4,pension_droit_direct_majorations,F,1726.0,certifiee
+2020,q4,pension_droit_direct_majorations,H,1871.0,certifiee
+2020,q4,pension_droit_direct_majorations,ensemble,1810.0,certifiee
+2020,q5,coefficient_proratisation,F,98.2,certifiee
+2020,q5,coefficient_proratisation,H,98.5,certifiee
+2020,q5,coefficient_proratisation,ensemble,98.5,certifiee
+2020,q5,duree_validee_hors_majoration,F,39.0,certifiee
+2020,q5,duree_validee_hors_majoration,H,40.0,certifiee
+2020,q5,duree_validee_hors_majoration,ensemble,40.0,certifiee
+2020,q5,effectifs,F,1070.0,certifiee
+2020,q5,effectifs,H,2206.0,certifiee
+2020,q5,effectifs,ensemble,3276.0,certifiee
+2020,q5,part_duree_validee_hors_majoration_10_20,F,1.5,certifiee
+2020,q5,part_duree_validee_hors_majoration_10_20,H,0.4,certifiee
+2020,q5,part_duree_validee_hors_majoration_10_20,ensemble,0.8,certifiee
+2020,q5,part_duree_validee_hors_majoration_20_30,F,5.1,certifiee
+2020,q5,part_duree_validee_hors_majoration_20_30,H,2.4,certifiee
+2020,q5,part_duree_validee_hors_majoration_20_30,ensemble,3.3,certifiee
+2020,q5,part_duree_validee_hors_majoration_30_40,F,44.6,certifiee
+2020,q5,part_duree_validee_hors_majoration_30_40,H,27.9,certifiee
+2020,q5,part_duree_validee_hors_majoration_30_40,ensemble,33.4,certifiee
+2020,q5,part_duree_validee_hors_majoration_40_plus,F,48.4,certifiee
+2020,q5,part_duree_validee_hors_majoration_40_plus,H,69.0,certifiee
+2020,q5,part_duree_validee_hors_majoration_40_plus,ensemble,62.3,certifiee
+2020,q5,part_duree_validee_hors_majoration_moins_10,F,0.4,certifiee
+2020,q5,part_duree_validee_hors_majoration_moins_10,H,0.2,certifiee
+2020,q5,part_duree_validee_hors_majoration_moins_10,ensemble,0.3,certifiee
+2020,q5,part_minimum_pension_regime_principal,F,1.1,certifiee
+2020,q5,part_minimum_pension_regime_principal,H,0.4,certifiee
+2020,q5,part_minimum_pension_regime_principal,ensemble,0.6,certifiee
+2020,q5,pension_droit_direct,F,2538.0,certifiee
+2020,q5,pension_droit_direct,H,3056.0,certifiee
+2020,q5,pension_droit_direct,ensemble,2887.0,certifiee
+2020,q5,pension_droit_direct_majorations,F,2593.0,certifiee
+2020,q5,pension_droit_direct_majorations,H,3161.0,certifiee
+2020,q5,pension_droit_direct_majorations,ensemble,2976.0,certifiee

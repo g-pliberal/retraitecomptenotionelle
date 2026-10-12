@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-10-11",
+ "dernier_passage_le": "2026-10-12",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -156,15 +156,15 @@
    "verifiee_le": "2026-09-20"
   },
   "caracteristiques_retraites": {
-   "ajoutees": 15,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "cf4d03030ccaca8c",
-   "identiques": 105,
+   "identiques": 120,
    "niveau": "certifiee",
    "source": "DREES, échantillon interrégimes de retraités (EIR)",
    "valeurs": 120,
-   "verifiee_le": "2026-10-05"
+   "verifiee_le": "2026-10-12"
   },
   "carriere_longue": {
    "ajoutees": 0,
@@ -648,7 +648,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-10-10"
+   "verifiee_le": "2026-10-12"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -945,7 +945,7 @@
    "niveau": "certifiee",
    "source": "DREES, échantillon interrégimes de retraités (EIR)",
    "valeurs": 126,
-   "verifiee_le": "2026-10-05"
+   "verifiee_le": "2026-10-12"
   },
   "persistance_smic": {
    "ajoutees": 336,
@@ -1178,6 +1178,17 @@
    "valeurs": 174,
    "verifiee_le": "2026-09-19"
   },
+  "quintiles_eqcc": {
+   "ajoutees": 198,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "117f92b4c8e984b5",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, échantillon interrégimes de retraités (EIR)",
+   "valeurs": 198,
+   "verifiee_le": "2026-10-12"
+  },
   "quotients_mortalite": {
    "ajoutees": 0,
    "colonne": "qx",
@@ -1341,7 +1352,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-10-10"
+   "verifiee_le": "2026-10-12"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -1506,7 +1517,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
    "valeurs": 29,
-   "verifiee_le": "2026-10-10"
+   "verifiee_le": "2026-10-12"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -1539,7 +1550,7 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-10-10"
+   "verifiee_le": "2026-10-12"
   },
   "valeurs_point_msa": {
    "ajoutees": 0,

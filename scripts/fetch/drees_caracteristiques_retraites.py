@@ -39,6 +39,23 @@ Le classeur donne la PART de bénéficiaires d'un minimum de pension — 46,5 %
 des femmes contre 26,1 % des hommes — mais pas ce que ce minimum leur APPORTE.
 Le retirer creuserait l'écart davantage : la mesure qui suit est donc, elle
 aussi, une borne basse.
+
+LES QUINTILES EN ÉQUIVALENT CARRIÈRE COMPLÈTE (action 136, étape 6)
+--------------------------------------------------------------------
+La feuille « QuintilesEQCC » range les retraités par quintile de leur pension
+de droit direct en équivalent carrière complète : la pension divisée par la
+somme des coefficients de proratisation de leurs régimes de base, « 950 / (20 %
++ 60 %) = 1 188 € », qui « neutralise l'effet de la proratisation » sans dire
+ce qu'aurait été la pension d'une carrière complète (DREES, Conseil
+d'orientation des retraites, séance du 24 novembre 2022). La durée retirée, le
+quintile dit ce que la carrière a acquis par année validée ; croisé avec les
+tranches de durée, il dit où tombent les carrières courtes : chez les femmes,
+le premier quintile compte 23,1 % de carrières de moins de dix années validées
+hors majorations, le dernier 0,4 %. Pour chaque quintile et chaque sexe : les
+effectifs, la proratisation et les pensions moyennes, la part au minimum de
+pension de son régime principal, la durée validée hors majorations et ses cinq
+tranches. Le récupérateur vérifie ce qu'il lit : les tranches font cent, les
+quintiles redonnent l'effectif, et chacun compte un cinquième des retraités.
 """
 
 from __future__ import annotations
@@ -262,6 +279,48 @@ INDICATEURS_RESIDENCE: dict[str, str] = {
 }
 
 
+#: La quatrième feuille lue : les retraités selon le quintile de leur pension
+#: de droit direct en équivalent carrière complète.
+FEUILLE_EQCC = "QuintilesEQCC"
+
+#: Les six colonnes, sous le code que le dépôt leur donne et l'en-tête exact
+#: du classeur : les cinq quintiles, tous sexes réunis, et l'ensemble.
+COLONNES_EQCC: dict[str, str] = {
+    "q1": "Premier quintile",
+    "q2": "Deuxième quintile",
+    "q3": "Troisième quintile",
+    "q4": "Quatrième quintile",
+    "q5": "Cinquième quintile",
+    "ensemble": "Ensemble",
+}
+
+#: Les tranches de durée validée hors majorations, sous leur code : leurs
+#: libellés sont ceux de :data:`INDICATEURS`.
+TRANCHES_EQCC = ("moins_10", "10_20", "20_30", "30_40", "40_plus")
+
+#: Les indicateurs de la feuille, lus au début de leur libellé ; la durée
+#: validée hors majorations sous l'intitulé qui se trompe (voir
+#: :data:`INDICATEURS`).
+INDICATEURS_EQCC: dict[str, str] = {
+    "effectifs": "Effectifs (en milliers)",
+    "coefficient_proratisation": "Coeficient de proratisation moyen",
+    "pension_droit_direct": (
+        "Montant moyen de la pension de retraite de droit direct brute"
+    ),
+    "pension_droit_direct_majorations": (
+        "Montant moyen de la pension de droit direct (dont les majorations pour "
+        "enfants) brute"
+    ),
+    "part_minimum_pension_regime_principal": (
+        "Part de bénéficiaires du minimum de pension dans leur régime principal"
+    ),
+    "duree_validee_hors_majoration": "Moyenne de la durée cotisée hors majoration",
+    **{f"part_duree_validee_hors_majoration_{tranche}":
+       INDICATEURS[f"part_duree_validee_hors_majoration_{tranche}"]
+       for tranche in TRANCHES_EQCC},
+}
+
+
 def classeur_le_plus_recent() -> tuple[int, str, bytes]:
     """Le classeur « tous les retraités » du millésime le plus élevé."""
     demande = urllib.request.Request(f"{BASE}/attachments", headers=ENTETES)
@@ -411,6 +470,76 @@ def lire_residence(contenu: bytes) -> dict[str, dict[str, dict[str, float]]]:
     return valeurs
 
 
+def lire_quintiles_eqcc(contenu: bytes) -> dict[str, dict[str, dict[str, float]]]:
+    """Les indicateurs de la feuille des quintiles en équivalent carrière
+    complète : colonne, indicateur, sexe.
+
+    Les colonnes sont cherchées par leur en-tête exact, les indicateurs par le
+    début de leur libellé, à sa première occurrence. Ce qui est lu se vérifie :
+    dans chaque colonne et pour chaque sexe, les cinq tranches de durée font
+    cent, à l'arrondi près ; les cinq quintiles redonnent l'effectif de
+    l'ensemble, et chacun compte le cinquième des retraités des deux sexes.
+    """
+    grille = feuilles(contenu, (FEUILLE_EQCC,))[FEUILLE_EQCC]
+    derniere_colonne = max(colonne for _, colonne in grille)
+    derniere_ligne = max(ligne for ligne, _ in grille)
+    colonnes: dict[str, int] = {}
+    for code, entete in COLONNES_EQCC.items():
+        for colonne in range(derniere_colonne + 1):
+            if str(grille.get((0, colonne), "")).strip() == entete:
+                colonnes[code] = colonne
+                break
+    manquantes = set(COLONNES_EQCC) - set(colonnes)
+    if manquantes:
+        raise RuntimeError(
+            f"feuille {FEUILLE_EQCC!r} : colonnes absentes — "
+            f"{', '.join(sorted(manquantes))}"
+        )
+
+    valeurs: dict[str, dict[str, dict[str, float]]] = {
+        quintile: {code: {} for code in INDICATEURS_EQCC} for quintile in COLONNES_EQCC
+    }
+    for ligne in range(1, derniere_ligne + 1):
+        sexe = SEXES.get(str(grille.get((ligne, 0), "")).strip())
+        libelle = " ".join(str(grille.get((ligne, 2), "")).split())
+        if sexe is None or not libelle:
+            continue
+        for code, debut in INDICATEURS_EQCC.items():
+            if not libelle.startswith(" ".join(debut.split())):
+                continue
+            for quintile, colonne in colonnes.items():
+                valeur = grille.get((ligne, colonne))
+                if (isinstance(valeur, (int, float))
+                        and sexe not in valeurs[quintile][code]):
+                    valeurs[quintile][code][sexe] = float(valeur)
+    manquants = [f"{quintile}/{code}" for quintile, serie in valeurs.items()
+                 for code, parsexe in serie.items() if len(parsexe) < 3]
+    if manquants:
+        raise RuntimeError(f"quintiles EQCC illisibles : {', '.join(manquants)}")
+
+    for quintile, serie in valeurs.items():
+        for sexe in SEXES.values():
+            total = sum(serie[f"part_duree_validee_hors_majoration_{tranche}"][sexe]
+                        for tranche in TRANCHES_EQCC)
+            if abs(total - 100.0) > 0.6:
+                raise RuntimeError(
+                    f"quintiles EQCC : les tranches de {quintile}/{sexe} font {total:g} %")
+    # Un retraité sur cent n'a pas de quintile : ceux que la colonne de
+    # l'ensemble compte, et qu'aucun quintile ne range.
+    for sexe in SEXES.values():
+        somme = sum(valeurs[q]["effectifs"][sexe] for q in COLONNES_EQCC if q != "ensemble")
+        ensemble = valeurs["ensemble"]["effectifs"][sexe]
+        if not 0.98 * ensemble <= somme <= ensemble:
+            raise RuntimeError(
+                f"quintiles EQCC : les quintiles comptent {somme:g} milliers de "
+                f"retraités ({sexe}), l'ensemble {ensemble:g}")
+    ranges = [valeurs[q]["effectifs"]["ensemble"] for q in COLONNES_EQCC if q != "ensemble"]
+    cinquieme = sum(ranges) / 5.0
+    if any(abs(effectif - cinquieme) > 0.01 * cinquieme for effectif in ranges):
+        raise RuntimeError(f"quintiles EQCC : des quintiles inégaux — {ranges}")
+    return valeurs
+
+
 def main() -> int:
     try:
         annee, titre, contenu = classeur_le_plus_recent()
@@ -427,6 +556,7 @@ def main() -> int:
         "mesure": "caractéristiques des retraités par sexe",
         "valeurs": valeurs,
         "residence": lire_residence(contenu),
+        "quintiles_eqcc": lire_quintiles_eqcc(contenu),
     }
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(
@@ -436,6 +566,8 @@ def main() -> int:
     for code, serie in valeurs.items():
         rendu = "  ".join(f"{sexe} {valeur:g}" for sexe, valeur in sorted(serie.items()))
         print(f"  {code:36} {rendu}")
+    print(f"  quintiles EQCC : {len(COLONNES_EQCC)} colonnes, "
+          f"{len(INDICATEURS_EQCC)} indicateurs, trois sexes")
     return 0
 
 

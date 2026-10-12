@@ -678,6 +678,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # par âge, et la distribution des heures, celle des bas revenus.
         "volume_travail": "macro/volume_travail.csv",
         "heures_salariees": "macro/heures_salariees.csv",
+        # Et ce qu'une carrière courte acquiert par année validée : les
+        # quintiles de la pension en équivalent carrière complète, croisés avec
+        # les tranches de durée.
+        "quintiles_eqcc": "macro/quintiles_eqcc.csv",
         # Le seul qui vienne d'Eurostat : aucune source française ne ventile le
         # salaire par âge pour les régimes spéciaux.
         "profil_salaire_secteur": "macro/profil_salaire_secteur.csv",
