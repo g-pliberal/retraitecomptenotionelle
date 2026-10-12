@@ -1,0 +1,21 @@
+date: "2026-10-12"
+session: "action 136, étape 6 : les carrières courtes de la population étalées sur la vie active"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1. Deux jeux de
+  la DREES, téléchargés depuis son portail de données ouvertes dans le répertoire de la
+  session, hors du dépôt : les données détaillées de l'EIC 2017 (« Les droits validés au
+  cours de la carrière », trimestres validés dans l'année par génération, âge et sexe) et
+  les classeurs de l'EIR 2020 sur les caractéristiques de tous les retraités, des
+  résidents en France et de la génération 1953.
+trouve: >-
+  Aucun texte de droit. L'EIC date les années validées que l'EIR ne date pas : les femmes
+  des générations 1946 à 1958 en valident autant par an de 50 à 54 ans que de 25 à 29, et
+  en cotisent davantage, ce que des carrières courtes groupées dans la jeunesse ne
+  donneraient pas ; la population les étale désormais de l'entrée à soixante ans. L'EIR
+  de la génération 1953 compte 23,5 % de femmes sous trente années validées hors
+  majorations, pour 33,7 % de tous les retraités de 2020. Rien n'est certifié : la
+  datation est une convention, que l'EIC fonde et que grille_large.py cite.
+reste: >-
+  À l'étape 6 de l'action 136 : le volume des années des carrières courtes, leurs années
+  coupées, à chercher et certifier ; la pension des hommes, sous l'EIR ; un bas d'échelle
+  plus fin ; la bascule de la page, au propriétaire.
