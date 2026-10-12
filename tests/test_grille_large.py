@@ -672,6 +672,31 @@ def test_une_grille_se_range_en_quintiles_comme_l_eir(parametres):
     assert confrontee["F"]["proratisation"] == [0.5, 1.0, 1.0, 1.0, 1.0]
     assert confrontee["H"]["proratisation"] == [0.5, 1.0, 1.0, 1.0, 1.0]
     assert confrontee["H"]["proratisation_eir"][4] == pytest.approx(0.985, abs=1e-3)
+    assert confrontee["F"]["duree_validee"] == [None] * 5
+    validees = [ligne + (20.0 if ligne[0] <= 2.0 else 40.0,) for ligne in proratisees]
+    residents = G.quintiles_eqcc(parametres.racine_donnees, residents=True)
+    confrontee = G.confronter_eqcc(validees, residents)
+    assert confrontee["F"]["duree_validee"] == [20.0, 40.0, 40.0, 40.0, 40.0]
+    assert confrontee["F"]["duree_validee_eir"] == [28.0, 38.0, 41.0, 41.0, 41.0]
+    assert confrontee["F"]["minimum_eir"][1] == pytest.approx(0.527, abs=1e-3)
+
+
+def test_les_quintiles_des_residents_se_lisent_dans_le_fichier_certifie(parametres):
+    """Les quintiles des seuls résidents en France, contre lesquels la
+    population se mesure : chacun en compte le cinquième, et ils sont moins
+    nombreux que tous les retraités ; 52,7 % des résidentes du deuxième sont au
+    minimum de leur régime principal, 17,5 % de celles du premier sont parties
+    avec une décote, et elles y cotisent moins d'années qu'elles n'en
+    valident."""
+    residents = G.quintiles_eqcc(parametres.racine_donnees, residents=True)
+    effectifs = [residents[(q, "effectifs", "ensemble")] for q in G.QUINTILES_EQCC]
+    assert max(effectifs) - min(effectifs) <= 0.01 * min(effectifs)
+    tous = G.quintiles_eqcc(parametres.racine_donnees)
+    assert (residents[("ensemble", "effectifs", "ensemble")]
+            < tous[("ensemble", "effectifs", "ensemble")])
+    assert residents[("q2", "part_minimum_pension_regime_principal", "F")] == 52.7
+    assert residents[("q1", "part_decote", "F")] == 17.5
+    assert residents[("q1", "duree_cotisee", "F")] < residents[("q1", "duree_validee", "F")]
 
 
 def test_la_duree_validee_se_lit_generation_par_generation(parametres):

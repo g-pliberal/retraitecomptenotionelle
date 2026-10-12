@@ -682,6 +682,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # quintiles de la pension en équivalent carrière complète, croisés avec
         # les tranches de durée.
         "quintiles_eqcc": "macro/quintiles_eqcc.csv",
+        # Et les mêmes quintiles, des seuls résidents en France : la population
+        # de la page ne compte qu'eux.
+        "quintiles_eqcc_residents": "macro/quintiles_eqcc_residents.csv",
         # Le seul qui vienne d'Eurostat : aucune source française ne ventile le
         # salaire par âge pour les régimes spéciaux.
         "profil_salaire_secteur": "macro/profil_salaire_secteur.csv",

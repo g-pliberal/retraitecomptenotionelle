@@ -56,6 +56,12 @@ effectifs, la proratisation et les pensions moyennes, la part au minimum de
 pension de son régime principal, la durée validée hors majorations et ses cinq
 tranches. Le récupérateur vérifie ce qu'il lit : les tranches font cent, les
 quintiles redonnent l'effectif, et chacun compte un cinquième des retraités.
+
+Le jeu porte la même feuille pour les seuls RÉSIDENTS en France, dans le
+classeur qui leur est propre, et le récupérateur la lit aussi : la population
+de la page ne compte que des résidents, et c'est contre eux qu'elle se mesure.
+Il y lit, de plus, la durée validée majorations comprises, la durée cotisée et
+la part des départs avec décote.
 """
 
 from __future__ import annotations
@@ -102,6 +108,13 @@ COLONNES_MINIMA: dict[str, str] = {
 #: variantes : tous les retraités, ceux qui résident en France, une génération.
 #: On retient « tous les retraités », qui est le champ de la distribution.
 _TITRE = re.compile(r"Caractéristiques de tous les retraités \(EIR (\d{4})\)")
+
+#: Le classeur des seuls résidents en France, du même millésime : on n'en lit
+#: que la feuille des quintiles en équivalent carrière complète, contre
+#: laquelle se mesure la population de la page, qui ne compte qu'eux (action
+#: 136, étape 6).
+_TITRE_RESIDENTS = re.compile(
+    r"Caractéristiques de tous les retraités résidant en France \(EIR (\d{4})\)")
 
 #: Les six indicateurs retenus, sous le code que le dépôt leur donne et le
 #: libellé, tronqué, que le classeur leur donne. Le libellé complet varie d'un
@@ -321,19 +334,32 @@ INDICATEURS_EQCC: dict[str, str] = {
 }
 
 
-def classeur_le_plus_recent() -> tuple[int, str, bytes]:
-    """Le classeur « tous les retraités » du millésime le plus élevé."""
+#: Les indicateurs lus chez les résidents : ceux de tous les retraités, et
+#: trois de plus — la durée validée majorations comprises, la durée cotisée et
+#: la part des départs avec décote, que la population, partie au taux plein,
+#: n'a pas.
+INDICATEURS_EQCC_RESIDENTS: dict[str, str] = {
+    **INDICATEURS_EQCC,
+    "duree_validee": "Moyenne de la durée validée (en années)",
+    "duree_cotisee": "Moyenne de la durée cotisée (en années)",
+    "part_decote": "Part de départ avec décote (en %)",
+}
+
+
+def classeur_le_plus_recent(motif: re.Pattern = _TITRE) -> tuple[int, str, bytes]:
+    """Le classeur du millésime le plus élevé dont le titre suit ``motif`` :
+    « tous les retraités », ou ceux qui résident en France."""
     demande = urllib.request.Request(f"{BASE}/attachments", headers=ENTETES)
     with urllib.request.urlopen(demande, timeout=300) as reponse:
         pieces = json.loads(reponse.read()).get("attachments", [])
     candidats = []
     for piece in pieces:
         metas = piece.get("metas") or {}
-        trouve = _TITRE.search(metas.get("title", ""))
+        trouve = motif.search(metas.get("title", ""))
         if trouve and metas.get("mimetype", "").endswith("spreadsheetml.sheet"):
             candidats.append((int(trouve.group(1)), metas["title"], metas["url"]))
     if not candidats:
-        raise RuntimeError("aucun classeur « tous les retraités » joint au jeu")
+        raise RuntimeError(f"aucun classeur {motif.pattern!r} joint au jeu")
     annee, titre, url = max(candidats)
     demande = urllib.request.Request(url, headers=ENTETES)
     with urllib.request.urlopen(demande, timeout=600) as reponse:
@@ -470,8 +496,9 @@ def lire_residence(contenu: bytes) -> dict[str, dict[str, dict[str, float]]]:
     return valeurs
 
 
-def lire_quintiles_eqcc(contenu: bytes) -> dict[str, dict[str, dict[str, float]]]:
-    """Les indicateurs de la feuille des quintiles en équivalent carrière
+def lire_quintiles_eqcc(contenu: bytes, indicateurs: dict[str, str] = INDICATEURS_EQCC
+                        ) -> dict[str, dict[str, dict[str, float]]]:
+    """Les ``indicateurs`` de la feuille des quintiles en équivalent carrière
     complète : colonne, indicateur, sexe.
 
     Les colonnes sont cherchées par leur en-tête exact, les indicateurs par le
@@ -497,14 +524,14 @@ def lire_quintiles_eqcc(contenu: bytes) -> dict[str, dict[str, dict[str, float]]
         )
 
     valeurs: dict[str, dict[str, dict[str, float]]] = {
-        quintile: {code: {} for code in INDICATEURS_EQCC} for quintile in COLONNES_EQCC
+        quintile: {code: {} for code in indicateurs} for quintile in COLONNES_EQCC
     }
     for ligne in range(1, derniere_ligne + 1):
         sexe = SEXES.get(str(grille.get((ligne, 0), "")).strip())
         libelle = " ".join(str(grille.get((ligne, 2), "")).split())
         if sexe is None or not libelle:
             continue
-        for code, debut in INDICATEURS_EQCC.items():
+        for code, debut in indicateurs.items():
             if not libelle.startswith(" ".join(debut.split())):
                 continue
             for quintile, colonne in colonnes.items():
@@ -543,8 +570,14 @@ def lire_quintiles_eqcc(contenu: bytes) -> dict[str, dict[str, dict[str, float]]
 def main() -> int:
     try:
         annee, titre, contenu = classeur_le_plus_recent()
+        annee_residents, titre_residents, residents = classeur_le_plus_recent(
+            _TITRE_RESIDENTS)
     except (urllib.error.HTTPError, urllib.error.URLError, RuntimeError) as erreur:
         print(f"DREES indisponible : {erreur}", file=sys.stderr)
+        return 1
+    if annee_residents != annee:
+        print(f"DREES : le classeur des résidents est de {annee_residents}, celui de "
+              f"tous les retraités de {annee}", file=sys.stderr)
         return 1
 
     valeurs = lire_caracteristiques(contenu)
@@ -557,6 +590,9 @@ def main() -> int:
         "valeurs": valeurs,
         "residence": lire_residence(contenu),
         "quintiles_eqcc": lire_quintiles_eqcc(contenu),
+        "fichier_residents": titre_residents,
+        "quintiles_eqcc_residents": lire_quintiles_eqcc(residents,
+                                                        INDICATEURS_EQCC_RESIDENTS),
     }
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(
@@ -568,6 +604,8 @@ def main() -> int:
         print(f"  {code:36} {rendu}")
     print(f"  quintiles EQCC : {len(COLONNES_EQCC)} colonnes, "
           f"{len(INDICATEURS_EQCC)} indicateurs, trois sexes")
+    print(f"  quintiles EQCC des résidents ({titre_residents}) : "
+          f"{len(INDICATEURS_EQCC_RESIDENTS)} indicateurs")
     return 0
 
 

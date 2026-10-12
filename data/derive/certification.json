@@ -1179,14 +1179,25 @@
    "verifiee_le": "2026-09-19"
   },
   "quintiles_eqcc": {
-   "ajoutees": 198,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "117f92b4c8e984b5",
-   "identiques": 0,
+   "identiques": 198,
    "niveau": "certifiee",
    "source": "DREES, échantillon interrégimes de retraités (EIR)",
    "valeurs": 198,
+   "verifiee_le": "2026-10-12"
+  },
+  "quintiles_eqcc_residents": {
+   "ajoutees": 252,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "651d329d9b6b188f",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, échantillon interrégimes de retraités (EIR)",
+   "valeurs": 252,
    "verifiee_le": "2026-10-12"
   },
   "quotients_mortalite": {

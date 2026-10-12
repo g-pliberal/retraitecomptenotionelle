@@ -2537,6 +2537,34 @@ def source_quintiles_eqcc() -> dict[tuple, float]:
     }
 
 
+def source_quintiles_eqcc_residents() -> dict[tuple, float]:
+    """Les retraités RÉSIDANT EN FRANCE selon le quintile de leur pension en
+    équivalent carrière complète.
+
+    Le classeur des résidents du même jeu et du même millésime, feuille
+    « QuintilesEQCC » : les mêmes indicateurs que ``source_quintiles_eqcc``,
+    et trois de plus — la durée validée majorations comprises, la durée
+    cotisée, la part des départs avec décote. La population de la page ne
+    compte que des résidents : c'est contre eux qu'elle se mesure (action 136,
+    étape 6).
+    """
+    charge = _lire_json(
+        "drees_caracteristiques_retraites.json",
+        "scripts/fetch/drees_caracteristiques_retraites.py",
+    )
+    if "quintiles_eqcc_residents" not in charge:
+        raise SourceAbsente(
+            "drees_caracteristiques_retraites.json sans les quintiles EQCC des "
+            "résidents (relancer scripts/fetch/drees_caracteristiques_retraites.py)")
+    annee = str(charge["millesime"])
+    return {
+        (annee, quintile, indicateur, sexe): valeur
+        for quintile, indicateurs in charge["quintiles_eqcc_residents"].items()
+        for indicateur, serie in indicateurs.items()
+        for sexe, valeur in serie.items()
+    }
+
+
 def source_age_conjoncturel() -> dict[tuple, float]:
     """L'âge conjoncturel de départ à la retraite, par sexe, depuis 2004.
 
@@ -6950,6 +6978,53 @@ CERTIFICATIONS = (
             "# scripts/grille_large.py (action 136, étape 6) donne aux carrières",
             "# courtes les salaires de tout leur sexe, à des années pleines : la",
             "# série dit où elle devrait les ranger.",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="quintiles_eqcc_residents",
+        chemin=REFERENCE / "macro" / "quintiles_eqcc_residents.csv",
+        cles=("annee", "quintile", "indicateur", "sexe"),
+        colonne="valeur",
+        source=source_quintiles_eqcc_residents,
+        origine="DREES, échantillon interrégimes de retraités (EIR)",
+        decimales=1,
+        tolerance=0.05,
+        entete=(
+            "# Les retraités résidant en France selon le quintile de leur pension",
+            "# en équivalent carrière complète",
+            "# source_id: drees_eir_caracteristiques",
+            "# unite: milliers de retraités (effectifs), pour cent (proratisation,",
+            "#        parts), euros bruts par mois (pensions), années (durées)",
+            "# fiabilite:",
+            "#   certifiee : feuille « QuintilesEQCC » du classeur « Caractéristiques",
+            "#             de tous les retraités résidant en France » de l'EIR,",
+            "#             diffusé par la DREES et recontrôlé par",
+            "#             scripts/verifier_donnees.py.",
+            "#",
+            "# Les quintiles de quintiles_eqcc.csv, mais des seuls retraités qui",
+            "# résident en France : rangés entre eux, chaque quintile en compte le",
+            "# cinquième. `quintile` : q1 à q5, et ensemble. `indicateur` : ceux de",
+            "# quintiles_eqcc.csv — effectifs ; coefficient_proratisation ;",
+            "# pension_droit_direct et pension_droit_direct_majorations ;",
+            "# part_minimum_pension_regime_principal ;",
+            "# duree_validee_hors_majoration, que le classeur intitule « durée",
+            "# cotisée hors majoration », et ses cinq tranches —, et trois de",
+            "# plus : duree_validee, majorations comprises ; duree_cotisee ;",
+            "# part_decote, la part des départs avec décote, en pour cent des",
+            "# retraités du quintile.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À mesurer la population de scripts/grille_large.py (action 136,",
+            "# étape 6), qui ne compte que des résidents : ceux de l'étranger,",
+            "# 5,5 % des retraités, ont des carrières françaises courtes, que les",
+            "# quintiles de tous les retraités rangent avec les autres. Et à dire",
+            "# ce que la population n'a pas : 8,8 % des résidentes sont parties",
+            "# avec une décote, 17,5 % de celles du premier quintile ; la",
+            "# population part au taux plein.",
             "#",
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",

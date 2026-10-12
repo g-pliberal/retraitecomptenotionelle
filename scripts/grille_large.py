@@ -102,10 +102,14 @@ comprises, et à leur distribution par tranches de cent euros
 Une grille qui a des tranches de durée est aussi rangée comme l'EIR range les
 retraités par quintile de leur pension en équivalent carrière complète — la
 pension divisée par la proratisation, ce qu'une carrière acquiert par année
-validée (``quintiles_eqcc.csv``) : chaque cohorte de l'année de l'enquête à sa
-pension, divisée par sa durée d'assurance tous régimes rapportée à la durée
-requise et bornée à un, en têtes ; puis, sexe par sexe, la part de chaque
-tranche de durée qui tombe dans le premier quintile, contre celle de l'EIR.
+validée : chaque cohorte de l'année de l'enquête à sa pension, divisée par sa
+durée d'assurance tous régimes rapportée à la durée requise et bornée à un, en
+têtes ; puis, sexe par sexe, la part de chaque tranche de durée qui tombe dans
+le premier quintile, contre celle de l'EIR. Les grilles ne comptant que des
+résidents, l'EIR est celui des résidents en France
+(``quintiles_eqcc_residents.csv``), depuis le 12 octobre 2026 ; la population
+lit encore, pour se construire, les quintiles de tous les retraités
+(``quintiles_eqcc.csv``).
 
 LA POPULATION (action 136, étape 6, seconde moitié)
 ---------------------------------------------------
@@ -942,12 +946,16 @@ def volumes_de_travail(racine: Path) -> tuple[tuple[tuple[int, float], ...], dic
     return volumes, rangs
 
 
-def quintiles_eqcc(racine: Path) -> dict[tuple[str, str, str], float]:
+def quintiles_eqcc(racine: Path, residents: bool = False
+                   ) -> dict[tuple[str, str, str], float]:
     """Les quintiles de la pension en équivalent carrière complète, tels que
-    l'EIR les publie (``quintiles_eqcc.csv``) : ``(quintile, indicateur,
-    sexe)``."""
+    l'EIR les publie : ``(quintile, indicateur, sexe)``. Ceux de tous les
+    retraités (``quintiles_eqcc.csv``), ou, sous ``residents``, ceux des seuls
+    résidents en France (``quintiles_eqcc_residents.csv``), contre lesquels la
+    population se mesure : elle ne compte qu'eux."""
+    fichier = "quintiles_eqcc_residents.csv" if residents else "quintiles_eqcc.csv"
     return {(l["quintile"], l["indicateur"], l["sexe"]): float(l["valeur"])
-            for l in _lire_macro(racine, "quintiles_eqcc.csv")}
+            for l in _lire_macro(racine, fichier)}
 
 
 def association_rang_duree(quintiles: dict, sexe: str) -> dict[str, dict[str, float]]:
@@ -2059,14 +2067,15 @@ def quintiles_ponderes(lignes: list[tuple]) -> dict:
     réunis, et, sexe par sexe, le poids de chaque tranche de durée dans chaque
     quintile, celui des retraités au minimum, et celui de leur proratisation.
     ``lignes`` : ``(pension, poids, sexe, tranche)``, et en cinquième, s'il y
-    est, le minimum, en sixième la proratisation. Une ligne à cheval sur une
-    borne va au quintile de son milieu."""
+    est, le minimum, en sixième la proratisation, en septième les années
+    validées. Une ligne à cheval sur une borne va au quintile de son milieu."""
     tries = sorted(lignes, key=lambda ligne: ligne[0])
     total = somme_ordonnee(ligne[1] for ligne in tries)
     bornes: list[float] = []
     masses: dict[str, dict[str, list[float]]] = {}
     minima: dict[str, list[float]] = {}
     proratisees: dict[str, list[float]] = {}
+    validees: dict[str, list[float]] = {}
     cumul = 0.0
     for ligne in tries:
         montant, poids, sexe, tranche = ligne[:4]
@@ -2082,16 +2091,20 @@ def quintiles_ponderes(lignes: list[tuple]) -> dict:
             if len(ligne) > 5:
                 proratisees.setdefault(cle, [0.0] * len(QUINTILES_EQCC))[rang] += (
                     poids * ligne[5])
+            if len(ligne) > 6:
+                validees.setdefault(cle, [0.0] * len(QUINTILES_EQCC))[rang] += (
+                    poids * ligne[6])
     return {"bornes": bornes, "masses": masses, "minima": minima,
-            "proratisees": proratisees}
+            "proratisees": proratisees, "validees": validees}
 
 
 def confronter_eqcc(lignes: list[tuple], quintiles: dict) -> dict:
-    """La grille contre l'EIR (``quintiles_eqcc.csv``), sexe par sexe : la part
+    """La grille contre l'EIR (:func:`quintiles_eqcc`), sexe par sexe : la part
     du sexe dans chaque quintile de la pension en équivalent carrière complète,
-    celle de chaque tranche de durée qui tombe dans le premier, et celle des
+    celle de chaque tranche de durée qui tombe dans le premier, celle des
     retraités au minimum dans chaque quintile — l'EIR, au minimum de leur régime
-    principal."""
+    principal —, leur proratisation et, là où l'EIR la publie, leur durée
+    validée, majorations comprises."""
     rangees = quintiles_ponderes(lignes)
     sortie: dict = {"bornes": rangees["bornes"]}
     for sexe in ("F", "H"):
@@ -2132,6 +2145,14 @@ def confronter_eqcc(lignes: list[tuple], quintiles: dict) -> dict:
                                               par_quintile)],
                         "proratisation_eir": [quintiles[(q, "coefficient_proratisation",
                                                          sexe)] / 100.0
+                                              for q in QUINTILES_EQCC],
+                        "duree_validee": [validee / masse if masse and validee is not None
+                                          else None
+                                          for validee, masse in zip(
+                                              rangees["validees"].get(
+                                                  sexe, [None] * len(QUINTILES_EQCC)),
+                                              par_quintile)],
+                        "duree_validee_eir": [quintiles.get((q, "duree_validee", sexe))
                                               for q in QUINTILES_EQCC]}
     return sortie
 
@@ -2157,7 +2178,7 @@ def eqcc(parametres: Parametres, variantes: list[Variante], tetes: GrilleEnTetes
             continue
         v = par_code[pensionne.code]
         lignes.append((montant / coefficient, poids, v.cas.sexe,
-                       tranche_de_duree(duree_de(v)), minimum, coefficient))
+                       tranche_de_duree(duree_de(v)), minimum, coefficient, annees))
         durees.append((pensionne.generation, v.cas.sexe, annees, poids))
     sortie = confronter_eqcc(lignes, quintiles)
     sortie["durees"] = durees_par_generation(
@@ -2218,7 +2239,7 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
     parametres = parametres if parametres is not None else Parametres()
     racine = parametres.racine_donnees
     source = eir(racine)
-    publies = quintiles_eqcc(racine)
+    publies = quintiles_eqcc(racine, residents=True)
     annee_centiles, valeurs = centiles(racine)
     points = multiplicateurs(valeurs)
     effectifs = Simulateur(parametres).effectifs
@@ -2290,15 +2311,15 @@ def imprimer_distribution(resultat: dict) -> None:
 
 def imprimer_eqcc(resultat: dict) -> None:
     """Les grilles qui ont des tranches de durée, rangées par quintile de leur
-    pension en équivalent carrière complète, contre l'EIR."""
+    pension en équivalent carrière complète, contre l'EIR des résidents."""
     lues = [(nom, g["eqcc"]) for nom, g in resultat["grilles"].items() if "eqcc" in g]
     if not lues:
         return
     millesime = resultat["eir"]["millesime"]
     print(f"\nLa pension en équivalent carrière complète en {millesime} — la pension "
           "divisée par la proratisation, ce qu'une carrière acquiert par année validée — "
-          "contre l'EIR : la part de chaque tranche de durée au premier quintile, et celle "
-          "du sexe")
+          "contre l'EIR des résidents : la part de chaque tranche de durée au premier "
+          "quintile, et celle du sexe")
     tranches = [nom for nom, _ in reversed(TRANCHES)]
     for sexe in ("F", "H"):
         print(f"\n{INTITULES_SEXES[sexe]:16}" + "".join(f"{t:>10}" for t in tranches)
@@ -2339,6 +2360,17 @@ def imprimer_eqcc(resultat: dict) -> None:
             print(f"{'  ' + nom:16}" + "".join(
                 f"{p * 100:>7.1f}%" if p is not None else f"{'—':>8}"
                 for p in mesure[sexe]["proratisation"]))
+    _, premiere = lues[0]
+    if all(d is not None for sexe in ("F", "H") for d in premiere[sexe]["duree_validee_eir"]):
+        print("\nLa durée validée, quintile par quintile, en années, majorations comprises")
+        for sexe in ("F", "H"):
+            print(f"\n{INTITULES_SEXES[sexe]:16}" + "".join(f"{q:>8}" for q in QUINTILES_EQCC))
+            print(f"{'  EIR':16}" + "".join(f"{d:>8.1f}"
+                                            for d in premiere[sexe]["duree_validee_eir"]))
+            for nom, mesure in lues:
+                print(f"{'  ' + nom:16}" + "".join(
+                    f"{d:>8.1f}" if d is not None else f"{'—':>8}"
+                    for d in mesure[sexe]["duree_validee"]))
     print("\nLa durée validée, génération par génération, en années — l'EIR, la durée "
           "d'assurance des résidents, majorations comprises ; la part de chaque génération")
     for sexe in ("F", "H"):
