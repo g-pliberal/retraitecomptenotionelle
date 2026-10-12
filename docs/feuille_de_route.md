@@ -5386,15 +5386,15 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 ### 136. Ce qu'OpenFisca fait mieux que le dépôt : deux règles, un oracle borné aux carrières simples, la trace d'un calcul, une population — `en cours`
 
 **Reprise, au 12 octobre 2026.** Fait : l'étape 6, sa première moitié, et, de
-la seconde, ses données certifiées et neuf versions de la population, mesurées
-à côté de la page (`grille_large.py --grille population`). La neuvième donne à
-chaque classe de salaire le volume de travail de sa catégorie : le minimum
-contributif de 2023 passe à 17,2 % (EACR 18,8), et les pensions s'approchent de
-l'EIR, sauf celles des hommes, sous l'EIR du premier au neuvième décile. Reste :
-cette pension des hommes ; celle des femmes, trop haute au bas ; le minimum
-selon la génération ; la bascule, au propriétaire ; de l'étape 3, la
-surcotisation et l'oracle ; les étapes 1, 2, 4 et 5. Le détail : les notes du
-12 octobre, la dernière sur la neuvième version.
+la seconde, ses données certifiées et dix versions de la population, mesurées
+à côté de la page (`grille_large.py --grille population`). La pension des
+hommes manque de durée : la dixième compte les carrières statutaires à leur
+durée, et leur médiane passe de 1 570 à 1 622 € (EIR 1 745) ; nés de 1938 à
+1953, ils valident encore 36 années pour 40,5. Reste : l'âge d'entrée des
+carrières pleines selon la génération ; la pension des femmes, trop haute par
+année validée ; le minimum selon la génération ; la bascule, au propriétaire ;
+de l'étape 3, la surcotisation et l'oracle ; les étapes 1, 2, 4 et 5. Le
+détail : les notes du 12 octobre, la dernière sur la dixième version.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais que tu analyses ce qu'on fait
 moins bien que openfisca pensions et que tu ajoutes une action sur ce sujet
