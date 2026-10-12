@@ -604,7 +604,8 @@ def test_une_grille_se_range_en_quintiles_comme_l_eir(parametres):
     sixième et huitième montant, deux carrières par quintile ; une carrière à
     cheval sur une borne va au quintile de son milieu. Contre l'EIR, une tranche
     rangée tout en bas a toute sa masse au premier quintile ; les carrières au
-    minimum se comptent dans leur quintile, sexe par sexe."""
+    minimum se comptent dans leur quintile, sexe par sexe, et la proratisation
+    s'y moyenne."""
     lignes = [(float(montant), 1.0, "F" if montant % 2 else "H",
                "moins_10" if montant <= 2 else "40_plus") for montant in range(1, 11)]
     rangees = G.quintiles_ponderes(lignes)
@@ -626,6 +627,11 @@ def test_une_grille_se_range_en_quintiles_comme_l_eir(parametres):
     assert confrontee["F"]["minimum_ensemble"] == pytest.approx(0.4)
     assert confrontee["H"]["minimum_ensemble"] == pytest.approx(0.2)
     assert confrontee["F"]["minimum_ensemble_eir"] == pytest.approx(0.385, abs=1e-3)
+    proratisees = [ligne + (0.5 if ligne[0] <= 2.0 else 1.0,) for ligne in au_minimum]
+    confrontee = G.confronter_eqcc(proratisees, G.quintiles_eqcc(parametres.racine_donnees))
+    assert confrontee["F"]["proratisation"] == [0.5, 1.0, 1.0, 1.0, 1.0]
+    assert confrontee["H"]["proratisation"] == [0.5, 1.0, 1.0, 1.0, 1.0]
+    assert confrontee["H"]["proratisation_eir"][4] == pytest.approx(0.985, abs=1e-3)
 
 
 def test_la_grille_du_depot_reecrite_redonne_la_page(parametres):

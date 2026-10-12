@@ -1878,14 +1878,16 @@ def quintiles_ponderes(lignes: list[tuple]) -> dict:
     """Une grille rangée comme l'EIR range les retraités : les bornes des
     quintiles de la pension en équivalent carrière complète, les deux sexes
     réunis, et, sexe par sexe, le poids de chaque tranche de durée dans chaque
-    quintile, et celui des retraités au minimum. ``lignes`` : ``(pension,
-    poids, sexe, tranche)``, et en cinquième, s'il y est, le minimum. Une ligne
-    à cheval sur une borne va au quintile de son milieu."""
+    quintile, celui des retraités au minimum, et celui de leur proratisation.
+    ``lignes`` : ``(pension, poids, sexe, tranche)``, et en cinquième, s'il y
+    est, le minimum, en sixième la proratisation. Une ligne à cheval sur une
+    borne va au quintile de son milieu."""
     tries = sorted(lignes, key=lambda ligne: ligne[0])
     total = somme_ordonnee(ligne[1] for ligne in tries)
     bornes: list[float] = []
     masses: dict[str, dict[str, list[float]]] = {}
     minima: dict[str, list[float]] = {}
+    proratisees: dict[str, list[float]] = {}
     cumul = 0.0
     for ligne in tries:
         montant, poids, sexe, tranche = ligne[:4]
@@ -1898,7 +1900,11 @@ def quintiles_ponderes(lignes: list[tuple]) -> dict:
                 tranche, [0.0] * len(QUINTILES_EQCC))[rang] += poids
             if len(ligne) > 4 and ligne[4]:
                 minima.setdefault(cle, [0.0] * len(QUINTILES_EQCC))[rang] += poids
-    return {"bornes": bornes, "masses": masses, "minima": minima}
+            if len(ligne) > 5:
+                proratisees.setdefault(cle, [0.0] * len(QUINTILES_EQCC))[rang] += (
+                    poids * ligne[5])
+    return {"bornes": bornes, "masses": masses, "minima": minima,
+            "proratisees": proratisees}
 
 
 def confronter_eqcc(lignes: list[tuple], quintiles: dict) -> dict:
@@ -1939,7 +1945,15 @@ def confronter_eqcc(lignes: list[tuple], quintiles: dict) -> dict:
                                                    sexe)] / 100.0 for q in QUINTILES_EQCC],
                         "minimum_ensemble": somme_ordonnee(minima) / total,
                         "minimum_ensemble_eir": quintiles[
-                            ("ensemble", "part_minimum_pension_regime_principal", sexe)] / 100.0}
+                            ("ensemble", "part_minimum_pension_regime_principal", sexe)] / 100.0,
+                        "proratisation": [proratisee / masse if masse else None
+                                          for proratisee, masse in zip(
+                                              rangees["proratisees"].get(
+                                                  sexe, [0.0] * len(QUINTILES_EQCC)),
+                                              par_quintile)],
+                        "proratisation_eir": [quintiles[(q, "coefficient_proratisation",
+                                                         sexe)] / 100.0
+                                              for q in QUINTILES_EQCC]}
     return sortie
 
 
@@ -1963,7 +1977,7 @@ def eqcc(parametres: Parametres, variantes: list[Variante], tetes: GrilleEnTetes
             continue
         v = par_code[pensionne.code]
         lignes.append((montant / coefficient, poids, v.cas.sexe,
-                       tranche_de_duree(duree_de(v)), minimum))
+                       tranche_de_duree(duree_de(v)), minimum, coefficient))
     return confronter_eqcc(lignes, quintiles)
 
 
@@ -2095,6 +2109,17 @@ def imprimer_eqcc(resultat: dict) -> None:
                 f"{p * 100:>7.1f}%" if p is not None else f"{'—':>8}"
                 for p in mesure[sexe]["minimum"])
                 + f"{mesure[sexe]['minimum_ensemble'] * 100:>9.1f}%")
+    print("\nLa proratisation moyenne, quintile par quintile — l'EIR, la somme des "
+          "coefficients des régimes de base")
+    for sexe in ("F", "H"):
+        print(f"\n{INTITULES_SEXES[sexe]:16}" + "".join(f"{q:>8}" for q in QUINTILES_EQCC))
+        _, premiere = lues[0]
+        print(f"{'  EIR':16}" + "".join(f"{p * 100:>7.1f}%"
+                                        for p in premiere[sexe]["proratisation_eir"]))
+        for nom, mesure in lues:
+            print(f"{'  ' + nom:16}" + "".join(
+                f"{p * 100:>7.1f}%" if p is not None else f"{'—':>8}"
+                for p in mesure[sexe]["proratisation"]))
 
 
 def imprimer(resultat: dict) -> None:
