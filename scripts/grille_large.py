@@ -161,7 +161,11 @@ leur salaire. La neuvième (le même jour) embraye le volume selon le rang
 classes du bas travaillent moins d'heures dans l'année que celles du haut. La
 dixième (le même jour) compte chaque carrière statutaire dans la tranche de
 sa durée, et non dans la plus longue (:data:`STATUTAIRES_A_LEUR_DUREE`) : les
-autres groupes ne portent plus seuls la tranche de trente à quarante ans.
+autres groupes ne portent plus seuls la tranche de trente à quarante ans. La
+onzième (le même jour) fait commencer les carrières pleines du salariat privé
+quarante-quatre années environ avant l'âge légal de leur génération
+(:data:`ENTREE_SELON_LA_GENERATION`) : à 16 ans pour les générations parties à
+60 ans, à 21 ans, comme avant, pour celles qui partent à 64.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -392,6 +396,15 @@ COURTES_ETALEES = True
 #: l'écart entre l'entrée et cet âge le prolonge d'autant.
 AGE_FIN_ETALEMENT = 60
 
+#: L'entrée des carrières pleines selon la génération : la carrière entière du
+#: salariat privé, sa tranche de quarante ans et plus, commence la durée des
+#: carrières pleines de sa génération (:func:`durees_pleines`) avant l'âge
+#: légal d'ouverture de celle-ci (``age_ouverture_requis.csv``), et à 21 ans
+#: au plus tard, l'entrée du gabarit. Elle commençait à 21 ans pour toutes :
+#: les générations nées avant 1951, parties à 60 ans, n'y validaient que 39
+#: années, quand les carrières pleines des retraités de 2020 en comptent 44.
+ENTREE_SELON_LA_GENERATION = True
+
 #: La persistance au Smic : une part des carrières du salariat privé de chaque
 #: sexe est payée le Smic toute la carrière. Celle de la coupe de l'année à
 #: temps complet sous :data:`SEUIL_VOISINAGE` fois le Smic, en moyenne des
@@ -516,7 +529,9 @@ class CasTypeLarge(CasType):
     sont. Une carrière ``persistante`` est payée le Smic de chaque année, et
     ses ``niveaux`` sont ceux du Smic. ``volumes`` — paires ``(âge, part de
     l'année)`` triées — paie chaque année d'activité à la part de l'année
-    travaillée à son âge.
+    travaillée à son âge. ``entrees`` — paires ``(génération, âge)`` triées —
+    fait commencer la carrière de chaque génération à son âge, les années
+    d'interruption comptées de lui.
     """
 
     avant: tuple[tuple[str, float], ...] = ()
@@ -526,10 +541,17 @@ class CasTypeLarge(CasType):
     plancher_smic: bool = False
     persistante: bool = False
     volumes: tuple[tuple[int, float], ...] = ()
+    entrees: tuple[tuple[int, float], ...] = ()
 
     def niveau_de(self, generation: int) -> float:
         """Le niveau de salaire de cette génération."""
         return _par_generation(self.niveaux, generation, self.niveau_salaire)
+
+    def debut_de(self, generation: int) -> float:
+        """L'âge d'entrée de cette génération : celui des ``entrees``, paires
+        ``(génération, âge)`` triées (:data:`ENTREE_SELON_LA_GENERATION`), ou
+        celui du cas type."""
+        return _par_generation(self.entrees, generation, self.age_debut)
 
     def au_smic(self, simulateur: Simulateur, generation: int) -> bool:
         """Vrai si la carrière se paie au Smic : persistante, ou, sous
@@ -558,7 +580,7 @@ class CasTypeLarge(CasType):
         quotite = _par_generation(self.quotites, generation, 1.0)
         debut, fin = self.ages_partiel or (0.0, 0.0)
         parts = {}
-        for age in range(int(self.age_debut), AGE_FIN_INACTIVITE + 1):
+        for age in range(int(self.debut_de(generation)), AGE_FIN_INACTIVITE + 1):
             annee = generation + age
             if annee in interruptions:
                 continue
@@ -570,16 +592,18 @@ class CasTypeLarge(CasType):
         return parts or None
 
     def _carriere(self, simulateur: Simulateur, generation: int, age_liquidation: float):
-        if not (self.avant or self.niveaux or self.ages_partiel or self.volumes):
+        if not (self.avant or self.niveaux or self.ages_partiel or self.volumes
+                or self.entrees):
             return super()._carriere(simulateur, generation, age_liquidation)
+        entree = self.debut_de(generation)
         interruptions = {
-            int(generation + self.age_debut + decalage): motif
+            int(generation + entree + decalage): motif
             for decalage, motif in self.interruptions_relatives
         }
         niveau, profil = self.niveau_de(generation), self.profil_carriere
         if self.au_smic(simulateur, generation):
             niveau, profil = 1.0, PROFIL_SMIC
-        metiers, age = [], self.age_debut
+        metiers, age = [], entree
         for affiliation, annees in self.avant:
             metiers.append(Metier(affiliation=affiliation, age_debut=age,
                                   niveau_salaire=niveau))
@@ -715,7 +739,8 @@ class DonneesPopulation:
     ``quintiles`` : les quintiles de la pension en équivalent carrière
     complète de l'EIR (:data:`RANG_SELON_LA_DUREE`) ; ``ecarts_du_bas`` : les
     niveaux relatifs des sous-classes du reste de la classe du bas
-    (:data:`SOUS_CLASSES_DU_BAS`).
+    (:data:`SOUS_CLASSES_DU_BAS`) ; ``entrees`` : l'âge d'entrée des carrières
+    pleines, génération par génération (:data:`ENTREE_SELON_LA_GENERATION`).
     """
 
     niveaux: dict[tuple[str, str], tuple[tuple[int, float], ...]]
@@ -729,6 +754,7 @@ class DonneesPopulation:
     rangs: dict[str, float]
     quintiles: dict[tuple[str, str, str], float]
     ecarts_du_bas: dict[str, tuple[tuple[int, tuple[float, ...]], ...]]
+    entrees: dict[str, tuple[tuple[int, float], ...]]
 
 
 def resserrer(relatifs: dict[str, float], moyenne: float) -> dict[str, float]:
@@ -1031,7 +1057,57 @@ def donnees_population(racine: Path) -> DonneesPopulation:
                                   SOUS_CLASSES_DU_BAS)
               for sexe in ("F", "H")}
     return DonneesPopulation(niveaux, parts, par_generation, points, persistants,
-                             au_smic, reste, volumes, rangs, quintiles_eqcc(racine), ecarts)
+                             au_smic, reste, volumes, rangs, quintiles_eqcc(racine), ecarts,
+                             entrees_des_carrieres_pleines(racine))
+
+
+def durees_pleines(racine: Path) -> dict[str, tuple[tuple[int, float], ...]]:
+    """La durée des carrières pleines, génération par génération, sexe par
+    sexe (:data:`ENTREE_SELON_LA_GENERATION`). Celle des retraités de 2020 se
+    déduit de l'EIR : la durée validée moyenne hors majorations, moins ce
+    qu'en portent les tranches plus courtes, comptées à leur milieu, rapportée
+    à la part de la tranche de quarante ans et plus — 44,1 années pour les
+    hommes, 44,0 pour les femmes (``caracteristiques_retraites.csv``). D'une
+    génération à l'autre, elle suit la durée d'assurance des hommes autour de
+    sa moyenne des générations certifiées (``duree_assurance_generations.csv``) :
+    celle des femmes monte surtout de ce que leurs carrières courtes se
+    raréfient, que la grille ne sait pas faire varier."""
+    source = eir(racine)
+    hommes = [(int(l["generation"]), float(l["trimestres"]) / 4.0, l["fiabilite"])
+              for l in _lire_macro(racine, "duree_assurance_generations.csv")
+              if l["sexe"] == "hommes"]
+    certifiees = [duree for _, duree, fiabilite in hommes if fiabilite == "haute"]
+    reference = somme_ordonnee(certifiees) / len(certifiees)
+    sortie = {}
+    for sexe in ("F", "H"):
+        parts = parts_tranches(source, sexe)
+        courtes = somme_ordonnee(parts[nom] * cible for nom, cible in TRANCHES
+                                 if cible is not None)
+        pleine = (source.valeur("duree_validee_hors_majoration", sexe) - courtes) / parts["40_plus"]
+        sortie[sexe] = tuple(sorted((generation, pleine + duree - reference)
+                                    for generation, duree, _ in hommes))
+    return sortie
+
+
+def entrees_des_carrieres_pleines(racine: Path) -> dict[str, tuple[tuple[int, float], ...]]:
+    """L'âge d'entrée des carrières pleines du salariat privé, génération par
+    génération, sexe par sexe : la durée des carrières pleines
+    (:func:`durees_pleines`) avant l'âge légal de la génération, à l'année
+    près, et à l'entrée du gabarit au plus tard."""
+    from retraite_notionnelle.scenarios.actuel import AgesOuverture
+
+    legaux = AgesOuverture(racine)
+    gabarit = next(cas for cas in CAS_TYPES if cas.code == "salaire_moyen").age_debut
+    sortie = {}
+    for sexe, durees in durees_pleines(racine).items():
+        entrees = []
+        for generation in range(min(g for g, _ in durees) - 40, max(g for g, _ in durees) + 1):
+            lu = legaux.age(generation)
+            legal = lu[0] if lu is not None else 60.0
+            entrees.append((generation, float(min(gabarit, round(
+                legal - _par_generation(durees, generation, 0.0))))))
+        sortie[sexe] = tuple(entrees)
+    return sortie
 
 
 def _part_eir(source: CaracteristiquesRetraites, groupe: str, sexe: str) -> float:
@@ -1370,7 +1446,10 @@ def salaires_population(variantes: list[Variante],
                            affiliation=("salarie_prive_cadre" if nom in CENTILES_CADRES
                                         else "salarie_prive_non_cadre"),
                            niveaux=donnees.niveaux[(cas.sexe, nom)],
-                           plancher_smic=PLANCHER_SMIC, volumes=volumes)
+                           plancher_smic=PLANCHER_SMIC, volumes=volumes,
+                           entrees=(donnees.entrees[cas.sexe]
+                                    if ENTREE_SELON_LA_GENERATION and v.tranche == "40_plus"
+                                    else ()))
             classes = [(rang, part)]
             if nom == CENTILES[0][0] and (PERSISTANCE_SMIC or SOUS_CLASSES_DU_BAS > 1):
                 persistants = (donnees.persistants[cas.sexe] * part / base

@@ -409,6 +409,28 @@ def test_chaque_classe_travaille_le_volume_de_sa_categorie(simulateur, source, p
     assert max(part for _, part in par_code[f"{G.GABARIT}~h~40_plus~p99"].volumes) == 1.0
 
 
+def test_les_carrieres_pleines_entrent_selon_leur_generation(simulateur, source, parametres):
+    """Sous ``ENTREE_SELON_LA_GENERATION``, la carrière pleine du salariat privé
+    commence la durée des carrières pleines avant l'âge légal de sa génération :
+    44 années pour les retraités de 2020, que l'EIR donne aux deux sexes ; à
+    16 ans pour la génération 1945, partie à 60 ans ; à 21 ans, l'entrée du
+    gabarit, pour celles qui partent à 64 ans. Sa part au Smic toute la
+    carrière la suit ; les carrières courtes gardent l'entrée du gabarit."""
+    assert G.ENTREE_SELON_LA_GENERATION
+    durees = G.durees_pleines(parametres.racine_donnees)
+    for sexe in ("F", "H"):
+        assert G._par_generation(durees[sexe], 1950, 0.0) == pytest.approx(44.0, abs=0.2)
+    par_code = {v.cas.code: v.cas for v in G.grille("population", simulateur.effectifs,
+                                                     source, ())}
+    pleine = par_code[f"{G.GABARIT}~h~40_plus~p50"]
+    assert pleine.debut_de(1945) == 16.0
+    assert pleine.debut_de(1980) == 21.0
+    assert par_code[f"{G.GABARIT}~h~40_plus~p10~smic"].debut_de(1945) == 16.0
+    assert par_code[f"{G.GABARIT}~h~30_40~p50"].debut_de(1945) == 21
+    lignes = pleine.carriere_a(simulateur, 1945, 60).lignes
+    assert min(l.annee for l in lignes if l.type_periode == "emploi") == 1945 + 16
+
+
 def test_les_carrieres_courtes_de_la_population_sont_celles_de_tous(simulateur, source):
     """Les régimes statutaires n'ayant pas de carrières courtes, les autres en
     portent d'autant plus : sur tous les retraités de chaque sexe, le militaire
