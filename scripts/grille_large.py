@@ -165,14 +165,19 @@ autres groupes ne portent plus seuls la tranche de trente à quarante ans. La
 onzième (le même jour) fait commencer les carrières pleines du salariat privé
 quarante-quatre années environ avant l'âge légal de leur génération
 (:data:`ENTREE_SELON_LA_GENERATION`) : à 16 ans pour les générations parties à
-60 ans, à 21 ans, comme avant, pour celles qui partent à 64.
+60 ans, à 21 ans, comme avant, pour celles qui partent à 64. La douzième (le
+même jour) fait suivre leur génération aux carrières incomplètes des femmes
+(:data:`DUREE_DES_FEMMES_SELON_LA_GENERATION`) : elles gagnent ou perdent, à
+chaque génération, les années qui portent la durée moyenne des femmes à celle
+que l'EIR mesure aux résidentes.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
 Une population. Les axes sont tenus pour indépendants — le salaire ne dépend
 ni du sexe ni de la durée —, chaque déclinaison garde l'âge d'entrée et le
 profil de son cas type, et les parts sont celles des retraités de 2020,
-appliquées à toutes les générations. La dispersion des salaires est celle d'une
+appliquées à toutes les générations ; seules les carrières incomplètes des
+femmes changent de durée avec la leur. La dispersion des salaires est celle d'une
 coupe de l'année à temps complet, plus large que celle d'un salaire de
 carrière ; les dix années de salariat d'un polypensionné et les deux enfants
 d'une femme sont des conventions, que l'EIR ne chiffre pas. Ce que la mesure
@@ -405,6 +410,26 @@ AGE_FIN_ETALEMENT = 60
 #: années, quand les carrières pleines des retraités de 2020 en comptent 44.
 ENTREE_SELON_LA_GENERATION = True
 
+#: La durée des carrières des femmes selon la génération : les carrières
+#: incomplètes des femmes, hors des régimes statutaires, gagnent ou perdent,
+#: génération par génération, les mêmes années validées
+#: (:func:`ecarts_des_femmes`), pour que la durée moyenne des femmes de chaque
+#: génération soit celle que l'EIR mesure aux résidentes, majorations
+#: comprises (``duree_assurance_generations.csv``) : 33,2 années pour la
+#: génération 1940, 39,5 pour 1953, 41 environ pour les suivantes, que
+#: TRAJECTOiRE projette. Les poids et les tranches restent ceux des retraitées
+#: de 2020 ; une carrière incomplète garde une année au moins, et ne passe pas
+#: l'âge légal de sa génération. La grille donnait à toutes les générations les
+#: carrières des femmes de 2020 : 34,7 années, quand celles de l'EIR montent de
+#: 33,8 autour de 1940 à 38,2 autour de 1950. Les hommes n'en reçoivent pas :
+#: leur durée, dans l'EIR, ne change guère d'une génération à l'autre. Les
+#: carrières incomplètes perdent 2,3 années pour les générations nées jusqu'en
+#: 1940 — celles d'avant, que l'EIR ne mesure pas, gardent sa première durée —,
+#: en gagnent 8,3 pour 1950, 15 à 17 pour celles nées de 1955 à 1970 : la
+#: tranche de trente à quarante ans, bornée par l'âge légal, n'en prend que
+#: quelques-unes, et les plus courtes portent le reste. La douzième version.
+DUREE_DES_FEMMES_SELON_LA_GENERATION = True
+
 #: La persistance au Smic : une part des carrières du salariat privé de chaque
 #: sexe est payée le Smic toute la carrière. Celle de la coupe de l'année à
 #: temps complet sous :data:`SEUIL_VOISINAGE` fois le Smic, en moyenne des
@@ -542,10 +567,23 @@ class CasTypeLarge(CasType):
     persistante: bool = False
     volumes: tuple[tuple[int, float], ...] = ()
     entrees: tuple[tuple[int, float], ...] = ()
+    tranche_de_base: tuple = ()
+    cibles: tuple[tuple[int, float], ...] = ()
 
     def niveau_de(self, generation: int) -> float:
         """Le niveau de salaire de cette génération."""
         return _par_generation(self.niveaux, generation, self.niveau_salaire)
+
+    def decalages_de(self, generation: int) -> tuple[tuple[int, str], ...]:
+        """Les interruptions de cette génération : celles du cas type, ou, pour
+        une carrière incomplète dont la durée suit la génération (``cibles``,
+        :data:`DUREE_DES_FEMMES_SELON_LA_GENERATION`), celles de ses années
+        validées de cette génération (:func:`decalages_de_tranche`)."""
+        if not self.cibles:
+            return self.interruptions_relatives
+        base, duree, assimilee, etalee = self.tranche_de_base
+        cible = int(round(_par_generation(self.cibles, generation, 0.0)))
+        return decalages_de_tranche(base, duree, cible, assimilee, etalee, self.age_debut)
 
     def debut_de(self, generation: int) -> float:
         """L'âge d'entrée de cette génération : celui des ``entrees``, paires
@@ -593,12 +631,12 @@ class CasTypeLarge(CasType):
 
     def _carriere(self, simulateur: Simulateur, generation: int, age_liquidation: float):
         if not (self.avant or self.niveaux or self.ages_partiel or self.volumes
-                or self.entrees):
+                or self.entrees or self.cibles):
             return super()._carriere(simulateur, generation, age_liquidation)
         entree = self.debut_de(generation)
         interruptions = {
             int(generation + entree + decalage): motif
-            for decalage, motif in self.interruptions_relatives
+            for decalage, motif in self.decalages_de(generation)
         }
         niveau, profil = self.niveau_de(generation), self.profil_carriere
         if self.au_smic(simulateur, generation):
@@ -1269,19 +1307,37 @@ def _interrompre(v: Variante, nom: str, cible: int | None, part: float,
         return None
     validee = duree if cible is None else cible
     assimilees = int(round(assimilee * validee))
+    nouveau = elargi(cas, code=f"{cas.code}~{nom}",
+                     interruptions_relatives=decalages_de_tranche(
+                         cas.interruptions_relatives, duree, cible, assimilee, etalee,
+                         cas.age_debut),
+                     tranche_de_base=(() if cible is None else
+                                      (cas.interruptions_relatives, duree, assimilee,
+                                       etalee)))
+    return v.fois(part, cas=nouveau, duree=validee, assimilees=assimilees, tranche=nom)
+
+
+def decalages_de_tranche(base: tuple[tuple[int, str], ...], duree: int, cible: int | None,
+                         assimilee: float, etalee: bool, age_debut: float
+                         ) -> tuple[tuple[int, str], ...]:
+    """Les interruptions d'une carrière de ``cible`` années validées
+    (:func:`_interrompre`), en décalages de son entrée : celles de ``base`` qui
+    tombent dans ses années validées, une part ``assimilee`` de celles-ci au
+    chômage indemnisé, au milieu, et, pour une tranche courte, l'inactivité
+    ailleurs, jusqu'à :data:`AGE_FIN_INACTIVITE`."""
+    validee = duree if cible is None else cible
+    assimilees = int(round(assimilee * validee))
     if cible is not None and etalee:
-        validees = annees_etalees(cible, max(cible, int(AGE_FIN_ETALEMENT - cas.age_debut)))
+        validees = annees_etalees(cible, max(cible, int(AGE_FIN_ETALEMENT - age_debut)))
     else:
         validees = tuple(range(validee))
-    occupes = {d: m for d, m in cas.interruptions_relatives if d in validees}
+    occupes = {d: m for d, m in base if d in validees}
     _placer(occupes, validees[(validee - assimilees) // 2:], assimilees, "chomage_indemnise")
     if cible is not None:
-        for decalage in range(int(AGE_FIN_INACTIVITE - cas.age_debut)):
+        for decalage in range(int(AGE_FIN_INACTIVITE - age_debut)):
             if decalage not in validees:
                 occupes[decalage] = "inactivite"
-    nouveau = elargi(cas, code=f"{cas.code}~{nom}",
-                     interruptions_relatives=tuple(sorted(occupes.items())))
-    return v.fois(part, cas=nouveau, duree=validee, assimilees=assimilees, tranche=nom)
+    return tuple(sorted(occupes.items()))
 
 
 def femmes(variantes: list[Variante], effectifs,
@@ -1494,7 +1550,105 @@ def population(effectifs, source: CaracteristiquesRetraites,
     variantes = interruptions(melees(personnes(reference_population(), effectifs, source),
                                      source), effectifs, source,
                               de_tous=COURTES_A_LA_PART_DE_TOUS, etalees=COURTES_ETALEES)
+    if DUREE_DES_FEMMES_SELON_LA_GENERATION:
+        variantes = femmes_selon_la_generation(variantes, effectifs, source, racine)
     return salaires_population(variantes, donnees_population(racine))
+
+
+def femmes_ponderees(variantes: list[Variante], effectifs,
+                     source: CaracteristiquesRetraites) -> list[tuple[Variante, float]]:
+    """Les variantes de femmes et leur poids de retraitées, l'année de l'enquête."""
+    poids = poids_retraites(variantes, effectifs, source.millesime)
+    return [(v, p) for v, p in zip(variantes, poids) if v.cas.sexe == "F" and p > 0.0]
+
+
+def incomplete(v: Variante) -> bool:
+    """Vrai pour une carrière incomplète hors des régimes statutaires, que
+    :data:`DUREE_DES_FEMMES_SELON_LA_GENERATION` allonge ou raccourcit."""
+    return v.groupe in GROUPES_INTERROMPUS and v.tranche not in (None, "40_plus")
+
+
+def annees_incompletes(v: Variante, ecart: float, legal: float) -> float:
+    """Les années validées d'une carrière incomplète, ``ecart`` gagné ou perdu :
+    une au moins, et pas au-delà de l'âge légal de sa génération."""
+    return min(max(1.0, v.duree + ecart), legal - v.cas.age_debut)
+
+
+def duree_moyenne_des_femmes(femmes: list[tuple[Variante, float]], ecart: float,
+                             legal: float, entree: float) -> float:
+    """La durée validée moyenne des femmes d'une génération, en années, comme
+    :func:`ecarts_des_femmes` la compte : une carrière incomplète à ses années
+    (:func:`annees_incompletes`), une carrière pleine de l'entrée à l'âge légal
+    — à ``entree`` pour le salariat privé —, les deux avec les majorations de
+    durée de ses enfants, huit trimestres chacun ; une carrière statutaire à sa
+    durée."""
+    majoration = 2.0 * ENFANTS
+    somme = total = 0.0
+    for v, p in femmes:
+        if incomplete(v):
+            annees = annees_incompletes(v, ecart, legal) + majoration
+        elif v.groupe in GROUPES_INTERROMPUS:
+            debut = entree if v.cas.code.split("~", 1)[0] == GABARIT else v.cas.age_debut
+            annees = legal - debut + majoration
+        else:
+            annees = duree_de(v)
+        somme += p * annees
+        total += p
+    return somme / total
+
+
+def ecarts_des_femmes(variantes: list[Variante], effectifs,
+                      source: CaracteristiquesRetraites, racine: Path) -> dict[int, float]:
+    """Les années que les carrières incomplètes des femmes gagnent ou perdent,
+    génération par génération (:data:`DUREE_DES_FEMMES_SELON_LA_GENERATION`) :
+    celles qui portent leur durée moyenne (:func:`duree_moyenne_des_femmes`) à
+    celle de l'EIR (:func:`durees_d_assurance`), par bissection."""
+    from retraite_notionnelle.scenarios.actuel import AgesOuverture
+
+    legaux = AgesOuverture(racine)
+    publiees = durees_d_assurance(racine)
+    serie = tuple(sorted((g, d) for (g, sexe), d in publiees.items() if sexe == "F"))
+    entrees = entrees_des_carrieres_pleines(racine)["F"]
+    femmes = femmes_ponderees(variantes, effectifs, source)
+    sortie = {}
+    for generation in range(serie[0][0] - 40, serie[-1][0] + 1):
+        lu = legaux.age(generation)
+        legal = lu[0] if lu is not None else 60.0
+        entree = _par_generation(entrees, generation, 21.0)
+        cible = _par_generation(serie, generation, 0.0)
+        bas, haut = -40.0, 40.0
+        for _ in range(50):
+            milieu = (bas + haut) / 2.0
+            if duree_moyenne_des_femmes(femmes, milieu, legal, entree) < cible:
+                bas = milieu
+            else:
+                haut = milieu
+        sortie[generation] = (bas + haut) / 2.0
+    return sortie
+
+
+def femmes_selon_la_generation(variantes: list[Variante], effectifs,
+                               source: CaracteristiquesRetraites,
+                               racine: Path) -> list[Variante]:
+    """Les carrières incomplètes des femmes, chacune à ses années validées de
+    chaque génération (:func:`ecarts_des_femmes`, :func:`annees_incompletes`),
+    à l'année près ; les autres variantes telles quelles."""
+    from retraite_notionnelle.scenarios.actuel import AgesOuverture
+
+    legaux = AgesOuverture(racine)
+    ecarts = ecarts_des_femmes(variantes, effectifs, source, racine)
+    sortie = []
+    for v in variantes:
+        if v.cas.sexe != "F" or not incomplete(v):
+            sortie.append(v)
+            continue
+        cibles = []
+        for generation, ecart in sorted(ecarts.items()):
+            lu = legaux.age(generation)
+            legal = lu[0] if lu is not None else 60.0
+            cibles.append((generation, float(round(annees_incompletes(v, ecart, legal)))))
+        sortie.append(replace(v, cas=replace(v.cas, cibles=tuple(cibles))))
+    return sortie
 
 
 def grille(nom: str, effectifs, source: CaracteristiquesRetraites,

@@ -480,12 +480,14 @@ def test_une_carriere_courte_de_la_population_s_etale_sur_la_vie_active(simulate
     durée — travail et périodes assimilées — en années espacées de son entrée à
     soixante ans, inactive entre elles et jusqu'au départ ; la grille des
     interruptions garde les premières années
-    (``test_une_carriere_courte_s_arrete_a_la_duree_de_sa_tranche``)."""
+    (``test_une_carriere_courte_s_arrete_a_la_duree_de_sa_tranche``). Celle
+    d'un homme : celle d'une femme change de durée avec sa génération
+    (``test_les_carrieres_des_femmes_suivent_la_duree_de_leur_generation``)."""
     assert G.COURTES_ETALEES
     variantes = G.grille("population", simulateur.effectifs, source, ())
-    courte = next(v for v in variantes if v.cas.code == f"{G.GABARIT}~f~10_20~p50")
+    courte = next(v for v in variantes if v.cas.code == f"{G.GABARIT}~h~10_20~p50")
     assert courte.duree == 15 and courte.assimilees == round(
-        G.part_assimilee(source, "F") * 15)
+        G.part_assimilee(source, "H") * 15)
     generation = 1960
     carriere = courte.cas.construire(simulateur, generation)
     validees = [ligne.annee - generation for ligne in carriere.lignes
@@ -497,6 +499,41 @@ def test_une_carriere_courte_de_la_population_s_etale_sur_la_vie_active(simulate
     types = {ligne.type_periode for ligne in carriere.lignes
              if ligne.annee - generation not in validees}
     assert types == {"inactivite"}
+
+
+def test_les_carrieres_des_femmes_suivent_la_duree_de_leur_generation(simulateur, source,
+                                                                        parametres):
+    """Sous ``DUREE_DES_FEMMES_SELON_LA_GENERATION``, les carrières incomplètes
+    des femmes, hors des régimes statutaires, gagnent ou perdent les mêmes
+    années à chaque génération, pour que la durée moyenne des femmes, comptée
+    comme le calage la compte, soit celle que l'EIR mesure aux résidentes : 38
+    années pour la génération 1950, partie à 60 ans. La génération 1935 en perd,
+    celles de 1950 et de 1965 en gagnent ; les carrières pleines, les carrières
+    statutaires et celles des hommes ne changent pas. Simulée, une carrière de
+    dix à vingt ans valide ses années de chaque génération, une au moins, sans
+    passer l'âge légal."""
+    assert G.DUREE_DES_FEMMES_SELON_LA_GENERATION
+    racine = parametres.racine_donnees
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    ecarts = G.ecarts_des_femmes(variantes, simulateur.effectifs, source, racine)
+    assert ecarts[1935] < 0.0 < ecarts[1950] < ecarts[1965]
+    femmes = G.femmes_ponderees(variantes, simulateur.effectifs, source)
+    entree = G._par_generation(G.entrees_des_carrieres_pleines(racine)["F"], 1950, 21.0)
+    assert G.duree_moyenne_des_femmes(femmes, ecarts[1950], 60.0, entree) == pytest.approx(
+        G.durees_d_assurance(racine)[(1950, "F")], abs=1e-6)
+    for v in variantes:
+        assert bool(v.cas.cibles) == (v.cas.sexe == "F" and G.incomplete(v)), v.cas.code
+    courte = next(v for v in variantes if v.cas.code == f"{G.GABARIT}~f~10_20~p50")
+    assert G.annees_incompletes(courte, -40.0, 60.0) == 1.0
+    assert G.annees_incompletes(courte, 40.0, 60.0) == 60.0 - courte.cas.age_debut
+    validees = {}
+    for generation in (1935, 1965):
+        carriere = courte.cas.construire(simulateur, generation)
+        validees[generation] = sum(1 for ligne in carriere.lignes
+                                   if ligne.type_periode in ("emploi", "chomage_indemnise"))
+        assert validees[generation] == round(
+            G._par_generation(courte.cas.cibles, generation, 0.0)), generation
+    assert validees[1935] < courte.duree < validees[1965]
 
 
 def test_les_quintiles_eqcc_se_lisent_dans_le_fichier_certifie(parametres):
