@@ -5387,14 +5387,13 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 
 **Reprise, au 12 octobre 2026.** Fait : l'étape 6, sa première moitié, et, de
 la seconde, ses données certifiées et treize versions de la population,
-mesurées à côté de la page (`grille_large.py --grille population`). Le
-deuxième quintile n'était qu'une affaire de bornes : ce qui manque aux femmes
-est plus bas, sous 880 € en équivalent carrière complète, 16 % pour 31 chez
-les résidentes de l'EIR, dont des départs avec décote. Reste : certifier le
-classeur des résidents de l'EIR et y confronter la population ; la décote ; le
-minimum selon la génération ; la bascule, au propriétaire ; de l'étape 3, la
-surcotisation et l'oracle ; les étapes 1, 2, 4 et 5. Le détail : les notes du
-12 octobre, la dernière sur la treizième version.
+mesurées contre les quintiles des résidents de l'EIR, certifiés
+(`grille_large.py --grille population`). Trop d'hommes au minimum, 17,3 %
+pour 9,8, dont les carrières statutaires déclinées aux classes du privé.
+Reste : caler la population sur les résidents ; ces carrières statutaires ; la
+décote ; le minimum selon la génération ; la bascule, au propriétaire ; de
+l'étape 3, la surcotisation et l'oracle ; les étapes 1, 2, 4 et 5. Le détail :
+les notes du 12 octobre, la dernière sur les résidents.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais que tu analyses ce qu'on fait
 moins bien que openfisca pensions et que tu ajoutes une action sur ce sujet

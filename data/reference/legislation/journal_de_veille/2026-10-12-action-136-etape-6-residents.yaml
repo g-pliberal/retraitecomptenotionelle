@@ -1,0 +1,20 @@
+date: "2026-10-12"
+session: "action 136, étape 6 : les quintiles des résidents de l'EIR, certifiés, et la population mesurée contre eux"
+consulte: >-
+  Aucune source de droit nouvelle. Le jeu « Caractéristiques des retraités » de la DREES,
+  par son interface : le classeur « Caractéristiques de tous les retraités résidant en
+  France (EIR 2020) », feuille « QuintilesEQCC », téléchargé par
+  scripts/fetch/drees_caracteristiques_retraites.py et certifié par
+  scripts/verifier_donnees.py ; le classeur de tous les retraités, relu à l'identique.
+trouve: >-
+  Aucun texte de droit. 252 valeurs certifiées (quintiles_eqcc_residents.csv), dont la
+  durée validée, la durée cotisée et la part des départs avec décote. Contre les
+  résidents, les hommes du premier quintile sont proratisés à 76,1 % et non 47,6 : les
+  retraités de l'étranger faisaient le premier quintile de tous. La population a 17,3 %
+  d'hommes au minimum, pour 9,8 chez les résidents, dont six points de militaires et de
+  fonctionnaires actifs.
+reste: >-
+  À l'étape 6 de l'action 136 : caler la population sur les résidents ; les carrières
+  statutaires déclinées aux classes de salaire du privé, que le minimum garanti relève ;
+  les départs avec décote ; le minimum selon la génération ; la bascule de la page, au
+  propriétaire.
