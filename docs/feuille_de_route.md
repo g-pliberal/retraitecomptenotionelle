@@ -5386,14 +5386,13 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 ### 136. Ce qu'OpenFisca fait mieux que le dépôt : deux règles, un oracle borné aux carrières simples, la trace d'un calcul, une population — `en cours`
 
 **Reprise, au 12 octobre 2026.** Fait : l'étape 6, sa première moitié, et, de
-la seconde, ses données certifiées et cinq versions de la population, mesurées
-à côté de la page (`grille_large.py --grille population`) ; la cinquième étale
-les carrières courtes (minimum contributif de 2023 : 12,6 %, EACR 18,8). Puis
-les quintiles EQCC de l'EIR, certifiés : 80,5 % des femmes et 74,0 % des
-hommes de moins de dix années validées au premier quintile, que la population
-ne range qu'à 64,2 et 21,7 %. Reste : un gain par année qui baisse avec la
-durée, calé sur eux ; la pension des hommes ; un bas d'échelle plus fin ; la
-bascule, au propriétaire ; de l'étape 3, la surcotisation et l'oracle ; les
+la seconde, ses données certifiées et six versions de la population, mesurées
+à côté de la page (`grille_large.py --grille population`). La sixième donne aux
+carrières courtes le rang de salaire que l'EIR leur mesure (quintiles EQCC) :
+elles tombent où l'enquête les met, mais le minimum contributif de 2023 reste à
+13,4 % (EACR 18,8), faute d'un bas d'échelle assez bas. Reste : ce bas
+d'échelle ; les pensions des femmes, trop hautes, et des hommes, trop basses ;
+la bascule, au propriétaire ; de l'étape 3, la surcotisation et l'oracle ; les
 étapes 1, 2, 4 et 5. Le détail : les notes du 12 octobre.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais que tu analyses ce qu'on fait
