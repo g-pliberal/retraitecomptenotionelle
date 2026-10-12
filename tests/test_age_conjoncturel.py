@@ -2,9 +2,10 @@
 
 `docs/limites.md` § 5 ter supposait que la grille partait « un peu plus tard
 que la France réelle » et disait ne pas pouvoir le chiffrer. La série est
-maintenant dans le dépôt, et la mesure dit autre chose : sur les dix-neuf
-années que la DREES publie, la grille suit l'âge réel à moins d'une demi-année
-près, et elle part en moyenne un peu plus TÔT. Ce qu'elle ne fait pas, c'est
+maintenant dans le dépôt : sur les dix-neuf années que la DREES publie, la
+grille suit l'âge réel à moins d'une demi-année près, et elle part en moyenne
+à peine plus tard — un peu plus TÔT jusqu'au 12 octobre 2026, quand le cas
+type militaire partait à quarante-quatre ans. Ce qu'elle ne fait pas, c'est
 suivre la montée des années récentes.
 
 Ces bornes tiennent la mesure sans la figer au centième : ce qu'on refuse est
@@ -78,15 +79,19 @@ def test_la_grille_suit_l_age_reel_a_moins_d_une_demi_annee(mesures):
         assert abs(ligne.ecart) < 0.5, ligne
 
 
-def test_la_grille_ne_part_pas_plus_tard_que_la_france_reelle(mesures):
-    """L'hypothèse de `limites.md` § 5 ter n'est pas confirmée.
+def test_la_grille_part_a_peine_plus_tard_que_la_france_reelle(mesures):
+    """L'hypothèse de `limites.md` § 5 ter, confirmée de justesse.
 
-    Elle attendait une grille partant « un peu plus tard » ; en moyenne elle
-    part un peu plus tôt. Le seuil est lâche des deux côtés : ce qui est tenu
-    ici est que l'écart moyen reste une fraction d'année, pas sa décimale.
+    Elle attendait une grille partant « un peu plus tard ». Jusqu'au
+    12 octobre 2026, elle partait en moyenne un peu plus tôt, de 0,02 an : le
+    cas type militaire était radié à quarante-quatre ans. Radié à
+    quarante-huit ans et demi, comme le militaire moyen du jaune budgétaire
+    (action 152, étape 1), il la fait partir 0,07 an plus tard que la France
+    réelle. Le seuil est lâche des deux côtés : ce qui est tenu ici est que
+    l'écart moyen reste une fraction d'année, et son sens, pas sa décimale.
     """
     moyen = sum(ligne.ecart for ligne in mesures) / len(mesures)
-    assert -0.2 < moyen <= 0.0
+    assert 0.0 < moyen < 0.2
 
 
 def test_la_grille_ne_suit_pas_la_montee_des_annees_recentes(mesures):

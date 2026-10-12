@@ -15057,22 +15057,27 @@ export const MESURES_BLOCAGES = {
   // pensions du système actuel sur la grille, ont porté la dette de 62 à 60 %,
   // et le creux du coefficient de 0,84 à 0,85. Le 8 octobre, la bonification du
   // cinquième des militaires (étape 17), qui relève celle du cas type militaire,
-  // l'a portée de 60 à 58 %, et le coefficient de 2070 de 1,00 à 1,01.
-  solde_moyen_proposition: -0.9,
+  // l'a portée de 60 à 58 %, et le coefficient de 2070 de 1,00 à 1,01. Le
+  // 12 octobre, le cas type militaire mis au militaire moyen du jaune
+  // budgétaire (action 152, étape 1) a porté le solde de la proposition de
+  // −0,9 à −0,8, sa dette de 58 à 56 %, et le coefficient de 2070 de 1,00 à
+  // 1,01.
+  solde_moyen_proposition: -0.8,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 58,
+  dette_2070_proposition: 56,
   dette_2070_actuel: 66,
   coefficient_minimum: 0.85,
   decennie_coefficient_minimum: 2040,
-  coefficient_2070: 1.0,
+  coefficient_2070: 1.01,
   // donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
   // quatre taux d'aujourd'hui, en points de PIB ; zéro, la TVA n'étant pas
   // réformée.
   tva_affectee: 0.0,
   // proposition_prospective.py : le solde moyen de la variante qui laisse le
   // stock intact, en points de PIB : −3,0 avant le 7 octobre 2026 (étapes 3
-  // et 7 de l'action 138).
-  solde_moyen_prospectif: -3.1,
+  // et 7 de l'action 138), −3,1 ensuite, −3,0 depuis le cas type militaire
+  // du 12 octobre (action 152, étape 1).
+  solde_moyen_prospectif: -3.0,
   // stock_age_legal.py : ce que coûte le diviseur de l'âge de l'assuré au lieu
   // de celui de 65 ans, en points de PIB par an.
   cout_diviseur_age_legal: 0.2,

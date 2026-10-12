@@ -58,7 +58,12 @@ adjoindre un second, et traiter les groupes dans l'ordre du plan.
   de la génération 1980, radié en 2028 et non plus en 2024, après la bascule,
   passe de −51 à +45 %. Coût : l'écart du passé passe de −78,9 à −79,0 % au
   scénario 2, la part du PIB du scénario 3 en 2070 de 7,1 à 7,0 %. Programme :
-  la baisse médiane sur la pension d'un retraité, de 27 à 29 %. Avantages : le
+  la baisse médiane sur la pension d'un retraité, de 27 à 29 % ; le solde
+  moyen de la proposition, de −0,9 à −0,8 point de PIB, sa dette en 2070 de
+  58 à 56 %, son coefficient de 2070 de 1,00 à 1,01, et la variante
+  prospective de −3,1 à −3,0 (`MESURES_BLOCAGES`, que l'accueil cite). La
+  grille, qui partait en moyenne 0,02 an plus tôt que l'âge conjoncturel de
+  la DREES, part 0,07 an plus tard (`test_age_conjoncturel.py`). Avantages : le
   minimum garanti n'a plus de montant — l'ancien militaire, seul à l'atteindre,
   en portait 0,56 Md€ en 2024 —, et la fiche dit pourquoi ; le modèle en
   chiffre 21, pour 97,9 Md€, et 12,5 Md€ de pensions servies avant l'âge
