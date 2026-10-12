@@ -153,7 +153,10 @@ bas de l'échelle, les longues au-dessus, la distribution de chaque sexe
 gardée. La septième (le même jour) affine le bas de l'échelle
 (:data:`SOUS_CLASSES_DU_BAS`) : le reste de la classe du bas se décline en
 sous-classes de rang, que le seuil du minimum contributif ne fait plus
-basculer d'un bloc.
+basculer d'un bloc. La huitième (le même jour) lit le rang des retraités que
+l'EIR trouve au minimum au premier quintile, et non au leur
+(:data:`MINIMUM_AU_PREMIER_QUINTILE`) : leur quintile dit le minimum, non
+leur salaire.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -446,6 +449,18 @@ AGES_DU_VOLUME = {"Y_LT25": 0, "Y25T39": 25, "Y40T49": 40, "Y50T54": 50, "Y_GE55
 #: pension par année validée est tenu pour celui du salaire, et celui de tous
 #: les retraités du sexe pour celui des salariés du privé.
 RANG_SELON_LA_DUREE = True
+
+#: Les retraités au minimum, rangés au premier quintile : sous
+#: :data:`RANG_SELON_LA_DUREE`, la part de chaque quintile que l'EIR trouve au
+#: minimum de pension de son régime principal (``quintiles_eqcc.csv``) quitte
+#: la bande de rangs de son quintile pour celle du premier, avec ses tranches
+#: de durée. Leur quintile dit le minimum, non leur salaire : le minimum
+#: contributif ne relève que la pension d'un salaire annuel moyen inférieur au
+#: double de son montant, ce que seuls les plus bas salaires donnent. Le
+#: deuxième quintile de l'EIR compte 59,9 % de femmes et 32,6 % d'hommes au
+#: minimum, que la sixième version payait comme ses rangs. Une convention : au
+#: minimum ou non, les retraités d'un quintile ont les mêmes tranches de durée.
+MINIMUM_AU_PREMIER_QUINTILE = True
 
 #: Les quintiles de la pension en équivalent carrière complète, dans l'ordre.
 QUINTILES_EQCC = ("q1", "q2", "q3", "q4", "q5")
@@ -843,22 +858,35 @@ def association_rang_duree(quintiles: dict, sexe: str) -> dict[str, dict[str, fl
     Chaque quintile est une bande de rangs du sexe, de la largeur de sa part des
     retraités du sexe que les quintiles rangent ; la masse d'une tranche dans
     un quintile se répartit sur sa bande, et chaque classe de centiles en
-    reçoit la part que ses rangs couvrent."""
+    reçoit la part que ses rangs couvrent. Sous
+    :data:`MINIMUM_AU_PREMIER_QUINTILE`, la part de chaque quintile au minimum
+    passe, avec ses tranches, dans la bande du premier."""
     effectifs = [quintiles[(q, "effectifs", sexe)] for q in QUINTILES_EQCC]
     total = somme_ordonnee(effectifs)
+    au_minimum = [quintiles[(q, "part_minimum_pension_regime_principal", sexe)] / 100.0
+                  if MINIMUM_AU_PREMIER_QUINTILE and rang > 0 else 0.0
+                  for rang, q in enumerate(QUINTILES_EQCC)]
+
+    def au_premier(parts: list[float]) -> list[float]:
+        """Des parts de quintile, celles au minimum passées au premier."""
+        restes = [part * (1.0 - minimum) for part, minimum in zip(parts, au_minimum)]
+        restes[0] += somme_ordonnee(part * minimum for part, minimum in zip(parts, au_minimum))
+        return restes
+
     bandes, debut = [], 0.0
-    for effectif in effectifs:
-        bandes.append((debut, debut + effectif / total))
-        debut += effectif / total
+    for largeur in au_premier([effectif / total for effectif in effectifs]):
+        bandes.append((debut, debut + largeur))
+        debut += largeur
     classes, debut = [], 0.0
     for nom, part in CENTILES:
         classes.append((nom, debut, debut + part))
         debut += part
     tableau = {}
     for tranche, _ in TRANCHES:
-        masses = [effectif / total
-                  * quintiles[(q, f"part_duree_validee_hors_majoration_{tranche}", sexe)] / 100.0
-                  for q, effectif in zip(QUINTILES_EQCC, effectifs)]
+        masses = au_premier([
+            effectif / total
+            * quintiles[(q, f"part_duree_validee_hors_majoration_{tranche}", sexe)] / 100.0
+            for q, effectif in zip(QUINTILES_EQCC, effectifs)])
         tableau[tranche] = {
             nom: somme_ordonnee(masse * max(0.0, min(fin, haut) - max(bas, plancher))
                                 / (haut - plancher)

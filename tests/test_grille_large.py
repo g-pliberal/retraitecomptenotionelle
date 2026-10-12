@@ -479,6 +479,31 @@ def test_le_rang_selon_la_duree_tient_les_marges_et_garde_l_association_de_l_eir
         assert rangs[sexe]["moins_10"]["p10"] > 2 * rangs[sexe]["40_plus"]["p10"]
 
 
+def test_les_retraites_au_minimum_se_rangent_au_premier_quintile(monkeypatch):
+    """Sous ``MINIMUM_AU_PREMIER_QUINTILE``, la part de chaque quintile au
+    minimum rejoint, avec ses tranches, la bande du premier. Cinq quintiles
+    égaux, le premier de carrières courtes, les autres de longues, la moitié
+    du deuxième au minimum : la bande du bas couvre trois dixièmes des rangs,
+    dont un tiers de longues carrières ; chaque classe garde son poids.
+    Débrayé, les longues carrières n'ont aucun rang du premier quintile."""
+    quintiles = {}
+    for rang, q in enumerate(G.QUINTILES_EQCC):
+        quintiles[(q, "effectifs", "F")] = 100.0
+        quintiles[(q, "part_minimum_pension_regime_principal", "F")] = 50.0 if rang == 1 else 0.0
+        dominante = "moins_10" if rang == 0 else "40_plus"
+        for tranche, _ in G.TRANCHES:
+            quintiles[(q, f"part_duree_validee_hors_majoration_{tranche}", "F")] = (
+                100.0 if tranche == dominante else 0.0)
+    tableau = G.association_rang_duree(quintiles, "F")
+    bas = dict(G.CENTILES)["p10"]
+    assert tableau["moins_10"]["p10"] == pytest.approx(0.2 * bas / 0.3)
+    assert tableau["40_plus"]["p10"] == pytest.approx(0.1 * bas / 0.3)
+    for nom, part in G.CENTILES:
+        assert sum(cases[nom] for cases in tableau.values()) == pytest.approx(part)
+    monkeypatch.setattr(G, "MINIMUM_AU_PREMIER_QUINTILE", False)
+    assert G.association_rang_duree(quintiles, "F")["40_plus"]["p10"] == 0.0
+
+
 def test_la_population_donne_aux_carrieres_courtes_le_rang_de_leur_duree(
         simulateur, source, parametres):
     """Sous ``RANG_SELON_LA_DUREE``, chaque tranche de durée du salariat privé
