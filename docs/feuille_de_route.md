@@ -5386,14 +5386,14 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 ### 136. Ce qu'OpenFisca fait mieux que le dépôt : deux règles, un oracle borné aux carrières simples, la trace d'un calcul, une population — `en cours`
 
 **Reprise, au 12 octobre 2026.** Fait : l'étape 6, sa première moitié, et, de
-la seconde, ses données certifiées et treize versions de la population,
-mesurées contre les quintiles des résidents de l'EIR, certifiés
-(`grille_large.py --grille population`). Trop d'hommes au minimum, 17,3 %
-pour 9,8, dont les carrières statutaires déclinées aux classes du privé.
-Reste : caler la population sur les résidents ; ces carrières statutaires ; la
-décote ; le minimum selon la génération ; la bascule, au propriétaire ; de
-l'étape 3, la surcotisation et l'oracle ; les étapes 1, 2, 4 et 5. Le détail :
-les notes du 12 octobre, la dernière sur les résidents.
+la seconde, ses données certifiées et quatorze versions de la population,
+mesurées contre les quintiles des résidents de l'EIR, dont elle prend
+désormais les durées (`grille_large.py --grille population`). Trop d'hommes
+au minimum encore, 16,7 % pour 9,8 : les minima des carrières statutaires et
+des exploitants. Reste : ces carrières statutaires ; la décote ; le minimum
+selon la génération ; la bascule, au propriétaire ; de l'étape 3, la
+surcotisation et l'oracle ; les étapes 1, 2, 4 et 5. Le détail : les notes du
+12 octobre, la dernière sur la quatorzième version.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais que tu analyses ce qu'on fait
 moins bien que openfisca pensions et que tu ajoutes une action sur ce sujet
