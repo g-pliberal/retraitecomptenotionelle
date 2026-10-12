@@ -367,6 +367,41 @@ def test_les_carrieres_courtes_de_la_population_sont_celles_de_tous(simulateur, 
             publiee["moins_de_30_ans"][sexe], abs=1e-9), sexe
 
 
+def test_des_annees_etalees_tombent_au_milieu_de_parts_egales():
+    """Chaque année validée tombe au milieu de sa part égale de l'étendue :
+    distinctes, dans l'étendue, toutes quand la tranche la remplit."""
+    assert G.annees_etalees(5, 39) == (3, 11, 19, 27, 35)
+    assert G.annees_etalees(39, 39) == tuple(range(39))
+    for cible in (5, 15, 25, 35):
+        for etendue in range(cible, 45):
+            annees = G.annees_etalees(cible, etendue)
+            assert len(set(annees)) == cible and 0 <= min(annees) <= max(annees) < etendue
+
+
+def test_une_carriere_courte_de_la_population_s_etale_sur_la_vie_active(simulateur, source):
+    """Sous ``COURTES_ETALEES``, une carrière courte de la population valide sa
+    durée — travail et périodes assimilées — en années espacées de son entrée à
+    soixante ans, inactive entre elles et jusqu'au départ ; la grille des
+    interruptions garde les premières années
+    (``test_une_carriere_courte_s_arrete_a_la_duree_de_sa_tranche``)."""
+    assert G.COURTES_ETALEES
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    courte = next(v for v in variantes if v.cas.code == f"{G.GABARIT}~f~10_20~p50")
+    assert courte.duree == 15 and courte.assimilees == round(
+        G.part_assimilee(source, "F") * 15)
+    generation = 1960
+    carriere = courte.cas.construire(simulateur, generation)
+    validees = [ligne.annee - generation for ligne in carriere.lignes
+                if ligne.type_periode in ("emploi", "chomage_indemnise")]
+    attendues = [int(courte.cas.age_debut) + d for d in G.annees_etalees(
+        15, G.AGE_FIN_ETALEMENT - int(courte.cas.age_debut))]
+    assert validees == attendues
+    assert validees[0] < 25 and validees[-1] >= 55 and validees[-1] < G.AGE_FIN_ETALEMENT
+    types = {ligne.type_periode for ligne in carriere.lignes
+             if ligne.annee - generation not in validees}
+    assert types == {"inactivite"}
+
+
 def test_la_grille_du_depot_reecrite_redonne_la_page(parametres):
     """Les pseudo-caisses et la grille simulée à part donnent la page au
     millième : la mesure ne mesure rien d'autre que la grille."""

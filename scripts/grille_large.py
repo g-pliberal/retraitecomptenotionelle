@@ -135,7 +135,10 @@ reste de la classe en garde la moyenne. La quatrième y met le volume de
 travail (:data:`VOLUME_DE_TRAVAIL`) : chaque année d'activité du salariat
 privé est payée à la part de l'année que l'INSEE mesure à son âge
 (``volume_travail.csv``), et, en variante, à son rang aussi
-(:data:`VOLUME_SELON_LE_RANG`).
+(:data:`VOLUME_SELON_LE_RANG`). La cinquième (le 12 octobre 2026) étale les
+années validées des carrières courtes de l'entrée à soixante ans, comme
+l'échantillon interrégimes de cotisants date celles de tous les affiliés
+(:data:`COURTES_ETALEES`) : elles étaient les premières, celles de la jeunesse.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -328,6 +331,25 @@ PLANCHER_SMIC = True
 #: tous, et la population de 2020 comptait 26,9 % de femmes sous trente
 #: années validées, pour 33,7 % dans l'EIR.
 COURTES_A_LA_PART_DE_TOUS = True
+
+#: Les carrières courtes, ÉTALÉES sur la vie active : les années validées d'une
+#: tranche courte, régulièrement espacées de l'âge d'entrée du cas type à
+#: :data:`AGE_FIN_ETALEMENT`, et non plus les premières. L'EIR ne les date pas ;
+#: l'échantillon interrégimes de cotisants date celles de tous les affiliés
+#: (DREES, « Les droits validés au cours de la carrière », EIC 2017, données
+#: détaillées, trimestres validés dans l'année). Les femmes des générations
+#: 1946 à 1958 en valident en moyenne 2,84 par an de 25 à 29 ans et 2,79 de 50
+#: à 54, et en cotisent 2,23 puis 2,52 ; les hommes, 3,23 et 3,09 ; et de
+#: même celles affiliées avant 23 ans, sans les arrivées tardives. Datées de la
+#: jeunesse, les carrières courtes de la population faisaient valider de 50 à
+#: 54 ans 0,70 femme pour une de 25 à 29 ans, et 0,85 homme ; étalées, 1,08 et
+#: 0,98.
+COURTES_ETALEES = True
+
+#: L'âge où finit l'étalement : le premier âge de départ des générations de la
+#: grille, qu'aucune année validée ne doit passer. Une tranche plus longue que
+#: l'écart entre l'entrée et cet âge le prolonge d'autant.
+AGE_FIN_ETALEMENT = 60
 
 #: La persistance au Smic : une part des carrières du salariat privé de chaque
 #: sexe est payée le Smic toute la carrière. Celle de la coupe de l'année à
@@ -890,33 +912,47 @@ def melees(variantes: list[Variante], source: CaracteristiquesRetraites) -> list
     return sortie
 
 
-def _placer(occupes: dict[int, str], debut: int, n: int, motif: str, fin: int) -> None:
-    """Place ``n`` années de ``motif`` dans les premières années libres à partir
-    de ``debut``, sans passer ``fin``."""
-    decalage = max(0, debut)
-    while n > 0 and decalage < fin:
+def _placer(occupes: dict[int, str], candidates, n: int, motif: str) -> None:
+    """Place ``n`` années de ``motif`` dans les premières années libres de
+    ``candidates``, dans leur ordre."""
+    for decalage in candidates:
+        if n <= 0:
+            break
         if decalage not in occupes:
             occupes[decalage] = motif
             n -= 1
-        decalage += 1
+
+
+def annees_etalees(cible: int, etendue: int) -> tuple[int, ...]:
+    """Les décalages de ``cible`` années validées étalées sur ``etendue``
+    années : chacune au milieu de sa part égale de l'étendue
+    (:data:`COURTES_ETALEES`)."""
+    return tuple((2 * rang + 1) * etendue // (2 * cible) for rang in range(cible))
 
 
 def _interrompre(v: Variante, nom: str, cible: int | None, part: float,
-                 assimilee: float) -> Variante | None:
+                 assimilee: float, etalee: bool = False) -> Variante | None:
     """La variante dans une tranche de durée : ``cible`` années validées, dont
-    une part assimilée, puis l'inactivité jusqu'au départ. ``None`` quand la
-    carrière du cas type est déjà plus courte que la tranche."""
+    une part assimilée au milieu, et l'inactivité jusqu'au départ — après elles,
+    ou, sous ``etalee``, entre elles et après elles (:func:`annees_etalees`).
+    ``None`` quand la carrière du cas type est déjà plus courte que la
+    tranche."""
     cas = v.cas
     duree = int(round(cas.age_liquidation - cas.age_debut))
     if cible is not None and cible >= duree:
         return None
     validee = duree if cible is None else cible
     assimilees = int(round(assimilee * validee))
-    occupes = {d: m for d, m in cas.interruptions_relatives if d < validee}
-    _placer(occupes, (validee - assimilees) // 2, assimilees, "chomage_indemnise", validee)
+    if cible is not None and etalee:
+        validees = annees_etalees(cible, max(cible, int(AGE_FIN_ETALEMENT - cas.age_debut)))
+    else:
+        validees = tuple(range(validee))
+    occupes = {d: m for d, m in cas.interruptions_relatives if d in validees}
+    _placer(occupes, validees[(validee - assimilees) // 2:], assimilees, "chomage_indemnise")
     if cible is not None:
-        for decalage in range(validee, int(AGE_FIN_INACTIVITE - cas.age_debut)):
-            occupes[decalage] = "inactivite"
+        for decalage in range(int(AGE_FIN_INACTIVITE - cas.age_debut)):
+            if decalage not in validees:
+                occupes[decalage] = "inactivite"
     nouveau = elargi(cas, code=f"{cas.code}~{nom}",
                      interruptions_relatives=tuple(sorted(occupes.items())))
     return v.fois(part, cas=nouveau, duree=validee, assimilees=assimilees)
@@ -970,11 +1006,12 @@ def parts_tranches_de_tous(variantes: list[Variante], effectifs,
 
 def interruptions(variantes: list[Variante], effectifs,
                   source: CaracteristiquesRetraites,
-                  de_tous: bool = False) -> list[Variante]:
+                  de_tous: bool = False, etalees: bool = False) -> list[Variante]:
     """Les femmes, puis, hors des régimes statutaires, les carrières courtes et
     les périodes assimilées, sexe par sexe : aux parts de l'EIR, ou, sous
     ``de_tous``, à celles qui les redonnent à tous les retraités
-    (:func:`parts_tranches_de_tous`)."""
+    (:func:`parts_tranches_de_tous`) ; leurs années validées sont les
+    premières, ou, sous ``etalees``, étalées sur la vie active."""
     sexuees = femmes(variantes, effectifs, source)
     parts = {sexe: (parts_tranches_de_tous(sexuees, effectifs, source, sexe) if de_tous
                     else parts_tranches(source, sexe))
@@ -989,7 +1026,7 @@ def interruptions(variantes: list[Variante], effectifs,
         restes = 0.0
         declinees = []
         for nom, cible in TRANCHES:
-            declinee = _interrompre(v, nom, cible, tranches[nom], assimilee)
+            declinee = _interrompre(v, nom, cible, tranches[nom], assimilee, etalees)
             if declinee is None:
                 restes += tranches[nom]
             else:
@@ -1082,10 +1119,11 @@ def population(effectifs, source: CaracteristiquesRetraites,
                racine: Path) -> list[Variante]:
     """La population : la grille « ensemble », son salariat privé tiré des
     distributions de chaque sexe plutôt que de quatre cas types étalés sur
-    celle des deux sexes réunis."""
+    celle des deux sexes réunis, et ses carrières courtes étalées sur la vie
+    active sous :data:`COURTES_ETALEES`."""
     variantes = interruptions(melees(personnes(reference_population(), effectifs, source),
                                      source), effectifs, source,
-                              de_tous=COURTES_A_LA_PART_DE_TOUS)
+                              de_tous=COURTES_A_LA_PART_DE_TOUS, etalees=COURTES_ETALEES)
     return salaires_population(variantes, donnees_population(racine))
 
 
