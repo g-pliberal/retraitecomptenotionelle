@@ -29,8 +29,8 @@
 # leur départ n'est pas une SORTIE DU MARCHÉ DU TRAVAIL. L'âge de la DREES est
 # tiré de l'enquête Emploi, où l'on est retraité quand on se déclare tel ;
 # l'agent de conduite radié à cinquante-deux ans et le militaire radié à
-# quarante-quatre liquident une pension et prennent le plus souvent un second
-# emploi, où l'enquête les compte comme actifs. Comparer leur âge de
+# quarante-huit ans et demi liquident une pension et prennent le plus souvent un
+# second emploi, où l'enquête les compte comme actifs. Comparer leur âge de
 # liquidation à l'âge de départ d'un groupe reviendrait à comparer deux
 # événements différents. Pour deux d'entre eux s'y ajoute que la nomenclature
 # ne les isole pas.
@@ -140,8 +140,8 @@ cas_types:
     hors_champ: >-
       La nomenclature les classerait dans le groupe 5, avec les policiers, et
       ce n'est pas ce qui bloque : un militaire non officier radié après
-      vingt-cinq ans de services liquide sa pension vers quarante-quatre ans et
-      prend presque toujours un second emploi, où l'enquête Emploi le compte
+      vingt-sept ans et demi de services liquide sa pension vers quarante-huit
+      ans et demi et prend le plus souvent un second emploi, où l'enquête Emploi le compte
       comme actif et non comme retraité. Son âge de liquidation et l'âge de
       départ d'un groupe ne datent pas le même événement.
 

@@ -308,16 +308,29 @@ CAS_TYPES: tuple[CasType, ...] = (
     ),
     CasType(
         code="militaire",
-        libelle="Militaire non officier (radiation après vingt-cinq ans de services)",
+        libelle="Militaire non officier (radiation après vingt-sept ans et demi de services)",
         affiliation="militaire",
-        age_debut=19, age_liquidation=44, niveau_salaire=0.95,
+        # Le militaire moyen des départs pour ancienneté du jaune budgétaire
+        # (annexe au PLF 2026, action 152) : 110,1 trimestres de services et
+        # une radiation à 48,7 ans en 2024 (tableau B-3) ; un indice de
+        # liquidation qui vaut de 0,83 à 0,98 salaire moyen de 2003 à 2024,
+        # 0,90 en moyenne (tableau 98), soit 1,15 salaire moyen primes
+        # comprises, le profil de l'État portant la solde de la radiation à
+        # 1,05 fois sa moyenne. Le cas type partait à quarante-quatre ans
+        # après vingt-cinq ans de services, au niveau de 0,95 salaire moyen :
+        # un non-officier des armées parti tôt, quand il porte le poids de tous.
+        age_debut=21, age_liquidation=48.5, niveau_salaire=1.15,
         part_primes=0.25,
         caisses=("fonction_publique_etat_militaire",),
-        regle_liquidation="services", ecart_liquidation=25,
+        regle_liquidation="services", ecart_liquidation=27.5,
         commentaire=(
             "La pension militaire ne s'ouvre pas à un âge mais à une durée : "
             "dix-sept ans de services pour un non-officier. C'est le départ le "
-            "plus précoce du système, et celui qu'un compte notionnel déplace le plus : quarante ans de rente pour vingt-cinq ans de cotisations. "
+            "plus précoce du système, et celui qu'un compte notionnel déplace le plus : plus de trente ans de rente pour vingt-sept ans et demi de cotisations. "
+            "Le cas type est le militaire moyen des départs de 2024, radié à "
+            "quarante-huit ans et demi, à la solde moyenne de tous, officiers "
+            "compris. Il lui manque les bénéfices de campagne et les "
+            "bonifications de service aérien, que le simulateur ne saisit pas. "
             "La solde indiciaire seule ouvre des droits ; les indemnités, plus "
             "lourdes que les primes de la fonction publique civile, relèvent du "
             "RAFP."

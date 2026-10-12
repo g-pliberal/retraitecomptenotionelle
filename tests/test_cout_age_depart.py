@@ -213,7 +213,7 @@ def test_les_deux_criteres_d_age_tirent_en_sens_contraire(mesure, simulateur):
     Rapprocher chaque cas type de SA catégorie éloigne leur SOMME de l'âge
     conjoncturel tous régimes. Les deux critères ne peuvent pas être satisfaits
     ensemble, et les quatre cas types hors champ — un douzième de la grille, à
-    des âges de quarante-quatre à cinquante-sept ans — sont le suspect. Ce test
+    des âges de quarante-huit ans et demi à cinquante-sept ans — sont le suspect. Ce test
     tient le constat, pas son explication.
     """
     fiches = CAD.concordance_du_depot(simulateur.parametres, CAS_TYPES)
@@ -334,4 +334,4 @@ def test_le_militaire_est_seul_a_porter_un_ecart_de_liquidation():
     """
     porteurs = {cas.code: cas.ecart_liquidation
                 for cas in CAS_TYPES if cas.ecart_liquidation}
-    assert porteurs == {"militaire": 25}
+    assert porteurs == {"militaire": 27.5}

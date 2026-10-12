@@ -42,8 +42,8 @@ QUATRE CAS TYPES SONT HORS CHAMP, ET LE FICHIER DIT POURQUOI
 --------------------------------------------------------------
 Le militaire, l'agent de conduite, l'agent des IEG et le fonctionnaire de
 catégorie active. Leur départ n'est pas une sortie du marché du travail :
-l'enquête compte retraité qui se déclare tel, et une radiation à quarante-quatre
-ou cinquante-deux ans est le plus souvent suivie d'un second emploi. Le motif
+l'enquête compte retraité qui se déclare tel, et une radiation à quarante-huit
+ans et demi ou à cinquante-deux ans est le plus souvent suivie d'un second emploi. Le motif
 de chacun est écrit dans `cas_types_csp.yaml`, et ce script le rappelle.
 """
 

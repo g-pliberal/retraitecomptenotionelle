@@ -922,11 +922,20 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: +19,2 %, et les deux cliquets remontent : la règle est le droit, et le cas
 #: type, vingt-cinq ans de services, en reçoit le plafond, quand le militaire
 #: qui liquide en 2023 en reçoit 16,4 trimestres (jaune, tableau 50).
+#: L'étape 1 de l'action 152 fait du cas type militaire le militaire moyen du
+#: jaune, radié à quarante-huit ans et demi après vingt-sept ans et demi de
+#: services, à 1,15 salaire moyen, quand il partait à quarante-quatre ans à
+#: 0,95 : la pension relative de la FPE passe de +4,2 à +9,3 %, sa dépense de
+#: +19,2 à +24,8 %, et les deux cliquets remontent. Plus haute d'un tiers, la
+#: pension militaire baisse aussi moins d'ici l'horizon : partie en 2028, quand
+#: le traitement indiciaire a déjà décroché de 5 %, elle perd 7 % rapportée au
+#: salaire moyen jusqu'aux départs de 2048, quand celle qui partait en 2024
+#: perdait 12 % jusqu'à ceux de 2044.
 DECOMPOSITION_GROUPES_CLIQUETS = {
-    ("pension_relative", "fpe"): 0.05,
+    ("pension_relative", "fpe"): 0.10,
     ("pension_relative", "cnracl"): 0.04,
     ("pension_relative", "agirc_arrco"): 0.18,
-    ("depense_part_pib", "fpe"): 0.20,
+    ("depense_part_pib", "fpe"): 0.25,
     ("depense_part_pib", "cnracl"): 0.02,
     ("depense_part_pib", "regimes_speciaux"): 0.35,
 }

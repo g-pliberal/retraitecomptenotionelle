@@ -428,6 +428,10 @@ avantages:
     regimes: fonction publique, régimes spéciaux
     etat_modele: chiffre
     ligne_cascade: minimum_garanti
+    sans_chiffre: >-
+      aucun cas type de la grille ne l'atteint, le militaire étant au niveau
+      moyen de son régime : il va aux carrières courtes ou basses, que les cas
+      types ne portent pas
     cout:
       mesurable_par: modele
       source_id: sre_minimum_garanti
@@ -953,8 +957,8 @@ avantages:
         part : une ligne mesurée pour certaines générations et pas pour d'autres
         donnerait un agrégat dont le biais serait invisible.
         Reste `--duree`, qui n'a pas besoin de contrefactuelle : la pension d'un
-        militaire parti à quarante-quatre ans est servie vingt ans avant l'âge
-        légal, et ces vingt annuités se comptent directement. C'est l'avantage
+        militaire parti à quarante-huit ans et demi est servie près de quinze ans
+        avant l'âge légal, et ces annuités se comptent directement. C'est l'avantage
         d'âge le plus extrême du système.
 
   - code: bonification_cinquieme_militaires
@@ -992,8 +996,8 @@ avantages:
       mesurable_par: modele
       note: >-
         Mesurée par retrait de la fiche (scripts/cout_avantages.py), sur le cas
-        type militaire de la grille, sous-officier de vingt-cinq ans de services,
-        à qui elle donne vingt trimestres. Dénombrée aussi : le tableau A-7 du
+        type militaire de la grille, sous-officier de vingt-sept ans et demi de
+        services, à qui elle donne vingt trimestres. Dénombrée aussi : le tableau A-7 du
         jaune budgétaire la confond avec les bénéfices de campagne, 404 478
         pensions militaires sur 406 645 en paiement en 2024 pour 27,4
         trimestres. Le tableau 50 l'isole sur le flux 2023 : 98,4 % des

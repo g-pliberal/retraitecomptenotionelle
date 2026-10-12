@@ -89,7 +89,7 @@ C'est l'accueil. Descendre lentement, sans rien cliquer.
   « Votre retraite : ce que votre régime promet → de l'ordre d'un quart de
   moins, en médiane ». La première des « Vos questions », « Ma
   retraite va-t-elle baisser ? », en donne le détail : 25 % pour qui n'est
-  pas encore à la retraite, 12 % s'il place les cinq points rendus, 27 % sur
+  pas encore à la retraite, 12 % s'il place les cinq points rendus, 29 % sur
   la pension d'aujourd'hui d'un retraité, garantie vieillesse comprise.
 - Le bloc « Et vous, ça donne combien ? » en haut de page est un raccourci
   vers le simulateur : on peut y saisir une date de naissance et un statut et
@@ -240,12 +240,12 @@ moins. Vert : plus.
 Trois choses à montrer :
 
 - Les deux cartes en tête : la carrière la mieux traitée (militaire non
-  officier, +40 % pour la génération 2000) et la moins bien traitée (carrière
-  interrompue, -34 %), et les 75 points qui les séparent. Dire aussitôt
+  officier, +14 % pour la génération 2000) et la moins bien traitée (carrière
+  interrompue, -34 %), et les 48 points qui les séparent. Dire aussitôt
   d'où vient le premier : le droit en vigueur laisse ce militaire partir à
-  44 ans, après vingt-cinq ans de services, et la proposition le fait servir
-  jusqu'à 65 ans —
-  une pension mensuelle bien plus forte, servie vingt et un ans plus tard.
+  48 ans et demi, après vingt-sept ans et demi de services, et la proposition
+  le fait servir jusqu'à 65 ans —
+  une pension mensuelle bien plus forte, servie seize ans et demi plus tard.
 - La ligne **« Fonctionnaire sédentaire (catégorie B) »**, qui va de -61 %
   pour la génération 1940 à -6 % pour la génération 1970 : la même règle
   donne des résultats très éloignés selon ce que l'État a versé à chaque
@@ -336,8 +336,8 @@ Si le temps manque, garder cette page pour les questions : elle répond seule
 Onglet **Avantages**. La page qui explique les écarts du simulateur : ce que
 le système actuel verse sans que personne l'ait cotisé. Trois chiffres :
 42 dispositifs en vigueur, du minimum vieillesse à la bonification du
-cinquième ; 97,6 Md € en 2024 pour les 22 que le modèle sait chiffrer, dont
-38,3 Md € de réversion, qui est lue et non calculée ; 11,4 Md € de pensions
+cinquième ; 97,9 Md € en 2024 pour les 21 que le modèle sait chiffrer, dont
+38,3 Md € de réversion, qui est lue et non calculée ; 12,5 Md € de pensions
 servies avant l'âge légal. La page dit que ces deux montants sont des
 planchers. Le graphique du haut compte les dispositifs année par année depuis
 1831, où il n'y en avait qu'un.

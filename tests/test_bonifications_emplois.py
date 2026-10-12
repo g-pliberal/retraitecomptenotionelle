@@ -256,18 +256,18 @@ MILITAIRES = "bonification_cinquieme_militaires"
 
 
 def test_vingt_trimestres_au_sous_officier_de_la_grille(simulateur):
-    """Le cas type militaire de la grille : engagé à dix-neuf ans, radié à
-    quarante-quatre, en 2024. Un cinquième de vingt-cinq ans, cinq annuités :
-    vingt trimestres, aux services liquidés et à la durée — 120 trimestres
-    liquidés, non 100."""
+    """Le cas type militaire de la grille : engagé à vingt et un ans, radié à
+    quarante-huit ans et demi, en 2024. Un cinquième de vingt-sept ans et
+    demi, plafonné à cinq annuités : vingt trimestres, aux services liquidés et
+    à la durée — 130 trimestres liquidés, non 110."""
     durees, resultat, pensions = _calculer(
-        simulateur, [Metier(MILITAIRE, 19.0, 1.0)], naissance=1980, liquidation=44.0)
+        simulateur, [Metier(MILITAIRE, 21.0, 1.0)], naissance=1976, liquidation=48.5)
     (emploi,) = durees.emplois
     assert (emploi.fiche, emploi.version) == (MILITAIRES, "loi_du_14_avril_2023")
     assert (emploi.services, emploi.duree, emploi.majoration) == (20, 20, 0)
     assert emploi.au_dela_du_maximum
-    assert resultat.trimestres_valides == 100 + 20
-    assert f"× 120/{resultat.trimestres_requis}" in pensions["fonction_publique_etat"].detail
+    assert resultat.trimestres_valides == 110 + 20
+    assert f"× 130/{resultat.trimestres_requis}" in pensions["fonction_publique_etat"].detail
 
 
 def test_elle_porte_le_taux_au_dela_de_75_pour_cent(simulateur):

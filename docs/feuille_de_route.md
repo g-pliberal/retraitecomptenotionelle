@@ -678,52 +678,6 @@ un réglage change le modèle, un regard ne vaut que pour sa page
    d'être publié sur le site d'un parti. Un repère, pas un avis juridique :
    articles cités de mémoire, à lire.
 
-### 152. Les cas types statutaires et non salariés à leur place dans l'EIR : le niveau et la carrière de chacun — `à faire`
-
-**D'où elle vient.** La population de l'action 136 (étape 6), rangée le
-12 octobre 2026 dans les quintiles de la pension en équivalent carrière
-complète des résidents de l'EIR 2020, régime par régime, met quatre groupes
-ailleurs que l'enquête. Chez les hommes : 60 % des militaires au troisième
-quintile, quand l'EIR en met 50 % au quatrième ; 62 % de la CNRACL sous le
-quatrième, pour 42 ; 88 % des exploitants agricoles au premier, pour 41 ; 72 %
-des professions libérales au cinquième, pour 45. Chez les femmes, les
-militaires et la CNRACL trop bas aussi, les libérales trop haut, les
-exploitantes à leur place. La déclinaison n'y est pour rien : c'est le cas
-type qu'elle décline (`castypes.py`) — le militaire parti à 44 ans après
-25 années de services, au niveau de 0,95 salaire moyen, sans second métier ;
-le fonctionnaire territorial ou hospitalier actif, de catégorie C, parti à
-57 ans ; l'exploitant agricole, à la moitié du salaire moyen ; la profession
-libérale, à 2,5 salaires moyens. Ce sont ceux de la page Coût. Recalée sur la
-dépense de chaque groupe du COR (`cout.py`, action 147, étape 8), elle tient
-la dépense de chaque groupe, non sa composition : elle compte 6,3 % de
-militaires et 6,3 % d'exploitants parmi les hommes, pour 4,3 et 4,2 % dans
-l'EIR, et ses scénarios se comparent sur ces poids. Le détail : la note des
-régimes (`docs/archives/feuille_de_route/136/2026-10-12-etape-6-regimes.md`).
-
-**Décidé le 12 octobre 2026 par le propriétaire** : une action à part, plutôt
-qu'un calage du niveau de chaque groupe de la population sur sa place dans
-l'EIR, qui l'aurait détachée des cas types de la page.
-
-**Ce qui est à faire**, un groupe à la fois — les militaires, la CNRACL, les
-exploitants agricoles, les professions libérales, puis les fonctionnaires
-civils de l'État, un peu bas eux aussi :
-
-1. Lire ce qui place le groupe : sa ligne dans les quintiles des résidents
-   (`quintiles_eqcc_residents.csv`, certifiée), et ce que sa caisse et la
-   DREES publient de ses pensions, de ses durées et de ses âges de départ ;
-   dire ce qui en écarte le cas type — le salaire, la durée, l'âge de départ,
-   le second métier, les bonifications.
-2. Corriger le cas type sur sa preuve, ou lui en adjoindre un second quand le
-   groupe en réunit deux. C'est un changement du modèle (`src/CLAUDE.md`) :
-   les cas types portent aussi d'autres résultats, les indicateurs de cycle de
-   vie par exemple, et ce qui bouge se dit par `scripts/resumer_temoins.py`.
-3. Remesurer la population (`grille_large.py --grille population`), qui
-   hérite de ces cas types : la part des hommes au minimum, 16,7 % pour 9,8
-   dans l'EIR le 12 octobre, en dépend d'abord.
-
-**Ce que le propriétaire tranche** : s'il faut un cas type de plus par groupe
-plutôt que déplacer celui qui existe, et l'ordre des groupes.
-
 ### 153. L'oracle au-delà des carrières simples : ce qu'OpenFisca calcule et que le dépôt ne lui confronte pas — `à faire`
 
 **D'où elle vient.** L'action 136 (étape 2). Le 1er octobre 2026, les
@@ -7631,3 +7585,63 @@ fonctionnaire à la limite et liquider sa pension à la radiation des cadres —
 puis chaque exception modélisée, en Python puis en JavaScript, avec ses
 témoins. La note du 10 octobre liste en outre deux règles du scénario 1 que les
 départs très tardifs atteignent pour la première fois, à relire au texte.
+
+### 152. Les cas types statutaires et non salariés à leur place dans l'EIR : le niveau et la carrière de chacun — `en cours`
+
+**Reprise, au 12 octobre 2026.** Faite, l'étape 1 : le cas type militaire est
+le militaire moyen des départs pour ancienneté du jaune budgétaire, radié à
+quarante-huit ans et demi après vingt-sept ans et demi de services, à 1,15
+salaire moyen, et la population est remesurée. Reste, un groupe par session et
+dans l'ordre du plan : la CNRACL (le fonctionnaire actif de catégorie C, parti
+à cinquante-sept ans), puis les exploitants agricoles, les professions
+libérales et les civils de l'État. Commencer par la ligne de la CNRACL dans les
+quintiles des résidents et par les tableaux du jaune sur la CNRACL (B-3 bis,
+B-5, B-8, B-9). Détail : la note de l'étape 1.
+
+**D'où elle vient.** La population de l'action 136 (étape 6), rangée le
+12 octobre 2026 dans les quintiles de la pension en équivalent carrière
+complète des résidents de l'EIR 2020, régime par régime, met quatre groupes
+ailleurs que l'enquête. Chez les hommes : 60 % des militaires au troisième
+quintile, quand l'EIR en met 50 % au quatrième ; 62 % de la CNRACL sous le
+quatrième, pour 42 ; 88 % des exploitants agricoles au premier, pour 41 ; 72 %
+des professions libérales au cinquième, pour 45. Chez les femmes, les
+militaires et la CNRACL trop bas aussi, les libérales trop haut, les
+exploitantes à leur place. La déclinaison n'y est pour rien : c'est le cas
+type qu'elle décline (`castypes.py`) — le militaire parti à 44 ans après
+25 années de services, au niveau de 0,95 salaire moyen, sans second métier ;
+le fonctionnaire territorial ou hospitalier actif, de catégorie C, parti à
+57 ans ; l'exploitant agricole, à la moitié du salaire moyen ; la profession
+libérale, à 2,5 salaires moyens. Ce sont ceux de la page Coût. Recalée sur la
+dépense de chaque groupe du COR (`cout.py`, action 147, étape 8), elle tient
+la dépense de chaque groupe, non sa composition : elle compte 6,3 % de
+militaires et 6,3 % d'exploitants parmi les hommes, pour 4,3 et 4,2 % dans
+l'EIR, et ses scénarios se comparent sur ces poids. Le détail : la note des
+régimes (`docs/archives/feuille_de_route/136/2026-10-12-etape-6-regimes.md`).
+
+**Décidé le 12 octobre 2026 par le propriétaire** : une action à part, plutôt
+qu'un calage du niveau de chaque groupe de la population sur sa place dans
+l'EIR, qui l'aurait détachée des cas types de la page.
+
+**Ce qui est à faire**, un groupe à la fois — les militaires, la CNRACL, les
+exploitants agricoles, les professions libérales, puis les fonctionnaires
+civils de l'État, un peu bas eux aussi :
+
+1. Lire ce qui place le groupe : sa ligne dans les quintiles des résidents
+   (`quintiles_eqcc_residents.csv`, certifiée), et ce que sa caisse et la
+   DREES publient de ses pensions, de ses durées et de ses âges de départ ;
+   dire ce qui en écarte le cas type — le salaire, la durée, l'âge de départ,
+   le second métier, les bonifications.
+2. Corriger le cas type sur sa preuve, ou lui en adjoindre un second quand le
+   groupe en réunit deux. C'est un changement du modèle (`src/CLAUDE.md`) :
+   les cas types portent aussi d'autres résultats, les indicateurs de cycle de
+   vie par exemple, et ce qui bouge se dit par `scripts/resumer_temoins.py`.
+3. Remesurer la population (`grille_large.py --grille population`), qui
+   hérite de ces cas types : la part des hommes au minimum, 16,7 % pour 9,8
+   dans l'EIR le 12 octobre, en dépend d'abord.
+
+**Décidé le 12 octobre 2026 par le propriétaire**, sur la lecture des
+militaires (note de l'étape 1) : pour eux, déplacer le cas type existant plutôt
+que lui en adjoindre un second ; pour tous, l'ordre des groupes du plan.
+
+**Ce que le propriétaire tranche** : s'il faut un cas type de plus par groupe
+plutôt que déplacer celui qui existe, et l'ordre des groupes.
