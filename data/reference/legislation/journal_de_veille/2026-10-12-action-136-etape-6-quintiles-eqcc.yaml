@@ -1,0 +1,21 @@
+date: "2026-10-12"
+session: "action 136, étape 6 : les quintiles de pension en équivalent carrière complète certifiés"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1. Le catalogue
+  de données ouvertes de la DREES (jeux sur les retraités, l'EIC et le minimum
+  contributif) ; le classeur de l'EIR 2020 « Caractéristiques de tous les retraités »,
+  feuille QuintilesEQCC, téléchargé par scripts/fetch/drees_caracteristiques_retraites.py ;
+  la présentation de la DREES au Conseil d'orientation des retraites du 24 novembre 2022,
+  sur les petites pensions, pour la définition de la pension en équivalent carrière
+  complète. Le site de la DREES et Internet Archive ont refusé la session.
+trouve: >-
+  Aucun texte de droit. Aucune source publique ne mesure le volume de travail des
+  carrières courtes ; l'EIR range les retraités par quintile de leur pension divisée par
+  la somme des coefficients de proratisation de leurs régimes de base, et croise ces
+  quintiles avec les tranches de durée : 80,5 % des femmes et 74,0 % des hommes de moins
+  de dix années validées hors majorations sont au premier quintile. La feuille est
+  certifiée dans data/reference/macro/quintiles_eqcc.csv, 198 valeurs.
+reste: >-
+  À l'étape 6 de l'action 136 : donner aux carrières courtes de la population le gain
+  par année que l'EIR leur mesure, calé sur ces quintiles ; puis le minimum contributif,
+  les pensions et la page.
