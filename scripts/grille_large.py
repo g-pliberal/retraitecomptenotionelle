@@ -156,7 +156,9 @@ sous-classes de rang, que le seuil du minimum contributif ne fait plus
 basculer d'un bloc. La huitième (le même jour) lit le rang des retraités que
 l'EIR trouve au minimum au premier quintile, et non au leur
 (:data:`MINIMUM_AU_PREMIER_QUINTILE`) : leur quintile dit le minimum, non
-leur salaire.
+leur salaire. La neuvième (le même jour) embraye le volume selon le rang
+(:data:`VOLUME_SELON_LE_RANG`), que la quatrième laissait en variante : les
+classes du bas travaillent moins d'heures dans l'année que celles du haut.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -420,9 +422,12 @@ VOLUME_DE_TRAVAIL = True
 #: celui de l'ensemble — employés au dixième centile (0,88), ouvriers au
 #: vingt-cinquième (0,95), professions intermédiaires au soixante-quinzième
 #: (1,08), cadres au-delà (1,13) —, sans jamais dépasser l'année entière. Une
-#: convention, que la mesure essaie : l'INSEE ne croise pas le rang du salaire
-#: et le volume, et celui des employés compte aussi leur temps partiel.
-VOLUME_SELON_LE_RANG = False
+#: convention : l'INSEE ne croise pas le rang du salaire et le volume, et
+#: celui des employés compte aussi leur temps partiel. Embrayée à la
+#: neuvième version : elle creuse le minimum contributif, 17,2 % des
+#: liquidants de 2023 au lieu de 13,6 (EACR 18,8), et rapproche de l'EIR la
+#: distribution des pensions, mais abaisse encore celles des hommes.
+VOLUME_SELON_LE_RANG = True
 
 #: Les catégories que le volume selon le rang prête aux classes de centiles.
 CATEGORIE_DU_RANG = {"p10": "employes", "p25": "ouvriers", "p50": "ensemble",

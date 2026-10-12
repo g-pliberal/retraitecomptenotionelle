@@ -390,6 +390,25 @@ def test_une_annee_d_activite_se_paie_a_la_part_travaillee_a_son_age(simulateur,
             assert avec[generation + age] == pytest.approx(sans[generation + age] * part), age
 
 
+def test_chaque_classe_travaille_le_volume_de_sa_categorie(simulateur, source, parametres):
+    """Sous ``VOLUME_SELON_LE_RANG``, chaque classe de centiles du salariat
+    privé travaille, à chaque âge, la part de l'année de cet âge fois le volume
+    de sa catégorie rapporté à l'ensemble, sans dépasser l'année entière : les
+    employés au bas, sa part au Smic toute la carrière comprise, les cadres au
+    haut, la classe médiane au volume de tous."""
+    assert G.VOLUME_SELON_LE_RANG
+    volumes, rangs = G.volumes_de_travail(parametres.racine_donnees)
+    par_code = {v.cas.code: v.cas for v in G.grille("population", simulateur.effectifs,
+                                                     source, ())}
+    for classe, nom in (("p10~bas1", "p10"), ("p10~smic", "p10"), ("p50", "p50"),
+                        ("p99", "p99")):
+        cas = par_code[f"{G.GABARIT}~h~40_plus~{classe}"]
+        assert cas.volumes == tuple((age, min(1.0, part * rangs[nom]))
+                                    for age, part in volumes), classe
+    assert rangs["p10"] < 1.0 < rangs["p99"]
+    assert max(part for _, part in par_code[f"{G.GABARIT}~h~40_plus~p99"].volumes) == 1.0
+
+
 def test_les_carrieres_courtes_de_la_population_sont_celles_de_tous(simulateur, source):
     """Les régimes statutaires n'ayant que des carrières entières, les autres
     portent d'autant plus de carrières courtes : sur tous les retraités de
