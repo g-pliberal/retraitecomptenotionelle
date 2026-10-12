@@ -1828,12 +1828,12 @@ MINIMA_DE_PENSION = ("minimum_contributif", "minimum_garanti", "pension_majoree_
 
 
 def _proratisations(parametres: Parametres, morceau: tuple
-                    ) -> list[tuple[str, int, float, bool]]:
+                    ) -> list[tuple[str, int, float, bool, float]]:
     """La proratisation de chaque couple du morceau, au scénario 1 de la page :
     sa durée d'assurance tous régimes, enfants compris, rapportée à la durée
-    requise de sa génération, bornée à un ; et si sa pension porte un minimum
-    (:data:`MINIMA_DE_PENSION`). Gardée sous l'empreinte du modèle et le code
-    de ce script."""
+    requise de sa génération, bornée à un ; si sa pension porte un minimum
+    (:data:`MINIMA_DE_PENSION`) ; et cette durée, en années. Gardée sous
+    l'empreinte du modèle et le code de ce script."""
 
     def calcul():
         simulateur = Simulateur(parametres).pour_la_projection()
@@ -1848,18 +1848,19 @@ def _proratisations(parametres: Parametres, morceau: tuple
                           for avantage in actuel.avantages_appliques)
             sortie.append((cas.code, generation,
                            min(1.0, actuel.trimestres_valides / requis) if requis else 1.0,
-                           minimum))
+                           minimum, actuel.trimestres_valides / 4.0))
         return sortie
 
     return memoire.memoriser_pour(
-        parametres, ("proratisation_et_minimum_de_la_grille", parametres, morceau), calcul)
+        parametres, ("proratisation_minimum_et_duree_de_la_grille", parametres, morceau),
+        calcul)
 
 
 def proratisations(parametres: Parametres, couples, processus: int
-                   ) -> dict[tuple[str, int], tuple[float, bool]]:
-    """La proratisation de chaque couple ``(cas type, génération)``, et s'il
-    est au minimum : par morceaux, chacun gardé, sur ``processus`` cœurs quand
-    il y en a plusieurs."""
+                   ) -> dict[tuple[str, int], tuple[float, bool, float]]:
+    """La proratisation de chaque couple ``(cas type, génération)``, s'il est
+    au minimum, et sa durée validée : par morceaux, chacun gardé, sur
+    ``processus`` cœurs quand il y en a plusieurs."""
     couples = sorted(couples, key=lambda couple: (couple[0].code, couple[1]))
     taille = max(1, math.ceil(len(couples) / max(1, 2 * processus)))
     morceaux = [tuple(couples[i:i + taille]) for i in range(0, len(couples), taille)]
@@ -1870,8 +1871,8 @@ def proratisations(parametres: Parametres, couples, processus: int
                                  mp_context=multiprocessing.get_context("spawn")) as pool:
             resultats = list(pool.map(_proratisations, [parametres] * len(morceaux),
                                       morceaux))
-    return {(code, generation): (coefficient, minimum) for resultat in resultats
-            for code, generation, coefficient, minimum in resultat}
+    return {(code, generation): (coefficient, minimum, annees) for resultat in resultats
+            for code, generation, coefficient, minimum, annees in resultat}
 
 
 def quintiles_ponderes(lignes: list[tuple]) -> dict:
@@ -1962,23 +1963,63 @@ def eqcc(parametres: Parametres, variantes: list[Variante], tetes: GrilleEnTetes
     """La grille l'année de l'enquête, chaque cohorte à sa pension divisée par
     sa proratisation (:func:`proratisations`), rangée comme l'EIR range les
     retraités (:func:`confronter_eqcc`) : ce qu'une carrière acquiert par année
-    validée, selon sa durée, et qui le minimum relève."""
+    validée, selon sa durée, et qui le minimum relève ; et la durée validée de
+    chaque génération (:func:`durees_par_generation`)."""
     par_code = {v.cas.code: v for v in variantes}
     cas_par_code = {cas.code: cas for cas in tetes.cas_types}
     cohortes = tetes.cohortes(annee)
     coefficients = proratisations(
         parametres, {(cas_par_code[pensionne.code], pensionne.generation)
                      for pensionne, _, _ in cohortes}, processus)
-    lignes = []
+    lignes, durees = [], []
     for pensionne, montant, poids in cohortes:
-        coefficient, minimum = coefficients.get((pensionne.code, pensionne.generation),
-                                                (0.0, False))
+        coefficient, minimum, annees = coefficients.get(
+            (pensionne.code, pensionne.generation), (0.0, False, 0.0))
         if not coefficient:
             continue
         v = par_code[pensionne.code]
         lignes.append((montant / coefficient, poids, v.cas.sexe,
                        tranche_de_duree(duree_de(v)), minimum, coefficient))
-    return confronter_eqcc(lignes, quintiles)
+        durees.append((pensionne.generation, v.cas.sexe, annees, poids))
+    sortie = confronter_eqcc(lignes, quintiles)
+    sortie["durees"] = durees_par_generation(
+        durees, durees_d_assurance(parametres.racine_donnees))
+    return sortie
+
+
+def durees_d_assurance(racine: Path) -> dict[tuple[int, str], float]:
+    """La durée d'assurance moyenne des retraités résidant en France, en
+    années, génération par génération, sexe par sexe, majorations de durée
+    comprises : l'EIR de 2020, prolongé par TRAJECTOiRE
+    (``duree_assurance_generations.csv``)."""
+    sexes = {"femmes": "F", "hommes": "H"}
+    return {(int(l["generation"]), sexes[l["sexe"]]): float(l["trimestres"]) / 4.0
+            for l in _lire_macro(racine, "duree_assurance_generations.csv")}
+
+
+def durees_par_generation(lignes: list[tuple[int, str, float, float]],
+                          publiees: dict[tuple[int, str], float]) -> dict:
+    """La durée validée moyenne de la grille, génération simulée par génération
+    simulée, sexe par sexe, contre celle que l'EIR mesure (:func:`durees_d_assurance`)
+    en moyenne des générations que chacune représente, à :data:`C._DEMI_TRANCHE`
+    ans près. ``lignes`` : ``(génération, sexe, années validées, poids)``."""
+    masses: dict[tuple[str, int], list[float]] = {}
+    for generation, sexe, annees, poids in lignes:
+        masse = masses.setdefault((sexe, generation), [0.0, 0.0])
+        masse[0] += poids * annees
+        masse[1] += poids
+    totaux: dict[str, float] = {}
+    for (sexe, _), (_, poids) in masses.items():
+        totaux[sexe] = totaux.get(sexe, 0.0) + poids
+    sortie: dict[str, list[dict]] = {}
+    for (sexe, generation), (cumul, poids) in sorted(masses.items()):
+        voisines = [publiees[(g, sexe)] for g in range(generation - C._DEMI_TRANCHE,
+                                                       generation + C._DEMI_TRANCHE + 1)
+                    if (g, sexe) in publiees]
+        sortie.setdefault(sexe, []).append({
+            "generation": generation, "part": poids / totaux[sexe], "annees": cumul / poids,
+            "eir": somme_ordonnee(voisines) / len(voisines) if voisines else None})
+    return sortie
 
 
 def processus_par_defaut() -> int:
@@ -2120,6 +2161,23 @@ def imprimer_eqcc(resultat: dict) -> None:
             print(f"{'  ' + nom:16}" + "".join(
                 f"{p * 100:>7.1f}%" if p is not None else f"{'—':>8}"
                 for p in mesure[sexe]["proratisation"]))
+    print("\nLa durée validée, génération par génération, en années — l'EIR, la durée "
+          "d'assurance des résidents, majorations comprises ; la part de chaque génération")
+    for sexe in ("F", "H"):
+        for nom, mesure in lues:
+            generations = [ligne for ligne in mesure.get("durees", {}).get(sexe, [])
+                           if ligne["part"] >= 0.01]
+            if not generations:
+                continue
+            print(f"\n{INTITULES_SEXES[sexe]:16}"
+                  + "".join(f"{ligne['generation']:>8}" for ligne in generations))
+            print(f"{'  EIR':16}" + "".join(
+                f"{ligne['eir']:>8.1f}" if ligne["eir"] is not None else f"{'—':>8}"
+                for ligne in generations))
+            print(f"{'  ' + nom:16}" + "".join(f"{ligne['annees']:>8.1f}"
+                                               for ligne in generations))
+            print(f"{'  part':16}" + "".join(f"{ligne['part'] * 100:>7.1f}%"
+                                             for ligne in generations))
 
 
 def imprimer(resultat: dict) -> None:

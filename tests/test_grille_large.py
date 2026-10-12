@@ -634,6 +634,26 @@ def test_une_grille_se_range_en_quintiles_comme_l_eir(parametres):
     assert confrontee["H"]["proratisation_eir"][4] == pytest.approx(0.985, abs=1e-3)
 
 
+def test_la_duree_validee_se_lit_generation_par_generation(parametres):
+    """Chaque génération simulée moyenne la durée validée de ses cohortes, à
+    leur poids, et se lit contre la durée d'assurance que l'EIR mesure, en
+    moyenne des générations qu'elle représente : celle des femmes nées autour
+    de 1950 y monte à 38,0 années, majorations comprises."""
+    publiees = G.durees_d_assurance(parametres.racine_donnees)
+    assert publiees[(1953, "F")] == pytest.approx(158.0 / 4.0)
+    lignes = [(1950, "F", 30.0, 1.0), (1950, "F", 40.0, 3.0), (1955, "F", 20.0, 4.0),
+              (1950, "H", 41.0, 2.0)]
+    durees = G.durees_par_generation(lignes, publiees)
+    premiere, seconde = durees["F"]
+    assert premiere["generation"] == 1950 and premiere["annees"] == pytest.approx(37.5)
+    assert premiere["part"] == pytest.approx(0.5) and seconde["part"] == pytest.approx(0.5)
+    voisines = [publiees[(g, "F")] for g in range(1950 - G.C._DEMI_TRANCHE,
+                                                  1950 + G.C._DEMI_TRANCHE + 1)]
+    assert premiere["eir"] == pytest.approx(sum(voisines) / len(voisines))
+    assert premiere["eir"] == pytest.approx(38.0, abs=0.5)
+    assert durees["H"][0]["annees"] == 41.0
+
+
 def test_la_grille_du_depot_reecrite_redonne_la_page(parametres):
     """Les pseudo-caisses et la grille simulée à part donnent la page au
     millième : la mesure ne mesure rien d'autre que la grille."""
