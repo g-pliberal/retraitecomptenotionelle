@@ -1675,11 +1675,19 @@ def duree_de(v: Variante) -> float:
     return v.duree if v.duree is not None else v.cas.age_liquidation - v.cas.age_debut
 
 
-def _proratisations(parametres: Parametres, morceau: tuple) -> list[tuple[str, int, float]]:
+#: Les minima de pension du scénario 1 que l'EIR compte : le minimum
+#: contributif, le minimum garanti des fonctionnaires, la pension majorée de
+#: référence des non-salariés agricoles.
+MINIMA_DE_PENSION = ("minimum_contributif", "minimum_garanti", "pension_majoree_reference")
+
+
+def _proratisations(parametres: Parametres, morceau: tuple
+                    ) -> list[tuple[str, int, float, bool]]:
     """La proratisation de chaque couple du morceau, au scénario 1 de la page :
     sa durée d'assurance tous régimes, enfants compris, rapportée à la durée
-    requise de sa génération, bornée à un. Gardée sous l'empreinte du modèle
-    et le code de ce script."""
+    requise de sa génération, bornée à un ; et si sa pension porte un minimum
+    (:data:`MINIMA_DE_PENSION`). Gardée sous l'empreinte du modèle et le code
+    de ce script."""
 
     def calcul():
         simulateur = Simulateur(parametres).pour_la_projection()
@@ -1690,18 +1698,22 @@ def _proratisations(parametres: Parametres, morceau: tuple) -> list[tuple[str, i
             except (ValueError, KeyError):
                 continue
             requis = actuel.trimestres_requis
+            minimum = any(avantage.code in MINIMA_DE_PENSION and avantage.montant > 0.0
+                          for avantage in actuel.avantages_appliques)
             sortie.append((cas.code, generation,
-                           min(1.0, actuel.trimestres_valides / requis) if requis else 1.0))
+                           min(1.0, actuel.trimestres_valides / requis) if requis else 1.0,
+                           minimum))
         return sortie
 
     return memoire.memoriser_pour(
-        parametres, ("proratisation_de_la_grille", parametres, morceau), calcul)
+        parametres, ("proratisation_et_minimum_de_la_grille", parametres, morceau), calcul)
 
 
 def proratisations(parametres: Parametres, couples, processus: int
-                   ) -> dict[tuple[str, int], float]:
-    """La proratisation de chaque couple ``(cas type, génération)`` : par
-    morceaux, chacun gardé, sur ``processus`` cœurs quand il y en a plusieurs."""
+                   ) -> dict[tuple[str, int], tuple[float, bool]]:
+    """La proratisation de chaque couple ``(cas type, génération)``, et s'il
+    est au minimum : par morceaux, chacun gardé, sur ``processus`` cœurs quand
+    il y en a plusieurs."""
     couples = sorted(couples, key=lambda couple: (couple[0].code, couple[1]))
     taille = max(1, math.ceil(len(couples) / max(1, 2 * processus)))
     morceaux = [tuple(couples[i:i + taille]) for i in range(0, len(couples), taille)]
@@ -1712,22 +1724,25 @@ def proratisations(parametres: Parametres, couples, processus: int
                                  mp_context=multiprocessing.get_context("spawn")) as pool:
             resultats = list(pool.map(_proratisations, [parametres] * len(morceaux),
                                       morceaux))
-    return {(code, generation): coefficient for resultat in resultats
-            for code, generation, coefficient in resultat}
+    return {(code, generation): (coefficient, minimum) for resultat in resultats
+            for code, generation, coefficient, minimum in resultat}
 
 
-def quintiles_ponderes(lignes: list[tuple[float, float, str, str]]) -> dict:
+def quintiles_ponderes(lignes: list[tuple]) -> dict:
     """Une grille rangée comme l'EIR range les retraités : les bornes des
     quintiles de la pension en équivalent carrière complète, les deux sexes
     réunis, et, sexe par sexe, le poids de chaque tranche de durée dans chaque
-    quintile. ``lignes`` : ``(pension, poids, sexe, tranche)``. Une ligne à
-    cheval sur une borne va au quintile de son milieu."""
+    quintile, et celui des retraités au minimum. ``lignes`` : ``(pension,
+    poids, sexe, tranche)``, et en cinquième, s'il y est, le minimum. Une ligne
+    à cheval sur une borne va au quintile de son milieu."""
     tries = sorted(lignes, key=lambda ligne: ligne[0])
     total = somme_ordonnee(ligne[1] for ligne in tries)
     bornes: list[float] = []
     masses: dict[str, dict[str, list[float]]] = {}
+    minima: dict[str, list[float]] = {}
     cumul = 0.0
-    for montant, poids, sexe, tranche in tries:
+    for ligne in tries:
+        montant, poids, sexe, tranche = ligne[:4]
         rang = min(len(QUINTILES_EQCC) - 1, int(5.0 * (cumul + poids / 2.0) / total))
         while len(bornes) < 4 and cumul + poids >= (len(bornes) + 1) * total / 5.0:
             bornes.append(montant)
@@ -1735,13 +1750,17 @@ def quintiles_ponderes(lignes: list[tuple[float, float, str, str]]) -> dict:
         for cle in (sexe, "ensemble"):
             masses.setdefault(cle, {}).setdefault(
                 tranche, [0.0] * len(QUINTILES_EQCC))[rang] += poids
-    return {"bornes": bornes, "masses": masses}
+            if len(ligne) > 4 and ligne[4]:
+                minima.setdefault(cle, [0.0] * len(QUINTILES_EQCC))[rang] += poids
+    return {"bornes": bornes, "masses": masses, "minima": minima}
 
 
-def confronter_eqcc(lignes: list[tuple[float, float, str, str]], quintiles: dict) -> dict:
+def confronter_eqcc(lignes: list[tuple], quintiles: dict) -> dict:
     """La grille contre l'EIR (``quintiles_eqcc.csv``), sexe par sexe : la part
     du sexe dans chaque quintile de la pension en équivalent carrière complète,
-    et la part de chaque tranche de durée qui tombe dans le premier."""
+    celle de chaque tranche de durée qui tombe dans le premier, et celle des
+    retraités au minimum dans chaque quintile — l'EIR, au minimum de leur régime
+    principal."""
     rangees = quintiles_ponderes(lignes)
     sortie: dict = {"bornes": rangees["bornes"]}
     for sexe in ("F", "H"):
@@ -1764,9 +1783,14 @@ def confronter_eqcc(lignes: list[tuple[float, float, str, str]], quintiles: dict
                 "premier_quintile": masses[0] / masse if masse else None,
                 "premier_quintile_eir": publiees[0] / somme_ordonnee(publiees),
             }
+        minima = rangees["minima"].get(sexe, [0.0] * len(QUINTILES_EQCC))
         sortie[sexe] = {"quintiles": [masse / total for masse in par_quintile],
                         "quintiles_eir": [effectif / tous for effectif in effectifs],
-                        "tranches": tranches}
+                        "tranches": tranches,
+                        "minimum": [au_minimum / masse if masse else None
+                                    for au_minimum, masse in zip(minima, par_quintile)],
+                        "minimum_eir": [quintiles[(q, "part_minimum_pension_regime_principal",
+                                                   sexe)] / 100.0 for q in QUINTILES_EQCC]}
     return sortie
 
 
@@ -1775,7 +1799,7 @@ def eqcc(parametres: Parametres, variantes: list[Variante], tetes: GrilleEnTetes
     """La grille l'année de l'enquête, chaque cohorte à sa pension divisée par
     sa proratisation (:func:`proratisations`), rangée comme l'EIR range les
     retraités (:func:`confronter_eqcc`) : ce qu'une carrière acquiert par année
-    validée, selon sa durée."""
+    validée, selon sa durée, et qui le minimum relève."""
     par_code = {v.cas.code: v for v in variantes}
     cas_par_code = {cas.code: cas for cas in tetes.cas_types}
     cohortes = tetes.cohortes(annee)
@@ -1784,11 +1808,13 @@ def eqcc(parametres: Parametres, variantes: list[Variante], tetes: GrilleEnTetes
                      for pensionne, _, _ in cohortes}, processus)
     lignes = []
     for pensionne, montant, poids in cohortes:
-        coefficient = coefficients.get((pensionne.code, pensionne.generation))
+        coefficient, minimum = coefficients.get((pensionne.code, pensionne.generation),
+                                                (0.0, False))
         if not coefficient:
             continue
         v = par_code[pensionne.code]
-        lignes.append((montant / coefficient, poids, v.cas.sexe, tranche_de_duree(duree_de(v))))
+        lignes.append((montant / coefficient, poids, v.cas.sexe,
+                       tranche_de_duree(duree_de(v)), minimum))
     return confronter_eqcc(lignes, quintiles)
 
 
@@ -1906,6 +1932,17 @@ def imprimer_eqcc(resultat: dict) -> None:
                 for t in tranches) + f"{mesure[sexe]['quintiles'][0] * 100:>7.1f}%")
     print("\n" + "  ".join(f"{nom} : bornes {', '.join(f'{b:.0f}' for b in m['bornes'])} €"
                            for nom, m in lues))
+    print("\nLa part au minimum de pension, quintile par quintile — l'EIR, au minimum du "
+          "régime principal")
+    for sexe in ("F", "H"):
+        print(f"\n{INTITULES_SEXES[sexe]:16}" + "".join(f"{q:>8}" for q in QUINTILES_EQCC))
+        _, premiere = lues[0]
+        print(f"{'  EIR':16}" + "".join(f"{p * 100:>7.1f}%"
+                                        for p in premiere[sexe]["minimum_eir"]))
+        for nom, mesure in lues:
+            print(f"{'  ' + nom:16}" + "".join(
+                f"{p * 100:>7.1f}%" if p is not None else f"{'—':>8}"
+                for p in mesure[sexe]["minimum"]))
 
 
 def imprimer(resultat: dict) -> None:
