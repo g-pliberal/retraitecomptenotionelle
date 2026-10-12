@@ -5387,14 +5387,14 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 
 **Reprise, au 12 octobre 2026.** Fait : l'étape 6, sa première moitié, et, de
 la seconde, ses données certifiées et onze versions de la population, mesurées
-à côté de la page (`grille_large.py --grille population`). La onzième fait
-entrer les carrières pleines selon leur génération : les durées s'approchent
-de l'EIR, le passé refait aussi, mais la pension des hommes ne bouge pas ; son
-écart tient aux deux quintiles du haut, à des carrières de moins de quarante
-ans. Reste : ce haut de l'échelle des hommes ; la pension des femmes, trop
-haute par année validée ; le minimum selon la génération ; la bascule, au
-propriétaire ; de l'étape 3, la surcotisation et l'oracle ; les étapes 1, 2, 4
-et 5. Le détail : les notes du 12 octobre, la dernière sur la onzième version.
+à côté de la page (`grille_large.py --grille population`). Le haut de l'échelle
+des hommes tient aux carrières statutaires, chaque régime représenté par sa
+catégorie la plus précoce : le droit du scénario 1 et les cas types de la page,
+non la population ; la tranche de trente à quarante ans est juste. Reste : la
+pension des femmes, trop haute par année validée ; le minimum selon la
+génération ; la bascule, au propriétaire ; de l'étape 3, la surcotisation et
+l'oracle ; les étapes 1, 2, 4 et 5. Le détail : les notes du 12 octobre, la
+dernière sur le haut de l'échelle des hommes.
 
 **Demande**, le 1er octobre 2026 : « J'aimerais que tu analyses ce qu'on fait
 moins bien que openfisca pensions et que tu ajoutes une action sur ce sujet
