@@ -1,0 +1,30 @@
+date: "2026-10-13"
+session: "action 159, étape 3 : les taux et les barèmes du jaune pensions 2027, confrontés aux séries et aux fiches"
+consulte: >-
+  Aucun texte de loi : la session confronte des séries et des fiches, et n'écrit aucune
+  règle du scénario 1. Le jaune pensions annexé au PLF 2027 (data/brut/34465.pdf, tiré de
+  la branche jaune-2027, empreinte vérifiée), en texte et, pour les pages 69 et 92, en
+  image : tableaux 4, 12, 13, 14, 22B, 24, 33 à 36, 38, 45, 46, 48, 49, 54, 57, 110 et
+  D-2, et les pages 42, 73, 119 et 129 à 131. Le jaune annexé au PLF 2026
+  (data/brut/12-Jaune2026_Pensions.pdf, tiré du miroir de l'Assemblée), pour son tableau
+  12, le même que le 14 de 2027.
+trouve: >-
+  Presque tout recoupe sous la règle du 1er janvier : retenue, contributions de l'État,
+  de ses militaires et de la CNRACL, Ircantec, RAFP, revalorisation, durée, décote,
+  minimum garanti, catégorie active, panorama. Trois corrections : la contribution
+  employeur du FSPOEIE, certifiée de 2000 à 2026 dans contribution_employeur_public.csv
+  (les ouvriers de l'État montent de 34 % en médiane au scénario 4) ; l'indemnité
+  temporaire de retraite, accordée jusqu'au 31 décembre 2027 et au seul code des
+  pensions ; les bénéfices de campagne, qui comptent une fois et demie à trois fois.
+  Quatre écarts déclarés : le taux des ministères prêté à tout fonctionnaire civil de
+  l'État, le taux d'appel de 2026 de l'Ircantec gardé à 7,11 / 5,60 contre 127 %, deux
+  emplois actifs à soixante-quatre ans de limite d'âge (question ouverte de la fiche
+  limite_age_fonction_publique), le seuil de vingt-huit heures de la CNRACL. Le document
+  se contredit quatre fois : la valeur de service du RAFP de 2006, son rendement de 2026
+  au récapitulatif, la hausse de novembre 2012 du FSPOEIE, une ligne du tableau 35.
+reste: >-
+  À l'étape 9 : les périodes d'AVPF et d'aidant comptées pour le minimum garanti depuis
+  2023 (L. 17, R. 31-1, décret n° 2023-752), qu'aucune fiche ne porte ; les limites d'âge
+  de soixante-quatre ans ; le cumul emploi-retraite de la LFSS 2026 pour les pensions
+  civiles liquidées à partir de 2027. Dans la base LEGI : le décret qui fixe le taux du
+  FSPOEIE en 1991 et en 1999, pour porter ces années.
