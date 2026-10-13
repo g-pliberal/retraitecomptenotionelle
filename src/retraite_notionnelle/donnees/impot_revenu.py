@@ -178,16 +178,41 @@ class BaremesImpotRevenu:
         :func:`croissance_macro` tire du scénario de projection du dépôt."""
         if annee <= self.derniere_annee:
             return self.lus(annee)
-        if indexation not in INDEXATIONS:
-            raise ValueError(f"indexation inconnue : {indexation!r} ({', '.join(INDEXATIONS)})")
-        if croissance is None:
-            raise ValueError(f"les revenus de {annee} se projettent : il faut la croissance "
-                             f"des {'prix' if indexation == 'prix' else 'salaires'}")
+        _verifier_la_projection(annee, indexation, croissance)
         parametres = self.lus(self.derniere_annee)
         for suivante in range(self.derniere_annee + 1, annee + 1):
             parametres = _projeter(parametres, suivante, indexation,
                                    1.0 + float(croissance(suivante)))
         return parametres
+
+    def chronique(self, derniere: int, indexation: str = "prix",
+                  croissance: Callable[[int], float] | None = None
+                  ) -> dict[int, ParametresImpot]:
+        """Les paramètres de chaque année de revenus, de :attr:`premiere_annee`
+        à ``derniere`` : ceux que :meth:`parametres` rend un à un, mais en une
+        passe, chaque année projetée partant de la précédente au lieu de la
+        dernière lue. Les indicateurs de cycle de vie en demandent un siècle."""
+        annees = {annee: self.lus(annee)
+                  for annee in range(self.premiere_annee, min(derniere, self.derniere_annee) + 1)}
+        if derniere > self.derniere_annee:
+            _verifier_la_projection(derniere, indexation, croissance)
+            parametres = annees[self.derniere_annee]
+            for suivante in range(self.derniere_annee + 1, derniere + 1):
+                parametres = _projeter(parametres, suivante, indexation,
+                                       1.0 + float(croissance(suivante)))
+                annees[suivante] = parametres
+        return annees
+
+
+def _verifier_la_projection(annee: int, indexation: str,
+                            croissance: Callable[[int], float] | None) -> None:
+    """Une année au-delà de la dernière lue demande une indexation connue, et
+    sa croissance."""
+    if indexation not in INDEXATIONS:
+        raise ValueError(f"indexation inconnue : {indexation!r} ({', '.join(INDEXATIONS)})")
+    if croissance is None:
+        raise ValueError(f"les revenus de {annee} se projettent : il faut la croissance "
+                         f"des {'prix' if indexation == 'prix' else 'salaires'}")
 
 
 def _projeter(precedents: ParametresImpot, annee: int, indexation: str,

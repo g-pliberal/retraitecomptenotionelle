@@ -35,7 +35,8 @@ from retraite_notionnelle.donnees.impot_revenu import (
     FRANC, arrondi_a_l_euro, charger_baremes_impot_revenu, croissance_macro, monnaie_de)
 from retraite_notionnelle.donnees.macro import DonneesMacro
 from retraite_notionnelle.impot_revenu import (
-    Declarant, Foyer, decote, impot_d_un_revenu_imposable, impot_du_foyer, nombre_de_parts)
+    Declarant, Foyer, decote, impot_aux_parametres, impot_d_un_revenu_imposable, impot_du_foyer,
+    nombre_de_parts)
 
 RACINE = Path(__file__).resolve().parents[1]
 DONNEES = RACINE / "data"
@@ -434,6 +435,26 @@ def test_la_projection_suit_les_prix_par_defaut_et_le_salaire_moyen_en_variante(
         assert calcul.impot > 0 and calcul.remarques
     with pytest.raises(ValueError):
         baremes.parametres(derniere + 1)
+
+
+def test_la_chronique_du_bareme_est_celle_de_chaque_annee(baremes):
+    """Les indicateurs de cycle de vie prennent les paramètres d'un siècle en
+    une passe (``chronique``), chaque année projetée partant de la précédente :
+    ce sont ceux que ``parametres`` rend un à un, et l'impôt qu'ils donnent est
+    celui d'``impot_du_foyer``."""
+    macro = DonneesMacro(DONNEES)
+    foyer = Foyer((Declarant(salaires=30000, pensions=12000, age=66),))
+    for indexation in ("prix", "salaire_moyen"):
+        croissance = croissance_macro(macro, indexation)
+        chronique = baremes.chronique(2100, indexation, croissance)
+        assert list(chronique) == list(range(baremes.premiere_annee, 2101))
+        for annee in (1960, 2000, baremes.derniere_annee, baremes.derniere_annee + 1, 2100):
+            assert chronique[annee] == baremes.parametres(annee, indexation, croissance), annee
+            assert impot_aux_parametres(foyer, chronique[annee]) == impot_du_foyer(
+                foyer, annee, baremes, indexation=indexation, croissance=croissance), annee
+    assert list(baremes.chronique(1999)) == list(range(baremes.premiere_annee, 2000))
+    with pytest.raises(ValueError):
+        baremes.chronique(baremes.derniere_annee + 1)
 
 
 # -- Ce que le script a lu dans l'index LEGI ----------------------------------------

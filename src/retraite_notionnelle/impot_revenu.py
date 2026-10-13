@@ -5,15 +5,19 @@ Le dépôt ne calculait aucun impôt sur le revenu : le site affiche un net
 prélèvements sociaux, la page Coût n'a pas d'effet retour par l'impôt (action
 138, étape 5). Ce module calcule l'impôt d'un FOYER pour les revenus d'une
 année, de 1960 à la dernière loi de finances lue, et au-delà sur un barème
-projeté (:mod:`~retraite_notionnelle.donnees.impot_revenu`). Il n'est branché
-nulle part : les indicateurs, le site et la page Coût le prendront plus tard.
+projeté (:mod:`~retraite_notionnelle.donnees.impot_revenu`). Les indicateurs
+de cycle de vie le prennent, après impôt
+(:func:`~retraite_notionnelle.cycle_de_vie.convention_apres_impot`) ; le site
+et la page Coût le prendront plus tard.
 
 LE FOYER. Une personne seule — célibataire, divorcée ou veuve — ou un couple
 marié ou pacsé, imposé en commun ; des enfants à charge ou non ; des salaires
 et des pensions imposables, c'est-à-dire déjà nets de la CSG déductible de
-leur année, que calculera la session de la CSG : ce module part du net
-imposable. Chaque déclarant dit son âge au 31 décembre de l'année des revenus,
-pour l'abattement des personnes âgées, et s'il est invalide.
+leur année (:func:`~retraite_notionnelle.cycle_de_vie.revenus_imposables`,
+:func:`~retraite_notionnelle.cycle_de_vie.parts_imposables_par_annee`) : ce
+module part du net imposable. Chaque déclarant dit son âge au 31 décembre de
+l'année des revenus, pour l'abattement des personnes âgées, et s'il est
+invalide.
 
 CE QU'IL REND. L'impôt, et chacune des étapes qui y mènent, et le revenu
 fiscal de référence (CGI, art. 1417, IV), qui servira à la CSG des pensions :
@@ -691,7 +695,18 @@ def impot_du_foyer(foyer: Foyer, annee: int, baremes: BaremesImpotRevenu, *,
     dans la monnaie de l'année. Au-delà de la dernière loi de finances lue,
     ``indexation`` et ``croissance`` projettent le barème
     (:meth:`~retraite_notionnelle.donnees.impot_revenu.BaremesImpotRevenu.parametres`)."""
-    parametres = baremes.parametres(annee, indexation, croissance)
+    return impot_aux_parametres(foyer, baremes.parametres(annee, indexation, croissance),
+                                unite=unite)
+
+
+def impot_aux_parametres(foyer: Foyer, parametres: ParametresImpot, *,
+                         unite: str = "euro") -> ImpotDuFoyer:
+    """L'impôt du ``foyer`` sur ses revenus de l'année de ``parametres``, lus
+    ou projetés : :func:`impot_du_foyer`, pour qui tient déjà les paramètres
+    de chaque année — les indicateurs de cycle de vie, qui en prennent la
+    chronique d'un siècle
+    (:meth:`~retraite_notionnelle.donnees.impot_revenu.BaremesImpotRevenu.chronique`)."""
+    annee = parametres.annee
     vers = _conversion(parametres, unite)
     salaires = tuple(_au_plus_proche(d.salaires * vers) for d in foyer.declarants)
     pensions = tuple(_au_plus_proche(d.pensions * vers) for d in foyer.declarants)

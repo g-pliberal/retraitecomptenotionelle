@@ -15,8 +15,8 @@ conventions, et ce module les refait sous les mêmes :
   cotisation, sur les mêmes carrières ;
 * L'OCDE, *Pensions at a Glance 2025* (``tests/temoins/ocde_pensions.json``,
   ``scripts/fetch/ocde_pensions.py``) : le taux de remplacement et le patrimoine
-  retraite d'un salarié entré à 22 ans en 2024, sous ses hypothèses
-  macroéconomiques (jeu ``ocde_2025``) ;
+  retraite d'un salarié entré à 22 ans en 2024, bruts et nets de l'impôt sur
+  le revenu, sous ses hypothèses macroéconomiques (jeu ``ocde_2025``) ;
 * L'ETK, le Centre finlandais des pensions, son mémo du 26 octobre 2023 sur
   le coefficient d'espérance de vie de 2024 : l'âge cible de la génération
   1962, et la règle qui le donne ;
@@ -87,6 +87,13 @@ de vie ; sur celles du dépôt, plus basses que celles du COR de 2019 de 1,2 an
 (génération 1958) à 3,2 ans (génération 2007), l'âge qui tiendrait en 2070 la
 part de 2020 est 65,4 ans au lieu de 66,7. Celle du COR de 2026, génération
 par génération, se retrouve à 0,1 point près.
+
+Le 13 octobre 2026, l'impôt sur le revenu (action 138, étape 5) : la pension
+brute de l'OCDE, passée par les prélèvements et l'impôt du dépôt, au barème
+projeté sur le salaire moyen, redonne son taux net à 0,4 point près au salaire
+moyen et à deux fois ; à la moitié, où rien n'est imposé, l'écart, 1,2 point,
+est celui de la CSG, que le dépôt tient au taux plein. Sa rente nette suit sa
+rente brute à 1,2 % près, comme celle de l'OCDE à 0,5 % près.
 """
 
 from __future__ import annotations
@@ -104,9 +111,11 @@ from retraite_notionnelle.castypes import CAS_TYPES, CasType
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.cout import coefficient_actuel
+from retraite_notionnelle.donnees.impot_revenu import charger_baremes_impot_revenu
 from retraite_notionnelle.donnees.prelevements_historiques import (
     charger_prelevements_historiques,
 )
+from retraite_notionnelle.impot_revenu import impot_du_foyer
 from retraite_notionnelle.saisie import Saisie
 from retraite_notionnelle.simulateur import Simulateur
 
@@ -798,6 +807,85 @@ def test_le_patrimoine_retraite_de_l_ocde_se_retrouve_a_la_mortalite_pres(
                              / (ocde["taux_remplacement_brut"][qui][multiple] / 100.0))
             ecart = rente / rente_publiee - 1.0
             assert bas <= ecart <= haut, (sexe, multiple, ecart)
+
+
+#: L'écart admis au taux net de l'OCDE, en points, quand le dépôt fait passer
+#: sa pension brute par ses prélèvements et son impôt.
+TOLERANCE_REMPLACEMENT_APRES_IMPOT = 0.5
+
+
+def test_le_taux_net_de_l_ocde_se_retrouve_de_sa_pension_brute(ocde, carrieres_ocde,
+                                                                simulateur_ocde):
+    """Le taux net de l'OCDE est sa pension brute, nette des prélèvements et
+    de l'impôt sur le revenu d'une personne seule, sur le dernier salaire, net
+    des siens. Le dépôt fait passer la pension brute de l'OCDE — son taux brut
+    fois le dernier revenu — par ses prélèvements et son impôt d'une année
+    entière, au barème projeté sur le salaire moyen, l'OCDE tenant le système
+    constant (``cycle_de_vie.remplacement_apres_impot``) : il retrouve son taux
+    net à 0,4 point près au salaire moyen et à deux fois. À la moitié du
+    salaire moyen, ni la pension ni le salaire ne paient d'impôt, et le dépôt
+    est 1,2 point sous l'OCDE : la pension y perd la CSG au taux plein, quand
+    le revenu fiscal d'un tel retraité ouvrirait un taux moindre ou nul
+    (action 138, étape 2)."""
+    baremes = charger_baremes_impot_revenu(simulateur_ocde.parametres.racine_donnees)
+    bruts, nets = (ocde[cle]["hommes"] for cle in ("taux_remplacement_brut",
+                                                    "taux_remplacement_net"))
+    for multiple in ("0.5", "1", "2"):
+        comparaison = carrieres_ocde[("H", multiple)]
+        flux = cycle_de_vie.flux_des_systemes(simulateur_ocde, comparaison,
+                                              impot="salaire_moyen")["actuel"]
+        depart = flux.annee_liquidation
+        brute = bruts[multiple] / 100.0 * flux.dernier_revenu
+        part = cycle_de_vie.parts_imposables_par_annee(simulateur_ocde, comparaison)[depart]
+        nette = brute * cycle_de_vie.convention_nette(simulateur_ocde, comparaison).retenu(depart)
+        impot = impot_du_foyer(
+            cycle_de_vie.foyer_de_l_annee(comparaison.carriere, depart, pension=brute * part),
+            depart, baremes, indexation="salaire_moyen",
+            croissance=simulateur_ocde.macro.salaire_moyen).impot
+        taux = 100.0 * (nette - impot) / flux.dernier_revenu_apres_impot
+        if multiple == "0.5":
+            assert impot == 0.0
+            assert flux.dernier_revenu_apres_impot == pytest.approx(flux.dernier_revenu_net)
+            assert -2.0 <= taux - nets[multiple] <= -TOLERANCE_REMPLACEMENT_APRES_IMPOT, taux
+        else:
+            assert impot > 0.0
+            assert taux == pytest.approx(nets[multiple], abs=TOLERANCE_REMPLACEMENT_APRES_IMPOT)
+
+
+def test_la_rente_nette_de_l_ocde_suit_sa_rente_brute_comme_celle_du_depot(
+        ocde, carrieres_ocde, simulateur_ocde):
+    """Le patrimoine net de l'OCDE, en années de salaire net, est son taux net
+    multiplié par la valeur d'un euro de rente nette : celle d'un euro de
+    rente brute, à 0,6 % près, l'arrondi de ses patrimoines au dixième. Celle
+    du dépôt — son patrimoine après impôt, en années de dernier revenu après
+    impôt, sur son taux de remplacement après impôt — est la rente brute à la
+    moitié du salaire moyen, où la pension ne paie pas d'impôt, et 1,2 % de
+    plus au salaire moyen : la pension, menée sur les prix, descend au fil de
+    la retraite sous un barème mené sur le salaire moyen, et paie de moins en
+    moins d'impôt. L'écart des deux rentes nettes est donc celui des deux
+    rentes brutes, la mortalité, à 1,5 % près."""
+    for sexe, qui in (("H", "hommes"), ("F", "femmes")):
+        for multiple in ("0.5", "1"):
+            comparaison = carrieres_ocde[(sexe, multiple)]
+            systemes = cycle_de_vie.flux_des_systemes(simulateur_ocde, comparaison,
+                                                      impot="salaire_moyen")
+            flux = systemes["actuel"]
+            convention = cycle_de_vie.convention_apres_impot(simulateur_ocde, comparaison,
+                                                             indexation="salaire_moyen")
+            patrimoine = (cycle_de_vie.indicateurs(flux, simulateur_ocde, convention).patrimoine
+                          * flux.dernier_revenu / flux.dernier_revenu_apres_impot)
+            nette = patrimoine / cycle_de_vie.remplacement_apres_impot(
+                simulateur_ocde, comparaison, indexation="salaire_moyen", systemes=systemes)
+            brute = (cycle_de_vie.indicateurs(flux, simulateur_ocde).patrimoine
+                     / comparaison.taux_remplacement_actuel)
+            publiees = {nature: ocde[f"patrimoine_{nature}"][qui][multiple]
+                        / (ocde[f"taux_remplacement_{nature}"][qui][multiple] / 100.0)
+                        for nature in ("brut", "net")}
+            assert abs(publiees["net"] / publiees["brut"] - 1.0) <= 0.006, (sexe, multiple)
+            if multiple == "0.5":
+                assert nette == pytest.approx(brute, rel=1e-9), sexe
+            ecart = nette / publiees["net"] - brute / publiees["brut"]
+            assert -0.01 <= ecart <= 0.015, (sexe, multiple, ecart)
 
 
 # ---------------------------------------------------------------------------

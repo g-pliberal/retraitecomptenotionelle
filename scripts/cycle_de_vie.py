@@ -3,6 +3,8 @@
 
     python scripts/cycle_de_vie.py                    # conventions du dépôt (celles de l'OCDE)
     python scripts/cycle_de_vie.py --cor              # conventions du COR
+    python scripts/cycle_de_vie.py --impot            # après impôt, barème projeté sur les prix
+    python scripts/cycle_de_vie.py --impot salaire_moyen --cor
     python scripts/cycle_de_vie.py --indicateurs rendement_reel,patrimoine --scenarios actuel
     python scripts/cycle_de_vie.py --json grille.json # tout, case par case
     python scripts/cycle_de_vie.py --ages salaire_moyen --generations 1970,2000
@@ -23,6 +25,15 @@ la survie de génération du sexe du cas type, le patrimoine actualisé à 1,5 %
 réel, la pension brute. Sous ``--cor``, celle des cas types du COR : les deux
 sexes réunis, le décès à 60 ans plus l'espérance de vie à 60 ans de la
 génération, la pension nette des prélèvements de chaque année (IPP).
+
+APRÈS IMPÔT (``--impot``, action 138, étape 5) : la pension et les revenus de
+chaque année, nets de leurs prélèvements, perdent aussi l'impôt sur le revenu
+d'une personne seule sans enfant (``cycle_de_vie.convention_apres_impot``),
+sous les conventions du dépôt ou, avec ``--cor``, sous celles du COR. Le
+barème se projette au-delà de la dernière loi de finances lue sur les prix
+(``--impot`` ou ``--impot prix``) ou, comme l'OCDE, sur le salaire moyen
+(``--impot salaire_moyen``). Avec ``--ages``, une colonne de plus : le taux de
+remplacement après impôt au départ, le taux net de l'OCDE.
 
 À CHAQUE ÂGE DE DÉPART (``--ages``, action 138, étape 9) : pour chaque cas type
 nommé, chaque génération et chaque hypothèse de productivité du COR, un
@@ -55,6 +66,7 @@ from retraite_notionnelle import cycle_de_vie  # noqa: E402
 from retraite_notionnelle.calendrier import decomposer, formater_age  # noqa: E402
 from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS, calculer_cas_types  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
+from retraite_notionnelle.donnees.impot_revenu import INDEXATIONS  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 
 #: Les indicateurs imprimés, leur titre et leur unité : ``%`` pour un taux
@@ -63,6 +75,8 @@ INDICATEURS = {
     "rendement_reel": ("Rendement interne réel (flux déflatés des prix)", "%"),
     "rendement_smpt": ("Rendement interne relatif (flux rapportés au salaire moyen)", "%"),
     "taux_recuperation": ("Taux de récupération (pensions sur cotisations, en salaire moyen)", "x"),
+    "taux_annuite": ("Taux d'annuité (pensions sur revenus d'activité, en salaire moyen)", "%"),
+    "taux_remplacement_cycle": ("Taux de remplacement sur le cycle de vie", "%"),
     "patrimoine": ("Patrimoine retraite (années de dernier revenu)", "x"),
     "valeur_nette": ("Valeur actuelle nette (années de dernier revenu)", "x"),
     "remplacement_au_deces": ("Taux de remplacement au décès, contre le salaire d'alors", "%"),
@@ -80,16 +94,36 @@ LIBELLES = {
 }
 
 
-def calculer(simulateur: Simulateur, cor: bool = False) -> dict:
-    """Les indicateurs de chaque case de la grille, système par système."""
+def calculer(simulateur: Simulateur, cor: bool = False, impot: str | None = None) -> dict:
+    """Les indicateurs de chaque case de la grille, système par système ;
+    après impôt avec ``impot``, l'indexation du barème."""
     grille = calculer_cas_types(simulateur)
     resultats = {}
     for cle, comparaison in sorted(grille.resultats.items()):
-        convention = (cycle_de_vie.convention_cor(simulateur, comparaison) if cor
-                      else cycle_de_vie.Convention())
+        if impot is not None:
+            convention = cycle_de_vie.convention_apres_impot(simulateur, comparaison, cor, impot)
+        elif cor:
+            convention = cycle_de_vie.convention_cor(simulateur, comparaison)
+        else:
+            convention = cycle_de_vie.Convention()
         resultats[cle] = cycle_de_vie.indicateurs_des_systemes(
             simulateur, comparaison, convention)
     return resultats
+
+
+def _titre_des_conventions(cor: bool, nettes: bool, impot: str | None) -> str:
+    """Ce que les tableaux supposent."""
+    if cor:
+        titre = "Conventions du COR, nettes" if nettes else "Conventions du COR"
+    elif nettes:
+        titre = "Conventions du dépôt, nettes : survie de génération, patrimoine à 1,5 % réel"
+    else:
+        titre = "Conventions du dépôt : survie de génération, patrimoine à 1,5 % réel, brut"
+    if impot is None:
+        return titre
+    indexation = "les prix" if impot == "prix" else "le salaire moyen"
+    return (f"{titre} ; après impôt sur le revenu d'une personne seule, barème projeté sur "
+            f"{indexation}")
 
 
 def _cellule(valeur: float | None, unite: str) -> str:
@@ -144,26 +178,38 @@ LEGENDE_AGES = (
     "interne réel et relatif au salaire moyen ; Patrim : patrimoine retraite net, "
     "en années de dernier revenu brut.")
 
+#: Après impôt, la colonne de plus : le taux de remplacement après impôt au
+#: départ, le taux net de l'OCDE.
+COLONNE_APRES_IMPOT = ("Rimp", "%", lambda depart, s: depart.remplacements_apres_impot[s])
+
+LEGENDE_APRES_IMPOT = (
+    "Après impôt : la pension et les revenus perdent aussi l'impôt sur le revenu de "
+    "chaque année ; Rimp : taux de remplacement après impôt au départ, une année "
+    "entière de pension sur une année entière du dernier revenu, chacune nette de "
+    "ses prélèvements et de son impôt.")
+
 
 def _remplacement(depart, scenario: str, unite: str) -> float | None:
     remplacement = depart.remplacements[scenario]
     return None if remplacement is None else getattr(remplacement, unite)
 
 
-def tableau_des_ages(departs, scenario: str, titre: str) -> str:
+def tableau_des_ages(departs, scenario: str, titre: str, colonnes=COLONNES_AGES) -> str:
     """Un balayage, un système : une ligne par âge de départ."""
     lignes = [titre, f"{'âge':>6} {'année':>6} "
-              + " ".join(f"{entete:>6}" for entete, _, _ in COLONNES_AGES)]
+              + " ".join(f"{entete:>6}" for entete, _, _ in colonnes)]
     for depart in departs:
         lignes.append(f"{depart.age:>6.2f} {depart.annee:>6} " + " ".join(
-            _cellule(lire(depart, scenario), unite) for _, unite, lire in COLONNES_AGES))
+            _cellule(lire(depart, scenario), unite) for _, unite, lire in colonnes))
     return "\n".join(lignes)
 
 
 def balayer(cas_types: list, generations: list[int], productivites: list[str],
-            cor: bool) -> tuple[dict[tuple[str, int, str], tuple], dict[str, str]]:
+            cor: bool, impot: str | None = None
+            ) -> tuple[dict[tuple[str, int, str], tuple], dict[str, str]]:
     """Les balayages des cas types nommés, génération par génération, sous
-    chaque hypothèse de productivité, et le libellé de chaque hypothèse."""
+    chaque hypothèse de productivité, et le libellé de chaque hypothèse ;
+    après impôt avec ``impot``, l'indexation du barème."""
     resultats, libelles = {}, {}
     for productivite in productivites:
         simulateur = Simulateur(Parametres(scenario_projection=productivite))
@@ -171,7 +217,7 @@ def balayer(cas_types: list, generations: list[int], productivites: list[str],
         for cas in cas_types:
             for generation in generations:
                 resultats[(cas.code, generation, productivite)] = cycle_de_vie.balayage(
-                    simulateur, cas, generation, cor)
+                    simulateur, cas, generation, cor, impot=impot)
     return resultats, libelles
 
 
@@ -190,16 +236,20 @@ def _imprimer_les_ages(arguments, analyseur, scenarios: list[str]) -> None:
     for nom in productivites:
         if nom not in connues:
             analyseur.error(f"productivité inconnue : {nom} ({', '.join(connues)})")
-    resultats, hypotheses = balayer(cas_types, generations, productivites, arguments.cor)
-    print("Conventions du COR, nettes" if arguments.cor
-          else "Conventions du dépôt, nettes : survie de génération, patrimoine à 1,5 % réel")
+    resultats, hypotheses = balayer(cas_types, generations, productivites, arguments.cor,
+                                    arguments.impot)
+    print(_titre_des_conventions(arguments.cor, True, arguments.impot))
     print(LEGENDE_AGES)
+    colonnes = COLONNES_AGES
+    if arguments.impot is not None:
+        print(LEGENDE_APRES_IMPOT)
+        colonnes = COLONNES_AGES + (COLONNE_APRES_IMPOT,)
     for (code, generation, productivite), departs in resultats.items():
         for scenario in scenarios if departs else ():
             print()
             print(tableau_des_ages(departs, scenario, (
                 f"{par_code[code].libelle}, génération {generation} — {LIBELLES[scenario]} — "
-                f"{hypotheses[productivite]}")))
+                f"{hypotheses[productivite]}"), colonnes))
     if arguments.json:
         Path(arguments.json).write_text(json.dumps(
             {f"{code}|{generation}|{productivite}": [
@@ -208,7 +258,10 @@ def _imprimer_les_ages(arguments, analyseur, scenarios: list[str]) -> None:
                                "pension_nette": depart.pensions_nettes[scenario],
                                "pension_aspa": depart.pensions_aspa[scenario],
                                "remplacement_net": (None if depart.remplacements[scenario] is None
-                                                    else vars(depart.remplacements[scenario]))}
+                                                    else vars(depart.remplacements[scenario])),
+                               "remplacement_apres_impot": (
+                                   None if depart.remplacements_apres_impot is None
+                                   else depart.remplacements_apres_impot[scenario])}
                     for scenario in cycle_de_vie.SCENARIOS}}
                 for depart in departs]
              for (code, generation, productivite), departs in resultats.items()},
@@ -324,6 +377,9 @@ def main(argv: list[str] | None = None) -> int:
                                                    "productivité, séparées par des virgules")
     analyseur.add_argument("--equilibre", action="store_true",
                            help="les âges d'équilibre de chaque génération et des cas types")
+    analyseur.add_argument("--impot", nargs="?", const="prix", choices=INDEXATIONS,
+                           help="après impôt sur le revenu, le barème projeté sur les prix "
+                                "(par défaut) ou sur le salaire moyen")
     arguments = analyseur.parse_args(argv)
     if arguments.equilibre:
         _imprimer_l_equilibre(arguments)
@@ -342,9 +398,8 @@ def main(argv: list[str] | None = None) -> int:
         _imprimer_les_ages(arguments, analyseur, scenarios)
         return 0
 
-    resultats = calculer(Simulateur(Parametres()), cor=arguments.cor)
-    print("Conventions du COR" if arguments.cor
-          else "Conventions du dépôt : survie de génération, patrimoine à 1,5 % réel, brut")
+    resultats = calculer(Simulateur(Parametres()), cor=arguments.cor, impot=arguments.impot)
+    print(_titre_des_conventions(arguments.cor, arguments.impot is not None, arguments.impot))
     for indicateur in indicateurs:
         for scenario in scenarios:
             print()

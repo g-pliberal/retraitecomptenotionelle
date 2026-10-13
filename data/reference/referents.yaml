@@ -1069,6 +1069,15 @@ referents:
           point reproche encore : l'impôt n'entre ni dans la
           pension nette ni dans l'effet retour de la page
           Coût.
+          Le 13 octobre 2026 (138.5, troisième partie),
+          l'impôt entre dans la pension nette des
+          indicateurs de cycle de vie, après impôt
+          (`cycle_de_vie.convention_apres_impot`) : celui du
+          foyer d'une personne seule, chaque année, sur son
+          salaire et sa pension imposables, et le taux de
+          remplacement après impôt, qui retrouve le taux net
+          de l'OCDE à 0,4 point près. Restent la pension
+          nette du site et l'effet retour de la page Coût.
         etat: a_reprendre
         chantier: "138.5"
       - quoi: >-
@@ -3181,6 +3190,12 @@ referents:
           net imposable des salaires et des pensions
           (`cycle_de_vie.revenus_imposables`,
           `parts_imposables_par_annee`). Restent le net du
+          site et l'effet retour de la page Coût.
+          Le 13 octobre 2026 (138.5, troisième partie), cet
+          impôt entre dans les indicateurs de cycle de vie,
+          après impôt (`cycle_de_vie.convention_apres_impot`),
+          chaque année, sur le salaire et la pension
+          imposables d'une personne seule. Restent le net du
           site et l'effet retour de la page Coût.
         etat: a_reprendre
         chantier: "138.5"
@@ -7117,6 +7132,10 @@ referents:
           quinquies, fait le net imposable des pensions et
           des salaires (`cycle_de_vie.py`). Reste le net du
           site.
+          Le 13 octobre 2026 (138.5, troisième partie), les
+          indicateurs de cycle de vie se calculent après
+          impôt (`cycle_de_vie.convention_apres_impot`).
+          Reste le net du site.
         etat: a_reprendre
         chantier: "138.5"
     bilan: >-
@@ -8234,6 +8253,12 @@ referents:
           dernier salaire, et le revenu autour du départ. Le dépôt n'a que le
           taux de remplacement (`simulateur.py:277-298`).
         preuve: son manuel PID289138, version 2.2
+        verification: >-
+          Le 13 octobre 2026 (138.5, troisième partie), le taux de
+          remplacement après impôt au départ, toute pension
+          confondue (`cycle_de_vie.remplacement_apres_impot`), et
+          les indicateurs de cycle de vie après impôt. Restent la
+          pension par étage et le revenu autour du départ.
         etat: a_reprendre
         chantier: "138.9"
       - quoi: >-
@@ -9965,6 +9990,11 @@ referents:
           dépôt sert 42,7 % au salaire moyen, et l'écart est celui de
           l'Agirc-Arrco, dont l'OCDE projette un quart de plus que la
           convention du COR que le dépôt suit.
+          Le 13 octobre 2026 (action 138, étape 5), le net : le taux
+          net se retrouve à 0,4 point près de la pension brute de
+          l'OCDE, passée par les prélèvements et l'impôt du dépôt ;
+          le patrimoine net, en années de salaire net, suit le brut
+          comme chez l'OCDE (tests/test_cycle_de_vie_references.py).
         etat: repris
         chantier: "138.9"
       - quoi: >-
@@ -9982,6 +10012,17 @@ referents:
           Méthode : le revenu disponible est la mesure de l'OCDE
           comme de la RGS ; l'impôt sur le revenu dépend du foyer,
           et le 138.2 doit le dire.
+          Le 13 octobre 2026 (138.5, troisième partie), le taux de
+          remplacement après impôt d'une personne seule
+          (`cycle_de_vie.remplacement_apres_impot`) : la pension
+          brute de l'OCDE, passée par les prélèvements et l'impôt
+          du dépôt, au barème projeté sur le salaire moyen, redonne
+          69,6 % au salaire moyen pour 70,0, 59,2 % à deux fois pour
+          58,9 ; à la moitié, 64,9 % pour 66,1, le dépôt prenant à
+          la pension la CSG au taux plein
+          (tests/test_cycle_de_vie_references.py). Restent le net
+          du site (`contexte.py`), et le foyer, que le 138.2 doit
+          dire.
         etat: a_reprendre
         chantier: "138.2"
       - quoi: >-

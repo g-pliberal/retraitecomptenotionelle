@@ -92,13 +92,23 @@ dont la dernière marche tient au-delà. Ce qui la rapporte à un revenu
 d'activité le rapporte au revenu net de la même année (:func:`revenus_nets`) :
 la fiche de paie du droit en vigueur, ramenée aux prélèvements de son année,
 et celle de la proposition pour le scénario 6 après la bascule, comme le site.
-Le patrimoine reste en années de dernier revenu brut, comme l'OCDE l'exprime.
+Le patrimoine reste en années de dernier revenu brut ; l'OCDE exprime son
+patrimoine net en années de salaire net (14,3 pour 11,5 brut au salaire moyen).
 
-LE NET IMPOSABLE, que l'impôt sur le revenu (:mod:`~retraite_notionnelle.impot_revenu`)
-attend, et qu'aucun indicateur ne prend encore (action 138, étape 5) : le
-revenu d'activité moins ses cotisations et la CSG déductible de son année
-(:func:`revenus_imposables`), la pension moins la CSG déductible et la
-cotisation maladie de l'année où elle est servie (:func:`parts_imposables_par_annee`).
+APRÈS IMPÔT (action 138, étape 5 ; :func:`convention_apres_impot`), la pension
+et les revenus perdent en plus l'impôt sur le revenu de chaque année
+(:mod:`~retraite_notionnelle.impot_revenu`) : celui du foyer d'une personne
+seule, sans enfant à charge, comme l'OCDE calcule ses taux nets
+(:func:`foyer_de_l_annee`), au barème de l'année, projeté au-delà de la
+dernière loi de finances lue sur les prix ou, comme l'OCDE, sur le salaire
+moyen. Le foyer déclare son net imposable : le revenu d'activité moins ses
+cotisations et la CSG déductible de son année (:func:`revenus_imposables`),
+la pension moins la CSG déductible et la cotisation maladie de l'année où
+elle est servie (:func:`parts_imposables_par_annee`). L'année du départ, il
+déclare les deux, et leur impôt se partage au prorata (:func:`impots_par_annee`).
+Le taux de remplacement après impôt au départ (:func:`remplacement_apres_impot`)
+est le taux net de l'OCDE. Les cotisations restent brutes : l'impôt ne les
+atteint pas.
 
 À CHAQUE ÂGE DE DÉPART (:func:`balayage`). Calculés au seul âge où un cas type
 part, les indicateurs ne disent pas ce qu'un départ plus tôt ou plus tard
@@ -138,15 +148,22 @@ CE QUE LE MODULE NE FAIT PAS. La pension nette l'est au taux plein de CSG, sans
 le taux réduit ni le médian que le revenu fiscal d'un foyer ouvrirait ; la
 maladie des pensions des régimes de base autres que le régime général, que
 l'IPP n'écrit pas, n'y est pas ; l'indépendant garde les prélèvements hors
-retraite de l'année courante. Il ne s'affiche pas encore sur le site, et n'a
-pas de jumeau JavaScript, pas plus que
+retraite de l'année courante. Après impôt, le foyer n'est jamais un couple ni
+un parent ; le bénéfice d'un indépendant n'est pas imposé
+(:func:`annees_hors_impot`), et ses revenus après impôt ne se calculent pas ;
+une année d'avant 1960, sans barème lu, ne paie pas d'impôt ; la majoration
+pour enfants, exonérée jusqu'à l'abrogation du 2° ter de l'article 81 du code
+général des impôts au 1er janvier 2014, s'impose à toute époque ; la prime pour
+l'emploi d'une année incomplète se calcule comme celle d'une année entière
+(:data:`~retraite_notionnelle.impot_revenu.HORS_CHAMP`). Il ne s'affiche pas
+encore sur le site, et n'a pas de jumeau JavaScript, pas plus que
 :mod:`~retraite_notionnelle.contributions_equilibre`.
 """
 
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 
 from pathlib import Path
@@ -156,12 +173,19 @@ from .config import RevalorisationStock
 from .contributions_equilibre import contributions_d_une_carriere, part_salariale_annualisee
 from .cout import coefficient_actuel
 from .donnees.chargement import charger_yaml
+from .donnees.impot_revenu import (
+    INDEXATIONS,
+    ParametresImpot,
+    charger_baremes_impot_revenu,
+    croissance_macro,
+)
 from .donnees.prelevements_historiques import (
     FAMILLES_INDEPENDANTES,
     charger_prelevements_historiques,
     famille_de_la_fiche,
 )
 from .donnees.mortalite import AGE_TERMINAL
+from .impot_revenu import Declarant, Foyer, ImpotDuFoyer, impot_aux_parametres
 from .remuneration import (
     charger_prelevements,
     fiche_depuis_brut,
@@ -217,6 +241,23 @@ class Convention:
     #: (:func:`prelevements_par_annee`) : une année qu'il ne porte pas prend
     #: ``prelevement``.
     prelevements: dict[int, float] | None = None
+    #: L'impôt sur le revenu (:func:`convention_apres_impot`) : ``None``, la
+    #: pension et les revenus avant lui ; sinon, comment son barème se projette
+    #: au-delà de la dernière loi de finances lue, sur les ``prix`` ou sur le
+    #: ``salaire_moyen`` (:mod:`~retraite_notionnelle.donnees.impot_revenu`).
+    #: Il se calcule sur le net imposable : la convention porte alors les
+    #: prélèvements.
+    impot: str | None = None
+
+    def __post_init__(self):
+        if self.impot is None:
+            return
+        if self.impot not in INDEXATIONS:
+            raise ValueError(f"indexation du barème inconnue : {self.impot!r} "
+                             f"({', '.join(INDEXATIONS)})")
+        if not self.nette:
+            raise ValueError("l'impôt se calcule sur le net imposable : une convention après "
+                             "impôt porte les prélèvements")
 
     @property
     def nette(self) -> bool:
@@ -229,6 +270,33 @@ class Convention:
         if self.prelevements is not None and annee in self.prelevements:
             return 1.0 - self.prelevements[annee]
         return 1.0 - self.prelevement
+
+
+@dataclass(frozen=True)
+class ImpotDeLAnnee:
+    """L'impôt sur le revenu d'une année du cycle de vie, et ce qu'en
+    supportent le salaire et la pension (:func:`impots_par_annee`)."""
+
+    annee: int
+    #: Ce que le foyer déclare, en euros courants : le salaire imposable de
+    #: l'année (:func:`revenus_imposables`), et la part imposable de ce que la
+    #: pension sert dans l'année (:func:`parts_imposables_par_annee`).
+    salaire: float
+    pension: float
+    #: L'impôt du foyer, étape par étape.
+    foyer: ImpotDuFoyer
+    #: La part de l'impôt que supporte la pension : au prorata des deux
+    #: revenus après leurs abattements de 10 %.
+    sur_la_pension: float
+
+    @property
+    def impot(self) -> float:
+        """Ce que le foyer paie ; négatif, ce qui lui est restitué."""
+        return self.foyer.impot
+
+    @property
+    def sur_le_salaire(self) -> float:
+        return self.foyer.impot - self.sur_la_pension
 
 
 @dataclass(frozen=True)
@@ -260,11 +328,37 @@ class Flux:
     #: fiche de paie.
     revenus_nets: dict[int, float] | None = None
     dernier_revenu_net: float | None = None
+    #: Sous un impôt (``flux_des_systemes(..., impot=…)``), l'indexation de son
+    #: barème, et l'impôt sur le revenu de chaque année (:func:`impots_par_annee`).
+    indexation_impot: str | None = None
+    impots: dict[int, ImpotDeLAnnee] | None = None
+    #: Les revenus nets que l'impôt laisse, et le dernier revenu net d'une
+    #: année entière d'impôt (:func:`dernier_revenu_apres_impot`) ; ``None``
+    #: quand une année de la carrière porte un revenu que le module de
+    #: l'impôt ne prend pas (:func:`annees_hors_impot`), ou qu'un statut n'a
+    #: pas de fiche de paie.
+    revenus_apres_impot: dict[int, float] | None = None
+    dernier_revenu_apres_impot: float | None = None
 
     @property
     def naissance(self) -> float:
         """L'origine des âges, en date décimale."""
         return self.debut - self.age
+
+    def servi(self, annee: int) -> float:
+        """La part de l'année ``annee`` où la pension est servie : du premier
+        mois au 31 décembre l'année du départ, l'année entière ensuite."""
+        return min(max(annee + 1 - self.debut, 0.0), 1.0)
+
+    def impot_de_la_pension(self, annee: int) -> float:
+        """La part de la pension brute de l'année ``annee`` que l'impôt lui
+        retire : ce qu'elle en supporte (:attr:`ImpotDeLAnnee.sur_la_pension`)
+        sur ce qu'elle sert dans l'année ; zéro sans impôt."""
+        impot = None if self.impots is None else self.impots.get(annee)
+        servie = self.niveaux.get(annee, 0.0) * self.servi(annee)
+        if impot is None or servie <= 0.0:
+            return 0.0
+        return impot.sur_la_pension / servie
 
     @property
     def annee_liquidation(self) -> int:
@@ -489,6 +583,14 @@ def revenus_imposables(simulateur, carriere, proposition: bool = False
     part déductible, comme chaque hausse et chaque baisse de la CSG l'a fait
     depuis 1997 — une convention, que le README ne tranche pas. ``None``
     comme :func:`revenus_nets`."""
+    revenus = _nets_et_imposables(simulateur, carriere, proposition)
+    return None if revenus is None else revenus[1]
+
+
+def _nets_et_imposables(simulateur, carriere, proposition: bool
+                        ) -> tuple[dict[int, float], dict[int, float]] | None:
+    """:func:`revenus_nets` et :func:`revenus_imposables`, d'une seule fiche
+    de paie par ligne."""
     paies = _paies(simulateur, carriere, imposable=True)
     if paies is None:
         return None
@@ -496,7 +598,7 @@ def revenus_imposables(simulateur, carriere, proposition: bool = False
     if proposition:
         nets = _avec_la_proposition(simulateur, carriere, nets)
     retires = _par_annee((annee, part) for annee, _, part in paies)
-    return {annee: net + retires.get(annee, 0.0) for annee, net in nets.items()}
+    return nets, {annee: net + retires.get(annee, 0.0) for annee, net in nets.items()}
 
 
 def _paies(simulateur, carriere, imposable: bool
@@ -743,44 +845,49 @@ def niveaux_notionnels(simulateur, comparaison, scenario: str, revalorisation,
     }
 
 
-def flux_des_systemes(simulateur, comparaison, nets: bool = False) -> dict[str, Flux]:
+def flux_des_systemes(simulateur, comparaison, nets: bool = False,
+                      impot: str | None = None) -> dict[str, Flux]:
     """Les deux flux d'une carrière sous chacun des six systèmes ; avec
     ``nets``, leurs revenus nets aussi (:func:`revenus_nets`), qu'une fiche
-    de paie par année coûte."""
+    de paie par année coûte ; avec ``impot``, l'indexation du barème de
+    l'impôt sur le revenu (:attr:`Convention.impot`), l'impôt de chaque année
+    aussi, et les revenus nets qu'il laisse (:func:`avec_l_impot`)."""
     carriere = comparaison.carriere
     derniere = max(_derniere_annee(comparaison.carriere_de(scenario))
                    for scenario in SCENARIOS)
     revalorisation = _revalorisation(simulateur, derniere)
     versees = cotisations_versees(simulateur, carriere)
     actuels = niveaux_actuels(simulateur, comparaison, revalorisation, derniere)
-    # Les revenus de chaque carrière, et leur net : sur la fiche du droit en
-    # vigueur, ou sur celle de la proposition pour le scénario 6.
+    parts = None if impot is None else parts_imposables_par_annee(simulateur, comparaison)
+    # Les revenus de chaque carrière, leur net et, sous l'impôt, leur net
+    # imposable : sur la fiche du droit en vigueur, ou sur celle de la
+    # proposition pour le scénario 6.
     revenus = {}
     for scenario in SCENARIOS:
-        cle = (id(comparaison.carriere_de(scenario)), simulateur.calculs[scenario].garantie
-               if scenario in simulateur.calculs else False)
+        cle = _cle_des_revenus(simulateur, comparaison, scenario)
         if cle not in revenus:
-            carriere_du_scenario = comparaison.carriere_de(scenario)
-            revenus[cle] = (revenus_d_activite(carriere_du_scenario),
-                            revenus_nets(simulateur, carriere_du_scenario, cle[1])
-                            if nets else None)
+            revenus[cle] = _revenus_de_la_carriere(
+                simulateur, comparaison.carriere_de(scenario), cle[1], nets, impot)
 
     def flux(scenario: str, cotisations: dict[int, float],
              niveaux: dict[int, float]) -> Flux:
         carriere_du_scenario = comparaison.carriere_de(scenario)
-        bruts, nets_du_scenario = revenus[(id(carriere_du_scenario),
-                                           simulateur.calculs[scenario].garantie
-                                           if scenario in simulateur.calculs else False)]
+        bruts, nets_du_scenario, imposables = revenus[
+            _cle_des_revenus(simulateur, comparaison, scenario)]
         dernier = (comparaison.dernier_revenu_annualise_liberal
                    if carriere_du_scenario is not carriere
                    else comparaison.dernier_revenu_annualise)
-        return Flux(
+        avant_impot = Flux(
             scenario=scenario, cotisations=cotisations, revenus=bruts, niveaux=niveaux,
             debut=_debut(carriere_du_scenario), age=carriere_du_scenario.age_liquidation,
             sexe=carriere_du_scenario.sexe, dernier_revenu=dernier,
             revenus_nets=nets_du_scenario,
             dernier_revenu_net=_dernier_revenu_net(dernier, bruts, nets_du_scenario),
         )
+        if impot is None:
+            return avant_impot
+        return avec_l_impot(simulateur, avant_impot, carriere_du_scenario, parts, imposables,
+                            impot, derniere)
 
     systemes = {"actuel": flux("actuel", versees, actuels)}
     reformees = cotisations_reformees(simulateur, comparaison)
@@ -792,6 +899,25 @@ def flux_des_systemes(simulateur, comparaison, nets: bool = False) -> dict[str, 
         systemes[scenario] = flux(scenario, cotisations, niveaux_notionnels(
             simulateur, comparaison, scenario, revalorisation, actuels, derniere))
     return systemes
+
+
+def _cle_des_revenus(simulateur, comparaison, scenario: str) -> tuple[int, bool]:
+    """Ce qui fait les revenus d'un système : sa carrière, et la fiche de paie
+    de la proposition, que lit le scénario 6."""
+    return (id(comparaison.carriere_de(scenario)),
+            simulateur.calculs[scenario].garantie if scenario in simulateur.calculs else False)
+
+
+def _revenus_de_la_carriere(simulateur, carriere, proposition: bool, nets: bool,
+                            impot: str | None) -> tuple:
+    """Les revenus d'activité de ``carriere``, leur net avec ``nets`` ou
+    ``impot``, et leur net imposable avec ``impot`` ; ``None`` pour ce qui
+    n'est pas demandé, ou qu'un statut sans fiche de paie ne permet pas."""
+    bruts = revenus_d_activite(carriere)
+    if impot is None:
+        return bruts, revenus_nets(simulateur, carriere, proposition) if nets else None, None
+    revenus = _nets_et_imposables(simulateur, carriere, proposition)
+    return (bruts, None, None) if revenus is None else (bruts, *revenus)
 
 
 # -- la fin de la retraite ---------------------------------------------------
@@ -832,15 +958,18 @@ def pensions_esperees(flux: Flux, simulateur, convention: Convention
 
     Sous un âge de décès fixe, la pension court du premier mois servi au
     décès. Sous la survie de génération, chaque morceau d'année compte pour
-    l'espérance de le vivre, sachant qu'on était en vie au départ.
+    l'espérance de le vivre, sachant qu'on était en vie au départ. Après
+    impôt, chaque année perd ce que l'impôt d'une année vécue en entier
+    retire à sa pension (:meth:`Flux.impot_de_la_pension`).
     """
+    _verifier_l_impot(flux, convention)
     esperees = []
     if convention.age_deces is not None:
         deces = flux.naissance + convention.age_deces
         for annee, niveau in sorted(flux.niveaux.items()):
             debut, fin = max(annee, flux.debut), min(annee + 1, deces)
             if fin > debut:
-                esperees.append((annee, niveau * (fin - debut) * convention.retenu(annee),
+                esperees.append((annee, niveau * (fin - debut) * _retenu(flux, convention, annee),
                                  (debut + fin) / 2.0, fin - debut))
         return esperees
     courbe = simulateur.mortalite.courbe(flux.age, flux.debut,
@@ -851,9 +980,26 @@ def pensions_esperees(flux: Flux, simulateur, convention: Convention
             continue
         vie = _integrale_survie(courbe, debut - flux.debut, fin - flux.debut)
         if vie > 0.0:
-            esperees.append((annee, niveau * vie * convention.retenu(annee),
+            esperees.append((annee, niveau * vie * _retenu(flux, convention, annee),
                              (debut + fin) / 2.0, vie))
     return esperees
+
+
+def _retenu(flux: Flux, convention: Convention, annee: int) -> float:
+    """La part de la pension brute de l'année ``annee`` qui reste : ce que
+    les prélèvements de la convention laissent, moins, après impôt, ce que
+    l'impôt prend."""
+    if convention.impot is None:
+        return convention.retenu(annee)
+    return convention.retenu(annee) - flux.impot_de_la_pension(annee)
+
+
+def _verifier_l_impot(flux: Flux, convention: Convention) -> None:
+    """Une convention après impôt demande un flux qui porte l'impôt de son
+    indexation."""
+    if convention.impot is not None and flux.indexation_impot != convention.impot:
+        raise ValueError(f"une convention après impôt demande un flux qui le porte : "
+                         f"flux_des_systemes(…, impot={convention.impot!r})")
 
 
 def age_de_deces_cor(mortalite, generation: int) -> float:
@@ -958,6 +1104,194 @@ def taux_de_prelevement(simulateur, resultat) -> float:
     return prelevements.taux_total + prelevements.maladie_complementaire * complementaire / total
 
 
+# -- l'impôt sur le revenu ---------------------------------------------------
+
+
+@lru_cache(maxsize=8)
+def _baremes_de_l_impot(simulateur, indexation: str, derniere: int
+                        ) -> dict[int, ParametresImpot]:
+    """Les paramètres de l'impôt de chaque année de revenus, du premier
+    barème lu à ``derniere``, projetés au-delà de la dernière loi de finances
+    lue sur ``indexation`` par le scénario de projection du simulateur
+    (:meth:`~.donnees.impot_revenu.BaremesImpotRevenu.chronique`)."""
+    baremes = charger_baremes_impot_revenu(simulateur.parametres.racine_donnees)
+    return baremes.chronique(derniere, indexation, croissance_macro(simulateur.macro, indexation))
+
+
+def foyer_de_l_annee(carriere, annee: int, salaire: float = 0.0,
+                     pension: float = 0.0) -> Foyer:
+    """Le foyer fiscal de ``carriere`` l'année ``annee`` : une personne seule,
+    sans enfant à charge, comme l'OCDE calcule ses taux nets, qui a au 31
+    décembre l'âge de sa génération — à 65 ans, il ouvre l'abattement des
+    personnes âgées (CGI, art. 157 bis) — et déclare ``salaire`` et
+    ``pension``, imposables."""
+    return Foyer(declarants=(Declarant(salaires=salaire, pensions=pension,
+                                       age=annee - carriere.annee_naissance),))
+
+
+def annees_hors_impot(simulateur, carriere) -> frozenset[int]:
+    """Les années où ``carriere`` a un revenu d'indépendant : un bénéfice, que
+    l'impôt ne prend pas comme un salaire — sans l'abattement de 10 %, et
+    majoré pour qui n'adhérait pas à un organisme de gestion agréé, de 2006 à
+    l'abrogation de l'article 158, 7, 1° du code au 1er janvier 2024 —, et
+    que le module de l'impôt ne calcule pas
+    (:data:`~retraite_notionnelle.impot_revenu.HORS_CHAMP`)."""
+    return frozenset(
+        ligne.annee for ligne in carriere.lignes
+        if ligne.cotise and profil_de_la_fiche(simulateur.affiliations, simulateur.catalogue,
+                                               ligne.affiliation, ligne.annee) == "independant")
+
+
+def impots_par_annee(simulateur, flux: Flux, carriere, parts: dict[int, float],
+                     salaires: dict[int, float], indexation: str = "prix",
+                     derniere: int | None = None) -> dict[int, ImpotDeLAnnee]:
+    """L'impôt sur le revenu de chaque année d'un flux, de la première de la
+    carrière à la dernière que la pension peut atteindre : celui du foyer de
+    l'année (:func:`foyer_de_l_annee`), qui déclare son salaire imposable —
+    ``salaires``, ceux de :func:`revenus_imposables` que le module prend — et
+    la part imposable de l'année (``parts``, :func:`parts_imposables_par_annee`)
+    de ce que la pension sert dans l'année (:meth:`Flux.servi`), au barème de
+    l'année, projeté au-delà de la dernière loi de finances lue sur
+    ``indexation``, jusqu'à ``derniere`` au moins.
+
+    Chaque année de retraite se compte vécue en entier : l'impôt plus faible
+    de l'année que le décès interrompt n'est pas calculé. L'année du départ,
+    le foyer déclare son dernier salaire et sa première pension, et leur impôt
+    se partage au prorata des deux revenus après leurs abattements de 10 %
+    (:attr:`ImpotDeLAnnee.sur_la_pension`). Une année d'avant le premier
+    barème lu, 1960, n'a pas d'impôt."""
+    pensions = {}
+    for annee, niveau in flux.niveaux.items():
+        servie = niveau * flux.servi(annee)
+        if servie > 0.0:
+            pensions[annee] = servie * parts[annee]
+    annees = sorted(set(salaires) | set(pensions))
+    if not annees:
+        return {}
+    baremes = _baremes_de_l_impot(simulateur, indexation, max(annees[-1], derniere or 0))
+    impots = {}
+    for annee in annees:
+        parametres = baremes.get(annee)
+        if parametres is None:
+            continue
+        salaire, pension = salaires.get(annee, 0.0), pensions.get(annee, 0.0)
+        foyer = impot_aux_parametres(foyer_de_l_annee(carriere, annee, salaire, pension),
+                                     parametres)
+        impots[annee] = ImpotDeLAnnee(annee=annee, salaire=salaire, pension=pension, foyer=foyer,
+                                      sur_la_pension=foyer.impot * _part_de_la_pension(foyer))
+    return impots
+
+
+def _part_de_la_pension(impot: ImpotDuFoyer) -> float:
+    """La part de l'impôt d'un foyer que supporte sa pension : au prorata des
+    revenus après leurs abattements de 10 %."""
+    salaires = somme_ordonnee(impot.salaires_nets)
+    pensions = somme_ordonnee(impot.pensions_nettes)
+    if salaires + pensions <= 0.0:
+        return 0.0
+    return pensions / (salaires + pensions)
+
+
+def avec_l_impot(simulateur, flux: Flux, carriere, parts: dict[int, float],
+                 imposables: dict[int, float] | None, indexation: str = "prix",
+                 derniere: int | None = None) -> Flux:
+    """``flux`` sous l'impôt sur le revenu : l'impôt de chaque année
+    (:func:`impots_par_annee`), les revenus nets qu'il laisse et le dernier
+    revenu net d'une année entière d'impôt (:func:`dernier_revenu_apres_impot`).
+
+    ``imposables`` sont les salaires imposables de ``carriere``
+    (:func:`revenus_imposables`), ``None`` pour un statut sans fiche de paie —
+    l'exploitant agricole —, dont la pension s'impose alors seule. Une année
+    où la carrière a un revenu que le module de l'impôt ne prend pas
+    (:func:`annees_hors_impot`) n'en déclare aucun : l'année du départ d'un
+    indépendant, sa pension s'impose seule. Les revenus après impôt ne se
+    calculent pas, alors, faute de l'impôt de ces années-là."""
+    hors = frozenset() if imposables is None else annees_hors_impot(simulateur, carriere)
+    salaires = {annee: montant for annee, montant in (imposables or {}).items()
+                if annee not in hors}
+    impots = impots_par_annee(simulateur, flux, carriere, parts, salaires, indexation, derniere)
+    apres = dernier = None
+    if flux.revenus_nets is not None and imposables is not None and not hors:
+        apres = {annee: net - (impots[annee].sur_le_salaire if annee in impots else 0.0)
+                 for annee, net in flux.revenus_nets.items()}
+        dernier = dernier_revenu_apres_impot(simulateur, flux, imposables, indexation, derniere)
+    return replace(flux, indexation_impot=indexation, impots=impots, revenus_apres_impot=apres,
+                   dernier_revenu_apres_impot=dernier)
+
+
+def dernier_revenu_apres_impot(simulateur, flux: Flux, imposables: dict[int, float],
+                               indexation: str = "prix", derniere: int | None = None
+                               ) -> float | None:
+    """Le dernier revenu annualisé (:attr:`Flux.dernier_revenu`), net de ses
+    prélèvements (:attr:`Flux.dernier_revenu_net`) et de l'impôt d'une année
+    entière de ce revenu, déclaré seul, au barème de l'année du départ — celle
+    de ses euros — et sans l'abattement des personnes âgées, comme le revenu
+    d'un actif. Son imposable est le dernier revenu fois le rapport de
+    l'imposable au brut de la dernière année cotisée. C'est le dernier salaire
+    net que l'OCDE oppose à la pension après impôt
+    (:func:`remplacement_apres_impot`) ; ``None`` sans dernier revenu net."""
+    if flux.dernier_revenu_net is None or not flux.revenus:
+        return None
+    annee = max(flux.revenus)
+    imposable = flux.dernier_revenu * imposables.get(annee, 0.0) / flux.revenus[annee]
+    depart = flux.annee_liquidation
+    parametres = _baremes_de_l_impot(simulateur, indexation,
+                                     max(depart, derniere or 0)).get(depart)
+    if parametres is None:
+        return flux.dernier_revenu_net
+    impot = impot_aux_parametres(Foyer(declarants=(Declarant(salaires=imposable),)), parametres)
+    return flux.dernier_revenu_net - impot.impot
+
+
+def convention_apres_impot(simulateur, comparaison, cor: bool = False,
+                           indexation: str = "prix") -> Convention:
+    """La convention nette (:func:`convention_nette`), après impôt sur le
+    revenu : la pension et les revenus de chaque année perdent l'impôt du
+    foyer de l'année (:func:`impots_par_annee`), son barème projeté au-delà
+    de la dernière loi de finances lue sur ``indexation`` — les prix, comme
+    les lois de finances le relèvent, ou le salaire moyen, comme l'OCDE."""
+    return replace(convention_nette(simulateur, comparaison, cor), impot=indexation)
+
+
+def remplacement_apres_impot(simulateur, comparaison, scenario: str = "actuel",
+                             indexation: str = "prix",
+                             systemes: dict[str, Flux] | None = None) -> float | None:
+    """Le taux de remplacement après impôt au départ du système ``scenario`` :
+    la pension du premier mois servi, annualisée (:func:`pension_au_depart`),
+    nette des prélèvements de son année et de l'impôt d'une année entière de
+    cette pension, déclarée seule au barème de l'année du départ, sur le
+    dernier revenu annualisé, net des siens et de l'impôt d'une année entière
+    de ce revenu (:func:`dernier_revenu_apres_impot`) : le taux net de l'OCDE
+    (« net replacement rate », *Pensions at a Glance*). ``systemes``, les flux
+    de :func:`flux_des_systemes` sous l'impôt d'``indexation``, s'ils sont
+    déjà calculés ; ``None`` sans dernier revenu après impôt."""
+    if systemes is None:
+        systemes = flux_des_systemes(simulateur, comparaison, impot=indexation)
+    flux = systemes[scenario]
+    convention = convention_nette(simulateur, comparaison)
+    _verifier_l_impot(flux, replace(convention, impot=indexation))
+    return _remplacement_apres_impot(simulateur, comparaison, scenario, flux, convention,
+                                     parts_imposables_par_annee(simulateur, comparaison))
+
+
+def _remplacement_apres_impot(simulateur, comparaison, scenario: str, flux: Flux,
+                              convention: Convention, parts: dict[int, float]
+                              ) -> float | None:
+    """:func:`remplacement_apres_impot`, de la convention nette et des parts
+    imposables de la comparaison."""
+    dernier = flux.dernier_revenu_apres_impot
+    if dernier is None or dernier <= 0.0:
+        return None
+    annee = flux.annee_liquidation
+    brute = pension_au_depart(simulateur, comparaison, scenario)
+    parametres = _baremes_de_l_impot(simulateur, flux.indexation_impot,
+                                     max(flux.niveaux)).get(annee)
+    impot = 0.0 if parametres is None else impot_aux_parametres(
+        foyer_de_l_annee(comparaison.carriere_de(scenario), annee,
+                         pension=brute * parts[annee]), parametres).impot
+    return (brute * convention.retenu(annee) - impot) / dernier
+
+
 # -- les indicateurs ---------------------------------------------------------
 
 
@@ -1018,17 +1352,24 @@ def indicateurs(flux: Flux, simulateur, convention: Convention = Convention()
     Sous une convention nette, la pension est nette, et ce qui la rapporte à
     un revenu d'activité — le taux d'annuité, le remplacement sur le cycle de
     vie et au décès — la rapporte au revenu net (:attr:`Flux.revenus_nets`),
-    ou ne se calcule pas sans lui. Le patrimoine reste en années de dernier
-    revenu brut, comme l'OCDE exprime son patrimoine net ; les cotisations
-    sont ce que la paie supporte, brutes par nature."""
+    ou ne se calcule pas sans lui. Après impôt, la pension et les revenus
+    sont nets de l'impôt de chaque année (:attr:`Flux.revenus_apres_impot`).
+    Le patrimoine reste en années de dernier revenu brut ; l'OCDE exprime le
+    sien, net, en années de dernier salaire net. Les cotisations sont ce que
+    la paie supporte, brutes par nature, et l'impôt ne les atteint pas : la
+    part patronale n'est pas un revenu du salarié, et la sienne se déduit de
+    son revenu imposable (CGI, art. 83)."""
     esperees = pensions_esperees(flux, simulateur, convention)
     duree = somme_ordonnee(vie for _, _, _, vie in esperees)
     annees = [annee for annee, _, _, _ in esperees] + list(flux.cotisations) + list(flux.revenus)
     premiere, derniere = min(annees), max(annees)
     prix, salaires = _indices(simulateur.macro, premiere, derniere)
-    nette = convention.nette
-    revenus = flux.revenus_nets if nette else flux.revenus
-    dernier = flux.dernier_revenu_net if nette else flux.dernier_revenu
+    if convention.impot is not None:
+        revenus, dernier = flux.revenus_apres_impot, flux.dernier_revenu_apres_impot
+    elif convention.nette:
+        revenus, dernier = flux.revenus_nets, flux.dernier_revenu_net
+    else:
+        revenus, dernier = flux.revenus, flux.dernier_revenu
 
     pensions_smpt = somme_ordonnee(montant / salaires[annee] for annee, montant, _, _ in esperees)
     cotisations_smpt = somme_ordonnee(montant / salaires[annee]
@@ -1065,7 +1406,7 @@ def indicateurs(flux: Flux, simulateur, convention: Convention = Convention()
         derniere_servie = int(math.floor(flux.debut + duree - 1e-9))
         if duree > 0.0 and derniere_servie in flux.niveaux and dernier:
             remplacement_au_deces = (
-                flux.niveaux[derniere_servie] * convention.retenu(derniere_servie)
+                flux.niveaux[derniere_servie] * _retenu(flux, convention, derniere_servie)
                 / (dernier * salaires[derniere_servie] / salaires[liquidation]))
 
     return Indicateurs(
@@ -1091,7 +1432,7 @@ def indicateurs_des_systemes(simulateur, comparaison,
                              ) -> dict[str, Indicateurs]:
     """Les indicateurs d'une carrière sous chacun des six systèmes."""
     systemes = flux_des_systemes(simulateur, comparaison,
-                                 nets=convention.nette)
+                                 nets=convention.nette, impot=convention.impot)
     return {scenario: indicateurs(flux, simulateur, convention)
             for scenario, flux in systemes.items()}
 
@@ -1220,7 +1561,8 @@ class Depart:
     #: L'année du départ du scénario 1 ; celui du scénario 6 est plus tard
     #: quand son âge légal le reporte (``Comparaison.carriere_de``).
     annee: int
-    #: Les indicateurs de chaque système, sous la convention nette.
+    #: Les indicateurs de chaque système, sous la convention nette, ou après
+    #: impôt.
     indicateurs: dict[str, Indicateurs]
     #: La pension nette du premier mois servi, annualisée, en euros de l'année
     #: du départ de chaque système.
@@ -1230,14 +1572,26 @@ class Depart:
     pensions_aspa: dict[str, float | None]
     #: Le taux de remplacement net au départ ; ``None`` sans revenu net.
     remplacements: dict[str, RemplacementNet | None]
+    #: Après impôt, le taux de remplacement après impôt au départ
+    #: (:func:`remplacement_apres_impot`) ; ``None`` avant impôt.
+    remplacements_apres_impot: dict[str, float | None] | None = None
 
 
 def depart(simulateur, comparaison, cor: bool = False,
-           age: float | None = None) -> Depart:
+           age: float | None = None, impot: str | None = None) -> Depart:
     """Ce que donne, en net, le départ de ``comparaison`` sous les six
-    systèmes (:func:`convention_nette`)."""
-    convention = convention_nette(simulateur, comparaison, cor)
-    systemes = flux_des_systemes(simulateur, comparaison, nets=True)
+    systèmes (:func:`convention_nette`) ; avec ``impot``, l'indexation du
+    barème de l'impôt sur le revenu, les indicateurs après impôt
+    (:func:`convention_apres_impot`) et le taux de remplacement après impôt."""
+    convention = (convention_nette(simulateur, comparaison, cor) if impot is None
+                  else convention_apres_impot(simulateur, comparaison, cor, impot))
+    systemes = flux_des_systemes(simulateur, comparaison, nets=True, impot=impot)
+    apres = None
+    if impot is not None:
+        parts = parts_imposables_par_annee(simulateur, comparaison)
+        apres = {scenario: _remplacement_apres_impot(simulateur, comparaison, scenario, flux,
+                                                     convention, parts)
+                 for scenario, flux in systemes.items()}
     pensions, aspa, remplacements = {}, {}, {}
     for scenario, flux in systemes.items():
         carriere = comparaison.carriere_de(scenario)
@@ -1254,6 +1608,7 @@ def depart(simulateur, comparaison, cor: bool = False,
         indicateurs={scenario: indicateurs(flux, simulateur, convention)
                      for scenario, flux in systemes.items()},
         pensions_nettes=pensions, pensions_aspa=aspa, remplacements=remplacements,
+        remplacements_apres_impot=apres,
     )
 
 
@@ -1281,14 +1636,15 @@ def ages_de_depart(simulateur, cas, generation: int,
 
 
 def balayage(simulateur, cas, generation: int, cor: bool = False,
-             pas: float = PAS_DES_AGES) -> tuple[Depart, ...]:
+             pas: float = PAS_DES_AGES, impot: str | None = None) -> tuple[Depart, ...]:
     """Les indicateurs nets du cas type ``cas`` né en ``generation``, à
     chacun de ses âges de départ (:func:`ages_de_depart`), sous les
     hypothèses macroéconomiques de ``simulateur`` : une productivité, que
-    :func:`hypotheses_de_productivite` énumère."""
+    :func:`hypotheses_de_productivite` énumère ; avec ``impot``, après impôt
+    (:func:`depart`)."""
     return tuple(
         depart(simulateur, simulateur.simuler(cas.carriere_a(simulateur, generation, age)),
-               cor, age)
+               cor, age, impot)
         for age in ages_de_depart(simulateur, cas, generation, pas))
 
 

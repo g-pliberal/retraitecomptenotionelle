@@ -6,10 +6,12 @@ tire la durée de retraite, le taux de récupération, le rendement interne et l
 patrimoine retraite (action 138, étape 9). Ce module tient les définitions :
 un rendement qu'on connaît d'avance se retrouve, une durée de retraite est
 celle que la convention dit, un taux de récupération est le rapport de deux
-sommes, et chaque système reçoit et verse ce que le modèle lui prête ; à
-chaque âge de départ, de l'âge d'ouverture à l'annulation de la décote, en
-net, sous les trois productivités du COR ; l'âge d'équilibre, où une
-génération retrouve le diviseur ou la part de vie de la référence du compte.
+sommes, et chaque système reçoit et verse ce que le modèle lui prête ; après
+impôt, l'impôt de chaque année est celui du foyer qui la déclare (action 138,
+étape 5) ; à chaque âge de départ, de l'âge d'ouverture à l'annulation de la
+décote, en net, sous les trois productivités du COR ; l'âge d'équilibre, où
+une génération retrouve le diviseur ou la part de vie de la référence du
+compte.
 La confrontation aux chiffres publiés par le COR, TRAJECTOiRE, l'OCDE, l'ETK
 et le simulateur du COR est dans ``tests/test_cycle_de_vie_references.py``.
 """
@@ -17,13 +19,16 @@ et le simulateur du COR est dans ``tests/test_cycle_de_vie_references.py``.
 from __future__ import annotations
 
 import math
+from dataclasses import replace
 
 import pytest
 
 from retraite_notionnelle import cycle_de_vie
 from retraite_notionnelle.castypes import CAS_TYPES
 from retraite_notionnelle.config import RACINE_DONNEES, Parametres
+from retraite_notionnelle.donnees.impot_revenu import charger_baremes_impot_revenu
 from retraite_notionnelle.donnees.macro import DonneesMacro
+from retraite_notionnelle.impot_revenu import Declarant, Foyer, impot_du_foyer
 from retraite_notionnelle.remuneration import fiche_depuis_brut, indemnites_de_la_carriere
 from retraite_notionnelle.revalorisation import faire_vivre
 from retraite_notionnelle.simulateur import Simulateur
@@ -442,6 +447,180 @@ def test_un_statut_sans_fiche_de_paie_n_a_pas_de_revenu_net(simulateur):
         annee_naissance=1980, sexe="H", affiliation="exploitant_agricole", age_debut=20,
         age_liquidation=64, niveau_salaire=0.5)
     assert cycle_de_vie.revenus_nets(simulateur, exploitant) is None
+
+
+# -- après impôt -------------------------------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def impose_en_2044(simulateur, parti_en_2044):
+    """Le salarié parti en 2044, sous l'impôt de son foyer, le barème projeté
+    sur les prix au-delà de la dernière loi de finances lue."""
+    return cycle_de_vie.flux_des_systemes(simulateur, parti_en_2044, impot="prix")
+
+
+def _impot(simulateur, annee: int, declarant: Declarant, indexation: str = "prix") -> float:
+    """L'impôt du foyer d'une personne seule, sans enfant, qui déclare ce que
+    dit ``declarant``, calculé par le module de l'impôt."""
+    return impot_du_foyer(Foyer((declarant,)), annee, charger_baremes_impot_revenu(RACINE_DONNEES),
+                          indexation=indexation, croissance=getattr(
+                              simulateur.macro, "inflation" if indexation == "prix"
+                              else "salaire_moyen")).impot
+
+
+def test_l_impot_de_chaque_annee_est_celui_du_foyer_qui_la_declare(
+        simulateur, parti_en_2044, impose_en_2044):
+    """Chaque année, le foyer d'une personne seule, sans enfant à charge, qui
+    a l'âge de sa génération au 31 décembre, déclare son salaire imposable et
+    la part imposable de ce que sa pension sert dans l'année ; son impôt est
+    celui du module de l'impôt, au barème de l'année, projeté sur les prix. Le
+    foyer déclare les deux l'année du départ, la pension seule ensuite."""
+    flux = impose_en_2044["actuel"]
+    imposables = cycle_de_vie.revenus_imposables(simulateur, parti_en_2044.carriere)
+    parts = cycle_de_vie.parts_imposables_par_annee(simulateur, parti_en_2044)
+    depart = flux.annee_liquidation
+    baremes = charger_baremes_impot_revenu(RACINE_DONNEES)
+    for annee in (2005, 2020, 2035, depart, depart + 1, depart + 30):
+        impot = flux.impots[annee]
+        pension = flux.niveaux.get(annee, 0.0) * flux.servi(annee) * parts.get(annee, 0.0)
+        assert impot.salaire == pytest.approx(imposables.get(annee, 0.0)), annee
+        assert impot.pension == pytest.approx(pension), annee
+        foyer = Foyer((Declarant(salaires=impot.salaire, pensions=impot.pension,
+                                 age=annee - 1980),))
+        assert impot.foyer == impot_du_foyer(foyer, annee, baremes, indexation="prix",
+                                             croissance=simulateur.macro.inflation), annee
+    assert flux.impots[depart].salaire > 0.0 and flux.impots[depart].pension > 0.0
+    assert flux.impots[depart + 1].salaire == 0.0 and flux.impots[depart + 1].impot > 0.0
+
+
+def test_l_annee_du_depart_partage_l_impot_au_prorata(impose_en_2044):
+    """L'année du départ, l'impôt du foyer se partage entre le salaire et la
+    pension au prorata des deux revenus après leurs abattements de 10 % : le
+    revenu après impôt de l'année perd la part du salaire, la pension la
+    sienne, sur les mois servis. Une année de carrière, tout l'impôt est
+    celui du salaire."""
+    flux = impose_en_2044["actuel"]
+    depart = flux.annee_liquidation
+    impot = flux.impots[depart]
+    salaires, pensions = sum(impot.foyer.salaires_nets), sum(impot.foyer.pensions_nettes)
+    assert impot.sur_la_pension == pytest.approx(impot.impot * pensions / (salaires + pensions))
+    assert flux.revenus_apres_impot[depart] == pytest.approx(
+        flux.revenus_nets[depart] - impot.sur_le_salaire)
+    assert flux.impot_de_la_pension(depart) == pytest.approx(
+        impot.sur_la_pension / (flux.niveaux[depart] * (depart + 1 - flux.debut)))
+    annee = depart - 5
+    assert flux.revenus_apres_impot[annee] == pytest.approx(
+        flux.revenus_nets[annee] - flux.impots[annee].impot)
+    assert flux.impot_de_la_pension(annee) == 0.0
+
+
+def test_apres_impot_chaque_annee_de_pension_perd_l_impot_qu_elle_supporte(
+        simulateur, parti_en_2044, impose_en_2044):
+    """Sous un âge de décès fixe, la pension après impôt d'une année est sa
+    pension nette moins l'impôt qu'elle supporte, l'année du départ comprise."""
+    flux = impose_en_2044["actuel"]
+    nette = replace(cycle_de_vie.convention_nette(simulateur, parti_en_2044), age_deces=87.0)
+    avant = {annee: montant for annee, montant, _, _
+             in cycle_de_vie.pensions_esperees(flux, simulateur, nette)}
+    apres = {annee: montant for annee, montant, _, _
+             in cycle_de_vie.pensions_esperees(flux, simulateur, replace(nette, impot="prix"))}
+    for annee in (flux.annee_liquidation, flux.annee_liquidation + 1, flux.annee_liquidation + 20):
+        assert avant[annee] - apres[annee] == pytest.approx(flux.impots[annee].sur_la_pension,
+                                                            rel=1e-9), annee
+
+
+def test_apres_impot_le_rendement_baisse_et_le_taux_d_annuite_monte(simulateur, parti_en_2044):
+    """La pension paie l'impôt, les cotisations non : le rendement, la
+    récupération et le patrimoine baissent. Le salaire en paie plus que la
+    pension, qui a des abattements et des revenus moindres : le taux
+    d'annuité et le remplacement sur le cycle de vie montent. La durée ne
+    change pas."""
+    nette = cycle_de_vie.indicateurs_des_systemes(
+        simulateur, parti_en_2044, cycle_de_vie.convention_nette(simulateur, parti_en_2044))
+    apres = cycle_de_vie.indicateurs_des_systemes(
+        simulateur, parti_en_2044, cycle_de_vie.convention_apres_impot(simulateur, parti_en_2044))
+    avant, apres = nette["actuel"], apres["actuel"]
+    assert apres.rendement_reel < avant.rendement_reel
+    assert apres.taux_recuperation < avant.taux_recuperation
+    assert apres.patrimoine < avant.patrimoine
+    assert apres.taux_annuite > avant.taux_annuite
+    assert apres.taux_remplacement_cycle > avant.taux_remplacement_cycle
+    assert apres.duree_retraite == avant.duree_retraite
+
+
+def test_le_remplacement_apres_impot_impose_une_annee_entiere_de_chacun(
+        simulateur, parti_en_2044, impose_en_2044):
+    """Le taux net de l'OCDE : la pension du premier mois, annualisée, nette
+    de ses prélèvements et de l'impôt d'une année entière de cette pension,
+    sur le dernier revenu annualisé, net des siens et de l'impôt d'une année
+    entière de ce revenu, déclaré par un actif, sans l'abattement des
+    personnes âgées. La pension paie moins d'impôt que le salaire : il est
+    au-dessus du taux de remplacement net."""
+    flux = impose_en_2044["actuel"]
+    depart = flux.annee_liquidation
+    imposables = cycle_de_vie.revenus_imposables(simulateur, parti_en_2044.carriere)
+    derniere = max(flux.revenus)
+    salaire = flux.dernier_revenu * imposables[derniere] / flux.revenus[derniere]
+    assert flux.dernier_revenu_apres_impot == pytest.approx(
+        flux.dernier_revenu_net - _impot(simulateur, depart, Declarant(salaires=salaire)))
+    brute = cycle_de_vie.pension_au_depart(simulateur, parti_en_2044, "actuel")
+    part = cycle_de_vie.parts_imposables_par_annee(simulateur, parti_en_2044)[depart]
+    nette = brute * cycle_de_vie.convention_nette(simulateur, parti_en_2044).retenu(depart)
+    impot = _impot(simulateur, depart, Declarant(pensions=brute * part, age=depart - 1980))
+    attendu = (nette - impot) / flux.dernier_revenu_apres_impot
+    assert cycle_de_vie.remplacement_apres_impot(
+        simulateur, parti_en_2044, systemes=impose_en_2044) == pytest.approx(attendu)
+    assert attendu > nette / flux.dernier_revenu_net
+
+
+def test_sur_le_salaire_moyen_le_bareme_projete_prend_moins(simulateur, parti_en_2044,
+                                                            impose_en_2044):
+    """Les salaires montent plus vite que les prix : au-delà de la dernière
+    loi de finances lue, le barème projeté sur le salaire moyen prend moins
+    que celui que les prix relèvent ; jusqu'à elle, c'est le même."""
+    prix = impose_en_2044["actuel"]
+    salaires = cycle_de_vie.flux_des_systemes(simulateur, parti_en_2044,
+                                              impot="salaire_moyen")["actuel"]
+    assert salaires.impots[2020] == prix.impots[2020]
+    for annee in (2040, prix.annee_liquidation + 10):
+        assert salaires.impots[annee].impot < prix.impots[annee].impot, annee
+
+
+def test_le_benefice_d_un_independant_n_est_pas_impose(simulateur):
+    """Le module de l'impôt ne calcule pas le bénéfice d'un artisan : aucune
+    de ses années ne le déclare, ses revenus après impôt ne se calculent pas,
+    ni ce qui s'y rapporte ; sa pension paie l'impôt, seule l'année du départ.
+    Sans fiche de paie, la pension d'un exploitant s'impose seule aussi."""
+    artisan = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1970, sexe="H", affiliation="artisan", age_debut=24,
+        age_liquidation=64, niveau_salaire=1.0))
+    assert cycle_de_vie.annees_hors_impot(simulateur, artisan.carriere) == frozenset(
+        cycle_de_vie.revenus_d_activite(artisan.carriere))
+    flux = cycle_de_vie.flux_des_systemes(simulateur, artisan, impot="prix")["actuel"]
+    assert flux.revenus_apres_impot is None and flux.dernier_revenu_apres_impot is None
+    depart = flux.annee_liquidation
+    assert flux.impots[depart].salaire == 0.0 and flux.impots[depart + 1].impot > 0.0
+    resultat = cycle_de_vie.indicateurs(
+        flux, simulateur, cycle_de_vie.convention_apres_impot(simulateur, artisan))
+    assert resultat.taux_annuite is None and resultat.rendement_reel is not None
+    exploitant = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1980, sexe="H", affiliation="exploitant_agricole", age_debut=20,
+        age_liquidation=64, niveau_salaire=1.0))
+    flux = cycle_de_vie.flux_des_systemes(simulateur, exploitant, impot="prix")["actuel"]
+    assert flux.revenus_apres_impot is None
+    assert all(impot.salaire == 0.0 for impot in flux.impots.values())
+
+
+def test_une_convention_apres_impot_est_nette_et_demande_un_flux_impose(simulateur,
+                                                                       parti_en_2044):
+    with pytest.raises(ValueError, match="net imposable"):
+        cycle_de_vie.Convention(impot="prix")
+    with pytest.raises(ValueError, match="inconnue"):
+        cycle_de_vie.Convention(prelevement=0.1, impot="loyers")
+    flux = cycle_de_vie.flux_des_systemes(simulateur, parti_en_2044, nets=True)["actuel"]
+    with pytest.raises(ValueError, match="impot='prix'"):
+        cycle_de_vie.indicateurs(flux, simulateur,
+                                 cycle_de_vie.convention_apres_impot(simulateur, parti_en_2044))
 
 
 # -- à chaque âge de départ ---------------------------------------------------------
