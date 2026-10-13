@@ -2048,6 +2048,76 @@ def test_une_population_reproduit_l_esperance_que_son_regime_publie(mortalite):
         mortalite.esperance_residuelle(65, 2024, "H", population="cadres")
 
 
+#: Les tranches d'âge du tableau A-2 du jaune pensions annexé au PLF 2027, âge
+#: atteint au 31 décembre : « < 35 » est prise à partir de vingt ans, « > 94 »
+#: jusqu'à cent cinq.
+TRANCHES_JAUNE = ((20, 34), (35, 39), (40, 44), (45, 49), (50, 54), (55, 59),
+                  (60, 64), (65, 69), (70, 74), (75, 79), (80, 84), (85, 89),
+                  (90, 94), (95, 105))
+
+
+def test_les_deces_de_2025_recoupent_le_facteur_des_pensionnes_civils(mortalite):
+    """La mortalité que le modèle prête aux pensionnés civils de l'État, confrontée
+    à leurs décès.
+
+    Le facteur de la population ``fonctionnaires_civils_etat`` est calé sur UNE
+    espérance à 65 ans, celle que le Service des retraites de l'État publie pour
+    2024, et tenu constant ailleurs : une hypothèse. Le jaune pensions annexé au
+    PLF 2027 en donne une observation indépendante, l'année suivante et sur une
+    autre grandeur : les décès de 2025 des pensionnés civils de droit direct, La
+    Poste et Orange comprises (tableau B-13), et leur stock au 31 décembre par
+    tranche d'âge et par sexe (tableau A-2). Sous la table générale de 2025, ce
+    stock aurait perdu 51 900 pensionnés ; il en a perdu 45 591, 12 % de moins.
+    Sous la table corrigée du facteur, 44 200 : à 3 % près.
+
+    LA BANDE DIT LA MÉTHODE. Chaque tranche est répartie entre ses âges comme la
+    population de l'INSEE au 1er janvier 2026 ; chaque âge meurt au quotient du
+    modèle pris à mi-chemin de l'année, rapporté à la survie, le stock étant
+    compté après les décès. Une répartition uniforme dans les tranches de cinq
+    ans, ou une table de 2025 interpolée entre celles de 2024 et de 2026 —
+    celle du modèle est une loi de Makeham, l'année n'étant ni observée ni
+    projetée —, déplace le rapport d'un à trois points.
+    """
+    population = Population(RACINE_DONNEES)
+    # Pensions civiles de droit direct en paiement au 31 décembre 2025, par
+    # tranche (tableau A-2, « FPE - Toutes pensions civiles »), et décès de 2025
+    # (tableau B-13, « FPE civils, y compris La Poste et Orange »).
+    stock = {
+        "H": (15, 29, 126, 362, 1_136, 9_378, 54_266, 141_248, 157_657, 164_316,
+              91_499, 53_897, 21_112, 5_059),
+        "F": (22, 76, 227, 679, 2_253, 10_901, 82_696, 182_736, 192_561, 215_804,
+              131_716, 84_479, 38_004, 14_145),
+    }
+    deces = {"H": 22_679, "F": 22_912}
+    assert sum(stock["H"]) == 700_100 and sum(stock["F"]) == 956_299
+
+    def attendus(sexe: str, facteur: float) -> float:
+        total = 0.0
+        for (debut, fin), effectif in zip(TRANCHES_JAUNE, stock[sexe]):
+            ages = range(debut, fin + 1)
+            poids = [population.effectif(age, 2026) for age in ages]
+            if not any(poids):
+                # Sous cinquante ans, la pyramide ne compte personne : la
+                # tranche est répartie également, ce qui ne pèse rien.
+                poids = [1.0] * len(ages)
+            for age, part in zip(ages, poids):
+                quotient = 1.0 - mortalite.survie_annuelle(age - 0.5, 2025.0, sexe, facteur)
+                total += effectif * part / sum(poids) * quotient / (1.0 - quotient)
+        return total
+
+    generale = {sexe: attendus(sexe, 1.0) for sexe in deces}
+    corrigee = {sexe: attendus(sexe, mortalite.facteur_population(
+        "fonctionnaires_civils_etat", sexe)) for sexe in deces}
+    # Les pensionnés civils meurent nettement moins que la population générale.
+    for sexe in deces:
+        assert deces[sexe] / generale[sexe] < 0.93, sexe
+    assert sum(deces.values()) / sum(generale.values()) < 0.92
+    # Et le facteur calé sur l'espérance de 2024 retrouve leurs décès de 2025.
+    for sexe in deces:
+        assert deces[sexe] / corrigee[sexe] == pytest.approx(1.0, abs=0.07), sexe
+    assert sum(deces.values()) / sum(corrigee.values()) == pytest.approx(1.0, abs=0.05)
+
+
 def test_les_vingtiles_de_niveau_de_vie_sont_cales_sur_leur_rapport_a_l_ensemble(mortalite):
     """L'axe du revenu de l'action 14 : les vingt vingtiles de l'INSEE sont
     des populations, et chacun est calé non sur sa valeur brute mais sur son
@@ -3438,6 +3508,47 @@ def test_les_cotisants_du_cor_recoupent_le_jaune_pensions_2027():
     for caisse, (fin_2023, fin_2024) in jaune.items():
         assert cotisants.effectif(caisse, 2024) == pytest.approx(
             (fin_2023 + fin_2024) / 2, rel=0.05), caisse
+
+
+def test_les_retraites_que_le_cor_projette_recoupent_le_jaune_pensions_2027():
+    """Les retraités de la fonction publique au-delà de la dernière enquête.
+
+    La grille pèse ses cas types par les retraités de chaque caisse que la DREES
+    dénombre jusqu'en 2024, puis, pour les trois caisses de la fonction
+    publique, par ceux que le COR leur projette (classeur par régime de juin
+    2024, ``EffectifsRetraites.CAISSES_PROJETEES``) : c'est là que le
+    vieillissement des agents, que le jaune pensions annexé au PLF 2027 décrit
+    (graphiques 87 à 91), entre dans le modèle. Le jaune compte au 31 décembre
+    ce qui s'est passé la première année (tableau A-3) : de 2024 à 2025, les
+    pensionnés de droit direct de la CNRACL ont crû de 2,7 %, ceux de l'État de
+    0,1 % pour les civils, La Poste et Orange comprises, et de 0,5 % pour les
+    militaires ; le COR leur projetait 3,1, 0,3 et 1,1 %. Six dixièmes de point
+    au plus.
+
+    Et les trois tableaux du jaune bouclent : les pensions de droit direct
+    entrées en paiement en 2025 (tableau B-12), moins les décès de pensionnés
+    de l'année (tableau B-13), font la variation du stock à 0,03 % près. Les
+    décès que confronte ``test_les_deces_de_2025_recoupent_le_facteur_des_pensionnes_civils``
+    sont donc bien ceux de ce stock.
+    """
+    chemin = RACINE_DONNEES / "reference" / "regimes" / "retraites_projetes.csv"
+    cor: dict[str, dict[int, float]] = {}
+    with chemin.open(encoding="utf-8") as flux:
+        for ligne in csv.DictReader(l for l in flux if not l.startswith("#")):
+            cor.setdefault(ligne["caisse"], {})[int(ligne["annee"])] = float(ligne["retraites"])
+    # Stock de droit direct au 31 décembre 2024 et 2025 (tableau A-3), entrées
+    # de 2025 (tableau B-12) et décès de 2025 (tableau B-13).
+    jaune = {
+        "fonction_publique_etat_civile": (1_654_863, 1_656_399, 47_104, 45_591),
+        "fonction_publique_etat_militaire": (406_645, 408_750, 10_691, 8_617),
+        "cnracl": (1_430_982, 1_470_309, 69_650, 30_726),
+    }
+    for caisse, (fin_2024, fin_2025, entrees, deces) in jaune.items():
+        assert caisse in EffectifsRetraites.CAISSES_PROJETEES, caisse
+        assert fin_2024 + entrees - deces == pytest.approx(fin_2025, rel=3e-4), caisse
+        projetee = cor[caisse][2025] / cor[caisse][2024] - 1.0
+        constatee = fin_2025 / fin_2024 - 1.0
+        assert projetee == pytest.approx(constatee, abs=0.01), caisse
 
 
 
