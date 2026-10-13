@@ -1789,11 +1789,13 @@ institutions:
           (`file-download/31546`) : la publication la vérifie, puisqu'elle
           refuse un fichier dont l'empreinte diffère.
 
-          La release `documents-apportes` le sert une fois déposé, par le
-          workflow si budget.gouv.fr laisse passer son navigateur, sinon à la
-          main sous le nom `34465.pdf` ; `source_locale.py --recuperer` l'y
-          trouve, et le `miroir` s'écrit alors. Quand l'Assemblée le servira,
-          son adresse pourra le doubler, comme pour l'édition 2026.
+          Le même jour, le workflow `documents-apportes.yml` (exécution
+          38405657830) a reçu 403 sur la page comme sur le fichier, à la
+          requête simple puis au navigateur : le document se dépose donc à la
+          main sur la release `documents-apportes`, sous le nom `34465.pdf`.
+          `source_locale.py --recuperer` l'y trouve alors, et le `miroir`
+          s'écrit. Quand l'Assemblée le servira, son adresse pourra le
+          doubler, comme pour l'édition 2026.
 
       - id: sre_historique_taux
         titre: Historique des taux de cotisations appelés par le CAS « Pensions »

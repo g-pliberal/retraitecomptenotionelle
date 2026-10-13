@@ -1,0 +1,27 @@
+date: "2026-10-13"
+session: "action 159, étape 1 : le jaune pensions 2027 au manifeste, sa licence lue, le workflow refusé"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1. Les
+  mentions légales de budget.gouv.fr (https://www.budget.gouv.fr/mentions-legales),
+  rubriques « Réutilisation des contenus et liens » et « Crédits photos », que le site
+  refuse au cloud : trois captures d'écran du téléphone du propriétaire, de 15 h 27 et
+  15 h 28. Le texte du jaune, cherché pour toute mention de propriété intellectuelle de
+  tiers. Le workflow documents-apportes.yml, lancé à 15 h 31 (exécution 38405657830),
+  qui a demandé à budget.gouv.fr la page des jaunes 2027 et l'adresse
+  documentation/file-download/34465, à la requête simple puis par Chromium.
+trouve: >-
+  Les contenus de budget.gouv.fr sont sous licence ouverte Etalab 2.0, « sauf mention
+  explicite de propriété intellectuelle détenue par des tiers », libres de reproduction
+  et de redistribution « sous réserve de mentionner leur source, leur date de dernière
+  mise à jour et ne pas induire en erreur des tiers » ; seules les images des articles
+  sont réservées, et le jaune n'en porte pas ni ne mentionne de droits de tiers. La fiche
+  sre_jaune_pensions_2027 du manifeste dit donc sa rediffusion libre. Le workflow a reçu
+  403 sur la page comme sur le fichier, navigateur compris : budget.gouv.fr refuse aussi
+  les machines de GitHub, et le document se dépose à la main sur la release, sous le nom
+  34465.pdf, comme les deux fichiers de la Cour des comptes avant lui.
+reste: >-
+  Déposer 34465.pdf sur la release documents-apportes (le propriétaire, depuis un
+  navigateur : le jeton d'une session n'écrit pas les releases) ; puis
+  source_locale.py --recuperer, qui en vérifie l'empreinte, le miroir écrit au
+  manifeste, la mention de la licence écrite à la release par le workflow (--mentions),
+  et la branche jaune-2027 supprimée. Ensuite, les étapes 2 à 9 de l'action 159.

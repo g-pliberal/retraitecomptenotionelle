@@ -7678,14 +7678,15 @@ conventions collectives ne disant qu'un plancher, non un salaire.
 
 ### 159. Le jaune pensions du PLF 2027, exploité en entier : rangé, puis chaque tableau à sa place dans le dépôt — `en cours`
 
-**Reprise, au 13 octobre 2026.** Faite, l'étape 0 : l'inventaire du jaune,
-partie par partie, chaque tableau rapporté à ce qu'il nourrit dans le dépôt
-(note du 13 octobre). Le PDF attend sur la branche `jaune-2027`, son empreinte
-dans la note. Commencer par l'étape 1, qui le range : la fiche du manifeste,
-avec le miroir de l'Assemblée dès qu'il y paraît, ou la release
-`documents-apportes` une fois la licence de budget.gouv.fr lue. Les étapes 2 à
-9 se mènent ensuite en parallèle, une par zone : l'étape 1 récrit ce bloc une
-dernière fois pour le dire, puis chaque étape tient le sien dans sa note.
+**Reprise, au 13 octobre 2026.** Faite, l'étape 0, l'inventaire (note du
+13 octobre). L'étape 1 est presque close : la fiche `sre_jaune_pensions_2027`
+est au manifeste, sous licence ouverte Etalab 2.0, lue dans les mentions
+légales de budget.gouv.fr (captures du propriétaire) ; le workflow
+`documents-apportes.yml`, lancé le 13 octobre, a buté sur le même refus (403,
+navigateur compris). Reste : le propriétaire dépose `34465.pdf` à la main sur
+la release `documents-apportes` ; une session écrit le `miroir` après
+`--recuperer`, et la branche `jaune-2027` se supprime. Les étapes 2 à 9 se
+mènent ensuite en parallèle, une par zone, chacune tenant son bloc dans sa note.
 
 **D'où elle vient.** La demande du propriétaire, le 13 octobre 2026, le jaune
 lu pour l'action 129 : « Je veux garder ce doc et le ranger correctement sur
@@ -7721,12 +7722,14 @@ l'étape 0.
 
 0. **L'inventaire** : fait le 13 octobre.
 1. **Ranger le document** (données) : la fiche `sre_jaune_pensions_2027` du
-   manifeste, avec son empreinte et son miroir, celui de l'Assemblée dès qu'il
-   paraît, sinon la release `documents-apportes`, une fois lue et citée la
-   licence de budget.gouv.fr ; puis `sre_jaune_pensions.py` apprend l'édition
-   2027, dont les tableaux A-7, 50 et B-1 gardent leurs numéros, sans perdre
-   la lecture de 2026. La branche `jaune-2027` se supprime ensuite.
-2. **Les bonifications** (données) : `bonifications_jaune.csv` sur le stock
+   manifeste, avec son empreinte et sa licence ; le PDF sur la release
+   `documents-apportes`, déposé à la main puisque budget.gouv.fr refuse aussi
+   le workflow, l'Assemblée pouvant le doubler quand elle le servira ; le
+   `miroir` écrit après `--recuperer`. La branche `jaune-2027` se supprime
+   ensuite.
+2. **Les bonifications** (données) : d'abord, `sre_jaune_pensions.py` apprend
+   l'édition 2027, dont les tableaux A-7, 50 et B-1 gardent leurs numéros,
+   sans perdre la lecture de 2026 ; puis `bonifications_jaune.csv` sur le stock
    et le flux de 2025 (A-7, 50, B-22), et les fiches qui les citent, confrontées
    par `--confronter`.
 3. **Les taux et les barèmes, en contrôle** (données) : taux salariaux et
@@ -7762,8 +7765,6 @@ l'étape 0.
    confronté aux fiches de la carte. Le jaune est un exemple officiel : le
    texte tel que la caisse l'applique l'emporte.
 
-**Ce que le propriétaire tranche** : s'il veut la release sans attendre
-l'Assemblée, la licence de budget.gouv.fr, qu'une capture du paragraphe de
-réutilisation de ses mentions légales suffit à citer ; l'ordre des étapes 2 à
-9 ; et, pour l'action 129, la convention du jaune, le taux du régime général,
-comme valeur de `contribution_etat`.
+**Ce que le propriétaire tranche** : l'ordre des étapes 2 à 9 ; et, pour
+l'action 129, la convention du jaune, le taux du régime général, comme valeur
+de `contribution_etat`.
