@@ -13,9 +13,14 @@ personnelle (``docs/limites.md`` §5). C'est l'assuré qui télécharge son rele
 et la lecture se fait chez lui — le PDF ne quitte jamais la page.
 
 **Ce que le relevé donne, et ce qu'il ne donne pas.** Il donne l'année, le
-régime, le revenu porté au compte et les trimestres retenus. Il ne donne ni le
-mois, ni la part de primes, ni le caractère cadre ou non cadre d'un emploi —
-c'est la présence de points Agirc, avant leur fusion de 2019, qui le dit. Et
+régime, le revenu porté au compte et les trimestres retenus. Il ne donne ni la
+part de primes, ni le caractère cadre ou non cadre d'un emploi — c'est la
+présence de points Agirc, avant leur fusion de 2019, qui le dit. Le mois, seul
+le relevé tous régimes d'info-retraite le donne, qui date chacune de ses
+périodes : la saisie n'en garde que l'année, et la lecture ne retient que la
+date où finit la dernière, pour dire à l'assuré une dernière année qui
+s'arrête avant décembre, que la simulation compterait pourtant entière et dont
+elle prolongerait le revenu jusqu'au départ. Et
 le revenu du relevé du régime général est PLAFONNÉ : la caisse ne reporte au
 compte que la part du salaire brut qui tombe sous le plafond de la Sécurité
 sociale, si bien qu'une rémunération plus élevée n'y figure pas en entier.
@@ -311,6 +316,11 @@ MONTANT = re.compile(
 #: sont des nombres qu'on lirait pour des trimestres : ils sont donc retirés de
 #: la ligne avant tout comptage, et leur année retenue à part.
 DATE = re.compile(r"(?<!\d)(\d{1,2})[/.-](\d{1,2})[/.-]((?:1[89]|20)\d{2})(?!\d)")
+
+#: Les mois, pour écrire une date comme une phrase l'écrit : « le 1er mars
+#: 2019 », et non « le 01/03/2019 ».
+MOIS = ("janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août",
+        "septembre", "octobre", "novembre", "décembre")
 
 #: Ce qui annonce la date de naissance sur un relevé. Elle y figure en tête,
 #: sous le nom de l'assuré : c'est la seule donnée du formulaire, hors la
@@ -639,6 +649,9 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None,
     # L'année sur deux chiffres et le mois que porte le numéro de sécurité
     # sociale, le premier lu.
     nir: tuple[int, int] | None = None
+    # La date où finit la période datée la plus tardive — année, mois, jour —,
+    # que seul le relevé d'info-retraite écrit.
+    fin: tuple[int, int, int] | None = None
 
     # Le plafond des années lues : celui que l'appelant donne — le site passe
     # l'année courante —, resserré par la date d'édition du document quand il
@@ -745,6 +758,15 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None,
         if len([mot for mot in plat.split(" ") if len(mot) > 1
                 and not mot.isdigit()]) > MOTS_PAR_LIGNE:
             continue
+        # LA FIN DE LA DERNIÈRE PÉRIODE. Le relevé d'info-retraite date chacune
+        # des siennes, la seconde date étant celle où elle finit, et la saisie
+        # n'en gardera que l'année : on retient la plus tardive, qu'elle porte un
+        # revenu ou non — une période de maladie couvre ses mois autant qu'un
+        # emploi —, pour dire une dernière année qui s'arrête avant son terme.
+        if dates >= 2:
+            jour, mois, millesime = map(int, DATE.findall(ligne)[-1])
+            if 1 <= mois <= len(MOIS) and 1 <= jour <= 31:
+                fin = max(fin or (0, 0, 0), (millesime, mois, jour))
 
         motif = _motif_de(plat)
         emploi = any(mot in plat for mot in EMPLOIS)
@@ -983,6 +1005,24 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None,
             "à l'étranger, ne sont souvent prises en compte qu'à la demande de "
             "retraite, et la simulation lit ce qu'il porte."
         )
+    # UNE DERNIÈRE ANNÉE QUI S'ARRÊTE AVANT SON TERME. Quand la période la plus
+    # tardive finit avant décembre de la dernière année lue, les mois qui
+    # suivent manquent : les régimes n'avaient pas encore enregistré les droits
+    # les plus récents — le relevé d'info-retraite prévient lui-même qu'ils le
+    # seront plus tard —, ou ces mois n'ont pas été travaillés. La simulation
+    # compterait pourtant l'année entière, au revenu de ses seuls mois, et le
+    # prolongerait jusqu'au départ : la note invite à compléter. Il y faut un
+    # mois entier qui manque, le modèle comptant en mois.
+    if lues and fin is not None and fin[0] == lues[-1].annee and fin[1] < len(MOIS):
+        notes.append(
+            f"Le relevé s'arrête le {_date_en_clair(fin)} : les droits les plus "
+            "récents n'y sont peut-être pas encore enregistrés. La simulation "
+            "compte pourtant chaque ligne pour une année entière, sauf celle du "
+            "départ, et prolonge jusqu'à lui le revenu de la dernière. Si vous "
+            f"avez travaillé depuis, ajoutez au revenu de {fin[0]} ce que vous "
+            "avez gagné après cette date, puis une ligne par année ; sinon, "
+            "déclarez les années sans emploi dans « Interruptions »."
+        )
     mois_de_naissance = naissance[:7] if naissance else None
     if mois_de_naissance is None and nir is not None and lues:
         # Le siècle, que le numéro tait, se lit dans la carrière : l'année de
@@ -1047,6 +1087,13 @@ def _en_clair(annees: list[int]) -> str:
     if len(morceaux) == 1:
         return morceaux[0]
     return ", ".join(morceaux[:-1]) + " et " + morceaux[-1]
+
+
+def _date_en_clair(date: tuple[int, int, int]) -> str:
+    """Une date — année, mois, jour —, comme une phrase l'écrit : « 1er mars
+    2019 »."""
+    annee, mois, jour = date
+    return f"{'1er' if jour == 1 else jour} {MOIS[mois - 1]} {annee}"
 
 
 def _fusionner(interruptions: list[tuple[int, int, str]]

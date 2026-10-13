@@ -258,6 +258,13 @@ const MONTANT = /(?<![\d,.])(\d{1,3}(?:[    ]\d{3})+|\d+)(?:[.,](\d{1,2}))?
 const DATE = /(?<!\d)(\d{1,2})[/.-](\d{1,2})[/.-]((?:1[89]|20)\d{2})(?!\d)/g;
 
 /**
+ * Les mois, pour écrire une date comme une phrase l'écrit : « le 1er mars
+ * 2019 », et non « le 01/03/2019 ».
+ */
+export const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet",
+  "août", "septembre", "octobre", "novembre", "décembre"];
+
+/**
  * Ce qui annonce la date de naissance sur un relevé. Elle y figure en tête,
  * sous le nom de l'assuré : c'est la seule donnée du formulaire, hors la
  * carrière elle-même, que le document porte — et celle dont tout le reste
@@ -504,6 +511,9 @@ export function lireReleve(lignes, anneeMaximale = null, revenuDesPoints = null)
   // L'année sur deux chiffres et le mois que porte le numéro de sécurité
   // sociale, le premier lu.
   let nir = null;
+  // La date où finit la période datée la plus tardive — `[année, mois, jour]` —,
+  // que seul le relevé d'info-retraite écrit.
+  let fin = null;
 
   // Le plafond des années lues : celui que l'appelant donne, resserré par la
   // date d'édition du document quand il la porte. Ce qui est postérieur est une
@@ -598,6 +608,20 @@ export function lireReleve(lignes, anneeMaximale = null, revenuDesPoints = null)
     if (parLaDate && dates < 2) continue;
     if (plat.split(" ").filter((mot) => mot.length > 1 && !/^\d+$/.test(mot))
       .length > MOTS_PAR_LIGNE) continue;
+    // LA FIN DE LA DERNIÈRE PÉRIODE. Le relevé d'info-retraite date chacune des
+    // siennes, la seconde date étant celle où elle finit, et la saisie n'en
+    // gardera que l'année : on retient la plus tardive, qu'elle porte un revenu
+    // ou non, pour dire une dernière année qui s'arrête avant son terme.
+    if (dates >= 2) {
+      const bornes = [...ligne.matchAll(DATE)];
+      const [jour, mois, millesime] = bornes[bornes.length - 1].slice(1).map(Number);
+      const date = [millesime, mois, jour];
+      if (mois >= 1 && mois <= MOIS.length && jour >= 1 && jour <= 31
+          && (fin === null || date[0] * 10000 + date[1] * 100 + date[2]
+            > fin[0] * 10000 + fin[1] * 100 + fin[2])) {
+        fin = date;
+      }
+    }
 
     const motif = motifDe(plat);
     const emploi = EMPLOIS.some((mot) => plat.includes(mot));
@@ -840,6 +864,23 @@ export function lireReleve(lignes, anneeMaximale = null, revenuDesPoints = null)
       + "retraite, et la simulation lit ce qu'il porte.",
     );
   }
+  // UNE DERNIÈRE ANNÉE QUI S'ARRÊTE AVANT SON TERME : les mois qui suivent la
+  // période la plus tardive manquent, pas encore enregistrés ou pas travaillés,
+  // et la simulation compterait l'année entière, puis en prolongerait le revenu
+  // jusqu'au départ. Il y faut un mois entier qui manque, le modèle comptant en
+  // mois.
+  if (lues.length && fin !== null && fin[0] === lues[lues.length - 1].annee
+      && fin[1] < MOIS.length) {
+    notes.push(
+      `Le relevé s'arrête le ${dateEnClair(fin)} : les droits les plus `
+      + "récents n'y sont peut-être pas encore enregistrés. La simulation "
+      + "compte pourtant chaque ligne pour une année entière, sauf celle du "
+      + "départ, et prolonge jusqu'à lui le revenu de la dernière. Si vous "
+      + `avez travaillé depuis, ajoutez au revenu de ${fin[0]} ce que vous `
+      + "avez gagné après cette date, puis une ligne par année ; sinon, "
+      + "déclarez les années sans emploi dans « Interruptions ».",
+    );
+  }
   let moisDeNaissance = naissance ? naissance.slice(0, 7) : null;
   if (moisDeNaissance === null && nir !== null && lues.length) {
     // Le siècle, que le numéro tait, se lit dans la carrière : l'année de
@@ -910,6 +951,11 @@ function enClair(annees) {
   }
   if (morceaux.length === 1) return morceaux[0];
   return `${morceaux.slice(0, -1).join(", ")} et ${morceaux[morceaux.length - 1]}`;
+}
+
+/** Une date — `[année, mois, jour]` —, comme une phrase l'écrit : « 1er mars 2019 ». */
+function dateEnClair([annee, mois, jour]) {
+  return `${jour === 1 ? "1er" : jour} ${MOIS[mois - 1]} ${annee}`;
 }
 
 /**

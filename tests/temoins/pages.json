@@ -86487,7 +86487,7 @@
    "  <p class=\"discret\">",
    "Carrière ",
    "<strong>lue sur un relevé</strong>",
-   " : 41 années de 1998 à 2038, dont 41 cotisées, sous 1 statut — Salarié du secteur privé, non cadre. Les métiers, le profil de carrière et le niveau de revenu du formulaire n'ont pas servi : aucun revenu n'est reconstitué, ils sont lus un par un. Une ligne vaut une année civile entière, sauf celle du départ, que la date de liquidation tronque : le relevé donne l'année, jamais le mois, et l'année d'entrée dans la vie active reste donc comptée pour une année pleine. Après 2038, votre dernière année se poursuit en 2039 : même statut, et un revenu qui suit le salaire moyen, comme l'estimation officielle prolonge vos revenus jusqu'au départ. Si vous ne travaillez plus, déclarez cette année dans « Interruptions » : ",
+   " : 41 années de 1998 à 2038, dont 41 cotisées, sous 1 statut — Salarié du secteur privé, non cadre. Les métiers, le profil de carrière et le niveau de revenu du formulaire n'ont pas servi : aucun revenu n'est reconstitué, ils sont lus un par un. Une ligne vaut une année civile entière, sauf celle du départ, que la date de liquidation tronque : la saisie ne garde que l'année, jamais le mois, et l'année d'entrée dans la vie active reste donc comptée pour une année pleine. Après 2038, votre dernière année se poursuit en 2039 : même statut, et un revenu qui suit le salaire moyen, comme l'estimation officielle prolonge vos revenus jusqu'au départ. Si vous ne travaillez plus, déclarez cette année dans « Interruptions » : ",
    "<code>2039:2039:sans_activite</code>",
    ".",
    "</p>\n",

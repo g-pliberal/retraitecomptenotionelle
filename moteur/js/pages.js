@@ -2094,8 +2094,9 @@ function resumeParcours(contexte, saisie) {
  * La phrase importe plus que le décompte : les champs du formulaire restent
  * affichés au-dessus, avec le statut et le revenu qu'ils portaient, et rien ne
  * dirait qu'ils n'ont pas servi. La lecture du relevé se termine donc par ce
- * qu'aucun relevé ne donne — le mois d'entrée dans la vie active —, parce que
- * c'est la seule approximation que ce chemin conserve. Puis par ce que le site
+ * que la saisie ne garde pas — le mois d'entrée dans la vie active, que seul le
+ * relevé d'info-retraite date —, parce que c'est la seule approximation que ce
+ * chemin conserve. Puis par ce que le site
  * y ajoute : les années qui séparent le relevé du départ
  * (`Contexte.releveProlonge`), et comment les dire sans emploi.
  */
@@ -2116,8 +2117,8 @@ function resumeReleve(contexte, saisie) {
     + `${libelles}. Les métiers, le profil de carrière et le niveau de revenu `
     + "du formulaire n'ont pas servi : aucun revenu n'est reconstitué, ils "
     + "sont lus un par un. Une ligne vaut une année civile entière, sauf "
-    + "celle du départ, que la date de liquidation tronque : le relevé donne "
-    + "l'année, jamais le mois, et l'année d'entrée dans la vie active reste "
+    + "celle du départ, que la date de liquidation tronque : la saisie ne garde "
+    + "que l'année, jamais le mois, et l'année d'entrée dans la vie active reste "
     + `donc comptée pour une année pleine.${suiteDuReleve(contexte, saisie, releve)}</p>`;
 }
 

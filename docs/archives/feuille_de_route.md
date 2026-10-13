@@ -17801,3 +17801,40 @@ Ce que le propriétaire tranchait : le net, décidé le 4 octobre 2026 (action
 et les versions, à l'action 156. Les points `a_reprendre` du registre
 renvoient aux nouvelles actions. Les notes sont sous
 `docs/archives/feuille_de_route/136/`, la dernière sur la clôture.
+
+### 160. Un deuxième relevé réel confronté au site : la dernière année incomplète, dite à qui le dépose — `fait`
+
+**Demande**, le 14 octobre 2026 : « Voici un deuxième relevé de compte info
+retraites pour vérifier que l'on ne se trompe pas sur notre site. Ce document
+ne doit jamais, absolument jamais aller sur Github » ; puis, la confrontation
+remise : « il manque des choses sur [sa dernière année] qui arriveront plus
+tard […] on fait le correctif a : on dit à la personne de remplir le reste ».
+
+**Ce que la confrontation a établi, le 14 octobre 2026.** Le relevé, tous
+régimes, au format qu'info-retraite délivre en 2026 et celui d'une autre
+personne que le propriétaire, a été lu en session locale ; il n'est jamais
+entré au dépôt, qui n'en garde que des écarts relatifs. Il se lit en entier, à
+l'identique dans les deux moteurs, et ses trimestres, la durée requise et les
+points Agirc-Arrco de ses années pleines sont ceux du modèle, au centième de
+point. Les écarts tiennent tous à sa dernière année, qui s'arrête avant
+décembre. Le plafond de la Sécurité sociale n'y est pas proratisé : un revenu
+au-delà du plafond de ses seuls mois perd sa tranche 2 à l'Agirc-Arrco, un
+cinquième des points de l'année et moins de trois pour cent du total. Une
+période portée avec deux revenus, un par régime, n'y garde que celui de la
+base. Et le site prolonge jusqu'au départ, comme celui d'une
+année, le revenu de quelques mois : c'est l'écart qui pèse le plus sur la
+pension affichée.
+
+**Le choix du propriétaire.** Trois correctifs lui ont été proposés : a) dire
+au dépôt une dernière année qui s'arrête avant décembre, et inviter à
+compléter ; b) une fraction d'année dans la saisie, pour proratiser le
+plafond ; c) un revenu par régime quand le relevé en porte deux. Il a retenu
+le premier ; les deux autres ne sont pas décidés.
+
+**Ce que ça a déplacé.** Aucun montant : la lecture rend la même saisie. Au
+dépôt d'un relevé dont la période la plus tardive finit avant décembre de sa
+dernière année, une note de plus le dit, avec sa date, et invite à compléter
+la carrière ou à déclarer les années sans emploi. La page de résultats et
+`docs/limites/5-hors-du-modele.md` ne disent plus qu'un relevé ne donne
+jamais le mois, et les limites disent le plafond d'une année incomplète. La
+note est sous `docs/archives/feuille_de_route/160/`.

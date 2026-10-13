@@ -1,0 +1,18 @@
+date: "2026-10-14"
+session: "action 160 : un deuxième relevé réel confronté au site, et sa dernière année incomplète dite à qui dépose son relevé"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1. Un
+  relevé de carrière tous régimes réel, d'une autre personne que le propriétaire,
+  lu en session locale et jamais versé au dépôt ; le chemin du site (lecture_pdf,
+  releve_lu.py, releve-lu.js, index.html), le relevé des droits du scénario 1 et
+  la page /simuler.
+trouve: >-
+  Aucun texte de droit. La lecture est exacte, et les années pleines du relevé
+  sont celles du modèle au centième. Sa dernière année s'arrête avant décembre :
+  plafond non proratisé, une période à deux revenus, et un revenu de quelques
+  mois prolongé jusqu'au départ. Au dépôt, une note dit désormais la
+  date où le relevé s'arrête et invite à compléter la carrière.
+reste: >-
+  Le plafond d'une année incomplète (une fraction d'année dans la saisie) et un
+  revenu par régime, non décidés ; une dernière année commencée tard, que la note
+  ne voit pas.

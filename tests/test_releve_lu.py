@@ -275,6 +275,23 @@ Ircantec 2019 1 trim. 7 pts
 L’Assurance retraite 1 trim.
 """
 
+#: Le relevé d'info-retraite d'une carrière dont la dernière année s'arrête en
+#: juin, inventé de bout en bout : les mois qui suivent manquent, que les
+#: régimes ne les aient pas encore enregistrés ou qu'ils n'aient pas été
+#: travaillés.
+DERNIERE_ANNEE_INCOMPLETE = """
+Relevé de carrière
+Détail de votre carrière
+Employeur/activité Date début Date fin Revenus* Régime(s)
+IMPRIMERIE DES COTEAUX
+05/09/2016 23/12/2016 7 340 € L’Assurance retraite, Agirc-Arrco
+03/01/2017 22/12/2017 24 610 €
+02/01/2018 21/12/2018 25 870 €
+02/01/2019 14/06/2019 12 930 €
+*Revenu d'activité soumis à cotisations retraite.
+Edité le 06/03/2020 2 / 2
+"""
+
 RELEVES = {
     "estimation": ESTIMATION,
     "releve_2026": RELEVE_2026,
@@ -287,6 +304,9 @@ RELEVES = {
     "exploitant": EXPLOITANT,
     "deux_emplois": DEUX_EMPLOIS,
     "sans_rien": SANS_RIEN,
+    "derniere_annee_incomplete": DERNIERE_ANNEE_INCOMPLETE,
+    "derniere_annee_au_premier": DERNIERE_ANNEE_INCOMPLETE.replace("14/06/2019",
+                                                                   "01/03/2019"),
 }
 
 
@@ -685,6 +705,50 @@ def test_le_releve_incomplet_avant_le_depart_est_dit():
         lecture = _lire(nom)
         dite = any("incomplet avant le départ" in note for note in lecture.notes)
         assert dite == bool(lecture.lignes), nom
+
+
+def _arret(lignes: list[str]) -> list[str]:
+    return [note for note in lire_releve(lignes).notes
+            if note.startswith("Le relevé s'arrête le ")]
+
+
+@pytest.mark.parametrize(("fin", "dite"), [
+    ("14/06/2019", "14 juin 2019"),
+    ("01/03/2019", "1er mars 2019"),
+    ("29/11/2019", "29 novembre 2019"),
+    ("16/12/2019", None),
+])
+def test_une_derniere_annee_qui_s_arrete_avant_decembre_est_dite(fin, dite):
+    """Le relevé d'info-retraite date ses périodes, et sa dernière année n'est
+    souvent pas finie : les régimes enregistrent les droits les plus récents
+    avec retard, le document le dit lui-même. La simulation compte pourtant
+    chaque ligne pour une année entière et prolonge jusqu'au départ le revenu de
+    la dernière — celui de quelques mois, vu comme celui d'une année. Quand la
+    période la plus tardive finit avant décembre, la note le dit, avec sa date,
+    et invite à compléter la carrière ou à déclarer les années sans emploi ; une
+    période finie en décembre ne laisse aucun mois entier à ajouter."""
+    notes = _arret(DERNIERE_ANNEE_INCOMPLETE.replace("14/06/2019", fin).strip().split("\n"))
+    if dite is None:
+        assert not notes
+        return
+    assert len(notes) == 1
+    assert notes[0].startswith(f"Le relevé s'arrête le {dite} : ")
+    assert "ajoutez au revenu de 2019 ce que vous avez gagné après cette date" in notes[0]
+    assert "« Interruptions »" in notes[0]
+
+
+def test_la_fin_du_releve_est_celle_de_sa_periode_la_plus_tardive():
+    """Une période sans revenu couvre ses mois autant qu'un emploi : une
+    maladie qui suit le dernier emploi recule la date où le relevé s'arrête.
+    Un relevé sans dates n'a rien à en dire, ni un relevé dont la dernière
+    période finit en décembre — l'estimation le 31, le relevé de 2026 le 19."""
+    lignes = DERNIERE_ANNEE_INCOMPLETE.strip().split("\n")
+    rang = lignes.index("*Revenu d'activité soumis à cotisations retraite.")
+    maladie = lignes[:rang] + ["MALADIE", "17/06/2019 29/11/2019 L’Assurance retraite"]
+    assert _arret(maladie + lignes[rang:])[0].startswith(
+        "Le relevé s'arrête le 29 novembre 2019 : ")
+    for nom in ("regime_general", "tous_regimes", "estimation", "releve_2026"):
+        assert _arret(RELEVES[nom].strip().split("\n")) == [], nom
 
 
 def test_tous_les_statuts_cites_existent_au_catalogue():

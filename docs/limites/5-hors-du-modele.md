@@ -309,15 +309,21 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   rien. Il reste à ce chemin une approximation, une convention et une
   impossibilité.
 
-  L'approximation est le MOIS. Un relevé donne l'année, jamais le mois : chaque
-  ligne vaut donc une année civile pleine, sauf celle du départ, que la date de
-  liquidation tronque parce que le modèle la connaît. L'année d'entrée dans la
-  vie active reste comptée pour une année entière alors qu'elle est presque
-  toujours partielle — son revenu est celui des mois travaillés, et le modèle ne
-  peut pas l'annualiser sans savoir lesquels. Un régime liquidant sur les six
-  derniers mois de service n'en souffre pas, cette année-là n'étant pas la
-  dernière ; un régime qui prend les vingt-cinq meilleures années y voit une
-  année faible de plus, exactement comme le droit.
+  L'approximation est le MOIS. La saisie ne garde que l'année, jamais le mois :
+  le relevé du régime général n'en dit pas plus, et celui d'info-retraite, qui
+  date ses périodes, n'en laisse que l'année. Chaque ligne vaut donc une année
+  civile pleine, sauf celle du départ, que la date de liquidation tronque parce
+  que le modèle la connaît. L'année d'entrée dans la vie active reste comptée
+  pour une année entière alors qu'elle est presque toujours partielle — son
+  revenu est celui des mois travaillés, et le modèle ne peut pas l'annualiser
+  sans savoir lesquels. Un régime liquidant sur les six derniers mois de
+  service n'en souffre pas, cette année-là n'étant pas la dernière ; un régime
+  qui prend les vingt-cinq meilleures années y voit une année faible de plus,
+  exactement comme le droit. Le plafond de la Sécurité sociale, lui, reste
+  celui d'une année entière : une année incomplète dont le revenu dépasse le
+  plafond de ses seuls mois — une fin de contrat, par exemple — n'a pas de
+  tranche 2 à l'Agirc-Arrco, et porte au compte du régime général plus que la
+  caisse.
 
   La convention est l'AVENIR. Un relevé s'arrête à sa dernière année ; le site
   le poursuit jusqu'au départ, comme le dernier métier d'un parcours court
@@ -399,6 +405,17 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   site le dit à qui le dépose, parmi les notes qui suivent la lecture, sous
   toute carrière lue — le document ne dit pas s'il est déjà complet
   (`releve_lu.py`, et son jumeau `releve-lu.js`).
+
+  Sa dernière année, surtout, s'arrête souvent avant son terme : les régimes
+  enregistrent les droits les plus récents avec retard, et le relevé
+  d'info-retraite le dit lui-même. La simulation compte pourtant cette année
+  entière, et en prolonge le revenu — celui de quelques mois — jusqu'au départ,
+  comme celui d'une année. Ce relevé datant ses périodes, la lecture retient la
+  date où finit la plus tardive : quand elle tombe avant décembre de la
+  dernière année, une note la dit à qui dépose son relevé, et l'invite à
+  compléter la carrière — ce qu'il a gagné depuis, puis une ligne par année —
+  ou à déclarer les années sans emploi dans « Interruptions ». Un relevé qui ne
+  date pas ses périodes n'en dit rien.
 
   **Ce qu'un vrai document a appris, le 22 septembre 2026 — et ce qu'il ne
   prouve pas.** La lecture avait été écrite contre des relevés d'essai, faute
