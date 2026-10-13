@@ -714,7 +714,7 @@ profit d'un régime unique construit **au cas le plus défavorable** :
 | Paramètre | Règle | Valeur 2026 |
 |---|---|---|
 | âge d'ouverture | le plus élevé | <!--chiffre:mesure(fusion?champ=age_ouverture)-->65<!--/--> ans |
-| âge du taux plein | le plus élevé | <!--chiffre:mesure(fusion?champ=age_taux_plein)-->67,5<!--/--> ans |
+| âge du taux plein | le plus élevé | <!--chiffre:mesure(fusion?champ=age_taux_plein)-->67,0<!--/--> ans |
 | durée requise | la plus longue | <!--chiffre:mesure(fusion?champ=duree_requise_trimestres)-->172<!--/--> trimestres |
 | salaire de référence | le moins avantageux | carrière entière |
 | assiette | la plus large | déplafonnée |
@@ -1267,12 +1267,14 @@ couvrant 1980 et 1981, a longtemps fait tenir ces deux années pour fausses : il
 ne touchait que la cotisation maladie, et leurs taux vieillesse sont justes.
 
 **Le drapeau porte sur le STATUT, pas seulement sur le régime.** Un artisan
-cotise au régime général, dont la fiche porte la répartition 41/59 d'un salarié.
-Le taux y est le bon — un artisan verse à peu près ce que verse le couple
-salarié-employeur — mais la répartition ne le concerne pas : lui paie tout.
-`affiliations.yaml` marque donc `sans_employeur: true` les cinq statuts
-concernés (artisan, commerçant, profession libérale, avocat, exploitant
-agricole), et le modèle force alors la part à un.
+cotise au régime général, dont la fiche porte la répartition 41/59 d'un salarié
+et les taux du couple salarié-employeur. Ni l'une ni les autres ne le
+concernent : lui paie tout, et à son barème — <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=2026&mesure=taux_plafonne_non_salarie)-->17,15<!--/--> % sous le plafond et
+<!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=2026&mesure=taux_deplafonne_non_salarie)-->0,72<!--/--> % sur la totalité (D. 633-3), que les mesures `_non_salarie` de
+`taux_cotisation_annuels.csv` portent depuis 2018. `affiliations.yaml` marque
+donc `sans_employeur: true` les cinq statuts concernés (artisan, commerçant,
+profession libérale, avocat, exploitant agricole), et le modèle force alors la
+part à un, et prend le barème propre là où la période en porte un.
 
 #### La contribution employeur du public
 
@@ -2155,7 +2157,7 @@ d'attendre une réforme.
 
 ### Sources
 
-`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->212<!--/--> jeux de données des
+`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->213<!--/--> jeux de données des
 <!--chiffre:entrees(data/sources.yaml:institutions)-->41<!--/--> institutions, avec pour chacun l'URL, le mode
 d'accès et l'état d'intégration.
 
