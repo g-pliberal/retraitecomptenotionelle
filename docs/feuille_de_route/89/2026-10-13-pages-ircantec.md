@@ -71,6 +71,10 @@ la vingtième attend le propriétaire.
   `reversion_ircantec`, `versement_unique_ircantec`, `seconde_pension` et
   `cumul_emploi_retraite_et_retraite_progressive` ;
   `regimes/elus_locaux_ircantec.yaml` et l'inventaire ; les limites.
+- *Les pages du site.* Rien à écrire dans `pages.js` ni dans `index.html`,
+  que tient une autre session : la date des mandats d'élus passe au paquet
+  (`moteur/donnees.json`) quand GitHub relance `construire_donnees.py`, et
+  le reste ne touche que le témoin, les fiches et les limites.
 - *Reste.* Certifier 2022 à 2026, que le dépôt porte au niveau `haute` : un
   récupérateur des pages « Les paramètres utilisés par l'Ircantec » et
   « Valeur du point », en tableaux HTML, plus simple que le PDF de l'annexe
