@@ -14096,7 +14096,7 @@
 "mesurable_par":"modele",
 "quoi":"Un cinquième du temps de service, cinq annuités au plus, au militaire réunissant dix-sept ans de services effectifs, quinze avant juillet 2011, jusqu'à 80 % de taux. Jusqu'en août 2023, le maximum allait à qui partait à cinquante-neuf ans — cinquante-cinq avant 2004, cinquante-sept ensuite —, la bonification perdait une annuité par année supplémentaire servie, et rien n'était dû au-delà de l'âge légal. Créée en 1975, après trois annuités au plus de 1972 à 1975 (loi de finances pour 1972, article 53).",
 "regimes":"militaires",
-"sans_chiffre":"la cascade ne l'isole pas ; le jaune la donne à 98,4 % des liquidants, 146 € par mois"
+"sans_chiffre":"la cascade ne l'isole pas ; le jaune la donne à 99,0 % des liquidants, 146 € par mois"
 },
 {
 "base_legale":["Loi n° 57-444 du 8 avril 1957 art. 1","Loi n° 57-444 du 8 avril 1957 art. 6","Loi n° 89-1007 du 31 décembre 1989 art. 5","Loi n° 96-452 du 28 mai 1996 art. 24","Loi n° 2003-1312 du 30 décembre 2003 art. 93","R. 411-2 code de la sécurité intérieure"],
@@ -14110,7 +14110,7 @@
 "mesurable_par":"modele",
 "quoi":"La même annuité gratuite pour cinq servies, accordée par des statuts particuliers aux policiers, aux sapeurs-pompiers professionnels, aux surveillants de l'administration pénitentiaire et aux douaniers de la branche surveillance.",
 "regimes":"fonction publique, catégories actives",
-"sans_chiffre":"aucun cas type de la grille n'est policier, surveillant ni sapeur-pompier ; le jaune en compte 108 453 à l'État, à 19,1 trimestres, la plus longue"
+"sans_chiffre":"aucun cas type de la grille n'est policier, surveillant ni sapeur-pompier ; le jaune en compte 109 188 à l'État, à 19,1 trimestres, la plus longue"
 },
 {
 "base_legale":["Décret n° 2008-639 du 30 juin 2008 art. 9 (SNCF)","Décret n° 2008-637 du 30 juin 2008 art. 20 (RATP)"],
@@ -14138,7 +14138,7 @@
 "mesurable_par":"aucune",
 "quoi":"Des annuités gratuites pour les services civils rendus hors d'Europe, prises en compte dès lors que la pension rémunère au moins quinze années de services effectifs.",
 "regimes":"fonction publique",
-"sans_chiffre":"le lieu d'affectation n'est pas saisi ; le jaune en compte 180 010, à 266 € par mois"
+"sans_chiffre":"le lieu d'affectation n'est pas saisi ; le jaune en compte 177 788, à 285 € par mois"
 },
 {
 "base_legale":["L. 12 c CPCMR"],
@@ -14152,7 +14152,7 @@
 "mesurable_par":"aucune",
 "quoi":"Le temps passé en opérations, à la mer ou outre-mer est compté double ou davantage. Avantage ancien, dont le coût se concentre sur les générations ayant servi en Afrique du Nord.",
 "regimes":"militaires, fonction publique",
-"sans_chiffre":"le détail des services n'est pas saisi ; le jaune la confond avec le cinquième : 404 478 militaires sur 406 645, à 27,4 trimestres"
+"sans_chiffre":"le détail des services n'est pas saisi ; le jaune la confond avec le cinquième : 406 657 militaires sur 408 750, à 27,3 trimestres"
 },
 {
 "base_legale":["L. 12 d CPCMR"],
@@ -14166,7 +14166,7 @@
 "mesurable_par":"aucune",
 "quoi":"Des annuités gratuites au prorata des heures de vol ou de la durée des services sous-marins, selon des coefficients arrêtés à la date d'ouverture du droit.",
 "regimes":"militaires, personnel navigant",
-"sans_chiffre":"les heures de vol et les services sous-marins ne sont pas saisis ; le jaune en compte un militaire sur deux, à 16,9 trimestres"
+"sans_chiffre":"les heures de vol et les services sous-marins ne sont pas saisis ; le jaune en compte un militaire sur deux, à 16,7 trimestres"
 },
 {
 "base_legale":["L. 351-7-1 CSS","L. 311-1 CPMIVG"],
@@ -15720,17 +15720,17 @@
 "avts_cnav":{"ajoutees":0,"colonne":"avts","corrigees":0,"empreinte":"fd021141eb7e0d31","identiques":44,"niveau":"haute","source":"Cnav, barème « Allocation aux vieux travailleurs salariés […] - Montant »","valeurs":44,"verifiee_le":"2026-10-13"},
 "avts_journal_officiel":{"ajoutees":0,"colonne":"avts","corrigees":0,"empreinte":"ca7103946473bf1c","identiques":22,"niveau":"certifiee","source":"DILA, bases JORF et LEGI, décrets fixant le montant de divers avantages de vieillesse et de l'allocation supplémentaire","valeurs":22,"verifiee_le":"2026-10-13"},
 "bonifications_jaune_effectifs":{
-"ajoutees":0,
+"ajoutees":68,
 "colonne":"valeur",
 "corrigees":0,
-"empreinte":"896ef8bd58494828",
-"identiques":68,
+"empreinte":"41248d144041a7fe",
+"identiques":0,
 "niveau":"certifiee",
-"source":"Direction du budget, jaune pensions annexé au PLF 2026 (données du Service des retraites de l'État, de la CNRACL et du FSPOEIE), tableaux A-7, 50 et B-1",
+"source":"Direction du budget, jaune pensions annexé au PLF 2027 (données du Service des retraites de l'État, de la CNRACL et du FSPOEIE), tableaux A-7, 50 et B-1",
 "valeurs":68,
-"verifiee_le":"2026-09-20"
+"verifiee_le":"2026-10-13"
 },
-"bonifications_jaune_taux":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"63be9fb4f7475a5b","identiques":75,"niveau":"certifiee","source":"Direction du budget, jaune pensions annexé au PLF 2026, tableaux A-7 et 50 (durées et proportions)","valeurs":75,"verifiee_le":"2026-09-20"},
+"bonifications_jaune_taux":{"ajoutees":75,"colonne":"valeur","corrigees":0,"empreinte":"32b82c475b070cf1","identiques":0,"niveau":"certifiee","source":"Direction du budget, jaune pensions annexé au PLF 2027, tableaux A-7 et 50 (durées et proportions)","valeurs":75,"verifiee_le":"2026-10-13"},
 "caracteristiques_retraites":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"cf4d03030ccaca8c","identiques":120,"niveau":"certifiee","source":"DREES, échantillon interrégimes de retraités (EIR)","valeurs":120,"verifiee_le":"2026-10-12"},
 "carriere_longue":{"ajoutees":0,"colonne":"age_depart","corrigees":0,"empreinte":"3874767d2af11938","identiques":80,"niveau":"certifiee","source":"DILA, base LEGI, code de la sécurité sociale L. 351-1-1 et D. 351-1-1 (I et II)","valeurs":80,"verifiee_le":"2026-09-17"},
 "coefficient_minoration":{"ajoutees":0,"colonne":"coefficient","corrigees":0,"empreinte":"4b9bcbfdd6753594","identiques":76,"niveau":"certifiee","source":"DILA, base LEGI, code de la sécurité sociale R. 351-27","valeurs":76,"verifiee_le":"2026-09-17"},
