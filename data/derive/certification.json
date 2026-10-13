@@ -257,13 +257,13 @@
   "cotisants_regimes": {
    "ajoutees": 0,
    "colonne": "cotisants",
-   "corrigees": 0,
-   "empreinte": "bf07f122ad538be6",
-   "identiques": 1148,
+   "corrigees": 47,
+   "empreinte": "5642724ff04e9126",
+   "identiques": 1101,
    "niveau": "haute",
    "source": "COR, compléments du rapport annuel de juin 2024, projections détaillées par régime",
    "valeurs": 1148,
-   "verifiee_le": "2026-10-05"
+   "verifiee_le": "2026-10-13"
   },
   "courbe_taux_sans_risque": {
    "ajoutees": 30,

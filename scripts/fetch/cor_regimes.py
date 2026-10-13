@@ -45,11 +45,15 @@ exercices de projection.
 
 TROIS PIÈGES, MESURÉS ET TRAITÉS ICI
 -------------------------------------
-1. **L'unité ment sur deux feuilles.** Les en-têtes annoncent « en millions »
-   partout, mais les feuilles CRPCEN et CRPNPAC portent des UNITÉS : 60 378
-   cotisants au CRPCEN en 2023, à rapprocher des 60 303 de la Cnav. On ne
-   corrige pas en silence — l'en-tête lu est recopié tel quel dans la sortie,
-   et c'est à l'appelant de voir « en millions » devant 60 378.
+1. **L'unité ment sur une feuille.** Les en-têtes annoncent « en millions »
+   sur dix-sept feuilles et « en milliers » sur trois — CRPCEN, CRPNPAC,
+   FSPOEIE —, et le CRPCEN y compte bien 60,378 milliers de cotisants en
+   2023, à rapprocher des 60 303 de la Cnav. Mais les cotisants du FSPOEIE,
+   sous « en milliers », sont des millions : 0,0173 en 2024, soit 17 349,
+   que le jaune pensions annexé au PLF 2027 recoupe (action 159, étape 6).
+   On ne corrige pas en silence — l'en-tête lu est recopié tel quel dans la
+   sortie, et c'est à l'appelant d'y lire l'unité, puis de la redresser
+   (``verifier_donnees.UNITE_COTISANTS_CORRIGEE``).
 2. **L'année de départ varie d'une feuille à l'autre** : 2010 le plus souvent,
    2015 pour la FPE, 2019 pour le RCI, 2023 pour la CNRACL et la CNBF, 2024
    pour le FSPOEIE. On ne complète pas : une absence est une absence.

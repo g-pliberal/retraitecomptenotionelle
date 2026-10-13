@@ -3333,6 +3333,10 @@ def test_les_cotisants_par_regime_sont_lus_et_projetes():
     assert cotisants.effectif("cnieg", 2070) == 51
     # Le CRPCEN est publié en milliers et rendu en personnes.
     assert cotisants.effectif("crpcen", 2023) == 60_378
+    # La feuille du FSPOEIE l'annonce aussi, mais ses cotisants sont en
+    # millions : 17 349 en 2024, que le jaune pensions annexé au PLF 2027
+    # recoupe (16 079 au 31 décembre 2024, tableau D-5 bis), et non dix-sept.
+    assert cotisants.effectif("fspoeie", 2024) == 17_349
     # Le partage civils/militaires somme à un, et ses deux lignes ne prétendent
     # pas à mieux qu'« estimée ».
     assert sum(partage_fonction_publique_etat().values()) == pytest.approx(1.0)

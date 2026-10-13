@@ -32,6 +32,11 @@
 #    militaires confondus. Le partage entre les deux cas types qui
 #    la réclament est une décision du modèle, écrite dans
 #    donnees/cotisants.py.
+# 5. LA FEUILLE DU FSPOEIE MENT SUR SON UNITÉ : « en milliers »
+#    au-dessus de valeurs en millions. Elles sont rendues en
+#    personnes, 17 349 cotisants en 2024 et non dix-sept, ce que le
+#    jaune pensions annexé au PLF 2027 recoupe (tableau D-5 bis :
+#    16 079 au 31 décembre 2024).
 #
 # Ne pas modifier ces valeurs à la main : elles seraient écrasées
 # au prochain scripts/verifier_donnees.py --appliquer.
@@ -257,7 +262,7 @@ annee,caisse,cotisants,fiabilite
 2024,enim,29825,haute
 2024,erafp,4980800,haute
 2024,fonction_publique_etat,2035575,haute
-2024,fspoeie,17,haute
+2024,fspoeie,17349,haute
 2024,ircantec,3170319,haute
 2024,msa_exploitants,425916,haute
 2024,msa_salaries,783816,haute
@@ -277,7 +282,7 @@ annee,caisse,cotisants,fiabilite
 2025,enim,29395,haute
 2025,erafp,4992165,haute
 2025,fonction_publique_etat,2025251,haute
-2025,fspoeie,17,haute
+2025,fspoeie,16535,haute
 2025,ircantec,3176270,haute
 2025,msa_exploitants,419527,haute
 2025,msa_salaries,791358,haute
@@ -297,7 +302,7 @@ annee,caisse,cotisants,fiabilite
 2026,enim,28847,haute
 2026,erafp,4988952,haute
 2026,fonction_publique_etat,2016722,haute
-2026,fspoeie,16,haute
+2026,fspoeie,15737,haute
 2026,ircantec,3181312,haute
 2026,msa_exploitants,414073,haute
 2026,msa_salaries,799071,haute
@@ -317,7 +322,7 @@ annee,caisse,cotisants,fiabilite
 2027,enim,28199,haute
 2027,erafp,4985279,haute
 2027,fonction_publique_etat,2010803,haute
-2027,fspoeie,15,haute
+2027,fspoeie,14948,haute
 2027,ircantec,3186905,haute
 2027,msa_exploitants,408276,haute
 2027,msa_salaries,806958,haute
@@ -337,7 +342,7 @@ annee,caisse,cotisants,fiabilite
 2028,enim,28041,haute
 2028,erafp,4982016,haute
 2028,fonction_publique_etat,2005292,haute
-2028,fspoeie,14,haute
+2028,fspoeie,14059,haute
 2028,ircantec,3189175,haute
 2028,msa_exploitants,402838,haute
 2028,msa_salaries,812086,haute
@@ -357,7 +362,7 @@ annee,caisse,cotisants,fiabilite
 2029,enim,27845,haute
 2029,erafp,4978066,haute
 2029,fonction_publique_etat,2000811,haute
-2029,fspoeie,13,haute
+2029,fspoeie,13094,haute
 2029,ircantec,3189780,haute
 2029,msa_exploitants,397516,haute
 2029,msa_salaries,814666,haute
@@ -377,7 +382,7 @@ annee,caisse,cotisants,fiabilite
 2030,enim,27633,haute
 2030,erafp,4975002,haute
 2030,fonction_publique_etat,1996581,haute
-2030,fspoeie,12,haute
+2030,fspoeie,12095,haute
 2030,ircantec,3189902,haute
 2030,msa_exploitants,392497,haute
 2030,msa_salaries,815960,haute
@@ -397,7 +402,7 @@ annee,caisse,cotisants,fiabilite
 2031,enim,27463,haute
 2031,erafp,4972687,haute
 2031,fonction_publique_etat,1992868,haute
-2031,fspoeie,11,haute
+2031,fspoeie,11098,haute
 2031,ircantec,3189067,haute
 2031,msa_exploitants,387656,haute
 2031,msa_salaries,817256,haute
@@ -417,7 +422,7 @@ annee,caisse,cotisants,fiabilite
 2032,enim,27289,haute
 2032,erafp,4970977,haute
 2032,fonction_publique_etat,1989363,haute
-2032,fspoeie,10,haute
+2032,fspoeie,10162,haute
 2032,ircantec,3188252,haute
 2032,msa_exploitants,382879,haute
 2032,msa_salaries,818554,haute
@@ -437,7 +442,7 @@ annee,caisse,cotisants,fiabilite
 2033,enim,27115,haute
 2033,erafp,4969563,haute
 2033,fonction_publique_etat,1986648,haute
-2033,fspoeie,9,haute
+2033,fspoeie,9259,haute
 2033,ircantec,3187414,haute
 2033,msa_exploitants,378370,haute
 2033,msa_salaries,819854,haute
@@ -457,7 +462,7 @@ annee,caisse,cotisants,fiabilite
 2034,enim,26958,haute
 2034,erafp,4967408,haute
 2034,fonction_publique_etat,1982823,haute
-2034,fspoeie,8,haute
+2034,fspoeie,8407,haute
 2034,ircantec,3186573,haute
 2034,msa_exploitants,374006,haute
 2034,msa_salaries,821156,haute
@@ -477,7 +482,7 @@ annee,caisse,cotisants,fiabilite
 2035,enim,26837,haute
 2035,erafp,4965361,haute
 2035,fonction_publique_etat,1980640,haute
-2035,fspoeie,8,haute
+2035,fspoeie,7618,haute
 2035,ircantec,3185650,haute
 2035,msa_exploitants,369815,haute
 2035,msa_salaries,822460,haute
@@ -497,7 +502,7 @@ annee,caisse,cotisants,fiabilite
 2036,enim,26726,haute
 2036,erafp,4964266,haute
 2036,fonction_publique_etat,1978886,haute
-2036,fspoeie,7,haute
+2036,fspoeie,6920,haute
 2036,ircantec,3184810,haute
 2036,msa_exploitants,365762,haute
 2036,msa_salaries,823767,haute
@@ -517,7 +522,7 @@ annee,caisse,cotisants,fiabilite
 2037,enim,26599,haute
 2037,erafp,4963807,haute
 2037,fonction_publique_etat,1977031,haute
-2037,fspoeie,6,haute
+2037,fspoeie,6300,haute
 2037,ircantec,3184075,haute
 2037,msa_exploitants,361869,haute
 2037,msa_salaries,825075,haute
@@ -537,7 +542,7 @@ annee,caisse,cotisants,fiabilite
 2038,enim,26476,haute
 2038,erafp,4963999,haute
 2038,fonction_publique_etat,1976133,haute
-2038,fspoeie,6,haute
+2038,fspoeie,5738,haute
 2038,ircantec,3183363,haute
 2038,msa_exploitants,358146,haute
 2038,msa_salaries,826385,haute
@@ -557,7 +562,7 @@ annee,caisse,cotisants,fiabilite
 2039,enim,26361,haute
 2039,erafp,4964147,haute
 2039,fonction_publique_etat,1974498,haute
-2039,fspoeie,5,haute
+2039,fspoeie,5224,haute
 2039,ircantec,3182839,haute
 2039,msa_exploitants,354553,haute
 2039,msa_salaries,827698,haute
@@ -577,7 +582,7 @@ annee,caisse,cotisants,fiabilite
 2040,enim,26230,haute
 2040,erafp,4964402,haute
 2040,fonction_publique_etat,1973260,haute
-2040,fspoeie,5,haute
+2040,fspoeie,4732,haute
 2040,ircantec,3182614,haute
 2040,msa_exploitants,351107,haute
 2040,msa_salaries,829012,haute
@@ -597,7 +602,7 @@ annee,caisse,cotisants,fiabilite
 2041,enim,26082,haute
 2041,erafp,4963408,haute
 2041,fonction_publique_etat,1970431,haute
-2041,fspoeie,4,haute
+2041,fspoeie,4282,haute
 2041,ircantec,3180701,haute
 2041,msa_exploitants,347800,haute
 2041,msa_salaries,830328,haute
@@ -617,7 +622,7 @@ annee,caisse,cotisants,fiabilite
 2042,enim,25928,haute
 2042,erafp,4960174,haute
 2042,fonction_publique_etat,1967768,haute
-2042,fspoeie,4,haute
+2042,fspoeie,3878,haute
 2042,ircantec,3178308,haute
 2042,msa_exploitants,344634,haute
 2042,msa_salaries,831647,haute
@@ -637,7 +642,7 @@ annee,caisse,cotisants,fiabilite
 2043,enim,25772,haute
 2043,erafp,4955850,haute
 2043,fonction_publique_etat,1964475,haute
-2043,fspoeie,4,haute
+2043,fspoeie,3507,haute
 2043,ircantec,3175272,haute
 2043,msa_exploitants,341599,haute
 2043,msa_salaries,832967,haute
@@ -657,7 +662,7 @@ annee,caisse,cotisants,fiabilite
 2044,enim,25607,haute
 2044,erafp,4950860,haute
 2044,fonction_publique_etat,1961690,haute
-2044,fspoeie,3,haute
+2044,fspoeie,3165,haute
 2044,ircantec,3172626,haute
 2044,msa_exploitants,338691,haute
 2044,msa_salaries,834290,haute
@@ -677,7 +682,7 @@ annee,caisse,cotisants,fiabilite
 2045,enim,25432,haute
 2045,erafp,4945476,haute
 2045,fonction_publique_etat,1957704,haute
-2045,fspoeie,3,haute
+2045,fspoeie,2852,haute
 2045,ircantec,3170048,haute
 2045,msa_exploitants,335914,haute
 2045,msa_salaries,835616,haute
@@ -697,7 +702,7 @@ annee,caisse,cotisants,fiabilite
 2046,enim,25262,haute
 2046,erafp,4937512,haute
 2046,fonction_publique_etat,1952945,haute
-2046,fspoeie,3,haute
+2046,fspoeie,2580,haute
 2046,ircantec,3165571,haute
 2046,msa_exploitants,333261,haute
 2046,msa_salaries,836943,haute
@@ -717,7 +722,7 @@ annee,caisse,cotisants,fiabilite
 2047,enim,25083,haute
 2047,erafp,4927477,haute
 2047,fonction_publique_etat,1948722,haute
-2047,fspoeie,2,haute
+2047,fspoeie,2347,haute
 2047,ircantec,3161852,haute
 2047,msa_exploitants,330730,haute
 2047,msa_salaries,838273,haute
@@ -737,7 +742,7 @@ annee,caisse,cotisants,fiabilite
 2048,enim,24900,haute
 2048,erafp,4918375,haute
 2048,fonction_publique_etat,1944250,haute
-2048,fspoeie,2,haute
+2048,fspoeie,2140,haute
 2048,ircantec,3159042,haute
 2048,msa_exploitants,328318,haute
 2048,msa_salaries,839605,haute
@@ -757,7 +762,7 @@ annee,caisse,cotisants,fiabilite
 2049,enim,24727,haute
 2049,erafp,4910938,haute
 2049,fonction_publique_etat,1941560,haute
-2049,fspoeie,2,haute
+2049,fspoeie,1948,haute
 2049,ircantec,3157855,haute
 2049,msa_exploitants,326023,haute
 2049,msa_salaries,840939,haute
@@ -777,7 +782,7 @@ annee,caisse,cotisants,fiabilite
 2050,enim,24554,haute
 2050,erafp,4903713,haute
 2050,fonction_publique_etat,1937690,haute
-2050,fspoeie,2,haute
+2050,fspoeie,1767,haute
 2050,ircantec,3155900,haute
 2050,msa_exploitants,323844,haute
 2050,msa_salaries,842274,haute
@@ -797,7 +802,7 @@ annee,caisse,cotisants,fiabilite
 2051,enim,24397,haute
 2051,erafp,4895409,haute
 2051,fonction_publique_etat,1933160,haute
-2051,fspoeie,2,haute
+2051,fspoeie,1601,haute
 2051,ircantec,3154225,haute
 2051,msa_exploitants,321777,haute
 2051,msa_salaries,843612,haute
@@ -817,7 +822,7 @@ annee,caisse,cotisants,fiabilite
 2052,enim,24238,haute
 2052,erafp,4887422,haute
 2052,fonction_publique_etat,1930607,haute
-2052,fspoeie,1,haute
+2052,fspoeie,1461,haute
 2052,ircantec,3153559,haute
 2052,msa_exploitants,319821,haute
 2052,msa_salaries,844952,haute
@@ -837,7 +842,7 @@ annee,caisse,cotisants,fiabilite
 2053,enim,24089,haute
 2053,erafp,4880477,haute
 2053,fonction_publique_etat,1928006,haute
-2053,fspoeie,1,haute
+2053,fspoeie,1339,haute
 2053,ircantec,3153555,haute
 2053,msa_exploitants,317973,haute
 2053,msa_salaries,846294,haute
@@ -857,7 +862,7 @@ annee,caisse,cotisants,fiabilite
 2054,enim,23940,haute
 2054,erafp,4874709,haute
 2054,fonction_publique_etat,1926073,haute
-2054,fspoeie,1,haute
+2054,fspoeie,1227,haute
 2054,ircantec,3154368,haute
 2054,msa_exploitants,316233,haute
 2054,msa_salaries,847638,haute
@@ -877,7 +882,7 @@ annee,caisse,cotisants,fiabilite
 2055,enim,23796,haute
 2055,erafp,4870610,haute
 2055,fonction_publique_etat,1924354,haute
-2055,fspoeie,1,haute
+2055,fspoeie,1123,haute
 2055,ircantec,3156158,haute
 2055,msa_exploitants,314598,haute
 2055,msa_salaries,848984,haute
@@ -897,7 +902,7 @@ annee,caisse,cotisants,fiabilite
 2056,enim,23654,haute
 2056,erafp,4866636,haute
 2056,fonction_publique_etat,1922442,haute
-2056,fspoeie,1,haute
+2056,fspoeie,1023,haute
 2056,ircantec,3157147,haute
 2056,msa_exploitants,313067,haute
 2056,msa_salaries,850332,haute
@@ -917,7 +922,7 @@ annee,caisse,cotisants,fiabilite
 2057,enim,23520,haute
 2057,erafp,4862548,haute
 2057,fonction_publique_etat,1921014,haute
-2057,fspoeie,1,haute
+2057,fspoeie,927,haute
 2057,ircantec,3158856,haute
 2057,msa_exploitants,311638,haute
 2057,msa_salaries,851683,haute
@@ -937,7 +942,7 @@ annee,caisse,cotisants,fiabilite
 2058,enim,23389,haute
 2058,erafp,4859674,haute
 2058,fonction_publique_etat,1919991,haute
-2058,fspoeie,1,haute
+2058,fspoeie,834,haute
 2058,ircantec,3160987,haute
 2058,msa_exploitants,310310,haute
 2058,msa_salaries,853036,haute
@@ -957,7 +962,7 @@ annee,caisse,cotisants,fiabilite
 2059,enim,23252,haute
 2059,erafp,4857789,haute
 2059,fonction_publique_etat,1919232,haute
-2059,fspoeie,1,haute
+2059,fspoeie,745,haute
 2059,ircantec,3163540,haute
 2059,msa_exploitants,309082,haute
 2059,msa_salaries,854391,haute
@@ -977,7 +982,7 @@ annee,caisse,cotisants,fiabilite
 2060,enim,23114,haute
 2060,erafp,4855904,haute
 2060,fonction_publique_etat,1917530,haute
-2060,fspoeie,1,haute
+2060,fspoeie,653,haute
 2060,ircantec,3163179,haute
 2060,msa_exploitants,307952,haute
 2060,msa_salaries,855748,haute
@@ -997,7 +1002,7 @@ annee,caisse,cotisants,fiabilite
 2061,enim,22982,haute
 2061,erafp,4853274,haute
 2061,fonction_publique_etat,1917289,haute
-2061,fspoeie,1,haute
+2061,fspoeie,559,haute
 2061,ircantec,3162534,haute
 2061,msa_exploitants,306920,haute
 2061,msa_salaries,857108,haute
@@ -1017,7 +1022,7 @@ annee,caisse,cotisants,fiabilite
 2062,enim,22851,haute
 2062,erafp,4850665,haute
 2062,fonction_publique_etat,1915816,haute
-2062,fspoeie,0,haute
+2062,fspoeie,470,haute
 2062,ircantec,3161865,haute
 2062,msa_exploitants,305985,haute
 2062,msa_salaries,858469,haute
@@ -1037,7 +1042,7 @@ annee,caisse,cotisants,fiabilite
 2063,enim,22717,haute
 2063,erafp,4848359,haute
 2063,fonction_publique_etat,1914252,haute
-2063,fspoeie,0,haute
+2063,fspoeie,390,haute
 2063,ircantec,3161431,haute
 2063,msa_exploitants,305067,haute
 2063,msa_salaries,859832,haute
@@ -1057,7 +1062,7 @@ annee,caisse,cotisants,fiabilite
 2064,enim,22584,haute
 2064,erafp,4845607,haute
 2064,fonction_publique_etat,1912883,haute
-2064,fspoeie,0,haute
+2064,fspoeie,317,haute
 2064,ircantec,3160487,haute
 2064,msa_exploitants,304152,haute
 2064,msa_salaries,861198,haute
@@ -1077,7 +1082,7 @@ annee,caisse,cotisants,fiabilite
 2065,enim,22453,haute
 2065,erafp,4841195,haute
 2065,fonction_publique_etat,1910564,haute
-2065,fspoeie,0,haute
+2065,fspoeie,251,haute
 2065,ircantec,3158357,haute
 2065,msa_exploitants,303239,haute
 2065,msa_salaries,862565,haute
@@ -1097,7 +1102,7 @@ annee,caisse,cotisants,fiabilite
 2066,enim,22323,haute
 2066,erafp,4834663,haute
 2066,fonction_publique_etat,1907042,haute
-2066,fspoeie,0,haute
+2066,fspoeie,201,haute
 2066,ircantec,3155361,haute
 2066,msa_exploitants,302330,haute
 2066,msa_salaries,863935,haute
@@ -1117,7 +1122,7 @@ annee,caisse,cotisants,fiabilite
 2067,enim,22193,haute
 2067,erafp,4827391,haute
 2067,fonction_publique_etat,1904352,haute
-2067,fspoeie,0,haute
+2067,fspoeie,154,haute
 2067,ircantec,3152752,haute
 2067,msa_exploitants,301423,haute
 2067,msa_salaries,865308,haute
@@ -1137,7 +1142,7 @@ annee,caisse,cotisants,fiabilite
 2068,enim,22064,haute
 2068,erafp,4820357,haute
 2068,fonction_publique_etat,1901202,haute
-2068,fspoeie,0,haute
+2068,fspoeie,112,haute
 2068,ircantec,3150232,haute
 2068,msa_exploitants,300669,haute
 2068,msa_salaries,866682,haute
@@ -1157,7 +1162,7 @@ annee,caisse,cotisants,fiabilite
 2069,enim,21935,haute
 2069,erafp,4812932,haute
 2069,fonction_publique_etat,1897950,haute
-2069,fspoeie,0,haute
+2069,fspoeie,83,haute
 2069,ircantec,3147299,haute
 2069,msa_exploitants,299917,haute
 2069,msa_salaries,868059,haute
@@ -1177,7 +1182,7 @@ annee,caisse,cotisants,fiabilite
 2070,enim,21806,haute
 2070,erafp,4804375,haute
 2070,fonction_publique_etat,1893125,haute
-2070,fspoeie,0,haute
+2070,fspoeie,61,haute
 2070,ircantec,3143714,haute
 2070,msa_exploitants,299168,haute
 2070,msa_salaries,869438,haute

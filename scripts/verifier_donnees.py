@@ -1922,6 +1922,13 @@ BLOCS_COTISANTS_COR: dict[str, float] = {
     "Effectifs de cotisants en millions": 1e6,
     "Effectifs de cotisants en milliers": 1e3,
 }
+#: La feuille dont l'en-tête ment sur l'unité de ses cotisants. Celle du
+#: FSPOEIE écrit « en milliers » au-dessus de 0,0173 pour 2024 : des MILLIONS,
+#: 17 349 cotisants, que le jaune pensions annexé au PLF 2027 recoupe — 17 144
+#: au 31 décembre 2023, 16 079 un an plus tard (tableau D-5 bis) —, quand ses
+#: retraités, annoncés en milliers eux aussi, le sont bien. Lue sur son
+#: en-tête, la série comptait dix-sept cotisants (action 159, étape 6).
+UNITE_COTISANTS_CORRIGEE: dict[str, float] = {"fspoeie": 1e6}
 
 
 def source_cotisants_regimes() -> dict[tuple, float]:
@@ -1953,6 +1960,7 @@ def source_cotisants_regimes() -> dict[tuple, float]:
         regime = REGIMES_COR.get(ligne["regime"])
         if regime is None:
             continue
+        facteur = UNITE_COTISANTS_CORRIGEE.get(regime, facteur)
         valeurs[(str(ligne["annee"]), regime)] = ligne["valeur"] * facteur
     return dict(sorted(valeurs.items()))
 
@@ -6530,6 +6538,11 @@ CERTIFICATIONS = (
             "#    militaires confondus. Le partage entre les deux cas types qui",
             "#    la réclament est une décision du modèle, écrite dans",
             "#    donnees/cotisants.py.",
+            "# 5. LA FEUILLE DU FSPOEIE MENT SUR SON UNITÉ : « en milliers »",
+            "#    au-dessus de valeurs en millions. Elles sont rendues en",
+            "#    personnes, 17 349 cotisants en 2024 et non dix-sept, ce que le",
+            "#    jaune pensions annexé au PLF 2027 recoupe (tableau D-5 bis :",
+            "#    16 079 au 31 décembre 2024).",
             "#",
             "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
             "# au prochain scripts/verifier_donnees.py --appliquer.",
