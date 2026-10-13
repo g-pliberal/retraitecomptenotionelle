@@ -5890,7 +5890,16 @@ sources:
     a_en_tirer: >-
       Le rapport de 2024 et ses fiches pays : la dépense de pensions de la
       France, projetée avec Destinie, et le modèle de chaque pays notionnel.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-10-13"
+    note: >-
+      La France, le 13 octobre 2026 (action 138, étape 3) : la fiche pays, le
+      volume 1 et l'annexe statistique des fiches, dont les feuilles FRa et
+      FRb sont au manifeste (`ageing_report_france`) et en témoin
+      (`tests/temoins/ageing_report_france.json`). Les fiches des pays
+      notionnels ont été lues par les modèles du registre qui les citent
+      (`sesim`, `modele_lettonie`, `projections_grece`). Le site répond
+      parfois 429 à deux téléchargements rapprochés.
 
   - id: oit_ilo_pensions
     url: https://qpss.ilo.org/APT

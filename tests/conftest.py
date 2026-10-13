@@ -96,6 +96,9 @@ CONTROLES = {
     # Les indicateurs de cycle de vie, confrontés au COR, à TRAJECTOiRE et à
     # l'OCDE, sous leurs conventions.
     "test_cycle_de_vie_references.py",
+    # La dépense en ses quatre facteurs, confrontée à l'Ageing Report de 2024
+    # (sa formule et son identité restent rapides, plus bas).
+    "test_facteurs_depense.py",
     # Les données : leur socle, leur certification, les lecteurs des
     # documents qui les apportent.
     "test_donnees.py", "test_verification.py", "test_bonifications_jaune.py",
@@ -122,6 +125,12 @@ EXCEPTIONS = {
     ("test_oracle.py", "test_les_exemples_publies_par_les_caisses_sont_reproduits"): "rapide",
     ("test_oracle.py", "test_le_temoin_des_exemples_officiels_est_source"): "rapide",
     ("test_oracle.py", "test_un_ecart_connu_entre_et_ne_change_pas_en_silence"): "rapide",
+    # La formule de l'Ageing Report, refaite sur ses propres séries, sans modèle.
+    ("test_facteurs_depense.py",
+     "test_le_temoin_de_l_ageing_report_dit_sa_source_et_tient_ses_identites"): "rapide",
+    ("test_facteurs_depense.py", "test_la_formule_de_l_awg_refait_ses_effets_publies"): "rapide",
+    ("test_facteurs_depense.py",
+     "test_les_quatre_facteurs_font_la_part_de_pib_et_un_seul_qui_bouge_fait_tout"): "rapide",
     # Le portage JavaScript, rejoué contre le Python : deux moteurs.
     ("test_cumul_activites.py",
      "test_le_portage_javascript_concorde_sur_des_cumuls_tires_au_hasard"): "complet",

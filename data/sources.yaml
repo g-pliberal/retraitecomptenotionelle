@@ -4267,6 +4267,38 @@ institutions:
           un contrôle : les quotients refaits restent à 1 % près en médiane des
           siens, chaque année.
 
+  commission_europeenne:
+    nom: >-
+      Commission européenne (DG ECFIN) et Comité de politique économique
+      (groupe de travail sur le vieillissement, AWG)
+    role: >-
+      La dépense de pensions de chaque État projetée par son propre modèle,
+      Destinie pour la France, sous des hypothèses communes, et décomposée en
+      dépendance, couverture, prestation et marché du travail.
+    jeux:
+      - id: ageing_report_france
+        titre: >-
+          2024 Ageing Report, annexe statistique des fiches pays, feuilles FRa
+          et FRb : la dépense de pensions de la France, ses facteurs et leur
+          décomposition, de 2022 à 2070
+        url: https://economy-finance.ec.europa.eu/document/download/e248db46-f876-4e72-8821-efae678e81ea_en?filename=2024_Ageing_Report-Statistical_annex_all_countryfiches.xlsx
+        acces: fichier
+        statut_integration: controle
+        cible: tests/temoins/ageing_report_france.json
+        recuperation: scripts/fetch/ageing_report.py
+        millesime: "2024"
+        note: >-
+          Ce que la fiche France imprime au dixième (tableaux 7 à 11), année
+          par année et sans arrondi, et la décomposition cumulée depuis 2022
+          de cinq ans en cinq ans. Il n'alimente aucune valeur :
+          `tests/test_facteurs_depense.py` s'y confronte (action 138, étape
+          3). La formule de ses effets, que ni la fiche ni le volume 1
+          n'écrivent, s'y retrouve au dix-millième de point : pas à pas, la
+          dépense au début du pas fois la variation relative du facteur. Ses
+          hypothèses ne sont pas celles du dépôt : la population EUROPOP2023,
+          une productivité horaire de 1,03 % par an, la loi d'avant la LFSS
+          pour 2026.
+
   ocde:
     nom: Organisation de coopération et de développement économiques
     role: >-
