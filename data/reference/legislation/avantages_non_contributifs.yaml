@@ -1373,17 +1373,22 @@ avantages:
     libelle: Indemnité temporaire de retraite outre-mer
     famille: autres_avantages
     quoi: >-
-      Une majoration de 35 à 75 % de la pension des fonctionnaires retraités
-      qui résident dans certaines collectivités d'outre-mer. Elle ne répond à
-      aucune cotisation supplémentaire : c'est un supplément de résidence servi
-      à vie. Fermée aux nouveaux bénéficiaires depuis 2009 et plafonnée, elle
-      s'éteint par extinction de ses titulaires.
+      Une majoration de 35 % (La Réunion, Mayotte), 40 % (Saint-Pierre-et-
+      Miquelon) ou 75 % (Nouvelle-Calédonie, Wallis-et-Futuna, Polynésie
+      française) de la pension des retraités du code des pensions civiles et
+      militaires qui résident dans ces collectivités. Elle ne répond à aucune
+      cotisation supplémentaire : c'est un supplément de résidence, acquis à
+      vie. En extinction depuis 2009 : plafonnée pour qui résidait là avant le
+      13 octobre 2008, accordée jusqu'au 31 décembre 2027 à de nouveaux
+      bénéficiaires sous des conditions plus strictes, elle ne l'est plus à
+      personne à compter du 1er janvier 2028 (rapport sur les pensions annexé
+      au PLF 2027, pages 129 à 131).
     base_legale: [Décret n° 52-1050 du 10 septembre 1952 art. 1, LOI n° 2008-1443
       du 30 décembre 2008 art. 137, Décret n° 2009-114 du 30 janvier 2009]
     fiches: []
     creation: 1952
     fin: null
-    regimes: [fonction_publique_etat, fonction_publique_territoriale]
+    regimes: [fonction_publique_etat]
     etat_modele: absent
     ligne_cascade: null
     pourquoi_pas_chiffre: >-
