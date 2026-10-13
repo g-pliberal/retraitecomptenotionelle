@@ -225,10 +225,50 @@ export class ProfilRemuneration {
     this.postes = fiche.postes;
     this.reduction_generale = fiche.reduction_generale
       ? new ReductionGenerale(fiche.reduction_generale) : null;
+    // L'abattement de l'assiette sociale de l'indépendant depuis 2025
+    // (L. 136-3, III ; D. 136-5), `null` pour les autres profils.
+    this.assiette_abattue = fiche.assiette_abattue ?? null;
   }
 
   get csg() {
     return this.csg_deductible + this.csg_imposable;
+  }
+
+  /**
+   * L'assiette sociale que donne un revenu brut : abattu de 26 % depuis 2025
+   * pour un indépendant, l'abattement borné entre 1,76 % et 130 % du plafond,
+   * jamais négative ; lui-même sinon. La fiche reçoit l'assiette.
+   */
+  assietteAbattue(revenuBrut, plafondAnnuel, annee) {
+    const regle = this.assiette_abattue;
+    if (regle === null || annee < regle.depuis) {
+      return revenuBrut;
+    }
+    const abattement = Math.min(
+      Math.max(regle.taux * revenuBrut, regle.plancher_en_plafonds * plafondAnnuel),
+      regle.plafond_en_plafonds * plafondAnnuel);
+    return Math.max(0.0, revenuBrut - abattement);
+  }
+
+  /**
+   * Le revenu brut d'où vient une assiette : la réciproque. Une assiette nulle,
+   * que tout revenu sous le plancher donne, rend le plancher lui-même.
+   */
+  revenuAvantAbattement(assiette, plafondAnnuel, annee) {
+    const regle = this.assiette_abattue;
+    if (regle === null || annee < regle.depuis) {
+      return assiette;
+    }
+    const plancher = regle.plancher_en_plafonds * plafondAnnuel;
+    const plafond = regle.plafond_en_plafonds * plafondAnnuel;
+    const rapport = 1.0 / regle.taux - 1.0;
+    if (assiette <= plancher * rapport) {
+      return assiette + plancher;
+    }
+    if (assiette >= plafond * rapport) {
+      return assiette + plafond;
+    }
+    return assiette / (1.0 - regle.taux);
   }
 
   /** Ce poste est-il dû à ce revenu, pour cet assuré ? */

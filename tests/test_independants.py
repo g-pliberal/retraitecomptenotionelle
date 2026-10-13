@@ -11,6 +11,12 @@ cotisent à leur barème (D. 633-3, fiche ``cotisation_vieillesse_independants``
 17,15 % sous le plafond et 0,60 % sur la totalité, 0,72 % depuis 2025, et non
 aux 15,45 % et 2,30 à 2,51 % du salarié et de son employeur. La fiche de paie
 le prélève, le compte notionnel le porte.
+
+L'assiette abattue : pour les périodes courant à compter du 1er janvier 2025,
+l'assiette sociale de l'indépendant est son revenu avant cotisations, abattu de
+26 %, l'abattement borné entre 1,76 % et 130 % du plafond (L. 136-3, III ;
+D. 136-5 ; fiche ``assiette_sociale_independants``). La fiche de paie reçoit
+l'assiette ; son profil sait la tirer du revenu brut, et l'inverse.
 """
 
 from __future__ import annotations
@@ -286,6 +292,42 @@ def test_une_redaction_illisible_arrete_le_recuperateur():
                                     "Le taux est fixé à 18 %.")
 
 
+#: (revenu brut, assiette) en 2026, au plafond de 48 060 € : l'abattement de
+#: 26 %, son plancher de 845,86 € et son plafond de 62 478 €, et le revenu sous
+#: le plancher, qui n'a pas d'assiette.
+ABATTEMENTS_2026 = [(40_000.0, 29_600.0), (2_000.0, 2_000.0 - 0.0176 * 48_060),
+                    (300_000.0, 300_000.0 - 1.30 * 48_060), (500.0, 0.0)]
+
+
+def _profil_independant():
+    return charger_prelevements(RACINE_DONNEES).profil("independant")
+
+
+def test_l_assiette_abattue_suit_l_article_l_136_3():
+    """26 % du revenu brut, ni moins de 1,76 % ni plus de 130 % du plafond ;
+    avant 2025, l'assiette est le revenu lui-même, et un salarié n'a pas
+    d'abattement de ce genre."""
+    profil = _profil_independant()
+    for brut, assiette in ABATTEMENTS_2026:
+        assert profil.assiette_abattue(brut, 48_060.0, 2026) == pytest.approx(assiette)
+    assert profil.assiette_abattue(40_000.0, 46_368.0, 2024) == 40_000.0
+    salarie = charger_prelevements(RACINE_DONNEES).profil("salarie_prive")
+    assert salarie.assiette_abattue(40_000.0, 48_060.0, 2026) == 40_000.0
+
+
+def test_la_reciproque_rend_le_revenu_brut():
+    """Du revenu brut à l'assiette et retour, à toute hauteur, les deux coudes
+    compris ; une assiette nulle rend le plancher."""
+    profil = _profil_independant()
+    plancher = 0.0176 * 48_060
+    for brut in [plancher, *range(1_000, 400_001, 1_500), 3_253.0, 240_300.0]:
+        assiette = profil.assiette_abattue(brut, 48_060.0, 2026)
+        assert profil.revenu_avant_abattement(assiette, 48_060.0, 2026) == pytest.approx(
+            brut), brut
+    assert profil.revenu_avant_abattement(0.0, 48_060.0, 2026) == pytest.approx(plancher)
+    assert profil.revenu_avant_abattement(40_000.0, 46_368.0, 2024) == 40_000.0
+
+
 #: Le jumeau JavaScript : les mêmes bornes et la même ligne de fiche de paie.
 _JUMEAU = """
 import { readFileSync } from "node:fs";
@@ -303,23 +345,35 @@ const lignes = new ConstructeurFiche(profil).fiche(
   fiche.annee, fiche.revenu, fiche.pss, fiche.smic, bloc).lignes;
 const retraite = Object.fromEntries(lignes.filter((ligne) => ligne.retraite)
   .map((ligne) => [ligne.code, [ligne.salarie, ligne.employeur]]));
-process.stdout.write(JSON.stringify({ bornes, retraite }));
+const abattues = fiche.bruts.map(([brut, pss, annee]) => {
+  const assiette = profil.assietteAbattue(brut, pss, annee);
+  return [assiette, profil.revenuAvantAbattement(assiette, pss, annee)];
+});
+process.stdout.write(JSON.stringify({ bornes, retraite, abattues }));
 """
 
 
-def test_le_portage_javascript_coupe_au_meme_plafond_et_au_meme_bareme(simulateur):
+def test_le_portage_javascript_rend_les_memes_plafond_bareme_et_assiette(simulateur):
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     catalogue = simulateur.catalogue
     annees = [*PLAFOND_RCI, 2025, 2026]
     pss = [simulateur.macro.plafond_securite_sociale(annee) for annee in annees]
+    bruts = [(brut, 48_060.0, 2026) for brut, _ in ABATTEMENTS_2026] + [
+        (40_000.0, 46_368.0, 2024), (61_234.5, 47_100.0, 2025)]
     fiche = {"annee": 2019, "revenu": 60_000.0, "pss": pss[annees.index(2019)],
-             "smic": smic_annuel(simulateur.macro, 2019)}
+             "smic": smic_annuel(simulateur.macro, 2019), "bruts": bruts}
+    profil = _profil_independant()
     attendu = {
         "bornes": [[list(p.bornes_assiette_en_euros(plafond, annee))
                     for p in catalogue["rci"].periodes_actives(annee)]
                    for annee, plafond in zip(annees, pss)],
         "retraite": _fiche(simulateur, 2019, 60_000.0),
+        "abattues": [
+            [profil.assiette_abattue(brut, plafond, annee),
+             profil.revenu_avant_abattement(
+                 profil.assiette_abattue(brut, plafond, annee), plafond, annee)]
+            for brut, plafond, annee in bruts],
     }
     execution = subprocess.run(
         ["node", "--input-type=module", "-e", _JUMEAU,
@@ -332,3 +386,5 @@ def test_le_portage_javascript_coupe_au_meme_plafond_et_au_meme_bareme(simulateu
     for code, (salarie, employeur) in attendu["retraite"].items():
         assert obtenu["retraite"][code] == [pytest.approx(salarie, abs=1e-9),
                                             pytest.approx(employeur, abs=1e-9)], code
+    assert obtenu["abattues"] == [[pytest.approx(a, abs=1e-9), pytest.approx(b, abs=1e-9)]
+                                  for a, b in attendu["abattues"]]

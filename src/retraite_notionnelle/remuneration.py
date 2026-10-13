@@ -461,6 +461,50 @@ class Poste:
 
 
 @dataclass(frozen=True)
+class AssietteAbattue:
+    """L'abattement de l'assiette sociale d'un travailleur indépendant.
+
+    Pour les périodes courant à compter du 1er janvier 2025, l'assiette de ses
+    cotisations et de sa CSG est son revenu d'activité avant cotisations,
+    diminué de 26 %, l'abattement ne descendant pas sous 1,76 % du plafond de
+    la sécurité sociale ni ne passant 130 % (L. 136-3, III ; D. 136-5). Avant,
+    pas d'abattement : l'assiette est le revenu professionnel.
+    """
+
+    depuis: int
+    taux: float
+    plancher_en_plafonds: float
+    plafond_en_plafonds: float
+
+    def abattement(self, revenu_brut: float, plafond_annuel: float) -> float:
+        return min(max(self.taux * revenu_brut, self.plancher_en_plafonds * plafond_annuel),
+                   self.plafond_en_plafonds * plafond_annuel)
+
+    def assiette(self, revenu_brut: float, plafond_annuel: float, annee: int) -> float:
+        """L'assiette d'un revenu brut, jamais négative : un revenu sous le
+        plancher n'a pas d'assiette à abattre."""
+        if annee < self.depuis:
+            return revenu_brut
+        return max(0.0, revenu_brut - self.abattement(revenu_brut, plafond_annuel))
+
+    def revenu_brut(self, assiette: float, plafond_annuel: float, annee: int) -> float:
+        """La réciproque : le revenu brut qui donne ``assiette``. L'abattement
+        croît avec le revenu, et l'assiette aussi : il n'y en a qu'un, sauf
+        pour une assiette nulle, que tout revenu sous le plancher donne, et
+        dont on rend le plus grand, le plancher lui-même."""
+        if annee < self.depuis:
+            return assiette
+        plancher = self.plancher_en_plafonds * plafond_annuel
+        plafond = self.plafond_en_plafonds * plafond_annuel
+        rapport = 1.0 / self.taux - 1.0
+        if assiette <= plancher * rapport:
+            return assiette + plancher
+        if assiette >= plafond * rapport:
+            return assiette + plafond
+        return assiette / (1.0 - self.taux)
+
+
+@dataclass(frozen=True)
 class ReductionGenerale:
     """La réduction générale dégressive unique, et de quoi la recalculer."""
 
@@ -539,10 +583,28 @@ class ProfilRemuneration:
     #: ``None`` quand l'employeur n'y a pas droit — ou qu'il n'y en a pas.
     reduction_generale: ReductionGenerale | None
     fiabilite: Fiabilite
+    #: L'abattement de l'assiette sociale de l'indépendant depuis 2025 ;
+    #: ``None`` pour les autres profils.
+    abattement_assiette: AssietteAbattue | None = None
 
     @property
     def csg(self) -> float:
         return self.csg_deductible + self.csg_imposable
+
+    def assiette_abattue(self, revenu_brut: float, plafond_annuel: float,
+                         annee: int) -> float:
+        """L'assiette sociale que donne un revenu brut : abattu de 26 % depuis
+        2025 pour un indépendant, lui-même sinon. La fiche reçoit l'assiette."""
+        if self.abattement_assiette is None:
+            return revenu_brut
+        return self.abattement_assiette.assiette(revenu_brut, plafond_annuel, annee)
+
+    def revenu_avant_abattement(self, assiette: float, plafond_annuel: float,
+                                annee: int) -> float:
+        """Le revenu brut d'où vient une assiette : la réciproque."""
+        if self.abattement_assiette is None:
+            return assiette
+        return self.abattement_assiette.revenu_brut(assiette, plafond_annuel, annee)
 
     def taux_retraite_du_droit_en_vigueur(self) -> float:
         """Ce que le coefficient maximal compte aujourd'hui pour la retraite."""
@@ -736,6 +798,17 @@ def _poste(contenu) -> Poste:
     )
 
 
+def _assiette_abattue(contenu) -> AssietteAbattue | None:
+    if not contenu:
+        return None
+    return AssietteAbattue(
+        depuis=int(contenu["depuis"]),
+        taux=float(contenu["taux"]),
+        plancher_en_plafonds=float(contenu["plancher_en_plafonds"]),
+        plafond_en_plafonds=float(contenu["plafond_en_plafonds"]),
+    )
+
+
 def _reduction_generale(contenu) -> ReductionGenerale | None:
     if not contenu:
         return None
@@ -776,6 +849,7 @@ def _charger(chemin: str, signature: tuple) -> Prelevements:
             reduction_generale=_reduction_generale(
                 fiche.get("reduction_generale")),
             fiabilite=fiabilite,
+            abattement_assiette=_assiette_abattue(fiche.get("assiette_abattue")),
         )
     pensions = contenu["pensions"]
     return Prelevements(

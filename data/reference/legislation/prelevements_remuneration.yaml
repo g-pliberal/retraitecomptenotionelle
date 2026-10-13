@@ -660,6 +660,26 @@ profils:
     cout_du_travail: false
     incidence: assiette
     postes: *postes_independant
+    # L'ASSIETTE ABATTUE, pour les périodes courant à compter du 1er janvier
+    # 2025 : le revenu d'activité, avant ses cotisations, diminué d'un
+    # abattement de 26 % qui ne descend pas sous 1,76 % du plafond ni ne passe
+    # 130 % (L. 136-3, III ; D. 136-5). Le revenu que la fiche reçoit EST cette
+    # assiette, comme le relevé de carrière la porte : la règle sert à la
+    # reconstituer depuis le revenu brut, ou le revenu brut depuis elle
+    # (`ProfilRemuneration.assiette_abattue`, `revenu_avant_abattement`), et
+    # le revenu disponible de la fiche reste l'assiette moins ses prélèvements
+    # (fiche `assiette_sociale_independants`, qui en mesure l'écart). Les
+    # revenus de remplacement qu'elle inclut et l'épargne salariale qu'elle
+    # déduit (L. 131-6) n'y sont pas.
+    assiette_abattue:
+      depuis: 2025
+      taux: 0.26
+      plancher_en_plafonds: 0.0176
+      plafond_en_plafonds: 1.30
+      textes:
+        - "Article L. 136-3 du code de la sécurité sociale, III, version en vigueur (LEGIARTI000051284498)"
+        - "Article D. 136-5 du code de la sécurité sociale, version en vigueur (LEGIARTI000049899286)"
+        - "Article L. 131-6 du code de la sécurité sociale, version en vigueur (LEGIARTI000048683707)"
     contributions_sociales:
       csg_deductible: 0.068
       csg_imposable: 0.024

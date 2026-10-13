@@ -6508,7 +6508,12 @@ referents:
           130 % du PASS ; L. 131-6 (LEGIARTI000048683707) : « Cette
           assiette inclut également le montant des revenus de
           remplacement sans lien avec une affection de longue durée
-          »
+          ». En partie repris le 13 octobre 2026 (action 138, étape
+          18) : le profil de la fiche de paie de l'indépendant passe,
+          dans les deux moteurs, du revenu brut à l'assiette et retour,
+          bornes comprises (fiche `assiette_sociale_independants`).
+          Restent la saisie d'un revenu brut, que les pages tiennent,
+          les revenus de remplacement et l'épargne salariale.
         etat: a_reprendre
         chantier: "138.18"
       - quoi: >-

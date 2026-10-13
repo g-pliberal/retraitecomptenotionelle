@@ -1,0 +1,172 @@
+schema_version: 1
+id: assiette_sociale_independants
+intitule: >-
+  Pour les périodes courant à compter du 1er janvier 2025, les cotisations et la
+  CSG d'un travailleur indépendant non agricole sont assises sur son revenu
+  d'activité avant cotisations, diminué d'un abattement de 26 % qui ne peut être
+  ni inférieur à 1,76 % ni supérieur à 130 % du plafond de la sécurité sociale ;
+  l'assiette inclut ses revenus de remplacement et exclut son épargne salariale.
+domaine: cotisations
+regimes: [regime_general, rci, cnavpl]
+etape: foyer_et_net
+face: cotisation
+etat: approchee
+lit:
+- le revenu de l'année de l'indépendant, qui est son assiette sociale, telle que le
+  relevé de carrière la porte et que la saisie la demande
+- le plafond de la sécurité sociale de l'année (macro/plafond_securite_sociale.csv)
+- >-
+  la règle d'abattement, dans legislation/prelevements_remuneration.yaml, profil
+  independant, assiette_abattue
+ecrit:
+- l'assiette sociale que donne un revenu brut, et le revenu brut d'où vient une
+  assiette, que le profil de la fiche de paie de l'indépendant sait calculer
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: revenu_professionnel
+  statut: lue
+  textes:
+  - id: LEGIARTI000048683641
+    article: L. 136-3 CSS
+    en_vigueur: 2023-12-28
+    citation: >-
+      « ces dispositions s'appliquent au calcul des cotisations et des contributions
+      dues par les travailleurs indépendants non agricoles autres que ceux mentionnés
+      à l'article L. 613-7 du code de la sécurité sociale au titre des périodes
+      courant à compter du 1er janvier 2025 »
+    lu_le: 2026-10-13
+  bornes:
+    revenu.annee: [null, 2025-01-01]
+  contenu:
+    droit: aucun
+    raison: >-
+      avant 2025, les cotisations sont assises sur le revenu professionnel, sans
+      abattement, et la CSG sur ce revenu majoré des cotisations ; c'est ce revenu
+      que la carrière porte
+  exemples: aucun trouvé
+- id: assiette_abattue_2025
+  statut: lue
+  nee_de: LEGIARTI000048683641
+  textes:
+  - id: LEGIARTI000048683641
+    article: L. 136-3 CSS
+    en_vigueur: 2023-12-28
+    citation: >-
+      « III.-L'assiette résultant de l'application des I et II du présent article fait
+      l'objet d'un abattement de 26 % » ; loi n° 2023-1250 du 26 décembre 2023,
+      article 18, VII : « au titre des périodes courant à compter du 1er janvier 2025 »
+    lu_le: 2026-10-13
+  - id: LEGIARTI000051284498
+    article: L. 136-3 CSS
+    en_vigueur: 2025-02-28
+    citation: >-
+      « III.-L'assiette résultant de l'application des I et II du présent article fait
+      l'objet d'un abattement de 26 %. Toutefois, cet abattement ne peut être ni
+      inférieur à un montant plancher, fixé par décret, […] ni supérieur à un montant
+      plafond fixé, également par décret »
+    lu_le: 2026-10-13
+  - id: LEGIARTI000049899286
+    article: D. 136-5 CSS
+    en_vigueur: 2024-07-07
+    citation: >-
+      « I. - Le montant plancher prévu au III de l'article L. 136-3 est fixé à 1,76 %
+      de la valeur annuelle du plafond de la sécurité sociale […]. II. - Le montant
+      plafond mentionné au III de l'article L. 136-3 est fixé à 130 % de la valeur
+      annuelle du plafond de la sécurité sociale »
+    lu_le: 2026-10-13
+  - id: LEGIARTI000048683707
+    article: L. 131-6 CSS
+    en_vigueur: 2023-12-28
+    citation: >-
+      « Les cotisations de sécurité sociale dues par les travailleurs indépendants non
+      agricoles ne relevant pas du dispositif prévu à l'article L. 613-7 sont assises
+      sur l'assiette définie à l'article L. 136-3. En sont toutefois déduites les
+      sommes mentionnées aux articles L. 3312-4, L. 3324-5 et L. 3332-27 du code du
+      travail […]. Cette assiette inclut également le montant des revenus de
+      remplacement sans lien avec une affection de longue durée »
+    lu_le: 2026-10-13
+  bornes:
+    revenu.annee: [2025-01-01, null]
+  contenu:
+    droit: >-
+      assiette = revenu brut − abattement, l'abattement valant 26 % du revenu brut,
+      borné entre 1,76 % et 130 % du plafond de l'année ; nulle sous le plancher
+    parametres:
+      taux: 0.26
+      plancher_en_plafonds: 0.0176
+      plafond_en_plafonds: 1.30
+  exemples: aucun trouvé
+approximations:
+- version: assiette_abattue_2025
+  ecart: >-
+    la saisie du simulateur et la carrière portent l'assiette déjà abattue, et le
+    modèle ne la tire pas d'un revenu brut : le profil de la fiche de paie sait le
+    faire, dans les deux moteurs, sans que la saisie s'en serve encore
+  effet: >-
+    aucun sur les droits, que la caisse calcule sur l'assiette ; tout tient à ce que
+    l'assuré saisit
+- version: assiette_abattue_2025
+  ecart: >-
+    le revenu disponible de la fiche de paie est l'assiette moins ses prélèvements,
+    et non le revenu brut moins ses prélèvements
+  effet: >-
+    en 2026, pour une assiette de 20 000, 40 000 et 80 000 € d'un artisan, la fiche
+    affiche 12 166, 22 947 et 47 315 € de revenu disponible, quand le revenu brut
+    en laisse 19 193, 37 001 et 75 423 € : 58 à 61 % de moins, mesuré le
+    13 octobre 2026
+- version: assiette_abattue_2025
+  ecart: >-
+    ni les revenus de remplacement que l'assiette inclut (indemnités journalières,
+    allocation journalière du proche aidant), ni l'épargne salariale qu'elle déduit
+    (L. 131-6)
+  effet: non mesuré
+- version: assiette_abattue_2025
+  ecart: >-
+    les indépendants agricoles, abattus pour les périodes courant depuis 2026 (D.
+    136-5), relèvent de la MSA et n'ont pas ce profil ; le micro-entrepreneur (L.
+    613-7) n'est pas concerné
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-13
+  prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    Un exemple chiffré publié par l'Urssaf ou la Cnav, à rejouer : ni la page de la
+    réforme d'impots.gouv.fr ni les fiches lues le 13 octobre 2026 n'en donnent.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 136-3 CSS (LEGIARTI000048683641, LEGIARTI000051284498), D. 136-5 CSS
+      (LEGIARTI000049899286), L. 131-6 CSS (LEGIARTI000048683707), lus dans l'index
+      LEGI du dépôt
+    date: 2026-10-13
+  - type: autre
+    reference: >-
+      impots.gouv.fr, « La réforme de l'assiette sociale » : un « abattement
+      forfaitaire de 26 % », appliqué par les caisses, « applicable à compter des
+      revenus 2025 » ; aucun exemple chiffré
+    url: https://www.impots.gouv.fr/la-reforme-de-lassiette-sociale
+    date: 2026-10-13
+code:
+  python: >-
+    remuneration.py : AssietteAbattue, ProfilRemuneration.assiette_abattue et
+    revenu_avant_abattement
+  javascript: >-
+    moteur/js/remuneration.js : ProfilRemuneration.assietteAbattue et
+    revenuAvantAbattement
+  parametres: legislation/prelevements_remuneration.yaml, profils.independant.assiette_abattue
+  tests: tests/test_independants.py
+referents:
+  modele_ti: calcule l'assiette sociale depuis le revenu brut, ses bornes et les revenus de remplacement compris
+historique:
+- >-
+  2026-10-13 — née avec l'action 138, étape 18 : le dépôt demandait l'assiette déjà
+  abattue sans connaître l'abattement ; ses deux moteurs savent depuis passer du
+  revenu brut à l'assiette et retour, et la fiche mesure ce que le revenu
+  disponible de la fiche de paie en laisse dehors.
+effet: >-
+  Les indépendants non agricoles, pour leurs revenus depuis 2025 : rien sur leurs
+  droits, que la caisse calcule sur l'assiette que la carrière porte ; leur revenu
+  disponible, que la fiche de paie tire de l'assiette, est sous-estimé de l'abattement
+  (58 à 61 % en 2026).

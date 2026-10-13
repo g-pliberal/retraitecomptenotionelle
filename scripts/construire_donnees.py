@@ -1843,6 +1843,14 @@ def _prelevements_remuneration() -> dict:
                 for poste in fiche.postes
             ],
             "reduction_generale": reduction(fiche.reduction_generale),
+            # L'abattement de l'assiette sociale de l'indépendant (L. 136-3).
+            "assiette_abattue": (
+                None if fiche.abattement_assiette is None else {
+                    "depuis": fiche.abattement_assiette.depuis,
+                    "taux": fiche.abattement_assiette.taux,
+                    "plancher_en_plafonds": fiche.abattement_assiette.plancher_en_plafonds,
+                    "plafond_en_plafonds": fiche.abattement_assiette.plafond_en_plafonds,
+                }),
         }
 
     return {

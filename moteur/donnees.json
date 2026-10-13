@@ -34311,6 +34311,7 @@ null
 "agent_seul":{
 "abattement_frais":[{"bas":0.0,"haut":4.0,"taux":0.0175},{"bas":4.0,"haut":null,"taux":0.0}],
 "annee":2026,
+"assiette_abattue":null,
 "code":"agent_seul",
 "cout_du_travail":false,
 "crds":0.005,
@@ -34327,6 +34328,7 @@ null
 "independant":{
 "abattement_frais":[],
 "annee":2026,
+"assiette_abattue":{"depuis":2025,"plafond_en_plafonds":1.3,"plancher_en_plafonds":0.0176,"taux":0.26},
 "code":"independant",
 "cout_du_travail":false,
 "crds":0.005,
@@ -34392,6 +34394,7 @@ null
 "salarie_ircantec":{
 "abattement_frais":[{"bas":0.0,"haut":4.0,"taux":0.0175},{"bas":4.0,"haut":null,"taux":0.0}],
 "annee":2026,
+"assiette_abattue":null,
 "code":"salarie_ircantec",
 "cout_du_travail":true,
 "crds":0.005,
@@ -34489,6 +34492,7 @@ null
 "salarie_prive":{
 "abattement_frais":[{"bas":0.0,"haut":4.0,"taux":0.0175},{"bas":4.0,"haut":null,"taux":0.0}],
 "annee":2026,
+"assiette_abattue":null,
 "code":"salarie_prive",
 "cout_du_travail":true,
 "crds":0.005,
