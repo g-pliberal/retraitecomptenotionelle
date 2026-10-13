@@ -2380,7 +2380,7 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
         # déplace donc aucun chiffre existant.
         borne_basse, borne_haute = periode.bornes_assiette_en_euros(
             moteur.macro.plafond_securite_sociale(ligne.annee)
-            * ligne.fraction_annee
+            * ligne.fraction_annee, ligne.annee
         )
         if borne_basse > 0:
             revenu = max(0.0, min(revenu, borne_haute or revenu) - borne_basse)

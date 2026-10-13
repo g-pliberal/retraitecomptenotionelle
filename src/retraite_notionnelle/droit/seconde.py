@@ -336,7 +336,7 @@ def _seconde_retraite_complementaire(moteur: ScenarioActuel, salaires: dict[int,
         plafond = macro.plafond_securite_sociale(annee)
         tranche_1 = next(
             (p for p in moteur.catalogue[AGIRC_ARRCO].periodes_actives(annee)
-             if p.bornes_assiette_en_euros(plafond)[0] == 0), None)
+             if p.bornes_assiette_en_euros(plafond, annee)[0] == 0), None)
         prix = _prix_du_point(moteur, annee)
         if tranche_1 is None or prix is None:
             continue

@@ -306,11 +306,18 @@ class Segment:
     plafonnée, comme la contribution d'équilibre technique. Une forme cumulative
     — « jusqu'à tant de plafonds » — ne saurait pas les représenter, et c'est
     pour cela que celle-ci est explicite.
+
+    Une borne que le régime fixe en euros pour l'année — le plafond propre du
+    RCI de 2013 à 2024, ``PeriodeRegime.bornes_de_l_annee`` — prime sur celle
+    en plafonds : ``bas_euros``, ``haut_euros``, en euros ANNUELS, comme le
+    plafond que la fiche reçoit.
     """
 
     bas_en_plafonds: float
     haut_en_plafonds: float | None
     taux: float
+    bas_euros: float | None = None
+    haut_euros: float | None = None
 
 
 def _montant(segments: tuple[Segment, ...], assiette: float,
@@ -320,9 +327,14 @@ def _montant(segments: tuple[Segment, ...], assiette: float,
     for segment in segments:
         if segment.taux == 0.0:
             continue
-        bas = segment.bas_en_plafonds * plafond_annuel
-        haut = (assiette if segment.haut_en_plafonds is None
-                else min(assiette, segment.haut_en_plafonds * plafond_annuel))
+        bas = (segment.bas_en_plafonds * plafond_annuel
+               if segment.bas_euros is None else segment.bas_euros)
+        if segment.haut_euros is not None:
+            haut = min(assiette, segment.haut_euros)
+        elif segment.haut_en_plafonds is None:
+            haut = assiette
+        else:
+            haut = min(assiette, segment.haut_en_plafonds * plafond_annuel)
         if haut > bas:
             total += (haut - bas) * segment.taux
     return total
@@ -1319,12 +1331,16 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
         employeur: list[Segment] = []
         for periode in regime.periodes_actives(annee):
             basse, haute = periode.bornes_assiette_en_pass()
+            # Le plafond propre du RCI, fixé en euros pour l'année.
+            basse_euros, haute_euros = periode.bornes_de_l_annee(annee)
             part = 1.0 if sans_employeur else periode.part_salariale
             traitement = 1.0 - part_primes if periode.assiette == "hors_primes" else 1.0
             taux = (periode.taux_cotisation_retraite or 0.0) * traitement
             if taux:
-                salarie.append(Segment(basse, haute, taux * part))
-                employeur.append(Segment(basse, haute, taux * (1.0 - part)))
+                salarie.append(Segment(basse, haute, taux * part,
+                                       basse_euros, haute_euros))
+                employeur.append(Segment(basse, haute, taux * (1.0 - part),
+                                         basse_euros, haute_euros))
             # Les retenues et contributions supplémentaires du policier, de
             # l'aide-soignant et du sapeur-pompier professionnel, chacune sur
             # son assiette, en taux de la rémunération entière, comme le

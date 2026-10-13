@@ -345,7 +345,7 @@ export class ConstructeurCompte {
    */
   _bornesProratisees(periode, annee, fraction) {
     const [basse, haute] = periode.bornesAssietteEnEuros(
-      this.macro.plafond_securite_sociale.valeur(annee),
+      this.macro.plafond_securite_sociale.valeur(annee), annee,
     );
     if (fraction >= 1.0) {
       return [basse, haute];

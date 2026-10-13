@@ -95,10 +95,17 @@ function montant(segments, assiette, plafondAnnuel) {
     if (segment.taux === 0) {
       continue;
     }
-    const bas = segment.bas * plafondAnnuel;
-    const haut = segment.haut === null
-      ? assiette
-      : Math.min(assiette, segment.haut * plafondAnnuel);
+    // Une borne que le régime fixe en euros pour l'année — le plafond propre
+    // du RCI de 2013 à 2024 — prime sur celle en plafonds.
+    const bas = segment.basEuros ?? segment.bas * plafondAnnuel;
+    let haut;
+    if (segment.hautEuros !== null && segment.hautEuros !== undefined) {
+      haut = Math.min(assiette, segment.hautEuros);
+    } else {
+      haut = segment.haut === null
+        ? assiette
+        : Math.min(assiette, segment.haut * plafondAnnuel);
+    }
     if (haut > bas) {
       total += (haut - bas) * segment.taux;
     }
@@ -777,12 +784,16 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
     const employeur = [];
     for (const periode of regime.periodesActives(annee)) {
       const [basse, haute] = periode.bornesAssietteEnPass();
+      // Le plafond propre du RCI, fixé en euros pour l'année.
+      const [basEuros, hautEuros] = periode.bornesDeLAnnee(annee);
       const part = sansEmployeur ? 1 : periode.part_salariale;
       const traitement = periode.assiette === "hors_primes" ? 1 - partPrimes : 1;
       const taux = (periode.taux_cotisation_retraite || 0) * traitement;
       if (taux) {
-        salarie.push({ bas: basse, haut: haute, taux: taux * part });
-        employeur.push({ bas: basse, haut: haute, taux: taux * (1 - part) });
+        salarie.push({ bas: basse, haut: haute, taux: taux * part, basEuros, hautEuros });
+        employeur.push({
+          bas: basse, haut: haute, taux: taux * (1 - part), basEuros, hautEuros,
+        });
       }
       // Les retenues et contributions supplémentaires du policier, de
       // l'aide-soignant et du sapeur-pompier professionnel, chacune sur son

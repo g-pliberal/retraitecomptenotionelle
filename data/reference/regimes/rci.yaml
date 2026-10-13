@@ -42,9 +42,24 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee
+    # Le plafond propre de la première tranche, que la caisse publie chaque
+    # année : fiche `rci_seuil_premiere_tranche`, qui cite la source de chacun.
+    borne_haute_par_annee:
+      2013: 37032
+      2014: 37513
+      2015: 37513
+      2016: 37546
+      2017: 37546
+      2018: 37846
+      2019: 37960
+      2020: 38340
+      2021: 38493
+      2022: 38916
+      2023: 40784
+      2024: 42946
     taux_cotisation_retraite: 0.0700
     notes: >-
-      D. 635-7, état du 1er janvier 2013 : première tranche, 7 % sous le plafond de la Sécurité sociale. La fiche ne portait que ce taux-là et s'arrêtait au plafond : la seconde tranche, annoncée en note, n'était portée par aucune période et ne prélevait donc rien.
+      D. 635-7, état du 1er janvier 2013 : première tranche, 7 % jusqu'à un plafond PROPRE AU RÉGIME, et non au plafond de la Sécurité sociale de l'année — celui du 1er janvier 2013, 37 032 €, puis « indexé sur la dernière valeur du revenu de référence, dans la limite du coefficient annuel de revalorisation des pensions » (LEGIARTI000025263581, 000034624601), puis revalorisé « du plus petit » des deux coefficients (LEGIARTI000041966498, depuis le 25 mai 2020). 42 946 € en 2024, quand le plafond de la Sécurité sociale valait 46 368 €. Les montants de `borne_haute_par_annee` sont ceux que la caisse a publiés, non recalculés ; jusqu'au 13 octobre 2026, la fiche coupait au plafond de la Sécurité sociale. La fiche ne portait d'abord que ce taux-là et s'arrêtait au plafond : la seconde tranche, annoncée en note, n'était portée par aucune période et ne prélevait donc rien.
       LES ÂGES ET LA DURÉE SE LISENT À LA GÉNÉRATION : le règlement du régime
       (arrêté du 9 février 2012, LEGIARTI000025397326) liquide les points
       à l'âge légal de l'article L. 161-17-2, sans abattement pour qui
@@ -68,9 +83,23 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: tranche_1_4_pass
+    # La seconde tranche part du plafond propre de la première.
+    borne_basse_par_annee:
+      2013: 37032
+      2014: 37513
+      2015: 37513
+      2016: 37546
+      2017: 37546
+      2018: 37846
+      2019: 37960
+      2020: 38340
+      2021: 38493
+      2022: 38916
+      2023: 40784
+      2024: 42946
     taux_cotisation_retraite: 0.0800
     notes: >-
-      D. 635-7, même état : seconde tranche, 8 % au-delà du plafond et jusqu'à quatre fois celui-ci.
+      D. 635-7, même état : seconde tranche, 8 % « pour la part du revenu d'activité excédant le seuil fixé au 1° », le plafond propre au régime, « dans la limite de quatre fois la valeur du plafond de la sécurité sociale » — celui de l'année, cette fois.
   - debut: 2025
     fin: null
     type_calcul: points
@@ -89,7 +118,7 @@ periodes:
     assiette: plafonnee
     taux_cotisation_retraite: 0.0810
     notes: >-
-      D. 635-7, état du 7 juillet 2024, qui porte la première tranche à 8,1 %. La DATE DE L'ÉTAT N'EST PAS CELLE DE L'EFFET : l'article précise que, conformément à l'article 6 du décret n° 2024-688 du 5 juillet 2024, ces dispositions s'appliquent aux cotisations « dues au titre des périodes courant à compter du 1er janvier 2025 ». C'est la seule clause de ce genre parmi les états lus.
+      D. 635-7, état du 7 juillet 2024, qui porte la première tranche à 8,1 % et l'arrête au « plafond annuel prévu au premier alinéa de l'article L. 241-3 » : le plafond propre au régime disparaît du texte. Les circulaires Cnav 2024-36 et 2025-31 publient pourtant encore un « plafond de cotisation RCI » pour 2025 et 2026, 43 891 et 44 286 €, en citant la rédaction abrogée de l'article ; la fiche suit le texte (fiche `rci_seuil_premiere_tranche`). La DATE DE L'ÉTAT N'EST PAS CELLE DE L'EFFET : l'article précise que, conformément à l'article 6 du décret n° 2024-688 du 5 juillet 2024, ces dispositions s'appliquent aux cotisations « dues au titre des périodes courant à compter du 1er janvier 2025 ». C'est la seule clause de ce genre parmi les états lus.
   - debut: 2025
     fin: null
     type_calcul: points

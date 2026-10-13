@@ -2,38 +2,214 @@ schema_version: 1
 id: rci_seuil_premiere_tranche
 intitule: >-
   De 2013 à 2024, la première tranche du RCI (7 %) s'arrête à un plafond propre
-  au régime — le plafond de la sécurité sociale de 2013, puis revalorisé du plus
-  petit des coefficients du revenu de référence et des pensions —, et non au plafond
-  de chaque année.
-etat: manquante
-effet: >-
-  Artisans et commerçants au-dessus du seuil, de 2014 à 2024 : la fiche coupe la
-  première tranche au plafond de chaque année (46 368 € en 2024), le texte à un
-  seuil plus bas (42 946 €), au-delà duquel le taux est de 8 % et non de 7. Sur
-  la tranche d'écart, un point de cotisation de moins : en 2024, une trentaine d'euros
-  de cotisation et deux euros de pension par an, moins d'un millième de la pension
-  RCI.
+  au régime — le plafond de la sécurité sociale de 2013, puis revalorisé chaque
+  année du plus petit des coefficients du revenu de référence et des pensions —,
+  et la seconde (8 %) part de lui jusqu'à quatre plafonds de la sécurité sociale
+  de l'année ; depuis 2025, la première tranche s'arrête au plafond de la sécurité
+  sociale.
+domaine: cotisations
+regimes: [rci]
+etape: acquerir_les_droits
+face: cotisation
+etat: transcrite
+lit:
+- le revenu porté au compte du RCI chaque année, et la part de l'année où l'assuré y
+  est affilié
+- le plafond propre de l'année, tel que la caisse l'a publié (regimes/rci.yaml,
+  borne_haute_par_annee et borne_basse_par_annee)
+- le plafond de la sécurité sociale de l'année (macro/plafond_securite_sociale.csv)
+ecrit:
+- l'assiette de chaque tranche du RCI, donc la cotisation et les points de l'année au
+  scénario 1, la cotisation que le compte notionnel porte et ce que la fiche de paie
+  prélève
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: avant_le_rci
+  statut: lue
+  textes:
+  - id: LEGIARTI000025263581
+    article: D. 635-7 CSS
+    en_vigueur: 2013-01-01
+    citation: >-
+      « Le taux de la cotisation annuelle du régime complémentaire obligatoire
+      d'assurance vieillesse des professions artisanales, industrielles et
+      commerciales est fixé à »
+    lu_le: 2026-10-13
+  bornes:
+    revenu.annee: [null, 2013-01-01]
+  contenu:
+    droit: aucun
+    raison: >-
+      le RCI naît le 1er janvier 2013 de la fusion de la complémentaire des artisans
+      et de celle des commerçants, dont les fiches portent les tranches (rco_artisans,
+      nric)
+  exemples: aucun trouvé
+- id: plafond_de_2013_indexe
+  statut: lue
+  textes:
+  - id: LEGIARTI000025263581
+    article: D. 635-7 CSS
+    en_vigueur: 2013-01-01
+    citation: >-
+      « 1° 7,0 % pour la part du revenu d'activité n'excédant pas le plafond prévu au
+      quatrième alinéa du présent article ; 2° 8,0 % pour la part du revenu d'activité
+      excédant le seuil fixé au 1°, dans la limite de quatre fois la valeur du plafond
+      de la sécurité sociale » ; « Au titre de l'exercice 2013, le montant du plafond
+      mentionné au 1° est fixé au plafond annuel prévu à l'article L. 241-3 en vigueur
+      au 1er janvier 2013. Pour les années suivantes, ce montant est indexé sur la
+      dernière valeur du revenu de référence, dans la limite du coefficient annuel de
+      revalorisation des pensions » ; « En cas de période d'affiliation inférieure à
+      une année, la valeur du plafond mentionné au 1° est réduite au prorata de la
+      durée d'affiliation »
+    lu_le: 2026-10-13
+  - id: LEGIARTI000034624601
+    article: D. 635-7 CSS
+    en_vigueur: 2017-05-06
+    lu_le: 2026-10-13
+  - reference: >-
+      barèmes IPP, « Cotisation de sécurité sociale pour la retraite complémentaire
+      des indépendants artisans-commerçants » : 37 032 € au 1er janvier 2013
+      (circulaire RSI 2013-004), 37 513 € en 2014, 37 546 € en 2016, 37 846 € en
+      2018, 37 960 € en 2019 (service-public), 38 340 € en 2020
+      (secu-independants.fr)
+    lu_le: 2026-10-13
+  - reference: >-
+      Harvest, fiche « RSI - Cotisations au régime complémentaire » : « soit 37 513 €
+      pour 2015 » ; RSI, brochure vieillesse de Saint-Pierre-et-Miquelon (2016) :
+      37 546 € en 2016 ; Legisocial, « Assiettes et cotisations des travailleurs
+      indépendants en 2017 » : « 7 % des revenus d'activité annuels dans la limite de
+      37.546 € » ; CPS de Saint-Barthélemy, barème artisan et commerçant 2020 : «
+      Plafond de retraite complémentaire des Indépendants 2020 : 38 340€ »
+    lu_le: 2026-10-13
+  bornes:
+    revenu.annee: [2013-01-01, 2021-01-01]
+  contenu:
+    droit: >-
+      7 % jusqu'au plafond propre de l'année, 8 % au-delà jusqu'à quatre plafonds de
+      la sécurité sociale de l'année ; le plafond propre réduit au prorata de la durée
+      d'affiliation quand l'année n'est pas entière
+    parametres:
+      plafond_propre: {2013: 37032, 2014: 37513, 2015: 37513, 2016: 37546,
+                       2017: 37546, 2018: 37846, 2019: 37960, 2020: 38340}
+  exemples: aucun trouvé
+- id: plus_petit_des_coefficients
+  statut: lue
+  textes:
+  - id: LEGIARTI000041966498
+    article: D. 635-7 CSS
+    en_vigueur: 2020-05-25
+    citation: >-
+      « Pour les années suivantes, ce montant est revalorisé par application du plus
+      petit des coefficients de revalorisation annuels d'une part du revenu de
+      référence mentionné au deuxième alinéa de l'article D. 635-9 et d'autre part des
+      pensions dans les conditions prévues à l'article L. 161-23-1 »
+    lu_le: 2026-10-13
+  - reference: >-
+      circulaires Cnav 2020-42 du 23 décembre 2020, 2021-36 du 21 décembre 2021,
+      2022-37 du 20 décembre 2022 et 2023-33 du 28 décembre 2023, « Le plafond de
+      cotisation RCI » : 38 493 €, 38 916 €, 40 784 € et 42 946 € au 1er janvier de
+      2021, 2022, 2023 et 2024
+    lu_le: 2026-10-13
+  bornes:
+    revenu.annee: [2021-01-01, 2025-01-01]
+  contenu:
+    droit: >-
+      les mêmes tranches, le plafond propre revalorisé du plus petit des deux
+      coefficients
+    parametres:
+      plafond_propre: {2021: 38493, 2022: 38916, 2023: 40784, 2024: 42946}
+  exemples: aucun trouvé
+- id: plafond_de_la_securite_sociale
+  statut: lue
+  nee_de: LEGIARTI000049904623
+  textes:
+  - id: LEGIARTI000049904623
+    article: D. 635-7 CSS
+    en_vigueur: 2024-07-07
+    citation: >-
+      « ces dispositions s'appliquent au calcul des cotisations et des contributions
+      dues par les travailleurs indépendants non agricoles […] au titre des périodes
+      courant à compter du 1er janvier 2025 » ; « 1° 8,1 % pour la part de l'assiette
+      de cotisations n'excédant pas le plafond annuel prévu au premier alinéa de
+      l'article L. 241-3 ; 2° 9,1 % pour la part de l'assiette de cotisations excédant
+      le seuil fixé au 1°, dans la limite de de quatre fois le plafond annuel »
+    lu_le: 2026-10-13
+  bornes:
+    revenu.annee: [2025-01-01, null]
+  contenu:
+    droit: >-
+      8,1 % jusqu'au plafond de la sécurité sociale de l'année, 9,1 % au-delà jusqu'à
+      quatre plafonds : le plafond propre disparaît du texte
+  exemples: aucun trouvé
+approximations: []
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-10-13
   prochaine_relecture: 2027-06-30
+  lectures_divergentes:
+  - >-
+    Les circulaires Cnav 2024-36 du 19 décembre 2024 et 2025-31 du 22 décembre 2025
+    publient encore un « plafond de cotisation RCI », 43 891 € pour 2025 et 44 286 €
+    pour 2026, en citant la rédaction de D. 635-7 qu'a remplacée celle du 7 juillet
+    2024, que l'Urssaf n'applique plus (8,1 % jusqu'au plafond de 48 060 € en 2026,
+    selon les barèmes publiés de Weblex et de Generali). La fiche suit le texte.
   a_relire:
   - >-
-    Lire la série des seuils de 2014 à 2023, que le COR ne publie que pour 2024,
-    et porter une assiette propre à la première tranche.
+    Lire les publications du RSI de 2014, 2015, 2018 et 2019, dont les montants ne
+    sont ici lus que chez des tiers (barème IPP, Harvest, Legisocial).
+  - >-
+    À quoi sert le plafond que la Cnav publie encore pour 2025 et 2026 : aux
+    cotisations provisionnelles de 2025, appelées avant que la réforme de l'assiette
+    ne s'applique à la régularisation ?
   lectures:
   - type: legifrance
     reference: >-
-      D. 635-7 CSS, LEGIARTI000025263581 (2013), LEGIARTI000034624601 (2017), LEGIARTI000041966498
-      (2020) : « Au titre de l'exercice 2013, le montant du plafond mentionné au
-      1° est fixé au plafond annuel […] en vigueur au 1er janvier 2013 »
-    date: 2026-09-23
+      D. 635-7 CSS, LEGIARTI000025263581 (2013), LEGIARTI000034624601 (2017),
+      LEGIARTI000041966498 (2020), LEGIARTI000049904623 (2024), lus dans l'index LEGI
+      du dépôt
+    date: 2026-10-13
+  - type: circulaire_cnav
+    reference: >-
+      circulaires 2020-42, 2021-36, 2022-37, 2023-33, 2024-36 et 2025-31, « Le
+      plafond de cotisation RCI »
+    url: https://legislation.lassuranceretraite.fr/
+    date: 2026-10-13
+  - type: autre
+    reference: >-
+      barèmes IPP, cotisation de retraite complémentaire des artisans-commerçants
+    url: >-
+      https://baremes.ipp.eu/parameters/prelevements-sociaux/prelevements_sociaux.cotisations_taxes_independants_artisans_commercants.ret_comp_ac/table
+    date: 2026-10-13
   - type: autre
     reference: >-
       COR, fiche « Régime complémentaire des indépendants » (juillet 2024) : 7 %
       « jusqu'à un plafond spécifique (42 946 euros) » en 2024
     url: https://www.cor-retraites.fr/sites/default/files/2024-07/Fiche_RCI_0.pdf
     date: 2026-09-23
-textes_a_rattacher:
-- reference: D. 635-7 CSS, versions du 1er janvier 2013 au 6 juillet 2024
+code:
+  python: >-
+    donnees/regimes.py : PeriodeRegime.bornes_assiette_en_euros et bornes_de_l_annee ;
+    droit/acquerir.py (les points du scénario 1), moteur/compte.py
+    (Compte._bornes_proratisees), remuneration.py (bloc_droit_en_vigueur, Segment)
+  javascript: >-
+    moteur/js/regimes.js : PeriodeRegime.bornesAssietteEnEuros et bornesDeLAnnee ;
+    moteur/js/droit/acquerir.js, moteur/js/compte.js, moteur/js/remuneration.js
+    (blocDroitEnVigueur, montant)
+  parametres: regimes/rci.yaml, borne_haute_par_annee et borne_basse_par_annee
+  tests: tests/test_independants.py
+referents:
+  modele_social: porte le plafond de 2021 à 2025, dont 43 891 € pour 2025
+  devcrafting_retraites: arrête la première tranche à 37 846 €, mais part du plafond de la sécurité sociale pour la seconde
+historique:
+- >-
+  2026-10-13 — action 138, étape 18 : la fiche coupait la première tranche au
+  plafond de la sécurité sociale de chaque année, et la passe au plafond propre que
+  la caisse a publié, de 2013 à 2024.
 reformes:
 - rci_2013
+effet: >-
+  Artisans et commerçants dont le revenu dépasse le plafond propre, de 2014 à 2024 :
+  un point de cotisation de plus sur la part comprise entre lui et le plafond de la
+  sécurité sociale, 3 422 € en 2024. Pour un artisan né en 1960, parti à 64 ans, la
+  pension RCI gagne 0,2 à 0,5 % — 12 à 14 € par an — dès que son revenu passe ce
+  plafond.

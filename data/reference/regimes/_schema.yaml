@@ -780,6 +780,19 @@ champs_periode:
       43 992 à 48 060 €. Les exprimer en plafonds les ferait dériver.
       `null` : les bornes de `assiette` s'appliquent.
 
+  borne_basse_par_annee:
+  borne_haute_par_annee:
+    description: >-
+      Bornes de l'assiette EN EUROS, ANNÉE PAR ANNÉE, sous la forme
+      `{année: euros}` : la borne que le régime fixe lui-même chaque année,
+      qui ne suit ni le plafond de la Sécurité sociale ni un montant figé.
+      C'est le plafond propre de la première tranche du RCI de 2013 à 2024
+      (D. 635-7), 42 946 € en 2024 quand le plafond valait 46 368 € : la
+      première tranche le porte en borne haute, la seconde en borne basse.
+      Chaque montant remplace, l'année qu'il nomme, la borne que donne
+      `assiette` ; la période doit couvrir chacune de ses années. Absent :
+      les bornes de `assiette` s'appliquent.
+
   pension_forfaitaire_annuelle:
   pension_forfaitaire_annee:
     description: >-

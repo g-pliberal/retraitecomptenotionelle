@@ -1687,7 +1687,7 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
     // partent de zéro passent par `plafonner` comme avant.
     const [borneBasse, borneHaute] = periode.bornesAssietteEnEuros(
       moteur.macro.plafond_securite_sociale.valeur(ligne.annee)
-        * ligne.fraction_annee,
+        * ligne.fraction_annee, ligne.annee,
     );
     if (borneBasse > 0) {
       revenu = Math.max(0.0, Math.min(revenu, borneHaute || revenu) - borneBasse);

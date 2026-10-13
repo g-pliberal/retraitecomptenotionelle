@@ -6611,8 +6611,14 @@ referents:
           année vaut la précédente revalorisée comme les pensions
           (+1,1 %, +4,8 %, +5,3 %, +2,2 %), règle de D. 635-7
           (LEGIARTI000041966498). La page Cnav qu'il cite
-          (application JavaScript) n'a pas pu être lue.
-        etat: a_reprendre
+          (application JavaScript) n'a pas pu être lue. Repris le
+          13 octobre 2026 (action 138, étape 18) sur les circulaires
+          Cnav 2020-42 à 2023-33, qui donnent les mêmes montants de
+          2021 à 2024 : `rci.yaml` coupe ses deux tranches au plafond
+          propre de 2013 à 2024, dans les deux moteurs. 2025 reste au
+          plafond de la sécurité sociale, comme le veut le texte du
+          7 juillet 2024, que la circulaire 2024-36 contredit.
+        etat: repris
         chantier: "138.18"
       - quoi: >-
           Il porte le salarié de Mayotte : vieillesse 5,54 %
@@ -7806,7 +7812,11 @@ referents:
           252070, février 2025) donne encore 7 et 8 % et un plafond
           RCI de 43 891 €, contre la version de 2024 du texte
           (LEGIARTI000049904623) : à relire avant de couper 2025.
-        etat: a_reprendre
+          Repris le 13 octobre 2026 (action 138, étape 18) : 37 846 €
+          est le plafond de 2018 ; `rci.yaml` porte celui de chaque
+          année de 2013 à 2024, la seconde tranche partant de lui
+          (fiche `rci_seuil_premiere_tranche`).
+        etat: repris
         chantier: "138.18"
       - quoi: >-
           Son taux de remplacement net retire 10,1 % à l'Agirc-Arrco

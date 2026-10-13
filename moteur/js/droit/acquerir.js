@@ -311,7 +311,8 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
         // le plafond lui-même.
         const passPlein = moteur.macro.plafond_securite_sociale.valeur(ligne.annee);
         const pass = passPlein * part;
-        let [borneBasse, borneHaute] = periode.bornesAssietteEnEuros(passPlein);
+        let [borneBasse, borneHaute] = periode.bornesAssietteEnEuros(
+          passPlein, ligne.annee);
         if (part < 1.0) {
           borneBasse *= part;
           borneHaute = borneHaute === null ? null : borneHaute * part;

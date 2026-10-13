@@ -275,7 +275,7 @@ function secondeRetraiteComplementaire(moteur, salaires, periode, dateEffet) {
   for (const [annee, salaire] of salaires) {
     const plafond = macro.plafond_securite_sociale.valeur(annee);
     const tranche1 = moteur.catalogue.obtenir(AGIRC_ARRCO).periodesActives(annee)
-      .find((p) => p.bornesAssietteEnEuros(plafond)[0] === 0);
+      .find((p) => p.bornesAssietteEnEuros(plafond, annee)[0] === 0);
     const prix = prixDuPoint(moteur, annee);
     if (tranche1 === undefined || prix === null) continue;
     const [reference, tauxAppel] = prix;

@@ -153,6 +153,12 @@ def _points_gratuits(fiche: dict | None) -> PointsGratuits | None:
     )
 
 
+def _bornes_par_annee(fiche: dict | None) -> tuple[tuple[int, float], ...]:
+    """``{2013: 37032, …}`` en paires (année, euros) triées ; ``()`` sans elles."""
+    return tuple(sorted((int(annee), float(euros))
+                        for annee, euros in (fiche or {}).items()))
+
+
 @dataclass(frozen=True)
 class PeriodeRegime:
     """Jeu de paramètres d'un régime sur une plage d'années."""
@@ -625,6 +631,16 @@ class PeriodeRegime:
     #: création du régime : voir :class:`PointsGratuits`. ``None`` partout
     #: ailleurs qu'à la RCO des non-salariés agricoles.
     points_gratuits: PointsGratuits | None = None
+    #: BORNES EN EUROS, ANNÉE PAR ANNÉE : celle que le régime fixe lui-même
+    #: chaque année, et qui ne suit ni le plafond de la Sécurité sociale ni un
+    #: montant figé. C'est le plafond propre de la première tranche du RCI de
+    #: 2013 à 2024 (D. 635-7) : le plafond de 2013, revalorisé chaque année du
+    #: plus petit des coefficients du revenu de référence et des pensions —
+    #: 42 946 € en 2024, quand le plafond de la Sécurité sociale valait
+    #: 46 368 €. Paires (année, euros) : chacune remplace, l'année qu'elle
+    #: nomme, la borne que donne ``assiette``.
+    borne_basse_par_annee: tuple[tuple[int, float], ...] = ()
+    borne_haute_par_annee: tuple[tuple[int, float], ...] = ()
     notes: str = ""
 
     @property
@@ -698,20 +714,41 @@ class PeriodeRegime:
         return BORNES_ASSIETTE.get(self.assiette, (0.0, None))
 
     def bornes_assiette_en_euros(
-        self, pass_annuel: float
+        self, pass_annuel: float, annee: int | None = None
     ) -> tuple[float, float | None]:
         """Bornes de l'assiette en euros de l'année, quelle que soit leur forme.
 
         Les bornes en euros priment quand la fiche en porte : un régime qui fixe
         ses tranches en euros et ne les indexe pas ne peut pas être décrit en
-        multiples d'un plafond qui, lui, suit les salaires.
+        multiples d'un plafond qui, lui, suit les salaires. Une borne fixée
+        ANNÉE PAR ANNÉE remplace, l'année qu'elle nomme, celle de l'assiette :
+        la période qui en porte exige donc ``annee``, faute de quoi elle
+        retomberait sans bruit sur le plafond de la Sécurité sociale.
         """
         if (self.borne_basse_euros is not None
                 or self.borne_haute_euros is not None):
             return self.borne_basse_euros or 0.0, self.borne_haute_euros
         borne_basse, borne_haute = self.bornes_assiette_en_pass()
-        return (borne_basse * pass_annuel,
-                None if borne_haute is None else borne_haute * pass_annuel)
+        basse = borne_basse * pass_annuel
+        haute = None if borne_haute is None else borne_haute * pass_annuel
+        if self.borne_basse_par_annee or self.borne_haute_par_annee:
+            if annee is None:
+                raise ValueError(
+                    f"{self.regime} {self.debut} : les bornes de l'assiette se "
+                    "fixent année par année, et l'année n'est pas donnée")
+            basse_de_l_annee, haute_de_l_annee = self.bornes_de_l_annee(annee)
+            if basse_de_l_annee is not None:
+                basse = basse_de_l_annee
+            if haute_de_l_annee is not None:
+                haute = haute_de_l_annee
+        return basse, haute
+
+    def bornes_de_l_annee(self, annee: int) -> tuple[float | None, float | None]:
+        """Les bornes en euros que la fiche fixe pour ``annee`` seule, ou
+        ``None`` : celles de ``borne_basse_par_annee`` et
+        ``borne_haute_par_annee``, que la fiche de paie lit aussi."""
+        return (dict(self.borne_basse_par_annee).get(annee),
+                dict(self.borne_haute_par_annee).get(annee))
 
 
 @dataclass
@@ -1748,6 +1785,8 @@ class CatalogueRegimes:
                     None if p.get("borne_haute_euros") is None
                     else float(p["borne_haute_euros"])
                 ),
+                borne_basse_par_annee=_bornes_par_annee(p.get("borne_basse_par_annee")),
+                borne_haute_par_annee=_bornes_par_annee(p.get("borne_haute_par_annee")),
                 pension_forfaitaire_annuelle=(
                     None if p.get("pension_forfaitaire_annuelle") is None
                     else float(p["pension_forfaitaire_annuelle"])

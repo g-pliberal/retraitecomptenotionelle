@@ -477,7 +477,7 @@ class ConstructeurCompte:
         les atteint qu'à proportion.
         """
         basse, haute = periode.bornes_assiette_en_euros(
-            self.macro.plafond_securite_sociale(annee)
+            self.macro.plafond_securite_sociale(annee), annee
         )
         if fraction >= 1.0:
             return basse, haute

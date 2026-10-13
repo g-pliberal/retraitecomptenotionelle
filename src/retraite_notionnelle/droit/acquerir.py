@@ -403,7 +403,7 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     moteur.macro.plafond_securite_sociale(ligne.annee) * part
                 )
                 borne_basse, borne_haute = periode.bornes_assiette_en_euros(
-                    moteur.macro.plafond_securite_sociale(ligne.annee)
+                    moteur.macro.plafond_securite_sociale(ligne.annee), ligne.annee
                 )
                 if part < 1.0:
                     borne_basse *= part

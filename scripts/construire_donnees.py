@@ -754,6 +754,8 @@ def _regimes() -> list[dict]:
                         p.trimestres_maximum_leve_avant_age),
                     "borne_basse_euros": p.borne_basse_euros,
                     "borne_haute_euros": p.borne_haute_euros,
+                    "borne_basse_par_annee": dict(p.borne_basse_par_annee) or None,
+                    "borne_haute_par_annee": dict(p.borne_haute_par_annee) or None,
                     "pension_forfaitaire_annuelle": p.pension_forfaitaire_annuelle,
                     "pension_forfaitaire_annee": p.pension_forfaitaire_annee,
                     "assiette_repere_smic": p.assiette_repere_smic,

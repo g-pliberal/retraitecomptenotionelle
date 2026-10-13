@@ -2010,8 +2010,11 @@ export class PeriodeRegime {
    * ses tranches en euros et ne les indexe pas — la complémentaire des avocats,
    * 42 507 € de 2023 à 2026 quand le plafond passait de 43 992 à 48 060 € — ne
    * peut pas être décrit en multiples d'un plafond qui, lui, suit les salaires.
+   * Une borne fixée ANNÉE PAR ANNÉE — le plafond propre du RCI de 2013 à 2024 —
+   * remplace, l'année qu'elle nomme, celle de l'assiette : la période qui en
+   * porte exige donc `annee`.
    */
-  bornesAssietteEnEuros(pass) {
+  bornesAssietteEnEuros(pass, annee = null) {
     const basse = this.borne_basse_euros;
     const haute = this.borne_haute_euros;
     if ((basse !== null && basse !== undefined)
@@ -2019,7 +2022,28 @@ export class PeriodeRegime {
       return [basse ?? 0.0, haute ?? null];
     }
     const [borneBasse, borneHaute] = this.bornesAssietteEnPass();
-    return [borneBasse * pass, borneHaute === null ? null : borneHaute * pass];
+    let enEurosBasse = borneBasse * pass;
+    let enEurosHaute = borneHaute === null ? null : borneHaute * pass;
+    if (this.borne_basse_par_annee || this.borne_haute_par_annee) {
+      if (annee === null || annee === undefined) {
+        throw new Error(`${this.regime} ${this.debut} : les bornes de l'assiette `
+          + "se fixent année par année, et l'année n'est pas donnée");
+      }
+      const [basseDeLAnnee, hauteDeLAnnee] = this.bornesDeLAnnee(annee);
+      if (basseDeLAnnee !== null) enEurosBasse = basseDeLAnnee;
+      if (hauteDeLAnnee !== null) enEurosHaute = hauteDeLAnnee;
+    }
+    return [enEurosBasse, enEurosHaute];
+  }
+
+  /**
+   * Les bornes en euros que la fiche fixe pour `annee` seule, ou `null` :
+   * celles de `borne_basse_par_annee` et `borne_haute_par_annee`, que la fiche
+   * de paie lit aussi.
+   */
+  bornesDeLAnnee(annee) {
+    return [this.borne_basse_par_annee?.[annee] ?? null,
+      this.borne_haute_par_annee?.[annee] ?? null];
   }
 
   /** Assiette qui ouvre droit à ``points_maximum`` points. */
