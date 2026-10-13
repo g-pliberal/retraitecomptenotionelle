@@ -20,6 +20,18 @@ consulte: >-
   au 13 décembre 2022 (CAFAT) ; le code des pensions de retraites des fonctionnaires
   consolidé au 1er janvier 2025 (Caisse locale de retraites). L'avis n° 24/2022 du CESE
   de la Nouvelle-Calédonie.
+  CRPN : décret n° 2011-1500, article 26, ses deux rédactions (LEGIARTI000024779267,
+  LEGIARTI000044496248) ; décret n° 2021-1637 au Journal officiel (JORFTEXT000044488061,
+  articles 1er et 2) ; R. 426-11 du code de l'aviation civile du 1er janvier 2012 au
+  31 octobre 2023 (LEGIARTI000024795153, LEGIARTI000044496243).
+  CRPCEN : décret n° 90-1215, article 84 (LEGIARTI000047910068).
+  Comédie-Française : décret n° 68-960, articles 6, 7, 12, 14 et 51, toutes leurs
+  rédactions depuis 2008 (LEGIARTI000018253625 à LEGIARTI000048031549) ; décret
+  n° 2011-1134, articles 1er à 14, dans LEGI et au Journal officiel.
+  Députés : le règlement de leur caisse, document servi par l'Assemblée nationale le
+  13 octobre 2026 à l'adresse www2.assemblee-nationale.fr/static/CRD-janvier-2018.pdf.
+  Fonction publique : loi n° 2003-775, article 66 (LEGIARTI000006758610) ; les tables par
+  génération d'OpenFisca-France-Pension (scripts/fetch/openfisca_parametres_generation.py).
 trouve: >-
   Saint-Pierre-et-Miquelon : l'âge et la durée suivent la génération depuis les pensions
   prenant effet au 1er juillet 2016, en trois rédactions — celle de l'ordonnance de
@@ -42,6 +54,21 @@ trouve: >-
   (délibération n° 59/CP du 24 février 2022 ; loi du pays n° 2024-10, article
   Lp. 221-1) ; la durée de 2023 de la CAFAT est de 142 trimestres, et l'âge de la Caisse
   locale atteint 62 ans en 2028, non en 2030 comme dans l'avant-projet.
+  CRPN : depuis 2022, le navigant né avant 1971 qui part à 55 ans ou plus a le taux plein
+  avec 21 annuités jusqu'à la génération 1962, puis une de plus par génération ; la
+  rédaction d'origine du III, à l'année d'effet, n'a jamais servi. Table crpn_2022,
+  colonne age_minimum, réforme navigants_2022. De 2012 à 2020, les conditions montent à
+  l'année d'effet (I et II de l'article 26).
+  CRPCEN : déjà juste, l'âge à la génération et la durée à la date des conditions.
+  Comédie-Française : 62 ans à compter de la génération 1962 seulement, 60 ans avant 1957
+  (article 51, I, A) ; la durée au calendrier de 2008, puis par génération à compter du
+  1er juillet 2019, lue à soixante ans ; la suspension de 2026 ne la touche pas.
+  Députés : l'âge à la génération, les annuités et leur valeur à l'âge d'ouverture
+  (article 21 ter) ; le document de l'Assemblée porte la suspension de 2026 pour les nés
+  du 1er janvier 1964 au 31 mars 1965.
+  Fonction publique : « Jusqu'en 2003 ; 150 » se lit à l'année d'ouverture du droit — le
+  fonctionnaire dont le droit s'est ouvert avant 2004 garde 150 trimestres même s'il part
+  après ; OpenFisca ne porte pas cette ligne.
 reste: >-
   Saint-Pierre-et-Miquelon : l'âge du taux plein des générations 1958 à 1961 depuis le
   1er septembre 2023 (67 ans à lire L. 351-8 mot à mot, l'âge d'avant dans les tables,
@@ -52,5 +79,10 @@ reste: >-
   réforme de 2019 (1,5 % par trimestre avant l'âge légal, 0,5 % par trimestre manquant,
   jusqu'à 65 ans) ; le texte même de la loi du pays, à lire sur Lexpol.
   Nouvelle-Calédonie : le droit acquis de la CAFAT (article 3, 3°) ; la durée de
-  services et les minorations de la Caisse locale. Puis les cinq autres fiches, dans
-  l'ordre du bloc de l'action 121.
+  services et les minorations de la Caisse locale. CRPN : les conditions de 2012 à 2021,
+  que le moteur ne sait pas décompter. Comédie-Française : les machinistes (article 6,
+  2°), la coupure du 1er juillet 2008. Députés : l'arrêté des Questeurs et le règlement
+  du Sénat, non publiés. Et les dix-sept régimes que le test de la règle de chacun
+  déclare à relire : l'Opéra de Paris, la Banque de France, la MSA des non-salariés, la
+  CNAVPL, la CNBF, la CAVIMAC, le CESE, la CARMF, l'ASV, la CARPIMKO, la CPRN, la
+  Comédie-Française d'avant 1993 et cinq complémentaires avant 1983.

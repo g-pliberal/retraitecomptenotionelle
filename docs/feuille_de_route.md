@@ -2257,16 +2257,16 @@ les cultes, `data/reference/legislation/affiliations.yaml`,
 
 ### 121. Le droit de chacun, et non celui de la génération de l'année : toutes les personnes vivantes — `en cours`
 
-**Reprise, au 13 octobre 2026.** Fait : la SNCF, la RATP et les IEG, puis
-Saint-Pierre-et-Miquelon et Mayotte (tables `spm_*` et `mayotte_*`), la
-Polynésie et la Nouvelle-Calédonie (âge à l'année du départ, textes lus).
-Restent cinq fiches, à commencer par `crpnpac`, puis `crpnpac_tranche_2`,
-`crpcen`, `comedie_francaise`, `assemblees_parlementaires`. Pour chacune,
-texte en main : l'âge suit-il la génération ou l'année ? si la génération, sa
-table ; la durée suit-elle la date des conditions réunies, celle de l'effet ou
-la génération ? Enfin le test : une règle datée valable pour toute génération
-de 1920 à ce jour. Détail : `121/2026-10-13-dix-fiches.md`, et « Ce qui reste,
-fiche par fiche ».
+**Reprise, au 13 octobre 2026.** Les dix fiches sont faites, texte en main, et
+le test de la fin aussi (`tests/test_regle_de_chacun.py`) : de 1920 à 2005,
+l'âge et la durée de chacun quelle que soit l'année de son départ, sauf texte
+déclaré. Restent les dix-sept régimes qu'il déclare `A_RELIRE`, à commencer par
+l'Opéra de Paris et la Banque de France, réformés en 2008 comme la
+Comédie-Française ; puis la MSA des non-salariés, la CNAVPL, la CNBF, la
+CAVIMAC, le CESE, la CARMF, l'ASV, la CARPIMKO, la CPRN, la Comédie-Française
+d'avant 1993 et cinq complémentaires d'avant 1983. Pour chacun : année d'effet
+(le déclarer) ou génération (le corriger) ? Détail :
+`121/2026-10-13-dix-fiches.md`, « Le test ».
 
 **Demande.** « Il faut prendre en compte la loi applicable pour tout le monde
 et pas seulement pour les derniers entrants ou sortants » ; « il faut aussi

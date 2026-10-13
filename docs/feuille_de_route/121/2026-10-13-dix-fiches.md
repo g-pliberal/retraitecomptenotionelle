@@ -1,18 +1,24 @@
 # Les dix fiches qui restaient : l'âge et la durée de chacun, texte en main
 
-**Le 13 octobre 2026, Saint-Pierre-et-Miquelon et Mayotte : leurs âges, leurs
-durées et leurs coefficients de minoration se lisent à la génération, dans les
-tables que leurs textes écrivent, et chaque période nomme celles de la rédaction
-en vigueur à sa date d'effet. La Polynésie, elle, date sa réforme de 2019 à
-l'année du départ : ses fiches gagnent les trois années de montée en charge
-qu'elles sautaient. Une Saint-Pierraise née en 1956 partie en 2020 doit
-152 trimestres, et non les 158 de la génération 1959 ; un Mahorais né en 1958
-parti en 2020, 132 et non 136. Là où le droit suit l'année d'effet — la durée
-transitoire de l'archipel jusqu'en 1997, l'âge, la durée et le taux plein de
-Mayotte de 2003 à 2011 ou 2017 —, les périodes restent annuelles.**
+**Le 13 octobre 2026, les dix fiches, texte en main. Saint-Pierre-et-Miquelon,
+Mayotte, la Comédie-Française et les députés lisent leurs âges à la génération,
+et leur durée à la génération ou à la date où les conditions sont réunies, dans
+les tables que leurs textes écrivent, comme la CRPCEN le faisait déjà ; la
+CRPN gagne le dispositif de ses navigants nés avant 1971. La Polynésie et la
+Nouvelle-Calédonie, elles, comptent à l'année du départ : leurs périodes
+annuelles sont la bonne écriture. Un test balaie toutes les générations de 1920
+à 2005 et déclare chaque régime dont la règle change avec l'année du départ ;
+il a trouvé la fonction publique, qui rendait 157 trimestres au lieu de 150 au
+fonctionnaire dont le droit s'était ouvert avant 2004. Une Saint-Pierraise née
+en 1956 partie en 2020 doit 152 trimestres, et non 158 ; une sociétaire de la
+Comédie-Française née en 1955 part à soixante ans ; un navigant né en 1965
+parti à cinquante-sept ans avec vingt-cinq annuités n'a plus de décote.**
 
 Demande du propriétaire : « Action 121 : reprends à la fiche
-cps_saint_pierre_et_miquelon, puis les suivantes, dans l'ordre du bloc. »
+cps_saint_pierre_et_miquelon, puis les suivantes, dans l'ordre du bloc. » Et :
+« une seule session tient pages.js et index.html. N'y écris pas ; ce qui
+devrait s'écrire dans les pages, mets-le dans ta note » — voir « Pour les
+pages ».
 
 ## Saint-Pierre-et-Miquelon
 
@@ -210,3 +216,140 @@ cps_saint_pierre_et_miquelon, puis les suivantes, dans l'ordre du bloc. »
   par an jusqu'à 35 ans) et les minorations, que le code renvoie à une
   délibération, lues dans la seule page de la direction de la fonction
   publique.
+
+## La CRPN, tranches 1 et 2
+
+- *Ce que les textes disent.* L'article 26 du décret n° 2011-1500, dans ses
+  deux rédactions (LEGIARTI000024779267, puis LEGIARTI000044496248 du décret
+  n° 2021-1637), et R. 426-11 du code de l'aviation civile de 2012 au
+  31 octobre 2023 (LEGIARTI000024795153, LEGIARTI000044496243), lus dans
+  l'index LEGI. De 2012 à 2020, l'âge, les annuités et leur somme qui ouvrent
+  le taux plein montent à l'ANNÉE d'effet de la pension (I et II : 50 ans et
+  6 mois, 26 annuités et une somme de 76 en 2012, jusqu'à 54 ans et 6 mois,
+  30 annuités et 80 en 2020), et la décote se compte, avant cinquante-cinq
+  ans, sur le plus grand des deux manques. Depuis 2022, la durée seule : trente
+  annuités. Mais le III, dans la rédaction de 2021, y déroge par GÉNÉRATION :
+  « pour les personnes nées avant le 1er janvier 1971, lorsque la liquidation
+  est effectuée à compter de l'âge de cinquante-cinq ans », 21 annuités
+  jusqu'à la génération 1962, une de plus par génération, 29 pour 1970. Sa
+  rédaction d'origine comptait à l'année d'effet, 26 annuités en 2022 et une
+  de plus par an : remplacée avant d'avoir servi.
+- *Ce qui est écrit.* La table `crpn_2022`
+  (`legislation/duree_requise_regimes_speciaux.csv`) garde 120 trimestres et
+  retranche à la cible de la décote 36 trimestres pour 1962, quatre de moins
+  par génération ; la colonne `age_minimum`, nouvelle, la réserve à qui part à
+  cinquante-cinq ans ou plus. Le moteur la lit dans le décompte par la durée
+  seule (`trimestres_de_decote`, `ligne` de `DureesRequisesRegimes`, et leurs
+  jumeaux), la proratisation gardant ses trente annuités. Réforme
+  `navigants_2022` au calendrier ; la fiche de règle `decote_crpn` relue.
+- *Ce que ça déplace.* Un navigant né en 1965 parti en 2022 à cinquante-sept ans
+  avec vingt-cinq annuités n'a plus de décote, au lieu de 25 % ; né en 1970, il
+  perd seize trimestres et non vingt ; parti à cinquante-quatre ans, rien ne
+  change. Le portage rend les mêmes chiffres que le Python sur huit carrières.
+- *Ce qui reste.* Les conditions de 2012 à 2021, à l'année d'effet : le moteur
+  n'a pas de décompte par la somme de l'âge et des annuités. Le décompte au
+  jour près.
+
+## La CRPCEN : rien à changer
+
+- *Ce que les textes disent.* L'article 84 du décret n° 90-1215 écrit ses âges
+  par génération dans toutes ses rédactions ; l'article 85-2 lit la durée à la
+  date des conditions réunies, puis par génération.
+- *Ce qui est écrit.* Déjà tout : `age_table: crpcen_2011` puis `crpcen_2023`,
+  le calendrier de 2008 et les tables `crpcen_2014` et `crpcen_2023`, l'âge de
+  référence de 2025 avec le droit acquis de l'article 85-2, II. Les périodes
+  annuelles de 2008 à 2024 ne portent plus que des valeurs de repli. Les
+  rédactions de 2008 et de 2011 de l'article 84 donnent le même âge à toutes
+  les générations qui pouvaient partir avant le 19 septembre 2011 : la table de
+  2011 vaut pour ces années-là aussi.
+
+## La Comédie-Française
+
+- *Ce que les textes disent.* Le décret n° 68-960, lu dans l'index LEGI. Son
+  article 6, depuis le décret n° 2011-1134 : 62 ans pour les artistes et les
+  employés, 57 pour les machinistes et les pompiers ; mais son article 51, I, A
+  ne donne 62 ans qu'à compter de la génération 1962, 60 ans avant 1957, quatre
+  mois de plus par génération entre les deux, et le B fait de même de 55 à
+  57 ans. La décote s'annule à l'âge d'ouverture « majoré de cinq ans »
+  (article 12, II, 1°). La durée, à son article 12, V, dans ses cinq rédactions
+  de 2008 à 2016 : le calendrier de 2008, à la date où les conditions sont
+  réunies ; depuis la rédaction du décret n° 2014-666, applicable en 2017, une
+  table par génération à compter du 1er juillet 2019, lue à soixante ans (VI).
+- *Ce qui est écrit.* Tables `comedie_francaise_2011` (âges) et
+  `comedie_francaise_2014` (durée, `age_de_lecture` 60), calendrier
+  `regimes_speciaux_2008` dès la période de 2009. La suspension de 2026 ne la
+  touche pas : déclarée au calendrier des réformes.
+- *Ce que ça déplace.* Une sociétaire née en 1955 part à soixante ans en 2015,
+  ce que la fiche lui refusait (62 ans pour tous dès 2012), et doit 162
+  trimestres, non les 166 de la table commune ; une née en 1949 partie en 2009,
+  152 et non 161. Le portage rend les mêmes chiffres sur douze carrières.
+- *Ce qui reste.* Le 2° de l'article 6, les machinistes, non modélisé. La
+  coupure au 1er juillet 2008 : les pensions du second semestre 2008 gardent
+  150 trimestres au lieu de 151, comme à la CRPCEN, à la SNCF et à la RATP. Le
+  calendrier signale la rédaction de 2017 de l'article 12, que nulle période ne
+  coupe : elle écrit dans le décret ce que le VI de l'article 5 de la loi de
+  2003 y portait par renvoi, sans changer un paramètre ; et le pivot de la
+  fiche nomme cet article `age_ouverture` quand il porte la durée.
+
+## Les assemblées parlementaires
+
+- *Ce que les textes disent.* Le règlement de la caisse des députés, relu dans
+  le document que l'Assemblée sert à la même adresse, consolidé après la loi du
+  14 avril 2023 et la suspension de 2026 : l'âge « de manière croissante à
+  raison de trois mois par génération », 64 ans à compter de 1969, par arrêté
+  des Questeurs non publié (article 8) ; et la valeur de l'annuité et le
+  nombre maximal d'annuités « en vigueur à l'âge d'ouverture » pour les nés de
+  1949 à 1968, au soixante-quatrième anniversaire après (article 21 ter). Ni
+  décote ni surcote.
+- *Ce qui est écrit.* La table d'âges `assemblee_nationale` (celle de
+  L. 161-17-2, que le règlement décrit), le calendrier du même nom
+  (`legislation/duree_requise_calendriers.csv`) lu au mois où l'âge d'ouverture
+  est atteint. Vingt et une périodes annuelles deviennent huit, une par
+  retenue.
+- *Ce que ça déplace.* Un député né en 1953, dont le droit s'ouvre en mars 2014
+  et qui part en 2018, doit 165 trimestres et non 167. La fiche donnait 62 ans
+  et 3 mois à la génération 1962 : c'est 62 ans et 6 mois. Le portage rend les
+  mêmes chiffres sur dix carrières.
+- *Ce qui reste.* L'arrêté des Questeurs, le règlement du Sénat et celui des
+  fonctionnaires des assemblées, non publiés.
+
+## Le test : la règle de chacun, de 1920 à 2005
+
+`tests/test_regle_de_chacun.py`, niveau `controle` (dix-huit secondes). Pour
+tout statut et toute génération de 1920 à 2005, partie de cinquante à
+soixante-dix ans, il vérifie qu'une période répond dans tout régime ouvert,
+et que l'âge d'ouverture et la durée requise ne dépendent pas de l'année du
+départ, une fois l'âge atteint. Les régimes dont le texte compte à l'année
+d'effet se déclarent avec leurs années de bascule (`A_L_ANNEE_D_EFFET` : la
+Polynésie, la Nouvelle-Calédonie, Mayotte jusqu'en 2017, Saint-Pierre-et-Miquelon
+jusqu'en 1998, la CRPN en 2012) ; une bascule hors de ces années échoue, et une
+déclaration qui ne sert plus aussi.
+
+Il a trouvé, dès son premier passage, la fonction publique : la table de
+l'article 66, II, de la loi de 2003 ne commençait qu'en 2004, et le droit
+ouvert avant, liquidé après, retombait sur la table par génération. Un
+fonctionnaire né en 1940, dont le droit s'ouvre en 2000 et qui part en 2004,
+devait 157 trimestres au lieu de 150. Le moteur lit désormais, pour un droit
+ouvert avant la table, la durée de la période où il s'est ouvert (« Jusqu'en
+2003 ; 150 »), dans l'État, la CNRACL et le FSPOEIE. La ligne de 2003 n'est pas
+ajoutée à la table : OpenFisca, qui la certifie, ne la porte pas.
+
+Restent dix-sept régimes, déclarés `A_RELIRE` avec ce que le relevé en montre :
+l'Opéra de Paris (la durée de la table commune depuis 2009, et non le
+calendrier de 2008 des régimes spéciaux), la Banque de France (une période par
+année jusqu'en 2025, et la durée empruntée à la fonction publique), la MSA des
+non-salariés, la CNAVPL et la CNBF (2004), la CAVIMAC (2007), le CESE, la
+CARMF et l'ASV (2017), la CARPIMKO (2016), la CPRN (64 ans de 2014 à 2023), la
+Comédie-Française d'avant 1993, et les complémentaires des générations 1920 à
+1922 avant 1983. Chacun, texte en main, sort du registre en devenant juste ou
+en passant à `A_L_ANNEE_D_EFFET`.
+
+## Pour les pages
+
+Rien n'est écrit dans `pages.js` ni dans `index.html`. La méthode (« Ce que le
+système 1 applique du droit en vigueur », `methodeDroitPositif`) dit « cinq
+paramètres lus à la génération plutôt qu'à l'année de liquidation » : elle
+devrait dire aussi que la durée des régimes spéciaux, de la fonction publique
+de 2004 à 2008 et des députés se lit à la date où l'assuré réunit les
+conditions, et que la Polynésie, la Nouvelle-Calédonie et Mayotte jusqu'en
+2017 comptent à l'année d'effet de la pension, comme leurs textes l'écrivent.
