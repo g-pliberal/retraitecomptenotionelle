@@ -40,6 +40,12 @@ mensuelle. Trois tableaux servent au dépôt, et ce script les lit :
   tableau laisse des cellules vides que la lecture ligne à ligne ne saurait
   replacer sans deviner.
 
+Un quatrième, qui n'est pas une bonification : **les taux de contribution
+employeur** depuis 2000 — tableau 14 de l'édition 2027, 12 de celle de 2026,
+reconnu à son titre —, l'État, la CNRACL, le FSPOEIE et le droit commun. Le
+dépôt en tire la seule série qu'il n'avait pas, celle du FSPOEIE (action 159,
+étape 3) ; les autres colonnes recoupent ses séries, et restent au JSON.
+
 **LE DOCUMENT NE SE TÉLÉCHARGE PAS DEPUIS UNE SESSION** : ``budget.gouv.fr``
 refuse les adresses de sortie du proxy. Mais l'annexe est déposée au
 Parlement, et l'Assemblée nationale sert le même fichier, octet pour octet :
@@ -62,7 +68,8 @@ JSON écrit ici et verse les trois tableaux, à plat, dans
 ``certifiee`` — clé (tableau, ligne, population, mesure). Les fiches de
 ``avantages_non_contributifs.yaml`` y renvoient par leur champ
 ``denombrement``, et un test exige que chaque chiffre qu'elles citent du
-jaune soit une valeur de leurs lignes.
+jaune soit une valeur de leurs lignes. La colonne du FSPOEIE va, elle, dans
+``data/reference/legislation/contribution_employeur_public.csv``.
 
 **CE QUE ``--confronter`` PROUVE EN PLUS.** Les valeurs du jaune ont d'abord
 été saisies à l'écran dans les notes des fiches. ``--confronter`` relit chaque
@@ -131,6 +138,18 @@ BLOCS_50 = ("proportion", "gain_trimestres", "gain_mensuel_eur")
 #: Les colonnes du tableau B-1.
 COLONNES_B1 = ("fpe_civils_hors_poste_orange", "fpe_civils", "fpe_militaires", "fpe_total",
                "ouvriers_etat", "fpt", "fph", "cnracl_total")
+#: Les colonnes du tableau des taux de contribution employeur — 14 dans
+#: l'édition 2027, 12 dans celle de 2026 —, dans l'ordre du document : les
+#: trois taux de l'État (civils, allocation temporaire d'invalidité,
+#: militaires), la CNRACL, le FSPOEIE et le droit commun d'un non-cadre (Cnav
+#: et Arrco). Avant 2006, l'État n'appelait rien : la ligne n'a que les trois
+#: dernières.
+COLONNES_EMPLOYEUR = ("fpe_civils", "fpe_ati", "fpe_militaires", "cnracl", "fspoeie",
+                      "droit_commun_non_cadre")
+#: Le titre du tableau, sans accents : son numéro change d'une édition à l'autre.
+TITRE_EMPLOYEUR = "taux de contribution employeur des fonctionnaires et des ouvriers"
+LIGNE_ANNEE = re.compile(r"^((?:19|20)\d\d) ")
+TAUX = re.compile(r"(\d+,\d+) ?%")
 
 #: Un nombre du document : milliers séparés d'une espace insécable (le lecteur
 #: PDF garde la fine du jaune comme telle) ou, dans une note saisie, d'une
@@ -305,6 +324,29 @@ def tableau_b1(pages: list[list[str]]) -> dict:
     return lu
 
 
+def tableau_taux_employeur(pages: list[list[str]]) -> dict:
+    """Le tableau des taux de contribution employeur, une ligne par année
+    depuis 2000 : six taux, ou les trois derniers avant 2006. Les renvois du
+    document — « * », plus haut de 0,10 point en novembre et décembre 2012 ;
+    « ** », la moyenne de 2013 de l'État, que sa baisse de décembre abaisse —
+    ne sont pas des valeurs : le taux imprimé est lu tel quel."""
+    page = _page(pages, lambda ligne: ligne.startswith("tableau") and TITRE_EMPLOYEUR in ligne)
+    lu: dict = {}
+    for ligne in page:
+        annee = LIGNE_ANNEE.match(ligne.strip())
+        taux = TAUX.findall(ligne)
+        if annee is None or not taux:
+            continue
+        if len(taux) not in (len(COLONNES_EMPLOYEUR), 3):
+            raise ValueError(f"taux employeur, {annee.group(1)} : {len(taux)} taux lus "
+                             f"dans {ligne!r}")
+        colonnes = COLONNES_EMPLOYEUR[-len(taux):]
+        lu[annee.group(1)] = dict(zip(colonnes, (_valeur(t + "%") for t in taux), strict=True))
+    if not lu:
+        raise ValueError("taux employeur : aucune ligne d'année lue")
+    return lu
+
+
 def _pourcent(part: float) -> str:
     return f"{part * 100:.1f} %".replace(".", ",")
 
@@ -331,7 +373,8 @@ def incoherences_50(lu: dict) -> list[str]:
 
 def lire(octets: bytes, edition: int = EDITION) -> dict:
     pages = lignes_par_page(octets, par_abscisse=EDITIONS[edition]["par_abscisse"])
-    return {"A-7": tableau_a7(pages), "50": tableau_50(pages), "B-1": tableau_b1(pages)}
+    return {"A-7": tableau_a7(pages), "50": tableau_50(pages), "B-1": tableau_b1(pages),
+            "taux_employeur": tableau_taux_employeur(pages)}
 
 
 # -- confrontation aux valeurs saisies -----------------------------------------
@@ -378,7 +421,9 @@ def confronter(tables: dict, avantages: Path = AVANTAGES) -> tuple[list[str], li
     notes du YAML, selon qu'ils figurent ou non dans les tableaux lus."""
     import yaml
 
-    formes = _valeurs_du_document(tables)
+    # Les taux employeurs ne sont pas des bonifications : aucune note ne les
+    # cite, et un chiffre mal saisi ne doit pas s'y retrouver par hasard.
+    formes = _valeurs_du_document({k: v for k, v in tables.items() if k != "taux_employeur"})
     trouves: list[str] = []
     manquants: list[str] = []
     document = yaml.safe_load(avantages.read_text(encoding="utf-8"))
@@ -451,12 +496,13 @@ def main(argv: list[str] | None = None) -> int:
         "incoherences": incoherences,
         "tables": tables,
     }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    a7, b1 = tables["A-7"], tables["B-1"]
+    a7, b1, employeur = tables["A-7"], tables["B-1"], tables["taux_employeur"]
     effectif = f"{a7['effectif']['fpe_civils']:,}".replace(",", " ")
     print(f"{sortie.relative_to(RACINE)} : A-7, {len(a7['bonifications'])} bonifications × "
           f"{len(COLONNES_A7)} colonnes sur {effectif} pensions civiles de l'État ; "
           f"tableau 50, {len(BLOCS_50)} blocs × {len(POPULATIONS_50)} populations × "
-          f"{len(COLONNES_50)} colonnes ; B-1, {len(b1)} lignes complètes")
+          f"{len(COLONNES_50)} colonnes ; B-1, {len(b1)} lignes complètes ; taux employeurs, "
+          f"{min(employeur)}-{max(employeur)}")
     for message in incoherences:
         print(f"  INCOHÉRENT  {message}")
 

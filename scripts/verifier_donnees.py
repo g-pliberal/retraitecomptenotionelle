@@ -4470,6 +4470,26 @@ def source_employeur_comedie_francaise() -> dict[tuple, float]:
     return _employeur_du_journal_officiel("comedie_francaise")
 
 
+def source_employeur_fspoeie() -> dict[tuple, float]:
+    """Contribution de l'employeur au FSPOEIE, le régime des ouvriers de
+    l'État, 2000-2026.
+
+    Le tableau des taux de contribution employeur du jaune pensions annexé au
+    PLF 2027 (tableau 14), lu par ``scripts/fetch/sre_jaune_pensions.py`` :
+    24 % jusqu'en 2008, 27, 30 et 33 % de 2009 à 2011 (décret n° 2008-1328),
+    puis un taux arrimé à celui d'un non-cadre du privé, 35,01 % depuis 2019.
+    Le document est celui de l'État qui fixe ce taux, avec la Caisse des dépôts
+    qui gère le fonds. La subvention d'équilibre des ministères n'y est pas,
+    comme le dit sa note : ce n'est pas une cotisation d'employeur.
+    """
+    tables = _lire_json("sre_jaune_pensions_2027.json",
+                        "scripts/fetch/sre_jaune_pensions.py")["tables"]
+    return {
+        (annee, "fspoeie"): float(taux["fspoeie"])
+        for annee, taux in sorted(tables["taux_employeur"].items())
+    }
+
+
 def source_employeur_sncf() -> dict[tuple, float]:
     """Contribution employeur de la SNCF, T1 + T2, 2007-2018.
 
@@ -8609,6 +8629,22 @@ CERTIFICATIONS = (
         colonne="taux",
         source=source_employeur_comedie_francaise,
         origine="DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 7 II",
+        decimales=6,
+        tolerance=5e-7,
+        gabarit={"nature": "appelee"},
+    ),
+    # -- le FSPOEIE, sorti de la ligne « rien / tout » de limites.md ----------
+    # Le jaune pensions du PLF 2027 en publie la série depuis 2000, dans le
+    # tableau qui donne aussi celles de l'État et de la CNRACL (action 159,
+    # étape 3).
+    Certification(
+        nom="employeur_public_fspoeie",
+        chemin=REFERENCE / "legislation" / "contribution_employeur_public.csv",
+        cles=("annee", "regime"),
+        colonne="taux",
+        source=source_employeur_fspoeie,
+        origine="Direction du budget, jaune pensions annexé au PLF 2027, "
+                "tableau 14 (taux de contribution employeur)",
         decimales=6,
         tolerance=5e-7,
         gabarit={"nature": "appelee"},

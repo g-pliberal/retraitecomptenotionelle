@@ -244,3 +244,53 @@ def test_chaque_edition_a_son_jeu_du_manifeste_et_son_fichier():
     assert {e["identifiant"] for e in jaune.EDITIONS.values()} <= ids
     assert len({e["sortie"] for e in jaune.EDITIONS.values()}) == len(jaune.EDITIONS)
     assert jaune.IDENTIFIANT == jaune.EDITIONS[jaune.EDITION]["identifiant"]
+
+
+#: Le tableau des taux de contribution employeur, tel que le lecteur PDF le
+#: rend de l'édition 2027 (tableau 14) : trois taux avant 2006, six ensuite,
+#: les renvois « * » et « ** » collés ou non, « 35,01% » sans espace.
+PAGE_TAUX_EMPLOYEUR = [
+    "Tableau 14 : Taux de contribution employeur des fonctionnaires et des ouvriers d’État",
+    "* Ces taux sont plus élevés de 0,10 point en novembre et décembre, en application "
+    "du décret du 2 juillet 2012.",
+    "civils, et agents CNRACL FSPOEIE",
+    "Anne dtachs 49 au titre des ATI militaires cadre",
+    "2000 25,60 % 24,00 % 15,50 %",
+    "2012 68,59 % 0,33 % 121,55 % 27,30 % * 33,00 % * 15,60 % *",
+    "2013 71,78 % ** 0,32 % 126,07 % 28,85 % 33,23 % 15,70 %",
+    "2022 74,28 % 0,32 % 126,07 % 30,65 % 35,01% 16,46 %",
+    "2026 82,28 % 0,32 % 126,07 % 37,65 % 35,01% 16,67 %",
+    "** Taux moyen sur l’année, prenant en compte la baisse ponctuelle de décembre 2013.",
+    "En 2020, d’après l’échantillon interrégimes de retraités (EIR), la proportion de "
+    "polypensionnés, parmi les",
+]
+
+
+def test_le_tableau_des_taux_employeur_se_lit_par_annee():
+    """Six taux par année, les trois derniers avant 2006, quand l'État
+    n'appelait rien ; les renvois ne sont pas des valeurs, et une ligne de
+    texte qui commence par une année sans taux n'est pas une ligne du
+    tableau."""
+    lu = jaune.tableau_taux_employeur([PAGE_TAUX_EMPLOYEUR])
+    assert list(lu) == ["2000", "2012", "2013", "2022", "2026"]
+    assert lu["2000"] == {"cnracl": 0.256, "fspoeie": 0.24, "droit_commun_non_cadre": 0.155}
+    assert lu["2012"]["fspoeie"] == 0.33 and lu["2012"]["fpe_militaires"] == 1.2155
+    assert lu["2013"]["fpe_civils"] == 0.7178 and lu["2013"]["fspoeie"] == 0.3323
+    assert lu["2022"]["fspoeie"] == 0.3501
+    assert lu["2026"] == {"fpe_civils": 0.8228, "fpe_ati": 0.0032, "fpe_militaires": 1.2607,
+                          "cnracl": 0.3765, "fspoeie": 0.3501,
+                          "droit_commun_non_cadre": 0.1667}
+
+
+def test_le_tableau_des_taux_employeur_se_trouve_a_son_titre_et_refuse_une_ligne_boiteuse():
+    """Le numéro du tableau change d'une édition à l'autre — 12 en 2026, 14
+    en 2027 — : il se trouve à son titre. Une ligne qui n'a ni trois ni six
+    taux ne se range pas sans deviner : la lecture échoue."""
+    page_2026 = ["Tableau 12 : Taux de contribution employeur des fonctionnaires et des "
+                 "ouvriers d’État", *PAGE_TAUX_EMPLOYEUR[1:]]
+    assert jaune.tableau_taux_employeur([page_2026])["2026"]["fspoeie"] == 0.3501
+    with pytest.raises(ValueError, match="2014"):
+        jaune.tableau_taux_employeur([[*PAGE_TAUX_EMPLOYEUR, "2014 74,28 % 0,32 % 30,40 %"
+                                                             " 33,87 %"]])
+    with pytest.raises(LookupError):
+        jaune.tableau_taux_employeur([PAGE_A7])

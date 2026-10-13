@@ -645,6 +645,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
             "legislation/contribution_employeur_public.csv",
         "employeur_public_comedie_francaise":
             "legislation/contribution_employeur_public.csv",
+        # Le FSPOEIE depuis 2000, lu dans le tableau 14 du jaune pensions du
+        # PLF 2027 (action 159, étape 3).
+        "employeur_public_fspoeie":
+            "legislation/contribution_employeur_public.csv",
         # Le second taux de l'État, celui de ses militaires : un fichier à part,
         # lu dans les décrets qui le fixent.
         "employeur_public_etat_militaires":
@@ -2223,11 +2227,29 @@ def employeurs() -> ContributionsEmployeurPubliques:
 
 
 def test_les_regimes_publies_sont_charges(employeurs):
-    """Trois régimes hier, neuf aujourd'hui : six sont venus du Journal officiel."""
+    """Trois régimes hier, neuf aujourd'hui : cinq sont venus du Journal
+    officiel, le FSPOEIE du jaune pensions."""
     assert employeurs.regimes == (
-        "cnracl", "comedie_francaise", "fonction_publique_etat", "ieg", "mines",
-        "opera_de_paris", "ratp", "sncf",
+        "cnracl", "comedie_francaise", "fonction_publique_etat", "fspoeie", "ieg",
+        "mines", "opera_de_paris", "ratp", "sncf",
     )
+
+
+def test_le_fspoeie_vient_du_jaune_pensions_depuis_2000(employeurs):
+    """Le tableau 14 du jaune pensions annexé au PLF 2027 : 24 % jusqu'en
+    2008, les trois marches du décret n° 2008-1328, puis le taux arrimé à
+    celui d'un non-cadre du privé. Avant 2000, rien : le texte du jaune date
+    les taux de 1991 et de 1999 sans le jour de leur effet, et la part
+    patronale reste estimée."""
+    reperes = ((2000, 0.24), (2008, 0.24), (2009, 0.27), (2010, 0.30), (2011, 0.33),
+               (2012, 0.33), (2013, 0.3323), (2018, 0.3463), (2019, 0.3501), (2026, 0.3501))
+    for annee, attendu in reperes:
+        contribution = employeurs.taux("fspoeie", annee)
+        assert contribution.taux == pytest.approx(attendu), annee
+        assert contribution.nature == "appelee", annee
+        assert contribution.fiabilite is Fiabilite.CERTIFIEE, annee
+    assert employeurs.couverture("fspoeie") == (2000, 2026)
+    assert employeurs.taux("fspoeie", 1999) is None
 
 
 def test_les_six_series_lues_au_journal_officiel_sont_certifiees(employeurs):

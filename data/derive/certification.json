@@ -167,22 +167,22 @@
    "verifiee_le": "2026-10-13"
   },
   "bonifications_jaune_effectifs": {
-   "ajoutees": 68,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "41248d144041a7fe",
-   "identiques": 0,
+   "identiques": 68,
    "niveau": "certifiee",
    "source": "Direction du budget, jaune pensions annexé au PLF 2027 (données du Service des retraites de l'État, de la CNRACL et du FSPOEIE), tableaux A-7, 50 et B-1",
    "valeurs": 68,
    "verifiee_le": "2026-10-13"
   },
   "bonifications_jaune_taux": {
-   "ajoutees": 75,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "32b82c475b070cf1",
-   "identiques": 0,
+   "identiques": 75,
    "niveau": "certifiee",
    "source": "Direction du budget, jaune pensions annexé au PLF 2027, tableaux A-7 et 50 (durées et proportions)",
    "valeurs": 75,
@@ -583,6 +583,17 @@
    "source": "DILA, base LEGI, décrets fixant le taux de la contribution employeur de l'État pour les personnels militaires (n° 2006-23 à n° 2012-1507)",
    "valeurs": 21,
    "verifiee_le": "2026-09-24"
+  },
+  "employeur_public_fspoeie": {
+   "ajoutees": 27,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "6fe0df2c526baff4",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "Direction du budget, jaune pensions annexé au PLF 2027, tableau 14 (taux de contribution employeur)",
+   "valeurs": 27,
+   "verifiee_le": "2026-10-13"
   },
   "employeur_public_ieg": {
    "ajoutees": 0,

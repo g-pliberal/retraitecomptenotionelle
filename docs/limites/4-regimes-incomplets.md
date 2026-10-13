@@ -469,7 +469,7 @@ Les scénarios 4 et 5 ajoutent à la part salariale ce que verse l'employeur. Po
 un salarié du privé, la fiche du régime le porte — `part_salariale` en donne la
 répartition, recoupée à OpenFisca année par année. Pour un agent public, elle
 n'est dans aucune fiche : le modèle la lit dans
-`legislation/contribution_employeur_public.csv`, qui couvre aujourd'hui huit
+`legislation/contribution_employeur_public.csv`, qui couvre aujourd'hui neuf
 régimes, mais aucun sur toute sa durée. Partout ailleurs, la part patronale est
 **estimée** par l'effort d'un salarié du privé de la même année — jamais laissée
 à zéro, qui ferait retomber les scénarios 4 et 5 sur les 2 et 3 sans le dire —
@@ -485,7 +485,8 @@ est affiché sous la simulation.
 | IEG | 2005-2020 | 1946-2004, 2021- | avant 2005, EDF et GDF payaient les pensions directement ; après 2020, l'arrêté du 29 décembre 2021 remplace la fixation annuelle par une formule que la caisse applique sans la publier |
 | Mines | 1984-2026 | 1930-1983 | la base LEGI ne garde aucune version de l'article 52 du décret de 1946 avant le 1er janvier 1984 |
 | Opéra de Paris, Comédie-Française | 1992-2026 | 1930-1991 | même mur : les versions datées du décret qui fixe ces taux commencent au 1er juillet 1991 |
-| FSPOEIE, marins, CRPCEN, Banque de France, port de Strasbourg, SEITA, chemins de fer secondaires | rien | tout | aucune série de taux employeur trouvée sous une forme exploitable, sauf aux chemins de fer secondaires : les parts de l'exploitant, des autorités concédantes et de l'État y sont lues pour le 1er octobre 1954 (décret n° 54-953, article 2) et de 1984 à 1992 (décret n° 74-171, article 2), sans l'être de 1955 à 1983 ni portées au modèle (action 133, note du 13 octobre 2026). Pour ces sept régimes, la part patronale des scénarios 4 et 5 est celle d'un salarié du privé de la même année, et le modèle le dit |
+| FSPOEIE | 2000-2026 | 1930-1999 | le jaune pensions annexé au PLF 2027 publie la série depuis 2000 (tableau 14) ; son texte date les deux taux d'avant, de 1991 et de 1999, sans le jour où chacun a pris effet, que le décret qui les fixe dirait (action 159, étape 3) |
+| Marins, CRPCEN, Banque de France, port de Strasbourg, SEITA, chemins de fer secondaires | rien | tout | aucune série de taux employeur trouvée sous une forme exploitable, sauf aux chemins de fer secondaires : les parts de l'exploitant, des autorités concédantes et de l'État y sont lues pour le 1er octobre 1954 (décret n° 54-953, article 2) et de 1984 à 1992 (décret n° 74-171, article 2), sans l'être de 1955 à 1983 ni portées au modèle (action 133, note du 13 octobre 2026). Pour ces six régimes, la part patronale des scénarios 4 et 5 est celle d'un salarié du privé de la même année, et le modèle le dit |
 
 **Ces taux sont ceux de l'employeur, non ceux de l'équilibre**, et c'est une
 convention qui se défend mais qui se paie. Trois de ces régimes reçoivent aussi
@@ -552,7 +553,7 @@ de pensions prévue. Ils ne donnent en revanche aucun TAUX employeur : les
 cotisations reçues de la RATP y sont en millions d'euros, salariés et
 employeur confondus, et l'ENIM n'y a que sa subvention. Le tableau ci-dessus
 ne bouge donc pas — il compte des séries de taux —, et la ligne « rien /
-tout » des sept régimes non plus. Depuis le 1er janvier 2025, ces crédits ne
+tout » des six régimes non plus. Depuis le 1er janvier 2025, ces crédits ne
 vont d'ailleurs plus aux régimes : la CNAV les équilibre en dernier ressort et
 l'État la compense, net de la compensation démographique et des cotisations
 que la fermeture a portées au régime général et à l'Agirc-Arrco, si bien que

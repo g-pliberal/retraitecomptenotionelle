@@ -1779,7 +1779,8 @@ institutions:
         statut_integration: certifie
         cible: >-
           data/reference/legislation/bonifications_jaune.csv,
-          data/reference/legislation/avantages_non_contributifs.yaml
+          data/reference/legislation/avantages_non_contributifs.yaml,
+          data/reference/legislation/contribution_employeur_public.csv
         note: >-
           L'ÉDITION SUIVANTE DE `sre_jaune_pensions` : le stock de pensionnés
           au 31 décembre 2025 et le flux des pensions entrées en paiement en
@@ -1801,6 +1802,12 @@ institutions:
           le tableau B-22 compte 20 736 bénéficiaires sur 47 104 pensions,
           44,0 %. Elle reste telle qu'imprimée, le lecteur la signale, aucune
           fiche ne la cite.
+
+          SON TABLEAU 14, les taux de contribution employeur depuis 2000 (le 12
+          de l'édition 2026, qui donne les mêmes), est lu par le même script :
+          la colonne du FSPOEIE, que le dépôt n'avait pas, est certifiée dans
+          `contribution_employeur_public.csv` (étape 3) ; les autres recoupent
+          les séries du dépôt sous la règle du 1er janvier.
 
           LE FICHIER NE SE TÉLÉCHARGE PAS DEPUIS UNE SESSION : le 13 octobre,
           budget.gouv.fr répond 403 au cloud, par curl comme par WebFetch, page
