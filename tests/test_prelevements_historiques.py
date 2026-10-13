@@ -4,8 +4,10 @@
 depuis les barèmes de l'IPP, donne aux indicateurs de cycle de vie nets les taux
 de chaque année (action 138, étape 9). Ce module tient trois choses : que la
 dernière marche de chaque série est le barème de l'année courante que le site
-applique (``prelevements_remuneration.yaml``) ; que les marches connues y sont,
-suppressions comprises ; que le salaire net de l'année courante est celui de la
+applique (``prelevements_remuneration.yaml``), hors de la maladie des pensions
+de la SNCF et des mines, qu'il ne prélève pas encore ; que les marches connues
+y sont, suppressions comprises, et que celles que le récupérateur lit aux
+textes s'y relisent ; que le salaire net de l'année courante est celui de la
 fiche de paie, et qu'une année ancienne en change ce que l'histoire dit.
 
 Et la CSG déductible (action 138, étape 5) : la part que l'article 154
@@ -163,6 +165,129 @@ def test_la_pension_d_un_fonctionnaire_parti_avant_1998_paie_sa_maladie(simulate
     assert taux[1995] == pytest.approx(0.024 + 0.0265)
     assert taux[1997] == pytest.approx(0.034 + 0.005 + 0.028)
     assert taux[1998] == pytest.approx(0.062 + 0.005)
+
+
+def test_la_maladie_des_pensions_des_exploitants_et_des_regimes_speciaux(historique):
+    """Lues aux textes (action 138, étape 9, huitième partie) : les exploitants
+    de 1990 à 1997, l'année 1993 tenue ; les régimes spéciaux placés sous le
+    régime général et les clercs de notaires depuis le 31 juillet 1980, les IEG
+    depuis le 22 novembre, leur relèvement de 1996 au 1er octobre ; la SNCF, la
+    RATP et la Banque de France depuis le 1er juillet 1991, les mines depuis le
+    1er juillet 1988 ; rien depuis 1998, sauf à la SNCF et aux mines. Une série
+    ne prélève rien avant sa première marche."""
+    pensions = historique.pensions
+
+    def taux(serie, annee, mois=6):
+        return pensions[serie].valeur(dt.date(annee, mois, 1))
+
+    assert taux("maladie_exploitants", 1989) == 0.0
+    for annee in (1990, 1993, 1996):
+        assert taux("maladie_exploitants", annee) == pytest.approx(0.038), annee
+    assert taux("maladie_exploitants", 1997) == pytest.approx(0.028)
+    assert taux("maladie_regimes_speciaux", 1980, 7) == 0.0
+    assert taux("maladie_regimes_speciaux", 1980, 8) == pytest.approx(0.015)
+    assert taux("maladie_regimes_speciaux", 1987, 7) == pytest.approx(0.019)
+    assert taux("maladie_regimes_speciaux", 1996, 8) == pytest.approx(0.0285)
+    assert taux("maladie_ieg", 1980, 11) == 0.0
+    assert taux("maladie_ieg", 1980, 12) == pytest.approx(0.015)
+    assert taux("maladie_ieg", 1996, 9) == pytest.approx(0.019)
+    assert taux("maladie_ieg", 1996, 10) == pytest.approx(0.0285)
+    for serie in ("maladie_regimes_speciaux", "maladie_ieg", "maladie_ratp"):
+        assert taux(serie, 1997, 3) == pytest.approx(0.0185), serie
+        assert taux(serie, 1997, 9) == pytest.approx(0.028), serie
+    assert taux("maladie_sncf", 1991, 6) == 0.0
+    assert taux("maladie_sncf", 1991, 7) == pytest.approx(0.045)
+    assert taux("maladie_sncf", 1997) == pytest.approx(0.035)
+    assert taux("maladie_ratp", 1992) == pytest.approx(0.0165)
+    assert taux("maladie_banque_de_france", 1996, 9) == pytest.approx(0.0305)
+    assert taux("maladie_banque_de_france", 1997, 3) == pytest.approx(0.0205)
+    assert taux("maladie_crpcen", 1985) == pytest.approx(0.015)
+    assert taux("maladie_crpcen", 1986) == pytest.approx(0.0225)
+    assert taux("maladie_crpcen", 1990) == pytest.approx(0.0265)
+    assert taux("maladie_mines", 1988, 6) == 0.0
+    assert taux("maladie_mines", 1990) == pytest.approx(0.034)
+    assert taux("maladie_mines", 1997) == pytest.approx(0.033)
+    for serie in ("maladie_exploitants", "maladie_regimes_speciaux", "maladie_ieg",
+                  "maladie_ratp", "maladie_banque_de_france", "maladie_crpcen"):
+        assert pensions[serie].valeur(APRES) == 0.0, serie
+    assert pensions["maladie_sncf"].valeur(APRES) == pytest.approx(0.007)
+    assert pensions["maladie_mines"].valeur(APRES) == pytest.approx(0.005)
+    regimes = historique.regimes_des_pensions
+    assert regimes["maladie_exploitants"] == {"msa_non_salaries"}
+    assert regimes["maladie_regimes_speciaux"] == {
+        "opera_de_paris", "comedie_francaise", "chemins_fer_secondaires"}
+    for regime in ("ieg", "sncf", "ratp", "banque_de_france", "crpcen", "mines"):
+        assert regimes[f"maladie_{regime}"] == {regime}
+
+
+def test_la_pension_d_un_agent_sncf_paie_encore_sa_maladie(simulateur):
+    """Un agent de la SNCF parti à 55 ans en 1990 : 4,50 % de sa pension en
+    1992, en plus de la CSG ; 0,70 % depuis 1998, toujours, que la fiche de paie
+    du site ne prélève pas encore (``taux_de_prelevement``) : un écart déclaré,
+    que le test tient jusqu'à ce qu'elle le prélève."""
+    comparaison = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1935, sexe="H", affiliation="agent_sncf", age_debut=20,
+        age_liquidation=55, niveau_salaire=1.0))
+    taux = cycle_de_vie.prelevements_par_annee(simulateur, comparaison)
+    assert cycle_de_vie._parts_assujetties(simulateur, comparaison.actuel)[
+        "maladie_sncf"] == pytest.approx(1.0)
+    assert taux[1992] == pytest.approx(0.011 + 0.045)
+    assert taux[1998] == pytest.approx(0.062 + 0.005 + 0.007)
+    courant = cycle_de_vie.taux_de_prelevement(simulateur, comparaison.actuel)
+    assert taux[2030] == pytest.approx(courant + 0.007)
+
+
+def _lectures():
+    """Ce que le récupérateur lit aux textes pour la maladie des pensions."""
+    sys.path.insert(0, str(RACINE_PROJET / "scripts" / "fetch"))
+    import maladie_des_pensions
+
+    return maladie_des_pensions
+
+
+def test_la_maladie_lue_aux_textes_est_la_donnee():
+    """Chaque série que le récupérateur lit aux textes est dans la donnée,
+    marche pour marche, et ses régimes aussi : la donnée a été refaite."""
+    lectures = _lectures()
+    contenu = charger_yaml(RACINE_DONNEES / CHEMIN)
+    for nom, marches in lectures.PENSIONS_LUES_AUX_TEXTES.items():
+        ecrites = contenu["pensions"][nom]
+        assert [(str(m["depuis"]), float(m["taux"])) for m in ecrites] == [
+            (m["depuis"], m["taux"]) for m in marches], nom
+    assert {nom: tuple(regimes) for nom, regimes in contenu["regimes_des_pensions"].items()} == (
+        lectures.REGIMES_DES_PENSIONS)
+
+
+def test_la_maladie_lue_aux_textes_se_relit_dans_l_index():
+    """Chaque marche lue aux textes cite les mots de l'article de LEGI, de
+    l'article ou de la notice du JORF qui la fixent, quand les index sont là
+    (``python scripts/fetch/dila_index.py legi --recuperer``, de même ``jorf``)."""
+    bases = {}
+    for nom in ("legi", "jorf"):
+        chemin = RACINE_DONNEES / "brut" / "dila" / f"{nom}.sqlite"
+        if chemin.exists():
+            bases[nom] = sqlite3.connect(f"file:{chemin}?mode=ro", uri=True)
+    if not bases:
+        pytest.skip("les index LEGI et JORF ne sont pas là")
+    relues = 0
+    try:
+        for nom, marches in _lectures().PENSIONS_LUES_AUX_TEXTES.items():
+            for marche in marches:
+                assert marche["lu"], (nom, marche["depuis"])
+                for identifiant, mots in marche["lu"]:
+                    base = bases.get("legi" if identifiant.startswith("LEGI") else "jorf")
+                    if base is None:
+                        continue
+                    lu = base.execute("select texte from doc where id = ?",
+                                      (identifiant,)).fetchone()
+                    assert lu, (nom, marche["depuis"], identifiant)
+                    texte = " ".join(lu[0].replace(" ", " ").replace("\xa0", " ").split())
+                    assert " ".join(mots.split()) in texte, (nom, marche["depuis"], identifiant)
+                    relues += 1
+    finally:
+        for base in bases.values():
+            base.close()
+    assert relues
 
 
 def test_le_prive_de_1995_paie_maladie_veuvage_chomage_et_csg(historique, simulateur):

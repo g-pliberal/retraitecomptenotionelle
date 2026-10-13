@@ -50,6 +50,13 @@ déplafonnement de 2013, ignore la réduction de 2017 des libéraux, prête 7,35
 au revenu de plus de cinq plafonds de 2018 quand le décret n° 2017-1894 dit
 6,5 %, et n'a rien après 2018.
 
+LA MALADIE DES PENSIONS DES AUTRES RÉGIMES DE BASE (action 138, étape 9,
+septième et huitième parties). La branche du régime général de l'IPP n'a que
+celle du régime général et des complémentaires, sa branche des indépendants
+celle de leurs retraités. Celle de la fonction publique, des exploitants
+agricoles et des régimes spéciaux est lue aux textes, marche par marche, dans
+``maladie_des_pensions.py``, qui dit aussi ce qu'il n'a pas pu lire.
+
 LA CSG DÉDUCTIBLE (action 138, étape 5, deuxième partie). L'impôt sur le revenu
 (``retraite_notionnelle/impot_revenu.py``) part des salaires et des pensions
 imposables, nets de la part de la CSG que l'article 154 quinquies du code
@@ -87,6 +94,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from dila_index import chemin_index, meta, recuperer  # noqa: E402
+from maladie_des_pensions import (  # noqa: E402
+    PENSIONS_LUES_AUX_TEXTES,
+    REGIMES_DES_PENSIONS,
+    a_ecrire,
+)
 
 RACINE_DEPOT = Path(__file__).resolve().parents[2]
 SORTIE = RACINE_DEPOT / "data" / "reference" / "legislation" / "prelevements_historiques.yaml"
@@ -325,39 +337,9 @@ ASSIETTE_CSG = [
 #: 1er juillet 1987, qui le porte « de 3 % à 3,4 % ».
 CORRECTIONS["maladie_independants"] = [{"ipp": "1986-01-01", "lue": None}]
 
-#: Celle des pensions de la fonction publique — État, militaires, ouvriers de
-#: l'État, collectivités locales —, précomptée dans la limite du plafond, lue
-#: dans LEGI : D. 712-39, D. 713-16 et l'article 3 du décret n° 67-850, que LEGI
-#: date du 30 septembre 1976. Avant le décret n° 76-896, son taux n'est pas lu.
-LUES_AUX_TEXTES["maladie_fonction_publique"] = [
-    {"depuis": "1976-10-01", "taux": 0.0225,
-     "texte": "Décret 76-896 du 29/09/1976 (JORFTEXT000000861798) : décret 67-850 du "
-              "30/09/1967, art. 3 (LEGIARTI000006770629)"},
-    {"depuis": "1988-07-01", "taux": 0.0265,
-     "texte": "Décret 88-795 du 22/06/1988 (JORFTEXT000000693584) : CSS, D. 712-39 et D. 713-16 ; "
-              "décret 67-850, art. 3"},
-    {"depuis": "1996-03-01", "taux": 0.0305,
-     "texte": "Décret 96-155 du 28/02/1996, art. 1 et 2 (JORFTEXT000000557800)"},
-    {"depuis": "1997-01-01", "taux": 0.028,
-     "texte": "Décret 96-1151 du 26/12/1996, art. 10 : CSS, D. 712-39 (LEGIARTI000006739102) ; "
-              "décret 67-850, art. 3 (LEGIARTI000006770632)"},
-    {"depuis": "1998-01-01", "taux": 0.0,
-     "texte": "Décret 97-1249 du 29/12/1997, art. 4, 9 et 17 : CSS, D. 712-39 "
-              "(LEGIARTI000006739103) et décret 67-850, art. 3, les seuls non-résidents"},
-]
-
-#: Les régimes dont chaque série de pensions prélève la part, hors des
-#: complémentaires (``maladie_complementaire`` de ``prelevements_remuneration.yaml``).
-#: Le régime des salariés agricoles suit celui du régime général, taux pour taux :
-#: 1 % en 1980 (décret n° 80-481), 1,4 % en 1987 (n° 87-453), 2,6 % en 1996
-#: (n° 95-1401), 2,8 % en 1997 (n° 96-1167), rien depuis 1998 (n° 97-1252). La
-#: cotisation des retraités indépendants ne porte que sur leur pension de base
-#: (D. 612-3).
-REGIMES_DES_PENSIONS = {
-    "maladie_regime_general": ("regime_general", "msa_salaries"),
-    "maladie_fonction_publique": ("fonction_publique_etat", "cnracl", "fspoeie"),
-    "maladie_independants": ("cancava", "organic", "cnavpl", "cnbf"),
-}
+#: Celle des autres régimes de base — la fonction publique, les exploitants
+#: agricoles, les régimes spéciaux —, lue aux textes, et les régimes dont chaque
+#: série prélève la part : ``maladie_des_pensions.py``.
 
 #: LA CSG DÉDUCTIBLE (action 138, étape 5, deuxième partie) : la part de la CSG
 #: que le revenu imposable déduit (CGI, art. 154 quinquies). La colonne
@@ -771,8 +753,8 @@ ENTETE = """\
 #     cotisation maladie des pensions du régime général, celle des
 #     complémentaires (les régimes de `maladie_complementaire`), celle des
 #     retraités indépendants sur leur pension de base, pour une pension sous le
-#     plafond, et celle des pensions de la fonction publique ;
-#     `regimes_des_pensions` dit les régimes dont chacune prélève la part.
+#     plafond, et celle des autres régimes de base ; `regimes_des_pensions` dit
+#     les régimes dont chacune prélève la part.
 #   salaires : la CSG et la CRDS d'activité, sur le brut abattu de
 #     `abattement` (sans limite) ou de `abattement_jusqu_a_quatre_plafonds`
 #     (jusqu'à quatre plafonds, depuis 2011) — l'IPP n'en donne pas avant 1998,
@@ -814,18 +796,17 @@ ENTETE = """\
 # LA MALADIE DES PENSIONS DES AUTRES RÉGIMES DE BASE, que la branche du régime
 # général de l'IPP n'écrit pas. Celle des retraités indépendants est dans sa
 # branche des indépendants : le dépôt la prend, sans le 3,1 % du 1er janvier
-# 1986, qu'aucun texte ne porte. Celle de la fonction publique est lue dans
-# LEGI (D. 712-39, D. 713-16, article 3 du décret n° 67-850), depuis le
-# 1er octobre 1976 : son taux d'avant n'est pas lu, et le plafond qui borne son
-# assiette n'est pas appliqué. Les salariés agricoles paient celle du régime
-# général, taux pour taux (décret n° 80-481 et ceux qui l'ont modifié). Ne
-# sont pas écrites : celle des exploitants agricoles retraités — 2,8 % de leur
-# pension en 1997, 1,8 % de part technique et 1 % de part complémentaire
-# (décret n° 97-140), rien depuis 1998 —, dont les taux d'avant 1997 tiennent à
-# des décrets annuels que l'index n'a qu'en titre, et dont le dépôt ne calcule
-# pas le net, faute de fiche de paie ; celle des régimes spéciaux (D. 711-3 à
-# D. 711-5 ; 1,5 % en 1985, 1,9 % en 1988), dont il faudrait savoir, régime par
-# régime, s'il relève du régime général pour la maladie. Les exonérations des
+# 1986, qu'aucun texte ne porte. Les salariés agricoles paient celle du régime
+# général, taux pour taux. Les autres sont lues aux textes, dans les index JORF
+# et LEGI (`scripts/fetch/maladie_des_pensions.py`, qui dit ce qu'il n'a pas pu
+# lire) : la fonction publique depuis 1976 ; les exploitants agricoles depuis
+# 1990, sur leur pension de base ; les régimes spéciaux placés sous le régime
+# général pour la maladie (Opéra, Comédie-Française, chemins de fer
+# secondaires), les IEG et les clercs de notaires depuis 1980 ; la SNCF, la
+# RATP et la Banque de France depuis 1991 ; les mines depuis 1988. Rien depuis
+# 1998, sauf à la SNCF (0,70 %) et aux mines (0,50 %), qui prélèvent encore,
+# et que la fiche de paie du site n'a pas. Un taux par tranches ou sous un
+# plafond est celui d'une pension sous le premier plafond ; les exonérations des
 # retraités non imposables ne jouent pas : le dépôt prélève au taux plein.
 #
 # LA CSG DÉDUCTIBLE. `deductible` dit la part de la CSG que le revenu imposable
@@ -872,7 +853,8 @@ def main(argv: list[str] | None = None) -> int:
     retraites = corriger("maladie_independants", series[("pensions", "maladie_independants")])
     series[("pensions", "maladie_independants")] = _sans_redite(
         [pension_sous_le_plafond(marche) for marche in retraites])
-    series[("pensions", "maladie_fonction_publique")] = LUES_AUX_TEXTES["maladie_fonction_publique"]
+    for nom, lues in PENSIONS_LUES_AUX_TEXTES.items():
+        series[("pensions", nom)] = [a_ecrire(marche) for marche in lues]
     series[("independants", "assiette_csg")] = _normaliser(ASSIETTE_CSG)
     verifier_deductible(series)
     jorf = _ouvrir("jorf")

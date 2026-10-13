@@ -8,7 +8,9 @@ cotisation maladie des pensions a valu jusqu'à 3,8 % sur les complémentaires,
 le salarié du privé payait 6,8 % de maladie en 1992. Ce module lit ces taux,
 marche par marche, dans ``data/reference/legislation/prelevements_historiques.yaml``,
 qu'écrit ``scripts/fetch/ipp_prelevements_sociaux.py`` depuis les barèmes de
-l'IPP.
+l'IPP, et, pour la cotisation maladie des pensions des régimes de base que
+l'IPP n'écrit pas — la fonction publique, les exploitants agricoles, les
+régimes spéciaux —, depuis les textes (``scripts/fetch/maladie_des_pensions.py``).
 
 Une année qui change de taux prélève la moyenne de ses douze mois, comme les
 contributions d'équilibre (:mod:`~retraite_notionnelle.contributions_equilibre`).
@@ -201,8 +203,9 @@ class PrelevementsHistoriques:
         """Ce que les prélèvements du ``jour`` retirent à une pension, en part
         du brut, au taux plein de CSG : la CSG, la CRDS, la CASA, et chaque
         cotisation maladie — du régime général, des complémentaires, de la
-        fonction publique, des retraités indépendants — sur la part de la
-        pension que ``parts`` lui donne (:attr:`regimes_des_pensions`)."""
+        fonction publique, des retraités indépendants, des exploitants
+        agricoles, des régimes spéciaux — sur la part de la pension que
+        ``parts`` lui donne (:attr:`regimes_des_pensions`)."""
         p = self.pensions
         return (p["csg_taux_plein"].valeur(jour) + p["crds"].valeur(jour)
                 + p["casa"].valeur(jour)

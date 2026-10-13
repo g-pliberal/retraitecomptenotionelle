@@ -3,14 +3,14 @@
 # source_id: ipp_prelevements_sociaux
 #
 # ÉCRIT PAR `scripts/fetch/ipp_prelevements_sociaux.py`, jamais à la main : les
-# barèmes de l'Institut des politiques publiques, lus le 2026-10-11, chacun avec la
+# barèmes de l'Institut des politiques publiques, lus le 2026-10-13, chacun avec la
 # référence que l'IPP cite pour sa marche. Une transcription, non une source
 # productrice : `haute` au plus (data/sources.yaml, `ipp`).
 #
 # L'ANCRAGE. Chaque marche de l'IPP porte, en `jorf`, le texte qu'il cite tel
 # que l'index JORF de la DILA le trouve, au numéro — au jour pour un arrêté —
 # et à la date de publication qu'il annonce : 159 des 223 marches de
-# l'IPP le sont (index à jour au 20261004-204228). Les autres disent, en `ancrage`, ce
+# l'IPP le sont (index à jour au 20261011-210356). Les autres disent, en `ancrage`, ce
 # qui manque : une date au Journal officiel, un texte numéroté — un article de
 # code, une convention, une circulaire —, ou la date que l'index donne quand
 # il dément celle de l'IPP. Une marche lue aux textes porte le texte du Journal
@@ -34,8 +34,8 @@
 #     cotisation maladie des pensions du régime général, celle des
 #     complémentaires (les régimes de `maladie_complementaire`), celle des
 #     retraités indépendants sur leur pension de base, pour une pension sous le
-#     plafond, et celle des pensions de la fonction publique ;
-#     `regimes_des_pensions` dit les régimes dont chacune prélève la part.
+#     plafond, et celle des autres régimes de base ; `regimes_des_pensions` dit
+#     les régimes dont chacune prélève la part.
 #   salaires : la CSG et la CRDS d'activité, sur le brut abattu de
 #     `abattement` (sans limite) ou de `abattement_jusqu_a_quatre_plafonds`
 #     (jusqu'à quatre plafonds, depuis 2011) — l'IPP n'en donne pas avant 1998,
@@ -77,18 +77,17 @@
 # LA MALADIE DES PENSIONS DES AUTRES RÉGIMES DE BASE, que la branche du régime
 # général de l'IPP n'écrit pas. Celle des retraités indépendants est dans sa
 # branche des indépendants : le dépôt la prend, sans le 3,1 % du 1er janvier
-# 1986, qu'aucun texte ne porte. Celle de la fonction publique est lue dans
-# LEGI (D. 712-39, D. 713-16, article 3 du décret n° 67-850), depuis le
-# 1er octobre 1976 : son taux d'avant n'est pas lu, et le plafond qui borne son
-# assiette n'est pas appliqué. Les salariés agricoles paient celle du régime
-# général, taux pour taux (décret n° 80-481 et ceux qui l'ont modifié). Ne
-# sont pas écrites : celle des exploitants agricoles retraités — 2,8 % de leur
-# pension en 1997, 1,8 % de part technique et 1 % de part complémentaire
-# (décret n° 97-140), rien depuis 1998 —, dont les taux d'avant 1997 tiennent à
-# des décrets annuels que l'index n'a qu'en titre, et dont le dépôt ne calcule
-# pas le net, faute de fiche de paie ; celle des régimes spéciaux (D. 711-3 à
-# D. 711-5 ; 1,5 % en 1985, 1,9 % en 1988), dont il faudrait savoir, régime par
-# régime, s'il relève du régime général pour la maladie. Les exonérations des
+# 1986, qu'aucun texte ne porte. Les salariés agricoles paient celle du régime
+# général, taux pour taux. Les autres sont lues aux textes, dans les index JORF
+# et LEGI (`scripts/fetch/maladie_des_pensions.py`, qui dit ce qu'il n'a pas pu
+# lire) : la fonction publique depuis 1976 ; les exploitants agricoles depuis
+# 1990, sur leur pension de base ; les régimes spéciaux placés sous le régime
+# général pour la maladie (Opéra, Comédie-Française, chemins de fer
+# secondaires), les IEG et les clercs de notaires depuis 1980 ; la SNCF, la
+# RATP et la Banque de France depuis 1991 ; les mines depuis 1988. Rien depuis
+# 1998, sauf à la SNCF (0,70 %) et aux mines (0,50 %), qui prélèvent encore,
+# et que la fiche de paie du site n'a pas. Un taux par tranches ou sous un
+# plafond est celui d'une pension sous le premier plafond ; les exonérations des
 # retraités non imposables ne jouent pas : le dépôt prélève au taux plein.
 #
 # LA CSG DÉDUCTIBLE. `deductible` dit la part de la CSG que le revenu imposable
@@ -100,7 +99,7 @@
 # art. 3). Ce sont les valeurs de l'IPP, que le script confronte aux versions
 # de l'article (`DEDUCTIBLE_AUX_TEXTES`). Le reste de la CSG, la CRDS et la
 # CASA ne se déduisent pas ; les cotisations, si (CGI, art. 83).
-lu_le: "2026-10-11"
+lu_le: "2026-10-13"
 fiabilite: haute
 tenues_avant_leur_premiere_marche: [maladie_prive, maladie_etat, maladie_collectivites, famille]
 
@@ -108,6 +107,14 @@ regimes_des_pensions:
   maladie_regime_general: [regime_general, msa_salaries]
   maladie_fonction_publique: [fonction_publique_etat, cnracl, fspoeie]
   maladie_independants: [cancava, organic, cnavpl, cnbf]
+  maladie_exploitants: [msa_non_salaries]
+  maladie_regimes_speciaux: [opera_de_paris, comedie_francaise, chemins_fer_secondaires]
+  maladie_ieg: [ieg]
+  maladie_sncf: [sncf]
+  maladie_ratp: [ratp]
+  maladie_banque_de_france: [banque_de_france]
+  maladie_crpcen: [crpcen]
+  maladie_mines: [mines]
 
 pensions:
   csg_taux_plein:
@@ -158,6 +165,53 @@ pensions:
     - {depuis: "1996-03-01", taux: 0.0305, texte: "Décret 96-155 du 28/02/1996, art. 1 et 2 (JORFTEXT000000557800)", jorf: "JORFTEXT000000557800"}
     - {depuis: "1997-01-01", taux: 0.028, texte: "Décret 96-1151 du 26/12/1996, art. 10 : CSS, D. 712-39 (LEGIARTI000006739102) ; décret 67-850, art. 3 (LEGIARTI000006770632)", jorf: "JORFTEXT000000381201"}
     - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1249 du 29/12/1997, art. 4, 9 et 17 : CSS, D. 712-39 (LEGIARTI000006739103) et décret 67-850, art. 3, les seuls non-résidents", jorf: "JORFTEXT000000753405"}
+  maladie_exploitants:
+    - {depuis: "1990-01-01", taux: 0.038, texte: "Décret 90-765 du 28/08/1990, art. 7 et 9 (2,8 % et 1 %), puis 91-912, 92-793, 94-715, 95-1038 et 96-679", jorf: "JORFTEXT000000707746"}
+    - {depuis: "1997-01-01", taux: 0.028, texte: "Décret 97-140 du 13/02/1997, art. 1 à 3 (1,8 % et 1 %)", jorf: "JORFTEXT000000380254"}
+    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1252 du 29/12/1997, art. 7 et 13 : les seuls non-résidents", jorf: "JORFTEXT000000753406"}
+  maladie_regimes_speciaux:
+    - {depuis: "1980-07-31", taux: 0.015, texte: "Décret 80-598 du 30/07/1980, art. 1", jorf: "JORFTEXT000000883589"}
+    - {depuis: "1987-07-01", taux: 0.019, texte: "Décret 87-466 du 30/06/1987, art. 1, puis décret 88-789 du 22/06/1988 : CSS, R. 711-8", jorf: "JORFTEXT000000881106"}
+    - {depuis: "1996-08-01", taux: 0.0285, texte: "Décret 96-680 du 31/07/1996, art. 1 : CSS, D. 711-3", jorf: "JORFTEXT000000734595"}
+    - {depuis: "1997-01-01", taux: 0.0185, texte: "Décret 96-1151 du 26/12/1996, art. 3 : CSS, D. 711-3", jorf: "JORFTEXT000000381201"}
+    - {depuis: "1997-07-01", taux: 0.028, texte: "Décret 96-1151 du 26/12/1996, art. 3 : CSS, D. 711-3", jorf: "JORFTEXT000000381201"}
+    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1249 du 29/12/1997, art. 2 et 17 : CSS, D. 711-3, les seules complémentaires", jorf: "JORFTEXT000000753405"}
+  maladie_ieg:
+    - {depuis: "1980-11-22", taux: 0.015, texte: "Décret 80-916 du 20/11/1980, art. 1", jorf: "JORFTEXT000000503483"}
+    - {depuis: "1987-07-01", taux: 0.019, texte: "Décret 87-466 du 30/06/1987, art. 2, puis décret 88-789 du 22/06/1988 : décret 80-916, art. 1", jorf: "JORFTEXT000000881106"}
+    - {depuis: "1991-07-01", taux: 0.019, texte: "Décret 91-613 du 28/06/1991, art. 9 : statut national, art. 23 ; CSS, D. 711-3", jorf: "JORFTEXT000000720106"}
+    - {depuis: "1996-10-01", taux: 0.0285, texte: "Décret 96-680 du 31/07/1996, art. 1, et sa notice : au 4e trimestre", jorf: "JORFTEXT000000734595"}
+    - {depuis: "1997-01-01", taux: 0.0185, texte: "Décret 96-1151 du 26/12/1996, art. 3 : CSS, D. 711-3", jorf: "JORFTEXT000000381201"}
+    - {depuis: "1997-07-01", taux: 0.028, texte: "Décret 96-1151 du 26/12/1996, art. 3 : CSS, D. 711-3", jorf: "JORFTEXT000000381201"}
+    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1249 du 29/12/1997, art. 2, 14 et 17 : CSS, D. 711-3", jorf: "JORFTEXT000000753405"}
+  maladie_sncf:
+    - {depuis: "1991-07-01", taux: 0.045, texte: "Décret 91-613 du 28/06/1991, art. 8 : décret du 06/08/1938, art. 3, § 6 bis", jorf: "JORFTEXT000000720106"}
+    - {depuis: "1997-01-01", taux: 0.035, texte: "Décret 96-1151 du 26/12/1996, art. 12 : décret du 06/08/1938, art. 3, § 6 bis", jorf: "JORFTEXT000000381201"}
+    - {depuis: "1998-01-01", taux: 0.007, texte: "Décret 97-1249 du 29/12/1997, art. 11, puis décret 2007-1056, art. 7, IV (LEGIARTI000052041125)", jorf: "JORFTEXT000000753405"}
+  maladie_ratp:
+    - {depuis: "1991-07-01", taux: 0.0165, texte: "Décret 91-613 du 28/06/1991, art. 11 : décret 50-1566, art. 12", jorf: "JORFTEXT000000720106"}
+    - {depuis: "1996-08-01", taux: 0.0285, texte: "Décret 96-680 du 31/07/1996, art. 3 : décret 50-1566, art. 12", jorf: "JORFTEXT000000734595"}
+    - {depuis: "1997-01-01", taux: 0.0185, texte: "Décret 96-1151 du 26/12/1996, art. 14 : décret 50-1566, art. 12", jorf: "JORFTEXT000000381201"}
+    - {depuis: "1997-07-01", taux: 0.028, texte: "Décret 96-1151 du 26/12/1996, art. 14 : décret 50-1566, art. 12", jorf: "JORFTEXT000000381201"}
+    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1249 du 29/12/1997, art. 13 : décret 50-1566, art. 12", jorf: "JORFTEXT000000753405"}
+  maladie_banque_de_france:
+    - {depuis: "1991-07-01", taux: 0.0265, texte: "Décret 91-613 du 28/06/1991, art. 13, I, 2°", jorf: "JORFTEXT000000720106"}
+    - {depuis: "1996-08-01", taux: 0.0305, texte: "Décret 96-680 du 31/07/1996, art. 4 : décret 91-613, art. 13", jorf: "JORFTEXT000000734595"}
+    - {depuis: "1997-01-01", taux: 0.0205, texte: "Décret 96-1151 du 26/12/1996, art. 15 : décret 91-613, art. 13", jorf: "JORFTEXT000000381201"}
+    - {depuis: "1997-07-01", taux: 0.028, texte: "Décret 96-1151 du 26/12/1996, art. 15 : décret 91-613, art. 13", jorf: "JORFTEXT000000381201"}
+    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1249 du 29/12/1997, art. 15 : décret 91-613, art. 13", jorf: "JORFTEXT000000753405"}
+  maladie_crpcen:
+    - {depuis: "1980-07-31", taux: 0.015, texte: "Décret 80-600 du 30/07/1980, art. 2", jorf: "JORFTEXT000000310314"}
+    - {depuis: "1986-01-01", taux: 0.0225, texte: "Décret 85-1093 du 11/10/1985, art. 18 et 19", jorf: "JORFTEXT000000316791"}
+    - {depuis: "1987-07-01", taux: 0.0265, texte: "Décret 87-467 du 30/06/1987, art. 2, puis décret 88-791 du 22/06/1988, art. 2", jorf: "JORFTEXT000000700750"}
+    - {depuis: "1996-06-01", taux: 0.0305, texte: "Décret 96-471 du 31/05/1996, art. 6 : décret 91-613, art. 4", jorf: "JORFTEXT000000559950"}
+    - {depuis: "1997-01-01", taux: 0.028, texte: "Décret 96-1151 du 26/12/1996, art. 15 : décret 91-613, art. 4", jorf: "JORFTEXT000000381201"}
+    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1249 du 29/12/1997, art. 16 : décret 91-613, art. 4, 4°, abrogé", jorf: "JORFTEXT000000753405"}
+  maladie_mines:
+    - {depuis: "1988-07-01", taux: 0.034, texte: "Arrêté du 22/06/1988, art. 1 (JORFTEXT000000318381) : décret 46-2769, art. 53", jorf: "JORFTEXT000000318381"}
+    - {depuis: "1996-06-01", taux: 0.0385, texte: "Décret 96-471 du 31/05/1996, art. 4 : décret 46-2769, art. 91", jorf: "JORFTEXT000000559950"}
+    - {depuis: "1997-01-01", taux: 0.033, texte: "Décret 96-1151 du 26/12/1996, art. 13 : décret 46-2769, art. 91", jorf: "JORFTEXT000000381201"}
+    - {depuis: "1998-01-01", taux: 0.005, texte: "Décret 97-1249 du 29/12/1997, art. 12 : décret 46-2769, art. 91 (LEGIARTI000037456798)", jorf: "JORFTEXT000000753405"}
 
 salaires:
   csg:

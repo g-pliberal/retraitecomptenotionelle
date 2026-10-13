@@ -1032,7 +1032,9 @@ def _parts_assujetties(simulateur, resultat) -> dict[str, float]:
     cotisation maladie, par cotisation : celle des complémentaires
     (``regimes_maladie``), toujours ; jusqu'en 1997, celle du régime général et
     des salariés agricoles, de la fonction publique, des retraités indépendants
-    sur leur pension de base (``regimes_des_pensions`` de l'histoire)."""
+    et des exploitants sur leur pension de base, des régimes spéciaux, dont la
+    SNCF et les mines prélèvent encore (``regimes_des_pensions`` de
+    l'histoire)."""
     racine = simulateur.parametres.racine_donnees
     prelevements = charger_prelevements(racine).pensions
     total = _au_depart(simulateur, resultat)
@@ -1054,7 +1056,9 @@ def prelevements_par_annee(simulateur, comparaison) -> dict[int, float]:
     du régime général et des salariés agricoles naît le 1er juillet 1980 et
     s'éteint en 1998, sur leur part de la pension ; celle des complémentaires
     vaut toujours, sur la leur ; celle de la fonction publique, de 1976 à 1997,
-    et celle des retraités indépendants, de 1970 à 1997, sur la leur
+    celle des retraités indépendants, de 1970 à 1997, celle des exploitants,
+    de 1990 à 1997, et celle des régimes spéciaux, de 1980, 1988 ou 1991 à 1997
+    — à la SNCF et aux mines, jusqu'aujourd'hui —, sur la leur
     (:func:`_parts_assujetties`). Les autres systèmes gardent les parts du
     scénario 1, comme ils gardent son taux de l'année courante."""
     historique = charger_prelevements_historiques(simulateur.parametres.racine_donnees)

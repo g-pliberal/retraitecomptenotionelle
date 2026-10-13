@@ -1,15 +1,5 @@
 # Étape 9, septième partie : l'histoire des prélèvements complétée — les indépendants, la maladie des pensions des autres régimes, l'ancrage au Journal officiel
 
-**Reprise, au 10 octobre 2026.** Fait : les prélèvements hors retraite d'un
-indépendant à leur année ; la maladie des pensions de la fonction publique,
-des retraités indépendants et des salariés agricoles ; chaque marche de
-`prelevements_historiques.yaml` ancrée au Journal officiel. Reste de l'histoire
-des prélèvements, une session par point : la maladie des pensions des
-exploitants d'avant 1997 et des régimes spéciaux ; la limite 5 ante ter (2),
-à récrire à la fin de l'étape ; la complémentaire de la CNBF et celle de la
-Cipav dans la fiche de paie, à la session des données ; les décrets qu'aucune
-marche ne rejoint. Détail : plus bas, « Ce qui reste ».
-
 **La demande.** Le propriétaire, le 10 octobre 2026, le point 5 de « Ce qui
 reste » de la quatrième partie, dans l'ordre : les prélèvements hors retraite
 des indépendants avant l'année courante, dont `revenus_nets` leur appliquait
