@@ -133,7 +133,9 @@ code:
     d'un relevé. Les services de la famille fonction_publique la lisent déjà
     (`droit/compter.py`, `compter.js`), et la liquidation le traitement à temps
     plein (`droit/liquider.py`).
-  tests: tests/test_temps_partiel.py, et l'exemple `sre_temps_partiel_pierre`
+  tests: >-
+    tests/test_temps_partiel.py, et l'exemple `sre_temps_partiel_pierre` ; la
+    confrontation à OpenFisca, tests/test_oracle_familles.py
 textes_a_rattacher:
 - reference: >-
     L. 11 CPCMR, 1° : LEGIARTI000006362691 (2 avril 1982), LEGIARTI000006362692,
@@ -148,3 +150,17 @@ textes_a_rattacher:
 - reference: >-
     décret n° 2003-1306, article 13 (LEGIARTI000006400874, LEGIARTI000047633115) ;
     décret n° 65-773, article 10 (LEGIARTI000006368197)
+referents:
+  openfisca_france_pension:
+    equivalent: >-
+      variables/fonction_publique.py, `quotite_de_travail` et
+      `duree_assurance_annuelle`, qui divise les services de l'année par la
+      quotité (:332-335 pour la CNRACL, :1193-1196 pour l'État), au commit 1c45423
+    confrontation: >-
+      exécutée le 13 octobre 2026 (action 153) sur six fonctionnaires à temps
+      partiel (tests/temoins/openfisca_temps_partiel_et_parents.json,
+      tests/test_oracle_familles.py) : durée, services, décote, surcote,
+      traitement à temps plein et pension concordent au centime, et le minimum
+      garanti lit des deux côtés les services réduits. Il reçoit les services
+      de chaque année, la convention lui donnant quatre trimestres fois la
+      quotité, et le traitement à temps plein.

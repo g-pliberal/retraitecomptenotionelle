@@ -89,8 +89,10 @@ CONTROLES = {
     # (ses exemples officiels restent rapides, plus bas), à Destinie 2, à
     # TRAJECTOiRE et à Ines, exécutés à part, dont les sorties sont figées ; et
     # celle de la part des nouveaux retraités au minimum contributif à l'EACR.
-    "test_oracle.py", "test_destinie.py", "test_trajectoire.py", "test_ines.py",
-    "test_part_minimum_contributif.py",
+    # OpenFisca au-delà des carrières simples, une famille de profils à la
+    # fois (action 153).
+    "test_oracle.py", "test_oracle_familles.py", "test_destinie.py",
+    "test_trajectoire.py", "test_ines.py", "test_part_minimum_contributif.py",
     # Les indicateurs de cycle de vie, confrontés au COR, à TRAJECTOiRE et à
     # l'OCDE, sous leurs conventions.
     "test_cycle_de_vie_references.py",

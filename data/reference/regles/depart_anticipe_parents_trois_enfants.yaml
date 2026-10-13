@@ -357,7 +357,7 @@ code:
     departParentTroisEnfants, ageOuverture, anneeOuvertureDesDroits, dureeRequise,
     dureeDeLAnnee ; moteur/js/droit/liquider.js
   parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
-  tests: [tests/test_parents_trois_enfants.py]
+  tests: [tests/test_parents_trois_enfants.py, tests/test_oracle_familles.py]
 referents:
   destinie_2:
     equivalent: >-
@@ -372,7 +372,20 @@ referents:
     equivalent: >-
       regimes/fonction_publique.py, depart_anticipe_trois_enfants et
       decote_a_date_depart_anticipe_parent_trois_enfants, au commit 1c45423
-    confrontation: aucune exécutée
+    confrontation: >-
+      exécutée le 13 octobre 2026 (action 153) sur sept mères et un père
+      (tests/temoins/openfisca_temps_partiel_et_parents.json,
+      tests/test_oracle_familles.py) : l'année des conditions réunies, la décote
+      de cette année — son barème et son âge d'annulation —, la bonification de
+      L. 12, b, et la majoration de L. 18 concordent. Quatre écarts, tous les
+      siens : il proratise sur la durée de la génération (article 66, II, et
+      article 5, VI, de la loi n° 2003-775) ; il ferme le départ, avant juillet
+      2011, à qui n'atteint pas son âge d'ouverture avant 2016 et n'a pas réuni
+      les conditions avant 2003 (L. 24, I, 3°) ; après juin 2011, il ne le sert
+      qu'à la raison « famille », qu'il date du départ (article 44, III et IV,
+      de la loi n° 2010-1330) ; il compte les quinze ans sur les services
+      réduits par la quotité (L. 5). Il ne lit pas l'interruption d'activité, et
+      ouvre le départ au père.
 historique:
 - >-
   2026-10-08 — née de l'étape 17 de l'action 138, sur le point de Destinie 2 au registre

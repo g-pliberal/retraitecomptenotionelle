@@ -678,38 +678,6 @@ un réglage change le modèle, un regard ne vaut que pour sa page
    d'être publié sur le site d'un parti. Un repère, pas un avis juridique :
    articles cités de mémoire, à lire.
 
-### 153. L'oracle au-delà des carrières simples : ce qu'OpenFisca calcule et que le dépôt ne lui confronte pas — `à faire`
-
-**D'où elle vient.** L'action 136 (étape 2). Le 1er octobre 2026, les
-48 profils que l'oracle confrontait à OpenFisca-France-Pension
-(`tests/test_oracle.py`) étaient des carrières continues à salaire nominal
-constant, sans enfant ni interruption, sédentaires et sans prime dans la
-fonction publique : la convention l'a voulu, pour que la traduction d'un
-modèle à l'autre ne devienne pas l'objet du test. OpenFisca calcule pourtant,
-et le plus souvent teste, la majoration de durée et la bonification pour
-enfants, la majoration de 10 %, les points enfants de l'Arrco, la catégorie
-active, la carrière longue de la fonction publique, les minima garanti et
-contributif, la minoration de l'Arrco, les périodes assimilées année par
-année, le salaire annuel moyen sur des salaires qui varient : son point
-`a_reprendre` au registre (`data/reference/referents.yaml`).
-
-**Ce qui est à faire**, une famille de profils à la fois, chacune avec sa
-convention de traduction écrite — les nombres d'enfants d'OpenFisca et son
-unique date de naissance, contre les naissances datées du dépôt, par
-exemple :
-
-1. Les deux règles que l'action 136 lui avait prises : le temps partiel des
-   fonctionnaires, dont OpenFisca réduit lui aussi les services, et à qui
-   aucun profil à temps partiel n'a encore été passé ; le départ anticipé des
-   parents de trois enfants, écrit à l'action 138 (étape 17, deuxième
-   partie), qu'OpenFisca code avec quatre tests.
-2. Les autres familles que le registre nomme. Un écart se tranche par la
-   preuve (`docs/architecture.md`, § 3.3).
-
-**Ce que le propriétaire tranche** : s'il faut signaler à OpenFisca les sept
-erreurs que l'oracle a trouvées chez lui — un geste vers l'extérieur, qui
-l'inviterait aussi à relire le dépôt.
-
 ### 154. Le temps partiel des fonctionnaires, fini : la surcotisation, et ce que la quotité laisse — `à faire`
 
 **D'où elle vient.** L'action 136 (étape 3) a écrit, le 11 octobre 2026, le
@@ -7654,3 +7622,46 @@ relèvements des pensions agricoles déjà liquidées un chantier à part.
 
 **Ce que le propriétaire tranche** : s'il faut un cas type de plus par groupe
 plutôt que déplacer celui qui existe, et l'ordre des groupes.
+
+### 153. L'oracle au-delà des carrières simples : ce qu'OpenFisca calcule et que le dépôt ne lui confronte pas — `en cours`
+
+**Reprise, au 13 octobre 2026.** Faite, l'étape 1 : la première famille, le temps
+partiel des fonctionnaires et le départ anticipé des parents de trois enfants, et
+sa convention de traduction, écrite dans le script qui fige le témoin
+(`openfisca_temps_partiel_et_parents.py`) et vérifiée par
+`tests/test_oracle_familles.py` ; rien à corriger chez nous, quatre écarts chez
+OpenFisca, au registre. Reste l'étape 2, une famille par session : d'abord les
+enfants (bonification et majoration de durée au-delà de trois, nés après 2004 ou
+hors des services), puis les autres que le registre nomme (153.2). Commencer par
+la convention de la famille, dans un script frère du premier. Le signalement à
+OpenFisca attend le propriétaire. Détail : la note de l'étape 1.
+
+**D'où elle vient.** L'action 136 (étape 2). Le 1er octobre 2026, les
+48 profils que l'oracle confrontait à OpenFisca-France-Pension
+(`tests/test_oracle.py`) étaient des carrières continues à salaire nominal
+constant, sans enfant ni interruption, sédentaires et sans prime dans la
+fonction publique : la convention l'a voulu, pour que la traduction d'un
+modèle à l'autre ne devienne pas l'objet du test. OpenFisca calcule pourtant,
+et le plus souvent teste, la majoration de durée et la bonification pour
+enfants, la majoration de 10 %, les points enfants de l'Arrco, la catégorie
+active, la carrière longue de la fonction publique, les minima garanti et
+contributif, la minoration de l'Arrco, les périodes assimilées année par
+année, le salaire annuel moyen sur des salaires qui varient : son point
+`a_reprendre` au registre (`data/reference/referents.yaml`).
+
+**Ce qui est à faire**, une famille de profils à la fois, chacune avec sa
+convention de traduction écrite — les nombres d'enfants d'OpenFisca et son
+unique date de naissance, contre les naissances datées du dépôt, par
+exemple :
+
+1. Les deux règles que l'action 136 lui avait prises : le temps partiel des
+   fonctionnaires, dont OpenFisca réduit lui aussi les services, et à qui
+   aucun profil à temps partiel n'a encore été passé ; le départ anticipé des
+   parents de trois enfants, écrit à l'action 138 (étape 17, deuxième
+   partie), qu'OpenFisca code avec quatre tests.
+2. Les autres familles que le registre nomme. Un écart se tranche par la
+   preuve (`docs/architecture.md`, § 3.3).
+
+**Ce que le propriétaire tranche** : s'il faut signaler à OpenFisca les sept
+erreurs que l'oracle a trouvées chez lui — un geste vers l'extérieur, qui
+l'inviterait aussi à relire le dépôt.

@@ -1,0 +1,760 @@
+{
+  "avertissement": "Deuxième implémentation, pas une source officielle. Pour les parents de trois enfants, sa durée requise est celle de la génération et non de l'année des conditions ; il ferme le départ, avant juillet 2011, à qui n'atteint pas son âge d'ouverture avant 2016 et n'a pas réuni les conditions avant 2003, et après juin 2011 à qui ne lui déclare pas la raison « famille » ; il compte les quinze ans sur les services réduits par la quotité. Son minimum garanti suit le point d'indice de l'année de liquidation.",
+  "convention": {
+    "date_de_naissance": "le 1er janvier de `naissance`",
+    "date_naissance_enfant": "la naissance du troisième enfant",
+    "dates": "OpenFisca date les quinze ans de services du 1er janvier de l'année où ils s'achèvent, le dépôt du mois : seule l'année se compare.",
+    "duree_de_service_cotisee_annuelle": "4 trimestres fois la quotité de l'année",
+    "liquidation_date": "le 1er janvier de `liquidation`",
+    "nombre_enfants": "le nombre de `naissances`",
+    "nombre_enfants_nes_avant_2004": "le nombre de `naissances` avant 2004",
+    "non_traduit": "L'interruption d'activité pour chaque enfant (L. 24, I, 3°, et R. 37) : OpenFisca ne la lit pas, le dépôt la présume de la mère seule ; la demande de pension d'avant 2011 (article 44, IV, 1°, de la loi n° 2010-1330), que le dépôt présume des pensions prenant effet au plus tard le 1er juillet 2011.",
+    "quotite_de_travail": "la quotité de l'année, 1 hors de `temps_partiel`",
+    "raison_depart_taux_plein_anticipe": "non déclarée, sauf `raison` au profil",
+    "salaire_de_base": "le traitement à temps plein, chaque année de `debut` à `liquidation` exclue, même à temps partiel (L. 15)",
+    "sexe": "vrai pour une femme (`sexe` F)",
+    "taux_de_prime": "0"
+  },
+  "famille": "le temps partiel des fonctionnaires et le départ anticipé des parents de trois enfants",
+  "perimetre": "Fonction publique de l'État et CNRACL, sédentaires sans prime, carrières continues à traitement nominal constant, liquidations de 2010 à 2018 : six temps partiels sans enfant, sept mères de trois enfants nés pendant les services, et un père.",
+  "profils": {
+    "cnracl_mere_conditions_2007": {
+      "entrees_openfisca": {
+        "cnracl_nombre_enfants_nes_avant_2004": 3,
+        "date_naissance_enfant": "1998-04-01",
+        "nombre_enfants": 3,
+        "sexe": true
+      },
+      "openfisca": {
+        "bonification": 12.0,
+        "coefficient_de_decote": 0.05000000074505806,
+        "coefficient_de_proratisation": 0.5090909004211426,
+        "conditions_reunies_le": "2007-01-01",
+        "decote_trimestres": 20.0,
+        "depart_anticipe": 1.0,
+        "duree_assurance": 84.0,
+        "duree_requise_de_la_generation": 165.0,
+        "majoration_pension": 984.2596435546875,
+        "minimum_garanti": 0.0,
+        "ouverture_des_droits_le": "2007-01-01",
+        "pension": 10826.8564453125,
+        "pension_avant_minimum": 9842.5966796875,
+        "pension_brute": 9842.5966796875,
+        "services": 72.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.7124999761581421,
+        "traitement_de_reference": 27134.98046875
+      },
+      "profil": {
+        "code": "cnracl_mere_conditions_2007",
+        "debut": 1993,
+        "liquidation": 2011,
+        "naissance": 1955,
+        "naissances": [
+          "1994-04-01",
+          "1996-04-01",
+          "1998-04-01"
+        ],
+        "objet": "conditions de 2007 : 158 trimestres, 0,25 % par trimestre",
+        "regime": "cnracl",
+        "regle": "parents_de_trois_enfants",
+        "sexe": "F",
+        "traitement": 27000.0
+      }
+    },
+    "cnracl_mere_nee_en_1962": {
+      "entrees_openfisca": {
+        "cnracl_nombre_enfants_nes_avant_2004": 3,
+        "date_naissance_enfant": "1995-05-01",
+        "nombre_enfants": 3,
+        "sexe": true
+      },
+      "openfisca": {
+        "bonification": 12.0,
+        "coefficient_de_decote": 0.25,
+        "coefficient_de_proratisation": 0.581818163394928,
+        "conditions_reunies_le": "2004-01-01",
+        "decote_trimestres": 20.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 96.0,
+        "duree_requise_de_la_generation": 165.0,
+        "majoration_pension": 855.1630859375,
+        "minimum_garanti": 0.0,
+        "ouverture_des_droits_le": "2022-01-01",
+        "pension": 9406.7939453125,
+        "pension_avant_minimum": 8551.630859375,
+        "pension_brute": 8551.630859375,
+        "services": 84.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.5625,
+        "traitement_de_reference": 26129.982421875
+      },
+      "profil": {
+        "code": "cnracl_mere_nee_en_1962",
+        "debut": 1990,
+        "liquidation": 2011,
+        "naissance": 1962,
+        "naissances": [
+          "1991-05-01",
+          "1993-05-01",
+          "1995-05-01"
+        ],
+        "objet": "partie avant juillet 2011, son âge d'ouverture tombant après 2016",
+        "regime": "cnracl",
+        "regle": "parents_de_trois_enfants",
+        "sexe": "F",
+        "traitement": 26000.0
+      }
+    },
+    "cnracl_mi_temps_cinq_ans_1956": {
+      "entrees_openfisca": {
+        "cnracl_duree_de_service_cotisee_annuelle": {
+          "2000": 2.0,
+          "2001": 2.0,
+          "2002": 2.0,
+          "2003": 2.0,
+          "2004": 2.0
+        },
+        "cnracl_quotite_de_travail": {
+          "2000": 0.5,
+          "2001": 0.5,
+          "2002": 0.5,
+          "2003": 0.5,
+          "2004": 0.5
+        },
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "coefficient_de_decote": 0.22499999403953552,
+        "coefficient_de_proratisation": 0.8072289228439331,
+        "decote_trimestres": 18.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 144.0,
+        "duree_requise_de_la_generation": 166.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 0.0,
+        "pension": 13216.4794921875,
+        "pension_avant_minimum": 13216.4794921875,
+        "pension_brute": 13216.4794921875,
+        "services": 134.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.5812499523162842,
+        "traitement_de_reference": 28168.009765625
+      },
+      "profil": {
+        "code": "cnracl_mi_temps_cinq_ans_1956",
+        "debut": 1982,
+        "liquidation": 2018,
+        "naissance": 1956,
+        "objet": "cinq ans à mi-temps, à la CNRACL",
+        "regime": "cnracl",
+        "regle": "temps_partiel",
+        "sexe": "H",
+        "temps_partiel": [
+          [
+            2000,
+            2004,
+            0.5
+          ]
+        ],
+        "traitement": 28000.0
+      }
+    },
+    "mere_conditions_1992": {
+      "entrees_openfisca": {
+        "date_naissance_enfant": "1985-06-01",
+        "fonction_publique_nombre_enfants_nes_avant_2004": 3,
+        "nombre_enfants": 3,
+        "sexe": true
+      },
+      "openfisca": {
+        "bonification": 12.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 0.8727272748947144,
+        "conditions_reunies_le": "1992-01-01",
+        "decote_trimestres": 0.0,
+        "depart_anticipe": 1.0,
+        "duree_assurance": 144.0,
+        "duree_requise_de_la_generation": 165.0,
+        "majoration_pension": 1973.453369140625,
+        "minimum_garanti": 12135.068359375,
+        "ouverture_des_droits_le": "1992-01-01",
+        "pension": 21707.986328125,
+        "pension_avant_minimum": 19734.533203125,
+        "pension_brute": 19734.533203125,
+        "services": 132.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 30149.98046875
+      },
+      "profil": {
+        "code": "mere_conditions_1992",
+        "debut": 1978,
+        "liquidation": 2011,
+        "naissance": 1953,
+        "naissances": [
+          "1980-03-01",
+          "1982-06-01",
+          "1985-06-01"
+        ],
+        "objet": "conditions réunies avant 2004 : 150 trimestres, aucune décote",
+        "regime": "fonction_publique_etat",
+        "regle": "parents_de_trois_enfants",
+        "sexe": "F",
+        "traitement": 30000.0
+      }
+    },
+    "mere_conditions_2009": {
+      "entrees_openfisca": {
+        "date_naissance_enfant": "2001-02-01",
+        "fonction_publique_nombre_enfants_nes_avant_2004": 3,
+        "nombre_enfants": 3,
+        "sexe": true
+      },
+      "openfisca": {
+        "bonification": 12.0,
+        "coefficient_de_decote": 0.10000000149011612,
+        "coefficient_de_proratisation": 0.46060606837272644,
+        "conditions_reunies_le": "2009-01-01",
+        "decote_trimestres": 20.0,
+        "depart_anticipe": 1.0,
+        "duree_assurance": 76.0,
+        "duree_requise_de_la_generation": 165.0,
+        "majoration_pension": 906.1439208984375,
+        "minimum_garanti": 7511.29638671875,
+        "ouverture_des_droits_le": "2009-01-01",
+        "pension": 9967.5830078125,
+        "pension_avant_minimum": 9061.439453125,
+        "pension_brute": 9061.439453125,
+        "services": 64.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.6749999523162842,
+        "traitement_de_reference": 29144.982421875
+      },
+      "profil": {
+        "code": "mere_conditions_2009",
+        "debut": 1995,
+        "liquidation": 2011,
+        "naissance": 1955,
+        "naissances": [
+          "1996-02-01",
+          "1998-02-01",
+          "2001-02-01"
+        ],
+        "objet": "conditions de 2009 : la durée de qui a soixante ans en 2009 (article 5, VI, de la loi n° 2003-775)",
+        "regime": "fonction_publique_etat",
+        "regle": "parents_de_trois_enfants",
+        "sexe": "F",
+        "traitement": 29000.0
+      }
+    },
+    "mere_partie_en_2012": {
+      "entrees_openfisca": {
+        "date_naissance_enfant": "1986-03-01",
+        "fonction_publique_nombre_enfants_nes_avant_2004": 3,
+        "nombre_enfants": 3,
+        "sexe": true
+      },
+      "openfisca": {
+        "bonification": 12.0,
+        "coefficient_de_decote": 0.25,
+        "coefficient_de_proratisation": 0.8433734774589539,
+        "conditions_reunies_le": "1994-01-01",
+        "decote_trimestres": 20.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 140.0,
+        "duree_requise_de_la_generation": 166.0,
+        "majoration_pension": 1423.1927490234375,
+        "minimum_garanti": 0.0,
+        "ouverture_des_droits_le": "2018-01-01",
+        "pension": 15655.1201171875,
+        "pension_avant_minimum": 14231.927734375,
+        "pension_brute": 14231.927734375,
+        "services": 128.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.5625,
+        "traitement_de_reference": 30000.0
+      },
+      "profil": {
+        "code": "mere_partie_en_2012",
+        "debut": 1980,
+        "liquidation": 2012,
+        "naissance": 1956,
+        "naissances": [
+          "1982-03-01",
+          "1984-03-01",
+          "1986-03-01"
+        ],
+        "objet": "partie après juin 2011 : l'année de ses soixante ans (article 44, IV, de la loi n° 2010-1330)",
+        "regime": "fonction_publique_etat",
+        "regle": "parents_de_trois_enfants",
+        "sexe": "F",
+        "traitement": 30000.0
+      }
+    },
+    "mere_partie_en_2012_raison_famille": {
+      "entrees_openfisca": {
+        "date_naissance_enfant": "1986-03-01",
+        "fonction_publique_nombre_enfants_nes_avant_2004": 3,
+        "nombre_enfants": 3,
+        "raison_depart_taux_plein_anticipe": "famille",
+        "sexe": true
+      },
+      "openfisca": {
+        "bonification": 12.0,
+        "coefficient_de_decote": 0.17499999701976776,
+        "coefficient_de_proratisation": 0.8433734774589539,
+        "conditions_reunies_le": "2012-01-01",
+        "decote_trimestres": 20.0,
+        "depart_anticipe": 1.0,
+        "duree_assurance": 140.0,
+        "duree_requise_de_la_generation": 166.0,
+        "majoration_pension": 1565.511962890625,
+        "minimum_garanti": 0.0,
+        "ouverture_des_droits_le": "2012-01-01",
+        "pension": 17220.6328125,
+        "pension_avant_minimum": 15655.1201171875,
+        "pension_brute": 15655.1201171875,
+        "services": 128.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.6187499761581421,
+        "traitement_de_reference": 30000.0
+      },
+      "profil": {
+        "code": "mere_partie_en_2012_raison_famille",
+        "debut": 1980,
+        "liquidation": 2012,
+        "naissance": 1956,
+        "naissances": [
+          "1982-03-01",
+          "1984-03-01",
+          "1986-03-01"
+        ],
+        "objet": "la même, la raison « famille » déclarée à OpenFisca",
+        "raison": "famille",
+        "regime": "fonction_publique_etat",
+        "regle": "parents_de_trois_enfants",
+        "sexe": "F",
+        "traitement": 30000.0
+      }
+    },
+    "mere_temps_partiel_conditions_2004": {
+      "entrees_openfisca": {
+        "date_naissance_enfant": "1995-03-01",
+        "fonction_publique_duree_de_service_cotisee_annuelle": {
+          "1991": 3.2,
+          "1992": 3.2,
+          "1993": 3.2,
+          "1994": 3.2,
+          "1995": 3.2,
+          "1996": 3.2,
+          "1997": 3.2,
+          "1998": 3.2,
+          "1999": 3.2,
+          "2000": 3.2
+        },
+        "fonction_publique_nombre_enfants_nes_avant_2004": 3,
+        "fonction_publique_quotite_de_travail": {
+          "1991": 0.8,
+          "1992": 0.8,
+          "1993": 0.8,
+          "1994": 0.8,
+          "1995": 0.8,
+          "1996": 0.8,
+          "1997": 0.8,
+          "1998": 0.8,
+          "1999": 0.8,
+          "2000": 0.8
+        },
+        "nombre_enfants": 3,
+        "sexe": true
+      },
+      "openfisca": {
+        "bonification": 12.0,
+        "coefficient_de_decote": 0.02500000037252903,
+        "coefficient_de_proratisation": 0.5333333611488342,
+        "conditions_reunies_le": "2006-01-01",
+        "decote_trimestres": 20.0,
+        "depart_anticipe": 1.0,
+        "duree_assurance": 96.0,
+        "duree_requise_de_la_generation": 165.0,
+        "majoration_pension": 1097.4593505859375,
+        "minimum_garanti": 8538.109375,
+        "ouverture_des_droits_le": "2006-01-01",
+        "pension": 12072.052734375,
+        "pension_avant_minimum": 10974.59375,
+        "pension_brute": 10974.59375,
+        "services": 76.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.7312500476837158,
+        "traitement_de_reference": 28139.98046875
+      },
+      "profil": {
+        "code": "mere_temps_partiel_conditions_2004",
+        "debut": 1990,
+        "liquidation": 2011,
+        "naissance": 1955,
+        "naissances": [
+          "1991-03-01",
+          "1993-03-01",
+          "1995-03-01"
+        ],
+        "objet": "dix ans à 80 % avant ses quinze ans, que L. 5 compte en entier",
+        "regime": "fonction_publique_etat",
+        "regle": "parents_de_trois_enfants",
+        "sexe": "F",
+        "temps_partiel": [
+          [
+            1991,
+            2000,
+            0.8
+          ]
+        ],
+        "traitement": 28000.0
+      }
+    },
+    "pere_conditions_1992": {
+      "entrees_openfisca": {
+        "date_naissance_enfant": "1985-06-01",
+        "fonction_publique_nombre_enfants_nes_avant_2004": 3,
+        "nombre_enfants": 3,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 0.800000011920929,
+        "conditions_reunies_le": "1992-01-01",
+        "decote_trimestres": 0.0,
+        "depart_anticipe": 1.0,
+        "duree_assurance": 132.0,
+        "duree_requise_de_la_generation": 165.0,
+        "majoration_pension": 1808.998779296875,
+        "minimum_garanti": 12135.068359375,
+        "ouverture_des_droits_le": "1992-01-01",
+        "pension": 19898.986328125,
+        "pension_avant_minimum": 18089.98828125,
+        "pension_brute": 18089.98828125,
+        "services": 132.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 30149.98046875
+      },
+      "profil": {
+        "code": "pere_conditions_1992",
+        "debut": 1978,
+        "liquidation": 2011,
+        "naissance": 1953,
+        "naissances": [
+          "1980-03-01",
+          "1982-06-01",
+          "1985-06-01"
+        ],
+        "objet": "le père : l'interruption d'activité, qu'OpenFisca ne lit pas",
+        "regime": "fonction_publique_etat",
+        "regle": "parents_de_trois_enfants",
+        "sexe": "H",
+        "traitement": 30000.0
+      }
+    },
+    "temps_partiel_70_trois_ans_1952": {
+      "entrees_openfisca": {
+        "fonction_publique_duree_de_service_cotisee_annuelle": {
+          "1990": 2.8,
+          "1991": 2.8,
+          "1992": 2.8
+        },
+        "fonction_publique_quotite_de_travail": {
+          "1990": 0.7,
+          "1991": 0.7,
+          "1992": 0.7
+        },
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "coefficient_de_decote": 0.061250001192092896,
+        "coefficient_de_proratisation": 0.9024389982223511,
+        "decote_trimestres": 7.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 152.0,
+        "duree_requise_de_la_generation": 164.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 0.0,
+        "pension": 20331.951171875,
+        "pension_avant_minimum": 20331.951171875,
+        "pension_brute": 20331.951171875,
+        "services": 148.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.7040625214576721,
+        "traitement_de_reference": 32000.0
+      },
+      "profil": {
+        "code": "temps_partiel_70_trois_ans_1952",
+        "debut": 1976,
+        "liquidation": 2014,
+        "naissance": 1952,
+        "objet": "8,4 trimestres de services à temps partiel : arrondis une fois, et non année par année",
+        "regime": "fonction_publique_etat",
+        "regle": "temps_partiel",
+        "sexe": "H",
+        "temps_partiel": [
+          [
+            1990,
+            1992,
+            0.7
+          ]
+        ],
+        "traitement": 32000.0
+      }
+    },
+    "temps_partiel_80_dix_ans_1955": {
+      "entrees_openfisca": {
+        "fonction_publique_duree_de_service_cotisee_annuelle": {
+          "1995": 3.2,
+          "1996": 3.2,
+          "1997": 3.2,
+          "1998": 3.2,
+          "1999": 3.2,
+          "2000": 3.2,
+          "2001": 3.2,
+          "2002": 3.2,
+          "2003": 3.2,
+          "2004": 3.2
+        },
+        "fonction_publique_quotite_de_travail": {
+          "1995": 0.8,
+          "1996": 0.8,
+          "1997": 0.8,
+          "1998": 0.8,
+          "1999": 0.8,
+          "2000": 0.8,
+          "2001": 0.8,
+          "2002": 0.8,
+          "2003": 0.8,
+          "2004": 0.8
+        },
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "coefficient_de_decote": 0.21250000596046448,
+        "coefficient_de_proratisation": 0.8433734774589539,
+        "decote_trimestres": 17.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 148.0,
+        "duree_requise_de_la_generation": 166.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 0.0,
+        "pension": 15033.1904296875,
+        "pension_avant_minimum": 15033.1904296875,
+        "pension_brute": 15033.1904296875,
+        "services": 140.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.5906250476837158,
+        "traitement_de_reference": 30180.009765625
+      },
+      "profil": {
+        "code": "temps_partiel_80_dix_ans_1955",
+        "debut": 1980,
+        "liquidation": 2017,
+        "naissance": 1955,
+        "objet": "dix ans à 80 % au milieu d'une carrière décotée",
+        "regime": "fonction_publique_etat",
+        "regle": "temps_partiel",
+        "sexe": "H",
+        "temps_partiel": [
+          [
+            1995,
+            2004,
+            0.8
+          ]
+        ],
+        "traitement": 30000.0
+      }
+    },
+    "temps_partiel_jusqu_au_depart_1953": {
+      "entrees_openfisca": {
+        "fonction_publique_duree_de_service_cotisee_annuelle": {
+          "2010": 3.2,
+          "2011": 3.2,
+          "2012": 3.2,
+          "2013": 3.2,
+          "2014": 3.2
+        },
+        "fonction_publique_quotite_de_travail": {
+          "2010": 0.8,
+          "2011": 0.8,
+          "2012": 0.8,
+          "2013": 0.8,
+          "2014": 0.8
+        },
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "coefficient_de_decote": 0.1237500011920929,
+        "coefficient_de_proratisation": 0.8969696760177612,
+        "decote_trimestres": 11.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 152.0,
+        "duree_requise_de_la_generation": 165.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 0.0,
+        "pension": 17684.318359375,
+        "pension_avant_minimum": 17684.318359375,
+        "pension_brute": 17684.318359375,
+        "services": 148.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.6571875214576721,
+        "traitement_de_reference": 30000.0
+      },
+      "profil": {
+        "code": "temps_partiel_jusqu_au_depart_1953",
+        "debut": 1977,
+        "liquidation": 2015,
+        "naissance": 1953,
+        "objet": "à 80 % jusqu'au départ : le traitement de référence à temps plein",
+        "regime": "fonction_publique_etat",
+        "regle": "temps_partiel",
+        "sexe": "H",
+        "temps_partiel": [
+          [
+            2010,
+            2014,
+            0.8
+          ]
+        ],
+        "traitement": 30000.0
+      }
+    },
+    "temps_partiel_minimum_garanti_1946": {
+      "entrees_openfisca": {
+        "fonction_publique_duree_de_service_cotisee_annuelle": {
+          "1990": 2.0,
+          "1991": 2.0,
+          "1992": 2.0,
+          "1993": 2.0,
+          "1994": 2.0,
+          "1995": 2.0,
+          "1996": 2.0,
+          "1997": 2.0,
+          "1998": 2.0,
+          "1999": 2.0
+        },
+        "fonction_publique_quotite_de_travail": {
+          "1990": 0.5,
+          "1991": 0.5,
+          "1992": 0.5,
+          "1993": 0.5,
+          "1994": 0.5,
+          "1995": 0.5,
+          "1996": 0.5,
+          "1997": 0.5,
+          "1998": 0.5,
+          "1999": 0.5
+        },
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 0.6410256624221802,
+        "decote_trimestres": 0.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 120.0,
+        "duree_requise_de_la_generation": 156.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 10652.2763671875,
+        "pension": 10652.2763671875,
+        "pension_avant_minimum": 5815.47119140625,
+        "pension_brute": 10652.2763671875,
+        "services": 100.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 12096.1796875
+      },
+      "profil": {
+        "code": "temps_partiel_minimum_garanti_1946",
+        "debut": 1980,
+        "liquidation": 2010,
+        "naissance": 1946,
+        "objet": "le minimum garanti, sur les services réduits",
+        "regime": "fonction_publique_etat",
+        "regle": "temps_partiel",
+        "sexe": "H",
+        "temps_partiel": [
+          [
+            1990,
+            1999,
+            0.5
+          ]
+        ],
+        "traitement": 12000.0
+      }
+    },
+    "temps_partiel_surcote_1949": {
+      "entrees_openfisca": {
+        "fonction_publique_duree_de_service_cotisee_annuelle": {
+          "2009": 3.6,
+          "2010": 3.6,
+          "2011": 3.6,
+          "2012": 3.6
+        },
+        "fonction_publique_quotite_de_travail": {
+          "2009": 0.9,
+          "2010": 0.9,
+          "2011": 0.9,
+          "2012": 0.9
+        },
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 1.0,
+        "decote_trimestres": 0.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 172.0,
+        "duree_requise_de_la_generation": 161.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 12612.9140625,
+        "pension": 26446.876953125,
+        "pension_avant_minimum": 26446.876953125,
+        "pension_brute": 26446.876953125,
+        "services": 170.0,
+        "surcote_trimestres": 11.0,
+        "taux_de_liquidation": 0.8531250357627869,
+        "traitement_de_reference": 31000.0
+      },
+      "profil": {
+        "code": "temps_partiel_surcote_1949",
+        "debut": 1970,
+        "liquidation": 2013,
+        "naissance": 1949,
+        "objet": "à 90 % pendant la surcote : la durée reste entière",
+        "regime": "fonction_publique_etat",
+        "regle": "temps_partiel",
+        "sexe": "H",
+        "temps_partiel": [
+          [
+            2009,
+            2012,
+            0.9
+          ]
+        ],
+        "traitement": 31000.0
+      }
+    }
+  },
+  "recupere_le": "2026-10-13",
+  "source": "OpenFisca-France-Pension",
+  "version": "0.1.3"
+}

@@ -1,0 +1,29 @@
+date: "2026-10-13"
+session: >-
+  action 153, étape 1 : le temps partiel des fonctionnaires et le départ anticipé des
+  parents de trois enfants, confrontés à OpenFisca-France-Pension
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index LEGI, récupéré à jour au 11 octobre 2026.
+  L'article 66 de la loi n° 2003-775 (LEGIARTI000006758610, II et III) ; son article 5,
+  VI, rédactions du 22 décembre 2006 (LEGIARTI000006758543), du 14 mai 2009
+  (LEGIARTI000020627929) et du 11 novembre 2010 (LEGIARTI000023030932) ; L. 13 du code
+  des pensions (LEGIARTI000006362702) ; L. 24, rédaction du 28 juin 2006 au 1er juillet
+  2011 (LEGIARTI000006362730) ; L. 5, rédactions du 27 juillet 1991
+  (LEGIARTI000006362669) et du 1er janvier 2004 (LEGIARTI000006362670) ; l'article 44 de
+  la loi n° 2010-1330 (LEGIARTI000023023951). Et le code d'OpenFisca-France-Pension
+  0.1.3, exécuté à part.
+trouve: >-
+  Aucun texte nouveau, aucune règle du scénario 1 à corriger : les deux fiches
+  (`temps_partiel_fonction_publique`, `depart_anticipe_parents_trois_enfants`) disent ce
+  que les textes disent, et OpenFisca les confirme sur le temps partiel, l'année des
+  conditions réunies, sa décote, la bonification et la majoration. Ses quatre écarts
+  sont les siens : la durée de la génération au lieu de celle de l'année des conditions
+  (article 66, II ; article 5, VI) ; le départ fermé avant juillet 2011 à qui n'atteint
+  pas son âge d'ouverture avant 2016 ni n'a réuni les conditions avant 2003 (L. 24, I,
+  3°) ; le départ d'après juin 2011 servi à la seule raison « famille », datée du départ
+  (article 44, III et IV) ; les quinze ans comptés sur les services réduits (L. 5).
+reste: >-
+  À l'action 153, étape 2 : les autres familles de profils, une par session, d'abord
+  les enfants. Le signalement à OpenFisca, que le propriétaire tranche. Les deux fiches
+  ne changent que leur bloc `referents` : leurs règles, leur état et leur date de
+  lecture restent.

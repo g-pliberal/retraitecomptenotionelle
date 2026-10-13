@@ -1244,9 +1244,12 @@ referents:
     confrontation: >-
       Un calcul rejoué : des carrières simples, à salaire nominal constant,
       calculées chez lui et figées en témoins (`tests/temoins/openfisca_*.json`),
-      que `tests/test_oracle.py` rejoue contre le scénario 1. C'est la seule
-      confrontation de moteur que le dépôt mène aujourd'hui ; ce qu'il reste à
-      en tirer est l'action 136 de la feuille de route.
+      que `tests/test_oracle.py` rejoue contre le scénario 1 ; puis, depuis le
+      13 octobre 2026, une famille de profils à la fois, chacune avec sa
+      convention de traduction écrite (`tests/test_oracle_familles.py`) : la
+      première, le temps partiel des fonctionnaires et le départ anticipé des
+      parents de trois enfants. Ce qu'il reste à en tirer est l'action 153 de
+      la feuille de route.
     ecarts:
       - constat: >-
           Ses coefficients de revalorisation des salaires portés au compte
@@ -1410,6 +1413,68 @@ referents:
         preuve: >-
           `openfisca_france_pension/regimes/fonction_publique.py`, au
           commit 1c45423 ; data/reference/regles/majoration_enfants_plafond_fonction_publique.yaml
+      - constat: >-
+          Au départ anticipé des parents de trois enfants, il proratise la
+          pension sur la durée de la génération
+          (`coefficient_de_proratisation`, qui lit
+          `trimtp.nombre_trimestres_cibles_taux_plein_par_generation`) et ne
+          prend l'année des conditions réunies que pour le barème et l'âge
+          d'annulation de la décote : la mère née en 1953 qui les réunit en
+          1992 a chez lui 165 trimestres requis, 150 chez nous.
+        tranche: >-
+          loi n° 2003-775, article 66, II (LEGIARTI000006758610) : le nombre
+          de trimestres du pourcentage maximum selon l'« Année au cours de
+          laquelle sont réunies les conditions mentionnées au I et au II de
+          l'article L. 24 », 150 jusqu'en 2003 ; puis son article 5, VI, la
+          durée de l'année où la liquidation peut intervenir
+          (LEGIARTI000006758543, LEGIARTI000023030932). Le dépôt a raison
+        preuve: >-
+          tests/temoins/openfisca_temps_partiel_et_parents.json ;
+          tests/test_oracle_familles.py
+      - constat: >-
+          Avant le 1er juillet 2011, il n'ouvre ce départ qu'à qui atteint son
+          âge d'ouverture avant 2016 ou a réuni les conditions avant 2003
+          (`depart_anticipe_trois_enfants`) : la mère née en 1962, quinze ans
+          de services en 2004, partie le 1er janvier 2011, liquide chez lui
+          comme à son âge d'ouverture, avec vingt trimestres de décote.
+        tranche: >-
+          L. 24, I, 3°, rédaction du 28 juin 2006 au 1er juillet 2011
+          (LEGIARTI000006362730) : la liquidation intervient « Lorsque le
+          fonctionnaire civil est parent de trois enfants vivants », sous la
+          seule condition de l'interruption d'activité ; l'article 44, IV,
+          1°, de la loi n° 2010-1330 (LEGIARTI000023023951) garde l'ancien
+          calcul aux demandes d'avant 2011. Le dépôt a raison
+        preuve: >-
+          tests/temoins/openfisca_temps_partiel_et_parents.json ;
+          tests/test_oracle_familles.py
+      - constat: >-
+          Après le 30 juin 2011, il ne sert plus ce départ, sauf à lui
+          déclarer la raison « famille » (`raison_depart_taux_plein_anticipe`),
+          qui date les conditions du départ lui-même : la durée et la décote
+          sont alors celles de l'année du départ, 0,875 % par trimestre en
+          2012.
+        tranche: >-
+          loi n° 2010-1330, article 44, III et IV (LEGIARTI000023023951) : qui
+          a réuni les conditions avant 2012 « conserve la possibilité de
+          liquider sa pension par anticipation », à la durée et à la décote de
+          l'année de ses soixante ans, 1,25 % en 2016. Le dépôt a raison
+        preuve: >-
+          tests/temoins/openfisca_temps_partiel_et_parents.json ;
+          tests/test_oracle_familles.py
+      - constat: >-
+          Il compte les quinze ans de services du départ des parents sur les
+          services réduits par la quotité (`date_quinze_ans_service`, qui lit
+          `duree_de_service_effective`) : dix ans à 80 % les lui retardent de
+          deux ans, et la mère qui les a en 2004 n'a chez lui que les
+          conditions de 2006, et sa décote.
+        tranche: >-
+          L. 5, rédactions du 27 juillet 1991 (LEGIARTI000006362669) et du
+          1er janvier 2004 (LEGIARTI000006362670) : le temps partiel compte
+          « pour la totalité de sa durée » dans la constitution du droit. Le
+          dépôt a raison
+        preuve: >-
+          tests/temoins/openfisca_temps_partiel_et_parents.json ;
+          tests/test_oracle_familles.py
     fait_mieux:
       - quoi: >-
           Il code le départ anticipé des fonctionnaires parents de trois
@@ -1423,6 +1488,13 @@ referents:
           (`depart_anticipe_trois_enfants`), et
           `tests/formulas/fonction_publique/parent_trois_enfants.yml`, au
           commit `1c45423`
+        verification: >-
+          Confronté à son calcul le 13 octobre 2026 (action 153, première
+          famille de profils) : l'année des conditions réunies, la décote de
+          cette année, la bonification de L. 12, b, et la majoration de L. 18
+          concordent ; sa durée requise, son ouverture du départ et ses
+          quinze ans de services s'écartent des textes, quatre écarts
+          tranchés plus haut, tous les siens.
         etat: repris
         chantier: "138.17"
       - quoi: >-
@@ -1440,7 +1512,9 @@ referents:
           champ « Temps partiel » du formulaire, la quotité des périodes
           d'activité, et les services qui la comptent, dans les deux moteurs ;
           l'exemple du SRE rend ses 148 trimestres (`sre_temps_partiel_pierre`).
-          La surcotisation ne l'est pas : la fiche reste `approchee`.
+          La surcotisation ne l'est pas : la fiche reste `approchee`. Confronté
+          à son calcul le 13 octobre 2026 (action 153) : durée, services,
+          décote, surcote, traitement et pension au centime sur six profils.
         etat: repris
         chantier: "136.3"
       - quoi: >-
@@ -1450,8 +1524,11 @@ referents:
           publique, les minima garanti et contributif, la minoration de
           l'Arrco, les périodes assimilées année par année et le salaire
           annuel moyen sur des salaires qui varient. L'oracle du dépôt ne lui
-          confronte que 48 carrières continues à salaire nominal constant
-          (`tests/test_oracle.py`).
+          confrontait que 48 carrières continues à salaire nominal constant
+          (`tests/test_oracle.py`) ; depuis le 13 octobre 2026, aussi le temps
+          partiel des fonctionnaires et le départ des parents de trois enfants
+          (`tests/test_oracle_familles.py`, action 153, étape 1). Restent les
+          autres familles.
         preuve: >-
           ses 140 tests de formules (`tests/formulas/`), au commit `1c45423`
         etat: a_reprendre
@@ -1741,20 +1818,23 @@ referents:
       validantes, minimum de réversion, catégories de L. 351-8). Il
       reste borné à cinq familles de régimes, arrêté à la loi de 2023,
       et faux sur le minimum surcoté, la majoration de durée et la
-      revalorisation de 2020.
+      revalorisation de 2020 ; au départ des parents de trois enfants,
+      faux sur la durée, l'ouverture et les quinze ans (action 153).
     manifeste:
       - openfisca_points
       - openfisca_regime_general_oracle
       - openfisca_fonction_publique_oracle
+      - openfisca_temps_partiel_et_parents_oracle
       - openfisca_arrco_oracle
       - openfisca_minimum_contributif
       - openfisca_parametres_generation
     sas: [openfisca_france_pension]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-13
     lu_dans:
       - https://github.com/openfisca/openfisca-france-pension
       - tests/temoins/openfisca_regime_general.json
       - tests/temoins/openfisca_fonction_publique.json
+      - tests/temoins/openfisca_temps_partiel_et_parents.json
       - tests/temoins/openfisca_arrco.json
       - tests/temoins/openfisca_agirc.json
       - tests/temoins/openfisca_ircantec.json

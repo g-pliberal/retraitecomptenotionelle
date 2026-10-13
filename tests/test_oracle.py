@@ -53,6 +53,10 @@ Ce que chaque confrontation a trouvé, dans l'ordre où elles ont été écrites
   l'artisan et le commerçant, non, parce que le modèle coupe leur carrière à
   chaque changement de caisse et calcule deux salaires de référence là où la
   loi n'en veut qu'un.
+
+Au-delà de ces carrières simples, la confrontation se poursuit une famille de
+profils à la fois, chacune avec sa convention de traduction écrite :
+``tests/test_oracle_familles.py`` (action 153).
 """
 
 from __future__ import annotations
