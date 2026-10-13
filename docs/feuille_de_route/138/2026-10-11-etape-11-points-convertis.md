@@ -1,14 +1,15 @@
 # Étape 11, première partie : les points du relevé convertis en revenus
 
-**Reprise, au 11 octobre 2026.** Fait : les points d'un relevé convertis en
+**Reprise, au 13 octobre 2026.** Fait : les points d'un relevé convertis en
 revenu dans les deux moteurs — le revenu entier le plus bas qui les ouvre,
 cherché sur le relevé des droits du scénario 1 (`revenu_des_points`,
-`droit/releve.py` et son jumeau) —, et la lecture des relevés qui s'en sert
-quand on le lui passe. Reste, dans cet ordre : le branchement dans
-`index.html`, à la session du site, une ligne (« Ce qui reste », 1) ; au
-propriétaire, ce que reçoit une année sans montant ni points (trois points du
-registre, `a_trancher`) ; puis les autres parties de l'étape, des exemples
-officiels du diviseur aux chocs stylisés du COR. Détail : « Ce qui reste ».
+`droit/releve.py` et son jumeau) —, la lecture des relevés qui s'en sert, et
+son branchement au site : `index.html` passe le convertisseur à `lireReleve`,
+la limite est récrite, le contrôle du dépôt lit aussi `droit/releve.js`.
+Reste, dans cet ordre : au propriétaire, ce que reçoit une année sans montant
+ni points (trois points du registre, `a_trancher`) ; puis les autres parties
+de l'étape, des exemples officiels du diviseur aux chocs stylisés du COR.
+Détail : « Ce qui reste », 2 à 4.
 
 **La demande.** Le propriétaire, le 11 octobre 2026 : « les années sans
 montant sont comptées zéro au compte notionnel, et les points du relevé sont

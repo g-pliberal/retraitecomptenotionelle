@@ -2856,16 +2856,17 @@ def _(m: Modele):
     C'est la phrase la plus engageante du formulaire, et la seule qu'un lecteur
     ne peut pas vérifier lui-même : un relevé de carrière est le document le
     plus personnel qu'une administration française délivre. Le contrôle lit
-    donc le code qui le manipule — les deux modules de lecture, et la section
-    du dépôt dans `index.html` — et refuse tout ce qui ouvrirait une
-    connexion. Il refuse aussi un `name` sur le champ de fichier : un
-    formulaire en GET porterait sinon le nom du fichier dans l'adresse.
+    donc le code qui le manipule — les deux modules de lecture, le relevé des
+    droits qui convertit ses points en revenus, et la section du dépôt dans
+    `index.html` — et refuse tout ce qui ouvrirait une connexion. Il refuse
+    aussi un `name` sur le champ de fichier : un formulaire en GET porterait
+    sinon le nom du fichier dans l'adresse.
     """
     page = (RACINE / "index.html").read_text(encoding="utf-8")
     debut = page.index("// -- le relevé de carrière déposé")
     depot = page[debut:page.index("// -- navigation", debut)]
     sources = {"index.html (dépôt)": depot}
-    for nom in ("lecture-pdf.js", "releve-lu.js"):
+    for nom in ("lecture-pdf.js", "releve-lu.js", "droit/releve.js"):
         sources[nom] = (RACINE / "moteur" / "js" / nom).read_text(encoding="utf-8")
     for nom, source in sources.items():
         code = _sans_commentaires(source)

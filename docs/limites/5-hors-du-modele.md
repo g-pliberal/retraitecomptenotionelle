@@ -311,13 +311,20 @@ n'est plus une limite : c'est un paramètre connu du résultat.
     libérales depuis 2004, les exploitants agricoles : leur relevé donne des
     points et des trimestres, et une complémentaire chiffre parfois seule une
     année que la base ne chiffre pas. Ces points disent le revenu, au barème
-    de leur régime : le modèle le retrouve, le plus bas qui les ouvre
-    (`revenu_des_points`, action 138, étape 11), et la lecture s'en sert
-    quand on le lui passe — ce que le site ne fait pas encore : il lit ces
-    années à zéro, et le dit. Une année qui n'a ni montant ni points qui le
-    disent reste à zéro, et la note invite à la compléter : ce que le compte
-    notionnel en reçoit est un choix du programme, que le propriétaire n'a pas
-    tranché.
+    de leur régime : au dépôt, le site retrouve le plus bas qui les ouvre, sur
+    le relevé des droits du scénario 1 (`revenu_des_points`, action 138,
+    étape 11), et l'écrit dans le champ du relevé, où le lecteur le voit et le
+    corrige. C'est un plancher : aux points du plafond d'un barème, le revenu
+    a pu le dépasser, et la note le dit. Elle ne dit pas l'écart du cadre
+    d'avant 2019 : le relevé d'aujourd'hui fond ses points de l'Agirc dans
+    ceux de l'Agirc-Arrco, l'année se convertit au barème du non-cadre, et le
+    revenu rendu est trop haut — sur les seules années sans montant, que le
+    relevé tous régimes chiffre d'ordinaire. Certains points ne disent aucun
+    revenu — ceux, forfaitaires, de la base des libéraux d'avant 2004, ceux
+    du plancher d'une assiette minimale, ceux d'un régime additionnel —, et
+    une année qui n'a ni montant ni points qui le disent reste à zéro : la
+    note invite à la compléter, et ce que le compte notionnel en reçoit est un
+    choix du programme, que le propriétaire n'a pas tranché.
   - **Un état de services couvrant plusieurs années n'est pas réparti.** « Du
     01/09/1996 au 31/08/2001 », tel que la fonction publique l'écrit, ne dit ni
     le revenu de chaque année ni leur partage : la ligne ressort telle quelle

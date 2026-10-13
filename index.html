@@ -151,6 +151,7 @@ import {
 } from "./moteur/js/pages.js";
 import * as gabarit from "./moteur/js/gabarit.js";
 import { NOMS_DE_MOIS } from "./moteur/js/calendrier.js";
+import { revenuDesPoints } from "./moteur/js/droit/releve.js";
 // La signature des images composées ici vient du gabarit, comme tout ce
 // que le site écrit : elle ne doit exister qu'à un seul endroit.
 const { SIGNATURE, SIGNATURE_SITE, ADRESSE_SITE } = gabarit;
@@ -1310,7 +1311,9 @@ function naviguer(cible) {
 //
 // Les deux modules sont chargés À LA DEMANDE, et non préchargés avec le
 // moteur : ils ne servent qu'ici, et les faire partir avec le reste coûterait
-// à tous les lecteurs qui ne déposeront jamais rien.
+// à tous les lecteurs qui ne déposeront jamais rien. La conversion des points
+// en revenu, elle, est du moteur (`moteur/js/droit/releve.js`) : préchargée
+// avec lui, elle s'importe en tête du script, et non à la demande.
 
 // « %PDF » : les quatre premiers octets de tout fichier PDF. Un relevé collé
 // dans un fichier texte se lit, lui, tel quel.
@@ -1440,7 +1443,12 @@ async function deposerLeReleve(contenu, fichier) {
     // L'année courante borne ce qui peut être une carrière : un relevé ne
     // rapporte jamais l'avenir, et les documents d'estimation en portent
     // beaucoup — « En partant au 01/06/2060, vous pourriez avoir droit à… ».
-    const lecture = lireReleve(lignes, new Date().getFullYear());
+    // Les points d'une année que le relevé ne chiffre pas en euros disent son
+    // revenu, au barème du droit en vigueur : le scénario 1 retrouve le plus
+    // bas qui les ouvre, plutôt que de lire l'année à zéro.
+    const moteur = contexte.simulateur().scenarioActuel;
+    const lecture = lireReleve(lignes, new Date().getFullYear(),
+      (...arguments_) => revenuDesPoints(moteur, ...arguments_));
     if (lecture.lignes.length === 0) {
       dire("Aucune année de carrière n'a été reconnue dans ce fichier. "
         + "S'il s'agit bien d'un relevé, sa mise en page est inconnue du "
