@@ -1,0 +1,38 @@
+date: "2026-10-13"
+session: "action 129 : le jaune pensions du PLF 2027 lu, qui ne décompose pas le taux de l'État année par année"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1. Le jaune
+  « Rapport sur les pensions de retraite de la fonction publique » annexé au PLF 2027,
+  que budget.gouv.fr publie depuis le 13 octobre sous « PLF 2027 - Jaunes budgétaires »
+  (documentation/documents-budgetaires/exercice-2027/projet-loi-finances-les/plf-2027-jaunes-budgetaires) :
+  budget.gouv.fr répondant toujours 403 au cloud, par curl comme par WebFetch (pare-feu
+  Incapsula), le propriétaire l'a téléchargé depuis son téléphone et déposé sur la
+  branche jaune-2027, sous le nom 34465.pdf, 11 964 640 octets, 250 pages, créé le
+  12 octobre 2026, SHA-256
+  73dd4a66051cd71bdf2c77eb5345a34f99f862330f0f20164c930492be2dbaf5. Lus : la partie I,
+  pages 19 à 24, et le tableau 14 des taux de contribution employeur. La page du dossier
+  du PLF 2027 de l'Assemblée nationale, tirée sans son cache à 13 h 28 : toujours pas de
+  « Jaunes annexés ».
+trouve: >-
+  Pas de série de la part « retraite seule ». Le jaune actualise, sur l'exécution de 2025,
+  l'affichage alternatif du jaune 2026 au taux du régime général sous le plafond
+  (16,67 %) : 11,0 Md€ de contributions employeurs au lieu de 54,9, et une subvention
+  d'équilibre de 43,9 Md€, 65,2 % des recettes du CAS selon sa figure 3A, quand son texte
+  écrit 41,5 Md€, que son propre pourcentage dément. Il cite la Cour (44,1 % civil,
+  51,2 % militaire, en 2025) et l'IPP (34,7 %, en 2020), impute l'écart de neuf points au
+  taux de départ et au coût des avantages professionnels, et écrit que la Cour retraite le
+  taux de 2026 (82,28 %), quand son tableau n° 15 part de 83,6 %, le taux d'équilibre de
+  2025. Il conclut qu'« il n'existe donc pas de taux consensuel » et annonce des travaux
+  de la direction du budget « dans les prochains mois » vers « une méthodologie
+  applicable d'année en année ». Son tableau 14 recoupe année par année les taux du
+  modèle : l'État civil et les militaires de 2006 à 2026, la CNRACL de 2000 à 2026 ; seul
+  écart, 2013, où il donne la moyenne de l'année (71,78 %) et le modèle le taux appelé
+  (74,28 %), la baisse de décembre étant déjà déclarée dans
+  contribution_employeur_public.csv.
+reste: >-
+  Le point 1 de l'action 129 attend encore : `PartRetraiteSeuleEtat` garde la proportion
+  de 2025, faute de série publiée ; à guetter, les travaux annoncés de la direction du
+  budget, et au plus tard le jaune du PLF 2028. Le miroir de l'Assemblée, quand il
+  paraîtra, se compare à l'empreinte ci-dessus. La mise à jour, sur le jaune 2027, des
+  bonifications que `sre_jaune_pensions.py` tire du jaune 2026 (tableaux A-7, 50 et B-1)
+  est une autre étape.

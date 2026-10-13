@@ -2321,14 +2321,14 @@ vaut pour elle. C'est le test à écrire à la fin de ce chantier.
 
 **Reprise, au 13 octobre 2026.** Le réglage et le défaut sont faits ; reste le
 point 1, une vraie série année par année de la part « retraite seule », au lieu
-de la proportion de 2025 prêtée aux autres années. Le jaune pensions du PLF 2027
-(n° 3210) n'était toujours pas en ligne le 13 octobre à 11 h, jour de la
-séance publique : pas de « Jaunes annexés » au dossier de l'Assemblée, même tiré
-sans son cache (`?v=<horodatage>`), vérifié à 10 h 50 puis à 11 h. L'en tirer dès qu'il y paraît, sans balayer
-les numéros de ses fichiers, voir s'il décompose le taux, puis faire accepter
-plusieurs années à `PartRetraiteSeuleEtat` (`regimes.py`, `regimes.js`).
-Détail : « Le point 1 reste ouvert », et le journal de veille des 11 et
-13 octobre.
+de la proportion de 2025 prêtée aux autres années. Le jaune pensions du PLF
+2027, lu le 13 octobre, n'en donne pas : il reprend la Cour (2025) et l'IPP
+(2020), conclut qu'« il n'existe donc pas de taux consensuel » et annonce des
+travaux de la direction du budget vers « une méthodologie applicable d'année
+en année ». `PartRetraiteSeuleEtat` n'a donc pas à accepter plusieurs années.
+Reste à guetter ces travaux, ou le jaune du PLF 2028 ; au propriétaire, dire
+s'il veut la convention du jaune (16,67 %) comme valeur de `contribution_etat`.
+Détail : `129/2026-10-13-jaune-pensions-2027.md`.
 
 **Demande.** « Dis-moi en plus sur le taux seulement dédié à la retraite, ça
 m'intéresse — ça peut changer beaucoup de choses », puis : « intègre-le comme
