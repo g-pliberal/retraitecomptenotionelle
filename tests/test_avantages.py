@@ -616,38 +616,41 @@ def test_la_majoration_pour_enfants_se_recoupe_avec_le_jaune(script_cout):
     ÉTIQUETTE, et rien ne le dirait — un poste voisin mal mappé rendrait un
     montant plausible.
 
-    Le jaune budgétaire permet un recoupement, parce qu'il détaille la
-    fonction publique là où les comptes agrègent tous les régimes. Pour les
-    pensions en paiement en 2024 (tableau A-7) et la part qui porte la
-    majoration avec son supplément moyen (tableau B-1, flux 2023) :
+    Le jaune budgétaire annexé au PLF 2027 permet un recoupement, parce qu'il
+    détaille la fonction publique là où les comptes agrègent tous les régimes.
+    Pour les pensions en paiement fin 2025 (tableau A-7) et la part qui porte
+    la majoration avec son supplément moyen (tableau B-1, flux de 2025) :
 
-        1 654 863 × 23,9 % × 276,2 € × 12 = 1,31 Md€   pensions civiles d'État
-          406 645 × 11,7 % × 332,8 € × 12 = 0,19 Md€   pensions militaires
-          800 833 × 26,8 % × 144,9 € × 12 = 0,37 Md€   FPT
-          630 149 × 24,4 % × 149,8 € × 12 = 0,28 Md€   FPH
+        1 656 399 × 24,3 % × 277,5 € × 12 = 1,34 Md€   pensions civiles d'État
+          408 750 × 12,0 % × 337,7 € × 12 = 0,20 Md€   pensions militaires
+          830 114 × 26,5 % × 145,1 € × 12 = 0,38 Md€   FPT
+          640 195 × 25,1 % × 151,2 € × 12 = 0,29 Md€   FPH
                                             ‾‾‾‾‾‾‾‾
-                                            2,15 Md€
+                                            2,21 Md€
 
-    La fonction publique ferait donc 28 % du poste des comptes. Elle pèse
-    environ un cinquième des retraités français, avec des pensions plus
-    élevées : l'écart est du bon côté et du bon ordre.
+    La fonction publique ferait donc 28 % du poste des comptes de 2024, le
+    dernier qu'ils publient. Elle pèse environ un cinquième des retraités
+    français, avec des pensions plus élevées : l'écart est du bon côté et du
+    bon ordre. Le jaune du PLF 2026 en donnait 2,15 Md€, et la même part.
 
-    LA BANDE EST LARGE À DESSEIN. Les deux termes ne sont pas du même
-    millésime — un stock de 2024 et une part mesurée sur le flux de 2023 —, et
-    ce test ne prétend pas valider le poste au pourcent près. Il attrape une
+    LA BANDE EST LARGE À DESSEIN. Les termes ne sont pas du même millésime —
+    un stock de fin 2025, une part mesurée sur le flux de la même année, le
+    poste des comptes de 2024 —, et ce test ne prétend pas valider le poste au
+    pourcent près. Il attrape une
     ERREUR D'ÉTIQUETTE : un poste mal mappé sortirait de [15 %, 45 %] sans
     qu'aucun autre garde-fou ne bronche.
     """
     from retraite_notionnelle import Parametres
     from retraite_notionnelle.donnees.depenses import DepensesRetraite
 
-    # Jaune budgétaire, tableaux A-7 et B-1 : effectif du stock 2024, part des
-    # pensions majorées et supplément mensuel moyen, régime par régime.
+    # Jaune budgétaire annexé au PLF 2027, tableaux A-7 et B-1 : effectif du
+    # stock de fin 2025, part des pensions majorées du flux de 2025 et
+    # supplément mensuel moyen, régime par régime.
     JAUNE = {
-        "pensions civiles de l'État": (1_654_863, 0.239, 276.2),
-        "pensions militaires": (406_645, 0.117, 332.8),
-        "FPT (CNRACL)": (800_833, 0.268, 144.9),
-        "FPH (CNRACL)": (630_149, 0.244, 149.8),
+        "pensions civiles de l'État": (1_656_399, 0.243, 277.5),
+        "pensions militaires": (408_750, 0.120, 337.7),
+        "FPT (CNRACL)": (830_114, 0.265, 145.1),
+        "FPH (CNRACL)": (640_195, 0.251, 151.2),
     }
     fonction_publique = sum(
         effectif * part * euro * 12 / 1e6 for effectif, part, euro in JAUNE.values()
