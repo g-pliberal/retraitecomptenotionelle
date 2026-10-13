@@ -7589,15 +7589,16 @@ départs très tardifs atteignent pour la première fois, à relire au texte.
 
 ### 152. Les cas types statutaires et non salariés à leur place dans l'EIR : le niveau et la carrière de chacun — `en cours`
 
-**Reprise, au 13 octobre 2026.** Faites, les étapes 1 et 2 : le militaire est le
+**Reprise, au 13 octobre 2026.** Faites, les étapes 1 à 3 : le militaire est le
 militaire moyen du jaune budgétaire, et la population est remesurée ; la CNRACL
-garde son cas type, juste en niveau au jaune comme à l'EIR, par deux erreurs qui
-se compensent. Reste, un groupe par session et dans l'ordre du plan : les
-exploitants agricoles (88,3 % des hommes au premier quintile, pour 40,8 dans
-l'EIR), puis les professions libérales et les civils de l'État. Commencer par la
-ligne des non-salariés de la MSA dans les quintiles des résidents et par ce que
-la MSA et la DREES publient de leurs pensions. Chantier à part : la dispersion
-des carrières statutaires dans la population. Détail : les notes des étapes.
+et l'exploitant agricole gardent leur cas type, l'exploitant parce que sa
+carrière tient et que la page ne sert pas aux pensions agricoles déjà liquidées
+leurs relèvements. Reste, un groupe par session : les professions libérales
+(72,2 % des hommes au cinquième quintile, pour 45,1 dans l'EIR), puis les civils
+de l'État. Commencer par la ligne des professions libérales dans les quintiles
+des résidents et par ce que la CNAVPL et la DREES publient de leurs pensions.
+Chantiers à part : la dispersion des carrières statutaires ; les relèvements
+agricoles, avec `cout.py` (action 147). Détail : les notes des étapes.
 
 **D'où elle vient.** La population de l'action 136 (étape 6), rangée le
 12 octobre 2026 dans les quintiles de la pension en équivalent carrière
@@ -7647,6 +7648,10 @@ que lui en adjoindre un second ; pour tous, l'ordre des groupes du plan.
 **Décidé le 13 octobre 2026 par le propriétaire**, sur la lecture de la CNRACL
 (note de l'étape 2) : garder son cas type, juste en niveau ; faire de la
 dispersion des carrières statutaires dans la population un chantier à part.
+
+**Décidé le 13 octobre 2026 par le propriétaire**, sur la lecture des
+exploitants agricoles (note de l'étape 3) : garder leur cas type ; faire des
+relèvements des pensions agricoles déjà liquidées un chantier à part.
 
 **Ce que le propriétaire tranche** : s'il faut un cas type de plus par groupe
 plutôt que déplacer celui qui existe, et l'ordre des groupes.
