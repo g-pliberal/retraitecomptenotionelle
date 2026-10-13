@@ -142,6 +142,10 @@ HORS_DU_MODELE = (
     # contre lesquelles leurs tables se contrôlent, et qu'aucun calcul ne lit
     # (action 138, étape 7).
     "data/reference/mortalite/esperances_vie_variantes.csv",
+    # Les pensions de la fonction publique en 2025, stock et flux, que les cas
+    # types statutaires confrontent, et qu'aucun calcul ne lit (action 159,
+    # étape 4).
+    "data/reference/macro/caracteristiques_fonction_publique.csv",
 )
 
 #: Les calculs de ce processus, par leur nom : l'objet picklé, dont chaque

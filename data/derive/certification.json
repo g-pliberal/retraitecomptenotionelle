@@ -188,6 +188,17 @@
    "valeurs": 75,
    "verifiee_le": "2026-10-13"
   },
+  "caracteristiques_fonction_publique": {
+   "ajoutees": 1352,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "62fca1c1be23b923",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "Direction du budget, jaune pensions annexé au PLF 2027 (données du Service des retraites de l'État, de la CNRACL et du FSPOEIE), tableaux A-1, B-1, B-3, B-3 bis, B-4 et B-5",
+   "valeurs": 1352,
+   "verifiee_le": "2026-10-13"
+  },
   "caracteristiques_retraites": {
    "ajoutees": 0,
    "colonne": "valeur",
@@ -585,11 +596,11 @@
    "verifiee_le": "2026-09-24"
   },
   "employeur_public_fspoeie": {
-   "ajoutees": 27,
+   "ajoutees": 0,
    "colonne": "taux",
    "corrigees": 0,
    "empreinte": "6fe0df2c526baff4",
-   "identiques": 0,
+   "identiques": 27,
    "niveau": "certifiee",
    "source": "Direction du budget, jaune pensions annexé au PLF 2027, tableau 14 (taux de contribution employeur)",
    "valeurs": 27,

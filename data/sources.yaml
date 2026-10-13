@@ -1780,7 +1780,8 @@ institutions:
         cible: >-
           data/reference/legislation/bonifications_jaune.csv,
           data/reference/legislation/avantages_non_contributifs.yaml,
-          data/reference/legislation/contribution_employeur_public.csv
+          data/reference/legislation/contribution_employeur_public.csv,
+          data/reference/macro/caracteristiques_fonction_publique.csv
         note: >-
           L'ÉDITION SUIVANTE DE `sre_jaune_pensions` : le stock de pensionnés
           au 31 décembre 2025 et le flux des pensions entrées en paiement en
@@ -1808,6 +1809,19 @@ institutions:
           la colonne du FSPOEIE, que le dépôt n'avait pas, est certifiée dans
           `contribution_employeur_public.csv` (étape 3) ; les autres recoupent
           les séries du dépôt sous la règle du 1er janvier.
+
+          SES TABLEAUX RÉFÉRENTS (étape 4) : le stock au 31 décembre 2025
+          (A-1) et le flux de 2025, en entier (B-1), par motif de départ (B-3,
+          B-3 bis), par catégorie et par grade (B-4, B-5) — âges, durées,
+          décote et surcote, taux et indice de liquidation, minimum garanti,
+          pension —, 1 352 valeurs certifiées dans
+          `caracteristiques_fonction_publique.csv`. Leurs cases vides ne
+          laissant rien dans le texte d'une ligne, le script les lit case par
+          case, chacune à sa place, et les recoupe entre eux : les sexes font
+          l'effectif, les motifs de départ du B-3 l'ensemble du B-1, les
+          catégories du B-4 la colonne des départs pour ancienneté du B-3.
+          Aucun calcul ne les lit : les cas types statutaires s'y confrontent
+          (`tests/test_flux_fonction_publique.py`).
 
           LE FICHIER NE SE TÉLÉCHARGE PAS DEPUIS UNE SESSION : le 13 octobre,
           budget.gouv.fr répond 403 au cloud, par curl comme par WebFetch, page

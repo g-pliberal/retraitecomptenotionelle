@@ -4601,6 +4601,29 @@ def source_jaune_taux() -> dict[tuple, float]:
     return {cle: v for cle, v in _valeurs_jaune().items() if cle[3] not in MESURES_JAUNE_ENTIERES}
 
 
+def source_jaune_referents() -> dict[tuple, float]:
+    """Les tableaux référents du jaune pensions annexé au PLF 2027 — le stock
+    au 31 décembre 2025 (A-1), le flux de 2025 (B-1, B-3, B-3 bis, B-4,
+    B-5) —, lus case par case par ``scripts/fetch/sre_jaune_pensions.py``.
+
+    Clé (tableau, population, champ, indicateur). Une case sans objet
+    (« n.d. », « n.p. », le tiret) n'est pas une valeur : elle n'entre pas.
+    """
+    tables = _lire_json("sre_jaune_pensions_2027.json",
+                        "scripts/fetch/sre_jaune_pensions.py")["tables"]
+    if "referents" not in tables:
+        raise SourceAbsente("les référents manquent au JSON du jaune 2027 "
+                            "(relancer scripts/fetch/sre_jaune_pensions.py)")
+    valeurs: dict[tuple, float] = {}
+    for tableau, populations in tables["referents"].items():
+        for population, champs in populations.items():
+            for champ, indicateurs in champs.items():
+                for indicateur, valeur in indicateurs.items():
+                    if valeur is not None:
+                        valeurs[(tableau, population, champ, indicateur)] = float(valeur)
+    return dict(sorted(valeurs.items()))
+
+
 #: Colonnes-clés qui se trient en NOMBRE et non en texte. Sans elles, la borne
 #: « 1000 » d'une tranche de pension tomberait entre « 100 » et « 200 ».
 CLES_NUMERIQUES = frozenset({"annee", "date_effet", "generation", "borne_mensuelle",
@@ -8933,6 +8956,99 @@ CERTIFICATIONS = (
                 "tableaux A-7 et 50 (durées et proportions)",
         decimales=3,
         tolerance=5e-4,
+    ),
+    Certification(
+        nom="caracteristiques_fonction_publique",
+        chemin=REFERENCE / "macro" / "caracteristiques_fonction_publique.csv",
+        cles=("tableau", "population", "champ", "indicateur"),
+        colonne="valeur",
+        source=source_jaune_referents,
+        origine="Direction du budget, jaune pensions annexé au PLF 2027 (données "
+                "du Service des retraites de l'État, de la CNRACL et du FSPOEIE), "
+                "tableaux A-1, B-1, B-3, B-3 bis, B-4 et B-5",
+        # Chaque indicateur a son unité — effectifs, années, trimestres,
+        # fractions, euros — : le fichier écrit chaque valeur au plus court,
+        # telle que le document l'imprime.
+        decimales=None,
+        tolerance=5e-7,
+        entete=(
+            "# Les pensions de la fonction publique en 2025, stock et flux, dites par ceux qui les paient",
+            "# source_id: sre_jaune_pensions_2027",
+            "#",
+            "# Le « Rapport sur les pensions de retraite de la fonction publique »,",
+            "# annexe au projet de loi de finances pour 2027 (le jaune budgétaire),",
+            "# publie les caractéristiques des pensions que servent le Service des",
+            "# retraites de l'État, la CNRACL et le FSPOEIE. Six de ses tableaux",
+            "# sont ici, à plat, lus case par case dans le PDF par",
+            "# scripts/fetch/sre_jaune_pensions.py :",
+            "#",
+            "# tableau A-1    : pensions EN PAIEMENT au 31 décembre 2025 (un stock) ;",
+            "#                  champ = droit_direct ou droit_derive.",
+            "# tableau B-1    : pensions de droit direct entrées en paiement en 2025",
+            "#                  (le flux) ; champ = ensemble, ou, pour une ligne",
+            "#                  d'effectifs, son motif de départ : invalidite,",
+            "#                  carriere_longue, motifs_familiaux, categorie_active.",
+            "# tableau B-3    : le même flux à l'État, par motif de départ : champ =",
+            "#                  anciennete (carrières longues comprises),",
+            "#                  motifs_familiaux, invalidite ; categorie_active, ceux",
+            "#                  des départs pour ancienneté qui en bénéficient.",
+            "# tableau B-3bis : le même, à la CNRACL.",
+            "# tableau B-4    : les départs pour ancienneté des civils de l'État, par",
+            "#                  catégorie : champ = sedentaire (hors carrières",
+            "#                  longues), active_57, active_52, carriere_longue ; et",
+            "#                  tous les départs des militaires, par armée",
+            "#                  (population militaires_terre_mer_air,",
+            "#                  militaires_gendarmerie) et par grade (champ",
+            "#                  non_officiers, officiers).",
+            "# tableau B-5    : les départs pour ancienneté de la CNRACL, par",
+            "#                  catégorie : champ = sedentaire, active, carriere_longue.",
+            "#",
+            "# population : fpe_civils_hors_poste_orange, fpe_civils (La Poste et",
+            "#              Orange compris), fpe_militaires, fpe_total, ouvriers_etat",
+            "#              (le FSPOEIE), fpt, fph, cnracl_total ; au B-4, les armées.",
+            "#",
+            "# indicateur, et son unité :",
+            "#   effectif, effectif_hommes, effectif_femmes, effectif_orphelins (A-1),",
+            "#   departs (le flux) ............................ nombre de pensions",
+            "#   part_hommes, part_femmes, part_decote, part_surcote, part_taux_plein,",
+            "#   part_taux_80, part_minimum_garanti, part_majoration_enfants,",
+            "#   part_remuneres_avant_liquidation ............. fraction (0.418 = 41,8 %)",
+            "#   taux_liquidation, taux_liquidation_hors_decote_surcote, taux_decote,",
+            "#   taux_surcote ................................. fraction",
+            "#   age_moyen, age_radiation,",
+            "#   age_premiere_mise_en_paiement ................ années",
+            "#   services_trimestres, bonifications_trimestres,",
+            "#   duree_tous_regimes_trimestres ................ trimestres",
+            "#   indice_liquidation ........................... indice majoré",
+            "#   pension_principale_eur, pension_avec_accessoires_eur,",
+            "#   perte_decote_eur, gain_surcote_eur,",
+            "#   majoration_enfants_eur ....................... euros bruts par mois",
+            "#   cout_decote_meur, cout_surcote_meur .......... millions d'euros",
+            "#",
+            "# Ce que le document dit de ses moyennes : le taux, la perte ou le",
+            "# bénéfice de la décote et de la surcote se calculent sur leurs seuls",
+            "# bénéficiaires, et la majoration pour enfants sur les siens ; à l'État,",
+            "# le taux et l'indice de liquidation hors pensions portées au minimum",
+            "# garanti. Une case « n.d. », « n.p. », « n.s. » ou un tiret n'est pas",
+            "# une valeur : elle n'est pas ici.",
+            "#",
+            "# fiabilite :",
+            "#   certifiee : lu dans le document du producteur et recontrôlé par",
+            "#               scripts/verifier_donnees.py. Le document ne se télécharge",
+            "#               pas depuis une session (budget.gouv.fr refuse) : son",
+            "#               miroir est dans data/sources.yaml, avec son empreinte,",
+            "#               et scripts/fetch/source_locale.py --recuperer le lit.",
+            "#",
+            "# À QUOI CE FICHIER SERT : à confronter le modèle aux pensions réelles",
+            "# de la fonction publique, sans qu'aucun calcul le lise",
+            "# (memoire.HORS_DU_MODELE). tests/test_flux_fonction_publique.py met en",
+            "# regard des départs de 2025 les trois cas types statutaires, chacun",
+            "# parti en 2025 : le fonctionnaire sédentaire de l'État, l'agent de",
+            "# catégorie active de la CNRACL, le militaire (action 159, étape 4).",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
     ),
     Certification(
         nom="pap_regimes_subventionnes",

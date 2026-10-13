@@ -731,6 +731,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # l'autre pour les décimaux (durées, proportions).
         "bonifications_jaune_effectifs": "legislation/bonifications_jaune.csv",
         "bonifications_jaune_taux": "legislation/bonifications_jaune.csv",
+        # Le stock et le flux de pensions de 2025 du même jaune, lus case par
+        # case : un seul contrôle, chaque valeur écrite au plus court
+        # (action 159, étape 4).
+        "caracteristiques_fonction_publique": "macro/caracteristiques_fonction_publique.csv",
         # Les projets annuels de performances du PLF 2026, lus dans leurs PDF :
         # une transcription des caisses, donc `haute` ; les âges de départ,
         # que le lecteur ne sait pas lire, restent au niveau de la saisie.
