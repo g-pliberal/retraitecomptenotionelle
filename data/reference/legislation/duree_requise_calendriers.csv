@@ -24,6 +24,21 @@
 # prend la dernière ligne dont le mois ne dépasse pas celui où l'assuré réunit
 # les conditions. `haute` : lu dans le texte de l'index LEGI, non recontrôlé
 # par un récupérateur.
+#
+# LES DÉPUTÉS AUSSI, hors LEGI : le règlement de leur caisse, publié par
+# l'Assemblée nationale (www2.assemblee-nationale.fr/static/CRD-janvier-2018.pdf,
+# relu le 13 octobre 2026 dans la version servie ce jour-là, qui porte la loi
+# du 14 avril 2023 et la suspension de 2026), fixe à son article 21 « la valeur
+# de l'annuité ainsi que le nombre maximum d'annuités liquidables » par
+# période : 40 annuités « jusqu'en 2008 », un trimestre de plus par an jusqu'à
+# 41 en 2012, 41,25 en 2013-2014, 41,5 de 2015 à 2017, 41,75 de 2018 à 2020,
+# 42 de janvier 2021 à août 2023, 42,25 de septembre 2023 à juin 2025, 42,5
+# de juillet 2025 à décembre 2027, 42,75 en 2028, 43 ensuite. Son article
+# 21 ter les lit « au soixante-quatrième anniversaire » des nés à compter de
+# 1969, à « l'âge d'ouverture de leur droit à pension » pour les nés de 1949
+# à 1968, et en 2008 pour qui avait soixante ans plus tôt : au mois où l'âge
+# d'ouverture est atteint, dans tous les cas. `assemblee_nationale` les
+# transcrit en trimestres.
 calendrier,depuis,trimestres,fiabilite
 regimes_speciaux_2008,1900-01,150,haute
 regimes_speciaux_2008,2008-07,151,haute
@@ -42,3 +57,16 @@ regimes_speciaux_2008,2015-07,163,haute
 regimes_speciaux_2008,2016-07,164,haute
 regimes_speciaux_2008,2017-07,165,haute
 regimes_speciaux_2008,2018-07,166,haute
+assemblee_nationale,1900-01,160,haute
+assemblee_nationale,2009-01,161,haute
+assemblee_nationale,2010-01,162,haute
+assemblee_nationale,2011-01,163,haute
+assemblee_nationale,2012-01,164,haute
+assemblee_nationale,2013-01,165,haute
+assemblee_nationale,2015-01,166,haute
+assemblee_nationale,2018-01,167,haute
+assemblee_nationale,2021-01,168,haute
+assemblee_nationale,2023-09,169,haute
+assemblee_nationale,2025-07,170,haute
+assemblee_nationale,2028-01,171,haute
+assemblee_nationale,2029-01,172,haute

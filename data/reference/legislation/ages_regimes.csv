@@ -155,6 +155,29 @@
 #       cinquante-six ans et huit mois pour 1966 (B du même I), n'est pas
 #       transcrit : la fiche ne modélise que le 1°.
 #
+# LES DÉPUTÉS, que la fiche faisait vieillir d'une année de liquidation à
+# l'autre. Le règlement de leur caisse (hors LEGI, publié par l'Assemblée
+# nationale, relu le 13 octobre 2026) ouvre le droit à « tout ancien député né
+# à compter du 1er janvier 1969 et âgé de soixante-quatre ans révolus »
+# (article 8, 1) ; avant, un arrêté des Questeurs, non publié, fixe l'âge « de
+# manière croissante à raison de trois mois par génération sauf pour les
+# anciens députés nés entre le 1er janvier 1964 et le 31 mars 1965 », pour
+# les nés de septembre 1961 à 1968 (article 8, 2) :
+#   `assemblee_nationale` — soixante ans avant juillet 1951, puis la montée de
+#       la fonction publique, sur le modèle de laquelle le régime a été réformé
+#       en 2010 : soixante ans et quatre mois pour le second semestre 1951,
+#       soixante ans et neuf mois pour 1952, soixante et un ans et deux mois
+#       pour 1953, soixante et un ans et sept mois pour 1954, soixante-deux ans
+#       de 1955 à août 1961 ; soixante-deux ans et trois mois de septembre à
+#       décembre 1961, six mois pour 1962, neuf mois de 1963 à mars 1965,
+#       soixante-trois ans d'avril à décembre 1965, trois mois de plus par
+#       génération jusqu'à soixante-trois ans et neuf mois pour 1968, et
+#       soixante-quatre ans à compter de 1969 : les âges de L. 161-17-2.
+#       `moyenne` pour ce que l'arrêté fixe, `haute` pour ce que le règlement
+#       écrit. Sans décote, l'âge du taux plein est celui de l'ouverture. Les
+#       générations que la suspension de 2026 change n'ont leur âge qu'après
+#       le 1er septembre 2026 : une seule table vaut pour toutes les dates.
+#
 # SAINT-PIERRE-ET-MIQUELON, sept générations derrière la métropole. Depuis
 # l'ordonnance n° 2015-896, le b du 1° de l'article 5 de la loi n° 87-563
 # adapte L. 161-17-2 en décalant ses dates, et l'article 3, II, 1°, du décret
@@ -464,3 +487,17 @@ comedie_francaise_2011,1959,61,66,haute,
 comedie_francaise_2011,1960,61.333333,66.333333,haute,
 comedie_francaise_2011,1961,61.666667,66.666667,haute,
 comedie_francaise_2011,1962,62,67,haute,
+assemblee_nationale,1900,60,60,moyenne,
+assemblee_nationale,1951.5,60.333333,60.333333,moyenne,
+assemblee_nationale,1952,60.75,60.75,moyenne,
+assemblee_nationale,1953,61.166667,61.166667,moyenne,
+assemblee_nationale,1954,61.583333,61.583333,moyenne,
+assemblee_nationale,1955,62,62,moyenne,
+assemblee_nationale,1961.667,62.25,62.25,moyenne,
+assemblee_nationale,1962,62.5,62.5,moyenne,
+assemblee_nationale,1963,62.75,62.75,moyenne,
+assemblee_nationale,1965.25,63,63,moyenne,
+assemblee_nationale,1966,63.25,63.25,moyenne,
+assemblee_nationale,1967,63.5,63.5,moyenne,
+assemblee_nationale,1968,63.75,63.75,moyenne,
+assemblee_nationale,1969,64,64,haute,

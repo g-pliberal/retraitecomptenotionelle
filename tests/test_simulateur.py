@@ -7141,6 +7141,34 @@ def test_la_comedie_francaise_lit_l_age_et_la_duree_de_son_decret(simulateur):
             naissance)
 
 
+def test_les_deputes_lisent_l_age_a_la_generation_et_la_duree_a_l_ouverture(
+        simulateur):
+    """Règlement de la Caisse de pensions des députés : l'âge d'ouverture
+    suit la génération (article 8) et le nombre maximal d'annuités se lit
+    « à l'âge d'ouverture de leur droit à pension » (article 21 ter, 2), et
+    non à l'année de la liquidation. Un député né en 1953, dont le droit
+    s'ouvre à soixante et un ans et deux mois en 2014, doit 41,25 annuités
+    même s'il part en 2018, quand la fiche lui en opposait 41,75 ; né en
+    1964, la suspension de 2026 lui garde soixante-deux ans et neuf mois.
+    """
+    scenario = simulateur.scenario_actuel
+    # (naissance, âge de départ) : âge d'ouverture, durée requise.
+    attendus = {(1948, 62.0): (60.0, 160), (1953, 65.0): (61.0 + 2 / 12, 165),
+                (1962, 63.0): (62.5, 169), (1964, 63.0): (62.75, 170),
+                (1969, 64.0): (64.0, 172)}
+    for (naissance, age), (ouverture, duree) in attendus.items():
+        carriere = simulateur.carriere_simple(
+            annee_naissance=naissance, sexe="H", affiliation="parlementaire",
+            age_debut=38, age_liquidation=age,
+        )
+        periode = _periode(simulateur, "assemblees_parlementaires",
+                           carriere.annee_liquidation)
+        assert ouvrir.age_ouverture(scenario, periode, carriere) == (
+            pytest.approx(ouverture, abs=1e-4)), naissance
+        assert ouvrir.duree_requise(scenario, periode, carriere)[0] == duree, (
+            naissance)
+
+
 def test_le_salaire_de_reference_des_cultes_est_fait_du_forfait(simulateur):
     """Le salaire annuel moyen de la CAVIMAC ne dépend pas du revenu déclaré.
 
