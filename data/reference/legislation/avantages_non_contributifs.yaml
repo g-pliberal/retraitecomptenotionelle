@@ -1138,9 +1138,11 @@ avantages:
     libelle: Bénéfices de campagne
     famille: age_et_bonifications
     quoi: >-
-      Le temps passé en opérations, à la mer ou outre-mer est compté double ou
-      davantage. Avantage ancien, dont le coût se concentre sur les générations
-      ayant servi en Afrique du Nord.
+      Le temps passé en opérations, à la mer ou outre-mer compte une fois et
+      demie (demi-campagne), deux fois (campagne simple) ou trois fois
+      (campagne double, réservée aux opérations de guerre). Avantage ancien,
+      dont le coût se concentre sur les générations ayant servi en Afrique du
+      Nord.
     base_legale: [L. 12 c CPCMR]
     fiches: []
     creation: 1964
