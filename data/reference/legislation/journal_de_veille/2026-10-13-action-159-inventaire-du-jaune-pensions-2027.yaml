@@ -1,0 +1,34 @@
+date: "2026-10-13"
+session: "action 159 : le jaune pensions du PLF 2027 inventorié, partie par partie, pour être exploité en entier"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1. Le jaune
+  pensions du PLF 2027, la copie que le propriétaire a déposée sur la branche jaune-2027
+  (34465.pdf, SHA-256 73dd4a66051cd71bdf2c77eb5345a34f99f862330f0f20164c930492be2dbaf5) :
+  son sommaire (pages 4 à 6), son éditorial (page 13), les légendes de ses tableaux,
+  figures et graphiques, numérotés de 1 à 116, la liste des tableaux de son annexe
+  (pages 199 à 201). Pour
+  ranger le document, sa licence : les mentions légales de budget.gouv.fr (403, par curl
+  comme par WebFetch), leur copie dans l'archive du web (429, puis refus de WebFetch),
+  l'article L. 322-1 du code des relations entre le public et l'administration sur
+  Légifrance (LEGIARTI000032255220, 403 par WebFetch). La page du dossier du PLF 2027 de
+  l'Assemblée nationale, tirée sans son cache à 15 h 21.
+trouve: >-
+  Un éditorial et six parties : les finances (dont ce que l'État verse aux régimes
+  spéciaux, tableau 5, et 1 366 Md€ d'engagements à fin 2025), les régimes (dont les
+  paramètres du RAFP de 2005 à 2026, tableau 22B, et les taux réels de l'Ircantec depuis
+  1992, tableau 24), les règles, les pensions, les perspectives, et une annexe
+  statistique sur le stock au 31 décembre 2025 (A-1 à A-8), le flux de 2025
+  (B-1 à B-22), les départs anticipés de 2015 à 2025 (C-1 à C-9) et les finances de 2025
+  (D-1 à D-5). Les tableaux A-7, 50 et B-1, que lit sre_jaune_pensions.py, gardent leurs
+  numéros. L'éditorial cite la DREES (génération 1958 : les règles du régime général
+  relèveraient de 1,5 % la pension moyenne des fonctionnaires de l'État, 62 % y
+  gagneraient) et un taux de remplacement de 73,8 % contre 74,8 % au régime général. La
+  licence ne se lit pas depuis le cloud, et l'Assemblée ne sert toujours pas le jaune :
+  ni miroir ni release possibles aujourd'hui, et le manifeste n'admet pas de fichier
+  refusé sans l'un ou l'autre.
+reste: >-
+  Les étapes 1 à 9 de l'action 159 : ranger le document (fiche du manifeste, miroir de
+  l'Assemblée ou release une fois la licence citée), puis, en parallèle, les
+  bonifications, les taux et barèmes en contrôle, les référents, les cas types, le
+  financement et le coût, la population, le site, et les règles confrontées aux fiches
+  de la carte.

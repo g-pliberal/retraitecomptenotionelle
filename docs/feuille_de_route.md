@@ -7675,3 +7675,95 @@ carrière ; si les grilles servent aussi aux cas types statutaires de
 l'action 152, le fonctionnaire de catégorie C et le militaire ; et si les
 grilles des entreprises à statut (SNCF, RATP, IEG) suivent, les minima des
 conventions collectives ne disant qu'un plancher, non un salaire.
+
+### 159. Le jaune pensions du PLF 2027, exploité en entier : rangé, puis chaque tableau à sa place dans le dépôt — `en cours`
+
+**Reprise, au 13 octobre 2026.** Faite, l'étape 0 : l'inventaire du jaune,
+partie par partie, chaque tableau rapporté à ce qu'il nourrit dans le dépôt
+(note du 13 octobre). Le PDF attend sur la branche `jaune-2027`, son empreinte
+dans la note. Commencer par l'étape 1, qui le range : la fiche du manifeste,
+avec le miroir de l'Assemblée dès qu'il y paraît, ou la release
+`documents-apportes` une fois la licence de budget.gouv.fr lue. Les étapes 2 à
+9 se mènent ensuite en parallèle, une par zone : l'étape 1 récrit ce bloc une
+dernière fois pour le dire, puis chaque étape tient le sien dans sa note.
+
+**D'où elle vient.** La demande du propriétaire, le 13 octobre 2026, le jaune
+lu pour l'action 129 : « Je veux garder ce doc et le ranger correctement sur
+la branche principale. Il y a énormément d'informations importantes dans ce
+document pour notre projet. Il faut faire une action qui exploite toutes les
+informations de ce document. »
+
+**Le document.** Le « Rapport sur les pensions de retraite de la fonction
+publique » annexé au PLF 2027, 250 pages, créé le 12 octobre 2026 par la
+direction du budget avec la DGAFP, le Service des retraites de l'État et la
+Caisse des dépôts. Sa matière : le stock de pensionnés au 31 décembre 2025 et
+le flux des pensions entrées en paiement en 2025, plus récents que ceux du
+jaune 2026 dont le dépôt tire déjà ses bonifications ; et, nouveaux, le poids
+des pensions dans chaque budget ministériel, une présentation alternative du
+CAS Pensions, ce que l'État verse aux régimes spéciaux, les engagements de
+retraite à fin 2025. budget.gouv.fr le sert depuis le 13 octobre et refuse le
+cloud ; l'Assemblée, qui servait le jaune 2026 octet pour octet, ne le porte
+pas encore. Le PDF n'entre pas dans l'historique de git : un test refuse tout
+document versionné sous `data/brut/`, et le manifeste ne range un document
+qu'avec un miroir, ou sur la release quand sa licence le permet.
+
+**Ce que le dépôt tire déjà de l'édition 2026**, et qui passe à 2027 dans
+l'étape de sa zone : `bonifications_jaune.csv` (tableaux A-7, 50 et B-1, lus
+par `scripts/fetch/sre_jaune_pensions.py`, niveau `certifiee`) et les fiches
+d'`avantages_non_contributifs.yaml` qui y renvoient ; le militaire moyen et
+l'agent de la CNRACL des cas types (`castypes.py`, action 152) ; les effectifs
+de cotisants de l'État (`donnees/cotisants.py`) ; des référents
+(`referents.yaml`) ; la clé civils-militaires de la page Coût.
+
+**Ce qui est à faire**, une étape par session ; après la 1, en parallèle, une
+par zone. Le détail, tableau par tableau et page par page, est dans la note de
+l'étape 0.
+
+0. **L'inventaire** : fait le 13 octobre.
+1. **Ranger le document** (données) : la fiche `sre_jaune_pensions_2027` du
+   manifeste, avec son empreinte et son miroir, celui de l'Assemblée dès qu'il
+   paraît, sinon la release `documents-apportes`, une fois lue et citée la
+   licence de budget.gouv.fr ; puis `sre_jaune_pensions.py` apprend l'édition
+   2027, dont les tableaux A-7, 50 et B-1 gardent leurs numéros, sans perdre
+   la lecture de 2026. La branche `jaune-2027` se supprime ensuite.
+2. **Les bonifications** (données) : `bonifications_jaune.csv` sur le stock
+   et le flux de 2025 (A-7, 50, B-22), et les fiches qui les citent, confrontées
+   par `--confronter`.
+3. **Les taux et les barèmes, en contrôle** (données) : taux salariaux et
+   employeurs (13, 14, 35, 36, D-2), Ircantec depuis 1992 (24), paramètres du
+   RAFP de 2005 à 2026 (22B), revalorisation des pensions (110), durée requise
+   (33, 34), décote (38), minimum garanti (45, 46), âges de la catégorie
+   active (57), dépaysement et campagne (48, 49), indemnité temporaire de
+   retraite (54, 55), panorama des régimes (12), confrontés aux séries et aux
+   fiches du dépôt ; un écart se déclare ou se corrige, en commit à part.
+4. **Les référents** (données) : pensions moyennes, âges, durées, minimum
+   garanti, décote et surcote, taux de liquidation, du stock et du flux de 2025
+   (A-1 à A-8, B-1 à B-21, tableaux 60 à 108), dans `referents.yaml`, que les
+   tests confrontent au modèle.
+5. **Les cas types** (modèle, avec l'action 152) : le militaire moyen, l'agent
+   de la CNRACL et le civil de l'État recalés sur le flux de 2025 (B-4, B-5,
+   95 à 97).
+6. **Le financement et le coût** (modèle) : ce que l'État verse aux régimes
+   spéciaux (5), le CAS Pensions (17 à 19, D-3), la CNRACL (20, 21, D-4, 116),
+   les ouvriers d'État (23), les ratios démographiques (113 à 115), les
+   cotisants (D-5), les engagements (10, 11), contre
+   `donnees/financement_regimes.py`, `donnees/cotisants.py` et `cout.py`.
+7. **La population** (modèle) : la pyramide des âges des agents (87 à 91), les
+   polypensionnés (15, 16), les départs anticipés de 2015 à 2025 (C-1 à C-9),
+   les décès de pensionnés (B-13), contre ce que le modèle suppose.
+8. **Le site** (site) : la fiche de paie du civil et du militaire primes
+   comprises (figures A et A bis) contre celle de la page ; la comparaison des
+   règles publiques et privées que l'éditorial cite (DREES, génération 1958),
+   et les taux de remplacement, en regard des résultats du site ; la part des
+   pensions dans chaque budget ministériel (figures 3B, B et B bis).
+9. **Les règles** (scénario 1, par `docs/veille_droit.md`) : ce que la partie
+   III décrit du droit — minimum garanti, bonifications, majorations, cumul,
+   réversion, carrières longues, rachats, invalidité, départs anticipés —
+   confronté aux fiches de la carte. Le jaune est un exemple officiel : le
+   texte tel que la caisse l'applique l'emporte.
+
+**Ce que le propriétaire tranche** : s'il veut la release sans attendre
+l'Assemblée, la licence de budget.gouv.fr, qu'une capture du paragraphe de
+réutilisation de ses mentions légales suffit à citer ; l'ordre des étapes 2 à
+9 ; et, pour l'action 129, la convention du jaune, le taux du régime général,
+comme valeur de `contribution_etat`.
