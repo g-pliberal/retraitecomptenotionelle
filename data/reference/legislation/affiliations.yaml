@@ -411,6 +411,13 @@ affiliations:
     periodes:
       - {debut: 1945, fin: 2004, regimes: [cnracl]}
       - {debut: 2005, fin: null, regimes: [cnracl, rafp]}
+    note: >-
+      Le statut ne lit pas la durée de travail. Le titulaire territorial ou
+      hospitalier nommé sur un emploi à temps non complet de moins de
+      vingt-huit heures par semaine relève du régime général et de
+      l'Ircantec, non de la CNRACL (jaune pensions annexé au PLF 2027,
+      tableau 4, page 26) : le routage le porte à la CNRACL quelle que soit
+      sa durée, comme les autres statuts de la caisse (action 159, étape 3).
 
   ouvrier_etat:
     libelle: Ouvrier des établissements industriels de l'État
