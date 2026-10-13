@@ -160,6 +160,11 @@ paragraphes datés, déclarés dans `zones.yaml`.
 
 ## Ce qui va aux autres étapes
 
+- **Étape 4, seconde partie** (« le stock face à la page Coût, pesé comme
+  elle ») : la part des moins de soixante ans y est faite, pesée comme la
+  page la pèse, et la mortalité du stock aussi (A-2, B-13) ; l'étape 4 a
+  trouvé de son côté, sur le flux, le même départ trop précoce de l'actif de
+  la CNRACL.
 - **Étape 5, les cas types** : l'agent de la CNRACL, à scinder entre
   sédentaire et actif ou à faire partir à 61 ans (B-5), avec son niveau de
   fin de carrière, qui le range dans son vingtile ; le civil de l'État, sans
