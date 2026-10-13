@@ -86,8 +86,9 @@ d'ÉQUILIBRE — <!--chiffre:cellule(data/reference/legislation/contribution_emp
 CNRACL —, **le site n'affiche pas de coût du travail** : ce taux est fixé pour
 que le compte d'affectation spéciale « Pensions » tombe juste, non parce que
 l'agent acquerrait <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82<!--/--> % de son traitement en droits nouveaux, et poser dessus
-l'incidence intégrale afficherait une hausse de salaire de soixante-dix points
-qui n'existe pas — la dette de pensions qu'il finance, elle, reste à payer. Pour
+l'incidence intégrale afficherait une hausse de salaire qui n'existe pas —
+soixante-six points de traitement pour un civil de l'État, vingt et un pour un
+agent de la CNRACL —, la dette de pensions qu'il finance, elle, restant à payer. Pour
 ces statuts, le traitement n'est donc ni tenu fixe ni porté à l'incidence
 intégrale : la moitié de ce que l'employeur cesse de verser remonte dans le
 traitement, l'autre moitié paie la dette de pensions déjà promises

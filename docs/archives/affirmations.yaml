@@ -83,3 +83,18 @@ affirmations:
       et l'encadré qui la remplace dit l'inverse — « Ces chiffres sont ceux
       des réglages par défaut, pas des vôtres » —, sous une adresse réglée
       qu'aucun témoin ne fige.
+
+  - id: simuler.fonctionnaire_assiette_fixe
+    page: /simuler
+    extrait: "est tenu fixe, et le site n'affiche pas de coût du travail pour votre statut."
+    porte: pour un agent public, le traitement brut est tenu fixe et le coût du travail n'est pas affiché
+    etat: verifiee
+    controle: fonctionnaire_assiette_fixe
+    retiree_le: 2026-10-13
+    motif: >-
+      la phrase était fausse depuis le 20 septembre 2026 : sous le partage
+      retenu ce jour-là, la moitié de ce que l'État cesse de verser remonte
+      dans la rémunération de l'agent, et le tableau de la fiche, juste
+      au-dessus, la montrait monter. Elle ne dit plus que le refus d'afficher
+      un coût du travail, sous `simuler.fonctionnaire_sans_cout_du_travail`
+      (action 159, étape 8).

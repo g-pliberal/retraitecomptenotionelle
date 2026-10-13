@@ -1286,19 +1286,50 @@ def _(m: Modele):
     assert not m.artisan.contribution_employeur.a_un_employeur
 
 
-@controle("fonctionnaire_assiette_fixe")
+@controle("fonctionnaire_sans_cout_du_travail")
 def _(m: Modele):
     """Aucun coût du travail affiché : ce que verse l'État est un taux d'équilibre.
 
-    Le traitement lui-même ne se tient plus fixe depuis le 20 septembre 2026 :
+    La rémunération, elle, ne se tient plus fixe depuis le 20 septembre 2026 :
     l'État cotisant 18 % comme tout employeur, la moitié de ce qu'il cesse de
-    verser revient au traitement. Ce que la phrase engage, et qui n'a pas
-    bougé, est le refus d'afficher un coût du travail pour ce statut.
+    verser lui revient, et la page le dit depuis le 13 octobre — elle disait
+    encore « tenu fixe ». La première ligne de la fiche est la rémunération
+    entière, primes et indemnité compensatrice comprises : la page la nomme
+    ainsi, et garde « traitement indiciaire brut » pour l'assiette du taux.
     """
     remuneration = m.fonctionnaire.remuneration
     assert remuneration.profil == "agent_seul"
     assert not remuneration.affiche_cout_du_travail
-    assert remuneration.libelle_assiette.lower().startswith("traitement")
+    assert remuneration.libelle_assiette.lower().startswith("rémunération")
+    reference = remuneration.reference
+    assert reference.proposition.brut > reference.droit_en_vigueur.brut
+    assert reference.contribution_equilibre > 0
+
+
+@controle("figure_a_du_jaune_2027")
+def _(m: Modele):
+    """Le cas type des figures A et A bis du jaune « Pensions » annexé au PLF
+    2027 — 3 274 € bruts par mois, 24,60 % de primes —, décomposé par la fiche
+    de paie du modèle et le taux d'équilibre de l'année, les autres charges
+    patronales reprises de la figure : la retraite prend 40 % de la rémunération
+    totale d'un civil au taux de 2025, 41 % à celui de 2026, 50 % d'un militaire.
+    ``test_remuneration.py`` en refait les quatre chiffres de chaque figure."""
+    from retraite_notionnelle.remuneration import contribution_equilibre, fiche_depuis_brut
+
+    racine = m.base.racine_donnees
+
+    def retraite(statut: str, annee: int, autres: float) -> int:
+        fiche = fiche_depuis_brut(racine, m.sim.macro, m.sim.catalogue,
+                                  m.sim.affiliations, statut, annee, 12 * 3274.0,
+                                  0.246, 0.0)
+        employeur = (contribution_equilibre(racine, m.sim.affiliations, statut, annee)
+                     * 0.754 * fiche.brut + fiche.retraite_employeur)
+        total = (fiche.brut + employeur) / (1.0 - autres)
+        return round(100 * (employeur + fiche.retraite_salarie) / total)
+
+    assert retraite("fonctionnaire_etat", 2025, 0.07) == 40
+    assert retraite("fonctionnaire_etat", 2026, 0.07) == 41
+    assert retraite("militaire", 2026, 0.06) == 50
 
 
 @controle("allegement_absent_hors_prive")

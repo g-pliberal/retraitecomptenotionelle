@@ -4014,9 +4014,7 @@ function enBref(comparaison, saisie, montants, constants, capitaliseVolontaire,
       } else {
         reste = `baisse de ${g.euros(-apres)}`;
       }
-      // « Rémunération nette », seul libellé féminin des quatre profils.
-      const pronom = remuneration.libelleNet.toLowerCase()
-        .startsWith("rémunération") ? "elle" : "il";
+      const pronom = feminin(remuneration.libelleNet) ? "elle" : "il";
       phrase += ` ; si vous épargnez les ${rendus} rendus, ${pronom} ${reste}`;
     }
     phrases.push(`${phrase}.`);
@@ -5531,6 +5529,16 @@ function remplacementsMontants(saisie, echelle, tauxPension) {
 }
 
 /**
+ * Le libellé de la fiche est-il féminin ? « Rémunération brute » et
+ * « Rémunération nette », d'un agent public ou d'un non-titulaire, sont les
+ * seuls des quatre profils : salaire et revenu ne le sont pas. Ce qui les suit
+ * s'accorde — « la rémunération nette pleine ».
+ */
+function feminin(libelle) {
+  return libelle.toLowerCase().startsWith("rémunération");
+}
+
+/**
  * Ce qu'un actif touche PENDANT qu'il cotise, dans les deux systèmes.
  *
  * Le reste de la page compare des pensions, c'est-à-dire des montants qu'on
@@ -5550,10 +5558,11 @@ function remplacementsMontants(saisie, echelle, tauxPension) {
  * qui déplie.
  *
  * Quatre profils, et un libellé par profil : ce qui s'écrit « salaire » pour un
- * salarié du privé s'écrit « traitement » pour un fonctionnaire et « revenu
- * professionnel » pour un indépendant ; et la ligne « coût du travail » ne
- * s'affiche que là où ce que verse l'employeur est un prix du travail, non un
- * taux d'équilibre. ``remuneration.py`` porte la décision, ce bloc l'écrit.
+ * salarié du privé s'écrit « rémunération » pour un agent public, primes et
+ * indemnité comprises, et « revenu professionnel » pour un indépendant ; et la
+ * ligne « coût du travail » ne s'affiche que là où ce que verse l'employeur est
+ * un prix du travail, non un taux d'équilibre. ``remuneration.py`` porte la
+ * décision, ce bloc l'écrit, et accorde ce qui suit le libellé (`feminin`).
  */
 function salaireNet(comparaison, saisie) {
   const remuneration = comparaison.remuneration;
@@ -5592,7 +5601,8 @@ function salaireNet(comparaison, saisie) {
   } else if (remuneration.afficheCoutDuTravail) {
     sousQuelleHypothese = "à coût du travail inchangé pour votre employeur";
   } else {
-    sousQuelleHypothese = `à ${echapper(remuneration.libelleAssiette.toLowerCase())} inchangé`;
+    sousQuelleHypothese = `à ${echapper(remuneration.libelleAssiette.toLowerCase())} `
+      + (feminin(remuneration.libelleAssiette) ? "inchangée" : "inchangé");
   }
   // D'où vient l'écart — la CSG allégée, le taux d'équilibre d'un employeur
   // public — est une explication, et elle faisait deux paragraphes de plus
@@ -5614,7 +5624,9 @@ function salaireNet(comparaison, saisie) {
       - tauxCapitalisationVolontaireApplique(parametres);
     const resteApres = reference.netApresVolontaire / 12;
     const ecartApres = remuneration.gainNetMensuelApresVolontaire;
-    volontaire = ` C'est votre ${net} plein : le système 4 prélève
+    const [le, plein] = feminin(remuneration.libelleNet) ? ["la", "pleine"]
+      : ["le", "plein"];
+    volontaire = ` C'est votre ${net} ${plein} : le système 4 prélève
   ${g.pourcentage(impose, false, 0)} pour la retraite, et rien d'autre. La
   rente qu'il affiche plus haut suppose en plus que vous placez les
   <strong>${g.pourcentage(tauxCapitalisationVolontaireApplique(parametres), false, 0)}
@@ -5624,7 +5636,7 @@ function salaireNet(comparaison, saisie) {
   ${g.pourcentage(tauxRetraitePropose(parametres), false, 0)} en tout, comme
   aujourd'hui. Il vous reste alors ${g.euros(resteApres)} par mois,
   soit ${eurosSigne(ecartApres, false)} par rapport à aujourd'hui. Si vous ne les
-  placez pas, vous gardez le ${net} plein, et la rente du système 4 baisse de la
+  placez pas, vous gardez ${le} ${net} ${plein}, et la rente du système 4 baisse de la
   part nommée « des cinq points volontaires ».`;
   }
 
@@ -5669,13 +5681,18 @@ function salaireNetRendu(remuneration, net) {
   }
   if (remuneration.incidence === Incidence.PARTAGEE
       && remuneration.contributionEquilibre > 0) {
+    // DEUX ASSIETTES, ET LA PHRASE LES NOMME TOUTES DEUX. Le taux d'équilibre
+    // et les départs anticipés qu'il paie sont des parts du seul traitement
+    // indiciaire ; ce qui en remonte va à la rémunération entière de la fiche,
+    // primes et indemnité comprises.
+    const traitement = "traitement indiciaire brut";
     const assiette = echapper(remuneration.libelleAssiette.toLowerCase());
     // Ce que le taux de l'État payait de départs anticipés, il le garde en
     // entier : la proposition les supprime, et seul le reste se partage.
     const partage = remuneration.departsAnticipes > 0
       ? `La proposition le ramène à
   la part employeur du taux unique. De ce qu'il cesse de verser, il garde en
-  entier les ${g.pourcentage(remuneration.departsAnticipes)} de votre ${assiette}
+  entier les ${g.pourcentage(remuneration.departsAnticipes)} de votre ${traitement}
   qui payaient des départs anticipés, puisque la proposition les supprime ; la
   moitié du reste revient à votre ${assiette}, l'autre moitié paie la dette de
   pensions déjà promises, qui reste due.`
@@ -5686,7 +5703,7 @@ function salaireNetRendu(remuneration, net) {
     morceaux.push(`
   <p><strong>Votre employeur verse aujourd'hui
   ${g.pourcentage(remuneration.contributionEquilibre)} de votre
-  ${assiette}</strong> pour votre retraite.
+  ${traitement}</strong> pour votre retraite.
   Ce n'est pas un prix du travail : c'est le taux qui équilibre le régime,
   c'est-à-dire qui paie les pensions d'aujourd'hui. ${partage} C'est pourquoi
   votre ${net} monte de plus que ne le ferait une simple baisse de retenue.</p>`);
@@ -5722,8 +5739,16 @@ function salaireNetDetail(comparaison, remuneration, saisie) {
   // l'assuré quand elle part de son assiette.
   const retraiteAvant = avecCout ? avant.retraiteTotale : avant.retraiteSalarie;
   const retraiteApres = avecCout ? apres.retraiteTotale : apres.retraiteSalarie;
+  lignes.push([assiette, mois(avant.brut), mois(apres.brut)]);
+  // L'indemnité compensatrice de la CSG d'un agent public est dans la première
+  // ligne, que la carrière saisie ne porte pas : la ligne dit d'où viennent ces
+  // euros. La proposition la garde, au même montant.
+  const indemnite = remuneration.indemniteCsgMensuelle;
+  if (indemnite > 0) {
+    lignes.push(["Dont indemnité compensatrice de la CSG",
+      g.eurosCentimes(indemnite), g.eurosCentimes(indemnite)]);
+  }
   lignes.push(
-    [assiette, mois(avant.brut), mois(apres.brut)],
     [`<strong>${libelleNet}</strong>`, `<strong>${mois(avant.net)}</strong>`,
       `<strong>${mois(apres.net)}</strong>`],
     [avecCout ? "Dont pour la retraite" : "Dont pour la retraite, à votre charge",
@@ -5754,20 +5779,38 @@ function salaireNetDetail(comparaison, remuneration, saisie) {
     + `${remuneration.libelleStatut}`,
     true,
   );
-  const lecture = avecCout
-    ? "<p>Le coût du travail ne bouge pas : c'est l'hypothèse. Le "
+  // TROIS LECTURES, une par incidence. Celle d'un agent public a dit « ne bouge
+  // pas » jusqu'au 13 octobre 2026, sous un tableau où sa rémunération montait
+  // de la moitié de ce que l'État cessait de verser, le partage du
+  // 20 septembre (`Incidence.PARTAGEE`).
+  const versee = `Ce que vous versez pour votre retraite passe de `
+    + `${mois(retraiteAvant)} à ${mois(retraiteApres)} par mois, soit `
+    + `<strong>${eurosSigne((retraiteApres - retraiteAvant) / 12)}</strong>`;
+  const la = feminin(remuneration.libelleAssiette) ? "La" : "Le";
+  // « monte de 792,00 € », « baisse de 12,00 € » : le sens dans le verbe.
+  const deplace = (ecart) => `${ecart >= 0 ? "monte" : "baisse"} de `
+    + g.eurosCentimes(Math.abs(ecart) / 12);
+  let lecture;
+  if (avecCout) {
+    lecture = "<p>Le coût du travail ne bouge pas : c'est l'hypothèse. Le "
       + `prélèvement retraite, lui, passe de ${mois(retraiteAvant)} à `
       + `${mois(retraiteApres)} par mois, soit `
       + `<strong>${eurosSigne((retraiteApres - retraiteAvant) / 12)}`
       + "</strong> ; le salaire brut monte de "
       + `${eurosSigne((apres.brut - avant.brut) / 12)}, et le net de `
-      + `${eurosSigne((apres.net - avant.net) / 12)}.</p>`
-    : `<p>Le ${assiette.toLowerCase()} ne bouge pas : c'est l'hypothèse, et ici `
-      + "c'est la seule disponible. Ce que vous versez pour votre retraite "
-      + `passe de ${mois(retraiteAvant)} à ${mois(retraiteApres)} par mois, `
-      + `soit <strong>${eurosSigne((retraiteApres - retraiteAvant) / 12)}`
-      + "</strong> ; votre net bouge donc de "
       + `${eurosSigne((apres.net - avant.net) / 12)}.</p>`;
+  } else if (remuneration.incidence === Incidence.PARTAGEE
+      && remuneration.contributionEquilibre > 0) {
+    lecture = `<p>${la} ${assiette.toLowerCase()} ${deplace(apres.brut - avant.brut)} : `
+      + "c'est la moitié de ce que votre employeur cesse de verser"
+      + (remuneration.departsAnticipes > 0
+        ? ", hors ce qui payait des départs anticipés" : "")
+      + `. ${versee} ; votre net ${deplace(apres.net - avant.net)}.</p>`;
+  } else {
+    lecture = `<p>${la} ${assiette.toLowerCase()} ne bouge pas : c'est `
+      + `l'hypothèse, et ici c'est la seule disponible. ${versee} ; votre net `
+      + `bouge donc de ${eurosSigne((apres.net - avant.net) / 12)}.</p>`;
+  }
 
   const alerte = remuneration.buteSurLeSmic
     ? '<p class="note avertissement">'
@@ -5846,7 +5889,7 @@ function salaireNetMethode(comparaison, remuneration) {
   const assiette = echapper(remuneration.libelleAssiette.toLowerCase());
   return `
 <h3>Comment ce chiffre est calculé, et ce qu'il suppose</h3>
-${salaireNetIncidence(remuneration, assiette)}
+${salaireNetIncidence(remuneration, assiette, parametres)}
 ${salaireNetPartage(remuneration, parametres, part)}
 ${salaireNetAllegement(remuneration)}
 ${salaireNetPerimetre(remuneration)}
@@ -5858,7 +5901,7 @@ exactement ce que le compte notionnel encaisse.</p>`;
 }
 
 /** Ce que le modèle tient fixe — et, pour le public, pourquoi il le doit. */
-function salaireNetIncidence(remuneration, assiette) {
+function salaireNetIncidence(remuneration, assiette, parametres) {
   if (remuneration.afficheCoutDuTravail) {
     return `<p><strong>Le coût du travail est tenu fixe.</strong> C'est ce que votre
 employeur a budgété pour votre poste, et aucune réforme des retraites ne le
@@ -5878,20 +5921,60 @@ L'assiette retenue est l'assiette sociale unique : votre revenu professionnel
 après l'abattement de 26 %, qui sert depuis 2025 aux cotisations comme à la
 CSG.</p>`;
   }
-  return `<p><strong>Votre ${assiette} est tenu fixe, et le site n'affiche pas de
-coût du travail pour votre statut.</strong> Ce n'est pas un oubli, c'est un
-refus. Ce que verse votre employeur n'est pas le prix de votre travail mais un
-<strong>taux d'équilibre</strong> — 82,28 % du traitement pour l'État en 2026,
-126,07 % de la solde de ses militaires —, fixé pour que le compte « Pensions » tombe juste, c'est-à-dire pour
-payer les pensions d'aujourd'hui, et non parce que vous acquerriez 82 % de votre
-traitement en droits nouveaux. Le traiter comme un coût du travail et supposer
-qu'une baisse vous reviendrait en salaire afficherait une augmentation de
-soixante-dix points qui n'existe pas : cette contribution finance une dette de
-pensions qui, elle, reste à payer. C'est la page <a href="${g.lien("/cout")}">Coût</a>
-qui en traite.</p>
-<p>Le chiffre ci-dessus est donc la lecture <strong>prudente</strong> : seule la
-part que vous supportez bouge. Il n'est pas comparable, terme à terme, au gain
-d'un salarié du privé, dont le site fait remonter la part patronale dans le
+  // CE PARAGRAPHE A DIT « VOTRE TRAITEMENT EST TENU FIXE » jusqu'au 13 octobre
+  // 2026, et « seule la part que vous supportez bouge » : c'était vrai avant le
+  // partage du 20 septembre, qui en fait remonter la moitié, et le tableau
+  // juste au-dessus le montrait. Le jaune budgétaire « Pensions » du PLF 2027
+  // chiffre ce que la fiche ne montre pas : ses figures A et A bis, que
+  // `test_remuneration.py` refait au point près.
+
+  // Sans série qui dise ce que verse son employeur — un marin, un artiste de
+  // l'Opéra —, la fiche retombe sur la rémunération fixe (`brut_partage`).
+  const rendue = remuneration.contributionEquilibre > 0
+    ? `Le site vous en rend donc la moitié, l'autre payant cette dette ; c'est la
+page <a href="${g.lien("/cout")}">Coût</a> qui traite du reste.`
+    : `Faute d'une série qui dise ce que verse le vôtre, le site tient ici votre
+${assiette} fixe ; c'est la page <a href="${g.lien("/cout")}">Coût</a> qui
+traite du reste.`;
+  // Le jaune ne parle que des agents de l'État : ceux dont le taux paie des
+  // départs anticipés, que seule la décomposition de l'État porte.
+  const jaune = remuneration.departsAnticipes > 0 ? `
+<p>Ce que votre fiche ne montre pas, le jaune budgétaire « Pensions » annexé au
+projet de loi de finances pour 2027 l'a chiffré, primes comprises, pour une
+rémunération brute de 3 274 € par mois dont 24,6 % de primes :
+<strong>la retraite y prend 40 % de la rémunération totale d'un fonctionnaire
+civil</strong> — 35 points versés par l'État, 5 retenus sur la fiche — et 50 %
+de celle d'un militaire, dont 4 retenus. Le modèle retrouve ces chiffres au
+point près, au taux de l'État de 2025 ; à celui de 2026, la part du civil passe
+à 41 %. Le même document tient ces taux pour « peu comparables » à ceux du
+privé.</p>` : "";
+  // LE TAUX DE L'AGENT, quand une série le dit : 82,28 % du traitement d'un
+  // civil de l'État en 2026, 126,07 % de la solde d'un militaire, 37,65 % pour
+  // la CNRACL. La phrase donnait les deux premiers à tous, et « soixante-dix
+  // points » à l'agent territorial dont l'employeur en libère vingt et un.
+  const taux = remuneration.contributionEquilibre;
+  const employeur = (parametres.taux_cotisation_liberal
+    + parametres.taux_capitalisation_obligatoire)
+    * (1 - parametres.part_salariale_taux_unique);
+  const equilibre = taux > 0
+    ? `${g.pourcentage(taux, false, 2)} de votre traitement indiciaire en `
+      + `${remuneration.reference.annee}`
+    : "82,28 % du traitement pour l'État en 2026, 126,07 % de la solde de ses "
+      + "militaires";
+  const hausse = taux > employeur
+    ? `une augmentation de ${g.nombre((taux - employeur) * 100, 0)} points de `
+      + "traitement"
+    : "une augmentation de salaire";
+  return `<p><strong>Le site n'affiche pas de coût du travail pour votre
+statut.</strong> Ce n'est pas un oubli, c'est un refus. Ce que verse votre
+employeur n'est pas le prix de votre travail mais un <strong>taux
+d'équilibre</strong> — ${equilibre} —, fixé pour que le régime tombe juste,
+c'est-à-dire pour payer les pensions d'aujourd'hui, et non parce que vous
+acquerriez autant de droits nouveaux. Vous rendre en salaire tout ce qu'il
+cesserait de verser afficherait ${hausse} qui n'existe pas : cette contribution
+finance une dette de pensions qui, elle, reste à payer. ${rendue}</p>${jaune}
+<p>Le chiffre ci-dessus n'est donc pas comparable, terme à terme, au gain d'un
+salarié du privé, dont le site fait remonter toute la part patronale dans le
 brut.</p>`;
 }
 
@@ -7399,6 +7482,33 @@ function casTypes(contexte, regards = null) {
     "Qui sont ces treize carrières",
     g.gloses(casTypesDeLaGrille.map((cas) => [cas.libelle, cas.commentaire])),
   );
+  // EN REGARD DE LA GRILLE, LA COMPARAISON QU'ELLE NE FAIT PAS. Le jaune
+  // budgétaire « Pensions » annexé au PLF 2027 (page 13) cite deux mesures de
+  // la DREES pour dire que le régime des fonctionnaires n'est pas plus
+  // avantageux que celui du privé, à salaire égal. Elles répondent à une autre
+  // question que la grille, et le dépliant dit laquelle (action 159, étape 8).
+  const depliantPublicPrive = g.depliant(
+    "Fonctionnaire et salarié : la comparaison que cette grille ne fait pas", `
+<p>Le jaune budgétaire « Pensions » annexé au projet de loi de finances pour
+2027 cite deux mesures de la DREES. Pour la génération née en 1958,
+<strong>appliquer aux fonctionnaires de l'État les règles de calcul du régime
+général relèverait leur pension de 1,5 % en moyenne</strong> : 62 % y
+gagneraient, 32 % y perdraient, et 6 % n'y verraient pas de différence notable
+(<em>Les Dossiers de la DREES</em> n° 103, novembre 2022). Et le taux de
+remplacement, la pension rapportée au dernier revenu d'activité, est un peu
+plus haut au régime général que dans la fonction publique de l'État : 74,8 %
+contre 73,8 % (DREES, <em>Les retraités et les retraites</em>, 2025). Selon le
+jaune, l'avantage apparent d'une pension calculée sur les six derniers mois de
+traitement est compensé par une assiette qui laisse de côté les primes, plus
+d'un cinquième de la rémunération brute.</p>
+<p>La grille ne compare pas deux jeux de règles sur un même salaire : chaque
+case rapporte ce qu'un système servirait à ce que le système actuel promet à la
+même carrière. L'écart entre la ligne du fonctionnaire sédentaire et celle du
+salarié mêle donc ce que chacun a cotisé et ce que ses règles lui promettent ;
+il ne dit pas lequel des deux régimes est le plus généreux. La comparaison de
+la DREES se refait sur une carrière, au <a href="${g.lien("/simuler")}">simulateur</a> :
+la même saisie, primes comprises, sous le statut de fonctionnaire de l'État,
+puis sous celui de salarié du privé.</p>`);
   // Les âges du tableau sont ceux du droit en vigueur ; la proposition en a
   // un autre, et la grille de son onglet le suit.
   const ageLegal = contexte.base.age_legal_liberal ?? null;
@@ -7474,6 +7584,7 @@ carrière</a><a href="${g.lien("/methode")}">Comment c'est calculé</a></p>
 <h2>Pour aller plus loin</h2>
 
 ${depliantCas}
+${depliantPublicPrive}
 ${depliantAges}
 ${echecs}
 `;
@@ -8918,6 +9029,22 @@ function phraseTauxEtat(contexte) {
     + `traitements en ${derniere}.`;
 }
 
+/**
+ * Ce que cette contribution pèse dans le budget de chaque ministère, que le
+ * projet de loi de finances pour 2027 montre pour la première fois, et dans le
+ * budget général : le jaune « Pensions », figures B, B bis, 3B et 8, et le
+ * texte qui les commente (action 159, étapes 6 et 8). Ses chiffres sont ceux
+ * du document, datés par lui.
+ */
+const PHRASE_CREDITS_MINISTERES = "Le projet de loi de finances pour 2027 en "
+  + "montre pour la première fois le poids dans chaque budget : avec les "
+  + "retenues de leurs agents, 32 % des crédits de l'Éducation nationale, "
+  + "28,5 milliards d'euros, et 30 % de ceux de l'Intérieur vont au compte "
+  + "« Pensions », 13 % environ pour l'ensemble des ministères. En 2025, ce que "
+  + "l'État a versé aux retraites de ses fonctionnaires et de ses ouvriers a "
+  + "pesé 11,4 % du budget général (jaune budgétaire « Pensions », figures B, "
+  + "B bis, 3B et 8).";
+
 function coutDetailRessources(contexte) {
   const comptes = contexte.comptes();
   const ventilees = comptes.anneesVentilees();
@@ -8942,7 +9069,8 @@ ${g.tableau(
     true,
   )}
 ${g.gloses(POSTES.map((poste) => [poste.libelle, `${poste.glose}${{
-    contribution_equilibre_etat: ` ${phraseTauxEtat(contexte)}`,
+    contribution_equilibre_etat:
+      ` ${phraseTauxEtat(contexte)} ${PHRASE_CREDITS_MINISTERES}`,
     impots_et_taxes: ` ${phraseFsv(comptes)}`,
   }[poste.code] ?? ""}`]))}
 <p class="discret">La colonne « cotisée » dit si le poste est un prélèvement

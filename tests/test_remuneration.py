@@ -18,10 +18,11 @@ au SMIC, la proposition prélève plus que le droit en vigueur, parce que la
 réduction générale efface aujourd'hui la totalité de la part patronale.
 
 Enfin que les TROIS AUTRES PROFILS sont ce qu'ils prétendent être : un
-fonctionnaire n'a pas de coût du travail affichable et son traitement est tenu
-fixe ; un indépendant paie tout lui-même ; les deux barèmes progressifs des
-indépendants retombent sur les bornes que la loi écrit ; et les familles qu'on
-ne sait pas décrire n'affichent toujours rien.
+fonctionnaire n'a pas de coût du travail affichable, la moitié de ce que l'État
+cesse de verser remontant dans sa rémunération, et sa fiche refait celles du
+jaune budgétaire « Pensions » ; un indépendant paie tout lui-même ; les deux
+barèmes progressifs des indépendants retombent sur les bornes que la loi
+écrit ; et les familles qu'on ne sait pas décrire n'affichent toujours rien.
 """
 
 from __future__ import annotations
@@ -978,6 +979,88 @@ def test_la_fiche_de_paie_d_une_carriere_suit_sa_part_de_primes():
         sans.droit_en_vigueur.brut - sans.indemnite_csg, rel=1e-12))
     assert _ligne(avec.droit_en_vigueur, "fonction_publique_etat") == pytest.approx(
         0.7 * _ligne(sans.droit_en_vigueur, "fonction_publique_etat"), rel=1e-12)
+
+
+#: Le cas type des figures A et A bis du jaune « Pensions » annexé au projet de
+#: loi de finances pour 2027 (pages 9 et 10) : une rémunération brute de 3 274 €
+#: par mois, dont 24,60 % de primes, moyennes de 2023, la même pour le civil et
+#: pour le militaire. Chaque figure la décompose en points de la rémunération
+#: totale : la contribution de l'employeur à la retraite, la cotisation de
+#: l'agent, la « rémunération nette totale », et les autres charges patronales
+#: — maladie, famille, FNAL, allocation temporaire d'invalidité, CSA —, que le
+#: modèle ne porte pas et qu'il reprend donc de la figure.
+BRUT_MENSUEL_JAUNE_2027 = 3274.0
+PRIMES_JAUNE_2027 = 0.246
+FIGURES_A_DU_JAUNE_2027 = {
+    "fonctionnaire_etat": {"employeur": 35, "agent": 5, "net": 53, "autres": 7},
+    "militaire": {"employeur": 46, "agent": 4, "net": 44, "autres": 6},
+}
+
+
+def _figure_a(pieces, statut: str, annee: int) -> dict[str, float]:
+    """Le cas type des figures A, décomposé par la fiche de paie du modèle.
+
+    Ce que verse l'employeur n'est pas sur la fiche d'un agent public : c'est
+    le taux d'équilibre de l'année, sur le seul traitement, et la part
+    patronale de la RAFP, que la fiche porte. Le total est celui de la figure,
+    une fois ses autres charges patronales remises.
+    """
+    from retraite_notionnelle.remuneration import fiche_depuis_brut
+
+    racine = PARAMETRES.racine_donnees
+    fiche = fiche_depuis_brut(racine, pieces["macro"], pieces["catalogue"],
+                              pieces["affiliations"], statut, annee,
+                              12 * BRUT_MENSUEL_JAUNE_2027, PRIMES_JAUNE_2027, 0.0)
+    traitement = (1.0 - PRIMES_JAUNE_2027) * fiche.brut
+    employeur = (contribution_equilibre(racine, pieces["affiliations"], statut, annee)
+                 * traitement + fiche.retraite_employeur)
+    autres = FIGURES_A_DU_JAUNE_2027[statut]["autres"] / 100
+    total = (fiche.brut + employeur) / (1.0 - autres)
+    return {
+        "employeur": 100 * employeur / total,
+        "agent": 100 * fiche.retraite_salarie / total,
+        "net": 100 * (fiche.brut - fiche.retraite_salarie) / total,
+        "net_de_la_fiche": 100 * fiche.net / total,
+    }
+
+
+@pytest.mark.parametrize("statut, annee", [("fonctionnaire_etat", 2025), ("militaire", 2026)])
+def test_les_figures_a_du_jaune_2027_se_retrouvent_au_point_pres(pieces, statut, annee):
+    """La fiche de paie du site prélève comme la direction du budget : la
+    retenue sur le seul traitement, la RAFP sur les primes dans la limite de
+    20 % du traitement, le taux d'équilibre sur le traitement. Refaite par le
+    modèle, chaque figure retombe, arrondie au point, sur ses quatre chiffres :
+    40 % de la rémunération totale pour la retraite d'un civil, 35 de l'État et
+    5 de l'agent, 53 de net ; 50 % pour un militaire, 46 et 4, 44 de net.
+
+    Deux choses ne se voient qu'en refaisant le calcul. La figure du civil est
+    au taux de 2025, 78,28 %, et non à celui de 2026 que cite le texte d'à
+    côté : le test suivant le montre. Et sa « rémunération nette totale » est
+    un brut moins la retraite : la CSG et la CRDS y sont encore, cinq points et
+    demi de la rémunération totale d'un civil, quatre et demi d'un militaire,
+    que le net de la fiche du site retire.
+    """
+    figure = FIGURES_A_DU_JAUNE_2027[statut]
+    parts = _figure_a(pieces, statut, annee)
+    for poste in ("employeur", "agent", "net"):
+        assert round(parts[poste]) == figure[poste], poste
+    assert round(parts["employeur"] + parts["agent"]) == figure["employeur"] + figure["agent"]
+    assert parts["net"] - parts["net_de_la_fiche"] > 4.0
+
+
+def test_la_figure_a_du_civil_n_est_pas_au_taux_de_2026(pieces):
+    """Le texte de l'éditorial donne les taux de 2026 — 82,28 % pour les civils,
+    126,07 % pour les militaires — à côté de figures qui en décomposent l'effet.
+    Celui des militaires n'a pas bougé depuis 2013 ; celui des civils a pris
+    quatre points en 2026, et la figure A ne les porte pas : à 82,28 %, elle
+    imprimerait 36 points pour l'État et 52 de net, la retraite prenant 41 % de
+    la rémunération totale. Le site, qui affiche le taux de l'année, le dit
+    ainsi."""
+    assert contribution_equilibre(PARAMETRES.racine_donnees, pieces["affiliations"],
+                                  "fonctionnaire_etat", 2026) == pytest.approx(0.8228)
+    parts = _figure_a(pieces, "fonctionnaire_etat", 2026)
+    assert (round(parts["employeur"]), round(parts["net"])) == (36, 52)
+    assert round(parts["employeur"] + parts["agent"]) == 41
 
 
 def test_un_statut_sans_fiche_de_paie_rend_le_montant_inchange(pieces):

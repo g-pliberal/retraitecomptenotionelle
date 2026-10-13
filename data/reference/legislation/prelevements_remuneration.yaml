@@ -624,8 +624,16 @@ profils:
 
   agent_seul:
     libelle: "Fonctionnaire ou agent d'un régime à retenue"
-    libelle_assiette: "Traitement indiciaire brut"
-    libelle_net: "Traitement net"
+    # La rémunération ENTIÈRE, et non le traitement indiciaire : la fiche porte
+    # depuis le 10 octobre 2026 le traitement, les primes et l'indemnité
+    # compensatrice de la CSG (`remuneration.py`), et c'est ainsi que le jaune
+    # budgétaire « Pensions » du PLF 2027 nomme la même grandeur (figures A et
+    # A bis). Le traitement indiciaire reste l'assiette de la retenue et du
+    # taux d'équilibre, et la page le nomme là où elle parle d'eux. Le libellé
+    # a dit « traitement indiciaire brut » jusqu'au 13 octobre 2026 (action
+    # 159, étape 8).
+    libelle_assiette: "Rémunération brute"
+    libelle_net: "Rémunération nette"
     cout_du_travail: false
     # `partagee` depuis le 20 septembre 2026, et c'est une DÉCISION, pas une
     # correction : la moitié de ce que l'employeur public cesse de verser

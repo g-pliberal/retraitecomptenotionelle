@@ -765,7 +765,7 @@ affirmations:
     extrait: "de votre traitement indiciaire brut"
     porte: ce que verse l'employeur public est un taux d'équilibre, non un prix du travail
     etat: verifiee
-    controle: fonctionnaire_assiette_fixe
+    controle: fonctionnaire_sans_cout_du_travail
 
   - id: simuler.csg_ne_finance_pas
     page: /simuler
@@ -854,12 +854,27 @@ affirmations:
     etat: verifiee
     controle: allegement_absent_hors_prive
 
-  - id: simuler.fonctionnaire_assiette_fixe
+  - id: simuler.fonctionnaire_sans_cout_du_travail
+    # A dit « Votre traitement indiciaire brut est tenu fixe » jusqu'au
+    # 13 octobre 2026 (action 159, étape 8) : faux depuis le partage du
+    # 20 septembre, qui en fait remonter la moitié dans la rémunération.
     page: /simuler
-    extrait: "est tenu fixe, et le site n'affiche pas de coût du travail pour votre statut."
-    porte: pour un agent public, le traitement brut est tenu fixe et le coût du travail n'est pas affiché
+    extrait: "Le site n'affiche pas de coût du travail pour votre statut."
+    porte: >-
+      pour un agent public, le coût du travail n'est pas affiché, et la moitié de
+      ce que l'employeur cesse de verser remonte dans la rémunération
     etat: verifiee
-    controle: fonctionnaire_assiette_fixe
+    controle: fonctionnaire_sans_cout_du_travail
+
+  - id: simuler.figure_a_du_jaune_2027
+    page: /simuler
+    extrait: "la retraite y prend 40 % de la rémunération totale d'un fonctionnaire civil"
+    porte: >-
+      refait par la fiche de paie du modèle, le cas type des figures A et A bis
+      du jaune « Pensions » du PLF 2027 donne 40 % au taux de 2025, 41 % à celui
+      de 2026, 50 % pour un militaire
+    etat: verifiee
+    controle: figure_a_du_jaune_2027
 
   - id: simuler.retenue_de_l_agent
     page: /simuler
@@ -972,6 +987,21 @@ affirmations:
     porte: les quatre systèmes ont chacun leur coefficient d'équilibre, et les ramener chacun au sien déplace les écarts de la grille
     etat: verifiee
     controle: les_ecarts_bougent_si_chaque_systeme_s_equilibre
+
+  # Une affirmation sur le MONDE, mise en regard de la grille le 13 octobre
+  # 2026 (action 159, étape 8) : la DREES, que cite le jaune « Pensions »
+  # annexé au PLF 2027, a refait la pension des fonctionnaires de l'État de la
+  # génération 1958 sous les règles du régime général. La grille ne fait pas
+  # cette comparaison, et le dépliant le dit ; la page cite la source.
+  - id: cas_types.regles_du_prive_selon_la_drees
+    page: /cas-types
+    extrait: "appliquer aux fonctionnaires de l'État les règles de calcul du régime général relèverait leur pension de 1,5 % en moyenne"
+    porte: >-
+      à salaire égal, les règles du régime général donneraient en moyenne un
+      peu plus aux fonctionnaires de l'État de la génération 1958 que les
+      leurs ; la grille, elle, rapporte chaque système au système actuel
+    etat: hors_modele
+    source: "Les Dossiers de la DREES n° 103"
 
   # LA CONVENTION COMPTABLE, DITE AU LECTEUR POUR LA PREMIÈRE FOIS le
   # 20 septembre 2026. Elle était dans les en-têtes de données depuis toujours
