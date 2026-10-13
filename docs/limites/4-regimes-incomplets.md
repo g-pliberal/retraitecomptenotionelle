@@ -495,7 +495,10 @@ une cotisation d'employeur : les droits spécifiques de la RATP jusqu'à 45 000
 agents, « une cotisation correspondant à <!--chiffre:illustration()-->22<!--/--> % des salaires » plus un complément
 d'équilibre pour les mines — près de trois fois ce que verse l'exploitant —, la
 subvention de l'Opéra. Pour la SNCF d'après 2007, la somme T1 + T2 laisse de
-même dehors la subvention d'équilibre. La ligne de l'État est la seule exception
+même dehors la subvention d'équilibre, et la série du FSPOEIE celle que l'État
+verse aux ouvriers de l'État : 1 654 M€ en 2025, les quatre cinquièmes de leurs
+pensions, près de six fois leurs cotisations (jaune pensions annexé au PLF 2027,
+tableau 23). La ligne de l'État est la seule exception
 du tableau : son taux EST un taux d'équilibre. Un agent minier et un
 fonctionnaire d'État ne sont donc pas mesurés à la même aune, et la différence
 joue contre le mineur.
@@ -557,7 +560,11 @@ tout » des six régimes non plus. Depuis le 1er janvier 2025, ces crédits ne
 vont d'ailleurs plus aux régimes : la CNAV les équilibre en dernier ressort et
 l'État la compense, net de la compensation démographique et des cotisations
 que la fermeture a portées au régime général et à l'Agirc-Arrco, si bien que
-les crédits 2026 ne se comparent pas à la subvention d'avant.
+les crédits 2026 ne se comparent pas à la subvention d'avant. Le jaune pensions
+annexé au PLF 2027 les compte pourtant encore en subventions, exécutées en 2025
+(tableau 5) : rapportées aux dépenses de chaque régime, elles retrouvent à deux
+points et demi près la part de l'État que le classeur du COR donne pour 2023,
+ce que tient `test_ce_que_l_etat_verse_recoupe_le_jaune_pensions_2027`.
 
 Trois conséquences à garder en tête.
 
