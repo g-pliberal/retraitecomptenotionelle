@@ -6434,16 +6434,15 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 6 octobre 2026.** Faites : les étapes 1 à 16 — le passé, le COR
+**Reprise, au 13 octobre 2026.** Faites : les étapes 1 à 17 — le passé, le COR
 et ses conventions (1 à 12) ; les régimes qui se ferment suivent le COR (13) ;
-les carrières incomplètes des natifs (14) ; l'ancrage du salaire moyen recensé
-(15), puis lu dans les données, 40 897 €, et le cas type au SMIC payé au SMIC
-de chaque année (16 : dérive de 2070 1,001, 0,979 en 2050). Reste, une session
-neuve par point : le privé sous le COR au milieu de la période
-(complémentaires −6 % en 2050, les polypensionnés) ; le passé (−16 % en 2009) ;
-la FPE et les régimes spéciaux à l'horizon. Python 3.11, celui de la CI. Au
-propriétaire : le taux du simulateur individuel (138.13). Lire les notes 13 à
-16.
+les carrières incomplètes des natifs (14) ; l'ancrage du salaire moyen (15,
+16) ; le privé sous le COR au milieu de la période, mesuré sans rien changer
+(17) : un écart de têtes à l'Agirc-Arrco, que seule la grille, que tient
+l'action 152, peut combler. Reste, une session neuve par point : le passé
+(−16 % en 2009) ; la FPE et les régimes spéciaux à l'horizon. Python 3.11,
+celui de la CI. Au propriétaire : le taux du simulateur individuel (138.13).
+Lire les notes 13 à 16, et celle de l'étape 17.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait

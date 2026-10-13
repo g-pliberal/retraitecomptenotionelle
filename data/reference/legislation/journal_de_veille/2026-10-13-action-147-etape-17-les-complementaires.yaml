@@ -1,0 +1,26 @@
+date: "2026-10-13"
+session: "action 147, étape 17 : le privé sous le COR au milieu de la période, un écart de têtes à l'Agirc-Arrco"
+consulte: >-
+  La veille du jour (scripts/veille_droit.py) : dix règles à relire, celles des
+  limites d'âge de la fonction publique, des prolongations d'activité, du minimum
+  des IEG et de la première tranche du RCI, hors du champ de l'étape. Le classeur
+  par régime du COR de juin 2024 (scripts/fetch/cor_regimes.py) : dépenses, masses
+  de droits directs et retraités de l'Agirc-Arrco, de la Cnav, de l'Ircantec, du
+  RCI, de la CNAVPL et de la MSA ; les titres des six classeurs du rapport de juin
+  2026, à la recherche des polypensionnés par génération ; les pièces du jeu de la
+  DREES sur les caractéristiques des retraités (EIR 2012, 2016 et 2020).
+trouve: >-
+  Aucun texte de droit : l'étape ne touche ni le scénario 1 ni le simulateur. Les
+  complémentaires restent sous le COR au milieu de la période parce que la grille
+  ne fait pas croître les retraités de l'Agirc-Arrco comme lui : chaque carrière du
+  privé y a les deux régimes et aucune autre n'a l'Agirc-Arrco, quand la part des
+  retraités qui en touchent une pension monte de 74 % à 92 % d'ici 2050 au COR. Ni
+  le rapport de juin 2026 ni la DREES ne publient la part des polypensionnés ou la
+  durée cotisée génération par génération : deux générations et deux stocks de
+  l'EIR seulement.
+reste: >-
+  Les carrières dont la part passée au privé change d'une génération à l'autre, à la
+  grille, que tient l'action 152 : la durée cotisée des femmes des générations
+  anciennes, les polypensionnés des régimes statutaires et non salariés, les poids
+  de l'Ircantec, du RCI et de la CNAVPL. Le passé de la reconstitution ; la FPE et
+  les régimes spéciaux à l'horizon.

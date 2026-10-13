@@ -461,40 +461,65 @@ def reconstitution(**reglages: str) -> float:
     return (rapports[annee] - 1) * 100
 
 
+#: Les caisses du classeur par régime du COR de juin 2024
+#: (``regimes/retraites_projetes.csv``) que réunit chaque régime de sa figure
+#: 2.7 : le classeur partage la FPE entre civils et militaires.
+CAISSES_DES_REGIMES_COR = {
+    "cnav": ("cnav",),
+    "fpe": ("fonction_publique_etat_civile", "fonction_publique_etat_militaire"),
+    "cnracl": ("cnracl",),
+    "agirc_arrco": ("agirc_arrco",),
+}
+
+
 def decomposition(**reglages: str) -> float:
     """Variation, en %, d'un facteur de la dépense du système actuel, de
     ``de`` à ``a`` : ``facteur=retraites`` ou ``facteur=pension_relative``,
     chez le modèle (``Avenir.decomposition``) ou, avec ``source=cor``, chez le
     COR (``decomposition_depense_retraite.csv`` et
-    ``croissance_depense_retraite.csv``) — pour la pension relative, d'un
-    régime avec ``groupe=cnav``, ``fpe``, ``cnracl`` ou ``agirc_arrco``, chez
-    l'un comme chez l'autre (``Avenir.decomposition_groupes``)."""
+    ``croissance_depense_retraite.csv``) — d'un régime avec ``groupe=cnav``,
+    ``fpe``, ``cnracl`` ou ``agirc_arrco``, chez l'un comme chez l'autre
+    (``Avenir.decomposition_groupes``). Les retraités d'un régime sont ses
+    têtes dans le modèle, et, chez le COR, ceux de son classeur par régime de
+    juin 2024 (``CAISSES_DES_REGIMES_COR``), que le rapport de juin 2026 ne
+    publie pas : un polypensionné compte dans chacun des siens, chez l'un
+    comme chez l'autre (action 147, étape 17)."""
+    from retraite_notionnelle.donnees.effectifs import _lire_projetes
     from retraite_notionnelle.donnees.equilibre import REGIMES_DU_MODELE, ComptesRetraite
 
     facteur = reglages["facteur"]
     if facteur not in ("retraites", "pension_relative"):
         raise ValueError(f"facteur attend retraites ou pension_relative, reçu « {facteur} »")
     de, a = int(reglages["de"]), int(reglages["a"])
+    groupe = reglages.get("groupe", "ensemble")
+    if groupe != "ensemble" and groupe not in REGIMES_DU_MODELE:
+        raise ValueError(f"groupe {groupe!r} : {sorted(REGIMES_DU_MODELE)} seulement")
     if reglages.get("source", "modele") == "cor":
-        cor = ComptesRetraite(_parametres().racine_donnees).decomposition
-        indice = (cor.indice_croissance("retraites", de, a) if facteur == "retraites"
-                  else cor.indice("pension_relative", reglages.get("groupe", "ensemble"),
-                                  de, a))
+        racine = _parametres().racine_donnees
+        if facteur == "retraites" and groupe != "ensemble":
+            projetes = _lire_projetes(racine / "reference" / "regimes" / "retraites_projetes.csv")
+            caisses = CAISSES_DES_REGIMES_COR[groupe]
+            if any(annee not in projetes.get(caisse, {})
+                   for caisse in caisses for annee in (de, a)):
+                raise ValueError(f"le classeur du COR ne compte pas les retraités "
+                                 f"de {groupe} en {de} et en {a}")
+            indice = (somme_ordonnee(projetes[caisse][a] for caisse in caisses)
+                      / somme_ordonnee(projetes[caisse][de] for caisse in caisses))
+        else:
+            cor = ComptesRetraite(racine).decomposition
+            indice = (cor.indice_croissance("retraites", de, a) if facteur == "retraites"
+                      else cor.indice("pension_relative", groupe, de, a))
         if indice is None:
             raise ValueError(f"le COR ne publie pas {facteur} de {de} à {a}")
         return (indice - 1) * 100
     if a == de:
         return 0.0
-    groupe = reglages.get("groupe", "ensemble")
     if groupe != "ensemble":
-        if facteur != "pension_relative" or groupe not in REGIMES_DU_MODELE:
-            raise ValueError(f"groupe {groupe!r} : pension relative de "
-                             f"{sorted(REGIMES_DU_MODELE)} seulement")
         par_groupe = _cout_de(reglages).avenir.decomposition_groupes(
             de, {groupe: REGIMES_DU_MODELE[groupe]})[groupe]
         if a not in par_groupe:
             raise ValueError(f"l'année {a} n'est pas dans la trajectoire")
-        return (par_groupe[a][1] - 1) * 100
+        return (par_groupe[a][0 if facteur == "retraites" else 1] - 1) * 100
     decompose = _cout_de(reglages).avenir.decomposition(de)
     if a not in decompose:
         raise ValueError(f"l'année {a} n'est pas dans la trajectoire")

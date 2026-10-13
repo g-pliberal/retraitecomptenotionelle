@@ -283,6 +283,31 @@ surtout, les polypensionnés manquant à la grille. Le passé, où vivaient les
 générations aux carrières les plus courtes, en recule, et la reconstitution
 avec lui.
 
+**Le privé au milieu de la période : un écart de têtes à l'Agirc-Arrco
+(action 147, étape 17).** Ce qui manque aux complémentaires n'est pas une
+pension par tête : celle que la grille sert à un retraité de l'Agirc-Arrco,
+rapportée au revenu d'activité moyen, recule de
+<!--chiffre:mesure(decomposition?facteur=pension_relative&groupe=agirc_arrco&de=2025&a=2050)-->−23,1<!--/--> % d'ici 2050, moins que chez le COR
+(<!--chiffre:mesure(decomposition?facteur=pension_relative&groupe=agirc_arrco&de=2025&a=2050&source=cor)-->−27,1<!--/--> %). Ce sont ses retraités : le classeur par régime du COR de
+juin 2024 les fait croître de <!--chiffre:mesure(decomposition?facteur=retraites&groupe=agirc_arrco&de=2025&a=2050&source=cor)-->44,6<!--/--> % d'ici 2050, bien plus vite que ceux de
+la Cnav (<!--chiffre:mesure(decomposition?facteur=retraites&groupe=cnav&de=2025&a=2050&source=cor)-->27,3<!--/--> %), quand la grille n'en compte que <!--chiffre:mesure(decomposition?facteur=retraites&groupe=agirc_arrco&de=2025&a=2050)-->25,0<!--/--> % de plus.
+Chez le COR, la part des retraités qui touchent une pension de l'Agirc-Arrco
+monte ; dans la grille, chaque carrière du privé a les deux régimes et aucune
+autre n'a l'Agirc-Arrco, si bien que cette part reste celle d'aujourd'hui.
+Pour que la dépense suive, les retraités qui manquent à la grille devraient
+toucher presque la pension moyenne qu'elle sert à l'Agirc-Arrco au début de
+la période, et de moins en moins ensuite : des carrières du privé presque
+entières d'abord — vraisemblablement celles des femmes des générations de
+l'après-guerre, dont les années validées sans cotisation, l'assurance
+vieillesse des parents au foyer et les majorations pour enfants, comptent à
+la Cnav et non à l'Agirc-Arrco —, des passages de plus en plus courts
+ensuite, ceux des polypensionnés. Les poids n'y peuvent rien : prolonger la
+Cnav ou l'Ircantec par le COR, ou donner aux contractuels, aux artisans, aux
+libéraux et aux fonctionnaires des années de salariat du privé, laisse
+l'écart où il est ou le creuse, les retraités de l'Agirc-Arrco n'y gagnant
+rien. Il y faudrait des carrières dont la part passée au privé change d'une
+génération à l'autre, que la grille ne porte pas.
+
 **La fourchette, tant que l'écart dure (action 147, étape 3).** La page ne
 prend plus au modèle la dépense du système actuel, mais elle lui prend
 toujours le RAPPORT de masses qui en tire les autres systèmes, et ce rapport
