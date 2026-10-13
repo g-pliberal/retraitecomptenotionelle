@@ -144,12 +144,9 @@
 #       puis 166 des nés du 1er janvier 1963 au 30 septembre 1965, 167
 #       d'octobre à décembre 1965, 168 pour 1966, 169 pour 1967, 170 pour
 #       1968-1970, 171 pour 1971-1973, 172 à compter de 1974.
-# Les deux coupures tombent en cours d'année, et la fiche coupe au 1er
-# janvier : les pensions de janvier à juin 2016 relèvent encore du décret n°
-# 89-110, 150 trimestres, que la table ne dépasse que pour les nés de janvier
-# à mai 1956 partis à soixante ans (152) ; celles de janvier et février 2026,
-# de `spm_2015`, qui ne diffère de `spm_2026` qu'à compter de 1964, une
-# génération qui n'atteint pas son âge avant avril 2026.
+# Les deux coupures tombent en cours d'année : les périodes de la fiche les
+# portent au jour (`date_effet`), le décret n° 89-110 et ses 150 trimestres
+# servant encore les pensions de janvier à juin 2016.
 #
 # MAYOTTE AUSSI, de la même façon. L'article 9 du décret n° 2003-589 fixait la
 # durée à l'ANNÉE d'effet de la pension, 64 trimestres en 2003 et quatre de

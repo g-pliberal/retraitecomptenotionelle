@@ -33,7 +33,8 @@ trouve: >-
   génération : l'âge depuis le décret n° 2012-1168 (et non « 2012-1170 »), la durée
   pour les pensions de 2018, le coefficient pour celles de 2026 ; le taux plein à 67 ans
   au 1er janvier 2026 (décret n° 2025-1410), la suspension au 1er septembre 2026.
-  Tables mayotte_2012, mayotte_2023, mayotte_2026 et mayotte_2018 ; deux réformes de plus.
+  Tables mayotte_2012, mayotte_2023, mayotte_2026_01, mayotte_2026_09 et mayotte_2018 ;
+  deux réformes de plus ; les coupures de 2016, 2023 et 2026 au jour (date_effet).
   Polynésie : la loi du pays n° 2019-6 relève l'âge et la durée à l'année du départ, de
   60 ans et 420 mois en 2019 à 62 ans et 456 mois en 2023, pour les tranches A et B ;
   trois périodes annuelles et la réforme polynesie_2020.

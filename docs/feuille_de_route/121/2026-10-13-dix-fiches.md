@@ -64,13 +64,12 @@ cps_saint_pierre_et_miquelon, puis les suivantes, dans l'ordre du bloc. »
   Saint-Pierraise née en 1948 partie à soixante ans avec 120 trimestres : 31,25
   % de taux au lieu de 25. Le portage rend les mêmes chiffres que le Python
   sur huit carrières de l'archipel, de 1948 à 1970.
-- *Les coupures, à l'année près.* Les pensions de janvier à juin 2016 relèvent
-  encore du décret de 1989 : la table ne s'en écarte que pour les nés de
-  janvier à mai 1956 partis à soixante ans, 152 trimestres au lieu de 150.
-  Celles de janvier à août 2023, et de janvier et février 2026, lisent déjà la
-  table suivante, qui ne diffère de la précédente que pour des générations
-  qui n'atteignent pas leur âge avant 2025, puis avant avril 2026. Le
-  calendrier des textes relève deux versions sans coupure de la fiche,
+- *Les coupures, au jour.* Le 1er juillet 2016, le 1er septembre 2023 et le
+  1er mars 2026 tombent en cours d'année : les périodes les portent au jour
+  (`date_effet`, que l'action 131 a donné aux fiches le même jour), et le
+  décret de 1989 sert encore les pensions de janvier à juin 2016 — 150
+  trimestres et non 152 aux nés de janvier à mai 1956 partis à soixante ans.
+  Le calendrier des textes relève deux versions sans coupure de la fiche,
   l'article 5 au 1er janvier 2020 et l'article 3 du décret au 24 août 2021 :
   lues, elles ne touchent ni l'âge, ni la durée, ni la décote.
 - *Une question ouverte, le taux plein des générations 1958 à 1961.* Depuis
@@ -115,11 +114,12 @@ cps_saint_pierre_et_miquelon, puis les suivantes, dans l'ordre du bloc. »
     (loi n° 2025-1403, article 105, V ; décret n° 2026-345) : 62 ans et 6 mois
     des nés de janvier 1963 à juin 1965, 62 ans et 9 mois de juillet à décembre
     1965, 64 ans à compter de 1970.
-- *Ce qui est écrit.* Les tables `mayotte_2012`, `mayotte_2023` et
-  `mayotte_2026` d'âges — la dernière porte aussi le coefficient de
-  minoration —, et `mayotte_2018` de durée. Les périodes de 2003 à 2017 restent
-  annuelles ; puis 2018-2022, 2023-2025, 2026 et après : trente-sept périodes
-  deviennent dix-neuf. Le calendrier des réformes prend
+- *Ce qui est écrit.* Les tables `mayotte_2012`, `mayotte_2023`,
+  `mayotte_2026_01` et `mayotte_2026_09` d'âges — les deux dernières portent
+  aussi le coefficient de minoration —, et `mayotte_2018` de durée. Les
+  périodes de 2003 à 2017 restent annuelles ; puis 2018-2022, 2023-2025, 2026
+  et après, celle-ci dédoublée au 1er septembre : trente-sept périodes
+  deviennent vingt. Le calendrier des réformes prend
   `mayotte_2026_taux_plein` et `mayotte_2026`.
 - *Ce que ça déplace.* Jusqu'à +3 % pour les générations parties à leur âge
   que la durée de la fiche proratisait trop : 132 trimestres et non 136 à la
@@ -134,12 +134,12 @@ cps_saint_pierre_et_miquelon, puis les suivantes, dans l'ordre du bloc. »
   fiche de Mayotte portait en 2026 — à 67 ans : tous les témoins le portent, et
   la méthodologie l'écrit en chiffre ancré. Le portage rend les mêmes chiffres
   que le Python sur neuf carrières mahoraises.
-- *Les coupures, à l'année près.* Les pensions de janvier à août 2023 lisent
-  déjà la table de 2023, qui ne diffère de celle de 2012 que pour les nés
-  depuis 1962, dont aucun n'atteint son âge avant 2024. Celles de janvier à
-  août 2026, la table de la suspension, qui laisse partir deux mois trop tôt
-  les nés de janvier et février 1964 : 62 ans et 6 mois en juillet et août
-  2026, quand le droit leur oppose encore 62 ans et 9 mois.
+- *Les coupures, au jour.* Le 1er septembre 2023 et le 1er septembre 2026
+  coupent leurs périodes (`date_effet`) : celle de 2026 se dédouble, janvier à
+  août avec les âges de 2023, le taux plein à 67 ans et la minoration de
+  janvier, puis la suspension. Un Mahorais né en janvier 1964 ne part donc pas
+  à 62 ans et 6 mois en août 2026, quand le droit lui oppose encore 62 ans et
+  9 mois.
 - *Ce qui reste.* L'âge de l'inaptitude (article 5 : 62 ans, l'âge d'ouverture
   pour les nés avant 1961) ; la durée des pensions de 2035 et après, dont le I
   de l'article 9 n'écrit plus que la génération 1973 : la table vaut pour

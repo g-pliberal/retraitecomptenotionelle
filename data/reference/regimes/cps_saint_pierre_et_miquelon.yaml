@@ -372,6 +372,7 @@ periodes:
       « sur la totalité de la carrière », ce que la fiche ne porte pas.
   - debut: 2011
     fin: 2015
+    date_effet: [2011-01-01, 2016-07-01]
     type_calcul: annuites
     age_ouverture: 60
     age_taux_plein: 65
@@ -389,17 +390,20 @@ periodes:
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
       TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL, comme à la période
-      précédente. DURÉE DE 150 TRIMESTRES ET ÂGES DE 60 ET 65 ANS, ceux du
-      décret n° 89-110 (art. 7 et 9), que l'ordonnance n° 2015-896 ne
-      remplace qu'aux pensions prenant effet à compter du 1er juillet 2016
-      (son article 4, 3°). COEFFICIENT DE MINORATION À LA GÉNÉRATION, par le
-      renvoi de l'article 9 à R. 351-27 : 1,5 % pour les nés en 1951, 1,375
-      % en 1952, 1,25 % à compter de 1953. La fiche prenait 1,87 %, « à
-      mi-chemin » d'une montée en charge qu'elle croyait décalée ici ; aucun
-      texte de l'archipel ne la décale (le décret n° 2017-1000 n'adapte de
-      R. 351-27 que la durée limite, art. 3, XIV, 1°).
+      précédente. DURÉE DE 150 TRIMESTRES ET ÂGES DE 60 ET 65 ANS, ceux
+      du décret n° 89-110 (art. 7 et 9), que l'ordonnance n° 2015-896 ne
+      remplace qu'aux pensions prenant effet à compter du 1er juillet
+      2016 (son article 4, 3°) : la période liquide jusqu'au 30 juin
+      2016 (`date_effet`). COEFFICIENT DE MINORATION À LA GÉNÉRATION,
+      par le renvoi de l'article 9 à R. 351-27 : 1,5 % pour les nés en
+      1951, 1,375 % en 1952, 1,25 % à compter de 1953. La fiche prenait
+      1,87 %, « à mi-chemin » d'une montée en charge qu'elle croyait
+      décalée ici ; aucun texte de l'archipel ne la décale (le décret n°
+      2017-1000 n'adapte de R. 351-27 que la durée limite, art. 3, XIV,
+      1°).
   - debut: 2016
     fin: 2016
+    date_effet: [2016-07-01, 2017-01-01]
     type_calcul: annuites
     age_ouverture: 62
     age_taux_plein: 67
@@ -421,27 +425,28 @@ periodes:
       TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL, comme aux périodes
       précédentes. DURÉE ET ÂGES À LA GÉNÉRATION, depuis l'ordonnance n°
       2015-896 : la durée du c du 1° de l'article 5 de la loi n° 87-563
-      (LEGIARTI000030930361), 150 trimestres avant 1956, deux de plus par
-      génération jusqu'à 166 pour 1963, 172 à compter de 1973 (table
-      `spm_2015` de `legislation/duree_requise_regimes_speciaux.csv`) ; les
-      âges de L. 161-17-2 et de D. 161-2-1-9 décalés de sept générations
-      (art. 5, b, et décret n° 2017-1000, art. 3, II, 1°,
+      (LEGIARTI000030930361), 150 trimestres avant 1956, deux de plus
+      par génération jusqu'à 166 pour 1963, 172 à compter de 1973 (table
+      `spm_2015` de `legislation/duree_requise_regimes_speciaux.csv`) ;
+      les âges de L. 161-17-2 et de D. 161-2-1-9 décalés de sept
+      générations (art. 5, b, et décret n° 2017-1000, art. 3, II, 1°,
       LEGIARTI000034740766), 60 ans avant 1958, 62 à compter de 1962, le
       taux plein cinq ans au-dessus (table `spm_2015` de
-      `legislation/ages_regimes.csv`). La fiche portait, année par année,
-      la durée et l'âge de la génération qui atteint l'ouverture cette
-      année-là, faux pour toutes les autres : 158 trimestres à une
-      Saint-Pierraise née en 1956 partie en 2020, dont le droit en demande
-      152. Ces règles valent pour les pensions prenant effet à compter du
-      1er juillet 2016 (ordonnance, art. 4, 3°) ; de janvier à juin, le
-      décret n° 89-110, dont les tables ne s'écartent que pour les nés de
-      janvier à mai 1956 partis à soixante ans (152 trimestres au lieu de
-      150). Les âges et la durée écrits ici ne sont que les cibles des
-      tables, qui répondent pour toute génération. Coefficient de
-      minoration à la génération (R. 351-27, rendu applicable par le décret
-      n° 2017-1000, art. 3, XIV).
+      `legislation/ages_regimes.csv`). La fiche portait, année par
+      année, la durée et l'âge de la génération qui atteint l'ouverture
+      cette année-là, faux pour toutes les autres : 158 trimestres à une
+      Saint-Pierraise née en 1956 partie en 2020, dont le droit en
+      demande 152. Ces règles valent pour les pensions prenant effet à
+      compter du 1er juillet 2016 (ordonnance, art. 4, 3°) : la période
+      ne liquide qu'à compter de ce jour (`date_effet`), et le décret n°
+      89-110 sert encore les pensions de janvier à juin. Les âges et la
+      durée écrits ici ne sont que les cibles des tables, qui répondent
+      pour toute génération. Coefficient de minoration à la génération
+      (R. 351-27, rendu applicable par le décret n° 2017-1000, art. 3,
+      XIV).
   - debut: 2017
     fin: 2022
+    date_effet: [2017-01-01, 2023-09-01]
     type_calcul: annuites
     age_ouverture: 62
     age_taux_plein: 67
@@ -469,6 +474,7 @@ periodes:
       que la fiche ne porte pas.
   - debut: 2023
     fin: 2025
+    date_effet: [2023-09-01, 2026-03-01]
     type_calcul: annuites
     age_ouverture: 64
     age_taux_plein: 67
@@ -487,21 +493,22 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. ÂGES DE LA RÉFORME DE 2023,
-      pour les pensions prenant effet à compter du 1er septembre 2023 (loi
-      n° 2023-1250, art. 90, II, 1°, et V, A ; LEGIARTI000048697709) : les
-      mêmes âges jusqu'à 1962, trois mois de plus par génération de 1963 à
-      1969, 64 ans à compter de 1970 (table `spm_2023`). La durée n'a pas
-      changé (table `spm_2015`). De janvier à août 2023, la rédaction
-      d'avant, qui ne diffère que pour les nés depuis 1963, dont aucun
-      n'atteint son âge avant 2025. Taux plein à 67 ans à compter de la
-      génération 1962 ; pour celles de 1958 à 1961, la table garde l'âge
-      d'ouverture augmenté de cinq ans, quand L. 351-8, 1°, ne parle plus
-      depuis le 1er septembre 2023 que de « l'âge prévu au premier alinéa
-      de l'article L. 161-17-2 augmenté de trois années » : question
-      ouverte, dite dans `ages_regimes.csv`.
+      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. ÂGES DE LA RÉFORME DE
+      2023, pour les pensions prenant effet à compter du 1er septembre
+      2023 (loi n° 2023-1250, art. 90, II, 1°, et V, A ;
+      LEGIARTI000048697709) : les mêmes âges jusqu'à 1962, trois mois de
+      plus par génération de 1963 à 1969, 64 ans à compter de 1970
+      (table `spm_2023`). La durée n'a pas changé (table `spm_2015`). La
+      période liquide à compter du 1er septembre 2023, la précédente
+      jusqu'au 31 août (`date_effet`). Taux plein à 67 ans à compter de
+      la génération 1962 ; pour celles de 1958 à 1961, la table garde
+      l'âge d'ouverture augmenté de cinq ans, quand L. 351-8, 1°, ne
+      parle plus depuis le 1er septembre 2023 que de « l'âge prévu au
+      premier alinéa de l'article L. 161-17-2 augmenté de trois années »
+      : question ouverte, dite dans `ages_regimes.csv`.
   - debut: 2026
     fin: null
+    date_effet: [2026-03-01, null]
     type_calcul: annuites
     age_ouverture: 64
     age_taux_plein: 67
@@ -520,16 +527,16 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. LA SUSPENSION, AU 1er MARS
-      2026 ET NON AU 1er SEPTEMBRE : l'article 105, IV et VI, de la loi n°
-      2025-1403 réécrit le b et le c pour les pensions prenant effet à
-      compter du 1er mars 2026 (LEGIARTI000053281072 ; l'ordonnance n°
-      2026-648 garde aux nés avant 1963 l'âge d'avant, LEGIARTI000054477924).
-      Tables `spm_2026` : 62 ans et 3 mois et 166 trimestres des nés du 1er
-      janvier 1963 au 30 septembre 1965, 62 ans et 6 mois et 167 trimestres
-      d'octobre à décembre 1965, puis trois mois de plus par génération
-      jusqu'à 63 ans et 9 mois pour 1970, 64 ans à compter de 1971 ; 168
-      trimestres pour 1966, 169 pour 1967, 170 de 1968 à 1970, 171 de 1971
-      à 1973, 172 à compter de 1974. Les pensions de janvier et février 2026 relèvent
-      encore de la rédaction d'avant, qui ne diffère qu'à compter de la
-      génération 1964, dont aucune n'atteint son âge avant avril 2026.
+      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. LA SUSPENSION, AU 1er
+      MARS 2026 ET NON AU 1er SEPTEMBRE : l'article 105, IV et VI, de la
+      loi n° 2025-1403 réécrit le b et le c pour les pensions prenant
+      effet à compter du 1er mars 2026 (LEGIARTI000053281072 ;
+      l'ordonnance n° 2026-648 garde aux nés avant 1963 l'âge d'avant,
+      LEGIARTI000054477924). Tables `spm_2026` : 62 ans et 3 mois et 166
+      trimestres des nés du 1er janvier 1963 au 30 septembre 1965, 62
+      ans et 6 mois et 167 trimestres d'octobre à décembre 1965, puis
+      trois mois de plus par génération jusqu'à 63 ans et 9 mois pour
+      1970, 64 ans à compter de 1971 ; 168 trimestres pour 1966, 169
+      pour 1967, 170 de 1968 à 1970, 171 de 1971 à 1973, 172 à compter
+      de 1974. La période liquide à compter du 1er mars 2026, la
+      précédente jusqu'au 28 février (`date_effet`).

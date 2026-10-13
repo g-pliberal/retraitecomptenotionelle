@@ -175,10 +175,9 @@
 #       1965, soixante-deux ans et neuf mois pour 1966, soixante-trois ans pour
 #       1967, trois mois de plus par génération jusqu'à soixante-trois ans et
 #       neuf mois pour 1970, soixante-quatre ans à compter de 1971.
-# La fiche lit `spm_2015` de 2016 à 2022, `spm_2023` de 2023 à 2025, `spm_2026`
-# depuis 2026 : à l'année près, les deux coupures ne déplacent personne qui
-# part à son âge, aucune des générations que les tables séparent ne
-# l'atteignant avant 2025 ni avant avril 2026.
+# La fiche lit `spm_2015` pour les pensions prenant effet du 1er juillet 2016 au
+# 31 août 2023, `spm_2023` jusqu'au 28 février 2026, `spm_2026` ensuite : ses
+# périodes portent ces dates au jour (`date_effet`).
 #
 # MAYOTTE, dont le décret n° 2003-589 écrit l'âge d'ouverture (article 2), celui
 # du taux plein (article 10) et le coefficient de minoration (article 11). De
@@ -200,22 +199,21 @@
 #       décembre 2025 : soixante-huit ans et neuf mois pour 1968. Celui de 1969,
 #       soixante-neuf ans, que l'article 2 n'écrit pas, ne sert à personne :
 #       cette génération n'a pas soixante ans avant 2026.
-#   `mayotte_2026` — deux textes de la même année. Le décret n° 2025-1410
-#       donne, aux pensions prenant effet à compter du 1er janvier 2026, le taux
-#       plein à « l'âge prévu au 1° de l'article L. 351-8 », soixante-sept ans
-#       (article 10, LEGIARTI000053354929), et le coefficient de minoration à la
-#       génération : 2,5 % avant 1964, 0,125 point de moins par génération
+#   `mayotte_2026_01` — pensions prenant effet du 1er janvier au 31 août 2026 :
+#       les âges de `mayotte_2023` ; le taux plein à « l'âge prévu au 1° de
+#       l'article L. 351-8 », soixante-sept ans (article 10 dans la rédaction du
+#       décret n° 2025-1410, LEGIARTI000053354929) ; le coefficient de minoration
+#       à la génération, 2,5 % avant 1964, 0,125 point de moins par génération
 #       jusqu'à 1,25 % à compter de 1973 (article 11, II, LEGIARTI000033155432,
-#       colonne `decote_par_trimestre`). L'article 105, V, de la loi n°
-#       2025-1403 et le décret n° 2026-345 donnent, aux pensions prenant effet à
-#       compter du 1er septembre 2026, soixante-deux ans et six mois aux nés du
-#       1er janvier 1963 au 30 juin 1965, et neuf mois de juillet à décembre
-#       1965, puis trois mois de plus par génération jusqu'à soixante-trois ans
-#       et neuf mois pour 1969, soixante-quatre ans à compter de 1970
-#       (LEGIARTI000054059636). La fiche lit la table dès 2026 : les nés en
-#       janvier et février 1964, qui atteignent soixante-deux ans et six mois en
-#       juillet et août 2026, y partent deux mois plus tôt que le droit, qui
-#       leur oppose encore soixante-deux ans et neuf mois.
+#       colonne `decote_par_trimestre`).
+#   `mayotte_2026_09` — pensions prenant effet à compter du 1er septembre 2026 :
+#       la suspension (loi n° 2025-1403, article 105, V ; décret n° 2026-345,
+#       LEGIARTI000054059636), soixante-deux ans et six mois des nés du 1er
+#       janvier 1963 au 30 juin 1965, et neuf mois de juillet à décembre 1965,
+#       puis trois mois de plus par génération jusqu'à soixante-trois ans et neuf
+#       mois pour 1969, soixante-quatre ans à compter de 1970 ; le taux plein et
+#       la minoration de janvier.
+#   Les périodes de la fiche portent ces dates au jour (`date_effet`).
 table,generation,age_ouverture,age_taux_plein,fiabilite,decote_par_trimestre,age_surcote_maximum
 cavom,1900,60,65,certifiee,
 cavom,1956,60.5,65.5,certifiee,
@@ -401,23 +399,42 @@ mayotte_2023,1966,63.25,68.25,haute,
 mayotte_2023,1967,63.5,68.5,haute,
 mayotte_2023,1968,63.75,68.75,haute,
 mayotte_2023,1969,64,69,moyenne,
-mayotte_2026,1900,60,67,haute,0.025
-mayotte_2026,1956,60.333333,67,haute,0.025
-mayotte_2026,1957,60.666667,67,haute,0.025
-mayotte_2026,1958,61,67,haute,0.025
-mayotte_2026,1959,61.333333,67,haute,0.025
-mayotte_2026,1960,61.666667,67,haute,0.025
-mayotte_2026,1961,62,67,haute,0.025
-mayotte_2026,1962,62.25,67,haute,0.025
-mayotte_2026,1963,62.5,67,haute,0.025
-mayotte_2026,1964,62.5,67,haute,0.02375
-mayotte_2026,1965,62.5,67,haute,0.0225
-mayotte_2026,1965.5,62.75,67,haute,0.0225
-mayotte_2026,1966,63,67,haute,0.02125
-mayotte_2026,1967,63.25,67,haute,0.02
-mayotte_2026,1968,63.5,67,haute,0.01875
-mayotte_2026,1969,63.75,67,haute,0.0175
-mayotte_2026,1970,64,67,haute,0.01625
-mayotte_2026,1971,64,67,haute,0.015
-mayotte_2026,1972,64,67,haute,0.01375
-mayotte_2026,1973,64,67,haute,0.0125
+mayotte_2026_01,1900,60,67,haute,0.025
+mayotte_2026_01,1956,60.333333,67,haute,0.025
+mayotte_2026_01,1957,60.666667,67,haute,0.025
+mayotte_2026_01,1958,61,67,haute,0.025
+mayotte_2026_01,1959,61.333333,67,haute,0.025
+mayotte_2026_01,1960,61.666667,67,haute,0.025
+mayotte_2026_01,1961,62,67,haute,0.025
+mayotte_2026_01,1962,62.25,67,haute,0.025
+mayotte_2026_01,1963,62.5,67,haute,0.025
+mayotte_2026_01,1964,62.75,67,haute,0.02375
+mayotte_2026_01,1965,63,67,haute,0.0225
+mayotte_2026_01,1966,63.25,67,haute,0.02125
+mayotte_2026_01,1967,63.5,67,haute,0.02
+mayotte_2026_01,1968,63.75,67,haute,0.01875
+mayotte_2026_01,1969,64,67,haute,0.0175
+mayotte_2026_01,1970,64,67,haute,0.01625
+mayotte_2026_01,1971,64,67,haute,0.015
+mayotte_2026_01,1972,64,67,haute,0.01375
+mayotte_2026_01,1973,64,67,haute,0.0125
+mayotte_2026_09,1900,60,67,haute,0.025
+mayotte_2026_09,1956,60.333333,67,haute,0.025
+mayotte_2026_09,1957,60.666667,67,haute,0.025
+mayotte_2026_09,1958,61,67,haute,0.025
+mayotte_2026_09,1959,61.333333,67,haute,0.025
+mayotte_2026_09,1960,61.666667,67,haute,0.025
+mayotte_2026_09,1961,62,67,haute,0.025
+mayotte_2026_09,1962,62.25,67,haute,0.025
+mayotte_2026_09,1963,62.5,67,haute,0.025
+mayotte_2026_09,1964,62.5,67,haute,0.02375
+mayotte_2026_09,1965,62.5,67,haute,0.0225
+mayotte_2026_09,1965.5,62.75,67,haute,0.0225
+mayotte_2026_09,1966,63,67,haute,0.02125
+mayotte_2026_09,1967,63.25,67,haute,0.02
+mayotte_2026_09,1968,63.5,67,haute,0.01875
+mayotte_2026_09,1969,63.75,67,haute,0.0175
+mayotte_2026_09,1970,64,67,haute,0.01625
+mayotte_2026_09,1971,64,67,haute,0.015
+mayotte_2026_09,1972,64,67,haute,0.01375
+mayotte_2026_09,1973,64,67,haute,0.0125
