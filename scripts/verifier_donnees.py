@@ -1890,10 +1890,12 @@ def source_structure_financement_regimes() -> dict[tuple, float]:
     pour le système entier. La question à laquelle il répond est celle que la
     page « Coût » ne sait pas poser : un scénario qui remplace tous les taux
     par 18 % déplace-t-il une charge vers l'État ou vers les caisses ? La
-    réponse n'est pas la même selon le régime — l'État finance 86 % de la
-    fonction publique d'État par sa contribution d'équilibre, et 61 % de la
-    SNCF par une subvention, quand la CNRACL ne reçoit rien de lui et porte un
-    besoin de financement que personne ne couvre.
+    réponse n'est pas la même selon le régime — les employeurs de l'État
+    financent 86 % de sa fonction publique par leur contribution, dont 74
+    points pour l'État lui-même (jaune pensions annexé au PLF 2027, tableau
+    D-3), et l'État 61 % de la SNCF par une subvention, quand la CNRACL ne
+    reçoit rien de lui et porte un besoin de financement que personne ne
+    couvre.
 
     LES PARTS NE SOMMENT PAS TOUJOURS À UN, et on ne les normalise pas. Sur les
     134 couples (régime, année), 100 somment à un à un millième près ; les
@@ -6452,11 +6454,13 @@ CERTIFICATIONS = (
             "# À répondre à une question que structure_ressources_retraite.csv",
             "# ne sait poser que pour le système entier : un scénario qui",
             "# remplace tous les taux par 18 % déplace-t-il une charge vers",
-            "# l'ÉTAT ou vers les CAISSES ? La réponse dépend du régime. L'État",
-            "# finance 86 % de la fonction publique d'État par sa contribution",
-            "# d'équilibre, et 61 % de la SNCF par une subvention ; la CNRACL ne",
-            "# reçoit rien de lui et porte un besoin de financement que personne",
-            "# ne couvre — 7 % en 2023, 49 % en 2070.",
+            "# l'ÉTAT ou vers les CAISSES ? La réponse dépend du régime. Les",
+            "# employeurs de l'État financent 86 % de sa fonction publique par",
+            "# leur contribution — l'État lui-même 74 points, ses établissements",
+            "# publics, La Poste et Orange le reste (jaune pensions annexé au",
+            "# PLF 2027, tableau D-3) —, et l'État 61 % de la SNCF par une",
+            "# subvention ; la CNRACL ne reçoit rien de lui et porte un besoin",
+            "# de financement que personne ne couvre — 7 % en 2023, 49 % en 2070.",
             "#",
             "# CE QU'IL FAUT SAVOIR AVANT DE S'EN SERVIR",
             "# ------------------------------------------",

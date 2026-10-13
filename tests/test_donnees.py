@@ -3310,6 +3310,67 @@ def test_la_structure_de_financement_dit_qui_paie_chaque_regime():
         structure.ventilation("cnracl", 2024)
 
 
+def test_ce_que_l_etat_verse_recoupe_le_jaune_pensions_2027():
+    """Les postes du COR que la page « Coût » lit, confrontés au jaune 2027.
+
+    La page lit chez le COR ce que l'État verse au système — sa contribution
+    d'équilibre, ses subventions — et, régime par régime, la part de chacun
+    que l'État finance. Le jaune pensions annexé au PLF 2027 compte les mêmes
+    flux à la source, en millions d'euros de 2025, et attrape une ERREUR
+    D'ÉTIQUETTE, un poste lu sous un autre nom, que rien d'autre ne verrait :
+
+    - les subventions d'équilibre de 2025, 6 009 M€ aux régimes spéciaux
+      (tableau 5) et 1 654 M€ aux ouvriers de l'État (tableau 23), contre
+      7 592 M€ dans les comptes du COR ;
+    - la contribution d'équilibre de l'État, 48 006 M€ d'État-employeur au
+      programme 741 (tableau D-3), contre 48 708 M€ ;
+    - la part de l'État de la SNCF, de la RATP, des marins, des mines et des
+      ouvriers de l'État, celle du COR de 2023 contre la subvention de 2025
+      rapportée aux dépenses, à deux points et demi près : la bascule de
+      2025, où la CNAV équilibre les régimes fermés et l'État la compense,
+      n'a pas déplacé ces parts ;
+    - et la fonction publique d'État, dont la « contribution d'équilibre de
+      l'État » du COR, 86,0 % en 2023, est celle de TOUS ses employeurs —
+      85,8 % au tableau D-3 —, dont 74,3 points de l'État lui-même. Le test le
+      fige, pour que personne ne relise ce poste comme ce que l'État seul
+      verse.
+
+    LA BANDE DIT LE MILLÉSIME : deux exercices, deux années ; les écarts
+    mesurés sont de 1,5 % au plus sur les montants et de 2,4 points sur les
+    parts.
+    """
+    from retraite_notionnelle.donnees.financement_regimes import StructureFinancement
+
+    comptes = ComptesRetraite(RACINE_DONNEES)
+    ressources = comptes.ressource(2025) * comptes.pib(2025)
+    subventions = comptes.part("subventions_equilibre", 2025) * ressources
+    contribution = comptes.part("contribution_equilibre_etat", 2025) * ressources
+    assert subventions == pytest.approx(6_009 + 1_653.8, rel=0.05)
+    assert contribution == pytest.approx(48_006, rel=0.05)
+
+    # Subvention de l'État et dépenses du régime en 2025, en millions d'euros :
+    # tableau 5 du jaune, tableau 23 pour les ouvriers de l'État.
+    jaune_2025 = {
+        "sncf": (3_281, 5_616),
+        "ratp": (886, 1_424),
+        "enim": (799, 1_067),
+        "canssm": (882, 1_094),
+        "fspoeie": (1_653.8, 2_104.0),
+    }
+    structure = StructureFinancement(RACINE_DONNEES)
+    for regime, (subvention, depenses) in jaune_2025.items():
+        assert structure.part_etat(regime, 2023) == pytest.approx(
+            subvention / depenses, abs=0.03), regime
+
+    # Le programme 741 en 2023 (tableau D-3) : l'État-employeur, ses
+    # établissements publics et autres employeurs, La Poste et Orange, sur le
+    # total des recettes.
+    etat, etablissements, poste, recettes = 44_439, 6_344, 499, 59_780
+    part_etat = structure.part_etat("fonction_publique_etat", 2023)
+    assert part_etat == pytest.approx((etat + etablissements + poste) / recettes, abs=0.01)
+    assert part_etat - etat / recettes > 0.10
+
+
 def test_les_cotisants_par_regime_sont_lus_et_projetes():
     """La série que le côté recette de la page « Coût » n'avait pas.
 
@@ -3346,6 +3407,33 @@ def test_les_cotisants_par_regime_sont_lus_et_projetes():
     assert cotisants.effectif("cnav", 2000) == cotisants.effectif("cnav", 2010)
     with pytest.raises(KeyError):
         cotisants.serie("caisse_inconnue")
+
+
+def test_les_cotisants_du_cor_recoupent_le_jaune_pensions_2027():
+    """Les cotisants qui pèsent la recette de la page « Coût », à la source.
+
+    Le COR projette en moyenne annuelle ; le jaune pensions annexé au PLF 2027
+    compte au 31 décembre ce que les caisses ont constaté (tableaux D-5 et
+    D-5 bis). Pour 2024, la moyenne des deux fins d'année encadre la valeur du
+    COR à moins de 5 % pour les trois régimes de la fonction publique : 3,7 %
+    de plus pour l'État, qui compte des cotisants distincts quand le jaune
+    compte ses comptes individuels actifs, 1,0 % pour la CNRACL, 4,4 % pour
+    les ouvriers de l'État. C'est le contrôle qui manquait quand la série
+    comptait dix-sept cotisants au FSPOEIE.
+    """
+    from retraite_notionnelle.donnees.cotisants import EffectifsCotisants
+
+    cotisants = EffectifsCotisants(RACINE_DONNEES)
+    # Cotisants au 31 décembre 2023 puis 2024 : civils et militaires de
+    # l'État, territoriaux et hospitaliers de la CNRACL, ouvriers de l'État.
+    jaune = {
+        "fonction_publique_etat": (1_650_992 + 323_701, 1_631_532 + 320_617),
+        "cnracl": (1_379_496 + 815_785, 1_346_132 + 805_562),
+        "fspoeie": (17_144, 16_079),
+    }
+    for caisse, (fin_2023, fin_2024) in jaune.items():
+        assert cotisants.effectif(caisse, 2024) == pytest.approx(
+            (fin_2023 + fin_2024) / 2, rel=0.05), caisse
 
 
 

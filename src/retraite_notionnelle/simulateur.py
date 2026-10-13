@@ -931,8 +931,8 @@ class Simulateur:
         Aucune pension n'en dépend non plus. Elle sert à dire ce qu'une réforme
         déplace ENTRE FINANCEURS, ce que le coefficient d'équilibre agrégé ne
         distingue pas : 86 % de la fonction publique d'État viennent de la
-        contribution de l'État, et 49 % de la CNRACL de 2070 ne viennent de
-        personne.
+        contribution de ses employeurs, dont 74 points de l'État lui-même, et
+        49 % de la CNRACL de 2070 ne viennent de personne.
         """
         return StructureFinancement(self.parametres.racine_donnees)
 

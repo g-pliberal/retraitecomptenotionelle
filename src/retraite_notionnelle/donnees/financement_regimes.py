@@ -10,10 +10,10 @@ d'une réforme : un scénario qui remplace tous les taux par 18 % rend-il de
 l'argent à l'État, ou en demande-t-il aux caisses ?
 
 La réponse n'est pas la même d'un régime à l'autre, et l'écart est énorme.
-En 2023, l'État finance 86 % de la fonction publique d'État par sa contribution
-d'équilibre et 61 % de la SNCF par une subvention, quand la CNRACL ne reçoit
-rien de lui — mais porte un besoin de financement que personne ne couvre, 7 %
-cette année-là et 49 % en 2070.
+En 2023, les employeurs de l'État financent 86 % de sa fonction publique par
+leur contribution, et l'État 61 % de la SNCF par une subvention, quand la
+CNRACL ne reçoit rien de lui — mais porte un besoin de financement que personne
+ne couvre, 7 % cette année-là et 49 % en 2070.
 
 TROIS LIMITES, QUI SONT DANS L'EN-TÊTE DU FICHIER ET QU'ON RÉPÈTE ICI
 ---------------------------------------------------------------------
@@ -28,7 +28,11 @@ TROIS LIMITES, QUI SONT DANS L'EN-TÊTE DU FICHIER ET QU'ON RÉPÈTE ICI
    telles que publiées, et :meth:`somme` permet de le vérifier avant de s'en
    servir.
 3. **La fonction publique d'État est d'un seul tenant**, civils et militaires
-   confondus, là où le reste du dépôt les sépare.
+   confondus, là où le reste du dépôt les sépare. Et sa « contribution
+   d'équilibre de l'État » est celle de TOUS ses employeurs : le jaune
+   pensions annexé au PLF 2027 (tableau D-3) en rend 74 points à l'État
+   lui-même en 2023, 11 à ses établissements publics, à La Poste et à Orange.
+   :meth:`part_etat` les compte ensemble, comme le COR.
 """
 
 from __future__ import annotations
