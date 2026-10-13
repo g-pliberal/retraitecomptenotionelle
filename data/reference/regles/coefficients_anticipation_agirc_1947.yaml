@@ -1,0 +1,233 @@
+schema_version: 1
+id: coefficients_anticipation_agirc_1947
+intitule: >-
+  Avant 1955, la retraite de l'Agirc se liquide à la cessation d'activité, au plus tôt à
+  cinquante-cinq ans, et « La retraite normale est liquidée à l'âge de 65 ans » : avant cet
+  âge, les points sont affectés d'un coefficient d'anticipation de 0,40 à cinquante-cinq ans
+  à 0,93 à soixante-quatre ; après, d'un coefficient d'ajournement de 1,05 à soixante-six
+  ans à 1,25 à soixante-dix ans et au-delà (convention collective nationale du 14 mars 1947,
+  annexe I, article 6).
+domaine: points
+regimes: [agirc]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- l'âge révolu de l'assuré à la date d'effet de sa pension, celle de son départ
+- les points de l'Agirc inscrits à son compte jusqu'au départ (Droits.points_acquis)
+- liquidation.date_effet, par l'année de la période de l'Agirc qui la couvre (agirc.yaml)
+ecrit:
+- le coefficient d'anticipation ou d'ajournement des points de l'Agirc, que la formule de la
+  pension affiche
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
+# moteur ne les lit pas : la période de l'Agirc de l'année de la liquidation
+# renvoie à cette fiche par trois interrupteurs (`code.interrupteurs`), de 1947 à
+# 1954, et les deux tables sont dans les deux moteurs, que
+# tests/test_coefficients_agirc_1947.py confronte à `contenu.parametres`.
+versions:
+- id: avant_le_1er_avril_1947
+  statut: supposee
+  hypothese: >-
+    la convention n'oblige les établissements qu'« À compter du 1er Avril 1947 » (article
+    2), et ses retraites partent « au plus tôt du 1er avril 1947 » (annexe I, article 26) :
+    aucune pension de l'Agirc ne prend effet avant
+  fiabilite: haute
+  bornes:
+    liquidation.date_effet: [null, 1947-04-01]
+  contenu:
+    droit: aucune pension de l'Agirc, donc aucun coefficient
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: convention_du_14_mars_1947
+  statut: lue
+  textes:
+  - id: JORFTEXT000000653842
+    reference: >-
+      arrêté du 31 mars 1947 portant agrément de la convention collective nationale du 14
+      mars 1947, dont l'index JORF ne garde que la notice
+    publie_le: 1947-04-24
+  - reference: >-
+      convention collective nationale de retraites et de prévoyance des cadres du 14 mars
+      1947, texte d'origine, annexe I, article 6, page 3 de l'annexe, lu à l'image de la
+      copie numérisée que publie dcalin.fr (« Texte original complet, avec ses annexes »)
+    article: annexe I, article 6
+    en_vigueur: 1947-04-01
+    lu_le: 2026-10-13
+    empreinte: sha256:b677434eae13e80cd62285b1f416479ca6fd34ca032cc757411c94b9047a1436
+  nee_de: JORFTEXT000000653842
+  bornes:
+    liquidation.date_effet: [1947-04-01, 1955-01-01]
+  contenu:
+    droit: >-
+      « Les droits de chaque intéressé sont liquidés lors de la cessation d'activité, et, au
+      plus tôt, à l'âge de 55 ans. La retraite normale est liquidée à l'âge de 65 ans. Si la
+      cessation d'activité est antérieure ou postérieure à cet âge, la retraite est
+      liquidée à l'âge théorique de 65 ans, compte tenu de tous les points de retraite
+      effectivement inscrits au compte de l'intéressé jusqu'à la cessation de service; ce
+      nombre de points est affecté des coefficients d'anticipation ou d'ajournement
+      ci-après » : « Anticipation », « 55 ans 0,40 », « 56 - 0,47 », « 57 - 0,54 », « 58 -
+      0,61 », « 59 - 0,66 », « 60 - 0,72 », « 61 - 0,76 », « 62 - 0,81 », « 63 - 0,87 »,
+      « 64 - 0,93 » ; « Ajournement », « 66 ans 1,05 », « 67 - 1,10 », « 68 - 1,15 »,
+      « 69 - 1,20 », « 70 ans et au delà 1,25 » (annexe I, article 6)
+    beneficiaire: le participant de l'Agirc qui cesse son activité avant ou après soixante-cinq ans
+    parametres:
+      existe: true
+      age_minimum: 55
+      age_normal: 65
+      anticipation: {55: 0.40, 56: 0.47, 57: 0.54, 58: 0.61, 59: 0.66, 60: 0.72, 61: 0.76,
+        62: 0.81, 63: 0.87, 64: 0.93}
+      ajournement: {66: 1.05, 67: 1.10, 68: 1.15, 69: 1.20, 70: 1.25}
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: table_des_accords_de_1955
+  statut: supposee
+  hypothese: >-
+    le COR (document n° 13 de la séance du 28 janvier 2009, p. 14-15) écrit que les
+    surcotes « ont été supprimées en 1955 à l'AGIRC » et que « les coefficients
+    d'anticipation ont été revus à la hausse », sa colonne « 1955-1964 » donnant 0,43 à
+    cinquante-cinq ans et 0,96 à soixante-quatre, et l'IPP date ce barème du 1er janvier
+    1955 ; l'avenant qui le fait n'est pas identifié. Ses candidats, dans l'index JORF, n'y
+    ont que leur notice : l'avenant du 23 juin 1954, étendu par l'arrêté du 13 janvier 1955
+    (JORFTEXT000000283499), et ceux des 14 juin, 8 juillet et 27 septembre 1955, étendus
+    par l'arrêté du 28 mars 1956 (JORFTEXT000000804488). La table de 1947 cède donc,
+    supposément au 1er janvier 1955, à celle de la fiche
+    coefficients_anticipation_agirc_arrco, qui s'accorde aux années pleines avec la colonne
+    du COR, sans ajournement
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [1955-01-01, null]
+  contenu:
+    droit: >-
+      plus de table de 1947 : les coefficients des accords, sans majoration d'ajournement
+      (fiche coefficients_anticipation_agirc_arrco)
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+approximations:
+- version: [convention_du_14_mars_1947, table_des_accords_de_1955]
+  ecart: >-
+    La fin de la table de 1947 est supposée au 1er janvier 1955 : l'avenant qui l'a
+    remplacée n'est pas lu, et la période de l'Agirc qui commence en 1955 coupe à l'année.
+  effet: >-
+    non mesuré ; seules les liquidations de 1955 d'avant l'avenant, s'il est postérieur au
+    1er janvier, prennent à tort la table des accords
+- version: [convention_du_14_mars_1947]
+  ecart: >-
+    La convention ne liquide rien avant cinquante-cinq ans ; le modèle liquide toutes les
+    pensions au même départ, et sert alors la première ligne, 0,40.
+  effet: >-
+    non mesuré ; il y faut un cadre parti avant cinquante-cinq ans et avant 1955, qu'un
+    régime de base aurait liquidé si tôt
+sources:
+  lu_le: 2026-10-13
+  prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    Identifier et lire l'avenant de 1954 ou de 1955 qui supprime l'ajournement et relève
+    la table : sa date d'effet, et si l'âge s'y compte encore en années révolues. Ses
+    candidats ne sont au Journal officiel que par les arrêtés qui les étendent (13 janvier
+    1955, 28 mars 1956), dont l'index n'a que la notice : leur fac-similé, sur Légifrance.
+  - >-
+    Lus avec l'article 6 et laissés à d'autres fiches : l'article 7, dix années de
+    cotisation au moins pour avoir une retraite, et l'article 9, qui rembourse les
+    cotisations de qui ne les a pas à soixante-cinq ans ; l'article 10, un versement unique
+    à soixante-cinq ans quand l'allocation trimestrielle est « inférieure à vingt fois le
+    salaire horaire de référence » (la fiche versement_unique_agirc_arrco n'en lit aucun
+    avant 2004) ; l'article 12, la veuve à soixante ans, après quinze années de services
+    du mari, et dès cinquante ans avec la même table décalée de cinq ans ; l'article 22, les
+    cadres sortis d'activité avant le 1er avril 1947, liquidés à soixante ans au plus tôt,
+    au coefficient de leur âge entre soixante et soixante-cinq ans, de soixante-cinq ans
+    au-delà, sans ajournement.
+  - >-
+    Les périodes de l'Agirc de 1947 à 1954 portent un âge d'ouverture de soixante ans ; la
+    convention dit cinquante-cinq. Sans effet sur le calcul, l'Agirc suivant l'ouverture du
+    régime de base ; le COR donne aussi les coefficients de cinquante-cinq à cinquante-neuf
+    ans jusqu'en 1983, que les périodes de 1955 à 1982 ne disent pas davantage.
+  lectures:
+  - type: autre
+    reference: >-
+      Convention collective nationale de retraites et de prévoyance des cadres du 14 mars
+      1947, texte d'origine et ses annexes, copie numérisée (26 pages) publiée par
+      dcalin.fr, « Il s'agit uniquement de la version originale intégrale de chacun de ces
+      textes » : annexe I, article 6, « Age de la retraite », lu à l'image, page 3 de
+      l'annexe ; la transcription de la même page en HTML porte les mêmes nombres
+    url: http://dcalin.fr/textoff/convention_cadres_1947.pdf
+    date: 1947-03-14
+  - type: jorf
+    reference: >-
+      Arrêté du 31 mars 1947, « AGREMENT DE CONVENTIONS COLLECTIVES CONCERNANT LE REGIME DE
+      RETRAITES ET DE PREVOYANCE DES CADRES » (JORFTEXT000000653842, Journal officiel du 24
+      avril 1947) : la notice seule, dans l'index du dépôt
+    date: 1947-04-24
+  - type: autre
+    reference: >-
+      COR, séance plénière du 28 janvier 2009, document n° 13, « L'évolution des paramètres
+      des régimes ARRCO et AGIRC », p. 14-15 : « Il existait à l'origine des surcotes pour
+      les liquidations après 65 ans. Ces surcotes ont été supprimées en 1955 à l'AGIRC et
+      en 1965 à l'ARRCO (UNIRS) » ; tableau « AGIRC », colonne « 1947-1955 » : 0,40 à 55
+      ans … 0,93 à 64 ans, 1,00 à 65 ans, 1,05 à 66 ans … 1,25 à 70 ans, les nombres de la
+      convention ; colonne « 1955-1964 » : 0,43 … 0,96
+    url: https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1073.pdf
+    date: 2009-01-28
+  - type: autre
+    reference: >-
+      Barèmes IPP, agirc/coefficient_de_minoration.yaml, au commit fe2cdff : de 1947 à 1955,
+      0,75 à cinq ans de l'âge du taux plein … 0,95 à un an, 1,05 à l'âge même, 1,10 à 1,25
+      au-delà, sans source — les nombres de l'Arrco de 1957, que le texte de 1947 dément ;
+      1955-01-01 pour la table suivante
+    url: https://gitlab.com/ipp/partage-public-ipp/baremes-ipp/baremes-ipp-yaml
+    date: 2026-09-21
+textes_a_rattacher:
+- reference: >-
+    l'avenant de 1954 ou de 1955 à la convention du 14 mars 1947 qui supprime les
+    coefficients d'ajournement et relève ceux d'anticipation, que les arrêtés d'extension
+    du 13 janvier 1955 (JORFTEXT000000283499) et du 28 mars 1956 (JORFTEXT000000804488)
+    peuvent viser
+  question: lequel, et à quelle date d'effet ?
+code:
+  interrupteurs:
+    abattement_points: agirc_arrco
+    bareme_anticipation: convention_1947
+    surcote_points: par_age_seul
+  moteur: >-
+    `abattement_points: agirc_arrco` garde le mécanisme des complémentaires : l'âge seul
+    avant 1983, faute de durée requise, et l'Agirc qui suit l'ouverture du régime de base.
+    `bareme_anticipation: convention_1947` y remplace la table des accords par celle de
+    l'article 6, par année d'âge révolue (`liquider.coefficient_convention_1947`). `surcote_points:
+    par_age_seul`, avec 0,0125 par trimestre, au pas de quatre trimestres, de soixante-cinq
+    à soixante-dix ans (agirc.yaml), sert la table d'ajournement : 5 % par année révolue,
+    1,25 au plus, ce qu'elle écrit ligne pour ligne.
+  python: >-
+    droit/liquider.py : coefficient_convention_1947, coefficient_pour_age,
+    abattement_points, surcote_points
+  javascript: >-
+    moteur/js/droit/liquider.js : coefficientConvention1947, coefficientPourAge,
+    abattementPoints, surcotePoints
+  parametres: >-
+    _COEFFICIENTS_CONVENTION_1947 (liquider.py) et COEFFICIENTS_CONVENTION_1947
+    (liquider.js) ; les champs de surcote des trois périodes de 1947 à 1954 (agirc.yaml)
+  tests: [tests/test_coefficients_agirc_1947.py]
+referents:
+  baremes_ipp:
+    equivalent: >-
+      retraites/secteur_prive/regimes_complementaires/agirc/coefficient_de_minoration.yaml,
+      au commit fe2cdff : de 1947 à 1955, les coefficients de l'Arrco de 1957 et 1,05 dès
+      l'âge du taux plein, sans source (écart E5 au registre)
+    confrontation: >-
+      par ses nombres, le 13 octobre 2026 : l'IPP s'écarte de la convention à chaque âge,
+      de 0,02 à 0,04 de soixante à soixante-quatre ans, de 0,05 de soixante-cinq à
+      soixante-neuf, et n'a rien avant soixante ans
+historique:
+- >-
+  2026-10-13 — écrite à l'étape 16 de l'action 138, sur le point des barèmes IPP au registre
+  (chantier 138.16) et la ligne a_relire de la fiche coefficients_anticipation_agirc_arrco,
+  qui ne lisait pas les textes d'origine de 1947 et de 1961.
+effet: >-
+  Le cadre dont la pension de l'Agirc prend effet avant 1955 : 0,72 au lieu de 0,78 à
+  soixante ans, 0,93 au lieu de 0,96 à soixante-quatre, et de 5 % à 25 % de plus au-delà de
+  soixante-cinq ans, au lieu de rien. Parti à soixante ans, il est né avant 1895 : le
+  simulateur, qui commence aux nés de 1900, n'en a pas, et seuls les cas types des
+  générations 1880 à 1890 de la page Coût en portent.

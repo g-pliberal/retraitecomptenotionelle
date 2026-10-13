@@ -6068,12 +6068,15 @@ def test_toute_surcote_ecrite_par_une_fiche_en_points_est_servie(simulateur):
     # La CARCDSF majore depuis ses statuts de 2011 (article 19, I, c), lus
     # le 23 septembre 2026 : 1 % par trimestre, 1,25 % depuis 2024. La CAVAMAC
     # aussi, depuis les siens (article 16) : 5 % par année pleine différée
-    # au-delà du taux plein, par année pleine COTISÉE depuis 2024.
+    # au-delà du taux plein, par année pleine COTISÉE depuis 2024. L'Agirc,
+    # de 1947 à 1954 : 5 % par année révolue au-delà de soixante-cinq ans,
+    # jusqu'à 1,25 à soixante-dix (convention du 14 mars 1947, annexe I,
+    # article 6, lue le 13 octobre 2026).
     assert servies == {
         "cnavpl", "msa_non_salaries", "carmf_complementaire", "asv_conventionnes",
         "cavec_complementaire", "cipav_complementaire", "carpimko_complementaire",
         "cavp_complementaire", "cprn_complementaire", "carcdsf_complementaire",
-        "cavamac_complementaire",
+        "cavamac_complementaire", "agirc",
     }, servies
 
 

@@ -785,6 +785,7 @@ def _regimes() -> list[dict]:
                     **_regles_d_avant_1983(p),
                     **_duree_majoree(p),
                     **_points_abattus(p),
+                    **_bareme_anticipation(p),
                     **_non_salaries_2026(p),
                     **_fractions_des_cultes(p),
                     **_regles_des_marins(p),
@@ -877,6 +878,14 @@ def _points_abattus(p) -> dict:
     Même raison que pour les marins.
     """
     return {"points_abattus_a_l_age": True} if p.points_abattus_a_l_age else {}
+
+
+def _bareme_anticipation(p) -> dict:
+    """La table d'anticipation par âge qui n'est pas celle des accords, et
+    seulement là : celle de la convention de 1947, aux périodes de l'Agirc de
+    1947 à 1954. Même raison que pour les marins.
+    """
+    return {"bareme_anticipation": p.bareme_anticipation} if p.bareme_anticipation else {}
 
 
 def _fractions_des_cultes(p) -> dict:

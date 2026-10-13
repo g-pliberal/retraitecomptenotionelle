@@ -13,7 +13,7 @@ effet: >-
   reste `a_verifier` parce que c'est un calendrier politique, non une lacune du
   dépôt.
 sources:
-  lu_le: 2026-10-11
+  lu_le: 2026-10-13
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -32,6 +32,12 @@ sources:
       vigueur depuis le 31/12/2025 », sans version à venir
     url: https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000053280889
     date: 2026-10-11
+  - type: legifrance
+    reference: >-
+      Index LEGI du dépôt, à jour de l'incrément du 12 octobre 2026, que le serveur de la
+      DILA sert de nouveau le 13 : ni L. 161-17-2 ni L. 161-17-3 n'ont de version
+      postérieure au 31 décembre 2025 (LEGIARTI000053280889, LEGIARTI000053280903)
+    date: 2026-10-12
   - type: circulaire_cnav
     reference: 2026-07 du 5 mars 2026, point 1.1
     date: 2026-03-05

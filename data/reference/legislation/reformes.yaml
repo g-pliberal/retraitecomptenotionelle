@@ -79,6 +79,17 @@ reformes:
     absorbee_par: []
     non_appliquee: {}
 
+  # La table d'anticipation de la convention du 14 mars 1947, relevée, et son
+  # ajournement, supprimé : en 1955 selon le COR et l'IPP, par un avenant que
+  # le dépôt n'a pas identifié (fiche coefficients_anticipation_agirc_1947).
+  - code: agirc_ajournement_1955
+    date: 1955-01-01
+    texte: {reference: "avenant de 1954 ou de 1955 à la convention collective nationale du 14 mars 1947, non identifié, hors JORF : COR, document n° 13 du 28 janvier 2009, p. 14-15 ; date supposée, celle de l'IPP", id: null}
+    parametres: [bareme_anticipation, surcote_points, surcote_par_trimestre]
+    regimes: [agirc]
+    absorbee_par: []
+    non_appliquee: {}
+
   - code: igrante_1960
     date: 1960-01-01
     texte: {reference: "décret n° 59-1569 du 31 décembre 1959 instituant un régime de retraite complémentaire pour les agents non titulaires de l'État, article 2", id: LEGITEXT000006060876}

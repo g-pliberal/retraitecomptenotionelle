@@ -2448,13 +2448,32 @@ export function abattementIrcec(moteur, periode, carriere, trimestres, requis, a
  * Le coefficient d'anticipation de la table des âges : les trimestres qui
  * séparent la liquidation de l'âge du taux plein, arrondis au supérieur, et
  * le plancher au-delà de dix ans. Voir `liquider.coefficient_pour_age`.
+ * Avant 1955, l'Agirc en lisait une autre, par année d'âge
+ * (`bareme_anticipation`, `coefficientConvention1947`).
  */
 export function coefficientPourAge(moteur, periode, carriere, ageLiquidation) {
+  if (periode.bareme_anticipation === "convention_1947") {
+    return coefficientConvention1947(ageLiquidation);
+  }
   const ecartAge = Math.max(
     0.0, (ouvrir.ageTauxPlein(moteur, periode, carriere) - ageLiquidation) * 4,
   );
   const parAge = coefficientAnticipation(ecartAge, 40);
   return parAge === null ? COEFFICIENT_ANTICIPATION_PLANCHER : parAge;
+}
+
+/**
+ * Le coefficient d'anticipation de l'Agirc d'avant 1955 : la ligne de l'âge
+ * révolu, de 0,40 à cinquante-cinq ans à 0,93 à soixante-quatre, 1 dès
+ * soixante-cinq, la première ligne avant cinquante-cinq ans (convention du
+ * 14 mars 1947, annexe I, article 6). Voir `liquider.coefficient_convention_1947`.
+ */
+export function coefficientConvention1947(ageLiquidation) {
+  const age = Math.floor(ageLiquidation + 1e-9);
+  if (age >= 65) {
+    return 1.0;
+  }
+  return COEFFICIENTS_CONVENTION_1947.get(Math.max(55, age));
 }
 
 export function abattementPoints(moteur, periode, carriere, trimestres, requis, ageLiquidation,
@@ -2773,6 +2792,17 @@ const PALIERS_ANTICIPATION = [[12, 0.01], [20, 0.0125], [40, 0.0175]];
 
 /** Dernière ligne de la table des âges : dix ans d'anticipation. */
 const COEFFICIENT_ANTICIPATION_PLANCHER = 0.43;
+
+/**
+ * La table d'anticipation de l'article 6 de l'annexe I de la convention du
+ * 14 mars 1947, une ligne par année d'âge, que l'Agirc a servie jusqu'en 1955.
+ * Son ajournement est la majoration par âge seul de la période. Voir
+ * `liquider._COEFFICIENTS_CONVENTION_1947`.
+ */
+const COEFFICIENTS_CONVENTION_1947 = new Map([
+  [55, 0.40], [56, 0.47], [57, 0.54], [58, 0.61], [59, 0.66],
+  [60, 0.72], [61, 0.76], [62, 0.81], [63, 0.87], [64, 0.93],
+]);
 
 /**
  * Majoration par trimestre ENTIER écoulé entre l'âge du taux plein et la

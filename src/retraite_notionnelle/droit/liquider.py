@@ -94,6 +94,19 @@ _ABATTEMENTS_PAR_ANNEE_AGE_SEUL = ("ircec_age_seul", "cavom")
 #: barème ne descend plus.
 _COEFFICIENT_ANTICIPATION_PLANCHER = 0.43
 
+#: La table d'anticipation de l'article 6 de l'annexe I de la convention du
+#: 14 mars 1947, une ligne par année d'âge, que l'Agirc a servie jusqu'en 1955
+#: (fiche ``coefficients_anticipation_agirc_1947``). Sa table d'ajournement —
+#: 1,05 à soixante-six ans, 1,10, 1,15, 1,20, puis 1,25 à « 70 ans et au
+#: delà » — n'est pas ici : c'est, ligne pour ligne, 5 % par année révolue
+#: au-delà de soixante-cinq ans, que la période sert par la majoration par
+#: âge seul (:func:`surcote_points`), au pas de quatre trimestres et jusqu'à
+#: soixante-dix ans.
+_COEFFICIENTS_CONVENTION_1947: dict[int, float] = {
+    55: 0.40, 56: 0.47, 57: 0.54, 58: 0.61, 59: 0.66,
+    60: 0.72, 61: 0.76, 62: 0.81, 63: 0.87, 64: 0.93,
+}
+
 #: Majoration par trimestre ENTIER écoulé entre l'âge du taux plein et la
 #: liquidation — le 1° du IV de l'article 16 de l'arrêté du 30 décembre 1970,
 #: « 0,75 % par trimestre entier écoulé entre le soixante-cinquième
@@ -3352,13 +3365,40 @@ def coefficient_pour_age(moteur, periode: PeriodeRegime, carriere: Carriere,
     """Le coefficient d'anticipation de la table des âges : les trimestres
     qui séparent la liquidation de l'âge du taux plein de la période,
     arrondis au supérieur, et le plancher au-delà de dix ans (accord du 17
-    novembre 2017, article 84, 2 ; table de septembre 2026, tableau 3)."""
+    novembre 2017, article 84, 2 ; table de septembre 2026, tableau 3).
+    Avant 1955, l'Agirc en lisait une autre, par année d'âge
+    (``bareme_anticipation``, :func:`coefficient_convention_1947`)."""
+    if periode.bareme_anticipation == "convention_1947":
+        return coefficient_convention_1947(age_liquidation)
     ecart_age = max(
         0.0,
         (ouvrir.age_taux_plein(moteur, periode, carriere) - age_liquidation) * 4,
     )
     par_age = _coefficient_anticipation(ecart_age, 40)
     return _COEFFICIENT_ANTICIPATION_PLANCHER if par_age is None else par_age
+
+
+def coefficient_convention_1947(age_liquidation: float) -> float:
+    """Le coefficient d'anticipation de l'Agirc d'avant 1955 : « Les droits de
+    chaque intéressé sont liquidés lors de la cessation d'activité, et, au
+    plus tôt, à l'âge de 55 ans. La retraite normale est liquidée à l'âge de
+    65 ans » ; avant, « ce nombre de points est affecté des coefficients
+    d'anticipation » d'une table qui n'a qu'une ligne par année d'âge, de
+    0,40 à cinquante-cinq ans à 0,93 à soixante-quatre (convention du 14 mars
+    1947, annexe I, article 6). L'âge est donc celui que l'assuré a révolu :
+    parti à soixante-deux ans et neuf mois, il prend 0,81, la ligne de
+    soixante-deux ans, quand la table des accords lui servirait 0,91.
+
+    La table est relevée en 1955 — 0,78 à soixante ans au lieu de 0,72 —, et
+    l'ajournement supprimé (COR, document n° 13 du 28 janvier 2009, p. 15),
+    par un avenant que le dépôt n'a pas lu. Avant cinquante-cinq ans, où la convention ne liquide rien, la
+    première ligne, comme le plancher des accords : le modèle liquide toutes
+    les pensions au même départ (fiche ``coefficients_anticipation_agirc_1947``,
+    ses approximations)."""
+    age = math.floor(age_liquidation + 1e-9)
+    if age >= 65:
+        return 1.0
+    return _COEFFICIENTS_CONVENTION_1947[max(55, age)]
 
 
 def taux_plein_anticipe(moteur, periode: PeriodeRegime, carriere: Carriere,

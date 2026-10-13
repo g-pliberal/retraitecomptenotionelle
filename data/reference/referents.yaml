@@ -225,8 +225,14 @@ referents:
           Le COR donne pour l'Agirc 1947-1955 : 0,93 à 64 ans … 0,72
           à 60 ans, 1,00 à 65 ans, puis de 1,05 à 66 ans jusqu'à
           1,25 à 70 ans. À confirmer dans le texte d'origine de la
-          convention de 1947.
-        preuve: COR, document n° 13 de la séance du 28 janvier 2009, p. 15
+          convention de 1947. Confirmé le 13 octobre 2026 : le texte
+          d'origine, lu à l'image, donne ces nombres, et 0,40 à 55
+          ans … 0,66 à 59 ans, que l'IPP n'a pas ; l'IPP a tort.
+        preuve: >-
+          COR, document n° 13 de la séance du 28 janvier 2009, p. 15 ;
+          convention collective nationale du 14 mars 1947, annexe I,
+          article 6, copie numérisée du texte d'origine (fiche
+          coefficients_anticipation_agirc_1947)
       - constat: >-
           E6. La fonction publique s'arrête en 2012-2014 : âges
           d'ouverture et limites d'âge (aod_a, aod_s, la_a, la_s :
@@ -690,7 +696,38 @@ referents:
           l'AGIRC et en 1965 à l'ARRCO (UNIRS) ». Les valeurs Arrco
           1957-1965 du COR (0,75 à 60 ans … 0,95 à 64 ans) sont
           celles de l'IPP ; les valeurs Agirc ne le sont pas (écart
-          E5).
+          E5). Repris le 13 octobre 2026 (action 138, étape 16) pour
+          l'Agirc : le texte d'origine de la convention du 14 mars
+          1947, lu à l'image (annexe I, article 6), donne les nombres
+          du COR, de 0,40 à 55 ans à 0,93 à 64 ans et de 1,05 à 66
+          ans à 1,25 à 70 ans et au-delà, que les deux moteurs servent
+          aux pensions de l'Agirc prenant effet avant 1955 (fiche
+          coefficients_anticipation_agirc_1947). L'Arrco, qui attend
+          le texte de 1961, est le point suivant.
+        etat: repris
+        chantier: "138.16"
+      - quoi: >-
+          L'IPP a des coefficients d'anticipation et d'ajournement
+          pour l'Arrco avant 1965, ceux de l'UNIRS de 1957 : 0,75 à
+          60 ans … 0,95 à 64 ans, puis 1,05 à l'âge du taux plein
+          et jusqu'à 1,25 quatre ans au-delà. Le dépôt sert à
+          l'UNIRS et à l'Arrco la table des accords, sans
+          ajournement. Détaché le 13 octobre 2026 du point
+          précédent, repris pour l'Agirc.
+        preuve: >-
+          retraites/secteur_prive/regimes_complementaires/arrco/coefficient_de_minoration.yaml:68-74
+          et suivantes, pour seule référence de 1957 « Accord du
+          15/05/1957 pour la création de l'UNIRS » ; commit fe2cdff
+        verification: >-
+          COR, document n° 13 du 28 janvier 2009, p. 15, tableau «
+          ARRCO (UNIRS) » : les mêmes nombres, l'ajournement sur les
+          lignes de 65 à 69 ans. Ni l'un ni l'autre ne cite de
+          texte, et l'IPP décale d'un an l'ajournement de l'Agirc de
+          1947, que le texte de 1947 dément : l'âge de chaque ligne
+          est à lire dans l'accord du 8 décembre 1961, que le Journal
+          officiel du 31 mars 1962 publie en annexe de l'arrêté
+          d'agrément du 27 mars 1962 (JORFTEXT000000435809), et dans
+          le règlement de l'UNIRS, hors du Journal officiel.
         etat: a_reprendre
         chantier: "138.16"
       - quoi: >-

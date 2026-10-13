@@ -373,6 +373,15 @@ class PeriodeRegime:
     #: applique le coefficient de minoration ci-dessus ; ``agirc_arrco``
     #: applique les coefficients d'anticipation propres à ce régime.
     abattement_points: str
+    #: La table des coefficients d'anticipation PAR ÂGE que lit
+    #: ``agirc_arrco``. ``None`` : celle des accords, par trimestre, de 0,43
+    #: dix ans avant l'âge du taux plein à 0,99 un trimestre avant ;
+    #: ``convention_1947`` : celle de l'article 6 de l'annexe I de la
+    #: convention du 14 mars 1947, par année d'âge révolue, de 0,40 à
+    #: cinquante-cinq ans à 0,93 à soixante-quatre, que l'Agirc a servie
+    #: jusqu'en 1955. Voir
+    #: :func:`~retraite_notionnelle.droit.liquider.coefficient_convention_1947`.
+    bareme_anticipation: str | None
     #: Les points acquis dans la période gardent-ils le coefficient
     #: d'anticipation POUR ÂGE, même au taux plein ? Les points de l'Agirc
     #: constitués sur la tranche C jusqu'au 31 décembre 2015 : l'exonération
@@ -1389,6 +1398,7 @@ INTERRUPTEURS: dict[str, object] = {
     "bareme_decote": "regime_aligne",
     "surcote_bareme": None,
     "abattement_points": "decote_du_regime_de_base",
+    "bareme_anticipation": None,
     "points_abattus_a_l_age": False,
     "surcote_points": "aucune",
     "bareme_points": None,
@@ -1732,6 +1742,7 @@ class CatalogueRegimes:
                 ),
                 surcote_bareme=p.get("surcote_bareme"),
                 abattement_points=p.get("abattement_points", "decote_du_regime_de_base"),
+                bareme_anticipation=p.get("bareme_anticipation"),
                 points_abattus_a_l_age=bool(p.get("points_abattus_a_l_age", False)),
                 surcote_points=p.get("surcote_points", "aucune"),
                 surcote_age_debut=(

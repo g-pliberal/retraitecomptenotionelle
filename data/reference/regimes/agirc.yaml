@@ -29,7 +29,8 @@ periodes:
     age_taux_plein: 65
     duree_requise_trimestres: null
     taux_plein: 1.0
-    abattement_points: coefficients_anticipation_agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_1947
+    bareme_anticipation: coefficients_anticipation_agirc_1947
     plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -37,7 +38,10 @@ periodes:
     taux_cotisation_retraite: 0.08
     part_salariale: 0.25   # OpenFisca, barème salarié / employeur
     decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
+    surcote_par_trimestre: 0.0125
+    surcote_points: coefficients_anticipation_agirc_1947
+    surcote_pas_trimestres: 4
+    surcote_age_maximum: 70
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 8 % appelé à 100 % : 8 % prélevés sur l'assiette,
@@ -58,7 +62,14 @@ periodes:
       appel : le moteur retire le taux d'appel (regimes/valeurs_point.csv,
       série identique à celle d'OpenFisca) pour ne convertir en points que
       la part contractuelle. Une période par changement de l'un ou de
-      l'autre.
+      l'autre. L'ANTICIPATION ET L'AJOURNEMENT DE 1947, jusqu'aux
+      liquidations de 1954 : la table de l'article 6 de l'annexe I, de 0,40
+      à 55 ans à 0,93 à 64 ans par année d'âge révolue, et 5 % par année
+      révolue au-delà de 65 ans, jusqu'à 1,25 à « 70 ans et au delà »
+      (fiche coefficients_anticipation_agirc_1947). La convention ouvre la
+      retraite « au plus tôt, à l'âge de 55 ans » : l'âge d'ouverture de 60
+      ans que portent ces périodes ne joue pas, l'Agirc suivant le régime de
+      base.
 
   - debut: 1952
     fin: 1952
@@ -67,7 +78,8 @@ periodes:
     age_taux_plein: 65
     duree_requise_trimestres: null
     taux_plein: 1.0
-    abattement_points: coefficients_anticipation_agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_1947
+    bareme_anticipation: coefficients_anticipation_agirc_1947
     plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -75,7 +87,10 @@ periodes:
     taux_cotisation_retraite: 0.0624
     part_salariale: 0.25   # OpenFisca, barème salarié / employeur
     decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
+    surcote_par_trimestre: 0.0125
+    surcote_points: coefficients_anticipation_agirc_1947
+    surcote_pas_trimestres: 4
+    surcote_age_maximum: 70
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 8 % appelé à 78 % : 6,24 % prélevés sur l'assiette,
@@ -91,7 +106,8 @@ periodes:
     age_taux_plein: 65
     duree_requise_trimestres: null
     taux_plein: 1.0
-    abattement_points: coefficients_anticipation_agirc_arrco
+    abattement_points: coefficients_anticipation_agirc_1947
+    bareme_anticipation: coefficients_anticipation_agirc_1947
     plafond_majoration_enfants: 2367.48
     plafond_majoration_annee: 2025
     salaire_reference: carriere_entiere
@@ -99,7 +115,10 @@ periodes:
     taux_cotisation_retraite: 0.064
     part_salariale: 0.25   # OpenFisca, barème salarié / employeur
     decote_par_trimestre: 0.01
-    surcote_par_trimestre: null
+    surcote_par_trimestre: 0.0125
+    surcote_points: coefficients_anticipation_agirc_1947
+    surcote_pas_trimestres: 4
+    surcote_age_maximum: 70
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux contractuel 8 % appelé à 80 % : 6,4 % prélevés sur l'assiette,

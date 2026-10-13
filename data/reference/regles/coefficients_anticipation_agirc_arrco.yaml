@@ -30,9 +30,12 @@ effet: >-
   de liquider une pension en deux fois ; et les liquidations de 1991 à 2003, où le moteur
   applique la même règle sans avoir lu l'accord de l'ASF. Deux questions restent
   ouvertes : l'âge de référence des liquidations de 2011 à 2018, et les assurés dont la
-  base n'est ni le régime général ni le régime agricole.
+  base n'est ni le régime général ni le régime agricole. Avant 1955, l'Agirc servait une
+  autre table, par année d'âge, et un ajournement : ceux de la convention d'origine
+  (fiche coefficients_anticipation_agirc_1947). L'Arrco d'avant 1965 garde ici la table
+  des accords, faute du texte de 1961.
 sources:
-  lu_le: 2026-09-27
+  lu_le: 2026-10-13
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
@@ -65,11 +68,27 @@ sources:
     refuse la requête — ses avenants l'ont été par les circulaires de la caisse, 2023-01-DRJ
     comprise, qui ne touche ni l'article 84, ni le 85, ni le 102 ; l'accord du 4 février
     1983 (ASF), dont seul le résumé de l'agrément est lu (arrêté du 21 mars 1983, Journal
-    officiel du 15 avril 1983), et les textes d'origine de 1947 et de 1961. Ni l'âge seul d'avant 1983, ni la
-    table des trimestres manquants dès 1983, que le moteur applique, ne sont donc
-    confirmés : les plus anciens textes lus sont l'accord Arrco du 25 avril 1996 pour
-    l'âge (65 ans, 0,43 à 55 ans, à compter de 1999) et les annexes E et V de 2018 pour
-    les trimestres.
+    officiel du 15 avril 1983), et le texte d'origine de 1961 ; celui de 1947 est lu, qui
+    ne vaut que jusqu'en 1955 (fiche coefficients_anticipation_agirc_1947). Ni l'âge seul
+    de 1955 à 1983, ni la table des trimestres manquants dès 1983, que le moteur applique,
+    ne sont donc confirmés par un texte : le COR (document n° 13 du 28 janvier 2009, p.
+    15) donne à l'Agirc, de 1955 à 1983, les nombres de la table des âges aux années
+    pleines, de 0,43 à 55 ans à 0,96 à 64 ans, et à l'Arrco, de 1965 à 1983, ceux de 60 à
+    64 ans ; les plus anciens textes lus sont l'accord Arrco du 25 avril 1996 pour l'âge
+    (65 ans, 0,43 à 55 ans, à compter de 1999) et les annexes E et V de 2018 pour les
+    trimestres.
+  - >-
+    L'Arrco d'avant 1965. Le COR et l'IPP donnent à l'UNIRS, de 1957 à 1965, 0,75 à 60
+    ans, 0,80, 0,85, 0,90 et 0,95 à 64 ans, rien avant 60 ans, et un ajournement de 1,05 à
+    1,25 que le COR écrit de « 65 ans » à « 69 ans » et l'IPP de l'âge du taux plein à
+    quatre ans au-delà : 1,05 à l'âge normal même, le décalage que l'IPP fait à l'Agirc de
+    1947 et que le texte de 1947 dément. Aucun ne cite de texte, et le moteur sert ici la
+    table des accords. Lire avant d'écrire une table : l'accord du 8 décembre 1961, que le
+    Journal officiel du 31 mars 1962 publie en annexe de l'arrêté d'agrément du 27 mars
+    1962 (JORFTEXT000000435809), dont l'index n'a que la notice, Légifrance n'en servant le
+    fac-similé qu'au navigateur ; l'accord du 15 mai 1957 qui crée l'UNIRS, et son
+    règlement, hors du Journal officiel ; le texte qui les change en 1965, que l'IPP date
+    du 1er janvier.
   - >-
     L'exemple du dépliant « Décrypter la retraite Agirc tranche C » (63 ans et 11 mois,
     0,8675) est porté, `agirc_arrco_tranche_c_63_ans_11_mois`, pour un cadre sans le taux
@@ -318,6 +337,21 @@ sources:
       titres seuls. Le texte de l'accord n'est ni dans l'index ni dans le recueil de la
       caisse, qui commence en 1993
     date: 2026-09-27
+  - type: jorf
+    reference: >-
+      Arrêté du 27 mars 1962, « AGREMENT DE L'ACCORD DU 08-12-1961 TENDANT A LA
+      GENERALISATION DES RETRAITES COMPLEMENTAIRES (ACCORD PUBLIE EN ANNEXE) »
+      (JORFTEXT000000435809, Journal officiel du 31 mars 1962) : la notice seule, dans
+      l'index du dépôt. Le 13 octobre 2026, Légifrance et NATLEX refusent la session, et
+      Gallica lui oppose une page de contrôle
+    date: 1962-03-31
+  - type: autre
+    reference: >-
+      COR, séance du 28 janvier 2009, document n° 13, p. 14-15, tableau « ARRCO (UNIRS) » :
+      colonne « 1957-1965 », 0,75 à 60 ans … 0,95 à 64 ans, puis 1,05 à 1,25 sur les lignes
+      de 65 à 69 ans ; colonne « 1965-1983 », 0,78 à 60 ans … 0,96 à 64 ans
+    url: https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1073.pdf
+    date: 2009-01-28
 textes_a_rattacher:
 - reference: >-
     accord national interprofessionnel du 17 novembre 2017 instituant le régime

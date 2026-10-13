@@ -655,6 +655,19 @@ champs_periode:
     valeurs: ["decote_du_regime_de_base", "agirc_arrco", "ircantec", "ircec", "ircec_age_seul", "cavom"]
     defaut: decote_du_regime_de_base
 
+  bareme_anticipation:
+    description: >-
+      Avec `abattement_points` en `agirc_arrco` : la table des coefficients
+      d'anticipation PAR ÂGE. Sans renvoi, celle des accords, par trimestre,
+      de 0,43 dix ans avant l'âge du taux plein à 0,99 un trimestre avant ;
+      `convention_1947`, celle de l'article 6 de l'annexe I de la convention
+      du 14 mars 1947, par année d'âge révolue, de 0,40 à 55 ans à 0,93 à
+      64 ans, que l'Agirc a servie jusqu'en 1955. La période qui la sert
+      renvoie à la fiche qui la décrit.
+    renvoi: true
+    valeurs: ["convention_1947"]
+    defaut: null
+
   points_abattus_a_l_age:
     description: >-
       Les points acquis dans la période gardent-ils le coefficient
