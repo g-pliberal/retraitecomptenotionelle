@@ -388,15 +388,24 @@ def duree_requise(moteur, periode: PeriodeRegime,
     if propre is not None:
         return propre[0], propre[2]
     if periode.bareme_decote == "fonction_publique":
+        ouverture = annee_ouverture_des_droits(moteur, 
+            periode, carriere,
+            carriere.annee_liquidation
+            if carriere.age_liquidation is not None else 9999,
+        )
         transitoire = moteur.durees_requises_fonction_publique.trimestres(
-            annee_ouverture_des_droits(moteur, 
-                periode, carriere,
-                carriere.annee_liquidation
-                if carriere.age_liquidation is not None else 9999,
-            )
+            ouverture
         )
         if transitoire is not None:
             return transitoire
+        # « Jusqu'en 2003 ; 150 » (loi du 21 août 2003, article 66, II) : le
+        # droit ouvert avant la table garde la durée de la période où il s'est
+        # ouvert, que la fiche porte, quand même il serait liquidé plus tard.
+        if moteur.durees_requises_fonction_publique.avant_la_table(ouverture):
+            ouverte = moteur.catalogue[periode.regime].periode(ouverture)
+            if (ouverte is not None and ouverte.debut != periode.debut
+                    and ouverte.duree_requise_trimestres):
+                return ouverte.duree_requise_trimestres, None
     derogation = derogation_active(moteur, periode, carriere)
     if derogation is not None and derogation.duree_requise is not None:
         return derogation.duree_requise, derogation.fiabilite

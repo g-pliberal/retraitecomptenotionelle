@@ -775,7 +775,10 @@ class DureesRequisesFonctionPublique:
     le seuil de la surcote. Avant 2004, la fiche du régime porte 150 ; à
     compter de 2009, l'article L. 13 II renvoie à la durée du régime général,
     lue par génération. La table ne répond donc que pour les années qu'elle
-    porte, et rend ``None`` ailleurs.
+    porte, et rend ``None`` ailleurs. Mais « jusqu'en 2003 » se lit à l'année
+    d'ouverture comme le reste : le droit ouvert avant la table garde la durée
+    de la période où il s'est ouvert, quand même il serait liquidé plus tard
+    (:meth:`avant_la_table`, ``ouvrir.duree_requise``).
 
     Le modèle lisait ces années dans la table du régime général — 160 pour
     toute génération née depuis 1943 —, et c'est la confrontation à
@@ -799,6 +802,10 @@ class DureesRequisesFonctionPublique:
 
     def trimestres(self, annee_ouverture: int) -> tuple[int, Fiabilite] | None:
         return self._table.get(annee_ouverture)
+
+    def avant_la_table(self, annee_ouverture: int) -> bool:
+        """Le droit s'est-il ouvert avant la première année de la table ?"""
+        return bool(self._table) and annee_ouverture < min(self._table)
 
 
 class DureesRequisesAvantSoixanteAns:

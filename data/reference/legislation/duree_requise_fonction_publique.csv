@@ -27,7 +27,13 @@
 # depuis l'âge d'ouverture du régime, au mois près, et la borne à l'année de
 # liquidation pour qui part avant.
 #
-# Avant 2004 : 150 trimestres, que la fiche du régime porte. À compter de 2009,
+# Avant 2004 : 150 trimestres, que la fiche du régime porte, et que le moteur
+# lit dans la période où le droit s'est OUVERT, quand même il serait liquidé
+# après 2003 : « Jusqu'en 2003 ; 150 ». Il les lisait dans la période de la
+# liquidation, et rendait à qui partait plus tard la table par génération : un
+# fonctionnaire né en 1940, dont le droit s'ouvre en 2000 et qui part en 2004,
+# devait 157 trimestres au lieu de 150 (relevé de l'action 121,
+# `tests/test_regle_de_chacun.py`). À compter de 2009,
 # la table s'arrête : l'article L. 13 II renvoie à la durée du régime général
 # (L. 161-17-3), lue par génération dans `duree_assurance_requise.csv`, et c'est
 # ce que la fiche branche par `duree_requise_par_generation`.

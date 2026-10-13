@@ -275,15 +275,23 @@ export function dureeRequise(moteur, periode, carriere) {
   // La fonction publique a sa propre montée en charge, 2004-2008, lue à
   // l'année d'ouverture du droit ; elle passe avant la table par génération.
   if (periode.bareme_decote === "fonction_publique") {
-    const transitoire = moteur.dureesRequisesFonctionPublique.trimestres(
-      anneeOuvertureDesDroits(
-        moteur, periode, carriere,
-        (carriere.age_liquidation !== null && carriere.age_liquidation !== undefined)
-          ? carriere.anneeLiquidation : 9999,
-      ),
+    const ouverture = anneeOuvertureDesDroits(
+      moteur, periode, carriere,
+      (carriere.age_liquidation !== null && carriere.age_liquidation !== undefined)
+        ? carriere.anneeLiquidation : 9999,
     );
+    const transitoire = moteur.dureesRequisesFonctionPublique.trimestres(ouverture);
     if (transitoire !== null) {
       return transitoire;
+    }
+    // « Jusqu'en 2003 ; 150 » (loi du 21 août 2003, article 66, II) : le droit
+    // ouvert avant la table garde la durée de la période où il s'est ouvert.
+    if (moteur.dureesRequisesFonctionPublique.avantLaTable(ouverture)) {
+      const ouverte = moteur.catalogue.obtenir(periode.regime).periode(ouverture);
+      if (ouverte !== null && ouverte !== undefined && ouverte.debut !== periode.debut
+          && ouverte.duree_requise_trimestres) {
+        return [ouverte.duree_requise_trimestres, null];
+      }
     }
   }
   // ET UN EMPLOI CLASSÉ N'A PAS LA DURÉE DE SA GÉNÉRATION : le XXIV, B de

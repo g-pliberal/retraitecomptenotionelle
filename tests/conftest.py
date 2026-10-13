@@ -107,6 +107,10 @@ CONTROLES = {
     # Les registres.
     "test_frontiere_contributive.py", "test_sources_a_explorer.py",
     "test_source_locale.py", "test_referents.py",
+    # Les régimes dont la règle d'une génération change avec l'année de son
+    # départ, déclarés un à un sur le balayage de toutes les générations
+    # depuis 1920 (action 121).
+    "test_regle_de_chacun.py",
     # L'outillage du dépôt : l'index de la DILA, la publication sur main et
     # ses pilotes de fusion, ce partage-ci, le filet des déplacements
     # (docs/architecture.md, § 12), l'arbre du dépôt, ce que les sessions

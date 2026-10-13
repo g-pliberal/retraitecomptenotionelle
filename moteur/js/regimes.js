@@ -185,6 +185,12 @@ export class DureesRequisesFonctionPublique {
   trimestres(anneeOuverture) {
     return this._table[String(anneeOuverture)] ?? null;
   }
+
+  /** Le droit s'est-il ouvert avant la première année de la table ? */
+  avantLaTable(anneeOuverture) {
+    const annees = Object.keys(this._table).map(Number);
+    return annees.length > 0 && anneeOuverture < Math.min(...annees);
+  }
 }
 
 /**
