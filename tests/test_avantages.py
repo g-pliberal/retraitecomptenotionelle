@@ -667,3 +667,74 @@ def test_la_majoration_pour_enfants_se_recoupe_avec_le_jaune(script_cout):
         f"{tous_regimes / 1000:.2f} Md€) : l'un des deux ne compte pas ce "
         f"qu'on croit"
     )
+
+
+def test_les_retraites_de_moins_de_soixante_ans_confrontes_au_jaune_pensions_2027(script_cout):
+    """Ce que la grille sert avant soixante ans, contre le stock de fin 2025.
+
+    ``--duree`` compte les annuités servies avant l'âge légal sur les têtes de
+    la grille : chaque cas type, pesé par sa caisse, suit la pyramide de l'INSEE
+    depuis son départ. Le jaune pensions annexé au PLF 2027 compte au
+    31 décembre 2025 les pensionnés de droit direct de chaque régime par tranche
+    d'âge, et parmi eux ceux d'invalidité, que la grille ne sert pas (tableau
+    A-2). Sous soixante ans, aucune génération n'a atteint l'âge légal : la part
+    y est une mesure sans convention.
+
+    - Le militaire tombe juste : 31,6 % de ses retraités ont moins de soixante
+      ans dans la grille, 31,5 % au jaune hors invalidité ; l'action 152 l'a
+      recalé sur le jaune de 2026.
+    - L'agent de la CNRACL en a 12,1 %, quand la caisse n'en compte que 1,3 %
+      hors invalidité, 3,3 % avec : le cas type porte toute la caisse, en
+      catégorie active, parti à l'âge d'ouverture, quand les actifs font 15 %
+      des départs de 2024 et partent à 60,8 ans. Il fait 4,4 des 8,3 milliards
+      que le classement sert avant l'âge légal en 2024. L'écart est DÉCLARÉ
+      (``docs/limites/5-hors-du-modele.md``), et ce test le tient : il cédera
+      le jour où l'étape 5 de l'action 159 recalera le cas type, et la
+      déclaration avec lui.
+    - Le civil de l'État ne part jamais avant soixante ans, quand 1,0 % de ses
+      pensionnés y sont, hors invalidité : la catégorie active de l'État, la
+      carrière longue et les parents de trois enfants, 11 139 départs avant
+      l'âge légal en 2025 (tableau C-1), que la grille ne sert pas.
+    """
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.castypes import CAS_TYPES
+    from retraite_notionnelle.cout import _ponderation
+    from retraite_notionnelle.donnees.population import Population
+    from retraite_notionnelle.simulateur import Simulateur
+
+    annee = 2025
+    simulateur = Simulateur(Parametres())
+    population = Population(RACINE_DONNEES)
+    poids = _ponderation(simulateur, "effectifs", CAS_TYPES)(annee)
+    pensionnes, _ = script_cout.decomposer(simulateur, "droit")
+    # Les têtes comme ``masses_anticipees`` pèse les masses : la part de la
+    # caisse, l'effectif de l'âge, chaque cohorte de la tranche une fois partie.
+    tetes: dict[str, list[float]] = {}
+    for pensionne in pensionnes:
+        part = poids.get(pensionne.code, 0.0)
+        if part <= 0.0:
+            continue
+        for decalage in range(-script_cout._DEMI_TRANCHE, script_cout._DEMI_TRANCHE + 1):
+            if annee < pensionne.annee_liquidation + decalage:
+                continue
+            age = annee - (pensionne.generation + decalage)
+            effectif = part * population.effectif(age, annee)
+            compte = tetes.setdefault(pensionne.code, [0.0, 0.0])
+            compte[0] += effectif if age < 60 else 0.0
+            compte[1] += effectif
+    grille = {code: avant / total for code, (avant, total) in tetes.items()}
+
+    # Pensionnés de droit direct au 31 décembre 2025 : de moins de soixante
+    # ans, dont d'invalidité, et en tout (tableau A-2).
+    jaune = {"militaire": (160_236, 31_356, 408_750),
+             "fonctionnaire_actif": (49_069, 29_956, 1_470_309),
+             "fonctionnaire_sedentaire": (25_204, 9_060, 1_656_399)}
+    observee = {code: (avant - invalides) / total
+                for code, (avant, invalides, total) in jaune.items()}
+    assert grille["militaire"] == pytest.approx(observee["militaire"], abs=0.03)
+    recale = ("le cas type de la CNRACL a été recalé : la déclaration de "
+              "docs/limites/5-hors-du-modele.md et ce test sont à refaire")
+    assert grille["fonctionnaire_actif"] > 5 * observee["fonctionnaire_actif"], recale
+    assert grille["fonctionnaire_actif"] > 3 * jaune["fonctionnaire_actif"][0] / 1_470_309, recale
+    assert grille["fonctionnaire_sedentaire"] == 0.0
+    assert observee["fonctionnaire_sedentaire"] > 0.005

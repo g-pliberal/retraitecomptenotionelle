@@ -212,6 +212,11 @@ fichiers:
       # an par an d'avance.
       - "- **Le diviseur est le même pour tout le monde"
       - "- **La décote surpunit l'anticipation ordinaire"
+      # Et deux confrontations au jaune pensions annexé au PLF 2027, faites le
+      # 13 octobre 2026 (action 159, étape 7) : les décès de 2025 des
+      # pensionnés publics, et ce que la grille sert avant soixante ans.
+      - "- **Les décès de 2025, au jaune pensions"
+      - "- **Les départs anticipés de la fonction publique, au jaune"
 
   docs/limites/5-ante-capitalisation.md:
     defaut: etat
@@ -275,6 +280,10 @@ fichiers:
       # écarts aux résidents de l'EIR, ce qui lui manque, et ce qu'elle
       # déplacerait sur la page, mesurés les 11 et 12 octobre 2026.
       - "**La population, arrêtée le 12 octobre 2026**"
+      # Les polypensionnés de la fonction publique que le jaune pensions
+      # annexé au PLF 2027 chiffre, lus le 13 octobre 2026 (action 159,
+      # étape 7) : la première réserve des poids, mesurée.
+      - "**Les polypensionnés de la fonction publique, au jaune pensions"
 
   docs/limites/5-ter-trajectoire.md:
     defaut: etat

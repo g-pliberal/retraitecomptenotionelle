@@ -79,6 +79,35 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   2070, et ne se corrigerait proprement qu'avec la distribution des pensions
   par niveau de vie.
 
+- **Les décès de 2025, au jaune pensions annexé au PLF 2027 (13 octobre
+  2026).** Le jaune compte les décès de 2025 des pensionnés de chaque régime
+  de la fonction publique (tableau B-13) et leur stock au 31 décembre par âge
+  et par sexe (tableau A-2) : de quoi confronter, régime par régime, la
+  mortalité que le modèle leur prête. Les pensionnés civils de l'État ont
+  perdu 45 591 des leurs, quand la table générale de 2025 en attendait
+  51 900 : 12 % de moins. Le facteur que le modèle cale sur l'espérance que
+  leur régime publie pour 2024 en attend 44 200, à 3 % près, et celui du
+  vingtile où le salaire range le fonctionnaire sédentaire, autant, à 4 % près
+  (`test_les_deces_de_2025_recoupent_le_facteur_des_pensionnes_civils`). Les
+  militaires meurent de 5 à 10 % moins que la population générale, un peu
+  plus que leur vingtile ne le dit. Pas l'agent de la CNRACL : ses retraités
+  ne meurent que 4 % moins que la population générale, ses hommes comme elle,
+  quand le vingtile où le range son salaire leur prête 13 % de décès en
+  moins — près d'une année de rente de trop à 65 ans pour un homme, une
+  demi-année pour une femme, que la convention lui donne par un niveau de fin
+  de carrière trop haut (action 152, étape 2). Les ouvriers de l'État meurent
+  comme la population générale. La page Coût, qui compte tout le monde à la
+  mortalité générale, sous-compte donc la longévité des pensionnés publics,
+  de 12 à 15 % de décès chez les civils de l'État. Le même tableau dément la
+  table de 2025 elle-même. L'année n'étant ni observée ni projetée, le modèle
+  la tient d'une loi de Makeham calée sur deux espérances, dont les quotients
+  dépassent de 7 à 26 % ceux de 2024 et de 2026 entre 70 et 80 ans, et leur
+  restent de 8 à 33 % inférieurs au-delà de 88 ans. Les conjoints
+  survivants, presque tous de ces grands âges, sont morts 39 905 en 2025, où
+  elle en attendait 33 000 et une table interpolée entre 2024 et 2026,
+  38 400. Interpoler la table de 2025 est un changement du modèle, des deux
+  côtés du portage, que l'étape 7 de l'action 159 laisse à une session à part.
+
 - **La décote surpunit l'anticipation ordinaire et sous-punit l'extrême.**
   Mesuré en comparant ce que coûte une année d'anticipation sous le droit en
   vigueur et sous le coefficient de conversion notionnel, sur un fonctionnaire
@@ -114,6 +143,27 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   un surcoût net — partir tôt, c'est aussi cotiser moins et mourir plus tôt en
   moyenne ; c'est exactement l'arbitrage qu'un coefficient de conversion
   notionnel rend automatique et que le droit actuel ne rend nulle part.
+
+- **Les départs anticipés de la fonction publique, au jaune pensions annexé
+  au PLF 2027 (13 octobre 2026).** Ces annuités sont celles de la grille, et
+  la grille prête à la fonction publique des départs que le jaune dément.
+  L'agent de la CNRACL y porte toute sa caisse, en catégorie active, parti à
+  l'âge d'ouverture : 12,1 % de ses retraités ont moins de soixante ans en
+  2025, quand la caisse n'en compte que 1,3 % hors invalidité, 3,3 % avec
+  (tableau A-2), ses actifs ne faisant que 15 % des pensions entrées en
+  paiement en 2025, à 61,0 ans (tableau B-5). Il fait 4,4 des 8,3 milliards du
+  classement en 2024. Le civil de l'État, à l'inverse, ne part jamais avant
+  l'âge légal, quand 11 139 départs de 2025 l'ont devancé (tableau C-1) :
+  5 909 au titre d'une carrière active, moitié moins qu'en 2015, 3 687 d'une
+  carrière longue, 1 227 de parents de trois enfants, 316 d'un handicap ou
+  d'un motif familial. Les départs anticipés pour carrière longue font 10 %
+  des départs civils de la fonction publique en 2025, 20 % en 2016 (tableaux
+  C-1, C-4 et C-7), et la grille n'en sert aucun hors du privé. Le militaire
+  tombe juste : 31,6 % de ses retraités ont moins de soixante ans dans la
+  grille, 31,5 % au jaune hors invalidité
+  (`test_les_retraites_de_moins_de_soixante_ans_confrontes_au_jaune_pensions_2027`).
+  Recaler les cas types de la CNRACL et de l'État est l'étape 5 de l'action
+  159.
 
 - **Le pilotage, et non plus le solde.** Le modèle calcule des droits
   individuels ; il porte une pyramide des âges, qui lui dit ce que chaque

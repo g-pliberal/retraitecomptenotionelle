@@ -78,6 +78,28 @@ le 19 septembre 2026 :
    du bord est reconduite** : la France de 1960 comptait plus d'exploitants
    agricoles que ces poids ne le disent, et la série tombe au niveau `estimee`
    pour le dire.
+
+   **Les polypensionnés de la fonction publique, au jaune pensions annexé au
+   PLF 2027 (13 octobre 2026).** Le jaune publie, d'après le même échantillon
+   interrégimes de 2020 que la grille élargie, la part des polypensionnés de
+   chaque régime de la fonction publique parmi ses retraités de soixante ans
+   ou plus (graphiques 15 et 16) : 46 % des civils de l'État, 60 % des
+   militaires, 76 % des retraités de la CNRACL — 85 % à la territoriale —,
+   80 % des ouvriers de l'État, pour 37 % à la Cnav. 74 % des retraités de la
+   CNRACL touchent aussi une pension du régime général, 52 % des militaires,
+   44 % des civils de l'État. Comptés par régime d'affiliation, ces chiffres
+   dépassent, comme ils le doivent, ceux que la grille élargie lit par régime
+   principal : 68 % à la CNRACL, 42 % chez les civils de l'État. Ils chiffrent
+   la première réserve pour la fonction publique : près de deux millions des
+   14,7 millions de retraités que l'enquête de 2024 compte à la Cnav sont
+   aussi des pensionnés de la fonction publique, 13 %, auxquels la grille de
+   treize cas types prête une carrière entière du privé. Et ils disent deux
+   carrières qu'aucune des deux grilles ne porte. L'agent de la CNRACL y est
+   monopensionné, quand les trois quarts de ses retraités ne le sont pas. Le
+   militaire n'y a pas de second métier, quand plus de la moitié des
+   militaires retraités touchent une pension du régime général, et 8 % une
+   pension civile de l'État ou de la CNRACL : la grille élargie ne décline
+   pas leurs polypensionnés, faute de savoir dater leur second départ.
 3. **Avant 1975, la reconstitution est mince.** La répartition ne commence
    qu'en 1941 : les générations antérieures à 1880 n'ont, dans ce modèle,
    aucune pension, et plusieurs régimes n'existaient pas encore. Les premières
