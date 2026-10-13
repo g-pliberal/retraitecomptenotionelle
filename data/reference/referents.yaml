@@ -5705,8 +5705,8 @@ referents:
     confrontation: >-
       Des résultats publiés à retrouver : les projections du COR pour l'État,
       les engagements du compte général de l'État, les effets de la réforme
-      de 2023 que le jaune « pensions » du PLF 2026 en tire, et les
-      engagements de l'État des comptes nationaux.
+      de 2023 que les jaunes « pensions » des PLF 2026 et 2027 en tirent, et
+      les engagements de l'État des comptes nationaux.
     fait_mieux:
       - quoi: >-
           Microsimulé sur le compte individuel de retraite, il chiffre le
@@ -5771,9 +5771,12 @@ referents:
           2035. Le dépôt n'a pas d'univers sans la réforme : même
           lacune que pour Prisme.
         preuve: >-
-          annexe « pensions » au PLF 2026, partie V, p. 218 («
+          annexe « pensions » au PLF 2027, partie V, p. 186 («
           L'effet de cette réforme a été simulé via l'outil de
-          micro-simulation Pablo »)
+          micro-simulation Pablo »), qui reprend les chiffres de
+          l'annexe au PLF 2026 (partie V, p. 218), puis décrit, sans
+          la chiffrer, la suspension de la réforme que décide la loi
+          de financement de la sécurité sociale pour 2026
         verification: Chiffrage officiel, à retrouver comme témoin.
         etat: a_reprendre
         chantier: "138.3"
@@ -5789,6 +5792,7 @@ referents:
       - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%2010_Pablo_SRE.pdf
       - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_06_SI_SRE.pdf
       - https://questions.assemblee-nationale.fr/dyn/contenu/visualisation/1090002/file/12-Jaune2026_Pensions.pdf
+      - https://www.budget.gouv.fr/documentation/file-download/34465
 
   - id: oscar
     nom: Oscar
@@ -5826,7 +5830,12 @@ referents:
           Méthode de validation. Elle demande les données du SRE, ou
           au moins ses agrégats publiés : l'annexe « pensions » au
           PLF et les cubes de data.economie.gouv.fr cités au doc. n°
-          6 de 2024.
+          6 de 2024. Les agrégats du flux de 2025 de l'annexe au
+          PLF 2027 sont au dépôt depuis le 13 octobre 2026 (action
+          159, étape 4, `caracteristiques_fonction_publique.csv`) :
+          les trois cas types statutaires s'y confrontent
+          (`tests/test_flux_fonction_publique.py`). La validation
+          pension par pension reste à faire.
         etat: a_reprendre
         chantier: "138.14"
     bilan: >-
@@ -5834,8 +5843,9 @@ referents:
       points de 2020. Le dépôt a déjà son pas mensuel, son calcul du
       RAFP et un moteur commun aux cas types et à la population ; il ne
       lui manque que la plage d'âges (138.10) et la validation sur un
-      flux réel (138.14). Son usage depuis 2020 n'est pas publié et
-      aucun résultat ne se confronte.
+      flux réel (138.14), dont il a, depuis le 13 octobre 2026, les
+      agrégats publiés du flux de 2025 (action 159, étape 4). Son usage
+      depuis 2020 n'est pas publié et aucun résultat ne se confronte.
     lu_le: 2026-10-04
     lu_dans:
       - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%2010_Pablo_SRE.pdf
@@ -5939,7 +5949,14 @@ referents:
           Données de gestion de la CNRACL (recueil statistique 2018,
           cité au doc. n° 11) et projection de la caisse pour le
           COR. Un âge moyen de 61,5 ans contredit un départ unique à
-          57 ans.
+          57 ans. Le flux de 2025 le confirme (annexe « pensions »
+          au PLF 2027, tableaux B-1 et B-5, au dépôt dans
+          `caracteristiques_fonction_publique.csv`) : 8 377 des
+          22 753 départs de la FPH en catégorie active, 2 220 des
+          46 897 de la FPT ; les actifs partis pour ancienneté
+          mis en paiement à 61,0 ans, les sédentaires à 64,0, toute
+          la CNRACL à 61,9. Le cas type part en 2025 à cinquante-sept
+          ans et neuf mois (`tests/test_flux_fonction_publique.py`).
         etat: a_reprendre
         chantier: "138.3"
       - quoi: >-

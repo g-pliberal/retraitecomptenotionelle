@@ -1,0 +1,26 @@
+date: "2026-10-13"
+session: "action 159, étape 4, première partie : le stock et le flux de 2025 du jaune, certifiés, et les cas types statutaires confrontés au flux"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1. Le jaune
+  pensions annexé au PLF 2027 (data/brut/34465.pdf, tiré de la branche jaune-2027,
+  empreinte vérifiée) : ses tableaux A-1 (stock au 31 décembre 2025), B-1, B-3, B-3 bis,
+  B-4 et B-5 (flux de 2025), en texte par pdftotext et par le lecteur du dépôt, en
+  fragments positionnés ; la phrase de sa partie IV sur l'indice moyen de liquidation
+  (p. 156) ; le paragraphe de sa partie V sur l'effet de la réforme de 2023 simulé par
+  Pablo, et celui qui suit sur sa suspension (p. 186).
+trouve: >-
+  Les tableaux du flux ont des cases vides que le texte d'une ligne ne laisse pas voir :
+  lus case par case, à leur abscisse, ils donnent 1 352 valeurs, qui se recoupent toutes
+  (sexes, totaux, motifs, catégories) et recoupent les départs de bonifications_jaune.csv ;
+  certifiées dans caracteristiques_fonction_publique.csv. Partis en 2025, les cas types
+  statutaires s'écartent des départs de leur groupe : le sédentaire de l'État à l'âge
+  (64,0 pour 64,4) et à l'indice du flux, mais au taux plein sur une carrière entière dans
+  le régime, 15 % au-dessus de la pension réelle ; l'actif de la CNRACL trois ans et quart
+  trop tôt, avec une décote, sur un traitement un cinquième trop haut, deux erreurs qui
+  se compensent à 4,6 % près ; le militaire à l'âge du flux, sans les bénéfices de
+  campagne ni le service aérien, 5 % en dessous. L'effet de la réforme de 2023 que Pablo
+  chiffre est celui de l'édition 2026, la suspension décrite sans chiffrage.
+reste: >-
+  La seconde partie de l'étape 4 : le tableau B-22 (bonifications du flux), les séries du
+  flux de 2016 à 2025 et les tableaux 60 à 108, le stock face à la page Coût, les limites.
+  Le recalage des cas types sur ce tableau est l'étape 5.
