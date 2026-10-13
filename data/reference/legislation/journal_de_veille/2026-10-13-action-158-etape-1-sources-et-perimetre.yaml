@@ -1,0 +1,44 @@
+date: "2026-10-13"
+session: "action 158, étape 1 : les sources et le périmètre des grilles indiciaires de la fonction publique, sans une ligne de code"
+consulte: >-
+  L'index LEGI de la DILA, récupéré et mis à jour au 12 octobre 2026, interrogé
+  sur les textes de grilles (titres, visas, articles). Le Noyau RH FPE du CISIRH,
+  édition de juillet 2026 sur data.economie.gouv.fr (licence ouverte 2.0, version
+  26.00.00) : nomenclatures CORPS, GRADE, GRILLE_IND, ECHELON, INDICE et TEXTE, la
+  correspondance IB-IM juridique au 1er juin 2026 ; l'édition de février 2026,
+  archivée sur data.gouv.fr le 8 juillet 2026. Le jeu d'Épicycle sur data.gouv.fr
+  (grilles et durées des professeurs des écoles, CC BY-SA). Le rapport annuel sur
+  l'état de la fonction publique 2025 (DGAFP) ; le Panorama statistique des
+  personnels de l'enseignement scolaire 2024-2025 (DEPP), chapitre 7 ; la synthèse
+  nationale des rapports sociaux uniques 2023 (DGCL) ; les Insee Première n° 2065
+  et 2067 ; le bilan social 2022 de l'ATIH ; la circulaire des grilles de la
+  territoriale du centre de gestion du Haut-Rhin au 1er février 2017. Sur
+  Légifrance, par ses seuls résultats de recherche, la page refusant le proxy :
+  les titres des décrets n° 2016-604, 2021-1819, 2016-594, 2021-1257, 2021-1267,
+  2022-1207, 2021-1262, 2016-647, 2009-21 et 2011-388. La page « Droit à
+  l'information » de rafp.fr ; le rapport pour avis du Sénat n° 134 (2023-2024),
+  tome V ; la question écrite n° 16217 de la 17e législature.
+trouve: >-
+  Les grilles de l'État sont structurées et datées dans le Noyau RH, chaque grille
+  et chaque échelon avec ses dates, son indice brut, ses durées et ses textes,
+  depuis 1989-1990 pour les enseignants et 2005 à 2011 pour les autres grands
+  corps ; pour les professeurs des écoles, elles concordent avec Épicycle de 1990
+  à 2024. La territoriale et l'hospitalière n'ont pas d'équivalent ouvert : leurs
+  grilles ne sont qu'au LEGI. L'index du dépôt ne les garde pas : son filtre
+  thématique ne retient d'un texte de grille que les articles qui écrivent
+  « indice brut » au singulier ; des 489 textes de grilles que le Noyau RH cite,
+  144 manquent, 157 n'y sont que par leurs visas, et les échelles C1 à C3 de la
+  territoriale (décrets n° 2016-604 et 2021-1819) en sont absentes, comme les
+  aides-soignants de l'hospitalière (n° 2021-1267 et 2022-1207) ; les indices de
+  solde des militaires y sont. La table INDICE du noyau n'a pas d'histoire avant
+  novembre 2006 et mêle le barème du décret n° 82-1105 et le minimum de traitement
+  (indice majoré 366 depuis le 1er janvier 2024). Le relevé de carrière porte les
+  points du RAFP année par année.
+reste: >-
+  Que le propriétaire tranche le périmètre de l'action 158. Puis, à l'étape 2,
+  élargir le filtre de l'index (« indices bruts », « échelonnement indiciaire »,
+  « échelles de rémunération », « classement indiciaire », textes de carrière) et
+  le faire reconstruire par le workflow index-dila.yml, puis mesurer jusqu'où le
+  LEGI garde les versions des articles de grilles et lire le barème du décret
+  n° 82-1105 depuis 1982 ; identifier les textes qui fixent les échelles C de
+  l'hospitalière et la catégorie B de la territoriale, et ceux d'avant 2017.
