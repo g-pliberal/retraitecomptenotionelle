@@ -898,7 +898,7 @@ reformes:
 
   - code: caledonie_2023
     date: 2023-01-01
-    texte: {reference: "délibérations du congrès de la Nouvelle-Calédonie portant réforme de l'assurance retraite CAFAT (âge de 60 à 62 ans et durée de 35 à 37 ans de 2023 à 2026), résumées par le CLEISS et la CAFAT", id: null}
+    texte: {reference: "délibération n° 59/CP du 24 février 2022 modifiant la délibération n° 458 du 8 janvier 2009 (JONC du 25 février 2022) : âge de liquidation de 60 ans et 6 mois au 1er janvier 2023 à 62 ans au 1er janvier 2026, durée de 35 ans et 6 mois à 37 ans pour partir plus tôt sans abattement, à la date du départ", id: null}
     parametres: [age_ouverture, duree_requise_trimestres]
     regimes: [cafat_nouvelle_caledonie]
     absorbee_par: []
@@ -914,7 +914,7 @@ reformes:
 
   - code: clr_2023
     date: 2023-10-01
-    texte: {reference: "loi du pays de la Nouvelle-Calédonie portant mesures d'urgence en faveur de la Caisse locale de retraites (cotisations de 10,8 % à 13 % et de 25,1 % à 28,8 %, minoration avant 60 ans) puis loi du pays de 2024 (âge de 60 à 62 ans de 2025 à 2030)", id: null}
+    texte: {reference: "loi du pays de la Nouvelle-Calédonie portant mesures d'urgence en faveur de la Caisse locale de retraites (cotisations de 10,8 % à 13 % et de 25,1 % à 28,8 %, minoration avant 60 ans) puis loi du pays n° 2024-10 du 12 septembre 2024 (âge de 60 ans et 6 mois en 2025 à 62 ans en 2028, à la date d'admission à la retraite, article Lp. 221-1)", id: null}
     parametres: [taux_cotisation_retraite, age_ouverture, decote_par_trimestre]
     regimes: [fonctionnaires_pacifique]
     absorbee_par: []

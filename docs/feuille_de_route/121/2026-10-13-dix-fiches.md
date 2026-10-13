@@ -178,3 +178,35 @@ cps_saint_pierre_et_miquelon, puis les suivantes, dans l'ordre du bloc. »
   suffisant » de 65 ans depuis le 1er juillet 2019 (tableaux 3 et 4 du
   rapport) ; un droit acquis par qui avait l'âge avant 2020, dont le rapport ne
   dit rien ; l'âge de la tranche B avant 2020.
+
+## Nouvelle-Calédonie : la CAFAT et la Caisse locale de retraites
+
+- *Ce que les textes disent.* Lus sur Juridoc, le site des textes de la
+  Nouvelle-Calédonie, dans leurs versions consolidées. La délibération n° 458
+  du 8 janvier 2009, articles 1er à 4 dans la rédaction de la délibération n°
+  59/CP du 24 février 2022 : « L'âge de liquidation est fixé à : 60 ans jusqu'au
+  31 décembre 2022 ; 60 ans et six mois à compter du 1er janvier 2023 » et six
+  mois de plus chaque 1er janvier jusqu'à 62 ans en 2026 ; la durée pour partir
+  plus tôt sans abattement, 35 ans et 6 mois en 2023 et six mois de plus par an
+  jusqu'à 37 ans ; 1,50 % d'abattement par trimestre d'anticipation, dix au
+  plus. Le code des pensions de retraites des fonctionnaires de
+  Nouvelle-Calédonie, article Lp. 221-1 dans la rédaction de la loi du pays
+  n° 2024-10 du 12 septembre 2024 : la « double condition de 62 ans d'âge et de
+  35 ans de services effectifs » s'apprécie « à la date d'admission à la
+  retraite », avec 60 ans et 6 mois en 2025, 61 ans en 2026, 61 ans et 6 mois
+  en 2027. Les deux caisses relèvent donc l'âge à la DATE du départ, et non à la
+  génération : leurs périodes annuelles sont la bonne écriture.
+- *Ce qui est corrigé.* À la CAFAT, la durée de 2023 : 142 trimestres, et non
+  les 144 que la fiche tirait d'un résumé. À la Caisse locale de retraites,
+  l'âge : la fiche portait le calendrier de l'avant-projet de février 2024,
+  quatre mois par an jusqu'à 62 ans en 2030 ; la loi adoptée va six mois par an
+  jusqu'en 2028. Un fonctionnaire calédonien né en 1966 ne part plus à 61 ans
+  en 2027, ni un né en 1967 à 61 ans et 6 mois en 2028. Le portage rend les
+  mêmes chiffres que le Python sur sept carrières des deux caisses.
+- *Ce qui reste.* À la CAFAT, le droit acquis du 3° de l'article 3 — le taux
+  plein sans abattement à qui avait, au 1er janvier 2023, trente-cinq ans
+  d'assurance et cinquante-sept ans et demi. À la Caisse locale, la durée de
+  services qui ouvre la pension d'ancienneté (31 ans en 2024, six mois de plus
+  par an jusqu'à 35 ans) et les minorations, que le code renvoie à une
+  délibération, lues dans la seule page de la direction de la fonction
+  publique.

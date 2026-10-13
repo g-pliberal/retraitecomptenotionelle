@@ -2363,14 +2363,14 @@ les cultes, `data/reference/legislation/affiliations.yaml`,
 
 **Reprise, au 13 octobre 2026.** Fait : la SNCF, la RATP et les IEG, puis
 Saint-Pierre-et-Miquelon et Mayotte (tables `spm_*` et `mayotte_*`), la
-Polynésie (montée en charge à l'année du départ). Restent sept fiches, à
-commencer par `cafat_nouvelle_caledonie`, puis `fonctionnaires_pacifique`,
-`crpnpac`, `crpnpac_tranche_2`, `crpcen`, `comedie_francaise`,
-`assemblees_parlementaires`. Pour chacune, texte en main : l'âge suit-il la
-génération ou l'année ? si la génération, sa table ; la durée suit-elle la
-date des conditions réunies, celle de l'effet ou la génération ? Enfin le
-test : une règle datée valable pour toute génération de 1920 à ce jour.
-Détail : `121/2026-10-13-dix-fiches.md`, et « Ce qui reste, fiche par fiche ».
+Polynésie et la Nouvelle-Calédonie (âge à l'année du départ, textes lus).
+Restent cinq fiches, à commencer par `crpnpac`, puis `crpnpac_tranche_2`,
+`crpcen`, `comedie_francaise`, `assemblees_parlementaires`. Pour chacune,
+texte en main : l'âge suit-il la génération ou l'année ? si la génération, sa
+table ; la durée suit-elle la date des conditions réunies, celle de l'effet ou
+la génération ? Enfin le test : une règle datée valable pour toute génération
+de 1920 à ce jour. Détail : `121/2026-10-13-dix-fiches.md`, et « Ce qui reste,
+fiche par fiche ».
 
 **Demande.** « Il faut prendre en compte la loi applicable pour tout le monde
 et pas seulement pour les derniers entrants ou sortants » ; « il faut aussi

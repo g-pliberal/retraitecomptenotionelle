@@ -32,13 +32,16 @@ inventaire:
   statuts: [fonctionnaire_pacifique]
   textes:
     - {reference: "Direction des ressources humaines et de la fonction publique de Nouvelle-Calédonie, « Mesures d'urgence en faveur de la CLR » (3 octobre 2023) et « Mesures favorisant la pérennité du régime de retraite des fonctionnaires » (16 septembre 2024) — lois du pays et délibérations du congrès, hors JORF", id: null}
+    - {reference: "code des pensions de retraites des fonctionnaires relevant des fonctions publiques de Nouvelle-Calédonie, article Lp. 221-1 dans la rédaction de la loi du pays n° 2024-10 du 12 septembre 2024 (Juridoc, version du 1er janvier 2025)", id: null}
 
   manque: >-
     La fiche est celle de la Caisse locale de retraites de Nouvelle-
     Calédonie ; les fonctionnaires de Polynésie relèvent de la CPS, portée
     par le statut salarié. Les cotisations d'avant 2023 sont projetées ;
-    la durée de services requise et la table exacte de l'âge après 2025
-    restent à lire dans la loi du pays.
+    la durée de services qui ouvre la pension d'ancienneté (31 ans en 2024,
+    six mois de plus par an jusqu'à 35 ans, article Lp. 221-1) n'est pas
+    portée, ni les minorations, fixées par délibération et lues dans la
+    seule page de la direction de la fonction publique.
 periodes:
   - debut: 1959
     fin: 2023
@@ -56,17 +59,19 @@ periodes:
     avantages_non_contributifs: [bonifications, reversion]
     notes: >-
       SOURCE : Direction des ressources humaines et de la fonction
-      publique de Nouvelle-Calédonie (drhfpnc.gouv.nc, « Mesures d'urgence
-      en faveur de la CLR », 3 octobre 2023, et « Mesures favorisant la
-      pérennité du régime », 16 septembre 2024), lues par
+      publique de Nouvelle-Calédonie (drhfpnc.gouv.nc, « Mesures
+      d'urgence en faveur de la CLR », 3 octobre 2023, et « Mesures
+      favorisant la pérennité du régime », 16 septembre 2024), lues par
       scripts/fetch/sites_institutionnels.py ; lois du pays et
       délibérations du congrès, hors JORF. PENSION : « une annuité ou
       année de service ouvre droit à 2 %, et 40 annuités ouvrent ainsi
-      droit à 80 % du traitement de base » — la fiche écrit 80 % pour 160
-      trimestres, proratisé, sur le dernier traitement indiciaire (hors
-      primes). ÂGE : 60 ans, que la loi du pays de 2024 relève «
-      progressivement […] à 62 ans sur 6 ans, passant à 60 ans et 4 mois
-      au premier janvier 2025, puis à 60 ans et 8 mois l'année d'après » ;
+      droit à 80 % du traitement de base » — la fiche écrit 80 % pour
+      160 trimestres, proratisé, sur le dernier traitement indiciaire
+      (hors primes). ÂGE : 60 ans, que la loi du pays n° 2024-10 du 12
+      septembre 2024 relève, « à la date d'admission à la retraite », à
+      60 ans et 6 mois au 1er janvier 2025, 61 ans en 2026, 61 ans et 6
+      mois en 2027 et 62 ans ensuite (article Lp. 221-1 du code des
+      pensions de retraites des fonctionnaires de Nouvelle-Calédonie) ;
       coefficients de minoration « pour les pensions concédées après le
       1er janvier 2024 : 35 % avant 57 ans, 24 % entre 57-58 ans, 16 %
       entre 58-59 ans, 10 % entre 59-60 ans », écrits comme 2,5 % par
@@ -92,30 +97,32 @@ periodes:
     avantages_non_contributifs: [bonifications, reversion]
     notes: >-
       SOURCE : Direction des ressources humaines et de la fonction
-      publique de Nouvelle-Calédonie (drhfpnc.gouv.nc, « Mesures d'urgence
-      en faveur de la CLR », 3 octobre 2023, et « Mesures favorisant la
-      pérennité du régime », 16 septembre 2024), lues par
+      publique de Nouvelle-Calédonie (drhfpnc.gouv.nc, « Mesures
+      d'urgence en faveur de la CLR », 3 octobre 2023, et « Mesures
+      favorisant la pérennité du régime », 16 septembre 2024), lues par
       scripts/fetch/sites_institutionnels.py ; lois du pays et
       délibérations du congrès, hors JORF. PENSION : « une annuité ou
       année de service ouvre droit à 2 %, et 40 annuités ouvrent ainsi
-      droit à 80 % du traitement de base » — la fiche écrit 80 % pour 160
-      trimestres, proratisé, sur le dernier traitement indiciaire (hors
-      primes). ÂGE : 60 ans, que la loi du pays de 2024 relève «
-      progressivement […] à 62 ans sur 6 ans, passant à 60 ans et 4 mois
-      au premier janvier 2025, puis à 60 ans et 8 mois l'année d'après » ;
+      droit à 80 % du traitement de base » — la fiche écrit 80 % pour
+      160 trimestres, proratisé, sur le dernier traitement indiciaire
+      (hors primes). ÂGE : 60 ans, que la loi du pays n° 2024-10 du 12
+      septembre 2024 relève, « à la date d'admission à la retraite », à
+      60 ans et 6 mois au 1er janvier 2025, 61 ans en 2026, 61 ans et 6
+      mois en 2027 et 62 ans ensuite (article Lp. 221-1 du code des
+      pensions de retraites des fonctionnaires de Nouvelle-Calédonie) ;
       coefficients de minoration « pour les pensions concédées après le
       1er janvier 2024 : 35 % avant 57 ans, 24 % entre 57-58 ans, 16 %
       entre 58-59 ans, 10 % entre 59-60 ans », écrits comme 2,5 % par
       trimestre. La CPS polynésienne, qui couvre les fonctionnaires de
       Polynésie dans son régime général, est portée par le statut
-      `salarie_polynesie`. COTISATION : « à partir du 01/04/2024 : 12,1 %
-      » (11,8 % dès le 1er octobre 2023) et 27,9 % employeur — 40 % en
+      `salarie_polynesie`. COTISATION : « à partir du 01/04/2024 : 12,1
+      % » (11,8 % dès le 1er octobre 2023) et 27,9 % employeur — 40 % en
       tout, moyenne de l'année.
   - debut: 2025
     fin: 2025
     type_calcul: annuites
-    age_ouverture: 60.33
-    age_taux_plein: 60.33
+    age_ouverture: 60.5
+    age_taux_plein: 60.5
     duree_requise_trimestres: 160
     taux_plein: 0.80
     salaire_reference: dernier_salaire
@@ -127,29 +134,41 @@ periodes:
     avantages_non_contributifs: [bonifications, reversion]
     notes: >-
       SOURCE : Direction des ressources humaines et de la fonction
-      publique de Nouvelle-Calédonie (drhfpnc.gouv.nc, « Mesures d'urgence
-      en faveur de la CLR », 3 octobre 2023, et « Mesures favorisant la
-      pérennité du régime », 16 septembre 2024), lues par
+      publique de Nouvelle-Calédonie (drhfpnc.gouv.nc, « Mesures
+      d'urgence en faveur de la CLR », 3 octobre 2023, et « Mesures
+      favorisant la pérennité du régime », 16 septembre 2024), lues par
       scripts/fetch/sites_institutionnels.py ; lois du pays et
       délibérations du congrès, hors JORF. PENSION : « une annuité ou
       année de service ouvre droit à 2 %, et 40 annuités ouvrent ainsi
-      droit à 80 % du traitement de base » — la fiche écrit 80 % pour 160
-      trimestres, proratisé, sur le dernier traitement indiciaire (hors
-      primes). ÂGE : 60 ans, que la loi du pays de 2024 relève «
-      progressivement […] à 62 ans sur 6 ans, passant à 60 ans et 4 mois
-      au premier janvier 2025, puis à 60 ans et 8 mois l'année d'après » ;
+      droit à 80 % du traitement de base » — la fiche écrit 80 % pour
+      160 trimestres, proratisé, sur le dernier traitement indiciaire
+      (hors primes). ÂGE : 60 ans jusqu'en 2024 ; puis l'article Lp.
+      221-1 du code des pensions de retraites des fonctionnaires
+      relevant des fonctions publiques de Nouvelle-Calédonie, dans la
+      rédaction de la loi du pays n° 2024-10 du 12 septembre 2024
+      (Juridoc, version du 1er janvier 2025) : la « double condition de
+      62 ans d'âge et de 35 ans de services effectifs » s'apprécie « à
+      la date d'admission à la retraite », et l'âge est fixé « à compter
+      du 1er janvier 2025 : 60 ans et 6 mois ; à compter du 1er janvier
+      2026 : 61 ans ; à compter du 1er janvier 2027 et jusqu'au 31
+      décembre 2027 : 61 ans et 6 mois » — à la date du départ, et non à
+      la génération. La fiche portait le calendrier de l'avant-projet de
+      février 2024, quatre mois par an jusqu'en 2030 ; la durée de
+      services qui ouvre la pension d'ancienneté, 31 ans en 2024 puis
+      six mois de plus par an jusqu'à 35 ans, n'est pas portée ;
       coefficients de minoration « pour les pensions concédées après le
       1er janvier 2024 : 35 % avant 57 ans, 24 % entre 57-58 ans, 16 %
       entre 58-59 ans, 10 % entre 59-60 ans », écrits comme 2,5 % par
       trimestre. La CPS polynésienne, qui couvre les fonctionnaires de
       Polynésie dans son régime général, est portée par le statut
-      `salarie_polynesie`. « 60 ans et 4 mois au premier janvier 2025 » ;
-      cotisation « à partir du 01/01/2025 : 12,4 % » et 28,2 % employeur.
+      `salarie_polynesie`. Départs de 2025 : 60 ans et 6 mois ;
+      cotisation « à partir du 01/01/2025 : 12,4 % » et 28,2 %
+      employeur.
   - debut: 2026
     fin: 2026
     type_calcul: annuites
-    age_ouverture: 60.67
-    age_taux_plein: 60.67
+    age_ouverture: 61
+    age_taux_plein: 61
     duree_requise_trimestres: 160
     taux_plein: 0.80
     salaire_reference: dernier_salaire
@@ -161,30 +180,41 @@ periodes:
     avantages_non_contributifs: [bonifications, reversion]
     notes: >-
       SOURCE : Direction des ressources humaines et de la fonction
-      publique de Nouvelle-Calédonie (drhfpnc.gouv.nc, « Mesures d'urgence
-      en faveur de la CLR », 3 octobre 2023, et « Mesures favorisant la
-      pérennité du régime », 16 septembre 2024), lues par
+      publique de Nouvelle-Calédonie (drhfpnc.gouv.nc, « Mesures
+      d'urgence en faveur de la CLR », 3 octobre 2023, et « Mesures
+      favorisant la pérennité du régime », 16 septembre 2024), lues par
       scripts/fetch/sites_institutionnels.py ; lois du pays et
       délibérations du congrès, hors JORF. PENSION : « une annuité ou
       année de service ouvre droit à 2 %, et 40 annuités ouvrent ainsi
-      droit à 80 % du traitement de base » — la fiche écrit 80 % pour 160
-      trimestres, proratisé, sur le dernier traitement indiciaire (hors
-      primes). ÂGE : 60 ans, que la loi du pays de 2024 relève «
-      progressivement […] à 62 ans sur 6 ans, passant à 60 ans et 4 mois
-      au premier janvier 2025, puis à 60 ans et 8 mois l'année d'après » ;
+      droit à 80 % du traitement de base » — la fiche écrit 80 % pour
+      160 trimestres, proratisé, sur le dernier traitement indiciaire
+      (hors primes). ÂGE : 60 ans jusqu'en 2024 ; puis l'article Lp.
+      221-1 du code des pensions de retraites des fonctionnaires
+      relevant des fonctions publiques de Nouvelle-Calédonie, dans la
+      rédaction de la loi du pays n° 2024-10 du 12 septembre 2024
+      (Juridoc, version du 1er janvier 2025) : la « double condition de
+      62 ans d'âge et de 35 ans de services effectifs » s'apprécie « à
+      la date d'admission à la retraite », et l'âge est fixé « à compter
+      du 1er janvier 2025 : 60 ans et 6 mois ; à compter du 1er janvier
+      2026 : 61 ans ; à compter du 1er janvier 2027 et jusqu'au 31
+      décembre 2027 : 61 ans et 6 mois » — à la date du départ, et non à
+      la génération. La fiche portait le calendrier de l'avant-projet de
+      février 2024, quatre mois par an jusqu'en 2030 ; la durée de
+      services qui ouvre la pension d'ancienneté, 31 ans en 2024 puis
+      six mois de plus par an jusqu'à 35 ans, n'est pas portée ;
       coefficients de minoration « pour les pensions concédées après le
       1er janvier 2024 : 35 % avant 57 ans, 24 % entre 57-58 ans, 16 %
       entre 58-59 ans, 10 % entre 59-60 ans », écrits comme 2,5 % par
       trimestre. La CPS polynésienne, qui couvre les fonctionnaires de
       Polynésie dans son régime général, est portée par le statut
-      `salarie_polynesie`. 60 ans et 8 mois ; cotisation « à partir du
-      01/01/2026 : 12,7 % » et 28,5 % employeur (progression « identique
-      au calendrier des agents »).
+      `salarie_polynesie`. Départs de 2026 : 61 ans ; cotisation « à
+      partir du 01/01/2026 : 12,7 % » et 28,5 % employeur (progression «
+      identique au calendrier des agents »).
   - debut: 2027
     fin: 2027
     type_calcul: annuites
-    age_ouverture: 61
-    age_taux_plein: 61
+    age_ouverture: 61.5
+    age_taux_plein: 61.5
     duree_requise_trimestres: 160
     taux_plein: 0.80
     salaire_reference: dernier_salaire
@@ -196,91 +226,37 @@ periodes:
     avantages_non_contributifs: [bonifications, reversion]
     notes: >-
       SOURCE : Direction des ressources humaines et de la fonction
-      publique de Nouvelle-Calédonie (drhfpnc.gouv.nc, « Mesures d'urgence
-      en faveur de la CLR », 3 octobre 2023, et « Mesures favorisant la
-      pérennité du régime », 16 septembre 2024), lues par
+      publique de Nouvelle-Calédonie (drhfpnc.gouv.nc, « Mesures
+      d'urgence en faveur de la CLR », 3 octobre 2023, et « Mesures
+      favorisant la pérennité du régime », 16 septembre 2024), lues par
       scripts/fetch/sites_institutionnels.py ; lois du pays et
       délibérations du congrès, hors JORF. PENSION : « une annuité ou
       année de service ouvre droit à 2 %, et 40 annuités ouvrent ainsi
-      droit à 80 % du traitement de base » — la fiche écrit 80 % pour 160
-      trimestres, proratisé, sur le dernier traitement indiciaire (hors
-      primes). ÂGE : 60 ans, que la loi du pays de 2024 relève «
-      progressivement […] à 62 ans sur 6 ans, passant à 60 ans et 4 mois
-      au premier janvier 2025, puis à 60 ans et 8 mois l'année d'après » ;
+      droit à 80 % du traitement de base » — la fiche écrit 80 % pour
+      160 trimestres, proratisé, sur le dernier traitement indiciaire
+      (hors primes). ÂGE : 60 ans jusqu'en 2024 ; puis l'article Lp.
+      221-1 du code des pensions de retraites des fonctionnaires
+      relevant des fonctions publiques de Nouvelle-Calédonie, dans la
+      rédaction de la loi du pays n° 2024-10 du 12 septembre 2024
+      (Juridoc, version du 1er janvier 2025) : la « double condition de
+      62 ans d'âge et de 35 ans de services effectifs » s'apprécie « à
+      la date d'admission à la retraite », et l'âge est fixé « à compter
+      du 1er janvier 2025 : 60 ans et 6 mois ; à compter du 1er janvier
+      2026 : 61 ans ; à compter du 1er janvier 2027 et jusqu'au 31
+      décembre 2027 : 61 ans et 6 mois » — à la date du départ, et non à
+      la génération. La fiche portait le calendrier de l'avant-projet de
+      février 2024, quatre mois par an jusqu'en 2030 ; la durée de
+      services qui ouvre la pension d'ancienneté, 31 ans en 2024 puis
+      six mois de plus par an jusqu'à 35 ans, n'est pas portée ;
       coefficients de minoration « pour les pensions concédées après le
       1er janvier 2024 : 35 % avant 57 ans, 24 % entre 57-58 ans, 16 %
       entre 58-59 ans, 10 % entre 59-60 ans », écrits comme 2,5 % par
       trimestre. La CPS polynésienne, qui couvre les fonctionnaires de
       Polynésie dans son régime général, est portée par le statut
-      `salarie_polynesie`. 61 ans ; cotisation « à partir du 01/01/2027 :
-      13 % » et 28,8 % employeur, dernier taux publié.
+      `salarie_polynesie`. Départs de 2027 : 61 ans et 6 mois ;
+      cotisation « à partir du 01/01/2027 : 13 % » et 28,8 % employeur,
+      dernier taux publié.
   - debut: 2028
-    fin: 2028
-    type_calcul: annuites
-    age_ouverture: 61.33
-    age_taux_plein: 61.33
-    duree_requise_trimestres: 160
-    taux_plein: 0.80
-    salaire_reference: dernier_salaire
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.4180
-    part_salariale: 0.3110
-    decote_par_trimestre: 0.025
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, reversion]
-    notes: >-
-      SOURCE : Direction des ressources humaines et de la fonction
-      publique de Nouvelle-Calédonie (drhfpnc.gouv.nc, « Mesures d'urgence
-      en faveur de la CLR », 3 octobre 2023, et « Mesures favorisant la
-      pérennité du régime », 16 septembre 2024), lues par
-      scripts/fetch/sites_institutionnels.py ; lois du pays et
-      délibérations du congrès, hors JORF. PENSION : « une annuité ou
-      année de service ouvre droit à 2 %, et 40 annuités ouvrent ainsi
-      droit à 80 % du traitement de base » — la fiche écrit 80 % pour 160
-      trimestres, proratisé, sur le dernier traitement indiciaire (hors
-      primes). ÂGE : 60 ans, que la loi du pays de 2024 relève «
-      progressivement […] à 62 ans sur 6 ans, passant à 60 ans et 4 mois
-      au premier janvier 2025, puis à 60 ans et 8 mois l'année d'après » ;
-      coefficients de minoration « pour les pensions concédées après le
-      1er janvier 2024 : 35 % avant 57 ans, 24 % entre 57-58 ans, 16 %
-      entre 58-59 ans, 10 % entre 59-60 ans », écrits comme 2,5 % par
-      trimestre. La CPS polynésienne, qui couvre les fonctionnaires de
-      Polynésie dans son régime général, est portée par le statut
-      `salarie_polynesie`. 61 ans et 4 mois.
-  - debut: 2029
-    fin: 2029
-    type_calcul: annuites
-    age_ouverture: 61.67
-    age_taux_plein: 61.67
-    duree_requise_trimestres: 160
-    taux_plein: 0.80
-    salaire_reference: dernier_salaire
-    assiette: hors_primes
-    taux_cotisation_retraite: 0.4180
-    part_salariale: 0.3110
-    decote_par_trimestre: 0.025
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [bonifications, reversion]
-    notes: >-
-      SOURCE : Direction des ressources humaines et de la fonction
-      publique de Nouvelle-Calédonie (drhfpnc.gouv.nc, « Mesures d'urgence
-      en faveur de la CLR », 3 octobre 2023, et « Mesures favorisant la
-      pérennité du régime », 16 septembre 2024), lues par
-      scripts/fetch/sites_institutionnels.py ; lois du pays et
-      délibérations du congrès, hors JORF. PENSION : « une annuité ou
-      année de service ouvre droit à 2 %, et 40 annuités ouvrent ainsi
-      droit à 80 % du traitement de base » — la fiche écrit 80 % pour 160
-      trimestres, proratisé, sur le dernier traitement indiciaire (hors
-      primes). ÂGE : 60 ans, que la loi du pays de 2024 relève «
-      progressivement […] à 62 ans sur 6 ans, passant à 60 ans et 4 mois
-      au premier janvier 2025, puis à 60 ans et 8 mois l'année d'après » ;
-      coefficients de minoration « pour les pensions concédées après le
-      1er janvier 2024 : 35 % avant 57 ans, 24 % entre 57-58 ans, 16 %
-      entre 58-59 ans, 10 % entre 59-60 ans », écrits comme 2,5 % par
-      trimestre. La CPS polynésienne, qui couvre les fonctionnaires de
-      Polynésie dans son régime général, est portée par le statut
-      `salarie_polynesie`. 61 ans et 8 mois.
-  - debut: 2030
     fin: null
     type_calcul: annuites
     age_ouverture: 62
@@ -296,22 +272,33 @@ periodes:
     avantages_non_contributifs: [bonifications, reversion]
     notes: >-
       SOURCE : Direction des ressources humaines et de la fonction
-      publique de Nouvelle-Calédonie (drhfpnc.gouv.nc, « Mesures d'urgence
-      en faveur de la CLR », 3 octobre 2023, et « Mesures favorisant la
-      pérennité du régime », 16 septembre 2024), lues par
+      publique de Nouvelle-Calédonie (drhfpnc.gouv.nc, « Mesures
+      d'urgence en faveur de la CLR », 3 octobre 2023, et « Mesures
+      favorisant la pérennité du régime », 16 septembre 2024), lues par
       scripts/fetch/sites_institutionnels.py ; lois du pays et
       délibérations du congrès, hors JORF. PENSION : « une annuité ou
       année de service ouvre droit à 2 %, et 40 annuités ouvrent ainsi
-      droit à 80 % du traitement de base » — la fiche écrit 80 % pour 160
-      trimestres, proratisé, sur le dernier traitement indiciaire (hors
-      primes). ÂGE : 60 ans, que la loi du pays de 2024 relève «
-      progressivement […] à 62 ans sur 6 ans, passant à 60 ans et 4 mois
-      au premier janvier 2025, puis à 60 ans et 8 mois l'année d'après » ;
+      droit à 80 % du traitement de base » — la fiche écrit 80 % pour
+      160 trimestres, proratisé, sur le dernier traitement indiciaire
+      (hors primes). ÂGE : 60 ans jusqu'en 2024 ; puis l'article Lp.
+      221-1 du code des pensions de retraites des fonctionnaires
+      relevant des fonctions publiques de Nouvelle-Calédonie, dans la
+      rédaction de la loi du pays n° 2024-10 du 12 septembre 2024
+      (Juridoc, version du 1er janvier 2025) : la « double condition de
+      62 ans d'âge et de 35 ans de services effectifs » s'apprécie « à
+      la date d'admission à la retraite », et l'âge est fixé « à compter
+      du 1er janvier 2025 : 60 ans et 6 mois ; à compter du 1er janvier
+      2026 : 61 ans ; à compter du 1er janvier 2027 et jusqu'au 31
+      décembre 2027 : 61 ans et 6 mois » — à la date du départ, et non à
+      la génération. La fiche portait le calendrier de l'avant-projet de
+      février 2024, quatre mois par an jusqu'en 2030 ; la durée de
+      services qui ouvre la pension d'ancienneté, 31 ans en 2024 puis
+      six mois de plus par an jusqu'à 35 ans, n'est pas portée ;
       coefficients de minoration « pour les pensions concédées après le
       1er janvier 2024 : 35 % avant 57 ans, 24 % entre 57-58 ans, 16 %
       entre 58-59 ans, 10 % entre 59-60 ans », écrits comme 2,5 % par
       trimestre. La CPS polynésienne, qui couvre les fonctionnaires de
       Polynésie dans son régime général, est portée par le statut
-      `salarie_polynesie`. 62 ans au terme des six ans de montée ; la
-      majoration « de 1 % par année travaillée » au-delà, portée à 2 % en
-      2030, n'est pas modélisée.
+      `salarie_polynesie`. Depuis 2028 : 62 ans, l'âge du premier alinéa
+      de Lp. 221-1 ; la majoration « de 1 % par année travaillée »
+      au-delà, portée à 2 % en 2030, n'est pas modélisée.
