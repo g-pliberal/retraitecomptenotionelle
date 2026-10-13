@@ -60,7 +60,7 @@ from retraite_notionnelle.donnees.bilan import charger_bilan
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.donnees.distribution import DistributionPensions, part_femmes
 from retraite_notionnelle.donnees.cotisants import (
-    COTISANTS_ETAT_2024,
+    COTISANTS_ETAT_2025,
     EffectifsCotisants,
 )
 from retraite_notionnelle.donnees.effectifs import EffectifsRetraites
@@ -1465,9 +1465,9 @@ def test_les_poids_cotisants_somment_a_un_et_ne_sont_pas_ceux_des_retraites():
     # La fonction publique d'État, d'un seul tenant chez le COR, est partagée
     # entre civils et militaires à la clé du jaune budgétaire, et la clé se lit
     # dans les poids : le militaire pèse ce que le sédentaire pèse, fois le
-    # rapport des deux effectifs de 2024.
-    attendu = (COTISANTS_ETAT_2024["fonction_publique_etat_militaire"]
-               / COTISANTS_ETAT_2024["fonction_publique_etat_civile"])
+    # rapport des deux effectifs de fin 2025.
+    attendu = (COTISANTS_ETAT_2025["fonction_publique_etat_militaire"]
+               / COTISANTS_ETAT_2025["fonction_publique_etat_civile"])
     assert poids["militaire"] / poids["fonctionnaire_sedentaire"] == pytest.approx(attendu)
     assert (cotisants.effectif("fonction_publique_etat_civile", 2030)
             + cotisants.effectif("fonction_publique_etat_militaire", 2030)

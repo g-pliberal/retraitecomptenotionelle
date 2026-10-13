@@ -23,11 +23,14 @@ et le COR ne publie qu'une ligne pour les deux. Les partager à égalité, comme
 faux d'un facteur cinq. Le partage est donc pris à la seule source qui le
 donne, le rapport sur les pensions de retraite de la fonction publique annexé
 au projet de loi de finances (« jaune budgétaire »), dont le dépôt porte déjà
-la lecture sous ``sre_jaune_pensions`` : 1,63 million de civils et 0,32 million
-de militaires cotisants au 1er janvier 2024. La clé est tenue CONSTANTE sur
-toute la série, parce que rien ne dit comment elle évolue, et les deux lignes
-qui en sortent sont marquées ``estimee`` : elles sont une déduction posée sur
-une valeur publiée, pas une valeur publiée.
+la lecture sous ``sre_jaune_pensions_2027`` : 1 584 758 civils et 321 432
+militaires cotisants au 31 décembre 2025 (tableau D-5), un militaire pour
+4,93 civils. La clé est tenue CONSTANTE sur toute la série, parce que rien ne
+dit comment elle évolue — de 2016 à 2025, le jaune la fait glisser de 5,82 à
+4,93 civils par militaire, les civils reculant quand les militaires se
+tiennent —, et les deux lignes qui en sortent sont marquées ``estimee`` :
+elles sont une déduction posée sur une valeur publiée, pas une valeur
+publiée.
 
 UN COTISANT DE CAISSE N'EST PAS UNE PERSONNE
 ---------------------------------------------
@@ -47,20 +50,22 @@ from ..somme import somme_ordonnee
 #: La ligne du classeur que deux cas types se partagent.
 FONCTION_PUBLIQUE_ETAT = "fonction_publique_etat"
 
-#: Cotisants civils et militaires de l'État au 1er janvier 2024, tels que le
-#: jaune « Pensions » annexé au PLF 2026 les écrit (``sre_jaune_pensions``), en
-#: personnes. Seul leur rapport sert : il partage la ligne du COR entre les
-#: deux cas types, et il est reconduit à l'identique sur toute la série.
-COTISANTS_ETAT_2024: dict[str, float] = {
-    "fonction_publique_etat_civile": 1_630_000.0,
-    "fonction_publique_etat_militaire": 320_000.0,
+#: Cotisants civils et militaires de l'État au 31 décembre 2025, tels que le
+#: jaune « Pensions » annexé au PLF 2027 les écrit (tableau D-5,
+#: ``sre_jaune_pensions_2027``), en personnes : les comptes individuels de
+#: retraite que l'employeur alimente. Seul leur rapport sert : il partage la
+#: ligne du COR entre les deux cas types, et il est reconduit à l'identique sur
+#: toute la série. Le jaune du PLF 2026 en donnait 1,63 et 0,32 million.
+COTISANTS_ETAT_2025: dict[str, float] = {
+    "fonction_publique_etat_civile": 1_584_758.0,
+    "fonction_publique_etat_militaire": 321_432.0,
 }
 
 
 def partage_fonction_publique_etat() -> dict[str, float]:
     """La part de chaque versant dans les cotisants de l'État, somme un."""
-    total = somme_ordonnee(COTISANTS_ETAT_2024.values())
-    return {caisse: valeur / total for caisse, valeur in COTISANTS_ETAT_2024.items()}
+    total = somme_ordonnee(COTISANTS_ETAT_2025.values())
+    return {caisse: valeur / total for caisse, valeur in COTISANTS_ETAT_2025.items()}
 
 
 class EffectifsCotisants:
@@ -77,7 +82,7 @@ class EffectifsCotisants:
     publiées.
 
     Les deux versants de la fonction publique d'État sont AJOUTÉS à la lecture,
-    par la clé de ``COTISANTS_ETAT_2024`` ; la ligne d'un seul tenant reste
+    par la clé de ``COTISANTS_ETAT_2025`` ; la ligne d'un seul tenant reste
     lisible sous ``fonction_publique_etat``.
     """
 
