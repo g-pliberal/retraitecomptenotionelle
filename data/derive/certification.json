@@ -167,36 +167,36 @@
    "verifiee_le": "2026-10-13"
   },
   "bonifications_jaune_effectifs": {
-   "ajoutees": 0,
+   "ajoutees": 32,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "41248d144041a7fe",
+   "empreinte": "49d6edb084d44d24",
    "identiques": 68,
    "niveau": "certifiee",
-   "source": "Direction du budget, jaune pensions annexé au PLF 2027 (données du Service des retraites de l'État, de la CNRACL et du FSPOEIE), tableaux A-7, 50 et B-1",
-   "valeurs": 68,
+   "source": "Direction du budget, jaune pensions annexé au PLF 2027 (données du Service des retraites de l'État, de la CNRACL et du FSPOEIE), tableaux A-7, 50, B-1 et B-22",
+   "valeurs": 100,
    "verifiee_le": "2026-10-13"
   },
   "bonifications_jaune_taux": {
-   "ajoutees": 0,
+   "ajoutees": 27,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "32b82c475b070cf1",
+   "empreinte": "23965f918264cd91",
    "identiques": 75,
    "niveau": "certifiee",
-   "source": "Direction du budget, jaune pensions annexé au PLF 2027, tableaux A-7 et 50 (durées et proportions)",
-   "valeurs": 75,
+   "source": "Direction du budget, jaune pensions annexé au PLF 2027, tableaux A-7, 50 et B-22 (durées et proportions)",
+   "valeurs": 102,
    "verifiee_le": "2026-10-13"
   },
   "caracteristiques_fonction_publique": {
-   "ajoutees": 1352,
+   "ajoutees": 7082,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "62fca1c1be23b923",
+   "empreinte": "832cc2ef9876dc32",
    "identiques": 0,
    "niveau": "certifiee",
-   "source": "Direction du budget, jaune pensions annexé au PLF 2027 (données du Service des retraites de l'État, de la CNRACL et du FSPOEIE), tableaux A-1, B-1, B-3, B-3 bis, B-4 et B-5",
-   "valeurs": 1352,
+   "source": "Direction du budget, jaune pensions annexé au PLF 2027 (données du Service des retraites de l'État, de la CNRACL et du FSPOEIE), tableaux A-1 à A-6, A-8 et B-1 à B-21",
+   "valeurs": 7082,
    "verifiee_le": "2026-10-13"
   },
   "caracteristiques_retraites": {

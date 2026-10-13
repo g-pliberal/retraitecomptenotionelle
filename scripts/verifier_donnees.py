@@ -4538,7 +4538,7 @@ MESURES_JAUNE_ENTIERES = frozenset({"effectif", "beneficiaires", "gain_mensuel_e
 
 
 def _valeurs_jaune() -> dict[tuple, float]:
-    """Les trois tableaux du jaune pensions, à plat : l'édition annexée au
+    """Les quatre tableaux du jaune pensions, à plat : l'édition annexée au
     PLF 2027 (``scripts/fetch/sre_jaune_pensions.py``, édition par défaut).
 
     Clé : (tableau, ligne, population, mesure). Dans A-7 la ligne est la
@@ -4547,8 +4547,9 @@ def _valeurs_jaune() -> dict[tuple, float]:
     tableau 50 la ligne est la colonne du document (une bonification, ou
     ``ensemble``) et la mesure le bloc (``proportion``, ``gain_trimestres``,
     ``gain_mensuel_eur``) ; dans B-1 la ligne est celle du document et la
-    mesure ``departs``. Une cellule « n.d. » n'est pas une valeur : elle
-    n'entre pas.
+    mesure ``departs`` ; dans B-22, comme dans A-7, la ligne est la
+    bonification, ou ``ensemble`` pour l'``effectif``. Une cellule « n.d. »
+    n'est pas une valeur : elle n'entre pas.
     """
     tables = _lire_json("sre_jaune_pensions_2027.json",
                         "scripts/fetch/sre_jaune_pensions.py")["tables"]
@@ -4571,6 +4572,11 @@ def _valeurs_jaune() -> dict[tuple, float]:
         for population, valeur in contenu["valeurs"].items():
             if valeur is not None:
                 valeurs[("B-1", ligne, population, "departs")] = float(valeur)
+    # Le tableau B-22, lu avec les référents : la ligne est la bonification,
+    # ou ``ensemble`` pour l'effectif de pensions.
+    for population, ligne, _, mesure, valeur in _referents_jaune(tables)["B-22"]:
+        if valeur is not None:
+            valeurs[("B-22", ligne, population, mesure)] = float(valeur)
     return dict(sorted(valeurs.items()))
 
 
@@ -4601,26 +4607,35 @@ def source_jaune_taux() -> dict[tuple, float]:
     return {cle: v for cle, v in _valeurs_jaune().items() if cle[3] not in MESURES_JAUNE_ENTIERES}
 
 
-def source_jaune_referents() -> dict[tuple, float]:
-    """Les tableaux référents du jaune pensions annexé au PLF 2027 — le stock
-    au 31 décembre 2025 (A-1), le flux de 2025 (B-1, B-3, B-3 bis, B-4,
-    B-5) —, lus case par case par ``scripts/fetch/sre_jaune_pensions.py``.
-
-    Clé (tableau, population, champ, indicateur). Une case sans objet
-    (« n.d. », « n.p. », le tiret) n'est pas une valeur : elle n'entre pas.
-    """
-    tables = _lire_json("sre_jaune_pensions_2027.json",
-                        "scripts/fetch/sre_jaune_pensions.py")["tables"]
+def _referents_jaune(tables: dict) -> dict[str, list[list]]:
+    """Les tableaux référents du JSON du jaune 2027 : par numéro, une liste
+    de [population, champ, modalité, indicateur, valeur]."""
     if "referents" not in tables:
         raise SourceAbsente("les référents manquent au JSON du jaune 2027 "
                             "(relancer scripts/fetch/sre_jaune_pensions.py)")
+    return tables["referents"]
+
+
+def source_jaune_referents() -> dict[tuple, float]:
+    """Les tableaux référents du jaune pensions annexé au PLF 2027 — le stock
+    au 31 décembre 2025 (A-1 à A-6, A-8), le flux de 2025 et ses séries
+    (B-1 à B-21) —, lus case par case par
+    ``scripts/fetch/sre_jaune_referents.py``. Le B-22, les bonifications du
+    flux, va à ``bonifications_jaune.csv``.
+
+    Clé (tableau, population, champ, modalite, indicateur). Une case sans
+    objet (« n.d. », « n.p. », le tiret) n'est pas une valeur : elle n'entre
+    pas.
+    """
+    tables = _lire_json("sre_jaune_pensions_2027.json",
+                        "scripts/fetch/sre_jaune_pensions.py")["tables"]
     valeurs: dict[tuple, float] = {}
-    for tableau, populations in tables["referents"].items():
-        for population, champs in populations.items():
-            for champ, indicateurs in champs.items():
-                for indicateur, valeur in indicateurs.items():
-                    if valeur is not None:
-                        valeurs[(tableau, population, champ, indicateur)] = float(valeur)
+    for tableau, cases in _referents_jaune(tables).items():
+        if tableau == "B-22":
+            continue
+        for population, champ, modalite, indicateur, valeur in cases:
+            if valeur is not None:
+                valeurs[(tableau, population, champ, modalite, indicateur)] = float(valeur)
     return dict(sorted(valeurs.items()))
 
 
@@ -8887,7 +8902,7 @@ CERTIFICATIONS = (
         source=source_jaune_effectifs,
         origine="Direction du budget, jaune pensions annexé au PLF 2027 (données "
                 "du Service des retraites de l'État, de la CNRACL et du FSPOEIE), "
-                "tableaux A-7, 50 et B-1",
+                "tableaux A-7, 50, B-1 et B-22",
         decimales=0,
         tolerance=0.5,
         entete=(
@@ -8896,7 +8911,7 @@ CERTIFICATIONS = (
             "#",
             "# Le « Rapport sur les pensions de retraite de la fonction publique »,",
             "# annexe au projet de loi de finances (le jaune budgétaire), est le seul",
-            "# document public qui dénombre les bonifications de service. Trois de",
+            "# document public qui dénombre les bonifications de service. Quatre de",
             "# ses tableaux sont ici, à plat, lus dans le PDF par",
             "# scripts/fetch/sre_jaune_pensions.py :",
             "#",
@@ -8916,8 +8931,8 @@ CERTIFICATIONS = (
             "#                sur le montant mensuel de la pension, en euros — la",
             "#                seule valorisation publiée de ces dispositifs).",
             "#                L'encart qui le porte ne date pas son flux : c'est",
-            "#                celui de 2025, que le tableau B-22 du même jaune",
-            "#                dénombre et où chaque part se retrouve, sauf une.",
+            "#                celui de 2025, que le tableau B-22 dénombre et où",
+            "#                chaque part se retrouve, sauf une.",
             "#                LA CASE (enfant, fpe_civils, proportion) EST FAUSSE",
             "#                DANS LE DOCUMENT : 4,0 %, quand l'ensemble est à",
             "#                56,7 % et que le B-22 compte 20 736 bénéficiaires",
@@ -8926,10 +8941,16 @@ CERTIFICATIONS = (
             "# tableau B-1  : pensions de droit direct entrées en paiement en 2025 ;",
             "#                seules les lignes complètes du document sont ici,",
             "#                mesure departs.",
+            "# tableau B-22 : le flux de 2025 du tableau 50, dénombré. ligne = la",
+            "#                bonification, celles du tableau 50 ; mesure =",
+            "#                beneficiaires ou duree_trimestres (durée moyenne chez",
+            "#                ces seuls bénéficiaires). La ligne `ensemble` porte",
+            "#                l'effectif des pensions entrées en paiement (mesure",
+            "#                effectif), celui du B-1.",
             "#",
             "# population : fpe_civils_hors_poste_orange, fpe_civils, fpe_militaires,",
-            "#              fpt, fph (A-7) ; fpe_civils, fpe_militaires, fpt, fph (50) ;",
-            "#              plus fpe_total, ouvriers_etat, cnracl_total (B-1).",
+            "#              fpt, fph (A-7, B-22) ; fpe_civils, fpe_militaires, fpt,",
+            "#              fph (50) ; plus fpe_total, ouvriers_etat, cnracl_total (B-1).",
             "#",
             "# fiabilite :",
             "#   certifiee : lu dans le document du producteur et recontrôlé par",
@@ -8953,45 +8974,65 @@ CERTIFICATIONS = (
         colonne="valeur",
         source=source_jaune_taux,
         origine="Direction du budget, jaune pensions annexé au PLF 2027, "
-                "tableaux A-7 et 50 (durées et proportions)",
+                "tableaux A-7, 50 et B-22 (durées et proportions)",
         decimales=3,
         tolerance=5e-4,
     ),
     Certification(
         nom="caracteristiques_fonction_publique",
         chemin=REFERENCE / "macro" / "caracteristiques_fonction_publique.csv",
-        cles=("tableau", "population", "champ", "indicateur"),
+        cles=("tableau", "population", "champ", "modalite", "indicateur"),
         colonne="valeur",
         source=source_jaune_referents,
         origine="Direction du budget, jaune pensions annexé au PLF 2027 (données "
                 "du Service des retraites de l'État, de la CNRACL et du FSPOEIE), "
-                "tableaux A-1, B-1, B-3, B-3 bis, B-4 et B-5",
+                "tableaux A-1 à A-6, A-8 et B-1 à B-21",
         # Chaque indicateur a son unité — effectifs, années, trimestres,
         # fractions, euros — : le fichier écrit chaque valeur au plus court,
         # telle que le document l'imprime.
         decimales=None,
         tolerance=5e-7,
         entete=(
-            "# Les pensions de la fonction publique en 2025, stock et flux, dites par ceux qui les paient",
+            "# Les pensions de la fonction publique, stock et flux, dites par ceux qui les paient",
             "# source_id: sre_jaune_pensions_2027",
             "#",
             "# Le « Rapport sur les pensions de retraite de la fonction publique »,",
             "# annexe au projet de loi de finances pour 2027 (le jaune budgétaire),",
             "# publie les caractéristiques des pensions que servent le Service des",
-            "# retraites de l'État, la CNRACL et le FSPOEIE. Six de ses tableaux",
-            "# sont ici, à plat, lus case par case dans le PDF par",
-            "# scripts/fetch/sre_jaune_pensions.py :",
+            "# retraites de l'État, la CNRACL et le FSPOEIE. Les tableaux de ses",
+            "# annexes A et B sont ici, à plat, lus case par case dans le PDF par",
+            "# scripts/fetch/sre_jaune_referents.py ; le B-22, les bonifications du",
+            "# flux, va à legislation/bonifications_jaune.csv, avec le tableau 50.",
             "#",
-            "# tableau A-1    : pensions EN PAIEMENT au 31 décembre 2025 (un stock) ;",
-            "#                  champ = droit_direct ou droit_derive.",
-            "# tableau B-1    : pensions de droit direct entrées en paiement en 2025",
-            "#                  (le flux) ; champ = ensemble, ou, pour une ligne",
+            "# Clé : tableau, population, champ, modalite, indicateur. Le champ dit",
+            "# la part du régime (droit direct ou dérivé, motif de départ,",
+            "# catégorie, administration) ; la modalité, la case d'une répartition",
+            "# (année, âge, tranche d'âge, sexe, catégorie hiérarchique, grade),",
+            "# ensemble sinon.",
+            "#",
+            "# LE STOCK, les pensions EN PAIEMENT au 31 décembre :",
+            "# tableau A-1    : en 2025 ; champ = droit_direct ou droit_derive.",
+            "# tableau A-2    : en 2025, par tranche d'âge (modalite moins_de_35,",
+            "#                  35-39, ..., 90-94, plus_de_94).",
+            "# tableau A-3    : les effectifs de 2016 à 2025 (modalite = l'année ;",
+            "#                  2019-2025 porte l'évolution sur la période,",
+            "#                  indicateurs evolution et evolution_annuelle).",
+            "# tableau A-4    : la pension moyenne de 2016 à 2025 (2020-2025,",
+            "#                  l'évolution).",
+            "# tableau A-5    : la pension moyenne de 2024 et de 2025, par sexe.",
+            "# tableau A-6    : la part au minimum garanti, de 2010 à 2025.",
+            "# tableau A-8    : les déciles de la pension en 2025, par sexe",
+            "#                  (modalite ensemble, hommes, femmes).",
+            "#",
+            "# LE FLUX, les pensions entrées en paiement :",
+            "# tableau B-1    : en 2025 ; champ = ensemble, ou, pour une ligne",
             "#                  d'effectifs, son motif de départ : invalidite,",
             "#                  carriere_longue, motifs_familiaux, categorie_active.",
-            "# tableau B-3    : le même flux à l'État, par motif de départ : champ =",
-            "#                  anciennete (carrières longues comprises),",
-            "#                  motifs_familiaux, invalidite ; categorie_active, ceux",
-            "#                  des départs pour ancienneté qui en bénéficient.",
+            "# tableau B-2    : le même, par sexe (modalite hommes, femmes).",
+            "# tableau B-3    : à l'État, par motif de départ : champ = anciennete",
+            "#                  (carrières longues comprises), motifs_familiaux,",
+            "#                  invalidite ; categorie_active, ceux des départs",
+            "#                  pour ancienneté qui en bénéficient.",
             "# tableau B-3bis : le même, à la CNRACL.",
             "# tableau B-4    : les départs pour ancienneté des civils de l'État, par",
             "#                  catégorie : champ = sedentaire (hors carrières",
@@ -9002,28 +9043,57 @@ CERTIFICATIONS = (
             "#                  non_officiers, officiers).",
             "# tableau B-5    : les départs pour ancienneté de la CNRACL, par",
             "#                  catégorie : champ = sedentaire, active, carriere_longue.",
+            "# tableaux B-6 à B-9 : en 2025, par âge à la mise en paiement (modalite",
+            "#                  = l'âge ; moins_de_40 et plus_de_65 aux bornes, 30",
+            "#                  et 58 pour les militaires), champ = le motif de",
+            "#                  départ : les civils de l'État (B-6), les militaires",
+            "#                  par grade (B-7), la territoriale (B-8),",
+            "#                  l'hospitalière (B-9).",
+            "# tableau B-10   : en 2025, par administration (champ), catégorie",
+            "#                  hiérarchique (modalite a, b, c, indetermine) et sexe.",
+            "# tableau B-11   : les pensions de réversion de 2025 (champ",
+            "#                  droit_derive), l'ouvrant droit mort en activité ou",
+            "#                  en retraite (modalite deces_en_activite,",
+            "#                  deces_en_retraite).",
+            "# tableau B-12   : les entrées en paiement de 2016 à 2025 (2020-2025,",
+            "#                  l'évolution).",
+            "# tableau B-13   : les décès de pensionnés en 2025, par sexe, et la",
+            "#                  durée moyenne de perception de leur pension.",
+            "# tableau B-14   : la pension, l'indice et le taux de liquidation du",
+            "#                  flux, de 2016 à 2025 ; la valeur annuelle moyenne du",
+            "#                  point (population fonction_publique).",
+            "# tableau B-15   : la pension moyenne du flux de 2024 et de 2025.",
+            "# tableaux B-16, B-17 : en 2025, par catégorie hiérarchique et sexe,",
+            "#                  hors invalidité (champ hors_invalidite) puis pour",
+            "#                  invalidité.",
+            "# tableaux B-18, B-19 : les militaires, par grade et sexe, de même.",
+            "# tableau B-20   : les déciles de la pension du flux de 2025, hors",
+            "#                  invalidité, par sexe.",
+            "# tableau B-21   : la part au minimum garanti du flux, de 2016 à 2025.",
             "#",
             "# population : fpe_civils_hors_poste_orange, fpe_civils (La Poste et",
             "#              Orange compris), fpe_militaires, fpe_total, ouvriers_etat",
             "#              (le FSPOEIE), fpt, fph, cnracl_total ; au B-4, les armées.",
             "#",
             "# indicateur, et son unité :",
-            "#   effectif, effectif_hommes, effectif_femmes, effectif_orphelins (A-1),",
-            "#   departs (le flux) ............................ nombre de pensions",
+            "#   effectif, departs, entrees, deces, et leurs parts par sexe,",
+            "#   effectif_orphelins, effectif_invalidite ...... nombre de pensions",
             "#   part_hommes, part_femmes, part_decote, part_surcote, part_taux_plein,",
             "#   part_taux_80, part_minimum_garanti, part_majoration_enfants,",
             "#   part_remuneres_avant_liquidation ............. fraction (0.418 = 41,8 %)",
             "#   taux_liquidation, taux_liquidation_hors_decote_surcote, taux_decote,",
-            "#   taux_surcote ................................. fraction",
-            "#   age_moyen, age_radiation,",
-            "#   age_premiere_mise_en_paiement ................ années",
+            "#   taux_surcote, evolution, evolution_annuelle .. fraction",
+            "#   age_moyen et par sexe, age_radiation,",
+            "#   age_premiere_mise_en_paiement,",
+            "#   duree_perception_ans ......................... années",
             "#   services_trimestres, bonifications_trimestres,",
             "#   duree_tous_regimes_trimestres ................ trimestres",
             "#   indice_liquidation ........................... indice majoré",
-            "#   pension_principale_eur, pension_avec_accessoires_eur,",
-            "#   perte_decote_eur, gain_surcote_eur,",
-            "#   majoration_enfants_eur ....................... euros bruts par mois",
+            "#   pension_principale_eur, pension_avec_accessoires_eur et par sexe,",
+            "#   perte_decote_eur, gain_surcote_eur, majoration_enfants_eur,",
+            "#   decile_1_eur à decile_9_eur .................. euros bruts par mois",
             "#   cout_decote_meur, cout_surcote_meur .......... millions d'euros",
+            "#   valeur_point_annuelle_eur .................... euros par an",
             "#",
             "# Ce que le document dit de ses moyennes : le taux, la perte ou le",
             "# bénéfice de la décote et de la surcote se calculent sur leurs seuls",
@@ -9031,6 +9101,20 @@ CERTIFICATIONS = (
             "# le taux et l'indice de liquidation hors pensions portées au minimum",
             "# garanti. Une case « n.d. », « n.p. », « n.s. » ou un tiret n'est pas",
             "# une valeur : elle n'est pas ici.",
+            "#",
+            "# CE QUE LE DOCUMENT DIT CONTRE LUI-MÊME. Ses tableaux se recoupent —",
+            "# les sexes font l'effectif, les régimes leur total, les âges, les",
+            "# catégories et les grades leur ensemble, et chaque case imprimée deux",
+            "# fois l'est à l'identique —, sauf en douze points : les âges des B-8",
+            "# et B-9 ne font que les neuf dixièmes de leurs totaux, les départs de",
+            "# la CNRACL en catégorie active du B-2 dépassent d'un quart ceux du",
+            "# B-1, et neuf écarts vont d'une unité à une centaine. Chaque case",
+            "# reste telle qu'il l'imprime ; scripts/fetch/sre_jaune_referents.py",
+            "# les déclare une à une (INCOHERENCES_DU_DOCUMENT), et un test exige",
+            "# que rien d'autre ne se contredise. La valeur « annuelle moyenne » du",
+            "# point, au B-14, reste à 58,64 € en 2024 et en 2025, la moyenne de",
+            "# 2023, quand il vaut 59,07 € depuis le 1er juillet 2023",
+            "# (legislation/point_indice_fonction_publique.csv).",
             "#",
             "# fiabilite :",
             "#   certifiee : lu dans le document du producteur et recontrôlé par",

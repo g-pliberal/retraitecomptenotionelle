@@ -106,7 +106,19 @@ def _flux(objet: bytes) -> bytes | None:
         try:
             return zlib.decompress(donnees.strip(b"\r\n"))
         except Exception:
+            pass
+        # LES DONNÉES COMPRESSÉES PEUVENT FINIR PAR UN RETOUR À LA LIGNE, et
+        # l'ôter avec la fin de ligne qui précède « endstream » tronquait le
+        # flux : zlib le refusait, et sa page disparaissait sans bruit. Le jaune
+        # pensions du PLF 2027 en perdait cinq, dont celle de ses tableaux B-20
+        # et B-21. Le flux se relit donc tel quel, ce qui suit sa fin écarté —
+        # pourvu qu'il finisse : un flux tronqué ne rend pas une demi-page.
+        decompresseur = zlib.decompressobj()
+        try:
+            contenu = decompresseur.decompress(donnees.lstrip(b"\r\n"))
+        except Exception:
             return None
+        return contenu if decompresseur.eof else None
     return donnees
 
 

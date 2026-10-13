@@ -117,12 +117,13 @@ class Mesure:
         return self.modele / self.jaune - 1.0
 
 
-def referents_publies() -> dict[tuple[str, str, str, str], float]:
-    """Le fichier certifié, à plat : (tableau, population, champ, indicateur)."""
+def referents_publies() -> dict[tuple[str, str, str, str, str], float]:
+    """Le fichier certifié, à plat : (tableau, population, champ, modalite,
+    indicateur)."""
     with REFERENCE.open(encoding="utf-8") as flux:
         lignes = (ligne for ligne in flux if not ligne.lstrip().startswith("#"))
-        return {(l["tableau"], l["population"], l["champ"], l["indicateur"]): float(l["valeur"])
-                for l in csv.DictReader(lignes)}
+        return {(l["tableau"], l["population"], l["champ"], l["modalite"], l["indicateur"]):
+                float(l["valeur"]) for l in csv.DictReader(lignes)}
 
 
 def point_annuel(annee: int = ANNEE) -> float:
@@ -194,7 +195,7 @@ def mesurer_le_modele(simulateur: Simulateur) -> dict[str, tuple[int, dict[str, 
 
 
 def confronter(modele: dict[str, tuple[int, dict[str, float]]],
-               publies: dict[tuple[str, str, str, str], float]) -> list[Mesure]:
+               publies: dict[tuple[str, str, str, str, str], float]) -> list[Mesure]:
     """Le tableau : chaque mesure du modèle face à celle du jaune."""
     mesures: list[Mesure] = []
     for code, (tableau, population, champ) in REFERENTS.items():
@@ -202,7 +203,8 @@ def confronter(modele: dict[str, tuple[int, dict[str, float]]],
         for indicateur, _ in INDICATEURS:
             mesures.append(Mesure(code, generation, tableau, population, champ, indicateur,
                                   valeurs[indicateur],
-                                  publies[(tableau, population, champ, indicateur)]))
+                                  publies[(tableau, population, champ, "ensemble",
+                                           indicateur)]))
     return mesures
 
 

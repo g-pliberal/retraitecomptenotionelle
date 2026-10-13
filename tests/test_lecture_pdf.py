@@ -260,3 +260,25 @@ def test_les_fragments_d_une_ligne_gardent_leur_abscisse():
         [[(60, "Ligne"), (120, "1"), (240, "3")], [(60, "SUIVANTE")]]]
     assert [[texte_de_ligne(ligne) for ligne in page] for page in pages] == (
         lignes_par_page(pdf, par_abscisse=True)) == [["Ligne 1 3", "SUIVANTE"]]
+
+
+def test_un_flux_comprime_qui_finit_par_un_retour_a_la_ligne_se_lit():
+    """Les données compressées peuvent finir par l'octet du retour à la ligne :
+    ôté avec la fin de ligne qui précède ``endstream``, il tronquait le flux,
+    zlib le refusait, et la page disparaissait sans bruit — cinq pages du
+    jaune pensions du PLF 2027, dont celle de ses tableaux B-20 et B-21. Ce
+    contenu-ci se compresse justement en finissant par ``\\n``."""
+    contenu = b"BT /F1 10 Tf 60 700 Td (FLUX 1399) Tj ET"
+    assert zlib.compress(contenu).endswith(b"\n")
+    pdf = _document(_objet(1, _flux(b"<< >>", contenu, comprimer=True)))
+    assert lignes_pdf(pdf) == ["FLUX 1399"], lignes_pdf(pdf)
+
+
+def test_un_flux_comprime_tronque_ne_rend_rien():
+    """Un flux dont la fin manque ne rend pas une demi-page : le lecteur le
+    tient pour illisible, comme avant."""
+    contenu = b"BT /F1 10 Tf 60 700 Td (FLUX 1399) Tj ET"
+    tronque = zlib.compress(contenu)[:-6]
+    objet = _objet(1, b"<< /Filter /FlateDecode /Length %d >>\nstream\n" % len(tronque)
+                   + tronque + b"\nendstream")
+    assert lignes_pdf(_document(objet)) == [], lignes_pdf(_document(objet))

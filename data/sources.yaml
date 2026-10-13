@@ -1810,18 +1810,28 @@ institutions:
           `contribution_employeur_public.csv` (étape 3) ; les autres recoupent
           les séries du dépôt sous la règle du 1er janvier.
 
-          SES TABLEAUX RÉFÉRENTS (étape 4) : le stock au 31 décembre 2025
-          (A-1) et le flux de 2025, en entier (B-1), par motif de départ (B-3,
-          B-3 bis), par catégorie et par grade (B-4, B-5) — âges, durées,
-          décote et surcote, taux et indice de liquidation, minimum garanti,
-          pension —, 1 352 valeurs certifiées dans
-          `caracteristiques_fonction_publique.csv`. Leurs cases vides ne
-          laissant rien dans le texte d'une ligne, le script les lit case par
-          case, chacune à sa place, et les recoupe entre eux : les sexes font
-          l'effectif, les motifs de départ du B-3 l'ensemble du B-1, les
-          catégories du B-4 la colonne des départs pour ancienneté du B-3.
-          Aucun calcul ne les lit : les cas types statutaires s'y confrontent
-          (`tests/test_flux_fonction_publique.py`).
+          SES TABLEAUX RÉFÉRENTS (étape 4), les annexes A et B : le stock au
+          31 décembre 2025 (A-1 à A-6, A-8) et le flux de 2025 avec ses séries
+          depuis 2016 (B-1 à B-21) — effectifs par âge, sexe, catégorie,
+          administration et grade, âges, durées, décote et surcote, taux et
+          indice de liquidation, minimum garanti, pensions et leurs déciles,
+          réversions et décès —, 7 082 valeurs certifiées dans
+          `caracteristiques_fonction_publique.csv` ; le B-22, les
+          bonifications du flux, dans `bonifications_jaune.csv`, où il établit
+          l'année du tableau 50. Leurs cases vides ne laissant rien dans le
+          texte d'une ligne, `scripts/fetch/sre_jaune_referents.py` les lit
+          case par case, chacune à sa place, et les recoupe : les sexes font
+          l'effectif, les régimes leur total, les âges, les catégories et les
+          grades leur ensemble, et chaque case imprimée deux fois l'est à
+          l'identique. Le document se contredit en douze points, que le script
+          déclare un à un, ses cases gardées telles qu'imprimées : les âges des
+          B-8 et B-9 ne font que les neuf dixièmes de leurs totaux, les départs
+          de la CNRACL en catégorie active du B-2 dépassent d'un quart ceux du
+          B-1, et neuf écarts vont d'une unité à une centaine. Cinq de ses
+          pages, dont celle des B-20 et B-21, échappaient au lecteur PDF du
+          dépôt, qui tronquait un flux compressé finissant par un retour à la
+          ligne. Aucun calcul ne les lit : les cas types statutaires s'y
+          confrontent (`tests/test_flux_fonction_publique.py`).
 
           LE FICHIER NE SE TÉLÉCHARGE PAS DEPUIS UNE SESSION : le 13 octobre,
           budget.gouv.fr répond 403 au cloud, par curl comme par WebFetch, page

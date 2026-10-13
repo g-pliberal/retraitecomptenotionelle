@@ -49,7 +49,6 @@ sys.path.insert(0, str(RACINE / "scripts"))
 sys.path.insert(0, str(RACINE / "scripts" / "fetch"))
 
 import flux_fonction_publique as flux  # noqa: E402
-from sre_jaune_pensions import incoherences_referents  # noqa: E402
 
 CHEMIN = "data/reference/macro/caracteristiques_fonction_publique.csv"
 
@@ -87,47 +86,42 @@ def mesures():
     return flux.mesures_du_depot(Parametres())
 
 
-def test_le_stock_et_le_flux_de_2025_sont_certifies_et_qu_aucun_calcul_ne_les_lit(lignes):
-    """Six tableaux, 1 352 valeurs, toutes certifiées ; la clé de chacune est à
-    elle. Le fichier est hors de l'empreinte du modèle : il le juge, il ne le
-    règle pas."""
+def test_le_stock_et_le_flux_sont_certifies_et_qu_aucun_calcul_ne_les_lit(lignes):
+    """Vingt-huit tableaux, 7 082 valeurs, toutes certifiées ; la clé de
+    chacune est à elle. Le fichier est hors de l'empreinte du modèle : il le
+    juge, il ne le règle pas. Ce que ses tableaux disent les uns des autres
+    est à ``tests/test_sre_jaune_referents.py``."""
     assert CHEMIN in memoire.HORS_DU_MODELE
     assert {l["fiabilite"] for l in lignes} == {"certifiee"}
-    assert {l["tableau"] for l in lignes} == {"A-1", "B-1", "B-3", "B-3bis", "B-4", "B-5"}
-    cles = [(l["tableau"], l["population"], l["champ"], l["indicateur"]) for l in lignes]
-    assert len(cles) == len(set(cles)) == 1352
+    assert {l["tableau"] for l in lignes} == {f"A-{n}" for n in (1, 2, 3, 4, 5, 6, 8)} | {
+        f"B-{n}" for n in range(1, 22)} | {"B-3bis"}
+    cles = [(l["tableau"], l["population"], l["champ"], l["modalite"], l["indicateur"])
+            for l in lignes]
+    assert len(cles) == len(set(cles)) == 7082
 
 
-def test_le_stock_et_le_flux_se_recoupent_entre_eux_et_avec_les_bonifications(lignes):
-    """Les sexes font l'effectif, ou cent pour cent ; le total de l'État, ses
-    civils et ses militaires ; les motifs de départ du B-3, l'ensemble du
-    B-1 ; les catégories du B-4, les départs pour ancienneté du B-3. Et les
-    départs du B-1 sont ceux que `bonifications_jaune.csv` tient du même
-    tableau."""
-    imbrique: dict = {}
-    for l in lignes:
-        valeur = float(l["valeur"])
-        imbrique.setdefault(l["tableau"], {}).setdefault(l["population"], {}).setdefault(
-            l["champ"], {})[l["indicateur"]] = int(valeur) if valeur.is_integer() else valeur
-    assert incoherences_referents(imbrique) == []
-
+def test_les_departs_du_flux_sont_ceux_que_tiennent_les_bonifications(lignes):
+    """Les départs du B-1 sont ceux que `bonifications_jaune.csv` tient du
+    même tableau, lu par l'autre lecteur."""
     with (RACINE / "data/reference/legislation/bonifications_jaune.csv").open(encoding="utf-8") as f:
         bonifications = list(csv.DictReader(x for x in f if not x.lstrip().startswith("#")))
     ensemble = {b["population"]: int(b["valeur"]) for b in bonifications
                 if b["tableau"] == "B-1" and b["ligne"] == "ensemble_des_departs"}
+    departs = {l["population"]: float(l["valeur"]) for l in lignes
+               if (l["tableau"], l["champ"], l["modalite"], l["indicateur"])
+               == ("B-1", "ensemble", "ensemble", "departs")}
     assert len(ensemble) == 8
-    for population, departs in ensemble.items():
-        assert imbrique["B-1"][population]["ensemble"]["departs"] == departs, population
+    assert departs == ensemble
 
 
 def test_les_moyennes_du_flux_sont_celles_que_le_texte_du_jaune_ecrit(lignes):
     """La partie IV du jaune écrit, en toutes lettres, ce que ses tableaux
     annexés donnent : l'indice moyen de liquidation de 2025, 726 pour les
     civils de l'État et 484 pour la CNRACL (p. 156)."""
-    valeur = {(l["tableau"], l["population"], l["champ"], l["indicateur"]): float(l["valeur"])
-              for l in lignes}
-    assert valeur[("B-1", "fpe_civils", "ensemble", "indice_liquidation")] == 726
-    assert valeur[("B-1", "cnracl_total", "ensemble", "indice_liquidation")] == 484
+    valeur = {(l["tableau"], l["population"], l["champ"], l["modalite"], l["indicateur"]):
+              float(l["valeur"]) for l in lignes}
+    assert valeur[("B-1", "fpe_civils", "ensemble", "ensemble", "indice_liquidation")] == 726
+    assert valeur[("B-1", "cnracl_total", "ensemble", "ensemble", "indice_liquidation")] == 484
 
 
 def test_chaque_cas_type_statutaire_part_en_2025_face_aux_departs_de_son_groupe(mesures):

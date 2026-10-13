@@ -54,7 +54,7 @@ def test_le_fichier_ne_porte_que_du_certifie_et_des_cles_uniques():
     assert {r["fiabilite"] for r in lignes} == {"certifiee"}
     cles = [(r["tableau"], r["ligne"], r["population"], r["mesure"]) for r in lignes]
     assert len(cles) == len(set(cles)), "deux lignes portent la même clé"
-    assert {r["tableau"] for r in lignes} == {"A-7", "50", "B-1"}
+    assert {r["tableau"] for r in lignes} == {"A-7", "50", "B-1", "B-22"}
 
 
 def test_les_entiers_et_les_decimaux_ont_chacun_leur_format():
@@ -112,7 +112,9 @@ def test_chaque_chiffre_cite_du_jaune_est_une_valeur_certifiee_de_ses_lignes():
 
 def test_les_deux_sources_du_verificateur_se_partagent_les_mesures(monkeypatch):
     """Sur un JSON simulé : les entiers d'un côté, les décimaux de l'autre, et
-    les clés (tableau, ligne, population, mesure) ; « n.d. » n'entre pas."""
+    les clés (tableau, ligne, population, mesure) ; « n.d. » n'entre pas. Le
+    B-22 vient des référents, lus case par case, et lui seul : les autres
+    tableaux référents vont à ``caracteristiques_fonction_publique.csv``."""
     chemin = RACINE / "scripts" / "verifier_donnees.py"
     specification = importlib.util.spec_from_file_location("verifier_donnees", chemin)
     module = importlib.util.module_from_spec(specification)
@@ -128,6 +130,12 @@ def test_les_deux_sources_du_verificateur_se_partagent_les_mesures(monkeypatch):
                "gain_mensuel_eur": {"fpe_civils": {"depaysement": 266, "ensemble": None}}},
         "B-1": {"ensemble_des_dparts": {"libelle": "Ensemble des départs",
                                         "valeurs": {"fpe_civils": 46932}}},
+        "referents": {
+            "B-22": [["fpe_civils", "ensemble", "ensemble", "effectif", 47104],
+                     ["fpe_civils", "enfant", "ensemble", "beneficiaires", 20736],
+                     ["fpe_civils", "enfant", "ensemble", "duree_trimestres", 7.9],
+                     ["fpt", "cinquieme_l12", "ensemble", "beneficiaires", None]],
+            "B-1": [["fpe_civils", "ensemble", "ensemble", "departs", 47104]]},
     }}
     monkeypatch.setattr(module, "_lire_json", lambda nom, script: simule)
     entiers = module.source_jaune_effectifs()
@@ -138,10 +146,13 @@ def test_les_deux_sources_du_verificateur_se_partagent_les_mesures(monkeypatch):
         ("A-7", "depaysement", "fpt", "beneficiaires"): 39933.0,
         ("A-7", "ensemble", "fpe_civils", "effectif"): 1654863.0,
         ("B-1", "ensemble_des_dparts", "fpe_civils", "departs"): 46932.0,
+        ("B-22", "enfant", "fpe_civils", "beneficiaires"): 20736.0,
+        ("B-22", "ensemble", "fpe_civils", "effectif"): 47104.0,
     }
     assert decimaux == {
         ("50", "depaysement", "fpe_civils", "proportion"): 0.09,
         ("50", "ensemble", "fpe_civils", "proportion"): 0.569,
         ("A-7", "depaysement", "fpe_civils", "duree_trimestres"): 17.3,
         ("A-7", "depaysement", "fpt", "duree_trimestres"): 18.7,
+        ("B-22", "enfant", "fpe_civils", "duree_trimestres"): 7.9,
     }
