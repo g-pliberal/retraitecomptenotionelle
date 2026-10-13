@@ -1,0 +1,28 @@
+date: "2026-10-13"
+session: "action 159, étape 6 : le financement et le coût, le jaune pensions 2027 confronté à ce que la page Coût lit"
+consulte: >-
+  Aucun texte de loi : la session confronte des séries, et n'écrit aucune règle du
+  scénario 1. Le jaune pensions annexé au PLF 2027 (data/brut/34465.pdf, tiré de la
+  branche jaune-2027, empreinte vérifiée), en texte : figures 1, 2 et 6 à 9, tableaux 4,
+  5, 10, 11, 17 à 21, 23, 113 à 116, A-7, B-1 et D-1 à D-5 bis. Le classeur par régime
+  du COR de juin 2024 (data/brut/cor_regimes.json, récupéré par
+  scripts/fetch/cor_regimes.py), pour l'unité de la feuille du FSPOEIE.
+trouve: >-
+  Les comptes du COR que la page Coût lit recoupent le jaune : 7 592 M€ de subventions
+  d'équilibre en 2025 contre 7 663, 48 708 M€ de contribution de l'État contre 48 006 au
+  programme 741, la part de l'État de cinq régimes à 2,4 points, les cotisants de 2024 à
+  5 % ; deux tests le tiennent. Deux corrections : la clé civils-militaires de l'État,
+  passée au tableau D-5 (1 584 758 et 321 432 cotisants au 31 décembre 2025, aucun
+  chiffre ancré ne bouge), et les cotisants du FSPOEIE, que la feuille du COR annonce en
+  milliers au-dessus de millions (17 au lieu de 17 349 en 2024). Mis à jour : le
+  recoupement de la majoration pour enfants (2,21 Md€, 28 % du poste des comptes) et les
+  engagements de l'État du référent Pablo (1 366 Md€ fin 2025 au taux de 2,21 %).
+  Déclarés : les 86 % « de l'État » du régime de l'État, qui sont ceux de tous ses
+  employeurs (74 points pour l'État lui-même), et la subvention d'équilibre du FSPOEIE,
+  hors de sa série de taux (1 654 M€ en 2025). Le document se contredit six fois.
+reste: >-
+  À l'étape 8 : le poids des pensions dans le budget général et dans chaque ministère.
+  À l'action 129 : la contribution d'équilibre du système chez le COR est celle de
+  l'État-employeur, quand le poste du même nom, régime par régime, compte tous les
+  employeurs. Au chantier 138.3 : un engagement par régime, que le compte général de
+  l'État confronterait.
