@@ -1,0 +1,42 @@
+date: "2026-10-13"
+session: "action 129 : le jaune pensions du PLF 2027 cherché le matin de la séance publique, toujours absent"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1. Le
+  13 octobre, de 10 h 30 à 10 h 50, heure de Paris, depuis le cloud : la page du dossier
+  du PLF 2027 de l'Assemblée nationale (dyn/17/dossiers/PLF_2027), deux fois par le cache
+  du site, qui la garde jusqu'à quatre heures, puis une fois sans lui ; celle du PLF 2026,
+  pour comparer ; les chemins statiques de www2 sur le modèle des années passées,
+  Annexes-DL/PLF2025-Jaunes/12-Jaune_pensions.pdf, qui répond, et neuf équivalents pour
+  2027, dont PLF2027-Jaunes/12-Jaune_pensions.pdf et PLF-2027/12-Jaune2027_Pensions.pdf ;
+  budget.gouv.fr, la page des jaunes 2027 et celle de l'exercice ; data.gouv.fr ; une
+  recherche sur le web ; deux articles d'Acteurs publics, du 15 juillet et du
+  5 octobre 2026.
+trouve: >-
+  Le jaune pensions 2027 n'est toujours en ligne nulle part le 13 octobre à 10 h 50, le
+  jour où le dossier inscrit sa « Discussion en séance publique ». Ses « Documents et
+  annexes » s'arrêtent aux annexes du projet et aux projets annuels de performances, mis
+  en ligne le 1er octobre : pas de section « Jaunes annexés », quand celle du PLF 2026 en
+  porte une, où le jaune pensions est le n° 12
+  (dyn/contenu/visualisation/1090002/file/12-Jaune2026_Pensions.pdf). La page tirée sans
+  le cache dit la même chose. Les chemins statiques de 2027 répondent 404, budget.gouv.fr
+  403 au proxy, et data.gouv.fr coupe la connexion. Les articles d'Acteurs publics ne
+  datent pas le jaune et n'annoncent aucune décomposition du taux par poste : la
+  circulaire du directeur du budget du 10 juillet 2026 promet « la part et l'évolution
+  des dépenses de chaque mission dédiée au financement du CAS « Pensions » », ce
+  qu'écrit l'article 75 du projet. Pour l'outillage : l'adresse
+  dyn/contenu/visualisation/<numéro>/file/<nom> sert un fichier par son seul numéro, le
+  nom n'y compte pas ; espacé, un numéro qui n'est pas un fichier répond 500, un numéro
+  qui n'existe pas 404. Soixante-dix requêtes en deux minutes, par fenêtres de vingt
+  numéros entre 1128330 et 1131008, après ceux des projets annuels de performances, ont
+  reçu des 503 sous 1130000 et des 404 au-delà, puis les connexions ont été coupées
+  quelques minutes ; le proxy coupait aussi, à la même heure, celles vers data.gouv.fr et
+  web.archive.org, et la cause n'est donc pas sûre.
+reste: >-
+  Tirer le jaune de la page du dossier dès qu'elle porte ses « Jaunes annexés », la LOLF
+  le voulant avant le début de l'examen en séance publique, inscrit ce 13 octobre ; la
+  demander avec un paramètre qui contourne le cache (?v=<horodatage>). Voir s'il
+  décompose le taux de l'État et, s'il le fait année par année, faire accepter plusieurs
+  années à `PartRetraiteSeuleEtat`, dans les deux moteurs. Ne pas balayer les numéros de
+  visualisation de l'Assemblée : un document déposé et pas encore lié n'est pas publié,
+  et c'est l'accès de toutes les sessions au site qu'on risquerait.
+prochaine_veille: "2026-10-14"

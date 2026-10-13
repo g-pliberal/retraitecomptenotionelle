@@ -2455,16 +2455,16 @@ vaut pour elle. C'est le test à écrire à la fin de ce chantier.
 
 ### 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, puis le défaut — `en cours`
 
-**Reprise, au 11 octobre 2026.** Le réglage et le défaut sont faits ; reste le
+**Reprise, au 13 octobre 2026.** Le réglage et le défaut sont faits ; reste le
 point 1, une vraie série année par année de la part « retraite seule », au lieu
 de la proportion de 2025 prêtée aux autres années. Le jaune pensions du PLF 2027
-(n° 3210) n'était en ligne nulle part le 11 au soir : ni à l'Assemblée, sans
-« Jaunes annexés », ni sur budget.gouv.fr, dont la page des jaunes 2027 répond
-« Accès refusé » (2026 : « plf-2026-jaunes-budgetaires »). La LOLF le veut avant
-la séance du 13 : le tirer de l'Assemblée, que le cloud joint, voir s'il
-décompose le taux, puis faire accepter plusieurs années à
-`PartRetraiteSeuleEtat` (`regimes.py`, `regimes.js`). Détail : « Le point 1
-reste ouvert », et les deux entrées du journal de veille du 11 octobre.
+(n° 3210) n'était toujours pas en ligne le 13 octobre à 10 h 50, jour de la
+séance publique : pas de « Jaunes annexés » au dossier de l'Assemblée, même tiré
+sans son cache (`?v=<horodatage>`). L'en tirer dès qu'il y paraît, sans balayer
+les numéros de ses fichiers, voir s'il décompose le taux, puis faire accepter
+plusieurs années à `PartRetraiteSeuleEtat` (`regimes.py`, `regimes.js`).
+Détail : « Le point 1 reste ouvert », et le journal de veille des 11 et
+13 octobre.
 
 **Demande.** « Dis-moi en plus sur le taux seulement dédié à la retraite, ça
 m'intéresse — ça peut changer beaucoup de choses », puis : « intègre-le comme
