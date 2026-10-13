@@ -122,6 +122,34 @@
 # atteint soixante ans ce mois-là. Et les tables de 2023, qui ne répondent
 # qu'aux conditions réunies depuis 2025, quand l'article est abrogé, se lisent
 # à la génération de l'agent : leur colonne reste vide.
+#
+# SAINT-PIERRE-ET-MIQUELON N'EST PAS UN RÉGIME SPÉCIAL, MAIS SA DURÉE EST LA
+# SIENNE : le c du 1° de l'article 5 de la loi n° 87-563 l'écrit génération par
+# génération, depuis l'ordonnance n° 2015-896, pour les pensions prenant effet
+# à compter du 1er juillet 2016 au plus tard (son article 4, 3°). Sa colonne
+# `depuis` ne borne rien : c'est la date d'EFFET de la pension, et non celle
+# des conditions réunies, qui choisit la rédaction, et la période de la fiche
+# la choisit. Lues le 13 octobre 2026 dans les index LEGI et JORF :
+#   `spm_2015` — rédactions du 25 juillet 2015 au 30 décembre 2025
+#       (LEGIARTI000030930361 à LEGIARTI000051289942 ; la loi n° 2023-1250 n'a
+#       réécrit que le b) : 150 trimestres avant 1956, deux de plus par
+#       génération jusqu'à 166 pour 1963, 167 pour 1964, 168 pour 1965, 169
+#       pour 1966, 170 pour 1967-1969, 171 pour 1970-1972, 172 à compter de
+#       1973. La fiche lui faisait lire, chaque année, la durée de la génération
+#       qui atteint l'ouverture cette année-là : 158 trimestres à une
+#       Saint-Pierraise née en 1956 partie en 2020, dont le droit en demande 152.
+#   `spm_2026` — rédaction de l'article 105, IV, de la loi n° 2025-1403, pour
+#       les pensions prenant effet à compter du 1er mars 2026 (son VI ;
+#       LEGIARTI000053281072, LEGIARTI000054477924) : les mêmes jusqu'à 1962,
+#       puis 166 des nés du 1er janvier 1963 au 30 septembre 1965, 167
+#       d'octobre à décembre 1965, 168 pour 1966, 169 pour 1967, 170 pour
+#       1968-1970, 171 pour 1971-1973, 172 à compter de 1974.
+# Les deux coupures tombent en cours d'année, et la fiche coupe au 1er
+# janvier : les pensions de janvier à juin 2016 relèvent encore du décret n°
+# 89-110, 150 trimestres, que la table ne dépasse que pour les nés de janvier
+# à mai 1956 partis à soixante ans (152) ; celles de janvier et février 2026,
+# de `spm_2015`, qui ne diffère de `spm_2026` qu'à compter de 1964, une
+# génération qui n'atteint pas son âge avant avril 2026.
 table,depuis,generation,trimestres,retranche_decote,fiabilite,age_de_lecture
 sncf_conduite,2025-01,1968.833,167,0,haute,
 sncf_conduite,2025-01,1970,168,0,haute,
@@ -184,3 +212,33 @@ crpcen_2014,2019-07,1964,169,0,haute,
 crpcen_2014,2019-07,1967,170,0,haute,
 crpcen_2014,2019-07,1970,171,0,haute,
 crpcen_2014,2019-07,1973,172,0,haute,
+spm_2015,1900-01,1900,150,0,haute,
+spm_2015,1900-01,1956,152,0,haute,
+spm_2015,1900-01,1957,154,0,haute,
+spm_2015,1900-01,1958,156,0,haute,
+spm_2015,1900-01,1959,158,0,haute,
+spm_2015,1900-01,1960,160,0,haute,
+spm_2015,1900-01,1961,162,0,haute,
+spm_2015,1900-01,1962,164,0,haute,
+spm_2015,1900-01,1963,166,0,haute,
+spm_2015,1900-01,1964,167,0,haute,
+spm_2015,1900-01,1965,168,0,haute,
+spm_2015,1900-01,1966,169,0,haute,
+spm_2015,1900-01,1967,170,0,haute,
+spm_2015,1900-01,1970,171,0,haute,
+spm_2015,1900-01,1973,172,0,haute,
+spm_2026,1900-01,1900,150,0,haute,
+spm_2026,1900-01,1956,152,0,haute,
+spm_2026,1900-01,1957,154,0,haute,
+spm_2026,1900-01,1958,156,0,haute,
+spm_2026,1900-01,1959,158,0,haute,
+spm_2026,1900-01,1960,160,0,haute,
+spm_2026,1900-01,1961,162,0,haute,
+spm_2026,1900-01,1962,164,0,haute,
+spm_2026,1900-01,1963,166,0,haute,
+spm_2026,1900-01,1965.75,167,0,haute,
+spm_2026,1900-01,1966,168,0,haute,
+spm_2026,1900-01,1967,169,0,haute,
+spm_2026,1900-01,1968,170,0,haute,
+spm_2026,1900-01,1971,171,0,haute,
+spm_2026,1900-01,1974,172,0,haute,

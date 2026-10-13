@@ -135,6 +135,50 @@
 #       référence d'avant, que la diminution de l'article 85-2, II, réduit : la
 #       période de 2025 la lit dans celle de l'année où le droit s'ouvre
 #       (`age_taux_plein_a_l_ouverture`).
+#
+# SAINT-PIERRE-ET-MIQUELON, sept générations derrière la métropole. Depuis
+# l'ordonnance n° 2015-896, le b du 1° de l'article 5 de la loi n° 87-563
+# adapte L. 161-17-2 en décalant ses dates, et l'article 3, II, 1°, du décret
+# n° 2017-1000 adapte de même D. 161-2-1-9, qui fixe les âges intermédiaires ;
+# le taux plein vient de L. 351-8, rendu applicable par le 3° du même article
+# 5. La fiche portait l'âge de la génération qui atteint l'ouverture l'année de
+# la liquidation. Lu le 13 octobre 2026 dans les index LEGI et JORF :
+#   `spm_2015` — article 5, b, rédactions du 25 juillet 2015 au 27 décembre 2023
+#       (LEGIARTI000030930361 à LEGIARTI000044629874), pour les pensions prenant
+#       effet au plus tard le 1er juillet 2016 (ordonnance n° 2015-896, article
+#       4, 3°) : soixante ans avant 1958, soixante ans et quatre mois pour 1958,
+#       soixante ans et neuf mois pour 1959, soixante et un ans et deux mois
+#       pour 1960, soixante et un ans et sept mois pour 1961 (D. 161-2-1-9, « nés
+#       en 1952 » devenu « nés en 1959 », LEGIARTI000034740766), soixante-deux
+#       ans à compter de 1962 ; taux plein cinq ans au-dessus (L. 351-8, 1°,
+#       LEGIARTI000028498855 : « l'âge prévu à l'article L. 161-17-2 augmenté de
+#       cinq années »).
+#   `spm_2023` — article 5, b, rédaction de l'article 90, II, 1°, de la loi n°
+#       2023-1250, pour les pensions prenant effet à compter du 1er septembre
+#       2023 (son V, A ; LEGIARTI000048697709), et D. 161-2-1-9 adapté par le
+#       décret n° 2025-157 (LEGIARTI000051227243) : les mêmes âges jusqu'à 1962,
+#       trois mois de plus par génération de 1963 à 1969, soixante-quatre ans à
+#       compter de 1970. Taux plein à soixante-sept ans. POUR 1958 À 1961, UNE
+#       QUESTION OUVERTE : L. 351-8, 1°, ne donne plus depuis le 1er septembre
+#       2023 que « l'âge prévu au premier alinéa de l'article L. 161-17-2
+#       augmenté de trois années » (LEGIARTI000047452736), soixante-sept ans pour
+#       tous à le lire mot à mot, et aucun texte de l'archipel ne garde à ces
+#       quatre générations, qui n'ont pas toutes atteint leur âge avant cette
+#       date, celui d'avant. La table le leur garde, comme la fiche le faisait ;
+#       la pratique de la caisse n'est pas lue, d'où le niveau `moyenne`.
+#   `spm_2026` — article 5, b, rédaction de l'article 105, IV, de la loi n°
+#       2025-1403, pour les pensions prenant effet à compter du 1er mars 2026, et
+#       non du 1er septembre comme en métropole (son VI ; LEGIARTI000053281072,
+#       puis LEGIARTI000054477924, l'ordonnance n° 2026-648 rendant aux nés
+#       avant 1963 l'âge d'avant) : soixante-deux ans et trois mois des nés du
+#       1er janvier 1963 au 30 septembre 1965, et six mois d'octobre à décembre
+#       1965, soixante-deux ans et neuf mois pour 1966, soixante-trois ans pour
+#       1967, trois mois de plus par génération jusqu'à soixante-trois ans et
+#       neuf mois pour 1970, soixante-quatre ans à compter de 1971.
+# La fiche lit `spm_2015` de 2016 à 2022, `spm_2023` de 2023 à 2025, `spm_2026`
+# depuis 2026 : à l'année près, les deux coupures ne déplacent personne qui
+# part à son âge, aucune des générations que les tables séparent ne
+# l'atteignant avant 2025 ni avant avril 2026.
 table,generation,age_ouverture,age_taux_plein,fiabilite,decote_par_trimestre,age_surcote_maximum
 cavom,1900,60,65,certifiee,
 cavom,1956,60.5,65.5,certifiee,
@@ -264,3 +308,37 @@ crpcen_2023,1967,63.25,67,haute,
 crpcen_2023,1968,63.5,67,haute,
 crpcen_2023,1969,63.75,67,haute,
 crpcen_2023,1970,,67,haute,
+spm_2015,1900,60,65,haute,
+spm_2015,1958,60.333333,65.333333,haute,
+spm_2015,1959,60.75,65.75,haute,
+spm_2015,1960,61.166667,66.166667,haute,
+spm_2015,1961,61.583333,66.583333,haute,
+spm_2015,1962,62,67,haute,
+spm_2023,1900,60,65,haute,
+spm_2023,1958,60.333333,65.333333,moyenne,
+spm_2023,1959,60.75,65.75,moyenne,
+spm_2023,1960,61.166667,66.166667,moyenne,
+spm_2023,1961,61.583333,66.583333,moyenne,
+spm_2023,1962,62,67,haute,
+spm_2023,1963,62.25,67,haute,
+spm_2023,1964,62.5,67,haute,
+spm_2023,1965,62.75,67,haute,
+spm_2023,1966,63,67,haute,
+spm_2023,1967,63.25,67,haute,
+spm_2023,1968,63.5,67,haute,
+spm_2023,1969,63.75,67,haute,
+spm_2023,1970,64,67,haute,
+spm_2026,1900,60,65,haute,
+spm_2026,1958,60.333333,65.333333,moyenne,
+spm_2026,1959,60.75,65.75,moyenne,
+spm_2026,1960,61.166667,66.166667,moyenne,
+spm_2026,1961,61.583333,66.583333,moyenne,
+spm_2026,1962,62,67,haute,
+spm_2026,1963,62.25,67,haute,
+spm_2026,1965.75,62.5,67,haute,
+spm_2026,1966,62.75,67,haute,
+spm_2026,1967,63,67,haute,
+spm_2026,1968,63.25,67,haute,
+spm_2026,1969,63.5,67,haute,
+spm_2026,1970,63.75,67,haute,
+spm_2026,1971,64,67,haute,

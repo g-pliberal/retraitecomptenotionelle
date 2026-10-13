@@ -21,6 +21,13 @@ sources:
   - type: autre
     reference: docs/regimes.md, journal de la campagne sur les régimes
     date: 2026-09-16
+  - type: legifrance
+    reference: >-
+      Saint-Pierre-et-Miquelon : loi n° 87-563, article 5, dix rédactions de
+      LEGIARTI000006757151 à LEGIARTI000054477924 ; loi n° 2023-1250, article 90,
+      II et V ; loi n° 2025-1403, article 105, IV et VI ; décret n° 2017-1000,
+      article 3, II, 1°, sept rédactions ; ordonnance n° 2015-896, article 4
+    date: 2026-10-13
 textes_a_rattacher:
 - reference: >-
     voir data/reference/legislation/reformes.yaml, entrées datées de 2023 et après
@@ -34,6 +41,7 @@ reformes:
 - cprn_report_2024
 - rafep_2024
 - mayotte_2024
+- spm_2023
 - agricole_2025
 - assiette_liberaux_2026
 - asv_2026

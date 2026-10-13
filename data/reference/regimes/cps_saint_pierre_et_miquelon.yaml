@@ -33,8 +33,12 @@ inventaire:
     Taux de cotisation et plafond de la caisse de prévoyance sociale,
     fixés localement et absents de l'index : ceux du régime général
     tiennent lieu. Le régime d'avant août 1987 (ordonnance n° 77-1102)
-    n'est pas porté. La table par génération est lue en dur, année par
-    année, faute d'un drapeau qui la décale de sept ans.
+    n'est pas porté. Le revenu annuel moyen n'est pas celui du droit :
+    toute la carrière avant le 1er juillet 2016, puis quarante à vingt-huit
+    années pour les nés avant 1962 (loi n° 87-563, art. 5, 3°, d), quand
+    la fiche en retient dix, puis vingt-cinq ; la surcote de 1,25 % par
+    trimestre accompli depuis le 1er juillet 2016 (décret n° 2017-1000)
+    n'est pas portée.
 periodes:
   - debut: 1987
     fin: 1987
@@ -342,6 +346,7 @@ periodes:
     taux_cotisation_deplafonnee: 0.0160
     part_salariale_deplafonnee: 0.0000
     decote_par_trimestre: 0.0250
+    decote_par_generation: decote_regime_general
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
@@ -355,10 +360,16 @@ periodes:
       décret n° 89-110 — la loi du 22 juillet 1993 n'a pas été étendue à
       l'archipel, et l'ordonnance n° 2015-896 le confirme en écrivant «
       150 trimestres pour les assurés nés avant le 1er janvier 1956 » (loi
-      n° 87-563, art. 5, c, LEGIARTI000030930361). La table nationale par
-      génération ne s'applique pas ici, d'où une durée en dur. Salaire de
-      référence : dix meilleures années, faute d'extension lue de R.
-      351-29 avant le décret n° 2017-1000.
+      n° 87-563, art. 5, c, LEGIARTI000030930361) ; âges de 60 et 65 ans
+      pour toute génération (art. 7, LEGIARTI000006774242). COEFFICIENT DE
+      MINORATION À LA GÉNÉRATION : le même article 9 fixe le taux « selon
+      les modalités définies à l'article R. 351-27 », qui l'abaisse depuis
+      2004 de 2,5 % pour les nés avant 1944 à 1,25 % pour ceux de 1953 ; la
+      fiche portait 2,5 % pour tous. Salaire de référence : dix meilleures
+      années, faute d'extension lue de R. 351-29 avant le décret n°
+      2017-1000 ; le rapport au Président de la République sur
+      l'ordonnance n° 2015-896 dit pourtant que le calcul portait jusque-là
+      « sur la totalité de la carrière », ce que la fiche ne porte pas.
   - debut: 2011
     fin: 2015
     type_calcul: annuites
@@ -372,31 +383,29 @@ periodes:
     part_salariale: 0.4463
     taux_cotisation_deplafonnee: 0.0210
     part_salariale_deplafonnee: 0.1429
-    decote_par_trimestre: 0.0187
+    decote_par_trimestre: 0.0125
+    decote_par_generation: decote_regime_general
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. DURÉE DE 150
-      TRIMESTRES, celle du 1° de R. 351-27 par renvoi de l'article 9 du
-      décret n° 89-110 — la loi du 22 juillet 1993 n'a pas été étendue à
-      l'archipel, et l'ordonnance n° 2015-896 le confirme en écrivant «
-      150 trimestres pour les assurés nés avant le 1er janvier 1956 » (loi
-      n° 87-563, art. 5, c, LEGIARTI000030930361). La table nationale par
-      génération ne s'applique pas ici, d'où une durée en dur. Coefficient
-      de minoration pris à mi-chemin entre l'ancien (2,5 %) et le nouveau
-      (1,25 %) de R. 351-27, dont la montée en charge par génération est
-      décalée ici.
+      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL, comme à la période
+      précédente. DURÉE DE 150 TRIMESTRES ET ÂGES DE 60 ET 65 ANS, ceux du
+      décret n° 89-110 (art. 7 et 9), que l'ordonnance n° 2015-896 ne
+      remplace qu'aux pensions prenant effet à compter du 1er juillet 2016
+      (son article 4, 3°). COEFFICIENT DE MINORATION À LA GÉNÉRATION, par le
+      renvoi de l'article 9 à R. 351-27 : 1,5 % pour les nés en 1951, 1,375
+      % en 1952, 1,25 % à compter de 1953. La fiche prenait 1,87 %, « à
+      mi-chemin » d'une montée en charge qu'elle croyait décalée ici ; aucun
+      texte de l'archipel ne la décale (le décret n° 2017-1000 n'adapte de
+      R. 351-27 que la durée limite, art. 3, XIV, 1°).
   - debut: 2016
     fin: 2016
     type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 152
+    age_ouverture: 62
+    age_taux_plein: 67
+    duree_requise_trimestres: 172
+    age_table: spm_2015
+    duree_requise_table: [spm_2015]
     taux_plein: 0.50
     salaire_reference: 10_meilleures_annees
     assiette: plafonnee
@@ -405,165 +414,40 @@ periodes:
     taux_cotisation_deplafonnee: 0.0210
     part_salariale_deplafonnee: 0.1429
     decote_par_trimestre: 0.0125
+    decote_par_generation: decote_regime_general
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Génération 1956.
+      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL, comme aux périodes
+      précédentes. DURÉE ET ÂGES À LA GÉNÉRATION, depuis l'ordonnance n°
+      2015-896 : la durée du c du 1° de l'article 5 de la loi n° 87-563
+      (LEGIARTI000030930361), 150 trimestres avant 1956, deux de plus par
+      génération jusqu'à 166 pour 1963, 172 à compter de 1973 (table
+      `spm_2015` de `legislation/duree_requise_regimes_speciaux.csv`) ; les
+      âges de L. 161-17-2 et de D. 161-2-1-9 décalés de sept générations
+      (art. 5, b, et décret n° 2017-1000, art. 3, II, 1°,
+      LEGIARTI000034740766), 60 ans avant 1958, 62 à compter de 1962, le
+      taux plein cinq ans au-dessus (table `spm_2015` de
+      `legislation/ages_regimes.csv`). La fiche portait, année par année,
+      la durée et l'âge de la génération qui atteint l'ouverture cette
+      année-là, faux pour toutes les autres : 158 trimestres à une
+      Saint-Pierraise née en 1956 partie en 2020, dont le droit en demande
+      152. Ces règles valent pour les pensions prenant effet à compter du
+      1er juillet 2016 (ordonnance, art. 4, 3°) ; de janvier à juin, le
+      décret n° 89-110, dont les tables ne s'écartent que pour les nés de
+      janvier à mai 1956 partis à soixante ans (152 trimestres au lieu de
+      150). Les âges et la durée écrits ici ne sont que les cibles des
+      tables, qui répondent pour toute génération. Coefficient de
+      minoration à la génération (R. 351-27, rendu applicable par le décret
+      n° 2017-1000, art. 3, XIV).
   - debut: 2017
-    fin: 2017
-    type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 65
-    duree_requise_trimestres: 154
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Génération 1957 ; salaire de référence sur vingt-cinq ans par
-      application de R. 351-29 (décret n° 2017-1000, art. 3, X,
-      LEGIARTI000034740766).
-  - debut: 2018
-    fin: 2018
-    type_calcul: annuites
-    age_ouverture: 60.33
-    age_taux_plein: 65
-    duree_requise_trimestres: 156
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Génération 1958 : 60 ans et 4 mois.
-  - debut: 2019
-    fin: 2020
-    type_calcul: annuites
-    age_ouverture: 60.75
-    age_taux_plein: 65
-    duree_requise_trimestres: 158
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Génération 1959 : 60 ans et 9 mois.
-  - debut: 2021
-    fin: 2021
-    type_calcul: annuites
-    age_ouverture: 61.17
-    age_taux_plein: 65
-    duree_requise_trimestres: 160
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Génération 1960 : 61 ans et 2 mois.
-  - debut: 2022
     fin: 2022
     type_calcul: annuites
-    age_ouverture: 61.58
-    age_taux_plein: 65
-    duree_requise_trimestres: 162
+    age_ouverture: 62
+    age_taux_plein: 67
+    duree_requise_trimestres: 172
+    age_table: spm_2015
+    duree_requise_table: [spm_2015]
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
@@ -572,397 +456,25 @@ periodes:
     taux_cotisation_deplafonnee: 0.0210
     part_salariale_deplafonnee: 0.1429
     decote_par_trimestre: 0.0125
+    decote_par_generation: decote_regime_general
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Génération 1961 : 61 ans et 7 mois.
+      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. DURÉE ET ÂGES À LA
+      GÉNÉRATION, tables `spm_2015`, comme en 2016. Salaire de référence
+      sur vingt-cinq ans par application de R. 351-29 (décret n° 2017-1000,
+      art. 3, XIV, 2°, LEGIARTI000034740766) ; le d du 3° de l'article 5 de
+      la loi n° 87-563 ne donne pourtant vingt-cinq années qu'aux nés à
+      compter de 1962, et quarante à vingt-huit aux générations d'avant,
+      que la fiche ne porte pas.
   - debut: 2023
-    fin: 2023
-    type_calcul: annuites
-    age_ouverture: 61.58
-    age_taux_plein: 65.33
-    duree_requise_trimestres: 162
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là. Âge
-      d'annulation de la décote : 65 ans et 4 mois pour la génération
-      1958.
-  - debut: 2024
-    fin: 2024
-    type_calcul: annuites
-    age_ouverture: 62
-    age_taux_plein: 65.75
-    duree_requise_trimestres: 164
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Génération 1962 : 62 ans ; annulation à 65 ans et 9 mois (1959).
-  - debut: 2025
     fin: 2025
-    type_calcul: annuites
-    age_ouverture: 62.25
-    age_taux_plein: 65.75
-    duree_requise_trimestres: 166
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Génération 1963 : 62 ans et 3 mois, 166 trimestres.
-  - debut: 2026
-    fin: 2026
-    type_calcul: annuites
-    age_ouverture: 62.25
-    age_taux_plein: 66.17
-    duree_requise_trimestres: 166
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Génération 1964 ; annulation à 66 ans et 2 mois (1960).
-  - debut: 2027
-    fin: 2027
-    type_calcul: annuites
-    age_ouverture: 62.25
-    age_taux_plein: 66.58
-    duree_requise_trimestres: 166
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Génération 1965 (janvier-septembre) ; annulation à 66 ans et 7 mois
-      (1961).
-  - debut: 2028
-    fin: 2028
-    type_calcul: annuites
-    age_ouverture: 62.75
-    age_taux_plein: 66.58
-    duree_requise_trimestres: 168
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Générations 1965 (octobre-décembre, 167 trimestres) et 1966 : 62 ans
-      et 9 mois, 168 trimestres.
-  - debut: 2029
-    fin: 2029
-    type_calcul: annuites
-    age_ouverture: 62.75
-    age_taux_plein: 67
-    duree_requise_trimestres: 168
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Annulation de la décote à 67 ans dès la génération 1962.
-  - debut: 2030
-    fin: 2030
-    type_calcul: annuites
-    age_ouverture: 63
-    age_taux_plein: 67
-    duree_requise_trimestres: 169
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Génération 1967 : 63 ans, 169 trimestres.
-  - debut: 2031
-    fin: 2031
-    type_calcul: annuites
-    age_ouverture: 63.25
-    age_taux_plein: 67
-    duree_requise_trimestres: 170
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Génération 1968 : 63 ans et 3 mois, 170 trimestres.
-  - debut: 2032
-    fin: 2032
-    type_calcul: annuites
-    age_ouverture: 63.5
-    age_taux_plein: 67
-    duree_requise_trimestres: 170
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Génération 1969 : 63 ans et 6 mois.
-  - debut: 2033
-    fin: 2034
-    type_calcul: annuites
-    age_ouverture: 63.75
-    age_taux_plein: 67
-    duree_requise_trimestres: 170
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Génération 1970 : 63 ans et 9 mois.
-  - debut: 2035
-    fin: 2037
     type_calcul: annuites
     age_ouverture: 64
     age_taux_plein: 67
-    duree_requise_trimestres: 171
+    duree_requise_trimestres: 172
+    age_table: spm_2023
+    duree_requise_table: [spm_2015]
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
@@ -971,31 +483,31 @@ periodes:
     taux_cotisation_deplafonnee: 0.0241
     part_salariale_deplafonnee: 0.1660
     decote_par_trimestre: 0.0125
+    decote_par_generation: decote_regime_general
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Générations 1971 à 1973 : 64 ans, 171 trimestres.
-  - debut: 2038
+      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. ÂGES DE LA RÉFORME DE 2023,
+      pour les pensions prenant effet à compter du 1er septembre 2023 (loi
+      n° 2023-1250, art. 90, II, 1°, et V, A ; LEGIARTI000048697709) : les
+      mêmes âges jusqu'à 1962, trois mois de plus par génération de 1963 à
+      1969, 64 ans à compter de 1970 (table `spm_2023`). La durée n'a pas
+      changé (table `spm_2015`). De janvier à août 2023, la rédaction
+      d'avant, qui ne diffère que pour les nés depuis 1963, dont aucun
+      n'atteint son âge avant 2025. Taux plein à 67 ans à compter de la
+      génération 1962 ; pour celles de 1958 à 1961, la table garde l'âge
+      d'ouverture augmenté de cinq ans, quand L. 351-8, 1°, ne parle plus
+      depuis le 1er septembre 2023 que de « l'âge prévu au premier alinéa
+      de l'article L. 161-17-2 augmenté de trois années » : question
+      ouverte, dite dans `ages_regimes.csv`.
+  - debut: 2026
     fin: null
     type_calcul: annuites
     age_ouverture: 64
     age_taux_plein: 67
     duree_requise_trimestres: 172
+    age_table: spm_2026
+    duree_requise_table: [spm_2026]
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
@@ -1004,22 +516,20 @@ periodes:
     taux_cotisation_deplafonnee: 0.0241
     part_salariale_deplafonnee: 0.1660
     decote_par_trimestre: 0.0125
+    decote_par_generation: decote_regime_general
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
-      sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
-      propre plafond, « revalorisé à la même date et du même taux que le
-      plafond des cotisations du régime général » (loi n° 87-563, art. 13)
-      ; aucun des deux n'est une série du dépôt : la fiche porte le taux
-      et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
-      PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
-      le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
-      2026-648) : 152 trimestres pour 1956, puis deux par génération
-      jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
-      sept générations sur la table nationale (art. 5, b : « l'année 1969
-      est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
-      devient « nés en 1959 », décret n° 2017-1000, art. 3,
-      LEGIARTI000034740766). La fiche porte, année par année, la durée et
-      l'âge de la génération qui atteint l'ouverture cette année-là.
-      Génération 1974 et suivantes : 64 ans, 172 trimestres.
+      TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. LA SUSPENSION, AU 1er MARS
+      2026 ET NON AU 1er SEPTEMBRE : l'article 105, IV et VI, de la loi n°
+      2025-1403 réécrit le b et le c pour les pensions prenant effet à
+      compter du 1er mars 2026 (LEGIARTI000053281072 ; l'ordonnance n°
+      2026-648 garde aux nés avant 1963 l'âge d'avant, LEGIARTI000054477924).
+      Tables `spm_2026` : 62 ans et 3 mois et 166 trimestres des nés du 1er
+      janvier 1963 au 30 septembre 1965, 62 ans et 6 mois et 167 trimestres
+      d'octobre à décembre 1965, puis trois mois de plus par génération
+      jusqu'à 63 ans et 9 mois pour 1970, 64 ans à compter de 1971 ; 168
+      trimestres pour 1966, 169 pour 1967, 170 de 1968 à 1970, 171 de 1971
+      à 1973, 172 à compter de 1974. Les pensions de janvier et février 2026 relèvent
+      encore de la rédaction d'avant, qui ne diffère qu'à compter de la
+      génération 1964, dont aucune n'atteint son âge avant avril 2026.

@@ -247,8 +247,11 @@ inventaire:
     manque: >-
       Taux de cotisation et plafond de la caisse de prévoyance sociale, fixés localement
       et absents de l'index : ceux du régime général tiennent lieu. Le régime d'avant
-      août 1987 (ordonnance n° 77-1102) n'est pas porté. La table par génération est
-      lue en dur, année par année, faute d'un drapeau qui la décale de sept ans.
+      août 1987 (ordonnance n° 77-1102) n'est pas porté. Le revenu annuel moyen n'est
+      pas celui du droit : toute la carrière avant le 1er juillet 2016, puis quarante
+      à vingt-huit années pour les nés avant 1962 (loi n° 87-563, art. 5, 3°, d), quand
+      la fiche en retient dix, puis vingt-cinq ; la surcote de 1,25 % par trimestre
+      accompli depuis le 1er juillet 2016 (décret n° 2017-1000) n'est pas portée.
 
   - code: cps_polynesie
     nom: >-

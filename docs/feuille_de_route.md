@@ -2393,16 +2393,16 @@ les cultes, `data/reference/legislation/affiliations.yaml`,
 
 ### 121. Le droit de chacun, et non celui de la génération de l'année : toutes les personnes vivantes — `en cours`
 
-**Reprise, au 1er octobre 2026.** Fait : la SNCF, la RATP et les IEG (âges par
-génération dans `ages_regimes.csv`, durée au mois des conditions réunies).
-Restent dix fiches, à commencer par `cps_saint_pierre_et_miquelon`, puis
-`cssm_mayotte`, `cps_polynesie`, `cafat_nouvelle_caledonie`,
-`fonctionnaires_pacifique`, `crpnpac`, `crpnpac_tranche_2`, `crpcen`,
-`comedie_francaise`, `assemblees_parlementaires`. Pour chacune, texte en main
-: l'âge suit-il la génération ou l'année ? si la génération, sa table ; la
-durée suit-elle la date des conditions réunies ou la génération ? Enfin le
-test : une règle datée valable pour toute génération de 1920 à ce jour. Détail
-: « Fait le 23 septembre 2026 », « Ce qui reste, fiche par fiche ».
+**Reprise, au 13 octobre 2026.** Fait : la SNCF, la RATP et les IEG, puis
+Saint-Pierre-et-Miquelon (tables `spm_*` d'âges et de durée, décote à la
+génération). Restent neuf fiches, à commencer par `cssm_mayotte`, puis
+`cps_polynesie`, `cafat_nouvelle_caledonie`, `fonctionnaires_pacifique`,
+`crpnpac`, `crpnpac_tranche_2`, `crpcen`, `comedie_francaise`,
+`assemblees_parlementaires`. Pour chacune, texte en main : l'âge suit-il la
+génération ou l'année ? si la génération, sa table ; la durée suit-elle la
+date des conditions réunies, celle de l'effet ou la génération ? Enfin le
+test : une règle datée valable pour toute génération de 1920 à ce jour.
+Détail : `121/2026-10-13-dix-fiches.md`, et « Ce qui reste, fiche par fiche ».
 
 **Demande.** « Il faut prendre en compte la loi applicable pour tout le monde
 et pas seulement pour les derniers entrants ou sortants » ; « il faut aussi

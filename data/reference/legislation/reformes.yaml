@@ -741,10 +741,18 @@ reformes:
     absorbee_par: []
     non_appliquee: {}
 
+  - code: spm_2023
+    date: 2023-09-01
+    texte: {reference: "loi n° 2023-1250 du 26 décembre 2023 de financement de la sécurité sociale pour 2024, article 90, II, 1°, et V, A (âges de la réforme de 2023 décalés de deux générations : 62 ans et 3 mois pour 1963, 64 ans à compter de 1970, pensions dès le 1er septembre 2023), et décret n° 2025-157 du 19 février 2025 (D. 161-2-1-9)", id: LEGIARTI000048697709}
+    parametres: [age_ouverture]
+    regimes: [cps_saint_pierre_et_miquelon]
+    absorbee_par: []
+    non_appliquee: {}
+
   - code: spm_2026
-    date: 2026-07-23
-    texte: {reference: "ordonnance n° 2026-648 du 22 juillet 2026 (table de durée 167 à 172 trimestres des générations 1965 à 1974)", id: LEGIARTI000054477924}
-    parametres: [duree_requise_trimestres]
+    date: 2026-03-01
+    texte: {reference: "loi n° 2025-1403 du 30 décembre 2025 de financement de la sécurité sociale pour 2026, article 105, IV et VI (suspension : 62 ans et 3 mois et 166 trimestres des nés du 1er janvier 1963 au 30 septembre 1965, 64 ans à compter de 1971 et 172 trimestres de 1974, pensions dès le 1er mars 2026), et ordonnance n° 2026-648 du 22 juillet 2026 (âge d'avant pour les nés avant 1963)", id: LEGIARTI000053281072}
+    parametres: [age_ouverture, duree_requise_trimestres]
     regimes: [cps_saint_pierre_et_miquelon]
     absorbee_par: []
     non_appliquee: {}
