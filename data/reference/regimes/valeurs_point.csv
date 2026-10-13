@@ -4,7 +4,10 @@
 #            ircantec_points (Ircantec 2022-2026 : valeur du point en
 #            vigueur au 31 décembre, salaire de référence et pourcentage
 #            d'appel, lus sur le site de l'Ircantec le 23 septembre 2026 ;
-#            source_valeurs_point_ircantec_publiees de verifier_donnees.py),
+#            source_valeurs_point_ircantec_publiees de verifier_donnees.py ;
+#            le pourcentage d'appel de 2026 y est le rapport 7,11 / 5,60,
+#            non les 127 % du jaune pensions du PLF 2027, écart que ce
+#            script déclare),
 #            ipp_points_independants (complémentaires artisans 1979-2012 et
 #            commerçants 2004-2012), openfisca_gmp (forfait de la
 #            garantie minimale de points de l'Agirc, 1989-2018 ;

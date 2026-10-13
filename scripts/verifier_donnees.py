@@ -2917,7 +2917,14 @@ def source_valeurs_point_ircantec() -> dict[tuple, float]:
 #: et non celle du 1er janvier, 0,49241 €, qu'OpenFisca transcrivait. Les points
 #: de l'IGRANTE et de l'IPACTE sont servis à la valeur de l'Ircantec. Le
 #: pourcentage d'appel de 2026 est le rapport du taux de cotisation appelé au
-#: taux contractuel de la tranche A, 7,11 % / 5,60 %.
+#: taux contractuel de la tranche A, 7,11 % / 5,60 %, et non les 127 % que le
+#: jaune pensions annexé au PLF 2027 dit « fixé » au 1er janvier 2026 (page 79,
+#: note 82) : c'est un écart déclaré (action 159, étape 3). Les taux appelés
+#: sont arrondis au centième — 2,24 % × 1,27 donne 2,8448 %, appelés 2,84 % —,
+#: et la caisse compte les points sur le taux contractuel. Le rapport rend donc
+#: exactement les points de la tranche A, que 1,27 diminuerait de 0,03 % ;
+#: ceux de la tranche B, dont le rapport propre vaut 19,81 / 15,60, sont
+#: surestimés de 0,02 %.
 VALEURS_POINT_IRCANTEC_PUBLIEES = {
     2022: {"valeur_service": 0.51211},
     2023: {"valeur_service": 0.51621, "salaire_reference": 5.329, "taux_appel": 1.25},
