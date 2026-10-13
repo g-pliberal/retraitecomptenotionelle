@@ -1736,6 +1736,7 @@ institutions:
         acces: document
         blocage: refus
         fichier_local: 34465.pdf
+        miroir: https://raw.githubusercontent.com/g-pliberal/retraitecomptenotionelle/jaune-2027/34465.pdf
         sha256: 73dd4a66051cd71bdf2c77eb5345a34f99f862330f0f20164c930492be2dbaf5
         rediffusion:
           statut: libre
@@ -1791,11 +1792,14 @@ institutions:
 
           Le même jour, le workflow `documents-apportes.yml` (exécution
           38405657830) a reçu 403 sur la page comme sur le fichier, à la
-          requête simple puis au navigateur : le document se dépose donc à la
-          main sur la release `documents-apportes`, sous le nom `34465.pdf`.
-          `source_locale.py --recuperer` l'y trouve alors, et le `miroir`
-          s'écrit. Quand l'Assemblée le servira, son adresse pourra le
-          doubler, comme pour l'édition 2026.
+          requête simple puis au navigateur. LE MIROIR EST LA BRANCHE
+          `jaune-2027` DU DÉPÔT, où le propriétaire a déposé le fichier :
+          GitHub le sert à tous, et `source_locale.py --recuperer` le vérifie
+          à l'empreinte ; la licence permet de le rediffuser. La branche se
+          garde donc tant qu'aucun autre miroir ne la remplace — l'Assemblée,
+          quand elle servira le jaune, comme pour l'édition 2026, ou la
+          release `documents-apportes`, où le fichier se déposerait à la main
+          sous le nom `34465.pdf`.
 
       - id: sre_historique_taux
         titre: Historique des taux de cotisations appelés par le CAS « Pensions »

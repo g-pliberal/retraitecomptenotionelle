@@ -7678,15 +7678,14 @@ conventions collectives ne disant qu'un plancher, non un salaire.
 
 ### 159. Le jaune pensions du PLF 2027, exploité en entier : rangé, puis chaque tableau à sa place dans le dépôt — `en cours`
 
-**Reprise, au 13 octobre 2026.** Faite, l'étape 0, l'inventaire (note du
-13 octobre). L'étape 1 est presque close : la fiche `sre_jaune_pensions_2027`
-est au manifeste, sous licence ouverte Etalab 2.0, lue dans les mentions
-légales de budget.gouv.fr (captures du propriétaire) ; le workflow
-`documents-apportes.yml`, lancé le 13 octobre, a buté sur le même refus (403,
-navigateur compris). Reste : le propriétaire dépose `34465.pdf` à la main sur
-la release `documents-apportes` ; une session écrit le `miroir` après
-`--recuperer`, et la branche `jaune-2027` se supprime. Les étapes 2 à 9 se
-mènent ensuite en parallèle, une par zone, chacune tenant son bloc dans sa note.
+**Reprise, au 13 octobre 2026.** Faites, l'étape 0, l'inventaire, et l'étape
+1 : le jaune est au manifeste (`sre_jaune_pensions_2027`, licence ouverte
+Etalab 2.0), avec pour miroir la branche `jaune-2027`, qui se garde ;
+`source_locale.py --recuperer` le pose dans `data/brut/34465.pdf`, empreinte
+vérifiée. Les étapes 2 à 9 se mènent en parallèle, une par zone : chacune tient
+son bloc « Reprise » sous le titre de sa note, et celui-ci ne se récrit plus.
+Commencer par l'étape 2, dont le script de lecture sert aux autres, ou par
+celle de sa zone. Détail : les notes des étapes 0 et 1.
 
 **D'où elle vient.** La demande du propriétaire, le 13 octobre 2026, le jaune
 lu pour l'action 129 : « Je veux garder ce doc et le ranger correctement sur
@@ -7704,9 +7703,9 @@ des pensions dans chaque budget ministériel, une présentation alternative du
 CAS Pensions, ce que l'État verse aux régimes spéciaux, les engagements de
 retraite à fin 2025. budget.gouv.fr le sert depuis le 13 octobre et refuse le
 cloud ; l'Assemblée, qui servait le jaune 2026 octet pour octet, ne le porte
-pas encore. Le PDF n'entre pas dans l'historique de git : un test refuse tout
-document versionné sous `data/brut/`, et le manifeste ne range un document
-qu'avec un miroir, ou sur la release quand sa licence le permet.
+pas encore. Le PDF n'entre pas dans l'historique de `main` : un test refuse
+tout document versionné sous `data/brut/`, et le manifeste range un document
+par son miroir, ici la branche `jaune-2027`, où le propriétaire l'a déposé.
 
 **Ce que le dépôt tire déjà de l'édition 2026**, et qui passe à 2027 dans
 l'étape de sa zone : `bonifications_jaune.csv` (tableaux A-7, 50 et B-1, lus
@@ -7721,12 +7720,11 @@ par zone. Le détail, tableau par tableau et page par page, est dans la note de
 l'étape 0.
 
 0. **L'inventaire** : fait le 13 octobre.
-1. **Ranger le document** (données) : la fiche `sre_jaune_pensions_2027` du
-   manifeste, avec son empreinte et sa licence ; le PDF sur la release
-   `documents-apportes`, déposé à la main puisque budget.gouv.fr refuse aussi
-   le workflow, l'Assemblée pouvant le doubler quand elle le servira ; le
-   `miroir` écrit après `--recuperer`. La branche `jaune-2027` se supprime
-   ensuite.
+1. **Ranger le document** (données) : fait le 13 octobre. La fiche
+   `sre_jaune_pensions_2027` du manifeste, avec son empreinte et sa licence ;
+   pour miroir, la branche `jaune-2027`, budget.gouv.fr refusant aussi le
+   workflow de la release. L'Assemblée, quand elle servira le jaune, pourra la
+   remplacer : la branche se supprimera alors.
 2. **Les bonifications** (données) : d'abord, `sre_jaune_pensions.py` apprend
    l'édition 2027, dont les tableaux A-7, 50 et B-1 gardent leurs numéros,
    sans perdre la lecture de 2026 ; puis `bonifications_jaune.csv` sur le stock

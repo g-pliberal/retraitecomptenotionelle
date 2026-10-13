@@ -1,0 +1,20 @@
+date: "2026-10-13"
+session: "action 159, étape 1 close : le jaune pensions 2027 a pour miroir la branche jaune-2027"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1. L'adresse
+  publique du fichier que le propriétaire a déposé sur la branche jaune-2027 du dépôt,
+  https://raw.githubusercontent.com/g-pliberal/retraitecomptenotionelle/jaune-2027/34465.pdf,
+  tirée depuis le cloud, puis par source_locale.py --recuperer une fois déclarée au
+  manifeste.
+trouve: >-
+  Le propriétaire a fait valoir que le fichier était déjà dans le dépôt, et que le
+  déposer encore sur la release revenait au même. GitHub le sert à tous depuis la
+  branche (200, 11 964 640 octets, la même empreinte), et sa licence, Etalab 2.0, permet
+  de le rediffuser : la branche devient le miroir de la fiche sre_jaune_pensions_2027, et
+  --recuperer en a tiré data/brut/34465.pdf, empreinte vérifiée. Un jeu dont le miroir
+  n'est pas la release n'est plus à publier : le workflow documents-apportes.yml ne le
+  demandera plus à budget.gouv.fr, et sa course mensuelle n'échouera pas sur lui.
+reste: >-
+  Garder la branche jaune-2027 tant qu'aucun autre miroir ne la remplace ; quand
+  l'Assemblée servira le jaune, comparer son fichier à l'empreinte, en faire le miroir,
+  et supprimer la branche. Les étapes 2 à 9 de l'action 159, en parallèle.
