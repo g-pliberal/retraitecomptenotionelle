@@ -187,6 +187,7 @@ periodes:
       deux régimes et les assurances sociales d'avant 1945.
   - debut: 1979
     fin: 1982
+    date_effet: [1979-01-01, 1983-04-01]
     type_calcul: 'annuites'
     age_ouverture: 60
     age_taux_plein: 65
@@ -209,9 +210,13 @@ periodes:
     notes: >-
       Les règles de 1978, le taux de soixante-cinq ans servi dès soixante
       ans aux femmes de trente-sept ans et demi d'assurance pour une pension
-      qui prend effet à compter du 1er janvier 1979 (même article).
+      qui prend effet à compter du 1er janvier 1979 (même article). La
+      période liquide encore les pensions qui prennent effet jusqu'au 31
+      mars 1983 (`date_effet`) : la règle nouvelle n'entre en vigueur que le
+      1er avril 1983 (décret n° 82-1054, article 2, LEGIARTI000006272103).
   - debut: 1983
     fin: 1993
+    date_effet: [1983-04-01, 1994-01-01]
     type_calcul: 'annuites'
     age_ouverture: 60
     age_taux_plein: 65
@@ -232,6 +237,8 @@ periodes:
     avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
     notes: >-
       Mêmes règles que le régime général sur 1983-1993 : la MSA les applique à l'identique.
+      En vigueur le 1er avril 1983 (décret n° 82-1054, article 2) : la période liquide depuis
+      ce jour (`date_effet`).
   - debut: 1994
     fin: 2003
     type_calcul: 'annuites'

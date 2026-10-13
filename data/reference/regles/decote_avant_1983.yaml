@@ -9,33 +9,36 @@ intitule: >-
 etat: approchee
 etape: liquider_chaque_regime
 effet: >-
-  Les pensions du régime général et des salariés agricoles liquidées avant 1983, et celles
-  des artisans et commerçants de 1973 à 1982. Le moteur compte le taux sur l'âge seul,
-  comme la caisse : sur 40 % jusqu'en 1971, « le pourcentage de 20% étant augmenté en cas
-  d'ajournement de 1 % par trimestre postérieur au soixantième anniversaire » (circulaire
-  n° 93 SS du 17 mai 1951) ; sur 50 % depuis le 1er janvier 1972, 25 % à soixante ans,
-  « majoré de 1,25 % (au lieu de 1 %) par trimestre d'ajournement » (circulaire Cnav n°
-  2/72). Il compte par trimestres civils entiers, au-delà de soixante-cinq ans comme en
-  deçà (`majoration_d_ajournement`) : « le taux de 50 % augmente, sans limitation, de 2,5 %
-  par trimestre d'âge après 65 ans » (circulaire Cnav n° 22/83). Au régime général, avant
-  1951, il compte les années d'assurance accomplies après soixante ans, non les années
-  d'âge (`ajournement_par_annee_d_assurance`). Les femmes qui réunissent trente-sept ans
-  et demi d'assurance au régime général, aux assurances sociales d'avant 1945 et chez les
-  salariés agricoles ont le taux de soixante-cinq ans dès soixante-trois ans en 1978, dès
-  soixante ans ensuite (`age_taux_plein_femmes`). Et qui avait passé soixante-cinq ans au
-  1er avril 1983 garde le taux acquis au 31 mars (`liquider.taux_acquis_au_31_mars_1983`)
-  sur la durée non majorée, si cette pension passe celle de 50 % sur la durée majorée
-  après soixante-cinq ans (fiche `majoration_duree_apres_65_ans`), comme dans les deux
-  premiers exemples de la circulaire Cnav n° 22/83, chacune ramenée à son maximum (fiche
+  Les pensions du régime général et des salariés agricoles qui prennent effet avant le 1er
+  avril 1983, et celles des artisans et commerçants de 1973 à 1982. Le moteur compte le
+  taux sur l'âge seul, comme la caisse : sur 40 % jusqu'en 1971, « le pourcentage de 20%
+  étant augmenté en cas d'ajournement de 1 % par trimestre postérieur au soixantième
+  anniversaire » (circulaire n° 93 SS du 17 mai 1951) ; sur 50 % depuis le 1er janvier
+  1972, 25 % à soixante ans, « majoré de 1,25 % (au lieu de 1 %) par trimestre
+  d'ajournement » (circulaire Cnav n° 2/72). Il compte par trimestres civils entiers,
+  au-delà de soixante-cinq ans comme en deçà (`majoration_d_ajournement`) : « le taux de
+  50 % augmente, sans limitation, de 2,5 % par trimestre d'âge après 65 ans » (circulaire
+  Cnav n° 22/83). Au régime général, avant 1951, il compte les années d'assurance
+  accomplies après soixante ans, non les années d'âge
+  (`ajournement_par_annee_d_assurance`). Les femmes qui réunissent trente-sept ans et demi
+  d'assurance au régime général, aux assurances sociales d'avant 1945 et chez les salariés
+  agricoles ont le taux de soixante-cinq ans dès soixante-trois ans en 1978, dès soixante
+  ans ensuite (`age_taux_plein_femmes`). Et qui avait passé soixante-cinq ans au 1er avril
+  1983 garde le taux acquis au 31 mars (`liquider.taux_acquis_au_31_mars_1983`) sur la
+  durée non majorée, si cette pension passe celle de 50 % sur la durée majorée après
+  soixante-cinq ans (fiche `majoration_duree_apres_65_ans`), comme dans les deux premiers
+  exemples de la circulaire Cnav n° 22/83, chacune ramenée à son maximum (fiche
   `pension_maximale_regime_general`) ; le troisième, qu'un salaire moyen de 1,7 plafond
-  décide, est un écart connu. Quatre écarts restent, aucun mesuré. Une pension de janvier à mars 1983 relève encore de l'âge seul : le moteur, qui
-  choisit la période à l'année, lui applique la règle d'avril et sert le taux plein à
-  soixante ans à qui a 150 trimestres. Les autres taux pleins d'avant 1983 tiennent à des
-  faits que la personne déclare — l'inaptitude (fiche `inaptitude_au_travail`), la
-  déportation, les services de guerre, le travail manuel des travailleurs manuels et des
-  ouvrières mères de famille (fiches `taux_plein_*`) —, sauf deux, que le modèle ne porte
-  pas : les travaux pénibles de l'ordonnance de 1945, les agents non titulaires de
-  soixante-trois ans dès le 1er juillet 1982. Chez les salariés
+  décide, est un écart connu. Une pension de janvier à mars 1983 relève encore de l'âge
+  seul : l'ordonnance n'entre en vigueur que le 1er avril, et la période de 1979 à 1982
+  liquide les pensions qui prennent effet jusqu'au 31 mars 1983 (`date_effet`,
+  docs/architecture.md, § 4.6), quand le moteur servait le taux plein à soixante ans dès
+  janvier à qui avait 150 trimestres. Trois écarts restent, aucun mesuré. Les autres taux
+  pleins d'avant 1983 tiennent à des faits que la personne déclare — l'inaptitude (fiche
+  `inaptitude_au_travail`), la déportation, les services de guerre, le travail manuel des
+  travailleurs manuels et des ouvrières mères de famille (fiches `taux_plein_*`) —, sauf
+  deux, que le modèle ne porte pas : les travaux pénibles de l'ordonnance de 1945, les
+  agents non titulaires de soixante-trois ans dès le 1er juillet 1982. Chez les salariés
   agricoles, la rédaction du 6 juin 1951 ne majorait le taux que pour une liquidation
   demandée « après soixante et un ans » : si la caisse la lisait ainsi, le moteur sert
   jusqu'à trois points de trop entre soixante et soixante et un ans. Pour les artisans et
@@ -43,17 +46,9 @@ effet: >-
   leur taux plein à soixante ans du 1er juillet 1984, et il arrête leur taux au taux
   plein, faute d'avoir lu que l'ajournement y courait au-delà.
 sources:
-  lu_le: 2026-09-27
+  lu_le: 2026-10-13
   prochaine_relecture: 2026-12-31
   a_relire:
-  - >-
-    Couper au 1er avril 1983 la période de 1983 du régime général et des salariés
-    agricoles (ordonnance, article 9 ; décret n° 82-1054, article 2) quand le moteur saura
-    dater une règle au mois (docs/architecture.md, § 4.6) : une pension de janvier à mars
-    1983 relève encore de l'âge seul, de l'ajournement et de la règle des femmes de 1979,
-    sans minimum contributif. Le moteur liquidant au mois de l'anniversaire (fiche
-    `date_effet_mois_suivant`), la coupure seule rangerait avant avril les pensions qui
-    prennent effet le 1er avril.
   - >-
     Artisans et commerçants : le décret n° 84-560 (article 12-2 du décret n° 73-937) ouvre
     le 1er juillet 1984 le taux plein à soixante ans, pour 150 trimestres, aux prestations
@@ -84,6 +79,17 @@ sources:
     où les 25 % les ont atteints, que l'article 55 du décret n° 50-1225 ne porte qu'au 1er
     juillet 1972.
   lectures:
+  - type: legifrance
+    reference: >-
+      relu pour couper la période de 1983 au jour : l'article 9 de l'ordonnance et
+      l'article 2 du décret n° 82-1054, cités ci-dessous, mot pour mot ; et le décret n°
+      83-551 du 30 juin 1983, article 4 (LEGIARTI000006764238), qui range les pensions par
+      leur date d'effet : « Les dispositions du présent décret sont applicables aux
+      titulaires de pensions de vieillesse portées, avec une date d'effet antérieure au
+      1er avril 1983, au montant minimum de base prévu aux articles L. 345 et L. 379 du
+      code de la sécurité sociale [...] en vigueur avant cette date ». Lu dans l'index LEGI
+      du dépôt
+    date: 2026-10-13
   - type: legifrance
     reference: >-
       ordonnance n° 82-270 du 26 mars 1982 (LEGITEXT000006069322), article 9, en vigueur

@@ -1,0 +1,29 @@
+date: "2026-10-13"
+session: "action 131 : les coupures au mois, du 1er avril 1983, de la CAVEC et du RACL"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF du dépôt, récupérés puis mis à
+  jour par leurs incréments (LEGI au 12 octobre, JORF au 13), et scripts/textes.py
+  --inscrire, qui n'inscrit aucune rédaction nouvelle. Dans LEGI : l'ordonnance n° 82-270
+  du 26 mars 1982, article 9 (LEGIARTI000006275868) ; le décret n° 82-1054 du 13 décembre
+  1982, article 2 (LEGIARTI000006272103) ; le décret n° 83-551 du 30 juin 1983, article 4
+  (LEGIARTI000006764238). Dans JORF : l'arrêté du 20 août 2018 approuvant les statuts de
+  la CAVEC (JORFTEXT000037363865) et son annexe (JORFARTI000037363871) ; l'arrêté du 4
+  juillet 2025, annexe (JORFARTI000051849616) ; l'arrêté du 13 mai 2025 sur le RACL
+  (JORFTEXT000051592833), son article 2 (JORFARTI000051592838) et son annexe
+  (JORFARTI000051592840).
+trouve: >-
+  L'ordonnance « entrer[a] en vigueur le 1er avril 1983 », comme l'article 1er du décret
+  n° 82-1054 chez les salariés agricoles, et le décret n° 83-551 distingue les pensions
+  « avec une date d'effet antérieure au 1er avril 1983 » : la règle nouvelle se lit à la
+  date d'effet de la pension. Les trois arrêtés de la CAVEC et du RACL ne portent aucune
+  date d'application : ils valent le lendemain de leur publication, le 5 septembre 2018,
+  le 7 juillet 2025 et le 16 mai 2025. Les périodes des quatre régimes sont coupées à ces
+  jours (champ date_effet). Trouvé en chemin : les statuts de la CAVEC de 2018 liquident
+  la retraite « à dater du premier jour du trimestre civil suivant la demande »
+  (article 14), quand le moteur la liquide au mois.
+reste: >-
+  La date d'effet trimestrielle de la CAVEC, à lire à la caisse (fiche
+  surcote_par_age_seul). L'accord du 4 février 1983 de l'ASF, hors du Journal officiel, qui
+  dirait si les complémentaires changent elles aussi le 1er avril 1983 (réforme asf_1983).
+  Le 1er juillet 1984 des artisans et commerçants, que la borne au jour permet désormais
+  de couper une fois leurs textes lus (fiche decote_avant_1983).

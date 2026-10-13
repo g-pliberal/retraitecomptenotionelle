@@ -36,7 +36,7 @@ from ..donnees.chargement import (
 )
 from ..donnees.primes import charger_primes_soumises
 from . import compter
-from .commun import derniere_annee
+from .commun import periode_de_liquidation
 from . import liquider, ouvrir
 from ..somme import somme_ordonnee
 
@@ -175,8 +175,7 @@ def points_gratuits(moteur: ScenarioActuel, periode: PeriodeRegime,
     """
     regle = periode.points_gratuits
     base = moteur.catalogue[regle.regime]
-    periode_base = base.periode(
-        min(carriere.annee_liquidation, derniere_annee(base)))
+    periode_base = periode_de_liquidation(base, carriere.date_liquidation)
     if periode_base is None:
         return 0.0, None
 
@@ -727,7 +726,7 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
     # sept années que la caisse ne liquide pas.
     for code, (total, avant_age) in trimestres_plafonnables.items():
         regime = moteur.catalogue[code]
-        periode = regime.periode(min(annee_liquidation, derniere_annee(regime)))
+        periode = periode_de_liquidation(regime, carriere.date_liquidation)
         if periode is None or periode.trimestres_maximum is None or total <= 0:
             continue
         retenus = min(total, max(float(periode.trimestres_maximum), avant_age))
@@ -755,8 +754,7 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 continue
             for code in attribuants:
                 regime = moteur.catalogue[code]
-                periode = regime.periode(
-                    min(annee_liquidation, derniere_annee(regime)))
+                periode = periode_de_liquidation(regime, carriere.date_liquidation)
                 if periode is None or periode.points_gratuits is None:
                     continue
                 gratuits, fiabilite_duree = points_gratuits(

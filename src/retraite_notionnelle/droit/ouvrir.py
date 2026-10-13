@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING
 from ..calendrier import MOIS_PAR_AN, DateMois, en_mois, trimestres_civils
 from ..donnees.chargement import Fiabilite, charger_chomage_complementaires
 from . import compter, coordonner, etranger, invalidite
-from .commun import date_d_effet, derniere_annee, ligne_cotisee
+from .commun import date_d_effet, ligne_cotisee, periode_de_liquidation
 from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
@@ -245,8 +245,7 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
             if groupes.get(code, (code,))[0] != code:
                 continue
             regime = moteur.catalogue[code]
-            periode = regime.periode(
-                min(annee_liquidation, derniere_annee(regime)))
+            periode = periode_de_liquidation(regime, carriere.date_liquidation)
             if periode is None or periode.type_calcul not in calculs:
                 continue
             if periode.abattement_points in ("agirc_arrco", "ircantec"):
@@ -1055,7 +1054,7 @@ def periodes_parcourues(
         if code not in moteur.catalogue:
             continue
         regime = moteur.catalogue[code]
-        periode = regime.periode(min(annee_liquidation, derniere_annee(regime)))
+        periode = periode_de_liquidation(regime, carriere.date_liquidation)
         if periode is None:
             continue
         (annuites if periode.type_calcul == "annuites" else autres).append(

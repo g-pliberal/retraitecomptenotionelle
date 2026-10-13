@@ -153,6 +153,16 @@ champs_regime:
 champs_periode:
   debut: "première année d'application (incluse)"
   fin:   "dernière année d'application (incluse), null si toujours en vigueur"
+  date_effet: >-
+    facultatif : les dates d'effet des pensions que la période liquide,
+    [début, fin), écrites au jour (AAAA-MM-JJ), quand un texte coupe l'année
+    — l'ordonnance du 26 mars 1982 vaut pour les pensions qui prennent effet
+    depuis le 1er avril 1983, un arrêté sans date d'effet propre depuis le
+    lendemain de sa publication. Absent, du 1er janvier de `debut` au 1er
+    janvier qui suit `fin`. Les années bornent toujours l'acquisition ; la
+    liquidation choisit la période à la date d'effet (docs/architecture.md,
+    § 4.6). Chaque borne tombe à moins d'un an de celle des années, et la
+    voisine prend le relais le même jour : le chargeur refuse le reste.
 
   type_calcul:
     description: "mode de liquidation en vigueur"

@@ -29,11 +29,14 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   est lu à la génération : durée requise, âge d'ouverture, âge d'annulation de
   la décote, coefficient de minoration et nombre d'années retenues au salaire de
   référence — quatre de ces cinq tables sont lues dans le texte même des
-  articles du code, et recontrôlées à chaque exécution. Ce qui LIQUIDE est lu à l'année
-  de liquidation : formule du régime, valeur de service du point, décote de la
-  fonction publique et barème du minimum garanti, comme leurs articles
-  l'écrivent. Reste approchée la montée en charge propre à chaque régime
-  spécial ;
+  articles du code, et recontrôlées à chaque exécution. Ce qui LIQUIDE est lu à la
+  date d'effet de la pension : la formule du régime, au jour quand un texte coupe
+  l'année — l'ordonnance du 26 mars 1982 au 1er avril 1983, au régime général et
+  chez les salariés agricoles, deux arrêtés de la CAVEC et un du RACL au lendemain
+  de leur publication —, et, à l'année de liquidation, la valeur de service du
+  point, la décote de la fonction publique et le barème du minimum garanti, comme
+  leurs articles l'écrivent. Reste approchée la montée en charge propre à chaque
+  régime spécial ;
 - **avantages datés** — la fiche de chaque période dit ce que le régime
   accordait cette année-là, et le moteur ne sert que cela : ni minimum
   contributif avant 1983, ni surcote avant 2004, ni trimestres pour enfants

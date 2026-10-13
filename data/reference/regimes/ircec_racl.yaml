@@ -72,6 +72,7 @@ periodes:
       `ircec_raap`.
   - debut: 2014
     fin: 2024
+    date_effet: [2014-01-01, 2025-05-16]
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -108,6 +109,7 @@ periodes:
       Taux, assiette et points : ceux de la première période.
   - debut: 2025
     fin: null
+    date_effet: [2025-05-16, null]
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -129,7 +131,10 @@ periodes:
       et le RACD : 2,5 % pour chacune des deux premières années
       manquantes, 5 % au-delà, les coefficients du régime de base s'ils
       sont plus favorables, et le taux plein dès l'âge légal si la
-      pension du régime de base l'est.
+      pension du régime de base l'est. Publié au Journal officiel du 15
+      mai 2025 sans date d'effet propre, il vaut le lendemain : la
+      période liquide les pensions qui prennent effet depuis le 16 mai
+      2025 (`date_effet`), la précédente celles d'avant.
       Une année entamée compte entière : l'annexe de l'arrêté du 21
       novembre 2013 (JORFARTI000028254004) la chiffre trimestre par
       trimestre. Les générations nées avant 1955 avaient jusqu'en 2024

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import re
 from dataclasses import dataclass, field, replace
 from functools import cached_property
 from pathlib import Path
@@ -157,6 +158,44 @@ def _bornes_par_annee(fiche: dict | None) -> tuple[tuple[int, float], ...]:
     """``{2013: 37032, …}`` en paires (année, euros) triées ; ``()`` sans elles."""
     return tuple(sorted((int(annee), float(euros))
                         for annee, euros in (fiche or {}).items()))
+
+
+def _dates_d_effet(bornes, debut_periode: int, fin_periode: int | None,
+                   lieu: str) -> tuple[str, str | None] | None:
+    """Les dates d'effet qu'une période déclare, ``[début, fin]`` écrites au
+    jour, en AAAA-MM-JJ ; ``None`` sans déclaration. Une fin nulle laisse la
+    période liquider sans borne, comme la dernière d'un régime vivant.
+
+    Elles coupent l'année d'un texte, et ne déplacent pas la période : chaque
+    borne tombe à moins d'un an de celle de ses années, au plus tôt dans
+    l'année qui précède, au plus tard dans celle qui suit, et la période
+    liquide toujours une part de sa première et de sa dernière année. C'est
+    ce qui laisse :func:`morceau_d_annees` découper ses années sans perdre
+    un jour."""
+    if bornes is None:
+        return None
+    if not isinstance(bornes, (list, tuple)) or len(bornes) != 2 or bornes[0] is None:
+        raise ValueError(f"{lieu} : `date_effet` s'écrit [début, fin], au jour, "
+                         f"et non {bornes!r}")
+    # Le YAML lit un jour écrit AAAA-MM-JJ comme une date.
+    debut, fin = (None if jour is None else
+                  jour.isoformat() if hasattr(jour, "isoformat") else str(jour)
+                  for jour in bornes)
+    for jour in (debut, fin):
+        if jour is not None and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", jour):
+            raise ValueError(f"{lieu} : `date_effet` porte {jour!r}, qui n'est pas "
+                             "une date AAAA-MM-JJ")
+    if fin is not None and fin <= debut:
+        raise ValueError(f"{lieu} : `date_effet` finit le {fin}, avant son début, "
+                         f"le {debut}")
+    if not f"{debut_periode - 1:04d}-01-01" < debut < f"{debut_periode + 1:04d}-01-01":
+        raise ValueError(f"{lieu} : `date_effet` commence le {debut}, à plus d'un an "
+                         f"de la première année de la période, {debut_periode}")
+    if (fin is None) != (fin_periode is None) or (fin is not None and not (
+            f"{fin_periode:04d}-01-01" < fin <= f"{fin_periode + 2:04d}-01-01")):
+        raise ValueError(f"{lieu} : `date_effet` finit le {fin}, à plus d'un an de "
+                         f"la dernière année de la période, {fin_periode}")
+    return debut, fin
 
 
 @dataclass(frozen=True)
@@ -650,7 +689,32 @@ class PeriodeRegime:
     #: nomme, la borne que donne ``assiette``.
     borne_basse_par_annee: tuple[tuple[int, float], ...] = ()
     borne_haute_par_annee: tuple[tuple[int, float], ...] = ()
+    #: LES DATES D'EFFET QUE LA PÉRIODE LIQUIDE, au jour, quand un texte
+    #: coupe l'année : [début, fin) sur ``liquidation.date_effet``, en
+    #: AAAA-MM-JJ, comme les bornes d'une version (docs/architecture.md,
+    #: § 4.1 et 4.6). L'ordonnance du 26 mars 1982 change la liquidation des
+    #: pensions qui prennent effet depuis le 1er avril 1983, et non celle de
+    #: toute l'année ; l'acquisition, elle, garde les années de la période.
+    #: ``None`` : du 1er janvier de ``debut`` au 1er janvier qui suit ``fin``
+    #: (:attr:`effet`).
+    date_effet: tuple[str, str | None] | None = None
     notes: str = ""
+
+    @property
+    def effet(self) -> tuple[str, str | None]:
+        """Les dates d'effet que la période liquide, [début, fin) en
+        AAAA-MM-JJ : celles qu'elle déclare, sinon ses années."""
+        if self.date_effet is not None:
+            return self.date_effet
+        return (f"{self.debut:04d}-01-01",
+                None if self.fin is None else f"{self.fin + 1:04d}-01-01")
+
+    def liquide(self, jour: str) -> bool:
+        """La période liquide-t-elle une pension qui prend effet ce jour
+        (AAAA-MM-JJ) ? Deux dates ainsi écrites se comparent comme deux
+        textes."""
+        debut, fin = self.effet
+        return debut <= jour and (fin is None or jour < fin)
 
     @property
     def taux_cotisation_salarie(self) -> float:
@@ -793,6 +857,16 @@ class Regime:
 
     def periodes_actives(self, annee: int) -> tuple[PeriodeRegime, ...]:
         return tuple(p for p in self.periodes if p.couvre(annee))
+
+    def periode_a_l_effet(self, jour: str) -> PeriodeRegime | None:
+        """Paramètres qui liquident une pension prenant effet ce jour
+        (AAAA-MM-JJ) : la première période dont les dates d'effet le
+        comprennent (:attr:`PeriodeRegime.effet`). Sans date d'effet
+        déclarée, c'est la période de l'année, :meth:`periode`."""
+        for p in self.periodes:
+            if p.liquide(jour):
+                return p
+        return None
 
     def ouvert(self, annee: int) -> bool:
         """Le régime accepte-t-il de nouveaux affiliés cette année-là ?"""
@@ -1211,6 +1285,26 @@ def charger_taux_annuels(racine: Path) -> dict[str, dict[int, dict[str, float]]]
     return table
 
 
+def morceau_d_annees(periode: PeriodeRegime, debut: int, fin: int | None,
+                     **champs) -> PeriodeRegime:
+    """La période réduite aux années [``debut``, ``fin``], ces champs changés.
+
+    Ses dates d'effet suivent : la part de celles de la période qui tombe dans
+    ces années, la borne au jour gardée au bout de la période où elle est
+    écrite (:attr:`PeriodeRegime.effet`). Le premier morceau des années
+    1983-1993 du régime général liquide depuis le 1er avril 1983, les
+    suivants depuis le 1er janvier de leur première année.
+    """
+    if periode.date_effet is None:
+        return replace(periode, debut=debut, fin=fin, **champs)
+    premiere, derniere = periode.effet
+    effet = (premiere if debut == periode.debut else f"{debut:04d}-01-01",
+             derniere if fin == periode.fin else f"{fin + 1:04d}-01-01")
+    annees = (f"{debut:04d}-01-01", None if fin is None else f"{fin + 1:04d}-01-01")
+    return replace(periode, debut=debut, fin=fin,
+                   date_effet=None if effet == annees else effet, **champs)
+
+
 def dater_les_taux(periodes: tuple[PeriodeRegime, ...],
                    annuels: dict[int, dict[str, float]],
                    ) -> tuple[PeriodeRegime, ...]:
@@ -1262,11 +1356,8 @@ def dater_les_taux(periodes: tuple[PeriodeRegime, ...],
                 tranches.append((annee, annee, champs))
         for rang, (debut, fin_tranche, champs) in enumerate(tranches):
             derniere = rang == len(tranches) - 1
-            resultat.append(replace(
-                periode, debut=debut,
-                fin=periode.fin if derniere else fin_tranche,
-                **champs,
-            ))
+            resultat.append(morceau_d_annees(
+                periode, debut, periode.fin if derniere else fin_tranche, **champs))
     return tuple(resultat)
 
 
@@ -1349,11 +1440,8 @@ def dater_les_taux_moyens(code: str, periodes: tuple[PeriodeRegime, ...],
                 tranches.append((annee, annee, champs))
         for rang, (debut, fin_tranche, champs) in enumerate(tranches):
             derniere = rang == len(tranches) - 1
-            resultat.append(replace(
-                periode, debut=debut,
-                fin=periode.fin if derniere else fin_tranche,
-                **champs,
-            ))
+            resultat.append(morceau_d_annees(
+                periode, debut, periode.fin if derniere else fin_tranche, **champs))
     return tuple(resultat)
 
 
@@ -1892,6 +1980,10 @@ class CatalogueRegimes:
                 ),
                 avantages_non_contributifs=tuple(p.get("avantages_non_contributifs") or ()),
                 points_gratuits=_points_gratuits(p.get("points_gratuits")),
+                date_effet=_dates_d_effet(
+                    p.get("date_effet"), int(p["debut"]),
+                    None if p.get("fin") is None else int(p["fin"]),
+                    f"{chemin.name}, période {p.get('debut')}"),
                 notes=(p.get("notes") or "").strip(),
             )
             for p in (

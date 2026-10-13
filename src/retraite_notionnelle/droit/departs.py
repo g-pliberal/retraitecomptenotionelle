@@ -62,7 +62,7 @@ from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
 from . import compter, coordonner, etranger, invalidite, ouvrir
-from .commun import derniere_annee, ligne_cotisee
+from .commun import derniere_annee, ligne_cotisee, periode_de_liquidation
 
 if TYPE_CHECKING:
     from ..carriere import AnneeCarriere, Carriere
@@ -222,9 +222,10 @@ def _ouverture(moteur: ScenarioActuel, carriere: Carriere,
     cotise plus : ni l'une ni l'autre ne se projette, elles se lisent acquises
     (:meth:`CarriereLongue.age_de_depart`, :func:`~.invalidite.age_du_handicap`).
     """
-    annee = carriere.annee_liquidation
     periodes = [(code, periode) for code in sorted(unite)
-                if (periode := _periode(moteur, code, annee)) is not None]
+                if code in moteur.catalogue
+                and (periode := periode_de_liquidation(
+                    moteur.catalogue[code], carriere.date_liquidation)) is not None]
     annuites = [(c, p) for c, p in periodes if p.type_calcul == "annuites"]
     autres = [(c, p) for c, p in periodes if p.type_calcul != "annuites"]
     retenues = annuites or ouvrir.sans_ages_propres(autres)

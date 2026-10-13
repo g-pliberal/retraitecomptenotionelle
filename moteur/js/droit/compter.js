@@ -15,7 +15,7 @@
 import { DateMois } from "../calendrier.js";
 import * as chrono from "../chronologie.js";
 import { fiabiliteDepuisTexte, nomFiabilite, Fiabilite } from "../serie.js";
-import { derniereAnnee, ligneCotisee } from "./commun.js";
+import { ligneCotisee, periodeDeLiquidation } from "./commun.js";
 import * as coordonner from "./coordonner.js";
 import { compterLesPeriodes, familleDesRegimes } from "./etranger.js";
 
@@ -919,7 +919,7 @@ export function majorationPourEnfants(moteur, carriere, trimestresParRegime, ann
       continue;
     }
     const regime = moteur.catalogue.obtenir(code);
-    const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+    const periode = periodeDeLiquidation(regime, new DateMois(anneeLiquidation, mois));
     if (periode === null) {
       continue;
     }

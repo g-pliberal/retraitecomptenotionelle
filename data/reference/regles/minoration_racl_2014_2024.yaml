@@ -16,16 +16,16 @@ effet: >-
   durée d'assurance en dispense, 25 % à soixante-deux ans ; nés avant 1953, 6 % par année
   d'anticipation avant soixante-cinq ans ; nés en 1953 et 1954, le tableau de l'annexe,
   par blocs de quatre trimestres avant 65 ans et 8 mois (5, 10, 15, 21 et 27 %) et avant
-  66 ans et 4 mois (4, 8, 13, 18 et 24 %). Un écart reste, et un doute. Le moteur passe à
-  la règle de 2025 au 1er janvier, quand l'arrêté du 13 mai 2025, publié le 15, n'a pas de
-  date d'effet propre : les pensions de janvier à mai 2025 relevaient encore de celle-ci ;
-  non mesuré, jusqu'aux versions datées (docs/architecture.md, § 4.6). Et pour les
-  générations 1955 et suivantes, la colonne « 1955 ET APRÈS » de l'annexe de 2013 chiffre
-  2,5 % par année les deux premières, 20 % à cinq ans, contre 25 % à l'article ; si la
-  caisse l'a suivie jusqu'à son abrogation en mai 2024, le moteur retire cinq points de
-  trop à soixante-deux ans.
+  66 ans et 4 mois (4, 8, 13, 18 et 24 %). Elle vaut pour les pensions qui prennent effet
+  jusqu'au 15 mai 2025 : l'arrêté du 13 mai 2025, publié ce jour-là sans date d'effet
+  propre, vaut le lendemain, et la période de 2025 du RACL liquide depuis le 16 mai
+  (`date_effet`, docs/architecture.md, § 4.6), quand le moteur passait à la règle nouvelle
+  dès le 1er janvier. Un doute reste : pour les générations 1955 et suivantes, la colonne
+  « 1955 ET APRÈS » de l'annexe de 2013 chiffre 2,5 % par année les deux premières, 20 % à
+  cinq ans, contre 25 % à l'article ; si la caisse l'a suivie jusqu'à son abrogation en mai
+  2024, le moteur retire cinq points de trop à soixante-deux ans.
 sources:
-  lu_le: 2026-09-27
+  lu_le: 2026-10-13
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -35,9 +35,6 @@ sources:
     : un guide ou une page d'avant 2024, un rapport, un exemple chiffré. Ses guides de
     2021, 2023 et 2025 ne publient pas le taux du RACL, et l'Internet Archive n'a pas
     répondu le 27 septembre 2026. Sans solliciter la caisse (docs/architecture.md, § 3.5).
-  - >-
-    Passer à la règle de 2025 à la publication de l'arrêté du 13 mai 2025, et non au 1er
-    janvier, quand le moteur saura dater une règle au mois (docs/architecture.md, § 4.6).
   lectures:
   - type: jorf
     reference: >-
@@ -80,8 +77,11 @@ sources:
       de l'âge prévu à l'article L. 161-17-2 du code de la sécurité sociale, dès lors que la
       pension du régime de base des travailleurs salariés est liquidée à taux plein », et
       les coefficients du régime de base « si cela est plus favorable à l'adhérent ». La
-      règle de la fiche s'arrête là. Lu dans l'index JORF du dépôt
-    date: 2026-09-27
+      règle de la fiche s'arrête là. Article 2 (JORFARTI000051592838) : « Le présent arrêté
+      sera publié au Journal officiel de la République française », sans autre date : il
+      entre en vigueur le lendemain de sa publication, le 16 mai 2025. Lu dans l'index
+      JORF du dépôt
+    date: 2026-10-13
   - type: autre
     reference: >-
       IRCEC, Guide de la retraite des artistes-auteurs 2021, pages du RACL : « La pension

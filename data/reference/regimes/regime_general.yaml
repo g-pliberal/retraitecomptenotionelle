@@ -270,6 +270,7 @@ periodes:
 
   - debut: 1979
     fin: 1982
+    date_effet: [1979-01-01, 1983-04-01]
     type_calcul: annuites
     age_ouverture: 60
     age_taux_plein: 65
@@ -293,13 +294,15 @@ periodes:
     notes: >-
       Les règles de 1978, le taux de soixante-cinq ans servi dès soixante
       ans aux femmes de trente-sept ans et demi d'assurance pour une pension
-      qui prend effet après le 31 décembre 1978 (même article). Jusqu'au 31
-      mars 1983, le taux croît encore après soixante-cinq ans ; le moteur, qui
-      choisit la période à l'année, applique à toute l'année 1983 la règle de
-      l'ordonnance du 26 mars 1982 (fiche `decote_avant_1983`).
+      qui prend effet après le 31 décembre 1978 (même article). La période
+      liquide encore les pensions qui prennent effet jusqu'au 31 mars 1983
+      (`date_effet`) : l'ordonnance du 26 mars 1982 n'entre en vigueur que le
+      1er avril 1983 (article 9, LEGIARTI000006275868), et jusque-là le taux
+      croît encore après soixante-cinq ans (fiche `decote_avant_1983`).
 
   - debut: 1983
     fin: 1993
+    date_effet: [1983-04-01, 1994-01-01]
     type_calcul: annuites
     age_ouverture: 60
     age_taux_plein: 65
@@ -324,7 +327,8 @@ periodes:
       ORDONNANCE DU 26 MARS 1982 : taux plein ouvert dès 60 ans pour
       150 trimestres. C'est l'abaissement d'âge de 65 à 60 ans que le
       modèle traite comme une anticipation de 5 ans (cf. cliquet dans
-      legislation/ages_reference.csv).
+      legislation/ages_reference.csv). En vigueur le 1er avril 1983
+      (article 9) : la période liquide depuis ce jour (`date_effet`).
 
   - debut: 1994
     fin: 2003

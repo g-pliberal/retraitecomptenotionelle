@@ -531,9 +531,15 @@ trois choses, qui changent elles aussi d'une version à l'autre :
 - depuis quand elle compte : des trimestres civils, ou des trimestres courus
   depuis le jour où les conditions sont réunies.
 
-Deux approximations d'aujourd'hui tombent ainsi : la pension qui part le mois
-de l'anniversaire au lieu du 1er du mois suivant, et une règle de septembre
-2026 appliquée dès janvier.
+La pension prend ainsi effet le 1er du mois qui suit l'anniversaire, et non le
+mois de l'anniversaire. Et une règle qui entre en vigueur en cours d'année ne
+vaut pas dès janvier : une version se borne au jour sur la date d'effet
+(§ 4.1), et une période d'un fichier de régime aussi. Ses années bornent ce
+qu'elle fait acquérir ; quand un texte coupe l'année, son champ `date_effet`
+borne au jour les pensions qu'elle liquide, et la liquidation choisit la
+période à la date d'effet de la pension. L'ordonnance du 26 mars 1982 vaut
+ainsi pour les pensions qui prennent effet depuis le 1er avril 1983, et un
+arrêté sans date d'effet propre, depuis le lendemain de sa publication.
 
 ### 4.7 Les hypothèses
 

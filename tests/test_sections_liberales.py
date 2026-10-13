@@ -154,7 +154,7 @@ def test_la_cavec_minore_par_l_age_seul(simulateur, naissance, liquidation,
         coefficient)
 
 
-def test_la_cavec_majore_pour_trois_enfants_depuis_2026(simulateur):
+def test_la_cavec_majore_pour_trois_enfants_depuis_juillet_2025(simulateur):
     resultat, pensions = _calculer(simulateur, "expert_comptable", 1961, 65.0,
                                    sexe="F", enfants=3)
     assert _majoration(resultat, "cavec_complementaire") == pytest.approx(

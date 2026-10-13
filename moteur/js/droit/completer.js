@@ -19,7 +19,7 @@ import { DateMois } from "../calendrier.js";
 import { formatFixe, formatPourcentage } from "../format.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import {
-  MAJORATION_ENFANTS, dateDEffet, derniereAnnee, ligneCotisee, majorationDuConjoint,
+  MAJORATION_ENFANTS, dateDEffet, ligneCotisee, majorationDuConjoint, periodeDeLiquidation,
 } from "./commun.js";
 import { pointsGratuits } from "./acquerir.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
@@ -126,8 +126,8 @@ export function finsDeCharge(carriere, regle, dateEffet) {
  * étapes `[[date, [[régime, part], ...]], ...]` ; `null` quand rien ne s'y
  * ajoute. Voir `majoration_pour_enfants_a_charge` du Python.
  */
-export function majorationPourEnfantsACharge(moteur, carriere, dateEffet, anneeLiquidation,
-  pensions, anticipations, nesEleves) {
+export function majorationPourEnfantsACharge(moteur, carriere, dateEffet, pensions,
+  anticipations, nesEleves) {
   const version = moteur.fichesDatees.version(FICHE_DES_ENFANTS_A_CHARGE, dateEffet);
   if (version === null || !version.parametres.existe) {
     return null;
@@ -144,7 +144,7 @@ export function majorationPourEnfantsACharge(moteur, carriere, dateEffet, anneeL
   const montants = new Map();
   for (const pension of pensions) {
     const regime = moteur.catalogue.obtenir(pension.regime);
-    const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+    const periode = periodeDeLiquidation(regime, carriere.dateLiquidation);
     if (pension.montant > 0.0 && periode !== null
         && periode.avantages_non_contributifs.includes(MAJORATION_ENFANTS)) {
       montants.set(pension.regime, pension.montant);
@@ -906,7 +906,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     for (let indice = 0; indice < pensions.length; indice += 1) {
       const pension = pensions[indice];
       const regime = moteur.catalogue.obtenir(pension.regime);
-      const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+      const periode = periodeDeLiquidation(regime, carriere.dateLiquidation);
       if (periode === null
           || !periode.avantages_non_contributifs.includes("surcote_parentale")) {
         continue;
@@ -992,7 +992,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         continue;
       }
       const regime = moteur.catalogue.obtenir(pension.regime);
-      const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+      const periode = periodeDeLiquidation(regime, carriere.dateLiquidation);
       if (periode === null
           || !periode.avantages_non_contributifs.includes("majoration_enfants")) {
         continue;
@@ -1078,7 +1078,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     }
     const aCharge = majorationPourEnfantsACharge(
       moteur, carriere, dateDEffet(carriere) ?? ouvrir.SANS_DATE_D_EFFET,
-      anneeLiquidation, pensions, new Map(liquidees.anticipations ?? []), nesEleves);
+      pensions, new Map(liquidees.anticipations ?? []), nesEleves);
     if (aCharge !== null) {
       const ajouts = new Map(aCharge.etapes[0][1]);
       let ajout = 0.0;
@@ -1126,7 +1126,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     if (indice >= 0) {
       const base = pensions[indice];
       const regime = moteur.catalogue.obtenir(base.regime);
-      const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+      const periode = periodeDeLiquidation(regime, carriere.dateLiquidation);
       const proratisation = periode === null ? ouverture.requis
         : liquider.dureeProratisation(moteur, periode, carriere, ouverture.requis)[0];
       const etapes = majorationPourConjointACharge(
@@ -1196,7 +1196,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     let periodeRco = null;
     if (indiceRco >= 0) {
       const regimeRco = moteur.catalogue.obtenir(RCO);
-      periodeRco = regimeRco.periode(Math.min(anneeLiquidation, derniereAnnee(regimeRco)));
+      periodeRco = periodeDeLiquidation(regimeRco, carriere.dateLiquidation);
     }
     const valeur = periodeRco !== null
       && periodeRco.avantages_non_contributifs.includes("complement_differentiel_rco")

@@ -21,7 +21,7 @@ import {
   GENERATION_REFORME_2023, REFORME_2023_EFFET,
 } from "../regimes.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
-import { dateDEffet, derniereAnnee, ligneCotisee } from "./commun.js";
+import { dateDEffet, ligneCotisee, periodeDeLiquidation } from "./commun.js";
 import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import { borneCarriere, REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
@@ -164,7 +164,7 @@ export function ouvrir(moteur, releve, regimes = null) {
         continue;
       }
       const regime = moteur.catalogue.obtenir(code);
-      const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+      const periode = periodeDeLiquidation(regime, carriere.dateLiquidation);
       if (periode === null || !calculs.includes(periode.type_calcul)) {
         continue;
       }
@@ -922,7 +922,7 @@ export function periodesParcourues(moteur, carriere) {
       continue;
     }
     const regime = moteur.catalogue.obtenir(code);
-    const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+    const periode = periodeDeLiquidation(regime, carriere.dateLiquidation);
     if (periode === null) {
       continue;
     }

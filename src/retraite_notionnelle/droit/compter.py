@@ -35,7 +35,7 @@ from .. import chronologie as chrono
 from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
 from . import coordonner
-from .commun import derniere_annee, ligne_cotisee
+from .commun import ligne_cotisee, periode_de_liquidation
 from .etranger import TrimestresEtrangers, compter_les_periodes, famille_des_regimes
 from ..somme import somme_ordonnee
 
@@ -1004,7 +1004,7 @@ def majoration_pour_enfants(moteur: ScenarioActuel, carriere: Carriere,
         if code not in moteur.catalogue:
             continue
         regime = moteur.catalogue[code]
-        periode = regime.periode(min(annee_liquidation, derniere_annee(regime)))
+        periode = periode_de_liquidation(regime, DateMois(annee_liquidation, mois))
         if periode is None:
             continue
         for dispositif in periode.avantages_non_contributifs:

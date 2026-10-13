@@ -16,7 +16,7 @@ import {
 } from "../carriere.js";
 import { nomFiabilite, Fiabilite } from "../serie.js";
 import { primesSoumises } from "../primes.js";
-import { derniereAnnee } from "./commun.js";
+import { periodeDeLiquidation } from "./commun.js";
 import * as compter from "./compter.js";
 import * as liquider from "./liquider.js";
 import * as ouvrir from "./ouvrir.js";
@@ -100,8 +100,7 @@ export function pointsGratuits(moteur, periode, carriere, assurance, trimestres,
   auTauxPlein = false) {
   const regle = periode.points_gratuits;
   const base = moteur.catalogue.obtenir(regle.regime);
-  const periodeBase = base.periode(
-    Math.min(carriere.anneeLiquidation, derniereAnnee(base)));
+  const periodeBase = periodeDeLiquidation(base, carriere.dateLiquidation);
   if (periodeBase === null) {
     return [0.0, null];
   }
@@ -584,7 +583,7 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
   // décret n° 46-2769). Voir le Python.
   for (const [code, [total, avantAge]] of trimestresPlafonnables) {
     const regime = moteur.catalogue.obtenir(code);
-    const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+    const periode = periodeDeLiquidation(regime, carriere.dateLiquidation);
     if (periode === null || periode.trimestres_maximum === null
         || periode.trimestres_maximum === undefined || total <= 0) {
       continue;
@@ -617,7 +616,7 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
       }
       for (const code of attribuants) {
         const regime = moteur.catalogue.obtenir(code);
-        const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+        const periode = periodeDeLiquidation(regime, carriere.dateLiquidation);
         if (periode === null || periode.points_gratuits === null
             || periode.points_gratuits === undefined) {
           continue;

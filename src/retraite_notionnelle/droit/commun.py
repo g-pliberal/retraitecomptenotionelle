@@ -1,6 +1,7 @@
 """Ce que les étapes du droit partagent avec la liquidation.
 
 La dernière année d'un régime, que l'acquisition et la liquidation lisent ;
+la période qui liquide une pension, à sa date d'effet ;
 la date d'effet d'une demande ; ce qu'est une année cotisée, que l'ouverture,
 le compte des durées et les départs lisent ;
 la pension d'un régime, que « liquider chaque régime » écrit et que
@@ -15,6 +16,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
 
 
@@ -22,6 +24,19 @@ def derniere_annee(regime) -> int:
     """Dernière année pour laquelle le régime a des paramètres."""
     annees = [p.fin if p.fin is not None else 9999 for p in regime.periodes]
     return min(max(annees), 2100) if annees else 2100
+
+
+def periode_de_liquidation(regime, date: DateMois):
+    """La période de ``regime`` qui liquide une pension prenant effet le 1er
+    du mois ``date`` : celle dont les dates d'effet le comprennent, au jour
+    quand un texte coupe l'année (``PeriodeRegime.effet`` ;
+    docs/architecture.md, § 4.6), et sinon celle de l'année. Après la
+    dernière année du régime, celle de cette dernière année. ``None`` quand
+    aucune ne la couvre."""
+    derniere = derniere_annee(regime)
+    if date.annee > derniere:
+        return regime.periode(derniere)
+    return regime.periode_a_l_effet(f"{date.annee:04d}-{date.mois:02d}-01")
 
 
 def date_d_effet(carriere) -> str | None:

@@ -88,6 +88,7 @@ periodes:
       d'avant 2008, lui, n'est pas connu.
   - debut: 2008
     fin: 2018
+    date_effet: [2008-01-01, 2018-09-05]
     type_calcul: points
     age_ouverture: 60
     age_taux_plein: 65
@@ -152,6 +153,7 @@ periodes:
       aucune dispense, l'abattement court jusqu'à 65 ans.
   - debut: 2019
     fin: 2025
+    date_effet: [2018-09-05, 2025-07-07]
     type_calcul: points
     age_ouverture: 60
     age_taux_plein: 65
@@ -197,10 +199,13 @@ periodes:
       LA MAJORATION TOMBE À 0,75 % : arrêté du 20 août 2018
       (JORFARTI000037363871), article 13, « une majoration de 0,75 % par
       trimestre plein de prorogation au-delà de cet âge, dans la limite
-      maximale de 15 % » — toujours vingt trimestres. Appliqué aux
-      liquidations à partir de 2019, première année pleine.
+      maximale de 15 % » — toujours vingt trimestres. L'arrêté, publié au
+      Journal officiel du 4 septembre 2018, n'a pas de date d'effet propre :
+      il vaut le lendemain, et la période liquide les pensions qui prennent
+      effet depuis le 5 septembre 2018 (`date_effet`).
   - debut: 2026
     fin: 2026
+    date_effet: [2025-07-07, 2027-01-01]
     type_calcul: points
     age_ouverture: 60
     age_taux_plein: 65
@@ -250,17 +255,20 @@ periodes:
       (LEGIARTI000054437585) le reprend, « une majoration de 1,25 % par
       trimestre plein de prorogation au-delà de cet âge, dans la limite
       maximale de 25 % », et le guide 2026 de la caisse l'écrit, « après
-      65 ans avec 1,25 % de majoration ». La fiche la sert dès 2026, le
-      moteur ne coupant pas une période au mois : de juillet à décembre
-      2025, il sert encore 0,75 % (fiche `surcote_par_age_seul`).
+      65 ans avec 1,25 % de majoration ». L'arrêté n'a pas de date d'effet
+      propre : il vaut le lendemain de sa publication, et les pensions qui
+      prennent effet depuis le 7 juillet 2025 reçoivent 1,25 % (`date_effet`
+      de la période de 2026 ; fiche `surcote_par_age_seul`).
       TROIS ENFANTS, DEPUIS L'ARRÊTÉ DU 4 JUILLET 2025 (JORFARTI000051849616,
       article 20 des statuts, puis article 1.3.1 du règlement de 2026) :
       « le montant de la première pension personnelle et de la pension de
       réversion […] des assurés ayant eu au moins trois enfants est majoré
       de 10 % ». La caisse l'écrit sur sa page de calcul ; le guide 2026
       de la CNAVPL, édité en mars, dit encore « le régime ne prévoit pas
-      de majoration ». L'arrêté n'a pas de date d'effet propre : la fiche
-      la sert aux liquidations de 2026, première année pleine.
+      de majoration ». L'arrêté n'a pas de date d'effet propre : la
+      majoration vaut pour les pensions qui prennent effet depuis le 7
+      juillet 2025, lendemain de sa publication (`date_effet` de la période
+      de 2026).
   - debut: 2027
     fin: null
     type_calcul: points
@@ -293,14 +301,17 @@ periodes:
       (LEGIARTI000054437585) le reprend, « une majoration de 1,25 % par
       trimestre plein de prorogation au-delà de cet âge, dans la limite
       maximale de 25 % », et le guide 2026 de la caisse l'écrit, « après
-      65 ans avec 1,25 % de majoration ». La fiche la sert dès 2026, le
-      moteur ne coupant pas une période au mois : de juillet à décembre
-      2025, il sert encore 0,75 % (fiche `surcote_par_age_seul`).
+      65 ans avec 1,25 % de majoration ». L'arrêté n'a pas de date d'effet
+      propre : il vaut le lendemain de sa publication, et les pensions qui
+      prennent effet depuis le 7 juillet 2025 reçoivent 1,25 % (`date_effet`
+      de la période de 2026 ; fiche `surcote_par_age_seul`).
       TROIS ENFANTS, DEPUIS L'ARRÊTÉ DU 4 JUILLET 2025 (JORFARTI000051849616,
       article 20 des statuts, puis article 1.3.1 du règlement de 2026) :
       « le montant de la première pension personnelle et de la pension de
       réversion […] des assurés ayant eu au moins trois enfants est majoré
       de 10 % ». La caisse l'écrit sur sa page de calcul ; le guide 2026
       de la CNAVPL, édité en mars, dit encore « le régime ne prévoit pas
-      de majoration ». L'arrêté n'a pas de date d'effet propre : la fiche
-      la sert aux liquidations de 2026, première année pleine.
+      de majoration ». L'arrêté n'a pas de date d'effet propre : la
+      majoration vaut pour les pensions qui prennent effet depuis le 7
+      juillet 2025, lendemain de sa publication (`date_effet` de la période
+      de 2026).

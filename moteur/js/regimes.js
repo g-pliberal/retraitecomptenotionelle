@@ -1994,6 +1994,25 @@ export class PeriodeRegime {
     return this.debut <= annee && (this.fin === null || annee <= this.fin);
   }
 
+  /**
+   * Les dates d'effet que la période liquide, [début, fin) en AAAA-MM-JJ :
+   * celles qu'elle déclare (`date_effet`, quand un texte coupe l'année),
+   * sinon ses années. Voir regimes.py.
+   */
+  get effet() {
+    if (this.date_effet !== null && this.date_effet !== undefined) {
+      return this.date_effet;
+    }
+    return [`${String(this.debut).padStart(4, "0")}-01-01`,
+      this.fin === null ? null : `${String(this.fin + 1).padStart(4, "0")}-01-01`];
+  }
+
+  /** La période liquide-t-elle une pension qui prend effet ce jour (AAAA-MM-JJ) ? */
+  liquide(jour) {
+    const [debut, fin] = this.effet;
+    return debut <= jour && (fin === null || jour < fin);
+  }
+
   /** Part du taux que l'assuré supporte lui-même. */
   get tauxCotisationSalarie() {
     return this.taux_cotisation_retraite * this.part_salariale;
@@ -2129,6 +2148,15 @@ export class Regime {
     return this.periodes.filter((p) => p.couvre(annee));
   }
 
+  /**
+   * Paramètres qui liquident une pension prenant effet ce jour (AAAA-MM-JJ) :
+   * la première période dont les dates d'effet le comprennent. Sans date
+   * d'effet déclarée, c'est la période de l'année.
+   */
+  periodeALEffet(jour) {
+    return this.periodes.find((p) => p.liquide(jour)) || null;
+  }
+
   /** Le régime accepte-t-il de nouveaux affiliés cette année-là ? */
   ouvert(annee) {
     if (annee < this.creation) {
@@ -2163,6 +2191,30 @@ function enVigueur(bareme, annee) {
 function memesChamps(a, b) {
   const cles = Object.keys(a);
   return cles.length === Object.keys(b).length && cles.every((cle) => a[cle] === b[cle]);
+}
+
+const _jan = (annee) => `${String(annee).padStart(4, "0")}-01-01`;
+
+/**
+ * La période réduite aux années [`debut`, `fin`], ces champs changés : ses
+ * dates d'effet suivent, la borne au jour gardée au bout de la période où
+ * elle est écrite. Voir donnees/regimes.py, morceau_d_annees.
+ */
+export function morceauDAnnees(periode, debut, fin, champs) {
+  if (periode.date_effet === null || periode.date_effet === undefined) {
+    return { ...periode, debut, fin, ...champs };
+  }
+  const [premiere, derniere] = periode.date_effet;
+  const effet = [debut === periode.debut ? premiere : _jan(debut),
+    fin === periode.fin ? derniere : _jan(fin + 1)];
+  const annees = [_jan(debut), fin === null ? null : _jan(fin + 1)];
+  const morceau = { ...periode, debut, fin, ...champs };
+  if (effet[0] === annees[0] && effet[1] === annees[1]) {
+    delete morceau.date_effet;
+  } else {
+    morceau.date_effet = effet;
+  }
+  return morceau;
 }
 
 /**
@@ -2206,9 +2258,8 @@ export function daterLesTauxMoyens(code, periodes, moyens, appels) {
     }
     tranches.forEach(([debut, finTranche, champs], rang) => {
       const derniereTranche = rang === tranches.length - 1;
-      resultat.push({
-        ...periode, debut, fin: derniereTranche ? periode.fin : finTranche, ...champs,
-      });
+      resultat.push(morceauDAnnees(
+        periode, debut, derniereTranche ? periode.fin : finTranche, champs));
     });
   }
   return resultat;

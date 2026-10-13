@@ -49,7 +49,7 @@ from . import acquerir
 from . import etranger as _etranger
 from . import invalidite, liquider, ouvrir
 from .commun import (MAJORATION_ENFANTS, AvantageApplique, PensionRegime, date_d_effet,
-                     derniere_annee, ligne_cotisee, majoration_du_conjoint)
+                     ligne_cotisee, majoration_du_conjoint, periode_de_liquidation)
 from .compter import trimestres_de_la_ligne_entre as _trimestres_de_la_ligne_entre
 from ..somme import somme_ordonnee
 
@@ -966,9 +966,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         trimestres_parentaux = 0
         for indice, pension in enumerate(pensions):
             regime = moteur.catalogue[pension.regime]
-            periode = regime.periode(
-                min(annee_liquidation, derniere_annee(regime))
-            )
+            periode = periode_de_liquidation(regime, carriere.date_liquidation)
             if (periode is None or "surcote_parentale"
                     not in periode.avantages_non_contributifs):
                 continue
@@ -1062,7 +1060,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
             if pension.montant <= 0.0:
                 continue
             regime = moteur.catalogue[pension.regime]
-            periode = regime.periode(min(annee_liquidation, derniere_annee(regime)))
+            periode = periode_de_liquidation(regime, carriere.date_liquidation)
             if periode is None:
                 continue
             if "majoration_enfants" not in periode.avantages_non_contributifs:
@@ -1143,7 +1141,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
             nes_eleves[code] = nes_eleves.get(code, 0.0) + part
         a_charge = majoration_pour_enfants_a_charge(
             moteur, carriere, date_d_effet(carriere) or ouvrir.SANS_DATE_D_EFFET,
-            annee_liquidation, pensions, dict(liquidees.anticipations), nes_eleves)
+            pensions, dict(liquidees.anticipations), nes_eleves)
         if a_charge is not None:
             ajouts = dict(a_charge.etapes[0][1])
             ajout = somme_ordonnee(ajouts.values())
@@ -1190,7 +1188,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         if indice is not None:
             base = pensions[indice]
             regime = moteur.catalogue[base.regime]
-            periode = regime.periode(min(annee_liquidation, derniere_annee(regime)))
+            periode = periode_de_liquidation(regime, carriere.date_liquidation)
             proratisation = (ouverture.requis if periode is None else liquider.duree_proratisation(
                 moteur, periode, carriere, ouverture.requis)[0])
             etapes = majoration_pour_conjoint_a_charge(
@@ -1252,8 +1250,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         periode_rco = None
         if indice_rco is not None:
             regime_rco = moteur.catalogue[RCO]
-            periode_rco = regime_rco.periode(
-                min(annee_liquidation, derniere_annee(regime_rco)))
+            periode_rco = periode_de_liquidation(regime_rco, carriere.date_liquidation)
         valeur = (liquider.valeur_du_point(moteur, RCO, carriere.date_liquidation)
                   if periode_rco is not None and "complement_differentiel_rco"
                   in periode_rco.avantages_non_contributifs else None)
@@ -1583,7 +1580,6 @@ class MajorationACharge:
 
 
 def majoration_pour_enfants_a_charge(moteur, carriere: Carriere, date_effet: str,
-                                     annee_liquidation: int,
                                      pensions: list[PensionRegime],
                                      anticipations: dict[str, float],
                                      nes_eleves: dict[str, float]) -> MajorationACharge | None:
@@ -1615,7 +1611,7 @@ def majoration_pour_enfants_a_charge(moteur, carriere: Carriere, date_effet: str
     montants: dict[str, float] = {}
     for pension in pensions:
         regime = moteur.catalogue[pension.regime]
-        periode = regime.periode(min(annee_liquidation, derniere_annee(regime)))
+        periode = periode_de_liquidation(regime, carriere.date_liquidation)
         if (pension.montant > 0.0 and periode is not None
                 and MAJORATION_ENFANTS in periode.avantages_non_contributifs):
             montants[pension.regime] = pension.montant

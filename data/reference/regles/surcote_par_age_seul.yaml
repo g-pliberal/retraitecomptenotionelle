@@ -26,26 +26,29 @@ effet: >-
   1er juillet 1951 à 1952, jusqu'à 68 ans pour ceux de 1953 à 1955, trois ans au-delà du
   taux plein ensuite (`age_surcote_maximum` de la table `cavp`) ; la Cipav, cinq années
   au plus, comptées de 65 ans jusqu'en 2021 et de l'âge du taux plein ensuite ; la CPRN,
-  les seuls trimestres d'exercice (`surcote_trimestres_cotises`). Deux écarts restent, à
-  la CAVEC, qui attendent ce que le modèle ne sait pas encore faire. Ses taux changent le
-  4 septembre 2018 (0,75 %) et le 6 juillet 2025 (1,25 %), que le moteur sert en 2019 et
-  en 2026, faute de couper une période au mois (docs/architecture.md, § 4.6) : jusqu'à 10
-  points d'écart aux liquidations de septembre à décembre 2018 et de juillet à décembre
-  2025. Et jusqu'au 4 septembre 2018, seuls les points acquis jusqu'à la fin de l'année,
-  puis, depuis 2012, du trimestre du 65e anniversaire, étaient majorés : le moteur, qui
-  ne garde pas les points année par année, les majore tous, non mesuré. Restent à lire la
+  les seuls trimestres d'exercice (`surcote_trimestres_cotises`). À la CAVEC, les taux
+  changent aux pensions qui prennent effet depuis le 5 septembre 2018 (0,75 %) et depuis
+  le 7 juillet 2025 (1,25 %), lendemains de la publication de deux arrêtés sans date
+  d'effet propre, que ses périodes coupent au jour (`date_effet`, docs/architecture.md,
+  § 4.6) ; le moteur les servait en 2019 et en 2026, jusqu'à 10 points d'écart aux
+  liquidations de septembre à décembre 2018 et de juillet à décembre 2025. Un écart y
+  reste, qui attend ce que le modèle ne sait pas encore faire : jusqu'au 4 septembre 2018,
+  seuls les points acquis jusqu'à la fin de l'année, puis, depuis 2012, du trimestre du
+  65e anniversaire, étaient majorés ; le moteur, qui ne garde pas les points année par
+  année, les majore tous, non mesuré. Restent à lire la
   rédaction d'origine de l'article 32 des statuts de la CARMF et l'article 3.15 des
   statuts de la Cipav de 2006, publiés au Bulletin officiel.
 sources:
-  lu_le: 2026-09-27
+  lu_le: 2026-10-13
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
-    CAVEC : servir 0,75 % dès le 4 septembre 2018 et 1,25 % dès le 6 juillet 2025 quand le
-    moteur saura dater une règle au mois (docs/architecture.md, § 4.6) ; et, jusqu'au 4
-    septembre 2018, ne majorer que les points acquis jusqu'à la fin de l'année du 65e
-    anniversaire, puis, depuis 2012, de son trimestre, quand il gardera les points année
-    par année.
+    CAVEC : jusqu'au 4 septembre 2018, ne majorer que les points acquis jusqu'à la fin de
+    l'année du 65e anniversaire, puis, depuis 2012, de son trimestre, quand le moteur
+    gardera les points année par année. Et la date d'effet : « La retraite est liquidée à
+    dater du premier jour du trimestre civil suivant la demande » (statuts approuvés par
+    l'arrêté du 20 août 2018, article 14), quand le moteur la liquide au premier jour du
+    mois, comme le régime de base ; lire si la caisse le fait toujours, et depuis quand.
   - >-
     Cipav : lire l'article 3.15 des statuts de 2006 (arrêté du 3 octobre 2006, publié au
     Bulletin officiel d'octobre 2006), pour dater la borne « de 1 à 5 ans », que le moteur
@@ -173,6 +176,16 @@ sources:
       nombre : « 25 » ». Les arrêtés de 2019, de 2024 et du 16 décembre 2025 n'y touchent
       pas.
     date: 2026-09-27
+  - type: jorf
+    reference: >-
+      CAVEC, index JORF, relu pour dater les deux coupures. L'arrêté du 20 août 2018
+      (JORFTEXT000037363865) et son annexe (JORFARTI000037363871) ne portent ni « vigueur »
+      ni date d'application : il vaut le lendemain de sa publication, le 5 septembre 2018 ;
+      article 14 des statuts : « La retraite est liquidée à dater du premier jour du
+      trimestre civil suivant la demande ». L'arrêté du 4 juillet 2025, annexe
+      (JORFARTI000051849616), ne porte pas davantage de date : il vaut le 7 juillet 2025,
+      pour la majoration de l'article 13 comme pour celle des trois enfants de l'article 20
+    date: 2026-10-13
   - type: legifrance
     reference: >-
       CAVEC, règlement approuvé par l'arrêté du 10 juillet 2026 (LEGIARTI000054437585),

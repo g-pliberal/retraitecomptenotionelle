@@ -1,6 +1,7 @@
 /**
  * Ce que les étapes du droit partagent avec la liquidation : la dernière
- * année d'un régime, la date d'effet d'une demande, ce qu'est une année
+ * année d'un régime, la période qui liquide une pension à sa date d'effet,
+ * la date d'effet d'une demande, ce qu'est une année
  * cotisée, les parts de la majoration pour enfants à une date.
  *
  * Jumeau de `src/retraite_notionnelle/droit/commun.py`.
@@ -13,6 +14,21 @@ export function derniereAnnee(regime) {
   }
   const annees = regime.periodes.map((p) => (p.fin === null ? 9999 : p.fin));
   return Math.min(Math.max(...annees), 2100);
+}
+
+/**
+ * La période de `regime` qui liquide une pension prenant effet le 1er du mois
+ * `date` : celle dont les dates d'effet le comprennent, au jour quand un texte
+ * coupe l'année, et sinon celle de l'année ; après la dernière année du
+ * régime, celle de cette dernière année. `null` quand aucune ne la couvre.
+ */
+export function periodeDeLiquidation(regime, date) {
+  const derniere = derniereAnnee(regime);
+  if (date.annee > derniere) {
+    return regime.periode(derniere);
+  }
+  return regime.periodeALEffet(
+    `${String(date.annee).padStart(4, "0")}-${String(date.mois).padStart(2, "0")}-01`);
 }
 
 /**

@@ -782,6 +782,9 @@ def _regimes() -> list[dict]:
                     # périodes qui y renvoient : absente, la moyenne annuelle.
                     **({"regles_du_salaire_annuel_moyen": p.regles_du_salaire_annuel_moyen}
                        if p.regles_du_salaire_annuel_moyen else {}),
+                    # Les dates d'effet que la période liquide, au jour, aux
+                    # seules périodes qu'un texte coupe : absentes, ses années.
+                    **({"date_effet": list(p.date_effet)} if p.date_effet is not None else {}),
                     **_regles_d_avant_1983(p),
                     **_duree_majoree(p),
                     **_points_abattus(p),

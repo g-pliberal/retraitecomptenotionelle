@@ -21,7 +21,7 @@ import { FIN_PEREQUATION, coefficientTraitementDiffere, dateIso } from "../reval
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import * as acquerir from "./acquerir.js";
 import * as categories from "./categories.js";
-import { dateDEffet, derniereAnnee } from "./commun.js";
+import { dateDEffet, derniereAnnee, periodeDeLiquidation } from "./commun.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import { REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
@@ -235,7 +235,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     const trimestres = durees.pourLeTaux(famille, nationale);
     const cumul = cumulCotisations.get(code) ?? 0.0;
     const regime = moteur.catalogue.obtenir(code);
-    const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+    const periode = periodeDeLiquidation(regime, carriere.dateLiquidation);
     if (periode === null) {
       continue;
     }
@@ -1196,7 +1196,7 @@ export function anneesDesRegimesAlignes(moteur, carriere, releve, membres, total
   const durees = releve.durees;
   const exploitants = coordonner.REGIME_DES_NON_SALARIES_AGRICOLES;
   const periode = moteur.catalogue.contient(exploitants)
-    ? moteur.catalogue.obtenir(exploitants).periode(carriere.anneeLiquidation)
+    ? periodeDeLiquidation(moteur.catalogue.obtenir(exploitants), carriere.dateLiquidation)
     : null;
   const reforme = periode !== null && Boolean(periode.meilleures_annees_non_salaries);
   let part = total;
@@ -1343,8 +1343,8 @@ export function pensionDesNonSalariesAgricoles(moteur, periode, carriere, releve
   const partA = proratisation > 0 ? forfait * retenueA / proratisation : 0.0;
 
   // 1° LE REVENU ANNUEL MOYEN DEPUIS 2016, au taux plein du régime général.
-  const taux = moteur.catalogue.obtenir("regime_general").periode(anneeLiquidation).taux_plein
-    || 0.5;
+  const taux = periodeDeLiquidation(moteur.catalogue.obtenir("regime_general"),
+    carriere.dateLiquidation).taux_plein || 0.5;
   const retenue1 = Math.min(duree1, proratisation);
   const revenuMoyen = retenue1 > 0 && anneesApres > 0
     ? salaireDeReference(

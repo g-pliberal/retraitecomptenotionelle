@@ -39,7 +39,7 @@ from .. import revalorisation
 from ..donnees.primes import charger_primes_soumises
 from . import acquerir, categories, coordonner, cultes, invalidite, ouvrir, primes
 from .compter import trimestres_de_la_ligne_entre
-from .commun import PensionRegime, date_d_effet, derniere_annee
+from .commun import PensionRegime, date_d_effet, derniere_annee, periode_de_liquidation
 from .etranger import famille_du_regime
 from .ouvrir import TRIMESTRES_DECOTE_MILITAIRE
 from ..somme import somme_ordonnee
@@ -696,7 +696,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         trimestres = durees.pour_le_taux(famille, nationale)
         cumul = cumul_cotisations.get(code, 0.0)
         regime = moteur.catalogue[code]
-        periode = regime.periode(min(annee_liquidation, derniere_annee(regime)))
+        periode = periode_de_liquidation(regime, carriere.date_liquidation)
         if periode is None:
             continue
         fiabilite_globale = min(fiabilite_globale, regime.fiabilite)
@@ -1789,7 +1789,7 @@ def annees_des_regimes_alignes(moteur, carriere: Carriere, releve: Releve,
         return None
     durees = releve.durees
     exploitants = coordonner.REGIME_DES_NON_SALARIES_AGRICOLES
-    periode = (moteur.catalogue[exploitants].periode(carriere.annee_liquidation)
+    periode = (periode_de_liquidation(moteur.catalogue[exploitants], carriere.date_liquidation)
                if exploitants in moteur.catalogue else None)
     reforme = periode is not None and periode.meilleures_annees_non_salaries
     part: int | None = total
@@ -1961,7 +1961,8 @@ def pension_des_non_salaries_agricoles(
 
     # 1° LE REVENU ANNUEL MOYEN DEPUIS 2016, au taux plein du régime général
     # et au prorata de la durée depuis 2016 (L. 732-18, L. 351-1).
-    taux = (moteur.catalogue["regime_general"].periode(annee_liquidation).taux_plein
+    taux = (periode_de_liquidation(moteur.catalogue["regime_general"],
+                                   carriere.date_liquidation).taux_plein
             or 0.5)
     retenue_1 = min(duree_1, proratisation)
     revenu_moyen = (

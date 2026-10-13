@@ -24,7 +24,7 @@
 
 import { DateMois } from "../calendrier.js";
 import { menerAuMois } from "../revalorisation.js";
-import { derniereAnnee, ligneCotisee } from "./commun.js";
+import { derniereAnnee, ligneCotisee, periodeDeLiquidation } from "./commun.js";
 import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import * as etranger from "./etranger.js";
@@ -185,10 +185,11 @@ function unitesDe(moteur, carriere, bases, routes) {
  * carrière longue acquise au départ déclaré. Voir `_ouverture` dans le Python.
  */
 function ouvertureDe(moteur, carriere, unite) {
-  const annee = carriere.anneeLiquidation;
   const periodes = [];
   for (const code of [...unite].sort()) {
-    const periode = periodeDe(moteur, code, annee);
+    const periode = moteur.catalogue.contient(code)
+      ? periodeDeLiquidation(moteur.catalogue.obtenir(code), carriere.dateLiquidation)
+      : null;
     if (periode !== null) {
       periodes.push([code, periode]);
     }
