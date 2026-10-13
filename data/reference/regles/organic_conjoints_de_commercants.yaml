@@ -1,0 +1,207 @@
+schema_version: 1
+id: organic_conjoints_de_commercants
+intitule: >-
+  De 1973 à 2003, l'industriel ou le commerçant affilié à l'Organic paie, en plus de sa
+  cotisation de base, une cotisation additionnelle sur deux tranches de son revenu
+  jusqu'au plafond, qui finance un régime complémentaire obligatoire maintenant à son
+  conjoint coexistant ou survivant les avantages que le droit lui donnait avant 1973 ;
+  au 1er janvier 2004, le régime est fermé, et ses droits deviennent des points portés au
+  compte de l'assuré lui-même, au NRCO puis au RCI, servis sous conditions de durée ou de
+  mariage et bornés par les pensions du conjoint.
+domaine: cotisations
+regimes: [organic_conjoints_batiment, nric, rci]
+etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- les années d'activité industrielle ou commerciale de l'assuré et son revenu
+  professionnel, sous le plafond, de 1973 à 2003
+- sa situation matrimoniale au premier jour de chaque semestre, et sa pension de base
+- en 2004, sa pension de base calculée sur sa carrière arrêtée au 31 décembre 2003
+- à la liquidation, sa durée d'assurance avant 2004, ses points, son mariage, et les
+  pensions de son conjoint coexistant
+ecrit:
+- la cotisation additionnelle de chaque année, jusqu'en 2003
+- les points du droit issu de l'ex-régime des conjoints, et la pension qu'ils donnent
+dates_qui_decident:
+- revenu.annee
+# `revenu.annee` est l'année de la cotisation additionnelle. Aucune version n'est lue par
+# un moteur : le modèle porte la cotisation par la fiche de régime
+# (regimes/organic_conjoints_batiment.yaml) et ne sert aucune pension, que `code` nomme.
+versions:
+- id: avantages_d_avant_1973
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006738056, article: "D. 635-34 CSS", en_vigueur: 1985-12-21}
+  nee_de: LEGIARTI000006738056
+  bornes:
+    revenu.annee: [null, 1973-01-01]
+  contenu:
+    droit: >-
+      le régime ne finance que les périodes « postérieures au 31 décembre 1972 » ; les
+      avantages qu'il maintient au conjoint sont ceux « qui résultaient des dispositions
+      législatives et réglementaires en vigueur à cette date », sous déduction des
+      prestations du régime de base (D. 635-34) : ce que le régime de base des
+      commerçants donnait au conjoint avant 1973 n'est pas lu ici
+  exemples: aucun trouvé
+- id: un_demi_et_un_quatre_vingt_deux
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006738054, article: "D. 635-32 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006738056, article: "D. 635-34 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006738057, article: "D. 635-35 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006738095, article: "D. 635-36 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006738060, article: "D. 635-37 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006738061, article: "D. 635-38 CSS", en_vigueur: 1985-12-21}
+  nee_de: LEGIARTI000006738054
+  bornes:
+    revenu.annee: [1973-01-01, 1998-01-01]
+  contenu:
+    regime: >-
+      « un régime complémentaire obligatoire d'assurance vieillesse en faveur des
+      conjoints coexistants et survivants des travailleurs non salariés des professions
+      industrielles et commerciales » (D. 635-32), qui maintient au conjoint, « au titre
+      des périodes d'assurance ou périodes assimilées postérieures au 31 décembre 1972,
+      les avantages qui résultaient des dispositions législatives et réglementaires en
+      vigueur à cette date, sous déduction, le cas échéant, des prestations du régime de
+      base » (D. 635-34)
+    cotisation: >-
+      « une cotisation additionnelle à la cotisation du régime de base, à la charge des
+      assujettis dudit régime de base », assise sur le revenu professionnel qui sert à
+      la cotisation de base (D. 635-35) : « 0,50 p. 100 des revenus ou de la part des
+      revenus qui n'excèdent pas le tiers du plafond » et « 1,82 p. 100 de la part des
+      revenus comprise entre le tiers et le montant dudit plafond » (D. 635-36, rédaction
+      codifiée du 21 décembre 1985 ; les taux de 1973 à 1985 ne sont pas lus) ;
+      l'assuré volontaire la doit aussi (D. 635-38)
+    exoneration: >-
+      le pensionné qui exerce encore en est exonéré s'il est célibataire, veuf ou divorcé,
+      sa situation s'appréciant au premier jour de chaque semestre ; une commission
+      nationale peut exonérer, sur demande, l'assuré célibataire, veuf, divorcé ou
+      séparé, selon son âge et ses revenus (D. 635-35)
+  exemples: aucun trouvé
+- id: un_et_demi_et_trois_et_demi
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006738096, article: "D. 635-36 CSS", en_vigueur: 1998-01-01}
+  nee_de: LEGIARTI000006738096
+  bornes:
+    revenu.annee: [1998-01-01, 1999-01-01]
+  contenu:
+    cotisation: >-
+      « 1,5 % des revenus ou de la part des revenus qui n'excèdent pas le tiers du
+      plafond » et « 3,5 % de la part des revenus comprise entre le tiers et le montant
+      dudit plafond » (D. 635-36)
+  exemples: aucun trouvé
+- id: deux_et_demi_et_trois_quatre_vingt_quinze
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006738097, article: "D. 635-36 CSS", en_vigueur: 1999-01-01}
+  nee_de: LEGIARTI000006738097
+  bornes:
+    revenu.annee: [1999-01-01, 2004-01-01]
+  contenu:
+    cotisation: >-
+      « 2,5 % des revenus ou de la part des revenus qui n'excèdent pas le tiers du
+      plafond » et « 3,95 % de la part des revenus comprise entre le tiers et le montant
+      dudit plafond » (D. 635-36), jusqu'à l'abrogation de la section, le 24 août 2004
+  exemples: aucun trouvé
+- id: points_de_l_assure_au_nrco_puis_au_rci
+  statut: lue
+  textes:
+  - {id: LEGIARTI000054907653, article: "règlement du RCI, annexe 1, 5", en_vigueur: 2024-06-26}
+  - {id: LEGIARTI000054892580, article: "règlement du RCI, annexe 1, 5", en_vigueur: 2013-01-01}
+  - {id: LEGIARTI000054891919, article: "règlement du RCI, article 14", en_vigueur: 2013-01-01}
+  - {id: LEGIARTI000054896439, article: "règlement du RCI, article 14", en_vigueur: 2024-06-26}
+  - {id: LEGIARTI000054896469, article: "règlement du RCI, article 15", en_vigueur: 2024-06-26}
+  - {id: LEGIARTI000054907278, article: "règlement du RCI, article 33", en_vigueur: 2024-06-26}
+  - {id: LEGIARTI000054907677, article: "règlement du RCI, annexe 3", en_vigueur: 2024-06-26}
+  - {id: LEGIARTI000054907403, article: "règlement du RCI, article 41", en_vigueur: 2024-06-26}
+  nee_de: LEGIARTI000054892580
+  bornes:
+    revenu.annee: [2004-01-01, null]
+  contenu:
+    reprise: >-
+      les points de l'ancien régime ont été reportés au compte de l'assuré « tel que
+      précisé à l'article 16 du règlement » du NRCO, qui n'est pas lu, puis repris par
+      le RCI (annexe 1, 5) : la pension de base de l'assuré, calculée au taux de 50 % sur
+      ses éléments figés au 31 décembre 2003 et une durée de référence de 150 trimestres,
+      est multipliée par un taux de service de 25 % jusqu'à soixante trimestres
+      d'affiliation, qui croît de 0,25 point par trimestre jusqu'à 50 % à cent soixante
+      trimestres, comptés avant 1973 et jusqu'au 31 décembre 2003 ; le résultat, arrondi
+      à l'euro, fait les points, la fraction qui les en tire n'étant pas lisible dans
+      l'index (« Points cotisés = montants fixés en application du 2° du présent 5/1 »)
+    conditions: >-
+      ce droit, celui de l'assuré, est subordonné aux conditions générales de liquidation
+      et, pour l'assuré non marié ou marié depuis moins de deux ans, à quinze ans
+      d'assurance cotisée au régime de base des commerçants avant le 31 décembre 2003 ;
+      pour l'assuré marié depuis deux ans, à ces quinze ans ou à 90 points cotisés ; à
+      défaut, à ce que son conjoint ait fait valoir tous ses droits personnels (article
+      14) ; la pension vaut les points par la valeur de service (article 15)
+    cumul: >-
+      le droit issu de l'ex-régime des conjoints se cumule avec les avantages personnels
+      ou de réversion du conjoint coexistant dans une limite que l'annexe 3 calcule : une
+      réduction égale aux avantages du conjoint retenus, proratisée par les trimestres
+      d'assurance commerciale de 1973 à 2012 sur le total (article 33 et annexe 3) ; ses
+      points de réversion comptent dans le versement forfaitaire unique (article 41)
+  exemples: aucun trouvé
+approximations:
+- version: [un_demi_et_un_quatre_vingt_deux, un_et_demi_et_trois_et_demi, deux_et_demi_et_trois_quatre_vingt_quinze]
+  ecart: >-
+    La fiche de régime porte la cotisation additionnelle, que le compte notionnel
+    reprend, aux taux de D. 635-36, ceux de 1985 projetés sur 1973-1984, et la pension
+    à un rendement nul (rendements_points.csv, organic_conjoints_batiment, 0) : le
+    modèle n'en sert rien, au motif que la pension va au conjoint ; les exonérations
+    des assurés seuls ne sont pas portées.
+  effet: non mesuré
+- version: points_de_l_assure_au_nrco_puis_au_rci
+  ecart: >-
+    Depuis 2004, le droit est celui de l'assuré lui-même : des points de NRCO, puis de
+    RCI, calculés sur sa pension de base et sa durée arrêtées en 2003, servis sous les
+    conditions de l'article 14 et réduits selon les pensions du conjoint. Le modèle ne
+    les porte pas.
+  effet: >-
+    non mesuré ; les commerçants qui ont cotisé avant 2004, quinze ans au moins ou
+    mariés, et dont la pension RCI omet ces points
+sources:
+  lu_le: 2026-10-13
+  prochaine_relecture: 2027-10-13
+  a_relire:
+  - >-
+    Lire l'article 16 du règlement du NRCO, qui convertit en 2004 les droits de l'ancien
+    régime en points, et la fraction de l'annexe 1, 5 du règlement du RCI que l'index
+    rend illisible.
+  - >-
+    Lire ce que le régime de base des commerçants donnait au conjoint avant 1973 — ce
+    que D. 635-34 maintient —, et les taux de la cotisation additionnelle de 1973 à 1985.
+  - >-
+    Porter ces points au RCI des commerçants concernés : une étape de modélisation,
+    hors de l'action 145.
+  lectures:
+  - type: legifrance
+    reference: >-
+      D. 635-32 à D. 635-40 CSS, rédactions de 1985 à 2004 ; règlement du régime
+      complémentaire des indépendants, articles 7, 14, 15, 33, 41 et annexes 1 et 3,
+      rédactions de 2013 et de 2024 : index LEGI du dépôt, à jour au 12 octobre 2026
+    date: 2026-10-13
+reformes: [conjoints_commercants_1973, conjoints_commercants_1998, conjoints_commercants_1999]
+code:
+  python: >-
+    données : regimes/organic_conjoints_batiment.yaml, des périodes de 1973 à 2003 sur
+    deux assiettes (plafonnee_033_pass, tranche_033_1_pass), routées par les statuts
+    commercant, gerant_debit_tabac et micro_entrepreneur ; droit/acquerir.py :
+    acquerir, qui convertit la cotisation au rendement nul
+  javascript: "moteur/js/droit/acquerir.js : acquerir"
+  parametres: >-
+    regimes/rendements_points.csv (organic_conjoints_batiment, 1973-2100, 0) ;
+    legislation/affiliations.yaml
+  tests: tests/temoins/simulations.json, les carrières du statut commercant
+historique:
+- >-
+  2026-10-13 — écrite à l'étape 2 de l'action 145 : le régime n'avait que la fiche
+  générique de liquidation. Le règlement du RCI montre que, depuis 2004, ses droits
+  sont ceux de l'assuré, que le modèle ne sert pas ; la lecture ne change aucun
+  chiffre.
+effet: >-
+  Les industriels et commerçants qui ont cotisé de 1973 à 2003, et leurs conjoints : la
+  cotisation additionnelle est portée, mais pas les points que le NRCO puis le RCI en
+  ont tirés pour l'assuré lui-même.

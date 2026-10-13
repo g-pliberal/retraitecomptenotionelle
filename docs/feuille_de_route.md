@@ -6313,16 +6313,15 @@ la décision du 1er novembre, une ligne de plus à la table datée.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 
-**Reprise, au 4 octobre 2026.** Fait : l'étape 1 — dix-sept régimes entrés à
-l'inventaire, neuf à modéliser et huit hors champ, et sept fiches de règles
-`pas_encore_modelisee` pour les régimes à modéliser dont les textes se lisent.
-Reste : 2. les fiches de règles des régimes de l'inventaire qui n'en ont
-aucune ou n'ont que la fiche générique de liquidation — l'outre-mer, l'IPACTE
-et l'IGRANTE, le personnel navigant, les assemblées, le CESE, les gérants de
-débits de tabac, l'ASV, les conjoints d'Organic, puis les hors champ dont des
-assurés vivent encore (Crédit foncier, ORTF, CRFOM) ; 3. les pistes que
-l'index ne porte que par leur titre. Commencer par l'étape 2, l'outre-mer
-d'abord ; la note de l'étape 1 dit où sont les sources.
+**Reprise, au 13 octobre 2026.** Fait : l'étape 1 — dix-sept régimes entrés à
+l'inventaire, sept fiches — et, de l'étape 2, les six régimes que l'action 121
+ne touche pas : huit fiches, pour l'IPACTE, l'IGRANTE, le CESE, les gérants de
+débits de tabac, l'ASV et les conjoints de commerçants. Reste : 2. l'outre-mer,
+le personnel navigant et les assemblées, une fois l'action 121 close, puis les
+hors champ dont des assurés vivent encore (Crédit foncier, ORTF, CRFOM), et les
+limites de l'étape ; 3. les pistes que l'index ne porte que par leur titre.
+Commencer, après l'action 121, par l'outre-mer ; la note du 13 octobre dit les
+cinq écarts au droit que la lecture a trouvés, soumis au propriétaire.
 
 **Demande**, le 4 octobre 2026 : « Je veux que tu documentes les régimes de
 retraite que nous n'avons pas encore documenter pour l'instant. Il faut

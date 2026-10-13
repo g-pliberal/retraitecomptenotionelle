@@ -1,0 +1,342 @@
+schema_version: 1
+id: ipacte_points
+intitule: >-
+  De 1951 à 1970, l'agent contractuel ou temporaire de l'État ingénieur diplômé, ou
+  dans des fonctions de catégorie A, payé au moins le traitement de l'indice 225, cotise
+  à l'IPACTE, 4,25 % à sa charge et 8,25 % à celle de l'employeur, sur la part de sa
+  rémunération comprise entre un et quatre plafonds — quatre et trois quarts depuis
+  1961 — ; la cotisation de l'année, divisée par un salaire de référence fixé chaque
+  année, donne ses points ; ses services antérieurs se valident, avec des points
+  gratuits de 1914 à 1946 ; au 1er janvier 1971, l'Ircantec reprend ces points, restés
+  calculés selon ces règles, et les liquide.
+domaine: points
+regimes: [ipacte, ircantec]
+etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- les services d'un agent non titulaire de l'État, puis, depuis 1955, des départements,
+  des communes et de leurs établissements, année par année, avec sa qualification, ses
+  fonctions et sa rémunération brute hors éléments familiaux et frais
+- le plafond des assurances sociales de chaque année
+- le salaire de référence de l'année, fixé par arrêté (arrêté du 12 décembre 1951,
+  article 8)
+- pour les services antérieurs validés, les tableaux I, II et VI annexés à l'arrêté
+ecrit:
+- les points IPACTE de chaque année de services, cotisée ou validée, et les points
+  gratuits des années 1914 à 1946
+- au 1er janvier 1971, ces mêmes points au compte de l'Ircantec, qui les liquide sous
+  ses propres règles
+dates_qui_decident:
+- revenu.annee
+# Les versions partagent l'année des services. Aucune n'est lue par un moteur :
+# le modèle calcule l'IPACTE par la fiche de régime (regimes/ipacte.yaml) et la
+# chaîne de succession (regimes/conversions_points.csv), que `code` nomme.
+versions:
+- id: services_de_1914_a_1946
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006381672, article: "arrêté du 12 décembre 1951, article 6", en_vigueur: 1951-12-18}
+  - {id: LEGIARTI000006381674, article: "arrêté du 12 décembre 1951, article 8 bis", en_vigueur: 1951-12-18}
+  - {id: LEGIARTI000006381675, article: "arrêté du 12 décembre 1951, annexe I", en_vigueur: 1951-12-18}
+  - {id: LEGIARTI000006381676, article: "arrêté du 12 décembre 1951, annexe II", en_vigueur: 1951-12-18}
+  - {id: LEGIARTI000006381677, article: "arrêté du 12 décembre 1951, annexe VI, première des vingt-huit grilles (LEGIARTI000006381677 à LEGIARTI000006381704)", en_vigueur: 1951-12-18}
+  - {id: LEGIARTI000006381642, article: "arrêté du 30 décembre 1970, article 26", en_vigueur: 1971-02-09}
+  nee_de: LEGIARTI000006381674
+  bornes:
+    revenu.annee: [null, 1947-01-01]
+  contenu:
+    droit: >-
+      les services accomplis avant l'entrée dans le régime se valident à la demande de
+      l'agent (décret, article 6, paragraphe 2, que l'index ne porte pas ; ses délais,
+      prorogés par les décrets n° 53-431, n° 53-1298 et n° 55-712, titres seuls) : l'institution vérifie qu'il remplissait les conditions de l'article 2 du
+      décret et percevait au moins le traitement budgétaire du tableau I — celui d'un
+      rédacteur stagiaire des administrations centrales, 2 000 F de 1914 à 1919, 14 000
+      F du 1er octobre 1930 au 30 juin 1943, 54 000 F en 1945 —, puis fixe les
+      cotisations rétroactives, assises entre les limites du tableau II — 3 600 et 14
+      400 F pour 1914 et avant, 90 000 et 306 000 F pour 1945 ; et « les services validés
+      […], accomplis entre 1914 et 1946 inclus, peuvent donner lieu gratuitement à des
+      attributions supplémentaires de points de retraite, conformément au tableau VI »
+      (article 8 bis)
+    points_gratuits: >-
+      le tableau VI tient en vingt-huit grilles, une par année ou groupe d'années, qui
+      donnent de 12 à plus de 900 points selon le traitement pris en compte ; dans les
+      dernières, le nombre de points décroît au-delà d'un certain traitement (de 228 à
+      189 points entre 135 000 et 504 000 F)
+    apres_1971: >-
+      l'Ircantec valide encore ces services « dans les conditions antérieurement fixées
+      par » l'article 2 du décret, les articles 6, 8 (paragraphe 3) et 8 bis de l'arrêté
+      et « compte tenu des éléments figurant dans les tableaux visés par ces articles »
+      (arrêté du 30 décembre 1970, article 26) ; le décret n° 78-44 étend la règle à
+      tous les services d'avant 1971 des agents de l'Ircantec
+  exemples: aucun trouvé
+- id: quatre_plafonds
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006368158, article: "décret n° 51-1445, article 2", en_vigueur: 1951-12-18}
+  - {id: LEGIARTI000006368159, article: "décret n° 51-1445, article 7", en_vigueur: 1951-12-18}
+  - {id: LEGIARTI000006368160, article: "décret n° 51-1445, article 8", en_vigueur: 1951-12-18}
+  - {id: LEGIARTI000006368161, article: "décret n° 51-1445, article 9", en_vigueur: 1951-12-18}
+  - {id: LEGIARTI000006368163, article: "décret n° 51-1445, article 10", en_vigueur: 1951-12-18}
+  - {id: LEGIARTI000006381673, article: "arrêté du 12 décembre 1951, article 8", en_vigueur: 1951-12-18}
+  - {id: LEGIARTI000006368164, article: "décret n° 55-773 du 9 juin 1955, article 2 (départements, communes et leurs établissements)", en_vigueur: 1955-06-10}
+  - {id: JORFTEXT000000691041, reference: "décret n° 51-1445 du 12 décembre 1951, analyse du Journal officiel : les articles 1er, 3 à 6 et 11 à 14, absents de LEGI, par leur seul objet", publie_le: 1951-12-18}
+  - {id: JORFTEXT000000833532, reference: "arrêté du 12 décembre 1951, analyse du Journal officiel : les articles 1er à 5, 7 et 9 à 21, absents de LEGI, par leur seul objet", publie_le: 1951-12-18}
+  - {id: JORFTEXT000000797895, reference: "arrêté du 30 août 1952 approuvant la convention du 11 juillet 1952 entre l'Agirc et l'IPACTE, titre seul", publie_le: 1952-09-06}
+  nee_de: LEGIARTI000006368159
+  bornes:
+    revenu.annee: [1947-01-01, 1961-01-01]
+  contenu:
+    beneficiaire: >-
+      les « personnels non titulaires » des administrations, services ou établissements
+      de l'article 1er qui, d'une part, possèdent « la qualification d'ingénieur
+      diplômé, ou une qualification technique assimilée » ou exercent des « fonctions
+      correspondant à celles qui incombent à des fonctionnaires titulaires de la
+      catégorie A », et, d'autre part, perçoivent, hors primes et indemnités, « une
+      rémunération brute, ramenée à l'année, égale au traitement budgétaire d'un agent
+      titulaire de l'Etat classé à l'indice 225 » (article 2, 2° et 3°) ; le 1°, le 4°
+      et le 5°, qui exige l'emploi en métropole, en Algérie ou dans les quatre
+      départements d'outre-mer (décret n° 54-663, analyse seule), ne sont pas dans
+      l'index ; l'emploi à
+      temps complet est une condition, que l'article 12 du décret n° 70-1277 rappelle
+      pour en affranchir les agents à compter de 1971. Le décret n° 55-773 étend le
+      régime aux agents des départements, des communes et de leurs établissements, aux
+      mêmes conditions ; des arrêtés d'extension l'ouvrent, établissement par
+      établissement, de 1954 à 1970
+    assiette: >-
+      « la fraction de la rémunération excédant le plafond des assurances sociales du
+      régime général, à l'exclusion des éléments à caractère familial, des indemnités
+      représentatives de frais et des prestations familiales, et dans la limite du
+      quadruple dudit plafond » (article 7) ; le tableau II de l'arrêté porte ces deux
+      limites année par année, 456 000 et 1 824 000 F en 1953, 660 000 et 2 640 000 F
+      en 1959
+    taux: >-
+      « Les taux de cotisation à la charge des bénéficiaires et des services employeurs
+      sont respectivement fixés à 4,25 p. 100 et à 8,25 p. 100 » ; un arrêté peut
+      suspendre le versement d'une partie des cotisations, sans toucher « le calcul des
+      points ni celui de la valeur du point » (article 7) : c'est un taux d'appel. LEGI
+      ne garde de l'article qu'une rédaction consolidée ; les décrets n° 53-1305, n°
+      59-1568 et n° 68-1028 l'ont modifié, et l'arrêté du 31 décembre 1953 suspend une
+      part des cotisations, l'arrêté du 31 décembre 1959 substituant à son article 3 «
+      le taux de 9 % » au « taux de 8 % » (article 6) : quatre textes connus par leur
+      titre ou leur analyse, sans leurs chiffres
+    points: >-
+      « Le nombre de points de retraite acquis par chaque intéressé au cours d'une année
+      civile déterminée s'obtient en divisant les cotisations afférentes à l'année
+      considérée par un salaire de référence dont le montant est fixé pour chaque
+      année » : 63 F pour 1951, 1952 et 1953, 65 F pour 1954, 74 F pour 1955, 80 F pour
+      1956, 97 F pour 1957, 116 F pour 1958, 1,25 NF pour 1959, 1,29 NF pour 1960
+      (arrêté, article 8)
+    gestion: >-
+      une institution de prévoyance paritaire, l'IPACTE, qui confie la gestion à la
+      Caisse nationale d'assurance sur la vie (articles 8 et 9), et passe des
+      conventions avec d'autres institutions de retraite pour les services accomplis
+      hors de l'État ou pour assurer des « avantages de retraite équivalents » à ceux
+      d'une association d'institutions (article 10) : la convention du 11 juillet 1952
+      avec l'Agirc, celles de 1953 à 1963 avec la CARIM, la CPPOSS, le personnel au sol
+      d'Air France et la CCPMA (titres seuls)
+    allocation: >-
+      ce que l'index dit de la liquidation tient aux seules analyses du Journal
+      officiel : la limite d'âge et l'indemnité de licenciement (décret, article 5), le
+      montant de l'allocation viagère (article 12), les conditions de la liquidation, sa
+      date, les droits de la veuve et des orphelins, la valeur du point et le
+      remboursement des cotisations (arrêté, articles 5, 7, 10, 12 à 17) ; l'arrêté du
+      31 décembre 1959 rend la liquidation possible avant soixante-cinq ans (article 2)
+      ; un capital-décès avant soixante ans est créé la même
+      année (décret n° 59-1568, article 2) ; la veuve a droit à cinquante ans au lieu de
+      soixante, et un coefficient de réduction s'applique à la liquidation anticipée,
+      depuis l'arrêté du 12 janvier 1967 — sans un chiffre lu
+  exemples: aucun trouvé
+- id: quatre_plafonds_trois_quarts
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006368159, article: "décret n° 51-1445, article 7", en_vigueur: 1951-12-18}
+  - {id: LEGIARTI000006381673, article: "arrêté du 12 décembre 1951, article 8", en_vigueur: 1951-12-18}
+  - {id: LEGIARTI000006381676, article: "arrêté du 12 décembre 1951, annexe II", en_vigueur: 1951-12-18}
+  - {id: JORFTEXT000000870158, reference: "décret n° 61-377 du 13 avril 1961 modifiant l'article 7, premier alinéa (assiette), titre seul", publie_le: 1961-04-19}
+  - {id: JORFTEXT000000515354, reference: "décret n° 67-64 du 12 janvier 1967 modifiant les articles 1er, 2, 3, 6 et 11, analyse seule", publie_le: 1967-01-20}
+  - {id: JORFTEXT000000847861, reference: "arrêté du 12 janvier 1967 modifiant l'arrêté du 12 décembre 1951, analyse seule", publie_le: 1967-01-20}
+  - {id: JORFTEXT000000887488, reference: "décret n° 68-1028 du 26 novembre 1968 modifiant l'article 7, alinéa 4 (taux), titre seul", publie_le: 1968-11-27}
+  nee_de: JORFTEXT000000870158
+  bornes:
+    revenu.annee: [1961-01-01, 1971-01-01]
+  contenu:
+    assiette: >-
+      « toutefois et à compter du 1er janvier 1961, cette limite est portée à 4,75 fois
+      le plafond des cotisations du régime général des assurances sociales » (article
+      7) : de 8 100 à 38 475 NF en 1961, de 18 000 à 85 500 F en 1970 (tableau II)
+    points: >-
+      la règle de l'article 8, aux salaires de référence de 1,36 NF pour 1961, 1,49 F
+      pour 1962, 1,64 F pour 1963, 1,74 F pour 1964, 1,82 F pour 1965, 1,89 F pour 1966,
+      1,97 F pour 1967, 2,26 F pour 1968, 2,42 F pour 1969 et 2,59 F pour 1970
+    taux: >-
+      la rédaction consolidée de l'article 7, 4,25 % et 8,25 %, est celle d'après le
+      décret n° 68-1028 ; ce qu'elle était de 1961 à 1968 n'est pas lu
+    extension: >-
+      le décret n° 67-64 étend le régime, crée une affiliation spéciale et une condition
+      d'âge (article 2, 5° à 7°) et accorde des points gratuits pour certains services
+      validés (article 6, paragraphe 3), que l'arrêté du 12 janvier 1967 règle (article
+      8 quater) ; le décret n° 69-200 ajoute un article 1er bis sur l'affiliation de
+      certains agents — analyses seules
+    allocation: >-
+      celle de la version précédente, avec la réduction de 1967 ; la veuve, depuis le 12
+      janvier 1967, à cinquante ans, et la veuve remariée redevenue veuve retrouve son
+      droit (article 13 bis) ; les internés et déportés ont une condition d'âge propre
+      (article 17) — analyses seules
+  exemples: aucun trouvé
+- id: reprise_par_l_ircantec
+  statut: lue
+  textes:
+  - {id: LEGITEXT000006061718, reference: "décret n° 70-1277 du 23 décembre 1970 portant création de l'Ircantec", publie_le: 1970-12-30}
+  - {id: LEGIARTI000006271608, article: "décret n° 70-1277, article 12, paragraphes 1 et 2", en_vigueur: 1973-04-01}
+  - {id: LEGIARTI000019515140, article: "décret n° 70-1277, article 12, paragraphes 1 et 2", en_vigueur: 2008-09-25}
+  - {id: LEGIARTI000036754937, article: "décret n° 70-1277, article 12, I et II", en_vigueur: 2018-03-31}
+  - {id: LEGIARTI000006381642, article: "arrêté du 30 décembre 1970, article 26", en_vigueur: 1971-02-09}
+  - {id: LEGIARTI000036755182, article: "arrêté du 30 décembre 1970, article 26", en_vigueur: 2018-03-31}
+  - {id: LEGIARTI000006773438, article: "décret n° 78-44 du 16 janvier 1978, article 1er", en_vigueur: 1978-01-18}
+  nee_de: LEGITEXT000006061718
+  bornes:
+    revenu.annee: [1971-01-01, null]
+  contenu:
+    droit: >-
+      « Les dispositions des décrets n° 51-1445 du 12 décembre 1951, n° 55-773 du 9 juin
+      1955, n° 59-1569 du 31 décembre 1959 et n° 61-451 du 18 avril 1961 modifiés sont
+      annulées et remplacées par celles du présent décret » ; l'IPACTE demeure jusqu'au
+      1er janvier 1971, avec l'article 2 (2° et 3°) et les articles 7 à 10 du décret de
+      1951, et « pour les services accomplis avant la date susvisée, les points
+      resteront calculés selon les dispositions visées à l'alinéa précédent » ; à cette
+      date, les employeurs immatriculés à l'IPACTE et « les agents tributaires desdits
+      régimes » sont affiliés de plein droit à l'Ircantec, et les agents à temps
+      incomplet, que l'IPACTE n'admettait pas, le sont aussi, leurs périodes antérieures
+      se validant sur demande (décret n° 70-1277, article 12)
+    conversion: >-
+      aucun texte de l'index ne majore ni ne convertit les points de l'IPACTE, quand
+      l'arrêté du 10 mars 1971 majore de 3,5 % ceux de l'IGRANTE (fiche
+      igrante_points) : ils passent à l'Ircantec un pour un, et c'est l'Ircantec qui les
+      liquide, à ses âges et à sa valeur de service
+    services_anterieurs: >-
+      les validations des services d'avant 1971 suivent les règles de l'IPACTE
+      (arrêté du 30 décembre 1970, article 26 ; décret n° 78-44, article 1er : « Les
+      services accomplis avant le 1er janvier 1971 par les agents visés à l'article
+      1er du décret n° 70-1277 […] sont validés suivant les règles applicables aux
+      ressortissants du régime institué par le décret n° 51-1445 »)
+  exemples: aucun trouvé
+approximations:
+- version: [quatre_plafonds, quatre_plafonds_trois_quarts]
+  ecart: >-
+    Le statut `contractuel_public` cotise à l'IPACTE sur toute la tranche B, sans les
+    conditions de l'article 2 : un contractuel qui n'est ni ingénieur ni de catégorie
+    A, ou qui est payé moins que l'indice 225, reçoit des points IPACTE au-dessus du
+    plafond, au taux de 12,5 %, quand le droit ne lui donnait, de 1960 à 1970, que
+    l'IGRANTE jusqu'à trois plafonds, au taux de 3,5 % (fiche igrante_points), et
+    avant 1960 rien, hors la validation que l'IGRANTE ouvrit en 1960 ; le temps
+    incomplet, exclu jusqu'en 1970, n'est pas distingué.
+  effet: >-
+    non mesuré ; les seuls contractuels payés au-dessus du plafond de 1951 à 1970, un
+    petit nombre que les sources lues ne chiffrent pas
+- version: [quatre_plafonds, quatre_plafonds_trois_quarts]
+  ecart: >-
+    Le taux d'appel de l'Ircantec de 1971, 60 %, est prolongé sur 1951-1970
+    (regimes/valeurs_point.csv, niveau `estimee`), et la fiche de régime cotise 12,5 %
+    × 0,6 = 7,5 % ; les taux d'avant le décret n° 68-1028 et la suspension de l'arrêté
+    du 31 décembre 1953 (un taux de 8 %, puis de 9 %, sans assiette lue) ne sont pas
+    lus. Le taux d'appel ne fait que la cotisation payée, que le compte notionnel
+    reprend ; les points suivent le taux contractuel, que seul un taux d'avant 1968
+    autre que 12,5 % déplacerait.
+  effet: non mesuré
+- version: quatre_plafonds_trois_quarts
+  ecart: >-
+    L'assiette de la fiche de régime est la tranche B, d'un à quatre plafonds ; le
+    trois quarts de plafond ajouté en 1961 n'est pas porté.
+  effet: >-
+    les seules rémunérations au-delà de quatre plafonds de 1961 à 1970 : jusqu'à un
+    cinquième des points de ces années pour un agent payé 4,75 plafonds ou plus, dont
+    l'assiette est de 3,75 plafonds et non de 3
+- version: services_de_1914_a_1946
+  ecart: >-
+    Les services antérieurs à l'affiliation ne se valident pas, et les points gratuits
+    du tableau VI ne sont pas attribués : le modèle ouvre l'IPACTE en 1951, et la
+    carrière saisie n'y entre qu'à cette date.
+  effet: >-
+    aucun sur les générations que le simulateur liquide : la validation de 1914 à 1946
+    ne concerne que des agents nés avant 1930
+- version: [quatre_plafonds, quatre_plafonds_trois_quarts]
+  ecart: >-
+    Les salaires de référence de 1947 à 1950 que valeurs_point.csv prête à l'IPACTE
+    sont ceux de l'annexe de l'arrêté du 17 février 1960 (IGRANTE), 26, 37, 42 et 52 F
+    ; ceux de l'IPACTE pour ces années, que portaient peut-être les tableaux III à V
+    de l'arrêté de 1951, abrogés en 1960, ne sont pas lus.
+  effet: non mesuré ; les seuls services validés de 1947 à 1950
+reformes: [ipacte_1951]
+sources:
+  lu_le: 2026-10-13
+  prochaine_relecture: 2027-10-13
+  a_relire:
+  - >-
+    Lire au fac-similé du Journal officiel du 18 décembre 1951 les articles 1er, 3 à 6
+    et 11 à 14 du décret n° 51-1445 et les articles 5, 7, 10, 12 à 17 de l'arrêté du
+    même jour — la limite d'âge, l'âge de la liquidation, l'allocation, la réversion —,
+    puis l'arrêté du 31 décembre 1959 (liquidation avant soixante-cinq ans) et l'arrêté
+    du 12 janvier 1967 (coefficient de réduction) : l'index n'en porte que l'analyse.
+  - >-
+    Lire les décrets n° 53-1305, n° 59-1568 et n° 68-1028 et l'arrêté du 31 décembre
+    1953, pour le taux de cotisation et sa suspension année par année, qui feraient du
+    taux d'appel de 60 % une valeur lue.
+  - >-
+    Lire le décret n° 49-1224 du 28 août 1949, « règlement de retraites applicables à
+    certaines catégories d'agents de l'Etat », que l'article 14 du décret de 1951
+    remplace : le régime avait un prédécesseur, que l'index ne porte que par son
+    analyse (JORFTEXT000000319082).
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 51-1445 du 12 décembre 1951, articles 2 et 7 à 10 ; arrêté du 12
+      décembre 1951, articles 6, 8 et 8 bis et annexes I, II et VI ; décret n° 55-773,
+      article 2 ; décret n° 70-1277, article 12, ses trois rédactions ; arrêté du 30
+      décembre 1970, article 26 ; décret n° 78-44, article 1er : index LEGI du dépôt, à
+      jour au 12 octobre 2026
+    date: 2026-10-13
+  - type: jorf
+    reference: >-
+      analyses du décret n° 51-1445 et de l'arrêté du 12 décembre 1951, des décrets n°
+      49-1224, n° 53-431, n° 53-1298, n° 54-663, n° 55-712, n° 57-293, n° 59-1568, n°
+      61-377, n° 64-1376, n° 67-64, n° 68-1028 et n° 69-200, des arrêtés du 30 août
+      1952, du 31 décembre 1959 et du 12 janvier 1967 : index JORF du dépôt, à jour au
+      13 octobre 2026
+    date: 2026-10-13
+textes_a_relire:
+- id: JORFTEXT000000876777
+  reference: décret n° 64-1376 du 30 décembre 1964, analyse seule
+  question: >-
+    Il abroge et remplace l'article 1er (« régime de retraite par répartition »), supprime
+    l'Algérie de l'article 2, modifie la validation et ajoute un alinéa à l'article 7
+    (limite de l'assiette) : lequel ?
+code:
+  python: >-
+    données : regimes/ipacte.yaml, une période de 1951 à 1970 sur la tranche B, au taux
+    effectif de 7,5 %, routée par le statut contractuel_public ; droit/acquerir.py :
+    acquerir, les points d'une année égaux à la cotisation divisée par le taux d'appel
+    et le salaire de référence ; droit/liquider.py : valeur_du_point, qui sert les
+    points IPACTE à la valeur de l'Ircantec, recopiée dans la série ipacte jusqu'en
+    2026, puis les convertit un pour un ; scenarios/actuel.py : ConversionsPoints
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
+    valeurDuPoint ; moteur/js/regimes.js : ConversionsPoints
+  parametres: >-
+    regimes/valeurs_point.csv (ipacte : salaires de référence de 1947 à 1970, taux
+    d'appel estimé, valeur de service jusqu'en 2026) ; regimes/conversions_points.csv
+    (ipacte -> ircantec, 1971, coefficient 1)
+  tests: >-
+    tests/test_donnees.py : test_les_precurseurs_de_l_ircantec_ne_se_recouvrent_pas ;
+    tests/test_simulateur.py : test_un_regime_ferme_ne_vaut_jamais_plus_que_son_successeur
+historique:
+- >-
+  2026-10-13 — écrite à l'étape 2 de l'action 145 : l'IPACTE n'avait que la fiche
+  générique de liquidation. La lecture ajoute à ce que la fiche de régime disait les
+  conditions d'affiliation de l'article 2, la validation des services antérieurs et ses
+  points gratuits, et la reprise par l'Ircantec ; elle ne change aucun chiffre.
+effet: >-
+  Les agents contractuels de l'État et des collectivités payés au-dessus du plafond de
+  1951 à 1970, aujourd'hui nés avant 1950 environ : leurs points IPACTE, que l'Ircantec
+  sert à sa valeur ; le modèle les donne à tout contractuel au-dessus du plafond, sans
+  la condition de qualification ni de traitement.

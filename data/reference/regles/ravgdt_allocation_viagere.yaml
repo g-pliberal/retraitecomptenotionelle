@@ -1,0 +1,319 @@
+schema_version: 1
+id: ravgdt_allocation_viagere
+intitule: >-
+  Le gérant de débit de tabac acquiert chaque année des « points tabac » sur les remises
+  que lui vaut la vente des tabacs — depuis 2006, ses remises corrigées divisées par
+  cent fois la valeur d'achat du point —, cotise sur ces remises, 2 % jusqu'en 2007 puis
+  de 1,98 % à 1,55 %, l'État versant le double, et touche à soixante-cinq ans, ou dès
+  soixante avec une réduction définitive, une allocation égale à ses points multipliés
+  par la valeur de service du point, en rente s'il a quinze ans de gestion, au prorata
+  de sept à quinze ans, en capital en deçà.
+domaine: points
+regimes: [gerants_debits_tabac]
+etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- les années de gestion d'un débit de tabac, et les remises brutes allouées chaque année
+  sur la vente des tabacs, par produit depuis 2008
+- la valeur d'achat et la valeur de service du point de chaque année (arrêté du 13
+  novembre 1963, article 14)
+- à la liquidation, l'âge, la durée de gestion, l'invalidité, le conjoint et les enfants
+ecrit:
+- les points tabac de chaque année de gestion
+- l'allocation viagère, en rente ou en capital, et ce qui en revient au conjoint et aux
+  orphelins
+dates_qui_decident:
+- revenu.annee
+# `revenu.annee` est l'année des remises, qui décide du taux, du plafond et du prix
+# du point. Aucune version n'est lue par un moteur : le modèle calcule le régime par
+# sa fiche (regimes/gerants_debits_tabac.yaml) et un rendement, que `code` nomme.
+versions:
+- id: services_d_avant_1963
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006775424, article: "décret n° 63-1104 du 30 octobre 1963, article 4", en_vigueur: 1963-11-08}
+  nee_de: LEGIARTI000006775424
+  bornes:
+    revenu.annee: [null, 1963-01-01]
+  contenu:
+    droit: >-
+      « Les conditions dans lesquelles les services accomplis par les gérants de débits
+      de tabac antérieurement au 1er janvier 1963 seront pris en compte pour la
+      détermination de leurs droits à allocation […] seront fixées par le règlement
+      intérieur » (article 4), que l'index ne porte pas
+  exemples: aucun trouvé
+- id: taux_ministeriel_et_plafond_de_remises
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006775417, article: "décret n° 63-1104, article 2", en_vigueur: 1963-11-08}
+  - {id: LEGIARTI000006775424, article: "décret n° 63-1104, article 4", en_vigueur: 1963-11-08}
+  - {id: LEGIARTI000006787840, article: "arrêté du 13 novembre 1963, article 5", en_vigueur: 1963-11-21}
+  - {id: LEGIARTI000006787848, article: "arrêté du 13 novembre 1963, article 6", en_vigueur: 1963-11-21}
+  - {id: LEGIARTI000006787856, article: "arrêté du 13 novembre 1963, article 6, rédaction de 1981", en_vigueur: 1981-08-15}
+  - {id: LEGIARTI000006787893, article: "arrêté du 13 novembre 1963, article 16", en_vigueur: 1963-11-21}
+  - {id: LEGIARTI000006787896, article: "arrêté du 13 novembre 1963, article 17", en_vigueur: 1963-11-21}
+  - {id: LEGIARTI000006787899, article: "arrêté du 13 novembre 1963, article 18", en_vigueur: 1963-11-21}
+  nee_de: LEGIARTI000006775417
+  bornes:
+    revenu.annee: [1963-01-01, 1990-10-24]
+  contenu:
+    financement: >-
+      « des cotisations mises à la charge des gérants en fonctions et prélevées sur les
+      remises allouées pour la vente des tabacs » et « une participation du fonds des
+      redevances des débits de tabac égale au double de la cotisation des gérants »
+      (décret, article 2) ; « Le taux des cotisations des gérants est fixé par le
+      ministre », sans chiffre lu ; la fraction des remises au-delà d'un plafond « ne
+      supporte pas de cotisation » : 30 000 F en 1963, 33 000 F en 1968, 37 200 F en
+      1970, 43 200 F en 1972, 120 000 F au 18 octobre 1974, 156 000 F au 3 octobre 1975,
+      192 000 F au 14 décembre 1977, 217 000 F au 10 août 1978, 290 000 F au 15 août
+      1981 (arrêté, article 6, ses neuf rédactions)
+    points: >-
+      « Le nombre de points acquis annuellement est calculé en fonction des remises
+      allouées sur la vente des tabacs, corrigées dans les conditions fixées par le
+      règlement intérieur » (décret, article 4) ; les tranches de remises de l'article
+      15 de l'arrêté ne sont pas dans l'index ; l'allocation vaut les points par « la
+      valeur du point d'allocation viagère » (article 16), qui « s'établit à 1 F pour
+      l'année 1963 » et suit jusqu'en 1987 le rapport des remises totales (article 17)
+    relevement_des_plafonds: >-
+      les limites des tranches se relèvent quand la valeur du point a varié de 10 % au
+      moins depuis le dernier changement, de 5 % depuis 1988 (article 18)
+  exemples: aucun trouvé
+- id: deux_pour_cent_des_remises_brutes
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006774753, article: "décret n° 90-424 du 16 mai 1990, article 2", en_vigueur: 1990-05-24}
+  - {id: LEGIARTI000006775418, article: "décret n° 63-1104, article 2", en_vigueur: 1990-05-24}
+  - {id: LEGIARTI000006787841, article: "arrêté du 13 novembre 1963, article 5", en_vigueur: 1990-10-24}
+  - {id: LEGIARTI000006787842, article: "arrêté du 13 novembre 1963, article 5 bis", en_vigueur: 1990-10-24}
+  - {id: LEGIARTI000006787894, article: "arrêté du 13 novembre 1963, article 16", en_vigueur: 1991-12-18}
+  nee_de: LEGIARTI000006787842
+  bornes:
+    revenu.annee: [1990-10-24, 2006-01-01]
+  contenu:
+    taux: >-
+      « Le taux des cotisations à la charge des débitants est fixé à 2 % du montant des
+      remises brutes allouées à ces gérants pour la vente des tabacs. Le taux de la
+      participation du fonds des redevances des débits de tabac est égal au double de
+      celui de la cotisation des gérants » (article 5 bis) ; le plafond de 290 000 F de
+      l'article 6 demeure jusqu'en 2006
+    allocation: >-
+      depuis le 18 décembre 1991, « les gérants dont le compte est crédité de moins de
+      quinze ans de services ont droit à une allocation annuelle calculée sur la base
+      d'autant de quinzièmes des "points tabac" acquis qu'ont été effectuées d'années de
+      service » (article 16)
+  exemples: aucun trouvé
+- id: points_tabac_a_valeur_d_achat
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006775419, article: "décret n° 63-1104, article 2", en_vigueur: 2006-01-01}
+  - {id: LEGIARTI000006775425, article: "décret n° 63-1104, article 4", en_vigueur: 2006-01-01}
+  - {id: LEGIARTI000006787881, article: "arrêté du 13 novembre 1963, article 14", en_vigueur: 2006-01-01}
+  - {id: LEGIARTI000006787882, article: "arrêté du 13 novembre 1963, article 14", en_vigueur: 2006-08-10}
+  - {id: LEGIARTI000006787895, article: "arrêté du 13 novembre 1963, article 16", en_vigueur: 2006-01-01}
+  - {id: LEGIARTI000006787878, article: "arrêté du 13 novembre 1963, article 13", en_vigueur: 2006-01-01}
+  - {id: LEGIARTI000006787875, article: "arrêté du 13 novembre 1963, article 12", en_vigueur: 2006-01-01}
+  - {id: LEGIARTI000006787914, article: "arrêté du 13 novembre 1963, article 20", en_vigueur: 2006-01-01}
+  - {id: LEGIARTI000006787918, article: "arrêté du 13 novembre 1963, article 21", en_vigueur: 2006-01-01}
+  - {id: LEGIARTI000006787920, article: "arrêté du 13 novembre 1963, article 22", en_vigueur: 2006-01-01}
+  nee_de: LEGIARTI000006775419
+  bornes:
+    revenu.annee: [2006-01-01, 2007-12-30]
+  contenu:
+    taux: >-
+      « Une cotisation de 2 % de la remise visée au 3° du I de l'article 570 du code
+      général des impôts » à la charge du débitant, et « une cotisation de l'Etat égale
+      au double de celle des débitants » (décret, article 2) ; le ministre pilote le
+      régime pour « maintenir son équilibre à l'horizon de trente ans » et, l'équilibre
+      garanti, « son taux de rendement tel que constaté en 2005 »
+    points: >-
+      « Le nombre de "points tabac" acquis au titre d'une année résulte de la formule
+      suivante : Remises corrigées/100 x valeur d'achat du point » (rédaction de 2010 ;
+      celle de 2006 pose la même fraction sur deux lignes) — les remises
+      corrigées divisées par cent fois la valeur d'achat —, les remises étant celles de
+      l'année précédente, « corrigées dans les conditions fixées par arrêté » (décret,
+      article 4), une correction que l'index ne détaille pas ; le rendement du régime
+      vaut « Valeur de service du point/ Taux de cotisation (*) x 100 x Valeur d'achat
+      du point × Remises corrigées/ Remises brutes », le taux réunissant celui des
+      débitants et celui de l'État (arrêté, article 14) ; au 1er janvier 2006, 3,59 €
+      d'achat pour l'exercice 2005 et 1,99 € de service
+    valeur_de_service: >-
+      révisée chaque 1er juillet ; « A compter de 2006, la valeur de service du point est
+      sous-indexée chaque année, pendant dix ans, d'un point par rapport à l'inflation
+      hors tabac constatée pour l'année civile précédente » (décret, article 4)
+    allocation: >-
+      en rente, aux points par la valeur de service, avec quinze ans de gestion et plus
+      de 400 points, ou sur 400 points au moins avec quinze ans ; de sept à quinze ans et
+      plus de 300 points, aux points multipliés par autant de quinzièmes que d'années de
+      gestion ; en capital, sous sept ans, ou de sept à quinze ans avec moins de 300
+      points, « dix fois le nombre de points accumulés multiplié par autant de quinzièmes
+      d'années de service accomplies, par la valeur de service du point » ; moins d'un
+      an compte pour un an (article 16) ; l'allocation part du premier jour du trimestre
+      civil qui suit la demande, présentée au plus tôt trois mois avant la cessation
+      (article 13), et se paie par trimestre d'avance (article 22) ; l'invalidité ouvre
+      la liquidation dès soixante ans avec quinze ans de gestion (article 12, barème
+      d'invalidité en annexe)
+    reversion: >-
+      le conjoint survivant, et les conjoints divorcés au prorata des mariages, reçoivent
+      une allocation sur la moitié des points, à soixante ans ou avec un enfant à
+      charge, si le mariage a deux ans ou a donné un enfant (article 20) ; chaque
+      orphelin mineur, sur le quart des points, et l'enfant majeur handicapé à charge,
+      sur la moitié (article 21)
+  exemples: aucun trouvé
+- id: taux_par_produit
+  statut: lue
+  textes:
+  - {id: LEGIARTI000017841661, article: "décret n° 63-1104, article 2", en_vigueur: 2007-12-30}
+  - {id: LEGIARTI000020285795, article: "décret n° 63-1104, article 2", en_vigueur: 2009-02-21}
+  - {id: LEGIARTI000021660892, article: "décret n° 63-1104, article 2", en_vigueur: 2010-01-01}
+  - {id: LEGIARTI000023410290, article: "décret n° 63-1104, article 2", en_vigueur: 2011-01-01}
+  - {id: LEGIARTI000025103123, article: "décret n° 63-1104, article 2", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000026875974, article: "décret n° 63-1104, article 2", en_vigueur: 2013-01-01}
+  - {id: LEGIARTI000028426767, article: "décret n° 63-1104, article 2", en_vigueur: 2014-01-01}
+  - {id: LEGIARTI000032191946, article: "décret n° 63-1104, article 2, rédaction du décret n° 2016-289", en_vigueur: 2016-03-13}
+  - {id: LEGIARTI000019231764, article: "arrêté du 13 novembre 1963, article 14", en_vigueur: 2008-07-23}
+  - {id: LEGIARTI000028436653, article: "arrêté du 13 novembre 1963, article 14", en_vigueur: 2014-01-01}
+  - {id: LEGIARTI000030083322, article: "arrêté du 13 novembre 1963, article 14", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000031872087, article: "arrêté du 13 novembre 1963, article 14", en_vigueur: 2016-01-01}
+  nee_de: LEGIARTI000017841661
+  bornes:
+    revenu.annee: [2007-12-30, 2017-01-01]
+  contenu:
+    taux: >-
+      le débitant cotise 1,778 % de la remise sur les cigares et cigarillos, et sur les
+      autres produits 1,984 % (30 décembre 2007), 1,958 % (21 février 2009), 1,930 %
+      (2010), 1,90 % (2011), 1,876 % (2012), 1,852 % (2013), 1,831 % (2014), 1,820 %
+      (2015), 1,809 % (2016) ; l'État, le double (décret, article 2)
+    points: >-
+      la formule de 2006, à 3,59 € d'achat jusqu'en 2013, puis 3,65 € (2014), 3,67 €
+      (2015) et 3,71 € (2016) ; la valeur de service passe de 2,02 € (1er juillet 2008) à
+      2,05 € (2009), 2,06 € (2011), 2,09 € (2012) et 2,11 € (2013), qu'elle garde
+      jusqu'au 30 juin 2019 (arrêté, article 14, ses rédactions annuelles)
+  exemples: aucun trouvé
+- id: taux_unique_decroissant
+  statut: lue
+  textes:
+  - {id: LEGIARTI000033841104, article: "décret n° 63-1104, article 2", en_vigueur: 2017-01-01}
+  - {id: LEGIARTI000037964584, article: "décret n° 63-1104, article 2", en_vigueur: 2018-12-29}
+  - {id: LEGIARTI000039392393, article: "décret n° 63-1104, article 2", en_vigueur: 2019-11-17}
+  - {id: LEGIARTI000044832478, article: "décret n° 63-1104, article 2", en_vigueur: 2022-01-01}
+  - {id: LEGIARTI000047216040, article: "décret n° 63-1104, article 2", en_vigueur: 2023-03-01}
+  - {id: LEGIARTI000048725388, article: "décret n° 63-1104, article 2", en_vigueur: 2024-01-01}
+  - {id: LEGIARTI000039392390, article: "décret n° 63-1104, article 4", en_vigueur: 2019-11-17}
+  - {id: LEGIARTI000033840576, article: "arrêté du 13 novembre 1963, article 14", en_vigueur: 2016-12-29}
+  - {id: LEGIARTI000039725125, article: "arrêté du 13 novembre 1963, article 14", en_vigueur: 2019-12-28}
+  - {id: LEGIARTI000048928301, article: "arrêté du 13 novembre 1963, article 14", en_vigueur: 2024-01-01}
+  - {id: LEGIARTI000053322968, article: "arrêté du 13 novembre 1963, article 14", en_vigueur: 2025-12-27}
+  - {id: LEGIARTI000054271296, article: "arrêté du 13 novembre 1963, article 14", en_vigueur: 2026-06-19}
+  - {id: LEGIARTI000037439002, article: "arrêté du 13 novembre 1963, article 11", en_vigueur: 2018-09-28}
+  - {id: LEGIARTI000039392423, article: "arrêté du 13 novembre 1963, article 12", en_vigueur: 2019-11-17}
+  - {id: LEGIARTI000037438992, article: "arrêté du 13 novembre 1963, article 20", en_vigueur: 2018-09-28}
+  - {id: LEGIARTI000039392413, article: "arrêté du 13 novembre 1963, article 21", en_vigueur: 2019-11-17}
+  - {id: LEGIARTI000037438986, article: "arrêté du 13 novembre 1963, article 24", en_vigueur: 2018-09-28}
+  nee_de: LEGIARTI000033841104
+  bornes:
+    revenu.annee: [2017-01-01, null]
+  contenu:
+    taux: >-
+      un taux unique sur tous les produits du tabac : 1,695 % (2017), 1,660 % (2018),
+      1,610 % de 2019 à 2021 — la rédaction de 2017 prévoyait 1,643 % puis 1,626 % —,
+      1,594 % (2022), puis, France continentale et Corse, 1,594 % et 1,592 % au 1er mars
+      2023, 1,586 % et 1,584 % au 1er avril 2023, 1,570 % et 1,572 % en 2024, 1,555 % et
+      1,551 % en 2025 ; l'État verse le double « moins le montant du produit du droit de
+      consommation sur les tabacs versé au bénéfice du régime » (L. 131-8, 7°, j CSS) ; la
+      cotisation est liquidée par les fournisseurs à la livraison (décret, article 2)
+    points: >-
+      la formule de 2006 ; valeur d'achat de 3,80 € (2017), 3,93 € (2019), 4,06 € (2020),
+      4,14 € (1er juin 2021), 4,24 € (2022), 4,31 € (2023), 4,54 € (2024), 4,86 € (2025) et
+      4,94 € (2026) ; valeur de service de 2,12 € (1er juillet 2019), 2,13 € (2020), 2,16
+      € (2022), 2,27 € (2023), 2,38 € (2024), 2,42 € (2025) et 2,44 € au 1er juillet 2026
+      (arrêté, article 14)
+    age: >-
+      « âgés d'au moins soixante-cinq ans » ; depuis 1991, quelle que soit la durée de
+      gestion ; dès soixante ans sur demande, avec « une réduction sur l'allocation
+      viagère de : 23 % » entre soixante et soixante et un ans, 19 %, 15 %, 11 % et 6 %
+      entre soixante-quatre et soixante-cinq ; la liquidation est définitive, et le
+      gérant qui continue cotise sans rien acquérir (article 11, rédaction du 28
+      septembre 2018)
+    reversion: >-
+      celle de 2006, partagée à titre définitif à la première demande (article 20) ;
+      avec plus de quinze ans de gestion, une rente sur 200 points au moins ; de sept à
+      quinze ans, une rente au-delà de 150 points, un capital en deçà ; sous sept ans,
+      un capital (article 24)
+  exemples: aucun trouvé
+approximations:
+- version: [points_tabac_a_valeur_d_achat, taux_par_produit, taux_unique_decroissant]
+  ecart: >-
+    Le modèle convertit la seule cotisation du gérant, 2 % du revenu saisi, à 49 centimes
+    de rente par euro (rendements_points.csv, ligne gerants_debits_tabac, 1963-2100,
+    niveau `estimee`) : c'est le rapport de la valeur de service à la valeur d'achat,
+    2,42 / 4,94, comme si un point coûtait 4,94 € de cotisation. L'article 14 fait
+    coûter un point cent fois la valeur d'achat en remises corrigées, 494 € en 2026,
+    soit 9,88 € de cotisation du gérant à 2 % et 7,68 € à 1,555 %. Si les remises
+    corrigées valent les remises brutes, le modèle sert 0,98 % des remises par année
+    de gestion quand le barème en sert 0,49 %.
+  effet: >-
+    non mesuré par une simulation ; calculé sur le barème de 2026, l'allocation du
+    modèle est le double de celle du droit, à remises corrigées égales aux remises
+    brutes, que l'index ne permet pas de vérifier
+- version: [taux_ministeriel_et_plafond_de_remises, deux_pour_cent_des_remises_brutes,
+    points_tabac_a_valeur_d_achat, taux_par_produit, taux_unique_decroissant]
+  ecart: >-
+    Le taux de 2 % est appliqué de 1963 à aujourd'hui, et le revenu saisi tient lieu de
+    remises sans le plafond de 1963 à 2006 (30 000 F en 1963, 290 000 F depuis 1981) ;
+    le droit donne un taux fixé par le ministre avant 1990, puis 1,98 % à 1,555 % depuis
+    2008 ; et, depuis 2006, les points suivent les remises, non la cotisation.
+  effet: non mesuré
+- version: taux_unique_decroissant
+  ecart: >-
+    L'allocation est servie à soixante-cinq ans, sans l'anticipation dès soixante ans
+    et ses réductions de 6 à 23 %, sans la liquidation pour invalidité, sans les seuils
+    de quinze ans et de 400 points, le prorata de sept à quinze ans et le capital en
+    deçà, sans les seuils de la réversion ; le rendement est le même de 1963 à 2100,
+    quand la valeur de service a été sous-indexée de 2006 à 2015 et que le rapport des
+    deux valeurs est passé de 0,55 en 2005 à 0,49 en 2026.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-13
+  prochaine_relecture: 2027-07-31
+  a_relire:
+  - >-
+    Trouver la correction des remises (décret, article 4 : « corrigées dans les
+    conditions fixées par arrêté ») et l'article 15 de l'arrêté de 1963 (tranches de
+    remises), absents de l'index : c'est d'eux que dépend l'écart de rendement que la
+    fiche signale, et qui ferait de l'allocation du modèle le double de celle du droit.
+  - >-
+    Lire chaque 1er juillet la valeur de service, et chaque 1er janvier la valeur
+    d'achat (arrêté, article 14), et chaque décret qui fixe le taux de l'année
+    (décret, article 2) : la rédaction de 2024 s'arrête à 2025.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 63-1104 du 30 octobre 1963, articles 2 (dix-sept rédactions, de 1963 à
+      2024) et 4 (trois rédactions) ; arrêté du 13 novembre 1963, articles 5, 5 bis, 6
+      (neuf rédactions), 11, 12, 13, 14 (trente-trois rédactions, de 2006 à 2026), 16,
+      17, 18, 20, 21, 22, 24 et annexe : index LEGI du dépôt, à jour au 12 octobre 2026
+    date: 2026-10-13
+reformes: [ravgdt_1963, ravgdt_1990]
+code:
+  python: >-
+    données : regimes/gerants_debits_tabac.yaml, deux périodes en points (1963-1989,
+    1990 et après), 2 % du revenu saisi, déplafonné, statut gerant_debit_tabac ;
+    droit/acquerir.py : acquerir, qui convertit la cotisation par le rendement, faute de
+    barème du point dans valeurs_point.csv ; droit/liquider.py : liquider_chaque_regime
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime
+  parametres: regimes/rendements_points.csv (gerants_debits_tabac, 1963-2100, 0,49)
+  tests: tests/temoins/simulations.json, les carrières du statut gerant_debit_tabac
+historique:
+- >-
+  2026-10-13 — écrite à l'étape 2 de l'action 145 : le régime n'avait que la fiche
+  générique de liquidation, et sa fiche de régime tenait le barème du point pour « hors
+  index ». L'index LEGI le porte année par année depuis 2006 (arrêté, article 14), avec
+  le taux de chaque année (décret, article 2) et les règles de liquidation ; la lecture
+  ne change aucun chiffre, et signale un rendement du modèle double de celui du barème.
+effet: >-
+  Les gérants de débits de tabac et leurs conjoints :
+  leur allocation viagère, que le modèle sert à soixante-cinq ans, et sans doute à un
+  rendement double de celui du barème.

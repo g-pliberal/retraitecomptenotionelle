@@ -1,0 +1,280 @@
+schema_version: 1
+id: igrante_points
+intitule: >-
+  De 1960 à 1970, l'agent non titulaire de l'État, auxiliaires exceptés, puis celui des
+  collectivités locales depuis 1961, cotise à l'IGRANTE 1,40 % de sa rémunération, et
+  son employeur 2,10 %, jusqu'à trois plafonds — jusqu'au plafond seulement s'il relève
+  aussi de l'IPACTE — ; la cotisation de l'année, divisée par un salaire de référence,
+  donne ses points ; ses services d'avant 1960 se valident par un versement ; au 1er
+  janvier 1971, ses points, majorés de 3,5 % sans cotisation, passent à l'Ircantec, qui
+  les liquide.
+domaine: points
+regimes: [igrante, ircantec]
+etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- les services d'un agent non titulaire de l'État, puis, depuis 1961, des départements,
+  des communes et de leurs établissements, année par année, et sa rémunération hors
+  éléments familiaux et frais
+- son affiliation, ou non, à l'IPACTE (fiche ipacte_points), qui borne son assiette au
+  plafond
+- le plafond des assurances sociales et le salaire de référence de chaque année
+- pour les services antérieurs à 1960, l'annexe de l'arrêté du 17 février 1960
+ecrit:
+- les points IGRANTE de chaque année de services, cotisée ou validée
+- au 1er janvier 1971, ces points majorés de 3,5 %, au compte de l'Ircantec
+dates_qui_decident:
+- revenu.annee
+# Les versions partagent l'année des services. Aucune n'est lue par un moteur :
+# le modèle calcule l'IGRANTE par la fiche de régime (regimes/igrante.yaml) et la
+# chaîne de succession (regimes/conversions_points.csv), que `code` nomme.
+versions:
+- id: services_d_avant_1960
+  statut: lue
+  textes:
+  - {id: JORFTEXT000000486546, reference: "décret n° 59-1569 du 31 décembre 1959, analyse du Journal officiel : article 7, validation de services", publie_le: 1960-01-06}
+  - {id: LEGIARTI000006381705, article: "arrêté du 17 février 1960, article 14", en_vigueur: 1960-03-01}
+  - {id: LEGIARTI000006381706, article: "arrêté du 17 février 1960, article 15", en_vigueur: 1960-03-01}
+  - {id: LEGIARTI000006381707, article: "arrêté du 17 février 1960, annexe", en_vigueur: 1960-03-01}
+  - {id: JORFTEXT000000621013, reference: "arrêté du 18 juin 1962, analyse seule : suspension de la moitié des cotisations des services antérieurs à 1960", publie_le: 1962-07-21}
+  - {id: LEGIARTI000006381642, article: "arrêté du 30 décembre 1970, article 26", en_vigueur: 1971-02-09}
+  nee_de: JORFTEXT000000486546
+  bornes:
+    revenu.annee: [null, 1960-01-01]
+  contenu:
+    droit: >-
+      « Les agents et anciens agents ainsi que leurs ayants droit peuvent, sur leur
+      demande, faire prendre en compte les services antérieurs au 1er janvier 1960 ou à
+      la date d'effet de l'arrêté d'extension. Ils doivent effectuer un versement égal
+      au montant des cotisations qui auraient été acquittées au titre du présent
+      régime, s'il avait été en vigueur aux époques où ces services ont été accomplis,
+      les salaires à retenir pour le calcul desdites cotisations étant limités aux
+      montants figurant en annexe ; le service employeur effectue un versement égal à
+      une fois et demie le précédent » (arrêté, article 15) ; le versement s'impute sur
+      les réserves des rentes de la Caisse nationale de prévoyance quand l'agent en
+      avait ; l'arrêté du 18 juin 1962 suspend la moitié de ces versements, sans toucher
+      les points (analyse seule)
+    salaires_de_reference: >-
+      « les salaires de référence figurent au tableau annexé » (article 14) : 0,60 F
+      pour 1914 et avant, 1 F pour 1919, 4,30 F de 1931 à 1934, 10 F pour 1945, 18 F
+      pour 1946, 26 F pour 1947, 37 F pour 1948, 42 F pour 1949, 52 F pour 1950, puis
+      ceux de l'IPACTE, de 63 F pour 1951 à 125 F pour 1959
+    limites: >-
+      la même annexe borne les salaires validés, en deux colonnes : pour l'agent affilié
+      à l'IPACTE, 2 600 F en 1914 et 660 000 F en 1959, le plafond de cette année-là ;
+      pour les autres, le triple, 7 800 F et 1 980 000 F
+    apres_1971: >-
+      l'Ircantec valide encore ces services selon l'article 14 (paragraphe 3) et
+      l'article 15 (paragraphe 1) de l'arrêté, « compte tenu des éléments figurant dans
+      les tableaux visés par ces articles » (arrêté du 30 décembre 1970, article 26)
+  exemples: aucun trouvé
+- id: trois_plafonds
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006368165, article: "décret n° 59-1569, article 2", en_vigueur: 1960-01-06}
+  - {id: LEGIARTI000006368166, article: "décret n° 59-1569, article 3", en_vigueur: 1960-01-06}
+  - {id: LEGIARTI000006368167, article: "décret n° 59-1569, article 4", en_vigueur: 1960-01-06}
+  - {id: LEGIARTI000006368168, article: "décret n° 59-1569, article 5", en_vigueur: 1960-01-06}
+  - {id: JORFTEXT000000486546, reference: "décret n° 59-1569, analyse du Journal officiel : articles 1er, 6 et 8, absents de LEGI", publie_le: 1960-01-06}
+  - {id: JORFTEXT000000262782, reference: "arrêté du 17 février 1960, analyse du Journal officiel : articles 1er à 13 et 16 à 24, absents de LEGI", publie_le: 1960-03-01}
+  - {id: JORFTEXT000000305990, reference: "décret n° 60-1019 du 19 septembre 1960 ajoutant un article 5 bis (limite d'âge, indemnité de licenciement, allocation de retraite), analyse seule", publie_le: 1960-09-24}
+  - {id: JORFTEXT000000338058, reference: "décret n° 61-451 du 18 avril 1961 étendant le régime aux agents non titulaires des départements, des communes et de leurs établissements, analyse seule", publie_le: 1961-05-09}
+  - {id: JORFTEXT000000847862, reference: "arrêté du 12 janvier 1967 modifiant l'arrêté du 17 février 1960, analyse seule", publie_le: 1967-01-20}
+  - {id: JORFTEXT000000869583, reference: "décret n° 68-1029 du 26 novembre 1968 modifiant l'article 2, alinéa 4 (taux), titre seul", publie_le: 1968-11-27}
+  nee_de: LEGIARTI000006368165
+  bornes:
+    revenu.annee: [1960-01-01, 1971-01-01]
+  contenu:
+    beneficiaire: >-
+      les agents non titulaires de l'État « à l'exclusion des auxiliaires » (article 1er,
+      analyse seule), employés à temps complet — la condition que l'article 12 du décret
+      n° 70-1277 lève en 1971 — ; depuis le décret n° 61-451, ceux des départements, des
+      communes et de leurs établissements ; des arrêtés l'étendent, de 1961 à 1970, à
+      l'économat de l'armée, à la RTF, au FORMA, au SEITA, au bureau des migrations des
+      départements d'outre-mer ; il prend effet au 1er janvier 1960 (article 8, analyse
+      seule)
+    assiette: >-
+      « l'ensemble de la rémunération perçue par les bénéficiaires, à l'exclusion des
+      éléments à caractère familial, des indemnités représentatives de frais et des
+      prestations familiales, dans la limite du triple du plafond des cotisations du
+      régime général des assurances sociales. Toutefois, en ce qui concerne le personnel
+      affilié au régime de retraites complémentaire créé par le décret du 12 décembre
+      1951, les cotisations ne sont assises que sur la fraction de la rémunération
+      inférieure audit plafond » (article 2)
+    taux: >-
+      « Les taux de cotisation à la charge des bénéficiaires et des services employeurs
+      sont respectivement fixés à 1,40 p. 100 et 2,10 p. 100 » ; un arrêté peut
+      suspendre une partie des versements sans toucher « le calcul des points ni celui
+      de la valeur du point » (article 2) : un taux d'appel, que l'index ne chiffre pas.
+      L'article 15 de l'arrêté confirme la répartition : l'employeur verse « une fois et
+      demie » ce que verse l'agent. LEGI ne garde qu'une rédaction consolidée de
+      l'article 2, que le décret n° 68-1029 a modifié au quatrième alinéa, celui du taux
+    points: >-
+      un compte de points, que la cotisation de l'année divisée par le salaire de
+      référence alimente (arrêté, articles 12 et 14, analyse seule) ; pour 1951 à 1959,
+      l'annexe donne les salaires de référence de l'IPACTE, mais ceux de l'IGRANTE de
+      1960 à 1970, fixés par arrêté, ne sont pas lus ; la valeur du point de retraite,
+      fixée par semestre, vaut 0,27 F au premier semestre 1964, 0,285 F au premier
+      semestre 1965, 0,314 F au premier semestre 1967, 0,327 F au premier semestre 1968
+      et 0,378 F au 1er janvier 1970 (arrêtés du 3 avril 1964, du 16 avril 1965, du 16
+      mars 1967, du 23 février 1968 et du 2 mars 1970, titres seuls)
+    points_gratuits: >-
+      « en cas de congé accordé pour cause de maladie, de maternité ou d'accident du
+      travail, des points de retraite gratuits sont attribués » par arrêté, pour les
+      arrêts intervenant depuis le 1er janvier 1966 (article 2, dernier alinéa, et sa
+      note : décret n° 67-65, article 3) ; l'arrêté du 12 janvier 1967 les règle (article
+      12 bis), celui du 26 novembre 1968 ajoute une majoration de points (article 12 ter)
+      — analyses seules
+    gestion: >-
+      une institution de prévoyance, l'IGRANTE, dont les statuts sont approuvés le 31
+      août 1961, qui confie la gestion à la Caisse nationale de prévoyance (articles 3 et
+      4) et passe des conventions avec d'autres institutions pour les services accomplis
+      hors de l'État (article 5)
+    allocation: >-
+      « les dispositions des art. 12 et 13 du décret du 12-12-1951 sont applicables » —
+      le montant de l'allocation viagère et la validation de l'IPACTE (article 6, analyse
+      seule) — ; l'arrêté règle la condition d'ancienneté (article 9), la liquidation
+      (articles 10 et 11), le calcul de l'allocation (article 13), la veuve non remariée
+      (articles 18 et 19), les orphelins (article 20), la majoration de points (article
+      21), le remboursement des cotisations (article 23), la valeur du point (article
+      24), et « pas d'allocation versée en dessous de 500 points » (article 22) ; le
+      décret n° 60-1019 ajoute la limite d'âge (article 5 bis) ; l'arrêté du 12 janvier
+      1967 porte la veuve à cinquante ans au lieu de soixante, ouvre un droit à la veuve
+      remariée et un coefficient de réduction à la liquidation anticipée — analyses
+      seules, sans un âge ni un coefficient lus
+  exemples: aucun trouvé
+- id: reprise_majoree_par_l_ircantec
+  statut: lue
+  textes:
+  - {id: LEGITEXT000006061718, reference: "décret n° 70-1277 du 23 décembre 1970 portant création de l'Ircantec", publie_le: 1970-12-30}
+  - {id: LEGIARTI000006271608, article: "décret n° 70-1277, article 12, paragraphes 1 et 2", en_vigueur: 1973-04-01}
+  - {id: LEGIARTI000019515140, article: "décret n° 70-1277, article 12, paragraphes 1 et 2", en_vigueur: 2008-09-25}
+  - {id: LEGIARTI000036754937, article: "décret n° 70-1277, article 12, I à III", en_vigueur: 2018-03-31}
+  - {id: LEGIARTI000006382664, article: "arrêté du 10 mars 1971, article 1er", en_vigueur: 1971-03-27}
+  - {id: LEGIARTI000036755182, article: "arrêté du 30 décembre 1970, article 26", en_vigueur: 2018-03-31}
+  - {id: LEGIARTI000006773438, article: "décret n° 78-44 du 16 janvier 1978, article 1er", en_vigueur: 1978-01-18}
+  nee_de: LEGITEXT000006061718
+  bornes:
+    revenu.annee: [1971-01-01, null]
+  contenu:
+    droit: >-
+      le décret n° 59-1569 est « annulé et remplacé » par celui de l'Ircantec ;
+      l'IGRANTE demeure jusqu'au 1er janvier 1971 avec les articles 2 à 5 de son décret,
+      et « pour les services accomplis avant la date susvisée, les points resteront
+      calculés selon les dispositions visées à l'alinéa précédent » ; les employeurs
+      immatriculés et les agents de l'IGRANTE sont affiliés de plein droit à l'Ircantec ;
+      les collectivités locales affiliées à un seul des deux régimes y passent pour les
+      catégories qu'il couvrait (décret n° 70-1277, article 12)
+    majoration: >-
+      « Avant transfert à l'I.R.C.A.N.T.E.C., le nombre de points attribués au 31
+      décembre 1970 au titre du régime institué par le décret n° 59-1569 du 31 décembre
+      1959 (I.G.R.A.N.T.E.) est majoré forfaitairement de 3,50 % sans versement de
+      cotisations. Cette majoration prend effet du 1er janvier 1971 » (arrêté du 10 mars
+      1971, article 1er) ; l'IPACTE n'a pas de majoration
+    services_anterieurs: >-
+      les validations des services d'avant 1971 suivent, depuis 1978, les règles de
+      l'IPACTE (décret n° 78-44, article 1er)
+  exemples: aucun trouvé
+approximations:
+- version: reprise_majoree_par_l_ircantec
+  ecart: >-
+    La majoration de 3,5 % n'est pas portée : le modèle sert les points IGRANTE à la
+    valeur de service de l'Ircantec, recopiée dans la série igrante de valeurs_point.csv
+    jusqu'en 2026, puis les convertit un pour un (conversions_points.csv, igrante ->
+    ircantec, coefficient 1, dont le commentaire tient la fusion pour faite « sans
+    changer l'unité de compte »). Le test
+    test_un_regime_ferme_ne_vaut_jamais_plus_que_son_successeur exige un coefficient
+    au plus égal à 1 : la règle lue le contredit, et le test sera à revoir avec la
+    correction.
+  effet: >-
+    non mesuré ; 3,5 % des points acquis ou validés à l'IGRANTE avant 1971 manquent à
+    toute pension Ircantec qui en compte
+- version: trois_plafonds
+  ecart: >-
+    Le statut `contractuel_public` cotise à l'IGRANTE sur la seule tranche 1, l'assiette
+    de l'agent qui relève aussi de l'IPACTE ; l'agent qui n'en relève pas cotisait
+    jusqu'à trois plafonds, et le modèle lui donne à la place l'IPACTE au-dessus du
+    plafond (fiche ipacte_points). Les auxiliaires, exclus jusqu'en 1970, et le temps
+    incomplet ne sont pas distingués.
+  effet: >-
+    non mesuré ; les contractuels non cadres payés au-dessus du plafond, et les
+    auxiliaires, de 1960 à 1970
+- version: trois_plafonds
+  ecart: >-
+    Le taux d'appel de l'Ircantec de 1971, 60 %, est prolongé sur 1960-1970
+    (regimes/valeurs_point.csv, niveau `estimee`), et la fiche de régime cotise 3,5 % ×
+    0,6 = 2,1 % ; le taux d'avant le décret n° 68-1029 n'est pas lu, et les salaires de
+    référence de 1960 à 1970 sont ceux de l'IPACTE (article 8 de l'arrêté du 12
+    décembre 1951), prêtés à l'IGRANTE. Les points ne suivent que le taux contractuel ;
+    la cotisation payée, que le compte notionnel reprend, suit le taux d'appel.
+  effet: non mesuré
+- version: [services_d_avant_1960, trois_plafonds]
+  ecart: >-
+    Ni la validation des services d'avant 1960, ni les points gratuits des congés de
+    maladie, de maternité et d'accident du travail depuis 1966, ni la majoration de
+    l'article 12 ter ne sont portés : le modèle ouvre l'IGRANTE en 1960, et ne compte
+    que les années cotisées.
+  effet: >-
+    non mesuré ; les agents entrés avant 1960, nés avant 1942 environ, et les congés
+    des contractuels de 1966 à 1970
+reformes: [igrante_1960]
+sources:
+  lu_le: 2026-10-13
+  prochaine_relecture: 2027-10-13
+  a_relire:
+  - >-
+    Lire au fac-similé du Journal officiel du 6 janvier 1960 l'article 1er du décret n°
+    59-1569 et les articles 9 à 13 et 16 à 24 de l'arrêté du 17 février 1960 (Journal
+    officiel du 1er mars) : la condition d'ancienneté, l'âge et la liquidation, le
+    calcul de l'allocation, la réversion, le seuil de 500 points ; puis l'article 5 bis
+    (décret n° 60-1019) et les arrêtés du 12 janvier 1967 et du 26 novembre 1968.
+  - >-
+    Corriger la reprise : porter la majoration de 3,5 % sur les points IGRANTE d'avant
+    1971, dans la série igrante de valeurs_point.csv et dans conversions_points.csv, et
+    revoir le test qui borne le coefficient à 1 ; c'est un changement du modèle, hors
+    de l'action 145, qui documente sans calculer.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 59-1569 du 31 décembre 1959, articles 2 à 5 ; arrêté du 17 février 1960,
+      articles 14 et 15 et annexe ; arrêtés d'extension de 1961 à 1968 ; décret n°
+      70-1277, article 12, ses trois rédactions ; arrêté du 30 décembre 1970, article 26
+      ; arrêté du 10 mars 1971, article 1er ; décret n° 78-44, article 1er : index LEGI
+      du dépôt, à jour au 12 octobre 2026
+    date: 2026-10-13
+  - type: jorf
+    reference: >-
+      analyses du décret n° 59-1569 et de l'arrêté du 17 février 1960, des décrets n°
+      60-1019, n° 61-451, n° 64-1377, n° 68-1029 et n° 69-201, des arrêtés du 30
+      septembre 1960, du 18 juin 1962, du 12 janvier 1967 et du 26 novembre 1968, et des
+      arrêtés fixant la valeur du point de 1964 à 1970 : index JORF du dépôt, à jour au
+      13 octobre 2026
+    date: 2026-10-13
+code:
+  python: >-
+    données : regimes/igrante.yaml, une période de 1960 à 1970 sur la tranche 1, au taux
+    effectif de 2,1 %, routée par le statut contractuel_public ; droit/acquerir.py :
+    acquerir ; droit/liquider.py : valeur_du_point, qui sert les points IGRANTE à la
+    valeur de l'Ircantec jusqu'en 2026, puis les convertit un pour un ;
+    scenarios/actuel.py : ConversionsPoints
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
+    valeurDuPoint ; moteur/js/regimes.js : ConversionsPoints
+  parametres: >-
+    regimes/valeurs_point.csv (igrante : salaires de référence de 1947 à 1970, taux
+    d'appel estimé, valeur de service jusqu'en 2026) ; regimes/conversions_points.csv
+    (igrante -> ircantec, 1971, coefficient 1)
+  tests: >-
+    tests/test_donnees.py : test_les_precurseurs_de_l_ircantec_ne_se_recouvrent_pas ;
+    tests/test_simulateur.py : test_un_regime_ferme_ne_vaut_jamais_plus_que_son_successeur
+historique:
+- >-
+  2026-10-13 — écrite à l'étape 2 de l'action 145 : l'IGRANTE n'avait que la fiche
+  générique de liquidation. La lecture trouve la majoration de 3,5 % des points au
+  transfert à l'Ircantec (arrêté du 10 mars 1971), que le modèle ne porte pas, et
+  l'exclusion des auxiliaires ; elle ne change aucun chiffre.
+effet: >-
+  Les agents non titulaires de l'État et des collectivités de 1960 à 1970, et ceux qui
+  ont validé des services antérieurs : leurs points IGRANTE, que l'Ircantec sert,
+  majorés de 3,5 % par le droit et non par le modèle.

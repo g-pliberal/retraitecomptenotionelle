@@ -1,0 +1,369 @@
+schema_version: 1
+id: cese_pension_des_membres
+intitule: >-
+  L'ancien membre du Conseil économique, social et environnemental désigné avant le 1er
+  septembre 2023, qui a cinq ans de mandat, l'âge légal et sa pension principale
+  liquidée, reçoit de la caisse de retraites du Conseil une pension égale, par annuité
+  de versement, à un pourcentage de 2,06 fois sa rémunération de membre — 2,11 % pour
+  les mandats jusqu'au 31 août 2004, puis 2,02 %, 1,95 %, 1,90 %, 1,85 % et 1,82 %
+  depuis le 28 octobre 2013 —, sans dépasser les trois quarts de cette assiette ;
+  moins de cinq ans de mandat ouvrent une allocation viagère, réduite de moitié pour
+  les mandats d'après le 15 novembre 2015.
+domaine: duree
+regimes: [cese_membres]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- les périodes de mandat au Conseil, jour par jour, et la date de la première
+  désignation
+- la rémunération de membre de chaque période (décret n° 59-602, article 1er), hors
+  indemnité de résidence et supplément familial
+- l'âge, la liquidation de la pension principale et les mandats en cours dans une
+  autre assemblée ou au Parlement européen
+- les enfants élevés, le conjoint et les orphelins, pour la majoration et la réversion
+ecrit:
+- la pension normale, ou l'allocation viagère, de l'ancien membre, et ce qui en revient
+  à son conjoint et à ses orphelins
+dates_qui_decident:
+- revenu.annee
+- entree_dans_un_regime
+# `revenu.annee` est ici la date du mandat qui fait l'annuité : le règlement taxe
+# chaque annuité au pourcentage de sa période, coupée au jour (article 17).
+# `entree_dans_un_regime` est la première désignation au Conseil, qui ferme la
+# caisse aux membres désignés depuis le 1er septembre 2023 (article 1er).
+versions:
+- id: deux_onze_pour_cent
+  statut: lue
+  textes:
+  - {id: JORFTEXT000000692927, reference: "loi n° 57-761 du 10 juillet 1957 complétant l'article 28 de la loi n° 50-10 : « Le Conseil économique est habilité à instituer, pour ses membres, une caisse de retraite », analyse du Journal officiel", publie_le: 1957-07-11}
+  - {id: LEGIARTI000006562302, article: "décret n° 59-601 du 5 mai 1959, article 8", en_vigueur: 1959-05-07}
+  - {id: LEGIARTI000022658661, article: "décret n° 59-601 du 5 mai 1959, article 8", en_vigueur: 2010-07-31}
+  - reference: >-
+      règlement de la caisse de retraites des membres du Conseil économique, social et
+      environnemental au 1er janvier 2025, avis conforme du Bureau du 5 novembre 2024,
+      arrêté n° 24/DECQ/05 du 8 novembre 2024, articles 1er à 21, 39 à 42, 47 à 49
+      (site du Conseil, hors Journal officiel)
+    en_vigueur: 2025-01-01
+    lu_le: 2026-10-13
+    empreinte: sha256:348a9bc8a02677bd6329328e111da01b3a841faa53b0a357f883defd84c91c1f
+  nee_de: JORFTEXT000000692927
+  bornes:
+    revenu.annee: [null, 2004-09-01]
+    entree_dans_un_regime: [null, 2023-09-01]
+  contenu:
+    caisse: >-
+      « La Caisse de retraites instituée en application de la loi n° 57-761 du 10
+      juillet 1957 et maintenue par le décret n° 59-601 du 5 mai 1959 est destinée à
+      assurer des pensions aux anciens membres de l'ancien Conseil économique et du
+      Conseil économique, social et environnemental ne relevant pas de l'article 1, à
+      leurs conjoints et à leurs orphelins mineurs » ; elle sert aussi des pensions
+      d'invalidité et des allocations viagères (article 2) ; le règlement date sa
+      création du 27 mars 1954 (article 15) ; il a connu trois rédactions, celle du 21
+      janvier 1958, abrogée le 16 novembre 2015, celle du 16 novembre 2015, abrogée le
+      1er septembre 2023, et celle d'aujourd'hui (articles 47 et 48)
+    retenue: >-
+      « égal à 3,42 fois celui prévu au 2° de l'article L61 du code des pensions
+      civiles et militaires de retraites », assise sur la rémunération de membre «
+      à l'exclusion de l'indemnité de résidence et du supplément familial de
+      traitement » ; « Aucune pension ne peut être concédée si le versement de la
+      retenue exigible n'a pas été effectué » (article 4) ; les autres ressources de la
+      caisse : une contribution de sauvegarde de 3 % du montant brut des pensions,
+      jusqu'au 31 décembre 2023 (article 6), le portefeuille, les dons et legs, la
+      subvention de la loi de finances, les recettes propres du Conseil et, depuis 2023,
+      la compensation de l'État (article 3) ; aucune contribution du Conseil n'est
+      chiffrée
+    ouverture: >-
+      la pension normale est due, sur demande, au lendemain de la fin du mandat ou au
+      jour où l'ancien membre réunit trois conditions : « l'âge, mentionné à l'article
+      L. 161-17-2 du code de la sécurité sociale », sauf carrière longue (L. 351-1-1)
+      ou départ anticipé de L. 25 bis du code des pensions dans sa retraite principale,
+      auquel cas l'âge retenu est celui de sa liquidation ; « la liquidation de sa
+      pension principale ou la non-détention de droits à pension » ; « un minimum de
+      cinq années de mandat » ; et il ne doit détenir aucun mandat dans une autre
+      assemblée de la Constitution ni au Parlement européen (article 7)
+    calcul: >-
+      « L'assiette de référence servant au calcul des pensions est égale à 2,06 fois la
+      rémunération » ; la pension vaut, pour chaque annuité de versement, « 2,11 % pour
+      les mandats jusqu'au 31/8/2004 » de cette assiette, et « ne peut en aucun cas
+      excéder les trois-quarts » de l'assiette ; « toute fraction de mois est comptée
+      pour un mois » (article 17) : trente-cinq annuités et demie atteignent le maximum
+    allocation_viagere: >-
+      l'ancien membre qui a l'âge sans les cinq années de mandat reçoit, sur demande,
+      une allocation viagère « proportionnelle au nombre d'annuités de versement des
+      cotisations acquises » (articles 8 et 20), aux règles de la pension normale
+      (article 10) ; redésigné, il la voit suspendue, et le nouveau mandat complète la
+      condition de durée (article 9). Jusqu'au 1er septembre 2009, une pension
+      proportionnelle existait (article 11 du règlement de 1958), plafonnée aux deux
+      tiers du maximum de la pension normale (article 49)
+    enfants: >-
+      les pensions normales et de réversion sont majorées de 10 % « pour trois
+      enfants, au moins, élevés jusqu'à l'âge de 16 ans », sans dépasser l'assiette de
+      référence, les enfants étant ceux de L. 18 du code des pensions (article 18),
+      sauf déchéance de l'autorité parentale (article 33)
+    reversion: >-
+      le conjoint survivant reçoit 50 % de la pension ou de l'allocation, hors
+      majoration (article 19), à cinquante-cinq ans, si le mariage précède d'un an la
+      liquidation, ou de quatre ans le décès, conditions levées par un enfant du
+      mariage (article 11) ; si le membre meurt en exercice, 50 % de ce qu'il aurait
+      reçu, au moins la pension de cinq années, au plus la moitié du SMIC brut (article
+      12) ; les conjoints divorcés ou séparés partagent au prorata des durées de
+      mariage, et perdent leur part en se remariant, en se pacsant ou en concubinage
+      (article 15) ; chaque orphelin de moins de vingt et un ans reçoit 10 %, la somme
+      ne dépassant pas la pension du membre (articles 13 et 16)
+    service: >-
+      les pensions se revalorisent comme celles de L. 161-25 (article 21) et se paient
+      par trimestre échu (article 26) ; une demande tardive de plus de six mois fait
+      partir la pension du premier jour du mois de la demande (article 23)
+    coordination: >-
+      des mandats successifs dans les assemblées de la Constitution ou au Parlement
+      européen n'ajoutent pas plus de cinq annuités au temps passé dans ces
+      assemblées (article 39) ; plusieurs pensions des assemblées se cumulent dans la
+      limite des trois quarts de l'indemnité parlementaire (article 40) ; la pension
+      est suspendue pendant un nouveau mandat au Conseil ou dans une assemblée
+      (article 42) ; le membre nommé au Gouvernement peut continuer de cotiser
+      (article 41)
+  exemples: aucun trouvé
+- id: deux_zero_deux_pour_cent
+  statut: lue
+  textes:
+  - reference: >-
+      règlement de la caisse de retraites des membres du CESE au 1er janvier 2025,
+      article 17 (site du Conseil, hors Journal officiel)
+    en_vigueur: 2025-01-01
+    lu_le: 2026-10-13
+    empreinte: sha256:348a9bc8a02677bd6329328e111da01b3a841faa53b0a357f883defd84c91c1f
+  bornes:
+    revenu.annee: [2004-09-01, 2010-10-01]
+    entree_dans_un_regime: [null, 2023-09-01]
+  contenu:
+    calcul: >-
+      « 2,02 % pour tout mandat effectué du 1/9/2004 au 30/9/2010 », le reste comme à
+      la version deux_onze_pour_cent ; le maximum s'atteint en un peu plus de trente-sept
+      annuités ; la pension proportionnelle disparaît le 1er septembre 2009
+  exemples: aucun trouvé
+- id: octobre_2010_sans_taux_ecrit
+  statut: supposee
+  hypothese: >-
+    le règlement donne 2,02 % jusqu'au 30 septembre 2010 et 1,95 % à compter du 28
+    octobre 2010 : les mandats du 1er au 27 octobre 2010, ceux de la mandature sortante,
+    n'ont pas de taux écrit ; on leur prête celui de la période qu'ils prolongent, 2,02 %
+  fiabilite: faible, le règlement n'écrit rien de ces vingt-sept jours
+  textes:
+  - reference: >-
+      règlement de la caisse de retraites des membres du CESE au 1er janvier 2025,
+      article 17, dont le silence fait cette version (site du Conseil, hors Journal
+      officiel)
+    en_vigueur: 2025-01-01
+    lu_le: 2026-10-13
+    empreinte: sha256:348a9bc8a02677bd6329328e111da01b3a841faa53b0a357f883defd84c91c1f
+  bornes:
+    revenu.annee: [2010-10-01, 2010-10-28]
+    entree_dans_un_regime: [null, 2023-09-01]
+  contenu:
+    calcul: 2,02 % de l'assiette de référence par annuité, supposé
+  exemples: aucun trouvé
+- id: un_quatre_vingt_quinze_pour_cent
+  statut: lue
+  textes:
+  - reference: >-
+      règlement de la caisse de retraites des membres du CESE au 1er janvier 2025,
+      article 17 (site du Conseil, hors Journal officiel)
+    en_vigueur: 2025-01-01
+    lu_le: 2026-10-13
+    empreinte: sha256:348a9bc8a02677bd6329328e111da01b3a841faa53b0a357f883defd84c91c1f
+  bornes:
+    revenu.annee: [2010-10-28, 2011-10-28]
+    entree_dans_un_regime: [null, 2023-09-01]
+  contenu:
+    calcul: >-
+      « 1,95 % pour tout mandat effectué entre le 28/10/2010 et le 27/10/2011 », le
+      reste comme à la version deux_onze_pour_cent
+  exemples: aucun trouvé
+- id: un_quatre_vingt_dix_pour_cent
+  statut: lue
+  textes:
+  - reference: >-
+      règlement de la caisse de retraites des membres du CESE au 1er janvier 2025,
+      article 17 (site du Conseil, hors Journal officiel)
+    en_vigueur: 2025-01-01
+    lu_le: 2026-10-13
+    empreinte: sha256:348a9bc8a02677bd6329328e111da01b3a841faa53b0a357f883defd84c91c1f
+  bornes:
+    revenu.annee: [2011-10-28, 2012-10-28]
+    entree_dans_un_regime: [null, 2023-09-01]
+  contenu:
+    calcul: >-
+      « 1,90 % pour tout mandat effectué entre le 28/10/2011 et le 27/10/2012 »
+  exemples: aucun trouvé
+- id: un_quatre_vingt_cinq_pour_cent
+  statut: lue
+  textes:
+  - reference: >-
+      règlement de la caisse de retraites des membres du CESE au 1er janvier 2025,
+      article 17 (site du Conseil, hors Journal officiel)
+    en_vigueur: 2025-01-01
+    lu_le: 2026-10-13
+    empreinte: sha256:348a9bc8a02677bd6329328e111da01b3a841faa53b0a357f883defd84c91c1f
+  bornes:
+    revenu.annee: [2012-10-28, 2013-10-28]
+    entree_dans_un_regime: [null, 2023-09-01]
+  contenu:
+    calcul: >-
+      « 1.85 % pour tout mandat effectué entre le 28/10/2012 et le 27/10/2013 »
+  exemples: aucun trouvé
+- id: un_quatre_vingt_deux_pour_cent
+  statut: lue
+  textes:
+  - reference: >-
+      règlement de la caisse de retraites des membres du CESE au 1er janvier 2025,
+      article 17 (site du Conseil, hors Journal officiel)
+    en_vigueur: 2025-01-01
+    lu_le: 2026-10-13
+    empreinte: sha256:348a9bc8a02677bd6329328e111da01b3a841faa53b0a357f883defd84c91c1f
+  bornes:
+    revenu.annee: [2013-10-28, 2015-11-16]
+    entree_dans_un_regime: [null, 2023-09-01]
+  contenu:
+    calcul: >-
+      « 1,82 % pour tout mandat effectué à compter du 28/10/2013 » : le maximum de
+      trois quarts s'atteint en un peu plus de quarante et une annuités
+  exemples: aucun trouvé
+- id: allocation_viagere_reduite_de_moitie
+  statut: lue
+  textes:
+  - reference: >-
+      règlement de la caisse de retraites des membres du CESE au 1er janvier 2025,
+      articles 17, 19 et 20 (site du Conseil, hors Journal officiel)
+    en_vigueur: 2025-01-01
+    lu_le: 2026-10-13
+    empreinte: sha256:348a9bc8a02677bd6329328e111da01b3a841faa53b0a357f883defd84c91c1f
+  bornes:
+    revenu.annee: [2015-11-16, null]
+    entree_dans_un_regime: [null, 2023-09-01]
+  contenu:
+    calcul: 1,82 % de l'assiette de référence par annuité, comme depuis le 28 octobre 2013
+    allocation_viagere: >-
+      « Pour les mandats effectués à partir du 16 novembre 2015 et pour les droits
+      acquis à compter de cette date, le montant de l'allocation viagère est égal à la
+      moitié du montant calculé dans les conditions fixées à l'article 17 » (article 20)
+    reversion: >-
+      la pension des conjoints survivants dont les droits s'ouvrent depuis le 16
+      novembre 2015 « ne peut excéder la moitié du salaire minimum de croissance
+      mensuel brut en vigueur, après application des majorations pour enfants »
+      (article 19) ; la borne suit l'ouverture du droit du conjoint, non la date du
+      mandat
+    maintien: >-
+      les membres en exercice au 31 août 2023 restent à la caisse pour leur mandat en
+      cours, et pour son renouvellement à la mandature suivante (article 1er)
+  exemples: aucun trouvé
+- id: regime_general_et_ircantec
+  statut: lue
+  textes:
+  - {id: JORFARTI000047445082, article: "loi n° 2023-270 du 14 avril 2023, article 1er, VI, 4° et 14°, et IX", publie_le: 2023-04-15}
+  - {id: LEGIARTI000047452607, article: "L. 381-32 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047452641, article: "L. 921-2-1 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000048701019, article: "L. 921-2-1 CSS", en_vigueur: 2024-01-01}
+  nee_de: JORFARTI000047445082
+  bornes:
+    entree_dans_un_regime: [2023-09-01, null]
+  contenu:
+    droit: >-
+      « Les membres du Conseil nouvellement désignés à partir du 1er septembre 2023,
+      sont affiliés à l'assurance vieillesse du régime général de la sécurité sociale et
+      à l'Ircantec » (règlement, article 1er) : « Les membres du Conseil économique,
+      social et environnemental sont affiliés à l'assurance vieillesse du régime
+      général de sécurité sociale » (L. 381-32), et « les personnes mentionnées à
+      l'article L. 381-32 » à l'Ircantec (L. 921-2-1) ; « Le 4° du VI s'applique aux
+      membres du Conseil économique, social et environnemental entrant en fonction à
+      compter du 1er septembre 2023 » (loi n° 2023-270, article 1er, IX) ; la fiche
+      cese_affiliation_2023 tient cette affiliation
+  exemples: aucun trouvé
+approximations:
+- version: [deux_onze_pour_cent, deux_zero_deux_pour_cent, un_quatre_vingt_quinze_pour_cent,
+    un_quatre_vingt_dix_pour_cent, un_quatre_vingt_cinq_pour_cent]
+  ecart: >-
+    Le modèle liquide toutes les annuités au pourcentage de la période de la fiche de
+    régime en vigueur l'année de la liquidation (liquider_chaque_regime prend
+    `regime.periode` de cette année), et ses périodes sont des années civiles —
+    1957-2004, 2005-2010, 2011, 2012, 2013, puis 2014 et suivantes, à 142, 149, 154,
+    158, 162 et 165 trimestres pour 75 % — : un ancien membre qui liquide après 2013
+    voit toutes ses annuités comptées à 1,82 %, quand le règlement compte chacune au
+    pourcentage de son mandat.
+  effet: >-
+    non mesuré par une simulation ; calculé sur les pourcentages, 13,7 % de moins sur
+    les annuités d'avant septembre 2004 (1,82 / 2,11) et 9,9 % sur celles de 2004 à
+    2010 (1,82 / 2,02), pour une liquidation postérieure à 2013
+- version: [deux_onze_pour_cent, allocation_viagere_reduite_de_moitie]
+  ecart: >-
+    La fiche de régime ne porte ni la condition de cinq années de mandat ni
+    l'allocation viagère : moins de cinq ans de mandat donnent la pension normale au
+    prorata, que le règlement sert aussi, mais réduite de moitié pour les mandats
+    effectués depuis le 16 novembre 2015.
+  effet: >-
+    non mesuré ; les membres de moins de cinq ans de mandat depuis 2015, dont
+    l'allocation est comptée double
+- version: deux_onze_pour_cent
+  ecart: >-
+    Le revenu saisi tient lieu d'assiette de référence — 2,06 fois la rémunération —, et
+    la retenue de 3,42 fois L. 61, assise sur la rémunération, est divisée par 2,06 :
+    une écriture équivalente, tant que le revenu saisi est bien l'assiette. Le Conseil
+    ne paie aucune part écrite, et la fiche de régime n'en porte pas.
+  effet: aucun sur la pension ; la cotisation que le compte notionnel reprend est la seule retenue
+sources:
+  lu_le: 2026-10-13
+  prochaine_relecture: 2027-10-13
+  a_relire:
+  - >-
+    Lire le règlement du 21 janvier 1958 et celui du 16 novembre 2015, que le Conseil
+    ne publie plus : l'âge, le taux et la pension proportionnelle des mandats d'avant
+    2015, que le règlement d'aujourd'hui ne dit que pour les droits qu'il maintient.
+  - >-
+    Dire ce que deviennent les vingt-sept jours du 1er au 27 octobre 2010, que l'article
+    17 laisse sans taux : la version supposée leur prête 2,02 %.
+  lectures:
+  - type: autre
+    reference: >-
+      règlement de la caisse de retraites des membres du Conseil économique, social et
+      environnemental au 1er janvier 2025, en entier (copie datée,
+      sha256:348a9bc8a02677bd6329328e111da01b3a841faa53b0a357f883defd84c91c1f)
+    url: https://www.lecese.fr/sites/default/files/documents/REGLEMENT-Caisse-de-retraites-1erjanvier2025.pdf
+    date: 2024-11-08
+  - type: legifrance
+    reference: >-
+      décret n° 59-601 du 5 mai 1959, article 8, ses deux rédactions ; L. 381-32 et L.
+      921-2-1 CSS dans leurs rédactions de 2023 et 2024 : index LEGI du dépôt
+    date: 2026-10-13
+  - type: jorf
+    reference: >-
+      loi n° 57-761 du 10 juillet 1957 (analyse) ; loi n° 2023-270, article 1er, IX :
+      index JORF du dépôt
+    date: 2026-10-13
+reformes: [cese_2013, cese_2023]
+code:
+  python: >-
+    données : regimes/cese_membres.yaml, des périodes en annuités par année civile, au
+    taux plein de 75 % atteint en 142 à 165 trimestres, la retenue de 3,42 fois L. 61
+    divisée par 2,06 ; droit/liquider.py : liquider_chaque_regime, qui prend la période
+    de l'année de liquidation ; legislation/affiliations.yaml, statut membre_cese, qui
+    route les membres entrés depuis le 1er septembre 2023 au régime général et à
+    l'Ircantec
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime ; moteur/js/regimes.js : le
+    catalogue et ses périodes
+  parametres: regimes/cese_membres.yaml (taux_plein, duree_requise_trimestres, taux_cotisation_retraite)
+  tests: >-
+    tests/temoins/simulations.json, les carrières du statut membre_cese, que le portage
+    rejoue
+historique:
+- >-
+  2026-10-13 — écrite à l'étape 2 de l'action 145 : la caisse du Conseil n'avait que la
+  fiche générique de liquidation et celle de sa fermeture. Le règlement lu en entier
+  ajoute ce que la fiche de régime ne porte pas — l'allocation viagère et sa réduction
+  de 2015, la réversion et son plafond, la coordination entre assemblées — et montre
+  que le modèle compte toutes les annuités au pourcentage de l'année de liquidation.
+  Aucun chiffre ne change.
+effet: >-
+  Les anciens membres du CESE désignés avant le 1er septembre 2023 : le modèle sous-évalue de 10 à 14 % la part de leurs annuités antérieures à 2010 quand
+  ils liquident après 2013, et compte double l'allocation des mandats courts d'après
+  2015.

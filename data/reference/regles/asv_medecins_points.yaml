@@ -1,0 +1,258 @@
+schema_version: 1
+id: asv_medecins_points
+intitule: >-
+  Le médecin libéral conventionné acquiert dans l'ASV, par une cotisation forfaitaire
+  que les caisses d'assurance maladie paient aux deux tiers, un nombre fixe de points par
+  année cotisée — 37,52 avant juillet 1972, 30,16 jusqu'en 1993, 27 depuis —, au prorata
+  des trimestres ; depuis 2012, une cotisation d'ajustement proportionnelle au revenu lui
+  en ajoute neuf au plus par an ; la prestation vaut les points multipliés par une valeur
+  de service qui dépend, depuis 2006, de l'année d'acquisition et de l'année de
+  liquidation, après au moins un an d'exercice conventionné.
+domaine: points
+regimes: [asv_conventionnes]
+etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- les trimestres d'exercice libéral conventionné du médecin, année par année
+- son revenu d'activité non salarié, dans la limite de cinq plafonds, depuis 2012
+- la cotisation forfaitaire et le taux d'ajustement de l'année, et le tarif de la
+  consultation de 1985 à 2011
+- à la liquidation, l'année de liquidation et l'année d'acquisition des points, pour la
+  valeur de service
+ecrit:
+- les points ASV de chaque année, forfaitaires et d'ajustement
+- la prestation complémentaire de vieillesse, points multipliés par la valeur de service
+dates_qui_decident:
+- revenu.annee
+# `revenu.annee` est l'année de la cotisation, qui décide des points. Aucune version
+# n'est lue par un moteur : le modèle calcule l'ASV par la fiche de régime
+# (regimes/asv_conventionnes.yaml), que `code` nomme ; les fiches
+# asv_medecins_ajustement et carmf_asv_minoration_enfants en tiennent deux pièces.
+versions:
+- id: avantage_social_d_avant_1972
+  statut: lue
+  textes:
+  - {id: LEGITEXT000006062007, reference: "décret n° 72-968 du 27 octobre 1972 tendant à rendre obligatoire le régime des prestations supplémentaires de vieillesse des médecins conventionnés", en_vigueur: 1972-07-01}
+  - {id: LEGIARTI000024871109, article: "décret n° 72-968 du 27 octobre 1972, article 2", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000054168410, article: "décret n° 72-968, article 2, rédaction du décret n° 2026-418", en_vigueur: 2026-07-01}
+  nee_de: LEGITEXT000006062007
+  bornes:
+    revenu.annee: [null, 1972-07-01]
+  contenu:
+    points: >-
+      « un total de 37,52 points de retraite pour les périodes de cotisation antérieures
+      au 1er juillet 1972 » ; « Lorsque la période de cotisation est inférieure à une
+      année, les points sont attribués au prorata du nombre de trimestres cotisés »
+      (article 2) : l'avantage social vieillesse des conventions d'avant le décret qui le
+      rend obligatoire, dont les rédactions antérieures de l'article 2 ne sont pas
+      citées ici
+  exemples: aucun trouvé
+- id: trente_points_seize
+  statut: lue
+  textes:
+  - {id: LEGITEXT000006062007, reference: "décret n° 72-968 du 27 octobre 1972 tendant à rendre obligatoire le régime des prestations supplémentaires de vieillesse des médecins conventionnés", en_vigueur: 1972-07-01}
+  - {id: LEGIARTI000024871109, article: "décret n° 72-968, article 2", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000006738371, article: "D. 645-2 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006738372, article: "D. 645-2 CSS", en_vigueur: 1986-01-01}
+  - {id: LEGIARTI000006738166, article: "D. 645-3 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006738373, article: "D. 645-2 CSS", en_vigueur: 1993-03-30}
+  - {id: LEGIARTI000006738167, article: "D. 645-3 CSS", en_vigueur: 1993-03-30}
+  nee_de: LEGITEXT000006062007
+  bornes:
+    revenu.annee: [1972-07-01, 1994-01-01]
+  contenu:
+    points: >-
+      « 30,16 points de retraite pour les périodes de cotisation comprises entre le 1er
+      juillet 1972 et le 31 décembre 1993 », au prorata des trimestres (article 2) :
+      7,54 points par trimestre, sans égard au revenu
+    cotisation: >-
+      jusqu'en 1985, un arrêté que l'index ne porte pas ; puis « trente fois la valeur au
+      1er janvier de l'année en cause du tarif de la consultation du médecin
+      omnipraticien » (D. 645-2), dont les caisses d'assurance maladie paient le double
+      de la part du médecin (D. 645-3) ; du 30 mars 1993 au 8 juillet 1994, quarante-cinq
+      fois la consultation, partagées par moitié
+  exemples: aucun trouvé
+- id: vingt_sept_points
+  statut: lue
+  textes:
+  - {id: LEGIARTI000024871109, article: "décret n° 72-968, article 2", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000006738374, article: "D. 645-2 CSS", en_vigueur: 1994-01-01}
+  - {id: LEGIARTI000006738168, article: "D. 645-3 CSS", en_vigueur: 1994-07-08}
+  - {id: LEGIARTI000006738375, article: "D. 645-2 CSS", en_vigueur: 1995-01-01}
+  - {id: LEGIARTI000006738169, article: "D. 645-3 CSS", en_vigueur: 1995-08-31}
+  - {id: LEGIARTI000006738376, article: "D. 645-2 CSS", en_vigueur: 1999-01-01}
+  - {id: LEGIARTI000023380413, article: "D. 645-2 CSS", en_vigueur: 2010-12-31}
+  - {id: LEGIARTI000006743830, article: "L. 645-5 CSS", en_vigueur: 2006-01-01}
+  nee_de: LEGIARTI000006738374
+  bornes:
+    revenu.annee: [1994-01-01, 2012-01-01]
+  contenu:
+    points: >-
+      « 27 points pour les périodes de cotisation postérieures au 31 décembre 1993 », au
+      prorata des trimestres : 6,75 par trimestre
+    cotisation: >-
+      quarante-cinq fois la consultation en 1994, cinquante-deux fois en 1995 — le
+      décret n° 95-442 qui le portait a été annulé par le Conseil d'État le 17 janvier
+      1997 —, soixante fois de 1999 à 2011 (D. 645-2, ses rédactions annuelles) ; les
+      caisses paient le double de la part du médecin depuis le 8 juillet 1994 (D. 645-3)
+    valeur_de_service: >-
+      depuis 2006, « Les points non liquidés et acquis antérieurement au 1er janvier 2006
+      ouvrent droit à un montant annuel de pension égal à la somme des produits du
+      nombre de points acquis chaque année par une valeur de service du point », qui
+      « peut varier selon l'année durant laquelle les points ont été acquis et selon
+      l'année de liquidation de la pension » ; ceux acquis depuis le 1er janvier 2006, à
+      une valeur unique fixée par décret (L. 645-5)
+  exemples: aucun trouvé
+- id: forfait_et_ajustement
+  statut: lue
+  textes:
+  - {id: LEGITEXT000024853546, reference: "décret n° 2011-1644 du 25 novembre 2011 relatif au régime des prestations complémentaires de vieillesse des médecins libéraux", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000024853551, article: "décret n° 2011-1644, article 1er", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000033090911, article: "décret n° 2011-1644, article 2", en_vigueur: 2016-09-05}
+  - {id: LEGIARTI000024853554, article: "décret n° 2011-1644, article 3", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000024853558, article: "décret n° 2011-1644, article 5", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000033090908, article: "décret n° 2011-1644, article 4", en_vigueur: 2016-09-05}
+  - {id: LEGIARTI000052567955, article: "décret n° 2011-1644, article 4", en_vigueur: 2025-11-14}
+  - {id: LEGIARTI000026799784, article: "L. 645-5 CSS", en_vigueur: 2012-12-19}
+  - {id: LEGIARTI000041455350, article: "D. 645-2 CSS", en_vigueur: 2020-01-01}
+  nee_de: LEGITEXT000024853546
+  bornes:
+    revenu.annee: [2012-01-01, 2026-01-01]
+  contenu:
+    forfait: >-
+      2 070 € au premier semestre 2012, 2 230 € au second, 4 400 € en 2013, 4 500 € en
+      2014, 4 650 € en 2015, 4 850 € en 2016, puis « revalorisé chaque année en fonction
+      de l'évolution constatée du revenu moyen » des affiliés (article 1er) ; ses
+      vingt-sept points restent
+    ajustement: >-
+      une cotisation sur le revenu de l'avant-dernière année, dans la limite de cinq
+      plafonds : 0,25 % en 2012, 0,90 % en 2013, 1,50 % en 2014, 2,10 % en 2015, 2,60 % en
+      2016, 2,8 % en 2017, 3,2 % en 2018, 3,6 % en 2019, 3,8 % de 2020 à 2025 (article 2)
+      ; elle ouvre, « dans la limite de neuf points par an », le rapport entre « le
+      produit du montant de la cotisation d'ajustement et des deux tiers du nombre de
+      points acquis au titre de la cotisation forfaitaire » et le forfait (article 3) ;
+      3 % pour l'assuré en cumul emploi-retraite (L. 643-6) et celui de L. 642-4-2
+      (D. 645-2)
+    valeur_de_service: >-
+      pour les pensions liquidées avant 2006, 15,55 € au premier semestre 2012, 15,25 €
+      au second, 14,80 € en 2013, 14,40 € en 2014, 14 € de 2015 à 2020, 14,06 € en 2021,
+      14,21 € en 2022, 14,49 € depuis 2023, 14,63 € depuis 2025 ; pour les points
+      liquidés depuis 2011, 13 € du second semestre 2012 à 2020, puis 13,05 €, 13,19 €,
+      13,45 € et 13,58 € (2025) ; pour les points liquidés depuis 2017, 11,31 € jusqu'en
+      2020, 11,36 € (2021), 11,48 € (2022), 11,71 € (2023 et 2024), 11,82 € depuis 2025
+      (article 4) ; les 300 premiers points des pensions de réversion, à 15,55 € (article
+      5)
+  exemples: aucun trouvé
+- id: ajustement_a_quatre_pour_cent
+  statut: lue
+  textes:
+  - {id: LEGIARTI000052567960, article: "décret n° 2011-1644, article 2, rédaction du décret n° 2025-1076", en_vigueur: 2025-11-14}
+  - {id: LEGIARTI000054168407, article: "décret n° 72-968, article 1er, rédaction du décret n° 2026-418", en_vigueur: 2026-07-01}
+  - {id: LEGIARTI000054168410, article: "décret n° 72-968, article 2", en_vigueur: 2026-07-01}
+  - {id: LEGIARTI000054168413, article: "décret n° 72-968, article 3", en_vigueur: 2026-07-01}
+  - {id: LEGIARTI000054168420, article: "décret n° 72-968, article 4", en_vigueur: 2026-07-01}
+  - {id: LEGIARTI000054168401, article: "décret n° 72-968, article 5-2", en_vigueur: 2026-07-01}
+  - {id: LEGIARTI000054168425, article: "décret n° 72-968, article 7", en_vigueur: 2026-07-01}
+  nee_de: LEGIARTI000052567960
+  bornes:
+    revenu.annee: [2026-01-01, null]
+  contenu:
+    ajustement: >-
+      « 4 % à compter de l'exercice 2026 », « aux cotisations et aux prestations dues au
+      titre des périodes courant à compter du 1er janvier 2026 » (article 2, rédaction du
+      décret n° 2025-1076)
+    conditions: >-
+      depuis le 1er juillet 2026 (décret n° 2026-418), les prestations « sont attribuées
+      aux médecins ayant exercé, pendant au moins un an, leur activité professionnelle
+      non-salariée dans le cadre des conventions » (article 7) ; le médecin qui exerce en
+      cumul emploi-retraite « ne peut obtenir aucun nouveau droit à retraite au titre
+      des cotisations versées » (article 2) ; l'affiliation part du premier jour du
+      trimestre civil qui suit le début de l'exercice conventionné (article 3) ; le
+      médecin au revenu inférieur à un seuil fixé par arrêté peut demander à être
+      dispensé (article 4) ; les conditions d'attribution et de service passent au
+      règlement de la section professionnelle, approuvé par arrêté (article 5-2) : celui
+      du 10 juillet 2026, que lit la fiche carmf_asv_minoration_enfants
+  exemples: aucun trouvé
+approximations:
+- version: [trente_points_seize, vingt_sept_points, forfait_et_ajustement, ajustement_a_quatre_pour_cent]
+  ecart: >-
+    La fiche de régime ne porte que la part du médecin — un tiers du forfait, la moitié
+    de 1993 à 1994 — ; la part des caisses d'assurance maladie est décrite, non comptée.
+    Les points ne dépendent pas de la cotisation : seul le compte notionnel, qui
+    reprend la cotisation, le voit.
+  effet: aucun sur la prestation ; les deux tiers du forfait manquent à la cotisation reprise
+- version: [trente_points_seize, vingt_sept_points]
+  ecart: >-
+    Le tarif de la consultation n'est pas une série du dépôt : le forfait de 1985 à 2011
+    est pris à une valeur de consultation de l'année de sa rédaction, ramenée aux prix
+    (114,34 € de 1985, 343,01 € de 1993, 264,27 € de 1995, 335,39 € de 1999, 400 € de
+    2004), et la période de 1972 à 1984 prend le forfait de 1985.
+  effet: aucun sur les points ; la cotisation reprise, sous-estimée là où le tarif a monté plus vite que les prix
+- version: [forfait_et_ajustement, ajustement_a_quatre_pour_cent]
+  ecart: >-
+    Le forfait de 2016, 4 850 € dont un tiers pour le médecin, est prolongé aux prix, et
+    non au revenu moyen des affiliés que le décret fait suivre ; les points d'ajustement
+    suivent la règle de l'article 3 (fiche asv_medecins_ajustement).
+  effet: >-
+    à moins de 1 % des points que la calculette de la CARMF donne, selon la fiche
+    asv_medecins_ajustement
+- version: avantage_social_d_avant_1972
+  ecart: >-
+    Les 37,52 points des années d'avant le 1er juillet 1972 ne sont pas portés : la
+    fiche de régime commence en 1972.
+  effet: >-
+    aucun sur les générations que le simulateur liquide ; les médecins installés avant
+    1972, nés avant 1945 environ
+- version: [vingt_sept_points, forfait_et_ajustement, ajustement_a_quatre_pour_cent]
+  ecart: >-
+    La valeur de service est celle de la période de la fiche de régime en vigueur à la
+    liquidation, pour tous les points : elle rejoint l'article 4 pour les liquidations
+    depuis 2012, où tous les points d'une même liquidation ont une même valeur, mais
+    les liquidations d'avant 2012 prennent 15,55 €, la valeur de 2012, ramenée aux
+    prix.
+  effet: non mesuré ; les seules liquidations d'avant 2012
+sources:
+  lu_le: 2026-10-13
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Porter chaque année le forfait que la CARMF publie, revalorisé sur le revenu moyen
+    des affiliés, et la valeur de service que le décret n° 2011-1644 fixe.
+  - >-
+    Lire les rédactions de l'article 2 du décret n° 72-968 d'avant 2012 (1981, 1994,
+    1999, 2004, 2006), qui ont fixé les points de chaque période, et l'arrêté de 1972
+    qui fixait la cotisation avant le code.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 72-968 du 27 octobre 1972, articles 1er à 7 dans leurs rédactions de 2012
+      et de 2026 ; décret n° 2011-1644, articles 1er à 6 ; D. 645-2 et D. 645-3 CSS, de
+      1985 à 2020 ; L. 645-5 CSS : index LEGI du dépôt, à jour au 12 octobre 2026
+    date: 2026-10-13
+reformes: [asv_1972, asv_trois_enfants_1981, asv_part_caisses_1993, asv_2012, asv_2017, carmf_temps_choisi_2017, asv_2026]
+code:
+  python: >-
+    données : regimes/asv_conventionnes.yaml, vingt-deux périodes en points, statut
+    medecin_liberal, `points_par_trimestre_valide`, `points_ajustement_par_forfait`,
+    `points_ajustement_maximum`, `valeur_point_euros` ; droit/acquerir.py : acquerir ;
+    droit/liquider.py : liquider_chaque_regime, valeur_point_fiche
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime
+  parametres: >-
+    regimes/asv_conventionnes.yaml (cotisation_forfaitaire_euros,
+    points_par_trimestre_valide, taux_cotisation_retraite, valeur_point_euros)
+  tests: tests/temoins/simulations.json, les carrières du statut medecin_liberal
+historique:
+- >-
+  2026-10-13 — écrite à l'étape 2 de l'action 145 : l'ASV n'avait que la fiche générique
+  de liquidation, et deux fiches partielles sans régime nommé (asv_medecins_ajustement,
+  carmf_asv_minoration_enfants). Elle réunit en versions ce que la fiche de régime
+  portait par périodes, et ajoute les 37,52 points d'avant 1972, la valeur de service à
+  trois étages de L. 645-5 et la réécriture du décret de 1972 au 1er juillet 2026. Aucun
+  chiffre ne change.
+effet: >-
+  Les médecins libéraux conventionnés : près du tiers de la pension d'un médecin de
+  secteur 1 ; le modèle en rend les points annuels à moins de 1 % de la calculette de la
+  CARMF (fiche asv_medecins_ajustement), sans les points d'avant 1972.

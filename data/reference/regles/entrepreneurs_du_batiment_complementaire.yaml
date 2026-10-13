@@ -1,0 +1,87 @@
+schema_version: 1
+id: entrepreneurs_du_batiment_complementaire
+intitule: >-
+  Le régime d'assurance vieillesse complémentaire des entrepreneurs du bâtiment, créé
+  par le décret n° 50-60 du 11 janvier 1950 et géré par la caisse des industriels et
+  commerçants, n'admet plus d'adhérent ni ne perçoit de cotisation depuis le 25 mars
+  1998 : il sert ses pensions en points, à une valeur fixée chaque année par le conseil
+  d'administration de la caisse dans la limite des prix.
+domaine: points
+regimes: [organic_conjoints_batiment]
+etape: liquider_chaque_regime
+face: droit
+etat: pas_encore_modelisee
+lit:
+- les années d'affiliation de l'entrepreneur du bâtiment avant le 25 mars 1998, et les
+  points qu'elles lui ont donnés
+- la valeur du point de l'année
+ecrit:
+- la pension complémentaire de l'entrepreneur du bâtiment, ses points par la valeur du
+  point
+dates_qui_decident:
+- revenu.annee
+# `revenu.annee` est l'année des cotisations, qui s'arrêtent en 1998. Aucune version n'est
+# calculée : l'inventaire range ce régime avec celui des conjoints de commerçants, et la
+# fiche de régime ne le porte pas.
+versions:
+- id: regime_cotise
+  statut: lue
+  textes:
+  - {id: LEGITEXT000006060585, reference: "décret n° 50-60 du 11 janvier 1950 relatif au régime d'assurance vieillesse complémentaire des entrepreneurs du bâtiment", en_vigueur: 1952-09-06}
+  nee_de: LEGITEXT000006060585
+  bornes:
+    revenu.annee: [null, 1998-03-25]
+  contenu:
+    droit: >-
+      un régime complémentaire obligatoire, au visa de la loi n° 48-101 du 17 janvier
+      1948, dont les articles 2 à 5 — l'affiliation, la cotisation, les points,
+      la liquidation — sont abrogés en 1998 et vides dans l'index, qui ne garde que leur
+      date (1963, 1967, 1969)
+  exemples: aucun trouvé
+- id: regime_ferme
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006781229, article: "décret n° 50-60, article 1er", en_vigueur: 1998-03-25}
+  - {id: LEGIARTI000006781236, article: "décret n° 50-60, article 6", en_vigueur: 1998-03-25}
+  - {id: LEGIARTI000006781237, article: "décret n° 50-60, article 6 bis", en_vigueur: 1998-03-25}
+  - {id: LEGIARTI000026885834, article: "décret n° 50-60, article 6 bis", en_vigueur: 2013-01-01}
+  nee_de: LEGIARTI000006781229
+  bornes:
+    revenu.annee: [1998-03-25, null]
+  contenu:
+    droit: >-
+      « Le régime d'assurance vieillesse complémentaire des entrepreneurs du bâtiment
+      n'admet plus d'adhérent et ne perçoit plus de cotisation des affiliés » (article
+      1er) ; un règlement de la caisse nationale de l'industrie et du commerce, approuvé
+      par les ministres, fixe « notamment celles [les conditions] dans lesquelles les
+      prestations continuent à être liquidées et versées » (article 6)
+    valeur_du_point: >-
+      « fixée chaque année, à effet du 1er juillet, par le conseil d'administration » de
+      la caisse, « en fonction de l'équilibre général du régime et dans la limite de
+      l'évolution de l'indice des prix hors tabac » (article 6 bis, 1998) ; depuis 2013,
+      au 1er avril, par le conseil de la caisse nationale du régime des indépendants, et
+      « au titre de l'année 2013, la valeur du point […] est assortie d'un coefficient
+      égal à 0,75 » (article 6 bis, rédaction du décret n° 2012-1520)
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-13
+  prochaine_relecture: 2027-10-13
+  a_relire:
+  - >-
+    Lire au fac-similé du Journal officiel les articles 2 à 5 du décret n° 50-60 et le
+    règlement de la caisse qui sert les pensions depuis 1998, et la valeur du point de
+    chaque année : sans eux, le régime ne se chiffre pas.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 50-60 du 11 janvier 1950, articles 1er à 7, dans leurs rédactions de 1952
+      à 2013 : index LEGI du dépôt, à jour au 12 octobre 2026
+    date: 2026-10-13
+historique:
+- >-
+  2026-10-13 — écrite à l'étape 2 de l'action 145 : le volet bâtiment de la ligne
+  d'inventaire des conjoints de commerçants n'avait aucune fiche ; il est lu, non
+  calculé.
+effet: >-
+  Les entrepreneurs du bâtiment affiliés avant 1998 et leurs ayants droit : une pension
+  complémentaire en points, que le modèle ne sert pas, faute de barème lu.
