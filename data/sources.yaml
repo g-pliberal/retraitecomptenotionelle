@@ -606,7 +606,10 @@ institutions:
         statut_integration: automatise
         cible: >-
           data/reference/mortalite/esperances_vie.csv,
-          data/reference/mortalite/quotients_projetes.csv
+          data/reference/mortalite/quotients_projetes.csv,
+          data/reference/mortalite/quotients_projetes_basse.csv,
+          data/reference/mortalite/quotients_projetes_haute.csv,
+          data/reference/mortalite/esperances_vie_variantes.csv
         recuperation: scripts/fetch/insee_projections_mortalite.py
         millesime: 2026
         note: >-
@@ -619,13 +622,19 @@ institutions:
           qu'il dérivait jusque-là des quotients en croyant e65 inédite. Les
           années 2023 à 2025 sont ignorées : elles sont observées, et
           l'observé prime sur le projeté même quand les deux viennent du même
-          producteur. Le classeur indexe ses quotients par âge atteint dans
+          producteur. Depuis le 13 octobre 2026, il reprend de même les
+          hypothèses basse et haute, que le modèle lit en variante, sous
+          `Parametres.hypothese_esperance_vie`, et leurs espérances publiées,
+          qui les contrôlent ; la page Coût ne les lit pas encore. Le
+          classeur indexe ses quotients par âge atteint dans
           l'année ; le récupérateur les convertit à l'âge exact, par la
           moyenne géométrique des survies des deux âges atteints qui encadrent
           chaque âge exact, et échoue si la table convertie s'écarte de plus
           de 0,05 an des espérances publiées à 60 et 65 ans, ou si la somme
           des survies du classeur ne retrouve pas l'espérance à la naissance
-          publiée pour 2070 (89,5 et 86,7 ans). Remplace l'exercice 2021-2070,
+          publiée pour 2070 (89,5 et 86,7 ans sous la centrale, trois ans de
+          moins sous la basse et de plus sous la haute, Insee Première
+          n° 2108). Remplace l'exercice 2021-2070,
           dont six valeurs étaient saisies aux années rondes et une, 2080,
           dépassait l'horizon.
       - id: insee_projections_population

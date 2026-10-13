@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-10-12",
+ "dernier_passage_le": "2026-10-13",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -648,7 +648,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-10-12"
+   "verifiee_le": "2026-10-13"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -660,6 +660,17 @@
    "source": "INSEE, projections de population 2026, espérances publiées sous les quotients projetés",
    "valeurs": 600,
    "verifiee_le": "2026-10-07"
+  },
+  "esperances_projetees_variantes": {
+   "ajoutees": 1200,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "32a2c0044bc635d2",
+   "identiques": 0,
+   "niveau": "projetee",
+   "source": "INSEE, projections de population 2026, espérances publiées sous les quotients des hypothèses d'espérance de vie basse et haute",
+   "valeurs": 1200,
+   "verifiee_le": "2026-10-13"
   },
   "esperances_vie": {
    "ajoutees": 0,
@@ -1233,6 +1244,28 @@
    "valeurs": 24200,
    "verifiee_le": "2026-10-07"
   },
+  "quotients_mortalite_projetes_basse": {
+   "ajoutees": 24200,
+   "colonne": "qx",
+   "corrigees": 0,
+   "empreinte": "c8e26064144076b0",
+   "identiques": 0,
+   "niveau": "projetee",
+   "source": "INSEE, projections de population 2026, quotients de l'hypothèse d'espérance de vie basse convertis à l'âge exact",
+   "valeurs": 24200,
+   "verifiee_le": "2026-10-13"
+  },
+  "quotients_mortalite_projetes_haute": {
+   "ajoutees": 24200,
+   "colonne": "qx",
+   "corrigees": 0,
+   "empreinte": "b3129e197f9586f8",
+   "identiques": 0,
+   "niveau": "projetee",
+   "source": "INSEE, projections de population 2026, quotients de l'hypothèse d'espérance de vie haute convertis à l'âge exact",
+   "valeurs": 24200,
+   "verifiee_le": "2026-10-13"
+  },
   "quotite_temps_partiel": {
    "ajoutees": 516,
    "colonne": "quotite",
@@ -1363,7 +1396,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-10-12"
+   "verifiee_le": "2026-10-13"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -1528,7 +1561,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
    "valeurs": 29,
-   "verifiee_le": "2026-10-12"
+   "verifiee_le": "2026-10-13"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -1561,7 +1594,7 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-10-12"
+   "verifiee_le": "2026-10-13"
   },
   "valeurs_point_msa": {
    "ajoutees": 0,

@@ -10,7 +10,9 @@ Trois sources, dans cet ordre de priorité, arbitrées **couple par couple**
 2. ``data/reference/mortalite/quotients_projetes.csv`` — les quotients que
    l'INSEE projette, hypothèse centrale de ses projections de population 2026,
    convertis à l'âge exact : de 2026 à 2125, de 0 à 120 ans. Au-delà de 2125,
-   ceux de 2125 ;
+   ceux de 2125. Sous l'hypothèse d'espérance de vie basse ou haute
+   (``Parametres.hypothese_esperance_vie``), les siens,
+   ``quotients_projetes_basse.csv`` ou ``quotients_projetes_haute.csv`` ;
 3. partout ailleurs — au-delà du dernier âge observé, et en 2025, que ni
    l'observation ni la projection ne couvrent — une table paramétrique de
    **Gompertz-Makeham** calibrée pour reproduire les espérances de vie
@@ -66,6 +68,16 @@ PAS = 0.25
 
 #: Âge terminal des tables.
 AGE_TERMINAL = 120.0
+
+#: Les hypothèses d'espérance de vie des projections de population 2026 de
+#: l'INSEE, et le fichier des quotients projetés de chacune
+#: (``Parametres.hypothese_esperance_vie``). Elles ne diffèrent qu'à partir
+#: de 2026 : l'observé est le même sous toutes.
+QUOTIENTS_PROJETES = {
+    "centrale": "quotients_projetes.csv",
+    "basse": "quotients_projetes_basse.csv",
+    "haute": "quotients_projetes_haute.csv",
+}
 
 
 @dataclass(frozen=True)
@@ -262,9 +274,15 @@ class DonneesMortalite:
     SEXES = ("H", "F")
 
     def __init__(self, racine: Path, poids_unisexe: tuple[float, float] = (0.5, 0.5),
-                 cache_disque: bool = True) -> None:
+                 cache_disque: bool = True, hypothese: str = "centrale") -> None:
+        if hypothese not in QUOTIENTS_PROJETES:
+            raise ValueError(
+                f"hypothèse d'espérance de vie inconnue : {hypothese!r} "
+                f"(connues : {', '.join(QUOTIENTS_PROJETES)})")
         self.racine = racine
         self.poids_unisexe = poids_unisexe
+        #: L'hypothèse d'espérance de vie des années projetées.
+        self.hypothese = hypothese
         self._chemin_cache = racine / "derive" / "calibrations_mortalite.json"
         self._cache_disque = cache_disque
         self._cache: dict[str, list[float]] = {}
@@ -287,7 +305,14 @@ class DonneesMortalite:
                 filtre={"sexe": sexe, "mesure": "e65"},
             )
         self._quotients_observes = self._charger_quotients("quotients_periode.csv")
-        self._quotients_projetes = self._charger_quotients("quotients_projetes.csv")
+        self._quotients_projetes = self._charger_quotients(QUOTIENTS_PROJETES[hypothese])
+        if self._quotients_projetes is None and hypothese != "centrale":
+            # Sans sa table, une variante retomberait sur la loi, calée sur les
+            # espérances de la centrale : la centrale, sous un autre nom.
+            raise FileNotFoundError(
+                f"{QUOTIENTS_PROJETES[hypothese]} absent de "
+                f"{racine / 'reference' / 'mortalite'} : l'hypothèse "
+                f"d'espérance de vie {hypothese} n'a pas de table")
         annees_projetees = sorted({annee for annee, _ in self._quotients_projetes or {}})
         #: Les années que couvrent les quotients projetés ; au-delà de la
         #: dernière, ce sont les siens qui servent, comme la loi paramétrique

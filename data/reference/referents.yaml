@@ -4914,6 +4914,12 @@ referents:
           projections de 2026, et le COR les fait passer dans tous
           les régimes. La plage est d'un point de PIB de chaque
           côté, du même ordre que l'écart de la page au COR.
+          Le 13 octobre 2026, le diviseur lit les hypothèses
+          d'espérance de vie basse et haute de l'INSEE, dans les deux
+          moteurs (`Parametres.hypothese_esperance_vie`) : à 64 ans,
+          celui de la génération 1975 s'en écarte de −6,6 % et
+          +8,2 %. Reste la page Coût, après l'action 147 (action
+          138, étape 7).
         etat: a_reprendre
         chantier: "138.7"
       - quoi: >-
@@ -8921,6 +8927,12 @@ referents:
           la proposition ; le chiffrer sous deux longévités est la
           seule façon de montrer qu'il joue. L'INSEE publie des
           variantes d'espérance de vie.
+          Le 13 octobre 2026, le diviseur lit les hypothèses
+          d'espérance de vie basse et haute de l'INSEE, dans les deux
+          moteurs (`Parametres.hypothese_esperance_vie`) : à 64 ans,
+          celui de la génération 1975 s'en écarte de −6,6 % et
+          +8,2 %. Reste la page Coût, après l'action 147 (action
+          138, étape 7).
         etat: a_reprendre
         chantier: "138.7"
       - quoi: >-
@@ -9218,6 +9230,12 @@ referents:
         verification: >-
           Méthode : seule une variante de mortalité éprouve le
           diviseur.
+          Le 13 octobre 2026, le diviseur lit les hypothèses
+          d'espérance de vie basse et haute de l'INSEE, dans les deux
+          moteurs (`Parametres.hypothese_esperance_vie`) : à 64 ans,
+          celui de la génération 1975 s'en écarte de −6,6 % et
+          +8,2 %. Reste la page Coût, après l'action 147 (action
+          138, étape 7).
         etat: a_reprendre
         chantier: "138.7"
       - quoi: >-
@@ -9430,6 +9448,12 @@ referents:
         verification: >-
           Méthode ; c'est un résultat publié à retrouver avec les
           variantes de l'INSEE.
+          Le 13 octobre 2026, le diviseur lit les hypothèses
+          d'espérance de vie basse et haute de l'INSEE, dans les deux
+          moteurs (`Parametres.hypothese_esperance_vie`) : à 64 ans,
+          celui de la génération 1975 s'en écarte de −6,6 % et
+          +8,2 %. Reste la page Coût, après l'action 147 (action
+          138, étape 7).
         etat: a_reprendre
         chantier: "138.7"
     bilan: >-
@@ -10054,7 +10078,14 @@ referents:
           de chômage du COR (hypotheses_projection.yaml:92-160),
           aucune de démographie.
         preuve: Fiche France, tableau 17, p. 38
-        verification: Méthode commune de l'AWG ; les variantes INSEE existent.
+        verification: >-
+          Méthode commune de l'AWG ; les variantes INSEE existent.
+          Le 13 octobre 2026, le diviseur lit les hypothèses
+          d'espérance de vie basse et haute de l'INSEE, dans les deux
+          moteurs (`Parametres.hypothese_esperance_vie`) : à 64 ans,
+          celui de la génération 1975 s'en écarte de −6,6 % et
+          +8,2 %. Reste la page Coût, après l'action 147 (action
+          138, étape 7).
         etat: a_reprendre
         chantier: "138.7"
       - quoi: >-

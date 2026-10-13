@@ -2772,6 +2772,49 @@ def source_quotients_projetes() -> dict[tuple, float]:
     }
 
 
+def source_quotients_projetes_variante(hypothese: str) -> Callable[[], dict[tuple, float]]:
+    """Quotients par âge des années projetées sous l'hypothèse d'espérance de
+    vie ``basse`` ou ``haute`` des projections de population 2026 de l'INSEE.
+
+    Les mêmes feuilles que la centrale, lues et converties de même, et
+    contrôlées de même contre les espérances que l'INSEE publie sous chacune.
+    Elles encadrent la centrale de trois ans d'espérance de vie à la
+    naissance en 2070 ; le diviseur les lit en variante
+    (``Parametres.hypothese_esperance_vie``, action 138, étape 7), la page
+    Coût pas encore.
+    """
+    def source() -> dict[tuple, float]:
+        serie = _serie_json("insee_quotients_projetes_variantes.json",
+                            "scripts/fetch/insee_projections_mortalite.py")
+        lues = [cle.split("|") for cle in serie if cle.startswith(f"{hypothese}|")]
+        return {
+            tuple(cle[1:]): serie["|".join(cle)]
+            for cle in sorted(lues, key=lambda c: (int(c[1]), c[2], int(c[3])))
+        }
+    return source
+
+
+def source_esperances_projetees_variantes() -> dict[tuple, float]:
+    """Espérances de vie à la naissance, à 60 et à 65 ans publiées par l'INSEE
+    sous les tables des hypothèses d'espérance de vie basse et haute.
+
+    Aucun calcul ne les lit : la loi de Gompertz-Makeham, la seule qui se cale
+    sur des espérances, ne sert plus à aucune année projetée. Elles sont la
+    mesure contre laquelle la table de chaque variante se contrôle, à
+    l'exécution du récupérateur comme dans ``tests/test_donnees.py``.
+    """
+    serie = _serie_json("insee_projections_mortalite_variantes.json",
+                        "scripts/fetch/insee_projections_mortalite.py")
+    return {
+        tuple(cle.split("|")): valeur
+        for cle, valeur in sorted(serie.items(),
+                                  key=lambda kv: (kv[0].split("|")[0],
+                                                  int(kv[0].split("|")[1]),
+                                                  kv[0].split("|")[2],
+                                                  kv[0].split("|")[3]))
+    }
+
+
 def source_quotients_anciens() -> dict[tuple, float]:
     """Quotients de mortalité par âge d'AVANT 1986, reconstitués par l'INED.
 
@@ -8079,6 +8122,85 @@ CERTIFICATIONS = (
             "# dans le modèle.",
             "#",
             "# Champ : France.",
+            "#",
+            "# Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas",
+            "# modifier à la main.",
+        ),
+    ),
+    *(Certification(
+        nom=f"quotients_mortalite_projetes_{hypothese}",
+        chemin=REFERENCE / "mortalite" / f"quotients_projetes_{hypothese}.csv",
+        cles=("annee", "sexe", "age"),
+        colonne="qx",
+        source=source_quotients_projetes_variante(hypothese),
+        origine=f"INSEE, projections de population 2026, quotients de "
+                f"l'hypothèse d'espérance de vie {hypothese} convertis à l'âge exact",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="projetee",
+        entete=(
+            f"# Quotients de mortalité par âge — années projetées, France, "
+            f"espérance de vie {hypothese}",
+            "# source_id: insee_projections_mortalite",
+            "# unite: probabilité de décès entre deux âges exacts, entre 0 et 1",
+            "#",
+            f"# L'hypothèse d'espérance de vie {hypothese} des projections de",
+            "# population 2026 de l'INSEE, de 2026 à 2125 et de 0 à 120 ans :",
+            "# l'espérance de vie à la naissance y est, en 2070, de trois ans "
+            + ("sous" if hypothese == "basse" else "au-dessus de"),
+            "# celle de l'hypothèse centrale (Insee Première n° 2108). Le modèle",
+            "# lit ce fichier à la place de quotients_projetes.csv quand",
+            f"# Parametres.hypothese_esperance_vie vaut « {hypothese} » : toute la",
+            "# mortalité d'une simulation, son diviseur d'abord (action 138,",
+            "# étape 7). La page Coût ne le lit pas encore. Au-delà de 2125, les",
+            "# quotients de 2125 ; en 2025, sous toute hypothèse, l'observé.",
+            "#",
+            "# CONVERTIS, NON RECOPIÉS, comme ceux de l'hypothèse centrale (voir",
+            "# l'en-tête de quotients_projetes.csv). La table convertie retrouve à",
+            "# moins de 0,05 an les espérances à 60 et 65 ans que l'INSEE publie",
+            "# sous la même feuille (esperances_vie_variantes.csv), ce que le",
+            "# récupérateur contrôle à chaque exécution.",
+            "#",
+            "# fiabilite: projetee — une projection du producteur, qui vaut estimee",
+            "# dans le modèle.",
+            "#",
+            "# Champ : France.",
+            "#",
+            "# Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas",
+            "# modifier à la main.",
+        ),
+    ) for hypothese in ("basse", "haute")),
+    Certification(
+        nom="esperances_projetees_variantes",
+        chemin=REFERENCE / "mortalite" / "esperances_vie_variantes.csv",
+        cles=("hypothese", "annee", "sexe", "mesure"),
+        colonne="valeur",
+        source=source_esperances_projetees_variantes,
+        origine="INSEE, projections de population 2026, espérances publiées "
+                "sous les quotients des hypothèses d'espérance de vie basse et haute",
+        decimales=2,
+        tolerance=0.005,
+        unite=" ans",
+        niveau="projetee",
+        entete=(
+            "# Espérances de vie projetées, hypothèses d'espérance de vie basse et",
+            "# haute, France",
+            "# source_id: insee_projections_mortalite",
+            "# unite: années",
+            "# hypothese: basse | haute",
+            "# sexe: H | F",
+            "# mesure: e0 (à la naissance), e60 (à 60 ans), e65 (à 65 ans)",
+            "#",
+            "# Publiées par l'INSEE sous chaque table de quotients des hypothèses",
+            "# basse et haute de ses projections de population 2026, de 2026 à",
+            "# 2125, arrondies au centième. L'hypothèse centrale est dans",
+            "# esperances_vie.csv. Aucun calcul ne les lit : elles contrôlent les",
+            "# tables quotients_projetes_basse.csv et quotients_projetes_haute.csv,",
+            "# à 0,05 an près à 60 et 65 ans (le récupérateur et",
+            "# tests/test_donnees.py).",
+            "#",
+            "# fiabilite: projetee — une projection du producteur, qui vaut estimee",
+            "# dans le modèle.",
             "#",
             "# Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas",
             "# modifier à la main.",

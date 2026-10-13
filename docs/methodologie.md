@@ -2223,7 +2223,9 @@ Trois sources, par ordre de priorité, et le partage se fait couple par couple
 2. `data/reference/mortalite/quotients_projetes.csv` — les **quotients
    projetés** par l'INSEE, hypothèse centrale de ses projections de population
    2026, de <!--chiffre:minimum(data/reference/mortalite/quotients_projetes.csv:annee)-->2026<!--/--> à <!--chiffre:maximum(data/reference/mortalite/quotients_projetes.csv:annee)-->2125<!--/-->, convertis à l'âge exact (plus bas) ; au-delà de
-   la dernière année, ceux de cette année-là ;
+   la dernière année, ceux de cette année-là. Sous l'hypothèse d'espérance de
+   vie basse ou haute (`hypothese_esperance_vie`, plus bas), ceux de la
+   sienne, `quotients_projetes_basse.csv` ou `quotients_projetes_haute.csv` ;
 3. partout ailleurs — au-delà du dernier âge observé, et en 2025, que ni
    l'observation ni la projection ne couvrent — une table paramétrique de
    **Gompertz-Makeham** `μ(x) = A + B·exp(k(x−60))`, dont *B* et *k* sont
@@ -2292,6 +2294,25 @@ l'espérance de vie à la naissance publiée pour 2070
 publiées à <!--chiffre:illustration()-->60<!--/--> et <!--chiffre:illustration()-->65<!--/--> ans, chaque année, à <!--chiffre:mesure(constante?de=fetch.insee_projections_mortalite&nom=TOLERANCE_CONVERSION)-->0,05<!--/--> an près, et
 `tests/test_donnees.py` refait ce second contrôle sur la table que le modèle
 lit.
+
+**Les hypothèses d'espérance de vie basse et haute, en variante.** L'INSEE
+publie avec la centrale deux hypothèses qui l'encadrent : en 2070,
+l'espérance de vie à la naissance y est de <!--chiffre:cellule(data/reference/mortalite/esperances_vie_variantes.csv:valeur?hypothese=basse&annee=2070&sexe=F&mesure=e0)-->86,5<!--/--> et <!--chiffre:cellule(data/reference/mortalite/esperances_vie_variantes.csv:valeur?hypothese=haute&annee=2070&sexe=F&mesure=e0)-->92,5<!--/--> ans pour les femmes,
+de <!--chiffre:cellule(data/reference/mortalite/esperances_vie_variantes.csv:valeur?hypothese=basse&annee=2070&sexe=H&mesure=e0)-->83,7<!--/--> et <!--chiffre:cellule(data/reference/mortalite/esperances_vie_variantes.csv:valeur?hypothese=haute&annee=2070&sexe=H&mesure=e0)-->89,7<!--/--> ans pour les hommes, trois ans de part et d'autre de la
+centrale. Le modèle lit leurs quotients comme les siens — même conversion,
+mêmes contrôles, contre les espérances publiées sous chacune
+(`esperances_vie_variantes.csv`, qu'aucun calcul ne lit) —, et le paramètre
+`hypothese_esperance_vie` choisit celle des années projetées, dans les deux
+moteurs. Toute la mortalité d'une simulation la suit à partir de 2026, son
+diviseur d'abord, et avec lui l'espérance de vie citée, le cycle de vie et la
+rente du pilier capitalisé ; l'observé et 2025 sont les mêmes sous les trois.
+Le capital d'un compte rétroactif n'en dépend pas, ni la pension du
+système 1 : la longévité gagnée ou perdue s'y règle en rente annuelle, ce que
+le diviseur de génération est fait pour absorber. Celui d'un compte prospectif
+en dépend par ses droits acquis, que la bascule convertit en capital par un
+diviseur. La page Coût ne lit pas encore les
+variantes : sa population reste celle du scénario central, et son simulateur
+refuse une autre hypothèse.
 
 **Ce que la loi rendait aux années projetées, mesuré le 7 octobre 2026.**
 Jusqu'à ce jour, la loi de Gompertz-Makeham décrivait seule les années

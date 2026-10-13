@@ -1,15 +1,15 @@
 # Étape 7, première partie : les quotients projetés de l'INSEE au lieu de la loi de Gompertz-Makeham
 
-**Reprise, au 10 octobre 2026.** Fait : les quotients projetés de l'INSEE, de
-2026 à 2125, lus âge par âge par les deux moteurs au lieu de la loi de
-Gompertz-Makeham ; le 10 octobre, la marche de la génération 1941, qui venait
-de la table d'Eurostat : les quotients observés de 1986 à 2024 se calculent
-par génération, comme l'INSEE. Reste, dans cet ordre : les variantes
-d'espérance de vie basse et haute, dans le diviseur et la page Coût ; la
-fécondité et les migrations de la page Coût ; la mortalité différentielle de
-ses cas types ; les départs qui suivent l'espérance de vie ; la queue observée
-de 85 à 98 ans ; 2025, sous la loi seule. Commencer par les variantes.
-Détail : « Ce qui reste » de la note du 10 octobre.
+**Reprise, au 13 octobre 2026.** Fait : les quotients projetés de l'INSEE lus
+âge par âge par les deux moteurs ; la marche de la génération 1941 (note du
+10 octobre) ; le 13 octobre, les hypothèses d'espérance de vie basse et haute
+dans le diviseur, dans les deux moteurs (`hypothese_esperance_vie`), la page
+Coût les refusant encore. Reste, dans cet ordre : les variantes dans la page
+Coût, après l'action 147, et dans les pages du simulateur, par la session qui
+les tient ; la fécondité et les migrations de la page Coût ; la mortalité
+différentielle de ses cas types ; les départs qui suivent l'espérance de vie ;
+la queue observée de 85 à 98 ans ; 2025, sous la loi seule. Détail : « Ce qui
+reste » et « Ce qui devrait s'écrire dans les pages », note du 13 octobre.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.7 ». L'étape 7 de
 l'action : « La démographie en variantes : les quotients projetés âge par âge

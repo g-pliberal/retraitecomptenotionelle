@@ -1,0 +1,23 @@
+date: "2026-10-13"
+session: "action 138, étape 7, troisième partie : les hypothèses d'espérance de vie basse et haute de l'INSEE, dans le diviseur"
+consulte: >-
+  Aucune source de droit : la session ne touche ni au scénario 1 ni à une règle.
+  L'INSEE, lu le jour même : le classeur des hypothèses de mortalité des
+  projections de population 2026 (hyp_mortalite.xlsx), ses feuilles basF, basH,
+  hautF et hautH ; l'Insee Première n° 2108 (juin 2026), son encadré des
+  hypothèses.
+trouve: >-
+  Aucun texte de droit. Les hypothèses basse et haute ont la disposition de la
+  centrale, s'en écartent dès 2025 et, selon l'Insee Première n° 2108,
+  « s'écartent de ± 3,0 ans » d'espérance de vie à la naissance en 2070, ce que
+  leurs feuilles rendent. Converties à l'âge exact comme la centrale, leurs
+  tables rendent les espérances publiées à 60 et 65 ans à 0,035 an près. Le
+  diviseur les lit en variante, dans les deux moteurs ; la page Coût les refuse
+  encore. Aucune pension ne bouge sous la centrale, celle du scénario 1 sous
+  aucune hypothèse.
+reste: >-
+  Le reste de l'étape 7 : les variantes dans la page Coût, après l'action 147,
+  et dans les pages du simulateur, par la session qui les tient ; la fécondité
+  et les migrations, la mortalité différentielle des cas types de la page Coût,
+  les départs qui suivent l'espérance de vie, la queue observée de 85 à 98 ans,
+  2025.

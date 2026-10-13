@@ -1126,6 +1126,179 @@ def test_le_diviseur_decroit_aussi_au_passage_du_1er_janvier(mortalite):
     )
 
 
+HYPOTHESES = ("basse", "centrale", "haute")
+
+
+def test_le_diviseur_absorbe_l_hypothese_d_esperance_de_vie():
+    """Sous les hypothèses d'espérance de vie basse et haute de l'INSEE, le
+    diviseur de qui part après 2026 encadre celui de la centrale, d'autant
+    plus largement que la génération est jeune, ses années projetées étant
+    plus nombreuses ; une génération éteinte avant 2026 — née en 1885, partie
+    en 1950 — a le même sous les trois, l'observé ne dépendant d'aucune
+    hypothèse (action 138, étape 7)."""
+    convertisseurs = {
+        hypothese: Convertisseur(
+            DonneesMortalite(RACINE_DONNEES, cache_disque=False, hypothese=hypothese),
+            Parametres(population_conversion=None))
+        for hypothese in HYPOTHESES}
+
+    def diviseurs(age: float, annee: int) -> list[float]:
+        return [convertisseurs[h].coefficient(age, annee).diviseur for h in HYPOTHESES]
+
+    assert len(set(diviseurs(65, 1950))) == 1
+    largeurs = []
+    for generation in (1960, 1975, 2000):
+        basse, centrale, haute = diviseurs(64, generation + 64)
+        assert basse < centrale < haute, generation
+        largeurs.append((haute - basse) / centrale)
+    assert largeurs == sorted(largeurs), largeurs
+
+
+def test_l_hypothese_d_esperance_de_vie_ne_touche_pas_au_capital_retroactif():
+    """Une carrière sous les trois hypothèses. Le système 1, où nulle
+    espérance de vie n'entre, sert la même pension ; le compte rétroactif
+    garde le même capital, et sa pension en est le quotient par le diviseur
+    de chaque hypothèse : la longévité gagnée ou perdue se règle en rente
+    annuelle, pas en capital. La simulation dit sous laquelle elle a couru."""
+    resultats = {}
+    for hypothese in HYPOTHESES:
+        simulateur = Simulateur(Parametres(hypothese_esperance_vie=hypothese))
+        carriere = simulateur.carriere_simple(1975, "F", "salarie_prive_non_cadre", 22, 64)
+        resultats[hypothese] = simulateur.simuler(carriere).dictionnaire()
+    actuel = {r["scenarios"]["actuel"]["pension_annuelle"] for r in resultats.values()}
+    assert len(actuel) == 1
+    retroactifs = {h: r["scenarios"]["notionnel_retroactif"] for h, r in resultats.items()}
+    assert len({r["capital_notionnel"] for r in retroactifs.values()}) == 1
+    for hypothese, resultat in resultats.items():
+        assert resultat["unite"]["hypothese_esperance_vie"] == hypothese
+        assert retroactifs[hypothese]["pension_annuelle"] == pytest.approx(
+            retroactifs[hypothese]["capital_notionnel"] / resultat["conversion"]["diviseur"])
+    pensions = [retroactifs[h]["pension_annuelle"] for h in HYPOTHESES]
+    assert pensions == sorted(pensions, reverse=True) and len(set(pensions)) == 3
+
+
+def test_une_hypothese_d_esperance_de_vie_hors_de_l_insee_est_refusee(tmp_path):
+    """Trois hypothèses, celles de l'INSEE ; une autre est refusée, et une
+    variante dont la table manque aussi : elle retomberait sur la loi, calée
+    sur les espérances de la centrale. La page Coût refuse la basse et la
+    haute, sa population restant celle du scénario central."""
+    import shutil
+
+    with pytest.raises(ValueError, match="inconnue"):
+        DonneesMortalite(RACINE_DONNEES, cache_disque=False, hypothese="moyenne")
+    (tmp_path / "reference" / "mortalite").mkdir(parents=True)
+    shutil.copy(RACINE_DONNEES / "reference" / "mortalite" / "esperances_vie.csv",
+                tmp_path / "reference" / "mortalite")
+    assert DonneesMortalite(tmp_path, cache_disque=False).annees_projetees is None
+    with pytest.raises(FileNotFoundError, match="quotients_projetes_haute.csv"):
+        DonneesMortalite(tmp_path, cache_disque=False, hypothese="haute")
+    with pytest.raises(ValueError, match="page Coût"):
+        Simulateur(Parametres(hypothese_esperance_vie="basse")).pour_la_projection()
+
+
+#: Trois carrières, que les deux moteurs simulent sous les hypothèses basse et
+#: haute : une salariée, un fonctionnaire, un artisan parti avant la bascule.
+CARRIERES_DES_VARIANTES = (
+    (1975, "F", "salarie_prive_non_cadre", 22, 64),
+    (1990, "H", "fonctionnaire_etat", 24, 62.5),
+    (1962, "H", "artisan", 20, 66),
+)
+
+_VARIANTES_JS = """
+import { readFileSync } from "node:fs";
+import { Contexte } from "./moteur/js/contexte.js";
+import { PARAMETRES_DEFAUT } from "./moteur/js/config.js";
+import { DonneesMortalite } from "./moteur/js/mortalite.js";
+const carrieres = JSON.parse(process.argv[1]);
+const paquet = JSON.parse(readFileSync("moteur/donnees.json", "utf8"));
+const contexte = new Contexte(paquet);
+const sortie = { simulations: {} };
+for (const hypothese of ["basse", "haute"]) {
+  const simulateur = contexte.simulateur({ ...PARAMETRES_DEFAUT, hypothese_esperance_vie: hypothese });
+  sortie.simulations[hypothese] = carrieres.map(([naissance, sexe, affiliation, debut, depart]) =>
+    simulateur.simuler(simulateur.carriereSimple({
+      annee_naissance: naissance, sexe, affiliation, age_debut: debut, age_liquidation: depart,
+    })).dictionnaire());
+}
+try {
+  new DonneesMortalite(paquet, undefined, "moyenne");
+  sortie.refus = null;
+} catch (erreur) {
+  sortie.refus = erreur.message;
+}
+process.stdout.write(JSON.stringify(sortie));
+"""
+
+
+def _simulations_des_variantes(carrieres) -> dict:
+    """La moitié Python du test jumeau : les carrières sous chaque variante."""
+    import json
+
+    resultats = {}
+    for hypothese in ("basse", "haute"):
+        simulateur = Simulateur(Parametres(hypothese_esperance_vie=hypothese))
+        resultats[hypothese] = [
+            json.loads(json.dumps(simulateur.simuler(simulateur.carriere_simple(*c))
+                                  .dictionnaire()))
+            for c in carrieres]
+    return resultats
+
+
+def _ecarts_au_portage(obtenu, attendu, chemin: str, ecarts: list[str]) -> None:
+    """Ce qui sépare la sortie JavaScript de la sortie Python, à un milliardième
+    près en relatif ; ``null`` vaut NaN, comme dans ``tests/js/comparer.mjs``."""
+    import math
+
+    if isinstance(attendu, dict):
+        for cle, valeur in attendu.items():
+            _ecarts_au_portage((obtenu or {}).get(cle) if isinstance(obtenu, dict) else None,
+                               valeur, f"{chemin}.{cle}", ecarts)
+    elif isinstance(attendu, list):
+        if not isinstance(obtenu, list) or len(obtenu) != len(attendu):
+            ecarts.append(f"{chemin} : {len(attendu)} éléments attendus")
+            return
+        for rang, (o, a) in enumerate(zip(obtenu, attendu)):
+            _ecarts_au_portage(o, a, f"{chemin}[{rang}]", ecarts)
+    elif isinstance(attendu, float) and math.isnan(attendu):
+        if obtenu is not None:
+            ecarts.append(f"{chemin} : python=NaN js={obtenu}")
+    elif isinstance(attendu, (int, float)) and not isinstance(attendu, bool):
+        if (isinstance(obtenu, bool) or not isinstance(obtenu, (int, float))
+                or abs(obtenu - attendu) > 1e-9 * max(abs(attendu), 1.0)):
+            ecarts.append(f"{chemin} : python={attendu} js={obtenu}")
+    elif obtenu != attendu:
+        ecarts.append(f"{chemin} : python={str(attendu)[:60]} js={str(obtenu)[:60]}")
+
+
+def test_le_portage_javascript_lit_les_memes_variantes():
+    """Les deux moteurs simulent trois carrières sous les hypothèses basse et
+    haute, et rendent les mêmes chiffres : le navigateur refait les deux
+    tables des écarts que le paquet porte (``quotientsProjetes``), et chaque
+    simulateur lit celle de ses paramètres. Une hypothèse inconnue y est
+    refusée comme en Python."""
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    from outils_portage import moitie_python
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _VARIANTES_JS,
+         json.dumps(CARRIERES_DES_VARIANTES)],
+        cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    sortie = json.loads(execution.stdout)
+    assert "inconnue" in sortie["refus"]
+    attendus = moitie_python(_simulations_des_variantes, CARRIERES_DES_VARIANTES)
+    ecarts: list[str] = []
+    _ecarts_au_portage(sortie["simulations"], attendus, "", ecarts)
+    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
+
+
 def test_le_taux_de_remplacement_rapporte_un_revenu_annualise(macro):
     """L'année du départ ne porte que ses mois ; le taux compare des années.
 

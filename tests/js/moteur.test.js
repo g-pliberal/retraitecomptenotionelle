@@ -688,6 +688,33 @@ test("les quotients projetés de l'INSEE remplacent la loi aux années projetée
   assert.equal(mortalite.survieAnnuelle(70, 2025, "H"), mortalite.loi(2025, "H").survie(70, 1));
 });
 
+/**
+ * Le portage de `test_les_variantes_ne_changent_que_les_annees_projetees`
+ * (tests/test_donnees.py) : les quotients des hypothèses d'espérance de vie
+ * basse et haute, refaits des écarts que le paquet porte, sont ceux des
+ * fichiers de données au bit près ; l'observé et 2025 restent ceux de la
+ * centrale ; une hypothèse inconnue est refusée.
+ */
+test("les variantes d'espérance de vie se refont au bit près", () => {
+  const centrale = new DonneesMortalite(paquet);
+  for (const hypothese of ["basse", "haute"]) {
+    const variante = new DonneesMortalite(paquet, undefined, hypothese);
+    assert.deepEqual(variante.anneesProjetees, [2026, 2125]);
+    const lignes = readFileSync(
+      join(RACINE, "data", "reference", "mortalite", `quotients_projetes_${hypothese}.csv`), "utf8")
+      .split("\n").filter((ligne) => ligne && !ligne.startsWith("#")).slice(1);
+    assert.equal(lignes.length, 24200);
+    for (const ligne of lignes) {
+      const [annee, sexe, age, qx] = ligne.split(",");
+      assert.equal(variante.survieAnnuelle(Number(age), Number(annee), sexe), 1 - Number(qx), ligne);
+    }
+    for (const [age, annee, sexe] of [[70, 1990, "H"], [64, 2024, "F"], [70, 2025, "H"]]) {
+      assert.equal(variante.survieAnnuelle(age, annee, sexe), centrale.survieAnnuelle(age, annee, sexe));
+    }
+  }
+  assert.throws(() => new DonneesMortalite(paquet, undefined, "moyenne"), /inconnue/);
+});
+
 test("le préfinancement du diviseur se rend sur la pension servie", () => {
   // Le portage de `test_le_prefinancement_du_diviseur_se_rend_sur_la_pension_servie`
   // (tests/test_moteur.py) : sous ν, la pension servie se revalorise au taux du

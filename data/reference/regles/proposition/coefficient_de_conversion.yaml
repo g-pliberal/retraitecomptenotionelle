@@ -43,7 +43,9 @@ versions:
     vie restante ; positif, il sert ce rendement d'avance, que la pension
     servie rend chaque année (`indexation_du_compte`). La table est de
     génération, unisexe par défaut
-    (`table_conversion`). Le compte n'a ni décote ni surcote : c'est le
+    (`table_conversion`) ; ses années projetées suivent l'une des trois
+    hypothèses d'espérance de vie de l'INSEE, la centrale par défaut
+    (`hypothese_esperance_vie`). Le compte n'a ni décote ni surcote : c'est le
     diviseur, avec les années non cotisées, qui fait peser l'âge du départ. Il
     tient dans le compte la place que la décote et la surcote tiennent dans le
     droit réel, d'où son domaine.
@@ -60,5 +62,5 @@ code:
     retraite_notionnelle.moteur.conversion: [Convertisseur.resoudre, Convertisseur.coefficient]
   javascript:
     moteur/js/conversion.js: [Convertisseur, resoudre, coefficient]
-  parametres: [taux_anticipe_conversion, table_conversion]
+  parametres: [taux_anticipe_conversion, table_conversion, hypothese_esperance_vie]
   tests: [tests/test_moteur.py]

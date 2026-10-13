@@ -15,7 +15,11 @@ et de 2023 à 2125, pour les trois hypothèses d'espérance de vie, et, sous cha
 table, les espérances de vie à la naissance, à 60 et à 65 ans qu'elle implique.
 On reprend la centrale : ses QUOTIENTS, que le modèle lit âge par âge depuis le
 7 octobre 2026 au lieu de sa loi de Gompertz-Makeham (action 138, étape 7), et
-ses espérances, telles que l'INSEE les publie.
+ses espérances, telles que l'INSEE les publie. Et, depuis le 13 octobre 2026,
+les hypothèses basse et haute, qui s'en écartent de trois ans d'espérance de vie
+à la naissance en 2070 : leurs quotients, que le diviseur lit sous
+``Parametres.hypothese_esperance_vie``, et leurs espérances publiées, contre
+lesquelles leur table se contrôle comme la centrale.
 
 LES ESPÉRANCES SONT PUBLIÉES, ET N'ONT PAS À ÊTRE DÉRIVÉES
 ----------------------------------------------------------
@@ -50,10 +54,14 @@ si l'un casse :
   que son scénario central implique en 2070, **89,5 ans pour les femmes et
   86,7 ans pour les hommes** (Insee Première n° 2108). La somme des survies du
   classeur, sans le demi-an usuel, rend 89,50 et 86,71 ; avec demi-an, 90,00 et
-  87,21. Le demi-an est dans l'indexation par âge atteint ;
+  87,21. Le demi-an est dans l'indexation par âge atteint. La même publication
+  écarte les hypothèses basse et haute de « ± 3,0 ans » de la centrale en 2070 :
+  86,5 et 92,5 ans pour les femmes, 83,7 et 89,7 pour les hommes, que la
+  somme des survies de leurs feuilles rend à 0,02 an près ;
 * la conversion : la table convertie, sommée comme le modèle la somme —
   trapèzes d'âge exact en âge exact —, retrouve à moins de 0,02 an les
-  espérances à 60 et 65 ans que l'INSEE publie, chaque année de 2026 à 2125.
+  espérances à 60 et 65 ans que l'INSEE publie, chaque année de 2026 à 2125,
+  sous les hypothèses centrale et basse, à moins de 0,04 an sous la haute.
   La tolérance est de 0,05 an. À la naissance, l'écart passe le dixième, et il
   est attendu : les décès de la première année se concentrent dans ses
   premières semaines, ce que la moyenne de deux parallélogrammes ignore. Aucun
@@ -80,20 +88,39 @@ URL = ("https://www.insee.fr/fr/statistiques/fichier/8990899/hyp_mortalite.xlsx"
 
 SORTIE = Path("data/brut/insee_projections_mortalite.json")
 SORTIE_QUOTIENTS = Path("data/brut/insee_quotients_projetes.json")
+#: Les hypothèses basse et haute, sous des clés que l'hypothèse ouvre
+#: (``basse|2070|F|e65``, ``haute|2070|F|65``).
+SORTIE_VARIANTES = Path("data/brut/insee_projections_mortalite_variantes.json")
+SORTIE_QUOTIENTS_VARIANTES = Path("data/brut/insee_quotients_projetes_variantes.json")
 
 PUBLICATION = ("INSEE, projections de population 2026 pour la France — "
                "hypothèses de mortalité jusqu'en 2125, hypothèse centrale "
                "(Insee Résultats, 2026)")
+PUBLICATION_VARIANTES = ("INSEE, projections de population 2026 pour la France — "
+                         "hypothèses de mortalité jusqu'en 2125, hypothèses "
+                         "d'espérance de vie basse et haute (Insee Résultats, 2026)")
 
-#: Feuille du classeur -> code de sexe du dépôt. Le classeur en porte huit :
-#: hypothèses centrale, basse, haute et mortalité constante, par sexe. On ne
-#: reprend que la centrale, seule dont le COR et le dépôt se réclament.
-FEUILLES = {"centralF": "F", "centralH": "H"}
+#: Hypothèse d'espérance de vie -> feuille du classeur -> code de sexe du
+#: dépôt. Le classeur en porte huit : hypothèses centrale, basse, haute et
+#: mortalité constante, par sexe. On reprend les trois premières : la
+#: centrale, dont le COR et le dépôt se réclament, et les deux qui
+#: l'encadrent, que le diviseur lit en variante depuis le 13 octobre 2026
+#: (action 138, étape 7). La mortalité constante, « hypothèse de travail »
+#: selon son titre, n'est pas une projection.
+HYPOTHESES = {
+    "centrale": {"centralF": "F", "centralH": "H"},
+    "basse": {"basF": "F", "basH": "H"},
+    "haute": {"hautF": "F", "hautH": "H"},
+}
+
+#: Les feuilles de l'hypothèse centrale.
+FEUILLES = HYPOTHESES["centrale"]
 
 #: Première année reprise. Le classeur commence en 2023, mais 2023 à 2025 sont
 #: observées et le dépôt les certifie déjà depuis l'INSEE BDM et l'OCDE :
 #: l'observé prime sur le projeté, y compris quand le projeté vient du même
-#: producteur.
+#: producteur. Les hypothèses basse et haute s'écartent de la centrale dès
+#: 2025 dans le classeur ; 2025 reste, sous chacune, ce que le dépôt observe.
 PREMIERE_ANNEE_PROJETEE = 2026
 
 #: Espérances publiées sous chaque table, par le début de leur libellé.
@@ -103,9 +130,16 @@ LIBELLES = {
     "Espérance de vie à 65 ans": "e65",
 }
 
-#: Contrôle de la convention d'âge : espérance de vie à la naissance que le
-#: scénario central implique en 2070, telle que l'INSEE la publie.
-CONTROLE = {("F", 2070): 89.5, ("H", 2070): 86.7}
+#: Contrôle de la convention d'âge : espérance de vie à la naissance que
+#: chaque hypothèse implique en 2070, telle que l'INSEE la publie (Insee
+#: Première n° 2108, juin 2026) : 89,5 et 86,7 ans sous la centrale, dont
+#: « les hypothèses basse et haute d'espérance de vie en 2070 s'écartent de
+#: ± 3,0 ans ».
+CONTROLE = {
+    ("centrale", "F", 2070): 89.5, ("centrale", "H", 2070): 86.7,
+    ("basse", "F", 2070): 86.5, ("basse", "H", 2070): 83.7,
+    ("haute", "F", 2070): 92.5, ("haute", "H", 2070): 89.7,
+}
 TOLERANCE_CONTROLE = 0.1
 
 #: Contrôle de la conversion : écart admis entre les espérances à 60 et 65 ans
@@ -222,16 +256,25 @@ def esperance_exacte(quotients: dict[int, float], age: int) -> float:
     return total
 
 
-def extraire(donnees: bytes) -> tuple[dict[str, float], dict[str, float], dict[str, float]]:
-    """Ce que le classeur apporte au dépôt, de 2026 à 2125.
+def extraire(donnees: bytes, hypothese: str = "centrale"
+             ) -> tuple[dict[str, float], dict[str, float], dict[str, float]]:
+    """Ce que le classeur apporte au dépôt, de 2026 à 2125, sous une hypothèse
+    d'espérance de vie (:data:`HYPOTHESES`).
 
     Trois dictionnaires : les espérances publiées, ``annee|sexe|mesure`` ; les
     quotients d'âge exact convertis, ``annee|sexe|age`` ; et, pour les
     contrôles, les espérances à la naissance de la convention du classeur et
     les espérances à 60 et 65 ans de la table convertie, ``annee|sexe|mesure``.
     """
-    classeur = feuilles(donnees)
-    manquantes = set(FEUILLES) - set(classeur)
+    return extraire_du_classeur(feuilles(donnees), hypothese)
+
+
+def extraire_du_classeur(classeur: dict, hypothese: str
+                         ) -> tuple[dict[str, float], dict[str, float], dict[str, float]]:
+    """:func:`extraire`, sur un classeur déjà lu : il ne se lit qu'une fois
+    pour les trois hypothèses."""
+    noms = HYPOTHESES[hypothese]
+    manquantes = set(noms) - set(classeur)
     if manquantes:
         raise LookupError(
             f"feuilles absentes du classeur : {sorted(manquantes)} "
@@ -241,7 +284,7 @@ def extraire(donnees: bytes) -> tuple[dict[str, float], dict[str, float], dict[s
     esperances: dict[str, float] = {}
     quotients: dict[str, float] = {}
     recalculees: dict[str, float] = {}
-    for feuille, sexe in FEUILLES.items():
+    for feuille, sexe in noms.items():
         table = _quotients(classeur[feuille])
         publiees = _esperances_publiees(classeur[feuille])
         for annee, atteints in table.items():
@@ -253,7 +296,8 @@ def extraire(donnees: bytes) -> tuple[dict[str, float], dict[str, float], dict[s
                 continue
             for mesure in LIBELLES.values():
                 if mesure not in publiees.get(annee, {}):
-                    raise LookupError(f"{mesure} non publiée pour {sexe} en {annee}")
+                    raise LookupError(
+                        f"{mesure} non publiée pour {sexe} en {annee} ({hypothese})")
                 esperances[f"{annee}|{sexe}|{mesure}"] = round(publiees[annee][mesure], 2)
             exacts = {age: round(q, DECIMALES) for age, q in convertir(atteints).items()}
             for age, quotient in sorted(exacts.items()):
@@ -281,18 +325,24 @@ def _telecharger(url: str) -> bytes:
         return reponse.read()
 
 
-def _ecrire(chemin: Path, serie: dict[str, float], note: str, cle_tri) -> None:
+def _ecrire(chemin: Path, serie: dict[str, float], note: str, cle_tri,
+            publication: str = PUBLICATION) -> None:
     chemin.parent.mkdir(parents=True, exist_ok=True)
     chemin.write_text(
         json.dumps({
             "source": URL,
-            "publication": PUBLICATION,
+            "publication": publication,
             "recupere_le": date.today().isoformat(),
             "note": note,
             "serie": dict(sorted(serie.items(), key=lambda kv: cle_tri(kv[0]))),
         }, ensure_ascii=False, indent=1),
         encoding="utf-8",
     )
+
+
+def _echec(message: str) -> int:
+    print(f"ÉCHEC   {message}", file=sys.stderr)
+    return 1
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -303,60 +353,71 @@ def main(argv: list[str] | None = None) -> int:
     try:
         donnees = lire_ou_telecharger(URL, _telecharger, options.fichier)
     except (urllib.error.HTTPError, urllib.error.URLError, OSError) as erreur:
-        print(f"ÉCHEC   téléchargement : {erreur}", file=sys.stderr)
-        return 1
+        return _echec(f"téléchargement : {erreur}")
     print(f"Classeur  {len(donnees) / 1024:,.0f} Ko")
 
     try:
-        serie, quotients, recalculees = extraire(donnees)
+        classeur = feuilles(donnees)
+        lus = {hypothese: extraire_du_classeur(classeur, hypothese)
+               for hypothese in HYPOTHESES}
     except (LookupError, ValueError) as erreur:
-        print(f"ÉCHEC   lecture du classeur : {erreur}", file=sys.stderr)
-        return 1
+        return _echec(f"lecture du classeur : {erreur}")
 
+    serie, quotients, _ = lus["centrale"]
     annees = sorted({int(cle.split("|")[0]) for cle in serie})
     if not annees:
-        print("ÉCHEC   aucune espérance publiée", file=sys.stderr)
-        return 1
+        return _echec("aucune espérance publiée")
 
     # Le contrôle qui autorise la lecture : la convention d'âge du classeur
     # n'est pas celle des tables du moment, et seule la valeur publiée par
     # l'INSEE peut trancher. Sans lui, un demi-an d'erreur passerait dans le
     # diviseur de conversion de toutes les liquidations à venir.
-    for (sexe, annee), attendu in CONTROLE.items():
-        obtenu = recalculees.get(f"{annee}|{sexe}|e0")
+    for (hypothese, sexe, annee), attendu in CONTROLE.items():
+        obtenu = lus[hypothese][2].get(f"{annee}|{sexe}|e0")
         if obtenu is None or abs(obtenu - attendu) > TOLERANCE_CONTROLE:
-            print(f"ÉCHEC   espérance à la naissance {sexe} en {annee} : "
-                  f"{obtenu} contre {attendu} publié par l'INSEE", file=sys.stderr)
-            return 1
-        print(f"Contrôle  e0 {sexe} {annee} : {obtenu:.2f} ans, INSEE {attendu} ans")
+            return _echec(f"espérance à la naissance {sexe} en {annee}, hypothèse "
+                          f"{hypothese} : {obtenu} contre {attendu} publié par l'INSEE")
+        print(f"Contrôle  e0 {hypothese:<8} {sexe} {annee} : {obtenu:.2f} ans, "
+              f"INSEE {attendu} ans")
 
     # Le contrôle qui autorise la conversion : la table que le modèle lira doit
-    # rendre, à 60 et 65 ans, les espérances que l'INSEE publie.
-    ecarts = ecarts_de_conversion(recalculees)
-    if ecarts:
-        print(f"ÉCHEC   table convertie loin de la publication : {ecarts[:5]}",
-              file=sys.stderr)
-        return 1
-    plus_grand = max(
-        (abs(v - recalculees[f"{c}_publiee"]), c) for c, v in recalculees.items()
-        if c.endswith(("|e60", "|e65")))
-    print(f"Contrôle  conversion : écart maximal {plus_grand[0]:.3f} an "
-          f"({plus_grand[1]}), tolérance {TOLERANCE_CONVERSION}")
+    # rendre, à 60 et 65 ans, les espérances que l'INSEE publie, sous chaque
+    # hypothèse.
+    for hypothese, (_, _, recalculees) in lus.items():
+        ecarts = ecarts_de_conversion(recalculees)
+        if ecarts:
+            return _echec(f"table convertie loin de la publication ({hypothese}) : "
+                          f"{ecarts[:5]}")
+        plus_grand = max(
+            (abs(v - recalculees[f"{c}_publiee"]), c) for c, v in recalculees.items()
+            if c.endswith(("|e60", "|e65")))
+        print(f"Contrôle  conversion {hypothese:<8} : écart maximal {plus_grand[0]:.3f} an "
+              f"({plus_grand[1]}), tolérance {TOLERANCE_CONVERSION}")
 
-    # Deux contrôles de vraisemblance, sans lesquels un décalage de colonne
-    # passerait inaperçu : l'espérance de vie croît sur toute la projection, et
-    # les femmes vivent plus longtemps que les hommes à chaque année.
-    for sexe in FEUILLES.values():
-        suite = [serie[f"{a}|{sexe}|e0"] for a in annees]
-        if any(b < a - 0.01 for a, b in zip(suite, suite[1:])):
-            print(f"ÉCHEC   espérance à la naissance non croissante ({sexe})",
-                  file=sys.stderr)
-            return 1
+    # Trois contrôles de vraisemblance, sans lesquels un décalage de colonne ou
+    # une feuille prise pour une autre passeraient inaperçus : sous chaque
+    # hypothèse, l'espérance de vie croît sur toute la projection, et les
+    # femmes vivent plus longtemps que les hommes à chaque année ; et chaque
+    # année, à 60 comme à 65 ans, la basse est sous la centrale, elle-même
+    # sous la haute.
+    for hypothese, (publiees, _, _) in lus.items():
+        if sorted({int(cle.split("|")[0]) for cle in publiees}) != annees:
+            return _echec(f"années de l'hypothèse {hypothese} autres que la centrale")
+        for sexe in FEUILLES.values():
+            suite = [publiees[f"{a}|{sexe}|e0"] for a in annees]
+            if any(b < a - 0.01 for a, b in zip(suite, suite[1:])):
+                return _echec(f"espérance à la naissance non croissante ({sexe}, {hypothese})")
+        for annee in annees:
+            if publiees[f"{annee}|F|e60"] <= publiees[f"{annee}|H|e60"]:
+                return _echec(f"e60 des femmes sous celle des hommes en {annee} ({hypothese})")
     for annee in annees:
-        if serie[f"{annee}|F|e60"] <= serie[f"{annee}|H|e60"]:
-            print(f"ÉCHEC   e60 des femmes sous celle des hommes en {annee}",
-                  file=sys.stderr)
-            return 1
+        for sexe in FEUILLES.values():
+            for mesure in ("e60", "e65"):
+                basse, centrale, haute = (lus[h][0][f"{annee}|{sexe}|{mesure}"]
+                                          for h in ("basse", "centrale", "haute"))
+                if not basse < centrale < haute:
+                    return _echec(f"{mesure} {sexe} {annee} : basse {basse}, centrale "
+                                  f"{centrale}, haute {haute}, hors de cet ordre")
 
     manquantes = [a for a in range(annees[0], annees[-1] + 1) if a not in annees]
     if manquantes:
@@ -373,9 +434,32 @@ def main(argv: list[str] | None = None) -> int:
             "le dernier âge gardant le sien. La table convertie retrouve les "
             "espérances publiées à 60 et 65 ans à moins de 0,05 an.",
             lambda cle: (int(cle.split("|")[0]), cle.split("|")[1], int(cle.split("|")[2])))
+    variantes = [hypothese for hypothese in HYPOTHESES if hypothese != "centrale"]
+    esperances_variantes = {f"{h}|{cle}": valeur for h in variantes
+                            for cle, valeur in lus[h][0].items()}
+    quotients_variantes = {f"{h}|{cle}": valeur for h in variantes
+                           for cle, valeur in lus[h][1].items()}
+    _ecrire(SORTIE_VARIANTES, esperances_variantes,
+            "e0, e60 et e65 PUBLIÉES par l'INSEE sous les tables des hypothèses "
+            "d'espérance de vie basse et haute, arrondies au centième, sous la "
+            "clé hypothese|annee|sexe|mesure.",
+            lambda cle: (cle.split("|")[0], int(cle.split("|")[1]),
+                         cle.split("|")[2], cle.split("|")[3]),
+            PUBLICATION_VARIANTES)
+    _ecrire(SORTIE_QUOTIENTS_VARIANTES, quotients_variantes,
+            "Quotients d'âge exact des hypothèses d'espérance de vie basse et "
+            "haute, CONVERTIS comme ceux de la centrale, sous la clé "
+            "hypothese|annee|sexe|age. Chaque table convertie retrouve les "
+            "espérances publiées à 60 et 65 ans à moins de 0,05 an.",
+            lambda cle: (cle.split("|")[0], int(cle.split("|")[1]),
+                         cle.split("|")[2], int(cle.split("|")[3])),
+            PUBLICATION_VARIANTES)
     print(f"\n{len(serie)} espérances écrites dans {SORTIE}")
     print(f"{len(quotients)} quotients écrits dans {SORTIE_QUOTIENTS}")
-    print(f"Couverture {annees[0]}-{annees[-1]}, {len(FEUILLES)} sexes")
+    print(f"{len(esperances_variantes)} espérances écrites dans {SORTIE_VARIANTES}")
+    print(f"{len(quotients_variantes)} quotients écrits dans {SORTIE_QUOTIENTS_VARIANTES}")
+    print(f"Couverture {annees[0]}-{annees[-1]}, {len(FEUILLES)} sexes, "
+          f"{len(HYPOTHESES)} hypothèses")
     return 0
 
 

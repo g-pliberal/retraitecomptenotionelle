@@ -7,7 +7,8 @@
  *
  * 1. les quotients réellement observés, quand le couple y figure ;
  * 2. les quotients que l'INSEE projette, de 2026 à 2125, convertis à l'âge
- *    exact ; au-delà de 2125, ceux de 2125 ;
+ *    exact, sous l'hypothèse d'espérance de vie de la simulation
+ *    (``parametres.hypothese_esperance_vie``) ; au-delà de 2125, ceux de 2125 ;
  * 3. partout ailleurs, une table paramétrique de Gompertz-Makeham calibrée pour
  *    reproduire les espérances de vie publiées à 60 et 65 ans.
  *
@@ -30,6 +31,72 @@ export const PAS = 0.25;
 
 /** Âge terminal des tables. */
 export const AGE_TERMINAL = 120.0;
+
+/**
+ * Les hypothèses d'espérance de vie des projections de population 2026 de
+ * l'INSEE (``QUOTIENTS_PROJETES`` du Python). Le paquet porte la centrale
+ * telle quelle, et chacune des deux autres en écarts à la centrale, en
+ * millionièmes : ``quotients_projetes_variantes``, que
+ * ``_quotients_variantes`` (``scripts/construire_donnees.py``) décrit.
+ */
+export const HYPOTHESES_ESPERANCE_VIE = Object.freeze(["centrale", "basse", "haute"]);
+
+/** Les tables des variantes, reconstruites une fois par paquet. */
+const TABLES_VARIANTES = new WeakMap();
+
+/**
+ * Les quotients projetés d'une hypothèse, sous la clé ``annee|sexe`` puis
+ * l'âge, comme la centrale.
+ *
+ * Le paquet porte, par sexe, une ligne d'entiers par année : les écarts de la
+ * variante à la centrale la première année, puis ce qu'ils gagnent d'une
+ * année sur l'autre. Cumulés, ils rendent les écarts de chaque année ;
+ * ajoutés à la centrale, les quotients de la variante. Les deux tables étant
+ * écrites au millionième, tout se fait sur des entiers, et rend au bit près
+ * le quotient que le Python lit dans son fichier. Le paquet y gagne les trois
+ * quarts du poids que deux tables entières lui ajouteraient.
+ */
+export function quotientsProjetes(paquet, hypothese = "centrale") {
+  if (!HYPOTHESES_ESPERANCE_VIE.includes(hypothese)) {
+    throw new Error(`hypothèse d'espérance de vie inconnue : ${hypothese} `
+      + `(connues : ${HYPOTHESES_ESPERANCE_VIE.join(", ")})`);
+  }
+  const centrale = paquet.quotients_projetes || {};
+  if (hypothese === "centrale") return centrale;
+  let tables = TABLES_VARIANTES.get(paquet);
+  if (tables === undefined) {
+    tables = new Map();
+    TABLES_VARIANTES.set(paquet, tables);
+  }
+  let table = tables.get(hypothese);
+  if (table === undefined) {
+    const variantes = paquet.quotients_projetes_variantes || {};
+    const parSexe = (variantes.hypotheses || {})[hypothese];
+    if (parSexe === undefined) {
+      throw new Error(`le paquet ne porte pas l'hypothèse d'espérance de vie ${hypothese}`);
+    }
+    table = {};
+    for (const [sexe, lignes] of Object.entries(parSexe)) {
+      let ecarts = null;
+      lignes.forEach((ligne, rang) => {
+        ecarts = ecarts === null ? [...ligne] : ecarts.map((ecart, age) => ecart + ligne[age]);
+        const cle = `${variantes.premiere_annee + rang}|${sexe}`;
+        const reference = centrale[cle];
+        const quotients = {};
+        ecarts.forEach((ecart, age) => {
+          const quotient = reference === undefined ? undefined : reference[String(age)];
+          if (quotient === undefined) {
+            throw new Error(`écart sans quotient central : ${cle}, ${age} ans (${hypothese})`);
+          }
+          quotients[String(age)] = (Math.round(quotient * 1e6) + ecart) / 1e6;
+        });
+        table[cle] = quotients;
+      });
+    }
+    tables.set(hypothese, table);
+  }
+  return table;
+}
 
 /** Paramètres de Makeham pour une année et un sexe donnés. */
 export class LoiMortalite {
@@ -168,11 +235,13 @@ export function calibrer(e60Cible, e65Cible, annee, sexe, fiabilite, quotients =
 export class DonneesMortalite {
   static SEXES = ["H", "F"];
 
-  constructor(paquet, poidsUnisexe = [0.5, 0.5]) {
+  constructor(paquet, poidsUnisexe = [0.5, 0.5], hypothese = "centrale") {
     this.poidsUnisexe = poidsUnisexe;
+    // L'hypothèse d'espérance de vie des années projetées.
+    this.hypothese = hypothese;
     this._calibrations = paquet.calibrations || {};
     this._quotients = paquet.quotients || {};
-    this._quotientsProjetes = paquet.quotients_projetes || {};
+    this._quotientsProjetes = quotientsProjetes(paquet, hypothese);
     // Les années que couvrent les quotients projetés ; au-delà de la dernière,
     // ce sont les siens qui servent, comme la loi s'en tient aux espérances de
     // la dernière année de sa série.

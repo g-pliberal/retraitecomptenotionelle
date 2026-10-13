@@ -487,6 +487,23 @@ class Parametres:
     #: retrouve la convention d'avant le 20 septembre 2026.
     trajectoire_emploi: str = "cor_2026"
 
+    #: L'hypothèse d'espérance de vie au-delà de la dernière observation, l'une
+    #: des trois des projections de population 2026 de l'INSEE : ``centrale``,
+    #: ``basse`` ou ``haute``, ces deux-là s'écartant de la première de trois
+    #: ans d'espérance de vie à la naissance en 2070 (Insee Première n° 2108).
+    #: Elle choisit la table des années projetées, de 2026 à 2125
+    #: (``donnees.mortalite.QUOTIENTS_PROJETES``), donc toute la mortalité
+    #: d'une simulation à partir de 2026 : son diviseur d'abord, qui absorbe ce
+    #: que la longévité gagne ou perd, et avec lui le capital d'ouverture des
+    #: scénarios prospectifs, que leurs droits acquis reçoivent par un
+    #: diviseur, l'espérance de vie citée, le cycle de vie et la rente du
+    #: pilier capitalisé. Les années observées sont
+    #: les mêmes sous les trois. La page Coût ne la lit pas encore : sa
+    #: population reste celle du scénario central, et
+    #: :meth:`~retraite_notionnelle.simulateur.Simulateur.pour_la_projection`
+    #: refuse une autre hypothèse (action 138, étape 7).
+    hypothese_esperance_vie: str = "centrale"
+
     #: Les pensions déjà servies à la bascule : sur les prix, comme le droit le
     #: leur promet, ou réindexées sur la règle du compte. Le défaut retire aux
     #: retraités de la bascule un demi-point par an qu'ils n'ont pas cotisé, et

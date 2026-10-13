@@ -212,6 +212,12 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: compose que la masse salariale et le PIB projetés, donc l'indexation des
   //: comptes notionnels : les systèmes 2 à 6 la lisent, pas le système 1.
   trajectoire_emploi: "cor_2026",
+  //: L'hypothèse d'espérance de vie au-delà de la dernière observation, l'une
+  //: des trois des projections de population 2026 de l'INSEE : ``centrale``,
+  //: ``basse`` ou ``haute``. Elle choisit la table des années projetées, donc
+  //: toute la mortalité d'une simulation à partir de 2026, son diviseur
+  //: d'abord : voir config.py.
+  hypothese_esperance_vie: "centrale",
   //: Les pensions déjà servies à la bascule : sur les prix, comme le droit le
   //: leur promet, ou réindexées sur la règle du compte.
   revalorisation_stock: RevalorisationStock.PRIX,

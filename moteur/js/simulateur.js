@@ -399,6 +399,7 @@ export class Comparaison {
         coefficient: this.coefficient_euros_constants,
         scenario_projection: this.parametres.scenario_projection,
         trajectoire_emploi: this.parametres.trajectoire_emploi,
+        hypothese_esperance_vie: this.parametres.hypothese_esperance_vie,
       },
       regime_fusionne: {
         annee_bascule: this.regime_fusionne.annee_bascule,
@@ -581,7 +582,8 @@ export class Simulateur {
 
     this.macro = new DonneesMacro(
       paquet, parametres.scenario_projection, parametres.trajectoire_emploi);
-    this.mortalite = new DonneesMortalite(paquet);
+    this.mortalite = new DonneesMortalite(
+      paquet, undefined, parametres.hypothese_esperance_vie);
     // Sous les conventions du COR, l'Agirc-Arrco cotise et acquiert ses
     // points au taux moyen des entreprises, comme ses cas types.
     this.catalogue = new CatalogueRegimes(

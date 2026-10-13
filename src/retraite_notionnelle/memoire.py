@@ -138,6 +138,10 @@ HORS_DU_MODELE = (
     # Le patrimoine des personnes décédées, que la reprise sur succession
     # confronte à celui des ménages, et qu'aucun calcul ne lit (action 47).
     "data/reference/macro/patrimoine_defunts.csv",
+    # Les espérances que l'INSEE publie sous ses hypothèses basse et haute,
+    # contre lesquelles leurs tables se contrôlent, et qu'aucun calcul ne lit
+    # (action 138, étape 7).
+    "data/reference/mortalite/esperances_vie_variantes.csv",
 )
 
 #: Les calculs de ce processus, par leur nom : l'objet picklé, dont chaque

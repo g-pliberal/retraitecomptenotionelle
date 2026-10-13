@@ -530,6 +530,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "esperances_vie": "mortalite/esperances_vie.csv",
         "esperance_65_derivee": "mortalite/esperances_vie.csv",
         "esperances_projetees": "mortalite/esperances_vie.csv",
+        # Les hypothèses d'espérance de vie basse et haute de l'INSEE : leurs
+        # quotients, que le modèle lit en variante, et leurs espérances
+        # publiées, qui les contrôlent (action 138, étape 7).
+        "esperances_projetees_variantes": "mortalite/esperances_vie_variantes.csv",
         "minimum_contributif": "legislation/minimum_contributif.csv",
         # Entre les ancres du code, ce que la Cnav a servi, date par date.
         "minimum_contributif_cnav": "legislation/minimum_contributif.csv",
@@ -572,6 +576,8 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # Les quotients que l'INSEE projette, que le modèle lit au lieu de sa
         # loi de Gompertz-Makeham depuis l'action 138, étape 7.
         "quotients_mortalite_projetes": "mortalite/quotients_projetes.csv",
+        "quotients_mortalite_projetes_basse": "mortalite/quotients_projetes_basse.csv",
+        "quotients_mortalite_projetes_haute": "mortalite/quotients_projetes_haute.csv",
         "valeurs_point": "regimes/valeurs_point.csv",
         "valeurs_point_ircantec": "regimes/valeurs_point.csv",
         # La suite de la Caisse des dépôts, lue sur la page du régime.
@@ -1884,6 +1890,72 @@ def test_la_table_projetee_reproduit_les_esperances_publiees(mortalite, esperanc
                 if abs(obtenue - publiee) > 0.05:
                     ecarts.append((annee, sexe, age, round(obtenue, 3), publiee))
     assert not ecarts, ecarts[:10]
+
+
+@pytest.fixture(scope="module")
+def variantes() -> dict[str, DonneesMortalite]:
+    """Les tables des hypothèses d'espérance de vie basse et haute."""
+    return {hypothese: DonneesMortalite(RACINE_DONNEES, cache_disque=False,
+                                        hypothese=hypothese)
+            for hypothese in ("basse", "haute")}
+
+
+@pytest.fixture(scope="module")
+def esperances_variantes() -> dict[tuple[str, int, str, str], float]:
+    """Les espérances publiées sous les hypothèses basse et haute, relues
+    telles quelles, clé (hypothèse, année, sexe, mesure)."""
+    import csv
+
+    chemin = RACINE_DONNEES / "reference" / "mortalite" / "esperances_vie_variantes.csv"
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = (l for l in flux if not l.lstrip().startswith("#"))
+        return {(l["hypothese"], int(l["annee"]), l["sexe"], l["mesure"]): float(l["valeur"])
+                for l in csv.DictReader(lignes)}
+
+
+def test_les_variantes_reproduisent_leurs_esperances_publiees(variantes, esperances_variantes):
+    """Le contrôle du récupérateur, refait sur les tables que le modèle lit
+    sous les hypothèses basse et haute : à 60 et 65 ans, chaque année
+    projetée, les espérances que l'INSEE publie sous la même feuille, à
+    0,05 an près (action 138, étape 7)."""
+    ecarts = []
+    for hypothese, mortalite_variante in variantes.items():
+        assert mortalite_variante.annees_projetees == (2026, 2125)
+        for annee in range(2026, 2126):
+            for sexe in ("H", "F"):
+                for age in (60, 65):
+                    obtenue = _esperance_de_la_table_lue(mortalite_variante, age, annee, sexe)
+                    publiee = esperances_variantes[(hypothese, annee, sexe, f"e{age}")]
+                    if abs(obtenue - publiee) > 0.05:
+                        ecarts.append((hypothese, annee, sexe, age, round(obtenue, 3), publiee))
+    assert not ecarts, ecarts[:10]
+
+
+def test_les_variantes_ne_changent_que_les_annees_projetees(
+        mortalite, variantes, esperances, esperances_variantes):
+    """Sous les trois hypothèses, la même mortalité jusqu'en 2025 : l'observé,
+    et la loi de 2025. Ensuite, chaque année et à 60 comme à 65 ans, la basse
+    sous la centrale, elle-même sous la haute ; et, en 2070, l'espérance à la
+    naissance de la basse et de la haute à trois ans de celle de la centrale,
+    comme l'INSEE l'écrit (Insee Première n° 2108, juin 2026)."""
+    for mortalite_variante in variantes.values():
+        for annee, sexe, age in ((1990, "H", 70), (2024, "F", 64), (2025, "H", 70),
+                                 (2025, "F", 100)):
+            assert mortalite_variante.survie_annuelle(age, annee, sexe) == \
+                mortalite.survie_annuelle(age, annee, sexe), (annee, sexe, age)
+    for annee in range(2026, 2126):
+        for sexe in ("H", "F"):
+            for mesure in ("e60", "e65"):
+                assert (esperances_variantes[("basse", annee, sexe, mesure)]
+                        < esperances[(annee, sexe, mesure)]
+                        < esperances_variantes[("haute", annee, sexe, mesure)]), \
+                    (annee, sexe, mesure)
+    for sexe in ("H", "F"):
+        centrale = esperances[(2070, sexe, "e0")]
+        assert esperances_variantes[("basse", 2070, sexe, "e0")] == pytest.approx(
+            centrale - 3.0, abs=0.01)
+        assert esperances_variantes[("haute", 2070, sexe, "e0")] == pytest.approx(
+            centrale + 3.0, abs=0.01)
 
 
 def test_esperance_decroit_avec_l_age(mortalite):

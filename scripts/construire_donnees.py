@@ -69,6 +69,7 @@ from retraite_notionnelle.donnees.cotisants import EffectifsCotisants  # noqa: E
 from retraite_notionnelle.donnees.effectifs import EffectifsRetraites  # noqa: E402
 from retraite_notionnelle.donnees.frais import FraisEpargneRetraite  # noqa: E402
 from retraite_notionnelle.donnees.mortalite import (  # noqa: E402
+    QUOTIENTS_PROJETES,
     DonneesMortalite,
     serialiser_calibrations,
 )
@@ -127,7 +128,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 18
+VERSION = 19
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -560,6 +561,56 @@ def _quotients(projetes: bool = False) -> dict:
         f"{annee}|{sexe}": {str(age): qx for age, qx in sorted(table.items())}
         for (annee, sexe), table in sorted(table_lue.items())
     }
+
+
+def _quotients_variantes() -> dict:
+    """Les quotients projetés des hypothèses d'espérance de vie basse et
+    haute, en ÉCARTS à la centrale, en millionièmes.
+
+    ``{"premiere_annee": 2026, "hypotheses": {hypothese: {sexe: lignes}}}`` :
+    une ligne par année, de la première à la dernière projetée, de 121
+    entiers, un par âge de 0 à 120 ans ; la première porte les écarts de son
+    année, chacune des suivantes ce que les écarts gagnent sur ceux de l'année
+    d'avant. Les deux tables entières pèseraient chacune sur le paquet ce que
+    la centrale y pèse, 87 Ko compressés ; leurs écarts, 89 Ko à elles deux,
+    et ce qu'ils gagnent d'une année sur l'autre, 44. Le navigateur les
+    cumule et les rajoute à la centrale (``quotientsProjetes``,
+    ``moteur/js/mortalite.js``) : tout se fait sur des entiers, les tables
+    étant écrites au millionième, et il retrouve au bit près les quotients
+    que le Python lit.
+    """
+    centrale = DonneesMortalite(DONNEES, cache_disque=False)._quotients_projetes or {}
+    annees = sorted({annee for annee, _ in centrale})
+    sexes = sorted({sexe for _, sexe in centrale})
+    if annees != list(range(annees[0], annees[-1] + 1)):
+        raise ValueError("années projetées non contiguës")
+    hypotheses: dict[str, dict] = {}
+    for hypothese in QUOTIENTS_PROJETES:
+        if hypothese == "centrale":
+            continue
+        table = DonneesMortalite(DONNEES, cache_disque=False,
+                                 hypothese=hypothese)._quotients_projetes
+        if set(table) != set(centrale):
+            raise ValueError(f"l'hypothèse {hypothese} ne couvre pas les années et "
+                             "les sexes de la centrale")
+        par_sexe: dict[str, list[list[int]]] = {}
+        for sexe in sexes:
+            lignes: list[list[int]] = []
+            precedents: list[int] | None = None
+            for annee in annees:
+                reference, quotients = centrale[(annee, sexe)], table[(annee, sexe)]
+                ages = sorted(quotients)
+                if ages != list(range(len(ages))) or sorted(reference) != ages:
+                    raise ValueError(f"âges de {annee}|{sexe} ({hypothese}) autres que "
+                                     "ceux de la centrale, ou non contigus depuis 0")
+                ecarts = [round(quotients[age] * 1e6) - round(reference[age] * 1e6)
+                          for age in ages]
+                lignes.append(ecarts if precedents is None
+                              else [e - p for e, p in zip(ecarts, precedents)])
+                precedents = ecarts
+            par_sexe[sexe] = lignes
+        hypotheses[hypothese] = par_sexe
+    return {"premiere_annee": annees[0], "hypotheses": hypotheses}
 
 
 _TABLE_CALIBRATIONS: dict[str, list] | None = None
@@ -2060,6 +2111,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "prelevements_remuneration": _prelevements_remuneration(),
         "quotients": _quotients(),
         "quotients_projetes": _quotients(projetes=True),
+        "quotients_projetes_variantes": _quotients_variantes(),
         "calibrations": _calibrations(),
         "populations": _populations(),
         "regimes": _regimes(),

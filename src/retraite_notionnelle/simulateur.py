@@ -601,6 +601,7 @@ class Comparaison:
                 "coefficient": self.coefficient_euros_constants,
                 "scenario_projection": self.parametres.scenario_projection,
                 "trajectoire_emploi": self.parametres.trajectoire_emploi,
+                "hypothese_esperance_vie": self.parametres.hypothese_esperance_vie,
             },
             "regime_fusionne": {
                 "annee_bascule": self.regime_fusionne.annee_bascule,
@@ -809,7 +810,8 @@ class Simulateur:
 
     @cached_property
     def mortalite(self) -> DonneesMortalite:
-        return DonneesMortalite(self.parametres.racine_donnees)
+        return DonneesMortalite(self.parametres.racine_donnees,
+                                hypothese=self.parametres.hypothese_esperance_vie)
 
     @cached_property
     def courbe_taux(self) -> CourbeTauxSansRisque:
@@ -1178,7 +1180,17 @@ class Simulateur:
         (``Parametres.conventions_cor``), et sans le minimum vieillesse au
         scénario 1 (``Parametres.minimum_vieillesse_dans_le_scenario_actuel``) :
         celui de la page Coût, dont la dépense ne compte pas l'ASPA. Construit
-        une fois, puis gardé."""
+        une fois, puis gardé.
+
+        Il refuse l'hypothèse d'espérance de vie basse ou haute : la population
+        de la page Coût reste celle du scénario central de l'INSEE, et ses
+        diviseurs suivraient seuls la variante (action 138, étape 7)."""
+        if self.parametres.hypothese_esperance_vie != "centrale":
+            raise ValueError(
+                "la page Coût ne lit pas encore l'hypothèse d'espérance de vie "
+                f"{self.parametres.hypothese_esperance_vie!r} : sa population reste "
+                "celle du scénario central de l'INSEE, et ses diviseurs suivraient "
+                "seuls la variante")
         if (self.parametres.conventions_cor
                 and not self.parametres.minimum_vieillesse_dans_le_scenario_actuel):
             return self
