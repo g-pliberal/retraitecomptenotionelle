@@ -7588,15 +7588,15 @@ départs très tardifs atteignent pour la première fois, à relire au texte.
 
 ### 152. Les cas types statutaires et non salariés à leur place dans l'EIR : le niveau et la carrière de chacun — `en cours`
 
-**Reprise, au 12 octobre 2026.** Faite, l'étape 1 : le cas type militaire est
-le militaire moyen des départs pour ancienneté du jaune budgétaire, radié à
-quarante-huit ans et demi après vingt-sept ans et demi de services, à 1,15
-salaire moyen, et la population est remesurée. Reste, un groupe par session et
-dans l'ordre du plan : la CNRACL (le fonctionnaire actif de catégorie C, parti
-à cinquante-sept ans), puis les exploitants agricoles, les professions
-libérales et les civils de l'État. Commencer par la ligne de la CNRACL dans les
-quintiles des résidents et par les tableaux du jaune sur la CNRACL (B-3 bis,
-B-5, B-8, B-9). Détail : la note de l'étape 1.
+**Reprise, au 13 octobre 2026.** Faites, les étapes 1 et 2 : le militaire est le
+militaire moyen du jaune budgétaire, et la population est remesurée ; la CNRACL
+garde son cas type, juste en niveau au jaune comme à l'EIR, par deux erreurs qui
+se compensent. Reste, un groupe par session et dans l'ordre du plan : les
+exploitants agricoles (88,3 % des hommes au premier quintile, pour 40,8 dans
+l'EIR), puis les professions libérales et les civils de l'État. Commencer par la
+ligne des non-salariés de la MSA dans les quintiles des résidents et par ce que
+la MSA et la DREES publient de leurs pensions. Chantier à part : la dispersion
+des carrières statutaires dans la population. Détail : les notes des étapes.
 
 **D'où elle vient.** La population de l'action 136 (étape 6), rangée le
 12 octobre 2026 dans les quintiles de la pension en équivalent carrière
@@ -7642,6 +7642,10 @@ civils de l'État, un peu bas eux aussi :
 **Décidé le 12 octobre 2026 par le propriétaire**, sur la lecture des
 militaires (note de l'étape 1) : pour eux, déplacer le cas type existant plutôt
 que lui en adjoindre un second ; pour tous, l'ordre des groupes du plan.
+
+**Décidé le 13 octobre 2026 par le propriétaire**, sur la lecture de la CNRACL
+(note de l'étape 2) : garder son cas type, juste en niveau ; faire de la
+dispersion des carrières statutaires dans la population un chantier à part.
 
 **Ce que le propriétaire tranche** : s'il faut un cas type de plus par groupe
 plutôt que déplacer celui qui existe, et l'ordre des groupes.
