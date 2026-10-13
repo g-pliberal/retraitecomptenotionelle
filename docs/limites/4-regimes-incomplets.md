@@ -718,7 +718,7 @@ la proposition fait attendre jusqu'à <!--chiffre:mesure(parametre?nom=age_legal
 C'est de cette part que dépend l'essentiel de ce que l'âge légal fait au
 solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,85<!--/--> point de PIB quand
 la moitié des reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=1)-->−0,69<!--/--> quand tous le font, de
-<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−1,00<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−1,22<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
+<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−1,00<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−1,21<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
 actuel : sans emploi, le report n'épargne guère que des années de pension, et
 sert ensuite des pensions plus fortes. Aucun impôt ne couvre ce qui reste —
 la TVA à taux unique qui le faisait du 23 au 24 septembre 2026 est retirée —,
