@@ -1,14 +1,13 @@
 # Les dix fiches qui restaient : l'âge et la durée de chacun, texte en main
 
-**Le 13 octobre 2026, Saint-Pierre-et-Miquelon : ses âges et sa durée se lisent
-à la génération, dans les tables que la loi n° 87-563 écrit pour l'archipel,
-et chaque période nomme celles de la rédaction en vigueur à sa date d'effet.
-Une Saint-Pierraise née en 1956 partie en 2020 doit 152 trimestres, et non les
-158 de la génération 1959 ; née en 1965 et partie en 2028, elle ouvre son droit
-à 62 ans et 3 mois avec 166 trimestres, et non à 62 ans et 9 mois avec 168. Le
-coefficient de minoration suit lui aussi la génération, par le renvoi du décret
-de 1989 à R. 351-27. Trente-deux périodes deviennent dix-sept, les onze de la
-durée transitoire comprises.**
+**Le 13 octobre 2026, Saint-Pierre-et-Miquelon et Mayotte : leurs âges, leurs
+durées et leurs coefficients de minoration se lisent à la génération, dans les
+tables que leurs textes écrivent, et chaque période nomme celles de la rédaction
+en vigueur à sa date d'effet. Une Saint-Pierraise née en 1956 partie en 2020 doit
+152 trimestres, et non les 158 de la génération 1959 ; un Mahorais né en 1958
+parti en 2020, 132 et non 136. Là où le droit suit l'année d'effet — la durée
+transitoire de l'archipel jusqu'en 1997, l'âge, la durée et le taux plein de
+Mayotte de 2003 à 2011 ou 2017 —, les périodes restent annuelles.**
 
 Demande du propriétaire : « Action 121 : reprends à la fiche
 cps_saint_pierre_et_miquelon, puis les suivantes, dans l'ordre du bloc. »
@@ -89,3 +88,59 @@ cps_saint_pierre_et_miquelon, puis les suivantes, dans l'ordre du bloc. »
   un changement du modèle, à faire des deux côtés. Et la surcote de 1,25 % par
   trimestre accompli depuis le 1er juillet 2016 (décret n° 2017-1000, article
   3) n'est pas portée. La ligne d'inventaire le dit.
+
+## Mayotte
+
+- *Ce que les textes disent.* Les articles 2 (âge), 9 (durée), 10 (taux plein)
+  et 11 (minoration) du décret n° 2003-589, dans toutes leurs rédactions, et
+  l'article 6 de l'ordonnance n° 2002-411 ; les décrets qui les ont changés, au
+  Journal officiel. Trois états du droit :
+  - de 2003 à 2011, tout suit l'ANNÉE d'effet de la pension : l'âge, de 55 ans
+    en 2003, 2004 et 2005 à 60 ans en 2010 ; la durée, 64 trimestres en 2003 et
+    quatre de plus par an, jusqu'en 2017 ; le taux plein, à 60 ans en 2003,
+    2004 et 2005, puis un an de plus par an jusqu'à 65 ans en 2010 — la fiche
+    le portait à 65 ans dès 2003, ce que le II de l'article 10 dément ;
+  - le décret n° 2012-1168, en vigueur le 21 octobre 2012 (le calendrier des
+    réformes le nommait « n° 2012-1170 du 19 octobre »), met l'âge à la
+    génération : 60 ans avant 1956, quatre mois de plus par génération jusqu'à
+    62 ans pour 1961, le taux plein cinq ans au-dessus. Le décret n° 2016-1246
+    y met la durée pour les pensions de 2018 et après, 120 trimestres avant 1956
+    et 172 pour 1973, et le coefficient pour celles de 2026 et après, de 2,5 %
+    avant 1964 à 1,25 % à compter de 1973. Le décret n° 2024-766 ajoute, au 1er
+    septembre 2023, trois mois par génération de 1962 à 1968 ;
+  - en 2026, deux textes : au 1er janvier, le décret n° 2025-1410 met le taux
+    plein à l'âge de L. 351-8, 1°, 67 ans ; au 1er septembre, la suspension
+    (loi n° 2025-1403, article 105, V ; décret n° 2026-345) : 62 ans et 6 mois
+    des nés de janvier 1963 à juin 1965, 62 ans et 9 mois de juillet à décembre
+    1965, 64 ans à compter de 1970.
+- *Ce qui est écrit.* Les tables `mayotte_2012`, `mayotte_2023` et
+  `mayotte_2026` d'âges — la dernière porte aussi le coefficient de
+  minoration —, et `mayotte_2018` de durée. Les périodes de 2003 à 2017 restent
+  annuelles ; puis 2018-2022, 2023-2025, 2026 et après : trente-sept périodes
+  deviennent dix-neuf. Le calendrier des réformes prend
+  `mayotte_2026_taux_plein` et `mayotte_2026`.
+- *Ce que ça déplace.* Jusqu'à +3 % pour les générations parties à leur âge
+  que la durée de la fiche proratisait trop : 132 trimestres et non 136 à la
+  génération 1958 partie en 2020 ; 148 et non 152 à 1962 partie en 2025 ; 160
+  et non 162 à 1965 partie en 2029. L'ouverture à 60 ans et non 60 ans et 8
+  mois pour 1955 en 2017, à 62 ans et 6 mois et non 63 ans pour 1965. Un
+  coefficient de 1,375 % et non 1,25 % à la génération 1972 partie en 2036. Le
+  taux plein à 60 ans en 2003 relève d'un cinquième la pension d'une Mahoraise
+  partie à 56 ans avec 44 trimestres : 30 % de taux et non 25. Et le régime
+  unique de la proposition, qui prend l'âge du taux plein le plus élevé du
+  catalogue l'année de la bascule, passe de 67 ans et 6 mois — celui que la
+  fiche de Mayotte portait en 2026 — à 67 ans : tous les témoins le portent, et
+  la méthodologie l'écrit en chiffre ancré. Le portage rend les mêmes chiffres
+  que le Python sur neuf carrières mahoraises.
+- *Les coupures, à l'année près.* Les pensions de janvier à août 2023 lisent
+  déjà la table de 2023, qui ne diffère de celle de 2012 que pour les nés
+  depuis 1962, dont aucun n'atteint son âge avant 2024. Celles de janvier à
+  août 2026, la table de la suspension, qui laisse partir deux mois trop tôt
+  les nés de janvier et février 1964 : 62 ans et 6 mois en juillet et août
+  2026, quand le droit leur oppose encore 62 ans et 9 mois.
+- *Ce qui reste.* L'âge de l'inaptitude (article 5 : 62 ans, l'âge d'ouverture
+  pour les nés avant 1961) ; la durée des pensions de 2035 et après, dont le I
+  de l'article 9 n'écrit plus que la génération 1973 : la table vaut pour
+  toutes, faute d'autre texte. La ligne de 1969 de `mayotte_2023` (69 ans de
+  taux plein, cinq ans au-dessus d'un âge que l'article 2 n'écrit pas) ne sert
+  à personne : cette génération n'a pas soixante ans avant 2026.

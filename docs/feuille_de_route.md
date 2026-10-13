@@ -2394,9 +2394,9 @@ les cultes, `data/reference/legislation/affiliations.yaml`,
 ### 121. Le droit de chacun, et non celui de la génération de l'année : toutes les personnes vivantes — `en cours`
 
 **Reprise, au 13 octobre 2026.** Fait : la SNCF, la RATP et les IEG, puis
-Saint-Pierre-et-Miquelon (tables `spm_*` d'âges et de durée, décote à la
-génération). Restent neuf fiches, à commencer par `cssm_mayotte`, puis
-`cps_polynesie`, `cafat_nouvelle_caledonie`, `fonctionnaires_pacifique`,
+Saint-Pierre-et-Miquelon et Mayotte (tables `spm_*` et `mayotte_*` d'âges et de
+durée, minoration à la génération). Restent huit fiches, à commencer par
+`cps_polynesie`, puis `cafat_nouvelle_caledonie`, `fonctionnaires_pacifique`,
 `crpnpac`, `crpnpac_tranche_2`, `crpcen`, `comedie_francaise`,
 `assemblees_parlementaires`. Pour chacune, texte en main : l'âge suit-il la
 génération ou l'année ? si la génération, sa table ; la durée suit-elle la

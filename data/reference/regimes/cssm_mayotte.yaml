@@ -85,7 +85,7 @@ periodes:
     fin: 2003
     type_calcul: annuites
     age_ouverture: 55
-    age_taux_plein: 65
+    age_taux_plein: 60
     duree_requise_trimestres: 64
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
@@ -99,30 +99,34 @@ periodes:
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
       TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit.
-      ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
-      prenant effet en 2003, la durée d'assurance requise pour l'obtention
-      du taux plein est de 64 trimestres, puis, chaque année, cette durée
-      est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
-      ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
-      effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
-      de plus chaque année jusqu'à soixante en 2010 (art. 2,
-      LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
-      de minoration de 2,5 % par trimestre (art. 11,
-      LEGIARTI000006781030). Pensions prenant effet en 2003 : 55 ans, 64
-      trimestres.
+      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié
+      en 2024, en convergence jusqu'en 2036) et son plafond (3 022 € par
+      mois en 2026), qui ne sont pas des séries du dépôt ; niveau
+      `estimee`. VALIDATION DES TRIMESTRES : autant de trimestres que le
+      salaire représente de fois 200 heures — 150 depuis 2017 — du SMIG
+      mahorais (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret
+      n° 2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC
+      national, qui est plus élevé : la fiche valide moins vite que le
+      droit. ÂGE, DURÉE ET TAUX PLEIN À L'ANNÉE D'EFFET DE LA PENSION
+      (ordonnance n° 2002-411 et décret n° 2003-589) : âge d'ouverture
+      de cinquante-cinq ans « pour les pensions prenant effet en 2003,
+      2004 et 2005 », puis un an de plus chaque année jusqu'à soixante
+      en 2010 (art. 2, LEGIARTI000006781021) ; « pour les pensions
+      prenant effet en 2003, la durée d'assurance requise pour
+      l'obtention du taux plein est de 64 trimestres, puis, chaque
+      année, cette durée est augmentée de quatre trimestres » (art. 9,
+      LEGIARTI000006781028) ; taux plein à soixante ans pour les
+      pensions prenant effet en 2003, 2004 et 2005, puis un an de plus
+      chaque année jusqu'à soixante-cinq ans en 2010 (art. 10, II,
+      LEGIARTI000006781029), que la fiche portait à soixante-cinq ans
+      dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
+      11, LEGIARTI000006781030). Pensions prenant effet en 2003 : 55
+      ans, 64 trimestres, taux plein à 60 ans.
   - debut: 2004
     fin: 2004
     type_calcul: annuites
     age_ouverture: 55
-    age_taux_plein: 65
+    age_taux_plein: 60
     duree_requise_trimestres: 68
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
@@ -130,36 +134,32 @@ periodes:
     taux_cotisation_retraite: 0.1487
     part_salariale: 0.4445
     taux_cotisation_deplafonnee: 0.0170
-    part_salariale_deplafonnee: 0.0   # la part salariale déplafonnée naît le 1er juillet 2004 : au 1er janvier elle n'existe pas
+    part_salariale_deplafonnee: 0.0000
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit.
-      ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
-      prenant effet en 2003, la durée d'assurance requise pour l'obtention
-      du taux plein est de 64 trimestres, puis, chaque année, cette durée
-      est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
-      ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
-      effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
-      de plus chaque année jusqu'à soixante en 2010 (art. 2,
-      LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
-      de minoration de 2,5 % par trimestre (art. 11,
-      LEGIARTI000006781030). Pensions prenant effet en 2004 : 55 ans, 68
-      trimestres.
+      TAUX, PLAFOND ET VALIDATION DES TRIMESTRES comme en 2003. ÂGE,
+      DURÉE ET TAUX PLEIN À L'ANNÉE D'EFFET DE LA PENSION (ordonnance n°
+      2002-411 et décret n° 2003-589) : âge d'ouverture de
+      cinquante-cinq ans « pour les pensions prenant effet en 2003, 2004
+      et 2005 », puis un an de plus chaque année jusqu'à soixante en
+      2010 (art. 2, LEGIARTI000006781021) ; « pour les pensions prenant
+      effet en 2003, la durée d'assurance requise pour l'obtention du
+      taux plein est de 64 trimestres, puis, chaque année, cette durée
+      est augmentée de quatre trimestres » (art. 9,
+      LEGIARTI000006781028) ; taux plein à soixante ans pour les
+      pensions prenant effet en 2003, 2004 et 2005, puis un an de plus
+      chaque année jusqu'à soixante-cinq ans en 2010 (art. 10, II,
+      LEGIARTI000006781029), que la fiche portait à soixante-cinq ans
+      dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
+      11, LEGIARTI000006781030). Pensions prenant effet en 2004 : 55
+      ans, 68 trimestres, taux plein à 60 ans.
   - debut: 2005
     fin: 2005
     type_calcul: annuites
     age_ouverture: 55
-    age_taux_plein: 65
+    age_taux_plein: 60
     duree_requise_trimestres: 72
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
@@ -172,31 +172,27 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit.
-      ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
-      prenant effet en 2003, la durée d'assurance requise pour l'obtention
-      du taux plein est de 64 trimestres, puis, chaque année, cette durée
-      est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
-      ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
-      effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
-      de plus chaque année jusqu'à soixante en 2010 (art. 2,
-      LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
-      de minoration de 2,5 % par trimestre (art. 11,
-      LEGIARTI000006781030). Pensions prenant effet en 2005 : 55 ans, 72
-      trimestres.
+      TAUX, PLAFOND ET VALIDATION DES TRIMESTRES comme en 2003. ÂGE,
+      DURÉE ET TAUX PLEIN À L'ANNÉE D'EFFET DE LA PENSION (ordonnance n°
+      2002-411 et décret n° 2003-589) : âge d'ouverture de
+      cinquante-cinq ans « pour les pensions prenant effet en 2003, 2004
+      et 2005 », puis un an de plus chaque année jusqu'à soixante en
+      2010 (art. 2, LEGIARTI000006781021) ; « pour les pensions prenant
+      effet en 2003, la durée d'assurance requise pour l'obtention du
+      taux plein est de 64 trimestres, puis, chaque année, cette durée
+      est augmentée de quatre trimestres » (art. 9,
+      LEGIARTI000006781028) ; taux plein à soixante ans pour les
+      pensions prenant effet en 2003, 2004 et 2005, puis un an de plus
+      chaque année jusqu'à soixante-cinq ans en 2010 (art. 10, II,
+      LEGIARTI000006781029), que la fiche portait à soixante-cinq ans
+      dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
+      11, LEGIARTI000006781030). Pensions prenant effet en 2005 : 55
+      ans, 72 trimestres, taux plein à 60 ans.
   - debut: 2006
     fin: 2006
     type_calcul: annuites
     age_ouverture: 56
-    age_taux_plein: 65
+    age_taux_plein: 61
     duree_requise_trimestres: 76
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
@@ -209,31 +205,27 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit.
-      ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
-      prenant effet en 2003, la durée d'assurance requise pour l'obtention
-      du taux plein est de 64 trimestres, puis, chaque année, cette durée
-      est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
-      ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
-      effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
-      de plus chaque année jusqu'à soixante en 2010 (art. 2,
-      LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
-      de minoration de 2,5 % par trimestre (art. 11,
-      LEGIARTI000006781030). Pensions prenant effet en 2006 : 56 ans, 76
-      trimestres.
+      TAUX, PLAFOND ET VALIDATION DES TRIMESTRES comme en 2003. ÂGE,
+      DURÉE ET TAUX PLEIN À L'ANNÉE D'EFFET DE LA PENSION (ordonnance n°
+      2002-411 et décret n° 2003-589) : âge d'ouverture de
+      cinquante-cinq ans « pour les pensions prenant effet en 2003, 2004
+      et 2005 », puis un an de plus chaque année jusqu'à soixante en
+      2010 (art. 2, LEGIARTI000006781021) ; « pour les pensions prenant
+      effet en 2003, la durée d'assurance requise pour l'obtention du
+      taux plein est de 64 trimestres, puis, chaque année, cette durée
+      est augmentée de quatre trimestres » (art. 9,
+      LEGIARTI000006781028) ; taux plein à soixante ans pour les
+      pensions prenant effet en 2003, 2004 et 2005, puis un an de plus
+      chaque année jusqu'à soixante-cinq ans en 2010 (art. 10, II,
+      LEGIARTI000006781029), que la fiche portait à soixante-cinq ans
+      dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
+      11, LEGIARTI000006781030). Pensions prenant effet en 2006 : 56
+      ans, 76 trimestres, taux plein à 61 ans.
   - debut: 2007
     fin: 2007
     type_calcul: annuites
     age_ouverture: 57
-    age_taux_plein: 65
+    age_taux_plein: 62
     duree_requise_trimestres: 80
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
@@ -246,31 +238,27 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit.
-      ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
-      prenant effet en 2003, la durée d'assurance requise pour l'obtention
-      du taux plein est de 64 trimestres, puis, chaque année, cette durée
-      est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
-      ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
-      effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
-      de plus chaque année jusqu'à soixante en 2010 (art. 2,
-      LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
-      de minoration de 2,5 % par trimestre (art. 11,
-      LEGIARTI000006781030). Pensions prenant effet en 2007 : 57 ans, 80
-      trimestres.
+      TAUX, PLAFOND ET VALIDATION DES TRIMESTRES comme en 2003. ÂGE,
+      DURÉE ET TAUX PLEIN À L'ANNÉE D'EFFET DE LA PENSION (ordonnance n°
+      2002-411 et décret n° 2003-589) : âge d'ouverture de
+      cinquante-cinq ans « pour les pensions prenant effet en 2003, 2004
+      et 2005 », puis un an de plus chaque année jusqu'à soixante en
+      2010 (art. 2, LEGIARTI000006781021) ; « pour les pensions prenant
+      effet en 2003, la durée d'assurance requise pour l'obtention du
+      taux plein est de 64 trimestres, puis, chaque année, cette durée
+      est augmentée de quatre trimestres » (art. 9,
+      LEGIARTI000006781028) ; taux plein à soixante ans pour les
+      pensions prenant effet en 2003, 2004 et 2005, puis un an de plus
+      chaque année jusqu'à soixante-cinq ans en 2010 (art. 10, II,
+      LEGIARTI000006781029), que la fiche portait à soixante-cinq ans
+      dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
+      11, LEGIARTI000006781030). Pensions prenant effet en 2007 : 57
+      ans, 80 trimestres, taux plein à 62 ans.
   - debut: 2008
     fin: 2008
     type_calcul: annuites
     age_ouverture: 58
-    age_taux_plein: 65
+    age_taux_plein: 63
     duree_requise_trimestres: 84
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
@@ -283,31 +271,27 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit.
-      ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
-      prenant effet en 2003, la durée d'assurance requise pour l'obtention
-      du taux plein est de 64 trimestres, puis, chaque année, cette durée
-      est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
-      ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
-      effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
-      de plus chaque année jusqu'à soixante en 2010 (art. 2,
-      LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
-      de minoration de 2,5 % par trimestre (art. 11,
-      LEGIARTI000006781030). Pensions prenant effet en 2008 : 58 ans, 84
-      trimestres.
+      TAUX, PLAFOND ET VALIDATION DES TRIMESTRES comme en 2003. ÂGE,
+      DURÉE ET TAUX PLEIN À L'ANNÉE D'EFFET DE LA PENSION (ordonnance n°
+      2002-411 et décret n° 2003-589) : âge d'ouverture de
+      cinquante-cinq ans « pour les pensions prenant effet en 2003, 2004
+      et 2005 », puis un an de plus chaque année jusqu'à soixante en
+      2010 (art. 2, LEGIARTI000006781021) ; « pour les pensions prenant
+      effet en 2003, la durée d'assurance requise pour l'obtention du
+      taux plein est de 64 trimestres, puis, chaque année, cette durée
+      est augmentée de quatre trimestres » (art. 9,
+      LEGIARTI000006781028) ; taux plein à soixante ans pour les
+      pensions prenant effet en 2003, 2004 et 2005, puis un an de plus
+      chaque année jusqu'à soixante-cinq ans en 2010 (art. 10, II,
+      LEGIARTI000006781029), que la fiche portait à soixante-cinq ans
+      dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
+      11, LEGIARTI000006781030). Pensions prenant effet en 2008 : 58
+      ans, 84 trimestres, taux plein à 63 ans.
   - debut: 2009
     fin: 2009
     type_calcul: annuites
     age_ouverture: 59
-    age_taux_plein: 65
+    age_taux_plein: 64
     duree_requise_trimestres: 88
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
@@ -320,26 +304,22 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit.
-      ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
-      prenant effet en 2003, la durée d'assurance requise pour l'obtention
-      du taux plein est de 64 trimestres, puis, chaque année, cette durée
-      est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
-      ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
-      effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
-      de plus chaque année jusqu'à soixante en 2010 (art. 2,
-      LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
-      de minoration de 2,5 % par trimestre (art. 11,
-      LEGIARTI000006781030). Pensions prenant effet en 2009 : 59 ans, 88
-      trimestres.
+      TAUX, PLAFOND ET VALIDATION DES TRIMESTRES comme en 2003. ÂGE,
+      DURÉE ET TAUX PLEIN À L'ANNÉE D'EFFET DE LA PENSION (ordonnance n°
+      2002-411 et décret n° 2003-589) : âge d'ouverture de
+      cinquante-cinq ans « pour les pensions prenant effet en 2003, 2004
+      et 2005 », puis un an de plus chaque année jusqu'à soixante en
+      2010 (art. 2, LEGIARTI000006781021) ; « pour les pensions prenant
+      effet en 2003, la durée d'assurance requise pour l'obtention du
+      taux plein est de 64 trimestres, puis, chaque année, cette durée
+      est augmentée de quatre trimestres » (art. 9,
+      LEGIARTI000006781028) ; taux plein à soixante ans pour les
+      pensions prenant effet en 2003, 2004 et 2005, puis un an de plus
+      chaque année jusqu'à soixante-cinq ans en 2010 (art. 10, II,
+      LEGIARTI000006781029), que la fiche portait à soixante-cinq ans
+      dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
+      11, LEGIARTI000006781030). Pensions prenant effet en 2009 : 59
+      ans, 88 trimestres, taux plein à 64 ans.
   - debut: 2010
     fin: 2010
     type_calcul: annuites
@@ -357,26 +337,22 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit.
-      ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
-      prenant effet en 2003, la durée d'assurance requise pour l'obtention
-      du taux plein est de 64 trimestres, puis, chaque année, cette durée
-      est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
-      ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
-      effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
-      de plus chaque année jusqu'à soixante en 2010 (art. 2,
-      LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
-      de minoration de 2,5 % par trimestre (art. 11,
-      LEGIARTI000006781030). Pensions prenant effet en 2010 : 60 ans, 92
-      trimestres.
+      TAUX, PLAFOND ET VALIDATION DES TRIMESTRES comme en 2003. ÂGE,
+      DURÉE ET TAUX PLEIN À L'ANNÉE D'EFFET DE LA PENSION (ordonnance n°
+      2002-411 et décret n° 2003-589) : âge d'ouverture de
+      cinquante-cinq ans « pour les pensions prenant effet en 2003, 2004
+      et 2005 », puis un an de plus chaque année jusqu'à soixante en
+      2010 (art. 2, LEGIARTI000006781021) ; « pour les pensions prenant
+      effet en 2003, la durée d'assurance requise pour l'obtention du
+      taux plein est de 64 trimestres, puis, chaque année, cette durée
+      est augmentée de quatre trimestres » (art. 9,
+      LEGIARTI000006781028) ; taux plein à soixante ans pour les
+      pensions prenant effet en 2003, 2004 et 2005, puis un an de plus
+      chaque année jusqu'à soixante-cinq ans en 2010 (art. 10, II,
+      LEGIARTI000006781029), que la fiche portait à soixante-cinq ans
+      dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
+      11, LEGIARTI000006781030). Pensions prenant effet en 2010 : 60
+      ans, 92 trimestres, taux plein à 65 ans.
   - debut: 2011
     fin: 2011
     type_calcul: annuites
@@ -394,32 +370,29 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit.
-      ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
-      prenant effet en 2003, la durée d'assurance requise pour l'obtention
-      du taux plein est de 64 trimestres, puis, chaque année, cette durée
-      est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
-      ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
-      effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
-      de plus chaque année jusqu'à soixante en 2010 (art. 2,
-      LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
-      de minoration de 2,5 % par trimestre (art. 11,
-      LEGIARTI000006781030). Pensions prenant effet en 2011 : 60 ans, 96
-      trimestres.
+      TAUX, PLAFOND ET VALIDATION DES TRIMESTRES comme en 2003. ÂGE,
+      DURÉE ET TAUX PLEIN À L'ANNÉE D'EFFET DE LA PENSION (ordonnance n°
+      2002-411 et décret n° 2003-589) : âge d'ouverture de
+      cinquante-cinq ans « pour les pensions prenant effet en 2003, 2004
+      et 2005 », puis un an de plus chaque année jusqu'à soixante en
+      2010 (art. 2, LEGIARTI000006781021) ; « pour les pensions prenant
+      effet en 2003, la durée d'assurance requise pour l'obtention du
+      taux plein est de 64 trimestres, puis, chaque année, cette durée
+      est augmentée de quatre trimestres » (art. 9,
+      LEGIARTI000006781028) ; taux plein à soixante ans pour les
+      pensions prenant effet en 2003, 2004 et 2005, puis un an de plus
+      chaque année jusqu'à soixante-cinq ans en 2010 (art. 10, II,
+      LEGIARTI000006781029), que la fiche portait à soixante-cinq ans
+      dès 2003 ; coefficient de minoration de 2,5 % par trimestre (art.
+      11, LEGIARTI000006781030). Pensions prenant effet en 2011 : 60
+      ans, 96 trimestres, taux plein à 65 ans.
   - debut: 2012
     fin: 2012
     type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 65
+    age_ouverture: 62
+    age_taux_plein: 67
     duree_requise_trimestres: 100
+    age_table: mayotte_2012
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
@@ -432,31 +405,32 @@ periodes:
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
       TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit.
-      ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
-      prenant effet en 2003, la durée d'assurance requise pour l'obtention
-      du taux plein est de 64 trimestres, puis, chaque année, cette durée
-      est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
-      ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
-      effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
-      de plus chaque année jusqu'à soixante en 2010 (art. 2,
-      LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
-      de minoration de 2,5 % par trimestre (art. 11,
-      LEGIARTI000006781030). Pensions prenant effet en 2012 : 60 ans, 100
-      trimestres.
+      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié
+      en 2024, en convergence jusqu'en 2036) et son plafond (3 022 € par
+      mois en 2026), qui ne sont pas des séries du dépôt ; niveau
+      `estimee`. VALIDATION DES TRIMESTRES : autant de trimestres que le
+      salaire représente de fois 200 heures — 150 depuis 2017 — du SMIG
+      mahorais (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret
+      n° 2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC
+      national, qui est plus élevé : la fiche valide moins vite que le
+      droit. ÂGE À LA GÉNÉRATION depuis le décret n° 2012-1168, en
+      vigueur le 21 octobre 2012 (art. 2, LEGIARTI000026514429 ; table
+      `mayotte_2012` de `legislation/ages_regimes.csv`) : soixante ans
+      avant 1956, soixante ans et quatre mois pour 1956, quatre mois de
+      plus par génération jusqu'à soixante-deux ans à compter de 1961 ;
+      taux plein à « l'âge prévu à l'article 2 augmenté de cinq années »
+      (art. 10, LEGIARTI000026514415). Les âges et la durée écrits ici
+      ne sont que les cibles des tables, qui répondent pour toute
+      génération. DURÉE ENCORE À L'ANNÉE D'EFFET (art. 9,
+      LEGIARTI000026514449) : 100 trimestres pour les pensions prenant
+      effet en 2012.
   - debut: 2013
     fin: 2013
     type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 65
+    age_ouverture: 62
+    age_taux_plein: 67
     duree_requise_trimestres: 104
+    age_table: mayotte_2012
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
@@ -468,32 +442,25 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit.
-      ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
-      prenant effet en 2003, la durée d'assurance requise pour l'obtention
-      du taux plein est de 64 trimestres, puis, chaque année, cette durée
-      est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
-      ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
-      effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
-      de plus chaque année jusqu'à soixante en 2010 (art. 2,
-      LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
-      de minoration de 2,5 % par trimestre (art. 11,
-      LEGIARTI000006781030). Pensions prenant effet en 2013 : 60 ans, 104
-      trimestres.
+      TAUX, PLAFOND ET VALIDATION DES TRIMESTRES comme en 2003. ÂGE À LA
+      GÉNÉRATION depuis le décret n° 2012-1168, en vigueur le 21 octobre
+      2012 (art. 2, LEGIARTI000026514429 ; table `mayotte_2012` de
+      `legislation/ages_regimes.csv`) : soixante ans avant 1956,
+      soixante ans et quatre mois pour 1956, quatre mois de plus par
+      génération jusqu'à soixante-deux ans à compter de 1961 ; taux
+      plein à « l'âge prévu à l'article 2 augmenté de cinq années »
+      (art. 10, LEGIARTI000026514415). Les âges et la durée écrits ici
+      ne sont que les cibles des tables, qui répondent pour toute
+      génération. DURÉE ENCORE À L'ANNÉE D'EFFET (art. 9,
+      LEGIARTI000026514449) : 104 trimestres pour les pensions prenant
+      effet en 2013.
   - debut: 2014
     fin: 2014
     type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 65
+    age_ouverture: 62
+    age_taux_plein: 67
     duree_requise_trimestres: 108
+    age_table: mayotte_2012
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
@@ -505,32 +472,25 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit.
-      ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
-      prenant effet en 2003, la durée d'assurance requise pour l'obtention
-      du taux plein est de 64 trimestres, puis, chaque année, cette durée
-      est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
-      ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
-      effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
-      de plus chaque année jusqu'à soixante en 2010 (art. 2,
-      LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
-      de minoration de 2,5 % par trimestre (art. 11,
-      LEGIARTI000006781030). Pensions prenant effet en 2014 : 60 ans, 108
-      trimestres.
+      TAUX, PLAFOND ET VALIDATION DES TRIMESTRES comme en 2003. ÂGE À LA
+      GÉNÉRATION depuis le décret n° 2012-1168, en vigueur le 21 octobre
+      2012 (art. 2, LEGIARTI000026514429 ; table `mayotte_2012` de
+      `legislation/ages_regimes.csv`) : soixante ans avant 1956,
+      soixante ans et quatre mois pour 1956, quatre mois de plus par
+      génération jusqu'à soixante-deux ans à compter de 1961 ; taux
+      plein à « l'âge prévu à l'article 2 augmenté de cinq années »
+      (art. 10, LEGIARTI000026514415). Les âges et la durée écrits ici
+      ne sont que les cibles des tables, qui répondent pour toute
+      génération. DURÉE ENCORE À L'ANNÉE D'EFFET (art. 9,
+      LEGIARTI000026514449) : 108 trimestres pour les pensions prenant
+      effet en 2014.
   - debut: 2015
     fin: 2015
     type_calcul: annuites
-    age_ouverture: 60
-    age_taux_plein: 65
+    age_ouverture: 62
+    age_taux_plein: 67
     duree_requise_trimestres: 112
+    age_table: mayotte_2012
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
@@ -542,32 +502,25 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit.
-      ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
-      prenant effet en 2003, la durée d'assurance requise pour l'obtention
-      du taux plein est de 64 trimestres, puis, chaque année, cette durée
-      est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
-      ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
-      effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
-      de plus chaque année jusqu'à soixante en 2010 (art. 2,
-      LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
-      de minoration de 2,5 % par trimestre (art. 11,
-      LEGIARTI000006781030). Pensions prenant effet en 2015 : 60 ans, 112
-      trimestres.
+      TAUX, PLAFOND ET VALIDATION DES TRIMESTRES comme en 2003. ÂGE À LA
+      GÉNÉRATION depuis le décret n° 2012-1168, en vigueur le 21 octobre
+      2012 (art. 2, LEGIARTI000026514429 ; table `mayotte_2012` de
+      `legislation/ages_regimes.csv`) : soixante ans avant 1956,
+      soixante ans et quatre mois pour 1956, quatre mois de plus par
+      génération jusqu'à soixante-deux ans à compter de 1961 ; taux
+      plein à « l'âge prévu à l'article 2 augmenté de cinq années »
+      (art. 10, LEGIARTI000026514415). Les âges et la durée écrits ici
+      ne sont que les cibles des tables, qui répondent pour toute
+      génération. DURÉE ENCORE À L'ANNÉE D'EFFET (art. 9,
+      LEGIARTI000026514449) : 112 trimestres pour les pensions prenant
+      effet en 2015.
   - debut: 2016
     fin: 2016
     type_calcul: annuites
-    age_ouverture: 60.33
-    age_taux_plein: 65.33
+    age_ouverture: 62
+    age_taux_plein: 67
     duree_requise_trimestres: 116
+    age_table: mayotte_2012
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
@@ -579,39 +532,25 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1956 : 60 ans et 4 mois ; durée calendaire 116
-      trimestres.
+      TAUX, PLAFOND ET VALIDATION DES TRIMESTRES comme en 2003. ÂGE À LA
+      GÉNÉRATION depuis le décret n° 2012-1168, en vigueur le 21 octobre
+      2012 (art. 2, LEGIARTI000026514429 ; table `mayotte_2012` de
+      `legislation/ages_regimes.csv`) : soixante ans avant 1956,
+      soixante ans et quatre mois pour 1956, quatre mois de plus par
+      génération jusqu'à soixante-deux ans à compter de 1961 ; taux
+      plein à « l'âge prévu à l'article 2 augmenté de cinq années »
+      (art. 10, LEGIARTI000026514415). Les âges et la durée écrits ici
+      ne sont que les cibles des tables, qui répondent pour toute
+      génération. DURÉE ENCORE À L'ANNÉE D'EFFET (art. 9,
+      LEGIARTI000026514449) : 116 trimestres pour les pensions prenant
+      effet en 2016.
   - debut: 2017
     fin: 2017
     type_calcul: annuites
-    age_ouverture: 60.67
-    age_taux_plein: 65.67
+    age_ouverture: 62
+    age_taux_plein: 67
     duree_requise_trimestres: 120
+    age_table: mayotte_2012
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
@@ -623,772 +562,72 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1957 : 60 ans et 8 mois ; 120 trimestres, fin de la
-      montée calendaire.
+      TAUX, PLAFOND ET VALIDATION DES TRIMESTRES comme en 2003. ÂGE À LA
+      GÉNÉRATION depuis le décret n° 2012-1168, en vigueur le 21 octobre
+      2012 (art. 2, LEGIARTI000026514429 ; table `mayotte_2012` de
+      `legislation/ages_regimes.csv`) : soixante ans avant 1956,
+      soixante ans et quatre mois pour 1956, quatre mois de plus par
+      génération jusqu'à soixante-deux ans à compter de 1961 ; taux
+      plein à « l'âge prévu à l'article 2 augmenté de cinq années »
+      (art. 10, LEGIARTI000026514415). Les âges et la durée écrits ici
+      ne sont que les cibles des tables, qui répondent pour toute
+      génération. DURÉE ENCORE À L'ANNÉE D'EFFET (art. 9,
+      LEGIARTI000026514449) : 120 trimestres pour les pensions prenant
+      effet en 2017.
   - debut: 2018
-    fin: 2018
-    type_calcul: annuites
-    age_ouverture: 60.67
-    age_taux_plein: 65.67
-    duree_requise_trimestres: 128
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
-    decote_par_trimestre: 0.0250
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Table de 2018 : 128 trimestres pour la génération 1957.
-  - debut: 2019
-    fin: 2019
-    type_calcul: annuites
-    age_ouverture: 61
-    age_taux_plein: 66
-    duree_requise_trimestres: 132
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
-    decote_par_trimestre: 0.0250
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1958 : 61 ans, 132 trimestres.
-  - debut: 2020
-    fin: 2020
-    type_calcul: annuites
-    age_ouverture: 61.33
-    age_taux_plein: 66.33
-    duree_requise_trimestres: 136
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
-    decote_par_trimestre: 0.0250
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1959 : 61 ans et 4 mois, 136 trimestres.
-  - debut: 2021
     fin: 2022
-    type_calcul: annuites
-    age_ouverture: 61.67
-    age_taux_plein: 66.67
-    duree_requise_trimestres: 140
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1533
-    part_salariale: 0.4463
-    taux_cotisation_deplafonnee: 0.0210
-    part_salariale_deplafonnee: 0.1429
-    decote_par_trimestre: 0.0250
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1960 : 61 ans et 8 mois, 140 trimestres.
-  - debut: 2023
-    fin: 2023
     type_calcul: annuites
     age_ouverture: 62
     age_taux_plein: 67
-    duree_requise_trimestres: 144
+    duree_requise_trimestres: 172
+    age_table: mayotte_2012
+    duree_requise_table: [mayotte_2018]
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
+    taux_cotisation_retraite: 0.1533
+    part_salariale: 0.4463
+    taux_cotisation_deplafonnee: 0.0210
+    part_salariale_deplafonnee: 0.1429
     decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
       TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1961 : 62 ans, 144 trimestres.
-  - debut: 2024
-    fin: 2024
-    type_calcul: annuites
-    age_ouverture: 62.25
-    age_taux_plein: 67.25
-    duree_requise_trimestres: 148
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0250
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1962 : 62 ans et 3 mois, 148 trimestres.
-  - debut: 2025
+      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié
+      en 2024, en convergence jusqu'en 2036) et son plafond (3 022 € par
+      mois en 2026), qui ne sont pas des séries du dépôt ; niveau
+      `estimee`. VALIDATION DES TRIMESTRES : autant de trimestres que le
+      salaire représente de fois 200 heures — 150 depuis 2017 — du SMIG
+      mahorais (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret
+      n° 2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC
+      national, qui est plus élevé : la fiche valide moins vite que le
+      droit. ÂGE À LA GÉNÉRATION depuis le décret n° 2012-1168, en
+      vigueur le 21 octobre 2012 (art. 2, LEGIARTI000026514429 ; table
+      `mayotte_2012` de `legislation/ages_regimes.csv`) : soixante ans
+      avant 1956, soixante ans et quatre mois pour 1956, quatre mois de
+      plus par génération jusqu'à soixante-deux ans à compter de 1961 ;
+      taux plein à « l'âge prévu à l'article 2 augmenté de cinq années »
+      (art. 10, LEGIARTI000026514415). Les âges et la durée écrits ici
+      ne sont que les cibles des tables, qui répondent pour toute
+      génération. DURÉE À LA GÉNÉRATION pour les pensions prenant effet
+      à compter du 1er janvier 2018 (art. 9 dans la rédaction du décret
+      n° 2016-1246, LEGIARTI000033155436 ; table `mayotte_2018` de
+      `legislation/duree_requise_regimes_speciaux.csv`) : 120 trimestres
+      avant 1956, quatre de plus par génération jusqu'à 160 pour 1965,
+      puis 162 à 172 de 1966 à 1973. La fiche portait, année par année,
+      l'âge et la durée de la génération qui atteint l'ouverture cette
+      année-là, faux pour toutes les autres : 136 trimestres en 2020,
+      ceux de 1959, à un Mahorais né en 1955 dont le droit en demande
+      120.
+  - debut: 2023
     fin: 2025
-    type_calcul: annuites
-    age_ouverture: 62.5
-    age_taux_plein: 67.5
-    duree_requise_trimestres: 152
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0250
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1963 : 62 ans et 6 mois, 152 trimestres.
-  - debut: 2026
-    fin: 2026
-    type_calcul: annuites
-    age_ouverture: 62.5
-    age_taux_plein: 67.5
-    duree_requise_trimestres: 156
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0250
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1964 : 156 trimestres ; coefficient de 2,5 % pour les
-      générations d'avant 1964 (2,375 % pour 1964).
-  - debut: 2027
-    fin: 2027
-    type_calcul: annuites
-    age_ouverture: 62.5
-    age_taux_plein: 67.5
-    duree_requise_trimestres: 160
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0238
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1965 (janvier-juin) : 160 trimestres.
-  - debut: 2028
-    fin: 2028
-    type_calcul: annuites
-    age_ouverture: 62.75
-    age_taux_plein: 67.75
-    duree_requise_trimestres: 160
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0225
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1965 (juillet-décembre) : 62 ans et 9 mois.
-  - debut: 2029
-    fin: 2029
-    type_calcul: annuites
-    age_ouverture: 63
-    age_taux_plein: 68
-    duree_requise_trimestres: 162
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0213
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1966 : 63 ans, 162 trimestres.
-  - debut: 2030
-    fin: 2030
-    type_calcul: annuites
-    age_ouverture: 63.25
-    age_taux_plein: 68.25
-    duree_requise_trimestres: 164
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0200
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1967 : 63 ans et 3 mois, 164 trimestres.
-  - debut: 2031
-    fin: 2031
-    type_calcul: annuites
-    age_ouverture: 63.5
-    age_taux_plein: 68.5
-    duree_requise_trimestres: 166
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0187
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1968 : 63 ans et 6 mois, 166 trimestres.
-  - debut: 2032
-    fin: 2033
-    type_calcul: annuites
-    age_ouverture: 63.75
-    age_taux_plein: 68.75
-    duree_requise_trimestres: 168
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0175
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1969 : 63 ans et 9 mois, 168 trimestres.
-  - debut: 2034
-    fin: 2034
-    type_calcul: annuites
-    age_ouverture: 64
-    age_taux_plein: 69
-    duree_requise_trimestres: 169
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0150
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1970 : 169 trimestres ; 64 ans supposés, le décret n°
-      2026-345 s'arrêtant à la génération 1969.
-  - debut: 2035
-    fin: 2035
-    type_calcul: annuites
-    age_ouverture: 64
-    age_taux_plein: 69
-    duree_requise_trimestres: 170
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0138
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1971 : 170 trimestres.
-  - debut: 2036
-    fin: 2036
-    type_calcul: annuites
-    age_ouverture: 64
-    age_taux_plein: 69
-    duree_requise_trimestres: 171
-    taux_plein: 0.50
-    salaire_reference: 25_meilleures_annees
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.1545
-    part_salariale: 0.4466
-    taux_cotisation_deplafonnee: 0.0241
-    part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
-    notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1972 : 171 trimestres.
-  - debut: 2037
-    fin: null
     type_calcul: annuites
     age_ouverture: 64
     age_taux_plein: 69
     duree_requise_trimestres: 172
+    age_table: mayotte_2023
+    duree_requise_table: [mayotte_2018]
     taux_plein: 0.50
     salaire_reference: 25_meilleures_annees
     assiette: plafonnee
@@ -1396,34 +635,84 @@ periodes:
     part_salariale: 0.4466
     taux_cotisation_deplafonnee: 0.0241
     part_salariale_deplafonnee: 0.1660
-    decote_par_trimestre: 0.0125
+    decote_par_trimestre: 0.0250
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
       TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
-      PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
-      1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
-      pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
-      62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
-      mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
-      2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
-      LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
-      augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
-      GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
-      avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
-      à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
-      La fiche porte, année par année, la génération qui atteint
-      l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
-      trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
-      pour les générations d'avant 1964 et 0,125 point de moins par
-      génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
-      Génération 1973 et suivantes : 172 trimestres, coefficient de 1,25
-      %.
+      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié
+      en 2024, en convergence jusqu'en 2036) et son plafond (3 022 € par
+      mois en 2026), qui ne sont pas des séries du dépôt ; niveau
+      `estimee`. VALIDATION DES TRIMESTRES : autant de trimestres que le
+      salaire représente de fois 200 heures — 150 depuis 2017 — du SMIG
+      mahorais (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret
+      n° 2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC
+      national, qui est plus élevé : la fiche valide moins vite que le
+      droit. ÂGE DE LA RÉFORME DE 2023, pour les pensions prenant effet
+      à compter du 1er septembre 2023 (art. 2 dans la rédaction du
+      décret n° 2024-766, LEGIARTI000049915788 ; table `mayotte_2023`) :
+      62 ans et 3 mois pour 1962, trois mois de plus par génération
+      jusqu'à 63 ans et 9 mois pour 1968, et à compter de 1969 l'âge de
+      L. 161-17-2, 64 ans, que l'article 6 de l'ordonnance n° 2002-411
+      leur renvoie ; le taux plein reste à l'âge d'ouverture augmenté de
+      cinq ans (art. 10) jusqu'au 31 décembre 2025. De janvier à août
+      2023, la rédaction de 2012, qui ne diffère que pour les nés depuis
+      1962, dont aucun n'atteint son âge avant 2024. DURÉE À LA
+      GÉNÉRATION pour les pensions prenant effet à compter du 1er
+      janvier 2018 (art. 9 dans la rédaction du décret n° 2016-1246,
+      LEGIARTI000033155436 ; table `mayotte_2018` de
+      `legislation/duree_requise_regimes_speciaux.csv`) : 120 trimestres
+      avant 1956, quatre de plus par génération jusqu'à 160 pour 1965,
+      puis 162 à 172 de 1966 à 1973. Coefficient de minoration de 2,5 %
+      (art. 11, I).
+  - debut: 2026
+    fin: null
+    type_calcul: annuites
+    age_ouverture: 64
+    age_taux_plein: 67
+    duree_requise_trimestres: 172
+    age_table: mayotte_2026
+    duree_requise_table: [mayotte_2018]
+    taux_plein: 0.50
+    salaire_reference: 25_meilleures_annees
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.1545
+    part_salariale: 0.4466
+    taux_cotisation_deplafonnee: 0.0241
+    part_salariale_deplafonnee: 0.1660
+    decote_par_trimestre: 0.0250
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+    notes: >-
+      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié
+      en 2024, en convergence jusqu'en 2036) et son plafond (3 022 € par
+      mois en 2026), qui ne sont pas des séries du dépôt ; niveau
+      `estimee`. VALIDATION DES TRIMESTRES : autant de trimestres que le
+      salaire représente de fois 200 heures — 150 depuis 2017 — du SMIG
+      mahorais (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret
+      n° 2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC
+      national, qui est plus élevé : la fiche valide moins vite que le
+      droit. 2026, DEUX TEXTES (table `mayotte_2026`). Pour les pensions
+      prenant effet à compter du 1er janvier 2026, le décret n°
+      2025-1410 donne le taux plein à « l'âge prévu au 1° de l'article
+      L. 351-8 », soixante-sept ans (art. 10, LEGIARTI000053354929), et
+      le coefficient de minoration suit la génération : 2,5 % avant
+      1964, 0,125 point de moins par génération jusqu'à 1,25 % à compter
+      de 1973 (art. 11, II, LEGIARTI000033155432). Pour celles prenant
+      effet à compter du 1er septembre 2026, la suspension (loi n°
+      2025-1403, art. 105, V, et décret n° 2026-345,
+      LEGIARTI000054059636) : 62 ans et 6 mois des nés du 1er janvier
+      1963 au 30 juin 1965, 62 ans et 9 mois de juillet à décembre 1965,
+      puis trois mois de plus par génération jusqu'à 63 ans et 9 mois
+      pour 1969, 64 ans à compter de 1970 ; lue dès janvier, elle laisse
+      partir deux mois trop tôt les nés de janvier et février 1964. La
+      fiche portait le coefficient de la génération qui atteint
+      l'ouverture l'année de la liquidation, et le taux plein cinq ans
+      au-dessus de cet âge, jusqu'à soixante-neuf ans en 2034. DURÉE À
+      LA GÉNÉRATION pour les pensions prenant effet à compter du 1er
+      janvier 2018 (art. 9 dans la rédaction du décret n° 2016-1246,
+      LEGIARTI000033155436 ; table `mayotte_2018` de
+      `legislation/duree_requise_regimes_speciaux.csv`) : 120 trimestres
+      avant 1956, quatre de plus par génération jusqu'à 160 pour 1965,
+      puis 162 à 172 de 1966 à 1973.

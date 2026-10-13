@@ -13,10 +13,7 @@ sources:
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Mayotte : la fiche est indexée par année, non par génération ; relire le décret
-    n° 2026-345, article 3 (62 ans et 6 mois de 1963 à 1965 jusqu'à 63 ans et 9
-    mois pour 1969) et vérifier les dernières périodes. La réforme agricole de 2026
-    a sa fiche, pension_non_salaries_agricoles_2026.
+    La réforme agricole de 2026 a sa fiche, pension_non_salaries_agricoles_2026.
   lectures:
   - type: autre
     reference: docs/regimes.md, journal de la campagne sur les régimes
@@ -27,6 +24,14 @@ sources:
       LEGIARTI000006757151 à LEGIARTI000054477924 ; loi n° 2023-1250, article 90,
       II et V ; loi n° 2025-1403, article 105, IV et VI ; décret n° 2017-1000,
       article 3, II, 1°, sept rédactions ; ordonnance n° 2015-896, article 4
+    date: 2026-10-13
+  - type: legifrance
+    reference: >-
+      Mayotte : décret n° 2003-589, articles 2 (quatre rédactions, de
+      LEGIARTI000006781021 à LEGIARTI000054059636), 9, 10 et 11 (trois chacun) ;
+      ordonnance n° 2002-411, article 6 (quatre) ; décrets n° 2012-1168, article
+      7, et n° 2025-1410, article 5, au Journal officiel ; loi n° 2025-1403,
+      article 105, V
     date: 2026-10-13
 textes_a_rattacher:
 - reference: >-
@@ -42,8 +47,10 @@ reformes:
 - rafep_2024
 - mayotte_2024
 - spm_2023
+- mayotte_2026_taux_plein
 - agricole_2025
 - assiette_liberaux_2026
 - asv_2026
 - cavec_report_2026
 - spm_2026
+- mayotte_2026

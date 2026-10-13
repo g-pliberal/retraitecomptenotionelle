@@ -150,6 +150,21 @@
 # à mai 1956 partis à soixante ans (152) ; celles de janvier et février 2026,
 # de `spm_2015`, qui ne diffère de `spm_2026` qu'à compter de 1964, une
 # génération qui n'atteint pas son âge avant avril 2026.
+#
+# MAYOTTE AUSSI, de la même façon. L'article 9 du décret n° 2003-589 fixait la
+# durée à l'ANNÉE d'effet de la pension, 64 trimestres en 2003 et quatre de
+# plus par an (LEGIARTI000006781028, LEGIARTI000026514449) : la fiche garde ses
+# périodes annuelles jusqu'en 2017. Pour les pensions prenant effet à compter
+# du 1er janvier 2018, la rédaction du décret n° 2016-1246 la fixe à la
+# génération (LEGIARTI000033155436), lue le 13 octobre 2026 :
+#   `mayotte_2018` — 120 trimestres avant 1956, quatre de plus par génération
+#       jusqu'à 160 pour 1965, deux de plus jusqu'à 168 pour 1969, un de plus
+#       jusqu'à 172 pour 1973. Son II borne la table aux pensions prenant effet
+#       avant 2035 et son I n'écrit plus que la génération 1973 : la table vaut
+#       au-delà, faute d'autre texte. Ni la loi de 2023 ni la suspension de 2026
+#       n'y ont touché. La fiche lisait la durée de la génération qui atteint
+#       l'ouverture l'année de la liquidation : 148 trimestres, ceux de 1962, à
+#       un Mahorais né en 1958 parti en 2024, dont le droit en demande 132.
 table,depuis,generation,trimestres,retranche_decote,fiabilite,age_de_lecture
 sncf_conduite,2025-01,1968.833,167,0,haute,
 sncf_conduite,2025-01,1970,168,0,haute,
@@ -242,3 +257,22 @@ spm_2026,1900-01,1967,169,0,haute,
 spm_2026,1900-01,1968,170,0,haute,
 spm_2026,1900-01,1971,171,0,haute,
 spm_2026,1900-01,1974,172,0,haute,
+mayotte_2018,1900-01,1900,120,0,haute,
+mayotte_2018,1900-01,1956,124,0,haute,
+mayotte_2018,1900-01,1957,128,0,haute,
+mayotte_2018,1900-01,1958,132,0,haute,
+mayotte_2018,1900-01,1959,136,0,haute,
+mayotte_2018,1900-01,1960,140,0,haute,
+mayotte_2018,1900-01,1961,144,0,haute,
+mayotte_2018,1900-01,1962,148,0,haute,
+mayotte_2018,1900-01,1963,152,0,haute,
+mayotte_2018,1900-01,1964,156,0,haute,
+mayotte_2018,1900-01,1965,160,0,haute,
+mayotte_2018,1900-01,1966,162,0,haute,
+mayotte_2018,1900-01,1967,164,0,haute,
+mayotte_2018,1900-01,1968,166,0,haute,
+mayotte_2018,1900-01,1969,168,0,haute,
+mayotte_2018,1900-01,1970,169,0,haute,
+mayotte_2018,1900-01,1971,170,0,haute,
+mayotte_2018,1900-01,1972,171,0,haute,
+mayotte_2018,1900-01,1973,172,0,haute,

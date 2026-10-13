@@ -775,7 +775,7 @@ reformes:
 
   - code: mayotte_2012
     date: 2012-10-21
-    texte: {reference: "décret n° 2012-1170 du 19 octobre 2012 (âge par génération de 60 à 62 ans, générations 1956 à 1961 ; taux plein à l'âge d'ouverture plus cinq ans)", id: LEGIARTI000026514429}
+    texte: {reference: "décret n° 2012-1168 du 17 octobre 2012, article 7, 2° et 6° (âge par génération de 60 à 62 ans, générations 1956 à 1961 ; taux plein à l'âge d'ouverture plus cinq ans), en vigueur le 21 octobre 2012", id: LEGIARTI000026514429}
     parametres: [age_ouverture, age_taux_plein]
     regimes: [cssm_mayotte]
     absorbee_par: []
@@ -791,8 +791,24 @@ reformes:
 
   - code: mayotte_2024
     date: 2024-07-10
-    texte: {reference: "décret n° 2024-766 du 8 juillet 2024 (âge de 62 ans et 3 mois à 63 ans et 9 mois pour les générations 1962 à 1968, pensions dès le 1er septembre 2023) et décret n° 2026-345 du 7 mai 2026 (génération 1969)", id: LEGIARTI000049915788}
+    texte: {reference: "décret n° 2024-766 du 8 juillet 2024 (âge de 62 ans et 3 mois à 63 ans et 9 mois pour les générations 1962 à 1968, pensions dès le 1er septembre 2023 ; taux plein toujours cinq ans au-dessus)", id: LEGIARTI000049915788}
     parametres: [age_ouverture, age_taux_plein]
+    regimes: [cssm_mayotte]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: mayotte_2026_taux_plein
+    date: 2026-01-01
+    texte: {reference: "décret n° 2025-1410 du 30 décembre 2025, article 5, I, 2° (taux plein à l'âge du 1° de L. 351-8, soixante-sept ans, pensions dès le 1er janvier 2026), avec le coefficient de minoration par génération que le décret n° 2016-1246 réservait aux pensions de 2026 et après", id: LEGIARTI000053354929}
+    parametres: [age_taux_plein, decote_par_trimestre]
+    regimes: [cssm_mayotte]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: mayotte_2026
+    date: 2026-09-01
+    texte: {reference: "loi n° 2025-1403 du 30 décembre 2025, article 105, V, et décret n° 2026-345 du 7 mai 2026 (suspension : 62 ans et 6 mois des nés du 1er janvier 1963 au 30 juin 1965, 63 ans et 9 mois pour 1969, 64 ans à compter de 1970, pensions dès le 1er septembre 2026)", id: LEGIARTI000054059636}
+    parametres: [age_ouverture]
     regimes: [cssm_mayotte]
     absorbee_par: []
     non_appliquee: {}
