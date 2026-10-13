@@ -80,8 +80,12 @@ def test_la_radiation_peut_tomber_au_depart():
 
 def _carriere(simulateur, metiers, invalidite=None, interruptions=None,
               liquidation=62.0) -> Carriere:
+    """La carrière d'un assuré né le 15 juin 1965 : le jour se déclare,
+    puisque la date du départ, où l'inaptitude se constate, se compte depuis
+    lui ; celui que la présomption pose a son test (``test_chronologie.py`` ;
+    feuille de route, action 135, levier 2)."""
     return Carriere.depuis_parcours(
-        annee_naissance=1965, sexe="H", mois_naissance=6, metiers=metiers,
+        annee_naissance=1965, sexe="H", mois_naissance=6, jour_naissance=15, metiers=metiers,
         age_liquidation=liquidation, macro=simulateur.macro,
         interruptions=interruptions, invalidite=invalidite)
 

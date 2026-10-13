@@ -218,11 +218,11 @@ def test_un_actif_ne_en_1969_surcote_des_62_ans_et_9_mois(simulateur):
     """
     _, resultat, _ = _calculer(
         simulateur, [Metier("fonctionnaire_etat_actif", 21.0, 1.0)],
-        naissance=1969, mois=6, liquidation=64.0, part_primes=0.2)
+        naissance=1969, mois=6, jour=15, liquidation=64.0, part_primes=0.2)
     assert resultat.trimestres_requis == 170
-    # Né en juin 1969 — le 15, faute de jour dit —, il part au 1er juillet
-    # 2033 avec 172 trimestres : deux au-delà de la durée, accomplis après
-    # 62 ans et 9 mois. Comptés depuis 64 ans, ils ne valaient rien.
+    # Né le 15 juin 1969, il part au 1er juillet 2033 avec 172 trimestres :
+    # deux au-delà de la durée, accomplis après 62 ans et 9 mois. Comptés
+    # depuis 64 ans, ils ne valaient rien.
     supplementaires = resultat.trimestres_valides - 170
     assert supplementaires == 2
     assert resultat.taux_liquidation == pytest.approx(

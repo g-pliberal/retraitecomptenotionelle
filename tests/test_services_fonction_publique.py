@@ -31,7 +31,12 @@ def simulateur() -> Simulateur:
 
 def _pension(simulateur: Simulateur, affiliation: str, motif: str | None,
              nombre_enfants: int = 0, annees: int = 5) -> tuple[float, str]:
-    """Pension d'une carrière pleine, coupée ou non par cinq ans d'un motif."""
+    """Pension d'une carrière pleine, coupée ou non par cinq ans d'un motif.
+
+    Les enfants naissent en 2005 : leur année se déclare, puisque ce qu'ils
+    ouvrent change avec elle, avant ou depuis 2004 ; celle que la présomption
+    pose a son test (``test_chronologie.py`` ; feuille de route, action 135,
+    levier 2)."""
     carriere = Carriere.depuis_parcours(
         annee_naissance=1975,
         sexe="F",
@@ -42,6 +47,7 @@ def _pension(simulateur: Simulateur, affiliation: str, motif: str | None,
         interruptions={annee: motif
                        for annee in range(2000, 2000 + annees)} if motif else {},
         nombre_enfants=nombre_enfants,
+        naissances_enfants=("2005",) * nombre_enfants,
     )
     resultat = simulateur.scenario_actuel.calculer(carriere)
     # Le prorata ne se lit que sur le régime en ANNUITÉS : c'est lui qui

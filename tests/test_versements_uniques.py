@@ -50,9 +50,12 @@ def _regle(simulateur, nom: str, date: str) -> dict:
 
 def _pensions(simulateur, naissance: int, age: float,
               lignes: list[tuple[int, str, float]]) -> dict[str, PensionRegime]:
-    """Les pensions d'une carrière que son relevé dit, ligne à ligne."""
+    """Les pensions d'une carrière que son relevé dit, ligne à ligne, d'une
+    assurée née le 15 janvier : le jour se déclare, puisque la date du départ
+    se compte depuis lui ; celui que la présomption pose a son test
+    (``test_chronologie.py`` ; feuille de route, action 135, levier 2)."""
     carriere = simulateur.carriere_releve(
-        annee_naissance=naissance, sexe="F", age_liquidation=age,
+        annee_naissance=naissance, sexe="F", age_liquidation=age, jour_naissance=15,
         releve=[LigneRelevee(annee=a, affiliation=s, revenu=r) for a, s, r in lignes])
     return {p.regime: p for p in simulateur.scenario_actuel.calculer(carriere).pensions_par_regime}
 

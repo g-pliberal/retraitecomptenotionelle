@@ -305,9 +305,11 @@ def test_l_indemnisation_cesse_au_taux_plein(simulateur):
     from retraite_notionnelle.droit.ouvrir import fin_indemnisation, indemnisation_bornee
 
     def carriere(interruptions, naissance=1958, debut=20, depart=66):
+        # Né le 15 janvier : le jour se déclare, puisque la coupure se compte
+        # depuis lui (feuille de route, action 135, levier 2).
         return simulateur.carriere_simple(
             annee_naissance=naissance, sexe="H", affiliation="salarie_prive_cadre",
-            mois_naissance=1, age_debut=debut, age_liquidation=depart,
+            mois_naissance=1, jour_naissance=15, age_debut=debut, age_liquidation=depart,
             niveau_salaire=1.5, profil_carriere="plat", interruptions=interruptions)
 
     moteur = simulateur.scenario_actuel

@@ -1,0 +1,18 @@
+date: "2026-10-13"
+session: "action 135, levier 2, étape 4 : le dernier lot, treize tests qui déclarent leur date"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  Elle déclare, dans treize fichiers de tests, la date que la présomption leur
+  donnait, sans changer aucun résultat attendu ; elle a relu la fiche
+  services_et_duree_fonction_publique, sur le 1° de L. 9.
+trouve: >-
+  Aucune règle n'a changé. Le docstring de test_cultes.py faisait naître le
+  ministre du culte le 1er décembre 1949, quand le départ qu'il raconte, au
+  1er janvier 2010, suppose un autre jour : il naît le 15. Le modèle
+  n'applique pas la condition « né ou adopté à partir du 1er janvier 2004 » du
+  1° de L. 9, faute, dit la fiche, de connaître l'année des enfants ; la saisie
+  la déclare désormais, et la présomption la pose sinon : la raison ne tient
+  plus, l'approximation reste, au modèle.
+reste: >-
+  La garde sur GitHub, qui rejoue les tests rapides sous les présomptions
+  décalées ; la condition de date du 1° de L. 9, au modèle.

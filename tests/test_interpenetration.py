@@ -33,8 +33,12 @@ def simulateur() -> Simulateur:
 def _carriere(simulateur: Simulateur, metiers: list[tuple[str, float]],
               naissance: int = 1962, liquidation: float = 64,
               enfants: int = 0, sexe: str = "H") -> Carriere:
+    """La carrière d'un assuré né le 15 janvier : le jour se déclare, puisque
+    la date du départ, et le traitement qu'elle liquide, se comptent depuis
+    lui ; celui que la présomption pose a son test (``test_chronologie.py`` ;
+    feuille de route, action 135, levier 2)."""
     return Carriere.depuis_parcours(
-        annee_naissance=naissance, sexe=sexe,
+        annee_naissance=naissance, sexe=sexe, jour_naissance=15,
         metiers=[Metier(affiliation=statut, age_debut=debut) for statut, debut in metiers],
         age_liquidation=liquidation, macro=simulateur.macro, nombre_enfants=enfants,
     )

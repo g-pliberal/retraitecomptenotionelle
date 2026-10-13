@@ -20,6 +20,7 @@ from pathlib import Path
 
 import pytest
 
+from retraite_notionnelle import chronologie
 from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.droit import acquerir, compter, coordonner, releve
 from retraite_notionnelle.noyau import contrats
@@ -113,8 +114,13 @@ def test_compter_donne_les_trimestres_des_enfants_au_regime_que_la_priorite_desi
     enfants = releve_.durees.enfants
     assert (enfants.regimes, enfants.dispositifs, enfants.trimestres) == (
         ["regime_general"], ["mda"], 24)
+    # La naissance que la présomption pose se lit au vocabulaire : le test
+    # vérifie que la ligne la dit, quelle qu'elle soit (feuille de route,
+    # action 135, levier 2).
+    presumee = (f"{1970 + chronologie.valeur('naissance_des_enfants')}-01-"
+                f"{chronologie.valeur('jour_de_naissance'):02d}")
     assert [(e.enfant, e.naissance, e.version) for e in enfants.enfants] == [
-        (f"enfant_{rang}", "2000-01-15", "mda_2010_nes_avant") for rang in (1, 2, 3)]
+        (f"enfant_{rang}", presumee, "mda_2010_nes_avant") for rang in (1, 2, 3)]
     assert releve_.durees.hors_annee["assurance"] == {"regime_general": 24}
     lignes = [ligne for ligne in releve_.lignes() if ligne["id"].startswith("enfants_")]
     assert [ligne["fait"] for ligne in lignes] == [

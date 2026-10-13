@@ -1724,8 +1724,8 @@ def test_la_page_dit_le_cumul_et_les_majorations_forfaitaires():
 # -- l'hypothèse de décès et la page ------------------------------------------------
 
 @pytest.mark.parametrize("requete, deces, annee", [
-    # Né en janvier 1975, présumé le 15 : il part au 1er février 2039.
-    ({"naissance": "1975", "liquidation": "64", "conjoint": "1977"}, "2039-02-01", 2039),
+    # Né le 15 janvier 1975 : il part au 1er février 2039.
+    ({"naissance": "1975-01-15", "liquidation": "64", "conjoint": "1977"}, "2039-02-01", 2039),
     ({"naissance": "1955", "liquidation": "62", "conjoint": "1957"}, "2026-01-01", 2026),
 ])
 def test_sans_deces_declare_le_deces_est_suppose_au_depart(contexte, requete, deces, annee):

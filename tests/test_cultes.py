@@ -29,10 +29,14 @@ def simulateur() -> Simulateur:
 
 def _carriere(simulateur, naissance, debut, depart, affiliation="ministre_du_culte",
               mois_naissance=1):
+    """La carrière d'un assuré né le 15 du mois : le jour se déclare, puisque
+    la date du départ se compte depuis lui ; celui que la présomption pose a
+    son test (``test_chronologie.py`` ; feuille de route, action 135,
+    levier 2)."""
     return simulateur.carriere_simple(
         annee_naissance=naissance, sexe="H", affiliation=affiliation,
-        mois_naissance=mois_naissance, age_debut=debut, age_liquidation=depart,
-        niveau_salaire=1.0, profil_carriere="plat")
+        mois_naissance=mois_naissance, jour_naissance=15, age_debut=debut,
+        age_liquidation=depart, niveau_salaire=1.0, profil_carriere="plat")
 
 
 def _cavimac(resultat):
@@ -152,7 +156,7 @@ def test_au_taux_plein_la_fraction_est_portee_au_minimum_contributif(simulateur)
 
 def test_les_annees_d_avant_1979_attendent_fevrier_2010(simulateur):
     """Le V bis ne vaut que pour les pensions prenant effet à compter du
-    1er février 2010 (décret n° 2010-103). Né le 1er décembre 1949, ministre
+    1er février 2010 (décret n° 2010-103). Né le 15 décembre 1949, ministre
     depuis ses dix-huit ans, parti à soixante ans — sa pension prend effet le
     1er janvier 2010 —, puis un mois plus tard."""
     moteur = simulateur.scenario_actuel

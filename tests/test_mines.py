@@ -53,8 +53,11 @@ def _lire(chemin: Path) -> list[dict]:
 
 
 def _mines(simulateur: Simulateur, naissance: int, debut: float, liquidation: float):
+    """Un mineur né le 15 janvier : le jour se déclare, puisque la date du
+    départ se compte depuis lui ; celui que la présomption pose a son test
+    (``test_chronologie.py`` ; feuille de route, action 135, levier 2)."""
     carriere = simulateur.carriere_simple(
-        annee_naissance=naissance, sexe="H", affiliation="mineur",
+        annee_naissance=naissance, sexe="H", affiliation="mineur", jour_naissance=15,
         age_debut=debut, age_liquidation=liquidation)
     resultat = simulateur.scenario_actuel.calculer(carriere)
     pension = next(p for p in resultat.pensions_par_regime if p.regime == "mines")
@@ -130,8 +133,8 @@ def test_la_table_porte_les_valeurs_que_les_textes_et_la_caisse_publient():
 
 def test_trente_ans_de_mine_liquides_en_2026(simulateur):
     """120 × 1,473 × 97,15 € = 17 172,23 € par an. La fiche servait
-    120 × 102,49 €, soit 12 299 €. Né en janvier 1971 — le 15, faute de jour
-    dit —, le mineur a cinquante-cinq ans au 1er février 2026."""
+    120 × 102,49 €, soit 12 299 €. Né le 15 janvier 1971, le mineur a
+    cinquante-cinq ans au 1er février 2026."""
     carriere, _, pension = _mines(simulateur, 1971, 25, 55)
     assert (carriere.date_liquidation.annee, carriere.date_liquidation.mois) == (2026, 2)
     assert pension.montant == pytest.approx(120 * 1.473 * 97.15, abs=1e-6)

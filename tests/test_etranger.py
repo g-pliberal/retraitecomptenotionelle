@@ -237,7 +237,7 @@ ETRANGER = {
 
 def test_la_chronologie_porte_les_periodes_les_pensions_et_la_residence(simulateur):
     carriere = Carriere.depuis_parcours(
-        annee_naissance=1965, sexe="H", mois_naissance=6,
+        annee_naissance=1965, sexe="H", mois_naissance=6, jour_naissance=15,
         metiers=[Metier("salarie_prive_non_cadre", 21.0)], age_liquidation=64.0,
         macro=simulateur.macro, interruptions={1999: "sans_activite", 2000: "sans_activite",
                                                2001: "sans_activite"},
@@ -253,8 +253,8 @@ def test_la_chronologie_porte_les_periodes_les_pensions_et_la_residence(simulate
     assert pension["attributs"] == {"acte": "liquidation", "age": 67.0}
     assert pension["montant"] == {"mensuel": 250.0, "monnaie": "EUR"}
     residence = chrono.residence(carriere.chronologie, carriere.personne)
-    # Né le 15 juin 1965 (jour présumé), il part à soixante-quatre ans en
-    # juillet 2029 : la résidence court de ce mois-là.
+    # Né le 15 juin 1965, il part à soixante-quatre ans en juillet 2029 : la
+    # résidence court de ce mois-là.
     assert (residence["debut"], residence["territoire"]) == ("2029-07-01", "PT")
     assert chrono.controler(carriere.chronologie) == []
     # Aucun autre fait ne dit son territoire : la métropole, le défaut du contrat.

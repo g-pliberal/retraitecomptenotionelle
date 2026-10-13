@@ -134,18 +134,18 @@ def test_qui_est_deja_parti_garde_son_releve_tel_quel(contexte):
 
 
 def test_un_releve_qui_touche_le_depart_ne_gagne_que_les_mois_qui_lui_manquent(contexte):
-    """Né en janvier 1975, le 15 présumé, parti le 1er février 2039 : un relevé
-    qui finit en 2038 gagne janvier 2039, un douzième de son revenu avancé
-    d'une année ; un relevé qui porte 2039, ou un départ de janvier, rien."""
+    """Né le 15 janvier 1975, parti le 1er février 2039 : un relevé qui finit
+    en 2038 gagne janvier 2039, un douzième de son revenu avancé d'une
+    année ; un relevé qui porte 2039, ou un départ de janvier, rien."""
     jusqu_en_2038 = "\n".join(f"{annee}:salarie_prive_non_cadre:20000"
                               for annee in range(1998, 2039))
-    saisie, ajoutees = _ajoutees(contexte, naissance="1975", releve=jusqu_en_2038)
+    saisie, ajoutees = _ajoutees(contexte, naissance="1975-01-15", releve=jusqu_en_2038)
     assert str(saisie.date_liquidation) == "février 2039"
     macro = _macro(contexte, saisie)
     assert [(ligne.annee, ligne.type_periode) for ligne in ajoutees] == [(2039, "emploi")]
     assert ajoutees[0].revenu == pytest.approx(
         20_000 * salaire_moyen_annuel(macro, 2039) / salaire_moyen_annuel(macro, 2038) / 12)
-    _, ajoutees = _ajoutees(contexte, naissance="1975",
+    _, ajoutees = _ajoutees(contexte, naissance="1975-01-15",
                             releve=jusqu_en_2038 + "\n2039:salarie_prive_non_cadre:2000")
     assert ajoutees == []
     _, ajoutees = _ajoutees(contexte, naissance="1975-01-01", releve=jusqu_en_2038)

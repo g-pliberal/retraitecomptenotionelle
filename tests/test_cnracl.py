@@ -123,11 +123,11 @@ def test_la_surcote_de_la_fonction_publique_se_compte_en_duree(simulateur):
 
 
 def test_un_trimestre_de_duree_prend_le_taux_de_son_dernier_mois(simulateur):
-    """Né en janvier 1948 — le 15, jour présumé —, à soixante ans le 15
-    janvier 2008, parti le 1er février 2011 : douze trimestres depuis février
-    2008, dont trois achevés en 2008 à 0,75 % et neuf à 1,25 % — celui de
-    novembre 2008 à janvier 2009 compris, accompli sous la LFSS pour 2009."""
-    _, resultat = _calculer(simulateur, "fonctionnaire_etat", 1948, 20, 63)
+    """Né le 15 janvier 1948, à soixante ans le 15 janvier 2008, parti le 1er
+    février 2011 : douze trimestres depuis février 2008, dont trois achevés
+    en 2008 à 0,75 % et neuf à 1,25 % — celui de novembre 2008 à janvier
+    2009 compris, accompli sous la LFSS pour 2009."""
+    _, resultat = _calculer(simulateur, "fonctionnaire_etat", 1948, 20, 63, jour=15)
     assert resultat.taux_liquidation == pytest.approx(0.75 * (1 + 3 * 0.0075 + 9 * 0.0125))
 
 

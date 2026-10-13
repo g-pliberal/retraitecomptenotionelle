@@ -1,13 +1,15 @@
 # Le levier 2, étape 1 : mesurer les tests qui dépendent des présomptions
 
-**Reprise, au 11 octobre 2026.** Fait : la mesure, les tests du mécanisme
-(`test_chronologie.py`, deux de `test_moteur.py`), et deux lots, sept
-fichiers, dont les trois exemples officiels de `test_oracle.py`. Reste : 13
-tests rapides, un dans chacun de treize fichiers, que liste
-`2026-10-11-levier-2-deuxieme-lot.md`, le dernier lot ; puis, la liste vide,
-une garde sur GitHub. Commencer par
-`PRESOMPTIONS_DECALEES=1 python -m pytest -m rapide --tb=no -rf`, qui en
-donne la liste.
+**Reprise, au 13 octobre 2026.** Fait : la mesure, les tests du mécanisme
+(`test_chronologie.py`, deux de `test_moteur.py`, un de `test_droit.py`), et
+trois lots, vingt fichiers : sous les présomptions décalées, aucun test
+rapide n'échoue plus (`2026-10-13-levier-2-dernier-lot.md`). Reste : la
+garde sur GitHub, qui rejoue à chaque envoi
+`PRESOMPTIONS_DECALEES=1 python -m pytest -m rapide`, une vingtaine de
+secondes, pour qu'un test qui écrit une valeur présumée tombe dès sa
+naissance. Commencer par `.github/workflows/tests.yml`, après « La suite
+complète » : décider si la garde rend son verdict dans
+`.github/etat_suite.yaml`, que le hook de démarrage affiche.
 
 **Le 10 octobre 2026, la demande** : l'étape suivante de l'action 135, le
 levier 2 du diagnostic du 28 septembre. À l'action 132, le jour de naissance
