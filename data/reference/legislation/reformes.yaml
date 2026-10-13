@@ -880,11 +880,19 @@ reformes:
     absorbee_par: []
     non_appliquee: {}
 
+  - code: polynesie_2020
+    date: 2020-01-01
+    texte: {reference: "loi du pays n° 2019-6 du 1er février 2019, applicable au 1er juillet 2019 (arrêté n° 993 CM du 20 juin 2019) : âge légal et durée d'assurance suffisante relevés de six et neuf mois par an à l'année du départ, 60 ans et 6 mois et 429 mois en 2020 — rapport annuel 2020 du Conseil d'orientation et de suivi des retraites polynésien, source CPS", id: null}
+    parametres: [age_ouverture, duree_requise_trimestres]
+    regimes: [cps_polynesie, cps_polynesie_tranche_b]
+    absorbee_par: []
+    non_appliquee: {}
+
   - code: polynesie_2023
     date: 2023-01-01
-    texte: {reference: "loi du pays et délibérations de l'assemblée de la Polynésie française portant réforme des retraites du régime général des salariés (62 ans, 456 mois, depuis le 1er janvier 2023), résumées par le CLEISS", id: null}
+    texte: {reference: "loi du pays n° 2019-6 du 1er février 2019, terme de la montée en charge : 62 ans et 456 mois depuis le 1er janvier 2023, pour les tranches A et B (fiches du CLEISS et rapport 2020 du Conseil d'orientation et de suivi des retraites polynésien)", id: null}
     parametres: [age_ouverture, duree_requise_trimestres]
-    regimes: [cps_polynesie]
+    regimes: [cps_polynesie, cps_polynesie_tranche_b]
     absorbee_par: []
     non_appliquee: {}
 

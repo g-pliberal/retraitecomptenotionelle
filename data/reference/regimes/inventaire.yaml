@@ -276,10 +276,17 @@ inventaire:
         \ salariés (tranche A) ; loi du pays n° 2019-6 du 1er février 2019 — cités par\
         \ le rapport de l'assemblée de la Polynésie française du 14 août 2025 sur l'harmonisation\
         \ des allocations familiales (hors JORF)", id: null}
+    - {reference: "rapport annuel 2020 du Conseil d'orientation et de suivi des retraites\
+        \ de la Polynésie française (service-public.pf, ARASS), tableaux « source CPS\
+        \ 2020 » des conditions d'âge et de durée par date, et tableaux 3 et 4 des paramètres\
+        \ et abattements de la réforme de 2019", id: null}
     manque: >-
-      Seuls les paramètres de 2026 sont lus, projetés sur toute la période ; le plafond
-      de 269 000 FCFP par mois n'est pas une série du dépôt et le plafond national,
-      plus haut, tient lieu ; la montée en charge de la réforme de 2023 n'est pas lue.
+      Seuls les taux et plafonds de 2026 sont lus, projetés sur toute la période ; le
+      plafond de 269 000 FCFP par mois n'est pas une série du dépôt et le plafond national,
+      plus haut, tient lieu. La montée en charge de 2020 à 2023 n'est lue que dans le
+      rapport du Conseil d'orientation et de suivi des retraites, et les abattements
+      de la réforme de 2019 — 1,5 % par trimestre avant l'âge légal, 0,5 % par trimestre
+      manquant à la durée, jusqu'à 65 ans — ne sont pas portés.
 
   - code: cps_polynesie_tranche_b
     nom: >-

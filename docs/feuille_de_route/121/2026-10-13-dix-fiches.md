@@ -3,7 +3,9 @@
 **Le 13 octobre 2026, Saint-Pierre-et-Miquelon et Mayotte : leurs âges, leurs
 durées et leurs coefficients de minoration se lisent à la génération, dans les
 tables que leurs textes écrivent, et chaque période nomme celles de la rédaction
-en vigueur à sa date d'effet. Une Saint-Pierraise née en 1956 partie en 2020 doit
+en vigueur à sa date d'effet. La Polynésie, elle, date sa réforme de 2019 à
+l'année du départ : ses fiches gagnent les trois années de montée en charge
+qu'elles sautaient. Une Saint-Pierraise née en 1956 partie en 2020 doit
 152 trimestres, et non les 158 de la génération 1959 ; un Mahorais né en 1958
 parti en 2020, 132 et non 136. Là où le droit suit l'année d'effet — la durée
 transitoire de l'archipel jusqu'en 1997, l'âge, la durée et le taux plein de
@@ -144,3 +146,35 @@ cps_saint_pierre_et_miquelon, puis les suivantes, dans l'ordre du bloc. »
   toutes, faute d'autre texte. La ligne de 1969 de `mayotte_2023` (69 ans de
   taux plein, cinq ans au-dessus d'un âge que l'article 2 n'écrit pas) ne sert
   à personne : cette génération n'a pas soixante ans avant 2026.
+
+## Polynésie française, tranches A et B
+
+- *Ce que les textes disent.* Les délibérations et lois du pays polynésiennes
+  ne sont ni dans LEGI ni au Journal officiel, et Lexpol ne répond pas d'ici :
+  la source est le rapport annuel 2020 du Conseil d'orientation et de suivi des
+  retraites de la Polynésie française (service-public.pf), dont les tableaux
+  « source CPS 2020 » datent les conditions de la loi du pays n° 2019-6 du
+  1er février 2019. L'âge légal et la durée d'assurance suffisante y suivent
+  l'ANNÉE DU DÉPART, et non la génération : 60 ans et 420 mois jusqu'en 2019,
+  60 ans et 6 mois et 429 mois en 2020, 61 ans et 438 mois en 2021, 61 ans et 6
+  mois et 447 mois en 2022, 62 ans et 456 mois depuis 2023 ; son tableau des
+  abattements se lit à l'« année du départ en retraite ». Et « les conditions du
+  départ en retraite tranche B (âge, durée d'assurance, etc…) sont identiques
+  en tranche A et B depuis la réforme ».
+- *Ce qui est écrit.* Trois périodes annuelles, 2020, 2021 et 2022, dans les
+  deux fiches ; la tranche A coupait de 60 à 62 ans au 1er janvier 2023 sans
+  montée en charge, la tranche B portait 62 ans depuis 1995 — elle prend 60 ans
+  avant 2020, l'âge de la tranche A, le sien n'étant pas lu. Le calendrier des
+  réformes prend `polynesie_2020`.
+- *Ce que ça déplace.* Une Polynésienne née en janvier 1960 ne part plus à
+  soixante ans en février 2020 : l'âge légal y est de 60 ans et 6 mois. Une
+  carrière courte partie en 2022 se proratise sur 149 trimestres et non 140 :
+  126/149 à une Polynésienne née en 1961 partie à 61 ans et 6 mois. Les
+  carrières complètes ne bougent pas. Le portage rend les mêmes chiffres que le
+  Python sur six carrières.
+- *Ce qui reste.* Les abattements de la réforme, que les fiches ne portent
+  pas : 1,5 % par trimestre d'anticipation avant l'âge légal, dès 57 ans, et
+  0,5 % par trimestre manquant à la durée suffisante, supprimés à l'« âge
+  suffisant » de 65 ans depuis le 1er juillet 2019 (tableaux 3 et 4 du
+  rapport) ; un droit acquis par qui avait l'âge avant 2020, dont le rapport ne
+  dit rien ; l'âge de la tranche B avant 2020.

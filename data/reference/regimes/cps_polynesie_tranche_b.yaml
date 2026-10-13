@@ -32,6 +32,143 @@ inventaire:
     de 1995 qui institue la tranche.
 periodes:
   - debut: 1995
+    fin: 2019
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 60
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: tranche_1_2_pass
+    taux_cotisation_retraite: 0.1743
+    part_salariale: 0.3333
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      SOURCE : fiches du CLEISS (voir `cps_polynesie`). COTISATION 2026
+      : « vieillesse tranche B : 11,62 % [employeur], 5,81 % [salarié],
+      entre 269 000 FCFP et 525 000 FCFP » par mois — 0,69 à 1,35
+      plafond national, la fiche prend la tranche entre un et deux
+      plafonds, la borne la plus proche du catalogue. POINTS : « le
+      total des points est obtenu en divisant le salaire annuel par le
+      salaire minimum horaire de référence (1 024,74 FCFP depuis le 1er
+      mai 2024) » et « la valeur du point s'obtient en multipliant 1
+      024,74 FCFP par 2 % soit 20,49 FCFP », pension « (total des points
+      × valeur du point) / 12 » : deux pour cent du salaire de la
+      tranche par année, soit 11,5 centimes de rente par euro cotisé à
+      17,43 %, dans `rendements_points.csv`. Année de création prise à
+      1995, date de la tranche B selon le rapport 2020 du Conseil
+      d'orientation et de suivi des retraites polynésien ; niveau
+      `estimee`. AVANT 2020, l'âge de la tranche B n'est pas lu : la
+      fiche lui prête celui de la tranche A, 60 ans, au lieu des 62 ans
+      qu'elle portait.
+  - debut: 2020
+    fin: 2020
+    type_calcul: points
+    age_ouverture: 60.5
+    age_taux_plein: 60.5
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: tranche_1_2_pass
+    taux_cotisation_retraite: 0.1743
+    part_salariale: 0.3333
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      SOURCE : fiches du CLEISS (voir `cps_polynesie`). COTISATION 2026
+      : « vieillesse tranche B : 11,62 % [employeur], 5,81 % [salarié],
+      entre 269 000 FCFP et 525 000 FCFP » par mois — 0,69 à 1,35
+      plafond national, la fiche prend la tranche entre un et deux
+      plafonds, la borne la plus proche du catalogue. POINTS : « le
+      total des points est obtenu en divisant le salaire annuel par le
+      salaire minimum horaire de référence (1 024,74 FCFP depuis le 1er
+      mai 2024) » et « la valeur du point s'obtient en multipliant 1
+      024,74 FCFP par 2 % soit 20,49 FCFP », pension « (total des points
+      × valeur du point) / 12 » : deux pour cent du salaire de la
+      tranche par année, soit 11,5 centimes de rente par euro cotisé à
+      17,43 %, dans `rendements_points.csv`. Année de création prise à
+      1995, date de la tranche B selon le rapport 2020 du Conseil
+      d'orientation et de suivi des retraites polynésien ; niveau
+      `estimee`. ÂGE À L'ANNÉE DU DÉPART, comme la tranche A : « les
+      conditions du départ en retraite tranche B (âge, durée
+      d'assurance, etc…) sont identiques en tranche A et B depuis la
+      réforme adoptée par la LP n° 2019-6 » (même rapport, § 3.5.2) — 60
+      ans et 6 mois en 2020, 61 ans en 2021, 61 ans et 6 mois en 2022,
+      62 ans depuis 2023. La fiche portait 62 ans depuis 1995.
+  - debut: 2021
+    fin: 2021
+    type_calcul: points
+    age_ouverture: 61
+    age_taux_plein: 61
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: tranche_1_2_pass
+    taux_cotisation_retraite: 0.1743
+    part_salariale: 0.3333
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      SOURCE : fiches du CLEISS (voir `cps_polynesie`). COTISATION 2026
+      : « vieillesse tranche B : 11,62 % [employeur], 5,81 % [salarié],
+      entre 269 000 FCFP et 525 000 FCFP » par mois — 0,69 à 1,35
+      plafond national, la fiche prend la tranche entre un et deux
+      plafonds, la borne la plus proche du catalogue. POINTS : « le
+      total des points est obtenu en divisant le salaire annuel par le
+      salaire minimum horaire de référence (1 024,74 FCFP depuis le 1er
+      mai 2024) » et « la valeur du point s'obtient en multipliant 1
+      024,74 FCFP par 2 % soit 20,49 FCFP », pension « (total des points
+      × valeur du point) / 12 » : deux pour cent du salaire de la
+      tranche par année, soit 11,5 centimes de rente par euro cotisé à
+      17,43 %, dans `rendements_points.csv`. Année de création prise à
+      1995, date de la tranche B selon le rapport 2020 du Conseil
+      d'orientation et de suivi des retraites polynésien ; niveau
+      `estimee`. ÂGE À L'ANNÉE DU DÉPART, comme la tranche A : « les
+      conditions du départ en retraite tranche B (âge, durée
+      d'assurance, etc…) sont identiques en tranche A et B depuis la
+      réforme adoptée par la LP n° 2019-6 » (même rapport, § 3.5.2) — 60
+      ans et 6 mois en 2020, 61 ans en 2021, 61 ans et 6 mois en 2022,
+      62 ans depuis 2023. La fiche portait 62 ans depuis 1995.
+  - debut: 2022
+    fin: 2022
+    type_calcul: points
+    age_ouverture: 61.5
+    age_taux_plein: 61.5
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: tranche_1_2_pass
+    taux_cotisation_retraite: 0.1743
+    part_salariale: 0.3333
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      SOURCE : fiches du CLEISS (voir `cps_polynesie`). COTISATION 2026
+      : « vieillesse tranche B : 11,62 % [employeur], 5,81 % [salarié],
+      entre 269 000 FCFP et 525 000 FCFP » par mois — 0,69 à 1,35
+      plafond national, la fiche prend la tranche entre un et deux
+      plafonds, la borne la plus proche du catalogue. POINTS : « le
+      total des points est obtenu en divisant le salaire annuel par le
+      salaire minimum horaire de référence (1 024,74 FCFP depuis le 1er
+      mai 2024) » et « la valeur du point s'obtient en multipliant 1
+      024,74 FCFP par 2 % soit 20,49 FCFP », pension « (total des points
+      × valeur du point) / 12 » : deux pour cent du salaire de la
+      tranche par année, soit 11,5 centimes de rente par euro cotisé à
+      17,43 %, dans `rendements_points.csv`. Année de création prise à
+      1995, date de la tranche B selon le rapport 2020 du Conseil
+      d'orientation et de suivi des retraites polynésien ; niveau
+      `estimee`. ÂGE À L'ANNÉE DU DÉPART, comme la tranche A : « les
+      conditions du départ en retraite tranche B (âge, durée
+      d'assurance, etc…) sont identiques en tranche A et B depuis la
+      réforme adoptée par la LP n° 2019-6 » (même rapport, § 3.5.2) — 60
+      ans et 6 mois en 2020, 61 ans en 2021, 61 ans et 6 mois en 2022,
+      62 ans depuis 2023. La fiche portait 62 ans depuis 1995.
+  - debut: 2023
     fin: null
     type_calcul: points
     age_ouverture: 62
@@ -46,17 +183,23 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
-      SOURCE : fiches du CLEISS (voir `cps_polynesie`). COTISATION 2026 :
-      « vieillesse tranche B : 11,62 % [employeur], 5,81 % [salarié],
-      entre 269 000 FCFP et 525 000 FCFP » par mois — 0,69 à 1,35 plafond
-      national, la fiche prend la tranche entre un et deux plafonds, la
-      borne la plus proche du catalogue. POINTS : « le total des points
-      est obtenu en divisant le salaire annuel par le salaire minimum
-      horaire de référence (1 024,74 FCFP depuis le 1er mai 2024) » et «
-      la valeur du point s'obtient en multipliant 1 024,74 FCFP par 2 %
-      soit 20,49 FCFP », pension « (total des points × valeur du point) /
-      12 » : deux pour cent du salaire de la tranche par année, soit 11,5
-      centimes de rente par euro cotisé à 17,43 %, dans
-      `rendements_points.csv`. Année de création prise à 1995, date de la
-      tranche B selon le rapport 2020 du Conseil d'orientation et de suivi
-      des retraites polynésien ; niveau `estimee`.
+      SOURCE : fiches du CLEISS (voir `cps_polynesie`). COTISATION 2026
+      : « vieillesse tranche B : 11,62 % [employeur], 5,81 % [salarié],
+      entre 269 000 FCFP et 525 000 FCFP » par mois — 0,69 à 1,35
+      plafond national, la fiche prend la tranche entre un et deux
+      plafonds, la borne la plus proche du catalogue. POINTS : « le
+      total des points est obtenu en divisant le salaire annuel par le
+      salaire minimum horaire de référence (1 024,74 FCFP depuis le 1er
+      mai 2024) » et « la valeur du point s'obtient en multipliant 1
+      024,74 FCFP par 2 % soit 20,49 FCFP », pension « (total des points
+      × valeur du point) / 12 » : deux pour cent du salaire de la
+      tranche par année, soit 11,5 centimes de rente par euro cotisé à
+      17,43 %, dans `rendements_points.csv`. Année de création prise à
+      1995, date de la tranche B selon le rapport 2020 du Conseil
+      d'orientation et de suivi des retraites polynésien ; niveau
+      `estimee`. ÂGE À L'ANNÉE DU DÉPART, comme la tranche A : « les
+      conditions du départ en retraite tranche B (âge, durée
+      d'assurance, etc…) sont identiques en tranche A et B depuis la
+      réforme adoptée par la LP n° 2019-6 » (même rapport, § 3.5.2) — 60
+      ans et 6 mois en 2020, 61 ans en 2021, 61 ans et 6 mois en 2022,
+      62 ans depuis 2023. La fiche portait 62 ans depuis 1995.

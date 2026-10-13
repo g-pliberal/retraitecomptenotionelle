@@ -29,14 +29,18 @@ inventaire:
   textes:
     - {reference: "fiche du CLEISS « La sécurité sociale des salariés en Polynésie française » et fiche de cotisations 2026 (délibérations de l'assemblée de la Polynésie française, compétence locale, hors JORF)", id: null}
     - {reference: "arrêté n° 1336 IT du 28 septembre 1956 portant organisation et fonctionnement de la caisse de prévoyance sociale ; délibération n° 67-110 AT du 24 août 1967 créant le régime de retraite polynésien ; délibération n° 87-11 AT du 29 janvier 1987 portant institution d'un régime de retraite des travailleurs salariés (tranche A) ; loi du pays n° 2019-6 du 1er février 2019 — cités par le rapport de l'assemblée de la Polynésie française du 14 août 2025 sur l'harmonisation des allocations familiales (hors JORF)", id: null}
+    - {reference: "rapport annuel 2020 du Conseil d'orientation et de suivi des retraites de la Polynésie française (service-public.pf, ARASS), tableaux « source CPS 2020 » des conditions d'âge et de durée par date, et tableaux 3 et 4 des paramètres et abattements de la réforme de 2019", id: null}
   manque: >-
-    Seuls les paramètres de 2026 sont lus, projetés sur toute la période ;
-    le plafond de 269 000 FCFP par mois n'est pas une série du dépôt et le
-    plafond national, plus haut, tient lieu ; la montée en charge de la
-    réforme de 2023 n'est pas lue.
+    Seuls les taux et plafonds de 2026 sont lus, projetés sur toute la
+    période ; le plafond de 269 000 FCFP par mois n'est pas une série du
+    dépôt et le plafond national, plus haut, tient lieu. La montée en
+    charge de 2020 à 2023 n'est lue que dans le rapport du Conseil
+    d'orientation et de suivi des retraites, et les abattements de la
+    réforme de 2019 — 1,5 % par trimestre avant l'âge légal, 0,5 % par
+    trimestre manquant à la durée, jusqu'à 65 ans — ne sont pas portés.
 periodes:
   - debut: 1968
-    fin: 2022
+    fin: 2019
     type_calcul: annuites
     age_ouverture: 60
     age_taux_plein: 60
@@ -51,23 +55,134 @@ periodes:
     avantages_non_contributifs: [reversion]
     notes: >-
       SOURCE : fiche « La sécurité sociale des salariés en Polynésie
-      française » et fiche de cotisations 2026 du CLEISS (cleiss.fr, lues
-      par scripts/fetch/sites_institutionnels.py), qui résument les
+      française » et fiche de cotisations 2026 du CLEISS (cleiss.fr,
+      lues par scripts/fetch/sites_institutionnels.py), qui résument les
       délibérations de l'assemblée de la Polynésie française, hors JORF.
-      TRANCHE A : « 70 % × salaire mensuel moyen × (nombre de mois cotisés
-      / 456 mois) », salaire moyen « des 180 meilleures rémunérations
-      mensuelles […] au cours des 240 derniers mois », droits « ouverts à
-      partir de 62 ans depuis le 1er janvier 2023 », taux plein avec « 38
-      ans soit 456 mois ou 152 trimestres depuis 2023 ». COTISATION 2026 :
-      « vieillesse tranche A : 15,69 % [employeur], 7,84 % [salarié], 269
-      000 FCFP » par mois, soit 23,53 % dont un tiers salarial ; le
-      plafond de 269 000 FCFP (2 254 €) est lu comme 0,69 plafond national
-      — la fiche prend le plafond national, plus haut. AVANT 2023 : 60 ans
-      et 35 ans cotisés (420 mois), les paramètres d'avant la réforme de
-      2023 tels que la fiche du CLEISS les oppose à ceux « depuis 2023 » ;
-      la montée en charge n'est pas lue, la fiche coupe au 1er janvier
-      2023. Salaire de référence : quinze ans, écrit ici comme les dix
-      meilleures années, la valeur la plus proche du catalogue.
+      TRANCHE A : « 70 % × salaire mensuel moyen × (nombre de mois
+      cotisés / 456 mois) », salaire moyen « des 180 meilleures
+      rémunérations mensuelles […] au cours des 240 derniers mois »,
+      droits « ouverts à partir de 62 ans depuis le 1er janvier 2023 »,
+      taux plein avec « 38 ans soit 456 mois ou 152 trimestres depuis
+      2023 ». COTISATION 2026 : « vieillesse tranche A : 15,69 %
+      [employeur], 7,84 % [salarié], 269 000 FCFP » par mois, soit 23,53
+      % dont un tiers salarial ; le plafond de 269 000 FCFP (2 254 €)
+      est lu comme 0,69 plafond national — la fiche prend le plafond
+      national, plus haut. JUSQU'EN 2019 : 60 ans et 35 ans cotisés (420
+      mois), les paramètres d'avant la loi du pays n° 2019-6, que le
+      rapport 2020 du Conseil d'orientation et de suivi des retraites
+      polynésien date à 2018 et jusqu'au 31 décembre 2019. Les
+      abattements de la réforme, que la fiche ne porte pas : 1,5 % par
+      trimestre d'anticipation avant l'âge légal, dès 57 ans, et 0,5 %
+      par trimestre manquant à la durée suffisante, supprimés à l'« âge
+      suffisant » de 65 ans depuis le 1er juillet 2019 (tableaux 3 et 4
+      du même rapport). Salaire de référence : quinze ans, écrit ici
+      comme les dix meilleures années, la valeur la plus proche du
+      catalogue.
+  - debut: 2020
+    fin: 2020
+    type_calcul: annuites
+    age_ouverture: 60.5
+    age_taux_plein: 60.5
+    duree_requise_trimestres: 143
+    taux_plein: 0.70
+    salaire_reference: 10_meilleures_annees
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.2353
+    part_salariale: 0.3332
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      SOURCE, TRANCHE A ET COTISATION comme en 2023. LA MONTÉE EN CHARGE
+      DE LA LOI DU PAYS N° 2019-6 DU 1er FÉVRIER 2019 SUIT L'ANNÉE DU
+      DÉPART, ET NON LA GÉNÉRATION : le rapport annuel 2020 du Conseil
+      d'orientation et de suivi des retraites de la Polynésie française,
+      « source CPS 2020 », donne l'âge légal et la durée d'assurance
+      suffisante par date — 60 ans et 420 mois jusqu'au 31 décembre
+      2019, 60 ans et 6 mois et 429 mois au 1er janvier 2020, 61 ans et
+      438 mois au 1er janvier 2021, 61 ans et 6 mois et 447 mois au 1er
+      janvier 2022, 62 ans et 456 mois au 1er janvier 2023 —, la durée «
+      à raison de 9 mois par an à compter de 2020 », et son tableau des
+      abattements les lit à l'« année du départ en retraite ». Il ne dit
+      rien d'un droit acquis par qui avait l'âge avant 2020. Départs de
+      2020 : 60 ans et 6 mois, 429 mois, soit 143 trimestres. Les
+      abattements de la réforme, que la fiche ne porte pas : 1,5 % par
+      trimestre d'anticipation avant l'âge légal, dès 57 ans, et 0,5 %
+      par trimestre manquant à la durée suffisante, supprimés à l'« âge
+      suffisant » de 65 ans depuis le 1er juillet 2019 (tableaux 3 et 4
+      du même rapport). Salaire de référence : quinze ans, écrit ici
+      comme les dix meilleures années, la valeur la plus proche du
+      catalogue.
+  - debut: 2021
+    fin: 2021
+    type_calcul: annuites
+    age_ouverture: 61
+    age_taux_plein: 61
+    duree_requise_trimestres: 146
+    taux_plein: 0.70
+    salaire_reference: 10_meilleures_annees
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.2353
+    part_salariale: 0.3332
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      SOURCE, TRANCHE A ET COTISATION comme en 2023. LA MONTÉE EN CHARGE
+      DE LA LOI DU PAYS N° 2019-6 DU 1er FÉVRIER 2019 SUIT L'ANNÉE DU
+      DÉPART, ET NON LA GÉNÉRATION : le rapport annuel 2020 du Conseil
+      d'orientation et de suivi des retraites de la Polynésie française,
+      « source CPS 2020 », donne l'âge légal et la durée d'assurance
+      suffisante par date — 60 ans et 420 mois jusqu'au 31 décembre
+      2019, 60 ans et 6 mois et 429 mois au 1er janvier 2020, 61 ans et
+      438 mois au 1er janvier 2021, 61 ans et 6 mois et 447 mois au 1er
+      janvier 2022, 62 ans et 456 mois au 1er janvier 2023 —, la durée «
+      à raison de 9 mois par an à compter de 2020 », et son tableau des
+      abattements les lit à l'« année du départ en retraite ». Il ne dit
+      rien d'un droit acquis par qui avait l'âge avant 2020. Départs de
+      2021 : 61 ans, 438 mois, soit 146 trimestres. Les abattements de
+      la réforme, que la fiche ne porte pas : 1,5 % par trimestre
+      d'anticipation avant l'âge légal, dès 57 ans, et 0,5 % par
+      trimestre manquant à la durée suffisante, supprimés à l'« âge
+      suffisant » de 65 ans depuis le 1er juillet 2019 (tableaux 3 et 4
+      du même rapport). Salaire de référence : quinze ans, écrit ici
+      comme les dix meilleures années, la valeur la plus proche du
+      catalogue.
+  - debut: 2022
+    fin: 2022
+    type_calcul: annuites
+    age_ouverture: 61.5
+    age_taux_plein: 61.5
+    duree_requise_trimestres: 149
+    taux_plein: 0.70
+    salaire_reference: 10_meilleures_annees
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.2353
+    part_salariale: 0.3332
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      SOURCE, TRANCHE A ET COTISATION comme en 2023. LA MONTÉE EN CHARGE
+      DE LA LOI DU PAYS N° 2019-6 DU 1er FÉVRIER 2019 SUIT L'ANNÉE DU
+      DÉPART, ET NON LA GÉNÉRATION : le rapport annuel 2020 du Conseil
+      d'orientation et de suivi des retraites de la Polynésie française,
+      « source CPS 2020 », donne l'âge légal et la durée d'assurance
+      suffisante par date — 60 ans et 420 mois jusqu'au 31 décembre
+      2019, 60 ans et 6 mois et 429 mois au 1er janvier 2020, 61 ans et
+      438 mois au 1er janvier 2021, 61 ans et 6 mois et 447 mois au 1er
+      janvier 2022, 62 ans et 456 mois au 1er janvier 2023 —, la durée «
+      à raison de 9 mois par an à compter de 2020 », et son tableau des
+      abattements les lit à l'« année du départ en retraite ». Il ne dit
+      rien d'un droit acquis par qui avait l'âge avant 2020. Départs de
+      2022 : 61 ans et 6 mois, 447 mois, soit 149 trimestres. Les
+      abattements de la réforme, que la fiche ne porte pas : 1,5 % par
+      trimestre d'anticipation avant l'âge légal, dès 57 ans, et 0,5 %
+      par trimestre manquant à la durée suffisante, supprimés à l'« âge
+      suffisant » de 65 ans depuis le 1er juillet 2019 (tableaux 3 et 4
+      du même rapport). Salaire de référence : quinze ans, écrit ici
+      comme les dix meilleures années, la valeur la plus proche du
+      catalogue.
   - debut: 2023
     fin: null
     type_calcul: annuites
@@ -84,18 +199,24 @@ periodes:
     avantages_non_contributifs: [reversion]
     notes: >-
       SOURCE : fiche « La sécurité sociale des salariés en Polynésie
-      française » et fiche de cotisations 2026 du CLEISS (cleiss.fr, lues
-      par scripts/fetch/sites_institutionnels.py), qui résument les
+      française » et fiche de cotisations 2026 du CLEISS (cleiss.fr,
+      lues par scripts/fetch/sites_institutionnels.py), qui résument les
       délibérations de l'assemblée de la Polynésie française, hors JORF.
-      TRANCHE A : « 70 % × salaire mensuel moyen × (nombre de mois cotisés
-      / 456 mois) », salaire moyen « des 180 meilleures rémunérations
-      mensuelles […] au cours des 240 derniers mois », droits « ouverts à
-      partir de 62 ans depuis le 1er janvier 2023 », taux plein avec « 38
-      ans soit 456 mois ou 152 trimestres depuis 2023 ». COTISATION 2026 :
-      « vieillesse tranche A : 15,69 % [employeur], 7,84 % [salarié], 269
-      000 FCFP » par mois, soit 23,53 % dont un tiers salarial ; le
-      plafond de 269 000 FCFP (2 254 €) est lu comme 0,69 plafond national
-      — la fiche prend le plafond national, plus haut. DEPUIS 2023 : 62
-      ans, 456 mois (152 trimestres), 70 % ; le salaire moyen de 180 mois
-      sur les 240 derniers est écrit comme les dix meilleures années, la
-      valeur la plus proche du catalogue.
+      TRANCHE A : « 70 % × salaire mensuel moyen × (nombre de mois
+      cotisés / 456 mois) », salaire moyen « des 180 meilleures
+      rémunérations mensuelles […] au cours des 240 derniers mois »,
+      droits « ouverts à partir de 62 ans depuis le 1er janvier 2023 »,
+      taux plein avec « 38 ans soit 456 mois ou 152 trimestres depuis
+      2023 ». COTISATION 2026 : « vieillesse tranche A : 15,69 %
+      [employeur], 7,84 % [salarié], 269 000 FCFP » par mois, soit 23,53
+      % dont un tiers salarial ; le plafond de 269 000 FCFP (2 254 €)
+      est lu comme 0,69 plafond national — la fiche prend le plafond
+      national, plus haut. DEPUIS 2023 : 62 ans, 456 mois (152
+      trimestres), 70 %, au terme de la montée en charge. Les
+      abattements de la réforme, que la fiche ne porte pas : 1,5 % par
+      trimestre d'anticipation avant l'âge légal, dès 57 ans, et 0,5 %
+      par trimestre manquant à la durée suffisante, supprimés à l'« âge
+      suffisant » de 65 ans depuis le 1er juillet 2019 (tableaux 3 et 4
+      du même rapport). Salaire de référence : quinze ans, écrit ici
+      comme les dix meilleures années, la valeur la plus proche du
+      catalogue.
