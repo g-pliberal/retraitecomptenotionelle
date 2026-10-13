@@ -32,12 +32,14 @@ inventaire:
   statuts: [ministre_du_culte]
   textes:
     - {reference: "code de la sécurité sociale, L. 921-1, complété par la loi n° 2005-1579 du 19 décembre 2005, article 75, VII", id: LEGIARTI000047452643}
-    - {reference: "circulaires de la CAVIMAC sur le recouvrement des cotisations de retraite complémentaire des cultes, n° 2021/04 à 2026/03", id: null}
+    - {reference: "circulaires de la CAVIMAC sur le recouvrement des cotisations de retraite complémentaire des cultes, n° 2020/01 à 2026/03", id: null}
   manque: >-
     Le taux de base seul : les huit taux spécifiques de la CAVIMAC, de
-    11,13 à 21,31 %, ne sont pas portés ; avant 2019, le taux est celui de
-    la tranche 1 de l'Arrco, aucune circulaire antérieure à novembre 2021
-    n'étant lisible.
+    11,13 à 21,31 %, ne sont pas portés, rien de publié ne disant quelles
+    collectivités les appliquent ni ce qu'ils achètent (fiche
+    `cultes_retraite_complementaire_taux_specifiques`) ; avant 2019, le
+    taux est celui de la tranche 1 de l'Arrco, les circulaires lues ne
+    commençant qu'en janvier 2020.
 periodes:
   - debut: 2006
     fin: 2010
@@ -63,9 +65,12 @@ periodes:
     avantages_non_contributifs: [majoration_enfants, reversion]
     notes: >-
       Taux de la tranche 1 de l'Arrco, 6 % appelés à 125 %, repris de sa
-      fiche : les circulaires de la CAVIMAC lisibles vont de novembre 2021
-      à juin 2026, et portent toutes le même forfait et le même taux de
-      base. Voir la dernière période pour la règle.
+      fiche : les circulaires de la CAVIMAC lues vont de janvier 2020 à
+      juin 2026, et portent toutes le même forfait et le même taux de
+      base. Au 1er mai 2008, un guide pour les associations cultuelles
+      (Actes 6) donne 7,50 % du forfait, 3,00 % à l'assuré et 4,50 % à la
+      collectivité, et l'AGFF en plus. Voir la dernière période pour la
+      règle.
 
   - debut: 2011
     fin: 2013
@@ -219,7 +224,10 @@ periodes:
       6,01 % à la charge de la collectivité et 4,01 % de l'assuré : 7,87 % de
       cotisation qui ouvre des points, et les 2,15 % de la contribution
       d'équilibre générale, qui n'en ouvrent pas. Les huit « taux
-      spécifiques » qu'elle énumère, de 11,13 à 21,31 %, ne sont pas portés.
+      spécifiques » qu'elle énumère, de 11,13 à 21,31 %, ne sont pas
+      portés : aucune circulaire ne dit quelles collectivités les
+      appliquent ni quelle part de chacun ouvre des points (fiche
+      `cultes_retraite_complementaire_taux_specifiques`).
       Les points sont ceux de l'Arrco puis de l'Agirc-Arrco (`points_de`),
       achetés et servis à leur barème : seule l'assiette diffère, comme pour
       la tranche 2 de l'Arrco.

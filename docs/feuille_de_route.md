@@ -2094,16 +2094,16 @@ publique.
 
 ### 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait — `en cours`
 
-**Reprise, au 4 octobre 2026.** Fait : le plafond du RAFP, les points
-gratuits de la RCO, l'Arrco des cultes, le salaire annuel moyen et les
-fractions de pension de la CAVIMAC, le routage calédonien (notes du
-3 octobre) ; les ouvriers de l'État hors du RAFP, par l'action 133 ; le
-barème de l'Ircantec pour enfants ; les exceptions au plafond du RAFP et la
-cotisation volontaire outre-mer, documentées en quatre fiches non modélisées ;
-les 66 points gratuits de la RCO, documentés sans être modélisés (notes du
-4 octobre). Reste, dans cet ordre : les huit taux de l'Arrco des cultes ; les
-cotisations forfaitaires de la CAVIMAC de 1979 à 1997. Commencer par les taux
-de l'Arrco des cultes (fiche `cultes_retraite_complementaire`, ses `a_relire`).
+**Reprise, au 13 octobre 2026.** Fait : le plafond et les exceptions du RAFP,
+les points gratuits de la RCO, l'Arrco des cultes, le salaire annuel moyen et
+les fractions de pension de la CAVIMAC, le routage calédonien, le barème de
+l'Ircantec pour enfants (notes des 3 et 4 octobre) ; les huit taux spécifiques
+de l'Arrco des cultes, lus dans toutes les circulaires de la CAVIMAC et définis
+nulle part : fiche `cultes_retraite_complementaire_taux_specifiques`, à
+vérifier, la question à poser à la caisse par le propriétaire (note du
+13 octobre, `119/2026-10-13-taux-specifiques-des-cultes.md`). Reste : les
+cotisations forfaitaires de la CAVIMAC de 1979 à 1997. Commencer par la
+dernière question de la fiche `cultes_fractions_de_pension`.
 
 **Demande.** « Il me semble qu'il manque encore pas mal de choses sur certains
 régimes complémentaires. Tu peux me dire ce qu'il manque ? », puis, la liste

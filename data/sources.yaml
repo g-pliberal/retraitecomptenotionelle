@@ -3007,15 +3007,20 @@ institutions:
         cible: data/reference/regimes/arrco_cultes.yaml
         note: >-
           Une circulaire par relèvement du SMIC, lisibles de la n° 2021/04 (15
-          novembre 2021) à la n° 2026/03 (27 mai 2026) ; les précédentes sont
-          des images. Toutes portent la même règle pour la retraite
+          octobre 2021) à la n° 2026/03 (27 mai 2026) ; les n° 2020/01 et
+          2021/01, des images, lues page à page le 13 octobre 2026, n'ont
+          qu'un « taux contractuel de référence », le même, et rien n'est en
+          ligne avant 2020. Toutes portent la même règle pour la retraite
           complémentaire obligatoire des cultes : l'assiette forfaitaire des
           autres cotisations, le SMIC mensuel — 1 589 € en novembre 2021,
           1 867 € en juin 2026 —, au « taux de base » de 10,02 %, dont 6,01 % à
           la charge de la collectivité et 4,01 % de l'assuré, soit la
           cotisation de 7,87 % de l'Agirc-Arrco et sa contribution d'équilibre
-          générale de 2,15 %. C'est la source de la fiche `arrco_cultes` ; les
-          taux eux-mêmes restent ceux de l'Agirc-Arrco.
+          générale de 2,15 %. Les lisibles énumèrent aussi huit « taux
+          spécifiques », de 11,13 à 21,31 %, sans les définir (fiche de règle
+          `cultes_retraite_complementaire_taux_specifiques`). C'est la source
+          de la fiche `arrco_cultes` ; les taux eux-mêmes restent ceux de
+          l'Agirc-Arrco.
 
   urssaf:
     nom: Urssaf Caisse nationale

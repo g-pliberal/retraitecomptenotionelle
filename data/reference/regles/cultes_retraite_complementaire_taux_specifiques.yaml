@@ -1,0 +1,128 @@
+schema_version: 1
+id: cultes_retraite_complementaire_taux_specifiques
+intitule: >-
+  Au lieu du « taux de base » de 10,02 %, la CAVIMAC appelle la cotisation de
+  retraite complémentaire obligatoire des cultes, sur le même forfait, à l'un de
+  huit « taux spécifiques », de 11,13 à 21,31 %, pour les collectivités qui les
+  appliquent ; rien de publié ne dit lesquelles, depuis quand, ni quelle part de
+  chaque taux ouvre des points.
+domaine: cotisations
+regimes: [arrco_cultes]
+etape: acquerir_les_droits
+face: droit
+etat: a_verifier
+lit:
+- le taux de retraite complémentaire que la collectivité du ministre applique, année par année — le taux de base ou l'un des huit taux spécifiques
+ecrit:
+- les points de l'Arrco, puis de l'Agirc-Arrco, que la cotisation au taux spécifique achète au-delà de celle au taux de base
+dates_qui_decident:
+- periode.debut
+effet: >-
+  Le ministre dont la collectivité applique un taux spécifique cotise de 11 à
+  113 % de plus qu'au taux de base, et le modèle ne lui compte que les points du
+  taux de base. Si l'excédent achète des points comme un taux supérieur de
+  l'accord Agirc-Arrco (article 35) — la contribution d'équilibre générale de
+  2,15 % retranchée, le reste appelé à 127 % —, il en a de 1,14 à 2,43 fois plus
+  depuis 2019, et avant si ces taux existaient déjà ; c'est une hypothèse, que
+  rien de publié ne confirme. Le simulateur ne demande pas le taux de la
+  collectivité.
+sources:
+  lu_le: 2026-10-13
+  prochaine_relecture: 2027-10-13
+  a_relire:
+  - >-
+    Ce que chaque taux spécifique achète — sa part génératrice de points, son
+    taux de calcul des points ou d'équivalence —, ce qu'il était sous l'Arrco,
+    avant 2019, et quelles collectivités l'appliquent, depuis quand. Ni les
+    circulaires de la CAVIMAC, ni ses rapports d'activité de 2016 à 2025, ni
+    l'accord Agirc-Arrco et ses circulaires lues ne le disent : la règle tient
+    sans doute aux conventions de partenariat de la CAVIMAC avec les
+    institutions de l'Arrco, que rien ne publie. La demander au service du
+    recouvrement de la CAVIMAC, ou à Malakoff Humanis Agirc-Arrco, seule
+    compétente pour les cultes depuis le 1er janvier 2025.
+  - >-
+    La page de la CAVIMAC « Nouveaux montants des cotisations au 1er janvier
+    2019 », que les moteurs de recherche indexent encore et que le site ne sert
+    plus (404 le 13 octobre 2026), porterait les taux de 2018 et de 2019 :
+    l'archive du web, que le réseau de la session refuse, la garde peut-être.
+  lectures:
+  - type: autre
+    reference: >-
+      CAVIMAC, circulaires n° 2020/01 du 17 janvier 2020 et n° 2021/01 du 15
+      janvier 2021, deux images numérisées, lues page à page : la « Cotisation
+      mensuelle de retraite complémentaire » n'y a qu'une ligne, « Taux
+      contractuel de référence 10,02 % », « Part collective (60%) », « Part
+      personnelle (40 %) », sur le forfait de 1 539 € puis de 1 555 € ; copies
+      datées dans data/brut/cultes_rco
+    url: https://www.cavimac.fr/publications
+    date: 2021-01-15
+  - type: autre
+    reference: >-
+      CAVIMAC, les onze circulaires de cotisations lisibles, de la n° 2021/04 du
+      15 octobre 2021 à la n° 2026/03 du 27 mai 2026 : chacune énumère sous
+      « RCO » le taux de base, 10,02 %, ses parts collective et personnelle,
+      6,01 et 4,01 %, puis les huit taux spécifiques, les mêmes de la première à
+      la dernière, sans part ni définition ; « Les taux de cotisation demeurent,
+      eux, inchangés »
+    url: https://www.cavimac.fr/publications
+    date: 2026-05-27
+  - type: autre
+    reference: >-
+      Agirc-Arrco, accord national interprofessionnel du 17 novembre 2017,
+      article 35, 2 (« Accords spécifiques » : les taux supérieurs nés d'une
+      obligation antérieure au 2 janvier 1993 continuent de s'appliquer, sauf
+      contribution de maintien des droits, taux d'équivalence ou démission), et
+      circulaire 2019-1-DRJ du 9 janvier 2019, fiches 3 et 4 : aucune ne nomme
+      les cultes, dont l'obligation date de 2006 ; copies datées dans
+      data/brut/cultes_rco
+    url: https://www.agirc-arrco.fr/
+    date: 2019-01-09
+  - type: autre
+    reference: >-
+      CAVIMAC, rapports d'activité de 2016 à 2025, triptyque retraite de 2024,
+      pages de l'espace partenaires, de la retraite complémentaire et de la
+      déclaration sociale nominative : rien sur les taux spécifiques
+    url: https://www.cavimac.fr/publications
+    date: 2026-10-13
+historique:
+- >-
+  2026-10-13 — née avec l'action 119 : les huit taux spécifiques que la fiche
+  `cultes_retraite_complementaire` laissait à relire, lus dans toutes les
+  circulaires de cotisations que la CAVIMAC publie, et que rien de publié ne
+  définit.
+textes_a_rattacher:
+- reference: >-
+    CAVIMAC, circulaire n° 2021/04 du 15 octobre 2021, cotisations « à compter
+    de l'échéance du 15 novembre 2021 (au titre du mois d'octobre 2021) », hors
+    JORF : la première qui énumère les huit taux spécifiques
+  citation: >-
+    « Les taux de cotisation demeurent, eux, inchangés » ; « Tous cultes - taux
+    spécifique n° 1 1 589 11,13% » […] « Tous cultes - taux spécifique n° 8
+    1 589 21,31% »
+  lu_le: 2026-10-13
+  empreinte: sha256:0c191c0d44bc6d1987bd55eb6be30b1da4bb54a732f14a90bedc304f1346a456
+- reference: >-
+    CAVIMAC, circulaire n° 2026/03 du 27 mai 2026, cotisations « à compter du
+    1er juin 2026 », hors JORF : la dernière
+  citation: >-
+    « Tous cultes - taux spécifique n° 1 1 867 11,13% 208 » ; « n° 2 1 867
+    12,00% 224 » ; « n° 3 1 867 13,06% 244 » ; « n° 4 1 867 14,30% 267 » ;
+    « n° 5 1 867 15,27% 285 » ; « n° 6 1 867 17,21% 321 » ; « n° 7 1 867
+    18,83% 352 » ; « n° 8 1 867 21,31% 398 »
+  lu_le: 2026-10-13
+  empreinte: sha256:7cb68acf8170f440047f8c531ec8547da8b628a3e61a761e15f5b1580567b35e
+- reference: >-
+    CAVIMAC, circulaires n° 2020/01 du 17 janvier 2020 et n° 2021/01 du 15
+    janvier 2021, hors JORF, images numérisées : avant les huit taux, un seul
+  citation: >-
+    « Taux contractuel de référence » « 10, 02 % » ; « Part collective (60%) » ;
+    « Part personnelle (40 %) »
+  lu_le: 2026-10-13
+  empreinte: >-
+    sha256:c6bffbf68ced8681401e4491b83c4affab9e65b71d1174c0879aaad24050b6af (n° 2020/01),
+    sha256:c6073e2197e5b868e34252bed4a5b826edc45002bea99b18c2d22ec787c0134b (n° 2021/01)
+- reference: >-
+    les conventions de partenariat de la CAVIMAC avec les institutions de
+    l'Arrco, depuis 2006, non publiées ; l'espace partenaires de la CAVIMAC en
+    compte « cinq »
+  question: ce que chaque taux spécifique achète, et à quelles collectivités il s'applique

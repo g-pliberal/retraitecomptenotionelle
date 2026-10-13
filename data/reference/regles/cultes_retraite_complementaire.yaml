@@ -16,14 +16,20 @@ effet: >-
   au scénario 1, celui né en 1955 6,2 %. Fiche `arrco_cultes` — points de l'Arrco
   puis de l'Agirc-Arrco, assiette forfaitaire —, statut `ministre_du_culte` scindé
   de `membre_congregation`, tenu par `test_le_ministre_du_culte_remunere_cotise_a_l_arrco_sur_le_forfait`
-  et son pendant JavaScript.
+  et son pendant JavaScript. Le taux est celui de base : les huit taux spécifiques
+  de la CAVIMAC, que rien de publié ne définit, ont leur fiche,
+  `cultes_retraite_complementaire_taux_specifiques`.
 sources:
-  lu_le: 2026-09-23
-  prochaine_relecture: 2027-09-30
+  lu_le: 2026-10-13
+  prochaine_relecture: 2027-10-13
   a_relire:
   - >-
-    Les huit taux spécifiques de la CAVIMAC, de 11,13 à 21,31 %. Le taux d'avant
-    2019, repris de l'Arrco faute de circulaire lisible antérieure à novembre 2021.
+    Le taux de 2006 à 2019, repris de la tranche 1 de l'Arrco puis de l'Agirc-Arrco :
+    les circulaires de la CAVIMAC lues commencent en janvier 2020, et seul un guide
+    pour les associations cultuelles le confirme, au 1er mai 2008. Ce guide fait
+    aussi verser l'AGFF aux cultes, 2,00 % du forfait, que
+    `contributions_equilibre_agirc_arrco.yaml` ne leur fait pas verser (action 138).
+  - >-
     Le lecteur de relevé rattache encore toute ligne de la CAVIMAC au ministre rémunéré.
   lectures:
   - type: legifrance
@@ -39,9 +45,43 @@ sources:
       vieillesse et retraite complémentaire obligatoire des cultes » portées au
       SMIC, 1 867 € ; « RCO — Tous cultes - taux de base » 10,02 %, part collective
       6,01 %, part personnelle 4,01 % ; même règle dans chaque circulaire lisible
-      depuis la n° 2021/04 du 15 novembre 2021
+      depuis la n° 2021/04 du 15 octobre 2021
     url: https://www.cavimac.fr/publications
     date: 2026-09-23
+  - type: autre
+    reference: >-
+      CAVIMAC, circulaires n° 2020/01 du 17 janvier 2020 et n° 2021/01 du 15 janvier
+      2021, deux images numérisées, lues page à page le 13 octobre 2026 : le SMIC
+      mensuel arrondi, 1 539 € puis 1 555 €, « constitue la nouvelle assiette
+      forfaitaire de calcul des cotisations mensuelles d'assurance maladie –
+      maternité – invalidité, vieillesse et retraite complémentaire obligatoire des
+      cultes » (n° 2020/01) ; dans les deux, « Taux contractuel de référence
+      10, 02 % », « Part collective (60%) », « Part personnelle (40 %) » ; copies
+      datées dans data/brut/cultes_rco
+    url: https://www.cavimac.fr/publications
+    date: 2021-01-15
+  - type: autre
+    reference: >-
+      Actes 6, « Le culte et la législation », chapitre « La rémunération des
+      ministres du culte », juin 2008, guide pour les associations cultuelles hors
+      culte catholique : cotisations au 1er mai 2008 sur le forfait de 1 309 €,
+      « Retraite complémentaire 1 309.00 3.00 39.27 4.50 58.91 » — 3,00 % pour
+      l'assuré, 4,50 % pour la collectivité — et « AGFF […] 1 309.00 0.80 10.47
+      1.20 15.70 » ; « Par décision de l'ARRCO, la caisse de retraite désignée est
+      Vauban Humanis ». Source de seconde main, la seule lue avant 2020 ; copie
+      datée dans data/brut/cultes_rco
+    url: http://www.actes6.com/images_ok/file/social/remuneration_ministres_culte.pdf
+    date: 2008-06-23
+  - type: autre
+    reference: >-
+      Agirc-Arrco, circulaire 2025-2-DRJ du 22 janvier 2025, qui transmet l'avenant
+      n° 25 : il attribue « à Malakoff Humanis Agirc-Arrco la gestion de l'ensemble
+      des adhésions des ministres des cultes et des membres des congrégations et des
+      collectivités religieuses affiliés au régime de base » de la CAVIMAC, y
+      compris outre-mer, depuis le 1er janvier 2025 ; copie datée dans
+      data/brut/cultes_rco
+    url: https://www.agirc-arrco.fr/storage/2025/01/CirculaireAgircArrco2025-2drj.pdf
+    date: 2025-01-22
   - type: autre
     reference: >-
       CAVIMAC, espace partenaires : « Il a été institué à compter du 1er janvier
@@ -62,11 +102,25 @@ textes_a_rattacher:
 - reference: >-
     code de la sécurité sociale, R. 382-89 et R. 382-90 : l'assiette forfaitaire
     du régime des cultes
+textes_sans_effet:
 - reference: >-
     avenant n° 25 du 18 décembre 2024 à l'accord Agirc-Arrco, avis d'extension du
-    9 avril 2025 (JORFARTI000051439935) : il « complète la dernière phrase de l'article
-    2 de l'Annexe B pour tenir compte des ministres des cultes et des membres des
-    congrégations » ; le texte de l'accord n'est pas lu
+    9 avril 2025 (JORFARTI000051439935), texte lu dans la circulaire Agirc-Arrco
+    2025-2-DRJ du 22 janvier 2025, hors JORF
+  article: annexe B, article 2, dernière phrase
+  citation: >-
+    « La dernière phrase de l'article 2 de l'Annexe B est complétée de la façon
+    suivante : après le mot « employeur » est ajoutée la phrase suivante « et aux
+    ministres des cultes et aux membres des congrégations et des collectivités
+    religieuses affiliés au régime de base de la Caisse d'assurance vieillesse,
+    invalidité et maladie des cultes (CAVIMAC). » » ; « Le présent avenant entre en
+    vigueur à compter du 1er janvier 2025. »
+  lu_le: 2026-10-13
+  empreinte: sha256:69986ec98ea0a734b1134ed63a83066269435aa9d8231cf130b81045fa35ebc1
+  motif: >-
+    l'annexe B désigne les « institutions compétentes » : l'avenant confie les
+    cultes à Malakoff Humanis Agirc-Arrco, outre-mer compris, sans toucher
+    l'assiette, le taux ni les points
 reformes:
 - cultes_arrco_2006
 code:
