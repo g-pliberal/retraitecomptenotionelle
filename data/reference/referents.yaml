@@ -3080,11 +3080,32 @@ referents:
       L'ASPA et l'ASI (`R/14_minima_pa.R`), la CSG, la CRDS et la CASA des
       pensions selon le revenu fiscal (`R/12_cotisations.R`), l'impôt ; les
       pensions viennent des données de l'ERFS, qu'il ne simule pas.
-      Législations 2016 à 2022 en SAS, 2023 et 2024 en R.
+      Législations 2016 à 2022 en SAS ; en R, les paramètres des
+      prélèvements jusqu'à 2025, et le barème des minima au mois de janvier
+      2021 à décembre 2025.
+    version: "Ines 2024.1, commit a55816c"
     confrontation: >-
-      Des paramètres et des calculs du foyer à comparer : l'ASPA et les
-      prélèvements des pensions, une seconde source indépendante de
-      LexImpact.
+      Un calcul rejoué, fait le 13 octobre 2026 : exécuté à part dans R, sur
+      l'archive du commit `a55816c`, sans l'ERFS (`scripts/fetch/ines.py`,
+      `ines.R`). De `calcule_cotis`, les seules instructions qui classent le
+      foyer par son revenu fiscal de l'avant-dernière année et prélèvent les
+      pensions, évaluées telles qu'Ines les écrit, sur dix-huit foyers de
+      2023 à 2025, dont neuf au seuil de la caisse ou un euro au-delà ;
+      `modelise_aspa_asi`, entière, sur huit foyers de 2021 à 2025 ; les
+      deux à la suite, sur deux allocataires. Ses sorties sont figées dans
+      `tests/temoins/ines.json`, avec les seuils que le barème de la caisse
+      donne pour chaque année, et `tests/test_ines.py` y confronte le
+      scénario 1 sans R, chaque écart déclaré avec sa cause. Concordent : les
+      taux de CSG, leur part déductible, la CRDS et la CASA, tranche par
+      tranche ; la règle de l'ASPA d'une personne seule et d'un couple d'un
+      ou de deux allocataires, au centime une fois les barèmes égalés ; la
+      tranche de chaque foyer éloigné des seuils. Son barème de l'ASPA est
+      celui de la caisse au centime de 2022 à 2025. Le reste est aux écarts
+      ci-dessous, et à trois points du dépôt : une personne seule servie de
+      douze fois le mensuel arrondi (0,03 à 0,08 € par an de moins) ; une
+      seule valeur pour 2022, celle de janvier pour une personne seule et
+      celle de juillet pour un couple, où Ines prend la moyenne des douze
+      mois ; les revenus d'activité, hors des ressources de l'ASPA.
     ecarts:
       - constat: >-
           Il fait payer la cotisation maladie de 1 % aux pensions exonérées de
@@ -3126,6 +3147,86 @@ referents:
         preuve: >-
           param_prelev.xlsx, Imput, l. 11, colonne valeur_INES_2020
           ; usage : R/12_cotisations.R:1962, 1981
+      - constat: >-
+          Au seuil d'exonération et au seuil du taux réduit, il range le
+          foyer dans la tranche suivante : `exo_csg` et `reduc_csg` exigent
+          `rfr < seuil` (`R/12_cotisations.R:371-374`). Exécuté : à une part,
+          12 817 € de revenu fiscal paient en 2025 la CSG de 3,8 % et la
+          CRDS ; 16 755 €, la CSG de 6,6 %, la CRDS, la CASA et le 1 %.
+        tranche: >-
+          L. 136-1-2, II 1° exonère le revenu qui « n'excède pas » le premier
+          seuil ; L. 136-8, III garde le taux réduit au revenu « inférieur ou
+          égal » au second (fiche `csg_des_pensions_selon_le_revenu`, lue dans
+          l'index LEGI) ; le barème de la caisse dit « si le revenu fiscal de
+          référence dépasse ». L'écart est le sien, d'un euro de revenu.
+        preuve: >-
+          `R/12_cotisations.R:371-374`, au commit `a55816c` ;
+          tests/temoins/ines.json, foyers `une_part_au_seuil_*` ;
+          tests/test_ines.py
+      - constat: >-
+          Il majore chaque seuil de quatre quarts de part par part
+          supplémentaire (`pm_..._pac * 4 * pmax(0, npart - 1)`,
+          `R/12_cotisations.R:371-376`), le quart de part arrondi à l'euro
+          au-dessus : à deux parts, 2 € de trop quand la demi-part est
+          impaire — en 2023 au premier seuil, en 2024 aux trois, en 2025 au
+          troisième (39 888 € pour 39 886 €). Exécuté : deux parts et
+          39 886 € de revenu fiscal restent en 2025 au taux de 6,6 %.
+        tranche: >-
+          Le barème de la caisse de chaque année (circulaires Cnav 2022/36,
+          2023/27 et 2024/35) majore de deux demi-parts : 6 941 € par
+          demi-part en 2025, 3 471 € par quart de part ; L. 136-8, III majore
+          chaque seuil par demi-part (fiche `csg_des_pensions_selon_le_revenu`).
+          L'écart est le sien.
+        preuve: >-
+          `R/12_cotisations.R:371-376`, au commit `a55816c` ; param_prelev.xlsx,
+          cotis, pm_exo_csg_remp_pac, pm_plaf_csg_remp_pac,
+          pm_plaf2_csg_ret_pac ;
+          https://legislation.lassuranceretraite.fr/api/v1/baremes/baremesByFileLeafRef/prelevement_sur_retraite_seuil_revenu_assujettissement_taux_csg_2025_bar.aspx ;
+          tests/temoins/ines.json, foyers `deux_parts_*seuil*`
+      - constat: >-
+          Au taux réduit, il reconstitue la pension brute d'un ancien salarié
+          du privé en retirant de la pension imposable la cotisation maladie
+          de sa part complémentaire (`R/12_cotisations.R:1980-1983`), qu'il
+          ne prélève pas (`coprmal` nul quand `reduc_csg`) : la brute en sort
+          trop haute de 0,23 % pour la part de 22,5 % qu'il impute.
+        tranche: >-
+          D. 242-9, 1° (LEGIARTI000043870910) : pas de cotisation maladie
+          sous le seuil du taux réduit, donc rien à retirer de la pension
+          imposable ; Ines lui-même ne la prélève pas. L'écart est le sien.
+        preuve: >-
+          `R/12_cotisations.R:1969-1983, 2016-2018`, au commit `a55816c` ;
+          tests/temoins/ines.json, foyers `une_part_taux_reduit` et
+          `*_seuil_*`
+      - constat: >-
+          La pension brute qu'il donne à l'ASPA ajoute la CRDS :
+          `zrstbrut = zrsti + coprmal + csgprd + crdspr`
+          (`R/12_cotisations.R:2037`), quand sa brute (`zpenu`) est déjà
+          entière. Exécuté : un allocataire de 9 500 € de pension imposable,
+          au taux réduit par son revenu fiscal, reçoit 49,38 € d'ASPA de
+          moins par an de 2023 à 2025.
+        tranche: >-
+          La CRDS ne se déduit pas du revenu imposable, qui ne retire que la
+          CSG déductible et les cotisations (CGI, art. 154 quinquies et 83) :
+          la pension imposable la porte déjà. La caisse retient
+          « le montant brut avant cotisations » (base législative de la
+          Cnav, « Evaluation des ressources - Aspa », que la fiche
+          `minimum_vieillesse` cite). L'écart est le sien.
+        preuve: >-
+          `R/12_cotisations.R:2037` et `R/14_minima_pa.R:84-90`, au commit
+          `a55816c` ; tests/temoins/ines.json, `chaine.seul_taux_reduit`
+      - constat: >-
+          Son plafond de ressources du couple de 2021 vaut 16 893,74 € par
+          an, douze mois durant (param_presta_mensuel.xlsx, Minima,
+          mv_plfc) : 0,20 € sous celui de la caisse, et 0,10 € d'ASPA de
+          moins à chacun de deux allocataires.
+        tranche: >-
+          Le barème de l'ASPA de la caisse au 1er janvier 2021 : 16 893,94 €
+          par an, 1 407,82 € par mois (circulaire Cnav 2022/3), que le dépôt
+          sert (`minimum_vieillesse_couple.csv`). L'écart est le sien.
+        preuve: >-
+          param_presta_mensuel.xlsx, Minima, mv_plfc, colonnes jan_2021 à
+          dec_2021, au commit `a55816c` ;
+          https://legislation.lassuranceretraite.fr/api/v1/baremes/baremesByFileLeafRef/aspa_montant_bar.aspx
     fait_mieux:
       - quoi: >-
           Il fixe le taux de CSG des pensions selon le revenu fiscal de
@@ -3133,7 +3234,14 @@ referents:
           (`prelevements_remuneration.yaml:705`).
         preuve: >-
           `R/12_cotisations.R:361-376`, au commit `a55816c`
-        etat: a_reprendre
+        verification: >-
+          L. 136-8, III et III bis ; L. 136-1-2, II 1°. Repris le 5 octobre
+          2026 (138.2) : la tranche du foyer, à son revenu fiscal dit ou
+          présumé et à ses parts, aux seuils de 2026. Exécuté le 13 octobre
+          2026 : sous les seuils de la caisse de 2023 à 2025, la règle du
+          dépôt range chaque foyer comme la caisse, et Ines aussi, hors de
+          ses deux écarts aux seuils (`tests/test_ines.py`).
+        etat: repris
         chantier: "138.2"
       - quoi: >-
           Il prélève la cotisation maladie de 1 % sur les retraites
@@ -3182,7 +3290,11 @@ referents:
           prestations exonérées. Ines omet l'exonération de la
           pension de l'allocataire (écart au registre) : on ne lui
           prend que la règle sur l'ASPA elle-même.
-        etat: a_reprendre
+          Repris le 5 octobre 2026 (138.2) : l'allocataire n'est prélevé
+          de rien, ni sur ses pensions ni sur l'ASPA
+          (`Montants.du_foyer`) ; rejoué le 13 octobre 2026 contre un
+          allocataire qu'Ines prélève de 4,3 % (`tests/test_ines.py`).
+        etat: repris
         chantier: "138.2"
       - quoi: >-
           Il calcule l'impôt sur le revenu des pensions : abattement
@@ -3259,7 +3371,11 @@ referents:
           juillet 2022. Circulaire Cnav 2024-39 : 12 411,44 € par an
           en 2025, valeur d'Ines. Il cite comme source les barèmes
           de l'IPP (baremes_ipp), qui portent les dates exactes :
-          une seule confirmation.
+          une seule confirmation. Exécuté le 13 octobre 2026 : en
+          2022, sa moyenne de l'année est sous la valeur du dépôt de
+          341,60 € pour un couple, au-dessus de 220,11 € pour une
+          personne seule ; ses montants de 2022 à 2025 sont ceux de la
+          caisse au centime (barème aspa_montant_bar).
         etat: a_reprendre
         chantier: "138.2"
       - quoi: >-
@@ -3317,23 +3433,30 @@ referents:
           obligatoire, et l'écrit (limites.md, § 5 ante ter, point
           3).
     bilan: >-
-      Ines fait mieux que le dépôt sur tout ce qui entoure la pension
-      d'un retraité : le net selon le RFR et les parts, le 1 % des
-      complémentaires, l'ASPA du couple sur les ressources du foyer et
-      hors des prélèvements, l'impôt, le barème de l'ASPA daté. Il ne
-      fait rien sur la pension elle-même ni sur la réversion, qui sont
-      des données. Deux de ses paramètres sont faux : l'abattement de
-      l'ASPA de 2026 et une part complémentaire de 2020.
+      Exécuté le 13 octobre 2026, Ines calcule les prélèvements des pensions
+      et l'ASPA comme le dépôt, aux mêmes taux et sous la même règle, à ses
+      écarts près : aux seuils de la CSG, d'un euro de revenu ; la
+      cotisation maladie sous le seuil d'exonération ; au taux réduit, une
+      brute trop haute ; la CRDS aux ressources de l'ASPA ; l'allocataire
+      prélevé. Il fait mieux que le dépôt sur l'impôt, le barème de l'ASPA
+      daté au mois, les revenus d'activité de l'allocataire et le recours.
+      Il ne fait rien sur la pension elle-même ni sur la réversion, qui sont
+      des données. Trois de ses paramètres sont faux : l'abattement de
+      l'ASPA de 2026, une part complémentaire de 2020, le plafond du couple
+      de 2021.
     sas: [insee_ines]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-13
     lu_dans:
       - https://gitlab.com/insee_drees_cnaf/ines-public
+      - https://legislation.lassuranceretraite.fr/api/v1/baremes
+      - tests/temoins/ines.json
     note: >-
       Dernier commit le 16 juin 2026 (Ines 2024.1). Ses paramètres sont ceux
       de l'équipe, qui cite Légifrance, le BOFiP et les barèmes de l'IPP parmi
       ses sources. L'ERFS demande une habilitation ; les versions SAS sont
       sur Adullact (`ines-libre`).
-      Comparé au dépôt le 1er octobre 2026 au commit `a55816c`, du 16 juin.
+      Comparé au dépôt le 1er octobre 2026 au commit `a55816c`, du 16 juin ;
+      exécuté le 13 octobre 2026 au même commit, toujours le dernier.
 
   # ---- La statistique publique : la DREES ---------------------------------
   # Une seule lignée : CALIPER (2013, en SAS) est devenu le module de calcul

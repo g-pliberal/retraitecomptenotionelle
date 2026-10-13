@@ -5478,11 +5478,19 @@ sources:
       L'ASPA et les prélèvements des pensions selon le revenu fiscal
       (`R/14_minima_pa.R`, `R/12_cotisations.R`) : une seconde source, hors
       d'OpenFisca, pour le foyer et le net.
-    statut: a_explorer
+    statut: explore
+    explore_le: 2026-10-13
     note: >-
       Mesuré le 1er octobre 2026 par `scripts/fetch/sonder_sources.py` : la
       page est une coquille que le JavaScript remplit. Le code, lui, se
-      clone (`git clone`, le même jour).
+      clone (`git clone`, le même jour). Exécuté à part le 13 octobre 2026,
+      sur l'archive du commit a55816c que GitLab sert
+      (`scripts/fetch/ines.py`, `ines.R`) : ses prélèvements des pensions de
+      2023 à 2025 et son ASPA de 2021 à 2025, figés dans
+      `tests/temoins/ines.json` et rejoués par `tests/test_ines.py` ; ce qu'il
+      a montré est au registre des modèles (`ines`). Reste à en tirer : son
+      impôt sur le revenu (`R/07_impot_revenus.R`), que l'étape 5 de
+      l'action 138 confronte à OpenFisca.
 
   - id: drees_legiretraite
     url: https://git.drees.fr/drees_code_public/outils/legiretraite

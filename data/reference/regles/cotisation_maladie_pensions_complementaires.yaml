@@ -139,7 +139,9 @@ code:
 referents:
   ines: >-
     prélève le 1 % sur les complémentaires du privé, par catégorie et quantile, mais
-    aussi sur les pensions exonérées de CSG
+    aussi sur les pensions exonérées de CSG ; exécuté le 13 octobre 2026
+    (tests/test_ines.py), au même taux et aux mêmes tranches hors de celle-là, mais au
+    taux réduit il retire de la pension imposable le 1 % qu'il ne prélève pas
   devcrafting_retraites: son taux de remplacement net retire 10,1 % à l'Agirc-Arrco et 9,1 % à la base
   openfisca_france: paramètre le 1 % sans qu'aucune variable le lise
   taxipp: l'oublie en remontant de la pension imposable à la pension brute

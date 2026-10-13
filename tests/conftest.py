@@ -86,10 +86,10 @@ CONTROLES = {
     # La prose et les affirmations du site, confrontées au dépôt.
     "test_prose.py", "test_affirmations.py",
     # La confrontation à OpenFisca, seconde implémentation écrite par d'autres
-    # (ses exemples officiels restent rapides, plus bas), à Destinie 2 et à
-    # TRAJECTOiRE, exécutés à part, dont les sorties sont figées ; et celle
-    # de la part des nouveaux retraités au minimum contributif à l'EACR.
-    "test_oracle.py", "test_destinie.py", "test_trajectoire.py",
+    # (ses exemples officiels restent rapides, plus bas), à Destinie 2, à
+    # TRAJECTOiRE et à Ines, exécutés à part, dont les sorties sont figées ; et
+    # celle de la part des nouveaux retraités au minimum contributif à l'EACR.
+    "test_oracle.py", "test_destinie.py", "test_trajectoire.py", "test_ines.py",
     "test_part_minimum_contributif.py",
     # Les indicateurs de cycle de vie, confrontés au COR, à TRAJECTOiRE et à
     # l'OCDE, sous leurs conventions.

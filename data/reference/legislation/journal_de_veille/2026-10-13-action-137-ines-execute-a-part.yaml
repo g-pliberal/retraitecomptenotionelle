@@ -1,0 +1,21 @@
+date: "2026-10-13"
+session: "action 137 : Ines exécuté à part, ses prélèvements des pensions et son ASPA rejoués dans le scénario 1"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée : la session confronte. Le code d'Ines au
+  commit a55816c (16 juin 2026, Ines 2024.1), téléchargé de GitLab et exécuté hors du
+  dépôt ; les barèmes de la caisse par son API, lus le jour même : les seuils de revenu
+  fiscal de la CSG des pensions de 2023 à 2026 (circulaires Cnav 2022/36, 2023/27,
+  2024/35 et 2025/35) et le barème de l'ASPA de 2020 à 2026 (circulaires Cnav 2021/1 à
+  2025/29). Les fiches minimum_vieillesse, csg_des_pensions_selon_le_revenu et
+  cotisation_maladie_pensions_complementaires, pour les textes qu'elles citent.
+trouve: >-
+  Aucun texte nouveau. La caisse publie ses seuils de CSG par demi-part et par quart de
+  part ; deux demi-parts font à deux parts 2 € de moins que quatre quarts de part
+  arrondis quand la demi-part est impaire (39 886 € au taux plein de 2025), ce qu'Ines
+  ne suit pas. Son barème mensuel de l'ASPA est celui de la caisse au centime de 2022 à
+  2025 ; le plafond du couple de 2021 de la caisse vaut 16 893,94 €, celui d'Ines
+  16 893,74 €. Le dépôt sert les seuils de 2026 de la caisse.
+reste: >-
+  Les seuils de CSG de 2027 et le barème de l'ASPA de 2027, à leur publication ; la
+  série de l'ASPA d'une personne seule, douze fois le mensuel, et la valeur de 2022,
+  « à décider » à l'étape 2 de l'action 138.

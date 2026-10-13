@@ -171,7 +171,12 @@ code:
   tests: tests/test_net_pensions.py ; tests/test_estimation_du_site.py
 referents:
   openfisca_france: la CSG, la CRDS et la CASA des pensions selon le revenu fiscal de N−2 et les parts
-  ines: le taux de CSG selon le revenu fiscal et les parts
+  ines: >-
+    le taux de CSG selon le revenu fiscal de N−2 et les parts ; exécuté le 13 octobre 2026
+    (tests/test_ines.py), les mêmes taux et la même règle de 2023 à 2025, sauf aux seuils —
+    il passe à la tranche suivante au seuil même des deux premiers, et majore de quatre
+    quarts de part arrondis au lieu de deux demi-parts — et sauf l'allocataire de l'ASPA,
+    qu'il prélève
   trajectoire: la pension prise pour seule ressource, abattement de 10 % compris
   destinie_2: trois cas, sans le taux médian, et le revenu approché par les pensions
   euromod: les seuils de 2026 et leurs majorations par demi-part, sans le lissage

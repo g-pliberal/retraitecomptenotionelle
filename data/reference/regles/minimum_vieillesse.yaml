@@ -158,3 +158,10 @@ textes_a_rattacher:
 - reference: L. 161-25 CSS
 - reference: D. 815-1 et D. 815-2 CSS, les barèmes d'une personne seule et d'un couple
 - reference: R. 815-28 et R. 815-29 CSS, le partage et l'appréciation des ressources
+referents:
+  ines: >-
+    exécuté le 13 octobre 2026 (tests/test_ines.py) : la même règle, d'une personne seule
+    et d'un couple d'un ou de deux allocataires, au centime une fois les barèmes égalés ;
+    son barème est la moyenne des douze mois, celui de la caisse au centime de 2022 à 2025
+    et 0,20 € sous lui pour le couple de 2021 ; il compte les revenus d'activité abattus
+    (R. 815-29), que le modèle ignore, et ajoute la CRDS à la pension brute

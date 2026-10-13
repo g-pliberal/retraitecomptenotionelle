@@ -1,0 +1,2448 @@
+{
+ "aspa": {
+  "couple_deux_allocataires": {
+   "objet": "un couple de deux allocataires",
+   "par_annee": {
+    "2021": [
+     {
+      "asi": 0,
+      "aspa_eli": 3446.87,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 10000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 3446.87,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 10000
+     }
+    ],
+    "2022": [
+     {
+      "asi": 0,
+      "aspa_eli": 3710.6825,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 10000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 3710.6825,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 10000
+     }
+    ],
+    "2023": [
+     {
+      "asi": 0,
+      "aspa_eli": 3952.53,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 10000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 3952.53,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 10000
+     }
+    ],
+    "2024": [
+     {
+      "asi": 0,
+      "aspa_eli": 4427.01,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 10000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 4427.01,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 10000
+     }
+    ],
+    "2025": [
+     {
+      "asi": 0,
+      "aspa_eli": 4634.4,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 10000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 4634.4,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 10000
+     }
+    ]
+   },
+   "personnes": [
+    {
+     "age": 70,
+     "pension_brute": 6000,
+     "salaire_brut": 0.0
+    },
+    {
+     "age": 68,
+     "pension_brute": 4000,
+     "salaire_brut": 0.0
+    }
+   ]
+  },
+  "couple_deux_allocataires_au_dessus_du_plafond": {
+   "objet": "un couple de plus de 65 ans, au-dessus du plafond du couple",
+   "par_annee": {
+    "2021": [
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 21000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 21000
+     }
+    ],
+    "2022": [
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 21000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 21000
+     }
+    ],
+    "2023": [
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 21000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 21000
+     }
+    ],
+    "2024": [
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 21000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 21000
+     }
+    ],
+    "2025": [
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 21000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 2,
+      "rev_tot_aspa_abat": 21000
+     }
+    ]
+   },
+   "personnes": [
+    {
+     "age": 70,
+     "pension_brute": 12000,
+     "salaire_brut": 0.0
+    },
+    {
+     "age": 68,
+     "pension_brute": 9000,
+     "salaire_brut": 0.0
+    }
+   ]
+  },
+  "couple_un_allocataire": {
+   "objet": "un couple, le conjoint n'a pas 65 ans",
+   "par_annee": {
+    "2021": [
+     {
+      "asi": 0,
+      "aspa_eli": 6893.74,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 10000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 10000
+     }
+    ],
+    "2022": [
+     {
+      "asi": 0,
+      "aspa_eli": 7421.365,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 10000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 10000
+     }
+    ],
+    "2023": [
+     {
+      "asi": 0,
+      "aspa_eli": 7905.06,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 10000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 10000
+     }
+    ],
+    "2024": [
+     {
+      "asi": 0,
+      "aspa_eli": 8854.02,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 10000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 10000
+     }
+    ],
+    "2025": [
+     {
+      "asi": 0,
+      "aspa_eli": 9268.8,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 10000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 10000
+     }
+    ]
+   },
+   "personnes": [
+    {
+     "age": 70,
+     "pension_brute": 6000,
+     "salaire_brut": 0.0
+    },
+    {
+     "age": 60,
+     "pension_brute": 4000,
+     "salaire_brut": 0.0
+    }
+   ]
+  },
+  "couple_un_allocataire_sans_ressources": {
+   "objet": "un couple, le conjoint n'a pas 65 ans ni de ressources",
+   "par_annee": {
+    "2021": [
+     {
+      "asi": 0,
+      "aspa_eli": 10881.75,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 1000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 1000
+     }
+    ],
+    "2022": [
+     {
+      "asi": 0,
+      "aspa_eli": 11221.465,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 1000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 1000
+     }
+    ],
+    "2023": [
+     {
+      "asi": 0,
+      "aspa_eli": 11533.02,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 1000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 1000
+     }
+    ],
+    "2024": [
+     {
+      "asi": 0,
+      "aspa_eli": 12144.27,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 1000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 1000
+     }
+    ],
+    "2025": [
+     {
+      "asi": 0,
+      "aspa_eli": 12411.44,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 1000
+     },
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": true,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 1000
+     }
+    ]
+   },
+   "personnes": [
+    {
+     "age": 70,
+     "pension_brute": 1000,
+     "salaire_brut": 0.0
+    },
+    {
+     "age": 60,
+     "pension_brute": 0,
+     "salaire_brut": 0.0
+    }
+   ]
+  },
+  "seul_au_dessus_du_plafond": {
+   "objet": "une personne seule, au-dessus du plafond",
+   "par_annee": {
+    "2021": [
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 13000
+     }
+    ],
+    "2022": [
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 13000
+     }
+    ],
+    "2023": [
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 13000
+     }
+    ],
+    "2024": [
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 13000
+     }
+    ],
+    "2025": [
+     {
+      "asi": 0,
+      "aspa_eli": 0,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 13000
+     }
+    ]
+   },
+   "personnes": [
+    {
+     "age": 70,
+     "pension_brute": 13000,
+     "salaire_brut": 0.0
+    }
+   ]
+  },
+  "seul_avec_salaire": {
+   "objet": "une personne seule qui travaille encore",
+   "par_annee": {
+    "2021": [
+     {
+      "asi": 0,
+      "aspa_eli": 2509.645,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 8372.105
+     }
+    ],
+    "2022": [
+     {
+      "asi": 0,
+      "aspa_eli": 3144.655,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 8076.81
+     }
+    ],
+    "2023": [
+     {
+      "asi": 0,
+      "aspa_eli": 3777.44,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 7755.58
+     }
+    ],
+    "2024": [
+     {
+      "asi": 0,
+      "aspa_eli": 4526.1,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 7618.17
+     }
+    ],
+    "2025": [
+     {
+      "asi": 0,
+      "aspa_eli": 4897.92,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 7513.52
+     }
+    ]
+   },
+   "personnes": [
+    {
+     "age": 66,
+     "pension_brute": 5000,
+     "salaire_brut": 9000
+    }
+   ]
+  },
+  "seul_petite_pension": {
+   "objet": "une personne seule, 6 000 € de pension",
+   "par_annee": {
+    "2021": [
+     {
+      "asi": 0,
+      "aspa_eli": 4881.75,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 6000
+     }
+    ],
+    "2022": [
+     {
+      "asi": 0,
+      "aspa_eli": 5221.465,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 6000
+     }
+    ],
+    "2023": [
+     {
+      "asi": 0,
+      "aspa_eli": 5533.02,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 6000
+     }
+    ],
+    "2024": [
+     {
+      "asi": 0,
+      "aspa_eli": 6144.27,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 6000
+     }
+    ],
+    "2025": [
+     {
+      "asi": 0,
+      "aspa_eli": 6411.44,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 6000
+     }
+    ]
+   },
+   "personnes": [
+    {
+     "age": 70,
+     "pension_brute": 6000,
+     "salaire_brut": 0.0
+    }
+   ]
+  },
+  "seul_sans_ressources": {
+   "objet": "une personne seule, sans pension",
+   "par_annee": {
+    "2021": [
+     {
+      "asi": 0,
+      "aspa_eli": 10881.75,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 0
+     }
+    ],
+    "2022": [
+     {
+      "asi": 0,
+      "aspa_eli": 11221.465,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 0
+     }
+    ],
+    "2023": [
+     {
+      "asi": 0,
+      "aspa_eli": 11533.02,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 0
+     }
+    ],
+    "2024": [
+     {
+      "asi": 0,
+      "aspa_eli": 12144.27,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 0
+     }
+    ],
+    "2025": [
+     {
+      "asi": 0,
+      "aspa_eli": 12411.44,
+      "en_couple": false,
+      "nb_elig_aspa": 1,
+      "rev_tot_aspa_abat": 0
+     }
+    ]
+   },
+   "personnes": [
+    {
+     "age": 70,
+     "pension_brute": 0,
+     "salaire_brut": 0.0
+    }
+   ]
+  }
+ },
+ "auteur": "INSEE, DREES et Cnaf",
+ "chaine": {
+  "seul_exonere": {
+   "age": 70,
+   "objet": "un allocataire exonéré de CSG par son revenu fiscal",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Fonctionnaire",
+     "asi": 0,
+     "aspa_eli": 2533.02,
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 0,
+     "csgpr_mal": 0,
+     "csgprd": 0,
+     "csgpri": 0,
+     "en_couple": false,
+     "exo_csg": 1,
+     "interm_csg": 1,
+     "nb_elig_aspa": 1,
+     "partretrcompl": null,
+     "reduc_csg": 1,
+     "rev_tot_aspa_abat": 9000,
+     "zpenu": 9000,
+     "zpenuc": 0,
+     "zpenug": 9000,
+     "zrstbrut": 9000
+    },
+    "2024": {
+     "ancienne_prof": "Fonctionnaire",
+     "asi": 0,
+     "aspa_eli": 3144.27,
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 0,
+     "csgpr_mal": 0,
+     "csgprd": 0,
+     "csgpri": 0,
+     "en_couple": false,
+     "exo_csg": 1,
+     "interm_csg": 1,
+     "nb_elig_aspa": 1,
+     "partretrcompl": null,
+     "reduc_csg": 1,
+     "rev_tot_aspa_abat": 9000,
+     "zpenu": 9000,
+     "zpenuc": 0,
+     "zpenug": 9000,
+     "zrstbrut": 9000
+    },
+    "2025": {
+     "ancienne_prof": "Fonctionnaire",
+     "asi": 0,
+     "aspa_eli": 3411.44,
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 0,
+     "csgpr_mal": 0,
+     "csgprd": 0,
+     "csgpri": 0,
+     "en_couple": false,
+     "exo_csg": 1,
+     "interm_csg": 1,
+     "nb_elig_aspa": 1,
+     "partretrcompl": null,
+     "reduc_csg": 1,
+     "rev_tot_aspa_abat": 9000,
+     "zpenu": 9000,
+     "zpenuc": 0,
+     "zpenug": 9000,
+     "zrstbrut": 9000
+    }
+   },
+   "parts": 1,
+   "pension_imposable": 9000,
+   "profession": "3311",
+   "revenu_fiscal": 8000
+  },
+  "seul_taux_reduit": {
+   "age": 70,
+   "objet": "un allocataire au taux réduit par son revenu fiscal",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Fonctionnaire",
+     "asi": 0,
+     "aspa_eli": 1608.38382536383,
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 49.3762993762994,
+     "csgpr_mal": 125.4158004158,
+     "csgprd": 375.259875259875,
+     "csgpri": 0,
+     "en_couple": false,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "nb_elig_aspa": 1,
+     "partretrcompl": null,
+     "reduc_csg": 1,
+     "rev_tot_aspa_abat": 9924.63617463617,
+     "zpenu": 9875.25987525988,
+     "zpenuc": 0,
+     "zpenug": 9875.25987525988,
+     "zrstbrut": 9924.63617463617
+    },
+    "2024": {
+     "ancienne_prof": "Fonctionnaire",
+     "asi": 0,
+     "aspa_eli": 2219.63382536383,
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 49.3762993762994,
+     "csgpr_mal": 125.4158004158,
+     "csgprd": 375.259875259875,
+     "csgpri": 0,
+     "en_couple": false,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "nb_elig_aspa": 1,
+     "partretrcompl": null,
+     "reduc_csg": 1,
+     "rev_tot_aspa_abat": 9924.63617463617,
+     "zpenu": 9875.25987525988,
+     "zpenuc": 0,
+     "zpenug": 9875.25987525988,
+     "zrstbrut": 9924.63617463617
+    },
+    "2025": {
+     "ancienne_prof": "Fonctionnaire",
+     "asi": 0,
+     "aspa_eli": 2486.80382536383,
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 49.3762993762994,
+     "csgpr_mal": 125.4158004158,
+     "csgprd": 375.259875259875,
+     "csgpri": 0,
+     "en_couple": false,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "nb_elig_aspa": 1,
+     "partretrcompl": null,
+     "reduc_csg": 1,
+     "rev_tot_aspa_abat": 9924.63617463617,
+     "zpenu": 9875.25987525988,
+     "zpenuc": 0,
+     "zpenug": 9875.25987525988,
+     "zrstbrut": 9924.63617463617
+    }
+   },
+   "parts": 1,
+   "pension_imposable": 9500,
+   "profession": "3311",
+   "revenu_fiscal": 13500
+  }
+ },
+ "code": "https://gitlab.com/insee_drees_cnaf/ines-public",
+ "commit": "a55816ca5bb50aa22f2d6391d330a4ffa9aff315",
+ "conventions": {
+  "aspa": "aspa_eli, l'allocation annuelle de chaque personne ; une personne absente des éligibles vaut null",
+  "classement": "exo_csg, reduc_csg et interm_csg, les indicatrices d'Ines : exonéré si exo_csg, taux réduit si reduc_csg, taux médian si interm_csg, taux plein sinon",
+  "montants": "annuels, en euros de l'année de législation",
+  "pension_imposable": "zrsti : la pension déclarée, nette de la CSG déductible et de la cotisation maladie ; Ines en reconstitue la brute, zpenu",
+  "revenu_fiscal": "rfr : celui de l'avant-dernière année, avec ses parts, que la table des foyers d'Ines porte à l'année N−2"
+ },
+ "environnement": {
+  "R": "R version 4.3.3 (2024-02-29)",
+  "dplyr": "1.1.4",
+  "readxl": "1.4.3",
+  "rlang": "1.1.3",
+  "tidyr": "1.3.1"
+ },
+ "execute_le": "2026-10-13",
+ "execution": "Des prélèvements, les instructions de calcule_cotis (R/12_cotisations.R) qui classent le foyer par son revenu fiscal (param_cotisations2, impot_ind) puis celles de la section des retraités (param_retraite, retraites), évaluées telles qu'Ines les écrit ; la table prof qui les relie est écrite par ines.R. De l'ASPA, modelise_aspa_asi (R/14_minima_pa.R), appelée entière, sur le barème mensuel de l'année (import_param_mensuel, profondeur nulle). La chaîne : l'ASPA sur la pension brute zrstbrut que la section des retraités reconstitue.",
+ "legislation": {
+  "aspa": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "chaine": [
+   2023,
+   2024,
+   2025
+  ],
+  "dit": "les années qu'Ines 2024.1 paramètre : les prélèvements jusqu'à 2025, le barème mensuel des minima de janvier 2021 à décembre 2025",
+  "prelevements": [
+   2023,
+   2024,
+   2025
+  ]
+ },
+ "licence": "CeCILL 2.1 (programmes) ; ODbL et DbCL (paramètres)",
+ "modele": "Ines",
+ "origine": "Sorties d'Ines, exécuté à part par scripts/fetch/ines.py et ines.R ; le code d'Ines n'entre pas au dépôt. Les chiffres ci-dessous sont ses résultats et les paramètres qu'il a lus, publiés sous sa licence, avec leur origine.",
+ "parametres_ines": {
+  "2021": {
+   "pm_abat_aspa_celib": 1406.97375,
+   "pm_abat_aspa_celib_mois_01": 1399.125,
+   "pm_abat_aspa_celib_mois_02": 1399.125,
+   "pm_abat_aspa_celib_mois_03": 1399.125,
+   "pm_abat_aspa_celib_mois_04": 1399.125,
+   "pm_abat_aspa_celib_mois_05": 1399.125,
+   "pm_abat_aspa_celib_mois_06": 1399.125,
+   "pm_abat_aspa_celib_mois_07": 1399.125,
+   "pm_abat_aspa_celib_mois_08": 1399.125,
+   "pm_abat_aspa_celib_mois_09": 1399.125,
+   "pm_abat_aspa_celib_mois_10": 1430.52,
+   "pm_abat_aspa_celib_mois_11": 1430.52,
+   "pm_abat_aspa_celib_mois_12": 1430.52,
+   "pm_abat_aspa_couple": 2344.95625,
+   "pm_abat_aspa_couple_mois_01": 2331.875,
+   "pm_abat_aspa_couple_mois_02": 2331.875,
+   "pm_abat_aspa_couple_mois_03": 2331.875,
+   "pm_abat_aspa_couple_mois_04": 2331.875,
+   "pm_abat_aspa_couple_mois_05": 2331.875,
+   "pm_abat_aspa_couple_mois_06": 2331.875,
+   "pm_abat_aspa_couple_mois_07": 2331.875,
+   "pm_abat_aspa_couple_mois_08": 2331.875,
+   "pm_abat_aspa_couple_mois_09": 2331.875,
+   "pm_abat_aspa_couple_mois_10": 2384.2,
+   "pm_abat_aspa_couple_mois_11": 2384.2,
+   "pm_abat_aspa_couple_mois_12": 2384.2,
+   "pm_mv_mi": 10881.75,
+   "pm_mv_mi_mois_01": 10881.75,
+   "pm_mv_mi_mois_02": 10881.75,
+   "pm_mv_mi_mois_03": 10881.75,
+   "pm_mv_mi_mois_04": 10881.75,
+   "pm_mv_mi_mois_05": 10881.75,
+   "pm_mv_mi_mois_06": 10881.75,
+   "pm_mv_mi_mois_07": 10881.75,
+   "pm_mv_mi_mois_08": 10881.75,
+   "pm_mv_mi_mois_09": 10881.75,
+   "pm_mv_mi_mois_10": 10881.75,
+   "pm_mv_mi_mois_11": 10881.75,
+   "pm_mv_mi_mois_12": 10881.75,
+   "pm_mv_plfc": 16893.74,
+   "pm_mv_plfc_mois_01": 16893.74,
+   "pm_mv_plfc_mois_02": 16893.74,
+   "pm_mv_plfc_mois_03": 16893.74,
+   "pm_mv_plfc_mois_04": 16893.74,
+   "pm_mv_plfc_mois_05": 16893.74,
+   "pm_mv_plfc_mois_06": 16893.74,
+   "pm_mv_plfc_mois_07": 16893.74,
+   "pm_mv_plfc_mois_08": 16893.74,
+   "pm_mv_plfc_mois_09": 16893.74,
+   "pm_mv_plfc_mois_10": 16893.74,
+   "pm_mv_plfc_mois_11": 16893.74,
+   "pm_mv_plfc_mois_12": 16893.74,
+   "pm_mv_plfi": 10881.75,
+   "pm_mv_plfi_mois_01": 10881.75,
+   "pm_mv_plfi_mois_02": 10881.75,
+   "pm_mv_plfi_mois_03": 10881.75,
+   "pm_mv_plfi_mois_04": 10881.75,
+   "pm_mv_plfi_mois_05": 10881.75,
+   "pm_mv_plfi_mois_06": 10881.75,
+   "pm_mv_plfi_mois_07": 10881.75,
+   "pm_mv_plfi_mois_08": 10881.75,
+   "pm_mv_plfi_mois_09": 10881.75,
+   "pm_mv_plfi_mois_10": 10881.75,
+   "pm_mv_plfi_mois_11": 10881.75,
+   "pm_mv_plfi_mois_12": 10881.75
+  },
+  "2022": {
+   "pm_abat_aspa_celib": 1480.7975,
+   "pm_abat_aspa_celib_mois_01": 1442.805,
+   "pm_abat_aspa_celib_mois_02": 1442.805,
+   "pm_abat_aspa_celib_mois_03": 1442.805,
+   "pm_abat_aspa_celib_mois_04": 1442.805,
+   "pm_abat_aspa_celib_mois_05": 1481.025,
+   "pm_abat_aspa_celib_mois_06": 1481.025,
+   "pm_abat_aspa_celib_mois_07": 1481.025,
+   "pm_abat_aspa_celib_mois_08": 1511.055,
+   "pm_abat_aspa_celib_mois_09": 1511.055,
+   "pm_abat_aspa_celib_mois_10": 1511.055,
+   "pm_abat_aspa_celib_mois_11": 1511.055,
+   "pm_abat_aspa_celib_mois_12": 1511.055,
+   "pm_abat_aspa_couple": 2467.99583333333,
+   "pm_abat_aspa_couple_mois_01": 2404.675,
+   "pm_abat_aspa_couple_mois_02": 2404.675,
+   "pm_abat_aspa_couple_mois_03": 2404.675,
+   "pm_abat_aspa_couple_mois_04": 2404.675,
+   "pm_abat_aspa_couple_mois_05": 2468.375,
+   "pm_abat_aspa_couple_mois_06": 2468.375,
+   "pm_abat_aspa_couple_mois_07": 2468.375,
+   "pm_abat_aspa_couple_mois_08": 2518.425,
+   "pm_abat_aspa_couple_mois_09": 2518.425,
+   "pm_abat_aspa_couple_mois_10": 2518.425,
+   "pm_abat_aspa_couple_mois_11": 2518.425,
+   "pm_abat_aspa_couple_mois_12": 2518.425,
+   "pm_mv_mi": 11221.465,
+   "pm_mv_mi_mois_01": 11001.44,
+   "pm_mv_mi_mois_02": 11001.44,
+   "pm_mv_mi_mois_03": 11001.44,
+   "pm_mv_mi_mois_04": 11001.44,
+   "pm_mv_mi_mois_05": 11001.44,
+   "pm_mv_mi_mois_06": 11001.44,
+   "pm_mv_mi_mois_07": 11441.49,
+   "pm_mv_mi_mois_08": 11441.49,
+   "pm_mv_mi_mois_09": 11441.49,
+   "pm_mv_mi_mois_10": 11441.49,
+   "pm_mv_mi_mois_11": 11441.49,
+   "pm_mv_mi_mois_12": 11441.49,
+   "pm_mv_plfc": 17421.365,
+   "pm_mv_plfc_mois_01": 17079.77,
+   "pm_mv_plfc_mois_02": 17079.77,
+   "pm_mv_plfc_mois_03": 17079.77,
+   "pm_mv_plfc_mois_04": 17079.77,
+   "pm_mv_plfc_mois_05": 17079.77,
+   "pm_mv_plfc_mois_06": 17079.77,
+   "pm_mv_plfc_mois_07": 17762.96,
+   "pm_mv_plfc_mois_08": 17762.96,
+   "pm_mv_plfc_mois_09": 17762.96,
+   "pm_mv_plfc_mois_10": 17762.96,
+   "pm_mv_plfc_mois_11": 17762.96,
+   "pm_mv_plfc_mois_12": 17762.96,
+   "pm_mv_plfi": 11221.465,
+   "pm_mv_plfi_mois_01": 11001.44,
+   "pm_mv_plfi_mois_02": 11001.44,
+   "pm_mv_plfi_mois_03": 11001.44,
+   "pm_mv_plfi_mois_04": 11001.44,
+   "pm_mv_plfi_mois_05": 11001.44,
+   "pm_mv_plfi_mois_06": 11001.44,
+   "pm_mv_plfi_mois_07": 11441.49,
+   "pm_mv_plfi_mois_08": 11441.49,
+   "pm_mv_plfi_mois_09": 11441.49,
+   "pm_mv_plfi_mois_10": 11441.49,
+   "pm_mv_plfi_mois_11": 11441.49,
+   "pm_mv_plfi_mois_12": 11441.49
+  },
+  "2023": {
+   "pm_abat_aspa_celib": 1561.105,
+   "pm_abat_aspa_celib_mois_01": 1538.355,
+   "pm_abat_aspa_celib_mois_02": 1538.355,
+   "pm_abat_aspa_celib_mois_03": 1538.355,
+   "pm_abat_aspa_celib_mois_04": 1538.355,
+   "pm_abat_aspa_celib_mois_05": 1572.48,
+   "pm_abat_aspa_celib_mois_06": 1572.48,
+   "pm_abat_aspa_celib_mois_07": 1572.48,
+   "pm_abat_aspa_celib_mois_08": 1572.48,
+   "pm_abat_aspa_celib_mois_09": 1572.48,
+   "pm_abat_aspa_celib_mois_10": 1572.48,
+   "pm_abat_aspa_celib_mois_11": 1572.48,
+   "pm_abat_aspa_celib_mois_12": 1572.48,
+   "pm_abat_aspa_couple": 2601.84166666667,
+   "pm_abat_aspa_couple_mois_01": 2563.925,
+   "pm_abat_aspa_couple_mois_02": 2563.925,
+   "pm_abat_aspa_couple_mois_03": 2563.925,
+   "pm_abat_aspa_couple_mois_04": 2563.925,
+   "pm_abat_aspa_couple_mois_05": 2620.8,
+   "pm_abat_aspa_couple_mois_06": 2620.8,
+   "pm_abat_aspa_couple_mois_07": 2620.8,
+   "pm_abat_aspa_couple_mois_08": 2620.8,
+   "pm_abat_aspa_couple_mois_09": 2620.8,
+   "pm_abat_aspa_couple_mois_10": 2620.8,
+   "pm_abat_aspa_couple_mois_11": 2620.8,
+   "pm_abat_aspa_couple_mois_12": 2620.8,
+   "pm_exo_csg_remp": 11614,
+   "pm_exo_csg_remp_pac": 1551,
+   "pm_mv_mi": 11533.02,
+   "pm_mv_mi_mois_01": 11533.02,
+   "pm_mv_mi_mois_02": 11533.02,
+   "pm_mv_mi_mois_03": 11533.02,
+   "pm_mv_mi_mois_04": 11533.02,
+   "pm_mv_mi_mois_05": 11533.02,
+   "pm_mv_mi_mois_06": 11533.02,
+   "pm_mv_mi_mois_07": 11533.02,
+   "pm_mv_mi_mois_08": 11533.02,
+   "pm_mv_mi_mois_09": 11533.02,
+   "pm_mv_mi_mois_10": 11533.02,
+   "pm_mv_mi_mois_11": 11533.02,
+   "pm_mv_mi_mois_12": 11533.02,
+   "pm_mv_plfc": 17905.06,
+   "pm_mv_plfc_mois_01": 17905.06,
+   "pm_mv_plfc_mois_02": 17905.06,
+   "pm_mv_plfc_mois_03": 17905.06,
+   "pm_mv_plfc_mois_04": 17905.06,
+   "pm_mv_plfc_mois_05": 17905.06,
+   "pm_mv_plfc_mois_06": 17905.06,
+   "pm_mv_plfc_mois_07": 17905.06,
+   "pm_mv_plfc_mois_08": 17905.06,
+   "pm_mv_plfc_mois_09": 17905.06,
+   "pm_mv_plfc_mois_10": 17905.06,
+   "pm_mv_plfc_mois_11": 17905.06,
+   "pm_mv_plfc_mois_12": 17905.06,
+   "pm_mv_plfi": 11533.02,
+   "pm_mv_plfi_mois_01": 11533.02,
+   "pm_mv_plfi_mois_02": 11533.02,
+   "pm_mv_plfi_mois_03": 11533.02,
+   "pm_mv_plfi_mois_04": 11533.02,
+   "pm_mv_plfi_mois_05": 11533.02,
+   "pm_mv_plfi_mois_06": 11533.02,
+   "pm_mv_plfi_mois_07": 11533.02,
+   "pm_mv_plfi_mois_08": 11533.02,
+   "pm_mv_plfi_mois_09": 11533.02,
+   "pm_mv_plfi_mois_10": 11533.02,
+   "pm_mv_plfi_mois_11": 11533.02,
+   "pm_mv_plfi_mois_12": 11533.02,
+   "pm_plaf2_csg_ret": 23564,
+   "pm_plaf2_csg_ret_pac": 3145,
+   "pm_plaf_csg_remp": 15183,
+   "pm_plaf_csg_remp_pac": 2027,
+   "pm_retrcp_q1": 1990.907959248,
+   "pm_retrcp_q2": 2427.471203976,
+   "pm_retrcp_q3": 2870.768072016,
+   "pm_retrcp_q4": 3617.077989096,
+   "pm_retrcp_t1": 0.349,
+   "pm_retrcp_t2": 0.378,
+   "pm_retrcp_t3": 0.433,
+   "pm_retrcp_t4": 0.507,
+   "pm_retrcp_t5": 0.65178681644874,
+   "pm_retrncp_q1": 875.37103056,
+   "pm_retrncp_q2": 1288.366593696,
+   "pm_retrncp_q3": 1656.471334752,
+   "pm_retrncp_q4": 2084.056415064,
+   "pm_retrncp_t1": 0.141,
+   "pm_retrncp_t2": 0.201,
+   "pm_retrncp_t3": 0.217,
+   "pm_retrncp_t4": 0.23,
+   "pm_retrncp_t5": 0.225,
+   "pm_tcasa": 0.003,
+   "pm_tcomapr": 0.01,
+   "pm_tcrdspr": 0.005,
+   "pm_tcsgprd1": 0.038,
+   "pm_tcsgprd1bis": 0.042,
+   "pm_tcsgprd2": 0.059,
+   "pm_tcsgpri": 0.024
+  },
+  "2024": {
+   "pm_abat_aspa_celib": 1595.4575,
+   "pm_abat_aspa_celib_mois_01": 1590.225,
+   "pm_abat_aspa_celib_mois_02": 1590.225,
+   "pm_abat_aspa_celib_mois_03": 1590.225,
+   "pm_abat_aspa_celib_mois_04": 1590.225,
+   "pm_abat_aspa_celib_mois_05": 1590.225,
+   "pm_abat_aspa_celib_mois_06": 1590.225,
+   "pm_abat_aspa_celib_mois_07": 1590.225,
+   "pm_abat_aspa_celib_mois_08": 1590.225,
+   "pm_abat_aspa_celib_mois_09": 1590.225,
+   "pm_abat_aspa_celib_mois_10": 1590.225,
+   "pm_abat_aspa_celib_mois_11": 1621.62,
+   "pm_abat_aspa_celib_mois_12": 1621.62,
+   "pm_abat_aspa_couple": 2659.09583333333,
+   "pm_abat_aspa_couple_mois_01": 2650.375,
+   "pm_abat_aspa_couple_mois_02": 2650.375,
+   "pm_abat_aspa_couple_mois_03": 2650.375,
+   "pm_abat_aspa_couple_mois_04": 2650.375,
+   "pm_abat_aspa_couple_mois_05": 2650.375,
+   "pm_abat_aspa_couple_mois_06": 2650.375,
+   "pm_abat_aspa_couple_mois_07": 2650.375,
+   "pm_abat_aspa_couple_mois_08": 2650.375,
+   "pm_abat_aspa_couple_mois_09": 2650.375,
+   "pm_abat_aspa_couple_mois_10": 2650.375,
+   "pm_abat_aspa_couple_mois_11": 2702.7,
+   "pm_abat_aspa_couple_mois_12": 2702.7,
+   "pm_exo_csg_remp": 12230,
+   "pm_exo_csg_remp_pac": 1633,
+   "pm_mv_mi": 12144.27,
+   "pm_mv_mi_mois_01": 12144.27,
+   "pm_mv_mi_mois_02": 12144.27,
+   "pm_mv_mi_mois_03": 12144.27,
+   "pm_mv_mi_mois_04": 12144.27,
+   "pm_mv_mi_mois_05": 12144.27,
+   "pm_mv_mi_mois_06": 12144.27,
+   "pm_mv_mi_mois_07": 12144.27,
+   "pm_mv_mi_mois_08": 12144.27,
+   "pm_mv_mi_mois_09": 12144.27,
+   "pm_mv_mi_mois_10": 12144.27,
+   "pm_mv_mi_mois_11": 12144.27,
+   "pm_mv_mi_mois_12": 12144.27,
+   "pm_mv_plfc": 18854.02,
+   "pm_mv_plfc_mois_01": 18854.02,
+   "pm_mv_plfc_mois_02": 18854.02,
+   "pm_mv_plfc_mois_03": 18854.02,
+   "pm_mv_plfc_mois_04": 18854.02,
+   "pm_mv_plfc_mois_05": 18854.02,
+   "pm_mv_plfc_mois_06": 18854.02,
+   "pm_mv_plfc_mois_07": 18854.02,
+   "pm_mv_plfc_mois_08": 18854.02,
+   "pm_mv_plfc_mois_09": 18854.02,
+   "pm_mv_plfc_mois_10": 18854.02,
+   "pm_mv_plfc_mois_11": 18854.02,
+   "pm_mv_plfc_mois_12": 18854.02,
+   "pm_mv_plfi": 12144.27,
+   "pm_mv_plfi_mois_01": 12144.27,
+   "pm_mv_plfi_mois_02": 12144.27,
+   "pm_mv_plfi_mois_03": 12144.27,
+   "pm_mv_plfi_mois_04": 12144.27,
+   "pm_mv_plfi_mois_05": 12144.27,
+   "pm_mv_plfi_mois_06": 12144.27,
+   "pm_mv_plfi_mois_07": 12144.27,
+   "pm_mv_plfi_mois_08": 12144.27,
+   "pm_mv_plfi_mois_09": 12144.27,
+   "pm_mv_plfi_mois_10": 12144.27,
+   "pm_mv_plfi_mois_11": 12144.27,
+   "pm_mv_plfi_mois_12": 12144.27,
+   "pm_plaf2_csg_ret": 24813,
+   "pm_plaf2_csg_ret_pac": 3312,
+   "pm_plaf_csg_remp": 15988,
+   "pm_plaf_csg_remp_pac": 2135,
+   "pm_retrcp_q1": 2030.72611843296,
+   "pm_retrcp_q2": 2476.02062805552,
+   "pm_retrcp_q3": 2928.18343345632,
+   "pm_retrcp_q4": 3689.41954887792,
+   "pm_retrcp_t1": 0.349,
+   "pm_retrcp_t2": 0.378,
+   "pm_retrcp_t3": 0.433,
+   "pm_retrcp_t4": 0.507,
+   "pm_retrcp_t5": 0.65178681644874,
+   "pm_retrncp_q1": 892.8784511712,
+   "pm_retrncp_q2": 1314.13392556992,
+   "pm_retrncp_q3": 1689.60076144704,
+   "pm_retrncp_q4": 2125.73754336528,
+   "pm_retrncp_t1": 0.141,
+   "pm_retrncp_t2": 0.201,
+   "pm_retrncp_t3": 0.217,
+   "pm_retrncp_t4": 0.23,
+   "pm_retrncp_t5": 0.225,
+   "pm_tcasa": 0.003,
+   "pm_tcomapr": 0.01,
+   "pm_tcrdspr": 0.005,
+   "pm_tcsgprd1": 0.038,
+   "pm_tcsgprd1bis": 0.042,
+   "pm_tcsgprd2": 0.059,
+   "pm_tcsgpri": 0.024
+  },
+  "2025": {
+   "pm_abat_aspa_celib": 1621.62,
+   "pm_abat_aspa_celib_mois_01": 1621.62,
+   "pm_abat_aspa_celib_mois_02": 1621.62,
+   "pm_abat_aspa_celib_mois_03": 1621.62,
+   "pm_abat_aspa_celib_mois_04": 1621.62,
+   "pm_abat_aspa_celib_mois_05": 1621.62,
+   "pm_abat_aspa_celib_mois_06": 1621.62,
+   "pm_abat_aspa_celib_mois_07": 1621.62,
+   "pm_abat_aspa_celib_mois_08": 1621.62,
+   "pm_abat_aspa_celib_mois_09": 1621.62,
+   "pm_abat_aspa_celib_mois_10": 1621.62,
+   "pm_abat_aspa_celib_mois_11": 1621.62,
+   "pm_abat_aspa_celib_mois_12": 1621.62,
+   "pm_abat_aspa_couple": 2702.7,
+   "pm_abat_aspa_couple_mois_01": 2702.7,
+   "pm_abat_aspa_couple_mois_02": 2702.7,
+   "pm_abat_aspa_couple_mois_03": 2702.7,
+   "pm_abat_aspa_couple_mois_04": 2702.7,
+   "pm_abat_aspa_couple_mois_05": 2702.7,
+   "pm_abat_aspa_couple_mois_06": 2702.7,
+   "pm_abat_aspa_couple_mois_07": 2702.7,
+   "pm_abat_aspa_couple_mois_08": 2702.7,
+   "pm_abat_aspa_couple_mois_09": 2702.7,
+   "pm_abat_aspa_couple_mois_10": 2702.7,
+   "pm_abat_aspa_couple_mois_11": 2702.7,
+   "pm_abat_aspa_couple_mois_12": 2702.7,
+   "pm_exo_csg_remp": 12817,
+   "pm_exo_csg_remp_pac": 1711,
+   "pm_mv_mi": 12411.44,
+   "pm_mv_mi_mois_01": 12411.44,
+   "pm_mv_mi_mois_02": 12411.44,
+   "pm_mv_mi_mois_03": 12411.44,
+   "pm_mv_mi_mois_04": 12411.44,
+   "pm_mv_mi_mois_05": 12411.44,
+   "pm_mv_mi_mois_06": 12411.44,
+   "pm_mv_mi_mois_07": 12411.44,
+   "pm_mv_mi_mois_08": 12411.44,
+   "pm_mv_mi_mois_09": 12411.44,
+   "pm_mv_mi_mois_10": 12411.44,
+   "pm_mv_mi_mois_11": 12411.44,
+   "pm_mv_mi_mois_12": 12411.44,
+   "pm_mv_plfc": 19268.8,
+   "pm_mv_plfc_mois_01": 19268.8,
+   "pm_mv_plfc_mois_02": 19268.8,
+   "pm_mv_plfc_mois_03": 19268.8,
+   "pm_mv_plfc_mois_04": 19268.8,
+   "pm_mv_plfc_mois_05": 19268.8,
+   "pm_mv_plfc_mois_06": 19268.8,
+   "pm_mv_plfc_mois_07": 19268.8,
+   "pm_mv_plfc_mois_08": 19268.8,
+   "pm_mv_plfc_mois_09": 19268.8,
+   "pm_mv_plfc_mois_10": 19268.8,
+   "pm_mv_plfc_mois_11": 19268.8,
+   "pm_mv_plfc_mois_12": 19268.8,
+   "pm_mv_plfi": 12411.44,
+   "pm_mv_plfi_mois_01": 12411.44,
+   "pm_mv_plfi_mois_02": 12411.44,
+   "pm_mv_plfi_mois_03": 12411.44,
+   "pm_mv_plfi_mois_04": 12411.44,
+   "pm_mv_plfi_mois_05": 12411.44,
+   "pm_mv_plfi_mois_06": 12411.44,
+   "pm_mv_plfi_mois_07": 12411.44,
+   "pm_mv_plfi_mois_08": 12411.44,
+   "pm_mv_plfi_mois_09": 12411.44,
+   "pm_mv_plfi_mois_10": 12411.44,
+   "pm_mv_plfi_mois_11": 12411.44,
+   "pm_mv_plfi_mois_12": 12411.44,
+   "pm_plaf2_csg_ret": 26004,
+   "pm_plaf2_csg_ret_pac": 3471,
+   "pm_plaf_csg_remp": 16755,
+   "pm_plaf_csg_remp_pac": 2237,
+   "pm_retrcp_q1": 2049.00265349886,
+   "pm_retrcp_q2": 2498.30481370802,
+   "pm_retrcp_q3": 2954.53708435743,
+   "pm_retrcp_q4": 3722.62432481782,
+   "pm_retrcp_t1": 0.349,
+   "pm_retrcp_t2": 0.378,
+   "pm_retrcp_t3": 0.433,
+   "pm_retrcp_t4": 0.507,
+   "pm_retrcp_t5": 0.65178681644874,
+   "pm_retrncp_q1": 900.914357231741,
+   "pm_retrncp_q2": 1325.96113090005,
+   "pm_retrncp_q3": 1704.80716830006,
+   "pm_retrncp_q4": 2144.86918125557,
+   "pm_retrncp_t1": 0.141,
+   "pm_retrncp_t2": 0.201,
+   "pm_retrncp_t3": 0.217,
+   "pm_retrncp_t4": 0.23,
+   "pm_retrncp_t5": 0.225,
+   "pm_tcasa": 0.003,
+   "pm_tcomapr": 0.01,
+   "pm_tcrdspr": 0.005,
+   "pm_tcsgprd1": 0.038,
+   "pm_tcsgprd1bis": 0.042,
+   "pm_tcsgprd2": 0.059,
+   "pm_tcsgpri": 0.024
+  }
+ },
+ "prelevements": {
+  "deux_parts_au_seuil_exoneration": {
+   "au_dela": 0,
+   "objet": "deux parts, au seuil « exoneration » de la caisse",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 0,
+     "coprmal": 67.652217489351,
+     "crdspr": 0,
+     "csgpr_mal": 0,
+     "csgprd": 0,
+     "csgpri": 0,
+     "exo_csg": 1,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 1,
+     "revenu_fiscal": 17816,
+     "zpenu": 30067.6522174894,
+     "zpenuc": 6765.2217489351,
+     "zpenug": 23302.4304685542,
+     "zrstbrut": 30067.6522174894
+    },
+    "2024": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 0,
+     "coprmal": 67.652217489351,
+     "crdspr": 0,
+     "csgpr_mal": 0,
+     "csgprd": 0,
+     "csgpri": 0,
+     "exo_csg": 1,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 1,
+     "revenu_fiscal": 18760,
+     "zpenu": 30067.6522174894,
+     "zpenuc": 6765.2217489351,
+     "zpenug": 23302.4304685542,
+     "zrstbrut": 30067.6522174894
+    },
+    "2025": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 156.290700703308,
+     "csgpr_mal": 396.978379786403,
+     "csgprd": 1187.80932534514,
+     "csgpri": 0,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 1,
+     "revenu_fiscal": 19661,
+     "zpenu": 31258.1401406616,
+     "zpenuc": 7033.08153164887,
+     "zpenug": 24225.0586090128,
+     "zrstbrut": 31344.1000260484
+    }
+   },
+   "parts": 2,
+   "pension_imposable": 30000,
+   "profession": "5411",
+   "seuil": "exoneration"
+  },
+  "deux_parts_au_seuil_taux_plein": {
+   "au_dela": 0,
+   "objet": "deux parts, au seuil « taux_plein » de la caisse",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 95.8721704394141,
+     "coprmal": 71.9041278295606,
+     "crdspr": 159.786950732357,
+     "csgpr_mal": 600.798934753662,
+     "csgprd": 1885.48601864181,
+     "csgpri": 766.977363515313,
+     "exo_csg": 0,
+     "interm_csg": 0,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 36144,
+     "zpenu": 31957.3901464714,
+     "zpenuc": 7190.41278295606,
+     "zpenug": 24766.9773635153,
+     "zrstbrut": 32117.1770972037
+    },
+    "2024": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 94.1668846455663,
+     "coprmal": 70.6251634841747,
+     "crdspr": 156.944807742611,
+     "csgpr_mal": 56.5001307873398,
+     "csgprd": 1318.33638503793,
+     "csgpri": 753.335077164531,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 38059,
+     "zpenu": 31388.9615485221,
+     "zpenuc": 7062.51634841747,
+     "zpenug": 24326.4452001046,
+     "zrstbrut": 31545.9063562647
+    },
+    "2025": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 94.1668846455663,
+     "coprmal": 70.6251634841747,
+     "crdspr": 156.944807742611,
+     "csgpr_mal": 56.5001307873398,
+     "csgprd": 1318.33638503793,
+     "csgpri": 753.335077164531,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 39886,
+     "zpenu": 31388.9615485221,
+     "zpenuc": 7062.51634841747,
+     "zpenug": 24326.4452001046,
+     "zrstbrut": 31545.9063562647
+    }
+   },
+   "parts": 2,
+   "pension_imposable": 30000,
+   "profession": "5411",
+   "seuil": "taux_plein"
+  },
+  "deux_parts_au_seuil_taux_reduit": {
+   "au_dela": 0,
+   "objet": "deux parts, au seuil « taux_reduit » de la caisse",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 94.1668846455663,
+     "coprmal": 70.6251634841747,
+     "crdspr": 156.944807742611,
+     "csgpr_mal": 56.5001307873398,
+     "csgprd": 1318.33638503793,
+     "csgpri": 753.335077164531,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 23291,
+     "zpenu": 31388.9615485221,
+     "zpenuc": 7062.51634841747,
+     "zpenug": 24326.4452001046,
+     "zrstbrut": 31545.9063562647
+    },
+    "2024": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 156.290700703308,
+     "csgpr_mal": 396.978379786403,
+     "csgprd": 1187.80932534514,
+     "csgpri": 0,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 1,
+     "revenu_fiscal": 24526,
+     "zpenu": 31258.1401406616,
+     "zpenuc": 7033.08153164887,
+     "zpenug": 24225.0586090128,
+     "zrstbrut": 31344.1000260484
+    },
+    "2025": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 94.1668846455663,
+     "coprmal": 70.6251634841747,
+     "crdspr": 156.944807742611,
+     "csgpr_mal": 56.5001307873398,
+     "csgprd": 1318.33638503793,
+     "csgpri": 753.335077164531,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 25703,
+     "zpenu": 31388.9615485221,
+     "zpenuc": 7062.51634841747,
+     "zpenug": 24326.4452001046,
+     "zrstbrut": 31545.9063562647
+    }
+   },
+   "parts": 2,
+   "pension_imposable": 30000,
+   "profession": "5411",
+   "seuil": "taux_reduit"
+  },
+  "deux_parts_exoneree": {
+   "objet": "deux parts, un ancien fonctionnaire, exonéré",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Fonctionnaire",
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 0,
+     "csgpr_mal": 0,
+     "csgprd": 0,
+     "csgpri": 0,
+     "exo_csg": 1,
+     "interm_csg": 1,
+     "partretrcompl": null,
+     "reduc_csg": 1,
+     "revenu_fiscal": 15000,
+     "zpenu": 16000,
+     "zpenuc": 0,
+     "zpenug": 16000,
+     "zrstbrut": 16000
+    },
+    "2024": {
+     "ancienne_prof": "Fonctionnaire",
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 0,
+     "csgpr_mal": 0,
+     "csgprd": 0,
+     "csgpri": 0,
+     "exo_csg": 1,
+     "interm_csg": 1,
+     "partretrcompl": null,
+     "reduc_csg": 1,
+     "revenu_fiscal": 15000,
+     "zpenu": 16000,
+     "zpenuc": 0,
+     "zpenug": 16000,
+     "zrstbrut": 16000
+    },
+    "2025": {
+     "ancienne_prof": "Fonctionnaire",
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 0,
+     "csgpr_mal": 0,
+     "csgprd": 0,
+     "csgpri": 0,
+     "exo_csg": 1,
+     "interm_csg": 1,
+     "partretrcompl": null,
+     "reduc_csg": 1,
+     "revenu_fiscal": 15000,
+     "zpenu": 16000,
+     "zpenuc": 0,
+     "zpenug": 16000,
+     "zrstbrut": 16000
+    }
+   },
+   "parts": 2,
+   "pension_imposable": 16000,
+   "profession": "3311"
+  },
+  "deux_parts_taux_median": {
+   "objet": "deux parts, un ancien fonctionnaire, au taux médian",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Fonctionnaire",
+     "casapr": 106.471816283925,
+     "coprmal": 0,
+     "crdspr": 177.453027139875,
+     "csgpr_mal": 63.8830897703549,
+     "csgprd": 1490.60542797495,
+     "csgpri": 851.774530271399,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": null,
+     "reduc_csg": 0,
+     "revenu_fiscal": 33000,
+     "zpenu": 35490.605427975,
+     "zpenuc": 0,
+     "zpenug": 35490.605427975,
+     "zrstbrut": 35668.0584551148
+    },
+    "2024": {
+     "ancienne_prof": "Fonctionnaire",
+     "casapr": 106.471816283925,
+     "coprmal": 0,
+     "crdspr": 177.453027139875,
+     "csgpr_mal": 63.8830897703549,
+     "csgprd": 1490.60542797495,
+     "csgpri": 851.774530271399,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": null,
+     "reduc_csg": 0,
+     "revenu_fiscal": 33000,
+     "zpenu": 35490.605427975,
+     "zpenuc": 0,
+     "zpenug": 35490.605427975,
+     "zrstbrut": 35668.0584551148
+    },
+    "2025": {
+     "ancienne_prof": "Fonctionnaire",
+     "casapr": 106.471816283925,
+     "coprmal": 0,
+     "crdspr": 177.453027139875,
+     "csgpr_mal": 63.8830897703549,
+     "csgprd": 1490.60542797495,
+     "csgpri": 851.774530271399,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": null,
+     "reduc_csg": 0,
+     "revenu_fiscal": 33000,
+     "zpenu": 35490.605427975,
+     "zpenuc": 0,
+     "zpenug": 35490.605427975,
+     "zrstbrut": 35668.0584551148
+    }
+   },
+   "parts": 2,
+   "pension_imposable": 34000,
+   "profession": "3311"
+  },
+  "deux_parts_taux_plein": {
+   "objet": "deux parts, un ancien fonctionnaire, au taux plein",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Fonctionnaire",
+     "casapr": 197.662061636557,
+     "coprmal": 0,
+     "crdspr": 329.436769394261,
+     "csgpr_mal": 1238.68225292242,
+     "csgprd": 3887.35387885228,
+     "csgpri": 1581.29649309245,
+     "exo_csg": 0,
+     "interm_csg": 0,
+     "partretrcompl": null,
+     "reduc_csg": 0,
+     "revenu_fiscal": 60000,
+     "zpenu": 65887.3538788523,
+     "zpenuc": 0,
+     "zpenug": 65887.3538788523,
+     "zrstbrut": 66216.7906482465
+    },
+    "2024": {
+     "ancienne_prof": "Fonctionnaire",
+     "casapr": 197.662061636557,
+     "coprmal": 0,
+     "crdspr": 329.436769394261,
+     "csgpr_mal": 1238.68225292242,
+     "csgprd": 3887.35387885228,
+     "csgpri": 1581.29649309245,
+     "exo_csg": 0,
+     "interm_csg": 0,
+     "partretrcompl": null,
+     "reduc_csg": 0,
+     "revenu_fiscal": 60000,
+     "zpenu": 65887.3538788523,
+     "zpenuc": 0,
+     "zpenug": 65887.3538788523,
+     "zrstbrut": 66216.7906482465
+    },
+    "2025": {
+     "ancienne_prof": "Fonctionnaire",
+     "casapr": 197.662061636557,
+     "coprmal": 0,
+     "crdspr": 329.436769394261,
+     "csgpr_mal": 1238.68225292242,
+     "csgprd": 3887.35387885228,
+     "csgpri": 1581.29649309245,
+     "exo_csg": 0,
+     "interm_csg": 0,
+     "partretrcompl": null,
+     "reduc_csg": 0,
+     "revenu_fiscal": 60000,
+     "zpenu": 65887.3538788523,
+     "zpenuc": 0,
+     "zpenug": 65887.3538788523,
+     "zrstbrut": 66216.7906482465
+    }
+   },
+   "parts": 2,
+   "pension_imposable": 62000,
+   "profession": "3311"
+  },
+  "deux_parts_taux_reduit": {
+   "objet": "deux parts, un ancien fonctionnaire, au taux réduit",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Fonctionnaire",
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 114.345114345114,
+     "csgpr_mal": 290.43659043659,
+     "csgprd": 869.022869022869,
+     "csgpri": 0,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": null,
+     "reduc_csg": 1,
+     "revenu_fiscal": 21000,
+     "zpenu": 22869.0228690229,
+     "zpenuc": 0,
+     "zpenug": 22869.0228690229,
+     "zrstbrut": 22983.367983368
+    },
+    "2024": {
+     "ancienne_prof": "Fonctionnaire",
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 114.345114345114,
+     "csgpr_mal": 290.43659043659,
+     "csgprd": 869.022869022869,
+     "csgpri": 0,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": null,
+     "reduc_csg": 1,
+     "revenu_fiscal": 21000,
+     "zpenu": 22869.0228690229,
+     "zpenuc": 0,
+     "zpenug": 22869.0228690229,
+     "zrstbrut": 22983.367983368
+    },
+    "2025": {
+     "ancienne_prof": "Fonctionnaire",
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 114.345114345114,
+     "csgpr_mal": 290.43659043659,
+     "csgprd": 869.022869022869,
+     "csgpri": 0,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": null,
+     "reduc_csg": 1,
+     "revenu_fiscal": 21000,
+     "zpenu": 22869.0228690229,
+     "zpenuc": 0,
+     "zpenug": 22869.0228690229,
+     "zrstbrut": 22983.367983368
+    }
+   },
+   "parts": 2,
+   "pension_imposable": 22000,
+   "profession": "3311"
+  },
+  "deux_parts_un_euro_au_dela_du_seuil_exoneration": {
+   "au_dela": 1,
+   "objet": "deux parts, un euro au-delà du seuil « exoneration » de la caisse",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 0,
+     "coprmal": 67.652217489351,
+     "crdspr": 0,
+     "csgpr_mal": 0,
+     "csgprd": 0,
+     "csgpri": 0,
+     "exo_csg": 1,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 1,
+     "revenu_fiscal": 17817,
+     "zpenu": 30067.6522174894,
+     "zpenuc": 6765.2217489351,
+     "zpenug": 23302.4304685542,
+     "zrstbrut": 30067.6522174894
+    },
+    "2024": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 0,
+     "coprmal": 67.652217489351,
+     "crdspr": 0,
+     "csgpr_mal": 0,
+     "csgprd": 0,
+     "csgpri": 0,
+     "exo_csg": 1,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 1,
+     "revenu_fiscal": 18761,
+     "zpenu": 30067.6522174894,
+     "zpenuc": 6765.2217489351,
+     "zpenug": 23302.4304685542,
+     "zrstbrut": 30067.6522174894
+    },
+    "2025": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 156.290700703308,
+     "csgpr_mal": 396.978379786403,
+     "csgprd": 1187.80932534514,
+     "csgpri": 0,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 1,
+     "revenu_fiscal": 19662,
+     "zpenu": 31258.1401406616,
+     "zpenuc": 7033.08153164887,
+     "zpenug": 24225.0586090128,
+     "zrstbrut": 31344.1000260484
+    }
+   },
+   "parts": 2,
+   "pension_imposable": 30000,
+   "profession": "5411",
+   "seuil": "exoneration"
+  },
+  "deux_parts_un_euro_au_dela_du_seuil_taux_plein": {
+   "au_dela": 1,
+   "objet": "deux parts, un euro au-delà du seuil « taux_plein » de la caisse",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 95.8721704394141,
+     "coprmal": 71.9041278295606,
+     "crdspr": 159.786950732357,
+     "csgpr_mal": 600.798934753662,
+     "csgprd": 1885.48601864181,
+     "csgpri": 766.977363515313,
+     "exo_csg": 0,
+     "interm_csg": 0,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 36145,
+     "zpenu": 31957.3901464714,
+     "zpenuc": 7190.41278295606,
+     "zpenug": 24766.9773635153,
+     "zrstbrut": 32117.1770972037
+    },
+    "2024": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 94.1668846455663,
+     "coprmal": 70.6251634841747,
+     "crdspr": 156.944807742611,
+     "csgpr_mal": 56.5001307873398,
+     "csgprd": 1318.33638503793,
+     "csgpri": 753.335077164531,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 38060,
+     "zpenu": 31388.9615485221,
+     "zpenuc": 7062.51634841747,
+     "zpenug": 24326.4452001046,
+     "zrstbrut": 31545.9063562647
+    },
+    "2025": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 94.1668846455663,
+     "coprmal": 70.6251634841747,
+     "crdspr": 156.944807742611,
+     "csgpr_mal": 56.5001307873398,
+     "csgprd": 1318.33638503793,
+     "csgpri": 753.335077164531,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 39887,
+     "zpenu": 31388.9615485221,
+     "zpenuc": 7062.51634841747,
+     "zpenug": 24326.4452001046,
+     "zrstbrut": 31545.9063562647
+    }
+   },
+   "parts": 2,
+   "pension_imposable": 30000,
+   "profession": "5411",
+   "seuil": "taux_plein"
+  },
+  "deux_parts_un_euro_au_dela_du_seuil_taux_reduit": {
+   "au_dela": 1,
+   "objet": "deux parts, un euro au-delà du seuil « taux_reduit » de la caisse",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 94.1668846455663,
+     "coprmal": 70.6251634841747,
+     "crdspr": 156.944807742611,
+     "csgpr_mal": 56.5001307873398,
+     "csgprd": 1318.33638503793,
+     "csgpri": 753.335077164531,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 23292,
+     "zpenu": 31388.9615485221,
+     "zpenuc": 7062.51634841747,
+     "zpenug": 24326.4452001046,
+     "zrstbrut": 31545.9063562647
+    },
+    "2024": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 156.290700703308,
+     "csgpr_mal": 396.978379786403,
+     "csgprd": 1187.80932534514,
+     "csgpri": 0,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 1,
+     "revenu_fiscal": 24527,
+     "zpenu": 31258.1401406616,
+     "zpenuc": 7033.08153164887,
+     "zpenug": 24225.0586090128,
+     "zrstbrut": 31344.1000260484
+    },
+    "2025": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 94.1668846455663,
+     "coprmal": 70.6251634841747,
+     "crdspr": 156.944807742611,
+     "csgpr_mal": 56.5001307873398,
+     "csgprd": 1318.33638503793,
+     "csgpri": 753.335077164531,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 25704,
+     "zpenu": 31388.9615485221,
+     "zpenuc": 7062.51634841747,
+     "zpenug": 24326.4452001046,
+     "zrstbrut": 31545.9063562647
+    }
+   },
+   "parts": 2,
+   "pension_imposable": 30000,
+   "profession": "5411",
+   "seuil": "taux_reduit"
+  },
+  "une_part_au_seuil_exoneration": {
+   "au_dela": 0,
+   "objet": "une part, au seuil « exoneration » de la caisse",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 104.193800468872,
+     "csgpr_mal": 264.652253190935,
+     "csgprd": 791.872883563428,
+     "csgpri": 0,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 1,
+     "revenu_fiscal": 11614,
+     "zpenu": 20838.7600937744,
+     "zpenuc": 4688.72102109925,
+     "zpenug": 16150.0390726752,
+     "zrstbrut": 20896.0666840323
+    },
+    "2024": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 104.193800468872,
+     "csgpr_mal": 264.652253190935,
+     "csgprd": 791.872883563428,
+     "csgpri": 0,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 1,
+     "revenu_fiscal": 12230,
+     "zpenu": 20838.7600937744,
+     "zpenuc": 4688.72102109925,
+     "zpenug": 16150.0390726752,
+     "zrstbrut": 20896.0666840323
+    },
+    "2025": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 104.193800468872,
+     "csgpr_mal": 264.652253190935,
+     "csgprd": 791.872883563428,
+     "csgpri": 0,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 1,
+     "revenu_fiscal": 12817,
+     "zpenu": 20838.7600937744,
+     "zpenuc": 4688.72102109925,
+     "zpenug": 16150.0390726752,
+     "zrstbrut": 20896.0666840323
+    }
+   },
+   "parts": 1,
+   "pension_imposable": 20000,
+   "profession": "5411",
+   "seuil": "exoneration"
+  },
+  "une_part_au_seuil_taux_plein": {
+   "au_dela": 0,
+   "objet": "une part, au seuil « taux_plein » de la caisse",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 63.9147802929427,
+     "coprmal": 47.9360852197071,
+     "crdspr": 106.524633821571,
+     "csgpr_mal": 400.532623169108,
+     "csgprd": 1256.99067909454,
+     "csgpri": 511.318242343542,
+     "exo_csg": 0,
+     "interm_csg": 0,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 23564,
+     "zpenu": 21304.9267643142,
+     "zpenuc": 4793.60852197071,
+     "zpenug": 16511.3182423435,
+     "zrstbrut": 21411.4513981358
+    },
+    "2024": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 63.9147802929427,
+     "coprmal": 47.9360852197071,
+     "crdspr": 106.524633821571,
+     "csgpr_mal": 400.532623169108,
+     "csgprd": 1256.99067909454,
+     "csgpri": 511.318242343542,
+     "exo_csg": 0,
+     "interm_csg": 0,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 24813,
+     "zpenu": 21304.9267643142,
+     "zpenuc": 4793.60852197071,
+     "zpenug": 16511.3182423435,
+     "zrstbrut": 21411.4513981358
+    },
+    "2025": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 63.9147802929427,
+     "coprmal": 47.9360852197071,
+     "crdspr": 106.524633821571,
+     "csgpr_mal": 400.532623169108,
+     "csgprd": 1256.99067909454,
+     "csgpri": 511.318242343542,
+     "exo_csg": 0,
+     "interm_csg": 0,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 26004,
+     "zpenu": 21304.9267643142,
+     "zpenuc": 4793.60852197071,
+     "zpenug": 16511.3182423435,
+     "zrstbrut": 21411.4513981358
+    }
+   },
+   "parts": 1,
+   "pension_imposable": 20000,
+   "profession": "5411",
+   "seuil": "taux_plein"
+  },
+  "une_part_au_seuil_taux_reduit": {
+   "au_dela": 0,
+   "objet": "une part, au seuil « taux_reduit » de la caisse",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 62.7779230970442,
+     "coprmal": 47.0834423227832,
+     "crdspr": 104.629871828407,
+     "csgpr_mal": 37.6667538582265,
+     "csgprd": 878.890923358619,
+     "csgpri": 502.223384776354,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 15183,
+     "zpenu": 20925.9743656814,
+     "zpenuc": 4708.34423227832,
+     "zpenug": 16217.6301334031,
+     "zrstbrut": 21030.6042375098
+    },
+    "2024": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 62.7779230970442,
+     "coprmal": 47.0834423227832,
+     "crdspr": 104.629871828407,
+     "csgpr_mal": 37.6667538582265,
+     "csgprd": 878.890923358619,
+     "csgpri": 502.223384776354,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 15988,
+     "zpenu": 20925.9743656814,
+     "zpenuc": 4708.34423227832,
+     "zpenug": 16217.6301334031,
+     "zrstbrut": 21030.6042375098
+    },
+    "2025": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 62.7779230970442,
+     "coprmal": 47.0834423227832,
+     "crdspr": 104.629871828407,
+     "csgpr_mal": 37.6667538582265,
+     "csgprd": 878.890923358619,
+     "csgpri": 502.223384776354,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 16755,
+     "zpenu": 20925.9743656814,
+     "zpenuc": 4708.34423227832,
+     "zpenug": 16217.6301334031,
+     "zrstbrut": 21030.6042375098
+    }
+   },
+   "parts": 1,
+   "pension_imposable": 20000,
+   "profession": "5411",
+   "seuil": "taux_reduit"
+  },
+  "une_part_exoneree": {
+   "objet": "une part, sous le seuil d'exonération",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 0,
+     "coprmal": 20.2956652468053,
+     "crdspr": 0,
+     "csgpr_mal": 0,
+     "csgprd": 0,
+     "csgpri": 0,
+     "exo_csg": 1,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 1,
+     "revenu_fiscal": 8000,
+     "zpenu": 9020.29566524681,
+     "zpenuc": 2029.56652468053,
+     "zpenug": 6990.72914056627,
+     "zrstbrut": 9020.29566524681
+    },
+    "2024": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 0,
+     "coprmal": 20.2956652468053,
+     "crdspr": 0,
+     "csgpr_mal": 0,
+     "csgprd": 0,
+     "csgpri": 0,
+     "exo_csg": 1,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 1,
+     "revenu_fiscal": 8000,
+     "zpenu": 9020.29566524681,
+     "zpenuc": 2029.56652468053,
+     "zpenug": 6990.72914056627,
+     "zrstbrut": 9020.29566524681
+    },
+    "2025": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 0,
+     "coprmal": 20.2956652468053,
+     "crdspr": 0,
+     "csgpr_mal": 0,
+     "csgprd": 0,
+     "csgpri": 0,
+     "exo_csg": 1,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 1,
+     "revenu_fiscal": 8000,
+     "zpenu": 9020.29566524681,
+     "zpenuc": 2029.56652468053,
+     "zpenug": 6990.72914056627,
+     "zrstbrut": 9020.29566524681
+    }
+   },
+   "parts": 1,
+   "pension_imposable": 9000,
+   "profession": "5411"
+  },
+  "une_part_taux_median": {
+   "objet": "une part, au taux médian",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 65.9168192518964,
+     "coprmal": 49.4376144389223,
+     "crdspr": 109.861365419827,
+     "csgpr_mal": 39.5500915511378,
+     "csgprd": 922.83546952655,
+     "csgpri": 527.334554015171,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 20000,
+     "zpenu": 21972.2730839655,
+     "zpenuc": 4943.76144389223,
+     "zpenug": 17028.5116400732,
+     "zrstbrut": 22082.1344493853
+    },
+    "2024": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 65.9168192518964,
+     "coprmal": 49.4376144389223,
+     "crdspr": 109.861365419827,
+     "csgpr_mal": 39.5500915511378,
+     "csgprd": 922.83546952655,
+     "csgpri": 527.334554015171,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 20000,
+     "zpenu": 21972.2730839655,
+     "zpenuc": 4943.76144389223,
+     "zpenug": 17028.5116400732,
+     "zrstbrut": 22082.1344493853
+    },
+    "2025": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 65.9168192518964,
+     "coprmal": 49.4376144389223,
+     "crdspr": 109.861365419827,
+     "csgpr_mal": 39.5500915511378,
+     "csgprd": 922.83546952655,
+     "csgpri": 527.334554015171,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 20000,
+     "zpenu": 21972.2730839655,
+     "zpenuc": 4943.76144389223,
+     "zpenug": 17028.5116400732,
+     "zrstbrut": 22082.1344493853
+    }
+   },
+   "parts": 1,
+   "pension_imposable": 21000,
+   "profession": "5411"
+  },
+  "une_part_taux_plein": {
+   "objet": "une part, au taux plein",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 134.22103861518,
+     "coprmal": 100.665778961385,
+     "crdspr": 223.7017310253,
+     "csgpr_mal": 841.118508655127,
+     "csgprd": 2639.68042609854,
+     "csgpri": 1073.76830892144,
+     "exo_csg": 0,
+     "interm_csg": 0,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 40000,
+     "zpenu": 44740.3462050599,
+     "zpenuc": 10066.5778961385,
+     "zpenug": 34673.7683089214,
+     "zrstbrut": 44964.0479360852
+    },
+    "2024": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 134.22103861518,
+     "coprmal": 100.665778961385,
+     "crdspr": 223.7017310253,
+     "csgpr_mal": 841.118508655127,
+     "csgprd": 2639.68042609854,
+     "csgpri": 1073.76830892144,
+     "exo_csg": 0,
+     "interm_csg": 0,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 40000,
+     "zpenu": 44740.3462050599,
+     "zpenuc": 10066.5778961385,
+     "zpenug": 34673.7683089214,
+     "zrstbrut": 44964.0479360852
+    },
+    "2025": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 134.22103861518,
+     "coprmal": 100.665778961385,
+     "crdspr": 223.7017310253,
+     "csgpr_mal": 841.118508655127,
+     "csgprd": 2639.68042609854,
+     "csgpri": 1073.76830892144,
+     "exo_csg": 0,
+     "interm_csg": 0,
+     "partretrcompl": 0.225,
+     "reduc_csg": 0,
+     "revenu_fiscal": 40000,
+     "zpenu": 44740.3462050599,
+     "zpenuc": 10066.5778961385,
+     "zpenug": 34673.7683089214,
+     "zrstbrut": 44964.0479360852
+    }
+   },
+   "parts": 1,
+   "pension_imposable": 42000,
+   "profession": "5411"
+  },
+  "une_part_taux_plein_cadre": {
+   "objet": "un ancien cadre du privé, au taux plein",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Cadre du privé",
+     "casapr": 134.834038776654,
+     "coprmal": 292.943496277205,
+     "crdspr": 224.72339796109,
+     "csgpr_mal": 844.9599763337,
+     "csgprd": 2651.73609594087,
+     "csgpri": 1078.67231021323,
+     "exo_csg": 0,
+     "interm_csg": 0,
+     "partretrcompl": 0.65178681644874,
+     "reduc_csg": 0,
+     "revenu_fiscal": 40000,
+     "zpenu": 44944.6795922181,
+     "zpenuc": 29294.3496277205,
+     "zpenug": 15650.3299644976,
+     "zrstbrut": 45169.4029901792
+    },
+    "2024": {
+     "ancienne_prof": "Cadre du privé",
+     "casapr": 134.834038776654,
+     "coprmal": 292.943496277205,
+     "crdspr": 224.72339796109,
+     "csgpr_mal": 844.9599763337,
+     "csgprd": 2651.73609594087,
+     "csgpri": 1078.67231021323,
+     "exo_csg": 0,
+     "interm_csg": 0,
+     "partretrcompl": 0.65178681644874,
+     "reduc_csg": 0,
+     "revenu_fiscal": 40000,
+     "zpenu": 44944.6795922181,
+     "zpenuc": 29294.3496277205,
+     "zpenug": 15650.3299644976,
+     "zrstbrut": 45169.4029901792
+    },
+    "2025": {
+     "ancienne_prof": "Cadre du privé",
+     "casapr": 134.834038776654,
+     "coprmal": 292.943496277205,
+     "crdspr": 224.72339796109,
+     "csgpr_mal": 844.9599763337,
+     "csgprd": 2651.73609594087,
+     "csgpri": 1078.67231021323,
+     "exo_csg": 0,
+     "interm_csg": 0,
+     "partretrcompl": 0.65178681644874,
+     "reduc_csg": 0,
+     "revenu_fiscal": 40000,
+     "zpenu": 44944.6795922181,
+     "zpenuc": 29294.3496277205,
+     "zpenug": 15650.3299644976,
+     "zrstbrut": 45169.4029901792
+    }
+   },
+   "parts": 1,
+   "pension_imposable": 42000,
+   "profession": "3721"
+  },
+  "une_part_taux_reduit": {
+   "objet": "une part, au taux réduit",
+   "par_annee": {
+    "2023": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 78.1453503516541,
+     "csgpr_mal": 198.489189893201,
+     "csgprd": 593.904662672571,
+     "csgpri": 0,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 1,
+     "revenu_fiscal": 14000,
+     "zpenu": 15629.0700703308,
+     "zpenuc": 3516.54076582443,
+     "zpenug": 12112.5293045064,
+     "zrstbrut": 15672.0500130242
+    },
+    "2024": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 78.1453503516541,
+     "csgpr_mal": 198.489189893201,
+     "csgprd": 593.904662672571,
+     "csgpri": 0,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 1,
+     "revenu_fiscal": 14000,
+     "zpenu": 15629.0700703308,
+     "zpenuc": 3516.54076582443,
+     "zpenug": 12112.5293045064,
+     "zrstbrut": 15672.0500130242
+    },
+    "2025": {
+     "ancienne_prof": "Non cadre du privé",
+     "casapr": 0,
+     "coprmal": 0,
+     "crdspr": 78.1453503516541,
+     "csgpr_mal": 198.489189893201,
+     "csgprd": 593.904662672571,
+     "csgpri": 0,
+     "exo_csg": 0,
+     "interm_csg": 1,
+     "partretrcompl": 0.225,
+     "reduc_csg": 1,
+     "revenu_fiscal": 14000,
+     "zpenu": 15629.0700703308,
+     "zpenuc": 3516.54076582443,
+     "zpenug": 12112.5293045064,
+     "zrstbrut": 15672.0500130242
+    }
+   },
+   "parts": 1,
+   "pension_imposable": 15000,
+   "profession": "5411"
+  }
+ },
+ "seuils_de_la_caisse": {
+  "2023": {
+   "bareme": "https://legislation.lassuranceretraite.fr/api/v1/baremes/baremesByFileLeafRef/prelevement_sur_retraite_seuil_revenu_assujettissement_taux_csg_2023_bar.aspx",
+   "circulaire": "Circulaire Cnav 2022/36 du 19/12/2022",
+   "demi_part": [
+    3101,
+    4054,
+    6290
+   ],
+   "modifie_le": "2023-05-31T08:11:00Z[UTC]",
+   "premiere_part": [
+    11614,
+    15183,
+    23564
+   ],
+   "quart_de_part": [
+    1551,
+    2027,
+    3145
+   ],
+   "titre": "Seuils de revenus pour assujettissement et taux de la contribution sociale généralisée (CSG) - 2023"
+  },
+  "2024": {
+   "bareme": "https://legislation.lassuranceretraite.fr/api/v1/baremes/baremesByFileLeafRef/prelevement_sur_retraite_seuil_revenu_assujettissement_taux_csg_2024_bar.aspx",
+   "circulaire": "Circulaire Cnav 2023/27 du 12/12/2023",
+   "demi_part": [
+    3265,
+    4269,
+    6623
+   ],
+   "modifie_le": "2024-12-13T06:34:00Z[UTC]",
+   "premiere_part": [
+    12230,
+    15988,
+    24813
+   ],
+   "quart_de_part": [
+    1633,
+    2135,
+    3312
+   ],
+   "titre": "Seuils de revenus pour assujettissement et taux de la contribution sociale généralisée (CSG) - 2024"
+  },
+  "2025": {
+   "bareme": "https://legislation.lassuranceretraite.fr/api/v1/baremes/baremesByFileLeafRef/prelevement_sur_retraite_seuil_revenu_assujettissement_taux_csg_2025_bar.aspx",
+   "circulaire": "Circulaire Cnav 2024/35 du 17/12/2024",
+   "demi_part": [
+    3422,
+    4474,
+    6941
+   ],
+   "modifie_le": "2024-12-17T06:11:00Z[UTC]",
+   "premiere_part": [
+    12817,
+    16755,
+    26004
+   ],
+   "quart_de_part": [
+    1711,
+    2237,
+    3471
+   ],
+   "titre": "Seuils de revenus pour assujettissement et taux de la contribution sociale généralisée (CSG) - 2025"
+  }
+ },
+ "version": "Ines 2024.1"
+}

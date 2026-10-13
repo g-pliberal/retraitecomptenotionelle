@@ -5618,16 +5618,16 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 
 ### 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation — `en cours`
 
-**Reprise, au 11 octobre 2026.** Fait : le registre (69 modèles, 47 en
+**Reprise, au 13 octobre 2026.** Fait : le registre (69 modèles, 47 en
 France) ; sa relecture à l'action 138 (le code de Destinie 2, d'Ines, de
 `legiretraite` et d'EDIFIS, cinq diviseurs étrangers), au registre ;
-Destinie 2 puis TRAJECTOiRE exécutés à part (action 142, étape 4) ; CALIPER,
-`calcul_pension` et le communiqué de 2021, lus ; les limites de CALIPER
-confrontées à `docs/limites/`, et celle du relevé dite au site ; l'Études et
-résultats n° 1283, ses cinq exemples devenus cas d'essai ; le minimum
-contributif de l'EACR, part et montant, confronté aux grilles et à TRAJECTOiRE.
-Reste ici : Ines, sur ce modèle ; les pistes non vérifiées (M@rel, Oscar) ;
-les `referents` des fiches, à leur relecture ; la campagne 2025 de l'EACR.
+Destinie 2, TRAJECTOiRE (action 142, étape 4) puis Ines (note du 13 octobre)
+exécutés à part ; CALIPER, `calcul_pension` et le communiqué de 2021, lus ;
+les limites de CALIPER confrontées à `docs/limites/`, et celle du relevé dite
+au site ; l'Études et résultats n° 1283, ses cinq exemples devenus cas
+d'essai ; le minimum contributif de l'EACR, confronté aux grilles et à
+TRAJECTOiRE. Reste ici : les pistes non vérifiées (M@rel, Oscar) ; les
+`referents` des fiches, à leur relecture ; la campagne 2025 de l'EACR.
 
 **Demande**, le 1er octobre 2026 : « Quels sont les autres modèles publics
 autres que openfisca ? », puis : « Ajoute les modèles qui ne sont pas encore
