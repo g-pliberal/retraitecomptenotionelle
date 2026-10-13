@@ -1084,6 +1084,14 @@ reformes:
         règlement de la CAVOM approuvé le 10 juillet 2026, après elle, garde
         ses propres âges — 62 ans et 6 mois pour la génération 1965, 64 ans
         dès 1968 — que la fiche lit dans sa table.
+      comedie_francaise: >-
+        La loi ne réécrit que L. 161-17-2, L. 161-17-3 et le XXIV de la loi de
+        2023 ; le décret n° 68-960 garde ses propres tables — âges du A du I
+        de l'article 51 (LEGIARTI000029134323), durée du V de l'article 12
+        (LEGIARTI000029134341) — sans renvoi à l'une ni à l'autre (index LEGI
+        relu le 13 octobre 2026). La fiche lit donc les tables du régime
+        (`age_table: comedie_francaise_2011`, `duree_requise_table:
+        [comedie_francaise_2014]`), non la table commune suspendue.
       ieg: >-
         La durée requise des agents actifs est celle du I bis de l'article 45
         de l'annexe 3, et non celle de L. 161-17-3 ; sa dernière

@@ -26,6 +26,8 @@ inventaire:
   textes:
     - {reference: "décret n° 68-960 du 11 octobre 1968 relatif à la caisse de retraites des personnels de la Comédie-Française", id: null}
     - {reference: "code de la sécurité sociale, R. 711-1 10°", id: LEGIARTI000048031379}
+    - {reference: "décret n° 68-960, article 51, I, A (âge d'ouverture par génération, rédaction du décret n° 2011-1134)", id: LEGIARTI000029134323}
+    - {reference: "décret n° 68-960, article 12, V et VI (durée : calendrier de 2008, puis table par génération à compter du 1er juillet 2019)", id: LEGIARTI000029134341}
 # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
 # — décret n° 68-960, article 16 VI (LEGIARTI000006765450) : 10 % pour
 # les trois premiers enfants et 5 % par enfant au-delà. La fiche ne la
@@ -87,6 +89,7 @@ periodes:
     age_taux_plein: 65
     duree_requise_trimestres: 160
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -99,9 +102,19 @@ periodes:
     avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
     notes: >-
       RÉFORME DES RÉGIMES SPÉCIAUX, portée ici par le décret n° 2008-658 du
-      2 juillet 2008 : coefficient de minoration et durée d'assurance alignée
-      sur celle de la fonction publique, qui monte par génération. Les bornes
-      d'âge, elles, ne bougent qu'en 2011.
+      2 juillet 2008 : coefficient de minoration et durée d'assurance. Les
+      bornes d'âge, elles, ne bougent qu'en 2011.
+      LA DURÉE SE LIT À LA DATE OÙ L'ASSURÉ RÉUNIT LES CONDITIONS, et non à
+      sa génération : « 151 trimestres pour les personnes remplissant les
+      conditions définies à l'article 6 entre le 1er juillet et le
+      31 décembre 2008 inclus », un de plus au 1er janvier et au 1er juillet
+      jusqu'en juillet 2012, au 1er décembre 2012, puis chaque 1er juillet
+      (article 12, V, du décret n° 68-960, rédactions du 5 juillet 2008 au
+      31 décembre 2016, LEGIARTI000019122583 à LEGIARTI000030058972, lues le
+      13 octobre 2026) : le calendrier de 2008
+      (`duree_requise_calendrier: regimes_speciaux_2008`). La fiche lisait la
+      table commune, par génération : 160 trimestres et plus à qui en devait
+      151 à 156.
       La décote, elle, monte en charge sur le calendrier des régimes
       spéciaux — rien avant le 1er juillet 2010, un dixième du taux plein
       ensuite, 1,25 % seulement en 2019 —, et non sur celui de la fonction
@@ -113,6 +126,9 @@ periodes:
     age_taux_plein: 67
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    age_table: comedie_francaise_2011
+    duree_requise_table: [comedie_francaise_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -134,3 +150,23 @@ periodes:
       ans — et elle N'A PAS FERMÉ LE RÉGIME : l'article 1er de la loi
       n° 2023-270 (JORFARTI000047445082) ne nomme que la RATP, les IEG,
       la CRPCEN, la Banque de France et le CESE.
+      MAIS SOIXANTE-DEUX ANS NE VALENT QU'À PARTIR DE LA GÉNÉRATION 1962.
+      L'article 51, I, A, du même décret, dans la rédaction du décret
+      n° 2011-1134 (LEGIARTI000024579866, puis LEGIARTI000029134323 depuis
+      2017, lues le 13 octobre 2026) : soixante ans pour les assurés nés
+      avant 1957, puis quatre mois de plus par génération, soixante et un
+      ans et huit mois pour 1961. La fiche le lit PAR GÉNÉRATION
+      (`age_table: comedie_francaise_2011`) ; elle donnait soixante-deux ans
+      à tous dès 2012, et refusait à une sociétaire née en 1955 le départ à
+      soixante ans que le décret lui ouvre. L'âge de référence de la décote
+      est l'âge d'ouverture « majoré de cinq ans » (article 12, II, 1°), que
+      le barème des régimes spéciaux diminue jusqu'au 30 juin 2024 ; la
+      fiche portait soixante-sept ans pour tous.
+      LA DURÉE, comme avant 2012, au calendrier de 2008 jusqu'à 166
+      trimestres en juillet 2018, puis, « à compter du 1er juillet 2019 »,
+      par génération : 167 trimestres des nés du 1er juillet 1959 à 1960,
+      jusqu'à 172 à compter de 1973 (article 12, V, rédaction du décret
+      n° 2014-666, LEGIARTI000029134341), lue à soixante ans (son VI) :
+      `duree_requise_table: [comedie_francaise_2014]`. La fiche lisait la
+      table commune, que la suspension de 2026 abaisse : le décret n'y
+      renvoie pas.

@@ -103,7 +103,8 @@
 #       161-17-3 : 169 trimestres, et non 168, à une clerc née en novembre 1961
 #       dont le droit s'ouvre en juillet 2023, comme la caisse l'écrit.
 #
-# LA COLONNE `age_de_lecture` N'EXISTE QUE POUR `ieg_2014`. L'article 9-1 de
+# LA COLONNE `age_de_lecture` N'EXISTE QUE POUR `ieg_2014`, ET POUR LA
+# COMÉDIE-FRANÇAISE PLUS BAS. L'article 9-1 de
 # l'annexe 3 des IEG, en vigueur du 1er janvier 2017 au 31 décembre 2024
 # (LEGIARTI000029150204 à LEGIARTI000047908882, abrogé par la rédaction du
 # 1er janvier 2025, LEGIARTI000047909955, lues le 27 septembre 2026), fixe la
@@ -186,6 +187,21 @@
 #       périodes de 2022 et après la choisissent. Un navigant né en 1965 parti à
 #       cinquante-sept ans avec vingt-cinq annuités n'a plus de décote, au lieu
 #       de 25 %.
+#
+# LA COMÉDIE-FRANÇAISE A LA SIENNE, au V de l'article 12 du décret n° 68-960,
+# après le même calendrier de 2008, lue le 13 octobre 2026 :
+#   `comedie_francaise_2014` — rédaction du décret n° 2014-666, pour les pensions
+#       prenant effet à compter du 1er janvier 2017 (LEGIARTI000029134341), « A
+#       compter du 1er juillet 2019 » : 167 trimestres des nés du 1er juillet
+#       1959 à 1960, 168 pour 1961-1963, 169 pour 1964-1966, 170 pour 1967-1969,
+#       171 pour 1970-1972, 172 à compter de 1973, les marches de la RATP. Son VI
+#       oppose la durée « en vigueur lorsque les assurés atteignent l'âge de
+#       soixante ans » et, à qui peut liquider plus tôt, celle des assurés qui
+#       l'atteignent l'année où la liquidation peut intervenir : âge de lecture,
+#       soixante ans, comme `ieg_2014`. Avant le 1er juillet 2019, le calendrier
+#       de 2008 répond, que les rédactions de 2008 à 2016 écrivent déjà. La fiche
+#       lisait la table commune de L. 161-17-3 : 166 trimestres au lieu de 162 à
+#       une sociétaire née en mars 1955 partie à soixante ans.
 table,depuis,generation,trimestres,retranche_decote,fiabilite,age_de_lecture,age_minimum
 sncf_conduite,2025-01,1968.833,167,0,haute,,
 sncf_conduite,2025-01,1970,168,0,haute,,
@@ -307,3 +323,9 @@ crpn_2022,1900-01,1968,120,12,haute,,55
 crpn_2022,1900-01,1969,120,8,haute,,55
 crpn_2022,1900-01,1970,120,4,haute,,55
 crpn_2022,1900-01,1971,120,0,haute,,55
+comedie_francaise_2014,2019-07,1959.5,167,0,haute,60,
+comedie_francaise_2014,2019-07,1961,168,0,haute,60,
+comedie_francaise_2014,2019-07,1964,169,0,haute,60,
+comedie_francaise_2014,2019-07,1967,170,0,haute,60,
+comedie_francaise_2014,2019-07,1970,171,0,haute,60,
+comedie_francaise_2014,2019-07,1973,172,0,haute,60,

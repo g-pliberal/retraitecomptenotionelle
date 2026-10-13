@@ -1753,6 +1753,10 @@ inventaire:
     - {reference: "décret n° 68-960 du 11 octobre 1968 relatif à la caisse de retraites\
         \ des personnels de la Comédie-Française", id: null}
     - {reference: 'code de la sécurité sociale, R. 711-1 10°', id: LEGIARTI000048031379}
+    - {reference: "décret n° 68-960, article 51, I, A (âge d'ouverture par génération,\
+        \ rédaction du décret n° 2011-1134)", id: LEGIARTI000029134323}
+    - {reference: "décret n° 68-960, article 12, V et VI (durée : calendrier de 2008,\
+        \ puis table par génération à compter du 1er juillet 2019)", id: LEGIARTI000029134341}
 
   - code: port_strasbourg
     nom: Régime de retraite du personnel du port autonome de Strasbourg

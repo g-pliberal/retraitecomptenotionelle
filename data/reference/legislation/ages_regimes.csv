@@ -136,6 +136,25 @@
 #       période de 2025 la lit dans celle de l'année où le droit s'ouvre
 #       (`age_taux_plein_a_l_ouverture`).
 #
+# LA COMÉDIE-FRANÇAISE AUSSI, dont la fiche donnait soixante-deux ans à tous
+# dès 2012. L'article 6 du décret n° 68-960, dans la rédaction du décret
+# n° 2011-1134 en vigueur depuis le 23 septembre 2011 (LEGIARTI000024579829),
+# fixe soixante-deux ans aux artistes aux appointements et aux employés à
+# traitement fixe ; le A du I de son article 51 (LEGIARTI000024579866, puis
+# LEGIARTI000029134323 depuis 2017) l'abaisse génération par génération. Lus le
+# 13 octobre 2026 dans l'index LEGI :
+#   `comedie_francaise_2011` — soixante ans avant 1957, soixante ans et quatre
+#       mois pour 1957, quatre mois de plus par génération jusqu'à soixante-deux
+#       ans à compter de 1962. Référence de la décote cinq ans au-dessus,
+#       « l'âge minimum d'ouverture du droit à pension applicable à l'assuré
+#       majoré de cinq ans » (article 12, II, 1°), que le barème des régimes
+#       spéciaux diminue jusqu'au 30 juin 2024. Les générations que la rédaction
+#       de 2011 change n'ont pas soixante ans avant 2017. Le 2° de l'article 6,
+#       cinquante-sept ans pour les machinistes, les électriciens, les
+#       régisseurs et les pompiers, abaissé de cinquante-cinq ans avant 1962 à
+#       cinquante-six ans et huit mois pour 1966 (B du même I), n'est pas
+#       transcrit : la fiche ne modélise que le 1°.
+#
 # SAINT-PIERRE-ET-MIQUELON, sept générations derrière la métropole. Depuis
 # l'ordonnance n° 2015-896, le b du 1° de l'article 5 de la loi n° 87-563
 # adapte L. 161-17-2 en décalant ses dates, et l'article 3, II, 1°, du décret
@@ -438,3 +457,10 @@ mayotte_2026_09,1970,64,67,haute,0.01625
 mayotte_2026_09,1971,64,67,haute,0.015
 mayotte_2026_09,1972,64,67,haute,0.01375
 mayotte_2026_09,1973,64,67,haute,0.0125
+comedie_francaise_2011,1900,60,65,haute,
+comedie_francaise_2011,1957,60.333333,65.333333,haute,
+comedie_francaise_2011,1958,60.666667,65.666667,haute,
+comedie_francaise_2011,1959,61,66,haute,
+comedie_francaise_2011,1960,61.333333,66.333333,haute,
+comedie_francaise_2011,1961,61.666667,66.666667,haute,
+comedie_francaise_2011,1962,62,67,haute,

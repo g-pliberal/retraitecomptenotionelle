@@ -7109,6 +7109,38 @@ def test_la_crpn_abaisse_la_cible_des_nes_avant_1971_partis_a_55_ans(simulateur)
                 age_debut=35, age_liquidation=60)) == 36
 
 
+def test_la_comedie_francaise_lit_l_age_et_la_duree_de_son_decret(simulateur):
+    """Décret n° 68-960 : l'âge de soixante-deux ans de l'article 6 ne vaut
+    qu'à compter de la génération 1962, abaissé à soixante ans avant 1957 et
+    relevé de quatre mois par génération entre les deux (article 51, I, A) ;
+    la décote s'annule cinq ans au-dessus (article 12, II, 1°). La durée se
+    lit au calendrier de 2008, à la date où les conditions sont réunies,
+    puis, à compter du 1er juillet 2019, à la génération (article 12, V).
+    La fiche donnait soixante-deux ans à tous dès 2012 et lisait la table
+    commune de la durée.
+    """
+    scenario = simulateur.scenario_actuel
+    # (naissance, âge de départ) : âge d'ouverture, de référence, durée.
+    attendus = {(1955, 60.0): (60.0, 65.0, 162),
+                (1958, 61.0): (60.0 + 8 / 12, 65.0 + 8 / 12, 166),
+                (1961, 62.0): (61.0 + 8 / 12, 66.0 + 8 / 12, 168),
+                (1975, 62.0): (62.0, 67.0, 172)}
+    for (naissance, age), (ouverture, reference, duree) in attendus.items():
+        carriere = simulateur.carriere_simple(
+            annee_naissance=naissance, sexe="F",
+            affiliation="personnel_comedie_francaise",
+            age_debut=22, age_liquidation=age,
+        )
+        periode = _periode(simulateur, "comedie_francaise",
+                           carriere.annee_liquidation)
+        assert ouvrir.age_ouverture(scenario, periode, carriere) == (
+            pytest.approx(ouverture, abs=1e-4)), naissance
+        assert ouvrir.age_taux_plein(scenario, periode, carriere) == (
+            pytest.approx(reference, abs=1e-4)), naissance
+        assert ouvrir.duree_requise(scenario, periode, carriere)[0] == duree, (
+            naissance)
+
+
 def test_le_salaire_de_reference_des_cultes_est_fait_du_forfait(simulateur):
     """Le salaire annuel moyen de la CAVIMAC ne dépend pas du revenu déclaré.
 
