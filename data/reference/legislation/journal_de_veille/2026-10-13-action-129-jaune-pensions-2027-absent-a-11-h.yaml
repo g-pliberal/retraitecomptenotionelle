@@ -1,0 +1,19 @@
+date: "2026-10-13"
+session: "action 129 : le jaune pensions du PLF 2027 cherché de nouveau à 11 h, jour de la séance publique, toujours absent"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1. Le
+  13 octobre, à 11 h, heure de Paris, depuis le cloud : la page du dossier du PLF 2027
+  de l'Assemblée nationale (dyn/17/dossiers/PLF_2027), tirée sans son cache
+  (?v=<horodatage>), trois fois, la première répondant 504, les deux suivantes 200.
+  Ni budget.gouv.fr, ni balayage des numéros de visualisation.
+trouve: >-
+  Rien de neuf depuis 10 h 50 : les « Documents et annexes » du dossier portent les
+  annexes au projet et les projets annuels de performances, et toujours pas de section
+  « Jaunes annexés », ni aucun lien vers un jaune.
+reste: >-
+  Le même qu'à 10 h 50 : tirer le jaune de la page du dossier dès qu'elle porte ses
+  « Jaunes annexés », voir s'il décompose le taux de l'État année par année et, s'il le
+  fait, faire accepter plusieurs années à `PartRetraiteSeuleEtat`, dans les deux
+  moteurs ; la mise à jour des bonifications que `sre_jaune_pensions.py` tire du jaune
+  est une autre étape.
+prochaine_veille: "2026-10-14"
