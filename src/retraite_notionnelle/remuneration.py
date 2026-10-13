@@ -1335,7 +1335,10 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
             basse_euros, haute_euros = periode.bornes_de_l_annee(annee)
             part = 1.0 if sans_employeur else periode.part_salariale
             traitement = 1.0 - part_primes if periode.assiette == "hors_primes" else 1.0
-            taux = (periode.taux_cotisation_retraite or 0.0) * traitement
+            # L'artisan et le commerçant, au régime général depuis 2018, paient
+            # leur barème propre (D. 633-3), comme le compte le leur porte.
+            plafonne, deplafonne = periode.taux_du_cotisant(sans_employeur)
+            taux = (plafonne or 0.0) * traitement
             if taux:
                 salarie.append(Segment(basse, haute, taux * part,
                                        basse_euros, haute_euros))
@@ -1356,7 +1359,7 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
                     employeur.append(Segment(0.0, None, sup_employeur))
             # La part déplafonnée porte sur la totalité du salaire, par-dessus
             # la précédente : c'est un segment de plus, non une tranche.
-            taux_deplafonne = (periode.taux_cotisation_deplafonnee or 0.0) * traitement
+            taux_deplafonne = (deplafonne or 0.0) * traitement
             if taux_deplafonne:
                 part_deplafonnee = (
                     1.0 if sans_employeur else periode.part_salariale_deplafonnee)

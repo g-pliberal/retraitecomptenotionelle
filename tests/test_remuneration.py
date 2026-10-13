@@ -715,12 +715,14 @@ def test_un_independant_ne_se_voit_pretee_aucune_part_patronale(pieces):
     assert all(ligne.employeur == 0.0 for ligne in avant.lignes)
     assert all(ligne.employeur == 0.0 for ligne in apres.lignes)
     assert avant.cout_du_travail == pytest.approx(avant.brut)
-    # Le régime général pèse ses 15,45 % pleins, et non ses 6,90 % salariaux.
+    # Le régime général pèse le barème propre de l'artisan (D. 633-3) : 17,15 %
+    # sous le plafond et 0,72 % sur la totalité, ni les 6,90 % salariaux, ni les
+    # 15,45 % et 2,51 % du salarié et de son employeur.
     retraite_base = next(ligne for ligne in avant.lignes
                          if ligne.code == "regime_general")
     plafonne = min(avant.brut, pieces["plafond"])
     assert retraite_base.salarie == pytest.approx(
-        0.1545 * plafonne + 0.0251 * avant.brut, rel=1e-3)
+        0.1715 * plafonne + 0.0072 * avant.brut, rel=1e-3)
 
 
 def test_l_independant_porte_les_dix_huit_pour_cent_en_entier(pieces):

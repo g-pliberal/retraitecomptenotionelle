@@ -5,13 +5,21 @@ complémentaire des indépendants (7 %) s'arrête à un plafond que la caisse
 publie chaque année, et non au plafond de la sécurité sociale ; la seconde
 (8 %) part de lui (D. 635-7, fiche ``rci_seuil_premiere_tranche``). Depuis
 2025, le texte coupe au plafond de la sécurité sociale.
+
+Les taux propres : au régime général depuis 2018, l'artisan et le commerçant
+cotisent à leur barème (D. 633-3, fiche ``cotisation_vieillesse_independants``),
+17,15 % sous le plafond et 0,60 % sur la totalité, 0,72 % depuis 2025, et non
+aux 15,45 % et 2,30 à 2,51 % du salarié et de son employeur. La fiche de paie
+le prélève, le compte notionnel le porte.
 """
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -20,6 +28,7 @@ from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.donnees import regimes
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes
+from retraite_notionnelle.moteur.compte import ConstructeurCompte
 from retraite_notionnelle.remuneration import (
     ConstructeurFiche, bloc_droit_en_vigueur, charger_prelevements, smic_annuel)
 from retraite_notionnelle.simulateur import Simulateur
@@ -95,14 +104,21 @@ def test_une_borne_annuelle_exige_l_annee():
         premiere.bornes_assiette_en_euros(40_524)
 
 
-def _fiche_rci(simulateur, annee: int, revenu: float) -> float:
+def _fiche(simulateur, annee: int, revenu: float, statut: str = "artisan") -> dict:
+    """Ce que la fiche de paie du droit en vigueur prélève pour la retraite,
+    régime par régime : (part de l'assuré, part de l'employeur)."""
     bloc = bloc_droit_en_vigueur(simulateur.catalogue, simulateur.affiliations,
-                                 "artisan", annee)
+                                 statut, annee)
     profil = charger_prelevements(RACINE_DONNEES).profil("independant")
     fiche = ConstructeurFiche(profil).fiche(
         annee, revenu, simulateur.macro.plafond_securite_sociale(annee),
         smic_annuel(simulateur.macro, annee), bloc)
-    return next(ligne.salarie for ligne in fiche.lignes if ligne.code == "rci")
+    return {ligne.code: (ligne.salarie, ligne.employeur)
+            for ligne in fiche.lignes if ligne.retraite}
+
+
+def _fiche_rci(simulateur, annee: int, revenu: float) -> float:
+    return _fiche(simulateur, annee, revenu)["rci"][0]
 
 
 def test_la_fiche_de_paie_preleve_au_plafond_propre(simulateur):
@@ -132,6 +148,144 @@ def test_les_points_du_rci_suivent_le_plafond_propre(simulateur, monkeypatch):
     assert 1.001 < propre[2.0] / au_plafond[2.0] < 1.01
 
 
+#: Le barème propre de D. 633-3 au régime général, depuis 2018 : (sous le
+#: plafond, sur la totalité). LEGIARTI000031799496 et 000041967101, puis
+#: LEGIARTI000049904636 pour les périodes courant depuis le 1er janvier 2025.
+BAREME_PROPRE = {annee: (0.1715, 0.0060 if annee < 2025 else 0.0072)
+                 for annee in range(2018, 2027)}
+
+
+def test_au_regime_general_l_artisan_garde_son_bareme(simulateur):
+    """Chaque année depuis 2018, la période du régime général porte le barème
+    propre du non-salarié à côté des taux du salarié, qu'il ne remplace pas."""
+    catalogue = CatalogueRegimes(RACINE_DONNEES)
+    for annee, attendu in BAREME_PROPRE.items():
+        (periode,) = [p for p in catalogue["regime_general"].periodes_actives(annee)
+                      if p.assiette == "plafonnee"]
+        assert periode.taux_du_cotisant(True) == pytest.approx(attendu), annee
+        assert periode.taux_du_cotisant(False) == (
+            periode.taux_cotisation_retraite, periode.taux_cotisation_deplafonnee)
+    (avant,) = catalogue["regime_general"].periodes_actives(2017)
+    assert avant.taux_du_cotisant(True) == avant.taux_du_cotisant(False)
+
+
+@pytest.mark.parametrize("statut, annee", [
+    ("artisan", 2019), ("commercant", 2024), ("artisan", 2025),
+    ("liberal_non_reglemente", 2020), ("micro_entrepreneur", 2026),
+])
+def test_la_fiche_de_paie_preleve_le_bareme_propre(simulateur, statut, annee):
+    """60 000 € de revenu : 17,15 % jusqu'au plafond, et 0,60 % (0,72 % depuis
+    2025) sur le tout — 7 309,87 € en 2019, et non les 7 640,96 € qu'un salarié
+    et son employeur versent."""
+    pss = simulateur.macro.plafond_securite_sociale(annee)
+    plafonne, deplafonne = BAREME_PROPRE[annee]
+    assert _fiche(simulateur, annee, 60_000.0, statut)["regime_general"] == (
+        pytest.approx(plafonne * pss + deplafonne * 60_000), 0.0)
+
+
+def test_le_salarie_garde_ses_taux(simulateur):
+    """Le salarié du privé et son employeur : 15,45 % sous le plafond et
+    2,30 % sur la totalité en 2019, partagés comme la fiche le dit."""
+    salarie, employeur = _fiche(simulateur, 2019, 60_000.0,
+                                "salarie_prive_non_cadre")["regime_general"]
+    assert salarie + employeur == pytest.approx(0.1545 * 40_524 + 0.023 * 60_000)
+
+
+def test_le_compte_porte_ce_que_l_artisan_a_verse(simulateur):
+    """Le compte notionnel inscrit ce qui a été versé : le barème propre au
+    régime général depuis 2018, celui du RSI avant (0,50 % en 2016)."""
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1965, sexe="H", affiliation="artisan", mois_naissance=1,
+        age_debut=22, age_liquidation=64, niveau_salaire=2.0, profil_carriere="plat")
+    constructeur = ConstructeurCompte(simulateur.macro, simulateur.catalogue,
+                                      simulateur.affiliations, simulateur.indexation,
+                                      simulateur.parametres)
+    for annee, (code, plafonne, deplafonne) in {
+            2016: ("rsi", 0.1715, 0.0050), 2019: ("regime_general", *BAREME_PROPRE[2019]),
+            2025: ("regime_general", *BAREME_PROPRE[2025])}.items():
+        versees = constructeur.cotisation_annuelle(carriere, annee)
+        pss = simulateur.macro.plafond_securite_sociale(annee)
+        revenu = versees.revenu
+        assert revenu > pss
+        assert dict(versees.par_regime)[code] == pytest.approx(
+            plafonne * pss + deplafonne * revenu), annee
+
+
+#: Quatre rédactions de D. 633-3, telles que l'index LEGI les porte, raccourcies
+#: de ce que le lecteur ne lit pas : le calendrier, la dérogation en note et la
+#: date d'application.
+REDACTIONS_D633_3 = [
+    ("LEGIARTI000028435871", "2014-01-01",
+     "I. - Le taux des cotisations assises sur le revenu d'activité dans la limite du "
+     "plafond est fixé à : a) 16,95 % pour l'année 2014 ; b) 17,05 % pour l'année "
+     "2015 ; c) 17,15 % à compter de l'année 2016. II. - Le taux des cotisations "
+     "assises sur la totalité du revenu d'activité est fixé à 0,20 %."),
+    ("LEGIARTI000029924551", "2015-01-01",
+     "Conformément au décret n° 2014-1531 du 17 décembre 2014 article 13 II, ces "
+     "dispositions s'appliquent aux cotisations de sécurité sociale dues au titre des "
+     "périodes courant à compter du 1er janvier 2015. I. - Le taux des cotisations "
+     "assises sur le revenu d'activité dans la limite du plafond est fixé à : a) 17,05 % "
+     "pour l'année 2015 ; b) 17,15 % à compter de l'année 2016. II. - Le taux des "
+     "cotisations assises sur la totalité du revenu d'activité est fixé à : a) 0,35 % "
+     "pour l'année 2015 ; b) 0,50 % pour l'année 2016 ; c) 0,60 % à compter de l'année "
+     "2017."),
+    ("LEGIARTI000031799496", "2016-01-01",
+     "Conformément à l'article 10 II du décret n° 2015-1856 du 30 décembre 2015, pour "
+     "l'année 2016, par dérogation aux dispositions de l'article D. 633-3 dans sa "
+     "rédaction résultant de l'article 7 du présent décret : le taux de la cotisation "
+     "mentionné au II de l'article D. 633-3 est fixé à 0,5 %. I.-Le taux des cotisations "
+     "assises sur le revenu d'activité dans la limite du plafond est fixé à 17,15 %. "
+     "II.-Le taux des cotisations assises sur la totalité du revenu d'activité est fixé "
+     "à 0,60 %."),
+    ("LEGIARTI000049904636", "2024-07-07",
+     "Conformément à l’article 6 du décret n° 2024-688 du 5 juillet 2024, ces "
+     "dispositions s'appliquent au calcul des cotisations et des contributions dues par "
+     "les travailleurs indépendants non agricoles au titre des périodes courant à "
+     "compter du 1er janvier 2025. I.-Le taux des cotisations assises sur l'assiette de "
+     "cotisations dans la limite du plafond est fixé à 17,15 %. II.-Le taux des "
+     "cotisations assises sur la totalité de l'assiette de cotisations est fixé à 0,72 %."),
+]
+
+
+def _recuperateur():
+    nom = "dila_legi_taux_independants"
+    chemin = RACINE / "scripts" / "fetch" / f"{nom}.py"
+    specification = importlib.util.spec_from_file_location(nom, chemin)
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[nom] = module
+    specification.loader.exec_module(module)
+    return module
+
+
+def test_le_bareme_se_lit_dans_les_redactions_de_d_633_3():
+    """Le récupérateur date chaque taux au 1er janvier, suit le calendrier
+    d'une rédaction, la dérogation de 2016 en note et la date d'application
+    que la rédaction de 2024 écrit, et rend le barème que la table certifie."""
+    recuperateur = _recuperateur()
+    redactions = [recuperateur.lire_redaction(*r) for r in REDACTIONS_D633_3]
+    assert [r["application"] for r in redactions] == [
+        "2014-01-01", "2015-01-01", "2016-01-01", "2025-01-01"]
+    serie = recuperateur.series(redactions)
+    lues = {int(a): (t["plafonne"], t["deplafonne"]) for a, t in serie.items()}
+    assert lues[2014] == (0.1695, 0.002)
+    assert lues[2015] == (0.1705, 0.0035)
+    assert lues[2016] == (0.1715, 0.005)
+    for annee in range(2017, 2025):
+        assert lues[annee] == (0.1715, 0.006), annee
+    assert lues[2025] == (0.1715, 0.0072)
+    for annee, attendu in BAREME_PROPRE.items():
+        if annee in lues:
+            assert lues[annee] == pytest.approx(attendu), annee
+
+
+def test_une_redaction_illisible_arrete_le_recuperateur():
+    """Rien n'est écrit plutôt qu'un taux deviné."""
+    recuperateur = _recuperateur()
+    with pytest.raises(ValueError, match="alinéas"):
+        recuperateur.lire_redaction("LEGIARTI000000000000", "2030-01-01",
+                                    "Le taux est fixé à 18 %.")
+
+
 #: Le jumeau JavaScript : les mêmes bornes et la même ligne de fiche de paie.
 _JUMEAU = """
 import { readFileSync } from "node:fs";
@@ -147,13 +301,13 @@ const bloc = blocDroitEnVigueur(catalogue, new Affiliations(paquet), "artisan", 
 const profil = new BaremePrelevements(paquet.prelevements_remuneration).profil("independant");
 const lignes = new ConstructeurFiche(profil).fiche(
   fiche.annee, fiche.revenu, fiche.pss, fiche.smic, bloc).lignes;
-process.stdout.write(JSON.stringify({
-  bornes, rci: lignes.find((ligne) => ligne.code === "rci").salarie,
-}));
+const retraite = Object.fromEntries(lignes.filter((ligne) => ligne.retraite)
+  .map((ligne) => [ligne.code, [ligne.salarie, ligne.employeur]]));
+process.stdout.write(JSON.stringify({ bornes, retraite }));
 """
 
 
-def test_le_portage_javascript_coupe_au_meme_plafond(simulateur):
+def test_le_portage_javascript_coupe_au_meme_plafond_et_au_meme_bareme(simulateur):
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     catalogue = simulateur.catalogue
@@ -165,7 +319,7 @@ def test_le_portage_javascript_coupe_au_meme_plafond(simulateur):
         "bornes": [[list(p.bornes_assiette_en_euros(plafond, annee))
                     for p in catalogue["rci"].periodes_actives(annee)]
                    for annee, plafond in zip(annees, pss)],
-        "rci": _fiche_rci(simulateur, 2019, 60_000.0),
+        "retraite": _fiche(simulateur, 2019, 60_000.0),
     }
     execution = subprocess.run(
         ["node", "--input-type=module", "-e", _JUMEAU,
@@ -174,4 +328,7 @@ def test_le_portage_javascript_coupe_au_meme_plafond(simulateur):
     assert execution.returncode == 0, execution.stderr
     obtenu = json.loads(execution.stdout)
     assert obtenu["bornes"] == attendu["bornes"]
-    assert obtenu["rci"] == pytest.approx(attendu["rci"], abs=1e-9)
+    assert set(obtenu["retraite"]) == set(attendu["retraite"])
+    for code, (salarie, employeur) in attendu["retraite"].items():
+        assert obtenu["retraite"][code] == [pytest.approx(salarie, abs=1e-9),
+                                            pytest.approx(employeur, abs=1e-9)], code

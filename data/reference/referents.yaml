@@ -8098,8 +8098,13 @@ referents:
           2017 à 2024, 0,72 % depuis 2025 ;
           `ret_ac/artisans/sous_pss.yaml` : 17,15 % depuis 2016. La
           convention surcrédite donc le compte de l'artisan
-          d'environ 1,8 point au-delà du plafond.
-        etat: a_reprendre
+          d'environ 1,8 point au-delà du plafond. Repris le 13 octobre
+          2026 (action 138, étape 18), sur D. 633-3 lu dans ses cinq
+          rédactions : au régime général depuis 2018, la fiche de paie
+          et le compte prennent le barème propre de l'assuré sans
+          employeur, 17,15 % et 0,60 % puis 0,72 % (fiche
+          `cotisation_vieillesse_independants`).
+        etat: repris
         chantier: "138.18"
       - quoi: >-
           Il calcule le système universel à points du projet de 2019

@@ -18,9 +18,19 @@
 #   part_salariale             : fraction du précédent supportée par le salarié
 #   taux_deplafonne            : salarié + employeur, sur la totalité du salaire
 #   part_salariale_deplafonnee : fraction du précédent supportée par le salarié
+#   taux_plafonne_non_salarie  : au régime général, le taux propre de l'assuré
+#   taux_deplafonne_non_salarie  sans employeur, sous plafond et sur la totalité
 #
 # Les non-salariés (cancava, organic, rsi) n'ont que les taux : ils
-# paient tout, et la fiche le sait (part_salariale : 1). Les cultes
+# paient tout, et la fiche le sait (part_salariale : 1). Depuis 2018,
+# l'artisan et le commerçant cotisent au régime général, mais à LEUR barème
+# (D. 633-3) : 17,15 % sous le plafond et 0,60 % sur la totalité, 0,72 %
+# depuis 2025, quand le salarié et son employeur versent 15,45 % et 2,30 à
+# 2,51 %. Ce sont les deux mesures `_non_salarie` du régime général,
+# certifiées sur les rédactions de D. 633-3 que lit
+# scripts/fetch/dila_legi_taux_independants.py ; la fiche de paie et le
+# compte d'un assuré sans employeur les lisent, les cultes, Mayotte et
+# Saint-Pierre-et-Miquelon n'en héritent pas. Les cultes
 # (R. 382-89 et R. 382-90), Mayotte et Saint-Pierre-et-Miquelon suivent la
 # série du régime général, dont leurs fiches recopiaient les moyennes.
 #
@@ -30,7 +40,9 @@
 #     scripts/fetch/dila_legi_taux_cotisation.py — D. 242-4 du code de la
 #     sécurité sociale et décret n° 81-1013 pour le régime général depuis
 #     1982, D. 741-35 du code rural et décret n° 50-444 pour les salariés
-#     agricoles depuis 1980 ;
+#     agricoles depuis 1980 ; et D. 633-3, lu par
+#     scripts/fetch/dila_legi_taux_independants.py, pour le barème propre
+#     des artisans et des commerçants au régime général depuis 2018 ;
 #   haute     : data/brut/openfisca_cotisations.json pour ce que la base
 #     LEGI ne permet pas de dater — avant 1982 au régime général, où
 #     l'article 3 du décret n° 67-803 n'a qu'une version de quatorze ans —
@@ -1200,39 +1212,57 @@ regime_general,2017,taux_plafonne,0.154500,certifiee
 regime_general,2018,part_salariale,0.446602,certifiee
 regime_general,2018,part_salariale_deplafonnee,0.173913,certifiee
 regime_general,2018,taux_deplafonne,0.023000,certifiee
+regime_general,2018,taux_deplafonne_non_salarie,0.006000,certifiee
 regime_general,2018,taux_plafonne,0.154500,certifiee
+regime_general,2018,taux_plafonne_non_salarie,0.171500,certifiee
 regime_general,2019,part_salariale,0.446602,certifiee
 regime_general,2019,part_salariale_deplafonnee,0.173913,certifiee
 regime_general,2019,taux_deplafonne,0.023000,certifiee
+regime_general,2019,taux_deplafonne_non_salarie,0.006000,certifiee
 regime_general,2019,taux_plafonne,0.154500,certifiee
+regime_general,2019,taux_plafonne_non_salarie,0.171500,certifiee
 regime_general,2020,part_salariale,0.446602,certifiee
 regime_general,2020,part_salariale_deplafonnee,0.173913,certifiee
 regime_general,2020,taux_deplafonne,0.023000,certifiee
+regime_general,2020,taux_deplafonne_non_salarie,0.006000,certifiee
 regime_general,2020,taux_plafonne,0.154500,certifiee
+regime_general,2020,taux_plafonne_non_salarie,0.171500,certifiee
 regime_general,2021,part_salariale,0.446602,certifiee
 regime_general,2021,part_salariale_deplafonnee,0.173913,certifiee
 regime_general,2021,taux_deplafonne,0.023000,certifiee
+regime_general,2021,taux_deplafonne_non_salarie,0.006000,certifiee
 regime_general,2021,taux_plafonne,0.154500,certifiee
+regime_general,2021,taux_plafonne_non_salarie,0.171500,certifiee
 regime_general,2022,part_salariale,0.446602,certifiee
 regime_general,2022,part_salariale_deplafonnee,0.173913,certifiee
 regime_general,2022,taux_deplafonne,0.023000,certifiee
+regime_general,2022,taux_deplafonne_non_salarie,0.006000,certifiee
 regime_general,2022,taux_plafonne,0.154500,certifiee
+regime_general,2022,taux_plafonne_non_salarie,0.171500,certifiee
 regime_general,2023,part_salariale,0.446602,certifiee
 regime_general,2023,part_salariale_deplafonnee,0.173913,certifiee
 regime_general,2023,taux_deplafonne,0.023000,certifiee
+regime_general,2023,taux_deplafonne_non_salarie,0.006000,certifiee
 regime_general,2023,taux_plafonne,0.154500,certifiee
+regime_general,2023,taux_plafonne_non_salarie,0.171500,certifiee
 regime_general,2024,part_salariale,0.446602,certifiee
 regime_general,2024,part_salariale_deplafonnee,0.165289,certifiee
 regime_general,2024,taux_deplafonne,0.024200,certifiee
+regime_general,2024,taux_deplafonne_non_salarie,0.006000,certifiee
 regime_general,2024,taux_plafonne,0.154500,certifiee
+regime_general,2024,taux_plafonne_non_salarie,0.171500,certifiee
 regime_general,2025,part_salariale,0.446602,certifiee
 regime_general,2025,part_salariale_deplafonnee,0.165289,certifiee
 regime_general,2025,taux_deplafonne,0.024200,certifiee
+regime_general,2025,taux_deplafonne_non_salarie,0.007200,certifiee
 regime_general,2025,taux_plafonne,0.154500,certifiee
+regime_general,2025,taux_plafonne_non_salarie,0.171500,certifiee
 regime_general,2026,part_salariale,0.446602,certifiee
 regime_general,2026,part_salariale_deplafonnee,0.159363,certifiee
 regime_general,2026,taux_deplafonne,0.025100,certifiee
+regime_general,2026,taux_deplafonne_non_salarie,0.007200,certifiee
 regime_general,2026,taux_plafonne,0.154500,certifiee
+regime_general,2026,taux_plafonne_non_salarie,0.171500,certifiee
 rsi,2006,taux_plafonne,0.166500,haute
 rsi,2007,taux_plafonne,0.166500,haute
 rsi,2008,taux_plafonne,0.166500,haute

@@ -703,6 +703,7 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "taux_cotisation_annuels": "regimes/taux_cotisation_annuels.csv",
         "taux_cotisation_avant_1967": "regimes/taux_cotisation_annuels.csv",
         "taux_cotisation_journal_officiel": "regimes/taux_cotisation_annuels.csv",
+        "taux_cotisation_non_salaries": "regimes/taux_cotisation_annuels.csv",
         "taux_cotisation_alignes": "regimes/taux_cotisation_annuels.csv",
         "salaires_forfaitaires_marins": "regimes/salaires_forfaitaires.csv",
         "employeur_public_texte":

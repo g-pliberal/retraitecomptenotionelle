@@ -1431,6 +1431,17 @@
    "valeurs": 368,
    "verifiee_le": "2026-09-15"
   },
+  "taux_cotisation_non_salaries": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "9f2c4982af5d1dc3",
+   "identiques": 18,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code de la sécurité sociale D. 633-3",
+   "valeurs": 18,
+   "verifiee_le": "2026-10-13"
+  },
   "taux_moyens_agirc_arrco": {
    "ajoutees": 90,
    "colonne": "taux",

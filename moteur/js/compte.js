@@ -184,8 +184,9 @@ export class ConstructeurCompte {
 
     if (sansEmployeur) {
       // Un non-salarié paie tout : la répartition de la fiche est celle d'un
-      // salarié du même régime, elle ne le concerne pas.
-      return [taux, 0.0, "", Fiabilite.CERTIFIEE];
+      // salarié du même régime, elle ne le concerne pas. Au régime général,
+      // il paie aussi son barème à lui (D. 633-3).
+      return [periode.tauxDuCotisant(true)[0], 0.0, "", Fiabilite.CERTIFIEE];
     }
 
     if (partSalarialeSeule) {
@@ -716,7 +717,9 @@ export class ConstructeurCompte {
         // Un compte notionnel, lui, porte au compte ce qui a été VERSÉ. Chaque
         // euro cotisé doit s'y retrouver, faute de quoi les hauts salaires
         // paraissent perdre plus qu'ils ne perdent.
-        const deplafonnee = base * periode.taux_cotisation_deplafonnee;
+        // L'artisan et le commerçant, au régime général depuis 2018, versent
+        // leur taux propre sur la totalité : 0,60 %, puis 0,72 % depuis 2025.
+        const deplafonnee = base * periode.tauxDuCotisant(sansEmployeur)[1];
         if (deplafonnee > 0) {
           let partAgent = periode.part_salariale_deplafonnee;
           if (sansEmployeur) {

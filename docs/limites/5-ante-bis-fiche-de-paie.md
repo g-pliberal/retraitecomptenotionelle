@@ -135,11 +135,14 @@ professionnelle (un forfait de <!--chiffre:illustration()-->0,25<!--/--> % du pl
 par symétrie avec les taxes sur salaires du privé) et l'assiette minimale que la
 loi impose aux très bas revenus, faute de savoir si l'assuré relève d'une de ses
 exonérations : le net affiché en bas de barème est un plafond. Ses cotisations
-de retraite sont par ailleurs celles des fiches de régime, qui alignent
-l'artisan et le commerçant sur le régime général — <!--chiffre:valeur(data/reference/regimes/regime_general.yaml:periodes.debut=2023.taux_cotisation_retraite*100)-->15,45<!--/--> % sous le plafond et
-<!--chiffre:illustration()-->2,51<!--/--> % déplafonnés plutôt que <!--chiffre:illustration()-->17,15<!--/--> % et <!--chiffre:illustration()-->0,72<!--/--> % : c'est la convention du modèle
-entier, et la fiche de paie ne peut pas en diverger sans que le compte notionnel
-et elle cessent de dire la même chose. Enfin, pour un agent public non
+de retraite sont celles de son barème : au régime général depuis 2018,
+l'artisan et le commerçant versent <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=2026&mesure=taux_plafonne_non_salarie)-->17,15<!--/--> %
+sous le plafond et <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=2026&mesure=taux_deplafonne_non_salarie)-->0,72<!--/--> % sur la totalité
+(D. 633-3), et non les <!--chiffre:valeur(data/reference/regimes/regime_general.yaml:periodes.debut=2023.taux_cotisation_retraite*100)-->15,45<!--/--> %
+et <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=2026&mesure=taux_deplafonne)-->2,51<!--/--> % du salarié et de son employeur ; le compte notionnel porte
+ce qu'il a versé, comme la fiche de paie le prélève. Sa complémentaire
+s'arrêtait de 2013 à 2024 au plafond propre du RCI, <!--chiffre:illustration()-->42 946<!--/--> € en 2024, et
+non au plafond de la sécurité sociale. Enfin, pour un agent public non
 titulaire, le coefficient maximal de la réduction générale reste celui du décret
 — un chiffre national bâti sur les taux du privé —, alors que le périmètre de
 son employeur est plus étroit de la CEG et plus large de l'Ircantec ; ce qui

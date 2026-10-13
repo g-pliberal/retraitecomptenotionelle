@@ -3571,6 +3571,30 @@ institutions:
           la version de D. 242-4 qui porte 2026, celle du décret n° 2025-1446
           du 31 décembre 2025, n'est que dans les incréments.
 
+      - id: dila_legi_taux_independants
+        titre: >-
+          Barème propre des artisans et des commerçants à la vieillesse de
+          base, lu dans l'article D. 633-3 du code de la sécurité sociale
+        url: https://echanges.dila.gouv.fr/OPENDATA/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/regimes/taux_cotisation_annuels.csv
+        recuperation: scripts/fetch/dila_legi_taux_independants.py
+        note: >-
+          Depuis 2018, l'artisan et le commerçant cotisent au régime général,
+          mais à leur barème : 17,15 % sous le plafond, 0,60 % sur la totalité
+          puis 0,72 % depuis 2025, quand le salarié et son employeur versent
+          15,45 % et 2,30 à 2,51 %. Le dépôt leur prêtait le second jusqu'au
+          13 octobre 2026 (action 138, étape 18). Le récupérateur lit les cinq
+          rédactions de l'article depuis sa naissance, le 1er janvier 2014 —
+          il portait avant une autre règle, la déclaration des revenus —, dans
+          l'index LEGI du dépôt : un taux par alinéa, un calendrier par année,
+          la dérogation de 2016 en note, la date d'application de 2025. Dix-huit
+          valeurs certifiées, les mesures taux_plafonne_non_salarie et
+          taux_deplafonne_non_salarie du régime général de 2018 à 2026 ; les
+          années 2014 à 2017, celles du RSI, restent à la transcription
+          d'OpenFisca.
+
       - id: dila_legi_decote_fonction_publique
         titre: Décote de la fonction publique, montée en charge 2006-2019
         url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/

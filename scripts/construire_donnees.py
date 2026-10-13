@@ -754,8 +754,6 @@ def _regimes() -> list[dict]:
                         p.trimestres_maximum_leve_avant_age),
                     "borne_basse_euros": p.borne_basse_euros,
                     "borne_haute_euros": p.borne_haute_euros,
-                    "borne_basse_par_annee": dict(p.borne_basse_par_annee) or None,
-                    "borne_haute_par_annee": dict(p.borne_haute_par_annee) or None,
                     "pension_forfaitaire_annuelle": p.pension_forfaitaire_annuelle,
                     "pension_forfaitaire_annee": p.pension_forfaitaire_annee,
                     "assiette_repere_smic": p.assiette_repere_smic,
@@ -795,6 +793,8 @@ def _regimes() -> list[dict]:
                     **_regles_des_sections(p),
                     **_plafond_des_primes(p),
                     **_points_gratuits(p),
+                    **_bornes_par_annee(p),
+                    **_taux_des_non_salaries(p),
                 }
                 for p in regime.periodes
             ],
@@ -897,6 +897,28 @@ def _fractions_des_cultes(p) -> dict:
     nullité.
     """
     return {"fractions_des_cultes": True} if p.fractions_des_cultes else {}
+
+
+def _bornes_par_annee(p) -> dict:
+    """Les bornes en euros que la fiche fixe année par année — le plafond propre
+    du RCI de 2013 à 2024 —, et seulement là. Même raison que pour les marins :
+    le moteur JavaScript lit leur absence comme une borne de l'assiette."""
+    champs = {
+        "borne_basse_par_annee": dict(p.borne_basse_par_annee) or None,
+        "borne_haute_par_annee": dict(p.borne_haute_par_annee) or None,
+    }
+    return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
+
+
+def _taux_des_non_salaries(p) -> dict:
+    """Les taux propres de l'assuré sans employeur au régime général (D. 633-3),
+    et seulement là. Même raison que pour les marins : le moteur JavaScript lit
+    leur absence comme les taux de la période."""
+    champs = {
+        "taux_cotisation_non_salarie": p.taux_cotisation_non_salarie,
+        "taux_cotisation_deplafonnee_non_salarie": p.taux_cotisation_deplafonnee_non_salarie,
+    }
+    return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
 
 
 def _non_salaries_2026(p) -> dict:

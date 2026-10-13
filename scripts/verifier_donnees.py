@@ -972,6 +972,10 @@ TAUX_ANNUELS = (
     ("rsi", "artisans_base_plafonnee", "independants_base_deplafonnee", 2006, 2017),
 )
 
+#: L'année où l'artisan et le commerçant passent au régime général, en gardant
+#: leur barème (``taux_plafonne_non_salarie``, ``taux_deplafonne_non_salarie``).
+PREMIERE_ANNEE_NON_SALARIES_AU_REGIME_GENERAL = 2018
+
 #: Régimes qui n'ont pas de barème propre et portent celui du régime général :
 #: les cultes, dont la cotisation est celle du droit commun sur une assiette
 #: forfaitaire, et les caisses de Mayotte et de Saint-Pierre-et-Miquelon, dont
@@ -1092,6 +1096,29 @@ def source_taux_cotisation_jorf() -> dict[tuple, float]:
     return valeurs
 
 
+def source_taux_cotisation_non_salaries() -> dict[tuple, float]:
+    """Le barème propre des artisans et des commerçants au régime général, lu
+    dans les rédactions de l'article D. 633-3 du code de la sécurité sociale.
+
+    Depuis 2018, l'artisan et le commerçant cotisent à la vieillesse de base du
+    régime général, mais à leur barème — 17,15 % sous le plafond, 0,60 % sur la
+    totalité, 0,72 % depuis 2025 —, et non à celui du salarié et de son
+    employeur. Le récupérateur lit chaque rédaction dans l'index LEGI du dépôt
+    et date chaque taux au 1er janvier, ou à la date d'application que la
+    rédaction écrit. Les années 2014 à 2017, celles du RSI, restent à la
+    transcription d'OpenFisca, que le journal compte à part.
+    """
+    charge = _lire_json("dila_taux_independants.json",
+                        "scripts/fetch/dila_legi_taux_independants.py")
+    valeurs: dict[tuple, float] = {}
+    for annee, taux in sorted(charge["series"].items()):
+        if int(annee) < PREMIERE_ANNEE_NON_SALARIES_AU_REGIME_GENERAL:
+            continue
+        valeurs[("regime_general", annee, "taux_plafonne_non_salarie")] = taux["plafonne"]
+        valeurs[("regime_general", annee, "taux_deplafonne_non_salarie")] = taux["deplafonne"]
+    return valeurs
+
+
 def source_taux_cotisation_alignes() -> dict[tuple, float]:
     """Les régimes qui portent la série du régime général, faute d'en publier une.
 
@@ -1109,9 +1136,12 @@ def source_taux_cotisation_alignes() -> dict[tuple, float]:
     chemin = REFERENCE / "regimes" / "taux_cotisation_annuels.csv"
     if not chemin.exists():
         return {}
+    # Les taux propres des non-salariés du régime général (D. 633-3) ne sont
+    # pas ceux des cultes, de Mayotte ni de Saint-Pierre-et-Miquelon.
     modele = {
         (ligne["annee"], ligne["mesure"]): float(ligne["valeur"])
         for ligne in charger_csv(chemin) if ligne["regime"] == "regime_general"
+        and not ligne["mesure"].endswith("_non_salarie")
     }
     return {
         (regime, annee, mesure): valeur
@@ -8550,6 +8580,19 @@ CERTIFICATIONS = (
         source=source_taux_cotisation_jorf,
         origine="DILA, base LEGI, code de la sécurité sociale D. 242-4 et "
                 "décret n° 81-1013 ; code rural D. 741-35 et décret n° 50-444",
+        decimales=6,
+        tolerance=5e-7,
+    ),
+    # Le barème propre des artisans et des commerçants au régime général,
+    # depuis 2018 : deux mesures à part, que seuls lisent la fiche de paie et
+    # le compte d'un assuré sans employeur.
+    Certification(
+        nom="taux_cotisation_non_salaries",
+        chemin=REFERENCE / "regimes" / "taux_cotisation_annuels.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_taux_cotisation_non_salaries,
+        origine="DILA, base LEGI, code de la sécurité sociale D. 633-3",
         decimales=6,
         tolerance=5e-7,
     ),

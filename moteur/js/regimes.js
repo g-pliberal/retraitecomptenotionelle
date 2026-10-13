@@ -2018,6 +2018,21 @@ export class PeriodeRegime {
     return this.taux_cotisation_retraite * this.part_salariale;
   }
 
+  /**
+   * Les taux plafonné et déplafonné que verse le cotisant : les taux propres
+   * d'un non-salarié quand la période en porte — l'artisan et le commerçant
+   * au régime général depuis 2018, D. 633-3 —, ceux de la période sinon.
+   */
+  tauxDuCotisant(sansEmployeur) {
+    let plafonne = this.taux_cotisation_retraite;
+    let deplafonne = this.taux_cotisation_deplafonnee;
+    if (sansEmployeur) {
+      plafonne = this.taux_cotisation_non_salarie ?? plafonne;
+      deplafonne = this.taux_cotisation_deplafonnee_non_salarie ?? deplafonne;
+    }
+    return [plafonne, deplafonne];
+  }
+
   bornesAssietteEnPass() {
     return BORNES_ASSIETTE[this.assiette] || [0.0, null];
   }

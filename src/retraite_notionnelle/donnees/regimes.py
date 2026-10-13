@@ -698,7 +698,29 @@ class PeriodeRegime:
     #: ``None`` : du 1er janvier de ``debut`` au 1er janvier qui suit ``fin``
     #: (:attr:`effet`).
     date_effet: tuple[str, str | None] | None = None
+    #: LES TAUX PROPRES DES NON-SALARIÉS : ce que paie au régime général un
+    #: assuré SANS EMPLOYEUR — l'artisan, le commerçant depuis 2018, le libéral
+    #: non réglementé depuis 2019 —, à qui le droit fixe son barème (D. 633-3) :
+    #: 17,15 % sous le plafond et 0,60 % sur la totalité, 0,72 % depuis 2025,
+    #: là où le salarié et son employeur versent 15,45 % et 2,30 à 2,51 %.
+    #: ``None`` : il paie les taux de la période. Datés année par année
+    #: (``taux_cotisation_annuels.csv``), lus par le compte notionnel et la
+    #: fiche de paie, jamais par la liquidation, que le taux ne change pas.
+    taux_cotisation_non_salarie: float | None = None
+    taux_cotisation_deplafonnee_non_salarie: float | None = None
     notes: str = ""
+
+    def taux_du_cotisant(self, sans_employeur: bool) -> tuple[float, float]:
+        """Les taux plafonné et déplafonné que verse le cotisant : les taux
+        propres d'un non-salarié quand la période en porte, ceux de la période
+        sinon."""
+        plafonne, deplafonne = self.taux_cotisation_retraite, self.taux_cotisation_deplafonnee
+        if sans_employeur:
+            if self.taux_cotisation_non_salarie is not None:
+                plafonne = self.taux_cotisation_non_salarie
+            if self.taux_cotisation_deplafonnee_non_salarie is not None:
+                deplafonne = self.taux_cotisation_deplafonnee_non_salarie
+        return plafonne, deplafonne
 
     @property
     def effet(self) -> tuple[str, str | None]:
@@ -1258,6 +1280,9 @@ _MESURES_TAUX_ANNUELS = {
     "part_salariale": "part_salariale",
     "taux_deplafonne": "taux_cotisation_deplafonnee",
     "part_salariale_deplafonnee": "part_salariale_deplafonnee",
+    # Les taux propres des non-salariés au régime général (D. 633-3).
+    "taux_plafonne_non_salarie": "taux_cotisation_non_salarie",
+    "taux_deplafonne_non_salarie": "taux_cotisation_deplafonnee_non_salarie",
 }
 
 

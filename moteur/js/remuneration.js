@@ -788,7 +788,11 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
       const [basEuros, hautEuros] = periode.bornesDeLAnnee(annee);
       const part = sansEmployeur ? 1 : periode.part_salariale;
       const traitement = periode.assiette === "hors_primes" ? 1 - partPrimes : 1;
-      const taux = (periode.taux_cotisation_retraite || 0) * traitement;
+      // L'artisan et le commerçant, au régime général depuis 2018, paient leur
+      // barème propre (D. 633-3), comme le compte le leur porte.
+      const [plafonneDuCotisant, deplafonneDuCotisant] =
+        periode.tauxDuCotisant(sansEmployeur);
+      const taux = (plafonneDuCotisant || 0) * traitement;
       if (taux) {
         salarie.push({ bas: basse, haut: haute, taux: taux * part, basEuros, hautEuros });
         employeur.push({
@@ -810,7 +814,7 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
       }
       // La part déplafonnée porte sur la totalité du salaire, PAR-DESSUS la
       // précédente : c'est un segment de plus, non une tranche.
-      const deplafonne = (periode.taux_cotisation_deplafonnee || 0) * traitement;
+      const deplafonne = (deplafonneDuCotisant || 0) * traitement;
       if (deplafonne) {
         const partDeplafonnee = sansEmployeur
           ? 1 : periode.part_salariale_deplafonnee;

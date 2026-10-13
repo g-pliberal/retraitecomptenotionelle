@@ -1,0 +1,170 @@
+schema_version: 1
+id: cotisation_vieillesse_independants
+intitule: >-
+  L'artisan et le commerçant cotisent à la vieillesse de base selon leur barème
+  propre (D. 633-3) : depuis 2014, un taux sous le plafond et un taux sur la
+  totalité du revenu, 17,15 % et 0,60 % depuis 2017, 17,15 % et 0,72 % depuis
+  2025 ; intégrés au régime général en 2018, ils gardent ce barème, et non celui
+  du salarié et de son employeur.
+domaine: cotisations
+regimes: [rsi, regime_general]
+etape: foyer_et_net
+face: cotisation
+etat: transcrite
+lit:
+- le revenu de l'année et le statut, qui dit si l'assuré a un employeur
+  (legislation/affiliations.yaml, sans_employeur)
+- >-
+  le barème de l'année, dans regimes/taux_cotisation_annuels.csv — les taux du RSI
+  jusqu'en 2017, les mesures taux_plafonne_non_salarie et
+  taux_deplafonne_non_salarie du régime général depuis 2018
+ecrit:
+- la cotisation de vieillesse de base que la fiche de paie du droit en vigueur
+  prélève, et celle que le compte notionnel porte
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: avant_le_bareme_propre
+  statut: lue
+  textes:
+  - id: LEGIARTI000028435871
+    article: D. 633-3 CSS
+    en_vigueur: 2014-01-01
+    citation: >-
+      « I. - Le taux des cotisations assises sur le revenu d'activité dans la limite
+      du plafond est fixé à : a) 16,95 % pour l'année 2014 »
+    lu_le: 2026-10-13
+  bornes:
+    revenu.annee: [null, 2014-01-01]
+  contenu:
+    droit: aucun
+    raison: >-
+      l'article naît au 1er janvier 2014 ; avant, la cotisation des artisans et des
+      commerçants n'avait qu'un taux, sous le plafond, que les fiches de la CANCAVA,
+      de l'ORGANIC et du RSI portent année par année, transcrit d'OpenFisca
+  exemples: aucun trouvé
+- id: deplafonnee_progressive
+  statut: lue
+  textes:
+  - id: LEGIARTI000028435871
+    article: D. 633-3 CSS
+    en_vigueur: 2014-01-01
+    citation: >-
+      « II. - Le taux des cotisations assises sur la totalité du revenu d'activité
+      est fixé à 0,20 % »
+    lu_le: 2026-10-13
+  - id: LEGIARTI000029924551
+    article: D. 633-3 CSS
+    en_vigueur: 2015-01-01
+    citation: >-
+      « a) 17,05 % pour l'année 2015 ; b) 17,15 % à compter de l'année 2016 » ; « a)
+      0,35 % pour l'année 2015 ; b) 0,50 % pour l'année 2016 ; c) 0,60 % à compter
+      de l'année 2017 »
+    lu_le: 2026-10-13
+  - id: LEGIARTI000031799496
+    article: D. 633-3 CSS
+    en_vigueur: 2016-01-01
+    citation: >-
+      « pour l'année 2016, par dérogation […] le taux de la cotisation mentionné au
+      II de l'article D. 633-3 est fixé à 0,5 % »
+    lu_le: 2026-10-13
+  bornes:
+    revenu.annee: [2014-01-01, 2017-01-01]
+  contenu:
+    droit: >-
+      sous le plafond, 16,95 % en 2014, 17,05 % en 2015, 17,15 % en 2016 ; sur la
+      totalité, 0,20 %, 0,35 % puis 0,50 % ; au RSI, qui en porte les taux année
+      par année
+  exemples: aucun trouvé
+- id: bareme_de_2017
+  statut: lue
+  textes:
+  - id: LEGIARTI000031799496
+    article: D. 633-3 CSS
+    en_vigueur: 2016-01-01
+    citation: >-
+      « I.-Le taux des cotisations assises sur le revenu d'activité dans la limite du
+      plafond est fixé à 17,15 %. II.-Le taux des cotisations assises sur la totalité
+      du revenu d'activité est fixé à 0,60 %. »
+    lu_le: 2026-10-13
+  - id: LEGIARTI000041967101
+    article: D. 633-3 CSS
+    en_vigueur: 2020-05-25
+    lu_le: 2026-10-13
+  bornes:
+    revenu.annee: [2017-01-01, 2025-01-01]
+  contenu:
+    droit: >-
+      17,15 % sous le plafond et 0,60 % sur la totalité ; au RSI en 2017, au régime
+      général depuis 2018, où le salarié et son employeur versent 15,45 % et 2,30 %
+      puis 2,42 %
+  exemples: aucun trouvé
+- id: bareme_de_2025
+  statut: lue
+  nee_de: LEGIARTI000049904636
+  textes:
+  - id: LEGIARTI000049904636
+    article: D. 633-3 CSS
+    en_vigueur: 2024-07-07
+    citation: >-
+      « ces dispositions s'appliquent au calcul des cotisations et des contributions
+      dues par les travailleurs indépendants non agricoles […] au titre des périodes
+      courant à compter du 1er janvier 2025 » ; « I.-Le taux des cotisations
+      assises sur l'assiette de cotisations dans la limite du plafond est fixé à
+      17,15 %. II.-Le taux des cotisations assises sur la totalité de l'assiette de
+      cotisations est fixé à 0,72 %. »
+    lu_le: 2026-10-13
+  bornes:
+    revenu.annee: [2025-01-01, null]
+  contenu:
+    droit: >-
+      17,15 % sous le plafond et 0,72 % sur la totalité de l'assiette de cotisations,
+      celle que la réforme de 2025 abat de 26 % (L. 136-3)
+  exemples: aucun trouvé
+approximations: []
+sources:
+  lu_le: 2026-10-13
+  prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    Le micro-entrepreneur cotise en pourcentage de son chiffre d'affaires
+    (L. 613-7) : le statut lui prête le barème de l'artisan sur un revenu
+    reconstitué, ce que la fiche de son statut dit déjà.
+  lectures:
+  - type: legifrance
+    reference: >-
+      D. 633-3 CSS, LEGIARTI000028435871 (2014), LEGIARTI000029924551 (2015),
+      LEGIARTI000031799496 (2016), LEGIARTI000041967101 (2020), LEGIARTI000049904636
+      (2024), lus dans l'index LEGI du dépôt
+    date: 2026-10-13
+code:
+  python: >-
+    donnees/regimes.py : PeriodeRegime.taux_du_cotisant, et les mesures
+    _non_salarie de charger_taux_annuels ; moteur/compte.py
+    (ConstructeurCompte.taux_effectif, la cotisation déplafonnée) ;
+    remuneration.py (bloc_droit_en_vigueur)
+  javascript: >-
+    moteur/js/regimes.js : PeriodeRegime.tauxDuCotisant ; moteur/js/compte.js
+    (tauxEffectif) ; moteur/js/remuneration.js (blocDroitEnVigueur)
+  parametres: >-
+    regimes/taux_cotisation_annuels.csv (lignes du RSI, et mesures
+    taux_plafonne_non_salarie et taux_deplafonne_non_salarie du régime général,
+    certifiées sur D. 633-3 par scripts/fetch/dila_legi_taux_independants.py et
+    scripts/verifier_donnees.py)
+  tests: tests/test_independants.py
+referents:
+  devcrafting_retraites: prélève sur l'artisan 0,60 % au-dessus du plafond, son taux propre
+historique:
+- >-
+  2026-10-13 — action 138, étape 18 : depuis 2018, la fiche de paie et le compte
+  prêtaient à l'artisan et au commerçant les taux du salarié et de son employeur
+  au régime général (15,45 % et 2,30 à 2,51 %), convention que les limites
+  déclaraient ; ils prennent leur barème.
+effet: >-
+  Artisans, commerçants et libéraux non réglementés, depuis 2018 : sous le
+  plafond, presque rien (17,75 % des deux côtés jusqu'en 2023, 0,12 point de moins
+  en 2024, 0,09 en 2026) ; au-dessus, 1,70 à 1,79 point de moins sur la part qui
+  le dépasse. Le système actuel ne bouge pas ; les comptes notionnels
+  rétroactifs d'un artisan à deux fois le salaire moyen baissent de 0,6 à 0,8 %,
+  et sa fiche de paie du droit en vigueur prélève 331 € de moins en 2019 sur
+  60 000 € de revenu.

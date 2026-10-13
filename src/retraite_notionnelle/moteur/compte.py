@@ -320,8 +320,9 @@ class ConstructeurCompte:
 
         if sans_employeur:
             # Un non-salarié paie tout : la répartition de la fiche est celle
-            # d'un salarié du même régime, elle ne le concerne pas.
-            return taux, 0.0, "", Fiabilite.CERTIFIEE
+            # d'un salarié du même régime, elle ne le concerne pas. Au régime
+            # général, il paie aussi son barème à lui (D. 633-3).
+            return periode.taux_du_cotisant(True)[0], 0.0, "", Fiabilite.CERTIFIEE
 
         if part_salariale_seule:
             # Un auteur paie la part du salarié, et personne l'autre : le
@@ -873,7 +874,10 @@ class ConstructeurCompte:
                 # réellement payé manquait au compte — jusqu'à 122 643 € de
                 # capital, soit 4,5 %, sur le témoin `salaire_8` part
                 # employeur comprise.
-                deplafonnee = base * periode.taux_cotisation_deplafonnee
+                # L'artisan et le commerçant, au régime général depuis 2018,
+                # versent leur taux propre sur la totalité : 0,60 %, puis
+                # 0,72 % depuis 2025, et non les 2,30 à 2,51 % du salarié.
+                deplafonnee = base * periode.taux_du_cotisant(sans_employeur)[1]
                 if deplafonnee > 0:
                     part_agent = periode.part_salariale_deplafonnee
                     if sans_employeur:
