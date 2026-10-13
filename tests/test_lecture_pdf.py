@@ -223,3 +223,21 @@ def test_une_page_en_plusieurs_flux_se_lit_d_un_seul_tenant():
     )
     assert lignes_pdf(pdf) == ["RELEVE DE CARRIERE", "Detail par annee"], lignes_pdf(pdf)
 
+
+
+def test_une_ligne_aux_cellules_decalees_se_relit_de_gauche_a_droite():
+    """Trois cellules d'une même ligne, centrées chacune dans sa case : 700,5,
+    700 et 699,6 d'ordonnée. Le tri de haut en bas les rend dans l'ordre des
+    hauteurs, « B A C » ; ``par_abscisse`` les relit de gauche à droite, comme
+    il faut le tableau 50 du jaune pensions du PLF 2027. Sans l'option, rien
+    ne change pour les lecteurs écrits avant elle."""
+    from lecture_pdf import lignes_par_page
+
+    contenu = (b"BT /F1 10 Tf 120 700.5 Td (B) Tj ET "
+               b"BT /F1 10 Tf 60 700 Td (A) Tj ET "
+               b"BT /F1 10 Tf 180 699.6 Td (C) Tj ET "
+               b"BT /F1 10 Tf 60 680 Td (SUIVANTE) Tj ET")
+    pdf = _document(_objet(1, _flux(b"<< >>", contenu)))
+    assert lignes_par_page(pdf) == [["B A C", "SUIVANTE"]], lignes_par_page(pdf)
+    assert lignes_par_page(pdf, par_abscisse=True) == [["A B C", "SUIVANTE"]], (
+        lignes_par_page(pdf, par_abscisse=True))

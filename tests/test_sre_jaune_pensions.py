@@ -159,3 +159,88 @@ def test_la_confrontation_retrouve_les_chiffres_ou_les_nomme(tmp_path):
     trouves, manquants = jaune.confronter(tables, fichier)
     assert trouves == ["juste : 404 478", "juste : 406 645", "juste : 27,4", "juste : 146"]
     assert manquants == ["faux : 404 479"]
+
+
+# -- l'édition 2027 : même tableaux, autre mise en page ------------------------
+
+#: L'insécable des milliers posée à part : le lecteur l'entoure de deux espaces.
+EP = f" {NB} "
+
+PAGE_50_2027 = [
+    "Tableau 50 : Pourcentage de retraités bénéficiaires d’une bonification de pension et gain moyen associé, dans les 3 fonctions publiques",
+    "Pour Pour campagne arien ou enseignem Du cinquime Bonifications Ensemble",
+    "FPE Civils 8,7% 4,0% 0,9% 0,4% 0,3% 0,0% 7,7% 56,7%",
+    "Proportion dans Militaires 0,0% 2,5% 79,4% 57,6% 0,0% 99,0% 3,4% 99,7%",
+    "les liquidants",
+    "FPT 2,8 % 45,1 % 0,8% 0,4% n.p. n.p. n.p. 49,2 %",
+    "FPH 2,7% 63,0 % 0,4% 0,0% n.p. n.p. n.p. 66,2%",
+    "Gain en FPE Civils 19,8 7,9 3,5 13,6 17,1 ns 19,7 12,1",
+    "dure Militaires n.p. 6,4 12,8 12,2 n.p. 16,5 5,5 34",
+    "FPT 35,8 7,4 3,2 9,4 n.p. n.p. n.p. 8,96",
+    "126",
+]
+PAGE_SUIVANTE_2027 = [
+    "(en",
+    "trimestres) FPH 33,9 7,6 2,8 2,9 n.p. n.p. n.p. 8,7",
+    "FPE Civils 285 € 191 € 53 € 155 € 360 € n.p. 301 € 241 €",
+    "Militaires n.p. 65 € 107 € 78 € n.p. 146 € 46 € 324 €",
+    "pension FPT n.d n.d n.d n.d n.d n.d n.d n.d",
+    "FPH n.d n.d n.d n.d n.d n.d n.d n.d",
+    "Sources : DGFiP, Service des retraites de l’Etat, base des pensions – CNRACl",
+    "FPT 1,0 2,0 3,0 4,0 5,0 6,0 7,0 8,0",
+]
+
+
+def test_l_insecable_posee_a_part_se_recolle_a_ses_chiffres():
+    """« 1 \\u00a0 343 \\u00a0 118 » : l'édition 2027 pose l'insécable des
+    milliers à part, et le lecteur l'entoure de deux espaces de position."""
+    ligne = f"Effectif total du régime 1{EP}343{EP}118 1{EP}656{EP}399 408{EP}750 830{EP}114 640{EP}195"
+    assert [jaune._valeur(c) for c in jaune._cellules(ligne)] == [
+        1343118, 1656399, 408750, 830114, 640195]
+    # Deux nombres voisins restent deux cellules.
+    assert jaune._cellules(f"bénéficiaires 13{EP}419 13{EP}419 39 n.d. n.d.") == [
+        f"13{NB}419", f"13{NB}419", "39", "n.d.", "n.d."]
+
+
+def test_le_tableau_50_de_2027_se_suit_sur_la_page_d_apres():
+    """Coupé entre deux pages, l'intitulé du bloc devant la population
+    (« Gain en FPE Civils … ») : la lecture passe à la page suivante et
+    s'arrête à « Sources », sans prendre ce qui la suit."""
+    lu = jaune.tableau_50([PAGE_50_2027, PAGE_SUIVANTE_2027])
+    assert lu["proportion"]["fpe_civils"]["depaysement"] == 0.087
+    assert lu["gain_trimestres"]["fpe_civils"]["hors_l12"] == 19.7
+    assert lu["gain_trimestres"]["fph"]["ensemble"] == 8.7
+    assert lu["gain_mensuel_eur"]["fpe_militaires"]["cinquieme_l12"] == 146
+    assert lu["gain_mensuel_eur"]["fpt"]["ensemble"] is None
+
+
+def test_une_case_du_tableau_50_que_son_ensemble_dement_est_signalee():
+    """4,0 % des civils liquidants à la bonification pour enfant, quand
+    l'ensemble est à 56,7 % : la case est fausse — 44,0 % d'après le tableau
+    B-22 —, la lecture la garde telle qu'imprimée et le dit. L'édition 2026
+    ne dit rien de tel."""
+    messages = jaune.incoherences_50(jaune.tableau_50([PAGE_50_2027, PAGE_SUIVANTE_2027]))
+    assert len(messages) == 1 and "fpe_civils" in messages[0] and "56,7 %" in messages[0]
+    assert jaune.incoherences_50(jaune.tableau_50([PAGE_50])) == []
+
+
+def test_le_tableau_b1_de_2027_garde_son_libelle_et_ses_huit_valeurs():
+    page = [f"Ensemble des départs 39{EP}146 47{EP}104 10{EP}691 57{EP}795 1{EP}382 "
+            f"46{EP}897 22{EP}753 69{EP}650",
+            "Hommes (en %) 41,8% 43,8% 83,4% 51,1% 84,5% 40,7% 19,3% 33,7%"]
+    lu = jaune.tableau_b1([page])
+    assert list(lu) == ["ensemble_des_departs"]
+    assert lu["ensemble_des_departs"]["libelle"] == "Ensemble des départs"
+    assert lu["ensemble_des_departs"]["valeurs"]["cnracl_total"] == 69650
+
+
+def test_chaque_edition_a_son_jeu_du_manifeste_et_son_fichier():
+    import yaml
+
+    racine = Path(__file__).resolve().parents[1]
+    manifeste = yaml.safe_load((racine / "data" / "sources.yaml").read_text(encoding="utf-8"))
+    ids = {jeu["id"] for institution in manifeste["institutions"].values()
+           for jeu in institution.get("jeux", [])}
+    assert {e["identifiant"] for e in jaune.EDITIONS.values()} <= ids
+    assert len({e["sortie"] for e in jaune.EDITIONS.values()}) == len(jaune.EDITIONS)
+    assert jaune.IDENTIFIANT == jaune.EDITIONS[jaune.EDITION]["identifiant"]

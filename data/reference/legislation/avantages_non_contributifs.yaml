@@ -70,11 +70,12 @@
 # scripts/fetch/sre_jaune_pensions.py et certifiés, valeur par valeur, dans
 # `bonifications_jaune.csv` par scripts/verifier_donnees.py. Une ligne qui
 # cite ces chiffres porte un champ `denombrement` qui dit où ils sont :
-#   source_id  : sre_jaune_pensions, toujours
-#   tableau_a7 : la ligne du tableau A-7 (le stock 2024) — la bonification
+#   source_id  : sre_jaune_pensions_2027, l'édition annexée au PLF 2027,
+#                toujours (celle du PLF 2026 servait jusqu'au 13 octobre 2026)
+#   tableau_a7 : la ligne du tableau A-7 (le stock de 2025) — la bonification
 #                telle que le document la nomme ; il confond bénéfices de
 #                campagne et cinquième (campagne_ou_cinquieme)
-#   tableau_50 : la colonne du tableau 50 (le flux 2023), qui les sépare
+#   tableau_50 : la colonne du tableau 50 (le flux de 2025), qui les sépare
 # Un test exige que chaque chiffre que la note cite du jaune soit une valeur
 # certifiée de ces lignes-là : la prose ne peut plus s'écarter du document.
 #
@@ -986,10 +987,10 @@ avantages:
       à chaque date d'effet sa version (fiche bonification_cinquieme_militaires).
     chiffre_par: scripts/cout_avantages.py
     sans_chiffre: >-
-      la cascade ne l'isole pas ; le jaune la donne à 98,4 % des liquidants,
+      la cascade ne l'isole pas ; le jaune la donne à 99,0 % des liquidants,
       146 € par mois
     denombrement:
-      source_id: sre_jaune_pensions
+      source_id: sre_jaune_pensions_2027
       tableau_a7: campagne_ou_cinquieme
       tableau_50: cinquieme_l12
     cout:
@@ -998,10 +999,10 @@ avantages:
         Mesurée par retrait de la fiche (scripts/cout_avantages.py), sur le cas
         type militaire de la grille, sous-officier de vingt-sept ans et demi de
         services, à qui elle donne vingt trimestres. Dénombrée aussi : le tableau A-7 du
-        jaune budgétaire la confond avec les bénéfices de campagne, 404 478
-        pensions militaires sur 406 645 en paiement en 2024 pour 27,4
-        trimestres. Le tableau 50 l'isole sur le flux 2023 : 98,4 % des
-        militaires liquidants, 16,4 trimestres, 146 € de gain mensuel.
+        jaune budgétaire la confond avec les bénéfices de campagne, 406 657
+        pensions militaires sur 408 750 en paiement en 2025 pour 27,3
+        trimestres. Le tableau 50 l'isole sur le flux de 2025 : 99,0 % des
+        militaires liquidants, 16,5 trimestres, 146 € de gain mensuel.
 
   - code: bonification_cinquieme_services_actifs
     libelle: Bonification du cinquième des policiers, pompiers et surveillants
@@ -1033,9 +1034,9 @@ avantages:
     chiffre_par: scripts/cout_avantages.py
     sans_chiffre: >-
       aucun cas type de la grille n'est policier, surveillant ni sapeur-pompier
-      ; le jaune en compte 108 453 à l'État, à 19,1 trimestres, la plus longue
+      ; le jaune en compte 109 188 à l'État, à 19,1 trimestres, la plus longue
     denombrement:
-      source_id: sre_jaune_pensions
+      source_id: sre_jaune_pensions_2027
       tableau_a7: hors_l12
       tableau_50: hors_l12
     cout:
@@ -1046,10 +1047,10 @@ avantages:
         grille n'en porte aucun. Les textes des quatre corps sont lus (lois de 1957 pour la police, 1989
         pour les contrôleurs aériens, 1996 pour les surveillants pénitentiaires,
         2003 pour les douanes). Dénombrée sous l'intitulé « bonifications ne
-        relevant pas de l'article L. 12 du CPCMR » : 108 453 pensions civiles de
-        l'État en paiement en 2024 pour 19,1 trimestres, la plus longue de
-        toutes (jaune budgétaire, tableau A-7), et 312 € de gain mensuel par
-        tête sur le flux 2023 (tableau 50).
+        relevant pas de l'article L. 12 du CPCMR » : 109 188 pensions civiles de
+        l'État en paiement en 2025 pour 19,1 trimestres, la plus longue de
+        toutes (jaune budgétaire, tableau A-7), et 301 € de gain mensuel par
+        tête sur le flux de 2025 (tableau 50).
 
   - code: bonifications_regimes_speciaux
     libelle: Bonifications de services de la SNCF et de la RATP
@@ -1117,21 +1118,21 @@ avantages:
     ligne_cascade: null
     pourquoi_pas_chiffre: Suppose de connaître le lieu d'affectation, que le simulateur ne saisit pas.
     sans_chiffre: >-
-      le lieu d'affectation n'est pas saisi ; le jaune en compte 180 010, à
-      266 € par mois
+      le lieu d'affectation n'est pas saisi ; le jaune en compte 177 788, à
+      285 € par mois
     denombrement:
-      source_id: sre_jaune_pensions
+      source_id: sre_jaune_pensions_2027
       tableau_a7: depaysement
       tableau_50: depaysement
     cout:
       mesurable_par: aucune
       note: >-
-        Dénombrée sur le stock : 180 010 des 1 654 863 pensions civiles de
-        l'État en paiement en 2024 portent une bonification pour services hors
-        d'Europe, de 17,3 trimestres en moyenne, et 39 933 pensions de la FPT
-        pour 18,7 trimestres (jaune budgétaire, tableau A-7). Le gain mensuel
-        par tête est de 266 € chez les civils de l'État (tableau 50, flux 2023).
-        Quasi nulle chez les militaires : 447 bénéficiaires.
+        Dénombrée sur le stock : 177 788 des 1 656 399 pensions civiles de
+        l'État en paiement en 2025 portent une bonification pour services hors
+        d'Europe, de 17,4 trimestres en moyenne, et 38 756 pensions de la FPT
+        pour 19,8 trimestres (jaune budgétaire, tableau A-7). Le gain mensuel
+        par tête est de 285 € chez les civils de l'État (tableau 50, flux de
+        2025). Quasi nulle chez les militaires : 396 bénéficiaires.
 
   - code: benefices_campagne
     libelle: Bénéfices de campagne
@@ -1150,21 +1151,21 @@ avantages:
     pourquoi_pas_chiffre: Suppose le détail des services, que le simulateur ne saisit pas.
     sans_chiffre: >-
       le détail des services n'est pas saisi ; le jaune la confond avec le
-      cinquième : 404 478 militaires sur 406 645, à 27,4 trimestres
+      cinquième : 406 657 militaires sur 408 750, à 27,3 trimestres
     denombrement:
-      source_id: sre_jaune_pensions
+      source_id: sre_jaune_pensions_2027
       tableau_a7: campagne_ou_cinquieme
       tableau_50: campagne
     cout:
       mesurable_par: aucune
       note: >-
         Dénombrée sur le stock, et confondue par le producteur avec la
-        bonification du cinquième : 404 478 des 406 645 pensions militaires en
-        paiement en 2024 portent l'une ou l'autre, pour 27,4 trimestres en
+        bonification du cinquième : 406 657 des 408 750 pensions militaires en
+        paiement en 2025 portent l'une ou l'autre, pour 27,3 trimestres en
         moyenne — près de sept annuités sur la quasi-totalité du régime. Chez
-        les civils de l'État, 88 932 pour 4,9 trimestres (jaune budgétaire,
-        tableau A-7). Gain mensuel par tête, sur le flux 2023 : 101 € pour la
-        campagne des militaires, 56 € pour celle des civils (tableau 50).
+        les civils de l'État, 82 236 pour 4,8 trimestres (jaune budgétaire,
+        tableau A-7). Gain mensuel par tête, sur le flux de 2025 : 107 € pour
+        la campagne des militaires, 53 € pour celle des civils (tableau 50).
 
   - code: bonification_service_aerien_sous_marin
     libelle: Bonification pour service aérien ou sous-marin commandé
@@ -1183,19 +1184,19 @@ avantages:
     pourquoi_pas_chiffre: Suppose le détail des services, que le simulateur ne saisit pas.
     sans_chiffre: >-
       les heures de vol et les services sous-marins ne sont pas saisis ; le
-      jaune en compte un militaire sur deux, à 16,9 trimestres
+      jaune en compte un militaire sur deux, à 16,7 trimestres
     denombrement:
-      source_id: sre_jaune_pensions
+      source_id: sre_jaune_pensions_2027
       tableau_a7: service_aerien_sous_marin
       tableau_50: service_aerien_sous_marin
     cout:
       mesurable_par: aucune
       note: >-
-        Dénombrée sur le stock : 202 113 des 406 645 pensions militaires en
-        paiement en 2024, soit une sur deux, pour 16,9 trimestres en moyenne ; 8
-        415 pensions civiles de l'État pour 7,0 trimestres (jaune budgétaire,
-        tableau A-7). Gain mensuel par tête sur le flux 2023 : 69 € chez les
-        militaires, 157 € chez les civils (tableau 50).
+        Dénombrée sur le stock : 204 944 des 408 750 pensions militaires en
+        paiement en 2025, soit une sur deux, pour 16,7 trimestres en moyenne ; 8
+        309 pensions civiles de l'État pour 7,2 trimestres (jaune budgétaire,
+        tableau A-7). Gain mensuel par tête sur le flux de 2025 : 78 € chez les
+        militaires, 155 € chez les civils (tableau 50).
 
   - code: reduction_duree_afrique_du_nord
     libelle: Réduction de la durée d'assurance pour services militaires en Afrique du Nord

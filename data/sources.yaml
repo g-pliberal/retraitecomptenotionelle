@@ -1684,10 +1684,11 @@ institutions:
         miroir: https://questions.assemblee-nationale.fr/dyn/contenu/visualisation/1090002/file/12-Jaune2026_Pensions.pdf
         sha256: cbe526b93e2038aed8b04edcbbdca5c947b6260f6e24538900d4d36b2010bbf2
         recuperation: scripts/fetch/sre_jaune_pensions.py
-        statut_integration: certifie
+        statut_integration: saisi
         cible: >-
-          data/reference/legislation/bonifications_jaune.csv,
-          data/reference/legislation/avantages_non_contributifs.yaml
+          data/reference/referents.yaml,
+          src/retraite_notionnelle/castypes.py,
+          src/retraite_notionnelle/donnees/cotisants.py
         note: >-
           LE SEUL DOCUMENT PUBLIC QUI DÉNOMBRE LES BONIFICATIONS DE SERVICE, et
           il a fallu le chercher : le rapport annuel du Service des retraites de
@@ -1726,6 +1727,14 @@ institutions:
           « PLF 2025 ». L'édition du PLF 2012, seule accessible en ligne hors de
           budget.gouv.fr, est sur data.gouv.fr sous « PLF2012-Jaune-Données » ;
           c'est elle qui avait servi d'abord, avec des chiffres de 2010.
+
+          Depuis le 13 octobre 2026, `bonifications_jaune.csv` et les fiches
+          qui le citent portent l'édition suivante, `sre_jaune_pensions_2027`
+          (action 159, étape 2) ; le script lit toujours celle-ci
+          (`--edition 2026`), exactement comme avant. Elle reste la source des
+          valeurs saisies de 2024 et 2023 — le militaire moyen des cas types,
+          les cotisants de l'État, des référents —, jusqu'à leur passage à
+          l'édition 2027 dans les étapes suivantes de l'action.
 
       - id: sre_jaune_pensions_2027
         titre: >-
@@ -1766,17 +1775,32 @@ institutions:
             fonction publique », annexe au projet de loi de finances pour 2027,
             budget.gouv.fr, document du 12 octobre 2026, licence ouverte
             Etalab 2.0.
-        statut_integration: a_faire
+        recuperation: scripts/fetch/sre_jaune_pensions.py
+        statut_integration: certifie
         cible: >-
           data/reference/legislation/bonifications_jaune.csv,
-          data/reference/referents.yaml
+          data/reference/legislation/avantages_non_contributifs.yaml
         note: >-
           L'ÉDITION SUIVANTE DE `sre_jaune_pensions` : le stock de pensionnés
           au 31 décembre 2025 et le flux des pensions entrées en paiement en
           2025, 250 pages, PDF créé le 12 octobre 2026. L'action 159 la fait
           entrer dans le dépôt : la note de son étape 0 en fait l'inventaire,
-          tableau par tableau, avec ce que chacun nourrit, et `cible` ne nomme
-          encore que les deux premiers fichiers visés.
+          tableau par tableau, avec ce que chacun nourrit ; `cible` dit ce qui
+          y est déjà entré.
+
+          SES TABLEAUX A-7, 50 ET B-1, ceux de l'édition 2026 sous les mêmes
+          numéros, sont lus par `scripts/fetch/sre_jaune_pensions.py` (édition
+          par défaut) et certifiés dans `bonifications_jaune.csv` (étape 2).
+          Leur mise en page a changé : cellules centrées à des hauteurs qui
+          varient, que le lecteur PDF relit de gauche à droite
+          (`par_abscisse`), tableau 50 coupé entre deux pages, insécable des
+          milliers posée à part. Les trente-neuf chiffres que citent les fiches
+          d'`avantages_non_contributifs.yaml` y sont tous. UNE CASE DU TABLEAU
+          50 EST FAUSSE DANS LE DOCUMENT : la bonification pour enfant de 4,0 %
+          des civils de l'État liquidants, quand l'ensemble est à 56,7 % et que
+          le tableau B-22 compte 20 736 bénéficiaires sur 47 104 pensions,
+          44,0 %. Elle reste telle qu'imprimée, le lecteur la signale, aucune
+          fiche ne la cite.
 
           LE FICHIER NE SE TÉLÉCHARGE PAS DEPUIS UNE SESSION : le 13 octobre,
           budget.gouv.fr répond 403 au cloud, par curl comme par WebFetch, page

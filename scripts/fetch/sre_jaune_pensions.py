@@ -1,9 +1,22 @@
 #!/usr/bin/env python3
 """Le jaune pensions, lu : les bonifications dénombrées par celui qui les paie.
 
-    python scripts/fetch/sre_jaune_pensions.py                 # lit le document, écrit data/brut/sre_jaune_pensions.json
+    python scripts/fetch/sre_jaune_pensions.py                 # lit l'édition 2027, écrit data/brut/sre_jaune_pensions_2027.json
+    python scripts/fetch/sre_jaune_pensions.py --edition 2026  # l'édition 2026, data/brut/sre_jaune_pensions.json
     python scripts/fetch/sre_jaune_pensions.py --confronter    # chaque chiffre du jaune cité dans le YAML des avantages est-il dans le document ?
-    python scripts/fetch/sre_jaune_pensions.py --fichier ~/Téléchargements/12-Jaune2026_Pensions.pdf
+    python scripts/fetch/sre_jaune_pensions.py --fichier ~/Téléchargements/34465.pdf
+
+**DEUX ÉDITIONS SE LISENT.** L'annexe au PLF 2026 (`sre_jaune_pensions` du
+manifeste : le stock de 2024, le flux de 2023) et celle au PLF 2027
+(`sre_jaune_pensions_2027` : le stock et le flux de 2025), que porte
+désormais `bonifications_jaune.csv`. Les tableaux gardent leurs numéros d'une
+édition à l'autre, non leur mise en page : celle de 2027 centre ses cellules
+dans leur case, coupe le tableau 50 entre deux pages et pose l'insécable des
+milliers à part. Le lecteur relit donc ses lignes de gauche à droite
+(``par_abscisse``), le tableau 50 se suit sur la page d'après, et
+:func:`_recoller` rend aux chiffres leur insécable ; l'édition 2026, elle, se
+lit exactement comme avant. Ce que le tableau 50 dit contre lui-même est
+signalé, non corrigé (:func:`incoherences_50`).
 
 Le « Rapport sur les pensions de retraite de la fonction publique », annexe
 au projet de loi de finances (le jaune budgétaire), est LE SEUL DOCUMENT
@@ -11,16 +24,18 @@ PUBLIC QUI DÉNOMBRE LES BONIFICATIONS DE SERVICE : combien de pensions en
 portent une, pour combien de trimestres, et ce qu'elles pèsent sur la pension
 mensuelle. Trois tableaux servent au dépôt, et ce script les lit :
 
-* **A-7**, en annexe : pour les pensions EN PAIEMENT en 2024 — un stock —, le
+* **A-7**, en annexe : pour les pensions EN PAIEMENT en fin d'année — un
+  stock, 2024 dans l'édition 2026, 2025 dans celle de 2027 —, le
   nombre de bénéficiaires et la durée moyenne, en trimestres, de six
   bonifications, en cinq colonnes (civils de l'État hors La Poste et Orange,
   tous civils de l'État, militaires, FPT, FPH).
-* **50**, dans le corps du rapport : sur le FLUX des liquidants de 2023, la
+* **50**, dans le corps du rapport : sur le FLUX des liquidants — 2023, puis
+  2025 —, la
   proportion de bénéficiaires, le gain en trimestres et LE GAIN SUR LE
   MONTANT MENSUEL DE LA PENSION, en euros — la seule valorisation publiée —,
   en huit colonnes (une par bonification, plus l'ensemble) et quatre
   populations.
-* **B-1**, en annexe : les caractéristiques du flux de 2023, dont on ne garde
+* **B-1**, en annexe : les caractéristiques du même flux, dont on ne garde
   que les lignes complètes — huit valeurs pour huit colonnes —, parce que le
   tableau laisse des cellules vides que la lecture ligne à ligne ne saurait
   replacer sans deviner.
@@ -74,8 +89,20 @@ from source_locale import (  # noqa: E402
     RACINE, jeux_bloques, lire_ou_telecharger, option_fichier, telecharger,
 )
 
-IDENTIFIANT = "sre_jaune_pensions"
-SORTIE = RACINE / "data" / "brut" / "sre_jaune_pensions.json"
+#: Les éditions que le script sait lire : le jeu du manifeste, le fichier
+#: écrit, et la façon de relire les lignes. L'édition 2027 centre chaque
+#: cellule dans sa case, à des hauteurs qui varient d'un demi-point : ses
+#: lignes se relisent de gauche à droite (``par_abscisse`` du lecteur PDF).
+EDITIONS = {
+    2026: {"identifiant": "sre_jaune_pensions", "sortie": "sre_jaune_pensions.json",
+           "par_abscisse": False},
+    2027: {"identifiant": "sre_jaune_pensions_2027", "sortie": "sre_jaune_pensions_2027.json",
+           "par_abscisse": True},
+}
+#: L'édition que porte data/reference/legislation/bonifications_jaune.csv.
+EDITION = 2027
+IDENTIFIANT = EDITIONS[EDITION]["identifiant"]
+SORTIE = RACINE / "data" / "brut" / EDITIONS[EDITION]["sortie"]
 AVANTAGES = RACINE / "data" / "reference" / "legislation" / "avantages_non_contributifs.yaml"
 
 #: Les colonnes du tableau A-7, dans l'ordre du document.
@@ -93,6 +120,13 @@ BONIFICATIONS_A7 = (
 COLONNES_50 = ("depaysement", "enfant", "campagne", "service_aerien_sous_marin",
                "enseignement_technique", "cinquieme_l12", "hors_l12", "ensemble")
 POPULATIONS_50 = ("fpe_civils", "fpe_militaires", "fpt", "fph")
+#: L'intitulé de chaque population, cherché comme un mot : il ouvre la ligne
+#: (« FPE Civils 9,0% … ») ou suit l'intitulé du bloc (« Gain en FPE Civils
+#: 19,8 … », « Gain en durée Militaires … »).
+MOTS_50 = (("fpe_civils", re.compile(r"\bfpe civils\b")),
+           ("fpe_militaires", re.compile(r"\bmilitaires\b")),
+           ("fpt", re.compile(r"\bfpt\b")),
+           ("fph", re.compile(r"\bfph\b")))
 BLOCS_50 = ("proportion", "gain_trimestres", "gain_mensuel_eur")
 #: Les colonnes du tableau B-1.
 COLONNES_B1 = ("fpe_civils_hors_poste_orange", "fpe_civils", "fpe_militaires", "fpe_total",
@@ -127,12 +161,20 @@ def _valeur(jeton: str) -> float | int | None:
     return int(nombre) if nombre == int(nombre) and "," not in propre else nombre
 
 
+def _recoller(ligne: str) -> str:
+    """L'édition 2027 pose l'insécable des milliers à part, si bien que le
+    lecteur l'entoure de deux espaces de position : « 1 \u00a0 343 \u00a0 118 ».
+    Elle se recolle ici à ses chiffres."""
+    return re.sub(r"(?<=\d) ?\u00a0 ?(?=\d)", "\u00a0", ligne)
+
+
 def _cellules(ligne: str) -> list[str]:
     """Les cellules numériques d'une ligne : un nombre dont les milliers
     tiennent par une insécable, son éventuel « % » collé ou « € » détaché, et
     les marques d'absence. Les cellules, elles, sont séparées d'une espace
-    ordinaire — celle que le lecteur pose entre deux positions."""
-    jetons = ligne.split(" ")
+    ordinaire — celle que le lecteur pose entre deux positions, après que
+    :func:`_recoller` a rendu ses chiffres à l'insécable des milliers."""
+    jetons = _recoller(ligne).split(" ")
     cellules: list[str] = []
     i = 0
     while i < len(jetons):
@@ -193,29 +235,40 @@ def tableau_a7(pages: list[list[str]]) -> dict:
     return lu
 
 
+def _lignes_du_tableau_50(pages: list[list[str]]) -> list[str]:
+    """Les lignes du tableau 50, de son titre à sa ligne « Sources ». L'édition
+    2027 le coupe entre deux pages : la lecture passe alors à la suivante,
+    jusqu'à cette ligne ou à la fin de la page."""
+    for rang, page in enumerate(pages):
+        debut = next((k for k, ligne in enumerate(page)
+                      if sans_accents(ligne).startswith("tableau 50")), None)
+        if debut is None:
+            continue
+        suite = pages[rang + 1] if rang + 1 < len(pages) else []
+        lignes: list[str] = []
+        for ligne in page[debut:] + suite:
+            if sans_accents(ligne).startswith("sources"):
+                break
+            lignes.append(ligne)
+        return lignes
+    raise LookupError("le tableau attendu n'est sur aucune page")
+
+
 def tableau_50(pages: list[list[str]]) -> dict:
     """Le tableau 50 : trois blocs (proportion, gain en trimestres, gain
     mensuel) × quatre populations × huit colonnes. Les libellés de bloc sont
     entremêlés aux lignes — « Gain en durée Militaires n.p. 6,4 … » — : on
     reconnaît la population, on prend ses huit cellules, et le bloc est le
     rang d'apparition de cette population."""
-    page = _page(pages, lambda ligne: ligne.startswith("tableau 50"))
     vus: dict[str, int] = {p: 0 for p in POPULATIONS_50}
     lu: dict = {bloc: {} for bloc in BLOCS_50}
-    for ligne in page:
+    for ligne in _lignes_du_tableau_50(pages):
         plat = sans_accents(ligne)
-        if plat.startswith("fpe civils"):
-            population = "fpe_civils"
-        elif plat.startswith("militaires") or " militaires " in f" {plat} ":
-            population = "fpe_militaires"
-        elif plat.startswith("fpt"):
-            population = "fpt"
-        elif plat.startswith("fph"):
-            population = "fph"
-        else:
+        population = next((code for code, mot in MOTS_50 if mot.search(plat)), None)
+        if population is None:
             continue
         cellules = _cellules(ligne)
-        if len(cellules) != len(COLONNES_50):
+        if len(cellules) != len(COLONNES_50) or vus[population] == len(BLOCS_50):
             continue
         bloc = BLOCS_50[vus[population]]
         vus[population] += 1
@@ -236,7 +289,7 @@ def tableau_b1(pages: list[list[str]]) -> dict:
     """Les lignes complètes du tableau B-1 : huit valeurs, huit colonnes."""
     page = _page(pages, lambda ligne: ligne.startswith("ensemble des dparts") or ligne.startswith("ensemble des departs"))
     lu: dict = {}
-    for ligne in page:
+    for ligne in map(_recoller, page):
         plat = sans_accents(ligne)
         cellules = _cellules(ligne)
         if len(cellules) != len(COLONNES_B1) or plat.startswith(("hommes", "femmes")):
@@ -252,8 +305,32 @@ def tableau_b1(pages: list[list[str]]) -> dict:
     return lu
 
 
-def lire(octets: bytes) -> dict:
-    pages = lignes_par_page(octets)
+def _pourcent(part: float) -> str:
+    return f"{part * 100:.1f} %".replace(".", ",")
+
+
+def incoherences_50(lu: dict) -> list[str]:
+    """Ce que le tableau 50 dit contre lui-même : un « ensemble » — la part des
+    liquidants qui portent AU MOINS une bonification — plus grand que la somme
+    des parts de chacune, au-delà de ce que les arrondis permettent. Le
+    document se trompe alors sur une case. Elle reste telle qu'il l'imprime,
+    et la lecture le dit : l'édition 2027 donne 4,0 % des civils de l'État
+    liquidants à la bonification pour enfant, quand son ensemble, 56,7 %, en
+    demande plus de 34, et que son tableau B-22 compte 20 736 bénéficiaires
+    sur 47 104 pensions, 44,0 % : un chiffre manque à la case."""
+    messages: list[str] = []
+    for population, valeurs in lu["proportion"].items():
+        parts = [v for c, v in valeurs.items() if c != "ensemble" and v is not None]
+        ensemble = valeurs["ensemble"]
+        if ensemble is not None and parts and ensemble > sum(parts) + 0.005:
+            messages.append(f"tableau 50, {population} : l'ensemble ({_pourcent(ensemble)}) "
+                            f"dépasse la somme des parts de chaque bonification "
+                            f"({_pourcent(sum(parts))}) ; une case du document est fausse")
+    return messages
+
+
+def lire(octets: bytes, edition: int = EDITION) -> dict:
+    pages = lignes_par_page(octets, par_abscisse=EDITIONS[edition]["par_abscisse"])
     return {"A-7": tableau_a7(pages), "50": tableau_50(pages), "B-1": tableau_b1(pages)}
 
 
@@ -335,10 +412,16 @@ def main(argv: list[str] | None = None) -> int:
     analyseur.add_argument("--confronter", action="store_true",
                            help="vérifie que chaque chiffre du jaune cité dans "
                                 "avantages_non_contributifs.yaml figure dans les tableaux lus")
+    analyseur.add_argument("--edition", type=int, choices=sorted(EDITIONS), default=EDITION,
+                           help=f"l'édition du jaune, par l'année du PLF (défaut : {EDITION}, "
+                                "celle que porte bonifications_jaune.csv)")
     options = analyseur.parse_args(argv)
-    jeu = next((j for j in jeux_bloques() if j["id"] == IDENTIFIANT), None)
+    edition = EDITIONS[options.edition]
+    identifiant = edition["identifiant"]
+    sortie = RACINE / "data" / "brut" / edition["sortie"]
+    jeu = next((j for j in jeux_bloques() if j["id"] == identifiant), None)
     if jeu is None:
-        print(f"{IDENTIFIANT} absent de data/sources.yaml, ou plus déclaré bloqué", file=sys.stderr)
+        print(f"{identifiant} absent de data/sources.yaml, ou plus déclaré bloqué", file=sys.stderr)
         return 1
     try:
         octets = lire_ou_telecharger(jeu["url"], telecharger, options.fichier,
@@ -348,28 +431,34 @@ def main(argv: list[str] | None = None) -> int:
         print(f"échec de la lecture du document : {erreur}", file=sys.stderr)
         return 1
     try:
-        tables = lire(octets)
+        tables = lire(octets, options.edition)
     except (LookupError, ValueError) as erreur:
         print(f"jaune : {erreur} — rien n'est écrit", file=sys.stderr)
         return 1
+    incoherences = incoherences_50(tables["50"])
 
-    SORTIE.parent.mkdir(parents=True, exist_ok=True)
-    SORTIE.write_text(json.dumps({
+    sortie.parent.mkdir(parents=True, exist_ok=True)
+    sortie.write_text(json.dumps({
+        "edition": options.edition,
         "source": jeu["url"],
         "miroir": jeu.get("miroir"),
         "sha256": jeu.get("sha256"),
         "recupere_le": date.today().isoformat(),
-        "producteur": "Direction du budget, annexe au projet de loi de finances pour 2026 "
-                      "(données du Service des retraites de l'État, de la CNRACL et du FSPOEIE). "
-                      "C'est le producteur de la donnée, non une transcription.",
+        "producteur": f"Direction du budget, annexe au projet de loi de finances pour "
+                      f"{options.edition} (données du Service des retraites de l'État, de la "
+                      "CNRACL et du FSPOEIE). C'est le producteur de la donnée, non une "
+                      "transcription.",
+        "incoherences": incoherences,
         "tables": tables,
     }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     a7, b1 = tables["A-7"], tables["B-1"]
     effectif = f"{a7['effectif']['fpe_civils']:,}".replace(",", " ")
-    print(f"{SORTIE.relative_to(RACINE)} : A-7, {len(a7['bonifications'])} bonifications × "
+    print(f"{sortie.relative_to(RACINE)} : A-7, {len(a7['bonifications'])} bonifications × "
           f"{len(COLONNES_A7)} colonnes sur {effectif} pensions civiles de l'État ; "
           f"tableau 50, {len(BLOCS_50)} blocs × {len(POPULATIONS_50)} populations × "
           f"{len(COLONNES_50)} colonnes ; B-1, {len(b1)} lignes complètes")
+    for message in incoherences:
+        print(f"  INCOHÉRENT  {message}")
 
     if options.confronter:
         trouves, manquants = confronter(tables)

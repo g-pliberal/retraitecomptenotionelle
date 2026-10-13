@@ -75,7 +75,7 @@ def test_le_champ_denombrement_designe_des_lignes_qui_existent():
         if not denombrement:
             continue
         vus += 1
-        assert denombrement["source_id"] == "sre_jaune_pensions", avantage["code"]
+        assert denombrement["source_id"] == "sre_jaune_pensions_2027", avantage["code"]
         assert denombrement["tableau_a7"] in a7, (avantage["code"], denombrement)
         assert denombrement["tableau_50"] in t50, (avantage["code"], denombrement)
     assert vus >= 5, "les cinq bonifications que le jaune dénombre portent le champ"

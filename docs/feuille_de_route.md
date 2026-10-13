@@ -7678,14 +7678,14 @@ conventions collectives ne disant qu'un plancher, non un salaire.
 
 ### 159. Le jaune pensions du PLF 2027, exploité en entier : rangé, puis chaque tableau à sa place dans le dépôt — `en cours`
 
-**Reprise, au 13 octobre 2026.** Faites, l'étape 0, l'inventaire, et l'étape
-1 : le jaune est au manifeste (`sre_jaune_pensions_2027`, licence ouverte
-Etalab 2.0), avec pour miroir la branche `jaune-2027`, qui se garde ;
-`source_locale.py --recuperer` le pose dans `data/brut/34465.pdf`, empreinte
-vérifiée. Les étapes 2 à 9 se mènent en parallèle, une par zone : chacune tient
-son bloc « Reprise » sous le titre de sa note, et celui-ci ne se récrit plus.
-Commencer par l'étape 2, dont le script de lecture sert aux autres, ou par
-celle de sa zone. Détail : les notes des étapes 0 et 1.
+**Reprise, au 13 octobre 2026.** Faites, les étapes 0 à 2 : l'inventaire ; le
+jaune au manifeste (`sre_jaune_pensions_2027`, licence ouverte Etalab 2.0),
+avec pour miroir la branche `jaune-2027`, qui se garde ; les bonifications,
+lues par `sre_jaune_pensions.py`, qui sait les deux éditions, et certifiées
+dans `bonifications_jaune.csv`. Les étapes 3 à 9 se mènent en parallèle, une
+par zone : chacune tient son bloc « Reprise » sous le titre de sa note, et
+celui-ci ne se récrit plus. Commencer par celle de sa zone. Détail : les notes
+des étapes 0 à 2.
 
 **D'où elle vient.** La demande du propriétaire, le 13 octobre 2026, le jaune
 lu pour l'action 129 : « Je veux garder ce doc et le ranger correctement sur
@@ -7725,11 +7725,11 @@ l'étape 0.
    pour miroir, la branche `jaune-2027`, budget.gouv.fr refusant aussi le
    workflow de la release. L'Assemblée, quand elle servira le jaune, pourra la
    remplacer : la branche se supprimera alors.
-2. **Les bonifications** (données) : d'abord, `sre_jaune_pensions.py` apprend
-   l'édition 2027, dont les tableaux A-7, 50 et B-1 gardent leurs numéros,
-   sans perdre la lecture de 2026 ; puis `bonifications_jaune.csv` sur le stock
-   et le flux de 2025 (A-7, 50, B-22), et les fiches qui les citent, confrontées
-   par `--confronter`.
+2. **Les bonifications** (données) : fait le 13 octobre.
+   `sre_jaune_pensions.py` lit l'édition 2027 sans perdre celle de 2026 ;
+   `bonifications_jaune.csv` porte le stock et le flux de 2025 (A-7, 50, B-1),
+   et les cinq fiches qui les citent, les chiffres de 2025. Le tableau B-22,
+   qui dénombre les bonifications du flux, reste à lire (étape 4).
 3. **Les taux et les barèmes, en contrôle** (données) : taux salariaux et
    employeurs (13, 14, 35, 36, D-2), Ircantec depuis 1992 (24), paramètres du
    RAFP de 2005 à 2026 (22B), revalorisation des pensions (110), durée requise

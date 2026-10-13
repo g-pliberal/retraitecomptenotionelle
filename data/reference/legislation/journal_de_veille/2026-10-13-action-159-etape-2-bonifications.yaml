@@ -1,0 +1,25 @@
+date: "2026-10-13"
+session: "action 159, étape 2 : les bonifications de l'édition 2027 du jaune, lues, certifiées, citées"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1. Le jaune
+  pensions annexé au PLF 2027 (data/brut/34465.pdf, tiré de son miroir) : ses tableaux
+  A-7 (stock de 2025), 50 (pages 126 et 127, flux de liquidants), B-1 et B-22 (flux de
+  2025), en texte et, pour le tableau 50, en image de la page 126. Le jaune annexé au
+  PLF 2026 (data/brut/12-Jaune2026_Pensions.pdf, tiré du miroir de l'Assemblée), relu
+  par l'ancien et le nouveau lecteur pour les comparer.
+trouve: >-
+  Les tableaux A-7, 50 et B-1 gardent leurs numéros d'une édition à l'autre, non leur
+  mise en page : cellules centrées à des hauteurs qui varient, tableau 50 coupé entre
+  deux pages, insécable des milliers posée à part. Lus de gauche à droite, ils donnent
+  143 valeurs, certifiées dans bonifications_jaune.csv ; les trente-neuf chiffres des
+  cinq fiches d'avantages_non_contributifs.yaml qui citent le jaune y sont tous, mis à
+  2025. Le tableau 50 imprime 4,0 % des civils de l'État liquidants à la bonification
+  pour enfant, quand son ensemble est à 56,7 % et la somme des parts à 22,0 % ; le
+  tableau B-22 compte 20 736 bénéficiaires sur 47 104 pensions, 44,0 %, et date le
+  tableau 50 du flux de 2025, chaque autre part s'y retrouvant. La case reste telle
+  qu'imprimée, signalée par le lecteur et par l'en-tête du fichier. L'édition 2026,
+  relue par le nouveau code, rend des tableaux identiques.
+reste: >-
+  Les étapes 3 à 9 de l'action 159, en parallèle ; le tableau B-22, à l'étape des
+  référents ; le militaire moyen des cas types, les cotisants de l'État et les
+  référents, encore sur l'édition 2026, à leurs étapes.

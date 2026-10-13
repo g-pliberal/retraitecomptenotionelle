@@ -4501,7 +4501,8 @@ MESURES_JAUNE_ENTIERES = frozenset({"effectif", "beneficiaires", "gain_mensuel_e
 
 
 def _valeurs_jaune() -> dict[tuple, float]:
-    """Les trois tableaux du jaune pensions, à plat.
+    """Les trois tableaux du jaune pensions, à plat : l'édition annexée au
+    PLF 2027 (``scripts/fetch/sre_jaune_pensions.py``, édition par défaut).
 
     Clé : (tableau, ligne, population, mesure). Dans A-7 la ligne est la
     bonification et la mesure ``beneficiaires`` ou ``duree_trimestres`` —
@@ -4512,7 +4513,8 @@ def _valeurs_jaune() -> dict[tuple, float]:
     mesure ``departs``. Une cellule « n.d. » n'est pas une valeur : elle
     n'entre pas.
     """
-    tables = _lire_json("sre_jaune_pensions.json", "scripts/fetch/sre_jaune_pensions.py")["tables"]
+    tables = _lire_json("sre_jaune_pensions_2027.json",
+                        "scripts/fetch/sre_jaune_pensions.py")["tables"]
     valeurs: dict[tuple, float] = {}
     a7 = tables["A-7"]
     for population, valeur in a7["effectif"].items():
@@ -8800,14 +8802,14 @@ CERTIFICATIONS = (
         cles=("tableau", "ligne", "population", "mesure"),
         colonne="valeur",
         source=source_jaune_effectifs,
-        origine="Direction du budget, jaune pensions annexé au PLF 2026 (données "
+        origine="Direction du budget, jaune pensions annexé au PLF 2027 (données "
                 "du Service des retraites de l'État, de la CNRACL et du FSPOEIE), "
                 "tableaux A-7, 50 et B-1",
         decimales=0,
         tolerance=0.5,
         entete=(
             "# Les bonifications de service, dénombrées par celui qui les paie",
-            "# source_id: sre_jaune_pensions",
+            "# source_id: sre_jaune_pensions_2027",
             "#",
             "# Le « Rapport sur les pensions de retraite de la fonction publique »,",
             "# annexe au projet de loi de finances (le jaune budgétaire), est le seul",
@@ -8815,7 +8817,7 @@ CERTIFICATIONS = (
             "# ses tableaux sont ici, à plat, lus dans le PDF par",
             "# scripts/fetch/sre_jaune_pensions.py :",
             "#",
-            "# tableau A-7  : pensions EN PAIEMENT en 2024 (un stock). ligne = la",
+            "# tableau A-7  : pensions EN PAIEMENT fin 2025 (un stock). ligne = la",
             "#                bonification ; mesure = beneficiaires (nombre de pensions",
             "#                qui en portent une) ou duree_trimestres (durée moyenne",
             "#                chez ces seuls bénéficiaires). La ligne `ensemble` porte",
@@ -8824,13 +8826,21 @@ CERTIFICATIONS = (
             "#                (ligne campagne_ou_cinquieme) ; hors_l12 sont les",
             "#                bonifications hors article L. 12 du CPCMR — police,",
             "#                surveillants, douanes, contrôleurs aériens.",
-            "# tableau 50   : FLUX des liquidants de 2023. ligne = la bonification, ou",
+            "# tableau 50   : FLUX des liquidants de 2025. ligne = la bonification, ou",
             "#                ensemble ; mesure = proportion (part des liquidants qui",
             "#                en bénéficient, en fraction), gain_trimestres (gain",
             "#                moyen en durée d'assurance) ou gain_mensuel_eur (gain",
             "#                sur le montant mensuel de la pension, en euros — la",
             "#                seule valorisation publiée de ces dispositifs).",
-            "# tableau B-1  : pensions de droit direct entrées en paiement en 2023 ;",
+            "#                L'encart qui le porte ne date pas son flux : c'est",
+            "#                celui de 2025, que le tableau B-22 du même jaune",
+            "#                dénombre et où chaque part se retrouve, sauf une.",
+            "#                LA CASE (enfant, fpe_civils, proportion) EST FAUSSE",
+            "#                DANS LE DOCUMENT : 4,0 %, quand l'ensemble est à",
+            "#                56,7 % et que le B-22 compte 20 736 bénéficiaires",
+            "#                sur 47 104 pensions, 44,0 %. Elle reste ici telle",
+            "#                qu'il l'imprime ; aucune fiche ne la cite.",
+            "# tableau B-1  : pensions de droit direct entrées en paiement en 2025 ;",
             "#                seules les lignes complètes du document sont ici,",
             "#                mesure departs.",
             "#",
@@ -8841,9 +8851,9 @@ CERTIFICATIONS = (
             "# fiabilite :",
             "#   certifiee : lu dans le document du producteur et recontrôlé par",
             "#               scripts/verifier_donnees.py. Le document ne se télécharge",
-            "#               pas depuis une session (budget.gouv.fr refuse), mais",
-            "#               l'Assemblée nationale sert le même fichier, dont",
-            "#               data/sources.yaml porte l'empreinte.",
+            "#               pas depuis une session (budget.gouv.fr refuse) : son",
+            "#               miroir est dans data/sources.yaml, avec son empreinte,",
+            "#               et scripts/fetch/source_locale.py --recuperer le lit.",
             "#",
             "# Les fiches de avantages_non_contributifs.yaml renvoient ici par leur",
             "# champ `denombrement` ; un test exige que chaque chiffre qu'elles citent",
@@ -8859,7 +8869,7 @@ CERTIFICATIONS = (
         cles=("tableau", "ligne", "population", "mesure"),
         colonne="valeur",
         source=source_jaune_taux,
-        origine="Direction du budget, jaune pensions annexé au PLF 2026, "
+        origine="Direction du budget, jaune pensions annexé au PLF 2027, "
                 "tableaux A-7 et 50 (durées et proportions)",
         decimales=3,
         tolerance=5e-4,

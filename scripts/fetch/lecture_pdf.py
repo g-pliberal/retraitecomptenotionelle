@@ -691,7 +691,50 @@ def lignes_pdf(octets: bytes, tolerance: float = 3.0) -> list[str]:
     return _assembler(fragments, tolerance)
 
 
-def lignes_par_page(octets: bytes, tolerance: float = 3.0) -> list[list[str]]:
+def _assembler_par_abscisse(fragments: list[tuple[int, int, float, float, str]],
+                            tolerance: float) -> list[str]:
+    """Les mêmes lignes que :func:`_assembler`, chacune relue de gauche à droite.
+
+    LE TRI DE HAUT EN BAS DÉSORDONNE UNE LIGNE DONT LES CELLULES NE SONT PAS
+    TOUT À FAIT À LA MÊME HAUTEUR. Le jaune pensions du PLF 2027 centre
+    chaque cellule de ses tableaux dans sa case : une ordonnée de 700,5 pour
+    l'une, de 700 pour sa voisine, et le tri, qui range l'ordonnée avant
+    l'abscisse, rendait la ligne des civils de son tableau 50 dans le
+    désordre — « 0,9% 0,4% 8,7% 4,0% … FPE Civils 0,0% » pour « FPE Civils
+    8,7% 4,0% 0,9% 0,4% … ». Les fragments d'une ligne se regroupent ici
+    comme dans :func:`_assembler`, puis se relisent par abscisse croissante.
+    """
+    lignes: list[list[tuple[float, str]]] = []
+    courante: list[tuple[float, str]] = []
+    ordonnee = None
+    feuille = None
+    for page, bande, y, x, morceau in fragments:
+        meme_ligne = (ordonnee is not None and (page, bande) == feuille
+                      and abs(y - ordonnee) <= tolerance)
+        if not meme_ligne and courante:
+            lignes.append(courante)
+            courante = []
+        courante.append((x, morceau))
+        ordonnee, feuille = y, (page, bande)
+    if courante:
+        lignes.append(courante)
+    rendu: list[str] = []
+    for ligne in lignes:
+        morceaux: list[str] = []
+        abscisse = None
+        for x, morceau in sorted(ligne, key=lambda f: f[0]):
+            if abscisse is not None and abs(x - abscisse) > 0.01:
+                morceaux.append(" ")
+            morceaux.append(morceau)
+            abscisse = x
+        texte = _normaliser("".join(morceaux))
+        if texte:
+            rendu.append(texte)
+    return rendu
+
+
+def lignes_par_page(octets: bytes, tolerance: float = 3.0,
+                    par_abscisse: bool = False) -> list[list[str]]:
     """Les mêmes lignes que :func:`lignes_pdf`, mais groupées par page.
 
     Écrit pour les rapports à la CCSS, dont le numéro de fiche est une TÊTE DE
@@ -704,13 +747,18 @@ def lignes_par_page(octets: bytes, tolerance: float = 3.0) -> list[list[str]]:
 
     On ne refait pas l'extraction : le découpage se lit dans les mêmes
     fragments, dont le premier champ est déjà le numéro de page.
+
+    ``par_abscisse`` relit chaque ligne de gauche à droite
+    (:func:`_assembler_par_abscisse`) ; sans lui, rien ne change pour les
+    lecteurs écrits avant.
     """
     fragments = _fragments(octets)
     fragments.sort(key=lambda f: (f[0], f[1], -f[2], f[3]))
     pages: dict[int, list[tuple[int, int, float, float, str]]] = {}
     for fragment in fragments:
         pages.setdefault(fragment[0], []).append(fragment)
-    return [_assembler(pages[page], tolerance) for page in sorted(pages)]
+    assembler = _assembler_par_abscisse if par_abscisse else _assembler
+    return [assembler(pages[page], tolerance) for page in sorted(pages)]
 
 
 def texte_pdf(octets: bytes) -> str:
