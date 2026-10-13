@@ -1425,7 +1425,9 @@ institutions:
           le barème porte pour 1946, où le texte en écrit 1 800. Il en lit aussi,
           au 31 décembre de chaque année de 1941 à 2006, les deux étages du
           minimum vieillesse d'avant l'ASPA et leurs plafonds, au niveau
-          `haute` ; lu le 7 octobre 2026.
+          `haute` ; lu le 7 octobre 2026. Depuis le 13 octobre 2026, les années
+          que leurs décrets redisent passent au niveau `certifiee` par
+          `jorf_avts` ; la caisse garde les autres.
 
       - id: cnav_montants_minimum
         titre: Barèmes du minimum contributif et du plafond d'écrêtement, 1983-2026
@@ -4054,6 +4056,36 @@ institutions:
           pas l'année qu'il commande ; 1982-1983 et 1989 n'écrivent pas leur
           montant ; 1985-1986 n'ont pas de notice ; 1994-1995 laissent leur
           tableau en image.
+
+      - id: jorf_avts
+        titre: L'AVTS, l'allocation supplémentaire et son plafond, relus dans leurs décrets, 1970-2003
+        url: https://echanges.dila.gouv.fr/OPENDATA/
+        acces: api
+        statut_integration: certifie
+        cible: >-
+          data/reference/legislation/minimum_vieillesse_avant_2007.csv ;
+          data/reference/legislation/salaire_validant_trimestre_avant_1972.csv
+        recuperation: scripts/fetch/jorf_avts.py
+        note: >-
+          Les montants que le barème de la Cnav date (`cnav_avts`), relus dans
+          les textes qui les fixent, par les index JORF et LEGI du dépôt : tous
+          les décrets « fixant le montant de divers avantages de vieillesse et
+          d'invalidité », « de l'allocation supplémentaire du Fonds national de
+          solidarité » ou « portant revalorisation » de l'un et de l'autre, et
+          non les seuls que la caisse cite. Un montant daté est certifié quand
+          un titre, une notice ou un article le redit à la même date, dans la
+          même série ; une année, quand toute sa ligne l'est — de 1982 à 2003,
+          par les articles de LEGI et du JORF. Avant 1970, l'index n'a que les
+          titres ; de 1970 à 1981, les notices redisent l'AVTS, rarement le
+          plafond, et les décrets de l'allocation supplémentaire, dont le titre
+          ne nomme pas la vieillesse, sont restés hors du filtre thématique de
+          l'index ; de 2004 à 2006, un arrêté ne fixe qu'un coefficient. Le
+          seuil d'un trimestre d'avant 1972 en reçoit 1946 à 1948 (les 18 F de
+          R. 351-9) et 1971 (l'AVTS du décret n° 70-879). Ce que les textes
+          disent autrement que la caisse est déclaré : trois notices fausses
+          (n° 74-1126, 82-1142, 87-78), une date (n° 79-1057), un décret cité
+          pour un autre (n° 83-552, que la caisse rapporte au n° 82-1143) ; lu
+          le 13 octobre 2026.
 
       - id: sncf_contribution_employeur
         titre: Contribution employeur de la SNCF, composantes T1 et T2, 2007-2022

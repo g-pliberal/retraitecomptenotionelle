@@ -526,6 +526,20 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "plafond_minimum_vieillesse_cnav": "legislation/minimum_vieillesse_avant_2007.csv",
         "plafond_couple_minimum_vieillesse_cnav":
             "legislation/minimum_vieillesse_avant_2007.csv",
+        # Les mêmes, relus au Journal officiel décret par décret, aux années dont
+        # toute la ligne s'y retrouve ; et le seuil d'un trimestre, aux années
+        # où R. 351-9 ou l'AVTS du 1er janvier se relisent (action 138, étape 6).
+        "avts_journal_officiel": "legislation/minimum_vieillesse_avant_2007.csv",
+        "allocation_supplementaire_journal_officiel":
+            "legislation/minimum_vieillesse_avant_2007.csv",
+        "allocation_supplementaire_menage_journal_officiel":
+            "legislation/minimum_vieillesse_avant_2007.csv",
+        "plafond_minimum_vieillesse_journal_officiel":
+            "legislation/minimum_vieillesse_avant_2007.csv",
+        "plafond_couple_minimum_vieillesse_journal_officiel":
+            "legislation/minimum_vieillesse_avant_2007.csv",
+        "salaire_validant_trimestre_journal_officiel":
+            "legislation/salaire_validant_trimestre_avant_1972.csv",
         "minimum_garanti_reference": "legislation/minimum_garanti_montants.csv",
         "esperances_vie": "mortalite/esperances_vie.csv",
         "esperance_65_derivee": "mortalite/esperances_vie.csv",

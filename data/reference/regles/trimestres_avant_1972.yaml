@@ -16,7 +16,7 @@ effet: >-
   n'en valide aucun ne compte plus au salaire annuel moyen depuis 2004. Aucun des 737
   témoins n'est touché.
 sources:
-  lu_le: 2026-10-07
+  lu_le: 2026-10-13
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
@@ -39,7 +39,9 @@ sources:
   - >-
     Le Journal officiel ne porte dans l'index du dépôt, pour ces années, que la notice du
     décret n° 70-879 (1 750 F au 1er octobre 1970) ; les lois de 1948 à 1956 et les
-    décrets de 1962 à 1969 n'y ont que leur titre. Les montants restent `haute`.
+    décrets de 1962 à 1969 n'y ont que leur titre, à lire au fac-similé. Depuis le
+    13 octobre 2026, le seuil de 1971 et ceux de 1946 à 1948 sont `certifiee`
+    (`jorf_avts.py`) ; ceux de 1949 à 1970 restent `haute`.
   lectures:
   - type: legifrance
     reference: >-
@@ -83,7 +85,9 @@ sources:
     reference: >-
       décret n° 70-879 du 29 septembre 1970, notice (JORFTEXT000000518679) : « A COMPTER DU
       01-10-1970, LES TAUX SONT PORTES A 1750FRS PAR AN (ALLOCATIONS AUX VIEUX
-      TRAVAILLEURS SALARIES […]) »
+      TRAVAILLEURS SALARIES […]) » ; relue avec les autres textes de l'AVTS par
+      `jorf_avts.py`, qui en certifie le seuil de 1971, et celui de 1946 à 1948 par
+      les rédactions de R. 351-9 ; avant 1970, l'index n'a que le titre des textes
     date: 1970-10-01
 textes_a_rattacher:
 - id: LEGIARTI000053335598

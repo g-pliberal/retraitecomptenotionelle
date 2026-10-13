@@ -25,19 +25,24 @@
 # barème « Salaire validant un trimestre » de la même caisse le redonne au
 # centime chaque année de 1949 à 1971, et, de 1972 à 2026, redonne au centime
 # les 200 puis 150 SMIC horaires du dépôt. Il porte 216 anciens francs pour
-# 1946 ; le texte en écrit 1 800, et c'est le texte qui est retenu. Le Journal
-# officiel ne porte de ces montants, dans l'index du dépôt, que celui du décret
-# n° 70-879 : 1 750 F au 1er octobre 1970, d'où les 437,50 F de 1971. `haute`.
-# Les francs sont convertis au taux de 6,55957, les anciens francs au centième.
+# 1946 ; le texte en écrit 1 800, et c'est le texte qui est retenu. Les francs
+# sont convertis au taux de 6,55957, les anciens francs au centième.
+#
+# NIVEAU. `certifiee` les années que les textes redisent
+# (`scripts/fetch/jorf_avts.py`) : 1946 à 1948, les 18 F de R. 351-9, lus dans
+# ses rédactions de 1985 et de 2014 ; 1971, le quart des 1 750 F que la notice du
+# décret n° 70-879 porte au 1er octobre 1970. `haute` les autres, que la Cnav
+# date : l'AVTS d'avant 1970 n'est dans l'index du Journal officiel que par le
+# titre de ses textes.
 #
 # Les départements d'outre-mer avaient leur seuil, plus bas de 1949 à 1951 et
 # de 1972 à 1995 : le récupérateur le garde (`bareme_seuil`), le modèle, qui
 # ne sait pas où l'assuré a travaillé, ne le lit pas encore (action 138,
 # étape 6).
 annee,valeur,fiabilite
-1946,2.744082310,haute
-1947,2.744082310,haute
-1948,2.744082310,haute
+1946,2.744082310,certifiee
+1947,2.744082310,certifiee
+1948,2.744082310,certifiee
 1949,12.958166465,haute
 1950,17.150514439,haute
 1951,19.818372241,haute
@@ -60,4 +65,4 @@ annee,valeur,fiabilite
 1968,55.262768749,haute
 1969,59.073994179,haute
 1970,62.885219610,haute
-1971,66.696445041,haute
+1971,66.696445041,certifiee

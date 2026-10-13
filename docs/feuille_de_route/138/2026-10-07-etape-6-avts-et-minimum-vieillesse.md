@@ -1,14 +1,15 @@
 # Étape 6 : l'AVTS, le trimestre d'avant 1972 et le minimum vieillesse d'avant 2007
 
-**Reprise, au 7 octobre 2026.** Fait : le trimestre de 1946 à 1971 au salaire
-de R. 351-9 — 18 F, puis le quart de l'AVTS au 1er janvier — ; le minimum
-vieillesse de 1941 à 2006 à deux étages, l'AVTS puis l'allocation
-supplémentaire sous son plafond (L. 814-2, L. 815-8), au lieu du montant de 2006
-ramené sur les prix ; les deux dans les deux moteurs, sur les barèmes de la Cnav
-(`cnav_avts.py`). Reste, dans cet ordre : la certification des montants au
-Journal officiel, décret par décret ; la pension minimum d'avant avril 1983 ;
+**Reprise, au 13 octobre 2026.** Fait : le trimestre de 1946 à 1971 au salaire
+de R. 351-9 ; le minimum vieillesse de 1941 à 2006 à deux étages, dans les deux
+moteurs, sur les barèmes de la Cnav (`cnav_avts.py`) ; le 13 octobre, ces
+montants relus au Journal officiel décret par décret (`jorf_avts.py`) : les
+lignes de 1982 à 2003 et le seuil de 1946 à 1948 et de 1971 passent au niveau
+`certifiee`. Reste, dans cet ordre : la pension minimum d'avant avril 1983 ;
 l'AVTS dans R. 732-70 ; l'outre-mer, avec un champ de saisie ; avant 1946, la
-retenue. Commencer par le Journal officiel. Détail : plus bas, « Ce qui reste ».
+retenue ; au fac-similé, sur le poste du propriétaire, les textes d'avant 1970
+et les plafonds de 1956 à 1981. Commencer par la pension minimum. Détail :
+`2026-10-13-etape-6-journal-officiel.md`.
 
 **La demande.** L'étape 6 de l'action : « L'AVTS et le minimum vieillesse
 d'avant 2007, au Journal officiel : la validation de 1949 à 1971, la série du

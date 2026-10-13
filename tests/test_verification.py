@@ -1574,6 +1574,164 @@ def test_le_bareme_des_seuils_est_refuse_s_il_contredit_r_351_9():
     assert any(e.startswith("avts|1981-01-01 : attendu") for e in erreurs), erreurs
 
 
+def _avts_journal_officiel():
+    return _charger_script("jorf_avts", "scripts", "fetch", "jorf_avts.py")
+
+
+def _lus(module, texte: str, forme: str, titre: str):
+    """Les énoncés d'un texte, en (série, date, francs), et ceux sans date."""
+    enonces, sans_date = module.lire_enonces(texte, source="ID", decret="d",
+                                             forme=forme, titre=titre)
+    return ([(e.serie, e.date, round(e.euros * 6.55957, 2)) for e in enonces],
+            [(serie, round(euros * 6.55957, 2)) for serie, euros, _ in sans_date])
+
+
+AVANTAGES = ("Décret n°87-77 du 6 février 1987 fixant le montant de divers avantages "
+             "de vieillesse et d'invalidité")
+SUPPLEMENTAIRE = ("Décret n°87-78 du 6 février 1987 FIXANT LE MONTANT DE L'ALLOCATION "
+                  "SUPPLEMENTAIRE DU FONDS NATIONAL DE SOLIDARITE")
+
+
+def test_l_avts_se_relit_dans_l_article_la_notice_et_le_titre():
+    """Chaque montant prend la date qui le suit (« à 13 470 F par an à compter
+    du 1er janvier 1987 »), sauf celle qui l'annonce (« A COMPTER DU
+    01-10-1970,LES TAUX SONT PORTES A 1750FRS ») ; la notice d'un décret « de
+    divers avantages de vieillesse » qui ne nomme pas l'AVTS donne la sienne ;
+    le montant servi « à titre prévisionnel » n'est pas une série."""
+    module = _avts_journal_officiel()
+    article = ("Sont portés à 13 470 F par an à compter du 1er janvier 1987 et à "
+               "13 600 F par an à compter du 1er juillet 1987 : - le montant de "
+               "l'allocation aux vieux travailleurs salariés ; - le montant de la "
+               "pension minimum vieillesse visée à l'article L. 350")
+    assert _lus(module, article, "article", AVANTAGES) == (
+        [("avts", "1987-01-01", 13_470.0), ("avts", "1987-07-01", 13_600.0)], [])
+    assert _lus(module, "(2 250 FRS PAR AN A COMPTER DU 01-07-1973).", "notice",
+                AVANTAGES.upper())[0] == [("avts", "1973-07-01", 2_250.0)]
+    notice = (
+        "A COMPTER DU 01-10-1970,LES TAUX SONT PORTES A 1750FRS PAR AN (ALLOCATIONS "
+        "AUX VIEUX TRAVAILLEURS SALARIES,MONTANT MINIMUM DU SECOURS VIAGER). POUR "
+        "L'APPLICATION DES LIVRES VII,VIII ET IX DU CODE DE LA SECURITE SOCIALE,LES "
+        "CHIFFRES LIMITES ANNUELS PREVUS AUX ART. L630,L675 ET L688 DUDIT CODE SONT "
+        "REMPLACES,A COMPTER DU 01-10-1970,PAR 4500FRS POUR UNE PERSONNE SEULE ET "
+        "6750FRS PAR MENAGE. PROVISOIREMENT,LES ORGANISMES SONT AUTORISES A PORTER,A "
+        "TITRE PREVISIONNEL,LE MONTANT TOTAL DES AVANTAGES AU MONTANT ANNUEL DE "
+        "3000FRS,A COMPTER DU 01-10-1970.")
+    assert _lus(module, notice, "notice", AVANTAGES.upper())[0] == [
+        ("avts", "1970-10-01", 1_750.0), ("plafond_seul", "1970-10-01", 4_500.0),
+        ("plafond_couple", "1970-10-01", 6_750.0)]
+
+
+def test_le_plafond_et_l_allocation_supplementaire_prennent_leur_libelle():
+    """Le libellé d'un plafond suit son montant ; celui de l'allocation
+    supplémentaire le suit dans une notice, le précède dans un article. Le
+    « minimum vieillesse » d'une notice n'est pas lu, ni rien de ce qui suit ;
+    une date suivie de « , et » ne s'étend pas au montant d'après."""
+    module = _avts_journal_officiel()
+    notice = (
+        "MONTANT MAXIMUM: AU 01-01-1987: 18120FRS POUR UNE PERSONNE SEULE ET 14865FRS "
+        "POUR UNE PERSONNE MARIEE; AU 01-07-1987: 18300FRS POUR UNE PERSONNE SEULE ET "
+        "15020FRS POUR UNE PERSONNE MARIEE. PLAFOND DE RESSOURCE: AU 01-01-1987: "
+        "32400FRS (PERSONNE SEULE) ET 56670FRS (DEUX EPOUX) ET RESPECTIVEMENT AU "
+        "01-07-1987,32800FRS ET 57240FRS. MONTANT DU MINIMUM VIEILLESSE: AU "
+        "01-01-1987: 31590FRS (PERSONNE SEULE). LES COUPLES MARIES: 56670FRS.")
+    assert _lus(module, notice, "notice", SUPPLEMENTAIRE)[0] == [
+        ("as_seul", "1987-01-01", 18_120.0), ("as_marie", "1987-01-01", 14_865.0),
+        ("as_seul", "1987-07-01", 18_300.0), ("as_marie", "1987-07-01", 15_020.0),
+        ("plafond_seul", "1987-01-01", 32_400.0), ("plafond_couple", "1987-01-01", 56_670.0)]
+    article = (
+        "Le montant maximum de l'allocation supplémentaire visée à l'article L. 815-4 "
+        "est fixé : a) Pour les personnes seules, à 20 900 F par an à compter du "
+        "1er janvier 1992 et à 21 280 F par an à compter du 1er juillet 1992 ; b) Pour "
+        "les couples mariés, à 34 300 F par an à compter du 1er janvier 1992.")
+    assert _lus(module, article, "article", AVANTAGES)[0] == [
+        ("as_seul", "1992-01-01", 20_900.0), ("as_seul", "1992-07-01", 21_280.0),
+        ("as_couple", "1992-01-01", 34_300.0)]
+    plafonds = (
+        "les montants limites annuels prévus aux articles L. 811-13, L. 814-1 et L. 815-8 "
+        "dudit code sont fixés à 34 480 F pour une personne seule et à 60 260 F pour "
+        "deux époux au 1er janvier 1989, et à 34 890 F pour une personne seule et à "
+        "60 990 F pour deux époux au 1er juillet 1989.")
+    assert _lus(module, plafonds, "article", SUPPLEMENTAIRE)[0] == [
+        ("plafond_seul", "1989-01-01", 34_480.0), ("plafond_couple", "1989-01-01", 60_260.0),
+        ("plafond_seul", "1989-07-01", 34_890.0), ("plafond_couple", "1989-07-01", 60_990.0)]
+
+
+def test_le_menage_double_le_montant_d_un_article_qui_ne_nomme_pas_le_couple():
+    """De 1983 à 1991, l'article fixe un montant pour tout allocataire : deux
+    allocataires mariés le reçoivent chacun. En 1982, il fixe celui de
+    l'allocataire marié, que le ménage reçoit deux fois. Une phrase sans date
+    prend celle de son article ; « 17.48O F » est un zéro mal lu ; la note de
+    la loi n° 93-936 que LEGI colle en tête ne nomme rien."""
+    module = _avts_journal_officiel()
+    note = ("[ Loi 93-936 du 22 juillet 1993 art. 12 JORF 23 / 7 / 93 : Toute référence "
+            "au \" fonds spécial \" est remplacée par la référence au \" service de "
+            "l'allocation spéciale vieillesse \". ")
+    textes = [
+        ("LEGIARTI1", "1983", "Article DECRET", SUPPLEMENTAIRE.replace("87-78", "82-1143"),
+         note + "Le montant maximum de l'allocation supplémentaire est fixé à 15200 F à "
+         "compter du 1er janvier 1983."),
+        ("LEGIARTI2", "1982", "Article DECRET", SUPPLEMENTAIRE.replace("87-78", "82-560"),
+         "A compter du 1er juillet 1982, le montant de l'allocation supplémentaire est "
+         "fixé à 14600 F. Toutefois, lorsque le bénéficiaire est marié, ce montant est "
+         "fixé à 12700 F."),
+        ("LEGIARTI3", "1985", "Article DECRET", SUPPLEMENTAIRE.replace("87-78", "85-785"),
+         "Le montant maximum de l'allocation supplémentaire est fixé à 17.48O F à "
+         "compter du 1er juillet 1985."),
+    ]
+    lus = {(e.decret, e.serie, e.date): round(e.euros * 6.55957, 2)
+           for e in module.enonces_des_textes(textes)}
+    assert lus == {
+        ("82-1143", "as_seul", "1983-01-01"): 15_200.0,
+        ("82-1143", "as_couple", "1983-01-01"): 30_400.0,
+        ("82-560", "as_seul", "1982-07-01"): 14_600.0,
+        ("82-560", "as_marie", "1982-07-01"): 12_700.0,
+        ("82-560", "as_couple", "1982-07-01"): 25_400.0,
+        ("85-785", "as_seul", "1985-07-01"): 17_480.0,
+        ("85-785", "as_couple", "1985-07-01"): 34_960.0,
+    }
+
+
+def test_une_annee_n_est_certifiee_que_si_toute_sa_ligne_l_est():
+    """Un montant de la caisse est certifié si un texte le redit à sa date ; un
+    texte qui dit autre chose est un écart, et la caisse qui cite un autre
+    décret est signalée. Une année ne l'est que si chaque colonne de sa ligne,
+    au 31 décembre, l'est ; le seuil d'un trimestre, si l'AVTS du 1er janvier
+    l'est."""
+    module = _avts_journal_officiel()
+    cnav = {
+        "datee": {"avts|1970-10-01": _francs(1_750.0), "avts|1982-07-01": _francs(10_900.0),
+                  "as_seul|1982-07-01": _francs(14_600.0),
+                  "plafond_seul|1982-07-01": _francs(26_400.0),
+                  "plafond_couple|1982-07-01": _francs(47_200.0),
+                  "avts|1983-01-01": _francs(11_300.0)},
+        "references": {"avts|1982-07-01": "Décret 82/561 du 29/06/1982",
+                       "as_seul|1982-07-01": "Décret 82/1143 du 29/12/1982"},
+    }
+
+    def enonce(serie, jour, francs, decret, forme="article"):
+        return module.Enonce(serie, jour, _francs(francs), f"{francs} F", "ID", decret, forme)
+
+    enonces = [enonce("avts", "1970-10-01", 1_750.0, "70-879", "notice"),
+               enonce("avts", "1982-07-01", 10_900.0, "82-561"),
+               enonce("as_seul", "1982-07-01", 14_600.0, "82-560"),
+               enonce("plafond_seul", "1982-07-01", 26_400.0, "82-560"),
+               enonce("plafond_couple", "1982-07-01", 47_200.0, "82-560"),
+               enonce("avts", "1983-01-01", 10_300.0, "82-1142", "notice")]
+    resultat = module.confronter(cnav, enonces)
+    assert sorted(resultat["certifiees"]) == [
+        "as_seul|1982-07-01", "avts|1970-10-01", "avts|1982-07-01",
+        "plafond_couple|1982-07-01", "plafond_seul|1982-07-01"]
+    assert [e.split(" : ")[0] for e in resultat["ecarts"]] == ["avts|1983-01-01"]
+    assert [c.split(" : ")[0] for c in resultat["citations"]] == ["as_seul|1982-07-01"]
+    annees, series = module.annees_certifiees(cnav, resultat["certifiees"])
+    assert annees == [1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979,
+                      1980, 1981, 1982]
+    assert series["supplementaire"] == {"1982": round(_francs(14_600.0), 6)}
+    seuils = module.seuils_certifies(cnav, resultat["certifiees"], _francs(18.0))
+    assert sorted(seuils) == ["1946", "1947", "1948", "1971"]
+    assert seuils["1971"] == pytest.approx(_francs(1_750.0) / 4)
+
+
 def test_l_aspa_lit_l_annuel_du_texte_et_non_douze_fois_le_mensuel():
     """8 507,49 € par an, et non 708,95 × 12 = 8 507,40 €."""
     module = _aspa()

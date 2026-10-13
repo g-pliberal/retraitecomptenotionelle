@@ -1,0 +1,44 @@
+date: "2026-10-13"
+session: "action 138, étape 6, deuxième partie : les montants de l'AVTS et du minimum vieillesse, relus au Journal officiel décret par décret"
+consulte: >-
+  veille_droit.py (dernière veille consignée : 2026-10-13 ; aucune des dix fiches à
+  relire ne touche l'étape) ; les index JORF et LEGI récupérés, puis mis à jour des
+  incréments jusqu'au 13 octobre 2026 (2 incréments JORF, 17 documents gardés ; 1
+  incrément LEGI, 307), et textes.py --inscrire, qui n'apporte aucune rédaction
+  nouvelle ; L. 161-17-2 et L. 161-17-3 n'ont aucune version postérieure au 31 décembre
+  2025. Dans les deux index, tous les textes « fixant le montant de divers avantages de
+  vieillesse et d'invalidité », « de l'allocation supplémentaire du Fonds national de
+  solidarité » ou « portant revalorisation » de l'un et de l'autre, de 1941 à 2007 :
+  leurs titres, leurs notices (1970-1989) et leurs articles (LEGI depuis le décret
+  n° 81-1166, le JORF depuis 1990), dont les articles 1er à 3 des décrets n° 81-1166 à
+  85-784 que la première partie avait repérés ; les rédactions de R. 351-9 de 1985 et
+  de 2014 ; les arrêtés du 23 décembre 2003, du 16 décembre 2004 et du 23 décembre 2005
+  relatifs à la revalorisation des pensions de vieillesse. Le dump global du JORF
+  (juillet 2025), pour les décrets de l'allocation supplémentaire que l'index n'a pas.
+trouve: >-
+  Les décrets redisent, à sa date, chaque montant de la ligne du minimum vieillesse
+  d'avant l'ASPA de 1982 à 2003 — l'AVTS (« Sont portés à 13 470 F par an à compter du
+  1er janvier 1987 […] : - le montant de l'allocation aux vieux travailleurs salariés »,
+  n° 87-77), l'allocation supplémentaire (« est fixé à 15200 F à compter du 1er janvier
+  1983 », n° 82-1143), les « montants limites annuels » d'une personne seule et de deux
+  époux — : ces vingt-deux années passent au niveau certifiee, ligne entière ; avant,
+  l'index n'a que les titres (avant 1970) ou des notices qui redisent l'AVTS sans
+  l'allocation supplémentaire (1970-1981) ; après, les arrêtés ne fixent qu'un
+  coefficient (1,017, 1,02, 1,018). Le montant du ménage est celui des « couples
+  mariés » depuis 1992 (n° 92-50), deux fois celui de l'allocataire marié en 1982
+  (12 700 F, n° 82-560), deux fois le montant unique que l'article fixe de 1983 à 1991 ;
+  la notice du n° 87-78 y écrit 14 865 F pour une personne mariée, que l'article
+  n'écrit pas : ce que le plafond du couple laisse à chacun, une fois servies les deux
+  AVTS, ce que le modèle calcule de lui-même (L. 815-8). R. 351-9 écrit 18 F de 1946 à
+  1948 : ces trois seuils, et celui de 1971 (1 750 F au 1er octobre 1970, n° 70-879),
+  passent au niveau certifiee. Les notices des n° 74-1126 (3 250 F datés du 1er avril
+  1975), 82-1142 (10 300 F au lieu de 11 300 F) et 87-78 (32 400 F au lieu de 32 490 F
+  pour le plafond) se trompent ; celle du n° 79-1057 date du 1er septembre 1979 ce que
+  la caisse date du 1er décembre ; la caisse rapporte au décret n° 82-1143
+  l'allocation supplémentaire de juillet 1983, que fixe le n° 83-552.
+reste: >-
+  Les décrets de l'allocation supplémentaire de 1956 à 1981, dont le titre ne nomme ni
+  la vieillesse ni la retraite et que le filtre thématique de l'index a laissés au
+  dump ; les lois et décrets d'avant 1970, au fac-similé du Journal officiel ; la date
+  du décret n° 79-1057, au fac-similé ; la pension minimum d'avant le 1er avril 1983 ;
+  l'AVTS dans R. 732-70 ; le seuil de l'outre-mer ; avant 1946, la retenue.

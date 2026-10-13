@@ -50,14 +50,21 @@ effet: >-
   Le modèle ignore, avant 2007, la majoration pour conjoint à charge et l'allocation
   spéciale de qui n'avait aucun régime ; il donne le premier étage à toute pension
   sous l'allocation aux vieux travailleurs salariés, sans en lire le plafond avant
-  1956, et au montant des villes de plus de 5 000 habitants jusqu'en 1961.
+  1956, et au montant des villes de plus de 5 000 habitants jusqu'en 1961. Ces montants
+  sont relus au Journal officiel, ligne entière, de 1982 à 2003 (13 octobre 2026).
 sources:
-  lu_le: 2026-10-07
+  lu_le: 2026-10-13
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
     Les montants de 2027, que fixera la circulaire de la Cnav de décembre 2026 :
     relancer scripts/fetch/cnav_minimum_vieillesse.py.
+  - >-
+    Avant 2007, les montants que le Journal officiel ne redit pas dans l'index du
+    dépôt (action 138, étape 6) : les décrets de l'allocation supplémentaire de 1956
+    à 1981, que le filtre thématique de l'index a laissés au dump ; les lois et les
+    décrets d'avant 1970, dont l'index n'a que le titre, au fac-similé du Journal
+    officiel ; de 2004 à 2006, des arrêtés qui ne fixent qu'un coefficient.
   lectures:
   - type: service_public
     reference: montants de l'ASPA 2026
@@ -147,6 +154,23 @@ sources:
       Journal officiel et, au 1er janvier 2006, l'ancre de D. 815-1 (3 009,45 € et
       4 314,03 €, 7 323,48 €)
     date: 2025-12-22
+  - type: jorf
+    reference: >-
+      les décrets « fixant le montant de divers avantages de vieillesse et
+      d'invalidité », « de l'allocation supplémentaire du Fonds national de
+      solidarité » et « portant revalorisation » de l'un et de l'autre, de 1970 à
+      2003, lus dans les index JORF et LEGI du dépôt (`jorf_avts.py`) : leurs articles,
+      des n° 81-1166 et 81-1167 aux n° 2002-115 et 2002-1619, redisent à sa date
+      chaque montant de la ligne de 1982 à 2003 — « Sont portés à 13 470 F par an à
+      compter du 1er janvier 1987 […] : - le montant de l'allocation aux vieux
+      travailleurs salariés » (n° 87-77), « b) Pour les couples mariés, à 34 300 F par
+      an » (n° 92-50), « les montants limites annuels […] sont fixés à 24.900 F pour
+      une personne seule et à 44.400 F pour deux époux » (n° 81-1167) ; de 1970 à
+      1981, leurs notices redisent l'AVTS. L'allocation supplémentaire d'un
+      allocataire marié est fixée en 1982 (12 700 F, n° 82-560), puis plus jusqu'en
+      1991 : le plafond du couple la borne, ce que la notice du n° 87-78 chiffre
+      (14 865 F) sans que l'article l'écrive
+    date: 2003-01-01
 textes_a_rattacher:
 - id: LEGIARTI000006745108
   reference: L. 814-2 CSS, rédaction de 1990, le premier étage avant l'ASPA

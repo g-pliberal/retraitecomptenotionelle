@@ -49,23 +49,45 @@
    "ajoutees": 0,
    "colonne": "supplementaire",
    "corrigees": 0,
-   "empreinte": "4cc8a2030600d816",
-   "identiques": 51,
+   "empreinte": "de562579c7848301",
+   "identiques": 29,
    "niveau": "haute",
    "source": "Cnav, barème « Allocation supplémentaire - Montant »",
-   "valeurs": 51,
-   "verifiee_le": "2026-10-07"
+   "valeurs": 29,
+   "verifiee_le": "2026-10-13"
+  },
+  "allocation_supplementaire_journal_officiel": {
+   "ajoutees": 0,
+   "colonne": "supplementaire",
+   "corrigees": 0,
+   "empreinte": "1c20f8e50d15a722",
+   "identiques": 22,
+   "niveau": "certifiee",
+   "source": "DILA, bases JORF et LEGI, décrets fixant le montant de divers avantages de vieillesse et de l'allocation supplémentaire",
+   "valeurs": 22,
+   "verifiee_le": "2026-10-13"
   },
   "allocation_supplementaire_menage_cnav": {
    "ajoutees": 0,
    "colonne": "supplementaire_menage",
    "corrigees": 0,
-   "empreinte": "708bcca5fc174270",
-   "identiques": 25,
+   "empreinte": "24e4dde591354cbf",
+   "identiques": 3,
    "niveau": "haute",
    "source": "Cnav, barème « Allocation supplémentaire - Montant »",
-   "valeurs": 25,
-   "verifiee_le": "2026-10-07"
+   "valeurs": 3,
+   "verifiee_le": "2026-10-13"
+  },
+  "allocation_supplementaire_menage_journal_officiel": {
+   "ajoutees": 0,
+   "colonne": "supplementaire_menage",
+   "corrigees": 0,
+   "empreinte": "a18e2fcfc93eabe1",
+   "identiques": 22,
+   "niveau": "certifiee",
+   "source": "DILA, bases JORF et LEGI, décrets fixant le montant de divers avantages de vieillesse et de l'allocation supplémentaire",
+   "valeurs": 22,
+   "verifiee_le": "2026-10-13"
   },
   "annees_revenu_annuel_moyen_independants": {
    "ajoutees": 0,
@@ -126,12 +148,23 @@
    "ajoutees": 0,
    "colonne": "avts",
    "corrigees": 0,
-   "empreinte": "d334d347b9dc6bc9",
-   "identiques": 66,
+   "empreinte": "fd021141eb7e0d31",
+   "identiques": 44,
    "niveau": "haute",
    "source": "Cnav, barème « Allocation aux vieux travailleurs salariés […] - Montant »",
-   "valeurs": 66,
-   "verifiee_le": "2026-10-07"
+   "valeurs": 44,
+   "verifiee_le": "2026-10-13"
+  },
+  "avts_journal_officiel": {
+   "ajoutees": 0,
+   "colonne": "avts",
+   "corrigees": 0,
+   "empreinte": "ca7103946473bf1c",
+   "identiques": 22,
+   "niveau": "certifiee",
+   "source": "DILA, bases JORF et LEGI, décrets fixant le montant de divers avantages de vieillesse et de l'allocation supplémentaire",
+   "valeurs": 22,
+   "verifiee_le": "2026-10-13"
   },
   "bonifications_jaune_effectifs": {
    "ajoutees": 0,
@@ -1017,12 +1050,23 @@
    "ajoutees": 0,
    "colonne": "plafond_couple",
    "corrigees": 0,
-   "empreinte": "a930c080c8852826",
-   "identiques": 51,
+   "empreinte": "c8596611d420d8d8",
+   "identiques": 29,
    "niveau": "haute",
    "source": "Cnav, barème « Allocation supplémentaire - Plafond de ressources »",
-   "valeurs": 51,
-   "verifiee_le": "2026-10-07"
+   "valeurs": 29,
+   "verifiee_le": "2026-10-13"
+  },
+  "plafond_couple_minimum_vieillesse_journal_officiel": {
+   "ajoutees": 0,
+   "colonne": "plafond_couple",
+   "corrigees": 0,
+   "empreinte": "0214cc1d11b7bca2",
+   "identiques": 22,
+   "niveau": "certifiee",
+   "source": "DILA, bases JORF et LEGI, décrets fixant le montant de divers avantages de vieillesse et de l'allocation supplémentaire",
+   "valeurs": 22,
+   "verifiee_le": "2026-10-13"
   },
   "plafond_journal_officiel": {
    "ajoutees": 0,
@@ -1050,12 +1094,23 @@
    "ajoutees": 0,
    "colonne": "plafond",
    "corrigees": 0,
-   "empreinte": "d8e30f61acfb4e2d",
-   "identiques": 51,
+   "empreinte": "83b7782baecbf98b",
+   "identiques": 29,
    "niveau": "haute",
    "source": "Cnav, barème « Allocation supplémentaire - Plafond de ressources »",
-   "valeurs": 51,
-   "verifiee_le": "2026-10-07"
+   "valeurs": 29,
+   "verifiee_le": "2026-10-13"
+  },
+  "plafond_minimum_vieillesse_journal_officiel": {
+   "ajoutees": 0,
+   "colonne": "plafond",
+   "corrigees": 0,
+   "empreinte": "4f17ba17b97b59b6",
+   "identiques": 22,
+   "niveau": "certifiee",
+   "source": "DILA, bases JORF et LEGI, décrets fixant le montant de divers avantages de vieillesse et de l'allocation supplémentaire",
+   "valeurs": 22,
+   "verifiee_le": "2026-10-13"
   },
   "point_indice_fonction_publique": {
    "ajoutees": 0,
@@ -1325,12 +1380,23 @@
    "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "d56cbc4d83eaae7e",
-   "identiques": 26,
+   "empreinte": "d6f2942ac2535cb8",
+   "identiques": 22,
    "niveau": "haute",
    "source": "Cnav, barèmes « Allocation aux vieux travailleurs salariés […] - Montant » et « Salaire validant un trimestre »",
-   "valeurs": 26,
-   "verifiee_le": "2026-10-07"
+   "valeurs": 22,
+   "verifiee_le": "2026-10-13"
+  },
+  "salaire_validant_trimestre_journal_officiel": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "e12c8136dc1bcad6",
+   "identiques": 4,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI (R. 351-9) et base JORF (l'AVTS au 1er janvier)",
+   "valeurs": 4,
+   "verifiee_le": "2026-10-13"
   },
   "salaires_forfaitaires_marins": {
    "ajoutees": 380,

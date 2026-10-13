@@ -3878,18 +3878,88 @@ def source_salaire_validant_trimestre_cnav() -> dict[tuple, float]:
     18 F de 1946 à 1948, puis le quart de l'allocation aux vieux travailleurs
     salariés en vigueur au 1er janvier, que le barème de la caisse date texte
     par texte depuis 1941 ; le récupérateur a vérifié que son barème des seuils
-    redonne ce quart au centime. Transcription de la caisse : niveau ``haute``.
+    redonne ce quart au centime. Transcription de la caisse : niveau ``haute``,
+    hors les années que les textes redisent.
     """
     serie = _lire_json("cnav_avts.json", "scripts/fetch/cnav_avts.py")["seuil_trimestre"]
+    try:
+        relus = set(source_salaire_validant_trimestre_journal_officiel())
+    except SourceAbsente:
+        relus = set()
+    return {(annee,): valeur for annee, valeur in sorted(serie.items())
+            if (annee,) not in relus}
+
+
+def source_salaire_validant_trimestre_journal_officiel() -> dict[tuple, float]:
+    """Le même seuil, relu dans les textes, aux années où il se certifie.
+
+    De 1946 à 1948, les 18 F que les rédactions de R. 351-9 de 1985 à 2025
+    écrivent ; de 1949 à 1971, le quart de l'AVTS en vigueur au 1er janvier,
+    quand le Journal officiel redit ce montant à sa date — la notice du décret
+    n° 70-879 pour 1971, les montants d'avant 1970 n'étant dans l'index que par
+    leur titre (``scripts/fetch/jorf_avts.py``). La Cnav garde les autres
+    années, au niveau ``haute``.
+    """
+    serie = _lire_json("jorf_avts.json", "scripts/fetch/jorf_avts.py")["seuil_trimestre"]
     return {(annee,): valeur for annee, valeur in sorted(serie.items())}
+
+
+def _annees_relues_au_journal_officiel() -> set[tuple]:
+    """Les années du minimum vieillesse d'avant l'ASPA dont toute la ligne est
+    relue au Journal officiel ; aucune si le certificateur n'a pas tourné."""
+    try:
+        annees = _lire_json("jorf_avts.json", "scripts/fetch/jorf_avts.py")["annees_certifiees"]
+    except SourceAbsente:
+        return set()
+    return {(str(annee),) for annee in annees}
 
 
 def _deux_etages_cnav(serie: str) -> dict[tuple, float]:
     """Une colonne du minimum vieillesse d'avant l'ASPA, par la Cnav : le
-    montant en vigueur au 31 décembre de chaque année, jusqu'en 2006."""
+    montant en vigueur au 31 décembre de chaque année, jusqu'en 2006, hors les
+    années que le Journal officiel certifie."""
     valeurs = _lire_json("cnav_avts.json", "scripts/fetch/cnav_avts.py")[serie]
+    relues = _annees_relues_au_journal_officiel()
     return {(annee,): valeur for annee, valeur in sorted(valeurs.items())
-            if int(annee) <= 2006}
+            if int(annee) <= 2006 and (annee,) not in relues}
+
+
+def _deux_etages_journal_officiel(colonne: str) -> dict[tuple, float]:
+    """Une colonne du minimum vieillesse d'avant l'ASPA, relue au Journal
+    officiel et dans LEGI, décret par décret (``scripts/fetch/jorf_avts.py``) :
+    aux seules années dont toute la ligne — l'AVTS, l'allocation supplémentaire
+    d'un et de deux allocataires, les deux plafonds — se retrouve dans un texte
+    à sa date, puisque la ligne n'a qu'un niveau de fiabilité. De 1982 à 2003 :
+    avant, les décrets de l'allocation supplémentaire sont hors de l'index ;
+    après, un arrêté ne fixe qu'un coefficient."""
+    valeurs = _lire_json("jorf_avts.json", "scripts/fetch/jorf_avts.py")[f"serie_{colonne}"]
+    return {(annee,): valeur for annee, valeur in sorted(valeurs.items())}
+
+
+def source_avts_journal_officiel() -> dict[tuple, float]:
+    """Le premier étage, relu au Journal officiel."""
+    return _deux_etages_journal_officiel("avts")
+
+
+def source_allocation_supplementaire_journal_officiel() -> dict[tuple, float]:
+    """Le second étage d'un allocataire, relu au Journal officiel."""
+    return _deux_etages_journal_officiel("supplementaire")
+
+
+def source_allocation_supplementaire_menage_journal_officiel() -> dict[tuple, float]:
+    """Le second étage de deux allocataires mariés, relu au Journal officiel :
+    fixé pour le couple depuis 1992 ; deux fois le montant de chacun avant."""
+    return _deux_etages_journal_officiel("supplementaire_menage")
+
+
+def source_plafond_minimum_vieillesse_journal_officiel() -> dict[tuple, float]:
+    """Le plafond de ressources d'une personne seule, relu au Journal officiel."""
+    return _deux_etages_journal_officiel("plafond")
+
+
+def source_plafond_couple_minimum_vieillesse_journal_officiel() -> dict[tuple, float]:
+    """Le plafond de ressources d'un couple marié, relu au Journal officiel."""
+    return _deux_etages_journal_officiel("plafond_couple")
 
 
 def source_avts_cnav() -> dict[tuple, float]:
@@ -7356,6 +7426,17 @@ CERTIFICATIONS = (
         niveau="haute",
     ),
     Certification(
+        nom="salaire_validant_trimestre_journal_officiel",
+        chemin=REFERENCE / "legislation" / "salaire_validant_trimestre_avant_1972.csv",
+        cles=("annee",),
+        colonne="valeur",
+        source=source_salaire_validant_trimestre_journal_officiel,
+        origine="DILA, base LEGI (R. 351-9) et base JORF (l'AVTS au 1er janvier)",
+        decimales=9,
+        tolerance=5e-3,
+        unite=" €",
+    ),
+    Certification(
         nom="avts_cnav",
         chemin=REFERENCE / "legislation" / "minimum_vieillesse_avant_2007.csv",
         cles=("annee",),
@@ -7414,6 +7495,69 @@ CERTIFICATIONS = (
         tolerance=5e-3,
         unite=" €",
         niveau="haute",
+    ),
+    # Les années que le Journal officiel redit, ligne entière : les cinq
+    # colonnes y passent ensemble au niveau « certifiee », la Cnav ne gardant
+    # que les autres (action 138, étape 6).
+    Certification(
+        nom="avts_journal_officiel",
+        chemin=REFERENCE / "legislation" / "minimum_vieillesse_avant_2007.csv",
+        cles=("annee",),
+        colonne="avts",
+        source=source_avts_journal_officiel,
+        origine="DILA, bases JORF et LEGI, décrets fixant le montant de divers "
+                "avantages de vieillesse et de l'allocation supplémentaire",
+        decimales=6,
+        tolerance=5e-3,
+        unite=" €",
+    ),
+    Certification(
+        nom="allocation_supplementaire_journal_officiel",
+        chemin=REFERENCE / "legislation" / "minimum_vieillesse_avant_2007.csv",
+        cles=("annee",),
+        colonne="supplementaire",
+        source=source_allocation_supplementaire_journal_officiel,
+        origine="DILA, bases JORF et LEGI, décrets fixant le montant de divers "
+                "avantages de vieillesse et de l'allocation supplémentaire",
+        decimales=6,
+        tolerance=5e-3,
+        unite=" €",
+    ),
+    Certification(
+        nom="allocation_supplementaire_menage_journal_officiel",
+        chemin=REFERENCE / "legislation" / "minimum_vieillesse_avant_2007.csv",
+        cles=("annee",),
+        colonne="supplementaire_menage",
+        source=source_allocation_supplementaire_menage_journal_officiel,
+        origine="DILA, bases JORF et LEGI, décrets fixant le montant de divers "
+                "avantages de vieillesse et de l'allocation supplémentaire",
+        decimales=6,
+        tolerance=5e-3,
+        unite=" €",
+    ),
+    Certification(
+        nom="plafond_minimum_vieillesse_journal_officiel",
+        chemin=REFERENCE / "legislation" / "minimum_vieillesse_avant_2007.csv",
+        cles=("annee",),
+        colonne="plafond",
+        source=source_plafond_minimum_vieillesse_journal_officiel,
+        origine="DILA, bases JORF et LEGI, décrets fixant le montant de divers "
+                "avantages de vieillesse et de l'allocation supplémentaire",
+        decimales=6,
+        tolerance=5e-3,
+        unite=" €",
+    ),
+    Certification(
+        nom="plafond_couple_minimum_vieillesse_journal_officiel",
+        chemin=REFERENCE / "legislation" / "minimum_vieillesse_avant_2007.csv",
+        cles=("annee",),
+        colonne="plafond_couple",
+        source=source_plafond_couple_minimum_vieillesse_journal_officiel,
+        origine="DILA, bases JORF et LEGI, décrets fixant le montant de divers "
+                "avantages de vieillesse et de l'allocation supplémentaire",
+        decimales=6,
+        tolerance=5e-3,
+        unite=" €",
     ),
     Certification(
         nom="plafond_majoration_reversion_cnav",
