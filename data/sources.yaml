@@ -1727,6 +1727,74 @@ institutions:
           budget.gouv.fr, est sur data.gouv.fr sous « PLF2012-Jaune-Données » ;
           c'est elle qui avait servi d'abord, avec des chiffres de 2010.
 
+      - id: sre_jaune_pensions_2027
+        titre: >-
+          Rapport sur les pensions de retraite de la fonction publique, annexe
+          au projet de loi de finances pour 2027 (« jaune budgétaire »)
+        url: https://www.budget.gouv.fr/documentation/documents-budgetaires/exercice-2027/projet-loi-finances-les/plf-2027-jaunes-budgetaires
+        document: https://www.budget.gouv.fr/documentation/file-download/34465
+        acces: document
+        blocage: refus
+        fichier_local: 34465.pdf
+        sha256: 73dd4a66051cd71bdf2c77eb5345a34f99f862330f0f20164c930492be2dbaf5
+        rediffusion:
+          statut: libre
+          licence: licence ouverte Etalab 2.0
+          texte: >-
+            « Sauf mention explicite de propriété intellectuelle détenue par des
+            tiers, les contenus de ce site sont proposés sous licence ouverte
+            Etalab 2.0. […] Vous êtes notamment libres de les reproduire,
+            copier, modifier, extraire, transformer, communiquer diffuser,
+            redistribuer, publier, transmettre et exploiter sous réserve de
+            mentionner leur source, leur date de dernière mise à jour et ne pas
+            induire en erreur des tiers quant aux informations qui y
+            figurent. »
+          lu_dans: >-
+            les mentions légales de budget.gouv.fr
+            (https://www.budget.gouv.fr/mentions-legales), rubrique
+            « Réutilisation des contenus et liens », que le site refuse au
+            cloud : lues par le propriétaire dans le navigateur de son
+            téléphone, en trois captures d'écran de 15 h 27 et 15 h 28. La
+            rubrique « Crédits photos » réserve les images des articles ; le
+            jaune n'en porte pas, et son texte ne mentionne aucune propriété
+            intellectuelle de tiers (ni « © », ni « droits réservés », ni
+            « reproduction »).
+          lu_le: "2026-10-13"
+          mention: >-
+            Direction du budget, « Rapport sur les pensions de retraite de la
+            fonction publique », annexe au projet de loi de finances pour 2027,
+            budget.gouv.fr, document du 12 octobre 2026, licence ouverte
+            Etalab 2.0.
+        statut_integration: a_faire
+        cible: >-
+          data/reference/legislation/bonifications_jaune.csv,
+          data/reference/referents.yaml
+        note: >-
+          L'ÉDITION SUIVANTE DE `sre_jaune_pensions` : le stock de pensionnés
+          au 31 décembre 2025 et le flux des pensions entrées en paiement en
+          2025, 250 pages, PDF créé le 12 octobre 2026. L'action 159 la fait
+          entrer dans le dépôt : la note de son étape 0 en fait l'inventaire,
+          tableau par tableau, avec ce que chacun nourrit, et `cible` ne nomme
+          encore que les deux premiers fichiers visés.
+
+          LE FICHIER NE SE TÉLÉCHARGE PAS DEPUIS UNE SESSION : le 13 octobre,
+          budget.gouv.fr répond 403 au cloud, par curl comme par WebFetch, page
+          comme fichier (pare-feu Incapsula), et le dossier du PLF 2027 de
+          l'Assemblée nationale, qui servait le jaune 2026 octet pour octet,
+          ne porte pas encore ses « Jaunes annexés » (vérifié à 13 h 28 et à
+          15 h 21). Le propriétaire l'a téléchargé depuis son téléphone, sous
+          le nom `34465.pdf`, et déposé sur la branche `jaune-2027` ; de cette
+          copie viennent l'empreinte et la taille, 11 964 640 octets.
+          L'adresse `document` en est déduite, sur le modèle de l'édition 2026
+          (`file-download/31546`) : la publication la vérifie, puisqu'elle
+          refuse un fichier dont l'empreinte diffère.
+
+          La release `documents-apportes` le sert une fois déposé, par le
+          workflow si budget.gouv.fr laisse passer son navigateur, sinon à la
+          main sous le nom `34465.pdf` ; `source_locale.py --recuperer` l'y
+          trouve, et le `miroir` s'écrit alors. Quand l'Assemblée le servira,
+          son adresse pourra le doubler, comme pour l'édition 2026.
+
       - id: sre_historique_taux
         titre: Historique des taux de cotisations appelés par le CAS « Pensions »
         url: https://retraitesdeletat.gouv.fr/files/files/Professionnels/CAS/Fiches/Historique%20taux%20cotisations.pdf
