@@ -2588,16 +2588,16 @@ fabriqués.
 
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
-**Reprise, au 1er octobre 2026.** Fait : architecture décidée, phases 0 à 8
-faites, cinq domaines ouverts sur demande puis clos (enfants, réversion,
-départs multiples, invalidité, carrières hors de France). Reste : les points
-ouverts des phases 2 à 8 ; la décision de la proposition, à prendre par le
-propriétaire, pour la retraite progressive, le cumul et la seconde pension
-(README muet) ; les restes consignés dans les fiches de chaque domaine, dont,
-hors de France, la comparaison des pensions des fonctionnaires ; le domaine
-suivant, à mesurer à son ouverture sur les sources publiques. Commencer par
-lui : liste et gabarit du § 11 de `docs/architecture.md`. Détail : de « Le
-cinquième domaine » à la fin ; la mesure, « Le deuxième domaine ».
+**Reprise, au 13 octobre 2026.** Fait : architecture décidée, phases 0 à 8
+faites, cinq domaines ouverts puis clos (enfants, réversion, départs
+multiples, invalidité, carrières hors de France) ; sa carte en schémas,
+`docs/carte_du_depot.md`. Reste : les points ouverts des phases 2 à 8 ; la
+décision du propriétaire sur la proposition pour la retraite progressive,
+le cumul et la seconde pension (README muet) ; les restes consignés dans les
+fiches de chaque domaine, dont, hors de France, la comparaison des pensions
+des fonctionnaires ; le domaine suivant, à mesurer sur les sources publiques.
+Commencer par lui : liste et gabarit du § 11 de `docs/architecture.md`. Détail :
+de « Le cinquième domaine » à la fin ; la mesure, « Le deuxième domaine ».
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

@@ -1380,6 +1380,7 @@ moteur/                         ce que le navigateur charge, et rien d'autre
                                 sans bibliothèque ni étape de build
 
 docs/
+  carte_du_depot.md             la vue d'ensemble, en schémas, et où suivre l'avancement
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle

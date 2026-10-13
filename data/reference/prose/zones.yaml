@@ -86,6 +86,13 @@ fichiers:
     sections:
       Les versions: recit
 
+  # La carte du dépôt : l'architecture vue d'ensemble, en schémas. Elle dit
+  # l'état : ses chiffres sont ancrés, et `tests/test_carte_du_depot.py`
+  # tient ce que ses schémas et ses tableaux nomment : les chemins, les
+  # adresses du site, les couches de chaque scénario.
+  docs/carte_du_depot.md:
+    defaut: etat
+
   # ------------------------------------------------------------------------
   # La feuille de route est un journal : ses actions décrivent ce qu'on VOULAIT
   # faire le jour où on l'a écrit, et ses bilans ce qu'on a mesuré ce jour-là.
