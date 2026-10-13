@@ -5722,27 +5722,33 @@ referents:
       - quoi: >-
           Il calcule chaque année, pour le compte général de l'État,
           l'engagement de retraite des fonctionnaires civils et
-          militaires, par unités de crédit projetées et avec la
-          mortalité du régime : 1 573 Md€ fin 2024 au taux réel de
-          1,38 % (OAT€i 2047), de 1 541 à 2 037 Md€ entre 1,5 % et 0
-          %, dont 878 pour les retraités et 695 pour les actifs. Le
-          dépôt calcule un engagement acquis pour tout le système,
-          au prorata de la carrière (`cout.py:3460-3527`, `3551`).
-          Son seul contrôle externe est le tableau 29 d'Eurostat
-          (`cout.py:3481-3482`) ; il n'en a aucun par régime.
+          militaires, La Poste comprise, par unités de crédit
+          projetées et avec la mortalité du régime : 1 366 Md€ fin
+          2025 au taux réel de 2,21 % (OAT€i 2047), de 1 265 à
+          2 018 Md€ entre 2,71 % et 0 %, dont 798 pour les retraités
+          et 568 pour les actifs ; au taux de 1,38 % du CGE 2024, il
+          serait de 1 565 Md€, contre 1 573 fin 2024. Celui des
+          ouvriers de l'État, sur la maquette de la Caisse des
+          dépôts, est de 31,3 Md€. Le dépôt calcule un engagement
+          acquis pour tout le système, au prorata de la carrière
+          (`calculer_engagements`, dans `cout.py`). Son seul contrôle
+          externe est le tableau 29 d'Eurostat (`EngagementAcquis`) ;
+          il n'en a aucun par régime.
         preuve: >-
-          annexe « pensions » au PLF 2026, partie I, tableau 7 («
-          Source : Paragraphe 25.1.1.2 de l'annexe au CGE 2024 ») ;
-          doc. n° 6 de 2024 : « la traduction comptable de long
-          terme dans le compte général de l'État grâce à son modèle
-          de micro-simulation Pablo »
+          annexe « pensions » au PLF 2027, partie I, tableaux 10 et 11
+          (« Source : Paragraphe 25.1.1.2 de l'annexe au Compte
+          général de l'État (CGE) 2025 », et 25.2 pour les ouvriers
+          de l'État, dont le texte écrit 314,3 Md€ là où le titre et
+          le tableau disent 31,3) ; doc. n° 6 de 2024 : « la
+          traduction comptable de long terme dans le compte général
+          de l'État grâce à son modèle de micro-simulation Pablo »
         verification: >-
           Norme comptable n° 13 de l'État (méthode d'IAS 19). Pablo
           est « certifié par la Cour des comptes en décembre 2017 »
           (doc. n° 10, p. 14). La convention d'acquisition est la
           même que celle du dépôt ; seul le taux diffère, et la
-          grille de sensibilité du dépôt (`cout.py:3456`) permet de
-          se placer à 1,38 %.
+          grille de sensibilité du dépôt (`ECARTS_ACTUALISATION`,
+          dans `cout.py`) permet de se placer à 2,21 %.
         etat: a_reprendre
         chantier: "138.3"
       - quoi: >-
