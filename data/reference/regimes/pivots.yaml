@@ -323,7 +323,12 @@ pivots:
     - {texte: "Décret n°62-766", num: "108", parametres: [taux_cotisation_retraite]}
     - {texte: "Décret n°62-766", num: "110", parametres: [age_ouverture]}
     - {texte: "Décret n°62-766", num: "118", parametres: [avantages_non_contributifs]}
+  # La loi du 22 juillet 1922 est dans l'index LEGI, version par version
+  # (lu le 13 octobre 2026) : l'article 12 dit les âges et les durées, le 13
+  # le taux par année et le salaire de référence. La fiche n'en est pas
+  # encore coupée : le calendrier le dit.
   chemins_fer_secondaires:
-    hors_legi: >-
-      Loi du 22 juillet 1922 et règlement de la CAMR, antérieurs au dump ;
-      régime fermé en 1954.
+    - {texte: "Loi du 22 juillet 1922 relative aux retraites des agents des chemins de fer secondaires", num: "12",
+       parametres: [age_ouverture, age_taux_plein, duree_requise_trimestres]}
+    - {texte: "Loi du 22 juillet 1922 relative aux retraites des agents des chemins de fer secondaires", num: "13",
+       parametres: [taux_plein, salaire_reference]}

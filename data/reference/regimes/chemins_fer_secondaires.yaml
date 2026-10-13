@@ -9,7 +9,13 @@ famille: special
 # affilie au régime général — les embauchés d'après le 1er octobre 1954 — ;
 # le décret n° 55-1297 (article 5, dans sa rédaction de 1962,
 # LEGIARTI000006767289) les affilie à la caisse autonome de retraites
-# complémentaires et de prévoyance du transport.
+# complémentaires et de prévoyance du transport. Relu le 13 octobre 2026 au
+# Journal officiel numérisé : l'article 4 du décret n° 54-953 dit
+# « embauchés postérieurement au 1er octobre 1954 » ; les agents d'avant
+# restent à la caisse autonome mutuelle, sans complémentaire, et le décret
+# n° 55-1513 (article 5) y fait liquider selon la loi de 1922 jusqu'aux
+# services d'après cette date des agents des caisses particulières qu'il
+# dissout.
 etage: integre
 source_id: cor_panorama_regimes
 fiabilite: estimee
@@ -28,29 +34,39 @@ inventaire:
   couverture: partiel
   statuts: [agent_chemins_fer_secondaires]
   textes:
-    - {reference: "loi du 22 juillet 1922 relative aux retraites des agents des chemins de fer secondaires et des tramways", id: null}
+    - {reference: "loi du 22 juillet 1922 relative aux retraites des agents des chemins de fer secondaires et des tramways", id: LEGITEXT000006073319}
+    - {reference: "décret n° 54-953 du 14 septembre 1954", id: JORFTEXT000000673682}
+    - {reference: "décret n° 55-1297 du 3 octobre 1955", id: LEGITEXT000006060717}
+    - {reference: "arrêté du 24 mai 1956 (JO du 8 juin 1956)", id: JORFTEXT000000255189}
     - {reference: "code de la sécurité sociale, R. 711-1 7°", id: LEGIARTI000048031379}
   manque: >-
-    Une seule période, au niveau `estimee`, depuis le texte fondateur sans
-    recontrôle. Le décret n° 54-953 du 14 septembre 1954 n'affilie au régime
-    général que les agents embauchés après le 1er octobre 1954 (article 4) ;
-    ceux d'avant restent à la caisse autonome mutuelle, dont il relève les
-    cotisations (article 2 : 7 % pour l'agent) — JO du 23 septembre 1954, lu
-    le 28 septembre 2026. Le routage les passe pourtant tous au régime
+    Une seule période, au niveau `estimee`, que les versions de la loi du 22
+    juillet 1922 ne coupent pas : son article 13 calcule la pension sur le
+    salaire moyen des trois dernières années, que le modèle ne connaît pas
+    (la fiche prend les six derniers mois), et, depuis 1943, à un
+    cinquantième par année au service actif, partant à cinquante-cinq ans,
+    à un soixantième au sédentaire, partant à soixante ans ; la fiche ne
+    porte que le premier. Le décret n° 54-953 du 14 septembre 1954
+    n'affilie au régime général que les agents embauchés postérieurement au
+    1er octobre 1954 (article 4) ; les autres restent à la caisse autonome
+    mutuelle et à la loi de 1922, et cotisent depuis cette date 7 % de leur
+    salaire, l'exploitant 13 %, les autorités concédantes et l'État 8 %
+    chacun (article 2). Le routage les passe pourtant tous au régime
     général en 1955, la fiche n'ayant aucune période après 1954. Les
-    embauchés d'après ont la complémentaire que crée, à compter du 1er
-    janvier 1955, le décret n° 54-1061 du 30 octobre 1954
-    (JORFTEXT000000691311), celle de la caisse autonome de retraites
-    complémentaires et de prévoyance du transport (décret n° 55-1297,
-    article 5) : 6 % de toute la rémunération, sans plafond, à parts égales
-    (article 10), rien sur le premier semestre 1955 (article 40), des points
-    au quotient de la rémunération par un salaire horaire de référence
-    (article 17), l'âge normal à soixante ou soixante-cinq ans selon le
-    service (article 22) — JO du 4 octobre 1955. La valeur du point, fixée
-    par arrêté pour 1955 et 1956 (article 39), et le salaire horaire de
-    référence, fixé par arrêté lui aussi, ne sont pas lus : le routage lui
-    substitue le droit commun du non-cadre, rien en 1955 et 1956, l'UNIRS de
-    1957 à 1960, l'Arrco ensuite.
+    embauchés d'après ont, depuis le 1er janvier 1955, la complémentaire de
+    la caisse autonome de retraites complémentaires et de prévoyance du
+    transport (décrets n° 54-1061 et 55-1297) : 6 % de toute la
+    rémunération, à parts égales, aucune cotisation sur le premier semestre
+    1955 — les trois premiers trimestres depuis le décret n° 62-1495 — ;
+    chaque année de service vaut, en points, 0,67 % de la rémunération
+    divisée par un salaire horaire de référence, 0,80 % au service roulant.
+    L'arrêté du 24 mai 1956 fixe ce salaire à 179 F pour 1955 et le point à
+    170 F jusqu'au 1er juillet 1956 ; ensuite, le conseil d'administration
+    de la caisse fixe l'un et l'autre (articles 18 et 29), et l'index du
+    Journal officiel n'en porte aucun. La caisse est en 1988 soumise à la
+    compensation de l'Arrco, à laquelle le décret n° 70-945 lui permettait
+    de s'affilier. Le routage lui substitue le droit commun du non-cadre :
+    rien en 1955 et 1956, l'UNIRS de 1957 à 1960, l'Arrco ensuite.
 periodes:
   - debut: 1930
     fin: 1954

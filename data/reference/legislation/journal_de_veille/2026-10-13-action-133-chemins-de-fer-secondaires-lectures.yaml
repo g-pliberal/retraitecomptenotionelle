@@ -1,0 +1,40 @@
+date: "2026-10-13"
+session: >-
+  l'action 133 : les lectures de la complémentaire des chemins de fer
+  secondaires — valeur du point, salaire de référence, adhésion à l'Arrco —
+  et de la caisse autonome mutuelle d'après 1954, sans routage
+consulte: >-
+  veille_droit.py au début de la session ; les index LEGI et JORF mis à jour
+  aux incréments du 12 et du 13 octobre, que le serveur de la DILA a servis ;
+  L. 161-17-2 et L. 161-17-3 ; textes.py --inscrire. Dans l'index LEGI : le
+  décret n° 55-1297, articles 1er, 5, 7, 9 à 12, 16 à 24, 29, 30, 39 et 40 ;
+  la loi du 22 juillet 1922, articles 11 à 13, 17, 17 bis et 18, version par
+  version ; les décrets n° 74-171, 77-171, 87-462, 88-797, 88-1224 et
+  92-1066. Dans l'index JORF : les notices des décrets n° 62-1495, 70-945,
+  84-264 et 2011-1726 (texte entier pour ce dernier) et des arrêtés de 1976,
+  1985 et 1986 sur la caisse. Au Journal officiel numérisé d'archive.org,
+  sur l'image des pages : l'arrêté du 24 mai 1956 (JO du 8 juin 1956), les
+  décrets n° 54-953 (JO du 23 septembre 1954) et 55-1513 (JO du 24 novembre
+  1955). La réponse ministérielle à la question écrite n° 98 de M. Georges
+  Lombard (JO Sénat du 4 août 1988) ; la fiche « Déclaration dans le secteur
+  du transport » de l'Agirc-Arrco (N4DS, 2011).
+trouve: >-
+  L. 161-17-2 et L. 161-17-3 n'ont pas de rédaction postérieure au 31
+  décembre 2025. Un seul arrêté, du 24 mai 1956, paru au JO du 8 juin et non
+  du 3 juin comme le date l'index, fixe le salaire horaire de référence de
+  1936 à 1955 (179 F pour 1955) et le point à 170 F du 1er janvier 1955 au
+  1er juillet 1956 ; ensuite, le conseil d'administration de la caisse les
+  fixe, et rien n'en est publié. La caisse est soumise en 1988 à la
+  compensation de l'Arrco, que le décret n° 70-945 lui ouvrait ; aucune
+  date d'adhésion n'est au Journal officiel. Les embauchés d'avant le 1er
+  octobre 1954 restent à la caisse autonome mutuelle et à la loi de 1922,
+  qui est dans LEGI version par version, contrairement à ce que disaient
+  les pivots : pension sur le salaire moyen des trois dernières années, que
+  le modèle ne connaît pas.
+reste: >-
+  Garder à la caisse autonome les embauchés d'avant le 1er octobre 1954 :
+  le salaire moyen des trois dernières années dans le modèle, une période
+  après 1954 dans la fiche, et la catégorie du statut, actif ou sédentaire,
+  à décider. Lire sur Légifrance les conventions collectives de 1974, 1983
+  et 1985 sur la caisse du transport, pour dater son adhésion à l'Arrco, et
+  l'article 49 de la loi n° 55-339 pour les cotisations de 1955 à 1983.

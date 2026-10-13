@@ -4970,16 +4970,16 @@ civil qui la précède.
 
 ### 133. La retraite de base et ses complémentaires, sous le montant du système 1 — `en cours`
 
-**Reprise, au 1er octobre 2026.** L'étage de chaque régime, la ligne sous le
-système 1 et le détail sont faits. Restent deux routages du scénario 1
-(session des données). La complémentaire des mineurs, l'Agirc-Arrco, attend
-une décision du propriétaire : la servir plus tard que la base, et ce que vaut
-le système 1 entre cinquante-cinq et soixante ans ; viendraient ensuite son
-routage (taux de l'Arrco), les allocations de l'ANGDM, les ETAM et les
-ingénieurs. Celle des chemins de fer secondaires commence par des lectures :
-valeur du point et salaire de référence (arrêtés de 1955 et 1956), adhésion à
-l'Arrco, caisse autonome mutuelle d'après 1954. Commencer par ces lectures.
-Détail : « Le 28 septembre 2026, suite ».
+**Reprise, au 13 octobre 2026.** L'étage de chaque régime, la ligne sous le
+système 1 et le détail sont faits. Les mineurs attendent une décision du
+propriétaire : servir leur complémentaire, l'Agirc-Arrco, plus tard que la
+base, et ce que vaut le système 1 entre cinquante-cinq et soixante ans ;
+viendraient ensuite son routage, l'ANGDM, les ETAM et les ingénieurs. Les
+chemins de fer secondaires sont lus : reste à garder à la caisse autonome les
+embauchés d'avant le 1er octobre 1954, ce qui demande au modèle le salaire
+moyen des trois dernières années et au propriétaire le choix entre service
+actif et sédentaire ; la complémentaire des embauchés d'après n'a de barème
+publié que pour 1955. Détail : note du 13 octobre (`133/`), « Le 28 septembre ».
 
 **Demande**, le 27 septembre 2026. « On ne montre pas réellement le découpage
 du montant des retraites dans les différents scénarios, c'est normal ? On ne

@@ -485,7 +485,7 @@ est affiché sous la simulation.
 | IEG | 2005-2020 | 1946-2004, 2021- | avant 2005, EDF et GDF payaient les pensions directement ; après 2020, l'arrêté du 29 décembre 2021 remplace la fixation annuelle par une formule que la caisse applique sans la publier |
 | Mines | 1984-2026 | 1930-1983 | la base LEGI ne garde aucune version de l'article 52 du décret de 1946 avant le 1er janvier 1984 |
 | Opéra de Paris, Comédie-Française | 1992-2026 | 1930-1991 | même mur : les versions datées du décret qui fixe ces taux commencent au 1er juillet 1991 |
-| FSPOEIE, marins, CRPCEN, Banque de France, port de Strasbourg, SEITA, chemins de fer secondaires | rien | tout | aucune série de taux employeur trouvée sous une forme exploitable. Pour ces sept régimes, la part patronale des scénarios 4 et 5 est celle d'un salarié du privé de la même année, et le modèle le dit |
+| FSPOEIE, marins, CRPCEN, Banque de France, port de Strasbourg, SEITA, chemins de fer secondaires | rien | tout | aucune série de taux employeur trouvée sous une forme exploitable, sauf aux chemins de fer secondaires : les parts de l'exploitant, des autorités concédantes et de l'État y sont lues pour le 1er octobre 1954 (décret n° 54-953, article 2) et de 1984 à 1992 (décret n° 74-171, article 2), sans l'être de 1955 à 1983 ni portées au modèle (action 133, note du 13 octobre 2026). Pour ces sept régimes, la part patronale des scénarios 4 et 5 est celle d'un salarié du privé de la même année, et le modèle le dit |
 
 **Ces taux sont ceux de l'employeur, non ceux de l'équilibre**, et c'est une
 convention qui se défend mais qui se paie. Trois de ces régimes reçoivent aussi
