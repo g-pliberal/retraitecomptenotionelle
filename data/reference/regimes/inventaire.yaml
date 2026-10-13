@@ -467,11 +467,13 @@ inventaire:
     - {reference: "code de la sécurité sociale, L. 921-1, complété par la loi n° 2005-1579\
         \ du 19 décembre 2005, article 75, VII", id: LEGIARTI000047452643}
     - {reference: "circulaires de la CAVIMAC sur le recouvrement des cotisations de\
-        \ retraite complémentaire des cultes, n° 2021/04 à 2026/03", id: null}
+        \ retraite complémentaire des cultes, n° 2020/01 à 2026/03", id: null}
     manque: >-
       Le taux de base seul : les huit taux spécifiques de la CAVIMAC, de 11,13 à 21,31
-      %, ne sont pas portés ; avant 2019, le taux est celui de la tranche 1 de l'Arrco,
-      aucune circulaire antérieure à novembre 2021 n'étant lisible.
+      %, ne sont pas portés, rien de publié ne disant quelles collectivités les appliquent
+      ni ce qu'ils achètent (fiche `cultes_retraite_complementaire_taux_specifiques`)
+      ; avant 2019, le taux est celui de la tranche 1 de l'Arrco, les circulaires lues
+      ne commençant qu'en janvier 2020.
 
   - code: agirc_entreprises_nouvelles
     nom: Agirc, barème des entreprises créées après 1981
