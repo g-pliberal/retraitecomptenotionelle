@@ -738,7 +738,7 @@ sources:
       La base documentaire de l'Ircantec — l'équivalent d'un règlement, autrement
       plus précis que la page grand public : assiettes A et B, taux théoriques,
       taux d'appel, salaire de référence.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ircantec_parametres
     url: https://www.ircantec.retraites.fr/employeur/parametres-utilises-ircantec
@@ -748,7 +748,7 @@ sources:
     a_en_tirer: >-
       Les paramètres de l'année et leur série : à confronter à valeurs_point.csv
       et aux taux de cotisation de la fiche du régime.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ircantec_valeur_point
     url: https://www.ircantec.retraites.fr/retraite/valeur-point
@@ -757,7 +757,7 @@ sources:
     regimes: [ircantec]
     a_en_tirer: >-
       La valeur de service, historisée par le producteur lui-même.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ircantec_prolongation_activite
     url: https://www.ircantec.retraites.fr/actif/acquisition-droits/prolongation-activite
@@ -767,7 +767,7 @@ sources:
     a_en_tirer: >-
       Ce que la prolongation d'activité ajoute : la surcote propre à l'Ircantec,
       si elle existe, et le sort des points acquis après l'âge du taux plein.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ircantec_prelevements_sociaux
     url: https://www.ircantec.retraites.fr/guide-des-prelevements-sociaux
@@ -778,7 +778,7 @@ sources:
       Le guide des prélèvements sur les pensions : deuxième source sur les
       taux CSG/CRDS/Casa, à recouper avec la Cnav et l'Agirc-Arrco. Trois
       sources qui disent la même chose valent certification.
-    statut: a_explorer
+    statut: en_cours
 
   # ---- RAFP (ERAFP) -----------------------------------------------------
 
@@ -4025,7 +4025,7 @@ sources:
       Les conditions de départ telles que la caisse les énonce aujourd'hui, à
       confronter à l'article 16 de l'arrêté du 30 décembre 1970 que la fiche
       applique version par version.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ircantec_droits_cotisation
     url: https://www.ircantec.retraites.fr/actif/acquisition-droits/activite-professionnelle/calcul-droits-cotisation-demarches
@@ -4035,7 +4035,7 @@ sources:
     a_en_tirer: >-
       Les points acquis par COTISATION : cotisation divisée par le salaire de
       référence et le taux d'appel, la formule même que le modèle applique.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ircantec_droits_validation
     url: https://www.ircantec.retraites.fr/actif/acquisition-droits/activite-professionnelle/calcul-droits-validation-demarches
@@ -4045,7 +4045,7 @@ sources:
     a_en_tirer: >-
       Les points acquis par VALIDATION de services antérieurs : un canal que le
       modèle ne porte pas, et qui compte pour les agents titularisés.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ircantec_chomage
     url: https://www.ircantec.retraites.fr/actif/decouvre-droits/chomage
@@ -4055,7 +4055,7 @@ sources:
     a_en_tirer: >-
       Les points gratuits de chômage : poste de la frontière contributive,
       chiffré par l'action 81 pour d'autres régimes et pas pour celui-ci.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ircantec_maladie_invalidite
     url: https://www.ircantec.retraites.fr/actif/decouvre-droits/maladie-accident-travail-invalidite
@@ -4065,7 +4065,7 @@ sources:
     a_en_tirer: >-
       Les points de maladie, d'accident du travail et d'invalidité, et leur
       condition d'attribution.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ircantec_enfants
     url: https://www.ircantec.retraites.fr/actif/decouvre-droits/enfants
@@ -4075,7 +4075,7 @@ sources:
     a_en_tirer: >-
       La majoration pour enfants de l'Ircantec, que la fiche déclare sans en
       porter le barème (`avantages_non_contributifs: [majoration_enfants]`).
-    statut: a_explorer
+    statut: en_cours
 
   - id: ircantec_service_militaire
     url: https://www.ircantec.retraites.fr/actif/decouvre-droits/service-militaire
@@ -4085,7 +4085,7 @@ sources:
     a_en_tirer: >-
       Les points du service national : droit non contributif que le dépôt ne
       compte pour aucun régime complémentaire.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ircantec_mandats_elus
     url: https://www.ircantec.retraites.fr/actif/decouvre-droits/mandats-elus
@@ -4095,7 +4095,7 @@ sources:
     a_en_tirer: >-
       Les droits des élus locaux, dont l'affiliation est une fiche de ROUTAGE à
       l'inventaire : assiette, taux, et ce qu'un mandat rapporte.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ircantec_retraite_progressive
     url: https://www.ircantec.retraites.fr/actif/prepare-retraite/dispositifs-adaptes-situation/dispositif-retraite-progressive
@@ -4105,7 +4105,7 @@ sources:
     a_en_tirer: >-
       La retraite progressive à l'Ircantec : la fraction de pension servie, et
       les points que l'activité poursuivie continue d'acquérir.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ircantec_cumul_emploi_retraite
     url: https://www.ircantec.retraites.fr/actif/dispositif-cumul-emploi-retraite
@@ -4114,7 +4114,7 @@ sources:
     regimes: [ircantec]
     a_en_tirer: >-
       Le cumul emploi-retraite et les points qu'il ouvre ou non.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ircantec_calcul_cotisations_employeur
     url: https://www.ircantec.retraites.fr/employeur/calcul-cotisations
@@ -4126,7 +4126,7 @@ sources:
       part salariale de la part patronale, et la fiche du régime reporte cette
       répartition par convention sur tout l'avant-2025. La part patronale est
       un axe de tête de la feuille de route.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ircantec_reversion
     url: https://www.ircantec.retraites.fr/deces/pension-reversion?dt=act
@@ -4136,7 +4136,7 @@ sources:
     a_en_tirer: >-
       La réversion de l'Ircantec : taux, conditions d'âge et de mariage,
       partage entre conjoints.
-    statut: a_explorer
+    statut: en_cours
 
   - id: baseircantec_age_taux_plein
     url: https://baseircantec.retraites.fr/demander-sa-retraite/les-conditions-douverture-du-droit-a-retraite/age-normal-de-la-retraite-a-taux-plein
@@ -4147,7 +4147,7 @@ sources:
       L'âge normal du taux plein dans la base documentaire — celle qui fait
       foi pour les gestionnaires — à confronter aux versions de l'article 16
       que la fiche a lues dans LEGI.
-    statut: a_explorer
+    statut: en_cours
 
   - id: baseircantec_points_gratuits_chomage
     url: https://baseircantec.retraites.fr/carriere/periodes-dactivite/titulaire-sans-droit-a-pension/points-gratuits/chomage
@@ -4157,7 +4157,7 @@ sources:
     a_en_tirer: >-
       Les points gratuits de chômage, règle de gestion et non page d'accueil :
       assiette retenue, plafond, durée.
-    statut: a_explorer
+    statut: en_cours
 
   - id: baseircantec_anx0801_taux_theoriques
     url: https://baseircantec.retraites.fr/sites/default/files/2023-12/anx0801_externe_tx_theoriques_sal_ref2024_0.pdf
@@ -4208,7 +4208,7 @@ sources:
     a_en_tirer: >-
       Le plafond de la Sécurité sociale retenu par le régime pour 2024 :
       contrôle croisé de `data/reference/macro/plafond_securite_sociale.csv`.
-    statut: a_explorer
+    statut: en_cours
 
   - id: baseircantec_taux_minoration
     url: https://baseircantec.retraites.fr/sites/default/files/2025-07/Tableaux%20tx%20de%20mino%20retraite%20%C3%A0%20tx%20r%C3%A9duit%202023%20externe.pdf
