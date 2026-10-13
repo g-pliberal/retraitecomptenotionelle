@@ -1336,7 +1336,9 @@ export function dureePropre(moteur, periode, carriere) {
   }
   const ouverture = moisOuvertureDesDroits(moteur, periode, carriere);
   for (const table of tables) {
-    const ligne = moteur.dureesRequisesRegimes.ligne(table, carriere.generation, ouverture);
+    const ligne = moteur.dureesRequisesRegimes.ligne(
+      table, carriere.generation, ouverture, carriere.age_liquidation,
+    );
     if (ligne !== null) {
       return ligne;
     }

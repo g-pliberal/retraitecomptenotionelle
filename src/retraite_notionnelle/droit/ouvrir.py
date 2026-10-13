@@ -1557,7 +1557,7 @@ def duree_propre(moteur, periode: PeriodeRegime, carriere: Carriere
     ouverture = mois_ouverture_des_droits(moteur, periode, carriere)
     for table in periode.duree_requise_table:
         ligne = moteur.durees_requises_regimes.ligne(
-            table, carriere.generation, ouverture
+            table, carriere.generation, ouverture, carriere.age_liquidation
         )
         if ligne is not None:
             return ligne

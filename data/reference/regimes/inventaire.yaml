@@ -670,10 +670,14 @@ inventaire:
         \ 2023)", id: null}
     - {reference: "code des transports, partie réglementaire, depuis le 1er novembre\
         \ 2023", id: null}
+    - {reference: "décret n° 2011-1500 du 10 novembre 2011, article 26 (conditions de\
+        \ 2012 à 2020 à l'année d'effet, dispositif transitoire des nés avant 1971 depuis\
+        \ 2022)", id: LEGIARTI000044496248}
     manque: >-
       Le taux d'appel de 1995 à 2011 n'est pas appliqué, ceux de 2016 à 2025 ne sont
-      pas publiés (105 % retenu, 111 % en 2026) ; le dispositif transitoire des navigants
-      nés avant 1971 et les conditions montantes de 2012 à 2021 ne sont pas portés.
+      pas publiés (105 % retenu, 111 % en 2026) ; les conditions de 2012 à 2021, qui
+      montent à l'année d'effet (âge, annuités et leur somme, décret n° 2011-1500, article
+      26, I et II), ne sont pas portées.
 
   - code: crpnpac_tranche_2
     nom: Caisse de retraite du personnel navigant, tranche 2
@@ -689,8 +693,8 @@ inventaire:
     textes:
     - {reference: 'code de l''aviation civile, R. 426-16-1-1', id: null}
     manque: >-
-      Mêmes limites que la tranche 1 : taux d'appel de 2016 à 2025 non publiés, dispositif
-      transitoire et conditions de 2012 à 2021 non portés.
+      Mêmes limites que la tranche 1 : taux d'appel de 2016 à 2025 non publiés, conditions
+      de 2012 à 2021, à l'année d'effet, non portées.
 
   - code: ircec_raap
     nom: Régime des artistes-auteurs professionnels (IRCEC)

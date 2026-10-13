@@ -573,6 +573,12 @@ class DureesRequisesRegimes:
     n° 2024/15). Un agent actif né en décembre 1964, dont le droit s'ouvre
     en décembre 2020, doit 167 trimestres, ceux de la génération 1960, et
     non les 169 de la sienne.
+
+    ET UNE TABLE PEUT NE VALOIR QU'À PARTIR D'UN ÂGE (colonne `age_minimum`).
+    Le III de l'article 26 du décret n° 2011-1500, depuis 2022, abaisse la
+    cible de la décote des navigants nés avant 1971 « lorsque la liquidation
+    est effectuée à compter de l'âge de cinquante-cinq ans » : en deçà, la
+    table ne répond pas.
     """
 
     FICHIER = "duree_requise_regimes_speciaux.csv"
@@ -581,6 +587,7 @@ class DureesRequisesRegimes:
         self._table: dict[str, dict[float, tuple[int, int, Fiabilite]]] = {}
         self._depuis: dict[str, int] = {}
         self._age_de_lecture: dict[str, float] = {}
+        self._age_minimum: dict[str, float] = {}
         chemin = racine / "reference" / "legislation" / self.FICHIER
         if chemin.exists():
             with chemin.open(encoding="utf-8") as flux:
@@ -594,20 +601,29 @@ class DureesRequisesRegimes:
                     age = (ligne.get("age_de_lecture") or "").strip()
                     if age:
                         self._age_de_lecture[ligne["table"]] = float(age)
+                    minimum = (ligne.get("age_minimum") or "").strip()
+                    if minimum:
+                        self._age_minimum[ligne["table"]] = float(minimum)
         self._generations = {cle: tuple(sorted(valeurs))
                              for cle, valeurs in self._table.items()}
 
-    def ligne(self, table: str, generation: float,
-              ouverture: int) -> tuple[int, int, Fiabilite] | None:
+    def ligne(self, table: str, generation: float, ouverture: int,
+              age_liquidation: float | None = None
+              ) -> tuple[int, int, Fiabilite] | None:
         """Trimestres requis, trimestres retranchés pour la décote, fiabilité.
 
         ``ouverture`` est le rang du mois où l'assuré réunit les conditions ;
         avant la date d'effet de la table, elle ne répond pas. Une table qui
         porte un âge de lecture répond, à qui réunit les conditions avant cet
-        âge, pour la génération qui l'atteint ce mois-là.
+        âge, pour la génération qui l'atteint ce mois-là. Une table qui porte
+        un âge minimum ne répond qu'à qui liquide à cet âge ou après.
         """
         generations = self._generations.get(table)
         if not generations or ouverture < self._depuis[table]:
+            return None
+        minimum = self._age_minimum.get(table)
+        if minimum is not None and (age_liquidation is None
+                                    or age_liquidation < minimum):
             return None
         age = self._age_de_lecture.get(table)
         if age is not None:

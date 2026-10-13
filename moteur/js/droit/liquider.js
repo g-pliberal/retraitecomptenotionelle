@@ -2287,10 +2287,12 @@ export function trimestresDeDecote(moteur, periode, carriere, trimestres, requis
   // dix trimestres selon la génération (décret n° 2008-639, article 35, II).
   const cible = requis - retrancheDecote(moteur, periode, carriere);
   // La CRPN depuis 2022 compte la durée seule, l'âge d'annulation ne faisant
-  // qu'effacer la décote (R. 6527-22 et R. 6527-23 du code des transports).
+  // qu'effacer la décote (R. 6527-22 et R. 6527-23 du code des transports),
+  // sur une cible abaissée pour le navigant né avant 1971 qui part à
+  // cinquante-cinq ans ou plus (décret n° 2011-1500, article 26, III).
   let trimestresDecote;
   if (periode.decote_par_la_duree_seule) {
-    trimestresDecote = manquantsAge <= 0 ? 0 : Math.max(0, requis - trimestres);
+    trimestresDecote = manquantsAge <= 0 ? 0 : Math.max(0, cible - trimestres);
   } else if (periode.decote_annulee_par_la_duree) {
     // Et les régimes spéciaux bornent ce décompte (`borneDeLaDuree`). Arrondi
     // à l'entier supérieur (L. 14, I) : la durée d'assurance du code des

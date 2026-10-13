@@ -2915,9 +2915,13 @@ def trimestres_de_decote(moteur, periode: PeriodeRegime, carriere: Carriere,
     if periode.decote_par_la_duree_seule:
         # La CRPN depuis 2022 : la durée seule compte, et l'âge d'annulation
         # ne fait qu'effacer la décote une fois atteint (R. 6527-22 et
-        # R. 6527-23 du code des transports).
+        # R. 6527-23 du code des transports). Le navigant né avant 1971 qui
+        # part à cinquante-cinq ans ou plus la compte sur une cible abaissée
+        # de 21 à 29 annuités selon sa génération (décret n° 2011-1500,
+        # article 26, III) ; la proratisation garde les trente.
+        cible = requis - retranche_decote(moteur, periode, carriere)
         trimestres_decote = (
-            0.0 if manquants_age <= 0 else float(max(0, requis - trimestres))
+            0.0 if manquants_age <= 0 else float(max(0, cible - trimestres))
         )
     elif periode.decote_annulee_par_la_duree:
         # La SNCF compte la décote par la durée sur une cible abaissée de

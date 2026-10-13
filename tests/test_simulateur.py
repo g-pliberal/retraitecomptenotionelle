@@ -7049,11 +7049,12 @@ def test_la_crpn_decote_par_la_duree_seule_jusqu_a_soixante_ans(simulateur):
     L. 6521-4, soixante ans — non soixante-cinq, comme la fiche le portait.
     Un navigant de cinquante-sept ans avec vingt-cinq annuités perd vingt
     trimestres, 25 % ; le plus petit des deux manques ne lui en retirait que
-    douze. À soixante ans, plus rien.
+    douze. À soixante ans, plus rien. Né en 1971, il n'a pas le dispositif
+    transitoire du test suivant.
     """
     scenario = simulateur.scenario_actuel
     carriere = simulateur.carriere_simple(
-        annee_naissance=1970, sexe="H", affiliation="personnel_navigant",
+        annee_naissance=1971, sexe="H", affiliation="personnel_navigant",
         age_debut=32, age_liquidation=57,
     )
     for code in ("crpnpac", "crpnpac_tranche_2"):
@@ -7068,6 +7069,44 @@ def test_la_crpn_decote_par_la_duree_seule_jusqu_a_soixante_ans(simulateur):
         avant = _periode(simulateur, code, 2018)
         assert not avant.decote_par_la_duree_seule
         assert avant.age_taux_plein == pytest.approx(60.0)
+
+
+def test_la_crpn_abaisse_la_cible_des_nes_avant_1971_partis_a_55_ans(simulateur):
+    """Décret n° 2011-1500, article 26, III, depuis le 1er janvier 2022 :
+    « pour les personnes nées avant le 1er janvier 1971, lorsque la
+    liquidation est effectuée à compter de l'âge de cinquante-cinq ans », le
+    taux plein demande 21 annuités jusqu'à la génération 1962, puis une de
+    plus par génération, 29 pour 1970. La table `crpn_2022` les retranche de
+    la cible de la décote, la proratisation gardant ses trente annuités.
+    Né en 1965 et parti en 2022 à cinquante-sept ans avec vingt-cinq
+    annuités, le navigant n'a plus de décote ; né en 1970, il en a seize
+    trimestres au lieu de vingt ; né en 1963 et parti à cinquante-neuf ans
+    avec vingt annuités, huit ; parti à cinquante-quatre ans, il compte
+    encore sur trente annuités.
+    """
+    scenario = simulateur.scenario_actuel
+    # (naissance, âge, trimestres) : trimestres de décote attendus.
+    attendus = {(1965, 57, 100): 0.0, (1970, 57, 100): 16.0,
+                (1963, 59, 80): 8.0, (1968, 54, 100): 20.0}
+    for code in ("crpnpac", "crpnpac_tranche_2"):
+        for (naissance, age, trimestres), attendu in attendus.items():
+            carriere = simulateur.carriere_simple(
+                annee_naissance=naissance, sexe="H",
+                affiliation="personnel_navigant",
+                age_debut=age - trimestres // 4, age_liquidation=age,
+            )
+            periode = _periode(simulateur, code, naissance + age)
+            assert periode.duree_requise_table == ("crpn_2022",)
+            assert liquider.trimestres_de_decote(scenario, periode, carriere,
+                trimestres, 120, float(age), 60.0) == pytest.approx(attendu), (
+                code, naissance, age)
+        # Trente annuités, quatre-vingt-quatre trimestres de cible : la
+        # proratisation, elle, ne bouge pas.
+        assert liquider.retranche_decote(scenario, _periode(
+            simulateur, code, 2022), simulateur.carriere_simple(
+                annee_naissance=1962, sexe="H",
+                affiliation="personnel_navigant",
+                age_debut=35, age_liquidation=60)) == 36
 
 
 def test_le_salaire_de_reference_des_cultes_est_fait_du_forfait(simulateur):

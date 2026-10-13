@@ -7,19 +7,28 @@ intitule: >-
 etat: approchee
 effet: >-
   L'âge d'annulation passe de 65 à 60 ans pour toute liquidation depuis 2012, et
-  la décote se compte sur la durée seule depuis 2022. Restent approchés : le dispositif
-  transitoire des navigants nés avant 1971 (taux plein à 55 ans avec 21 à 29 annuités),
-  les conditions montantes de 2012 à 2021 (âge et « couple » âge plus annuités),
-  le décompte au jour près, et les taux d'appel de 2016 à 2025, non publiés.
+  la décote se compte sur la durée seule depuis 2022, sur 21 à 29 annuités selon la
+  génération pour le navigant né avant 1971 qui part à 55 ans ou plus. Restent
+  approchés : les conditions montantes de 2012 à 2021 (âge et « couple » âge plus
+  annuités, à l'année d'effet), le décompte au jour près, et les taux d'appel de 2016
+  à 2025, non publiés.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-10-13
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Le dispositif transitoire et les conditions de 2012 à 2021 demandent une table
-    par génération et par année ; les taux d'appel annuels, les décisions du conseil
-    d'administration de la caisse.
+    Les conditions de 2012 à 2021 demandent un décompte par l'âge, les annuités et
+    leur somme, qui montent à l'année d'effet (R. 426-11, II, A, dans sa rédaction
+    du 1er janvier 2012, et article 26, I et II, du décret n° 2011-1500) ; les taux
+    d'appel annuels, les décisions du conseil d'administration de la caisse.
   lectures:
+  - type: legifrance
+    reference: >-
+      Décret n° 2011-1500, article 26, dans ses deux rédactions (LEGIARTI000024779267,
+      LEGIARTI000044496248), et R. 426-11 du code de l'aviation civile du 1er janvier
+      2012 au 16 décembre 2021 puis jusqu'au 31 octobre 2023 (LEGIARTI000024795153,
+      LEGIARTI000044496243), lus dans l'index LEGI du dépôt.
+    date: 2026-10-13
   - type: legifrance
     reference: >-
       R. 6527-21 à R. 6527-23, lus dans l'index LEGI du dépôt ; L. 6521-4, lu sur
@@ -35,6 +44,10 @@ sources:
     date: 2026-09-23
 textes_a_rattacher:
 - reference: >-
+    décret n° 2011-1500 du 10 novembre 2011, article 26, III, dans la rédaction du
+    décret n° 2021-1637 (LEGIARTI000044496248), pour les pensions prenant effet à
+    compter du 1er janvier 2022
+- reference: >-
     R. 6527-21 à R. 6527-23 du code des transports (LEGIARTI000048325100, LEGIARTI000048325102,
     LEGIARTI000048325104), depuis le 1er novembre 2023
 - reference: >-
@@ -48,4 +61,7 @@ code:
     `age_taux_plein` ne faisant que l'annuler une fois atteint. C'est la CRPN depuis le
     1er janvier 2022 : 5 % par annuité manquante sous trente annuités (R. 6527-22 du code
     des transports), sans décote à partir de soixante ans, l'âge du premier alinéa de
-    L. 6521-4 (R. 6527-23). Prime sur `decote_annulee_par_la_duree`.
+    L. 6521-4 (R. 6527-23). Prime sur `decote_annulee_par_la_duree`. La cible de la
+    décote est abaissée par la table `crpn_2022`
+    (`legislation/duree_requise_regimes_speciaux.csv`), qui ne répond qu'à qui
+    liquide à cinquante-cinq ans ou plus (colonne `age_minimum`).

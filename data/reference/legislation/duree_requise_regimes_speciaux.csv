@@ -51,7 +51,7 @@
 # modèle ne sait pas encore la compter. La table des agents SÉDENTAIRES, le I
 # du même article, n'est pas transcrite : aucune fiche ne les modélise.
 #
-# LA COLONNE `retranche_decote` N'EXISTE QUE POUR LA SNCF. Le II de l'article 35
+# LA COLONNE `retranche_decote` SERT À LA SNCF, ET À LA CRPN PLUS BAS. Le II de l'article 35
 # du décret n° 2008-639 ajoute : « Pour le calcul du nombre de trimestres
 # supplémentaires prévu au 2° du I de l'article 13 […] en retranchant aux
 # durées d'assurance requises pour bénéficier du pourcentage maximum de la
@@ -162,114 +162,148 @@
 #       n'y ont touché. La fiche lisait la durée de la génération qui atteint
 #       l'ouverture l'année de la liquidation : 148 trimestres, ceux de 1962, à
 #       un Mahorais né en 1958 parti en 2024, dont le droit en demande 132.
-table,depuis,generation,trimestres,retranche_decote,fiabilite,age_de_lecture
-sncf_conduite,2025-01,1968.833,167,0,haute,
-sncf_conduite,2025-01,1970,168,0,haute,
-sncf_conduite,2025-01,1972,169,0,haute,
-sncf_conduite,2025-01,1973,170,2,haute,
-sncf_conduite,2025-01,1974,170,3,haute,
-sncf_conduite,2025-01,1976,171,5,haute,
-sncf_conduite,2025-01,1977,171,6,haute,
-sncf_conduite,2025-01,1978,172,8,haute,
-sncf_conduite,2025-01,1979,172,9,haute,
-sncf_conduite,2025-01,1980,172,10,haute,
-ratp,2025-01,1959.5,167,0,haute,
-ratp,2025-01,1961,168,0,haute,
-ratp,2025-01,1963,169,0,haute,
-ratp,2025-01,1964,170,0,haute,
-ratp,2025-01,1966,171,0,haute,
-ratp,2025-01,1968,172,0,haute,
-ieg_actif_5,2025-01,1964,170,0,haute,
-ieg_actif_5,2025-01,1967,171,0,haute,
-ieg_actif_5,2025-01,1969,172,0,haute,
-ieg_actif_8,2025-01,1965,170,0,haute,
-ieg_actif_8,2025-01,1968,171,0,haute,
-ieg_actif_8,2025-01,1970,172,0,haute,
-ieg_actif_11,2025-01,1966,170,0,haute,
-ieg_actif_11,2025-01,1969,171,0,haute,
-ieg_actif_11,2025-01,1971,172,0,haute,
-ieg_actif_14,2025-01,1967,170,0,haute,
-ieg_actif_14,2025-01,1970,171,0,haute,
-ieg_actif_14,2025-01,1972,172,0,haute,
-ieg_actif_17,2025-01,1968,170,0,haute,
-ieg_actif_17,2025-01,1971,171,0,haute,
-ieg_actif_17,2025-01,1973,172,0,haute,
-sncf_2014,2019-07,1964.5,167,0,haute,
-sncf_2014,2019-07,1966,168,0,haute,
-sncf_2014,2019-07,1969,169,0,haute,
-sncf_2014,2019-07,1972,170,0,haute,
-sncf_2014,2019-07,1975,171,0,haute,
-sncf_2014,2019-07,1978,172,0,haute,
-ratp_2014,2019-07,1959.5,167,0,haute,
-ratp_2014,2019-07,1961,168,0,haute,
-ratp_2014,2019-07,1964,169,0,haute,
-ratp_2014,2019-07,1967,170,0,haute,
-ratp_2014,2019-07,1970,171,0,haute,
-ratp_2014,2019-07,1973,172,0,haute,
-ieg_2014,2019-07,1959.5,167,0,haute,60
-ieg_2014,2019-07,1961,168,0,haute,60
-ieg_2014,2019-07,1964,169,0,haute,60
-ieg_2014,2019-07,1967,170,0,haute,60
-ieg_2014,2019-07,1970,171,0,haute,60
-ieg_2014,2019-07,1973,172,0,haute,60
-crpcen_2023,2025-01,1959.5,167,0,haute,
-crpcen_2023,2025-01,1961,168,0,haute,
-crpcen_2023,2025-01,1963,169,0,haute,
-crpcen_2023,2025-01,1964,170,0,haute,
-crpcen_2023,2025-01,1965,171,0,haute,
-crpcen_2023,2025-01,1966,172,0,haute,
-crpcen_2014,2019-07,1959.5,167,0,haute,
-crpcen_2014,2019-07,1961,168,0,haute,
-crpcen_2014,2019-07,1964,169,0,haute,
-crpcen_2014,2019-07,1967,170,0,haute,
-crpcen_2014,2019-07,1970,171,0,haute,
-crpcen_2014,2019-07,1973,172,0,haute,
-spm_2015,1900-01,1900,150,0,haute,
-spm_2015,1900-01,1956,152,0,haute,
-spm_2015,1900-01,1957,154,0,haute,
-spm_2015,1900-01,1958,156,0,haute,
-spm_2015,1900-01,1959,158,0,haute,
-spm_2015,1900-01,1960,160,0,haute,
-spm_2015,1900-01,1961,162,0,haute,
-spm_2015,1900-01,1962,164,0,haute,
-spm_2015,1900-01,1963,166,0,haute,
-spm_2015,1900-01,1964,167,0,haute,
-spm_2015,1900-01,1965,168,0,haute,
-spm_2015,1900-01,1966,169,0,haute,
-spm_2015,1900-01,1967,170,0,haute,
-spm_2015,1900-01,1970,171,0,haute,
-spm_2015,1900-01,1973,172,0,haute,
-spm_2026,1900-01,1900,150,0,haute,
-spm_2026,1900-01,1956,152,0,haute,
-spm_2026,1900-01,1957,154,0,haute,
-spm_2026,1900-01,1958,156,0,haute,
-spm_2026,1900-01,1959,158,0,haute,
-spm_2026,1900-01,1960,160,0,haute,
-spm_2026,1900-01,1961,162,0,haute,
-spm_2026,1900-01,1962,164,0,haute,
-spm_2026,1900-01,1963,166,0,haute,
-spm_2026,1900-01,1965.75,167,0,haute,
-spm_2026,1900-01,1966,168,0,haute,
-spm_2026,1900-01,1967,169,0,haute,
-spm_2026,1900-01,1968,170,0,haute,
-spm_2026,1900-01,1971,171,0,haute,
-spm_2026,1900-01,1974,172,0,haute,
-mayotte_2018,1900-01,1900,120,0,haute,
-mayotte_2018,1900-01,1956,124,0,haute,
-mayotte_2018,1900-01,1957,128,0,haute,
-mayotte_2018,1900-01,1958,132,0,haute,
-mayotte_2018,1900-01,1959,136,0,haute,
-mayotte_2018,1900-01,1960,140,0,haute,
-mayotte_2018,1900-01,1961,144,0,haute,
-mayotte_2018,1900-01,1962,148,0,haute,
-mayotte_2018,1900-01,1963,152,0,haute,
-mayotte_2018,1900-01,1964,156,0,haute,
-mayotte_2018,1900-01,1965,160,0,haute,
-mayotte_2018,1900-01,1966,162,0,haute,
-mayotte_2018,1900-01,1967,164,0,haute,
-mayotte_2018,1900-01,1968,166,0,haute,
-mayotte_2018,1900-01,1969,168,0,haute,
-mayotte_2018,1900-01,1970,169,0,haute,
-mayotte_2018,1900-01,1971,170,0,haute,
-mayotte_2018,1900-01,1972,171,0,haute,
-mayotte_2018,1900-01,1973,172,0,haute,
+#
+# LA CRPN N'ABAISSE QUE LA CIBLE DE SA DÉCOTE, ET POUR QUI PART À
+# CINQUANTE-CINQ ANS OU PLUS. Depuis le 1er janvier 2022, la pension des
+# navigants est à taux plein à trente annuités, et chaque annuité manquante
+# coûte 5 % (R. 426-11, II, du code de l'aviation civile, puis R. 6527-22 du
+# code des transports). Le III de l'article 26 du décret n° 2011-1500, dans la
+# rédaction du décret n° 2021-1637 qui vaut pour les pensions prenant effet à
+# compter du 1er janvier 2022 (LEGIARTI000044496248, lue le 13 octobre 2026),
+# y déroge « pour les personnes nées avant le 1er janvier 1971, lorsque la
+# liquidation est effectuée à compter de l'âge de cinquante-cinq ans » :
+# 21 annuités pour les nés jusqu'au 31 décembre 1962, une de plus par
+# génération, 29 pour 1970. La rédaction d'origine, remplacée avant d'avoir
+# servi, comptait à l'année d'effet : 26 annuités en 2022, une de plus par an
+# jusqu'en 2025 (LEGIARTI000024779267).
+#   `crpn_2022` — la pension reste proportionnelle aux annuités, 1,85 % chacune
+#       dans la limite de trente (R. 426-16-1) : la table garde 120 trimestres et
+#       retranche à la cible de la décote 36 trimestres pour 1962 et avant, quatre
+#       de moins par génération, 4 pour 1970, rien à compter de 1971. Sa colonne
+#       `age_minimum`, la seule remplie, la réserve à qui liquide à
+#       cinquante-cinq ans ou plus : en deçà, elle ne répond pas, et la décote
+#       se compte sur trente annuités. Sa colonne `depuis` ne borne rien : les
+#       périodes de 2022 et après la choisissent. Un navigant né en 1965 parti à
+#       cinquante-sept ans avec vingt-cinq annuités n'a plus de décote, au lieu
+#       de 25 %.
+table,depuis,generation,trimestres,retranche_decote,fiabilite,age_de_lecture,age_minimum
+sncf_conduite,2025-01,1968.833,167,0,haute,,
+sncf_conduite,2025-01,1970,168,0,haute,,
+sncf_conduite,2025-01,1972,169,0,haute,,
+sncf_conduite,2025-01,1973,170,2,haute,,
+sncf_conduite,2025-01,1974,170,3,haute,,
+sncf_conduite,2025-01,1976,171,5,haute,,
+sncf_conduite,2025-01,1977,171,6,haute,,
+sncf_conduite,2025-01,1978,172,8,haute,,
+sncf_conduite,2025-01,1979,172,9,haute,,
+sncf_conduite,2025-01,1980,172,10,haute,,
+ratp,2025-01,1959.5,167,0,haute,,
+ratp,2025-01,1961,168,0,haute,,
+ratp,2025-01,1963,169,0,haute,,
+ratp,2025-01,1964,170,0,haute,,
+ratp,2025-01,1966,171,0,haute,,
+ratp,2025-01,1968,172,0,haute,,
+ieg_actif_5,2025-01,1964,170,0,haute,,
+ieg_actif_5,2025-01,1967,171,0,haute,,
+ieg_actif_5,2025-01,1969,172,0,haute,,
+ieg_actif_8,2025-01,1965,170,0,haute,,
+ieg_actif_8,2025-01,1968,171,0,haute,,
+ieg_actif_8,2025-01,1970,172,0,haute,,
+ieg_actif_11,2025-01,1966,170,0,haute,,
+ieg_actif_11,2025-01,1969,171,0,haute,,
+ieg_actif_11,2025-01,1971,172,0,haute,,
+ieg_actif_14,2025-01,1967,170,0,haute,,
+ieg_actif_14,2025-01,1970,171,0,haute,,
+ieg_actif_14,2025-01,1972,172,0,haute,,
+ieg_actif_17,2025-01,1968,170,0,haute,,
+ieg_actif_17,2025-01,1971,171,0,haute,,
+ieg_actif_17,2025-01,1973,172,0,haute,,
+sncf_2014,2019-07,1964.5,167,0,haute,,
+sncf_2014,2019-07,1966,168,0,haute,,
+sncf_2014,2019-07,1969,169,0,haute,,
+sncf_2014,2019-07,1972,170,0,haute,,
+sncf_2014,2019-07,1975,171,0,haute,,
+sncf_2014,2019-07,1978,172,0,haute,,
+ratp_2014,2019-07,1959.5,167,0,haute,,
+ratp_2014,2019-07,1961,168,0,haute,,
+ratp_2014,2019-07,1964,169,0,haute,,
+ratp_2014,2019-07,1967,170,0,haute,,
+ratp_2014,2019-07,1970,171,0,haute,,
+ratp_2014,2019-07,1973,172,0,haute,,
+ieg_2014,2019-07,1959.5,167,0,haute,60,
+ieg_2014,2019-07,1961,168,0,haute,60,
+ieg_2014,2019-07,1964,169,0,haute,60,
+ieg_2014,2019-07,1967,170,0,haute,60,
+ieg_2014,2019-07,1970,171,0,haute,60,
+ieg_2014,2019-07,1973,172,0,haute,60,
+crpcen_2023,2025-01,1959.5,167,0,haute,,
+crpcen_2023,2025-01,1961,168,0,haute,,
+crpcen_2023,2025-01,1963,169,0,haute,,
+crpcen_2023,2025-01,1964,170,0,haute,,
+crpcen_2023,2025-01,1965,171,0,haute,,
+crpcen_2023,2025-01,1966,172,0,haute,,
+crpcen_2014,2019-07,1959.5,167,0,haute,,
+crpcen_2014,2019-07,1961,168,0,haute,,
+crpcen_2014,2019-07,1964,169,0,haute,,
+crpcen_2014,2019-07,1967,170,0,haute,,
+crpcen_2014,2019-07,1970,171,0,haute,,
+crpcen_2014,2019-07,1973,172,0,haute,,
+spm_2015,1900-01,1900,150,0,haute,,
+spm_2015,1900-01,1956,152,0,haute,,
+spm_2015,1900-01,1957,154,0,haute,,
+spm_2015,1900-01,1958,156,0,haute,,
+spm_2015,1900-01,1959,158,0,haute,,
+spm_2015,1900-01,1960,160,0,haute,,
+spm_2015,1900-01,1961,162,0,haute,,
+spm_2015,1900-01,1962,164,0,haute,,
+spm_2015,1900-01,1963,166,0,haute,,
+spm_2015,1900-01,1964,167,0,haute,,
+spm_2015,1900-01,1965,168,0,haute,,
+spm_2015,1900-01,1966,169,0,haute,,
+spm_2015,1900-01,1967,170,0,haute,,
+spm_2015,1900-01,1970,171,0,haute,,
+spm_2015,1900-01,1973,172,0,haute,,
+spm_2026,1900-01,1900,150,0,haute,,
+spm_2026,1900-01,1956,152,0,haute,,
+spm_2026,1900-01,1957,154,0,haute,,
+spm_2026,1900-01,1958,156,0,haute,,
+spm_2026,1900-01,1959,158,0,haute,,
+spm_2026,1900-01,1960,160,0,haute,,
+spm_2026,1900-01,1961,162,0,haute,,
+spm_2026,1900-01,1962,164,0,haute,,
+spm_2026,1900-01,1963,166,0,haute,,
+spm_2026,1900-01,1965.75,167,0,haute,,
+spm_2026,1900-01,1966,168,0,haute,,
+spm_2026,1900-01,1967,169,0,haute,,
+spm_2026,1900-01,1968,170,0,haute,,
+spm_2026,1900-01,1971,171,0,haute,,
+spm_2026,1900-01,1974,172,0,haute,,
+mayotte_2018,1900-01,1900,120,0,haute,,
+mayotte_2018,1900-01,1956,124,0,haute,,
+mayotte_2018,1900-01,1957,128,0,haute,,
+mayotte_2018,1900-01,1958,132,0,haute,,
+mayotte_2018,1900-01,1959,136,0,haute,,
+mayotte_2018,1900-01,1960,140,0,haute,,
+mayotte_2018,1900-01,1961,144,0,haute,,
+mayotte_2018,1900-01,1962,148,0,haute,,
+mayotte_2018,1900-01,1963,152,0,haute,,
+mayotte_2018,1900-01,1964,156,0,haute,,
+mayotte_2018,1900-01,1965,160,0,haute,,
+mayotte_2018,1900-01,1966,162,0,haute,,
+mayotte_2018,1900-01,1967,164,0,haute,,
+mayotte_2018,1900-01,1968,166,0,haute,,
+mayotte_2018,1900-01,1969,168,0,haute,,
+mayotte_2018,1900-01,1970,169,0,haute,,
+mayotte_2018,1900-01,1971,170,0,haute,,
+mayotte_2018,1900-01,1972,171,0,haute,,
+mayotte_2018,1900-01,1973,172,0,haute,,
+crpn_2022,1900-01,1900,120,36,haute,,55
+crpn_2022,1900-01,1963,120,32,haute,,55
+crpn_2022,1900-01,1964,120,28,haute,,55
+crpn_2022,1900-01,1965,120,24,haute,,55
+crpn_2022,1900-01,1966,120,20,haute,,55
+crpn_2022,1900-01,1967,120,16,haute,,55
+crpn_2022,1900-01,1968,120,12,haute,,55
+crpn_2022,1900-01,1969,120,8,haute,,55
+crpn_2022,1900-01,1970,120,4,haute,,55
+crpn_2022,1900-01,1971,120,0,haute,,55

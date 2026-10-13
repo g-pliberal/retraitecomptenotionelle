@@ -439,6 +439,14 @@ reformes:
     absorbee_par: []
     non_appliquee: {}
 
+  - code: navigants_2022
+    date: 2022-01-01
+    texte: {reference: "décret n° 2021-1637 du 13 décembre 2021 relatif au régime complémentaire de retraite du personnel navigant professionnel de l'aviation civile, pour les pensions prenant effet à compter du 1er janvier 2022 : taux plein à trente annuités et décote sur la seule durée (R. 426-11), et, pour les nés avant 1971 partis à cinquante-cinq ans ou plus, 21 à 29 annuités selon la génération (article 26, III, du décret n° 2011-1500)", id: JORFTEXT000044488061}
+    parametres: [duree_requise_trimestres, decote_par_trimestre]
+    regimes: [crpnpac, crpnpac_tranche_2]
+    absorbee_par: []
+    non_appliquee: {}
+
   - code: rci_2013
     date: 2013-01-01
     texte: {reference: "arrêté du 9 février 2012 portant approbation du règlement du régime complémentaire des indépendants", id: LEGIARTI000025397326}

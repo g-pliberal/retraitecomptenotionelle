@@ -27,11 +27,12 @@ inventaire:
   textes:
     - {reference: "code de l'aviation civile, R. 426-1 et suivants (abrogés au 1er novembre 2023)", id: null}
     - {reference: "code des transports, partie réglementaire, depuis le 1er novembre 2023", id: null}
+    - {reference: "décret n° 2011-1500 du 10 novembre 2011, article 26 (conditions de 2012 à 2020 à l'année d'effet, dispositif transitoire des nés avant 1971 depuis 2022)", id: LEGIARTI000044496248}
   manque: >-
     Le taux d'appel de 1995 à 2011 n'est pas appliqué, ceux de 2016 à 2025
-    ne sont pas publiés (105 % retenu, 111 % en 2026) ; le dispositif
-    transitoire des navigants nés avant 1971 et les conditions montantes de
-    2012 à 2021 ne sont pas portés.
+    ne sont pas publiés (105 % retenu, 111 % en 2026) ; les conditions de
+    2012 à 2021, qui montent à l'année d'effet (âge, annuités et leur
+    somme, décret n° 2011-1500, article 26, I et II), ne sont pas portées.
 periodes:
   - debut: 1963
     fin: 1994
@@ -179,6 +180,7 @@ periodes:
     age_ouverture: 50
     age_taux_plein: 60
     duree_requise_trimestres: 120
+    duree_requise_table: [crpn_2022]
     taux_plein: 0.5550
     salaire_reference: carriere_entiere
     assiette: plafonnee_4_pass
@@ -203,11 +205,17 @@ periodes:
       cinquante-sept ans avec vingt-cinq annuités. La caisse compte les
       annuités au jour près (jours validés divisés par 360) ; la fiche, au
       trimestre.
-      PAS PORTÉ : le dispositif transitoire des navigants nés avant 1971,
-      taux plein à cinquante-cinq ans avec 21 annuités pour la génération
-      1962 et une de plus par génération jusqu'à 29 pour 1970 (notice de
-      la caisse sur les conditions applicables depuis le 1er novembre
-      2023).
+      ET LE DISPOSITIF TRANSITOIRE DES NAVIGANTS NÉS AVANT 1971 : à qui
+      liquide à cinquante-cinq ans ou plus, le taux plein ne demande que
+      21 annuités jusqu'à la génération 1962, puis une de plus par
+      génération, 29 pour 1970 (décret n° 2011-1500, article 26, III, dans
+      la rédaction du décret n° 2021-1637, LEGIARTI000044496248, lue le
+      13 octobre 2026). La table `crpn_2022` retranche ce qui manque à
+      trente annuités de la cible de la décote, et d'elle seule : la
+      pension reste de 1,85 % par annuité validée. Il compte à la
+      génération, et non à l'année d'effet comme la rédaction d'origine
+      (26 annuités en 2022, une de plus par an), remplacée avant d'avoir
+      servi.
       Première tranche : 1.85% de taux de pension par annuité validée
       (R. 426-16-1), dans la limite de 30 annuités — d'où un taux
       plein de 55.50%. Cotisation de 7,668 % pour l'affilié et 13,632 % pour l'employeur (R. 426-6 et R. 426-7 dans leur rédaction du décret n° 2011-1500).
@@ -249,6 +257,7 @@ periodes:
     age_ouverture: 50
     age_taux_plein: 60
     duree_requise_trimestres: 120
+    duree_requise_table: [crpn_2022]
     taux_plein: 0.5550
     salaire_reference: carriere_entiere
     assiette: plafonnee_4_pass
@@ -280,11 +289,17 @@ periodes:
       cinquante-sept ans avec vingt-cinq annuités. La caisse compte les
       annuités au jour près (jours validés divisés par 360) ; la fiche, au
       trimestre.
-      PAS PORTÉ : le dispositif transitoire des navigants nés avant 1971,
-      taux plein à cinquante-cinq ans avec 21 annuités pour la génération
-      1962 et une de plus par génération jusqu'à 29 pour 1970 (notice de
-      la caisse sur les conditions applicables depuis le 1er novembre
-      2023).
+      ET LE DISPOSITIF TRANSITOIRE DES NAVIGANTS NÉS AVANT 1971 : à qui
+      liquide à cinquante-cinq ans ou plus, le taux plein ne demande que
+      21 annuités jusqu'à la génération 1962, puis une de plus par
+      génération, 29 pour 1970 (décret n° 2011-1500, article 26, III, dans
+      la rédaction du décret n° 2021-1637, LEGIARTI000044496248, lue le
+      13 octobre 2026). La table `crpn_2022` retranche ce qui manque à
+      trente annuités de la cible de la décote, et d'elle seule : la
+      pension reste de 1,85 % par annuité validée. Il compte à la
+      génération, et non à l'année d'effet comme la rédaction d'origine
+      (26 annuités en 2022, une de plus par an), remplacée avant d'avoir
+      servi.
       Première tranche : 1.85% de taux de pension par annuité validée
       (R. 426-16-1), dans la limite de 30 annuités — d'où un taux
       plein de 55.50%. Cotisation de 7,668 % pour l'affilié et 13,632 % pour l'employeur (R. 426-6 et R. 426-7 dans leur rédaction du décret n° 2011-1500).

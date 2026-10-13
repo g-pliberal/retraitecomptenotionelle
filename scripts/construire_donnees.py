@@ -1438,8 +1438,9 @@ def _complement_differentiel_rco() -> dict:
 
 def _durees_requises_regimes() -> dict:
     """Durée requise propre à un régime spécial, par table et par génération,
-    avec le mois (rang) à compter duquel chaque table vaut, et l'âge auquel
-    une table se lit, quand elle en porte un."""
+    avec le mois (rang) à compter duquel chaque table vaut, l'âge auquel une
+    table se lit et l'âge de liquidation à partir duquel elle vaut, quand
+    elle en porte."""
     from retraite_notionnelle.scenarios.actuel import DureesRequisesRegimes
 
     tables = DureesRequisesRegimes(DONNEES)
@@ -1448,6 +1449,8 @@ def _durees_requises_regimes() -> dict:
             "depuis": tables._depuis[table],
             **({"age_de_lecture": tables._age_de_lecture[table]}
                if table in tables._age_de_lecture else {}),
+            **({"age_minimum": tables._age_minimum[table]}
+               if table in tables._age_minimum else {}),
             "lignes": {
                 (str(int(generation)) if float(generation).is_integer()
                  else str(generation)): [trimestres, retranche, int(fiabilite)]

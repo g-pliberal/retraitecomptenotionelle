@@ -107,9 +107,12 @@ export class DureesRequisesRegimes {
   constructor(paquet) {
     this._tables = Object.fromEntries(
       Object.entries(paquet.durees_requises_regimes ?? {})
-        .map(([table, { depuis, age_de_lecture: ageDeLecture, lignes }]) => [
+        .map(([table, {
+          depuis, age_de_lecture: ageDeLecture, age_minimum: ageMinimum, lignes,
+        }]) => [
           table, {
             depuis, ageDeLecture: ageDeLecture ?? null,
+            ageMinimum: ageMinimum ?? null,
             lignes: new TableParGeneration(lignes),
           },
         ]),
@@ -118,12 +121,18 @@ export class DureesRequisesRegimes {
 
   /**
    * Une table ne répond qu'à qui réunit les conditions à compter de sa date
-   * d'effet (`ouverture`, rang du mois) — portage de `DureesRequisesRegimes`.
+   * d'effet (`ouverture`, rang du mois), et, si elle porte un âge minimum, qu'à
+   * qui liquide à cet âge ou après — portage de `DureesRequisesRegimes`.
    * @returns {[number, number, number] | null} trimestres, retranchés pour la décote, fiabilité.
    */
-  ligne(table, generation, ouverture) {
+  ligne(table, generation, ouverture, ageLiquidation = null) {
     const lue = this._tables[table];
     if (lue === undefined || ouverture < lue.depuis) {
+      return null;
+    }
+    if (lue.ageMinimum !== null
+        && (ageLiquidation === null || ageLiquidation === undefined
+            || ageLiquidation < lue.ageMinimum)) {
       return null;
     }
     let lueA = generation;
