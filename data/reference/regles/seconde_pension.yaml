@@ -125,7 +125,7 @@ approximations:
     départ, ni dans celle d'aujourd'hui, et « faire vivre » ne la revalorise pas
   effet: non mesuré
 sources:
-  lu_le: 2026-09-30
+  lu_le: 2026-10-13
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -161,6 +161,18 @@ sources:
       (LEGIARTI000053279747) ; D. 161-2-22-1 (LEGIARTI000047958952) ; R. 161-19-2 et
       R. 161-19-4, dans l'index LEGI
     date: 2026-09-29
+  - type: autre
+    reference: >-
+      Ircantec, « Le dispositif du cumul emploi-retraite » : l'activité exercée en cumul
+      intégral entre le 2 janvier 2015 et le 31 août 2024 n'ouvre aucun droit ; celle
+      exercée depuis le 1er septembre 2024 ouvre une deuxième pension de l'Ircantec,
+      « sans plafond, mais sans bonus (pas de majoration pour enfants) », après six mois
+      de carence chez le même employeur, et aucune troisième ; « Le nombre de
+      liquidations de retraite auprès de l'Ircantec est limité à deux », celles d'avant
+      le 1er août 2026 valant pour une (« La reprise d'un mandat électif »). Le modèle
+      ne calcule pas cette seconde pension
+    url: https://www.ircantec.retraites.fr/actif/dispositif-cumul-emploi-retraite
+    date: 2026-10-13
 code:
   python: >-
     droit/seconde.py : droits, _nouvelle_pension, _seconde_retraite_complementaire,

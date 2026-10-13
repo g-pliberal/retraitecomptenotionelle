@@ -123,7 +123,9 @@
 #     salarié et employeur au dix-millième.
 #   points_de_l_annee — les points que le salaire de l'année `annee` acquiert,
 #     régime par régime, une valeur par période qui en crédite (la tranche 1,
-#     puis la 2), au centième. L'exemple donne ce salaire, en euros de
+#     puis la 2), au centième, ou au point quand la source arrondit au point
+#     (`arrondi: point`) ; un nombre seul est le total des périodes, quand la
+#     source ne publie que lui. L'exemple donne ce salaire, en euros de
 #     l'année, dans `carriere.releve` (année : salaire), que le test porte sur
 #     un relevé de carrière.
 #   majoration_exceptionnelle_mensuelle — la majoration exceptionnelle des
@@ -985,6 +987,71 @@ exemples:
       partie au taux plein ; seul se compare le taux de la majoration.
     carriere: {naissance: "1962-05", sexe: F, affiliation: contractuel_public, liquidation: "2029-05", age_debut: 22, nombre_enfants: 7}
     attendu: {majorations_enfants_des_regimes: {ircantec: 0.30}}
+
+  # Les pages de la caisse et de sa base documentaire, lues le 13 octobre 2026
+  # (action 89, lot des pages de l'Ircantec) : deux minorations, dont la
+  # première que la caisse publie sur la seconde table de l'article 16, celle
+  # qui lit la durée, et deux années de points.
+  - id: ircantec_minoration_duree_63_ans
+    source: {editeur: "Ircantec", reference: "ircantec.retraites.fr, Actif, « Les conditions de départ à la retraite », Je pars à taux réduit, situation 2", verifie_le: "2026-10-13"}
+    enonce: >-
+      Né le 1er avril 1965, l'assuré part le 1er avril 2028, à 63 ans, l'âge
+      légal de sa génération depuis la loi de financement pour 2026, avec 157
+      trimestres pour 171 requis : « L'Ircantec comparera donc le coefficient
+      déterminé en fonction de votre âge et celui déterminé en fonction de
+      votre nombre de trimestres acquis. Le coefficient le plus avantageux
+      sera appliqué à votre nombre total de points, soit dans ce cas
+      85,50 % » — quatorze trimestres manquants, 0,88 moins deux marches de
+      0,0125, contre 0,83 par l'âge.
+    carriere: {naissance: "1965-04-01", sexe: H, affiliation: contractuel_public, liquidation: "2028-04", trimestres_valides: 157}
+    attendu: {trimestres_requis: 171, liquidation_ouverte: true, coefficients_des_regimes: {ircantec: 0.855}}
+
+  - id: ircantec_minoration_age_avant_l_age_legal
+    source: {editeur: "Ircantec", reference: "ircantec.retraites.fr, Actif, « Les conditions de départ à la retraite », Je pars à taux réduit, situation 1", verifie_le: "2026-10-13"}
+    enonce: >-
+      Né en décembre 1964, l'assuré demande sa retraite de l'Ircantec au 1er
+      septembre 2026, à 61 ans et 9 mois — la naissance s'écrit au 1er, que cet
+      âge suppose —, avec 160 trimestres, avant l'âge légal de sa génération,
+      62 ans et 9 mois : « Seul le critère d'âge sera donc pris en compte.
+      L'Ircantec appliquera un coefficient de 76,25 % à votre nombre total de
+      points » — un trimestre sous soixante-deux ans, 0,78 moins 0,0175. La
+      caisse la sert « au plus tôt à l'âge de 57 ans », sans attendre le
+      régime général.
+    carriere: {naissance: "1964-12-01", sexe: H, affiliation: contractuel_public, liquidation: "2026-09", trimestres_valides: 160}
+    attendu: {coefficients_des_regimes: {ircantec: 0.7625}}
+    ecart_connu:
+      modele: {coefficients_des_regimes: {ircantec: 0.9}}
+      explication: >-
+        Le modèle présume la complémentaire demandée avec son régime de base :
+        avant l'âge légal, rien ne s'ouvre, et l'Ircantec attend le régime
+        général, à 62 ans et 9 mois, où la durée lui donne 0,90, dix
+        trimestres manquants. La caisse la sert dès septembre 2026, un an plus
+        tôt, à 0,7625. Il faudrait laisser une complémentaire des salariés
+        devancer son régime de base de dix ans au plus, au coefficient de
+        l'âge seul (fiche liquidation_regime_par_regime).
+      fiche: liquidation_regime_par_regime
+      depuis: "2026-10-13"
+
+  - id: ircantec_points_2024_deux_tranches
+    source: {editeur: "Ircantec", reference: "ircantec.retraites.fr, Actif, « Les points acquis par cotisations », exemple de 2024", verifie_le: "2026-10-13"}
+    enonce: >-
+      « Un salarié a perçu en 2024, un salaire annuel de 47 500 € » : 46 368 €
+      en tranche A, le plafond, et 1 132 € en tranche B, aux taux théoriques
+      de 5,60 % et 15,60 % (agent et employeur), soit 2 597 € et 177 € de
+      cotisations théoriques, divisées par le salaire de référence de 2024,
+      5,611 € : « 494 points ». Le taux théorique est le taux appelé divisé
+      par le taux d'appel, 7 % et 19,5 % sur 125 % : la formule du modèle.
+    carriere: {naissance: "1985-03", sexe: F, affiliation: contractuel_public, liquidation: "2052-04", age_debut: 22, releve: {2024: 47500}}
+    attendu: {points_de_l_annee: {annee: 2024, arrondi: point, ircantec: 494}}
+
+  - id: ircantec_points_2019_base_documentaire
+    source: {editeur: "Ircantec", reference: "baseircantec.retraites.fr, base documentaire de la Caisse des dépôts, « Détermination du nombre de points - Mode de calcul », page du 3 mars 2026, exemple de 2019", verifie_le: "2026-10-13"}
+    enonce: >-
+      « Un salarié a perçu en 2019 un salaire annuel de 50 000 € » : 40 524 ×
+      5,60 % / 4,958 = « 458 points » en tranche A, 9 476 × 15,60 % / 4,958 =
+      « 298 points » en tranche B, chaque tranche arrondie au point.
+    carriere: {naissance: "1985-03", sexe: F, affiliation: contractuel_public, liquidation: "2052-04", age_debut: 22, releve: {2019: 50000}}
+    attendu: {points_de_l_annee: {annee: 2019, arrondi: point, ircantec: [458, 298]}}
 
   # ---- ENIM (régime des marins) ------------------------------------------
   # Les deux pages que l'Établissement national des invalides de la marine

@@ -14,15 +14,18 @@ effet: >-
   C'est l'âge du taux plein qui ancre l'escalier, jamais l'âge d'ouverture, et le
   modèle fait déjà ainsi.
 sources:
-  lu_le: 2026-09-22
+  lu_le: 2026-10-13
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    La seconde table de l'article, celle qui lit la DURÉE manquante, n'a pas d'équivalent
-    publié : la colonne « durée d'assurance » des tableaux couple les deux lectures
-    au lieu de les séparer. Le modèle applique « la plus avantageuse des deux »
-    ; le vérifier demanderait un exemple chiffré de la caisse, qu'elle ne publie
-    pas.
+    Les tableaux de la caisse sont toujours ceux de 2023 : leur version du 4 juillet
+    2025 ne corrige qu'une coquille (« 66 ans et 3 mois » pour 0,97, où celle de
+    décembre 2023 imprimait « 67 ans et 3 mois »). La caisse annonce que la durée
+    d'assurance des générations 1964 et 1965, et l'âge à partir duquel la durée
+    compte, changent pour les pensions prenant effet depuis le 1er septembre 2026
+    (loi de financement pour 2026) : relire les tableaux quand elle les republiera.
+    La seconde table de l'article, celle qui lit la DURÉE manquante, a désormais son
+    exemple publié (ircantec_minoration_duree_63_ans), que le modèle rend.
   lectures:
   - type: legifrance
     reference: >-
@@ -35,6 +38,23 @@ sources:
       », tableaux 2023, onze générations de 1955 à 1968 et au-delà
     url: https://baseircantec.retraites.fr/
     date: 2026-09-22
+  - type: autre
+    reference: >-
+      Ircantec, « Les conditions de départ à la retraite », Je pars à taux réduit : deux
+      exemples, 76,25 % à 61 ans et 9 mois par l'âge seul, avant l'âge légal, et
+      85,50 % à 63 ans avec 157 trimestres pour 171, par la durée, « le coefficient le
+      plus avantageux » contre 83 % par l'âge
+    url: https://www.ircantec.retraites.fr/actif/preparer-ma-retraite/conditions-depart-retraite
+    date: 2026-10-13
+  - type: autre
+    reference: >-
+      Ircantec, base documentaire, « Tableaux permettant le calcul du taux de minoration
+      dans le cadre de la retraite à taux réduit », version du 4 juillet 2025 (dossier
+      2025-07), comparée ligne à ligne à celle de décembre 2023 (dossier 2024-01)
+    url: https://baseircantec.retraites.fr/sites/default/files/2025-07/Tableaux%20tx%20de%20mino%20retraite%20%C3%A0%20tx%20r%C3%A9duit%202023%20externe.pdf
+    date: 2026-10-13
+exemples:
+- ircantec_minoration_duree_63_ans
 textes_a_rattacher:
 - reference: >-
     article 16 de l'arrêté du 30 décembre 1970 (LEGIARTI000006381606, LEGIARTI000024266924)

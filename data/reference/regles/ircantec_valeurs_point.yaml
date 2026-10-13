@@ -127,7 +127,7 @@ versions:
       prix_du_point: >-
         le salaire de référence publié de l'année, au taux d'appel publié : 7,11 / 5,60 en
         2026, le rapport des taux appelés arrondis aux taux théoriques
-  exemples: aucun trouvé
+  exemples: [ircantec_points_2019_base_documentaire, ircantec_points_2024_deux_tranches]
 - id: prix_au_dela_du_bareme
   statut: supposee
   nee_de: LEGIARTI000053281114
@@ -203,7 +203,7 @@ approximations:
     l'arrondi : la part Ircantec ressort de 0,01 % au-dessus d'un prix d'achat prolongé
     sans lui, de la génération 1975 à 2005. L'écart d'indice, non mesuré.
 sources:
-  lu_le: 2026-10-04
+  lu_le: 2026-10-13
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -233,6 +233,18 @@ sources:
       d'appel de 125 %, puis 7,11 / 5,60 en 2026
     url: https://www.ircantec.retraites.fr/retraite/valeur-point
     date: 2026-09-23
+  - type: autre
+    reference: >-
+      Ircantec, « Les paramètres utilisés par l'Ircantec » : le salaire de référence de
+      2013 à 2026, les taux d'appel et les taux théoriques de chaque tranche, part de
+      l'agent et part de l'employeur, de 2014 à 2026, les plafonds de la sécurité sociale
+      de 2016 à 2026 ; relus le 13 octobre 2026 avec la page « Valeur du point » (de
+      2011 à 2026, 0,49241 € puis 0,51211 € au 1er juillet 2022) : tout concorde avec
+      regimes/valeurs_point.csv et la fiche du régime. Et deux exemples de points, la
+      page « Les points acquis par cotisations » (494 points en 2024) et la base
+      documentaire (458 et 298 points en 2019)
+    url: https://www.ircantec.retraites.fr/employeur/parametres-utilises-ircantec
+    date: 2026-10-13
   - type: autre
     reference: >-
       Ircantec, actualité du 28 décembre 2023 : le plan adopté en décembre 2021 indexe

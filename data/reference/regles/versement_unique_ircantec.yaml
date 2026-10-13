@@ -127,7 +127,7 @@ approximations:
     par euro de valeur, hors l'année 2022.
   effet: les liquidations projetées après 2027
 sources:
-  lu_le: 2026-10-08
+  lu_le: 2026-10-13
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
@@ -142,6 +142,16 @@ sources:
       article 25, ses cinq rédactions (LEGIARTI000006381638 à LEGIARTI000006381641,
       LEGIARTI000019511940), lues dans l'index LEGI le 8 octobre 2026
     date: 2008-09-25
+  - type: autre
+    reference: >-
+      Ircantec, « La pension de réversion » : sous 300 points, « le nombre de points
+      multiplié par le salaire de référence en vigueur l'année précédant la date de
+      liquidation des droits », en un versement qui solde les droits ; au-delà, une
+      périodicité réglementaire, annuelle de 300 à 999 points, trimestrielle de 1 000 à
+      2 999, mensuelle à partir de 3 000 ; les modalités sont « celles applicables à
+      l'allocation de retraite »
+    url: https://www.ircantec.retraites.fr/deces/pension-reversion
+    date: 2026-10-13
 code:
   python: >-
     droit/completer.py : verser_en_capital, salaire_de_reference_ircantec, completer ;

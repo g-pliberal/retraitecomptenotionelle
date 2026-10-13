@@ -82,7 +82,7 @@ versions:
       succédé
     parametres:
       depart_tous_regimes: false
-  exemples: aucun trouvé
+  exemples: [ircantec_minoration_age_avant_l_age_legal]
 approximations:
 - ecart: >-
     la date à laquelle l'assuré demande chaque pension est présumée quand il ne la
@@ -103,7 +103,11 @@ approximations:
     qui peut atteindre 57 %, n'est prise que si le régime de base lui-même est pris
     à cette date. Demandée plus tard que lui, elle se liquide à sa date ; plus tôt,
     elle le suit
-  effet: non mesuré
+  effet: >-
+    mesuré par un exemple de l'Ircantec (ircantec_minoration_age_avant_l_age_legal,
+    écart connu) : né en décembre 1964, parti à 61 ans et 9 mois avec 160 trimestres,
+    l'assuré reçoit de la caisse ses points au coefficient 0,7625 dès septembre 2026 ;
+    le modèle les lui sert un an plus tard, à l'âge légal, à 0,90
 - ecart: >-
     le minimum contributif d'un départ s'écrête sur les pensions que les départs
     précédents servent, menées au mois de sa date d'effet (R. 173-7) ; il n'est pas
@@ -163,6 +167,16 @@ sources:
       agricoles à taux plein »
     url: https://www.agirc-arrco.fr/storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf
     date: 2026-09-29
+  - type: autre
+    reference: >-
+      Ircantec, « Les conditions de départ à la retraite » : « vous pouvez bénéficier de
+      votre pension Ircantec au plus tôt à l'âge de 57 ans », au coefficient de l'âge
+      seul avant l'âge légal de la génération (« situation 1 », 76,25 % à 61 ans et 9
+      mois pour un assuré né en décembre 1964), au meilleur des deux coefficients
+      au-delà ; premier exemple chiffré d'une complémentaire servie avant le régime
+      de base
+    url: https://www.ircantec.retraites.fr/actif/preparer-ma-retraite/conditions-depart-retraite
+    date: 2026-10-13
 code:
   python: >-
     droit/departs.py : departs, departs_et_demandes, DemandeExaminee, liquider_les_departs ;

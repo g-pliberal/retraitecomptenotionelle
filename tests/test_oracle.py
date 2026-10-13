@@ -2121,11 +2121,16 @@ def _concorde(cle: str, mesure, valeur) -> bool:
             for grandeur, attendue in valeur.items() if grandeur != "forme")
     if cle == "points_de_l_annee":
         # Au centième, que les guides arrondissent ; chaque période dans
-        # l'ordre où le régime la crédite.
+        # l'ordre où le régime la crédite. Au demi-point quand la source
+        # arrondit au point (`arrondi: point`, l'Ircantec) ; un nombre seul est
+        # le total des périodes, quand elle ne publie que lui.
+        ecart = 0.5 if valeur.get("arrondi") == "point" else 0.0051
         return mesure["annee"] == int(valeur["annee"]) and all(
+            sum(mesure.get(code, [])) == pytest.approx(points, abs=ecart)
+            if isinstance(points, (int, float)) else
             len(mesure.get(code, [])) == len(points) and all(
-                m == pytest.approx(p, abs=0.0051) for m, p in zip(mesure[code], points))
-            for code, points in valeur.items() if code != "annee")
+                m == pytest.approx(p, abs=ecart) for m, p in zip(mesure[code], points))
+            for code, points in valeur.items() if code not in ("annee", "arrondi"))
     if cle == "cotisation_agirc_de_l_annee":
         return mesure["annee"] == int(valeur["annee"]) and all(
             mesure[part] == pytest.approx(valeur[part], **TOLERANCES[cle])

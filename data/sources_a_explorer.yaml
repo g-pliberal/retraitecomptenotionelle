@@ -738,7 +738,19 @@ sources:
       La base documentaire de l'Ircantec — l'équivalent d'un règlement, autrement
       plus précis que la page grand public : assiettes A et B, taux théoriques,
       taux d'appel, salaire de référence.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-13"
+    note: >-
+      Lue le 13 octobre 2026 (page du 3 mars 2026) : la formule des points,
+      assiette × taux théorique / salaire de référence, tranche par tranche,
+      le plafond de la tranche A proratisé à la durée d'emploi, et le salaire
+      de référence de 2019 à 2026, qui concorde avec
+      data/reference/regimes/valeurs_point.csv. Son exemple de 2019, 458 et
+      298 points pour 50 000 €, est aux exemples officiels
+      (tests/temoins/exemples_officiels.yaml,
+      ircantec_points_2019_base_documentaire), et le modèle le rend au point.
+      L'annexe 8-1 de 2026 qu'elle cite relève de la ligne
+      baseircantec_anx0801_taux_theoriques.
 
   - id: ircantec_parametres
     url: https://www.ircantec.retraites.fr/employeur/parametres-utilises-ircantec
@@ -748,7 +760,21 @@ sources:
     a_en_tirer: >-
       Les paramètres de l'année et leur série : à confronter à valeurs_point.csv
       et aux taux de cotisation de la fiche du régime.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-10-13"
+    note: >-
+      Lue le 13 octobre 2026 : le salaire de référence de 2013 à 2026, les
+      taux d'appel et les taux théoriques des deux tranches, part de l'agent
+      et part de l'employeur, de 2014 à 2026 — 7,11 % et 19,81 % appelés en
+      2026 sur 5,60 % et 15,60 % théoriques —, les plafonds de 2016 à 2026, et
+      les taux propres des PU-PH et MCU-PH, sur toute leur rémunération (5,29
+      % et 9,65 % appelés depuis 2026). Tout concorde avec
+      data/reference/regimes/valeurs_point.csv et la fiche du régime. Reste à
+      certifier 2022 à 2026, au niveau `haute` faute de récupérateur : ces
+      tableaux HTML se lisent plus simplement que le PDF de l'annexe 8-1, et
+      un récupérateur de cette page et de celle de la valeur du point les
+      ferait passer à `certifiee`. Les taux des PU-PH et MCU-PH ne sont pas
+      portés (docs/limites/ecarts-au-droit-positif.md).
 
   - id: ircantec_valeur_point
     url: https://www.ircantec.retraites.fr/retraite/valeur-point
@@ -757,7 +783,18 @@ sources:
     regimes: [ircantec]
     a_en_tirer: >-
       La valeur de service, historisée par le producteur lui-même.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-10-13"
+    note: >-
+      Relue le 13 octobre 2026, après la saisie du 23 septembre qui en a tiré
+      2022 à 2026 (VALEURS_POINT_IRCANTEC_PUBLIEES,
+      scripts/verifier_donnees.py) : la valeur de service de 2011 à 2026,
+      0,56053 € en 2026 (+ 0,9 %), avec ses dates d'effet — au 1er avril
+      jusqu'en 2013, au 1er octobre de 2014 à 2017, au 1er janvier depuis
+      2019, et deux valeurs en 2022, 0,49241 € puis 0,51211 € au 1er juillet.
+      Tout concorde avec data/reference/regimes/valeurs_point.csv. Comme la
+      page des paramètres, elle attend le récupérateur qui certifierait 2022 à
+      2026.
 
   - id: ircantec_prolongation_activite
     url: https://www.ircantec.retraites.fr/actif/acquisition-droits/prolongation-activite
@@ -767,18 +804,39 @@ sources:
     a_en_tirer: >-
       Ce que la prolongation d'activité ajoute : la surcote propre à l'Ircantec,
       si elle existe, et le sort des points acquis après l'âge du taux plein.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-13"
+    note: >-
+      Lue le 13 octobre 2026 : la surcote 1, 0,625 % par trimestre cotisé
+      au-delà de l'âge légal et de la durée requise, jusqu'à 67 ans, le
+      trimestre à cheval compté ; la surcote 2, 0,75 % par trimestre entier
+      écoulé après 67 ans ; l'une et l'autre calculées à part, sur le total
+      des points majorations comprises, le trimestre valant quatre-vingt-dix
+      jours. C'est le IV de l'article 16 que le modèle applique
+      (docs/limites/3-systeme-actuel.md, tests/test_oracle.py) : rien de plus
+      à en tirer.
 
   - id: ircantec_prelevements_sociaux
     url: https://www.ircantec.retraites.fr/guide-des-prelevements-sociaux
-    nature: bareme
+    nature: simulateur
     acces: session
     regimes: [ircantec]
     a_en_tirer: >-
       Le guide des prélèvements sur les pensions : deuxième source sur les
       taux CSG/CRDS/Casa, à recouper avec la Cnav et l'Agirc-Arrco. Trois
       sources qui disent la même chose valent certification.
-    statut: en_cours
+    statut: a_explorer
+    note: >-
+      Lue le 13 octobre 2026 : ce n'est pas un barème mais un SIMULATEUR, un
+      formulaire en plusieurs pages (« Poursuivre la simulation »), anonyme,
+      qui demande le domicile fiscal, puis le revenu fiscal de référence et
+      les parts de 2023 et de 2024 ; seuls les taux des non-résidents sont
+      dans la page — 4,20 % d'assurance maladie hors de l'Espace économique
+      européen, 3,77 % de cotisation mahoraise, 1,30 % de contribution
+      calédonienne. Les seuils de la CSG ne se lisent qu'en saisissant : un
+      lot de saisies à soumettre au propriétaire (scripts/simulateurs.py), ou
+      à laisser, les mêmes seuils étant publiés en clair par la Cnav et
+      service-public (cnav_prelevements_sociaux, sp_f2971_csg_crds).
 
   # ---- RAFP (ERAFP) -----------------------------------------------------
 
@@ -4025,7 +4083,26 @@ sources:
       Les conditions de départ telles que la caisse les énonce aujourd'hui, à
       confronter à l'article 16 de l'arrêté du 30 décembre 1970 que la fiche
       applique version par version.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-13"
+    note: >-
+      Lue le 13 octobre 2026 : les âges et les durées de la loi de financement
+      pour 2026, de 1963 à « 1969 et suivantes », ceux du modèle ; le taux
+      plein à 67 ans sans condition, à 65 ans pour les aidants, les parents
+      d'enfant handicapé et les parents de trois enfants nés de juillet 1951 à
+      1955 ; la pension « au plus tôt à l'âge de 57 ans ». Ses deux exemples
+      de minoration sont aux exemples officiels
+      (tests/temoins/exemples_officiels.yaml) : 85,50 % à 63 ans avec 157
+      trimestres sur 171, par la durée — le premier exemple publié de cette
+      seconde table, que le modèle rend —, et 76,25 % à 61 ans et 9 mois,
+      avant l'âge légal, en écart connu, le modèle n'ouvrant pas la
+      complémentaire avant le régime de base (fiche
+      liquidation_regime_par_regime). La page « Départ à la retraite à taux
+      plein à partir de l'âge légal », qu'elle cite, en est restée aux
+      tableaux de 2023, sans la suspension ; les tableaux de minoration de
+      juillet 2025 ne corrigent qu'une coquille (fiche
+      coefficient_anticipation_ircantec). La page des retraites anticipées
+      imprime « 60 ans et 3 6 mois » pour la carrière longue des nés en 1964.
 
   - id: ircantec_droits_cotisation
     url: https://www.ircantec.retraites.fr/actif/acquisition-droits/activite-professionnelle/calcul-droits-cotisation-demarches
@@ -4035,7 +4112,17 @@ sources:
     a_en_tirer: >-
       Les points acquis par COTISATION : cotisation divisée par le salaire de
       référence et le taux d'appel, la formule même que le modèle applique.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-13"
+    note: >-
+      Lue le 13 octobre 2026 : l'assiette, la rémunération brute (sauf
+      praticiens hospitaliers, élus et apprentis), la formule des points de
+      chaque tranche aux taux théoriques, la tranche B ouverte au plafond
+      atteint, sauf temps partiel et employeurs multiples, le plafond
+      proratisé à la durée d'emploi. Son exemple de 2024, 494 points pour 47
+      500 €, est aux exemples officiels
+      (tests/temoins/exemples_officiels.yaml,
+      ircantec_points_2024_deux_tranches), et le modèle le rend au point.
 
   - id: ircantec_droits_validation
     url: https://www.ircantec.retraites.fr/actif/acquisition-droits/activite-professionnelle/calcul-droits-validation-demarches
@@ -4045,7 +4132,16 @@ sources:
     a_en_tirer: >-
       Les points acquis par VALIDATION de services antérieurs : un canal que le
       modèle ne porte pas, et qui compte pour les agents titularisés.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-10-13"
+    note: >-
+      Lue le 13 octobre 2026 : la validation des services rendus à l'État et
+      aux collectivités avant 1973 — avant le 1er novembre 1979 pour les
+      études des praticiens hospitaliers, et les mandats de maire et d'adjoint
+      visés par la loi de 1973 —, contre les cotisations de l'époque, aux taux
+      théoriques de l'année des services. Le modèle ne la sert pas, pas plus
+      que les rachats (docs/limites/ecarts-au-droit-positif.md) : ce qu'elle
+      vaut n'est pas chiffré.
 
   - id: ircantec_chomage
     url: https://www.ircantec.retraites.fr/actif/decouvre-droits/chomage
@@ -4055,7 +4151,17 @@ sources:
     a_en_tirer: >-
       Les points gratuits de chômage : poste de la frontière contributive,
       chiffré par l'action 81 pour d'autres régimes et pas pour celui-ci.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-10-13"
+    note: >-
+      Lue le 13 octobre 2026 : des points depuis le 1er août 1977, sur le
+      salaire journalier de référence quand l'allocation est cotisée (France
+      Travail depuis 2013, pour les recrutés jusqu'en 2010), sur le SMIC, un
+      an au plus, après trois mois de carence et douze mois payés au SMIC,
+      quand elle ne l'est pas (l'employeur auto-assuré). Le premier est servi
+      (fiche chomage_retraite_complementaire), le second non
+      (docs/limites/5-hors-du-modele.md). La frontière contributive de
+      l'action 81 ne chiffre toujours pas ce poste pour l'Ircantec.
 
   - id: ircantec_maladie_invalidite
     url: https://www.ircantec.retraites.fr/actif/decouvre-droits/maladie-accident-travail-invalidite
@@ -4065,7 +4171,16 @@ sources:
     a_en_tirer: >-
       Les points de maladie, d'accident du travail et d'invalidité, et leur
       condition d'attribution.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-10-13"
+    note: >-
+      Lue le 13 octobre 2026 avec ses deux sous-pages : des points gratuits
+      pour les arrêts de maladie, d'accident du travail ou de maladie
+      professionnelle et l'indemnité temporaire d'inaptitude, dès trente jours
+      consécutifs d'indemnités journalières, « ceux que vous auriez eu si vous
+      aviez travaillé » ; pour l'invalidité des deux tiers, survenue depuis le
+      1er juin 1981, sur la dernière année complète d'activité. Le modèle ne
+      les sert pas (docs/limites/ecarts-au-droit-positif.md).
 
   - id: ircantec_enfants
     url: https://www.ircantec.retraites.fr/actif/decouvre-droits/enfants
@@ -4075,7 +4190,17 @@ sources:
     a_en_tirer: >-
       La majoration pour enfants de l'Ircantec, que la fiche déclare sans en
       porter le barème (`avantages_non_contributifs: [majoration_enfants]`).
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-13"
+    note: >-
+      Déroulée le 13 octobre 2026 : la majoration de 10 à 30 % de trois à sept
+      enfants, que la fiche porte depuis le 4 octobre
+      (data/reference/regles/ircantec_majoration_enfants.yaml) ; la
+      bonification parentale, un an par enfant au plus, à la moyenne annuelle
+      des points, lue dans la même fiche et non servie ; les points gratuits
+      de la maternité, de la paternité et, depuis le 1er juillet 2026, du
+      congé supplémentaire de naissance, dès trente jours d'indemnités, non
+      servis (docs/limites/ecarts-au-droit-positif.md).
 
   - id: ircantec_service_militaire
     url: https://www.ircantec.retraites.fr/actif/decouvre-droits/service-militaire
@@ -4085,7 +4210,15 @@ sources:
     a_en_tirer: >-
       Les points du service national : droit non contributif que le dépôt ne
       compte pour aucun régime complémentaire.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-10-13"
+    note: >-
+      Lue le 13 octobre 2026 : des points gratuits pour la durée légale du
+      service, à qui a un an de services à l'Ircantec et ne l'a pas fait
+      valider par un autre régime que le régime général ou agricole — sans
+      cette réserve pour l'élu —, proportionnels à la moyenne annuelle des
+      points : (500 × 12) / 60 = 100 points, dit la caisse. Le modèle ne les
+      sert pas (docs/limites/ecarts-au-droit-positif.md).
 
   - id: ircantec_mandats_elus
     url: https://www.ircantec.retraites.fr/actif/decouvre-droits/mandats-elus
@@ -4095,7 +4228,20 @@ sources:
     a_en_tirer: >-
       Les droits des élus locaux, dont l'affiliation est une fiche de ROUTAGE à
       l'inventaire : assiette, taux, et ce qu'un mandat rapporte.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-13"
+    note: >-
+      Déroulée le 13 octobre 2026, avec « Le calcul des cotisations des élus
+      locaux » : l'élu cotise « dans les mêmes conditions qu'un salarié » sur
+      ses indemnités de fonction perçues ; chaque mandat s'affilie à sa date,
+      des maires et adjoints en 1973 aux conseillers municipaux des communes
+      de moins de 100 000 habitants en 2002, ce que le statut `elu_local` ne
+      distingue pas (data/reference/regimes/elus_locaux_ircantec.yaml) ; deux
+      liquidations au plus depuis le 1er août 2026. Son exemple de 2025, deux
+      mandats et 67 000 € d'indemnités, 999 points quand chaque collectivité
+      proratise le plafond, 654 sinon, tronque les points de chaque mandat et
+      de chaque tranche, quand la base documentaire arrondit au plus proche :
+      non transcrit, une carrière du dépôt n'exerçant qu'un mandat à la fois.
 
   - id: ircantec_retraite_progressive
     url: https://www.ircantec.retraites.fr/actif/prepare-retraite/dispositifs-adaptes-situation/dispositif-retraite-progressive
@@ -4105,7 +4251,14 @@ sources:
     a_en_tirer: >-
       La retraite progressive à l'Ircantec : la fraction de pension servie, et
       les points que l'activité poursuivie continue d'acquérir.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-13"
+    note: >-
+      Lue le 13 octobre 2026 : à soixante ans, avec 150 trimestres et la
+      retraite progressive du régime général ou agricole ; minorée à l'âge
+      seul avant l'âge légal ; les points de l'activité réduite attribués à la
+      retraite définitive. Consigné dans la fiche
+      data/reference/regles/cumul_emploi_retraite_et_retraite_progressive.yaml.
 
   - id: ircantec_cumul_emploi_retraite
     url: https://www.ircantec.retraites.fr/actif/dispositif-cumul-emploi-retraite
@@ -4114,7 +4267,16 @@ sources:
     regimes: [ircantec]
     a_en_tirer: >-
       Le cumul emploi-retraite et les points qu'il ouvre ou non.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-13"
+    note: >-
+      Lue le 13 octobre 2026 : en cumul plafonné, l'Ircantec verse sa pension
+      entière, ce que le modèle fait ; en cumul intégral, l'activité exercée
+      depuis le 1er septembre 2024 ouvre une deuxième pension, sans majoration
+      pour enfants, et aucune troisième — rien de 2015 à août 2024. Le modèle
+      ne calcule pas cette seconde pension
+      (data/reference/regles/seconde_pension.yaml,
+      docs/limites/ecarts-au-droit-positif.md).
 
   - id: ircantec_calcul_cotisations_employeur
     url: https://www.ircantec.retraites.fr/employeur/calcul-cotisations
@@ -4126,7 +4288,15 @@ sources:
       part salariale de la part patronale, et la fiche du régime reporte cette
       répartition par convention sur tout l'avant-2025. La part patronale est
       un axe de tête de la feuille de route.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-13"
+    note: >-
+      Lue le 13 octobre 2026 : les taux d'appel de 2026, 2,84 % et 4,27 % sur
+      la tranche A, 7,06 % et 12,75 % sur la tranche B, part de l'agent et
+      part de l'employeur, ceux de la fiche du régime
+      (data/reference/regimes/ircantec.yaml) ; rien au-delà de huit plafonds.
+      La répartition passée, que la ligne cherchait, est soldée par l'annexe
+      4-4 (baseircantec_anx0404_taux_cotisation).
 
   - id: ircantec_reversion
     url: https://www.ircantec.retraites.fr/deces/pension-reversion?dt=act
@@ -4136,7 +4306,18 @@ sources:
     a_en_tirer: >-
       La réversion de l'Ircantec : taux, conditions d'âge et de mariage,
       partage entre conjoints.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-13"
+    note: >-
+      Lue le 13 octobre 2026 avec « Conditions d'attribution des droits de
+      réversion » de la base documentaire : la moitié des points, au prorata
+      des mariages, à cinquante ans ou avec deux enfants de moins de vingt et
+      un ans, sous condition de durée du mariage, supprimée au remariage, et
+      le versement unique sous 300 points, au salaire de référence de l'année
+      qui précède — ce que portent
+      data/reference/regles/reversion_ircantec.yaml et
+      versement_unique_ircantec.yaml. L'allocation des orphelins de père et de
+      mère, 20 % des points chacun, n'est pas servie.
 
   - id: baseircantec_age_taux_plein
     url: https://baseircantec.retraites.fr/demander-sa-retraite/les-conditions-douverture-du-droit-a-retraite/age-normal-de-la-retraite-a-taux-plein
@@ -4147,7 +4328,14 @@ sources:
       L'âge normal du taux plein dans la base documentaire — celle qui fait
       foi pour les gestionnaires — à confronter aux versions de l'article 16
       que la fiche a lues dans LEGI.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-13"
+    note: >-
+      Lue le 13 octobre 2026 (page du 13 août 2026) : 65 ans avant le 1er
+      juillet 1951, puis 65 ans et 4 mois, 65 ans et 9 mois, 66 ans et 2 mois,
+      66 ans et 7 mois, et 67 ans dès 1955 — la table de l'âge d'annulation de
+      la décote que le modèle applique à l'Ircantec
+      (data/reference/regimes/ircantec.yaml, age_annulation_decote).
 
   - id: baseircantec_points_gratuits_chomage
     url: https://baseircantec.retraites.fr/carriere/periodes-dactivite/titulaire-sans-droit-a-pension/points-gratuits/chomage
@@ -4157,7 +4345,14 @@ sources:
     a_en_tirer: >-
       Les points gratuits de chômage, règle de gestion et non page d'accueil :
       assiette retenue, plafond, durée.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-13"
+    note: >-
+      Lue le 13 octobre 2026 (page du 2 mai 2024) : elle ne dit que
+      l'extension des points de chômage aux fonctionnaires sans droit à
+      pension et aux ouvriers d'État indemnisés par leur employeur, sans
+      assiette, plafond ni durée ; rien à transcrire au-delà de la ligne
+      ircantec_chomage.
 
   - id: baseircantec_anx0801_taux_theoriques
     url: https://baseircantec.retraites.fr/sites/default/files/2023-12/anx0801_externe_tx_theoriques_sal_ref2024_0.pdf
@@ -4208,7 +4403,14 @@ sources:
     a_en_tirer: >-
       Le plafond de la Sécurité sociale retenu par le régime pour 2024 :
       contrôle croisé de `data/reference/macro/plafond_securite_sociale.csv`.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-13"
+    note: >-
+      Lue le 13 octobre 2026 (version du 2 janvier 2024) : le plafond de 1962
+      à 2024, mensuel et annuel, en francs puis en euros ; ses soixante-trois
+      années concordent toutes avec
+      data/reference/macro/plafond_securite_sociale.csv, et la page des
+      paramètres le redit de 2016 à 2026.
 
   - id: baseircantec_taux_minoration
     url: https://baseircantec.retraites.fr/sites/default/files/2025-07/Tableaux%20tx%20de%20mino%20retraite%20%C3%A0%20tx%20r%C3%A9duit%202023%20externe.pdf

@@ -284,7 +284,7 @@ approximations:
     déclarent pas ; le libéral suit le calendrier de la réduction des artisans
   effet: non mesuré
 sources:
-  lu_le: 2026-09-30
+  lu_le: 2026-10-13
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -362,6 +362,17 @@ sources:
       sur la tranche 1 depuis le 1er janvier 2023 en cumul intégral
     url: https://www.agirc-arrco.fr/particuliers/ma-retraite/vivre-ma-retraite/cumul-emploi-retraite/
     date: 2026-09-30
+  - type: autre
+    reference: >-
+      Ircantec, « Le dispositif du cumul emploi-retraite » et « Le dispositif de retraite
+      progressive » : en cumul plafonné, « votre régime de base peut réduire votre
+      pension. Mais l'Ircantec continue de vous verser la totalité », ce que le modèle
+      fait ; la retraite progressive de l'Ircantec à soixante ans, avec 150 trimestres
+      et la retraite progressive du régime général ou agricole, minorée à l'âge seul
+      quand elle précède l'âge légal, les points de l'activité réduite attribués à la
+      retraite définitive
+    url: https://www.ircantec.retraites.fr/actif/dispositif-cumul-emploi-retraite
+    date: 2026-10-13
 textes_a_rattacher:
 - {id: LEGIARTI000047961599, article: "D. 161-2-5 CSS", en_vigueur: 2023-09-01,
    change: "la pension servie le mois qui suit la rupture"}

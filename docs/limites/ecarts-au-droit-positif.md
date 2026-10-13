@@ -141,6 +141,28 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   barèmes sont lus et rangés au registre de veille (`rachats_et_versements`) —
   dont celui du rachat d'études de la fonction publique, refait au premier
   janvier 2026, que la calculette de l'ENSAP n'applique pas encore.
+- **Les droits de l'Ircantec que le modèle ne sert pas.** Il tire les points
+  de l'Ircantec des cotisations, du chômage indemnisé depuis le 1er août 1977,
+  et les majore pour les enfants. Les pages de la caisse, lues le 13 octobre
+  2026 (action 89), en nomment d'autres : les points gratuits des arrêts de
+  travail, de la maternité, de la paternité et, depuis le 1er juillet 2026, du
+  congé supplémentaire de naissance, dès trente jours consécutifs
+  d'indemnités journalières ; ceux de l'invalidité des deux tiers, depuis le
+  1er juin 1981 ; ceux du service national et la bonification parentale, un an
+  par enfant au plus, toutes deux à la moyenne annuelle des points acquis —
+  <!--chiffre:illustration()-->100<!--/--> points pour un an de service à qui
+  en a acquis <!--chiffre:illustration()-->500<!--/--> en cinq ans, dit la
+  caisse — ; ceux du chômage dont l'allocation n'est pas cotisée, sur le SMIC,
+  un an au plus après trois mois ; la validation des services d'avant 1973,
+  contre les cotisations de l'époque. Le modèle ne sert pas non plus la
+  pension que la caisse verse avant le régime de base, au plus tôt à
+  cinquante-sept ans, au coefficient de l'âge seul (exemple
+  `ircantec_minoration_age_avant_l_age_legal`, en écart connu), ni la seconde
+  pension de l'activité reprise en cumul intégral depuis le 1er septembre
+  2024, sans majoration pour enfants — deux liquidations au plus depuis le
+  1er août 2026 —, ni les taux propres des professeurs et maîtres de
+  conférences praticiens hospitaliers, sur toute leur rémunération et sans
+  tranche.
 - **Le cumul emploi-retraite : calculé, sur une activité déclarée.** Depuis le
   30 septembre 2026, l'activité exercée après le départ — sa date, sa fin, son
   statut, son revenu, l'employeur, le dernier ou un autre — se déclare au

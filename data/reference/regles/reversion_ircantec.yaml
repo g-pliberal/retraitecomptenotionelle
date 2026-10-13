@@ -273,7 +273,7 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-10-09
+  lu_le: 2026-10-13
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -319,6 +319,20 @@ sources:
       périodicité selon les points, le capital unique sous 300 points, 20 % par orphelin
     date: 2026-10-04
     url: https://www.ircantec.retraites.fr/deces/pension-reversion
+  - type: autre
+    reference: >-
+      Ircantec, « La pension de réversion », et sa base documentaire, « Conditions
+      d'attribution des droits de réversion » (page du 13 mai 2024) : la moitié des
+      points, au prorata de chaque mariage ; cinquante ans, ou deux enfants de moins de
+      vingt et un ans à charge ; quatre ans de mariage, ou deux ans avant les
+      cinquante-cinq ans de l'agent ou la cessation de ses fonctions, aucune durée
+      quand un enfant est né du mariage ou que l'agent est devenu invalide depuis ;
+      suppression au remariage, rétablissement au veuvage ; moins de 300 points, un
+      versement unique au salaire de référence de l'année qui précède. Et l'allocation
+      des orphelins de père et de mère, 20 % des points par orphelin, sans
+      coefficient de minoration, que le modèle ne sert pas
+    url: https://www.ircantec.retraites.fr/deces/pension-reversion
+    date: 2026-10-13
 code:
   python: >-
     droit/reversion.py : reversion, _age_ircantec, _mariage_ircantec,

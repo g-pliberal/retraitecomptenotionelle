@@ -60,7 +60,7 @@ versions:
       ou à celle de leur conjoint, neuf ans au moins avant ses seize ans
   exemples: [ircantec_majoration_sept_enfants]
 sources:
-  lu_le: 2026-10-04
+  lu_le: 2026-10-13
   prochaine_relecture: 2027-10-01
   lectures:
   - type: legifrance
@@ -75,6 +75,16 @@ sources:
       retraite » ; sept enfants et 2 500 points donnent 750 points de plus, 3 250 en tout
     url: https://www.ircantec.retraites.fr/actif/acquisition-droits/enfants/3-enfants-ou-plus
     date: 2026-10-04
+  - type: autre
+    reference: >-
+      Ircantec, « Le congé parental » : la bonification parentale de l'article 15 bis,
+      un an par enfant au plus, « (Points acquis × durée d'interruption) / Durée totale
+      des services Ircantec » — 500 points pour un an à qui en a acquis 5 000 en dix
+      ans, 1 500 pour trois enfants et cinq ans d'interruption —, à qui a interrompu
+      toute activité, accompli un an de services et ne reçoit pas de bonification d'un
+      autre régime que le régime général ou agricole ; non servie
+    url: https://www.ircantec.retraites.fr/actif/acquisition-droits/enfants/conge-parental
+    date: 2026-10-13
   a_relire:
   - >-
     La bonification de points de l'article 15 bis, autre règle que celle-ci : par enfant
