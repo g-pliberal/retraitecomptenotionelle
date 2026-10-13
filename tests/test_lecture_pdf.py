@@ -241,3 +241,22 @@ def test_une_ligne_aux_cellules_decalees_se_relit_de_gauche_a_droite():
     assert lignes_par_page(pdf) == [["B A C", "SUIVANTE"]], lignes_par_page(pdf)
     assert lignes_par_page(pdf, par_abscisse=True) == [["A B C", "SUIVANTE"]], (
         lignes_par_page(pdf, par_abscisse=True))
+
+
+def test_les_fragments_d_une_ligne_gardent_leur_abscisse():
+    """Une case vide ne laisse rien dans le texte d'une ligne : « 1 3 » ne dit
+    pas que la case du milieu manque. Les fragments le disent, chacun à son
+    abscisse ; leur texte, joint par :func:`texte_de_ligne`, est celui que
+    ``lignes_par_page`` rend, aux mêmes rangs."""
+    from lecture_pdf import fragments_par_page, lignes_par_page, texte_de_ligne
+
+    contenu = (b"BT /F1 10 Tf 60 700 Td (Ligne) Tj ET "
+               b"BT /F1 10 Tf 120 700.5 Td (1) Tj ET "
+               b"BT /F1 10 Tf 240 699.6 Td (3) Tj ET "
+               b"BT /F1 10 Tf 60 680 Td (SUIVANTE) Tj ET")
+    pdf = _document(_objet(1, _flux(b"<< >>", contenu)))
+    pages = fragments_par_page(pdf)
+    assert [[[(round(x), texte) for x, texte in ligne] for ligne in page] for page in pages] == [
+        [[(60, "Ligne"), (120, "1"), (240, "3")], [(60, "SUIVANTE")]]]
+    assert [[texte_de_ligne(ligne) for ligne in page] for page in pages] == (
+        lignes_par_page(pdf, par_abscisse=True)) == [["Ligne 1 3", "SUIVANTE"]]

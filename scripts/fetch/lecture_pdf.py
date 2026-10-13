@@ -704,6 +704,15 @@ def _assembler_par_abscisse(fragments: list[tuple[int, int, float, float, str]],
     8,7% 4,0% 0,9% 0,4% … ». Les fragments d'une ligne se regroupent ici
     comme dans :func:`_assembler`, puis se relisent par abscisse croissante.
     """
+    return [texte for _, texte in _lignes_par_abscisse(fragments, tolerance)]
+
+
+def _lignes_par_abscisse(fragments: list[tuple[int, int, float, float, str]],
+                         tolerance: float) -> list[tuple[list[tuple[float, str]], str]]:
+    """Chaque ligne de :func:`_assembler_par_abscisse`, avec ses fragments
+    (abscisse, texte) rangés de gauche à droite. Une ligne sans texte n'en
+    est pas une : elle ne se rend pas, de sorte que les deux lectures
+    gardent les mêmes rangs."""
     lignes: list[list[tuple[float, str]]] = []
     courante: list[tuple[float, str]] = []
     ordonnee = None
@@ -718,19 +727,55 @@ def _assembler_par_abscisse(fragments: list[tuple[int, int, float, float, str]],
         ordonnee, feuille = y, (page, bande)
     if courante:
         lignes.append(courante)
-    rendu: list[str] = []
+    rendu: list[tuple[list[tuple[float, str]], str]] = []
     for ligne in lignes:
-        morceaux: list[str] = []
-        abscisse = None
-        for x, morceau in sorted(ligne, key=lambda f: f[0]):
-            if abscisse is not None and abs(x - abscisse) > 0.01:
-                morceaux.append(" ")
-            morceaux.append(morceau)
-            abscisse = x
-        texte = _normaliser("".join(morceaux))
+        rangee = sorted(ligne, key=lambda f: f[0])
+        texte = texte_de_ligne(rangee)
         if texte:
-            rendu.append(texte)
+            rendu.append((rangee, texte))
     return rendu
+
+
+def texte_de_ligne(rangee: list[tuple[float, str]]) -> str:
+    """Le texte d'une ligne de fragments (abscisse, texte) rangés de gauche à
+    droite : deux fragments posés à des abscisses différentes sont séparés
+    d'une espace, ceux d'un même tableau ``TJ`` restent collés."""
+    morceaux: list[str] = []
+    abscisse = None
+    for x, morceau in rangee:
+        if abscisse is not None and abs(x - abscisse) > 0.01:
+            morceaux.append(" ")
+        morceaux.append(morceau)
+        abscisse = x
+    return _normaliser("".join(morceaux))
+
+
+def _fragments_des_pages(octets: bytes) -> list[list[tuple[int, int, float, float, str]]]:
+    """Les fragments du document, page par page, de haut en bas."""
+    fragments = _fragments(octets)
+    fragments.sort(key=lambda f: (f[0], f[1], -f[2], f[3]))
+    pages: dict[int, list[tuple[int, int, float, float, str]]] = {}
+    for fragment in fragments:
+        pages.setdefault(fragment[0], []).append(fragment)
+    return [pages[page] for page in sorted(pages)]
+
+
+def fragments_par_page(octets: bytes, tolerance: float = 3.0
+                       ) -> list[list[list[tuple[float, str]]]]:
+    """Les lignes de :func:`lignes_par_page` relues de gauche à droite
+    (``par_abscisse``), chacune gardée en fragments : (abscisse, texte).
+
+    UNE CELLULE VIDE NE LAISSE RIEN DANS LE TEXTE D'UNE LIGNE. Le tableau
+    B-1 du jaune pensions du PLF 2027 n'a pas de total de l'État sur la
+    plupart de ses lignes, ni de militaires sur celles de la surcote : lue
+    en texte, sa ligne de la surcote a six nombres pour huit colonnes, et
+    rien ne dit lesquelles manquent. L'abscisse le dit, chaque cellule étant
+    posée dans sa colonne. Les rangs des pages et des lignes sont ceux de
+    :func:`lignes_par_page`, dont le texte se refait en joignant les
+    fragments d'une espace là où l'abscisse change.
+    """
+    return [[rangee for rangee, _ in _lignes_par_abscisse(page, tolerance)]
+            for page in _fragments_des_pages(octets)]
 
 
 def lignes_par_page(octets: bytes, tolerance: float = 3.0,
@@ -752,13 +797,8 @@ def lignes_par_page(octets: bytes, tolerance: float = 3.0,
     (:func:`_assembler_par_abscisse`) ; sans lui, rien ne change pour les
     lecteurs écrits avant.
     """
-    fragments = _fragments(octets)
-    fragments.sort(key=lambda f: (f[0], f[1], -f[2], f[3]))
-    pages: dict[int, list[tuple[int, int, float, float, str]]] = {}
-    for fragment in fragments:
-        pages.setdefault(fragment[0], []).append(fragment)
     assembler = _assembler_par_abscisse if par_abscisse else _assembler
-    return [assembler(pages[page], tolerance) for page in sorted(pages)]
+    return [assembler(page, tolerance) for page in _fragments_des_pages(octets)]
 
 
 def texte_pdf(octets: bytes) -> str:
