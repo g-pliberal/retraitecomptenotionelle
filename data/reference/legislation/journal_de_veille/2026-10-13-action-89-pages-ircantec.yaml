@@ -1,0 +1,29 @@
+date: "2026-10-13"
+session: "action 89 : les pages de l'Ircantec et de sa base documentaire, vingt lignes de l'inventaire"
+consulte: >-
+  `python scripts/veille_droit.py` en commençant. Le site de l'Ircantec, que la Caisse
+  des dépôts gère : les conditions de départ, la prolongation d'activité, les points
+  acquis par cotisations et par validation, le chômage, la maladie et l'invalidité,
+  les enfants et leurs quatre sous-pages, le service militaire, les mandats des élus et
+  le calcul de leurs cotisations, la retraite progressive, le cumul emploi-retraite, le
+  calcul des cotisations, les paramètres, la valeur du point, la réversion, le guide
+  des prélèvements sociaux ; la base documentaire : le mode de calcul des points,
+  l'âge du taux plein, les points de chômage des fonctionnaires sans droit à pension,
+  les conditions de la réversion, l'annexe 4-1 du plafond et les deux versions des
+  tableaux de minoration (décembre 2023, juillet 2025). Aucun texte de l'index LEGI
+  relu : l'article 16 de l'arrêté du 30 décembre 1970 l'avait été le 18 septembre.
+trouve: >-
+  Le premier exemple publié de la seconde table de l'article 16, celle qui lit la durée
+  manquante : 85,50 % à 63 ans avec 157 trimestres sur 171, que le modèle rend ; et
+  76,25 % à 61 ans et 9 mois, avant l'âge légal, que le modèle ne sert qu'avec le
+  régime général, à 0,90, en écart connu (fiche liquidation_regime_par_regime). Deux
+  années de points, rendues au point. Tout le reste concorde avec le dépôt : les
+  paramètres de 2013 à 2026, la valeur du point, le plafond de 1962 à 2024, les deux
+  surcotes, l'âge du taux plein, la réversion, le versement unique, le cumul
+  plafonné. Les droits non servis sont nommés aux limites ; la date d'affiliation de
+  chaque mandat d'élu, dans la fiche elus_locaux_ircantec.
+reste: >-
+  Certifier les barèmes de 2022 à 2026 par un récupérateur des pages des paramètres et
+  de la valeur du point. Relire les tableaux de minoration quand la caisse les
+  republiera pour la loi de financement pour 2026. Le guide des prélèvements sociaux,
+  un simulateur, attend un lot approuvé par le propriétaire.

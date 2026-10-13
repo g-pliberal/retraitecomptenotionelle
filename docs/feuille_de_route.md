@@ -1356,16 +1356,16 @@ borne basse et l'écart une borne haute.
 
 ### 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026 — `en cours`
 
-**Reprise, au 5 octobre 2026.** Les 260 adresses se dépouillent par lots.
+**Reprise, au 13 octobre 2026.** Les 260 adresses se dépouillent par lots.
 Sont faits l'IRCEC, les libérales, la CRPN, l'Ircantec, l'ENIM, la fonction
 publique de l'État, la CNRACL, la Caisse des dépôts, le RAFP, l'Agirc-Arrco
-et les régimes spéciaux — la CNIEG, la CRPCEN, la CPRPF et la MSA (leurs
-notes, en fin d'action). Les saisies passent par `scripts/simulateurs.py`,
-sur un lot approuvé. Restent `a_explorer` : les pages de l'Ircantec, la Cnav
-et service-public, le CLEISS, les modèles publics, mon-entreprise, et quinze
-API publiques. Ce que les régimes spéciaux laissent — le minimum des IEG, la
-CAMIEG, leurs sédentaires, la part employeur de la CRPCEN — est dans leur
-note, la dernière.
+et les régimes spéciaux. Les saisies passent par `scripts/simulateurs.py`,
+sur un lot approuvé ; en attendent un la calculette de points du RAFP et le
+guide des prélèvements de l'Ircantec. Restent `a_explorer` : la Cnav et
+service-public, par où commencer, le CLEISS, les modèles publics,
+mon-entreprise, et quinze API publiques. Ce que l'Ircantec laisse — certifier
+2022 à 2026, ses points gratuits — est dans la note du 13 octobre
+(`docs/feuille_de_route/89/2026-10-13-pages-ircantec.md`).
 
 **Demande.** Huit lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut
