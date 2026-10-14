@@ -149,6 +149,7 @@ HORS_DU_MODELE = (
     # Ce que chaque ministère verse au compte « Pensions », que la page Coût
     # montre par le paquet, et qu'aucun calcul ne lit (action 159, étape 8).
     "data/reference/macro/credits_ministeres.csv",
+    "src/retraite_notionnelle/donnees/credits_ministeres.py",
 )
 
 #: Les calculs de ce processus, par leur nom : l'objet picklé, dont chaque

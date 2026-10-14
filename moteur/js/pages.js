@@ -44,6 +44,7 @@ import {
 import { financer } from "./bilan.js";
 import { COMPOSANTE_GARANTIE } from "./agregats.js";
 import { CaracteristiquesRetraites } from "./caracteristiques.js";
+import { CreditsMinisteres } from "./credits-ministeres.js";
 import { DistributionPensions } from "./distribution.js";
 import { coutGarantie, coutGarantieParSexe } from "./garantie.js";
 import { SYSTEMES, DepensesRetraite } from "./depenses.js";
@@ -9049,6 +9050,75 @@ const PHRASE_CREDITS_MINISTERES = "Le projet de loi de finances pour 2027 en "
   + "pesé 11,4 % du budget général (jaune budgétaire « Pensions », figures B, "
   + "B bis, 3B et 8).";
 
+/** Le nom de chaque ministère de la figure 3B, au plus court. */
+const MINISTERES_FIGURE_3B = {
+  education_nationale: "Éducation nationale",
+  interieur: "Intérieur",
+  enseignement_superieur: "Enseignement supérieur, recherche et espace",
+  justice: "Justice",
+  action_comptes_publics: "Action et comptes publics",
+  armees: "Armées et anciens combattants",
+  transition_ecologique: "Transition écologique",
+  agriculture: "Agriculture et souveraineté alimentaire",
+  culture: "Culture",
+  services_premier_ministre: "Services du Premier ministre",
+  europe_affaires_etrangeres: "Europe et affaires étrangères",
+  sports: "Sports, jeunesse et vie associative",
+  outre_mer: "Outre-mer",
+  travail_solidarites: "Travail et solidarités",
+  economie_finances: "Économie et finances",
+  amenagement_territoire: "Aménagement du territoire et décentralisation",
+  ville_logement: "Ville et logement",
+};
+
+/**
+ * Une part des crédits d'un ministère, au dixième de point : la figure ne se
+ * lit pas plus finement, et une part plus petite n'y a que l'épaisseur de son
+ * tracé.
+ */
+function partDesCredits(part) {
+  return part < 0.001 ? `&lt;\u00a0${g.pourcentage(0.001, false, 1)}`
+    : g.pourcentage(part, false, 1);
+}
+
+/**
+ * Ce que chaque ministère verse au compte « Pensions », en part de ses
+ * crédits : la figure 3B du jaune, que le document trace sans en imprimer une
+ * valeur, et que le dépôt lit sur ses barres (action 159, étape 8).
+ */
+function tableauCreditsMinisteres(contexte) {
+  const credits = new CreditsMinisteres(contexte.paquet);
+  const lignes = credits.ministeres.map((code) => [
+    echapper(MINISTERES_FIGURE_3B[code]),
+    partDesCredits(credits.contribution(code)),
+    partDesCredits(credits.part(code, "cotisations_salariales")),
+    partDesCredits(credits.auComptePensions(code)),
+    partDesCredits(credits.part(code, "reste_personnel")),
+  ]);
+  const operateurs = credits.part("enseignement_superieur", "t3_cas");
+  return `
+<p>Ministère par ministère, la figure 3B du jaune « Pensions » décompose les
+crédits de ${credits.annee}, sans en imprimer une valeur : le dépôt les lit sur
+ses barres, au vingtième de point près, et y retrouve les parts que le texte
+imprime pour l'Éducation nationale et l'Intérieur. « Plus un ministère emploie
+de personnel, plus la part de ses crédits consacrée aux retraites est
+importante », dit le document.</p>
+
+${g.tableau(
+    ["Ministère", "Contribution de l'État", "Retenue des agents",
+     "Au compte «\u00a0Pensions\u00a0»", "Autres dépenses de personnel"],
+    lignes, ["", "nombre", "nombre", "nombre", "nombre"],
+    `Part des crédits de chaque ministère, projet de loi de finances pour ${credits.annee}`,
+    true,
+  )}
+<p class="discret">La contribution de l'Enseignement supérieur compte les
+${g.pourcentage(operateurs, false, 1)} de ses crédits que ses opérateurs versent
+sur leurs crédits de fonctionnement ; la retenue de leurs agents et leurs
+autres dépenses de personnel n'y sont pas. La Santé et les Transports ne versent
+pas de contribution. Source : jaune budgétaire « Pensions », figure 3B.</p>
+`;
+}
+
 function coutDetailRessources(contexte) {
   const comptes = contexte.comptes();
   const ventilees = comptes.anneesVentilees();
@@ -9086,7 +9156,7 @@ déjà au compte du système 3, et c'est à ce titre qu'elle est comptée
 ici, malgré un taux fixé pour équilibrer plutôt que pour acquérir. La part
 cotisée <em>recule</em> : elle était de
 ${g.pourcentage(comptes.partContributive(premiere), false, 0)} en ${premiere}.</p>
-`, "cout-ressources");
+${tableauCreditsMinisteres(contexte)}`, "cout-ressources");
 }
 
 /**

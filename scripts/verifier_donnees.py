@@ -9199,8 +9199,11 @@ CERTIFICATIONS = (
         source=source_jaune_ministeres,
         origine="Direction du budget, jaune pensions annexé au PLF 2027, figure 3B "
                 "(décomposition des crédits budgétaires des ministères), lue sur ses tracés",
-        decimales=4,
-        tolerance=5e-5,
+        # Six décimales, celles du lecteur : la page arrondit au dixième de
+        # point, et un premier arrondi au dix-millième faisait d'une part de
+        # 1,048 point une de 1,05, qu'elle montrait à 1,1.
+        decimales=6,
+        tolerance=5e-7,
         entete=(
             "# Ce que chaque ministère verse au compte « Pensions », en part de ses crédits",
             "# source_id: sre_jaune_pensions_2027",
@@ -9212,8 +9215,8 @@ CERTIFICATIONS = (
             "# lus par scripts/fetch/sre_jaune_ministeres.py, et chaque part est la",
             "# longueur de son rectangle rapportée à l'axe, que ses graduations",
             "# donnent. Le producteur pose ses points sur une grille de 0,12 point :",
-            "# chaque valeur se lit à 0,0005 près, et une part de 0,0005 n'a que",
-            "# l'épaisseur minimale du tracé, sous le dixième de point.",
+            "# chaque valeur se lit à 0,0005 près, et une part de 0,000476, un pas,",
+            "# n'a que l'épaisseur minimale du tracé, sous le dixième de point.",
             "#",
             "# Clé : annee (celle des crédits, 2027), ministere, part. Les parts, en",
             "# fraction des crédits du ministère :",

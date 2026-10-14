@@ -17,6 +17,8 @@ from pathlib import Path
 
 import pytest
 
+from retraite_notionnelle.donnees.credits_ministeres import CreditsMinisteres
+
 RACINE = Path(__file__).resolve().parents[1]
 CSV = RACINE / "data" / "reference" / "macro" / "credits_ministeres.csv"
 
@@ -131,3 +133,20 @@ def test_le_fichier_certifie_ne_s_ecarte_du_texte_qu_aux_points_declares():
     messages = incoherences_3b(_certifiee())
     assert incoherences_declarees(messages, INCOHERENCES_3B) == ([], [])
     assert len(messages) == len(INCOHERENCES_3B) == 2
+
+
+def test_le_lecteur_du_modele_range_les_ministeres_par_ce_qu_ils_versent():
+    """Ce que la page montre : du plus au moins versé au compte « Pensions »,
+    la contribution de l'Enseignement supérieur comptant celle de ses
+    opérateurs, et une part que la barre ne trace pas valant zéro."""
+    credits = CreditsMinisteres(RACINE / "data")
+    assert credits.annee == 2027
+    assert credits.ministeres[:2] == ("education_nationale", "interieur")
+    versements = [credits.au_compte_pensions(m) for m in credits.ministeres]
+    assert versements == sorted(versements, reverse=True)
+    assert credits.part("justice", "t3_cas") == 0.0
+    assert credits.contribution("enseignement_superieur") == pytest.approx(
+        credits.part("enseignement_superieur", "t2_cas")
+        + credits.part("enseignement_superieur", "t3_cas"))
+    with pytest.raises(KeyError):
+        credits.part("sante", "t2_cas")

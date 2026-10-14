@@ -3646,6 +3646,56 @@ def test_la_page_cout_ventile_ce_que_d_autres_caisses_versent():
     assert "et le système 2" in texte
 
 
+def test_la_page_cout_dit_ce_que_chaque_ministere_verse_au_compte_pensions():
+    """La figure 3B du jaune « Pensions » du PLF 2027, que le document trace
+    sans en imprimer une valeur, se lit dans le dépliant des ressources :
+    dix-sept ministères, du plus au moins versé, chacun tel que le fichier
+    certifié le porte, et sous le dixième de point, ce que le tracé permet
+    d'en dire (action 159, étape 8). Le portage lit le paquet comme le Python
+    lit le fichier."""
+    from retraite_notionnelle.donnees.credits_ministeres import CreditsMinisteres
+
+    racine = Path(__file__).resolve().parents[1]
+    credits = CreditsMinisteres(racine / "data")
+    paquet = json.loads((racine / "moteur" / "donnees.json").read_text(encoding="utf-8"))
+    jumeau = module("credits-ministeres").CreditsMinisteres(
+        {"credits_ministeres": paquet["credits_ministeres"]})
+    assert list(jumeau.ministeres) == list(credits.ministeres)
+    for code in credits.ministeres:
+        assert jumeau.au_compte_pensions(code) == credits.au_compte_pensions(code), code
+
+    corps = rendre("/cout", {})[1]
+    tableau = re.search(r"<table><caption><span>Part des crédits de chaque ministère, "
+                        r"projet de loi de finances pour 2027</span>.*?</table>", corps, re.S)
+    assert tableau, "le dépliant des ressources n'a pas le tableau des ministères"
+    lignes = re.findall(r'<tr><th class="" scope="row">(.*?)</th>(.*?)</tr>',
+                        tableau.group(0), re.S)
+    assert len(lignes) == 17
+    assert [nom for nom, _ in lignes[:2]] == ["Éducation nationale", "Intérieur"]
+
+    def part(valeur):
+        return (f"&lt; {g.pourcentage(0.001, decimales=1)}" if valeur < 0.001
+                else g.pourcentage(valeur, decimales=1))
+
+    for code, (_, cellules) in zip(credits.ministeres, lignes):
+        assert re.findall(r'<td class="nombre">(.*?)</td>', cellules) == [
+            part(credits.contribution(code)),
+            part(credits.part(code, "cotisations_salariales")),
+            part(credits.au_compte_pensions(code)),
+            part(credits.part(code, "reste_personnel")),
+        ], code
+    # Les deux derniers ministères ne versent pas un dixième de point : la note
+    # de la figure dit « moins de 1 % ».
+    assert all(cellules.count("&lt;") >= 2 for _, cellules in lignes[-2:])
+    texte = html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", corps)))
+    # L'espace fine du pourcentage est une espace pour ``\s`` : la phrase se
+    # compare espaces confondues.
+    t3 = " ".join(g.pourcentage(credits.part("enseignement_superieur", "t3_cas"),
+                                decimales=1).split())
+    assert (f"La contribution de l'Enseignement supérieur compte les {t3} de ses crédits "
+            "que ses opérateurs versent") in texte
+
+
 def test_les_parts_de_l_impot_et_la_depense_du_cor_se_calculent(contexte):
     """Trois chiffres de la page Coût étaient écrits en dur, et deux avaient
     vieilli : « 38 % » des impôts affectés pour le fonds de solidarité

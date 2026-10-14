@@ -42,6 +42,7 @@ sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle.carriere import Affiliations  # noqa: E402
 from retraite_notionnelle.donnees.caracteristiques import CaracteristiquesRetraites  # noqa: E402
+from retraite_notionnelle.donnees.credits_ministeres import CreditsMinisteres  # noqa: E402
 from retraite_notionnelle.donnees.assiette import POSTES_ASSIETTE  # noqa: E402
 from retraite_notionnelle.donnees.chargement import (  # noqa: E402
     SerieAnnuelle,
@@ -128,7 +129,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 19
+VERSION = 20
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -485,6 +486,19 @@ def _caracteristiques_retraites() -> dict:
                                "beneficiaires_minimum_regime_principal")
             for sexe in ("F", "H", "ensemble")
         },
+    }
+
+
+def _credits_ministeres() -> dict:
+    """Ce que chaque ministère verse au compte « Pensions », en part de ses
+    crédits : la figure 3B du jaune pensions annexé au PLF 2027, que la page
+    Coût montre. Les parts sont écrites sous une clé « ministère|part »."""
+    credits = CreditsMinisteres(DONNEES)
+    return {
+        "annee": credits.annee,
+        "fiabilite": int(credits.fiabilite),
+        "parts": {f"{ministere}|{part}": valeur
+                  for (ministere, part), valeur in sorted(credits.parts().items())},
     }
 
 
@@ -2247,6 +2261,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "patrimoine_menages": _patrimoine_menages(),
         "distribution_pensions_sexes": _distribution_pensions_sexes(),
         "caracteristiques_retraites": _caracteristiques_retraites(),
+        "credits_ministeres": _credits_ministeres(),
         "vie_en_couple": _vie_en_couple(),
         "certification": journal_certification(DONNEES),
         # Le manifeste des sources n'entre pas dans le paquet — le site n'en
