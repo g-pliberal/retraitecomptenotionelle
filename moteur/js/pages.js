@@ -9365,9 +9365,10 @@ ce modèle.</div>
  * toutes les règles laisse le rapport juste, et ce sont les chiffres de la
  * page ; un écart PROPRE au système actuel laisse juste la masse des systèmes
  * notionnels, et leur rapport doit être multiplié par la dérive
- * (`rapportDerive`). Depuis l'étape 11, la dérive passe sous un au milieu de
- * la période : la seconde lecture n'est plus la borne haute, et le texte dit
- * de combien elle s'écarte, dans un sens ou dans l'autre. Le tableau donne les
+ * (`rapportDerive`). Depuis l'étape 19, la dérive ne passe sous un que les
+ * toutes premières années : la seconde lecture redevient presque partout la
+ * borne haute, et le texte dit les années où elle allège la proposition, et de
+ * combien elle s'en écarte. Le tableau donne les
  * deux lectures pour la proposition, le seul système qu'un lecteur vienne
  * chercher.
  */
@@ -9381,6 +9382,21 @@ function coutFourchette(contexte) {
   const horizon = avenir.annee(fin);
   const plusBasse = avenir.projetees().reduce(
     (bas, ligne) => (ligne.derive < bas.derive ? ligne : bas), horizon);
+  // Les années où la dérive passe sous un, les seules où la seconde lecture
+  // allège la proposition (2026 à 2028 depuis l'étape 19 de l'action 147).
+  const sous = avenir.projetees().filter((ligne) => ligne.derive < 1)
+    .map((ligne) => ligne.annee);
+  const periodeSous = sous.length === 1 ? `en ${sous[0]}`
+    : `de ${sous[0]} à ${sous[sous.length - 1]}`;
+  const phraseSecondeLecture = sous.length === 0
+    ? `La seconde lecture borne donc la proposition par le haut : elle
+l'alourdit chaque année, de ${g.pourcentage(horizon.derive - 1, false, 1)} en
+${fin}.`
+    : `La seconde lecture redevient donc, à peu de chose près, la borne haute
+de la proposition : elle ne l'allège que ${periodeSous}, de
+${g.pourcentage(1 - plusBasse.derive, false, 1)} au plus en ${plusBasse.annee},
+et l'alourdit ensuite, de ${g.pourcentage(horizon.derive - 1, false, 1)} en
+${fin}.`;
   const scenario = "notionnel_liberal";
   const moyenne = (bilan) => bilan.soldeMoyen(scenario, debut, bilan.derniereAnnee);
   const lignes = [
@@ -9415,9 +9431,8 @@ carrières françaises courtes, qui tirent vers la première. La page suit trois
 de ses hypothèses, sur l'Agirc-Arrco, les primes et l'entrée tardive des
 fonctionnaires dans leur régime, et la masse de chaque génération porte les
 carrières courtes de ceux qui sont arrivés en France adultes : l'écart qui
-reste est petit, et il change de signe. La seconde lecture ne borne donc plus
-la proposition par le haut : elle l'alourdit en ${fin}, l'allège avant, et la
-vérité est entre les deux colonnes, qui se tiennent de près.</p>
+reste est petit, et il change de signe. ${phraseSecondeLecture} La vérité est
+entre les deux colonnes, qui se tiennent de près.</p>
 ${g.tableau(
     ["La proposition libérale", "Si l'écart est partagé (cette page)",
       "Si l'écart est propre au système actuel"],
@@ -9692,7 +9707,7 @@ dépense de ${derniere}, sa propre masse de pensions ferait croître la part du
 système actuel dans le PIB de ${g.pourcentage(croissanceModele - 1, false, 0)}
 de ${premiereProjetee} à ${avenir.derniereAnnee}, quand le COR la fait croître
 de ${g.pourcentage(croissanceCor - 1, false, 0)} ; entre les deux, elle passe
-sous la sienne, de ${g.pourcentage(1 - plusBasse.derive, false, 0)} au plus en
+sous la sienne, de ${g.pourcentage(1 - plusBasse.derive, false, 1)} au plus en
 ${plusBasse.annee}. Le nombre de retraités, le modèle le suit : sur ces années,
 il en compte ${g.pourcentage(tetesModele - 1, false, 0)} de plus, le COR
 ${tetesCor === null ? "—" : g.pourcentage(tetesCor - 1, false, 0)}. La pension
