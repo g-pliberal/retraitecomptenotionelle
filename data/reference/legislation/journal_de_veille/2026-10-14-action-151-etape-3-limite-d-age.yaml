@@ -1,0 +1,34 @@
+date: "2026-10-14"
+session: >-
+  action 151, étape 3 : la limite d'âge des fonctionnaires et ses exceptions,
+  modélisées en Python et en JavaScript sur la décision du propriétaire du 14 octobre
+  2026 — la radiation des cadres à la limite, les exceptions présumées accordées
+  autant que le départ saisi les demande, le militaire à la limite la plus haute de sa
+  catégorie
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index LEGI, mis à jour jusqu'au 13 octobre 2026
+  (`dila_index.py legi --mettre-a-jour`, deux incréments), puis `textes.py --inscrire`,
+  qui n'inscrit aucune rédaction nouvelle. Les rédactions en vigueur de L. 556-1, L.
+  556-3, L. 556-5 et L. 556-7 du code général de la fonction publique, et de L. 4139-16
+  et L. 4139-17 du code de la défense, cherchées par leur numéro ; L. 556-1
+  (LEGIARTI000047452904) et L. 556-7 (LEGIARTI000047452899), relus dans leur texte. Les
+  huit fiches de l'étape 2, et les textes qu'elles citent, pour les valeurs.
+trouve: >-
+  Aucune rédaction postérieure à celles que les fiches citent : L. 556-1 et L. 556-7
+  datent du 14 juin 2023, L. 4139-17 du 3 août 2023. Les valeurs que le modèle lit sont
+  celles des fiches, écrites dans les paramètres de leurs versions : les limites par
+  classe d'emploi et par période, les paliers des lois de 1975 et de 1984, la marche de
+  la loi de 2010, les reculs pour enfants et leurs plafonds d'avant 2022, les dix
+  trimestres de la carrière incomplète, la prolongation de l'actif jusqu'à la limite
+  des sédentaires, le maintien et le plafond de soixante-dix ans. Cinq fiches passent à
+  `approchee`, deux à `transcrite` ; aucun exemple chiffré publié n'a été trouvé.
+  Trente-trois témoins baissent au scénario 1, de 2 à 24 % : les actifs nés de 1925 à
+  1945 et les militaires dont le départ saisi à 64 ans passait la limite.
+reste: >-
+  Les lectures que les fiches gardent : les lois du 15 février 1946 et du 8 août 1947,
+  l'article 2 du décret n° 48-1907, dont dépend la prolongation de l'actif avant 2010,
+  la limite des territoriaux avant 1985, les limites des corps actifs avant 2010, les
+  tableaux de L. 4139-16 de 2007 à 2023 ; l'âge où l'enfant cesse d'être à charge au
+  sens des prestations familiales, que le modèle prend à vingt ans ; la limite des
+  agents contractuels, des ouvriers de l'État et des régimes spéciaux, à une étape
+  suivante.
