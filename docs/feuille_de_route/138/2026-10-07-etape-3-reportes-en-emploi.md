@@ -1,15 +1,15 @@
 # Étape 3, première partie : la part des reportés en emploi, lue dans les évaluations de 2010
 
-**Reprise, au 14 octobre 2026.** Fait : la part des reportés en emploi, la
-moitié par défaut (7 octobre) ; la décomposition de l'Ageing Report de 2024
-(`facteurs_depense.py`, 13 octobre) ; le 14 octobre, les trois leviers du COR,
-l'âge compris, et le tax gap et le pension gap, confrontés à la figure 2.24 et
-au tableau 2.11 (`leviers.py` : 3,06 ans en 2070 contre 3,02). Reste, une
-session par point : la CSG effective, avec la dépense nette de l'AWG ; les
-contrôles d'Ancetre et de l'EACR ; les retraités par régime et la pondération
-par les masses, avec l'action 147 ; la couverture de 2022-2030 et les têtes de
-la proposition ; les leviers dans le paquet et sur la page Coût. Commencer par
-la CSG effective. Détail : plus bas, et les notes du 13 et du 14 octobre.
+**Reprise, au 14 octobre 2026.** Fait : la part des reportés en emploi
+(7 octobre) ; la décomposition de l'Ageing Report (`facteurs_depense.py`,
+13 octobre) ; le 14 octobre, les leviers du COR, l'âge compris (`leviers.py`),
+et la CSG effective, 6,8 % de la masse en 2022 contre 9,1 % au taux plein,
+confrontée aux 11,1 % que l'AWG reprend, impôt compris (`depense_nette.py`).
+Reste, une session par point : les contrôles d'Ancetre et de l'EACR ; les
+retraités par régime et la pondération par les masses, avec l'action 147 ; la
+couverture de 2022-2030 et les têtes de la proposition ; les leviers et le
+taux effectif dans le paquet et sur la page Coût. Commencer par les contrôles
+d'Ancetre. Détail : plus bas, et les notes du 13 et du 14 octobre.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.3 ». L'étape est
 vaste — sept chantiers, vingt-neuf points du registre — ; cette session en
