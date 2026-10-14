@@ -56,9 +56,10 @@ CHAMPS_ECART = ("constat", "tranche", "preuve")
 
 #: Ce qu'un autre modèle fait mieux que le dépôt, et ce qu'on en a fait. Le
 #: propriétaire veut le dépôt « meilleur en tous points » (action 138) : chaque
-#: point vérifié reste au registre jusqu'à être repris, tranché ou écarté.
+#: point vérifié reste au registre jusqu'à être repris, tranché ou écarté. Le
+#: 14 octobre 2026, il a coupé : le léger et le nul se déclarent sans se faire.
 CHAMPS_FAIT_MIEUX = ("quoi", "preuve", "etat")
-ETATS_FAIT_MIEUX = {"a_reprendre", "a_trancher", "repris", "ecarte"}
+ETATS_FAIT_MIEUX = {"a_reprendre", "a_trancher", "repris", "ecarte", "coupe"}
 
 #: Les licences à réciprocité : un code qui les porte s'exécute à part, et
 #: seules ses sorties entrent au dépôt (§ 3.4).
@@ -199,6 +200,26 @@ def test_ce_qu_un_modele_fait_mieux_dit_sa_preuve_et_son_chantier(referents):
             else:
                 assert point.get("raison"), (
                     f"{modele['id']} : « {point['quoi'][:40]}… » {point['etat']} sans raison")
+
+
+def test_un_point_coupe_dit_son_chantier_et_la_fiche_qui_le_declare(referents):
+    """La coupe du 14 octobre 2026 (action 138) : un point léger ou nul n'est
+    pas fait, mais déclaré. Il garde l'étape d'où il vient ; quand c'est une
+    règle, il nomme la fiche de la carte qui le déclare, et celle-ci ne se dit
+    pas conforme, puisqu'elle ne le sert pas."""
+    fiches = {f.stem: f for f in (RACINE / "data" / "reference" / "regles").rglob("*.yaml")}
+    for modele in referents:
+        for point in modele.get("fait_mieux", []):
+            if point["etat"] != "coupe":
+                continue
+            assert re.fullmatch(r"\d+\.\d+", str(point.get("chantier", ""))), (
+                f"{modele['id']} : « {point['quoi'][:40]}… » coupé sans chantier")
+            if point.get("fiche"):
+                assert point["fiche"] in fiches, (
+                    f"{modele['id']} : la fiche {point['fiche']} n'existe pas")
+                etat = yaml.safe_load(fiches[point["fiche"]].read_text(encoding="utf-8"))["etat"]
+                assert etat != "conforme", (
+                    f"{modele['id']} : la fiche {point['fiche']} se dit conforme")
 
 
 def test_les_renvois_au_manifeste_et_au_registre_des_sources_existent(referents):

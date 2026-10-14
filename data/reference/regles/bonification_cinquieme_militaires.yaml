@@ -356,6 +356,14 @@ approximations:
     supérieur, où le service des retraites de l'État ne la prend en compte que « dans
     la limite de 75 % », ne l'est pas non plus.
   effet: non mesuré
+- ecart: >-
+    Les bénéfices de campagne et les bonifications pour services aériens ou sous-marins
+    commandés (L. 12, c et d), qui portent avec le cinquième une part de la durée
+    validée des militaires, ne sont pas servis : la saisie ne dit ni les campagnes ni
+    les services aériens, et 376 810 militaires étaient retraités en 2024.
+  effet: >-
+    non mesuré ; léger : la coupe du 14 octobre 2026 le déclare sans le faire
+    (action 138, classement du 9 octobre)
 sources:
   lu_le: 2026-10-08
   prochaine_relecture: 2027-04-30

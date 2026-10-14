@@ -189,3 +189,20 @@ referents:
     son barème est la moyenne des douze mois, celui de la caisse au centime de 2022 à 2025
     et 0,20 € sous lui pour le couple de 2021 ; il compte les revenus d'activité abattus
     (R. 815-29), que le modèle ignore, et ajoute la CRDS à la pension brute
+approximations:
+- ecart: >-
+    La série d'une personne seule ne porte qu'un montant par an : 2008, 2013 et 2015 y
+    manquent, 2014 est au montant d'octobre, 2022 à celui de janvier, et l'annuel vaut
+    douze fois le mensuel depuis 2021 (12 523,08 € pour 12 523,14 €) ; Ines tient le
+    barème au mois, revalorisation d'avril au prorata.
+  effet: >-
+    non mesuré ; léger : la coupe du 14 octobre 2026 le déclare sans le faire
+    (action 138, classement du 9 octobre)
+- ecart: >-
+    R. 815-1 ouvre l'allocation dès l'âge de leur taux plein aux assurés des 2° à 5° de
+    L. 351-8 ; le modèle ne la sert ainsi qu'à l'inapte et à l'ancien invalide, à
+    soixante-cinq ans aux autres (fiches taux_plein_anciens_combattants_prisonniers,
+    taux_plein_meres_de_famille_ouvrieres, taux_plein_travailleurs_manuels).
+  effet: >-
+    non mesuré ; léger : la coupe du 14 octobre 2026 le déclare sans le faire
+    (action 138, classement du 9 octobre)

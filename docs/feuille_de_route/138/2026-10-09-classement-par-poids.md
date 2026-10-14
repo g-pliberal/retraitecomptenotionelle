@@ -1,14 +1,14 @@
 # Le classement des restes de l'action 138, par leur poids
 
-**Reprise, au 9 octobre 2026.** Fait : les restes de l'action classés par ce
-qu'ils déplacent dans ce que le site compare (ci-dessous). Au propriétaire :
-la coupe — faire le lourd et le moyen, déclarer le léger `approchee` ou
-`pas_encore_modelisee` dans la carte sans le faire — et les choix de l'étape
-13, qui pèsent plus que tout le reste. D'ici là, une session qui choisit son
-étape prend la première ligne libre du rang lourd : l'effet retour (étape 5),
-puis la CNRACL (étape 3), puis les années sans montant (étape 11). Le
-registre retarde : il dit `a_reprendre` des points que les étapes 2, 4, 6, 8
-et 17 ont repris.
+**Reprise, au 14 octobre 2026.** Décidé par le propriétaire : la coupe — le
+lourd et le moyen se font, le léger se déclare sans se faire. Fait : chaque
+reste léger ou nul déclaré, dans les approximations de sa fiche ou au registre
+(état `coupe`, avec sa raison). Reste du lourd : la CNRACL pondérée sur un seul
+départ (étape 3), les années sans montant (étape 11, au propriétaire), la
+population (étape 14), le projet de loi de financement pour 2027 (au vote) ;
+l'effet retour, tenu ce 14 octobre. Reste du moyen : la carrière heurtée (étape
+19), la mortalité différentielle des cas types (étape 7). Au propriétaire : les
+choix de l'étape 13. Détail : `2026-10-14-la-coupe.md`.
 
 **Le 9 octobre 2026, la demande.** Le propriétaire demandait s'il ne serait
 pas plus simple de reprendre le code des modèles analysés, Destinie,

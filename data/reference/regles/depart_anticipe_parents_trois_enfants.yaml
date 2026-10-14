@@ -261,6 +261,14 @@ approximations:
     Les quinze ans se comptent à l'année, sur les années servies dans les statuts des
     trois régimes du code des pensions, comme la coordination les compte.
   effet: non mesuré
+- ecart: >-
+    Seuls les trois régimes du code des pensions servent le départ : les régimes
+    spéciaux qui l'avaient — CRPCEN, Comédie-Française, SNCF, RATP, IEG, Banque de
+    France, Opéra —, éteint par leurs décrets de 2008 à 2011 avec leurs propres
+    transitions, ne le servent pas.
+  effet: >-
+    non mesuré ; léger : la coupe du 14 octobre 2026 le déclare sans le faire
+    (action 138, classement du 9 octobre)
 presomptions:
   interruption_d_activite_par_la_mere: >-
     la condition d'interruption ou de réduction d'activité pour chaque enfant, depuis

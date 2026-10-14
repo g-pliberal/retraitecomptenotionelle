@@ -604,7 +604,9 @@ def page() -> str:
           f"lus chez {modeles_mieux} modèles : {etats_mieux['a_reprendre']} à reprendre, "
           f"{etats_mieux['a_trancher']} à trancher par le propriétaire (des choix du "
           f"programme), {etats_mieux['repris']} repris, {etats_mieux['ecarte']} "
-          f"écarté{'s' if etats_mieux['ecarte'] > 1 else ''}. "
+          f"écarté{'s' if etats_mieux['ecarte'] > 1 else ''}, {etats_mieux['coupe']} "
+          f"coupé{'s' if etats_mieux['coupe'] > 1 else ''} (léger ou nul, déclaré sans "
+          "être fait). "
           "Les points à reprendre, par chantier de la feuille de route : "
           + ", ".join(f"{c} ({chantiers[c]})" for c in ordre) + ".")
     w(f"- **Les fiches sans exemple officiel** : {len(veille) - avec_exemple}.")

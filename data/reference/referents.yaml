@@ -68,8 +68,11 @@
 #                    a_reprendre | repris, avec le `chantier` qui le reprend
 #                    (« action.étape » de la feuille de route) ; a_trancher
 #                    (un choix du programme, que le propriétaire tranche) |
-#                    ecarte, avec sa `raison`. Un avantage qui ne tient pas à
-#                    la vérification n'y entre pas : il va à `ecarts`.
+#                    ecarte, avec sa `raison` | coupe, avec son `chantier` et sa
+#                    `raison` : léger ou nul, déclaré sans être fait (la coupe du
+#                    14 octobre 2026, action 138), et, quand c'est une règle, la
+#                    `fiche` de la carte qui le déclare. Un avantage qui ne tient
+#                    pas à la vérification n'y entre pas : il va à `ecarts`.
 #                    Depuis le relevé du 4 octobre 2026, un point dit aussi
 #                    sa `verification` : ce qui établit qu'il a raison —
 #                    l'article en vigueur, la circulaire, la page officielle
@@ -462,8 +465,14 @@ referents:
           celui qui est en vigueur dans ledit département » ; le
           barème de la Cnav (salaire_validant_un_trimestre) donne
           les mêmes montants
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.6"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Le seuil de l'outre-mer : la fiche le déclare, et la saisie n'a pas
+          de champ pour dire où l'assuré a travaillé.
+        fiche: trimestres_avant_1972
       - quoi: >-
           Avant 1973, le salaire de base du régime général était la
           moyenne des dix DERNIÈRES années, pas des dix meilleures.
@@ -728,8 +737,15 @@ referents:
           officiel du 31 mars 1962 publie en annexe de l'arrêté
           d'agrément du 27 mars 1962 (JORFTEXT000000435809), et dans
           le règlement de l'UNIRS, hors du Journal officiel.
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.16"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Nul : des liquidations d'avant 1965. L'Arrco d'avant 1965 attend le
+          Journal officiel du 31 mars 1962, au fac-similé (étape 16, note du 13
+          octobre).
+        fiche: coefficients_anticipation_agirc_arrco
       - quoi: >-
           Pour 1948, l'IPP donne le bon salaire de référence de
           l'IGRANTE et de l'IPACTE : 0,37 F, soit 0,0564 €. Le dépôt
@@ -815,8 +831,15 @@ referents:
           l'ASPA « au 1er octobre 2014 ». Décret n° 2014-1568 du 22
           décembre 2014 (JORFTEXT000029954019) : prise en compte des
           revenus d'activité.
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.2"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Le couple est repris (étape 2, 5 octobre) ; restent les années
+          manquantes de la série d'une personne seule, des centimes à quelques euros ;
+          les plafonds de 1956 à 1981 attendent le fac-similé (étape 6).
+        fiche: minimum_vieillesse
       - quoi: >-
           L'IPP a le point de la CNRO (PRO BTP) de 1960 à 1998,
           l'institution Arrco des ouvriers du bâtiment. Son
@@ -1052,7 +1075,7 @@ referents:
         preuve: >-
           `contributions_sociales/remplacement.py:285-308` (CSG), `:417-438`
           (CRDS) et `:477-496` (CASA), au commit `16b2e69`
-        etat: a_reprendre
+        etat: repris
         chantier: "138.2"
       - quoi: >-
           Il sert l'ASPA d'un couple sous le plafond du couple (19 442,21 €),
@@ -1861,8 +1884,14 @@ referents:
           qui a travaillé dans un département de L. 751-1, « le
           montant du salaire minimum de croissance à retenir est
           celui qui est en vigueur dans ledit département »
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.6"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Le même point que baremes_ipp : le seuil de l'outre-mer, que la
+          fiche déclare.
+        fiche: trimestres_avant_1972
     bilan: >-
       Ce qu'il fait de mieux tient à des paramètres datés texte par
       texte que le dépôt projette ou ignore — d'abord le minimum
@@ -1981,8 +2010,14 @@ referents:
           niveaux de vie sont les témoins naturels de la pension
           nette du foyer et de l'ASPA du couple ; leurs résultats se
           recalculent à part par OpenFisca-France
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.2"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Nul : une confrontation ou un indicateur, qui ne change aucun
+          chiffre tant qu'il ne trouve pas d'erreur. Seize ménages à confronter au net
+          du foyer.
       - quoi: >-
           Il tient, avec l'Assemblée nationale, un baromètre de la
           parution des décrets d'application, loi par loi. La veille
@@ -1999,8 +2034,15 @@ referents:
           méthode : le décret qu'attend une loi, celle du 30
           décembre 2025 ou la LFSS pour 2027, se repère avant sa
           parution
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.12"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Nul : une confrontation ou un indicateur, qui ne change aucun
+          chiffre tant qu'il ne trouve pas d'erreur. Un baromètre des décrets
+          d'application, que la veille du dépôt remplace par les sommaires du Journal
+          officiel.
       - quoi: >-
           Il chiffre l'effet budgétaire des mesures sur les ménages,
           pensions comprises, sur l'ERFS-FPR vieillie et calée. La
@@ -3038,7 +3080,7 @@ referents:
           proche du réel pour les petites pensions, mais sans le
           taux de 6,6 % (écart ci-dessous), et le revenu fiscal
           approché par les pensions.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.2"
       - quoi: >-
           Il applique le coefficient de solidarité de l'Agirc-Arrco
@@ -3514,8 +3556,14 @@ referents:
           341,60 € pour un couple, au-dessus de 220,11 € pour une
           personne seule ; ses montants de 2022 à 2025 sont ceux de la
           caisse au centime (barème aspa_montant_bar).
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.2"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). La série de l'ASPA d'une personne seule, au mois : des centimes à
+          quelques euros par an.
+        fiche: minimum_vieillesse
       - quoi: >-
           Il cale le recours à l'ASPA par type de ménage, par tirage
           sur les effectifs servis : personnes seules, couples à un
@@ -4119,8 +4167,14 @@ referents:
         preuve: >-
           `R/fonctionsCalculsPensions.R:3421-3445` et
           `inst/scripts/casTypesCOR.R:107-114`, au commit `0963b57`
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.2"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Une convention du COR pour la page Carrières types ; le net applique
+          aux six scénarios le taux du scénario 1, et l'écart entre eux n'en dépend pas.
+        fiche: csg_des_pensions_selon_le_revenu
       - quoi: >-
           Depuis septembre 2023, il compte les trimestres d'AVPF
           parmi les 120 trimestres cotisés qui ouvrent la majoration
@@ -4327,7 +4381,7 @@ referents:
           pension seule et une part sont une approximation, plus
           proche du réel que le taux plein pour les petites
           pensions. Ses seuils s'arrêtent en 2022 et se prolongent.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.2"
       - quoi: >-
           Il projette l'âge de départ que le COR publie : âge
@@ -4571,7 +4625,7 @@ referents:
         verification: >-
           Les mêmes textes que pour trajectoire ; même famille, une
           seule confirmation.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.17"
     bilan: >-
       C'est le moteur de TRAJECTOiRE figé en janvier 2023 et, selon la
@@ -4786,8 +4840,14 @@ referents:
           Sources : Drees, EACR, modèle Ancètre ») ; le document n°
           3 du COR du 19 décembre 2024, cité jusqu'ici, ne porte pas
           ces montants
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.3"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Nul : une confrontation ou un indicateur, qui ne change aucun
+          chiffre tant qu'il ne trouve pas d'erreur. Le contrôle de la pension par
+          régime principal.
       - quoi: >-
           Il donne la répartition tous régimes, sans doublon, des
           retraités par taux de CSG : en 2024, droits directs, 3 815
@@ -4906,8 +4966,14 @@ referents:
           minimum, décotés, surcotés) et pour les coefficients
           temporaires ; ils se lisent aussi à la source, classeur «
           62 EACR diffusée » du 26 mai 2026 sur data.drees.
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.3"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Nul : une confrontation ou un indicateur, qui ne change aucun
+          chiffre tant qu'il ne trouve pas d'erreur. Les tables E, H, B et C de l'EACR,
+          à confronter.
     bilan: >-
       Ses paramètres de législation ne valent pas mieux que les séries
       certifiées du dépôt, et les trois écarts du registre tiennent au
@@ -4967,8 +5033,14 @@ referents:
           fixe, ces taxes sur le brut absorbent environ 3 % de l'écart de brut
           entre systèmes, et le « aucune ne bouge » du dépôt est inexact.
         preuve: la feuille « Barème » de 2025, ligne 264, au commit `95ef983`
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.12"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Hors de la carte : la fiche de paie, dont docs/limites/5-ante-bis-
+          fiche-de-paie.md déclare les exclusions ; le net se compare entre scénarios au
+          même taux. Le coût du travail complet.
       - quoi: >-
           Ses barèmes de 2015 à 2025 portent les taux de vieillesse
           de chaque année. Le dépôt applique au régime général des
@@ -5280,8 +5352,14 @@ referents:
           hypothèses Direction du budget pour COR, juin 2026 »),
           reprises par Pablo et Canopée. C'est une convention, pas
           une loi, mais la seule publiée.
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.3"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Les rémunérations publiques sur les hypothèses de la Direction du
+          budget : une hypothèse de projection, qui déplace la pension des
+          fonctionnaires de la page Coût des deux côtés à la fois.
       - quoi: >-
           Il publie les effets macroéconomiques des leviers (tab.
           2.10, p. 125). Un an d'âge d'ouverture des droits ajoute,
@@ -5388,8 +5466,14 @@ referents:
           et ne rejoue aucun de ces chocs sur son moteur notionnel.
         preuve: >-
           `doc-4018.pdf`, séance du COR du 5 juillet 2017
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.11"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Nul : une confrontation ou un indicateur, qui ne change aucun
+          chiffre tant qu'il ne trouve pas d'erreur. Les chocs stylisés du COR, que les
+          variantes de la page Coût approchent.
     bilan: >-
       Rien de nouveau au-delà des chocs stylisés, déjà au registre
       (138.11). Ses autres conclusions confirment des choix du dépôt
@@ -5430,8 +5514,15 @@ referents:
         preuve: >-
           sa documentation de 2016, copiée dans `brunoscherrer/retraites` au
           commit `f3c2d92`
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.3"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Nul : une confrontation ou un indicateur, qui ne change aucun
+          chiffre tant qu'il ne trouve pas d'erreur. Le levier de l'âge est calculé
+          (étape 3, 14 octobre, scripts/leviers.py) ; l'équation de bouclage n'en serait
+          qu'une autre forme.
       - quoi: >-
           Sa documentation fixe à 0,5 la part des retraités retardés
           qui deviennent cotisants, parce qu'« une partie des
@@ -5558,8 +5649,15 @@ referents:
           le total (p. 28-29). Recoupé par la DREES : 22,7 % au sens
           large en 2016 (Cheloudko 2019, É&R n° 1116, cité p. 32).
           Législation de 2019, antérieure à la réforme de 2023.
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.19"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Nul : une confrontation ou un indicateur, qui ne change aucun
+          chiffre tant qu'il ne trouve pas d'erreur. La part de la solidarité dans les
+          masses de droits, que l'inventaire des avantages non contributifs mesure
+          autrement.
       - quoi: >-
           Sa bascule de 2009 en comptes notionnels intègre au
           coefficient de conversion le décès des actifs avant la
@@ -5691,8 +5789,14 @@ referents:
         preuve: >-
           fiche « CER Revalorisation du montant » de ses traitements
           algorithmiques (mars 2026)
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.12"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). La seconde pension revalorisée et replafonnée : celle de qui
+          retravaille après sa première pension, que la fiche déclare.
+        fiche: seconde_pension
     bilan: >-
       Les fiches décrivent des étapes sans formules ; le dépôt les
       couvre toutes (coordination internationale, LURA, minimum
@@ -5740,8 +5844,14 @@ referents:
           Arrêté du 20 juillet 2018 fixant les modalités
           d'alimentation du RGCU. La liste rejoint l'étape 12
           (rachat de trimestres).
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.12"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Des éléments de carrière rares que la saisie ne porte pas ; le
+          rachat a sa fiche, pas encore modélisée.
+        fiche: rachats_et_versements
     bilan: >-
       Le RGCU et son moteur calculent durées et salaire annuel moyen à
       la demande, sans rien stocker ni publier (« les droits ne sont pas
@@ -5855,8 +5965,14 @@ referents:
           individus moyens, sans mesurer ce biais, que le tableau 3.2
           d'Ancetre permettrait d'approcher.
         preuve: COR, document n° 10 de mars 2020 (Pablo, SRE)
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.3"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Nul : une confrontation ou un indicateur, qui ne change aucun
+          chiffre tant qu'il ne trouve pas d'erreur. Le biais de l'individu moyen,
+          mesure de ce que la population de l'étape 14 corrigera.
       - quoi: >-
           Il calcule chaque année, pour le compte général de l'État,
           l'engagement de retraite des fonctionnaires civils et
@@ -5887,8 +6003,14 @@ referents:
           même que celle du dépôt ; seul le taux diffère, et la
           grille de sensibilité du dépôt (`ECARTS_ACTUALISATION`,
           dans `cout.py`) permet de se placer à 2,21 %.
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.3"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Nul : une confrontation ou un indicateur, qui ne change aucun
+          chiffre tant qu'il ne trouve pas d'erreur. L'engagement de retraite de l'État,
+          à confronter au passif du dépôt.
       - quoi: >-
           Il fait mourir les fonctionnaires de l'État selon 23
           tables relationnelles (Hannerz) : 60 000 décès de moins
@@ -6180,8 +6302,13 @@ referents:
           classeur par régime du COR (2024), bloc « Effectifs de
           retraités de droit direct » ; COR, document n° 7 de
           décembre 2024
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.3"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Les droits de l'Ircantec, petites pensions de polypensionnés (4,5 %
+          de la pension moyenne) : leur poids dans la page Coût.
       - quoi: >-
           Il évalue chaque année la solvabilité de l'Ircantec à long
           terme « au regard d'indicateurs définis dans le cadre de
@@ -6534,7 +6661,7 @@ referents:
           les seuils de `7a-Legislation_sociale.sas:118-129`, au
           commit `7bc72c9` (le programme 6 n'y applique que les
           seuils de 2015, pour remonter au revenu brut)
-        etat: a_reprendre
+        etat: repris
         chantier: "138.2"
       - quoi: >-
           Il sert l'ASPA de 2017 sous le plafond du couple et borne
@@ -6699,8 +6826,15 @@ referents:
           bornes comprises (fiche `assiette_sociale_independants`).
           Restent la saisie d'un revenu brut, que les pages tiennent,
           les revenus de remplacement et l'épargne salariale.
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.18"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). L'assiette abattue et ses bornes sont reprises (étape 18, 13
+          octobre) ; restent les revenus de remplacement, l'épargne salariale et la
+          saisie d'un revenu brut, que la fiche déclare.
+        fiche: assiette_sociale_independants
       - quoi: >-
           Il applique aux artisans et commerçants les taux du code :
           vieillesse de base 17,15 % plafonnée plus 0,72 % sur tout
@@ -6741,8 +6875,13 @@ referents:
           attribué en application du dernier alinéa de l'article L.
           642-1 est de 400 » ; guide CNAVPL 2025, p. 26 : ces
           périodes « sont comptées comme périodes d'assurance »
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.18"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Les 400 points de l'année d'incapacité d'exercice du libéral.
+        fiche: un_statut_par_annee
       - quoi: >-
           Il porte les grilles de la CAVEC de 2023 à 2026 (2025 :
           782 € jusqu'à 16 190 €, 2 934 € jusqu'à 32 350 €, 4 629 €
@@ -6841,8 +6980,14 @@ referents:
           D. 633-19-2 (LEGIARTI000041966711) : « Soit sur un revenu
           forfaitaire égal au tiers du plafond … Soit sur 33,33 % …
           Soit sur 50 % du revenu d'activité du chef d'entreprise »
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.18"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Le conjoint collaborateur des indépendants et ses options de
+          cotisation.
+        fiche: un_statut_par_annee
       - quoi: >-
           Il dispense de l'assiette minimale l'activité saisonnière,
           comme le bénéficiaire du RSA ou de la prime d'activité,
@@ -6857,8 +7002,14 @@ referents:
           applicables … aux cotisations … dues par les personnes au
           titre des activités accessoires saisonnières », « sauf
           demande contraire »
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.18"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). La dispense de l'assiette minimale des activités saisonnières (L.
+          613-11).
+        fiche: assiette_minimale_independants
       - quoi: >-
           Il appelle le forfait CNBF selon l'ancienneté (363 € la
           première année à 1 988 € dès la sixième en 2026), de 2023
@@ -6868,8 +7019,14 @@ referents:
         preuve: professions-libérales/CNBF.publicodes:10-85, au commit 05cb5be
         verification: >-
           barème CNBF 2026, déjà lu par le dépôt (cnbf.yaml:107-109)
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.18"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Le forfait de la CNBF selon l'ancienneté : le compte notionnel des
+          cinq premières années, 16 590 retraités à la caisse.
+        fiche: baremes_cnbf
       - quoi: >-
           Il modélise l'Acre, réforme de 2026 comprise (exonération
           au quart, publics restreints). Le dépôt ne la connaît pas.
@@ -7024,16 +7181,27 @@ referents:
           dans L. 382-3.
         preuve: >-
           `artiste-auteur.publicodes:67-75, 198-231`, au commit `6bb0f26`
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.12"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). L'artiste-auteur sous le seuil d'affiliation au RAAP.
+        fiche: un_statut_par_annee
       - quoi: >-
           Il dispense des cotisations minimales le bénéficiaire du RSA ou de
           la prime d'activité ; le dépôt sert à tous les trois trimestres de
           l'assiette minimale (écart déclaré, voir modele_ti).
         preuve: >-
           `situation-personnelle.publicodes:4-8`, au commit `6bb0f26`
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.12"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). La dispense des cotisations minimales du bénéficiaire du RSA ou de
+          la prime d'activité.
+        fiche: assiette_minimale_independants
       - quoi: >-
           Chaque règle porte ses `références`, et l'application en tire une
           page par valeur ; le site du dépôt ne cite ni fiche ni article sous
@@ -7100,8 +7268,14 @@ referents:
           CGI, art. 231 (LEGIARTI000054370158) : mêmes taux ; seuils
           2026 9 229 et 18 423 € (il garde ceux de 2025, voir
           écarts)
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.12"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Hors de la carte : la fiche de paie, dont docs/limites/5-ante-bis-
+          fiche-de-paie.md déclare les exclusions ; le net se compare entre scénarios au
+          même taux. La taxe sur les salaires.
       - quoi: >-
           Il compte le versement mobilité au taux de la commune, la
           taxe d'apprentissage, la formation, la PEEC, le dialogue
@@ -7116,8 +7290,14 @@ referents:
           méthode : prélèvements assis sur le brut ; à coût fixé,
           ils absorbent une part de l'écart de brut (registre,
           EDIFIS)
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.12"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Hors de la carte : la fiche de paie, dont docs/limites/5-ante-bis-
+          fiche-de-paie.md déclare les exclusions ; le net se compare entre scénarios au
+          même taux. Les taxes hors protection sociale.
       - quoi: >-
           Il applique outre-mer la Lodeom au lieu de la réduction
           générale. Le dépôt donne la réduction générale à tout
@@ -7130,8 +7310,14 @@ referents:
           L. 752-3-2 (LEGIARTI000053285063, dès le 1er juillet 2026)
           : non cumulable « avec une autre exonération totale ou
           partielle de cotisations patronales »
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.18"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Hors de la carte : la fiche de paie, dont docs/limites/5-ante-bis-
+          fiche-de-paie.md déclare les exclusions ; le net se compare entre scénarios au
+          même taux. La Lodeom, outre-mer, au lieu de la réduction générale.
       - quoi: >-
           Il calcule le précompte de l'artiste-auteur : plafonnée
           moins 0,75 point et déplafonnée nulle (prises en charge
@@ -7147,8 +7333,14 @@ referents:
           payant « l'intégralité de la cotisation vieillesse assise
           sur la totalité » et « 0,75 point » de la plafonnée, qui «
           ouvre les mêmes droits »
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.12"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Hors de la carte : la fiche de paie, dont docs/limites/5-ante-bis-
+          fiche-de-paie.md déclare les exclusions ; le net se compare entre scénarios au
+          même taux. Le précompte de l'artiste-auteur.
     bilan: >-
       Côté salarié et micro-entrepreneur, il est à jour de 2026 et fait
       mieux sur ce qui entoure la retraite : chiffre d'affaires,
@@ -7222,8 +7414,13 @@ referents:
           réservée aux salariés « pour lesquels l'employeur est
           soumis à l'obligation prévue à l'article L. 5422-13 du
           code du travail »
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.12"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Le dirigeant assimilé salarié, qui se saisit en salarié du privé.
+        fiche: un_statut_par_annee
     bilan: >-
       Rien de mieux sur les droits, ceux d'un salarié, que le dépôt
       calcule bien mieux (sa pension de base vaut 50 % du revenu de
@@ -7376,7 +7573,7 @@ referents:
         preuve: >-
           `sources/archives_cgi.catala_fr:341-370`, au commit
           `7f5fe83`
-        etat: a_reprendre
+        etat: repris
         chantier: "138.2"
       - quoi: >-
           Il calcule le quotient familial avec les demi-parts des
@@ -7536,7 +7733,7 @@ referents:
           RFR de N-2, sans le lissage par N-3 (rapport, § 2.6.4.1),
           et sa CRDS n'est pas graduée (écart ci-dessous) : recopier
           les seuils, pas l'assiette.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.2"
       - quoi: >-
           L'ASPA reste hors de l'assiette de la CSG, de la CRDS et
@@ -7551,7 +7748,7 @@ referents:
           L. 136-1-2, I et II 1° (LEGIARTI000051289679) ;
           retraitesdeletat.gouv.fr, « Les prélèvements sociaux et
           les exonérations » : ASPA et ASI exonérées.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.2"
       - quoi: >-
           Il calcule l'impôt des pensions de 2026 : abattement de 10
@@ -7676,8 +7873,14 @@ referents:
           (part des reportés en emploi, mortalité, productivité), au
           lieu d'une variante à la fois. Sans OpenTURNS, puisque le
           dépôt n'admet que PyYAML, un tirage en Python pur suffit.
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.19"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Nul : une confrontation ou un indicateur, qui ne change aucun
+          chiffre tant qu'il ne trouve pas d'erreur. L'incertitude propagée par Monte-
+          Carlo.
       - quoi: >-
           Il calcule la part de la vie passée en retraite, (60 + e60
           − âge)/(60 + e60), et l'âge qui la tient constante : 29,05
@@ -7839,7 +8042,7 @@ referents:
           MIT, à confronter au net par foyer, non une action de plus.
         preuve: >-
           `app.js:21-77`, au commit `431dd9f`
-        etat: a_reprendre
+        etat: repris
         chantier: "138.2"
     bilan: >-
       Son seul avantage reste le net par foyer (138.2), qui est déjà au
@@ -7991,8 +8194,15 @@ referents:
           (LEGIARTI000053278668,
           `prelevements_remuneration.yaml:767`), remplacée le 27
           juin 2026 ; le changement ne touche pas les pensions.
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.2"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Les seuils à une et deux parts sont repris (étape 2), l'impôt du
+          foyer calculé à part (étape 5) ; les demi-parts des enfants à charge restent,
+          que la fiche déclare.
+        fiche: csg_des_pensions_selon_le_revenu
       - quoi: >-
           Il donne l'incidence d'une mesure par décile de pension
           (onglet « Qui paie »).
@@ -8861,8 +9071,14 @@ referents:
           réalisés par l'assureur » (lafinancepourtous.com, IEFP). À
           taux technique nul, toute la participation aux bénéfices
           revalorise la rente.
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.11"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). La rente du pilier capitalisé qui suivrait le rendement de ses fonds
+          : une variante de la proposition, que sa fiche ne porte pas.
+        fiche: capitalisation_obligatoire
       - quoi: >-
           Il lit des risques de décès projetés par année de 1980 à
           2120, par sexe et par âge. Le dépôt réduit la mortalité
@@ -9060,8 +9276,13 @@ referents:
         preuve: >-
           rapport orange de 2014, annexe A.1.1 : « to permit more rapid
           adjustment … to changes in the inflation rate »
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.11"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Le lissage du seul réel : une variante de l'indexation du compte.
+        fiche: indexation_du_compte
       - quoi: >-
           Calculer l'indice d'équilibre comme indicateur, sans
           l'appliquer. Au numérateur, l'actif de cotisation
@@ -9120,8 +9341,14 @@ referents:
           (2021), +7,84 % (2022), +5,62 % (2023). Ce point complète
           celui de la Pologne sur le prorata des mois, qui ne règle
           pas le décalage de mesure.
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.11"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Le décalage des indices publiés : une variante de l'indexation du
+          compte.
+        fiche: indexation_du_compte
     bilan: >-
       Il apporte une mesure de solvabilité de stock, écrite dans la loi,
       que la page Coût peut calculer sans l'appliquer. Il apporte aussi
@@ -9241,8 +9468,14 @@ referents:
           ce que le coût d'un système notionnel doit au
           comportement, puisque le diviseur fait du départ un choix.
           Elle se pose sur les cas types, sans microdonnées.
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.7"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Nul : une confrontation ou un indicateur, qui ne change aucun
+          chiffre tant qu'il ne trouve pas d'erreur. Une variante de comportement, non
+          une meilleure estimation.
       - quoi: >-
           Il rapporte les pensions de toute la retraite aux revenus
           de toute la carrière, par décile de revenu et par sexe,
@@ -9417,8 +9650,8 @@ referents:
           forfait de 9,1 % (`prelevements_remuneration.yaml:705`). Le reste du
           modèle n'est pas public.
         preuve: rapport n° 27 de la RGS, juillet 2026, § 6.5
-        etat: a_reprendre
-        chantier: "138.2"
+        etat: repris
+        chantier: "138.5"
       - quoi: >-
           Il mesure ce que l'ajustement automatique du diviseur
           absorbe d'un choc de longévité : espérance de vie haute et
@@ -9457,8 +9690,14 @@ referents:
         verification: >-
           Méthode, la même que l'Ageing Report (encadré I.1.1) : une
           seconde source pour le même chantier.
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.3"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Nul : une confrontation ou un indicateur, qui ne change aucun
+          chiffre tant qu'il ne trouve pas d'erreur. La décomposition est faite (étape
+          3, 13 octobre) ; reste son détail par prestation, sexe et secteur.
       - quoi: >-
           Le départ anticipé du régime contributif (64 ans, 20 ans
           de cotisation) exige une pension d'au moins trois fois
@@ -9567,8 +9806,14 @@ referents:
         preuve: >-
           L. 335/1995, art. 1, c. 6-11 ; ministère du Travail, 28 octobre
           2025 : « nei cinque anni precedenti il 2025 »
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.11"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Le lissage italien exact, plancher compris : une variante de
+          l'indexation du compte.
+        fiche: indexation_du_compte
       - quoi: >-
           Ses diviseurs lisent la mortalité âge par âge
           (probabilités de l'Istat pour 2023), et des probabilités
@@ -9609,8 +9854,12 @@ referents:
           (LEGIARTI000053335726) : « payables mensuellement et à
           terme échu ». L'écart est faible, mais k est nécessaire
           pour rejouer 19,049 au millième.
-        etat: a_reprendre
-        chantier: "138.11"
+        etat: a_trancher
+        raison: >-
+          Le terme des versements dans le diviseur — rente continue, ou mensualités
+          échues — est un choix du programme : le README définit le diviseur comme «
+          l'espérance de vie restante », que le dépôt calcule exactement ; k est écrit
+          dans le test qui refait l'exemple italien (étape 11, note du 14 octobre 2026).
     bilan: >-
       Il fait mieux sur trois points : la réversion tarifée dans le
       diviseur (à trancher), le plancher à rattrapage, et un exemple
@@ -9845,8 +10094,14 @@ referents:
           (`moteur/indexation.py:213-235`), soit de +½ an à −0,4 an de
           croissance ; un prorata de (m−1)/12 suffirait.
         preuve: Dz.U. 2025 poz. 1749, art. 25a
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.11"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Le prorata des mois de l'année du départ : au plus une demi-année de
+          croissance, une fois.
+        fiche: indexation_du_compte
       - quoi: >-
           Le GUS publie chaque année la table qui fait le diviseur, 222,7 mois
           à 65 ans en 2026 : un exemple officiel, sans actualisation, que la
@@ -10523,8 +10778,8 @@ referents:
           (tests/test_cycle_de_vie_references.py). Restent le net
           du site (`contexte.py`), et le foyer, que le 138.2 doit
           dire.
-        etat: a_reprendre
-        chantier: "138.2"
+        etat: repris
+        chantier: "138.5"
       - quoi: >-
           Il publie les âges et les durées de la retraite. Âge de
           départ d'une carrière entrée à 22 ans : 64,3 ans pour un
@@ -10665,8 +10920,14 @@ referents:
           cette décomposition.
         preuve: Fiche France, tableau 14, p. 34
         verification: Méthode commune de l'AWG.
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.3"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Nul : une confrontation ou un indicateur, qui ne change aucun
+          chiffre tant qu'il ne trouve pas d'erreur. Le flux des pensions nouvelles,
+          après la décomposition du stock (étape 3, 13 octobre).
       - quoi: >-
           Il confronte sa projection précédente à l'observé et
           décompose l'erreur. Pour 2019-2021, la projection de 2021
@@ -10681,8 +10942,14 @@ referents:
           Méthode : une rétro-projection depuis une année ancienne,
           ancrée comme aujourd'hui sur la dernière année connue,
           mesurerait l'erreur propre du moteur du coût.
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.19"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Nul : une confrontation ou un indicateur, qui ne change aucun
+          chiffre tant qu'il ne trouve pas d'erreur. La rétro-projection, la
+          confrontation d'une projection passée à l'observé.
       - quoi: >-
           Il publie la dépense nette d'impôts et de cotisations des
           retraités (12,8 % du PIB en 2022, 12,1 % en 2070, contre
@@ -10757,8 +11024,14 @@ referents:
           Méthode actuarielle standard. Le COR publie lui aussi le
           levier du taux de prélèvement, que le 138.3 nomme « tax
           gap ».
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.19"
+        raison: >-
+          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
+          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
+          octobre). Nul : une confrontation ou un indicateur, qui ne change aucun
+          chiffre tant qu'il ne trouve pas d'erreur. Le taux de cotisation d'équilibre,
+          décomposé.
     bilan: >-
       Il fait mieux sur la projection actuarielle : une population par
       états et ses transitions, et les taux de cotisation d'équilibre.

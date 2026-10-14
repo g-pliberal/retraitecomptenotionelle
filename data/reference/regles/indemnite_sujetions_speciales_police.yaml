@@ -93,6 +93,14 @@ approximations:
     part de la rémunération hors primes du RAFP : après 1992, la pension n'en dépend
     pas.
   effet: non mesuré
+- ecart: >-
+    Les autres primes que la loi soumet à retenue sans que le modèle leur donne de
+    statut ne le sont pas : la prime de sujétions spéciales des surveillants
+    pénitentiaires (loi de finances pour 1986, article 76), l'indemnité des gendarmes,
+    celle des personnels administratifs et techniques de la police depuis 2023.
+  effet: >-
+    non mesuré ; léger : la coupe du 14 octobre 2026 le déclare sans le faire
+    (action 138, classement du 9 octobre)
 sources:
   lu_le: 2026-10-10
   prochaine_relecture: 2027-04-30

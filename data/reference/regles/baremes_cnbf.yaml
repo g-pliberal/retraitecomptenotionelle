@@ -4,7 +4,7 @@ intitule: >-
   Pension forfaitaire de base, cotisation forfaitaire, taux proportionnel et grille
   de cotisation du complémentaire des avocats (classe C1), année par année depuis
   2016.
-etat: transcrite
+etat: approchee
 effet: >-
   Tout avocat. La grille du complémentaire était celle de 2026 depuis 2019, alors
   que le taux de première tranche est passé de 3,20 % en 2016 à 7,00 % en 2026 ;
@@ -30,3 +30,13 @@ textes_a_rattacher:
     R. 723-43 CSS : le montant de la retraite de base est fixé par décision de l'assemblée
     générale de la CNBF
 - reference: barèmes annuels des cotisations et prestations de la CNBF, 2016 à 2026
+approximations:
+- ecart: >-
+    La cotisation forfaitaire de base s'appelle selon l'ancienneté, de 363 € la première
+    année à 1 988 € dès la sixième en 2026 (barèmes de 2023 à 2026) ; le modèle prélève
+    le forfait de croisière à toutes les années : le compte notionnel des cinq premières
+    années est surestimé de 4 586 € en 2026, la pension forfaitaire du scénario 1 n'en
+    dépend pas.
+  effet: >-
+    non mesuré ; léger : la coupe du 14 octobre 2026 le déclare sans le faire
+    (action 138, classement du 9 octobre)
