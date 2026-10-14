@@ -616,6 +616,7 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "valeurs_point_msa": "regimes/valeurs_point.csv",
         "valeurs_point_independants": "regimes/valeurs_point.csv",
         "valeurs_point_rci_cnav": "regimes/valeurs_point.csv",
+        "valeurs_point_avant_1973": "regimes/valeurs_point.csv",
         "valeurs_point_unirs": "regimes/valeurs_point.csv",
         "valeurs_point_texte": "regimes/valeurs_point.csv",
         "valeurs_point_estimees": "regimes/valeurs_point.csv",
@@ -946,10 +947,18 @@ def test_taux_de_cotisation_plausibles(catalogue):
     deux cas le taux nul est la bonne écriture ; sans l'un ou l'autre, la
     période ne prélèverait rien, et c'est exactement le silence que ce test
     traque.
+
+    Une période postérieure à la FERMETURE du régime ne prélève rien, et ne le
+    doit pas : elle ne fait que liquider les droits acquis avant — les points
+    d'avant 1973 des artisans et des commerçants, servis selon l'âge et la
+    durée de chaque époque (action 138, étape 18).
     """
     for regime in catalogue:
         for periode in regime.periodes:
             forfait = periode.cotisation_forfaitaire_euros or 0.0
+            if (periode.taux_cotisation_retraite == 0.0 and regime.fermeture is not None
+                    and periode.debut > regime.fermeture):
+                continue
             if periode.taux_cotisation_retraite == 0.0:
                 assert forfait > 0.0 or periode.cotisation_par_classes, (
                     f"{regime.code} {periode.debut} : taux nul sans forfait "
@@ -1329,7 +1338,9 @@ def test_la_cotisation_est_celle_de_chaque_annee_et_non_une_moyenne(catalogue):
     # faute de mieux ; à partir de 1980, ils ont la leur, lue dans leur décret.
     assert catalogue["msa_salaries"].periode(1979).taux_cotisation_retraite == pytest.approx(0.129)
     assert catalogue["cancava"].periode(1973).taux_cotisation_retraite == pytest.approx(0.0875)
-    assert catalogue["cancava"].periode(1960).taux_cotisation_retraite == pytest.approx(0.085)
+    # Avant 1973, les années d'artisan sont des points (action 138, étape 18).
+    assert catalogue["cancava"].periode(1960) is None
+    assert catalogue["cancava_avant_1973"].periode(1960).taux_cotisation_retraite == pytest.approx(0.085)
     assert catalogue["rsi"].periode(2015).taux_cotisation_deplafonnee == pytest.approx(0.0035)
 
 

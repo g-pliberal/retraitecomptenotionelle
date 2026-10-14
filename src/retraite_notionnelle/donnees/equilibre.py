@@ -453,7 +453,11 @@ REGIMES_DU_MODELE: dict[str, tuple[str, ...]] = {
     "agirc_arrco": ("agirc_arrco",),
 }
 GROUPES_DU_MODELE: dict[str, tuple[str, ...]] = {
-    "lura": ("regime_general", "msa_salaries"),
+    # Les droits en points d'avant 1973 des artisans et des commerçants, que la
+    # Cnav sert depuis l'intégration de la sécurité sociale des indépendants
+    # (action 138, étape 18).
+    "lura": ("regime_general", "msa_salaries", "cancava_avant_1973",
+             "organic_avant_1973"),
     "fpe": ("fonction_publique_etat",),
     "cnracl": ("cnracl",),
     "non_salaries_base": ("msa_non_salaries", "cnavpl", "cnbf"),

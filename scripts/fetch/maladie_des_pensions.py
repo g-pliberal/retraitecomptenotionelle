@@ -337,11 +337,14 @@ PENSIONS_LUES_AUX_TEXTES["maladie_mines"] = [
 #: 1 % en 1980 (décret n° 80-481), 1,4 % en 1987 (n° 87-453), 2,6 % en 1996
 #: (n° 95-1401), 2,8 % en 1997 (n° 96-1167), rien depuis 1998 (n° 97-1252). La
 #: cotisation des retraités indépendants ne porte que sur leur pension de base
-#: (D. 612-3), celle des exploitants aussi (code rural, art. 1106-6-1, II).
+#: (D. 612-3), celle des exploitants aussi (code rural, art. 1106-6-1, II). Les
+#: droits en points d'avant 1973 des artisans et des commerçants sont une pension
+#: de base (L. 634-3 ; action 138, étape 18).
 REGIMES_DES_PENSIONS = {
     "maladie_regime_general": ("regime_general", "msa_salaries"),
     "maladie_fonction_publique": ("fonction_publique_etat", "cnracl", "fspoeie"),
-    "maladie_independants": ("cancava", "organic", "cnavpl", "cnbf"),
+    "maladie_independants": ("cancava", "cancava_avant_1973", "organic",
+                             "organic_avant_1973", "cnavpl", "cnbf"),
     "maladie_exploitants": ("msa_non_salaries",),
     "maladie_regimes_speciaux": ("opera_de_paris", "comedie_francaise", "chemins_fer_secondaires"),
     "maladie_ieg": ("ieg",),

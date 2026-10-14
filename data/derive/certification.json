@@ -1651,6 +1651,17 @@
    "valeurs": 1,
    "verifiee_le": "2026-10-05"
   },
+  "valeurs_point_avant_1973": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "914840586bb15ebe",
+   "identiques": 121,
+   "niveau": "haute",
+   "source": "Cnav, base de législation : barème de la valeur du point des droits d'avant 1973 (circulaires 2020/5 à 2025/29) et fiches RVB du RSI de 1988 à 2019 ; IPP avant 1988",
+   "valeurs": 121,
+   "verifiee_le": "2026-10-14"
+  },
   "valeurs_point_cnavpl": {
    "ajoutees": 0,
    "colonne": "valeur",

@@ -106,7 +106,7 @@ tenues_avant_leur_premiere_marche: [maladie_prive, maladie_etat, maladie_collect
 regimes_des_pensions:
   maladie_regime_general: [regime_general, msa_salaries]
   maladie_fonction_publique: [fonction_publique_etat, cnracl, fspoeie]
-  maladie_independants: [cancava, organic, cnavpl, cnbf]
+  maladie_independants: [cancava, cancava_avant_1973, organic, organic_avant_1973, cnavpl, cnbf]
   maladie_exploitants: [msa_non_salaries]
   maladie_regimes_speciaux: [opera_de_paris, comedie_francaise, chemins_fer_secondaires]
   maladie_ieg: [ieg]

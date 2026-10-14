@@ -5217,6 +5217,32 @@ institutions:
           porte. Ce n'est pas une certification : le décret dit ce qui vaut à
           partir du 14 novembre 1981, non ce qui valait avant.
 
+      - id: cnav_points_avant_1973
+        titre: >-
+          Valeur du point de retraite des droits d'avant 1973 des artisans
+          (depuis 1973) et des commerçants (depuis 1960)
+        url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=ti_prestation_valeur_point_retraite_commercant_bar.aspx
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/regimes/valeurs_point.csv
+        recuperation: scripts/fetch/cnav_points_avant_1973.py
+        note: >-
+          Trois sources, lues le 14 octobre 2026 (action 138, étape 18). Le
+          barème de la Cnav, depuis 2020, une ligne par date d'effet et sa
+          circulaire (10,7637 € pour les artisans et 14,84302 € pour les
+          commerçants au 1er janvier 2026, circulaire 2025/29) ; en 2020, la
+          ligne des pensions d'au plus 2 000 € par mois. Les deux fiches
+          « Valeur du point de retraite RVB » du RSI (mise à jour du 26
+          février 2019) que ce barème cite pour 1988 à 2019. Les barèmes de
+          l'IPP avant 1988, `pt_organic` (points acquis par cotisations) et
+          `pt_cancava` ; ceux d'avant 1960, libellés en anciens francs sans
+          rupture visible, ne sont pas repris. L'IPP porte en 2011, pour les
+          commerçants, la valeur des artisans (8,8124 €) : la fiche du RSI
+          l'emporte (12,15131 €). Francs à 6,55957. Transcriptions des
+          décisions de la caisse nationale, puis de la revalorisation de
+          L. 161-25 : `haute`. Le récupérateur écrit aussi chaque valeur à sa
+          date d'effet, que `valeurs_service_datees.csv` reprend.
+
       - id: ipp_points_independants
         titre: >-
           Prix d'achat et valeur de service du point des complémentaires

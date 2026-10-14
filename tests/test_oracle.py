@@ -1436,17 +1436,23 @@ def test_les_regimes_alignes_des_independants_liquident_avec_leur_successeur(
     artisans et des commerçants nés de 1935 à 1952, pour les pensions prenant
     effet avant 2026, porte sur moins d'années que le salaire annuel moyen
     (R. 634-1-1 : vingt et une pour la génération 1949, au lieu de
-    vingt-cinq), donc sur de meilleures. Avec leur table, cinq profils de
-    l'oracle partent plus haut que le salarié — ceux de ces générations dont
-    la carrière compte plus d'années que la table n'en retient —, aucun plus
-    bas. Leur prête-t-on celle du régime général, l'artisan et le commerçant
-    rendent exactement la pension du salarié sur les dix profils, comme la
-    MSA — et donc, à la tolérance près, celle d'OpenFisca : la table est le
-    seul écart.
+    vingt-cinq), donc sur de meilleures. Leur prête-t-on celle du régime
+    général, l'artisan et le commerçant rendent exactement la pension du
+    salarié, comme la MSA — et donc, à la tolérance près, celle d'OpenFisca.
+
+    L'ALIGNEMENT NE VAUT QUE DEPUIS 1973. Les années d'artisan ou de commerçant
+    d'avant ont leurs points (L. 634-3 ; action 138, étape 18), hors de la
+    pension alignée : l'égalité ne se lit que sur les cinq profils entrés depuis,
+    et aucun ne part plus haut — leurs générations, 1952 à 1956, ne comptent pas
+    plus d'années que la table n'en retient. Les cinq autres, entrés de 1968 à
+    1972, gardent leur durée et leur taux ; leurs années d'avant 1973 sortent de
+    la proratisation et rendent des points (test suivant).
     """
     plus_hauts = set()
     for code, entree in oracle["profils"].items():
         profil = entree["profil"]
+        if profil["debut"] < 1973:
+            continue
         reference = _notre_calcul(simulateur, profil)
         for affiliation in ("artisan", "commercant"):
             nous = _notre_pension_alignee(simulateur, profil, affiliation)
@@ -1459,16 +1465,15 @@ def test_les_regimes_alignes_des_independants_liquident_avec_leur_successeur(
             assert nous["taux_de_liquidation"] == pytest.approx(
                 entree["openfisca"]["taux_de_liquidation"],
                 abs=TOLERANCE_EXACTE), (code, affiliation)
-    assert plus_hauts == {
-        "carriere_incomplete_1945", "bas_salaire_1947", "carriere_complete_1948",
-        "depart_tardif_1949", "carriere_complete_1950",
-    }
+    assert plus_hauts == set()
 
     actuel = simulateur.scenario_actuel
     monkeypatch.setattr(actuel, "annees_revenu_independants",
                         actuel.annees_salaire_reference)
     for code, entree in oracle["profils"].items():
         profil = entree["profil"]
+        if profil["debut"] < 1973:
+            continue
         reference = _notre_calcul(simulateur, profil)
         for affiliation in ("artisan", "commercant"):
             nous = _notre_pension_alignee(simulateur, profil, affiliation)
@@ -1477,6 +1482,39 @@ def test_les_regimes_alignes_des_independants_liquident_avec_leur_successeur(
             assert nous["montant"] == pytest.approx(
                 entree["openfisca"]["pension_brute"], rel=TOLERANCE_SALAIRE
             ), (code, affiliation)
+
+
+def test_avant_1973_des_points_hors_de_la_pension_alignee(oracle, simulateur):
+    """Les cinq profils de l'oracle entrés avant 1973 (L. 634-3).
+
+    Leurs années d'avant 1973 comptent dans la durée tous régimes — le taux de
+    liquidation reste celui d'OpenFisca —, mais plus dans la pension alignée :
+    elles rendent des points, au régime des droits d'avant 1973.
+    """
+    avant = {"artisan": "cancava_avant_1973", "commercant": "organic_avant_1973"}
+    entres_avant = 0
+    for code, entree in oracle["profils"].items():
+        profil = entree["profil"]
+        if profil["debut"] >= 1973:
+            continue
+        entres_avant += 1
+        reference = _notre_calcul(simulateur, profil)
+        for affiliation, regime in avant.items():
+            nous = _notre_pension_alignee(simulateur, profil, affiliation)
+            assert nous["trimestres"] == reference["duree_assurance"], (code, affiliation)
+            assert nous["taux_de_liquidation"] == pytest.approx(
+                entree["openfisca"]["taux_de_liquidation"],
+                abs=TOLERANCE_EXACTE), (code, affiliation)
+            carriere = Carriere(
+                annee_naissance=profil["naissance"], sexe="H",
+                age_liquidation=float(profil["liquidation"] - profil["naissance"]),
+                lignes=[AnneeCarriere(annee=annee, revenu=profil["salaire"],
+                                      affiliation=affiliation, trimestres_valides=4)
+                        for annee in range(profil["debut"], profil["liquidation"])])
+            points = {p.regime: p for p in simulateur.scenario_actuel.calculer(
+                carriere).pensions_par_regime}[regime]
+            assert points.montant > 0, (code, affiliation)
+    assert entres_avant == 5
 
 
 def test_la_cesure_a_la_succession_reste_mesurable(oracle, simulateur):
@@ -1490,13 +1528,17 @@ def test_la_cesure_a_la_succession_reste_mesurable(oracle, simulateur):
     morceau CANCAVA d'un artisan parti tard servait la surcote au taux plat
     de sa fiche de 2006 (0,75 %) à des trimestres accomplis de 2011 à 2015,
     qui valent 1,25 % — la césure cumulait deux erreurs, et l'une compensait
-    l'autre. Il vient aussi de la table des indépendants (R. 634-1-1), que le
-    morceau aligné d'un assuré né en 1949 applique à ses seules années :
-    vingt et une retenues, au lieu de vingt-cinq.
+    l'autre. Il venait aussi de la table des indépendants (R. 634-1-1), que le
+    morceau aligné d'un assuré né en 1949 appliquait à ses seules années.
+    Depuis que les années d'avant 1973 ont leurs points (action 138, étape
+    18), la mesure ne porte plus que sur les cinq profils entrés depuis : de
+    −7,1 % à −0,2 %.
     """
     coupes, ecarts = 0, []
     for code, entree in oracle["profils"].items():
         profil = entree["profil"]
+        if profil["debut"] < 1973:
+            continue
         for affiliation in ("artisan", "commercant"):
             nous = _notre_pension_alignee(
                 simulateur, profil, affiliation, liquider_successions=False
@@ -1504,9 +1546,9 @@ def test_la_cesure_a_la_succession_reste_mesurable(oracle, simulateur):
             assert nous["morceaux"] == 2, (code, affiliation)
             coupes += 1
             ecarts.append(nous["montant"] / entree["openfisca"]["pension_brute"])
-    assert coupes == 20
+    assert coupes == 10
     assert 0.925 < min(ecarts) < 0.930, min(ecarts)
-    assert 1.090 < max(ecarts) < 1.100, max(ecarts)
+    assert 0.995 < max(ecarts) < 1.000, max(ecarts)
 
 
 # ---------------------------------------------------------------------------

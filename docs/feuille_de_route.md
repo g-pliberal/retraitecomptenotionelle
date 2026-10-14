@@ -24,7 +24,7 @@ avec la raison, et l'action elle-même dans l'archive. Une découverte faite en 
 ici, pas dans un commentaire de code.
 
 **Le constat de septembre 2026, qui fonde ce classement.** La couverture des
-régimes est finie : <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->110<!--/--> lignes d'inventaire,
+régimes est finie : <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->112<!--/--> lignes d'inventaire,
 <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->42<!--/--> fiches partielles dont chaque mur est documenté dans `regimes.md` et
 `limites.md` §4, et <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=a_modeliser)-->9<!--/--> lignes « à modéliser » — aucune en
 septembre, celles-ci rouvertes le 4 octobre par l'action 145 pour des régimes

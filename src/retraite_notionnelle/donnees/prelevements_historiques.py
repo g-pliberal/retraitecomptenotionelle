@@ -63,10 +63,11 @@ FAMILLES_INDEPENDANTES = ("artisan", "commercant", "liberal", "avocat")
 
 #: Les régimes de base qui font d'un indépendant un avocat, un libéral, un
 #: artisan ; les autres sont commerçants — l'Organic, le RSI, et depuis 2018 la
-#: sécurité sociale des indépendants au régime général.
+#: sécurité sociale des indépendants au régime général. Avant 1973, l'artisan
+#: relève des droits en points de la CANCAVA (action 138, étape 18).
 REGIMES_AVOCATS = frozenset({"cnbf"})
 REGIMES_LIBERAUX = frozenset({"cnavpl"})
-REGIMES_ARTISANS = frozenset({"cancava"})
+REGIMES_ARTISANS = frozenset({"cancava", "cancava_avant_1973"})
 
 #: Les tranches d'un barème d'indépendant, par la colonne qui porte leur taux :
 #: leurs bornes, en plafonds de l'année, ``None`` pour l'infini. Elles

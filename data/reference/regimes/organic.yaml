@@ -21,21 +21,11 @@ inventaire:
             gerant_debit_tabac, micro_entrepreneur]
   textes:
     - {reference: "loi n° 48-101 du 17 janvier 1948", id: null}
+# LES ANNÉES DE 1949 À 1972 ONT LEUR RÉGIME, `organic_avant_1973` (action 138, étape 18) :
+# des points, liquidés à part selon l'article L. 634-3, et non des années de la
+# pension alignée. La période en points que cette fiche portait, au rendement
+# estimé de 9 %, y est passée.
 periodes:
-  - debut: 1949
-    fin: 1972
-    type_calcul: points
-    age_ouverture: 65
-    age_taux_plein: 65
-    duree_requise_trimestres: null
-    taux_plein: 1.0
-    salaire_reference: carriere_entiere
-    assiette: plafonnee
-    taux_cotisation_retraite: 0.085
-    decote_par_trimestre: null
-    surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, reversion]
-    notes: Régime en points, symétrique de la CANCAVA.
   - debut: 1973
     fin: 1982
     type_calcul: annuites

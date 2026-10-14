@@ -808,7 +808,15 @@ referents:
           ti_prestation_valeur_point_retraite_commercant_bar :
           valeur du point de 1988 à 2026 (10,7637 € pour les
           artisans, 14,84302 € pour les commerçants en 2026).
-        etat: a_reprendre
+          Repris le 14 octobre 2026 (action 138, étape 18) : la
+          valeur de la Cnav depuis 1988 et celle de l'IPP avant,
+          à chaque date d'effet, sous deux régimes neufs,
+          `cancava_avant_1973` et `organic_avant_1973` ; les points
+          s'acquièrent par l'équivalence de D. 634-8 (un point par
+          3 % du plafond chez l'artisan, 5 % chez le commerçant),
+          faute des seuils des classes (fiche
+          `points_avant_1973_independants`, `approchee`).
+        etat: repris
         chantier: "138.18"
       - quoi: >-
           L'IPP a l'ASPA d'un couple de 2006 à 2026, les plafonds de
@@ -1927,7 +1935,12 @@ referents:
           et reprend dans `rsi_vp` : 9,1234 € (artisans) et 12,58032
           € (commerçants) en octobre 2015. L'acquisition (points par
           classe de cotisation) reste à lire ailleurs.
-        etat: a_reprendre
+          Repris le 14 octobre 2026 (action 138, étape 18) : les mêmes
+          valeurs, lues à la Cnav (barème et fiches RVB du RSI), sauf
+          2011 pour les commerçants, où l'IPP porte la valeur des
+          artisans ; l'acquisition par l'équivalence de D. 634-8
+          (fiche `points_avant_1973_independants`).
+        etat: repris
         chantier: "138.18"
       - quoi: >-
           Il porte le seuil de validation des Antilles-Guyane et de

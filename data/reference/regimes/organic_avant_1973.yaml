@@ -1,0 +1,172 @@
+code: organic_avant_1973
+rang: 301
+nom: Droits en points d'avant 1973 du régime de base des industriels et commerçants
+famille: non_salarie
+etage: base
+source_id: cnav_points_avant_1973
+fiabilite: moyenne
+creation: 1949
+fermeture: 1972
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Industriels et commerçants, pour leurs années d'activité de 1949 à 1972 :
+  des points de retraite, liquidés à part de la pension alignée (L. 634-3).
+hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 22
+  population: Industriels et commerçants, années de 1949 à 1972
+  couverture: modelise
+  statuts: [commercant, gerant_debit_tabac, micro_entrepreneur]
+  textes:
+    - {reference: "article L. 634-3 du code de la sécurité sociale", id: LEGIARTI000036391704}
+    - {reference: "décret n° 66-248 du 31 mars 1966, articles 3, 17 et 19", id: LEGIARTI000006763964}
+    - {reference: "décret n° 73-937 du 2 octobre 1973, article 3", id: LEGIARTI000047634732}
+    - {reference: "article D. 634-8 du code de la sécurité sociale", id: LEGIARTI000041966593}
+# LES DROITS D'AVANT 1973 NE SONT PAS LA PENSION ALIGNÉE (action 138, étape 18 ;
+# fiche de règle `points_avant_1973_independants`). Les prestations afférentes
+# aux périodes antérieures au 1er janvier 1973 « demeurent calculées, liquidées
+# et servies dans les conditions définies par les dispositions législatives et
+# réglementaires en vigueur au 31 décembre 1972 » (L. 634-3) : des points,
+# multipliés par la valeur du point de retraite (décret n° 66-248, art. 19), et
+# non des annuités. Le dépôt les portait sous `organic`, période en points de
+# 1949 à 1972, que la liquidation, lue à la date d'effet, servait en annuités du
+# régime aligné, années d'avant 1973 comprises dans la proratisation. Ils ont
+# désormais leur régime : l'ORGANIC commence en 1973, et ces années n'entrent
+# plus que dans la durée tous régimes, que l'article 3 du décret n° 73-937 lit
+# aussi pour la minoration.
+#
+# La première période ACQUIERT, les suivantes ne font que LIQUIDER : le routage
+# (`legislation/affiliations.yaml`) n'envoie ici que les années de commerçant de
+# 1949 à 1972, et la liquidation lit la période de la date d'effet. Leur taux de
+# cotisation est nul, faute de rien acquérir.
+periodes:
+  - debut: 1949
+    fin: 1972
+    type_calcul: points
+    age_ouverture: 65
+    age_taux_plein: 65
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.085
+    points_maximum: 20
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [minimum_vieillesse, reversion]
+    notes: >-
+      LES POINTS. Le décret n° 66-248 (article 3, rédaction du 31 mars
+      1971) fait OPTER le commerçant pour l'une de trois classes, VI bis
+      (20 points), VII (24) ou VIII (36) ; sans option, il cotise en classe
+      minimale VI bis, et il ne descend dans les classes I à VI (4 à 16
+      points) que sur sa demande, sous des seuils de revenus « fixés par
+      décret ». Les classes de 1949 à 1970 et les seuils ne sont pas dans
+      l'index LEGI, et le Journal officiel d'avant 1990 n'y est qu'en
+      notices. Le dépôt lit donc la seule conversion d'un revenu en points
+      que le droit en vigueur écrive : D. 634-8, qui calcule la pension des
+      périodes assimilées après 1972 sur un revenu égal « à autant de fois un
+      pourcentage dudit plafond que la dernière cotisation annuelle […]
+      antérieurement au 1er janvier 1973 comporte de points », 5 % du plafond
+      pour les industriels et commerçants (de même le II de l'article 1er du
+      décret n° 73-937). Un point par 5 % du plafond, au plafond au plus :
+      20 points pour un revenu au plafond, la classe minimale VI bis. Le
+      modèle ne prête à personne une option qu'il ne connaît pas : ni les
+      classes VII et VIII, ni les classes basses qu'il fallait demander ; il
+      ouvre moins de vingt points sous le plafond, là où la classe VI bis en
+      donnait vingt à qui ne demandait rien. Ni les points gratuits des
+      années d'avant 1949 (classe I, cent vingt points au plus, article
+      17), ni les rachats, ni la bonification sur les points acquis au
+      1er décembre 1962 (article 20). TAUX DE COTISATION : 8,5 %, la valeur
+      de synthèse que la fiche `organic` portait, qui ne sert qu'au compte
+      notionnel.
+  - debut: 1973
+    fin: 1993
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 150
+    taux_plein: 1.0
+    salaire_reference: sans_objet
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    decote_par_trimestre: 0.025
+    decote_par_generation: decote_regime_general
+    decote_annulee_par_la_duree: decote_avant_1983
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [minimum_vieillesse, reversion]
+    notes: >-
+      Article 3 du décret n° 73-937 : liquidables dès soixante ans, sans
+      abattement pour qui justifie de 150 trimestres dans les régimes de base
+      (rédaction de 1990, LEGIARTI000006765816), sinon minorés de 2,5 % par
+      trimestre manquant, au plus petit des trimestres manquant à la durée et
+      de ceux qui séparent de soixante-cinq ans. Avant 1990, l'article
+      renvoyait aux règles du régime général (rédaction du 5 mars 1976,
+      LEGIARTI000006765815) : la fiche leur applique celles de 1990, et la
+      durée qui annule la décote avant 1983 comme l'ORGANIC.
+  - debut: 1994
+    fin: 2003
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 160
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    salaire_reference: sans_objet
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    decote_par_trimestre: 0.025
+    decote_par_generation: decote_regime_general
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [minimum_vieillesse, reversion]
+    notes: >-
+      Rédaction du 28 août 1993 (LEGIARTI000006765817), pour les pensions
+      prenant effet depuis 1994 : la durée monte de 150 à 160 trimestres par
+      génération, comme au régime général ; la minoration reste de 2,5 %.
+  - debut: 2004
+    fin: 2012
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 160
+    taux_plein: 1.0
+    salaire_reference: sans_objet
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    decote_par_trimestre: 0.025
+    decote_par_generation: decote_regime_general
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [minimum_vieillesse, reversion]
+    notes: >-
+      Rédaction du 19 février 2004 (LEGIARTI000006765819) : 160 trimestres
+      « quelle que soit la date de naissance de l'assuré », et la minoration
+      descend de 2,5 % pour les nés avant 1944 à 1,25 % pour les nés après
+      1952, la table de R. 351-27. Coupée à l'année : la rédaction suivante
+      prend effet le 7 octobre 2012.
+  - debut: 2013
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    salaire_reference: sans_objet
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    decote_par_trimestre: 0.025
+    decote_par_generation: decote_regime_general
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [minimum_vieillesse, reversion]
+    notes: >-
+      Rédactions du 7 octobre 2012 (LEGIARTI000026474703) et du 1er septembre
+      2023 (LEGIARTI000047634732) : l'âge de L. 161-17-2, la durée du
+      deuxième alinéa de L. 351-1, et la minoration jusqu'à l'âge de L. 351-8,
+      1° — l'âge légal, la durée et l'âge d'annulation de la décote du
+      régime général, génération par génération. Ni surcote ni carrière
+      longue : l'article 3 bis, qui ouvre le versement pour la retraite
+      anticipée, n'est pas modélisé.

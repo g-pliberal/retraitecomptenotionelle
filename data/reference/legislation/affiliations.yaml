@@ -249,8 +249,8 @@ affiliations:
     famille: independant
     sans_employeur: true
     periodes:
-      - {debut: 1949, fin: 1962, regimes: [organic]}
-      - {debut: 1963, fin: 1972, regimes: [organic, gerants_debits_tabac]}
+      - {debut: 1949, fin: 1962, regimes: [organic_avant_1973]}
+      - {debut: 1963, fin: 1972, regimes: [organic_avant_1973, gerants_debits_tabac]}
       - {debut: 1973, fin: 2003, regimes: [organic, organic_conjoints_batiment, gerants_debits_tabac]}
       - {debut: 2004, fin: 2005, regimes: [organic, nric, gerants_debits_tabac]}
       - {debut: 2006, fin: 2012, regimes: [rsi, nric, gerants_debits_tabac]}
@@ -267,7 +267,7 @@ affiliations:
     famille: independant
     sans_employeur: true
     periodes:
-      - {debut: 1949, fin: 1972, regimes: [organic]}
+      - {debut: 1949, fin: 1972, regimes: [organic_avant_1973]}
       - {debut: 1973, fin: 2003, regimes: [organic, organic_conjoints_batiment]}
       - {debut: 2004, fin: 2005, regimes: [organic, nric]}
       - {debut: 2006, fin: 2008, regimes: [rsi, nric]}
@@ -648,7 +648,8 @@ affiliations:
     famille: independant
     sans_employeur: true
     periodes:
-      - {debut: 1949, fin: 1978, regimes: [cancava]}
+      - {debut: 1949, fin: 1972, regimes: [cancava_avant_1973]}
+      - {debut: 1973, fin: 1978, regimes: [cancava]}
       - {debut: 1979, fin: 2005, regimes: [cancava, rco_artisans]}
       - {debut: 2006, fin: 2012, regimes: [rsi, rco_artisans]}
       - {debut: 2013, fin: 2017, regimes: [rsi, rci]}
@@ -659,7 +660,7 @@ affiliations:
     famille: independant
     sans_employeur: true
     periodes:
-      - {debut: 1949, fin: 1972, regimes: [organic]}
+      - {debut: 1949, fin: 1972, regimes: [organic_avant_1973]}
       - {debut: 1973, fin: 2003, regimes: [organic, organic_conjoints_batiment]}
       - {debut: 2004, fin: 2005, regimes: [organic, nric]}
       - {debut: 2006, fin: 2012, regimes: [rsi, nric]}

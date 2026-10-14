@@ -12,6 +12,12 @@ cotisent à leur barème (D. 633-3, fiche ``cotisation_vieillesse_independants``
 aux 15,45 % et 2,30 à 2,51 % du salarié et de son employeur. La fiche de paie
 le prélève, le compte notionnel le porte.
 
+Les points d'avant 1973 : les années d'artisan et de commerçant de 1949 à 1972
+ont leur régime, ``cancava_avant_1973`` et ``organic_avant_1973`` — des points,
+un par 3 % ou 5 % du plafond (D. 634-8), servis à la valeur du point de la date
+d'effet et minorés selon l'article 3 du décret n° 73-937 —, hors de la pension
+alignée (L. 634-3 ; fiche ``points_avant_1973_independants``).
+
 L'assiette abattue : pour les périodes courant à compter du 1er janvier 2025,
 l'assiette sociale de l'indépendant est son revenu avant cotisations, abattu de
 26 %, l'abattement borné entre 1,76 % et 130 % du plafond (L. 136-3, III ;
@@ -26,17 +32,20 @@ import json
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import Carriere, Metier
+from retraite_notionnelle.carriere import AnneeCarriere, Carriere, Metier
 from retraite_notionnelle.config import RACINE_DONNEES
+from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.donnees import regimes
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes
 from retraite_notionnelle.moteur.compte import ConstructeurCompte
 from retraite_notionnelle.remuneration import (
     ConstructeurFiche, bloc_droit_en_vigueur, charger_prelevements, smic_annuel)
+from retraite_notionnelle.saisie import Saisie
 from retraite_notionnelle.simulateur import Simulateur
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -388,3 +397,110 @@ def test_le_portage_javascript_rend_les_memes_plafond_bareme_et_assiette(simulat
                                             pytest.approx(employeur, abs=1e-9)], code
     assert obtenu["abattues"] == [[pytest.approx(a, abs=1e-9), pytest.approx(b, abs=1e-9)]
                                   for a, b in attendu["abattues"]]
+
+
+# -- les points d'avant 1973 -------------------------------------------------
+
+
+def _carriere(affiliation: str, debut: int, fin: int, naissance: int,
+              liquidation: int, part_du_plafond: float, macro) -> Carriere:
+    lignes = [AnneeCarriere(annee=annee, affiliation=affiliation, trimestres_valides=4,
+                            revenu=part_du_plafond * macro.plafond_securite_sociale(annee))
+              for annee in range(debut, fin + 1)]
+    return Carriere(annee_naissance=naissance, sexe="H", lignes=lignes,
+                    age_liquidation=float(liquidation - naissance))
+
+
+def _pensions(simulateur, carriere) -> dict:
+    return {p.regime: p for p in simulateur.scenario_actuel.calculer(carriere)
+            .pensions_par_regime}
+
+
+def test_les_annees_d_avant_1973_ont_leur_regime():
+    """L'artisan et le commerçant de 1949 à 1972 relèvent des droits en points ;
+    la CANCAVA et l'ORGANIC alignées commencent en 1973."""
+    catalogue = CatalogueRegimes(RACINE_DONNEES)
+    affiliations = Simulateur().scenario_actuel.affiliations
+    for statut, avant, apres in (("artisan", "cancava_avant_1973", "cancava"),
+                                 ("commercant", "organic_avant_1973", "organic")):
+        assert affiliations.regimes(statut, 1972) == (avant,)
+        assert apres in affiliations.regimes(statut, 1973)
+        assert catalogue[apres].periodes[0].debut == 1973
+        assert catalogue[avant].periode(1960).type_calcul == "points"
+
+
+@pytest.mark.parametrize("statut, regime, points", [
+    ("artisan", "cancava_avant_1973", 100 / 3),
+    ("commercant", "organic_avant_1973", 20.0),
+])
+def test_un_point_par_trois_ou_cinq_pour_cent_du_plafond(simulateur, statut, regime, points):
+    """D. 634-8 : un point par 3 % du plafond chez l'artisan, par 5 % chez le
+    commerçant, au plafond au plus ; servis à la valeur du 1er janvier 2025
+    (10,6667 € et 14,71063 €, circulaire Cnav 2024/39). Né en janvier 1958
+    avec la durée, parti à 67 ans en janvier 2025 : rien n'est minoré."""
+    valeur = {"cancava_avant_1973": 10.6667, "organic_avant_1973": 14.71063}[regime]
+    for part, attendus in ((2.0, points), (0.5, points / 2)):
+        carriere = Carriere(annee_naissance=1958, sexe="H", age_liquidation=67.0, lignes=[
+            AnneeCarriere(annee=1972, affiliation=statut, trimestres_valides=4,
+                          revenu=part * simulateur.macro.plafond_securite_sociale(1972)),
+            *(AnneeCarriere(annee=annee, affiliation="salarie_prive_non_cadre",
+                            trimestres_valides=4, revenu=30_000.0)
+              for annee in range(1973, 2025))])
+        pension = _pensions(simulateur, carriere)[regime]
+        assert pension.montant == pytest.approx(attendus * valeur, rel=1e-6), pension.detail
+
+
+def test_les_annees_d_avant_1973_sortent_de_la_proratisation(simulateur):
+    """Les treize années de 1960 à 1972 ne sont plus des annuités de la pension
+    alignée, mais des points : 128 trimestres sur 150, et 346,67 points à la
+    valeur de 2005 (8,0199 €)."""
+    pensions = _pensions(simulateur, _carriere(
+        "artisan", 1960, 2004, 1940, 2005, 0.8, simulateur.macro))
+    assert "× 128/150" in pensions["cancava"].detail, pensions["cancava"].detail
+    assert pensions["cancava_avant_1973"].montant == pytest.approx(
+        13 * 0.8 * 100 / 3 * 8.0199, rel=1e-6)
+
+
+def test_la_minoration_de_l_article_3(simulateur):
+    """Un commerçant de 1955 à 1972 seul, parti à soixante ans en 1995 : 72
+    trimestres tous régimes, vingt trimestres jusqu'à soixante-cinq ans, le plus
+    petit des deux décomptes, à 2,5 % chacun — la moitié de ses points."""
+    carriere = _carriere("commercant", 1955, 1972, 1935, 1995, 1.0, simulateur.macro)
+    pension = _pensions(simulateur, carriere)["organic_avant_1973"]
+    valeur = simulateur.scenario_actuel.valeurs_point.service_au(
+        "organic_avant_1973", 1995, 1)[0]
+    assert pension.montant == pytest.approx(18 * 20 * valeur * 0.5, rel=1e-6), pension.detail
+
+
+CAS_AVANT_1973 = [
+    {"statut": "artisan", "naissance": "1945-03-15", "debut": "20",
+     "liquidation": "2005-04"},
+    {"statut": "commercant", "naissance": "1947-06-15", "debut": "19",
+     "liquidation": "2010-01"},
+]
+
+
+def test_les_deux_moteurs_servent_les_memes_points_d_avant_1973():
+    """Le résultat entier, des six scénarios, est le même en Python et en
+    JavaScript pour un artisan et un commerçant entrés avant 1973."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    sys.path.insert(0, str(RACINE / "scripts"))
+    from construire_temoins import _fini
+    contexte = Contexte()
+    attendus = [{"requete": cas,
+                 "resultat": _fini(contexte.simuler(Saisie.depuis_requete(cas)).dictionnaire())}
+                for cas in CAS_AVANT_1973]
+    texte = json.dumps(attendus, ensure_ascii=False)
+    assert "cancava_avant_1973" in texte and "organic_avant_1973" in texte
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        fichier.write(texte)
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", str(RACINE / "tests" / "js" / "comparer.mjs"), chemin],
+            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    finally:
+        Path(chemin).unlink()
+    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]

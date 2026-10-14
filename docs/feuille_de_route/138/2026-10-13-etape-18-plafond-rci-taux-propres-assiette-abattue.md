@@ -2,14 +2,14 @@
 
 **Reprise, au 14 octobre 2026.** Fait : le plafond propre du RCI, le barème
 propre des artisans, l'assiette abattue (13 octobre) ; les cotisations PCV des
-professions de santé, auxiliaires médicaux et chirurgiens-dentistes compris,
-avec la part des caisses au compte (14 octobre, note
-`2026-10-14-etape-18-cotisations-pcv.md`). Reste, une session par point : les
-points d'avant 1973 des artisans et des commerçants, le plus lourd ; les
-points d'incapacité ; le conjoint collaborateur ; les dispenses de l'assiette
-minimale ; la Lodeom. CAVEC et CNBF : action 131 ; Mayotte : action 121. Aux
-pages, la saisie des PCV est faite (sage-femme, biologiste, secteur 2 : note
-`2026-10-14-etape-18-saisie-pcv.md`). Commencer par les points d'avant 1973.
+professions de santé et leur saisie (14 octobre, notes `…-cotisations-pcv.md`
+et `…-saisie-pcv.md`) ; les points d'avant 1973 des artisans et des
+commerçants, servis à part, à la valeur de la Cnav, acquis par l'équivalence de
+D. 634-8 (14 octobre, note `…-points-avant-1973.md`). Reste, une session par
+point : les points d'incapacité ; le conjoint collaborateur ; les dispenses de
+l'assiette minimale ; la Lodeom ; au fac-similé, les classes d'avant 1973.
+CAVEC, CNBF : action 131 ; Mayotte : 121. Commencer par les points
+d'incapacité.
 
 **La demande.** Le propriétaire, le 13 octobre 2026 : « Action 138, étape 18,
 pas encore commencée : commence par l'assiette abattue des indépendants, leurs

@@ -1,0 +1,272 @@
+schema_version: 1
+id: points_avant_1973_independants
+intitule: >-
+  Les années d'artisan et de commerçant de 1949 à 1972 ouvrent des points de retraite,
+  servis à part de la pension alignée : les points acquis, multipliés par la valeur du
+  point de retraite à la date d'effet, liquidables à l'âge légal et minorés, faute de
+  la durée d'assurance tous régimes, par trimestre manquant ou par trimestre qui sépare
+  de l'âge d'annulation de la décote, au plus petit des deux.
+domaine: points
+regimes: [cancava_avant_1973, organic_avant_1973]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- le revenu porté au compte de chaque année de 1949 à 1972, écrêté au plafond de la
+  sécurité sociale de l'année
+- la valeur du point de retraite à la date d'effet (regimes/valeurs_service_datees.csv,
+  regimes/valeurs_point.csv)
+- la durée d'assurance tous régimes, l'âge et la génération, pour la minoration
+ecrit:
+- les points d'avant 1973 et leur pension, au scénario 1, sous les codes
+  cancava_avant_1973 et organic_avant_1973
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: classes_de_cotisation
+  statut: lue
+  textes:
+  - id: LEGIARTI000006764503
+    article: décret n° 64-994, art. 4
+    en_vigueur: 1968-11-10
+    citation: >-
+      « La cotisation annuelle est égale au produit du nombre de points prévu pour
+      chacune des classes de cotisations énoncées ci-après par la valeur du point :
+      Classe I : 4 points. […] Classe XV : 60 points »
+    lu_le: 2026-10-14
+  - id: LEGIARTI000006764504
+    article: décret n° 64-994, art. 5
+    en_vigueur: 1971-01-08
+    citation: >-
+      « la cotisation annuelle normalement exigible est celle de la classe prévue à
+      l'article 4-I qui correspond à leurs revenus professionnels non-salariés annuels
+      […] Lesdits revenus déterminent la classe de cotisation exigible au titre de
+      l'année commençant le 1er janvier suivant, dans les conditions fixées par décret »
+    lu_le: 2026-10-14
+  - id: LEGIARTI000006764529
+    article: décret n° 64-994, art. 26
+    en_vigueur: 1968-11-10
+    citation: >-
+      « Le nombre de points de retraite correspondant à une cotisation annuelle est
+      ainsi fixé : Classe I 4 points. […] Classe XV 60 points » ; « le tableau n° II
+      annexé au présent décret détermine les classes correspondant aux cotisations
+      effectivement versées […] au titre de la période du 1er janvier 1949 au 31
+      décembre 1963 »
+    lu_le: 2026-10-14
+  - id: LEGIARTI000006763964
+    article: décret n° 66-248, art. 3
+    en_vigueur: 1971-03-31
+    citation: >-
+      « chaque assujetti opte pour l'une des trois classes de cotisation ci-après :
+      Classe VIII correspondant à 36 points de cotisation. Classe VII correspondant à
+      24 points de cotisation. Classe VI bis correspondant à 20 points de cotisation.
+      La cotisation de l'assujetti qui n'a pas opté pour l'une des classes ci-dessus
+      est appelée en classe minimale VI bis »
+    lu_le: 2026-10-14
+  - id: LEGIARTI000006763981
+    article: décret n° 66-248, art. 19
+    en_vigueur: 1966-04-22
+    citation: >-
+      « l'allocation est égale au produit de la valeur du point de retraite fixée,
+      comme il est dit ci-après, par la somme des points acquis en raison tant des
+      cotisations versées […] que des années d'activité professionnelle visées à
+      l'article 17-II »
+    lu_le: 2026-10-14
+  - id: LEGIARTI000041966593
+    article: D. 634-8 CSS
+    en_vigueur: 2020-05-25
+    citation: >-
+      « un revenu annuel égal, dans la limite du plafond […] en vigueur au 1er janvier
+      1973, à autant de fois un pourcentage dudit plafond que la dernière cotisation
+      annuelle portée à son compte antérieurement au 1er janvier 1973 comporte de
+      points. Ce pourcentage est fixé à 3 p. 100 en ce qui concerne les professions
+      artisanales et à 5 p. 100 en ce qui concerne les professions industrielles et
+      commerciales »
+    lu_le: 2026-10-14
+  bornes:
+    liquidation.date_effet: [null, 1973-01-01]
+  contenu:
+    droit: >-
+      des points par année de cotisation de 1949 à 1972, selon la classe : imposée par
+      le revenu de l'année précédente chez les artisans (4 à 60 points), choisie chez
+      les commerçants (classe minimale VI bis, 20 points, depuis 1971) ; l'allocation,
+      à soixante-cinq ans, vaut les points multipliés par la valeur du point de
+      retraite. Les mêmes points se liquident après 1972 selon la version suivante
+    parametres:
+      points_par_pourcentage_du_plafond: {artisans: 0.03, commercants: 0.05}
+  exemples: aucun trouvé
+- id: liquidation_a_part
+  statut: lue
+  textes:
+  - id: LEGIARTI000036391704
+    article: L. 634-3 CSS
+    en_vigueur: 2018-01-01
+    citation: >-
+      « Les prestations afférentes aux périodes d'assurance ou d'activité
+      professionnelle non salariée ou périodes assimilées antérieures au 1er janvier
+      1973 demeurent calculées, liquidées et servies dans les conditions définies par
+      les dispositions législatives et réglementaires en vigueur au 31 décembre 1972,
+      sous réserve d'adaptation par décret. Les coefficients de revalorisation
+      mentionnés à l'article L. 161-25 sont applicables aux prestations contributives
+      mentionnées au présent article. »
+    lu_le: 2026-10-14
+  - id: LEGIARTI000006765816
+    article: décret n° 73-937, art. 3
+    en_vigueur: 1990-01-01
+    citation: >-
+      « peuvent être liquidées à compter de l'âge de soixante ans. I - Pour les assurés
+      qui justifient dans les régimes d'assurance vieillesse de base obligatoires de
+      périodes d'assurance ou de périodes reconnues équivalentes d'une durée au moins
+      égale à 150 trimestres, il n'est appliqué aucun abattement sur le montant de la
+      pension. II - […] un coefficient de minoration qui est fonction soit du nombre de
+      trimestres manquant […] soit du nombre de trimestres correspondant à la durée
+      séparant l'âge auquel leur pension prend effet de leur soixante-cinquième
+      anniversaire […] Le plus petit de ces deux nombres est pris en considération.
+      Pour chaque trimestre ainsi retenu le coefficient de minoration à appliquer au
+      montant de la pension est fixé à 2,50 p. 100 »
+    lu_le: 2026-10-14
+  - id: LEGIARTI000006765815
+    article: décret n° 73-937, art. 3
+    en_vigueur: 1976-03-05
+    lu_le: 2026-10-14
+  - id: LEGIARTI000006765817
+    article: décret n° 73-937, art. 3
+    en_vigueur: 1993-08-28
+    lu_le: 2026-10-14
+  - id: LEGIARTI000006765819
+    article: décret n° 73-937, art. 3
+    en_vigueur: 2004-02-19
+    citation: >-
+      « En ce qui concerne les pensions prenant effet postérieurement au 31 décembre
+      2003, le coefficient de minoration à appliquer au montant de la pension est fixé
+      à : 2,5 % pour l'assuré né avant le 1er janvier 1944 ; […] 1,25 % pour l'assuré
+      né après 1952 » ; « Le nombre de 160 trimestres mentionné aux I et II est
+      applicable aux pensions prenant effet postérieurement au 31 décembre 2002, quelle
+      que soit la date de naissance de l'assuré »
+    lu_le: 2026-10-14
+  - id: LEGIARTI000026474703
+    article: décret n° 73-937, art. 3
+    en_vigueur: 2012-10-07
+    lu_le: 2026-10-14
+  - id: LEGIARTI000047634732
+    article: décret n° 73-937, art. 3
+    en_vigueur: 2023-09-01
+    citation: >-
+      « peuvent être liquidées à compter de l'âge prévu par l'article L. 161-17-2 du
+      code de la sécurité sociale. I-Pour les assurés qui justifient […] d'une durée au
+      moins égale à la limite prévue par le deuxième alinéa de l'article L. 351-1 du
+      code de la sécurité sociale, il n'est appliqué aucun abattement » ; « soit de
+      leur soixante-cinquième anniversaire s'ils remplissent les conditions prévues aux
+      1° bis ou 2° de l'article L. 351-8 […] ou, dans le cas contraire, de l'âge prévu
+      au 1° de l'article L. 351-8 »
+    lu_le: 2026-10-14
+  - reference: >-
+      Cnav, barème « Valeur du point de retraite » des artisans et des commerçants
+      (ti_prestation_valeur_point_retraite_commercant_bar) : 10,7637 € et 14,84302 €
+      au 1er janvier 2026 (circulaire 2025/29) ; fiches « Valeur du point de retraite
+      RVB » du RSI, mise à jour du 26 février 2019, de 1988 à 2019
+    lu_le: 2026-10-14
+  bornes:
+    liquidation.date_effet: [1973-01-01, null]
+  contenu:
+    droit: >-
+      les points multipliés par la valeur du point de retraite à la date d'effet,
+      minorés par trimestre manquant à la durée tous régimes ou à l'âge d'annulation de
+      la décote, au plus petit des deux, 2,5 % par trimestre, puis selon la génération
+      de 2,5 % à 1,25 % pour les pensions prenant effet depuis 2004
+  exemples: aucun trouvé
+approximations:
+- ecart: >-
+    les points d'une année se lisent dans le revenu par l'équivalence de D. 634-8 (un
+    point par 3 % du plafond pour l'artisan, par 5 % pour le commerçant, au plafond au
+    plus), et non dans la classe de l'année : les seuils de revenus des classes des
+    artisans et les classes de 1949 à 1970 sont dans des décrets que l'index ne porte
+    qu'en notices ; le commerçant, qui choisissait sa classe, en cotisait vingt points
+    au moins sans rien demander, quand le modèle lui en ouvre moins sous le plafond
+  effet: >-
+    un artisan payé au plafond reçoit 33,3 points par an, la classe XII (36 points) à
+    un dixième près ; à 80 % du plafond, 26,7 points ; un commerçant au plafond, les 20
+    points de la classe minimale, à 80 %, 16
+- ecart: >-
+    ni les points gratuits des années d'activité d'avant 1949 (classe I chez le
+    commerçant, cent vingt points au plus, décret n° 66-248, art. 17 ; tableau de
+    reconstitution chez l'artisan), ni les rachats, ni la bonification des points
+    acquis au 1er décembre 1962 (décret n° 66-248, art. 20), ni la majoration pour
+    ajournement d'avant juillet 1984 (décret n° 73-937, art. 12), ni la bonification
+    des points de la mère sans période d'assurance après 1972, la moyenne
+    trimestrielle de ses points par année d'éducation, huit au plus par enfant (même
+    décret, art. 5)
+  effet: non mesuré ; les carrières du modèle commencent après 1949
+- ecart: >-
+    avant 1990, l'article 3 renvoyait aux règles du régime général ; la fiche applique
+    celles de la rédaction de 1990 (150 trimestres, 2,5 % par trimestre) dès 1973, et
+    coupe à l'année la rédaction du 7 octobre 2012 ; en 2020, la valeur du point est
+    celle des pensions d'au plus 2 000 € par mois
+  effet: non mesuré
+- ecart: >-
+    l'article 3 bis, qui fait liquider ces droits avec la retraite anticipée pour
+    carrière longue, et l'article 3 ter, le versement pour la retraite, ne sont pas
+    modélisés
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-14
+  prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    Les seuils de revenus des classes des artisans de 1969 à 1972 (« dans les conditions
+    fixées par décret », décret n° 64-994, art. 5), les tableaux I et II annexés au même
+    décret pour 1949 à 1968, et l'article 3 du décret n° 66-248 avant sa rédaction du 31
+    mars 1971 (décret n° 71-239) : au fac-similé du Journal officiel, que l'index ne
+    porte qu'en notices.
+  - >-
+    Un exemple chiffré de la Cnav ou de la Sécurité sociale des indépendants : une
+    pension de droits d'avant 1973, ses points et leur valeur.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 634-3 et D. 634-8 CSS ; décret n° 73-937 du 2 octobre 1973, articles 1er, 2, 3
+      (rédactions de 1976, 1990, 1993, 2004, 2012 et 2023), 4, 12 et annexe ; décret n°
+      64-994 du 17 septembre 1964, articles 3 à 6 et 26 ; décret n° 66-248 du 31 mars
+      1966, articles 3 à 6, 17 à 21 ; lus dans l'index LEGI du dépôt
+    date: 2026-10-14
+  - type: circulaire_cnav
+    reference: >-
+      barème « Valeur du point de retraite », artisans et commerçants, circulaires
+      2020/5, 2020/9, 2021/1, 2022/3, 2022/19, 2023/3, 2023/34, 2024/39 et 2025/29 ;
+      fiches RVB du RSI (1988-2019) qu'il cite
+    url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=ti_prestation_valeur_point_retraite_commercant_bar.aspx
+    date: 2026-10-14
+  - type: autre
+    reference: >-
+      barèmes IPP, retraites.independants.pt_organic et pt_cancava, avant 1988
+    url: https://baremes.ipp.eu/parameters/regimes-de-retraites/
+    date: 2026-10-14
+code:
+  python: >-
+    droit/acquerir.py (les points d'un barème en points, `points_maximum` rapporté à
+    l'assiette plafonnée) ; droit/liquider.py (valeur du point à la date d'effet,
+    abattement_regime_de_base)
+  javascript: >-
+    moteur/js/droit/acquerir.js et moteur/js/droit/liquider.js, mêmes chemins
+  parametres: >-
+    regimes/cancava_avant_1973.yaml, regimes/organic_avant_1973.yaml,
+    legislation/affiliations.yaml, regimes/valeurs_point.csv,
+    regimes/valeurs_service_datees.csv
+  tests: tests/test_independants.py
+referents:
+  baremes_ipp: porte la valeur du point des commerçants depuis 1951 et des artisans depuis 1974
+  openfisca_france: porte la valeur du point, sans le barème d'acquisition
+historique:
+- >-
+  2026-10-14 — action 138, étape 18 : le dépôt servait ces années en annuités de la
+  pension alignée, comptées dans sa proratisation, la période en points des fiches
+  cancava et organic n'étant lue qu'à l'acquisition, au rendement estimé de 9 % ; elles
+  ont leur régime, leurs points et la valeur que la Cnav publie.
+reformes: []
+effet: >-
+  Les artisans et commerçants en activité avant 1973, nés avant 1958 environ. Un
+  artisan à 80 % du plafond de 1960 à 2004, né en 1940, parti en 2005 : sa pension
+  alignée perd les treize années d'avant 1973 de sa proratisation (128/150 au lieu de
+  150/150, −1 722 €), et ses 346,67 points en rendent 2 780 € ; sa pension de base
+  monte de 11 739 € à 12 798 €. Un artisan de 1955 à 1972 seul, parti en 2000 : 480
+  points, 3 501 € au lieu de 3 828 € d'annuités.

@@ -122,6 +122,17 @@ pivots:
     - {texte: "Code de la sécurité sociale", num: L634-2, parametres: [alignement]}
   organic:
     - {texte: "Code de la sécurité sociale", num: L634-2, parametres: [alignement]}
+  # Les droits d'avant 1973 (action 138, étape 18) : servis à part (L. 634-3),
+  # leurs points lus par l'équivalence de D. 634-8, liquidés selon l'article 3
+  # du décret n° 73-937.
+  cancava_avant_1973:
+    - {texte: "Code de la sécurité sociale", num: L634-3, parametres: [type_calcul]}
+    - {texte: "Code de la sécurité sociale", num: D634-8, parametres: [points_maximum]}
+    - {texte: "Décret n°73-937", num: "3", parametres: [age_ouverture, duree_requise_trimestres, decote_par_trimestre]}
+  organic_avant_1973:
+    - {texte: "Code de la sécurité sociale", num: L634-3, parametres: [type_calcul]}
+    - {texte: "Code de la sécurité sociale", num: D634-8, parametres: [points_maximum]}
+    - {texte: "Décret n°73-937", num: "3", parametres: [age_ouverture, duree_requise_trimestres, decote_par_trimestre]}
   rsi:
     - {texte: "Code de la sécurité sociale", num: L634-2, parametres: [alignement]}
   rco_artisans:

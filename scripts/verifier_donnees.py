@@ -3298,6 +3298,24 @@ def source_valeurs_point_rci_cnav() -> dict[tuple, float]:
     }
 
 
+def source_valeurs_point_avant_1973() -> dict[tuple, float]:
+    """Valeur du point de retraite des droits d'avant 1973 des artisans et
+    des commerçants (action 138, étape 18).
+
+    La Cnav la publie depuis 2020 dans sa base de législation, et cite pour
+    1988 à 2019 les fiches « Valeur du point de retraite RVB » du RSI ; l'IPP
+    la transcrit avant. Ce sont des transcriptions de la décision de la caisse
+    nationale, puis de la revalorisation de L. 161-25 : niveau `haute`.
+    """
+    return {
+        tuple(cle.split("|")): valeur
+        for cle, valeur in sorted(
+            _serie_json("cnav_points_avant_1973.json",
+                        "scripts/fetch/cnav_points_avant_1973.py").items()
+        )
+    }
+
+
 def source_valeurs_point_msa() -> dict[tuple, float]:
     """Valeur de service du point de la complémentaire agricole, dans le code rural.
 
@@ -8124,6 +8142,19 @@ CERTIFICATIONS = (
         source=source_valeurs_point_rci_cnav,
         origine="Cnav, base de législation : barèmes du point RCI "
                 "(circulaires Cnav 2023/33, 2024/36 et 2025/31)",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="haute",
+    ),
+    Certification(
+        nom="valeurs_point_avant_1973",
+        chemin=REFERENCE / "regimes" / "valeurs_point.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_valeurs_point_avant_1973,
+        origine="Cnav, base de législation : barème de la valeur du point des "
+                "droits d'avant 1973 (circulaires 2020/5 à 2025/29) et fiches RVB "
+                "du RSI de 1988 à 2019 ; IPP avant 1988",
         decimales=6,
         tolerance=5e-7,
         niveau="haute",

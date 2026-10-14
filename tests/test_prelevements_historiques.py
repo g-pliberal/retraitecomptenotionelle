@@ -145,7 +145,8 @@ def test_la_maladie_des_pensions_des_autres_regimes_de_base(historique, courants
     regimes = historique.regimes_des_pensions
     assert {"regime_general", "msa_salaries"} <= regimes["maladie_regime_general"]
     assert {"fonction_publique_etat", "cnracl"} <= regimes["maladie_fonction_publique"]
-    assert {"cancava", "organic", "cnavpl", "cnbf"} == regimes["maladie_independants"]
+    assert {"cancava", "cancava_avant_1973", "organic", "organic_avant_1973", "cnavpl",
+            "cnbf"} == regimes["maladie_independants"]
     # Une pension n'est comptée que dans une cotisation.
     groupes = [*regimes.values(), courants.pensions.regimes_maladie]
     assert sum(len(g) for g in groupes) == len(frozenset().union(*groupes))

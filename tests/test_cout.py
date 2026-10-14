@@ -683,8 +683,12 @@ RECONSTITUTION_DEPUIS = 2000
 #: vieillesse des premiers non-salariés, que la dépense observée ne compte pas
 #: — un défaut qui en compensait un autre (voir le test) ; -13,9 % le
 #: 14 octobre, l'étape 19 servant au scénario 1 les revalorisations que son
-#: droit a servies, et non les prix.
-RECONSTITUTION_CLIQUET = 0.14
+#: droit a servies, et non les prix ; -14,1 % le même jour, l'étape 138.18
+#: servant en points, et non plus en annuités, les années d'avant 1973 des
+#: artisans et des commerçants : sous le plafond, l'équivalence de D. 634-8
+#: leur ouvre moins que la classe minimale des commerçants (voir la fiche
+#: ``points_avant_1973_independants``), et les premières générations baissent.
+RECONSTITUTION_CLIQUET = 0.142
 #: Ce que vise le cliquet : quelques pour cent, chaque année.
 RECONSTITUTION_CIBLE = 0.05
 
