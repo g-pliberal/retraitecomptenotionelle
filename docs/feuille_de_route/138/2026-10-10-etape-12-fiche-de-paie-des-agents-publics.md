@@ -5,12 +5,9 @@ public, dans les deux moteurs (10 octobre) ; le micro-entrepreneur saisi par son
 chiffre d'affaires et son activité, abattu de 71, 50 ou 34 %, la Cipav routée
 vers le libéral (14 octobre). Reste, une session par point : la veille du projet
 de loi de financement pour 2027, à son vote ; du micro-entrepreneur, le revenu
-qui valide les trimestres et sa cotisation notionnelle ; puis, au rang léger, le
-coût du travail complet du privé (la taxe sur les salaires, le forfait social,
-les taxes hors protection sociale), la seconde pension revalorisée et
-replafonnée, les artistes-auteurs sous le seuil, la dispense des cotisations
-minimales, le rachat de trimestres, le dirigeant assimilé salarié. Détail :
-« Ce qui reste », ici et dans `2026-10-14-etape-12-micro-entrepreneur.md`.
+qui valide les trimestres et sa cotisation notionnelle ; puis les points légers
+que nomme le 5 de « Ce qui reste ». Détail : « Ce qui reste », ici et dans
+`2026-10-14-etape-12-micro-entrepreneur.md`.
 
 **Le 10 octobre 2026, la demande.** Le propriétaire : porter sur la fiche de
 paie, en Python puis en JavaScript, la cotisation de la RAFP sur les primes,
@@ -147,4 +144,8 @@ qui en hérite.
    encore « le traitement indiciaire brut ne bouge pas » et son incidence « est
    tenu fixe », que le partage du 20 septembre a rendus faux ; une ligne de
    l'indemnité au tableau.
-5. *Le reste de l'étape* : voir le bloc « Reprise ».
+5. *Le reste de l'étape*, au rang léger après le micro-entrepreneur : le coût
+   du travail complet du privé (la taxe sur les salaires, le forfait social,
+   les taxes hors protection sociale), la seconde pension revalorisée et
+   replafonnée, les artistes-auteurs sous le seuil, la dispense des cotisations
+   minimales, le rachat de trimestres, le dirigeant assimilé salarié.

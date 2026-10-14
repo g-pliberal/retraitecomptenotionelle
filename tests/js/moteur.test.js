@@ -342,7 +342,12 @@ test("les sections de santé minorent comme leurs règlements", () => {
     const majoration = r.avantages_appliques
       .filter((a) => a.code === "majoration_enfants")
       .reduce((somme, a) => somme + a.montant, 0);
-    const pensions = r.pensions_par_regime.reduce((somme, p) => somme + p.montant, 0);
+    // Les prestations complémentaires de vieillesse des auxiliaires médicaux
+    // n'ont aucune majoration (guide de la CNAVPL, 2025, p. 95-96), comme
+    // dans `tests/test_sections_sante.py`.
+    const pensions = r.pensions_par_regime
+      .filter((p) => p.regime !== "asv_auxiliaires_medicaux")
+      .reduce((somme, p) => somme + p.montant, 0);
     proche(majoration / pensions, 0.10);
   }
 
