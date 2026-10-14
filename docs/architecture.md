@@ -1742,7 +1742,12 @@ au propriétaire. Le quatrième, l'invalidité et l'inaptitude, a été ouvert l
 30 septembre 2026, à la demande du propriétaire, et clos le 1er octobre, la
 proposition n'en faisant pas exception. Le cinquième, les carrières hors de
 France, a été ouvert le 1er octobre 2026, à la demande du propriétaire, et
-clos le même jour, la proposition n'en faisant pas exception non plus.
+clos le même jour, la proposition n'en faisant pas exception non plus. La
+mesure du 14 octobre 2026, sur les personnes qui en relèvent faute de
+retraités dénombrés, place les périodes assimilées manquantes devant les
+départs anticipés particuliers, puis les rachats et les régimes hors champ ;
+elles ont été ouvertes ce jour-là, sixième domaine (feuille de route,
+action 130).
 
 ---
 
