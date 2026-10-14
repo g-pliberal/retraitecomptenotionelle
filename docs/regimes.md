@@ -390,6 +390,40 @@ l'index JORF et LEGI du dépôt et n'y ont pas laissé de texte propre.
 - **Caisse des retraites de l'Imprimerie nationale** : le régime est nommé par
   `R*77` du code des pensions et par `R. 711-1`, mais sa date de fermeture ne
   l'est pas.
+- **Les pistes de l'action 145, relues le 14 octobre 2026** (étape 3). Aucune
+  n'est inscrite : aucune n'a de règlement dans l'index, et la plupart
+  rejoignent un régime que l'inventaire porte déjà.
+  - *Caisse générale de retraites de la presse française* : l'ordonnance
+    n° 45-2411 (affiliation obligatoire du personnel des organismes de presse)
+    n'est connue que par son analyse ; `R. 731-16` (`LEGIARTI000006753038`) la
+    range parmi les institutions du titre III du livre VII, et la caisse de la
+    presse et de la communication devient en 1993 la Caisse nationale des
+    cadres de la presse, institution de retraite complémentaire (arrêté du
+    24 décembre 1993) : une complémentaire de salariés, à rattacher aux
+    régimes professionnels intégrés si le texte de son intégration se trouve.
+  - *Ingénieurs de l'industrie des minéraux solides* : une caisse de retraite
+    complémentaire de cadres, prévue par l'article 26 d'un décret du 14 juin
+    1946, autorisée par l'arrêté du 20 septembre 1947 ; rien d'autre dans
+    l'index. Écartée comme régime distinct.
+  - *Institut de France* : le décret n° 49-1372 « institu[e] un régime
+    complémentaire de retraite » de son personnel, connu par son seul titre ;
+    rien d'autre. Écarté, faute de texte.
+  - *Praticiens-conseils du contrôle médical* : l'arrêté du 28 mars 1963, pris
+    sur un article du statut de 1961 que le Conseil d'État a jugé illégal
+    (12 mars 1965) ; depuis le décret n° 69-505 (article 19,
+    `LEGIARTI000006776867`), ils relèvent de la convention collective de
+    prévoyance des organismes sociaux, la CPPOSS, que la ligne des régimes
+    professionnels intégrés porte. Écartés.
+  - *ONIVIT* : le décret n° 77-871, que le décret n° 79-814 modifie, affilie
+    ses agents à la sécurité sociale et à l'Ircantec (décret n° 70-1277) ; le décret n° 83-1267 (article 12, `LEGIARTI000006603947`) en
+    fait autant pour les offices agricoles. Pas de régime propre. Écarté.
+  - *Crédit municipal de Paris* : ses fonctionnaires relèvent de la CNRACL
+    (décret n° 2003-1306, article 17). Écarté.
+  - *Entrepôt réel des douanes du Havre* : un décret du 30 septembre 1938
+    porte un « régime normal de retraite » de ses employés, en règlement
+    annexé, connu par son analyse ; sa fermeture n'est pas dans l'index.
+    Reste une piste, au fac-similé du Journal officiel.
+  - *Condition des soies de Lyon* : aucun texte dans l'index. Écartée.
 
 ## L'étape suivante : les règles à travers l'histoire
 
