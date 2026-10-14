@@ -6311,13 +6311,13 @@ de `contribution_etat`.
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
 **Reprise, au 14 octobre 2026.** Faite, l'étape 1 : la carte des jumeaux,
-`python scripts/jumeaux.py`, qui range les 70 paires de la plus facile à
-retirer à la plus difficile, avec tout ce qui dépend de chaque jumeau, et
-`--couverture`, ce que les tests de concordance en exécutent. Reste l'étape
-2, la note de décision qui récrit le principe 4, que le propriétaire valide
-avant tout retrait ; puis le pilote, le lecteur du relevé (`web/releve_lu.py`,
-rang 1). Commencer par la note. Détail :
-`161/2026-10-14-etape-1-la-carte-des-jumeaux.md`.
+`python scripts/jumeaux.py`. L'étape 2 attend le propriétaire : la note de
+décision 0003, qui récrit le principe 4, est proposée dans
+`161/2026-10-14-etape-2-la-note-de-decision.md`. Validée, elle entre sous
+`docs/decisions/`, et la session qui l'y range récrit le principe 4 et le
+§ 7.1, ajoute la ligne de « Où va quoi », la version de l'architecture et les
+consignes de `src/` et de `moteur/` ; corrigée, elle se reprend dans sa note.
+Rien ne se retire avant. Ensuite, le pilote : le lecteur du relevé.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
@@ -6358,14 +6358,15 @@ d'elle-même, avant tout retrait, et se mène sur n'importe quelle paire.
 **Ce qui est à faire**, une étape par session :
 
 1. **La carte des jumeaux** — faite le 14 octobre 2026.
-2. **La note de décision** : le principe 4 récrit, la règle de l'endroit, la
-   méthode, et ce que le pont devra tenir ; validée par le propriétaire.
+2. **La note de décision** — proposée le 14 octobre 2026, à valider : le
+   principe 4 récrit, la règle de l'endroit, la méthode, et ce que le pont
+   devra tenir.
 3. **Le pilote** : le lecteur du relevé (`web/releve_lu.py` et
    `releve-lu.js`), que ni le coût ni la fabrique n'atteignent.
 4. **Les deux autres paires hors du coût et de la fabrique**, chacune tranchée
    à sa relecture : `cycle_de_vie.py`, dont le jumeau attend l'étape 10 de
    l'action 138, qui l'affiche ; `scripts/fetch/lecture_pdf.py`, dont quatorze
-   scripts de lecture des sources ont besoin hors du site.
+   scripts de la fabrique ont besoin hors du site.
 5. **Le pont** : le coût et la fabrique font tourner le moteur JavaScript par
    node, jusqu'à des témoins et des agrégats identiques.
 6. **Les paires du moteur**, une à une, dans l'ordre de la carte, relecture
