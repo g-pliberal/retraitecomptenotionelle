@@ -7451,16 +7451,16 @@ départs très tardifs atteignent pour la première fois, à relire au texte.
 
 ### 152. Les cas types statutaires et non salariés à leur place dans l'EIR : le niveau et la carrière de chacun — `en cours`
 
-**Reprise, au 13 octobre 2026.** Faites, les étapes 1 à 3 : le militaire est le
-militaire moyen du jaune budgétaire, et la population est remesurée ; la CNRACL
-et l'exploitant agricole gardent leur cas type, l'exploitant parce que sa
-carrière tient et que la page ne sert pas aux pensions agricoles déjà liquidées
-leurs relèvements. Reste, un groupe par session : les professions libérales
-(72,2 % des hommes au cinquième quintile, pour 45,1 dans l'EIR), puis les civils
-de l'État. Commencer par la ligne des professions libérales dans les quintiles
-des résidents et par ce que la CNAVPL et la DREES publient de leurs pensions.
-Chantiers à part : la dispersion des carrières statutaires ; les relèvements
-agricoles, avec `cout.py` (action 147). Détail : les notes des étapes.
+**Reprise, au 14 octobre 2026.** Faites, les étapes 1 à 3 : le militaire au
+militaire moyen du jaune budgétaire, la population remesurée ; l'exploitant
+agricole garde son cas type. La CNRACL et les civils de l'État sont recalés
+sur les départs de 2025 par l'action 159 (étape 5) : l'agent de la CNRACL au
+taux plein, les deux civils entrés tard dans leur régime. Reste, un groupe par
+session : les professions libérales (72,2 % des hommes au cinquième quintile,
+pour 45,1 dans l'EIR), puis la place des deux civils dans les quintiles.
+Commencer par la ligne des professions libérales dans les quintiles des
+résidents. Chantiers à part : la dispersion des carrières statutaires ; les
+relèvements agricoles (action 147). Détail : les notes des étapes.
 
 **D'où elle vient.** La population de l'action 136 (étape 6), rangée le
 12 octobre 2026 dans les quintiles de la pension en équivalent carrière
@@ -7514,6 +7514,14 @@ dispersion des carrières statutaires dans la population un chantier à part.
 **Décidé le 13 octobre 2026 par le propriétaire**, sur la lecture des
 exploitants agricoles (note de l'étape 3) : garder leur cas type ; faire des
 relèvements des pensions agricoles déjà liquidées un chantier à part.
+
+**Le 14 octobre 2026**, à l'étape 5 de l'action 159, devant le choix de
+garder, de déplacer ou de scinder l'agent de la CNRACL sur les départs de 2025
+du jaune pensions, le propriétaire a demandé « ce qui est le plus propre ». La
+session a déplacé le cas type : au taux plein, à 0,9 salaire moyen, entré à la
+CNRACL après six ans de contrat sur la page Coût ; et fait entrer le civil de
+l'État dans son régime au délai que mesurent les services du jaune. Le détail :
+la note de cette étape (`docs/feuille_de_route/159/`).
 
 **Ce que le propriétaire tranche** : s'il faut un cas type de plus par groupe
 plutôt que déplacer celui qui existe, et l'ordre des groupes.

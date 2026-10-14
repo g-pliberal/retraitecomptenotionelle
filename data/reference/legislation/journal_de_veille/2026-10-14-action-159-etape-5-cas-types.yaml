@@ -1,0 +1,27 @@
+date: "2026-10-14"
+session: "action 159, étape 5 : les cas types statutaires recalés sur les départs de 2025 du jaune pensions annexé au PLF 2027"
+consulte: >-
+  Aucune source de droit nouvelle : la session ne touche à aucune règle du
+  scénario 1. Le jaune pensions annexé au PLF 2027 (`sre_jaune_pensions_2027`,
+  tiré de la branche `jaune-2027`, empreinte vérifiée) : tableaux B-3, B-4 et
+  B-5 (départs de 2025), 94 à 97 (durée de référence, services et
+  bonifications des civils, caractéristiques des pensions militaires), 102
+  (âges de départ à la CNRACL de 2005 à 2025). Dans le moteur, le barème de
+  décote de la fonction publique (`decote_fonction_publique.csv`,
+  `DecoteFonctionPublique`) et l'âge du taux plein que lit le pilote
+  (`ouvrir.age_taux_plein_droit`).
+trouve: >-
+  L'agent de la CNRACL part désormais au taux plein, à 0,9 salaire moyen, et
+  les deux civils entrent dans leur régime après six ans de contrat sur la page
+  Coût : leur pension de 2025 tombe à 1 et 3 % de celle de leur groupe. Le
+  pilote ne lit pas la montée en charge de la décote de la fonction publique,
+  que la liquidation applique (rien avant 2006, puis la limite d'âge moins
+  seize à zéro trimestres) : il fait attendre l'agent actif jusqu'à 60 ans de
+  2006 à 2016, quand ses collègues partaient de 56 à 59 ans. Au tableau B-5,
+  les services de la colonne totale ne recoupent pas ceux des deux versants
+  (127,6 trimestres aux actifs, pour 120,0).
+reste: >-
+  Faire lire au pilote le barème de décote de la fonction publique, en Python
+  et en JavaScript, en suivant docs/veille_droit.md ; scinder la CNRACL entre
+  actifs et sédentaires ; les bonifications du militaire que le simulateur ne
+  saisit pas.
