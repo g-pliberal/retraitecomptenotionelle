@@ -1644,7 +1644,28 @@ sources:
       Le modèle de projection de la DREES : hypothèses démographiques et
       d'emploi, et la manière dont il projette les carrières. À confronter à
       la trajectoire d'emploi du COR que le dépôt a adoptée à l'action 46.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-14"
+    note: >-
+      Dépouillée le 14 octobre 2026 (action 89, lot des modèles publics) :
+      lue en entier pour le registre des modèles,
+      data/reference/referents.yaml (`trajectoire`), au commit `0963b57`,
+      encore la tête de sa branche ce jour-là (`git ls-remote`), et exécutée
+      à part le 5 octobre (scripts/fetch/trajectoire.py,
+      tests/temoins/trajectoire.json, tests/test_trajectoire.py). Ce qu'elle
+      apporte : une population, des départs modélisés, et des règles du
+      scénario 1 que le dépôt n'avait pas — majoration exceptionnelle de
+      2023, versements uniques des complémentaires, bonifications de
+      service, minima des exploitants —, reprises ou confiées aux chantiers
+      de l'action 138 ; le dépôt en prend ses taux de cotisation moyens, au
+      manifeste (`drees_trajectoire_taux_moyens`). Ce qui la contredit : sa
+      version publique ignore la loi du 30 décembre 2025 (la génération 1964
+      à 63 ans et 171 trimestres), et dix-neuf écarts au registre. La
+      trajectoire d'emploi que cette ligne voulait confronter n'est pas la
+      sienne : elle prolonge les carrières de l'EIC, calées sur les
+      cotisants et le chômage du COR, d'où vient aussi celle que le dépôt a
+      adoptée à l'action 46 ; reste sa population, au CASD (138.14). À
+      relire à sa prochaine version publique.
 
   - id: drees_trajectoire_page
     url: https://drees.solidarites-sante.gouv.fr/sources-outils-et-enquetes/le-modele-trajectoire
@@ -5656,10 +5677,23 @@ sources:
       Les règles de 2014 de cinq régimes, d'où vient l'architecture
       d'OpenFisca-France-Pension : à lire pour savoir ce que celui-ci en a
       hérité.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-14"
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
+      Dépouillée le 14 octobre 2026 (action 89, lot des modèles publics) :
+      lue en entier pour le registre des modèles,
+      data/reference/referents.yaml (`til_pension`), au commit `c4e0d50`,
+      encore sa tête ce jour-là ; l'IPP donne le projet pour terminé. Le
+      droit de 2014 du régime général, du RSI, de la fonction publique, de
+      l'Agirc et de l'Arrco, sans réversion, ni régimes spéciaux, ni minimum
+      garanti. Le dépôt en a pris la majoration de l'Agirc-Arrco pour
+      enfants à charge (138.17) et la confirmation de l'assiette de l'AVPF
+      (138.16). Ce qui la contredit : un trimestre pour 200 heures de SMIC
+      dès 1945, et un droit arrêté en 2014. Ce qu'OpenFisca-France-Pension
+      en a hérité ne s'est pas lu ici : la ligne `openfisca_france_pension`
+      est laissée à l'action 153.
 
   - id: ipp_pensipp
     url: https://github.com/abozio/PENSIPP
@@ -5671,10 +5705,23 @@ sources:
       2013 (`OutilsCN.R`, `Simulations/CN`) : la seule autre mécanique
       notionnelle française qui se lise. Sans licence : se lit, ne se copie
       pas.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-14"
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
+      Dépouillée le 14 octobre 2026 (action 89, lot des modèles publics) :
+      lue en entier pour le registre des modèles,
+      data/reference/referents.yaml (`pensipp`), au commit `fbaf3fa`, du 22
+      mai 2013, encore sa tête ce jour-là. Sans licence : elle se lit et se
+      cite, ne se copie pas. Elle ne fait mieux que le dépôt sur aucune
+      règle en vigueur, et son droit s'arrête en 2011 ; son salaire de base
+      prend les meilleures années avant 1973 aussi. Ce qu'elle apporte tient
+      à la proposition : sa conversion en comptes notionnels et son
+      diviseur, que le README du dépôt ne tranche pas, les crédits de
+      périodes non cotisées, désactivables, et quatre règles de départ —
+      trois choix laissés au propriétaire au registre (`a_trancher`) —, et
+      l'application à une génération du barème d'une année donnée (138.10).
 
   - id: insee_destinie_2
     url: https://github.com/InseeFr/Destinie-2
@@ -5685,10 +5732,24 @@ sources:
       La réversion, l'ASPA et les majorations pour enfants, calculées par un
       modèle dont les paramètres ne viennent pas de l'IPP : la confirmation
       indépendante que trois fiches attendent.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-14"
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git ls-remote` et `git
       clone` acceptés (1er octobre 2026).
+      Dépouillée le 14 octobre 2026 (action 89, lot des modèles publics) :
+      lue en entier pour le registre des modèles,
+      data/reference/referents.yaml (`destinie_2`), au commit `4c1d34b`,
+      encore sa tête ce jour-là, et exécutée à part le 5 octobre. C'est la
+      confirmation indépendante que cette ligne cherchait : la réversion,
+      l'ASPA du ménage et les enfants, confrontés, et des séries longues
+      (minimum contributif depuis 1984, minimum vieillesse depuis 1970) ;
+      quatre règles du scénario 1 qui manquaient au dépôt, et quinze autres
+      apports, sont repris ou confiés aux chantiers de l'action 138. Ce qui
+      la contredit : vingt-cinq écarts au registre, dont onze où elle a tort
+      outre la loi du 30 décembre 2025 ; trois points restent à trancher
+      (138.13), dont le plafond de la majoration pour enfants des
+      fonctionnaires avec surcote.
 
   - id: insee_ines
     url: https://gitlab.com/insee_drees_cnaf/ines-public
@@ -5722,11 +5783,27 @@ sources:
       Les âges et les durées par génération, caisse et catégorie, et les
       revalorisations par caisse : une table à opposer aux nôtres, écart par
       écart ; sa durée requise de 1964 et 1965 est déjà en écart.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-14"
     note: >-
       Mesuré le 1er octobre 2026 par `scripts/fetch/sonder_sources.py` : la
       page est une coquille que le JavaScript remplit. Le code, lui, se
       clone (`git clone`, le même jour).
+      Dépouillée le 14 octobre 2026 (action 89, lot des modèles publics) :
+      lue en entier pour le registre des modèles,
+      data/reference/referents.yaml (`legiretraite`), au commit `98d2cbb`,
+      du 18 septembre, encore sa tête ce jour-là. Ce qu'elle apporte : les
+      âges et les durées par génération, caisse et catégorie, et les tables
+      de l'EACR de mai 2026, dont la répartition des retraités par taux de
+      CSG, confiée au chantier 138.3. Le dépôt ne prend rien de ses
+      paramètres, qui ne valent pas mieux que ses séries certifiées. Ce qui
+      la contredit : sa durée requise en est restée à la loi de 2023 (171
+      trimestres pour 1964, 172 pour 1965, et de même pour les actifs,
+      l'Agirc-Arrco et la proratisation), quand
+      data/reference/legislation/duree_assurance_requise.csv, inchangé ce
+      jour, certifie 170, puis 171 pour les nés depuis avril 1965 ; ses
+      actifs ouvrent à 58 ans dès janvier 1970, contre le décret n°
+      2023-435.
 
   - id: drees_edifis
     url: https://git.drees.fr/drees_code_public/outils/edifis
@@ -5736,7 +5813,18 @@ sources:
     a_en_tirer: >-
       Les taux de cotisation vieillesse et Agirc-Arrco de 2015 à 2025, d'une
       source indépendante des barèmes de l'IPP.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-14"
+    note: >-
+      Dépouillée le 14 octobre 2026 (action 89, lot des modèles publics) :
+      lue en entier pour le registre des modèles,
+      data/reference/referents.yaml (`edifis`), au commit `95ef983`, encore
+      sa tête ce jour-là. Rien sur les pensions. Elle apporte un barème des
+      cotisations année par année, indépendant de l'IPP, qui montre que le
+      dépôt applique au régime général des moyennes par période (chantier
+      138.12), et un coût du travail complet ; son seul écart, le quart de
+      part du plafond du taux réduit, est au registre, la source qui le
+      tranche restant à citer.
 
   - id: dgtresor_saphir
     url: https://github.com/DGTresor/Saphir
@@ -5789,10 +5877,20 @@ sources:
       Les articles de l'âge, du taux plein, de l'inaptitude et de l'ASPA,
       transcrits mot à mot : l'écart de la génération 1967 y reste, d'autres
       sont à chercher.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-14"
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
+      Dépouillée le 14 octobre 2026 (action 89, lot des modèles publics) :
+      lue en entier pour le registre des modèles,
+      data/reference/referents.yaml (`catala`), au commit `2694b17`, encore
+      sa tête ce jour-là. Son avance est la traçabilité, chaque règle sous
+      l'alinéa qu'elle transcrit (155.1). Ses règles de retraite, d'avant la
+      LFSS pour 2026, ouvrent mal les droits de la génération 1967 et ne
+      valent pas référence ; son SMIC de Mayotte s'arrête en novembre 2024,
+      avec un conflit de dates. Le dépôt en prendra ce SMIC, décret par
+      décret, pour les trimestres de la caisse de Mayotte (138.18).
 
   - id: dgfip_ir_catala
     url: https://gitlab.adullact.net/dgfip/ir-catala
@@ -5869,10 +5967,21 @@ sources:
       Les âges et les durées par génération sous trois états du droit,
       vérifiés au texte le 9 septembre 2026 : un recoupement de la suspension
       de la loi du 30 décembre 2025.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-14"
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
+      Dépouillée le 14 octobre 2026 (action 89, lot des modèles publics) :
+      lue en entier pour le registre des modèles,
+      data/reference/referents.yaml (`simulateur_aurain`), au commit
+      `59b7985`, encore sa tête ce jour-là. Ses âges et ses durées sous
+      trois états du droit n'ont au registre qu'un écart : une sortie de
+      suspension en 2028, qui n'est pas dans la loi. Le dépôt en a pris la
+      part des reportés restés en emploi (138.3) ; restent à reprendre
+      l'effet retour d'une baisse des pensions (138.5), ses seuils de CSG
+      par parts (138.2), et le contrefactuel de la suspension au trimestre
+      (138.10).
 
   - id: lfi_outil_retraite
     url: https://github.com/ataieb3342/lfi-site
@@ -5883,10 +5992,21 @@ sources:
       L'âge d'ouverture et la durée requise par génération sous trois états
       du droit (`src/lib/boite-a-outils/retraite/outil.js`) : une lecture de
       plus de la suspension.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-14"
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
+      Dépouillée le 14 octobre 2026 (action 89, lot des modèles publics) :
+      lue en entier pour le registre des modèles,
+      data/reference/referents.yaml (`outil_quand_partir`), au commit
+      `94616bc` ; sa tête, `0121861` ce jour-là, n'a changé depuis que des
+      pages étrangères à la retraite (six commits, du 1er au 7 octobre, rien
+      sous src/lib/boite-a-outils/retraite). Sans licence. Elle n'apporte
+      que le contrefactuel déjà au registre (138.10). Ce qui la contredit :
+      toute la génération 1961 à 62 ans et 3 mois avec 169 trimestres, et un
+      âge de départ opposé à l'espérance de vie sans incapacité à la
+      naissance, un contresens.
 
   - id: sud_education_simulateur
     url: https://github.com/Brndan/simulateur-retraites
@@ -5896,10 +6016,21 @@ sources:
     a_en_tirer: >-
       La pension des enseignants au droit de 2020 : un cas type de la fonction
       publique, rejouable au scénario 1 à cette date.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-14"
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
+      Dépouillée le 14 octobre 2026 (action 89, lot des modèles publics) :
+      lue en entier pour le registre des modèles,
+      data/reference/referents.yaml (`simulateur_sud_education`), au commit
+      `eec62c9`, du 5 septembre 2020, encore sa tête ce jour-là. Elle
+      n'apporte que la saisie de l'enseignant par son corps et son échelon
+      (138.10). Son cas type au droit de 2020 ne se rejoue pas : son calcul
+      cumule cinq erreurs ou retards — décote sans borne, prorata non
+      plafonné, minimum contributif servi aux fonctionnaires, contractuels
+      sur vingt-cinq années, durées de la loi de 2014 —, que les textes
+      tranchent en faveur du dépôt, et ce n'est pas un exemple officiel.
 
   - id: devcrafting_retraites
     url: https://github.com/devcrafting/retraites
@@ -5909,10 +6040,21 @@ sources:
     a_en_tirer: >-
       Le régime général, les indépendants et la Cipav au droit de 2020, en F#
       : un calcul de plus à relire.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-14"
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
+      Dépouillée le 14 octobre 2026 (action 89, lot des modèles publics) :
+      lue en entier pour le registre des modèles,
+      data/reference/referents.yaml (`devcrafting_retraites`), au commit
+      `2312ebd`, du 21 janvier 2020, encore sa tête ce jour-là. Sans
+      licence. Le dépôt en a pris le plafond propre de la première tranche
+      du RCI et le taux propre des artisans au-dessus du plafond (138.18),
+      et le 1 % maladie de la complémentaire (138.2). Ce qui la contredit :
+      six écarts au registre — prorata non plafonné, décote changée en
+      surcote, coefficients Agirc-Arrco au-dessus de 1, seconde tranche du
+      RCI, durée de 2014, salaire moyen non revalorisé.
 
   - id: calcul_verification_pension
     url: https://gitlab.com/jean-ricky-fr/calcul-verification-pension-retraite
@@ -5922,7 +6064,18 @@ sources:
     a_en_tirer: >-
       Un tableur de la pension du régime général et de la MSA : une lecture
       de plus de la formule, à relire.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-14"
+    note: >-
+      Dépouillée le 14 octobre 2026 (action 89, lot des modèles publics) :
+      lue en entier pour le registre des modèles,
+      data/reference/referents.yaml (`calcul_verification_pension`), au
+      commit `5344b10`, encore sa tête ce jour-là. Sans licence. Le dépôt en
+      a pris le seuil trimestriel de validation d'avant 1972, confirmé au JO
+      (138.6) ; reste le contrôle des trimestres d'un relevé par ses
+      montants (138.10). Ce qui la contredit : la majoration de 10 %
+      réservée aux mères, les 24 et 23 meilleures années sans condition de
+      date, et des trimestres comptés en jours sur 91.
 
   - id: nosretraites_simulateur_cas_types
     url: https://github.com/nosretraites/simulateur_cas_types
@@ -5933,10 +6086,21 @@ sources:
       Les paramètres par génération du projet de réforme de janvier 2023 : la
       trace d'un état du droit qui n'a pas été voté, à ne pas confondre avec
       la loi.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-14"
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
+      Dépouillée le 14 octobre 2026 (action 89, lot des modèles publics) :
+      lue en entier pour le registre des modèles,
+      data/reference/referents.yaml (`nosretraites_cas_types`), au commit
+      `5e4abf1`, encore sa tête ce jour-là. Sans licence. Le projet du 10
+      janvier 2023 n'a pas été voté : ses paramètres sont la trace d'un état
+      du droit, non la loi. Elle n'apporte que la lecture âge par âge, déjà
+      au registre (138.10). Ce qui la contredit : toute la génération 1961 à
+      62 ans et 3 mois avec 169 trimestres, quatre trimestres par enfant né
+      avant 2004 aux mères fonctionnaires sans condition, et deux états du
+      droit périmés.
 
   - id: cor_simulateur
     url: https://www.cor-retraites.fr/simulateur/
