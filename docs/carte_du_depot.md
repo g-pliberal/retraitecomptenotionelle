@@ -275,9 +275,9 @@ Quatre endroits, dans cet ordre :
    datée. Les actions closes passent dans `docs/archives/`.
 
 L'inventaire compte
-<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->112<!--/-->
+<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->110<!--/-->
 régimes : <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise)-->34<!--/-->
-modélisés, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->44<!--/-->
+modélisés, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->42<!--/-->
 partiels, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=a_modeliser)-->9<!--/-->
 à modéliser, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=hors_champ)-->23<!--/-->
 hors champ et <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=routage)-->2<!--/-->

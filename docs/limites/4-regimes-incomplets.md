@@ -1,6 +1,6 @@
 # 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n’est pas un régime absent : les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->78<!--/--> régimes du catalogue
+Un régime « incomplet » n’est pas un régime absent : les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->76<!--/--> régimes du catalogue
 calculent tous une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -33,7 +33,7 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->78<!--/--> régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->76<!--/--> régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
 
@@ -46,7 +46,7 @@ document saisi à la main, et les portails officiels ne servent pas de liste
 exploitable —, si bien qu'un régime pouvait manquer à la liste des manquants.
 [`data/reference/regimes/inventaire.yaml`](../data/reference/regimes/inventaire.yaml)
 énumère maintenant TOUS les régimes obligatoires, vivants, disparus ou hors
-champ — <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->112<!--/--> lignes, ancrées sur `R. 711-1`, `D. 643-1`, `L. 921-1` et le
+champ — <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->110<!--/--> lignes, ancrées sur `R. 711-1`, `D. 643-1`, `L. 921-1` et le
 programme 195 des lois de finances, chacune avec son texte fondateur et, quand
 l'index DILA du dépôt le porte, son identifiant —, et dit pour chacun s'il est
 modélisé, partiel, à modéliser ou hors champ. `tests/test_donnees.py` impose
