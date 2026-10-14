@@ -153,7 +153,7 @@ export class ConstructeurCompte {
    * Cipav valent 0,65, 1,2, 1,4, 1,6, 2, 2,5 et 3 plafonds.
    * @returns {[number, number]|null} montant et fiabilité.
    */
-  _cotisationParClasses(code, periode, revenu, annee) {
+  _cotisationParClasses(code, periode, revenu, annee, carriere, affiliation) {
     if (!periode.cotisation_par_classes) {
       return null;
     }
@@ -165,9 +165,13 @@ export class ConstructeurCompte {
     if (reference <= 0) {
       return null;
     }
+    // Le revenu de l'année que le texte désigne, et la classe du début
+    // d'activité : `ClassesCotisation.revenuRetenu`.
+    const [revenuClasse, rang] = this.classes.revenuRetenu(
+      code, annee, revenu, carriere, affiliation);
     return this.classes.cotisation(
-      code, annee, revenu,
-      this.macro.plafond_securite_sociale.valeur(annee) / reference,
+      code, annee, revenuClasse,
+      this.macro.plafond_securite_sociale.valeur(annee) / reference, rang,
     );
   }
 
@@ -692,7 +696,8 @@ export class ConstructeurCompte {
         // taux n'ont alors de rôle — c'est la grille qui décide, sur le revenu
         // ENTIER de l'année, et le montant est proratisé comme un forfait pour
         // une année incomplète.
-        const classe = this._cotisationParClasses(code, periode, base, annee);
+        const classe = this._cotisationParClasses(
+          code, periode, base, annee, carriere, ligne.affiliation);
         if (classe !== null) {
           fiabilite = Math.min(fiabilite, classe[1]);
         } else if (assiette <= 0 && forfait <= 0) {

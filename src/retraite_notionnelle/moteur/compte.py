@@ -267,7 +267,8 @@ class ConstructeurCompte:
         return cotisation / periode.taux_cotisation_retraite, fiabilite
 
     def _cotisation_par_classes(self, code: str, periode, revenu: float,
-                                annee: int) -> tuple[float, Fiabilite] | None:
+                                annee: int, carriere: Carriere, affiliation: str
+                                ) -> tuple[float, Fiabilite] | None:
         """Montant du palier où tombe ce revenu, ``None`` hors de cette forme.
 
         La grille est celle du millésime publié ; pour les autres exercices
@@ -292,9 +293,13 @@ class ConstructeurCompte:
         reference = self.macro.plafond_securite_sociale(millesime)
         if reference <= 0:
             return None
+        # Le revenu de l'année que le texte désigne, et la classe du début
+        # d'activité : `ClassesCotisation.revenu_retenu`.
+        revenu, rang = self.classes.revenu_retenu(code, annee, revenu,
+                                                  carriere, affiliation)
         return self.classes.cotisation(
             code, annee, revenu,
-            self.macro.plafond_securite_sociale(annee) / reference,
+            self.macro.plafond_securite_sociale(annee) / reference, rang,
         )
 
     def taux_effectif(self, regime: str, periode, annee: int,
@@ -840,7 +845,8 @@ class ConstructeurCompte:
                 # grille qui décide, sur le revenu ENTIER de l'année, et le
                 # montant est proratisé comme un forfait pour une année
                 # incomplète.
-                classe = self._cotisation_par_classes(code, periode, base, annee)
+                classe = self._cotisation_par_classes(code, periode, base, annee,
+                                                     carriere, ligne.affiliation)
                 if classe is not None:
                     montant_classe, fiabilite_classe = classe
                     montant_classe *= part

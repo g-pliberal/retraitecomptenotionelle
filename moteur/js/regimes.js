@@ -2843,6 +2843,52 @@ export class ClassesCotisation {
       }
       this._table.get(regime).set(Number(annee), grille);
     }
+    this._regles = paquet.classes_cotisation_regles ?? {};
+  }
+
+  static _regle(regles, annee) {
+    for (const regle of regles ?? []) {
+      if (regle.debut <= annee && (regle.fin === null || annee <= regle.fin)) {
+        return regle;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Le revenu sur lequel l'exercice range l'assuré, et la classe que le début
+   * d'activité impose : jumeau de `ClassesCotisation.revenu_retenu`.
+   * @returns {[number, number|null]}
+   */
+  revenuRetenu(regime, annee, revenu, carriere, affiliation) {
+    const regles = this._regles[regime];
+    if (!regles) {
+      return [revenu, null];
+    }
+    const debut = ClassesCotisation._regle(regles.classe_de_debut, annee);
+    if (debut !== null) {
+      let premiere = null;
+      for (const l of carriere.lignes) {
+        if (l.affiliation === affiliation && l.cotise
+            && (premiere === null || l.annee < premiere)) {
+          premiere = l.annee;
+        }
+      }
+      if (annee < (premiere ?? annee) + debut.annees) {
+        return [revenu, debut.rang];
+      }
+    }
+    const decalage = ClassesCotisation._regle(regles.annee_de_revenu, annee);
+    if (decalage === null) {
+      return [revenu, null];
+    }
+    let total = 0;
+    for (const l of carriere.lignesDe(annee - decalage.decalage)) {
+      if (l.affiliation === affiliation && l.cotise) {
+        total += l.revenu;
+      }
+    }
+    return [total, null];
   }
 
   /** @returns {number|null} millésime de la grille applicable à cet exercice. */
@@ -2858,7 +2904,7 @@ export class ClassesCotisation {
   }
 
   /** @returns {[number, number]|null} montant dû et fiabilité. */
-  cotisation(regime, annee, revenu, coefficient = 1.0) {
+  cotisation(regime, annee, revenu, coefficient = 1.0, rang = null) {
     const millesime = this.anneeGrille(regime, annee);
     if (millesime === null) {
       return null;
@@ -2866,6 +2912,10 @@ export class ClassesCotisation {
     const grille = this._table.get(regime).get(millesime);
     if (!grille || !grille.length) {
       return null;
+    }
+    if (rang !== null) {
+      const [, montant, fiabilite] = grille[Math.min(rang, grille.length - 1)];
+      return [montant * coefficient, fiabilite];
     }
     for (const [borne, montant, fiabilite] of grille) {
       if (borne === null || borne === undefined || revenu <= borne * coefficient) {

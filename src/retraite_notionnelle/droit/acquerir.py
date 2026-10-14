@@ -491,12 +491,16 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                         0.0 if millesime is None
                         else moteur.macro.plafond_securite_sociale(millesime)
                     )
+                    # Le revenu de l'année que le texte désigne, et la
+                    # classe du début d'activité : `revenu_retenu`.
+                    revenu_classe, rang = moteur.classes.revenu_retenu(
+                        code, ligne.annee, base, carriere, ligne.affiliation)
                     par_classe = (
                         None if reference <= 0
                         else moteur.classes.cotisation(
-                            code, ligne.annee, base,
+                            code, ligne.annee, revenu_classe,
                             moteur.macro.plafond_securite_sociale(ligne.annee)
-                            / reference,
+                            / reference, rang,
                         )
                     )
                     if par_classe is not None:

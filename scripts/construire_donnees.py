@@ -1096,6 +1096,15 @@ def _classes_cotisation() -> dict:
     }
 
 
+def _classes_cotisation_regles() -> dict:
+    """L'année de revenu et la classe de début d'activité, régime par régime
+    (`classes_cotisation_epoques.yaml`, bloc ``regles``)."""
+    from retraite_notionnelle.donnees.regimes import ClassesCotisation
+
+    return {regime: regles for regime, regles
+            in sorted(ClassesCotisation(DONNEES)._regles.items())}
+
+
 def _salaires_forfaitaires() -> dict:
     """Grilles de salaires forfaitaires par catégorie : ``regime|annee`` ->
     liste de [catégorie, montant annuel, fiabilité]."""
@@ -2297,6 +2306,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "rendements_points": _rendements(),
         "conversions_points": _conversions_points(),
         "classes_cotisation": _classes_cotisation(),
+        "classes_cotisation_regles": _classes_cotisation_regles(),
         "salaires_forfaitaires": _salaires_forfaitaires(),
         "durees_requises": _table_par_generation(DureesRequises),
         "durees_requises_avant_suspension": _table_par_generation(

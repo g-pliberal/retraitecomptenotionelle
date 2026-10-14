@@ -29,13 +29,17 @@ effet: >-
   1998, un nombre d'actes selon l'âge, sans égard au revenu ; de 1998 à 2015, des actes
   médicaux vétérinaires, dont l'ordre fixait la valeur, au taux d'appel du décret annuel
   (77 % en 1998, 104 % en 2015), que rien ne publie en euros ; le moteur y reporte la
-  grille de 2016. Le moteur range l'assuré sur le revenu de l'année, comme la Cipav, qui
-  régularise sur l'année même « depuis le 1er janvier 2021 » ; les autres textes prennent
-  celui de l'avant-dernière année (CARPV jusqu'en 2021, CAVEC de 2008 à 2018) ou de l'année
-  précédente (CARPV depuis 2022, CAVEC depuis les statuts de 2018, Cipav selon ses statuts
-  de 2016). Il n'appelle pas non plus la classe de début d'activité que les textes
-  imposent. Les grilles du texte abaissent les pensions des 24 cas types de la Cipav et de
-  la CAVEC, de 2 % à 20 % au scénario 1.
+  grille de 2016. L'année de revenu est celle du texte, et la classe de début d'activité
+  aussi : l'avant-dernière année à la CAVEC de 2008 à 2018 et à la CARPV de 1998 à 2021,
+  la précédente à la CAVEC depuis 2019, à la CARPV depuis 2022 et à la Cipav de 2016 à
+  2020, l'année même à la Cipav depuis 2021 ; la classe A les deux premières années à la
+  CAVEC de 2012 à 2018, la première depuis 2019, la classe B les deux premières à la CARPV
+  de 2014 à 2021, la première depuis 2022, la classe A les deux premières à la Cipav de
+  2016 à 2020. Le moteur reconnaît le régime d'une autre année à l'affiliation de la
+  ligne. Avant les statuts lus (Cipav avant 2016, CAVEC avant 2008), l'année même.
+  Les grilles du texte abaissent les pensions des 24 cas types de la Cipav et de la CAVEC,
+  de 2 % à 20 % au scénario 1 ; l'année de revenu et la classe de début en déplacent
+  quinze de plus, de moins de 1 % pour la plupart.
 sources:
   lu_le: 2026-10-14
   prochaine_relecture: 2027-03-31
@@ -57,16 +61,12 @@ sources:
     vétérinaires, et celle de l'indice de référence, que les livrets de 2024 à 2026 ne
     donnent pas. L'Internet Archive n'a pas répondu le 27 septembre 2026.
   - >-
-    Après la phase 8 : ranger l'assuré sur le revenu de l'année que le texte désigne —
-    l'avant-dernière à la CAVEC (statuts de 2008 à 2018) et à la CARPV (jusqu'en 2021),
-    l'année précédente à la CAVEC (statuts de 2018), à la CARPV (depuis 2022) et à la Cipav
-    (statuts de 2016, classe provisoire sur l'avant-dernière), l'année même à la Cipav
-    « depuis le 1er janvier 2021 », dont la fiche pratique de 2021 régularise déjà
-    l'exercice 2020 —, et appeler la classe de début d'activité : à la CAVEC, la classe A les
-    deux premières années civiles (statuts de 2012), la première depuis ceux de 2018 ; à la
-    CARPV, la classe B les deux premières années (statuts de 2014 et de 2015), la première
-    depuis ceux de 2021 ; à la Cipav, la classe A jusqu'au premier jour de la deuxième année
-    civile (statuts de 2016), à titre provisionnel depuis 2021.
+    Fait le 14 octobre 2026 : l'année de revenu et la classe de début d'activité
+    (`classes_cotisation_epoques.yaml`, bloc `regles`). Restent : les statuts de la Cipav
+    d'avant 2016 et de la CAVEC d'avant 2008, au Bulletin officiel, non lus ; la classe
+    provisoire de la Cipav, que le moteur ne sert pas, puisqu'elle est régularisée ; la
+    date d'effet des statuts de 2018 de la CAVEC, que le moteur prend aux cotisations de
+    2019.
   - >-
     CAVEC d'avant 1980 : le décret de 1953 fait opter l'assujetti, « dans les conditions
     fixées par les statuts », pour l'une de cinq classes, sans nommer le revenu ; quand la

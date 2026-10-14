@@ -1,0 +1,29 @@
+date: "2026-10-14"
+session: "action 131 : les grilles des classes des libérales, l'année de revenu et la classe de début d'activité"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF du dépôt, récupérés (dump du 13
+  juillet 2025, à jour au 11 octobre 2026). Dans LEGI : l'article 2 du décret n° 53-506
+  (CAVEC), versions de 1980 (LEGIARTI000006770087), de 1987 (LEGIARTI000006770088) et de
+  2008 (LEGIARTI000018042862) ; les décrets annuels des cotisations des complémentaires
+  libérales de 1984 à 2025, du n° 84-447 au n° 2025-1076, pour la Cipav et la CAVEC. Dans
+  JORF : le décret n° 2008-85 (JORFARTI000017991856), les statuts de la CAVEC approuvés
+  le 22 février 2008 (JORFARTI000018197778), les notices des décrets n° 89-313 et 91-864.
+trouve: >-
+  La classe de référence de la Cipav (classe 1 puis A) pour 35 exercices de 1986 à 2022,
+  celle de la CAVEC (classe 4 puis A) pour 39 de 1984 à 2025 ; les classes 3 à 18 de la
+  CAVEC en francs, dont les montants sont proportionnels aux points. Les décrets de 2015,
+  2017 et 2018 fixent deux exercices, et ceux de 2018 et 2019 corrigent le second (CAVEC
+  2018 : 631,20 € puis 625,44 € ; 2019 : 640,80 € puis 639 €). Le décret n° 2008-1303
+  fixe la classe A de la CAVEC à 2 262 € pour 2008, au prix du point de l'ancienne classe
+  4, quand celui de 2009 en fixe 480 € : le décret n° 2008-85, qui récrit l'article 2 en
+  classes A à H, ne dit pas sa date d'effet. Les statuts de 2008 de la CAVEC renvoient au
+  conseil d'administration les tranches et « la cotisation correspondant à un point de
+  retraite ». Le moteur sert désormais la grille du texte de chaque exercice, l'année de
+  revenu qu'il désigne et la classe de début d'activité, dans les deux moteurs.
+reste: >-
+  La CARPV de 1998 à 2015, en actes médicaux vétérinaires ; les décrets de la Cipav de
+  1979 à 1985, 1989 et 1991 et de la CAVEC de 1980 à 1983, que l'index ne porte pas ou
+  dont il n'a que la notice ; la date d'effet de la grille A à H de la CAVEC ; les statuts
+  d'avant 2016 de la Cipav et d'avant 2008 de la CAVEC, au Bulletin officiel ; les bornes
+  des caisses d'avant 2019 (Cipav) et d'avant 2022 (CAVEC), que l'archive du web aurait
+  peut-être.

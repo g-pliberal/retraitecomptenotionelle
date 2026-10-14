@@ -8,6 +8,7 @@ from dataclasses import dataclass, field, replace
 from functools import cached_property
 from pathlib import Path
 
+from ..somme import somme_ordonnee
 from .chargement import Fiabilite, charger_yaml
 
 #: Familles de régimes reconnues.
@@ -1201,6 +1202,7 @@ class ClassesCotisation:
 
     def __init__(self, racine: Path) -> None:
         self._table: dict[str, dict[int, list[ClasseCotisation]]] = {}
+        self._regles: dict[str, dict[str, list[dict]]] = {}
         chemin = racine / "reference" / "regimes" / "classes_cotisation.csv"
         if not chemin.exists():
             return
@@ -1243,7 +1245,13 @@ class ClassesCotisation:
             racine / "reference" / "macro" / "plafond_securite_sociale.csv",
             colonne_valeur="pass_eur", nom="pass",
         )
-        for regime, spec in charger_yaml(chemin).items():
+        contenu = charger_yaml(chemin)
+        self._regles = {
+            regime: {cle: [dict(r) for r in (regles.get(cle) or [])]
+                     for cle in ("annee_de_revenu", "classe_de_debut")}
+            for regime, regles in (contenu.pop("regles", None) or {}).items()
+        }
+        for regime, spec in contenu.items():
             publiees = self._table.setdefault(regime, {})
             bornes = {int(a): [float(b) for b in v]
                       for a, v in (spec.get("bornes") or {}).items()}
@@ -1299,18 +1307,58 @@ class ClassesCotisation:
             return None
         return tuple(self._table[regime][millesime])
 
+    @staticmethod
+    def _regle(regles: list[dict], annee: int) -> dict | None:
+        for regle in regles:
+            if regle["debut"] <= annee and (regle["fin"] is None
+                                            or annee <= regle["fin"]):
+                return regle
+        return None
+
+    def revenu_retenu(self, regime: str, annee: int, revenu: float,
+                      carriere, affiliation: str) -> tuple[float, int | None]:
+        """Le revenu sur lequel l'exercice range l'assuré, et la classe que le
+        début d'activité impose, ``None`` sinon.
+
+        Le régime d'une ligne se reconnaît à son affiliation : le revenu d'une
+        autre année est celui des lignes cotisées de la même affiliation, nul
+        s'il n'y en a pas, et l'activité commence à la première de ces
+        lignes. L'année de revenu est celle que le texte désigne, l'année
+        même hors de ses bornes (`classes_cotisation_epoques.yaml`).
+        """
+        regles = self._regles.get(regime)
+        if not regles:
+            return revenu, None
+        debut = self._regle(regles.get("classe_de_debut") or [], annee)
+        if debut is not None:
+            premiere = min((l.annee for l in carriere.lignes
+                            if l.affiliation == affiliation and l.cotise),
+                           default=annee)
+            if annee < premiere + int(debut["annees"]):
+                return revenu, int(debut["rang"])
+        decalage = self._regle(regles.get("annee_de_revenu") or [], annee)
+        if decalage is None:
+            return revenu, None
+        return somme_ordonnee(l.revenu for l in carriere.lignes_de(
+            annee - int(decalage["decalage"]))
+            if l.affiliation == affiliation and l.cotise), None
+
     def cotisation(self, regime: str, annee: int, revenu: float,
-                   coefficient: float = 1.0
+                   coefficient: float = 1.0, rang: int | None = None,
                    ) -> tuple[float, Fiabilite] | None:
         """Montant dû pour ce revenu, ``None`` si le régime n'a pas de grille.
 
         ``coefficient`` ramène la grille de son millésime à l'exercice demandé :
         il multiplie les bornes ET les montants, faute de quoi l'indexation
-        ferait glisser tout le monde d'une classe.
+        ferait glisser tout le monde d'une classe. ``rang`` impose une classe,
+        celle du début d'activité.
         """
         classes = self.grille(regime, annee)
         if not classes:
             return None
+        if rang is not None:
+            classe = classes[min(rang, len(classes) - 1)]
+            return classe.cotisation * coefficient, classe.fiabilite
         for classe in classes:
             borne = classe.revenu_maximum
             if borne is None or revenu <= borne * coefficient:

@@ -396,9 +396,14 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           const reference = millesime === null
             ? 0.0
             : moteur.macro.plafond_securite_sociale.valeur(millesime);
+          // Le revenu de l'année que le texte désigne, et la classe du début
+          // d'activité : `revenuRetenu`.
+          const [revenuClasse, rang] = moteur.classes.revenuRetenu(
+            code, ligne.annee, base, carriere, ligne.affiliation);
           const parClasse = reference <= 0 ? null : moteur.classes.cotisation(
-            code, ligne.annee, base,
+            code, ligne.annee, revenuClasse,
             moteur.macro.plafond_securite_sociale.valeur(ligne.annee) / reference,
+            rang,
           );
           if (parClasse !== null) {
             cotisation = parClasse[0] * part;

@@ -253,3 +253,37 @@ def test_l_assiette_minimale_valide_trois_trimestres(simulateur, annee):
     rendait deux en 2025."""
     macro = simulateur.macro
     assert macro.trimestres_valides(450 * macro.smic_horaire(annee), annee) == 3
+
+
+def test_la_classe_suit_l_annee_de_revenu_et_le_debut_d_activite():
+    """Action 131 : la classe de l'exercice se lit sur le revenu de l'année que
+    le texte désigne, et le début d'activité impose sa classe
+    (`classes_cotisation_epoques.yaml`, bloc ``regles``)."""
+    from pathlib import Path
+    from types import SimpleNamespace
+
+    from retraite_notionnelle.donnees.regimes import ClassesCotisation
+
+    racine = Path(__file__).resolve().parents[1] / "data"
+    classes = ClassesCotisation(racine)
+    lignes = [SimpleNamespace(annee=a, revenu=r, affiliation="expert_comptable",
+                              cotise=True)
+              for a, r in ((2014, 20_000.0), (2015, 30_000.0), (2016, 90_000.0),
+                           (2017, 10_000.0), (2018, 60_000.0))]
+    carriere = SimpleNamespace(
+        lignes=lignes,
+        lignes_de=lambda annee: [l for l in lignes if l.annee == annee])
+    retenu = lambda annee, revenu: classes.revenu_retenu(
+        "cavec_complementaire", annee, revenu, carriere, "expert_comptable")
+    # Classe A d'office les deux premières années civiles (statuts de 2012).
+    assert retenu(2014, 20_000.0) == (20_000.0, 0)
+    assert retenu(2015, 30_000.0) == (30_000.0, 0)
+    # Puis le revenu de l'avant-dernière année (statuts de 2008).
+    assert retenu(2016, 90_000.0) == (20_000.0, None)
+    assert retenu(2018, 60_000.0) == (90_000.0, None)
+    # La classe imposée est la première de la grille.
+    assert classes.cotisation("cavec_complementaire", 2014, 500_000.0,
+                              rang=0)[0] == 583.0
+    # Avant 2008, rien n'est lu : l'année même.
+    assert classes.revenu_retenu("cavec_complementaire", 2005, 40_000.0,
+                                 carriere, "expert_comptable") == (40_000.0, None)

@@ -198,3 +198,58 @@ cavec_complementaire:
     2023: [16190, 32350, 44790, 64560, 79040, 94850, 132780]
     2024: [16190, 32350, 44790, 64560, 79040, 94850, 132780]
     2025: [16190, 32350, 44790, 64560, 79040, 94850, 132780]
+
+# L'ANNÉE DE REVENU ET LA CLASSE DE DÉBUT D'ACTIVITÉ
+# ---------------------------------------------------
+# `annee_de_revenu` : l'exercice range l'assuré sur le revenu de l'année
+# qu'il précède de `decalage` ans (1, l'année précédente ; 2,
+# l'avant-dernière), le revenu que la carrière porte dans ce régime cette
+# année-là, nul s'il n'y était pas. Hors de ces bornes, l'année même : c'est
+# le cas d'un texte qui n'est pas lu (Cipav avant 2016, CAVEC avant 2008).
+# `classe_de_debut` : les `annees` premières années civiles d'activité dans le
+# régime, la première comprise, l'assuré cotise dans la classe de rang
+# `rang` (0, la première de la grille), quel que soit son revenu.
+regles:
+  cipav_complementaire:
+    # Statuts approuvés par l'arrêté du 18 décembre 2015, en vigueur le 1er
+    # janvier 2016, article 3.4 (JORFARTI000031680320) : classe provisoire
+    # sur l'avant-dernière année, « ajustée » dès que le revenu de la dernière
+    # est connu ; « inscrit d'office en classe A jusqu'au premier jour de la
+    # deuxième année civile qui suit le début de l'activité ». Depuis 2021,
+    # la régularisation se fait sur le revenu de l'année même (fiche pratique
+    # de 2021), et la classe A de début n'est plus que provisionnelle (arrêté
+    # du 16 mars 2021, JORFARTI000043302736).
+    annee_de_revenu:
+    - {debut: 2016, fin: 2020, decalage: 1}
+    classe_de_debut:
+    - {debut: 2016, fin: 2020, rang: 0, annees: 2}
+  cavec_complementaire:
+    # Statuts de 2008 (arrêté du 22 février 2008, article 3.4,
+    # JORFARTI000018197778) : le revenu « de l'avant-dernière année ». Statuts
+    # de 2012 (arrêté du 9 février 2012, JORFARTI000025395367) : « inscrit
+    # d'office en classe A pour les deux premières années civiles
+    # d'exercice ». Statuts de 2018 (arrêté du 20 août 2018,
+    # JORFARTI000037363871), pour les cotisations de 2019 et après : le revenu
+    # « de l'exercice précédent », la classe A « pour sa première année civile
+    # d'exercice ».
+    annee_de_revenu:
+    - {debut: 2008, fin: 2018, decalage: 2}
+    - {debut: 2019, fin: null, decalage: 1}
+    classe_de_debut:
+    - {debut: 2012, fin: 2018, rang: 0, annees: 2}
+    - {debut: 2019, fin: null, rang: 0, annees: 1}
+  carpv_complementaire:
+    # Décret n° 50-1318, article 2, version du 2 décembre 1997
+    # (LEGIARTI000006776823) : le revenu « de l'avant-dernière année » ;
+    # version du 1er janvier 2022 (LEGIARTI000044223137) : « de l'année
+    # précédente ». Statuts approuvés le 16 avril 2014 (JORFARTI000028939421),
+    # titre II, article 4 : la classe B « pendant les deux premières années
+    # civiles d'activité » ; statuts du 18 octobre 2021 (JORFARTI000044220745),
+    # en vigueur le 1er janvier 2022, article 44 : « la première année civile
+    # d'activité ».
+    annee_de_revenu:
+    - {debut: 1998, fin: 2021, decalage: 2}
+    - {debut: 2022, fin: null, decalage: 1}
+    classe_de_debut:
+    - {debut: 2014, fin: 2021, rang: 0, annees: 2}
+    - {debut: 2022, fin: null, rang: 0, annees: 1}
