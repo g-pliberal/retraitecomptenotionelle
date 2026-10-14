@@ -157,6 +157,16 @@ pivots:
     - {texte: "Décret n° 2011-1644", num: "1", parametres: [cotisation_forfaitaire_euros]}
     - {texte: "Décret n° 2011-1644", num: "2", parametres: [taux_cotisation_retraite, assiette]}
     - {texte: "Décret n° 2011-1644", num: "4", parametres: [valeur_point_euros]}
+  asv_auxiliaires_medicaux:
+    - {texte: "Décret n° 2008-1044", num: "1", parametres: [cotisation_forfaitaire_euros, points_par_trimestre_valide]}
+    - {texte: "Décret n° 2008-1044", num: "2", parametres: [taux_cotisation_retraite, assiette]}
+    - {texte: "Décret n° 2008-1044", num: "3", parametres: [taux_cotisation_retraite]}
+    - {texte: "Décret n° 2008-1044", num: "4", parametres: [points_ajustement_par_forfait]}
+    - {texte: "Décret n° 2008-1044", num: "5", parametres: [valeur_point_euros]}
+  asv_chirurgiens_dentistes:
+    - {texte: "Décret n° 2007-458", num: "1", parametres: [cotisation_forfaitaire_euros, points_par_trimestre_valide]}
+    - {texte: "Décret n° 2007-458", num: "2", parametres: [taux_cotisation_retraite, assiette, points_ajustement_au_plafond]}
+    - {texte: "Décret n° 2007-458", num: "3", parametres: [valeur_point_euros]}
   organic_conjoints_batiment:
     - {texte: "Code de la sécurité sociale", num: "D635-36", parametres: [taux_cotisation_retraite, assiette]}
     - {texte: "Code de la sécurité sociale", num: "D635-35", parametres: [type_calcul]}

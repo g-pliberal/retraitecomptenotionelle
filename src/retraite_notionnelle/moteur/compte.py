@@ -878,6 +878,21 @@ class ConstructeurCompte:
                     montant = assure * part + patronale + forfait
                     fiabilite = min(fiabilite, fiabilite_cultes)
 
+                # LA PART DE L'ASSURANCE MALADIE. Les prestations
+                # complémentaires de vieillesse du professionnel de santé
+                # conventionné sont payées aux deux tiers par les caisses
+                # d'assurance maladie (L. 645-2, D. 645-3) : sans employeur,
+                # il a pourtant un tiers payeur, et un compte qui porte ce qui
+                # a été versé le reçoit comme une part patronale, sous les
+                # conventions qui portent celle-ci.
+                prise_en_charge = 0.0
+                if (classe is None and not part_salariale_seule
+                        and self.parametres.part_cotisation
+                        is not PartCotisation.SALARIALE):
+                    prise_en_charge = periode.prise_en_charge(forfait, assiette * taux)
+                    montant += prise_en_charge
+                    patronale += prise_en_charge
+
                 # LA COTISATION DÉPLAFONNÉE. Le régime général prélève, en
                 # plus de la cotisation plafonnée, un taux sur la TOTALITÉ du
                 # salaire — 2,42 % en 2024 et 2025, 2,51 % en 2026, lus année

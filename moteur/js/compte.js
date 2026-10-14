@@ -723,6 +723,17 @@ export class ConstructeurCompte {
           fiabilite = Math.min(fiabilite, fiabiliteCultes);
         }
 
+        // LA PART DE L'ASSURANCE MALADIE des prestations complémentaires de
+        // vieillesse des professionnels de santé conventionnés : voir
+        // compte.py.
+        let priseEnCharge = 0.0;
+        if (classe === null && !partSalarialeSeule
+            && this.parametres.part_cotisation !== PartCotisation.SALARIALE) {
+          priseEnCharge = periode.priseEnCharge(forfait, assiette * taux);
+          montant += priseEnCharge;
+          patronale += priseEnCharge;
+        }
+
         // LA COTISATION DÉPLAFONNÉE. Au-dessus du plafond, le régime général
         // prélève encore sur la TOTALITÉ du salaire — 2,42 % en 2025 — et
         // cette part n'ouvre aucun droit : elle finance la solidarité. Le

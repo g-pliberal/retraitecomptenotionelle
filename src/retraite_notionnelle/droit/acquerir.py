@@ -551,17 +551,32 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                                 carriere.mois_de_l_anniversaire(
                                     periode.trimestres_maximum_leve_avant_age),
                             )
+                    ajustement = None
                     if (periode.points_ajustement_par_forfait is not None
                             and forfait > 0):
                         # Les points d'AJUSTEMENT de l'ASV des médecins :
                         # 18 fois la cotisation proportionnelle sur le
                         # forfait, neuf au plus (décret n° 2011-1644,
                         # art. 3). Ils suivent le revenu, là où les 27
-                        # points du forfait ne suivent que la durée.
+                        # points du forfait ne suivent que la durée. Le
+                        # rapport est celui des cotisations TOTALES, part
+                        # de l'assurance maladie comprise : l'auxiliaire
+                        # médical ne paie que 40 % de l'ajustement et le
+                        # tiers du forfait (décret n° 2008-1044, art. 4).
                         ajustement = (periode.points_ajustement_par_forfait
-                                      * assiette
-                                      * periode.taux_cotisation_retraite
-                                      / forfait)
+                                      * periode.ajustement_total(
+                                          forfait,
+                                          assiette
+                                          * periode.taux_cotisation_retraite))
+                    elif (periode.points_ajustement_au_plafond is not None
+                            and borne_haute):
+                        # Les points d'ajustement du chirurgien-dentiste :
+                        # 1,93 au plafond de cinq plafonds, « au prorata de
+                        # la cotisation acquittée » en deçà (décret n°
+                        # 2007-458, art. 2).
+                        ajustement = (periode.points_ajustement_au_plafond
+                                      * assiette / borne_haute)
+                    if ajustement is not None:
                         if periode.points_ajustement_maximum is not None:
                             ajustement = min(
                                 ajustement,

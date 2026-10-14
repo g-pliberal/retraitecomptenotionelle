@@ -733,17 +733,20 @@ affiliations:
     famille: independant
     sans_employeur: true
     periodes:
-      - {debut: 1949, fin: 1983, regimes: [cnavpl]}
-      - {debut: 1984, fin: null, regimes: [cnavpl, carpimko_complementaire]}
+      - {debut: 1949, fin: 1974, regimes: [cnavpl]}
+      - {debut: 1975, fin: 1983, regimes: [cnavpl, asv_auxiliaires_medicaux]}
+      - {debut: 1984, fin: null, regimes: [cnavpl, carpimko_complementaire, asv_auxiliaires_medicaux]}
     note: >-
       La CARPIMKO est la plus nombreuse des dix sections professionnelles de la
       CNAVPL. Son complémentaire est créé par le décret n° 84-143 du 22 février
       1984, d'où la borne : purement forfaitaire jusqu'en 1995, forfait plus
       3 % ensuite, et entièrement proportionnel depuis 2026.
-      CE STATUT NE PORTE PAS L'ASV, le régime des prestations complémentaires
-      de vieillesse des auxiliaires médicaux conventionnés, dont les deux tiers
-      sont payés par l'assurance maladie. Un infirmier conventionné est donc
-      sous-estimé de cet étage.
+      Depuis le 1er juillet 1975 (décret n° 75-891), l'auxiliaire médical
+      conventionné cotise aussi aux prestations complémentaires de vieillesse
+      (PCV, ex-ASV), dont l'assurance maladie paie les deux tiers du forfait
+      et 60 % de l'ajustement : le statut les porte depuis le 14 octobre 2026
+      (`asv_auxiliaires_medicaux`, action 138, étape 18), et présume
+      l'auxiliaire conventionné.
 
   pharmacien:
     libelle: Pharmacien ou biologiste libéral
@@ -1061,12 +1064,20 @@ affiliations:
     famille: independant
     sans_employeur: true
     periodes:
-      - {debut: 1949, fin: null, regimes: [cnavpl, carcdsf_complementaire]}
+      - {debut: 1949, fin: 1977, regimes: [cnavpl, carcdsf_complementaire]}
+      - {debut: 1978, fin: null, regimes: [cnavpl, carcdsf_complementaire, asv_chirurgiens_dentistes]}
     note: >-
       Le complémentaire porte l'essentiel de la pension : la caisse écrit qu'il
       en représente environ la moitié pour un dentiste, le quart pour une
       sage-femme. Sa cotisation est la seule du catalogue à mêler un FORFAIT et
-      un taux — 3 210,60 € plus 11,35 % en 2026.
+      un taux — 3 210,60 € plus 11,35 % en 2026. Depuis le 1er janvier 1978
+      (décret n° 78-283), le chirurgien-dentiste conventionné cotise aussi aux
+      prestations complémentaires de vieillesse (PCV, ex-ASV), dont
+      l'assurance maladie paie les deux tiers du forfait et la moitié de
+      l'ajustement : le statut les porte depuis le 14 octobre 2026
+      (`asv_chirurgiens_dentistes`), et présume le chirurgien-dentiste
+      conventionné ; la sage-femme a son propre régime, que le modèle ne
+      porte pas.
 
   medecin_liberal:
     libelle: Médecin libéral
@@ -1083,7 +1094,10 @@ affiliations:
       barème publié — voir docs/limites.md. Depuis le décret n° 72-968 du 27
       octobre 1972, le médecin conventionné cotise aussi à l'ASV, dont les
       caisses d'assurance maladie paient les deux tiers : la fiche
-      `asv_conventionnes` porte sa part seule, le statut étant sans employeur.
+      `asv_conventionnes` porte sa part, le statut étant sans employeur, et
+      celle des caisses, que le compte notionnel reçoit comme une part
+      patronale (action 138, étape 18). Elle présume le secteur 1 : en
+      secteur 2, le médecin paie tout, et les caisses rien.
 
   personnel_navigant:
     libelle: Personnel navigant professionnel de l'aéronautique civile

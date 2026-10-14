@@ -273,6 +273,14 @@
 #       mois pour 1969, soixante-quatre ans à compter de 1970 ; le taux plein et
 #       la minoration de janvier.
 #   Les périodes de la fiche portent ces dates au jour (`date_effet`).
+#
+# `pcv_auxiliaires_medicaux` — prestations complémentaires de vieillesse des
+#   auxiliaires médicaux conventionnés. « L'auxiliaire médical peut percevoir
+#   la retraite à 65 ans, ou 60 ans en cas d'inaptitude […] Toutefois, le
+#   professionnel peut faire liquider ses droits par anticipation dès l'âge de
+#   60 ans » (guide de l'assurance vieillesse des professions libérales, CNAVPL,
+#   2025, p. 95-96), à toutes les générations. Le règlement de la section
+#   approuvé par l'arrêté du 10 juillet 2026 n'est pas lu (action 138, étape 18).
 table,generation,age_ouverture,age_taux_plein,fiabilite,decote_par_trimestre,age_surcote_maximum
 cavom,1900,60,65,certifiee,
 cavom,1956,60.5,65.5,certifiee,
@@ -535,3 +543,4 @@ banque_de_france,1967,63.25,,haute,
 banque_de_france,1968,63.5,,haute,
 banque_de_france,1969,63.75,,haute,
 banque_de_france,1970,64,,haute,
+pcv_auxiliaires_medicaux,1900,60,65,haute,

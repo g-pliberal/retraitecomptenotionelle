@@ -35,15 +35,18 @@ inventaire:
     - {reference: "décret n° 2007-458 du 25 mars 2007 (chirurgiens-dentistes : forfait de 3 150 à 3 900 €, dix points, ajustement 1,45 %)", id: LEGIARTI000034762381}
     - {reference: "décret n° 2017-1812 du 28 décembre 2017 (sages-femmes) et décret n° 2007-597 du 24 avril 2007 (directeurs de laboratoire : 0,30 %, cinquante points, point à 0,96 €)", id: LEGIARTI000026885155}
   manque: >-
-    La fiche ne porte que les médecins, et la seule part qu'ils paient :
-    les deux tiers versés par les caisses d'assurance maladie sont
-    décrits, non comptés. Les points d'ajustement sont pris au plafond de
-    neuf par an, atteint dès 68 000 € de revenu. Les chirurgiens-dentistes
-    (décret n° 2007-458 : dix points par forfait, ajustement 1,45 %), les
-    sages-femmes (2017-1812), les auxiliaires médicaux et les directeurs
-    de laboratoire (2007-597) ont chacun leur barème, lu mais non porté ;
-    leurs statuts restent sans ASV. Le tarif de la consultation, base du
-    forfait de 1985 à 2011, n'est pas une série du dépôt.
+    La fiche porte les médecins ; les auxiliaires médicaux et les
+    chirurgiens-dentistes ont la leur depuis le 14 octobre 2026
+    (asv_auxiliaires_medicaux, asv_chirurgiens_dentistes, action 138,
+    étape 18). Les sages-femmes (décret n° 84-254, 18 points par an) et les
+    directeurs de laboratoire (2007-597) ont chacun leur barème, lu mais
+    non porté. La fiche présume le secteur 1, où les caisses paient les
+    deux tiers, que le compte notionnel reçoit comme une part patronale ;
+    en secteur 2 le médecin paie tout. Les points d'ajustement sont pris au
+    plafond de neuf par an, atteint dès 68 000 € de revenu. Le forfait de
+    2017 à 2024, revalorisé sur le revenu moyen des médecins, est projeté
+    sur les prix depuis 2016. Le tarif de la consultation, base du forfait
+    de 1985 à 2011, n'est pas une série du dépôt.
 periodes:
   - debut: 1972
     fin: 1980
@@ -58,6 +61,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 114.34
     cotisation_forfaitaire_annee: 1985
     points_par_trimestre_valide: 7.54
@@ -73,7 +78,9 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. FORFAIT : le
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). FORFAIT : le
       décret n° 72-968 renvoie la cotisation à un arrêté que l'index ne
       porte pas ; la première version codifiée est celle de 1985, « trente
       fois la valeur au 1er janvier de l'année en cause du tarif de la
@@ -102,6 +109,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 114.34
     cotisation_forfaitaire_annee: 1985
     points_par_trimestre_valide: 7.54
@@ -133,6 +142,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 114.34
     cotisation_forfaitaire_annee: 1985
     points_par_trimestre_valide: 7.54
@@ -148,7 +159,9 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. FORFAIT : «
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). FORFAIT : «
       trente fois la valeur au 1er janvier de l'année en cause du tarif de
       la consultation du médecin omnipraticien » (D. 645-2,
       LEGIARTI000006738371 au 21 décembre 1985, LEGIARTI000006738372
@@ -178,6 +191,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.5
+    part_assurance_maladie_taux: 0.5
     cotisation_forfaitaire_euros: 343.01
     cotisation_forfaitaire_annee: 1993
     points_par_trimestre_valide: 7.54
@@ -203,6 +218,11 @@ periodes:
       LEGIARTI000024853556), prise pour valeur de 2011 et ramenée aux prix
       de l'année de liquidation ; aucune valeur antérieure n'est dans
       l'index, niveau `estimee`.
+      LA PART DES CAISSES À L'ÉGALITÉ : du 30 mars 1993 au 8 juillet 1994,
+      D. 645-3 fixe la cotisation des caisses « égale à la cotisation
+      exigible des bénéficiaires pratiquant les tarifs conventionnels pour
+      les médecins » (LEGIARTI000006738167), et non au double : la moitié
+      du total, que la fiche porte sur toute l'année 1993.
   - debut: 1994
     fin: 1994
     type_calcul: points
@@ -216,6 +236,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.5
+    part_assurance_maladie_taux: 0.5
     cotisation_forfaitaire_euros: 343.01
     cotisation_forfaitaire_annee: 1993
     points_par_trimestre_valide: 6.75
@@ -236,6 +258,11 @@ periodes:
       (décret n° 2011-1644, art. 4, LEGIARTI000024853556), prise pour
       valeur de 2011 et ramenée aux prix de l'année de liquidation ;
       aucune valeur antérieure n'est dans l'index, niveau `estimee`.
+      LA PART DES CAISSES À L'ÉGALITÉ : du 30 mars 1993 au 8 juillet 1994,
+      D. 645-3 fixe la cotisation des caisses « égale à la cotisation
+      exigible des bénéficiaires pratiquant les tarifs conventionnels pour
+      les médecins » (LEGIARTI000006738167), et non au double : la moitié
+      du total, que la fiche porte sur toute l'année 1994.
   - debut: 1995
     fin: 1998
     type_calcul: points
@@ -249,6 +276,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 264.27
     cotisation_forfaitaire_annee: 1995
     points_par_trimestre_valide: 6.75
@@ -264,7 +293,9 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. FORFAIT : «
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). FORFAIT : «
       cinquante-deux fois la valeur au 1er janvier de l'année en cause du
       tarif de la consultation du médecin omnipraticien » (D. 645-2,
       LEGIARTI000006738375 ; le décret 95-442 qui le portait a été annulé
@@ -291,6 +322,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 335.39
     cotisation_forfaitaire_annee: 1999
     points_par_trimestre_valide: 6.75
@@ -306,7 +339,9 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. FORFAIT : «
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). FORFAIT : «
       soixante fois la valeur au 1er janvier de l'année en cause du tarif
       de la consultation du médecin omnipraticien » (D. 645-2,
       LEGIARTI000006738376 pour 1999 et 2000, LEGIARTI000006738377,
@@ -332,6 +367,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 400.00
     cotisation_forfaitaire_annee: 2004
     points_par_trimestre_valide: 6.75
@@ -347,7 +384,9 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. FORFAIT :
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). FORFAIT :
       soixante fois la consultation, reconduit exercice par exercice (D.
       645-2, LEGIARTI000006738380 pour 2004, LEGIARTI000006738381 pour
       2005, jusqu'à LEGIARTI000023380413 pour 2010 et 2011). C = 20 €
@@ -373,6 +412,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.000833
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 1433.33
     cotisation_forfaitaire_annee: 2012
     points_par_trimestre_valide: 6.75
@@ -390,7 +431,9 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. LA RÉFORME DE
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). LA RÉFORME DE
       2012 (décret n° 2011-1644 du 25 novembre 2011). Le forfait quitte le
       tarif de la consultation : « 2 070 euros pour le premier semestre de
       l'exercice 2012 ; 2 230 euros pour le second semestre » (art. 1,
@@ -423,6 +466,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.003000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 1466.67
     cotisation_forfaitaire_annee: 2013
     points_par_trimestre_valide: 6.75
@@ -440,7 +485,9 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. Forfait « 4 400
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). Forfait « 4 400
       euros pour l'exercice 2013 » (art. 1, LEGIARTI000024853551),
       ajustement « 0,90 % au titre de l'exercice 2013 » (art. 2,
       LEGIARTI000033090911), un tiers chacun pour le médecin ; à 100 000 €
@@ -461,6 +508,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.005000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 1500.00
     cotisation_forfaitaire_annee: 2014
     points_par_trimestre_valide: 6.75
@@ -478,7 +527,9 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. Forfait « 4 500
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). Forfait « 4 500
       euros pour l'exercice 2014 », ajustement « 1,50 % au titre de
       l'exercice 2014 » (mêmes articles) ; 6,2 points d'ajustement à 100
       000 € : 33,2 par an, 8,3 par trimestre. VALEUR DE SERVICE : «
@@ -498,6 +549,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.007000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 1550.00
     cotisation_forfaitaire_annee: 2015
     points_par_trimestre_valide: 6.75
@@ -515,7 +568,9 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. Forfait « 4 650
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). Forfait « 4 650
       euros pour l'exercice 2015 », ajustement « 2,10 % au titre de
       l'exercice 2015 » ; 8,4 points d'ajustement à 100 000 € : 35,4 par
       an, 8,85 par trimestre. VALEUR DE SERVICE : « s'agissant des points
@@ -534,6 +589,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.008667
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 1616.67
     cotisation_forfaitaire_annee: 2016
     points_par_trimestre_valide: 6.75
@@ -551,7 +608,9 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. Forfait « 4 850
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). Forfait « 4 850
       euros pour l'exercice 2016 », dernier montant écrit : « à compter de
       l'exercice 2017, le montant de cette cotisation est revalorisé
       chaque année en fonction de l'évolution constatée du revenu moyen »
@@ -575,6 +634,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.009333
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 1616.67
     cotisation_forfaitaire_annee: 2016
     points_par_trimestre_valide: 6.75
@@ -597,7 +658,9 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. Ajustement «
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). Ajustement «
       2,8 % au titre de l'exercice 2017 » (art. 2, LEGIARTI000033090911),
       neuf points d'ajustement au plus, selon le revenu. VALEUR DE SERVICE : « s'agissant des
       points liquidés à compter du 1er janvier 2017 : 11,31 euros » (art.
@@ -622,6 +685,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.010667
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 1616.67
     cotisation_forfaitaire_annee: 2016
     points_par_trimestre_valide: 6.75
@@ -644,7 +709,9 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. Ajustement «
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). Ajustement «
       3,2 % au titre de l'exercice 2018 » (art. 2, LEGIARTI000033090911).
       VALEUR DE SERVICE : « s'agissant des points liquidés à compter du
       1er janvier 2017 : 11,31 euros » (art. 4, LEGIARTI000033090908 au 5
@@ -669,6 +736,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.012000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 1616.67
     cotisation_forfaitaire_annee: 2016
     points_par_trimestre_valide: 6.75
@@ -691,7 +760,9 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. Ajustement «
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). Ajustement «
       3,6 % au titre de l'exercice 2019 » (art. 2, LEGIARTI000033090911).
       VALEUR DE SERVICE : « s'agissant des points liquidés à compter du
       1er janvier 2017 : 11,31 euros » (art. 4, LEGIARTI000033090908 au 5
@@ -716,6 +787,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.012667
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 1616.67
     cotisation_forfaitaire_annee: 2016
     points_par_trimestre_valide: 6.75
@@ -738,7 +811,9 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. Ajustement «
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). Ajustement «
       3,8 % à compter de l'exercice 2020 » (art. 2, LEGIARTI000033090911),
       « au titre des exercices 2020 à 2025 » dans la version du 14
       novembre 2025 (LEGIARTI000052567960). VALEUR DE SERVICE : «
@@ -764,6 +839,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.012667
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 1616.67
     cotisation_forfaitaire_annee: 2016
     points_par_trimestre_valide: 6.75
@@ -786,7 +863,9 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. Ajustement 3,8
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). Ajustement 3,8
       %. VALEUR DE SERVICE des points liquidés depuis 2017 : « 11,31 euros
       jusqu'à l'exercice 2020, 11,36 euros pour l'exercice 2021, 11,48
       euros pour l'exercice 2022, 11,71 euros pour les exercices 2023 et
@@ -812,6 +891,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.012667
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 1616.67
     cotisation_forfaitaire_annee: 2016
     points_par_trimestre_valide: 6.75
@@ -834,7 +915,9 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. Ajustement 3,8
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). Ajustement 3,8
       %. VALEUR DE SERVICE des points liquidés depuis 2017 : « 11,31 euros
       jusqu'à l'exercice 2020, 11,36 euros pour l'exercice 2021, 11,48
       euros pour l'exercice 2022, 11,71 euros pour les exercices 2023 et
@@ -860,6 +943,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.012667
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
     cotisation_forfaitaire_euros: 1616.67
     cotisation_forfaitaire_annee: 2016
     points_par_trimestre_valide: 6.75
@@ -882,7 +967,9 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. Ajustement 3,8
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). Ajustement 3,8
       %. VALEUR DE SERVICE des points liquidés depuis 2017 : « 11,31 euros
       jusqu'à l'exercice 2020, 11,36 euros pour l'exercice 2021, 11,48
       euros pour l'exercice 2022, 11,71 euros pour les exercices 2023 et
@@ -908,8 +995,10 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.012667
-    cotisation_forfaitaire_euros: 1616.67
-    cotisation_forfaitaire_annee: 2016
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
+    cotisation_forfaitaire_euros: 1852.00
+    cotisation_forfaitaire_annee: 2025
     points_par_trimestre_valide: 6.75
     points_ajustement_par_forfait: 18
     points_ajustement_maximum: 9
@@ -930,8 +1019,16 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. Ajustement 3,8
-      %. VALEUR DE SERVICE des points liquidés depuis 2017 : « 11,31 euros
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). Ajustement 3,8
+      %. FORFAIT : 5 556 € en secteur 2, 1 852 € en secteur 1, le tiers
+      (guide de l'assurance vieillesse des professions libérales, CNAVPL,
+      2025, p. 85) ; le décret n° 2011-1644 (art. 1er,
+      LEGIARTI000024853551) le revalorise depuis 2017 « en fonction de
+      l'évolution constatée du revenu moyen » des médecins, que l'index ne
+      publie pas : de 2017 à 2024, la fiche garde le forfait de 2016
+      projeté sur les prix. VALEUR DE SERVICE des points liquidés depuis 2017 : « 11,31 euros
       jusqu'à l'exercice 2020, 11,36 euros pour l'exercice 2021, 11,48
       euros pour l'exercice 2022, 11,71 euros pour les exercices 2023 et
       2024 et 11,82 euros à compter de l'exercice 2025 » (art. 4,
@@ -956,8 +1053,10 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.013333
-    cotisation_forfaitaire_euros: 1616.67
-    cotisation_forfaitaire_annee: 2016
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
+    cotisation_forfaitaire_euros: 1917.00
+    cotisation_forfaitaire_annee: 2026
     points_par_trimestre_valide: 6.75
     points_ajustement_par_forfait: 18
     points_ajustement_maximum: 9
@@ -978,11 +1077,14 @@ periodes:
       versent une cotisation égale au DOUBLE de celle du médecin (D.
       645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995)
       : le forfait et le taux de la fiche valent donc un tiers du total,
-      et la part des caisses est décrite ici, non comptée. Ajustement « 4
+      et la part des caisses, que disent `part_assurance_maladie_forfait`
+      et `part_assurance_maladie_taux`, est portée au compte comme une
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). Ajustement « 4
       % à compter de l'exercice 2026 » (art. 2 dans sa rédaction du décret
       n° 2025-1076, LEGIARTI000052567960, « aux cotisations et aux
       prestations dues au titre des périodes courant à compter du 1er
-      janvier 2026 »). VALEUR DE SERVICE des points liquidés depuis 2017 :
+      janvier 2026 »). FORFAIT : 5 751 € en secteur 2, 1 917 € en secteur
+      1 (CARMF, cotisations 2026, relevé au registre le 4 octobre 2026). VALEUR DE SERVICE des points liquidés depuis 2017 :
       « 11,31 euros jusqu'à l'exercice 2020, 11,36 euros pour l'exercice
       2021, 11,48 euros pour l'exercice 2022, 11,71 euros pour les
       exercices 2023 et 2024 et 11,82 euros à compter de l'exercice 2025 »

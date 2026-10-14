@@ -1,0 +1,319 @@
+code: asv_chirurgiens_dentistes
+rang: 532
+nom: >-
+  Prestations complémentaires de vieillesse des chirurgiens-dentistes
+  conventionnés (PCV, ex-ASV)
+famille: liberal
+etage: additionnel
+source_id: legifrance_textes
+fiabilite: estimee
+creation: 1978
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Chirurgiens-dentistes libéraux conventionnés, affiliés à la CARCDSF.
+  Facultatif depuis le décret du 13 juillet 1962, obligatoire depuis le
+  1er janvier 1978 (décret n° 78-283), refondu par le décret n° 2007-458
+  du 25 mars 2007 : un forfait qui ouvre dix points, et depuis 2008 une
+  cotisation d'ajustement sur le revenu, qui en ouvre au plus un, puis
+  1,47 et 1,93. L'assurance maladie paie les deux tiers du forfait et la
+  moitié de l'ajustement ; la fiche porte la part de l'adhérent, et les
+  fractions `part_assurance_maladie_*` celle des caisses, que le compte
+  notionnel reçoit comme une part patronale. ÂGES : le taux plein à
+  67 ans, le départ dès l'âge légal avec une minoration de 1,25 % par
+  trimestre « dans la limite de 15 % » (guide CNAVPL 2025, p. 88) ; la
+  fiche fait suivre les deux âges aux générations, comme la complémentaire
+  des médecins avant 2017, et les présume à toutes les années. LE STATUT
+  `chirurgien_dentiste_ou_sage_femme` NE DIT PAS LA PROFESSION : la fiche
+  présume le chirurgien-dentiste, comme celle de la complémentaire de la
+  CARCDSF. La sage-femme a son régime, 18 points par an, à 6,10 € le point
+  en 2025 (décret n° 84-254 ; fiche asv_autres_professions_de_sante) : la
+  présomption surestime sa prestation de près de trois fois. Le règlement de
+  la section approuvé par l'arrêté du 10 juillet 2026 n'est pas lu.
+hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 214
+  nom: Prestations complémentaires de vieillesse des chirurgiens-dentistes conventionnés (PCV, ex-ASV)
+  population: Chirurgiens-dentistes conventionnés
+  couverture: partiel
+  statuts: [chirurgien_dentiste_ou_sage_femme]
+  textes:
+    - {reference: "décret n° 78-283 du 28 février 1978 rendant obligatoire le régime de prestations supplémentaires de vieillesse des chirurgiens-dentistes conventionnés", id: LEGITEXT000006062837}
+    - {reference: "décret n° 2007-458 du 25 mars 2007, articles 1er à 3 (forfait, ajustement, valeur de service)", id: LEGIARTI000006261863}
+  manque: >-
+    Les points d'avant 2007, exprimés en lettre clé C, que l'index ne
+    chiffre pas : la fiche présume la règle de 2007, dix points par an, et
+    le forfait de 2007. Les valeurs de service des points d'avant 2006, le
+    rachat des années de 1946 à 1977, la borne de 420 points jusqu'en
+    2021, l'arrondi au centième supérieur. Le partage avec l'assurance
+    maladie, lu pour 2025, est présumé à toutes les années. La sage-femme,
+    que le statut confond avec le chirurgien-dentiste, a son propre régime.
+periodes:
+  - debut: 1978
+    fin: 2006
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.5
+    cotisation_forfaitaire_euros: 1050.00
+    cotisation_forfaitaire_annee: 2007
+    points_par_trimestre_valide: 2.5
+    valeur_point_euros: 28.5747
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    decote_trimestres_maximum: 12
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      PRÉSOMPTION, AVANT LE DÉCRET DE 2007. Le régime, facultatif depuis
+      le décret du 13 juillet 1962, est rendu obligatoire au 1er janvier
+      1978 (décret n° 78-283), ses cotisations et ses prestations
+      « exprimées en fonction de la lettre clé C » (article 2), que
+      l'index ne chiffre pas, ni le nombre de points qu'une année
+      ouvrait. La fiche présume la règle du décret n° 2007-458 — dix
+      points par an, 2,5 par trimestre validé, sans ajustement — et le
+      forfait de 2007, 3 150 € dont le tiers au chirurgien-dentiste,
+      projeté en arrière sur les prix. Les points acquis avant 2006 ont
+      leur propre valeur de service, plus basse, par année d'acquisition
+      (décret n° 2007-458, art. 3, II, LEGIARTI000006261865), que le
+      modèle ne sert pas : il les vaut au point d'après 2006. Le rachat
+      des années de 1946 à 1977, huit points l'année, n'est pas porté.
+      Niveau `estimee`.
+  - debut: 2007
+    fin: 2007
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.5
+    cotisation_forfaitaire_euros: 1050.00
+    cotisation_forfaitaire_annee: 2007
+    points_par_trimestre_valide: 2.5
+    valeur_point_euros: 28.5747
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    decote_trimestres_maximum: 12
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      FORFAIT : « 3 150 euros pour l'exercice 2007 », qui ouvre « 10 »
+      points (décret n° 2007-458, art. 1er, LEGIARTI000006261863). C'est la
+      cotisation TOTALE : l'assurance maladie en paie les deux tiers
+      (guide CNAVPL 2025, p. 87 : 1 648,76 € à la charge de l'adhérent,
+      3 297,52 € à celle des organismes d'assurance maladie) ; la fiche
+      porte le tiers, 1 050 €, et présume ce partage à toutes les
+      années.
+  - debut: 2008
+    fin: 2008
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.003750
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.5
+    cotisation_forfaitaire_euros: 1200.00
+    cotisation_forfaitaire_annee: 2008
+    points_par_trimestre_valide: 2.5
+    points_ajustement_au_plafond: 1.0
+    valeur_point_euros: 28.5747
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    decote_trimestres_maximum: 12
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      FORFAIT : « 3 600 euros pour l'exercice 2008 » (art. 1er), le tiers à
+      l'adhérent. AJUSTEMENT : « 0,75 % du revenu professionnel […] dans
+      la limite de cinq fois le plafond », dont la cotisation au plafond
+      « ouvre droit à l'attribution de 1 point de retraite », « au prorata
+      de la cotisation acquittée, arrondi au centième de point
+      supérieur » en deçà (art. 2, LEGIARTI000006261864) ; la moitié à
+      l'adhérent, l'autre aux caisses (guide CNAVPL 2025, partage présumé
+      constant). Le moteur ne fait pas l'arrondi.
+  - debut: 2009
+    fin: 2011
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.003750
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.5
+    cotisation_forfaitaire_euros: 1300.00
+    cotisation_forfaitaire_annee: 2009
+    points_par_trimestre_valide: 2.5
+    points_ajustement_au_plafond: 1.0
+    valeur_point_euros: 28.5747
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    decote_trimestres_maximum: 12
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      FORFAIT : « 3 900 euros pour l'exercice 2009 », puis « revalorisé
+      conformément à l'évolution annuelle moyenne des prix à la
+      consommation hors tabac de l'année précédente » (art. 1er) : le
+      tiers, 1 300 €, projeté sur les prix. AJUSTEMENT : 0,75 %, un point
+      au plafond (art. 2, rédactions de 2007 et de 2012,
+      LEGIARTI000026885150).
+  - debut: 2012
+    fin: 2017
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.003750
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.5
+    cotisation_forfaitaire_euros: 1300.00
+    cotisation_forfaitaire_annee: 2009
+    points_par_trimestre_valide: 2.5
+    points_ajustement_au_plafond: 1.0
+    valeur_point_euros: 28.5747
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    decote_trimestres_maximum: 12
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      FORFAIT : « 3 900 euros pour l'exercice 2009 », puis « revalorisé
+      conformément à l'évolution annuelle moyenne des prix à la
+      consommation hors tabac de l'année précédente » (art. 1er) : le
+      tiers, 1 300 €, projeté sur les prix. AJUSTEMENT : 0,75 %, un point
+      au plafond (art. 2, rédactions de 2007 et de 2012,
+      LEGIARTI000026885150).
+      La rédaction du 30 décembre 2012 de l'article 2 (décret n° 2012-1485)
+      remplace « défini au second alinéa de l'article L. 642-2 » par
+      « défini à l'article L. 642-2 » : sans effet sur le taux ni sur les
+      points ; la période est coupée à sa date pour le dire.
+  - debut: 2018
+    fin: 2018
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.005500
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.5
+    cotisation_forfaitaire_euros: 1300.00
+    cotisation_forfaitaire_annee: 2009
+    points_par_trimestre_valide: 2.5
+    points_ajustement_au_plafond: 1.47
+    valeur_point_euros: 28.5747
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    decote_trimestres_maximum: 12
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      AJUSTEMENT : « 1,10 % au titre de l'exercice 2018 », qui ouvre au
+      plafond « 1,47 point de retraite au titre de l'exercice 2018 » (art.
+      2 dans sa rédaction du décret n° 2017-933, LEGIARTI000034762381),
+      assis sur le revenu de L. 131-6. LA PRESTATION « ne dépasse pas 420
+      points » jusqu'en 2021 (décret n° 78-283, article 3) : le moteur
+      ne la borne pas.
+  - debut: 2019
+    fin: 2024
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.007250
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.5
+    cotisation_forfaitaire_euros: 1300.00
+    cotisation_forfaitaire_annee: 2009
+    points_par_trimestre_valide: 2.5
+    points_ajustement_au_plafond: 1.93
+    valeur_point_euros: 28.5747
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    decote_trimestres_maximum: 12
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      AJUSTEMENT : « 1,45 % à compter de l'exercice 2019 », « 1,93 point
+      de retraite à compter de l'exercice 2019 » au plafond (art. 2,
+      LEGIARTI000034762381), dont 0,725 % à l'adhérent.
+  - debut: 2025
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.007250
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.5
+    cotisation_forfaitaire_euros: 1648.76
+    cotisation_forfaitaire_annee: 2025
+    points_par_trimestre_valide: 2.5
+    points_ajustement_au_plafond: 1.93
+    valeur_point_euros: 28.5747
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    decote_trimestres_maximum: 12
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      FORFAIT : « 1 648,76 € en 2025, à la charge de l'adhérent, 3 297,52
+      € à la charge des organismes d'assurance maladie » ; « La
+      cotisation forfaitaire ouvre droit à 10 points » ; AJUSTEMENT :
+      « 0,725 % des revenus professionnels non-salariés de la dernière
+      année dans la limite de 5 fois la valeur du plafond […] Le taux
+      global est de 1,45 % en 2025, l'autre moitié étant à la charge des
+      organismes d'assurance maladie » ; VALEUR DE SERVICE : « La valeur
+      2025 du point est de 28,5747 € pour les points acquis à compter du
+      01/01/2006 » ; MINORATION : « 1,25 % par trimestre manquant […] dans
+      la limite de 15 % » avant 67 ans ; « La pension est majorée de 10 %
+      au profit des allocataires ayant eu au moins 3 enfants » (guide de
+      l'assurance vieillesse des professions libérales, CNAVPL, 2025, p.
+      87-88).

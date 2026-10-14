@@ -230,12 +230,19 @@ def test_la_carpimko_majore_depuis_son_age(simulateur):
     "auxiliaire_medical", "veterinaire",
 ])
 def test_trois_enfants_majorent_toute_la_pension_en_2027(simulateur, statut):
-    """En 2027, la base (L. 643-1-1) et chaque complémentaire majorent de 10 %."""
+    """En 2027, la base (L. 643-1-1) et chaque complémentaire majorent de 10 %.
+
+    Les prestations complémentaires de vieillesse des auxiliaires médicaux
+    n'ont aucune majoration que le guide de la CNAVPL nomme (2025, p. 95-96) :
+    elles restent hors du compte.
+    """
     resultat, pensions = _calculer(simulateur, statut, 1960, 67.0, sexe="F",
                                    enfants=3)
     majoration = sum(a.montant for a in resultat.avantages_appliques
                      if a.code == "majoration_enfants")
-    assert majoration == pytest.approx(0.10 * sum(p.montant for p in pensions.values()))
+    majorees = [p.montant for code, p in pensions.items()
+                if code != "asv_auxiliaires_medicaux"]
+    assert majoration == pytest.approx(0.10 * sum(majorees))
 
 
 def test_trois_enfants_majoraient_deja_les_complementaires_du_medecin(simulateur):

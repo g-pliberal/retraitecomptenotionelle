@@ -2002,6 +2002,13 @@ export const BORNES_ASSIETTE = Object.freeze({
   sans_objet: [0.0, null],
 });
 
+
+/** Ce qu'un tiers verse pour un euro de l'assuré, quand il paie `part` du
+ * total : 2 pour deux tiers, 1,5 pour 60 %. */
+function complement(part) {
+  return part ? part / (1.0 - part) : 0.0;
+}
+
 /** Jeu de paramètres d'un régime sur une plage d'années. */
 export class PeriodeRegime {
   constructor(fiche) {
@@ -2049,6 +2056,29 @@ export class PeriodeRegime {
       deplafonne = this.taux_cotisation_deplafonnee_non_salarie ?? deplafonne;
     }
     return [plafonne, deplafonne];
+  }
+
+  /**
+   * Ce que l'assurance maladie verse en plus de ce que paie le professionnel
+   * de santé conventionné, son forfait et sa cotisation proportionnelle
+   * donnés : voir `PeriodeRegime.prise_en_charge` (regimes.py). Le paquet ne
+   * porte ses deux fractions que là où elles servent.
+   */
+  priseEnCharge(forfait, proportionnelle) {
+    return forfait * complement(this.part_assurance_maladie_forfait ?? 0)
+      + proportionnelle * complement(this.part_assurance_maladie_taux ?? 0);
+  }
+
+  /**
+   * Le rapport de la cotisation d'ajustement TOTALE au forfait total, qui
+   * fait les points d'ajustement : voir regimes.py.
+   */
+  ajustementTotal(forfait, proportionnelle) {
+    if (forfait <= 0) {
+      return 0.0;
+    }
+    return (proportionnelle / (1.0 - (this.part_assurance_maladie_taux ?? 0)))
+      / (forfait / (1.0 - (this.part_assurance_maladie_forfait ?? 0)));
   }
 
   bornesAssietteEnPass() {

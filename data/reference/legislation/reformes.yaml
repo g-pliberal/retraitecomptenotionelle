@@ -712,6 +712,46 @@ reformes:
     absorbee_par: []
     non_appliquee: {}
 
+  - code: pcv_auxiliaires_medicaux_1975
+    date: 1975-07-01
+    texte: {reference: "décret n° 75-891 du 23 septembre 1975 rendant obligatoire le régime de prestations supplémentaires de vieillesse des auxiliaires médicaux conventionnés", id: LEGITEXT000006062390}
+    parametres: [creation]
+    regimes: [asv_auxiliaires_medicaux]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: pcv_chirurgiens_dentistes_1978
+    date: 1978-01-01
+    texte: {reference: "décret n° 78-283 du 28 février 1978 rendant obligatoire le régime de prestations supplémentaires de vieillesse des chirurgiens-dentistes conventionnés", id: LEGITEXT000006062837}
+    parametres: [creation]
+    regimes: [asv_chirurgiens_dentistes]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: pcv_chirurgiens_dentistes_2007
+    date: 2007-03-28
+    texte: {reference: "décret n° 2007-458 du 25 mars 2007 relatif au régime des prestations complémentaires de vieillesse des chirurgiens-dentistes (forfait, dix points, ajustement de 0,75 % dès 2008)", id: LEGIARTI000006261863}
+    parametres: [cotisation_forfaitaire_euros, points_par_trimestre_valide, taux_cotisation_retraite, points_ajustement_au_plafond]
+    regimes: [asv_chirurgiens_dentistes]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: pcv_chirurgiens_dentistes_2018
+    date: 2018-01-01
+    texte: {reference: "décret n° 2017-933 du 10 mai 2017 (ajustement de 1,10 % en 2018 et 1,45 % depuis 2019, 1,47 puis 1,93 point au plafond)", id: LEGIARTI000034762381}
+    parametres: [taux_cotisation_retraite, points_ajustement_au_plafond]
+    regimes: [asv_chirurgiens_dentistes]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: pcv_auxiliaires_medicaux_2008
+    date: 2008-10-12
+    texte: {reference: "décret n° 2008-1044 du 10 octobre 2008 relatif au régime des prestations complémentaires de vieillesse des auxiliaires médicaux (forfait, points, ajustement dès 2010, valeur de service)", id: LEGIARTI000019600602}
+    parametres: [cotisation_forfaitaire_euros, points_par_trimestre_valide, taux_cotisation_retraite, points_ajustement_par_forfait, valeur_point_euros]
+    regimes: [asv_auxiliaires_medicaux]
+    absorbee_par: []
+    non_appliquee: {}
+
   - code: rafep_2005
     date: 2005-09-01
     texte: {reference: "loi n° 2005-5 du 5 janvier 2005 et décret n° 2005-1233 du 30 septembre 2005 relatif au régime additionnel de retraite des personnels enseignants et de documentation", id: LEGITEXT000006052499}

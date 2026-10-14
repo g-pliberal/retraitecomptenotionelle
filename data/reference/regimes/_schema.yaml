@@ -855,6 +855,27 @@ champs_periode:
       au plus (décret n° 2011-1644, art. 3).
     defaut: null
 
+  part_assurance_maladie_forfait:
+  part_assurance_maladie_taux:
+    description: >-
+      La fraction de la cotisation TOTALE des prestations complémentaires de
+      vieillesse (PCV, ex-ASV) que les caisses d'assurance maladie versent pour
+      le professionnel de santé conventionné, sur le forfait et sur la
+      cotisation proportionnelle d'ajustement (L. 645-2, L. 645-3, L. 162-14-1,
+      5°). La fiche porte la part du professionnel ; le compte notionnel porte
+      celle des caisses comme une part patronale, et le scénario 1 compte les
+      points d'ajustement sur la cotisation totale. Deux tiers et deux tiers
+      pour le médecin de secteur 1 (D. 645-3), deux tiers et 0,6 pour
+      l'auxiliaire médical, deux tiers et la moitié pour le chirurgien-dentiste.
+    defaut: 0
+
+  points_ajustement_au_plafond:
+    description: >-
+      Les points qu'ouvre la cotisation d'ajustement appelée sur la borne haute
+      de l'assiette, au prorata en deçà : le chirurgien-dentiste, un point de
+      2008 à 2017, 1,47 en 2018, 1,93 depuis 2019 (décret n° 2007-458, art. 2).
+    defaut: null
+
   ecretement_salaire_reference:
     description: >-
       L'ÉCRÊTEMENT du salaire de chaque année retenue pour le salaire de

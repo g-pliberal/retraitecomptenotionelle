@@ -809,6 +809,7 @@ def _regimes() -> list[dict]:
                     **_points_gratuits(p),
                     **_bornes_par_annee(p),
                     **_taux_des_non_salaries(p),
+                    **_assurance_maladie(p),
                 }
                 for p in regime.periodes
             ],
@@ -920,6 +921,20 @@ def _bornes_par_annee(p) -> dict:
     champs = {
         "borne_basse_par_annee": dict(p.borne_basse_par_annee) or None,
         "borne_haute_par_annee": dict(p.borne_haute_par_annee) or None,
+    }
+    return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
+
+
+def _assurance_maladie(p) -> dict:
+    """La part de l'assurance maladie dans les prestations complémentaires de
+    vieillesse des professionnels de santé conventionnés, et les points
+    d'ajustement au plafond du chirurgien-dentiste, et seulement là. Même
+    raison que pour les marins : le moteur JavaScript lit leur absence comme
+    une part nulle et aucun point."""
+    champs = {
+        "part_assurance_maladie_forfait": p.part_assurance_maladie_forfait or None,
+        "part_assurance_maladie_taux": p.part_assurance_maladie_taux or None,
+        "points_ajustement_au_plafond": p.points_ajustement_au_plafond,
     }
     return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
 

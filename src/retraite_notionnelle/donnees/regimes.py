@@ -198,6 +198,12 @@ def _dates_d_effet(bornes, debut_periode: int, fin_periode: int | None,
     return debut, fin
 
 
+def _complement(part: float) -> float:
+    """Ce qu'un tiers verse pour un euro de l'assuré, quand il paie ``part``
+    du total : 2 pour deux tiers, 1,5 pour 60 %."""
+    return part / (1.0 - part) if part else 0.0
+
+
 @dataclass(frozen=True)
 class PeriodeRegime:
     """Jeu de paramètres d'un régime sur une plage d'années."""
@@ -708,7 +714,41 @@ class PeriodeRegime:
     #: fiche de paie, jamais par la liquidation, que le taux ne change pas.
     taux_cotisation_non_salarie: float | None = None
     taux_cotisation_deplafonnee_non_salarie: float | None = None
+    #: LA PART DE L'ASSURANCE MALADIE dans les prestations complémentaires de
+    #: vieillesse (PCV, ex-ASV) des professionnels de santé conventionnés :
+    #: la fraction de la cotisation TOTALE que les caisses d'assurance maladie
+    #: versent pour lui (L. 645-2 et L. 645-3, L. 162-14-1, 5°). La fiche
+    #: porte la part du professionnel seul, que le statut, sans employeur,
+    #: paie ; ces fractions en tirent celle des caisses — deux tiers du
+    #: forfait et de l'ajustement du médecin de secteur 1 (D. 645-3), deux
+    #: tiers du forfait et 60 % de l'ajustement de l'auxiliaire médical, deux
+    #: tiers du forfait et la moitié de l'ajustement du chirurgien-dentiste.
+    #: Le compte notionnel les porte comme une part patronale ; le scénario 1
+    #: en tire les points d'ajustement, que le texte compte sur la cotisation
+    #: totale. 0 : l'assuré paie tout.
+    part_assurance_maladie_forfait: float = 0.0
+    part_assurance_maladie_taux: float = 0.0
+    #: POINTS D'AJUSTEMENT AU PLAFOND : ceux qu'ouvre la cotisation
+    #: d'ajustement appelée sur cinq plafonds, « au prorata de la cotisation
+    #: acquittée » en deçà — le chirurgien-dentiste, un point de 2008 à 2017,
+    #: 1,47 en 2018, 1,93 depuis 2019 (décret n° 2007-458, art. 2). ``None`` :
+    #: aucun, ou ceux de ``points_ajustement_par_forfait``.
+    points_ajustement_au_plafond: float | None = None
     notes: str = ""
+
+    def prise_en_charge(self, forfait: float, proportionnelle: float) -> float:
+        """Ce que l'assurance maladie verse en plus de ce que paie le
+        professionnel, son forfait et sa cotisation proportionnelle donnés."""
+        return (forfait * _complement(self.part_assurance_maladie_forfait)
+                + proportionnelle * _complement(self.part_assurance_maladie_taux))
+
+    def ajustement_total(self, forfait: float, proportionnelle: float) -> float:
+        """Le rapport de la cotisation d'ajustement TOTALE au forfait total,
+        qui fait les points d'ajustement, tirés des parts du professionnel."""
+        if forfait <= 0:
+            return 0.0
+        return ((proportionnelle / (1.0 - self.part_assurance_maladie_taux))
+                / (forfait / (1.0 - self.part_assurance_maladie_forfait)))
 
     def taux_du_cotisant(self, sans_employeur: bool) -> tuple[float, float]:
         """Les taux plafonné et déplafonné que verse le cotisant : les taux
@@ -1967,6 +2007,14 @@ class CatalogueRegimes:
                 points_ajustement_maximum=(
                     None if p.get("points_ajustement_maximum") is None
                     else float(p["points_ajustement_maximum"])
+                ),
+                part_assurance_maladie_forfait=float(
+                    p.get("part_assurance_maladie_forfait") or 0.0),
+                part_assurance_maladie_taux=float(
+                    p.get("part_assurance_maladie_taux") or 0.0),
+                points_ajustement_au_plafond=(
+                    None if p.get("points_ajustement_au_plafond") is None
+                    else float(p["points_ajustement_au_plafond"])
                 ),
                 points_par_trimestre_valide=(
                     None if p.get("points_par_trimestre_valide") is None

@@ -1,0 +1,241 @@
+code: asv_auxiliaires_medicaux
+rang: 531
+nom: >-
+  Prestations complémentaires de vieillesse des auxiliaires médicaux
+  conventionnés (PCV, ex-ASV)
+famille: liberal
+etage: additionnel
+source_id: legifrance_textes
+fiabilite: estimee
+creation: 1975
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Infirmiers, masseurs-kinésithérapeutes, pédicures-podologues,
+  orthophonistes et orthoptistes libéraux conventionnés, affiliés à la
+  CARPIMKO. Facultatif depuis le décret n° 71-544 du 2 juillet 1971,
+  obligatoire depuis le 1er juillet 1975 (décret n° 75-891), refondu par
+  le décret n° 2008-1044 du 10 octobre 2008 : un forfait qui ouvre un
+  nombre fixe de points, et depuis 2010 une cotisation d'ajustement de
+  0,40 % du revenu qui en ouvre au prorata. L'assurance maladie paie les
+  deux tiers du forfait et 60 % de l'ajustement ; la fiche porte la part
+  de l'auxiliaire, que le statut, sans employeur, paie, et les fractions
+  `part_assurance_maladie_*` celle des caisses, que le compte notionnel
+  reçoit comme une part patronale. ÂGES : la retraite « à 65 ans », et
+  « par anticipation dès l'âge de 60 ans », avec « un coefficient
+  réducteur allant de 0,75 à 60 ans à 0,95 à 64 ans » (guide de
+  l'assurance vieillesse des professions libérales, CNAVPL, 2025, p.
+  95-96), soit 1,25 % par trimestre manquant ; présumés à toutes les
+  années. Le règlement de la section approuvé par l'arrêté du 10 juillet
+  2026 n'est pas lu.
+hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 212
+  nom: Prestations complémentaires de vieillesse des auxiliaires médicaux conventionnés (PCV, ex-ASV)
+  population: Infirmiers, masseurs-kinésithérapeutes, pédicures-podologues, orthophonistes et orthoptistes conventionnés
+  couverture: partiel
+  statuts: [auxiliaire_medical]
+  textes:
+    - {reference: "décret n° 75-891 du 23 septembre 1975 rendant obligatoire le régime de prestations supplémentaires de vieillesse des auxiliaires médicaux conventionnés", id: LEGITEXT000006062390}
+    - {reference: "décret n° 2008-1044 du 10 octobre 2008, articles 1er à 5 (forfait, ajustement, points, valeur de service)", id: LEGIARTI000019600602}
+  manque: >-
+    Les points d'avant 2008, que l'index ne porte pas : la fiche présume
+    la règle de 2010, 24,5 points par an, et le forfait de 2008. Les
+    valeurs de service propres aux points acquis avant 2006, par tranche
+    d'années. L'arrondi au dixième supérieur des points d'ajustement, et
+    l'assiette de l'avant-dernière année. Le partage du forfait et de
+    l'ajustement avec l'assurance maladie, lu pour 2025, est présumé à
+    toutes les années.
+periodes:
+  - debut: 1975
+    fin: 2007
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    age_table: pcv_auxiliaires_medicaux
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.6
+    cotisation_forfaitaire_euros: 133.33
+    cotisation_forfaitaire_annee: 2008
+    points_par_trimestre_valide: 6.125
+    valeur_point_euros: 1.49
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      PRÉSOMPTION, AVANT LE DÉCRET DE 2008. Le régime, facultatif depuis
+      le décret n° 71-544, est rendu obligatoire au 1er juillet 1975 (décret
+      n° 75-891) ; ses articles 2 à 4, qui fixaient la cotisation en
+      lettres clés, sont abrogés en 2008 et l'index ne les porte pas, ni
+      le nombre de points qu'une année ouvrait. La fiche présume la règle
+      permanente du décret n° 2008-1044 — 24,5 points par an, 6,125 par
+      trimestre validé, sans ajustement — et le forfait de 2008, 400 €
+      dont le tiers à l'auxiliaire, projeté en arrière sur les prix
+      (convention du dépôt pour un montant sans série). Les points acquis
+      avant 2006 ont une valeur de service propre à leur tranche d'années
+      — 2,30 € de 1960 à 1975, 2,20 € de 1976 à 1987, 1,90 € de 1988 à
+      1997, 1,60 € de 1998 à 2005, à compter de 2011 (décret n° 2008-1044,
+      art. 5, II, 2°, LEGIARTI000019600614) — que le modèle, qui ne
+      connaît qu'une valeur par régime, ne sert pas : il les vaut au point
+      d'après 2006. Niveau `estimee`.
+  - debut: 2008
+    fin: 2008
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    age_table: pcv_auxiliaires_medicaux
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.6
+    cotisation_forfaitaire_euros: 133.33
+    cotisation_forfaitaire_annee: 2008
+    points_par_trimestre_valide: 11.0
+    valeur_point_euros: 1.49
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      FORFAIT : « 400 € pour l'exercice 2008 » ; POINTS : « 44 pour
+      l'exercice 2008 » (décret n° 2008-1044, art. 1er,
+      LEGIARTI000019600602). Le forfait du décret est la cotisation
+      TOTALE : l'assurance maladie en paie les deux tiers (guide CNAVPL
+      2025, p. 95 : 222 € pour l'auxiliaire, 443 € pour les caisses) ; la
+      fiche en porte le tiers, 133,33 €, et présume le partage de 2025 à
+      toutes les années.
+  - debut: 2009
+    fin: 2009
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    age_table: pcv_auxiliaires_medicaux
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.6
+    cotisation_forfaitaire_euros: 166.67
+    cotisation_forfaitaire_annee: 2009
+    points_par_trimestre_valide: 6.625
+    valeur_point_euros: 1.49
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      FORFAIT : « 500 € pour l'exercice 2009 » ; POINTS : « 26,5 pour
+      l'exercice 2009 » (décret n° 2008-1044, art. 1er). Le tiers, 166,67
+      €, à l'auxiliaire.
+  - debut: 2010
+    fin: 2010
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    age_table: pcv_auxiliaires_medicaux
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.001000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.6
+    cotisation_forfaitaire_euros: 166.67
+    cotisation_forfaitaire_annee: 2010
+    points_par_trimestre_valide: 6.125
+    points_ajustement_par_forfait: 24.5
+    valeur_point_euros: 1.49
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      FORFAIT : « 500 € pour l'exercice 2010 », 24,5 points « à compter de
+      l'exercice 2010 » (art. 1er). AJUSTEMENT : « fixé à 0,25 % pour
+      l'exercice 2010 » (art. 3, LEGIARTI000019600610), sur le revenu
+      conventionné dans la limite de cinq plafonds ; l'auxiliaire en paie
+      40 %, 0,10 %, les caisses 60 % (guide CNAVPL 2025, partage présumé
+      constant). POINTS D'AJUSTEMENT : « le produit du montant de la
+      cotisation d'ajustement acquittée et du nombre de points acquis au
+      titre de la cotisation forfaitaire », divisé par le forfait,
+      « arrondi au dixième supérieur » (art. 4, LEGIARTI000019600612) :
+      le moteur prend le rapport des cotisations totales, sans
+      l'arrondi. La cotisation est assise sur le revenu de l'avant-dernière
+      année, de la dernière depuis 2026 ; le modèle prend celui de
+      l'année.
+  - debut: 2011
+    fin: 2024
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    age_table: pcv_auxiliaires_medicaux
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.001600
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.6
+    cotisation_forfaitaire_euros: 180.00
+    cotisation_forfaitaire_annee: 2011
+    points_par_trimestre_valide: 6.125
+    points_ajustement_par_forfait: 24.5
+    valeur_point_euros: 1.49
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      FORFAIT : « 540 € pour l'exercice 2011 », puis « revalorisé
+      conformément à l'évolution annuelle moyenne des prix à la
+      consommation hors tabac de l'année précédente » (art. 1er) : le
+      tiers, 180 €, projeté sur les prix. AJUSTEMENT : 0,40 % « à compter
+      du 1er janvier 2010 », sauf 2010 (art. 2, LEGIARTI000019600608),
+      dont 0,16 % à l'auxiliaire.
+  - debut: 2025
+    fin: null
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    age_table: pcv_auxiliaires_medicaux
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.001600
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.6
+    cotisation_forfaitaire_euros: 221.67
+    cotisation_forfaitaire_annee: 2025
+    points_par_trimestre_valide: 6.125
+    points_ajustement_par_forfait: 24.5
+    valeur_point_euros: 1.49
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      FORFAIT : « La cotisation forfaitaire, versée par l'auxiliaire
+      médical, est fixée à 222 € en 2025. La cotisation des organismes
+      d'assurance maladie, parties à la convention, s'élève à 443 € » ;
+      AJUSTEMENT : « 0,40 % des revenus conventionnés […] La part du
+      professionnel est de 40 % au taux de 0,16 %, celles des organismes
+      d'assurance maladie de 60 %, au taux de 0,24 % » (guide de
+      l'assurance vieillesse des professions libérales, CNAVPL, 2025, p.
+      95). Le tiers du total, 221,67 €. Depuis 2026, l'ajustement est
+      assis sur le revenu de la dernière année (art. 2,
+      LEGIARTI000052567941).

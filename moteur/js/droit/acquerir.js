@@ -447,15 +447,27 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
               );
             }
           }
+          let ajustement = null;
           if (periode.points_ajustement_par_forfait !== null
               && periode.points_ajustement_par_forfait !== undefined
               && forfait > 0) {
             // Les points d'AJUSTEMENT de l'ASV des médecins : 18 fois la
             // cotisation proportionnelle sur le forfait, neuf au plus
             // (décret n° 2011-1644, art. 3). Ils suivent le revenu, là où
-            // les 27 points du forfait ne suivent que la durée.
-            let ajustement = periode.points_ajustement_par_forfait * assiette
-              * periode.taux_cotisation_retraite / forfait;
+            // les 27 points du forfait ne suivent que la durée. Le rapport
+            // est celui des cotisations TOTALES, part de l'assurance maladie
+            // comprise (décret n° 2008-1044, art. 4).
+            ajustement = periode.points_ajustement_par_forfait
+              * periode.ajustementTotal(
+                forfait, assiette * periode.taux_cotisation_retraite);
+          } else if (periode.points_ajustement_au_plafond !== null
+              && periode.points_ajustement_au_plafond !== undefined
+              && borneHaute) {
+            // Ceux du chirurgien-dentiste : 1,93 au plafond de cinq plafonds,
+            // au prorata en deçà (décret n° 2007-458, art. 2).
+            ajustement = periode.points_ajustement_au_plafond * assiette / borneHaute;
+          }
+          if (ajustement !== null) {
             if (periode.points_ajustement_maximum !== null
                 && periode.points_ajustement_maximum !== undefined) {
               ajustement = Math.min(ajustement,
