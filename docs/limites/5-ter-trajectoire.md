@@ -112,6 +112,30 @@ depuis 2000 sous un cliquet, qui ne doit que descendre jusqu'à quelques pour
 cent (`test_la_projection_refait_le_passe`) ; l'action 147 de la feuille de
 route en est le chantier.
 
+**L'écart du passé, en trois facteurs.** L'enquête annuelle auprès des caisses
+de la DREES compte, depuis 2004, les personnes qui touchent un droit direct,
+tous régimes réunis, et la masse de la réversion ; l'écart de la reconstitution
+en est le produit de trois (`Avenir.reconstitution_decomposee`). En 2009, le
+pire depuis 2000 : <!--chiffre:mesure(reconstitution?annee=2009&facteur=retraites)-->−6,1<!--/--> % de têtes,
+<!--chiffre:mesure(reconstitution?annee=2009&facteur=pension)-->−11,0<!--/--> % de pension de droit direct par tête,
+<!--chiffre:mesure(reconstitution?annee=2009&facteur=reversion)-->−0,1<!--/--> % de réversion ; en 2004,
+<!--chiffre:mesure(reconstitution?annee=2004&facteur=retraites)-->0,2<!--/--> %, <!--chiffre:mesure(reconstitution?annee=2004&facteur=pension)-->−10,2<!--/--> % et
+<!--chiffre:mesure(reconstitution?annee=2004&facteur=reversion)-->−1,9<!--/--> %. Les têtes suivent l'enquête en 2004,
+s'en écartent jusqu'en 2009 et y reviennent ensuite : le dessin des départs
+anticipés pour carrière longue, de 2004 à 2008, que la grille ne connaît pas,
+ses cas types partant à l'âge du taux plein ; c'est lui qui fait de 2009 le
+pire. La réversion, dont la part est celle de 2010 avant 2010, ne pèse qu'en
+début de fenêtre. Le gros de l'écart est la pension par tête, qui croît plus
+vite dans le modèle que dans les comptes : le défaut que la décomposition du
+COR situe aussi dans l'avenir. Une part en revient aux revalorisations servies,
+que le scénario 1 suit par les prix et non par les coefficients publiés — les
+gels de 2014 à 2018 et la valeur de service de l'Agirc-Arrco ; les servir, à
+la mesure qui en a été faite, rapproche 2009 de trois points, mais relève
+d'autant la dérive de l'horizon. Le reste tient aux pensions que la grille
+sert aux générations anciennes. Un test garde l'identité et chacun des trois
+facteurs sous un cliquet
+(`test_la_reconstitution_se_decompose_en_tetes_pension_et_reversion`).
+
 **Le contrôle par la décomposition du COR : les retraités se suivent, la
 pension moyenne non.** La masse des pensions de droit direct est un nombre de
 retraités multiplié par une pension moyenne. Le COR publie les deux facteurs —

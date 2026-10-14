@@ -450,12 +450,35 @@ def dependance(**reglages: str) -> float:
     return _avenir(reglages).dependance
 
 
+#: Les facteurs de la reconstitution que la sonde sait rendre, dans l'ordre
+#: de ``Avenir.reconstitution_decomposee``.
+FACTEURS_RECONSTITUTION = ("retraites", "pension", "reversion")
+
+
 def reconstitution(**reglages: str) -> float:
     """Écart, en %, de la base que l'ancrage prête au modèle à la dépense
     observée, une année publiée : la projection du système actuel refaite à
-    rebours (``Avenir.reconstitution``)."""
-    rapports = _cout_de(reglages).avenir.reconstitution()
+    rebours (``Avenir.reconstitution``). Avec ``facteur=retraites``,
+    ``pension`` ou ``reversion``, l'écart d'un de ses trois facteurs, contre
+    l'enquête annuelle auprès des caisses : les personnes qui touchent un
+    droit direct, leur pension moyenne, la réversion
+    (``Avenir.reconstitution_decomposee``, action 147, étape 18)."""
     annee = int(reglages["annee"])
+    facteur = reglages.get("facteur")
+    if facteur is not None:
+        from retraite_notionnelle.donnees.effectifs import EffectifsRetraites
+
+        if facteur not in FACTEURS_RECONSTITUTION:
+            raise ValueError(f"facteur attend {', '.join(FACTEURS_RECONSTITUTION)}, "
+                             f"reçu « {facteur} »")
+        effectifs = EffectifsRetraites(_parametres().racine_donnees)
+        decompose = _cout_de(reglages).avenir.reconstitution_decomposee(
+            effectifs.serie(EffectifsRetraites.TOUS_REGIMES), _depenses().droits_derives)
+        if annee not in decompose:
+            raise ValueError(f"l'année {annee} n'est pas dans la fenêtre de l'enquête : "
+                             f"{min(decompose)}-{max(decompose)}")
+        return (decompose[annee][FACTEURS_RECONSTITUTION.index(facteur)] - 1) * 100
+    rapports = _cout_de(reglages).avenir.reconstitution()
     if annee not in rapports:
         raise ValueError(f"l'année {annee} n'est pas publiée : {min(rapports)}-{max(rapports)}")
     return (rapports[annee] - 1) * 100

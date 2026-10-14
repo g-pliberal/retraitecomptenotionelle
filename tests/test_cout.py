@@ -760,6 +760,58 @@ def test_la_projection_refait_le_passe(avenir, depenses):
         f"à {math.ceil(ecart * 200) / 200:.1%}")
 
 
+#: Ce que la décomposition de la reconstitution admet, depuis la première
+#: année de l'enquête auprès des caisses (2004), facteur par facteur. Mesuré
+#: le 14 octobre 2026 (action 147, étape 18) : les têtes -6,1 % au pire (2009
+#: et 2010), la pension de droit direct par tête -11,8 % (2007), la réversion
+#: -1,9 % (2004, la part du COR reconduite avant 2010). Des cliquets, qui ne
+#: doivent que descendre ; une session qui les fait passer sous eux d'un point
+#: les abaisse.
+RECONSTITUTION_TETES = 0.065
+RECONSTITUTION_PENSION = 0.12
+RECONSTITUTION_REVERSION = 0.02
+
+
+def test_la_reconstitution_se_decompose_en_tetes_pension_et_reversion(avenir, depenses):
+    """Le passé refait, en ses trois facteurs : d'où viennent les -16 % de 2009.
+
+    L'enquête annuelle auprès des caisses compte, depuis 2004, les personnes
+    qui touchent un droit direct, tous régimes réunis, et la masse de la
+    réversion (:meth:`Avenir.reconstitution_decomposee`). L'écart de la
+    reconstitution est, au produit près, celui des têtes, celui de la pension
+    de droit direct par tête et celui de la réversion.
+
+    *Le 14 octobre 2026*, en 2009, le pire depuis 2000 : -6,1 % de têtes,
+    -11,0 % de pension par tête, -0,1 % de réversion. Les têtes suivent
+    l'enquête en 2004 (+0,2 %), s'en écartent jusqu'en 2009 et y reviennent
+    ensuite : c'est le dessin des départs anticipés pour carrière longue, de
+    2004 à 2008, que la grille ne connaît pas (ses cas types partent à l'âge
+    du taux plein) — l'âge conjoncturel de départ des hommes tombe de 60,06 à
+    59,88 ans de 2004 à 2008 (DREES). La pension par tête, elle, croît plus
+    vite dans le modèle que dans les comptes, de dix points de 2004 à 2024 :
+    le défaut que la décomposition du COR situe déjà dans l'avenir. Les
+    revalorisations servies en font une part, que le scénario 1 sert sur les
+    prix : mesuré hors du dépôt, leur servir les coefficients de la Cnav et la
+    valeur de service de l'Arrco puis de l'Agirc-Arrco ramène 2009 de -16,4 à
+    -13,5 %, mais porte la dérive de 2070 de 1,008 à 1,033 (note de l'étape).
+    """
+    effectifs = EffectifsRetraites(RACINE_DONNEES)
+    decompose = avenir.reconstitution_decomposee(
+        effectifs.serie(EffectifsRetraites.TOUS_REGIMES), depenses.droits_derives)
+    reconstitution = avenir.reconstitution()
+    assert min(decompose) == 2004 and max(decompose) == depenses.derniere_annee, sorted(decompose)
+    for annee, (tetes, pension, reversion) in decompose.items():
+        assert tetes * pension * reversion == pytest.approx(reconstitution[annee], rel=1e-12), annee
+    assert decompose[depenses.derniere_annee] == pytest.approx((1.0, 1.0, 1.0), rel=1e-12)
+    for rang, (nom, cliquet) in enumerate((("têtes", RECONSTITUTION_TETES),
+                                           ("pension par tête", RECONSTITUTION_PENSION),
+                                           ("réversion", RECONSTITUTION_REVERSION))):
+        pire = max(decompose, key=lambda annee: abs(decompose[annee][rang] - 1.0))
+        ecart = decompose[pire][rang] - 1.0
+        assert abs(ecart) <= cliquet, (
+            f"{pire} : {nom} {ecart:+.1%}, le cliquet en admet {cliquet:.1%}")
+
+
 #: Ce que le contrôle par la décomposition du COR tolère sur les EFFECTIFS de
 #: retraités, à chaque fin de sous-période du COR, la dernière année observée du
 #: compte valant un. Mesuré le 5 octobre 2026 : +2,3 % en 2030, -1,0 % en 2045,

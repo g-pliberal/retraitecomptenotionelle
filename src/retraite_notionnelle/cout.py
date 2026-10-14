@@ -1007,6 +1007,55 @@ class Avenir:
         return {ligne.annee: ligne.base_modele / ligne.base
                 for ligne in self.annees if not ligne.projete and ligne.base > 0.0}
 
+    def reconstitution_decomposee(self, retraites: SerieAnnuelle,
+                                  derives: SerieAnnuelle
+                                  ) -> dict[int, tuple[float, float, float]]:
+        """La reconstitution du passé en ses trois facteurs, contre l'enquête
+        annuelle auprès des caisses de la DREES (action 147, étape 18).
+
+        ``retraites`` compte les PERSONNES qui touchent un droit direct, tous
+        régimes réunis, ``derives`` la masse de la réversion, en euros
+        courants : les deux viennent de la feuille A-Cadrage de l'EACR. Chaque
+        année publiée de leur fenêtre rend trois rapports, un l'année
+        d'ancrage, dont le produit est :meth:`reconstitution` : les têtes du
+        modèle sur celles de l'enquête ; sa pension de droit direct par tête
+        sur celle qu'on tire de la dépense observée, réversion retirée ; et
+        ce que la réversion ajoute dans le modèle
+        (:attr:`AvenirAnnuel.facteur_reversion`) sur ce qu'elle ajoute à la
+        dépense observée. Le rapport des têtes ne mesure pas la grille seule :
+        elle n'a pas de départ anticipé pour carrière longue, et le creux de
+        2004 à 2009 est le leur.
+        """
+        ancrage = next((ligne for ligne in reversed(self.annees) if not ligne.projete), None)
+
+        def facteurs(ligne: AvenirAnnuel) -> tuple[float, float, float] | None:
+            annee = ligne.annee
+            if (ligne.base <= 0.0 or ligne.tetes <= 0.0
+                    or not retraites.premiere_annee <= annee <= retraites.derniere_annee
+                    or not derives.premiere_annee <= annee <= derives.derniere_annee):
+                return None
+            directs = ligne.base - derives(annee) * ligne.coefficient_constants
+            personnes = retraites(annee)
+            if directs <= 0.0 or personnes <= 0.0:
+                return None
+            return (ligne.tetes / personnes,
+                    ligne.base_modele / ligne.facteur_reversion / ligne.tetes
+                    / (directs / personnes),
+                    ligne.facteur_reversion / (ligne.base / directs))
+
+        reference = facteurs(ancrage) if ancrage is not None else None
+        if reference is None:
+            return {}
+        resultat: dict[int, tuple[float, float, float]] = {}
+        for ligne in self.annees:
+            if ligne.projete:
+                continue
+            courants = facteurs(ligne)
+            if courants is not None:
+                resultat[ligne.annee] = tuple(
+                    courant / ref for courant, ref in zip(courants, reference))
+        return resultat
+
 
 @dataclass
 class SoldeAnnuel:
