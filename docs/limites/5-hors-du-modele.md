@@ -425,7 +425,7 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   départ peut donc les omettre, et la simulation compte ce qu'il porte ; le
   site le dit à qui le dépose, parmi les notes qui suivent la lecture, sous
   toute carrière lue — le document ne dit pas s'il est déjà complet
-  (`releve_lu.py`, et son jumeau `releve-lu.js`).
+  (`moteur/js/releve-lu.js`).
 
   Sa dernière année, surtout, s'arrête souvent avant son terme : les régimes
   enregistrent les droits les plus récents avec retard, et le relevé

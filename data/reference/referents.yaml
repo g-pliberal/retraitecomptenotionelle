@@ -10186,7 +10186,7 @@ referents:
           compte, jamais en baisse. Le dépôt a la même structure
           (`scenarios/notionnel.py:658-735`), mais une année sans montant y
           vaut zéro, et les points du relevé sont « lus, et jetés »
-          (`web/releve_lu.py:634, 648-654`).
+          (`moteur/js/releve-lu.js`, `lireReleve`).
         preuve: >-
           Dz.U. 2025 poz. 1749, art. 173, art. 174 ust. 8 et art. 15 ust. 2a
         etat: a_trancher
@@ -10776,8 +10776,8 @@ referents:
           Pologne (voir diviseur_pologne).
       - quoi: >-
           Il impute les salaires manquants par leur moyenne revalorisée. Dans
-          le dépôt, une année sans montant vaut zéro (`web/releve_lu.py:634,
-          648-654`).
+          le dépôt, une année sans montant vaut zéro (`moteur/js/releve-lu.js`,
+          `lireReleve`).
         preuve: « Calculus for PROST 15 », éq. 116
         etat: a_trancher
         chantier: "138.13"

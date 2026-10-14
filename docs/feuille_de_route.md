@@ -6310,14 +6310,14 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 14 octobre 2026.** Faites, les étapes 1 et 2 : la carte des
-jumeaux (`python scripts/jumeaux.py`) et la note de décision 0003, validée par
-le propriétaire, qui récrit le principe 4 : chaque étape s'écrit une fois,
-dans le langage de l'endroit où elle tourne. Reste l'étape 3, le pilote : le
-lecteur du relevé (`web/releve_lu.py` et `releve-lu.js`). Commencer par
-`python scripts/jumeaux.py releve_lu`, puis relire la paire fonction par
-fonction, par la méthode de la note 0003. Détail : les notes des étapes 1
-et 2.
+**Reprise, au 14 octobre 2026.** Faites, les étapes 1 à 3 : la carte des
+jumeaux, la note de décision 0003, et le pilote — le lecteur du relevé n'a
+plus que son exemplaire JavaScript, relu, confronté sur 8 000 relevés, deux
+écarts corrigés, sa lecture des relevés d'essai figée. Reste l'étape 4, les
+deux autres paires hors du coût et de la fabrique : `scripts/fetch/lecture_pdf.py`,
+que la fabrique lit aussi, à trancher à sa relecture, puis `cycle_de_vie.py`,
+après l'étape 10 de l'action 138. Commencer par
+`python scripts/jumeaux.py lecture_pdf`. Détail : la note de l'étape 3.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
@@ -6361,7 +6361,8 @@ d'elle-même, avant tout retrait, et se mène sur n'importe quelle paire.
 2. **La note de décision** — validée le 14 octobre 2026 :
    `docs/decisions/0003-un-seul-exemplaire-du-code.md`.
 3. **Le pilote** : le lecteur du relevé (`web/releve_lu.py` et
-   `releve-lu.js`), que ni le coût ni la fabrique n'atteignent.
+   `releve-lu.js`), que ni le coût ni la fabrique n'atteignent — fait le
+   14 octobre 2026 : le jumeau Python est parti.
 4. **Les deux autres paires hors du coût et de la fabrique**, chacune tranchée
    à sa relecture : `cycle_de_vie.py`, dont le jumeau attend l'étape 10 de
    l'action 138, qui l'affiche ; `scripts/fetch/lecture_pdf.py`, dont quatorze

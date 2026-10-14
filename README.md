@@ -1369,7 +1369,6 @@ src/retraite_notionnelle/
   web/
     site.py                     le site lu depuis le Python, par node : ses
                                 pages et ses modules, pour les tests et la prose
-    releve_lu.py                la lecture d'un relevé de carrière officiel
 
 index.html                      le site : charge les données, puis le moteur JavaScript
 .nojekyll                       servir les fichiers sans transformation

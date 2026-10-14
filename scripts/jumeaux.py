@@ -3,7 +3,7 @@
 et ce que les tests de concordance en exécutent.
 
     python scripts/jumeaux.py                # la carte, de la paire la plus facile à retirer à la plus difficile
-    python scripts/jumeaux.py releve_lu      # une paire : chaque dépendant, à sa ligne
+    python scripts/jumeaux.py cycle_de_vie   # une paire : chaque dépendant, à sa ligne
     python scripts/jumeaux.py --couverture   # mesure ce que les tests de concordance exécutent (quelques minutes)
     python scripts/jumeaux.py --json carte.json
 
@@ -160,7 +160,7 @@ def fichiers_suivis(racine: Path = RACINE) -> list[str]:
 @dataclass(frozen=True)
 class Module:
     chemin: str
-    #: Le nom qu'un import lui donne : ``retraite_notionnelle.web.releve_lu``,
+    #: Le nom qu'un import lui donne : ``retraite_notionnelle.droit.liquider``,
     #: ``construire_donnees``, ``fetch.lecture_pdf``, ``outils_web``.
     nom: str
     #: ``modele`` (``src/``), ``script`` (``scripts/`` et les hooks) ou ``test``.
@@ -404,7 +404,7 @@ class Paire:
 
 
 def court(chemin: str) -> str:
-    """Un chemin sans le préfixe de son dossier : ``web/releve_lu.py``, ``droit/releve.js``."""
+    """Un chemin sans le préfixe de son dossier : ``droit/liquider.py``, ``droit/releve.js``."""
     for prefixe in (PAQUET, PORTAGE):
         if chemin.startswith(prefixe):
             return chemin[len(prefixe):]
@@ -474,7 +474,7 @@ def paires(racine: Path, fichiers: list[str]) -> tuple[list[Paire], list[tuple[s
 
 def index_des_suffixes(fichiers: list[str]) -> dict[str, set[str]]:
     """Chaque fin de chemin d'un fichier de code, vers les fichiers qu'elle peut
-    désigner : ``releve_lu.py``, ``web/releve_lu.py``, ``src/…/web/releve_lu.py``."""
+    désigner : ``liquider.py``, ``droit/liquider.py``, ``src/…/droit/liquider.py``."""
     suffixes: dict[str, set[str]] = defaultdict(set)
     for chemin in fichiers:
         if chemin.endswith((".py", ".js", ".mjs")):
@@ -494,7 +494,7 @@ class Resolveur:
 
     def fichiers(self, jeton: str) -> set[str]:
         """Les fichiers qu'un jeton peut désigner. Un nom pointé se lit du plus
-        long au plus court, ``….releve_lu.lire_releve`` désignant le module ;
+        long au plus court, ``….droit.liquider.liquider`` désignant le module ;
         un paquet ne répond qu'à son nom entier, sans quoi un module disparu
         se prendrait pour le paquet qui le portait."""
         jeton = re.sub(r"^(?:\.\.?/)+", "", jeton)

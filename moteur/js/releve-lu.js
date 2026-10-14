@@ -1,10 +1,60 @@
 /**
  * Lire un relevé de carrière officiel, tel qu'une caisse l'imprime.
  *
- * Portage de ``src/retraite_notionnelle/web/releve_lu.py``, qui fait foi :
- * mêmes tables, mêmes règles, mêmes refus. `tests/test_releve_lu.py` fait
- * tourner les deux sur les mêmes relevés et compare la saisie qu'ils rendent,
- * caractère par caractère.
+ * Le simulateur accepte une carrière année par année — `année:régime:revenu`,
+ * parfois `:trimestres` —, et il fallait la recopier à la main depuis son
+ * relevé. Ce module fait le chemin inverse : il prend les LIGNES DE TEXTE d'un
+ * relevé — celles que `lecture-pdf.js` tire du PDF déposé sur le site, ou celles
+ * qu'on colle depuis l'écran de sa caisse — et en rend la saisie du formulaire.
+ * Il ne va rien chercher, et ne peut pas : le répertoire de gestion des
+ * carrières uniques n'est pas ouvert, et son accès passe par une
+ * authentification personnelle (`docs/limites/5-hors-du-modele.md`). C'est
+ * l'assuré qui télécharge son relevé, et la lecture se fait chez lui — le PDF
+ * ne quitte jamais la page.
+ *
+ * **Ce que le relevé donne, et ce qu'il ne donne pas.** Il donne l'année, le
+ * régime, le revenu porté au compte et les trimestres retenus. Il ne donne ni
+ * la part de primes, ni le caractère cadre ou non cadre d'un emploi — c'est la
+ * présence de points Agirc, avant leur fusion de 2019, qui le dit. Le mois,
+ * seul le relevé tous régimes d'info-retraite le donne, qui date chacune de
+ * ses périodes : la saisie n'en garde que l'année, et la lecture ne retient
+ * que la date où finit la dernière, pour dire à l'assuré une dernière année
+ * qui s'arrête avant décembre, que la simulation compterait pourtant entière
+ * et dont elle prolongerait le revenu jusqu'au départ. Et le revenu du relevé
+ * du régime général est PLAFONNÉ : la caisse ne reporte au compte que la part
+ * du salaire brut qui tombe sous le plafond de la Sécurité sociale, si bien
+ * qu'une rémunération plus élevée n'y figure pas en entier. C'est le relevé
+ * qui est ainsi, pas la lecture ; `docs/limites/` le dit, et le site le répète
+ * à qui dépose son relevé. Le relevé tous régimes qu'info-retraite délivre en
+ * 2026, lui, porte le « revenu d'activité soumis à cotisations retraite »,
+ * plafond franchi compris, et la lecture ne le dit pas plafonné.
+ *
+ * **Les francs.** Un relevé du régime général porte les revenus dans la
+ * monnaie de leur année : en francs de 1960 à 2001, en anciens francs avant
+ * 1960. Le guide « Mon relevé de carrière, comment le lire ? » de l'Assurance
+ * retraite le dit de la table des revenus minimums qu'il publie en regard, et
+ * ces deux colonnes se lisent l'une contre l'autre. La conversion se fait donc
+ * ici, au taux légal — 6,55957 francs pour un euro, cent anciens francs pour
+ * un franc —, et la lecture dit dans ses notes ce qu'elle a converti.
+ *
+ * **Les points.** Un régime qui compte en points — le régime de base des
+ * libéraux depuis 2004, la retraite proportionnelle des exploitants agricoles
+ * — n'écrit pas de revenu au relevé, et une complémentaire chiffre parfois
+ * seule une année que la base ne chiffre pas. Ces points disent le revenu, au
+ * barème de leur régime et de leur année : quand l'appelant passe
+ * `revenuDesPoints` — celui du modèle, `droit/releve.js` —, une année sans
+ * montant reçoit le revenu le plus bas qui les ouvre, et la lecture le dit.
+ * Une année qui n'a ni montant ni points qui le disent reste à zéro, et la
+ * lecture le dit aussi : ce qu'on lui porte au compte notionnel est un choix
+ * du programme, qu'elle ne fait pas (action 138, étape 11).
+ *
+ * C'est le seul lecteur du relevé : le site le charge, et le Python le fait
+ * tourner par node (`scripts/estimation_officielle.py`). Son jumeau Python,
+ * dont il était le portage, est parti à l'action 161, étape 3, après une
+ * relecture fonction par fonction et une confrontation sur des milliers de
+ * relevés ; deux écarts y ont été corrigés ici. `tests/test_releve_lu.py` en
+ * tient les règles, et la lecture figée des relevés d'essai
+ * (`tests/temoins/releves_lus.json`), au caractère près.
  *
  * Ce module n'est chargé que lorsqu'un relevé est déposé sur le site : il ne
  * sert pas au calcul, et le faire partir avec le reste du moteur coûterait à
@@ -50,7 +100,9 @@ export const NOMBRES_PAR_LIGNE = 6;
  * En 2026, il faut avoir perçu au moins 1 803,00 € pour valider 1 trimestre »
  * porte une année, un montant en euros et des trimestres, tous correctement
  * étiquetés : rien, dans les nombres, ne la distingue d'une ligne de carrière.
- * Ce qui l'en distingue, c'est qu'elle est écrite en français.
+ * Ce qui l'en distingue, c'est qu'elle est écrite en français. Une cellule de
+ * tableau ne l'est pas : le nom d'un employeur et celui d'une caisse tiennent
+ * en quelques mots.
  */
 export const MOTS_PAR_LIGNE = 12;
 
@@ -65,20 +117,25 @@ export const EDITION = ["edite le", "editee le", "situation au", "releve au",
 /**
  * Ce par quoi un relevé dit porter le revenu ENTIER, et non sa part plafonnée :
  * le relevé tous régimes d'info-retraite (2026) renvoie sa colonne « Revenus* »
- * au « Revenu d'activité soumis à cotisations retraite ».
+ * au « Revenu d'activité soumis à cotisations retraite », et des années y
+ * dépassent le plafond de la Sécurité sociale.
  */
 export const REVENU_ENTIER = ["revenu d activite soumis a cotisations retraite"];
 
 /**
  * Ce qu'un régime complémentaire nommé avec le régime de base dit de l'emploi :
  * « L'Assurance retraite, Ircantec » est un emploi de contractuel de la
- * fonction publique, et non un emploi du privé.
+ * fonction publique, que le régime général et l'Ircantec couvrent ensemble, et
+ * non un emploi du privé.
  */
 export const PRECISIONS = new Map([["regime_general ircantec", "contractuel_public"]]);
 
 /**
  * Les en-têtes de colonnes qui ouvrent un tableau du relevé d'info-retraite :
- * le régime nommé à la fin du tableau d'avant n'y vaut plus.
+ * le régime nommé à la fin du tableau d'avant n'y vaut plus. Sous
+ * « Employeur/activité Date début Date fin Revenus* Régime(s) », chaque bloc
+ * nomme les siens, et l'Ircantec qui fermait le tableau des années n'en dit
+ * rien.
  */
 export const ENTETES = ["date debut date fin", "duree par regime"];
 
@@ -94,7 +151,8 @@ const AVANT_LA_DATE = 24;
  * les points, mais jamais un revenu qu'il ne porte pas : c'est le barème du
  * régime qui l'en déduit, quand l'appelant le passe, et « indice » pour un régime
  * complémentaire, qui ne porte aucune carrière mais dit le statut : des points
- * Agirc dans une année disent que l'emploi était un emploi de cadre.
+ * Agirc dans une année disent que l'emploi était un emploi de cadre. Lu comme
+ * une carrière, il ferait doublon avec la base et doublerait les trimestres.
  *
  * L'ordre ne compte pas : c'est l'alias le plus long qui gagne, sans quoi
  * « agirc » trancherait avant « agirc-arrco ».
@@ -222,8 +280,10 @@ export const COMPLEMENTAIRES = ["complementaire", "rco"];
 
 /**
  * L'euro le plus proche, la moitié vers le haut. Ni `Math.round`, qui arrondit
- * vers le haut aussi pour les négatifs, ni `round` de Python, qui arrondit à
- * l'entier PAIR : la règle est écrite, et la même des deux côtés du portage.
+ * vers le haut aussi pour les négatifs, ni l'arrondi à l'entier PAIR — 2,5 y
+ * fait 2 —, qui s'en sépare une fois sur deux cents sur des revenus convertis
+ * de francs : la règle est écrite, et le Python la prend ici
+ * (`scripts/estimation_officielle.py`).
  */
 export function arrondi(montant) {
   return Math.floor(montant + 0.5);
@@ -277,10 +337,13 @@ export const NAISSANCE = ["date de naissance", "ne le", "nee le", "ne e le"];
 
 /**
  * Le numéro de sécurité sociale, tel que le relevé d'info-retraite (2026)
- * l'imprime en tête de ses pages : un chiffre, les deux derniers chiffres de
- * l'année de naissance, le mois, le département — trois chiffres outre-mer — et
- * la commune, le rang, la clé parfois derrière. Il ne donne de la naissance que
- * l'année sans son siècle et le mois ; un mois hors de 01 à 12 ne se lit pas.
+ * l'imprime en tête de ses pages : un chiffre, puis les deux derniers chiffres
+ * de l'année de naissance et son mois, le département — « 2A », « 2B » pour la
+ * Corse, trois chiffres outre-mer — et la commune, le rang ;
+ * « 1 62 05 75 123 456 », la clé parfois derrière. Ce relevé ne porte pas la
+ * date de naissance en clair, et le numéro n'en donne que la moitié : l'année
+ * sans son siècle, le mois, jamais le jour. Un mois hors de 01 à 12 n'en est
+ * pas un, et ne se lit pas.
  */
 const SEPARATEUR = "[    ]";
 export const NIR = new RegExp(
@@ -359,9 +422,10 @@ const POINTS = ["pt", "pts", "point", "points"];
  *
  * C'est l'information la plus sûre d'un relevé, et la seule qui ne dépende pas
  * de la mise en page : « 49 150 € » est un revenu où qu'il se trouve dans la
- * ligne, « 4 trim. » une durée, « 203,91 pts » des points. Le signe € se
- * cherche sur le texte BRUT : il ne survit pas à la mise à plat, qui ne garde
- * que des lettres et des chiffres.
+ * ligne, « 4 trim. » une durée, « 203,91 pts » des points. Un tableau qui ne
+ * les écrit pas se lit à la position, comme avant. Le signe € se cherche sur
+ * le texte BRUT : il ne survit pas à la mise à plat, qui ne garde que des
+ * lettres et des chiffres.
  */
 function uniteDe(suite) {
   if (suite.trimStart().startsWith("\u20ac")) return "revenu";
@@ -405,7 +469,8 @@ function enEuros(montant, annee) {
  *
  * C'est la date qui SUIT le marqueur, et non la plus tardive de la ligne : une
  * couche de doublure colle toute une page sur une seule ligne, et l'on y trouve
- * « Edité le 22/09/2026 » à côté de « En partant au 01/06/2066 ».
+ * « Edité le 22/09/2026 » à côté de « En partant au 01/06/2066 ». Lire le
+ * maximum de la ligne donnait 2066, et le plafond ne plafonnait plus rien.
  */
 function anneeDuDocument(lignes) {
   let derniere = null;
@@ -474,7 +539,8 @@ function anneeEtNombres(ligne) {
  *    tombent dans la ligne. Un tableau qui n'écrit pas ses unités se lit à la
  *    position, le revenu au-dessus de quatre et les trimestres en dessous.
  * 3. **Une année revient autant de fois que le relevé la coupe** : les revenus
- *    s'additionnent, les trimestres aussi, plafonnés à quatre. Une ligne qui ne
+ *    s'additionnent, les trimestres aussi, plafonnés à quatre — c'est la règle
+ *    du droit, et c'est ce que le total du relevé affiche. Une ligne qui ne
  *    nomme qu'une caisse complémentaire, l'année où une autre ne nomme que la
  *    base, est la vue de cette caisse sur la même paie : son revenu ne s'y
  *    ajoute pas.
@@ -482,7 +548,8 @@ function anneeEtNombres(ligne) {
  *    française, une ligne de quarante nombres, une date de référence sans sa
  *    seconde borne, une année postérieure à l'édition du document.
  * 5. **Ce qui n'est pas compris n'est pas deviné** : la ligne ressort telle
- *    quelle dans `ignorees`, et le site la montre.
+ *    quelle dans `ignorees`, et le site la montre : c'est au lecteur de
+ *    trancher, pas au programme de choisir à sa place un chiffre vraisemblable.
  *
  * `anneeMaximale` borne les années lues — le site passe l'année courante. La
  * date d'édition du document, quand il la porte, la resserre encore.
@@ -495,6 +562,18 @@ function anneeEtNombres(ligne) {
  * `{ revenu, auPlafond }`. Les points de la base et ceux de la complémentaire
  * d'un même emploi disent chacun un revenu qu'il a au moins atteint, et
  * l'année prend le plus haut ; ceux de deux emplois s'ajoutent.
+ *
+ * Rend `{ lignes, interruptions, ignorees, regimes, notes, naissance,
+ * moisDeNaissance }`. Chaque année lue porte son millésime, son statut, son
+ * revenu en euros de l'année, francs déjà convertis, ses trimestres — `null`
+ * quand le relevé ne les porte pas : le modèle les déduira —, son motif, et la
+ * ligne d'origine, pour que le lecteur retrouve ce qui a été lu. Les
+ * interruptions sont des plages `[début, fin, motif]` ; `ignorees`, les lignes
+ * qui portaient une année sans qu'on sache quoi en faire ; `regimes`, les
+ * régimes reconnus, dans l'ordre où ils sont apparus ; `notes`, ce que la
+ * lecture a supposé, en toutes lettres ; `naissance`, la date lue en tête du
+ * relevé, « AAAA-MM-JJ » ; `moisDeNaissance`, « AAAA-MM », celui de la date ou,
+ * quand le relevé ne la porte pas, celui du numéro de sécurité sociale.
  */
 export function lireReleve(lignes, anneeMaximale = null, revenuDesPoints = null) {
   let courant = null;
@@ -584,7 +663,8 @@ export function lireReleve(lignes, anneeMaximale = null, revenuDesPoints = null)
     const nommes = regime !== null ? regimesDe(plat) : [];
     if (regime !== null) {
       // DEUX RÉGIMES COURANTS, ET C'EST LE RELEVÉ QUI L'IMPOSE. La SECTION est
-      // le dernier régime nommé, quel qu'il soit : les lignes qui suivent
+      // le dernier régime nommé, quel qu'il soit : un relevé tous régimes
+      // empile ses tableaux sous un titre, et les lignes qui suivent
       // « Ircantec » en relèvent même si elles ne le répètent pas. La BASE est
       // le dernier régime qui porte une carrière : c'est de lui que vient le
       // statut de l'année, jamais de la caisse qui ne tient que des points.
@@ -601,20 +681,27 @@ export function lireReleve(lignes, anneeMaximale = null, revenuDesPoints = null)
     if (plage) { ignorees.push(ligne); continue; }
     // UNE LIGNE DE TABLEAU PORTE QUELQUES COLONNES, PAS QUARANTE. Un PDF peut
     // porter deux fois le même texte — une couche visible, mise en page, et une
-    // couche de doublure où tout est collé bout à bout.
+    // couche de doublure où tout est collé bout à bout. C'est le cas d'une
+    // estimation retraite ré-exportée par un éditeur de bureau pour être
+    // anonymisée, dont la doublure rendait des lignes de deux cents caractères
+    // où les dates et les montants de toute une page se suivaient sans
+    // séparateur. Additionnés à l'année qu'ils touchaient, ils y faisaient des
+    // revenus de deux millions d'euros.
     if (nombres.length > NOMBRES_PAR_LIGNE) { ignorees.push(ligne); continue; }
     if (plafond !== null && annee > plafond) continue;
     // UNE PÉRIODE A DEUX BORNES. Quand le millésime ne vient que d'une date,
     // une seule date ne suffit pas : « Valeur du point au 01/11/2025 : 1,4386 € »
     // et « 3 / 7 Edité le 22/09/2026 » en portent une, et toutes deux se
-    // lisaient comme une année de carrière.
+    // lisaient comme une année de carrière — l'une y ajoutait un euro et
+    // quarante, l'autre sept euros et trois trimestres.
     if (parLaDate && dates < 2) continue;
     if (plat.split(" ").filter((mot) => mot.length > 1 && !/^\d+$/.test(mot))
       .length > MOTS_PAR_LIGNE) continue;
     // LA FIN DE LA DERNIÈRE PÉRIODE. Le relevé d'info-retraite date chacune des
     // siennes, la seconde date étant celle où elle finit, et la saisie n'en
     // gardera que l'année : on retient la plus tardive, qu'elle porte un revenu
-    // ou non, pour dire une dernière année qui s'arrête avant son terme.
+    // ou non — une période de maladie couvre ses mois autant qu'un emploi —,
+    // pour dire une dernière année qui s'arrête avant son terme.
     if (dates >= 2) {
       const bornes = [...ligne.matchAll(DATE)];
       const [jour, mois, millesime] = bornes[bornes.length - 1].slice(1).map(Number);
@@ -629,6 +716,12 @@ export function lireReleve(lignes, anneeMaximale = null, revenuDesPoints = null)
     const motif = motifDe(plat);
     const emploi = EMPLOIS.some((mot) => plat.includes(mot));
 
+    // Un régime complémentaire ne porte pas de carrière : ses points feraient
+    // un revenu qui n'en est pas un, et ses années doubleraient celles de la
+    // base. Mais sa ligne n'est pas perdue pour autant : elle porte la durée
+    // tous régimes de l'année — « 2025 4 trim. 203,91 pts Agirc-Arrco » —, et
+    // parfois un revenu en euros que la base n'a pas reporté. On lui prend donc
+    // ce qui est ÉTIQUETÉ, et rien d'autre.
     // Le régime qui gouverne la ligne : celui qu'elle nomme, sinon celui de la
     // section où elle se trouve.
     const gouverne = regime !== null ? regime : section;
@@ -690,11 +783,14 @@ export function lireReleve(lignes, anneeMaximale = null, revenuDesPoints = null)
       }
     }
     // LA MÊME PAIE, VUE PAR DEUX CAISSES. Quand la base et la complémentaire ne
-    // la voient pas tout à fait de même, le relevé d'info-retraite (2026) la
-    // porte deux fois sous le même employeur : une ligne qui ne nomme que la
-    // base, une qui ne nomme que la complémentaire. Le revenu de celle-ci se
+    // la voient pas tout à fait de même — une date, quelques euros —, le relevé
+    // d'info-retraite (2026) la porte deux fois sous le même employeur : une
+    // ligne qui ne nomme que la base, une qui ne nomme que la complémentaire.
+    // Les additionner doublait le revenu de l'année. Le revenu de celle-ci se
     // tient à part, et ne rejoint l'année que si aucune ligne n'y nomme la base
-    // seule : il est alors une période que la base compte sans l'écrire à part.
+    // seule : il est alors une période que la base compte sans l'écrire à part
+    // — le relevé réel le montre, dont la base valide un trimestre que ses
+    // propres lignes n'atteignent pas sans elle.
     const baseSeule = !indiceSeul
       && regimesDeLaLigne.some((r) => r.genre !== "indice")
       && !regimesDeLaLigne.some((r) => r.genre === "indice");
@@ -730,6 +826,10 @@ export function lireReleve(lignes, anneeMaximale = null, revenuDesPoints = null)
     }
 
     const montant = enEuros(revenu, annee);
+    // Une année en cours d'agrégation : un relevé la coupe par employeur. `vu`
+    // est le revenu des lignes qui ne nomment qu'une complémentaire, tenu à
+    // part ; `baseSeule`, si une ligne de l'année ne nomme que le régime de
+    // base, revenu à l'appui.
     if (!annees.has(annee)) {
       annees.set(annee, {
         revenu: 0.0, trimestres: null, statut: "", revenuDuStatut: -1.0,
@@ -750,6 +850,9 @@ export function lireReleve(lignes, anneeMaximale = null, revenuDesPoints = null)
     if (trimestres !== null) {
       cumul.trimestres = Math.min(TRIMESTRES_PAR_AN, (cumul.trimestres ?? 0) + trimestres);
     }
+    // Le statut de l'année est celui du régime qui y a porté le plus : l'année
+    // d'un changement de métier relève d'un seul régime, et c'est la
+    // convention que le modèle applique partout ailleurs.
     if (montant >= cumul.revenuDuStatut || !cumul.statut) {
       cumul.statut = statut;
       cumul.revenuDuStatut = montant;
@@ -787,6 +890,9 @@ export function lireReleve(lignes, anneeMaximale = null, revenuDesPoints = null)
       }
     }
     if (cumul.revenu <= 0 && !cumul.motif) sansRevenu.push(annee);
+    // Une année sans revenu n'est pas une année travaillée : le relevé y porte
+    // une période assimilée, que le formulaire décrit par son motif et non par
+    // une ligne de carrière à zéro euro.
     if (cumul.revenu <= 0 && cumul.motif) interruptions.push([annee, annee, cumul.motif]);
     lues.push({
       annee, statut, revenu: cumul.revenu, trimestres: cumul.trimestres,
@@ -869,11 +975,14 @@ export function lireReleve(lignes, anneeMaximale = null, revenuDesPoints = null)
       + "retraite, et la simulation lit ce qu'il porte.",
     );
   }
-  // UNE DERNIÈRE ANNÉE QUI S'ARRÊTE AVANT SON TERME : les mois qui suivent la
-  // période la plus tardive manquent, pas encore enregistrés ou pas travaillés,
-  // et la simulation compterait l'année entière, puis en prolongerait le revenu
-  // jusqu'au départ. Il y faut un mois entier qui manque, le modèle comptant en
-  // mois.
+  // UNE DERNIÈRE ANNÉE QUI S'ARRÊTE AVANT SON TERME. Quand la période la plus
+  // tardive finit avant décembre de la dernière année lue, les mois qui suivent
+  // manquent : les régimes n'avaient pas encore enregistré les droits les plus
+  // récents — le relevé d'info-retraite prévient lui-même qu'ils le seront plus
+  // tard —, ou ces mois n'ont pas été travaillés. La simulation compterait
+  // pourtant l'année entière, au revenu de ses seuls mois, et le prolongerait
+  // jusqu'au départ : la note invite à compléter. Il y faut un mois entier qui
+  // manque, le modèle comptant en mois.
   if (lues.length && fin !== null && fin[0] === lues[lues.length - 1].annee
       && fin[1] < MOIS.length) {
     notes.push(
@@ -908,7 +1017,10 @@ export function lireReleve(lignes, anneeMaximale = null, revenuDesPoints = null)
 /**
  * Le revenu que disent les points d'une année, le statut qui le porte, et s'il
  * est au plafond d'un barème : `[revenu, statut, auPlafond]`, ou `null` s'ils
- * n'en disent aucun. Voir `_revenu_des_points` dans le Python.
+ * n'en disent aucun. Les points de chaque étage d'un même statut disent chacun
+ * un revenu que l'emploi a au moins atteint : l'année prend le plus haut. Ceux
+ * de deux statuts sont deux emplois, et s'ajoutent, de gauche à droite ; le
+ * statut de l'année est celui qui y a porté le plus, comme partout ailleurs.
  */
 function revenuDesPointsDeLAnnee(cumul, annee, cadre, convertir) {
   const parStatut = new Map();
