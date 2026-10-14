@@ -5687,6 +5687,75 @@ referents:
       Le manifeste porte déjà la documentation du répertoire
       (`info_retraite_referentiel`), pas les sorties de son moteur.
 
+  - id: marel
+    nom: Moteur de « Mon estimation retraite » (M@rel)
+    auteur: Union Retraite, opéré par l'Agirc-Arrco et l'Assurance retraite
+    nature: calculateur
+    publication: non_public
+    documentation:
+      - https://www.cor-retraites.fr/sites/default/files/2019-06/doc-3565.pdf
+      - https://www.info-retraite.fr/portail-info/files/live/sites/PortailInformationnel/files/images/PDF/Rapport/UNION-RETRAITE_RA-2023_BD.pdf
+      - https://www.info-retraite.fr/portail-info/sites/PortailInformationnel/home/mon-estimation-retraite.html
+    licence: sans objet
+    usage: resultats_publies
+    confronte: [scenario_1]
+    couvre: >-
+      L'estimation de la pension de tous les régimes, de base et
+      complémentaires, sur la carrière connue des régimes, à plusieurs âges
+      de départ, avec décote et surcote. Le simulateur d'origine, « Ma
+      retraite en ligne », se remplissait à la main ; celui qui lui a
+      succédé, à partir d'un simulateur des seuls salariés d'un groupe
+      Agirc-Arrco (lancé en mai 2016), lit la carrière des régimes et en
+      projette la suite. Huit mille cinq cents règles de calcul en 2023,
+      mises à jour quatre fois en douze mois pour la réforme du 14 avril
+      2023.
+    confrontation: >-
+      Aucune : il exige FranceConnect et la carrière réelle de la personne
+      connectée, sans mode anonyme ni interface, et ni ses règles ni ses
+      sorties ne sont publiées. Ses hypothèses de projection l'ont été en
+      2016 : la carrière future prolonge la situation présente, le revenu
+      croît de 1,5 % par an (« comme l'inflation »), sans distinction de
+      catégorie ; l'ancien M@rel prenait les hypothèses du PLFSS sur
+      quatre ans, puis le scénario central du COR.
+    fait_mieux:
+      - quoi: >-
+          Il donne la pension à « plusieurs âges de départ possibles »,
+          chacun avec ses trimestres et son montant, et l'assuré en
+          ajoute (« Ajouter un âge de départ »). Le site du dépôt
+          montre une pension à un seul âge.
+        preuve: >-
+          page « Mon estimation retraite » d'info-retraite.fr, lue le 14
+          octobre 2026
+        verification: >-
+          Méthode ; la même qu'Oscar (plage de 62 à 70 ans) et que les
+          cas types du COR.
+        etat: a_reprendre
+        chantier: "138.10"
+    bilan: >-
+      Le moteur qui fait foi auprès des assurés n'est ni publié ni
+      interrogeable : il ne confirme rien du dépôt. Ce qu'il fait mieux,
+      plusieurs âges côte à côte, est déjà au chantier 138.10, avec Oscar.
+      Le reste de ce qu'on en sait est d'organisation : deux opérateurs
+      (l'Agirc-Arrco et l'Assurance retraite), 8 500 règles, 25,8 millions
+      de simulations en 2023. Les exemples de ses pages restent au registre
+      des sources (`sas`, les simulateurs d'info-retraite.fr).
+    sas: [union_retraite_les_simulateurs]
+    lu_le: 2026-10-14
+    lu_dans:
+      - https://www.cor-retraites.fr/sites/default/files/2019-06/doc-3565.pdf
+      - https://www.cor-retraites.fr/sites/default/files/2021-01/Audition%20COR%20-%20pr%C3%A9sentation%20St%C3%A9phane%20Bonnet.pdf
+      - https://www.info-retraite.fr/portail-info/files/live/sites/PortailInformationnel/files/images/PDF/Rapport/UNION-RETRAITE_RA-2023_BD.pdf
+      - https://www.info-retraite.fr/portail-info/sites/PortailInformationnel/home/mon-estimation-retraite.html
+      - https://www.force-ouvriere.fr/agirc-arrco-un-nouveau-simulateur-base-sur-les-donnees-reelles?lang=fr
+    note: >-
+      Le document n° 4 du COR (séance du 6 juillet 2016, doc-3565) est la
+      seule description publiée de ses projections ; l'audition du
+      directeur de l'Union Retraite (28 janvier 2021) en donne l'usage
+      (3,3 millions de simulations en 2019) et le « M@rel en 1 clic ».
+      Le registre l'écartait comme simulateur, source d'application : il y
+      entre pour son moteur, comme celui de la Cnav (`moteur_cnav`), à la
+      relecture des pistes non vérifiées (action 137, le 14 octobre 2026).
+
   - id: pablo
     nom: Pablo
     auteur: Service des retraites de l'État (DGFiP)
@@ -5809,7 +5878,13 @@ referents:
       carrières de Pablo, construit en R pour le système universel de 2020
       (points, primes).
     confrontation: >-
-      Aucune : son usage actuel n'est pas connu.
+      Aucune : rien de lui n'est publié depuis 2020. Ni les documents du
+      COR sur ses cas types (21 avril 2022, n° 7 ; 25 mai 2023) ni l'annexe
+      « pensions » au PLF 2025 ne le nomment ; l'annexe nomme Pablo, la
+      microsimulation du SRE, pour ses prévisions et l'effet de la réforme
+      de 2023, et les cas types de fonctionnaires du COR s'établissent sur
+      les comptes individuels de retraite du SRE (travaux de 2013), sans
+      outil nommé.
     fait_mieux:
       - quoi: >-
           Il calcule chaque cas type sur une plage d'âges de
@@ -5847,10 +5922,15 @@ referents:
       lui manque que la plage d'âges (138.10) et la validation sur un
       flux réel (138.14), dont il a, depuis le 13 octobre 2026, les
       agrégats publiés du flux de 2025 (action 159, étape 4). Son usage
-      depuis 2020 n'est pas publié et aucun résultat ne se confronte.
-    lu_le: 2026-10-04
+      depuis 2020 n'est pas publié et aucun résultat ne se confronte : la
+      relecture du 14 octobre 2026 (action 137) ne l'a trouvé nommé nulle
+      part depuis, et le SRE ne publie que par Pablo (`pablo`).
+    lu_le: 2026-10-14
     lu_dans:
       - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%2010_Pablo_SRE.pdf
+      - https://www.cor-retraites.fr/sites/default/files/2022-04/Doc_07_Refonte_cas_types.pdf
+      - https://www.cor-retraites.fr/sites/default/files/2023-05/2.%20Actualisation%20cas%20priv%C3%A9-public_25.05.2023.pdf
+      - https://www2.assemblee-nationale.fr/static/17/Annexes-DL/PLF2025-Jaunes/12-Jaune_pensions.pdf
 
   - id: ariane
     nom: Ariane

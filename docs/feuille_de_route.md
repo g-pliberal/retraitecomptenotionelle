@@ -5482,16 +5482,16 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 
 ### 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation — `en cours`
 
-**Reprise, au 13 octobre 2026.** Fait : le registre (69 modèles, 47 en
-France) ; sa relecture à l'action 138 (le code de Destinie 2, d'Ines, de
-`legiretraite` et d'EDIFIS, cinq diviseurs étrangers), au registre ;
-Destinie 2, TRAJECTOiRE (action 142, étape 4) puis Ines (note du 13 octobre)
-exécutés à part ; CALIPER, `calcul_pension` et le communiqué de 2021, lus ;
-les limites de CALIPER confrontées à `docs/limites/`, et celle du relevé dite
-au site ; l'Études et résultats n° 1283, ses cinq exemples devenus cas
-d'essai ; le minimum contributif de l'EACR, confronté aux grilles et à
-TRAJECTOiRE. Reste ici : les pistes non vérifiées (M@rel, Oscar) ; les
-`referents` des fiches, à leur relecture ; la campagne 2025 de l'EACR.
+**Reprise, au 14 octobre 2026.** Fait : le registre (70 modèles, 48 en
+France) et sa relecture à l'action 138 ; Destinie 2, TRAJECTOiRE et Ines
+exécutés à part ; CALIPER, `calcul_pension`, l'Études et résultats n° 1283 et
+le minimum contributif de l'EACR, confrontés ; M@rel (son moteur, `marel`) et
+Oscar, lus et classés (note du 14 octobre) : rien ne s'en confronte. Reste
+ici : la campagne 2025 de l'EACR, non publiée au 14 octobre (la DREES diffuse
+au printemps ; relancer `drees_eacr.py`, `verifier_donnees.py`, puis
+`part_minimum_contributif.py`, et relire 2024 contre la grille) ; les autres
+pistes non vérifiées du 1er octobre (Aphrodite, Osiris, les sections
+libérales…) ; les `referents` des fiches, à leur relecture.
 
 **Demande**, le 1er octobre 2026 : « Quels sont les autres modèles publics
 autres que openfisca ? », puis : « Ajoute les modèles qui ne sont pas encore
