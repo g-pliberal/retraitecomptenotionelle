@@ -22,7 +22,8 @@ inventaire:
   couverture: partiel
   statuts: [profession_liberale, liberal_non_reglemente, auxiliaire_medical, pharmacien,
             expert_comptable, agent_general_assurance, notaire, veterinaire,
-            officier_ministeriel, chirurgien_dentiste_ou_sage_femme, medecin_liberal]
+            officier_ministeriel, chirurgien_dentiste_ou_sage_femme, medecin_liberal,
+            medecin_liberal_secteur_2, sage_femme, biologiste_liberal]
   textes:
     - {reference: "loi n° 48-101 du 17 janvier 1948", id: null}
     - {reference: "code de la sécurité sociale, L. 640-1 (professions affiliées, rédaction de la LFSS 2018)", id: LEGIARTI000036391511}

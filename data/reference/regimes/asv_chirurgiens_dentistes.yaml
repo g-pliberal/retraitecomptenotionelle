@@ -25,13 +25,11 @@ population: >-
   67 ans, le départ dès l'âge légal avec une minoration de 1,25 % par
   trimestre « dans la limite de 15 % » (guide CNAVPL 2025, p. 88) ; la
   fiche fait suivre les deux âges aux générations, comme la complémentaire
-  des médecins avant 2017, et les présume à toutes les années. LE STATUT
-  `chirurgien_dentiste_ou_sage_femme` NE DIT PAS LA PROFESSION : la fiche
-  présume le chirurgien-dentiste, comme celle de la complémentaire de la
-  CARCDSF. La sage-femme a son régime, 18 points par an, à 6,10 € le point
-  en 2025 (décret n° 84-254 ; fiche asv_autres_professions_de_sante) : la
-  présomption surestime sa prestation de près de trois fois. Le règlement de
-  la section approuvé par l'arrêté du 10 juillet 2026 n'est pas lu.
+  des médecins avant 2017, et les présume à toutes les années. Le statut
+  `chirurgien_dentiste_ou_sage_femme` garde son nom, mais ne vaut plus que
+  pour le chirurgien-dentiste depuis le 14 octobre 2026 : la sage-femme a
+  son statut et ses PCV (asv_sages_femmes). Le règlement de la section
+  approuvé par l'arrêté du 10 juillet 2026 n'est pas lu.
 hors_repartition: false
 inventaire:
   section: non_salaries
@@ -49,8 +47,7 @@ inventaire:
     le forfait de 2007. Les valeurs de service des points d'avant 2006, le
     rachat des années de 1946 à 1977, la borne de 420 points jusqu'en
     2021, l'arrondi au centième supérieur. Le partage avec l'assurance
-    maladie, lu pour 2025, est présumé à toutes les années. La sage-femme,
-    que le statut confond avec le chirurgien-dentiste, a son propre régime.
+    maladie, lu pour 2025, est présumé à toutes les années.
 periodes:
   - debut: 1978
     fin: 2006

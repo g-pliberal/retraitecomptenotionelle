@@ -20,8 +20,8 @@ appliquées à travers son histoire. Ce document fait la première moitié ; la
 seconde est l'étape suivante, esquissée en fin de page.
 
 <!-- compte:debut -->
-L'inventaire compte **110 lignes** : 34 régimes modélisés,
-42 calculés mais incomplets, 2 affiliations portées par un statut,
+L'inventaire compte **112 lignes** : 34 régimes modélisés,
+44 calculés mais incomplets, 2 affiliations portées par un statut,
 23 hors champ — 9 à modéliser.
 <!-- compte:fin -->
 

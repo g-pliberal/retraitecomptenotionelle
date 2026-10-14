@@ -726,8 +726,12 @@ export class ConstructeurCompte {
         // LA PART DE L'ASSURANCE MALADIE des prestations complémentaires de
         // vieillesse des professionnels de santé conventionnés : voir
         // compte.py.
+        // Le médecin de secteur 2 la paie seul, depuis 1980.
         let priseEnCharge = 0.0;
-        if (classe === null && !partSalarialeSeule
+        if (classe === null
+            && this.affiliations.sansPriseEnCharge(ligne.affiliation, annee)) {
+          montant += periode.priseEnCharge(forfait, assiette * taux);
+        } else if (classe === null && !partSalarialeSeule
             && this.parametres.part_cotisation !== PartCotisation.SALARIALE) {
           priseEnCharge = periode.priseEnCharge(forfait, assiette * taux);
           montant += priseEnCharge;

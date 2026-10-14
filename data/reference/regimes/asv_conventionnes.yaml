@@ -27,7 +27,7 @@ inventaire:
   nom: Prestations complémentaires de vieillesse des professionnels de santé conventionnés (ASV)
   population: Médecins, chirurgiens-dentistes, sages-femmes, auxiliaires médicaux et directeurs de laboratoire conventionnés
   couverture: partiel
-  statuts: [medecin_liberal]
+  statuts: [medecin_liberal, medecin_liberal_secteur_2]
   textes:
     - {reference: "décret n° 72-968 du 27 octobre 1972, article 2 (points par année cotisée)", id: LEGIARTI000024871109}
     - {reference: "code de la sécurité sociale, D. 645-2 (cotisation en multiples du tarif de la consultation) et D. 645-3 (part des caisses d'assurance maladie)", id: LEGIARTI000006738166}
@@ -38,11 +38,11 @@ inventaire:
     La fiche porte les médecins ; les auxiliaires médicaux et les
     chirurgiens-dentistes ont la leur depuis le 14 octobre 2026
     (asv_auxiliaires_medicaux, asv_chirurgiens_dentistes, action 138,
-    étape 18). Les sages-femmes (décret n° 84-254, 18 points par an) et les
-    directeurs de laboratoire (2007-597) ont chacun leur barème, lu mais
-    non porté. La fiche présume le secteur 1, où les caisses paient les
-    deux tiers, que le compte notionnel reçoit comme une part patronale ;
-    en secteur 2 le médecin paie tout. Les points d'ajustement sont pris au
+    étape 18), et les sages-femmes et les directeurs de laboratoire depuis
+    le même jour (asv_sages_femmes, asv_directeurs_laboratoire). En secteur
+    1, les caisses paient les deux tiers, que le compte notionnel reçoit
+    comme une part patronale ; en secteur 2, statut à part depuis le même
+    jour, le médecin paie tout, et le compte le porte comme sa cotisation. Les points d'ajustement sont pris au
     plafond de neuf par an, atteint dès 68 000 € de revenu. Le forfait de
     2017 à 2024, revalorisé sur le revenu moyen des médecins, est projeté
     sur les prix depuis 2016. Le tarif de la consultation, base du forfait

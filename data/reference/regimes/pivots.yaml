@@ -167,6 +167,14 @@ pivots:
     - {texte: "Décret n° 2007-458", num: "1", parametres: [cotisation_forfaitaire_euros, points_par_trimestre_valide]}
     - {texte: "Décret n° 2007-458", num: "2", parametres: [taux_cotisation_retraite, assiette, points_ajustement_au_plafond]}
     - {texte: "Décret n° 2007-458", num: "3", parametres: [valeur_point_euros]}
+  asv_sages_femmes:
+    - {texte: "Décret n° 84-254", num: "3", parametres: [points_par_trimestre_valide]}
+    - {texte: "Décret n° 2011-2002", num: "1", parametres: [cotisation_forfaitaire_euros]}
+    - {texte: "Décret n° 2011-2002", num: "2", parametres: [valeur_point_euros]}
+  asv_directeurs_laboratoire:
+    - {texte: "Décret n° 2007-597", num: "1", parametres: [cotisation_forfaitaire_euros, points_par_trimestre_valide]}
+    - {texte: "Décret n° 2007-597", num: "2", parametres: [taux_cotisation_retraite, assiette, points_ajustement_au_plafond]}
+    - {texte: "Décret n° 2007-597", num: "3", parametres: [valeur_point_euros]}
   organic_conjoints_batiment:
     - {texte: "Code de la sécurité sociale", num: "D635-36", parametres: [taux_cotisation_retraite, assiette]}
     - {texte: "Code de la sécurité sociale", num: "D635-35", parametres: [type_calcul]}

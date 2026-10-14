@@ -750,7 +750,7 @@ affiliations:
       l'auxiliaire conventionné.
 
   pharmacien:
-    libelle: Pharmacien ou biologiste libéral
+    libelle: Pharmacien libéral
     famille: independant
     sans_employeur: true
     periodes:
@@ -763,7 +763,24 @@ affiliations:
       2 906 à 17 436 € en 2026, n'est pas au catalogue : il n'est pas de la
       répartition, et sa grille n'est pas publiée sous une forme lisible.
       Un pharmacien simulé ici est donc sous-estimé de la part capitalisée de
-      son complémentaire, qui peut en représenter la moitié.
+      son complémentaire, qui peut en représenter la moitié. Le biologiste
+      a son statut depuis le 14 octobre 2026.
+
+  biologiste_liberal:
+    libelle: Biologiste libéral non médecin (directeur de laboratoire)
+    famille: independant
+    sans_employeur: true
+    periodes:
+      - {debut: 1949, fin: 1980, regimes: [cnavpl, cavp_complementaire]}
+      - {debut: 1981, fin: null, regimes: [cnavpl, cavp_complementaire, asv_directeurs_laboratoire]}
+    note: >-
+      Le pharmacien biologiste, directeur de laboratoire d'analyses médicales
+      conventionné : les régimes du pharmacien, et depuis le 1er juillet 1981
+      (décret n° 81-1046) ses prestations complémentaires de vieillesse, un
+      forfait qui ouvre 262 points par an et un ajustement de 1,2 % du
+      revenu depuis 2022, dont l'assurance maladie paie les deux tiers et la
+      moitié (`asv_directeurs_laboratoire`). Le biologiste médecin relève de
+      la CARMF : son statut est celui du médecin.
 
   expert_comptable:
     libelle: Expert-comptable ou commissaire aux comptes
@@ -1080,7 +1097,7 @@ affiliations:
       obligatoire.
 
   chirurgien_dentiste_ou_sage_femme:
-    libelle: Chirurgien-dentiste ou sage-femme libéral
+    libelle: Chirurgien-dentiste libéral
     famille: independant
     sans_employeur: true
     periodes:
@@ -1096,11 +1113,29 @@ affiliations:
       l'assurance maladie paie les deux tiers du forfait et la moitié de
       l'ajustement : le statut les porte depuis le 14 octobre 2026
       (`asv_chirurgiens_dentistes`), et présume le chirurgien-dentiste
-      conventionné ; la sage-femme a son propre régime, que le modèle ne
-      porte pas.
+      conventionné. Le code garde son nom, que des adresses portent, mais
+      ne vaut plus que pour le chirurgien-dentiste : la sage-femme a son
+      statut depuis le 14 octobre 2026.
+
+  sage_femme:
+    libelle: Sage-femme libérale
+    famille: independant
+    sans_employeur: true
+    periodes:
+      - {debut: 1949, fin: 1983, regimes: [cnavpl, carcdsf_complementaire]}
+      - {debut: 1984, fin: null, regimes: [cnavpl, carcdsf_complementaire, asv_sages_femmes]}
+    note: >-
+      La complémentaire de la CARCDSF, commune aux chirurgiens-dentistes et
+      aux sages-femmes depuis que la CARSAF l'a rejointe en 2009 (décret
+      n° 2008-1423) ; avant, la CARSAF avait son propre barème, que le
+      modèle ne porte pas : la sage-femme y reçoit celui du dentiste. Depuis
+      le 1er janvier 1984 (décret n° 84-254), la sage-femme conventionnée
+      cotise aussi à ses prestations complémentaires de vieillesse, un
+      forfait qui ouvre dix-huit points par an, dont l'assurance maladie
+      paie les deux tiers (`asv_sages_femmes`).
 
   medecin_liberal:
-    libelle: Médecin libéral
+    libelle: Médecin libéral en secteur 1
     famille: independant
     sans_employeur: true
     periodes:
@@ -1116,8 +1151,29 @@ affiliations:
       caisses d'assurance maladie paient les deux tiers : la fiche
       `asv_conventionnes` porte sa part, le statut étant sans employeur, et
       celle des caisses, que le compte notionnel reçoit comme une part
-      patronale (action 138, étape 18). Elle présume le secteur 1 : en
-      secteur 2, le médecin paie tout, et les caisses rien.
+      patronale (action 138, étape 18). Le statut est celui du secteur 1 ;
+      le secteur 2 a le sien depuis le 14 octobre 2026.
+
+  medecin_liberal_secteur_2:
+    libelle: Médecin libéral en secteur 2 (honoraires libres)
+    famille: independant
+    sans_employeur: true
+    sans_prise_en_charge_depuis: 1980
+    periodes:
+      - {debut: 1949, fin: 1971, regimes: [cnavpl, carmf_complementaire]}
+      - {debut: 1972, fin: null, regimes: [cnavpl, carmf_complementaire, asv_conventionnes]}
+    note: >-
+      Les régimes du médecin de secteur 1, et les mêmes points. Seule change
+      la cotisation aux prestations complémentaires de vieillesse : « La
+      cotisation du médecin conventionné en secteur II est composée d'une
+      cotisation forfaitaire de 5 556 € en 2025 [et] d'une cotisation
+      proportionnelle d'ajustement de 3,80 % », quand celle du secteur 1 en
+      est le tiers (guide de l'assurance vieillesse des professions
+      libérales, CNAVPL, 2025, p. 85) : les caisses n'en paient rien. Le
+      compte notionnel porte donc la cotisation entière comme la sienne,
+      sous toutes les conventions (`sans_prise_en_charge_depuis`). Le
+      secteur 2 naît de la convention de 1980 : avant, le statut vaut le
+      secteur 1. L'option de pratique tarifaire maîtrisée n'est pas portée.
 
   personnel_navigant:
     libelle: Personnel navigant professionnel de l'aéronautique civile

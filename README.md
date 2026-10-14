@@ -230,7 +230,7 @@ consultable en JSON au bas de la page.
 `index.html` charge deux choses : `moteur/donnees.json`
 (<!--chiffre:poids(moteur/donnees.json)-->5 378<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
-2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->76<!--/--> fiches de régime, et ce que le Python a calculé une fois pour toutes
+2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->78<!--/--> fiches de régime, et ce que le Python a calculé une fois pour toutes
 sous les réglages de référence : le coût et les carrières types, que les pages
 qui agrègent lisent sans rien recalculer) et `moteur/js/`, un portage en
 JavaScript, sans aucune bibliothèque, de ce qui dépend de ce que le lecteur
@@ -253,7 +253,7 @@ Il est traité de front : **le Python de `src/` reste la référence**, et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->72<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue les simulations côté JavaScript et les compare valeur par valeur —
 <!--chiffre:portage(valeurs)-->152 253<!--/--> nombres,
-dont <!--chiffre:portage(identiques)-->97,3<!--/--> % identiques
+dont <!--chiffre:portage(identiques)-->97,4<!--/--> % identiques
 au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->9,1<!--/--> · 10⁻¹⁵ (un *ulp*, la précision d'un flottant, vaut 2 · 10⁻¹⁶). Ce pire
 écart n'est pas celui d'un calcul mais d'une soustraction entre deux montants
 presque égaux — deux pensions dont on mesure l'écart, ou le plancher de la
@@ -353,7 +353,7 @@ print(simulateur.simuler(simulateur.carriere_releve(
 # Le cas général : grille cas type × génération
 print(calculer_cas_types(simulateur).tableau())
 
-# Les 68 statuts et les 76 régimes du catalogue
+# Les 71 statuts et les 78 régimes du catalogue
 for regime in simulateur.catalogue:
     print(f"{regime.code:<26} {regime.famille:<22} {regime.nom}")
 ```
@@ -385,7 +385,7 @@ print(simulateur.simuler(carriere).tableau())
 |---|---|
 | Comptes notionnels rétroactifs depuis l'origine de la répartition | Origine 1941 (AVTS), paramétrable à 1945 |
 | Chaque réforme laisse une trace dans chaque fiche | Un calendrier central des réformes (`data/reference/legislation/reformes.yaml`, <!--chiffre:entrees(data/reference/legislation/reformes.yaml:reformes)-->126<!--/--> entrées de 1945 à 2026) et, par régime, les articles de code ou de décret qui portent ses paramètres (`regimes/pivots.yaml`) ; `scripts/calendrier_regimes.py` lit leurs versions dans l'index LEGI et les confronte aux périodes des fiches, et un test impose que toute réforme touchant un régime soit coupée, absorbée par un drapeau par génération, ou déclarée non appliquée avec sa raison |
-| Tous les régimes, actuels **et** disparus | <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->76<!--/--> régimes calculés : AGIRC, ARRCO, CANCAVA, ORGANIC, RSI, mines, SEITA, chemins de fer secondaires… — et un [inventaire](docs/regimes.md) de **<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->110<!--/--> lignes** — tous les régimes obligatoires ayant existé depuis 1930, calculés ou non —, ancré sur `R. 711-1`, qui dit ce qui manque à chacun et pourquoi ; un test le tient aligné sur le catalogue, et ses tableaux sont produits par script |
+| Tous les régimes, actuels **et** disparus | <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->78<!--/--> régimes calculés : AGIRC, ARRCO, CANCAVA, ORGANIC, RSI, mines, SEITA, chemins de fer secondaires… — et un [inventaire](docs/regimes.md) de **<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->112<!--/--> lignes** — tous les régimes obligatoires ayant existé depuis 1930, calculés ou non —, ancré sur `R. 711-1`, qui dit ce qui manque à chacun et pourquoi ; un test le tient aligné sur le catalogue, et ses tableaux sont produits par script |
 | Départ trop tôt = pension réduite | Âge de référence à **<!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--/--> ans** — l'âge légal de départ de la proposition — à partir de la bascule ; avant elle, un **cliquet** que l'abaissement de 1982 ne fait pas redescendre |
 | Régimes à départ précoce traités au même étalon | L'agent de conduite de l'exemple, parti à <!--chiffre:mesure(constante?de=mesures_prose&nom=EXEMPLES.sncf.depart)-->50<!--/--> ans en 2005, compte <!--chiffre:mesure(avance?exemple=sncf)-->15<!--/--> ans d'anticipation ; après la bascule, un départ de l'Opéra à <!--chiffre:illustration()-->40<!--/--> ans se mesure à un âge de référence de <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--/--> ans |
 | Indexation par triple lock inversé, depuis l'origine | `min(inflation, salaire moyen, productivité réelle)`, appliqué aux comptes en constitution. Le modèle s'arrête à la liquidation : il ne revalorise pas les pensions servies, et n'en calcule qu'une, dans les euros de l'année de départ |
@@ -410,7 +410,7 @@ print(simulateur.simuler(carriere).tableau())
 | Le droit ouvre-t-il ce départ ? | Âge légal du régime ou carrière longue ; sinon le montant est marqué comme un contrefactuel, pas une pension servie |
 | Suppression des minima | Ni minimum contributif, ni minimum garanti, ni ASPA : peu cotisé, peu de retraite |
 | Suppression des avantages | Ni majorations enfants, ni MDA, ni AVPF, ni bonifications, ni réversion, ni trimestres gratuits |
-| Tout le monde peut simuler | <!--chiffre:entrees(data/reference/legislation/affiliations.yaml:affiliations)-->68<!--/--> statuts d’affiliation, cinq informations suffisent |
+| Tout le monde peut simuler | <!--chiffre:entrees(data/reference/legislation/affiliations.yaml:affiliations)-->71<!--/--> statuts d’affiliation, cinq informations suffisent |
 | La cotisation de chaque année, pas une moyenne de période | Le compte notionnel reçoit le taux de l'année — <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1967&mesure=taux_plafonne)-->8<!--/--> % en 1967, <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1979&mesure=taux_plafonne)-->13<!--/--> % en 1979, <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1991&mesure=taux_plafonne)-->16<!--/--> % en 1991 au régime général, sous le plafond —, lu dans `taux_cotisation_annuels.csv` (<!--chiffre:lignes_csv(data/reference/regimes/taux_cotisation_annuels.csv)-->1 224<!--/--> valeurs, lues dans les décrets datés ou, à défaut, dans les barèmes d'OpenFisca-France, pour le régime général, les salariés agricoles, les cultes, Mayotte, Saint-Pierre-et-Miquelon, les artisans, les commerçants et le RSI) et appliqué année par année au chargement des fiches, qui gardent leur moyenne pour les années d'avant 1967 |
 | Le marin cotise et liquide sur le forfait de sa catégorie | Les <!--chiffre:distinctes(data/reference/regimes/salaires_forfaitaires.csv:categorie)-->20<!--/--> salaires forfaitaires des marins sont lus au Journal officiel, arrêté par arrêté depuis 2008 (`salaires_forfaitaires.csv`, <!--chiffre:lignes_csv(data/reference/regimes/salaires_forfaitaires.csv)-->380<!--/--> montants certifiés) ; le moteur range le marin dans la catégorie la plus proche de son revenu — convention nommée — et cotise comme il liquide sur ce forfait, dans les deux moteurs |
 | Avant 1967, la part vieillesse des assurances sociales, datée | Les taux de 1945 à 1966 viennent du tableau du COR d'après la Cnav, et la part vieillesse est la convention nommée de 8,5/21 — celle de l'ordonnance de 1967 —, au niveau estimé : le compte reçoit <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1945&mesure=taux_plafonne)-->5<!--/--> % en 1945, <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1947&mesure=taux_plafonne)-->6<!--/--> % en 1947, <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1966&mesure=taux_plafonne)-->8<!--/--> % en 1966 ; la retenue des fonctionnaires est à <!--chiffre:valeur(data/reference/regimes/fonction_publique_etat.yaml:periodes.debut=1989.taux_cotisation_retraite*100)-->8,9<!--/--> % dès 1989 (loi n° 89-18, art. 23), les points CARMF d'avant 1991 valent <!--chiffre:cellule(data/reference/regimes/conversions_points.csv:coefficient?regime=carmf_complementaire)-->1,33<!--/--> point d'après |
@@ -1319,7 +1319,7 @@ data/
                                 du système de retraite, pyramide des âges,
                                 projections
     mortalite/                  espérances de vie et quotients par âge, observés et projetés
-    regimes/                    76 fiches de régime, un fichier par régime
+    regimes/                    78 fiches de régime, un fichier par régime
                                 nommé de son code, + schéma + valeurs du point,
                                 et l'inventaire de tous les régimes (inventaire.yaml),
                                 fabriqué depuis ces fichiers

@@ -1,0 +1,31 @@
+date: "2026-10-14"
+session: "action 138, étape 18, troisième partie : la saisie des PCV — sage-femme, biologiste, secteur 2 du médecin"
+consulte: >-
+  L'index LEGI du dépôt, récupéré (à jour au 11 octobre 2026) : décret n° 84-254,
+  article 3, dans ses rédactions de 1984, 2008 et 2012 (LEGIARTI000025077318) ;
+  D. 645-2 de 1985 à 2020 ; décret n° 2011-2002, articles 1er et 2, de 2012 à leur
+  rédaction du 14 novembre 2025 (LEGIARTI000052567982, LEGIARTI000052567973) ;
+  L. 645-5 ; décret n° 2007-597, articles 1er à 3, de 2007 à leur rédaction du 25
+  décembre 2022 (LEGIARTI000046813870, -858, -849). Le JORF, pour l'avenant de 2004
+  à la convention des directeurs de laboratoire (article 24). Le guide de
+  l'assurance vieillesse des professions libérales de la CNAVPL, édition 2025,
+  p. 85, 90 à 94.
+trouve: >-
+  La sage-femme conventionnée a ses PCV : un forfait total de 780 € en 2025,
+  dont le tiers à sa charge, qui ouvre dix-huit points par an, sans ajustement,
+  à 6,10 € le point ; 229 € à sa charge de 2008 à 2011, une fois et demie le
+  forfait d'accouchement avant. Le biologiste non médecin a les siennes : un
+  forfait total de 1 080 € en 2008 à 2 138 € en 2025, dont le tiers à sa charge,
+  qui ouvre 262 points, un ajustement de 0,30 % puis 1,2 % depuis 2022, la
+  moitié à sa charge, qui en ouvre cinquante au plafond ; 0,3927 € le point
+  acquis depuis 2006, en 2025. Le médecin de secteur 2 paie seul son forfait et
+  son ajustement, 5 556 € et 3,80 % en 2025, pour les mêmes points. Deux fiches
+  neuves (asv_sages_femmes, asv_directeurs_laboratoire) et trois statuts
+  (sage_femme, biologiste_liberal, medecin_liberal_secteur_2), dans les deux
+  moteurs.
+reste: >-
+  Les points et les forfaits d'avant 2008 des deux professions, en lettres clés,
+  présumés ; les valeurs de service des points d'avant 2006 ; le coefficient
+  d'anticipation du biologiste, que le guide ne chiffre pas ; la CARSAF des
+  sages-femmes d'avant 2009 ; l'option de pratique tarifaire maîtrisée du
+  secteur 2 ; les règlements des sections approuvés le 10 juillet 2026.

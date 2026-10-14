@@ -77,7 +77,7 @@ témoins la tiennent :
 complètes et <!--chiffre:entrees(tests/temoins/pages.json:)-->72<!--/--> pages
 figées, que `node --test` rejoue ;
 <!--chiffre:portage(valeurs)-->152 253<!--/--> nombres comparés, dont
-<!--chiffre:portage(identiques)-->97,3<!--/--> % identiques au bit près.
+<!--chiffre:portage(identiques)-->97,4<!--/--> % identiques au bit près.
 
 Une exception, voulue : le coût pour toute la population ne se calcule qu'en
 Python. Il voyage tout fait dans le paquet (`data/derive/agregats.json`), et
@@ -275,9 +275,9 @@ Quatre endroits, dans cet ordre :
    datée. Les actions closes passent dans `docs/archives/`.
 
 L'inventaire compte
-<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->110<!--/-->
+<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->112<!--/-->
 régimes : <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise)-->34<!--/-->
-modélisés, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->42<!--/-->
+modélisés, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->44<!--/-->
 partiels, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=a_modeliser)-->9<!--/-->
 à modéliser, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=hors_champ)-->23<!--/-->
 hors champ et <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=routage)-->2<!--/-->

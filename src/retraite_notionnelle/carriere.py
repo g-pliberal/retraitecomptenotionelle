@@ -2391,6 +2391,9 @@ PROFIL_PAR_AFFILIATION = {
     "medecin_liberal": "cadre",
     "chirurgien_dentiste_ou_sage_femme": "cadre",
     "pharmacien": "cadre",
+    "medecin_liberal_secteur_2": "cadre",
+    "sage_femme": "profession_intermediaire",
+    "biologiste_liberal": "cadre",
     "veterinaire": "cadre",
     "expert_comptable": "cadre",
     "auxiliaire_medical": "profession_intermediaire",
@@ -2816,6 +2819,24 @@ class Affiliations:
         """
         return bool(self._profils.get(affiliation, {}).get(
             "part_salariale_seule", False))
+
+    def sans_prise_en_charge(self, affiliation: str, annee: int) -> bool:
+        """Ce statut paie-t-il seul, cette année, les prestations
+        complémentaires de vieillesse que les caisses d'assurance maladie
+        financent pour les autres professionnels de santé conventionnés ?
+
+        Vrai pour le médecin de secteur 2 depuis la convention de 1980, qui
+        le crée : il verse le forfait et l'ajustement entiers, quand les
+        caisses en paient les deux tiers en secteur 1 (L. 645-2, D. 645-3 ;
+        guide de la CNAVPL, 2025, p. 85). Ses points sont les mêmes.
+        """
+        depuis = self.sans_prise_en_charge_depuis(affiliation)
+        return depuis is not None and annee >= depuis
+
+    def sans_prise_en_charge_depuis(self, affiliation: str) -> int | None:
+        """L'année depuis laquelle :meth:`sans_prise_en_charge` vaut, ou rien."""
+        depuis = self._profils.get(affiliation, {}).get("sans_prise_en_charge_depuis")
+        return None if depuis is None else int(depuis)
 
     def categorie_active(self, affiliation: str) -> str | None:
         """Classement de l'emploi : ``active``, ``super_active`` ou rien.

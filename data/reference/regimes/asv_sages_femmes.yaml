@@ -1,0 +1,201 @@
+code: asv_sages_femmes
+rang: 533
+nom: >-
+  Prestations complémentaires de vieillesse des sages-femmes conventionnées
+  (PCV, ex-ASV)
+famille: liberal
+etage: additionnel
+source_id: legifrance_textes
+fiabilite: estimee
+creation: 1984
+fermeture: null
+extinction: null
+succede_a: []
+integre_dans: null
+population: >-
+  Sages-femmes libérales conventionnées, affiliées à la CARCDSF depuis 2009
+  (à la CARSAF avant). Facultatif depuis le décret n° 62-793 du 13 juillet
+  1962, obligatoire depuis le 1er janvier 1984 (décret n° 84-254), réformé
+  par le décret n° 2011-2002 du 28 décembre 2011 : un forfait, sans
+  ajustement sur le revenu, qui ouvre dix-huit points par an, dont
+  l'assurance maladie paie les deux tiers ; la fiche porte la part de la
+  sage-femme, et `part_assurance_maladie_forfait` celle des caisses, que
+  le compte notionnel reçoit comme une part patronale. ÂGES : le taux plein
+  à 67 ans, ou à l'âge légal avec la durée ; avant, une minoration de 1,25 %
+  par trimestre « dans la limite de douze trimestres » ; 10 % de plus pour
+  trois enfants (guide de l'assurance vieillesse des professions libérales,
+  CNAVPL, 2025, p. 90-91). La fiche suit, pour les âges, celle des
+  chirurgiens-dentistes, et les présume à toutes les années. Le règlement
+  de la section approuvé par l'arrêté du 10 juillet 2026 n'est pas lu.
+hors_repartition: false
+inventaire:
+  section: non_salaries
+  rang: 215
+  nom: Prestations complémentaires de vieillesse des sages-femmes conventionnées (PCV, ex-ASV)
+  population: Sages-femmes conventionnées
+  couverture: partiel
+  statuts: [sage_femme]
+  textes:
+    - {reference: "décret n° 84-254 du 5 avril 1984 rendant obligatoire le régime de prestations supplémentaires de vieillesse des sages-femmes conventionnées, article 3 (dix-huit points par année de cotisations)", id: LEGIARTI000025077318}
+    - {reference: "décret n° 2011-2002 du 28 décembre 2011, articles 1er et 2 (forfait, valeur de service)", id: LEGIARTI000052567982}
+  manque: >-
+    Le forfait d'avant 2008, une fois et demie le forfait d'accouchement
+    simple (D. 645-2), que le dépôt ne chiffre pas : la fiche présume les
+    229 € de 2008 projetés en arrière sur les prix. Les forfaits fixes en
+    euros, projetés sur les prix entre deux textes. La valeur de service,
+    6,10 € en 2025, ramenée aux autres années par les prix, quand le décret
+    la fige en euros pour les points liquidés depuis 2012. Le rachat des
+    années de 1946 à 1983, six points l'année. Le partage avec l'assurance
+    maladie, lu pour 2025, est présumé à toutes les années.
+periodes:
+  - debut: 1984
+    fin: 2007
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    cotisation_forfaitaire_euros: 229.00
+    cotisation_forfaitaire_annee: 2008
+    points_par_trimestre_valide: 4.5
+    valeur_point_euros: 6.10
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    decote_trimestres_maximum: 12
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      PRÉSOMPTION, AVANT 2008. Le régime, facultatif depuis le décret
+      n° 62-793, est rendu obligatoire au 1er janvier 1984 : « une
+      prestation égale à 18 points de retraite par année de cotisations »
+      (décret n° 84-254, article 3, LEGIARTI000006767269), 4,5 par trimestre
+      validé. La cotisation de la sage-femme vaut « 1,5 fois la valeur au
+      1er janvier de l'année en cause du tarif conventionnel du forfait
+      d'accouchement simple » (D. 645-2, 3°, LEGIARTI000006738372, 1,08
+      fois en 1985), que le dépôt ne chiffre pas : la fiche présume les
+      229 € de 2008, projetés en arrière sur les prix. Les caisses en
+      paient le double (D. 645-3 de 1985 à 2004). Niveau `estimee`.
+  - debut: 2008
+    fin: 2011
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    cotisation_forfaitaire_euros: 229.00
+    cotisation_forfaitaire_annee: 2008
+    points_par_trimestre_valide: 4.5
+    valeur_point_euros: 6.10
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    decote_trimestres_maximum: 12
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      FORFAIT : « pour les sages-femmes, à 229 euros » (D. 645-2, 3°,
+      rédaction du décret n° 2008-232, LEGIARTI000018250536), la part de la
+      sage-femme ; « une prestation égale à 18 points de retraite par année
+      de cotisations […], la valeur du point de retraite étant fixée à 6,10
+      euros » (décret n° 84-254, article 3, LEGIARTI000018250544).
+  - debut: 2012
+    fin: 2014
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    cotisation_forfaitaire_euros: 229.00
+    cotisation_forfaitaire_annee: 2012
+    points_par_trimestre_valide: 4.5
+    valeur_point_euros: 6.10
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    decote_trimestres_maximum: 12
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      FORFAIT TOTAL : « 687 euros pour l'exercice 2012 ; 705 euros pour
+      l'exercice 2013 ; 735 euros pour l'exercice 2014 » (décret n°
+      2011-2002, article 1er, LEGIARTI000025075120), dont le tiers à la
+      sage-femme : 229, 235 et 245 € ; la fiche porte celui de 2012,
+      projeté sur les prix. VALEUR DE SERVICE : « Pour les points liquidés
+      à compter du 1er janvier 2012, à 6,10 euros » (article 2,
+      LEGIARTI000025075122).
+  - debut: 2015
+    fin: 2024
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    cotisation_forfaitaire_euros: 260.00
+    cotisation_forfaitaire_annee: 2015
+    points_par_trimestre_valide: 4.5
+    valeur_point_euros: 6.10
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    decote_trimestres_maximum: 12
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      FORFAIT TOTAL : « 780 euros pour les exercices 2015 à 2025 » (décret
+      n° 2011-2002, article 1er, rédaction du décret n° 2025-1076,
+      LEGIARTI000052567982), dont le tiers à la sage-femme, 260 € ; la
+      fiche le projette sur les prix depuis 2015, quand le texte le garde
+      en euros.
+  - debut: 2025
+    fin: null
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    cotisation_forfaitaire_euros: 260.00
+    cotisation_forfaitaire_annee: 2025
+    points_par_trimestre_valide: 4.5
+    valeur_point_euros: 6.10
+    valeur_point_annee: 2025
+    decote_par_trimestre: 0.0125
+    decote_trimestres_maximum: 12
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      « Son montant est de 780 € pour 2025 dont : 260 € à la charge de la
+      sage-femme ; 520 € à la charge de la caisse d'assurance maladie (soit
+      2/3 de la cotisation). Le montant de la cotisation annuelle
+      forfaitaire totale ouvre droit à 18 points de retraite » ; « Elle est
+      de 6,10 € en 2025 pour les points non liquidés acquis à compter du
+      01/01/2006 » ; minoration de « 1,25 % par trimestre manquant […] dans
+      la limite de douze trimestres » avant 67 ans ; majoration de 10 %
+      pour trois enfants (guide de l'assurance vieillesse des professions
+      libérales, CNAVPL, 2025, p. 90-91).

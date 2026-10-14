@@ -9,7 +9,8 @@ intitule: >-
   ajoute — sauf aux sages-femmes —, et la prestation vaut les points multipliés par une
   valeur de service propre à chaque profession.
 domaine: points
-regimes: [asv_conventionnes, asv_auxiliaires_medicaux, asv_chirurgiens_dentistes]
+regimes: [asv_conventionnes, asv_auxiliaires_medicaux, asv_chirurgiens_dentistes,
+  asv_sages_femmes, asv_directeurs_laboratoire]
 etape: acquerir_les_droits
 face: droit
 etat: approchee
@@ -26,8 +27,8 @@ dates_qui_decident:
 # `revenu.annee` est l'année de la cotisation. Les quatre professions sont décrites
 # ensemble, version par version. Depuis le 14 octobre 2026 (action 138, étape 18), les
 # auxiliaires médicaux et les chirurgiens-dentistes sont calculés, chacun par sa fiche de
-# régime ; les sages-femmes, que le statut confond avec les dentistes, et les directeurs
-# de laboratoire ne le sont pas.
+# régime ; depuis le même jour, les sages-femmes et les directeurs de laboratoire, chacun
+# sous son statut (`sage_femme`, `biologiste_liberal`).
 versions:
 - id: regimes_en_lettres_cles
   statut: lue
@@ -164,10 +165,6 @@ sources:
     guide de la CNAVPL, présumé à toutes les années : le lire aux conventions nationales
     de chaque profession (L. 162-14-1, 5°).
   - >-
-    Une saisie qui distingue la sage-femme du chirurgien-dentiste, et le biologiste du
-    pharmacien d'officine : sans elle, la sage-femme reçoit les PCV du dentiste, près de
-    trois fois les siennes.
-  - >-
     Un exemple chiffré publié de la prestation d'un auxiliaire médical ou d'un
     chirurgien-dentiste : aucun n'a été trouvé.
   lectures:
@@ -185,6 +182,14 @@ sources:
       pour les médecins du 30 mars 1993 au 8 juillet 1994) ; décret n° 2008-1044,
       articles 1er à 5 ; décret n° 2007-458, articles 1er à 3 dans leurs rédactions de
       2007, 2012 et 2018 : index LEGI du dépôt, à jour au 13 octobre 2026
+    date: 2026-10-14
+  - type: legifrance
+    reference: >-
+      décret n° 84-254, article 3, dans ses rédactions de 1984, 2008 et 2012 ; D. 645-2
+      de 1985 à 2020 (le forfait de la sage-femme, une fois et demie le forfait
+      d'accouchement, puis 229 €) ; décret n° 2011-2002, articles 1er et 2 ; décret n°
+      2007-597, articles 1er à 3, de 2007 à 2022 : index LEGI du dépôt, à jour au 11
+      octobre 2026
     date: 2026-10-14
   - type: autre
     reference: >-
@@ -205,11 +210,18 @@ historique:
   asv_auxiliaires_medicaux et asv_chirurgiens_dentistes, routées par leurs statuts),
   avec la part de l'assurance maladie, que le compte notionnel reçoit comme une part
   patronale ; les points d'avant 2007 et 2008 sont présumés.
+- >-
+  2026-10-14 — action 138, étape 18, troisième partie : la saisie distingue la
+  sage-femme du chirurgien-dentiste, le biologiste du pharmacien et le secteur 2 du
+  médecin. Les sages-femmes (fiche asv_sages_femmes, dix-huit points par an) et les
+  directeurs de laboratoire (asv_directeurs_laboratoire, 262 points et l'ajustement)
+  ont leurs PCV, dans les deux moteurs ; le médecin de secteur 2 paie seul les siennes,
+  que le compte porte entières comme sa propre cotisation.
 effet: >-
   Un infirmier né en 1960, au salaire moyen de 25 à 65 ans : ses PCV valent 1 642 € par
   an, un dixième de sa pension, qui les ignorait ; un chirurgien-dentiste, 10 576 €, plus
   du tiers de la sienne. Sous la convention totale, les caisses d'assurance maladie font
   6 à 8 % de ce que reçoit le compte notionnel de l'auxiliaire, 19 à 27 % de celui du
-  dentiste, 17 à 21 % de celui du médecin. Les sages-femmes reçoivent, faute d'une saisie
-  qui les distingue, les PCV du dentiste ; les directeurs de laboratoire n'en ont
-  aucune.
+  dentiste, 17 à 21 % de celui du médecin. Depuis la troisième partie, la sage-femme
+  reçoit ses dix-huit points par an, et non plus les PCV du dentiste ; le biologiste,
+  ses 262 points ; le médecin de secteur 2, au compte, toute sa cotisation.

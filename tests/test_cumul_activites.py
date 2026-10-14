@@ -318,4 +318,4 @@ def test_la_page_dit_l_activite_ajoutee():
     assert "Deuxième métier, en plus" in page
     assert 'name="metier2_fin"' in page
     assert '<option value="oui" selected' in page
-    assert "et en même temps Médecin libéral de 36 ans" in page
+    assert "et en même temps Médecin libéral en secteur 1 de 36 ans" in page

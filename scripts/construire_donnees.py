@@ -1010,9 +1010,18 @@ def _affiliations() -> dict:
             "pension_militaire": affiliations.pension_militaire(code),
             "releve_par": affiliations.releve_par(code),
             "periodes": list(affiliations.periodes(code)),
+            **_sans_prise_en_charge(affiliations, code),
         }
         for code in affiliations.codes
     }
+
+
+def _sans_prise_en_charge(affiliations: Affiliations, code: str) -> dict:
+    """L'année depuis laquelle le statut paie seul ses prestations
+    complémentaires de vieillesse (le médecin de secteur 2), et seulement
+    là : le moteur JavaScript lit son absence comme une prise en charge."""
+    depuis = affiliations.sans_prise_en_charge_depuis(code)
+    return {} if depuis is None else {"sans_prise_en_charge_depuis": depuis}
 
 
 def _valeurs_point() -> dict:

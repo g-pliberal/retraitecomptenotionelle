@@ -28,7 +28,7 @@ inventaire:
   nom: Complémentaire des pharmaciens (CAVP)
   population: Pharmaciens libéraux
   couverture: partiel
-  statuts: [pharmacien]
+  statuts: [pharmacien, biologiste_liberal]
   textes:
     - {reference: "statuts du régime complémentaire de la CAVP (arrêtés d'approbation)", id: null}
   manque: >-

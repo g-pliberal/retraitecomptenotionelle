@@ -885,8 +885,13 @@ class ConstructeurCompte:
                 # il a pourtant un tiers payeur, et un compte qui porte ce qui
                 # a été versé le reçoit comme une part patronale, sous les
                 # conventions qui portent celle-ci.
+                # Le médecin de secteur 2 la paie seul, depuis 1980 : c'est
+                # alors sa propre cotisation, sous toutes les conventions.
                 prise_en_charge = 0.0
-                if (classe is None and not part_salariale_seule
+                if classe is None and self.affiliations.sans_prise_en_charge(
+                        ligne.affiliation, annee):
+                    montant += periode.prise_en_charge(forfait, assiette * taux)
+                elif (classe is None and not part_salariale_seule
                         and self.parametres.part_cotisation
                         is not PartCotisation.SALARIALE):
                     prise_en_charge = periode.prise_en_charge(forfait, assiette * taux)

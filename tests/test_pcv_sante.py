@@ -53,6 +53,8 @@ def _pcv(simulateur, statut: str, niveau: float = 1.0):
     ("auxiliaire_medical", "asv_auxiliaires_medicaux"),
     ("chirurgien_dentiste_ou_sage_femme", "asv_chirurgiens_dentistes"),
     ("medecin_liberal", "asv_conventionnes"),
+    ("medecin_liberal_secteur_2", "asv_conventionnes"),
+    ("biologiste_liberal", "asv_directeurs_laboratoire"),
 ])
 def test_chaque_profession_de_sante_a_son_etage(simulateur, statut, code):
     """L'infirmier et le dentiste ont désormais leurs PCV, et elles suivent le
@@ -81,7 +83,9 @@ def test_la_part_de_l_assurance_maladie_est_au_compte(simulateur):
     convention salariale, rien."""
     for statut, code in (("auxiliaire_medical", "asv_auxiliaires_medicaux"),
                          ("chirurgien_dentiste_ou_sage_femme", "asv_chirurgiens_dentistes"),
-                         ("medecin_liberal", "asv_conventionnes")):
+                         ("medecin_liberal", "asv_conventionnes"),
+                         ("sage_femme", "asv_sages_femmes"),
+                         ("biologiste_liberal", "asv_directeurs_laboratoire")):
         carriere = _carriere(simulateur, statut)
         lignes = {}
         for part in (PartCotisation.SALARIALE, PartCotisation.TOTALE):
@@ -124,6 +128,57 @@ def test_le_dentiste_compte_ses_points_au_plafond(simulateur):
     assert periode.points_par_trimestre_valide * 4 == pytest.approx(10.0)
 
 
+def test_la_sage_femme_a_ses_dix_huit_points(simulateur):
+    """Quarante ans, de 1985 à 2024 : dix-huit points par an, sans
+    ajustement, quel que soit le revenu, au point de 6,10 € en 2025 (décret
+    n° 84-254, article 3) — et non plus les PCV du chirurgien-dentiste, près
+    de trois fois les siennes. Sa complémentaire reste celle de la
+    CARCDSF."""
+    pensions = _pcv(simulateur, "sage_femme")
+    assert "asv_chirurgiens_dentistes" not in pensions
+    assert "carcdsf_complementaire" in pensions
+    pension = pensions["asv_sages_femmes"]
+    points = float(pension.detail.split(" points")[0].replace(",", ""))
+    assert points == pytest.approx(40 * 18, abs=1)
+    assert "valeur de service 6.1 €" in pension.detail
+    aise = _pcv(simulateur, "sage_femme", 2.0)["asv_sages_femmes"]
+    assert aise.montant == pytest.approx(pension.montant)
+    dentiste = _pcv(simulateur, "chirurgien_dentiste_ou_sage_femme")
+    assert dentiste["asv_chirurgiens_dentistes"].montant > 2.5 * pension.montant
+
+
+def test_le_biologiste_a_ses_262_points(simulateur):
+    """262 points de forfait par an, et jusqu'à cinquante d'ajustement depuis
+    2008, au point de 0,3927 € en 2025 (décret n° 2007-597) ; le pharmacien
+    d'officine n'a pas cet étage."""
+    pension = _pcv(simulateur, "biologiste_liberal")["asv_directeurs_laboratoire"]
+    points = float(pension.detail.split(" points")[0].replace(",", ""))
+    assert 40 * 262 < points < 40 * 262 + 17 * 50
+    assert "valeur de service 0.39" in pension.detail
+    assert "asv_directeurs_laboratoire" not in _pcv(simulateur, "pharmacien")
+
+
+def test_le_medecin_de_secteur_2_paie_seul_ses_pcv(simulateur):
+    """Mêmes points qu'en secteur 1 ; mais les caisses ne paient rien : le
+    compte porte toute la cotisation comme la sienne, sous la convention
+    salariale comme sous la totale, et c'est la totale du secteur 1."""
+    un = _pcv(simulateur, "medecin_liberal")["asv_conventionnes"]
+    deux = _pcv(simulateur, "medecin_liberal_secteur_2")["asv_conventionnes"]
+    assert deux.montant == pytest.approx(un.montant)
+    cotisations = {}
+    for statut in ("medecin_liberal", "medecin_liberal_secteur_2"):
+        carriere = _carriere(simulateur, statut)
+        for part in (PartCotisation.SALARIALE, PartCotisation.TOTALE):
+            constructeur = simulateur._constructeur_variante(part_cotisation=part)
+            ligne = constructeur.cotisation_annuelle(carriere, 2020)
+            cotisations[statut, part] = dict(ligne.par_regime)["asv_conventionnes"]
+    secteur_1 = cotisations["medecin_liberal", PartCotisation.TOTALE]
+    for part in (PartCotisation.SALARIALE, PartCotisation.TOTALE):
+        assert cotisations["medecin_liberal_secteur_2", part] == pytest.approx(secteur_1)
+    assert secteur_1 == pytest.approx(
+        3 * cotisations["medecin_liberal", PartCotisation.SALARIALE], rel=1e-5)
+
+
 CAS = [
     {"statut": "auxiliaire_medical", "naissance": "1960-03-15", "debut": "25",
      "liquidation": "2025-04"},
@@ -131,6 +186,12 @@ CAS = [
      "debut": "26", "liquidation": "2029-04"},
     {"statut": "medecin_liberal", "naissance": "1958-03-15", "debut": "30",
      "liquidation": "2023-04"},
+    {"statut": "medecin_liberal_secteur_2", "naissance": "1958-03-15", "debut": "30",
+     "liquidation": "2023-04"},
+    {"statut": "sage_femme", "naissance": "1961-03-15", "debut": "24",
+     "liquidation": "2028-04"},
+    {"statut": "biologiste_liberal", "naissance": "1959-03-15", "debut": "28",
+     "liquidation": "2026-04"},
 ]
 
 
@@ -149,6 +210,7 @@ def test_les_deux_moteurs_servent_les_memes_pcv():
                          "resultat": _fini(contexte.simuler(saisie).dictionnaire())})
     texte = json.dumps(attendus, ensure_ascii=False)
     assert "asv_auxiliaires_medicaux" in texte and "asv_chirurgiens_dentistes" in texte
+    assert "asv_sages_femmes" in texte and "asv_directeurs_laboratoire" in texte
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:
         fichier.write(texte)

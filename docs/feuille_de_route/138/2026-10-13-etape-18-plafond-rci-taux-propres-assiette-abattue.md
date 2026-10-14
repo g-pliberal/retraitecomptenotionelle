@@ -8,8 +8,8 @@ avec la part des caisses au compte (14 octobre, note
 points d'avant 1973 des artisans et des commerçants, le plus lourd ; les
 points d'incapacité ; le conjoint collaborateur ; les dispenses de l'assiette
 minimale ; la Lodeom. CAVEC et CNBF : action 131 ; Mayotte : action 121. Aux
-pages : « Pour les pages », plus bas et dans la note du 14. Commencer par les
-points d'avant 1973.
+pages, la saisie des PCV est faite (sage-femme, biologiste, secteur 2 : note
+`2026-10-14-etape-18-saisie-pcv.md`). Commencer par les points d'avant 1973.
 
 **La demande.** Le propriétaire, le 13 octobre 2026 : « Action 138, étape 18,
 pas encore commencée : commence par l'assiette abattue des indépendants, leurs

@@ -2568,6 +2568,17 @@ export class Affiliations {
   }
 
   /**
+   * Ce statut paie-t-il seul, cette année, les prestations complémentaires de
+   * vieillesse que les caisses financent pour les autres ? Le médecin de
+   * secteur 2, depuis 1980 : voir `Affiliations.sans_prise_en_charge`
+   * (carriere.py).
+   */
+  sansPriseEnCharge(affiliation, annee) {
+    const depuis = (this._profils[affiliation] ?? {}).sans_prise_en_charge_depuis;
+    return depuis !== undefined && depuis !== null && annee >= depuis;
+  }
+
+  /**
    * Classement de l'emploi : "active", "super_active" ou null.
    *
    * Le classement tient à l'EMPLOI, pas à la personne ni au régime : un

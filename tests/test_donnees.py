@@ -2649,6 +2649,7 @@ def test_les_statuts_sans_employeur_sont_marques():
     assert sans == {"artisan", "commercant", "profession_liberale", "avocat",
                     "exploitant_agricole", "collaborateur_agricole", "medecin_liberal",
                     "chirurgien_dentiste_ou_sage_femme", "expert_comptable",
+                    "sage_femme", "biologiste_liberal", "medecin_liberal_secteur_2",
                     "pharmacien", "auxiliaire_medical", "veterinaire",
                     "officier_ministeriel", "notaire", "liberal_non_reglemente",
                     "gerant_debit_tabac", "micro_entrepreneur"}

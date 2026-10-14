@@ -92,7 +92,7 @@ STATUTS = (
     "membre_cese", "salarie_polynesie", "salarie_nouvelle_caledonie",
     "salarie_wallis_et_futuna", "fonctionnaire_pacifique",
     "salarie_regime_professionnel_integre", "chirurgien_dentiste_ou_sage_femme", "expert_comptable",
-    "pharmacien", "auxiliaire_medical", "veterinaire", "officier_ministeriel",
+    "pharmacien", "biologiste_liberal", "sage_femme", "medecin_liberal_secteur_2", "auxiliaire_medical", "veterinaire", "officier_ministeriel",
     "artiste_auteur", "ministre_du_culte", "membre_congregation",
     "personnel_navigant",
     "agent_general_assurance", "notaire",
