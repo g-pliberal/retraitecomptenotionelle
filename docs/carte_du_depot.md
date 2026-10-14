@@ -74,7 +74,7 @@ La copie elle-même, seul trait en pointillé, se fait à la main, règle par
 règle et Python d'abord, sous les mêmes noms d'étapes des deux côtés. Les
 témoins la tiennent :
 <!--chiffre:entrees(tests/temoins/simulations.json:)-->805<!--/--> simulations
-complètes et <!--chiffre:entrees(tests/temoins/pages.json:)-->70<!--/--> pages
+complètes et <!--chiffre:entrees(tests/temoins/pages.json:)-->72<!--/--> pages
 figées, que `node --test` rejoue ;
 <!--chiffre:portage(valeurs)-->149 860<!--/--> nombres comparés, dont
 <!--chiffre:portage(identiques)-->97,2<!--/--> % identiques au bit près.

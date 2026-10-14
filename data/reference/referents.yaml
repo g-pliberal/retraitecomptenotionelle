@@ -7003,11 +7003,14 @@ referents:
           et « chiffre d'affaires » est absent de `pages.js` et de
           `saisie.js` ; le revenu qui valide les trimestres se prend au taux
           du versement et à sa part de base, comme le fait service-public, non
-          au revenu abattu (voir les écarts).
+          au revenu abattu (voir les écarts). Repris le 14 octobre 2026 :
+          le champ « micro » de la saisie, ses quatre activités et la Cipav,
+          dans les deux moteurs ; le revenu qui valide les trimestres reste
+          celui de l'écart.
         preuve: >-
           `règles/entreprise/imposition.publicodes:327-353` et
           `règles/protection-sociale.publicodes:77-105`, au commit `6bb0f26`
-        etat: a_reprendre
+        etat: repris
         chantier: "138.12"
       - quoi: >-
           Il porte le seuil d'affiliation des artistes-auteurs au RAAP (900

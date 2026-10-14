@@ -79,6 +79,7 @@ import {
   RELEVE_MAXIMUM, REVALORISATIONS_STOCK, SAISIES, SAISIE_DE_LA_SITUATION,
   SALAIRE_DEFAUT, SANS_EMPLOI, SITUATIONS, SITUATIONS_FOYER, Saisie, TABLES,
   MOIS_DE_GUERRE_MAXIMUM, TRAJECTOIRES_EMPLOI, TRAVAUX_MANUELS, UNITES_REVENU, age, entier, estEntier, jourEnClair,
+  ABATTEMENTS_MICRO, ACTIVITES_MICRO, STATUT_MICRO,
   nombreBrut, parmi, reel, refus,
 } from "./saisie.js";
 import {
@@ -1027,7 +1028,7 @@ export function formulaire(saisie, contexte, comparaison = null) {
   ${desaccordDeSituation(saisie, contexte)}
   <div class="grille">${identite}</div>
   <h3>La carrière, période par période${bulleDesPeriodes()}</h3>
-  ${metiersFormulaire(saisie, affiliations, echelle)}
+  ${metiersFormulaire(saisie, affiliations, echelle)}${microFormulaire(saisie)}
   ${blocPension(saisie)}
   ${lienAutreSaisie(saisie)}
   ${saisie.parPension ? "" : basculeUnite(saisie, echelle)}
@@ -1257,7 +1258,8 @@ function apresLeDepartFormulaire(saisie, contexte, affiliations, echelle) {
       [["", "celui de votre dernier métier"], ...activites], saisie.emploi_retraite_statut),
     champRevenu("emploi_retraite_salaire", saisie, echelle,
       saisie.emploi_retraite_salaire === null ? "" : nombreBrut(saisie.emploi_retraite_salaire),
-      true, "vide : celui de votre dernier métier"),
+      true, "vide : celui de votre dernier métier",
+      saisie.emploi_retraite_statut || saisie.dernierMetier.statut),
     g.liste("emploi_retraite_employeur", "Chez", EMPLOYEURS_APRES_DEPART,
       saisie.emploi_retraite_employeur, "",
       {}, "Chez le dernier employeur dans les six mois de la pension, elle n'est pas "
@@ -1565,6 +1567,25 @@ const APPEL_REVENU_RETRAITE = " Jamais une pension : la pension est ce que le "
   + "et dispense de l'estimer.";
 
 /**
+ * Le champ d'une période de micro-entrepreneur qui dit son activité : un
+ * chiffre d'affaires, ou des recettes, que le modèle abat (L. 613-7, II). Ni
+ * brut ni net ; la saisie lui oppose les bornes du revenu.
+ */
+function champChiffreDAffaires(nom, saisie, valeur, vide) {
+  const recettes = ["liberal", "cipav"].includes(saisie.micro);
+  const quoi = recettes ? "Recettes" : "Chiffre d'affaires";
+  const abattement = Math.round(100 * ABATTEMENTS_MICRO[saisie.micro]);
+  if (!saisie.revenu_en_euros) {
+    return g.champ(nom, `${quoi}, en multiples du salaire moyen`, valeur,
+      `abattu de ${abattement} %${vide}`, "number",
+      { min: "0.1", max: "10", step: nombreBrut(PAS_MULTIPLE) });
+  }
+  return g.champ(nom, recettes ? "Recettes mensuelles" : "Chiffre d'affaires mensuel", valeur,
+    `en euros par mois, abattu de ${abattement} %${vide}`, "number",
+    { min: "0", step: "1" });
+}
+
+/**
  * Le champ « combien gagnez-vous », dans l'unité choisie. Le libellé porte le
  * mot « brut » et l'aide dit où le lire : c'est la question qui revenait le plus
  * souvent devant ce formulaire, et elle se règle là, sur le champ, plutôt que
@@ -1581,8 +1602,12 @@ const APPEL_REVENU_RETRAITE = " Jamais une pension : la pension est ce que le "
  * `siVide` s'ajoute à l'aide brève d'un champ facultatif : ce que vaut le champ
  * laissé vide.
  */
-function champRevenu(nom, saisie, echelle, valeur, bref = false, siVide = "") {
+function champRevenu(nom, saisie, echelle, valeur, bref = false, siVide = "",
+  statut = "") {
   const vide = siVide ? ` ; ${siVide}` : "";
+  if (saisie.enChiffreDAffaires(statut)) {
+    return champChiffreDAffaires(nom, saisie, valeur, vide);
+  }
   if (!saisie.revenu_en_euros) {
     const aideMultiple = bref
       ? `en multiples du salaire moyen brut${vide}`
@@ -1897,6 +1922,29 @@ export function requeteBasculee(contexte, formulaire, lien) {
  * ligne suivante propose les deux, et la dernière dit donc, quand elle est sans
  * emploi, la date à laquelle l'activité s'arrête.
  */
+/**
+ * Ce que saisit le micro-entrepreneur (action 138, étape 12) : son revenu déjà
+ * abattu, comme avant, ou son chiffre d'affaires, que le modèle abat selon son
+ * activité, la Cipav routant ses périodes vers les régimes du libéral. Le menu
+ * ne paraît qu'avec une période de micro-entrepreneur, ou une activité déjà
+ * dite.
+ */
+function microFormulaire(saisie) {
+  const micro = saisie.lignesCarriere.some((ligne) => ligne.statut === STATUT_MICRO)
+    || saisie.emploi_retraite_statut === STATUT_MICRO;
+  if (!micro && !saisie.micro) {
+    return "";
+  }
+  return `<div class="grille">${g.liste("micro", "Micro-entrepreneur, vous saisissez",
+    ACTIVITES_MICRO, saisie.micro, "le chiffre d'affaires, ou le revenu abattu", {},
+    "Vos droits se calculent sur votre chiffre d'affaires abattu de 71 % pour la "
+    + "vente, de 50 % pour les services commerciaux ou artisanaux, de 34 % pour "
+    + "les recettes libérales : dites votre activité, et saisissez votre chiffre "
+    + "d'affaires mensuel. Les architectes, ingénieurs-conseils, ostéopathes, "
+    + "psychologues, moniteurs de ski, et qui y était affilié avant 2019, "
+    + "relèvent de la Cipav.")}</div>`;
+}
+
 function metiersFormulaire(saisie, affiliations, echelle) {
   // Le menu des statuts de chaque ligne est daté de l'entrée dans cette
   // période : un statut que le droit ferme avant cette date y est grisé.
@@ -1925,7 +1973,8 @@ function metiersFormulaire(saisie, affiliations, echelle) {
       "proposé aux seules dates où son régime recrutait", {},
       g.GLOSSAIRE["statut d'affiliation"])
     + (saisie.parPension
-      ? "" : champRevenu("salaire", saisie, echelle, nombreBrut(saisie.salaire))),
+      ? "" : champRevenu("salaire", saisie, echelle, nombreBrut(saisie.salaire),
+        false, "", saisie.statut)),
   )];
 
   saisie.metiers.forEach((metier, index) => {
@@ -1971,7 +2020,7 @@ function champsMetier(rang, debut, calcul, statut, salaire, statuts, saisie, ech
   // fait.
   const revenu = CODES_SANS_EMPLOI.has(statut) || saisie.parPension
     ? ""
-    : champRevenu(`metier${rang}_salaire`, saisie, echelle, salaire, true);
+    : champRevenu(`metier${rang}_salaire`, saisie, echelle, salaire, true, "", statut);
   // UNE ACTIVITÉ PEUT S'AJOUTER À CELLE EN COURS au lieu de la remplacer.
   // C'est la personne qui le dit, par un menu dont la réponse par défaut est
   // celle d'avant ; la date de fin ne sert qu'à l'activité ajoutée.
@@ -3234,10 +3283,19 @@ function revenuDeduit(contexte, comparaison, saisie, montants) {
   const valeur = saisie.revenu_en_euros
     ? nombreBrut(arrondir(affiche, 0))
     : nombreBrut(arrondir(trouve.niveau, DECIMALES_MULTIPLE));
-  const remplacements = { saisie_par: "revenu", salaire: valeur };
-  for (let rang = 2; rang < saisie.metiers.length + 2; rang += 1) {
-    remplacements[`metier${rang}_salaire`] = valeur;
-  }
+  // Une ligne de micro-entrepreneur relit un chiffre d'affaires : le revenu
+  // trouvé y remonte, brut, de son abattement.
+  const valeurDe = (statut) => {
+    if (!saisie.enChiffreDAffaires(statut)) return valeur;
+    const part = 1.0 - ABATTEMENTS_MICRO[saisie.micro];
+    return saisie.revenu_en_euros
+      ? nombreBrut(arrondir(brut / part, 0))
+      : nombreBrut(arrondir(trouve.niveau / part, DECIMALES_MULTIPLE));
+  };
+  const remplacements = { saisie_par: "revenu", salaire: valeurDe(saisie.statut) };
+  saisie.metiers.forEach((metier, index) => {
+    remplacements[`metier${index + 2}_salaire`] = valeurDe(metier.statut);
+  });
   const reprise = `#/simuler?${echapper(saisie.requete(remplacements))}`;
 
   const [debut, fin] = bornesDeformation(contexte.paquet, saisie.profil,
@@ -3249,7 +3307,7 @@ function revenuDeduit(contexte, comparaison, saisie, montants) {
   return `
 <div class="carte revenu-deduit">
   <h3 style="margin-top:0">Le revenu que votre pension suppose</h3>
-  <p class="cle-chiffre">${g.euros(affiche)} ${mot} par mois</p>
+  <p class="cle-chiffre">${g.euros(affiche)} ${mot} par mois</p>${chiffreDAffairesDeduit(saisie, brut)}
   <p>C'est le revenu d'activité dont le <strong>système actuel</strong> tire
   exactement la pension que vous avez saisie. Il vaut pour ${quand}. Les quatre
   montants ci-dessous sont calculés sur cette carrière-là.</p>
@@ -3259,6 +3317,18 @@ function revenuDeduit(contexte, comparaison, saisie, montants) {
   période.</p>
 </div>
 `;
+}
+
+/**
+ * Le chiffre d'affaires que le revenu déduit suppose, quand la première période
+ * est celle d'un micro-entrepreneur qui dit son activité : le revenu brut,
+ * remonté de son abattement.
+ */
+function chiffreDAffairesDeduit(saisie, brut) {
+  if (!saisie.enChiffreDAffaires(saisie.statut)) return "";
+  const abattement = ABATTEMENTS_MICRO[saisie.micro];
+  return `<p>Soit un chiffre d'affaires de ${g.euros(brut / (1.0 - abattement))} par `
+    + `mois, que le droit abat de ${Math.round(100 * abattement)} %.</p>`;
 }
 
 /**
@@ -5454,7 +5524,8 @@ function mentionConversion(saisie, echelle) {
     return "";
   }
   const sans = saisie.lignesCarriere.filter(
-    (ligne) => !ligne.sans_emploi && !echelle.convertit(ligne.statut),
+    (ligne) => !ligne.sans_emploi && !saisie.enChiffreDAffaires(ligne.statut)
+      && !echelle.convertit(ligne.statut),
   );
   if (!sans.length) {
     return "";
@@ -5517,10 +5588,12 @@ function remplacementsMontants(saisie, echelle, tauxPension) {
   // moyen est un rapport entre deux bruts, que le mode ne touche pas.
   if (saisie.revenu_en_euros) {
     const lignes = saisie.lignesCarriere;
+    // Un chiffre d'affaires n'est ni brut ni net : il passe tel quel.
     const traduits = lignes.map((ligne) => nombreBrut(Math.round(
-      versLeNet
-        ? echelle.netMensuel(ligne.salaire, ligne.statut)
-        : echelle.brutMensuelDirect(ligne.salaire, ligne.statut),
+      saisie.enChiffreDAffaires(ligne.statut) ? ligne.salaire
+        : versLeNet
+          ? echelle.netMensuel(ligne.salaire, ligne.statut)
+          : echelle.brutMensuelDirect(ligne.salaire, ligne.statut),
     ), 0));
     remplacements.salaire = traduits[0];
     traduits.slice(1).forEach((valeur, index) => {

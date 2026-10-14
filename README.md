@@ -250,7 +250,7 @@ Le risque d'un portage, c'est qu'il déplace un chiffre sans que rien n'échoue.
 Il est traité de front : **le Python de `src/` reste la référence**, et
 `scripts/construire_temoins.py` fige depuis lui
 <!--chiffre:entrees(tests/temoins/simulations.json:)-->805<!--/--> simulations complètes, et depuis le site
-<!--chiffre:entrees(tests/temoins/pages.json:)-->70<!--/--> rendus de page, dans `tests/temoins/`.
+<!--chiffre:entrees(tests/temoins/pages.json:)-->72<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue les simulations côté JavaScript et les compare valeur par valeur —
 <!--chiffre:portage(valeurs)-->149 860<!--/--> nombres,
 dont <!--chiffre:portage(identiques)-->97,2<!--/--> % identiques

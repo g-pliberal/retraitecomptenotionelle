@@ -1425,3 +1425,64 @@ def test_la_proposition_se_compare_a_taux_egal_cotise(contexte):
         _prose(cout).lower())
     methode = _prose(rendre("/methode", {})[1])
     assert "convention de comparaison" in methode
+
+
+# LE MICRO-ENTREPRENEUR SAISI PAR SON CHIFFRE D'AFFAIRES (action 138, étape 12 ;
+# fiche micro_social_abattement) : son activité abat le chiffre d'affaires de
+# 71, 50 ou 34 % (L. 613-7, II), au seuil du modèle, dans les deux moteurs ; la
+# Cipav route la période vers les régimes du libéral.
+_MICRO = {"statut": "micro_entrepreneur", "naissance": "1975", "debut": "2009-01",
+          "unite_revenu": "euros_mois", "salaire": "3000"}
+
+
+@pytest.mark.parametrize("micro,statut,part", [
+    ("", "micro_entrepreneur", 1.0), ("vente", "micro_entrepreneur", 0.29),
+    ("services", "micro_entrepreneur", 0.50), ("liberal", "micro_entrepreneur", 0.66),
+    ("cipav", "profession_liberale", 0.66),
+])
+def test_le_chiffre_d_affaires_s_abat_selon_l_activite(micro, statut, part):
+    champs = {**_MICRO, "micro": micro}
+    echelle = _echelle()
+    [metier] = Saisie.depuis_requete(champs).parcours(echelle)
+    assert metier.affiliation == statut
+    assert metier.niveau_salaire == pytest.approx(echelle.niveau(3000.0) * part)
+    jumeau = module("saisie").Saisie.depuis_requete(
+        champs, False, site().contexte.paquet.presomptions)
+    [porte] = jumeau.parcours(site().contexte.echelle(jumeau))
+    assert porte["affiliation"] == statut
+    assert porte["niveau_salaire"] == pytest.approx(metier.niveau_salaire, rel=1e-12)
+
+
+def test_l_activite_du_micro_entrepreneur_revient_dans_l_adresse():
+    champs = {**_MICRO, "micro": "cipav"}
+    assert "micro=cipav" in Saisie.depuis_requete(champs).requete()
+    assert "micro=cipav" in module("saisie").Saisie.depuis_requete(
+        champs, False, site().contexte.paquet.presomptions).requete()
+    assert "micro" not in dict(parse_qsl(Saisie.depuis_requete(_MICRO).requete()))
+    # Une activité inconnue retombe, comme tout menu, sur le défaut.
+    assert Saisie.depuis_requete({**_MICRO, "micro": "agricole"}).micro == ""
+
+
+def test_le_chiffre_d_affaires_ne_se_convertit_pas_en_net():
+    """Ni brut ni net : en mode net, le chiffre d'affaires se lit tel quel, et
+    seule la ligne salariée remonte au brut."""
+    champs = {**_MICRO, "micro": "vente", "montants": "net",
+              "metier2_debut": "2020-01", "metier2_statut": "salarie_prive_non_cadre",
+              "metier2_salaire": "3000"}
+    saisie = Saisie.depuis_requete(champs)
+    echelle = Contexte().echelle(saisie)
+    micro, salarie = saisie.parcours(echelle)
+    assert micro.niveau_salaire == pytest.approx(echelle.niveau(3000.0) * 0.29)
+    assert salarie.niveau_salaire > echelle.niveau(3000.0)
+
+
+def test_un_chiffre_d_affaires_trop_petit_se_refuse_en_chiffre_d_affaires():
+    champs = {**_MICRO, "micro": "vente", "salaire": "1000"}
+    saisie = Saisie.depuis_requete(champs)
+    with pytest.raises(ErreurSaisie, match="Ce chiffre d'affaires, abattu à 29 %") as refus:
+        saisie.parcours(_echelle())
+    jumeau = module("saisie").Saisie.depuis_requete(
+        champs, False, site().contexte.paquet.presomptions)
+    with pytest.raises(Exception, match="abattu à 29 %") as refus_porte:
+        jumeau.parcours(site().contexte.echelle(jumeau))
+    assert str(refus.value) in str(refus_porte.value)

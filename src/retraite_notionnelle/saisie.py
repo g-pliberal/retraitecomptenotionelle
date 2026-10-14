@@ -387,6 +387,34 @@ TRAVAUX_MANUELS = [
     ("penible", "en continu, à la chaîne, au four ou aux intempéries"),
 ]
 
+#: L'activité du micro-entrepreneur, qui fait lire son revenu comme un CHIFFRE
+#: D'AFFAIRES (action 138, étape 12 ; fiche ``micro_social_abattement``). Ses
+#: droits « sont calculés sur la base de leur chiffre d'affaires ou de leurs
+#: recettes après application d'un taux d'abattement de 71 % » pour la vente,
+#: « de 50 % » pour les services commerciaux ou artisanaux, « de 34 % » pour
+#: les recettes libérales (L. 613-7, II ; L. 133-6-8 jusqu'en 2017), les
+#: abattements du micro-fiscal (CGI, 50-0 et 102 ter), les mêmes depuis 2007.
+#: Le vide garde le sens d'avant : le revenu saisi est déjà abattu. La Cipav
+#: route la ligne vers les régimes du libéral (CNAVPL et Cipav) : ses
+#: micro-entrepreneurs sont ceux des professions qu'elle garde, et ceux qui y
+#: étaient affiliés avant 2019 (D. 613-4, b).
+ACTIVITES_MICRO = [
+    ("", "revenu déjà abattu"),
+    ("vente", "vente de marchandises : chiffre d'affaires"),
+    ("services", "services commerciaux ou artisanaux : chiffre d'affaires"),
+    ("liberal", "activité libérale : recettes"),
+    ("cipav", "activité libérale à la Cipav : recettes"),
+]
+
+#: L'abattement de chaque activité, la part du chiffre d'affaires qui ne
+#: compte pas dans les droits.
+ABATTEMENTS_MICRO = {"vente": 0.71, "services": 0.50, "liberal": 0.34, "cipav": 0.34}
+
+#: Le statut dont le revenu se lit en chiffre d'affaires, et celui vers qui la
+#: Cipav le route.
+STATUT_MICRO = "micro_entrepreneur"
+STATUT_MICRO_CIPAV = "profession_liberale"
+
 #: La durée de captivité et de services militaires en temps de guerre que la
 #: saisie admet, en mois : de un à vingt ans.
 MOIS_DE_GUERRE_MAXIMUM = 240
@@ -734,6 +762,10 @@ class Saisie:
     deporte: bool = False
     mois_de_guerre: int | None = None
     travail_manuel: str = ""
+    #: L'activité du micro-entrepreneur, qui fait lire le revenu de ses
+    #: lignes comme un chiffre d'affaires (:data:`ACTIVITES_MICRO`) ; le vide,
+    #: comme un revenu déjà abattu.
+    micro: str = ""
     #: Les carrières hors de France (fiches
     #: ``totalisation_des_periodes_etrangeres``, ``pension_proratisee``,
     #: ``minimum_contributif_international`` et
@@ -923,6 +955,7 @@ class Saisie:
             mois_de_guerre=(None if parametres.get("guerre") in (None, "")
                             else _entier(parametres, "guerre", 0)),
             travail_manuel=_parmi(parametres, "travail_manuel", TRAVAUX_MANUELS, ""),
+            micro=_parmi(parametres, "micro", ACTIVITES_MICRO, ""),
             etranger=_periodes_etrangeres_saisies(parametres, mois_de_naissance, tolerante),
             pensions_etrangeres=_pensions_etrangeres_saisies(parametres, mois_de_naissance,
                                                              tolerante),
@@ -1225,10 +1258,35 @@ class Saisie:
         # En mode net, le nombre saisi n'est pas encore un brut : on remonte
         # d'abord jusqu'à lui, statut par statut, PUIS on ramène à l'unité du
         # modèle. L'ordre compte — le salaire moyen de l'échelle est un brut.
+        # Un chiffre d'affaires n'est ni brut ni net : il se lit tel quel.
         if self.saisie_en_net:
-            saisis = [echelle.brut_mensuel(valeur, ligne.statut)
+            saisis = [valeur if self.en_chiffre_d_affaires(ligne.statut)
+                      else echelle.brut_mensuel(valeur, ligne.statut)
                       for valeur, ligne in zip(saisis, lignes)]
         return [echelle.niveau(valeur) for valeur in saisis]
+
+    def en_chiffre_d_affaires(self, statut: str) -> bool:
+        """Le revenu d'une ligne de ce statut est-il un chiffre d'affaires ?
+
+        Celui du micro-entrepreneur qui dit son activité. Une activité dite
+        sans ligne de micro-entrepreneur ne change rien : le formulaire la
+        garde d'une saisie à l'autre, et elle ne se refuse pas.
+        """
+        return bool(self.micro) and statut == STATUT_MICRO
+
+    def abattu(self, niveau: float, statut: str) -> tuple[float, str]:
+        """Ce qu'une ligne donne au modèle : son revenu et son statut.
+
+        LE CHIFFRE D'AFFAIRES S'ABAT ICI, au seuil du modèle, et nulle part
+        avant : :meth:`niveaux` garde le nombre saisi, ramené à l'unité du
+        modèle, pour que la bascule d'unité le traduise sans le toucher. Le
+        micro-entrepreneur de la Cipav prend le statut du libéral, dont il a
+        les régimes.
+        """
+        if not self.en_chiffre_d_affaires(statut):
+            return niveau, statut
+        route = STATUT_MICRO_CIPAV if self.micro == "cipav" else statut
+        return niveau * (1.0 - ABATTEMENTS_MICRO[self.micro]), route
 
     def parcours(self, echelle: "Echelle") -> list[Metier]:
         """La carrière comme suite de MÉTIERS, le premier compris.
@@ -1249,8 +1307,9 @@ class Saisie:
         ):
             if ligne.sans_emploi:
                 continue
-            self._verifier_niveau(niveau, rang, echelle)
-            metiers.append(Metier(affiliation=ligne.statut, age_debut=ligne.debut,
+            niveau, statut = self.abattu(niveau, ligne.statut)
+            self._verifier_niveau(niveau, rang, echelle, ligne.statut)
+            metiers.append(Metier(affiliation=statut, age_debut=ligne.debut,
                                   niveau_salaire=niveau, cumul=ligne.cumul,
                                   age_fin=ligne.fin))
         return metiers
@@ -1321,7 +1380,7 @@ class Saisie:
         return creux
 
     def _verifier_niveau(self, niveau: float, rang: int,
-                         echelle: "Echelle") -> None:
+                         echelle: "Echelle", statut: str = "") -> None:
         """Le salaire converti tient-il dans ce que le modèle sait décrire ?
 
         Le contrôle ne peut se faire qu'ici : « 0,1 à 10 fois le salaire moyen »
@@ -1331,6 +1390,27 @@ class Saisie:
         """
         if 0.1 <= niveau <= 10:
             return
+        if self.en_chiffre_d_affaires(statut):
+            # Les bornes valent pour le revenu abattu : le refus les redit en
+            # chiffre d'affaires, le nombre que le champ porte.
+            part = 1.0 - ABATTEMENTS_MICRO[self.micro]
+            if not self.revenu_en_euros:
+                raise _refus(
+                    rang,
+                    f"Ce chiffre d'affaires, abattu à {nombre(100 * part, 0)} %, "
+                    f"vaut {nombre(niveau, 2)} fois le salaire moyen ; le modèle "
+                    f"en accepte de 0,1 à 10 fois, soit un chiffre d'affaires de "
+                    f"{nombre(NIVEAU_MINIMAL / part, 2)} à "
+                    f"{nombre(NIVEAU_MAXIMAL / part, 2)} fois le salaire moyen.",
+                )
+            raise _refus(
+                rang,
+                f"Ce chiffre d'affaires, abattu à {nombre(100 * part, 0)} %, "
+                f"vaut {nombre(niveau, 2)} fois le salaire moyen ; le modèle en "
+                "accepte de 0,1 à 10 fois, soit un chiffre d'affaires de "
+                f"{nombre(math.ceil(echelle.mensuel(NIVEAU_MINIMAL) / part), 0)} à "
+                f"{euros(math.floor(echelle.mensuel(NIVEAU_MAXIMAL) / part))} par mois.",
+            )
         if not self.revenu_en_euros:
             raise _refus(
                 rang,
@@ -1860,9 +1940,10 @@ class Saisie:
         if self.revenu_en_euros:
             if echelle is None:
                 raise ValueError("un revenu en euros se convertit sur une échelle")
-            if self.saisie_en_net:
+            if self.saisie_en_net and not self.en_chiffre_d_affaires(statut):
                 salaire = echelle.brut_mensuel(salaire, statut)
             niveau = echelle.niveau(salaire)
+        niveau, statut = self.abattu(niveau, statut)
         return {"age": self.emploi_retraite, "fin": self.emploi_retraite_fin,
                 "affiliation": statut, "niveau_salaire": niveau,
                 "employeur": self.emploi_retraite_employeur}
@@ -2305,6 +2386,7 @@ class Saisie:
                 ("deporte", OUI if self.deporte else None),
                 ("guerre", self.mois_de_guerre),
                 ("travail_manuel", self.travail_manuel or None)) if valeur is not None},
+            **({"micro": self.micro} if self.micro else {}),
             **({"residence": self.residence} if self.residence else {}),
             **({"mois_en_france": self.mois_en_france}
                if self.mois_en_france is not None else {}),

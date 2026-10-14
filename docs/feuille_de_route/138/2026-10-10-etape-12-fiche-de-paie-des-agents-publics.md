@@ -1,15 +1,16 @@
 # Étape 12, première partie : la fiche de paie d'un agent public — la RAFP, l'indemnité compensatrice de la CSG, le taux d'équilibre sur le traitement
 
-**Reprise, au 10 octobre 2026.** Fait : le coût du travail complet d'un agent
-public — la RAFP sur ses primes, l'indemnité compensatrice de la hausse de la
-CSG, le taux d'équilibre de l'État sur le seul traitement —, dans les deux
-moteurs. Reste, une session par point : le micro-entrepreneur par son chiffre
-d'affaires et le chemin de la Cipav (rang moyen du classement) ; la veille du
-projet de loi de financement pour 2027, à son vote ; puis, au rang léger, le coût
-du travail complet du privé (la taxe sur les salaires, le forfait social, les
-taxes hors protection sociale), la seconde pension revalorisée et replafonnée,
-les artistes-auteurs sous le seuil, la dispense des cotisations minimales, le
-rachat de trimestres, le dirigeant assimilé salarié. Détail : « Ce qui reste ».
+**Reprise, au 14 octobre 2026.** Fait : le coût du travail complet d'un agent
+public, dans les deux moteurs (10 octobre) ; le micro-entrepreneur saisi par son
+chiffre d'affaires et son activité, abattu de 71, 50 ou 34 %, la Cipav routée
+vers le libéral (14 octobre). Reste, une session par point : la veille du projet
+de loi de financement pour 2027, à son vote ; du micro-entrepreneur, le revenu
+qui valide les trimestres et sa cotisation notionnelle ; puis, au rang léger, le
+coût du travail complet du privé (la taxe sur les salaires, le forfait social,
+les taxes hors protection sociale), la seconde pension revalorisée et
+replafonnée, les artistes-auteurs sous le seuil, la dispense des cotisations
+minimales, le rachat de trimestres, le dirigeant assimilé salarié. Détail :
+« Ce qui reste », ici et dans `2026-10-14-etape-12-micro-entrepreneur.md`.
 
 **Le 10 octobre 2026, la demande.** Le propriétaire : porter sur la fiche de
 paie, en Python puis en JavaScript, la cotisation de la RAFP sur les primes,

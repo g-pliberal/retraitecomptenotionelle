@@ -877,6 +877,20 @@ def _cas() -> list[dict]:
         "naissance": "1960-03-15", "sexe": "F", "debut": "1990-09",
         "liquidation": "2022-04", "enfants": "3", "travail_manuel": "ouvrier",
     }))
+    # LE MICRO-ENTREPRENEUR SAISI PAR SON CHIFFRE D'AFFAIRES (action 138,
+    # étape 12) : abattu de 71, 50 ou 34 % selon l'activité (L. 613-7, II), en
+    # euros, en net, où il passe tel quel, et en multiples ; la Cipav routée
+    # vers la CNAVPL et sa complémentaire.
+    for activite, modifications in (
+            ("vente", {"salaire": "3000"}),
+            ("services", {"salaire": "2500", "montants": "net"}),
+            ("liberal", {"salaire": "1.5", "unite_revenu": "moyen"}),
+            ("cipav", {"salaire": "4000"})):
+        cas.append((f"micro_entrepreneur_{activite}", {
+            "statut": "micro_entrepreneur", "naissance": "1975-03-15",
+            "debut": "2009-01", "liquidation": "2039-04", "micro": activite,
+            "unite_revenu": "euros_mois", **modifications,
+        }))
     cas.append(("taux_plein_travailleur_manuel_1978", {
         "naissance": "1918-03-15", "debut": "1933-09", "liquidation": "1978-04",
         "travail_manuel": "penible",
@@ -1794,7 +1808,7 @@ FORMULAIRE_ENTIER = frozenset({
     "simuler", "simuler_saisie_refusee", "simuler_plusieurs_metiers",
     "simuler_releve", "simuler_par_pension", "simuler_revenu_en_multiples",
     "simuler_reversion", "simuler_demande_de_pension", "simuler_radiation_invalidite",
-    "simuler_carriere_hors_de_france", "simuler_handicap",
+    "simuler_carriere_hors_de_france", "simuler_handicap", "simuler_micro_entrepreneur",
 })
 _FORMULAIRE = re.compile(r'(<form class="carte"[^>]*>).*?(</form>)', re.DOTALL)
 
@@ -1827,6 +1841,20 @@ def _pages() -> dict:
             **BASE, "sexe": "F", "naissance": "1968", "statut": "salarie_prive_non_cadre",
             "interruptions": "1995:1999:education_enfant", "enfants": "2",
             "salaire": "0.9",
+        }),
+        # Le micro-entrepreneur (action 138, étape 12) : salarié, puis
+        # micro-entrepreneur saisi par son chiffre d'affaires ; le menu de son
+        # activité, et le champ qui dit « chiffre d'affaires ». Puis le même,
+        # saisi par sa pension : le revenu trouvé remonte en chiffre d'affaires.
+        ("simuler_micro_entrepreneur", "/simuler", {
+            **BASE, "unite_revenu": "euros_mois", "salaire": "2800",
+            "metier2_debut": "2015-01", "metier2_statut": "micro_entrepreneur",
+            "metier2_salaire": "4000", "micro": "services",
+        }),
+        ("simuler_micro_entrepreneur_par_pension", "/simuler", {
+            **BASE, "statut": "micro_entrepreneur", "debut": "2009-01",
+            "unite_revenu": "euros_mois", "salaire": "3500", "micro": "vente",
+            "saisie_par": "pension", "pension": "900",
         }),
         ("simuler_regime_special", "/simuler", {
             **BASE, "statut": "agent_sncf", "naissance": "1960", "liquidation": "52",

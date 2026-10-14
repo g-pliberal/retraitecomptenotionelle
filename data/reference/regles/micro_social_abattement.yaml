@@ -1,0 +1,80 @@
+schema_version: 1
+id: micro_social_abattement
+intitule: >-
+  Les droits du micro-entrepreneur se calculent sur son chiffre d'affaires ou ses
+  recettes après un abattement de 71 % pour la vente de marchandises, de 50 % pour
+  les services commerciaux ou artisanaux, de 34 % pour les recettes libérales
+  (L. 613-7, II ; L. 133-6-8 jusqu'en 2017) ; celui des professions que la Cipav
+  garde relève de la CNAVPL et de la Cipav, au même abattement de 34 % (D. 613-4,
+  b).
+etat: approchee
+etape: acquerir_les_droits
+effet: >-
+  Le micro-entrepreneur saisit son chiffre d'affaires mensuel et son activité
+  (champ « micro »), que la saisie abat avant de le donner au modèle : 3 000 € de
+  ventes valent un revenu de 870 €. Sans activité dite, le revenu saisi reste lu
+  comme déjà abattu, ce qu'il était avant le 14 octobre 2026. Approchée sur trois
+  points : l'abattement minimal de 305 € n'est pas opposé, le revenu qui valide
+  les trimestres est le revenu abattu et non celui que la cotisation versée
+  achète (0,29 au lieu de 0,299 du chiffre d'affaires pour la vente), et la
+  cotisation des services et du libéral est celle du barème de l'artisan, ou du
+  libéral à la Cipav, sur le revenu abattu, non le taux global du chiffre
+  d'affaires. Une seule activité pour toute la carrière.
+sources:
+  lu_le: 2026-10-14
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Le revenu qui valide les trimestres : service-public (F23369) le prend au taux
+    du versement et à sa part de base, 12,3 % × 43,45 % pour la vente en 2026 ;
+    lire le texte qui le fixe, et ses taux de répartition de chaque année.
+  - >-
+    La cotisation micro-sociale de chaque activité et de chaque année (D. 613-4 et
+    ses versions, D. 131-6-3 pendant l'exonération de début d'activité), pour la
+    cotisation des comptes notionnels.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 613-7 CSS, LEGIARTI000037061904 (2018), LEGIARTI000046193899 (2022) et
+      LEGIARTI000048683570 (en vigueur depuis le 28 décembre 2023), II : « Les
+      prestations attribuées aux personnes mentionnées au présent article sont
+      calculées sur la base de leur chiffre d'affaires ou de leurs recettes après
+      application d'un taux d'abattement de 71 % […], de 50 % […] et de 34 % »,
+      lus dans l'index LEGI du dépôt
+    date: 2026-10-14
+  - type: legifrance
+    reference: >-
+      D. 613-4 CSS, LEGIARTI000052218738 (en vigueur depuis le 1er janvier 2026) :
+      la section de la Cipav (R. 641-1, 11°) à 34 % d'abattement et 23,2 % de taux
+      global, la vente à 71 % et 12,3 %, les services à 50 % et 21,2 %, le libéral
+      de la Sécurité sociale des indépendants à 34 % et 25,6 %
+    date: 2026-10-14
+  - type: legifrance
+    reference: >-
+      CGI, 50-0 (LEGIARTI000018026446, 2008) : abattements de 71 % et 50 %, « ne
+      peuvent être inférieurs à 305 euros » ; 102 ter (LEGIARTI000006302649,
+      2006-2008) : réfaction de 34 %, minimum 305 €
+    date: 2026-10-14
+  - type: service_public
+    reference: >-
+      « Régime de retraite du micro-entrepreneur », F23369, vérifié le 1er avril
+      2026 : les professions affiliées à la Cipav, et la validation des
+      trimestres par le versement
+    url: https://entreprendre.service-public.gouv.fr/vosdroits/F23369
+    date: 2026-04-01
+textes_a_rattacher:
+- reference: code de la sécurité sociale, L. 613-7, II (LEGIARTI000048683570)
+- reference: code de la sécurité sociale, L. 133-6-8 (de 2009 à 2017)
+- reference: code de la sécurité sociale, D. 613-4 (LEGIARTI000052218738)
+- reference: >-
+    décret n° 2018-1120 du 10 décembre 2018, le micro-social des libéraux de la
+    Cipav (LEGITEXT000037798308)
+code:
+  python: >-
+    saisie.py : ACTIVITES_MICRO, ABATTEMENTS_MICRO, Saisie.en_chiffre_d_affaires et
+    Saisie.abattu, appelée par parcours et emploi_retraite_declare
+  javascript: moteur/js/saisie.js (enChiffreDAffaires, abattu) ; moteur/js/pages.js
+    (microFormulaire, champChiffreDAffaires)
+  tests: >-
+    tests/test_web_saisie.py ; témoins micro_entrepreneur_* et
+    simuler_micro_entrepreneur*

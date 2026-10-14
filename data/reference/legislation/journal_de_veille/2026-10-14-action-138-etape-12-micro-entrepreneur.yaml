@@ -1,0 +1,25 @@
+date: "2026-10-14"
+session: "action 138, étape 12 : le micro-entrepreneur saisi par son chiffre d'affaires, et le chemin de la Cipav"
+consulte: >-
+  L'index LEGI du dépôt, récupéré (à jour au 11 octobre 2026) : L. 613-7 CSS dans
+  ses versions de 2018, 2020, 2022 et du 28 décembre 2023 (LEGIARTI000048683570),
+  L. 133-6-8 de 2009 à 2015, D. 613-4 en vigueur au 1er janvier 2026
+  (LEGIARTI000052218738), le décret n° 2018-1120 (micro-social des libéraux de la
+  Cipav), CGI 50-0 (2008) et 102 ter (2006-2008). Service-public, « Régime de
+  retraite du micro-entrepreneur » (F23369, vérifié le 1er avril 2026).
+trouve: >-
+  L. 613-7, II : les prestations du micro-entrepreneur se calculent sur son
+  chiffre d'affaires ou ses recettes abattus de 71 % (vente), 50 % (services
+  commerciaux ou artisanaux) et 34 % (recettes libérales), les abattements du
+  micro-fiscal, inchangés depuis 2007 au moins ; D. 613-4, b, la section de la
+  Cipav au même abattement de 34 %, au taux global de 23,2 %. Service-public
+  nomme les professions de la Cipav, et valide les trimestres sur la part de
+  base du versement, non sur le revenu abattu. Fiche neuve
+  micro_social_abattement, approchée ; le champ « micro » de la saisie l'applique
+  dans les deux moteurs.
+reste: >-
+  Le revenu qui valide les trimestres pris au taux du versement ; le taux global
+  de chaque activité et de chaque année dans la cotisation des comptes
+  notionnels ; l'abattement minimal de 305 € ; L. 133-6-8 n'a pas, dans ses
+  versions d'avant 2016, la phrase des prestations : son siège avant 2016 reste
+  à trouver.

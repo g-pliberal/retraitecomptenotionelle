@@ -283,6 +283,26 @@ export const TRAVAUX_MANUELS = [
   ["penible", "en continu, à la chaîne, au four ou aux intempéries"],
 ];
 
+/**
+ * L'activité du micro-entrepreneur, qui fait lire son revenu comme un chiffre
+ * d'affaires abattu de 71, 50 ou 34 % (L. 613-7, II), la Cipav routant la
+ * ligne vers les régimes du libéral. Voir `ACTIVITES_MICRO` du Python.
+ */
+export const ACTIVITES_MICRO = [
+  ["", "revenu déjà abattu"],
+  ["vente", "vente de marchandises : chiffre d'affaires"],
+  ["services", "services commerciaux ou artisanaux : chiffre d'affaires"],
+  ["liberal", "activité libérale : recettes"],
+  ["cipav", "activité libérale à la Cipav : recettes"],
+];
+
+/** L'abattement de chaque activité. Voir `ABATTEMENTS_MICRO` du Python. */
+export const ABATTEMENTS_MICRO = { vente: 0.71, services: 0.50, liberal: 0.34, cipav: 0.34 };
+
+/** Le statut lu en chiffre d'affaires, et celui vers qui la Cipav le route. */
+export const STATUT_MICRO = "micro_entrepreneur";
+export const STATUT_MICRO_CIPAV = "profession_liberale";
+
 /** La durée de captivité et de services de guerre que la saisie admet, en mois. */
 export const MOIS_DE_GUERRE_MAXIMUM = 240;
 
@@ -588,6 +608,9 @@ export const DEFAUTS = Object.freeze({
   deporte: false,
   mois_de_guerre: null,
   travail_manuel: "",
+  //: L'activité du micro-entrepreneur (`ACTIVITES_MICRO`), vide quand son
+  //: revenu est déjà abattu.
+  micro: "",
   //: Les carrières hors de France : les périodes passées hors de France
   //: — `{pays, debut, fin, activite}`, les âges comptés comme un début
   //: d'activité —, les pensions étrangères — `{pays, montant, debut}` —,
@@ -762,6 +785,7 @@ export class Saisie {
       mois_de_guerre: [undefined, null, ""].includes(parametres.guerre) ? null
         : entier(parametres, "guerre", 0),
       travail_manuel: parmi(parametres, "travail_manuel", TRAVAUX_MANUELS, ""),
+      micro: parmi(parametres, "micro", ACTIVITES_MICRO, ""),
       etranger: periodesEtrangeresSaisies(parametres, moisDeNaissance, tolerante),
       pensions_etrangeres: pensionsEtrangeresSaisies(parametres, moisDeNaissance, tolerante),
       residence: (parametres.residence || "").trim(),
@@ -1087,12 +1111,34 @@ export class Saisie {
     // En mode net, le nombre saisi n'est pas encore un brut : on remonte
     // d'abord jusqu'à lui, statut par statut, PUIS on ramène à l'unité du
     // modèle. L'ordre compte — le salaire moyen de l'échelle est un brut.
+    // Un chiffre d'affaires n'est ni brut ni net : il se lit tel quel.
     if (this.saisieEnNet) {
-      saisis = saisis.map(
-        (valeur, index) => echelle.brutMensuel(valeur, lignes[index].statut),
-      );
+      saisis = saisis.map((valeur, index) => (
+        this.enChiffreDAffaires(lignes[index].statut)
+          ? valeur : echelle.brutMensuel(valeur, lignes[index].statut)));
     }
     return saisis.map((valeur) => echelle.niveau(valeur));
+  }
+
+  /**
+   * Le revenu d'une ligne de ce statut est-il un chiffre d'affaires ? Voir
+   * `en_chiffre_d_affaires` du Python.
+   */
+  enChiffreDAffaires(statut) {
+    return Boolean(this.micro) && statut === STATUT_MICRO;
+  }
+
+  /**
+   * Ce qu'une ligne donne au modèle, `[niveau, statut]` : le chiffre
+   * d'affaires abattu, la Cipav routée vers le libéral. Voir `abattu` du
+   * Python.
+   */
+  abattu(niveau, statut) {
+    if (!this.enChiffreDAffaires(statut)) {
+      return [niveau, statut];
+    }
+    const route = this.micro === "cipav" ? STATUT_MICRO_CIPAV : statut;
+    return [niveau * (1.0 - ABATTEMENTS_MICRO[this.micro]), route];
   }
 
   /**
@@ -1111,11 +1157,12 @@ export class Saisie {
     const metiers = [];
     this.lignesCarriere.forEach((ligne, index) => {
       if (ligne.sans_emploi) { return; }
-      this.verifierNiveau(niveaux[index], index + 1, echelle);
+      const [niveau, statut] = this.abattu(niveaux[index], ligne.statut);
+      this.verifierNiveau(niveau, index + 1, echelle, ligne.statut);
       metiers.push({
-        affiliation: ligne.statut,
+        affiliation: statut,
         age_debut: ligne.debut,
-        niveau_salaire: niveaux[index],
+        niveau_salaire: niveau,
         cumul: ligne.cumul,
         age_fin: ligne.fin,
       });
@@ -1199,9 +1246,30 @@ export class Saisie {
    * devient un intervalle d'euros qu'une fois la série chargée. Le refus redit
    * donc les bornes en euros, faute de quoi il n'indiquerait pas quoi corriger.
    */
-  verifierNiveau(niveau, rang, echelle) {
+  verifierNiveau(niveau, rang, echelle, statut = "") {
     if (niveau >= 0.1 && niveau <= 10) {
       return;
+    }
+    if (this.enChiffreDAffaires(statut)) {
+      const part = 1.0 - ABATTEMENTS_MICRO[this.micro];
+      if (!this.revenu_en_euros) {
+        throw refus(
+          rang,
+          `Ce chiffre d'affaires, abattu à ${g.nombre(100 * part, 0)} %, `
+          + `vaut ${g.nombre(niveau, 2)} fois le salaire moyen ; le modèle `
+          + "en accepte de 0,1 à 10 fois, soit un chiffre d'affaires de "
+          + `${g.nombre(NIVEAU_MINIMAL / part, 2)} à `
+          + `${g.nombre(NIVEAU_MAXIMAL / part, 2)} fois le salaire moyen.`,
+        );
+      }
+      throw refus(
+        rang,
+        `Ce chiffre d'affaires, abattu à ${g.nombre(100 * part, 0)} %, `
+        + `vaut ${g.nombre(niveau, 2)} fois le salaire moyen ; le modèle en `
+        + "accepte de 0,1 à 10 fois, soit un chiffre d'affaires de "
+        + `${g.nombre(Math.ceil(echelle.mensuel(NIVEAU_MINIMAL) / part), 0)} à `
+        + `${g.euros(Math.floor(echelle.mensuel(NIVEAU_MAXIMAL) / part))} par mois.`,
+      );
     }
     if (!this.revenu_en_euros) {
       throw refus(
@@ -1793,14 +1861,15 @@ export class Saisie {
       if (echelle === null) {
         throw new Error("un revenu en euros se convertit sur une échelle");
       }
-      if (this.saisieEnNet) {
+      if (this.saisieEnNet && !this.enChiffreDAffaires(statut)) {
         salaire = echelle.brutMensuel(salaire, statut);
       }
       niveau = echelle.niveau(salaire);
     }
+    const [abattu, route] = this.abattu(niveau, statut);
     return {
-      age: this.emploi_retraite, fin: this.emploi_retraite_fin, affiliation: statut,
-      niveau_salaire: niveau, employeur: this.emploi_retraite_employeur,
+      age: this.emploi_retraite, fin: this.emploi_retraite_fin, affiliation: route,
+      niveau_salaire: abattu, employeur: this.emploi_retraite_employeur,
     };
   }
 
@@ -2374,6 +2443,7 @@ export class Saisie {
         ["guerre", this.mois_de_guerre],
         ["travail_manuel", this.travail_manuel || null],
       ].filter(([, valeur]) => valeur !== null)),
+      ...(this.micro ? { micro: this.micro } : {}),
       ...(this.residence ? { residence: this.residence } : {}),
       ...(this.mois_en_france !== null ? { mois_en_france: this.mois_en_france } : {}),
       ...(this.revenu_fiscal !== null ? { revenu_fiscal: nombreBrut(this.revenu_fiscal) } : {}),

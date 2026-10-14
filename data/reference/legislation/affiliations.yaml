@@ -279,10 +279,12 @@ affiliations:
       (L. 133-6-8) : un pourcentage du chiffre d'affaires, dont une fraction
       va au régime de base et à la complémentaire des commerçants, et des
       droits calculés sur le chiffre d'affaires après abattement (71 %, 50 %
-      ou 34 %). Le revenu saisi doit donc être ce revenu reconstitué ; le
-      statut route les mêmes régimes que le commerçant, avant 2009 comme
-      lui. Les seuils de chiffre d'affaires qui valident les trimestres ne
-      sont pas portés.
+      ou 34 %). Le revenu saisi est ce revenu reconstitué, ou, si la saisie
+      dit l'activité (champ « micro »), le chiffre d'affaires, qu'elle abat ;
+      le statut route les mêmes régimes que le commerçant, avant 2009 comme
+      lui, sauf à la Cipav, que la saisie route vers `profession_liberale`.
+      Les seuils de chiffre d'affaires qui valident les trimestres ne sont
+      pas portés.
 
   parlementaire:
     libelle: Député ou sénateur (indemnité parlementaire)
