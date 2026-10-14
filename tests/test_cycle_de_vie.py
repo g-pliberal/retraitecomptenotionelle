@@ -43,7 +43,8 @@ def _comparaison(simulateur, generation: int, age_liquidation: float = 64,
                  affiliation: str = "salarie_prive_non_cadre", sexe: str = "H"):
     return simulateur.simuler(simulateur.carriere_simple(
         annee_naissance=generation, sexe=sexe, affiliation=affiliation,
-        age_debut=21, age_liquidation=age_liquidation, niveau_salaire=1.0))
+        age_debut=21, age_liquidation=age_liquidation, niveau_salaire=1.0,
+        jour_naissance=15))
 
 
 @pytest.fixture(scope="module")

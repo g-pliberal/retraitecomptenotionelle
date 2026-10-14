@@ -52,7 +52,7 @@ def simulateur() -> Simulateur:
 def _calculer(simulateur: Simulateur, affiliation: str, naissance: int, mois: int,
               liquidation: float, debut: float, sexe: str = "H", enfants: int = 0):
     carriere = Carriere.depuis_parcours(
-        annee_naissance=naissance, mois_naissance=mois, sexe=sexe,
+        annee_naissance=naissance, mois_naissance=mois, jour_naissance=15, sexe=sexe,
         metiers=[Metier(affiliation=affiliation, age_debut=debut, niveau_salaire=1.0)],
         age_liquidation=liquidation, macro=simulateur.macro, nombre_enfants=enfants,
     )
