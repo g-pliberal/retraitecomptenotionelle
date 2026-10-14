@@ -17838,3 +17838,312 @@ la carrière ou à déclarer les années sans emploi. La page de résultats et
 `docs/limites/5-hors-du-modele.md` ne disent plus qu'un relevé ne donne
 jamais le mois, et les limites disent le plafond d'une année incomplète. La
 note est sous `docs/archives/feuille_de_route/160/`.
+
+### 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait — `fait`
+
+**Reprise, au 14 octobre 2026.** Fait : toutes les étapes — RAFP, RCO, Arrco
+des cultes, salaire annuel moyen et fractions de pension de la CAVIMAC, routage
+calédonien, Ircantec pour enfants, taux spécifiques des cultes (à vérifier,
+note du 13 octobre) — et, le 14, les cotisations de la CAVIMAC de 1979 à 1997,
+deux montants par arrêté que le compte notionnel porte
+(`119/2026-10-14-cotisations-forfaitaires-des-cultes.md`). Reste : l'arrêté de
+1982 et la solidarité de 1979 sur le fac-similé du Journal officiel, la
+question des taux spécifiques au propriétaire. L'action est à clore, et à
+archiver par la première session qui déplace des fichiers.
+
+**Close, le 14 octobre 2026.** Toutes les étapes sont faites — RAFP, RCO,
+Arrco des cultes, salaire annuel moyen et fractions de pension de la CAVIMAC,
+routage calédonien, Ircantec pour enfants, taux spécifiques des cultes, et les
+cotisations de la CAVIMAC de 1979 à 1997. Deux restes vont au propriétaire,
+aucun à une session : l'arrêté de 1982 et la solidarité de 1979, estimés,
+attendent le fac-similé du Journal officiel, que Légifrance ne met pas en
+données ouvertes (`docs/limites/4-regimes-incomplets.md`) ; ce qu'achètent les
+huit taux spécifiques de l'Arrco des cultes, à demander à la CAVIMAC ou à
+Malakoff Humanis. Le « Ce qui reste » plus bas date d'avant ces étapes. Les
+notes sont sous `docs/archives/feuille_de_route/119/`.
+
+**Demande.** « Il me semble qu'il manque encore pas mal de choses sur certains
+régimes complémentaires. Tu peux me dire ce qu'il manque ? », puis, la liste
+faite : « vas-y, commence par le plafond RAFP », et « vas-y » pour la suite
+(23 septembre 2026).
+
+**Ce que la relecture a trouvé.** Les manques connus des complémentaires sont
+écrits dans l'inventaire, dans `limites.md` §4 et au registre de veille. La
+relecture — inventaire, fiches, les deux moteurs, `sources_a_explorer.yaml`,
+puis les textes et les caisses — en a trouvé cinq qui ne l'étaient nulle part,
+ici par ordre de poids :
+
+1. *Les points gratuits de RCO des chefs d'exploitation, pour leurs années
+   d'avant 2003* : cent par an à qui a cotisé dix-sept ans et demi comme chef,
+   dans la limite de trente-sept ans et demi moins ses années de RCO ; sinon
+   soixante-six, sur dix-sept ans au plus, depuis 2014 (La retraite en clair,
+   le site du GIP Union Retraite). Le dépôt ne connaît que ceux des conjoints
+   et des aides familiaux. Tout exploitant parti depuis 2003 a donc une RCO
+   sous-estimée au scénario 1 — ce qui flatte les comptes notionnels, dont
+   ces points gratuits sont absents par construction.
+2. *L'Arrco des ministres des cultes*, obligatoire depuis 2006 pour qui
+   perçoit un revenu d'activité individuel, les membres des congrégations en
+   étant exclus (réponse ministérielle au Sénat de 2007, tableau des régimes
+   du GIP Union Retraite). Le statut `ministre_du_culte`, qui confond les deux
+   populations, ne route que la CAVIMAC.
+3. *Le plafond de l'assiette du RAFP* : fait, voir ci-dessous.
+4. *La majoration pour enfants de l'Ircantec* : 10, 15, 20, 25 puis 30 % de
+   trois à sept enfants, selon la base documentaire du régime. La fiche la
+   déclare sans barème, et le moteur sert 10 % à partir de trois.
+5. *La Nouvelle-Calédonie* : l'inventaire date l'Agirc-Arrco de l'accord
+   territorial de 1995 et dit que le statut ne route pas vers la
+   complémentaire, quand `affiliations.yaml` route l'Arrco dès 1961 ; le
+   compte notionnel y porte trente-quatre ans de cotisations jamais versées.
+
+Un sixième est sorti en lisant l'article 76 de la loi n° 2003-775 pour le
+RAFP : le régime n'est ouvert qu'aux fonctionnaires civils, aux magistrats et
+aux militaires, et le modèle y affilie les deux statuts d'ouvrier de l'État
+depuis 2005. Une piste, enfin, qu'aucun texte lu ne confirme encore : les droits
+gratuits accordés à la création de l'Agirc et des institutions de l'Arrco pour
+les années travaillées avant, dont le dépôt ne dit rien. Vérifiés et justes,
+en revanche : Mayotte et la Polynésie sans Agirc-Arrco, l'adhésion y étant
+facultative.
+
+**Ce qui a été fait : le plafond du RAFP.** Les primes n'y cotisent que
+« dans la limite de 20 % du traitement indiciaire brut total ou de la solde
+brute totale perçus au cours de l'année considérée » : l'article 2 du décret
+n° 2004-569 le dit dans ses six versions depuis 2004, l'ERAFP en tête de sa
+page sur les cotisations, et la fiche le citait sans qu'aucun moteur le lise.
+Un champ de période, `plafond_primes_traitement` ; une méthode,
+`PeriodeRegime.part_du_revenu` en Python et `partDuRevenu` en JavaScript, qui
+remplace les trois copies du découpage traitement/primes du scénario 1 et du
+compte notionnel ; le taux unique, lui, garde la rémunération entière. Les
+deux pages de l'ERAFP ont été réservées avant d'être ouvertes (action 89) :
+celle des cotisations est `explore`, la calculette, qui part des cotisations
+et non des primes, retourne au vivier avec ce qu'elle peut vraiment rendre.
+
+**Ce que ça a déplacé.** Deux témoins sur 505, les deux carrières de
+fonctionnaire à 22 % de primes : leur RAFP baisse de 29 %, au scénario 1 comme
+dans les compartiments de capitalisation des scénarios notionnels. Les trois
+cas types publics cotisaient sur une assiette trop forte de 10, 41 et 67 %.
+Aucun écart entre scénarios ne bouge, le RAFP étant servi à l'identique dans
+les six.
+
+**Ce qui a été fait ensuite : les points gratuits de la RCO.** Cent points
+par année de chef d'avant 2003, dans la limite de trente-sept ans et demi
+moins les années de RCO, à qui a dix-sept ans et demi comme chef et le taux
+plein de sa retraite de base (D. 732-154, D. 732-151, L. 732-56, II, 2° et
+III du code rural, lus dans toutes leurs versions de l'index LEGI). Le taux
+plein a changé de nature le 1er septembre 2023 : il fallait en réunir la durée,
+il suffit depuis d'avoir liquidé au taux plein, par l'âge aussi (loi
+n° 2023-270, art. 18, VI). La page de la MSA sur les non-salariés agricoles,
+réservée puis lue en ses quatre onglets, écrit la règle des cent points à
+l'identique et la condition d'avant 2023. Un champ de période,
+`points_gratuits`, que `_points_gratuits` lit dans les deux moteurs ; les
+points entrent au compte de la RCO, la formule le dit (« dont … points
+gratuits »), et la cascade les isole sous une neuvième ligne chiffrée,
+`points_gratuits_rco`, mesurée comme l'AVPF par un second calcul. Le régime
+des 66 points (V et VI de L. 732-56) ne peut pas s'ouvrir dans le modèle : il
+demande dix-sept ans et demi d'activité non salariée agricole à un autre titre
+que celui de chef, que le modèle ne connaît pas.
+
+**Ce que ça a déplacé.** Quatre témoins sur 509, les chefs d'exploitation du
+simulateur : leur pension du scénario 1 monte de 7,5 % pour la génération
+1945, 4,3 % pour 1955, 2,1 % pour 1965 et 0,25 % pour 1975. Pour un chef né en
+1955, installé à vingt ans et payé la moitié du salaire moyen, les points
+gratuits font 56 % de la RCO. La page
+Avantages chiffre la ligne à 0,64 Md € en 2024, et le chiffrable passe de 96,1
+à 96,7 Md €. Les écarts des comptes notionnels rétroactifs se creusent
+d'autant pour ces carrières.
+
+**Deux pistes sorties de la page de la MSA**, pour le régime de base : elle
+donne 3 940,51 € de retraite forfaitaire intégrale au 1er janvier 2026 et
+4,631 € de point de proportionnelle, quand la fiche, qui les indexe sur les
+prix, en tire 3 801,89 € et 4,6693 € ; et la version de D. 732-166 en vigueur
+depuis le 14 février 2026 fixe encore la valeur de service de la RCO « pour
+l'année 2025 », 0,3919 €, quand le modèle extrapole 2026. À reprendre avec la
+réforme des vingt-cinq meilleures années.
+
+**Ce qui a été fait ensuite : l'Arrco des ministres des cultes.** L. 921-1,
+complété par l'article 75 de la loi de financement de la sécurité sociale pour
+2006, affilie à l'Arrco depuis le 1er janvier 2006 les personnes du régime des
+cultes « qui bénéficient d'un revenu d'activité perçu individuellement ». Les
+circulaires de la CAVIMAC, qui recouvre la cotisation, en donnent l'assiette —
+le forfait du SMIC mensuel, comme ses autres cotisations — et le taux de base,
+10,02 %, soit les 7,87 % de l'Agirc-Arrco et ses 2,15 % de contribution
+d'équilibre. Le statut `ministre_du_culte` est scindé : il garde son code et
+reçoit une fiche `arrco_cultes` depuis 2006, qui emprunte les points de
+l'Arrco puis de l'Agirc-Arrco ; `membre_congregation` n'a que la CAVIMAC. Le
+ministre du simulateur né en 1975 gagne 14 % de pension au scénario 1, celui
+né en 1955 6,2 %.
+
+**Puis le salaire annuel moyen de la CAVIMAC.** La caisse le calcule « sur la
+base du SMIC [...] pour tous les assurés cultuels », comme L. 382-27 et le
+forfait de R. 382-89 le veulent ; le moteur prélevait la cotisation sur le
+forfait mais liquidait sur le revenu saisi. `_assiette_de_reference` prend
+désormais, dans les deux moteurs, le forfait de chaque année : à une fois et
+demie le salaire moyen, la pension de base du ministre était 2,17 fois trop
+haute. La page de la caisse, réservée puis lue, dit aussi que les années
+d'avant 1979 sont validées gratuitement, quand le statut affirmait qu'elles ne
+portaient aucun droit.
+
+**Puis, le 3 octobre 2026, le routage calédonien et le chômage d'outre-mer.**
+« Vérifier deux points sur les salariés de Nouvelle-Calédonie », relevés
+pendant l'action 141. L'Arrco n'y est obligatoire que depuis le 1er janvier
+1995 : l'accord interprofessionnel territorial du 29 août 1994, étendu par
+l'arrêté n° 1745-T du 25 avril 1995, fait affilier tout le personnel « au plus
+tard le 1er Janvier 1995 » et valide « gratuitement » les services passés
+d'avant (art. 2 et 6) ; le guide réglementaire de 2016 les valide, « reconnus
+par la CAFAT », selon les opérations supplémentaires d'avant 1992 (II.4.2.1.3)
+— à 100 % pour les actifs dont l'âge moyen ne passe pas cinquante-deux ans,
+selon une pesée pour les anciens salariés et les retraités (IV.2.1). Une
+période d'affiliation porte désormais `services_passes` : ces années valent au
+scénario 1 les points d'une année cotisée, à une pension prise depuis la
+généralisation, et le compte notionnel n'en porte rien
+(`Affiliations.services_passes`, dans les deux moteurs). La Nouvelle-Calédonie
+de 1958 à 1994, l'UNIRS tenant lieu de barème avant 1961 ; Saint-Pierre-et-
+Miquelon pour 1987, l'Arrco y étant étendue au 1er janvier 1988 (arrêté du
+21 juin 1988). Le chômage calédonien, que la CAFAT indemnise, ne vaut plus de
+points : l'Agirc-Arrco ne valide que l'Unédic, l'État et les organismes
+auto-assurés du code du travail (guide, VII.3.1.3.1 ; accord de 2017, art. 59
+à 79) — `sans_validation`, dans `chomage_complementaires.yaml`. Celui de
+Saint-Pierre-et-Miquelon garde ses points, la convention d'assurance chômage y
+« s'appliqu[ant] ». Fiche `services_passes_outre_mer` ; ligne d'inventaire de
+la CAFAT récrite ; le routage calédonien de la liste ci-dessous est fait.
+Onze témoins bougent, tous calédoniens ou saint-pierrais, et deux naissent
+(`chomage_et_services_passes_caledoniens`, `chomage_saint_pierre_et_miquelon`).
+Au scénario 1, la pension calédonienne prise en 1989 perd l'Arrco qu'elle
+n'avait pas (− 27,5 %), celle de 1999 gagne trois ans d'UNIRS (+ 1 %) ; au
+scénario 2, le taux de remplacement calédonien perd 30 % né en 1925, 14 % né en
+1945, 3 % né en 1965, et le saint-pierrais l'année 1987 — 11 % né en 1925,
+moins de 2 % ensuite. Sous Windows, `web/site.py` attend
+désormais node sans `select`, qui n'y lit pas les tubes : la régénération y
+échouait.
+
+**Puis, le 3 octobre 2026, les fractions de pension de la CAVIMAC.** L. 382-27
+laisse les périodes d'avant 1998 aux règles du 31 décembre 1997 : une pension
+« calculée sur des bases forfaitaires » (L. 721-6 de 1985), le maximum de
+l'année au prorata de cent cinquante trimestres (D. 721-7), à soixante-cinq ans
+(D. 721-6), sur des trimestres qui comprennent l'activité cultuelle d'avant
+1979 (D. 721-11). L. 721-5 et L. 721-6 de 1998 gardent cet âge à toute la
+pension jusqu'au décret n° 2006-1325, qui, depuis le 1er novembre 2006, ouvre
+l'âge légal, décote la fraction d'avant 1998 à taux minoré, la surcote, et la
+porte au taux plein au minimum contributif majoré pour les trimestres cotisés
+de 1979 à 1997 — une part de l'écart pour les générations 1939 à 1942 (V) —,
+puis, depuis le 1er février 2010, au minimum contributif pour ceux d'avant
+1979 (V bis). Le maximum : 7 500 F en 1979, 23 449 F en 1997 par les arrêtés
+— 1982, 1984 et 1986 estimés, l'index n'en ayant pas le texte —, les
+pensions ensuite, que le calcul suit à quelques centimes des 3 839,26 € de
+2002 (question n° 11394) et des 452,15 € par mois de 2026 (la caisse). La
+pension est désormais la somme des deux fractions, dans les deux moteurs
+(`droit/cultes.py`, `fractions_des_cultes`, `legislation/cultes_maximum_pension.csv`) :
+celle d'après 1997 a seule son salaire annuel moyen, sa durée et le minimum
+contributif (`hors_minimum`) ; les années d'avant 1979 sont routées à la
+CAVIMAC en services passés, hors des trimestres cotisés
+(`Affiliations.validee_sans_cotisation`, `ligne_cotisee`). La fiche servait
+l'âge légal et le minimum contributif dès 1979, et une surcote dès 2004 que
+L. 382-27 n'ouvre qu'au 20 décembre 2005. Fiche `cultes_fractions_de_pension` ;
+`cultes_salaire_annuel_moyen` passe conforme. Au scénario 1, le ministre né en
+1925 gagne 98 %, né en 1945 30 %, né en 1955 5 %, né en 1965 moins de 1 % ;
+celui de 1975, au minimum majoré, rien ; à soixante-quatre ans, ceux de 1925
+et de 1935 ne sont plus ouverts. Les scénarios prospectifs valorisent les
+droits d'avant 1998 au maximum seul, qui est leur part contributive : − 11 %
+pour le ministre né en 1965, − 13 % pour le religieux. Quatre témoins
+naissent (`cultes_*`) ; le formulaire ne dit plus « (depuis 1979) ». Les
+cotisations de 1979 à 1997 étaient des montants fixés par les mêmes arrêtés,
+et non un taux sur le SMIC : à reprendre. Les fractions de la liste ci-dessous
+sont faites.
+
+**Puis, le 4 octobre 2026, les ouvriers de l'État hors du RAFP, déjà faits.**
+L'action 133 les en a sortis le 28 septembre, sur l'article 76 de la loi
+n° 2003-775 et la page « Actif » de l'ERAFP (fiche `rafp_beneficiaires`) ;
+aucun des quatorze témoins d'ouvrier de l'État n'a plus de RAFP. La liste
+ci-dessous l'ignorait.
+
+**Puis, le 4 octobre 2026, le barème de l'Ircantec pour enfants.** « Le total
+des points de retraite est majoré de : 10 % pour trois enfants ; 15 % pour
+quatre enfants ; 20 % pour cinq enfants ; 25 % pour six enfants ; 30 % pour
+sept enfants et au-delà » : l'article 15 de l'arrêté du 30 décembre 1970, une
+seule rédaction depuis 1971, lu dans l'index LEGI, et la page de l'Ircantec,
+qui le redit sans plafond. Le modèle servait 10 % à tous. Chaque période de
+`ircantec.yaml` porte désormais le barème (`taux_majoration_enfants`), que les
+deux moteurs lisaient déjà pour les régimes spéciaux : rien à changer au code.
+Fiche `ircantec_majoration_enfants`. L'exemple de la caisse — sept enfants,
+2 500 points, 750 de plus — entre aux exemples officiels, avec une grandeur
+nouvelle, `majorations_enfants_des_regimes`, la majoration de chaque régime
+rapportée à sa pension ; l'Ircantec rejoint les éditeurs admis. Aucun témoin
+n'avait plus de trois enfants : deux naissent, une contractuelle mère de
+quatre et de sept enfants, qui gagne 633 € et 2 534 € par an (+ 1,3 et
++ 5,3 %). Reste hors du modèle la bonification de l'article 15 bis, des points
+gratuits par enfant pour qui a interrompu son activité, que le modèle ne
+connaît pas.
+
+**Puis, le 4 octobre 2026, les exceptions au plafond du RAFP et la cotisation
+volontaire outre-mer, documentées.** La GIPA cotise au RAFP hors de la limite
+de 20 % depuis 2008 (décret n° 2008-964, article 1er ; borné à 2011 par son
+article 2, que le décret n° 2014-452 abroge en 2014). Les jours de compte
+épargne-temps au-delà du seuil, que le titulaire verse au RAFP — et qui y vont
+s'il ne choisit pas —, depuis 2009 dans les trois versants (décrets
+n° 2002-634, 2004-878 et 2002-788) : un jour vaut V = M / (P + T), M le forfait
+de l'arrêté du 28 août 2009, article 4, lu sur Légifrance en trois rédactions
+(125, 80, 65 € ; 135, 90, 75 € en 2019 ; 150, 100, 83 € depuis 2024), hors
+plafond. La formule redonne au centime les 142,50, 95,00 et 78,85 € nets de
+l'ERAFP, et ses 98, 66 et 55 points au salaire de référence de 2026 arrondi au
+point supérieur ; la rente de quinze jours, 90,03 € pour 1 470 points, ne se
+retrouve pas (0,0612 € le point, 0,0567 € de valeur de service). Depuis le
+1er avril 2024, l'article 76 bis de la loi n° 2003-775 (loi de finances pour
+2024, article 201 ; 2025, article 167 ; 2026, article 175) ouvre aux agents de
+l'État qui prennent un poste dans le Pacifique ou à Saint-Pierre une
+cotisation volontaire hors plafond sur leurs majorations de traitement, partagée
+moitié-moitié (décret n° 2004-569, articles 15-1 et 15-2 ; liste du décret
+n° 2025-1339) ; et une garantie que la note d'avant ignorait : l'État complète
+à 4 000 € par an la rente de ces points et l'indemnité temporaire de retraite
+de qui y était en activité au 1er janvier 2024 et y réside à son départ, sans
+décote (décret n° 2024-839). Quatre fiches `pas_encore_modelisee` :
+`rafp_gipa_hors_plafond`, `rafp_compte_epargne_temps`,
+`rafp_cotisation_volontaire_outre_mer`, `rafp_garantie_outre_mer` ; le
+simulateur ne demande ni GIPA, ni jours de CET, ni affectation outre-mer, et
+l'exemple de l'ERAFP n'entre pas aux exemples officiels, qu'aucune grandeur ne
+rejoue. Les deux pages officielles passent `explore`.
+
+**Puis, le 4 octobre 2026, les 66 points gratuits de la RCO, documentés.**
+L'article 34 de la loi n° 2014-40 ajoute à L. 732-56 un V et un VI : depuis
+le 1er février 2014, pensions en cours comprises (décret n° 2014-494,
+article 2), 66 points par an (D. 732-154-1), dix-sept annuités au plus et
+trente-sept ans et demi de points gratuits en tout (D. 732-154-3), pour les
+années d'avant 2011 d'aide familial, de conjoint participant aux travaux
+(avant 2009) ou de collaborateur, et celles d'avant 2003 du chef qui n'a pas
+ses dix-sept ans et demi comme chef (D. 732-154-2). Il faut dix-sept ans et
+demi d'activité non salariée agricole (D. 732-151-1), et la durée tous régimes
+du taux plein jusqu'au 31 août 2023, une pension au taux plein ensuite ;
+depuis 2026, les majorations de durée comptent (décret n° 2025-1410). La
+synthèse statistique de la MSA de décembre 2018 en compte 467 500
+bénéficiaires en 2015, 448 000 en 2017, sept sur dix des femmes, et 377 € par
+an pour une aide familiale au taux plein : 17 × 66 points à 0,3362 €, au
+centime. Fiche `rco_points_gratuits_66`, `pas_encore_modelisee` : le
+simulateur ne connaît que le chef, pour qui les deux durées de dix-sept ans et
+demi se confondent, et la règle n'y trouve jamais à s'appliquer. Aucun exemple
+d'assuré n'est publié.
+
+**Ce qui reste**, dans l'ordre où le prendre : les fractions de pension de la
+CAVIMAC d'avant 1979, validées gratuitement, et de 1979 à 1997, portées au
+minimum contributif ou au maximum de la pension « Cavimac » ; les ouvriers de
+l'État hors du RAFP ; le barème de l'Ircantec pour enfants ; le routage calédonien et sa
+ligne d'inventaire ; les deux exceptions au plafond du RAFP — la GIPA, cotisée
+en entier, les jours de compte épargne-temps convertis — et la cotisation
+volontaire des agents de l'État outre-mer ; les 66 points gratuits des
+conjoints, aides familiaux et collaborateurs, qui demandent de connaître ces
+statuts ; les huit taux spécifiques de l'Arrco des cultes. Les lignes
+`rafp_assiette_plafond`, `rco_points_gratuits`,
+`cultes_retraite_complementaire` et `cultes_salaire_annuel_moyen` du registre
+de veille et les quatre récits de `limites.md` en tiennent le détail.
+
+**Fichiers.** `data/reference/regimes/_schema.yaml`,
+`data/reference/regimes/rafp.yaml`, `msa_rco.yaml`,
+`inventaire.yaml` et `pivots.yaml` ;
+`src/retraite_notionnelle/donnees/regimes.py`, `scenarios/actuel.py`,
+`moteur/compte.py`, et leurs pendants `moteur/js/regimes.js`,
+`scenario-actuel.js`, `compte.js` ; `scripts/construire_donnees.py` ;
+`tests/test_simulateur.py`, `tests/js/moteur.test.js`, les témoins ;
+`data/reference/legislation/veille.yaml`,
+`data/reference/legislation/avantages_non_contributifs.yaml`,
+`data/sources_a_explorer.yaml`, `data/reference/prose/zones.yaml`,
+`docs/limites.md`, `docs/regimes.md`, `docs/parcours_presentation.md` ; pour
+les cultes, `data/reference/legislation/affiliations.yaml`,
+`majoration_enfants_points.csv` et `reformes.yaml`, `data/sources.yaml`,
+`scripts/construire_temoins.py`.

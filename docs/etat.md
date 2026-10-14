@@ -107,7 +107,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 **Ce qui est hors de la page Coût.** La réversion, par exemple, pèse 10,4 % de la masse des prestations en 2024 (COR) : le modèle en calcule une pour une personne (scénario 1), mais la page Coût n'en connaît que cette part publiée, qu'elle ne calcule pas.
 
-**La feuille de route** compte 161 actions : 132 fait, 18 en cours, 7 à faire, 2 archivée, 2 abandonnée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
+**La feuille de route** compte 161 actions : 133 fait, 17 en cours, 7 à faire, 2 archivée, 2 abandonnée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
 
 ## 2. Ce qui ne va pas encore
 
@@ -294,10 +294,9 @@ Et 34 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 
 ## 3. Ce qui reste à faire, et par quoi commencer
 
-- **Les 18 actions en cours** de la feuille de route :
+- **Les 17 actions en cours** de la feuille de route :
   - 47. La garantie vieillesse est une avance : la reprise sur succession, sa règle et son chiffrage
   - 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026
-  - 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait
   - 121. Le droit de chacun, et non celui de la génération de l'année : toutes les personnes vivantes
   - 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, puis le défaut
   - 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir
