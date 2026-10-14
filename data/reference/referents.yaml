@@ -1248,7 +1248,8 @@ referents:
       13 octobre 2026, une famille de profils à la fois, chacune avec sa
       convention de traduction écrite (`tests/test_oracle_familles.py`) : la
       première, le temps partiel des fonctionnaires et le départ anticipé des
-      parents de trois enfants. Ce qu'il reste à en tirer est l'action 153 de
+      parents de trois enfants ; la deuxième, le 14 octobre, les enfants des
+      fonctionnaires (`tests/test_oracle_enfants.py`). Ce qu'il reste à en tirer est l'action 153 de
       la feuille de route.
     ecarts:
       - constat: >-
@@ -1475,6 +1476,55 @@ referents:
         preuve: >-
           tests/temoins/openfisca_temps_partiel_et_parents.json ;
           tests/test_oracle_familles.py
+      - constat: >-
+          À la CNRACL, il ne sert jamais la majoration de durée des enfants
+          nés depuis 2004 : `cnracl_majoration_duree_assurance_enfant`
+          compare la date de liquidation de l'État
+          (`fonction_publique_liquidation_date`), et non celle de la CNRACL, à
+          celle du régime général. L'agente de la CNRACL, mère de deux
+          enfants nés en 2004 et 2007, partie en 2020, a chez lui 144
+          trimestres et vingt de décote ; l'agente de l'État de même
+          carrière, 148 et dix-neuf.
+        tranche: >-
+          décret n° 2003-1306, article 21, I, rédaction du 1er juillet 2011
+          (LEGIARTI000023414107) : « Pour chacun de leurs enfants nés à
+          compter du 1er janvier 2004, les femmes fonctionnaires ayant
+          accouché postérieurement à leur recrutement bénéficient d'une
+          majoration de la durée d'assurance [...] fixée à deux trimestres ».
+          Le dépôt a raison
+        preuve: >-
+          tests/temoins/openfisca_enfants.json ;
+          tests/test_oracle_enfants.py
+      - constat: >-
+          Il ne lit ni le recrutement ni la radiation : il accorde la
+          bonification de L. 12, b, à chaque enfant né avant 2004, né avant
+          le recrutement ou non. La mère recrutée en 1985, dont les deux
+          enfants sont nés en 1978 et 1980, partie en 2009, a chez lui huit
+          trimestres de bonification, et une pension plus forte de 8/96.
+        tranche: >-
+          R. 13, rédaction du 19 avril 2009 (LEGIARTI000020532497), comme
+          celle du 1er janvier 2004 : la bonification est « subordonnée à une
+          interruption d'activité [...] dans le cadre d'un congé » du statut,
+          que l'enfant né avant le recrutement n'a pas ouvert. Seul le b bis
+          de L. 12 (LEGIARTI000006362696) l'accorde alors, à la femme qui a
+          accouché pendant ses études et a été recrutée dans les deux ans de
+          son diplôme, ce qu'aucun des deux ne lit. Depuis 2011, R. 13
+          (LEGIARTI000023449727) l'ouvre à l'enfant né avant la radiation, et
+          les deux concordent. Le dépôt a raison, hors du b bis
+        preuve: >-
+          tests/temoins/openfisca_enfants.json ;
+          tests/test_oracle_enfants.py
+      - constat: >-
+          Il accorde la majoration de durée de L. 12 bis à la femme qui a
+          accouché avant son recrutement : deux trimestres à la mère d'un
+          enfant né en 2005, recrutée en 2006.
+        tranche: >-
+          L. 12 bis (LEGIARTI000006362697) : la majoration va aux femmes
+          « ayant accouché postérieurement à leur recrutement ». Le dépôt a
+          raison ; la pension n'en change pas, la décote étant au plafond
+        preuve: >-
+          tests/temoins/openfisca_enfants.json ;
+          tests/test_oracle_enfants.py
     fait_mieux:
       - quoi: >-
           Il code le départ anticipé des fonctionnaires parents de trois
@@ -1527,7 +1577,11 @@ referents:
           confrontait que 48 carrières continues à salaire nominal constant
           (`tests/test_oracle.py`) ; depuis le 13 octobre 2026, aussi le temps
           partiel des fonctionnaires et le départ des parents de trois enfants
-          (`tests/test_oracle_familles.py`, action 153, étape 1). Restent les
+          (`tests/test_oracle_familles.py`, action 153, étape 1) ; depuis le
+          14 octobre, les enfants des fonctionnaires — la bonification et la
+          majoration de pension au-delà de trois enfants, la majoration de
+          durée des enfants nés depuis 2004, les enfants nés avant le
+          recrutement (`tests/test_oracle_enfants.py`, étape 2). Restent les
           autres familles.
         preuve: >-
           ses 140 tests de formules (`tests/formulas/`), au commit `1c45423`
@@ -1819,22 +1873,26 @@ referents:
       reste borné à cinq familles de régimes, arrêté à la loi de 2023,
       et faux sur le minimum surcoté, la majoration de durée et la
       revalorisation de 2020 ; au départ des parents de trois enfants,
-      faux sur la durée, l'ouverture et les quinze ans (action 153).
+      faux sur la durée, l'ouverture et les quinze ans ; aux enfants des
+      fonctionnaires, sur le recrutement, qu'il ne lit pas, et sur la
+      majoration de durée de la CNRACL (action 153).
     manifeste:
       - openfisca_points
       - openfisca_regime_general_oracle
       - openfisca_fonction_publique_oracle
       - openfisca_temps_partiel_et_parents_oracle
+      - openfisca_enfants_oracle
       - openfisca_arrco_oracle
       - openfisca_minimum_contributif
       - openfisca_parametres_generation
     sas: [openfisca_france_pension]
-    lu_le: 2026-10-13
+    lu_le: 2026-10-14
     lu_dans:
       - https://github.com/openfisca/openfisca-france-pension
       - tests/temoins/openfisca_regime_general.json
       - tests/temoins/openfisca_fonction_publique.json
       - tests/temoins/openfisca_temps_partiel_et_parents.json
+      - tests/temoins/openfisca_enfants.json
       - tests/temoins/openfisca_arrco.json
       - tests/temoins/openfisca_agirc.json
       - tests/temoins/openfisca_ircantec.json

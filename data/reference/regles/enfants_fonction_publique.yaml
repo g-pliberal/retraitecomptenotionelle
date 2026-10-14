@@ -201,6 +201,13 @@ approximations:
     les conditions d'interruption ou de réduction d'activité sont présumées remplies
     par la mère
   effet: non mesuré
+- version: [l12b_2004]
+  ecart: >-
+    le b bis de L. 12 n'est pas porté : la bonification de la femme qui a accouché
+    pendant ses études, recrutée dans les deux ans de son diplôme, sans condition
+    d'interruption ; la chronologie ne connaît ni les études ni le diplôme, et
+    l'enfant né avant le recrutement n'ouvre rien aux pensions de 2004 à 2010
+  effet: non mesuré
 - version: [l12b_2004, l12b_2011_decret, l12b_2011, l12bis, l12bter]
   ecart: >-
     la naissance de l'enfant se compare au recrutement et à la radiation à l'année
@@ -297,8 +304,17 @@ code:
   tests: [tests/test_priorite_enfants.py, tests/test_scenarios_meres.py]
 referents:
   openfisca_france_pension:
-    equivalent: variable nombre_enfants (un nombre, sans dates)
-    confrontation: aucune ; les profils de l'oracle sont sans enfant
+    equivalent: >-
+      bonification_cpcm_enfant et majoration_duree_assurance_enfant
+      (regimes/fonction_publique.py), qui lisent nombre_enfants et
+      nombre_enfants_nes_avant_2004 : un nombre, sans dates, ni recrutement ni radiation
+    confrontation: >-
+      le 14 octobre 2026 (action 153, étape 2 ; tests/test_oracle_enfants.py) : la
+      bonification au-delà de trois enfants et la majoration de L. 12 bis à l'État
+      concordent ; trois écarts, tous chez lui, au registre — il accorde la bonification
+      à l'enfant né avant le recrutement d'une pension de 2009 (R. 13) et la majoration
+      à la femme qui a accouché avant le sien (L. 12 bis), et ne sert jamais la
+      majoration de la CNRACL (décret n° 2003-1306, article 21)
   destinie_2:
     equivalent: >-
       durees_majo (src/DroitsRetr.cpp), CoefMdaFP : une année par enfant né avant 2004
@@ -347,6 +363,9 @@ historique:
 - >-
   2026-10-05 — confrontée à TRAJECTOiRE (action 142, étape 4) : la bonification
   concorde en trimestres ; TRAJECTOiRE la borne au plafond de 75 %, à tort.
+- >-
+  2026-10-14 — confrontée à OpenFisca-France-Pension (action 153, étape 2) : rien à
+  corriger ; trois écarts chez lui.
 effet: >-
   Toute mère fonctionnaire ou agente d'un régime spécial : quatre trimestres par enfant
   né avant 2004, en services, donc au prorata de la pension ; deux par enfant né depuis,

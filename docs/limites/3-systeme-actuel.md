@@ -308,12 +308,22 @@ la raison « famille », datée du départ, quand la loi du 9 novembre 2010 le
 garde à l'année des soixante ans ; et il compte les quinze ans de services
 sur les services réduits par la quotité, que L. 5 compte en entier. Il ne lit
 pas l'interruption d'activité pour chaque enfant, que le dépôt présume de la
-mère seule : son père de trois enfants part, le nôtre non. Restent les autres
-familles que le registre nomme : la majoration de durée et la bonification
-pour enfants, la majoration de pension au-delà de trois enfants, les points
-enfants de l'Arrco, la catégorie active, la carrière longue de la fonction
-publique, les minima, la minoration de l'Arrco, les périodes assimilées, le
-salaire annuel moyen sur des salaires qui varient.
+mère seule : son père de trois enfants part, le nôtre non. La deuxième, les
+enfants des fonctionnaires (`tests/test_oracle_enfants.py`), ne trouve rien à
+corriger non plus : la bonification d'un an par enfant né avant 2004 jusqu'à
+sept enfants, la majoration de pension de cinq points par enfant au-delà du
+troisième et son plafond au traitement, la majoration de durée des enfants
+nés depuis 2004 à l'État concordent. Ses trois écarts tiennent à ce qu'il ne
+lit pas : le recrutement, si bien qu'il accorde la bonification à l'enfant né
+avant lui d'une pension de 2009, que R. 13 réservait alors à l'interruption
+prise dans un congé du statut, et la majoration de durée à la femme qui a
+accouché avant ; et la liquidation de la CNRACL, que sa majoration de durée
+confond avec celle de l'État, de sorte qu'il ne la sert jamais. Comme lui, le
+dépôt ne lit pas le b bis de L. 12, la bonification de la femme qui a
+accouché pendant ses études. Restent les autres familles que le registre
+nomme : les points enfants de l'Arrco, la catégorie active, la carrière
+longue de la fonction publique, les minima, la minoration de l'Arrco, les
+périodes assimilées, le salaire annuel moyen sur des salaires qui varient.
 
 **TRAJECTOiRE**, le modèle de la DREES dont un module calcule les cas types du
 COR, s'exécute à part, sa licence à réciprocité (EUPL) le tenant hors du dépôt :

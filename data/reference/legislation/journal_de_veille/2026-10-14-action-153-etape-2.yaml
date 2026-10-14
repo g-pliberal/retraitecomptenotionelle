@@ -1,0 +1,28 @@
+date: "2026-10-14"
+session: >-
+  action 153, étape 2 : les enfants des fonctionnaires — la bonification et la
+  majoration au-delà de trois enfants, les enfants nés depuis 2004 ou hors des
+  services —, confrontés à OpenFisca-France-Pension
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index LEGI, récupéré à jour au 11 octobre 2026.
+  L. 12 du code des pensions, rédaction du 1er janvier 2004 (LEGIARTI000006362696, b et
+  b bis) ; R. 13, rédactions du 1er janvier 2004 (LEGIARTI000006362902) et du 19 avril
+  2009 (LEGIARTI000020532497) ; L. 12 bis (LEGIARTI000006362697) ; l'article 21 du
+  décret n° 2003-1306, rédactions du 1er janvier 2004 (LEGIARTI000006400884) et du
+  1er juillet 2011 (LEGIARTI000023414107). Et le code d'OpenFisca-France-Pension 0.1.3,
+  exécuté à part.
+trouve: >-
+  Aucun texte nouveau, aucune règle du scénario 1 à corriger : la fiche
+  `enfants_fonction_publique` dit ce que les textes disent, et OpenFisca la confirme sur
+  la bonification jusqu'à sept enfants, la majoration de L. 12 bis à l'État et la
+  majoration de L. 18 et son plafond (`majoration_enfants_plafond_fonction_publique`).
+  Ses trois écarts sont les siens : la bonification à l'enfant né avant le recrutement
+  d'une pension de 2009 (R. 13, congé du statut) ; la majoration de L. 12 bis à la
+  femme qui a accouché avant son recrutement ; la majoration de la CNRACL jamais servie
+  (décret n° 2003-1306, article 21, I). Le b bis de L. 12, que le dépôt ne porte pas,
+  est déclaré dans les approximations de la fiche.
+reste: >-
+  À l'action 153, étape 2 : les familles suivantes, une par session. Le signalement à
+  OpenFisca, que le propriétaire tranche. Les deux fiches ne changent que leur bloc
+  `referents` et, pour `enfants_fonction_publique`, une approximation déclarée : leurs
+  règles, leur état et leur date de lecture restent.

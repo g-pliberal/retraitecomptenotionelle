@@ -313,7 +313,12 @@ referents:
     equivalent: >-
       regimes/fonction_publique.py, variable pension, min_(pension_brute +
       majoration_pension, salaire_de_reference), au commit 1c45423
-    confrontation: aucune exécutée ; son écart est déclaré plus haut (lectures_divergentes)
+    confrontation: >-
+      le 14 octobre 2026 (action 153, étape 2 ; tests/test_oracle_enfants.py) : la mère
+      de sept enfants partie en 2014, à 80 % et cinq trimestres de surcote, que 30 % de
+      majoration porteraient au-delà du traitement ; les deux servent le traitement. Une
+      pension d'avant 2021 : l'écart déclaré plus haut (lectures_divergentes), qui tient
+      à la surcote depuis 2021, n'est pas éprouvé
 historique:
 - >-
   2026-09-24 — inscrite manquante à la veille de l'action 89, sur la page du service des
