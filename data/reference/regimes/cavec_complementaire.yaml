@@ -64,13 +64,17 @@ periodes:
       donnent le même à un dix-millième près. C'est ce qui autorise à
       convertir la cotisation par le rendement plutôt que par une table de
       points, et 8,33 % est aussi le chiffre que la caisse annonce.
-      UN SEUL MILLÉSIME EST PUBLIÉ, celui de 2026, ramené aux autres
-      exercices par le rapport des plafonds. Pour la Cipav cette règle est
-      démontrée par l'arithmétique de sa grille ; ici elle est un CHOIX —
-      les neuf bornes valent 0,31, 0,66, 0,93, 1,36, 1,69, 2,08, 2,81 et
-      3,77 plafonds, et rien n'y est rond. Soixante-dix ans reportés depuis
-      une seule grille : c'est la limite de cette fiche, et elle est
-      grande.
+      LA GRILLE DE CHAQUE EXERCICE EST CELLE DE SON TEXTE depuis le 14
+      octobre 2026 (action 131, `classes_cotisation_epoques.yaml`) : les
+      classes de l'article 2 dans sa rédaction de l'exercice (six de 48 à
+      180 points en 1980, sept jusqu'à 216 en 1987, huit de 48 à 1 500 de
+      2008 à 2025), le montant que le décret annuel donne à la classe 4,
+      puis A, et les bornes que la caisse publie de 2022 à 2025, les mêmes,
+      ramenées aux autres exercices par le rapport des plafonds. Ici le
+      plafond est un CHOIX : rien n'y est rond. Les sept classes d'avant
+      2008 en prennent les six premières, rang pour rang, et la grille de
+      1980, ramenée, tient lieu de celle d'avant, que le décret de 1953
+      faisait choisir.
       AUCUNE MAJORATION DE REPORT N'EST LUE AVANT 2008 : la fiche
       portait 1,25 % sur toute la période sans texte, et le moteur ne le
       lisait pas ; le premier état des statuts dans l'index est l'arrêté
@@ -124,13 +128,17 @@ periodes:
       donnent le même à un dix-millième près. C'est ce qui autorise à
       convertir la cotisation par le rendement plutôt que par une table de
       points, et 8,33 % est aussi le chiffre que la caisse annonce.
-      UN SEUL MILLÉSIME EST PUBLIÉ, celui de 2026, ramené aux autres
-      exercices par le rapport des plafonds. Pour la Cipav cette règle est
-      démontrée par l'arithmétique de sa grille ; ici elle est un CHOIX —
-      les neuf bornes valent 0,31, 0,66, 0,93, 1,36, 1,69, 2,08, 2,81 et
-      3,77 plafonds, et rien n'y est rond. Soixante-dix ans reportés depuis
-      une seule grille : c'est la limite de cette fiche, et elle est
-      grande.
+      LA GRILLE DE CHAQUE EXERCICE EST CELLE DE SON TEXTE depuis le 14
+      octobre 2026 (action 131, `classes_cotisation_epoques.yaml`) : les
+      classes de l'article 2 dans sa rédaction de l'exercice (six de 48 à
+      180 points en 1980, sept jusqu'à 216 en 1987, huit de 48 à 1 500 de
+      2008 à 2025), le montant que le décret annuel donne à la classe 4,
+      puis A, et les bornes que la caisse publie de 2022 à 2025, les mêmes,
+      ramenées aux autres exercices par le rapport des plafonds. Ici le
+      plafond est un CHOIX : rien n'y est rond. Les sept classes d'avant
+      2008 en prennent les six premières, rang pour rang, et la grille de
+      1980, ramenée, tient lieu de celle d'avant, que le décret de 1953
+      faisait choisir.
       L'ÂGE SEUL COMMANDE, ET LES STATUTS LE DATENT. Arrêté du 22
       février 2008 (JORFARTI000018197778), article 3.13 : la retraite
       est liquidée « à 65 ans à taux plein ; entre 60 et 65 ans, avec
@@ -189,13 +197,17 @@ periodes:
       donnent le même à un dix-millième près. C'est ce qui autorise à
       convertir la cotisation par le rendement plutôt que par une table de
       points, et 8,33 % est aussi le chiffre que la caisse annonce.
-      UN SEUL MILLÉSIME EST PUBLIÉ, celui de 2026, ramené aux autres
-      exercices par le rapport des plafonds. Pour la Cipav cette règle est
-      démontrée par l'arithmétique de sa grille ; ici elle est un CHOIX —
-      les neuf bornes valent 0,31, 0,66, 0,93, 1,36, 1,69, 2,08, 2,81 et
-      3,77 plafonds, et rien n'y est rond. Soixante-dix ans reportés depuis
-      une seule grille : c'est la limite de cette fiche, et elle est
-      grande.
+      LA GRILLE DE CHAQUE EXERCICE EST CELLE DE SON TEXTE depuis le 14
+      octobre 2026 (action 131, `classes_cotisation_epoques.yaml`) : les
+      classes de l'article 2 dans sa rédaction de l'exercice (six de 48 à
+      180 points en 1980, sept jusqu'à 216 en 1987, huit de 48 à 1 500 de
+      2008 à 2025), le montant que le décret annuel donne à la classe 4,
+      puis A, et les bornes que la caisse publie de 2022 à 2025, les mêmes,
+      ramenées aux autres exercices par le rapport des plafonds. Ici le
+      plafond est un CHOIX : rien n'y est rond. Les sept classes d'avant
+      2008 en prennent les six premières, rang pour rang, et la grille de
+      1980, ramenée, tient lieu de celle d'avant, que le décret de 1953
+      faisait choisir.
       LA MAJORATION TOMBE À 0,75 % : arrêté du 20 août 2018
       (JORFARTI000037363871), article 13, « une majoration de 0,75 % par
       trimestre plein de prorogation au-delà de cet âge, dans la limite
@@ -241,13 +253,17 @@ periodes:
       donnent le même à un dix-millième près. C'est ce qui autorise à
       convertir la cotisation par le rendement plutôt que par une table de
       points, et 8,33 % est aussi le chiffre que la caisse annonce.
-      UN SEUL MILLÉSIME EST PUBLIÉ, celui de 2026, ramené aux autres
-      exercices par le rapport des plafonds. Pour la Cipav cette règle est
-      démontrée par l'arithmétique de sa grille ; ici elle est un CHOIX —
-      les neuf bornes valent 0,31, 0,66, 0,93, 1,36, 1,69, 2,08, 2,81 et
-      3,77 plafonds, et rien n'y est rond. Soixante-dix ans reportés depuis
-      une seule grille : c'est la limite de cette fiche, et elle est
-      grande.
+      LA GRILLE DE CHAQUE EXERCICE EST CELLE DE SON TEXTE depuis le 14
+      octobre 2026 (action 131, `classes_cotisation_epoques.yaml`) : les
+      classes de l'article 2 dans sa rédaction de l'exercice (six de 48 à
+      180 points en 1980, sept jusqu'à 216 en 1987, huit de 48 à 1 500 de
+      2008 à 2025), le montant que le décret annuel donne à la classe 4,
+      puis A, et les bornes que la caisse publie de 2022 à 2025, les mêmes,
+      ramenées aux autres exercices par le rapport des plafonds. Ici le
+      plafond est un CHOIX : rien n'y est rond. Les sept classes d'avant
+      2008 en prennent les six premières, rang pour rang, et la grille de
+      1980, ramenée, tient lieu de celle d'avant, que le décret de 1953
+      faisait choisir.
       LA MAJORATION REVIENT À 1,25 % par l'arrêté du 4 juillet 2025
       (JORFARTI000051849616, Journal officiel du 6 juillet 2025), qui
       remplace à l'article 13 des statuts « 0,75 » par « 1,25 » et « 15 »

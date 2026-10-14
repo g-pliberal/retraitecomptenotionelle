@@ -8,50 +8,48 @@ etat: approchee
 etape: acquerir_les_droits
 effet: >-
   Les vétérinaires, les experts-comptables et commissaires aux comptes, et les affiliés de
-  la Cipav jusqu'en 2022. L'article 2 des trois décrets est lu version par version. La
-  grille du moteur a la forme du texte à la CARPV depuis 1998 (trois classes à 16, 20 et 24
-  points, quatre à 17, 21, 25 et 28 points depuis 2026), à la Cipav de 2013 à 2022 (huit
-  classes, d'une à treize fois la classe A) et à la CAVEC en 2026 (neuf classes, de 54 à
-  1 841 points). Mais hors des millésimes publiés, la CARPV depuis 2016, la Cipav en 2022 et
-  la CAVEC en 2026, le moteur reporte une seule grille par le rapport des plafonds, et les
-  textes la démentent ; les caisses aussi, dont les bornes publiées restent fixes quand le
-  plafond monte : de 16 190 € à 132 780 € à la CAVEC chaque année de 2022 à 2025, de 26 580 €
-  à 123 300 € à la Cipav en 2019 comme en 2022. En 2022, le moteur borne la classe A de la
-  CAVEC à 12 770 € et l'appelle 769 €, pour 16 190 € et 670 € publiés ; en 2019, il appelle
-  1 504 € la classe A de la Cipav, pour 1 353 €. Cipav : six classes, d'une à dix fois la
-  classe 1, jusqu'en 2012, et non huit jusqu'à treize fois ; à rang égal, la première classe
-  du moteur passe celle du décret annuel de 84 % en 1990, 72 % en 2001, 34 % en 2008, 16 % en
-  2013 et 5 % en 2021. CAVEC : en 1953, cinq classes de 12 à 60 points, pour l'une
-  desquelles l'assujetti « opte, dans les conditions fixées par les statuts », sans que le
-  décret nomme le revenu ; six classes de 48 à 180 points en 1980, sept jusqu'à 216 points
-  en 1987, huit de 48 à 1 500 points de 2008 à 2025, et le moteur en sert neuf, de 54 à
-  1 841 points, selon le revenu ; sa classe A passe celle du décret de 24 % en
-  2012 et de 12,5 % en 2025, et en 1992 il appelle de 411 € à 13 996 € quand le décret
-  fixait de 1 045 € (classe 3) à 6 273 € (classe 18). CARPV : avant 1998, un nombre d'actes
-  selon l'âge, sans égard au revenu ; de 1998 à 2015, des actes médicaux vétérinaires, dont
-  l'ordre fixait la valeur, au taux d'appel du décret annuel (77 % en 1998, 104 % en 2015),
-  que rien ne publie en euros ; le moteur y reporte la grille de 2016. Le moteur range
-  l'assuré sur le revenu de l'année, comme la Cipav, qui régularise sur l'année même
-  « depuis le 1er janvier 2021 » ; les autres textes prennent celui de l'avant-dernière
-  année (CARPV jusqu'en 2021, CAVEC de 2008 à 2018) ou de l'année précédente (CARPV depuis
-  2022, CAVEC depuis les statuts de 2018, Cipav selon ses statuts de 2016). Il n'appelle pas
-  non plus la classe de début d'activité que les textes imposent. Les points suivent la
-  cotisation ; l'effet sur les pensions n'est pas mesuré.
+  la Cipav jusqu'en 2022. L'article 2 des trois décrets est lu version par version. Depuis
+  le 14 octobre 2026, la grille de chaque exercice est celle de son texte à la Cipav (1979
+  à 2022) et à la CAVEC (1980 à 2025) : les classes de l'article 2 dans sa rédaction de
+  l'exercice, le montant que le décret annuel donne à la classe de référence, lu dans les
+  index LEGI et JORF pour 35 exercices de la Cipav et 39 de la CAVEC, et les bornes que la
+  caisse publie (Cipav 2019 et 2022, CAVEC 2022 à 2026)
+  (`classes_cotisation_epoques.yaml`). Restent des conventions, chacune déclarée : un
+  exercice sans décret lu (Cipav de 1979 à 1985, 1989 et 1991 ; CAVEC de 1980 à 1983,
+  1989, 1991 et 2008) prend le montant lu le plus proche ramené au rapport des plafonds ;
+  les bornes des autres exercices sont les publiées les plus proches ramenées de même, et
+  une époque de moins de classes (six à la Cipav jusqu'en 2012, six puis sept à la CAVEC
+  jusqu'en 2007) en prend les premières, rang pour rang. Les classes 5, 7 et 10 de la
+  Cipav n'entrent qu'en 1980, 1981 et 1982, comme le texte de 1979 les rend obligatoires.
+  En 2008, la CAVEC prend le montant de 2009 ramené : le décret n° 2008-1303 fixe la classe
+  A à 2 262 €, le prix du point de la classe 4 de 2007, qui ferait 70 687 € la classe H.
+  À la CAVEC d'avant 1980, que le décret de 1953 faisait choisir, la grille de 1980
+  ramenée tient lieu. CARPV : la grille du moteur a la forme du texte depuis 2016 (trois
+  classes à 16, 20 et 24 points, quatre à 17, 21, 25 et 28 points depuis 2026) ; avant
+  1998, un nombre d'actes selon l'âge, sans égard au revenu ; de 1998 à 2015, des actes
+  médicaux vétérinaires, dont l'ordre fixait la valeur, au taux d'appel du décret annuel
+  (77 % en 1998, 104 % en 2015), que rien ne publie en euros ; le moteur y reporte la
+  grille de 2016. Le moteur range l'assuré sur le revenu de l'année, comme la Cipav, qui
+  régularise sur l'année même « depuis le 1er janvier 2021 » ; les autres textes prennent
+  celui de l'avant-dernière année (CARPV jusqu'en 2021, CAVEC de 2008 à 2018) ou de l'année
+  précédente (CARPV depuis 2022, CAVEC depuis les statuts de 2018, Cipav selon ses statuts
+  de 2016). Il n'appelle pas non plus la classe de début d'activité que les textes
+  imposent. Les grilles du texte abaissent les pensions des 24 cas types de la Cipav et de
+  la CAVEC, de 2 % à 20 % au scénario 1.
 sources:
-  lu_le: 2026-09-27
+  lu_le: 2026-10-14
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Après la phase 8 : servir à chaque exercice la grille de son texte plutôt qu'une grille
-    reportée. Les points de chaque classe sont dans l'article 2, version par version ; les
-    montants, dans les décrets annuels de l'index LEGI (classe 1 puis A de la Cipav, classe
-    A de la CAVEC, taux d'appel puis valeur d'achat du point de la CARPV). Les bornes de
-    revenu ne sont dans aucun texte publié au Journal officiel : les statuts les renvoient au
-    conseil d'administration (CAVEC depuis 2008, Cipav depuis 2016) ; à la CARPV, le décret
-    les écrit en actes médicaux vétérinaires, dont l'ordre fixait la valeur, puis, depuis
-    2015, en multiples d'un indice de référence que fixe le conseil. Porter dans
-    classes_cotisation.csv les grilles que les caisses publient, lues le 27 septembre 2026 :
-    CAVEC de 2022 à 2025, Cipav de 2019.
+    Fait le 14 octobre 2026 pour la Cipav et la CAVEC (`classes_cotisation_epoques.yaml`).
+    Restent : la CARPV de 1998 à 2015, dont le décret écrit les classes en actes médicaux
+    vétérinaires, et les montants que le décret annuel ne donne qu'en taux d'appel ; les
+    décrets de la Cipav de 1979 à 1985 et de 1989 et 1991 (n° 89-313 et 91-864, dont l'index
+    n'a que le sommaire), de la CAVEC de 1980 à 1983 ; la date d'effet de la grille A à H de
+    la CAVEC, que le décret n° 2008-85 ne dit pas, et le montant de 2 262 € de 2008. Les
+    montants publiés de la classe H (17 583 € en 2019 à la Cipav, 20 925 € en 2022 à la
+    CAVEC) s'écartent de quelques euros du multiple de la classe A que le moteur appelle
+    (17 589 €, 20 937,50 €) : la caisse arrondit au point.
   - >-
     Chercher les autres millésimes de bornes dans ce que publient les caisses : guides de la
     CAVEC d'avant 2022 et de la Cipav d'avant 2019, livrets de la CARPV d'avant 2024 (celui
@@ -89,6 +87,23 @@ sources:
     Cipav : la version de 1985 ne touche pas l'option, elle ouvre un « appel réduit », à
     80 % au moins, et porte de 15 à 25 % la cotisation facultative du conjoint.
   lectures:
+  - type: legifrance
+    reference: >-
+      décrets annuels des cotisations des complémentaires libérales, de 1984 à 2025, lus
+      exercice par exercice dans les index LEGI et JORF du dépôt : la classe 1, puis A, de
+      la Cipav de 1986 à 2022 (de « Classe 1 (classe de référence) 2 288 F », décret
+      n° 86-1022, LEGIARTI000006769506, à « Cotisation forfaitaire de la classe A : 1 527
+      euros », décret n° 2022-1633, LEGIARTI000046809720) ; de la CAVEC, la classe 4 de
+      1984 à 2007 (« Classe 4 6.720 F », décret n° 84-447, LEGIARTI000006767447, à
+      « Classe IV : 2 184 Euros », décret n° 2007-1437, LEGIARTI000006268615), la classe A
+      de 2008 à 2025 (« Classe A : 2 262 € » en 2008, décret n° 2008-1303 ; « Classe A :
+      480 euros » en 2009, décret n° 2009-1635, LEGIARTI000021537812 ; 782 euros en 2025).
+      Les décrets de 2015, de 2017 et de 2018 fixent deux exercices, et ceux de 2018 et de
+      2019 corrigent le second : la CAVEC passe de 631,20 € à 625,44 € pour 2018, de
+      640,80 € à 639 € pour 2019. Chaque montant, avec son identifiant, est dans
+      classes_cotisation_epoques.yaml. Le décret n° 2008-85 (JORFARTI000017991856) récrit
+      l'article 2 de la CAVEC sans date d'effet
+    date: 2026-10-14
   - type: legifrance
     reference: >-
       décret n° 50-1318 du 21 octobre 1950, article 2 (CARPV), ses onze versions. De 1950 à

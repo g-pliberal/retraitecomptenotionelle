@@ -1142,6 +1142,30 @@ class PartRetraiteSeuleEtat:
         raise KeyError((population, poste))
 
 
+#: Un franc vaut 1/6,55957 euro (règlement (CE) n° 2866/98 du Conseil).
+FRANCS_PAR_EURO = 6.55957
+
+
+def _au_plus_proche(valeurs: dict, annee: int, plafond):
+    """La valeur lue de cet exercice, ``haute`` ; sinon la plus proche qui le
+    précède, ou la première, ramenée au rapport des plafonds, ``estimee``.
+
+    Une valeur est un nombre ou une liste de nombres (des bornes).
+    ``(None, ESTIMEE)`` si rien n'est lu.
+    """
+    if not valeurs:
+        return None, Fiabilite.ESTIMEE
+    if annee in valeurs:
+        return valeurs[annee], Fiabilite.HAUTE
+    anterieures = [a for a in valeurs if a < annee]
+    source = max(anterieures) if anterieures else min(valeurs)
+    rapport = plafond(annee) / plafond(source)
+    valeur = valeurs[source]
+    if isinstance(valeur, list):
+        return [v * rapport for v in valeur], Fiabilite.ESTIMEE
+    return valeur * rapport, Fiabilite.ESTIMEE
+
+
 @dataclass(frozen=True)
 class ClasseCotisation:
     """Un palier : jusqu'à ce revenu, ce montant."""
@@ -1196,6 +1220,62 @@ class ClassesCotisation:
                 # Les paliers sans borne ferment la grille : ils passent en fin.
                 classes.sort(key=lambda c: (c.revenu_maximum is None,
                                             c.revenu_maximum or 0.0))
+        self._deplier_epoques(racine)
+
+    def _deplier_epoques(self, racine: Path) -> None:
+        """Une grille par exercice, tirée des textes de chaque époque.
+
+        `classes_cotisation_epoques.yaml` porte les classes de l'article 2,
+        rédaction par rédaction, le montant de la classe de référence que fixe
+        le décret annuel, et les bornes que la caisse publie ; son en-tête dit
+        les conventions, que voici. Un exercice sans montant lu prend le
+        montant lu le plus proche qui le précède, ou le premier, ramené au
+        rapport des plafonds ; de même des bornes, qu'une époque de moins de
+        classes prend rang pour rang. Une grille entière publiée, lue dans le
+        CSV, l'emporte.
+        """
+        chemin = racine / "reference" / "regimes" / "classes_cotisation_epoques.yaml"
+        if not chemin.exists():
+            return
+        from .chargement import charger_serie_annuelle
+
+        plafond = charger_serie_annuelle(
+            racine / "reference" / "macro" / "plafond_securite_sociale.csv",
+            colonne_valeur="pass_eur", nom="pass",
+        )
+        for regime, spec in charger_yaml(chemin).items():
+            publiees = self._table.setdefault(regime, {})
+            bornes = {int(a): [float(b) for b in v]
+                      for a, v in (spec.get("bornes") or {}).items()}
+            reference_points = float(spec.get("points_reference") or 1.0)
+            for epoque in spec["epoques"]:
+                montants = {
+                    int(a): float(m["montant"]) / (
+                        FRANCS_PAR_EURO if m.get("monnaie") == "FRF" else 1.0)
+                    for a, m in (epoque.get("montants")
+                                 or spec.get("montants") or {}).items()
+                }
+                multiples = epoque.get("multiples") or [
+                    p / reference_points for p in epoque["points"]
+                ]
+                for annee in range(int(epoque["debut"]), int(epoque["fin"]) + 1):
+                    if annee in publiees:
+                        continue
+                    unite, fiab_unite = _au_plus_proche(montants, annee, plafond)
+                    if unite is None:
+                        continue
+                    seuils, fiab_bornes = _au_plus_proche(bornes, annee, plafond)
+                    fiabilite = min(fiab_unite, fiab_bornes)
+                    seuils = list(seuils or [])[: len(multiples) - 1]
+                    publiees[annee] = [
+                        ClasseCotisation(
+                            revenu_maximum=(seuils[rang] if rang < len(seuils)
+                                            else None),
+                            cotisation=round(unite * multiple, 2),
+                            fiabilite=fiabilite,
+                        )
+                        for rang, multiple in enumerate(multiples)
+                    ]
 
     def __bool__(self) -> bool:
         return bool(self._table)
@@ -1551,7 +1631,8 @@ def dater_les_taux_moyens(code: str, periodes: tuple[PeriodeRegime, ...],
 #: Les fichiers YAML du dossier des régimes qui ne sont pas des régimes : tout
 #: autre fichier ``*.yaml`` en est un, hors ceux dont le nom commence par
 #: « _ » (le schéma).
-FICHIERS_HORS_REGIMES = ("inventaire.yaml", "pivots.yaml")
+FICHIERS_HORS_REGIMES = ("inventaire.yaml", "pivots.yaml",
+                         "classes_cotisation_epoques.yaml")
 
 
 #: Les champs du bloc ``inventaire`` d'un fichier de régime (``_schema.yaml``).

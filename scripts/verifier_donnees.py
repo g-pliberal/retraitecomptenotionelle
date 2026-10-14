@@ -61,7 +61,8 @@ REFERENCE = DONNEES / "reference"
 
 #: Les fichiers YAML du dossier des régimes qui ne sont pas des régimes (le
 #: chargeur du catalogue en tient la même liste).
-FICHIERS_HORS_REGIMES = ("inventaire.yaml", "pivots.yaml")
+FICHIERS_HORS_REGIMES = ("inventaire.yaml", "pivots.yaml",
+                         "classes_cotisation_epoques.yaml")
 
 
 def _fiche_regime(code: str) -> dict:

@@ -1,0 +1,200 @@
+# Cotisations par classes : la grille de chaque époque, lue dans les textes
+# -----------------------------------------------------------------------
+# source_id: cipav_fiches_pratiques
+#
+# Action 131, 14 octobre 2026. `classes_cotisation.csv` porte les grilles que
+# les caisses publient entières, bornes et montants ; ce fichier-ci porte ce
+# que les TEXTES fixent pour les autres exercices, et le chargeur
+# (`ClassesCotisation`) en déplie une grille par exercice, que le paquet
+# transmet au portage tel quel. Une grille entière publiée pour un exercice
+# l'emporte toujours sur celle que ce fichier reconstitue.
+#
+# TROIS PIÈCES PAR GRILLE.
+#
+# 1. LES CLASSES, par époque : l'article 2 du décret de la section, rédaction
+#    par rédaction, donne les points de chaque classe. Le montant de chaque
+#    classe est un multiple de celui de la classe de référence, que le décret
+#    annuel fixe : `multiples` à la Cipav, dont l'article l'écrit (« deux,
+#    trois, cinq, sept et dix fois le montant de la cotisation de la
+#    classe 1 ») ; `points`, rapportés à `points_reference`, à la CAVEC, dont
+#    l'article ne donne que les points et dont chaque classe coûte le même
+#    prix du point (2022 : 670 € pour 48 points, 20 925 € pour 1 500, à
+#    0,1 % près).
+#
+# 2. LE MONTANT DE LA CLASSE DE RÉFÉRENCE, exercice par exercice : le décret
+#    annuel des cotisations des complémentaires libérales, lu dans les index
+#    LEGI et JORF du dépôt (`montants`, francs convertis à 6,55957). Un
+#    exercice dont le décret n'est pas lu prend le montant lu le plus proche
+#    qui le précède dans la même époque, ramené au rapport des plafonds de la
+#    Sécurité sociale, ou, avant le premier, le premier ainsi ramené : sa
+#    fiabilité est alors `estimee`. Les `montants` d'une époque ne servent
+#    qu'à elle ; ceux du régime, à toutes ses époques qui n'en ont pas. La
+#    CAVEC a changé d'échelle entre 2007 (2 184 € les 48 points de la
+#    classe 4) et 2009 (480 € les 48 points de la classe A) : ses montants
+#    sont par époque.
+#
+# 3. LES BORNES DE REVENU : aucun texte publié au Journal officiel ne les
+#    porte, les statuts les renvoient au conseil d'administration. Celles que
+#    la caisse publie sont dans `bornes` ; pour un autre exercice, ce sont les
+#    bornes publiées les plus proches qui le précèdent, ou les premières pour
+#    un exercice antérieur, ramenées au rapport des plafonds, et `estimee`.
+#    Une époque qui a moins de classes que la grille publiée en prend les
+#    premières bornes, RANG POUR RANG, sa dernière classe allant au-delà :
+#    c'est une convention, que rien ne publie, et la fiche
+#    `cotisation_par_classes_liberales` la déclare.
+#
+# Ce que ce fichier ne porte pas : la CARPV, dont les classes de 1998 à 2015
+# sont écrites en actes médicaux vétérinaires, que rien ne publie en euros,
+# et avant 1998 en actes selon l'âge, sans égard au revenu ; la CAVEC
+# d'avant 1980, dont le décret de 1953 fait opter l'assujetti sans nommer le
+# revenu. L'une et l'autre gardent la grille la plus ancienne ramenée.
+
+cipav_complementaire:
+  reference: classe 1 (quatre points) jusqu'en 2012, classe A (36 points) ensuite
+  epoques:
+  # Décret n° 79-262, article 2, version de 1979 (LEGIARTI000006767473) :
+  # « six classes de cotisation », classe 1 à 4 points, 2 à 8, 3 à 12, 5 à
+  # 20, 7 à 28 et 10 à 40 points, « respectivement égaux à deux, trois,
+  # cinq, sept et dix fois le montant de la cotisation de la classe 1 » ;
+  # les classes 5, 7 et 10 ne deviennent obligatoires qu'en 1980, 1981 et
+  # 1982 : jusque-là, la classe la plus haute que l'on doive est la dernière
+  # obligatoire. Version du 21 juin 1985 (LEGIARTI000006767474) : mêmes
+  # classes, et un appel réduit possible, que rien ne dit appliqué.
+  - {debut: 1979, fin: 1979, multiples: [1, 2, 3]}
+  - {debut: 1980, fin: 1980, multiples: [1, 2, 3, 5]}
+  - {debut: 1981, fin: 1981, multiples: [1, 2, 3, 5, 7]}
+  - {debut: 1982, fin: 2012, multiples: [1, 2, 3, 5, 7, 10]}
+  # Version du 1er janvier 2013 (LEGIARTI000026892951) : « huit classes de
+  # cotisation », de 36 à 468 points, « respectivement égaux à
+  # 2,3,5,7,11,12 et 13 fois le montant de la cotisation de la classe A ».
+  # Les décrets de 2013 à 2018 nomment encore la « classe 1 ».
+  - {debut: 2013, fin: 2022, multiples: [1, 2, 3, 5, 7, 11, 12, 13]}
+  # Les montants de la classe de référence, une seule suite de 1979 à 2022 :
+  # la classe A de 2013 (1 184 €) prolonge la classe 1 de 2012 (1 156 €).
+  montants:
+      1986: {montant: 2288, monnaie: FRF, texte: LEGIARTI000006769506, decret: "n° 86-1022, art. 1"}
+      1987: {montant: 2360, monnaie: FRF, texte: LEGIARTI000006769918, decret: "n° 87-296, art. 1"}
+      1988: {montant: 2440, monnaie: FRF, texte: LEGIARTI000006770752, decret: "n° 88-94, art. 1"}
+      1990: {montant: 2640, monnaie: FRF, texte: LEGIARTI000006774899, decret: "n° 90-311, art. 1"}
+      1992: {montant: 2870, monnaie: FRF, texte: LEGIARTI000006776246, decret: "n° 92-326, art. 1"}
+      1993: {montant: 2986, monnaie: FRF, texte: LEGIARTI000006930455, decret: "n° 93-646, art. 1"}
+      1994: {montant: 3060, monnaie: FRF, texte: LEGIARTI000006777592, decret: "du 6 juillet 1994, art. 1"}
+      1995: {montant: 3132, monnaie: FRF, texte: LEGIARTI000006778334, decret: "n° 95-517, art. 1"}
+      1996: {montant: 3224, monnaie: FRF, texte: LEGIARTI000006771372, decret: "n° 96-1003, art. 1"}
+      1997: {montant: 3318, monnaie: FRF, texte: LEGIARTI000006771809, decret: "n° 97-830, art. 4"}
+      1998: {montant: 3406, monnaie: FRF, texte: LEGIARTI000006772562, decret: "n° 98-599, art. 4"}
+      1999: {montant: 3480, monnaie: FRF, texte: LEGIARTI000006779463, decret: "n° 99-959, art. 4"}
+      2000: {montant: 3652, monnaie: FRF, texte: LEGIARTI000006779649, decret: "n° 2000-1082, art. 4"}
+      2001: {montant: 3872, monnaie: FRF, texte: LEGIARTI000006780641, decret: "n° 2001-1182, art. 4"}
+      2002: {montant: 626, texte: LEGIARTI000006216022, decret: "n° 2002-1525, art. 4"}
+      2003: {montant: 694, texte: LEGIARTI000006226335, decret: "n° 2003-1214, art. 4"}
+      2004: {montant: 720, texte: LEGIARTI000006235225, decret: "n° 2004-1095, art. 1"}
+      2005: {montant: 756, texte: LEGIARTI000006248064, decret: "n° 2005-1683, art. 1"}
+      2006: {montant: 808, texte: LEGIARTI000006257601, decret: "n° 2006-1579, art. 1"}
+      2007: {montant: 864, texte: LEGIARTI000006268615, decret: "n° 2007-1437, art. 1"}
+      2008: {montant: 924, texte: LEGIARTI000019908651, decret: "n° 2008-1303, art. 1"}
+      2009: {montant: 988, texte: LEGIARTI000021537812, decret: "n° 2009-1635, art. 1"}
+      2010: {montant: 1032, texte: LEGIARTI000022942424, decret: "n° 2010-1253"}
+      2011: {montant: 1092, texte: LEGIARTI000024193768, decret: "n° 2011-674, art. 1"}
+      2012: {montant: 1156, texte: LEGIARTI000025691651, decret: "n° 2012-478, art. 1"}
+      2013: {montant: 1184, texte: LEGIARTI000028255086, decret: "n° 2013-1081, art. 1"}
+      2014: {montant: 1198, texte: LEGIARTI000029994686, decret: "n° 2014-1639, art. 1"}
+      2015: {montant: 1214, texte: LEGIARTI000031845891, decret: "n° 2015-1802, art. 1"}
+      2016: {montant: 1214, texte: LEGIARTI000031845892, decret: "n° 2015-1802, art. 2"}
+      2017: {montant: 1277, texte: LEGIARTI000037650996, decret: "n° 2017-730"}
+      2018: {montant: 1315, texte: LEGIARTI000037672459, decret: "n° 2017-730 modifié par le n° 2018-1033"}
+      2019: {montant: 1353, texte: LEGIARTI000039790979, decret: "n° 2018-1033 modifié par le n° 2019-1484"}
+      2020: {montant: 1392, texte: LEGIARTI000042869838, decret: "n° 2020-1738"}
+      2021: {montant: 1457, texte: LEGIARTI000043802982, decret: "n° 2021-945, art. 4"}
+      2022: {montant: 1527, texte: LEGIARTI000046809720, decret: "n° 2022-1633, art. 7"}
+  bornes:
+    # Guide pratique 2019 de la Cipav, page 17, « VOS REVENUS NETS
+    # D'ACTIVITÉS INDÉPENDANTES (2018 PUIS 2019) », et fiche pratique 2022,
+    # dont la grille entière est dans classes_cotisation.csv : les mêmes
+    # bornes. Les exercices 2020 et 2021, entre deux millésimes publiés
+    # égaux, prennent celles de 2019 ramenées au plafond, qui n'a pas bougé
+    # de 2020 à 2022 : à 1,5 % près les mêmes.
+    2019: [26580, 49280, 57850, 66400, 83060, 103180, 123300]
+
+cavec_complementaire:
+  reference: classe 4 (48 points) jusqu'en 2007, classe A (48 points) ensuite
+  points_reference: 48
+  epoques:
+  # Décret n° 53-506, article 2, version de 1980 (LEGIARTI000006770087) :
+  # « six classes de cotisations », classes 4, 5, 7, 10, 12 et 15 à 48, 60,
+  # 84, 120, 144 et 180 points ; « la cotisation due par chaque assujetti
+  # est celle de la classe à laquelle correspond [...] son revenu
+  # professionnel net ». La classe III, maintenue pour les revenus
+  # insuffisants « dans les conditions fixées par les statuts », et l'option
+  # pour la classe supérieure ne sont pas servies : le dépôt ne prête pas un
+  # choix qu'il ne connaît pas.
+  - debut: 1980
+    fin: 1986
+    points: [48, 60, 84, 120, 144, 180]
+    montants:
+      1984: {montant: 6720, monnaie: FRF, texte: LEGIARTI000006767447, decret: "n° 84-447, art. 1"}
+      1985: {montant: 7120, monnaie: FRF, texte: LEGIARTI000006768533, decret: "n° 85-1085, art. 1"}
+      1986: {montant: 7440, monnaie: FRF, texte: LEGIARTI000006769506, decret: "n° 86-1022, art. 1"}
+  # Version du 13 mars 1987 (LEGIARTI000006770088) : une septième classe,
+  # « Classe 18 correspondant à 216 points de retraite ». À partir de 1996,
+  # le décret ne fixe plus que la « Classe IV ».
+  - debut: 1987
+    fin: 2007
+    points: [48, 60, 84, 120, 144, 180, 216]
+    montants:
+      1987: {montant: 7656, monnaie: FRF, texte: LEGIARTI000006769918, decret: "n° 87-296, art. 1"}
+      1988: {montant: 7920, monnaie: FRF, texte: LEGIARTI000006770752, decret: "n° 88-94, art. 1"}
+      1990: {montant: 8448, monnaie: FRF, texte: LEGIARTI000006774899, decret: "n° 90-311, art. 1"}
+      1992: {montant: 9144, monnaie: FRF, texte: LEGIARTI000006776246, decret: "n° 92-326, art. 1"}
+      1993: {montant: 9552, monnaie: FRF, texte: LEGIARTI000006930455, decret: "n° 93-646, art. 1"}
+      1994: {montant: 9840, monnaie: FRF, texte: LEGIARTI000006777592, decret: "du 6 juillet 1994, art. 1"}
+      1995: {montant: 10032, monnaie: FRF, texte: LEGIARTI000006778334, decret: "n° 95-517, art. 1"}
+      1996: {montant: 10272, monnaie: FRF, texte: LEGIARTI000006771372, decret: "n° 96-1003, art. 1"}
+      1997: {montant: 10560, monnaie: FRF, texte: LEGIARTI000006771809, decret: "n° 97-830, art. 4"}
+      1998: {montant: 10800, monnaie: FRF, texte: LEGIARTI000006772562, decret: "n° 98-599, art. 4"}
+      1999: {montant: 11040, monnaie: FRF, texte: LEGIARTI000006779463, decret: "n° 99-959, art. 4"}
+      2000: {montant: 11280, monnaie: FRF, texte: LEGIARTI000006779649, decret: "n° 2000-1082, art. 4"}
+      2001: {montant: 11616, monnaie: FRF, texte: LEGIARTI000006780641, decret: "n° 2001-1182, art. 4"}
+      2002: {montant: 1814.88, texte: LEGIARTI000006216022, decret: "n° 2002-1525, art. 4"}
+      2003: {montant: 1848, texte: LEGIARTI000006226335, decret: "n° 2003-1214, art. 4"}
+      2004: {montant: 1904, texte: LEGIARTI000006235225, decret: "n° 2004-1095, art. 1"}
+      2005: {montant: 1987, texte: LEGIARTI000006248064, decret: "n° 2005-1683, art. 1"}
+      2006: {montant: 2083, texte: LEGIARTI000006257601, decret: "n° 2006-1579, art. 1"}
+      2007: {montant: 2184, texte: LEGIARTI000006268615, decret: "n° 2007-1437, art. 1"}
+  # Version du 28 janvier 2008 (LEGIARTI000018042862), décret n° 2008-85 :
+  # classes A à H, à 48, 180, 284, 444, 708, 1 080, 1 200 et 1 500 points.
+  # Le décret n° 2008-1303 fixe pour 2008 la « Classe A : 2 262 € », au prix
+  # du point de la classe 4 de 2007 et non de celui de 2009 (480 €) : servi
+  # tel quel, il appellerait 70 687 € la classe H. Ce montant n'est pas
+  # servi tant que la date d'effet de la nouvelle grille n'est pas lue ;
+  # 2008 prend celui de 2009 ramené.
+  - debut: 2008
+    fin: 2025
+    points: [48, 180, 284, 444, 708, 1080, 1200, 1500]
+    montants:
+      2009: {montant: 480, texte: LEGIARTI000021537812, decret: "n° 2009-1635, art. 1"}
+      2010: {montant: 501, texte: LEGIARTI000022942424, decret: "n° 2010-1253"}
+      2011: {montant: 518, texte: LEGIARTI000024193768, decret: "n° 2011-674, art. 1"}
+      2012: {montant: 549, texte: LEGIARTI000025691651, decret: "n° 2012-478, art. 1"}
+      2013: {montant: 573, texte: LEGIARTI000028255086, decret: "n° 2013-1081, art. 1"}
+      2014: {montant: 583, texte: LEGIARTI000029994686, decret: "n° 2014-1639, art. 1"}
+      2015: {montant: 600, texte: LEGIARTI000031845891, decret: "n° 2015-1802, art. 1"}
+      2016: {montant: 609, texte: LEGIARTI000031845892, decret: "n° 2015-1802, art. 2"}
+      2017: {montant: 617.76, texte: LEGIARTI000037650996, decret: "n° 2017-730"}
+      2018: {montant: 625.44, texte: LEGIARTI000037672459, decret: "n° 2017-730 modifié par le n° 2018-1033"}
+      2019: {montant: 639, texte: LEGIARTI000039790979, decret: "n° 2018-1033 modifié par le n° 2019-1484"}
+      2020: {montant: 648, texte: LEGIARTI000042869838, decret: "n° 2020-1738"}
+      2021: {montant: 653, texte: LEGIARTI000043802982, decret: "n° 2021-945, art. 4"}
+      2022: {montant: 670, texte: LEGIARTI000046809720, decret: "n° 2022-1633, art. 7"}
+      2023: {montant: 711, texte: LEGIARTI000048853156, decret: "n° 2023-1351"}
+      2024: {montant: 760, texte: LEGIARTI000050861772, decret: "n° 2024-1214"}
+      2025: {montant: 782, texte: LEGIARTI000052566419, decret: "n° 2025-1076, art. 12"}
+  bornes:
+    # « Quel est le montant de vos cotisations en 2022 ? » (cavec.fr, 4
+    # janvier 2022), et les pages du 4 janvier 2023, du 8 janvier 2024 et du
+    # 16 décembre 2024 pour 2025 : les mêmes bornes, sur les revenus de
+    # l'année précédente.
+    2022: [16190, 32350, 44790, 64560, 79040, 94850, 132780]
+    2023: [16190, 32350, 44790, 64560, 79040, 94850, 132780]
+    2024: [16190, 32350, 44790, 64560, 79040, 94850, 132780]
+    2025: [16190, 32350, 44790, 64560, 79040, 94850, 132780]
