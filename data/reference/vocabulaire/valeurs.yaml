@@ -496,6 +496,27 @@ listes:
           n'ouvre garde un départ unique, que la page dit non ouvert.
           Décision du propriétaire, le 29 septembre 2026 : « il faut que l'on
           colle le plus possible à la réalité »
+      exceptions_a_la_limite_d_age:
+        dit: >-
+          le fonctionnaire dont le départ saisi passe la limite d'âge de son
+          emploi a demandé et obtenu, autant que ce départ le demande, la
+          prolongation pour carrière incomplète, celle de l'actif jusqu'à la
+          limite des sédentaires et le maintien jusqu'à soixante-dix ans ; le
+          militaire a la limite la plus haute de sa catégorie
+        valeur: demandées et accordées autant que le départ saisi le demande
+        appliquee_par: radiation (droit/limite_age.py), que les départs, l'échéancier et le scénario 1 lisent ; son jumeau JavaScript
+        entrera_a: echeancier
+        raison: >-
+          ces exceptions se demandent, et l'employeur peut les refuser — dans
+          l'intérêt du service, ou par un refus motivé du maintien —, quand les
+          reculs pour enfants sont de droit ; or le formulaire ne demande ni
+          l'acte ni la réponse, et qui saisit un départ au-delà de sa limite
+          dit les avoir obtenues. Au-delà de la limite la plus tardive qu'elles
+          ouvrent, l'agent est radié des cadres, sa pension part de ce jour, et
+          ce qui suit n'est plus du service (droit/limite_age.py). Le militaire,
+          dont la saisie ne porte ni le grade ni le corps, prend la limite la
+          plus haute de sa catégorie. Décision du propriétaire, le 14 octobre
+          2026, sur la proposition de l'action 151, étape 2
       pension_d_invalidite_de_la_periode:
         dit: >-
           l'assuré dont la carrière finit par une période d'invalidité touche

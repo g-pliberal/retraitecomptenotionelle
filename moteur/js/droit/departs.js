@@ -29,6 +29,7 @@ import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import * as etranger from "./etranger.js";
 import * as invalidite from "./invalidite.js";
+import * as limiteAge from "./limite_age.js";
 import * as liquidation from "./liquidation.js";
 import * as ouvrirLeDroit from "./ouvrir.js";
 import * as lesProgressives from "./progressive.js";
@@ -49,6 +50,8 @@ export const MOTIF_DEMANDE = "demande";
 export const MOTIF_INVALIDITE = "invalidite";
 /** La pension du fonctionnaire radié des cadres pour invalidité, à la radiation. */
 export const MOTIF_RADIATION = "radiation";
+/** La pension du fonctionnaire ou du militaire radié par limite d'âge. */
+export const MOTIF_LIMITE = "limite_d_age";
 
 /**
  * Ce qu'une demande devient quand elle ne date pas sa pension : servie avec la
@@ -421,6 +424,13 @@ export function departsEtDemandes(moteur, carriereSaisie) {
     substituee = null;
   }
   const substitues = moteur.invalidites.regimes("substitution");
+  // La radiation par limite d'âge, quand elle tombe avant la fin des services
+  // déclarés : la pension du code des pensions en part, à l'ouverture du droit
+  // si elle vient après.
+  let limite = limiteAge.radiation(moteur, carriere);
+  if (limite !== null && !limite.forcee) {
+    limite = null;
+  }
   const dates = unites.map((unite, i) => {
     const voulueDe = () => {
       let voulue = null;
@@ -436,6 +446,10 @@ export function departsEtDemandes(moteur, carriereSaisie) {
     // radiation, à tout âge (L. 24, I, 2°).
     if ([...unite].some((code) => invalidite.radiationDuRegime(moteur, code, carriere) !== null)) {
       return [carriere.radiationPourInvalidite.date, MOTIF_RADIATION];
+    }
+    if (limite !== null && [...unite].some((code) => limite.regimes.has(code))) {
+      return ouvertures[i].rang <= limite.date.rang
+        ? [limite.date, MOTIF_LIMITE] : [ouvertures[i], MOTIF_OUVERTURE];
     }
     if (substituee !== null && [...unite].some((code) => substitues.has(code))) {
       const presumee = [substituee.date, MOTIF_INVALIDITE];
@@ -507,7 +521,8 @@ export function departsEtDemandes(moteur, carriereSaisie) {
       return MOTIF_DEPART;
     }
     const motifs = new Set([...regimes].map((code) => parRegime.get(code)[1]));
-    for (const retenu of [MOTIF_DEMANDE, MOTIF_SORTIE, MOTIF_RADIATION, MOTIF_INVALIDITE]) {
+    for (const retenu of [MOTIF_DEMANDE, MOTIF_SORTIE, MOTIF_RADIATION, MOTIF_LIMITE,
+      MOTIF_INVALIDITE]) {
       if (motifs.has(retenu)) {
         return retenu;
       }

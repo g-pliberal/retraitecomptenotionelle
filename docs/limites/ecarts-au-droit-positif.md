@@ -290,27 +290,38 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   les <!--chiffre:illustration()-->17<!--/--> années des ingénieurs du contrôle de la navigation aérienne et les <!--chiffre:illustration()-->32<!--/-->
   des égoutiers et des identificateurs de l'institut médico-légal ne sont pas
   distinguées, faute d'un corps déclaré.
-- **La limite d'âge des fonctionnaires : lue, pas encore appliquée.** Le
-  fonctionnaire civil est radié des cadres à la limite d'âge de son emploi —
-  soixante-sept ans pour le sédentaire depuis la génération 1955, un âge plus bas
-  pour l'actif, que son statut fixe —, et n'est maintenu au-delà que par les
-  exceptions que la loi prévoit : un an par enfant à charge, trois au plus, la
-  prolongation de la carrière incomplète, celle de l'actif jusqu'à la limite des
-  sédentaires et, depuis le 14 juin 2023, le maintien sur autorisation jusqu'à
-  soixante-dix ans, qui borne le tout. Le modèle n'en applique aucune : il garde
-  le fonctionnaire en activité, traitement, services et surcote compris, jusqu'au
-  départ saisi, que la saisie accepte depuis le 10 octobre 2026 jusqu'au dernier
-  âge que les tables de mortalité convertissent. La fiche
-  `limite_age_fonction_publique` et celles qu'elle relie portent le droit ; ce que
-  le simulateur fera au-delà de la limite attend la décision du propriétaire
+- **La limite d'âge des fonctionnaires : appliquée, ses exceptions présumées.**
+  Le fonctionnaire civil dont le départ saisi passe la limite d'âge de son
+  emploi est radié des cadres à la limite, reculée de droit d'un an par enfant à
+  charge, trois au plus, ou d'un an pour le parent de trois enfants, et prolongée
+  autant que le départ le demande par les exceptions que le modèle présume
+  demandées et accordées : la prolongation pour carrière incomplète, celle de
+  l'actif jusqu'à la limite des sédentaires et, depuis le 14 juin 2023, le
+  maintien jusqu'à soixante-dix ans, qui borne le tout ; sa pension part de la
+  radiation, et ses services s'arrêtent là. Le militaire prend la limite la plus
+  haute de sa catégorie, soixante-six ans pour l'officier et cinquante-neuf pour
+  le non-officier depuis la loi de 2010. Restent approchés ou dehors : le corps,
+  que la saisie ne porte pas — le sédentaire d'avant 1985 prend la limite du
+  corps le plus haut, soixante-dix ans puis soixante-huit, et le policier celle
+  du corps d'encadrement et d'application, cinquante-sept ans — ; un refus de
+  l'employeur, que le modèle ne présume jamais ; la prolongation de l'actif
+  avant 2010, dont le décret n° 48-1907 n'est pas lu, si bien que l'actif né
+  avant 1950 est radié à sa limite ; les bonifications, que la prolongation pour
+  carrière incomplète ne compte pas ; le recul pour enfant mort pour la France
+  ou invalide, et le maintien du militaire pour les besoins des forces ; les
+  contractuels, les ouvriers de l'État et les régimes spéciaux, qui ont leur
+  propre limite ; et les comptes notionnels, qui gardent les services déclarés
+  au-delà de la radiation. Les fiches `limite_age_fonction_publique` et
+  `limite_age_militaires`, et celles qu'elles relient, portent le droit
   (action 151, étape 3).
 - **Pension militaire : la durée est servie, le grade ne l'est pas.** Les deux
   statuts militaires opposent la durée de services qui ouvre la pension —
   <!--chiffre:maximum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=non_officier)-->17<!--/--> ans pour un non-officier, <!--chiffre:maximum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=officier)-->27<!--/--> pour un officier, <!--chiffre:minimum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=non_officier)-->15<!--/--> et <!--chiffre:minimum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=officier)-->25<!--/--> avant la loi du
   9 novembre 2010 —, l'âge de jouissance différée de l'article L. 25 et la
   décote propre du II de l'article L. 14, plafonnée à dix trimestres. Restent
-  dehors : la LIMITE D'ÂGE DE GRADE, qui ouvre la pension quelle que soit la
-  durée accomplie et qui sert d'âge d'annulation de la décote au militaire
+  dehors : la LIMITE D'ÂGE DE GRADE — le modèle radie le militaire à la plus
+  haute de sa catégorie, sans connaître la sienne —, qui ouvre la pension quelle
+  que soit la durée accomplie et qui sert d'âge d'annulation de la décote au militaire
   liquidant à <!--chiffre:illustration()-->52<!--/--> ans ou plus (L. 14 bis, 4°) — le modèle ne connaît pas le
   grade et applique donc à tous le barème du II —, et la limite de durée de
   services, qui l'ouvre de la même façon. Conséquence : un officier supérieur

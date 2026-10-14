@@ -48,6 +48,7 @@ import * as lesDeparts from "./droit/departs.js";
 import { fusionnerLesCharges } from "./droit/commun.js";
 import { foyerEtNet } from "./droit/foyer.js";
 import { ageDeLAspa } from "./droit/invalidite.js";
+import * as limiteAge from "./droit/limite_age.js";
 import * as liquidation from "./droit/liquidation.js";
 import * as lesProgressives from "./droit/progressive.js";
 
@@ -238,8 +239,12 @@ export class ScenarioActuel {
    * net ». Les drapeaux sont ce qu'une couche d'un seul calcul neutralise ;
    * `nature` est celle de la demande. Voir le Python.
    */
-  calculer(carriereSaisie, ignorerPenaliteAge = false, avantagesNonContributifs = true,
+  calculer(carriereDonnee, ignorerPenaliteAge = false, avantagesNonContributifs = true,
     avpf = true, liquiderSuccessions = true, pointsGratuits = null, nature = "definitive") {
+    // Les services qui passent la limite d'âge s'arrêtent à la radiation
+    // (`droit/limite_age.js`).
+    const carriereSaisie = nature !== "fictive"
+      ? limiteAge.radier(this, carriereDonnee) : carriereDonnee;
     // `pointsGratuits` nul suit `avantagesNonContributifs` : voir le Python.
     const avecPointsGratuits = pointsGratuits ?? avantagesNonContributifs;
     const neutralisations = [

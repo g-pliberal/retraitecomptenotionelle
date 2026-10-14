@@ -46,6 +46,7 @@ from .droit import cumul as _cumul
 from .droit import departs as _departs
 from .droit import foyer as _foyer
 from .droit import invalidite as _invalidite
+from .droit import limite_age as _limite_age
 from .droit import liquidation as _liquidation
 from .droit import progressive as _progressive
 from .droit import reversion as _reversion
@@ -169,7 +170,10 @@ class Echeancier:
         """Les événements de ``carriere``, dans l'ordre, puis, s'il y en a une,
         l'échéance ``echeance`` (une année), à laquelle les pensions liquidées
         sont menées. Une retraite progressive vient d'abord ; le départ qui
-        la suit est celui de la pension définitive."""
+        la suit est celui de la pension définitive. Les services de
+        fonctionnaire ou de militaire qui passent la limite d'âge s'arrêtent à
+        la radiation (:func:`~.droit.limite_age.radier`)."""
+        carriere = _limite_age.radier(self.moteur, carriere)
         self._progresser(carriere)
         departs, demandes = _departs.departs_et_demandes(self.moteur, carriere)
         if len(departs) > 1 or (departs and not departs[0].unique):

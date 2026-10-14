@@ -14,7 +14,7 @@ domaine: age
 regimes: [fonction_publique_etat, pensions_civiles_1853]
 etape: preparer_la_chronologie
 face: droit
-etat: manquante
+etat: approchee
 lit:
 - le grade, le corps et le lien au service du militaire — de carrière ou sous contrat —,
   que la saisie ne porte pas ; elle ne distingue que l'officier du non-officier
@@ -39,6 +39,8 @@ versions:
   bornes:
     age_atteint: [null, 2011-07-01]
   contenu:
+    parametres:
+      limites: {non_officier: 57, officier: 64}
     droit: >-
       « Les limites d'âge et âges maximaux de maintien en première section des
       militaires » par grade et par corps ; les limites de durée de service des militaires
@@ -63,6 +65,15 @@ versions:
   bornes:
     age_atteint: [2011-07-01, 2023-07-01]
   contenu:
+    parametres:
+      limites_avant: {non_officier: 57, officier: 64}
+      ecart_de_reference: 0
+      marche:
+      - {depuis: "2011-07-01", mois: 4}
+      - {depuis: "2012-01-01", mois: 9}
+      - {depuis: "2013-01-01", mois: 14}
+      - {depuis: "2014-01-01", mois: 19}
+      - {depuis: "2015-01-01", mois: 24}
     droit: >-
       « la limite d'âge est fixée, à compter du 1er janvier 2015 : 1° A quarante-sept ans
       lorsque cette limite d'âge était fixée antérieurement à quarante-cinq ans ; 2° A
@@ -89,6 +100,15 @@ versions:
   bornes:
     age_atteint: [2023-07-01, null]
   contenu:
+    parametres:
+      limites_avant: {non_officier: 57, officier: 64}
+      ecart_de_reference: 0
+      marche:
+      - {depuis: "2011-07-01", mois: 4}
+      - {depuis: "2012-01-01", mois: 9}
+      - {depuis: "2013-01-01", mois: 14}
+      - {depuis: "2014-01-01", mois: 19}
+      - {depuis: "2015-01-01", mois: 24}
     droit: >-
       les limites par grade et par corps de L. 4139-16, rédaction du 19 août 2026 : pour les
       sous-officiers de carrière de l'armée de terre, de la marine ou de l'air, quarante-sept
@@ -113,8 +133,11 @@ versions:
       4141-5) ; les orchestres de la Garde républicaine, par périodes de deux ans
       renouvelables, sans âge qui les borne (L. 4139-16)
   exemples: aucun trouvé
+presomptions:
+  exceptions_a_la_limite_d_age: >-
+    la limite du militaire, dont le grade et le corps ne sont pas saisis : la plus haute de sa catégorie
 sources:
-  lu_le: 2026-10-10
+  lu_le: 2026-10-14
   prochaine_relecture: 2027-10-10
   a_relire:
   - >-
@@ -122,8 +145,9 @@ sources:
     reproduit pas (« voir le fac-similé ») : lire leurs fac-similés au Journal officiel.
     Et le statut général des militaires avant 2007 (lois n° 72-662 et n° 2005-270).
   - >-
-    Le simulateur ne connaît que l'officier et le non-officier : quelle limite opposer à
-    chacun, sans le grade ni le corps, est à décider à l'étape 3.
+    Le simulateur ne connaît que l'officier et le non-officier, et leur oppose la limite
+    la plus haute de leur catégorie (décision du propriétaire, le 14 octobre 2026) : la
+    limite du grade attend que la saisie le porte.
   lectures:
   - type: legifrance
     reference: >-
@@ -140,8 +164,17 @@ historique:
 - >-
   2026-10-10 — née avec l'action 151, étape 2, avec la fiche `limite_age_fonction_publique`
   des civils.
+- >-
+  2026-10-14 — appliquée, action 151, étape 3, sur la décision du propriétaire du même
+  jour : le militaire, dont la saisie ne porte ni le grade ni le corps, est radié à la
+  limite la plus haute de sa catégorie, et sa pension part de la radiation
+  (`droit/limite_age.py`).
 effet: >-
-  Tout militaire dont le départ saisi passe sa limite d'âge ou de durée de services : le
-  modèle, qui ne connaît ni le grade ni le corps, le garde en service jusqu'au départ
-  saisi, jusqu'à 119 ans depuis l'étape 1 de l'action 151, quand la loi le raye des
-  cadres de quarante-sept à soixante-sept ans, trois de plus s'il est maintenu.
+  Tout militaire dont le départ saisi passe la limite la plus haute de sa catégorie —
+  cinquante-neuf ans pour le non-officier, soixante-six pour l'officier depuis 2015, deux de
+  moins avant la loi de 2010 — est radié des cadres à cette limite, et sa pension militaire
+  en part : le militaire non officier né en 1975, entré à 21 ans et saisi parti à 64 ans,
+  perd 13 % de sa pension au scénario 1 (témoin `statut_militaire`), mesuré le 14 octobre
+  2026. Approchée : la limite de son grade, souvent plus basse, et la limite de durée de
+  services du militaire sous contrat ne sont pas saisies, et le maintien de L. 4139-17 pour
+  les besoins des forces n'est pas présumé.

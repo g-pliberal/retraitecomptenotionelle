@@ -10,7 +10,7 @@ domaine: age
 regimes: [fonction_publique_etat, cnracl]
 etape: preparer_la_chronologie
 face: droit
-etat: manquante
+etat: transcrite
 lit:
 - l'emploi de l'assuré à sa limite d'âge, sédentaire ou de la catégorie active, et sa
   limite (fiche `limite_age_fonction_publique`)
@@ -51,6 +51,8 @@ versions:
   bornes:
     age_atteint: [2023-06-14, null]
   contenu:
+    parametres:
+      jusqu_a: 70
     droit: >-
       « Toutefois, le fonctionnaire occupant un emploi qui ne relève pas de la catégorie
       active et auquel s'applique la limite d'âge mentionnée au 1° du présent article ou
@@ -70,14 +72,18 @@ versions:
       avant le soixante-septième anniversaire, réponse de l'employeur trois mois au moins
       avant
   exemples: aucun trouvé
+presomptions:
+  exceptions_a_la_limite_d_age: >-
+    la demande du maintien et l'autorisation de l'employeur, que la saisie ne porte pas
 sources:
-  lu_le: 2026-10-10
+  lu_le: 2026-10-14
   prochaine_relecture: 2027-10-10
   a_relire:
   - >-
-    L'autorisation est discrétionnaire, et la saisie ne la porte pas : l'étape 3 dira si
-    le simulateur la présume accordée quand le départ saisi la demande, et comment la
-    page le dit.
+    L'autorisation est discrétionnaire, et la saisie ne la porte pas : le simulateur la
+    présume accordée autant que le départ saisi la demande (présomption
+    `exceptions_a_la_limite_d_age`) ; la page dira ce qu'elle présume (action 151, bloc
+    « Reprise »).
   lectures:
   - type: legifrance
     reference: >-
@@ -100,9 +106,12 @@ sources:
 historique:
 - >-
   2026-10-10 — née avec l'action 151, étape 2, avec la fiche `limite_age_fonction_publique`.
+- >-
+  2026-10-14 — appliquée, action 151, étape 3, sur la décision du propriétaire du même
+  jour : présumé autorisé autant que le départ saisi le demande, pour le sédentaire qui
+  atteint sa limite depuis le 14 juin 2023 (`droit/limite_age.py`).
 effet: >-
-  Aucun aujourd'hui, le modèle n'appliquant aucune limite d'âge. La limite appliquée, ce
-  maintien est ce qui permet à un sédentaire parti depuis le 14 juin 2023 de servir de
-  soixante-sept à soixante-dix ans, et soixante-dix ans est l'âge au-delà duquel le droit
-  ne garde plus aucun fonctionnaire civil, hors les corps de la fiche
-  `maintiens_en_fonctions_de_certains_corps`.
+  Le sédentaire qui atteint sa limite d'âge depuis le 14 juin 2023 et dont le départ saisi
+  la passe est maintenu jusqu'à ce départ, soixante-dix ans au plus, puis radié : né en
+  1990, il touche à tout départ saisi au-delà de 70 ans la pension d'un départ à 70 ans.
+  L'autorisation, que l'employeur peut refuser, est présumée accordée.

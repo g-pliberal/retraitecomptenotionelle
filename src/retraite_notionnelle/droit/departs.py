@@ -29,6 +29,10 @@ liquide :
   ``droits_apres_la_premiere_pension``) : le modèle ne la présume pas ;
 * le fonctionnaire radié des cadres pour invalidité liquide sa pension à la
   radiation, à tout âge (fiche ``retraite_pour_invalidite_fonction_publique``) ;
+* le fonctionnaire et le militaire radiés des cadres par limite d'âge avant la
+  fin des services que la saisie déclare liquident leur pension à la
+  radiation, ou à l'ouverture du droit si elle vient après
+  (:func:`~.limite_age.radiation`) ;
 * la pension de vieillesse de l'ex-invalide remplace sa pension d'invalidité
   d'office, au premier jour du mois qui suit l'âge de la substitution, dans
   le régime général et les régimes alignés, avant son départ déclaré s'il le
@@ -61,7 +65,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
-from . import compter, coordonner, etranger, invalidite, ouvrir
+from . import compter, coordonner, etranger, invalidite, limite_age, ouvrir
 from .commun import derniere_annee, ligne_cotisee, periode_de_liquidation
 
 if TYPE_CHECKING:
@@ -89,6 +93,9 @@ MOTIF_INVALIDITE = "invalidite"
 #: La pension du fonctionnaire radié des cadres pour invalidité, à la radiation
 #: (fiche ``retraite_pour_invalidite_fonction_publique``).
 MOTIF_RADIATION = "radiation"
+#: La pension du fonctionnaire ou du militaire radié des cadres par limite
+#: d'âge (:func:`~.limite_age.radiation`).
+MOTIF_LIMITE = "limite_d_age"
 
 #: Ce qu'une demande devient quand elle ne date pas sa pension : servie avec
 #: la pension que la loi lui attache — le régime liquidé avec elle, ou le
@@ -110,7 +117,8 @@ class Depart:
     #: l'armée ; ``demande``, la date que la personne demande ;
     #: ``invalidite``, la pension de vieillesse qui remplace la pension
     #: d'invalidité ; ``radiation``, la pension du fonctionnaire radié des
-    #: cadres pour invalidité.
+    #: cadres pour invalidité ; ``limite_d_age``, celle du fonctionnaire ou du
+    #: militaire radié par limite d'âge.
     motif: str = MOTIF_DEPART
 
     @property
@@ -135,7 +143,8 @@ class DemandeExaminee:
     #: Le mois où la pension commence ; ``None`` sans pension de ce régime.
     retenue: DateMois | None
     #: ``demande`` : la date demandée ; ``depart``, ``ouverture``, ``sortie``,
-    #: ``invalidite`` ou ``radiation`` : la date présumée, que la demande
+    #: ``invalidite``, ``radiation`` ou ``limite_d_age`` : la date présumée,
+    #: que la demande
     #: n'avance pas ;
     #: ``ensemble`` : celle de la pension que la loi lui attache ;
     #: ``sans_pension`` : la carrière n'a pas de pension dans ce régime.
@@ -410,6 +419,12 @@ def departs_et_demandes(moteur: ScenarioActuel, carriere: Carriere
     if substituee is not None and substituee.date > declare:
         substituee = None
     substitues = moteur.invalidites.regimes("substitution")
+    # La radiation par limite d'âge, quand elle tombe avant la fin des
+    # services déclarés : la pension du code des pensions en part, à
+    # l'ouverture du droit si elle vient après.
+    limite = limite_age.radiation(moteur, carriere)
+    if limite is not None and not limite.forcee:
+        limite = None
     dates: list[tuple[DateMois, str]] = []
     for i, unite in enumerate(unites):
         # Le fonctionnaire radié des cadres pour invalidité liquide sa pension
@@ -420,6 +435,10 @@ def departs_et_demandes(moteur: ScenarioActuel, carriere: Carriere
                           is not None), None)
         if radiation is not None:
             dates.append((radiation.date, MOTIF_RADIATION))
+            continue
+        if limite is not None and not unite.isdisjoint(limite.regimes):
+            dates.append((limite.date, MOTIF_LIMITE) if ouvertures[i] <= limite.date
+                         else (ouvertures[i], MOTIF_OUVERTURE))
             continue
         if substituee is not None and not unite.isdisjoint(substitues):
             presumee = (substituee.date, MOTIF_INVALIDITE)
@@ -473,7 +492,8 @@ def departs_et_demandes(moteur: ScenarioActuel, carriere: Carriere
         if quand == declare:
             return MOTIF_DEPART
         motifs = {par_regime[code][1] for code in par_date[quand]}
-        for retenu in (MOTIF_DEMANDE, MOTIF_SORTIE, MOTIF_RADIATION, MOTIF_INVALIDITE):
+        for retenu in (MOTIF_DEMANDE, MOTIF_SORTIE, MOTIF_RADIATION, MOTIF_LIMITE,
+                       MOTIF_INVALIDITE):
             if retenu in motifs:
                 return retenu
         return MOTIF_OUVERTURE

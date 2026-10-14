@@ -1211,6 +1211,13 @@ def test_la_formule_affichee_retrouve_la_pension_du_regime(contexte, nom, champs
         )
 
 
+def _montant_a_sa_date(pension) -> float:
+    """Le montant d'une pension à sa date d'effet, que sa formule produit :
+    celui de la ligne, sauf pour une pension servie à une autre date que le
+    départ déclaré, que la ligne mène à ce départ."""
+    return pension.montant if pension.montant_a_l_effet is None else pension.montant_a_l_effet
+
+
 def _refaire_la_formule(detail: str) -> float | None:
     """Le montant que produit une formule affichée, ou None si elle n'en est pas une.
 
@@ -1378,11 +1385,14 @@ def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
                         branches.add(marqueur)
                 # Les grandeurs de la formule sont arrondies pour l'affichage :
                 # un euro sur le salaire de référence, un centime sur les points.
-                if abs(refait - pension.montant) > 0.25:
+                # Une pension servie avant le départ — celle du militaire radié
+                # à sa limite d'âge — a sa formule à sa date d'effet.
+                montant = _montant_a_sa_date(pension)
+                if abs(refait - montant) > 0.25:
                     ecarts.append(
                         f"{statut}/{naissance}/{liquidation} {pension.regime} : "
                         f"« {pension.detail[:70]} » donne {refait:,.2f} €, "
-                        f"la ligne affiche {pension.montant:,.2f} €"
+                        f"la ligne affiche {montant:,.2f} €"
                     )
     for nom, champs in particuliers:
         for pension in contexte.simuler(
@@ -1397,10 +1407,10 @@ def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
                              "pension majorée de référence", "complément différentiel"):
                 if marqueur in pension.detail:
                     branches.add(marqueur)
-            if abs(refait - pension.montant) > 0.25:
+            if abs(refait - _montant_a_sa_date(pension)) > 0.25:
                 ecarts.append(
                     f"{nom} {pension.regime} : « {pension.detail[:70]} » donne "
-                    f"{refait:,.2f} €, la ligne affiche {pension.montant:,.2f} €"
+                    f"{refait:,.2f} €, la ligne affiche {_montant_a_sa_date(pension):,.2f} €"
                 )
 
     assert not ecarts, "\n".join(ecarts[:8])

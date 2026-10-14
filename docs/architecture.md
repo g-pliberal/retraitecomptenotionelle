@@ -815,6 +815,11 @@ Le relevé des droits et le résultat le signalent.
     remplace (version 5.26). Elle non plus ne reprend pas la valeur d'avant
     elle — tout liquider au départ, à l'âge du régime le plus précoce —, qui
     servait des pensions que le droit n'ouvrait pas encore (version 5.21).
+  - les exceptions à la limite d'âge du fonctionnaire demandées et accordées
+    autant que le départ déclaré le demande — la prolongation pour carrière
+    incomplète, celle de l'actif, le maintien jusqu'à soixante-dix ans —, et
+    le militaire à la limite la plus haute de sa catégorie : au-delà, il est
+    radié des cadres, et sa pension part de la radiation (action 151, étape 3) ;
   - une pension d'invalidité depuis le début de la période d'invalidité par
     laquelle la carrière finit, quand l'assuré ne la date pas : l'âge légal le
     trouve invalide, et la pension de vieillesse la remplace (version 5.29) ;

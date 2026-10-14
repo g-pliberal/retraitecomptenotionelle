@@ -301,6 +301,25 @@ def _cas() -> list[dict]:
     # le diviseur n'était jamais pris si près de la fin des tables.
     for age in ("90", str(AGE_LIQUIDATION_MAXIMAL)):
         cas.append((f"liquidation_{age}", {"liquidation": age}))
+    # LA LIMITE D'ÂGE DES FONCTIONNAIRES (action 151, étape 3) : le départ
+    # saisi la passe, et la radiation des cadres arrête les services et date
+    # la pension du code des pensions, avec les exceptions que le départ
+    # demande — le maintien jusqu'à soixante-dix ans, le recul du parent de
+    # trois enfants, les prolongations de l'actif —, ou la limite la plus haute
+    # de sa catégorie pour le militaire, ou celle de 1975 pour un sédentaire
+    # né en 1912.
+    for nom, modifications in (
+        ("limite_age_sedentaire", {"statut": "fonctionnaire_etat", "liquidation": "75"}),
+        ("limite_age_sedentaire_trois_enfants", {
+            "statut": "fonctionnaire_etat", "liquidation": "75", "enfants": "3"}),
+        ("limite_age_policier", {"statut": "policier", "liquidation": "70"}),
+        ("limite_age_aide_soignant_1952", {
+            "statut": "aide_soignant", "naissance": "1952", "liquidation": "70"}),
+        ("limite_age_officier", {"statut": "militaire_officier", "liquidation": "70"}),
+        ("limite_age_sedentaire_1912", {
+            "statut": "fonctionnaire_etat", "naissance": "1912", "liquidation": "72"}),
+    ):
+        cas.append((nom, modifications))
     cas.append(("liquidation_demi", {"liquidation": "64.5", "debut": "20.5"}))
     # LA DURÉE MAJORÉE APRÈS L'ÂGE DU TAUX PLEIN : 2,5 % de la durée par
     # trimestre écoulé au-delà de cet âge, pour qui n'a pas la durée (R. 351-7).

@@ -3373,6 +3373,7 @@ const POURQUOI_CE_DEPART = {
   demande: "à la date où vous la demandez",
   invalidite: "en remplacement de votre pension d'invalidité",
   radiation: "à votre radiation des cadres pour invalidité",
+  limite_d_age: "à votre radiation des cadres par limite d'âge",
 };
 
 /**
@@ -3392,6 +3393,8 @@ const POURQUOI_PAS_A_CETTE_DATE = {
     + `1<sup>er</sup> ${retenue}, quelle que soit la date de votre demande`,
   radiation: (retenue) => "la pension du fonctionnaire radié des cadres pour invalidité "
     + `se liquide à sa radiation, le 1<sup>er</sup> ${retenue}`,
+  limite_d_age: (retenue) => "la loi vous radie des cadres à votre limite d'âge, et votre "
+    + `pension de fonctionnaire part de ce jour, le 1<sup>er</sup> ${retenue}`,
   ensemble: (retenue, complementaire) => (complementaire
     ? "elle suit la pension de base dont elle partage les années, servie le "
       + `1<sup>er</sup> ${retenue}`

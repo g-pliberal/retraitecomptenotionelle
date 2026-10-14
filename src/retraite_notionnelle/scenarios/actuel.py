@@ -85,6 +85,7 @@ from ..droit import cumul as _cumul
 from ..droit import departs as _departs
 from ..droit import foyer as _foyer
 from ..droit import invalidite as _invalidite
+from ..droit import limite_age as _limite_age
 from ..droit import liquidation as _liquidation
 from ..droit import progressive as _progressive
 from ..droit import seconde as _seconde
@@ -1184,7 +1185,10 @@ class FichesDatees:
     1975, que ``revalorisation.majorations_forfaitaires`` lit, et les primes que
     la loi assujettit à la retenue pour pension, que ``primes.prime_de_la_pension``
     lit, et les plans de revalorisation des retraites agricoles de 1997 à 2008,
-    que ``completer.majoration_retraite_proportionnelle`` lit.
+    que ``completer.majoration_retraite_proportionnelle`` lit, et la limite
+    d'âge des fonctionnaires et ses exceptions, que ``limite_age.radiation``
+    lit au jour où la limite est atteinte (date ``age_atteint``,
+    :data:`~retraite_notionnelle.droit.limite_age.FICHES`).
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
@@ -1204,7 +1208,12 @@ class FichesDatees:
             "majorations_forfaitaires_1972_1982",
             "indemnite_sujetions_speciales_police",
             "prime_speciale_sujetion_aides_soignants",
-            "indemnite_de_feu_sapeurs_pompiers", "majoration_retraite_proportionnelle")
+            "indemnite_de_feu_sapeurs_pompiers", "majoration_retraite_proportionnelle",
+            "limite_age_fonction_publique", "limite_age_militaires",
+            "recul_limite_age_enfants", "prolongation_activite_carriere_incomplete",
+            "prolongation_activite_categorie_active",
+            "maintien_en_fonctions_jusqu_a_70_ans",
+            "plafond_limite_age_fonction_publique")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}
@@ -3204,8 +3213,13 @@ class ScenarioActuel:
 
         L'agent parti de la fonction publique sans droit à pension y est
         RÉTABLI au régime général et à l'Ircantec
-        (:func:`~retraite_notionnelle.droit.coordonner.retablir`).
+        (:func:`~retraite_notionnelle.droit.coordonner.retablir`) ; le
+        fonctionnaire et le militaire dont les services déclarés passent la
+        limite d'âge sont RADIÉS à la limite
+        (:func:`~retraite_notionnelle.droit.limite_age.radier`).
         """
+        if nature != "fictive":
+            carriere = _limite_age.radier(self, carriere)
         if points_gratuits is None:
             points_gratuits = avantages_non_contributifs
         neutralisations = frozenset(nom for nom, neutre in (

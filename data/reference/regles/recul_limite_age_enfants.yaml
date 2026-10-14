@@ -12,7 +12,7 @@ domaine: enfants
 regimes: [fonction_publique_etat, pensions_civiles_1853, cnracl]
 etape: preparer_la_chronologie
 face: droit
-etat: manquante
+etat: approchee
 lit:
 - la limite d'âge de l'emploi (fiche `limite_age_fonction_publique`)
 - les enfants de l'assuré, leurs naissances, et ceux qui sont à sa charge — au sens des
@@ -39,6 +39,15 @@ versions:
   bornes:
     age_atteint: [null, 1986-12-26]
   contenu:
+    parametres:
+      par_enfant: 1
+      enfants_au_plus: 3
+      age_a_charge: 20
+      parent_de_trois: 1
+      age_du_parent: 50
+      enfants_du_parent: 3
+      plafond_par_enfant: {sedentaire: 73, active: 68}
+      plafond_du_parent: {sedentaire: 71, active: 66}
     droit: >-
       « Sont maintenues en vigueur les dispositions de l'article 4 de la loi du 18 août
       1936 et de l'article 18 de la loi du 27 février 1948 relatives au recul de la limite
@@ -52,6 +61,15 @@ versions:
   bornes:
     age_atteint: [1986-12-26, 2022-03-01]
   contenu:
+    parametres:
+      par_enfant: 1
+      enfants_au_plus: 3
+      age_a_charge: 20
+      parent_de_trois: 1
+      age_du_parent: 50
+      enfants_du_parent: 3
+      plafond_par_enfant: {sedentaire: 73, active: 68}
+      plafond_du_parent: {sedentaire: 71, active: 66}
     droit: >-
       « Les limites d'âge sont reculées d'une année par enfant à charge, sans que la
       prolongation d'activité puisse être supérieure à trois ans. Les enfants pris en
@@ -82,6 +100,13 @@ versions:
   bornes:
     age_atteint: [2022-03-01, 2023-06-14]
   contenu:
+    parametres:
+      par_enfant: 1
+      enfants_au_plus: 3
+      age_a_charge: 20
+      parent_de_trois: 1
+      age_du_parent: 50
+      enfants_du_parent: 3
     droit: >-
       « La limite d'âge est reculée d'une année par enfant à la charge de l'agent public,
       sans que la prolongation d'activité puisse être supérieure à trois ans. Les enfants
@@ -109,6 +134,13 @@ versions:
   bornes:
     age_atteint: [2023-06-14, null]
   contenu:
+    parametres:
+      par_enfant: 1
+      enfants_au_plus: 3
+      age_a_charge: 20
+      parent_de_trois: 1
+      age_du_parent: 50
+      enfants_du_parent: 3
     droit: >-
       les mêmes reculs (L. 556-2 à L. 556-4), sous le plafond commun de soixante-dix ans :
       « Le bénéfice cumulé de ce maintien en fonctions, des prolongations d'activité et des
@@ -121,7 +153,7 @@ versions:
       sédentaire, et s'accorde aux actifs comme aux sédentaires
   exemples: aucun trouvé
 sources:
-  lu_le: 2026-10-10
+  lu_le: 2026-10-14
   prochaine_relecture: 2027-10-10
   a_relire:
   - >-
@@ -157,8 +189,17 @@ historique:
 - >-
   2026-10-10 — née avec l'action 151, étape 2, avec la fiche `limite_age_fonction_publique`
   qu'elle recule.
+- >-
+  2026-10-14 — appliquée, action 151, étape 3, sur la décision du propriétaire du même
+  jour : de droit, un an par enfant de moins de vingt ans quand la limite est atteinte,
+  trois au plus, ou un an pour le parent de trois enfants nés avant ses cinquante ans, le
+  plus favorable des deux (`droit/limite_age.py`). Ses versions portent ces valeurs dans
+  leurs paramètres ; l'âge de vingt ans, celui où cessent les prestations familiales, est
+  une lecture du modèle, que la fiche des prestations n'a pas encore.
 effet: >-
-  Aucun aujourd'hui, le modèle n'appliquant pas la limite d'âge qu'elle recule : il garde
-  tout fonctionnaire en activité jusqu'au départ saisi. Dès que la limite s'appliquera, le
-  parent d'enfants encore à charge à soixante-sept ans pourra rester jusqu'à trois ans de
-  plus — soixante-dix ans au plus depuis 2023.
+  Le fonctionnaire civil dont le départ saisi passe sa limite d'âge y gagne un an par
+  enfant de moins de vingt ans quand il l'atteint, trois au plus, ou un an s'il avait trois
+  enfants à cinquante ans : né en 1990, parent de trois enfants nés à ses trente ans, il est
+  maintenu de droit de 67 à 68 ans, puis par le maintien présumé jusqu'à 70. Approchée :
+  l'enfant invalide, qui permet de cumuler les deux reculs, l'enfant ouvrant droit à
+  l'allocation aux adultes handicapés et l'enfant mort pour la France ne sont pas saisis.

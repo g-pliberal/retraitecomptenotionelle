@@ -11,7 +11,7 @@ domaine: age
 regimes: [fonction_publique_etat, cnracl]
 etape: preparer_la_chronologie
 face: droit
-etat: manquante
+etat: approchee
 lit:
 - la limite d'âge de l'emploi actif, reculée et prolongée le cas échéant (fiches
   `limite_age_fonction_publique`, `recul_limite_age_enfants` et
@@ -52,6 +52,8 @@ versions:
   bornes:
     age_atteint: [2010-01-01, 2011-07-01]
   contenu:
+    parametres:
+      jusqu_a: sedentaire
     droit: >-
       « Sous réserve des droits au recul des limites d'âge prévus par l'article 4 de la loi
       du 18 août 1936 [...], les fonctionnaires [...] appartenant à des corps ou des cadres
@@ -72,6 +74,8 @@ versions:
   bornes:
     age_atteint: [2011-07-01, 2022-03-01]
   contenu:
+    parametres:
+      jusqu_a: sedentaire
     droit: >-
       le même maintien, « jusqu'à un âge égal à la limite d'âge prévue au même premier
       alinéa », celle des sédentaires de l'article 1er de la loi n° 84-834, qui monte de
@@ -86,6 +90,8 @@ versions:
   bornes:
     age_atteint: [2022-03-01, 2023-06-14]
   contenu:
+    parametres:
+      jusqu_a: sedentaire
     droit: >-
       « Le fonctionnaire appartenant à un corps ou à un cadre d'emplois dont la limite d'âge
       est inférieure à celle fixée au 1° de l'article L. 556-1 est maintenu en activité
@@ -102,6 +108,8 @@ versions:
   bornes:
     age_atteint: [2023-06-14, null]
   contenu:
+    parametres:
+      jusqu_a: sedentaire
     droit: >-
       le fonctionnaire actif « bénéficie, à sa demande et sous réserve de son aptitude
       physique, d'une prolongation d'activité jusqu'à l'âge fixé au même 1° », soixante-sept
@@ -114,8 +122,11 @@ versions:
       d'aptitude ; sans réponse dans les trois mois, l'administration est « implicitement
       considérée comme ayant donné son accord »
   exemples: aucun trouvé
+presomptions:
+  exceptions_a_la_limite_d_age: >-
+    la demande de la prolongation, que la saisie ne porte pas
 sources:
-  lu_le: 2026-10-10
+  lu_le: 2026-10-14
   prochaine_relecture: 2027-10-10
   a_relire:
   - >-
@@ -145,11 +156,17 @@ sources:
 historique:
 - >-
   2026-10-10 — née avec l'action 151, étape 2, avec la fiche `limite_age_fonction_publique`.
+- >-
+  2026-10-14 — appliquée, action 151, étape 3, sur la décision du propriétaire du même
+  jour : présumée demandée et accordée autant que le départ saisi la demande, jusqu'à la
+  limite des sédentaires de la génération (`droit/limite_age.py`) ; avant 2010, faute du
+  décret n° 48-1907, aucune.
 effet: >-
-  Aucun aujourd'hui, le modèle n'appliquant aucune limite d'âge : un policier, une
-  aide-soignante, un sapeur-pompier professionnel se simulent en activité jusqu'au départ
-  saisi. La limite appliquée, cette prolongation est ce qui leur permet de servir de leur
-  limite — cinquante-sept à soixante-deux ans — jusqu'à soixante-sept ans.
+  Le fonctionnaire actif dont le départ saisi passe sa limite d'âge est maintenu, depuis
+  2010, jusqu'à la limite des sédentaires de sa génération : le policier né en 1990 sert
+  jusqu'à 67 ans, l'aide-soignante née en 1952 jusqu'à 65 ans et 9 mois. Approchée : avant
+  2010, la disposition du décret n° 48-1907 n'est pas lue, et l'actif est radié à sa
+  limite, de cinquante-cinq à soixante ans.
 textes_a_rattacher:
 - reference: >-
     décret n° 2009-1744 du 30 décembre 2009 pris pour l'application de l'article 1-3 de la

@@ -32,7 +32,7 @@ domaine: age
 regimes: [fonction_publique_etat, cnracl]
 etape: preparer_la_chronologie
 face: droit
-etat: manquante
+etat: transcrite
 lit:
 - la limite d'âge de l'emploi, et chaque recul et chaque prolongation que les fiches
   reliées accordent
@@ -83,7 +83,7 @@ versions:
       age_maximal: 70
   exemples: aucun trouvé
 sources:
-  lu_le: 2026-10-10
+  lu_le: 2026-10-14
   prochaine_relecture: 2027-10-10
   a_relire:
   - >-
@@ -109,8 +109,12 @@ historique:
 - >-
   2026-10-10 — née avec l'action 151, étape 2 : la relation qui ordonne les exceptions à
   la limite d'âge, et le plafond qui les borne depuis 2023.
+- >-
+  2026-10-14 — appliquée, action 151, étape 3, sur la décision du propriétaire du même
+  jour : l'ordre des exceptions et le plafond de soixante-dix ans bornent la radiation
+  (`droit/limite_age.py`) ; le plafond vaut, faute de mieux, pour l'actif comme pour le
+  sédentaire, que les exceptions de l'actif ne mènent jamais si loin.
 effet: >-
-  Aucun aujourd'hui, le modèle n'appliquant aucune limite d'âge. La limite appliquée, cette
-  relation fixe l'âge le plus tardif où un fonctionnaire civil peut servir : soixante-dix
-  ans depuis le 14 juin 2023, hors les corps de la fiche
-  `maintiens_en_fonctions_de_certains_corps`.
+  La radiation par limite d'âge du fonctionnaire civil ne vient jamais après soixante-dix
+  ans depuis le 14 juin 2023 : né en 1990 et parent de trois enfants, il est radié à 70 ans
+  et non à 71. Avant, chaque recul a son plafond, et la prolongation ses dix trimestres.

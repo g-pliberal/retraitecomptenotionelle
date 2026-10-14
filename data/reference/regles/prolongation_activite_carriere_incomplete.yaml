@@ -11,7 +11,7 @@ domaine: age
 regimes: [fonction_publique_etat, cnracl]
 etape: preparer_la_chronologie
 face: droit
-etat: manquante
+etat: approchee
 lit:
 - la limite d'âge de l'emploi, reculée le cas échéant (fiches `limite_age_fonction_publique`
   et `recul_limite_age_enfants`)
@@ -96,8 +96,11 @@ versions:
     parametres:
       trimestres_au_plus: 10
   exemples: aucun trouvé
+presomptions:
+  exceptions_a_la_limite_d_age: >-
+    la demande de la prolongation et l'accord de l'employeur, que la saisie ne porte pas
 sources:
-  lu_le: 2026-10-10
+  lu_le: 2026-10-14
   prochaine_relecture: 2027-10-10
   a_relire:
   - >-
@@ -107,8 +110,9 @@ sources:
     n° 65-773, article 2) : lus, ils peuvent faire une version de plus.
   - >-
     « sous réserve de l'intérêt du service » : un refus est possible, que le simulateur
-    ne connaîtra pas. L'étape 3 dira s'il la présume accordée quand le départ saisi la
-    demande.
+    ne connaît pas ; il la présume accordée autant que le départ saisi la demande
+    (présomption `exceptions_a_la_limite_d_age`). Compter les bonifications dans la durée,
+    comme L. 13 le veut, quand le modèle saura les dater.
   lectures:
   - type: legifrance
     reference: >-
@@ -127,8 +131,14 @@ sources:
 historique:
 - >-
   2026-10-10 — née avec l'action 151, étape 2, avec la fiche `limite_age_fonction_publique`.
+- >-
+  2026-10-14 — appliquée, action 151, étape 3, sur la décision du propriétaire du même
+  jour : présumée demandée et accordée autant que le départ saisi la demande, jusqu'à la
+  durée de services du taux maximum, dix trimestres au plus (`droit/limite_age.py`).
 effet: >-
-  Aucun aujourd'hui, le modèle n'appliquant pas la limite d'âge : il garde tout
-  fonctionnaire en activité jusqu'au départ saisi, que sa durée soit complète ou non. La
-  limite appliquée, le fonctionnaire entré tard pourra rester jusqu'à dix trimestres de
-  plus, s'il lui manque cette durée.
+  Le fonctionnaire civil dont le départ saisi passe sa limite d'âge sans la durée du taux
+  maximum est maintenu, depuis 2004, jusqu'à cette durée, dix trimestres au plus : le
+  policier né en 1990 et entré à 22 ans sert ainsi de 57 à 59 ans et demi, avant la
+  prolongation de l'actif. Approchée : la durée se compte sur les seuls services, sans les
+  bonifications, ce qui peut accorder un peu trop, et l'intérêt du service, qui peut la
+  faire refuser, est présumé ne pas s'y opposer.

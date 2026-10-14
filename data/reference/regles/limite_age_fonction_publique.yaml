@@ -15,7 +15,7 @@ domaine: age
 regimes: [fonction_publique_etat, pensions_civiles_1853, cnracl]
 etape: preparer_la_chronologie
 face: droit
-etat: manquante
+etat: approchee
 lit:
 - la date de naissance de l'assuré, et sa génération
 - l'emploi de chaque période de la fonction publique — sédentaire, de la catégorie active
@@ -46,6 +46,8 @@ versions:
   bornes:
     age_atteint: [null, 1976-01-01]
   contenu:
+    parametres:
+      limites: {sedentaire: 70, active: 60, police_penitentiaire: 55}
     droit: >-
       « La limite d'âge est abaissée, pour les fonctionnaires et employés civils des
       services de l'Etat de la catégorie A et de la catégorie B » : catégorie A, la
@@ -76,6 +78,11 @@ versions:
   bornes:
     age_atteint: [1976-01-01, 1985-01-01]
   contenu:
+    parametres:
+      limites: {sedentaire: 70, active: 60, police_penitentiaire: 55}
+      paliers:
+      - {depuis: "1977-01-01", sedentaire: 69}
+      - {depuis: "1978-01-01", sedentaire: 68}
     droit: >-
       « la limite d'âge des fonctionnaires civils de l'Etat est fixée à soixante-huit ans
       lorsqu'elle était de soixante-dix ans avant l'intervention de la présente loi et à
@@ -106,6 +113,11 @@ versions:
   bornes:
     age_atteint: [1985-01-01, 2011-07-01]
   contenu:
+    parametres:
+      limites: {sedentaire: 67, active: 60, police_penitentiaire: 55}
+      paliers:
+      - {depuis: "1985-07-01", sedentaire: 66}
+      - {depuis: "1986-01-01", sedentaire: 65}
     droit: >-
       « la limite d'âge des fonctionnaires civils de l'Etat est fixée à soixante-cinq ans
       lorsqu'elle était, avant l'intervention de la présente loi, fixée à un âge
@@ -146,6 +158,15 @@ versions:
   bornes:
     age_atteint: [2011-07-01, 2022-03-01]
   contenu:
+    parametres:
+      limites_avant: {sedentaire: 65, active: 60, police_penitentiaire: 55}
+      ecart_de_reference: 5
+      marche:
+      - {depuis: "2011-07-01", mois: 4}
+      - {depuis: "2012-01-01", mois: 9}
+      - {depuis: "2013-01-01", mois: 14}
+      - {depuis: "2014-01-01", mois: 19}
+      - {depuis: "2015-01-01", mois: 24}
     droit: >-
       « la limite d'âge des fonctionnaires civils de l'Etat est fixée à soixante-sept ans
       lorsqu'elle était, avant l'intervention de la loi n° 2010-1330 [...], fixée à
@@ -182,6 +203,15 @@ versions:
   bornes:
     age_atteint: [2022-03-01, 2023-06-14]
   contenu:
+    parametres:
+      limites_avant: {sedentaire: 65, active: 60, police_penitentiaire: 55}
+      ecart_de_reference: 5
+      marche:
+      - {depuis: "2011-07-01", mois: 4}
+      - {depuis: "2012-01-01", mois: 9}
+      - {depuis: "2013-01-01", mois: 14}
+      - {depuis: "2014-01-01", mois: 19}
+      - {depuis: "2015-01-01", mois: 24}
     droit: >-
       « Le fonctionnaire ne peut être maintenu en fonctions au-delà de l'âge limite de
       l'activité dans l'emploi qu'il occupe, sous réserve des exceptions prévues par les
@@ -219,6 +249,15 @@ versions:
   bornes:
     age_atteint: [2023-06-14, null]
   contenu:
+    parametres:
+      limites_avant: {sedentaire: 65, active: 60, police_penitentiaire: 55}
+      ecart_de_reference: 5
+      marche:
+      - {depuis: "2011-07-01", mois: 4}
+      - {depuis: "2012-01-01", mois: 9}
+      - {depuis: "2013-01-01", mois: 14}
+      - {depuis: "2014-01-01", mois: 19}
+      - {depuis: "2015-01-01", mois: 24}
     droit: >-
       soixante-sept ans pour l'emploi qui ne relève pas de la catégorie active, au sens du
       deuxième alinéa du 1° du I de L. 24 CPCMR, un âge au plus égal pour l'emploi actif
@@ -239,6 +278,9 @@ versions:
       84-834, article 1er) ; les autres sont dans la fiche
       `maintiens_en_fonctions_de_certains_corps`
   exemples: aucun trouvé
+presomptions:
+  exceptions_a_la_limite_d_age: >-
+    la date de la radiation, quand le départ saisi passe la limite d'âge : les exceptions qu'il demande, présumées accordées
 sources:
   lu_le: 2026-10-14
   prochaine_relecture: 2027-10-10
@@ -318,15 +360,25 @@ historique:
   fonctionnaire jusqu'à cet âge. La veille a lu la limite d'âge de 1936 à 2026, et les
   exceptions qui la reculent, chacune dans sa fiche. Ce que le simulateur fait au-delà,
   le propriétaire en décide (étape 3).
+- >-
+  2026-10-14 — appliquée, action 151, étape 3, sur la décision du propriétaire du même
+  jour : la radiation des cadres à la limite d'âge, reculée et prolongée par les exceptions
+  que le départ saisi demande ; la pension du code des pensions en part, et les services
+  s'arrêtent là (`droit/limite_age.py`). Ses versions portent désormais les limites de
+  chaque classe d'emploi dans leurs paramètres.
 effet: >-
-  Tout fonctionnaire civil dont le départ saisi passe sa limite d'âge : le modèle le garde
-  en activité jusqu'au départ, traitement, services et surcote compris, jusqu'à 119 ans
-  depuis l'étape 1 de l'action 151. Un sédentaire de l'État né en 1990 et entré à 22 ans
-  touche, au scénario 1, 5 219 € brut par mois s'il part à 70 ans, le plus tard que le
-  droit le garde, 10 775 € à 90 ans et 18 987 € à 119 ans ; un policier de la même
-  génération, dont la limite est 57 ans et 67 avec la prolongation de L. 556-7, se simule
-  en activité jusqu'à 119 ans. Mesuré le 10 octobre 2026, en euros constants du
-  simulateur.
+  Tout fonctionnaire civil dont le départ saisi passe sa limite d'âge est radié des cadres
+  à la limite reculée et prolongée par les exceptions que ce départ demande, et sa pension
+  part de la radiation, mesuré le 14 octobre 2026 : un sédentaire de l'État né en 1990 et
+  entré à 22 ans touche, au scénario 1, la pension d'un départ à 70 ans — 5 219 € brut par
+  mois en euros constants —, qu'il saisisse son départ à 75, à 90 ou à 119 ans, quand le
+  modèle lui servait 10 775 € à 90 ans et 18 987 € à 119 ans ; un policier de la même
+  génération, celle d'un départ à 67 ans, 4 499 €. Approchée : le corps n'est pas saisi —
+  le sédentaire d'avant 1985 prend la limite du corps le plus haut, soixante-dix ans puis
+  soixante-huit, le policier celle du corps d'encadrement et d'application, l'actif hors de
+  la police soixante-deux ans, soixante avant la loi de 2010 —, et l'actif né avant 1950,
+  radié à sa limite faute d'une prolongation lue avant 2010, perd au scénario 1 de 4 à
+  24 % de sa pension à un départ saisi à 64 ans (témoins `statut_*_1925` à `_1945`).
 textes_a_rattacher:
 - reference: >-
     tableau des emplois classés dans la catégorie active, annexé au code des pensions
