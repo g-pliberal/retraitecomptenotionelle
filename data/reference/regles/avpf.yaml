@@ -11,7 +11,7 @@ effet: >-
   l'année, 9 à 10 % de trop peu depuis 1982, 12,5 % avant, et une assiette avant 1972,
   quand l'AVPF n'existait pas.
 sources:
-  lu_le: 2026-10-05
+  lu_le: 2026-10-14
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -41,6 +41,16 @@ sources:
   - type: jorf
     reference: loi n° 72-8 du 3 janvier 1972, « allocation de la mère au foyer » (JORFTEXT000000509305)
     date: 1972-01-05
+  - type: legifrance
+    reference: >-
+      décret n° 73-88 du 26 janvier 1973, article 3 (LEGIARTI000006761990, de 1973 à
+      1982) : la cotisation « est assise sur une assiette forfaitaire correspondant par
+      mois à 173,33 fois le montant du salaire horaire minimum de croissance [...] en
+      vigueur au 1er juillet de l'année civile précédente » ; article 1er
+      (LEGIARTI000006761985) : les bénéficiaires « sont affiliées obligatoirement à
+      l'assurance vieillesse du régime général ». Les périodes de 1972 à 1982 du régime
+      général la comptent depuis le 14 octobre 2026.
+    date: 2026-10-14
 textes_a_rattacher:
 - reference: L. 381-1 CSS
 - id: LEGIARTI000047961951

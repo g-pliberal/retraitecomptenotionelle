@@ -786,6 +786,23 @@ test("l'assiette de l'AVPF et la colonne de revalorisation sont celles de la Cna
 });
 
 /**
+ * Le portage de `test_l_avpf_compte_avant_avril_1983` (tests/test_salaire_annuel_moyen.py) :
+ * l'AVPF de 1972 à 1977 dans une pension de janvier 1983.
+ */
+test("l'AVPF compte avant avril 1983", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const interruptions = new Map();
+  for (let annee = 1972; annee < 1978; annee += 1) interruptions.set(annee, "education_enfant");
+  const resultat = simulateur.scenarioActuel.calculer(simulateur.carriereSimple({
+    annee_naissance: 1918, sexe: "F", affiliation: "salarie_prive_non_cadre",
+    age_debut: 50, age_liquidation: 65, niveau_salaire: 0.4, profil_carriere: "plat",
+    nombre_enfants: 2, jour_naissance: 1, interruptions,
+  }));
+  const avpf = resultat.avantages_appliques.find((a) => a.code === "avpf");
+  assert.ok(avpf && Math.abs(avpf.montant - 7.0812) < 1e-3, `${avpf?.montant}`);
+});
+
+/**
  * Le portage des montants de `test_avant_2007_le_minimum_vieillesse_tient_en_deux_etages`
  * (tests/test_liquidation.py) : les deux étages d'avant l'ASPA, sur la table du paquet.
  */

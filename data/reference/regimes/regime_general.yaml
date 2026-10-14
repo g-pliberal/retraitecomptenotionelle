@@ -137,7 +137,7 @@ periodes:
     majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+      [minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
     notes: >-
       Loi Boulin du 31 décembre 1971 : taux plein porté à 50 %, durée
       requise à 150 trimestres (37,5 ans), salaire de référence sur les
@@ -160,6 +160,12 @@ periodes:
       `trimestres_retenus_1972_1974`) : une carrière complète liquidée en
       1972 reçoit 128/150 de la pension normale. D'où les périodes de
       1972, 1973 et 1974, qui ne diffèrent que par ce plafond.
+      L'assurance vieillesse des mères au foyer (loi n° 72-8 du 3 janvier
+      1972) porte au compte du régime général, depuis le 1er juillet 1972,
+      un salaire sur une assiette forfaitaire de 173,33 heures du SMIC du
+      1er juillet de l'année précédente (décret n° 73-88, article 3,
+      LEGIARTI000006761990) : ces périodes la comptent (`avpf`), comme
+      celles d'après 1983 ; elles l'omettaient jusqu'au 14 octobre 2026.
 
   - debut: 1973
     fin: 1973
@@ -180,7 +186,7 @@ periodes:
     majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+      [minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
     notes: >-
       Les règles de 1972 (loi Boulin), avec 136 trimestres retenus au
       plus pour une pension qui prend effet en 1973 (décret n° 45-0179,
@@ -205,7 +211,7 @@ periodes:
     majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+      [minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
     notes: >-
       Les règles de 1972 (loi Boulin), avec 144 trimestres retenus au
       plus pour une pension qui prend effet en 1974 (décret n° 45-0179,
@@ -229,7 +235,7 @@ periodes:
     majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+      [minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
     notes: >-
       Les règles de 1972 (loi Boulin), la durée retenue atteignant les
       150 trimestres du dénominateur « si la pension prend effet
@@ -259,7 +265,7 @@ periodes:
     duree_taux_plein_femmes_regimes: [regime_general, assurances_sociales, msa_salaries]
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+      [minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
     notes: >-
       Les règles de 1975, et le taux de soixante-cinq ans dès soixante-trois
       ans aux femmes qui réunissent trente-sept ans et demi d'assurance « dans
@@ -290,7 +296,7 @@ periodes:
     duree_taux_plein_femmes_regimes: [regime_general, assurances_sociales, msa_salaries]
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+      [minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
     notes: >-
       Les règles de 1978, le taux de soixante-cinq ans servi dès soixante
       ans aux femmes de trente-sept ans et demi d'assurance pour une pension

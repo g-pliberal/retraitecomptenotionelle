@@ -161,6 +161,23 @@ def test_l_assiette_de_l_avpf_est_celle_de_la_cnav(simulateur):
     assert macro.revenu_avpf(2027) == pytest.approx(2_028 * 12.31)
 
 
+def test_l_avpf_compte_avant_avril_1983(simulateur):
+    """L'assurance vieillesse des mères au foyer porte un salaire au compte du
+    régime général depuis le 1er juillet 1972 (loi n° 72-8 ; décret n° 73-88,
+    article 3) : une pension de janvier 1983, liquidée sous les règles d'avant
+    l'ordonnance de 1982, le compte dans son salaire annuel moyen. Les périodes
+    de 1972 à 1982 l'omettaient jusqu'au 14 octobre 2026 (action 131)."""
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1918, sexe="F", affiliation="salarie_prive_non_cadre",
+        age_debut=50, age_liquidation=65, niveau_salaire=0.4,
+        profil_carriere="plat", nombre_enfants=2, jour_naissance=1,
+        interruptions={a: "education_enfant" for a in range(1972, 1978)})
+    assert simulateur.catalogue["regime_general"].periode(1982).date_effet[1] == "1983-04-01"
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    applique = {a.code: a.montant for a in resultat.avantages_appliques}
+    assert applique["avpf"] == pytest.approx(7.0812, abs=1e-3)
+
+
 def test_la_colonne_de_revalorisation_est_celle_de_la_date_d_effet(simulateur):
     """Trois coefficients recopiés à la main de la page de la Cnav des
     coefficients d'avant 2013 et du barème d'avril 2013, qu'un défaut du
