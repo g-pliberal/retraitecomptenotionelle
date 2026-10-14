@@ -7,32 +7,43 @@ texte avant lui —, et tout de ce qu'une caisse écrit dessus.
 
 Les relevés d'essai sont écrits ici, à la forme des documents officiels : un
 tableau par régime, une ligne par employeur, des francs avant 2002, des
-périodes assimilées sans revenu. Chacun passe par les DEUX implémentations, et
-la saisie qu'elles rendent doit être la même au caractère près.
+périodes assimilées sans revenu. Le lecteur est celui du site,
+`moteur/js/releve-lu.js`, que node fait tourner (`tests/js/lire-releve.mjs`).
+Son jumeau Python, qui faisait foi, est parti à l'action 161, étape 3, relu
+et confronté avant : sa lecture des relevés d'essai reste, figée, la référence
+(`tests/temoins/releves_lus.json`).
 """
 
 from __future__ import annotations
 
 import functools
 import json
-import shutil
+import os
 import subprocess
 import sys
 import tempfile
+from dataclasses import dataclass
 from pathlib import Path
-from types import SimpleNamespace
 
 import pytest
 
 from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.droit.releve import points_de_l_annee, revenu_des_points
+from retraite_notionnelle.lignes import json_en_lignes
 from retraite_notionnelle.simulateur import Simulateur
-from retraite_notionnelle.web.releve_lu import REGIMES, lire_releve
-from retraite_notionnelle.web.site import disponible, rendre
+from retraite_notionnelle.web.site import disponible, module, rendre
 
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "scripts" / "fetch"))
 from lecture_pdf import lignes_pdf  # noqa: E402
+
+pytestmark = pytest.mark.skipif(not disponible(),
+                                reason="node absent : le lecteur du relevé ne tourne pas sans lui")
+
+#: Le lecteur du site, que node fait tourner sur un lot de relevés.
+LECTEUR = RACINE / "tests" / "js" / "lire-releve.mjs"
+#: La lecture figée des relevés d'essai, sans barème et au convertisseur d'essai.
+TEMOIN = RACINE / "tests" / "temoins" / "releves_lus.json"
 
 #: Le relevé du régime général : une caisse, un tableau, une ligne par employeur
 #: — et une année coupée en deux, moitié emploi moitié chômage.
@@ -324,9 +335,86 @@ RELEVES = {
 }
 
 
-def _lire(nom: str, revenu_des_points=None):
-    return lire_releve(RELEVES[nom].strip().split("\n"),
-                       revenu_des_points=revenu_des_points)
+@dataclass(frozen=True)
+class LigneLue:
+    """Une année, telle que le lecteur l'a rendue."""
+
+    annee: int
+    statut: str
+    revenu: float
+    trimestres: int | None
+    motif: str | None
+    source: str
+
+
+@dataclass(frozen=True)
+class Lecture:
+    """Ce que le lecteur a rendu d'un relevé, comme le site le reçoit."""
+
+    lignes: tuple[LigneLue, ...]
+    interruptions: tuple[tuple[int, int, str], ...]
+    ignorees: tuple[str, ...]
+    regimes: tuple[str, ...]
+    notes: tuple[str, ...]
+    naissance: str | None
+    mois_de_naissance: str | None
+    saisie: tuple[tuple[str, str], ...]
+
+    @property
+    def vide(self) -> bool:
+        return not self.lignes
+
+    def parametres(self) -> dict[str, str]:
+        """La saisie du formulaire : le relevé, et les interruptions."""
+        return dict(self.saisie)
+
+
+def _en_lecture(brut: dict) -> Lecture:
+    return Lecture(tuple(LigneLue(*ligne) for ligne in brut["lignes"]),
+                   tuple(tuple(plage) for plage in brut["interruptions"]),
+                   tuple(brut["ignorees"]), tuple(brut["regimes"]), tuple(brut["notes"]),
+                   brut["naissance"], brut["mois_de_naissance"],
+                   tuple(brut["saisie"].items()))
+
+
+def _lire_en_lot(cas: list[dict]) -> list[dict]:
+    """La lecture brute de chaque cas, par node, en un seul appel."""
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8") as fichier:
+        json.dump(cas, fichier, ensure_ascii=False)
+        fichier.flush()
+        execution = subprocess.run(["node", str(LECTEUR), fichier.name], cwd=RACINE,
+                                   capture_output=True, text=True, encoding="utf-8",
+                                   check=False)
+    assert execution.returncode == 0, execution.stdout + execution.stderr
+    return json.loads(execution.stdout)
+
+
+def lire_releve(lignes: list[str], annee_maximale: int | None = None,
+                convertisseur: str | None = None) -> Lecture:
+    """Un relevé lu par le lecteur du site ; le convertisseur des points est
+    ``None``, ``"modele"`` (le barème du scénario 1, comme le site) ou
+    ``"par_cent"`` (l'essai de ``tests/js/lire-releve.mjs``)."""
+    (brut,) = _lire_en_lot([{"lignes": lignes, "anneeMaximale": annee_maximale,
+                             "convertisseur": convertisseur}])
+    return _en_lecture(brut)
+
+
+#: Les convertisseurs sous lesquels chaque relevé d'essai se lit.
+CONVERTISSEURS = (None, "par_cent", "modele")
+
+
+@functools.lru_cache(maxsize=None)
+def _lectures() -> dict[tuple[str, str | None], dict]:
+    """Chaque relevé d'essai sous chaque convertisseur, lus d'un seul appel."""
+    cles = [(nom, convertisseur) for nom in sorted(RELEVES)
+            for convertisseur in CONVERTISSEURS]
+    bruts = _lire_en_lot([{"lignes": RELEVES[nom].strip().split("\n"),
+                           "convertisseur": convertisseur} for nom, convertisseur in cles])
+    return dict(zip(cles, bruts))
+
+
+def _lire(nom: str, convertisseur: str | None = None) -> Lecture:
+    return _en_lecture(_lectures()[(nom, convertisseur)])
 
 
 @pytest.fixture(scope="module")
@@ -337,17 +425,8 @@ def moteur():
 
 @pytest.fixture(scope="module")
 def convertir(moteur):
-    """Le convertisseur que le site passe à la lecture : celui du modèle."""
+    """Le barème du modèle, qui dit ce que la lecture doit trouver."""
     return functools.partial(revenu_des_points, moteur)
-
-
-def _par_cent(statut, annee, etage, points, trimestres):
-    """Un convertisseur d'essai, pour la mécanique de la lecture seule : cent
-    euros le point, au plafond à partir de cinq cents, rien sous dix."""
-    if points < 10:
-        return None
-    return SimpleNamespace(revenu=round(points * 100), au_plafond=points >= 500,
-                           appel=(statut, annee, etage, points, trimestres))
 
 
 def test_une_annee_coupee_par_employeur_est_recollee():
@@ -422,13 +501,13 @@ def test_un_regime_en_points_ne_rend_aucun_revenu():
     assert any("points" in note for note in lecture.notes)
 
 
-def test_les_points_d_un_liberal_disent_son_revenu(moteur, convertir):
+def test_les_points_d_un_liberal_disent_son_revenu(moteur):
     """Le barème du régime de base des libéraux convertit les points en
     revenu : le plus bas qui les ouvre, que la pension recalculée de la saisie
     retrouve. En 2016, ce sont les 550 points du plafond, et la note dit que le
     revenu a pu le dépasser ; en 2003, cent points par trimestre ne disent
     aucun revenu, et l'année reste sans montant, signalée comme telle."""
-    lecture = _lire("liberal_en_points", convertir)
+    lecture = _lire("liberal_en_points", "modele")
     lues = {ligne.annee: ligne for ligne in lecture.lignes}
     assert lues[2003].revenu == 0
     assert points_de_l_annee(moteur, "medecin_liberal", 2015, "base",
@@ -440,11 +519,11 @@ def test_les_points_d_un_liberal_disent_son_revenu(moteur, convertir):
     assert sans_revenu.startswith("L'année 2003 est lue sans revenu")
 
 
-def test_une_annee_que_seule_la_complementaire_chiffre(moteur, convertir):
+def test_une_annee_que_seule_la_complementaire_chiffre(moteur):
     """Le tableau des années du relevé de 2026, collé seul, ne porte aucun
     revenu : les points de l'Agirc-Arrco et de l'Ircantec le disent, chacun au
     barème du statut qui les ouvre."""
-    lecture = _lire("tableau_des_annees", convertir)
+    lecture = _lire("tableau_des_annees", "modele")
     lues = {ligne.annee: ligne for ligne in lecture.lignes}
     assert lues[2018].statut == "salarie_prive_non_cadre"
     assert lues[2019].statut == "contractuel_public"
@@ -454,14 +533,14 @@ def test_une_annee_que_seule_la_complementaire_chiffre(moteur, convertir):
                              lues[2019].revenu, 1) >= 7 - 1e-6
     assert not any("sans revenu" in note for note in lecture.notes)
     # Une année qui porte un revenu le garde : ses points ne s'y ajoutent pas.
-    assert _lire("releve_2026", convertir).parametres() == _lire("releve_2026").parametres()
+    assert _lire("releve_2026", "modele").parametres() == _lire("releve_2026").parametres()
 
 
 def test_la_base_et_la_complementaire_d_un_emploi_disent_chacune_un_plancher(convertir):
     """Les points de la retraite proportionnelle et ceux de la complémentaire
     disent chacun un revenu que l'exploitant a au moins atteint : l'année prend
     le plus haut. Les 23 points du plancher ne disent rien."""
-    lues = {ligne.annee: ligne for ligne in _lire("exploitant", convertir).lignes}
+    lues = {ligne.annee: ligne for ligne in _lire("exploitant", "modele").lignes}
     base = convertir("exploitant_agricole", 2018, "base", 80, 4)
     complementaire = convertir("exploitant_agricole", 2018, "complementaire", 221.89, 4)
     assert lues[2018].revenu == max(base.revenu, complementaire.revenu)
@@ -473,7 +552,7 @@ def test_deux_emplois_chiffres_en_points_s_ajoutent():
     et l'année prend le statut du plus grand. Une année de cadre convertit
     ses points au barème du cadre ; une période assimilée ne convertit rien,
     ses points étant ceux du salaire d'avant."""
-    lecture = _lire("deux_emplois", _par_cent)
+    lecture = _lire("deux_emplois", "par_cent")
     lues = {ligne.annee: ligne for ligne in lecture.lignes}
     assert (lues[2018].revenu, lues[2018].statut) == (4200, "contractuel_public")
     assert (lues[2010].revenu, lues[2010].statut) == (1500, "salarie_prive_cadre")
@@ -783,7 +862,8 @@ def test_tous_les_statuts_cites_existent_au_catalogue():
     """Un statut mal orthographié ferait un refus de saisie à l'import, et
     l'assuré n'aurait aucun moyen de comprendre pourquoi."""
     codes = set(Contexte().simulateur().affiliations.codes)
-    inconnus = {regime.statut for regime in REGIMES if regime.statut not in codes}
+    regimes = module("releve-lu").REGIMES
+    inconnus = {regime.statut for regime in regimes if regime.statut not in codes}
     assert not inconnus, f"statuts absents du catalogue : {sorted(inconnus)}"
 
 
@@ -791,8 +871,6 @@ def test_la_saisie_produite_se_simule_sans_refus():
     """Le bout du chemin : ce que la lecture écrit doit être ce que le
     formulaire accepte. Une saisie que le simulateur refuse serait un import
     qui échoue chez le lecteur, après le dépôt de son relevé."""
-    if not disponible():
-        pytest.skip("node absent : le site ne se lit pas sans lui")
     parametres = _lire("regime_general").parametres()
     _, corps = rendre("/simuler", {
         "naissance": "1978-05-01", "depart": "2043-05-01",
@@ -801,38 +879,24 @@ def test_la_saisie_produite_se_simule_sans_refus():
     assert 'class="erreur"' not in corps, corps[:400]
 
 
-@pytest.mark.parametrize("points", [False, True], ids=["sans_bareme", "points_convertis"])
-def test_le_portage_javascript_lit_les_memes_releves(points, request):
-    """Le site lit le PDF déposé avec `moteur/js/releve-lu.js` ; ce fichier-ci
-    fait foi. Les deux doivent rendre la MÊME saisie — le relevé, les
-    interruptions, les lignes ignorées, les régimes et les notes —, avec les
-    points convertis au barème de chaque moteur (`droit/releve`) comme
-    sans."""
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    convertisseur = request.getfixturevalue("convertir") if points else None
-
-    noms = sorted(RELEVES)
-    entree = [RELEVES[nom].strip().split("\n") for nom in noms]
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8") as fichier:
-        json.dump(entree, fichier, ensure_ascii=False)
-        fichier.flush()
-        execution = subprocess.run(
-            ["node", "tests/js/comparer-releve.mjs", fichier.name,
-             *(["points"] if points else [])],
-            cwd=RACINE, capture_output=True, text=True, encoding="utf-8",
-            check=False,
-        )
-    assert execution.returncode == 0, execution.stdout + execution.stderr
-    rendu = json.loads(execution.stdout)
-
-    for nom, javascript in zip(noms, rendu):
-        lecture = lire_releve(RELEVES[nom].strip().split("\n"),
-                              revenu_des_points=convertisseur)
-        attendu = dict(lecture.parametres())
-        attendu["ignorees"] = list(lecture.ignorees)
-        attendu["regimes"] = list(lecture.regimes)
-        attendu["notes"] = list(lecture.notes)
-        attendu["naissance"] = lecture.naissance
-        attendu["mois_de_naissance"] = lecture.mois_de_naissance
-        assert javascript == attendu, nom
+@pytest.mark.parametrize("convertisseur", [None, "par_cent"], ids=["sans_bareme", "par_cent"])
+def test_les_releves_d_essai_se_lisent_comme_la_lecture_figee(convertisseur):
+    """Le jumeau Python du lecteur faisait foi, et ce test comparait le site à
+    lui. Il est parti à l'action 161, étape 3, relu fonction par fonction et
+    confronté avant sur des milliers de relevés ; sa lecture des relevés
+    d'essai reste, figée dans `tests/temoins/releves_lus.json` : la référence
+    du lecteur du site, au caractère près — les années, la saisie, les lignes
+    ignorées, les régimes, les notes, la naissance. Le barème du modèle n'y
+    entre pas, qui bouge avec les données : ses conversions ont leurs tests,
+    plus haut. Une lecture qui change exprès se refige, dans un commit à elle :
+    ``REFIGER_LES_RELEVES_LUS=1 python -m pytest tests/test_releve_lu.py -k figee``."""
+    cle = convertisseur or "sans_bareme"
+    lues = {nom: _lectures()[(nom, convertisseur)] for nom in sorted(RELEVES)}
+    temoin = json.loads(TEMOIN.read_text(encoding="utf-8"))
+    if os.environ.get("REFIGER_LES_RELEVES_LUS"):
+        temoin[cle] = lues
+        TEMOIN.write_text(json_en_lignes(temoin) + "\n", encoding="utf-8")
+        pytest.skip(f"lecture refigée : {TEMOIN.relative_to(RACINE)}, {cle}")
+    assert sorted(temoin[cle]) == sorted(RELEVES), "un relevé d'essai sans lecture figée"
+    for nom in sorted(RELEVES):
+        assert lues[nom] == temoin[cle][nom], nom

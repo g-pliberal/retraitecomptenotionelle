@@ -11,8 +11,9 @@ peut en lire la page, et n'y change une hypothèse qu'avec son accord.
     python scripts/estimation_officielle.py --releve ~/releve.pdf --estimation ~/estimation.yaml
 
 `--releve` lit le relevé de carrière que l'assuré a téléchargé : le PDF par
-`scripts/fetch/lecture_pdf.py`, ou ses lignes de texte, puis
-`web/releve_lu.lire_releve`, qui en rend la saisie du simulateur.
+`scripts/fetch/lecture_pdf.py`, ou ses lignes de texte, puis le lecteur du
+site, `moteur/js/releve-lu.js`, que node fait tourner, qui en rend la saisie
+du simulateur.
 `--estimation` lit ce que la caisse affiche, recopié âge par âge dans le
 gabarit que `--modele` imprime, avec la convention de la page mot pour mot.
 Pour chaque âge, le scénario 1 est liquidé à la même date, ramené à la même
@@ -31,9 +32,9 @@ travaille plus.
 
 **Ce que le relevé porte, et ce qu'il ne porte pas.** Le relevé du seul régime
 général porte un revenu PLAFONNÉ, et les points Agirc-Arrco n'y servent que
-d'indice du statut cadre (`web/releve_lu.py`) : une année au plafond minore la
-complémentaire du modèle sans qu'aucune règle n'y soit pour rien. Le relevé
-tous régimes d'info-retraite, lui, porte le « revenu d'activité soumis à
+d'indice du statut cadre (`moteur/js/releve-lu.js`) : une année au plafond
+minore la complémentaire du modèle sans qu'aucune règle n'y soit pour rien. Le
+relevé tous régimes d'info-retraite, lui, porte le « revenu d'activité soumis à
 cotisations retraite », plafond franchi compris. Le script dit lequel des deux
 il a lu, avant le tableau. Une année que la lecture a mal lue se corrige à la
 main dans l'estimation (`releve.corrections`), d'après le relevé lui-même, et
@@ -72,7 +73,7 @@ from retraite_notionnelle.donnees.chargement import (  # noqa: E402
     charger_periodes_non_travaillees,
 )
 from retraite_notionnelle.saisie import ErreurSaisie, Saisie  # noqa: E402
-from retraite_notionnelle.web.releve_lu import Lecture, arrondi, lire_releve  # noqa: E402
+from retraite_notionnelle.web.site import module  # noqa: E402
 
 #: Les étages d'une pension du système 1, dans l'ordre où le site les écrit
 #: (`ETAGES_ACTUEL` de `moteur/js/pages.js`) : le régime intégré tient lieu de
@@ -222,6 +223,49 @@ def hors_du_depot(chemin: Path) -> Path:
 # ---------------------------------------------------------------------------
 # Le relevé
 # ---------------------------------------------------------------------------
+
+#: Le lecteur du relevé est celui du site, `moteur/js/releve-lu.js`, que node
+#: fait tourner (`web/site.py`) : son jumeau Python est parti à l'action 161,
+#: étape 3, et un relevé se lit ici comme il se lit sur le site.
+LECTEUR = "releve-lu"
+
+
+@dataclass(frozen=True)
+class Lecture:
+    """Le relevé tel que le lecteur du site l'a lu : ses années — ``annee``,
+    ``statut``, ``revenu``, ``trimestres``, ``motif``, ``source`` —, les lignes
+    qu'il n'a pas comprises, ses notes, la naissance qu'il porte, et la saisie
+    qu'il en écrit."""
+
+    lignes: tuple
+    ignorees: tuple[str, ...]
+    notes: tuple[str, ...]
+    naissance: str | None
+    mois_de_naissance: str | None
+    saisie: tuple[tuple[str, str], ...]
+
+    @property
+    def vide(self) -> bool:
+        return not self.lignes
+
+    def parametres(self) -> dict[str, str]:
+        """La saisie du formulaire : le relevé, et les interruptions."""
+        return dict(self.saisie)
+
+
+def lire_releve(lignes: list[str]) -> Lecture:
+    """Les lignes d'un relevé, lues par le lecteur du site."""
+    lecteur = module(LECTEUR)
+    lue = lecteur.lire_releve(lignes)
+    return Lecture(tuple(lue.lignes), tuple(lue.ignorees), tuple(lue.notes), lue.naissance,
+                   lue.mois_de_naissance, tuple(lecteur.parametres_de(lue).items()))
+
+
+def arrondi(montant: float) -> int:
+    """L'euro le plus proche, la moitié vers le haut : la règle de la saisie
+    que le lecteur écrit, prise chez lui."""
+    return module(LECTEUR).arrondi(montant)
+
 
 def lignes_du_releve(chemin: Path) -> list[str]:
     """Les lignes de texte d'un relevé : celles du PDF, ou celles d'un texte collé."""

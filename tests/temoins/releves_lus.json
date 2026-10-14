@@ -1,0 +1,475 @@
+{
+"par_cent":{
+"ancienne":{
+"ignorees":[],
+"interruptions":[[1959,1959,"service_militaire"]],
+"lignes":[
+[1957,"salarie_prive_non_cadre",731.7552827395698,4,null,"1957 USINE RENAULT 480 000 4"],
+[1958,"salarie_prive_non_cadre",780.5389682555411,4,null,"1958 USINE RENAULT 512 000 4"],
+[1959,"salarie_prive_non_cadre",0.0,4,"service_militaire","1959 Service national 4"],
+[1960,"salarie_prive_non_cadre",975.6737103194264,4,null,"1960 USINE RENAULT 6 400 4"],
+[1961,"salarie_prive_non_cadre",1082.3880223856138,4,null,"1961 USINE RENAULT 7 100 4"],
+[2001,"salarie_prive_non_cadre",22562.454551136736,4,null,"2001 USINE RENAULT 148 000 4"],
+[2002,"salarie_prive_non_cadre",23400.0,4,null,"2002 USINE RENAULT 23 400 4"]
+],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Les revenus antérieurs à 2002 ont été convertis en euros : divisés par 6,55957 pour les francs, par 655,957 pour les années antérieures à 1960, qu'un relevé porte en anciens francs.",
+"Le revenu porté au relevé est plafonné : au-delà du plafond de la Sécurité sociale, le salaire n'y figure pas en entier, et la simulation lit ce que le relevé porte.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["regime_general"],
+"saisie":{
+"interruptions":"1959:1959:service_militaire",
+"releve":"1957:salarie_prive_non_cadre:732:4\n1958:salarie_prive_non_cadre:781:4\n1959:salarie_prive_non_cadre:0:4\n1960:salarie_prive_non_cadre:976:4\n1961:salarie_prive_non_cadre:1082:4\n2001:salarie_prive_non_cadre:22562:4\n2002:salarie_prive_non_cadre:23400:4"
+}
+},
+"derniere_annee_au_premier":{
+"ignorees":[],
+"interruptions":[],
+"lignes":[
+[2016,"salarie_prive_non_cadre",7340.0,null,null,"05/09/2016 23/12/2016 7 340 € L’Assurance retraite, Agirc-Arrco"],
+[2017,"salarie_prive_non_cadre",24610.0,null,null,"03/01/2017 22/12/2017 24 610 €"],
+[2018,"salarie_prive_non_cadre",25870.0,null,null,"02/01/2018 21/12/2018 25 870 €"],
+[2019,"salarie_prive_non_cadre",12930.0,null,null,"02/01/2019 01/03/2019 12 930 €"]
+],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte.",
+"Le relevé s'arrête le 1er mars 2019 : les droits les plus récents n'y sont peut-être pas encore enregistrés. La simulation compte pourtant chaque ligne pour une année entière, sauf celle du départ, et prolonge jusqu'à lui le revenu de la dernière. Si vous avez travaillé depuis, ajoutez au revenu de 2019 ce que vous avez gagné après cette date, puis une ligne par année ; sinon, déclarez les années sans emploi dans « Interruptions »."
+],
+"regimes":["regime_general","arrco"],
+"saisie":{"interruptions":"","releve":"2016:salarie_prive_non_cadre:7340\n2017:salarie_prive_non_cadre:24610\n2018:salarie_prive_non_cadre:25870\n2019:salarie_prive_non_cadre:12930"}
+},
+"derniere_annee_incomplete":{
+"ignorees":[],
+"interruptions":[],
+"lignes":[
+[2016,"salarie_prive_non_cadre",7340.0,null,null,"05/09/2016 23/12/2016 7 340 € L’Assurance retraite, Agirc-Arrco"],
+[2017,"salarie_prive_non_cadre",24610.0,null,null,"03/01/2017 22/12/2017 24 610 €"],
+[2018,"salarie_prive_non_cadre",25870.0,null,null,"02/01/2018 21/12/2018 25 870 €"],
+[2019,"salarie_prive_non_cadre",12930.0,null,null,"02/01/2019 14/06/2019 12 930 €"]
+],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte.",
+"Le relevé s'arrête le 14 juin 2019 : les droits les plus récents n'y sont peut-être pas encore enregistrés. La simulation compte pourtant chaque ligne pour une année entière, sauf celle du départ, et prolonge jusqu'à lui le revenu de la dernière. Si vous avez travaillé depuis, ajoutez au revenu de 2019 ce que vous avez gagné après cette date, puis une ligne par année ; sinon, déclarez les années sans emploi dans « Interruptions »."
+],
+"regimes":["regime_general","arrco"],
+"saisie":{"interruptions":"","releve":"2016:salarie_prive_non_cadre:7340\n2017:salarie_prive_non_cadre:24610\n2018:salarie_prive_non_cadre:25870\n2019:salarie_prive_non_cadre:12930"}
+},
+"deux_emplois":{
+"ignorees":[],
+"interruptions":[[2012,2012,"maladie"]],
+"lignes":[[2010,"salarie_prive_cadre",1500.0,0,null,"Agirc 2010 0 trim. 15 pts"],[2012,"salarie_prive_non_cadre",0.0,4,"maladie","2012 Maladie 0 4"],[2013,"salarie_prive_non_cadre",0.0,4,null,"2013 Salarié 0 4"],[2018,"contractuel_public",4200.0,1,null,"Agirc-Arrco 2018 0 trim. 12 pts"]],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Des points Agirc figurent au relevé : les années qu'ils couvrent sont lues comme des années de cadre.",
+"Les années 2010 et 2018, que le relevé ne chiffre qu'en points, ont reçu le revenu le plus bas qui les ouvre, au barème de leur régime et de leur année.",
+"L'année 2013 est lue sans revenu : la lecture n'en a trouvé aucun au relevé, ni en euros, ni en points qu'elle sache convertir. À compléter à la main ; à défaut, la simulation lui prête un revenu nul.",
+"Une période déclarée à l'Assurance retraite et à l'Ircantec est lue comme un emploi de contractuel de la fonction publique.",
+"Le revenu porté au relevé est plafonné : au-delà du plafond de la Sécurité sociale, le salaire n'y figure pas en entier, et la simulation lit ce que le relevé porte.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["regime_general","arrco","ircantec","agirc"],
+"saisie":{"interruptions":"2012:2012:maladie","releve":"2010:salarie_prive_cadre:1500:0\n2012:salarie_prive_non_cadre:0:4\n2013:salarie_prive_non_cadre:0:4\n2018:contractuel_public:4200:1"}
+},
+"ecarts_de_la_relecture":{
+"ignorees":[],
+"interruptions":[[2011,2011,"service_militaire"]],
+"lignes":[[2010,"salarie_prive_non_cadre",29500.0,2,null,"2010 SOCIETE 29 500 € 2,5 trim."],[2011,"salarie_prive_non_cadre",0.0,4,"service_militaire","2011 Se᷄rvice national 4"]],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Le revenu porté au relevé est plafonné : au-delà du plafond de la Sécurité sociale, le salaire n'y figure pas en entier, et la simulation lit ce que le relevé porte.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["regime_general"],
+"saisie":{"interruptions":"2011:2011:service_militaire","releve":"2010:salarie_prive_non_cadre:29500:2\n2011:salarie_prive_non_cadre:0:4"}
+},
+"estimation":{
+"ignorees":["01/12/2022 31/12/2022 L’Assurance retraite"],
+"interruptions":[],
+"lignes":[
+[2022,"contractuel_public",0.0,0,null,"2022 0 trim. 4 pts Ircantec"],
+[2023,"salarie_prive_non_cadre",1550.0,1,null,"2023 1 trim. 6,5 pts Agirc-Arrco"],
+[2024,"salarie_prive_non_cadre",45000.0,4,null,"2024 4 trim. 121,05 pts Agirc-Arrco"],
+[2025,"salarie_prive_non_cadre",42800.0,4,null,"2025 4 trim. 188,40 pts Agirc-Arrco"]
+],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"L'année 2022 est lue sans revenu : la lecture n'en a trouvé aucun au relevé, ni en euros, ni en points qu'elle sache convertir. À compléter à la main ; à défaut, la simulation lui prête un revenu nul.",
+"Une période déclarée à l'Assurance retraite et à l'Ircantec est lue comme un emploi de contractuel de la fonction publique.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["regime_general","arrco","ircantec","agirc"],
+"saisie":{"interruptions":"","releve":"2022:contractuel_public:0:0\n2023:salarie_prive_non_cadre:1550:1\n2024:salarie_prive_non_cadre:45000:4\n2025:salarie_prive_non_cadre:42800:4"}
+},
+"exploitant":{
+"ignorees":[],
+"interruptions":[],
+"lignes":[[2018,"exploitant_agricole",22189.0,4,null,"2018 Retraite proportionnelle 4 trim. 80 pts"],[2019,"exploitant_agricole",2300.0,4,null,"2019 Retraite proportionnelle 4 trim. 23 pts"]],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Les années 2018 et 2019, que le relevé ne chiffre qu'en points, ont reçu le revenu le plus bas qui les ouvre, au barème de leur régime et de leur année.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["msa_exploitants","arrco"],
+"saisie":{"interruptions":"","releve":"2018:exploitant_agricole:22189:4\n2019:exploitant_agricole:2300:4"}
+},
+"liberal":{
+"ignorees":[],
+"interruptions":[],
+"lignes":[[2015,"medecin_liberal",55000.0,4,null,"2015 Régime de base 550 4"],[2016,"medecin_liberal",56000.0,4,null,"2016 Régime de base 560 4"]],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Les années 2015 et 2016, que le relevé ne chiffre qu'en points, ont reçu le revenu le plus bas qui les ouvre, au barème de leur régime et de leur année. En 2015 et 2016, ce sont les points du plafond du barème : le revenu a pu le dépasser.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["carmf"],
+"saisie":{"interruptions":"","releve":"2015:medecin_liberal:55000:4\n2016:medecin_liberal:56000:4"}
+},
+"liberal_en_points":{
+"ignorees":[],
+"interruptions":[],
+"lignes":[[2003,"medecin_liberal",40000.0,4,null,"2003 Régime de base 400 4"],[2015,"medecin_liberal",41200.0,4,null,"2015 Régime de base 412 4"],[2016,"medecin_liberal",55000.0,4,null,"2016 Régime de base 550 4"]],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Les années 2003, 2015 et 2016, que le relevé ne chiffre qu'en points, ont reçu le revenu le plus bas qui les ouvre, au barème de leur régime et de leur année. En 2016, ce sont les points du plafond du barème : le revenu a pu le dépasser.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["carmf"],
+"saisie":{"interruptions":"","releve":"2003:medecin_liberal:40000:4\n2015:medecin_liberal:41200:4\n2016:medecin_liberal:55000:4"}
+},
+"regime_general":{
+"ignorees":[],
+"interruptions":[],
+"lignes":[
+[1998,"salarie_prive_non_cadre",14406.432128935281,4,null,"1998 GARAGE MARTIN 94 500 4"],
+[1999,"salarie_prive_non_cadre",14970.4934927137,4,null,"1999 GARAGE MARTIN 98 200 4"],
+[2000,"salarie_prive_non_cadre",7774.899879107929,4,"chomage_indemnise","2000 GARAGE MARTIN 51 000 2"],
+[2001,"salarie_prive_non_cadre",17135.269537484928,4,null,"2001 SOCIETE DUPONT SA 112 400 4"],
+[2002,"salarie_prive_non_cadre",18300.0,4,null,"2002 SOCIETE DUPONT SA 18 300 4"],
+[2003,"salarie_prive_non_cadre",19100.0,4,null,"2003 SOCIETE DUPONT SA 19 100 4"]
+],
+"mois_de_naissance":"1962-05",
+"naissance":"1962-05-12",
+"notes":[
+"Les revenus antérieurs à 2002 ont été convertis en euros : divisés par 6,55957 pour les francs, par 655,957 pour les années antérieures à 1960, qu'un relevé porte en anciens francs.",
+"Le revenu porté au relevé est plafonné : au-delà du plafond de la Sécurité sociale, le salaire n'y figure pas en entier, et la simulation lit ce que le relevé porte.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["regime_general"],
+"saisie":{"interruptions":"","releve":"1998:salarie_prive_non_cadre:14406:4\n1999:salarie_prive_non_cadre:14970:4\n2000:salarie_prive_non_cadre:7775:4\n2001:salarie_prive_non_cadre:17135:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:19100:4"}
+},
+"releve_2026":{
+"ignorees":["07/09/2020 27/11/2020 L’Assurance retraite"],
+"interruptions":[],
+"lignes":[
+[2018,"salarie_prive_non_cadre",655.0,0,null,"Agirc-Arrco 2018 0 trim. 2,90 pts"],
+[2019,"contractuel_public",2885.0,1,null,"Ircantec 2019 1 trim. 7 pts"],
+[2020,"salarie_prive_non_cadre",2010.0,1,null,"Agirc-Arrco 2020 1 trim. 9,50 pts"],
+[2021,"salarie_prive_non_cadre",18315.0,4,null,"Agirc-Arrco 2021 4 trim. 96,44 pts"],
+[2022,"salarie_prive_non_cadre",34550.0,4,null,"Agirc-Arrco 2022 4 trim. 187,62 pts"],
+[2023,"salarie_prive_non_cadre",49765.0,4,null,"Agirc-Arrco 2023 4 trim. 198,10 pts"],
+[2024,"salarie_prive_non_cadre",52345.0,4,null,"Agirc-Arrco 2024 4 trim. 210,35 pts"],
+[2025,"contractuel_public",6045.0,3,null,"Ircantec 2025 3 trim. 41 pts"]
+],
+"mois_de_naissance":"1998-08",
+"naissance":null,
+"notes":[
+"Une ligne qui ne nomme qu'une caisse complémentaire, l'année où une autre ne nomme que le régime de base, redit la même paie : son revenu n'est pas compté une seconde fois.",
+"Une période déclarée à l'Assurance retraite et à l'Ircantec est lue comme un emploi de contractuel de la fonction publique.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["regime_general","ircantec","arrco"],
+"saisie":{
+"interruptions":"",
+"releve":"2018:salarie_prive_non_cadre:655:0\n2019:contractuel_public:2885:1\n2020:salarie_prive_non_cadre:2010:1\n2021:salarie_prive_non_cadre:18315:4\n2022:salarie_prive_non_cadre:34550:4\n2023:salarie_prive_non_cadre:49765:4\n2024:salarie_prive_non_cadre:52345:4\n2025:contractuel_public:6045:3"
+}
+},
+"sans_rien":{
+"ignorees":[],
+"interruptions":[],
+"lignes":[],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":["Ce document ne ressemble pas à un relevé de carrière : ni son titre, ni la colonne des trimestres qu'une caisse imprime toujours ne s'y trouvent. Rien n'en a été lu, plutôt que d'en tirer des années qui n'existent pas."],
+"regimes":[],
+"saisie":{"interruptions":"","releve":""}
+},
+"tableau_des_annees":{
+"ignorees":[],
+"interruptions":[],
+"lignes":[[2018,"salarie_prive_non_cadre",0.0,0,null,"Agirc-Arrco 2018 0 trim. 2,90 pts"],[2019,"contractuel_public",0.0,1,null,"Ircantec 2019 1 trim. 7 pts"]],
+"mois_de_naissance":"1997-03",
+"naissance":null,
+"notes":[
+"Les années 2018 et 2019 sont lues sans revenu : la lecture n'en a trouvé aucun au relevé, ni en euros, ni en points qu'elle sache convertir. À compléter à la main ; à défaut, la simulation leur prête un revenu nul.",
+"Une période déclarée à l'Assurance retraite et à l'Ircantec est lue comme un emploi de contractuel de la fonction publique.",
+"Le revenu porté au relevé est plafonné : au-delà du plafond de la Sécurité sociale, le salaire n'y figure pas en entier, et la simulation lit ce que le relevé porte.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["arrco","regime_general","ircantec"],
+"saisie":{"interruptions":"","releve":"2018:salarie_prive_non_cadre:0:0\n2019:contractuel_public:0:1"}
+},
+"tous_regimes":{
+"ignorees":["Services du 01/09/1996 au 31/08/2001 Professeur certifié"],
+"interruptions":[[2012,2012,"maladie"]],
+"lignes":[[2010,"salarie_prive_non_cadre",29500.0,4,null,"2010 Salarié 29 500 4"],[2011,"salarie_prive_cadre",30100.0,4,null,"2011 Salarié 30 100 4"],[2012,"salarie_prive_non_cadre",0.0,4,"maladie","2012 Maladie 0 4"],[2013,"salarie_prive_non_cadre",31800.0,4,null,"2013 Salarié 31 800 4"]],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Des points Agirc figurent au relevé : les années qu'ils couvrent sont lues comme des années de cadre.",
+"Le revenu porté au relevé est plafonné : au-delà du plafond de la Sécurité sociale, le salaire n'y figure pas en entier, et la simulation lit ce que le relevé porte.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["regime_general","arrco","agirc","ircantec","pension_civile_etat"],
+"saisie":{"interruptions":"2012:2012:maladie","releve":"2010:salarie_prive_non_cadre:29500:4\n2011:salarie_prive_cadre:30100:4\n2012:salarie_prive_non_cadre:0:4\n2013:salarie_prive_non_cadre:31800:4"}
+}
+},
+"sans_bareme":{
+"ancienne":{
+"ignorees":[],
+"interruptions":[[1959,1959,"service_militaire"]],
+"lignes":[
+[1957,"salarie_prive_non_cadre",731.7552827395698,4,null,"1957 USINE RENAULT 480 000 4"],
+[1958,"salarie_prive_non_cadre",780.5389682555411,4,null,"1958 USINE RENAULT 512 000 4"],
+[1959,"salarie_prive_non_cadre",0.0,4,"service_militaire","1959 Service national 4"],
+[1960,"salarie_prive_non_cadre",975.6737103194264,4,null,"1960 USINE RENAULT 6 400 4"],
+[1961,"salarie_prive_non_cadre",1082.3880223856138,4,null,"1961 USINE RENAULT 7 100 4"],
+[2001,"salarie_prive_non_cadre",22562.454551136736,4,null,"2001 USINE RENAULT 148 000 4"],
+[2002,"salarie_prive_non_cadre",23400.0,4,null,"2002 USINE RENAULT 23 400 4"]
+],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Les revenus antérieurs à 2002 ont été convertis en euros : divisés par 6,55957 pour les francs, par 655,957 pour les années antérieures à 1960, qu'un relevé porte en anciens francs.",
+"Le revenu porté au relevé est plafonné : au-delà du plafond de la Sécurité sociale, le salaire n'y figure pas en entier, et la simulation lit ce que le relevé porte.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["regime_general"],
+"saisie":{
+"interruptions":"1959:1959:service_militaire",
+"releve":"1957:salarie_prive_non_cadre:732:4\n1958:salarie_prive_non_cadre:781:4\n1959:salarie_prive_non_cadre:0:4\n1960:salarie_prive_non_cadre:976:4\n1961:salarie_prive_non_cadre:1082:4\n2001:salarie_prive_non_cadre:22562:4\n2002:salarie_prive_non_cadre:23400:4"
+}
+},
+"derniere_annee_au_premier":{
+"ignorees":[],
+"interruptions":[],
+"lignes":[
+[2016,"salarie_prive_non_cadre",7340.0,null,null,"05/09/2016 23/12/2016 7 340 € L’Assurance retraite, Agirc-Arrco"],
+[2017,"salarie_prive_non_cadre",24610.0,null,null,"03/01/2017 22/12/2017 24 610 €"],
+[2018,"salarie_prive_non_cadre",25870.0,null,null,"02/01/2018 21/12/2018 25 870 €"],
+[2019,"salarie_prive_non_cadre",12930.0,null,null,"02/01/2019 01/03/2019 12 930 €"]
+],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte.",
+"Le relevé s'arrête le 1er mars 2019 : les droits les plus récents n'y sont peut-être pas encore enregistrés. La simulation compte pourtant chaque ligne pour une année entière, sauf celle du départ, et prolonge jusqu'à lui le revenu de la dernière. Si vous avez travaillé depuis, ajoutez au revenu de 2019 ce que vous avez gagné après cette date, puis une ligne par année ; sinon, déclarez les années sans emploi dans « Interruptions »."
+],
+"regimes":["regime_general","arrco"],
+"saisie":{"interruptions":"","releve":"2016:salarie_prive_non_cadre:7340\n2017:salarie_prive_non_cadre:24610\n2018:salarie_prive_non_cadre:25870\n2019:salarie_prive_non_cadre:12930"}
+},
+"derniere_annee_incomplete":{
+"ignorees":[],
+"interruptions":[],
+"lignes":[
+[2016,"salarie_prive_non_cadre",7340.0,null,null,"05/09/2016 23/12/2016 7 340 € L’Assurance retraite, Agirc-Arrco"],
+[2017,"salarie_prive_non_cadre",24610.0,null,null,"03/01/2017 22/12/2017 24 610 €"],
+[2018,"salarie_prive_non_cadre",25870.0,null,null,"02/01/2018 21/12/2018 25 870 €"],
+[2019,"salarie_prive_non_cadre",12930.0,null,null,"02/01/2019 14/06/2019 12 930 €"]
+],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte.",
+"Le relevé s'arrête le 14 juin 2019 : les droits les plus récents n'y sont peut-être pas encore enregistrés. La simulation compte pourtant chaque ligne pour une année entière, sauf celle du départ, et prolonge jusqu'à lui le revenu de la dernière. Si vous avez travaillé depuis, ajoutez au revenu de 2019 ce que vous avez gagné après cette date, puis une ligne par année ; sinon, déclarez les années sans emploi dans « Interruptions »."
+],
+"regimes":["regime_general","arrco"],
+"saisie":{"interruptions":"","releve":"2016:salarie_prive_non_cadre:7340\n2017:salarie_prive_non_cadre:24610\n2018:salarie_prive_non_cadre:25870\n2019:salarie_prive_non_cadre:12930"}
+},
+"deux_emplois":{
+"ignorees":[],
+"interruptions":[[2012,2012,"maladie"]],
+"lignes":[[2010,"salarie_prive_cadre",0.0,0,null,"Agirc 2010 0 trim. 15 pts"],[2012,"salarie_prive_non_cadre",0.0,4,"maladie","2012 Maladie 0 4"],[2013,"salarie_prive_non_cadre",0.0,4,null,"2013 Salarié 0 4"],[2018,"contractuel_public",0.0,1,null,"Agirc-Arrco 2018 0 trim. 12 pts"]],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Des points Agirc figurent au relevé : les années qu'ils couvrent sont lues comme des années de cadre.",
+"Les années 2010, 2013 et 2018 sont lues sans revenu : la lecture n'en a trouvé aucun au relevé, ni en euros, ni en points qu'elle sache convertir. À compléter à la main ; à défaut, la simulation leur prête un revenu nul.",
+"Une période déclarée à l'Assurance retraite et à l'Ircantec est lue comme un emploi de contractuel de la fonction publique.",
+"Le revenu porté au relevé est plafonné : au-delà du plafond de la Sécurité sociale, le salaire n'y figure pas en entier, et la simulation lit ce que le relevé porte.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["regime_general","arrco","ircantec","agirc"],
+"saisie":{"interruptions":"2012:2012:maladie","releve":"2010:salarie_prive_cadre:0:0\n2012:salarie_prive_non_cadre:0:4\n2013:salarie_prive_non_cadre:0:4\n2018:contractuel_public:0:1"}
+},
+"ecarts_de_la_relecture":{
+"ignorees":[],
+"interruptions":[[2011,2011,"service_militaire"]],
+"lignes":[[2010,"salarie_prive_non_cadre",29500.0,2,null,"2010 SOCIETE 29 500 € 2,5 trim."],[2011,"salarie_prive_non_cadre",0.0,4,"service_militaire","2011 Se᷄rvice national 4"]],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Le revenu porté au relevé est plafonné : au-delà du plafond de la Sécurité sociale, le salaire n'y figure pas en entier, et la simulation lit ce que le relevé porte.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["regime_general"],
+"saisie":{"interruptions":"2011:2011:service_militaire","releve":"2010:salarie_prive_non_cadre:29500:2\n2011:salarie_prive_non_cadre:0:4"}
+},
+"estimation":{
+"ignorees":["01/12/2022 31/12/2022 L’Assurance retraite"],
+"interruptions":[],
+"lignes":[
+[2022,"contractuel_public",0.0,0,null,"2022 0 trim. 4 pts Ircantec"],
+[2023,"salarie_prive_non_cadre",1550.0,1,null,"2023 1 trim. 6,5 pts Agirc-Arrco"],
+[2024,"salarie_prive_non_cadre",45000.0,4,null,"2024 4 trim. 121,05 pts Agirc-Arrco"],
+[2025,"salarie_prive_non_cadre",42800.0,4,null,"2025 4 trim. 188,40 pts Agirc-Arrco"]
+],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"L'année 2022 est lue sans revenu : la lecture n'en a trouvé aucun au relevé, ni en euros, ni en points qu'elle sache convertir. À compléter à la main ; à défaut, la simulation lui prête un revenu nul.",
+"Une période déclarée à l'Assurance retraite et à l'Ircantec est lue comme un emploi de contractuel de la fonction publique.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["regime_general","arrco","ircantec","agirc"],
+"saisie":{"interruptions":"","releve":"2022:contractuel_public:0:0\n2023:salarie_prive_non_cadre:1550:1\n2024:salarie_prive_non_cadre:45000:4\n2025:salarie_prive_non_cadre:42800:4"}
+},
+"exploitant":{
+"ignorees":[],
+"interruptions":[],
+"lignes":[[2018,"exploitant_agricole",0.0,4,null,"2018 Retraite proportionnelle 4 trim. 80 pts"],[2019,"exploitant_agricole",0.0,4,null,"2019 Retraite proportionnelle 4 trim. 23 pts"]],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Les années 2018 et 2019 sont lues sans revenu : la lecture n'en a trouvé aucun au relevé, ni en euros, ni en points qu'elle sache convertir. À compléter à la main ; à défaut, la simulation leur prête un revenu nul.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["msa_exploitants","arrco"],
+"saisie":{"interruptions":"","releve":"2018:exploitant_agricole:0:4\n2019:exploitant_agricole:0:4"}
+},
+"liberal":{
+"ignorees":[],
+"interruptions":[],
+"lignes":[[2015,"medecin_liberal",0.0,4,null,"2015 Régime de base 550 4"],[2016,"medecin_liberal",0.0,4,null,"2016 Régime de base 560 4"]],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Les années 2015 et 2016 sont lues sans revenu : la lecture n'en a trouvé aucun au relevé, ni en euros, ni en points qu'elle sache convertir. À compléter à la main ; à défaut, la simulation leur prête un revenu nul.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["carmf"],
+"saisie":{"interruptions":"","releve":"2015:medecin_liberal:0:4\n2016:medecin_liberal:0:4"}
+},
+"liberal_en_points":{
+"ignorees":[],
+"interruptions":[],
+"lignes":[[2003,"medecin_liberal",0.0,4,null,"2003 Régime de base 400 4"],[2015,"medecin_liberal",0.0,4,null,"2015 Régime de base 412 4"],[2016,"medecin_liberal",0.0,4,null,"2016 Régime de base 550 4"]],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Les années 2003, 2015 et 2016 sont lues sans revenu : la lecture n'en a trouvé aucun au relevé, ni en euros, ni en points qu'elle sache convertir. À compléter à la main ; à défaut, la simulation leur prête un revenu nul.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["carmf"],
+"saisie":{"interruptions":"","releve":"2003:medecin_liberal:0:4\n2015:medecin_liberal:0:4\n2016:medecin_liberal:0:4"}
+},
+"regime_general":{
+"ignorees":[],
+"interruptions":[],
+"lignes":[
+[1998,"salarie_prive_non_cadre",14406.432128935281,4,null,"1998 GARAGE MARTIN 94 500 4"],
+[1999,"salarie_prive_non_cadre",14970.4934927137,4,null,"1999 GARAGE MARTIN 98 200 4"],
+[2000,"salarie_prive_non_cadre",7774.899879107929,4,"chomage_indemnise","2000 GARAGE MARTIN 51 000 2"],
+[2001,"salarie_prive_non_cadre",17135.269537484928,4,null,"2001 SOCIETE DUPONT SA 112 400 4"],
+[2002,"salarie_prive_non_cadre",18300.0,4,null,"2002 SOCIETE DUPONT SA 18 300 4"],
+[2003,"salarie_prive_non_cadre",19100.0,4,null,"2003 SOCIETE DUPONT SA 19 100 4"]
+],
+"mois_de_naissance":"1962-05",
+"naissance":"1962-05-12",
+"notes":[
+"Les revenus antérieurs à 2002 ont été convertis en euros : divisés par 6,55957 pour les francs, par 655,957 pour les années antérieures à 1960, qu'un relevé porte en anciens francs.",
+"Le revenu porté au relevé est plafonné : au-delà du plafond de la Sécurité sociale, le salaire n'y figure pas en entier, et la simulation lit ce que le relevé porte.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["regime_general"],
+"saisie":{"interruptions":"","releve":"1998:salarie_prive_non_cadre:14406:4\n1999:salarie_prive_non_cadre:14970:4\n2000:salarie_prive_non_cadre:7775:4\n2001:salarie_prive_non_cadre:17135:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:19100:4"}
+},
+"releve_2026":{
+"ignorees":["07/09/2020 27/11/2020 L’Assurance retraite"],
+"interruptions":[],
+"lignes":[
+[2018,"salarie_prive_non_cadre",655.0,0,null,"Agirc-Arrco 2018 0 trim. 2,90 pts"],
+[2019,"contractuel_public",2885.0,1,null,"Ircantec 2019 1 trim. 7 pts"],
+[2020,"salarie_prive_non_cadre",2010.0,1,null,"Agirc-Arrco 2020 1 trim. 9,50 pts"],
+[2021,"salarie_prive_non_cadre",18315.0,4,null,"Agirc-Arrco 2021 4 trim. 96,44 pts"],
+[2022,"salarie_prive_non_cadre",34550.0,4,null,"Agirc-Arrco 2022 4 trim. 187,62 pts"],
+[2023,"salarie_prive_non_cadre",49765.0,4,null,"Agirc-Arrco 2023 4 trim. 198,10 pts"],
+[2024,"salarie_prive_non_cadre",52345.0,4,null,"Agirc-Arrco 2024 4 trim. 210,35 pts"],
+[2025,"contractuel_public",6045.0,3,null,"Ircantec 2025 3 trim. 41 pts"]
+],
+"mois_de_naissance":"1998-08",
+"naissance":null,
+"notes":[
+"Une ligne qui ne nomme qu'une caisse complémentaire, l'année où une autre ne nomme que le régime de base, redit la même paie : son revenu n'est pas compté une seconde fois.",
+"Une période déclarée à l'Assurance retraite et à l'Ircantec est lue comme un emploi de contractuel de la fonction publique.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["regime_general","ircantec","arrco"],
+"saisie":{
+"interruptions":"",
+"releve":"2018:salarie_prive_non_cadre:655:0\n2019:contractuel_public:2885:1\n2020:salarie_prive_non_cadre:2010:1\n2021:salarie_prive_non_cadre:18315:4\n2022:salarie_prive_non_cadre:34550:4\n2023:salarie_prive_non_cadre:49765:4\n2024:salarie_prive_non_cadre:52345:4\n2025:contractuel_public:6045:3"
+}
+},
+"sans_rien":{
+"ignorees":[],
+"interruptions":[],
+"lignes":[],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":["Ce document ne ressemble pas à un relevé de carrière : ni son titre, ni la colonne des trimestres qu'une caisse imprime toujours ne s'y trouvent. Rien n'en a été lu, plutôt que d'en tirer des années qui n'existent pas."],
+"regimes":[],
+"saisie":{"interruptions":"","releve":""}
+},
+"tableau_des_annees":{
+"ignorees":[],
+"interruptions":[],
+"lignes":[[2018,"salarie_prive_non_cadre",0.0,0,null,"Agirc-Arrco 2018 0 trim. 2,90 pts"],[2019,"contractuel_public",0.0,1,null,"Ircantec 2019 1 trim. 7 pts"]],
+"mois_de_naissance":"1997-03",
+"naissance":null,
+"notes":[
+"Les années 2018 et 2019 sont lues sans revenu : la lecture n'en a trouvé aucun au relevé, ni en euros, ni en points qu'elle sache convertir. À compléter à la main ; à défaut, la simulation leur prête un revenu nul.",
+"Une période déclarée à l'Assurance retraite et à l'Ircantec est lue comme un emploi de contractuel de la fonction publique.",
+"Le revenu porté au relevé est plafonné : au-delà du plafond de la Sécurité sociale, le salaire n'y figure pas en entier, et la simulation lit ce que le relevé porte.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["arrco","regime_general","ircantec"],
+"saisie":{"interruptions":"","releve":"2018:salarie_prive_non_cadre:0:0\n2019:contractuel_public:0:1"}
+},
+"tous_regimes":{
+"ignorees":["Services du 01/09/1996 au 31/08/2001 Professeur certifié"],
+"interruptions":[[2012,2012,"maladie"]],
+"lignes":[[2010,"salarie_prive_non_cadre",29500.0,4,null,"2010 Salarié 29 500 4"],[2011,"salarie_prive_cadre",30100.0,4,null,"2011 Salarié 30 100 4"],[2012,"salarie_prive_non_cadre",0.0,4,"maladie","2012 Maladie 0 4"],[2013,"salarie_prive_non_cadre",31800.0,4,null,"2013 Salarié 31 800 4"]],
+"mois_de_naissance":null,
+"naissance":null,
+"notes":[
+"Des points Agirc figurent au relevé : les années qu'ils couvrent sont lues comme des années de cadre.",
+"Le revenu porté au relevé est plafonné : au-delà du plafond de la Sécurité sociale, le salaire n'y figure pas en entier, et la simulation lit ce que le relevé porte.",
+"Un relevé peut être incomplet avant le départ : certaines périodes, comme le chômage non indemnisé, le service militaire ou le travail à l'étranger, ne sont souvent prises en compte qu'à la demande de retraite, et la simulation lit ce qu'il porte."
+],
+"regimes":["regime_general","arrco","agirc","ircantec","pension_civile_etat"],
+"saisie":{"interruptions":"2012:2012:maladie","releve":"2010:salarie_prive_non_cadre:29500:4\n2011:salarie_prive_cadre:30100:4\n2012:salarie_prive_non_cadre:0:4\n2013:salarie_prive_non_cadre:31800:4"}
+}
+}
+}

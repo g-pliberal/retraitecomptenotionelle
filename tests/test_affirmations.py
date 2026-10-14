@@ -2846,10 +2846,11 @@ def _(m: Modele):
     lignes du relevé, la saisie qu'elles rendent, la page qui la calcule — sur
     un relevé à la forme de ceux des caisses.
     """
-    from retraite_notionnelle.web.releve_lu import lire_releve
-    from retraite_notionnelle.web.site import rendre
+    from retraite_notionnelle.web.site import module, rendre
 
-    lecture = lire_releve([
+    # Le lecteur du relevé est celui du site, que node fait tourner.
+    lecteur = module("releve-lu")
+    lecture = lecteur.lire_releve([
         "Relevé de carrière",
         "Régime général",
         "Année Employeur Revenu Trimestres retenus",
@@ -2857,7 +2858,7 @@ def _(m: Modele):
         "2011 SOCIETE 30 100 4",
     ])
     assert [ligne.annee for ligne in lecture.lignes] == [2010, 2011]
-    parametres = lecture.parametres()
+    parametres = lecteur.parametres_de(lecture)
     assert parametres["releve"].startswith("2010:salarie_prive_non_cadre:29500:4")
     _, corps = rendre("/simuler", {
         "naissance": "1985-01-01", "depart": "2050-01-01",
