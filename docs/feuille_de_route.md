@@ -6062,12 +6062,13 @@ plutôt que déplacer celui qui existe, et l'ordre des groupes.
 
 ### 153. L'oracle au-delà des carrières simples : ce qu'OpenFisca calcule et que le dépôt ne lui confronte pas — `en cours`
 
-**Reprise, au 14 octobre 2026.** Faites, l'étape 1 et la première famille de
-l'étape 2 : les enfants des fonctionnaires (`openfisca_enfants.py`,
-`tests/test_oracle_enfants.py`) ; rien à corriger chez nous, trois écarts de plus
-chez OpenFisca, au registre — quatorze en tout. Reste l'étape 2, une famille par
-session, chacune dans un script et un test frères des premiers : la catégorie
-active, la carrière longue de la fonction publique, les minima (le minimum
+**Reprise, au 14 octobre 2026.** Faites, l'étape 1 et deux familles de
+l'étape 2 : les enfants des fonctionnaires, puis la catégorie active
+(`openfisca_categorie_active.py`, `tests/test_oracle_categorie_active.py`), qui
+a trouvé une erreur chez nous, corrigée — la durée de services actifs, relevée
+selon l'année d'atteinte et non la génération — et deux de plus chez OpenFisca,
+seize en tout. Reste l'étape 2, une famille par session, dans un script et un
+test frères : la carrière longue de la fonction publique, les minima (le minimum
 garanti de la CNRACL, nul chez lui), les points enfants et la minoration de
 l'Arrco, les périodes assimilées, le salaire annuel moyen (153.2). Le
 signalement à OpenFisca attend le propriétaire. Détail : la note du 14 octobre.

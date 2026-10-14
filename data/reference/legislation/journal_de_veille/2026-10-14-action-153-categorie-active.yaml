@@ -1,0 +1,31 @@
+date: "2026-10-14"
+session: >-
+  action 153, étape 2, troisième famille : la catégorie active des fonctionnaires —
+  l'âge anticipé, la durée de services actifs, la durée requise, la décote, la
+  super-active —, confrontée à OpenFisca-France-Pension
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index LEGI, récupéré à jour au 11 octobre 2026.
+  La loi n° 2010-1330, article 35, rédactions du 1er juillet 2011 (LEGIARTI000023023867)
+  et du 23 décembre 2011 (LEGIARTI000025014546) ; le décret n° 2011-2103, articles 2, 4,
+  6 et 8 (LEGIARTI000025100416, LEGIARTI000025100420, LEGIARTI000025100424,
+  LEGIARTI000025100429). Et le code et les barèmes d'OpenFisca-France-Pension 0.1.3
+  (`duree_seuil_actif`, `trimtp_a`, `aod_a`, `la_a`), exécutés à part.
+trouve: >-
+  Une règle du scénario 1 à corriger. L'article 35 de la loi du 9 novembre 2010 porte
+  les quinze ans de services actifs à dix-sept, et les vingt-cinq de services
+  super-actifs à vingt-sept, « à compter du 1er janvier 2015 » ; l'article 6 du décret
+  n° 2011-2103 fixe la transition selon l'« Année au cours de laquelle est atteinte la
+  durée de services de quinze ans » — quinze ans avant le 1er juillet 2011, quinze ans
+  et quatre mois au second semestre 2011, neuf mois en 2012, seize ans et deux mois en
+  2013, sept mois en 2014. Le dépôt l'exigeait par génération, dix-sept ans dès celle
+  du 1er juillet 1956 (`categorie_active.csv`) ; il porte depuis
+  `duree_services_actifs.csv`, lue à l'année où la durée de base est atteinte, pour
+  l'âge anticipé ou minoré et pour les bonifications qui l'exigent, dans les deux
+  moteurs. Aucun témoin de simulation ne bouge. Les âges, la limite d'âge, la décote et
+  la durée requise des actifs concordent avec OpenFisca ; ses deux écarts, la
+  proratisation des actifs (L. 13, III) et la super-active, sont les siens.
+reste: >-
+  À l'action 153, étape 2 : les familles suivantes, une par session. Le signalement à
+  OpenFisca, que le propriétaire tranche. Le III de l'article 35 — l'agent qui a
+  accompli l'ancienne durée avant 2011 puis a été intégré dans un corps sédentaire ou
+  radié — ne pèse pas : l'année d'atteinte lui laisse déjà l'ancienne durée.

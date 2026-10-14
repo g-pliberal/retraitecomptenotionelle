@@ -1548,6 +1548,42 @@ referents:
         preuve: >-
           tests/temoins/openfisca_enfants.json ;
           tests/test_oracle_enfants.py
+      - constat: >-
+          Il proratise la pension des actifs sur la durée de leur génération
+          (`trimtp`), quand il oppose à leur décote celle de l'année
+          d'ouverture du droit (`trimtp_a`). L'actif de la CNRACL né en 1954,
+          parti à 55 ans en 2009 avec 132 trimestres, est proratisé chez lui
+          sur 164 trimestres, chez nous sur 161 : sa pension y est plus faible
+          de 3/164 ; de un à trois trimestres sur les sept actifs confrontés.
+        tranche: >-
+          L. 13, III, rédaction du 22 janvier 2014 (LEGIARTI000028498258) :
+          « la durée des services et bonifications exigée des fonctionnaires
+          [...] qui remplissent les conditions de liquidation d'une pension
+          avant l'âge de soixante ans est celle exigée des fonctionnaires
+          atteignant cet âge l'année à compter de laquelle la liquidation
+          peut intervenir » ; avant 2014, la loi n° 2003-775, article 5, VI
+          (LEGIARTI000023030932). Le dépôt a raison
+        preuve: >-
+          tests/temoins/openfisca_categorie_active.json ;
+          tests/test_oracle_categorie_active.py
+      - constat: >-
+          Il ne connaît pas la super-active : `nombre_annees_actif` ne compte
+          que les années `actif`, l'âge d'ouverture ne lit que
+          `actif_a_la_liquidation`, et la bonification du cinquième est
+          écrite sous `super_actif = False`. Le fonctionnaire super-actif de
+          l'État né en 1962, trente et un ans de services super-actifs, parti
+          à 52 ans en 2014, a chez lui l'âge d'ouverture du sédentaire, vingt
+          trimestres de décote et aucune bonification : 13 286 euros, contre
+          19 782 chez nous.
+        tranche: >-
+          L. 24, I, 1° : l'âge minoré, 50 ans et 9 mois pour la génération
+          1962 (décret n° 2011-2103, article 2), à qui a vingt-sept ans de
+          services super-actifs, vingt-cinq atteints avant juillet 2011
+          (article 6) ; loi n° 96-452, article 24 : la bonification du
+          cinquième, cinq ans au plus. Le dépôt a raison
+        preuve: >-
+          tests/temoins/openfisca_categorie_active.json ;
+          tests/test_oracle_categorie_active.py
     fait_mieux:
       - quoi: >-
           Il code le départ anticipé des fonctionnaires parents de trois
@@ -1591,6 +1627,31 @@ referents:
         etat: repris
         chantier: "136.3"
       - quoi: >-
+          Il relève la durée de services actifs qui ouvre l'âge anticipé —
+          quinze ans portés à dix-sept — selon la date à laquelle les quinze
+          ans sont atteints (`duree_seuil_actif`, lue à
+          `date_quinze_ans_actif`). Le dépôt l'exigeait par génération :
+          dix-sept ans de tout actif né depuis le 1er juillet 1956, vingt-sept
+          de tout super-actif né depuis le 1er juillet 1961, et refusait
+          l'âge anticipé à qui avait achevé ses quinze ans avant 2013 sans
+          aller jusqu'à dix-sept.
+        preuve: >-
+          `variables/fonction_publique.py:23-33` (`cnracl_actif_a_la_liquidation`)
+          et `parameters/retraites/secteur_public/pension_civile/duree_seuil_actif.yaml`,
+          version 0.1.3
+        verification: >-
+          Loi n° 2010-1330, article 35, II (LEGIARTI000025014546), et décret
+          n° 2011-2103, article 6 (LEGIARTI000025100424) : la durée exigée
+          selon l'« Année au cours de laquelle est atteinte la durée de
+          services de quinze ans », quinze ans avant le 1er juillet 2011,
+          dix-sept à compter de 2015 ; les mêmes marches de vingt-cinq à
+          vingt-sept. Repris le 14 octobre 2026 dans les deux moteurs
+          (`duree_services_actifs.csv`), pour l'âge anticipé ou minoré et
+          pour les bonifications qui l'exigent ; confronté à son calcul sur
+          trois profils de seize ans (action 153, troisième famille).
+        etat: repris
+        chantier: "153.2"
+      - quoi: >-
           Il calcule, et le plus souvent teste, la majoration de durée et la
           bonification pour enfants, la majoration de 10 %, les points enfants
           de l'Arrco, la catégorie active, la carrière longue de la fonction
@@ -1604,8 +1665,10 @@ referents:
           14 octobre, les enfants des fonctionnaires — la bonification et la
           majoration de pension au-delà de trois enfants, la majoration de
           durée des enfants nés depuis 2004, les enfants nés avant le
-          recrutement (`tests/test_oracle_enfants.py`, étape 2). Restent les
-          autres familles.
+          recrutement (`tests/test_oracle_enfants.py`, étape 2) ; la
+          catégorie active — l'âge anticipé, la durée de services actifs, la
+          décote, la super-active (`tests/test_oracle_categorie_active.py`).
+          Restent les autres familles.
         preuve: >-
           ses 140 tests de formules (`tests/formulas/`), au commit `1c45423`
         etat: a_reprendre
@@ -1904,13 +1967,17 @@ referents:
       revalorisation de 2020 ; au départ des parents de trois enfants,
       faux sur la durée, l'ouverture et les quinze ans ; aux enfants des
       fonctionnaires, sur le recrutement, qu'il ne lit pas, et sur la
-      majoration de durée de la CNRACL (action 153).
+      majoration de durée de la CNRACL ; à la catégorie active, sur la
+      proratisation des actifs et sur la super-active, qu'il ne connaît
+      pas — mais juste sur la durée de services actifs, que le dépôt
+      lisait par génération (action 153).
     manifeste:
       - openfisca_points
       - openfisca_regime_general_oracle
       - openfisca_fonction_publique_oracle
       - openfisca_temps_partiel_et_parents_oracle
       - openfisca_enfants_oracle
+      - openfisca_categorie_active_oracle
       - openfisca_arrco_oracle
       - openfisca_minimum_contributif
       - openfisca_parametres_generation

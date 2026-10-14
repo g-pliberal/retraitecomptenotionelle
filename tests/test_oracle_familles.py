@@ -85,6 +85,15 @@ def _quotites(profil: dict) -> dict[int, float]:
             for annee in range(debut, fin + 1)}
 
 
+def _affiliation(profil: dict, annee: int) -> str:
+    """Le statut de l'année : le statut classé du profil sur sa plage
+    ``actif`` (troisième famille, la catégorie active), le statut sédentaire
+    du régime ailleurs."""
+    if "actif" in profil and profil["actif"][0] <= annee <= profil["actif"][1]:
+        return profil["statut_actif"]
+    return AFFILIATIONS[profil["regime"]]
+
+
 def _notre_calcul(simulateur: Simulateur, profil: dict) -> dict:
     """La pension civile du scénario 1, sur la carrière que le profil décrit.
 
@@ -97,7 +106,7 @@ def _notre_calcul(simulateur: Simulateur, profil: dict) -> dict:
     lignes = [
         AnneeCarriere(
             annee=annee, revenu=profil["traitement"] * partiel.get(annee, 1.0),
-            affiliation=AFFILIATIONS[code], trimestres_valides=SERVICES_PAR_AN,
+            affiliation=_affiliation(profil, annee), trimestres_valides=SERVICES_PAR_AN,
             quotite=partiel.get(annee, 1.0),
         )
         for annee in range(profil["debut"], profil["liquidation"])
@@ -138,6 +147,7 @@ def _notre_calcul(simulateur: Simulateur, profil: dict) -> dict:
         "majoration_pension": avantages.get("majoration_enfants", 0.0),
         "liquidation_ouverte": resultat.liquidation_ouverte,
         "depart": ouvrir.depart_parent_trois_enfants(scenario, periode, carriere),
+        "derogation_active": ouvrir.derogation_active(scenario, periode, carriere),
     }
 
 

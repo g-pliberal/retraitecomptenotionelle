@@ -113,7 +113,7 @@ rejoue sans avoir à installer le paquet.
 **Cinq familles de régimes y passent aujourd'hui**, et c'est tout ce
 qu'OpenFisca expose : le régime général, la pension civile (État et CNRACL),
 l'Arrco d'avant 2019, l'Agirc des cadres et l'Ircantec des agents non
-titulaires — <!--chiffre:mesure(profils_oracle)-->72<!--/--> profils en tout. Les régimes alignés — MSA des
+titulaires — <!--chiffre:mesure(profils_oracle)-->82<!--/--> profils en tout. Les régimes alignés — MSA des
 salariés agricoles, artisans, commerçants — n'ont chez lui aucun module, et
 n'en ont pas besoin : la loi les calcule comme le régime général, et c'est à
 l'oracle du régime général qu'ils se confrontent — à une table près : le
@@ -320,10 +320,20 @@ prise dans un congé du statut, et la majoration de durée à la femme qui a
 accouché avant ; et la liquidation de la CNRACL, que sa majoration de durée
 confond avec celle de l'État, de sorte qu'il ne la sert jamais. Comme lui, le
 dépôt ne lit pas le b bis de L. 12, la bonification de la femme qui a
-accouché pendant ses études. Restent les autres familles que le registre
-nomme : les points enfants de l'Arrco, la catégorie active, la carrière
-longue de la fonction publique, les minima, la minoration de l'Arrco, les
-périodes assimilées, le salaire annuel moyen sur des salaires qui varient.
+accouché pendant ses études. La troisième, la catégorie active
+(`tests/test_oracle_categorie_active.py`), a trouvé une erreur chez nous : le
+dépôt exigeait dix-sept ans de services actifs de toute génération née depuis
+juillet 1956, quand le décret n° 2011-2103 relève les quinze ans selon l'année
+où ils sont atteints ; qui les avait achevés avant 2011 sans aller jusqu'à
+dix-sept se voyait refuser l'âge anticipé. Corrigée le 14 octobre 2026, elle
+laisse l'âge anticipé, la limite d'âge et la décote concorder. Ses deux écarts
+sont les siens : il proratise la pension des actifs sur la durée de leur
+génération, et non sur celle de l'année où le droit s'ouvre (L. 13, III) ; il
+ne connaît pas la super-active, ni ses années, ni l'âge minoré, ni la
+bonification du cinquième. Restent les autres familles que le registre
+nomme : les points enfants de l'Arrco, la carrière longue de la fonction
+publique, les minima, la minoration de l'Arrco, les périodes assimilées, le
+salaire annuel moyen sur des salaires qui varient.
 
 **TRAJECTOiRE**, le modèle de la DREES dont un module calcule les cas types du
 COR, s'exécute à part, sa licence à réciprocité (EUPL) le tenant hors du dépôt :

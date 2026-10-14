@@ -3,7 +3,7 @@ id: categorie_active_super_active
 intitule: >-
   Âge anticipé et minoré des emplois classés, par génération, décalé d'un trimestre
   par la suspension ; âge d'annulation propre ; dix-sept et vingt-sept ans de services
-  classés.
+  classés, quinze et vingt-cinq relevés selon l'année où ils sont atteints.
 etat: transcrite
 effet: Fonctionnaires déclarés en catégorie active ou super-active.
 sources:
@@ -16,6 +16,14 @@ sources:
     reference: >-
       décret n° 2026-344, JORFTEXT000054047709, article 3 D lu alinéa par alinéa
     date: 2026-05-07
+  - type: legifrance
+    reference: >-
+      loi n° 2010-1330, article 35 (LEGIARTI000025014546), et décret n° 2011-2103,
+      article 6 (LEGIARTI000025100424), lus dans l'index LEGI : la durée de services
+      classés relevée selon l'« Année au cours de laquelle est atteinte la durée de
+      services de quinze ans » (ou de vingt-cinq), non selon la génération, comme le
+      modèle la lisait ; corrigé par `duree_services_actifs.csv`
+    date: 2026-10-14
 textes_a_rattacher:
 - reference: L. 24 I 1° CPCMR
 - reference: L. 14 bis CPCMR
@@ -35,3 +43,15 @@ referents:
       dépôt) : l'écart est le sien (registre) ; il sert la bonification du cinquième,
       que le dépôt n'a pas (138.17) ; l'âge de l'actif né en 1970 diffère de la
       suspension
+  openfisca_france_pension:
+    equivalent: >-
+      cnracl_actif_a_la_liquidation et fonction_publique_actif_a_la_liquidation, sur
+      nombre_annees_actif et duree_seuil_actif lue à date_quinze_ans_actif ; aod_a,
+      la_a, trimtp_a ; super_actif_a_la_liquidation, une entrée sans formule
+    confrontation: >-
+      le 14 octobre 2026 (action 153, étape 2 ; tests/test_oracle_categorie_active.py)
+      : l'âge anticipé, la limite d'âge et la décote des actifs concordent ; il relève
+      les quinze ans de services actifs selon l'année où ils sont atteints, ce que le
+      dépôt lisait par génération et a corrigé ; il ne connaît pas la super-active —
+      ni ses années, ni l'âge minoré, ni la bonification du cinquième : l'écart est le
+      sien (registre)

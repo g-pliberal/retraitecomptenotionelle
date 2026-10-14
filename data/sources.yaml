@@ -4794,6 +4794,28 @@ institutions:
           à l'État concordent ; trois écarts, tous chez lui, tranchés par
           l'article 21 du décret n° 2003-1306, R. 13 et L. 12 bis.
 
+      - id: openfisca_categorie_active_oracle
+        titre: >-
+          Moteur de calcul de la pension civile, au-delà des carrières simples :
+          la catégorie active des fonctionnaires
+        url: https://github.com/openfisca/openfisca-france-pension
+        acces: api
+        statut_integration: automatise
+        cible: tests/temoins/openfisca_categorie_active.json
+        recuperation: scripts/fetch/openfisca_categorie_active.py
+        note: >-
+          La troisième famille de profils de l'action 153, exécutée à part le
+          14 octobre 2026 (version 0.1.3, AGPL : ses sorties seules entrent) :
+          dix profils, à l'État et à la CNRACL, liquidés de 2009 à 2020 — cinq
+          actifs de toute leur carrière, trois de seize ans, deux
+          super-actifs. La convention de traduction est écrite dans le script
+          et portée par le témoin ; `tests/test_oracle_categorie_active.py` la
+          vérifie, puis confronte. L'âge anticipé, la décote et la limite
+          d'âge concordent ; la durée de services actifs, que le dépôt lisait
+          par génération, est corrigée (décret n° 2011-2103, article 6) ; deux
+          écarts chez lui, la proratisation des actifs (L. 13, III) et la
+          super-active.
+
       - id: openfisca_arrco_oracle
         titre: Moteur de calcul de l'Arrco 1999-2018 — contre-expertise du scénario 1
         url: https://github.com/openfisca/openfisca-france-pension
