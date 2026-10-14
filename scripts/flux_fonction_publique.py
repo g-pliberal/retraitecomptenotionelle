@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Les cas types statutaires face aux départs de 2025 que décrit le jaune pensions.
 
-    python scripts/flux_fonction_publique.py            # le tableau, cas type par cas type
+    python scripts/flux_fonction_publique.py            # le flux de 2025, chaque année, le stock
     python scripts/flux_fonction_publique.py --json f.json
 
 LA QUESTION
@@ -58,6 +58,26 @@ QUATRE RÉSERVES
 4. **Les euros sont ceux de 2025, courants, des deux côtés** : le cas type est
    liquidé en 2025, et le jaune publie les pensions entrées en paiement en
    2025.
+
+ANNÉE PAR ANNÉE, PUIS LE STOCK
+------------------------------
+Le flux de 2025 est une année. Les séries du jaune en donnent dix : chaque cas
+type part aussi en 2016, en 2017… jusqu'en 2025 — la génération que le droit
+fait partir cette année-là, quand il y en a une —, face à la série qui suit
+son groupe (:data:`SERIES`) : l'âge des sédentaires de l'État partis pour
+ancienneté (tableau 101) et leur taux hors minimum garanti (107), l'âge des
+actifs de la CNRACL (102), et, faute de série plus fine, l'indice, la pension
+et le taux de tout le flux de son régime (B-14), pension accessoires compris.
+
+Le stock enfin, pesé comme la page « Coût » le pèse
+(:func:`stock_pese_comme_la_page`) : chaque génération de sa grille,
+représentant les cinq cohortes de sa tranche, chacune partie à son année, à
+l'effectif de son âge et à sa complétude — les poids de
+``cout._masses_regimes`` —, sert une pension moyenne aux retraités de chaque
+année, au titre de son régime statutaire, face à celle que le jaune publie du
+stock de droit direct de ce régime (tableaux A-4 et A-5). La page compte en
+euros constants, le droit indexant les pensions sur les prix ; le stock réel
+a été revalorisé moins vite que les prix depuis 2016.
 """
 
 from __future__ import annotations
@@ -74,8 +94,11 @@ sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.castypes import CAS_TYPES, CasType, calculer_cas_types  # noqa: E402
+from retraite_notionnelle.cout import _DEMI_TRANCHE, _pensionnes  # noqa: E402
+from retraite_notionnelle.donnees.population import Population  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle.somme import somme_ordonnee  # noqa: E402
 
 REFERENCE = RACINE / "data" / "reference" / "macro" / "caracteristiques_fonction_publique.csv"
 POINT = RACINE / "data" / "reference" / "legislation" / "point_indice_fonction_publique.csv"
@@ -90,6 +113,49 @@ REFERENTS = {
     "fonctionnaire_actif": ("B-5", "cnracl_total", "active"),
     "militaire": ("B-3", "fpe_militaires", "anciennete"),
 }
+
+#: Les années que les séries du jaune couvrent : de 2016, où commence celle du
+#: B-14, à 2025.
+ANNEES = tuple(range(2016, 2026))
+
+#: Pour chaque cas type, la série du jaune qui suit chaque mesure année par
+#: année : (tableau, population, champ, indicateur), l'année en modalité.
+#: L'âge et le taux du sédentaire sont ceux des civils sédentaires partis pour
+#: ancienneté (tableaux 101 et 107, ce dernier hors minimum garanti) ; l'âge
+#: de l'actif, celui des actifs de la CNRACL (102) ; le reste, celui de tout
+#: le flux de son régime (B-14), la pension accessoires compris. Le jaune n'a
+#: pas de série de l'âge des militaires.
+SERIES = {
+    "fonctionnaire_sedentaire": {
+        "age_premiere_mise_en_paiement": ("101", "fpe_civils", "sedentaire",
+                                          "age_premiere_mise_en_paiement"),
+        "taux_liquidation": ("107", "fpe_civils", "anciennete", "taux_liquidation"),
+        "indice_liquidation": ("B-14", "fpe_civils", "droit_direct", "indice_liquidation"),
+        "pension_principale_eur": ("B-14", "fpe_civils", "droit_direct",
+                                   "pension_avec_accessoires_eur"),
+    },
+    "fonctionnaire_actif": {
+        "age_premiere_mise_en_paiement": ("102", "cnracl_total", "active",
+                                          "age_premiere_mise_en_paiement"),
+        "taux_liquidation": ("B-14", "cnracl_total", "droit_direct", "taux_liquidation"),
+        "indice_liquidation": ("B-14", "cnracl_total", "droit_direct", "indice_liquidation"),
+        "pension_principale_eur": ("B-14", "cnracl_total", "droit_direct",
+                                   "pension_avec_accessoires_eur"),
+    },
+    "militaire": {
+        "taux_liquidation": ("B-14", "fpe_militaires", "droit_direct", "taux_liquidation"),
+        "indice_liquidation": ("B-14", "fpe_militaires", "droit_direct", "indice_liquidation"),
+        "pension_principale_eur": ("B-14", "fpe_militaires", "droit_direct",
+                                   "pension_avec_accessoires_eur"),
+    },
+}
+
+#: Le régime de chaque cas type statutaire, dans le stock du jaune.
+REGIMES_DU_STOCK = {"fonctionnaire_sedentaire": "fpe_civils",
+                    "fonctionnaire_actif": "cnracl_total", "militaire": "fpe_militaires"}
+#: Et dans le modèle : celui qui sert la pension que le jaune décrit.
+REGIMES_STATUTAIRES = {"fonctionnaire_sedentaire": "fonction_publique_etat",
+                       "fonctionnaire_actif": "cnracl", "militaire": "fonction_publique_etat"}
 
 #: Les mesures, dans l'ordre du tableau, et leur libellé.
 INDICATEURS = (
@@ -233,6 +299,134 @@ def mesures_du_depot(parametres: Parametres) -> list[Mesure]:
     return confronter(modele, referents_publies())
 
 
+@dataclass
+class MesureAnnuelle:
+    """Ce que le modèle et une série du jaune disent d'un cas type, une année."""
+
+    cas_type: str
+    annee: int
+    generation: int
+    indicateur: str
+    tableau: str
+    modele: float
+    jaune: float
+
+    @property
+    def ecart(self) -> float:
+        return self.modele - self.jaune
+
+    @property
+    def ecart_relatif(self) -> float:
+        return self.modele / self.jaune - 1.0
+
+
+def mesurer_les_annees(simulateur: Simulateur, annees: tuple[int, ...] = ANNEES
+                       ) -> dict[str, dict[int, tuple[int, dict[str, float]]]]:
+    """Chaque cas type statutaire, parti chacune de ces années : sa génération
+    et ses mesures. Une année où le droit ne fait partir aucune génération —
+    le sédentaire de 1960 part en 2023, celui de 1961 en 2025 — n'a pas de
+    mesure."""
+    par_code = {cas.code: cas for cas in CAS_TYPES}
+    modele: dict[str, dict[int, tuple[int, dict[str, float]]]] = {}
+    for code in REFERENTS:
+        for annee in annees:
+            try:
+                generation, comparaison = depart_en(simulateur, par_code[code], annee)
+            except ValueError:
+                continue
+            mesures = mesures_du_cas(comparaison, point_annuel(annee))
+            modele.setdefault(code, {})[annee] = (
+                generation, {indicateur: round(valeur, 4) for indicateur, valeur in mesures.items()})
+    return modele
+
+
+def confronter_les_annees(modele: dict[str, dict[int, tuple[int, dict[str, float]]]],
+                          publies: dict[tuple[str, str, str, str, str], float]
+                          ) -> list[MesureAnnuelle]:
+    """Chaque mesure de chaque année face à la série du jaune qui la suit."""
+    mesures: list[MesureAnnuelle] = []
+    for code, series in SERIES.items():
+        for annee, (generation, valeurs) in sorted(modele.get(code, {}).items()):
+            for indicateur, (tableau, population, champ, publie) in series.items():
+                jaune = publies.get((tableau, population, champ, str(annee), publie))
+                if jaune is not None:
+                    mesures.append(MesureAnnuelle(code, annee, generation, indicateur, tableau,
+                                                  valeurs[indicateur], jaune))
+    return mesures
+
+
+def mesures_annuelles_du_depot(parametres: Parametres) -> list[MesureAnnuelle]:
+    """Les mesures de chaque année, sur le simulateur de la page Coût, comme
+    celles du flux de 2025, et les données du dépôt ; la part du modèle se
+    garde dans la mémoire des calculs."""
+    modele = memoire.memoriser_pour(
+        parametres, ("flux_fonction_publique_annees", parametres),
+        lambda: mesurer_les_annees(Simulateur(parametres).pour_la_projection()))
+    return confronter_les_annees(modele, referents_publies())
+
+
+def stock_pese_comme_la_page(simulateur: Simulateur, annees: tuple[int, ...] = ANNEES
+                             ) -> dict[str, dict[int, float]]:
+    """La pension mensuelle moyenne que la page « Coût » sert, chaque année,
+    aux retraités de chaque cas type statutaire, au titre de son régime
+    statutaire — celui dont le jaune décrit le stock —, en euros courants de
+    l'année.
+
+    C'est la grille de la page (``cout._pensionnes``, sous les conventions du
+    COR), pesée comme ``cout._masses_regimes`` la pèse : chaque génération de
+    la grille représente les cinq cohortes de sa tranche, chacune partie à son
+    année et comptée à l'effectif de son âge ; ce que chaque cohorte touche de
+    la pension de la grille (sa complétude) pèse sa masse, non ses têtes ; et
+    seule compte la part de la pension que sert le régime statutaire, l'État
+    ou la CNRACL, le civil ayant cotisé ailleurs avant d'y entrer. Les pensions
+    de la page sont en euros constants, ces régimes les indexant sur les prix :
+    l'indice des prix les ramène aux euros de l'année."""
+    cas_types = tuple(cas for cas in CAS_TYPES if cas.code in REFERENTS)
+    pensionnes, _ = _pensionnes(simulateur, cas_types, "droit")
+    population = Population(simulateur.parametres.racine_donnees)
+    euros = simulateur.parametres.annee_euros_constants
+    stock: dict[str, dict[int, float]] = {}
+    for code in REFERENTS:
+        regime = REGIMES_STATUTAIRES[code]
+        for annee in annees:
+            servie = tetes = 0.0
+            for pensionne in pensionnes:
+                if pensionne.code != code:
+                    continue
+                pension = pensionne.pensions["actuel"] * pensionne.parts_regimes.get(regime, 0.0)
+                for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
+                    if annee < pensionne.annee_liquidation + decalage:
+                        continue
+                    effectif = population.effectif(annee - pensionne.generation - decalage,
+                                                   annee)
+                    servie += effectif * pensionne.completude(decalage) * pension
+                    tetes += effectif
+            if tetes > 0.0:
+                stock.setdefault(code, {})[annee] = round(
+                    servie / tetes * simulateur.macro.coefficient_prix(euros, annee) / 12, 2)
+    return stock
+
+
+def stock_du_depot(parametres: Parametres) -> dict[str, dict[int, float]]:
+    """Le stock pesé comme la page, sur les données du dépôt, gardé dans la
+    mémoire des calculs : la grille de la page prend quelques secondes."""
+    return memoire.memoriser_pour(parametres, ("stock_fonction_publique", parametres),
+                                  lambda: stock_pese_comme_la_page(Simulateur(parametres)))
+
+
+def stock_publie(code: str, publies: dict[tuple[str, str, str, str, str], float]
+                 ) -> dict[int, tuple[float | None, float | None]]:
+    """Le stock de droit direct du régime d'un cas type, chaque année : (la
+    pension avec ses accessoires, tableau A-4 ; l'avantage principal seul,
+    tableau A-5, en 2024 et 2025)."""
+    population = REGIMES_DU_STOCK[code]
+    return {annee: (publies.get(("A-4", population, "droit_direct", str(annee),
+                                 "pension_avec_accessoires_eur")),
+                    publies.get(("A-5", population, "droit_direct", str(annee),
+                                 "pension_principale_eur")))
+            for annee in ANNEES}
+
+
 def _format(indicateur: str, valeur: float) -> str:
     if indicateur == "taux_liquidation":
         return f"{valeur:.1%}"
@@ -254,15 +448,57 @@ def imprimer(mesures: list[Mesure]) -> None:
               f"{_format(mesure.indicateur, mesure.jaune):>9} {mesure.ecart_relatif:>+8.1%}")
 
 
+def imprimer_les_annees(mesures: list[MesureAnnuelle]) -> None:
+    libelles = dict(INDICATEURS)
+    print("\nANNÉE PAR ANNÉE : l'écart du cas type parti chaque année à la série du jaune")
+    for code in SERIES:
+        siennes = [m for m in mesures if m.cas_type == code]
+        if not siennes:
+            continue
+        print(f"\n{code}")
+        for indicateur in SERIES[code]:
+            ligne = [m for m in siennes if m.indicateur == indicateur]
+            ecarts = " ".join(f"{m.annee}:{m.ecart:+.2f}" if indicateur.startswith("age")
+                              else f"{m.annee}:{m.ecart_relatif:+.1%}" for m in ligne)
+            print(f"  {libelles[indicateur]:34} ({ligne[0].tableau}) {ecarts}")
+
+
+def imprimer_le_stock(stock: dict[str, dict[int, float]],
+                      publies: dict[tuple[str, str, str, str, str], float]) -> None:
+    print("\nLE STOCK PESÉ COMME LA PAGE : la pension mensuelle moyenne servie, en euros "
+          "courants,\nface au stock de droit direct du jaune (A-4, accessoires compris ; "
+          "A-5, avantage principal)")
+    for code, serie in stock.items():
+        publie = stock_publie(code, publies)
+        print(f"\n{code} ({REGIMES_DU_STOCK[code]})")
+        for annee, pension in serie.items():
+            accessoires, principal = publie[annee]
+            texte = f"  {annee} : {pension:7.0f} €"
+            if accessoires:
+                texte += f", {accessoires:5.0f} € au A-4 ({pension / accessoires - 1:+.1%})"
+            if principal:
+                texte += f", {principal:5.0f} € au A-5 ({pension / principal - 1:+.1%})"
+            print(texte)
+
+
 def main(argv: list[str] | None = None) -> int:
     analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     analyseur.add_argument("--json", type=Path, help="écrit aussi le tableau dans ce fichier")
     options = analyseur.parse_args(argv)
-    mesures = mesures_du_depot(Parametres())
+    parametres = Parametres()
+    mesures = mesures_du_depot(parametres)
     imprimer(mesures)
+    annuelles = mesures_annuelles_du_depot(parametres)
+    imprimer_les_annees(annuelles)
+    stock = stock_du_depot(parametres)
+    imprimer_le_stock(stock, referents_publies())
     if options.json:
-        options.json.write_text(json.dumps([asdict(m) for m in mesures], ensure_ascii=False,
-                                           indent=2) + "\n", encoding="utf-8")
+        options.json.write_text(json.dumps({
+            "flux_2025": [asdict(m) for m in mesures],
+            "annees": [asdict(m) for m in annuelles],
+            "stock": {code: {str(a): v for a, v in serie.items()}
+                      for code, serie in stock.items()},
+        }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return 0
 
 

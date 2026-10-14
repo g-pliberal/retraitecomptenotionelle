@@ -5832,8 +5832,10 @@ referents:
           PLF et les cubes de data.economie.gouv.fr cités au doc. n°
           6 de 2024. Les agrégats du flux de 2025 de l'annexe au
           PLF 2027 sont au dépôt depuis le 13 octobre 2026 (action
-          159, étape 4, `caracteristiques_fonction_publique.csv`) :
-          les trois cas types statutaires s'y confrontent
+          159, étape 4, `caracteristiques_fonction_publique.csv`),
+          avec ses séries de 2016 à 2025 et le stock depuis 2016 :
+          les trois cas types statutaires s'y confrontent, chaque
+          année, et le stock que la page « Coût » leur sert
           (`tests/test_flux_fonction_publique.py`). La validation
           pension par pension reste à faire.
         etat: a_reprendre
