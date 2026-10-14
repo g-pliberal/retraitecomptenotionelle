@@ -1,6 +1,6 @@
-# Les régimes à relire : l'Opéra de Paris, la Banque de France, la MSA
+# Les régimes à relire : onze sur dix-sept, texte en main
 
-**Le 14 octobre 2026, trois des dix-sept régimes que
+**Le 14 octobre 2026, onze des dix-sept régimes que
 `tests/test_regle_de_chacun.py` déclarait `A_RELIRE` en sortent, texte en main
 (index LEGI à jour du 11 octobre 2026).** Leur durée se lit, comme à la
 Comédie-Française, à la date où l'assuré réunit les conditions, et non à sa
@@ -8,7 +8,11 @@ génération ; l'âge de la Banque est la table de son règlement, et non la tab
 commune. Ce qui varie encore avec l'année du départ est l'entrée en vigueur
 d'un texte, déclarée à l'année d'effet (`A_L_ANNEE_D_EFFET`). La MSA des
 non-salariés a, elle aussi, sa durée propre, que la fiche empruntait au
-régime général. Restent quatorze régimes.
+régime général ; la CARMF et l'ASV s'ouvrent à l'âge légal de la génération,
+et non à soixante-deux ans. La CNAVPL, la CNBF, la CAVIMAC, la CARPIMKO et la
+CPRN ne basculent qu'à l'entrée en vigueur de leurs textes. Restent à relire
+la durée de la CARMF et celle du CESE, la Comédie-Française d'avant 1993 et
+les cinq complémentaires d'avant 1983.
 
 ## L'Opéra national de Paris
 
@@ -97,10 +101,61 @@ reprend (`DureesRequisesRegimes`, en Python et dans `moteur/js/regimes.js`).
 Les deux moteurs concordent (`test_liquidation.py`, `test_minima_agricoles.py`,
 paquet refait en local) ; les témoins du portage sont à refaire par GitHub.
 
+## La CNAVPL, la CNBF, la CAVIMAC, la CARPIMKO et la CPRN : l'année d'effet
+
+Aucune valeur n'y change ; chacune bascule à l'entrée en vigueur d'un texte,
+désormais déclarée avec lui dans `A_L_ANNEE_D_EFFET`.
+
+- **CNAVPL** : le régime en points « entre en vigueur le 1er janvier 2004 »
+  (loi n° 2003-775, article 96, I, LEGIARTI000006758646) ; L. 643-3 ouvre la
+  pension à l'âge de L. 351-1 et renvoie, pour la durée, au « deuxième alinéa
+  de l'article L. 351-1 », la durée du taux plein (R. 351-27) : la table que
+  la fiche lit est la bonne.
+- **CNBF** : L. 723-10-1, même âge, même durée, « entre en vigueur le
+  1er janvier 2004 » (loi n° 2003-775, article 97, II, JORFARTI000002429604).
+- **CAVIMAC** : le décret n° 2006-1325 abaisse à soixante ans l'âge de la
+  pension d'avant 1998 dès sa publication, le 1er novembre 2006, sans
+  disposition transitoire (JORFARTI000001085913) ; la fiche coupe au
+  1er janvier 2007. La fiche est aussi celle de la session de l'action 119 :
+  elle n'est pas touchée ici.
+- **CARPIMKO** : l'article 12 quater des statuts (arrêté du 31 juillet 2015,
+  publié le 2 octobre, JORFARTI000031255547) ouvre la retraite à soixante ans
+  aux générations 1955 et antérieures ; la fiche le sert à partir de 2016, et
+  lit avant l'âge légal de la génération, faute d'avoir lu les statuts de 1968
+  modifiés.
+- **CPRN** : l'article 18 des statuts diffère l'âge légal de vingt-quatre mois
+  pour les nés à compter de 1954 (arrêté du 16 décembre 2013), puis revient à
+  l'âge légal (arrêté du 29 novembre 2023, en vigueur le 1er janvier 2024).
+
+## La CARMF et l'ASV : l'âge de la génération
+
+Depuis la retraite en temps choisi (1er janvier 2017), les deux régimes
+« s'ouvrent à taux plein à l'âge légal », et la majoration court de
+soixante-deux ans (arrêtés du 22 mars 2017 et règlement du 10 juillet 2026).
+Les fiches portaient soixante-deux ans comme âge d'ouverture, pour placer la
+majoration : l'âge des nés de 1947 à 1954 passait de soixante à soixante-deux
+ans d'une année de départ à l'autre, et les nés de 1962 et après s'ouvraient
+avant leur âge légal. La majoration a son propre champ (`surcote_age_debut:
+62`) ; l'âge d'ouverture est désormais l'âge légal de la génération
+(`age_ouverture_par_generation`). La durée de l'ASV, elle, disparaît bien au
+1er janvier 2017, « sans décote ni durée » : année d'effet de l'arrêté du
+1er décembre 2016.
+
+## Ce qui reste à relire
+
+- **La durée de la CARMF**, de 1930 à 1939 : l'article 15 des statuts minore
+  par l'âge seul depuis 2000, et la durée n'y joue plus ; avant 2000, la fiche
+  lit la durée de la génération, sans avoir lu les statuts d'alors.
+- **Le CESE** : l'article 17 de son règlement fixe un taux par annuité selon la
+  date du MANDAT (2,11 % jusqu'au 31 août 2004, 2,02 % jusqu'au 30 septembre
+  2010, puis 1,95, 1,90, 1,85 et 1,82 %), que la fiche écrit en durée requise
+  par année de départ. Il faut au moteur un taux par annuité acquise, qu'il n'a
+  pas : un chantier du modèle, à mener avec son jumeau JS.
+
 ## Ce qui reste
 
-- Quatorze régimes `A_RELIRE`, dans l'ordre du bloc : la CNAVPL, la CNBF, la CAVIMAC, le CESE, la CARMF, l'ASV, la CARPIMKO, la
-  CPRN, la Comédie-Française d'avant 1993 et cinq complémentaires d'avant 1983.
+- Dans le registre `A_RELIRE` : la durée de la CARMF et le CESE (ci-dessus),
+  la Comédie-Française d'avant 1993 et les cinq complémentaires d'avant 1983.
 - Banque de France : l'ancien régime, avant 2007 (âge, durée) ; la coupure de
   la fiche au 1er avril 2007 plutôt qu'en 2008 ; l'âge d'annulation de la
   décote (article 34, et le III de l'article 72), qui reste celui de la

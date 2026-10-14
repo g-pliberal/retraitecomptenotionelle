@@ -628,6 +628,7 @@ periodes:
     fin: 2017
     type_calcul: points
     age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -674,11 +675,18 @@ periodes:
       la retraite », « réduit à 0,75 % par trimestre » après 65 ans,
       rien au-delà du soixante-dixième anniversaire. Le règlement du 10
       juillet 2026 (LEGIARTI000054437501, III, article 2) écrit « après
-      l'âge de 62 ans » ; la fiche retient 62 ans sur toute la période.
+      l'âge de 62 ans » : la majoration court de soixante-deux ans
+      (`surcote_age_debut: 62`). LE RÉGIME, LUI, S'OUVRE À L'ÂGE LÉGAL DE
+      LA GÉNÉRATION (`age_ouverture_par_generation`, relu le 14 octobre
+      2026) : la fiche ouvrait à soixante-deux ans tous ceux qui partaient
+      depuis 2017, et l'âge des nés de 1947 à 1954 changeait avec l'année
+      de leur départ. La durée, elle, disparaît bien au 1er janvier 2017 :
+      année d'effet de l'arrêté.
   - debut: 2018
     fin: 2018
     type_calcul: points
     age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -730,6 +738,7 @@ periodes:
     fin: 2019
     type_calcul: points
     age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -781,6 +790,7 @@ periodes:
     fin: 2020
     type_calcul: points
     age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -833,6 +843,7 @@ periodes:
     fin: 2021
     type_calcul: points
     age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -885,6 +896,7 @@ periodes:
     fin: 2022
     type_calcul: points
     age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -937,6 +949,7 @@ periodes:
     fin: 2024
     type_calcul: points
     age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -989,6 +1002,7 @@ periodes:
     fin: 2025
     type_calcul: points
     age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -1047,6 +1061,7 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     duree_requise_trimestres: null
     taux_plein: 1.0

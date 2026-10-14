@@ -109,6 +109,42 @@ A_L_ANNEE_D_EFFET = {
         "loi n° 86-19 du 6 janvier 1986, article 11 (LEGIARTI000006757038) : "
         "soixante ans pour les pensions « prenant effet postérieurement au "
         "1er janvier 1986 », soixante-cinq avant (lu le 14 octobre 2026)")),
+    ("cnavpl", "age"): (2004, 2004, (
+        "loi n° 2003-775, article 96, I (LEGIARTI000006758646) : le régime en "
+        "points des professions libérales « entre en vigueur le 1er janvier "
+        "2004 » ; L. 643-3 ouvre la pension à l'âge de L. 351-1, au lieu de "
+        "l'allocation à soixante-cinq ans (lu le 14 octobre 2026)")),
+    ("cnavpl", "duree"): (2004, 2004, (
+        "même article : depuis 2004, la durée du taux plein du régime général "
+        "(L. 643-3, I, renvoyant au deuxième alinéa de L. 351-1)")),
+    ("cnbf", "age"): (2004, 2004, (
+        "loi n° 2003-775, article 97, II (JORFARTI000002429604) : L. 723-10-1, "
+        "l'âge de L. 351-1 et la durée du taux plein, « entrent en vigueur le "
+        "1er janvier 2004 »")),
+    ("cnbf", "duree"): (2004, 2004, "même article"),
+    ("cavimac", "age"): (2007, 2007, (
+        "décret n° 2006-1325 du 31 octobre 2006, article 2 (JORFARTI000001085913) : "
+        "l'âge de la pension d'avant 1998 « est également abaissé à soixante "
+        "ans », dès sa publication le 1er novembre 2006, sans disposition "
+        "transitoire ; la fiche coupe au 1er janvier 2007 (lu le 14 octobre "
+        "2026)")),
+    ("asv_conventionnes", "duree"): (2017, 2017, (
+        "arrêté du 1er décembre 2016 (JORFARTI000033538061), article 12 des "
+        "statuts : la retraite en temps choisi, à taux plein à l'âge légal "
+        "« sans décote ni durée », pour les pensions de 2017 et après ; avant, "
+        "la durée du régime de base (lu le 14 octobre 2026)")),
+    ("carpimko_complementaire", "age"): (2016, 2016, (
+        "arrêté du 31 juillet 2015 (JORFARTI000031255547), article 12 quater des "
+        "statuts : soixante ans pour les générations 1955 et antérieures, que la "
+        "fiche sert à partir de 2016 ; avant, elle lit l'âge légal de la "
+        "génération, faute d'avoir lu les statuts de 1968 modifiés (relu le "
+        "14 octobre 2026)")),
+    ("cprn_complementaire", "age"): (2014, 2024, (
+        "article 18 des statuts, rédaction de l'arrêté du 16 décembre 2013 : "
+        "l'âge de L. 161-17-2 « différé de vingt-quatre mois » pour les nés à "
+        "compter de 1954 ; rédaction de l'arrêté du 29 novembre 2023 "
+        "(JORFARTI000048679350), en vigueur le 1er janvier 2024 : l'âge légal "
+        "(table `cprn_2014`, relu le 14 octobre 2026)")),
 }
 
 #: (régime, paramètre) : les années où la règle bascule aujourd'hui, et ce que
@@ -120,38 +156,21 @@ A_RELIRE = {
         "l'ordonnance de 1982 n'est celle d'aucun texte relu"))
        for code in ("agirc", "agirc_entreprises_nouvelles", "arrco",
                     "arrco_tranche_2", "ircantec")},
-    ("asv_conventionnes", "age"): (2017, 2017, (
-        "générations 1947 à 1954 : leur âge de la génération avant 2017, "
-        "62 ans pour un départ de 2017 et après")),
-    ("asv_conventionnes", "duree"): (2017, 2017, (
-        "générations 1949 à 1954 : la durée change pour un départ de 2017 et "
-        "après")),
-    ("carmf_complementaire", "age"): (2017, 2017, (
-        "générations 1947 à 1954 : 62 ans pour un départ de 2017 et après")),
     ("carmf_complementaire", "duree"): (2000, 2000, (
-        "générations 1930 à 1939 : la durée change pour un départ de 2000 et "
-        "après")),
-    ("carpimko_complementaire", "age"): (2016, 2016, (
-        "générations 1952 et 1953 : 60 ans et 9 mois avant 2016, 60 ans après")),
-    ("cavimac", "age"): (2007, 2007, (
-        "générations 1937 à 1941 : 65 ans avant 2007, 60 ans après")),
+        "générations 1930 à 1939 : la durée de la génération avant 2000, aucune "
+        "après (relu le 14 octobre 2026) — l'article 15 des statuts minore par "
+        "l'âge seul depuis 2000, et ce qu'il disait avant, que la fiche lit à la "
+        "génération, n'est pas lu")),
     ("cese_membres", "duree"): (2005, 2014, (
         "générations 1935 à 1952 : la durée change en 2005, puis chaque année "
-        "de 2011 à 2014")),
-    ("cnavpl", "age"): (2004, 2004, (
-        "générations 1934 à 1938 : 65 ans avant 2004, 60 ans après, même pour "
-        "qui avait déjà 65 ans")),
-    ("cnavpl", "duree"): (2004, 2004, (
-        "générations 1934 à 1938 : la durée de la génération pour un départ de "
-        "2004 et après")),
-    ("cnbf", "age"): (2004, 2004, "comme la CNAVPL"),
-    ("cnbf", "duree"): (2004, 2004, "comme la CNAVPL"),
+        "de 2011 à 2014. Relu le 14 octobre 2026 : l'article 17 du règlement "
+        "fixe un taux par annuité selon la date du MANDAT (2,11 % jusqu'au "
+        "31 août 2004, 2,02 % jusqu'au 30 septembre 2010…), que la fiche "
+        "écrit en durée requise par année de départ ; il faut au moteur un "
+        "taux par annuité acquise, qu'il n'a pas")),
     ("comedie_francaise", "age"): (1993, 1997, (
         "générations 1923 à 1937 : 55 ans avant le décret du 25 mars 1993, "
         "60 ans après, même pour qui avait déjà 55 ans")),
-    ("cprn_complementaire", "age"): (2014, 2024, (
-        "générations 1952 à 1959 : 64 ans pour un départ de 2014 à 2023, 62 ans "
-        "avant et après")),
 }
 
 

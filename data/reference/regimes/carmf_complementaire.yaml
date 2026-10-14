@@ -1214,6 +1214,7 @@ periodes:
     fin: 2017
     type_calcul: points
     age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -1245,11 +1246,19 @@ periodes:
       âge » par « après l'âge de 62 ans », et le règlement approuvé le 10
       juillet 2026 (LEGIARTI000054437501) l'écrit de même : la majoration
       court de soixante-deux ans, quel que soit l'âge légal de la
-      génération, et la fiche retient 62 ans sur toute la période.
+      génération (`surcote_age_debut: 62`).
+      LE RÉGIME, LUI, S'OUVRE À L'ÂGE LÉGAL DE LA GÉNÉRATION
+      (`age_ouverture_par_generation`, relu le 14 octobre 2026) : la fiche
+      ouvrait à soixante-deux ans tous ceux qui partaient depuis 2017, et
+      faisait passer de soixante à soixante-deux ans, d'une année de départ
+      à l'autre, l'âge d'ouverture des nés de 1947 à 1954 ; elle l'ouvrait
+      aussi à soixante-deux ans aux nés de 1962 et après, dont l'âge légal
+      est plus haut.
   - debut: 2018
     fin: 2021
     type_calcul: points
     age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -1286,6 +1295,7 @@ periodes:
     fin: 2023
     type_calcul: points
     age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -1322,6 +1332,7 @@ periodes:
     fin: 2025
     type_calcul: points
     age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -1358,6 +1369,7 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     duree_requise_trimestres: null
     taux_plein: 1.0
