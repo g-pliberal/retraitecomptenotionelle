@@ -650,6 +650,17 @@ export class MinimumContributif {
   }
 
   /**
+   * La pension minimum d'avant le 1er avril 1983 en vigueur le premier jour du
+   * mois, en euros par an : le montant de l'AVTS ; zéro avant 1945. Voir
+   * `pension_minimum` du Python.
+   *
+   * @returns {[number, number]} valeur, et fiabilité.
+   */
+  pensionMinimum(annee, mois = 1) {
+    return this._enVigueur("pension_minimum", annee, mois) ?? [0.0, Fiabilite.CERTIFIEE];
+  }
+
+  /**
    * Montant de base, montant majoré et plafond d'écrêtement en vigueur le
    * premier jour du mois, en euros par an : tout à zéro avant le 1er avril
    * 1983 ; le majoré égal au minimum avant 2004 ; le plafond nul avant 2012.

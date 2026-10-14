@@ -1,0 +1,91 @@
+# La pension minimum de vieillesse d'avant le 1er avril 1983, en euros par an
+# -------------------------------------------------------------------------
+# source_id: cnav_avts
+#
+# LA RÈGLE. Avant le minimum contributif, la pension de vieillesse du régime
+# général liquidée au taux de soixante-cinq ans était portée au « minimum de
+# base prévu à l'article L. 345 du code de la sécurité sociale », entier à qui
+# justifiait de quinze années d'assurance (soixante trimestres) dans le régime
+# général ou tenait sa pension d'une pension d'invalidité, « réduit à autant de
+# soixantièmes que l'assuré justifie de trimestres d'assurance » sinon (décret
+# n° 45-0179, article 70-5, rédaction du 12 mai 1976, LEGIARTI000006760665 ;
+# article 70-7, rédaction du 23 juillet 1982, LEGIARTI000006760669). La loi
+# n° 83-430 du 31 mai 1983 récrit L. 345 en minimum contributif, pour les
+# pensions qui prennent effet depuis le 1er avril 1983. Le scénario 1 le lit
+# dans la fiche `minimum_contributif` (versions `pension_minimum_de_1945` et
+# `pension_minimum_de_1976`) et `droit/completer.py`, son portage dans
+# `moteur/js/droit/completer.js`.
+#
+# LE MONTANT EST CELUI DE L'ALLOCATION AUX VIEUX TRAVAILLEURS SALARIÉS. Les
+# mêmes textes les fixent ensemble : « Sont portés à 10.100 F par an à compter
+# du 1er janvier 1982 : Le montant de l'allocation aux vieux travailleurs
+# salariés […] ; Le montant de la pension minimum de vieillesse visée aux
+# articles L. 345, L. 350 et L. 379 du code de la sécurité sociale, à l'article
+# 1er bis (par. 2) du décret du 6 juin 1951 susvisé et à l'article 13 de
+# l'ordonnance n° 45-170 du 2 février 1945 » (décret n° 81-1166, article 1er,
+# LEGIARTI000006762489) ; de même les décrets n° 82-561 (10 900 F au 1er
+# juillet 1982) et n° 82-1142 (11 300 F au 1er janvier 1983), et, depuis 1979,
+# les notices des décrets « fixant le montant de divers avantages de vieillesse
+# et d'invalidité » (« PENSION MINIMUM DE VIEILLESSE »). Chaque ligne est le
+# montant de l'AVTS que le barème de la Cnav date
+# (`ancienne_prestation_autre_prestation_montant_bar`, `scripts/fetch/cnav_avts.py`),
+# depuis l'ordonnance du 2 février 1945, jusqu'au dernier en vigueur le
+# 31 mars 1983 ; jusqu'en 1961, celui des villes de plus de 5 000 habitants.
+# Le montant au 31 décembre de chaque année est celui de la colonne `avts` de
+# `minimum_vieillesse_avant_2007.csv` (`tests/test_donnees.py`). Les francs
+# sont convertis au taux de 6,55957, les anciens francs au centième. `haute` :
+# la caisse transcrit ce que les textes fixent ; les trois montants de 1982 et
+# 1983, lus dans l'article, attendent un contrôle qui les certifie.
+#
+# UNE LIGNE PAR DATE : le modèle lit le montant en vigueur le premier jour du
+# mois de la date d'effet.
+date,valeur,fiabilite,texte
+1945-01-01,10.976329,haute,Ordonnance du 02/02/1945
+1946-01-01,16.464494,haute,Loi du 03/01/1946
+1946-07-01,22.867353,haute,Loi du 07/10/1946
+1947-08-01,27.440823,haute,Loi du 25/06/1947
+1948-01-01,33.538784,haute,Loi du 07/01/1948
+1948-07-01,44.210215,haute,Loi du 23/08/1948
+1948-10-01,51.832666,haute,Loi du 24/02/1949
+1949-04-01,59.455117,haute,Loi du 13/07/1949
+1950-01-01,68.602058,haute,Loi du 03/02/1950
+1951-01-01,79.273489,haute,Loi du 27/03/1951
+1951-10-01,91.164512,haute,Loi du 26/09/1951
+1954-01-01,100.311453,haute,Loi du 20/03/1954
+1956-01-01,110.342599,haute,Loi du 27/03/1956
+1960-01-01,110.342599,haute,Loi du 27/03/1956
+1962-04-01,121.959214,haute,Décret 62/440 du 14/04/1962
+1963-07-01,121.959214,haute,Décret 63/921 du 06/09/1963
+1964-01-01,137.204116,haute,Décret 63/921 du 06/09/1963
+1964-11-01,152.449017,haute,Décret 65/12 du 08/01/1965
+1965-07-01,167.693919,haute,Décret 65/12 du 08/01/1965
+1966-01-01,175.31637,haute,Décret 65/1153 du 24/12/1965
+1966-07-01,190.561272,haute,Décret 66/452 du 30/06/1966
+1967-01-01,198.183722,haute,Décret 67/36 du 11/01/1967
+1967-10-01,213.428624,haute,Décret 67/969 du 27/10/1967
+1968-01-01,221.051075,haute,Décret 67/1168 du 22/12/1967
+1968-07-01,236.295977,haute,Décret 68/585 du 29/06/1968
+1969-10-01,251.540878,haute,Décret 69/878 du 26/09/1969
+1970-10-01,266.78578,haute,Décret 70/879 du 29/09/1970
+1971-10-01,282.030682,haute,Décret 71/705 du 27/08/1971
+1972-10-01,320.142936,haute,Décret 72/929 du 11/10/1972
+1973-07-01,343.010289,haute,Décret 73/691 du 18/07/1973
+1974-01-01,373.500092,haute,Décret 73/1137 du 21/12/1973
+1974-07-01,457.347052,haute,Décret 74/611 du 27/06/1974
+1975-01-01,495.459306,haute,Décret 74/1126 du 26/12/1974
+1975-04-01,533.57156,haute,Décret 75/209 du 28/03/1975
+1976-01-01,571.683815,haute,Décret 75/1341 du 31/12/1975
+1976-07-01,609.796069,haute,Décret 76/559 du 25/06/1976
+1977-01-01,655.530774,haute,Décret 76/1242 du 29/12/1976
+1977-07-01,724.132832,haute,Décret 77/615 du 15/06/1977
+1977-12-01,800.35734,haute,Décret 77/1291 du 24/11/1977
+1978-07-01,884.2043,haute,Décret 78/719 du 10/07/1978
+1979-01-01,975.67371,haute,Décret 78/1241 du 29/12/1978
+1979-07-01,1067.143121,haute,Décret 79/567 du 03/07/1979
+1979-12-01,1128.122728,haute,Décret 79/1057 du 07/12/1979
+1980-06-01,1204.347236,haute,Décret 80/498 du 01/07/1980
+1981-01-01,1295.816647,haute,Décret 80/1159 du 31/12/1980
+1981-07-01,1433.020762,haute,Décret 81/681 du 30/06/1981
+1982-01-01,1539.735074,haute,Décret 81/1166 du 30/12/1981
+1982-07-01,1661.694288,haute,Décret 82/561 du 29/06/1982
+1983-01-01,1722.673895,haute,Décret 82/1142 du 29/12/1982

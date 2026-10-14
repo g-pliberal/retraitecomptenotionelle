@@ -450,6 +450,19 @@ export function plancherDuRegime(eligible, montantBase, montantMajore, majoratio
 }
 
 /**
+ * La pension minimum d'avant le 1er avril 1983 due au régime : le montant de
+ * l'AVTS entier à l'ex-invalide et à soixante trimestres dans le régime, en
+ * soixantièmes en dessous (décret n° 45-0179, article 70-5). Voir
+ * `plancher_d_avant_1983` du Python.
+ */
+export function plancherDAvant1983(eligible, montant, regle, exInvalide) {
+  if (exInvalide && regle.entier_a_l_ex_invalide) {
+    return montant;
+  }
+  return montant * Math.min(1.0, eligible.dureeRegime / regle.trimestres_du_minimum_entier);
+}
+
+/**
  * Les durées cotisées de l'éligible, telles que la majoration de cette date les
  * lit : la durée d'assurance de janvier 2004 à juin 2005, l'AVPF et l'AVA en
  * plus au régime général depuis septembre 2023. Voir `selon_la_regle` du
@@ -637,16 +650,36 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
   // La règle du minimum que la date d'effet fait valoir (fiche
   // `minimum_contributif`) : il n'existe que depuis le 1er avril 1983, sa
   // majoration depuis 2004, son seuil depuis avril 2009, son écrêtement depuis
-  // 2012, l'AVPF dans sa majoration depuis septembre 2023.
+  // 2012, l'AVPF dans sa majoration depuis septembre 2023. Avant lui, la
+  // pension minimum de L. 345, au montant de l'AVTS (`pension_minimum`).
   const regle = moteur.minimumContributif.regle(dateDEffet(carriere));
-  if (avantagesNonContributifs && eligiblesMinimum.length > 0 && regle.existe) {
+  const pensionMinimum = regle.pension_minimum ?? null;
+  if (avantagesNonContributifs && eligiblesMinimum.length > 0
+    && (regle.existe || pensionMinimum !== null)) {
     // Le minimum contributif ne relève que les pensions liquidées AU TAUX
     // PLEIN (L. 351-10). Sa majoration au titre des périodes cotisées se
     // proratise sur la durée cotisée DANS le régime, quand le montant de base
     // se proratise sur sa durée d'assurance. Les montants sont ceux du mois de
     // la date d'effet.
-    const [montantBase, montantMajore, plafond, fiabiliteMinimum] = moteur
-      .minimumContributif.valeurs(anneeLiquidation, carriere.moisLiquidation);
+    let montantBase;
+    let montantMajore;
+    let plafond;
+    let fiabiliteMinimum;
+    let exInvalide = false;
+    if (pensionMinimum !== null) {
+      // Avant le 1er avril 1983, ni majoration ni écrêtement : le montant de
+      // l'AVTS, que les mêmes décrets fixent.
+      [montantBase, fiabiliteMinimum] = moteur.minimumContributif.pensionMinimum(
+        anneeLiquidation, carriere.moisLiquidation);
+      [montantMajore, plafond] = [montantBase, 0.0];
+      if (regle.fiabilite) {
+        fiabiliteMinimum = Math.min(fiabiliteMinimum, fiabiliteDepuisTexte(regle.fiabilite));
+      }
+      exInvalide = substitution(moteur, carriere) !== null;
+    } else {
+      [montantBase, montantMajore, plafond, fiabiliteMinimum] = moteur
+        .minimumContributif.valeurs(anneeLiquidation, carriere.moisLiquidation);
+    }
     const avpf = avpfRetenue(moteur, carriere, regle.plafond_avpf);
     const majoree = majorationOuverte(regle, trimestresCotises + avpf);
     const dateEffet = [anneeLiquidation, carriere.moisLiquidation];
@@ -658,9 +691,10 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     const complementDu = (pension, eligible, plancher) => (!eligible.tauxPlein ? 0.0
       : complementMinimum((pension.montant - (eligible.horsMinimum ?? 0.0)) / eligible.surcote,
         plancher, eligible.surcote, dateEffet));
-    const plancherNational = (eligible, majoration) => plancherDuRegime(
-      selonLaRegle(eligible, regle, avpf), montantBase, montantMajore, majoration,
-      regle.duree_tous_regimes);
+    const plancherNational = (eligible, majoration) => (pensionMinimum !== null
+      ? plancherDAvant1983(eligible, montantBase, pensionMinimum, exInvalide)
+      : plancherDuRegime(selonLaRegle(eligible, regle, avpf), montantBase, montantMajore,
+        majoration, regle.duree_tous_regimes));
     // LA PENSION PRORATISÉE ET LA PENSION NATIONALE : quand un accord les
     // compare, chacune est portée à SON minimum, puis la plus élevée est
     // servie — la proratisée à égalité.
@@ -669,7 +703,8 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       const nationale = nationales.regimes[eligible.indice];
       alternatives.set(nationale.regime, [nationale, eligible]);
     }
-    const international = nationales === null ? null : minimumInternational(moteur, carriere);
+    const international = nationales === null || pensionMinimum !== null ? null
+      : minimumInternational(moteur, carriere);
     let cotisesFrancais = 0;
     let dureeTotale = 0;
     if (nationales !== null) {
@@ -685,6 +720,9 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     let majore = false;
     for (const eligible of eligiblesMinimum) {
       const pension = pensions[eligible.indice];
+      if (pensionMinimum !== null && !pensionMinimum.regimes.includes(pension.regime)) {
+        continue;
+      }
       const alternative = alternatives.get(pension.regime);
       let complement;
       let avecMajoration = majoree;
@@ -771,19 +809,26 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
           ...pensions[indice],
           montant: pensions[indice].montant + complement,
           detail: `${pensions[indice].detail} = `
-            + `${formatFixe(pensions[indice].montant, 2, true)} €, porté au `
-            + `minimum contributif par + ${formatFixe(complement, 2, true)} €`,
+            + `${formatFixe(pensions[indice].montant, 2, true)} €, porté `
+            + (pensionMinimum !== null ? "à la pension minimum" : "au minimum contributif")
+            + ` par + ${formatFixe(complement, 2, true)} €`,
         };
       }
       total += releveMinimum;
       minimumApplique = true;
       fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteMinimum);
+      // Le même article, L. 345, porte la pension minimum d'avant le 1er avril
+      // 1983 et le minimum contributif qui la remplace : un seul code.
       avantages.push({
         code: "minimum_contributif",
-        libelle: "Minimum contributif",
+        libelle: pensionMinimum !== null ? "Pension minimum (AVTS)" : "Minimum contributif",
         montant: releveMinimum,
-        detail: "porté au plancher, au prorata de la durée acquise"
-          + (majore ? ", majoration des périodes cotisées comprise" : ""),
+        detail: pensionMinimum !== null
+          ? "porté au montant de l'allocation aux vieux travailleurs salariés, "
+            + `entier à ${pensionMinimum.trimestres_du_minimum_entier} `
+            + "trimestres dans le régime, au prorata en dessous"
+          : "porté au plancher, au prorata de la durée acquise"
+            + (majore ? ", majoration des périodes cotisées comprise" : ""),
         // La part de chaque pension : la réversion du régime général se
         // calcule sans elle (`droit/reversion.js`).
         par_regime: [...complements].filter(([, complement]) => complement > 0)
@@ -795,9 +840,10 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
   // LA MAJORATION EXCEPTIONNELLE DE SEPTEMBRE 2023 relève les pensions que le
   // minimum contributif regarde, portées ou non à lui ; elle se calcule le mois
   // où elle est due (`majorerLesPetitesPensions`). Ce qu'elle relit de chacune
-  // s'écrit ici : ses durées, son taux plein et sa surcote.
+  // s'écrit ici : ses durées, son taux plein et sa surcote. Une pension d'avant
+  // le 1er avril 1983, que la pension minimum regarde, n'en relève pas.
   let petitesPensions = [];
-  if (avantagesNonContributifs) {
+  if (avantagesNonContributifs && regle.existe) {
     const moisDEffet = [anneeLiquidation, carriere.moisLiquidation];
     petitesPensions = eligiblesMinimum.map((eligible) => ({
       regime: pensions[eligible.indice].regime,

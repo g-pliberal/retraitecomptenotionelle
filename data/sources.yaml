@@ -1426,7 +1426,8 @@ institutions:
         statut_integration: automatise
         cible: >-
           data/reference/legislation/salaire_validant_trimestre_avant_1972.csv ;
-          data/reference/legislation/minimum_vieillesse_avant_2007.csv
+          data/reference/legislation/minimum_vieillesse_avant_2007.csv ;
+          data/reference/legislation/pension_minimum_avant_1983.csv
         recuperation: scripts/fetch/cnav_avts.py
         note: >-
           Quatre barèmes de la base de législation de la Cnav, servis par son
@@ -1451,7 +1452,11 @@ institutions:
           minimum vieillesse d'avant l'ASPA et leurs plafonds, au niveau
           `haute` ; lu le 7 octobre 2026. Depuis le 13 octobre 2026, les années
           que leurs décrets redisent passent au niveau `certifiee` par
-          `jorf_avts` ; la caisse garde les autres.
+          `jorf_avts` ; la caisse garde les autres. Depuis le 14 octobre 2026,
+          chaque montant daté de l'AVTS de 1945 au 1er janvier 1983 est aussi
+          celui de la pension minimum de vieillesse d'avant le minimum
+          contributif (L. 345), que les mêmes décrets fixent, au niveau `haute`
+          (pension_minimum_avant_1983.csv, tiré du barème daté de data/brut/cnav_avts.json).
 
       - id: cnav_montants_minimum
         titre: Barèmes du minimum contributif et du plafond d'écrêtement, 1983-2026

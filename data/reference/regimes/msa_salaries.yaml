@@ -39,7 +39,7 @@ periodes:
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+    avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
       RÉGIME ALIGNÉ, ET LA FICHE NE L'ÉTAIT PAS. Les salariés agricoles
       relèvent depuis l'origine d'un régime dont les règles de calcul sont
@@ -80,7 +80,7 @@ periodes:
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+    avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
     notes: >-
       Mêmes règles que le régime général sur 1972-1982 : la MSA les applique à l'identique.
       La durée retenue y monte par les mêmes paliers : « Pour les pensions
@@ -110,7 +110,7 @@ periodes:
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+    avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
     notes: >-
       Les règles de 1972, avec 136 trimestres retenus au plus pour une
       pension qui prend effet en 1973 (décret n° 50-1225, article 59-1).
@@ -132,7 +132,7 @@ periodes:
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+    avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
     notes: >-
       Les règles de 1972, avec 144 trimestres retenus au plus pour une
       pension qui prend effet en 1974 (décret n° 50-1225, article 59-1).
@@ -153,7 +153,7 @@ periodes:
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+    avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
     notes: >-
       Les règles de 1972, les 150 trimestres du dénominateur étant tous
       retenus depuis 1975 : le décret n° 50-1225, article 59-1, ne fixe de
@@ -178,7 +178,7 @@ periodes:
     duree_taux_plein_femmes_trimestres: 150
     duree_taux_plein_femmes_regimes: [regime_general, assurances_sociales, msa_salaries]
     surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+    avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
     notes: >-
       Les règles de 1975, et le taux de soixante-cinq ans dès soixante-trois
       ans aux femmes qui réunissent trente-sept ans et demi d'assurance, pour
@@ -206,7 +206,7 @@ periodes:
     duree_taux_plein_femmes_trimestres: 150
     duree_taux_plein_femmes_regimes: [regime_general, assurances_sociales, msa_salaries]
     surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+    avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
     notes: >-
       Les règles de 1978, le taux de soixante-cinq ans servi dès soixante
       ans aux femmes de trente-sept ans et demi d'assurance pour une pension

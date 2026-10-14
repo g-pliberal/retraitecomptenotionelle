@@ -3239,6 +3239,10 @@ class ScenarioActuel:
 
 #: La règle du minimum contributif quand la fiche manque : celle du droit en
 #: vigueur (version ``avpf_et_ava_2023`` de la fiche ``minimum_contributif``).
+#: La série de la pension minimum d'avant le 1er avril 1983 parmi les montants
+#: datés du minimum (:meth:`MinimumContributif.pension_minimum`).
+PENSION_MINIMUM = "pension_minimum"
+
 REGLE_DU_MINIMUM_EN_VIGUEUR = {
     "existe": True,
     "majoration": "periodes_cotisees",
@@ -3297,6 +3301,17 @@ class MinimumContributif:
                         Fiabilite.depuis_texte(ligne["fiabilite"])))
             self._table = {mesure: tuple(sorted(datees))
                            for mesure, datees in lues.items()}
+        #: Avant le 1er avril 1983, la pension minimum de L. 345, au montant de
+        #: l'allocation aux vieux travailleurs salariés, à chaque date depuis
+        #: 1945 (action 138, étape 6).
+        avant_1983 = racine / "reference" / "legislation" / "pension_minimum_avant_1983.csv"
+        if avant_1983.exists():
+            with avant_1983.open(encoding="utf-8") as flux:
+                lignes = (l for l in flux if not l.lstrip().startswith("#"))
+                self._table[PENSION_MINIMUM] = tuple(sorted(
+                    (ligne["date"], float(ligne["valeur"]),
+                     Fiabilite.depuis_texte(ligne["fiabilite"]))
+                    for ligne in csv.DictReader(lignes)))
         fiche = racine / "reference" / "regles" / "minimum_contributif.yaml"
         self._fiche = versions.preparer(charger_yaml(fiche)) if fiche.exists() else None
 
@@ -3333,6 +3348,16 @@ class MinimumContributif:
         if rang == len(datees) and annee > derniere:
             valeur *= self.macro.coefficient_smic(derniere, annee)
         return valeur, fiabilite
+
+    def pension_minimum(self, annee: int, mois: int = 1) -> tuple[float, Fiabilite]:
+        """La pension minimum d'avant le 1er avril 1983 en vigueur le premier
+        jour du mois, en euros par an : le montant de l'allocation aux vieux
+        travailleurs salariés, que les mêmes textes fixent (fiche
+        ``minimum_contributif``, versions ``pension_minimum_de_*``). Zéro avant
+        1945 ; le dernier montant, celui du 1er janvier 1983, n'est lu que
+        jusqu'au 31 mars 1983, la règle de la date d'effet l'arrêtant là."""
+        lu = self._en_vigueur(PENSION_MINIMUM, annee, mois)
+        return (0.0, Fiabilite.CERTIFIEE) if lu is None else lu
 
     def valeurs(self, annee: int, mois: int = 1) -> tuple[float, float, float, Fiabilite]:
         """Montant de base, montant majoré et plafond d'écrêtement en vigueur le

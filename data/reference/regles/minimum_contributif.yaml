@@ -8,7 +8,10 @@ intitule: >-
   de 120 trimestres cotisés depuis avril 2009, l'AVPF et l'AVA comprises dans la limite
   de 24 trimestres depuis septembre 2023 ; jusqu'en 2003, le cumul de plusieurs pensions
   portées au minimum est limité au minimum entier ; depuis 2012, le complément est écrêté
-  sur l'ensemble des pensions ; la surcote s'y ajoute depuis avril 2009.
+  sur l'ensemble des pensions ; la surcote s'y ajoute depuis avril 2009. Avant le 1er
+  avril 1983, la pension au taux de soixante-cinq ans est portée à la pension minimum de
+  L. 345, au montant de l'allocation aux vieux travailleurs salariés, entière à soixante
+  trimestres dans le régime ou à l'ex-invalide, en soixantièmes en dessous.
 domaine: minima
 regimes: [regime_general, msa_salaries, cancava, organic, rsi, cavimac]
 etape: completer_tous_regimes
@@ -22,7 +25,9 @@ lit:
 - les trimestres d'assurance vieillesse des parents au foyer et des aidants, année par
   année
 - les montants du minimum, du majoré et du plafond en vigueur à la date d'effet
-  (legislation/minimum_contributif.csv)
+  (legislation/minimum_contributif.csv), et, avant le 1er avril 1983, celui de la pension
+  minimum (legislation/pension_minimum_avant_1983.csv)
+- avant le 1er avril 1983, la pension d'invalidité que la pension de vieillesse remplace
 - les pensions déjà servies et les pensions étrangères, pour l'écrêtement
 ecrit:
 - le complément de chaque régime porté au minimum, majoration des périodes cotisées
@@ -30,21 +35,26 @@ ecrit:
 dates_qui_decident:
 - liquidation.date_effet
 versions:
-- id: avant_le_minimum_contributif
-  statut: lue
-  textes:
-  - reference: >-
-      Cnav, exposé « Minimum avant 2012 », partie « Avant le 01/04/1983 » : « Le minimum
-      contributif est applicable depuis le 01/04/1983. Avant cette date, la retraite était
-      comparée au montant de l'allocation aux vieux travailleurs salariés (AVTS) si elle
-      était attribuée au taux plein »
-    lu_le: 2026-10-04
+- id: pension_minimum_de_1945
+  statut: supposee
+  hypothese: >-
+    l'ordonnance n° 45-170 du 2 février 1945 (article 13), le code de 1956 (L. 345) et le
+    décret n° 45-0179 avant sa rédaction du 12 mai 1976 n'ont pas d'article lisible dans
+    les index JORF et LEGI ; les décrets « fixant le montant de divers avantages de
+    vieillesse » de 1981 et 1982 renvoient encore à l'article 13 de l'ordonnance pour la
+    pension minimum de vieillesse, qu'ils fixent au montant de l'AVTS. La règle de 1976
+    est présumée valoir depuis 1945 — le minimum entier à soixante trimestres, en
+    soixantièmes en dessous —, quand, avant le 1er juillet 1974, les petites carrières
+    recevaient une rente que le modèle ne distingue pas de la pension
+    (versement_forfaitaire_unique)
+  fiabilite: faible
   bornes:
-    liquidation.date_effet: [null, 1983-04-01]
+    liquidation.date_effet: [null, 1976-05-12]
   contenu:
     droit: >-
-      pas de minimum contributif ; la comparaison à l'AVTS d'avant le 1er avril 1983 est
-      l'affaire de l'étape 138.6, non de cette fiche
+      pas de minimum contributif : la pension au taux de soixante-cinq ans est portée à la
+      pension minimum de vieillesse, au montant de l'allocation aux vieux travailleurs
+      salariés, comme de 1976 à 1983 ; présumé
     parametres:
       existe: false
       majoration: aucune
@@ -53,6 +63,89 @@ versions:
       ecretement: false
       cumul_des_minima: false
       duree_tous_regimes: false
+      pension_minimum:
+        trimestres_du_minimum_entier: 60
+        entier_a_l_ex_invalide: true
+        regimes: [regime_general, msa_salaries]
+      fiabilite: estimee
+  exemples: aucun trouvé
+- id: pension_minimum_de_1976
+  statut: lue
+  textes:
+  - id: LEGIARTI000006760665
+    reference: >-
+      décret n° 45-0179, article 70-5, 2. (rédaction du 12 mai 1976, décret n° 76-404) :
+      « Seuls peuvent bénéficier de l'intégralité du minimum de base prévu à l'article
+      L. 345 du code de la sécurité sociale les titulaires d'une pension de vieillesse
+      substituée à une pension d'invalidité et les titulaires de pensions correspondant à
+      une durée d'assurance d'au moins quinze années (soit 60 trimestres) accomplies dans
+      le régime général de la sécurité sociale. Lorsque cette durée est inférieure à
+      quinze années, le minimum de base est réduit à autant de soixantièmes que l'assuré
+      justifie de trimestres d'assurance. Au minimum de base entier ou réduit
+      s'ajoutent, le cas échéant : […] Une bonification de 10 p. 100 du montant du
+      minimum de base […] ; La majoration pour conjoint à charge »
+    en_vigueur: 1976-05-12
+    lu_le: 2026-10-14
+  - id: LEGIARTI000006760669
+    reference: décret n° 45-0179, article 70-7 (rédaction du 23 juillet 1982), le même texte
+    en_vigueur: 1982-07-23
+    lu_le: 2026-10-14
+  - id: LEGIARTI000006773767
+    reference: >-
+      décret n° 51-727 du 6 juin 1951, article 1er bis, paragraphe 2 (rédaction du 26 août
+      1977) : « Le montant de la pension de retraite d'un assuré âgé de plus de soixante-
+      cinq ans ou de moins de soixante-cinq ans mais inapte au travail ne peut être
+      inférieur à celui visé à l'article L. 345 du Code de la sécurité sociale »
+    en_vigueur: 1977-08-26
+    lu_le: 2026-10-14
+  - id: LEGIARTI000006762489
+    reference: >-
+      décret n° 81-1166 du 30 décembre 1981, article 1er : « Sont portés à 10.100 F par an
+      à compter du 1er janvier 1982 : Le montant de l'allocation aux vieux travailleurs
+      salariés […] ; Le montant de la pension minimum de vieillesse visée aux articles
+      L. 345, L. 350 et L. 379 du code de la sécurité sociale » ; de même les décrets
+      n° 82-561 (LEGIARTI000006762758, 10 900 F) et n° 82-1142 (LEGIARTI000006763160,
+      11 300 F)
+    en_vigueur: 1982-01-01
+    lu_le: 2026-10-14
+  - id: LEGIARTI000006764238
+    reference: >-
+      décret n° 83-551 du 30 juin 1983, article 4 : les « pensions de vieillesse portées,
+      avec une date d'effet antérieure au 1er avril 1983, au montant minimum de base prévu
+      aux articles L. 345 et L. 379 », qui suivent l'AVTS après la réforme
+    en_vigueur: 1983-07-01
+    lu_le: 2026-10-14
+  - reference: >-
+      Cnav, exposé « Minimum avant 2012 », partie « Avant le 01/04/1983 » : « Le minimum
+      contributif est applicable depuis le 01/04/1983. Avant cette date, la retraite était
+      comparée au montant de l'allocation aux vieux travailleurs salariés (AVTS) si elle
+      était attribuée au taux plein »
+    lu_le: 2026-10-04
+  bornes:
+    liquidation.date_effet: [1976-05-12, 1983-04-01]
+  contenu:
+    droit: >-
+      pas de minimum contributif : la pension au taux de soixante-cinq ans — à soixante-
+      cinq ans, ou avant au titre de l'inaptitude ou d'une catégorie — est portée au
+      minimum de base de L. 345, que les décrets fixent au montant de l'allocation aux
+      vieux travailleurs salariés (pension_minimum_avant_1983.csv) : entier à soixante
+      trimestres d'assurance dans le régime ou à l'ex-invalide, en soixantièmes en
+      dessous ; la bonification pour trois enfants s'y ajoute, au taux de 10 %, comme à
+      la pension, et la majoration pour conjoint à charge. Au régime des salariés
+      agricoles, le même minimum (décret n° 51-727, article 1er bis), sa proratisation
+      présumée celle du régime général
+    parametres:
+      existe: false
+      majoration: aucune
+      seuil_trimestres_cotises: null
+      plafond_avpf: 0
+      ecretement: false
+      cumul_des_minima: false
+      duree_tous_regimes: false
+      pension_minimum:
+        trimestres_du_minimum_entier: 60
+        entier_a_l_ex_invalide: true
+        regimes: [regime_general, msa_salaries]
   exemples: aucun trouvé
 - id: minimum_de_1983
   statut: lue
@@ -421,9 +514,23 @@ approximations:
     pensions auxquelles l'assuré peut prétendre sont demandées
   effet: non mesuré
 sources:
-  lu_le: 2026-10-04
+  lu_le: 2026-10-14
   prochaine_relecture: 2027-01-31
   a_relire:
+  - >-
+    Avant le 12 mai 1976 : l'article 13 de l'ordonnance n° 45-170, L. 345 du code de 1956
+    et les rédactions du décret n° 45-0179 d'avant 1976, au fac-similé du Journal
+    officiel (les index n'en ont rien) ; avant la loi n° 75-3 et le 1er juillet 1974, la
+    rente des moins de quinze ans d'assurance n'était peut-être pas portée au minimum.
+  - >-
+    Avant le 1er avril 1983, au régime des salariés agricoles, le décret qui proratise le
+    minimum (décret n° 51-727, article 1er bis : « fixés par décret en tenant compte de la
+    durée d'assurance ») ; aux artisans et commerçants, le minimum de base de L. 345
+    attribué « au titre des périodes d'assurance postérieures au 31 décembre 1972 »
+    (décret n° 73-937, article 7 ; décret n° 73-938) ; le cumul de deux pensions portées
+    au minimum ; et ce qui s'ajoutait au minimum, la rente des assurances sociales au
+    31 décembre 1940 et celle des retraites ouvrières et paysannes, que le modèle ne
+    connaît pas.
   - Relire les montants à chaque revalorisation de janvier (circulaire Cnav « Revalorisation
     du Smic ») et le plafond à chaque relèvement du SMIC.
   - >-
@@ -431,6 +538,13 @@ sources:
     garde que le titre) et les articles R. 173-7 à R. 173-14 de 1985, pour la limitation du
     cumul des pensions attribuées successivement.
   lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 45-0179, articles 70-5 (1976) et 70-7 (1982 et 1983) ; décret n° 51-727,
+      article 1er bis (1977 et 1983) ; décrets n° 81-1166, 82-561 et 82-1142, article 1er,
+      et n° 83-551 et 84-92, article 4 ; ordonnance n° 45-2410, article 11 ; dans les
+      index LEGI et JORF du dépôt à jour au 11 octobre 2026
+    date: 2026-10-14
   - type: circulaire_cnav
     reference: >-
       barèmes « Montant minimum de la retraite personnelle » (du 1er avril 1983 au 1er
@@ -478,18 +592,22 @@ textes_a_rattacher:
 - reference: L. 173-2 CSS
 code:
   python: >-
-    scenarios/actuel.py : MinimumContributif (valeurs, regle) ; droit/completer.py :
-    completer, plancher_national, avpf_retenue, limiter_le_cumul, complement_minimum ;
+    scenarios/actuel.py : MinimumContributif (valeurs, pension_minimum, regle) ;
+    droit/completer.py : completer, plancher_national, plancher_d_avant_1983,
+    avpf_retenue, limiter_le_cumul, complement_minimum ;
     droit/liquider.py : EligibleMinimum (duree_tous_regimes, cotisee_tous_regimes,
     porte_avpf)
   javascript: >-
     moteur/js/regimes.js : MinimumContributif ; moteur/js/droit/completer.js :
-    completer, plancherNational, avpfRetenue, limiterLeCumul ; moteur/js/droit/liquider.js
+    completer, plancherNational, plancherDAvant1983, avpfRetenue, limiterLeCumul ;
+    moteur/js/droit/liquider.js
   parametres: >-
-    contenu.parametres de chaque version ; data/reference/legislation/minimum_contributif.csv
+    contenu.parametres de chaque version ; data/reference/legislation/minimum_contributif.csv,
+    data/reference/legislation/pension_minimum_avant_1983.csv
   tests: >-
     tests/test_simulateur.py et tests/js/moteur.test.js : les exemples des circulaires
-    2005/30 et 2009/17 rejoués dans les deux moteurs
+    2005/30 et 2009/17 rejoués dans les deux moteurs ; tests/test_pension_minimum_avant_1983.py :
+    la pension minimum d'avant avril 1983, dans les deux moteurs
 historique:
 - >-
   2026-09-23 — la surcote ajoutée au minimum depuis avril 2009, et non le minimum
@@ -502,6 +620,11 @@ historique:
 - >-
   2026-10-05 — confrontée à TRAJECTOiRE (action 142, étape 4) : la pension au minimum
   contributif concorde, à dix centimes par an près.
+- >-
+  2026-10-14 — la pension minimum d'avant le 1er avril 1983, à l'étape 138.6 : la
+  pension au taux de soixante-cinq ans portée au montant de l'AVTS, entière à soixante
+  trimestres, en soixantièmes en dessous, lue de 1976 à 1983, présumée de 1945 à 1976 ;
+  avant, le modèle ne servait aucun minimum.
 exemples:
 - cnav_2005_30_minimum_majore_monopensionne
 - sp_a15703_minimum_contributif_2026

@@ -1312,6 +1312,14 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         #: fraction d'avant 1998 des cultes demandent : durée requise, ou âge
         #: d'annulation de la décote, ou inaptitude. Lu pour eux seuls.
         taux_plein_du_regime = (
+            # Avant le 1er avril 1983, où le taux croît avec l'âge seul, la
+            # pension minimum de L. 345 ne relève que la pension au taux de
+            # soixante-cinq ans — à cet âge, ou avant au titre de l'inaptitude
+            # ou d'une catégorie : celle qu'aucun abattement ne réduit, quelle
+            # que soit la durée.
+            "minimum_contributif" in periode.avantages_non_contributifs
+            and facteur_decote >= 1.0
+        ) if periode.majoration_d_ajournement and durees_cultes is None else (
             (durees_cultes is not None
              or "minimum_contributif" in periode.avantages_non_contributifs)
             and (trimestres >= requis

@@ -775,15 +775,21 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     }
     const surcoteDeLaPension = montant * (1.0 - 1.0 / coefficientDeLaSurcote);
     // Le taux plein, que le minimum contributif et les majorations de la
-    // fraction d'avant 1998 des cultes demandent : lu pour eux seuls.
-    const tauxPleinDuRegime = (dureesCultes !== null
-      || periode.avantages_non_contributifs.includes("minimum_contributif"))
-      && (trimestres >= requis
-        || ageLiquidation >= ouvrir.ageTauxPlein(moteur, periode, carriere)
-        || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation)
-        || categories.tauxPleinParCategorie(
-          moteur, code, carriere, durees, ageLiquidation) !== null
-        || regimesDuHandicap.has(code));
+    // fraction d'avant 1998 des cultes demandent : lu pour eux seuls. Avant le
+    // 1er avril 1983, où le taux croît avec l'âge seul, la pension minimum de
+    // L. 345 ne relève que la pension au taux de soixante-cinq ans : celle
+    // qu'aucun abattement ne réduit, quelle que soit la durée.
+    const tauxPleinDuRegime = periode.majoration_d_ajournement && dureesCultes === null
+      ? periode.avantages_non_contributifs.includes("minimum_contributif")
+        && facteurDecote >= 1.0
+      : (dureesCultes !== null
+        || periode.avantages_non_contributifs.includes("minimum_contributif"))
+        && (trimestres >= requis
+          || ageLiquidation >= ouvrir.ageTauxPlein(moteur, periode, carriere)
+          || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation)
+          || categories.tauxPleinParCategorie(
+            moteur, code, carriere, durees, ageLiquidation) !== null
+          || regimesDuHandicap.has(code));
     const fractionCultes = dureesCultes !== null
       ? cultes.fractionDAvant1998(
         moteur, carriere, dureesCultes, proratisation, tauxPleinDuRegime,

@@ -1,0 +1,44 @@
+date: "2026-10-14"
+session: "action 138, étape 6 : la pension minimum d'avant le 1er avril 1983"
+consulte: >-
+  Les index LEGI et JORF de la release `index-dila`, à jour au 11 octobre 2026 :
+  tout article qui nomme L. 345, la « pension minimum », le « minimum de base » ou
+  l'allocation aux vieux travailleurs salariés près d'un minimum, jusqu'en 1986 ; les
+  rédactions du décret n° 45-0179, articles 70 à 74, de 1973 à 1985 ; le décret
+  n° 51-727, article 1er bis (1977, 1983) ; les décrets « fixant le montant de divers
+  avantages de vieillesse » n° 81-1166, 82-561, 82-1142 (article 1er), n° 83-551 et
+  84-92 (article 4) ; l'ordonnance n° 45-2410, article 11 ; les notices des décrets
+  n° 76-404, 79-567, 80-1159, 81-681, 83-773 et 84-187, et de la loi n° 75-1279. Le
+  barème « Montant minimum de la retraite personnelle » de la Cnav, qui commence au
+  1er avril 1983, et son barème daté de l'AVTS, par l'API de sa base de législation ;
+  l'exposé « Minimum avant 2012 », que l'API ne sert pas, reste cité de sa lecture du
+  4 octobre.
+trouve: >-
+  Le texte de 1976 (décret n° 45-0179, article 70-5, recopié en 70-7 en 1982) : « Seuls
+  peuvent bénéficier de l'intégralité du minimum de base prévu à l'article L. 345 […]
+  les titulaires d'une pension de vieillesse substituée à une pension d'invalidité et
+  les titulaires de pensions correspondant à une durée d'assurance d'au moins quinze
+  années (soit 60 trimestres) accomplies dans le régime général […]. Lorsque cette
+  durée est inférieure à quinze années, le minimum de base est réduit à autant de
+  soixantièmes que l'assuré justifie de trimestres d'assurance » ; la bonification
+  pour trois enfants et la majoration pour conjoint s'y ajoutent. Le minimum relève la
+  pension d'un assuré « âgé de plus de soixante-cinq ans ou de moins de soixante-cinq
+  ans mais inapte » (décret n° 51-727, qui l'étend aux salariés agricoles). Son
+  montant est celui de l'AVTS : les mêmes articles les fixent ensemble (« Le montant
+  de la pension minimum de vieillesse visée aux articles L. 345, L. 350 et L. 379 »,
+  10 100 F au 1er janvier 1982, 10 900 F au 1er juillet, 11 300 F au 1er janvier 1983),
+  et renvoient encore à l'article 13 de l'ordonnance n° 45-170 du 2 février 1945. La
+  loi n° 83-430 récrit le même L. 345 en minimum contributif au 1er avril 1983. Avant
+  1976, les index n'ont aucun article. Modélisé dans les deux moteurs, dans la fiche
+  `minimum_contributif` : versions `pension_minimum_de_1976`, lue, et
+  `pension_minimum_de_1945`, supposée ; montants datés dans
+  `pension_minimum_avant_1983.csv`.
+reste: >-
+  Avant 1976, l'ordonnance de 1945, L. 345 du code de 1956 et le décret n° 45-0179, au
+  fac-similé ; avant le 1er juillet 1974, la rente des moins de quinze ans. La
+  proratisation du minimum des salariés agricoles, présumée celle du régime général ;
+  le minimum de base des artisans et commerçants pour leurs périodes d'après 1972
+  (décret n° 73-937, article 7) ; le cumul de deux pensions portées au minimum ; la
+  rente des assurances sociales de 1940 et celle des retraites ouvrières et paysannes,
+  qui s'ajoutaient au minimum. Les montants de 1982 et 1983, lus dans l'article, à
+  certifier par un contrôle automatique.

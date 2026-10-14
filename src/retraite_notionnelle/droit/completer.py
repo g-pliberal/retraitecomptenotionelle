@@ -244,6 +244,25 @@ def plancher_du_regime(eligible, montant_base: float, montant_majore: float,
     return plancher
 
 
+def plancher_d_avant_1983(eligible, montant: float, regle: dict, ex_invalide: bool) -> float:
+    """La pension minimum d'avant le 1er avril 1983 due au régime.
+
+    « Seuls peuvent bénéficier de l'intégralité du minimum de base prévu à
+    l'article L. 345 du code de la sécurité sociale les titulaires d'une
+    pension de vieillesse substituée à une pension d'invalidité et les
+    titulaires de pensions correspondant à une durée d'assurance d'au moins
+    quinze années (soit 60 trimestres) accomplies dans le régime général […].
+    Lorsque cette durée est inférieure à quinze années, le minimum de base est
+    réduit à autant de soixantièmes que l'assuré justifie de trimestres
+    d'assurance » (décret n° 45-0179, article 70-5, rédaction de 1976 ;
+    article 70-7 en 1982). ``regle`` est le paramètre ``pension_minimum`` de la
+    version, ``montant`` celui de l'AVTS à la date d'effet."""
+    if ex_invalide and regle.get("entier_a_l_ex_invalide"):
+        return montant
+    entier = regle["trimestres_du_minimum_entier"]
+    return montant * min(1.0, eligible.duree_regime / entier)
+
+
 def selon_la_regle(eligible, regle: dict, avpf: int):
     """Les durées cotisées de l'éligible, telles que la majoration de cette date
     les lit.
@@ -701,9 +720,12 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
     # La règle du minimum que la date d'effet fait valoir (fiche
     # ``minimum_contributif``) : il n'existe que depuis le 1er avril 1983, sa
     # majoration depuis 2004, son seuil depuis avril 2009, son écrêtement
-    # depuis 2012, l'AVPF dans sa majoration depuis septembre 2023.
+    # depuis 2012, l'AVPF dans sa majoration depuis septembre 2023. Avant lui,
+    # la pension minimum de L. 345, au montant de l'AVTS (``pension_minimum``).
     regle = moteur.minimum_contributif.regle(date_d_effet(carriere))
-    if avantages_non_contributifs and eligibles_minimum and regle["existe"]:
+    pension_minimum = regle.get("pension_minimum")
+    if (avantages_non_contributifs and eligibles_minimum
+            and (regle["existe"] or pension_minimum)):
         # Le minimum contributif ne relève que les pensions liquidées AU
         # TAUX PLEIN (L. 351-10). Sa majoration au titre des périodes
         # cotisées se proratise sur la durée COTISÉE dans le régime, quand le
@@ -711,10 +733,21 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         # entrecoupée de chômage indemnisé valide sa durée d'assurance sans
         # cotiser, et n'a donc droit qu'à une part de la majoration. Les
         # montants sont ceux du mois de la date d'effet.
-        montant_base, montant_majore, plafond, fiabilite_minimum = (
-            moteur.minimum_contributif.valeurs(annee_liquidation,
-                                               carriere.mois_liquidation)
-        )
+        if pension_minimum:
+            # Avant le 1er avril 1983, ni majoration ni écrêtement : le montant
+            # de l'AVTS, que les mêmes décrets fixent.
+            montant_base, fiabilite_minimum = moteur.minimum_contributif.pension_minimum(
+                annee_liquidation, carriere.mois_liquidation)
+            montant_majore, plafond = montant_base, 0.0
+            if regle.get("fiabilite"):
+                fiabilite_minimum = min(fiabilite_minimum,
+                                        Fiabilite.depuis_texte(regle["fiabilite"]))
+            ex_invalide = invalidite.substitution(moteur, carriere) is not None
+        else:
+            montant_base, montant_majore, plafond, fiabilite_minimum = (
+                moteur.minimum_contributif.valeurs(annee_liquidation,
+                                                   carriere.mois_liquidation)
+            )
         avpf = avpf_retenue(moteur, carriere, regle["plafond_avpf"])
         majoree = majoration_ouverte(regle, trimestres_cotises + avpf)
         date_effet = (annee_liquidation, carriere.mois_liquidation)
@@ -733,6 +766,9 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 eligible.surcote, date_effet)
 
         def plancher_national(eligible, majoration: bool) -> float:
+            if pension_minimum:
+                return plancher_d_avant_1983(eligible, montant_base, pension_minimum,
+                                             ex_invalide)
             return plancher_du_regime(
                 selon_la_regle(eligible, regle, avpf), montant_base, montant_majore,
                 majoration, regle["duree_tous_regimes"])
@@ -744,7 +780,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
             nationales.regimes[eligible.indice].regime:
                 (nationales.regimes[eligible.indice], eligible)
             for eligible in nationales.minimum}
-        international = (None if nationales is None
+        international = (None if nationales is None or pension_minimum
                          else _minimum_international(moteur, carriere))
         if nationales is not None:
             # La pension nationale ne compte que les trimestres cotisés en
@@ -760,6 +796,8 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         majore = False
         for eligible in eligibles_minimum:
             pension = pensions[eligible.indice]
+            if pension_minimum and pension.regime not in pension_minimum["regimes"]:
+                continue
             alternative = alternatives.get(pension.regime)
             avec_majoration = majoree
             if alternative is None:
@@ -838,18 +876,28 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                     montant=pensions[indice].montant + complement,
                     detail=(
                         f"{pensions[indice].detail} = "
-                        f"{pensions[indice].montant:,.2f} €, porté au minimum "
-                        f"contributif par + {complement:,.2f} €"
+                        f"{pensions[indice].montant:,.2f} €, porté "
+                        + ("à la pension minimum" if pension_minimum
+                           else "au minimum contributif")
+                        + f" par + {complement:,.2f} €"
                     ),
                 )
             total += releve_minimum
             minimum_applique = True
             fiabilite_globale = min(fiabilite_globale, fiabilite_minimum)
+            # Le même article, L. 345, porte la pension minimum d'avant le
+            # 1er avril 1983 et le minimum contributif qui la remplace (loi
+            # n° 83-430, article 2) : un seul code.
             avantages.append(AvantageApplique(
                 code="minimum_contributif",
-                libelle="Minimum contributif",
+                libelle=("Pension minimum (AVTS)" if pension_minimum
+                         else "Minimum contributif"),
                 montant=releve_minimum,
                 detail=(
+                    "porté au montant de l'allocation aux vieux travailleurs salariés, "
+                    f"entier à {pension_minimum['trimestres_du_minimum_entier']} "
+                    "trimestres dans le régime, au prorata en dessous"
+                    if pension_minimum else
                     "porté au plancher, au prorata de la durée acquise"
                     + (", majoration des périodes cotisées comprise"
                        if majore else "")
@@ -866,9 +914,11 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
     # le mois où elle est due, sur ce qu'elles servent alors
     # (:func:`~retraite_notionnelle.revalorisation.majorer_les_petites_pensions`).
     # Ce qu'elle relit de chacune s'écrit ici : ses durées, son taux plein et
-    # sa surcote, qu'elle écarte de ses comparaisons.
+    # sa surcote, qu'elle écarte de ses comparaisons. Une pension d'avant le
+    # 1er avril 1983, que la pension minimum regarde, n'en relève pas (fiche
+    # ``majoration_exceptionnelle_2023``).
     petites_pensions: tuple[PetitePension, ...] = ()
-    if avantages_non_contributifs:
+    if avantages_non_contributifs and regle["existe"]:
         mois_d_effet = (annee_liquidation, carriere.mois_liquidation)
         petites_pensions = tuple(
             PetitePension(

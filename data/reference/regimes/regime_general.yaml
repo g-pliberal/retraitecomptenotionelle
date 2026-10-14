@@ -59,7 +59,7 @@ periodes:
     majoration_d_ajournement: decote_avant_1983
     ajournement_par_annee_d_assurance: decote_avant_1983
     surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+    avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
       Ordonnances des 4 et 19 octobre 1945. Taux de 20 % à 60 ans porté à
       40 % à 65 ans par majorations d'ajournement (4 points par année
@@ -109,7 +109,7 @@ periodes:
     decote_annulee_par_la_duree: decote_avant_1983
     majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
-    avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+    avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
       Les règles de 1945, la majoration comptée « par année postérieure à
       cet âge » depuis la loi n° 51-374 du 27 mars 1951 : « le pourcentage
@@ -137,7 +137,8 @@ periodes:
     majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
+      [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf,
+       reversion, periodes_assimilees]
     notes: >-
       Loi Boulin du 31 décembre 1971 : taux plein porté à 50 %, durée
       requise à 150 trimestres (37,5 ans), salaire de référence sur les
@@ -186,7 +187,8 @@ periodes:
     majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
+      [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf,
+       reversion, periodes_assimilees]
     notes: >-
       Les règles de 1972 (loi Boulin), avec 136 trimestres retenus au
       plus pour une pension qui prend effet en 1973 (décret n° 45-0179,
@@ -211,7 +213,8 @@ periodes:
     majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
+      [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf,
+       reversion, periodes_assimilees]
     notes: >-
       Les règles de 1972 (loi Boulin), avec 144 trimestres retenus au
       plus pour une pension qui prend effet en 1974 (décret n° 45-0179,
@@ -235,7 +238,8 @@ periodes:
     majoration_d_ajournement: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
+      [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf,
+       reversion, periodes_assimilees]
     notes: >-
       Les règles de 1972 (loi Boulin), la durée retenue atteignant les
       150 trimestres du dénominateur « si la pension prend effet
@@ -265,7 +269,8 @@ periodes:
     duree_taux_plein_femmes_regimes: [regime_general, assurances_sociales, msa_salaries]
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
+      [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf,
+       reversion, periodes_assimilees]
     notes: >-
       Les règles de 1975, et le taux de soixante-cinq ans dès soixante-trois
       ans aux femmes qui réunissent trente-sept ans et demi d'assurance « dans
@@ -296,7 +301,8 @@ periodes:
     duree_taux_plein_femmes_regimes: [regime_general, assurances_sociales, msa_salaries]
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
+      [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf,
+       reversion, periodes_assimilees]
     notes: >-
       Les règles de 1978, le taux de soixante-cinq ans servi dès soixante
       ans aux femmes de trente-sept ans et demi d'assurance pour une pension
