@@ -129,6 +129,72 @@ def test_le_complement_suit_la_version_de_sa_date_d_effet(simulateur):
         assert int(0.85 * 1820 * smic / 12 * 100) / 100 == mensuel
 
 
+
+def _smic_net_agricole():
+    chemin = RACINE / "scripts" / "fetch" / "msa_smic_net_agricole.py"
+    spec = importlib.util.spec_from_file_location("msa_smic_net_agricole", chemin)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_le_smic_net_agricole_se_refait_des_taux_salariaux():
+    """La MSA déduit du SMIC brut les taux salariaux d'un non cadre de la
+    production agricole — AGRICA à 3,93 % et non 3,15, l'AFNCA à 0,01 % — :
+    21,63025 % depuis 2019, 22,845 % en 2015. Le calcul redonne au centime
+    chaque montant publié, le fichier s'en écarte de moins de 0,0002 € de
+    l'heure (2024 à part), et son niveau dit qui l'a publié."""
+    module = _smic_net_agricole()
+    assert module.confronter() == []
+    assert module.taux_deduit(2019) == pytest.approx(21.63025)
+    assert module.taux_deduit(2015) == pytest.approx(22.845)
+    brut, lues = module.smic_brut(), module.fichier()
+    assert set(lues) == set(range(2015, 2027))
+    for annee, (valeur, _) in lues.items():
+        tolerance = 0.0002 + module.ECARTS_CONNUS.get(annee, 0.0) / (
+            0.85 * module.HEURES_PAR_MOIS)
+        assert abs(valeur - module.calcule(annee, brut)) <= tolerance, annee
+    publies = {annee: (part, montant, producteur)
+               for annee, part, montant, _, producteur, *_ in module.PUBLIES
+               if montant != int(montant)}
+    for annee, (part, montant, producteur) in publies.items():
+        assert lues[annee][0] == module.horaire_publie(part, montant), annee
+        assert lues[annee][1] == ("certifiee" if producteur else "haute"), annee
+    certifiees = {annee for annee, (_, niveau) in lues.items() if niveau == "certifiee"}
+    assert certifiees == {annee for annee, (*_, producteur) in publies.items() if producteur}
+
+
+def test_les_montants_mensuels_que_la_msa_publie_sortent_des_tables(simulateur):
+    """Ce que la MSA et le ministère écrivent par mois, au centime inférieur :
+    681,20 € et 541,30 € de PMR au 1er avril 2013, sous un plafond de
+    852,39 € (ministère de l'agriculture, page du 11 février 2015) ; 699,07 €
+    et 874,76 € en 2021, 747,57 € et 961,08 € au 1er janvier 2023 (la MSA au
+    COR, 26 janvier 2023)."""
+    pmr = simulateur.scenario_actuel.pension_majoree_reference
+
+    def mois(mesure, annee, mois_):
+        return math.floor(pmr.montant(mesure, annee, mois_)[0] / 12 * 100 + 1e-6) / 100
+
+    assert (mois("pmr_chef", 2013, 4), mois("pmr_conjoint", 2013, 4),
+            mois("plafond", 2013, 4)) == (681.20, 541.30, 852.39)
+    assert (mois("pmr_chef", 2021, 1), mois("plafond", 2021, 1)) == (699.07, 874.76)
+    assert (mois("pmr_chef", 2023, 1), mois("plafond", 2023, 1)) == (747.57, 961.08)
+
+
+def test_une_carriere_complete_de_chef_partie_en_2022_touche_la_garantie_publiee(simulateur):
+    """La MSA écrit la garantie d'une carrière complète de chef au
+    1er janvier 2022 : 1 067,91 € par mois. Quarante-deux ans de chef à
+    faible revenu, parti à 62 ans en 2022 au taux plein : ses deux pensions
+    agricoles la valent, au centime près."""
+    carriere = _chef(simulateur, 1960, 62)
+    assert carriere.annee_liquidation == 2022
+    _, avantages, pensions = _resultat(simulateur, carriere)
+    assert {"pension_majoree_reference", "complement_differentiel_rco"} <= set(avantages)
+    assert math.floor(_cible(simulateur, carriere) / 12 * 100 + 1e-6) / 100 == 1067.91
+    agricoles = pensions["msa_non_salaries"] + pensions["msa_rco"]
+    assert agricoles / 12 == pytest.approx(1067.91, abs=0.02)
+
+
 # -- le scénario 1 --------------------------------------------------------------
 
 def test_un_chef_parti_en_2019_atteint_75_pour_cent_du_smic_net(simulateur):
@@ -304,6 +370,8 @@ CAS = [
     # requise, parti en 2016 et en 2012.
     {"naissance": "1950", "liquidation": "66", "debut": "35"},
     {"naissance": "1945", "liquidation": "67", "debut": "40"},
+    # La garantie que la MSA publie au 1er janvier 2022, 1 067,91 € par mois.
+    {"naissance": "1960", "liquidation": "62"},
 ]
 
 

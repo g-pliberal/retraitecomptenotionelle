@@ -3455,9 +3455,11 @@ class ComplementDifferentielRco:
     chaque 1er janvier, et la règle que la date d'effet lui applique.
 
     **Le SMIC net agricole** (``legislation/complement_differentiel_rco.csv``)
-    se tire des montants que la MSA publie pour 2021 et de 2024 à 2026 ; les
-    autres années sont estimées, et le fichier dit comment. Au-delà de la
-    dernière, il suit le SMIC brut du modèle.
+    se tire des montants que la MSA, ou un rapport parlementaire, publient ;
+    les autres années, du SMIC brut moins les taux salariaux d'un non cadre
+    de la production agricole, que ``scripts/fetch/msa_smic_net_agricole.py``
+    refait et confronte à ces montants. Au-delà de la dernière, il suit le
+    SMIC brut du modèle.
 
     **La règle** est celle de la fiche ``complement_differentiel_rco`` : rien
     avant 2015, 73, 74 puis 75 % d'une carrière complète, 85 % et un plafond

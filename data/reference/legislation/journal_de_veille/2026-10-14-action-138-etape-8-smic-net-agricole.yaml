@@ -1,0 +1,30 @@
+date: "2026-10-14"
+session: "action 138, étape 8 : le SMIC net agricole refait des taux salariaux, et ce que la MSA publie en euros"
+consulte: >-
+  `python scripts/veille_droit.py`. Aucun texte nouveau : L. 732-63 du code rural, que
+  la fiche complement_differentiel_rco cite déjà, dit « après déduction des
+  contributions et cotisations obligatoires dues au titre des régimes de base et
+  complémentaire légalement obligatoire des salariés agricoles ». Hors de l'index :
+  le barème des cotisations sur salaires agricoles au 1er janvier 2016 (ministère de
+  l'agriculture) ; le barème de la MSA Midi-Pyrénées Sud au 1er avril 2020 ; le
+  rapport du Sénat n° 315 (2017-2018) et celui de l'Assemblée nationale n° 3071 (juin
+  2020) ; les pages de la MSA d'Armorique, de La Réunion, de Guadeloupe, de
+  Mayenne-Orne-Sarthe et de msa.fr sur la revalorisation et le complément ; ses
+  guides « Préparer sa retraite » de 2012 et 2023, sa note au COR du 26 janvier 2023
+  sur la PMR, sa synthèse sur la RCO de décembre 2018, ses Chiffres utiles de 2018 et
+  2023 ; la page du ministère de l'agriculture sur la majoration de la retraite de
+  base (11 février 2015).
+trouve: >-
+  La MSA déduit du SMIC brut les taux salariaux d'un non cadre de la production
+  agricole : 22,845 % en 2015, 22,945 en 2016, 22,995 en 2017, 22,46525 en 2018,
+  21,63025 depuis 2019 ; les 0,79 point inexpliqués sont la part salariale d'AGRICA
+  (3,93 % au lieu de 3,15) et l'AFNCA (0,01 %). Le calcul redonne au centime les
+  montants publiés de 2018, 2020, 2021, 2022 et 2026, et 2024 à trois centimes. La
+  garantie au 1er janvier 2022 est de 1 067,91 € par mois. Aucune publication de la
+  MSA ne déroule un exemple d'assuré ; ses montants mensuels de PMR (2013, 2021, 2023)
+  sortent des tables du dépôt.
+reste: >-
+  Un montant de la MSA pour 2015 à 2017 et 2019 ; l'adresse de l'Info presse du
+  14 février 2023, pour que le script relise 2023 ; un exemple d'assuré, s'il en
+  paraît un. Les cinq fiches que `scripts/veille_droit.py` donne à relire, dont
+  fin_de_la_suspension_2028, à vérifier à chaque session.

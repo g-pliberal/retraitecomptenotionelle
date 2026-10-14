@@ -2599,14 +2599,21 @@ institutions:
           agricole : montants mensuels publiés, 2021-2026
         url: https://www.msa.fr/lfp/retraite/revalorisation-retraites-agricoles-loi-3-juillet
         acces: document
-        statut_integration: saisi
+        statut_integration: controle
         cible: data/reference/legislation/complement_differentiel_rco.csv
+        recuperation: scripts/fetch/msa_smic_net_agricole.py
         note: >-
           La page ne garde que le montant de l'année (1 214,40 € au 1er
           janvier 2026, mise à jour du 20 mars 2026) ; celui de 2021 vient du
           communiqué national du 3 novembre 2021, ceux de 2024 et de 2025 de
           pages qui les ont repris. Le SMIC net agricole de l'heure s'en tire ;
-          les autres années sont estimées, et le fichier dit comment.
+          les autres années sont estimées, et le fichier dit comment. Depuis le
+          14 octobre 2026, le récupérateur refait chaque année du SMIC brut
+          moins les taux salariaux d'un non cadre de la production agricole
+          (barèmes de la MSA de 2016 et de 2020), confronte le calcul aux
+          montants publiés — la MSA pour 2021, 2022 et 2026, le Sénat pour
+          2018, l'Assemblée nationale pour 2020 — et, avec `--verifier`, relit
+          chacun à sa source.
 
   cnavpl:
     nom: Caisse nationale d'assurance vieillesse des professions libérales
