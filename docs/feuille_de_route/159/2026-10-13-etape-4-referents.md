@@ -1,16 +1,5 @@
 # Étape 4, première partie : le stock et le flux de 2025 certifiés, les trois cas types statutaires confrontés aux départs de leur groupe
 
-**Reprise, au 13 octobre 2026.** Fait : le stock de pensions au 31 décembre
-2025 (A-1) et le flux de 2025 (B-1 en entier, B-3, B-3 bis, B-4, B-5), lus case
-par case et certifiés (`caracteristiques_fonction_publique.csv`) ; les trois
-cas types statutaires, partis en 2025, face aux départs de leur groupe, leurs
-écarts déclarés (`tests/test_flux_fonction_publique.py`) ; le registre des
-modèles à jour. Reste, dans cet ordre : le tableau B-22, les bonifications du
-flux, qui corrige la case fausse du tableau 50 ; les séries du flux (B-14) et
-les tableaux 60 à 108, pour confronter les cas types année par année ; le stock
-face à la page Coût, pesé comme elle ; les limites. Commencer par B-22, avec un
-gabarit du lecteur. Détail : cette note.
-
 Le document est celui de l'étape 1 (`sre_jaune_pensions_2027`), tiré de la
 branche `jaune-2027` dans `data/brut/`, son empreinte vérifiée. Les pages
 citées sont celles qu'il imprime.

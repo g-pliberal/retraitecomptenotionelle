@@ -1,0 +1,31 @@
+date: "2026-10-14"
+session: "action 159, étape 4, seconde partie : les annexes A et B et les tableaux 60 à 108 du jaune certifiés, les cas types année par année et le stock pesé comme la page"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1. Le jaune
+  pensions annexé au PLF 2027 (data/brut/34465.pdf, empreinte vérifiée) : ses annexes A
+  (A-1 à A-6, A-8) et B (B-1 à B-22), et les tableaux 60 à 108 de son corps, en texte par
+  pdftotext et par le lecteur du dépôt, en fragments positionnés ; les coefficients de
+  revalorisation des pensions de 2016 à 2025 que le dépôt tient déjà
+  (revalorisation_pensions.csv), et la valeur du point d'indice
+  (point_indice_fonction_publique.csv), pour les confronter au jaune.
+trouve: >-
+  Le lecteur PDF du dépôt perdait cinq pages du jaune, dont celle des B-20 et B-21 et celle
+  des tableaux 95 et 96 : il tronquait un flux compressé finissant par un retour à la
+  ligne. Lus case par case, les cinquante-trois tableaux donnent 8 166 valeurs, certifiées
+  dans caracteristiques_fonction_publique.csv, et le B-22 59 de plus, dans
+  bonifications_jaune.csv, où il confirme les parts du tableau 50 à l'arrondi près, sauf
+  la case fausse. Ils se recoupent, sauf en dix-sept points où le document se contredit,
+  déclarés un à un : les âges des B-8 et B-9 ne font que les neuf dixièmes de leurs
+  totaux, les départs en catégorie active de la CNRACL du B-2 dépassent d'un quart ceux
+  du B-1, les taux des catégories de la territoriale du tableau 108 sont ceux de
+  l'hospitalière ; la valeur moyenne du point du B-14 reste à 58,64 € en 2024 et 2025,
+  quand il vaut 59,07 € depuis juillet 2023. Les cas types de l'étape 5, partis chaque
+  année de 2016 à 2025 : le sédentaire suit le taux de son groupe mais non son âge,
+  l'actif de la CNRACL part d'un à deux ans après les actifs, le militaire perd six points
+  de taux. Le stock que la page Coût sert, pesé comme elle, est à 1 à 3 % de celui du
+  jaune en 2025 ; il monte plus vite, la page indexant sur les prix des pensions que le
+  droit a revalorisées de 4 % de moins depuis 2016.
+reste: >-
+  Rien pour l'étape 4. Les tableaux 95 et 96, que le lecteur voit désormais, attendent
+  les cas types (étape 5) ; l'indexation du stock de la page sur les prix plutôt que sur
+  les revalorisations du droit est une question au propriétaire.

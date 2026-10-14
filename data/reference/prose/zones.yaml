@@ -293,6 +293,9 @@ fichiers:
       # annexé au PLF 2027 chiffre, lus le 13 octobre 2026 (action 159,
       # étape 7) : la première réserve des poids, mesurée.
       - "**Les polypensionnés de la fonction publique, au jaune pensions"
+      # Et le stock que la page sert à ses cas types statutaires, pesé comme
+      # elle, face à celui du jaune, le 14 octobre 2026 (action 159, étape 4).
+      - "**Le stock de la fonction publique, au jaune pensions"
 
   docs/limites/5-ter-trajectoire.md:
     defaut: etat

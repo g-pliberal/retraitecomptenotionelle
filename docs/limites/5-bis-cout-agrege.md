@@ -302,6 +302,26 @@ elle creuse l'écart des années observées de 1,38 point au scénario 2 et de
 en 2070, et refait le passé à 17,2 % au pire depuis 2000, pour 16,6 sur la
 page. Sa bascule sur la page est l'action 157.
 
+**Le stock de la fonction publique, au jaune pensions annexé au PLF 2027,
+mesuré le 14 octobre 2026** (`scripts/flux_fonction_publique.py`, action 159,
+étape 4). La grille de la page, pesée comme elle — chaque cohorte à
+l'effectif de son âge et à sa complétude, la seule part du régime
+statutaire —, sert en 2025 aux retraités de ses trois cas types statutaires
+1 à 3 % de moins que l'avantage principal du stock de droit direct de leur
+caisse (tableau A-5) : 2 364 € pour 2 386 aux civils de l'État, 1 443 pour
+1 481 à la CNRACL, 1 798 pour 1 832 aux militaires. En 2016, elle servait
+10, 13 et 16 % de moins que le stock accessoires compris (tableau A-4) : son
+stock monte plus vite que celui du jaune. Il suit les prix, quand le droit a
+revalorisé les pensions de 4 % de moins qu'eux de 2016 à 2025, et avec un an
+de retard en 2023, où l'écart des civils passe de 4 à 0 % puis revient à
+4 % ; la page indexe le scénario 1 sur les prix, comme le droit le dit en
+moyenne, non comme il l'a fait chaque année. Année par année, les cas types
+partent comme leur groupe sans en suivre l'âge : le sédentaire part en 2016
+huit mois après les sédentaires, en 2025 cinq mois avant eux (tableau 101) ;
+l'actif de la CNRACL, d'un à deux ans après les actifs (tableau 102) ; le
+militaire perd six points de taux de liquidation de 2016 à 2025, le flux
+réel quatre (tableau B-14).
+
 **Ce qui, en revanche, n'est pas une approximation** : l'égalité des scénarios
 3 et 5 avec le système actuel sur toute la période observée. Elle est EXACTE, et
 au sens strict — le scénario prospectif recopie la pension du scénario actuel
