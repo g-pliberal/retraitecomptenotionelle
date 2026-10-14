@@ -1,0 +1,380 @@
+schema_version: 1
+id: crpn_pension_des_navigants
+intitule: >-
+  Le navigant professionnel de l'aéronautique civile reçoit de sa caisse, en plus du
+  régime général et de l'Agirc-Arrco, une pension de 1,85 % par annuité de son salaire
+  moyen indexé jusqu'à quatre plafonds et de 1,4 % de quatre à huit plafonds, calculé
+  sur ses vingt-cinq meilleures annuités ; vingt-cinq annuités au plus jusqu'en 2011,
+  puis une durée qui monte vers trente ; dès cinquante ans avec vingt annuités depuis
+  2012, à taux plein avec trente annuités et à 5 % de décote par annuité manquante
+  depuis 2022, sans décote à soixante ans ; une majoration temporaire, de cinquante-cinq
+  ans à l'âge légal, de 0,8 % du plafond mensuel par annuité, une majoration pour trois
+  enfants et un minimum par annuité.
+domaine: salaire_de_reference
+regimes: [crpnpac, crpnpac_tranche_2]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- les jours de services valables, en qualité de navigant, cotisés, rachetés ou validés à titre gratuit, et les heures de vol ou de sauts de chaque année jusqu'en 2011
+- le salaire brut plafonné de chaque année, à quatre puis huit plafonds, et l'indice corrigé de variation des salaires de la caisse
+- l'âge à la date d'effet, l'inaptitude, l'invalidité ou le licenciement économique, la durée d'assurance tous régimes
+- les enfants eus, adoptés ou élevés neuf ans, le conjoint et les orphelins
+ecrit:
+- la pension des deux tranches, sa décote ou ses coefficients de minoration, sa majoration temporaire, sa majoration pour enfants, son minimum, et la réversion
+dates_qui_decident:
+- liquidation.date_effet
+# Le régime est calculé (deux fiches de régime, une par tranche, sous le même statut
+# personnel_navigant) : les versions coupent comme les textes, à la date d'effet de la
+# pension. Les cotisations, elles, se taxent à l'année de leur exercice : la fiche de
+# régime les porte par période.
+versions:
+- id: avant_le_code_de_1984
+  statut: supposee
+  hypothese: >-
+    la caisse, créée en 1951 et dont le code de l'aviation civile reprend le statut en
+    1967 (R. 426-1, R. 426-4, R. 426-6 et R. 426-7 dans leur rédaction du 9 avril 1967),
+    sert avant le 1er juillet 1984 une pension dont l'index ne porte pas les articles de
+    calcul ; on lui prête la règle de 1984 — 1,85 % et 1,4 % par annuité, vingt-cinq au
+    plus, dès cinquante ans —, que la fiche de régime applique depuis 1963
+  fiabilite: faible pour le montant, haute pour l'existence du régime
+  bornes:
+    liquidation.date_effet: [null, 1984-07-01]
+  contenu:
+    droit: la pension de la caisse, aux règles de 1984 supposées
+  exemples: aucun trouvé
+- id: vingt_cinq_annuites
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006845205, article: "code de l'aviation civile, R. 426-11", en_vigueur: 1984-07-01}
+  - {id: LEGIARTI000006845190, article: "code de l'aviation civile, R. 426-5", en_vigueur: 1984-07-01}
+  - {id: LEGIARTI000006845191, article: "code de l'aviation civile, R. 426-5", en_vigueur: 1990-07-01}
+  - {id: LEGIARTI000006845211, article: "code de l'aviation civile, R. 426-12", en_vigueur: 1984-07-01}
+  - {id: LEGIARTI000006845221, article: "code de l'aviation civile, R. 426-15-1", en_vigueur: 1984-07-01}
+  - {id: LEGIARTI000006845228, article: "code de l'aviation civile, R. 426-16-1", en_vigueur: 1984-07-01}
+  - {id: LEGIARTI000006845229, article: "code de l'aviation civile, R. 426-16-1", en_vigueur: 1990-07-01}
+  - {id: LEGIARTI000006845236, article: "code de l'aviation civile, R. 426-18", en_vigueur: 1984-07-01}
+  - {id: LEGIARTI000006845197, article: "code de l'aviation civile, R. 426-8", en_vigueur: 1984-07-01}
+  nee_de: LEGIARTI000006845228
+  bornes:
+    liquidation.date_effet: [1984-07-01, 1995-07-01]
+  contenu:
+    ouverture: >-
+      « Le droit à pension à taux plein n'est ouvert que lorsque l'affilié compte au
+      moins vingt-cinq annuités » ; en deçà, « une pension proportionnelle » (R. 426-11) ;
+      l'entrée en jouissance ne peut précéder cinquante ans, sauf la liquidation
+      anticipée dès quarante-cinq ans de qui compte vingt-cinq annuités, aux
+      coefficients de 0,65 à quarante-cinq ans à 0,95 à quarante-neuf (R. 426-15-1,
+      R. 426-18), et l'inaptitude définitive reconnue par le conseil médical
+    annuite: >-
+      une année compte entière si elle a été cotisée douze mois avec quatre fois (trois
+      fois depuis 1995) la durée mensuelle normale du travail en heures de vol, et pour
+      la fraction des heures faites sinon (R. 426-12)
+    calcul: >-
+      « A chacune [des deux tranches] est attribué, pour toute annuité validée [...]
+      dans la limite de vingt-cinq, un taux de pension égal à 1,85 p. 100 pour la
+      première tranche et à 1,4 p. 100 pour la deuxième tranche » (R. 426-16-1), sur le
+      salaire moyen indexé de carrière, réduit aux vingt-cinq meilleures annuités au-delà
+      de vingt-cinq (R. 426-5, c) ; depuis le 1er juillet 1990, « la somme obtenue est
+      multipliée par l'indice de revalorisation des pensions » à la liquidation
+    majorations: >-
+      trois enfants majorent de 2,5 % la part de la première tranche ; de cinquante à
+      soixante ans, une majoration de 1 % du plafond de la sécurité sociale par année
+      validée, vingt-cinq au plus, 1,4 % sans assurance maladie (R. 426-16-1)
+    cotisation: >-
+      les cotisations sont appelées « à concurrence des quatre cinquièmes des taux
+      fixés », jusqu'à ce que les charges atteignent 75 % des ressources (R. 426-8)
+  exemples: aucun trouvé
+- id: valeur_n_du_fonds
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006845206, article: "code de l'aviation civile, R. 426-11", en_vigueur: 1995-07-01}
+  - {id: LEGIARTI000023049284, article: "code de l'aviation civile, R. 426-11", en_vigueur: 2010-12-01}
+  - {id: LEGIARTI000006845207, article: "code de l'aviation civile, R. 426-11-1", en_vigueur: 1995-07-01}
+  - {id: LEGIARTI000006845208, article: "code de l'aviation civile, R. 426-11-2", en_vigueur: 1995-07-01}
+  - {id: LEGIARTI000006845209, article: "code de l'aviation civile, R. 426-11-3", en_vigueur: 1995-07-01}
+  - {id: LEGIARTI000006845212, article: "code de l'aviation civile, R. 426-12", en_vigueur: 1995-07-01}
+  - {id: LEGIARTI000006845222, article: "code de l'aviation civile, R. 426-15-1", en_vigueur: 1995-07-01}
+  - {id: LEGIARTI000006845230, article: "code de l'aviation civile, R. 426-16-1", en_vigueur: 1995-07-01}
+  - {id: LEGIARTI000006845231, article: "code de l'aviation civile, R. 426-16-1", en_vigueur: 2005-01-01}
+  - {id: LEGIARTI000006845237, article: "code de l'aviation civile, R. 426-18", en_vigueur: 1995-07-01}
+  - {id: LEGIARTI000006845238, article: "code de l'aviation civile, R. 426-18-1", en_vigueur: 1995-07-01}
+  - {id: LEGIARTI000006845192, article: "code de l'aviation civile, R. 426-5", en_vigueur: 1995-07-01}
+  - {id: LEGIARTI000006845193, article: "code de l'aviation civile, R. 426-5", en_vigueur: 2005-01-01}
+  - {id: LEGIARTI000006845198, article: "code de l'aviation civile, R. 426-8", en_vigueur: 1995-07-01}
+  - {id: LEGIARTI000006845199, article: "code de l'aviation civile, R. 426-8", en_vigueur: 2005-01-01}
+  nee_de: LEGIARTI000006845207
+  bornes:
+    liquidation.date_effet: [1995-07-01, 2012-01-01]
+  contenu:
+    ouverture: >-
+      la durée du taux plein suit la réserve du régime, N, la valeur du fonds en années
+      de prestations : dès cinquante ans, « 25, lorsque N est supérieur ou égal à 7 ;
+      (32 - N), lorsque N est supérieur à 2 et inférieur à 7 ; 30, lorsque N est
+      inférieur ou égal à 2 » (R. 426-11-1) ; la pension proportionnelle demande quinze
+      ans d'affiliation et (75 - âge) annuités si N ≥ 7, (82 - N) - âge sinon
+      (R. 426-11-2), ou s'ouvre à soixante ans sans condition (R. 426-11-3)
+    anticipation: >-
+      la pension à taux plein dès quarante-cinq ans, aux coefficients de 0,65 à 0,95
+      (R. 426-18) ; la pension proportionnelle dès cinquante ans, à un coefficient
+      actuariel compris entre 0,6 et 1 qui dépend de N et du temps validé (R. 426-18-1),
+      sauf aux navigants nés avant 1955 qu'il exonère
+    calcul: >-
+      vingt-cinq annuités au plus, 1,85 % et 1,4 %, multipliées depuis 1995 par
+      « l'indice de variation des salaires corrigé applicable à la date de liquidation »
+      (R. 426-16-1), sur le salaire moyen des vingt-cinq meilleures annuités (R. 426-5, c)
+    majorations: >-
+      trois enfants : 2,5 % de la première tranche jusqu'en 2004, puis « 0,12 % du
+      plafond mensuel [...] pour toute annuité validée dans la limite de 25 » ; de l'âge
+      d'ouverture à soixante ans, une majoration mensuelle de 1,21 pour dix mille de huit
+      plafonds par annuité, puis, depuis 2005, de 0,8 % du plafond mensuel par annuité,
+      vingt-cinq au plus, davantage pour qui n'a pas d'assurance maladie (R. 426-16-1)
+    cotisation: >-
+      le taux d'appel vaut 118 - 3 N, à 1,5 point près (R. 426-8, 1995), puis 125 - 4 N
+      + E, E entre - 1,5 et + 1,5 (2005), N étant lu à l'avant-dernier exercice
+  exemples: aucun trouvé
+- id: decote_age_et_duree
+  statut: lue
+  textes:
+  - {id: LEGIARTI000024795153, article: "code de l'aviation civile, R. 426-11", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000024795157, article: "code de l'aviation civile, R. 426-12", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000026911750, article: "code de l'aviation civile, R. 426-12", en_vigueur: 2013-01-02}
+  - {id: LEGIARTI000024795119, article: "code de l'aviation civile, R. 426-5", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000024795195, article: "code de l'aviation civile, R. 426-16-1", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000026911765, article: "code de l'aviation civile, R. 426-16-1", en_vigueur: 2013-01-02}
+  - {id: LEGIARTI000036880164, article: "code de l'aviation civile, R. 426-16-1", en_vigueur: 2018-05-07}
+  - {id: LEGIARTI000024780851, article: "code de l'aviation civile, R. 426-16-1-1", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000024780844, article: "code de l'aviation civile, R. 426-16-3", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000036880143, article: "code de l'aviation civile, R. 426-16-3", en_vigueur: 2019-01-01}
+  - {id: LEGIARTI000024795139, article: "code de l'aviation civile, R. 426-8", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000043495476, article: "code de l'aviation civile, R. 426-8", en_vigueur: 2021-05-13}
+  nee_de: LEGIARTI000024795153
+  bornes:
+    liquidation.date_effet: [2012-01-01, 2022-01-01]
+  contenu:
+    ouverture: >-
+      la pension est servie à qui a « atteint l'âge de cinquante ans » et justifie de
+      « vingt annuités », condition levée à l'âge de R. 426-12 ; elle est « à taux
+      plein » si l'affilié a cinquante-cinq ans ou trente annuités et si « la somme de
+      l'âge et du nombre d'annuités [...] est supérieure ou égale à 80 », et sinon
+      décotée de « 5 % par année manquante » (R. 426-11) ; aucune décote à l'âge du
+      premier alinéa de L. 6521-4 du code des transports, soixante ans (R. 426-12)
+    calcul: >-
+      1,85 % et 1,4 %, pour toute annuité validée à titre onéreux « dans la limite
+      d'une durée » égale à « a »/360, « a » montant année après année vers trente
+      annuités (R. 426-5, d ; R. 426-16-1) ; tranches à quatre et huit plafonds
+      (R. 426-16-1-1)
+    majorations: >-
+      trois enfants : 0,12 % du plafond mensuel par annuité, vingt-cinq au plus ; de
+      l'âge d'ouverture, cinquante-cinq ans au plus tôt, à l'âge légal de L. 161-17-2,
+      une majoration mensuelle de 0,8 % du plafond mensuel par annuité, vingt-cinq au
+      plus, si la pension est sans décote, sans la distinction de l'assurance maladie
+      depuis le 7 mai 2018 (R. 426-16-1)
+    minimum: >-
+      avec vingt-cinq annuités cotisées ou rachetées, la pension avant décote ne peut
+      être inférieure à 2 % du plafond annuel par annuité (R. 426-16-3, 2012), puis à «
+      795 € par annuité », revalorisés depuis 2020 comme l'indice corrigé (2019)
+    cotisation: >-
+      7,668 % pour l'affilié et 13,632 % pour l'employeur, appelés à 101 % en 2012, un
+      point de plus chaque année jusqu'à 105 % en 2016 ; de 2016 à 2023, un demi-point
+      de plus l'année suivante si le fonds, à trente ans, tombe sous cinq années de
+      prestations, et un demi-point au choix du conseil, sans dépasser 110 % ; « A
+      compter de l'exercice 2024, le taux d'appel est fixé à 111 % » (R. 426-8, rédaction
+      du décret n° 2021-570)
+  exemples: aucun trouvé
+- id: trente_annuites_duree_seule
+  statut: lue
+  textes:
+  - {id: LEGIARTI000044496243, article: "code de l'aviation civile, R. 426-11", en_vigueur: 2021-12-16}
+  - {id: LEGIARTI000044496248, article: "décret n° 2011-1500 du 10 novembre 2011, article 26", en_vigueur: 2021-12-16}
+  - {id: LEGIARTI000048325100, article: "code des transports, R. 6527-21", en_vigueur: 2023-11-01}
+  - {id: LEGIARTI000048325102, article: "code des transports, R. 6527-22", en_vigueur: 2023-11-01}
+  - {id: LEGIARTI000048325104, article: "code des transports, R. 6527-23", en_vigueur: 2023-11-01}
+  - {id: LEGIARTI000048441032, article: "code des transports, R. 6527-24", en_vigueur: 2023-11-22}
+  - {id: LEGIARTI000048325128, article: "code des transports, R. 6527-34", en_vigueur: 2023-11-01}
+  - {id: LEGIARTI000048441109, article: "code des transports, R. 6527-36", en_vigueur: 2023-11-22}
+  - {id: LEGIARTI000048325140, article: "code des transports, R. 6527-40", en_vigueur: 2023-11-01}
+  - {id: LEGIARTI000048325144, article: "code des transports, R. 6527-41", en_vigueur: 2023-11-01}
+  - {id: LEGIARTI000048325148, article: "code des transports, R. 6527-43", en_vigueur: 2023-11-01}
+  - {id: LEGIARTI000048325150, article: "code des transports, R. 6527-44", en_vigueur: 2023-11-01}
+  - {id: LEGIARTI000048325152, article: "code des transports, R. 6527-45", en_vigueur: 2023-11-01}
+  - {id: LEGIARTI000048325154, article: "code des transports, R. 6527-46", en_vigueur: 2023-11-01}
+  - {id: LEGIARTI000048441026, article: "code des transports, R. 6527-46", en_vigueur: 2023-11-22}
+  - {id: LEGIARTI000053225407, article: "code des transports, R. 6527-46", en_vigueur: 2025-12-29}
+  - {id: LEGIARTI000048438125, article: "code des transports, R. 6527-46-1", en_vigueur: 2023-11-22}
+  - {id: LEGIARTI000053225414, article: "code des transports, R. 6527-46-1", en_vigueur: 2025-12-29}
+  - {id: LEGIARTI000048325156, article: "code des transports, R. 6527-47", en_vigueur: 2023-11-01}
+  - {id: LEGIARTI000048325158, article: "code des transports, R. 6527-48", en_vigueur: 2023-11-01}
+  - {id: LEGIARTI000048325168, article: "code des transports, R. 6527-52", en_vigueur: 2023-11-01}
+  - {id: LEGIARTI000048325184, article: "code des transports, R. 6527-60", en_vigueur: 2023-11-01}
+  - {id: LEGIARTI000053225423, article: "code des transports, R. 6527-68", en_vigueur: 2025-12-29}
+  - {id: LEGIARTI000048438195, article: "code des transports, D. 6527-12", en_vigueur: 2023-11-22}
+  - {id: LEGIARTI000048438198, article: "code des transports, D. 6527-13", en_vigueur: 2023-11-22}
+  - {id: LEGIARTI000048438223, article: "code des transports, D. 6527-14", en_vigueur: 2023-11-22}
+  - {id: LEGIARTI000048438507, article: "code des transports, D. 6527-15", en_vigueur: 2023-11-22}
+  nee_de: LEGIARTI000044496243
+  bornes:
+    liquidation.date_effet: [2022-01-01, 2027-01-01]
+  contenu:
+    ouverture: >-
+      cinquante ans et vingt annuités, ou l'âge de R. 6527-23 sans condition de durée
+      (R. 6527-21) ; « La pension est dite à taux plein si l'affilié justifie [...]
+      d'au moins trente annuités [...]. Lorsque l'affilié n'atteint pas cette durée,
+      une décote égale à 5 % par annuité manquante est appliquée », les annuités
+      manquantes se comptant en jours validés divisés par 360 (R. 6527-22) ; aucune
+      décote à soixante ans (R. 6527-23), ni pour l'inapte permanent de cinquante ans
+      et vingt annuités, l'invalide ou l'accidenté du service aérien (R. 6527-24), ni
+      pour le licencié économique à la fin de ses allocations de chômage (R. 6527-27) ;
+      les nés avant 1971 partis à cinquante-cinq ans ou plus ont le taux plein avec 21
+      annuités jusqu'à la génération 1962, une de plus par génération ensuite (décret
+      n° 2011-1500, article 26, III)
+    calcul: >-
+      la pension se calcule sur le salaire moyen indexé de carrière (R. 6527-34), la
+      moyenne des salaires plafonnés divisés par l'indice corrigé de variation des
+      salaires, réduite aux « vingt-cinq meilleures annuités » quand l'affilié en a plus
+      (R. 6527-36), ou sur un salaire moyen indexé majoré pour les services de guerre
+      et militaires (R. 6527-40, formule et tableau publiés en image) ; « un taux de
+      pension égal à 1,85 % pour la première tranche et à 1,4 % pour la seconde » par
+      annuité validée à titre onéreux, « dans la limite d'une durée égale à la valeur «
+      a » [...] divisée par 360 », la somme étant « multipliée par l'indice corrigé de
+      variation des salaires [...] applicable à la date de liquidation » (R. 6527-43),
+      les tranches s'arrêtant à quatre et huit plafonds de l'exercice (R. 6527-44)
+    majorations: >-
+      trois enfants : « 0,12 % du montant du plafond mensuel [...] pour toute annuité
+      validée à titre onéreux dans la limite de 25 » (R. 6527-45) ; de l'âge auquel
+      l'affilié a ses annuités, cinquante-cinq ans au plus tôt, à l'âge légal de
+      L. 161-17-2, une majoration de « 0,8 % du plafond mensuel [...] par annuité
+      validée à titre onéreux dans la limite de vingt-cinq » si la pension est sans
+      décote, doublée de soixante-deux ans à l'âge légal, sans dépasser 40 % du plafond
+      mensuel, pour qui a la durée d'assurance du taux plein et n'est pas en carrière
+      longue (R. 6527-46, depuis le 22 novembre 2023) ; et, depuis la même date, une
+      prestation de la moitié du salaire mensuel moyen des trente-six derniers mois,
+      dans la limite de la moitié du plafond mensuel, au navigant sorti à soixante ans
+      dont le chômage a pris fin, jusqu'au taux plein du régime général (R. 6527-46-1)
+    minimum: >-
+      avec vingt-cinq annuités cotisées ou rachetées, pas moins de « 795 euros par
+      annuité » avant décote, revalorisés comme l'indice corrigé depuis 2020
+      (R. 6527-47) ; un capital unique sous 2 % du plafond mensuel (R. 6527-68)
+    service: >-
+      revalorisation au 1er janvier comme les prix hors tabac de novembre à novembre
+      (R. 6527-48) ; réversion de 60 % au conjoint (R. 6527-52), orphelins à 12 %,
+      50 % ou 72 % (R. 6527-60)
+    cotisation: >-
+      7,668 % et 13,632 % jusqu'à huit plafonds (D. 6527-12, D. 6527-13), appelés à
+      105 % depuis 2016 (D. 6527-14) et « à 111 % » depuis l'exercice 2024 (D. 6527-15)
+  exemples: aucun trouvé
+- id: jours_cotises_2027
+  statut: lue
+  textes:
+  - {id: LEGIARTI000048325140, article: "code des transports, R. 6527-40", en_vigueur: 2023-11-01}
+  bornes:
+    liquidation.date_effet: [2027-01-01, null]
+  contenu:
+    calcul: >-
+      « Pour les pensions prenant effet à compter du 1er janvier 2027, « a » est égal au
+      nombre de jours ayant donné lieu au versement ou au rachat de cotisations » :
+      l'annuité ne se borne plus par le tableau, et le reste est la version
+      trente_annuites_duree_seule
+  exemples: aucun trouvé
+approximations:
+- version: [vingt_cinq_annuites, valeur_n_du_fonds, decote_age_et_duree, trente_annuites_duree_seule, jours_cotises_2027]
+  ecart: >-
+    La fiche de régime calcule sur la carrière entière (`salaire_reference:
+    carriere_entiere`), quand le droit ne retient que les vingt-cinq meilleures annuités
+    de qui en compte plus (R. 426-5, c, puis R. 6527-36), et le revalorise par l'indice
+    du modèle, non par l'indice corrigé de variation des salaires de la caisse, qui
+    n'est publié que par ses notices.
+  effet: >-
+    non mesuré ; les navigants de plus de vingt-cinq annuités, dont les années faibles
+    de début de carrière abaissent la pension simulée
+- version: [vingt_cinq_annuites, valeur_n_du_fonds, decote_age_et_duree, trente_annuites_duree_seule]
+  ecart: >-
+    Aucune majoration n'est portée : ni celle de trois enfants (2,5 % de la première
+    tranche, puis 0,12 % du plafond mensuel par annuité, vingt-cinq au plus), ni la
+    majoration temporaire de l'âge d'ouverture à soixante ans puis à l'âge légal (1 %
+    du plafond par année jusqu'en 1995, 0,8 % du plafond mensuel par annuité depuis
+    2005, doublée de soixante-deux ans à l'âge légal depuis le 22 novembre 2023), ni
+    la prestation de R. 6527-46-1, ni le minimum de 795 € par annuité.
+  effet: >-
+    non mesuré ; la majoration temporaire vaut, pour vingt-cinq annuités, 20 % du
+    plafond mensuel par mois, soit 9 612 € par an au plafond de 2026 (4 005 €), servis
+    de cinquante-cinq ans à l'âge légal : la pension d'un pilote parti à cinquante-cinq
+    ans est sous-estimée, sur ces années, de près de dix mille euros par an
+- version: [vingt_cinq_annuites, valeur_n_du_fonds]
+  ecart: >-
+    Avant 2012, la fiche de régime porte vingt-cinq annuités et cinquante ans, sans
+    coefficient : ni la liquidation dès quarante-cinq ans aux coefficients de 0,65 à
+    0,95, ni, de 1995 à 2011, la durée du taux plein qui monte de 25 à 30 annuités quand
+    la réserve N descend sous sept ans, ni la pension proportionnelle et son
+    coefficient actuariel, ni le seuil d'heures de vol qui fait l'annuité.
+  effet: non mesuré ; les navigants partis avant 2012
+- version: [decote_age_et_duree, trente_annuites_duree_seule]
+  ecart: >-
+    Le taux d'appel de 2024 et de 2025 est écrit : « A compter de l'exercice 2024, le
+    taux d'appel est fixé à 111 % » (R. 426-8 dans la rédaction du décret n° 2021-570,
+    lue ; D. 6527-15) ; la fiche de régime garde 105 % jusqu'en 2025 et sa ligne
+    d'inventaire disait ces deux taux non publiés. Ceux de 2017 à 2023, de 105 % à
+    110 % selon la réserve et le conseil, restent à lire dans les notices de la caisse.
+  effet: >-
+    sur la cotisation et le compte notionnel qu'elle alimente, non sur la pension : 6 %
+    de cotisation en moins en 2024 et 2025 (22,37 % au lieu de 23,64 %)
+- version: [decote_age_et_duree, trente_annuites_duree_seule, jours_cotises_2027]
+  ecart: >-
+    La durée qui borne les annuités suit la valeur « a » du tableau de R. 6527-40, puis
+    les jours cotisés depuis 2027 ; la fiche de régime la tient pour trente annuités
+    dès 2012, et compte au trimestre ce que la caisse compte au jour (jours validés
+    divisés par 360).
+  effet: non mesuré ; les navigants de plus de vingt-cinq annuités partis de 2012 à 2026
+sources:
+  lu_le: 2026-10-14
+  prochaine_relecture: 2027-10-14
+  a_relire:
+  - >-
+    Lire le tableau de la valeur « a » et les formules de R. 6527-40 et R. 6527-41 au
+    fac-similé du Journal officiel (décret n° 2023-1008), que LEGI publie en image ; et
+    la formule du coefficient actuariel de R. 426-18-1, que l'index ne reproduit pas.
+  - >-
+    Relever dans les notices de la caisse les taux d'appel de 2017 à 2023, l'indice
+    corrigé de variation des salaires de chaque année, les taux du fonds de majoration
+    et du fonds d'assurance (D. 6527-19, D. 6527-20).
+  - >-
+    Lire le statut de 1951 et les articles R. 426 de 1967 à 1984, que l'index ne porte
+    pas : la version avant_le_code_de_1984 est supposée.
+  lectures:
+  - type: legifrance
+    reference: >-
+      code de l'aviation civile, R. 426-5, R. 426-8, R. 426-11 à R. 426-12, R. 426-15-1,
+      R. 426-16-1, R. 426-16-1-1, R. 426-16-3, R. 426-18 et R. 426-18-1, toutes leurs
+      rédactions de 1984 à 2023 ; code des transports, R. 6527-1 à R. 6527-73 et
+      D. 6527-10 à D. 6527-73, toutes leurs rédactions depuis le 1er novembre 2023 ;
+      décret n° 2011-1500, article 26 : index LEGI du dépôt, à jour au 13 octobre 2026
+    date: 2026-10-14
+reformes: [navigants_2012, navigants_2022]
+code:
+  moteur: >-
+    les deux tranches sont deux fiches de régime, parce que la liquidation ne retient
+    qu'une période active par régime ; `decote_par_la_duree_seule` (decote_crpn) et la
+    table `crpn_2022` portent la version trente_annuites_duree_seule
+  python: >-
+    données : regimes/crpnpac.yaml et regimes/crpnpac_tranche_2.yaml, des périodes en
+    annuités, 1963, 1995, 2012, 2016, 2022 et 2026 ; droit/liquider.py :
+    liquider_chaque_regime et la décote à la durée seule ; donnees/regimes.py
+  javascript: moteur/js/droit/liquider.js et moteur/js/regimes.js, le même catalogue
+  parametres: regimes/crpnpac.yaml et regimes/crpnpac_tranche_2.yaml (taux_plein, duree_requise_trimestres, taux_cotisation_retraite, decote_par_trimestre)
+  tests: >-
+    tests/temoins/simulations.json, les carrières du statut personnel_navigant, que le
+    portage rejoue
+historique:
+- >-
+  2026-10-14 — écrite à l'étape 2 de l'action 145 : la caisse des navigants n'avait que
+  la fiche générique de liquidation. Les articles R. 426 du code de l'aviation civile
+  et R. et D. 6527 du code des transports, lus dans toutes leurs rédactions, ajoutent
+  ce que les fiches de régime ne portent pas — les vingt-cinq meilleures annuités, la
+  majoration temporaire, celle des enfants, le minimum, la durée liée à la réserve de
+  1995 à 2011 — et montrent que le taux d'appel de 111 % est écrit pour 2024 et 2025.
+  Aucun chiffre ne change.
+effet: >-
+  Les navigants de l'aéronautique civile : leur pension de la caisse est simulée sans
+  la majoration temporaire de cinquante-cinq ans à l'âge légal, ni celle des enfants,
+  ni le minimum, et sur la carrière entière plutôt que les vingt-cinq meilleures
+  annuités.

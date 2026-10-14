@@ -29,10 +29,15 @@ inventaire:
     - {reference: "code des transports, partie réglementaire, depuis le 1er novembre 2023", id: null}
     - {reference: "décret n° 2011-1500 du 10 novembre 2011, article 26 (conditions de 2012 à 2020 à l'année d'effet, dispositif transitoire des nés avant 1971 depuis 2022)", id: LEGIARTI000044496248}
   manque: >-
-    Le taux d'appel de 1995 à 2011 n'est pas appliqué, ceux de 2016 à 2025
-    ne sont pas publiés (105 % retenu, 111 % en 2026) ; les conditions de
-    2012 à 2021, qui montent à l'année d'effet (âge, annuités et leur
-    somme, décret n° 2011-1500, article 26, I et II), ne sont pas portées.
+    Le taux d'appel de 1995 à 2011 n'est pas appliqué ; ceux de 2017 à 2023,
+    de 105 % à 110 % selon la réserve et le conseil, ne sont pas publiés, et
+    les périodes gardent 105 % jusqu'en 2025, quand R. 426-8 puis D. 6527-15
+    écrivent 111 % dès 2024 ; les conditions de 2012 à 2021, qui montent à
+    l'année d'effet (âge, annuités et leur somme, décret n° 2011-1500,
+    article 26, I et II), ne sont pas portées. Ni les vingt-cinq meilleures
+    annuités, ni la majoration temporaire de cinquante-cinq ans à l'âge
+    légal, ni celle des enfants, ni le minimum par annuité (fiche
+    crpn_pension_des_navigants).
 periodes:
   - debut: 1963
     fin: 1994

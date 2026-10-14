@@ -32,7 +32,7 @@ inventaire:
   textes:
     - {reference: "code de l'aviation civile, R. 426-16-1-1", id: null}
   manque: >-
-    Mêmes limites que la tranche 1 : taux d'appel de 2016 à 2025 non publiés, conditions de 2012 à 2021, à l'année d'effet, non portées.
+    Mêmes limites que la tranche 1 : taux d'appel de 2017 à 2023 non publiés, 111 % de 2024 et 2025 non appliqué, conditions de 2012 à 2021, à l'année d'effet, non portées, salaire moyen sur la carrière entière et non les vingt-cinq meilleures annuités (fiche crpn_pension_des_navigants).
 periodes:
   - debut: 1963
     fin: 1994
