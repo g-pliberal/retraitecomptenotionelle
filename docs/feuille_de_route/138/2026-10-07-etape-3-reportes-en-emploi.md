@@ -1,15 +1,15 @@
 # Étape 3, première partie : la part des reportés en emploi, lue dans les évaluations de 2010
 
-**Reprise, au 13 octobre 2026.** Fait : la part des reportés en emploi, la
-moitié par défaut (7 octobre) ; la décomposition dépendance × couverture ×
-prestation × marché du travail, confrontée à l'Ageing Report de 2024
-(`facteurs_depense.py`, 13 octobre). Reste, une session par point : le levier
-de l'âge, avec le « tax gap » et le « pension gap » du COR, que la
-décomposition outille ; la CSG effective, avec la dépense nette de l'AWG ; les
+**Reprise, au 14 octobre 2026.** Fait : la part des reportés en emploi, la
+moitié par défaut (7 octobre) ; la décomposition de l'Ageing Report de 2024
+(`facteurs_depense.py`, 13 octobre) ; le 14 octobre, les trois leviers du COR,
+l'âge compris, et le tax gap et le pension gap, confrontés à la figure 2.24 et
+au tableau 2.11 (`leviers.py` : 3,06 ans en 2070 contre 3,02). Reste, une
+session par point : la CSG effective, avec la dépense nette de l'AWG ; les
 contrôles d'Ancetre et de l'EACR ; les retraités par régime et la pondération
-par les masses, avec l'action 147 ; de la décomposition, la couverture de
-2022-2030 à départager et les têtes de la proposition. Commencer par le levier
-de l'âge. Détail : plus bas, et `2026-10-13-etape-3-decomposition-de-l-ageing-report.md`.
+par les masses, avec l'action 147 ; la couverture de 2022-2030 et les têtes de
+la proposition ; les leviers dans le paquet et sur la page Coût. Commencer par
+la CSG effective. Détail : plus bas, et les notes du 13 et du 14 octobre.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.3 ». L'étape est
 vaste — sept chantiers, vingt-neuf points du registre — ; cette session en
