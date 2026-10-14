@@ -2445,9 +2445,13 @@ inventaire:
       (chiffre d'affaires après abattement) : la cotisation micro-sociale ventilée entre
       les branches reproduit, par construction, celle du commerçant — 12,3 % du chiffre
       d'affaires dont 58,3 % pour la retraite, sur 29 % de revenu, font 24,7 % contre
-      24,75 % —, et les trimestres se valident sur ce revenu depuis 2023. Non portés
-      : les seuils de chiffre d'affaires d'avant 2023, les variantes de l'abattement
-      (50 % services, 34 % libéral).
+      24,75 % —, et les trimestres se valident sur ce revenu depuis 2023. La saisie
+      prend le chiffre d'affaires et l'activité (champ « micro »), l'abat de 71, 50
+      ou 34 % (L. 613-7, II) et route la Cipav vers les régimes du libéral. Non portés
+      : les seuils de chiffre d'affaires d'avant 2023, le revenu qui valide les trimestres
+      pris au taux du versement plutôt qu'au revenu abattu, la cotisation des services
+      et du libéral, que le barème de l'artisan ou du libéral approche sur le revenu
+      abattu.
 
   - code: cnavpl
     nom: >-

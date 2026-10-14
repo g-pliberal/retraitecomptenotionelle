@@ -1,12 +1,7 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: rouge
-sources: 093cda200a54c6ea7fdaa3dc7ab7d4da85fb566d
-date: 2026-10-14T03:42:48Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38507022803
-echecs:
-  - "FAILED tests/test_parcours.py::test_chaque_compte_du_parcours_est_sur_sa_page[### 6. M\xe9thode et Donn\xe9es \u2014 deux minutes, pour finir-/donnees] - AssertionError: ### 6. Méthode et Données — deux minutes, pour finir"
-  - "FAILED tests/test_prose.py::test_chaque_action_en_cours_s_ouvre_sur_son_bloc_reprise - AssertionError: ['2026-10-10-etape-12-fiche-de-paie-des-agents-publics.md : plus de dix lignes de reprise']"
-  - "FAILED tests/test_web.py::test_le_portage_javascript_retrouve_les_chiffres_du_modele - AssertionError: TAP version 13"
-  - "FAILED tests/test_web.py::test_le_README_dit_le_vrai_nombre_de_statuts_et_de_regimes - AssertionError: README.md annonce 74 régimes, le dépôt en compte 76"
+etat: vert
+sources: b3451a8fe988f261169838457e2bb43baf78bae2
+date: 2026-10-14T07:10:05Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38525184862
 presomptions: vert
