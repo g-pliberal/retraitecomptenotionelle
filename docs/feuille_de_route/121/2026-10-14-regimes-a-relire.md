@@ -1,13 +1,14 @@
-# Les régimes à relire : l'Opéra de Paris et la Banque de France
+# Les régimes à relire : l'Opéra de Paris, la Banque de France, la MSA
 
-**Le 14 octobre 2026, deux des dix-sept régimes que
+**Le 14 octobre 2026, trois des dix-sept régimes que
 `tests/test_regle_de_chacun.py` déclarait `A_RELIRE` en sortent, texte en main
 (index LEGI à jour du 11 octobre 2026).** Leur durée se lit, comme à la
 Comédie-Française, à la date où l'assuré réunit les conditions, et non à sa
 génération ; l'âge de la Banque est la table de son règlement, et non la table
 commune. Ce qui varie encore avec l'année du départ est l'entrée en vigueur
-d'un texte, déclarée à l'année d'effet (`A_L_ANNEE_D_EFFET`). Restent quinze
-régimes.
+d'un texte, déclarée à l'année d'effet (`A_L_ANNEE_D_EFFET`). La MSA des
+non-salariés a, elle aussi, sa durée propre, que la fiche empruntait au
+régime général. Restent quatorze régimes.
 
 ## L'Opéra national de Paris
 
@@ -71,10 +72,34 @@ déclaré à l'année d'effet, de 2008 à 2012 — les nés de 1949 à 1952, qui
 partaient à cinquante-cinq ans, ne peuvent plus partir avant soixante, et leur
 premier départ sous le règlement tombe de 2009 à 2012.
 
+## La MSA des non-salariés agricoles
+
+L'âge compte à l'année d'effet : la loi n° 86-19 du 6 janvier 1986 ouvre la
+pension à soixante ans pour les pensions « prenant effet postérieurement au
+1er janvier 1986 » (article 11, LEGIARTI000006757038), ce que la fiche disait
+déjà ; seule la génération 1920, qui partait à soixante-cinq ans en 1985, le
+montre.
+
+La durée, elle, était fausse. R. 732-39 du code rural (LEGIARTI000006597424,
+puis LEGIARTI000024113166) écrit la durée en deçà de laquelle la pension est
+minorée : 150 trimestres pour l'assuré né avant 1944, 152 pour 1944, deux de
+plus par génération jusqu'à 160 pour 1948, « pour les pensions prenant effet
+avant le 1er janvier 2009 » ; après, « la limite mentionnée au deuxième alinéa
+de l'article L. 351-1 », la durée de proratisation du régime général, qui
+porte les mêmes nombres. La fiche opposait, à compter de 2004, la durée du
+taux plein du régime général : 151 à 160 trimestres aux nés de 1934 à 1943,
+160 aux nés de 1944 à 1947. Table `msa_non_salaries_2005`, branchée sur les
+périodes de 2004 et après.
+
+Le moteur apprend pour cela qu'une table propre peut s'arrêter : une ligne sans
+trimestres (ici, la génération 1949) la fait taire, et la table commune
+reprend (`DureesRequisesRegimes`, en Python et dans `moteur/js/regimes.js`).
+Les deux moteurs concordent (`test_liquidation.py`, `test_minima_agricoles.py`,
+paquet refait en local) ; les témoins du portage sont à refaire par GitHub.
+
 ## Ce qui reste
 
-- Quinze régimes `A_RELIRE`, dans l'ordre du bloc : la MSA des non-salariés,
-  la CNAVPL, la CNBF, la CAVIMAC, le CESE, la CARMF, l'ASV, la CARPIMKO, la
+- Quatorze régimes `A_RELIRE`, dans l'ordre du bloc : la CNAVPL, la CNBF, la CAVIMAC, le CESE, la CARMF, l'ASV, la CARPIMKO, la
   CPRN, la Comédie-Française d'avant 1993 et cinq complémentaires d'avant 1983.
 - Banque de France : l'ancien régime, avant 2007 (âge, durée) ; la coupure de
   la fiche au 1er avril 2007 plutôt qu'en 2008 ; l'âge d'annulation de la

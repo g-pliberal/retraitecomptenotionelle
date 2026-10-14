@@ -141,7 +141,10 @@ export class DureesRequisesRegimes {
       lueA = Math.min(generation, Math.round(
         (date.annee - lue.ageDeLecture + (date.mois - 1) / 12) * 1000) / 1000);
     }
-    return lue.lignes.valeur(lueA);
+    // Une ligne sans trimestres arrête la table : la table commune reprend.
+    const valeur = lue.lignes.valeur(lueA);
+    return valeur === null || valeur === undefined || valeur[0] === null
+      ? null : valeur;
   }
 }
 

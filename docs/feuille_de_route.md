@@ -2258,14 +2258,14 @@ les cultes, `data/reference/legislation/affiliations.yaml`,
 
 **Reprise, au 14 octobre 2026.** Le test de la règle de chacun
 (`tests/test_regle_de_chacun.py`) déclarait dix-sept régimes `A_RELIRE` ;
-l'Opéra de Paris et la Banque de France en sont sortis, texte en main : leur
-durée se lit à la date des conditions réunies, l'âge de la Banque à la table
-de son règlement. Restent, dans l'ordre : la MSA des non-salariés, la CNAVPL,
-la CNBF, la CAVIMAC, le CESE, la CARMF, l'ASV, la CARPIMKO, la CPRN, la
-Comédie-Française d'avant 1993 et cinq complémentaires d'avant 1983. Pour
-chacun : année d'effet (le déclarer) ou génération (le corriger) ? Détail :
-`121/2026-10-14-regimes-a-relire.md`, et `121/2026-10-13-dix-fiches.md`,
-« Le test ».
+l'Opéra de Paris, la Banque de France et la MSA des non-salariés en sont
+sortis, texte en main : leur durée se lit à la date des conditions réunies ou
+à leur table propre, l'âge de la Banque à son règlement. Restent, dans
+l'ordre : la CNAVPL, la CNBF, la CAVIMAC, le CESE, la CARMF, l'ASV, la
+CARPIMKO, la CPRN, la Comédie-Française d'avant 1993 et cinq complémentaires
+d'avant 1983. Pour chacun : année d'effet (le déclarer) ou génération (le
+corriger) ? Détail : `121/2026-10-14-regimes-a-relire.md`, et
+`121/2026-10-13-dix-fiches.md`, « Le test ».
 
 **Demande.** « Il faut prendre en compte la loi applicable pour tout le monde
 et pas seulement pour les derniers entrants ou sortants » ; « il faut aussi

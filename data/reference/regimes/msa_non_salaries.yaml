@@ -226,6 +226,7 @@ periodes:
     age_taux_plein: 65
     duree_requise_trimestres: 160
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [msa_non_salaries_2005]
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee
@@ -283,6 +284,17 @@ periodes:
       génération. Soixante ans reste l'âge d'ouverture (L. 732-18,
       LEGIARTI000006585523, jusqu'au 30 juin 2011). La période portait
       64, 67 et 172.
+      MAIS LA DURÉE N'EST PAS CELLE DU TAUX PLEIN DU RÉGIME GÉNÉRAL : le
+      décret l'écrit lui-même (R. 732-39, LEGIARTI000006597424, lu le
+      14 octobre 2026) — 150 trimestres pour l'assuré né avant 1944, 152
+      pour 1944, deux de plus par génération jusqu'à 160 pour 1948, puis,
+      pour les pensions de 2009 et après, « la limite mentionnée au
+      deuxième alinéa de l'article L. 351-1 », la durée de proratisation,
+      qui porte les mêmes nombres. La fiche opposait aux nés de 1934 à 1943
+      les 151 à 160 trimestres du décret du 27 août 1993 à compter de 2004,
+      et 150 avant : la durée de chacun changeait avec l'année de son
+      départ (`duree_requise_table: [msa_non_salaries_2005]`, qui s'arrête
+      à la génération 1949, où la table commune reprend).
       LA SURCOTE EST SERVIE PAR LA BRANCHE EN POINTS, à la règle du
       régime général : D. 732-42 (LEGIARTI000006597431, puis
       LEGIARTI000023397787 pour les pensions prenant effet à compter du
@@ -300,6 +312,7 @@ periodes:
     age_taux_plein: 65
     duree_requise_trimestres: 160
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [msa_non_salaries_2005]
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee
@@ -370,6 +383,7 @@ periodes:
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [msa_non_salaries_2005]
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee
@@ -446,6 +460,7 @@ periodes:
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [msa_non_salaries_2005]
     taux_plein: 1.0
     salaire_reference: 25_meilleures_annees
     salaire_reference_par_generation: salaire_annuel_moyen
@@ -497,6 +512,7 @@ periodes:
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [msa_non_salaries_2005]
     taux_plein: 1.0
     salaire_reference: 25_meilleures_annees
     salaire_reference_par_generation: salaire_annuel_moyen

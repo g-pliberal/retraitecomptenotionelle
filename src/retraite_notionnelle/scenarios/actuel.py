@@ -579,6 +579,11 @@ class DureesRequisesRegimes:
     cible de la décote des navigants nés avant 1971 « lorsque la liquidation
     est effectuée à compter de l'âge de cinquante-cinq ans » : en deçà, la
     table ne répond pas.
+
+    ET UNE TABLE PEUT S'ARRÊTER À UNE GÉNÉRATION (ligne sans trimestres) : à
+    compter d'elle, la table ne répond plus, et la table commune reprend. Le
+    code rural (R. 732-39) écrit la durée des non-salariés agricoles nés
+    avant 1949 et renvoie, pour les suivants, à celle du régime général.
     """
 
     FICHIER = "duree_requise_regimes_speciaux.csv"
@@ -595,7 +600,8 @@ class DureesRequisesRegimes:
                 for ligne in csv.DictReader(lignes):
                     self._table.setdefault(ligne["table"], {})[
                         float(ligne["generation"])
-                    ] = (int(ligne["trimestres"]), int(ligne["retranche_decote"]),
+                    ] = (int(ligne["trimestres"]) if ligne["trimestres"].strip()
+                         else None, int(ligne["retranche_decote"]),
                          Fiabilite.depuis_texte(ligne["fiabilite"]))
                     self._depuis[ligne["table"]] = _rang_mois(ligne["depuis"])
                     age = (ligne.get("age_de_lecture") or "").strip()
@@ -630,7 +636,8 @@ class DureesRequisesRegimes:
             date = DateMois.depuis_rang(ouverture)
             generation = min(generation,
                              round(date.annee - age + (date.mois - 1) / 12, 3))
-        return valeur_par_generation(self._table[table], generations, generation)
+        lue = valeur_par_generation(self._table[table], generations, generation)
+        return None if lue is None or lue[0] is None else lue
 
 
 class CalendriersDureeRequise:

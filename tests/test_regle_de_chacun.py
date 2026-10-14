@@ -105,6 +105,10 @@ A_L_ANNEE_D_EFFET = {
         "fiche de 2008, celle de l'ancien régime ; de 2009 à 2012, la même "
         "bascule, au premier départ que le règlement ouvre aux nés de 1949 à "
         "1952")),
+    ("msa_non_salaries", "age"): (1986, 1986, (
+        "loi n° 86-19 du 6 janvier 1986, article 11 (LEGIARTI000006757038) : "
+        "soixante ans pour les pensions « prenant effet postérieurement au "
+        "1er janvier 1986 », soixante-cinq avant (lu le 14 octobre 2026)")),
 }
 
 #: (régime, paramètre) : les années où la règle bascule aujourd'hui, et ce que
@@ -148,11 +152,6 @@ A_RELIRE = {
     ("cprn_complementaire", "age"): (2014, 2024, (
         "générations 1952 à 1959 : 64 ans pour un départ de 2014 à 2023, 62 ans "
         "avant et après")),
-    ("msa_non_salaries", "age"): (1986, 1986, (
-        "génération 1920 : 65 ans avant 1986, 60 ans après")),
-    ("msa_non_salaries", "duree"): (2004, 2004, (
-        "générations 1934 à 1943 : 150 trimestres avant 2004, ceux de la "
-        "génération après")),
 }
 
 

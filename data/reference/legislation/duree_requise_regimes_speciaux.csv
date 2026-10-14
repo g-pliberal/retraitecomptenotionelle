@@ -237,6 +237,20 @@
 #       171, moins qu'aux nés de 1965 : ce que la Banque applique reste à
 #       confirmer (fiabilité moyenne). Les deux tables répondent à la date où
 #       l'agent réunit les conditions, avant elle le calendrier.
+#
+# LES NON-SALARIÉS AGRICOLES, au code rural, lu le 14 octobre 2026 :
+#   `msa_non_salaries_2005` — R. 732-39 (LEGIARTI000006597424, puis
+#       LEGIARTI000024113166) : la durée en deçà de laquelle la pension est
+#       minorée est de 150 trimestres pour l'assuré né avant 1944, 152 pour
+#       1944, deux de plus par génération jusqu'à 160 pour 1948, « pour les
+#       pensions prenant effet avant le 1er janvier 2009 » ; après, « la limite
+#       mentionnée au deuxième alinéa de l'article L. 351-1 », la durée de
+#       proratisation du régime général, qui porte les mêmes nombres
+#       (`duree_proratisation.csv`). La fiche lisait la durée du taux plein du
+#       régime général, 151 à 160 trimestres pour les nés de 1934 à 1943 (décret
+#       du 27 août 1993), que le code rural ne leur oppose pas. La ligne de 1949,
+#       sans trimestres, arrête la table : la durée de L. 161-17-3, la table
+#       commune, vaut à compter de cette génération.
 table,depuis,generation,trimestres,retranche_decote,fiabilite,age_de_lecture,age_minimum
 sncf_conduite,2025-01,1968.833,167,0,haute,,
 sncf_conduite,2025-01,1970,168,0,haute,,
@@ -382,3 +396,10 @@ banque_de_france_2023,2025-01,1963,169,0,haute,,
 banque_de_france_2023,2025-01,1964,170,0,haute,,
 banque_de_france_2023,2025-01,1965,171,0,haute,,
 banque_de_france_2023,2025-01,1966,172,0,moyenne,,
+msa_non_salaries_2005,1900-01,1900,150,0,haute,,
+msa_non_salaries_2005,1900-01,1944,152,0,haute,,
+msa_non_salaries_2005,1900-01,1945,154,0,haute,,
+msa_non_salaries_2005,1900-01,1946,156,0,haute,,
+msa_non_salaries_2005,1900-01,1947,158,0,haute,,
+msa_non_salaries_2005,1900-01,1948,160,0,haute,,
+msa_non_salaries_2005,1900-01,1949,,0,haute,,
