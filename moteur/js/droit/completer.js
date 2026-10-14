@@ -40,6 +40,7 @@ export const FICHES = {
   pension_majoree_reference: "pension_majoree_reference",
   complement_differentiel_rco: "complement_differentiel_rco",
   majoration_conjoint_a_charge: "majoration_conjoint_a_charge",
+  majoration_retraite_proportionnelle: "majoration_retraite_proportionnelle",
 };
 
 /** Le régime de la retraite complémentaire des non-salariés agricoles. */
@@ -335,6 +336,141 @@ export function pensionMajoree(moteur, carriere, eligible, pension, ressources) 
     complement: Math.max(0.0, Math.min(avant, plafond - ressources)),
     plafond, fiabilite: Math.min(fiabilite, fiabilitePlafond), reduite, dureeReduite,
   };
+}
+
+/**
+ * La fiche des plans de revalorisation de 1997 à 2008, et les minima qu'une
+ * version peut nommer outre un nombre de points. Voir le Python.
+ */
+export const FICHE_DE_LA_MAJORATION_PROPORTIONNELLE = "majoration_retraite_proportionnelle";
+export const MINIMA_DE_LA_MAJORATION_PROPORTIONNELLE = [
+  "minimum_vieillesse_personne_seule", "differentiel_du_couple"];
+export const ANNEES_DE_CHEF_DU_MINIMUM = 17.5;
+export const ANNEES_DU_MINIMUM_AU_PLUS = 37.5;
+export const ANNEES_SANS_MINORATION = 22.5;
+export const PLANCHER_DES_POINTS_D_UNE_ANNEE = 16.0;
+
+/**
+ * Le minimum vieillesse d'une personne seule (MV1), ou l'écart entre celui d'un
+ * couple et celui d'une personne seule (MV2), au 1er janvier de `annee`. Voir
+ * `_minimum_vieillesse` du Python.
+ */
+function minimumVieillesse(moteur, nom, annee) {
+  const etages = moteur.minimumVieillesse.deuxEtages(annee);
+  if (etages !== null) {
+    const seule = etages.avts + etages.supplementaire;
+    if (nom === "minimum_vieillesse_personne_seule") {
+      return [seule, etages.fiabilite];
+    }
+    if (etages.supplementaireMenage === null || etages.supplementaireMenage === undefined) {
+      return null;
+    }
+    return [2 * etages.avts + etages.supplementaireMenage - seule, etages.fiabilite];
+  }
+  const seule = moteur.minimumVieillesse.plafond(annee);
+  if (seule === null) {
+    return null;
+  }
+  if (nom === "minimum_vieillesse_personne_seule") {
+    return seule;
+  }
+  const couple = moteur.minimumVieillesse.plafondCouple(annee);
+  if (couple === null) {
+    return null;
+  }
+  return [couple[0] - seule[0], Math.min(seule[1], couple[1])];
+}
+
+/**
+ * Ce que les plans de revalorisation ajoutent à la retraite proportionnelle
+ * d'un chef d'exploitation parti de 1997 à 2008 ; null quand ils n'y ajoutent
+ * rien : P = (A - n) × DCE, minoré sous vingt-deux ans et demi de 1997 à 2000
+ * et réduit à la part servie. Voir `majoration_retraite_proportionnelle` du
+ * Python.
+ */
+export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pension,
+  trimestres) {
+  const dateEffet = dateDEffet(carriere);
+  if (dateEffet === null || !eligible.tauxPlein || pension.montant <= 0.0) {
+    return null;
+  }
+  const regle = moteur.fichesDatees.regle(FICHE_DE_LA_MAJORATION_PROPORTIONNELLE, dateEffet);
+  if (!regle || !regle.existe || trimestres <= 0) {
+    return null;
+  }
+  const periode = periodeDeLiquidation(moteur.catalogue.obtenir(pension.regime),
+    carriere.dateLiquidation);
+  if (periode === null || periode.pension_forfaitaire_annuelle === null
+      || periode.pension_forfaitaire_annuelle === undefined) {
+    return null;
+  }
+  const annee = carriere.anneeLiquidation;
+  const chef = eligible.chef / 4.0;
+  const agricole = eligible.duree / 4.0;
+  let minimumNomme;
+  if (chef >= ANNEES_DE_CHEF_DU_MINIMUM) {
+    minimumNomme = regle.minimum;
+  } else if (regle.minimum_reduit && chef > 0.0 && agricole >= ANNEES_DE_CHEF_DU_MINIMUM) {
+    minimumNomme = regle.minimum_reduit;
+  } else {
+    return null;
+  }
+  let valeur = liquider.valeurDuPoint(moteur, periode.points_de ?? pension.regime,
+    carriere.dateLiquidation);
+  if (valeur === null && periode.valeur_point_euros !== null
+      && periode.valeur_point_euros !== undefined) {
+    valeur = [liquider.valeurPointFiche(moteur, periode, annee), Fiabilite.MOYENNE];
+  }
+  if (valeur === null || valeur[0] <= 0.0) {
+    return null;
+  }
+  const point = valeur[0];
+  let fiabilite = valeur[1];
+  const [requis] = ouvrir.dureeRequise(moteur, periode, carriere);
+  const service = point * (requis > 0 ? 37.5 / (requis / 4.0) : 1.0);
+  const forfait = periode.pension_forfaitaire_annuelle * moteur.macro.coefficientPrix(
+    periode.pension_forfaitaire_annee ?? annee, annee);
+  let minimum;
+  if (minimumNomme === null || minimumNomme === undefined) {
+    minimum = Number(regle.minimum_points);
+  } else {
+    if (!MINIMA_DE_LA_MAJORATION_PROPORTIONNELLE.includes(minimumNomme)) {
+      throw new Error(`${FICHE_DE_LA_MAJORATION_PROPORTIONNELLE} : minimum `
+        + `'${minimumNomme}' inconnu`);
+    }
+    const lu = minimumVieillesse(moteur, minimumNomme, annee);
+    if (lu === null) {
+      return null;
+    }
+    minimum = (lu[0] - forfait) / (ANNEES_DU_MINIMUM_AU_PLUS * point);
+    fiabilite = Math.min(fiabilite, lu[1]);
+  }
+  // La retraite proportionnelle, en points de la liquidation par année
+  // agricole, trente-sept et demie au plus.
+  const [proratisation] = liquider.dureeProratisation(moteur, periode, carriere, requis);
+  const partForfaitaire = proratisation > 0
+    ? forfait * Math.min(trimestres, proratisation) / proratisation
+    : 0.0;
+  const proportionnelle = Math.max(0.0, pension.montant / eligible.surcote - partForfaitaire);
+  const moyenne = Math.max(PLANCHER_DES_POINTS_D_UNE_ANNEE,
+    proportionnelle / service / Math.min(trimestres / 4.0, ANNEES_DU_MINIMUM_AU_PLUS));
+  const duree = Math.min(chef, ANNEES_DU_MINIMUM_AU_PLUS);
+  let points = Math.max(0.0, minimum - moyenne) * duree;
+  if (regle.minorations && chef < ANNEES_SANS_MINORATION) {
+    const manque = ANNEES_SANS_MINORATION - chef;
+    let taux = 0;
+    regle.minorations.forEach((coefficient, rang) => {
+      if (manque > rang) {
+        taux += coefficient * Math.min(1.0, manque - rang);
+      }
+    });
+    points *= Math.max(0.0, 1.0 - taux);
+  }
+  points *= regle.part_servie;
+  if (points <= 0.0) {
+    return null;
+  }
+  return { minimum, moyenne, duree, points, complement: points * service, fiabilite };
 }
 
 /**
@@ -1257,7 +1393,31 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
   if (avantagesNonContributifs && agricole !== null) {
     const etrangeres = etranger.pensionsEtrangeresServies(
       moteur.macro, carriere, carriere.dateLiquidation);
-    const base = pensions[agricole.indice];
+    let base = pensions[agricole.indice];
+    // Avant 2009, les plans de revalorisation portent la retraite
+    // proportionnelle du chef à un minimum de points (1997 à 2008).
+    const proportionnelle = majorationRetraiteProportionnelle(
+      moteur, carriere, agricole, base, durees.trimestresParRegime.get(base.regime) ?? 0);
+    if (proportionnelle !== null) {
+      base = {
+        ...base,
+        montant: base.montant + proportionnelle.complement,
+        detail: `${base.detail} = ${formatFixe(base.montant, 2, true)} €, retraite `
+          + `proportionnelle majorée par + ${formatFixe(proportionnelle.complement, 2, true)} €`,
+      };
+      pensions[agricole.indice] = base;
+      total += proportionnelle.complement;
+      fiabiliteGlobale = Math.min(fiabiliteGlobale, proportionnelle.fiabilite);
+      avantages.push({
+        code: "majoration_retraite_proportionnelle",
+        libelle: "Majoration de la retraite proportionnelle",
+        montant: proportionnelle.complement,
+        detail: `${formatFixe(proportionnelle.points, 2, true)} points : `
+          + `(${formatFixe(proportionnelle.minimum, 3)} - ${formatFixe(proportionnelle.moyenne, 3)})`
+          + ` × ${proportionnelle.duree} ans de chef`,
+        par_regime: [[base.regime, proportionnelle.complement]],
+      });
+    }
     const majoree = pensionMajoree(moteur, carriere, agricole, base,
       total + servies + etrangeres);
     if (majoree !== null && majoree.complement > 0.0) {

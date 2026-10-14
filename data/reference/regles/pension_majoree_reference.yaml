@@ -57,9 +57,10 @@ versions:
     droit: >-
       pas de pension majorée de référence : les plans de revalorisation de 1994 à 2002
       majoraient la retraite PROPORTIONNELLE en points — un minimum de points par année
-      de chef d'exploitation d'une carrière complète, des points pour les années d'aide
-      familial ou de conjoint —, ce que le modèle ne sert pas ; et la PMR de 2009 a
-      relevé aussi les pensions liquidées avant elle, ce que l'échéancier ne sert pas
+      de chef d'exploitation, que le modèle sert depuis le 14 octobre 2026 (fiche
+      majoration_retraite_proportionnelle), des points pour les années d'aide familial
+      ou de conjoint, qu'il ne sert pas — ; et la PMR de 2009 a relevé aussi les
+      pensions liquidées avant elle, ce que l'échéancier ne sert pas
     parametres:
       existe: false
       duree_minimale: null
@@ -444,7 +445,8 @@ approximations:
 - ecart: >-
     la majoration se calcule au départ : sa révision quand les ressources changent, et
     la PMR attribuée en 2009 aux pensions liquidées avant elle, ne sont pas servies ;
-    les majorations des plans de 1994 à 2002, avant 2009, non plus
+    avant 2009, le minimum de points des plans de 1997 à 2002 l'est, à la liquidation
+    (fiche majoration_retraite_proportionnelle)
   effet: >-
     les pensions agricoles liquidées avant 2009, et celles qu'une pension étrangère ou
     une seconde pension vient écrêter après le départ
@@ -467,10 +469,6 @@ sources:
   - >-
     Chercher un exemple chiffré publié par la MSA (circulaire, fiche, simulateur) d'une
     pension portée à la PMR, et le rejouer dans exemples_officiels.yaml.
-  - >-
-    Lire les décrets d'application des plans de revalorisation de 1994 à 2002 (D. 732-110
-    à D. 732-149 dans leur rédaction antérieure à 2009) pour servir le minimum de points
-    des pensions liquidées de 1997 à 2008.
   - Relire les montants à chaque revalorisation de janvier.
   lectures:
   - type: legifrance

@@ -1183,7 +1183,8 @@ class FichesDatees:
     et les majorations forfaitaires de 1972 à 1982 des pensions prises avant
     1975, que ``revalorisation.majorations_forfaitaires`` lit, et les primes que
     la loi assujettit à la retenue pour pension, que ``primes.prime_de_la_pension``
-    lit.
+    lit, et les plans de revalorisation des retraites agricoles de 1997 à 2008,
+    que ``completer.majoration_retraite_proportionnelle`` lit.
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
@@ -1203,7 +1204,7 @@ class FichesDatees:
             "majorations_forfaitaires_1972_1982",
             "indemnite_sujetions_speciales_police",
             "prime_speciale_sujetion_aides_soignants",
-            "indemnite_de_feu_sapeurs_pompiers")
+            "indemnite_de_feu_sapeurs_pompiers", "majoration_retraite_proportionnelle")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

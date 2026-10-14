@@ -1043,7 +1043,7 @@ DECOMPOSITION_GROUPES_CLIQUETS = {
     ("pension_relative", "fpe"): 0.08,
     ("pension_relative", "cnracl"): 0.04,
     ("pension_relative", "agirc_arrco"): 0.23,
-    ("depense_part_pib", "fpe"): 0.24,
+    ("depense_part_pib", "fpe"): 0.23,
     ("depense_part_pib", "cnracl"): 0.14,
     ("depense_part_pib", "regimes_speciaux"): 0.34,
 }

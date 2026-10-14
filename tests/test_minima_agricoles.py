@@ -235,6 +235,78 @@ def test_ni_pmr_avant_2009_ni_complement_avant_2015(simulateur):
     assert "complement_differentiel_rco" not in avantages
 
 
+# -- les plans de revalorisation de 1997 à 2008 --------------------------------
+
+def _majoration(simulateur: Simulateur, carriere: Carriere):
+    _, avantages, pensions = _resultat(simulateur, carriere)
+    return avantages.get("majoration_retraite_proportionnelle"), pensions
+
+
+def test_les_plans_portent_une_carriere_complete_au_minimum_vieillesse(simulateur):
+    """Depuis 2002, A = (MV1 - AVTS) / (37,5 × VP) : la retraite forfaitaire
+    et la proportionnelle d'une carrière complète de chef valent le minimum
+    vieillesse d'une personne seule, 6 832,58 € en 2002 (décret n° 2002-298,
+    article 3)."""
+    majoration, pensions = _majoration(simulateur, _chef(simulateur, 1942, 60))
+    assert majoration is not None
+    etages = simulateur.scenario_actuel.minimum_vieillesse.deux_etages(2002)
+    assert pensions["msa_non_salaries"] == pytest.approx(
+        etages.avts + etages.supplementaire, abs=0.01)
+
+
+def test_les_points_de_1997_ne_sont_servis_qu_au_tiers(simulateur):
+    """26,933 points par année de chef, servis au tiers en 1997, aux deux
+    tiers en 1998, entiers en 1999 (décret n° 97-163, articles 1er et 3) ; 29,23
+    en 2001 (décret n° 2001-170)."""
+    for naissance, age, minimum, part in ((1935, 62, 26.933, 1 / 3), (1937, 61, 26.933, 2 / 3),
+                                          (1939, 60, 26.933, 1.0), (1941, 60, 29.23, 1.0)):
+        majoration, _ = _majoration(simulateur, _chef(simulateur, naissance, age))
+        assert majoration is not None, naissance
+        assert f"({minimum:.3f} - " in majoration.detail
+        assert majoration.detail.startswith(
+            f"{(minimum - 16.0) * 37.5 * part:,.2f} points"), majoration.detail
+
+
+def test_les_points_se_minorent_sous_vingt_deux_ans_et_demi_de_chef(simulateur):
+    """Vingt ans de chef en 1999, après vingt de salarié : il en manque deux
+    et demi, 15 + 15 + la moitié de 20 %, quarante pour cent de moins."""
+    metiers = [Metier("salarie_prive_non_cadre", 20.0, niveau_salaire=0.3),
+               Metier("exploitant_agricole", 40.0, niveau_salaire=0.3)]
+    majoration, _ = _majoration(simulateur, _chef(simulateur, 1939, 60, metiers=metiers))
+    assert majoration is not None
+    points = float(majoration.detail.split(" points")[0].replace(",", ""))
+    minimum, moyenne = (float(x) for x in
+                        majoration.detail.split("(")[1].split(")")[0].split(" - "))
+    assert majoration.detail.endswith("× 20 ans de chef")
+    assert points == pytest.approx((minimum - moyenne) * 20 * 0.6, abs=0.02)
+
+
+def test_ni_plan_avant_1997_ni_sans_le_taux_plein(simulateur):
+    """Une pension de 1996 n'a pas le minimum à la liquidation ; vingt ans de
+    chef partis à soixante ans en 2000, sans la durée requise, non plus."""
+    majoration, _ = _majoration(simulateur, _chef(simulateur, 1934, 62))
+    assert majoration is None
+    majoration, _ = _majoration(simulateur, _chef(simulateur, 1940, 60, debut=40.0))
+    assert majoration is None
+
+
+def test_le_chef_de_moins_de_dix_sept_ans_et_demi_a_le_minimum_du_couple(simulateur):
+    """Depuis 2002, douze ans de chef après trente de conjoint collaborateur :
+    C = (MV2 - AVTS) / (37,5 × VP), MV2 étant l'écart entre le minimum d'un
+    couple et celui d'une personne seule (D. 732-146)."""
+    metiers = [Metier("collaborateur_agricole", 20.0, niveau_salaire=0.3),
+               Metier("exploitant_agricole", 50.0, niveau_salaire=0.3)]
+    carriere = _chef(simulateur, 1943, 62, metiers=metiers)
+    majoration, _ = _majoration(simulateur, carriere)
+    assert majoration is not None and majoration.detail.endswith("× 12 ans de chef")
+    etages = simulateur.scenario_actuel.minimum_vieillesse.deux_etages(2005)
+    seule = etages.avts + etages.supplementaire
+    mv2 = 2 * etages.avts + etages.supplementaire_menage - seule
+    assert mv2 < seule
+    minimum = float(majoration.detail.split("(")[1].split(" - ")[0])
+    assert minimum < 26.933
+
+
 def test_une_pension_decotee_n_a_ni_pmr_ni_complement(simulateur):
     """Trente-deux ans de carrière à 62 ans : la décote, et aucun des deux
     minima, qui ne s'ouvrent qu'au taux plein."""
@@ -458,6 +530,15 @@ CAS = [
     {"naissance": "1965", "liquidation": "65", "statut": "salarie_prive_non_cadre",
      "metier2_debut": "30", "metier2_statut": "exploitant_agricole",
      "metier2_salaire": "0.1", "metier2_cumul": "oui"},
+    # Les plans de revalorisation : au tiers en 1997, minorés sous vingt-deux
+    # ans et demi en 1999, au minimum vieillesse en 2002, au minimum du couple
+    # pour douze ans de chef en 2005.
+    {"naissance": "1935", "liquidation": "62"},
+    {"naissance": "1939", "liquidation": "60", "statut": "salarie_prive_non_cadre",
+     "metier2_debut": "40", "metier2_statut": "exploitant_agricole", "metier2_salaire": "0.3"},
+    {"naissance": "1942", "liquidation": "60"},
+    {"naissance": "1943", "liquidation": "62", "statut": "collaborateur_agricole",
+     "metier2_debut": "50", "metier2_statut": "exploitant_agricole", "metier2_salaire": "0.3"},
 ]
 
 
@@ -483,7 +564,8 @@ def test_les_deux_moteurs_servent_les_memes_minima_agricoles():
     obtenus, attendus = json.loads(execution.stdout), _python(requetes)
     codes = {d["code"] for a in attendus for l in a["liquidations"]
              for d in l["complements"]["dispositifs"]}
-    assert {"pension_majoree_reference", "complement_differentiel_rco"} <= codes
+    assert {"pension_majoree_reference", "complement_differentiel_rco",
+            "majoration_retraite_proportionnelle"} <= codes
     assert sum(any(e["id"] == "relevement_msa_rco" for e in a["journal"])
                for a in attendus) == 2
     ecarts: list[str] = []

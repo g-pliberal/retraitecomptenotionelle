@@ -74,6 +74,7 @@ FICHES = {
     "pension_majoree_reference": "pension_majoree_reference",
     "complement_differentiel_rco": "complement_differentiel_rco",
     "majoration_conjoint_a_charge": "majoration_conjoint_a_charge",
+    "majoration_retraite_proportionnelle": "majoration_retraite_proportionnelle",
 }
 
 #: Le régime de la retraite complémentaire des non-salariés agricoles, dont
@@ -471,6 +472,164 @@ def pension_majoree(moteur: ScenarioActuel, carriere: Carriere, eligible,
         avant_ecretement=avant, complement=max(0.0, min(avant, plafond - ressources)),
         plafond=plafond, fiabilite=min(fiabilite, fiabilite_plafond),
         reduite=reduite, duree_reduite=duree_reduite)
+
+
+@dataclass(frozen=True)
+class MajorationProportionnelle:
+    """Ce que les plans de revalorisation de 1997 à 2008 ajoutent à la
+    retraite proportionnelle du chef d'exploitation
+    (:func:`majoration_retraite_proportionnelle`)."""
+
+    #: Le nombre minimal annuel moyen de points, A ou C, et le nombre annuel
+    #: moyen n de la pension, au plancher de seize.
+    minimum: float
+    moyenne: float
+    #: Les années retenues, DCE, trente-sept et demie au plus.
+    duree: float
+    #: Les points ajoutés, minorés et réduits à la part servie, et leur montant.
+    points: float
+    complement: float
+    fiabilite: Fiabilite
+
+
+#: La fiche des plans de revalorisation de 1997 à 2008, que :class:`FichesDatees
+#: <retraite_notionnelle.scenarios.actuel.FichesDatees>` lit à la date d'effet
+#: (:func:`majoration_retraite_proportionnelle`), et les minima qu'une version
+#: peut nommer outre un nombre de points.
+FICHE_DE_LA_MAJORATION_PROPORTIONNELLE = "majoration_retraite_proportionnelle"
+MINIMA_DE_LA_MAJORATION_PROPORTIONNELLE = ("minimum_vieillesse_personne_seule",
+                                           "differentiel_du_couple")
+
+#: Les années de chef qu'il faut pour le minimum A, la durée au-delà de
+#: laquelle aucune ne compte, et celle sous laquelle les points ajoutés se
+#: minorent de 1997 à 2000 (décret n° 97-163, article 1er).
+ANNEES_DE_CHEF_DU_MINIMUM = 17.5
+ANNEES_DU_MINIMUM_AU_PLUS = 37.5
+ANNEES_SANS_MINORATION = 22.5
+#: Le nombre de points au-dessous duquel aucune année ne compte dans la moyenne.
+PLANCHER_DES_POINTS_D_UNE_ANNEE = 16.0
+
+
+def _minimum_vieillesse(moteur: ScenarioActuel, nom: str, annee: int
+                        ) -> tuple[float, Fiabilite] | None:
+    """Le minimum vieillesse d'une personne seule (MV1), ou l'écart entre celui
+    d'un couple et celui d'une personne seule (MV2), en vigueur au 1er janvier
+    de ``annee`` : à deux étages jusqu'en 2006, l'ASPA depuis."""
+    etages = moteur.minimum_vieillesse.deux_etages(annee)
+    if etages is not None:
+        seule = etages.avts + etages.supplementaire
+        if nom == "minimum_vieillesse_personne_seule":
+            return seule, etages.fiabilite
+        if etages.supplementaire_menage is None:
+            return None
+        return 2 * etages.avts + etages.supplementaire_menage - seule, etages.fiabilite
+    seule = moteur.minimum_vieillesse.plafond(annee)
+    if seule is None:
+        return None
+    if nom == "minimum_vieillesse_personne_seule":
+        return seule
+    couple = moteur.minimum_vieillesse.plafond_couple(annee)
+    if couple is None:
+        return None
+    return couple[0] - seule[0], min(seule[1], couple[1])
+
+
+def majoration_retraite_proportionnelle(
+        moteur: ScenarioActuel, carriere: Carriere, eligible, pension: PensionRegime,
+        trimestres: int) -> MajorationProportionnelle | None:
+    """Ce que les plans de revalorisation ajoutent à la retraite
+    proportionnelle d'un chef d'exploitation parti de 1997 à 2008 ; ``None``
+    quand ils n'y ajoutent rien.
+
+    Le nombre de points de la pension prise au taux plein « est, le cas
+    échéant, majoré pour être porté à un minimum » : P = (A - n) × DCE, où A
+    est le nombre minimal annuel moyen de points, n celui de la pension,
+    chaque année comptée pour seize points au moins, et DCE la durée de chef,
+    dix-sept ans et demi au moins, trente-sept et demie au plus (décret
+    n° 97-163, article 1er ; D. 732-113, D. 732-144). A vaut 26,933 de 1997 à
+    2000, 29,23 en 2001 ; depuis 2002, (MV1 - AVTS) / (37,5 × VP), qui porte
+    la retraite forfaitaire et la proportionnelle d'une carrière complète au
+    minimum vieillesse d'une personne seule. Depuis 2002, le chef de moins de
+    dix-sept ans et demi qui a dix-sept ans et demi d'activité agricole a le
+    minimum C, (MV2 - AVTS) / (37,5 × VP), MV2 étant l'écart entre le minimum
+    d'un couple et celui d'une personne seule (D. 732-146). Les points
+    ajoutés se minorent sous vingt-deux ans et demi de chef de 1997 à 2000,
+    et ne sont servis qu'au tiers en 1997, aux deux tiers en 1998.
+
+    L'AVTS est la retraite forfaitaire d'une carrière complète, que le décret
+    lui égale ; n se lit sur la retraite proportionnelle, la pension avant
+    surcote moins sa part forfaitaire, en points de la liquidation par année
+    de la durée agricole, trente-sept et demie au plus (fiche
+    ``majoration_retraite_proportionnelle``).
+    ``eligible`` est l':class:`~retraite_notionnelle.droit.liquider.EligibleAgricole`
+    du régime ; ``trimestres``, sa durée d'assurance.
+    """
+    date_effet = date_d_effet(carriere)
+    if date_effet is None or not eligible.taux_plein or pension.montant <= 0.0:
+        return None
+    regle = moteur.fiches_datees.regle(FICHE_DE_LA_MAJORATION_PROPORTIONNELLE, date_effet)
+    if not regle or not regle["existe"] or trimestres <= 0:
+        return None
+    periode = periode_de_liquidation(moteur.catalogue[pension.regime],
+                                     carriere.date_liquidation)
+    if periode is None or periode.pension_forfaitaire_annuelle is None:
+        return None
+    annee = carriere.annee_liquidation
+    chef, agricole = eligible.chef / 4.0, eligible.duree / 4.0
+    if chef >= ANNEES_DE_CHEF_DU_MINIMUM:
+        minimum_nomme = regle["minimum"]
+    elif regle["minimum_reduit"] and chef > 0.0 and agricole >= ANNEES_DE_CHEF_DU_MINIMUM:
+        minimum_nomme = regle["minimum_reduit"]
+    else:
+        return None
+    valeur = liquider.valeur_du_point(moteur, periode.points_de or pension.regime,
+                                      carriere.date_liquidation)
+    if valeur is None and periode.valeur_point_euros is not None:
+        valeur = liquider.valeur_point_fiche(moteur, periode, annee), Fiabilite.MOYENNE
+    if valeur is None or valeur[0] <= 0.0:
+        return None
+    point, fiabilite = valeur
+    requis, _ = ouvrir.duree_requise(moteur, periode, carriere)
+    service = point * (37.5 / (requis / 4.0) if requis > 0 else 1.0)
+    forfait = periode.pension_forfaitaire_annuelle * moteur.macro.coefficient_prix(
+        periode.pension_forfaitaire_annee or annee, annee)
+    if minimum_nomme is None:
+        minimum = float(regle["minimum_points"])
+    else:
+        if minimum_nomme not in MINIMA_DE_LA_MAJORATION_PROPORTIONNELLE:
+            raise ValueError(f"{FICHE_DE_LA_MAJORATION_PROPORTIONNELLE} : minimum "
+                             f"{minimum_nomme!r} inconnu")
+        lu = _minimum_vieillesse(moteur, minimum_nomme, annee)
+        if lu is None:
+            return None
+        minimum = (lu[0] - forfait) / (ANNEES_DU_MINIMUM_AU_PLUS * point)
+        fiabilite = min(fiabilite, lu[1])
+    # La retraite proportionnelle : la pension avant surcote, moins sa part
+    # forfaitaire, en points de la liquidation par année agricole, trente-sept
+    # et demie au plus — une carrière complète de chef a ainsi le minimum.
+    proratisation, _ = liquider.duree_proratisation(moteur, periode, carriere, requis)
+    part_forfaitaire = (forfait * min(trimestres, proratisation) / proratisation
+                        if proratisation > 0 else 0.0)
+    proportionnelle = max(0.0, pension.montant / eligible.surcote - part_forfaitaire)
+    moyenne = max(PLANCHER_DES_POINTS_D_UNE_ANNEE,
+                  proportionnelle / service
+                  / min(trimestres / 4.0, ANNEES_DU_MINIMUM_AU_PLUS))
+    duree = min(chef, ANNEES_DU_MINIMUM_AU_PLUS)
+    points = max(0.0, minimum - moyenne) * duree
+    if regle["minorations"] and chef < ANNEES_SANS_MINORATION:
+        # « Pour chacune des années de l'écart constaté » ; la fraction d'année
+        # manquante, au prorata.
+        manque = ANNEES_SANS_MINORATION - chef
+        taux = somme_ordonnee(coefficient * min(1.0, manque - rang)
+                              for rang, coefficient in enumerate(regle["minorations"])
+                              if manque > rang)
+        points *= max(0.0, 1.0 - taux)
+    points *= regle["part_servie"]
+    if points <= 0.0:
+        return None
+    return MajorationProportionnelle(
+        minimum=minimum, moyenne=moyenne, duree=duree, points=points,
+        complement=points * service, fiabilite=fiabilite)
 
 
 @dataclass(frozen=True)
@@ -1329,6 +1488,28 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         etrangeres = _etranger.pensions_etrangeres_servies(
             moteur.macro, carriere, carriere.date_liquidation)
         base = pensions[agricole.indice]
+        # Avant 2009, les plans de revalorisation portent la retraite
+        # proportionnelle du chef à un minimum de points (1997 à 2008).
+        proportionnelle = majoration_retraite_proportionnelle(
+            moteur, carriere, agricole, base,
+            durees.trimestres_par_regime.get(base.regime, 0))
+        if proportionnelle is not None:
+            base = replace(
+                base, montant=base.montant + proportionnelle.complement,
+                detail=(f"{base.detail} = {base.montant:,.2f} €, retraite proportionnelle "
+                        f"majorée par + {proportionnelle.complement:,.2f} €"))
+            pensions[agricole.indice] = base
+            total += proportionnelle.complement
+            fiabilite_globale = min(fiabilite_globale, proportionnelle.fiabilite)
+            avantages.append(AvantageApplique(
+                code="majoration_retraite_proportionnelle",
+                libelle="Majoration de la retraite proportionnelle",
+                montant=proportionnelle.complement,
+                detail=(f"{proportionnelle.points:,.2f} points : ({proportionnelle.minimum:.3f} "
+                        f"- {proportionnelle.moyenne:.3f}) × {proportionnelle.duree:g} ans "
+                        f"de chef"),
+                par_regime=((base.regime, proportionnelle.complement),),
+            ))
         majoree = pension_majoree(moteur, carriere, agricole, base,
                                   total + servies + etrangeres)
         if majoree is not None and majoree.complement > 0.0:

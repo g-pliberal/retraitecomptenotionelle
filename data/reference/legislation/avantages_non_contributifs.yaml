@@ -483,8 +483,8 @@ avantages:
       note: >-
         Servie depuis le 7 octobre 2026 (action 138, étape 8), aux pensions qui
         prennent effet depuis 2009 : celle que la loi de 2008 a accordée aux
-        pensions plus anciennes, et les plans de revalorisation de 1994 à
-        2002, ne le sont pas. Les non-salariés agricoles sont le régime où un
+        pensions plus anciennes ne l'est pas ; les plans de revalorisation de
+        1997 à 2002 ont leur ligne, majoration_retraite_proportionnelle. Les non-salariés agricoles sont le régime où un
         plancher pèse le plus lourd, leur pension contributive étant la plus
         faible du catalogue.
 
@@ -510,6 +510,30 @@ avantages:
         prennent effet depuis 2015 ; la MSA en comptait 240 985 bénéficiaires
         fin 2022, pour 1 668 euros bruts par an en moyenne (tableau de bord des
         retraites des non-salariés agricoles, août 2023).
+
+  - code: majoration_retraite_proportionnelle
+    libelle: Majoration de la retraite proportionnelle des chefs d'exploitation
+    famille: minima_de_pension
+    quoi: >-
+      Les plans de revalorisation des retraites agricoles : de 1997 à 2008, la
+      retraite proportionnelle du chef d'exploitation liquidée au taux plein
+      est portée à un nombre minimal de points par année de chef — 26,933 de
+      1997 à 2000, 29,23 en 2001, depuis 2002 ce qui porte une carrière
+      complète au minimum vieillesse d'une personne seule.
+    base_legale: [L. 732-54-1 code rural, D. 732-113 et D. 732-141 à D. 732-146 code rural]
+    fiches: [majoration_retraite_proportionnelle]
+    creation: 1997
+    fin: 2008
+    regimes: non-salariés agricoles (MSA)
+    etat_modele: chiffre
+    ligne_cascade: majoration_retraite_proportionnelle
+    cout:
+      mesurable_par: modele
+      note: >-
+        Servie depuis le 14 octobre 2026 (action 138, étape 8), à la
+        liquidation des pensions qui prennent effet de 1997 à 2008 : les
+        révisions des pensions déjà liquidées, et les points des conjoints et
+        des aides familiaux, ne le sont pas.
 
   # --- Périodes non cotisées mais validées ---------------------------------
 

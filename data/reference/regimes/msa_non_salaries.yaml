@@ -144,7 +144,8 @@ periodes:
     decote_par_trimestre: 0.025
     decote_par_generation: bareme_minoration_regimes_en_points
     surcote_par_trimestre: null
-    avantages_non_contributifs: [majoration_enfants, minimum_vieillesse, reversion]
+    avantages_non_contributifs:
+      [majoration_enfants, minimum_vieillesse, pension_majoree_reference, reversion]
     notes: >-
       « À compter du 1er janvier 1990 » (R. 732-70), la cotisation ouvre un
       nombre de points qui dépend du revenu par un escalier à quatre marches
@@ -159,6 +160,11 @@ periodes:
       soixante-cinq ans ou avec cent cinquante trimestres tous régimes
       (L. 732-25, LEGIARTI000006585545) ; la loi du 22 juillet 1993 n'a
       pas touché ce régime, qui n'est pas un régime aligné.
+      Les minima des exploitants (`pension_majoree_reference`) s'y lisent
+      depuis le 14 octobre 2026 : la PMR n'existe pas avant 2009, mais les
+      plans de revalorisation portent de 1997 à 2008 la retraite
+      proportionnelle du chef à un minimum de points (fiche
+      majoration_retraite_proportionnelle).
   - debut: 2003
     fin: 2003
     type_calcul: mixte
