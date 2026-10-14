@@ -244,6 +244,18 @@ champs_periode:
     renvoi: true
     valeurs: [true]
     defaut: false
+  annuites_au_taux_de_leur_annee:
+    description: >-
+      Chaque annuité se liquide-t-elle au taux de la période qui couvre son
+      ANNÉE, et non à celui de la période de liquidation ? Les périodes de la
+      caisse des membres du CESE le posent : son règlement fixe le pourcentage
+      par annuité selon la date du mandat, « 2,11 % pour les mandats jusqu'au
+      31/8/2004 », puis 2,02 %, …, 1,82 % (article 17). Les trimestres de
+      chaque période pèsent la durée de la liquidation sur la durée requise de
+      leur période.
+    renvoi: true
+    valeurs: [true]
+    defaut: false
 
   age_table:
     description: >-

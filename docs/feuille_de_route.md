@@ -1957,15 +1957,15 @@ publique.
 
 ### 121. Le droit de chacun, et non celui de la génération de l'année : toutes les personnes vivantes — `en cours`
 
-**Reprise, au 14 octobre 2026.** Le test de la règle de chacun
-(`tests/test_regle_de_chacun.py`) déclarait dix-sept régimes `A_RELIRE` ;
-quinze en sont sortis, texte en main : la durée de l'Opéra, de la Banque de
-France et de la MSA, l'âge de la Banque, de la CARMF et de l'ASV, corrigés ;
-les autres déclarés à l'année d'effet de leurs textes. Restent deux : la durée
-de la CARMF avant 2000 (statuts d'alors non lus, hors des index) et le CESE,
-dont le règlement fixe un taux par annuité selon la date du mandat — un
-chantier du modèle et de son jumeau JS, que le moteur ne sait pas porter.
-Détail : `121/2026-10-14-regimes-a-relire.md`.
+**Reprise, au 14 octobre 2026.** Close, à archiver par une session
+d'entretien. Le registre `A_RELIRE` du test de la règle de chacun est vide : le
+CESE liquide chaque annuité au taux de son mandat (interrupteur
+`annuites_au_taux_de_leur_annee`, Python et JS), et la durée de la CARMF
+d'avant 2000, statuts introuvables, passe au registre `PRESUMES`. Au dossier des
+décisions : la Banque de France (172 trimestres des nés de 1966 à 1972),
+l'Opéra (table de 2019 et ballet), la CARMF d'avant 2000 ; à une session du
+site, la phrase de la page Méthode. L'action 145 peut reprendre.
+Détail : `121/2026-10-14-cese-et-carmf.md`.
 
 **Demande.** « Il faut prendre en compte la loi applicable pour tout le monde
 et pas seulement pour les derniers entrants ou sortants » ; « il faut aussi

@@ -280,20 +280,24 @@ versions:
       cese_affiliation_2023 tient cette affiliation
   exemples: aucun trouvé
 approximations:
-- version: [deux_onze_pour_cent, deux_zero_deux_pour_cent, un_quatre_vingt_quinze_pour_cent,
-    un_quatre_vingt_dix_pour_cent, un_quatre_vingt_cinq_pour_cent]
+- version: [deux_onze_pour_cent, deux_zero_deux_pour_cent, octobre_2010_sans_taux_ecrit,
+    un_quatre_vingt_quinze_pour_cent, un_quatre_vingt_dix_pour_cent,
+    un_quatre_vingt_cinq_pour_cent]
   ecart: >-
-    Le modèle liquide toutes les annuités au pourcentage de la période de la fiche de
-    régime en vigueur l'année de la liquidation (liquider_chaque_regime prend
-    `regime.periode` de cette année), et ses périodes sont des années civiles —
-    1957-2004, 2005-2010, 2011, 2012, 2013, puis 2014 et suivantes, à 142, 149, 154,
-    158, 162 et 165 trimestres pour 75 % — : un ancien membre qui liquide après 2013
-    voit toutes ses annuités comptées à 1,82 %, quand le règlement compte chacune au
-    pourcentage de son mandat.
+    Chaque annuité se liquide au pourcentage de la période de la fiche de régime qui
+    couvre son année (`annuites_au_taux_de_leur_annee`), mais ces périodes sont des
+    années civiles — 1957-2004, 2005-2010, 2011, 2012, 2013, puis 2014 et suivantes —,
+    quand le règlement coupe au 1er septembre 2004 et au 28 octobre de 2010 à 2013 :
+    septembre à décembre 2004 se comptent à 2,11 % au lieu de 2,02 %, les deux
+    derniers mois de 2010 à 2,02 % au lieu de 1,95 %, et ceux de 2011 à 2013 au
+    pourcentage de l'année au lieu du suivant. Le pourcentage se lit par la durée
+    requise de la période, en trimestres entiers, 75 % sur 142, 149, 154, 158, 162 et
+    165 trimestres : 2,113 % au lieu de 2,11 %, 2,013 au lieu de 2,02, 1,948 au lieu
+    de 1,95, 1,899 au lieu de 1,90, 1,852 au lieu de 1,85, 1,818 au lieu de 1,82.
   effet: >-
-    non mesuré par une simulation ; calculé sur les pourcentages, 13,7 % de moins sur
-    les annuités d'avant septembre 2004 (1,82 / 2,11) et 9,9 % sur celles de 2004 à
-    2010 (1,82 / 2,02), pour une liquidation postérieure à 2013
+    non mesuré par une simulation ; quatre mois de 2004 et deux mois de chacune des
+    années 2010 à 2013 au pourcentage d'à côté, de 0,05 à 0,09 point par annuité ; le
+    pourcentage lu par la durée s'écarte du règlement de 0,4 % au plus (2,013 / 2,02)
 - version: [deux_onze_pour_cent, allocation_viagere_reduite_de_moitie]
   ecart: >-
     La fiche de régime ne porte ni la condition de cinq années de mandat ni
@@ -341,15 +345,25 @@ sources:
     date: 2026-10-13
 reformes: [cese_2013, cese_2023]
 code:
+  interrupteurs:
+    annuites_au_taux_de_leur_annee: true
+  moteur: >-
+    `annuites_au_taux_de_leur_annee` : sur les périodes de la caisse du CESE, les
+    trimestres de chaque période pèsent la durée de la liquidation sur la durée requise
+    de leur période (`annuites_au_taux_de_leur_annee`, dans droit/liquider.py et
+    droit/liquider.js) : une annuité de 2000 liquidée en 2030 vaut 165/142 trimestres,
+    soit 2,11 % de l'assiette au lieu de 1,82 %, et le maximum de trois quarts borne la
+    somme.
   python: >-
     données : regimes/cese_membres.yaml, des périodes en annuités par année civile, au
     taux plein de 75 % atteint en 142 à 165 trimestres, la retenue de 3,42 fois L. 61
     divisée par 2,06 ; droit/liquider.py : liquider_chaque_regime, qui prend la période
-    de l'année de liquidation ; legislation/affiliations.yaml, statut membre_cese, qui
+    de l'année de liquidation, et annuites_au_taux_de_leur_annee, qui compte chaque
+    année au taux de la sienne ; legislation/affiliations.yaml, statut membre_cese, qui
     route les membres entrés depuis le 1er septembre 2023 au régime général et à
     l'Ircantec
   javascript: >-
-    moteur/js/droit/liquider.js : liquiderChaqueRegime ; moteur/js/regimes.js : le
+    moteur/js/droit/liquider.js : liquiderChaqueRegime et annuitesAuTauxDeLeurAnnee ; moteur/js/regimes.js : le
     catalogue et ses périodes
   parametres: regimes/cese_membres.yaml (taux_plein, duree_requise_trimestres, taux_cotisation_retraite)
   tests: >-
@@ -363,7 +377,13 @@ historique:
   de 2015, la réversion et son plafond, la coordination entre assemblées — et montre
   que le modèle compte toutes les annuités au pourcentage de l'année de liquidation.
   Aucun chiffre ne change.
+- >-
+  2026-10-14 — action 121 : le moteur compte chaque annuité au pourcentage de la période
+  de son année (interrupteur `annuites_au_taux_de_leur_annee`, Python et JavaScript),
+  et non plus à celui de l'année de liquidation ; restent les coupures à l'année civile
+  et l'allocation viagère des mandats courts.
 effet: >-
-  Les anciens membres du CESE désignés avant le 1er septembre 2023 : le modèle sous-évalue de 10 à 14 % la part de leurs annuités antérieures à 2010 quand
-  ils liquident après 2013, et compte double l'allocation des mandats courts d'après
+  Les anciens membres du CESE désignés avant le 1er septembre 2023 : leurs annuités
+  d'avant 2014 se liquident désormais à leur pourcentage, aux coupures de l'année
+  civile près ; le modèle compte encore double l'allocation des mandats courts d'après
   2015.

@@ -252,6 +252,11 @@ class PeriodeRegime:
     #: d'avant la réforme de 2023 à qui a ouvert son droit avant le 1er
     #: janvier 2025, « quelle que soit la date d'effet » de sa pension.
     age_taux_plein_a_l_ouverture: bool
+    #: Chaque annuité se liquide-t-elle au taux de la période qui couvre son
+    #: année, et non à celui de la période de liquidation ? Vrai à la caisse
+    #: des membres du CESE, dont le règlement fixe le pourcentage par annuité
+    #: selon la date du mandat (article 17).
+    annuites_au_taux_de_leur_annee: bool
     #: Table d'âges PROPRE au régime, lue à la génération dans
     #: ``legislation/ages_regimes.csv`` : l'âge d'ouverture et l'âge du taux
     #: plein que le règlement d'une section écrit lui-même, et qui ne sont pas
@@ -1565,6 +1570,7 @@ INTERRUPTEURS: dict[str, object] = {
     "age_ouverture_par_generation": False,
     "age_taux_plein_par_generation": False,
     "age_taux_plein_a_l_ouverture": False,
+    "annuites_au_taux_de_leur_annee": False,
     "age_surcote_regimes_speciaux": False,
     "decote_par_generation": False,
     "duree_proratisation_par_generation": False,
@@ -1803,6 +1809,8 @@ class CatalogueRegimes:
                 age_taux_plein_par_generation=bool(
                     p.get("age_taux_plein_par_generation", False)
                 ),
+                annuites_au_taux_de_leur_annee=bool(
+                    p.get("annuites_au_taux_de_leur_annee", False)),
                 age_taux_plein_a_l_ouverture=bool(
                     p.get("age_taux_plein_a_l_ouverture", False)
                 ),

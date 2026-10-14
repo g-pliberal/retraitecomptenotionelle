@@ -46,6 +46,7 @@ periodes:
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     age_taux_plein_par_generation: age_annulation_decote
+    annuites_au_taux_de_leur_annee: cese_pension_des_membres
     duree_requise_trimestres: 142
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
@@ -87,6 +88,7 @@ periodes:
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     age_taux_plein_par_generation: age_annulation_decote
+    annuites_au_taux_de_leur_annee: cese_pension_des_membres
     duree_requise_trimestres: 149
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
@@ -127,6 +129,7 @@ periodes:
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     age_taux_plein_par_generation: age_annulation_decote
+    annuites_au_taux_de_leur_annee: cese_pension_des_membres
     duree_requise_trimestres: 154
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
@@ -167,6 +170,7 @@ periodes:
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     age_taux_plein_par_generation: age_annulation_decote
+    annuites_au_taux_de_leur_annee: cese_pension_des_membres
     duree_requise_trimestres: 158
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
@@ -206,6 +210,7 @@ periodes:
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     age_taux_plein_par_generation: age_annulation_decote
+    annuites_au_taux_de_leur_annee: cese_pension_des_membres
     duree_requise_trimestres: 162
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
@@ -245,6 +250,7 @@ periodes:
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     age_taux_plein_par_generation: age_annulation_decote
+    annuites_au_taux_de_leur_annee: cese_pension_des_membres
     duree_requise_trimestres: 165
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
@@ -286,6 +292,7 @@ periodes:
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     age_taux_plein_par_generation: age_annulation_decote
+    annuites_au_taux_de_leur_annee: cese_pension_des_membres
     duree_requise_trimestres: 165
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
@@ -327,6 +334,7 @@ periodes:
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     age_taux_plein_par_generation: age_annulation_decote
+    annuites_au_taux_de_leur_annee: cese_pension_des_membres
     duree_requise_trimestres: 165
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
@@ -368,6 +376,7 @@ periodes:
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     age_taux_plein_par_generation: age_annulation_decote
+    annuites_au_taux_de_leur_annee: cese_pension_des_membres
     duree_requise_trimestres: 165
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
@@ -409,6 +418,7 @@ periodes:
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     age_taux_plein_par_generation: age_annulation_decote
+    annuites_au_taux_de_leur_annee: cese_pension_des_membres
     duree_requise_trimestres: 165
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
@@ -450,6 +460,7 @@ periodes:
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     age_taux_plein_par_generation: age_annulation_decote
+    annuites_au_taux_de_leur_annee: cese_pension_des_membres
     duree_requise_trimestres: 165
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
@@ -491,6 +502,7 @@ periodes:
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     age_taux_plein_par_generation: age_annulation_decote
+    annuites_au_taux_de_leur_annee: cese_pension_des_membres
     duree_requise_trimestres: 165
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
@@ -532,6 +544,7 @@ periodes:
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     age_taux_plein_par_generation: age_annulation_decote
+    annuites_au_taux_de_leur_annee: cese_pension_des_membres
     duree_requise_trimestres: 165
     taux_plein: 0.7500
     salaire_reference: carriere_entiere
@@ -573,6 +586,7 @@ periodes:
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 62
     age_taux_plein_par_generation: age_annulation_decote
+    annuites_au_taux_de_leur_annee: cese_pension_des_membres
     duree_requise_trimestres: 165
     taux_plein: 0.7500
     salaire_reference: carriere_entiere

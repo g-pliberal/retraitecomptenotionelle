@@ -16,8 +16,9 @@ d'une génération y change avec l'année où elle part. Ces régimes se déclar
 un à un, texte en main, avec les années où la règle bascule
 (``A_L_ANNEE_D_EFFET``). Ceux dont la variation n'a pas encore été confrontée
 à leur texte se déclarent aussi, comme tels (``A_RELIRE``) : c'est la suite de
-l'action 121. Une bascule hors des années déclarées échoue, et une déclaration
-qui ne sert plus se retire.
+l'action 121 ; ceux dont le texte a été cherché sans être trouvé se déclarent
+présumés (``PRESUMES``), avec ce qu'on a cherché. Une bascule hors des années
+déclarées échoue, et une déclaration qui ne sert plus se retire.
 
 Le balayage construit une carrière par statut et par génération, partie à
 soixante-dix ans, puis la décline à chaque âge de départ : l'âge d'ouverture
@@ -166,19 +167,22 @@ A_L_ANNEE_D_EFFET = {
 
 #: (régime, paramètre) : les années où la règle bascule aujourd'hui, et ce que
 #: le relevé du 13 octobre 2026 en montre, faute d'en avoir lu le texte.
-A_RELIRE = {
+A_RELIRE: dict = {}
+
+#: (régime, paramètre) : les bascules dont le texte a été cherché sans être
+#: trouvé ; la règle d'avant est une présomption, déclarée avec ce qu'on a
+#: cherché, et qui revient au propriétaire.
+PRESUMES = {
     ("carmf_complementaire", "duree"): (2000, 2000, (
         "générations 1930 à 1939 : la durée de la génération avant 2000, aucune "
-        "après (relu le 14 octobre 2026) — l'article 15 des statuts minore par "
-        "l'âge seul depuis 2000, et ce qu'il disait avant, que la fiche lit à la "
-        "génération, n'est pas lu")),
-    ("cese_membres", "duree"): (2005, 2014, (
-        "générations 1935 à 1952 : la durée change en 2005, puis chaque année "
-        "de 2011 à 2014. Relu le 14 octobre 2026 : l'article 17 du règlement "
-        "fixe un taux par annuité selon la date du MANDAT (2,11 % jusqu'au "
-        "31 août 2004, 2,02 % jusqu'au 30 septembre 2010…), que la fiche "
-        "écrit en durée requise par année de départ ; il faut au moteur un "
-        "taux par annuité acquise, qu'il n'a pas")),
+        "après. L'article 15 des statuts, lu dans leur seul état consolidé, sans "
+        "date d'origine, minore par l'âge seul ; la fiche le sert depuis 2000, "
+        "borne de période et non date d'un texte, et lit avant la décote du "
+        "régime de base. Statuts d'avant 2000 cherchés le 14 octobre 2026, sans "
+        "succès : ni LEGI ni JORF (résumés d'arrêtés seulement), ni le site de "
+        "la CARMF, dont la chronologie date de 1979 la retraite à soixante ans "
+        "« avec un coefficient d'abattement », indice d'une minoration par "
+        "l'âge dès cette date")),
 }
 
 
@@ -216,10 +220,17 @@ def releve():
                         if regime.creation <= annee <= (regime.extinction or 9999):
                             lacunes.append((statut, code, generation, age_depart))
                         continue
+                    # La durée d'une période qui liquide chaque annuité au
+                    # taux de son année n'est que le dénominateur de ses
+                    # annuités, qui pèsent chacune la durée de leur période
+                    # (`annuites_au_taux_de_leur_annee`, la caisse du CESE) :
+                    # la pension ne dépend plus de l'année du départ, et la
+                    # durée de l'année de liquidation ne décide de rien.
                     lu[(code, statut, generation)].append((
                         age_depart, annee,
                         round(ouvrir.age_ouverture(scenario, periode, carriere), 4),
-                        ouvrir.duree_requise(scenario, periode, carriere)[0],
+                        None if periode.annuites_au_taux_de_leur_annee
+                        else ouvrir.duree_requise(scenario, periode, carriere)[0],
                     ))
     variations = defaultdict(lambda: defaultdict(set))
     for (code, statut, generation), departs in lu.items():
@@ -242,7 +253,7 @@ def test_toute_generation_trouve_une_periode_dans_un_regime_ouvert(releve):
 
 def test_une_generation_garde_sa_regle_quelle_que_soit_l_annee_de_son_depart(releve):
     variations, _ = releve
-    declares = {**A_L_ANNEE_D_EFFET, **A_RELIRE}
+    declares = {**A_L_ANNEE_D_EFFET, **A_RELIRE, **PRESUMES}
     hors = {}
     for cle, par_assure in variations.items():
         if cle not in declares:
@@ -262,10 +273,36 @@ def test_une_generation_garde_sa_regle_quelle_que_soit_l_annee_de_son_depart(rel
 def test_une_declaration_qui_ne_sert_plus_se_retire(releve):
     variations, _ = releve
     for nom, declaration in (("A_L_ANNEE_D_EFFET", A_L_ANNEE_D_EFFET),
-                             ("A_RELIRE", A_RELIRE)):
+                             ("A_RELIRE", A_RELIRE), ("PRESUMES", PRESUMES)):
         inutiles = sorted(set(declaration) - set(variations))
         assert not inutiles, f"{nom} : {inutiles}"
 
 
-def test_les_deux_registres_ne_se_recouvrent_pas():
-    assert not set(A_L_ANNEE_D_EFFET) & set(A_RELIRE)
+def test_l_annuite_du_cese_garde_le_taux_de_son_mandat():
+    """Le règlement de la caisse du CESE compte chaque annuité au pourcentage
+    de son mandat (article 17) : vingt ans de mandat, de 1990 à 2009, pèsent
+    15 annuités sur 142 trimestres et 5 sur 149, que la liquidation tombe en
+    2004 ou en 2030, sur 142 ou sur 165 trimestres."""
+    from retraite_notionnelle.droit import liquider
+
+    simulateur = Simulateur()
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1950, sexe="H", affiliation="membre_cese",
+        age_debut=22, age_liquidation=64)
+
+    class Durees:
+        def cumul_plafonne(self, table, membres, annees):
+            return sum(4 for annee in range(1990, 2010) if annees(annee))
+
+    for proratisation in (142, 165):
+        trimestres = liquider.annuites_au_taux_de_leur_annee(
+            simulateur.scenario_actuel, "cese_membres", carriere, Durees(),
+            ("cese_membres",), proratisation, 80)
+        assert trimestres / proratisation == pytest.approx(60 / 142 + 20 / 149, abs=1e-4)
+
+
+def test_les_registres_ne_se_recouvrent_pas():
+    registres = (A_L_ANNEE_D_EFFET, A_RELIRE, PRESUMES)
+    for i, un in enumerate(registres):
+        for autre in registres[i + 1:]:
+            assert not set(un) & set(autre)

@@ -785,6 +785,11 @@ def _regimes() -> list[dict]:
                     # CRPCEN : absent, le moteur JavaScript le lit faux.
                     **({"age_taux_plein_a_l_ouverture": True}
                        if p.age_taux_plein_a_l_ouverture else {}),
+                    # Les périodes de la caisse du CESE le posent : absent, le
+                    # moteur JavaScript liquide toutes les annuités au taux de
+                    # la période de liquidation.
+                    **({"annuites_au_taux_de_leur_annee": True}
+                       if p.annuites_au_taux_de_leur_annee else {}),
                     # Six périodes le posent, de 1972 à 1974 au régime
                     # général et aux salariés agricoles : absent, le moteur
                     # JavaScript le lit nul.

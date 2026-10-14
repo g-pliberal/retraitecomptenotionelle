@@ -16,7 +16,7 @@
 import { DateMois } from "../calendrier.js";
 import { salaireMoyenAnnuel } from "../carriere.js";
 import * as chrono from "../chronologie.js";
-import { formatFixe, formatPourcentage } from "../format.js";
+import { arrondi, formatFixe, formatPourcentage } from "../format.js";
 import { FIN_PEREQUATION, coefficientTraitementDiffere, dateIso } from "../revalorisation.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import * as acquerir from "./acquerir.js";
@@ -572,6 +572,12 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     if (dureesCultes === null) {
       numerateur += durees.servicesDesEmplois(membres);
     }
+    if (periode.annuites_au_taux_de_leur_annee && dureesCultes === null && !auJour) {
+      // L'ANNUITÉ AU TAUX DE SON MANDAT, à la caisse du CESE (article 17 de
+      // son règlement) : voir liquider.py.
+      numerateur = annuitesAuTauxDeLeurAnnee(
+        moteur, code, carriere, durees, membres, proratisation, numerateur);
+    }
     let trimestresRegime = Math.min(numerateur, proratisation + bonifications);
     // Rapport des trimestres liquidables à la durée requise, borné au taux
     // maximum — 80/75 avec des bonifications, un sans elles.
@@ -1013,6 +1019,27 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
  * surcote, que la PMR retire avant de comparer. `coefficient` est celui de la
  * décote ou de la surcote du régime. Voir `eligible_agricole` du Python.
  */
+/**
+ * Les trimestres du régime, quand chaque annuité se liquide au taux de l'année
+ * qui l'a acquise (`annuites_au_taux_de_leur_annee`) : ceux de chaque période
+ * pèsent la durée de la liquidation sur la durée requise de la période.
+ * Arrondis au centième comme le Python.
+ */
+export function annuitesAuTauxDeLeurAnnee(moteur, code, carriere, durees, membres,
+  proratisation, numerateur) {
+  const regime = moteur.catalogue.obtenir(code);
+  const table = regime.famille === "fonction_publique" ? "services" : "assurance";
+  let ajout = 0.0;
+  for (const periode of regime.periodes) {
+    const acquis = durees.cumulPlafonne(table, membres, (annee) => periode.couvre(annee));
+    if (acquis) {
+      const requis = ouvrir.dureeRequise(moteur, periode, carriere)[0];
+      ajout += acquis * proratisation / requis - acquis;
+    }
+  }
+  return arrondi((numerateur + ajout) * 100) / 100;
+}
+
 export function eligibleAgricole(moteur, periode, carriere, releve, membres, trimestres,
   ageLiquidation, indice, coefficient, parLeHandicap) {
   const durees = releve.durees;

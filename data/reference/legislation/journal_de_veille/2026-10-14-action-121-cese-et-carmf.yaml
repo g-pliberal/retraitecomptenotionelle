@@ -1,0 +1,20 @@
+date: "2026-10-14"
+session: "action 121 : le CESE au taux de son mandat, la CARMF d'avant 2000 présumée"
+consulte: >-
+  python scripts/veille_droit.py. Règlement de la caisse de retraites des membres du
+  CESE au 1er janvier 2025, article 17, tel que la fiche cese_pension_des_membres le
+  cite (copie datée, sha256:348a9bc8…), sans relecture nouvelle. CARMF : statuts du
+  régime complémentaire d'avant 2000, cherchés sur le site de la caisse (état
+  consolidé seul, arrêté du 7 janvier 2025) et par deux recherches sur le web ;
+  l'index JORF d'avant 2001, déjà relevé le 14 octobre (résumés d'arrêtés seulement).
+trouve: >-
+  Le CESE : le moteur compte désormais chaque annuité au pourcentage de la période de
+  son année (interrupteur annuites_au_taux_de_leur_annee), comme le veut l'article 17 ;
+  le scénario 1 ne bouge pas sur les témoins, au maximum des trois quarts. La CARMF :
+  aucun texte d'avant 2000 ; la chronologie de la caisse date de 1979 la retraite à
+  soixante ans « avec un coefficient d'abattement ».
+reste: >-
+  CESE : les coupures à l'année civile, au lieu du 1er septembre 2004 et des 28 octobre
+  de 2010 à 2013 ; l'allocation viagère des mandats courts d'après 2015 ; les
+  règlements de 1958 et de 2015. CARMF : la minoration d'avant 2000, présumée (registre
+  PRESUMES du test de la règle de chacun), au dossier des décisions.

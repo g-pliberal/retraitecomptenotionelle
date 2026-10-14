@@ -1086,6 +1086,17 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             # elle ensemble à la durée requise, et seules les bonifications de
             # L. 12 le dépassent.
             numerateur += durees.services_des_emplois(membres)
+        if (periode.annuites_au_taux_de_leur_annee and durees_cultes is None
+                and not au_jour):
+            # L'ANNUITÉ AU TAUX DE SON MANDAT. Le règlement de la caisse du
+            # CESE compte chaque annuité au pourcentage de la période où le
+            # mandat l'a acquise — « 2,11 % pour les mandats jusqu'au
+            # 31/8/2004 », puis 2,02 %, …, 1,82 % (article 17) —, et non à
+            # celui de l'année de liquidation : chaque année d'une période
+            # pèse la durée de la liquidation sur la durée requise de sa
+            # période (fiche cese_pension_des_membres).
+            numerateur = annuites_au_taux_de_leur_annee(
+                moteur, code, carriere, durees, membres, proratisation, numerateur)
         trimestres_regime = min(numerateur, proratisation + bonifications)
         #: Rapport des trimestres liquidables à la durée requise, borné au
         #: taux maximum — 80/75 avec des bonifications, un sans elles.
@@ -1572,6 +1583,27 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         supplements=tuple(eligibles_supplement),
         anticipations=tuple(anticipations),
     )
+
+
+def annuites_au_taux_de_leur_annee(moteur, code: str, carriere: Carriere, durees,
+                                   membres: tuple[str, ...], proratisation: int,
+                                   numerateur: int) -> float | int:
+    """Les trimestres du régime, quand chaque annuité se liquide au taux de
+    l'année qui l'a acquise (``annuites_au_taux_de_leur_annee``) : ceux de
+    chaque période pèsent la durée de la liquidation sur la durée requise de
+    la période ; une année qu'aucune période ne couvre pèse un. Arrondis au
+    centième, et entiers quand ils tombent juste, pour que la formule s'écrive
+    pareil des deux côtés."""
+    table = ("services" if moteur.catalogue[code].famille == "fonction_publique"
+             else "assurance")
+    ajout = 0.0
+    for periode in moteur.catalogue[code].periodes:
+        acquis = durees.cumul_plafonne(table, membres, periode.couvre)
+        if acquis:
+            requis = ouvrir.duree_requise(moteur, periode, carriere)[0]
+            ajout += acquis * proratisation / requis - acquis
+    centiemes = round((numerateur + ajout) * 100)
+    return centiemes // 100 if centiemes % 100 == 0 else centiemes / 100
 
 
 def eligible_agricole(moteur, periode: PeriodeRegime, carriere: Carriere, releve: Releve,
