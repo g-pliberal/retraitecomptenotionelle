@@ -1,0 +1,64 @@
+# Le revenu qui VALIDE les trimestres du micro-entrepreneur
+# ---------------------------------------------------------
+# Action 138, étape 12 ; fiche `micro_social_abattement`. Le micro-entrepreneur
+# verse un pourcentage de son chiffre d'affaires, le taux global (D. 613-4) ;
+# une part en va à la retraite de base, le taux de répartition (D. 613-6, qui
+# couvre l'Assurance retraite depuis le décret n° 2022-1529, au 1er octobre
+# 2022) ; cette part, divisée par le taux de cotisation de base des
+# indépendants (D. 633-3), donne le « revenu cotisé », que la caisse compare
+# à 150 SMIC horaires (circulaire Cnav n° 2024-23 du 16 juillet 2024, point 4 ;
+# service-public, F23369, vérifié le 1er avril 2026, dont l'exemple : 12 100 €
+# de ventes en 2026 valident deux trimestres, quand le revenu abattu, 3 509 €,
+# n'en valide qu'un). Pour la Cipav, la part est celle de la première tranche
+# de la CNAVPL (D. 642-3, 1°), divisée par son taux (`valeurs_point.csv`) :
+# 2 792 € de recettes en 2026 valident un trimestre (F23369).
+#
+# Chaque activité porte ses versions, du mois où elles s'appliquent. L'année
+# prend la moyenne de ses douze mois ; une année qu'aucune version ne couvre
+# entière — avant 2023 — valide sur le revenu abattu, faute d'avoir lu la
+# règle d'avant le décret n° 2022-1529. Au-delà de la dernière version, la
+# dernière vaut.
+#
+# Textes lus dans l'index LEGI du dépôt, le 14 octobre 2026 :
+#   D. 613-4 : LEGIARTI000046714712 (10 décembre 2022, taux du 1er octobre
+#     2022), LEGIARTI000049624068 (1er juillet 2024), LEGIARTI000049624097
+#     (2025), LEGIARTI000052218738 (2026) ;
+#   D. 613-6 : LEGIARTI000046714699 (10 décembre 2022), LEGIARTI000049625264
+#     (1er juillet 2024), LEGIARTI000049625405 (2025), LEGIARTI000052218747
+#     (2026) ;
+#   D. 633-3 : LEGIARTI000041967101 (17,15 % + 0,60 %, jusqu'en 2024),
+#     LEGIARTI000049904636 (17,15 % + 0,72 %, périodes courant depuis le
+#     1er janvier 2025).
+schema_version: 1
+
+# La part du chiffre d'affaires que la saisie retire (L. 613-7, II) : le
+# revenu du modèle est le chiffre d'affaires fois (1 - abattement).
+abattements:
+  vente: 0.71
+  services: 0.50
+  liberal: 0.34
+  cipav: 0.34
+
+versions:
+  # a) vente de marchandises, 1° du 1 de l'article 50-0 du CGI.
+  vente:
+    - {debut: "2022-10", taux_global: 0.123, part_base: 0.418, taux_base: 0.1775}
+    - {debut: "2025-01", taux_global: 0.123, part_base: 0.418, taux_base: 0.1787}
+    - {debut: "2026-01", taux_global: 0.123, part_base: 0.4345, taux_base: 0.1787}
+  # d) services commerciaux ou artisanaux, 2° du 1 de l'article 50-0.
+  services:
+    - {debut: "2022-10", taux_global: 0.212, part_base: 0.418, taux_base: 0.1775}
+    - {debut: "2025-01", taux_global: 0.212, part_base: 0.418, taux_base: 0.1787}
+    - {debut: "2026-01", taux_global: 0.212, part_base: 0.4345, taux_base: 0.1787}
+  # e) libéral de l'Assurance retraite (L. 631-1 et 102 ter du CGI).
+  liberal:
+    - {debut: "2022-10", taux_global: 0.211, part_base: 0.555, taux_base: 0.1775}
+    - {debut: "2024-07", taux_global: 0.231, part_base: 0.5075, taux_base: 0.1775}
+    - {debut: "2025-01", taux_global: 0.246, part_base: 0.476, taux_base: 0.1787}
+    - {debut: "2026-01", taux_global: 0.256, part_base: 0.464, taux_base: 0.1787}
+  # b) section de la Cipav (R. 641-1, 11°) : première tranche de la CNAVPL.
+  cipav:
+    - {debut: "2022-10", taux_global: 0.212, part_base: 0.26, taux_base: 0.0823}
+    - {debut: "2024-07", taux_global: 0.232, part_base: 0.2345, taux_base: 0.0823}
+    - {debut: "2025-01", taux_global: 0.232, part_base: 0.2345, taux_base: 0.0873}
+    - {debut: "2026-01", taux_global: 0.232, part_base: 0.243, taux_base: 0.0873}

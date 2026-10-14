@@ -316,6 +316,7 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
         affiliation: emploiRetraite.affiliation,
         niveau_salaire: emploiRetraite.niveau_salaire, profil: "plat",
         part_primes: 0.0, apres_depart: true, employeur: emploiRetraite.employeur,
+        ...(emploiRetraite.micro ? { micro: emploiRetraite.micro } : {}),
       }));
   }
   if (invalidite !== null && invalidite !== undefined) {
@@ -725,6 +726,9 @@ export function duParcours({
           profil: profil_carriere,
           part_primes,
         };
+        if (metier.micro) {
+          attributs.micro = metier.micro;
+        }
         if (quotite < 1.0) {
           attributs.quotite = quotite;
         }
@@ -755,6 +759,7 @@ export function duParcours({
       profil: profil_carriere,
       part_primes,
       cumul: true,
+      ...(metier.micro ? { micro: metier.micro } : {}),
     }));
   });
   const annees = interruptions ? [...interruptions.keys()].sort((a, b) => a - b) : [];

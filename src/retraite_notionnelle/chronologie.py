@@ -393,7 +393,8 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
             {"affiliation": emploi_retraite["affiliation"],
              "niveau_salaire": emploi_retraite["niveau_salaire"], "profil": "plat",
              "part_primes": 0.0, "apres_depart": True,
-             "employeur": emploi_retraite["employeur"]}))
+             "employeur": emploi_retraite["employeur"],
+             **({"micro": emploi_retraite["micro"]} if emploi_retraite.get("micro") else {})}))
     if invalidite is not None:
         depart += _invalidite(assure, age_liquidation, invalidite)
     if etranger is not None:
@@ -757,6 +758,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
             attributs = {"affiliation": metier.affiliation,
                          "niveau_salaire": metier.niveau_salaire,
                          "profil": profil_carriere, "part_primes": part_primes}
+            if metier.micro:
+                attributs["micro"] = metier.micro
             if quotite < 1.0:
                 attributs["quotite"] = quotite
             periodes.append(fait(f"emploi_{rang}" if morceau == 1 else f"emploi_{rang}_{morceau}",
@@ -780,7 +783,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
             )
         periodes.append(fait(f"cumul_{rang}", ASSURE, EMPLOI, _jour(ouverture), _jour(cloture), {
             "affiliation": metier.affiliation, "niveau_salaire": metier.niveau_salaire,
-            "profil": profil_carriere, "part_primes": part_primes, "cumul": True}))
+            "profil": profil_carriere, "part_primes": part_primes, "cumul": True,
+            **({"micro": metier.micro} if metier.micro else {})}))
     for annee in sorted(interruptions or {}):
         periodes.append(fait(f"interruption_{annee}", ASSURE, INTERRUPTION,
                              f"{annee:04d}-01-01", f"{annee + 1:04d}-01-01",

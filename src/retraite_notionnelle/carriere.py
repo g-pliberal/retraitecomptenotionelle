@@ -36,8 +36,10 @@ from .donnees.chargement import (
     charger_chomage_complementaires,
     charger_periodes_non_travaillees,
     charger_table_csv,
+    charger_validation_micro,
     charger_yaml,
     dans_un_instantane,
+    rapport_validation_micro,
     une_fois_par_instantane,
 )
 from .donnees.macro import DonneesMacro
@@ -187,6 +189,12 @@ class AnneeCarriere:
     #: les déclare : les mois de la ligne font alors ses jours
     #: (:func:`~retraite_notionnelle.droit.compter.jours_de_la_ligne`).
     jours_de_services: int | None = None
+    #: L'activité du MICRO-ENTREPRENEUR dont la ligne lit le revenu abattu
+    #: (``saisie.ACTIVITES_MICRO``) ; vide hors du micro-social. Ses trimestres
+    #: se valident sur le revenu que sa cotisation achète, non sur le revenu
+    #: abattu (``legislation/micro_social.yaml``), et l'assiette minimale ne le
+    #: touche pas.
+    micro: str = ""
 
     @property
     def cotise(self) -> bool:
@@ -315,6 +323,10 @@ class Metier:
     #: Âge auquel une activité cumulée s'arrête ; ``None`` la mène jusqu'à la
     #: liquidation. Sans objet pour un métier principal, que le suivant clôt.
     age_fin: float | None = None
+    #: L'activité du micro-entrepreneur dont le niveau est le revenu abattu
+    #: (``saisie.ACTIVITES_MICRO``), qui valide ses trimestres sur le revenu
+    #: que sa cotisation achète ; vide sinon.
+    micro: str = ""
 
 
 @dataclass(frozen=True)
@@ -468,6 +480,25 @@ def _revenu_reference(annee: int, revenu: float, type_periode: str,
                * macro.plafond_securite_sociale(annee) * part)
 
 
+def _revenu_validant(macro: DonneesMacro, revenu: float, micro: str,
+                     annee: int) -> float:
+    """Le revenu qui valide les trimestres d'un micro-entrepreneur.
+
+    LE REVENU COTISÉ, ET NON LE REVENU ABATTU. Ses prestations « sont calculées
+    sur la base de [son] chiffre d'affaires […] après application d'un taux
+    d'abattement » (L. 613-7, II), mais la caisse valide ses trimestres sur ce
+    que sa cotisation achète : le chiffre d'affaires fois le taux global
+    (D. 613-4), fois la part de base (D. 613-6), divisé par le taux de base
+    (D. 633-3), comparé à 150 SMIC horaires (circulaire Cnav n° 2024-23,
+    point 4). 12 100 € de ventes en 2026 font 3 509 € de revenu abattu, un
+    trimestre, et 3 619 € de revenu cotisé, deux (service-public, F23369).
+    Avant 2023, la règle n'est pas lue : le revenu abattu valide.
+    """
+    rapport = rapport_validation_micro(
+        charger_validation_micro(macro.racine), micro, annee)
+    return revenu if rapport is None else revenu * rapport
+
+
 def _ligne_annuelle(
     annee: int,
     revenu: float,
@@ -480,6 +511,7 @@ def _ligne_annuelle(
     trimestres_maximum: int,
     trimestres_declares: float | None = None,
     quotite: float = 1.0,
+    micro: str = "",
 ) -> AnneeCarriere:
     """Une année de carrière, une fois connus son revenu et sa nature.
 
@@ -493,6 +525,9 @@ def _ligne_annuelle(
     ``trimestres_declares`` est le seul point où ils se séparent : un relevé
     dit combien de trimestres l'année a validés, et ce chiffre-là fait foi ;
     une carrière paramétrique les déduit du montant cotisé.
+
+    ``micro``, l'activité d'un micro-entrepreneur, fait valider ses trimestres
+    sur le revenu que sa cotisation achète (:func:`_revenu_validant`).
     """
     cotise = type_periode == "emploi"
     regle = None if cotise else motifs.get(type_periode, motifs.get("sans_activite"))
@@ -501,7 +536,7 @@ def _ligne_annuelle(
     # trimestres au lieu d'un. Le revenu de la ligne reste celui qu'il a
     # déclaré : sa complémentaire, le RCI, n'a pas de minimum.
     minimale = 0.0
-    if cotise and revenu > 0:
+    if cotise and revenu > 0 and not micro:
         regle_minimale = assiette_minimale(
             charger_assiettes_minimales(macro.racine), affiliation, annee)
         if regle_minimale is not None:
@@ -509,7 +544,8 @@ def _ligne_annuelle(
                 macro.plafond_securite_sociale(annee),
                 macro.smic_horaire(annee), part)
     if trimestres_declares is None:
-        trimestres = (macro.trimestres_valides(max(revenu, minimale), annee)
+        validant = _revenu_validant(macro, revenu, micro, annee) if micro else revenu
+        trimestres = (macro.trimestres_valides(max(validant, minimale), annee)
                       if cotise
                       else (regle.trimestres_assimiles if regle else 4))
     else:
@@ -533,6 +569,7 @@ def _ligne_annuelle(
         trimestres_valides=min(trimestres_maximum, trimestres),
         assiette_minimale_base=minimale,
         cotisations_versees=cotise,
+        micro=micro,
         # Pendant une période indemnisée, les régimes complémentaires
         # attribuent des points sur le salaire d'avant. L'Unédic les paie pour
         # le chômage ; l'Agirc-Arrco les donne pour la maladie, sans
@@ -1595,6 +1632,7 @@ class Carriere:
                 part=mois / MOIS_PAR_AN,
                 part_primes=source.part_primes,
                 trimestres_maximum=trimestres_civils(mois),
+                micro=source.micro,
             )
 
         # Le mois de liquidation n'est pas travaillé : l'année du départ
@@ -2194,6 +2232,7 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
             part_primes=dominant["part_primes"],
             trimestres_maximum=trimestres_maximum,
             quotite=quotite,
+            micro=dominant.get("micro", ""),
         ))
     lignes = limiter_chomage_non_indemnise(lignes, annee_naissance)
 
@@ -2220,6 +2259,7 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
                 part=fraction_annee(annee, ouverture, cloture),
                 part_primes=metier["part_primes"],
                 trimestres_maximum=trimestres_civils(mois),
+                micro=metier.get("micro", ""),
             ))
 
     dates_entree: dict[str, DateMois] = {}
@@ -2268,7 +2308,8 @@ def _lignes_apres_depart(date_naissance: DateMois, periode: dict,
             type_periode="emploi", macro=macro, motifs=motifs,
             part=fraction_annee(annee, ouverture, cloture),
             part_primes=attributs.get("part_primes", 0.0),
-            trimestres_maximum=trimestres_civils(mois)))
+            trimestres_maximum=trimestres_civils(mois),
+            micro=attributs.get("micro", "")))
     return lignes
 
 

@@ -891,6 +891,19 @@ def _cas() -> list[dict]:
             "debut": "2009-01", "liquidation": "2039-04", "micro": activite,
             "unite_revenu": "euros_mois", **modifications,
         }))
+    # Ses trimestres se valident sur le revenu que sa cotisation achète, non
+    # sur le revenu abattu (circulaire Cnav n° 2024-23) : 1 450 € de ventes
+    # par mois en valident deux en 2025, et non trois, le taux de base des
+    # indépendants passant à 17,87 % sans que la part de base suive ; 550 € de
+    # recettes à la Cipav en valident deux, et non trois, l'assiette minimale
+    # du libéral ne le touchant pas.
+    for nom, activite, salaire in (("vente_au_seuil", "vente", "1450"),
+                                   ("cipav_petites_recettes", "cipav", "550")):
+        cas.append((f"micro_entrepreneur_{nom}", {
+            "statut": "micro_entrepreneur", "naissance": "1975-03-15",
+            "debut": "2009-01", "liquidation": "2039-04", "micro": activite,
+            "unite_revenu": "euros_mois", "salaire": salaire,
+        }))
     cas.append(("taux_plein_travailleur_manuel_1978", {
         "naissance": "1918-03-15", "debut": "1933-09", "liquidation": "1978-04",
         "travail_manuel": "penible",

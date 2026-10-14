@@ -1230,6 +1230,15 @@ def _assiette_minimale_independants() -> list:
     ]
 
 
+def _validation_micro() -> dict:
+    """Le rapport du revenu qui valide les trimestres du micro-entrepreneur à
+    son revenu abattu, par activité et par année (``micro_social.yaml``)."""
+    from retraite_notionnelle.donnees.chargement import charger_validation_micro
+
+    return {activite: {str(annee): rapport for annee, rapport in par_annee.items()}
+            for activite, par_annee in sorted(charger_validation_micro(DONNEES).items())}
+
+
 def _periodes_non_travaillees() -> dict:
     """Ce qu'ouvre chaque motif d'interruption."""
     from retraite_notionnelle.donnees.chargement import charger_periodes_non_travaillees
@@ -2308,6 +2317,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "contributions_equilibre": _contributions_equilibre(),
         "prelevements_historiques": _prelevements_historiques(),
         "assiette_minimale_independants": _assiette_minimale_independants(),
+        "validation_micro": _validation_micro(),
         "profil_salaire_age": _profil_salaire("profil_salaire_age.csv", "annee"),
         "profil_salaire_categorie": _profil_salaire(
             "profil_salaire_categorie.csv", "categorie"),

@@ -122,6 +122,11 @@ export class AnneeCarriere {
     //: (R. 26). ``null`` hors d'un relevé qui les déclare : les mois de la
     //: ligne font alors ses jours (`joursDeLaLigne`). Voir carriere.py.
     jours_de_services = null,
+    //: L'activité du MICRO-ENTREPRENEUR dont la ligne lit le revenu abattu ;
+    //: vide hors du micro-social. Ses trimestres se valident sur le revenu
+    //: que sa cotisation achète, et l'assiette minimale ne le touche pas.
+    //: Voir carriere.py.
+    micro = "",
   }) {
     Object.assign(this, {
       annee, revenu, affiliation, type_periode, quotite,
@@ -130,7 +135,7 @@ export class AnneeCarriere {
       fraction_annee,
       services_fonction_publique, services_plafond_trimestres_par_enfant,
       reputes_cotises_enveloppe, reputes_cotises_plafond,
-      assiette_minimale_base, revenu_retabli, jours_de_services,
+      assiette_minimale_base, revenu_retabli, jours_de_services, micro,
     });
   }
 
@@ -434,6 +439,26 @@ export function limiterChomageNonIndemnise(lignes, anneeNaissance,
   return resultat;
 }
 
+/**
+ * Le revenu qui valide les trimestres d'un micro-entrepreneur : le revenu
+ * COTISÉ, le chiffre d'affaires fois le taux global, la part de base, sur le
+ * taux de base, et non le revenu abattu (circulaire Cnav n° 2024-23). Le
+ * paquet porte, par activité et par année, le rapport de l'un à l'autre ;
+ * avant la première année lue, le revenu abattu valide. Voir carriere.py.
+ */
+function revenuValidant(macro, revenu, micro, annee) {
+  const parAnnee = (macro.paquet.validation_micro ?? {})[micro];
+  if (parAnnee === undefined) {
+    return revenu;
+  }
+  const annees = Object.keys(parAnnee).map(Number);
+  const premiere = Math.min(...annees);
+  if (annee < premiere) {
+    return revenu;
+  }
+  return revenu * parAnnee[String(Math.min(annee, Math.max(...annees)))];
+}
+
 function ligneAnnuelle({
   annee,
   revenu,
@@ -445,6 +470,7 @@ function ligneAnnuelle({
   trimestresMaximum,
   trimestresDeclares = null,
   quotite = 1.0,
+  micro = "",
 }) {
   const cotise = typePeriode === "emploi";
   const motifs = macro.paquet.periodes_non_travaillees ?? {};
@@ -468,7 +494,7 @@ function ligneAnnuelle({
   // cotise en 2026 sur 450 SMIC horaires et valide trois trimestres au lieu
   // d'un. Le revenu de la ligne reste celui qu'il a déclaré.
   let minimale = 0.0;
-  if (cotise && revenu > 0) {
+  if (cotise && revenu > 0 && !micro) {
     const regleMinimale = assietteMinimale(macro.paquet, affiliation, annee);
     if (regleMinimale !== null) {
       minimale = montantAssietteMinimale(regleMinimale,
@@ -480,7 +506,8 @@ function ligneAnnuelle({
   // se comptent au jour (`jours_de_services`) ; la durée en trimestres
   // entiers que les autres régimes lisent l'arrondit au mois et demi.
   const trimestres = trimestresDeclares === null
-    ? (cotise ? macro.trimestresValides(Math.max(revenu, minimale), annee)
+    ? (cotise ? macro.trimestresValides(
+      Math.max(micro ? revenuValidant(macro, revenu, micro, annee) : revenu, minimale), annee)
       : (regle !== null ? regle[0] : 4))
     : Math.floor(trimestresDeclares + 0.5);
   return new AnneeCarriere({
@@ -496,6 +523,7 @@ function ligneAnnuelle({
     // soit le salaire.
     trimestres_valides: Math.min(trimestresMaximum, trimestres),
     assiette_minimale_base: minimale,
+    micro,
     // Pendant une période indemnisée, les régimes complémentaires attribuent
     // des points sur le salaire d'avant. L'Unédic les paie pour le chômage ;
     // l'Agirc-Arrco les donne pour la maladie, sans contrepartie.
@@ -1242,6 +1270,7 @@ export class Carriere {
         part: mois / MOIS_PAR_AN,
         part_primes: source.part_primes,
         trimestresMaximum: trimestresCivils(mois),
+        micro: source.micro,
       });
     };
     // Le mois de liquidation n'est pas travaillé.
@@ -1843,6 +1872,7 @@ function lignesApresDepart(dateNaissance, periode, macro) {
       part: fractionAnnee(annee, ouverture, cloture),
       part_primes: attributs.part_primes ?? 0.0,
       trimestresMaximum: trimestresCivils(mois),
+      micro: attributs.micro ?? "",
     }));
   }
   return lignes;
@@ -2065,6 +2095,7 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
       part_primes: principal.part_primes,
       trimestresMaximum,
       quotite,
+      micro: principal.micro ?? "",
     }));
   }
   const limitees = limiterChomageNonIndemnise(lignes, anneeNaissance);
@@ -2093,6 +2124,7 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
         part: fractionAnnee(annee, ouverture, cloture),
         part_primes: metier.part_primes,
         trimestresMaximum: trimestresCivils(mois),
+        micro: metier.micro ?? "",
       }));
     }
   }

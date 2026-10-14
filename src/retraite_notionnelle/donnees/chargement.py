@@ -671,6 +671,56 @@ def assiette_minimale(table: tuple[AssietteMinimale, ...], statut: str,
     return None
 
 
+@une_fois_par_instantane
+def charger_validation_micro(racine: Path) -> dict[str, dict[int, float]]:
+    """Le revenu qui valide les trimestres du micro-entrepreneur, rapporté à
+    son revenu abattu, par activité et par année
+    (``legislation/micro_social.yaml`` ; action 138, étape 12).
+
+    La caisse valide sur le « revenu cotisé » : le chiffre d'affaires fois le
+    taux global (D. 613-4), fois la part de base (D. 613-6), divisé par le
+    taux de base (D. 633-3, ou la première tranche de la CNAVPL pour la
+    Cipav). Le modèle porte le revenu abattu, le chiffre d'affaires fois
+    (1 - abattement) : le rapport des deux le convertit. L'année prend la
+    moyenne de ses douze mois ; seules figurent les années qu'une version
+    couvre entières.
+    """
+    chemin = racine / "reference" / "legislation" / "micro_social.yaml"
+    if not chemin.exists():
+        return {}
+    donnees = charger_yaml(chemin)
+    table: dict[str, dict[int, float]] = {}
+    for activite, versions in donnees["versions"].items():
+        part_abattue = 1.0 - donnees["abattements"][activite]
+        debuts = [tuple(int(x) for x in v["debut"].split("-")) for v in versions]
+        premiere = debuts[0][0] + (0 if debuts[0][1] == 1 else 1)
+        derniere = max(annee for annee, _ in debuts)
+        par_annee = {}
+        for annee in range(premiere, derniere + 1):
+            mensuels = []
+            for mois in range(1, 13):
+                rang = max(i for i, d in enumerate(debuts) if d <= (annee, mois))
+                v = versions[rang]
+                mensuels.append(v["taux_global"] * v["part_base"] / v["taux_base"])
+            par_annee[annee] = somme_ordonnee(mensuels) / 12.0 / part_abattue
+        table[activite] = par_annee
+    return table
+
+
+def rapport_validation_micro(table: dict[str, dict[int, float]], activite: str,
+                             annee: int) -> float | None:
+    """Le rapport du revenu validant au revenu abattu, cette année-là ; ``None``
+    avant la première année lue, où le revenu abattu valide ; au-delà de la
+    dernière, la dernière."""
+    par_annee = table.get(activite)
+    if not par_annee:
+        return None
+    premiere, derniere = min(par_annee), max(par_annee)
+    if annee < premiere:
+        return None
+    return par_annee[min(annee, derniere)]
+
+
 def charger_accords_internationaux(racine: Path) -> dict[str, dict]:
     """Le tableau des accords qui coordonnent les retraites françaises avec
     celles d'un autre État : pour chaque code d'État, son ``nom``, ses

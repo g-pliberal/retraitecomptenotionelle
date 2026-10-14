@@ -1307,11 +1307,12 @@ class Saisie:
         ):
             if ligne.sans_emploi:
                 continue
+            micro = self.micro if self.en_chiffre_d_affaires(ligne.statut) else ""
             niveau, statut = self.abattu(niveau, ligne.statut)
             self._verifier_niveau(niveau, rang, echelle, ligne.statut)
             metiers.append(Metier(affiliation=statut, age_debut=ligne.debut,
                                   niveau_salaire=niveau, cumul=ligne.cumul,
-                                  age_fin=ligne.fin))
+                                  age_fin=ligne.fin, micro=micro))
         return metiers
 
     def interruptions_de_carriere(
@@ -1943,10 +1944,12 @@ class Saisie:
             if self.saisie_en_net and not self.en_chiffre_d_affaires(statut):
                 salaire = echelle.brut_mensuel(salaire, statut)
             niveau = echelle.niveau(salaire)
+        micro = self.micro if self.en_chiffre_d_affaires(statut) else ""
         niveau, statut = self.abattu(niveau, statut)
         return {"age": self.emploi_retraite, "fin": self.emploi_retraite_fin,
                 "affiliation": statut, "niveau_salaire": niveau,
-                "employeur": self.emploi_retraite_employeur}
+                "employeur": self.emploi_retraite_employeur,
+                **({"micro": micro} if micro else {})}
 
     def _verifier_emploi_retraite(self) -> None:
         """L'activité exercée après le départ : une date qui ne précède pas le

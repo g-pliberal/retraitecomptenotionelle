@@ -1157,6 +1157,7 @@ export class Saisie {
     const metiers = [];
     this.lignesCarriere.forEach((ligne, index) => {
       if (ligne.sans_emploi) { return; }
+      const micro = this.enChiffreDAffaires(ligne.statut) ? this.micro : "";
       const [niveau, statut] = this.abattu(niveaux[index], ligne.statut);
       this.verifierNiveau(niveau, index + 1, echelle, ligne.statut);
       metiers.push({
@@ -1165,6 +1166,7 @@ export class Saisie {
         niveau_salaire: niveau,
         cumul: ligne.cumul,
         age_fin: ligne.fin,
+        micro,
       });
     });
     return metiers;
@@ -1866,10 +1868,12 @@ export class Saisie {
       }
       niveau = echelle.niveau(salaire);
     }
+    const micro = this.enChiffreDAffaires(statut) ? this.micro : "";
     const [abattu, route] = this.abattu(niveau, statut);
     return {
       age: this.emploi_retraite, fin: this.emploi_retraite_fin, affiliation: route,
       niveau_salaire: abattu, employeur: this.emploi_retraite_employeur,
+      ...(micro ? { micro } : {}),
     };
   }
 
