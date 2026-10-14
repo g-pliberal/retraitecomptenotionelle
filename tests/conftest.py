@@ -241,10 +241,19 @@ _CONFRONTE_AU_PORTAGE = re.compile(r'"node"|tests/js/|comparer[-\w]*\.mjs')
 
 
 def _confronte_au_portage(item) -> bool:
-    try:
-        return bool(_CONFRONTE_AU_PORTAGE.search(inspect.getsource(item.function)))
-    except (AttributeError, OSError, TypeError):
-        return False
+    """Le test lui-même, ou l'une des fixtures qu'il demande, qui fait souvent
+    tourner node une fois pour tous les cas d'un fichier."""
+    fonctions = [getattr(item, "function", None)]
+    definitions = getattr(getattr(item, "_fixtureinfo", None), "name2fixturedefs", {})
+    for nom in getattr(item, "fixturenames", ()):
+        fonctions += [definition.func for definition in definitions.get(nom, ())]
+    for fonction in fonctions:
+        try:
+            if _CONFRONTE_AU_PORTAGE.search(inspect.getsource(fonction)):
+                return True
+        except (AttributeError, OSError, TypeError):
+            continue
+    return False
 
 
 @pytest.hookimpl(tryfirst=True)
