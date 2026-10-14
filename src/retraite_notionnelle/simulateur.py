@@ -1182,15 +1182,10 @@ class Simulateur:
         celui de la page Coût, dont la dépense ne compte pas l'ASPA. Construit
         une fois, puis gardé.
 
-        Il refuse l'hypothèse d'espérance de vie basse ou haute : la population
-        de la page Coût reste celle du scénario central de l'INSEE, et ses
-        diviseurs suivraient seuls la variante (action 138, étape 7)."""
-        if self.parametres.hypothese_esperance_vie != "centrale":
-            raise ValueError(
-                "la page Coût ne lit pas encore l'hypothèse d'espérance de vie "
-                f"{self.parametres.hypothese_esperance_vie!r} : sa population reste "
-                "celle du scénario central de l'INSEE, et ses diviseurs suivraient "
-                "seuls la variante")
+        Il garde l'hypothèse d'espérance de vie des paramètres : sous la basse
+        ou la haute, la page Coût compte ses retraités dans la pyramide de la
+        même hypothèse, ce que ``calculer_cout`` vérifie
+        (``Population.verifier_hypothese``, action 138, étape 7)."""
         if (self.parametres.conventions_cor
                 and not self.parametres.minimum_vieillesse_dans_le_scenario_actuel):
             return self

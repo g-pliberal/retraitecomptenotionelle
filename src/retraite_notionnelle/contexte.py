@@ -202,8 +202,10 @@ class Contexte:
             f"comptes:{variante}", lambda: ComptesRetraite(racine, variante=variante))
 
     def population(self) -> Population:
+        hypothese = self.base.hypothese_esperance_vie
         return self._donnee(
-            "population", lambda: Population(self.base.racine_donnees))
+            f"population:{hypothese}",
+            lambda: Population(self.base.racine_donnees, hypothese))
 
     def distribution(self) -> DistributionPensions:
         """La distribution des pensions — elle seule chiffre un plancher.

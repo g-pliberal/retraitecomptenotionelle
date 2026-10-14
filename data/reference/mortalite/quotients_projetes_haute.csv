@@ -9,7 +9,7 @@
 # lit ce fichier à la place de quotients_projetes.csv quand
 # Parametres.hypothese_esperance_vie vaut « haute » : toute la
 # mortalité d'une simulation, son diviseur d'abord (action 138,
-# étape 7). La page Coût ne le lit pas encore. Au-delà de 2125, les
+# étape 7), la page Coût aussi. Au-delà de 2125, les
 # quotients de 2125 ; en 2025, sous toute hypothèse, l'observé.
 #
 # CONVERTIS, NON RECOPIÉS, comme ceux de l'hypothèse centrale (voir

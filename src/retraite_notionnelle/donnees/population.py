@@ -22,6 +22,13 @@ Deux séries en sont tirées, qui ne servent pas à la même chose :
 
 La pyramide s'arrête en 2070, et cette borne REFUSE plutôt qu'elle n'emprunte :
 ``_annee_bornee`` dit pourquoi, et ce que le refus a coûté d'apprendre.
+
+Sous l'hypothèse d'espérance de vie basse ou haute
+(``Parametres.hypothese_esperance_vie``, action 138, étape 7), les deux séries
+sont, à partir de 2026, celles des scénarios « espérance de vie basse » et
+« haute » de l'INSEE (``population_par_age_variantes.csv``,
+``population_active_variantes.csv``) : la page Coût compte alors ses retraités
+sous la mortalité que lisent ses diviseurs et ses survies de cohortes.
 """
 
 from __future__ import annotations
@@ -37,11 +44,21 @@ from ..somme import somme_ordonnee
 #: Le cas type qui liquide le plus tôt part à 52 ans.
 AGE_MINIMAL = 50
 
+#: Les hypothèses d'espérance de vie dont la pyramide est publiée, celles de
+#: ``Parametres.hypothese_esperance_vie``.
+HYPOTHESES_ESPERANCE_VIE = ("centrale", "basse", "haute")
+
 
 class Population:
-    """Effectifs par âge et par année, observés puis projetés."""
+    """Effectifs par âge et par année, observés puis projetés, sous une
+    hypothèse d'espérance de vie (``centrale`` par défaut)."""
 
-    def __init__(self, racine: Path) -> None:
+    def __init__(self, racine: Path, hypothese_esperance_vie: str = "centrale") -> None:
+        if hypothese_esperance_vie not in HYPOTHESES_ESPERANCE_VIE:
+            raise ValueError(
+                f"hypothèse d'espérance de vie inconnue : {hypothese_esperance_vie!r} "
+                f"(attendu : {HYPOTHESES_ESPERANCE_VIE})")
+        self.hypothese_esperance_vie = hypothese_esperance_vie
         macro = racine / "reference" / "macro"
         self._effectifs: dict[int, dict[int, float]] = {}
         self._fiabilites: dict[int, Fiabilite] = {}
@@ -62,12 +79,61 @@ class Population:
         self.actifs: SerieAnnuelle = charger_serie_annuelle(
             macro / "population_active.csv", "effectif", nom="population_active"
         )
+        if hypothese_esperance_vie != "centrale":
+            self._lire_variante(macro, hypothese_esperance_vie)
         self._annees = sorted(self._effectifs)
         self.premiere_annee = self._annees[0]
         self.derniere_annee = self._annees[-1]
         self.age_maximal = max(
             age for effectifs in self._effectifs.values() for age in effectifs
         )
+
+    def _lire_variante(self, macro: Path, hypothese: str) -> None:
+        """Les années que la variante publie remplacent celles du central,
+        âge par âge : toutes celles d'après 2025. Une variante absente est
+        refusée, plutôt que de compter sous le central les retraités d'un
+        diviseur qui suit la variante."""
+        chemin = macro / "population_par_age_variantes.csv"
+        remplacees: dict[int, dict[int, float]] = {}
+        if chemin.exists():
+            with chemin.open(encoding="utf-8") as flux:
+                lignes = (l for l in flux if not l.lstrip().startswith("#"))
+                for ligne in csv.DictReader(lignes):
+                    if ligne["hypothese"] != hypothese:
+                        continue
+                    annee, age = int(ligne["annee"]), int(ligne["age"])
+                    remplacees.setdefault(annee, {})[age] = float(ligne["effectif"])
+                    niveau = Fiabilite.depuis_texte(ligne["fiabilite"])
+                    self._fiabilites[annee] = min(self._fiabilites.get(annee, niveau),
+                                                  niveau)
+        if not remplacees:
+            raise ValueError(
+                f"aucune pyramide sous l'hypothèse d'espérance de vie {hypothese!r} "
+                f"dans {chemin}")
+        self._effectifs.update(remplacees)
+        chemin_actifs = macro / "population_active_variantes.csv"
+        variante = charger_serie_annuelle(
+            chemin_actifs, "effectif", nom=f"population_active_{hypothese}",
+            filtre={"hypothese": hypothese})
+        if set(variante.annees()) != set(remplacees):
+            raise ValueError(
+                f"{chemin_actifs} ne couvre pas les années de la pyramide "
+                f"{hypothese!r}")
+        valeurs = {annee: self.actifs.brut(annee) for annee in self.actifs.annees()
+                   if annee < variante.premiere_annee}
+        valeurs.update({annee: variante.brut(annee) for annee in variante.annees()})
+        self.actifs = SerieAnnuelle(valeurs, f"population_active_{hypothese}")
+
+    def verifier_hypothese(self, hypothese_esperance_vie: str) -> None:
+        """Refuse une pyramide d'une autre hypothèse d'espérance de vie que
+        celle du simulateur : ses retraités mourraient d'une table, ses
+        diviseurs et ses survies de cohortes d'une autre."""
+        if hypothese_esperance_vie != self.hypothese_esperance_vie:
+            raise ValueError(
+                f"pyramide de l'hypothèse d'espérance de vie "
+                f"{self.hypothese_esperance_vie!r}, simulateur sous "
+                f"{hypothese_esperance_vie!r} : construire la population par "
+                f"Population(racine, parametres.hypothese_esperance_vie)")
 
     # -- accès ---------------------------------------------------------------
 

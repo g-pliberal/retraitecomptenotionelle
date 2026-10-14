@@ -3,6 +3,7 @@
 
     python scripts/fetch/insee_projections_population.py
     python scripts/fetch/insee_projections_population.py --fichier 00_central.xlsx
+    python scripts/fetch/insee_projections_population.py --variantes 14_ev_basse.xlsx 13_ev_haute.xlsx
 
 Le dépôt calcule des droits individuels. Pour dire ce que coûtera un système,
 il faut en plus savoir COMBIEN de gens le percevront : une pyramide des âges.
@@ -48,6 +49,18 @@ script en tire, à 64 ans, la part des résidents entrés après 21 ans, et la
 part de pension que leur carrière française n'a pas : une arrivée à l'âge
 `a` y travaille (64 - a) / (64 - 21) d'une carrière. Voir
 :func:`arrivees_tardives` pour ce qui est compté, et ce qui ne l'est pas.
+
+LES DEUX SCÉNARIOS D'ESPÉRANCE DE VIE (action 138, étape 7)
+-------------------------------------------------------------
+Le diviseur lit les hypothèses d'espérance de vie basse et haute de l'INSEE
+(`insee_projections_mortalite.py`) ; la page Coût, qui compte ses retraités
+dans la pyramide, doit les compter sous la même hypothèse. Les scénarios
+« espérance de vie basse » et « haute », qui ne diffèrent du central que par
+la mortalité, sont publiés dans deux classeurs de même disposition
+(`14_ev_basse.xlsx`, `13_ev_haute.xlsx`) : les mêmes deux séries en sont
+tirées, et écrites à part (`SORTIE_VARIANTES`). Les arrivées tardives restent
+celles du central : sous les variantes, leur manque ne bouge que de deux
+dix-millièmes au plus, génération par génération.
 """
 
 from __future__ import annotations
@@ -65,6 +78,18 @@ from lecture_xlsx import feuilles  # noqa: E402
 URL = "https://www.insee.fr/fr/statistiques/fichier/8990852/00_central.xlsx"
 ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
 SORTIE = Path("data/brut/insee_projections_population.json")
+
+#: Les scénarios qui ne diffèrent du central que par l'hypothèse d'espérance
+#: de vie, sous le nom que ``Parametres.hypothese_esperance_vie`` leur donne.
+URLS_VARIANTES = {
+    "basse": "https://www.insee.fr/fr/statistiques/fichier/8990856/14_ev_basse.xlsx",
+    "haute": "https://www.insee.fr/fr/statistiques/fichier/8990856/13_ev_haute.xlsx",
+}
+SORTIE_VARIANTES = Path("data/brut/insee_projections_population_variantes.json")
+#: Dernière année dont la pyramide est commune aux trois hypothèses : celle du
+#: 1er janvier 2025 suit les décès de 2024, que les trois tiennent pour
+#: observés ; les hypothèses s'écartent dès 2025.
+DERNIERE_ANNEE_COMMUNE = 2025
 
 #: Onglet du classeur qui porte la pyramide des âges.
 FEUILLE = "population"
@@ -284,20 +309,73 @@ def controler(charge: dict) -> None:
         )
 
 
+def controler_variantes(variantes: dict[str, dict]) -> None:
+    """Les deux scénarios ne doivent différer qu'à partir de 2026, et la
+    basse doit compter, chaque année projetée, moins de 65 ans ou plus que
+    la haute : un classeur échangé, ou d'un autre scénario, le trahirait."""
+    basse, haute = variantes["basse"]["par_age"], variantes["haute"]["par_age"]
+    if set(basse) != set(haute):
+        raise ValueError("les deux scénarios ne couvrent pas les mêmes âges et années")
+    for cle in basse:
+        if int(cle.split("|")[0]) <= DERNIERE_ANNEE_COMMUNE and basse[cle] != haute[cle]:
+            raise ValueError(f"les deux scénarios diffèrent dès {cle}")
+
+    def ages_65(table: dict, annee: int) -> float:
+        return sum(effectif for cle, effectif in table.items()
+                   if cle.startswith(f"{annee}|") and int(cle.split("|")[1]) >= 65)
+
+    annees = sorted({int(cle.split("|")[0]) for cle in basse})
+    for annee in annees:
+        if annee > DERNIERE_ANNEE_COMMUNE and not ages_65(basse, annee) < ages_65(haute, annee):
+            raise ValueError(f"en {annee}, la basse compte plus de 65 ans ou plus "
+                             "que la haute")
+
+
+def _telecharger(url: str) -> bytes:
+    demande = urllib.request.Request(url, headers=ENTETES)
+    with urllib.request.urlopen(demande, timeout=300) as reponse:
+        return reponse.read()
+
+
+def variantes(classeurs: dict[str, bytes]) -> int:
+    """Les scénarios d'espérance de vie basse et haute, lus et écrits à part."""
+    charge: dict = {}
+    for hypothese, donnees in classeurs.items():
+        lu = extraire(_grille(feuilles(donnees)))
+        controler(lu)
+        charge[hypothese] = {"par_age": lu["par_age"], "actifs_20_64": lu["actifs_20_64"],
+                             "source": URLS_VARIANTES[hypothese]}
+    controler_variantes(charge)
+    SORTIE_VARIANTES.parent.mkdir(parents=True, exist_ok=True)
+    SORTIE_VARIANTES.write_text(
+        json.dumps(charge, ensure_ascii=False, indent=1), encoding="utf-8")
+    for hypothese, lu in charge.items():
+        print(f"Espérance de vie {hypothese} : {len(lu['par_age'])} effectifs par âge "
+              f"écrits dans {SORTIE_VARIANTES}")
+    return 0
+
+
 def main(arguments: list[str] | None = None) -> int:
     arguments = sys.argv[1:] if arguments is None else arguments
+    classeurs_variantes: dict[str, bytes] | None = None
     if arguments[:1] == ["--fichier"] and len(arguments) == 2:
         # Le classeur déjà téléchargé : le même fichier, lu sans réseau.
         donnees = Path(arguments[1]).expanduser().read_bytes()
+    elif arguments[:1] == ["--variantes"] and len(arguments) == 3:
+        # Les deux classeurs des variantes, basse puis haute, lus sans réseau.
+        return variantes({
+            "basse": Path(arguments[1]).expanduser().read_bytes(),
+            "haute": Path(arguments[2]).expanduser().read_bytes(),
+        })
     elif arguments:
-        print("usage : insee_projections_population.py [--fichier CLASSEUR]",
-              file=sys.stderr)
+        print("usage : insee_projections_population.py [--fichier CLASSEUR | "
+              "--variantes BASSE HAUTE]", file=sys.stderr)
         return 2
     else:
         try:
-            demande = urllib.request.Request(URL, headers=ENTETES)
-            with urllib.request.urlopen(demande, timeout=300) as reponse:
-                donnees = reponse.read()
+            donnees = _telecharger(URL)
+            classeurs_variantes = {hypothese: _telecharger(url)
+                                   for hypothese, url in URLS_VARIANTES.items()}
         except (urllib.error.HTTPError, urllib.error.URLError) as erreur:
             print(f"INSEE indisponible : {erreur}", file=sys.stderr)
             return 1
@@ -320,6 +398,8 @@ def main(arguments: list[str] | None = None) -> int:
     manques = charge["arrivees_tardives"]
     print(f"Arrivées tardives de {min(manques)} à {max(manques)} : manque de "
           f"{manques[min(manques)]['manque']:.2%} à {manques[max(manques)]['manque']:.2%}")
+    if classeurs_variantes is not None:
+        return variantes(classeurs_variantes)
     return 0
 
 

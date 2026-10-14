@@ -289,7 +289,7 @@ def leviers_du_modele(parametres, scenario: str = "actuel",
         raise ValueError(f"le COR ne publie pas de cotisants par retraité en {ANNEE_ANCRAGE}")
     demographie = demographie_du_modele(cout.avenir, Simulateur(parametres).macro, rapport)
     annuels = leviers(cout.solde, scenario, part_assiette, demographie,
-                      Population(racine), annees,
+                      Population(racine, parametres.hypothese_esperance_vie), annees,
                       part_en_emploi=parametres.part_reportes_en_emploi)
     pib = pib_constant(cout.avenir)
     horizons = {fin: ecarts_sur_horizon(cout.solde, scenario, part_assiette, pib, fin=fin)

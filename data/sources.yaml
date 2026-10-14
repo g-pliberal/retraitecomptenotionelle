@@ -625,7 +625,8 @@ institutions:
           producteur. Depuis le 13 octobre 2026, il reprend de même les
           hypothèses basse et haute, que le modèle lit en variante, sous
           `Parametres.hypothese_esperance_vie`, et leurs espérances publiées,
-          qui les contrôlent ; la page Coût ne les lit pas encore. Le
+          qui les contrôlent ; la page Coût aussi depuis le 14 octobre, avec
+          la pyramide de la même hypothèse (`insee_projections_population`). Le
           classeur indexe ses quotients par âge atteint dans
           l'année ; le récupérateur les convertit à l'âge exact, par la
           moyenne géométrique des survies des deux âges atteints qui encadrent
@@ -648,7 +649,9 @@ institutions:
         cible: >-
           data/reference/macro/population_par_age.csv,
           data/reference/macro/population_active.csv,
-          data/reference/macro/arrivees_tardives.csv
+          data/reference/macro/arrivees_tardives.csv,
+          data/reference/macro/population_par_age_variantes.csv,
+          data/reference/macro/population_active_variantes.csv
         note: >-
           Pyramide des âges au 1er janvier, par âge détaillé et par année, de
           1962 à 2070 — l'onglet `population` du classeur du scénario central.
@@ -664,9 +667,14 @@ institutions:
           avec l'onglet `deces` : les arrivées après 21 ans, génération par
           génération, et ce qu'elles retirent à la pension d'une carrière
           française complète (`estimee`, action 147, étape 11). Seize autres
-          scénarios sont publiés ; seul le central est repris, comme pour les
-          quotients de mortalité — les variantes attendent l'action 138,
-          étape 7.
+          scénarios sont publiés ; deux en sont repris depuis le 14 octobre
+          2026 (action 138, étape 7), « espérance de vie basse » et « haute »
+          (https://www.insee.fr/fr/statistiques/8990856, `14_ev_basse.xlsx`,
+          `13_ev_haute.xlsx`), dont les mêmes deux séries, à partir de 2026,
+          comptent les retraités de la page Coût quand le diviseur lit la
+          même hypothèse (`Parametres.hypothese_esperance_vie`). Les arrivées
+          tardives restent celles du central : sous les variantes, leur manque
+          ne bouge que de deux dix-millièmes au plus.
 
       - id: insee_mortalite_niveau_de_vie
         titre: >-

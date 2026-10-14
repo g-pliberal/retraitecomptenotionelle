@@ -498,10 +498,10 @@ class Parametres:
     #: scénarios prospectifs, que leurs droits acquis reçoivent par un
     #: diviseur, l'espérance de vie citée, le cycle de vie et la rente du
     #: pilier capitalisé. Les années observées sont
-    #: les mêmes sous les trois. La page Coût ne la lit pas encore : sa
-    #: population reste celle du scénario central, et
-    #: :meth:`~retraite_notionnelle.simulateur.Simulateur.pour_la_projection`
-    #: refuse une autre hypothèse (action 138, étape 7).
+    #: les mêmes sous les trois. La page Coût la lit aussi : elle compte ses
+    #: retraités dans la pyramide du scénario de l'INSEE de même hypothèse
+    #: (``Population(racine, hypothese_esperance_vie)``), et refuse une
+    #: pyramide d'une autre (action 138, étape 7).
     hypothese_esperance_vie: str = "centrale"
 
     #: Les pensions déjà servies à la bascule : sur les prix, comme le droit le

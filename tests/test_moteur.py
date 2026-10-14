@@ -14,6 +14,7 @@ from retraite_notionnelle.config import (
 )
 from retraite_notionnelle.donnees.macro import DonneesMacro
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite
+from retraite_notionnelle.donnees.population import Population
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes
 from retraite_notionnelle.moteur.age_reference import AgeReference
 from retraite_notionnelle.moteur.conversion import Convertisseur
@@ -1180,8 +1181,8 @@ def test_l_hypothese_d_esperance_de_vie_ne_touche_pas_au_capital_retroactif():
 def test_une_hypothese_d_esperance_de_vie_hors_de_l_insee_est_refusee(tmp_path):
     """Trois hypothèses, celles de l'INSEE ; une autre est refusée, et une
     variante dont la table manque aussi : elle retomberait sur la loi, calée
-    sur les espérances de la centrale. La page Coût refuse la basse et la
-    haute, sa population restant celle du scénario central."""
+    sur les espérances de la centrale. La page Coût refuse une pyramide d'une
+    autre hypothèse que celle de son simulateur (action 138, étape 7)."""
     import shutil
 
     with pytest.raises(ValueError, match="inconnue"):
@@ -1192,8 +1193,10 @@ def test_une_hypothese_d_esperance_de_vie_hors_de_l_insee_est_refusee(tmp_path):
     assert DonneesMortalite(tmp_path, cache_disque=False).annees_projetees is None
     with pytest.raises(FileNotFoundError, match="quotients_projetes_haute.csv"):
         DonneesMortalite(tmp_path, cache_disque=False, hypothese="haute")
-    with pytest.raises(ValueError, match="page Coût"):
-        Simulateur(Parametres(hypothese_esperance_vie="basse")).pour_la_projection()
+    basse = Simulateur(Parametres(hypothese_esperance_vie="basse"))
+    assert basse.pour_la_projection().parametres.hypothese_esperance_vie == "basse"
+    with pytest.raises(ValueError, match="hypothèse d'espérance de vie"):
+        Population(RACINE_DONNEES).verifier_hypothese("basse")
 
 
 #: Trois carrières, que les deux moteurs simulent sous les hypothèses basse et

@@ -813,6 +813,12 @@ class AvenirAnnuel:
     #: projetée. Un sur les années publiées, et partout sans compte du COR.
     #: Voir :func:`rapport_derive`.
     derive: float = 1.0
+    #: Ce que la pyramide de l'hypothèse d'espérance de vie basse ou haute
+    #: change cette année-là à la masse du système actuel, rapportée à la
+    #: pyramide centrale : la dépense du COR, projetée sous la centrale, en
+    #: est multipliée, dans la base comme dans le bilan. Un sous la centrale
+    #: et sur les années publiées (action 138, étape 7).
+    facteur_esperance_vie: float = 1.0
     #: La même base du modèle, régime par régime — chacun au bout de ses
     #: fusions, comme le COR le compte — et ses têtes : un polypensionné
     #: compte dans chacun des siens. Ce que
@@ -3818,9 +3824,20 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
     ``poids`` pèse les cas types dans les masses de PENSIONS, ``poids_cotisants``
     dans les masses de COTISATIONS ; sans le second, le premier sert aux deux,
     ce qui est l'ancienne convention.
+
+    SOUS L'HYPOTHÈSE D'ESPÉRANCE DE VIE BASSE OU HAUTE (action 138, étape 7),
+    la dépense du COR, projetée sous la mortalité centrale, se multiplie
+    chaque année par ce que la pyramide de la variante change à la masse du
+    système actuel : la même masse, des mêmes pensions — le système actuel
+    n'a pas de diviseur —, comptée dans les deux pyramides. Sans quoi le
+    système actuel ne bougerait pas sous la variante, et les autres, tirés de
+    lui par leur rapport de masses, porteraient seuls l'effet de la longévité.
+    Le COR ne publie pas ces variantes dans les comptes que le dépôt lit.
     """
     if poids_cotisants is None:
         poids_cotisants = poids
+    centrale = (Population(simulateur.parametres.racine_donnees)
+                if population.hypothese_esperance_vie != "centrale" else None)
     macro = simulateur.macro
     annee_euros = simulateur.parametres.annee_euros_constants
     derniere_publiee = depenses.derniere_annee
@@ -3907,6 +3924,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
         masses_regimes, tetes_regimes = _masses_regimes(
             pensionnes, population, annee, poids_annee, revalorisation)
         part_derives = depenses.part_droits_derives(annee)
+        facteur_esperance_vie = 1.0
         reversion = (1.0 - part_ancrage) / (1.0 - part_derives)
         modele = ancrage * masses["actuel"] * reversion
         pib = pib_projete.get(annee, depenses.pib(min(annee, derniere_pib)))
@@ -3917,6 +3935,11 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             # 2025, puis celui des hypothèses du COR, emploi compris. La part de
             # PIB affichée est donc exactement la sienne.
             base = comptes.depense(annee) * pib * coefficient
+            if centrale is not None:
+                masses_centrale, _, _ = _masses(pensionnes, centrale, annee, poids_annee,
+                                                revalorisation)
+                facteur_esperance_vie = masses["actuel"] / masses_centrale["actuel"]
+                base *= facteur_esperance_vie
         else:
             base = modele
         derive = 1.0
@@ -3952,6 +3975,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             salaire_reel=(macro.coefficient_salaire_moyen(annee_euros, annee)
                           / macro.coefficient_prix(annee_euros, annee)),
             derive=derive,
+            facteur_esperance_vie=facteur_esperance_vie,
             masses_regimes={regime: ancrage * masse
                             for regime, masse in masses_regimes.items()},
             tetes_regimes=tetes_regimes,
@@ -3997,6 +4021,9 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
     pas celui sur lequel il a été calculé. La dépense du système actuel, elle,
     reste celle du COR de bout en bout : c'est ce qui fait que le solde du
     scénario 1 est exactement le solde publié, et non une reconstitution.
+    Sauf sous l'hypothèse d'espérance de vie basse ou haute, que le COR ne
+    publie pas : sa dépense y suit la pyramide de la variante
+    (``AvenirAnnuel.facteur_esperance_vie``), ses ressources non.
 
     ``tva_liberal`` est ce que la TVA à taux unique rapporte de plus, en part
     de PIB : la même chaque année, l'assiette gardant sa part de PIB, et nulle
@@ -4035,7 +4062,7 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
             annee=annee,
             projete=annee > comptes.derniere_annee_observee,
             ressources=comptes.ressource(annee),
-            depenses=comptes.depense(annee),
+            depenses=comptes.depense(annee) * par_annee[annee].facteur_esperance_vie,
             rapports=({scenario: rapport_derive(par_annee[annee].rapports, scenario,
                                                 par_annee[annee].derive)
                        for scenario in par_annee[annee].rapports}
@@ -4450,6 +4477,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     # Avant la grille, et non après : son refus tombait au bout d'une minute.
     if ponderation not in PONDERATIONS:
         raise ValueError(f"pondération inconnue : {ponderation!r} (attendu : {PONDERATIONS})")
+    population.verifier_hypothese(simulateur.parametres.hypothese_esperance_vie)
     reversion_servie = convention_reversion == CONVENTION_REVERSION_SERVIE
     pensionnes, echecs = (grille_simulee if grille_simulee is not None
                           else _pensionnes(simulateur, cas_types, liquidation))

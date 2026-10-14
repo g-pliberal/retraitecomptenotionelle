@@ -454,6 +454,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "population_par_age_projetee": "macro/population_par_age.csv",
         "population_active": "macro/population_active.csv",
         "population_active_projetee": "macro/population_active.csv",
+        # Les mêmes, sous les hypothèses d'espérance de vie basse et haute
+        # (action 138, étape 7).
+        "population_par_age_variantes": "macro/population_par_age_variantes.csv",
+        "population_active_variantes": "macro/population_active_variantes.csv",
         # Les arrivées tardives, tirées du même classeur que la pyramide :
         # une reconstitution, au niveau `estimee` (action 147, étape 11).
         "arrivees_tardives": "macro/arrivees_tardives.csv",
@@ -1982,6 +1986,41 @@ def test_les_variantes_ne_changent_que_les_annees_projetees(
             centrale - 3.0, abs=0.01)
         assert esperances_variantes[("haute", 2070, sexe, "e0")] == pytest.approx(
             centrale + 3.0, abs=0.01)
+
+
+def test_la_pyramide_suit_l_hypothese_d_esperance_de_vie():
+    """Sous les trois hypothèses, la même pyramide jusqu'en 2025 ; ensuite,
+    chaque année, moins de 65 ans ou plus sous la basse que sous la centrale,
+    et plus sous la haute, l'écart croissant d'une décennie à l'autre ; les
+    moins de 65 ans bougent à peine (action 138, étape 7). Une hypothèse
+    inconnue est refusée, une variante dont la pyramide manque aussi."""
+    pyramides = {h: Population(RACINE_DONNEES, h) for h in ("basse", "centrale", "haute")}
+    for annee, age in ((1990, 70), (2023, 90), (2025, 100), (2025, 50)):
+        assert len({p.effectif(age, annee) for p in pyramides.values()}) == 1, (annee, age)
+    assert len({p.actifs(2025) for p in pyramides.values()}) == 1
+    ecarts = []
+    for annee in range(2026, 2071):
+        basse, centrale, haute = (pyramides[h].effectif_tranche(65, 104, annee)
+                                  for h in ("basse", "centrale", "haute"))
+        assert basse < centrale < haute, annee
+        ecarts.append(haute - basse)
+        jeunes = [pyramides[h].effectif_tranche(50, 64, annee) for h in pyramides]
+        assert max(jeunes) / min(jeunes) < 1.02, annee
+    assert ecarts[::10] == sorted(ecarts[::10])
+    with pytest.raises(ValueError, match="inconnue"):
+        Population(RACINE_DONNEES, "moyenne")
+
+
+def test_une_pyramide_de_variante_absente_est_refusee(tmp_path):
+    import shutil
+
+    macro = tmp_path / "reference" / "macro"
+    macro.mkdir(parents=True)
+    for nom in ("population_par_age.csv", "population_active.csv"):
+        shutil.copy(RACINE_DONNEES / "reference" / "macro" / nom, macro)
+    assert Population(tmp_path).hypothese_esperance_vie == "centrale"
+    with pytest.raises(ValueError, match="aucune pyramide"):
+        Population(tmp_path, "haute")
 
 
 def test_esperance_decroit_avec_l_age(mortalite):

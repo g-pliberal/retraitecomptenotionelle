@@ -1283,6 +1283,40 @@ def source_arrivees_tardives() -> dict[tuple, float]:
     }
 
 
+#: Dernière année dont la pyramide est commune aux trois hypothèses
+#: d'espérance de vie : les variantes ne s'écrivent qu'après.
+DERNIERE_ANNEE_POPULATION_COMMUNE = 2025
+
+
+def _population_variantes() -> dict:
+    return _lire_json("insee_projections_population_variantes.json",
+                      "scripts/fetch/insee_projections_population.py")
+
+
+def source_population_par_age_variantes() -> dict[tuple, float]:
+    """La pyramide des scénarios « espérance de vie basse » et « haute » des
+    projections de population 2026 (action 138, étape 7), à partir de 2026 :
+    la page Coût y compte ses retraités quand le diviseur lit la même
+    hypothèse (``Parametres.hypothese_esperance_vie``)."""
+    return {
+        (hypothese, *cle.split("|")): effectif
+        for hypothese, lu in sorted(_population_variantes().items())
+        for cle, effectif in sorted(lu["par_age"].items(),
+                                    key=lambda kv: tuple(map(int, kv[0].split("|"))))
+        if int(cle.split("|")[0]) > DERNIERE_ANNEE_POPULATION_COMMUNE
+    }
+
+
+def source_population_active_variantes() -> dict[tuple, float]:
+    """Les 20-64 ans des mêmes scénarios, à partir de 2026."""
+    return {
+        (hypothese, annee): effectif
+        for hypothese, lu in sorted(_population_variantes().items())
+        for annee, effectif in sorted(lu["actifs_20_64"].items())
+        if int(annee) > DERNIERE_ANNEE_POPULATION_COMMUNE
+    }
+
+
 def _cps() -> dict:
     return _lire_json("drees_cps.json", "scripts/fetch/drees_cps.py")
 
@@ -2820,8 +2854,8 @@ def source_quotients_projetes_variante(hypothese: str) -> Callable[[], dict[tupl
     contrôlées de même contre les espérances que l'INSEE publie sous chacune.
     Elles encadrent la centrale de trois ans d'espérance de vie à la
     naissance en 2070 ; le diviseur les lit en variante
-    (``Parametres.hypothese_esperance_vie``, action 138, étape 7), la page
-    Coût pas encore.
+    (``Parametres.hypothese_esperance_vie``, action 138, étape 7), et la page
+    Coût avec la pyramide de la même hypothèse.
     """
     def source() -> dict[tuple, float]:
         serie = _serie_json("insee_quotients_projetes_variantes.json",
@@ -5755,6 +5789,74 @@ CERTIFICATIONS = (
         niveau="projetee",
     ),
     Certification(
+        nom="population_par_age_variantes",
+        chemin=REFERENCE / "macro" / "population_par_age_variantes.csv",
+        cles=("hypothese", "annee", "age"),
+        colonne="effectif",
+        source=source_population_par_age_variantes,
+        origine="INSEE, projections de population 2026, scénarios d'espérance "
+                "de vie basse et haute",
+        decimales=0,
+        tolerance=0.51,
+        niveau="projetee",
+        entete=(
+            "# Population au 1er janvier par âge, France, 50 ans et plus, sous les",
+            "# hypothèses d'espérance de vie basse et haute",
+            "# source_id: insee_projections_population",
+            "# unite: personnes",
+            "# hypothese: basse | haute",
+            "#",
+            "# Les scénarios « espérance de vie basse » et « haute » des projections",
+            "# de population 2026 de l'INSEE (14_ev_basse.xlsx, 13_ev_haute.xlsx),",
+            "# qui ne diffèrent du central que par la mortalité : trois ans",
+            "# d'espérance de vie à la naissance de moins, ou de plus, en 2070. La",
+            "# même disposition, les mêmes âges que population_par_age.csv, à partir",
+            "# de 2026 seulement : jusqu'en 2025, la pyramide est celle du central,",
+            "# que les trois hypothèses partagent.",
+            "#",
+            "# La page Coût y compte ses retraités quand Parametres.",
+            "# hypothese_esperance_vie vaut « basse » ou « haute » : la population",
+            "# suit alors la même mortalité que le diviseur et les survies de",
+            "# cohortes (quotients_projetes_basse.csv, quotients_projetes_haute.csv ;",
+            "# action 138, étape 7).",
+            "#",
+            "# fiabilite: projetee — une projection du producteur, qui vaut estimee",
+            "# dans le modèle.",
+            "#",
+            "# Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas",
+            "# modifier à la main.",
+        ),
+    ),
+    Certification(
+        nom="population_active_variantes",
+        chemin=REFERENCE / "macro" / "population_active_variantes.csv",
+        cles=("hypothese", "annee"),
+        colonne="effectif",
+        source=source_population_active_variantes,
+        origine="INSEE, projections de population 2026, scénarios d'espérance "
+                "de vie basse et haute",
+        decimales=0,
+        tolerance=0.51,
+        niveau="projetee",
+        entete=(
+            "# Population des 20 à 64 ans au 1er janvier, France, sous les",
+            "# hypothèses d'espérance de vie basse et haute",
+            "# source_id: insee_projections_population",
+            "# unite: personnes",
+            "# hypothese: basse | haute",
+            "#",
+            "# Le dénominateur du PIB projeté de la page Coût (voir",
+            "# population_active.csv), sous les mêmes scénarios que",
+            "# population_par_age_variantes.csv, à partir de 2026.",
+            "#",
+            "# fiabilite: projetee — une projection du producteur, qui vaut estimee",
+            "# dans le modèle.",
+            "#",
+            "# Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas",
+            "# modifier à la main.",
+        ),
+    ),
+    Certification(
         nom="depenses_retraite",
         chemin=REFERENCE / "macro" / "depenses_retraite.csv",
         cles=("annee",),
@@ -8425,7 +8527,7 @@ CERTIFICATIONS = (
             "# lit ce fichier à la place de quotients_projetes.csv quand",
             f"# Parametres.hypothese_esperance_vie vaut « {hypothese} » : toute la",
             "# mortalité d'une simulation, son diviseur d'abord (action 138,",
-            "# étape 7). La page Coût ne le lit pas encore. Au-delà de 2125, les",
+            "# étape 7), la page Coût aussi. Au-delà de 2125, les",
             "# quotients de 2125 ; en 2025, sous toute hypothèse, l'observé.",
             "#",
             "# CONVERTIS, NON RECOPIÉS, comme ceux de l'hypothèse centrale (voir",

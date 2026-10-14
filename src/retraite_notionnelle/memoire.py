@@ -592,7 +592,7 @@ def cout(parametres: Parametres | None = None, *, comptes: bool = True,
             parametres, ("grille_du_cout", parametres, grille, reglages["liquidation"]),
             lambda: module._pensionnes(simulateur, grille, reglages["liquidation"]))
         return calculer_cout(
-            simulateur, DepensesRetraite(racine), Population(racine),
+            simulateur, DepensesRetraite(racine), Population(racine, parametres.hypothese_esperance_vie),
             ComptesRetraite(racine, variante=variante) if comptes else None,
             cas_types=grille, assiette=AssietteActivite(racine) if assiette else None,
             grille_simulee=simulee, **reglages)
@@ -615,7 +615,7 @@ def avantages(parametres: Parametres | None = None, **options):
 
         racine = parametres.racine_donnees
         return calculer_avantages(Simulateur(parametres), DepensesRetraite(racine),
-                                  Population(racine), **reglages)
+                                  Population(racine, parametres.hypothese_esperance_vie), **reglages)
 
     return memoriser_pour(parametres, ("avantages", parametres, tuple(sorted(reglages.items()))),
                      calcul)

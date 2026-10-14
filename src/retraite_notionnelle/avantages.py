@@ -961,6 +961,7 @@ def calculer_avantages(simulateur: Simulateur, depenses: DepensesRetraite,
     liquidation possible — sont écartées : une part y serait une division par
     zéro, et non un résultat.
     """
+    population.verifier_hypothese(simulateur.parametres.hypothese_esperance_vie)
     pensionnes, refus = decomposer(simulateur, liquidation)
     poids = _ponderation(simulateur, ponderation, CAS_TYPES)
     annees: list[AnneeAvantages] = []

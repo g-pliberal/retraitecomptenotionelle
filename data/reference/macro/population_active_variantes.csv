@@ -1,0 +1,106 @@
+# Population des 20 à 64 ans au 1er janvier, France, sous les
+# hypothèses d'espérance de vie basse et haute
+# source_id: insee_projections_population
+# unite: personnes
+# hypothese: basse | haute
+#
+# Le dénominateur du PIB projeté de la page Coût (voir
+# population_active.csv), sous les mêmes scénarios que
+# population_par_age_variantes.csv, à partir de 2026.
+#
+# fiabilite: projetee — une projection du producteur, qui vaut estimee
+# dans le modèle.
+#
+# Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas
+# modifier à la main.
+hypothese,annee,effectif,fiabilite
+basse,2026,38213735,projetee
+basse,2027,38261339,projetee
+basse,2028,38280811,projetee
+basse,2029,38282296,projetee
+basse,2030,38275214,projetee
+basse,2031,38295719,projetee
+basse,2032,38298769,projetee
+basse,2033,38324775,projetee
+basse,2034,38341120,projetee
+basse,2035,38349489,projetee
+basse,2036,38326555,projetee
+basse,2037,38275064,projetee
+basse,2038,38203564,projetee
+basse,2039,38146423,projetee
+basse,2040,38128637,projetee
+basse,2041,38131352,projetee
+basse,2042,38160367,projetee
+basse,2043,38146278,projetee
+basse,2044,38086977,projetee
+basse,2045,37996024,projetee
+basse,2046,37838609,projetee
+basse,2047,37685799,projetee
+basse,2048,37516904,projetee
+basse,2049,37373055,projetee
+basse,2050,37215276,projetee
+basse,2051,37044575,projetee
+basse,2052,36868030,projetee
+basse,2053,36694127,projetee
+basse,2054,36515693,projetee
+basse,2055,36343139,projetee
+basse,2056,36164764,projetee
+basse,2057,36003323,projetee
+basse,2058,35844252,projetee
+basse,2059,35710579,projetee
+basse,2060,35576472,projetee
+basse,2061,35424378,projetee
+basse,2062,35267053,projetee
+basse,2063,35111318,projetee
+basse,2064,34940909,projetee
+basse,2065,34769195,projetee
+basse,2066,34565915,projetee
+basse,2067,34379173,projetee
+basse,2068,34208002,projetee
+basse,2069,34045454,projetee
+basse,2070,33874002,projetee
+haute,2026,38216974,projetee
+haute,2027,38269380,projetee
+haute,2028,38294435,projetee
+haute,2029,38302122,projetee
+haute,2030,38301755,projetee
+haute,2031,38329450,projetee
+haute,2032,38340070,projetee
+haute,2033,38374055,projetee
+haute,2034,38398663,projetee
+haute,2035,38415456,projetee
+haute,2036,38400996,projetee
+haute,2037,38357932,projetee
+haute,2038,38294771,projetee
+haute,2039,38246102,projetee
+haute,2040,38237169,projetee
+haute,2041,38249223,projetee
+haute,2042,38287962,projetee
+haute,2043,38283403,projetee
+haute,2044,38233702,projetee
+haute,2045,38152137,projetee
+haute,2046,38003305,projetee
+haute,2047,37859193,projetee
+haute,2048,37698873,projetee
+haute,2049,37564278,projetee
+haute,2050,37415467,projetee
+haute,2051,37253377,projetee
+haute,2052,37085204,projetee
+haute,2053,36919566,projetee
+haute,2054,36749135,projetee
+haute,2055,36584552,projetee
+haute,2056,36413800,projetee
+haute,2057,36260237,projetee
+haute,2058,36108970,projetee
+haute,2059,35983654,projetee
+haute,2060,35857855,projetee
+haute,2061,35713487,projetee
+haute,2062,35563626,projetee
+haute,2063,35415312,projetee
+haute,2064,35251786,projetee
+haute,2065,35086782,projetee
+haute,2066,34889033,projetee
+haute,2067,34708164,projetee
+haute,2068,34543260,projetee
+haute,2069,34387222,projetee
+haute,2070,34221965,projetee

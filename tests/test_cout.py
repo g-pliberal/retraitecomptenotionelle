@@ -1885,6 +1885,38 @@ def test_une_variante_de_liquidation_inconnue_est_refusee(depenses, population):
                       liquidation="au_hasard")
 
 
+def test_la_page_cout_suit_l_hypothese_d_esperance_de_vie(depenses):
+    """Sous l'hypothèse d'espérance de vie basse ou haute (action 138, étape
+    7), la page compte ses retraités dans la pyramide de la même hypothèse,
+    et la dépense du COR suit ce que cette pyramide change à la masse du
+    système actuel : un et quart à un et un tiers de point de PIB en 2070,
+    dans les deux sens, l'ordre de grandeur que le COR publie. La
+    proposition, dont le diviseur absorbe la longévité, bouge vingt fois
+    moins, en dépense comme en solde. Rien ne bouge avant 2026 ; et une
+    pyramide d'une autre hypothèse que le simulateur est refusée."""
+    couts = {h: memoire.cout(Parametres(hypothese_esperance_vie=h))
+             for h in ("basse", "centrale", "haute")}
+    fins = {h: {a.annee: a for a in c.avenir.annees} for h, c in couts.items()}
+    soldes = {h: {s.annee: s for s in c.solde.annees} for h, c in couts.items()}
+    for annee in (2010, 2024):
+        assert len({fins[h][annee].part_pib("actuel") for h in fins}) == 1
+        assert {fins[h][annee].facteur_esperance_vie for h in fins} == {1.0}
+    assert {a.facteur_esperance_vie for a in fins["centrale"].values()} == {1.0}
+    actuel = {h: fins[h][2070].part_pib("actuel") for h in fins}
+    liberal = {h: fins[h][2070].part_pib("notionnel_liberal") for h in fins}
+    assert actuel["basse"] < actuel["centrale"] < actuel["haute"]
+    for h in ("basse", "haute"):
+        assert 0.010 < abs(actuel[h] - actuel["centrale"]) < 0.016, h
+        assert abs(liberal[h] - liberal["centrale"]) < 0.001, h
+        assert abs(soldes[h][2070].solde("notionnel_liberal")
+                   - soldes["centrale"][2070].solde("notionnel_liberal")) < 0.001, h
+        assert (soldes[h][2070].solde("actuel") - soldes["centrale"][2070].solde("actuel")
+                == pytest.approx(actuel["centrale"] - actuel[h], abs=0.002)), h
+    with pytest.raises(ValueError, match="hypothèse d'espérance de vie"):
+        calculer_cout(Simulateur(Parametres(hypothese_esperance_vie="haute")), depenses,
+                      Population(RACINE_DONNEES))
+
+
 # -- la garantie vieillesse, chiffrée sur la distribution ---------------------
 
 
