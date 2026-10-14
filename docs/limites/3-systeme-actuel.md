@@ -113,7 +113,7 @@ rejoue sans avoir à installer le paquet.
 **Cinq familles de régimes y passent aujourd'hui**, et c'est tout ce
 qu'OpenFisca expose : le régime général, la pension civile (État et CNRACL),
 l'Arrco d'avant 2019, l'Agirc des cadres et l'Ircantec des agents non
-titulaires — <!--chiffre:mesure(profils_oracle)-->62<!--/--> profils en tout. Les régimes alignés — MSA des
+titulaires — <!--chiffre:mesure(profils_oracle)-->72<!--/--> profils en tout. Les régimes alignés — MSA des
 salariés agricoles, artisans, commerçants — n'ont chez lui aucun module, et
 n'en ont pas besoin : la loi les calcule comme le régime général, et c'est à
 l'oracle du régime général qu'ils se confrontent — à une table près : le
@@ -343,7 +343,7 @@ services liquidés, sous le pourcentage maximum.
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->197<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->198<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -445,7 +445,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->197<!--/--> tombent justes ensemble, hors
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->198<!--/--> tombent justes ensemble, hors
 les écarts connus que chacun déclare, sur une douzaine de sources et autant de
 règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.
