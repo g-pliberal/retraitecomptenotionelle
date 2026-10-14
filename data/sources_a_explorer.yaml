@@ -257,7 +257,7 @@ sources:
       questions-réponses. C'est la source d'APPLICATION qu'exige
       docs/veille_droit.md à côté du texte de Légifrance. Dérouler la
       recherche par thème et par date, pas seulement la page d'accueil.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnav_circulaire_2026_07
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_07_05032026.pdf
@@ -267,7 +267,7 @@ sources:
     a_en_tirer: >-
       Circulaire du 5 mars 2026 : à lire pour ce qu'elle change au scénario 1,
       avec sa ligne dans veille.yaml et son exemple chiffré s'il y en a un.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnav_circulaire_2026_04
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_04_05022026.pdf
@@ -276,7 +276,7 @@ sources:
     regimes: [regime_general]
     a_en_tirer: >-
       Circulaire du 5 février 2026, même traitement.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnav_circulaire_2025_33
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2025_33_23122025.pdf
@@ -287,7 +287,7 @@ sources:
       Circulaire du 23 décembre 2025 : période où la loi du 30 décembre 2025 a
       déplacé les âges légaux, celle-là même qui avait pris le dépôt en défaut
       le 17 septembre 2026. Vérifier que les tables du dépôt la portent.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnav_circulaire_2025_29
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2025_29_22122025.pdf
@@ -296,7 +296,7 @@ sources:
     regimes: [regime_general]
     a_en_tirer: >-
       Circulaire du 22 décembre 2025, même traitement.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnav_prelevements_sociaux
     url: https://www.lassuranceretraite.fr/portail-info/portail-info/home/retraite/paiements-retraite/prelevements-sociaux-retraite.html
@@ -308,7 +308,7 @@ sources:
       référence, exonération et taux réduit. Le dépôt compare des pensions
       BRUTES ; ces taux sont ce qui manque pour dire un net de pension, comme
       l'action 39 l'a fait pour le salaire.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnav_arrierees_artiste_auteur
     url: https://www.lassuranceretraite.fr/portail-info/hors-menu/annexe/salaries/montant-retraite/cotis-arrierees-artiste-auteur.html
@@ -318,7 +318,7 @@ sources:
     a_en_tirer: >-
       Le barème de régularisation des cotisations arriérées des
       artistes-auteurs. Chiffres rares, et fiche IRCEC partielle à l'inventaire.
-    statut: a_explorer
+    statut: en_cours
 
   # ---- Agirc-Arrco ------------------------------------------------------
 
@@ -3271,7 +3271,7 @@ sources:
       Le RCI et ses prédécesseurs (RCO artisans, NRIC commerçants), servis par
       la Cnav depuis 2020 : classes, points, valeur de service. Trois fiches
       que le dépôt modélise sur des valeurs saisies.
-    statut: a_explorer
+    statut: en_cours
 
   # ---- service-public.gouv.fr ---------------------------------------------
   # Quatre fiches de ce site sont DÉJÀ rejouées par test_oracle.py. Les autres
@@ -3286,7 +3286,7 @@ sources:
       « Comment les enfants sont-ils pris en compte pour la retraite du
       salarié ? » : MDA, AVPF, majoration de 10 %. Les trois canaux, avec
       leurs exemples — matière de l'action 43 et de la frontière contributive.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sp_f21142_montant_agent_public
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F21142
@@ -3314,7 +3314,7 @@ sources:
     a_en_tirer: >-
       Le montant de la retraite d'un salarié du privé : SAM, taux, prorata,
       et les exemples de la fiche.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sp_f31249_chomage
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F31249
@@ -3325,7 +3325,7 @@ sources:
       Les périodes de chômage : trimestres assimilés, points de complémentaire,
       et leurs limites. Poste central de docs/frontiere_contributive.md et des
       17,9 milliards de l'action 81.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sp_f19666_decote
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F19666
@@ -3336,7 +3336,7 @@ sources:
       La décote du salarié. Fiche DÉJÀ rejouée (témoin `sp_f19666_decote`,
       vérifiée au 1er janvier 2026) : à relire pour la redater et voir si son
       exemple a changé.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sp_f19643_surcote
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F19643
@@ -3346,7 +3346,7 @@ sources:
     a_en_tirer: >-
       La surcote du salarié. Fiche déjà rejouée (`sp_f19643_surcote`), même
       traitement.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sp_f13736_duree_fonctionnaire
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F13736
@@ -3373,7 +3373,7 @@ sources:
       CSG et CRDS sur les revenus d'activité ET de remplacement, avec les
       seuils de revenu fiscal de référence : la source de référence pour
       passer du brut au net, des deux côtés de la vie.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sp_f33841_micro_entrepreneur
     url: https://entreprendre.service-public.gouv.fr/vosdroits/F33841
@@ -3394,7 +3394,7 @@ sources:
     a_en_tirer: >-
       Le régime de retraite de l'entrepreneur individuel, base et
       complémentaire.
-    statut: a_explorer
+    statut: en_cours
 
   # ---- CLEISS : le versant international ----------------------------------
   # `docs/limites.md` déclare les carrières internationales hors modèle. Ce
@@ -3786,7 +3786,7 @@ sources:
       Le nombre d'années retenues pour le salaire annuel moyen, GÉNÉRATION PAR
       GÉNÉRATION : la montée de 10 à 25 ans, que le dépôt applique et dont la
       table mérite d'être lue chez celui qui liquide.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnav_interruptions_carriere
     url: https://www.lassuranceretraite.fr/portail-info/home/actif/ma-carriere/interruptions-carriere.html
@@ -3796,7 +3796,7 @@ sources:
     a_en_tirer: >-
       Chômage, maladie, maternité, service national : les trimestres assimilés
       et leurs plafonds. Poste central de la frontière contributive.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnav_ameliorer_montant
     url: https://www.lassuranceretraite.fr/portail-info/home/actif/montant-retraite/ameliorer-montant-retraite.html
@@ -3807,7 +3807,7 @@ sources:
       Surcote, rachat, cumul, minimum contributif : la liste, par la Cnav, de
       tout ce qui relève un montant — donc la liste de ce que le modèle doit
       savoir appliquer.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnav_parentalite
     url: https://www.lassuranceretraite.fr/portail-info/home/actif/vie-personnelle-retraite/parentalite-droits-retraite.html
@@ -3818,7 +3818,7 @@ sources:
       MDA, AVPF, majoration de pension, congé parental : les quatre canaux de
       la parentalité, chez celui qui les liquide. Matière de l'action 43 et du
       chiffrage des avantages non contributifs.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnav_handicap_invalidite
     url: https://www.lassuranceretraite.fr/portail-info/portail-info/home/actif/vie-personnelle-retraite/handicap-invalidite.html
@@ -3829,7 +3829,7 @@ sources:
       Retraite anticipée des travailleurs handicapés, pension d'invalidité
       convertie, inaptitude : trois portes de sortie anticipée que le dépôt ne
       distingue pas, et qui pèsent sur l'âge moyen de départ.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnav_rachat_trimestres
     url: https://www.lassuranceretraite.fr/portail-info/home/actif/ma-carriere/rachat-trimestres-retraite.html
@@ -3841,7 +3841,7 @@ sources:
       et par option : quatrième barème de rachat du lot, et le plus utilisé.
       C'est le prix que l'État met sur un trimestre — à comparer à ce que le
       système notionnel ferait payer pour le même droit.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sp_a15703_minimum_contributif
     url: https://www.service-public.gouv.fr/particuliers/actualites/A15703
@@ -3852,7 +3852,7 @@ sources:
       Le montant du minimum contributif, majoré ou non, à sa date de
       publication : une valeur que le dépôt projette et qui doit être recalée
       sur la valeur servie.
-    statut: a_explorer
+    statut: en_cours
 
   # ---- Suite des régimes spéciaux et de la fonction publique ---------------
 
@@ -5978,7 +5978,7 @@ sources:
       Toutes les fiches « Vos droits » en XML, chacune avec sa date de
       dernière modification importante : à chaque veille, dire lesquelles des
       fiches que citent les règles du dépôt ont changé, sans ouvrir le site.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Mesuré le 5 octobre 2026 : l'archive entière pèse 23 Mo ; une fiche se
       lit seule à `…/vdd/3.4/part/xml/F13243.xml`, attribut
