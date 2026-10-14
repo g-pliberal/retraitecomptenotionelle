@@ -1,15 +1,7 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: rouge
-sources: 5fccdd364f32b2b7703617b79a79d2d8e41e836b
-date: 2026-10-14T11:00:06Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38551611139
-echecs:
-  - "FAILED tests/test_parcours.py::test_chaque_chiffre_du_parcours_est_sur_sa_page[### 5. Avantages \u2014 deux minutes-/avantages] - AssertionError: ### 5. Avantages — deux minutes"
-  - "FAILED tests/test_parcours.py::test_chaque_compte_du_parcours_est_sur_sa_page[### 5. Avantages \u2014 deux minutes-/avantages] - AssertionError: ### 5. Avantages — deux minutes"
-  - "FAILED tests/test_prose.py::test_chaque_action_en_cours_s_ouvre_sur_son_bloc_reprise - AssertionError: [\"l'action 89 : 12 lignes de reprise\"]"
-  - "FAILED tests/test_cout.py::test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor - AssertionError: 2070 : pension relative du modèle 0.873, du COR 0.828 (+5.4%, cliquet 5%, cible 3%)"
-presomptions: rouge
-presomptions_echecs:
-  - "FAILED tests/test_limite_age.py::test_le_metier_d_apres_la_radiation_part_au_depart_saisi - AssertionError: assert 2059 == 2060"
-  - "FAILED tests/test_limite_age.py::test_radier_est_idempotent - assert 2059 == 2060"
+etat: vert
+sources: 6465a236626430863c36279cee1710863f73dabf
+date: 2026-10-14T13:19:43Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38568872456
+presomptions: vert
