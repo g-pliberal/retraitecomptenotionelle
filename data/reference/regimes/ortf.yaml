@@ -13,8 +13,15 @@ inventaire:
   couverture: hors_champ
   statuts: []
   textes:
+    - {reference: "loi n° 74-696 du 7 août 1974, article 30 (position spéciale des agents de cinquante-cinq ans et plus au 31 décembre 1974)", id: LEGIARTI000006420141}
+    - {reference: "code de la sécurité sociale, L. 134-3, k (solde du régime, au titre des allocations supplémentaires de retraite, porté par la Cnav)", id: LEGIARTI000051288904}
     - {reference: "arrêté du 14 avril 1980, validation pour la retraite des services accomplis à l'ORTF", id: JORFTEXT000000855476}
     - {reference: "lois de finances, programme 195, action « versements liés à la liquidation de l'ORTF »", id: JORFARTI000023316030}
   raison_hors_champ: >-
     Régime en extinction dont l'État verse les derniers engagements ; aucun
-    cotisant depuis 1975.
+    cotisant depuis 1975. Ses agents relevaient du régime général et de
+    l'IGRANTE, puis de l'Ircantec ; le seul droit propre de l'Office est la
+    position spéciale des agents nés en 1919 ou avant, puis leurs
+    « allocations supplémentaires de retraite » (loi n° 74-696, article
+    30 ; fiche `ortf_position_speciale_1974`) : 58 000 euros du budget
+    général en 2026.

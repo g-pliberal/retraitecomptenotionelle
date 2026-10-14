@@ -1132,7 +1132,9 @@ inventaire:
       Régime des cadres coloniaux fermé par la loi de finances pour 1976 : ses derniers
       actifs ont été affiliés d'office aux pensions civiles et militaires au 1er janvier
       1976, et ses pensions sont servies par l'État. Le statut `fonctionnaire_etat`
-      porte la carrière ; le dépôt n'a pas le règlement du décret du 21 avril 1950.
+      porte la carrière, sans la limite d'âge du cadre ni les bonifications de services
+      hors d'Europe que la loi leur garde ; le dépôt n'a pas le règlement du décret
+      n° 50-461 du 21 avril 1950 (fiche `crfom_regime_du_decret_1950`).
 
   - code: fonctionnaires_algerie_maroc_tunisie
     nom: >-
@@ -1919,13 +1921,18 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
+    - {reference: "loi n° 89-18 du 13 janvier 1989, article 13 (fin du régime spécial\
+        \ d'assurance invalidité et vieillesse au 1er janvier 1989)", id: LEGIARTI000006756499}
     - {reference: "décret n° 89-157 du 8 mars 1989 fixant les modalités du transfert\
         \ au régime général, au 1er janvier 1989, du régime spécial du Crédit foncier",
       id: LEGIARTI000006774339}
     raison_hors_champ: >-
       Transféré au régime général au 1er janvier 1989, pensions et cotisants compris
-      : les droits acquis sont servis par le régime général et le dépôt n'a pas de source
-      pour le barème d'avant.
+      : les droits acquis avant 1989 deviennent une rente forfaitaire du régime général,
+      la moitié du plafond de 1988 pour cent cinquante trimestres (décret n° 89-157,
+      fiche `credit_foncier_transfert_1989`), et le reste est une retraite d'entreprise,
+      servie par assureurs depuis 2009. Le dépôt n'a pas le barème du régime spécial
+      d'avant 1989 (décret du 6 août 1931).
 
   - code: ortf
     nom: Régime de retraite des personnels de l'ORTF
@@ -1939,13 +1946,21 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
+    - {reference: "loi n° 74-696 du 7 août 1974, article 30 (position spéciale des agents\
+        \ de cinquante-cinq ans et plus au 31 décembre 1974)", id: LEGIARTI000006420141}
+    - {reference: "code de la sécurité sociale, L. 134-3, k (solde du régime, au titre\
+        \ des allocations supplémentaires de retraite, porté par la Cnav)", id: LEGIARTI000051288904}
     - {reference: "arrêté du 14 avril 1980, validation pour la retraite des services\
         \ accomplis à l'ORTF", id: JORFTEXT000000855476}
     - {reference: "lois de finances, programme 195, action « versements liés à la liquidation\
         \ de l'ORTF »", id: JORFARTI000023316030}
     raison_hors_champ: >-
       Régime en extinction dont l'État verse les derniers engagements ; aucun cotisant
-      depuis 1975.
+      depuis 1975. Ses agents relevaient du régime général et de l'IGRANTE, puis de
+      l'Ircantec ; le seul droit propre de l'Office est la position spéciale des agents
+      nés en 1919 ou avant, puis leurs « allocations supplémentaires de retraite » (loi
+      n° 74-696, article 30 ; fiche `ortf_position_speciale_1974`) : 58 000 euros du
+      budget général en 2026.
 
   - code: regies_ferroviaires_outre_mer
     nom: >-

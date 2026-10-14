@@ -1,0 +1,139 @@
+schema_version: 1
+id: ortf_position_speciale_1974
+intitule: >-
+  À la dissolution de l'ORTF, ses agents statutaires âgés de soixante ans au 31 décembre
+  1974 sont mis en « position spéciale », et ceux de cinquante-cinq ans peuvent l'être à
+  leur demande : une rémunération revalorisée comme les salaires, égale à la pension et
+  aux retraites complémentaires qu'ils auraient eues en travaillant jusqu'à leur limite
+  d'âge ; ce que l'État leur verse depuis au-delà des régimes de droit commun — les
+  « allocations supplémentaires de retraite » — est le seul droit propre à l'Office
+  que le droit en vigueur nomme encore, financé par le compte des pensions de l'État puis, depuis 2024, par la Cnav.
+domaine: depart_anticipe
+regimes: [ortf, regime_general, ircantec]
+etape: ouvrir_le_droit
+face: droit
+etat: pas_encore_modelisee
+lit:
+- l'appartenance aux statuts de l'Office au 31 décembre 1974, journaliste ou non
+- l'âge au 31 décembre 1974, les enfants et les parents à charge, la limite d'âge du statut
+- la dernière rémunération d'activité soumise à cotisation à l'Ircantec
+ecrit:
+- une rémunération de position spéciale jusqu'à la limite d'âge, puis les pensions des régimes de droit commun et une allocation supplémentaire de retraite
+dates_qui_decident:
+- assure.generation
+# Le régime est hors champ (inventaire) : aucune version n'est lue par un moteur. La
+# borne est la naissance : cinquante-cinq ans au 31 décembre 1974, le seuil de la loi,
+# c'est être né en 1919 ou avant ; les
+# agents plus jeunes, repris par les sociétés issues de l'Office, gardent le régime
+# général et l'Ircantec, que le modèle simule déjà.
+versions:
+- id: position_speciale
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006420141, article: "loi n° 74-696 du 7 août 1974, article 30", en_vigueur: 1979-12-22}
+  nee_de: LEGIARTI000006420141
+  bornes:
+    assure.generation: [null, 1920-01-01]
+  contenu:
+    droit: >-
+      « Les agents relevant des statuts de l'Office âgés de soixante ans et plus au 31
+      décembre 1974, sont mis, à cette date, en position spéciale » ; ceux de
+      cinquante-cinq ans ou plus peuvent l'être « sur leur demande » ; ni les uns ni les
+      autres s'ils ont des enfants à charge (au sens de L. 527 ou de l'impôt sur le
+      revenu) ou des parents à charge : ceux-là sont maintenus en activité à leur
+      demande, tant qu'ils ont des enfants à charge et au plus jusqu'à leur limite d'âge
+    montant: >-
+      « une rémunération assimilée à un salaire et revalorisée en fonction de l'évolution
+      des salaires, équivalente au total de la pension et, le cas échéant, de la ou des
+      retraites complémentaires auxquelles ils auraient pu prétendre s'ils avaient
+      poursuivi leur activité jusqu'à la limite d'âge » de leur statut
+    plafond: >-
+      cette rémunération et l'allocation de chômage des ASSEDIC ne dépassent pas
+      ensemble la dernière rémunération d'activité soumise à cotisation à l'Ircantec,
+      revalorisée comme les salaires ; la rémunération est réduite d'autant
+    retraite_complementaire: >-
+      une retraite complémentaire est attribuée aux anciens agents non journalistes
+      placés en position spéciale, à des conditions que fixe l'arrêté du 26 juin 1980,
+      connu par son analyse
+    financement: >-
+      les « pensions de l'ORTF » sont une ligne du compte d'affectation spéciale
+      Pensions, programme des régimes divers : 532 000 € de participation du budget
+      général en 2011, 320 000 € en 2015, 62 000 € en 2025, 58 000 € en 2026 (lois de
+      finances, état A) ; depuis la loi de financement pour 2024 (article 15), la Cnav
+      porte le solde du « régime des personnels de l'Office de radiodiffusion-télévision
+      française », restreint par la loi de financement pour 2025 (article 24) aux
+      « allocations supplémentaires de retraite » (L. 134-3, k)
+  exemples: aucun trouvé
+- id: maintien_en_activite
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006420141, article: "loi n° 74-696 du 7 août 1974, article 30", en_vigueur: 1979-12-22}
+  nee_de: LEGIARTI000006420141
+  bornes:
+    assure.generation: [1920-01-01, null]
+  contenu:
+    droit: >-
+      l'agent de moins de cinquante-cinq ans au 31 décembre 1974 n'entre pas en position
+      spéciale : il passe aux sociétés et établissements issus de l'Office, au régime
+      général et à l'Ircantec, comme avant (l'Office n'a pas de régime de base propre :
+      ses agents non titulaires relèvent de l'IGRANTE depuis l'arrêté du 5 décembre
+      1961, qui étend à la Radiodiffusion-télévision française le décret du 31 décembre
+      1959, puis de l'Ircantec ; ses fonctionnaires, détachés, gardent le code des
+      pensions civiles et militaires : le décret n° 59-613 leur ouvre la retraite
+      anticipée de l'article 169 de l'ordonnance n° 58-1374, l'article 18 du décret
+      n° 69-33 assimile les emplois d'inspecteur de l'Office pour L. 16)
+    reclassement: >-
+      les agents statutaires reclassés comme contractuels dans l'administration de
+      l'État peuvent être titularisés dans un corps de leur ministère, avec
+      reconstitution de carrière et droit à pension (décret n° 79-882 du 8 octobre 1979,
+      pris pour l'article 26 de la loi n° 77-574, connu par son analyse) ; les services
+      de contractuel accomplis du 1er janvier 1975 au 30 juin 1976 au service de
+      liquidation de l'Office sont validables au titre de L. 5 du code des pensions
+      civiles et militaires (arrêté du 14 avril 1980, connu par son analyse)
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-14
+  prochaine_relecture: 2027-10-14
+  a_relire:
+  - >-
+    Ce que sont les « allocations supplémentaires de retraite » que L. 134-3 nomme
+    depuis 2025 : le complément que l'État verse, à la limite d'âge, entre les pensions
+    de droit commun et la rémunération de position spéciale, ou une allocation propre
+    aux journalistes ? Le décret d'application de L. 134-3 et les arrêtés de 1975 qui
+    ont organisé la position spéciale, au fac-similé du Journal officiel.
+  - >-
+    L'arrêté du 26 juin 1980 (retraite complémentaire des non-journalistes en position
+    spéciale) et l'arrêté du 14 avril 1980 (validation des services au service de
+    liquidation), connus par leur seule analyse.
+  - >-
+    Le statut des journalistes de l'Office, que l'article 30 ne distingue pas, et la
+    limite d'âge « prévue par les textes qui leur sont actuellement applicables ».
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 74-696 du 7 août 1974, article 30 (LEGIARTI000006420141) ; L. 134-3 du code
+      de la sécurité sociale, rédactions du 1er janvier 2025 (LEGIARTI000048701250) et
+      du 28 février 2025 (LEGIARTI000051288904) ; lois de finances pour 2011
+      (JORFARTI000023316030), 2015 (LEGIARTI000029995083), 2025 (LEGIARTI000051173291)
+      et 2026 (LEGIARTI000053511458), état A, ligne 94 du compte Pensions ; par l'index
+      LEGI du dépôt
+    date: 2026-10-14
+  - type: jorf
+    reference: >-
+      loi n° 2023-1250, article 15 (JORFARTI000048668717) ; loi n° 2025-199, article 24
+      (JORFARTI000051269606) ; analyses du décret n° 59-613 (JORFTEXT000000673010), de
+      l'arrêté du 5 décembre 1961 (JORFTEXT000000656447), du décret n° 69-33
+      (JORFTEXT000000499869), du décret n° 79-882 (JORFTEXT000000703706), des arrêtés du
+      14 avril 1980 (JORFTEXT000000855476) et du 26 juin 1980 (JORFTEXT000000832737) ;
+      par l'index JORF du dépôt
+    date: 2026-10-14
+historique:
+- >-
+  2026-10-14 — née avec l'action 145, étape 2 : la ligne d'inventaire de l'ORTF disait
+  le régime « en extinction » sans dire ce qu'il servait ; la loi de 1974 et L. 134-3 le
+  disent.
+effet: >-
+  Les agents de l'Office nés en 1919 ou avant, mis en position spéciale de 1975 à leur
+  limite d'âge, et leurs conjoints survivants : quelques dizaines de milliers d'euros
+  par an en 2026. Les agents plus jeunes, que le modèle simule au régime général et à
+  l'Ircantec, n'en sont pas touchés.

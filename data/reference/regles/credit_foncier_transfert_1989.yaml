@@ -1,0 +1,189 @@
+schema_version: 1
+id: credit_foncier_transfert_1989
+intitule: >-
+  Au 1er janvier 1989, le régime spécial d'assurance invalidité et vieillesse du Crédit
+  foncier de France prend fin : ses pensions en cours et les droits non liquidés
+  deviennent des rentes du régime général, égales à la moitié du salaire plafond moyen
+  de 1988 pour cent cinquante trimestres validés depuis le 1er juillet 1930 et en
+  cent-cinquantièmes au-dessous ; ses pensions de retraite pour invalidité des moins de
+  soixante ans deviennent des pensions d'invalidité de 30 ou 50 % de ce plafond ; la
+  caisse de retraites du Crédit foncier, institution de retraite supplémentaire, sert
+  le reste des droits.
+domaine: coordination
+regimes: [credit_foncier, regime_general]
+etape: coordonner_les_affiliations
+face: droit
+etat: pas_encore_modelisee
+lit:
+- les périodes d'affiliation au régime spécial du 1er juillet 1930 au 31 décembre 1988, telles qu'il les a validées, et les périodes assimilées et majorations du régime général qui s'y rattachent
+- "la situation au 31 décembre 1988 : pension de retraite, de retraite pour invalidité (et sa catégorie) ou de réversion en cours, âge"
+ecrit:
+- une rente du régime général, immédiate ou différée, ou une pension d'invalidité, et leur réversion
+dates_qui_decident:
+- liquidation.date_effet
+# Le régime est hors champ (inventaire) : aucune version n'est lue par un moteur. Le
+# gabarit est celui des transferts de la Compagnie générale des eaux (1991) et de la
+# CCI de Roubaix (1998), dont le décret n° 89-157 est le premier.
+versions:
+- id: regime_special
+  statut: supposee
+  hypothese: >-
+    de 1931 à 1988, le Crédit foncier sert ses propres pensions de retraite, de retraite
+    pour invalidité et de réversion, sous le décret du 6 août 1931 « fixant le régime
+    d'assurances des agents du Crédit foncier de France » et ses règlements, que l'index
+    ne publie pas ; la caisse de retraites du Crédit foncier contribue au fonds spécial
+    d'allocation vieillesse (240 847 F en 1984, décret n° 84-104, article 2)
+  fiabilite: faible pour le montant, haute pour l'existence du régime
+  bornes:
+    liquidation.date_effet: [null, 1989-01-01]
+  contenu:
+    droit: une pension du régime spécial, dont les règles ne sont pas lues
+    sante: >-
+      les retraités relèvent pour la maladie d'un régime propre, organisé en application
+      de l'article 72 de l'ordonnance n° 45-2454 (décret n° 48-1852 du 7 décembre 1948,
+      entré en vigueur le 1er octobre 1948, et décret n° 49-582 du 22 avril 1949, connus
+      par leur seule analyse)
+  exemples: aucun trouvé
+- id: rentes_de_transfert
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006756499, article: "loi n° 89-18 du 13 janvier 1989, article 13", en_vigueur: 1989-01-14}
+  - {id: LEGIARTI000006774339, article: "décret n° 89-157 du 8 mars 1989, article 1er", en_vigueur: 1989-03-10}
+  - {id: LEGIARTI000006774340, article: "décret n° 89-157, article 2", en_vigueur: 1989-03-10}
+  - {id: LEGIARTI000006774341, article: "décret n° 89-157, article 3", en_vigueur: 1989-03-10}
+  - {id: LEGIARTI000006774342, article: "décret n° 89-157, article 4", en_vigueur: 1989-03-10}
+  - {id: LEGIARTI000006774343, article: "décret n° 89-157, article 5", en_vigueur: 1989-03-10}
+  - {id: LEGIARTI000006774344, article: "décret n° 89-157, article 6", en_vigueur: 1989-03-10}
+  - {id: LEGIARTI000006774345, article: "décret n° 89-157, article 7", en_vigueur: 1989-03-10}
+  - {id: LEGIARTI000006774346, article: "décret n° 89-157, article 8", en_vigueur: 1989-03-10}
+  - {id: LEGIARTI000006774347, article: "décret n° 89-157, article 9", en_vigueur: 1989-03-10}
+  - {id: LEGIARTI000006774348, article: "décret n° 89-157, article 10", en_vigueur: 1989-03-10}
+  - {id: LEGIARTI000006774349, article: "décret n° 89-157, article 11", en_vigueur: 1989-03-10}
+  - {id: LEGIARTI000006774350, article: "décret n° 89-157, article 12", en_vigueur: 1989-03-10}
+  - {id: LEGIARTI000006774351, article: "décret n° 89-157, article 13", en_vigueur: 1989-03-10}
+  - {id: LEGIARTI000006774352, article: "décret n° 89-157, article 14", en_vigueur: 1989-03-10}
+  nee_de: LEGIARTI000006756499
+  bornes:
+    liquidation.date_effet: [1989-01-01, null]
+  contenu:
+    principe: >-
+      « A compter du 1er janvier 1989, les salariés du Crédit foncier de France sont
+      affiliés au régime général de sécurité sociale pour l'ensemble des risques » ;
+      « Il est mis fin, à compter de la même date, au régime spécial d'assurance
+      invalidité et vieillesse » ; ses obligations envers les bénéficiaires au 31
+      décembre 1988 passent au régime général « dans la limite des règles propres à
+      celui-ci », le Crédit foncier pourvoyant au reste par des couvertures
+      complémentaires du titre III du livre VII (loi n° 89-18, article 13)
+    rente_immediate: >-
+      aux titulaires d'une pension de retraite au 31 décembre 1988 âgés d'au moins
+      soixante ans : « Le montant de cette rente est égal à 50 p. 100 du salaire plafond
+      moyen soumis à cotisation à l'assurance vieillesse du régime général en 1988 pour
+      les personnes justifiant d'une durée d'assurance d'au moins 150 trimestres »,
+      réduit à autant de cent-cinquantièmes que de trimestres (article 5, alinéas 1 et 2)
+    duree: >-
+      les périodes du 1er juillet 1930 au 31 décembre 1988 validées par le régime spécial,
+      de date à date, le reste de jours arrondi au trimestre supérieur à partir de
+      quarante-cinq ; les périodes assimilées des 2°, 3° et 6° de L. 351-3 et les
+      majorations de L. 351-4 et L. 351-5, comme le régime général les aurait accordées,
+      si nul autre régime ne les compte ; quatre trimestres par an et cent cinquante en
+      tout au plus (article 5, alinéas 3 à 5)
+    majorations: >-
+      majorations de L. 351-10 (premier alinéa), L. 351-12 (enfants), L. 351-13 et
+      L. 355-1 (deuxième alinéa), ces deux dernières si aucune pension ne les sert déjà
+      (article 5, alinéa 6)
+    invalidite: >-
+      les titulaires d'une pension de retraite pour invalidité de moins de soixante ans
+      reçoivent une pension d'invalidité du régime général « égal à 30 p. 100 du salaire
+      plafond moyen » de 1988 en première catégorie, 50 % en deuxième et troisième
+      (article 1er) ; les pensions d'invalidité de l'article 9 du décret du 6 août 1931
+      sont reprises intégralement (article 2) ; la pension de vieillesse qui leur est
+      substituée vaut la rente de l'article 5, revalorisée depuis 1989 (article 3)
+    rente_differee: >-
+      le régime général « garantit » une rente à jouissance différée, liquidée au
+      1er janvier 1989, aux pensionnés de moins de soixante ans, servie le premier jour
+      du mois qui suit leur soixantième anniversaire, et aux affiliés dont les droits
+      n'étaient pas liquidés, servie aux conditions d'entrée en jouissance des pensions
+      du régime général, et en même temps que la pension du régime général quand ils en
+      ont une (article 7)
+    coordination: >-
+      les pensions servies au 31 décembre 1988 en application de D. 173-1 (les
+      pensions de coordination des agents partis sans droit au régime spécial) sont
+      reprises intégralement par le régime général (article 9)
+    reversion: >-
+      rente de réversion au taux du régime général, immédiate ou différée selon ses
+      conditions, majorée selon L. 353-1 et L. 353-5 (articles 5, 6 et 8) ; pension
+      d'invalidité de veuf ou de veuve avant cinquante-cinq ans (article 4) ; allocation
+      de veuvage (article 10)
+    service: >-
+      la Cnav liquide les rentes, sert celles de ses propres pensionnés par l'organisme
+      qui sert leur pension, le Crédit foncier avance les prestations jusqu'au 31
+      décembre 1989 (articles 12 et 13 ; acomptes de l'arrêté du 18 août 1989 :
+      32 millions de francs au 1er septembre 1989, 12 millions au 1er décembre 1989 et
+      au 1er mars 1990)
+    abrogation: >-
+      le décret du 6 août 1931 et les décrets n° 48-1852 et n° 49-582 sont abrogés au
+      1er janvier 1989 (article 14)
+    complement: >-
+      le reste des droits, que la rente ne couvre pas, est servi par la caisse des
+      retraites du Crédit foncier de France (CRCFF), institution de retraite autorisée à
+      fonctionner au 1er janvier 1989 « dans les conditions prévues au titre III du
+      livre VIII », avec deux règlements, pour les agents entrés avant et après le
+      1er janvier 1970 (arrêté du 16 juin 1989, connu par son analyse ; règlement
+      intérieur modifié par l'arrêté du 4 février 1993, qui la dit du titre III du livre
+      VII) ; en 2009, au titre de l'article 116 de la loi n° 2003-775, ses provisions
+      passent à AXA France Vie, CARDIF et SOGECAP (décision de l'ACAM du 11 mars 2009) :
+      une retraite d'entreprise, hors des régimes obligatoires, dont aucun règlement
+      n'est lu et que le scénario 1 ne simule pas
+  unites:
+    rente: >-
+      fraction du plafond annuel de 1988, revalorisée comme les pensions du régime
+      général ; le plafond annuel de 1988 que le dépôt porte
+      (`macro/plafond_securite_sociale.csv`) vaut 18 349 €, soit 120 362 F, et la rente
+      pleine environ 60 180 F, à confirmer contre le « salaire plafond moyen » que la
+      Cnav a retenu
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-14
+  prochaine_relecture: 2027-10-14
+  a_relire:
+  - >-
+    Le « salaire plafond moyen soumis à cotisation à l'assurance vieillesse du régime
+    général en 1988 » : la valeur que la Cnav a retenue (moyenne des plafonds mensuels de
+    l'année), à lire dans sa circulaire d'application de 1989, avec le montant de la
+    rente pleine.
+  - >-
+    Le gabarit des trois transferts : la rente pleine de la Compagnie générale des eaux,
+    64 650 F en 1991, voisine de la moitié du plafond annuel de 1990 ; celle de la CCI
+    de Roubaix, 62 150 F en 1998, nettement en deçà de la moitié du plafond de 1997 :
+    vérifier si les décrets de 1991 et de 1998 reprennent, en francs, la règle de la
+    moitié du plafond d'une année antérieure.
+  - >-
+    Le décret du 6 août 1931 et les règlements de la CRCFF (1989, 1993) : au fac-similé
+    du Journal officiel, ou auprès des assureurs qui servent ses rentes depuis 2009.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 89-18 du 13 janvier 1989, article 13 (LEGIARTI000006756499) ; décret
+      n° 89-157 du 8 mars 1989 (JORFTEXT000000872102), articles 1er à 15
+      (LEGIARTI000006774338 à LEGIARTI000006774352), par l'index LEGI du dépôt
+    date: 2026-10-14
+  - type: jorf
+    reference: >-
+      analyses de l'arrêté du 16 juin 1989 (JORFTEXT000000479489), de l'arrêté du 18 août
+      1989 (JORFTEXT000000476369), de l'arrêté du 4 février 1993 (JORFARTI000001193713),
+      de l'avis du 3 avril 2009 (JORFARTI000020478201), des décrets n° 48-1852
+      (JORFTEXT000000496000) et n° 49-582 (JORFTEXT000000300199), par l'index JORF du
+      dépôt
+    date: 2026-10-14
+historique:
+- >-
+  2026-10-14 — née avec l'action 145, étape 2 : la ligne d'inventaire du Crédit foncier
+  disait que le dépôt n'avait « pas de source pour le barème d'avant » ; le décret de
+  transfert, lu, donne la règle qui vaut depuis 1989 pour tous ses anciens agents.
+effet: >-
+  Les anciens agents du Crédit foncier entrés avant 1989, nés avant 1929 pour les
+  pensionnés et jusqu'aux générations des années 1960 pour les droits non liquidés :
+  leurs années d'avant 1989 valent une rente forfaitaire du régime général, la moitié du
+  plafond de 1988 revalorisée pour une carrière de cent cinquante trimestres, et non une
+  pension calculée sur leur salaire. Le modèle, qui n'a pas de statut pour eux, les
+  simule au régime général sur toute leur carrière.

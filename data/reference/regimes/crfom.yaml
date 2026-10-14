@@ -20,5 +20,7 @@ inventaire:
     Régime des cadres coloniaux fermé par la loi de finances pour 1976 :
     ses derniers actifs ont été affiliés d'office aux pensions civiles et
     militaires au 1er janvier 1976, et ses pensions sont servies par
-    l'État. Le statut `fonctionnaire_etat` porte la carrière ; le dépôt
-    n'a pas le règlement du décret du 21 avril 1950.
+    l'État. Le statut `fonctionnaire_etat` porte la carrière, sans la
+    limite d'âge du cadre ni les bonifications de services hors d'Europe
+    que la loi leur garde ; le dépôt n'a pas le règlement du décret
+    n° 50-461 du 21 avril 1950 (fiche `crfom_regime_du_decret_1950`).

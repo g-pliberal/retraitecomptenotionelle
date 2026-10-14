@@ -1,0 +1,158 @@
+schema_version: 1
+id: crfom_regime_du_decret_1950
+intitule: >-
+  Les fonctionnaires des cadres locaux des colonies, puis de la France d'outre-mer,
+  cotisent de 1924 à 1975 à la caisse intercoloniale de retraites, devenue caisse de
+  retraites de la France d'outre-mer, sous le décret du 1er novembre 1928 puis le décret
+  n° 50-461 du 21 avril 1950 ; ceux qui restent tributaires de ce régime en sont
+  affiliés d'office au code des pensions civiles et militaires au 1er janvier 1976,
+  en gardant leur limite d'âge et les bonifications de services hors d'Europe de
+  l'article 9 du décret de 1950.
+domaine: coordination
+regimes: [crfom, fonction_publique_etat]
+etape: coordonner_les_affiliations
+face: droit
+etat: pas_encore_modelisee
+lit:
+- les services accomplis dans les cadres locaux des colonies et de la France d'outre-mer, et le territoire où ils l'ont été
+- les options exercées en 1959 (maintien au régime de 1950) et en 1966 (renonciation), et l'intégration dans un corps de l'État
+- la limite d'âge du cadre d'origine, au 31 décembre 1975
+ecrit:
+- une pension du régime de 1950, ou une pension du code des pensions civiles et militaires qui en garde la limite d'âge et les bonifications
+dates_qui_decident:
+- liquidation.date_effet
+# Le régime est hors champ (inventaire) : aucune version n'est lue par un moteur. Le
+# statut `fonctionnaire_etat` porte la carrière, au code des pensions civiles et
+# militaires de chaque année.
+versions:
+- id: caisse_intercoloniale
+  statut: supposee
+  hypothese: >-
+    la loi du 14 avril 1924 crée la caisse intercoloniale de retraites, à laquelle sont
+    assujettis « les fonctionnaires et agents des cadres locaux européens des colonies,
+    pays de protectorat et territoires à mandat » dont les emplois ne conduisent pas à
+    pension sur le Trésor, alimentée par une retenue au taux des articles 3 et 6 de la
+    loi et par des subventions des budgets locaux, et qui absorbe les caisses locales
+    (article 71, lu) ; ses pensions suivent le décret du 1er novembre 1928, modifié en
+    1931, 1933, 1936, 1940 et 1943, que l'index ne porte que par ses analyses : les
+    règles de durée, de taux et d'âge ne sont pas lues
+  fiabilite: haute pour l'existence et les tributaires, nulle pour le calcul
+  textes:
+  - {id: LEGIARTI000020851163, article: "loi du 14 avril 1924, article 71", en_vigueur: 1924-04-16}
+  bornes:
+    liquidation.date_effet: [null, 1950-04-24]
+  contenu:
+    droit: >-
+      une pension de la caisse intercoloniale, aux tributaires du décret du 1er novembre
+      1928, dont le calcul n'est pas lu ; les fonctionnaires en activité en 1924
+      pouvaient opter, définitivement, pour leur régime antérieur (loi du 14 avril 1924,
+      article 71, dernier alinéa)
+  exemples: aucun trouvé
+- id: regime_du_decret_1950
+  statut: supposee
+  hypothese: >-
+    le décret n° 50-461 du 21 avril 1950, « portant règlement d'administration publique
+    relatif au régime des pensions de la caisse intercoloniale de retraites », n'est pas
+    dans l'index ; il n'est connu que par les textes qui le citent : la mise à la
+    retraite de son article 3, les bonifications de services hors d'Europe de son
+    article 9 (modifié par le décret n° 56-7 du 3 janvier 1956), les réductions d'âge
+    et de durée de ses articles 5, paragraphe II, et 6, la retenue de 6 % et, pour le
+    fonctionnaire détaché, la contribution de 14 % (décret n° 50-1348, article 43)
+  fiabilite: haute pour ce que les textes lus en disent, nulle pour le calcul
+  textes:
+  - {id: LEGIARTI000006362882, article: "code des pensions civiles et militaires, R*2", en_vigueur: 1964-12-01}
+  - {id: LEGIARTI000006457152, article: "décret n° 66-808 du 28 octobre 1966, article 2", en_vigueur: 1966-11-03}
+  - {id: LEGIARTI000006501902, article: "décret n° 68-20 du 5 janvier 1968, article 23", en_vigueur: 1968-01-11}
+  - {id: LEGIARTI000006501742, article: "décret n° 53-711 du 9 août 1953, article 6", en_vigueur: 1953-08-10}
+  - {id: LEGIARTI000006504747, article: "décret n° 50-1348 du 27 octobre 1950, article 43", en_vigueur: 1950-10-28}
+  - {id: LEGIARTI000006504750, article: "décret n° 50-1348, article 46", en_vigueur: 1950-10-28}
+  bornes:
+    liquidation.date_effet: [1950-04-24, 1976-01-01]
+  contenu:
+    droit: >-
+      une pension de la caisse de retraites de la France d'outre-mer, dont le calcul
+      n'est pas lu
+    maintien: >-
+      à la fin des cadres de la France d'outre-mer, les fonctionnaires intégrés dans un
+      corps autonome ou latéral restent tributaires du régime de 1950 s'ils le demandent
+      dans les six mois (décret n° 59-1379, article 41, cité par R*2 du code des pensions
+      civiles et militaires), et encore six mois après une intégration dans un corps
+      métropolitain (R*2) ; en Polynésie, de même, à l'intégration dans les corps de
+      l'État (décret n° 68-20, article 23)
+    renonciation: >-
+      de novembre 1966 à mai 1967, ceux qui sont restés tributaires peuvent y renoncer,
+      en activité : leurs droits relèvent alors du code des pensions civiles et
+      militaires (décret n° 66-808, article 2)
+    mise_a_la_retraite: >-
+      ils peuvent être mis d'office à la retraite, s'ils ont l'âge et les services d'une
+      pension d'ancienneté, quand des emplois non vacants de leur cadre sont supprimés
+      (décret n° 53-711, article 6)
+  exemples: aucun trouvé
+- id: affiliation_d_office_1976
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006272976, article: "loi n° 75-1278 du 30 décembre 1975, article 73", en_vigueur: 1975-12-31}
+  nee_de: LEGIARTI000006272976
+  bornes:
+    liquidation.date_effet: [1976-01-01, null]
+  contenu:
+    affiliation: >-
+      « Les fonctionnaires en activité relevant du régime spécial du décret du 21 avril
+      1950 sont affiliés d'office à compter du 1er janvier 1976 au régime général des
+      pensions civiles et militaires de retraite. Ils conserveront la limite d'âge dont
+      ils relevaient antérieurement au 1er janvier 1976 ainsi que le bénéfice des
+      bonifications prévues à l'article 9 » (article 73, II)
+    fenetre: >-
+      pendant trois ans à compter de la promulgation de la loi, le 30 décembre 1975, ils peuvent
+      partir avec les réductions d'âge et de durée de service des articles 5,
+      paragraphe II, 6 et 9, dernier alinéa, du décret de 1950 (article 73, II)
+    alignement: >-
+      les pensionnés du régime de 1950 et leurs ayants cause bénéficient des avantages
+      des modifications du code des pensions civiles et militaires postérieures au
+      1er janvier 1961, sans effet pécuniaire avant le 1er janvier 1976 et sans restreindre
+      les droits liquidés des ayants cause (article 73, I)
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-14
+  prochaine_relecture: 2027-10-14
+  a_relire:
+  - >-
+    Le décret n° 50-461 du 21 avril 1950, au fac-similé du Journal officiel du 24 avril
+    1950 : durée, taux, âge, bonifications de l'article 9, réductions des articles 5 et
+    6 ; et le décret du 1er novembre 1928 avec ses modifications, pour les pensions
+    d'avant 1950.
+  - >-
+    Le taux de la retenue des articles 3 et 6 de la loi du 14 avril 1924 et sa suite
+    jusqu'en 1950.
+  - >-
+    Qui sert aujourd'hui les pensions de la CRFOM, et sur quelle ligne du compte
+    Pensions : le service des retraites de l'État, au titre des pensions civiles, ou un
+    programme à part.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi du 14 avril 1924, article 71 (LEGIARTI000020851163) ; loi n° 75-1278, article
+      73 (LEGIARTI000006272976) ; R*2 du code des pensions civiles et militaires
+      (LEGIARTI000006362882) ; décret n° 50-1348, articles 43 et 46 ; décret n° 53-711,
+      article 6 ; décret n° 66-808, article 2 ; décret n° 68-20, article 23 ; par
+      l'index LEGI du dépôt
+    date: 2026-10-14
+  - type: jorf
+    reference: >-
+      analyses du décret du 1er novembre 1928 (JORFTEXT000000850743) et de ses
+      modifications de 1931, 1933, 1936, 1940 et 1943, du décret n° 56-7
+      (JORFTEXT000000687514), de l'arrêté du 24 décembre 1952 pris pour l'article 15 du
+      décret n° 50-461 (JORFTEXT000000797881) ; par l'index JORF du dépôt
+    date: 2026-10-14
+historique:
+- >-
+  2026-10-14 — née avec l'action 145, étape 2 : la ligne d'inventaire disait que le
+  dépôt n'avait pas le règlement du décret du 21 avril 1950 ; il ne l'a toujours pas,
+  mais la loi de 1975 et les options de 1959 et 1966, lues, disent ce que devient la
+  carrière de ses derniers tributaires.
+effet: >-
+  Les fonctionnaires des anciens cadres de la France d'outre-mer encore en activité en
+  1976, nés pour la plupart de 1915 à 1945 : le modèle simule leur carrière au code des
+  pensions civiles et militaires, sans la limite d'âge de leur cadre ni les
+  bonifications de services hors d'Europe que la loi leur garde ; les pensions
+  liquidées avant 1976 sous le régime de 1950 ne sont pas simulées.

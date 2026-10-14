@@ -13,8 +13,13 @@ inventaire:
   couverture: hors_champ
   statuts: []
   textes:
+    - {reference: "loi n° 89-18 du 13 janvier 1989, article 13 (fin du régime spécial d'assurance invalidité et vieillesse au 1er janvier 1989)", id: LEGIARTI000006756499}
     - {reference: "décret n° 89-157 du 8 mars 1989 fixant les modalités du transfert au régime général, au 1er janvier 1989, du régime spécial du Crédit foncier", id: LEGIARTI000006774339}
   raison_hors_champ: >-
     Transféré au régime général au 1er janvier 1989, pensions et cotisants
-    compris : les droits acquis sont servis par le régime général et le
-    dépôt n'a pas de source pour le barème d'avant.
+    compris : les droits acquis avant 1989 deviennent une rente forfaitaire
+    du régime général, la moitié du plafond de 1988 pour cent cinquante
+    trimestres (décret n° 89-157, fiche `credit_foncier_transfert_1989`),
+    et le reste est une retraite d'entreprise, servie par assureurs depuis
+    2009. Le dépôt n'a pas le barème du régime spécial d'avant 1989
+    (décret du 6 août 1931).
