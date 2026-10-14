@@ -271,27 +271,51 @@ conventions_points:
 # Avant 2019, que la figure ne couvre pas, le premier rapport est reconduit :
 # le point d'indice a perdu le tiers de sa valeur sur le salaire moyen depuis
 # 2000, et le décrochage d'avant est sous-estimé d'autant.
-# L'entrée tardive dans la fonction publique de l'État (action 147, étape 11).
-# Deux sources. L'annexe méthodologique en ligne du rapport de juin 2026
-# (§ 2.1, cas types de fonctionnaires de l'État), d'après l'EIC 2013 de la
-# DREES et les comptes individuels retraite du SRE : « les fonctionnaires
-# entrent dans la vie active en moyenne un à trois ans avant d'entrer dans le
-# régime de la FPE ». Le rapport de juin 2026, partie 2, chapitre 1, note 69 :
-# « La durée retenue pour le coefficient de proratisation serait en baisse
-# d'environ 6 ans entre les générations qui partent actuellement à la
-# retraite et la génération 2000. »
+# L'entrée tardive dans la fonction publique (action 147, étape 11 ; action
+# 159, étape 5). Trois sources. L'annexe méthodologique en ligne du rapport du
+# COR de juin 2026 (§ 2.1, cas types de fonctionnaires de l'État), d'après
+# l'EIC 2013 de la DREES et les comptes individuels retraite du SRE : « les
+# fonctionnaires entrent dans la vie active en moyenne un à trois ans avant
+# d'entrer dans le régime de la FPE ». Le rapport de juin 2026, partie 2,
+# chapitre 1, note 69 : « La durée retenue pour le coefficient de
+# proratisation serait en baisse d'environ 6 ans entre les générations qui
+# partent actuellement à la retraite et la génération 2000. » Le jaune
+# pensions annexé au PLF 2027 (`sre_jaune_pensions_2027`), qui mesure les
+# services des départs : 142,9 trimestres de services et de bonifications aux
+# civils de l'État partis pour ancienneté en catégorie sédentaire en 2004,
+# 144,5 en 2025 (tableau 95) ; 134,2 aux actifs de la CNRACL partis en 2025, à
+# 61,0 ans, pour 180,7 trimestres tous régimes (tableau B-5).
 #
-# Le cas type de fonctionnaire sédentaire (castypes.py) commence sa carrière
-# au même âge, mais sous le statut que nomme son champ
-# `affiliation_avant_entree` — contractuel de la fonction publique — pendant
-# `annees` années : deux pour la génération 1962, qui part en ce moment, huit
-# pour la génération 2000, et de l'une à l'autre en ligne droite ; avant la
-# première et après la seconde, la valeur du bord. Il part à l'âge que le droit
-# ouvre à sa carrière d'un seul statut (pilote.py) : seule sa pension se
-# partage, entre l'État d'un côté, le régime général et l'Ircantec de l'autre.
+# Le cas type du fonctionnaire sédentaire (castypes.py) commence sa carrière au
+# même âge, mais sous le statut que nomme son champ `affiliation_avant_entree`
+# — contractuel de la fonction publique — pendant `annees` années, en ligne
+# droite d'un point à l'autre et la valeur du bord au-delà : deux pour la
+# génération 1944, qu'il fait partir à 60 ans en 2004, six pour la génération
+# 1961, qu'il fait partir à 64 ans en 2025 — ce qui sépare alors sa carrière
+# des services du jaune, à un trimestre près —, et six de plus pour la
+# génération 2000, la pente du COR. Le délai porte plus que l'entrée tardive
+# que le COR mesure, un à trois ans : tout ce que les services ne comptent pas
+# et la durée si, le temps partiel, la disponibilité. Jusqu'au 14 octobre
+# 2026, il valait deux ans jusqu'à la génération 1962 et huit pour la
+# génération 2000. Il part à l'âge que le droit ouvre à sa carrière d'un seul
+# statut (pilote.py) : seule sa pension se partage, entre l'État d'un côté, le
+# régime général et l'Ircantec de l'autre.
 entree_fonction_publique:
-  - {generation: 1962, annees: 2}
-  - {generation: 2000, annees: 8}
+  - {generation: 1944, annees: 2}
+  - {generation: 1961, annees: 6}
+  - {generation: 2000, annees: 12}
+
+# L'entrée tardive à la CNRACL (action 159, étape 5), celle du cas type de
+# catégorie active, de la même façon. Six ans pour toutes les générations : le
+# jaune ne mesure les services des actifs de la CNRACL qu'en 2025, et le cas
+# type, parti cette année-là au taux plein à 62 ans, en tombe à deux trimestres
+# près en passant six ans sous contrat. Rien ne dit comment ce délai a varié ni
+# comment il variera : le COR n'écrit sa baisse des services que pour l'État,
+# et la grille suivait déjà sans délai, à 4 % près, la pension relative qu'il
+# projette pour la CNRACL ; la pente de l'État l'en écartait de 18 %
+# (`test_l_ecart_au_cor_groupe_par_groupe`).
+entree_cnracl:
+  - {generation: 1963, annees: 6}
 
 traitement_indiciaire:
   annee_base: 2025

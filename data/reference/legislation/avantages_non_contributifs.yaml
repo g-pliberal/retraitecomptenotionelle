@@ -429,10 +429,6 @@ avantages:
     regimes: fonction publique, régimes spéciaux
     etat_modele: chiffre
     ligne_cascade: minimum_garanti
-    sans_chiffre: >-
-      aucun cas type de la grille ne l'atteint, le militaire étant au niveau
-      moyen de son régime : il va aux carrières courtes ou basses, que les cas
-      types ne portent pas
     cout:
       mesurable_par: modele
       source_id: sre_minimum_garanti

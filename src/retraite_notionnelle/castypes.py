@@ -70,14 +70,17 @@ class CasType:
     #:
     #: ``ouverture`` — l'âge auquel le droit OUVRE la liquidation, sans égard
     #: à la durée. C'est celle des carrières dont un STATUT commande le départ :
-    #: la catégorie active, l'agent de conduite, l'agent des IEG. Leur cas type
-    #: existe pour montrer ce départ-là ; les faire attendre le taux plein
-    #: reviendrait à les calculer en sédentaires, ce dont le dépôt vient de
-    #: sortir. Elle suit tout ce que le droit fait varier — l'âge légal par
-    #: génération, l'anticipation du classement, l'âge propre d'un régime
-    #: spécial, et jusqu'à sa FERMETURE : l'agent de conduite né en 2000 est
-    #: embauché après 2020, relève du régime général, et liquide donc à l'âge
-    #: de celui-ci et non à cinquante-deux ans.
+    #: l'agent de conduite, l'agent des IEG. Leur cas type existe pour montrer
+    #: ce départ-là. Elle suit tout ce que le droit fait varier — l'âge légal
+    #: par génération, l'âge propre d'un régime spécial, et jusqu'à sa
+    #: FERMETURE : l'agent de conduite né en 2000 est embauché après 2020,
+    #: relève du régime général, et liquide donc à l'âge de celui-ci et non à
+    #: cinquante-deux ans. La catégorie active l'a portée jusqu'au 14 octobre
+    #: 2026 : le jaune pensions annexé au PLF 2027 a montré que ses agents n'en
+    #: usent pas — les actifs de la CNRACL partent à 61,0 ans en 2025, trois
+    #: ans et quart après l'ouverture du cas type, et 7,8 % seulement avec une
+    #: décote (tableau B-5) —, et elle part depuis au taux plein, que le
+    #: classement lui ouvre plus tôt qu'aux sédentaires (action 159, étape 5).
     #:
     #: ``services`` — l'âge d'entrée augmenté de :attr:`ecart_liquidation`
     #: années de services. La pension militaire ne s'ouvre pas à un âge mais à
@@ -94,10 +97,16 @@ class CasType:
     #: le statut des premières années, avant l'entrée dans le régime de
     #: l'affiliation, pendant
     #: :meth:`~retraite_notionnelle.donnees.macro.DonneesMacro.delai_entree_fonction_publique`
-    #: années (action 147, étape 11). Vide, la carrière n'a qu'un statut, et
-    #: la page Cas types montre toujours celle-là : le droit d'une carrière,
-    #: non une projection.
+    #: années (action 147, étape 11 ; les deux fonctionnaires civils, au délai
+    #: que mesurent les services du jaune pensions, depuis l'action 159,
+    #: étape 5). Vide, la carrière n'a qu'un statut, et la page Cas types
+    #: montre toujours celle-là : le droit d'une carrière, non une projection.
     affiliation_avant_entree: str = ""
+    #: La série de ``macro/hypotheses_projection.yaml`` qui donne ce délai,
+    #: génération par génération (:meth:`~retraite_notionnelle.donnees.macro.DonneesMacro.delai_entree`) :
+    #: celle de l'État, que le COR fait croître de six ans d'ici la génération
+    #: 2000, ou celle de la CNRACL, que rien ne fait varier.
+    serie_entree: str = "entree_fonction_publique"
 
     def niveau_relatif(self, simulateur: Simulateur, generation: int) -> float:
         """Son salaire en multiples du salaire moyen : ce qui le RATTACHE à un
@@ -131,7 +140,7 @@ class CasType:
         le pilote fixe : celle que les indicateurs à chaque âge de départ
         balaient (:func:`~retraite_notionnelle.cycle_de_vie.balayage`)."""
         if self.affiliation_avant_entree and simulateur.parametres.conventions_cor:
-            delai = simulateur.macro.delai_entree_fonction_publique(generation)
+            delai = simulateur.macro.delai_entree(self.serie_entree, generation)
             if delai > 0.0:
                 return self._carriere_entree_tardive(simulateur, generation, age, delai)
         return self._carriere(simulateur, generation, age)
@@ -291,19 +300,30 @@ CAS_TYPES: tuple[CasType, ...] = (
         code="fonctionnaire_actif",
         libelle="Fonctionnaire de catégorie active (départ anticipé)",
         affiliation="fonctionnaire_territorial_hospitalier_actif",
-        age_debut=22, age_liquidation=57, niveau_salaire=1.1,
+        # L'agent actif moyen des départs de 2025 à la CNRACL, au jaune pensions
+        # annexé au PLF 2027 (tableau B-5 ; action 159, étape 5) : mis en
+        # paiement à 61,0 ans, à l'indice 508, après 127,6 trimestres de
+        # services, 7,8 % seulement avec une décote. Le cas type partait à
+        # l'âge d'ouverture, au niveau de 1,1 salaire moyen : trois ans et
+        # quart trop tôt, sur un traitement d'un cinquième trop haut, deux
+        # erreurs qui se compensaient. Le taux plein rend le départ, à
+        # soixante-deux ans pour la génération qui part en 2025 ; le niveau de
+        # 0,9, l'indice ; l'entrée tardive de la page Coût, les services.
+        age_debut=22, age_liquidation=62, niveau_salaire=0.9,
         part_primes=0.22,
         profil_carriere="public_categorie_c",
         caisses=("cnracl",),
-        regle_liquidation="ouverture",
+        affiliation_avant_entree="contractuel_public",
+        serie_entree="entree_cnracl",
         commentaire=(
             "Aide-soignant, agent technique territorial : l'emploi est classé, "
-            "et le départ anticipé de cinq années est celui que l'article L. 24 "
-            "lui ouvre, non une anticipation sanctionnée. Le cas type était "
-            "calculé comme un sédentaire tant qu'aucun statut ne portait le "
-            "classement. L'âge suit sa génération : cinquante-cinq ans jusqu'à "
-            "celle de 1956, cinquante-sept ensuite, cinquante-neuf pour celles "
-            "que la réforme de 2023 atteint."
+            "et l'article L. 24 lui ouvre la pension cinq ans avant les "
+            "sédentaires — cinquante-cinq ans jusqu'à la génération 1956, "
+            "cinquante-sept ensuite, cinquante-neuf pour celles que la réforme "
+            "de 2023 atteint. Il ne part pas pour autant à cet âge : comme les "
+            "actifs de la CNRACL, mis en paiement à 61 ans en 2025 et presque "
+            "tous sans décote, il attend le taux plein, que le classement lui "
+            "ouvre plus tôt qu'aux sédentaires."
         ),
     ),
     CasType(

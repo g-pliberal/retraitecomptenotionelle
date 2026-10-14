@@ -598,20 +598,31 @@ class DonneesMacro:
 
     def delai_entree_fonction_publique(self, generation: int) -> float:
         """Les années qu'un fonctionnaire de l'État né en ``generation`` passe
-        sous un autre statut avant d'entrer dans le régime
+        sous un autre statut avant d'entrer dans son régime
         (``entree_fonction_publique`` de ``macro/hypotheses_projection.yaml``,
-        action 147, étape 11).
+        action 147, étape 11 ; action 159, étape 5).
 
-        Deux pour la génération qui part en ce moment, d'après l'EIC 2013 que
-        cite l'annexe méthodologique du COR (« un à trois ans »), huit pour la
-        génération 2000, la durée de services retenue pour la proratisation
-        baissant « d'environ 6 ans » (rapport de juin 2026, note 69) ; en ligne
-        droite entre les points du fichier, la valeur du bord au-delà, zéro
-        sans fichier. Seuls les cas types la lisent, sous les conventions du
-        COR (:meth:`~retraite_notionnelle.castypes.CasType.construire`).
+        Deux pour la génération 1944, six pour la génération 1961 : ce qui
+        sépare la carrière du cas type, à son départ, des services que le
+        jaune pensions mesure aux départs de 2004 et de 2025 (annexe au PLF
+        2027, tableau 95). Six de plus pour la génération 2000, la durée de
+        services retenue pour la proratisation baissant « d'environ 6 ans »
+        (rapport du COR de juin 2026, note 69).
+        """
+        return self.delai_entree("entree_fonction_publique", generation)
+
+    def delai_entree(self, serie: str, generation: int) -> float:
+        """Les années qu'un fonctionnaire civil né en ``generation`` passe
+        sous un autre statut avant d'entrer dans son régime, lues dans la
+        série ``serie`` de ``macro/hypotheses_projection.yaml`` : celle de
+        l'État (:meth:`delai_entree_fonction_publique`), ou celle de la CNRACL,
+        ``entree_cnracl`` (action 159, étape 5). En ligne droite entre les
+        points de la série, la valeur du bord au-delà, zéro sans elle. Seuls
+        les cas types la lisent, sous les conventions du COR
+        (:meth:`~retraite_notionnelle.castypes.CasType.construire`).
         """
         points = sorted((int(point["generation"]), float(point["annees"]))
-                        for point in self._hypotheses.get("entree_fonction_publique") or ())
+                        for point in self._hypotheses.get(serie) or ())
         if not points:
             return 0.0
         if generation <= points[0][0]:

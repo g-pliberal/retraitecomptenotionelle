@@ -210,17 +210,20 @@ def test_corriger_les_ages_eloigne_le_modele_du_COR(mesure):
 def test_les_deux_criteres_d_age_tirent_en_sens_contraire(mesure, simulateur):
     """Ce que la mesure laisse ouvert, et qu'elle ne tranche pas.
 
-    Rapprocher chaque cas type de SA catégorie éloigne leur SOMME de l'âge
-    conjoncturel tous régimes. Les deux critères ne peuvent pas être satisfaits
-    ensemble, et les quatre cas types hors champ — un douzième de la grille, à
-    des âges de quarante-huit ans et demi à cinquante-sept ans — sont le suspect. Ce test
-    tient le constat, pas son explication.
+    Rapprocher chaque cas type de SA catégorie fait passer leur SOMME de
+    l'autre côté de l'âge conjoncturel tous régimes : la grille des fiches
+    part 0,29 an plus tard que la France réelle, le contrefactuel 0,20 an plus
+    tôt. Les deux critères ne peuvent pas être satisfaits ensemble, et les
+    cinq cas types hors champ, aux âges de leurs statuts, sont le suspect. Ce
+    test tient le constat, pas son explication. Jusqu'au 14 octobre 2026, la
+    grille des fiches était aussi la plus proche, à 0,07 an : l'agent de la
+    CNRACL partait à l'âge d'ouverture, et non au taux plein (action 159,
+    étape 5).
     """
     fiches = CAD.concordance_du_depot(simulateur.parametres, CAS_TYPES)
     contrefactuel = CAD.concordance_du_depot(simulateur.parametres, mesure["corrigee"])
-    assert abs(fiches) < 0.2
-    assert contrefactuel < fiches
-    assert abs(contrefactuel) > abs(fiches)
+    assert 0.0 < fiches < 0.4
+    assert contrefactuel < 0.0 < fiches
 
 
 def test_le_plafond_de_decote_ne_mord_sur_aucune_liquidation_ouverte(simulateur):

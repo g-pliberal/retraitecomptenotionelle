@@ -19,13 +19,13 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 
   **La limite tient toujours, mais elle ne mord plus sur le chiffre publié**,
   parce que le chiffre publié n'est plus calculé. Les avantages non contributifs
-  valent <!--chiffre:mesure(avantages?annee=2024)-->97,9<!--/--> milliards en 2024, soit <!--chiffre:mesure(avantages?annee=2024&quoi=part_depense)-->23,0<!--/--> % de la dépense, et **<!--chiffre:mesure(avantages?annee=2024&quoi=part_lue)-->84<!--/--> % de ce
+  valent <!--chiffre:mesure(avantages?annee=2024)-->99,3<!--/--> milliards en 2024, soit <!--chiffre:mesure(avantages?annee=2024&quoi=part_depense)-->23,3<!--/--> % de la dépense, et **<!--chiffre:mesure(avantages?annee=2024&quoi=part_lue)-->83<!--/--> % de ce
   total est LU** : la réversion dans l'enquête de la DREES auprès des caisses,
   et dix autres lignes dans les sous-postes des Comptes de la protection
   sociale, dont la majoration pour enfants à <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=majoration_enfants)-->7,8<!--/--> milliards — que le modèle
   chiffrait à zéro. Le COR chiffre l'ensemble des droits de solidarité à « de
   l'ordre d'un cinquième » : on y est. Ce que le modèle apporte n'est donc pas
-  le chiffre mais la LISTE, et les <!--chiffre:mesure(avantages?annee=2024&quoi=calculees)-->15,8<!--/--> milliards qu'il calcule encore lui-même
+  le chiffre mais la LISTE, et les <!--chiffre:mesure(avantages?annee=2024&quoi=calculees)-->17,2<!--/--> milliards qu'il calcule encore lui-même
   restent soumis à cette limite. Vingt-sept dispositifs sur quarante-cinq ne
   portent aucun chiffre, chacun avec sa raison écrite.
 
@@ -131,13 +131,13 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   sans que rien ne le dise. Pour la génération 1965 l'écart tombe sous la centaine d'euros, le classement abaissant
   par ailleurs la durée requise d'un trimestre. Mesurer la
   valeur d'un avantage d'ÂGE par l'écart de MONTANT à date de départ fixe donne
-  donc un chiffre petit — <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=categorie_active)-->0,6<!--/--> milliard en 2024 pour la catégorie active — et ce
+  donc un chiffre petit — <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=categorie_active)-->1,9<!--/--> milliard en 2024 pour la catégorie active — et ce
   chiffre n'est pas faux, il est incomplet. Il porte de surcroît, depuis le
   22 septembre 2026, la durée requise propre aux emplois classés, que le
   contrôle d'isolement de `avantages.py` accepte pour ce seul avantage
   (`DUREE_REQUISE_EST_L_AVANTAGE`), le texte la donnant « au titre de la
   catégorie active ». Ce que l'avantage coûte, ce sont les annuités
-  servies avant l'âge légal, que nulle décote ne rattrape. Elles valent **<!--chiffre:mesure(avantages?annee=2024&quoi=anticipees)-->12,5<!--/--> milliards en 2024**, dont <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=classement)-->8,3<!--/--> pour le
+  servies avant l'âge légal, que nulle décote ne rattrape. Elles valent **<!--chiffre:mesure(avantages?annee=2024&quoi=anticipees)-->8,2<!--/--> milliards en 2024**, dont <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=classement)-->4,0<!--/--> pour le
   classement, <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=regime_special)-->2,3<!--/--> pour les régimes spéciaux et <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=carriere_longue)-->1,9<!--/--> pour la carrière longue
   (`scripts/cout_avantages.py --duree`). Ce sont des annuités anticipées et non
   un surcoût net — partir tôt, c'est aussi cotiser moins et mourir plus tôt en
@@ -164,6 +164,27 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   (`test_les_retraites_de_moins_de_soixante_ans_confrontes_au_jaune_pensions_2027`).
   Recaler les cas types de la CNRACL et de l'État est l'étape 5 de l'action
   159.
+
+- **Les cas types civils recalés sur le jaune pensions annexé au PLF 2027
+  (14 octobre 2026).** L'étape 5 de l'action 159 corrige ce que le paragraphe
+  précédent déclarait. L'agent de la CNRACL part au taux plein, à soixante-deux
+  ans en 2025, à 0,9 salaire moyen, et non plus à l'âge d'ouverture, à 1,1 :
+  aucun de ses retraités n'a moins de soixante ans en 2025, pour 1,3 % au
+  jaune hors invalidité, et le classement ne sert plus avant l'âge légal que
+  4,0 des 8,2 milliards de 2024, quand il en servait 8,3 des 12,5. Sur la page
+  Coût, les deux civils entrent dans leur régime après six ans sous contrat
+  pour la génération qui part en 2025 : leur pension de 2025 tombe à 1 et 3 %
+  de celle des départs de leur groupe (`tests/test_flux_fonction_publique.py`),
+  et la pension relative de la CNRACL à 0,2 % de celle que le COR projette en
+  2070. Deux défauts que l'ancien cas type masquait se voient désormais. Le
+  pilote qui date le taux plein ignore la montée en charge de la décote de la
+  fonction publique, que la liquidation applique : il fait attendre soixante
+  ans à l'agent de la CNRACL de 2006 à 2016, quand ses collègues partaient de
+  56 à 59 ans, et la grille part jusqu'à deux tiers d'année plus tard que la
+  France réelle de 2008 à 2011 (`test_age_conjoncturel.py`). Et un seul cas
+  type actif porte une caisse dont les sédentaires partent plus tard : ses
+  têtes croissent de 7 % de plus que les retraités que le COR projette à la
+  CNRACL d'ici 2070, sa dépense de 11 % (`test_cout.py`).
 
 - **Le pilotage, et non plus le solde.** Le modèle calcule des droits
   individuels ; il porte une pyramide des âges, qui lui dit ce que chaque

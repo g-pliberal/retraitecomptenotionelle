@@ -930,13 +930,27 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: pension militaire baisse aussi moins d'ici l'horizon : partie en 2028, quand
 #: le traitement indiciaire a déjà décroché de 5 %, elle perd 7 % rapportée au
 #: salaire moyen jusqu'aux départs de 2048, quand celle qui partait en 2024
-#: perdait 12 % jusqu'à ceux de 2044.
+#: perdait 12 % jusqu'à ceux de 2044. L'étape 5 de l'action 159 recale les
+#: deux civils sur les départs de 2025 du jaune pensions annexé au PLF 2027 :
+#: le sédentaire entre dans l'État après six ans sous contrat pour la
+#: génération 1961, deux pour la génération 1944, douze pour la génération
+#: 2000 ; l'agent de la CNRACL part au taux plein et non plus à l'âge
+#: d'ouverture, à 0,9 salaire moyen et non plus 1,1, après six ans sous
+#: contrat. La pension relative de la FPE passe de +9,3 à +5,2 %, sa dépense de
+#: +24,8 à +19,9 % ; celle de la CNRACL de +3,2 à +0,2 %, et sa dépense de
+#: +1,5 à +10,9 % : ce cliquet-là remonte. Les têtes de la CNRACL croissaient
+#: de 4 % de moins que les retraités que le COR lui projette d'ici l'horizon,
+#: et sa pension relative de 3 % de plus ; ses têtes croissent désormais de
+#: 7 % de plus. Le cas type porte toute la caisse en catégorie active, parti
+#: à soixante-deux ans, quand le COR fait monter l'âge moyen de départ à la
+#: CNRACL de 61,5 à 64,3 ans avec ses sédentaires (Canopée, au registre,
+#: chantier 138.3) : encore un défaut qui en masquait un autre.
 DECOMPOSITION_GROUPES_CLIQUETS = {
-    ("pension_relative", "fpe"): 0.10,
-    ("pension_relative", "cnracl"): 0.04,
+    ("pension_relative", "fpe"): 0.06,
+    ("pension_relative", "cnracl"): 0.01,
     ("pension_relative", "agirc_arrco"): 0.18,
-    ("depense_part_pib", "fpe"): 0.25,
-    ("depense_part_pib", "cnracl"): 0.02,
+    ("depense_part_pib", "fpe"): 0.20,
+    ("depense_part_pib", "cnracl"): 0.11,
     ("depense_part_pib", "regimes_speciaux"): 0.35,
 }
 
@@ -1131,37 +1145,50 @@ def test_les_arrivees_tardives_pesent_les_masses_et_non_les_tetes(population):
     assert entiere.completude(-2) == entiere.completude(2) == 1.0
 
 
-def test_le_fonctionnaire_de_l_etat_entre_tard_dans_son_regime():
-    """Action 147, étape 11 : sous les conventions du COR, le fonctionnaire
-    sédentaire commence sa carrière contractuel, deux ans pour la génération
-    1962 (« un à trois ans », annexe méthodologique du COR, d'après l'EIC
-    2013), huit pour la génération 2000 (six ans de services en moins, note 69
-    du rapport de juin 2026), en ligne droite entre les deux. Il part au même
-    âge, sa pension seule se partage ; le simulateur individuel et la page Cas
-    types gardent la carrière d'un seul statut."""
+def test_les_fonctionnaires_civils_entrent_tard_dans_leur_regime():
+    """Action 147, étape 11, puis action 159, étape 5 : sous les conventions
+    du COR, les deux fonctionnaires civils commencent leur carrière
+    contractuels. Le sédentaire, deux ans pour la génération 1944, six pour la
+    génération 1961 — ce qui sépare sa carrière, à son départ de 2004 et de
+    2025, des services que le jaune pensions annexé au PLF 2027 mesure
+    (tableau 95) —, douze pour la génération 2000 (six ans de services en
+    moins, note 69 du rapport du COR de juin 2026), en ligne droite d'un point
+    à l'autre ; l'agent de la CNRACL, six ans pour toutes les générations, le
+    jaune ne mesurant ses services qu'en 2025. Ils partent au même âge, leur
+    pension seule se partage ; le simulateur individuel et la page Cas types
+    gardent la carrière d'un seul statut. Le sédentaire seul entrait tard,
+    deux ans pour la génération 1962 et huit pour la génération 2000, jusqu'au
+    14 octobre 2026."""
     from retraite_notionnelle.donnees.macro import DonneesMacro
 
     macro = DonneesMacro(RACINE_DONNEES)
     assert macro.delai_entree_fonction_publique(1940) == 2.0
-    assert macro.delai_entree_fonction_publique(1962) == 2.0
-    assert macro.delai_entree_fonction_publique(1981) == pytest.approx(5.0, rel=1e-12)
-    assert macro.delai_entree_fonction_publique(2000) == 8.0
-    assert macro.delai_entree_fonction_publique(2015) == 8.0
-    assert [c.code for c in CAS_TYPES if c.affiliation_avant_entree] == [
-        "fonctionnaire_sedentaire"]
-    cas = next(c for c in CAS_TYPES if c.code == "fonctionnaire_sedentaire")
+    assert macro.delai_entree_fonction_publique(1944) == 2.0
+    assert macro.delai_entree_fonction_publique(1961) == 6.0
+    assert macro.delai_entree_fonction_publique(1981) == pytest.approx(6.0 + 6.0 * 20 / 39,
+                                                                       rel=1e-12)
+    assert macro.delai_entree_fonction_publique(2000) == 12.0
+    assert macro.delai_entree_fonction_publique(2015) == 12.0
+    assert {macro.delai_entree("entree_cnracl", generation)
+            for generation in (1930, 1963, 2000, 2015)} == {6.0}
+    assert {c.code: c.serie_entree for c in CAS_TYPES if c.affiliation_avant_entree} == {
+        "fonctionnaire_sedentaire": "entree_fonction_publique",
+        "fonctionnaire_actif": "entree_cnracl"}
     individuel = Simulateur(Parametres())
     projection = individuel.pour_la_projection()
-    for generation in (1945, 1980, 2000):
-        seul = cas.construire(individuel, generation)
-        tard = cas.construire(projection, generation)
-        assert {ligne.affiliation for ligne in seul.lignes} == {"fonctionnaire_etat"}
-        assert tard.annee_liquidation == seul.annee_liquidation, generation
-        avant = [ligne for ligne in tard.lignes if ligne.affiliation == "contractuel_public"]
-        delai = macro.delai_entree_fonction_publique(generation)
-        assert sum(ligne.fraction_annee for ligne in avant) == pytest.approx(
-            delai, abs=1.0), generation
-        assert all(ligne.annee < generation + cas.age_debut + delai + 1 for ligne in avant)
+    for cas in (c for c in CAS_TYPES if c.affiliation_avant_entree):
+        for generation in (1945, 1980, 2000):
+            seul = cas.construire(individuel, generation)
+            tard = cas.construire(projection, generation)
+            assert {ligne.affiliation for ligne in seul.lignes} == {cas.affiliation}
+            assert tard.annee_liquidation == seul.annee_liquidation, (cas.code, generation)
+            avant = [ligne for ligne in tard.lignes
+                     if ligne.affiliation == "contractuel_public"]
+            delai = macro.delai_entree(cas.serie_entree, generation)
+            assert sum(ligne.fraction_annee for ligne in avant) == pytest.approx(
+                delai, abs=1.0), (cas.code, generation)
+            assert all(ligne.annee < generation + cas.age_debut + delai + 1
+                       for ligne in avant)
     # Le portage JavaScript refaisait le délai et la complétude des carrières,
     # et un test l'y confrontait : ils ne servaient qu'au coût, figé depuis le
     # 11 octobre 2026 (action 150).
@@ -1368,11 +1395,13 @@ def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):
     # dérive passe sous un au milieu de la période, et la seconde lecture
     # ALLÈGE la dette de la proposition : de huit points jusqu'à l'étape 12,
     # d'un à l'étape 13, la dérive repassant au-dessus d'un après 2058, de sept
-    # depuis l'étape 14, qui la tient sous un de 2031 à l'horizon. Les deux
-    # lectures encadrent encore la vérité.
+    # depuis l'étape 14, qui la tient sous un de 2031 à l'horizon, de deux
+    # depuis l'étape 5 de l'action 159, qui recale les fonctionnaires civils
+    # sur le jaune pensions et rapproche la masse du modèle de la dépense du
+    # COR. Les deux lectures encadrent encore la vérité.
     ecart = cout.dette_derive.horizon("notionnel_liberal") - cout.dette.horizon(
         "notionnel_liberal")
-    assert -0.10 < ecart < -0.05, ecart
+    assert -0.035 < ecart < -0.005, ecart
 
 
 def test_le_pib_projete_croit_moins_vite_que_l_hypothese_nominale(avenir):

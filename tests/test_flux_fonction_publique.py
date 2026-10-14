@@ -6,27 +6,30 @@ les publient dans le jaune annexé au PLF 2027, sont certifiés dans
 `data/reference/macro/caracteristiques_fonction_publique.csv` (action 159,
 étape 4). Aucun calcul ne les lit : ils jugent le modèle, ils ne le règlent
 pas. `scripts/flux_fonction_publique.py` fait partir en 2025 chacun des trois
-cas types statutaires et met en regard ce que le modèle lui sert et ce que le
-jaune publie des départs de son groupe.
+cas types statutaires, tel que la page Coût le pèse, et met en regard ce que
+le modèle lui sert et ce que le jaune publie des départs de son groupe.
 
-Ce que la mesure trouve, le 13 octobre 2026 — l'écart du modèle au jaune :
+Ce que la mesure trouve, le 14 octobre 2026 — l'écart du modèle au jaune :
 
 | cas type | âge | durée tous régimes | taux | indice | pension |
 |---|---|---|---|---|---|
-| fonctionnaire sédentaire de l'État (B-4) | −0,4 an | −6,5 trim. | +12,3 % | +1,9 % | +15,3 % |
-| agent actif de la CNRACL (B-5) | −3,25 ans | −37,7 trim. | −17,9 % | +21,2 % | −4,6 % |
+| fonctionnaire sédentaire de l'État (B-4) | −0,4 an | −6,5 trim. | −3,8 % | +1,9 % | −1,2 % |
+| agent actif de la CNRACL (B-5) | +1,0 an | −20,7 trim. | +1,0 % | +0,5 % | −2,7 % |
 | militaire (B-3, ancienneté) | −0,7 an | −24,5 trim. | −10,9 % | +4,9 % | −5,0 % |
 
-Le sédentaire part à l'âge du flux et à son indice, mais au taux plein, sur
-une carrière entière dans le seul régime de l'État : le civil réel n'y a que
-138 trimestres de services sur 174,5 tous régimes, et sa pension est 15 % plus
-basse. L'actif de la CNRACL part trois ans trop tôt, à l'âge d'ouverture, avec
-une décote que les actifs ne prennent presque jamais, sur un traitement un
-cinquième trop haut : deux erreurs qui se compensent, que l'action 152 avait
-lues sur le jaune 2026, et que le flux de 2025 confirme. Le militaire part à
-l'âge du flux, mais sans les bénéfices de campagne ni les bonifications du
-service aérien que le simulateur ne saisit pas : 130 trimestres liquidables
-pour 149,5. Le recalage des cas types est l'étape 5 de l'action 159.
+Les deux civils sont recalés sur ce flux depuis l'étape 5 de l'action 159. Le
+sédentaire entre dans l'État à vingt-huit ans, après six ans de contrat : 144
+trimestres de services, pour 143,3 au jaune, services et bonifications ; son
+taux, sans surcote, est celui du flux hors décote et surcote, 64,1 %. L'actif
+de la CNRACL part au taux plein, à soixante-deux ans pour 61,0, à l'indice du
+flux, après six ans de contrat lui aussi. Leur durée tous régimes reste en
+deçà : une carrière continue, sans enfant ni temps partiel. Le 13 octobre
+(étape 4), sur la carrière d'un seul statut, le sédentaire était 15 % trop
+haut, et l'actif partait trois ans et quart trop tôt, à l'âge d'ouverture, sur
+un traitement d'un cinquième trop haut : deux erreurs qui se compensaient. Le
+militaire part à l'âge du flux, mais sans les bénéfices de campagne ni les
+bonifications du service aérien que le simulateur ne saisit pas : 130
+trimestres liquidables pour 149,5.
 
 Les écarts sont DÉCLARÉS : chacun tient dans sa fourchette, et une mesure qui
 en sort fait échouer la suite, qu'elle s'améliore ou qu'elle se dégrade. Qui
@@ -43,6 +46,7 @@ import pytest
 
 from retraite_notionnelle import memoire
 from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.simulateur import Simulateur
 
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "scripts"))
@@ -53,20 +57,20 @@ import flux_fonction_publique as flux  # noqa: E402
 CHEMIN = "data/reference/macro/caracteristiques_fonction_publique.csv"
 
 #: L'écart relatif de chaque mesure au jaune, (modèle − jaune) / jaune, dans
-#: sa fourchette déclarée. Mesuré le 13 octobre 2026 (action 159, étape 4) :
-#: la valeur du jour est au milieu, à un point et demi près, et l'âge à un
-#: demi-point (trois mois).
+#: sa fourchette déclarée. Mesuré le 13 octobre 2026 (action 159, étape 4),
+#: puis, pour les deux civils, le 14 (étape 5) : la valeur du jour est au
+#: milieu, à un point et demi près, et l'âge à un demi-point (trois mois).
 ECARTS_DECLARES = {
     ("fonctionnaire_sedentaire", "age_premiere_mise_en_paiement"): (-0.011, -0.001),
     ("fonctionnaire_sedentaire", "duree_tous_regimes_trimestres"): (-0.052, -0.022),
-    ("fonctionnaire_sedentaire", "taux_liquidation"): (0.108, 0.138),
+    ("fonctionnaire_sedentaire", "taux_liquidation"): (-0.053, -0.023),
     ("fonctionnaire_sedentaire", "indice_liquidation"): (0.004, 0.034),
-    ("fonctionnaire_sedentaire", "pension_principale_eur"): (0.138, 0.168),
-    ("fonctionnaire_actif", "age_premiere_mise_en_paiement"): (-0.058, -0.048),
-    ("fonctionnaire_actif", "duree_tous_regimes_trimestres"): (-0.224, -0.194),
-    ("fonctionnaire_actif", "taux_liquidation"): (-0.194, -0.164),
-    ("fonctionnaire_actif", "indice_liquidation"): (0.197, 0.227),
-    ("fonctionnaire_actif", "pension_principale_eur"): (-0.061, -0.031),
+    ("fonctionnaire_sedentaire", "pension_principale_eur"): (-0.027, 0.003),
+    ("fonctionnaire_actif", "age_premiere_mise_en_paiement"): (0.011, 0.021),
+    ("fonctionnaire_actif", "duree_tous_regimes_trimestres"): (-0.130, -0.100),
+    ("fonctionnaire_actif", "taux_liquidation"): (-0.005, 0.025),
+    ("fonctionnaire_actif", "indice_liquidation"): (-0.010, 0.020),
+    ("fonctionnaire_actif", "pension_principale_eur"): (-0.042, -0.012),
     ("militaire", "age_premiere_mise_en_paiement"): (-0.019, -0.009),
     ("militaire", "duree_tous_regimes_trimestres"): (-0.174, -0.144),
     ("militaire", "taux_liquidation"): (-0.124, -0.094),
@@ -131,7 +135,7 @@ def test_chaque_cas_type_statutaire_part_en_2025_face_aux_departs_de_son_groupe(
     droit fait partir en 2025."""
     assert {(m.cas_type, m.indicateur) for m in mesures} == set(ECARTS_DECLARES)
     generations = {m.cas_type: m.generation for m in mesures}
-    assert generations == {"fonctionnaire_sedentaire": 1961, "fonctionnaire_actif": 1968,
+    assert generations == {"fonctionnaire_sedentaire": 1961, "fonctionnaire_actif": 1963,
                            "militaire": 1977}
 
 
@@ -147,13 +151,19 @@ def test_chaque_ecart_au_flux_de_2025_tient_dans_sa_fourchette_declaree(mesures,
         f"{mesure.ecart_relatif:+.1%}, fourchette déclarée [{bas:+.1%}, {haut:+.1%}]")
 
 
-def test_les_deux_erreurs_de_l_actif_de_la_cnracl_se_compensent(mesures):
-    """L'actif de la CNRACL part trois ans trop tôt, avec une décote, sur un
-    traitement un cinquième trop haut ; sa pension tombe pourtant à moins de
-    6 % de celle du flux. Que l'une des deux erreurs soit corrigée sans
-    l'autre, et la pension s'en écarte : ce test le dit d'avance."""
-    actif = {m.indicateur: m for m in mesures if m.cas_type == "fonctionnaire_actif"}
-    assert actif["age_premiere_mise_en_paiement"].ecart < -3.0
-    assert actif["taux_liquidation"].ecart_relatif < -0.15
-    assert actif["indice_liquidation"].ecart_relatif > 0.15
-    assert abs(actif["pension_principale_eur"].ecart_relatif) < 0.06
+def test_l_entree_tardive_porte_le_recalage_des_deux_civils(mesures):
+    """Sur la carrière d'un seul statut que la page Cas types montre, les deux
+    civils liquident six ans de services de plus que sous les conventions de
+    la page Coût, et leur pension passe 14 à 15 % au-dessus du flux : le
+    sédentaire à 75 % du traitement, l'actif à 72 %. C'est l'entrée tardive,
+    que le jaune mesure, qui les recale ; que l'une des deux pages perde la
+    convention de l'autre, et ce test le dit."""
+    publies = flux.referents_publies()
+    individuel = flux.confronter(flux.mesurer_le_modele(Simulateur(Parametres())), publies)
+    for code in ("fonctionnaire_sedentaire", "fonctionnaire_actif"):
+        seul = next(m for m in individuel
+                    if (m.cas_type, m.indicateur) == (code, "pension_principale_eur"))
+        tard = next(m for m in mesures
+                    if (m.cas_type, m.indicateur) == (code, "pension_principale_eur"))
+        assert seul.ecart_relatif > 0.10, (code, seul.ecart_relatif)
+        assert abs(tard.ecart_relatif) < 0.04, (code, tard.ecart_relatif)

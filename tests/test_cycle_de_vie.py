@@ -824,19 +824,23 @@ def test_sous_la_convention_du_cor_l_age_suit_l_age_de_deces(simulateur):
 def test_les_ages_d_un_cas_type_ne_tiennent_qu_a_sa_mortalite(simulateur):
     """Le cas type n'entre dans ses âges d'équilibre que par la mortalité de
     son diviseur, la population où son salaire le range, et par son sexe pour
-    la part de vie : le salarié au salaire moyen et le fonctionnaire de
-    catégorie active, du même vingtile, ont les mêmes âges, à des âges de
-    départ que cinq années séparent. Le salarié au SMIC, d'un vingtile qui
-    vit moins longtemps, retrouve plus tard la référence : de 1961 à 2000,
-    son diviseur à 65 ans gagne 3,58 ans, contre 3,38, et il baisse moins
-    vite avec l'âge, de 0,83 an par an, contre 0,88."""
+    la part de vie : le salarié au SMIC et l'exploitant agricole, du même
+    vingtile, ont les mêmes âges, à des âges de départ qu'une année sépare. Le
+    fonctionnaire de catégorie active le montrait, du vingtile du salarié au
+    salaire moyen et parti cinq ans avant lui, jusqu'à son recalage sur les
+    actifs de la CNRACL (action 159, étape 5), qui le range au onzième. Le
+    salarié au SMIC, d'un vingtile qui vit moins longtemps, retrouve plus tard
+    la référence : de 1961 à 2000, son diviseur à 65 ans gagne 3,58 ans,
+    contre 3,38, et il baisse moins vite avec l'âge, de 0,83 an par an, contre
+    0,88."""
     moyen = cycle_de_vie.ages_d_equilibre(simulateur, _cas("salaire_moyen"), 2000)
-    actif = cycle_de_vie.ages_d_equilibre(simulateur, _cas("fonctionnaire_actif"), 2000)
     smic = cycle_de_vie.ages_d_equilibre(simulateur, _cas("smic_carriere_complete"), 2000)
-    assert moyen.population == actif.population == "niveau_de_vie_v14"
-    assert moyen.age_de_depart - actif.age_de_depart == 5.0
-    assert (moyen.diviseur, moyen.part_de_vie) == (actif.diviseur, actif.part_de_vie)
+    exploitant = cycle_de_vie.ages_d_equilibre(simulateur, _cas("exploitant_agricole"), 2000)
+    assert smic.population == exploitant.population == "niveau_de_vie_v04"
+    assert exploitant.age_de_depart - smic.age_de_depart == 1.0
+    assert (smic.diviseur, smic.part_de_vie) == (exploitant.diviseur, exploitant.part_de_vie)
+    assert smic.diviseur == cycle_de_vie.age_d_equilibre(simulateur, 2000, "H", smic.population)
+    assert moyen.population == "niveau_de_vie_v14"
     assert moyen.diviseur == cycle_de_vie.age_d_equilibre(simulateur, 2000, "H", moyen.population)
-    assert smic.population == "niveau_de_vie_v04"
     assert smic.diviseur.age > moyen.diviseur.age
     assert smic.part_de_vie > moyen.part_de_vie

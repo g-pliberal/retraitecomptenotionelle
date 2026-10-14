@@ -221,9 +221,11 @@ fichiers:
       - "- **La décote surpunit l'anticipation ordinaire"
       # Et deux confrontations au jaune pensions annexé au PLF 2027, faites le
       # 13 octobre 2026 (action 159, étape 7) : les décès de 2025 des
-      # pensionnés publics, et ce que la grille sert avant soixante ans.
+      # pensionnés publics, et ce que la grille sert avant soixante ans ; puis
+      # le recalage des cas types civils, le 14 (action 159, étape 5).
       - "- **Les décès de 2025, au jaune pensions"
       - "- **Les départs anticipés de la fonction publique, au jaune"
+      - "- **Les cas types civils recalés sur le jaune pensions"
 
   docs/limites/5-ante-capitalisation.md:
     defaut: etat

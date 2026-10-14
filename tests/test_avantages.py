@@ -683,14 +683,14 @@ def test_les_retraites_de_moins_de_soixante_ans_confrontes_au_jaune_pensions_202
     - Le militaire tombe juste : 31,6 % de ses retraités ont moins de soixante
       ans dans la grille, 31,5 % au jaune hors invalidité ; l'action 152 l'a
       recalé sur le jaune de 2026.
-    - L'agent de la CNRACL en a 12,1 %, quand la caisse n'en compte que 1,3 %
-      hors invalidité, 3,3 % avec : le cas type porte toute la caisse, en
-      catégorie active, parti à l'âge d'ouverture, quand les actifs font 15 %
-      des départs de 2024 et partent à 60,8 ans. Il fait 4,4 des 8,3 milliards
-      que le classement sert avant l'âge légal en 2024. L'écart est DÉCLARÉ
-      (``docs/limites/5-hors-du-modele.md``), et ce test le tient : il cédera
-      le jour où l'étape 5 de l'action 159 recalera le cas type, et la
-      déclaration avec lui.
+    - L'agent de la CNRACL n'en a aucun, quand la caisse en compte 1,3 % hors
+      invalidité, 3,3 % avec. Le cas type part au taux plein depuis l'étape 5
+      de l'action 159, comme les actifs de 2025, partis à 61,0 ans ; le 1,3 %
+      est fait des actifs partis plus tôt, que le cas type moyen ne représente
+      pas. Il partait à l'âge d'ouverture jusque-là, et en comptait 12,1 % :
+      4,4 des 8,3 milliards que le classement servait avant l'âge légal en
+      2024 étaient les siens. L'écart est DÉCLARÉ
+      (``docs/limites/5-hors-du-modele.md``).
     - Le civil de l'État ne part jamais avant soixante ans, quand 1,0 % de ses
       pensionnés y sont, hors invalidité : la catégorie active de l'État, la
       carrière longue et les parents de trois enfants, 11 139 départs avant
@@ -732,9 +732,7 @@ def test_les_retraites_de_moins_de_soixante_ans_confrontes_au_jaune_pensions_202
     observee = {code: (avant - invalides) / total
                 for code, (avant, invalides, total) in jaune.items()}
     assert grille["militaire"] == pytest.approx(observee["militaire"], abs=0.03)
-    recale = ("le cas type de la CNRACL a été recalé : la déclaration de "
-              "docs/limites/5-hors-du-modele.md et ce test sont à refaire")
-    assert grille["fonctionnaire_actif"] > 5 * observee["fonctionnaire_actif"], recale
-    assert grille["fonctionnaire_actif"] > 3 * jaune["fonctionnaire_actif"][0] / 1_470_309, recale
+    assert grille["fonctionnaire_actif"] == 0.0
+    assert 0.005 < observee["fonctionnaire_actif"] < 0.02
     assert grille["fonctionnaire_sedentaire"] == 0.0
     assert observee["fonctionnaire_sedentaire"] > 0.005

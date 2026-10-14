@@ -89,7 +89,7 @@ C'est l'accueil. Descendre lentement, sans rien cliquer.
   « Votre retraite : ce que votre régime promet → de l'ordre d'un quart de
   moins, en médiane ». La première des « Vos questions », « Ma
   retraite va-t-elle baisser ? », en donne le détail : 25 % pour qui n'est
-  pas encore à la retraite, 12 % s'il place les cinq points rendus, 29 % sur
+  pas encore à la retraite, 12 % s'il place les cinq points rendus, 28 % sur
   la pension d'aujourd'hui d'un retraité, garantie vieillesse comprise.
 - Le bloc « Et vous, ça donne combien ? » en haut de page est un raccourci
   vers le simulateur : on peut y saisir une date de naissance et un statut et
@@ -336,8 +336,8 @@ Si le temps manque, garder cette page pour les questions : elle répond seule
 Onglet **Avantages**. La page qui explique les écarts du simulateur : ce que
 le système actuel verse sans que personne l'ait cotisé. Trois chiffres :
 42 dispositifs en vigueur, du minimum vieillesse à la bonification du
-cinquième ; 97,9 Md € en 2024 pour les 21 que le modèle sait chiffrer, dont
-38,3 Md € de réversion, qui est lue et non calculée ; 12,5 Md € de pensions
+cinquième ; 99,3 Md € en 2024 pour les 22 que le modèle sait chiffrer, dont
+38,3 Md € de réversion, qui est lue et non calculée ; 8,2 Md € de pensions
 servies avant l'âge légal. La page dit que ces deux montants sont des
 planchers. Le graphique du haut compte les dispositifs année par année depuis
 1831, où il n'y en avait qu'un.

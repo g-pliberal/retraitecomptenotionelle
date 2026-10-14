@@ -15,6 +15,13 @@ les certifie (``data/reference/macro/caracteristiques_fonction_publique.csv``,
 action 159, étape 4). Ce script fait partir chaque cas type en 2025, et met
 en regard ce que le modèle lui sert et ce que le jaune publie.
 
+Le cas type est mesuré tel que la page Coût le pèse, celle où il porte sa
+caisse : sous les conventions de projection du COR
+(:meth:`~retraite_notionnelle.simulateur.Simulateur.pour_la_projection`), qui
+font entrer les fonctionnaires civils dans leur régime après quelques années
+sous un autre statut. La page Cas types en montre la carrière d'un seul
+statut : le droit d'une carrière, non le retraité moyen d'une caisse.
+
 CE QU'ON COMPARE À QUOI
 -----------------------
 Chaque cas type a son départ de référence (:data:`REFERENTS`) : les civils de
@@ -45,8 +52,9 @@ QUATRE RÉSERVES
    aucune ne part forcément en 2025.
 3. **Le flux réel a d'autres carrières que la sienne** : des polypensionnés,
    entrés tard ou partis avant dans le privé, dont la durée tous régimes
-   dépasse les services. Un cas type n'a qu'une carrière, entière dans son
-   régime.
+   dépasse les services, que les enfants allongent aussi. Le cas type entre
+   tard dans son régime, s'il est civil, mais sa carrière est continue, sans
+   enfant ni temps partiel : sa durée tous régimes reste en deçà.
 4. **Les euros sont ceux de 2025, courants, des deux côtés** : le cas type est
    liquidé en 2025, et le jaune publie les pensions entrées en paiement en
    2025.
@@ -214,13 +222,14 @@ def mesurer(simulateur: Simulateur) -> list[Mesure]:
 
 
 def mesures_du_depot(parametres: Parametres) -> list[Mesure]:
-    """Le tableau, sur un simulateur neuf et les données du dépôt. La part du
-    modèle se garde dans la mémoire des calculs (``retraite_notionnelle/
-    memoire.py``) ; le jaune se relit à chaque fois : il est hors de
-    l'empreinte du modèle (``HORS_DU_MODELE``), qui ne dirait pas qu'il a
-    changé."""
-    modele = memoire.memoriser_pour(parametres, ("flux_fonction_publique", parametres),
-                                    lambda: mesurer_le_modele(Simulateur(parametres)))
+    """Le tableau, sur le simulateur de la page Coût et les données du dépôt.
+    La part du modèle se garde dans la mémoire des calculs
+    (``retraite_notionnelle/memoire.py``) ; le jaune se relit à chaque fois :
+    il est hors de l'empreinte du modèle (``HORS_DU_MODELE``), qui ne dirait
+    pas qu'il a changé."""
+    modele = memoire.memoriser_pour(
+        parametres, ("flux_fonction_publique", parametres),
+        lambda: mesurer_le_modele(Simulateur(parametres).pour_la_projection()))
     return confronter(modele, referents_publies())
 
 

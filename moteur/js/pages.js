@@ -7525,8 +7525,11 @@ puis sous celui de salarié du privé.</p>`);
     + "RÈGLE, et chaque génération liquide donc au sien. La plupart partent "
     + "au taux plein, le premier âge auquel la pension est servie entière, "
     + "qui dépend à la fois de l'âge légal et de la durée requise de la "
-    + "génération. Ceux dont un statut commande le départ (catégorie active, agent de conduite, agent des IEG) partent à l'âge que ce statut leur "
-    + "ouvre. Le militaire, lui, part à une DURÉE de services, pas à un âge."
+    + "génération. Ceux dont un statut commande le départ (agent de conduite, agent des IEG) partent à l'âge que ce statut leur "
+    + "ouvre. L'agent de catégorie active pourrait partir ainsi, mais il "
+    + "attend, comme les actifs de la CNRACL, le taux plein que son "
+    + "classement avance. Le militaire, lui, part à une DURÉE de services, "
+    + "pas à un âge."
     + mentionProposition + "</p>" + ages,
   );
 
@@ -15190,12 +15193,16 @@ export const MESURES_BLOCAGES = {
   // 12 octobre, le cas type militaire mis au militaire moyen du jaune
   // budgétaire (action 152, étape 1) a porté le solde de la proposition de
   // −0,9 à −0,8, sa dette de 58 à 56 %, et le coefficient de 2070 de 1,00 à
-  // 1,01.
-  solde_moyen_proposition: -0.8,
+  // 1,01. Le 14 octobre, les fonctionnaires civils recalés sur les départs de
+  // 2025 du jaune pensions (action 159, étape 5) — l'agent de la CNRACL parti
+  // au taux plein et non plus à l'ouverture, les deux civils entrés tard dans
+  // leur régime — l'ont reporté à −0,9, sa dette à 62 %, et le creux du
+  // coefficient à 0,84.
+  solde_moyen_proposition: -0.9,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 56,
+  dette_2070_proposition: 62,
   dette_2070_actuel: 66,
-  coefficient_minimum: 0.85,
+  coefficient_minimum: 0.84,
   decennie_coefficient_minimum: 2040,
   coefficient_2070: 1.01,
   // donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
@@ -15205,8 +15212,9 @@ export const MESURES_BLOCAGES = {
   // proposition_prospective.py : le solde moyen de la variante qui laisse le
   // stock intact, en points de PIB : −3,0 avant le 7 octobre 2026 (étapes 3
   // et 7 de l'action 138), −3,1 ensuite, −3,0 depuis le cas type militaire
-  // du 12 octobre (action 152, étape 1).
-  solde_moyen_prospectif: -3.0,
+  // du 12 octobre (action 152, étape 1), −3,1 depuis les fonctionnaires
+  // civils recalés le 14 (action 159, étape 5).
+  solde_moyen_prospectif: -3.1,
   // stock_age_legal.py : ce que coûte le diviseur de l'âge de l'assuré au lieu
   // de celui de 65 ans, en points de PIB par an.
   cout_diviseur_age_legal: 0.2,
