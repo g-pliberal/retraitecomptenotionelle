@@ -278,13 +278,15 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   de l'article L. 24 — <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1960)-->57<!--/--> ans, <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active&generation=1965)-->52<!--/--> pour la super-active, <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active)-->59<!--/--> et <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active)-->54<!--/--> après la
   réforme de 2023 — est désormais opposé, ainsi que l'âge d'annulation de décote
   propre au classement (<!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_annulation?classement=active)-->62<!--/--> et <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_annulation?classement=super_active)-->57<!--/--> ans), la condition de durée de services
-  classés (<!--chiffre:maximum(data/reference/legislation/categorie_active.csv:services_requis_annees?classement=active)-->17<!--/--> et <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:services_requis_annees?classement=super_active)-->27<!--/--> ans) et, depuis le 22 septembre 2026, la DURÉE REQUISE
+  classés (<!--chiffre:maximum(data/reference/legislation/duree_services_actifs.csv:annees_requises?classement=active)-->17<!--/--> et <!--chiffre:maximum(data/reference/legislation/duree_services_actifs.csv:annees_requises?classement=super_active)-->27<!--/--> ans, relevés depuis 2011 de quinze et vingt-cinq selon l'année
+  où ceux-ci sont atteints, et non selon la génération depuis le 14 octobre
+  2026) et, depuis le 22 septembre 2026, la DURÉE REQUISE
   propre aux emplois classés, dont le calendrier est donné plus bas (« La durée
   requise des emplois classés »). Ce qui reste hors
   du modèle est le CLASSEMENT lui-même : il tient à l'emploi occupé, qu'aucune donnée de carrière ne révèle,
   et c'est donc l'assuré qui le déclare en choisissant l'un des cinq statuts
   classés. Qui se trompe de statut se trompe d'âge. La table ne porte par
-  ailleurs qu'une durée par classement — <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:services_requis_annees?classement=active)-->17<!--/--> ans en active, <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:services_requis_annees?classement=super_active)-->27<!--/--> en super-active :
+  ailleurs qu'une durée par classement — <!--chiffre:maximum(data/reference/legislation/duree_services_actifs.csv:annees_requises?classement=active)-->17<!--/--> ans en active, <!--chiffre:maximum(data/reference/legislation/duree_services_actifs.csv:annees_requises?classement=super_active)-->27<!--/--> en super-active :
   les <!--chiffre:illustration()-->17<!--/--> années des ingénieurs du contrôle de la navigation aérienne et les <!--chiffre:illustration()-->32<!--/-->
   des égoutiers et des identificateurs de l'institut médico-légal ne sont pas
   distinguées, faute d'un corps déclaré.

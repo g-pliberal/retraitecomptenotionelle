@@ -433,8 +433,8 @@ export class AgesCategorieActive {
  * relèvement sur l'année où l'ancienne durée est atteinte.
  */
 export class DureesServicesMilitaires {
-  constructor(paquet) {
-    this._table = paquet.durees_services_militaires ?? {};
+  constructor(paquet, cle = "durees_services_militaires") {
+    this._table = paquet[cle] ?? {};
     this._annees = {};
     for (const [categorie, valeurs] of Object.entries(this._table)) {
       this._annees[categorie] = Object.keys(valeurs).map(Number).sort((a, b) => a - b);
@@ -468,6 +468,20 @@ export class DureesServicesMilitaires {
       applicable = candidate;
     }
     return this._table[categorie][String(applicable)];
+  }
+}
+
+/**
+ * Durée de services classés qui ouvre l'âge anticipé ou minoré, par année
+ * d'atteinte : quinze ans de services actifs, vingt-cinq de super-actifs avant
+ * la loi du 9 novembre 2010, dix-sept et vingt-sept depuis 2015. L'article 6
+ * du décret n° 2011-2103 indexe le relèvement, comme l'article 4 celui des
+ * militaires, sur l'année où l'ancienne durée est atteinte ; la clé est le
+ * classement.
+ */
+export class DureesServicesActifs extends DureesServicesMilitaires {
+  constructor(paquet) {
+    super(paquet, "durees_services_actifs");
   }
 }
 

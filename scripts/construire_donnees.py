@@ -98,6 +98,7 @@ from retraite_notionnelle.scenarios.actuel import (  # noqa: E402
     FichesDatees,
     CoefficientsMinoration,
     DureesProratisation,
+    DureesServicesActifs,
     DureesRequises,
     DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension,
     Invalidites,
@@ -129,7 +130,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 20
+VERSION = 21
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -1477,11 +1478,12 @@ def _categorie_active() -> dict:
     }
 
 
-def _durees_services_militaires() -> dict:
-    """Durée qui ouvre la pension militaire, par année d'atteinte."""
+def _durees_services_militaires(classe=None) -> dict:
+    """Durée qui ouvre la pension militaire, par année d'atteinte ; ou, de
+    ``classe``, l'âge anticipé ou minoré des emplois classés."""
     from retraite_notionnelle.scenarios.actuel import DureesServicesMilitaires
 
-    table = DureesServicesMilitaires(DONNEES)._table
+    table = (classe or DureesServicesMilitaires)(DONNEES)._table
     return {
         categorie: {
             (str(int(annee)) if float(annee).is_integer() else str(annee)):
@@ -2304,6 +2306,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "ages_regimes": _ages_regimes(),
         "categorie_active": _categorie_active(),
         "durees_services_militaires": _durees_services_militaires(),
+        "durees_services_actifs": _durees_services_militaires(DureesServicesActifs),
         "ages_jouissance_militaire": _table_par_generation(AgesJouissanceMilitaire),
         "coefficients_minoration": _table_par_generation(CoefficientsMinoration),
         "annees_salaire_reference": _table_par_generation(AnneesSalaireReference),

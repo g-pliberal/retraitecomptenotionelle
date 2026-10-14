@@ -530,7 +530,8 @@ export function derogationActive(moteur, periode, carriere) {
     return null;
   }
   const servies = carriere.dureeDeService(statuts, borneCarriere(carriere));
-  if (servies + 1e-9 < derogation.servicesRequis) {
+  if (servies + 1e-9 < compter.servicesActifsRequis(
+    moteur, carriere, classement, statuts, derogation.servicesRequis)) {
     return null;
   }
   return derogation;

@@ -2768,10 +2768,12 @@ def test_les_tables_de_la_categorie_active_et_des_militaires_sont_completes():
     from retraite_notionnelle.scenarios.actuel import (
         AgesCategorieActive,
         AgesJouissanceMilitaire,
+        DureesServicesActifs,
         DureesServicesMilitaires,
     )
 
     affiliations = Affiliations(RACINE_DONNEES)
+    actifs = DureesServicesActifs(RACINE_DONNEES)
     ages = AgesCategorieActive(RACINE_DONNEES)
     durees = DureesServicesMilitaires(RACINE_DONNEES)
     jouissance = AgesJouissanceMilitaire(RACINE_DONNEES)
@@ -2787,7 +2789,9 @@ def test_les_tables_de_la_categorie_active_et_des_militaires_sont_completes():
             # d'ouverture : c'est la limite d'âge du grade, ou l'âge anticipé
             # majoré de trois années depuis l'article L. 14 bis.
             assert derogation.age_annulation > derogation.age_ouverture
-            assert 15 <= derogation.services_requis <= 27
+            # La durée de base, que le décret n° 2011-2103 relève selon
+            # l'année où elle est atteinte, non selon la génération.
+            assert derogation.services_requis == actifs.duree_de_base(classement)
     # Les deux âges cibles de la loi du 14 avril 2023.
     assert ages.derogation("active", 2000).age_ouverture == pytest.approx(59.0)
     assert ages.derogation("super_active", 2000).age_ouverture == pytest.approx(54.0)
@@ -2796,6 +2800,12 @@ def test_les_tables_de_la_categorie_active_et_des_militaires_sont_completes():
     assert durees.annees_requises("officier", 2020)[0] == pytest.approx(27.0)
     assert durees.duree_de_base("non_officier") == pytest.approx(15.0)
     assert durees.duree_de_base("officier") == pytest.approx(25.0)
+    # Les mêmes marches pour les emplois classés (article 6 du même décret).
+    assert set(actifs.categories) == set(ages.classements)
+    assert actifs.annees_requises("active", 2011.0)[0] == pytest.approx(15.0)
+    assert actifs.annees_requises("active", 2012.5)[0] == pytest.approx(15.75)
+    assert actifs.annees_requises("active", 2020)[0] == pytest.approx(17.0)
+    assert actifs.annees_requises("super_active", 2020)[0] == pytest.approx(27.0)
     # La jouissance différée de l'article L. 25 : l'âge légal moins dix ans.
     assert jouissance.age(1950)[0] == pytest.approx(50.0)
     assert jouissance.age(1965)[0] == pytest.approx(52.0)

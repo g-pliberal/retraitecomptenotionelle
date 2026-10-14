@@ -962,7 +962,9 @@ class DerogationActive:
     #: Âge d'annulation de la décote : limite d'âge du grade jusqu'en 2023,
     #: article L. 14 bis ensuite.
     age_annulation: float
-    #: Années de services classés sans lesquelles rien de tout cela ne vaut.
+    #: Années de services classés d'avant la loi de 2010 — quinze, vingt-cinq
+    #: en super-active —, que ``DureesServicesActifs`` relève selon l'année où
+    #: elles sont atteintes ; sans la durée relevée, rien de tout cela ne vaut.
     services_requis: float
     #: Durée de services et bonifications requise, quand le classement en a une
     #: qui lui soit propre — « par dérogation à l'article L. 13 ». ``None``
@@ -1046,6 +1048,8 @@ class DureesServicesMilitaires:
     """
 
     FICHIER = "duree_services_militaires.csv"
+    #: La colonne qui porte la clé de chaque ligne.
+    CLE = "categorie"
 
     def __init__(self, racine: Path) -> None:
         self._table: dict[str, dict[float, tuple[float, Fiabilite]]] = {}
@@ -1056,7 +1060,7 @@ class DureesServicesMilitaires:
         with chemin.open(encoding="utf-8") as flux:
             lignes = (l for l in flux if not l.lstrip().startswith("#"))
             for ligne in csv.DictReader(lignes):
-                self._table.setdefault(ligne["categorie"], {})[
+                self._table.setdefault(ligne[self.CLE], {})[
                     float(ligne["annee_atteinte"])
                 ] = (float(ligne["annees_requises"]),
                      Fiabilite.depuis_texte(ligne["fiabilite"]))
@@ -1085,6 +1089,22 @@ class DureesServicesMilitaires:
                 break
             applicable = candidate
         return self._table[categorie][applicable]
+
+
+class DureesServicesActifs(DureesServicesMilitaires):
+    """Durée de services classés qui ouvre l'âge anticipé ou minoré, par année
+    d'atteinte.
+
+    Quinze ans de services actifs, vingt-cinq de services super-actifs avant la
+    loi du 9 novembre 2010 ; dix-sept et vingt-sept depuis 2015. L'article 6 du
+    décret n° 2011-2103 indexe le relèvement, comme l'article 4 celui des
+    militaires, sur « l'année au cours de laquelle est atteinte la durée de
+    services » antérieure, et non sur la génération : la clé est le classement
+    (``active``, ``super_active``).
+    """
+
+    FICHIER = "duree_services_actifs.csv"
+    CLE = "classement"
 
 
 class AgesJouissanceMilitaire(TableParGeneration):
@@ -3023,6 +3043,7 @@ class ScenarioActuel:
         self.durees_services_militaires = DureesServicesMilitaires(
             parametres.racine_donnees
         )
+        self.durees_services_actifs = DureesServicesActifs(parametres.racine_donnees)
         self.ages_jouissance_militaire = AgesJouissanceMilitaire(
             parametres.racine_donnees
         )

@@ -1,0 +1,40 @@
+# Durée de services classés qui ouvre l'âge anticipé ou minoré, PAR ANNÉE D'ATTEINTE
+# -------------------------------------------------------------------------------
+# source_id: legifrance_textes
+#
+# L'article 35 de la loi n° 2010-1330 du 9 novembre 2010 (LEGIARTI000025014546)
+# porte à dix-sept ans les quinze ans de services actifs du 1° du I de L. 24, et
+# à vingt-sept les vingt-cinq ans de services super-actifs, « à compter du
+# 1er janvier 2015 » ; son II les fixe, du 1er juillet 2011 au 31 décembre 2014,
+# « par décret, de manière croissante ». L'article 6 du décret n° 2011-2103 du
+# 30 décembre 2011 (LEGIARTI000025100424) les fixe selon l'« Année au cours de
+# laquelle est atteinte la durée de services de quinze ans [ou de vingt-cinq ans]
+# applicable antérieurement » : quinze ans pour qui les a atteints avant le
+# 1er juillet 2011, quinze ans et quatre mois au second semestre 2011, neuf mois
+# en 2012, seize ans et deux mois en 2013, sept mois en 2014, dix-sept ans à
+# compter de 2015 ; les mêmes marches à partir de vingt-cinq ans.
+#
+# LA CLÉ N'EST PAS LA GÉNÉRATION, et le modèle l'a lue ainsi jusqu'au 14 octobre
+# 2026 : `categorie_active.csv` exigeait dix-sept ans de toute génération née
+# depuis le 1er juillet 1956, et refusait l'âge anticipé à qui avait achevé ses
+# quinze ans avant 2011 sans aller jusqu'à dix-sept. C'est l'oracle d'OpenFisca
+# qui l'a fait voir (action 153, troisième famille), dont la table est celle-ci.
+# La clé est celle des militaires (`duree_services_militaires.csv`, article 4 du
+# même décret).
+#
+# Les ANNÉES À DÉCIMALES coupent en cours d'année : `2011.5` est le 1er juillet
+# 2011. La première ligne de chaque classement est la durée de base, celle que
+# `categorie_active.csv` porte (`services_requis_annees`).
+classement,annee_atteinte,annees_requises,fiabilite
+active,1900,15.00,haute
+active,2011.5,15.33,haute
+active,2012,15.75,haute
+active,2013,16.17,haute
+active,2014,16.58,haute
+active,2015,17.00,haute
+super_active,1900,25.00,haute
+super_active,2011.5,25.33,haute
+super_active,2012,25.75,haute
+super_active,2013,26.17,haute
+super_active,2014,26.58,haute
+super_active,2015,27.00,haute

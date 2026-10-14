@@ -861,6 +861,22 @@ def age_de_suppression(moteur: ScenarioActuel, carriere: Carriere, fiche: str,
     return float(age), Fiabilite.depuis_texte(parametres["fiabilite"])
 
 
+def services_actifs_requis(moteur: ScenarioActuel, carriere: Carriere, classement: str,
+                           statuts: list[str], base: float) -> float:
+    """Les années de services classés qu'exige l'âge anticipé ou minoré.
+
+    ``base`` est la durée d'avant la loi du 9 novembre 2010, quinze ans ou
+    vingt-cinq ; son article 35 la relève selon l'année où ``statuts`` l'ont
+    atteinte (décret n° 2011-2103, article 6) : quinze ans à qui les avait
+    avant le 1er juillet 2011, dix-sept à qui les atteint depuis 2015. Qui ne
+    l'atteint pas se voit opposer la durée relevée, qu'il n'a pas non plus.
+    """
+    atteinte = carriere.date_de_service(statuts, base)
+    annee = 9999.0 if atteinte is None else atteinte.annee + (atteinte.mois - 1) / 12
+    requises = moteur.durees_services_actifs.annees_requises(classement, annee)
+    return base if requises is None else requises[0]
+
+
 def condition_d_un_emploi(moteur: ScenarioActuel, carriere: Carriere, condition: str,
                           parametres: dict, servies: float) -> Fiabilite | None:
     """La condition remplie, et la fiabilité de ce qu'elle a lu ; ``None``
@@ -903,12 +919,16 @@ def condition_d_un_emploi(moteur: ScenarioActuel, carriere: Carriere, condition:
     if condition == "duree_de_l_age_minore":
         if carriere.radiation_pour_invalidite is not None:
             return Fiabilite.depuis_texte(parametres["fiabilite"])
-        if derogation is None or servies + 1e-9 < derogation.services_requis:
+        if derogation is None or servies + 1e-9 < services_actifs_requis(
+                moteur, carriere, parametres["classement"], list(parametres["statuts"]),
+                derogation.services_requis):
             return None
         return derogation.fiabilite
     borne = coordonner.borne_carriere(carriere)
-    actifs = carriere.duree_de_service(list(moteur.affiliations.classements_actifs), borne)
-    if derogation is None or actifs + 1e-9 < derogation.services_requis:
+    classes = list(moteur.affiliations.classements_actifs)
+    actifs = carriere.duree_de_service(classes, borne)
+    if derogation is None or actifs + 1e-9 < services_actifs_requis(
+            moteur, carriere, parametres["classement"], classes, derogation.services_requis):
         return None
     if condition == "duree_de_la_categorie_active":
         return derogation.fiabilite

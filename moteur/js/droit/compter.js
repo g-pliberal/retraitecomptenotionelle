@@ -791,6 +791,18 @@ export function ageDeSuppression(moteur, carriere, fiche, version) {
 }
 
 /**
+ * Les années de services classés qu'exige l'âge anticipé ou minoré : `base`,
+ * la durée d'avant la loi du 9 novembre 2010, relevée selon l'année où
+ * `statuts` l'ont atteinte (décret n° 2011-2103, article 6).
+ */
+export function servicesActifsRequis(moteur, carriere, classement, statuts, base) {
+  const atteinte = carriere.dateDeService(statuts, base);
+  const annee = atteinte === null ? 9999.0 : atteinte.annee + (atteinte.mois - 1) / 12;
+  const requises = moteur.dureesServicesActifs.anneesRequises(classement, annee);
+  return requises === null || requises === undefined ? base : requises[0];
+}
+
+/**
  * La condition remplie, et la fiabilité de ce qu'elle a lu ; null sinon. Les
  * services actifs sont ceux de tous les statuts classés, super-actifs compris.
  * Voir `condition_d_un_emploi` du Python.
@@ -839,15 +851,18 @@ export function conditionDUnEmploi(moteur, carriere, condition, parametres, serv
     if (carriere.radiationPourInvalidite !== null) {
       return fiabiliteDepuisTexte(parametres.fiabilite);
     }
-    if (derogation === null || servies + 1e-9 < derogation.servicesRequis) {
+    if (derogation === null || servies + 1e-9 < servicesActifsRequis(
+      moteur, carriere, parametres.classement, [...parametres.statuts],
+      derogation.servicesRequis)) {
       return null;
     }
     return derogation.fiabilite;
   }
   const borne = coordonner.borneCarriere(carriere);
-  const actifs = carriere.dureeDeService(
-    Object.keys(moteur.affiliations.classementsActifs), borne);
-  if (derogation === null || actifs + 1e-9 < derogation.servicesRequis) {
+  const classes = Object.keys(moteur.affiliations.classementsActifs);
+  const actifs = carriere.dureeDeService(classes, borne);
+  if (derogation === null || actifs + 1e-9 < servicesActifsRequis(
+    moteur, carriere, parametres.classement, classes, derogation.servicesRequis)) {
     return null;
   }
   if (condition === "duree_de_la_categorie_active") {

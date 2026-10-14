@@ -615,7 +615,9 @@ def derogation_active(moteur, periode: PeriodeRegime,
     spécial que la même carrière traverserait (cf.
     :func:`~retraite_notionnelle.droit.coordonner.regimes_routes`) ;
     et la carrière doit porter la durée de services classés que l'article
-    L. 24 exige — dix-sept ans, vingt-sept pour la super-active. Sans cette
+    L. 24 exige — dix-sept ans, vingt-sept pour la super-active, quinze et
+    vingt-cinq à qui les avait atteints avant juillet 2011
+    (:func:`~retraite_notionnelle.droit.compter.services_actifs_requis`). Sans cette
     dernière, l'assuré reste au droit commun, ce qui est exactement ce que
     le texte dit : la faculté « est ouverte à la condition que le
     fonctionnaire puisse se prévaloir, au total, d'au moins dix-sept ans de
@@ -639,7 +641,8 @@ def derogation_active(moteur, periode: PeriodeRegime,
     if periode.regime not in coordonner.regimes_routes(moteur, statuts):
         return None
     servies = carriere.duree_de_service(statuts, coordonner.borne_carriere(carriere))
-    if servies + 1e-9 < derogation.services_requis:
+    if servies + 1e-9 < compter.services_actifs_requis(
+            moteur, carriere, classement, statuts, derogation.services_requis):
         return None
     return derogation
 

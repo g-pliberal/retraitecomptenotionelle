@@ -31,7 +31,7 @@ import {
   DureesProratisation, DureesRequises, DureesRequisesAvantSoixanteAns,
   DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension,
   DureesRequisesFonctionPublique, DureesRequisesRegimes, CalendriersDureeRequise,
-  DureesServicesMilitaires,
+  DureesServicesActifs, DureesServicesMilitaires,
   ComplementDifferentielRco,
   MajorationsPourEnfants, MaximumDesCultes, MinimumContributif, MinimumGaranti,
   MinimumVieillesse, PensionMajoreeReference,
@@ -79,6 +79,7 @@ export class ScenarioActuel {
     this.agesRegimes = new AgesRegimes(paquet);
     this.agesCategorieActive = new AgesCategorieActive(paquet);
     this.dureesServicesMilitaires = new DureesServicesMilitaires(paquet);
+    this.dureesServicesActifs = new DureesServicesActifs(paquet);
     this.agesJouissanceMilitaire = new AgesJouissanceMilitaire(paquet);
     this.coefficientsMinoration = new CoefficientsMinoration(paquet);
     this.anneesSalaireReference = new AnneesSalaireReference(paquet);
