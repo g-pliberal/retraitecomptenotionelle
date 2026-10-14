@@ -5325,9 +5325,14 @@ referents:
           d'espérance de vie basse et haute de l'INSEE, dans les deux
           moteurs (`Parametres.hypothese_esperance_vie`) : à 64 ans,
           celui de la génération 1975 s'en écarte de −6,6 % et
-          +8,2 %. Reste la page Coût, après l'action 147 (action
-          138, étape 7).
-        etat: a_reprendre
+          +8,2 %. Le 14 octobre 2026, la page Coût les lit aussi,
+          avec la pyramide de la même hypothèse : en 2070, le
+          système actuel passe de 15,30 % du PIB à 14,05 % sous la
+          basse et à 16,61 % sous la haute (le COR : 14,30 et
+          16,35 %) ; la proposition reste entre 8,06 et 8,10 %, et
+          son solde entre +0,06 et +0,11 point : son diviseur
+          absorbe la longévité (action 138, étape 7).
+        etat: repris
         chantier: "138.7"
       - quoi: >-
           Il projette les rémunérations publiques sur les hypothèses
@@ -9679,9 +9684,14 @@ referents:
           d'espérance de vie basse et haute de l'INSEE, dans les deux
           moteurs (`Parametres.hypothese_esperance_vie`) : à 64 ans,
           celui de la génération 1975 s'en écarte de −6,6 % et
-          +8,2 %. Reste la page Coût, après l'action 147 (action
-          138, étape 7).
-        etat: a_reprendre
+          +8,2 %. Le 14 octobre 2026, la page Coût les lit aussi,
+          avec la pyramide de la même hypothèse : en 2070, le
+          système actuel passe de 15,30 % du PIB à 14,05 % sous la
+          basse et à 16,61 % sous la haute (le COR : 14,30 et
+          16,35 %) ; la proposition reste entre 8,06 et 8,10 %, et
+          son solde entre +0,06 et +0,11 point : son diviseur
+          absorbe la longévité (action 138, étape 7).
+        etat: repris
         chantier: "138.7"
       - quoi: >-
           Il décompose la dépense en pension moyenne sur
@@ -10004,9 +10014,14 @@ referents:
           d'espérance de vie basse et haute de l'INSEE, dans les deux
           moteurs (`Parametres.hypothese_esperance_vie`) : à 64 ans,
           celui de la génération 1975 s'en écarte de −6,6 % et
-          +8,2 %. Reste la page Coût, après l'action 147 (action
-          138, étape 7).
-        etat: a_reprendre
+          +8,2 %. Le 14 octobre 2026, la page Coût les lit aussi,
+          avec la pyramide de la même hypothèse : en 2070, le
+          système actuel passe de 15,30 % du PIB à 14,05 % sous la
+          basse et à 16,61 % sous la haute (le COR : 14,30 et
+          16,35 %) ; la proposition reste entre 8,06 et 8,10 %, et
+          son solde entre +0,06 et +0,11 point : son diviseur
+          absorbe la longévité (action 138, étape 7).
+        etat: repris
         chantier: "138.7"
       - quoi: >-
           En Pologne, l'État cotise pour le congé parental, la
@@ -10234,9 +10249,14 @@ referents:
           d'espérance de vie basse et haute de l'INSEE, dans les deux
           moteurs (`Parametres.hypothese_esperance_vie`) : à 64 ans,
           celui de la génération 1975 s'en écarte de −6,6 % et
-          +8,2 %. Reste la page Coût, après l'action 147 (action
-          138, étape 7).
-        etat: a_reprendre
+          +8,2 %. Le 14 octobre 2026, la page Coût les lit aussi,
+          avec la pyramide de la même hypothèse : en 2070, le
+          système actuel passe de 15,30 % du PIB à 14,05 % sous la
+          basse et à 16,61 % sous la haute (le COR : 14,30 et
+          16,35 %) ; la proposition reste entre 8,06 et 8,10 %, et
+          son solde entre +0,06 et +0,11 point : son diviseur
+          absorbe la longévité (action 138, étape 7).
+        etat: repris
         chantier: "138.7"
     bilan: >-
       Ce qu'il fait de mieux est un résultat : la stabilité d'un
@@ -10924,9 +10944,14 @@ referents:
           d'espérance de vie basse et haute de l'INSEE, dans les deux
           moteurs (`Parametres.hypothese_esperance_vie`) : à 64 ans,
           celui de la génération 1975 s'en écarte de −6,6 % et
-          +8,2 %. Reste la page Coût, après l'action 147 (action
-          138, étape 7).
-        etat: a_reprendre
+          +8,2 %. Le 14 octobre 2026, la page Coût les lit aussi,
+          avec la pyramide de la même hypothèse : en 2070, le
+          système actuel passe de 15,30 % du PIB à 14,05 % sous la
+          basse et à 16,61 % sous la haute (le COR : 14,30 et
+          16,35 %) ; la proposition reste entre 8,06 et 8,10 %, et
+          son solde entre +0,06 et +0,11 point : son diviseur
+          absorbe la longévité (action 138, étape 7).
+        etat: repris
         chantier: "138.7"
       - quoi: >-
           Il décompose aussi le flux des pensions nouvelles :

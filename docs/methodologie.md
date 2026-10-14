@@ -2312,9 +2312,16 @@ Le capital d'un compte rétroactif n'en dépend pas, ni la pension du
 système 1 : la longévité gagnée ou perdue s'y règle en rente annuelle, ce que
 le diviseur de génération est fait pour absorber. Celui d'un compte prospectif
 en dépend par ses droits acquis, que la bascule convertit en capital par un
-diviseur. La page Coût ne lit pas encore les
-variantes : sa population reste celle du scénario central, et son simulateur
-refuse une autre hypothèse.
+diviseur. La page Coût lit les variantes depuis le 14 octobre 2026 : elle
+compte alors ses retraités dans la pyramide du scénario de l'INSEE de même
+hypothèse, « espérance de vie basse » ou « haute »
+(`population_par_age_variantes.csv`), et refuse une pyramide d'une autre. La
+dépense que le COR projette pour le système actuel, sous la seule mortalité
+centrale, y est multipliée chaque année par ce que la pyramide de la variante
+change à la masse du système actuel — les mêmes pensions, que la variante ne
+touche pas, comptées dans les deux pyramides —, dans la trajectoire comme dans
+le bilan ; ses ressources ne bougent pas, ni les arrivées tardives, celles du
+central.
 
 **Ce que la loi rendait aux années projetées, mesuré le 7 octobre 2026.**
 Jusqu'à ce jour, la loi de Gompertz-Makeham décrivait seule les années
