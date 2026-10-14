@@ -13637,7 +13637,9 @@ ${g.terme("durée", "durée d'assurance")}, le ${g.terme("salaire de référence
 de chaque régime (sur ses seules années, jamais sur toute la carrière), et cinq
 paramètres lus à la génération plutôt qu'à l'année de liquidation : durée requise,
 âge légal, âge d'annulation de la décote, coefficient de minoration, nombre
-d'années retenues au salaire de référence.</p>
+d'années retenues au salaire de référence. Dans les régimes spéciaux, l'Opéra
+et la Banque de France compris, la durée requise se lit à la date où l'assuré
+réunit les conditions de son départ, comme le fait chacun d'eux.</p>
 <p>Il applique aussi, dans l'ordre où le droit les applique, les avantages non
 contributifs que la carrière suffit à déterminer :</p>
 <ul>
@@ -13768,7 +13770,8 @@ function methodeConstruction() {
 <a href="${g.DEPOT}/tree/main/src">le dossier <code>src/</code> du dépôt</a> : c'est
 lui qui fait foi, et c'est lui qui est testé contre les sources — les textes,
 les barèmes, et des calculateurs extérieurs comme OpenFisca, qui servent
-d'oracle au système 1.</p>
+d'oracle au système 1, jusqu'au temps partiel, aux enfants et à la catégorie
+active des fonctionnaires.</p>
 <p>Ce que vous lisez ici est un <strong>portage en JavaScript</strong> de ce
 modèle, sans aucune bibliothèque, qui tourne entièrement dans votre navigateur
 : rien de ce que vous saisissez n'est envoyé nulle part. Le portage ne s'écarte

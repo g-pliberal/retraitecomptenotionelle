@@ -19,13 +19,13 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 
   **La limite tient toujours, mais elle ne mord plus sur le chiffre publié**,
   parce que le chiffre publié n'est plus calculé. Les avantages non contributifs
-  valent <!--chiffre:mesure(avantages?annee=2024)-->99,5<!--/--> milliards en 2024, soit <!--chiffre:mesure(avantages?annee=2024&quoi=part_depense)-->23,3<!--/--> % de la dépense, et **<!--chiffre:mesure(avantages?annee=2024&quoi=part_lue)-->83<!--/--> % de ce
+  valent <!--chiffre:mesure(avantages?annee=2024)-->99,8<!--/--> milliards en 2024, soit <!--chiffre:mesure(avantages?annee=2024&quoi=part_depense)-->23,4<!--/--> % de la dépense, et **<!--chiffre:mesure(avantages?annee=2024&quoi=part_lue)-->82<!--/--> % de ce
   total est LU** : la réversion dans l'enquête de la DREES auprès des caisses,
   et dix autres lignes dans les sous-postes des Comptes de la protection
   sociale, dont la majoration pour enfants à <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=majoration_enfants)-->7,8<!--/--> milliards — que le modèle
   chiffrait à zéro. Le COR chiffre l'ensemble des droits de solidarité à « de
   l'ordre d'un cinquième » : on y est. Ce que le modèle apporte n'est donc pas
-  le chiffre mais la LISTE, et les <!--chiffre:mesure(avantages?annee=2024&quoi=calculees)-->17,4<!--/--> milliards qu'il calcule encore lui-même
+  le chiffre mais la LISTE, et les <!--chiffre:mesure(avantages?annee=2024&quoi=calculees)-->17,7<!--/--> milliards qu'il calcule encore lui-même
   restent soumis à cette limite. Vingt-sept dispositifs sur quarante-cinq ne
   portent aucun chiffre, chacun avec sa raison écrite.
 

@@ -548,7 +548,7 @@ Les tables elles-mêmes sont décrites au §9.
 ## 6. Les neutralisations
 
 > **L'inventaire complet de ce que le scénario 1 sert au-delà de la cotisation
-> — <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages)-->47<!--/--> dispositifs, avec leur base légale et le moyen d'en chiffrer le
+> — <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages)-->48<!--/--> dispositifs, avec leur base légale et le moyen d'en chiffrer le
 > coût — est dans `data/reference/legislation/avantages_non_contributifs.yaml`,
 > et `docs/avantages_non_contributifs.md` le commente.** Le tableau ci-dessous
 > ne porte que les quatorze champs de `Neutralisations`, qui sont une déclaration
@@ -2000,7 +2000,7 @@ pension moyenne de la grille ne reculait pas comme la sienne ; le lecteur qui
 refaisait le calcul ne retrouvait pas le chiffre officiel. Elle est gardée pour
 ce qu'elle contrôle — la reconstitution du passé et la décomposition de
 l'écart (`docs/limites.md`, § 5 ter) — et n'est plus affichée comme une
-projection : elle donne aujourd'hui <!--chiffre:mesure(trajectoire_propre?annee=2070)-->15,6<!--/--> % du PIB en 2070, quand le COR
+projection : elle donne aujourd'hui <!--chiffre:mesure(trajectoire_propre?annee=2070)-->15,5<!--/--> % du PIB en 2070, quand le COR
 en projette <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/-->.
 
 Deux précisions d'unité, parce qu'elles sont la source d'erreur la plus facile.
