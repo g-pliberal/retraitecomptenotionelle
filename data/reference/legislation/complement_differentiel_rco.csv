@@ -22,7 +22,8 @@
 #         3 novembre 2021, lu le 7 octobre 2026                      haute
 #   2023  1 138,63 € (85 %), « soit un montant de 1 138,63€ net par
 #         mois » au 1er janvier 2023 : Info presse de la MSA du 14 février
-#         2023, lue le 8 octobre 2026                                haute
+#         2023, lue le 8 octobre 2026, relue par le script depuis le
+#         14 octobre 2026                                            certifiee
 #   2024  1 177,03 € (85 %), « une garantie de retraite minimale portée à
 #         1177,03 € par mois au 1er janvier 2024 » : la phrase de la page de
 #         la MSA, qui ne la date plus que de 2026, reprise mot pour mot par
@@ -59,9 +60,9 @@
 # Lot-et-Garonne aurait écrit, que le calcul redonne, n'a pas pu être relu.
 #
 # LES NIVEAUX : `certifiee` quand la MSA, qui produit la donnée, publie le
-# montant et que le script le relit (2021, 2022, 2026) ; `haute` quand un
+# montant et que le script le relit (2021, 2022, 2023, 2026) ; `haute` quand un
 # tiers le cite, ou que la MSA le publie sans que le script le relise (2018,
-# 2020, 2023) ; `moyenne` quand le montant vient d'une page qui le reprend,
+# 2020) ; `moyenne` quand le montant vient d'une page qui le reprend,
 # ou du seul calcul sur des taux lus (2015 à 2017, 2019, 2024, 2025). Une
 # ligne publiée garde la convention : le plus petit SMIC net de l'heure, à
 # quatre décimales, qui redonne le montant au centime inférieur ; les
@@ -70,7 +71,8 @@
 # Fichier écrit à la main, le 7 octobre 2026 (action 138, étape 8) ; la
 # fiche complement_differentiel_rco dit comment le modèle le lit. Le
 # 8 octobre 2026, 2023 lu : l'estimation tombait juste. Le 14 octobre
-# 2026, la déduction expliquée, 2015 à 2020 et 2022 refaits.
+# 2026, la déduction expliquée, 2015 à 2020 et 2022 refaits ; 2023 relu
+# par le script, à l'adresse de l'Info presse retrouvée.
 annee,smic_net_horaire,fiabilite
 2015,7.4146,moyenne
 2016,7.4512,moyenne
@@ -80,7 +82,7 @@ annee,smic_net_horaire,fiabilite
 2020,7.9546,haute
 2021,8.0329,certifiee
 2022,8.2838,certifiee
-2023,8.8323,haute
+2023,8.8323,certifiee
 2024,9.1302,moyenne
 2025,9.3104,moyenne
 2026,9.4201,certifiee
