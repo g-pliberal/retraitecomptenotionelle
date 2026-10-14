@@ -21,10 +21,13 @@ racine=$(git rev-parse --show-toplevel 2>/dev/null) || {
     echo "pousser: pas dans un dépôt git" >&2; exit 1; }
 cd "$racine" || exit 1
 
+# Une tête détachée publie comme une autre : c'est `HEAD` qui part sur main,
+# pas une branche. Une session créée par une autre session part ainsi, et le
+# refus d'avant lui laissait son travail sur les bras. Il n'y a seulement
+# aucune branche de session à faire suivre : `branche` reste vide, et les deux
+# derniers blocs ne font rien.
 branche=$(git rev-parse --abbrev-ref HEAD)
-if [ "$branche" = HEAD ]; then
-    echo "pousser: HEAD détachée, rien poussé" >&2; exit 1
-fi
+[ "$branche" = HEAD ] && branche=""
 
 # Le réseau lâche : quatre essais, 2s, 4s, 8s, 16s.
 avec_reprises() {
@@ -184,8 +187,14 @@ fi
 # commits non poussés lise zéro. Jamais de création. `ls-remote` distingue les
 # trois cas par son code de sortie, et c'est ce qui rend ce bloc sûr : 0 la
 # référence est sur GitHub, 2 elle n'y est pas, autre chose le réseau a lâché.
-git ls-remote --exit-code --heads origin "$branche" >/dev/null 2>&1
-case $? in
+# Sans branche (tête détachée), le code 3 saute les deux blocs.
+if [ -n "$branche" ]; then
+    git ls-remote --exit-code --heads origin "$branche" >/dev/null 2>&1
+    suivi=$?
+else
+    suivi=3
+fi
+case $suivi in
     0)
         distant=$(git rev-parse --quiet --verify "refs/remotes/origin/$branche" 2>/dev/null || echo "")
         if [ "$distant" != "$tete" ]; then
@@ -208,6 +217,9 @@ case $? in
         # c'est ce que ferait `git fetch --prune`.
         git update-ref -d "refs/remotes/origin/$branche" >/dev/null 2>&1 || true
         ;;
+    3)
+        : # tête détachée : aucune branche de session
+        ;;
     *)
         : # ls-remote a échoué : ne rien conclure de son silence, ne rien toucher.
         ;;
@@ -215,7 +227,9 @@ esac
 
 # Et donner à la branche locale l'amont qu'elle n'a pas : sans lui, le compteur
 # compare à un point fixe et remonte à chaque commit.
-git branch --quiet --set-upstream-to=origin/main "$branche" >/dev/null 2>&1 || true
+[ -n "$branche" ] \
+    && git branch --quiet --set-upstream-to=origin/main "$branche" >/dev/null 2>&1
+true
 
 if [ "$avance" -gt 0 ]; then
     echo "main ← ${tete:0:7} ($avance commit(s))"

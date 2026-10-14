@@ -221,6 +221,76 @@ def test_il_refuse_un_conflit_de_rebasage_sans_rien_pousser(atelier, tmp_path):
     assert git(session, "status", "--porcelain") == "", "le rebasage a été abandonné"
 
 
+# -- la tête détachée ---------------------------------------------------------
+
+
+def _autre_session_pousse(distant: Path, tmp_path: Path, nom: str, texte: str = "x") -> str:
+    autre = tmp_path / "autre"
+    subprocess.run(["git", "clone", "--quiet", str(distant), str(autre)], check=True)
+    git(autre, "config", "user.email", "autre@exemple.fr")
+    git(autre, "config", "user.name", "Autre")
+    sienne = commiter(autre, nom, texte)
+    git(autre, "push", "--quiet", "origin", "main")
+    return sienne
+
+
+def test_une_tete_detachee_publie_sur_main(atelier):
+    """Une session créée par une autre part détachée : elle publie quand même,
+    et le script ne crée aucune branche, faute d'en avoir une à faire suivre."""
+    distant, session = atelier
+    git(session, "checkout", "--quiet", "--detach")
+    tete = commiter(session, "travail.txt")
+
+    acheve = pousser(session)
+    assert acheve.returncode == 0, acheve.stderr
+    assert "main ←" in acheve.stdout
+    assert tete_distante(distant, "main") == tete
+    assert git(session, "rev-parse", "--abbrev-ref", "HEAD") == "HEAD", "toujours détachée"
+    assert git(distant, "for-each-ref", "--format=%(refname)", "refs/heads") == "refs/heads/main"
+
+    relance = pousser(session)
+    assert relance.returncode == 0, relance.stderr
+    assert relance.stdout.strip() == ""
+
+
+def test_une_tete_detachee_se_rebase_sur_main(atelier, tmp_path):
+    distant, session = atelier
+    git(session, "checkout", "--quiet", "--detach")
+    commiter(session, "mienne.txt")
+    sienne = _autre_session_pousse(distant, tmp_path, "sienne.txt")
+
+    acheve = pousser(session)
+    assert acheve.returncode == 0, acheve.stderr
+    assert git(session, "rev-parse", "HEAD~1") == sienne
+    assert tete_distante(distant, "main") == git(session, "rev-parse", "HEAD")
+
+
+def test_une_tete_detachee_garde_les_refus(atelier, tmp_path):
+    """Détachée, elle refuse ce que refuse une branche : ici un conflit."""
+    distant, session = atelier
+    git(session, "checkout", "--quiet", "--detach")
+    commiter(session, "partage.txt", "version de la session")
+    attendu = _autre_session_pousse(distant, tmp_path, "partage.txt", "version de l'autre")
+
+    acheve = pousser(session)
+    assert acheve.returncode != 0
+    assert "conflit" in acheve.stderr
+    assert tete_distante(distant, "main") == attendu, "rien poussé"
+
+
+def test_une_tete_detachee_refuse_une_adresse_nominative(atelier):
+    distant, session = atelier
+    avant = tete_distante(distant, "main")
+    git(session, "checkout", "--quiet", "--detach")
+    git(session, "config", "user.email", "prenom.nom@exemple.fr")
+    commiter(session, "travail.txt")
+
+    acheve = pousser(session)
+    assert acheve.returncode != 0
+    assert "adresse nominative" in acheve.stderr
+    assert tete_distante(distant, "main") == avant, "rien poussé"
+
+
 # -- le compteur de commits « non poussés » -----------------------------------
 
 
