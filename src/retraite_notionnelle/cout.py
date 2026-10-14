@@ -158,6 +158,7 @@ from .donnees.equilibre import (
     DecompositionDepense,
 )
 from .donnees.tva import AssietteTva
+from .effet_retour import EffetRetour, EffetRetourAnnuel
 from .donnees.population import CarrieresIncompletes, Population
 from .garantie import (
     CoutGarantie,
@@ -819,12 +820,34 @@ class AvenirAnnuel:
     #: groupe (action 147, étape 5).
     masses_regimes: dict[str, float] = field(default_factory=dict)
     tetes_regimes: dict[str, float] = field(default_factory=dict)
+    #: L'effet retour de l'année (action 138, étape 5) : ce que chaque euro
+    #: d'économie des régimes des scénarios 2 à 5 coûte en ASPA et fait perdre
+    #: en prélèvements sur les pensions. ``None`` sans distribution.
+    effet_retour: EffetRetourAnnuel | None = None
 
     def cout_constants(self, scenario: str) -> float:
         """Coût du système, en millions d'euros constants de référence."""
         return masse_du_scenario(self.base, self.part_derives,
                                  self.rapports[scenario], scenario,
                                  self.reversion_servie, self.reforme_en_vigueur)
+
+    def economie_constants(self, scenario: str) -> float:
+        """Ce que le système épargne aux régimes face au système actuel, en
+        millions d'euros constants : négatif quand il sert plus."""
+        return self.cout_constants("actuel") - self.cout_constants(scenario)
+
+    def effet_retour_constants(self, scenario: str) -> float:
+        """Ce que l'économie des régimes coûte ailleurs, en millions d'euros
+        constants : l'ASPA de plus, et la CSG, la CRDS, la CASA et l'impôt sur
+        le revenu que les pensions ne paient plus (:mod:`.effet_retour`)."""
+        if self.effet_retour is None:
+            return 0.0
+        return self.effet_retour.taux(scenario) * self.economie_constants(scenario)
+
+    def gain_public_constants(self, scenario: str) -> float:
+        """L'économie des régimes, moins son effet retour : ce que les
+        finances publiques y gagnent, en millions d'euros constants."""
+        return self.economie_constants(scenario) - self.effet_retour_constants(scenario)
 
     def cout_constants_derive(self, scenario: str) -> float:
         """Le même coût, si l'écart au COR tenait tout entier au système actuel."""
@@ -902,6 +925,16 @@ class Avenir:
     def ecart_cumule(self, scenario: str) -> float:
         """Ce que le système ferait économiser (négatif) ou coûter en plus."""
         return self.cumul(scenario) - self.cumul("actuel")
+
+    def part_effet_retour(self, scenario: str, debut: int, fin: int) -> float | None:
+        """La part de l'économie des régimes, cumulée de ``debut`` à ``fin``,
+        que l'effet retour reprend : ce que l'IPP chiffre de 20 à 25 %.
+        ``None`` quand le système n'épargne rien sur la période."""
+        lignes = [l for l in self.annees if debut <= l.annee <= fin]
+        economie = somme_ordonnee(l.economie_constants(scenario) for l in lignes)
+        if economie == 0.0:
+            return None
+        return somme_ordonnee(l.effet_retour_constants(scenario) for l in lignes) / economie
 
     def cumul_reprises(self) -> float:
         """Ce que les successions rendent sur les années projetées, en euros constants."""
@@ -3799,6 +3832,14 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
                                           poids, revalorisation)
     if masses_ancrage["actuel"] <= 0.0:
         return Avenir()
+    # L'effet retour se lit sur la distribution que la garantie a calée, sa
+    # tranche ouverte remise à la moyenne publiée l'année de l'enquête.
+    caracteristiques = simulateur.caracteristiques
+    effet_retour = EffetRetour(
+        simulateur, garantie,
+        caracteristiques.valeur("pension_droit_direct_majorations", "ensemble")
+        if caracteristiques.millesime == garantie.distribution.millesime else None,
+        derniere=HORIZON)
     # L'ancrage est le prix, en euros constants de référence, d'une unité de la
     # masse du modèle. Les deux termes sont donc mis dans la MÊME unité avant
     # d'être divisés : la dépense publiée, en euros de son année, est ramenée
@@ -3914,6 +3955,9 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             masses_regimes={regime: ancrage * masse
                             for regime, masse in masses_regimes.items()},
             tetes_regimes=tetes_regimes,
+            effet_retour=effet_retour.chiffrer(
+                annee, masses, tetes[TETES_TOUTES],
+                tetes[TETES_GARANTIE] / tetes[TETES_TOUTES] if tetes[TETES_TOUTES] else 0.0),
         ))
     _reprises_successions(lignes, simulateur, garantie)
 

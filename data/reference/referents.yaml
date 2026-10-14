@@ -7924,7 +7924,14 @@ referents:
           mais son calage de l'ASPA est grossier.
         preuve: >-
           `modeles/fiscal.py:357-391`, au commit `59b7985`
-        etat: a_reprendre
+        verification: >-
+          Repris le 14 octobre 2026 (`effet_retour.py`) : sur la
+          distribution de l'EIR que la garantie cale, l'ASPA au barème de
+          l'année et la CSG, la CRDS, la CASA et l'impôt d'une personne
+          seule ; de 2026 à 2070, l'effet retour reprend 27 à 28 % de
+          l'économie des régimes des scénarios 2 à 5, un peu plus que
+          l'IPP. La page ne l'affiche pas encore.
+        etat: repris
         chantier: "138.5"
       - quoi: >-
           Son interface résout un problème budgétaire à l'envers,

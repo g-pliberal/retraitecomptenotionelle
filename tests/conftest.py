@@ -74,7 +74,7 @@ COMPLETS = {
     "test_cout.py", "test_cout_age_depart.py", "test_age_conjoncturel.py",
     "test_age_depart_csp.py", "test_avantages.py", "test_garantie_par_sexe.py",
     "test_solde_fusion.py", "test_stock_age_legal.py",
-    "test_proposition_prospective.py", "test_postes_ecartes.py",
+    "test_proposition_prospective.py", "test_postes_ecartes.py", "test_effet_retour.py",
     "test_chiffrage_plf.py", "test_scenarios_meres.py", "test_grille_large.py",
     # Ce que les pages qui agrègent lisent du modèle, figé sous la référence,
     # confronté au modèle qui le calcule.
