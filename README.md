@@ -188,8 +188,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1554<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->8 066<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1562<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->8 132<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Neuf pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -228,9 +228,9 @@ consultable en JSON au bas de la page.
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
 `index.html` charge deux choses : `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->5 300<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->5 355<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
-2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->74<!--/--> fiches de régime, et ce que le Python a calculé une fois pour toutes
+2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->76<!--/--> fiches de régime, et ce que le Python a calculé une fois pour toutes
 sous les réglages de référence : le coût et les carrières types, que les pages
 qui agrègent lisent sans rien recalculer) et `moteur/js/`, un portage en
 JavaScript, sans aucune bibliothèque, de ce qui dépend de ce que le lecteur
@@ -253,8 +253,8 @@ Il est traité de front : **le Python de `src/` reste la référence**, et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->72<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue les simulations côté JavaScript et les compare valeur par valeur —
 <!--chiffre:portage(valeurs)-->149 860<!--/--> nombres,
-dont <!--chiffre:portage(identiques)-->97,2<!--/--> % identiques
-au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->765000000000000,0<!--/--> · 10⁻¹⁵ (un *ulp*, la précision d'un flottant, vaut 2 · 10⁻¹⁶). Ce pire
+dont <!--chiffre:portage(identiques)-->95,7<!--/--> % identiques
+au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->94200000000000000000,0<!--/--> · 10⁻¹⁵ (un *ulp*, la précision d'un flottant, vaut 2 · 10⁻¹⁶). Ce pire
 écart n'est pas celui d'un calcul mais d'une soustraction entre deux montants
 presque égaux — deux pensions dont on mesure l'écart, ou le plancher de la
 garantie vieillesse et la pension qu'il complète : les quelques *ulp* sur
@@ -384,8 +384,8 @@ print(simulateur.simuler(carriere).tableau())
 | Exigence | Réalisation |
 |---|---|
 | Comptes notionnels rétroactifs depuis l'origine de la répartition | Origine 1941 (AVTS), paramétrable à 1945 |
-| Chaque réforme laisse une trace dans chaque fiche | Un calendrier central des réformes (`data/reference/legislation/reformes.yaml`, <!--chiffre:entrees(data/reference/legislation/reformes.yaml:reformes)-->121<!--/--> entrées de 1945 à 2026) et, par régime, les articles de code ou de décret qui portent ses paramètres (`regimes/pivots.yaml`) ; `scripts/calendrier_regimes.py` lit leurs versions dans l'index LEGI et les confronte aux périodes des fiches, et un test impose que toute réforme touchant un régime soit coupée, absorbée par un drapeau par génération, ou déclarée non appliquée avec sa raison |
-| Tous les régimes, actuels **et** disparus | <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->74<!--/--> régimes calculés : AGIRC, ARRCO, CANCAVA, ORGANIC, RSI, mines, SEITA, chemins de fer secondaires… — et un [inventaire](docs/regimes.md) de **<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->108<!--/--> lignes** — tous les régimes obligatoires ayant existé depuis 1930, calculés ou non —, ancré sur `R. 711-1`, qui dit ce qui manque à chacun et pourquoi ; un test le tient aligné sur le catalogue, et ses tableaux sont produits par script |
+| Chaque réforme laisse une trace dans chaque fiche | Un calendrier central des réformes (`data/reference/legislation/reformes.yaml`, <!--chiffre:entrees(data/reference/legislation/reformes.yaml:reformes)-->126<!--/--> entrées de 1945 à 2026) et, par régime, les articles de code ou de décret qui portent ses paramètres (`regimes/pivots.yaml`) ; `scripts/calendrier_regimes.py` lit leurs versions dans l'index LEGI et les confronte aux périodes des fiches, et un test impose que toute réforme touchant un régime soit coupée, absorbée par un drapeau par génération, ou déclarée non appliquée avec sa raison |
+| Tous les régimes, actuels **et** disparus | <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->76<!--/--> régimes calculés : AGIRC, ARRCO, CANCAVA, ORGANIC, RSI, mines, SEITA, chemins de fer secondaires… — et un [inventaire](docs/regimes.md) de **<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->110<!--/--> lignes** — tous les régimes obligatoires ayant existé depuis 1930, calculés ou non —, ancré sur `R. 711-1`, qui dit ce qui manque à chacun et pourquoi ; un test le tient aligné sur le catalogue, et ses tableaux sont produits par script |
 | Départ trop tôt = pension réduite | Âge de référence à **<!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--/--> ans** — l'âge légal de départ de la proposition — à partir de la bascule ; avant elle, un **cliquet** que l'abaissement de 1982 ne fait pas redescendre |
 | Régimes à départ précoce traités au même étalon | L'agent de conduite de l'exemple, parti à <!--chiffre:mesure(constante?de=mesures_prose&nom=EXEMPLES.sncf.depart)-->50<!--/--> ans en 2005, compte <!--chiffre:mesure(avance?exemple=sncf)-->15<!--/--> ans d'anticipation ; après la bascule, un départ de l'Opéra à <!--chiffre:illustration()-->40<!--/--> ans se mesure à un âge de référence de <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--/--> ans |
 | Indexation par triple lock inversé, depuis l'origine | `min(inflation, salaire moyen, productivité réelle)`, appliqué aux comptes en constitution. Le modèle s'arrête à la liquidation : il ne revalorise pas les pensions servies, et n'en calcule qu'une, dans les euros de l'année de départ |
@@ -778,7 +778,7 @@ de chaque cas type :
 | 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 666<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−51,6<!--/--> % |
 | 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=5)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=5)-->+0,0<!--/--> % |
 | 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->6 666<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−51,6<!--/--> % |
-| *s'ajoute au 6 : sa garantie vieillesse, payée par l'impôt, lue sur la distribution des pensions* | *<!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 433<!--/--> Md €* | |
+| *s'ajoute au 6 : sa garantie vieillesse, payée par l'impôt, lue sur la distribution des pensions* | *<!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 434<!--/--> Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
 ce n'est pas un défaut du calcul : leur bascule est fixée à 2026, aucune pension

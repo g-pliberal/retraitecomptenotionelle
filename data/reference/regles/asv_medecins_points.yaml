@@ -235,7 +235,9 @@ code:
   python: >-
     données : regimes/asv_conventionnes.yaml, vingt-deux périodes en points, statut
     medecin_liberal, `points_par_trimestre_valide`, `points_ajustement_par_forfait`,
-    `points_ajustement_maximum`, `valeur_point_euros` ; droit/acquerir.py : acquerir ;
+    `points_ajustement_maximum`, `valeur_point_euros`, `part_assurance_maladie_forfait`
+    et `part_assurance_maladie_taux` ; droit/acquerir.py : acquerir ; moteur/compte.py :
+    la part des caisses au compte ;
     droit/liquider.py : liquider_chaque_regime, valeur_point_fiche
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
@@ -252,6 +254,13 @@ historique:
   portait par périodes, et ajoute les 37,52 points d'avant 1972, la valeur de service à
   trois étages de L. 645-5 et la réécriture du décret de 1972 au 1er juillet 2026. Aucun
   chiffre ne change.
+- >-
+  2026-10-14 — action 138, étape 18 : la part des caisses d'assurance maladie, les deux
+  tiers du forfait et de l'ajustement en secteur 1 (la moitié du 30 mars 1993 au 8
+  juillet 1994, D. 645-3), est portée au compte notionnel comme une part patronale ; les
+  points n'en changent pas. Le forfait de 2025 et de 2026, 1 852 et 1 917 € pour le
+  médecin, lu au guide de la CNAVPL et chez la CARMF, au lieu de celui de 2016 projeté
+  sur les prix.
 effet: >-
   Les médecins libéraux conventionnés : près du tiers de la pension d'un médecin de
   secteur 1 ; le modèle en rend les points annuels à moins de 1 % de la calculette de la

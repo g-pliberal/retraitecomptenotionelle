@@ -9,10 +9,10 @@ intitule: >-
   ajoute — sauf aux sages-femmes —, et la prestation vaut les points multipliés par une
   valeur de service propre à chaque profession.
 domaine: points
-regimes: [asv_conventionnes]
+regimes: [asv_conventionnes, asv_auxiliaires_medicaux, asv_chirurgiens_dentistes]
 etape: acquerir_les_droits
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - la profession, les années d'exercice libéral conventionné et le revenu d'activité non
   salarié de chaque année, dans la limite de cinq plafonds
@@ -24,8 +24,10 @@ ecrit:
 dates_qui_decident:
 - revenu.annee
 # `revenu.annee` est l'année de la cotisation. Les quatre professions sont décrites
-# ensemble, version par version ; aucune n'est calculée : leurs statuts n'ont pas d'ASV
-# dans le modèle, qui ne porte que les médecins (fiche asv_medecins_points).
+# ensemble, version par version. Depuis le 14 octobre 2026 (action 138, étape 18), les
+# auxiliaires médicaux et les chirurgiens-dentistes sont calculés, chacun par sa fiche de
+# régime ; les sages-femmes, que le statut confond avec les dentistes, et les directeurs
+# de laboratoire ne le sont pas.
 versions:
 - id: regimes_en_lettres_cles
   statut: lue
@@ -140,8 +142,8 @@ versions:
       juillet 2026 ne sont pas lus ici
   exemples: aucun trouvé
 sources:
-  lu_le: 2026-10-13
-  prochaine_relecture: 2027-10-13
+  lu_le: 2026-10-14
+  prochaine_relecture: 2027-10-14
   a_relire:
   - >-
     Lire les règlements des quatre sections approuvés par l'arrêté du 10 juillet 2026
@@ -152,9 +154,22 @@ sources:
     cotisations en lettres clés, les points d'avant les forfaits en euros — et les
     forfaits de 2016 et d'après des directeurs de laboratoire.
   - >-
-    Donner une ASV aux statuts des auxiliaires médicaux, des chirurgiens-dentistes, des
-    sages-femmes et des biologistes, qui n'en ont aucune dans le modèle : c'est une
-    étape de modélisation, hors de l'action 145.
+    Les points d'avant les décrets de 2007 et de 2008, que l'index ne chiffre pas : les
+    fiches de régime présument la règle de 2007 (dix points par an) et celle de 2010
+    (24,5 points), et servent ces points à la valeur d'après 2006 quand le texte leur en
+    donne une par tranche d'années. Les chercher au Bulletin officiel, ou dans les
+    statuts des deux sections.
+  - >-
+    Le partage du forfait et de l'ajustement avec l'assurance maladie, lu pour 2025 au
+    guide de la CNAVPL, présumé à toutes les années : le lire aux conventions nationales
+    de chaque profession (L. 162-14-1, 5°).
+  - >-
+    Une saisie qui distingue la sage-femme du chirurgien-dentiste, et le biologiste du
+    pharmacien d'officine : sans elle, la sage-femme reçoit les PCV du dentiste, près de
+    trois fois les siennes.
+  - >-
+    Un exemple chiffré publié de la prestation d'un auxiliaire médical ou d'un
+    chirurgien-dentiste : aucun n'a été trouvé.
   lectures:
   - type: legifrance
     reference: >-
@@ -163,12 +178,38 @@ sources:
       articles de cotisation, de points et de valeur de service : index LEGI du dépôt, à
       jour au 12 octobre 2026
     date: 2026-10-13
+  - type: legifrance
+    reference: >-
+      L. 645-2, L. 645-3 et L. 645-5 CSS dans toutes leurs rédactions de 1985 à 2026 ;
+      D. 645-3 de 1985 à 2004 (le double de la cotisation du professionnel, l'égalité
+      pour les médecins du 30 mars 1993 au 8 juillet 1994) ; décret n° 2008-1044,
+      articles 1er à 5 ; décret n° 2007-458, articles 1er à 3 dans leurs rédactions de
+      2007, 2012 et 2018 : index LEGI du dépôt, à jour au 13 octobre 2026
+    date: 2026-10-14
+  - type: autre
+    reference: >-
+      guide de l'assurance vieillesse des professions libérales, CNAVPL, édition 2025,
+      p. 84 à 96 : forfaits, ajustements, parts de l'assurance maladie, points, valeurs
+      de service et âges des PCV des médecins, des chirurgiens-dentistes, des
+      sages-femmes et des auxiliaires médicaux
+      (https://www.cnavpl.fr/wp-content/uploads/2025/07/Guide-2025.pdf)
+    date: 2026-10-14
 historique:
 - >-
   2026-10-13 — écrite à l'étape 2 de l'action 145 : l'inventaire nomme les cinq
   professions de l'ASV, et la fiche de régime ne porte que les médecins. Les quatre
   autres régimes sont lus, non calculés.
+- >-
+  2026-10-14 — action 138, étape 18 : les auxiliaires médicaux et les
+  chirurgiens-dentistes ont leurs PCV, dans les deux moteurs (fiches
+  asv_auxiliaires_medicaux et asv_chirurgiens_dentistes, routées par leurs statuts),
+  avec la part de l'assurance maladie, que le compte notionnel reçoit comme une part
+  patronale ; les points d'avant 2007 et 2008 sont présumés.
 effet: >-
-  Les auxiliaires médicaux, chirurgiens-dentistes, directeurs de laboratoire et
-  sages-femmes conventionnés : la part de leur pension que l'ASV sert manque dans le
-  modèle, qui ne leur en donne aucune.
+  Un infirmier né en 1960, au salaire moyen de 25 à 65 ans : ses PCV valent 1 642 € par
+  an, un dixième de sa pension, qui les ignorait ; un chirurgien-dentiste, 10 576 €, plus
+  du tiers de la sienne. Sous la convention totale, les caisses d'assurance maladie font
+  6 à 8 % de ce que reçoit le compte notionnel de l'auxiliaire, 19 à 27 % de celui du
+  dentiste, 17 à 21 % de celui du médecin. Les sages-femmes reçoivent, faute d'une saisie
+  qui les distingue, les PCV du dentiste ; les directeurs de laboratoire n'en ont
+  aucune.

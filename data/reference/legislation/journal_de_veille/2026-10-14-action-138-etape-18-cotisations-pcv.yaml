@@ -1,0 +1,37 @@
+date: "2026-10-14"
+session: "action 138, étape 18, deuxième partie : les cotisations PCV (ex-ASV) des professions de santé conventionnées"
+consulte: >-
+  veille_droit.py. L'index LEGI du dépôt, récupéré puis mis à jour des incréments du
+  12 et du 13 octobre 2026. Dans l'index : L. 645-2, L. 645-3 et L. 645-5 dans toutes
+  leurs rédactions de 1985 à 2026 ; D. 645-3 de 1985 à 2004 et sa rédaction de 2020,
+  d'un autre objet ; le décret n° 2008-1044, articles 1er à 5 ; le décret n° 2007-458,
+  articles 1er à 3 dans leurs rédactions de 2007, 2012 et 2018 ; le décret
+  n° 2011-1644, articles 1er à 4 ; les visas des décrets n° 75-891, 78-283 et 84-254,
+  dont l'index ne garde pas les articles de cotisation. Ailleurs : le guide de
+  l'assurance vieillesse des professions libérales de la CNAVPL, édition 2025, p. 84
+  à 96 ; une recherche des points de l'ASV des auxiliaires médicaux d'avant 2008, sans
+  résultat.
+trouve: >-
+  Le forfait des décrets de 2007 et de 2008 est la cotisation TOTALE : l'assurance
+  maladie en paie les deux tiers — 443 € des 665 € de l'auxiliaire médical en 2025,
+  3 297,52 € des 4 946,28 € du chirurgien-dentiste —, et 60 % de l'ajustement de
+  l'auxiliaire (0,24 % sur 0,40 %), la moitié de celui du dentiste (0,725 % sur
+  1,45 %). Les points d'ajustement de l'auxiliaire se comptent sur la cotisation
+  totale, rapportée au forfait total, « arrondi au dixième supérieur » (décret
+  n° 2008-1044, art. 4) ; ceux du dentiste au plafond de cinq plafonds, un point de
+  2008 à 2017, 1,47 en 2018, 1,93 depuis, « au prorata » en deçà (décret n° 2007-458,
+  art. 2). D. 645-3 fixe la part des caisses au double de celle du professionnel de
+  1985 à 2004, sauf pour les médecins du 30 mars 1993 au 8 juillet 1994, où elle lui
+  est égale. Le forfait des médecins, revalorisé depuis 2017 sur leur revenu moyen
+  (décret n° 2011-1644, art. 1er), est de 5 556 € en 2025, dont 1 852 € en secteur 1.
+  Valeurs de service de 2025 : 1,49 € pour les points des auxiliaires acquis depuis
+  2006, 28,5747 € pour ceux des dentistes. Âges, au guide : 65 ans pour l'auxiliaire,
+  60 avec un coefficient de 0,75 à 0,95 ; 67 ans pour le dentiste, la minoration de
+  1,25 % par trimestre bornée à 15 %. Aucun exemple chiffré publié n'a été trouvé.
+reste: >-
+  Les points d'avant 2007 (dentistes, en lettre clé C) et d'avant 2008 (auxiliaires),
+  présumés ; les valeurs de service propres aux points d'avant 2006 ; le partage avec
+  l'assurance maladie avant 2025, présumé constant ; les règlements des sections
+  approuvés par l'arrêté du 10 juillet 2026 ; les forfaits des médecins de 2017 à
+  2024 ; la sage-femme et le directeur de laboratoire, que la saisie ne distingue
+  pas ; le secteur 2 des médecins.

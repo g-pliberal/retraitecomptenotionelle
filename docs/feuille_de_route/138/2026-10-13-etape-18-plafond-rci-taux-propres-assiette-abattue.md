@@ -1,15 +1,15 @@
 # Étape 18, première partie : le plafond propre du RCI, le barème propre des artisans et l'assiette abattue
 
-**Reprise, au 13 octobre 2026.** Fait : le plafond propre de la première
-tranche du RCI de 2013 à 2024 ; le barème propre des artisans et des
-commerçants au régime général depuis 2018 (D. 633-3, dix-huit taux certifiés) ;
-l'abattement de 26 % de l'assiette sociale, dans le profil de la fiche de paie
-de l'indépendant. Reste, une session par point : les cotisations PCV des
-professions de santé, le plus lourd ; les points d'avant 1973 des artisans et
-des commerçants ; les points d'incapacité ; le conjoint collaborateur ; les
-dispenses de l'assiette minimale ; la Lodeom. CAVEC et CNBF : action 131 ;
-Mayotte : action 121. Aux pages : « Pour les pages », plus bas. Commencer par
-les cotisations PCV.
+**Reprise, au 14 octobre 2026.** Fait : le plafond propre du RCI, le barème
+propre des artisans, l'assiette abattue (13 octobre) ; les cotisations PCV des
+professions de santé, auxiliaires médicaux et chirurgiens-dentistes compris,
+avec la part des caisses au compte (14 octobre, note
+`2026-10-14-etape-18-cotisations-pcv.md`). Reste, une session par point : les
+points d'avant 1973 des artisans et des commerçants, le plus lourd ; les
+points d'incapacité ; le conjoint collaborateur ; les dispenses de l'assiette
+minimale ; la Lodeom. CAVEC et CNBF : action 131 ; Mayotte : action 121. Aux
+pages : « Pour les pages », plus bas et dans la note du 14. Commencer par les
+points d'avant 1973.
 
 **La demande.** Le propriétaire, le 13 octobre 2026 : « Action 138, étape 18,
 pas encore commencée : commence par l'assiette abattue des indépendants, leurs
