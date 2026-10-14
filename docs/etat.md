@@ -107,7 +107,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 **Ce qui est hors de la page Coût.** La réversion, par exemple, pèse 10,4 % de la masse des prestations en 2024 (COR) : le modèle en calcule une pour une personne (scénario 1), mais la page Coût n'en connaît que cette part publiée, qu'elle ne calcule pas.
 
-**La feuille de route** compte 161 actions : 133 fait, 17 en cours, 7 à faire, 2 archivée, 2 abandonnée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
+**La feuille de route** compte 161 actions : 134 fait, 16 en cours, 7 à faire, 2 archivée, 2 abandonnée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
 
 ## 2. Ce qui ne va pas encore
 
@@ -294,7 +294,7 @@ Et 34 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 
 ## 3. Ce qui reste à faire, et par quoi commencer
 
-- **Les 17 actions en cours** de la feuille de route :
+- **Les 16 actions en cours** de la feuille de route :
   - 47. La garantie vieillesse est une avance : la reprise sur succession, sa règle et son chiffrage
   - 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026
   - 121. Le droit de chacun, et non celui de la génération de l'année : toutes les personnes vivantes
@@ -306,7 +306,6 @@ Et 34 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation
   - 138. Meilleur en tous points : ce que les autres modèles font mieux, vérifié, puis repris
   - 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés
-  - 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR
   - 151. Partir très tard : le départ jusqu'au bout des tables de mortalité, puis la limite d'âge des fonctionnaires et ses exceptions
   - 152. Les cas types statutaires et non salariés à leur place dans l'EIR : le niveau et la carrière de chacun
   - 153. L'oracle au-delà des carrières simples : ce qu'OpenFisca calcule et que le dépôt ne lui confronte pas

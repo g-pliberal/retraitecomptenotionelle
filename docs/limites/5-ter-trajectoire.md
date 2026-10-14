@@ -111,7 +111,7 @@ hors de son champ, n'est pas dans la pension du scénario 1, qui écarte les
 régimes hors répartition. Un test tient le pire écart
 depuis 2000 sous un cliquet, qui ne doit que descendre jusqu'à quelques pour
 cent (`test_la_projection_refait_le_passe`) ; l'action 147 de la feuille de
-route en est le chantier.
+route, qui en était le chantier, s'est close sur un écart déclaré (ci-dessous).
 
 **L'écart du passé, en trois facteurs.** L'enquête annuelle auprès des caisses
 de la DREES compte, depuis 2004, les personnes qui touchent un droit direct,
@@ -379,3 +379,15 @@ immigrés aux carrières françaises courtes —, qui tirent vers la première
 conventions de l'Agirc-Arrco et des primes, l'entrée tardive des
 fonctionnaires, et porte à la masse les carrières courtes des arrivées
 tardives : ce qui reste de l'écart est petit, et de signe changeant.
+
+**L'écart déclaré, à reprendre plus tard.** L'action 147 s'est close le
+14 octobre 2026, par décision du propriétaire, sur l'écart tel qu'il est, et
+non sur sa cible de quelques pour cent. Trois restes demeurent déclarés, que
+rien ne corrige encore. À l'horizon, la pension par tête que la grille sert
+recule moins que chez le COR, à la fonction publique de l'État comme à
+l'Agirc-Arrco (la figure 2.7, plus haut) : c'est la dérive du rapport de
+masses, que la fourchette encadre. Au passé, les départs anticipés pour
+carrière longue de 2004 à 2008, que la grille ne connaît pas, font de 2009 le
+pire écart de la reconstitution ; l'action 152 de la feuille de route les
+reprend. Et ce qui reste de l'écart du passé tient aux pensions que la grille
+sert aux générations anciennes, que nulle action ne reprend encore.
