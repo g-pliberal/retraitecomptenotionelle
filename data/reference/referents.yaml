@@ -5054,7 +5054,18 @@ referents:
           mais écarte le levier de l'âge (`cout.py:1357`).
         preuve: >-
           rapport annuel du COR de juin 2026, tableau 2.11 et figure 2.24
-        etat: a_reprendre
+        verification: >-
+          Repris le 14 octobre 2026 (action 138, étape 3) :
+          `src/retraite_notionnelle/leviers.py` chiffre les trois leviers de
+          chaque système, chaque année, l'âge compris, et le pension gap et le
+          tax gap sur les quatre horizons ; `tests/test_leviers.py` les
+          confronte à la figure 2.24 et au tableau 2.11
+          (`tests/temoins/cor_leviers_2026.json`). Le système actuel recule
+          l'âge de 3,06 ans en 2070 (COR 3,02), relève le taux de 5,63 points
+          (5,56), a un tax gap de 2,78 points (2,76) ; le pension gap, 8,2 %
+          (8,6). Le geste de l'âge, que le rapport n'écrit pas, refait ses
+          âges d'équilibre à 0,1 an près sur ses propres séries.
+        etat: repris
         chantier: "138.3"
       - quoi: >-
           Il publie, par cas type et génération, le taux de
@@ -7569,7 +7580,16 @@ referents:
           +5,6 points de prélèvement en 2070).
         preuve: >-
           `SimulateurRetraites.py:290-900, 1309`, au commit `f3c2d92`
-        etat: a_reprendre
+        verification: >-
+          Repris le 14 octobre 2026 (action 138, étape 3), par les leviers du
+          COR de 2026 plutôt que par ceux de 2019 :
+          `src/retraite_notionnelle/leviers.py` chiffre la pension, le taux
+          et l'âge qui équilibrent chaque année chacun des six systèmes, et
+          `tests/test_leviers.py` les confronte à la figure 2.24 (3,06 ans en
+          2070 contre 3,02 au COR, 5,63 points de prélèvement contre 5,56).
+          Le niveau de vie relatif et la part de la vie en retraite comme
+          leviers restent à faire ; aucune page ne les affiche encore.
+        etat: repris
         chantier: "138.3"
       - quoi: >-
           Il propage par Monte-Carlo l'incertitude de trois entrées

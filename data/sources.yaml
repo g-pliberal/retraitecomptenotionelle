@@ -910,6 +910,30 @@ institutions:
           durée rapportée à sa durée requise, qui pèse ses masses (action 147,
           étape 14). Le COR en est le diffuseur, la DREES le producteur : le
           niveau `haute` pour l'observé, `projetee` au-delà.
+      - id: cor_leviers_equilibre
+        titre: >-
+          Les leviers qui équilibreraient le système de retraite — pension
+          relative, âge effectif de départ, taux de prélèvement, chaque année
+          jusqu'en 2070 (figure 2.24), et le pension gap et le tax gap sur
+          quatre horizons (tableau 2.11) du rapport annuel de juin 2026
+        url: https://www.cor-retraites.fr/sites/default/files/2026-06/Donn%C3%A9es_RA2026_P2.xlsx
+        acces: fichier
+        statut_integration: controle
+        cible: tests/temoins/cor_leviers_2026.json
+        recuperation: scripts/fetch/cor_leviers.py
+        millesime: juin 2026
+        note: >-
+          Ce que chaque levier, seul, devrait faire pour équilibrer chaque
+          année, trajectoire spontanée et niveau d'équilibre, sans arrondi ;
+          et l'ajustement immédiat qui équilibrerait en moyenne jusqu'en 2030,
+          2045, 2050 ou 2070. Il n'alimente aucune valeur :
+          `tests/test_leviers.py` s'y confronte (action 138, étape 3). Le
+          rapport ne dit pas comment il passe d'un manque à un âge ; ses
+          séries le font retrouver : reculer l'âge retire des retraités la
+          population des âges franchis et en compte les deux tiers parmi les
+          cotisants. Le tableau 2.11 du classeur garde le titre et les notes
+          du rapport de 2025 ; ses valeurs sont celles que celui de 2026
+          imprime.
       - id: cor_cas_types
         titre: Cas types du COR (carrières de référence)
         url: https://www.cor-retraites.fr/simulateurs
