@@ -6208,15 +6208,15 @@ la décision du 1er novembre, une ligne de plus à la table datée.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 
-**Reprise, au 13 octobre 2026.** Fait : l'étape 1 — dix-sept régimes entrés à
-l'inventaire, sept fiches — et, de l'étape 2, les six régimes que l'action 121
-ne touche pas : huit fiches, pour l'IPACTE, l'IGRANTE, le CESE, les gérants de
-débits de tabac, l'ASV et les conjoints de commerçants. Reste : 2. l'outre-mer,
-le personnel navigant et les assemblées, une fois l'action 121 close, puis les
-hors champ dont des assurés vivent encore (Crédit foncier, ORTF, CRFOM), et les
-limites de l'étape ; 3. les pistes que l'index ne porte que par leur titre.
-Commencer, après l'action 121, par l'outre-mer ; la note du 13 octobre dit les
-cinq écarts au droit que la lecture a trouvés, soumis au propriétaire.
+**Reprise, au 14 octobre 2026.** Fait : l'étape 1 — dix-sept régimes entrés à
+l'inventaire, sept fiches — et, de l'étape 2, onze fiches : les six régimes que
+l'action 121 ne touche pas (13 octobre), puis les trois hors champ dont des
+assurés vivent encore, Crédit foncier, ORTF, CRFOM (14 octobre). Reste : 2.
+l'outre-mer, le personnel navigant et les assemblées, une fois l'action 121
+close, puis les limites de l'étape ; 3. les pistes que l'index ne porte que par
+leur titre. Commencer, après l'action 121, par l'outre-mer. Au propriétaire :
+les cinq écarts de la note du 13 octobre, et le transfert du Crédit foncier
+(note du 14), sans statut. `textes.py --inscrire` reste à lancer, seul.
 
 **Demande**, le 4 octobre 2026 : « Je veux que tu documentes les régimes de
 retraite que nous n'avons pas encore documenter pour l'instant. Il faut

@@ -1,0 +1,37 @@
+date: "2026-10-14"
+session: "action 145, étape 2 : le Crédit foncier, l'ORTF et la CRFOM"
+consulte: >-
+  veille_droit.py (les fiches à relire, aucune de ces régimes) ; l'index LEGI mis à
+  jour au 13 octobre et l'index JORF au 14 octobre 2026. Puis : la loi n° 89-18,
+  article 13, et le décret n° 89-157, articles 1er à 15 ; les analyses des arrêtés du
+  16 juin 1989, du 18 août 1989 et du 4 février 1993, de l'avis du 3 avril 2009 et des
+  décrets n° 48-1852 et n° 49-582 ; le décret n° 84-104, article 2. La loi n° 74-696,
+  article 30 ; L. 134-3 du code de la sécurité sociale (rédactions du 1er janvier et
+  du 28 février 2025) ; les lois n° 2023-1250, article 15, et n° 2025-199, article 24 ;
+  l'état A des lois de finances pour 2011, 2015, 2025 et 2026 ; les analyses des
+  décrets n° 59-613, n° 69-33 et n° 79-882 et des arrêtés du 5 décembre 1961, du 14
+  avril 1980 et du 26 juin 1980. La loi du 14 avril 1924, article 71 ; la loi n°
+  75-1278, article 73 ; R*2 du code des pensions civiles et militaires ; les décrets
+  n° 50-1348 (articles 43 et 46), n° 53-711 (article 6), n° 66-808 (article 2) et n°
+  68-20 (article 23) ; les analyses du décret du 1er novembre 1928 et de ses
+  modifications, du décret n° 56-7 et de l'arrêté du 24 décembre 1952.
+trouve: >-
+  Trois fiches de règles, pas encore modélisées, pour trois régimes hors champ ; aucun
+  chiffre du scénario 1 n'en est changé. Le Crédit foncier : depuis 1989, une rente du
+  régime général de 50 % du plafond moyen de 1988 pour cent cinquante trimestres, en
+  cent-cinquantièmes au-dessous, que le modèle ne porte pas (il simule ces agents au
+  régime général sur toute leur carrière). L'ORTF : aucun régime de base propre ; la
+  position spéciale des agents nés en 1919 ou avant, et leurs allocations
+  supplémentaires de retraite, dont la Cnav porte le solde depuis 2024 (58 000 € du
+  budget général en 2026). La CRFOM : l'affiliation d'office de 1976 garde la limite
+  d'âge du cadre et les bonifications de services hors d'Europe, que le modèle ignore.
+  Deux rédactions de la liste des textes y prennent un statut ; le cliquet est à
+  9 774.
+reste: >-
+  À lire au fac-similé du Journal officiel : le décret du 6 août 1931 (Crédit
+  foncier), le décret n° 50-461 du 21 avril 1950 et le décret du 1er novembre 1928
+  (CRFOM), les arrêtés de 1980 sur l'ORTF, le décret d'application de L. 134-3 ; et la
+  circulaire de la Cnav de 1989 qui chiffre le « salaire plafond moyen » de 1988.
+  textes.py --inscrire, lancé puis annulé, ferait entrer trente-huit textes cités par
+  les fiches des 13 et 14 octobre : à une session seule sur la liste. À l'étape 2 :
+  l'outre-mer, le personnel navigant et les assemblées, après l'action 121.
