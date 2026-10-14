@@ -7450,16 +7450,16 @@ départs très tardifs atteignent pour la première fois, à relire au texte.
 
 ### 152. Les cas types statutaires et non salariés à leur place dans l'EIR : le niveau et la carrière de chacun — `en cours`
 
-**Reprise, au 14 octobre 2026.** Faites, les étapes 1 à 3 : le militaire au
-militaire moyen du jaune budgétaire, la population remesurée ; l'exploitant
-agricole garde son cas type. La CNRACL et les civils de l'État sont recalés
-sur les départs de 2025 par l'action 159 (étape 5) : l'agent de la CNRACL au
-taux plein, les deux civils entrés tard dans leur régime. Reste, un groupe par
-session : les professions libérales (72,2 % des hommes au cinquième quintile,
-pour 45,1 dans l'EIR), puis la place des deux civils dans les quintiles.
-Commencer par la ligne des professions libérales dans les quintiles des
-résidents. Chantiers à part : la dispersion des carrières statutaires ; les
-relèvements agricoles (action 147). Détail : les notes des étapes.
+**Reprise, au 14 octobre 2026.** Faites, les étapes 1 à 4 : le militaire au
+militaire moyen du jaune budgétaire ; l'exploitant agricole et la profession
+libérale gardent leur cas type, leur niveau moyen tenant contre la DREES. Les
+libéraux restent trop haut (72 % des hommes au cinquième quintile, pour 45) :
+la population resserre un seul libéral de la Cipav, que sa pension plafonne,
+quand l'EIR mêle dix sections. Au propriétaire : décliner les libéraux de la
+population par section, après avoir certifié le revenu de chacune, ou
+consigner l'écart. Les deux civils de l'État, mesurés au passage, relèvent de
+la dispersion des carrières statutaires, chantier à part, comme les
+relèvements agricoles (action 147). Détail : la note de l'étape 4.
 
 **D'où elle vient.** La population de l'action 136 (étape 6), rangée le
 12 octobre 2026 dans les quintiles de la pension en équivalent carrière
