@@ -1,0 +1,219 @@
+schema_version: 1
+id: deputes_pension_des_anciens_deputes
+intitule: >-
+  L'ancien député reçoit de la caisse de pensions de l'Assemblée nationale, à l'âge
+  d'ouverture de sa génération — soixante ans avant juillet 1951, soixante-quatre ans
+  depuis la génération 1969 —, une pension égale, par annuité de mandat, à un
+  pourcentage des sommes soumises à retenue (l'indemnité parlementaire, de résidence et
+  de fonction), de 2,11 % pour quarante annuités au plus jusqu'à la génération 1948, à
+  1,9628 % pour quarante-trois annuités après 2028, sans décote ni surcote, majorée de
+  10 % pour trois enfants ; la caisse est financée par une retenue sur l'indemnité et
+  une subvention de l'Assemblée égale au double de cette retenue.
+domaine: duree
+regimes: [assemblees_parlementaires]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- les mandats de député, au trimestre, et les périodes d'allocation d'aide au retour à l'emploi différentielle depuis le 1er juillet 2022
+- les sommes soumises à retenue de chaque période
+- la date de naissance, qui fait l'âge et l'année de la valeur de l'annuité
+- les enfants nés ou adoptés pendant le mandat, les enfants élevés, le conjoint et les orphelins
+- les mandats détenus dans une autre assemblée, au Parlement européen ou au Gouvernement
+ecrit:
+- la pension de l'ancien député, sa majoration pour enfants, sa réversion et les pensions d'orphelin
+dates_qui_decident:
+- assure.generation
+# La valeur de l'annuité et le nombre maximal d'annuités se lisent à l'âge d'ouverture
+# (générations 1949 à 1968), au soixante-quatrième anniversaire (1969 et après), ou
+# sont ceux de 2008 (1948 et avant) : article 21 ter. La fiche de régime les porte par
+# le calendrier `assemblee_nationale` (duree_requise_calendriers.csv), lu au mois de
+# l'âge d'ouverture, et l'âge par la table de ages_regimes.csv.
+versions:
+- id: valeurs_de_2008
+  statut: lue
+  textes:
+  - {id: JORFARTI000036376107, reference: "arrêté du Bureau de l'Assemblée nationale n° 11/XV du 8 novembre 2017, article 28 : publication du règlement de la Caisse de pensions des députés et des anciens députés consolidé au 1er janvier 2018", publie_le: 2018-01-04}
+  - {id: JORFARTI000036376118, reference: "règlement de la Caisse de pensions des députés et des anciens députés, articles 1er et 2", publie_le: 2018-01-04}
+  - {id: JORFARTI000036376120, reference: "règlement de la Caisse de pensions des députés et des anciens députés, article 5", publie_le: 2018-01-04}
+  - reference: >-
+      règlement de la Caisse de pensions des députés et des anciens députés, à jour des
+      arrêtés du Bureau de 2023 et de 2026, articles 1er à 56 et arrêté des Questeurs
+      n° 15-043 du 14 avril 2015 (site de l'Assemblée nationale)
+    en_vigueur: 2026-05-13
+    lu_le: 2026-10-14
+    empreinte: sha256:24189bde10a5714b18aa29b437a33142eb6fc01a891c7070980d8487c268491b
+  nee_de: JORFARTI000036376107
+  bornes:
+    assure.generation: [null, 1949-01-01]
+  contenu:
+    caisse: >-
+      « La Caisse instituée par la Résolution du 23 décembre 1904 a pour objet le
+      versement de pensions aux anciens députés et à leurs ayants cause » ; « Son
+      équilibre financier est assuré dans les conditions fixées par la loi validée du 3
+      octobre 1941 » (article 1er) ; ses ressources sont les retenues, le portefeuille,
+      les dons et legs et « la subvention inscrite dans la Dotation égale au double des
+      retenues opérées sur les indemnités des députés », puis, s'il le faut, les sommes
+      nécessaires inscrites au budget de la dotation (article 2)
+    retenue: >-
+      « une retenue obligatoire sur l'indemnité parlementaire augmentée de l'indemnité de
+      résidence et de l'indemnité de fonction » ; le député s'engage à ne pas cotiser à
+      un autre régime sans y exercer d'activité ; depuis le 1er juillet 2022, une retenue
+      sur l'allocation d'aide au retour à l'emploi différentielle, cinquante jours
+      d'allocation valant un trimestre, quatre par an au plus (article 5) ; 9,34 % au 1er
+      juin 2015, 9,69 % en 2016, 10,04 % en 2017, 10,31 % en 2018, 10,58 % en 2019 et
+      10,85 % depuis 2020 (arrêté des Questeurs n° 15-043)
+    calcul: >-
+      « Le montant de la pension est égal, pour chaque annuité, à un pourcentage des
+      sommes soumises à retenue » (article 21, 1) ; « les anciens députés ayant atteint
+      leur soixantième anniversaire avant le 1er janvier 2008 sont soumis aux mêmes
+      modalités de liquidation de la pension que les anciens députés ayant atteint cet
+      âge au cours de l'année 2008 » (article 21 ter, 2) : « jusqu'en 2008 : 2,1100 % —
+      40 annuités », 84,4 % des sommes soumises à retenue au plus ; « toute fraction de
+      trimestre de cotisation est comptée pour trois mois » (article 21, 3) ; aucune
+      décote ni surcote n'est écrite
+    ouverture: >-
+      soixante ans, l'âge de la fonction publique pour ces générations (article 8, 2,
+      arrêté des Questeurs non publié) ; les pensions sont liquidées « selon les règles
+      en vigueur à la date de départ de jouissance de la pension » (article 48 bis)
+    enfants: >-
+      bonification de deux trimestres par enfant né ou adopté pendant le mandat, pour les
+      femmes députées ; trois mois d'annuité par période de trente mois d'éducation d'un
+      enfant invalide à 80 %, une annuité au plus (article 21, 4 et 5) ; majoration de 10
+      % pour trois enfants élevés neuf ans, 5 % par enfant au-delà (article 25), le tout
+      plafonné à l'indemnité d'un député en activité (article 37)
+    reversion: >-
+      50 % de la pension servie ou à laquelle le député pouvait prétendre (article 22),
+      sans condition d'âge ni de ressources, si le mariage précède d'un an le départ ou
+      de quatre ans le décès, ou si un enfant en est issu (article 14), partagée par lits
+      entre conjoints et orphelins (article 17) ; orphelins jusqu'à vingt et un ans, 10 %
+      chacun, la somme ne dépassant pas la pension (articles 16 et 23)
+    service: >-
+      les pensions suivent « les variations que peuvent subir les pensions du personnel
+      retraité de l'État » (article 54) et se paient par mois échu (article 43)
+    coordination: >-
+      la pension est suspendue pendant un nouveau mandat de député, au Parlement
+      européen ou au Gouvernement ; plusieurs pensions des assemblées se cumulent dans
+      la limite du maximum d'annuités de l'article 21 ; avec l'indemnité d'une autre
+      assemblée, dans la limite de l'indemnité de député (articles 50, 51 et 53)
+  exemples: aucun trouvé
+- id: valeurs_a_l_age_d_ouverture
+  statut: lue
+  textes:
+  - {id: JORFARTI000047879565, reference: "arrêté du Bureau de l'Assemblée nationale n° 34/XVI du 19 juillet 2023, articles 1er à 6, en vigueur le 1er septembre 2023", publie_le: 2023-07-25}
+  - {id: JORFARTI000054113947, reference: "arrêté du Bureau de l'Assemblée nationale n° 49/XVII du 13 mai 2026, articles 1er à 4", publie_le: 2026-05-20}
+  - reference: >-
+      règlement de la Caisse de pensions des députés et des anciens députés, à jour au
+      13 mai 2026, articles 8, 21 et 21 ter (site de l'Assemblée nationale)
+    en_vigueur: 2026-05-13
+    lu_le: 2026-10-14
+    empreinte: sha256:24189bde10a5714b18aa29b437a33142eb6fc01a891c7070980d8487c268491b
+  bornes:
+    assure.generation: [1949-01-01, 1969-01-01]
+  contenu:
+    calcul: >-
+      « Les anciens députés nés entre 1949 et 1968 sont soumis aux modalités de
+      liquidation de la pension en vigueur à l'âge d'ouverture de leur droit à pension »
+      (article 21 ter, 2, l'année 1968 depuis l'arrêté du 13 mai 2026) : 2,0969 % et
+      40,25 annuités en 2009, puis un quart d'annuité de plus et un pourcentage de moins
+      par palier — 2,0840 % (2010), 2,0712 % (2011), 2,0585 % (2012), 2,0461 % (2013-2014),
+      2,0337 % (2015-2017), 2,0216 % (2018-2020), 2,0095 % et 42 annuités (janvier 2021
+      - août 2023), 1,9976 % (septembre 2023 - juin 2025), 1,9859 % et 42,5 annuités
+      (juillet 2025 - décembre 2027), 1,9743 % (2028), 1,9628 % et 43 annuités ensuite
+      (article 21, 2, dans la rédaction des arrêtés de 2023 et 2026)
+    ouverture: >-
+      un âge fixé par arrêté des Questeurs, « de manière croissante à raison de trois
+      mois par génération sauf pour les anciens députés nés entre le 1er janvier 1964 et
+      le 31 mars 1965 », pour les nés du 1er septembre 1961 au 31 décembre 1968 (article
+      8, 2) ; l'arrêté n'est pas publié
+  exemples: aucun trouvé
+- id: valeurs_a_soixante_quatre_ans
+  statut: lue
+  textes:
+  - {id: JORFARTI000054113947, reference: "arrêté du Bureau de l'Assemblée nationale n° 49/XVII du 13 mai 2026, article 1er", publie_le: 2026-05-20}
+  bornes:
+    assure.generation: [1969-01-01, null]
+  contenu:
+    ouverture: >-
+      « Tout ancien député né à compter du 1er janvier 1969 et âgé de soixante-quatre
+      ans révolus a droit, sur sa demande, à une pension » (article 8, 1) ; « Le nombre
+      maximum d'annuités liquidables et la valeur de l'annuité [...] sont ceux en
+      vigueur au soixantième-quatrième anniversaire » (article 21 ter, 1) : 1,9628 % et
+      quarante-trois annuités, 84,4 % au plus
+  exemples: aucun trouvé
+approximations:
+- version: [valeurs_de_2008, valeurs_a_l_age_d_ouverture, valeurs_a_soixante_quatre_ans]
+  ecart: >-
+    La fiche de régime dit la part de l'Assemblée non écrite et ne porte que la retenue
+    (part salariale 1) ; le règlement l'écrit : « la subvention inscrite dans la
+    Dotation égale au double des retenues » (article 2, 4°, publié au Journal officiel du
+    4 janvier 2018). La cotisation totale est trois fois la retenue, le tiers à la charge
+    du député.
+  effet: >-
+    sur la cotisation et le compte notionnel des députés, non sur leur pension : un
+    effort contributif triple de celui simulé, 32,55 % des sommes soumises à retenue
+    depuis 2020 au lieu de 10,85 %
+- version: [valeurs_de_2008, valeurs_a_l_age_d_ouverture, valeurs_a_soixante_quatre_ans]
+  ecart: >-
+    Ni la bonification de deux trimestres par enfant né pendant le mandat d'une femme
+    députée, ni la majoration d'annuités pour un enfant invalide, ni l'arrondi au
+    trimestre supérieur de toute fraction de trimestre, ni le plafond de la pension
+    majorée à l'indemnité, ni la retenue sur l'allocation de retour à l'emploi depuis
+    2022 ne sont portés ; les sénateurs suivent la même fiche faute d'un règlement
+    publié.
+  effet: non mesuré ; quelques trimestres pour les députées mères pendant leur mandat
+sources:
+  lu_le: 2026-10-14
+  prochaine_relecture: 2027-10-14
+  a_relire:
+  - >-
+    Lire les règlements d'avant 2010 — la double cotisation facultative des quinze
+    premières années, le système complémentaire supprimé en 2018 — dans les Journaux
+    officiels qui les ont publiés, s'ils l'ont été, et l'arrêté des Questeurs qui fixe
+    l'âge des générations 1951 à 1968.
+  - >-
+    Lire le règlement de la Caisse des retraites et de sécurité sociale du personnel de
+    l'Assemblée nationale (articles 10, 11, 28, 31 et 38 cités par les arrêtés du Bureau
+    n° 35/XVI et 50/XVII, JORFARTI000047879565 et JORFARTI000054113947), que le dépôt ne
+    tient pas, et chercher ceux du Sénat, dont le Journal officiel ne publie que l'ordre
+    du jour du Bureau (4 juillet 2023, 15 octobre 2024).
+  lectures:
+  - type: autre
+    reference: >-
+      règlement de la Caisse de pensions des députés et des anciens députés, en entier,
+      et arrêté des Questeurs n° 15-043 (copie datée,
+      sha256:24189bde10a5714b18aa29b437a33142eb6fc01a891c7070980d8487c268491b)
+    url: https://www2.assemblee-nationale.fr/static/CRD-janvier-2018.pdf
+    date: 2026-05-13
+  - type: jorf
+    reference: >-
+      Journal officiel du 4 janvier 2018 (règlement consolidé, arrêté n° 11/XV), du 25
+      juillet 2023 (arrêtés n° 34/XVI et 35/XVI) et du 20 mai 2026 (arrêtés n° 49/XVII et
+      50/XVII), informations parlementaires ; loi du 9 février 1905 : index du dépôt
+    date: 2026-10-14
+reformes: [deputes_2018]
+code:
+  moteur: >-
+    une fiche de régime en annuités, dont l'âge se lit à la génération (`age_table:
+    assemblee_nationale`) et la durée au mois de l'âge d'ouverture
+    (`duree_requise_calendrier: assemblee_nationale`)
+  python: >-
+    données : regimes/assemblees_parlementaires.yaml, legislation/ages_regimes.csv,
+    legislation/duree_requise_calendriers.csv ; droit/liquider.py :
+    liquider_chaque_regime
+  javascript: moteur/js/droit/liquider.js et moteur/js/regimes.js, le même catalogue
+  parametres: regimes/assemblees_parlementaires.yaml (taux_plein, duree_requise_trimestres, taux_cotisation_retraite, part_salariale)
+  tests: >-
+    tests/temoins/simulations.json, les carrières du statut parlementaire, que le
+    portage rejoue
+historique:
+- >-
+  2026-10-14 — écrite à l'étape 2 de l'action 145 : la caisse des députés n'avait que la
+  fiche générique de liquidation. Le règlement, lu en entier, est publié au Journal
+  officiel, en 2018 puis par ses arrêtés modificatifs de 2023 et 2026 ; il écrit la
+  subvention de l'Assemblée, le double de la retenue, que la fiche de régime disait non
+  écrite. Aucun chiffre ne change.
+effet: >-
+  Les anciens députés et, par assimilation, les anciens sénateurs : leur pension est
+  simulée au droit lu ; leur cotisation est sous-estimée des deux tiers, la part de
+  l'Assemblée n'étant pas portée.

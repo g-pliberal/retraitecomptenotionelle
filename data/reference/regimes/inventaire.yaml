@@ -1061,8 +1061,11 @@ inventaire:
     statuts: [parlementaire]
     textes:
     - {reference: "règlement de la Caisse de pensions des députés et des anciens députés,\
-        \ consolidé au 1er janvier 2018, publié par l'Assemblée nationale (hors JORF)",
-      id: null}
+        \ consolidé au 1er janvier 2018, publié au Journal officiel du 4 janvier 2018\
+        \ (informations parlementaires) et par l'Assemblée nationale", id: JORFARTI000036376107}
+    - {reference: "arrêtés du Bureau de l'Assemblée nationale n° 34/XVI du 19 juillet\
+        \ 2023 et n° 49/XVII du 13 mai 2026, modifiant les articles 8, 21 et 21 ter\
+        \ du règlement", id: JORFARTI000054113947}
     - {reference: "arrêté des Questeurs n° 15-043 du 14 avril 2015 relatif au taux de\
         \ cotisation à la Caisse de pensions (9,34 % en 2015, 10,85 % en 2020)", id: null}
     - {reference: "Bureau du Sénat du 12 juillet 2023, transposition de la loi du 14\
@@ -1071,18 +1074,20 @@ inventaire:
     manque: >-
       La fiche est celle des députés, lue dans le règlement de 2018 ; les sénateurs
       y sont assimilés faute d'un règlement publié, et les fonctionnaires des assemblées
-      restent hors fiche. La part versée par l'Assemblée n'est pas écrite : seule la
-      retenue du député est portée. La retenue d'avant 2015 est estimée. Les âges des
-      générations nées avant 1969 sont fixés par un arrêté des Questeurs non publié
-      : la fiche prend ceux de L. 161-17-2, que le règlement décrit. Deux compléments
-      internes ne sont pas portés. Les députés avaient, jusqu'au 1er janvier 2018, un
-      « système de retraite complémentaire facultatif », que l'alignement sur la fonction
-      publique a supprimé (Assemblée nationale, « Alignement sur le droit commun du
-      régime de retraite des députés », page archivée le 31 décembre 2019). Et une page
-      de la-retraite-en-clair.fr (« La retraite des parlementaires », publiée le 1er
-      janvier 2010) écrit que les sénateurs ont « un régime de retraite complémentaire
-      par points », dont « la cotisation est égale à celle du régime de base » : le
-      règlement du Sénat n'étant pas publié, rien ne le vérifie.
+      restent hors fiche. La part versée par l'Assemblée est écrite, « la subvention
+      inscrite dans la Dotation égale au double des retenues » (article 2, 4°), mais
+      n'est pas portée : seule la retenue du député l'est (fiche deputes_pension_des_anciens_deputes).
+      La retenue d'avant 2015 est estimée. Les âges des générations nées avant 1969
+      sont fixés par un arrêté des Questeurs non publié : la fiche prend ceux de L.
+      161-17-2, que le règlement décrit. Deux compléments internes ne sont pas portés.
+      Les députés avaient, jusqu'au 1er janvier 2018, un « système de retraite complémentaire
+      facultatif », que l'alignement sur la fonction publique a supprimé (Assemblée
+      nationale, « Alignement sur le droit commun du régime de retraite des députés
+      », page archivée le 31 décembre 2019). Et une page de la-retraite-en-clair.fr
+      (« La retraite des parlementaires », publiée le 1er janvier 2010) écrit que les
+      sénateurs ont « un régime de retraite complémentaire par points », dont « la cotisation
+      est égale à celle du régime de base » : le règlement du Sénat n'étant pas publié,
+      rien ne le vérifie.
 
   - code: cese_membres
     nom: >-
