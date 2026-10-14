@@ -1,0 +1,21 @@
+date: "2026-10-14"
+session: "action 159, étape 8, seconde partie : la figure 3B du jaune pensions 2027, lue sur ses tracés, certifiée et sur la page Coût"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1. Le jaune
+  pensions annexé au PLF 2027 (34465.pdf, tiré de la branche jaune-2027 dans le
+  répertoire de travail de la session, empreinte vérifiée) : la figure 3B (page 24), ses
+  tracés et son texte ; les chiffres que le document en imprime, pages 7, 10, 11, 12, 24
+  et 25.
+trouve: >-
+  Le lecteur PDF du dépôt lit les tracés d'une page : les dix-sept barres de la figure
+  3B, rapportées à son axe, au vingtième de point près. Vingt-deux chiffres du texte s'y
+  retrouvent à leur arrondi, sauf deux, déclarés : la barre de l'Enseignement supérieur
+  fait 119,1 % de l'axe, son reste des dépenses comptant aussi les 19,1 points de son T3
+  CAS ; la borne basse de « entre 20 % et 32 % », page 25, ajoute les parts arrondies de
+  la Justice, 18 et 2 %, quand la figure en trace 20,9. Les parts sont certifiées dans
+  data/reference/macro/credits_ministeres.csv, et la page Coût les montre, ministère par
+  ministère.
+reste: >-
+  L'expérience de la DREES refaite par le modèle, si le propriétaire la veut ; les deux
+  publications de la DREES, à relire à la source quand son site répondra. L'étape 8
+  close, l'action 159 n'a plus d'étape ouverte : elle peut se clore.
