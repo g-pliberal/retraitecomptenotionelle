@@ -8820,11 +8820,15 @@ referents:
           5,8 %. La fiche suédoise de l'Ageing Report 2024 le
           projette à 4 % l'an (tableau 16).
         verification: >-
-          Méthode : la France a des réserves (FRR, Agirc-Arrco,
-          régimes des libéraux), et le dépôt écrit que le COR les
-          chiffre (`cout.py:98-100`). Un solde sans stock surestime
-          le besoin de court terme d'un système qui a des réserves.
-        etat: a_reprendre
+          Repris en partie le 14 octobre 2026 (action 138, étape 19) :
+          le stock et son rendement, non la trajectoire. Les réserves
+          du COR (rapport de juin 2026, tableau 2.3), 244,6 Md€ fin
+          2025, 8,2 % du PIB, FRR compris, sont à l'actif du bilan du
+          compte (`bilan_compte.py`, `reserves_retraite.csv`), et leur
+          rendement comptable de 2025 est de 1,6 %. Les projeter, et
+          les faire couvrir les déficits de la page Coût, reste à
+          faire.
+        etat: repris
         chantier: "138.19"
       - quoi: >-
           On y choisit le scénario démographique de SCB (« Du kan
@@ -9314,8 +9318,15 @@ referents:
           (Fredriksen et Stølen, Økonomiske analyser 6/2014), sans
           rien coûter en valeur actuelle. Sa limite est écrite : il
           suppose stable la population active (rapport orange 2025,
-          note 3).
-        etat: a_reprendre
+          note 3). Repris le 14 octobre 2026 (action 138, étape 19),
+          comme indicateur : `bilan_compte.py` tire la durée de
+          rotation de la grille (29,3 ans en 2025 pour le système
+          actuel : cotisations à 44,8 ans, pensions à 74,1), l'actif
+          de cotisation, les réserves du COR et, pour dette,
+          l'engagement acquis de la page Coût ; le ratio vaut 0,65
+          pour le système actuel, 0,92 pour la proposition
+          (`scripts/bilan_compte.py`). Aucune page ne l'affiche.
+        etat: repris
         chantier: "138.19"
       - quoi: >-
           Un compte suédois ne reçoit que des indices publiés. Celui
@@ -11065,7 +11076,13 @@ referents:
         verification: >-
           Méthode actuarielle standard. Le COR publie lui aussi le
           levier du taux de prélèvement, que le 138.3 nomme « tax
-          gap ».
+          gap ». Fait en partie le 14 octobre 2026 (action 138, étape 19) :
+          `bilan_compte.py` donne la dépense sur l'assiette (33,2 %
+          en 2025 pour le système actuel) et le taux de cotisation
+          qui équilibre l'année, les autres ressources gardées
+          (25,8 %, contre 25,4 % prélevés). La décomposition d × r en
+          têtes, la prime moyenne sur une période et le taux à ratio
+          de réserve cible sont coupés.
         etat: coupe
         chantier: "138.19"
         raison: >-
