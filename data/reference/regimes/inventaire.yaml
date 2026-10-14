@@ -2930,7 +2930,7 @@ inventaire:
     succede_a: []
     integre_dans: null
     couverture: partiel
-    statuts: [exploitant_agricole]
+    statuts: [exploitant_agricole, collaborateur_agricole]
     textes:
     - {reference: "loi n° 52-799 du 10 juillet 1952 assurant la mise en œuvre du régime\
         \ de l'allocation de vieillesse des personnes non salariées", id: null}
@@ -2952,7 +2952,7 @@ inventaire:
     succede_a: []
     integre_dans: null
     couverture: partiel
-    statuts: [exploitant_agricole]
+    statuts: [exploitant_agricole, collaborateur_agricole]
     textes:
     - {reference: "loi n° 2002-308 du 4 mars 2002 tendant à la création d'un régime\
         \ de retraite complémentaire obligatoire pour les non-salariés agricoles", id: null}

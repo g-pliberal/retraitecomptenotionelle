@@ -20,6 +20,7 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -263,6 +264,79 @@ def test_la_majoration_pour_enfants_ne_porte_pas_sur_la_pmr(simulateur):
     assert part == pytest.approx(0.10 * (pensions["msa_non_salaries"] - pmr))
 
 
+# -- le statut : chef, collaborateur, chef à titre secondaire -------------------
+
+def test_la_conjointe_collaboratrice_recoit_pmr2_et_ni_complement_ni_points(simulateur):
+    """Quarante-quatre ans de conjointe collaboratrice, partie en 2016 au taux
+    plein : la PMR au montant réduit, PMR2, sur toute sa durée (D. 732-111) ;
+    ni les points gratuits de la RCO ni son complément différentiel, réservés
+    aux années de chef (L. 732-56, II ; L. 732-63)."""
+    metiers = [Metier("collaborateur_agricole", 20.0, niveau_salaire=0.3)]
+    carriere = _chef(simulateur, 1952, 64, sexe="F", metiers=metiers)
+    resultat, avantages, _ = _resultat(simulateur, carriere)
+    pmr = simulateur.scenario_actuel.pension_majoree_reference
+    reduite, _ = pmr.montant("pmr_conjoint", 2016, carriere.mois_liquidation)
+    assert f"+ {reduite:,.2f} € × " in avantages["pension_majoree_reference"].detail
+    assert not {"points_gratuits_rco", "complement_differentiel_rco"} & set(avantages)
+    eligible = resultat.chef_d_exploitation.eligible
+    assert eligible.chef == 0 and eligible.duree > 0
+
+
+def test_une_carriere_melee_recoit_pmr1_et_pmr2_au_prorata(simulateur):
+    """Vingt ans de collaborateur, puis vingt-quatre de chef, parti en 2019 :
+    PMR1 sur les années de chef, retenues d'abord, PMR2 sur le reste ; le
+    complément ne compte que les années de chef, et ses points gratuits celles
+    de chef d'avant 2003."""
+    metiers = [Metier("collaborateur_agricole", 20.0, niveau_salaire=0.3),
+               Metier("exploitant_agricole", 40.0, niveau_salaire=0.3)]
+    carriere = _chef(simulateur, 1955, 64, metiers=metiers)
+    resultat, avantages, _ = _resultat(simulateur, carriere)
+    eligible = resultat.chef_d_exploitation.eligible
+    assert 0 < eligible.chef < eligible.duree
+    pmr = simulateur.scenario_actuel.pension_majoree_reference
+    pleine, _ = pmr.montant("pmr_chef", 2019, carriere.mois_liquidation)
+    reduite, _ = pmr.montant("pmr_conjoint", 2019, carriere.mois_liquidation)
+    retenue = min(eligible.duree, eligible.reference)
+    attendue = (pleine * eligible.chef + reduite * (retenue - eligible.chef)) / eligible.reference
+    base = completer.pension_majoree(
+        simulateur.scenario_actuel, carriere, eligible,
+        SimpleNamespace(montant=0.0001), 0.0)
+    assert base.avant_ecretement == pytest.approx(attendue, abs=1e-3)
+    assert f"PMR {pleine:,.2f} € × {eligible.chef}/" in avantages[
+        "pension_majoree_reference"].detail
+    assert "× " + str(eligible.chef) + "/" in avantages["complement_differentiel_rco"].detail
+
+
+def test_le_chef_de_moins_de_dix_sept_ans_et_demi_recoit_pmr1_depuis_2011(simulateur):
+    """La condition de dix-sept ans et demi de chef pour PMR1 n'a valu que de
+    2009 à 2010 (D. 732-110, II, 1°, rédaction de 2009) : un chef de seize ans,
+    au taux plein par l'âge en 2016, reçoit PMR1."""
+    carriere = _chef(simulateur, 1950, 66, debut=50.0)
+    resultat, avantages, _ = _resultat(simulateur, carriere)
+    eligible = resultat.chef_d_exploitation.eligible
+    assert eligible.chef == eligible.duree < 70
+    assert "+ " not in avantages["pension_majoree_reference"].detail.split(", au taux")[0]
+
+
+def test_le_chef_a_titre_secondaire_ne_compte_que_depuis_2026(simulateur):
+    """Salarié, et chef d'exploitation à côté : ses années de chef à titre
+    secondaire n'entrent dans les durées des deux minima qu'à compter de 2026
+    (D. 732-110, D. 732-166-1), ni jamais dans les points gratuits."""
+    for naissance, liquidation, depuis_2026 in ((1958, 66, False), (1965, 65, True)):
+        metiers = [Metier("salarie_prive_non_cadre", 20.0, niveau_salaire=0.3),
+                   Metier("exploitant_agricole", 30.0, niveau_salaire=0.1, cumul=True)]
+        carriere = _chef(simulateur, naissance, liquidation, metiers=metiers)
+        annees = [a for a in range(carriere.lignes[0].annee, carriere.annee_liquidation)
+                  if carriere.qualite_agricole(a) == "chef_secondaire"]
+        assert annees and all(carriere.qualite_agricole(a) != "chef" for a in annees)
+        resultat, avantages, _ = _resultat(simulateur, carriere)
+        eligible = resultat.chef_d_exploitation.eligible
+        assert eligible.chef == eligible.duree
+        assert (eligible.duree > 0) == depuis_2026, (naissance, eligible)
+        assert eligible.duree <= 4 * sum(1 for a in annees if a >= 2026)
+        assert "points_gratuits_rco" not in avantages
+
+
 # -- les deux moteurs -------------------------------------------------------------
 
 #: Des chefs d'exploitation à faible revenu, de 2010 à 2030 : la PMR seule,
@@ -372,6 +446,18 @@ CAS = [
     {"naissance": "1945", "liquidation": "67", "debut": "40"},
     # La garantie que la MSA publie au 1er janvier 2022, 1 067,91 € par mois.
     {"naissance": "1960", "liquidation": "62"},
+    # Le statut (étape 8) : une conjointe collaboratrice partie en 2016, à PMR2 ;
+    # vingt ans de collaborateur puis de chef, en 2019 ; un salarié chef à titre
+    # secondaire, parti en 2024 et en 2030.
+    {"naissance": "1952", "sexe": "F", "statut": "collaborateur_agricole"},
+    {"naissance": "1955", "statut": "collaborateur_agricole", "metier2_debut": "40",
+     "metier2_statut": "exploitant_agricole", "metier2_salaire": "0.3"},
+    {"naissance": "1958", "liquidation": "66", "statut": "salarie_prive_non_cadre",
+     "metier2_debut": "30", "metier2_statut": "exploitant_agricole",
+     "metier2_salaire": "0.1", "metier2_cumul": "oui"},
+    {"naissance": "1965", "liquidation": "65", "statut": "salarie_prive_non_cadre",
+     "metier2_debut": "30", "metier2_statut": "exploitant_agricole",
+     "metier2_salaire": "0.1", "metier2_cumul": "oui"},
 ]
 
 

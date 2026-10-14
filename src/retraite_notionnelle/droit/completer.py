@@ -372,6 +372,11 @@ class PensionMajoree:
     #: Le plafond de l'écrêtement.
     plafond: float
     fiabilite: Fiabilite
+    #: De 2009 à 2021, le montant réduit, PMR2, et les trimestres qui le
+    #: reçoivent, DM2 : ceux du conjoint collaborateur et de l'aide familial
+    #: (D. 732-111) ; ``duree`` les compte aussi.
+    reduite: float | None = None
+    duree_reduite: int = 0
 
 
 def pension_majoree(moteur: ScenarioActuel, carriere: Carriere, eligible,
@@ -404,19 +409,28 @@ def pension_majoree(moteur: ScenarioActuel, carriere: Carriere, eligible,
     duree = eligible.duree + (eligible.enfants if regle["majorations_de_duree"] else 0)
     if duree < (regle["duree_minimale"] or 0):
         return None
-    # De 2009 à 2021, PMR1 pour qui a été chef d'exploitation dix-sept ans et
-    # demi, PMR2 sinon (D. 732-110, II ; D. 732-111).
-    serie = regle["montant"]
-    if regle["montant_reduit"] and eligible.duree < (regle["seuil_chef"] or 0):
-        serie = regle["montant_reduit"]
     annee, mois = carriere.annee_liquidation, carriere.mois_liquidation
-    lu = moteur.pension_majoree_reference.montant(serie, annee, mois)
+    lu = moteur.pension_majoree_reference.montant(regle["montant"], annee, mois)
     if lu is None:
         return None
     entiere, fiabilite = lu
     retenue = min(duree, eligible.reference)
-    avant = max(0.0, entiere * retenue / eligible.reference
-                - pension.montant / eligible.surcote)
+    # De 2009 à 2021, PMR = PMR1 × DM1 / DR + PMR2 × DM2 / DR : DM1, les
+    # périodes de chef, retenues en priorité ; DM2, celles du conjoint
+    # collaborateur et de l'aide familial, et, jusqu'en 2010, celles du chef
+    # qui ne l'a pas été dix-sept ans et demi (D. 732-110, II ; D. 732-111).
+    reduite, duree_reduite = None, 0
+    if regle["montant_reduit"]:
+        lu_reduite = moteur.pension_majoree_reference.montant(
+            regle["montant_reduit"], annee, mois)
+        if lu_reduite is None:
+            return None
+        reduite, fiabilite = lu_reduite[0], min(fiabilite, lu_reduite[1])
+        chef = eligible.chef if eligible.chef >= (regle["seuil_chef"] or 0) else 0
+        duree_reduite = retenue - min(chef, retenue)
+    pmr = (entiere * (retenue - duree_reduite)
+           + (reduite or 0.0) * duree_reduite) / eligible.reference
+    avant = max(0.0, pmr - pension.montant / eligible.surcote)
     if avant <= 0.0:
         return None
     if regle["plafond"] == "minimum_contributif":
@@ -427,7 +441,8 @@ def pension_majoree(moteur: ScenarioActuel, carriere: Carriere, eligible,
     return PensionMajoree(
         entiere=entiere, duree=retenue, reference=eligible.reference,
         avant_ecretement=avant, complement=max(0.0, min(avant, plafond - ressources)),
-        plafond=plafond, fiabilite=min(fiabilite, fiabilite_plafond))
+        plafond=plafond, fiabilite=min(fiabilite, fiabilite_plafond),
+        reduite=reduite, duree_reduite=duree_reduite)
 
 
 @dataclass(frozen=True)
@@ -481,8 +496,11 @@ def complement_differentiel(moteur: ScenarioActuel, carriere: Carriere, eligible
     toutes les pensions personnelles de l'assuré, ``personnelles``, la cible
     entière (L. 732-63, V ; D. 732-166-5-1). Il se convertit en points à la
     valeur de service de l'année, arrondis à l'entier le plus proche
-    (D. 732-166-6). Le modèle ne connaissant que le statut de chef, la durée
-    de chef, DCE, est la durée agricole, Dnsa.
+    (D. 732-166-6). La durée de chef, DCE, ne compte que les années de chef,
+    à titre exclusif ou principal, et à titre secondaire depuis 2026
+    (D. 732-166-1, II) ; la durée agricole, Dnsa, aussi celles du conjoint
+    collaborateur et de l'aide familial. Les ``points_rco`` sont tous ceux de
+    la RCO : ceux du collaborateur, acquis depuis 2011, y entrent aussi.
 
     ``quand``, ``smic`` et ``pmr`` lisent la règle, le SMIC net agricole et la
     PMR d'une autre date que la date d'effet : ceux du 1er septembre 2023, pour
@@ -493,10 +511,11 @@ def complement_differentiel(moteur: ScenarioActuel, carriere: Carriere, eligible
     regle = moteur.complement_differentiel_rco.regle(quand or date_effet)
     if not regle["existe"] or valeur_point <= 0.0:
         return None
-    duree = eligible.duree + (eligible.enfants if regle["majorations_de_duree"] else 0)
+    enfants = eligible.enfants if regle["majorations_de_duree"] else 0
+    duree, chef = eligible.duree + enfants, eligible.chef + enfants
     ouvert = (eligible.taux_plein if regle["condition"] == "taux_plein"
               else eligible.duree_requise_atteinte)
-    if duree < (regle["seuil_chef"] or 0) or not ouvert:
+    if chef < (regle["seuil_chef"] or 0) or not ouvert:
         return None
     annee = carriere.annee_liquidation
     smic = smic or moteur.complement_differentiel_rco.smic_net(annee)
@@ -507,13 +526,14 @@ def complement_differentiel(moteur: ScenarioActuel, carriere: Carriere, eligible
         return None
     smic_net, fiabilite = smic
     cible = regle["pourcentage"] * HEURES_DU_COMPLEMENT * smic_net
-    retenue = min(duree, eligible.reference)
+    retenue = min(chef, eligible.reference)
     prorata = retenue / eligible.reference
     if regle["formule"] == "carriere_complete":
         formule = (cible - (pmr[0] + POINTS_D_UNE_CARRIERE_COMPLETE * valeur_point)) * prorata
     else:
         formule = (cible - pmr[0]) * prorata - points_rco * valeur_point
-    montant = min(formule, cible * prorata - (base + rco))
+    montant = min(formule, cible * min(duree, eligible.reference) / eligible.reference
+                  - (base + rco))
     if regle["plafond_tous_regimes"]:
         montant = min(montant, cible - personnelles)
     montant = max(0.0, montant)
@@ -1288,8 +1308,11 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 code="pension_majoree_reference",
                 libelle="Pension majorée de référence",
                 montant=majoree.complement,
-                detail=(f"PMR {majoree.entiere:,.2f} € × {majoree.duree}/"
-                        f"{majoree.reference}, au taux plein"
+                detail=(f"PMR {majoree.entiere:,.2f} € × "
+                        f"{majoree.duree - majoree.duree_reduite}/{majoree.reference}"
+                        + (f" + {majoree.reduite:,.2f} € × {majoree.duree_reduite}/"
+                           f"{majoree.reference}" if majoree.duree_reduite else "")
+                        + ", au taux plein"
                         + (f", écrêtée au plafond de {majoree.plafond:,.2f} € de toutes "
                            f"les pensions"
                            if majoree.complement < majoree.avant_ecretement - 1e-9 else "")),

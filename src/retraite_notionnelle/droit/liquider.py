@@ -514,8 +514,10 @@ class EligibleAgricole:
     durées (:func:`~.completer.pension_majoree`,
     :func:`~.completer.complement_differentiel`).
 
-    Le modèle ne connaît que le statut de chef d'exploitation, à titre
-    principal : la durée non salariée agricole est donc aussi celle de chef.
+    Les deux minima ne comptent, avant 2026, que les périodes accomplies « à
+    titre exclusif ou principal » ; depuis, aussi celles à titre secondaire
+    (D. 732-110, D. 732-166-1). La qualité de chef se lit année par année
+    (:meth:`~retraite_notionnelle.carriere.Carriere.qualite_agricole`).
     """
 
     #: Indice de la pension dans :attr:`Pensions.regimes`.
@@ -532,6 +534,11 @@ class EligibleAgricole:
     #: Durée d'assurance non salariée agricole, en trimestres : celle des
     #: années, sans les trimestres pour enfants.
     duree: int
+    #: Celle des années de chef d'exploitation, DCE : le reste de ``duree``
+    #: est celui du conjoint collaborateur ou de l'aide familial, que la PMR
+    #: servait à un montant réduit de 2009 à 2021 et que le complément
+    #: différentiel ne compte pas (D. 732-111, D. 732-166-1, II).
+    chef: int
     #: Les trimestres pour enfants que le régime porte, que les durées
     #: comptent depuis 2026 (D. 732-110, D. 732-166-3).
     enfants: int
@@ -596,6 +603,7 @@ class Pensions:
                 "duree_requise_atteinte": self.agricole.duree_requise_atteinte,
                 "surcote": self.agricole.surcote,
                 "duree": self.agricole.duree,
+                "chef": self.agricole.chef,
                 "enfants": self.agricole.enfants,
                 "reference": self.agricole.reference,
             }
@@ -1606,6 +1614,12 @@ def annuites_au_taux_de_leur_annee(moteur, code: str, carriere: Carriere, durees
     return centiemes // 100 if centiemes % 100 == 0 else centiemes / 100
 
 
+#: Les périodes de chef d'exploitation à titre secondaire comptent, dans les
+#: deux minima des exploitants, à compter du 1er janvier de cette année
+#: (D. 732-110 et D. 732-166-1, rédaction du décret n° 2025-1410).
+ANNEE_DU_TITRE_SECONDAIRE = 2026
+
+
 def eligible_agricole(moteur, periode: PeriodeRegime, carriere: Carriere, releve: Releve,
                       membres: tuple[str, ...], trimestres: int, age_liquidation: float,
                       indice: int, coefficient: float, par_le_handicap: bool
@@ -1617,8 +1631,10 @@ def eligible_agricole(moteur, periode: PeriodeRegime, carriere: Carriere, releve
     régimes, l'âge du taux plein, l'inaptitude ou le handicap (L. 732-54-1,
     3°, depuis février 2014 ; D. 732-109, 3°, a) avant). La DURÉE est celle
     des périodes cotisées ou assimilées pour la retraite forfaitaire, année par
-    année ; les trimestres pour enfants n'y entrent que depuis 2026, et la
-    règle les ajoute (D. 732-110). La DURÉE DE RÉFÉRENCE est celle de la
+    année, à titre exclusif ou principal, et à titre secondaire depuis 2026 ;
+    les trimestres pour enfants n'y entrent que depuis 2026, et la règle les
+    ajoute (D. 732-110). Celle de CHEF n'en garde que les années où la
+    personne l'était. La DURÉE DE RÉFÉRENCE est celle de la
     retraite forfaitaire, que le modèle lit comme le forfait la lit, au moins
     trente-sept ans et demi. ``coefficient`` est celui de la décote ou de la
     surcote du régime ; seule la surcote est retirée avant de comparer à la
@@ -1627,6 +1643,14 @@ def eligible_agricole(moteur, periode: PeriodeRegime, carriere: Carriere, releve
     code = membres[0]
     requis, _ = ouvrir.duree_requise(moteur, periode, carriere)
     proratisation, _ = duree_proratisation(moteur, periode, carriere, requis)
+    qualite = carriere.qualite_agricole
+    principales = durees.cumul_plafonne(
+        "assurance", membres,
+        lambda annee: annee >= ANNEE_DU_TITRE_SECONDAIRE or qualite(annee) != "chef_secondaire")
+    chef = durees.cumul_plafonne(
+        "assurance", membres,
+        lambda annee: qualite(annee) == "chef" or (
+            annee >= ANNEE_DU_TITRE_SECONDAIRE and qualite(annee) == "chef_secondaire"))
     annees = durees.cumul_plafonne("assurance", membres, lambda annee: True)
     toutes = durees.cumul_plafonne("assurance", membres)
     return EligibleAgricole(
@@ -1638,7 +1662,8 @@ def eligible_agricole(moteur, periode: PeriodeRegime, carriere: Carriere, releve
                     or par_le_handicap),
         duree_requise_atteinte=trimestres >= requis,
         surcote=max(1.0, coefficient),
-        duree=annees,
+        duree=principales,
+        chef=chef,
         enfants=max(0, toutes - annees),
         reference=max(150, proratisation),
     )

@@ -18,7 +18,7 @@ inventaire:
   nom: Retraite complémentaire obligatoire des non-salariés agricoles
   population: Chefs d'exploitation, et depuis 2011 conjoints et aides familiaux
   couverture: partiel
-  statuts: [exploitant_agricole]
+  statuts: [exploitant_agricole, collaborateur_agricole]
   textes:
     - {reference: "loi n° 2002-308 du 4 mars 2002 tendant à la création d'un régime de retraite complémentaire obligatoire pour les non-salariés agricoles", id: null}
     - {reference: "code rural et de la pêche maritime, D. 732-166", id: null}

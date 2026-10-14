@@ -164,9 +164,12 @@ def points_gratuits(moteur: ScenarioActuel, periode: PeriodeRegime,
     parti en 2019 perdait plus de la moitié de sa complémentaire.
 
     Une année se compte en trimestres validés au régime de base, divisés
-    par quatre et bornés aux trimestres civils de l'année. Le modèle ne
-    distingue pas l'activité principale de la secondaire : toute année de
-    chef compte.
+    par quatre et bornés aux trimestres civils de l'année. Seules comptent,
+    pour les points comme pour les dix-sept ans et demi, les années de chef
+    à titre exclusif ou principal (L. 732-56, II ; D. 732-151) : ni celles
+    du conjoint collaborateur ou de l'aide familial, ni celles où une autre
+    activité précède l'exploitation
+    (:meth:`~retraite_notionnelle.carriere.Carriere.qualite_agricole`).
 
     ``au_taux_plein`` ouvre les points au taux plein quelle que soit la date
     d'effet : ceux que le relèvement de septembre 2023 attribue aux pensions
@@ -179,12 +182,13 @@ def points_gratuits(moteur: ScenarioActuel, periode: PeriodeRegime,
     if periode_base is None:
         return 0.0, None
 
-    def valides(code: str, avant: int | None = None) -> int:
+    def valides(code: str, avant: int | None = None, chef: bool = False) -> int:
         return somme_ordonnee(min(nombre, carriere.plafond_trimestres(annee))
                    for annee, nombre in assurance.get(code, {}).items()
-                   if avant is None or annee < avant)
+                   if (avant is None or annee < avant)
+                   and (not chef or carriere.qualite_agricole(annee) == "chef"))
 
-    if valides(regle.regime) < regle.annees_minimum * 4:
+    if valides(regle.regime, chef=True) < regle.annees_minimum * 4:
         return 0.0, None
     requis, fiabilite = ouvrir.duree_requise(moteur, periode_base, carriere)
     taux_plein = trimestres >= requis
@@ -195,7 +199,7 @@ def points_gratuits(moteur: ScenarioActuel, periode: PeriodeRegime,
     if not taux_plein:
         return 0.0, fiabilite
     retenus = min(
-        valides(regle.regime, regle.avant),
+        valides(regle.regime, regle.avant, chef=True),
         max(0.0, regle.annees_maximum * 4 - valides(periode.regime)),
     )
     return regle.points_par_annee * retenus / 4, fiabilite

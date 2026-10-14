@@ -58,7 +58,8 @@ objets:
       taux_plein: {porte: "la pension est-elle liquidée au taux plein dans le régime : durée requise, âge du taux plein, inaptitude ou handicap", type: booleen, obligatoire: true}
       duree_requise_atteinte: {porte: "la durée tous régimes atteint-elle la durée requise, que le complément de la RCO demandait jusqu'en août 2023", type: booleen, obligatoire: true}
       surcote: {porte: "le coefficient de surcote déjà incorporé au montant, que la PMR retire avant de comparer", type: nombre, obligatoire: true}
-      duree: {porte: "la durée d'assurance non salariée agricole des années, sans les trimestres pour enfants, en trimestres", type: entier, obligatoire: true}
+      duree: {porte: "la durée d'assurance non salariée agricole des années, à titre exclusif ou principal, et secondaire depuis 2026, sans les trimestres pour enfants, en trimestres", type: entier, obligatoire: true}
+      chef: {porte: "la part de cette durée accomplie comme chef d'exploitation, le reste étant celle du conjoint collaborateur ou de l'aide familial, en trimestres", type: entier, obligatoire: true}
       enfants: {porte: "les trimestres pour enfants que le régime porte, que les durées comptent depuis 2026", type: entier, obligatoire: true}
       reference: {porte: "la durée de référence DR, celle de la retraite forfaitaire, 150 trimestres au moins", type: entier, obligatoire: true}
 

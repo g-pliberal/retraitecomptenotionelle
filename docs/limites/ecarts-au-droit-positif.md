@@ -321,9 +321,12 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   différentiel de la complémentaire agricole, aux pensions qui prennent effet
   depuis 2015, à qui compte <!--chiffre:valeur(data/reference/regles/complement_differentiel_rco.yaml:versions.id=complement_de_2026.contenu.parametres.seuil_chef)-->70<!--/--> trimestres de chef d'exploitation. Restent
   dehors : la pension majorée que la loi de 2008 a accordée aux pensions déjà
-  liquidées, et les plans de revalorisation de 1994 à 2002 ; le montant réduit
-  des conjoints et des aides familiaux, que le modèle ne distingue pas du chef
-  d'exploitation ; la réversion, que le plafond ne compte pas. Le SMIC net
+  liquidées, et les plans de revalorisation de 1994 à 2002 ; l'assiette
+  forfaitaire du conjoint collaborateur et de l'aide familial, statut que la
+  saisie propose depuis le 14 octobre 2026 et dont le modèle sert le montant
+  réduit de la pension majorée de 2009 à 2021, sans points gratuits ni
+  complément, mais dont il prend les cotisations du revenu saisi ; la réversion,
+  que le plafond ne compte pas. Le SMIC net
   agricole qui fixe le complément n'est publié par la MSA que pour 2021, 2023
   et depuis 2024 : les autres années sont estimées. Le relèvement de septembre
   2023 est servi : le taux plein ouvre les points gratuits et le complément aux

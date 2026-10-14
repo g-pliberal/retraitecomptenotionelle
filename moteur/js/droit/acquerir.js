@@ -104,16 +104,19 @@ export function pointsGratuits(moteur, periode, carriere, assurance, trimestres,
   if (periodeBase === null) {
     return [0.0, null];
   }
-  const valides = (code, avant = null) => {
+  // Seules les années de chef à titre exclusif ou principal (L. 732-56, II ;
+  // D. 732-151) : `Carriere.qualiteAgricole`.
+  const valides = (code, avant = null, chef = false) => {
     let total = 0;
     for (const [annee, nombre] of assurance.get(code) ?? []) {
-      if (avant === null || annee < avant) {
+      if ((avant === null || annee < avant)
+          && (!chef || carriere.qualiteAgricole(annee) === "chef")) {
         total += Math.min(nombre, carriere.plafondTrimestres(annee));
       }
     }
     return total;
   };
-  if (valides(regle.regime) < regle.annees_minimum * 4) {
+  if (valides(regle.regime, null, true) < regle.annees_minimum * 4) {
     return [0.0, null];
   }
   const [requis, fiabilite] = ouvrir.dureeRequise(moteur, periodeBase, carriere);
@@ -127,7 +130,7 @@ export function pointsGratuits(moteur, periode, carriere, assurance, trimestres,
     return [0.0, fiabilite];
   }
   const retenus = Math.min(
-    valides(regle.regime, regle.avant),
+    valides(regle.regime, regle.avant, true),
     Math.max(0.0, regle.annees_maximum * 4 - valides(periode.regime)),
   );
   return [regle.points_par_annee * retenus / 4, fiabilite];

@@ -45,6 +45,15 @@ export const PERIODES_NON_COTISEES = new Set([
   "etudes",
 ]);
 
+/**
+ * Les statuts de non-salarié agricole, et la qualité que chacun donne quand
+ * il est l'activité principale de l'année (`Carriere.qualiteAgricole`).
+ */
+export const AFFILIATIONS_AGRICOLES = Object.freeze({
+  exploitant_agricole: "chef",
+  collaborateur_agricole: "collaborateur",
+});
+
 /** Une année de carrière. */
 export class AnneeCarriere {
   constructor({
@@ -1522,6 +1531,26 @@ export class Carriere {
   /** Toutes les lignes d'une année, l'activité principale en tête. */
   lignesDe(annee) {
     return this._parAnnee.get(annee) ?? [];
+  }
+
+  /**
+   * La qualité de non-salarié agricole de l'année : "chef" quand la ligne du
+   * chef d'exploitation est l'activité principale, "chef_secondaire" quand
+   * une autre activité la précède, "collaborateur" pour le conjoint
+   * collaborateur ou l'aide familial, null hors du régime (D. 732-110,
+   * D. 732-154, D. 732-166-1).
+   */
+  qualiteAgricole(annee) {
+    const lignes = this.lignesDe(annee);
+    if (lignes.length === 0) return null;
+    const principale = lignes[0].affiliation;
+    if (Object.hasOwn(AFFILIATIONS_AGRICOLES, principale)) {
+      return AFFILIATIONS_AGRICOLES[principale];
+    }
+    if (lignes.slice(1).some((ligne) => ligne.affiliation === "exploitant_agricole")) {
+      return "chef_secondaire";
+    }
+    return null;
   }
 
   /**

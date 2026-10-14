@@ -122,8 +122,13 @@ versions:
       « sont prises en considération les périodes qui ont donné lieu à versement des
       cotisations ouvrant droit à la retraite forfaitaire ou à validation au titre de
       périodes assimilées » ; « Le nombre total d'années prises en compte ne peut
-      excéder [...] la durée fixée au 1° de l'article R. 732-61 »
-    lu_le: 2026-10-07
+      excéder [...] la durée fixée au 1° de l'article R. 732-61 » ; « 1° Pour tout ou
+      partie des périodes d'assurance validées en qualité de chef d'exploitation [...]
+      à titre exclusif ou principal par les personnes qui justifient d'une durée
+      d'assurance en qualité de chef [...] au moins égale à dix-sept années et demie »
+      ; au 4°, celles du collaborateur, du conjoint participant aux travaux, de l'aide
+      familial, et du chef qui n'a pas ces dix-sept ans et demi
+    lu_le: 2026-10-14
   - id: LEGIARTI000020254705
     article: D. 732-111 code rural
     en_vigueur: 2009-02-16
@@ -178,9 +183,12 @@ versions:
     droit: >-
       au taux plein et avec vingt-deux ans et demi d'assurance non salariée agricole, la
       pension de base, comparée avant surcote et sans la majoration pour enfants, est
-      portée à PMR1 × durée / DR pour qui a été chef d'exploitation dix-sept ans et
-      demi, à PMR2 × durée / DR sinon, la durée au plus DR, DR au moins 150 trimestres ;
-      la majoration est écrêtée de ce que toutes les pensions, majorations pour enfants
+      portée à (PMR1 × DM1 + PMR2 × DM2) / DR : DM1, les périodes de chef
+      d'exploitation de qui l'a été dix-sept ans et demi, retenues en priorité ; DM2,
+      celles du conjoint participant aux travaux ou collaborateur, de l'aide familial,
+      et du chef qui ne l'a pas été dix-sept ans et demi ; DM1 + DM2 au plus DR, DR au
+      moins 150 trimestres ; les périodes à titre secondaire n'y entrent pas ; la
+      majoration est écrêtée de ce que toutes les pensions, majorations pour enfants
       comprises, dépassent du plafond
     parametres:
       existe: true
@@ -203,19 +211,30 @@ versions:
   - id: LEGIARTI000023395298
     article: D. 732-110 code rural
     en_vigueur: 2011-01-01
-    lu_le: 2026-10-07
+    citation: >-
+      « II. ― Ce montant minimum annuel est calculé de manière différenciée : 1° Pour
+      tout ou partie des périodes d'assurance validées en qualité de chef d'exploitation
+      ou d'entreprise agricole à titre exclusif ou principal ; [...] 4° Pour tout ou
+      partie des périodes d'assurance à titre exclusif ou principal validées en qualité
+      de collaborateur d'exploitation ou d'entreprise agricole [...] ou en qualité de
+      conjoint participant aux travaux [...], et pour tout ou partie des périodes
+      d'assurance validées en qualité d'aide familial » : la condition de dix-sept ans
+      et demi de chef, que la rédaction de 2009 mettait au 1°, est tombée
+    lu_le: 2026-10-14
   bornes:
     liquidation.date_effet: [2011-01-01, 2014-02-01]
   contenu:
     droit: >-
-      la même règle, la durée exigée ramenée à dix-sept ans et demi d'assurance non
-      salariée agricole
+      la durée exigée ramenée à dix-sept ans et demi d'assurance non salariée agricole ;
+      depuis le décret n° 2010-1759, toutes les périodes de chef entrent dans DM1, sans
+      condition de durée : PMR2 ne sert plus que le conjoint collaborateur et l'aide
+      familial
     parametres:
       existe: true
       duree_minimale: 70
       montant: pmr_chef
       montant_reduit: pmr_conjoint
-      seuil_chef: 70
+      seuil_chef: null
       plafond: plafond
       majorations_de_duree: false
   exemples: aucun trouvé
@@ -247,13 +266,14 @@ versions:
   contenu:
     droit: >-
       le taux plein suffit, sans durée minimale d'assurance non salariée agricole ;
-      PMR1 pour qui a été chef dix-sept ans et demi, PMR2 sinon
+      PMR1 pour les périodes de chef, PMR2 pour celles du conjoint collaborateur et de
+      l'aide familial
     parametres:
       existe: true
       duree_minimale: 0
       montant: pmr_chef
       montant_reduit: pmr_conjoint
-      seuil_chef: 70
+      seuil_chef: null
       plafond: plafond
       majorations_de_duree: false
   exemples: aucun trouvé
@@ -397,8 +417,7 @@ versions:
     droit: >-
       la durée compte les trimestres pour enfants ; le plafond est celui du minimum
       contributif, douze fois le montant mensuel de D. 173-21-4 ; les périodes de chef
-      d'exploitation à titre secondaire comptent depuis 2026, que le modèle ne
-      distingue pas
+      d'exploitation à titre secondaire comptent depuis 2026
     parametres:
       existe: true
       duree_minimale: 0
@@ -410,10 +429,12 @@ versions:
   exemples: aucun trouvé
 approximations:
 - ecart: >-
-    le modèle ne connaît que le statut de chef d'exploitation, à titre principal : la
-    durée d'assurance non salariée agricole est celle de chef, les périodes de conjoint,
-    d'aide familial ou de collaborateur et celles d'activité secondaire n'y sont pas, et
-    PMR2 ne sert qu'au chef qui n'a pas dix-sept ans et demi de cette qualité
+    le statut se lit année par année : chef à titre principal quand la ligne du chef
+    d'exploitation est l'activité principale de l'année, à titre secondaire quand une
+    autre la précède ; conjoint collaborateur et aide familial sont un même statut, que
+    la règle traite de même (D. 732-110, II, 4°) ; les périodes de collaborateur
+    régularisées de 1999 à 2008, que le 3° range avec celles du chef, et celles de qui
+    peut prétendre à une réversion, que le 2° y range aussi, reçoivent PMR2
   effet: non mesuré
 - ecart: >-
     la réversion n'entre ni dans la pension comparée ni dans l'écrêtement : le modèle

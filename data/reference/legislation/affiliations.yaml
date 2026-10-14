@@ -874,6 +874,25 @@ affiliations:
     periodes:
       - {debut: 1952, fin: 2002, regimes: [msa_non_salaries]}
       - {debut: 2003, fin: null, regimes: [msa_non_salaries, msa_rco]}
+    note: >-
+      Chef à titre exclusif ou principal quand la ligne est la première de son
+      année ; à titre secondaire quand une autre activité la précède, ce que
+      les deux minima des exploitants distinguent (D. 732-110, D. 732-166-1).
+
+  collaborateur_agricole:
+    libelle: Conjoint collaborateur ou aide familial d'exploitation agricole
+    famille: agricole
+    sans_employeur: true
+    periodes:
+      - {debut: 1952, fin: 2010, regimes: [msa_non_salaries]}
+      - {debut: 2011, fin: null, regimes: [msa_non_salaries, msa_rco]}
+    note: >-
+      Le conjoint participant aux travaux, puis collaborateur (L. 321-5), et
+      l'aide familial (L. 722-10, 2°) : affiliés à la RCO depuis le 1er janvier
+      2011 (L. 732-56, IV, LEGIARTI000023034502). La pension majorée de
+      référence leur sert un montant réduit de 2009 à 2021, et le complément
+      différentiel ne compte que les périodes de chef (D. 732-110, II, 4° ;
+      D. 732-111 ; D. 732-166-1, II).
 
   agent_sncf:
     libelle: Agent du cadre permanent de la SNCF

@@ -141,6 +141,7 @@ export class Pensions {
         duree_requise_atteinte: this.agricole.dureeRequiseAtteinte,
         surcote: this.agricole.surcote,
         duree: this.agricole.duree,
+        chef: this.agricole.chef,
         enfants: this.agricole.enfants,
         reference: this.agricole.reference,
       };
@@ -1011,13 +1012,22 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
 }
 
 /**
+ * Les périodes de chef à titre secondaire comptent, dans les deux minima des
+ * exploitants, à compter du 1er janvier de cette année (D. 732-110 et
+ * D. 732-166-1, rédaction du décret n° 2025-1410).
+ */
+export const ANNEE_DU_TITRE_SECONDAIRE = 2026;
+
+/**
  * Ce que la pension majorée de référence et le complément différentiel de la
  * RCO lisent de la pension de base des non-salariés agricoles : le taux plein
  * (durée requise tous régimes, âge du taux plein, inaptitude ou handicap), la
  * durée des années et les trimestres pour enfants à part, la durée de
  * référence DR de la retraite forfaitaire, 150 trimestres au moins, et la
- * surcote, que la PMR retire avant de comparer. `coefficient` est celui de la
- * décote ou de la surcote du régime. Voir `eligible_agricole` du Python.
+ * surcote, que la PMR retire avant de comparer. La durée ne compte les années
+ * de chef à titre secondaire que depuis 2026 ; `chef` ne garde que les années
+ * de chef. `coefficient` est celui de la décote ou de la surcote du régime.
+ * Voir `eligible_agricole` du Python.
  */
 /**
  * Les trimestres du régime, quand chaque annuité se liquide au taux de l'année
@@ -1046,6 +1056,12 @@ export function eligibleAgricole(moteur, periode, carriere, releve, membres, tri
   const code = membres[0];
   const requis = ouvrir.dureeRequise(moteur, periode, carriere)[0];
   const proratisation = dureeProratisation(moteur, periode, carriere, requis)[0];
+  const qualite = (annee) => carriere.qualiteAgricole(annee);
+  const principales = durees.cumulPlafonne("assurance", membres,
+    (annee) => annee >= ANNEE_DU_TITRE_SECONDAIRE || qualite(annee) !== "chef_secondaire");
+  const chef = durees.cumulPlafonne("assurance", membres,
+    (annee) => qualite(annee) === "chef"
+      || (annee >= ANNEE_DU_TITRE_SECONDAIRE && qualite(annee) === "chef_secondaire"));
   const annees = durees.cumulPlafonne("assurance", membres, () => true);
   const toutes = durees.cumulPlafonne("assurance", membres);
   return {
@@ -1056,7 +1072,8 @@ export function eligibleAgricole(moteur, periode, carriere, releve, membres, tri
       || parLeHandicap,
     dureeRequiseAtteinte: trimestres >= requis,
     surcote: Math.max(1.0, coefficient),
-    duree: annees,
+    duree: principales,
+    chef,
     enfants: Math.max(0, toutes - annees),
     reference: Math.max(150, proratisation),
   };

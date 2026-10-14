@@ -85,6 +85,13 @@ PERIODES_NON_COTISEES = {
     "etudes",
 }
 
+#: Les statuts de non-salarié agricole, et la qualité que chacun donne quand
+#: il est l'activité principale de l'année (:meth:`Carriere.qualite_agricole`).
+AFFILIATIONS_AGRICOLES = {
+    "exploitant_agricole": "chef",
+    "collaborateur_agricole": "collaborateur",
+}
+
 
 @dataclass(frozen=True)
 class AnneeCarriere:
@@ -1371,6 +1378,23 @@ class Carriere:
     def lignes_de(self, annee: int) -> tuple[AnneeCarriere, ...]:
         """Toutes les lignes d'une année, l'activité principale en tête."""
         return self._lignes_par_annee.get(annee, ())
+
+    def qualite_agricole(self, annee: int) -> str | None:
+        """La qualité de non-salarié agricole de l'année : ``"chef"`` quand la
+        ligne du chef d'exploitation est l'activité principale (« à titre
+        exclusif ou principal »), ``"chef_secondaire"`` quand une autre
+        activité la précède, ``"collaborateur"`` pour le conjoint
+        collaborateur ou l'aide familial, ``None`` hors du régime. Les deux
+        minima des exploitants et les points gratuits de la RCO la
+        distinguent (D. 732-110, D. 732-154, D. 732-166-1)."""
+        lignes = self.lignes_de(annee)
+        if not lignes:
+            return None
+        if lignes[0].affiliation in AFFILIATIONS_AGRICOLES:
+            return AFFILIATIONS_AGRICOLES[lignes[0].affiliation]
+        if any(ligne.affiliation == "exploitant_agricole" for ligne in lignes[1:]):
+            return "chef_secondaire"
+        return None
 
     def part_retenue(self, annee: int) -> float:
         """Part de l'année civile qui compte, une fois le départ pris en compte.

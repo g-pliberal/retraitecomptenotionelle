@@ -293,7 +293,7 @@ versions:
   contenu:
     droit: >-
       les trimestres pour enfants comptent dans les durées ; les périodes de chef à
-      titre secondaire aussi, que le modèle ne distingue pas
+      titre secondaire aussi, à compter du 1er janvier 2026
     parametres:
       existe: true
       pourcentage: 0.85
@@ -318,8 +318,12 @@ approximations:
     seule étant lue en octobre
   effet: non mesuré
 - ecart: >-
-    le modèle ne connaît que le statut de chef d'exploitation à titre principal : la
-    durée de chef est la durée agricole, et tous les points de RCO sont ceux de chef
+    la durée de chef ne compte que les années où le chef d'exploitation est l'activité
+    principale, et, depuis 2026, celles où il est secondaire ; la durée agricole compte
+    aussi le conjoint collaborateur et l'aide familial ; mais tous les points de RCO
+    entrent dans la formule différentielle, ceux acquis comme collaborateur depuis 2011
+    compris, quand D. 732-166-3 ne retient que ceux de chef : le complément d'une
+    carrière mêlée est un peu trop bas
   effet: non mesuré
 - ecart: >-
     le complément se calcule au départ : servi depuis 2015 aux pensions liquidées avant,

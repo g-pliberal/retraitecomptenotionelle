@@ -291,22 +291,34 @@ export function pensionMajoree(moteur, carriere, eligible, pension, ressources) 
   if (duree < (regle.duree_minimale ?? 0)) {
     return null;
   }
-  // De 2009 à 2021, PMR1 pour qui a été chef d'exploitation dix-sept ans et
-  // demi, PMR2 sinon (D. 732-110, II ; D. 732-111).
-  let serie = regle.montant;
-  if (regle.montant_reduit && eligible.duree < (regle.seuil_chef ?? 0)) {
-    serie = regle.montant_reduit;
-  }
   const annee = carriere.anneeLiquidation;
   const mois = carriere.moisLiquidation;
-  const lu = moteur.pensionMajoreeReference.montant(serie, annee, mois);
+  const lu = moteur.pensionMajoreeReference.montant(regle.montant, annee, mois);
   if (lu === null) {
     return null;
   }
-  const [entiere, fiabilite] = lu;
+  const entiere = lu[0];
+  let fiabilite = lu[1];
   const retenue = Math.min(duree, eligible.reference);
-  const avant = Math.max(0.0, entiere * retenue / eligible.reference
-    - pension.montant / eligible.surcote);
+  // De 2009 à 2021, PMR = PMR1 × DM1 / DR + PMR2 × DM2 / DR : DM1, les
+  // périodes de chef, retenues en priorité ; DM2, celles du conjoint
+  // collaborateur et de l'aide familial, et, jusqu'en 2010, celles du chef qui
+  // ne l'a pas été dix-sept ans et demi (D. 732-110, II ; D. 732-111).
+  let reduite = null;
+  let dureeReduite = 0;
+  if (regle.montant_reduit) {
+    const luReduite = moteur.pensionMajoreeReference.montant(regle.montant_reduit, annee, mois);
+    if (luReduite === null) {
+      return null;
+    }
+    reduite = luReduite[0];
+    fiabilite = Math.min(fiabilite, luReduite[1]);
+    const chef = eligible.chef >= (regle.seuil_chef ?? 0) ? eligible.chef : 0;
+    dureeReduite = retenue - Math.min(chef, retenue);
+  }
+  const pmr = (entiere * (retenue - dureeReduite) + (reduite ?? 0.0) * dureeReduite)
+    / eligible.reference;
+  const avant = Math.max(0.0, pmr - pension.montant / eligible.surcote);
   if (avant <= 0.0) {
     return null;
   }
@@ -321,7 +333,7 @@ export function pensionMajoree(moteur, carriere, eligible, pension, ressources) 
   return {
     entiere, duree: retenue, reference: eligible.reference, avantEcretement: avant,
     complement: Math.max(0.0, Math.min(avant, plafond - ressources)),
-    plafond, fiabilite: Math.min(fiabilite, fiabilitePlafond),
+    plafond, fiabilite: Math.min(fiabilite, fiabilitePlafond), reduite, dureeReduite,
   };
 }
 
@@ -344,10 +356,15 @@ export function complementDifferentiel(moteur, carriere, eligible, base, rco, po
   if (!regle.existe || valeurPoint <= 0.0) {
     return null;
   }
-  const duree = eligible.duree + (regle.majorations_de_duree ? eligible.enfants : 0);
+  // La durée de chef, DCE, ouvre et proratise ; la durée agricole, Dnsa, qui
+  // compte aussi le conjoint collaborateur et l'aide familial, borne
+  // (D. 732-166-1, II ; D. 732-166-5).
+  const enfants = regle.majorations_de_duree ? eligible.enfants : 0;
+  const duree = eligible.duree + enfants;
+  const chef = eligible.chef + enfants;
   const ouvert = regle.condition === "taux_plein"
     ? eligible.tauxPlein : eligible.dureeRequiseAtteinte;
-  if (duree < (regle.seuil_chef ?? 0) || !ouvert) {
+  if (chef < (regle.seuil_chef ?? 0) || !ouvert) {
     return null;
   }
   const annee = carriere.anneeLiquidation;
@@ -360,12 +377,13 @@ export function complementDifferentiel(moteur, carriere, eligible, base, rco, po
   }
   const [smicNet, fiabilite] = smic;
   const cible = regle.pourcentage * HEURES_DU_COMPLEMENT * smicNet;
-  const retenue = Math.min(duree, eligible.reference);
+  const retenue = Math.min(chef, eligible.reference);
   const prorata = retenue / eligible.reference;
   const formule = regle.formule === "carriere_complete"
     ? (cible - (pmr[0] + POINTS_D_UNE_CARRIERE_COMPLETE * valeurPoint)) * prorata
     : (cible - pmr[0]) * prorata - pointsRco * valeurPoint;
-  let montant = Math.min(formule, cible * prorata - (base + rco));
+  let montant = Math.min(formule,
+    cible * Math.min(duree, eligible.reference) / eligible.reference - (base + rco));
   if (regle.plafond_tous_regimes) {
     montant = Math.min(montant, cible - personnelles);
   }
@@ -1228,8 +1246,13 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         code: "pension_majoree_reference",
         libelle: "Pension majorée de référence",
         montant: majoree.complement,
-        detail: `PMR ${formatFixe(majoree.entiere, 2, true)} € × ${majoree.duree}/`
-          + `${majoree.reference}, au taux plein`
+        detail: `PMR ${formatFixe(majoree.entiere, 2, true)} € × `
+          + `${majoree.duree - majoree.dureeReduite}/${majoree.reference}`
+          + (majoree.dureeReduite
+            ? ` + ${formatFixe(majoree.reduite, 2, true)} € × ${majoree.dureeReduite}/`
+              + `${majoree.reference}`
+            : "")
+          + ", au taux plein"
           + (majoree.complement < majoree.avantEcretement - 1e-9
             ? `, écrêtée au plafond de ${formatFixe(majoree.plafond, 2, true)} € de toutes `
               + "les pensions"

@@ -83,7 +83,7 @@ STATUTS = (
     "contractuel_public", "agent_sncf",
     "agent_ratp", "agent_ieg", "artisan", "commercant", "profession_liberale",
     "liberal_non_reglemente",
-    "exploitant_agricole", "salarie_agricole", "avocat", "marin",
+    "exploitant_agricole", "collaborateur_agricole", "salarie_agricole", "avocat", "marin",
     "agent_banque_de_france", "clerc_de_notaire", "mineur", "ouvrier_etat",
     "personnel_opera", "personnel_comedie_francaise", "sans_activite",
     "maitre_enseignement_prive", "medecin_liberal", "elu_local",
