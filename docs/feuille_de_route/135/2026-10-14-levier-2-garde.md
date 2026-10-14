@@ -32,7 +32,14 @@ verdict va dans `.github/etat_suite.yaml`, que le hook de démarrage affiche.
   dépôt jetable qui pousse sur un dépôt nu, écrit une garde rouge à part
   d'une suite verte ; le hook sépare les échecs de l'une et de l'autre.
 
-**Ce qui reste.** Voir la première course qui joue la garde sur GitHub
-(n° 488 et suivantes) et son verdict. Puis les fiches de règles dans
+- *La première nuit.* Rejouée sur `main` une heure plus tard, la garde a
+  fait tomber deux fichiers nés entre-temps. `test_pension_minimum_avant_1983.py`
+  déclare le 15 dans `_calculer`. `test_cycle_de_vie_portage.py` confronte le
+  Python au portage dans une fixture, que la garde ne lisait pas : elle lit
+  désormais aussi les fixtures que le test demande (`_confronte_au_portage`,
+  `tests/conftest.py`). La course du 14 octobre à 3 h 27, sur `91ab5fc`, a
+  écrit `presomptions: vert`, sous une suite rouge pour d'autres causes.
+
+**Ce qui reste.** les fiches de règles dans
 l'empreinte, la fin du portage rejoué (notes du 10 octobre), `actions/cache`
 au propriétaire.

@@ -77,7 +77,7 @@ témoins la tiennent :
 complètes et <!--chiffre:entrees(tests/temoins/pages.json:)-->72<!--/--> pages
 figées, que `node --test` rejoue ;
 <!--chiffre:portage(valeurs)-->149 860<!--/--> nombres comparés, dont
-<!--chiffre:portage(identiques)-->96,9<!--/--> % identiques au bit près.
+<!--chiffre:portage(identiques)-->95,7<!--/--> % identiques au bit près.
 
 Une exception, voulue : le coût pour toute la population ne se calcule qu'en
 Python. Il voyage tout fait dans le paquet (`data/derive/agregats.json`), et
