@@ -1,0 +1,54 @@
+schema_version: 1
+id: abattement_rci
+intitule: >-
+  Abattement des points de la retraite complémentaire des indépendants liquidée avant
+  le taux plein : 1 % par trimestre manquant jusqu'à douze, puis 1,25 %, jusqu'à 22 %
+  à vingt trimestres (annexe 2 du règlement du RCI), sur le plus petit des deux
+  décomptes, durée et âge, et sur toutes les catégories de points, celles du RCO des
+  artisans et du NRIC des commerçants comprises.
+etat: approchee
+effet: >-
+  Toute retraite du RCI liquidée avant le taux plein du régime de base. Le modèle
+  abat les points de la décote du régime général, 1,25 % par trimestre, soit 0,9125
+  à sept trimestres manquants quand la caisse sert 0,93 : 1,9 % de moins sur la
+  complémentaire de l'artisan de la circulaire 2026-07, et l'écart croît jusqu'à
+  douze trimestres (0,85 contre 0,88), et reste de trois points à vingt (0,75
+  contre 0,78).
+approximations:
+- ecart: >-
+    les fiches rci, rco_artisans et nric portent `decote_par_trimestre: 0.0125` et
+    `decote_par_generation`, le barème de la décote du régime de base, et non
+    l'annexe 2 du règlement ; l'exemple cnav_2026_07_abattement_rci_1962 entre au
+    témoin en écart connu
+  effet: >-
+    0,9125 au lieu de 0,93 à sept trimestres manquants ; 0,85 au lieu de 0,88 à
+    douze ; 0,75 au lieu de 0,78 à vingt
+exemples:
+- cnav_2026_07_abattement_rci_1962
+sources:
+  lu_le: 2026-10-14
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Avant 2013 : les règlements du RCO des artisans (1979) et du NRIC des commerçants
+    (2004) avaient-ils déjà ce barème ? Le dépôt ne les a pas lus ; le correctif
+    `abattement_points: agirc_arrco` ne vaut, jusque-là, que pour les liquidations
+    depuis le 1er janvier 2013.
+  lectures:
+  - type: legifrance
+    reference: >-
+      arrêté du 9 février 2012 portant approbation du règlement du RCI, article 12
+      (LEGIARTI000054891893, 2013 ; LEGIARTI000054896398, 26 juin 2024) et annexe 2
+      (LEGIARTI000054892591, 2013 ; LEGIARTI000054907665, 26 juin 2024), même table
+      aux deux dates, lus dans l'index LEGI du dépôt à jour au 11 octobre 2026
+    date: 2026-10-14
+  - type: circulaire_cnav
+    reference: >-
+      circulaire 2026-07 du 5 mars 2026, point 4.1.2 : un exemple chiffré, et le
+      plafond de 12 % des générations nées depuis 1969, que douze trimestres d'âge
+      séparent du taux plein
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_07_05032026.pdf
+    date: 2026-10-14
+textes_a_rattacher:
+- reference: arrêté du 9 février 2012, article 12 et annexe 2
+- reference: L. 635-1 CSS
