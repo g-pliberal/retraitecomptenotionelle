@@ -1,0 +1,36 @@
+# Réserves du système de retraite par répartition, fin d'année, et ce qu'elles rapportent
+# source_id: cor_reserves_systeme_retraite
+# unite: montant en milliards d'euros courants ; part_pib en fraction du PIB
+#        de l'année, telle que le COR l'écrit (vide quand il ne l'écrit pas)
+# fiabilite:
+#   haute : rapport annuel du COR de juin 2026, partie 2, chapitre 3,
+#           § 3.1 à 3.3 et tableau 2.3 (valeur de marché au 31 décembre,
+#           « données des régimes ») ; § 1.1 pour le solde avec et sans les
+#           charges et produits financiers. Saisi à la main.
+#
+# L'AUTRE TERME DU BILAN D'UN COMPTE NOTIONNEL
+# ---------------------------------------------
+# Le bilan suédois (« balansräkning ») met à l'actif la recette future des
+# cotisations — l'actif de cotisation — et le fonds tampon ; au passif, les
+# droits acquis. La page Coût laisse les réserves hors du solde, qui dit le
+# flux et jamais le stock (`cout.py`) : ce fichier en donne le stock, pour le
+# bilan du compte (`bilan_compte.py`, action 138, étape 19).
+#
+# reserves_regimes : actifs admis en représentation des réserves des régimes
+#   en répartition, fonds de roulement compris (tableau 2.3, « Total des
+#   réserves »), 91 % aux complémentaires, dont 113,6 Md€ à l'Agirc-Arrco.
+# frr : actif net du Fonds de réserve pour les retraites (§ 3.2).
+# reserves_totales : la somme des deux (§ 3.2, dernier alinéa).
+# dette_cades_retraite : la part de la dette de la Cades imputable à la
+#   branche retraite, 24 % de sa situation nette (§ 3.3, note 103).
+# produits_financiers_nets : charges et produits financiers de l'année, nets,
+#   déduits des deux soldes du § 1.1 (− 5,1 hors, − 1,3 Md€ avec).
+annee,poste,montant,part_pib,fiabilite
+2024,reserves_regimes,213.8,0.073,haute
+2024,frr,20.4,,haute
+2024,reserves_totales,234.2,,haute
+2025,reserves_regimes,223.9,0.075,haute
+2025,frr,20.7,0.007,haute
+2025,reserves_totales,244.6,0.082,haute
+2025,dette_cades_retraite,29.3,0.010,haute
+2025,produits_financiers_nets,3.8,,haute

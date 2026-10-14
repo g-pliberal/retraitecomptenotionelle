@@ -161,6 +161,9 @@ EXCEPTIONS = {
     # Les deux minima des exploitants agricoles, dans les deux moteurs.
     ("test_minima_agricoles.py",
      "test_les_deux_moteurs_servent_les_memes_minima_agricoles"): "complet",
+    # Le bilan du compte sur la grille : il lit le coût agrégé.
+    ("test_bilan_compte.py",
+     "test_la_grille_donne_une_duree_de_rotation_a_la_suedoise"): "complet",
 }
 
 

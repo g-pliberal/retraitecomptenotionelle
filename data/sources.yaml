@@ -844,6 +844,22 @@ institutions:
           « Complément du rapport annuel du COR - juin 2024 ». Le reste du
           dépôt tournant sur le COR 2026, mélanger les deux coudrait deux
           exercices de projection.
+      - id: cor_reserves_systeme_retraite
+        titre: >-
+          Réserves du système de retraite par répartition, FRR et dette de la
+          Cades imputable aux retraites, fin 2024 et fin 2025 (rapport annuel
+          de juin 2026, partie 2, chapitre 3, tableau 2.3)
+        url: https://www.cor-retraites.fr/sites/default/files/2026-06/RA_Part2_Chap3.pdf
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/macro/reserves_retraite.csv
+        note: >-
+          Le stock que le solde ne dit pas : 244,6 Md€ fin 2025, 8,2 % du
+          PIB, dont 113,6 à l'Agirc-Arrco et 20,7 au FRR ; 29,3 Md€ de dette
+          de la Cades imputable aux retraites. Saisi pour le bilan du compte
+          notionnel (action 138, étape 19), qui les met à l'actif à côté de
+          l'actif de cotisation, comme le bilan suédois son fonds tampon.
+
       - id: cor_comptes_systeme_retraite
         titre: >-
           Comptes du système de retraite — dépenses, ressources et solde, en
