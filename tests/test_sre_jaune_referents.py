@@ -278,6 +278,7 @@ def test_le_titre_se_reconnait_a_la_ligne_entiere_et_le_droit_derive_suit_le_dir
     lignes = (ref._l(r"^effectif\b", "effectif"), ref._l(r"age moyen(?! de)", "age_moyen"))
     colonnes = ({"population": "fpe_civils_hors_poste_orange"}, {"population": "fpe_civils"})
     direct = ref.tableau_referent([page], ref.Gabarit("A-1", "tableau n°a - 1", colonnes, lignes,
+                                                      suivi=True,
                                                       defaut={"champ": "droit_direct"}))
     derive = ref.tableau_referent([page], ref.Gabarit("A-1", "tableau n°a - 1", colonnes, lignes,
                                                       rang=1, defaut={"champ": "droit_derive"}))
@@ -359,6 +360,60 @@ def test_les_referents_se_recoupent_entre_eux():
     ]), messages
 
 
+def test_un_age_en_annees_et_en_mois_est_une_case_lue_en_mois():
+    """« 62 ans et 5 mois », « 57 ans 5 mois » : cinq ou quatre mots, une
+    case, comptée en mois. Le tableau 79 imprime même « 26 ans et 12 mois »."""
+    rangee = [(70.0, "Age à la liquidation"), (152.0, "62 ans et 5 mois"),
+              (222.0, "57 ans 5 mois"), (291.0, "26 ans et 12 mois")]
+    intitule, cases = ref._cases(rangee, seuil=140.0)
+    assert intitule == "Age à la liquidation"
+    assert [ref._valeur_case(t) for _, t in cases] == [749, 689, 324]
+
+
+def test_l_annee_en_tete_de_ligne_est_son_intitule_et_la_lecture_remonte():
+    """Au tableau 60, chaque ligne s'ouvre sur son année, un nombre comme ses
+    cases, et la première, 1990, a des cases sans objet : la ligne de 2000
+    place les colonnes, et la lecture remonte d'une ligne pour commencer."""
+    page = [_rangee("Tableau 60 : Nombre total de pensionnés en 1990 et 2000"),
+            [(83.0, "1990"), (148.0, f"954{NB}387"), (233.0, "n.d."), (304.0, f"580{NB}242")],
+            [(82.0, "2000"), (146.0, f"1{NB}254{NB}005"), (224.0, f"1{NB}159{NB}092"),
+             (304.0, f"562{NB}933")],
+            _rangee("Sources : DGFiP")]
+    gabarit = ref.Gabarit("X-60", "tableau 60 :", tuple(
+        {"population": p} for p in ("fpe_civils", "fpe_civils_hors_poste_orange",
+                                    "fpe_militaires")),
+        tuple(ref._l(rf"(^|\s){a}(\s|$)", "effectif", modalite=str(a)) for a in (1990, 2000)),
+        reference=r"(^|\s)2000(\s|$)", intitule_numerique=True)
+    lu = ref.tableau_referent([page], gabarit)
+    assert lu[("fpe_civils", "ensemble", "1990", "effectif")] == 954387
+    assert lu[("fpe_civils_hors_poste_orange", "ensemble", "1990", "effectif")] is None
+    assert lu[("fpe_militaires", "ensemble", "2000", "effectif")] == 562933
+
+
+def test_une_moyenne_est_celle_de_ses_parts_et_tombe_entre_les_sexes():
+    """Au tableau 108, la pension d'un versant est celle de ses catégories,
+    pesées de leurs départs ; au tableau 101, l'âge de l'ensemble tombe entre
+    celui des hommes et celui des femmes, à l'arrondi près."""
+    def cases(population, modalite, **indicateurs):
+        return {(population, "ensemble", modalite, i): v for i, v in indicateurs.items()}
+
+    lu = {"108": {**cases("fpe_civils", "ensemble", departs=30,
+                          pension_avec_accessoires_eur=2000),
+                  **cases("fpe_civils", "a", departs=10, pension_avec_accessoires_eur=3000),
+                  **cases("fpe_civils", "b", departs=10, pension_avec_accessoires_eur=2000),
+                  **cases("fpe_civils", "c", departs=10, pension_avec_accessoires_eur=1000)},
+          "101": {("fpe_civils", "anciennete", "2010", f"age_premiere_mise_en_paiement{s}"): v
+                  for s, v in (("_hommes", 59.4), ("_femmes", 60.2), ("", 60.0))}}
+    assert ref.incoherences_referents(lu) == []
+    lu["108"][("fpe_civils", "ensemble", "ensemble", "pension_avec_accessoires_eur")] = 2002
+    lu["101"][("fpe_civils", "anciennete", "2010", "age_premiere_mise_en_paiement")] = 62.3
+    assert ref.incoherences_referents(lu) == [
+        "108 / fpe_civils / ensemble / ensemble / pension_avec_accessoires_eur : 2002, et "
+        "2000 pesé de ses parts",
+        "101, fpe_civils, anciennete, 2010, age_premiere_mise_en_paiement : 62.3, hors de "
+        "59.4 pour les hommes et 60.2 pour les femmes"]
+
+
 def test_une_incoherence_se_declare_et_ne_couvre_que_ses_messages():
     """Une incohérence déclarée explique les messages de son motif ; un autre
     message reste inattendu, et une déclaration que plus rien ne montre se
@@ -368,16 +423,20 @@ def test_une_incoherence_se_declare_et_ne_couvre_que_ses_messages():
     inattendues, disparues = ref.incoherences_declarees(messages)
     assert inattendues == messages[1:]
     assert len(disparues) == len(ref.INCOHERENCES_DU_DOCUMENT) - 1
-    assert all("B-17" not in d for d in disparues)
+    assert not any(d.startswith("Au B-17") for d in disparues)
 
 
 def test_les_gabarits_couvrent_les_annexes_et_le_flux_ses_vingt_quatre_caracteristiques():
     """Les annexes A et B, sauf l'A-7 que ``sre_jaune_pensions`` lit depuis
-    l'étape 2 ; les tableaux du flux par colonne disent tous les mêmes
-    vingt-quatre caractéristiques, dans le même ordre."""
+    l'étape 2, et les tableaux du corps du rapport qui les prolongent — ses
+    graphiques n'ont pas de nombres à lire — ; les tableaux du flux par
+    colonne disent tous les mêmes vingt-quatre caractéristiques, dans le même
+    ordre."""
     numeros = {g.numero for g in ref.GABARITS}
     assert numeros == {f"A-{n}" for n in (1, 2, 3, 4, 5, 6, 8)} | {
-        f"B-{n}" for n in range(1, 23)} | {"B-3bis"}
+        f"B-{n}" for n in range(1, 23)} | {"B-3bis"} | {
+        str(n) for n in (60, 66, 67, 68, 69, 70, 73, 75, 76, 78, 79, 80, 83, 84, 85, 86,
+                         *range(101, 109))}
     for gabarit in ref.GABARITS:
         if gabarit.numero in ("B-1", "B-2", "B-3", "B-3bis", "B-4", "B-5"):
             assert gabarit.lignes[-24:] == ref.CARACTERISTIQUES_DU_FLUX, gabarit.numero
@@ -387,24 +446,33 @@ def test_les_gabarits_couvrent_les_annexes_et_le_flux_ses_vingt_quatre_caracteri
 
 
 def test_les_tableaux_certifies_ne_se_contredisent_qu_aux_points_declares(certifies, tableau_50):
-    """Le stock et le flux certifiés se recoupent, sauf aux douze points où
+    """Le stock et le flux certifiés se recoupent, sauf aux dix-sept points où
     le document se contredit, et au tableau 50 : chacun est déclaré, et
-    chaque déclaration se lit encore. Les recoupements ne passent pas à
-    vide : seules quatre cases totales manquent au document — l'indice des
-    ouvriers de l'État, les militaires partis pour carrière longue ou en
-    catégorie active, les ouvriers en catégorie active."""
+    chaque déclaration se lit encore — l'en-tête du fichier certifié les
+    compte. Les recoupements ne passent pas à vide : seules cinq cases
+    totales manquent au document — l'indice des ouvriers de l'État, les
+    militaires partis pour carrière longue ou en catégorie active, les
+    ouvriers en catégorie active, leur durée validée —, et une part au
+    minimum garanti, celle des militaires partis pour motifs familiaux."""
     messages = incoherences_50(tableau_50) + ref.incoherences_referents(certifies)
     assert ref.incoherences_declarees(messages) == ([], [])
-    assert len(ref.INCOHERENCES_DU_DOCUMENT) == 13
-    vides = [total for total, _ in ref._recoupements()
+    assert len(ref.INCOHERENCES_DU_DOCUMENT) == 1 + 17
+    vides = [total for total, *_ in ref._recoupements()
              if total[1:] not in certifies.get(total[0], {})]
     assert vides == [
         ("B-1", "ouvriers_etat", "ensemble", "ensemble", "indice_liquidation"),
         ("B-1", "fpe_militaires", "carriere_longue", "ensemble", "departs"),
         ("B-1", "fpe_militaires", "categorie_active", "ensemble", "departs"),
         ("B-1", "ouvriers_etat", "categorie_active", "ensemble", "departs"),
+        ("79", "ouvriers_etat", "ensemble", "ensemble", "duree_validee_mois"),
     ]
-    assert len(ref._recoupements()) > 400
+    assert len(ref._recoupements()) > 550
+    a_vide = [une for une, autre, *_ in ref._concordances()
+              if une[1:] not in certifies.get(une[0], {})
+              or autre[1:] not in certifies.get(autre[0], {})]
+    assert a_vide == [("84", "fpe_militaires", "motifs_familiaux", "ensemble",
+                       "part_minimum_garanti")]
+    assert all(moyenne[1:] in certifies[moyenne[0]] for moyenne, *_ in ref._moyennes())
 
 
 def test_le_b22_retrouve_les_parts_du_tableau_50_sauf_sa_case_fausse(certifies, tableau_50):

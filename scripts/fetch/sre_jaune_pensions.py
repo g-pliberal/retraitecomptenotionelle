@@ -50,13 +50,14 @@ dépôt en tire la seule série qu'il n'avait pas, celle du FSPOEIE (action 159,
 annexes A et B, le stock de pensions au 31 décembre 2025 (A-1 à A-6, A-8) et
 le flux de 2025 avec ses séries depuis 2016 (B-1 à B-22) — effectifs, âges,
 durées, décote et surcote, taux et indice de liquidation, minimum garanti,
-pensions et leurs déciles. Leurs cases vides ne laissent rien dans le texte
-d'une ligne : ``sre_jaune_referents.py`` les lit case par case, chacune à sa
-place, et dit ce qu'ils disent les uns des autres, et contre eux-mêmes. Le
-JSON les garde à plat, une liste de [population, champ, modalité,
-indicateur, valeur] par tableau ; ``scripts/verifier_donnees.py`` les certifie
-dans ``data/reference/macro/caracteristiques_fonction_publique.csv``, et le
-B-22 dans ``bonifications_jaune.csv``.
+pensions et leurs déciles —, et les tableaux du corps du rapport qui les
+prolongent depuis 1990 ou 2000 (60 à 108). Leurs cases vides ne laissent rien
+dans le texte d'une ligne : ``sre_jaune_referents.py`` les lit case par case,
+chacune à sa place, et dit ce qu'ils disent les uns des autres, et contre
+eux-mêmes. Le JSON les garde à plat, une liste de [population, champ,
+modalité, indicateur, valeur] par tableau ; ``scripts/verifier_donnees.py``
+les certifie dans ``data/reference/macro/caracteristiques_fonction_publique.csv``,
+et le B-22 dans ``bonifications_jaune.csv``.
 
 **LE DOCUMENT NE SE TÉLÉCHARGE PAS DEPUIS UNE SESSION** : ``budget.gouv.fr``
 refuse les adresses de sortie du proxy. Mais l'annexe est déposée au

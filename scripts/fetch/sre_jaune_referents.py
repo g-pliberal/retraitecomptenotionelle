@@ -2,7 +2,11 @@
 
 Les annexes A et B du jaune (action 159, étape 4) : le stock de pensions de la
 fonction publique au 31 décembre 2025 (A-1 à A-6, A-8) et le flux de 2025, avec
-ses séries depuis 2016 (B-1 à B-22). C'est ce que
+ses séries depuis 2016 (B-1 à B-22) ; et les tableaux du corps du rapport qui
+les prolongent (60 à 108) : le stock depuis 1990, les âges de départ depuis
+1990, la pension du stock et du flux depuis 2000, le minimum garanti, la
+décristallisation, la surcote, la décote et le taux de liquidation depuis
+2004. C'est ce que
 ``scripts/fetch/sre_jaune_pensions.py`` lit en plus des bonifications, et que
 ``scripts/verifier_donnees.py`` certifie dans
 ``data/reference/macro/caracteristiques_fonction_publique.csv`` — le B-22, les
@@ -45,9 +49,12 @@ donnent ensemble, la ligne l'emportant :
 Ce que les tableaux disent les uns des autres se recoupe
 (:func:`incoherences_referents`) : les sexes font l'effectif, les régimes leur
 total, les âges, les catégories et les grades leur ensemble, et chaque case
-que le document imprime deux fois l'est à l'identique. Sauf en douze points,
-où le document se contredit : ses cases restent telles qu'il les imprime, et
-chaque incohérence est déclarée (:data:`INCOHERENCES_DU_DOCUMENT`).
+que le document imprime deux fois l'est à l'identique, à l'arrondi près
+quand deux tableaux l'impriment à des précisions différentes ; une moyenne
+est celle de ses parts, pesées de leurs effectifs, et tombe entre celle des
+hommes et celle des femmes. Sauf en dix-sept points, où le document se
+contredit : ses cases restent telles qu'il les imprime, et chaque
+incohérence est déclarée (:data:`INCOHERENCES_DU_DOCUMENT`).
 """
 
 from __future__ import annotations
@@ -86,6 +93,9 @@ NOMBRE_CASE = re.compile(r"^[-+]?(?:\d{1,3}(?:\u00a0\d{3})+|\d+)(?:,\d+)?%?$")
 #: trouver le milieu d'une case centrée. « 39 146 » s'étend sur vingt
 #: points, le tiret d'une case sans objet sur deux.
 LARGEUR_CARACTERE = 3.5
+#: Un âge ou une durée en années et en mois, « 62 ans et 5 mois » ou « 57 ans
+#: 5 mois » : une case, que la lecture compte en mois.
+AGE_CASE = re.compile(r"^(\d+) ans (?:et )?(\d+) mois$")
 
 
 def sans_accents(texte: str) -> str:
@@ -133,7 +143,7 @@ def _cases(rangee: list[tuple[float, str]], seuil: float) -> tuple[str, list[tup
     commence six points avant le « 37 » de sa ligne de référence."""
     mots: list[str] = []
     cases: list[tuple[float, str]] = []
-    for x, jeton in _jetons(rangee):
+    for x, jeton in _ages(_jetons(rangee)):
         if x + LARGEUR_CARACTERE * len(jeton) / 2 < seuil:
             mots.append(jeton)
         elif RENVOI.match(jeton):
@@ -141,7 +151,7 @@ def _cases(rangee: list[tuple[float, str]], seuil: float) -> tuple[str, list[tup
         elif jeton in ("%", "€") and cases and NOMBRE_CASE.match(cases[-1][1]):
             if jeton == "%":
                 cases[-1] = (cases[-1][0], cases[-1][1] + "%")
-        elif NOMBRE_CASE.match(jeton) or ABSENCE.match(jeton):
+        elif NOMBRE_CASE.match(jeton) or ABSENCE.match(jeton) or AGE_CASE.match(jeton):
             cases.append((x, jeton))
         else:
             mots.append(jeton)
@@ -149,11 +159,33 @@ def _cases(rangee: list[tuple[float, str]], seuil: float) -> tuple[str, list[tup
                             for x, texte in cases]
 
 
+def _ages(jetons: list[tuple[float, str]]) -> list[tuple[float, str]]:
+    """Les mots d'une ligne, chaque âge en années et en mois réuni en un
+    seul, à l'abscisse de son premier mot."""
+    reunis: list[tuple[float, str]] = []
+    k = 0
+    while k < len(jetons):
+        for longueur in (5, 4):
+            texte = " ".join(t for _, t in jetons[k:k + longueur])
+            if AGE_CASE.match(texte):
+                reunis.append((jetons[k][0], texte))
+                k += longueur
+                break
+        else:
+            reunis.append(jetons[k])
+            k += 1
+    return reunis
+
+
 def _valeur_case(jeton: str) -> float | int | None:
     """« 23 780 » → 23780 ; « 1230 » → 1230 ; « 64,2 » → 64.2 ; « 41,5% » →
-    0.415 ; « -212,2 » → -212.2 ; « n.d. », le tiret seul → None."""
+    0.415 ; « -212,2 » → -212.2 ; « 62 ans et 5 mois » → 749, en mois ;
+    « n.d. », le tiret seul → None."""
     if ABSENCE.match(jeton):
         return None
+    age = AGE_CASE.match(jeton)
+    if age:
+        return int(age.group(1)) * 12 + int(age.group(2))
     if not NOMBRE_CASE.match(jeton):
         raise ValueError(f"pas une case du tableau : {jeton!r}")
     propre = jeton.rstrip("%").replace("\u00a0", "")
@@ -188,6 +220,19 @@ class Gabarit:
     #: première : au tableau B-10, l'État n'a pas de catégorie
     #: « indéterminée », et ses lignes n'ont pas toutes les colonnes.
     reference: str | None = None
+    #: Un autre bloc du même tableau suit celui-ci — le droit dérivé du A-1
+    #: suit son droit direct — : le bloc finit à sa dernière ligne.
+    suivi: bool = False
+    #: La première case de chaque ligne est son intitulé, tout nombre qu'elle
+    #: soit : l'année des lignes des tableaux 60 et 69.
+    intitule_numerique: bool = False
+    #: La ligne qui clôt le tableau, sans accents : celle de ses sources, le
+    #: plus souvent. Au tableau 69, une note en marge porte la sienne au
+    #: milieu des lignes : le tableau finit avec sa page.
+    fin: str | None = r"^sources?\b"
+    #: Des pourcentages imprimés sans leur signe (« 69,82 ») : la lecture les
+    #: rend en fraction, comme les autres.
+    pour_cent: bool = False
 
 
 def _l(motif: str, indicateur: str | None = None, **dimensions) -> tuple[dict, str]:
@@ -227,7 +272,8 @@ def _pages_apres_le_titre(positionnees: list[list[list[tuple[float, str]]]], tit
     n'est pas « Tableau n°B - 3bis »."""
     for rang_page, page in enumerate(positionnees):
         for rang, rangee in enumerate(page):
-            if sans_accents(texte_de_ligne(rangee)) == titre:
+            texte = sans_accents(texte_de_ligne(rangee))
+            if texte == titre or (titre.endswith(":") and texte.startswith(titre)):
                 return [page[rang + 1:], *positionnees[rang_page + 1:]]
     raise LookupError(f"le titre « {titre} » n'est sur aucune page")
 
@@ -283,7 +329,12 @@ def tableau_referent(positionnees: list[list[list[tuple[float, str]]]],
         # Une ligne de référence a une case pleine par colonne ; avant que
         # le seuil soit connu, le tiret d'un intitulé (« FPE - Pensions
         # civiles ») passerait pour une case sans objet.
-        cases = [case for case in cases if NOMBRE_CASE.match(case[1])]
+        cases = [case for case in cases
+                 if NOMBRE_CASE.match(case[1]) or AGE_CASE.match(case[1])
+                 or (ABSENCE.match(case[1]) and case[1] != "-")]
+        if gabarit.intitule_numerique and cases:
+            mots = " ".join((cases[0][1], mots))
+            cases = cases[1:]
         if len(cases) != nombre:
             continue
         voisins = [lignes[j] for j in (debut - 1, debut + 1) if 0 <= j < len(lignes)]
@@ -304,10 +355,22 @@ def tableau_referent(positionnees: list[list[list[tuple[float, str]]]],
     seuil = milieux[0] - pas / 2
     if gabarit.reference is not None:
         # La lecture commence à la première ligne du gabarit, avant la
-        # ligne de référence.
-        debut = next(k for k, rangee in enumerate(lignes)
-                     if _cases(rangee, seuil)[1] and re.search(
-                         gabarit.lignes[0][1], sans_accents(_cases(rangee, seuil)[0])))
+        # ligne de référence : reconnue à son intitulé, ou, quand elle n'en
+        # porte pas, comptée en remontant de la ligne de référence, une ligne
+        # de cases par ligne du gabarit.
+        motif = gabarit.lignes[0][1]
+        premiere = next((k for k, rangee in enumerate(lignes[:debut + 1])
+                         if _cases(rangee, seuil)[1]
+                         and re.search(motif, sans_accents(_cases(rangee, seuil)[0]))), None)
+        if premiere is None:
+            reste = [m for _, m in gabarit.lignes].index(gabarit.reference)
+            premiere = debut
+            while reste:
+                premiere -= 1
+                texte = sans_accents(texte_de_ligne(lignes[premiere]))
+                if _cases(lignes[premiere], seuil)[1] and not re.fullmatch(r"\d{1,3}", texte):
+                    reste -= 1
+        debut = premiere
 
     if debut > 0 and not _cases(lignes[debut][:], seuil)[0] \
             and not _cases(lignes[debut - 1], seuil)[1]:
@@ -328,7 +391,8 @@ def tableau_referent(positionnees: list[list[list[tuple[float, str]]]],
         avant = 0
         for rangee in suite:
             texte = sans_accents(texte_de_ligne(rangee))
-            if texte.startswith("source") or re.match(r"tableau n\W", texte):
+            if (gabarit.fin and re.search(gabarit.fin, texte)) or re.match(
+                    r"(tableau|graphique|figure) (n\W|\d)", texte):
                 break
             if re.fullmatch(r"\d{1,3}", texte):
                 continue
@@ -345,7 +409,7 @@ def tableau_referent(positionnees: list[list[list[tuple[float, str]]]],
     # et leurs sources sur une autre, et le corps du suivant vient ensuite.
     # Une ligne de cases au-delà de ce que le gabarit attend, sur la page de
     # sa dernière ligne, est une ligne qu'il oublie.
-    suivi = any(g.numero == gabarit.numero and g.rang > gabarit.rang for g in GABARITS)
+    suivi = gabarit.suivi
     lu: dict[Cle, float | int | None] = {}
     attendues = iter(gabarit.lignes)
     attendue = next(attendues)
@@ -355,7 +419,9 @@ def tableau_referent(positionnees: list[list[list[tuple[float, str]]]],
             continue
         contexte = _contexte(zone, k)
         if attendue is None:
-            if suivi or page_de[k] != page_de[derniere]:
+            # Un renvoi de note, une page citée dans le texte qui suit, ne
+            # font qu'une case : une ligne oubliée en a plusieurs.
+            if suivi or page_de[k] != page_de[derniere] or len(cases) < 2:
                 break
             raise ValueError(f"{gabarit.numero} : « {contexte} », une ligne que le gabarit "
                              f"n'attend pas")
@@ -369,7 +435,13 @@ def tableau_referent(positionnees: list[list[list[tuple[float, str]]]],
             if abs(milieux[colonne] - x) > pas / 2 or colonne in rangs:
                 raise ValueError(f"{gabarit.numero}, « {motif} » : la case « {jeton} » "
                                  f"n'a pas de colonne à elle")
-            rangs[colonne] = _valeur_case(jeton)
+            valeur = _valeur_case(jeton)
+            if gabarit.pour_cent and valeur is not None and not jeton.endswith("%"):
+                valeur = round(valeur / 100, 6)
+            if dimensions.get("negatif") and valeur is not None:
+                # Le signe posé sur la ligne du dessus (tableau 104).
+                valeur = -valeur
+            rangs[colonne] = valeur
         for colonne, valeur in rangs.items():
             cle = _cle(gabarit, gabarit.colonnes[colonne], dimensions)
             if cle is None:
@@ -542,6 +614,236 @@ POPULATIONS_A8 = ("fpe_civils_hors_poste_orange", "fpe_civils", "fpe_militaires"
                   "cnracl_total")
 
 
+#: Les colonnes des tableaux du corps du rapport qui suivent l'État, ses
+#: militaires, la CNRACL et les ouvriers de l'État : la pension moyenne du
+#: stock et du flux depuis 2000, la durée validée (tableaux 75, 76, 78, 79).
+POPULATIONS_DU_CORPS = ("fpe_civils", "fpe_militaires", "fpt", "fph", "cnracl_total",
+                        "ouvriers_etat")
+#: Les versants des tableaux du minimum garanti (tableaux 80, 83 à 85).
+VERSANTS_MG = (("fpe_civils", r"civils"), ("fpe_militaires", r"militaires"),
+               ("fpt", r"\bfpt\b"), ("fph", r"\bfph\b"))
+
+
+def _annees(*annees: int) -> tuple[dict, ...]:
+    """Les colonnes d'une série dont le document saute des années (« 2005 …
+    2010 2011 ») : une par année imprimée."""
+    return tuple({"modalite": str(a)} for a in annees)
+
+
+def _ages_de_depart(motifs: tuple[str, str]) -> tuple[tuple[dict, str], ...]:
+    """Les lignes des âges de départ de 2024 et de 2025 (tableaux 67 et 68) :
+    à la radiation des cadres, puis à la liquidation, en mois."""
+    return tuple(_l(motif, indicateur, modalite=annee)
+                 for annee in ("2024", "2025")
+                 for indicateur, motif in zip(("age_radiation_mois", "age_liquidation_mois"),
+                                              motifs))
+
+
+#: Les tableaux du corps du rapport (partie IV et partie V.2), lus comme ceux
+#: de l'annexe. Les graphiques (61 à 65, 71, 72, 74, 77, 81, 82, 98) n'ont
+#: pas de nombres à lire.
+GABARITS_DU_CORPS = (
+    # Le nombre de pensionnés depuis 1990, puis leur progression.
+    Gabarit("60", "tableau 60 :", tuple(
+        {"population": p, "indicateur": i}
+        for p, indicateurs in (("fpe_civils", ("effectif", "part_trois_versants")),
+                               ("fpe_civils_hors_poste_orange", ("effectif",
+                                                                 "part_trois_versants")),
+                               ("fpe_militaires", ("effectif", "part_trois_versants")),
+                               ("cnracl_total", ("effectif", "part_trois_versants")),
+                               ("fpe_et_cnracl", ("effectif",)), ("ouvriers_etat", ("effectif",)))
+        for i in indicateurs),
+        tuple(_l(rf"(^|\s){a}(\s|$)", modalite=str(a)) for a in (1990, 2000, 2015, 2024, 2025)),
+        reference=r"(^|\s)2000(\s|$)", suivi=True, intitule_numerique=True),
+    Gabarit("60", "tableau 60 :", tuple(
+        {"population": p} for p in ("fpe_civils", "fpe_civils_hors_poste_orange",
+                                    "fpe_militaires", "cnracl_total", "fpe_et_cnracl",
+                                    "ouvriers_etat")), (
+        _l(r"2025/1990", "evolution_annuelle", modalite="1990-2025"),
+        _l(r"2025/2000", "evolution_annuelle", modalite="2000-2025"),
+        _l(r"2025/2024", "evolution", modalite="2024-2025")), reference=r"2025/2000"),
+    # Les pensions entrées en paiement en 2024 et en 2025.
+    Gabarit("66", "tableau 66 :", tuple(
+        {"population": p} for p in ("fpe_civils", "fpe_civils_hors_poste_orange",
+                                    "fpe_militaires", "fpe_total", "cnracl_total",
+                                    "fpe_et_cnracl", "ouvriers_etat")), tuple(
+        _l(motif, indicateur, modalite=modalite, champ=champ)
+        for modalite, indicateur in (("2024", "entrees"), ("2025", "entrees"),
+                                     ("2024-2025", "evolution"))
+        for champ, motif in (("ensemble", r"\bensemble\b"), ("droit_direct", r"directs"),
+                             ("droit_derive", r"deriv")))),
+    # Les âges de départ de 2024 et 2025, puis ceux des sédentaires et des
+    # actifs, en mois.
+    Gabarit("67", "tableau 67 :", tuple(
+        {"population": p} for p in ("fpe_civils", "fpe_civils_hors_poste_orange",
+                                    "fpe_militaires", "fpt", "fph", "ouvriers_etat")),
+        _ages_de_depart((r"radiation", r"liquidation"))),
+    Gabarit("68", "tableau 68 :", tuple(
+        {"population": p, "champ": c} for p in ("fpe_civils", "fpt", "fph")
+        for c in ("sedentaire", "active")),
+        _ages_de_depart((r"radiation", r"liquidation"))),
+    # L'âge de liquidation des civils de l'État et du régime général depuis
+    # 1990 ; une note en marge porte ses sources au milieu des lignes.
+    Gabarit("69", "tableau 69 :", (
+        {"population": "fpe_civils"}, {"population": "fpe_civils", "champ": "sedentaire"},
+        {"population": "regime_general"}),
+        tuple(_l(rf"(^|\s){a}(\s|$)", modalite=str(a))
+              for a in (1990, 1995, 2000, 2005, *range(2010, 2026))),
+        reference=r"(^|\s)2015(\s|$)", intitule_numerique=True, fin=None,
+        defaut={"indicateur": "age_liquidation_mois"}),
+    # Les départs de 2025 par motif, hors militaires.
+    Gabarit("70", "tableau 70 :", tuple(
+        {"champ": c} for c in ("ensemble", "anciennete_hors_dispositif", "categorie_active",
+                               "carriere_longue", "invalidite", "motifs_familiaux")), tuple(
+        ligne for population, motif in (("fpe_civils", r"civils de l.etat"),
+                                        ("fpt", r"territoriaux"), ("fph", r"hospitaliers"))
+        for ligne in (_l(motif, "departs", population=population),
+                      _l(r"dans le total", "part_departs", population=population),
+                      _l(r"pour anciennete", "part_departs_anciennete",
+                         population=population)))),
+    # La part des liquidants de 2025 encore rémunérés l'année d'avant.
+    Gabarit("73", "tableau 73 :", tuple(
+        {"population": p} for p in ("fpe_civils", "fpe_militaires", "ouvriers_etat", "fpt",
+                                    "fph")),
+        (_l(r"titulaires civils", "part_remuneres_avant_liquidation"),)),
+    # La pension moyenne du stock depuis 2000, du flux depuis 2000, des
+    # départs pour ancienneté de 2024, et la durée validée du flux de 2025.
+    Gabarit("75", "tableau 75 :", tuple({"population": p} for p in POPULATIONS_DU_CORPS), (
+        _l(r"2000 \(en (€ )?2000\)", "pension_avec_accessoires_eur", modalite="2000"),
+        _l(r"2000 \(en (€ )?2025\)", "pension_avec_accessoires_eur_de_2025", modalite="2000"),
+        _l(r"(^|\s)2025(\s|$)", "pension_avec_accessoires_eur", modalite="2025"),
+        _l(r"progression 2025/2000", "gain_eur_de_2025", modalite="2000-2025"),
+        _l(r"courants", "evolution_annuelle", modalite="2000-2025"),
+        _l(r"inflation", "evolution_annuelle_hors_inflation", modalite="2000-2025")),
+        intitule_numerique=True),
+    Gabarit("76", "tableau 76 :", tuple({"population": p} for p in POPULATIONS_DU_CORPS), (
+        _l(r"(^|\s)2000(\s|$)", "pension_avec_accessoires_eur", modalite="2000"),
+        _l(r"2000 \(en", "pension_avec_accessoires_eur_de_2025", modalite="2000"),
+        _l(r"(^|\s)2010(\s|$)", "pension_avec_accessoires_eur", modalite="2010"),
+        _l(r"(^|\s)2025(\s|$)", "pension_avec_accessoires_eur", modalite="2025")),
+        intitule_numerique=True, defaut={"champ": "droit_direct"}),
+    Gabarit("78", "tableau 78 :", tuple({"population": p} for p in POPULATIONS_DU_CORPS),
+            (_l(r"(^|\s)2024(\s|$)", "pension_avec_accessoires_eur", modalite="2024"),),
+            intitule_numerique=True, defaut={"champ": "anciennete"}),
+    Gabarit("79", "tableau 79 :", tuple({"population": p} for p in POPULATIONS_DU_CORPS), (
+        _l(r"services effectifs", "services_mois"),
+        _l(r"bonifications", "bonifications_mois"),
+        _l(r"duree totale", "duree_validee_mois"))),
+    # Le minimum garanti dans le flux de 2025.
+    Gabarit("80", "tableau 80 :", (
+        {"indicateur": "departs"}, {"indicateur": "part_departs"},
+        {"indicateur": "services_mois"}),
+        tuple(_l(motif, population=p) for p, motif in VERSANTS_MG),
+        defaut={"champ": "minimum_garanti"}),
+    Gabarit("83", "tableau 83 :", tuple(
+        {"indicateur": i, "champ": c} for i in ("services_mois", "indice_liquidation")
+        for c in ("minimum_garanti", "hors_minimum_garanti")),
+        tuple(_l(motif, population=p) for p, motif in VERSANTS_MG)),
+    Gabarit("84", "tableau 84 :", tuple(
+        {"population": p} for p, _ in VERSANTS_MG), (
+        _l(r"anciennete", "part_minimum_garanti", champ="anciennete"),
+        _l(r"motifs familiaux", "part_minimum_garanti", champ="motifs_familiaux"),
+        _l(r"invalidite", "part_minimum_garanti", champ="invalidite"))),
+    Gabarit("85", "tableau 85 :", tuple(
+        {"indicateur": i} for i in ("indice_liquidation", "taux_liquidation_normal",
+                                    "pension_avant_minimum_garanti_eur",
+                                    "pension_avec_minimum_garanti_eur",
+                                    "gain_minimum_garanti_eur")),
+        tuple(_l(motif, population=p) for p, motif in VERSANTS_MG),
+        defaut={"champ": "minimum_garanti"}),
+    # La décristallisation, son surcoût de 2016.
+    Gabarit("86", "tableau 86 :", (
+        *({"population": p, "indicateur": i, "champ": c}
+          for p in ("fpe_civils", "fpe_militaires")
+          for i in ("effectif", "surcout_annuel_eur")
+          for c in ("droit_direct", "droit_derive")),
+        {"population": "fpe_total", "indicateur": "effectif"},
+        {"population": "fpe_total", "indicateur": "surcout_annuel_eur"}), (
+        _l(r"surcout", modalite="point"),
+        _l(r"decristallisees du point et", modalite="point_et_indice"),
+        _l(r"revalorisation du point", modalite="point_et_indice_revalorisation_du_point"),
+        _l(r"revalorisation de", modalite="point_et_indice_revalorisation_de_l_indice"),
+        _l(r"premier droit", modalite="premier_droit_depuis_2011")),
+        intitule_numerique=True),
+    # Les âges de première mise en paiement depuis 2005, à l'État pour
+    # ancienneté, par sexe, et à la CNRACL par type de départ.
+    Gabarit("101", "tableau 101 :", _annees(2005, *range(2010, 2026)), (
+        _l(r"", entete=True),
+        *(_l(rf"\b{sexe}\b", f"age_premiere_mise_en_paiement{suffixe}", champ=champ)
+          for champ in ("active", "sedentaire", "anciennete")
+          for sexe, suffixe in (("hommes", "_hommes"), ("femmes", "_femmes"),
+                                ("ensemble", "")))),
+        defaut={"population": "fpe_civils"}),
+    Gabarit("102", "tableau 102 :", _annees(2005, *range(2011, 2026)), (
+        _l(r"type de departs", entete=True),
+        *(_l(motif, champ=champ) for champ, motif in (
+            ("carriere_longue", r"carri\w*re longue"), ("sedentaire", r"dentaires"),
+            ("active", r"\bactifs\b"), ("insalubre", r"insalubres"),
+            ("parents_trois_enfants", r"parents de 3"), ("handicap", r"handicap"),
+            ("ensemble", r"total vieillesse")))),
+        defaut={"population": "cnracl_total", "indicateur": "age_premiere_mise_en_paiement"}),
+    # La surcote et la décote depuis 2004, à l'État puis à la CNRACL.
+    Gabarit("103", "tableau 103 :", _annees(2004, *range(2011, 2026)), (
+        _l(r"", entete=True),
+        _l(r"part des agents", "part_surcote"),
+        _l(r"montant mensuel", "gain_surcote_eur")),
+        defaut={"population": "fpe_civils"}),
+    # Le montant de la décote y est posé sur trois lignes : le signe, les
+    # chiffres, le symbole ; de 2022 à 2025, les chiffres une ligne plus haut
+    # que ceux des années d'avant.
+    Gabarit("104", "tableau 104 :", _annees(2004, 2005, 2006, *range(2010, 2026)), (
+        _l(r"", entete=True),
+        _l(r"agents atteints", "part_decote"),
+        _l(r"^montant", entete=True),
+        _l(r"", entete=True),
+        _l(r"mensuel de", "perte_decote_eur", negatif=True),
+        _l(r"cote moyen", "perte_decote_eur", negatif=True)),
+        defaut={"population": "fpe_civils"}),
+    Gabarit("105", "tableau 105 :", _annees(2004, *range(2013, 2026)), (
+        _l(r"", entete=True),
+        *(ligne for population, motif in (("fph", r"\bfph\b"), ("fpt", r"\bfpt\b"),
+                                          ("cnracl_total", r"\bensemble\b"))
+          for ligne in (_l(motif, "part_surcote", population=population),
+                        _l(r"surcote moyen", "gain_surcote_eur", population=population))))),
+    Gabarit("106", "tableau 106 :", _annees(*range(2013, 2026)), (
+        _l(r"", entete=True),
+        *(ligne for population, motif in (("fph", r"\bfph\b"), ("fpt", r"\bfpt\b"),
+                                          ("cnracl_total", r"\bensemble\b"))
+          for ligne in (_l(motif, "part_decote", population=population),
+                        _l(r"d\w*cote moyen", "perte_decote_eur", population=population))))),
+    # Le taux de liquidation des civils partis pour ancienneté depuis 2004,
+    # puis la pension et le taux du flux de 2025 par catégorie.
+    Gabarit("107", "tableau 107 :", _annees(2004, 2005, *range(2012, 2026)), (
+        _l(r"", entete=True),
+        _l(r"sans", "taux_liquidation_hors_decote_surcote"),
+        _l(r"avec.*surcote ou d", "taux_liquidation"),
+        _l(r"avec.*surcote$", "taux_liquidation_avec_surcote"),
+        _l(r"avec.*d\w*cote$", "taux_liquidation_avec_decote")),
+        pour_cent=True, defaut={"population": "fpe_civils", "champ": "anciennete"}),
+    Gabarit("108", "tableau 108 :", tuple(
+        {"indicateur": i} for i in ("departs", "pension_avec_accessoires_eur",
+                                    "taux_liquidation",
+                                    "taux_liquidation_hors_decote_surcote")), tuple(
+        _l(motif, population=population, modalite=modalite)
+        for population, motif, modalite in (
+            ("fpe_civils", r"civils", "ensemble"),
+            ("fpe_civils", r"gorie a\b", "a"), ("fpe_civils", r"gorie b\b", "b"),
+            ("fpe_civils", r"gorie c\b", "c"),
+            ("fpe_militaires", r"militaires", "ensemble"),
+            ("fpe_militaires", r"officiers g", "officiers_generaux_superieurs"),
+            ("fpe_militaires", r"officiers subalternes", "officiers_subalternes"),
+            ("fpe_militaires", r"sous ?-officiers", "sous_officiers"),
+            ("fpe_militaires", r"caporaux", "caporaux_soldats"),
+            ("fpt", r"territoriale", "ensemble"),
+            ("fpt", r"gorie a\b", "a"), ("fpt", r"gorie b\b", "b"), ("fpt", r"gorie c\b", "c"),
+            ("fpt", r"non renseign", "indetermine"),
+            ("fph", r"hospitali", "ensemble"),
+            ("fph", r"gorie a\b", "a"), ("fph", r"gorie b\b", "b"), ("fph", r"gorie c\b", "c"),
+            ("fph", r"non renseign", "indetermine"),
+            ("cnracl_total", r"ensemble cnracl", "ensemble")))),
+)
+
+
 GABARITS = (
     # Le stock au 31 décembre 2025.
     Gabarit("A-1", "tableau n°a - 1", _colonnes(POPULATIONS_A1, ("droit_direct",)), (
@@ -553,7 +855,7 @@ GABARITS = (
         _l(r"services acquis", "services_trimestres"),
         _l(r"taux moyen de liquidation", "taux_liquidation"),
         _l(r"indice moyen", "indice_liquidation"),
-        *PENSION_DU_STOCK)),
+        *PENSION_DU_STOCK), suivi=True),
     Gabarit("A-1", "tableau n°a - 1", _colonnes(POPULATIONS_A1, ("droit_derive",)), (
         _l(r"^effectif\b", "effectif"),
         _l(r"\bhommes", "effectif_hommes"),
@@ -633,7 +935,7 @@ GABARITS = (
         _l(r"retraite totale", "pension_avec_accessoires_eur"),
         _l(r"\bhommes", "pension_avec_accessoires_hommes_eur"),
         _l(r"\bfemmes", "pension_avec_accessoires_femmes_eur")),
-        rang=rang, defaut={"champ": champ})
+        rang=rang, suivi=rang == 0, defaut={"champ": champ})
       for rang, champ in enumerate(("droit_direct", "droit_derive"))),
     Gabarit("A-6", "tableau n°a - 6", tuple({"modalite": str(a)} for a in range(2010, 2026)),
             tuple(_l(motif, "part_minimum_garanti", population=population)
@@ -770,7 +1072,7 @@ GABARITS = (
         _l(r"\bfemmes", "pension_avec_accessoires_femmes_eur"),
         *((_l(r"surcote", "gain_surcote_eur"), _l(r"d\w*cote", "perte_decote_eur"))
           if champ == "droit_direct" else ())),
-        rang=rang, defaut={"champ": champ})
+        rang=rang, suivi=rang == 0, defaut={"champ": champ})
       for rang, champ in enumerate(("droit_direct", "droit_derive"))),
     # Les pensions du flux par catégorie hiérarchique et par sexe, hors
     # invalidité puis pour invalidité ; celles des militaires par grade.
@@ -795,7 +1097,7 @@ GABARITS = (
         for s in ("ensemble", "hommes", "femmes")), (
         _l(r"^effectifs", "effectif"),
         *(_l(rf"^{d}(er|e) d\w*cile", f"decile_{d}_eur") for d in range(1, 10))),
-        rang=rang, defaut={"champ": champ})
+        rang=rang, suivi=rang == 0, defaut={"champ": champ})
       for rang, champ in enumerate(("droit_direct", "droit_derive"))),
     Gabarit("B-21", "tableau n°b - 21", _series(2016, 2025),
             tuple(_l(motif, "part_minimum_garanti", population=population)
@@ -816,8 +1118,9 @@ GABARITS = (
         for s in ("ensemble", "hommes", "femmes")), (
         _l(r"^effectifs", "effectif"),
         *(_l(rf"^{d}(er|e) d\w*cile", f"decile_{d}_eur") for d in range(1, 10))),
-        rang=rang, defaut={"champ": champ})
+        rang=rang, suivi=rang == 0, defaut={"champ": champ})
       for rang, champ in enumerate(("droit_direct", "droit_derive"))),
+    *GABARITS_DU_CORPS,
 )
 
 
@@ -863,8 +1166,9 @@ COMPTES = ("effectif", "departs", "deces", "entrees")
 
 #: Les régimes qui font un total, dans tout tableau qui les donne : l'État,
 #: ses civils et ses militaires ; la CNRACL, la territoriale et
-#: l'hospitalière.
-REGIMES = {"fpe_total": ("fpe_civils", "fpe_militaires"), "cnracl_total": ("fpt", "fph")}
+#: l'hospitalière ; les trois versants, l'État et la CNRACL.
+REGIMES = {"fpe_total": ("fpe_civils", "fpe_militaires"), "cnracl_total": ("fpt", "fph"),
+           "fpe_et_cnracl": ("fpe_total", "cnracl_total")}
 
 
 #: Les tableaux dont chaque ligne a son total, et ses parts par modalité et
@@ -872,10 +1176,11 @@ REGIMES = {"fpe_total": ("fpe_civils", "fpe_militaires"), "cnracl_total": ("fpt"
 LIGNES_PAR_SEXE = frozenset({"B-10"})
 
 
-def _recoupements() -> list[tuple[tuple, list[tuple]]]:
+def _recoupements() -> list[tuple]:
     """(total, parts) : chaque case que le document imprime deux fois, ou
     comme la somme d'autres, avec ses parts — clés à cinq dimensions, le
-    tableau d'abord."""
+    tableau d'abord ; et, quand les parts sont arrondies chacune, l'écart que
+    l'arrondi permet."""
     def depart(tableau, population, champ):
         return (tableau, population, champ, "ensemble", "departs")
 
@@ -1014,6 +1319,199 @@ def _recoupements() -> list[tuple[tuple, list[tuple]]]:
                        "fph"):
         liste.append((depart("B-1", population, "ensemble"),
                       [("B-22", population, "ensemble", "ensemble", "effectif")]))
+    return liste + _recoupements_du_corps()
+
+
+def _recoupements_du_corps() -> list[tuple[tuple, list[tuple]]]:
+    """Ceux des tableaux du corps du rapport : avec eux-mêmes, et avec
+    l'annexe, qu'ils répètent souvent."""
+    liste: list[tuple[tuple, list[tuple]]] = []
+    # Le nombre de pensionnés (60) : les trois versants font leur total, et
+    # 2024 et 2025 sont le stock du A-3.
+    for annee in ("1990", "2000", "2015", "2024", "2025"):
+        def c60(population):
+            return ("60", population, "ensemble", annee, "effectif")
+        liste.append((c60("fpe_et_cnracl"),
+                      [c60("fpe_civils"), c60("fpe_militaires"), c60("cnracl_total")]))
+        if annee in ("2024", "2025"):
+            liste += [(c60(p), [("A-3", p, "ensemble", annee, "effectif")])
+                      for p in ("fpe_civils", "fpe_civils_hors_poste_orange", "fpe_militaires",
+                                "cnracl_total", "ouvriers_etat")]
+    # Les entrées de 2024 et 2025 (66) sont celles du B-12.
+    for annee in ("2024", "2025"):
+        for champ in ("ensemble", "droit_direct", "droit_derive"):
+            liste += [(("66", p, champ, annee, "entrees"), [("B-12", p, champ, annee, "entrees")])
+                      for p in ("fpe_civils", "fpe_civils_hors_poste_orange", "fpe_militaires",
+                                "fpe_total", "cnracl_total", "ouvriers_etat")]
+    # Les départs de 2025 par motif (70) : leurs motifs font leur total, qui
+    # est celui du B-1, motif par motif.
+    motifs_70 = ("anciennete_hors_dispositif", "categorie_active", "carriere_longue",
+                 "invalidite", "motifs_familiaux")
+    for population in ("fpe_civils", "fpt", "fph"):
+        def c70(champ):
+            return ("70", population, champ, "ensemble", "departs")
+        liste.append((c70("ensemble"), [c70(m) for m in motifs_70]))
+        liste += [(("B-1", population, champ, "ensemble", "departs"), [c70(champ)])
+                  for champ in ("ensemble", "categorie_active", "carriere_longue", "invalidite",
+                                "motifs_familiaux")]
+    # La durée validée (79) : les services et les bonifications, chacun
+    # arrondi au mois.
+    for population in POPULATIONS_DU_CORPS:
+        liste.append((("79", population, "ensemble", "ensemble", "duree_validee_mois"),
+                      [("79", population, "ensemble", "ensemble", "services_mois"),
+                       ("79", population, "ensemble", "ensemble", "bonifications_mois")], 1))
+    # Le minimum garanti (80, 83, 85) : la durée et l'indice de ses
+    # bénéficiaires, d'un tableau à l'autre ; son gain, l'écart des deux
+    # pensions ; l'indice des autres pensions de l'État, celui du B-1.
+    for population, _ in VERSANTS_MG:
+        liste += [
+            (("80", population, "minimum_garanti", "ensemble", "services_mois"),
+             [("83", population, "minimum_garanti", "ensemble", "services_mois")]),
+            (("85", population, "minimum_garanti", "ensemble", "indice_liquidation"),
+             [("83", population, "minimum_garanti", "ensemble", "indice_liquidation")]),
+            (("85", population, "minimum_garanti", "ensemble", "pension_avec_minimum_garanti_eur"),
+             [("85", population, "minimum_garanti", "ensemble",
+               "pension_avant_minimum_garanti_eur"),
+              ("85", population, "minimum_garanti", "ensemble", "gain_minimum_garanti_eur")]),
+            (("B-1", population, "ensemble", "ensemble", "part_minimum_garanti"),
+             [("80", population, "minimum_garanti", "ensemble", "part_departs")]),
+        ]
+        if population.startswith("fpe"):
+            liste.append((("B-1", population, "ensemble", "ensemble", "indice_liquidation"),
+                          [("83", population, "hors_minimum_garanti", "ensemble",
+                            "indice_liquidation")]))
+    # La décristallisation (86) : l'État fait ses civils et ses militaires,
+    # et le surcoût de la décristallisation du point et de l'indice, ce que
+    # rapportent l'un et l'autre, à l'euro près ; les civils de droit direct
+    # n'ont pas de pension concédée en premier droit depuis 2011.
+    for modalite in ("point", "point_et_indice", "premier_droit_depuis_2011"):
+        for indicateur in ("effectif", "surcout_annuel_eur"):
+            liste.append((("86", "fpe_total", "ensemble", modalite, indicateur),
+                          [("86", p, c, modalite, indicateur)
+                           for p in ("fpe_civils", "fpe_militaires")
+                           for c in ("droit_direct", "droit_derive")
+                           if (modalite, p, c) != ("premier_droit_depuis_2011", "fpe_civils",
+                                                   "droit_direct")], 1))
+    for population, champ in (("fpe_civils", "droit_derive"), ("fpe_militaires", "droit_direct"),
+                              ("fpe_militaires", "droit_derive"), ("fpe_total", "ensemble")):
+        liste.append((("86", population, champ, "point_et_indice", "surcout_annuel_eur"),
+                      [("86", population, champ, f"point_et_indice_revalorisation_{r}",
+                        "surcout_annuel_eur") for r in ("du_point", "de_l_indice")], 1))
+    # Le flux de 2025 par catégorie (108) : les catégories font leur
+    # versant, et le versant est celui du B-1.
+    categories_108 = {"fpe_civils": ("a", "b", "c"),
+                      "fpe_militaires": ("officiers_generaux_superieurs", "officiers_subalternes",
+                                         "sous_officiers", "caporaux_soldats"),
+                      "fpt": ("a", "b", "c", "indetermine"), "fph": ("a", "b", "c", "indetermine")}
+    for population, categories in categories_108.items():
+        liste.append((("108", population, "ensemble", "ensemble", "departs"),
+                      [("108", population, "ensemble", m, "departs") for m in categories]))
+    for population in ("fpe_civils", "fpe_militaires", "fpt", "fph", "cnracl_total"):
+        liste += [(("B-1", population, "ensemble", "ensemble", indicateur),
+                   [("108", population, "ensemble", "ensemble", indicateur)])
+                  for indicateur in ("departs", "pension_avec_accessoires_eur",
+                                     "taux_liquidation")]
+    # Ses catégories, hors invalidité et pour invalidité aux B-16 à B-19.
+    for population in ("fpe_civils", "fpt", "fph"):
+        for categorie in categories_108[population]:
+            liste.append((("108", population, "ensemble", categorie, "departs"),
+                          [("B-16", population, "hors_invalidite", categorie, "departs"),
+                           ("B-17", population, "invalidite", categorie, "departs")]))
+    for categorie, grades in (("officiers_generaux_superieurs",
+                               ("officiers_generaux", "officiers_superieurs")),
+                              ("officiers_subalternes", ("officiers_subalternes",)),
+                              ("sous_officiers", ("sous_officiers",)),
+                              ("caporaux_soldats", ("caporaux_soldats",))):
+        liste.append((("108", "fpe_militaires", "ensemble", categorie, "departs"),
+                      [(tableau, "fpe_militaires", champ, grade, "departs")
+                       for tableau, champ in (("B-18", "hors_invalidite"),
+                                              ("B-19", "invalidite"))
+                       for grade in grades]))
+    # La pension du stock et du flux en 2025 (75, 76), celle du A-4 et du
+    # B-14 ; l'âge de liquidation des civils de l'État (67, 69).
+    for population in POPULATIONS_DU_CORPS:
+        liste += [
+            (("75", population, "ensemble", "2025", "pension_avec_accessoires_eur"),
+             [("A-4", population, "ensemble", "2025", "pension_avec_accessoires_eur")]),
+            (("76", population, "droit_direct", "2025", "pension_avec_accessoires_eur"),
+             [("B-14", population, "droit_direct", "2025", "pension_avec_accessoires_eur")]),
+        ]
+    liste += [(("69", "fpe_civils", "ensemble", annee, "age_liquidation_mois"),
+               [("67", "fpe_civils", "ensemble", annee, "age_liquidation_mois")])
+              for annee in ("2024", "2025")]
+    return liste
+
+
+#: Les cases que deux tableaux impriment dans des unités, ou à des arrondis,
+#: différents : (une case, l'autre, ce qui ramène la première à l'unité de
+#: la seconde, l'écart que l'arrondi permet).
+def _concordances() -> list[tuple[tuple, tuple, float, float]]:
+    liste: list[tuple[tuple, tuple, float, float]] = []
+    # Les âges de 2025 en mois (67), et en années au dixième (B-1).
+    for population in ("fpe_civils", "fpe_civils_hors_poste_orange", "fpe_militaires", "fpt",
+                       "fph", "ouvriers_etat"):
+        for mois, annees in (("age_radiation_mois", "age_radiation"),
+                             ("age_liquidation_mois", "age_premiere_mise_en_paiement")):
+            liste.append((("67", population, "ensemble", "2025", mois),
+                          ("B-1", population, "ensemble", "ensemble", annees),
+                          1 / 12, 0.05 + 1 / 24 + 1e-9))
+    # Le minimum garanti par motif (84), au centième de point, et au B-3 et
+    # au B-3 bis, au dixième.
+    for population, tableau in (("fpe_civils", "B-3"), ("fpe_militaires", "B-3"),
+                                ("fpt", "B-3bis"), ("fph", "B-3bis")):
+        for motif in ("anciennete", "motifs_familiaux", "invalidite"):
+            liste.append((("84", population, motif, "ensemble", "part_minimum_garanti"),
+                          (tableau, population, motif, "ensemble", "part_minimum_garanti"),
+                          1.0, 0.0005 + 1e-9))
+    # La surcote et la décote de 2025 (103 à 106), au point près, et au B-1.
+    for tableau, population, indicateur, ecart in (
+            ("103", "fpe_civils", "part_surcote", 0.005), ("103", "fpe_civils",
+                                                           "gain_surcote_eur", 0.5),
+            ("104", "fpe_civils", "part_decote", 0.005), ("104", "fpe_civils",
+                                                          "perte_decote_eur", 0.5),
+            *((t, p, i, e) for p in ("fpt", "fph", "cnracl_total")
+              for t, i, e in (("105", "part_surcote", 0.005), ("105", "gain_surcote_eur", 0.5),
+                              ("106", "part_decote", 0.005), ("106", "perte_decote_eur", 0.5)))):
+        liste.append(((tableau, population, "ensemble", "2025", indicateur),
+                      ("B-1", population, "ensemble", "ensemble", indicateur), 1.0,
+                      ecart + 1e-9))
+    # La part des liquidants encore rémunérés (73), et au B-1.
+    for population in ("fpe_civils", "fpe_militaires", "ouvriers_etat", "fpt", "fph"):
+        liste.append((("73", population, "ensemble", "ensemble",
+                       "part_remuneres_avant_liquidation"),
+                      ("B-1", population, "ensemble", "ensemble",
+                       "part_remuneres_avant_liquidation"), 1.0, 1e-9))
+    return liste
+
+
+#: Les moyennes que leurs parts pèsent : (la moyenne de l'ensemble, ses
+#: parts, le compte qui les pèse, l'écart que l'arrondi permet).
+def _moyennes() -> list[tuple[tuple, list[tuple], str, float]]:
+    liste: list[tuple[tuple, list[tuple], str, float]] = []
+    categories_108 = {"fpe_civils": ("a", "b", "c"),
+                      "fpe_militaires": ("officiers_generaux_superieurs", "officiers_subalternes",
+                                         "sous_officiers", "caporaux_soldats"),
+                      "fpt": ("a", "b", "c", "indetermine"), "fph": ("a", "b", "c", "indetermine")}
+    for population, categories in categories_108.items():
+        for indicateur, ecart in (("pension_avec_accessoires_eur", 1.0),
+                                  ("taux_liquidation", 0.001),
+                                  ("taux_liquidation_hors_decote_surcote", 0.001)):
+            liste.append((("108", population, "ensemble", "ensemble", indicateur),
+                          [("108", population, "ensemble", m, indicateur) for m in categories],
+                          "departs", ecart))
+    for tableau, champ in (("B-16", "hors_invalidite"), ("B-17", "invalidite")):
+        for population in ("fpe_civils_hors_poste_orange", "fpe_civils", "fpt", "fph",
+                           "cnracl_total"):
+            liste.append(((tableau, population, champ, "ensemble", "pension_avec_accessoires_eur"),
+                          [(tableau, population, champ, m, "pension_avec_accessoires_eur")
+                           for m in ("a", "b", "c", "indetermine")], "departs", 1.0))
+    for tableau, champ in (("B-18", "hors_invalidite"), ("B-19", "invalidite")):
+        for indicateur in ("pension_principale_eur", "pension_avec_accessoires_eur"):
+            liste.append(((tableau, "fpe_militaires", champ, "ensemble", indicateur),
+                          [(tableau, "fpe_militaires", champ, m, indicateur)
+                           for m in ("officiers_generaux", "officiers_superieurs",
+                                     "officiers_subalternes", "sous_officiers",
+                                     "caporaux_soldats")], "departs", 1.0))
     return liste
 
 
@@ -1081,7 +1579,8 @@ def incoherences_referents(lu: dict[str, dict[Cle, object]]) -> list[str]:
             if total is not None and total != somme:
                 messages.append(f"{tableau}, {population}, {champ} : {total} départs, "
                                 f"{somme} dans ses catégories et ses sexes")
-    for total, termes in _recoupements():
+    for total, termes, *tolerance in _recoupements():
+        ecart = tolerance[0] if tolerance else 1e-6
         if not {total[0], *(terme[0] for terme in termes)} <= set(lu):
             # Un tableau que la lecture n'a pas rendu : rien à recouper.
             continue
@@ -1094,9 +1593,44 @@ def incoherences_referents(lu: dict[str, dict[Cle, object]]) -> list[str]:
             continue
         if None in trouves:
             messages.append(f"{' / '.join(total)} : une case manque pour le recoupement")
-        elif abs(sum(trouves) - attendu) > 1e-6:
+        elif abs(sum(trouves) - attendu) > ecart:
             messages.append(f"{' / '.join(total)} : {attendu}, et {sum(trouves)} dans "
                             f"{', '.join(t[0] for t in termes)}")
+    for une, autre, facteur, ecart in _concordances():
+        if not {une[0], autre[0]} <= set(lu):
+            continue
+        a, b = lu[une[0]].get(une[1:]), lu[autre[0]].get(autre[1:])
+        if a is not None and b is not None and abs(a * facteur - b) > ecart:
+            messages.append(f"{' / '.join(une)} : {a}, et {b} au {autre[0]}")
+    for moyenne, parts, compte, ecart in _moyennes():
+        if moyenne[0] not in lu or lu[moyenne[0]].get(moyenne[1:]) is None:
+            continue
+        tableau = lu[moyenne[0]]
+        poids = [(tableau.get((*part[1:4], compte)), tableau.get(part[1:])) for part in parts]
+        poids = [(n, v) for n, v in poids if n and v is not None]
+        if not poids:
+            continue
+        pesee = sum(n * v for n, v in poids) / sum(n for n, _ in poids)
+        if abs(pesee - tableau[moyenne[1:]]) > ecart + 1e-9:
+            messages.append(f"{' / '.join(moyenne)} : {tableau[moyenne[1:]]}, et "
+                            f"{pesee:.4g} pesé de ses parts")
+    # La moyenne de l'ensemble tombe entre celles des hommes et des femmes,
+    # à l'arrondi près.
+    for tableau, valeurs in lu.items():
+        for (population, champ, modalite, indicateur), hommes in valeurs.items():
+            if "_hommes" not in indicateur or indicateur.startswith(COMPTES):
+                continue
+            femmes = valeurs.get((population, champ, modalite,
+                                  indicateur.replace("_hommes", "_femmes")))
+            ensemble = valeurs.get((population, champ, modalite,
+                                    indicateur.replace("_hommes", "")))
+            if None in (hommes, femmes, ensemble):
+                continue
+            ecart = 0.5 if all(isinstance(v, int) for v in (hommes, femmes, ensemble)) else 0.05
+            if not min(hommes, femmes) - ecart - 1e-9 <= ensemble <= max(hommes, femmes) + ecart + 1e-9:
+                messages.append(f"{tableau}, {population}, {champ}, {modalite}, "
+                                f"{indicateur.replace('_hommes', '')} : {ensemble}, hors de "
+                                f"{hommes} pour les hommes et {femmes} pour les femmes")
     return messages
 
 
@@ -1134,12 +1668,11 @@ INCOHERENCES_DU_DOCUMENT: tuple[tuple[str, str], ...] = (
     (r"^B-9, fph, .* dans ses modalités$",
      "Au B-9, les âges ne font, dans chaque colonne, que les neuf dixièmes du total : "
      "19 986 départs de l'hospitalière, pour 22 753."),
-    (r"^B-8 / fpt / ensemble / ensemble / departs : ",
-     "Au B-8, le total des départs de la territoriale, 46 897 comme au B-1, dépasse de "
-     "102 ses départs pour ancienneté ou motifs familiaux et pour invalidité (46 795)."),
-    (r"^B-9 / fph / ensemble / ensemble / departs : ",
-     "Au B-9, le total des départs de l'hospitalière, 22 753 comme au B-1, dépasse de "
-     "16 ses départs pour ancienneté ou motifs familiaux et pour invalidité (22 737)."),
+    (r"^B-8 / fpt / ensemble / ensemble / departs : |^B-9 / fph / ensemble / ensemble / departs : "
+     r"|^108 / (fpt|fph) / ensemble / [abc] / departs : ",
+     "Le B-1 compte 102 départs de la territoriale et 16 de l'hospitalière que leurs "
+     "tableaux par motif ne classent ni dans l'ancienneté ni dans l'invalidité (B-8, B-9, "
+     "B-16, B-17) ; le tableau 108 les range dans ses catégories A, B et C."),
     (r"^B-16 / cnracl_total / hors_invalidite / ensemble / departs : ",
      "La CNRACL compte 57 670 départs hors invalidité au B-16, la somme des B-8 et B-9, "
      "et 57 756 au B-3 bis, dont les départs pour invalidité (11 894) ne sont pas ceux "
@@ -1151,6 +1684,30 @@ INCOHERENCES_DU_DOCUMENT: tuple[tuple[str, str], ...] = (
     (r"^B-1 / ouvriers_etat / ensemble / ensemble / taux_liquidation",
      "Les ouvriers de l'État partis en 2025 ont un taux de liquidation de 61,1 % au B-1, "
      "de 60,9 % dans la série du B-14 ; hors décote et surcote, 60,4 % et 60,2 %."),
+    (r"^70 / (fpt|fph) / ensemble / ensemble / departs : "
+     r"|^B-1 / (fpt|fph) / invalidite / ensemble / departs : ",
+     "Au tableau 70, les motifs des départs de la territoriale et de l'hospitalière ne "
+     "font pas leur total (46 487 pour 46 897, 22 682 pour 22 753), et leurs départs "
+     "pour invalidité, 8 544 et 3 350, ne sont pas ceux du B-1 (8 516 et 3 346)."),
+    (r"^69 / fpe_civils / ensemble / 2025 / age_liquidation_mois : ",
+     "Le tableau 69 fait liquider les civils de l'État à 62 ans et 6 mois en 2025, deux "
+     "mois plus tôt qu'en 2024 ; le tableau 67 dit 62 ans et 10 mois, comme le B-1 "
+     "(62,8 ans)."),
+    (r"^67 / fpt / ensemble / 2025 / age_liquidation_mois : ",
+     "Le tableau 67 fait liquider la territoriale à 62 ans et 1 mois en 2025, à l'âge de "
+     "sa radiation des cadres ; le B-1 dit 62,3 ans."),
+    (r"^108 / fpe_militaires / ensemble / ensemble / taux_liquidation",
+     "Au tableau 108, les taux de liquidation des grades des militaires, pesés de leurs "
+     "départs, font 63,7 %, et 64,1 % hors décote et surcote, pour les 65,3 % et 65,7 % "
+     "de leur total, ceux du B-1."),
+    (r"^108 / fpt / ensemble / ensemble / taux_liquidation : ",
+     "Au tableau 108, les taux de liquidation des catégories de la territoriale sont "
+     "ceux de l'hospitalière, à la décimale près (61,1 %, 55,1 %, 46,5 %, 47,6 %) : "
+     "pesés de leurs départs, ils font 49,5 %, pour les 50,7 % du versant."),
+    (r"^101, fpe_civils, anciennete, (2010|2021|2022|2025), age_premiere_mise_en_paiement : ",
+     "Au tableau 101, l'âge des civils de l'État partis pour ancienneté sort quatre fois "
+     "de ceux de leurs hommes et de leurs femmes : 62,3 ans en 2010, pour 59,4 et 60,2 ; "
+     "d'un dixième en 2021, 2022 et 2025."),
 )
 
 

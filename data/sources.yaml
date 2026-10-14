@@ -1815,23 +1815,30 @@ institutions:
           depuis 2016 (B-1 à B-21) — effectifs par âge, sexe, catégorie,
           administration et grade, âges, durées, décote et surcote, taux et
           indice de liquidation, minimum garanti, pensions et leurs déciles,
-          réversions et décès —, 7 082 valeurs certifiées dans
+          réversions et décès — ; et les tableaux du corps du rapport qui les
+          prolongent (60 à 108) : le stock depuis 1990, les âges de départ
+          depuis 1990, la pension du stock et du flux depuis 2000, le minimum
+          garanti, la décristallisation, la surcote, la décote et le taux de
+          liquidation depuis 2004. 8 166 valeurs certifiées dans
           `caracteristiques_fonction_publique.csv` ; le B-22, les
           bonifications du flux, dans `bonifications_jaune.csv`, où il établit
           l'année du tableau 50. Leurs cases vides ne laissant rien dans le
           texte d'une ligne, `scripts/fetch/sre_jaune_referents.py` les lit
           case par case, chacune à sa place, et les recoupe : les sexes font
           l'effectif, les régimes leur total, les âges, les catégories et les
-          grades leur ensemble, et chaque case imprimée deux fois l'est à
-          l'identique. Le document se contredit en douze points, que le script
-          déclare un à un, ses cases gardées telles qu'imprimées : les âges des
-          B-8 et B-9 ne font que les neuf dixièmes de leurs totaux, les départs
-          de la CNRACL en catégorie active du B-2 dépassent d'un quart ceux du
-          B-1, et neuf écarts vont d'une unité à une centaine. Cinq de ses
-          pages, dont celle des B-20 et B-21, échappaient au lecteur PDF du
-          dépôt, qui tronquait un flux compressé finissant par un retour à la
-          ligne. Aucun calcul ne les lit : les cas types statutaires s'y
-          confrontent (`tests/test_flux_fonction_publique.py`).
+          grades leur ensemble, une moyenne est celle de ses parts, et chaque
+          case imprimée deux fois l'est à l'identique, à l'arrondi près. Le
+          document se contredit en dix-sept points, que le script déclare un à
+          un, ses cases gardées telles qu'imprimées : les âges des B-8 et B-9
+          ne font que les neuf dixièmes de leurs totaux, les départs de la
+          CNRACL en catégorie active du B-2 dépassent d'un quart ceux du B-1,
+          les taux des catégories de la territoriale, au tableau 108, sont ceux
+          de l'hospitalière, et treize écarts sont plus petits. Cinq de ses
+          pages, dont celle des B-20 et B-21 et celle des tableaux 95 et 96,
+          échappaient au lecteur PDF du dépôt, qui tronquait un flux compressé
+          finissant par un retour à la ligne. Aucun calcul ne les lit : les
+          cas types statutaires s'y confrontent
+          (`tests/test_flux_fonction_publique.py`).
 
           LE FICHIER NE SE TÉLÉCHARGE PAS DEPUIS UNE SESSION : le 13 octobre,
           budget.gouv.fr répond 403 au cloud, par curl comme par WebFetch, page

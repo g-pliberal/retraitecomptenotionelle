@@ -87,17 +87,19 @@ def mesures():
 
 
 def test_le_stock_et_le_flux_sont_certifies_et_qu_aucun_calcul_ne_les_lit(lignes):
-    """Vingt-huit tableaux, 7 082 valeurs, toutes certifiées ; la clé de
+    """Cinquante-trois tableaux, 8 166 valeurs, toutes certifiées ; la clé de
     chacune est à elle. Le fichier est hors de l'empreinte du modèle : il le
     juge, il ne le règle pas. Ce que ses tableaux disent les uns des autres
     est à ``tests/test_sre_jaune_referents.py``."""
     assert CHEMIN in memoire.HORS_DU_MODELE
     assert {l["fiabilite"] for l in lignes} == {"certifiee"}
     assert {l["tableau"] for l in lignes} == {f"A-{n}" for n in (1, 2, 3, 4, 5, 6, 8)} | {
-        f"B-{n}" for n in range(1, 22)} | {"B-3bis"}
+        f"B-{n}" for n in range(1, 22)} | {"B-3bis"} | {
+        str(n) for n in (60, 66, 67, 68, 69, 70, 73, 75, 76, 78, 79, 80, 83, 84, 85, 86,
+                         *range(101, 109))}
     cles = [(l["tableau"], l["population"], l["champ"], l["modalite"], l["indicateur"])
             for l in lignes]
-    assert len(cles) == len(set(cles)) == 7082
+    assert len(cles) == len(set(cles)) == 8166
 
 
 def test_les_departs_du_flux_sont_ceux_que_tiennent_les_bonifications(lignes):
