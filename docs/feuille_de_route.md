@@ -5849,13 +5849,15 @@ la décision du 1er novembre, une ligne de plus à la table datée.
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 
 **Reprise, au 14 octobre 2026.** Fait : l'étape 1 — dix-sept régimes entrés à
-l'inventaire, sept fiches ; de l'étape 2, onze fiches — six régimes que l'action
-121 ne touche pas, puis le Crédit foncier, l'ORTF et la CRFOM ; l'étape 3 — huit
-pistes relues, six écartées, aucune inscrite. Reste : l'étape 2 seule,
-l'outre-mer, le personnel navigant et les assemblées, une fois l'action 121
-close, puis les limites de l'étape. Au propriétaire : les cinq écarts de la note
-du 13 octobre, et le transfert du Crédit foncier, sans statut (note du 14).
-`textes.py --inscrire` reste à lancer, par une session seule sur la liste.
+l'inventaire, sept fiches ; de l'étape 2, quatorze fiches — six régimes que
+l'action 121 ne touche pas, le Crédit foncier, l'ORTF et la CRFOM, puis les
+navigants, les députés et Mayotte ; l'étape 3 — huit pistes relues, aucune
+inscrite. Reste : l'étape 2 seule, Saint-Pierre-et-Miquelon d'abord (loi
+n° 87-563, dans l'index), puis la CAFAT, la CPS de Polynésie, Wallis-et-Futuna,
+les fonctionnaires du Pacifique et trois hors champ, puis les limites de
+l'étape (note navigants-deputes-mayotte). Au propriétaire : les cinq écarts de
+la note du 13 octobre, le Crédit foncier sans statut, cinq écarts de plus (même
+note). `textes.py --inscrire` reste à une session seule sur la liste.
 
 **Demande**, le 4 octobre 2026 : « Je veux que tu documentes les régimes de
 retraite que nous n'avons pas encore documenter pour l'instant. Il faut

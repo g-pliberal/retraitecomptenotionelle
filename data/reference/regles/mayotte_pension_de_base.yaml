@@ -1,0 +1,274 @@
+schema_version: 1
+id: mayotte_pension_de_base
+intitule: >-
+  Le salarié de droit privé de Mayotte, et depuis 2012 le non-salarié, reçoit de la
+  caisse de sécurité sociale de Mayotte une pension de base : de 1987 à 2002, 1,5 % par
+  année d'assurance du salaire moyen des cinq meilleures années ; depuis 2003, au plus
+  50 % du salaire annuel moyen des vingt-cinq meilleures années — seize à vingt-cinq
+  selon la génération pour les pensions de 2018 à 2027 —, pour une durée qui monte de
+  64 trimestres en 2003 à 172 pour la génération 1973, minorée de 2,5 % par trimestre
+  manquant, puis de 1,25 % à 2,375 % selon la génération depuis 2026 ; au 1er janvier
+  2028, le code de la sécurité sociale s'étend à Mayotte et le régime général reprend ses
+  périodes.
+domaine: salaire_de_reference
+regimes: [cssm_mayotte]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- les salaires annuels soumis à retenue, plafonnés au plafond de Mayotte, et le SMIG puis le SMIC de Mayotte au 1er janvier de chaque année, qui font les trimestres
+- les périodes assimilées, les majorations pour enfants et la durée d'assurance dans les autres régimes de base
+- la date de naissance et la date d'effet, l'inaptitude et le handicap
+- le conjoint, ses ressources et celles du ménage, pour la réversion
+ecrit:
+- la pension de base de Mayotte, son minimum et sa réversion
+dates_qui_decident:
+- liquidation.date_effet
+# Depuis 2018, l'âge, la durée requise, le nombre d'années du salaire moyen et le
+# coefficient de minoration se lisent à la génération (décret n° 2003-589, articles 2, 7,
+# 9 et 11) ; la fiche de régime les porte par ses tables `mayotte_2018`,
+# `mayotte_2026_01` et `mayotte_2026_09`, et la version qui les écrit est bornée à la
+# date d'effet.
+versions:
+- id: decret_de_1987
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006756839, article: "loi n° 85-10 du 3 janvier 1985, article 98", en_vigueur: 1985-01-04}
+  - {id: LEGIARTI000006770149, article: "décret n° 87-175 du 16 mars 1987, article 1er", en_vigueur: 1987-01-01}
+  - {id: LEGIARTI000006770150, article: "décret n° 87-175 du 16 mars 1987, article 2", en_vigueur: 1987-01-01}
+  - {id: LEGIARTI000006770151, article: "décret n° 87-175 du 16 mars 1987, article 3", en_vigueur: 1987-01-01}
+  - {id: LEGIARTI000006770153, article: "décret n° 87-175 du 16 mars 1987, article 5", en_vigueur: 1987-01-01}
+  - {id: LEGIARTI000006770157, article: "décret n° 87-175 du 16 mars 1987, article 8", en_vigueur: 1987-01-01}
+  - {id: LEGIARTI000006770158, article: "décret n° 87-175 du 16 mars 1987, article 9", en_vigueur: 1987-01-01}
+  - {id: LEGIARTI000006770160, article: "décret n° 87-175 du 16 mars 1987, article 11", en_vigueur: 1987-01-01}
+  - {id: LEGIARTI000006770161, article: "décret n° 87-175 du 16 mars 1987, article 12", en_vigueur: 1987-01-01}
+  - {id: LEGIARTI000006770162, article: "décret n° 87-175 du 16 mars 1987, article 13", en_vigueur: 1987-01-01}
+  nee_de: LEGIARTI000006770149
+  bornes:
+    liquidation.date_effet: [null, 2003-01-01]
+  contenu:
+    creation: >-
+      le régime naît le 1er janvier 1987 (article 1er) : aucune période d'avant n'est au
+      compte, et la borne basse ouverte ne sert qu'à couvrir toutes les dates
+    ouverture: >-
+      « La caisse de prévoyance sociale sert une pension d'ancienneté aux assurés
+      réunissant 150 trimestres d'assurance à compter de l'âge de soixante ans », et une
+      pension proportionnelle à soixante-cinq ans avec quarante trimestres (article 2) ;
+      « à titre transitoire, l'âge [...] est abaissé de cinq ans », la durée de la
+      pension d'ancienneté est de 120 trimestres et celle de la pension proportionnelle
+      de 20 (article 27, reproduit en tête des articles 2, 6 et 8) ; la femme qui a
+      élevé un enfant neuf ans avant ses seize ans a une année de bonification par
+      enfant, trois au plus (article 5)
+    trimestres: >-
+      autant de trimestres que le salaire soumis à retenue représente de fois 200 heures
+      du salaire minimum interprofessionnel garanti de Mayotte au 1er janvier, quatre par
+      an au plus (article 3)
+    calcul: >-
+      « La pension d'ancienneté et la pension proportionnelle sont calculées sur la base
+      du salaire annuel moyen des cinq meilleures années civiles d'assurance », plafonné
+      au plafond fixé par arrêté préfectoral (article 9), au taux de « 1,5 p. 100 du
+      salaire annuel moyen [...] par année civile liquidable » (article 11), « La durée
+      maximum d'assurance susceptible d'être prise en compte [...] est de 150
+      trimestres » (article 8) : 56,25 % au plus ; aucune minoration n'est écrite
+    minimum: >-
+      avec soixante trimestres au moins, pas moins de « 22,5 p. 100 de la valeur annuelle
+      du salaire minimum interprofessionnel garanti » de Mayotte (article 12)
+    reversion: >-
+      la veuve de cinquante-cinq ans (cinquante à titre transitoire), mariée deux ans
+      avant le décès, reçoit 50 % de la pension du mari (article 13), partagée par
+      familles quand le salarié n'était pas marié sous le code civil (article 15) ;
+      chaque orphelin de moins de seize ans, 10 % (article 14)
+  exemples: aucun trouvé
+- id: ordonnance_de_2002
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006698316, article: "ordonnance n° 2002-411 du 27 mars 2002, article 6", en_vigueur: 2003-01-01}
+  - {id: LEGIARTI000025022563, article: "ordonnance n° 2002-411 du 27 mars 2002, article 6", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000006698323, article: "ordonnance n° 2002-411 du 27 mars 2002, article 12", en_vigueur: 2003-01-01}
+  - {id: LEGIARTI000025022540, article: "ordonnance n° 2002-411 du 27 mars 2002, article 12", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000006781021, article: "décret n° 2003-589 du 1er juillet 2003, article 2", en_vigueur: 2003-07-02}
+  - {id: LEGIARTI000026514429, article: "décret n° 2003-589 du 1er juillet 2003, article 2", en_vigueur: 2012-10-21}
+  - {id: LEGIARTI000006781026, article: "décret n° 2003-589 du 1er juillet 2003, article 7", en_vigueur: 2003-07-02}
+  - {id: LEGIARTI000026514457, article: "décret n° 2003-589 du 1er juillet 2003, article 7", en_vigueur: 2012-10-21}
+  - {id: LEGIARTI000006781028, article: "décret n° 2003-589 du 1er juillet 2003, article 9", en_vigueur: 2003-07-02}
+  - {id: LEGIARTI000026514449, article: "décret n° 2003-589 du 1er juillet 2003, article 9", en_vigueur: 2012-10-21}
+  - {id: LEGIARTI000006781030, article: "décret n° 2003-589 du 1er juillet 2003, article 11", en_vigueur: 2003-07-02}
+  - {id: LEGIARTI000026514446, article: "décret n° 2003-589 du 1er juillet 2003, article 11", en_vigueur: 2012-10-21}
+  nee_de: LEGIARTI000006698316
+  bornes:
+    liquidation.date_effet: [2003-01-01, 2018-01-01]
+  contenu:
+    ouverture: >-
+      « une pension de retraite à l'assuré qui en demande la liquidation à partir de
+      l'âge prévu au premier alinéa de l'article L. 351-1 », soixante ans, et qui
+      justifie d'une durée minimale d'assurance (ordonnance, article 6) ; à titre
+      transitoire, cinquante-cinq ans pour les pensions de 2003 à 2005, un an de plus
+      chaque année jusqu'à soixante ans en 2010 (décret, article 2)
+    calcul: >-
+      « le salaire annuel moyen déterminé à partir des vingt-cinq meilleurs salaires
+      annuels », ou de toute la carrière sous vingt-cinq années (décret, article 7) ; le
+      taux plein de 50 % demande 160 trimestres, « pour les pensions prenant effet en
+      2003, [...] 64 trimestres, puis, chaque année, cette durée est augmentée de quatre
+      trimestres » (article 9) ; sinon, « un coefficient de minoration » de 2,5 % par
+      trimestre manquant ou séparant l'âge du taux plein, « Le plus petit de ces nombres
+      est pris en considération » (article 11)
+  exemples: aucun trouvé
+- id: duree_a_la_generation
+  statut: lue
+  textes:
+  - {id: LEGIARTI000048697769, article: "ordonnance n° 2002-411 du 27 mars 2002, article 6", en_vigueur: 2023-12-28}
+  - {id: LEGIARTI000053281077, article: "ordonnance n° 2002-411 du 27 mars 2002, article 6", en_vigueur: 2025-12-31}
+  - {id: LEGIARTI000047453021, article: "ordonnance n° 2002-411 du 27 mars 2002, article 12", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000034110000, article: "ordonnance n° 2002-411 du 27 mars 2002, article 14", en_vigueur: 2019-01-01}
+  - {id: LEGIARTI000049915788, article: "décret n° 2003-589 du 1er juillet 2003, article 2", en_vigueur: 2024-07-10}
+  - {id: LEGIARTI000054059636, article: "décret n° 2003-589 du 1er juillet 2003, article 2", en_vigueur: 2026-09-01}
+  - {id: LEGIARTI000033155445, article: "décret n° 2003-589 du 1er juillet 2003, article 7", en_vigueur: 2018-01-01}
+  - {id: LEGIARTI000048241292, article: "décret n° 2003-589 du 1er juillet 2003, article 8", en_vigueur: 2023-10-22}
+  - {id: LEGIARTI000033155436, article: "décret n° 2003-589 du 1er juillet 2003, article 9", en_vigueur: 2018-01-01}
+  - {id: LEGIARTI000053354929, article: "décret n° 2003-589 du 1er juillet 2003, article 10", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000033155432, article: "décret n° 2003-589 du 1er juillet 2003, article 11", en_vigueur: 2016-09-26}
+  - {id: LEGIARTI000051228498, article: "décret n° 2003-589 du 1er juillet 2003, article 15", en_vigueur: 2025-02-22}
+  - {id: LEGIARTI000048241267, article: "décret n° 2003-589 du 1er juillet 2003, article 17", en_vigueur: 2023-10-22}
+  nee_de: LEGIARTI000033155445
+  bornes:
+    liquidation.date_effet: [2018-01-01, 2028-01-01]
+  contenu:
+    ouverture: >-
+      soixante ans avant la génération 1956, quatre mois de plus par génération jusqu'à
+      soixante-deux ans pour 1961, puis, pour les pensions prenant effet depuis le 1er
+      septembre 2026, soixante-deux ans et trois mois pour 1962, soixante-deux ans et
+      six mois du 1er janvier 1963 au 30 juin 1965, trois mois de plus par génération
+      jusqu'à soixante-trois ans et neuf mois pour 1969, l'âge de L. 161-17-2 ensuite
+      (décret, article 2 ; ordonnance, article 6) ; taux plein à l'âge du 1° de L. 351-8,
+      à l'inaptitude, ou à soixante-cinq ans pour l'assuré handicapé (article 10)
+    calcul: >-
+      vingt-cinq meilleures années pour la génération 1965, et, « Pour les pensions
+      prenant effet après le 31 décembre 2017 et avant le 1er janvier 2028 [...] 16
+      années pour l'assuré né avant 1957 », une de plus par génération jusqu'à 24 pour
+      1964 (décret, article 7) ; 172 trimestres pour la génération 1973, et, pour les
+      pensions prenant effet avant 2035, 120 trimestres avant 1956, quatre de plus par
+      génération jusqu'à 160 pour 1965, puis deux jusqu'à 172 (article 9) ; minoration de
+      2,5 % par trimestre pour les pensions d'avant 2026, puis de 2,5 % avant la
+      génération 1964 à 1,25 % à compter de 1973, 0,125 point de moins par génération
+      (article 11)
+    trimestres: >-
+      200 heures du SMIG de Mayotte par trimestre avant 2017, 150 heures en 2017, 150
+      heures du SMIC de Mayotte depuis 2018, quatre par an au plus (article 8)
+    minimum: >-
+      au taux plein, un minimum de 54,9212 % de 151,67 heures du SMIC de Mayotte au 1er
+      janvier 2024, majoré jusqu'à 10 170,86 € par an au 1er novembre 2023 pour cent
+      vingt trimestres cotisés, proratisé (ordonnance, article 14 ; décret, article 15)
+    reversion: >-
+      sous plafond de ressources, 2 080 heures du SMIC de Mayotte pour le conjoint seul,
+      1,6 fois ce plafond pour le ménage (décret, article 17)
+  exemples: aucun trouvé
+- id: code_de_la_securite_sociale_2028
+  statut: lue
+  textes:
+  - {id: JORFTEXT000054456323, reference: "ordonnance n° 2026-647 du 22 juillet 2026 relative à l'extension et à l'adaptation du code de la sécurité sociale à Mayotte et à l'accélération de la convergence sociale, et son rapport au Président de la République (JORFARTI000054456299)", publie_le: 2026-07-23}
+  - {id: LEGIARTI000054474883, article: "code de la sécurité sociale, L. 759-1", en_vigueur: 2028-01-01}
+  - {id: LEGIARTI000054474823, article: "code de la sécurité sociale, L. 759-22", en_vigueur: 2028-01-01}
+  nee_de: JORFTEXT000054456323
+  bornes:
+    liquidation.date_effet: [2028-01-01, null]
+  contenu:
+    droit: >-
+      l'ordonnance n° 2002-411 est abrogée et le code de la sécurité sociale s'applique à
+      Mayotte, au SMIC et au plafond de Mayotte (L. 759-1) ; « Pour l'ouverture du droit
+      et pour le calcul des pensions de vieillesse des assurés justifiant d'une durée
+      minimale d'assurance [...] dans le régime mentionné à l'article 5 de l'ordonnance
+      n° 2002-411 [...] ou ayant été affiliés exclusivement à ce même régime, prenant
+      effet avant le 1er janvier 2035 », L. 161-17-2 et L. 161-17-3 s'appliquent avec
+      l'âge et la durée « fixés par décret » par génération, 172 trimestres à compter de
+      la génération 1973 (L. 759-22, jusqu'au 31 mars 2036) ; le régime général reprend
+      les périodes et les salaires portés au compte avant 2028 (ordonnance, article 19,
+      selon son rapport)
+  exemples: aucun trouvé
+approximations:
+- version: decret_de_1987
+  ecart: >-
+    La fiche de régime dit que « La formule de la pension n'est pas dans l'index » et lui
+    prête celle du régime général : 50 % pour 120 trimestres, dix meilleures années,
+    2,5 % de décote. Le décret n° 87-175 l'écrit : 1,5 % par année, 150 trimestres au
+    plus, sur les cinq meilleures années, sans minoration, et un minimum de 22,5 % du
+    SMIG annuel avec soixante trimestres.
+  effet: >-
+    non mesuré ; les pensions de Mayotte liquidées de 1987 à 2002, sur quinze ans au
+    plus de carrière dans le régime : le droit sert 1,5 % par année quand la fiche sert
+    1,67 % par année au taux plein et décote au-dessous
+- version: duree_a_la_generation
+  ecart: >-
+    Le salaire annuel moyen se calcule sur seize à vingt-quatre années pour les
+    générations 1956 à 1964, quand la fiche de régime en prend vingt-cinq depuis 2003.
+  effet: >-
+    non mesuré ; les assurés nés avant 1965 liquidant de 2018 à 2027, dont le salaire
+    moyen simulé compte jusqu'à neuf années faibles de trop
+- version: [ordonnance_de_2002, duree_a_la_generation]
+  ecart: >-
+    Les trimestres se valident au SMIG puis au SMIC de Mayotte, que le dépôt n'a pas en
+    série : la fiche de régime valide au SMIC national ; et le taux et le plafond de la
+    caisse sont ceux du régime général.
+  effet: la fiche valide moins vite que le droit ; la cotisation est celle du régime général
+- version: code_de_la_securite_sociale_2028
+  ecart: >-
+    La fiche de régime prolonge le régime de Mayotte après 2027 ; le droit le fond dans
+    le régime général au 1er janvier 2028, aux âges et durées que des décrets doivent
+    fixer, et l'ordonnance étend aussi le régime complémentaire des indépendants à
+    compter de 2028.
+  effet: >-
+    non mesuré ; les pensions prenant effet depuis 2028, dont les paramètres de
+    convergence ne sont pas encore fixés
+sources:
+  lu_le: 2026-10-14
+  prochaine_relecture: 2027-04-14
+  a_relire:
+  - >-
+    Lire les décrets d'application de l'ordonnance n° 2026-647 dès leur parution : l'âge
+    et la durée de L. 759-22 pour les générations d'avant 1970 et 1973, et l'article 19
+    de l'ordonnance (reprise des périodes d'avant 2028), que l'index ne porte que par le
+    rapport au Président de la République.
+  - >-
+    Relever le SMIG puis le SMIC de Mayotte au 1er janvier de chaque année depuis 1987,
+    et le plafond de la caisse, pour valider les trimestres au droit.
+  - >-
+    Lire le chapitre III du décret n° 2003-589 (articles 31 et suivants), qui adapte le
+    revenu annuel moyen des non-salariés, et dire s'ils méritent un statut.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 87-175, articles 1er à 19 ; ordonnance n° 2002-411, articles 5 à 14 et
+      23-4, toutes leurs rédactions ; décret n° 2003-589, articles 2, 3, 7 à 11, 15 à 17,
+      toutes leurs rédactions ; code de la sécurité sociale, L. 759-1 à L. 759-27 dans
+      leur rédaction du 1er janvier 2028 : index LEGI du dépôt, à jour au 13 octobre
+      2026
+    date: 2026-10-14
+  - type: jorf
+    reference: >-
+      ordonnance n° 2026-647 du 22 juillet 2026 et son rapport au Président de la
+      République : index JORF du dépôt
+    date: 2026-10-14
+reformes: []
+code:
+  moteur: >-
+    une fiche de régime en annuités, une période par réforme, l'âge, la durée et la
+    minoration lus à la génération par les tables `mayotte_2018`, `mayotte_2026_01` et
+    `mayotte_2026_09`
+  python: >-
+    données : regimes/cssm_mayotte.yaml, legislation/ages_regimes.csv,
+    legislation/duree_requise_regimes_speciaux.csv ; droit/liquider.py :
+    liquider_chaque_regime
+  javascript: moteur/js/droit/liquider.js et moteur/js/regimes.js, le même catalogue
+  parametres: regimes/cssm_mayotte.yaml (taux_plein, duree_requise_trimestres, salaire_reference, decote_par_trimestre)
+  tests: >-
+    tests/temoins/simulations.json, les carrières du statut salarie_mayotte, que le
+    portage rejoue
+historique:
+- >-
+  2026-10-14 — écrite à l'étape 2 de l'action 145 : le régime de Mayotte n'avait que la
+  fiche générique de liquidation. Le décret n° 87-175, que la fiche de régime disait
+  sans formule, l'écrit ; l'ordonnance n° 2026-647 fond le régime dans le code de la
+  sécurité sociale en 2028. Aucun chiffre ne change.
+effet: >-
+  Les salariés de Mayotte : leur pension est simulée au droit depuis 2003, à leur
+  salaire moyen près pour les nés avant 1965 ; celles de 1987 à 2002 le sont à la
+  formule du régime général et non à celle du décret.
