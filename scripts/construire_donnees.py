@@ -1246,6 +1246,37 @@ def _periodes_non_travaillees() -> dict:
     }
 
 
+def _prelevements_historiques() -> dict:
+    """L'histoire des prélèvements sur les pensions et sur les salaires
+    (``legislation/prelevements_historiques.yaml``), telle que le Python la lit
+    (:mod:`retraite_notionnelle.donnees.prelevements_historiques`) : les
+    revenus nets des indicateurs de cycle de vie du portage, et la convention
+    du COR (``moteur/js/prelevements-historiques.js``). Chaque série garde ses
+    marches, datées, leurs paliers en couples."""
+    from retraite_notionnelle.donnees.prelevements_historiques import (
+        charger_prelevements_historiques,
+    )
+
+    historique = charger_prelevements_historiques(DONNEES)
+
+    def series(groupe) -> dict:
+        return {nom: {"tenue_avant": serie.tenue_avant,
+                      "marches": [[debut.isoformat(),
+                                   {cle: [list(p) for p in valeur] if cle == "paliers" else valeur
+                                    for cle, valeur in sorted(valeurs.items())}]
+                                  for debut, valeurs in serie.marches]}
+                for nom, serie in sorted(groupe.items())}
+
+    return {
+        "lu_le": historique.lu_le,
+        "pensions": series(historique.pensions),
+        "salaires": series(historique.salaires),
+        "independants": series(historique.independants),
+        "regimes_des_pensions": {serie: sorted(regimes) for serie, regimes
+                                 in sorted(historique.regimes_des_pensions.items())},
+    }
+
+
 def _contributions_equilibre() -> dict:
     """Les contributions d'équilibre de l'Agirc-Arrco
     (``legislation/contributions_equilibre_agirc_arrco.yaml``), telles que le
@@ -2275,6 +2306,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "primes_soumises_a_retenue": _primes_soumises_a_retenue(),
         "indemnite_compensatrice_csg": _indemnite_compensatrice_csg(),
         "contributions_equilibre": _contributions_equilibre(),
+        "prelevements_historiques": _prelevements_historiques(),
         "assiette_minimale_independants": _assiette_minimale_independants(),
         "profil_salaire_age": _profil_salaire("profil_salaire_age.csv", "annee"),
         "profil_salaire_categorie": _profil_salaire(

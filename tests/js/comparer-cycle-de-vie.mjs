@@ -17,8 +17,9 @@ import { fileURLToPath } from "node:url";
 import { Contexte } from "../../moteur/js/contexte.js";
 import { contributionsDUneCarriere } from "../../moteur/js/contributions-equilibre.js";
 import {
-  ageDeDecesCor, ageDEquilibre, ageDePartDeVieConstante, Convention,
-  indicateursDesSystemes, tauxDePrelevement,
+  ageDeDecesCor, ageDEquilibre, ageDePartDeVieConstante, Convention, conventionNette,
+  indicateursDesSystemes, prelevementsParAnnee, revenusImposables, revenusNets,
+  tauxDePrelevement,
 } from "../../moteur/js/cycle-de-vie.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -26,23 +27,32 @@ const paquet = JSON.parse(readFileSync(join(RACINE, "moteur/donnees.json"), "utf
 const simulateur = new Contexte(paquet).simulateur();
 const demande = JSON.parse(readFileSync(process.argv[2], "utf8"));
 
+const parAnnee = (valeurs) => (valeurs === null ? null : Object.fromEntries(valeurs));
+
 const cas = demande.cas.map(({ carriere: options, conventions }) => {
   try {
     const carriere = simulateur.carriereSimple(options);
     const comparaison = simulateur.simuler(carriere);
     const indicateurs = {};
     for (const [nom, champs] of Object.entries(conventions)) {
-      const reglages = { ...champs };
+      const { construite = null, ...reglages } = champs;
       if (reglages.age_deces === "cor") {
         reglages.age_deces = ageDeDecesCor(simulateur.mortalite, carriere.annee_naissance);
       }
-      const systemes = indicateursDesSystemes(simulateur, comparaison, new Convention(reglages));
+      const convention = construite !== null
+        ? conventionNette(simulateur, comparaison, construite === "cor")
+        : new Convention(reglages);
+      const systemes = indicateursDesSystemes(simulateur, comparaison, convention);
       indicateurs[nom] = Object.fromEntries(Object.entries(systemes)
         .map(([scenario, valeurs]) => [scenario, valeurs.dictionnaire()]));
     }
     return {
       contributions: Object.fromEntries(contributionsDUneCarriere(simulateur, carriere)),
       taux_de_prelevement: tauxDePrelevement(simulateur, comparaison.actuel),
+      revenus_nets: parAnnee(revenusNets(simulateur, carriere)),
+      revenus_nets_proposition: parAnnee(revenusNets(simulateur, carriere, true)),
+      revenus_imposables: parAnnee(revenusImposables(simulateur, carriere)),
+      prelevements: parAnnee(prelevementsParAnnee(simulateur, comparaison)),
       indicateurs,
     };
   } catch (erreur) {

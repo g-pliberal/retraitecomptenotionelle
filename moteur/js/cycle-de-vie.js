@@ -10,21 +10,28 @@
  * diviseur et l'âge de part de vie constante.
  *
  * CE QUI EST PORTÉ, ET CE QUI NE L'EST PAS ENCORE. Les deux flux de chaque
- * système, bruts — ce que la paie supporte pour la retraite, contributions
+ * système — ce que la paie supporte pour la retraite, contributions
  * d'équilibre de l'Agirc-Arrco comprises (`contributions-equilibre.js`), et ce
- * qui est servi, année après année —, sous toute convention qui ne demande
- * pas les revenus nets : celle de l'OCDE, et un âge de décès fixe, la table
- * unisexe, un taux de prélèvement sur la pension (celui de l'année courante,
- * `tauxDePrelevement`). Pas encore : les revenus nets, que l'histoire des
- * prélèvements donne (`prelevements_historiques.py`), donc la convention du
- * COR et la convention nette, et l'impôt sur le revenu (`impot_revenu.py`) ;
- * une convention qui les demande lève une erreur plutôt que de rendre un
- * chiffre faux. `node tests/js/comparer-cycle-de-vie.mjs` rejoue le tout contre
- * le Python (`tests/test_cycle_de_vie_portage.py`).
+ * qui est servi, année après année —, et, depuis le 14 octobre, les revenus
+ * nets de chaque année, que l'histoire des prélèvements donne
+ * (`prelevements-historiques.js`) : donc toute convention qui ne demande pas
+ * l'impôt, celle de l'OCDE, la convention nette et celle du COR, la pension
+ * nette chaque année au taux de son année. Pas encore : l'impôt sur le revenu
+ * (`impot_revenu.py`, étape 5), dont le net imposable est prêt
+ * (`revenusImposables`, `partsImposablesParAnnee`) ; une convention qui le
+ * demande lève une erreur plutôt que de rendre un chiffre faux.
+ * `node tests/js/comparer-cycle-de-vie.mjs` rejoue le tout contre le Python
+ * (`tests/test_cycle_de_vie_portage.py`).
  */
 
-import { contributionsDUneCarriere } from "./contributions-equilibre.js";
+import { contributionsDUneCarriere, partSalarialeAnnualisee } from "./contributions-equilibre.js";
 import { AGE_TERMINAL } from "./mortalite.js";
+import {
+  chargerPrelevementsHistoriques, familleDeLaFiche, FAMILLES_INDEPENDANTES,
+} from "./prelevements-historiques.js";
+import {
+  ficheDepuisBrut, indemnitesDesLignes, profilDeLaFiche, remunerationDeLaCarriere,
+} from "./remuneration.js";
 import { faireVivre, RevalorisationServie } from "./revalorisation.js";
 
 /** Les six systèmes, dans l'ordre de la comparaison. */
@@ -207,6 +214,137 @@ export function revenusDActivite(carriere) {
     .map((ligne) => [ligne.annee, ligne.revenu]));
 }
 
+/** Les postes de la fiche que les contributions d'équilibre de l'année remplacent. */
+export const POSTES_EQUILIBRE = Object.freeze(["equilibre_general", "equilibre_technique"]);
+
+/** Les postes de la fiche d'un indépendant que l'histoire refait à l'année. */
+export const POSTES_REFAITS_INDEPENDANT = Object.freeze([
+  "maladie_maternite", "indemnites_journalieres", "famille", "csg_crds",
+]);
+
+function historiqueDe(simulateur) {
+  const historique = chargerPrelevementsHistoriques(simulateur.paquet);
+  if (historique === null) {
+    throw new Error("le paquet ne porte pas l'histoire des prélèvements "
+      + "(`prelevements_historiques`) : les revenus nets ne se calculent pas");
+  }
+  return historique;
+}
+
+/**
+ * Le net du revenu annualisé d'une ligne cotisée, aux prélèvements de son
+ * année, et, avec `imposable`, ce que ces prélèvements en retirent sans que
+ * le revenu imposable le déduise ; `null` sans fiche de paie. Jumeau de
+ * `_net_annualise`.
+ */
+function netAnnualise(simulateur, carriere, ligne, indemnite = 0.0, imposable = false) {
+  const { macro, catalogue, affiliations } = simulateur;
+  const fiche = ficheDepuisBrut(simulateur.baremePrelevements, macro, catalogue, affiliations,
+    ligne.affiliation, ligne.annee, ligne.revenuAnnualise, ligne.part_primes, indemnite);
+  if (fiche === null) return null;
+  const annualise = fiche.brut;
+  const profil = profilDeLaFiche(affiliations, catalogue, ligne.affiliation, ligne.annee);
+  const regimes = profil === "independant"
+    ? affiliations.regimes(ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation))
+    : [];
+  const famille = familleDeLaFiche(profil, regimes);
+  const historique = historiqueDe(simulateur);
+  const plafond = macro.plafond_securite_sociale.valeur(ligne.annee);
+  const courante = simulateur.baremePrelevements.annee;
+  if (famille === null) {
+    return [fiche.net, imposable
+      ? historique.nonDeductiblesAnnuel(null, courante, annualise, plafond) : 0.0];
+  }
+  let retraite;
+  if (FAMILLES_INDEPENDANTES.includes(famille)) {
+    retraite = 0.0;
+    for (const l of fiche.lignes) {
+      if (!POSTES_REFAITS_INDEPENDANT.includes(l.code)) retraite += l.salarie;
+    }
+  } else {
+    retraite = fiche.retraiteSalarie;
+  }
+  const horsRetraite = historique.horsRetraiteAnnuel(famille, courante, annualise, plafond, retraite)
+    - historique.horsRetraiteAnnuel(famille, ligne.annee, annualise, plafond, retraite);
+  let equilibre = 0.0;
+  for (const l of fiche.lignes) if (POSTES_EQUILIBRE.includes(l.code)) equilibre += l.salarie;
+  if (equilibre > 0.0) equilibre -= partSalarialeAnnualisee(simulateur, carriere, ligne);
+  const nonDeductibles = imposable
+    ? historique.nonDeductiblesAnnuel(famille, ligne.annee, annualise, plafond, retraite) : 0.0;
+  return [fiche.net + horsRetraite + equilibre, nonDeductibles];
+}
+
+/**
+ * Chaque ligne cotisée, dans l'ordre : son année, son net et, avec
+ * `imposable`, sa part non déductible, ramenés aux mois travaillés ; `null`
+ * quand un statut de la carrière n'a pas de fiche de paie.
+ */
+function paies(simulateur, carriere, imposable) {
+  const resultat = [];
+  const indemnites = indemnitesDesLignes(carriere, simulateur.macro, simulateur.catalogue,
+    simulateur.affiliations);
+  for (const [rang, ligne] of carriere.lignes.entries()) {
+    if (!ligne.cotise) continue;
+    const paie = netAnnualise(simulateur, carriere, ligne, indemnites[rang], imposable);
+    if (paie === null) return null;
+    const [net, nonDeductible] = paie;
+    resultat.push([ligne.annee, net * ligne.fraction_annee, nonDeductible * ligne.fraction_annee]);
+  }
+  return resultat;
+}
+
+/** Les nets des années de la bascule au départ, lus sur la fiche de la proposition. */
+function avecLaProposition(simulateur, carriere, nets) {
+  const remuneration = remunerationDeLaCarriere(carriere, simulateur.macro,
+    simulateur.catalogue, simulateur.affiliations, simulateur.parametres,
+    simulateur.baremePrelevements, simulateur.paquet);
+  const bruts = revenusDActivite(carriere);
+  for (const annee of remuneration === null ? [] : remuneration.annees) {
+    const fiche = annee.proposition;
+    if (fiche.brut > 0.0 && bruts.has(annee.annee)) {
+      // Le même brut que la fiche du droit en vigueur, indemnité comprise.
+      const revenu = annee.droitEnVigueur.brut - annee.indemniteCsg;
+      const paye = revenu > 0.0 ? annee.indemniteCsg * bruts.get(annee.annee) / revenu : 0.0;
+      nets.set(annee.annee, (bruts.get(annee.annee) + paye) * fiche.net / fiche.brut);
+    }
+  }
+  return nets;
+}
+
+/**
+ * Ce que la paie laisse de chaque revenu d'activité, année par année, aux
+ * prélèvements de son année ; avec `proposition`, les années de la bascule au
+ * départ lues sur la fiche de la proposition. `null` quand un statut de la
+ * carrière n'a pas de fiche de paie. Jumeau de `revenus_nets`.
+ */
+export function revenusNets(simulateur, carriere, proposition = false) {
+  const lues = paies(simulateur, carriere, false);
+  if (lues === null) return null;
+  const nets = parAnnee(lues.map(([annee, net]) => [annee, net]));
+  return proposition ? avecLaProposition(simulateur, carriere, nets) : nets;
+}
+
+/**
+ * Les revenus d'activité nets imposables, année par année : le net, plus ce
+ * que la paie retire sans que le revenu imposable le déduise. Jumeau de
+ * `revenus_imposables` ; l'impôt lui-même n'est pas encore porté.
+ */
+export function revenusImposables(simulateur, carriere, proposition = false) {
+  const lues = paies(simulateur, carriere, true);
+  if (lues === null) return null;
+  let nets = parAnnee(lues.map(([annee, net]) => [annee, net]));
+  if (proposition) nets = avecLaProposition(simulateur, carriere, nets);
+  const retires = parAnnee(lues.map(([annee, , part]) => [annee, part]));
+  return new Map([...nets].map(([annee, net]) => [annee, net + (retires.get(annee) ?? 0.0)]));
+}
+
+/** Le dernier revenu annualisé, net : le rapport du net au brut de la dernière année cotisée. */
+function dernierRevenuNet(dernierRevenu, revenus, nets) {
+  if (nets === null || revenus.size === 0) return null;
+  const annee = Math.max(...revenus.keys());
+  return dernierRevenu * (nets.get(annee) ?? 0.0) / revenus.get(annee);
+}
+
 function debutDe(carriere) {
   return carriere.anneeLiquidation + carriere.fractionAnneeLiquidation;
 }
@@ -333,13 +471,14 @@ export function niveauxNotionnels(simulateur, comparaison, scenario, revalorisat
 }
 
 /**
- * Les deux flux d'une carrière sous chacun des six systèmes, bruts. Les
- * revenus nets et l'impôt ne sont pas encore portés.
+ * Les deux flux d'une carrière sous chacun des six systèmes ; avec `nets`,
+ * leurs revenus nets aussi (`revenusNets`), sur la fiche du droit en vigueur,
+ * ou sur celle de la proposition pour le scénario 6. L'impôt n'est pas encore
+ * porté.
  */
 export function fluxDesSystemes(simulateur, comparaison, { nets = false, impot = null } = {}) {
-  if (nets || impot !== null) {
-    throw new Error("les revenus nets et l'impôt ne sont pas encore portés "
-      + "(`prelevements_historiques.py`, `impot_revenu.py`)");
+  if (impot !== null) {
+    throw new Error("l'impôt sur le revenu n'est pas encore porté (`impot_revenu.py`)");
   }
   const carriere = comparaison.carriere;
   let derniere = -Infinity;
@@ -350,22 +489,39 @@ export function fluxDesSystemes(simulateur, comparaison, { nets = false, impot =
     simulateur, simulateur.parametres.annee_debut_repartition, derniere);
   const versees = cotisationsVersees(simulateur, carriere);
   const actuels = niveauxActuels(simulateur, comparaison, revalorisation, derniere);
+  // Les revenus de chaque carrière, et leur net : une fiche de paie par année,
+  // une fois par carrière et par fiche (`_cle_des_revenus`).
   const revenus = new Map();
+  const revenusDe = (scenario) => {
+    const duScenario = comparaison.carriereDe(scenario);
+    const proposition = scenario in simulateur.calculs
+      ? Boolean(simulateur.calculs[scenario].garantie) : false;
+    if (!revenus.has(duScenario)) revenus.set(duScenario, new Map());
+    const parFiche = revenus.get(duScenario);
+    if (!parFiche.has(proposition)) {
+      parFiche.set(proposition, [revenusDActivite(duScenario),
+        nets ? revenusNets(simulateur, duScenario, proposition) : null]);
+    }
+    return parFiche.get(proposition);
+  };
 
   const flux = (scenario, cotisations, niveaux) => {
     const duScenario = comparaison.carriereDe(scenario);
-    if (!revenus.has(duScenario)) revenus.set(duScenario, revenusDActivite(duScenario));
+    const [bruts, netsDuScenario] = revenusDe(scenario);
+    const dernier = duScenario !== carriere
+      ? comparaison.dernier_revenu_annualise_liberal
+      : comparaison.dernier_revenu_annualise;
     return new Flux({
       scenario,
       cotisations,
-      revenus: revenus.get(duScenario),
+      revenus: bruts,
       niveaux,
       debut: debutDe(duScenario),
       age: duScenario.age_liquidation,
       sexe: duScenario.sexe,
-      dernier_revenu: duScenario !== carriere
-        ? comparaison.dernier_revenu_annualise_liberal
-        : comparaison.dernier_revenu_annualise,
+      dernier_revenu: dernier,
+      revenus_nets: netsDuScenario,
+      dernier_revenu_net: dernierRevenuNet(dernier, bruts, netsDuScenario),
     });
   };
 
@@ -469,6 +625,83 @@ export function tauxDePrelevement(simulateur, resultat) {
     if (prelevements.regimes_maladie.has(p.regime)) complementaire += p.montant;
   }
   return prelevements.tauxTotal + prelevements.maladie_complementaire * complementaire / total;
+}
+
+/**
+ * Les conventions du rendement interne des cas types du COR : les deux sexes
+ * réunis, le décès à 60 ans plus l'espérance de vie à 60 ans de la
+ * génération, la pension nette au taux plein de CSG, chaque année au taux de
+ * son année (`prelevementsParAnnee`). Jumeau de `convention_cor`.
+ */
+export function conventionCor(simulateur, comparaison) {
+  return new Convention({
+    age_deces: ageDeDecesCor(simulateur.mortalite, comparaison.carriere.annee_naissance),
+    unisexe: true,
+    prelevement: tauxDePrelevement(simulateur, comparaison.actuel),
+    prelevements: prelevementsParAnnee(simulateur, comparaison),
+  });
+}
+
+/**
+ * La convention nette : celle du COR avec `cor`, sinon celle de l'OCDE, la
+ * pension nette des prélèvements de chaque année. Jumeau de `convention_nette`.
+ */
+export function conventionNette(simulateur, comparaison, cor = false) {
+  if (cor) return conventionCor(simulateur, comparaison);
+  return new Convention({
+    prelevement: tauxDePrelevement(simulateur, comparaison.actuel),
+    prelevements: prelevementsParAnnee(simulateur, comparaison),
+  });
+}
+
+/**
+ * Les parts de la pension du scénario 1 au départ qui ont payé une cotisation
+ * maladie, par cotisation : une `Map` de la série à sa part. Jumeau de
+ * `_parts_assujetties`.
+ */
+export function partsAssujetties(simulateur, resultat) {
+  const total = auDepart(simulateur, resultat);
+  if (total <= 0.0) return new Map([["maladie_complementaires", 1.0]]);
+  const groupes = new Map(historiqueDe(simulateur).regimes_des_pensions);
+  groupes.set("maladie_complementaires", simulateur.baremePrelevements.pensions.regimes_maladie);
+  const parts = new Map();
+  for (const [serie, regimes] of groupes) {
+    let montant = 0.0;
+    for (const p of resultat.pensions_par_regime) if (regimes.has(p.regime)) montant += p.montant;
+    parts.set(serie, montant / total);
+  }
+  return parts;
+}
+
+/** Du premier départ des systèmes à la dernière année qu'une pension peut atteindre. */
+function anneesDesPensions(comparaison) {
+  const carrieres = SCENARIOS.map((scenario) => comparaison.carriereDe(scenario));
+  const premiere = Math.min(...carrieres.map((c) => c.anneeLiquidation));
+  const derniere = Math.max(...carrieres.map(derniereAnneeDe));
+  return Array.from({ length: derniere - premiere + 1 }, (_, rang) => premiere + rang);
+}
+
+/**
+ * Ce que les prélèvements de chaque année retirent aux pensions de
+ * `comparaison`, au taux plein de CSG, du premier départ à la dernière année
+ * qu'une pension peut atteindre. Jumeau de `prelevements_par_annee`.
+ */
+export function prelevementsParAnnee(simulateur, comparaison) {
+  const historique = historiqueDe(simulateur);
+  const parts = partsAssujetties(simulateur, comparaison.actuel);
+  return new Map(anneesDesPensions(comparaison)
+    .map((annee) => [annee, historique.tauxPensionAnnuel(annee, parts)]));
+}
+
+/**
+ * La part des pensions que le revenu imposable de chaque année retient.
+ * Jumeau de `parts_imposables_par_annee` ; l'impôt n'est pas encore porté.
+ */
+export function partsImposablesParAnnee(simulateur, comparaison) {
+  const historique = historiqueDe(simulateur);
+  const parts = partsAssujetties(simulateur, comparaison.actuel);
+  return new Map(anneesDesPensions(comparaison)
+    .map((annee) => [annee, 1.0 - historique.tauxDeductiblePensionAnnuel(annee, parts)]));
 }
 
 // -- les indicateurs ---------------------------------------------------------

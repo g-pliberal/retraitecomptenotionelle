@@ -1234,6 +1234,25 @@ export function indemnitesDeLaCarriere(carriere, macro, catalogue, affiliations)
 }
 
 /**
+ * L'indemnité de chaque ligne de la carrière, dans leur ordre, pour une année
+ * pleine : celle de son année, au prorata de son revenu annualisé dans la
+ * rémunération annualisée de l'année. Nulle hors des lignes d'agent public
+ * bénéficiaire. Jumeau de `indemnites_des_lignes`.
+ */
+export function indemnitesDesLignes(carriere, macro, catalogue, affiliations) {
+  const montants = indemnitesDeLaCarriere(carriere, macro, catalogue, affiliations);
+  if (!montants || montants.size === 0) return carriere.lignes.map(() => 0);
+  const [eligibles, annualisees] = remunerationsDAgentPublic(carriere, catalogue, affiliations);
+  const retenues = new Set(eligibles);
+  return carriere.lignes.map((ligne) => {
+    const montant = montants.get(ligne.annee) ?? 0;
+    const annee = annualisees.get(ligne.annee) ?? 0;
+    if (!retenues.has(ligne) || montant <= 0 || annee <= 0) return 0;
+    return montant * ligne.revenuAnnualise / annee;
+  });
+}
+
+/**
  * Ce que la saisie, qui ne connaît qu'un montant, prête d'indemnité : un agent
  * du même statut, payé fin 2017, dont la rémunération a suivi le salaire
  * moyen. Une fonction du revenu, ou `null` quand le statut n'y a pas droit.
@@ -1272,6 +1291,29 @@ function ficheAvecIndemnite(constructeur, catalogue, affiliations, statut, annee
   const primes = partPrimesDeLaFiche(revenu, partPrimes, indemnite);
   return constructeur.fiche(annee, revenu + indemnite, plafond, smic,
     blocDroitEnVigueur(catalogue, affiliations, statut, annee, primes), cadre);
+}
+
+/**
+ * La fiche de paie du droit en vigueur d'un revenu brut annuel de `statut`,
+ * l'année `annee`, dont `partPrimes` sont des primes ; `null` pour un statut
+ * sans fiche de paie. `indemnite` : l'indemnité compensatrice de la CSG que la
+ * carrière donne (`indemnitesDesLignes`) ; à défaut, celle que la saisie prête.
+ * Jumeau de `fiche_depuis_brut`.
+ */
+export function ficheDepuisBrut(bareme, macro, catalogue, affiliations, statut, annee,
+  brutAnnuel, partPrimes = 0, indemnite = null) {
+  const codeProfil = profilDeLaFiche(affiliations, catalogue, statut, annee);
+  if (codeProfil === null) return null;
+  const cadre = statut.includes("cadre") && !statut.includes("non_cadre");
+  let montant = indemnite;
+  if (montant === null) {
+    const stylisee = indemniteStylisee(macro, catalogue, affiliations, statut, annee,
+      partPrimes);
+    montant = stylisee === null ? 0 : stylisee(brutAnnuel);
+  }
+  return ficheAvecIndemnite(new ConstructeurFiche(bareme.profil(codeProfil)), catalogue,
+    affiliations, statut, annee, brutAnnuel, partPrimes, montant,
+    macro.plafond_securite_sociale.valeur(annee), smicAnnuel(macro, annee), cadre);
 }
 
 export function smicAnnuel(macro, annee) {

@@ -3,13 +3,13 @@
 **Reprise, au 14 octobre 2026.** Fait : `cycle_de_vie.py`, onze indicateurs
 des six systèmes, sous les conventions de l'OCDE et du COR, chaque âge de
 départ, les prélèvements de chaque année, l'âge d'équilibre ; le 14 octobre,
-le portage des flux bruts, des indicateurs et de l'âge d'équilibre
-(`cycle-de-vie.js`, `contributions-equilibre.js`), rejoué contre le Python.
-Reste, dans cet ordre : au portage, les revenus nets, qui ouvrent la
-convention du COR, puis l'impôt (étape 5) et les âges de départ ;
-l'affichage, avec l'étape 10, à la session du site ; la révision de 2026, au
-COR ; Typfallsmodellen. Commencer par les revenus nets. Détail :
-`2026-10-14-etape-9-portage-du-cycle-de-vie.md`.
+leur portage — les flux, les indicateurs, l'âge d'équilibre, puis les revenus
+nets de chaque année (`prelevements-historiques.js`), donc la convention
+nette et celle du COR —, rejoué contre le Python. Reste, dans cet ordre : au
+portage, l'impôt (étape 5), dont le net imposable est prêt, puis les âges de
+départ ; l'affichage, avec l'étape 10, à la session du site ; la révision de
+2026, au COR ; Typfallsmodellen. Commencer par l'impôt. Détail :
+`2026-10-14-etape-9-revenus-nets-au-portage.md`.
 
 **La demande.** L'étape 9 de l'action : « les indicateurs de cycle de vie, par
 cas type et génération, sous les six systèmes : rendement interne, durée de

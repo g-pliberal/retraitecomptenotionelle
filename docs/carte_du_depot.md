@@ -66,7 +66,7 @@ flowchart LR
 
 Le modèle Python lit les données et fabrique deux choses : le paquet que
 charge le site, `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->5 359<!--/--> Ko, par
+(<!--chiffre:poids(moteur/donnees.json)-->5 378<!--/--> Ko, par
 `scripts/construire_donnees.py`), et les témoins qui vérifient la copie
 JavaScript, dans `tests/temoins/` (par `scripts/construire_temoins.py`).
 
