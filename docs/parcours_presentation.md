@@ -353,9 +353,9 @@ Onglet **Méthode** : les trois opérations, en une phrase chacune, puis
 « Qu'est-ce qui décide du résultat ? ». On peut s'arrêter au titre.
 
 Onglet **Données**, et c'est la bonne page pour conclure : « Rien ici n'est à
-croire sur parole. » 131 599 valeurs recontrôlées automatiquement contre le
-fichier de l'institution qui les produit, sur 164 séries ; 112 régimes
-recensés dont 78 calculés ; 41 institutions citées. Ce compte mesure la
+croire sur parole. » 136 639 valeurs recontrôlées automatiquement contre le
+fichier de l'institution qui les produit, sur 166 séries ; 114 régimes
+recensés dont 80 calculés ; 41 institutions citées. Ce compte mesure la
 fidélité de la recopie, non la justesse des pensions : si on vous le demande,
 la réponse est que les pensions se contrôlent ailleurs, sur les exemples
 publiés par les caisses, et que `docs/limites.md` dit lesquels. Le code et

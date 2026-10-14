@@ -621,18 +621,22 @@ export function plancherDAvant1983(eligible, montant, regle, exInvalide) {
  * artisan ou d'un commerçant : le minimum proratisé sur les seuls trimestres
  * d'après 1972, relevant la part de la pension qui leur revient, sans porter le
  * cumul au-delà du minimum entier quand l'assuré a des périodes d'avant 1973
- * (décret n° 73-937, article 7). Voir `complement_des_alignes` du Python.
+ * (décret n° 73-937, article 7), la pension des droits d'avant 1973 comprise
+ * (`DROITS_D_AVANT_1973`). Voir `complement_des_alignes` du Python.
  */
+export const DROITS_D_AVANT_1973 = new Map([
+  ["cancava", "cancava_avant_1973"], ["organic", "organic_avant_1973"]]);
+
 export function complementDesAlignes(pension, eligible, montant, regle, exInvalide,
-  depuis1973) {
+  depuis1973, avant1973 = 0.0) {
   if (!eligible.tauxPlein || pension <= 0.0 || eligible.dureeRegime <= 0) {
     return 0.0;
   }
   const plancher = plancherDAvant1983({ ...eligible, dureeRegime: depuis1973 },
     montant, regle, exInvalide);
   let complement = Math.max(0.0, plancher - pension * depuis1973 / eligible.dureeRegime);
-  if (depuis1973 < eligible.dureeRegime) {
-    complement = Math.min(complement, Math.max(0.0, montant - pension));
+  if (depuis1973 < eligible.dureeRegime || avant1973 > 0.0) {
+    complement = Math.min(complement, Math.max(0.0, montant - pension - avant1973));
   }
   return complement;
 }
@@ -906,7 +910,9 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         complement = complementDesAlignes(
           pension.montant - (eligible.horsMinimum ?? 0.0), eligible, montantBase,
           pensionMinimum, exInvalide,
-          durees.cumulPlafonne("assurance", [pension.regime], (annee) => annee >= 1973));
+          durees.cumulPlafonne("assurance", [pension.regime], (annee) => annee >= 1973),
+          pensions.filter((p) => p.regime === DROITS_D_AVANT_1973.get(pension.regime))
+            .reduce((somme, p) => somme + p.montant, 0.0));
       } else if (alternative === undefined) {
         complement = complementDu(pension, eligible, plancherNational(eligible, majoree));
       } else {

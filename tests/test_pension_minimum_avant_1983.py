@@ -112,9 +112,13 @@ def test_avec_des_periodes_d_avant_1973_le_cumul_s_arrete_au_minimum_entier(simu
     pension, portée à ses soixantièmes, dépasserait avec celle d'avant le
     minimum entier ; « l'application dudit article L. 345 ne peut avoir pour
     effet de porter à un montant supérieur à celui du minimum de base entier le
-    montant cumulé » des deux (décret n° 73-937, article 7)."""
+    montant cumulé » des deux (décret n° 73-937, article 7). Les années d'avant
+    1973 ont leur pension, en points (action 138, étape 18) : c'est la somme des
+    deux qui s'arrête au minimum entier."""
     _, _, pensions, minimum = _calculer(simulateur, 1916, 65.0, 40.0, 0.3, "artisan")
-    assert pensions["cancava"].montant == pytest.approx(AVTS_JANVIER_1981, abs=0.01)
+    assert pensions["cancava_avant_1973"].montant > 0
+    assert (pensions["cancava"].montant + pensions["cancava_avant_1973"].montant
+            == pytest.approx(AVTS_JANVIER_1981, abs=0.01))
     assert minimum is not None
 
 

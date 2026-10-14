@@ -66,7 +66,7 @@ flowchart LR
 
 Le modèle Python lit les données et fabrique deux choses : le paquet que
 charge le site, `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->5 405<!--/--> Ko, par
+(<!--chiffre:poids(moteur/donnees.json)-->5 493<!--/--> Ko, par
 `scripts/construire_donnees.py`), et les témoins qui vérifient la copie
 JavaScript, dans `tests/temoins/` (par `scripts/construire_temoins.py`).
 
@@ -275,9 +275,9 @@ Quatre endroits, dans cet ordre :
    datée. Les actions closes passent dans `docs/archives/`.
 
 L'inventaire compte
-<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->112<!--/-->
+<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->114<!--/-->
 régimes : <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise)-->36<!--/-->
-modélisés, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->42<!--/-->
+modélisés, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->44<!--/-->
 partiels, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=a_modeliser)-->9<!--/-->
 à modéliser, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=hors_champ)-->23<!--/-->
 hors champ et <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=routage)-->2<!--/-->

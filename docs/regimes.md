@@ -20,7 +20,7 @@ appliquées à travers son histoire. Ce document fait la première moitié ; la
 seconde est l'étape suivante, esquissée en fin de page.
 
 <!-- compte:debut -->
-L'inventaire compte **112 lignes** : 34 régimes modélisés,
+L'inventaire compte **114 lignes** : 36 régimes modélisés,
 44 calculés mais incomplets, 2 affiliations portées par un statut,
 23 hors champ — 9 à modéliser.
 <!-- compte:fin -->
@@ -162,7 +162,9 @@ repris par un autre.
 | Régime | Famille | Période | Couverture | Statuts | Ce qui manque, ou pourquoi |
 |---|---|---|---|---|---|
 | Caisse autonome nationale de compensation de l'assurance vieillesse artisanale (`cancava`) | non-salariés | 1949-2006 | ✅ modélisé | `artisan` |  |
+| Droits en points d'avant 1973 du régime de base des artisans (`cancava_avant_1973`) | non-salariés | depuis 1949, fermé en 1972 | ✅ modélisé | `artisan` |  |
 | Organisation autonome nationale de l'industrie et du commerce (`organic`) | non-salariés | 1949-2006 | ✅ modélisé | `commercant`, `gerant_debit_tabac`, `micro_entrepreneur` |  |
+| Droits en points d'avant 1973 du régime de base des industriels et commerçants (`organic_avant_1973`) | non-salariés | depuis 1949, fermé en 1972 | ✅ modélisé | `commercant`, `gerant_debit_tabac`, `micro_entrepreneur` |  |
 | Régime social des indépendants (`rsi`) | non-salariés | 2006-2020 | ✅ modélisé | `artisan`, `commercant`, `gerant_debit_tabac`, `micro_entrepreneur` |  |
 | Régime complémentaire obligatoire des artisans (`rco_artisans`) | non-salariés | 1979-2013 | ✅ modélisé | `artisan` |  |
 | Nouveau régime complémentaire des industriels et commerçants (`nric`) | non-salariés | 2004-2013 | ✅ modélisé | `commercant`, `gerant_debit_tabac`, `micro_entrepreneur` |  |

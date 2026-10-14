@@ -59,7 +59,7 @@ le 19 septembre 2026 :
    **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
    affiché « plutôt un plancher », les départs très précoces que le notionnel
    pénalise le plus étant surreprésentés. C'est vrai des scénarios qui portent
-   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−56,0<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,9<!--/--> % — et faux du
+   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−55,9<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,8<!--/--> % — et faux du
    scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−77,8<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,9<!--/--> % : la pondération donne aux
    carrières du privé, que le compte salarial seul pénalise davantage encore,
    les deux tiers du poids. C'était un plancher pour les uns, un plafond pour

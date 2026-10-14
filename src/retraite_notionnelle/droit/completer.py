@@ -264,8 +264,14 @@ def plancher_d_avant_1983(eligible, montant: float, regle: dict, ex_invalide: bo
     return montant * min(1.0, eligible.duree_regime / entier)
 
 
+#: Le régime qui sert à part les droits d'avant 1973 de chaque régime aligné en
+#: 1973 (L. 634-3 ; action 138, étape 18).
+DROITS_D_AVANT_1973 = {"cancava": "cancava_avant_1973", "organic": "organic_avant_1973"}
+
+
 def complement_des_alignes(pension: float, eligible, montant: float, regle: dict,
-                           ex_invalide: bool, depuis_1973: int) -> float:
+                           ex_invalide: bool, depuis_1973: int,
+                           avant_1973: float = 0.0) -> float:
     """Ce que la pension minimum d'avant le 1er avril 1983 ajoute à la pension
     d'un artisan ou d'un commerçant.
 
@@ -279,16 +285,18 @@ def complement_des_alignes(pension: float, eligible, montant: float, regle: dict
     celui du minimum de base entier le montant cumulé » des deux avantages
     (décret n° 73-937, article 7, rédaction de 1976). Le minimum se proratise
     donc sur les seuls trimestres d'après 1972 (``depuis_1973``), et relève la
-    part de la pension qui leur revient ; le modèle, qui calcule les années
-    d'avant 1973 comme celles d'après (étape 18), la lit au prorata des
-    trimestres. ``pension`` est la pension servie avant minimum."""
+    part de la pension qui leur revient. Les années d'avant 1973 ont leur
+    pension, en points (``avant_1973``, :data:`DROITS_D_AVANT_1973`) : c'est
+    elle que le cumul ajoute. ``pension`` est la pension servie avant minimum ;
+    si elle comptait encore des années d'avant 1973, sa part d'après 1972 se lit
+    au prorata des trimestres."""
     if not eligible.taux_plein or pension <= 0.0 or eligible.duree_regime <= 0:
         return 0.0
     plancher = plancher_d_avant_1983(replace(eligible, duree_regime=depuis_1973),
                                      montant, regle, ex_invalide)
     complement = max(0.0, plancher - pension * depuis_1973 / eligible.duree_regime)
-    if depuis_1973 < eligible.duree_regime:
-        complement = min(complement, max(0.0, montant - pension))
+    if depuis_1973 < eligible.duree_regime or avant_1973 > 0.0:
+        complement = min(complement, max(0.0, montant - pension - avant_1973))
     return complement
 
 
@@ -1012,7 +1020,10 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                     pension.montant - eligible.hors_minimum, eligible, montant_base,
                     pension_minimum, ex_invalide,
                     durees.cumul_plafonne("assurance", (pension.regime,),
-                                          lambda annee: annee >= 1973))
+                                          lambda annee: annee >= 1973),
+                    somme_ordonnee(
+                        p.montant for p in pensions
+                        if p.regime == DROITS_D_AVANT_1973.get(pension.regime)))
             elif alternative is None:
                 complement = complement_du(
                     pension, eligible, plancher_national(eligible, majoree))

@@ -77,10 +77,14 @@ annuités de la pension alignée, comptées dans sa proratisation (« SR × 50 %
    (`prelevements_historiques.yaml`, `maladie_des_pensions.py`,
    `prelevements_historiques.py`). Au coût, les deux régimes entrent dans le
    groupe LURA (`donnees/equilibre.py`), et le cliquet de la reconstitution du
-   passé monte de 14,0 à 14,2 % (`test_cout.py` : −14,1 % en 2009). Deux
-   comptes que la suite vérifie, hors des pages : le README dit 78 régimes, et
-   `docs/parcours_presentation.md` recopie ceux de la page Données (131 599
-   valeurs, 164 séries, 112 régimes dont 78 calculés).
+   passé monte de 14,0 à 14,2 % (`test_cout.py` : −14,1 % en 2009). La pension
+   minimum d'avant 1983 de l'étape 6, que l'autre session avait écrite sur la
+   pension alignée entière, borne désormais le cumul avec la pension des droits
+   d'avant 1973 (`complement_des_alignes`, jumelle en JavaScript ; son test
+   compte la somme des deux). Deux comptes que la suite vérifie, hors des
+   pages : le README dit 80 régimes, et `docs/parcours_presentation.md` recopie
+   ceux de la page Données (136 639 valeurs, 166 séries, 114 régimes dont 80
+   calculés), au jour du rebasage.
 
 **Ce que montrent les mesures.**
 

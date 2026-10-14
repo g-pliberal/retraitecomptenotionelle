@@ -2325,6 +2325,23 @@ inventaire:
     - {reference: "loi n° 48-101 du 17 janvier 1948 instituant une allocation de vieillesse\
         \ pour les personnes non salariées", id: null}
 
+  - code: cancava_avant_1973
+    nom: Droits en points d'avant 1973 du régime de base des artisans
+    famille: non_salarie
+    population: Artisans, années de 1949 à 1972
+    creation: 1949
+    fermeture: 1972
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [artisan]
+    textes:
+    - {reference: article L. 634-3 du code de la sécurité sociale, id: LEGIARTI000036391704}
+    - {reference: 'décret n° 64-994 du 17 septembre 1964, articles 4, 5 et 26', id: LEGIARTI000006764529}
+    - {reference: 'décret n° 73-937 du 2 octobre 1973, article 3', id: LEGIARTI000047634732}
+    - {reference: article D. 634-8 du code de la sécurité sociale, id: LEGIARTI000041966593}
+
   - code: organic
     nom: Organisation autonome nationale de l'industrie et du commerce
     famille: non_salarie
@@ -2338,6 +2355,24 @@ inventaire:
     statuts: [commercant, gerant_debit_tabac, micro_entrepreneur]
     textes:
     - {reference: loi n° 48-101 du 17 janvier 1948, id: null}
+
+  - code: organic_avant_1973
+    nom: >-
+      Droits en points d'avant 1973 du régime de base des industriels et commerçants
+    famille: non_salarie
+    population: Industriels et commerçants, années de 1949 à 1972
+    creation: 1949
+    fermeture: 1972
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [commercant, gerant_debit_tabac, micro_entrepreneur]
+    textes:
+    - {reference: article L. 634-3 du code de la sécurité sociale, id: LEGIARTI000036391704}
+    - {reference: 'décret n° 66-248 du 31 mars 1966, articles 3, 17 et 19', id: LEGIARTI000006763964}
+    - {reference: 'décret n° 73-937 du 2 octobre 1973, article 3', id: LEGIARTI000047634732}
+    - {reference: article D. 634-8 du code de la sécurité sociale, id: LEGIARTI000041966593}
 
   - code: rsi
     nom: Régime social des indépendants
@@ -2483,7 +2518,8 @@ inventaire:
     couverture: partiel
     statuts: [profession_liberale, liberal_non_reglemente, auxiliaire_medical, pharmacien,
       expert_comptable, agent_general_assurance, notaire, veterinaire, officier_ministeriel,
-      chirurgien_dentiste_ou_sage_femme, medecin_liberal]
+      chirurgien_dentiste_ou_sage_femme, medecin_liberal, medecin_liberal_secteur_2,
+      sage_femme, biologiste_liberal]
     textes:
     - {reference: loi n° 48-101 du 17 janvier 1948, id: null}
     - {reference: "code de la sécurité sociale, L. 640-1 (professions affiliées, rédaction\
@@ -2513,7 +2549,7 @@ inventaire:
     succede_a: []
     integre_dans: null
     couverture: modelise
-    statuts: [medecin_liberal]
+    statuts: [medecin_liberal, medecin_liberal_secteur_2]
     textes:
     - {reference: "décret n° 49-579 du 22 avril 1949 et statuts du régime complémentaire\
         \ (arrêtés d'approbation)", id: null}
@@ -2532,7 +2568,7 @@ inventaire:
     succede_a: []
     integre_dans: null
     couverture: partiel
-    statuts: [chirurgien_dentiste_ou_sage_femme]
+    statuts: [chirurgien_dentiste_ou_sage_femme, sage_femme]
     textes:
     - {reference: "décret n° 2008-1490 du 30 décembre 2008 (fusion de la CARCD et de\
         \ la CARSAF)", id: null}
@@ -2560,7 +2596,7 @@ inventaire:
     succede_a: []
     integre_dans: null
     couverture: partiel
-    statuts: [pharmacien]
+    statuts: [pharmacien, biologiste_liberal]
     textes:
     - {reference: "statuts du régime complémentaire de la CAVP (arrêtés d'approbation)",
       id: null}
@@ -2790,7 +2826,7 @@ inventaire:
     succede_a: []
     integre_dans: null
     couverture: partiel
-    statuts: [medecin_liberal]
+    statuts: [medecin_liberal, medecin_liberal_secteur_2]
     textes:
     - {reference: "décret n° 72-968 du 27 octobre 1972, article 2 (points par année\
         \ cotisée)", id: LEGIARTI000024871109}
@@ -2807,14 +2843,14 @@ inventaire:
     manque: >-
       La fiche porte les médecins ; les auxiliaires médicaux et les chirurgiens-dentistes
       ont la leur depuis le 14 octobre 2026 (asv_auxiliaires_medicaux, asv_chirurgiens_dentistes,
-      action 138, étape 18). Les sages-femmes (décret n° 84-254, 18 points par an) et
-      les directeurs de laboratoire (2007-597) ont chacun leur barème, lu mais non porté.
-      La fiche présume le secteur 1, où les caisses paient les deux tiers, que le compte
-      notionnel reçoit comme une part patronale ; en secteur 2 le médecin paie tout.
-      Les points d'ajustement sont pris au plafond de neuf par an, atteint dès 68 000
-      € de revenu. Le forfait de 2017 à 2024, revalorisé sur le revenu moyen des médecins,
-      est projeté sur les prix depuis 2016. Le tarif de la consultation, base du forfait
-      de 1985 à 2011, n'est pas une série du dépôt.
+      action 138, étape 18), et les sages-femmes et les directeurs de laboratoire depuis
+      le même jour (asv_sages_femmes, asv_directeurs_laboratoire). En secteur 1, les
+      caisses paient les deux tiers, que le compte notionnel reçoit comme une part patronale
+      ; en secteur 2, statut à part depuis le même jour, le médecin paie tout, et le
+      compte le porte comme sa cotisation. Les points d'ajustement sont pris au plafond
+      de neuf par an, atteint dès 68 000 € de revenu. Le forfait de 2017 à 2024, revalorisé
+      sur le revenu moyen des médecins, est projeté sur les prix depuis 2016. Le tarif
+      de la consultation, base du forfait de 1985 à 2011, n'est pas une série du dépôt.
 
   - code: asv_auxiliaires_medicaux
     nom: >-
@@ -2870,8 +2906,65 @@ inventaire:
       Les valeurs de service des points d'avant 2006, le rachat des années de 1946 à
       1977, la borne de 420 points jusqu'en 2021, l'arrondi au centième supérieur. Le
       partage avec l'assurance maladie, lu pour 2025, est présumé à toutes les années.
-      La sage-femme, que le statut confond avec le chirurgien-dentiste, a son propre
-      régime.
+
+  - code: asv_sages_femmes
+    nom: >-
+      Prestations complémentaires de vieillesse des sages-femmes conventionnées (PCV,
+      ex-ASV)
+    famille: liberal
+    population: Sages-femmes conventionnées
+    creation: 1984
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [sage_femme]
+    textes:
+    - {reference: "décret n° 84-254 du 5 avril 1984 rendant obligatoire le régime de\
+        \ prestations supplémentaires de vieillesse des sages-femmes conventionnées,\
+        \ article 3 (dix-huit points par année de cotisations)", id: LEGIARTI000025077318}
+    - {reference: "décret n° 2011-2002 du 28 décembre 2011, articles 1er et 2 (forfait,\
+        \ valeur de service)", id: LEGIARTI000052567982}
+    manque: >-
+      Le forfait d'avant 2008, une fois et demie le forfait d'accouchement simple (D.
+      645-2), que le dépôt ne chiffre pas : la fiche présume les 229 € de 2008 projetés
+      en arrière sur les prix. Les forfaits fixes en euros, projetés sur les prix entre
+      deux textes. La valeur de service, 6,10 € en 2025, ramenée aux autres années par
+      les prix, quand le décret la fige en euros pour les points liquidés depuis 2012.
+      Le rachat des années de 1946 à 1983, six points l'année. Le partage avec l'assurance
+      maladie, lu pour 2025, est présumé à toutes les années.
+
+  - code: asv_directeurs_laboratoire
+    nom: >-
+      Prestations complémentaires de vieillesse des directeurs de laboratoire non médecins
+      conventionnés (PCV, ex-ASV)
+    famille: liberal
+    population: Pharmaciens biologistes directeurs de laboratoire conventionnés
+    creation: 1981
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [biologiste_liberal]
+    textes:
+    - {reference: "décret n° 81-1046 du 24 novembre 1981 relatif au régime des prestations\
+        \ supplémentaires de vieillesse des directeurs de laboratoires privés d'analyses\
+        \ médicales", id: LEGITEXT000006063390}
+    - {reference: "décret n° 2007-597 du 24 avril 2007, articles 1er à 3 (forfait, ajustement,\
+        \ valeur de service)", id: LEGIARTI000046813870}
+    manque: >-
+      Les points d'avant 2008, que l'index ne chiffre pas : la fiche présume la règle
+      de 2008, 262 points par an sans ajustement, et le forfait de 2008. Les valeurs
+      de service propres aux points acquis avant 2006, par tranche d'années, de 0,35
+      à 1,40 € en 2008, plus hautes que celle des points d'après, qui sert à tous. La
+      revalorisation du forfait sur le coefficient de L. 161-25 majoré de deux points
+      depuis 2023, et celle de la valeur de service minorée d'un demi-point depuis 2022
+      : les prix en tiennent lieu. Le coefficient d'anticipation, présumé. L'arrondi
+      au dixième supérieur des points d'ajustement, et l'assiette de l'avant-dernière
+      année. Le partage avec l'assurance maladie, lu pour 2025, est présumé à toutes
+      les années.
 
   - code: cnbf
     nom: Caisse nationale des barreaux français, régime de base
