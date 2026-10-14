@@ -509,6 +509,26 @@ def test_aucun_calcul_garde_ne_lit_ce_que_l_empreinte_ignore():
     hors = [c for cle in ("lus", "listes", "modules") for c in releve[cle]
             if lectures_du_modele.hors_du_modele(c)]
     assert not hors, f"lu par un calcul gardé, et pourtant hors de l'empreinte : {hors}"
+    assert len(releve["champs"]) > 50
+    documentaires = lectures_du_modele.champs_documentaires_lus(releve)
+    assert not documentaires, (
+        f"champs documentaires lus par un calcul gardé, que l'empreinte ignore : {documentaires}")
+
+
+def test_l_empreinte_d_une_fiche_ignore_sa_seule_documentation():
+    """Chaque fiche de règles, privée par le texte de ses champs documentaires
+    (``memoire._sans_documentation``), se lit comme la fiche privée de ces
+    champs : l'empreinte voit tout ce que les calculs en lisent, et rien
+    d'autre."""
+    import yaml
+
+    fiches = sorted((memoire.RACINE_PROJET / "data" / "reference" / "regles").rglob("*.yaml"))
+    assert len(fiches) > 100
+    for fiche in fiches:
+        contenu = fiche.read_bytes()
+        attendu = {cle: valeur for cle, valeur in yaml.safe_load(contenu).items()
+                   if cle not in memoire.CHAMPS_DOCUMENTAIRES}
+        assert yaml.safe_load(memoire._sans_documentation(contenu)) == attendu, fiche.name
 
 
 def test_les_worktrees_partagent_la_memoire_du_depot_principal(tmp_path):
@@ -555,6 +575,17 @@ def test_l_empreinte_suit_les_sources_que_git_voit(monkeypatch, memoire_isolee, 
     assert memoire_isolee.empreinte() != premiere
     (depot / "src" / "modele.py").write_text("TAUX = 2\n", encoding="utf-8")
     assert memoire_isolee.empreinte() != premiere
+    fiche = depot / "data" / "reference" / "regles" / "f.yaml"
+    fiche.parent.mkdir(parents=True)
+    fiche.write_text("id: f\netat: approchee\nsources:\n  lu_le: 2026-10-01\n"
+                     "versions:\n- id: v\n", encoding="utf-8")
+    avec_fiche = memoire_isolee.empreinte()
+    fiche.write_text("id: f\netat: fidele\nsources:\n  lu_le: 2026-10-14\n"
+                     "versions:\n- id: v\n", encoding="utf-8")
+    assert memoire_isolee.empreinte() == avec_fiche
+    fiche.write_text("id: f\netat: fidele\nsources:\n  lu_le: 2026-10-14\n"
+                     "versions:\n- id: w\n", encoding="utf-8")
+    assert memoire_isolee.empreinte() != avec_fiche
     ailleurs = tmp_path / "ailleurs"
     ailleurs.mkdir()
     monkeypatch.setattr(memoire_isolee, "RACINE_PROJET", ailleurs)

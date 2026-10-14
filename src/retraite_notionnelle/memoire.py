@@ -20,7 +20,8 @@ CE QUI SE GARDE, ET SOUS QUOI
 Un calcul se garde sous sa CLÉ — ses paramètres, ses options, ce qu'il ne
 tient pas des sources — et sous l'EMPREINTE du modèle : tout ce que git voit
 sous ``src/`` et ``data/``, octet par octet, hors de ce qu'aucun calcul ne lit
-(:data:`HORS_DU_MODELE`), et la version de Python. Qu'un de ces fichiers
+(:data:`HORS_DU_MODELE`), des fiches de règles sans leur documentation
+(:data:`CHAMPS_DOCUMENTAIRES`), et la version de Python. Qu'un de ces fichiers
 bouge, et tout se refait ; un calcul pendant lequel l'un d'eux a bougé ne se
 garde pas. Un calcul écrit hors du modèle, dans un script ou un test, porte en
 plus dans sa clé son propre code et celui qu'il importe à côté de lui
@@ -176,6 +177,28 @@ def du_modele(chemin: str) -> bool:
             and chemin.rsplit("/", 1)[-1] != "CLAUDE.md")
 
 
+#: Les champs d'une fiche de règles qui la documentent et qu'aucun calcul gardé
+#: ne lit : ce qu'elle dit, son état, ses lectures et ses textes à suivre, ses
+#: écarts, ses exemples, son histoire. Une fiche ne changeait souvent que là —
+#: la date de lecture, l'état — et refaisait toute la mémoire ; l'empreinte les
+#: ignore (:func:`_sans_documentation`), et ``scripts/lectures_du_modele.py``,
+#: que ``tests/test_outillage.py`` relance, note les champs que les calculs
+#: lisent de chaque fiche : un calcul qui en lirait un ferait échouer la suite
+#: (feuille de route, action 135).
+CHAMPS_DOCUMENTAIRES = (
+    "intitule", "etat", "effet", "sources", "approximations", "exemples",
+    "referents", "historique", "textes_a_rattacher", "textes_sans_effet",
+    "textes_a_relire",
+)
+_CHAMPS_DOCUMENTAIRES = frozenset(champ.encode() for champ in CHAMPS_DOCUMENTAIRES)
+
+
+def est_une_fiche(chemin: str) -> bool:
+    """Une fiche de la carte des règles, dont l'empreinte ne lit pas la
+    documentation (:data:`CHAMPS_DOCUMENTAIRES`)."""
+    return chemin.startswith("data/reference/regles/") and chemin.endswith(".yaml")
+
+
 def _sources() -> list[bytes] | None:
     try:
         listes = subprocess.run(
@@ -185,6 +208,22 @@ def _sources() -> list[bytes] | None:
         return None
     return sorted(chemin for chemin in set(filter(None, listes.split(b"\0")))
                   if du_modele(os.fsdecode(chemin)))
+
+
+def _sans_documentation(contenu: bytes) -> bytes:
+    """Une fiche de règles sans ses champs documentaires, ligne à ligne : une
+    clé de premier niveau commence en première colonne, et son bloc court
+    jusqu'à la clé suivante (une liste peut s'y écrire en première colonne).
+    ``tests/test_outillage.py`` vérifie, fiche par fiche, que le texte qui
+    reste se lit comme la fiche privée de ces champs."""
+    gardees, sauter = [], False
+    for ligne in contenu.splitlines(keepends=True):
+        if ligne[:1] not in b" \t\r\n#-":
+            cle, deux_points, _ = ligne.partition(b":")
+            sauter = bool(deux_points) and cle in _CHAMPS_DOCUMENTAIRES
+        if not sauter:
+            gardees.append(ligne)
+    return b"".join(gardees)
 
 
 def empreinte() -> str | None:
@@ -201,6 +240,8 @@ def empreinte() -> str | None:
         except OSError:          # au registre de git, mais effacé du répertoire
             somme.update(b"-")
             continue
+        if est_une_fiche(os.fsdecode(chemin)):
+            contenu = _sans_documentation(contenu)
         somme.update(b"+" + len(contenu).to_bytes(8, "little") + contenu)
     return somme.hexdigest()[:24]
 

@@ -458,6 +458,11 @@ _LECTEUR = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
 # simples — retombe sur `deepcopy`.
 _YAML_EN_CACHE: dict[tuple[str, int, int], bytes | dict] = {}
 
+#: Qui veut voir ce que le modèle lit de chaque YAML : ``scripts/lectures_du_modele.py``
+#: y substitue au dictionnaire rendu un dictionnaire qui note les champs lus
+#: (feuille de route, action 135). ``None`` hors de ce relevé.
+SUIVI: Callable[[Path, dict], dict] | None = None
+
 
 def _copie(garde: bytes | dict) -> dict:
     if isinstance(garde, bytes):
@@ -487,12 +492,13 @@ def charger_yaml(chemin: Path) -> dict:
     except OSError:  # pragma: no cover - le fichier manquant lèvera plus bas
         cle = None
     if cle is not None and cle in _YAML_EN_CACHE:
-        return _copie(_YAML_EN_CACHE[cle])
-    with chemin.open(encoding="utf-8") as flux:
-        contenu = yaml.load(flux, Loader=_LECTEUR) or {}
-    if cle is not None:
-        _YAML_EN_CACHE[cle] = _a_garder(contenu)
-    return contenu
+        contenu = _copie(_YAML_EN_CACHE[cle])
+    else:
+        with chemin.open(encoding="utf-8") as flux:
+            contenu = yaml.load(flux, Loader=_LECTEUR) or {}
+        if cle is not None:
+            _YAML_EN_CACHE[cle] = _a_garder(contenu)
+    return contenu if SUIVI is None else SUIVI(chemin, contenu)
 
 
 def compter_institutions(racine: Path) -> int:
