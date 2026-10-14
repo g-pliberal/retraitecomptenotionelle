@@ -2111,7 +2111,9 @@ def _(m: Modele):
     # 147 : la masse du modèle part d'une dépense plus étroite. C'est la
     # croissance que la page compare, et son rapport est la dérive de la
     # seconde lecture ; depuis l'étape 11, elle ne s'écarte plus de celle du
-    # COR que de trois points, et passe sous elle entre les deux.
+    # COR que de trois points, et passe sous elle entre les deux. L'étape 19,
+    # le système actuel servant les revalorisations de son droit, la porte à
+    # 3,3 points à l'horizon, et ne la laisse sous elle qu'en 2027.
     avenir = m.cout.avenir
     debut, fin = avenir.premiere_annee_projetee, avenir.derniere_annee
     comptes = m.contexte.comptes()
@@ -2121,7 +2123,7 @@ def _(m: Modele):
 
     ecart = (part(avenir.annee(fin)) / part(avenir.annee(debut))
              / (comptes.depense(fin) / comptes.depense(debut)))
-    assert abs(ecart - 1.0) < 0.03
+    assert abs(ecart - 1.0) < 0.04
     assert _proche(ecart, avenir.annee(fin).derive)
     assert min(ligne.derive for ligne in avenir.projetees()) < 1.0
     tetes, pension = avenir.decomposition(avenir.premiere_annee_projetee)[avenir.derniere_annee]

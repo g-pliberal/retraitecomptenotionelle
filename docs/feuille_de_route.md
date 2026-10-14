@@ -5994,16 +5994,16 @@ changement dans les moteurs. »
 
 ### 147. La trajectoire du système actuel : refaire le passé, puis rejoindre le COR — `en cours`
 
-**Reprise, au 14 octobre 2026.** Faites : les étapes 1 à 18 — le passé, le COR
+**Reprise, au 14 octobre 2026.** Faites : les étapes 1 à 19 — le passé, le COR
 et ses conventions (1 à 12) ; les régimes qui se ferment (13) ; les carrières
 incomplètes (14) ; l'ancrage du salaire moyen (15, 16) ; le privé au milieu de
-la période (17) ; le passé décomposé et déclaré (18) : en 2009, −6,1 % de
-têtes (les carrières longues, à la grille, action 152), −11,0 % de pension par
-tête. Reste, une session neuve par point : servir au scénario 1 ses
-revalorisations réelles (trois points du passé, mais l'horizon remonte :
-note 18, « Ce qui reste ») ; la FPE et les régimes spéciaux à l'horizon.
-Python 3.11. Au propriétaire : le taux du simulateur individuel (138.13).
-Lire les notes 13 à 16, et celles des étapes 17 et 18.
+la période (17) ; le passé décomposé (18) ; les revalorisations que le droit a
+servies, au scénario 1 (19) : 2009 à −13,9 %, mais la dérive de 2070 à 1,033
+et la pension relative à +4,8 % du COR. Reste, une session neuve par point :
+l'horizon, la pension par tête trop rapide (FPE +8,0 %, Agirc-Arrco +22,2 %) ;
+au passé, les carrières longues (action 152) et les générations anciennes.
+L'action ne se clôt pas. Python 3.11. Au propriétaire : clore sur un écart
+déclaré, pour 138.5 et 138.7 ? Lire les notes 13 à 16, 18 et 19.
 
 **Demande**, le 4 octobre 2026 : « Quelle est la plus grosse erreur qu'il
 faudrait corriger ? » ; puis, le 5, des trois étapes proposées : « Fait

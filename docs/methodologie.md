@@ -432,7 +432,7 @@ prend un diviseur plus élevé, donc un capital d'ouverture plus gros, et le
 cadeau va tout entier aux générations de transition. Le défaut suit l'âge légal
 de départ de la proposition, <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--/--> ans : moins que les <!--chiffre:maximum(data/reference/legislation/ages_reference.csv:age_reference)-->67<!--/--> ans du
 cliquet, et les deux scénarios prospectifs dépensent donc davantage qu'avec
-lui. Leurs soldes moyens sont, sous le défaut, de <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,65<!--/--> et <!--chiffre:mesure(solde_moyen?scenario=5)-->+0,01<!--/--> % du
+lui. Leurs soldes moyens sont, sous le défaut, de <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,65<!--/--> et <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,00<!--/--> % du
 PIB, contre <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système actuel.
 
 ### Variantes
@@ -2000,7 +2000,7 @@ pension moyenne de la grille ne reculait pas comme la sienne ; le lecteur qui
 refaisait le calcul ne retrouvait pas le chiffre officiel. Elle est gardée pour
 ce qu'elle contrôle — la reconstitution du passé et la décomposition de
 l'écart (`docs/limites.md`, § 5 ter) — et n'est plus affichée comme une
-projection : elle donne aujourd'hui <!--chiffre:mesure(trajectoire_propre?annee=2070)-->14,9<!--/--> % du PIB en 2070, quand le COR
+projection : elle donne aujourd'hui <!--chiffre:mesure(trajectoire_propre?annee=2070)-->15,5<!--/--> % du PIB en 2070, quand le COR
 en projette <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/-->.
 
 Deux précisions d'unité, parce qu'elles sont la source d'erreur la plus facile.

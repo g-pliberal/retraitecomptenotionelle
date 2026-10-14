@@ -681,8 +681,10 @@ RECONSTITUTION_DEPUIS = 2000
 #: abaissent le passé, que d'autres défauts tenaient déjà trop bas ; -16,6 %
 #: le 11 octobre, l'action 136 retirant de la grille de la page le minimum
 #: vieillesse des premiers non-salariés, que la dépense observée ne compte pas
-#: — un défaut qui en compensait un autre (voir le test).
-RECONSTITUTION_CLIQUET = 0.17
+#: — un défaut qui en compensait un autre (voir le test) ; -13,9 % le
+#: 14 octobre, l'étape 19 servant au scénario 1 les revalorisations que son
+#: droit a servies, et non les prix.
+RECONSTITUTION_CLIQUET = 0.14
 #: Ce que vise le cliquet : quelques pour cent, chaque année.
 RECONSTITUTION_CIBLE = 0.05
 
@@ -768,7 +770,7 @@ def test_la_projection_refait_le_passe(avenir, depenses):
 #: doivent que descendre ; une session qui les fait passer sous eux d'un point
 #: les abaisse.
 RECONSTITUTION_TETES = 0.065
-RECONSTITUTION_PENSION = 0.12
+RECONSTITUTION_PENSION = 0.10
 RECONSTITUTION_REVERSION = 0.02
 
 
@@ -790,10 +792,10 @@ def test_la_reconstitution_se_decompose_en_tetes_pension_et_reversion(avenir, de
     59,88 ans de 2004 à 2008 (DREES). La pension par tête, elle, croît plus
     vite dans le modèle que dans les comptes, de dix points de 2004 à 2024 :
     le défaut que la décomposition du COR situe déjà dans l'avenir. Les
-    revalorisations servies en font une part, que le scénario 1 sert sur les
-    prix : mesuré hors du dépôt, leur servir les coefficients de la Cnav et la
-    valeur de service de l'Arrco puis de l'Agirc-Arrco ramène 2009 de -16,4 à
-    -13,5 %, mais porte la dérive de 2070 de 1,008 à 1,033 (note de l'étape).
+    revalorisations servies en faisaient une part, que le scénario 1 servait
+    sur les prix : depuis l'étape 19, il sert celles de son droit, et 2009
+    passe à -13,9 % (-6,1 % de têtes, -8,3 % de pension par tête), mais la
+    dérive de 2070 de 1,008 à 1,033.
     """
     effectifs = EffectifsRetraites(RACINE_DONNEES)
     decompose = avenir.reconstitution_decomposee(
@@ -810,6 +812,35 @@ def test_la_reconstitution_se_decompose_en_tetes_pension_et_reversion(avenir, de
         ecart = decompose[pire][rang] - 1.0
         assert abs(ecart) <= cliquet, (
             f"{pire} : {nom} {ecart:+.1%}, le cliquet en admet {cliquet:.1%}")
+
+
+def test_le_scenario_1_sert_les_revalorisations_de_son_droit(avenir):
+    """Action 147, étape 19 : la masse du scénario 1 sert, jusqu'au dernier
+    barème, ce que le droit a servi (:meth:`RevalorisationServie.coefficient_historique`),
+    et non les prix. Une pension du régime général liquidée en 2000 vaut, en
+    2024, 4,7 % de moins que la même revalorisée sur les prix — le gel de
+    2014, les 0,3 % de 2019 ; celle de la fonction publique, dont le point
+    d'indice a décroché des prix avant 2004, 7,6 % de moins. Le RAFP, hors
+    répartition, n'est pas dans la masse, et sa part ne se revalorise pas. Au-delà
+    du dernier barème, les prix : un départ à venir garde un coefficient de un.
+    Et les réformes prospectives, qui servent à qui est parti avant elles la
+    pension du scénario 1, la servent sous son droit jusqu'à la bascule : leur
+    stock est toute la masse du scénario 1 sur les années publiées (après,
+    les cohortes de la grille qui partent après la bascule en sortent)."""
+    simulateur = Simulateur(Parametres()).pour_la_projection()
+    revalorisation = RevalorisationServie(simulateur, 2000, 2070)
+    general = revalorisation.coefficient_historique("regime_general", 2000, 2024)
+    assert 0.94 < general < 0.96, general
+    publique = revalorisation.coefficient_historique("fonction_publique_etat", 2000, 2024)
+    assert 0.91 < publique < 0.93, publique
+    assert revalorisation.coefficient_historique("rafp", 2010, 2024) == 1.0
+    assert revalorisation.coefficient_historique("regime_general", 2030, 2050) == 1.0
+    # Figé au dernier barème : la projection lit les prix au-delà.
+    assert revalorisation.coefficient_historique("regime_general", 2000, 2040) == (
+        revalorisation.coefficient_historique("regime_general", 2000, 2060))
+    for ligne in avenir.annees:
+        if not ligne.projete:
+            assert ligne.part_stock == pytest.approx(1.0, rel=1e-12), ligne.annee
 
 
 #: Ce que le contrôle par la décomposition du COR tolère sur les EFFECTIFS de
@@ -834,8 +865,13 @@ DECOMPOSITION_TETES = 0.03
 #: autre, l'écart passant de -2,3 à -0,4 % en 2050. L'étape 14 le ramène à
 #: 2,4 % (le modèle -15,2 %), à la cible : la complétude de chaque génération
 #: porte les carrières incomplètes des natifs, plus courtes à chaque
-#: génération après 1965. Il ne doit que descendre.
-DECOMPOSITION_PENSION_CLIQUET = 0.03
+#: génération après 1965. L'étape 19 le relève à 4,9 % (le modèle -13,4 %) :
+#: le scénario 1 sert les revalorisations de son droit, le stock de 2025,
+#: érodé par le gel de 2014 et les revalorisations sous les prix, pèse moins
+#: dans l'ancrage, et la masse remonte quand il s'éteint — la correction d'un
+#: défaut qui en masquait un autre, celui de la pension par tête qui croît trop
+#: vite (étape 18). Il ne doit que descendre.
+DECOMPOSITION_PENSION_CLIQUET = 0.05
 DECOMPOSITION_PENSION_CIBLE = 0.03
 
 
@@ -996,14 +1032,20 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: 7 % de plus. Le cas type porte toute la caisse en catégorie active, parti
 #: à soixante-deux ans, quand le COR fait monter l'âge moyen de départ à la
 #: CNRACL de 61,5 à 64,3 ans avec ses sédentaires (Canopée, au registre,
-#: chantier 138.3) : encore un défaut qui en masquait un autre.
+#: chantier 138.3) : encore un défaut qui en masquait un autre. L'étape 19
+#: de l'action 147, le scénario 1 servant les revalorisations de son droit,
+#: relève les pensions relatives à l'horizon — FPE +8,0 %, CNRACL +3,4 %,
+#: Agirc-Arrco +22,2 % — et les dépenses — FPE +23,1 %, CNRACL +13,7 %,
+#: régimes spéciaux -33,1 % — : le
+#: stock de 2025, revalorisé au point d'indice, par décret ou à une valeur de
+#: service gelée, sous les prix, pèse moins dans l'ancrage, et s'éteint.
 DECOMPOSITION_GROUPES_CLIQUETS = {
-    ("pension_relative", "fpe"): 0.06,
-    ("pension_relative", "cnracl"): 0.01,
-    ("pension_relative", "agirc_arrco"): 0.18,
-    ("depense_part_pib", "fpe"): 0.20,
-    ("depense_part_pib", "cnracl"): 0.11,
-    ("depense_part_pib", "regimes_speciaux"): 0.35,
+    ("pension_relative", "fpe"): 0.08,
+    ("pension_relative", "cnracl"): 0.04,
+    ("pension_relative", "agirc_arrco"): 0.23,
+    ("depense_part_pib", "fpe"): 0.24,
+    ("depense_part_pib", "cnracl"): 0.14,
+    ("depense_part_pib", "regimes_speciaux"): 0.34,
 }
 
 
@@ -1160,7 +1202,7 @@ def test_les_arrivees_tardives_pesent_les_masses_et_non_les_tetes(population):
     retraité, à la pension plus courte (``Pensionne.completude``)."""
     from retraite_notionnelle.cout import (
         CLES_CAS_TYPES, RESSOURCES_GARANTIE, TETES_TOUTES, Pensionne, VoletLiberal,
-        _masses, _masses_regimes)
+        _masses, _masses_regimes, coefficient_servi)
 
     simulateur = Simulateur(Parametres()).pour_la_projection()
     revalorisation = RevalorisationServie(simulateur, 2000, 2030)
@@ -1179,11 +1221,17 @@ def test_les_arrivees_tardives_pesent_les_masses_et_non_les_tetes(population):
                                         revalorisation)
     assert tetes_courtes[TETES_TOUTES] == tetes[TETES_TOUTES] == pytest.approx(
         sum(effectifs), rel=1e-12)
-    # Au système actuel, indexé sur les prix, la moyenne des complétudes que
-    # pèsent les effectifs ; aux autres, dont la revalorisation dépend de
+    # Au système actuel, la moyenne des complétudes que pèsent les effectifs
+    # et ce que le droit a servi à chaque cohorte depuis son départ (action
+    # 147, étape 19) ; aux autres, dont la revalorisation dépend aussi de
     # l'année de départ de chaque cohorte, une moyenne entre la plus courte et
     # la plus longue.
-    assert courtes["actuel"] == pytest.approx(masses["actuel"] * attendu, rel=1e-12)
+    servis = [coefficient_servi({"regime_general": 1.0}, revalorisation,
+                                2010 + decalage, 2020) for decalage in range(-2, 3)]
+    assert courtes["actuel"] == pytest.approx(
+        masses["actuel"] * sum(e * k * c for e, k, c in zip(effectifs, completudes, servis))
+        / sum(e * c for e, c in zip(effectifs, servis)), rel=1e-12)
+    assert courtes["actuel"] != pytest.approx(masses["actuel"] * attendu, rel=1e-6)
     for cle in ("notionnel_retroactif", "notionnel_liberal", RESSOURCES_GARANTIE):
         assert 0.90 < courtes[cle] / masses[cle] < 0.98, cle
     regimes, tetes_regimes = _masses_regimes([entiere], population, 2020, {"x": 1.0},
@@ -1192,7 +1240,7 @@ def test_les_arrivees_tardives_pesent_les_masses_et_non_les_tetes(population):
                                            revalorisation)
     assert tetes_courts == tetes_regimes
     assert courts["regime_general"] == pytest.approx(
-        regimes["regime_general"] * attendu, rel=1e-12)
+        regimes["regime_general"] * courtes["actuel"] / masses["actuel"], rel=1e-12)
     # Sans complétudes, la pension entière : la grille du simulateur individuel.
     assert entiere.completude(-2) == entiere.completude(2) == 1.0
 
@@ -1415,16 +1463,20 @@ def test_la_derive_mesure_l_ecart_de_la_masse_du_modele_au_cor(avenir, comptes):
     # exploitants agricoles, la SNCF et les IEG rendant au privé, mieux payé,
     # la part que le COR leur retire — ce que les carrières incomplètes des
     # natifs, plus courtes à chaque génération, doivent reprendre — et
-    # reprennent à l'étape 14 : 0,999. Un écart à un de plus d'un point dirait
-    # qu'un défaut est revenu.
-    assert 0.99 < horizon.derive < 1.01, horizon.derive
+    # reprennent à l'étape 14 : 0,999, puis 1,008, et 1,033 à l'étape 19, le
+    # scénario 1 servant les revalorisations de son droit : son stock de 2025,
+    # érodé, pèse moins dans l'ancrage, et la masse du modèle remonte sur
+    # celle du COR quand il s'éteint. Un écart à un de plus de quatre points
+    # dirait qu'un défaut est revenu.
+    assert 0.99 < horizon.derive < 1.04, horizon.derive
     # Les arrivées tardives et les carrières incomplètes des natifs pèsent dès
     # 2035 : la dérive passe sous un, au plus bas à 0,975 en 2054 (0,977 avant
     # l'étape 13, quand les régimes qui se ferment privaient le privé de leur
-    # part, et 0,985 en 2034 avant l'étape 14). Une dérive qui s'en écarterait
-    # de plus de 3 % dirait un défaut, non un écart d'hypothèses.
+    # part, et 0,985 en 2034 avant l'étape 14). Depuis l'étape 19, elle reste
+    # au-dessus de 0,99 et monte à 1,033 à l'horizon. Une dérive qui s'en
+    # écarterait de plus de 4 % dirait un défaut, non un écart d'hypothèses.
     for ligne in avenir.projetees():
-        assert 0.97 < ligne.derive < 1.03, (ligne.annee, ligne.derive)
+        assert 0.97 < ligne.derive < 1.04, (ligne.annee, ligne.derive)
 
 
 def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):
@@ -1450,10 +1502,13 @@ def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):
     # depuis l'étape 14, qui la tient sous un de 2031 à l'horizon, de deux
     # depuis l'étape 5 de l'action 159, qui recale les fonctionnaires civils
     # sur le jaune pensions et rapproche la masse du modèle de la dépense du
-    # COR. Les deux lectures encadrent encore la vérité.
+    # COR. Depuis l'étape 19 de l'action 147, le scénario 1 servant les
+    # revalorisations de son droit, la dérive repasse au-dessus d'un après
+    # 2027, et la seconde lecture ALOURDIT la dette de sept points. Les deux
+    # lectures encadrent encore la vérité.
     ecart = cout.dette_derive.horizon("notionnel_liberal") - cout.dette.horizon(
         "notionnel_liberal")
-    assert -0.035 < ecart < -0.005, ecart
+    assert 0.05 < ecart < 0.09, ecart
 
 
 def test_le_pib_projete_croit_moins_vite_que_l_hypothese_nominale(avenir):

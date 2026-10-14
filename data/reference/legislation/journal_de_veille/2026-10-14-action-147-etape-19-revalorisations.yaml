@@ -1,0 +1,24 @@
+date: "2026-10-14"
+session: "action 147, étape 19 : la masse du scénario 1 de la page Coût sert les revalorisations que son droit a servies, et non les prix"
+consulte: >-
+  python scripts/veille_droit.py, sans rien qui touche aux revalorisations. Aucun
+  texte neuf : la session lit les barèmes que le dépôt porte déjà, et que
+  revalorisation.py applique pension par pension au simulateur —
+  revalorisation_pensions.csv (coefficients de la Cnav au titre de
+  L. 161-23-1 depuis 1949, les cinq tranches de 2020 de la loi n° 2019-1446,
+  art. 81), revalorisation_pensions_fonction_publique.csv (décrets de 2003 à
+  2008), point_indice_fonction_publique.csv (la péréquation jusqu'en 2003), les
+  valeurs de service des régimes en points et leurs changements d'échelle.
+trouve: >-
+  Aucun texte de droit. Les masses de la page Coût servaient au scénario 1 des
+  pensions indexées sur les prix jusqu'au dernier barème, quand le droit les a
+  revalorisées moins : une pension du régime général liquidée en 2000 vaut, en
+  2024, 4,7 % de moins que la même sur les prix, une pension de l'État 7,6 %.
+  Elles servent désormais, par régime et à la moyenne de l'année, ce que le
+  droit a servi (RevalorisationServie.coefficient_historique), puis les prix et
+  la valeur de service convenue de l'Agirc-Arrco.
+reste: >-
+  Deux conventions, déclarées : la tranche de 2020 du milieu (0,8 %), faute du
+  montant de chaque retraité ; les majorations forfaitaires de 1972 à 1982, qui
+  ne visent que certaines pensions d'avant 1975, absentes. Les régimes spéciaux
+  suivent la Cnav avant 2009, comme au simulateur (fiabilité estimée).

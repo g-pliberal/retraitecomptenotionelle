@@ -1340,6 +1340,166 @@ class RevalorisationServie:
                         ("prix", 1)) * macro.coefficient_prix(annee, annee - 1)
                 serie[annee] = reelle
             self._points[regime] = serie
+        #: Ce que le droit a servi, jusqu'au dernier barème : voir
+        #: :meth:`coefficient_historique`. Construit à la demande.
+        self._moteur = actuel
+        self._revalorisations = simulateur.revalorisations
+        self._prix_reels: dict[int, float] = {}
+        self._nominaux: dict[object, tuple[dict[int, float], int | None]] = {}
+        self._regles: dict[tuple[str, int], object] = {}
+        self._historiques: dict[tuple[str, int, int], float] = {}
+
+    # -- ce que le droit a servi jusqu'au dernier barème ----------------------
+
+    #: La première revalorisation que la Cnav publie : avant, un coefficient
+    #: de un.
+    HISTOIRE_DEPUIS = 1949
+
+    #: Le montant total brut mensuel de décembre 2019 qui choisit la tranche
+    #: de 2020 (loi n° 2019-1446, art. 81) : celle du milieu, 0,8 %, entre le
+    #: 1 % des petites retraites et le 0,3 % des grandes. Une convention, que
+    #: les masses ne peuvent pas lever : elles ne connaissent pas le montant
+    #: de chaque retraité.
+    MENSUEL_2019 = 2004.0
+
+    def _prix(self, annee: int) -> float:
+        """Les prix de ``annee`` sur ceux de :attr:`HISTOIRE_DEPUIS`."""
+        if not self._prix_reels:
+            indice = 1.0
+            self._prix_reels[self.HISTOIRE_DEPUIS] = indice
+            for millesime in range(self.HISTOIRE_DEPUIS + 1, self.derniere_annee + 1):
+                indice /= self._macro.coefficient_prix(millesime, millesime - 1)
+                self._prix_reels[millesime] = indice
+        borne = min(max(annee, self.HISTOIRE_DEPUIS), self.derniere_annee)
+        return self._prix_reels[borne]
+
+    def _moyennes(self, au_jour, fin: int | None) -> dict[int, float]:
+        """La moyenne, mois par mois, de ``au_jour(date)`` sur chaque année de
+        :attr:`HISTOIRE_DEPUIS` à ``fin`` : une masse annuelle sert douze
+        mensualités, et une revalorisation d'avril n'en touche que neuf. Une
+        année manque dès qu'un de ses mois n'a pas de valeur."""
+        moyennes: dict[int, float] = {}
+        if fin is None:
+            return moyennes
+        for annee in range(self.HISTOIRE_DEPUIS, min(fin, self.derniere_annee) + 1):
+            valeurs = [au_jour(date(annee, mois, 1)) for mois in range(1, 13)]
+            if all(valeur is not None and valeur > 0.0 for valeur in valeurs):
+                moyennes[annee] = somme_ordonnee(valeurs) / 12.0
+        return moyennes
+
+    def _nominal(self, regle) -> tuple[dict[int, float], int | None]:
+        """L'indice nominal moyen de chaque année sous ``regle``, et la
+        dernière année qu'un barème publié couvre."""
+        if regle in self._nominaux:
+            return self._nominaux[regle]
+        revalorisations = self._revalorisations
+        origine = date(self.HISTOIRE_DEPUIS - 1, 12, 31)
+        def generale(jour: date) -> float:
+            return revalorisations.generale(origine, jour, False, self.MENSUEL_2019)[0]
+        fin_generale = max(ligne.date_effet.year for ligne in revalorisations.generales)
+        if regle == REGLE_GENERALE:
+            resultat = (self._moyennes(generale, fin_generale), fin_generale)
+        elif regle == REGLE_FONCTION_PUBLIQUE:
+            # La péréquation, au point d'indice, jusqu'en 2003 ; les décrets
+            # de 2004 à 2008 ; la règle générale ensuite — l'ordre de
+            # :meth:`PensionServie._fonction_publique`, à l'année.
+            minimum = self._moteur.minimum_garanti
+            def publique(jour: date) -> float | None:
+                fin = min(jour.year, DERNIERE_ANNEE_PEREQUATION)
+                point = minimum.ratio_point_indice(DERNIERE_ANNEE_PEREQUATION, fin)
+                if point is None:
+                    return None
+                if jour < FIN_PEREQUATION:
+                    return point
+                decrets = produit(revalorisations.retenues(
+                    revalorisations.fonction_publique, FIN_PEREQUATION,
+                    min(jour, DEBUT_REGLE_GENERALE_PUBLIC), True, None))[0]
+                suite = (generale(jour) / generale(DEBUT_REGLE_GENERALE_PUBLIC)
+                         if jour >= DEBUT_REGLE_GENERALE_PUBLIC else 1.0)
+                return point * decrets * suite
+            resultat = (self._moyennes(publique, fin_generale), fin_generale)
+        else:
+            # Un régime en points : la valeur de service du jour, le long des
+            # fusions (:func:`~.droit.liquider.valeur_du_point`).
+            bareme = regle[1]
+            def point(jour: date) -> float | None:
+                valeur = liquider.valeur_du_point(self._moteur, bareme, jour)
+                return None if valeur is None else valeur[0]
+            publiee = _derniere_valeur_publiee(self._moteur, bareme)
+            resultat = (self._moyennes(point, publiee), publiee)
+        self._nominaux[regle] = resultat
+        return resultat
+
+    def _regle_historique(self, regime: str, annee_liquidation: int):
+        """La règle qui a revalorisé une pension de ``regime`` liquidée en
+        ``annee_liquidation`` : celle de :meth:`PensionServie.coefficient`,
+        lue sur la période du régime plutôt que sur la pension."""
+        cle = (regime, annee_liquidation)
+        if cle in self._regles:
+            return self._regles[cle]
+        regle = REGLE_GENERALE
+        fiche = self._catalogue[regime] if regime in self._catalogue else None
+        if fiche is not None:
+            periode = fiche.periode(min(annee_liquidation, _derniere_annee(fiche)))
+            if periode is not None and periode.type_calcul in ("points", "mixte"):
+                bareme = periode.points_de or regime
+                if _derniere_valeur_publiee(self._moteur, bareme) is not None:
+                    regle = (REGLE_POINT, bareme)
+            if regle == REGLE_GENERALE and regime in REGIMES_FONCTION_PUBLIQUE:
+                regle = REGLE_FONCTION_PUBLIQUE
+        self._regles[cle] = regle
+        return regle
+
+    def coefficient_historique(self, regime: str, annee_liquidation: int,
+                               annee: int) -> float:
+        """Ce que vaut en ``annee``, en euros constants, un euro de pension de
+        ``regime`` liquidé en ``annee_liquidation``, sous ce que le droit a
+        servi jusqu'au dernier barème publié, et un au-delà.
+
+        LE SCÉNARIO 1 N'A PAS SUIVI LES PRIX. Le régime général a gelé ses
+        pensions en 2014, les a revalorisées de 0,3 % en 2019 ; l'Agirc-Arrco
+        a laissé son point plusieurs années sans revalorisation : une pension
+        liquidée avant 2014 vaut, en 2024, 5 % de moins que la même revalorisée
+        sur les prix (action 147, étape 18). C'est le droit, que les masses de
+        la page Coût servaient jusqu'au 14 octobre 2026 comme des prix
+        constants. Trois règles, celles de :class:`PensionServie` : les
+        coefficients de la Cnav (L. 161-23-1), pour tout ce qui n'a pas de
+        texte à soi, les régimes spéciaux compris ; la péréquation puis les
+        décrets de la fonction publique ; la valeur de service des régimes en
+        points, changements d'échelle compris. Chacune à la moyenne de
+        l'année, déflatée des prix. Les majorations forfaitaires de 1972 à
+        1982, qui ne visent que certaines pensions, n'y sont pas.
+        """
+        cle = (regime, annee_liquidation, annee)
+        if cle in self._historiques:
+            return self._historiques[cle]
+        # Le RAFP, hors répartition, n'est pas dans la masse du scénario 1, et
+        # sa part ne s'y revalorise pas (``test_la_masse_se_decompose_regime_par_regime``).
+        if regime in self._catalogue and self._catalogue[regime].hors_repartition:
+            self._historiques[cle] = 1.0
+            return 1.0
+        regle = self._regle_historique(regime, annee_liquidation)
+        coefficient = self._historique(regle, annee_liquidation, annee)
+        if coefficient is None:
+            coefficient = self._historique(REGLE_GENERALE, annee_liquidation, annee)
+        self._historiques[cle] = coefficient
+        return coefficient
+
+    def _historique(self, regle, annee_liquidation: int, annee: int) -> float | None:
+        moyennes, derniere = self._nominal(regle)
+        if derniere is None:
+            return None
+        depart = max(annee_liquidation, self.HISTOIRE_DEPUIS)
+        arrivee = min(annee, derniere, self.derniere_annee)
+        if arrivee <= depart:
+            return 1.0
+        if depart not in moyennes or arrivee not in moyennes:
+            return None
+        nominal = moyennes[arrivee] / moyennes[depart]
+        if regle not in (REGLE_GENERALE, REGLE_FONCTION_PUBLIQUE):
+            nominal *= self._moteur.conversions_points.echelle(
+                regle[1], depart, arrivee)[0]
+        return nominal * self._prix(depart) / self._prix(arrivee)
 
     def regime_convenu(self, regime: str) -> str | None:
         """Le régime qui sert, au bout de ses fusions, les points de

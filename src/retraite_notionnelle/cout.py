@@ -408,8 +408,9 @@ class Pensionne:
     #: dimension. Ce que prélève la proposition est dans les volets.
     cotisations: dict[str, dict[int, float]] = field(default_factory=dict)
     #: La part de sa pension du scénario 1 que sert chaque régime, à la
-    #: liquidation : celle des régimes en points dont le COR projette la
-    #: valeur de service ne suit pas les prix (:func:`coefficient_actuel`).
+    #: liquidation : chacun l'a revalorisée sous son texte, et celle des
+    #: régimes en points dont le COR projette la valeur de service ne suit pas
+    #: les prix (:func:`coefficient_servi`).
     parts_regimes: dict[str, float] = field(default_factory=dict)
     #: Ce que touche chacune de ses cinq cohortes, en part de la pension
     #: de la carrière de la grille, partie au taux plein, du
@@ -2204,6 +2205,45 @@ def coefficient_actuel(parts: dict[str, float], revalorisation: RevalorisationSe
     return coefficient
 
 
+def coefficient_servi(parts: dict[str, float], revalorisation: RevalorisationServie,
+                      annee_liquidation: int, annee: int) -> float:
+    """Ce que vaut en ``annee``, en euros constants, un euro de pension du
+    scénario 1 liquidé en ``annee_liquidation``, ``parts`` étant
+    :attr:`Pensionne.parts_regimes` : ce que le droit a servi à chaque régime
+    jusqu'à son dernier barème
+    (:meth:`RevalorisationServie.coefficient_historique`), puis la convention
+    de :func:`coefficient_actuel`. Les masses et l'engagement le lisent ; le
+    cycle de vie, qui mène le passé pension par pension, garde
+    :func:`coefficient_actuel` (action 147, étape 19)."""
+    coefficient = 1.0
+    if annee <= annee_liquidation:
+        return coefficient
+    for regime, part in parts.items():
+        convenu = revalorisation.regime_convenu(regime)
+        projete = (1.0 if convenu is None else
+                   revalorisation.coefficient_points(convenu, annee_liquidation, annee))
+        coefficient += part * (
+            revalorisation.coefficient_historique(regime, annee_liquidation, annee)
+            * projete - 1.0)
+    return coefficient
+
+
+def coefficient_historique(parts: dict[str, float],
+                           revalorisation: RevalorisationServie,
+                           annee_liquidation: int, annee: int) -> float:
+    """La part historique de :func:`coefficient_servi`, sans la convention :
+    ce qu'une réforme PROSPECTIVE sert, jusqu'à la bascule, à qui est parti
+    avant elle — la pension du scénario 1, sous son droit."""
+    coefficient = 1.0
+    if annee <= annee_liquidation:
+        return coefficient
+    for regime, part in parts.items():
+        coefficient += part * (
+            revalorisation.coefficient_historique(regime, annee_liquidation, annee)
+            - 1.0)
+    return coefficient
+
+
 def parts_convenues(pensionne: Pensionne,
                     revalorisation: RevalorisationServie) -> dict[str, float]:
     """Les parts de :attr:`Pensionne.parts_regimes` que sert, au bout de ses
@@ -2441,10 +2481,12 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
     —, et ``poids_revalorise_prospectif`` fait de même en ne comptant que ce
     qui suit la bascule, parce que les scénarios 3 et 5 n'existent pas avant
     elle. La garantie vieillesse garde le poids en têtes, parce que le droit
-    l'indexe sur les prix et que les masses sont déjà en euros constants ; le
-    scénario 1 aussi, sauf la part de sa pension que sert l'Agirc-Arrco, dont
-    le COR projette la valeur de service (``poids_actuel``,
-    :func:`coefficient_actuel`).
+    l'indexe sur les prix et que les masses sont déjà en euros constants. Le
+    scénario 1 sert ce que son droit a servi jusqu'au dernier barème, puis les
+    prix, sauf la part de sa pension que sert l'Agirc-Arrco, dont le COR
+    projette la valeur de service (``poids_actuel``, :func:`coefficient_servi`) ;
+    les réformes prospectives, la même chose à qui est parti avant elles,
+    jusqu'à la bascule (:func:`coefficient_historique`).
 
     Les poids en euros portent enfin ce que chaque cohorte touche de la
     pension d'une carrière complète (:meth:`Pensionne.completude`, action 147,
@@ -2471,7 +2513,6 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
         poids_actuel = 0.0
         poids_revalorise = 0.0
         poids_revalorise_prospectif = 0.0
-        convenues = parts_convenues(pensionne, revalorisation)
         # La proposition se somme À PART, cohorte par cohorte : chacune a son
         # volet (:meth:`Pensionne.volet`), sa date de départ — que l'âge légal
         # peut reporter — et sa pension. Ses pensions ne sont pas servies dans
@@ -2491,8 +2532,8 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             if annee >= liquidation:
                 poids += effectif
                 poids_masse += pese
-                poids_actuel += pese * coefficient_actuel(
-                    convenues, revalorisation, liquidation, annee)
+                poids_actuel += pese * coefficient_servi(
+                    pensionne.parts_regimes, revalorisation, liquidation, annee)
                 # Le poids revalorisé porte la revalorisation des pensions
                 # SERVIES, et il faut qu'il soit à part : le coefficient
                 # dépend de l'année de liquidation, qui n'est pas la même pour
@@ -2503,18 +2544,28 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
                 poids_revalorise += pese * revalorisation.coefficient_stock(
                     liquidation, annee, prospectif=False
                 )
+                # Une réforme prospective sert à qui est parti avant elle la
+                # pension du scénario 1, sous son droit jusqu'à la bascule.
                 poids_revalorise_prospectif += pese * revalorisation.coefficient_stock(
                     liquidation, annee, prospectif=True
-                )
+                ) * coefficient_historique(
+                    pensionne.parts_regimes, revalorisation, liquidation,
+                    min(annee, revalorisation.annee_bascule))
             volet = pensionne.volet(decalage)
             depart = volet.annee_liquidation + decalage
             if annee < depart:
                 continue
-            # L'ordre des produits est celui du portage, au bit près.
+            # L'ordre des produits est celui du portage, au bit près. Rangé
+            # parmi les réformes prospectives, il sert à qui est parti avant
+            # la bascule le scénario 1, sous son droit jusqu'à elle.
             masse_liberale += pese * (
                 1.0 if regle_liberale == REGLE_PRIX
                 else revalorisation.coefficient_stock(
                     depart, annee, prospectif=regle_liberale == REGLE_PROSPECTIVE)
+                * (1.0 if regle_liberale != REGLE_PROSPECTIVE
+                   else coefficient_historique(
+                       pensionne.parts_regimes, revalorisation, depart,
+                       min(annee, revalorisation.annee_bascule)))
             ) * volet.pension
             # La garantie n'entre qu'à 65 ans, même pour qui est parti plus
             # tôt : avant, on ne touche pas le minimum vieillesse. Ce qu'elle
@@ -2909,7 +2960,7 @@ def _masses_regimes(pensionnes: list[Pensionne], population: Population, annee: 
 
     Le régime est pris au bout de ses fusions, comme le COR le compte ; la
     masse de chacun est sa part de la pension (:attr:`Pensionne.parts_regimes`),
-    revalorisée comme la masse la revalorise (:func:`coefficient_actuel`) : leur
+    revalorisée comme la masse la revalorise (:func:`coefficient_servi`) : leur
     somme est la masse ``actuel`` de :func:`_masses`. Une tête compte dans
     chacun des régimes qui la servent.
     """
@@ -2922,7 +2973,7 @@ def _masses_regimes(pensionnes: list[Pensionne], population: Population, annee: 
         regroupees: dict[str, list[tuple[str, float]]] = {}
         for regime, part_regime in pensionne.parts_regimes.items():
             regroupees.setdefault(revalorisation.regime_de_tete(regime), []).append(
-                (revalorisation.regime_convenu(regime) or regime, part_regime))
+                (regime, part_regime))
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
             liquidation = pensionne.annee_liquidation + decalage
             if annee < liquidation:
@@ -2935,9 +2986,9 @@ def _masses_regimes(pensionnes: list[Pensionne], population: Population, annee: 
             for tete, parts in regroupees.items():
                 tetes[tete] = tetes.get(tete, 0.0) + effectif
                 masses[tete] = masses.get(tete, 0.0) + pese * pensionne.pensions["actuel"] * somme_ordonnee(
-                    part_regime * revalorisation.coefficient_points(
-                        convenu, liquidation, annee)
-                    for convenu, part_regime in parts)
+                    part_regime * coefficient_servi(
+                        {regime: 1.0}, revalorisation, liquidation, annee)
+                    for regime, part_regime in parts)
     return masses, tetes
 
 
@@ -4208,7 +4259,7 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
     communes = [cle for cle in cles if cle not in CLES_LIBERALES]
     liberales = [cle for cle in cles if cle in CLES_LIBERALES]
     for pensionne in pensionnes:
-        convenues = parts_convenues(pensionne, revalorisation)
+        servies = pensionne.parts_regimes
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
             cohorte = pensionne.generation + decalage
             debut_carriere = cohorte + ages_debut[pensionne.code]
@@ -4259,11 +4310,15 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
                     }
                     if REGLE_PROSPECTIVE in regles_utiles:
                         coefficients[REGLE_PROSPECTIVE] = revalorisation.coefficient_stock(
-                            fin_carriere, millesime, prospectif=True)
-                    # Le scénario 1 sur les prix, sauf ce qu'il sert en points
-                    # de l'Agirc-Arrco : la règle de ses masses.
-                    actuel = coefficient_actuel(convenues, revalorisation,
-                                                fin_carriere, millesime)
+                            fin_carriere, millesime, prospectif=True
+                        ) * coefficient_historique(
+                            servies, revalorisation, fin_carriere,
+                            min(millesime, revalorisation.annee_bascule))
+                    # Le scénario 1 sous son droit, puis sur les prix, sauf ce
+                    # qu'il sert en points de l'Agirc-Arrco : la règle de ses
+                    # masses.
+                    actuel = coefficient_servi(servies, revalorisation,
+                                               fin_carriere, millesime)
                     for cle in cles_depart:
                         totaux[cle] += (commun * (actuel if cle == "actuel"
                                                   else coefficients[regles[cle]])

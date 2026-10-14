@@ -1903,8 +1903,8 @@ def pensions_de_l_annee(pensionnes: list, cas_types: tuple[CasType, ...],
     la grille en représente cinq, chacune pesée par son effectif INSEE de
     l'année et comptée dès sa liquidation, chaque cas type par son poids de la
     page. La pension est celle de la liquidation, revalorisée comme la page la
-    revalorise — les prix, et la valeur de service de l'Agirc-Arrco pour sa
-    part (``coefficient_actuel``) —, ramenée des euros constants à ceux de
+    revalorise — le droit jusqu'au dernier barème, puis les prix, et la valeur
+    de service de l'Agirc-Arrco pour sa part (``coefficient_servi``) —, ramenée des euros constants à ceux de
     l'année. Sans la complétude des cohortes (``Pensionne.completude``) : elle
     allège la MASSE d'une cohorte d'une moyenne, que la distribution ne sait
     pas répartir entre ses membres ; chaque ligne décrit une carrière.
@@ -1925,7 +1925,6 @@ def cohortes_de_l_annee(pensionnes: list, poids: dict[str, float], population: P
         part = poids.get(pensionne.code, 0.0)
         if part <= 0.0:
             continue
-        convenues = C.parts_convenues(pensionne, revalorisation)
         for decalage in range(-C._DEMI_TRANCHE, C._DEMI_TRANCHE + 1):
             liquidation = pensionne.annee_liquidation + decalage
             if annee < liquidation:
@@ -1933,8 +1932,8 @@ def cohortes_de_l_annee(pensionnes: list, poids: dict[str, float], population: P
             effectif = population.effectif(annee - pensionne.generation - decalage, annee)
             if effectif <= 0.0:
                 continue
-            montant = pensionne.pensions["actuel"] * vers_l_annee * C.coefficient_actuel(
-                convenues, revalorisation, liquidation, annee)
+            montant = pensionne.pensions["actuel"] * vers_l_annee * C.coefficient_servi(
+                pensionne.parts_regimes, revalorisation, liquidation, annee)
             yield pensionne, montant, part * effectif
 
 

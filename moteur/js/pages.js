@@ -15340,10 +15340,12 @@ export const MESURES_BLOCAGES = {
   // 2025 du jaune pensions (action 159, étape 5) — l'agent de la CNRACL parti
   // au taux plein et non plus à l'ouverture, les deux civils entrés tard dans
   // leur régime — l'ont reporté à −0,9, sa dette à 62 %, et le creux du
-  // coefficient à 0,84.
-  solde_moyen_proposition: -0.9,
+  // coefficient à 0,84. Le même jour, les revalorisations que le droit a
+  // servies au système actuel, et non plus les prix (action 147, étape 19),
+  // l'ont porté à −1,0 et sa dette à 69 %.
+  solde_moyen_proposition: -1.0,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 62,
+  dette_2070_proposition: 69,
   dette_2070_actuel: 66,
   coefficient_minimum: 0.84,
   decennie_coefficient_minimum: 2040,
