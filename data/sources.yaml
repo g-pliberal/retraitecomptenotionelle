@@ -1180,6 +1180,26 @@ institutions:
           pas. Elle sert à chiffrer la garantie vieillesse du scénario 6, qui est
           une allocation différentielle : son coût est celui de la queue basse de
           cette distribution, et ne se lit sur aucun cas type.
+      - id: drees_pension_nette
+        titre: >-
+          Pension moyenne brute et nette de tous les retraités (tableau 2.1-a,
+          fin 2022), et retraités tous régimes par taux de CSG (EACR, feuille
+          A-Prelev_sociaux)
+        url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/1393_les-effectifs-et-montants-de-pension-des-retraites/
+        acces: api
+        statut_integration: controle
+        recuperation: scripts/fetch/drees_pension_nette.py
+        cible: tests/temoins/drees_pension_nette.json
+        millesime: "2022 (montants), 2024 (taux de CSG)"
+        note: >-
+          Deux moyennes sur les mêmes retraités, la pension brute et la nette de
+          la CSG, de la CRDS, de la Casa et de la cotisation maladie des
+          complémentaires, de 2008 à 2022 : leur rapport est le taux que les
+          prélèvements sociaux prennent à la MASSE des pensions, 6,8 % en 2022
+          contre 9,1 % au taux plein. Les têtes par taux de CSG, de 2012 à 2024,
+          en donnent une borne basse. Il n'alimente aucune valeur :
+          `tests/test_depense_nette.py` s'y confronte, avec la part que
+          l'Ageing Report reprend de la dépense brute (action 138, étape 3).
       - id: insee_patrimoine_menages
         titre: >-
           Patrimoine des ménages : déciles début 2021 et début 2024, moyennes et
