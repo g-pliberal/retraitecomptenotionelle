@@ -1223,15 +1223,13 @@ borne basse et l'écart une borne haute.
 **Reprise, au 14 octobre 2026.** Les 260 adresses se dépouillent par lots.
 Sont faits l'IRCEC, les libérales, la CRPN, l'Ircantec, l'ENIM, la fonction
 publique, la CNRACL, la Caisse des dépôts, le RAFP, l'Agirc-Arrco, les régimes
-spéciaux, la Cnav, service-public, le CLEISS et les modèles publics français
-(treize lignes, déjà lues au registre des modèles). Attendent un lot approuvé
-(saisies par `scripts/simulateurs.py`) : la calculette du RAFP, le guide des
-prélèvements de l'Ircantec, le simulateur des artistes-auteurs de la Cnav. À
-corriger : l'abattement du RCI, en écart connu (fiche `abattement_rci`), après
-lecture des règlements RCO et NRIC. Restent `a_explorer` : mon-entreprise,
-quinze API publiques, et vingt-sept modèles déjà au registre, à fermer quand
-leurs sessions (138.3, 138.5, 138.7, 138.11, 153) auront fini. Détail :
-`docs/feuille_de_route/89/2026-10-14-modeles-publics.md`.
+spéciaux, la Cnav, service-public, le CLEISS et les modèles publics français.
+Attendent un lot approuvé (`scripts/simulateurs.py`) : la calculette du RAFP,
+le guide des prélèvements de l'Ircantec, le simulateur des artistes-auteurs de
+la Cnav. À corriger : l'abattement du RCI, écart connu (`abattement_rci`), après
+lecture des règlements RCO et NRIC. Restent `a_explorer` : mon-entreprise, quinze
+API publiques, vingt-sept modèles déjà au registre, à fermer quand leurs sessions
+(138.3, 138.5, 138.7, 138.11, 153) auront fini. Détail : `89/2026-10-14-modeles-publics.md`.
 
 **Demande.** Huit lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut

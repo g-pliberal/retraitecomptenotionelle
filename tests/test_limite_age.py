@@ -155,13 +155,14 @@ def test_le_militaire_prend_la_limite_la_plus_haute_de_sa_categorie(simulateur):
 
 
 def test_le_metier_d_apres_la_radiation_part_au_depart_saisi(simulateur):
-    """Fonctionnaire jusqu'à soixante-douze ans, puis salarié : radié à
-    soixante-dix ans, il touche sa pension de fonctionnaire dès lors, et celle
-    du régime général à son départ, à soixante-quinze ans. Les années de
-    fonctionnaire d'après la radiation ne sont plus du service."""
+    """Né le 15 janvier 1990, fonctionnaire jusqu'à soixante-douze ans, puis
+    salarié : radié à soixante-dix ans, il touche sa pension de fonctionnaire
+    dès lors, et celle du régime général à son départ, à soixante-quinze ans.
+    Les années de fonctionnaire d'après la radiation ne sont plus du service."""
     moteur = simulateur.scenario_actuel
     carriere = Carriere.depuis_parcours(
-        annee_naissance=1990, sexe="H", age_liquidation=75, macro=simulateur.macro,
+        annee_naissance=1990, mois_naissance=1, jour_naissance=15, sexe="H",
+        age_liquidation=75, macro=simulateur.macro,
         metiers=[Metier("fonctionnaire_etat", 22.0), Metier("salarie_prive_non_cadre", 72.0)])
     radiation = limite_age.radiation(moteur, carriere)
     assert radiation.forcee and radiation.age == 70.0
@@ -176,7 +177,8 @@ def test_le_metier_d_apres_la_radiation_part_au_depart_saisi(simulateur):
 
 def test_radier_est_idempotent(simulateur):
     moteur = simulateur.scenario_actuel
-    carriere = _simple(simulateur, "fonctionnaire_etat", 1990, 80)
+    carriere = _simple(simulateur, "fonctionnaire_etat", 1990, 80,
+                       mois_naissance=1, jour_naissance=15)
     radiee = limite_age.radier(moteur, carriere)
     assert radiee is not carriere
     assert max(l.annee for l in radiee.lignes) == 2060

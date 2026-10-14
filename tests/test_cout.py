@@ -874,8 +874,13 @@ DECOMPOSITION_TETES = 0.03
 #: érodé par le gel de 2014 et les revalorisations sous les prix, pèse moins
 #: dans l'ancrage, et la masse remonte quand il s'éteint — la correction d'un
 #: défaut qui en masquait un autre, celui de la pension par tête qui croît trop
-#: vite (étape 18). Il ne doit que descendre.
-DECOMPOSITION_PENSION_CLIQUET = 0.05
+#: vite (étape 18). Les grilles de chaque époque de la Cipav et de la CAVEC
+#: (action 131, 14 octobre) le relèvent à 5,4 % (le modèle -12,7 %) : la
+#: complémentaire du libéral de la population, seul de la Cipav pour les dix
+#: sections (action 152), baisse d'un tiers en 2025, et le calage sur la
+#: dépense des groupes du COR lui rend 18 % de têtes, et 2 % de masse à
+#: l'Agirc-Arrco, qu'ils gardent jusqu'en 2070. Il ne doit que descendre.
+DECOMPOSITION_PENSION_CLIQUET = 0.055
 DECOMPOSITION_PENSION_CIBLE = 0.03
 
 

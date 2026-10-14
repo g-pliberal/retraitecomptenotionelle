@@ -6356,7 +6356,7 @@ année.
 | — dont retraités (pension entière acquise) | <!--chiffre:mesure(engagement?quoi=retraites)-->195<!--/--> % |
 | — dont actifs, au prorata de la carrière faite | <!--chiffre:mesure(engagement?quoi=actifs)-->296<!--/--> % |
 | Proposition (système 6) | <!--chiffre:mesure(engagement?scenario=6)-->355<!--/--> % |
-| Notionnel part salariale (système 2) | <!--chiffre:mesure(engagement?scenario=2)-->156<!--/--> % |
+| Notionnel part salariale (système 2) | <!--chiffre:mesure(engagement?scenario=2)-->155<!--/--> % |
 | Publié par Eurostat, tableau 29 | <!--chiffre:mesure(engagement?quoi=publie)-->397<!--/--> % |
 
 La proposition doit moins parce qu'elle promet moins : c'est la même règle qui
