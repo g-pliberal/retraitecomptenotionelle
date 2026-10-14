@@ -107,7 +107,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 **Ce qui est hors de la page Coût.** La réversion, par exemple, pèse 10,4 % de la masse des prestations en 2024 (COR) : le modèle en calcule une pour une personne (scénario 1), mais la page Coût n'en connaît que cette part publiée, qu'elle ne calcule pas.
 
-**La feuille de route** compte 161 actions : 134 fait, 16 en cours, 7 à faire, 2 archivée, 2 abandonnée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
+**La feuille de route** compte 161 actions : 135 fait, 15 en cours, 7 à faire, 2 archivée, 2 abandonnée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
 
 ## 2. Ce qui ne va pas encore
 
@@ -294,10 +294,9 @@ Et 34 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 
 ## 3. Ce qui reste à faire, et par quoi commencer
 
-- **Les 16 actions en cours** de la feuille de route :
+- **Les 15 actions en cours** de la feuille de route :
   - 47. La garantie vieillesse est une avance : la reprise sur succession, sa règle et son chiffrage
   - 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026
-  - 121. Le droit de chacun, et non celui de la génération de l'année : toutes les personnes vivantes
   - 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, puis le défaut
   - 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir
   - 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger
@@ -311,7 +310,7 @@ Et 34 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 153. L'oracle au-delà des carrières simples : ce qu'OpenFisca calcule et que le dépôt ne lui confronte pas
   - 158. Les grilles indiciaires de la fonction publique : la carrière d'un fonctionnaire pré-remplie depuis son corps, plutôt que de mémoire
   - 159. Le jaune pensions du PLF 2027, exploité en entier : rangé, puis chaque tableau à sa place dans le dépôt
-- **Les sources à exploiter** : 67 à explorer sur 324 (109 explorées, 148 épuisées). 10 d'entre elles visent un régime partiel, et pourraient le compléter :
+- **Les sources à exploiter** : 54 à explorer sur 324 (109 explorées, 148 épuisées). 10 d'entre elles visent un régime partiel, et pourraient le compléter :
   - Caisse nationale d'assurance vieillesse des professions libérales, régime de base : 7 source(s) (mon_entreprise_comparaison_ei, cnavpl_wordpress, cavec_wordpress…)
   - Complémentaire des agents généraux d'assurance (CAVAMAC) : 1 source(s) (cavamac_wordpress)
   - Complémentaire des officiers ministériels (CAVOM) : 1 source(s) (cavom_wordpress)
@@ -322,7 +321,7 @@ Et 34 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - Régime des artistes-auteurs professionnels (IRCEC) : 1 source(s) (mon_entreprise_artiste_auteur)
   - Régime des auteurs et compositeurs dramatiques (IRCEC) : 1 source(s) (mon_entreprise_artiste_auteur)
   - Régime des auteurs et compositeurs lyriques (IRCEC) : 1 source(s) (mon_entreprise_artiste_auteur)
-  - et 49 sources sans régime désigné.
+  - et 36 sources sans régime désigné.
 - **Les autres modèles** (§ 3.4) : 70 au registre (`data/reference/referents.yaml`) : 32 au code ouvert, 1 sur demande, 13 documenté(s) sans leur code, 24 non public(s). 14 ont déjà été confrontés au dépôt ou lui donnent des valeurs (Barèmes IPP, OpenFisca-France, OpenFisca-France-Pension, Destinie 2, Ines, TRAJECTOiRE, ANCETRE, Maquette globale de projection du COR, Maquette simplifiée du secrétariat général du COR, PRISME (Projection des Retraites, Simulations, Modélisation et Évaluations), modele-ti, modele-social, Les modèles de pension de l'OCDE, Ageing Report et ses fiches pays), et 191 écarts y ont été trouvés. 14 sont à confronter au scénario 1 en premier, parce que leur code est ouvert, qu'ils ne l'ont jamais été et qu'ils ne dépendent d'aucune autre source du registre ; dans l'ordre du registre, qui range les administrations d'abord : `legiretraite`, `edifis`, `saphir`, `modele_as`, `catala`, `ir_catala`, et 8 autres.
 - **Ce que les autres modèles font mieux** (action 138) : 285 points, lus chez 66 modèles : 134 à reprendre, 46 à trancher par le propriétaire (des choix du programme), 95 repris, 10 écartés. Les points à reprendre, par chantier de la feuille de route : 138.2 (16), 138.3 (19), 138.5 (6), 138.6 (3), 138.7 (15), 138.8 (1), 138.9 (1), 138.10 (10), 138.11 (9), 138.12 (11), 138.14 (13), 138.16 (1), 138.17 (1), 138.18 (13), 138.19 (7), 153.2 (1), 155.1 (1), 155.2 (1), 155.3 (3), 156.1 (1), 157.1 (1).
 - **Les fiches sans exemple officiel** : 158.
