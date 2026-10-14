@@ -292,7 +292,21 @@ IMPRIMERIE DES COTEAUX
 Edité le 06/03/2020 2 / 2
 """
 
+#: Les deux écarts que la relecture des deux lecteurs a trouvés, avant le
+#: retrait du jumeau Python (action 161, étape 3) : une marque qui se combine à
+#: sa lettre hors des accents courants, qui coupait en deux, sous le
+#: JavaScript, le nom d'un régime ou d'un motif ; et un compte de trimestres
+#: étiqueté qui n'est pas entier, que le JavaScript gardait tel quel.
+MARQUE_RARE = chr(0x1DC4)
+ECARTS_DE_LA_RELECTURE = f"""
+Re{MARQUE_RARE}levé de carrière
+Re{MARQUE_RARE}gime général
+2010 SOCIETE 29 500 € 2,5 trim.
+2011 Se{MARQUE_RARE}rvice national 4
+"""
+
 RELEVES = {
+    "ecarts_de_la_relecture": ECARTS_DE_LA_RELECTURE,
     "estimation": ESTIMATION,
     "releve_2026": RELEVE_2026,
     "tableau_des_annees": TABLEAU_DES_ANNEES,
@@ -652,6 +666,20 @@ def _pdf_d_info_retraite(lignes: list[str]) -> bytes:
                        b"/Encoding /WinAnsiEncoding /ToUnicode 5 0 R >>")
             + objet(5, flux(table))
             + b"trailer\n<< >>\n%%EOF\n")
+
+
+def test_une_marque_rare_et_des_trimestres_non_entiers_se_lisent_sans_ecart():
+    """Une marque qui se combine à sa lettre s'efface comme un accent : le
+    titre, le régime et le motif se reconnaissent. Un compte de trimestres est
+    entier : « 2,5 trim. » en compte deux, et la saisie ne reçoit jamais de
+    fraction."""
+    lecture = _lire("ecarts_de_la_relecture")
+    lues = {ligne.annee: ligne for ligne in lecture.lignes}
+    assert sorted(lues) == [2010, 2011]
+    assert (round(lues[2010].revenu), lues[2010].trimestres) == (29_500, 2)
+    assert lecture.interruptions == ((2011, 2011, "service_militaire"),)
+    assert lecture.regimes == ("regime_general",)
+    assert lecture.parametres()["releve"].split("\n")[0] == "2010:salarie_prive_non_cadre:29500:2"
 
 
 def test_un_document_qui_n_est_pas_un_releve_ne_rend_pas_de_carriere():

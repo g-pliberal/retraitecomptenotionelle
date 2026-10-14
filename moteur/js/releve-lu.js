@@ -233,10 +233,13 @@ export function arrondi(montant) {
  * Le texte en minuscules, sans accent et sans ponctuation séparatrice. C'est
  * la forme sur laquelle les alias se cherchent : « Agirc-Arrco », « AGIRC
  * ARRCO » et « agirc/arrco » sont le même nom, et une caisse ne l'écrit pas
- * deux fois de la même façon d'un document à l'autre.
+ * deux fois de la même façon d'un document à l'autre. Toute marque qui se
+ * combine à sa lettre s'efface, et pas seulement les accents courants : une
+ * marque plus rare restait, puis la ponctuation la changeait en espace, et le
+ * nom d'un régime ou d'un motif se coupait en deux (action 161, étape 3).
  */
 export function sansAccent(texte) {
-  const plat = texte.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  const plat = texte.toLowerCase().normalize("NFD").replace(/\p{Mn}/gu, "");
   return plat.replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
 }
 
@@ -662,8 +665,10 @@ export function lireReleve(lignes, anneeMaximale = null, revenuDesPoints = null)
         if (unite === "revenu") revenu = Math.max(revenu, valeur);
         else if (unite === "trimestre" && valeur <= TRIMESTRES_PAR_AN) {
           // Le dernier l'emporte, et jamais un cumul de carrière : « 172
-          // trimestres » est un total, pas une année.
-          trimestres = valeur;
+          // trimestres » est un total, pas une année. Un compte de trimestres
+          // est entier : « 2,5 trim. » en compte deux, et la saisie ne reçoit
+          // jamais de fraction (action 161, étape 3).
+          trimestres = Math.trunc(valeur);
         } else if (unite === "point") {
           lus += valeur;
         }
