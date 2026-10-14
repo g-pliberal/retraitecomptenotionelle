@@ -1,5 +1,9 @@
 texte,titre
+arrete_1951_12_12,Arrêté du 12 décembre 1951 relatif aux modalités de fonctionnement du régime de retraites complémentaire des assurances sociales institué par le décret n° 51-1445 du 12 décembre 1951.
+arrete_1960_02_17,Arrêté du 17 février 1960 relatif aux modalités de fonctionnement du régime de retraites complémentaire des assurances sociales institué par le décret n° 59-1569 du 31 décembre 1959.
+arrete_1963_11_13,Arrêté du 13 novembre 1963 pris pour l'application du décret du 30 octobre 1963 modifié relatif au régime d'allocation viagère des gérants de débits de tabac.
 arrete_1970_12_30,Arrêté du 30 décembre 1970 relatif aux modalités de fonctionnement du régime de retraites complémentaire des assurances sociales institué par le décret du 23 décembre 1970
+arrete_1971_03_10,Arrêté du 10 mars 1971 relatif au régime de retraite complémentaire des agents non titulaires de l'Etat et des collectivités publiques.
 arrete_1986_01_08,"Arrêté du 8 janvier 1986 relatif à la revalorisation de divers avantages de vieillesse, d'invalidité et d'accident du travail du régime général de la sécurité sociale et des prestations d'assurance vieillesse des travailleurs non-salariés des professions artisanales, industrielles et commerciales."
 arrete_1986_10_09,"Arrêté du 9 octobre 1986 relatif à la revalorisation de divers avantages de vieillesse, d'invalidité et d'accident du travail du régime général de la sécurité sociale et des prestations d'assurance vieillesse des travailleurs non-salariés des professions artisanales, industrielles et commerciales"
 arrete_2004_11_26,Arrêté du 26 novembre 2004 portant application du décret n° 2004-569 du 18 juin 2004 relatif à la retraite additionnelle de la fonction publique
@@ -10,6 +14,7 @@ arrete_2026_07_10_carmf,"Arrêté du 10 juillet 2026 portant approbation des rè
 arrete_2026_07_10_carpimko,"Arrêté du 10 juillet 2026 portant approbation des règlements d'assurance vieillesse complémentaire, d'assurance invalidité-décès et de prestations complémentaires de vieillesse de la section professionnelle des auxiliaires médicaux (CARPIMKO)"
 arrete_2026_07_10_cavp,"Arrêté du 10 juillet 2026 portant approbation des règlements d'assurance vieillesse complémentaire, d'assurance invalidité-décès et de prestations complémentaires de vieillesse de la section professionnelle des pharmaciens (CAVP)"
 arrete_2026_07_10_cprn,Arrêté du 10 juillet 2026 portant approbation des règlements d'assurance vieillesse complémentaire et d'assurance invalidité-décès de la section professionnelle des notaires (CPRN)
+code_de_l_aviation_civile,Code de l'aviation civile
 code_de_l_education,Code de l'éducation
 code_de_la_defense,Code de la défense
 code_du_travail,Code du travail
@@ -25,6 +30,7 @@ decret_2002_788,Décret n°2002-788 du 3 mai 2002 relatif au compte épargne-tem
 decret_2003_1280,Décret n°2003-1280 du 26 décembre 2003 portant application de la loi n° 2003-775 du 21 août 2003 et relatif à la majoration de la durée d'assurance prévue à l'article L. 351-4 du code de la sécurité sociale (troisième partie : Décrets)
 decret_2003_1306,Décret n°2003-1306 du 26 décembre 2003 relatif au régime de retraite des fonctionnaires affiliés à la Caisse nationale de retraites des agents des collectivités locales
 decret_2003_146,"Décret n°2003-146 du 20 février 2003 relatif aux conditions d'application et à l'organisation du régime de retraite complémentaire obligatoire pour les non-salariés agricoles, créé en application de la loi n° 2002-308 du 4 mars 2002"
+decret_2003_589,Décret n°2003-589 du 1 juillet 2003 portant application des dispositions du titre II (Assurance vieillesse) et du chapitre Ier du titre VI (Allocation spéciale pour les personnes âgées) de l'ordonnance n° 2002-411 du 27 mars 2002 relative à la protection sanitaire et sociale à Mayotte
 decret_2004_1056,Décret n°2004-1056 du 5 octobre 2004 relatif au régime des pensions des ouvriers des établissements industriels de l'Etat
 decret_2004_240,Décret n°2004-240 du 18 mars 2004 relatif à la prise en compte de la prime spéciale de sujétion au regard du droit à pension des agents du corps des aides-soignants de la fonction publique hospitalière.
 decret_2004_569,Décret n°2004-569 du 18 juin 2004 relatif à la retraite additionnelle de la fonction publique.
@@ -33,12 +39,17 @@ decret_2004_878,Décret n°2004-878 du 26 août 2004 relatif au compte épargne-
 decret_2006_1325,"Décret n°2006-1325 du 31 octobre 2006 relatif à la caisse d'assurance vieillesse, maladie et invalidité des cultes et modifiant le code de la sécurité sociale (troisième partie : Décrets)."
 decret_2006_933,Décret n°2006-933 du 28 juillet 2006 relatif aux conditions de cessation d'activité des maîtres et documentalistes contractuels ou agréés des établissements d'enseignement privés liés à l'Etat par contrat pris pour l'application de l'article L. 914-1 du code de l'éducation.
 decret_2007_262,Décret n° 2007-262 du 27 février 2007 relatif au régime de retraite des agents titulaires de la Banque de France
+decret_2007_458,Décret n° 2007-458 du 25 mars 2007 relatif au régime des prestations complémentaires de vieillesse des chirurgiens-dentistes prévu à l'article L. 645-1 du code de la sécurité sociale
+decret_2007_597,Décret n°2007-597 du 24 avril 2007 relatif au régime des prestations complémentaires de vieillesse prévu à l'article L. 645-1 du code de la sécurité sociale des directeurs de laboratoires privés d'analyses médicales non médecins mentionnés à l'article L. 162-14 du code de la sécurité sociale
+decret_2008_1044,Décret n° 2008-1044 du 10 octobre 2008 relatif au régime des prestations complémentaires de vieillesse prévu à l'article L. 645-1 du code de la sécurité sociale des auxiliaires médicaux mentionnés à l'article L. 722-1 du code de la sécurité sociale
 decret_2008_1303,"Décret n° 2008-1303 du 10 décembre 2008 fixant pour l'année 2008 les cotisations aux régimes d'assurance vieillesse complémentaire des professions libérales et au régime d'assurance vieillesse complémentaire commun aux artistes graphiques et plastiques et aux professeurs de musique, musiciens, auteurs et compositeurs"
 decret_2008_1509,Décret n° 2008-1509 du 30 décembre 2008 portant diverses dispositions relatives à l'assurance vieillesse
 decret_2008_637,Décret n° 2008-637 du 30 juin 2008 portant règlement des retraites du personnel de la Régie autonome des transports parisiens
 decret_2008_639,Décret n° 2008-639 du 30 juin 2008 relatif au régime spécial de retraite du personnel de la Société nationale des chemins de fer français
 decret_2008_964,Décret n° 2008-964 du 16 septembre 2008 relatif aux modalités de prise en compte dans la retraite additionnelle de la fonction publique de l'indemnité dite de garantie individuelle du pouvoir d'achat
+decret_2011_1500,Décret n° 2011-1500 du 10 novembre 2011 relatif au régime complémentaire de retraite du personnel navigant professionnel de l'aviation civile et modifiant le code de l'aviation civile
 decret_2011_1644,Décret n° 2011-1644 du 25 novembre 2011 relatif au régime des prestations complémentaires de vieillesse des médecins libéraux prévu à l'article L. 645-1 du code de la sécurité sociale
+decret_2011_2002,Décret n° 2011-2002 du 28 décembre 2011 relatif au régime des prestations complémentaires de vieillesse des sages-femmes prévu à l'article L. 645-1 du code de la sécurité sociale
 decret_2011_934,Décret n° 2011-934 du 1er août 2011 relatif à la comptabilisation des périodes de chômage involontaire non indemnisé comme périodes d'assurance pour l'ouverture du droit à pension d'assurance vieillesse
 decret_2012_478,Décret n° 2012-478 du 12 avril 2012 fixant pour l'année 2012 les cotisations aux régimes d'assurance vieillesse complémentaire des professions libérales ainsi qu'aux régimes d'assurance invalidité-décès des professions libérales
 decret_2013_1081,Décret n° 2013-1081 du 29 novembre 2013 fixant pour l'année 2013 les cotisations aux régimes d'assurance vieillesse complémentaire des professions libérales et des artistes et auteurs relevant de l'article L. 382-1 du code de la sécurité sociale et les cotisations aux régimes d'assurance invalidité-décès des professions libérales
@@ -58,33 +69,55 @@ decret_46_1541,Décret n°46-1541 du 22 juin 1946 approuvant le statut national 
 decret_46_2769,Décret n°46-2769 du 27 novembre 1946 portant organisation de la sécurité sociale dans les mines.
 decret_50_1225,Décret n°50-1225 du 21 septembre 1950 PORTANT REGLEMENT D'ADMINISTRATION PUBLIQUE EN CE QUI CONCERNE LES ASSURANCES SOCIALES AGRICOLES ET NOTAMMENT L'APPLICATION DES S MODIFIES DES 30 OCTOBRE 1935 ET 20 AVRIL 1950.
 decret_50_1318,Décret n°50-1318 du 21 octobre 1950 relatif au régime d'assurance vieillesse complémentaire des vétérinaires.
+decret_50_1348,Décret n°50-1348 du 27 octobre 1950 portant règlement d'administration publique pour l'application de la loi n° 46-2294 du 19 octobre 1946 aux fonctionnaires de certains cadres civils exerçant normalement leur activité dans les territoires relevant du ministère de la France d'outre-mer.
+decret_50_60,Décret n°50-60 du 11 janvier 1950 relatif au régime d'assurance vieillesse complémentaire des entrepreneurs du bâtiment et des travaux publics.
+decret_51_1445,Décret n°51-1445 du 12 décembre 1951 instituant un régime de retraites complémentaire des assurances sociales pour certaines catégories d'agents de l'Etat non titulaires.
 decret_51_727,Décret n°51-727 du 6 juin 1951 FIXANT LE REGIME DES PENSIONS DE VIEILLESSE ET D'INVALIDITE DE L'ASSURANCE SOCIALE OBLIGATOIRE AGRICOLE.
 decret_53_506,Décret n°53-506 du 21 mai 1953 relatif au régime d'assurance vieillesse complémentaire des experts comptables et des comptables agréés.
 decret_53_711,Décret n°53-711 du 9 août 1953 relatif au régime des retraites des personnels de l'Etat et des services publics.
 decret_55_753,Décret n°55-753 du 31 mai 1955 TENDANT A MODIFIER ET A COMPLETER LE DU 18 OCTOBRE 1952 ET FIXANT LES CONDITIONS D'APPLICATION DE LA LOI DU 5 JANVIER 1955 RELATIVE A L'ALLOCATION VIEILLESSE AGRICOLE.
+decret_55_773,"Décret n°55-773 du 9 juin 1955 portant extension et adaptation du régime complémentaire de retraites institué par le décret n° 51-1445 du 12 décembre 1951 à certaines catégories d'agents non titulaires des départements, des communes et de leurs établissements publics."
+decret_59_1569,Décret n°59-1569 du 31 décembre 1959 portant création d'un régime de retraites complémentaire des assurances sociales pour certaines catégories d'agents de l'Etat non titulaires.
+decret_59_601,Décret n°59-601 du 5 mai 1959 relatif au régime administratif et financier du Conseil économique et social.
 decret_62_420,"Décret n°62-420 du 11 avril 1962 relatif au régime d'assurance vieillesse complémentaire commun aux artistes graphiques et plastiques et aux professeurs de musique, musiciens, auteurs et compositeurs."
 decret_62_766,Décret n°62-766 du 6 juillet 1962 portant statut des personnels du service d'exploitation industrielle des tabacs et allumettes
+decret_63_1104,Décret n°63-1104 du 30 octobre 1963 relatif au régime d'allocations viagères des gérants de débits de tabac.
 decret_65_773,Décret n°65-773 du 9 septembre 1965 portant règlement d'administration publique et modifiant le décret n° 49-1416 du 5 octobre 1949 pris pour l'application de l'article 3 de l'ordonnance n° 45-993 du 17 mai 1945 et relatif au régime de retraite des tributaires de la caisse nationale de retraites des agents des collectivités locales
 decret_65_836,Décret n°65-836 du 24 septembre 1965 RELATIF AU REGIME DES PENSIONS DES OUVRIERS DES ETABLISSEMENTS INDUSTRIELS DE L'ETAT
+decret_66_808,"Décret n°66-808 du 28 octobre 1966 autorisant les tributaires du régime local de retraites du Haut-Rhin, du Bas-Rhin et de la Moselle et du régime spécial de retraites prévu par le décret n° 50-461 du 21 avril 1950 à opter pour le régime général du code des pensions civiles et militaires de retraite"
+decret_68_20,Décret n°68-20 du 5 janvier 1968 fixant les conditions d'application de la loi n° 66-496 du 11 juillet 1966 relative à la création de corps de fonctionnaires de l'Etat pour l'administration de la Polynésie française.
 decret_68_382,Décret n°68-382 du 5 avril 1968 portant statut de la caisse de retraites des personnels de l'Opéra national de Paris.
 decret_68_960,Décret n°68-960 du 11 octobre 1968 MODIFIANT LE STATUT DE LA CAISSE DE RETRAITES DU PERSONNEL DE LA COMEDIE-FRANCAISE
 decret_70_1277,Décret n°70-1277 du 23 décembre 1970 portant création d'un régime de retraites complémentaire des assurances sociales en faveur des agents non titulaires de l'Etat et des collectivités publiques.
 decret_72_1098,Décret n°72-1098 du 11 décembre 1972 PORTANT MODIFICATION DE L'AGE D'ATTRIBUTION DES PENSIONS DE REVERSION ET DES SECOURS VIAGERS DES CONJOINTS SURVIVANTS DU REGIME GENERAL DE SECURITE SOCIALE.
+decret_72_968,Décret n°72-968 du 27 octobre 1972 TENDANT A RENDRE OBLIGATOIRE LE REGIME DE PRESTATIONS SUPPLEMENTAIRES DE VIEILLESSE DES MEDECINS CONVENTIONNES.
+decret_73_88,Décret n°73-88 du 26 janvier 1973 RELATIF A L'ASSURANCE VIEILLESSE DES BENEFICIAIRES DE CERTAINES PRESTATIONS FAMILIALES.
 decret_73_937,"Décret n°73-937 du 2 octobre 1973 portant application de l'article L. 634-3 du code de la sécurité sociale et relatif aux prestations des régimes d'assurance vieillesse des professions artisanales, industrielles et commerciales afférentes aux périodes d'assurance ou d'activité non salariées antérieures au 1er janvier 1973."
 decret_74_191,"Décret n°74-191 du 26 février 1974 RELATIF A LA LIQUIDATION ENTRE SOIXANTE ET SOIXANTE-CINQ ANS DE LA PENSION DE VIEILLESSE DES ASSURES, ANCIENS COMBATTANTS OU PRISONNIERS DE GUERRE OU ANCIENS DEPORTES OU INTERNES RESISTANTS OU POLITIQUES, BENEFICIAIRES DE L'EX-REGIME LOCAL D'ASSURANCE DES DEPARTEMENTS DU HAUT-RHIN, DU BAS-RHIN ET DE LA MOSELLE."
 decret_74_54,Décret n°74-54 du 23 janvier 1974 FIXANT LES MODALITES D'APPLICATION DE LA LOI N° 73-1051 DU 21 NOVEMBRE 1973 PERMETTANT AUX ANCIENS COMBATTANTS ET AUX ANCIENS PRISONNIERS DE GUERRE DE BENEFICIER ENTRE SOIXANTE ET SOIXANTE CINQ ANS D'UNE PENSION DE RETRAITE CALCULEE SUR LE TAUX APPLICABLE A L'AGE DE SOIXANTE CINQ ANS.
 decret_75_109,"Décret n°75-109 du 24 février 1975 RELATIF A DIVERSES AMELIORATIONS ET SIMPLIFICATIONS EN MATIERE DE PENSIONS OU ALLOCATIONS DES CONJOINTS SURVIVANTS, DES MERES DE FAMILLE ET DES PERSONNES AGEES, ET NOTAMMENT A L'APPLICATION DE LA LOI N° 75-3 DU 3 JANVIER 1975."
+decret_75_891,Décret n°75-891 du 23 septembre 1975 RENDANT OBLIGATOIRE LE REGIME DE PRESTATIONS SUPPLEMENTAIRES DE VIEILLESSE DES AUXILIAIRES MEDICAUX CONVENTIONNES.
+decret_78_283,Décret n°78-283 du 28 février 1978 rendant obligatoire le régime de prestations supplémentaires de vieillesse des chirurgiens-dentistes conventionnés.
+decret_78_44,"Décret n°78-44 du 16 janvier 1978 unifiant les règles de validation des services accomplis par les affiliés au régime de retraites complémentaire des assurances sociales en faveur des agents non titulaires de l'Etat et des collectivités publiques, avant la création de ce régime."
 decret_79_262,"Décret n°79-262 du 21 mars 1979 RELATIF AU REGIME D'ASSURANCE VIEILLESSE COMPLEMENTAIRE DES ARCHITECTES, AGREES EN ARCHITECTURE, INGENIEURS, TECHNICIENS, EXPERTS ET CONSEILS."
 decret_79_265,"Décret n°79-265 du 27 mars 1979 relatif au régime d'assurance vieillesse complémentaire des officiers ministériels, officiers publics et des compagnies judiciaires."
 decret_79_607,Décret n°79-607 du 3 juillet 1979 RELATIF AU REGIME D'ASSURANCE VIEILLESSE DES MINISTRES DES CULTES ET MEMBRES DES CONGREGATIONS ET COLLECTIVITES RELIGIEUSES INSTITUE PAR LA LOI N° 78-4 DU 2 JANVIER 1978
 decret_80_7,Décret n°80-7 du 2 janvier 1980 relatif aux conditions de cessation d'activité de certains maitres contractuels ou agréés des établissements d'enseignement privés sous contrat
 decret_80_808,"Décret n°80-808 du 14 octobre 1980 relatif aux retraites des personnes non-salariées de l'agriculture, pris pour l'application de l'article 18 de la loi n° 80-502 du 4 juillet 1980 d'orientation agricole"
+decret_81_1046,"Décret n°81-1046 du 24 novembre 1981 relatif au régime des prestations supplémentaires de vieillesse des directeurs de laboratoires privés d'analyses médicales, non médecins, conventionnés."
+decret_81_1166,Décret n°81-1166 du 30 décembre 1981 FIXANT LE MONTANT DE DIVERS AVANTAGES DE VIEILLESSE ET INVALIDITE
 decret_82_1054,Décret n°82-1054 du 13 décembre 1982 PORTANT APPLICATION AUX SALARIES AGRICOLES DES DISPOSITIONS DE L'ORDONNANCE N° 82-270 DU 26 MARS 1982 RELATIVE A L'ABAISSEMENT DE L'AGE DE LA RETRAITE DES ASSURES DU REGIME GENERAL ET DU REGIME DES ASSURANCES SOCIALES AGRICOLES ET DU TITRE 1ER DE L'ORDONNANCE N° 82-290 DU 30 MARS 1982 RELATIVE A LA LIMITATION DES POSSIBILITES DE CUMULS ENTRE PENSIONS DE RETRAITE ET REVENUS D'ACTIVITES.
+decret_82_1142,Décret n°82-1142 du 29 décembre 1982 FIXANT LE MONTANT DE DIVERS AVANTAGES DE VIEILLESSE ET D'INVALIDITE.
+decret_82_561,Décret n°82-561 du 29 juin 1982 FIXANT LE MONTANT DE DIVERS AVANTAGES DE VIEILLESSE ET D'INVALIDITE.
 decret_82_628,"Décret n°82-628 du 21 juillet 1982 PORTANT APPLICATION, DANS LE REGIME GENERAL DE LA SECURITE SOCIALE, DE L'ORDONNANCE N° 82-270 DU 26 MARS 1982 RELATIVE A L'ABAISSEMENT DE L'AGE DE LA RETRAITE DES ASSURES DU REGIME GENERAL ET DU REGIME DES ASSURANCES SOCIALES AGRICOLES ET DU TITRE 1ER DE L'ORDONNANCE N° 82-290 DU 30 MARS 1982 RELATIVE A LA LIMITATION DES POSSIBILITES DE CUMULS ENTRE PENSIONS DE RETRAITE ET REVENUS D'ACTIVITES."
+decret_83_551,Décret n°83-551 du 30 juin 1983 fixant le montant de divers avantages de vieillesse et d'invalidité.
+decret_84_254,Décret n°84-254 du 5 avril 1984 RENDANT OBLIGATOIRE LE REGIME DE PRESTATIONS SUPPLEMENTAIRES DE VIEILLESSE DES SAGES-FEMMES CONVENTIONNEES.
 decret_84_295,Décret n°84-295 du 20 avril 1984 PORTANT APPLICATION DE L'ARTICLE R. 322-7 DU CODE DU TRAVAIL
 decret_87_270,"Décret n°87-270 du 15 avril 1987 portant application de l'article R. 322-7 du code du travail *allocation spéciale du fonds national de l'emploi, FNE*"
+decret_89_157,"Décret n°89-157 du 8 mars 1989 fixant les modalités du transfert au régime général de sécurité sociale, au 1er janvier 1989, des obligations contractées par le Crédit foncier de France à l'égard de ses agents et anciens agents ainsi que de leurs ayants droit pour la couverture des risques invalidité et vieillesse"
 decret_90_1215,Décret n°90-1215 du 20 décembre 1990 portant application de la loi du 12 juillet 1937 instituant une caisse de retraite et de prévoyance des clercs et employés de notaires et modifiant certaines dispositions relatives à cette caisse
 decret_90_311,Décret n°90-311 du 30 mars 1990 fixant pour l'année 1990 les cotisations des régimes d'assurance vieillesse complémentaire et d'assurance invalidité-décès des travailleurs non salariés des professions libérales.
+decret_90_424,Décret n°90-424 du 16 mai 1990 portant modification du décret n° 63-1104 du 30 octobre 1963 relatif au régime d'allocation viagère des gérants de débits de tabac.
 decret_90_498,"Décret n°90-498 du 21 juin 1990 relatif au calcul des cotisations dues au régime de protection sociale des personnes non salariées des professions agricoles, assises sur les revenus mentionnés à l'article 1003-12 du code rural"
 decret_91_613,Décret n°91-613 du 28 juin 1991 fixant les taux des cotisations de divers régimes spéciaux de sécurité sociale.
 decret_92_326,Décret n°92-326 du 27 mars 1992 fixant pour l'année 1992 les cotisations des régimes d'assurance vieillesse complémentaires et d'assurance invalidité-décès des travailleurs non salariés des professions libérales.
@@ -96,9 +129,14 @@ loi_2003_1199,Loi n° 2003-1199 du 18 décembre 2003 de financement de la sécur
 loi_2003_775,Loi n° 2003-775 du 21 août 2003 portant réforme des retraites (1).
 loi_2010_1330,LOI n° 2010-1330 du 9 novembre 2010 portant réforme des retraites (1)
 loi_2011_1977,LOI n° 2011-1977 du 28 décembre 2011 de finances pour 2012 (1)
+loi_2014_1654,LOI n° 2014-1654 du 29 décembre 2014 de finances pour 2015 (1)
 loi_2023_270,LOI n° 2023-270 du 14 avril 2023 de financement rectificative de la sécurité sociale pour 2023 (1)
+loi_2025_127,LOI n° 2025-127 du 14 février 2025 de finances pour 2025 (1)
+loi_2026_103,LOI n° 2026-103 du 19 février 2026 de finances pour 2026 (1)
 loi_57_444,Loi n° 57-444 du 8 avril 1957 instituant un régime particulier de retraites en faveur des personnels actifs de police (1).
 loi_71_1132,Loi n° 71-1132 du 31 décembre 1971 portant amélioration des pensions de vieillesse du régime général de sécurité sociale et du régime des travailleurs salariés agricoles.
+loi_74_696,Loi n° 74-696 du 7 août 1974 relative à la radiodiffusion et à la télévision
+loi_75_1278,Loi n° 75-1278 du 30 décembre 1975 DE FINANCES POUR 1976
 loi_75_1279,Loi n° 75-1279 du 30 décembre 1975 RELATIVE AUX CONDITIONS D'ACCES A LA RETRAITE DE CERTAINS TRAVAILLEURS MANUELS.
 loi_75_1280,Loi n° 75-1280 du 30 décembre 1975 relative à la limite d'âge des fonctionnaires de l'Etat
 loi_75_3,"Loi n° 75-3 du 3 janvier 1975 PORTANT DIVERSES AMELIORATIONS ET SIMPLIFICATIONS EN MATIERE DE PENSIONS OU ALLOCATIONS DES CONJOINTS SURVIVANTS, DES MERES DE FAMILLE ET DES PERSONNES AGEES."
@@ -109,10 +147,13 @@ loi_83_1179,Loi n° 83-1179 du 29 décembre 1983 de finances pour 1984 (1)
 loi_84_575,Loi n° 84-575 du 9 juillet 1984 portant diverses dispositions d'ordre social.
 loi_84_834,Loi n° 84-834 du 13 septembre 1984 relative à la limite d'âge dans la fonction publique et le secteur public
 loi_86_1304,Loi n° 86-1304 du 23 décembre 1986 relative à la limite d'âge et aux modalités de recrutement de certains fonctionnaires civils de l'Etat (1)
+loi_87_563,Loi n° 87-563 du 17 juillet 1987 portant réforme du régime d'assurance vieillesse applicable à Saint-Pierre-et-Miquelon (1)
 loi_89_1007,Loi n° 89-1007 du 31 décembre 1989 relative au corps des ingénieurs du contrôle de la navigation aérienne (1)
+loi_89_18,Loi n° 89-18 du 13 janvier 1989 portant diverses mesures d'ordre social (1)
 loi_90_1067,Loi n° 90-1067 du 28 novembre 1990 relative à la fonction publique territoriale et portant modification de certains articles du code des communes (1)
 loi_96_452,"Loi n° 96-452 du 28 mai 1996 portant diverses mesures d'ordre sanitaire, social et statutaire (1)"
 loi_97_1164,Loi n° 97-1164 du 19 décembre 1997 de financement de la sécurité sociale pour 1998 (1)
+loi_du_14_avril_1924_portant_reforme_du_regime_des_pensions,Loi du 14 avril 1924 portant réforme du régime des pensions civiles et des pensions militaires.
 loi_du_18_aout_1936_concernant_les_mises_a_la_retraite_par_a,Loi du 18 août 1936 concernant les mises à la retraite par ancienneté.
 marins,"Code des pensions de retraite des marins français du commerce, de pêche ou de plaisance"
 ordonnance_58_1270,Ordonnance n° 58-1270 du 22 décembre 1958 portant loi organique relative au statut de la magistrature.

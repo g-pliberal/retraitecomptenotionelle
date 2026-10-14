@@ -4756,10 +4756,10 @@ de statuts et les `manque` de la page Méthode.
 **Reprise, au 14 octobre 2026.** Fait : le levier 1 (scripts) ; le 2, les
 tests qui déclarent leur date et leur garde sur GitHub, qui rejoue les tests
 rapides sous les présomptions décalées à chaque envoi et écrit son verdict à
-part (`presomptions:` dans `.github/etat_suite.yaml`,
-`2026-10-14-levier-2-garde.md`) ; le 3 pour l'essentiel ; le hook de
-démarrage ; « Économiser le contexte » ; l'arbre du dépôt ; le parcours
-`tenu` ; le contexte en cinq étapes ; la mémoire indexée sur le seul modèle.
+part (`presomptions:` dans `.github/etat_suite.yaml`, note du 14) ; le 3 pour
+l'essentiel ; le hook de démarrage ; « Économiser le contexte » ; l'arbre du
+dépôt ; le parcours `tenu` ; le contexte en cinq étapes ; la mémoire indexée
+sur le seul modèle ; `pousser.sh` publie une tête détachée (entretien du 14).
 Reste : `actions/cache` sur GitHub, que le propriétaire décide ; les fiches de
 règles dans l'empreinte, la fin du portage rejoué (notes du 10 octobre),
 par quoi commencer ; le 4 et 5.
