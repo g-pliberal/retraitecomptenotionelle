@@ -4703,9 +4703,9 @@ def test_la_tranche_c_d_avant_2016_garde_le_coefficient_pour_age(simulateur):
     """
     scenario = simulateur.scenario_actuel
 
-    def agirc(age, niveau=8.0):
+    def agirc(age, niveau=8.0, naissance=1955):
         resultat = scenario.calculer(simulateur.carriere_simple(
-            annee_naissance=1955, sexe="H", affiliation="salarie_prive_cadre",
+            annee_naissance=naissance, sexe="H", affiliation="salarie_prive_cadre",
             age_debut=20, age_liquidation=age, niveau_salaire=niveau,
             profil_carriere="plat", jour_naissance=15,
         ))
@@ -4721,6 +4721,16 @@ def test_la_tranche_c_d_avant_2016_garde_le_coefficient_pour_age(simulateur):
     # À soixante-sept ans, plus rien ; sous quatre plafonds, pas de tranche C.
     assert "coefficient" not in agirc(67).detail
     assert "coefficient" not in agirc(62, niveau=1.0).detail
+    # À travers la fusion de 2019 : l'accord la convertit au quotient des
+    # valeurs de service du 31 décembre 2018 (article 52), et en nomme encore
+    # les points de tranche C d'avant 2016 « dans l'ancien régime AGIRC »
+    # (article 102). Un cadre de 1960 parti à soixante-deux ans en 2022 garde
+    # 0,78 sur ces points, servis à 1,2841 € × 0,347798.
+    apres = agirc(62, naissance=1960)
+    assert apres.detail.endswith(
+        "dont 77,442.08 points de la tranche C d'avant 2016 au coefficient "
+        "pour âge 0.7800")
+    assert "valeur de service 0.446599 €" in apres.detail
 
 def test_la_reforme_agricole_rend_l_exemple_de_la_msa(simulateur):
     """L'exemple de la MSA (« Réforme de la retraite des exploitants : 25

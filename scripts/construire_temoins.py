@@ -325,6 +325,13 @@ def _cas() -> list[dict]:
         "statut": "salarie_prive_cadre", "salaire": "8", "profil": "plat",
         "naissance": "1955", "debut": "20", "liquidation": "62",
     }))
+    # Le même, né en 1960 et parti en 2022 : les points convertis à la fusion
+    # de 2019 gardent la tranche C d'avant 2016 à part (accord du 17 novembre
+    # 2017, articles 52 et 102).
+    cas.append(("tranche_c_apres_la_fusion", {
+        "statut": "salarie_prive_cadre", "salaire": "8", "profil": "plat",
+        "naissance": "1960", "debut": "20", "liquidation": "62",
+    }))
     # LE PLAFOND D'ÂGE DES MARINS : vingt-cinq annuités au plus si la pension
     # est demandée avant cinquante-cinq ans (R. 13 de leur code). Aucun témoin
     # ne visitait cette branche — celui-ci part à cinquante ans après une

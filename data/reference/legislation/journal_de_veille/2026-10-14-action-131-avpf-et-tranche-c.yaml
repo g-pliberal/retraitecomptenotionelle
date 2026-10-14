@@ -1,0 +1,27 @@
+date: "2026-10-14"
+session: "action 131 : l'AVPF de 1972 à 1982 au régime général, la tranche C de l'Agirc à travers la fusion de 2019"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF du dépôt, récupérés (dump du 13
+  juillet 2025, à jour au 11 octobre 2026). Dans JORF : la loi n° 72-8 du 3 janvier 1972
+  (JORFTEXT000000509305), dont l'index n'a que la notice. Dans LEGI : le décret n° 73-88
+  du 26 janvier 1973, articles 1er (LEGIARTI000006761985, de 1978 à 1980) et 3
+  (LEGIARTI000006761990, de 1973 à 1982). L'accord national interprofessionnel du 17
+  novembre 2017, version applicable au 1er janvier 2019 jointe à la circulaire Agirc-Arrco
+  2018-09-DC, articles 52, 84 et 102.
+trouve: >-
+  Les mères au foyer bénéficiaires « sont affiliées obligatoirement à l'assurance
+  vieillesse du régime général », la cotisation « assise sur une assiette forfaitaire
+  correspondant par mois à 173,33 fois le montant du salaire horaire minimum de croissance »
+  du 1er juillet de l'année précédente : le salaire est porté au compte dès le 1er juillet
+  1972, et les périodes de 1972 à 1982 du régime général, qui l'omettaient, le comptent.
+  L'accord de 2017 convertit les points Agirc au quotient des valeurs de service du 31
+  décembre 2018 (article 52) et nomme encore, après la fusion, « les points constitués sur
+  la tranche C des rémunérations avant 2016 dans l'ancien régime AGIRC » (article 102) :
+  le moteur, qui les sert à la valeur convertie, leur garde le coefficient pour âge après
+  2019, ce qu'un témoin montre désormais.
+reste: >-
+  L'article 102 laisse demander le report de ces points, sans abattement, à l'âge du 1° de
+  L. 351-8 : le moteur ne liquide pas une pension en deux fois. Les coefficients de
+  solidarité de 2019 à 2023 (ANI du 30 octobre 2015), que la fiche du régime décrit et
+  qu'aucun calcul ne sert. Les 173,33 heures du décret n° 73-88 contre les 169 de R. 381-3 :
+  le moteur lit l'assiette au barème de la Cnav, date par date, et ne dépend pas du nombre.

@@ -25,7 +25,9 @@ effet: >-
   aucun ou un plus doux — 22 % de moins à 62 ans, 12 % à 64 ans, sur ces seuls points.
   Aucun témoin cadre n'était payé si haut ; un témoin né pour la règle la montre (1955,
   huit fois le salaire moyen, parti à 62 ans avec la durée : 40 % de ses points Agirc à
-  0,78). Deux approximations : le report de ces points, sans abattement, à l'âge du 1° de
+  0,78), et un second la suit à travers la fusion de 2019 (1960, parti en 2022 : ses
+  points Agirc convertis au quotient des valeurs de service du 31 décembre 2018, article
+  52, gardent à part ceux de la tranche C d'avant 2016, que l'article 102 nomme encore). Deux approximations : le report de ces points, sans abattement, à l'âge du 1° de
   L. 351-8 (article 102), que l'assuré peut demander et que le moteur ne sert pas, faute
   de liquider une pension en deux fois ; et les liquidations de 1991 à 2003, où le moteur
   applique la même règle sans avoir lu l'accord de l'ASF. Deux questions restent
@@ -35,7 +37,7 @@ effet: >-
   (fiche coefficients_anticipation_agirc_1947). L'Arrco d'avant 1965 garde ici la table
   des accords, faute du texte de 1961.
 sources:
-  lu_le: 2026-10-13
+  lu_le: 2026-10-14
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
@@ -136,6 +138,18 @@ sources:
       abattement, à l'âge mentionné au 1° de l'article L. 351-8 »
     url: https://www.agirc-arrco.fr/storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf
     date: 2026-09-27
+  - type: autre
+    reference: >-
+      Même accord, même version, relue le 14 octobre 2026. Article 52, « Conversion des
+      droits au 1er janvier 2019 » : « les points AGIRC sont convertis en points du présent
+      régime en leur appliquant le quotient entre la valeur de service de l'AGIRC au 31
+      décembre 2018 et la valeur de service de l'ARRCO à cette même date » ; article 102,
+      « La liquidation se fait simultanément sur toutes les tranches », puis le report des
+      « points constitués sur la tranche C des rémunérations avant 2016 dans l'ancien
+      régime AGIRC » : la conversion ne les fond pas dans les autres, et le moteur, qui les
+      sert à la valeur convertie, leur garde leur coefficient après 2019.
+    url: https://www.agirc-arrco.fr/storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf
+    date: 2026-10-14
   - type: autre
     reference: >-
       Circulaire Agirc-Arrco 2023-03-DRJ du 5 avril 2023 et avenant n° 15 du 16 mars

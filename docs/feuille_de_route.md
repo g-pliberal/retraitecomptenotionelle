@@ -4524,16 +4524,15 @@ R. 111-2 ; la condition de L. 816-1 ; le tableau de 2008 des régimes
 
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
-**Reprise, au 13 octobre 2026.** Les coupures au mois sont faites : une période
-de régime borne au jour les pensions qu'elle liquide (`date_effet`), la
-liquidation la choisit à la date d'effet, et le 1er avril 1983, la CAVEC et le
-RACL sont coupés, sans témoin qui bouge. Restent : `retraite_proportionnelle_msa`,
-le maximum M, série de l'AVTS à faire entrer (zone des données) ;
-`cotisation_par_classes_liberales`, les grilles ; les restes de
-`coefficients_anticipation_agirc_arrco`, `decote_avant_1983`, des artisans et
-commerçants, de `pension_non_salaries_agricoles_2026` et de R. 173-4-3 ; trouvée
-en chemin, l'AVPF des périodes de 1972 à 1982 du régime général, en commit à part.
-Détail : note `131/2026-10-13-coupures-au-mois.md`, et « Ce qui reste de l'action ».
+**Reprise, au 14 octobre 2026.** Faits : les coupures au mois (13 octobre),
+l'AVPF aux périodes de 1972 à 1982 du régime général et la tranche C d'avant
+2016 suivie à travers la fusion de 2019 (14 octobre). Restent :
+`retraite_proportionnelle_msa`, le maximum M et la série de l'AVTS (zone des
+données) ; `cotisation_par_classes_liberales`, les grilles ; de
+`coefficients_anticipation_agirc_arrco`, le report de l'article 102, l'âge de
+référence de 2011 à 2018, les textes d'avant 2003 ; les restes de
+`decote_avant_1983`, des artisans et commerçants, de
+`pension_non_salaries_agricoles_2026` et de R. 173-4-3. Détail : les notes.
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
 session, à la demande du propriétaire, après avoir vérifié qu'elle ne lui
