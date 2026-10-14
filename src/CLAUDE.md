@@ -6,9 +6,14 @@ ses données dans `data/`, qui ont leurs consignes. Ne s'écrivent pas ici : le
 texte du site, qui s'écrit en JavaScript (`moteur/CLAUDE.md`), ni une variante
 de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
 
-- **Le Python de `src/` fait foi.** Toute modification du modèle se porte
-  dans `moteur/js/`, sauf celle du coût, qui ne se calcule qu'ici : le coût
-  agrégé, celui des avantages, les carrières types et leurs départs, que
+- **Le Python de `src/` fait foi pour chaque étape qui a encore son jumeau
+  JavaScript** (principe 4, note de décision 0003) : toute modification s'y
+  fait d'abord, puis se porte dans `moteur/js/`, et
+  `python scripts/jumeaux.py <nom>` dit si une étape a son jumeau et tout ce
+  qui en dépend. Un code neuf s'écrit une fois, dans le langage de l'endroit
+  où il tourne : ici, ce que seule la fabrique calcule, comme le coût, qui ne
+  se calcule qu'ici : le coût agrégé, celui des avantages, les carrières types
+  et leurs départs, que
   `scripts/construire_donnees.py` fige sous les réglages de référence dans la
   table du paquet (`data/derive/agregats.json`), lue des deux côtés par les
   mêmes accesseurs (`donnees/agregats.py`, `moteur/js/agregats.js`). Après
@@ -44,7 +49,7 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
 
 ## Liste de contrôle
 
-- **Un changement du modèle** : le Python d'abord, puis son jumeau s'il
-  touche une carrière, le coût n'en ayant pas ;
+- **Un changement du modèle** : le Python d'abord, puis son jumeau s'il en
+  a un (`python scripts/jumeaux.py <nom>`), le coût n'en ayant pas ;
   `python scripts/regenerer.py`, puis `python scripts/resumer_temoins.py`, pour
   voir ce qu'il déplace ; `-m rapide` et les tests de sa zone, puis le commit.

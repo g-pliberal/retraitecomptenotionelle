@@ -41,12 +41,16 @@ carrières commencées en 1930 aux départs de 2070.
    l'applique, montre qu'il se trompe, et la fiche en garde la preuve.
    La proposition n'a pas de texte en vigueur : sa référence est son propre
    texte, puis les notes de décision.
-4. **Une implémentation fait foi : aujourd'hui, le Python.** Les autres, dont
-   le JavaScript du site, en sont la copie étape par étape, écrite à la main
-   ou produite d'une source commune. Toutes s'échangent les mêmes données entre
-   étapes, et les témoins garantissent qu'elles donnent les mêmes chiffres.
-   Le JavaScript ne copie que ce qui dépend de la saisie du lecteur ; le
-   reste, il le lit, fabriqué par le Python (§ 7.1).
+4. **Chaque étape s'écrit une fois, dans le langage de l'endroit où elle
+   tourne.** Ce que le site calcule chez son lecteur s'écrit en JavaScript,
+   le seul langage du navigateur. Ce qui ne tourne qu'à la fabrique —
+   acquérir, certifier et empaqueter les données, le coût, les études,
+   l'outillage — s'écrit en Python. Ce qui tourne aux deux endroits, le
+   moteur d'une carrière, n'a qu'un exemplaire, en JavaScript, que le Python
+   fait tourner par node. Les étapes s'échangent des données décrites par un
+   schéma, et les témoins gardent leurs chiffres. Tant qu'une étape a encore
+   ses deux jumeaux, le Python fait foi pour elle, et le JavaScript la copie
+   (§ 7.1).
 5. **Le temps est explicite.** Chaque version d'une règle dit à quelles
    situations elle s'applique, par des bornes sur des dates nommées. Les
    versions d'une règle forment un partage, sans trou ni chevauchement qui ne
@@ -105,6 +109,7 @@ vivent à côté du noyau : on les allonge, elles aussi, sans décision.
 | savoir où l'on en est, ce qui ne va pas encore, ce qui reste à faire | le tableau de bord, fabriqué (§ 9.1) ; la feuille de route n'y ajoute que ce que la carte ne sait pas dire |
 | une source nouvelle : un texte, un exemple, une série, une remarque | le registre des sources, où elle entre toujours ; ce qu'elle révèle, déclaré là où il va (§ 9.2) |
 | changer le texte du site | le site, en JavaScript seulement |
+| retirer un doublon entre le Python et le JavaScript | une paire par étape, par la méthode de la note de décision 0003, en partant de `python scripts/jumeaux.py <nom>` ; les témoins restent identiques |
 
 ---
 
@@ -1074,13 +1079,21 @@ rédaction par rédaction.
 
 ## 7. Le moteur
 
-### 7.1 Des moteurs jumeaux, des étapes qui s'échangent des données
+### 7.1 Un exemplaire par étape, des étapes qui s'échangent des données
 
-Une implémentation fait foi, aujourd'hui le Python ; le JavaScript est sa
-copie pour le site. Les deux ont la même structure, étape par étape et
-fonction par fonction, avec les mêmes noms : recopier une règle devient un
-geste local. Les versions, les relations et les paramètres sont des données,
-écrites une fois et lues par les deux moteurs.
+Chaque étape a un seul exemplaire, dans le langage de l'endroit où elle tourne
+(principe 4, note de décision 0003) : le JavaScript pour ce que le site
+calcule chez son lecteur, le Python pour ce que seule la fabrique calcule, et
+le JavaScript pour le moteur d'une carrière, qui tourne aux deux endroits et
+que le Python fera tourner par node. Le dépôt y va une paire de jumeaux à la
+fois, relue avant d'être retirée, les témoins identiques (action 161) :
+`python scripts/jumeaux.py` dresse la carte des paires, de tout ce qui dépend
+de chaque jumeau et de ce que les tests de concordance en exécutent. Tant
+qu'une étape a ses deux jumeaux, le Python fait foi pour elle, et les deux
+gardent la même structure, étape par étape et fonction par fonction, avec les
+mêmes noms : recopier une règle reste un geste local. Les versions, les
+relations et les paramètres sont des données, écrites une fois et lues par
+les deux moteurs.
 
 **Le coût n'a pas de jumeau.** Le JavaScript ne copie que ce qui dépend de
 la saisie du lecteur : une carrière, ses droits et sa pension, sous les
@@ -1104,8 +1117,7 @@ compare seule entre Python et JavaScript, et pourrait un jour n'être écrite
 qu'une fois. C'est la porte de sortie si la recopie devient trop lourde :
 Catala, par exemple, produit du Python et du JavaScript à partir d'un même
 texte, et publie ainsi une bibliothèque de droit français. Le jour venu, une
-étape pourra y passer seule, sans toucher aux autres, et le principe 4 n'aura
-pas à changer.
+étape pourra y passer seule, sans toucher aux autres.
 
 ### 7.2 Acquérir
 

@@ -2,11 +2,15 @@
 
 Claude Code les charge à la première lecture d'un fichier de `moteur/`, en
 plus de `CLAUDE.md`. Le dossier porte deux zones : le portage JavaScript du
-modèle, jumeau du Python de `src/`, qui fait foi et se modifie le premier
-(`src/CLAUDE.md`), et le site. Le portage ne copie que ce que le simulateur
-calcule, une carrière : le coût n'y est pas, et Coût, Carrières types et
-Droits non cotisés lisent ce que le Python en a fabriqué (`agregats.js`,
-`docs/architecture.md`, § 7.1).
+modèle et le site. Chaque étape s'écrit une fois, dans le langage de
+l'endroit où elle tourne (principe 4, note de décision 0003) : ce que le site
+calcule chez son lecteur, ici seulement. Une étape qui a encore son jumeau
+Python le suit : le Python fait foi et se modifie le premier
+(`src/CLAUDE.md`), jusqu'au retrait de la paire (action 161,
+`python scripts/jumeaux.py <nom>`). Le portage ne copie que ce que le
+simulateur calcule, une carrière : le coût n'y est pas, et Coût, Carrières
+types et Droits non cotisés lisent ce que le Python en a fabriqué
+(`agregats.js`, `docs/architecture.md`, § 7.1).
 
 - **Le texte du site ne s'écrit qu'en JavaScript** : `moteur/js/pages.js`,
   `gabarit.js`, et `moteur/style.css`, sa propre source. Le Python le lit par
