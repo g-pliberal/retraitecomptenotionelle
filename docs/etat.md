@@ -28,8 +28,8 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | à vérifier | 2 |
 
 - Confrontées à au moins un exemple officiel : **58 sur 216** (198 exemples : 187 reproduits, 11 en écart connu, section 2).
-- Citées dans le code par leur identifiant : **85 sur 216**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
-- Désignées par les interrupteurs des périodes de régime : **45 sur 216**, par 2 386 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
+- Citées dans le code par leur identifiant : **86 sur 216**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
+- Désignées par les interrupteurs des périodes de régime : **46 sur 216**, par 2 400 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **99 sur 216**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
 - Découpées en versions : **109 sur 216**, soit 443 versions, dont 64 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 126, dont 10 déclarées non appliquées.
@@ -180,7 +180,7 @@ Et 34 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `cavec_minoration_age_seul` | approchee | La note de la fiche disait la règle, mais la période laissait la durée annuler la minoration, et lisait avant 2008 les âges du régime génér… |
 | `cavom_ages_minoration` | approchee | La fiche lisait les tables du régime général et la décote du régime de base, que la durée annule : un officier ministériel parti à l'âge lé… |
 | `cavp_minoration_deux_pentes` | approchee | La fiche lisait la décote du régime de base, que la durée annule : un pharmacien parti à 64 ans avec sa durée ne perdait rien de sa complém… |
-| `cese_pension_des_membres` | approchee | Les anciens membres du CESE désignés avant le 1er septembre 2023 : le modèle sous-évalue de 10 à 14 % la part de leurs annuités antérieures… |
+| `cese_pension_des_membres` | approchee | Les anciens membres du CESE désignés avant le 1er septembre 2023 : leurs annuités d'avant 2014 se liquident désormais à leur pourcentage, a… |
 | `chomage_retraite_complementaire` | approchee | Une année de solidarité vaut, depuis 2019, un tiers de points de moins sur la tranche 1 et les trois quarts de moins sur la tranche 2 qu'un… |
 | `cnavpl_majoration_duree_assurance` | approchee | La fiche les disait non portés, et le moteur ne cherchait la majoration de durée que dans les régimes en annuités : une libérale qui n'avai… |
 | `coefficients_anticipation_agirc_1947` | approchee | Le cadre dont la pension de l'Agirc prend effet avant 1955 : 0,72 au lieu de 0,78 à soixante ans, 0,93 au lieu de 0,96 à soixante-quatre, e… |
