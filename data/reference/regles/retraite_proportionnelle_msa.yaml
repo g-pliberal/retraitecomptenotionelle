@@ -13,23 +13,24 @@ effet: >-
   Les chefs d'exploitation, pour leurs années depuis 1990. Le barème du moteur est celui
   que le décret n° 80-808, puis R. 732-70 et R. 732-71, écrivent depuis 1990, points
   arrondis à l'entier le plus proche — 23 au plancher de 600 SMIC —, à un écart près pour
-  les pensions d'avant 2026. Il calcule le maximum M avec la retraite forfaitaire de la
-  fiche, ramenée sur les prix, au lieu de l'allocation aux vieux travailleurs salariés :
-  115,1 points au plafond en 2025, quand la MSA publie une échelle « comprise entre 23 et
-  113 points ». Pour les pensions prenant effet depuis le 1er janvier 2026, ces points ne
+  les pensions d'avant 2026. Il calcule le maximum M avec l'allocation aux vieux
+  travailleurs salariés au 1er janvier de l'année, comme R. 732-70 l'écrit, au lieu de la
+  retraite forfaitaire figée depuis 2014 (le 14 octobre 2026, étape 138.6) : 113 points au
+  plafond en 2025, l'échelle « comprise entre 23 et 113 points » que publie la MSA, au
+  lieu de 115. Pour les pensions prenant effet depuis le 1er janvier 2026, ces points ne
   comptent plus que par la réforme de L. 732-24 : ceux d'avant 2016 par la moyenne des
   meilleures années, multipliée par le nombre d'années — dans l'exemple de la MSA, 682
   points au lieu des 633 de la somme —, ceux de 2016 à 2027 dans le seul calcul
   provisoire des pensions de 2026 et 2027 ; le moteur le fait depuis le 28 septembre
   2026, voir la fiche pension_non_salaries_agricoles_2026.
 sources:
-  lu_le: 2026-09-27
+  lu_le: 2026-10-14
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Calculer le maximum M avec l'allocation aux vieux travailleurs salariés de l'année, au
-    lieu de la retraite forfaitaire, quand sa série, lue dans ses décrets de
-    revalorisation, sera entrée au dépôt (zone des données).
+    R. 732-70 ne dit pas à quelle date lire l'AVTS : le modèle prend, depuis le 14 octobre
+    2026, le montant en vigueur au 1er janvier de l'année (pension_minimum_avant_1983.csv,
+    du barème de la Cnav), comme le minimum contributif de R. 732-71.
   - >-
     R. 732-71 ne dit pas à quelle date lire « l'intégralité du montant annuel minimal non
     majoré de pension garanti en application de l'article L. 351-10 » (MC) : le modèle

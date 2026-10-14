@@ -1,5 +1,5 @@
-# La pension minimum de vieillesse d'avant le 1er avril 1983, en euros par an
-# -------------------------------------------------------------------------
+# La pension minimum de vieillesse d'avant le 1er avril 1983, et l'AVTS depuis, en euros par an
+# ------------------------------------------------------------------------------------------
 # source_id: cnav_avts
 #
 # LA RÈGLE. Avant le minimum contributif, la pension de vieillesse du régime
@@ -29,13 +29,25 @@
 # et d'invalidité » (« PENSION MINIMUM DE VIEILLESSE »). Chaque ligne est le
 # montant de l'AVTS que le barème de la Cnav date
 # (`ancienne_prestation_autre_prestation_montant_bar`, `scripts/fetch/cnav_avts.py`),
-# depuis l'ordonnance du 2 février 1945, jusqu'au dernier en vigueur le
-# 31 mars 1983 ; jusqu'en 1961, celui des villes de plus de 5 000 habitants.
+# depuis l'ordonnance du 2 février 1945 ; jusqu'en 1961, celui des villes de
+# plus de 5 000 habitants.
 # Le montant au 31 décembre de chaque année est celui de la colonne `avts` de
 # `minimum_vieillesse_avant_2007.csv` (`tests/test_donnees.py`). Les francs
 # sont convertis au taux de 6,55957, les anciens francs au centième. `haute` :
 # la caisse transcrit ce que les textes fixent ; les trois montants de 1982 et
 # 1983, lus dans l'article, attendent un contrôle qui les certifie.
+#
+# APRÈS LE 31 MARS 1983, LA SÉRIE SE POURSUIT : l'allocation aux vieux
+# travailleurs salariés reste un montant que d'autres règles lisent. Le maximum
+# M des points de retraite proportionnelle des non-salariés agricoles, de 1990 à
+# 2025, est « M = PM-AVTS/37,5 x VP », où « AVTS représente le montant de
+# l'allocation aux vieux travailleurs salariés » (code rural, R. 732-70,
+# LEGIARTI000006597479 et LEGIARTI000024113180 ; décret n° 80-808, article 8-1,
+# depuis 1990) ; le modèle le lit au 1er janvier de chaque année
+# (`droit/acquerir.py`, `points_msa`). Chaque date jusqu'au 1er janvier 2026,
+# du même barème, avec le texte que la Cnav cite : les décrets jusqu'en 2003, les
+# arrêtés de 2004 à 2007, ses circulaires depuis 2008. Pas de revalorisation en
+# 2015. Les montants de 2002 à 2026 sont en euros dans le barème.
 #
 # UNE LIGNE PAR DATE : le modèle lit le montant en vigueur le premier jour du
 # mois de la date d'effet.
@@ -89,3 +101,58 @@ date,valeur,fiabilite,texte
 1982-01-01,1539.735074,haute,Décret 81/1166 du 30/12/1981
 1982-07-01,1661.694288,haute,Décret 82/561 du 29/06/1982
 1983-01-01,1722.673895,haute,Décret 82/1142 du 29/12/1982
+1983-07-01,1791.275953,haute,Décret 83/551 du 30/06/1983
+1984-01-01,1823.290246,haute,Décret 84/92 du 08/02/1984
+1984-07-01,1862.926991,haute,Décret 84/643 du 17/07/1984
+1985-01-01,1926.955578,haute,Décret 84/1288 du 31/12/1984
+1985-07-01,1980.312734,haute,Décret 85/784 du 24/07/1985
+1986-01-01,2006.229067,haute,Décret 85/1490 du 31/12/1985
+1986-10-01,2016.900498,haute,Décret 86/1101 du 09/10/1986
+1987-01-01,2053.488262,haute,Décret 87/77 du 06/02/1987
+1987-07-01,2073.306634,haute,Décret 87/77 du 06/02/1987
+1988-01-01,2126.66379,haute,Décret 87/1176 du 24/12/1987
+1988-07-01,2154.104614,haute,Décret 87/1176 du 24/12/1987
+1989-01-01,2181.545437,haute,Décret 88/1238 du 30/12/1988
+1989-07-01,2208.98626,haute,Décret 88/1238 du 30/12/1988
+1990-01-01,2256.245455,haute,Décret 90/265 du 23/03/1990
+1990-07-01,2285.210768,haute,Décret 90/265 du 23/03/1990
+1991-01-01,2324.085268,haute,Décret 90/1241 du 31/12/1990
+1991-07-01,2342.37915,haute,Décret 91/751 du 31/07/1991
+1992-01-01,2366.008748,haute,Décret 92/50 du 16/01/1992
+1992-07-01,2408.694472,haute,Décret 92/50 du 16/01/1992
+1993-01-01,2440.708766,haute,Décret 93/202 du 11/02/1993
+1994-01-01,2489.644901,haute,Décret 93/1357 du 30/12/1993
+1995-01-01,2519.524908,haute,Décret 95/254 du 06/03/1995
+1995-07-01,2532.178176,haute,Décret 95/864 du 31/07/1995
+1996-01-01,2582.943699,haute,Décret 96/86 du 02/02/1996
+1997-01-01,2614.043299,haute,Décret 96/1185 du 30/12/1996
+1998-01-01,2642.856163,haute,Décret 97/1246 du 29/12/1997
+1999-01-01,2674.718007,haute,Décret 98/1224 du 29/12/1998
+2000-01-01,2688.133521,haute,Décret 99/1146 du 29/12/1999
+2001-01-01,2747.28374,haute,Décret 2000/1324 du 26/12/2000
+2002-01-01,2807.72,haute,Décret 2002/115 du 25/01/2002
+2003-01-01,2849.84,haute,Décret 2002/1619 du 31/12/2002
+2004-01-01,2898.28,haute,Arrêté du 23/12/2003
+2005-01-01,2956.24,haute,Arrêté du 16/12/2004
+2006-01-01,3009.45,haute,Arrêté du 23/12/2005
+2007-01-01,3063.62,haute,Arrêté du 19/12/2006
+2008-01-01,3097.31,haute,Arrêté du 21/12/2007
+2008-09-01,3122.08,haute,Circulaire Cnav 2008/45 du 12/08/2008
+2009-04-01,3153.3,haute,Circulaire Cnav 2009/31 du 16/04/2009
+2010-04-01,3181.67,haute,Circulaire Cnav 2010/43 du 23/04/2010
+2011-04-01,3248.48,haute,Circulaire Cnav 2011/30 du 14/04/2011
+2012-04-01,3316.69,haute,Circulaire Cnav 2012/35 du 17/04/2012
+2013-04-01,3359.8,haute,Circulaire Cnav 2013/29 du 18/04/2013
+2014-04-01,3379.95,haute,Circulaire Cnav 2014/28 du 09/04/2014
+2016-04-01,3383.32,haute,Circulaire Cnav 2016/21 du 29/03/2016
+2017-04-01,3393.46,haute,Circulaire Cnav 2017/13 du 04/04/2017
+2018-04-01,3427.39,haute,Circulaire Cnav 2018/10 du 05/04/2018
+2019-01-01,3478.8,haute,Circulaire Cnav 2019/4 du 09/01/2019
+2020-01-01,3513.58,haute,Circulaire Cnav 2020/9 du 04/02/2020
+2021-01-01,3527.63,haute,Circulaire Cnav 2021/1 du 11/01/2021
+2022-01-01,3566.43,haute,Circulaire Cnav 2022/3 du 11/01/2022
+2022-07-01,3709.08,haute,Circulaire Cnav 2022/19 du 18/08/2022
+2023-01-01,3738.75,haute,Circulaire Cnav 2023/3 du 09/01/2023
+2024-01-01,3936.9,haute,Circulaire Cnav 2023/34 du 29/12/2023
+2025-01-01,4023.51,haute,Circulaire Cnav 2024/39 du 23/12/2024
+2026-01-01,4059.72,haute,Circulaire Cnav 2025/29 du 22/12/2025

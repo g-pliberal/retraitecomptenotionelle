@@ -63,7 +63,10 @@ export function pointsMsa(moteur, periode, annee, revenu) {
   if (smic <= 0 || passAnnuel <= 0 || valeurPoint <= 0) {
     return 0.0;
   }
-  const avts = (periode.pension_forfaitaire_annuelle ?? 0.0)
+  // L'allocation aux vieux travailleurs salariés au 1er janvier de l'année
+  // (R. 732-70), et non la retraite forfaitaire, figée depuis 2014.
+  const lue = moteur.minimumContributif.avts(annee);
+  const avts = lue !== null ? lue[0] : (periode.pension_forfaitaire_annuelle ?? 0.0)
     * moteur.macro.coefficientPrix(periode.pension_forfaitaire_annee ?? annee, annee);
   // Le minimum en vigueur au 1er janvier de l'année : R. 732-71 ne dit pas à
   // quelle date le lire.

@@ -1,0 +1,24 @@
+date: "2026-10-14"
+session: "action 138, étape 6 : l'allocation aux vieux travailleurs salariés dans R. 732-70"
+consulte: >-
+  L'index LEGI de la release `index-dila`, à jour au 11 octobre 2026 : R. 732-70 du
+  code rural (LEGIARTI000006597479, du 22 avril 2005 au 3 juin 2011 ;
+  LEGIARTI000024113180, du 3 juin 2011 au 1er janvier 2026), D. 732-77 dans sa
+  rédaction du 1er janvier 2026 (LEGIARTI000053365517). Le barème « Allocation aux vieux
+  travailleurs salariés […] - Montant » de la Cnav, par son API, récupéré le jour même
+  (`scripts/fetch/cnav_avts.py`), de 1983 à 2026.
+trouve: >-
+  « M = PM-AVTS/37,5 x VP », où « AVTS représente le montant de l'allocation aux vieux
+  travailleurs salariés » : l'AVTS elle-même, que le barème date jusqu'au 1er janvier
+  2026 (4 059,72 €), et non la retraite forfaitaire, figée depuis 2014 ; aucune date de
+  lecture dans l'article, le modèle prend le 1er janvier, comme pour le minimum
+  contributif de R. 732-71. Au plafond de 2025, 113,4 points, arrondis à 113 : les
+  « 23 à 113 points » de la MSA ; avec le forfait, 115. L'index clôt l'article au
+  1er janvier 2026 sans rédaction nouvelle ; D. 732-77 renvoie à R. 732-70 et R. 732-71
+  « dans leur rédaction antérieure au décret n° 2025-1409 ». La série datée de l'AVTS
+  prolonge `pension_minimum_avant_1983.csv` jusqu'en 2026 ; quatorze témoins
+  d'exploitants baissent, de 0,09 % à 1,29 %.
+reste: >-
+  Certifier les montants de l'AVTS d'après 1983 au Journal officiel, comme ceux d'avant
+  (`jorf_avts.py`) ; la rédaction de R. 732-70 depuis le 1er janvier 2026, que l'index
+  ne porte pas.

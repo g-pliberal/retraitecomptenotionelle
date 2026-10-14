@@ -429,7 +429,7 @@ referents:
           `avts/montants_annuels.yaml` et
           `as/allocation_supplementaire/as_personne_seule.yaml`, sous
           `…/solidarite_insertion/minimum_vieillesse/`, au commit `fe2cdff`
-        etat: a_reprendre
+        etat: repris
         chantier: "138.6"
       - quoi: >-
           Il porte la pension majorée de référence des exploitants

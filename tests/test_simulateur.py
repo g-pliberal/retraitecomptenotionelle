@@ -4883,8 +4883,11 @@ def test_la_pension_agricole_de_2026_prend_le_plus_favorable_des_deux_calculs(si
     assert "revenu annuel moyen" not in pension(1955).detail
     # La moitié du plafond borne la pension avant la surcote : une longue
     # carrière au triple du salaire moyen la dépasse, par ses points d'avant
-    # 2016, que la proratisation ne borne pas.
-    haut = pension(1962, niveau=3.0, debut=18)
+    # 2016, que la proratisation ne borne pas. Installée à dix-sept ans : le
+    # maximum de points de R. 732-70, qui lit l'AVTS depuis le 14 octobre 2026,
+    # en donne moins qu'avec la retraite forfaitaire, et dix-huit n'y suffisent
+    # plus.
+    haut = pension(1962, niveau=3.0, debut=17)
     assert haut.detail.startswith(
         "moitié du plafond 24,030.00 € × coefficient de majoration 1.0500 "
         "(L. 732-24, III), au lieu de ")

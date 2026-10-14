@@ -642,7 +642,7 @@ export class MinimumContributif {
    *
    * @returns {[number, number]|null} valeur, et fiabilité.
    */
-  _enVigueur(mesure, annee, mois) {
+  _enVigueur(mesure, annee, mois, surLesPrix = false) {
     const datees = this._table[mesure] ?? [];
     if (datees.length === 0) {
       return null;
@@ -658,9 +658,21 @@ export class MinimumContributif {
     let [, valeur, fiabilite] = datees[rang - 1];
     const derniere = Number(datees[datees.length - 1][0].slice(0, 4));
     if (rang === datees.length && annee > derniere) {
-      valeur *= this.macro.coefficientSmic(derniere, annee);
+      valeur *= surLesPrix ? this.macro.coefficientPrix(derniere, annee)
+        : this.macro.coefficientSmic(derniere, annee);
     }
     return [valeur, fiabilite];
+  }
+
+  /**
+   * L'allocation aux vieux travailleurs salariés en vigueur le premier jour du
+   * mois, en euros par an, revalorisée sur les prix au-delà du dernier montant ;
+   * `null` avant 1945. Voir `avts` du Python.
+   *
+   * @returns {[number, number] | null} valeur, et fiabilité.
+   */
+  avts(annee, mois = 1) {
+    return this._enVigueur("pension_minimum", annee, mois, true);
   }
 
   /**

@@ -110,17 +110,16 @@ def points_msa(moteur: ScenarioActuel, periode: PeriodeRegime, annee: int,
     valeur_point = liquider.valeur_point_fiche(moteur, periode, annee)
     if smic <= 0 or pass_annuel <= 0 or valeur_point <= 0:
         return 0.0
-    # L'AVTS est le montant de la retraite forfaitaire elle-même : la loi
-    # les a égalés jusqu'en 2014 (L. 732-24), puis a figé le forfait sur
-    # l'AVTS de cette année-là. Les deux ont depuis divergé — 4 023,51 €
-    # d'AVTS au 1er janvier 2025 contre 3 850 € environ de forfait —, ce qui
-    # porte M à 115,1 points au lieu de 113,4 : un pour cent et demi de trop
-    # sur la marche la plus haute du barème. La fiche ne porte qu'un
-    # montant, et c'est celui-là ; le jour où l'AVTS entrera dans le dépôt,
-    # c'est ici qu'elle se substituera.
-    avts = (periode.pension_forfaitaire_annuelle or 0.0) * moteur.macro.coefficient_prix(
-        periode.pension_forfaitaire_annee or annee, annee
-    )
+    # « AVTS représente le montant de l'allocation aux vieux travailleurs
+    # salariés » (R. 732-70), au 1er janvier de l'année, comme le minimum
+    # ci-dessous : la série datée du barème de la Cnav, jusqu'en 2026. Le
+    # module prenait la retraite forfaitaire de la fiche ramenée sur les prix,
+    # que la loi a égalée à l'AVTS jusqu'en 2014 puis figée : 3 850 € environ
+    # au lieu de 4 023,51 € en 2025, et M à 115,1 points au lieu de 113,4.
+    lue = moteur.minimum_contributif.avts(annee)
+    avts = (lue[0] if lue is not None
+            else (periode.pension_forfaitaire_annuelle or 0.0) * moteur.macro.coefficient_prix(
+                periode.pension_forfaitaire_annee or annee, annee))
     # Le minimum en vigueur au 1er janvier de l'année : R. 732-71 ne dit pas
     # à quelle date le lire.
     minimum_contributif, _, _, _ = moteur.minimum_contributif.valeurs(annee)

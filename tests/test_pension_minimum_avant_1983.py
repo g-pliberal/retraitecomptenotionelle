@@ -151,7 +151,7 @@ def test_la_serie_datee_redonne_l_avts_de_chaque_31_decembre():
     datees = sorted((l["date"], float(l["valeur"])) for l in lire("pension_minimum_avant_1983.csv"))
     annuelles = {int(l["annee"]): float(l["avts"])
                  for l in lire("minimum_vieillesse_avant_2007.csv")}
-    for annee in range(1945, 1983):
+    for annee in range(1945, 2007):
         au_31 = [valeur for jour, valeur in datees if jour <= f"{annee}-12-31"][-1]
         assert au_31 == pytest.approx(annuelles[annee], abs=1e-6), annee
 
@@ -208,3 +208,18 @@ def test_les_deux_moteurs_servent_la_meme_pension_minimum():
     portees = [rang for rang, attendu in enumerate(attendus)
                if "porté à la pension minimum" in json.dumps(attendu, ensure_ascii=False)]
     assert portees, "aucune requête n'est portée à la pension minimum"
+
+
+def test_le_maximum_de_r_732_70_lit_l_avts(simulateur):
+    """« M = PM-AVTS/37,5 x VP », où « AVTS représente le montant de
+    l'allocation aux vieux travailleurs salariés » (R. 732-70) : au plafond de
+    2025, 113,4 points, arrondis à 113, les « 23 à 113 points » que la MSA
+    annonce ; la retraite forfaitaire, figée depuis 2014, en donnait 115."""
+    from retraite_notionnelle.droit.acquerir import points_msa
+
+    actuel = simulateur.scenario_actuel
+    assert actuel.minimum_contributif.avts(2025)[0] == pytest.approx(4_023.51)
+    assert actuel.minimum_contributif.avts(2015)[0] == pytest.approx(3_379.95)
+    periode = actuel.catalogue["msa_non_salaries"].periode(2025)
+    plafond = actuel.macro.plafond_securite_sociale(2025)
+    assert points_msa(actuel, periode, 2025, plafond) == 113

@@ -3352,11 +3352,11 @@ class MinimumContributif:
         return dict(REGLE_DU_MINIMUM_EN_VIGUEUR if version is None
                     else version["parametres"])
 
-    def _en_vigueur(self, mesure: str, annee: int, mois: int
+    def _en_vigueur(self, mesure: str, annee: int, mois: int, sur_les_prix: bool = False
                     ) -> tuple[float, Fiabilite] | None:
         """Le montant en vigueur le premier jour de ce mois, ``None`` avant le
         premier : un montant connu, ou, au-delà du dernier, ce dernier
-        revalorisé sur le SMIC de chaque année traversée."""
+        revalorisé sur le SMIC de chaque année traversée, ou sur les prix."""
         datees = self._table.get(mesure)
         if not datees:
             return None
@@ -3367,8 +3367,18 @@ class MinimumContributif:
         date_valeur, valeur, fiabilite = datees[rang - 1]
         derniere = int(datees[-1][0][:4])
         if rang == len(datees) and annee > derniere:
-            valeur *= self.macro.coefficient_smic(derniere, annee)
+            valeur *= (self.macro.coefficient_prix(derniere, annee) if sur_les_prix
+                       else self.macro.coefficient_smic(derniere, annee))
         return valeur, fiabilite
+
+    def avts(self, annee: int, mois: int = 1) -> tuple[float, Fiabilite] | None:
+        """L'allocation aux vieux travailleurs salariés en vigueur le premier
+        jour du mois, en euros par an : la série de la pension minimum, que les
+        mêmes textes fixent jusqu'en 1983, et que le barème de la Cnav prolonge
+        jusqu'en 2026 ; au-delà, revalorisée sur les prix. ``None`` avant 1945.
+        Le maximum des points de retraite proportionnelle agricole la lit
+        (R. 732-70)."""
+        return self._en_vigueur(PENSION_MINIMUM, annee, mois, sur_les_prix=True)
 
     def pension_minimum(self, annee: int, mois: int = 1) -> tuple[float, Fiabilite]:
         """La pension minimum d'avant le 1er avril 1983 en vigueur le premier
