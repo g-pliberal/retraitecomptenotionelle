@@ -76,8 +76,9 @@ def diviseur_de_courbe(courbe, taux_anticipe: float = 0.0) -> float:
     La rente est supposée servie en continu sur l'année : chaque année compte
     la survie moyenne de son début et de sa fin, actualisée au milieu de
     l'année. C'est la formule de l'ETK finlandaise, au millionième ; les
-    exemples officiels de la Suède, de l'Italie et de la Pologne, rejoués par
-    cette fonction, sont dans ``tests/test_diviseur_exemples_officiels.py``.
+    exemples officiels de la Suède, de l'Italie, de la Pologne, de la Lettonie
+    et de la Norvège, rejoués par cette fonction, sont dans
+    ``tests/test_diviseur_exemples_officiels.py``.
     """
     diviseur = 0.0
     for t in range(len(courbe) - 1):

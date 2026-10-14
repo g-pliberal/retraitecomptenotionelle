@@ -9561,9 +9561,10 @@ referents:
       prix. Tables de NAV du 26 juin 2026 : 20,41 à 62 ans pour la génération
       1965.
     confrontation: >-
-      Un calcul à refaire : le diviseur de 1965 depuis les tables de
-      mortalité de SSB ; et une variante du diviseur du dépôt qui inclut le
-      gain de survie.
+      Un calcul refait le 14 octobre 2026 : la grille de 1965, 157 nombres,
+      au centième, depuis la table 07902 de SSB et les formules du vedlegg
+      (`tests/test_diviseur_exemples_officiels.py`) ; reste une variante du
+      diviseur du dépôt qui inclut le gain de survie.
     ecarts:
       - constat: >-
           Après 60 ans, son diviseur lit la mortalité moyenne
@@ -9606,7 +9607,12 @@ referents:
         verification: >-
           Méthode : traçabilité. Une grille publiée laisse chacun
           vérifier un diviseur, et montre d'un millésime à l'autre
-          ce que les tables de génération déplacent.
+          ce que les tables de génération déplacent. La grille de NAV
+          est refaite au centième le 14 octobre 2026, ses 157 nombres
+          de la génération 1965 (`tests/test_diviseur_exemples_officiels.py`) :
+          le diviseur du dépôt, escompté au milieu de l'année et non
+          à son début, la rend à 0,9925^½ et au gain d'héritage
+          près. Reste à publier celle du dépôt.
         etat: a_reprendre
         chantier: "138.11"
     bilan: >-
@@ -10257,9 +10263,11 @@ referents:
     couvre: >-
       La pension, capital divisé par l'espérance de vie unisexe du bureau
       statistique ; le capital indexé sur la masse salariale cotisée. La
-      table G du 1er janvier 2026 donne 17,76 à 65 ans.
+      table G du 1er janvier 2026 donne 17,76 à 65 ans : l'espérance de vie
+      du moment de 2024 (CSB, IRP030), non de génération.
     confrontation: >-
-      Une variante à opposer au diviseur du dépôt, sans actualisation.
+      Une variante à opposer au diviseur du dépôt, sans actualisation ;
+      rejouée le 14 octobre 2026 (`tests/test_diviseur_exemples_officiels.py`).
     ecarts:
       - constat: >-
           G est interpolé linéairement entre les âges quinquennaux :
@@ -10352,23 +10360,32 @@ referents:
       - quoi: >-
           La table G du 1er janvier 2026 (17,76 à 65 ans, 18,49 à
           64, 19,95 à 62) est un exemple officiel de diviseur
-          unisexe de génération, sans actualisation. La fiche du
-          dépôt n'en a aucun (coefficient_de_conversion.yaml:50).
+          unisexe, sans actualisation. La fiche du dépôt n'en a
+          aucun (coefficient_de_conversion.yaml:50).
         preuve: >-
           VSAA, « plānotie vecuma pensijas izmaksas laika periodi
-          (gados) G no 2026. gada 1. janvāra » ; fiche lettone, p. 5
-          : « projected cohort-specific unisex life expectancy at
-          retirement »
+          (gados) G no 2026. gada 1. janvāra » ; CSB, IRP030 de 2024,
+          « Paredzamais mūža ilgums 40 līdz 90 gadus veciem
+          iedzīvotājiem (gados, pensijas aprēķinam) », nombre pour
+          nombre. La fiche lettone (p. 5 : « projected cohort-specific
+          unisex life expectancy ») décrit la projection, non la table.
         verification: >-
           Table officielle de l'organisme de paiement, établie sur
-          les données du bureau statistique (art. 13).
-        etat: a_reprendre
+          les données du bureau statistique (art. 13). Repris le 14
+          octobre 2026 (138.11) : sur la table abrégée de 2024 (IRP020,
+          survivants aux âges ronds), la mortalité constante entre
+          deux âges publiés, les deux moteurs rendent G au centième de
+          40 à 85 ans ; entre les âges ronds, G interpole en ligne
+          droite (`tests/test_diviseur_exemples_officiels.py`).
+        etat: repris
         chantier: "138.11"
     bilan: >-
       Ses règles éclairent surtout ce que le dépôt doit trancher :
       l'assiette qui fait le rendement, les cotisations d'après le
-      départ, le plancher à rattrapage. Son diviseur est de génération
-      comme celui du dépôt, mais interpolé plus grossièrement.
+      départ, le plancher à rattrapage. Son diviseur est l'espérance de
+      vie du moment de l'avant-dernière année, interpolée entre les âges
+      ronds : moins exact que la table de génération du dépôt, qui le
+      refait au centième sur la même table.
     sas: [lettonie_table_g]
     lu_le: 2026-10-04
     lu_dans:

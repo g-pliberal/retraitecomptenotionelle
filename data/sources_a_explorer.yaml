@@ -6195,7 +6195,13 @@ sources:
     a_en_tirer: >-
       Les diviseurs fixés des générations 1954 à 1965 et projetés jusqu'à
       2040 : celui de 1965 à refaire depuis les tables de mortalité.
-    statut: a_explorer
+    statut: explore
+    explore_le: 2026-10-14
+    note: >-
+      La grille de la génération 1965, refaite au centième depuis la table
+      07902 de SSB, dans tests/test_diviseur_exemples_officiels.py ; les
+      générations 1954 à 1964 et la prévision jusqu'à 2040 restent à en
+      tirer, avec la grille du dépôt.
 
   - id: italie_rgs_rapporto_27
     url: https://www.rgs.mef.gov.it/_Documenti/VERSIONE-I/Attivit--i/Spesa-soci/Attivita_di_previsione_RGS/2026/Ltdmlpdspess-2026.pdf
@@ -6235,7 +6241,13 @@ sources:
     regimes: []
     a_en_tirer: >-
       La table G du 1er janvier 2026 : le diviseur letton, 17,76 à 65 ans.
-    statut: a_explorer
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      La table G, de 40 à 90 ans, recopiée dans
+      tests/test_diviseur_exemples_officiels.py avec la table abrégée IRP020
+      de 2024 du CSB, d'où elle se refait : l'espérance du moment de 2024,
+      non de génération.
 
   - id: bresil_lei_9876
     url: https://www.planalto.gov.br/ccivil_03/leis/l9876.htm

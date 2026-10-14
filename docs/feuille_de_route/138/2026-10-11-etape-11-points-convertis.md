@@ -1,15 +1,15 @@
 # Étape 11, première partie : les points du relevé convertis en revenus
 
 **Reprise, au 14 octobre 2026.** Fait : les points d'un relevé convertis en
-revenu dans les deux moteurs et leur branchement au site (11 octobre) ; le
-diviseur éprouvé sur les exemples officiels de la Finlande, de la Pologne, de
-la Suède et de l'Italie, par les deux moteurs, en cas d'essai
-(`test_diviseur_exemples_officiels.py`, 14 octobre) : exact là où la
-convention est la même, plus court du terme des versements ailleurs. Reste :
-au propriétaire, le terme des versements, la réversion dans le diviseur, et
-ce que reçoit une année sans montant ni points ; puis la Lettonie, la grille
-publiée, les lissages, le prorata des mois, les chocs du COR. Détail :
-`2026-10-14-etape-11-exemples-officiels.md`, « Ce qui reste ».
+revenu (11 octobre) ; le diviseur éprouvé, par les deux moteurs, en cas
+d'essai (`test_diviseur_exemples_officiels.py`), sur la Finlande, la Pologne,
+la Suède et l'Italie, puis sur la table G lettone, refaite au centième aux
+âges ronds, et sur la grille de NAV de 1965, ses 157 nombres au centième.
+Reste : au propriétaire, le terme des versements, la réversion dans le
+diviseur, ce que reçoit une année sans montant ni points, le gain d'héritage ;
+puis la grille du dépôt à publier (modèle, puis site), les lissages, le
+prorata des mois, les chocs du COR. Détail :
+`2026-10-14-etape-11-lettonie-et-norvege.md`, « Ce qui reste ».
 
 **La demande.** Le propriétaire, le 11 octobre 2026 : « les années sans
 montant sont comptées zéro au compte notionnel, et les points du relevé sont
