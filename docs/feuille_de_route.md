@@ -1223,12 +1223,12 @@ borne basse et l'écart une borne haute.
 **Reprise, au 14 octobre 2026.** Les 260 adresses se dépouillent par lots.
 Sont faits l'IRCEC, les libérales, la CRPN, l'Ircantec, l'ENIM, la fonction
 publique, la CNRACL, la Caisse des dépôts, le RAFP, l'Agirc-Arrco, les régimes
-spéciaux, la Cnav et service-public. Attendent un lot approuvé (saisies par
+spéciaux, la Cnav, service-public et le CLEISS. Attendent un lot approuvé (saisies par
 `scripts/simulateurs.py`) : la calculette du RAFP, le guide des prélèvements de
 l'Ircantec, le simulateur des artistes-auteurs de la Cnav. À corriger :
 l'abattement du RCI, en écart connu (fiche `abattement_rci`). Restent
-`a_explorer` : le CLEISS, par où commencer, les modèles publics, mon-entreprise,
-quinze API publiques. Détail : `docs/feuille_de_route/89/2026-10-14-cnav-service-public.md`.
+`a_explorer` : les modèles publics, par où commencer, mon-entreprise, quinze
+API publiques. Détail : `docs/feuille_de_route/89/2026-10-14-cnav-service-public.md`.
 
 **Demande.** Huit lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut

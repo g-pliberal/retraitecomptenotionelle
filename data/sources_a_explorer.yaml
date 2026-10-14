@@ -3542,7 +3542,21 @@ sources:
       La description complète du système français de retraite, écrite pour les
       institutions étrangères : une synthèse dense, à jour, qui sert de liste
       de contrôle — ce qu'elle nomme et que le dépôt ne porte pas est un manque.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026, comme liste de contrôle : tout ce qu'elle
+      nomme pour la vieillesse, le dépôt le porte ou le déclare — décote
+      par trimestre de 49,375 à 37,5 %, 170 trimestres pour 1963,
+      minimum contributif et plafond de 1 410,89 €, pension plafonnée à
+      2 002,50 € par mois, réversion et ses majorations, Agirc-Arrco
+      (taux, 127 %, prix et valeur du point de 2026), orphelins et
+      allocation veuvage, aux limites
+      (`docs/limites/ecarts-au-droit-positif.md`). Un retard : la
+      retraite progressive y ouvre encore « 2 ans » avant l'âge légal,
+      quand la fiche `data/reference/regles/retraite_progressive.yaml`
+      la porte, à juste titre, à soixante ans depuis le 1er septembre
+      2025.
 
   - id: cleiss_faq_retraite
     url: https://www.cleiss.fr/faq/retraite-pensions.html
@@ -3552,7 +3566,15 @@ sources:
     a_en_tirer: >-
       Les questions fréquentes sur les pensions internationales : totalisation,
       proratisation, pension nationale contre pension européenne.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 : pension nationale contre pension
+      européenne, calcul accord par accord sans totalisation entre deux
+      accords, et le triple calcul des accords qui totalisent un État
+      tiers (France, Canada, Chili) — déjà dans
+      `data/reference/legislation/accords_internationaux.yaml` et la
+      fiche `pension_proratisee`. Aucun exemple chiffré.
 
   - id: cleiss_reglements
     url: https://www.cleiss.fr/particuliers/retraite/reglements.html
@@ -3641,7 +3663,17 @@ sources:
     regimes: []
     a_en_tirer: >-
       Les règlements européens de coordination, dans leur texte.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 : la présentation des règlements de 2010,
+      leurs textes consolidés, et les circulaires d'application que le
+      dépôt n'a pas lues — DSS 2010/278, 2010/363, 2010/461, 2011/225,
+      2011/363 (l'AVPF sous les règlements), 2012/207 (Suisse), 2013/373
+      (Croatie), 2014/147 ; Cnav 2010/54, 2010-23, 2011-20, 2013-21, et
+      la lettre du 14 mars 2012 sur les périodes réputées cotisées de la
+      retraite anticipée. Reste à lire la DSS 2011/363 et la lettre de
+      2012, les deux qui touchent un droit que le modèle calcule.
 
   # ---- Légifrance ---------------------------------------------------------
 

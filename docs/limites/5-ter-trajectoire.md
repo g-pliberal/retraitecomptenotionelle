@@ -74,7 +74,7 @@ un modèle de population complet et une méthode qui n'a rien de commun avec
 celle-ci : il trouve <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> % du PIB en 2024 et **<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/--> % en 2070** (rapport annuel
 de juin 2026, champ « ensemble des régimes légalement obligatoires, y compris
 FSV, hors RAFP »). Le modèle, laissé à lui-même — sa masse de pensions mise à
-l'échelle de la dernière année publiée —, trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(trajectoire_propre?annee=2070)-->14,92<!--/--> %**. Trois dixièmes de point
+l'échelle de la dernière année publiée —, trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(trajectoire_propre?annee=2070)-->14,91<!--/--> %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
 Comptes de la protection sociale n'étant pas exactement celle du COR — et
 **un demi-point à l'arrivée, du même côté** : depuis l'étape 14 de l'action
@@ -117,7 +117,7 @@ de la DREES compte, depuis 2004, les personnes qui touchent un droit direct,
 tous régimes réunis, et la masse de la réversion ; l'écart de la reconstitution
 en est le produit de trois (`Avenir.reconstitution_decomposee`). En 2009, le
 pire depuis 2000 : <!--chiffre:mesure(reconstitution?annee=2009&facteur=retraites)-->−6,1<!--/--> % de têtes,
-<!--chiffre:mesure(reconstitution?annee=2009&facteur=pension)-->−11,0<!--/--> % de pension de droit direct par tête,
+<!--chiffre:mesure(reconstitution?annee=2009&facteur=pension)-->−10,9<!--/--> % de pension de droit direct par tête,
 <!--chiffre:mesure(reconstitution?annee=2009&facteur=reversion)-->−0,1<!--/--> % de réversion ; en 2004,
 <!--chiffre:mesure(reconstitution?annee=2004&facteur=retraites)-->0,2<!--/--> %, <!--chiffre:mesure(reconstitution?annee=2004&facteur=pension)-->−10,2<!--/--> % et
 <!--chiffre:mesure(reconstitution?annee=2004&facteur=reversion)-->−1,9<!--/--> %. Les têtes suivent l'enquête en 2004,
