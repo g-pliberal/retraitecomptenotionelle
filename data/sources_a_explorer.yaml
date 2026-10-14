@@ -1644,7 +1644,7 @@ sources:
       Le modèle de projection de la DREES : hypothèses démographiques et
       d'emploi, et la manière dont il projette les carrières. À confronter à
       la trajectoire d'emploi du COR que le dépôt a adoptée à l'action 46.
-    statut: a_explorer
+    statut: en_cours
 
   - id: drees_trajectoire_page
     url: https://drees.solidarites-sante.gouv.fr/sources-outils-et-enquetes/le-modele-trajectoire
@@ -5656,7 +5656,7 @@ sources:
       Les règles de 2014 de cinq régimes, d'où vient l'architecture
       d'OpenFisca-France-Pension : à lire pour savoir ce que celui-ci en a
       hérité.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
@@ -5671,7 +5671,7 @@ sources:
       2013 (`OutilsCN.R`, `Simulations/CN`) : la seule autre mécanique
       notionnelle française qui se lise. Sans licence : se lit, ne se copie
       pas.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
@@ -5685,7 +5685,7 @@ sources:
       La réversion, l'ASPA et les majorations pour enfants, calculées par un
       modèle dont les paramètres ne viennent pas de l'IPP : la confirmation
       indépendante que trois fiches attendent.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git ls-remote` et `git
       clone` acceptés (1er octobre 2026).
@@ -5722,7 +5722,7 @@ sources:
       Les âges et les durées par génération, caisse et catégorie, et les
       revalorisations par caisse : une table à opposer aux nôtres, écart par
       écart ; sa durée requise de 1964 et 1965 est déjà en écart.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Mesuré le 1er octobre 2026 par `scripts/fetch/sonder_sources.py` : la
       page est une coquille que le JavaScript remplit. Le code, lui, se
@@ -5736,7 +5736,7 @@ sources:
     a_en_tirer: >-
       Les taux de cotisation vieillesse et Agirc-Arrco de 2015 à 2025, d'une
       source indépendante des barèmes de l'IPP.
-    statut: a_explorer
+    statut: en_cours
 
   - id: dgtresor_saphir
     url: https://github.com/DGTresor/Saphir
@@ -5789,7 +5789,7 @@ sources:
       Les articles de l'âge, du taux plein, de l'inaptitude et de l'ASPA,
       transcrits mot à mot : l'écart de la génération 1967 y reste, d'autres
       sont à chercher.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
@@ -5869,7 +5869,7 @@ sources:
       Les âges et les durées par génération sous trois états du droit,
       vérifiés au texte le 9 septembre 2026 : un recoupement de la suspension
       de la loi du 30 décembre 2025.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
@@ -5883,7 +5883,7 @@ sources:
       L'âge d'ouverture et la durée requise par génération sous trois états
       du droit (`src/lib/boite-a-outils/retraite/outil.js`) : une lecture de
       plus de la suspension.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
@@ -5896,7 +5896,7 @@ sources:
     a_en_tirer: >-
       La pension des enseignants au droit de 2020 : un cas type de la fonction
       publique, rejouable au scénario 1 à cette date.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
@@ -5909,7 +5909,7 @@ sources:
     a_en_tirer: >-
       Le régime général, les indépendants et la Cipav au droit de 2020, en F#
       : un calcul de plus à relire.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
@@ -5922,7 +5922,7 @@ sources:
     a_en_tirer: >-
       Un tableur de la pension du régime général et de la MSA : une lecture
       de plus de la formule, à relire.
-    statut: a_explorer
+    statut: en_cours
 
   - id: nosretraites_simulateur_cas_types
     url: https://github.com/nosretraites/simulateur_cas_types
@@ -5933,7 +5933,7 @@ sources:
       Les paramètres par génération du projet de réforme de janvier 2023 : la
       trace d'un état du droit qui n'a pas été voté, à ne pas confondre avec
       la loi.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
