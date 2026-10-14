@@ -6307,3 +6307,69 @@ l'étape 0.
 **Ce que le propriétaire tranche** : l'ordre des étapes 2 à 9 ; et, pour
 l'action 129, la convention du jaune, le taux du régime général, comme valeur
 de `contribution_etat`.
+
+### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
+
+**Reprise, au 14 octobre 2026.** Faite, l'étape 1 : la carte des jumeaux,
+`python scripts/jumeaux.py`, qui range les 70 paires de la plus facile à
+retirer à la plus difficile, avec tout ce qui dépend de chaque jumeau, et
+`--couverture`, ce que les tests de concordance en exécutent. Reste l'étape
+2, la note de décision qui récrit le principe 4, que le propriétaire valide
+avant tout retrait ; puis le pilote, le lecteur du relevé (`web/releve_lu.py`,
+rang 1). Commencer par la note. Détail :
+`161/2026-10-14-etape-1-la-carte-des-jumeaux.md`.
+
+**D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
+veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
+au cas par cas. Python a ses avantages, JavaScript a les siens. Je veux
+quelque chose de pragmatique pour avancer de façon sûre et sans faire
+d'erreur sur le projet. […] Il faut que chaque ligne de code supprimée soit
+vérifiée pour voir si on ne casse pas des dépendances cachées et aussi au
+passage vérifier notre code. Ça permet de faire une passe de relecture pour
+déceler les erreurs dans le code existant. »
+
+**Le constat, mesuré avant de rien retirer.** Sur les 845 cas des témoins,
+157 418 valeurs, 97,3 % sont identiques au bit près, et l'écart relatif le
+plus grand vaut 9 × 10⁻¹⁵ : le bruit d'arrondi des flottants, non un écart de
+calcul. Le risque est ailleurs : dans ce que les tests de concordance
+n'exécutent pas, et dans ce qui dépend d'un jumeau sans l'importer — les
+fiches qui nomment leurs fonctions, les chiffres ancrés qui chargent un module
+par son nom, les chaînes qui nomment un fichier.
+
+**La règle.** Chaque morceau de code n'existe qu'une fois, dans le langage de
+l'endroit où il tourne : dans le navigateur, le JavaScript, sans choix ; à la
+fabrique seulement, le Python ; aux deux endroits — le moteur d'une carrière,
+que le site fait tourner pour un lecteur et le coût pour une population —, un
+seul exemplaire, en JavaScript, que le Python fait tourner par node comme il
+le fait déjà pour les pages (`web/site.py`), et en dernier. Elle récrit le
+principe 4 (« une implémentation fait foi : aujourd'hui, le Python ») : une
+note de décision d'abord (`docs/architecture.md`, § 13.1 et 13.3).
+
+**La méthode, une paire par étape.** Relever tout ce qui dépend du jumeau à
+retirer (`python scripts/jumeaux.py <nom>`) ; mesurer ce que les tests de
+concordance en exécutent, des deux côtés (`--couverture`) ; relire la paire
+fonction par fonction, chaque différence tranchée contre la source, la fiche
+et le texte, aucun jumeau n'ayant raison par défaut (§ 3.1), et l'erreur
+corrigée dans celui qui reste, avec son test ; fixer par des témoins ce que
+les tests n'exécutaient pas ; brancher les dépendants sur celui qui reste ;
+retirer, dans un commit à part, les témoins identiques. La relecture vaut
+d'elle-même, avant tout retrait, et se mène sur n'importe quelle paire.
+
+**Ce qui est à faire**, une étape par session :
+
+1. **La carte des jumeaux** — faite le 14 octobre 2026.
+2. **La note de décision** : le principe 4 récrit, la règle de l'endroit, la
+   méthode, et ce que le pont devra tenir ; validée par le propriétaire.
+3. **Le pilote** : le lecteur du relevé (`web/releve_lu.py` et
+   `releve-lu.js`), que ni le coût ni la fabrique n'atteignent.
+4. **Les deux autres paires hors du coût et de la fabrique**, chacune tranchée
+   à sa relecture : `cycle_de_vie.py`, dont le jumeau attend l'étape 10 de
+   l'action 138, qui l'affiche ; `scripts/fetch/lecture_pdf.py`, dont quatorze
+   scripts de lecture des sources ont besoin hors du site.
+5. **Le pont** : le coût et la fabrique font tourner le moteur JavaScript par
+   node, jusqu'à des témoins et des agrégats identiques.
+6. **Les paires du moteur**, une à une, dans l'ordre de la carte, relecture
+   d'abord.
+
+**Ce que le propriétaire tranche** : la note de l'étape 2 ; et, pour chaque
+paire, le jumeau qui reste, quand la règle de l'endroit ne suffit pas.
