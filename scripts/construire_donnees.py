@@ -1226,6 +1226,34 @@ def _periodes_non_travaillees() -> dict:
     }
 
 
+def _contributions_equilibre() -> dict:
+    """Les contributions d'équilibre de l'Agirc-Arrco
+    (``legislation/contributions_equilibre_agirc_arrco.yaml``), telles que le
+    Python les lit (:mod:`retraite_notionnelle.contributions_equilibre`) :
+    les indicateurs de cycle de vie du portage les ajoutent à ce qu'une
+    carrière verse (``moteur/js/contributions-equilibre.js``)."""
+    from retraite_notionnelle.contributions_equilibre import charger_contributions_equilibre
+
+    regles = charger_contributions_equilibre(DONNEES)
+
+    def tranches(liste) -> list[dict]:
+        return [{"jusqu_en_plafonds": t.jusqu_en_plafonds, "salarie": t.salarie,
+                 "employeur": t.employeur} for t in liste]
+
+    return {
+        "regimes_cadres": sorted(regles.regimes_cadres),
+        "contributions": [{
+            "code": c.code,
+            "regimes": sorted(c.regimes),
+            "jusqu_au": None if c.jusqu_au is None else c.jusqu_au.isoformat(),
+            "statuts_exclus": sorted(c.statuts_exclus),
+            "due_au_dela_de_plafonds": c.due_au_dela_de_plafonds,
+            "baremes": [{"debut": b.debut.isoformat(), "cadres": tranches(b.cadres),
+                         "non_cadres": tranches(b.non_cadres)} for b in c.baremes],
+        } for c in regles.contributions],
+    }
+
+
 def _indemnite_compensatrice_csg() -> dict:
     """L'indemnité compensatrice de la hausse de la CSG des agents publics
     (``legislation/indemnite_compensatrice_csg.yaml``), telle que le Python la
@@ -2216,6 +2244,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "chomage_complementaires": _chomage_complementaires(),
         "primes_soumises_a_retenue": _primes_soumises_a_retenue(),
         "indemnite_compensatrice_csg": _indemnite_compensatrice_csg(),
+        "contributions_equilibre": _contributions_equilibre(),
         "assiette_minimale_independants": _assiette_minimale_independants(),
         "profil_salaire_age": _profil_salaire("profil_salaire_age.csv", "annee"),
         "profil_salaire_categorie": _profil_salaire(

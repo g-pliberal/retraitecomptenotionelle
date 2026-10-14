@@ -7,8 +7,8 @@ le 13, l'impôt dans les indicateurs de cycle de vie, après impôt
 (`cycle_de_vie.convention_apres_impot`, `remplacement_apres_impot`,
 `scripts/cycle_de_vie.py --impot`), qui retrouve le taux net de l'OCDE.
 Reste, dans cet ordre : l'effet retour de la page Coût, après l'action 147 ;
-l'impôt au site, avec son portage JavaScript ; le bénéfice des indépendants ;
-les règles d'avant 1981 sans texte lu. Détail :
+l'impôt au site, porté après les revenus nets (étape 9, 14 octobre) ; le
+bénéfice des indépendants ; les règles d'avant 1981 sans texte lu. Détail :
 `2026-10-13-etape-5-impot-dans-les-indicateurs.md`.
 
 **La demande.** Le propriétaire, le 10 octobre 2026 : l'impôt sur le revenu

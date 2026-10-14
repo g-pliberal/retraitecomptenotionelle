@@ -1010,10 +1010,66 @@ export class RevalorisationServie {
         * macro.coefficientPrix(annee, annee - 1);
       this._index.set(annee, index);
     }
-    // Le Python tient aussi la valeur de service convenue de chaque régime en
-    // points (`coefficient_points`), et la rente nominale du pilier
-    // (`coefficient_nominal`) : le coût agrégé seul les lisait, et elles ne
-    // sont plus portées depuis qu'il est figé (11 octobre 2026).
+    // La valeur de service convenue de chaque régime en points
+    // (`coefficientPoints`), que les indicateurs de cycle de vie lisent
+    // (`cycle-de-vie.js`) : bâtie à la première demande, les autres lecteurs
+    // n'en ayant pas besoin. La rente nominale du pilier (`coefficient_nominal`)
+    // n'est pas portée : le coût agrégé seul la lisait.
+    this._simulateur = simulateur;
+    this._points = null;
+  }
+
+  /** Les séries de la valeur de service convenue, en euros constants. */
+  _series() {
+    if (this._points !== null) return this._points;
+    const macro = this._simulateur.macro;
+    const valeurs = this._simulateur.scenarioActuel.valeursPoint;
+    this._points = new Map();
+    for (const regime of valeurs.regimesConvenus("valeur_service")) {
+      const derniere = valeurs.derniereAnneeServie(regime);
+      let reelle = 1;
+      const serie = new Map([[this.premiereAnnee, reelle]]);
+      for (let annee = this.premiereAnnee + 1; annee <= this.derniereAnnee; annee += 1) {
+        if (derniere !== null && derniere !== undefined && annee > derniere) {
+          reelle *= valeurs.indiceConvenu(regime, "valeur_service", annee - 1, annee, macro,
+            ["prix", 1]) * macro.coefficientPrix(annee, annee - 1);
+        }
+        serie.set(annee, reelle);
+      }
+      this._points.set(regime, serie);
+    }
+    return this._points;
+  }
+
+  /**
+   * Le régime qui sert, au bout de ses fusions, les points de `regime`, s'il a
+   * une valeur de service convenue ; `null` sinon — portage de
+   * `regime_convenu`.
+   */
+  regimeConvenu(regime) {
+    const points = this._series();
+    const catalogue = this._simulateur.scenarioActuel.catalogue;
+    let courant = regime;
+    for (let i = 0; i <= catalogue.taille; i += 1) {
+      if (points.has(courant)) return courant;
+      const fiche = catalogue.contient(courant) ? catalogue.obtenir(courant) : null;
+      if (fiche === null || !fiche.integre_dans) return null;
+      courant = fiche.integre_dans;
+    }
+    return null;
+  }
+
+  /**
+   * Ce que vaut en `annee`, en euros constants, un euro de pension servie en
+   * points de `regime` liquidé en `anneeLiquidation` — portage de
+   * `coefficient_points` : 1 sans convention, et jusqu'au dernier barème.
+   */
+  coefficientPoints(regime, anneeLiquidation, annee) {
+    const serie = this._series().get(regime);
+    if (serie === undefined || annee <= anneeLiquidation) return 1;
+    const valeur = (millesime) => serie.get(
+      Math.min(Math.max(millesime, this.premiereAnnee), this.derniereAnnee));
+    return valeur(annee) / valeur(anneeLiquidation);
   }
 
   _valeur(annee) {

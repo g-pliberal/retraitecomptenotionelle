@@ -1,15 +1,15 @@
 # Étape 9, première partie : les indicateurs de cycle de vie, confrontés au COR, à TRAJECTOiRE et à l'OCDE
 
-**Reprise, au 10 octobre 2026.** Fait : `cycle_de_vie.py`, onze indicateurs
-des six systèmes, sous la convention de l'OCDE et sous celle du COR, les
-contributions d'équilibre, chaque âge de départ, les prélèvements de chaque
-année ; l'écart au COR des générations 1963 à 1970, trouvé et déclaré ; le
-10 octobre, l'âge d'équilibre, du diviseur et de la part de vie, confronté à
-l'ETK et au simulateur du COR, deux points du registre repris ; la génération
-1941, aux données (étape 7). Reste, dans cet ordre : le portage et
-l'affichage, avec l'étape 10 ; la révision de 2026, au COR ; la rémunération
-moyenne par tête du COR, aux données ; Typfallsmodellen, au registre.
-Commencer par le portage. Détail : `2026-10-10-etape-9-age-d-equilibre.md`.
+**Reprise, au 14 octobre 2026.** Fait : `cycle_de_vie.py`, onze indicateurs
+des six systèmes, sous les conventions de l'OCDE et du COR, chaque âge de
+départ, les prélèvements de chaque année, l'âge d'équilibre ; le 14 octobre,
+le portage des flux bruts, des indicateurs et de l'âge d'équilibre
+(`cycle-de-vie.js`, `contributions-equilibre.js`), rejoué contre le Python.
+Reste, dans cet ordre : au portage, les revenus nets, qui ouvrent la
+convention du COR, puis l'impôt (étape 5) et les âges de départ ;
+l'affichage, avec l'étape 10, à la session du site ; la révision de 2026, au
+COR ; Typfallsmodellen. Commencer par les revenus nets. Détail :
+`2026-10-14-etape-9-portage-du-cycle-de-vie.md`.
 
 **La demande.** L'étape 9 de l'action : « les indicateurs de cycle de vie, par
 cas type et génération, sous les six systèmes : rendement interne, durée de
