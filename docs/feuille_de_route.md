@@ -7527,16 +7527,15 @@ plutôt que déplacer celui qui existe, et l'ordre des groupes.
 
 ### 153. L'oracle au-delà des carrières simples : ce qu'OpenFisca calcule et que le dépôt ne lui confronte pas — `en cours`
 
-**Reprise, au 13 octobre 2026.** Faite, l'étape 1 : la première famille, le temps
-partiel des fonctionnaires et le départ anticipé des parents de trois enfants, et
-sa convention de traduction, écrite dans le script qui fige le témoin
-(`openfisca_temps_partiel_et_parents.py`) et vérifiée par
-`tests/test_oracle_familles.py` ; rien à corriger chez nous, quatre écarts chez
-OpenFisca, au registre. Reste l'étape 2, une famille par session : d'abord les
-enfants (bonification et majoration de durée au-delà de trois, nés après 2004 ou
-hors des services), puis les autres que le registre nomme (153.2). Commencer par
-la convention de la famille, dans un script frère du premier. Le signalement à
-OpenFisca attend le propriétaire. Détail : la note de l'étape 1.
+**Reprise, au 14 octobre 2026.** Faites, l'étape 1 et la première famille de
+l'étape 2 : les enfants des fonctionnaires (`openfisca_enfants.py`,
+`tests/test_oracle_enfants.py`) ; rien à corriger chez nous, trois écarts de plus
+chez OpenFisca, au registre — quatorze en tout. Reste l'étape 2, une famille par
+session, chacune dans un script et un test frères des premiers : la catégorie
+active, la carrière longue de la fonction publique, les minima (le minimum
+garanti de la CNRACL, nul chez lui), les points enfants et la minoration de
+l'Arrco, les périodes assimilées, le salaire annuel moyen (153.2). Le
+signalement à OpenFisca attend le propriétaire. Détail : la note du 14 octobre.
 
 **D'où elle vient.** L'action 136 (étape 2). Le 1er octobre 2026, les
 48 profils que l'oracle confrontait à OpenFisca-France-Pension

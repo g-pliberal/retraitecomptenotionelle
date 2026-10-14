@@ -213,9 +213,10 @@ def test_la_majoration_de_pension_croit_de_cinq_points_par_enfant(temoin, nous):
 def test_le_traitement_plafonne_la_pension_majoree(temoin, nous):
     """L. 18 : « En aucun cas, le montant de la pension majorée ne peut
     excéder le montant du traitement ». La mère de sept enfants a 80 % de son
-    traitement (L. 13, I) ; trente pour cent de majoration l'en porteraient à
-    104 %. Le dépôt réduit la majoration, OpenFisca plafonne la somme : les
-    deux servent le traitement."""
+    traitement (L. 13, I), et cinq trimestres de surcote : 85 %, que trente
+    pour cent de majoration porteraient à plus de 110 %. Une pension de 2014,
+    où la surcote compte dans le plafond : le dépôt réduit la majoration,
+    OpenFisca plafonne la somme, et les deux servent le traitement."""
     code = "mere_sept_enfants_plafond_2014"
     eux, moi = temoin["profils"][code]["openfisca"], nous[code]
     assert _taux_de_majoration(7) == pytest.approx(0.30)
