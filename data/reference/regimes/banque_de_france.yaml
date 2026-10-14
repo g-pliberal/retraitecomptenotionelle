@@ -57,11 +57,14 @@ periodes:
     fin: 2008
     type_calcul: annuites
     age_ouverture: 60
+    age_table: banque_de_france
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 160
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
+    duree_requise_calendrier: banque_de_france_2007
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -81,15 +84,40 @@ periodes:
       fonction publique d'État, sur lesquelles le régime est aligné : 2008-2008
       (60 ans, 160 trimestres, retenue de 7,85 %), 2009-2010, 2011-2022 (âges
       reportés de deux ans), 2023 (64 ans).
+      MAIS L'ÂGE ET LA DURÉE SONT CEUX DU RÈGLEMENT, NON CEUX DE LA FONCTION
+      PUBLIQUE (relus le 14 octobre 2026). L'âge est la table de l'article 72
+      (`age_table: banque_de_france`) : soixante ans pour les agents nés avant
+      1956, trois mois par semestre de naissance jusqu'à soixante-deux ans
+      pour juillet 1959 (décret n° 2012-701), puis de soixante-deux ans et
+      trois mois pour 1963 à soixante-quatre ans pour 1970 (décret
+      n° 2023-693) ; la fiche lisait la table commune, soixante ans et neuf
+      mois à un agent né en 1952. La durée est celle de l'article 69, « fixée
+      en fonction de la date à laquelle l'agent est susceptible de liquider sa
+      pension » : le calendrier de 2007, 150 trimestres jusqu'en mars 2007
+      puis un de plus par trimestre ou semestre jusqu'à 166 en juillet 2014
+      (`duree_requise_calendrier: banque_de_france_2007`), et les tables par
+      génération de 2018 et de 2025
+      (`duree_requise_table: [banque_de_france_2023, banque_de_france_2014]`).
+      La fiche lisait la durée de la génération : 160 trimestres à un agent né
+      en 1948, qui a soixante ans en 2008 et en doit 153. L'âge d'annulation
+      de la décote reste celui de la fonction publique, non relu.
+      LE RÈGLEMENT VAUT À L'ANNÉE D'EFFET. Il entre en vigueur au printemps
+      2007 (son article 69 compte encore « jusqu'au 31 mars 2007 ») ; la fiche
+      le fait commencer avec sa période de 2008, et garde avant les cinquante-
+      cinq ans et les 150 trimestres de l'ancien régime, que l'index LEGI ne
+      porte pas et que le dépôt n'a pas relus.
   - debut: 2009
     fin: 2010
     type_calcul: annuites
     age_ouverture: 60
+    age_table: banque_de_france
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 160
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
+    duree_requise_calendrier: banque_de_france_2007
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -107,11 +135,14 @@ periodes:
     fin: 2012
     type_calcul: annuites
     age_ouverture: 62
+    age_table: banque_de_france
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
+    duree_requise_calendrier: banque_de_france_2007
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -142,11 +173,14 @@ periodes:
     fin: 2013
     type_calcul: annuites
     age_ouverture: 62
+    age_table: banque_de_france
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
+    duree_requise_calendrier: banque_de_france_2007
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -177,11 +211,14 @@ periodes:
     fin: 2014
     type_calcul: annuites
     age_ouverture: 62
+    age_table: banque_de_france
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
+    duree_requise_calendrier: banque_de_france_2007
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -212,11 +249,14 @@ periodes:
     fin: 2015
     type_calcul: annuites
     age_ouverture: 62
+    age_table: banque_de_france
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
+    duree_requise_calendrier: banque_de_france_2007
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -247,11 +287,14 @@ periodes:
     fin: 2016
     type_calcul: annuites
     age_ouverture: 62
+    age_table: banque_de_france
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
+    duree_requise_calendrier: banque_de_france_2007
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -282,11 +325,14 @@ periodes:
     fin: 2017
     type_calcul: annuites
     age_ouverture: 62
+    age_table: banque_de_france
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
+    duree_requise_calendrier: banque_de_france_2007
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -317,11 +363,14 @@ periodes:
     fin: 2018
     type_calcul: annuites
     age_ouverture: 62
+    age_table: banque_de_france
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
+    duree_requise_calendrier: banque_de_france_2007
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -352,11 +401,14 @@ periodes:
     fin: 2019
     type_calcul: annuites
     age_ouverture: 62
+    age_table: banque_de_france
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
+    duree_requise_calendrier: banque_de_france_2007
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -387,11 +439,14 @@ periodes:
     fin: 2020
     type_calcul: annuites
     age_ouverture: 62
+    age_table: banque_de_france
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
+    duree_requise_calendrier: banque_de_france_2007
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -422,11 +477,14 @@ periodes:
     fin: 2021
     type_calcul: annuites
     age_ouverture: 62
+    age_table: banque_de_france
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
+    duree_requise_calendrier: banque_de_france_2007
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -457,11 +515,14 @@ periodes:
     fin: 2022
     type_calcul: annuites
     age_ouverture: 62
+    age_table: banque_de_france
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
+    duree_requise_calendrier: banque_de_france_2007
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -492,9 +553,12 @@ periodes:
     fin: 2024
     type_calcul: annuites
     age_ouverture: 62
+    age_table: banque_de_france
     age_taux_plein: 67
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
+    duree_requise_calendrier: banque_de_france_2007
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -513,18 +577,21 @@ periodes:
       vigueur du 1er septembre 2023 au 1er janvier 2025
       (LEGIARTI000047909413) garde soixante-deux ans à l'article 26 et la
       table de 2010 à l'article 72 : la fiche coupait au 1er septembre
-      2023 avec soixante-quatre ans, deux ans trop tôt. Les âges sont ici
-      écrits en dur — la table nationale lue à la génération porterait
-      déjà le relèvement de 2023 aux nés de 1961.
+      2023 avec soixante-quatre ans, deux ans trop tôt. Les âges sont lus
+      dans la table du règlement (`age_table: banque_de_france`) : la table
+      nationale porterait déjà le relèvement de 2023 aux nés de 1961.
   - debut: 2025
     fin: null
     type_calcul: annuites
     age_ouverture: 64
+    age_table: banque_de_france
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
+    duree_requise_calendrier: banque_de_france_2007
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -547,5 +614,13 @@ periodes:
       neuf ans, générations 1968 à 1975, pour les catégories à
       nomenclature) ; l'article 31 fixe la durée à 172 trimestres ;
       l'article 68 réécrit les carrières longues en trois bornes, 58, 60
-      et 62 ans. Les âges sont lus à la génération dans la table
-      nationale, qui est la même.
+      et 62 ans. Les âges sont lus dans la table du règlement
+      (`age_table: banque_de_france`), qui n'est PAS la table nationale :
+      celle-ci, suspension de 2026 comprise, donne soixante-deux ans et six
+      mois aux nés de 1962, que la Banque laisse à soixante-deux ans. La
+      durée, « à compter du 1er janvier 2025 », est de 169 trimestres pour
+      1963, 170 pour 1964, 171 pour 1965 (article 69, IV), et 172 ensuite,
+      la durée de l'article 31 — PRÉSOMPTION : à la lettre, le III, que le
+      décret n'abroge pas, donnerait encore 169 à 171 trimestres aux nés de
+      1966 à 1972, moins qu'à ceux de 1965 ; ce que la Banque applique reste
+      à confirmer.

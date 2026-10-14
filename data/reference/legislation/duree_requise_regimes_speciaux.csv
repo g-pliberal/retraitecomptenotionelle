@@ -202,6 +202,41 @@
 #       de 2008 répond, que les rédactions de 2008 à 2016 écrivent déjà. La fiche
 #       lisait la table commune de L. 161-17-3 : 166 trimestres au lieu de 162 à
 #       une sociétaire née en mars 1955 partie à soixante ans.
+#
+# L'OPÉRA NATIONAL DE PARIS A LA MÊME, au V de l'article 14 du décret n° 68-382,
+# lue le 14 octobre 2026 (LEGIARTI000029135692, version du 26 juin 2014, puis
+# LEGIARTI000029135161, en vigueur depuis le 1er janvier 2017) :
+#   `opera_de_paris_2014` — « A compter du 1er juillet 2019 », A, « pour les
+#       assurés mentionnés au 4° et au 5° du I de l'article 6 », musiciens et
+#       autres catégories : les marches de la Comédie-Française, 167 trimestres
+#       des nés du 1er juillet 1959 à 1960 jusqu'à 172 à compter de 1973. Son VI
+#       est celui de la Comédie-Française : âge de lecture, soixante ans. Le B,
+#       pour les assurés du 4° du I de l'article 52, décale la première marche
+#       d'un an (nés du 1er juillet 1960 au 30 juin 1961) : non transcrit, la
+#       fiche ne les distingue pas. Le texte ne nomme ni le ballet, ni les
+#       chœurs, ni les emplois à fatigues exceptionnelles, que le VI renvoie à
+#       la durée des assurés qui atteignent soixante ans l'année où ils
+#       peuvent liquider : la fiche, qui suit le ballet, leur lit la même table,
+#       la seule que le décret écrive (présomption déclarée dans la fiche).
+#
+# LA BANQUE DE FRANCE, au même article 69 de son règlement, lu le 14 octobre
+# 2026, après son calendrier (`duree_requise_calendriers.csv`) :
+#   `banque_de_france_2014` — III, rédaction du 26 juin 2014
+#       (LEGIARTI000029138467) : « A compter du 1er janvier 2018 », 167
+#       trimestres des nés de 1958 à 1960, 168 pour 1961-1963, 169 pour
+#       1964-1966, 170 pour 1967-1969, 171 pour 1970-1972, 172 à compter de
+#       1973. La fiche lisait la table commune : 169 au lieu de 168 pour 1962.
+#   `banque_de_france_2023` — IV, rédaction du décret n° 2023-693
+#       (LEGIARTI000047909725), « A compter du 1er janvier 2025 » : 169 pour
+#       1963, 170 pour 1964, 171 pour 1965 ; son VI garde l'ancienne durée à qui
+#       réunit les conditions avant 2025. PRÉSOMPTION pour les nés de 1966 à
+#       1972 : 172 trimestres, la durée de l'article 31, que le IV vise à
+#       rejoindre une génération après le régime général, comme le V, pour les
+#       catégories actives, cinq ans plus tard (169 à 171 de 1968 à 1970). À la
+#       lettre, le III, que le décret n'abroge pas, leur donnerait encore 169 à
+#       171, moins qu'aux nés de 1965 : ce que la Banque applique reste à
+#       confirmer (fiabilité moyenne). Les deux tables répondent à la date où
+#       l'agent réunit les conditions, avant elle le calendrier.
 table,depuis,generation,trimestres,retranche_decote,fiabilite,age_de_lecture,age_minimum
 sncf_conduite,2025-01,1968.833,167,0,haute,,
 sncf_conduite,2025-01,1970,168,0,haute,,
@@ -329,3 +364,21 @@ comedie_francaise_2014,2019-07,1964,169,0,haute,60,
 comedie_francaise_2014,2019-07,1967,170,0,haute,60,
 comedie_francaise_2014,2019-07,1970,171,0,haute,60,
 comedie_francaise_2014,2019-07,1973,172,0,haute,60,
+opera_de_paris_2014,2019-07,1959.5,167,0,haute,60,
+opera_de_paris_2014,2019-07,1961,168,0,haute,60,
+opera_de_paris_2014,2019-07,1964,169,0,haute,60,
+opera_de_paris_2014,2019-07,1967,170,0,haute,60,
+opera_de_paris_2014,2019-07,1970,171,0,haute,60,
+opera_de_paris_2014,2019-07,1973,172,0,haute,60,
+banque_de_france_2014,2018-01,1958,167,0,haute,,
+banque_de_france_2014,2018-01,1961,168,0,haute,,
+banque_de_france_2014,2018-01,1964,169,0,haute,,
+banque_de_france_2014,2018-01,1967,170,0,haute,,
+banque_de_france_2014,2018-01,1970,171,0,haute,,
+banque_de_france_2014,2018-01,1973,172,0,haute,,
+banque_de_france_2023,2025-01,1958,167,0,haute,,
+banque_de_france_2023,2025-01,1961,168,0,haute,,
+banque_de_france_2023,2025-01,1963,169,0,haute,,
+banque_de_france_2023,2025-01,1964,170,0,haute,,
+banque_de_france_2023,2025-01,1965,171,0,haute,,
+banque_de_france_2023,2025-01,1966,172,0,moyenne,,

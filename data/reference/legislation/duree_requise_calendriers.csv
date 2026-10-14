@@ -39,6 +39,17 @@
 # à 1968, et en 2008 pour qui avait soixante ans plus tôt : au mois où l'âge
 # d'ouverture est atteint, dans tous les cas. `assemblee_nationale` les
 # transcrit en trimestres.
+#
+# LA BANQUE DE FRANCE A LE SIEN, à l'article 69 du règlement annexé au décret
+# n° 2007-262 (LEGIARTI000006778516, version de 2007, puis LEGIARTI000029138467,
+# rédaction du 26 juin 2014, encore en vigueur, lues le 14 octobre 2026) : la
+# durée « fixée en fonction de la date à laquelle l'agent est susceptible de
+# liquider sa pension en application de l'article 26 » — 150 trimestres
+# jusqu'au 31 mars 2007, 151 au deuxième trimestre 2007, puis un de plus par
+# semestre jusqu'à 159 au premier semestre 2011, 160 ensuite (article 31), et
+# « à compter du 1er janvier 2012 », un trimestre par semestre jusqu'à 166 au
+# 1er juillet 2014. `banque_de_france_2007` le transcrit ; les tables par
+# génération de 2018 et de 2025 sont dans `duree_requise_regimes_speciaux.csv`.
 calendrier,depuis,trimestres,fiabilite
 regimes_speciaux_2008,1900-01,150,haute
 regimes_speciaux_2008,2008-07,151,haute
@@ -70,3 +81,20 @@ assemblee_nationale,2023-09,169,haute
 assemblee_nationale,2025-07,170,haute
 assemblee_nationale,2028-01,171,haute
 assemblee_nationale,2029-01,172,haute
+banque_de_france_2007,1900-01,150,haute
+banque_de_france_2007,2007-04,151,haute
+banque_de_france_2007,2007-07,152,haute
+banque_de_france_2007,2008-01,153,haute
+banque_de_france_2007,2008-07,154,haute
+banque_de_france_2007,2009-01,155,haute
+banque_de_france_2007,2009-07,156,haute
+banque_de_france_2007,2010-01,157,haute
+banque_de_france_2007,2010-07,158,haute
+banque_de_france_2007,2011-01,159,haute
+banque_de_france_2007,2011-07,160,haute
+banque_de_france_2007,2012-01,161,haute
+banque_de_france_2007,2012-07,162,haute
+banque_de_france_2007,2013-01,163,haute
+banque_de_france_2007,2013-07,164,haute
+banque_de_france_2007,2014-01,165,haute
+banque_de_france_2007,2014-07,166,haute

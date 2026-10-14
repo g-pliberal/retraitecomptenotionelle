@@ -85,6 +85,26 @@ A_L_ANNEE_D_EFFET = {
         "n° 2011-1500 : trente annuités pour le taux plein des pensions prenant "
         "effet à compter du 1er janvier 2012, et non plus vingt-cinq")),
     ("crpnpac_tranche_2", "duree"): (2012, 2012, "la même caisse, la même règle"),
+    ("opera_de_paris", "age"): (2002, 2002, (
+        "décret n° 68-382, article 6, rédaction du décret n° 2002-347 du "
+        "12 mars 2002 (LEGIARTI000006765539) : quarante ans pour tout le ballet "
+        "dès le 14 mars 2002, quarante-cinq avant pour les hommes, sans "
+        "disposition transitoire sur l'âge d'ouverture (lu le 14 octobre 2026)")),
+    ("banque_de_france", "age"): (2008, 2012, (
+        "règlement annexé au décret n° 2007-262, article 26 "
+        "(LEGIARTI000006778516) : soixante ans pour les pensions qu'il régit, à "
+        "compter du printemps 2007, que la fiche fait commencer en 2008 ; avant, "
+        "les cinquante-cinq ans de l'ancien régime, non relus. Puis la table de "
+        "l'article 72, par génération (lu le 14 octobre 2026). Les nés de 1949 "
+        "à 1952, qui partaient à cinquante-cinq ans, ne peuvent plus partir "
+        "avant soixante : leur premier départ sous le règlement tombe de 2009 "
+        "à 2012")),
+    ("banque_de_france", "duree"): (2008, 2012, (
+        "même règlement, article 69 : la durée lue à la date où l'agent est "
+        "susceptible de liquider, 150 trimestres jusqu'en mars 2007 ; avant la "
+        "fiche de 2008, celle de l'ancien régime ; de 2009 à 2012, la même "
+        "bascule, au premier départ que le règlement ouvre aux nés de 1949 à "
+        "1952")),
 }
 
 #: (régime, paramètre) : les années où la règle bascule aujourd'hui, et ce que
@@ -107,13 +127,6 @@ A_RELIRE = {
     ("carmf_complementaire", "duree"): (2000, 2000, (
         "générations 1930 à 1939 : la durée change pour un départ de 2000 et "
         "après")),
-    ("banque_de_france", "age"): (2008, 2025, (
-        "générations 1938 à 1962 : 55 ans avant 2008, puis l'âge d'une période "
-        "par année jusqu'en 2025, celui de la génération qui l'atteint")),
-    ("banque_de_france", "duree"): (2008, 2013, (
-        "générations 1944 à 1952 : 150 trimestres avant 2008, puis la table de "
-        "la fonction publique et la table commune, que la fiche emprunte sans "
-        "que le décret de la Banque ait été lu")),
     ("carpimko_complementaire", "age"): (2016, 2016, (
         "générations 1952 et 1953 : 60 ans et 9 mois avant 2016, 60 ans après")),
     ("cavimac", "age"): (2007, 2007, (
@@ -140,12 +153,6 @@ A_RELIRE = {
     ("msa_non_salaries", "duree"): (2004, 2004, (
         "générations 1934 à 1943 : 150 trimestres avant 2004, ceux de la "
         "génération après")),
-    ("opera_de_paris", "age"): (2002, 2002, (
-        "générations 1932 à 1951 : 45 ans avant 2002, 40 ans après")),
-    ("opera_de_paris", "duree"): (2009, 2027, (
-        "générations 1939 à 1972 : 150 trimestres avant 2009, puis la table "
-        "commune, et non le calendrier de 2008 des régimes spéciaux à la date "
-        "des conditions réunies, comme à la Comédie-Française")),
 }
 
 

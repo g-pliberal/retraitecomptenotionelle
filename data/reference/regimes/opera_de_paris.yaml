@@ -84,12 +84,19 @@ periodes:
     avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
     notes: >-
       L'ÂGE DE LA DANSE CESSE DE DÉPENDRE DU SEXE. L'article 6, dans sa
-      rédaction en vigueur le 14 mars 2002, ouvre le droit « à quarante ans
+      rédaction du décret n° 2002-347 du 12 mars 2002, en vigueur le 14 mars
+      2002 (LEGIARTI000006765539, lue le 14 octobre 2026), ouvre le droit « à quarante ans
       d'âge pour les artistes du ballet » — sans distinction — puis à
       cinquante ans pour le chant et les chœurs, cinquante-cinq pour les
       emplois à fatigues exceptionnelles, soixante pour les autres. C'est
       la période où l'âge de quarante ans, celui pour lequel ce régime est
       connu, vaut pour tout le ballet.
+      L'ÂGE SE LIT À L'ANNÉE D'EFFET DE LA PENSION. Le décret ne porte
+      aucune disposition transitoire sur l'âge d'ouverture — son V ne règle
+      que la mise à la retraite d'office des danseurs de trente-six ans et
+      plus — : la pension qui prend effet après le 14 mars 2002 se voit
+      opposer quarante ans, celle d'avant quarante-cinq, quelle que soit la
+      génération (`tests/test_regle_de_chacun.py`, `A_L_ANNEE_D_EFFET`).
   - debut: 2009
     fin: 2013
     type_calcul: annuites
@@ -97,6 +104,7 @@ periodes:
     age_taux_plein: 42
     duree_requise_trimestres: 160
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -131,6 +139,19 @@ periodes:
       (fiche `decote_opera_de_paris`) : une danseuse qui a quarante ans en
       janvier 2011 et part aussitôt se voit opposer quatre trimestres de
       décote, au taux de 0,125 % — un demi-point de pension.
+      LA DURÉE SE LIT À LA DATE OÙ L'ASSURÉ RÉUNIT LES CONDITIONS, et non à
+      sa génération. Le V du même article 14 (rédaction du décret
+      n° 2008-1497, LEGIARTI000020056984, lue le 14 octobre 2026) : « cent
+      cinquante et un trimestres pour les personnes remplissant les
+      conditions définies à l'article 6 entre le 1er juillet et le
+      31 décembre 2008 inclus », un de plus au 1er janvier et au 1er juillet
+      jusqu'en juillet 2012, au 1er décembre 2012, puis chaque 1er juillet —
+      le calendrier de 2008 des régimes spéciaux, mot pour mot celui de la
+      Comédie-Française (`duree_requise_calendrier: regimes_speciaux_2008`).
+      La fiche lisait la table commune, par génération : 160 trimestres à un
+      danseur né en mars 1970, qui réunit les conditions à quarante ans, en
+      mars 2010, et en doit 154 ; 150 à qui les réunissait avant juillet
+      2008.
   - debut: 2014
     fin: null
     type_calcul: annuites
@@ -138,6 +159,8 @@ periodes:
     age_taux_plein: 42
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [opera_de_paris_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
     assiette: hors_primes
@@ -154,8 +177,20 @@ periodes:
       « le nombre de trimestres nécessaire pour obtenir le pourcentage
       maximum de la pension est fixé à cent soixante-douze. Le pourcentage
       maximum de la pension est fixé à 75 % ». Le V le module encore par
-      génération jusqu'aux assurés nés en 1973, d'où la lecture à la
-      génération que la fiche conserve.
+      génération jusqu'aux assurés nés en 1973 — mais seulement « à compter
+      du 1er juillet 2019 » : jusque-là, le calendrier de 2008, jusqu'à 166
+      trimestres en juillet 2018 (LEGIARTI000029135161, lue le 14 octobre
+      2026). La table (`duree_requise_table: [opera_de_paris_2014]`) est
+      celle de la Comédie-Française, 167 trimestres des nés du 1er juillet
+      1959 à 172 à compter de 1973, lue à soixante ans par le VI : à qui
+      peut liquider plus tôt, la durée des assurés qui atteignent soixante
+      ans l'année où la liquidation peut intervenir. Un danseur né en 1985,
+      qui réunit les conditions en 2025, se voit opposer celle de la
+      génération 1965, 169 trimestres, et non 172. PRÉSOMPTION DÉCLARÉE : le
+      A ne nomme que les 4° et 5° de l'article 6, musiciens et autres
+      catégories ; la fiche, qui suit le ballet, lui lit la même table, la
+      seule que le décret écrive. Le B (4° du I de l'article 52, première
+      marche un an plus tard) n'est pas transcrit.
       L'ÂGE DU BALLET N'A PAS BOUGÉ. Le décret n° 2011-953 du 10 août 2011
       a relevé les autres : « 1° A quarante ans pour les artistes du
       ballet ; 2° A cinquante-sept ans pour les artistes des chœurs ; 3° A
