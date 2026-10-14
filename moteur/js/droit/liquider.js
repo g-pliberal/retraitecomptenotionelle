@@ -785,8 +785,10 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     // fraction d'avant 1998 des cultes demandent : lu pour eux seuls. Avant le
     // 1er avril 1983, où le taux croît avec l'âge seul, la pension minimum de
     // L. 345 ne relève que la pension au taux de soixante-cinq ans : celle
-    // qu'aucun abattement ne réduit, quelle que soit la durée.
-    const tauxPleinDuRegime = periode.majoration_d_ajournement && dureesCultes === null
+    // qu'aucun abattement ne réduit, quelle que soit la durée ; aux artisans
+    // et aux commerçants aussi (décret n° 73-937, article 7).
+    const tauxPleinDuRegime = (periode.majoration_d_ajournement
+      || dateDEffet(carriere) < "1983-04-01") && dureesCultes === null
       ? periode.avantages_non_contributifs.includes("minimum_contributif")
         && facteurDecote >= 1.0
       : (dureesCultes !== null

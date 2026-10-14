@@ -92,6 +92,41 @@ def test_la_pension_abattue_avant_soixante_cinq_ans_n_y_a_pas_droit(simulateur):
     assert "minimum" not in pensions["regime_general"].detail
 
 
+@pytest.mark.parametrize("affiliation,regime", [
+    ("artisan", "cancava"),
+    ("commercant", "organic"),
+])
+def test_l_artisan_et_le_commercant_au_titre_de_leurs_periodes_d_apres_1972(
+        simulateur, affiliation, regime):
+    """Vingt-huit trimestres, tous d'après 1972, liquidés en avril 1981 : le
+    minimum de base en soixantièmes, comme au régime général (décret
+    n° 73-937, article 7)."""
+    effet, _, pensions, minimum = _calculer(simulateur, 1916, 65.0, 58.0, 0.3, affiliation)
+    assert effet == "1981-04-01"
+    assert pensions[regime].montant == pytest.approx(AVTS_JANVIER_1981 * 28 / 60, abs=0.01)
+    assert minimum is not None and minimum.par_regime[0][0] == regime
+
+
+def test_avec_des_periodes_d_avant_1973_le_cumul_s_arrete_au_minimum_entier(simulateur):
+    """Vingt-cinq ans d'artisanat, de 1956 à 1981 : la part d'après 1972 de la
+    pension, portée à ses soixantièmes, dépasserait avec celle d'avant le
+    minimum entier ; « l'application dudit article L. 345 ne peut avoir pour
+    effet de porter à un montant supérieur à celui du minimum de base entier le
+    montant cumulé » des deux (décret n° 73-937, article 7)."""
+    _, _, pensions, minimum = _calculer(simulateur, 1916, 65.0, 40.0, 0.3, "artisan")
+    assert pensions["cancava"].montant == pytest.approx(AVTS_JANVIER_1981, abs=0.01)
+    assert minimum is not None
+
+
+def test_l_artisan_abattu_avant_soixante_cinq_ans_n_y_a_pas_droit(simulateur):
+    """Le taux de soixante ans, en 1978 : 25 %, et aucun minimum, comme au
+    régime général, même quand la durée tous régimes atteindrait la durée
+    requise."""
+    _, resultat, _, minimum = _calculer(simulateur, 1918, 60.0, 20.0, 0.3, "artisan")
+    assert resultat.taux_liquidation == pytest.approx(0.25)
+    assert minimum is None
+
+
 def test_la_regle_bascule_au_1er_avril_1983(simulateur):
     """La pension minimum vaut jusqu'au 31 mars 1983, le minimum contributif
     depuis ; avant le 12 mai 1976, la règle est présumée, au niveau estimé."""
@@ -136,6 +171,9 @@ CAS = [
     {"statut": "salarie_agricole"},
     {"naissance": "1918", "liquidation": "60", "debut": "20"},
     {"naissance": "1917", "sexe": "F", "enfants": "3"},
+    # L'artisan et le commerçant, avec des périodes d'avant 1973.
+    {"statut": "artisan"},
+    {"statut": "commercant", "naissance": "1916"},
     # De part et d'autre du 1er avril 1983.
     {"naissance": "1918", "naissance_mois": "2"},
     {"naissance": "1918", "naissance_mois": "3"},

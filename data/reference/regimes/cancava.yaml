@@ -52,9 +52,12 @@ periodes:
     decote_annulee_par_la_duree: decote_avant_1983
     surcote_par_trimestre: null
     avantages_non_contributifs:
-      [minimum_vieillesse, majoration_enfants, mda,
+      [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
        reversion, periodes_assimilees]
     notes: >-
+      LA PENSION MINIMUM DE L. 345, au titre des seules périodes d'après 1972,
+      sans porter le cumul avec l'avantage d'avant 1973 au-delà du minimum
+      entier (décret n° 73-937, article 7 ; fiche `minimum_contributif`).
       ALIGNEMENT DE 1973, ET IL SE SUIT DANS LE TEMPS. La loi du 3 juillet
       1972 aligne le régime de base sur le régime général à compter du
       1er janvier 1973 : les points acquis avant sont conservés et convertis

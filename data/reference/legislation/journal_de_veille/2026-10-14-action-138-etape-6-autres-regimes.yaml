@@ -1,0 +1,33 @@
+date: "2026-10-14"
+session: "action 138, étape 6 : la pension minimum d'avant le 1er avril 1983, les autres régimes et le cumul"
+consulte: >-
+  Les index LEGI et JORF de la release `index-dila`, à jour au 11 octobre 2026 : tout
+  article qui nomme L. 345 jusqu'en 1984 (22) ou le « minimum de base » (12 dans LEGI,
+  9 dans le JORF) ; le décret n° 50-1225, articles 55-5 (30 juin 1976) et 55-7
+  (15 décembre 1982) ; le décret n° 73-937, article 7 (rédactions de 1976, 1990 et
+  2001) et article 7-2 ; le décret n° 73-938, article 16 ; le décret n° 58-436,
+  articles 1 à 4 ; le décret n° 51-820, articles 1 à 8 ; les articles qui joignent
+  minimum, prorata et vieillesse jusqu'en 1984.
+trouve: >-
+  Aux salariés agricoles, le texte même du régime général (décret n° 50-1225,
+  article 55-5, II, depuis le 30 juin 1976) : le minimum entier à soixante trimestres
+  « accomplies dans le régime des assurances sociales agricoles », en soixantièmes en
+  dessous ; ce que le modèle présumait. Aux artisans et aux commerçants (décret
+  n° 73-937, article 7, rédaction du 5 mars 1976) : le minimum de base « est attribué,
+  au titre des périodes d'assurance postérieures au 31 décembre 1972, dans les
+  conditions fixées par le II de l'article 70-2 » du décret n° 45-0179, et, quand
+  l'assuré a des périodes d'avant 1973, il ne peut « porter à un montant supérieur à
+  celui du minimum de base entier le montant cumulé » des deux avantages ; modélisé
+  dans les deux moteurs. Le cumul de deux pensions portées au minimum : chaque texte
+  proratise sur les trimestres de son régime, et aucun texte lu ne borne leur somme
+  après 1974 ; avant le 1er juillet 1974 au régime général, la coordination des
+  salariés et des non-salariés (décret n° 58-436, article 4) portait la fraction de
+  chaque régime au minimum réduit au prorata de sa durée dans la durée totale, que le
+  modèle ne fait pas (écart déclaré). Le décret n° 51-820 (assurés des deux régimes
+  agricole et non agricole âgés de moins de soixante ans en 1946) partage de même le
+  minimum de la réversion (article 8), et ne dit rien de celui de la pension.
+reste: >-
+  Le décret n° 73-937 avant 1976 et l'article 70-2 du décret n° 45-0179 auquel il
+  renvoie, le décret n° 50-1225 avant le 30 juin 1976, au fac-similé ; la coordination
+  de 1958 ; la pension d'avant 1973 des artisans et des commerçants, que le modèle
+  calcule avec celle d'après (étape 18) ; l'AVTS dans R. 732-70.

@@ -11,7 +11,9 @@ intitule: >-
   sur l'ensemble des pensions ; la surcote s'y ajoute depuis avril 2009. Avant le 1er
   avril 1983, la pension au taux de soixante-cinq ans est portée à la pension minimum de
   L. 345, au montant de l'allocation aux vieux travailleurs salariés, entière à soixante
-  trimestres dans le régime ou à l'ex-invalide, en soixantièmes en dessous.
+  trimestres dans le régime ou à l'ex-invalide, en soixantièmes en dessous ; aux
+  artisans et aux commerçants, au titre des seules périodes d'après 1972, sans porter le
+  cumul avec l'avantage d'avant 1973 au-delà du minimum entier.
 domaine: minima
 regimes: [regime_general, msa_salaries, cancava, organic, rsi, cavimac]
 etape: completer_tous_regimes
@@ -66,7 +68,8 @@ versions:
       pension_minimum:
         trimestres_du_minimum_entier: 60
         entier_a_l_ex_invalide: true
-        regimes: [regime_general, msa_salaries]
+        regimes: [regime_general, msa_salaries, cancava, organic]
+        alignes_en_1973: [cancava, organic]
       fiabilite: estimee
   exemples: aucun trouvé
 - id: pension_minimum_de_1976
@@ -89,6 +92,33 @@ versions:
   - id: LEGIARTI000006760669
     reference: décret n° 45-0179, article 70-7 (rédaction du 23 juillet 1982), le même texte
     en_vigueur: 1982-07-23
+    lu_le: 2026-10-14
+  - id: LEGIARTI000006774013
+    reference: >-
+      décret n° 50-1225 du 21 septembre 1950, article 55-5, II (rédaction du 30 juin
+      1976), et article 55-7 (15 décembre 1982, LEGIARTI000006774018), le texte du régime
+      général aux salariés agricoles : « titulaires de pensions correspondant à une durée
+      d'assurance d'au moins quinze années (soit 60 trimestres) accomplies dans le régime
+      des assurances sociales agricoles. Lorsque cette durée est inférieure à quinze
+      années, le minimum de base est réduit à autant de soixantièmes que l'assuré
+      justifie de trimestres d'assurance »
+    en_vigueur: 1976-06-30
+    lu_le: 2026-10-14
+  - id: LEGIARTI000006765827
+    reference: >-
+      décret n° 73-937 du 2 octobre 1973, article 7 (rédaction du 5 mars 1976), aux
+      artisans et aux commerçants : « Le minimum de base prévu à l'article L. 345 du Code
+      de la sécurité sociale est attribué, au titre des périodes d'assurance postérieures
+      au 31 décembre 1972, dans les conditions fixées par le II de l'article 70-2 du
+      décret du 29 décembre 1945 susvisé. Toutefois, lorsque l'assuré justifie également
+      de périodes d'assurance ou d'activité professionnelle non-salariée antérieures au
+      1er janvier 1973 valables au titre du régime d'assurance vieillesse en vigueur au
+      31 décembre 1972, l'application dudit article L. 345 ne peut avoir pour effet de
+      porter à un montant supérieur à celui du minimum de base entier le montant cumulé
+      de la pension allouée au titre des périodes d'assurance postérieures au 31 décembre
+      1972 et de l'avantage de vieillesse alloué au titre des périodes d'assurance et
+      d'activité non-salariée antérieures au 1er janvier 1973 »
+    en_vigueur: 1976-03-05
     lu_le: 2026-10-14
   - id: LEGIARTI000006773767
     reference: >-
@@ -132,8 +162,14 @@ versions:
       trimestres d'assurance dans le régime ou à l'ex-invalide, en soixantièmes en
       dessous ; la bonification pour trois enfants s'y ajoute, au taux de 10 %, comme à
       la pension, et la majoration pour conjoint à charge. Au régime des salariés
-      agricoles, le même minimum (décret n° 51-727, article 1er bis), sa proratisation
-      présumée celle du régime général
+      agricoles, le même minimum, entier à soixante trimestres dans ce régime (décret
+      n° 50-1225, article 55-5), lu depuis le 30 juin 1976. Aux artisans et aux
+      commerçants, le minimum en soixantièmes des seuls trimestres d'après 1972, qui
+      relève la part de la pension qui leur revient ; s'il y a des périodes d'avant 1973,
+      le cumul des deux avantages n'est pas porté au-delà du minimum entier (décret
+      n° 73-937, article 7). Chaque régime proratise sur ses propres trimestres : deux
+      pensions portées au minimum se cumulent sans autre borne, aucun texte lu n'en
+      posant
     parametres:
       existe: false
       majoration: aucune
@@ -145,7 +181,8 @@ versions:
       pension_minimum:
         trimestres_du_minimum_entier: 60
         entier_a_l_ex_invalide: true
-        regimes: [regime_general, msa_salaries]
+        regimes: [regime_general, msa_salaries, cancava, organic]
+        alignes_en_1973: [cancava, organic]
   exemples: aucun trouvé
 - id: minimum_de_1983
   statut: lue
@@ -510,6 +547,22 @@ approximations:
     l'autre ; le plafond de même, et non à chaque relèvement du SMIC
   effet: non mesuré
 - ecart: >-
+    avant le 1er avril 1983, la pension d'un artisan ou d'un commerçant porte en un seul
+    calcul les années d'avant 1973 et celles d'après (étape 138.18) : la part que le
+    minimum de base relève (décret n° 73-937, article 7) se lit au prorata des trimestres
+    d'après 1972, et non sur la pension de ces seules périodes ; le décret n° 73-937
+    renvoie au « II de l'article 70-2 » du décret n° 45-0179, rédaction d'avant 1976
+    que les index n'ont pas, présumé dire la règle de l'article 70-5 ; avant le
+    5 mars 1976, la règle est présumée
+  effet: non mesuré
+- ecart: >-
+    avant le 1er juillet 1974 au régime général, la coordination des régimes de salariés
+    et de non-salariés (décret n° 58-436, article 4) portait la fraction de chaque régime
+    au minimum « réduit au prorata de la durée des périodes accomplies sous ledit régime
+    par rapport à la durée totale », quand l'assuré réunissait quinze ans tous régimes ;
+    le modèle proratise chaque régime sur soixante trimestres
+  effet: non mesuré
+- ecart: >-
     la condition de subsidiarité (L. 351-10-1), depuis 2012, se présume remplie : toutes les
     pensions auxquelles l'assuré peut prétendre sont demandées
   effet: non mesuré
@@ -523,14 +576,11 @@ sources:
     officiel (les index n'en ont rien) ; avant la loi n° 75-3 et le 1er juillet 1974, la
     rente des moins de quinze ans d'assurance n'était peut-être pas portée au minimum.
   - >-
-    Avant le 1er avril 1983, au régime des salariés agricoles, le décret qui proratise le
-    minimum (décret n° 51-727, article 1er bis : « fixés par décret en tenant compte de la
-    durée d'assurance ») ; aux artisans et commerçants, le minimum de base de L. 345
-    attribué « au titre des périodes d'assurance postérieures au 31 décembre 1972 »
-    (décret n° 73-937, article 7 ; décret n° 73-938) ; le cumul de deux pensions portées
-    au minimum ; et ce qui s'ajoutait au minimum, la rente des assurances sociales au
-    31 décembre 1940 et celle des retraites ouvrières et paysannes, que le modèle ne
-    connaît pas.
+    Avant le 1er avril 1983 : le décret n° 50-1225 avant le 30 juin 1976, le décret
+    n° 73-937 avant le 5 mars 1976 et l'article 70-2 du décret n° 45-0179 auquel il
+    renvoie, au fac-similé ; la règle de la coordination de 1958 avant juillet 1974 ; et
+    ce qui s'ajoutait au minimum, la rente des assurances sociales au 31 décembre 1940 et
+    celle des retraites ouvrières et paysannes, que le modèle ne connaît pas.
   - Relire les montants à chaque revalorisation de janvier (circulaire Cnav « Revalorisation
     du Smic ») et le plafond à chaque relèvement du SMIC.
   - >-
@@ -541,7 +591,9 @@ sources:
   - type: legifrance
     reference: >-
       décret n° 45-0179, articles 70-5 (1976) et 70-7 (1982 et 1983) ; décret n° 51-727,
-      article 1er bis (1977 et 1983) ; décrets n° 81-1166, 82-561 et 82-1142, article 1er,
+      article 1er bis (1977 et 1983) ; décret n° 50-1225, articles 55-5 (1976) et 55-7
+      (1982) ; décret n° 73-937, article 7 (1976) ; décret n° 58-436, articles 1 à 4 ;
+      décret n° 51-820, articles 1 à 8 ; décrets n° 81-1166, 82-561 et 82-1142, article 1er,
       et n° 83-551 et 84-92, article 4 ; ordonnance n° 45-2410, article 11 ; dans les
       index LEGI et JORF du dépôt à jour au 11 octobre 2026
     date: 2026-10-14
@@ -594,12 +646,14 @@ code:
   python: >-
     scenarios/actuel.py : MinimumContributif (valeurs, pension_minimum, regle) ;
     droit/completer.py : completer, plancher_national, plancher_d_avant_1983,
+    complement_des_alignes,
     avpf_retenue, limiter_le_cumul, complement_minimum ;
     droit/liquider.py : EligibleMinimum (duree_tous_regimes, cotisee_tous_regimes,
     porte_avpf)
   javascript: >-
     moteur/js/regimes.js : MinimumContributif ; moteur/js/droit/completer.js :
-    completer, plancherNational, plancherDAvant1983, avpfRetenue, limiterLeCumul ;
+    completer, plancherNational, plancherDAvant1983, complementDesAlignes, avpfRetenue,
+    limiterLeCumul ;
     moteur/js/droit/liquider.js
   parametres: >-
     contenu.parametres de chaque version ; data/reference/legislation/minimum_contributif.csv,
@@ -607,7 +661,8 @@ code:
   tests: >-
     tests/test_simulateur.py et tests/js/moteur.test.js : les exemples des circulaires
     2005/30 et 2009/17 rejoués dans les deux moteurs ; tests/test_pension_minimum_avant_1983.py :
-    la pension minimum d'avant avril 1983, dans les deux moteurs
+    la pension minimum d'avant avril 1983, dans les deux moteurs, celle des artisans et des
+    commerçants comprise
 historique:
 - >-
   2026-09-23 — la surcote ajoutée au minimum depuis avril 2009, et non le minimum
@@ -625,6 +680,11 @@ historique:
   pension au taux de soixante-cinq ans portée au montant de l'AVTS, entière à soixante
   trimestres, en soixantièmes en dessous, lue de 1976 à 1983, présumée de 1945 à 1976 ;
   avant, le modèle ne servait aucun minimum.
+- >-
+  2026-10-14 — les autres régimes : les salariés agricoles lus (décret n° 50-1225,
+  article 55-5) ; les artisans et les commerçants portés au minimum de base au titre de
+  leurs périodes d'après 1972, le cumul avec l'avantage d'avant 1973 borné au minimum
+  entier (décret n° 73-937, article 7) ; deux pensions portées au minimum se cumulent.
 exemples:
 - cnav_2005_30_minimum_majore_monopensionne
 - sp_a15703_minimum_contributif_2026

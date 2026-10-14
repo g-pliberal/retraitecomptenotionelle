@@ -263,6 +263,34 @@ def plancher_d_avant_1983(eligible, montant: float, regle: dict, ex_invalide: bo
     return montant * min(1.0, eligible.duree_regime / entier)
 
 
+def complement_des_alignes(pension: float, eligible, montant: float, regle: dict,
+                           ex_invalide: bool, depuis_1973: int) -> float:
+    """Ce que la pension minimum d'avant le 1er avril 1983 ajoute à la pension
+    d'un artisan ou d'un commerçant.
+
+    « Le minimum de base prévu à l'article L. 345 du Code de la sécurité
+    sociale est attribué, au titre des périodes d'assurance postérieures au 31
+    décembre 1972, dans les conditions fixées par le II de l'article 70-2 du
+    décret du 29 décembre 1945 susvisé. Toutefois, lorsque l'assuré justifie
+    également de périodes d'assurance ou d'activité professionnelle
+    non-salariée antérieures au 1er janvier 1973 […], l'application dudit
+    article L. 345 ne peut avoir pour effet de porter à un montant supérieur à
+    celui du minimum de base entier le montant cumulé » des deux avantages
+    (décret n° 73-937, article 7, rédaction de 1976). Le minimum se proratise
+    donc sur les seuls trimestres d'après 1972 (``depuis_1973``), et relève la
+    part de la pension qui leur revient ; le modèle, qui calcule les années
+    d'avant 1973 comme celles d'après (étape 18), la lit au prorata des
+    trimestres. ``pension`` est la pension servie avant minimum."""
+    if not eligible.taux_plein or pension <= 0.0 or eligible.duree_regime <= 0:
+        return 0.0
+    plancher = plancher_d_avant_1983(replace(eligible, duree_regime=depuis_1973),
+                                     montant, regle, ex_invalide)
+    complement = max(0.0, plancher - pension * depuis_1973 / eligible.duree_regime)
+    if depuis_1973 < eligible.duree_regime:
+        complement = min(complement, max(0.0, montant - pension))
+    return complement
+
+
 def selon_la_regle(eligible, regle: dict, avpf: int):
     """Les durées cotisées de l'éligible, telles que la majoration de cette date
     les lit.
@@ -820,7 +848,13 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 continue
             alternative = alternatives.get(pension.regime)
             avec_majoration = majoree
-            if alternative is None:
+            if pension_minimum and pension.regime in pension_minimum.get("alignes_en_1973", ()):
+                complement = complement_des_alignes(
+                    pension.montant - eligible.hors_minimum, eligible, montant_base,
+                    pension_minimum, ex_invalide,
+                    durees.cumul_plafonne("assurance", (pension.regime,),
+                                          lambda annee: annee >= 1973))
+            elif alternative is None:
                 complement = complement_du(
                     pension, eligible, plancher_national(eligible, majoree))
             else:

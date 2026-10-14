@@ -1335,10 +1335,14 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             # pension minimum de L. 345 ne relève que la pension au taux de
             # soixante-cinq ans — à cet âge, ou avant au titre de l'inaptitude
             # ou d'une catégorie : celle qu'aucun abattement ne réduit, quelle
-            # que soit la durée.
+            # que soit la durée. Les artisans et les commerçants, que le droit
+            # aligne sans que leur fiche porte l'ajournement, aussi (décret
+            # n° 73-937, article 7).
             "minimum_contributif" in periode.avantages_non_contributifs
             and facteur_decote >= 1.0
-        ) if periode.majoration_d_ajournement and durees_cultes is None else (
+        ) if ((periode.majoration_d_ajournement
+               or (date_d_effet(carriere) or "9999") < "1983-04-01")
+              and durees_cultes is None) else (
             (durees_cultes is not None
              or "minimum_contributif" in periode.avantages_non_contributifs)
             and (trimestres >= requis

@@ -481,6 +481,27 @@ export function plancherDAvant1983(eligible, montant, regle, exInvalide) {
 }
 
 /**
+ * Ce que la pension minimum d'avant le 1er avril 1983 ajoute à la pension d'un
+ * artisan ou d'un commerçant : le minimum proratisé sur les seuls trimestres
+ * d'après 1972, relevant la part de la pension qui leur revient, sans porter le
+ * cumul au-delà du minimum entier quand l'assuré a des périodes d'avant 1973
+ * (décret n° 73-937, article 7). Voir `complement_des_alignes` du Python.
+ */
+export function complementDesAlignes(pension, eligible, montant, regle, exInvalide,
+  depuis1973) {
+  if (!eligible.tauxPlein || pension <= 0.0 || eligible.dureeRegime <= 0) {
+    return 0.0;
+  }
+  const plancher = plancherDAvant1983({ ...eligible, dureeRegime: depuis1973 },
+    montant, regle, exInvalide);
+  let complement = Math.max(0.0, plancher - pension * depuis1973 / eligible.dureeRegime);
+  if (depuis1973 < eligible.dureeRegime) {
+    complement = Math.min(complement, Math.max(0.0, montant - pension));
+  }
+  return complement;
+}
+
+/**
  * Les durées cotisées de l'éligible, telles que la majoration de cette date les
  * lit : la durée d'assurance de janvier 2004 à juin 2005, l'AVPF et l'AVA en
  * plus au régime général depuis septembre 2023. Voir `selon_la_regle` du
@@ -744,7 +765,13 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       const alternative = alternatives.get(pension.regime);
       let complement;
       let avecMajoration = majoree;
-      if (alternative === undefined) {
+      if (pensionMinimum !== null
+        && (pensionMinimum.alignes_en_1973 ?? []).includes(pension.regime)) {
+        complement = complementDesAlignes(
+          pension.montant - (eligible.horsMinimum ?? 0.0), eligible, montantBase,
+          pensionMinimum, exInvalide,
+          durees.cumulPlafonne("assurance", [pension.regime], (annee) => annee >= 1973));
+      } else if (alternative === undefined) {
         complement = complementDu(pension, eligible, plancherNational(eligible, majoree));
       } else {
         const plancher = international
