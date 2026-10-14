@@ -3542,7 +3542,7 @@ sources:
       La description complète du système français de retraite, écrite pour les
       institutions étrangères : une synthèse dense, à jour, qui sert de liste
       de contrôle — ce qu'elle nomme et que le dépôt ne porte pas est un manque.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cleiss_faq_retraite
     url: https://www.cleiss.fr/faq/retraite-pensions.html
@@ -3552,7 +3552,7 @@ sources:
     a_en_tirer: >-
       Les questions fréquentes sur les pensions internationales : totalisation,
       proratisation, pension nationale contre pension européenne.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cleiss_reglements
     url: https://www.cleiss.fr/particuliers/retraite/reglements.html
@@ -3641,7 +3641,7 @@ sources:
     regimes: []
     a_en_tirer: >-
       Les règlements européens de coordination, dans leur texte.
-    statut: a_explorer
+    statut: en_cours
 
   # ---- Légifrance ---------------------------------------------------------
 
