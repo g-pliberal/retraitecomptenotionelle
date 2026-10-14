@@ -51,17 +51,19 @@ def test_chaque_fichier_fabrique_a_son_etape():
     assert [f for f in fabriques if f not in ecrits] == []
 
 
-def test_une_suite_rouge_n_est_pas_publiee_verte(tmp_path):
+@pytest.mark.parametrize("identifiant", ["suite", "garde"])
+def test_une_suite_rouge_n_est_pas_publiee_verte(tmp_path, identifiant):
     """L'étape de la suite passe la sortie de pytest dans ``tee``. Sous le
     ``bash -e`` que GitHub prend quand l'étape ne nomme pas son shell, l'issue
     du tube est celle de ``tee`` : le 7 octobre 2026, onze courses rouges ont
     été publiées vertes. L'étape se joue ici sous le shell que GitHub lui
-    donnerait, pytest remplacé par un échec, et doit échouer."""
+    donnerait, pytest remplacé par un échec, et doit échouer ; de même la
+    garde des présomptions (action 135, levier 2)."""
     import yaml
 
     flux = yaml.safe_load((RACINE / ".github" / "workflows" / "tests.yml")
                           .read_text(encoding="utf-8"))
-    etape = next(e for e in flux["jobs"]["suite"]["steps"] if e.get("id") == "suite")
+    etape = next(e for e in flux["jobs"]["suite"]["steps"] if e.get("id") == identifiant)
     # Les shells de GitHub : `shell: bash` est `bash --noprofile --norc -eo
     # pipefail {0}` ; sans `shell`, c'est `bash -e {0}`.
     shell = (["bash", "--noprofile", "--norc", "-eo", "pipefail", "-c"]
@@ -71,6 +73,86 @@ def test_une_suite_rouge_n_est_pas_publiee_verte(tmp_path):
     issue = subprocess.run([*shell, script], capture_output=True,
                            env={**os.environ, "RUNNER_TEMP": str(tmp_path)})
     assert issue.returncode != 0
+
+
+def test_la_garde_rejoue_les_tests_rapides_sous_d_autres_presomptions():
+    """La garde de l'action 135, levier 2 : après la suite complète, les tests
+    rapides sous les présomptions décalées, et son issue passée au script qui
+    écrit le verdict."""
+    import yaml
+
+    from conftest import PRESOMPTIONS_DECALEES
+
+    etapes = yaml.safe_load((RACINE / ".github" / "workflows" / "tests.yml")
+                            .read_text(encoding="utf-8"))["jobs"]["suite"]["steps"]
+    ids = [e.get("id") for e in etapes]
+    assert ids.index("garde") == ids.index("suite") + 1
+    garde = etapes[ids.index("garde")]
+    assert f"{PRESOMPTIONS_DECALEES}=1 python -m pytest -m rapide" in garde["run"]
+    publier = next(e for e in etapes if "publier_fabrique.sh" in e.get("run", ""))
+    assert publier["env"]["GARDE"] == "${{ steps.garde.outcome }}"
+
+
+def _publier(tmp_path, garde: str, sortie: str) -> tuple[dict, str]:
+    """Joue ``publier_fabrique.sh`` dans un dépôt jetable qui pousse sur un
+    dépôt nu : le verdict qu'il écrit, et le titre de son commit."""
+    import yaml
+
+    nu, depot = tmp_path / "origine.git", tmp_path / "depot"
+    tmp_path.mkdir(exist_ok=True)
+    identite = {"GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@example.invalid",
+                "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@example.invalid"}
+    env = {**os.environ, **identite}
+
+    def git(*arguments, cwd=depot):
+        subprocess.run(["git", *arguments], cwd=cwd, env=env, check=True,
+                       capture_output=True)
+
+    git("init", "-q", "--bare", "-b", "main", str(nu), cwd=tmp_path)
+    git("clone", "-q", str(nu), str(depot), cwd=tmp_path)
+    (depot / ".github").mkdir()
+    (depot / "a").write_text("a", encoding="utf-8")
+    git("add", "-A")
+    git("commit", "-q", "-m", "a")
+    git("push", "-q", "origin", "HEAD:main")
+    (tmp_path / "suite.txt").write_text("1 passed\n", encoding="utf-8")
+    (tmp_path / "garde.txt").write_text(sortie, encoding="utf-8")
+    subprocess.run(["bash", str(RACINE / "scripts" / "publier_fabrique.sh")], cwd=depot,
+                   check=True, capture_output=True, env={
+                       **env, "GITHUB_REF_NAME": "main", "FABRICATION": "success",
+                       "SUITE": "success", "SORTIE_SUITE": str(tmp_path / "suite.txt"),
+                       "GARDE": garde, "SORTIE_GARDE": str(tmp_path / "garde.txt")})
+    verdict = yaml.safe_load((depot / ".github" / "etat_suite.yaml").read_text(encoding="utf-8"))
+    titre = subprocess.run(["git", "log", "-1", "--format=%s", "main"], cwd=nu,
+                           capture_output=True, text=True, check=True).stdout.strip()
+    return verdict, titre
+
+
+def test_une_garde_rouge_s_ecrit_a_part_du_verdict_de_la_suite(tmp_path):
+    """Une garde rouge laisse la suite verte, et ses fichiers publiés, mais
+    s'écrit au verdict avec les tests qui ont échoué, que le hook de
+    démarrage affiche."""
+    verdict, titre = _publier(tmp_path, "failure",
+                              "FAILED tests/test_x.py::test_y - assert 1\n")
+    assert verdict["etat"] == "vert" and verdict["presomptions"] == "rouge"
+    assert verdict["presomptions_echecs"] == ["FAILED tests/test_x.py::test_y - assert 1"]
+    assert "garde des présomptions ROUGE" in titre
+    verdict, titre = _publier(tmp_path / "verte", "success", "1 passed\n")
+    assert verdict["presomptions"] == "vert" and "ROUGE" not in titre
+
+
+def test_le_hook_de_demarrage_affiche_la_garde_rouge(tmp_path):
+    (tmp_path / ".github").mkdir()
+    (tmp_path / ".github" / "etat_suite.yaml").write_text(
+        "etat: rouge\nsources: abc\ncourse: x\nechecs:\n"
+        + '  - "FAILED tests/a.py::b"\npresomptions: rouge\npresomptions_echecs:\n'
+        + '  - "FAILED tests/c.py::d"\n', encoding="utf-8")
+    sortie = subprocess.run(["bash", str(RACINE / ".claude" / "hooks" / "etat-suite.sh")],
+                            capture_output=True, text=True, check=True,
+                            env={**os.environ, "CLAUDE_PROJECT_DIR": str(tmp_path)}).stdout
+    suite, garde = sortie.split("GARDE DES PRÉSOMPTIONS ROUGE")
+    assert "tests/a.py::b" in suite and "tests/c.py::d" not in suite
+    assert "tests/c.py::d" in garde
 
 
 def test_chaque_etape_a_son_script_et_sait_verifier():

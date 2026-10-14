@@ -12,7 +12,10 @@
 # refera tout.
 #
 # Entrées : FABRICATION et SUITE, l'issue des deux étapes (success ou autre) ;
-# SORTIE_SUITE, le fichier où la suite a écrit ; COURSE, l'adresse de la course.
+# SORTIE_SUITE, le fichier où la suite a écrit ; COURSE, l'adresse de la course ;
+# GARDE et SORTIE_GARDE, l'issue et la sortie de la garde des présomptions
+# (action 135, levier 2), dont le verdict s'écrit à part : une garde rouge ne
+# retient pas les fichiers fabriqués, justes si la suite est verte.
 
 set -euo pipefail
 
@@ -23,6 +26,15 @@ source=$(git rev-parse HEAD)
 # que la sortie nomme rend la suite rouge.
 if grep -qE '^(FAILED|ERROR) ' "${SORTIE_SUITE:-/dev/null}" 2>/dev/null; then
     SUITE=echecs_dans_la_sortie
+fi
+garde=
+if [ -n "${GARDE:-}" ]; then
+    garde=vert
+    if [ "$GARDE" != success ] \
+        || grep -qE '^(FAILED|ERROR) ' "${SORTIE_GARDE:-/dev/null}" 2>/dev/null; then
+        garde=rouge
+    fi
+    [ "$GARDE" = skipped ] && garde=non_jouee
 fi
 etat=vert
 if [ "${FABRICATION:-}" != success ] || [ "${SUITE:-}" != success ]; then
@@ -48,6 +60,14 @@ fichier=.github/etat_suite.yaml
         grep -E '^(FAILED|ERROR) ' "${SORTIE_SUITE:-/dev/null}" 2>/dev/null \
             | head -n 30 | sed 's/"/\\"/g; s/^/  - "/; s/$/"/' || true
     fi
+    if [ -n "$garde" ]; then
+        echo "presomptions: $garde"
+    fi
+    if [ "$garde" = rouge ]; then
+        echo "presomptions_echecs:"
+        grep -E '^(FAILED|ERROR) ' "${SORTIE_GARDE:-/dev/null}" 2>/dev/null \
+            | head -n 30 | sed 's/"/\\"/g; s/^/  - "/; s/$/"/' || true
+    fi
 } > "$fichier"
 
 git config user.name "github-actions[bot]"
@@ -58,6 +78,9 @@ if [ "$etat" = vert ]; then
     titre="Fabriqué par GitHub : suite verte sur ${source:0:7}, $fabriques fichier(s) refait(s)"
 else
     titre="Suite ROUGE sur ${source:0:7} : voir .github/etat_suite.yaml"
+fi
+if [ "$garde" = rouge ]; then
+    titre="$titre ; garde des présomptions ROUGE"
 fi
 git commit --quiet -m "$titre" -m "${COURSE:-}"
 

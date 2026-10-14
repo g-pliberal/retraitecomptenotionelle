@@ -11,12 +11,18 @@ depuis=$(git log -1 --format=%H -- "$f" 2>/dev/null)
 attente=$( [ -n "$depuis" ] && git rev-list --count "$depuis"..HEAD 2>/dev/null || echo "?")
 if [ "$etat" = rouge ]; then
     echo "SUITE ROUGE sur main (GitHub, sources ${sources:0:7}) : la réparer avant toute autre chose."
-    sed -n '/^course:/p; /^echecs:/,$p' "$f"
+    sed -n '/^course:/p; /^echecs:/,/^presomptions/{/^presomptions/!p}' "$f"
 else
     if [ "$attente" = 0 ]; then
         echo "Suite complète verte sur GitHub, sur la tête de main (${sources:0:7})."
     else
         echo "Suite complète verte sur GitHub (sources ${sources:0:7}) ; $attente commit(s) depuis, que la course suivante vérifie."
     fi
+fi
+# La garde des présomptions (action 135, levier 2) : un test qui écrit en dur
+# une valeur présumée, à faire déclarer sa date avant toute autre chose.
+if [ "$(sed -n 's/^presomptions: //p' "$f")" = rouge ]; then
+    echo "GARDE DES PRÉSOMPTIONS ROUGE (PRESOMPTIONS_DECALEES=1 python -m pytest -m rapide) : ces tests écrivent une valeur présumée ; leur faire déclarer leur date (action 135, levier 2)."
+    sed -n '/^presomptions_echecs:/,$p' "$f" | tail -n +2
 fi
 exit 0

@@ -9,7 +9,8 @@
 #
 # 1. `scripts/regenerer.py` refait le paquet, les témoins, le chiffrage, les
 #    tableaux, le tableau de bord et les chiffres ancrés de la prose ;
-# 2. la suite complète, `python -m pytest`, les joue ;
+# 2. la suite complète, `python -m pytest`, les joue, puis la garde des
+#    présomptions rejoue les tests rapides sous d'autres présomptions ;
 # 3. `scripts/publier_fabrique.sh` commite, sous l'identité noreply du robot,
 #    le verdict (`.github/etat_suite.yaml`, que le hook SessionStart affiche à
 #    l'ouverture de chaque session) et, si la suite est verte, les fichiers
@@ -75,16 +76,32 @@ jobs:
         shell: bash
         run: python -m pytest -rfE 2>&1 | tee "$RUNNER_TEMP/suite.txt"
 
+      # La garde des présomptions (action 135, levier 2) : les tests rapides,
+      # une vingtaine de secondes, rejoués sous d'autres présomptions que
+      # celles du vocabulaire (`tests/conftest.py`). Un test qui écrit en dur
+      # une valeur présumée — le jour de naissance, l'année des enfants ou du
+      # mariage — y tombe dès sa naissance. Son verdict s'écrit à part dans
+      # `.github/etat_suite.yaml` : il ne retient pas les fichiers fabriqués,
+      # justes si la suite est verte, mais rend la course rouge.
+      - name: La garde des présomptions
+        id: garde
+        if: steps.fabriquer.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: PRESOMPTIONS_DECALEES=1 python -m pytest -m rapide -rfE 2>&1 | tee "$RUNNER_TEMP/garde.txt"
+
       - name: Publier le verdict et les fichiers fabriqués
         env:
           FABRICATION: ${{ steps.fabriquer.outcome }}
           SUITE: ${{ steps.suite.outcome }}
           SORTIE_SUITE: ${{ runner.temp }}/suite.txt
+          GARDE: ${{ steps.garde.outcome }}
+          SORTIE_GARDE: ${{ runner.temp }}/garde.txt
           COURSE: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: bash scripts/publier_fabrique.sh
 
       - name: Le verdict
-        if: steps.fabriquer.outcome != 'success' || steps.suite.outcome != 'success'
+        if: steps.fabriquer.outcome != 'success' || steps.suite.outcome != 'success' || steps.garde.outcome != 'success'
         run: |
-          echo "::error::Suite rouge : voir l'étape « La suite complète », ou « Fabriquer »."
+          echo "::error::Rouge : voir l'étape « La suite complète », « La garde des présomptions » ou « Fabriquer »."
           exit 1
