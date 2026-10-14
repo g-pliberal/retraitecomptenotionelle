@@ -5055,16 +5055,16 @@ de statuts et les `manque` de la page Méthode.
 
 ### 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats — `en cours`
 
-**Reprise, au 13 octobre 2026.** Fait : le levier 1 (scripts) ; le 3 pour
-l'essentiel (la suite complète sous Windows, de 56 à moins de 15 min à
-froid) ; le hook de démarrage ; « Économiser le contexte » ; l'arbre du dépôt ;
-le parcours `tenu` par son test ; le contexte en cinq étapes, closes ; le
-portage que node rejoue, pour l'essentiel ; la mémoire indexée sur le seul
-modèle. En cours : le levier 2 — aucun test rapide ne dépend plus des
-présomptions ; reste sa garde sur GitHub, que le bloc de
-`2026-10-10-levier-2-mesure.md` ouvre. Reste : `actions/cache` sur GitHub,
-que le propriétaire décide ; les fiches de règles dans l'empreinte, la fin du
-portage rejoué (notes du 10 octobre) ; le 4 et 5.
+**Reprise, au 14 octobre 2026.** Fait : le levier 1 (scripts) ; le 2, les
+tests qui déclarent leur date et leur garde sur GitHub, qui rejoue les tests
+rapides sous les présomptions décalées à chaque envoi et écrit son verdict à
+part (`presomptions:` dans `.github/etat_suite.yaml`,
+`2026-10-14-levier-2-garde.md`) ; le 3 pour l'essentiel ; le hook de
+démarrage ; « Économiser le contexte » ; l'arbre du dépôt ; le parcours
+`tenu` ; le contexte en cinq étapes ; la mémoire indexée sur le seul modèle.
+Reste : `actions/cache` sur GitHub, que le propriétaire décide ; les fiches de
+règles dans l'empreinte, la fin du portage rejoué (notes du 10 octobre),
+par quoi commencer ; le 4 et 5.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus
