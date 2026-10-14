@@ -27,8 +27,8 @@ from ..donnees.chargement import Fiabilite, charger_chomage_complementaires
 from ..donnees.primes import charger_primes_soumises
 from ..donnees.macro import DonneesMacro
 from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation,
-                              ContributionsEmployeurPubliques, PartRetraiteSeuleEtat,
-                              SalairesForfaitaires)
+                              ContributionsEmployeurPubliques, CotisationsDesCultes,
+                              PartRetraiteSeuleEtat, SalairesForfaitaires)
 from .fusion import RegimeFusionne
 from .indexation import Indexation
 from ..somme import somme_ordonnee
@@ -151,6 +151,7 @@ class ConstructeurCompte:
         )
         self.classes = ClassesCotisation(parametres.racine_donnees)
         self.grilles = SalairesForfaitaires(parametres.racine_donnees)
+        self.cotisations_cultes = CotisationsDesCultes(parametres.racine_donnees)
         # Les primes que la loi assujettit à la retenue pour pension, et les
         # retenues et contributions supplémentaires de leur statut.
         self.primes = charger_primes_soumises(parametres.racine_donnees)
@@ -856,6 +857,26 @@ class ConstructeurCompte:
                     fiabilite = min(fiabilite, fiabilite_taux)
                 montant = (montant_classe if classe is not None
                            else assiette * taux + forfait)
+                patronale = assiette * taux_employeur
+
+                # LES COTISATIONS DES CULTES DE 1979 À 1997. Le forfait du SMIC
+                # aux taux du régime général ne vaut que depuis 1998 : avant,
+                # deux montants par assuré, fixés chaque année par arrêté — le
+                # sien, le taux total du régime général sur deux fois le
+                # maximum de pension, et la solidarité de sa collectivité
+                # (`legislation/cultes_cotisations_forfaitaires.csv`). Le
+                # compte porte ce qui a été appelé : la cotisation de l'assuré,
+                # et celle de la collectivité quand la convention porte la part
+                # de l'employeur. Il portait jusqu'au 14 octobre 2026 le SMIC
+                # aux taux du régime général, un quart de trop de 1983 à 1997.
+                cultes = (self.cotisations_cultes.montants(annee)
+                          if periode.assiette_forfaitaire and classe is None
+                          else None)
+                if cultes is not None:
+                    assure, solidarite, fiabilite_cultes = cultes
+                    patronale = solidarite * part if taux_employeur > 0.0 else 0.0
+                    montant = assure * part + patronale + forfait
+                    fiabilite = min(fiabilite, fiabilite_cultes)
 
                 # LA COTISATION DÉPLAFONNÉE. Le régime général prélève, en
                 # plus de la cotisation plafonnée, un taux sur la TOTALITÉ du
@@ -877,7 +898,14 @@ class ConstructeurCompte:
                 # L'artisan et le commerçant, au régime général depuis 2018,
                 # versent leur taux propre sur la totalité : 0,60 %, puis
                 # 0,72 % depuis 2025, et non les 2,30 à 2,51 % du salarié.
-                deplafonnee = base * periode.taux_du_cotisant(sans_employeur)[1]
+                # Le régime des cultes la prélève sur son forfait, et non sur
+                # le revenu de l'assuré ; de 1979 à 1997, les montants des
+                # arrêtés la comprennent déjà.
+                base_deplafonnee = (
+                    base if not periode.assiette_forfaitaire
+                    else 0.0 if cultes is not None else repere)
+                deplafonnee = (base_deplafonnee
+                               * periode.taux_du_cotisant(sans_employeur)[1])
                 if deplafonnee > 0:
                     part_agent = periode.part_salariale_deplafonnee
                     if sans_employeur:
@@ -905,6 +933,7 @@ class ConstructeurCompte:
 
                 if validee < 1.0:
                     montant *= validee
+                    patronale *= validee
                     assiette *= validee
                     assiette_salaire *= validee
                 if nature is not None:
@@ -923,7 +952,7 @@ class ConstructeurCompte:
                     cotisation += montant
                     par_regime[code] = par_regime.get(code, 0.0) + montant
                     assiette_totale += assiette
-                    part_employeur += assiette * taux_employeur + supplement_employeur
+                    part_employeur += patronale + supplement_employeur
                     if (deplafonnee > 0 and not sans_employeur
                             and not part_salariale_seule
                             and self.parametres.part_cotisation

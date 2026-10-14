@@ -1,0 +1,20 @@
+date: "2026-10-14"
+session: "action 119 : les cotisations forfaitaires de la CAVIMAC, 1979-1997"
+consulte: >-
+  Dans l'index LEGI du dépôt, à jour au 11 octobre 2026 : le décret n° 79-607,
+  articles 24 et 25 ; R. 721-29 de 1985 à 1988, R. 721-29 et R. 721-30 de 1998 à
+  2006 ; les arrêtés annuels du maximum de pension et des cotisations de 1983 à
+  1997, articles 1er à 4. Dans l'index JORF : les résumés et titres des arrêtés de
+  1979 à 1991 qui fixent les cotisations du régime des cultes.
+trouve: >-
+  De 1979 à 1997, deux montants par assuré non retraité, fixés chaque année par
+  arrêté : la cotisation de l'assuré, le taux total du régime général sur deux fois
+  le maximum de pension (art. 24 ; R. 721-29), et la solidarité de sa collectivité,
+  fixée pour équilibrer le régime (art. 25 ; R. 721-30). Le compte notionnel les
+  porte (`legislation/cultes_cotisations_forfaitaires.csv`) ; le scénario 1, où la
+  pension d'avant 1998 est forfaitaire, n'en dépend pas. Le maximum de 1984 et de
+  1986, que le dépôt estimait, est lu : 15 450 F et 17 300 F.
+reste: >-
+  L'arrêté du 22 décembre 1981, pour 1982, et la cotisation de solidarité de 1979,
+  sur le fac-similé du Journal officiel. Une circulaire de la CAVIMAC sur le décret
+  n° 2006-1325.

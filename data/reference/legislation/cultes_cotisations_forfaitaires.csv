@@ -1,0 +1,55 @@
+# Cotisations vieillesse forfaitaires du régime des cultes, 1979-1997
+# -------------------------------------------------------------------
+# source_id: dila_legi_cultes (décret n° 79-607, art. 24 et 25 ; R. 721-29 et
+#            R. 721-30 du code de 1985 ; arrêtés annuels)
+#
+# De 1979 à 1997, le régime des cultes ne prélevait ni un taux ni un forfait
+# du SMIC : il appelait, par assuré non retraité, DEUX MONTANTS fixés chaque
+# année par arrêté. La cotisation forfaitaire de l'assuré « correspond[ait] à
+# la cotisation d'assurance vieillesse qui serait due pour le compte d'un
+# assuré du régime général percevant un salaire lui permettant d'acquérir à
+# soixante-cinq ans, pour la durée maximum d'assurance, une pension égale à »
+# la pension maximum (décret n° 79-607, art. 24 ; R. 721-29 de 1985) : le taux
+# total du régime général, part salariale et patronale, sur deux fois le
+# maximum de `cultes_maximum_pension.csv` — 12,9 % de 18 200 F en 1980,
+# 2 348 F. La cotisation de solidarité des associations, congrégations et
+# collectivités était « fixée chaque année de manière à assurer l'équilibre
+# du régime compte tenu notamment des charges résultant de la prise en compte
+# des périodes d'activité antérieures à sa création », et « due pour tout
+# assuré non retraité » (art. 25 ; R. 721-30 de 1985). En 1995, la charge
+# passe de l'assuré à la collectivité, le total restant à peu près le même.
+# Depuis 1998, l'assiette est le SMIC et les taux ceux du régime général
+# (R. 721-29 et R. 721-30 de 1998, aujourd'hui R. 382-89 et R. 382-90) :
+# c'est ce que porte `regimes/cavimac.yaml`.
+#
+# La cotisation d'invalidité (R. 721-42, 158 F de 1991 à 1997) n'est pas de
+# la vieillesse et n'est pas ici.
+#
+# DEUX ANNÉES EN PARTIE ESTIMÉES : la cotisation de solidarité de 1979, que le
+# résumé de l'arrêté ne donne pas, au rapport de celle de l'assuré en 1980 ;
+# les deux montants de 1982, dont l'arrêté n'est pas dans l'index — celui de
+# l'assuré par la règle de l'article 24 (12,9 % de deux fois le maximum
+# estimé), celui de la solidarité moyenne géométrique de 1981 et de 1983.
+#
+# Valeurs en francs, converties en euros par division par 6,55957. Montants
+# annuels, par assuré.
+annee,assure,solidarite,assure_francs,solidarite_francs,fiabilite_assure,fiabilite_solidarite,reference
+1979,294.988848,157.327386,1935,1032,haute,estimee,"arrêté du 8 janvier 1980 (JORFTEXT000000839462), résumé du Journal officiel : « pour 1979, ce montant est fixé à 1935 F » ; solidarité au rapport de 1980"
+1980,357.950292,190.866170,2348,1252,haute,haute,"arrêté du 27 mars 1980 (JORFTEXT000000861446), résumé du Journal officiel"
+1981,407.343774,217.697197,2672,1428,haute,haute,"arrêté du 17 décembre 1980 (JORFTEXT000000676770), titre au Journal officiel"
+1982,477.927669,214.190869,3135,1405,estimee,estimee,"arrêté du 22 décembre 1981 (JORFTEXT000000287249) absent de l'index : assuré par la règle de l'art. 24 sur le maximum estimé, solidarité moyenne géométrique de 1981 et 1983"
+1983,560.555036,210.836991,3677,1383,haute,haute,"arrêté du 12 janvier 1983, art. 2 et 3 (LEGIARTI000006784427, LEGIARTI000006784428)"
+1984,654.768529,155.040651,4295,1017,haute,haute,"arrêté du 27 décembre 1983, art. 2 et 3 (LEGIARTI000006782740, LEGIARTI000006782741)"
+1985,711.936910,134.460033,4670,882,haute,haute,"arrêté du 7 décembre 1984, art. 2 et 3 (LEGIARTI000006783279, LEGIARTI000006783280)"
+1986,733.279773,181.414331,4810,1190,haute,haute,"arrêté du 13 décembre 1985, art. 2 et 3 (LEGIARTI000006783967, LEGIARTI000006783968)"
+1987,785.722235,183.853515,5154,1206,haute,haute,"arrêté du 9 décembre 1986, art. 2 et 3 (LEGIARTI000006784445, LEGIARTI000006784446)"
+1988,816.669385,229.435771,5357,1505,haute,haute,"arrêté du 23 décembre 1987, art. 2 et 3 (LEGIARTI000006785419, LEGIARTI000006785420) : 5 285 F, « majorée de 72 F » à titre exceptionnel"
+1989,852.799802,219.526585,5594,1440,haute,haute,"arrêté du 22 décembre 1988, art. 2 et 3 (LEGIARTI000006786100, LEGIARTI000006786101)"
+1990,946.708397,152.449017,6210,1000,haute,haute,"arrêté du 3 janvier 1990, art. 2 et 3 (LEGIARTI000006786638, LEGIARTI000006786639)"
+1991,975.521261,165.407184,6399,1085,haute,haute,"arrêté du 8 février 1991 (JORFTEXT000000506439), résumé du Journal officiel"
+1992,1049.916382,123.026357,6887,807,haute,haute,"arrêté du 17 mars 1992, art. 2 et 3 (LEGIARTI000006788463, LEGIARTI000006788464)"
+1993,1091.687412,128.209623,7161,841,haute,haute,"arrêté du 17 février 1993, art. 2 et 3 (LEGIARTI000006927788, LEGIARTI000006927789)"
+1994,1113.487622,130.801257,7304,858,haute,haute,"arrêté du 6 mai 1994, art. 2 et 3 (LEGIARTI000006789524, LEGIARTI000006789525)"
+1995,451.249091,807.979791,2960,5300,haute,haute,"arrêté du 5 avril 1995, art. 2 et 3 (LEGIARTI000006789914, LEGIARTI000006789915)"
+1996,462.682767,828.103062,3035,5432,haute,haute,"arrêté du 19 septembre 1996, art. 2 et 3 (LEGIARTI000006790616, LEGIARTI000006790617)"
+1997,468.323381,838.012248,3072,5497,haute,haute,"arrêté du 18 février 1997, art. 2 et 3 (LEGIARTI000006790669, LEGIARTI000006790670)"

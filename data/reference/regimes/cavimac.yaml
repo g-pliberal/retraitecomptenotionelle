@@ -77,6 +77,12 @@ periodes:
       La fiche servait dès 1979 les règles du régime général, à l'âge légal
       et avec le minimum contributif, jusqu'au 3 octobre 2026 (fiche
       `cultes_fractions_de_pension`).
+      NI SMIC NI TAUX AVANT 1998 non plus pour les cotisations : deux
+      montants par assuré, fixés chaque année par arrêté, le sien et la
+      solidarité de sa collectivité (décret n° 79-607, art. 24 et 25 ;
+      R. 721-29 et R. 721-30 de 1985). Le compte notionnel les porte
+      (`legislation/cultes_cotisations_forfaitaires.csv`) ; l'assiette et les
+      taux de cette période ne lui servent plus que sous un taux commun.
   - debut: 1983
     fin: 1993
     type_calcul: annuites
@@ -115,7 +121,8 @@ periodes:
       1,25 % dès 1979 : un ministre du culte parti en 1996 avec plus que
       la durée requise voyait sa pension majorée de dix pour cent que
       personne ne lui devait.
-      NI ÂGE LÉGAL NI MINIMUM CONTRIBUTIF AVANT 1998 : voir la période de 1979.
+      NI ÂGE LÉGAL NI MINIMUM CONTRIBUTIF AVANT 1998, NI SMIC NI TAUX POUR LES
+      COTISATIONS : voir la période de 1979.
   - debut: 1994
     fin: 1997
     type_calcul: annuites
@@ -154,7 +161,8 @@ periodes:
       1,25 % dès 1979 : un ministre du culte parti en 1996 avec plus que
       la durée requise voyait sa pension majorée de dix pour cent que
       personne ne lui devait.
-      NI ÂGE LÉGAL NI MINIMUM CONTRIBUTIF AVANT 1998 : voir la période de 1979.
+      NI ÂGE LÉGAL NI MINIMUM CONTRIBUTIF AVANT 1998, NI SMIC NI TAUX POUR LES
+      COTISATIONS : voir la période de 1979.
   - debut: 1998
     fin: 2001
     type_calcul: annuites

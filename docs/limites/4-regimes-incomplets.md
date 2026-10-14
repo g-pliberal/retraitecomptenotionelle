@@ -154,11 +154,12 @@ minimum contributif au taux plein et décotée sinon. Restent approchés : 2006,
 où la fraction d'après 1997 s'ouvre à l'âge légal dix mois avant l'autre, et
 que le modèle laisse toute l'année à soixante-cinq ans ; le taux plein du
 régime général pour les majorations, que le décret n° 2006-1325 laisse à
-soixante-cinq ans ; le maximum de 1982, 1984 et 1986, estimé. Cela ne touche
-que le scénario 1 ; les comptes notionnels, eux, ne lisent que des
-cotisations — celles de 1979 à 1997, que des arrêtés fixaient chaque année en
-montants forfaitaires, prises aux taux du régime général sur le forfait du
-SMIC.
+soixante-cinq ans ; le maximum de 1982, estimé. Cela ne touche que le
+scénario 1 ; les comptes notionnels, eux, ne lisent que des cotisations —
+celles de 1979 à 1997, les deux montants par assuré que des arrêtés fixaient
+chaque année, la sienne et la solidarité de sa collectivité
+(`legislation/cultes_cotisations_forfaitaires.csv`), ceux de 1982 et la
+solidarité de 1979 estimés.
 
 **Les autres, et le mur devant chacun** : voir la couverture « à modéliser »
 de l'inventaire, qui porte pour chacun ce qui bloque.

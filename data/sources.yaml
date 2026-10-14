@@ -4047,7 +4047,9 @@ institutions:
           maximum de la pension que des arrêtés fixent chaque année de 1979 à
           1997, lus le 3 octobre 2026 dans les index LEGI et JORF
           (`legislation/cultes_maximum_pension.csv`, fiche
-          `cultes_fractions_de_pension`).
+          `cultes_fractions_de_pension`) ; et les cotisations de ces années,
+          deux montants par assuré que les mêmes arrêtés fixent, lus le
+          14 octobre 2026 (`legislation/cultes_cotisations_forfaitaires.csv`).
 
       - id: dila_legi_rci
         titre: >-

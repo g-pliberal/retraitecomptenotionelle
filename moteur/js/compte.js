@@ -16,7 +16,7 @@ import { ContributionEtat, SourceCotisations, PartCotisation } from "./config.js
 import { chomageComplementaires, salaireMoyenAnnuel } from "./carriere.js";
 import {
   ClassesCotisation, ContributionsEmployeurPubliques, PartRetraiteSeuleEtat,
-  SalairesForfaitaires, ValeursPoint,
+  CotisationsDesCultes, SalairesForfaitaires, ValeursPoint,
 } from "./regimes.js";
 import { Fiabilite } from "./serie.js";
 import { primesSoumises } from "./primes.js";
@@ -36,6 +36,7 @@ export class ConstructeurCompte {
     this.contributionsPubliques = new ContributionsEmployeurPubliques(macro.paquet);
     this.classes = new ClassesCotisation(macro.paquet);
     this.grilles = new SalairesForfaitaires(macro.paquet);
+    this.cotisationsCultes = new CotisationsDesCultes(macro.paquet);
     // Les primes que la loi assujettit à la retenue pour pension, et les
     // retenues et contributions supplémentaires de leur statut.
     this.primes = primesSoumises(macro.paquet);
@@ -708,6 +709,19 @@ export class ConstructeurCompte {
         let montant = classe !== null
           ? classe[0] * part
           : assiette * taux + forfait;
+        let patronale = assiette * tauxEmployeur;
+
+        // LES COTISATIONS DES CULTES DE 1979 À 1997 : deux montants par
+        // assuré, fixés chaque année par arrêté, et non le SMIC aux taux du
+        // régime général. Voir compte.py.
+        const cultes = periode.assiette_forfaitaire && classe === null
+          ? this.cotisationsCultes.montants(annee) : null;
+        if (cultes !== null) {
+          const [assure, solidarite, fiabiliteCultes] = cultes;
+          patronale = tauxEmployeur > 0.0 ? solidarite * part : 0.0;
+          montant = assure * part + patronale + forfait;
+          fiabilite = Math.min(fiabilite, fiabiliteCultes);
+        }
 
         // LA COTISATION DÉPLAFONNÉE. Au-dessus du plafond, le régime général
         // prélève encore sur la TOTALITÉ du salaire — 2,42 % en 2025 — et
@@ -719,7 +733,11 @@ export class ConstructeurCompte {
         // paraissent perdre plus qu'ils ne perdent.
         // L'artisan et le commerçant, au régime général depuis 2018, versent
         // leur taux propre sur la totalité : 0,60 %, puis 0,72 % depuis 2025.
-        const deplafonnee = base * periode.tauxDuCotisant(sansEmployeur)[1];
+        // Le régime des cultes la prélève sur son forfait, et non sur le
+        // revenu de l'assuré ; de 1979 à 1997, les arrêtés la comprennent.
+        const baseDeplafonnee = !periode.assiette_forfaitaire ? base
+          : cultes !== null ? 0.0 : repere;
+        const deplafonnee = baseDeplafonnee * periode.tauxDuCotisant(sansEmployeur)[1];
         if (deplafonnee > 0) {
           let partAgent = periode.part_salariale_deplafonnee;
           if (sansEmployeur) {
@@ -746,6 +764,7 @@ export class ConstructeurCompte {
 
         if (validee < 1.0) {
           montant *= validee;
+          patronale *= validee;
           assiette *= validee;
           assietteSalaire *= validee;
         }
@@ -770,7 +789,7 @@ export class ConstructeurCompte {
           cotisation += montant;
           parRegime.set(code, (parRegime.get(code) ?? 0.0) + montant);
           assietteTotale += assiette;
-          partEmployeur += assiette * tauxEmployeur + supplementEmployeur;
+          partEmployeur += patronale + supplementEmployeur;
           if (deplafonnee > 0 && !sansEmployeur && !partSalarialeSeule
               && this.parametres.part_cotisation !== PartCotisation.SALARIALE) {
             // Même règle que pour `tauxEmployeur` ci-dessus : sous

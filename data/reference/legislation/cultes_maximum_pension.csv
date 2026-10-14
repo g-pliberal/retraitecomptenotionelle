@@ -15,8 +15,8 @@
 # VIII). Voir la fiche `cultes_fractions_de_pension`.
 #
 # CE SONT DES ANCRES. Une ligne par arrêté, pour l'année qu'il fixe, lu dans
-# les index LEGI et JORF du dépôt — 1987 à 1997 dans leur texte, 1980, 1981,
-# 1983 et 1985 dans le résumé que le Journal officiel en donne. Le moteur
+# les index LEGI et JORF du dépôt — 1984 et 1986 à 1997 dans leur texte, 1980,
+# 1981, 1983 et 1985 dans le résumé que le Journal officiel en donne. Le moteur
 # porte les années suivantes depuis 1997 par les revalorisations des pensions
 # (`revalorisation_pensions.csv`), jusqu'à l'ancre de 2026, le montant que
 # publie la caisse (452,15 € par mois au 1er janvier 2026), puis par les prix.
@@ -25,10 +25,14 @@
 # (question n° 11394) en écrit 3 839,26 € : la caisse arrondit à chaque
 # revalorisation, ce que le moteur ne fait pas.
 #
-# TROIS ANNÉES ESTIMÉES : les arrêtés de 1982, 1984 et 1986 existent, mais
-# l'index n'a que le titre des deux derniers (JORFTEXT000000314636 et
-# JORFTEXT000000494052) et rien du premier ; leur montant est la moyenne
-# géométrique de ceux qui les encadrent, arrondie au franc.
+# UNE ANNÉE ESTIMÉE : l'arrêté de 1982 existe (JORFTEXT000000287249), mais
+# l'index n'en a que le titre ; son montant est la moyenne géométrique de
+# ceux qui l'encadrent, arrondie au franc. Ceux de 1984 et de 1986, estimés de
+# même jusqu'au 14 octobre 2026, sont dans l'index LEGI, article par article,
+# que le Journal officiel ne résume que par leur titre : 15 450 F et
+# 17 300 F, au lieu de 15 474 F et 17 220 F. Pour 1983, le texte consolidé
+# écrit 14 250 F et le résumé du Journal officiel 14 252 F, que la
+# cotisation de l'assuré (3 677 F, 12,9 % de deux fois le maximum) confirme.
 #
 # Valeurs en francs jusqu'en 1997, converties en euros par division par
 # 6,55957 — conversion arithmétique, sans revalorisation. Montants annuels.
@@ -38,9 +42,9 @@ annee,valeur,francs,fiabilite,reference
 1981,1579.371819,10360,haute,arrêté du 17 décembre 1980 (JORFTEXT000000676770)
 1982,1852.408008,12151,estimee,"moyenne géométrique de 1981 et 1983, l'arrêté n'étant pas dans l'index"
 1983,2172.703394,14252,haute,arrêté du 12 janvier 1983 (JORFTEXT000000470945)
-1984,2358.996093,15474,estimee,"moyenne géométrique de 1983 et 1985, l'index n'ayant que le titre de l'arrêté du 27 décembre 1983 (JORFTEXT000000314636)"
+1984,2355.337316,15450,haute,"arrêté du 27 décembre 1983, art. 1er (LEGIARTI000006782739)"
 1985,2561.143490,16800,haute,arrêté du 7 décembre 1984 (JORFTEXT000000860072)
-1986,2625.172077,17220,estimee,"moyenne géométrique de 1985 et 1987, l'index n'ayant que le titre de l'arrêté du 13 décembre 1985 (JORFTEXT000000494052)"
+1986,2637.367998,17300,haute,"arrêté du 13 décembre 1985, art. 1er (LEGIARTI000006783966)"
 1987,2690.725154,17650,haute,arrêté du 9 décembre 1986 (LEGIARTI000006784444)
 1988,2759.327212,18100,haute,arrêté du 23 décembre 1987 (LEGIARTI000006785418)
 1989,2881.286426,18900,haute,arrêté du 22 décembre 1988 (LEGIARTI000006786099)

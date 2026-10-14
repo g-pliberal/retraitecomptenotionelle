@@ -76,6 +76,29 @@ versions:
   - id: LEGIARTI000006766268
     reference: décret n° 79-607 du 3 juillet 1979, art. 42, la même règle dès 1979
     lu_le: 2026-10-03
+  - id: LEGIARTI000006766248
+    reference: décret n° 79-607 du 3 juillet 1979, art. 24, du 1er janvier 1979 au 21 décembre 1985
+    citation: >-
+      « Le montant annuel de la cotisation forfaitaire à la charge des assurés [...] est
+      fixé chaque année de manière à correspondre à la cotisation d'assurance vieillesse
+      qui serait due pour le compte d'un assuré du régime général percevant un salaire lui
+      permettant d'acquérir à soixante-cinq ans, pour la durée maximum d'assurance, une
+      pension égale à la pension définie à l'article 39 »
+    lu_le: 2026-10-14
+  - id: LEGIARTI000006766249
+    reference: décret n° 79-607 du 3 juillet 1979, art. 25, du 1er janvier 1979 au 21 décembre 1985
+    citation: >-
+      « La cotisation de solidarité à la charge des associations, congrégations et
+      collectivités religieuses [...] est fixée chaque année de manière à assurer
+      l'équilibre du régime compte tenu notamment des charges résultant de la prise en
+      compte des périodes d'activité antérieures à sa création. Cette cotisation est due
+      pour tout assuré non retraité »
+    lu_le: 2026-10-14
+  - id: LEGIARTI000006752921
+    reference: >-
+      code de la sécurité sociale, R. 721-29, rédaction du 21 décembre 1985 au 13 novembre
+      1988, la règle de l'article 24
+    lu_le: 2026-10-14
   bornes:
     liquidation.date_effet: [null, 1998-01-01]
   contenu:
@@ -89,6 +112,12 @@ versions:
       base (D. 721-9 à D. 721-11)
     age: soixante-cinq ans ; soixante pour l'inaptitude et les déportés (D. 721-6)
     minimum_contributif: aucun, L. 351-10 ne vaut pas pour le régime
+    cotisations: >-
+      deux montants par assuré non retraité, fixés chaque année par arrêté : le sien, le
+      taux total du régime général sur deux fois le maximum, et la solidarité de sa
+      collectivité (`legislation/cultes_cotisations_forfaitaires.csv`) ; ils n'ouvrent
+      aucun droit au scénario 1, où la pension est forfaitaire, mais font le compte
+      notionnel
   exemples: aucun trouvé
 - id: alignement_de_1998
   statut: lue
@@ -227,13 +256,13 @@ approximations:
   effet: non mesuré
 - version: [regime_forfaitaire, alignement_de_1998, decret_de_2006, decret_de_2010]
   ecart: >-
-    Le maximum de 1982, 1984 et 1986 est la moyenne géométrique de ceux qui l'encadrent,
-    les arrêtés n'étant pas dans l'index ; celui de 1998 à 2025 est revalorisé sans
+    Le maximum de 1982 est la moyenne géométrique de ceux qui l'encadrent, l'arrêté
+    n'étant pas dans l'index ; celui de 1998 à 2025 est revalorisé sans
     l'arrondi de la caisse, à deux centimes par mois près en 2026. Le modèle prend le
     maximum et le minimum contributif de l'année de la date d'effet.
   effet: non mesuré
 sources:
-  lu_le: 2026-10-03
+  lu_le: 2026-10-14
   prochaine_relecture: 2027-10-01
   lectures:
   - type: legifrance
@@ -248,6 +277,20 @@ sources:
       les arrêtés du maximum de pension et des cotisations de 1980, 1981, 1983, 1985 et
       1991 (résumés de l'index JORF du dépôt), ceux de 1984 et 1986 (titres seuls)
     date: 2026-10-03
+  - type: legifrance
+    reference: >-
+      les arrêtés annuels de 1983 à 1997, articles 1er à 3 — le maximum, la cotisation
+      forfaitaire de l'assuré, la cotisation de solidarité —, ceux de 1984 et 1986 compris,
+      que le Journal officiel ne résume que par leur titre ; R. 721-29 de 1985 et les
+      articles 24 et 25 du décret n° 79-607, qui fixent la règle des deux cotisations ;
+      R. 721-29 et R. 721-30 de 1998 à 2006 (index LEGI du dépôt)
+    date: 2026-10-14
+  - type: jorf
+    reference: >-
+      l'arrêté du 8 janvier 1980, cotisation de l'assuré de 1979 (1 935 F), et celui du
+      17 décembre 1980, les deux cotisations de 1981 (2 672 F et 1 428 F), par leur
+      titre dans l'index JORF du dépôt
+    date: 2026-10-14
   - type: autre
     reference: >-
       CAVIMAC, « Demander ma retraite de base » : trois fractions ; « Le montant mensuel du
@@ -265,16 +308,11 @@ sources:
     date: 2003-03-24
   a_relire:
   - >-
-    Les arrêtés du maximum de pension de 1982, 1984 et 1986, à lire sur le fac-similé du
-    Journal officiel ; une circulaire de la CAVIMAC sur le décret n° 2006-1325, qui dirait
-    l'âge du taux plein de la fraction d'avant 1998, l'écrêtement des majorations et le
-    partage de leurs prorata.
-  - >-
-    Les cotisations de 1979 à 1997 n'étaient pas un taux sur le SMIC mais des montants
-    forfaitaires fixés chaque année par arrêté — 2 348 F à la charge de l'assuré en 1980,
-    6 210 F en 1990 —, avec une cotisation de solidarité des collectivités (décret
-    n° 79-607, art. 24 et 25 ; R. 721-29 et R. 721-30) : le compte notionnel les prend
-    aux taux du régime général sur le forfait du SMIC.
+    L'arrêté du 22 décembre 1981, maximum de pension et cotisations de 1982, à lire sur le
+    fac-similé du Journal officiel, et celui du 8 janvier 1980, la cotisation de
+    solidarité de 1979 ; une circulaire de la CAVIMAC sur le décret n° 2006-1325, qui
+    dirait l'âge du taux plein de la fraction d'avant 1998, l'écrêtement des majorations
+    et le partage de leurs prorata.
 code:
   interrupteurs:
     fractions_des_cultes: true
@@ -302,6 +340,10 @@ code:
   - droit/compter.js ; droit/ouvrir.js
   parametres:
   - legislation/cultes_maximum_pension.csv
+  - >-
+    legislation/cultes_cotisations_forfaitaires.csv, les deux cotisations de 1979 à 1997,
+    que les comptes notionnels portent (`moteur/compte.py`, `CotisationsDesCultes`) au
+    lieu du forfait du SMIC aux taux du régime général
   - regimes/cavimac.yaml (`fractions_des_cultes`, l'âge de soixante-cinq ans jusqu'en
     2006)
   - legislation/affiliations.yaml (ministre_du_culte, membre_congregation)

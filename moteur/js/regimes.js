@@ -2684,6 +2684,22 @@ export class Affiliations {
  * plus proche de son revenu annualisé. Hors des années publiées, la grille la
  * plus proche est ramenée par le salaire moyen, et le résultat le dit.
  */
+/**
+ * Les cotisations vieillesse forfaitaires du régime des cultes, 1979-1997 :
+ * celle de l'assuré et celle de sa collectivité, par année. Voir
+ * `donnees/regimes.py`, `CotisationsDesCultes`.
+ */
+export class CotisationsDesCultes {
+  constructor(paquet) {
+    this._table = paquet.cultes_cotisations_forfaitaires ?? {};
+  }
+
+  /** @returns {[number, number, number]|null} assuré, solidarité, fiabilité. */
+  montants(annee) {
+    return this._table[String(annee)] ?? null;
+  }
+}
+
 export class SalairesForfaitaires {
   constructor(paquet) {
     this._table = new Map();

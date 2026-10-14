@@ -115,6 +115,54 @@ def test_les_annees_d_avant_1979_sont_validees_sans_cotisation(simulateur):
     assert constructeur.cotisation_annuelle(carriere, 1985).regimes == ("cavimac",)
 
 
+def test_de_1979_a_1997_le_compte_porte_les_cotisations_des_arretes(simulateur):
+    """Avant 1998, ni SMIC ni taux : la cotisation de l'assuré et la
+    solidarité de sa collectivité, que des arrêtés fixent chaque année
+    (décret n° 79-607, art. 24 et 25 ; R. 721-29 et R. 721-30 de 1985) —
+    6 210 F et 1 000 F en 1990, 3 072 F et 5 497 F en 1997. Sous la
+    convention salariale, le compte ne porte que la première ; sous la
+    totale, les deux. Depuis 1998, le SMIC aux taux du régime général."""
+    carriere = _carriere(simulateur, 1940, 20, 70)
+
+    def constructeur(part):
+        return ConstructeurCompte(
+            simulateur.macro, simulateur.catalogue, simulateur.affiliations,
+            simulateur.indexation, simulateur.parametres.avec(part_cotisation=part))
+
+    salariale = constructeur(PartCotisation.SALARIALE)
+    totale = constructeur(PartCotisation.TOTALE)
+    for annee, assure, solidarite in ((1990, 6210, 1000), (1997, 3072, 5497)):
+        # Le fichier garde six décimales ; l'Arrco des cultes a ses lignes.
+        ligne = salariale.cotisation_annuelle(carriere, annee)
+        assert dict(ligne.par_regime)["cavimac"] == pytest.approx(
+            assure / FRANCS_PAR_EURO, abs=1e-5)
+        ligne = totale.cotisation_annuelle(carriere, annee)
+        assert dict(ligne.par_regime)["cavimac"] == pytest.approx(
+            (assure + solidarite) / FRANCS_PAR_EURO, abs=1e-5)
+    ligne = totale.cotisation_annuelle(carriere, 1990)
+    assert ligne.regimes == ("cavimac",)
+    assert ligne.part_employeur == pytest.approx(1000 / FRANCS_PAR_EURO, abs=1e-5)
+    assert salariale.cotisation_annuelle(carriere, 1990).part_employeur == 0.0
+    # La cotisation de l'assuré est le taux total du régime général sur deux
+    # fois le maximum : 12,9 % de 18 200 F en 1980, 13,9 % de 30 900 F en 1984.
+    assert round(0.129 * 2 * 9100) == 2348 and round(0.139 * 2 * 15450) == 4295
+    maximum = simulateur.scenario_actuel.maximum_des_cultes
+    assert maximum.valeur(1984)[0] == pytest.approx(15450 / FRANCS_PAR_EURO, abs=1e-6)
+    # Depuis 1998, la fiche reprend la main.
+    periode = simulateur.catalogue["cavimac"].periode(2000)
+    ligne = salariale.cotisation_annuelle(carriere, 2000)
+    assert dict(ligne.par_regime)["cavimac"] == pytest.approx(
+        2028 * simulateur.macro.smic_horaire(2000) * periode.taux_cotisation_salarie,
+        rel=1e-6)
+    # La part déplafonnée se prend sur le même forfait, et non sur le revenu
+    # de l'assuré ; les montants des arrêtés la comprennent.
+    ligne = totale.cotisation_annuelle(carriere, 2000)
+    assert dict(ligne.par_regime)["cavimac"] == pytest.approx(
+        2028 * simulateur.macro.smic_horaire(2000)
+        * (periode.taux_cotisation_retraite + periode.taux_cotisation_deplafonnee),
+        rel=1e-6)
+
+
 def test_avant_1998_la_pension_est_le_maximum_au_prorata_a_soixante_cinq_ans(simulateur):
     """D. 721-6 et D. 721-7 du code de 1985 : à soixante-cinq ans, le maximum
     de l'année au prorata de cent cinquante trimestres, et aucun minimum

@@ -1608,6 +1608,16 @@ def _maximum_des_cultes() -> dict:
             for annee, (valeur, fiabilite) in sorted(table.items())}
 
 
+def _cotisations_des_cultes() -> dict:
+    """Les cotisations forfaitaires du régime des cultes de 1979 à 1997, par
+    année : celle de l'assuré, celle de sa collectivité, et leur fiabilité."""
+    from retraite_notionnelle.donnees.regimes import CotisationsDesCultes
+
+    table = CotisationsDesCultes(DONNEES)._table
+    return {str(annee): [assure, solidarite, int(fiabilite)]
+            for annee, (assure, solidarite, fiabilite) in sorted(table.items())}
+
+
 def _minimum_vieillesse_avant_2007() -> dict:
     """Le minimum vieillesse à deux étages, de 1941 à 2006 : par année, l'AVTS,
     l'allocation supplémentaire d'un et de deux allocataires, les plafonds d'une
@@ -2259,6 +2269,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "pension_majoree_reference": _pension_majoree_reference(),
         "complement_differentiel_rco": _complement_differentiel_rco(),
         "cultes_maximum_pension": _maximum_des_cultes(),
+        "cultes_cotisations_forfaitaires": _cotisations_des_cultes(),
         "minimum_garanti": _minimum_garanti(),
         "baremes_trimestre": _baremes_trimestre(),
         "minimum_vieillesse": _minimum_vieillesse(),

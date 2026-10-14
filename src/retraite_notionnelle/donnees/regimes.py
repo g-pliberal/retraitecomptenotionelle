@@ -1273,6 +1273,39 @@ class SalairesForfaitaires:
         return meilleur.montant * coefficient, meilleur.categorie, fiabilite
 
 
+class CotisationsDesCultes:
+    """Les cotisations vieillesse forfaitaires du régime des cultes, 1979-1997.
+
+    Avant 1998, le régime n'appelait ni un taux ni un forfait du SMIC, mais
+    deux montants par assuré non retraité, fixés chaque année par arrêté : la
+    cotisation forfaitaire de l'assuré (décret n° 79-607, art. 24 ; R. 721-29
+    du code de 1985) et la cotisation de solidarité de sa collectivité
+    (art. 25 ; R. 721-30). ``legislation/cultes_cotisations_forfaitaires.csv``
+    les porte ; depuis 1998, la fiche du régime reprend la main.
+    """
+
+    def __init__(self, racine: Path) -> None:
+        self._table: dict[int, tuple[float, float, Fiabilite]] = {}
+        chemin = racine / "reference" / "legislation" / "cultes_cotisations_forfaitaires.csv"
+        if not chemin.exists():
+            return
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            for ligne in csv.DictReader(lignes):
+                self._table[int(ligne["annee"])] = (
+                    float(ligne["assure"]),
+                    float(ligne["solidarite"]),
+                    min(Fiabilite.depuis_texte(ligne["fiabilite_assure"]),
+                        Fiabilite.depuis_texte(ligne["fiabilite_solidarite"])),
+                )
+
+    def montants(self, annee: int) -> tuple[float, float, Fiabilite] | None:
+        """La cotisation de l'assuré et celle de sa collectivité pour une
+        année entière, en euros, et ce qu'elles valent ; ``None`` hors des
+        années qu'un arrêté fixe."""
+        return self._table.get(annee)
+
+
 #: Champ de la période que chaque mesure de `taux_cotisation_annuels.csv`
 #: remplace.
 _MESURES_TAUX_ANNUELS = {
