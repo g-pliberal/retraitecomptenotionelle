@@ -69,6 +69,23 @@ def niveau_relatif(carriere: Carriere, macro: DonneesMacro) -> float:
     return revenus / references if references > 0.0 else 1.0
 
 
+def diviseur_de_courbe(courbe, taux_anticipe: float = 0.0) -> float:
+    """Le diviseur d'une courbe de survie : ``courbe[t]`` est la probabilité
+    d'être en vie ``t`` années après le départ, ``courbe[0]`` valant un.
+
+    La rente est supposée servie en continu sur l'année : chaque année compte
+    la survie moyenne de son début et de sa fin, actualisée au milieu de
+    l'année. C'est la formule de l'ETK finlandaise, au millionième ; les
+    exemples officiels de la Suède, de l'Italie et de la Pologne, rejoués par
+    cette fonction, sont dans ``tests/test_diviseur_exemples_officiels.py``.
+    """
+    diviseur = 0.0
+    for t in range(len(courbe) - 1):
+        survie_moyenne = 0.5 * (courbe[t] + courbe[t + 1])
+        diviseur += survie_moyenne / ((1.0 + taux_anticipe) ** (t + 0.5))
+    return diviseur
+
+
 @dataclass(frozen=True)
 class CoefficientConversion:
     """Diviseur annuitaire et éléments qui l'expliquent."""
@@ -228,12 +245,7 @@ class Convertisseur:
         )
 
         nu = self.parametres.taux_anticipe_conversion
-        diviseur = 0.0
-        for t in range(len(courbe) - 1):
-            # Rente supposée servie en continu sur l'année : on prend la survie
-            # moyenne de début et de fin de période.
-            survie_moyenne = 0.5 * (courbe[t] + courbe[t + 1])
-            diviseur += survie_moyenne / ((1.0 + nu) ** (t + 0.5))
+        diviseur = diviseur_de_courbe(courbe, nu)
 
         if diviseur <= 0:
             raise ValueError(

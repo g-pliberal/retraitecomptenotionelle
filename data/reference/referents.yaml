@@ -8875,7 +8875,12 @@ referents:
           1,016. La fiche du diviseur du dépôt n'a aucun exemple officiel
           (`coefficient_de_conversion.yaml:48`) ; celui-ci en ferait un test.
         preuve: PFS 2026:2, recalculée sur la table `LivslangdFemarigA` de SCB
-        etat: a_reprendre
+        verification: >-
+          Repris le 14 octobre 2026 (138.11) : la formule suédoise refait la
+          grille au centième de 62 à 103 ans ; le diviseur des deux moteurs,
+          rente continue, en est plus court de 1/24 d'année, 17,30 contre 17,34
+          à 65 ans (`tests/test_diviseur_exemples_officiels.py`).
+        etat: repris
         chantier: "138.11"
       - quoi: >-
           Son diviseur est la valeur des mensualités, versées
@@ -9454,7 +9459,13 @@ referents:
           que la fiche du diviseur du dépôt n'a pas
           (`coefficient_de_conversion.yaml:48`).
         preuve: lavoro.gov.it, « nota-tecnica-decreto-ct-2025 », tableau C.2
-        etat: a_reprendre
+        verification: >-
+          Repris le 14 octobre 2026 (138.11) sur le terme direct, 17,590 : sur
+          les quotients du tableau A, l'annuité d'avance moins k le refait au
+          millième de 57 à 71 ans ; les deux moteurs rendent 17,548, plus
+          courts de 0,5 − k (`tests/test_diviseur_exemples_officiels.py`). La
+          réversion, 1,460, reste au point qui la tranche.
+        etat: repris
         chantier: "138.11"
       - quoi: >-
           La loi revalorise les comptes sur la moyenne du PIB nominal des cinq
@@ -9750,7 +9761,13 @@ referents:
           fiche du diviseur du dépôt n'a pas
           (`coefficient_de_conversion.yaml:48`).
         preuve: communiqué du GUS du 25 mars 2026
-        etat: a_reprendre
+        verification: >-
+          Repris le 14 octobre 2026 (138.11) : sur la table D du GUS de 2025,
+          les deux moteurs, sans actualisation, refont le communiqué au dixième
+          de mois à 60, 62, 65, 67, 70, 80 et 90 ans, l'espérance arrondie au
+          centième d'année avant d'être multipliée par douze
+          (`tests/test_diviseur_exemples_officiels.py`).
+        etat: repris
         chantier: "138.11"
       - quoi: >-
           Le compte ne baisse jamais, et sa revalorisation ne passe
@@ -10164,7 +10181,11 @@ referents:
           (`coefficient_de_conversion.yaml:48`) : celui-ci en ferait un test.
         preuve: >-
           `eak2024.pdf`, mémo de l'ETK
-        etat: a_reprendre
+        verification: >-
+          Repris le 14 octobre 2026 (138.11) : les deux moteurs rendent
+          16,778288 et 17,718722 au millionième, sur les quotients du mémo
+          (`tests/test_diviseur_exemples_officiels.py`).
+        etat: repris
         chantier: "138.11"
       - quoi: >-
           L'ETK publie pour chaque génération l'âge qui compense le

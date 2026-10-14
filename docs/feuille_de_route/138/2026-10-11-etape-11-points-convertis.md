@@ -1,15 +1,15 @@
 # Étape 11, première partie : les points du relevé convertis en revenus
 
-**Reprise, au 13 octobre 2026.** Fait : les points d'un relevé convertis en
-revenu dans les deux moteurs — le revenu entier le plus bas qui les ouvre,
-cherché sur le relevé des droits du scénario 1 (`revenu_des_points`,
-`droit/releve.py` et son jumeau) —, la lecture des relevés qui s'en sert, et
-son branchement au site : `index.html` passe le convertisseur à `lireReleve`,
-la limite est récrite, le contrôle du dépôt lit aussi `droit/releve.js`.
-Reste, dans cet ordre : au propriétaire, ce que reçoit une année sans montant
-ni points (trois points du registre, `a_trancher`) ; puis les autres parties
-de l'étape, des exemples officiels du diviseur aux chocs stylisés du COR.
-Détail : « Ce qui reste », 2 à 4.
+**Reprise, au 14 octobre 2026.** Fait : les points d'un relevé convertis en
+revenu dans les deux moteurs et leur branchement au site (11 octobre) ; le
+diviseur éprouvé sur les exemples officiels de la Finlande, de la Pologne, de
+la Suède et de l'Italie, par les deux moteurs, en cas d'essai
+(`test_diviseur_exemples_officiels.py`, 14 octobre) : exact là où la
+convention est la même, plus court du terme des versements ailleurs. Reste :
+au propriétaire, le terme des versements, la réversion dans le diviseur, et
+ce que reçoit une année sans montant ni points ; puis la Lettonie, la grille
+publiée, les lissages, le prorata des mois, les chocs du COR. Détail :
+`2026-10-14-etape-11-exemples-officiels.md`, « Ce qui reste ».
 
 **La demande.** Le propriétaire, le 11 octobre 2026 : « les années sans
 montant sont comptées zéro au compte notionnel, et les points du relevé sont
