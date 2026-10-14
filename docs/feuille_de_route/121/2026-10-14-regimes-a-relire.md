@@ -1,6 +1,6 @@
-# Les régimes à relire : onze sur dix-sept, texte en main
+# Les régimes à relire : quinze sur dix-sept, texte en main
 
-**Le 14 octobre 2026, onze des dix-sept régimes que
+**Le 14 octobre 2026, quinze des dix-sept régimes que
 `tests/test_regle_de_chacun.py` déclarait `A_RELIRE` en sortent, texte en main
 (index LEGI à jour du 11 octobre 2026).** Leur durée se lit, comme à la
 Comédie-Française, à la date où l'assuré réunit les conditions, et non à sa
@@ -10,9 +10,9 @@ d'un texte, déclarée à l'année d'effet (`A_L_ANNEE_D_EFFET`). La MSA des
 non-salariés a, elle aussi, sa durée propre, que la fiche empruntait au
 régime général ; la CARMF et l'ASV s'ouvrent à l'âge légal de la génération,
 et non à soixante-deux ans. La CNAVPL, la CNBF, la CAVIMAC, la CARPIMKO et la
-CPRN ne basculent qu'à l'entrée en vigueur de leurs textes. Restent à relire
-la durée de la CARMF et celle du CESE, la Comédie-Française d'avant 1993 et
-les cinq complémentaires d'avant 1983.
+CPRN ne basculent qu'à l'entrée en vigueur de leurs textes, comme la
+Comédie-Française en 1993 et les cinq complémentaires en 1983. Restent à relire
+la durée de la CARMF et celle du CESE.
 
 ## L'Opéra national de Paris
 
@@ -141,6 +141,22 @@ avant leur âge légal. La majoration a son propre champ (`surcote_age_debut:
 1er janvier 2017, « sans décote ni durée » : année d'effet de l'arrêté du
 1er décembre 2016.
 
+## La Comédie-Française de 1993 et les complémentaires de 1983
+
+- **Comédie-Française** : le décret n° 93-430 du 22 mars 1993
+  (JORFTEXT000000345623) récrit l'article 6 du décret n° 68-960 — soixante ans
+  pour les artistes aux appointements dès le 25 mars 1993, au lieu de
+  cinquante-cinq pour les hommes (LEGIARTI000006765430) —, sans disposition
+  transitoire dans aucun de ses huit articles. De 1994 à 1997, la même
+  bascule, au premier départ que le décret ouvre aux nés de 1934 à 1937.
+- **Agirc, Agirc des entreprises nouvelles, Arrco, sa tranche 2, Ircantec** :
+  « à compter du 1er avril 1983 », la durée du taux plein au régime de base
+  annule le coefficient d'anticipation (accord ASF du 4 février 1983 ; arrêté
+  du 30 décembre 1970, article 16, 6° c), LEGIARTI000006381610, pour
+  l'Ircantec). Avant, l'âge seul : la période ne porte aucune durée, et les
+  160 trimestres que le test relevait sont le repli du moteur, que
+  l'abattement par l'âge seul ne consulte pas (`liquider.py`, `par_age_seul`).
+
 ## Ce qui reste à relire
 
 - **La durée de la CARMF**, de 1930 à 1939 : l'article 15 des statuts minore
@@ -154,8 +170,10 @@ avant leur âge légal. La majoration a son propre champ (`surcote_age_debut:
 
 ## Ce qui reste
 
-- Dans le registre `A_RELIRE` : la durée de la CARMF et le CESE (ci-dessus),
-  la Comédie-Française d'avant 1993 et les cinq complémentaires d'avant 1983.
+- Dans le registre `A_RELIRE` : la durée de la CARMF et le CESE (ci-dessus).
+  L'index JORF ne porte, pour la CARMF d'avant 2000, que des résumés
+  d'arrêtés ; ses statuts d'alors sont à chercher ailleurs (la caisse, le
+  Journal officiel en fac-similé).
 - Banque de France : l'ancien régime, avant 2007 (âge, durée) ; la coupure de
   la fiche au 1er avril 2007 plutôt qu'en 2008 ; l'âge d'annulation de la
   décote (article 34, et le III de l'article 72), qui reste celui de la

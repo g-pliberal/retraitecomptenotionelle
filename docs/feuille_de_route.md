@@ -2256,14 +2256,14 @@ les cultes, `data/reference/legislation/affiliations.yaml`,
 ### 121. Le droit de chacun, et non celui de la génération de l'année : toutes les personnes vivantes — `en cours`
 
 **Reprise, au 14 octobre 2026.** Le test de la règle de chacun
-(`tests/test_regle_de_chacun.py`) déclarait dix-sept régimes `A_RELIRE` ; onze
-en sont sortis, texte en main : la durée de l'Opéra, de la Banque de France et
-de la MSA, l'âge de la Banque, de la CARMF et de l'ASV, corrigés ; la CNAVPL,
-la CNBF, la CAVIMAC, la CARPIMKO et la CPRN, déclarées à l'année d'effet.
-Restent la durée de la CARMF avant 2000 (statuts non lus), le CESE (un taux
-par annuité selon la date du mandat, que le moteur ne sait pas porter), la
-Comédie-Française d'avant 1993 et cinq complémentaires d'avant 1983. Détail :
-`121/2026-10-14-regimes-a-relire.md`.
+(`tests/test_regle_de_chacun.py`) déclarait dix-sept régimes `A_RELIRE` ;
+quinze en sont sortis, texte en main : la durée de l'Opéra, de la Banque de
+France et de la MSA, l'âge de la Banque, de la CARMF et de l'ASV, corrigés ;
+les autres déclarés à l'année d'effet de leurs textes. Restent deux : la durée
+de la CARMF avant 2000 (statuts d'alors non lus, hors des index) et le CESE,
+dont le règlement fixe un taux par annuité selon la date du mandat — un
+chantier du modèle et de son jumeau JS, que le moteur ne sait pas porter.
+Détail : `121/2026-10-14-regimes-a-relire.md`.
 
 **Demande.** « Il faut prendre en compte la loi applicable pour tout le monde
 et pas seulement pour les derniers entrants ou sortants » ; « il faut aussi

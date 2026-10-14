@@ -145,17 +145,28 @@ A_L_ANNEE_D_EFFET = {
         "compter de 1954 ; rédaction de l'arrêté du 29 novembre 2023 "
         "(JORFARTI000048679350), en vigueur le 1er janvier 2024 : l'âge légal "
         "(table `cprn_2014`, relu le 14 octobre 2026)")),
+    ("comedie_francaise", "age"): (1993, 1997, (
+        "décret n° 93-430 du 22 mars 1993 (JORFTEXT000000345623), article 6 du "
+        "décret n° 68-960 (LEGIARTI000006765430) : soixante ans pour les "
+        "artistes aux appointements dès le 25 mars 1993, cinquante-cinq avant "
+        "pour les hommes ; aucune disposition transitoire dans ses huit "
+        "articles. De 1994 à 1997, la même bascule, au premier départ que le "
+        "décret ouvre aux nés de 1934 à 1937 (lu le 14 octobre 2026)")),
+    **{(code, "duree"): (1983, 1983, (
+        "accord ASF du 4 février 1983 pour l'Agirc et l'Arrco, article 16, 6° c), "
+        "de l'arrêté du 30 décembre 1970 pour l'Ircantec (LEGIARTI000006381610) : "
+        "« à compter du 1er avril 1983 », la durée du taux plein au régime de "
+        "base annule le coefficient d'anticipation ; avant, l'âge seul, et la "
+        "période ne porte aucune durée — les 160 trimestres du relevé sont le "
+        "repli du moteur, que l'abattement par l'âge seul ne consulte pas (relu "
+        "le 14 octobre 2026)"))
+       for code in ("agirc", "agirc_entreprises_nouvelles", "arrco",
+                    "arrco_tranche_2", "ircantec")},
 }
 
 #: (régime, paramètre) : les années où la règle bascule aujourd'hui, et ce que
 #: le relevé du 13 octobre 2026 en montre, faute d'en avoir lu le texte.
 A_RELIRE = {
-    **{(code, "duree"): (1983, 1983, (
-        "générations 1920 à 1922 : 160 trimestres pour un départ d'avant le "
-        "1er avril 1983, 150 après ; la durée que la fiche lit avant "
-        "l'ordonnance de 1982 n'est celle d'aucun texte relu"))
-       for code in ("agirc", "agirc_entreprises_nouvelles", "arrco",
-                    "arrco_tranche_2", "ircantec")},
     ("carmf_complementaire", "duree"): (2000, 2000, (
         "générations 1930 à 1939 : la durée de la génération avant 2000, aucune "
         "après (relu le 14 octobre 2026) — l'article 15 des statuts minore par "
@@ -168,9 +179,6 @@ A_RELIRE = {
         "31 août 2004, 2,02 % jusqu'au 30 septembre 2010…), que la fiche "
         "écrit en durée requise par année de départ ; il faut au moteur un "
         "taux par annuité acquise, qu'il n'a pas")),
-    ("comedie_francaise", "age"): (1993, 1997, (
-        "générations 1923 à 1937 : 55 ans avant le décret du 25 mars 1993, "
-        "60 ans après, même pour qui avait déjà 55 ans")),
 }
 
 
