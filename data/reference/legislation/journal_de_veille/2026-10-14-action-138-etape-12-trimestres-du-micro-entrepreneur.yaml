@@ -1,0 +1,31 @@
+date: "2026-10-14"
+session: "action 138, étape 12 : les trimestres du micro-entrepreneur validés sur le versement"
+consulte: >-
+  L'index LEGI du dépôt (à jour au 11 octobre 2026) : L. 613-7 (LEGIARTI000048683570),
+  D. 613-4 dans ses versions de 2022 à 2026 (LEGIARTI000046714712,
+  LEGIARTI000049624068, LEGIARTI000049624097, LEGIARTI000052218738), D. 613-6
+  (LEGIARTI000046714699, LEGIARTI000049623885, LEGIARTI000049625264,
+  LEGIARTI000049625405, LEGIARTI000052218747), D. 633-3 (LEGIARTI000041967101,
+  LEGIARTI000049904636), L. 133-6-8-2 (LEGIARTI000021538000, 2010-2015). La
+  circulaire Cnav n° 2024-23 du 16 juillet 2024, lue entière sur
+  legislation.lassuranceretraite.fr. Service-public, F23369, vérifié le
+  1er avril 2026, relu le 14 octobre 2026.
+trouve: >-
+  La caisse valide les trimestres du micro-entrepreneur sur un « revenu cotisé » :
+  la part du forfait affectée au régime de base (chiffre d'affaires × taux global
+  de D. 613-4 × taux de répartition de D. 613-6), divisée par le taux de
+  cotisation de base des indépendants (17,75 % jusqu'en 2024, 17,87 % depuis
+  2025, D. 633-3), comparée à 150 SMIC horaires (circulaire n° 2024-23, point 4).
+  D. 613-6 ne couvre l'Assurance retraite que depuis le décret n° 2022-1529, pour
+  les périodes courant depuis le 1er octobre 2022. Pour la Cipav, la première
+  tranche de la CNAVPL : 2 792 € de recettes par trimestre en 2026 (F23369). En
+  2025, le taux de base monte sans que la part de base suive : la vente valide
+  alors sur 0,288 du chiffre d'affaires, moins que son revenu abattu. Le
+  micro-entrepreneur n'a pas d'assiette minimale : celui de la Cipav, routé vers
+  le libéral, en recevait une à tort. Table neuve `legislation/micro_social.yaml`,
+  appliquée dans les deux moteurs ; fiche micro_social_abattement relue.
+reste: >-
+  La règle d'avant le 1er octobre 2022 (circulaire n° 2023-4 et devancières ;
+  seuils de L. 133-6-8-2) ; si le revenu cotisé entre aussi au salaire annuel
+  moyen, ce que L. 613-7, II semble exclure ; le taux global dans la cotisation
+  des comptes notionnels ; l'abattement minimal de 305 €.

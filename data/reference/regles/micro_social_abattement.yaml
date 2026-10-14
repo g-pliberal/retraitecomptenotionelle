@@ -6,28 +6,40 @@ intitule: >-
   les services commerciaux ou artisanaux, de 34 % pour les recettes libérales
   (L. 613-7, II ; L. 133-6-8 jusqu'en 2017) ; celui des professions que la Cipav
   garde relève de la CNAVPL et de la Cipav, au même abattement de 34 % (D. 613-4,
-  b).
+  b). Ses trimestres se valident sur le revenu que sa cotisation achète : le
+  chiffre d'affaires fois le taux global (D. 613-4), fois la part de base
+  (D. 613-6), divisé par le taux de base (D. 633-3, ou la première tranche de
+  la CNAVPL), comparé à 150 SMIC horaires (circulaire Cnav n° 2024-23).
 etat: approchee
 etape: acquerir_les_droits
 effet: >-
   Le micro-entrepreneur saisit son chiffre d'affaires mensuel et son activité
   (champ « micro »), que la saisie abat avant de le donner au modèle : 3 000 € de
   ventes valent un revenu de 870 €. Sans activité dite, le revenu saisi reste lu
-  comme déjà abattu, ce qu'il était avant le 14 octobre 2026. Approchée sur trois
-  points : l'abattement minimal de 305 € n'est pas opposé, le revenu qui valide
-  les trimestres est le revenu abattu et non celui que la cotisation versée
-  achète (0,29 au lieu de 0,299 du chiffre d'affaires pour la vente), et la
+  comme déjà abattu, ce qu'il était avant le 14 octobre 2026. Depuis 2023, les
+  trimestres se valident sur le revenu cotisé (`legislation/micro_social.yaml`,
+  par activité et par année), sans assiette minimale : 12 100 € de ventes en
+  2026 en valident deux, et non un ; 2 793 € de recettes à la Cipav, un, et non
+  les trois de l'assiette minimale du libéral (tests/test_micro_social.py, sur
+  les exemples de F23369 et de la circulaire). Approchée sur quatre points :
+  avant 2023, le revenu abattu valide, la règle d'avant le décret n° 2022-1529
+  n'étant pas lue ; l'abattement minimal de 305 € n'est pas opposé ; la
   cotisation des services et du libéral est celle du barème de l'artisan, ou du
   libéral à la Cipav, sur le revenu abattu, non le taux global du chiffre
-  d'affaires. Une seule activité pour toute la carrière.
+  d'affaires, et le revenu cotisé n'entre pas dans le salaire annuel moyen ;
+  l'année prend la moyenne de ses mois, sans les arrondis trimestriels de la
+  caisse. Une seule activité pour toute la carrière.
 sources:
   lu_le: 2026-10-14
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Le revenu qui valide les trimestres : service-public (F23369) le prend au taux
-    du versement et à sa part de base, 12,3 % × 43,45 % pour la vente en 2026 ;
-    lire le texte qui le fixe, et ses taux de répartition de chaque année.
+    La validation avant le 1er octobre 2022 : D. 613-6 ne répartissait alors que
+    la cotisation de la Cipav ; la circulaire Cnav n° 2023-4 et ses devancières
+    (seuils de chiffre d'affaires de L. 133-6-8-2, 2010-2015) disent sans doute
+    la règle. Et le salaire annuel moyen : la circulaire n° 2024-23 détermine
+    « les droits » par le forfait payé, L. 613-7, II par le chiffre d'affaires
+    abattu ; lire ce que la caisse reporte au compte.
   - >-
     La cotisation micro-sociale de chaque activité et de chaque année (D. 613-4 et
     ses versions, D. 131-6-3 pendant l'exonération de début d'activité), pour la
@@ -55,26 +67,52 @@ sources:
       peuvent être inférieurs à 305 euros » ; 102 ter (LEGIARTI000006302649,
       2006-2008) : réfaction de 34 %, minimum 305 €
     date: 2026-10-14
+  - type: legifrance
+    reference: >-
+      D. 613-6 CSS, LEGIARTI000046714699 (10 décembre 2022), LEGIARTI000049625264
+      (1er juillet 2024), LEGIARTI000049625405 (2025), LEGIARTI000052218747
+      (2026) : la part de base, 41,80 % puis 43,45 % pour la vente et les
+      services, 55,50 %, 50,75 %, 47,60 % puis 46,40 % pour le libéral, 26,00 %,
+      23,45 % puis 24,30 % (première tranche) pour la Cipav ; D. 613-4 dans ses
+      versions de 2022 à 2026 ; D. 633-3, LEGIARTI000041967101 et
+      LEGIARTI000049904636 (17,75 % puis 17,87 % depuis 2025)
+    date: 2026-10-14
+  - type: circulaire_cnav
+    reference: >-
+      Circulaire Cnav n° 2024-23 du 16 juillet 2024, « Les modalités de
+      détermination des droits à la retraite des travailleurs indépendants
+      relevant du dispositif micro-social », point 4 : revenu cotisé = parts du
+      forfait affectées au régime de base / taux de cotisation de base, comparé à
+      150 SMIC horaires ; exemples de 2023 (6 220 € de ventes, un trimestre) et de
+      2024
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2024_23_16072024.pdf
+    date: 2024-07-16
   - type: service_public
     reference: >-
       « Régime de retraite du micro-entrepreneur », F23369, vérifié le 1er avril
       2026 : les professions affiliées à la Cipav, et la validation des
-      trimestres par le versement
+      trimestres par le versement, avec ses exemples de 2026 (12 100 € : deux
+      trimestres pour la vente, trois pour les services, quatre pour le libéral ;
+      2 792 € par trimestre à la Cipav)
     url: https://entreprendre.service-public.gouv.fr/vosdroits/F23369
     date: 2026-04-01
 textes_a_rattacher:
 - reference: code de la sécurité sociale, L. 613-7, II (LEGIARTI000048683570)
 - reference: code de la sécurité sociale, L. 133-6-8 (de 2009 à 2017)
 - reference: code de la sécurité sociale, D. 613-4 (LEGIARTI000052218738)
+- reference: code de la sécurité sociale, D. 613-6 (LEGIARTI000052218747)
 - reference: >-
     décret n° 2018-1120 du 10 décembre 2018, le micro-social des libéraux de la
     Cipav (LEGITEXT000037798308)
 code:
   python: >-
     saisie.py : ACTIVITES_MICRO, ABATTEMENTS_MICRO, Saisie.en_chiffre_d_affaires et
-    Saisie.abattu, appelée par parcours et emploi_retraite_declare
+    Saisie.abattu, appelée par parcours et emploi_retraite_declare ;
+    carriere.py : Metier.micro, AnneeCarriere.micro, _revenu_validant ;
+    donnees/chargement.py : charger_validation_micro
   javascript: moteur/js/saisie.js (enChiffreDAffaires, abattu) ; moteur/js/pages.js
-    (microFormulaire, champChiffreDAffaires)
+    (microFormulaire, champChiffreDAffaires) ; moteur/js/carriere.js
+    (revenuValidant, paquet validation_micro)
   tests: >-
-    tests/test_web_saisie.py ; témoins micro_entrepreneur_* et
-    simuler_micro_entrepreneur*
+    tests/test_web_saisie.py ; tests/test_micro_social.py ; témoins
+    micro_entrepreneur_* et simuler_micro_entrepreneur*

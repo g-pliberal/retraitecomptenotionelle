@@ -283,8 +283,9 @@ affiliations:
       dit l'activité (champ « micro »), le chiffre d'affaires, qu'elle abat ;
       le statut route les mêmes régimes que le commerçant, avant 2009 comme
       lui, sauf à la Cipav, que la saisie route vers `profession_liberale`.
-      Les seuils de chiffre d'affaires qui valident les trimestres ne sont
-      pas portés.
+      Depuis 2023, ses trimestres se valident sur le revenu que sa
+      cotisation achète (`micro_social.yaml`), sans assiette minimale ;
+      avant, sur le revenu abattu, la règle n'étant pas lue.
 
   parlementaire:
     libelle: Député ou sénateur (indemnité parlementaire)

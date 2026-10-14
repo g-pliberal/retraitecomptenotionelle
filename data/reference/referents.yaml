@@ -7111,9 +7111,10 @@ referents:
           12 100 € de ventes « valide 2 trimestres », le revenu abattu
           (3 509 €) un seul.
         tranche: >-
-          service-public.fr (F23369, vérifié le 1er avril 2026) ; l'erreur est
-          la sienne, et aussi celle du dépôt
-          (`regimes/micro_entrepreneurs.yaml`)
+          service-public.fr (F23369, vérifié le 1er avril 2026) et la
+          circulaire Cnav n° 2024-23 ; l'erreur est la sienne, et était celle
+          du dépôt, qui valide depuis le 14 octobre 2026 sur le revenu cotisé
+          dès 2023 (`legislation/micro_social.yaml`)
         preuve: >-
           `règles/protection-sociale.publicodes:77-105` et
           `règles/entreprise/imposition.publicodes:327-353`, au commit
@@ -7171,8 +7172,9 @@ referents:
           du versement et à sa part de base, comme le fait service-public, non
           au revenu abattu (voir les écarts). Repris le 14 octobre 2026 :
           le champ « micro » de la saisie, ses quatre activités et la Cipav,
-          dans les deux moteurs ; le revenu qui valide les trimestres reste
-          celui de l'écart.
+          dans les deux moteurs ; le même jour, le revenu qui valide les
+          trimestres, cotisé et non abattu, dès 2023
+          (`legislation/micro_social.yaml`).
         preuve: >-
           `règles/entreprise/imposition.publicodes:327-353` et
           `règles/protection-sociale.publicodes:77-105`, au commit `6bb0f26`
