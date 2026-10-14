@@ -1,0 +1,32 @@
+date: "2026-10-14"
+session: "action 159, étape 9 : les règles de la partie III du jaune pensions 2027, confrontées aux fiches de la carte"
+consulte: >-
+  Le jaune pensions annexé au PLF 2027 (data/brut/34465.pdf, tiré de la branche
+  jaune-2027), partie III, pages 87 à 143, en texte : les réformes, les bornes d'âge, la
+  décote et la surcote, la surcote famille, les carrières longues (39A, 39B), les rachats,
+  la limite d'âge (41), le minimum garanti (43 à 46), les bonifications et majorations de
+  durée, la majoration pour enfants, les majorations liées au handicap, le cumul, la
+  réversion, les militaires, la catégorie active (57), l'invalidité. Dans l'index LEGI du
+  dépôt, mis à jour au 13 octobre 2026 : L. 14 du code des pensions (LEGIARTI000048844775),
+  L. 17 (LEGIARTI000048697797), R. 31-1 (LEGIARTI000047961873), le tableau des emplois
+  classés (LEGIARTI000049589035), L. 351-1-2-1 CSS (LEGIARTI000051289776). Dans l'index
+  JORF, mis à jour au 14 octobre : un décret fixant le seuil du cumul de 2027, sans
+  résultat.
+trouve: >-
+  Presque tout recoupe la carte : le minimum garanti, ses âges et ses montants ; la
+  bonification d'un trimestre du b ter ; la réversion ; l'invalidité ; la retraite
+  anticipée du handicap ; la décote « carrière courte » des militaires ; les réputés
+  cotisés de la carrière longue, AVPF et enfants compris (décret n° 2026-700) ; le cumul
+  de 2027. Les deux emplois actifs à soixante-quatre ans du tableau 57 ont soixante-deux
+  ans dans le tableau des emplois classés : le jaune se trompe, la fiche
+  limite_age_fonction_publique le dit. Deux écarts du modèle déclarés : les périodes
+  d'AVPF et d'aidant que L. 17 compte au minimum garanti depuis 2023, dans la limite de
+  vingt-quatre trimestres (R. 31-1), qu'il ne porte pas ; la surcote parentale du
+  fonctionnaire, que L. 14, V, interdit de cumuler avec la surcote ordinaire, quand le
+  moteur ajoute l'une à l'autre. Le seuil de 7 000 euros que le jaune donne au cumul de
+  2027 n'a pas de décret. Le document se contredit sept fois, sans effet sur le dépôt.
+reste: >-
+  Lire comment le service des retraites de l'État et la CNRACL appliquent L. 14, V, et
+  trancher (fiche surcote_parentale). Porter les périodes d'AVPF et d'aidant du
+  fonctionnaire, quand la saisie les connaîtra (fiche minimum_garanti). Guetter le décret
+  du seuil de L. 161-22, 2°.

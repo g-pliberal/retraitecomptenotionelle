@@ -284,7 +284,7 @@ approximations:
     déclarent pas ; le libéral suit le calendrier de la réduction des artisans
   effet: non mesuré
 sources:
-  lu_le: 2026-10-13
+  lu_le: 2026-10-14
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -300,6 +300,14 @@ sources:
     Avant 2004, la rupture ne vise que « l'employeur » : la reprise chez un autre
     employeur est-elle libre de tout plafond ? Aucune circulaire lue ne le dit ; le
     texte le laisse entendre.
+  - >-
+    LE SEUIL DE 2027 EST ANNONCÉ, NON PUBLIÉ. Le jaune pensions annexé au PLF 2027
+    (partie III) écrit qu'entre l'âge légal et l'âge d'annulation de la décote, pour
+    les pensions liquidées à partir de 2027, « le cumul sera libre dans la limite d'un
+    seuil annuel fixé à 7 000 euros par an », l'excédent écrêté de moitié. Aucun décret
+    ne le fixe dans les index JORF et LEGI du dépôt, à jour au 13 octobre 2026 : le
+    paramètre reste `non_publie`, et la pension de 2027 entière dans ce cas ; à reprendre
+    dès que le décret paraît (action 159, étape 9).
   lectures:
   - type: autre
     reference: L'Assurance retraite, mesures de la LFSS 2026

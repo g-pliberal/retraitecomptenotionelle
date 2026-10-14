@@ -400,6 +400,12 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   d'activité sur une « durée d'assurance » de cinq trimestres, quand le modèle
   n'y compte que les trimestres cotisés — plus dur que la lettre du décret, en
   attendant la circulaire qui l'applique.
+- **Le minimum garanti ne compte pas les périodes de parent au foyer ou
+  d'aidant du fonctionnaire.** Depuis le 1er septembre 2023, le dernier alinéa
+  de L. 17 du code des pensions les tient pour services effectifs, dans la
+  limite de vingt-quatre trimestres (R. 31-1) ; le modèle, qui ne les distingue
+  pas dans une carrière de fonctionnaire, sous-estime le minimum de qui en a
+  (fiche `minimum_garanti`).
 - **La date d'effet suit l'anniversaire, et le jour se présume.** La pension
   prend effet le premier jour du mois qui suit celui où l'âge est atteint, ou
   le jour même pour qui est né un 1er (R. 351-37 ; L. 90 du code des

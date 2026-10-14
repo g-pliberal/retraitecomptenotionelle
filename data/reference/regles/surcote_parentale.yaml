@@ -16,14 +16,34 @@ effet: >-
   les trimestres de chaque année répartis sur ses mois ; `test_la_surcote_parentale_ne_compte_que_les_trimestres_au_dela_de_la_duree`
   tient la règle.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-10-14
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Chercher la circulaire Cnav d'application du décret n° 2023-799 et son exemple
     chiffré : la fiche F19643 de service-public (vérifiée le 1er janvier 2026) ne
     décrit pas la surcote parentale, et la circulaire 2026-07 non plus.
+  - >-
+    LE FONCTIONNAIRE A SON TEXTE, ET SA RÈGLE DE NON-CUMUL. L. 14, IV, du code des
+    pensions (rédaction du 31 décembre 2023, LEGIARTI000048844775) ouvre la même
+    majoration au fonctionnaire qui détient un trimestre de bonification ou de
+    majoration au titre du b du 1° de L. 9, des b et b bis de L. 12, de L. 12 bis ou de
+    L. 12 ter ; le moteur la sert aux trois régimes de fonctionnaires, sur les trimestres
+    d'enfants qu'il compte. Mais L. 14, V, dispose que « la majoration mentionnée au III
+    et celle mentionnée au IV ne peuvent pas être cumulées », quand le moteur ajoute la
+    surcote parentale à la surcote ordinaire ; le code de la sécurité sociale, récrit
+    en 2025 (l'âge de la surcote « est abaissé d'un an »), n'a pas cette clause. Le jaune
+    pensions annexé au PLF 2027 (partie III) écrit que, passé l'âge légal, « la surcote
+    classique trouve à s'appliquer », sans trancher. Lire comment le service des
+    retraites de l'État et la CNRACL appliquent le V, et chercher un exemple chiffré
+    (action 159, étape 9).
   lectures:
+  - type: legifrance
+    reference: >-
+      L. 14, IV et V, du code des pensions civiles et militaires, rédaction du 31
+      décembre 2023 (LEGIARTI000048844775), lu dans l'index LEGI du dépôt le 14 octobre
+      2026 ; L. 351-1-2-1 CSS, rédaction du 28 février 2025 (LEGIARTI000051289776)
+    date: 2025-02-28
   - type: legifrance
     reference: >-
       L. 351-1-2-1 CSS, LEGIARTI000047449229, version du 1er septembre 2023 : la

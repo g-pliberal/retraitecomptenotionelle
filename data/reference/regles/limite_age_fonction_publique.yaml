@@ -240,7 +240,7 @@ versions:
       `maintiens_en_fonctions_de_certains_corps`
   exemples: aucun trouvé
 sources:
-  lu_le: 2026-10-10
+  lu_le: 2026-10-14
   prochaine_relecture: 2027-10-10
   a_relire:
   - >-
@@ -262,13 +262,22 @@ sources:
     LEGIARTI000025494907), les ouvriers de l'État (décret n° 2004-1057) et les régimes
     spéciaux (IEG, SNCF, RATP, Banque de France) ont leur propre limite d'âge, que le
     modèle n'applique pas davantage : une fiche chacun, à l'étape qui les modélisera.
-  - >-
-    Le tableau 57 du jaune pensions annexé au PLF 2027 donne soixante-quatre ans de
-    limite d'âge à deux emplois de la catégorie active, les techniciens supérieurs du
-    développement durable affectés en mer ou au littoral et les syndics des gens de
-    mer, quand l'intitulé dit soixante-deux pour tous les actifs que la loi ne nomme
-    pas : leurs statuts particuliers sont à lire (action 159, étape 9).
   lectures:
+  - type: legifrance
+    reference: >-
+      Tableau des emplois classés dans la catégorie active, annexé au code des
+      pensions civiles et militaires, rédaction du 25 mai 2024 (LEGIARTI000049589035),
+      lu dans l'index LEGI du dépôt le 14 octobre 2026 : les techniciens supérieurs du
+      développement durable de la spécialité « navigation, sécurité maritime et
+      gestion de la ressource halieutique et des espaces marin et littoral », affectés
+      sur un moyen nautique, dans une unité littorale des affaires maritimes ou dans
+      un centre de sécurité des navires, et les syndics des gens de mer de la
+      spécialité « navigation et sécurité » (décret n° 2000-572, article 4), affectés
+      de même, « bénéficient du classement en catégorie active et d'une limite d'âge
+      à 62 ans ». Le tableau 57 du jaune pensions annexé au PLF 2027, qui leur donne
+      soixante-quatre ans, se trompe : la fiche garde soixante-deux (action 159,
+      étape 9).
+    date: 2024-05-25
   - type: legifrance
     reference: >-
       L. 556-1 CGFP, rédactions du 1er mars 2022 et du 14 juin 2023 (LEGIARTI000044425146,
@@ -319,6 +328,9 @@ effet: >-
   en activité jusqu'à 119 ans. Mesuré le 10 octobre 2026, en euros constants du
   simulateur.
 textes_a_rattacher:
+- reference: >-
+    tableau des emplois classés dans la catégorie active, annexé au code des pensions
+    (LEGIARTI000049589035)
 - reference: >-
     loi du 15 février 1946 relative aux effectifs, au recrutement et aux limites d'âge des
     fonctionnaires, article 10 ; loi du 8 août 1947, article 21 ; décret n° 48-1907 du 18

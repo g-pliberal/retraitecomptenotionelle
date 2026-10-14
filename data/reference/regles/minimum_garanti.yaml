@@ -23,7 +23,7 @@ effet: >-
   en 2000, qu'un départ par régime fait paraître, perdait 2 378,39 € par an en
   euros de son départ déclaré.
 sources:
-  lu_le: 2026-10-08
+  lu_le: 2026-10-14
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
@@ -46,7 +46,35 @@ sources:
     de 0,8 %, et le montant publié de 2024 divisé par la sienne. Aucune page lue
     ne la publie en toutes lettres. Depuis le 8 octobre 2026, la chaîne des
     revalorisations des pensions civiles la donne aussi, partie de 2004.
+  - >-
+    LES PÉRIODES D'AVPF ET D'AIDANT NE SONT PAS COMPTÉES. Depuis le 1er septembre 2023,
+    le dernier alinéa de L. 17 tient pour services effectifs, au minimum garanti, les
+    périodes où le fonctionnaire, le magistrat ou le militaire remplissait les
+    conditions d'affiliation à l'assurance vieillesse des parents au foyer ou des
+    aidants (L. 381-1 et L. 381-2 CSS) tout en restant affilié à son régime spécial,
+    dans la limite de vingt-quatre trimestres (R. 31-1, décret n° 2023-752), de même
+    à la CNRACL et au FSPOEIE ; le jaune pensions annexé au PLF 2027 le rappelle. Le
+    modèle ne distingue pas ces périodes dans une carrière de fonctionnaire : le
+    minimum de qui en a est sous-estimé. Le porter demande que la saisie les connaisse.
   lectures:
+  - type: autre
+    reference: >-
+      Jaune pensions annexé au PLF 2027 (sre_jaune_pensions_2027), partie III : les
+      tableaux 43, 45 et 46 recoupent la fiche — l'âge du minimum sans la durée, celui
+      d'annulation de la décote minoré de neuf à un trimestre de 2011 à 2015, la
+      référence de 1 366,35 € par mois au 1er janvier 2026 (16 396,19 € par an), 785,65 €
+      à quinze annuités, 57,5 % plus 2,5 points par an jusqu'à trente, puis 0,5 point ;
+      l'écrêtement « toujours pas » fixé par décret. Il rappelle les périodes d'AVPF et
+      d'aidant de 2023, que le modèle ne porte pas (action 159, étape 9).
+    date: 2026-10-12
+  - type: legifrance
+    reference: >-
+      R. 31-1 CPCMR, rédaction du 1er septembre 2023 (LEGIARTI000047961873), et dernier
+      alinéa de L. 17 (LEGIARTI000048697797), lus dans l'index LEGI du dépôt le 14
+      octobre 2026 : « Les périodes mentionnées au dernier alinéa de l'article L. 17
+      sont considérées comme des périodes de services effectifs dans la limite de
+      vingt-quatre trimestres »
+    date: 2023-09-01
   - type: legifrance
     reference: >-
       L. 17 CPCMR, rédaction du 28 décembre 2023 (LEGIARTI000048697797), lue dans
@@ -128,6 +156,7 @@ textes_a_rattacher:
     décret n° 65-836, article 10 (LEGIARTI000006766756)
 - reference: loi n° 2003-775, article 66 V
 - reference: loi n° 2010-1330, articles 45 (IV et V) et 53 (V)
+- reference: R. 31-1 CPCMR (LEGIARTI000047961873) ; décret n° 2023-752 du 10 août 2023
 - reference: >-
     décret n° 2010-1744 du 30 décembre 2010, article 3 (JORFARTI000023334941)
 historique:
