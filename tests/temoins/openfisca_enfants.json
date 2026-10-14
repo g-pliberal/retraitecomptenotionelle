@@ -1,0 +1,472 @@
+{
+  "avertissement": "Deuxième implémentation, pas une source officielle. Il ne lit ni le recrutement ni la radiation : il accorde la bonification de L. 12, b, à l'enfant né avant le recrutement d'une pension d'avant 2011, et la majoration de L. 12 bis à la femme qui a accouché avant le sien ; à la CNRACL, sa majoration de L. 12 bis lit la date de liquidation de l'État, et n'est jamais servie.",
+  "convention": {
+    "date_de_naissance": "le 1er janvier de `naissance`",
+    "date_naissance_enfant": "la naissance du troisième enfant, s'il y en a trois",
+    "duree_de_service_cotisee_annuelle": "4 trimestres chaque année",
+    "liquidation_date": "le 1er janvier de `liquidation`",
+    "nombre_enfants": "le nombre de `naissances`",
+    "nombre_enfants_nes_avant_2004": "le nombre de `naissances` avant 2004, nés pendant les services ou non",
+    "non_traduit": "Le recrutement et la radiation, auxquels le dépôt compare chaque naissance (R. 13, L. 12 bis) ; l'interruption ou la réduction d'activité de L. 12, b, que le dépôt présume de la mère seule ; la bonification de L. 12, b bis, aux femmes qui ont accouché pendant leurs études, que ni l'un ni l'autre ne lit ; les conditions d'éducation de L. 18, que le dépôt présume remplies.",
+    "quotite_de_travail": "1",
+    "regime_general_cnav_liquidation_date": "non déclarée (le 31 décembre 2250)",
+    "salaire_de_base": "le traitement, chaque année de `debut` à `liquidation` exclue",
+    "sexe": "vrai pour une femme (`sexe` F)",
+    "taux_de_prime": "0"
+  },
+  "famille": "les enfants des fonctionnaires : bonification, majoration de durée et majoration de pension, au-delà de trois enfants, nés après 2004 ou hors des services",
+  "perimetre": "Fonction publique de l'État et CNRACL, sédentaires sans prime, à temps plein, carrières continues à traitement nominal constant, liquidations de 2009 à 2020 : quatre parents de quatre à sept enfants, trois mères d'enfants nés depuis 2004, trois mères d'enfants nés avant leur recrutement.",
+  "profils": {
+    "cnracl_mere_cinq_enfants_2018": {
+      "entrees_openfisca": {
+        "cnracl_nombre_enfants_nes_avant_2004": 5,
+        "date_naissance_enfant": "2001-01-01",
+        "nombre_enfants": 5,
+        "sexe": true
+      },
+      "openfisca": {
+        "bonification": 20.0,
+        "bonification_enfants": 20.0,
+        "coefficient_de_decote": 0.22499999403953552,
+        "coefficient_de_proratisation": 0.6024096608161926,
+        "decote_trimestres": 18.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 100.0,
+        "duree_requise_de_la_generation": 166.0,
+        "majoration_duree": 20.0,
+        "majoration_duree_enfants": 0.0,
+        "majoration_pension": 2536.21142578125,
+        "minimum_garanti": 0.0,
+        "pension": 15217.26953125,
+        "pension_avant_minimum": 12681.0576171875,
+        "pension_brute": 12681.0576171875,
+        "services": 80.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.5812499523162842,
+        "traitement_de_reference": 36216.01171875
+      },
+      "profil": {
+        "code": "cnracl_mere_cinq_enfants_2018",
+        "debut": 1998,
+        "liquidation": 2018,
+        "naissance": 1956,
+        "naissances": [
+          "1998-05-01",
+          "1999-09-01",
+          "2001-01-01",
+          "2002-05-01",
+          "2003-09-01"
+        ],
+        "objet": "cinq enfants, à la CNRACL : vingt trimestres, 20 % de majoration",
+        "regime": "cnracl",
+        "regle": "au_dela_de_trois",
+        "sexe": "F",
+        "traitement": 36000.0
+      }
+    },
+    "cnracl_mere_deux_enfants_apres_2004_2020": {
+      "entrees_openfisca": {
+        "cnracl_nombre_enfants_nes_avant_2004": 0,
+        "nombre_enfants": 2,
+        "sexe": true
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "bonification_enfants": 0.0,
+        "coefficient_de_decote": 0.25,
+        "coefficient_de_proratisation": 0.8622754216194153,
+        "decote_trimestres": 20.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 144.0,
+        "duree_requise_de_la_generation": 167.0,
+        "majoration_duree": 0.0,
+        "majoration_duree_enfants": 0.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 0.0,
+        "pension": 13095.8076171875,
+        "pension_avant_minimum": 13095.8076171875,
+        "pension_brute": 13095.8076171875,
+        "services": 144.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.5625,
+        "traitement_de_reference": 27000.0
+      },
+      "profil": {
+        "code": "cnracl_mere_deux_enfants_apres_2004_2020",
+        "debut": 1984,
+        "liquidation": 2020,
+        "naissance": 1958,
+        "naissances": [
+          "2004-06-01",
+          "2007-06-01"
+        ],
+        "objet": "la même, à la CNRACL",
+        "regime": "cnracl",
+        "regle": "nes_apres_2004",
+        "sexe": "F",
+        "traitement": 27000.0
+      }
+    },
+    "mere_accouchement_avant_recrutement_2020": {
+      "entrees_openfisca": {
+        "fonction_publique_nombre_enfants_nes_avant_2004": 0,
+        "nombre_enfants": 1,
+        "sexe": true
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "bonification_enfants": 0.0,
+        "coefficient_de_decote": 0.25,
+        "coefficient_de_proratisation": 0.3353293538093567,
+        "decote_trimestres": 20.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 58.0,
+        "duree_requise_de_la_generation": 167.0,
+        "majoration_duree": 2.0,
+        "majoration_duree_enfants": 2.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 0.0,
+        "pension": 7544.91015625,
+        "pension_avant_minimum": 7544.91015625,
+        "pension_brute": 7544.91015625,
+        "services": 56.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.5625,
+        "traitement_de_reference": 40000.0
+      },
+      "profil": {
+        "code": "mere_accouchement_avant_recrutement_2020",
+        "debut": 2006,
+        "hors_services": true,
+        "liquidation": 2020,
+        "naissance": 1958,
+        "naissances": [
+          "2005-06-01"
+        ],
+        "objet": "un enfant né en 2005, avant le recrutement : L. 12 bis ne va qu'à la femme qui accouche après",
+        "regime": "fonction_publique_etat",
+        "regle": "hors_services",
+        "sexe": "F",
+        "traitement": 40000.0
+      }
+    },
+    "mere_de_part_et_d_autre_de_2004_2020": {
+      "entrees_openfisca": {
+        "fonction_publique_nombre_enfants_nes_avant_2004": 1,
+        "nombre_enfants": 2,
+        "sexe": true
+      },
+      "openfisca": {
+        "bonification": 4.0,
+        "bonification_enfants": 4.0,
+        "coefficient_de_decote": 0.21250000596046448,
+        "coefficient_de_proratisation": 0.886227548122406,
+        "decote_trimestres": 17.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 150.0,
+        "duree_requise_de_la_generation": 167.0,
+        "majoration_duree": 6.0,
+        "majoration_duree_enfants": 2.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 0.0,
+        "pension": 15702.845703125,
+        "pension_avant_minimum": 15702.845703125,
+        "pension_brute": 15702.845703125,
+        "services": 144.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.5906250476837158,
+        "traitement_de_reference": 30000.0
+      },
+      "profil": {
+        "code": "mere_de_part_et_d_autre_de_2004_2020",
+        "debut": 1984,
+        "liquidation": 2020,
+        "naissance": 1958,
+        "naissances": [
+          "2002-06-01",
+          "2005-06-01"
+        ],
+        "objet": "un enfant de chaque côté de 2004 : quatre trimestres de bonification, deux de majoration",
+        "regime": "fonction_publique_etat",
+        "regle": "nes_apres_2004",
+        "sexe": "F",
+        "traitement": 30000.0
+      }
+    },
+    "mere_deux_enfants_apres_2004_2020": {
+      "entrees_openfisca": {
+        "fonction_publique_nombre_enfants_nes_avant_2004": 0,
+        "nombre_enfants": 2,
+        "sexe": true
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "bonification_enfants": 0.0,
+        "coefficient_de_decote": 0.23749999701976776,
+        "coefficient_de_proratisation": 0.8622754216194153,
+        "decote_trimestres": 19.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 148.0,
+        "duree_requise_de_la_generation": 167.0,
+        "majoration_duree": 4.0,
+        "majoration_duree_enfants": 4.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 0.0,
+        "pension": 14793.4111328125,
+        "pension_avant_minimum": 14793.4111328125,
+        "pension_brute": 14793.4111328125,
+        "services": 144.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.5718749761581421,
+        "traitement_de_reference": 30000.0
+      },
+      "profil": {
+        "code": "mere_deux_enfants_apres_2004_2020",
+        "debut": 1984,
+        "liquidation": 2020,
+        "naissance": 1958,
+        "naissances": [
+          "2004-06-01",
+          "2007-06-01"
+        ],
+        "objet": "deux enfants nés depuis 2004 : quatre trimestres de durée, aucun de services (L. 12 bis)",
+        "regime": "fonction_publique_etat",
+        "regle": "nes_apres_2004",
+        "sexe": "F",
+        "traitement": 30000.0
+      }
+    },
+    "mere_enfants_avant_recrutement_2009": {
+      "entrees_openfisca": {
+        "fonction_publique_nombre_enfants_nes_avant_2004": 2,
+        "nombre_enfants": 2,
+        "sexe": true
+      },
+      "openfisca": {
+        "bonification": 8.0,
+        "bonification_enfants": 8.0,
+        "coefficient_de_decote": 0.04500000178813934,
+        "coefficient_de_proratisation": 0.6459627151489258,
+        "decote_trimestres": 9.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 104.0,
+        "duree_requise_de_la_generation": 161.0,
+        "majoration_duree": 8.0,
+        "majoration_duree_enfants": 0.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 10374.0751953125,
+        "pension": 13991.396484375,
+        "pension_avant_minimum": 13991.396484375,
+        "pension_brute": 13991.396484375,
+        "services": 96.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.7162500023841858,
+        "traitement_de_reference": 30240.501953125
+      },
+      "profil": {
+        "code": "mere_enfants_avant_recrutement_2009",
+        "debut": 1985,
+        "hors_services": true,
+        "liquidation": 2009,
+        "naissance": 1949,
+        "naissances": [
+          "1978-03-01",
+          "1980-03-01"
+        ],
+        "objet": "deux enfants nés avant le recrutement, pension de 2009 : R. 13 exige alors une interruption dans un congé du statut",
+        "regime": "fonction_publique_etat",
+        "regle": "hors_services",
+        "sexe": "F",
+        "traitement": 30000.0
+      }
+    },
+    "mere_enfants_avant_recrutement_2015": {
+      "entrees_openfisca": {
+        "fonction_publique_nombre_enfants_nes_avant_2004": 2,
+        "nombre_enfants": 2,
+        "sexe": true
+      },
+      "openfisca": {
+        "bonification": 8.0,
+        "bonification_enfants": 8.0,
+        "coefficient_de_decote": 0.1237500011920929,
+        "coefficient_de_proratisation": 0.7757575511932373,
+        "decote_trimestres": 11.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 128.0,
+        "duree_requise_de_la_generation": 165.0,
+        "majoration_duree": 8.0,
+        "majoration_duree_enfants": 0.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 0.0,
+        "pension": 15294.5458984375,
+        "pension_avant_minimum": 15294.5458984375,
+        "pension_brute": 15294.5458984375,
+        "services": 120.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.6571875214576721,
+        "traitement_de_reference": 30000.0
+      },
+      "profil": {
+        "code": "mere_enfants_avant_recrutement_2015",
+        "debut": 1985,
+        "hors_services": true,
+        "liquidation": 2015,
+        "naissance": 1953,
+        "naissances": [
+          "1978-03-01",
+          "1980-03-01"
+        ],
+        "objet": "les mêmes, pension de 2015 : R. 13 admet depuis 2011 l'enfant né avant la radiation",
+        "regime": "fonction_publique_etat",
+        "regle": "hors_services",
+        "sexe": "F",
+        "traitement": 30000.0
+      }
+    },
+    "mere_quatre_enfants_2018": {
+      "entrees_openfisca": {
+        "date_naissance_enfant": "2001-09-01",
+        "fonction_publique_nombre_enfants_nes_avant_2004": 4,
+        "nombre_enfants": 4,
+        "sexe": true
+      },
+      "openfisca": {
+        "bonification": 16.0,
+        "bonification_enfants": 16.0,
+        "coefficient_de_decote": 0.22499999403953552,
+        "coefficient_de_proratisation": 0.5783132314682007,
+        "decote_trimestres": 18.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 96.0,
+        "duree_requise_de_la_generation": 166.0,
+        "majoration_duree": 16.0,
+        "majoration_duree_enfants": 0.0,
+        "majoration_pension": 2028.96923828125,
+        "minimum_garanti": 0.0,
+        "pension": 15555.431640625,
+        "pension_avant_minimum": 13526.4619140625,
+        "pension_brute": 13526.4619140625,
+        "services": 80.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.5812499523162842,
+        "traitement_de_reference": 40240.015625
+      },
+      "profil": {
+        "code": "mere_quatre_enfants_2018",
+        "debut": 1998,
+        "liquidation": 2018,
+        "naissance": 1956,
+        "naissances": [
+          "1998-06-01",
+          "2000-03-01",
+          "2001-09-01",
+          "2003-06-01"
+        ],
+        "objet": "quatre enfants nés avant 2004 : seize trimestres, 15 % de majoration",
+        "regime": "fonction_publique_etat",
+        "regle": "au_dela_de_trois",
+        "sexe": "F",
+        "traitement": 40000.0
+      }
+    },
+    "mere_sept_enfants_plafond_2014": {
+      "entrees_openfisca": {
+        "date_naissance_enfant": "1990-06-01",
+        "fonction_publique_nombre_enfants_nes_avant_2004": 7,
+        "nombre_enfants": 7,
+        "sexe": true
+      },
+      "openfisca": {
+        "bonification": 28.0,
+        "bonification_enfants": 28.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 1.0666667222976685,
+        "decote_trimestres": 0.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 196.0,
+        "duree_requise_de_la_generation": 164.0,
+        "majoration_duree": 28.0,
+        "majoration_duree_enfants": 0.0,
+        "majoration_pension": 7650.00048828125,
+        "minimum_garanti": 12612.9140625,
+        "pension": 30000.0,
+        "pension_avant_minimum": 25500.001953125,
+        "pension_brute": 25500.001953125,
+        "services": 168.0,
+        "surcote_trimestres": 5.0,
+        "taux_de_liquidation": 0.796875,
+        "traitement_de_reference": 30000.0
+      },
+      "profil": {
+        "code": "mere_sept_enfants_plafond_2014",
+        "debut": 1972,
+        "liquidation": 2014,
+        "naissance": 1952,
+        "naissances": [
+          "1988-02-01",
+          "1989-04-01",
+          "1990-06-01",
+          "1991-08-01",
+          "1993-02-01",
+          "1995-02-01",
+          "1997-02-01"
+        ],
+        "objet": "sept enfants : le pourcentage porté à 80 %, puis 30 % de majoration, que le traitement plafonne (L. 18)",
+        "regime": "fonction_publique_etat",
+        "regle": "au_dela_de_trois",
+        "sexe": "F",
+        "traitement": 30000.0
+      }
+    },
+    "pere_quatre_enfants_2018": {
+      "entrees_openfisca": {
+        "date_naissance_enfant": "2001-09-01",
+        "fonction_publique_nombre_enfants_nes_avant_2004": 4,
+        "nombre_enfants": 4,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "bonification_enfants": 0.0,
+        "coefficient_de_decote": 0.22499999403953552,
+        "coefficient_de_proratisation": 0.4819277226924896,
+        "decote_trimestres": 18.0,
+        "depart_anticipe": 0.0,
+        "duree_assurance": 80.0,
+        "duree_requise_de_la_generation": 166.0,
+        "majoration_duree": 0.0,
+        "majoration_duree_enfants": 0.0,
+        "majoration_pension": 1690.8077392578125,
+        "minimum_garanti": 0.0,
+        "pension": 12962.859375,
+        "pension_avant_minimum": 11272.0517578125,
+        "pension_brute": 11272.0517578125,
+        "services": 80.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.5812499523162842,
+        "traitement_de_reference": 40240.015625
+      },
+      "profil": {
+        "code": "pere_quatre_enfants_2018",
+        "debut": 1998,
+        "liquidation": 2018,
+        "naissance": 1956,
+        "naissances": [
+          "1998-06-01",
+          "2000-03-01",
+          "2001-09-01",
+          "2003-06-01"
+        ],
+        "objet": "le père de quatre enfants : aucune bonification, 15 % de majoration",
+        "regime": "fonction_publique_etat",
+        "regle": "au_dela_de_trois",
+        "sexe": "H",
+        "traitement": 40000.0
+      }
+    }
+  },
+  "recupere_le": "2026-10-14",
+  "source": "OpenFisca-France-Pension",
+  "version": "0.1.3"
+}
