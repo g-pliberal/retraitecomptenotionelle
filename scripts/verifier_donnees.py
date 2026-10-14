@@ -4639,6 +4639,21 @@ def source_jaune_referents() -> dict[tuple, float]:
     return dict(sorted(valeurs.items()))
 
 
+def source_jaune_ministeres() -> dict[tuple, float]:
+    """La figure 3B du jaune pensions annexé au PLF 2027 : la part des crédits
+    de chaque ministère que trace chacune de ses parts, lue sur ses tracés par
+    ``scripts/fetch/sre_jaune_ministeres.py``. Clé (annee, ministere, part),
+    l'année étant celle des crédits."""
+    tables = _lire_json("sre_jaune_pensions_2027.json",
+                        "scripts/fetch/sre_jaune_pensions.py")["tables"]
+    if "3B" not in tables:
+        raise SourceAbsente("la figure 3B manque au JSON du jaune 2027 "
+                            "(relancer scripts/fetch/sre_jaune_pensions.py)")
+    return {("2027", ministere, part): float(valeur)
+            for ministere, parts in tables["3B"]["ministeres"].items()
+            for part, valeur in parts.items()}
+
+
 #: Colonnes-clés qui se trient en NOMBRE et non en texte. Sans elles, la borne
 #: « 1000 » d'une tranche de pension tomberait entre « 100 » et « 200 ».
 CLES_NUMERIQUES = frozenset({"annee", "date_effet", "generation", "borne_mensuelle",
@@ -9171,6 +9186,72 @@ CERTIFICATIONS = (
             "# regard des départs de 2025 les trois cas types statutaires, chacun",
             "# parti en 2025 : le fonctionnaire sédentaire de l'État, l'agent de",
             "# catégorie active de la CNRACL, le militaire (action 159, étape 4).",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="credits_ministeres",
+        chemin=REFERENCE / "macro" / "credits_ministeres.csv",
+        cles=("annee", "ministere", "part"),
+        colonne="valeur",
+        source=source_jaune_ministeres,
+        origine="Direction du budget, jaune pensions annexé au PLF 2027, figure 3B "
+                "(décomposition des crédits budgétaires des ministères), lue sur ses tracés",
+        decimales=4,
+        tolerance=5e-5,
+        entete=(
+            "# Ce que chaque ministère verse au compte « Pensions », en part de ses crédits",
+            "# source_id: sre_jaune_pensions_2027",
+            "#",
+            "# Le « Rapport sur les pensions de retraite de la fonction publique »,",
+            "# annexe au projet de loi de finances pour 2027 (le jaune budgétaire),",
+            "# décompose, page 24, les crédits que le PLF ouvre à dix-sept ministères",
+            "# (figure 3B), sans en imprimer une valeur : ses barres sont des tracés,",
+            "# lus par scripts/fetch/sre_jaune_ministeres.py, et chaque part est la",
+            "# longueur de son rectangle rapportée à l'axe, que ses graduations",
+            "# donnent. Le producteur pose ses points sur une grille de 0,12 point :",
+            "# chaque valeur se lit à 0,0005 près, et une part de 0,0005 n'a que",
+            "# l'épaisseur minimale du tracé, sous le dixième de point.",
+            "#",
+            "# Clé : annee (celle des crédits, 2027), ministere, part. Les parts, en",
+            "# fraction des crédits du ministère :",
+            "#   t2_cas                 : la contribution employeur au CAS « Pensions »",
+            "#                            sur les dépenses de personnel (titre 2) ;",
+            "#   t3_cas                 : celle que les opérateurs de l'Enseignement",
+            "#                            supérieur versent sur leurs crédits de",
+            "#                            fonctionnement (titre 3), pour ce seul",
+            "#                            ministère ;",
+            "#   cotisations_salariales : la retenue des fonctionnaires, estimée sur",
+            "#                            leur traitement indiciaire ;",
+            "#   reste_personnel        : les autres dépenses de personnel ;",
+            "#   reste_depenses         : les dépenses hors personnel.",
+            "# La Santé et les Transports, qui ne versent pas de contribution, ne",
+            "# sont pas sur la figure.",
+            "#",
+            "# CE QUE LE TEXTE IMPRIME S'Y RETROUVE, à l'arrondi près : les parts de",
+            "# l'Éducation nationale et de l'Intérieur, en points et en milliards",
+            "# (pages 7, 10, 11, 12 et 24), la Justice au bas de « entre 18 et 28 % »",
+            "# (page 25), les deux derniers ministères sous 1 %. Deux points s'en",
+            "# écartent, déclarés par le lecteur (INCOHERENCES_3B) : LA BARRE DE",
+            "# L'ENSEIGNEMENT SUPÉRIEUR FAIT 119,1 % DE L'AXE, son reste des dépenses",
+            "# comptant aussi les 19,1 points de son T3 CAS, et la borne basse de",
+            "# « entre 20 % et 32 % », page 25, ajoute les parts arrondies de la",
+            "# Justice, 18 et 2 %, quand la figure en trace 20,9. Chaque part reste",
+            "# telle que la figure la trace.",
+            "#",
+            "# fiabilite :",
+            "#   certifiee : lu dans le document du producteur et recontrôlé par",
+            "#               scripts/verifier_donnees.py. Le document ne se télécharge",
+            "#               pas depuis une session (budget.gouv.fr refuse) : son",
+            "#               miroir est dans data/sources.yaml, avec son empreinte,",
+            "#               et scripts/fetch/source_locale.py --recuperer le lit.",
+            "#",
+            "# À QUOI CE FICHIER SERT : à dire, sur la page Coût, ce que pèse dans le",
+            "# budget de chaque ministère la contribution d'équilibre que l'État verse",
+            "# aux retraites de ses fonctionnaires (action 159, étape 8). Aucun calcul",
+            "# du modèle ne le lit (memoire.HORS_DU_MODELE).",
             "#",
             "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
             "# scripts/verifier_donnees.py --appliquer.",

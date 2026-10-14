@@ -10,7 +10,8 @@ salissaient les tableaux : les espaces posées seules, les dictionnaires en
 ligne du contenu balisé, et les reculs d'un tableau ``TJ``. Et deux que le
 relevé de carrière d'info-retraite (2026) a montrés, qui le rendaient page par
 page du bas vers le haut : le repère retourné de la page, et la page coupée en
-plusieurs flux.
+plusieurs flux. Et les tracés d'une page, que la figure 3B du jaune
+pensions du PLF 2027 a demandés : ses barres sont des rectangles peints.
 """
 
 from __future__ import annotations
@@ -20,7 +21,7 @@ import zlib
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts" / "fetch"))
-from lecture_pdf import lignes_pdf  # noqa: E402
+from lecture_pdf import Aplat, aplats_de_page, lignes_pdf  # noqa: E402
 
 
 def _objet(numero: int, corps: bytes) -> bytes:
@@ -282,3 +283,51 @@ def test_un_flux_comprime_tronque_ne_rend_rien():
     objet = _objet(1, b"<< /Filter /FlateDecode /Length %d >>\nstream\n" % len(tronque)
                    + tronque + b"\nendstream")
     assert lignes_pdf(_document(objet)) == [], lignes_pdf(_document(objet))
+
+
+def _arbre(*pages: bytes) -> list[bytes]:
+    """Un catalogue et un arbre de pages, dont les feuilles sont rangées à
+    rebours des numéros de leurs objets : 10 + rang de la dernière à la
+    première."""
+    numeros = [10 + rang for rang in range(len(pages))][::-1]
+    enfants = b" ".join(b"%d 0 R" % n for n in numeros)
+    return [_objet(1, b"<< /Type /Catalog /Pages 2 0 R >>"),
+            _objet(2, b"<< /Type /Pages /Kids [%s] /Count %d >>" % (enfants, len(pages))),
+            *(_objet(n, page) for n, page in zip(numeros, pages))]
+
+
+def test_les_rectangles_d_une_page_se_lisent_en_points_de_la_feuille():
+    """La page se trouve par l'arbre des pages, non par le rang de ses flux ;
+    son ``/Contents`` désigne un objet qui n'est qu'un tableau de flux, et le
+    premier réduit la feuille de moitié, comme celui du jaune la réduit à
+    99,88 %. Un rectangle posé par ``re``, un chemin fermé de quatre coins
+    sous un motif, un filet tracé se rendent avec leur peinture ; une courbe
+    n'est pas un rectangle, une découpe ne peint rien, et ce que ``q`` et
+    ``Q`` enferment ne déborde pas."""
+    trace = (b"0.2 0.4 0.6 rg 10 20 30 40 re f "
+             b"q /Pattern cs /P1 scn 100 0 m 120 0 l 120 10 l 100 10 l h f Q "
+             b"0 0 m 10 10 20 0 30 0 c f 0 0 500 500 re W n "
+             b"0.5 G 50 0 m 50 100 l S 1 1 2 2 re f")
+    pdf = _document(
+        *_arbre(b"<< /Type /Page /Contents 3 0 R >>", b"<< /Type /Page /Contents 4 0 R >>"),
+        _objet(3, _flux(b"<< >>", b"BT /F1 12 Tf 10 10 Td (0 0 5 5 re f) Tj ET")),
+        _objet(4, b"[5 0 R 6 0 R 7 0 R]"),
+        _objet(5, _flux(b"<< >>", b"q 0.5 0 0 0.5 0 0 cm")),
+        _objet(6, _flux(b"<< >>", trace, comprimer=True)),
+        _objet(7, _flux(b"<< >>", b"Q 1 1 2 2 re f")),
+    )
+    assert aplats_de_page(pdf, 1) == []
+    assert aplats_de_page(pdf, 2) == [
+        Aplat(("rgb", 0.2, 0.4, 0.6), 5.0, 10.0, 20.0, 30.0),
+        Aplat(("motif", "P1"), 50.0, 0.0, 60.0, 5.0),
+        Aplat(("rgb", 0.5, 0.5, 0.5), 25.0, 0.0, 25.0, 50.0, trait=True),
+        Aplat(("rgb", 0.2, 0.4, 0.6), 0.5, 0.5, 1.5, 1.5),
+        Aplat(("rgb", 0.0, 0.0, 0.0), 1.0, 1.0, 3.0, 3.0),
+    ]
+    try:
+        aplats_de_page(pdf, 3)
+    except LookupError:
+        pass
+    else:
+        raise AssertionError("une page qui n'existe pas se lit")
+

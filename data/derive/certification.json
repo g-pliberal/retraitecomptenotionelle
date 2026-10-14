@@ -287,6 +287,17 @@
    "valeurs": 30,
    "verifiee_le": "2026-09-18"
   },
+  "credits_ministeres": {
+   "ajoutees": 69,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "41582e2922d2af67",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "Direction du budget, jaune pensions annexé au PLF 2027, figure 3B (décomposition des crédits budgétaires des ministères), lue sur ses tracés",
+   "valeurs": 69,
+   "verifiee_le": "2026-10-14"
+  },
   "croissance_depense_retraite": {
    "ajoutees": 0,
    "colonne": "taux",

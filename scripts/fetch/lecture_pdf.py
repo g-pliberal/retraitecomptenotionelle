@@ -47,12 +47,19 @@ délivre en 2026, dont chaque page sortait du bas vers le haut :
    opérateur commencé dans l'un s'achève dans le suivant. Le même relevé coupe
    ainsi ses deux premières pages : le repère dans un flux, une ``Tm`` à la
    fin du deuxième, la chaîne qu'elle place au début du troisième.
+
+Et les tracés, que le jaune pensions du PLF 2027 a demandés : sa figure 3B
+décompose les crédits de dix-sept ministères sans imprimer une valeur, mais
+ses barres sont des rectangles peints, dont les longueurs sont les parts.
+:func:`aplats_de_page` les rend, en points de la feuille, avec leur couleur
+ou leur motif hachuré.
 """
 from __future__ import annotations
 
 import math
 import re
 import zlib
+from typing import NamedTuple
 
 OCTAL = re.compile(r"\\([0-7]{1,3})")
 #: Les échappements d'une chaîne littérale : octal, les cinq lettres de la
@@ -815,6 +822,232 @@ def lignes_par_page(octets: bytes, tolerance: float = 3.0,
 
 def texte_pdf(octets: bytes) -> str:
     return "\n".join(lignes_pdf(octets))
+
+
+# -- tracés -----------------------------------------------------------------
+
+
+def _pages_de_l_arbre(objets: dict[int, bytes]) -> list[int]:
+    """Les objets page du document, dans l'ordre de ses pages.
+
+    LE RANG D'UN FLUX N'EST PAS CELUI DE SA PAGE. Les lectures de texte
+    ci-dessus numérotent les flux dans l'ordre du fichier : le jaune pensions
+    du PLF 2027 en compte 265 pour 250 pages, et sa page 24 y est la 23e.
+    Une page désignée par son numéro se trouve donc en suivant l'arbre des
+    pages depuis le catalogue, ``/Kids`` après ``/Kids``.
+    """
+    catalogue = next((objet for objet in objets.values()
+                      if re.search(rb"/Type\s*/Catalog\b", objet)), None)
+    racine = catalogue and re.search(rb"/Pages\s+(\d+)\s+0\s+R", catalogue)
+    if not racine:
+        raise LookupError("le document n'a pas d'arbre des pages")
+    pages: list[int] = []
+    a_voir, vus = [int(racine.group(1))], set()
+    while a_voir:
+        numero = a_voir.pop()
+        if numero in vus:
+            continue
+        vus.add(numero)
+        enfants = re.search(rb"/Kids\s*\[([^\]]*)\]", objets.get(numero, b""))
+        if enfants:
+            # Le dernier empilé sort le premier : les enfants s'empilent à
+            # rebours pour se lire dans leur ordre.
+            a_voir.extend(int(n) for n in reversed(
+                re.findall(rb"(\d+)\s+0\s+R", enfants.group(1))))
+        else:
+            pages.append(numero)
+    return pages
+
+
+def _contenu_de_la_page(objets: dict[int, bytes], page: int) -> bytes:
+    """Les flux d'une page, bout à bout. ``/Contents`` désigne un flux, un
+    tableau de flux, ou — le jaune pensions du PLF 2027 — un objet qui n'est
+    qu'un tableau de flux : la page 24 en pose trois, dont le premier ramène
+    toute la feuille à 99,88 % de sa taille."""
+    contenus = re.search(rb"/Contents\s*(?:\[([^\]]*)\]|(\d+)\s+0\s+R)", objets[page])
+    if not contenus:
+        return b""
+    if contenus.group(1) is not None:
+        tableau = contenus.group(1)
+    else:
+        numero = int(contenus.group(2))
+        cible = re.match(rb"\s*\[([^\]]*)\]", objets.get(numero, b""))
+        tableau = cible.group(1) if cible else b"%d 0 R" % numero
+    return b"\n".join(filter(None, (_flux(objets.get(int(n), b""))
+                                    for n in re.findall(rb"(\d+)\s+0\s+R", tableau))))
+
+
+class Aplat(NamedTuple):
+    """Un rectangle peint, en points de la feuille, ``x0 <= x1`` et
+    ``y0 <= y1`` : une barre, une case de légende, ou — ``trait`` — un filet
+    tracé, une graduation, d'épaisseur nulle dans un sens. ``peinture`` est
+    une couleur, ``("rgb", r, v, b)`` ou ``("cmjn", c, m, j, n)``, ou un motif
+    de la page, ``("motif", "P631")``."""
+
+    peinture: tuple
+    x0: float
+    y0: float
+    x1: float
+    y1: float
+    trait: bool = False
+
+
+#: Les jetons d'un flux, lus pour ses tracés. Une chaîne, un dictionnaire en
+#: ligne et un crochet ne tracent rien, mais une chaîne peut contenir « re »
+#: ou « f » : ils se lisent d'un bloc pour ne pas être pris pour des
+#: opérateurs. Une chaîne garde ses parenthèses équilibrées sur un niveau.
+JETONS_TRACE = re.compile(
+    rb"(?P<chaine>\((?:[^()\\]|\\.|\((?:[^()\\]|\\.)*\))*\))"
+    rb"|(?P<dict><<.*?>>)"
+    rb"|(?P<hex><[0-9A-Fa-f\s]*>)"
+    rb"|(?P<nom>/[^\s/\[\]()<>{}%]*)"
+    rb"|(?P<nombre>[-+]?(?:\d+\.?\d*|\.\d+))"
+    rb"|(?P<operateur>[A-Za-z'\"][A-Za-z0-9*'\"]*)"
+    rb"|(?P<commentaire>%[^\r\n]*)",
+    re.S,
+)
+REMPLIR = frozenset({b"f", b"F", b"f*"})
+TRACER = frozenset({b"S", b"s"})
+LES_DEUX = frozenset({b"B", b"B*", b"b", b"b*"})
+
+
+def _couleur(operandes: list, espace: str | None) -> tuple:
+    """La peinture que posent ``sc`` et ``scn`` : un motif s'il est nommé,
+    sinon une couleur, selon le nombre de ses composantes."""
+    if operandes and isinstance(operandes[-1], str):
+        return ("motif", operandes[-1])
+    nombres = [x for x in operandes if isinstance(x, float)]
+    if len(nombres) == 1:
+        return ("rgb", nombres[0], nombres[0], nombres[0])
+    if len(nombres) == 3:
+        return ("rgb", *nombres)
+    if len(nombres) == 4:
+        return ("cmjn", *nombres)
+    return ("couleur", espace, *nombres)
+
+
+def _boite(points: list[tuple[float, float]]) -> tuple[float, float, float, float] | None:
+    """Les bornes d'un sous-chemin qui est un rectangle droit — quatre coins,
+    ou deux points d'un même filet —, ``None`` pour toute autre figure."""
+    xs = sorted({round(x, 6) for x, _ in points})
+    ys = sorted({round(y, 6) for _, y in points})
+    if len(xs) > 2 or len(ys) > 2:
+        return None
+    coins = {(round(x, 6), round(y, 6)) for x, y in points}
+    if len(points) >= 4:
+        if coins != {(x, y) for x in xs for y in ys}:
+            return None
+    elif len(points) < 2 or (len(xs) == 2 and len(ys) == 2):
+        return None
+    return xs[0], ys[0], xs[-1], ys[-1]
+
+
+def _aplats(contenu: bytes) -> list[Aplat]:
+    """Les rectangles qu'un flux de contenu remplit ou trace.
+
+    La matrice courante (``cm``, que ``q`` et ``Q`` sauvent et rendent) porte
+    chaque point sur la feuille, comme pour le texte ; une courbe n'est pas un
+    rectangle, et une découpe (``W n``) ne peint rien : la barre qu'elle rogne
+    garde sa longueur entière. Un formulaire (``Do``) ne se déplie pas, ni une
+    image en ligne, que l'on saute.
+    """
+    matrice = IDENTITE
+    remplissage: tuple = ("rgb", 0.0, 0.0, 0.0)
+    trait: tuple = ("rgb", 0.0, 0.0, 0.0)
+    espaces: dict[str, str | None] = {"remplissage": None, "trait": None}
+    sauves: list[tuple] = []
+    chemins: list[list[tuple[float, float]]] = []
+    courbes: set[int] = set()
+    operandes: list = []
+    aplats: list[Aplat] = []
+
+    def point(x: float, y: float) -> tuple[float, float]:
+        a, b, c, d, e, f = matrice
+        return a * x + c * y + e, b * x + d * y + f
+
+    def peindre(peinture: tuple, en_trait: bool) -> None:
+        for rang, chemin in enumerate(chemins):
+            boite = None if rang in courbes else _boite(chemin)
+            if boite:
+                aplats.append(Aplat(peinture, *boite, trait=en_trait))
+
+    position = 0
+    while (jeton := JETONS_TRACE.search(contenu, position)):
+        position = jeton.end()
+        if jeton.group("nombre"):
+            operandes.append(float(jeton.group("nombre")))
+            continue
+        if jeton.group("nom"):
+            operandes.append(jeton.group("nom")[1:].decode("latin-1"))
+            continue
+        operateur = jeton.group("operateur")
+        if not operateur:
+            if not jeton.group("commentaire"):
+                operandes.append(None)
+            continue
+        nombres = [x for x in operandes if isinstance(x, float)]
+        if operateur == b"q":
+            sauves.append((matrice, remplissage, trait, dict(espaces)))
+        elif operateur == b"Q":
+            if sauves:
+                matrice, remplissage, trait, espaces = sauves.pop()
+        elif operateur == b"cm" and len(nombres) == 6:
+            matrice = _composer(tuple(nombres), matrice)
+        elif operateur == b"m" and len(nombres) == 2:
+            chemins.append([point(*nombres)])
+        elif operateur == b"l" and len(nombres) == 2 and chemins:
+            chemins[-1].append(point(*nombres))
+        elif operateur in (b"c", b"v", b"y") and len(nombres) >= 4 and chemins:
+            chemins[-1].append(point(*nombres[-2:]))
+            courbes.add(len(chemins) - 1)
+        elif operateur == b"re" and len(nombres) == 4:
+            x, y, largeur, hauteur = nombres
+            chemins.append([point(x, y), point(x + largeur, y),
+                            point(x + largeur, y + hauteur), point(x, y + hauteur)])
+        elif operateur in REMPLIR or operateur in TRACER or operateur in LES_DEUX \
+                or operateur == b"n":
+            if operateur in REMPLIR or operateur in LES_DEUX:
+                peindre(remplissage, False)
+            if operateur in TRACER or operateur in LES_DEUX:
+                peindre(trait, True)
+            chemins, courbes = [], set()
+        elif operateur == b"rg" and len(nombres) == 3:
+            remplissage = ("rgb", *nombres)
+        elif operateur == b"RG" and len(nombres) == 3:
+            trait = ("rgb", *nombres)
+        elif operateur == b"g" and len(nombres) == 1:
+            remplissage = ("rgb", *nombres * 3)
+        elif operateur == b"G" and len(nombres) == 1:
+            trait = ("rgb", *nombres * 3)
+        elif operateur == b"k" and len(nombres) == 4:
+            remplissage = ("cmjn", *nombres)
+        elif operateur == b"K" and len(nombres) == 4:
+            trait = ("cmjn", *nombres)
+        elif operateur == b"cs" and operandes and isinstance(operandes[-1], str):
+            espaces["remplissage"] = operandes[-1]
+        elif operateur == b"CS" and operandes and isinstance(operandes[-1], str):
+            espaces["trait"] = operandes[-1]
+        elif operateur in (b"sc", b"scn"):
+            remplissage = _couleur(operandes, espaces["remplissage"])
+        elif operateur in (b"SC", b"SCN"):
+            trait = _couleur(operandes, espaces["trait"])
+        elif operateur == b"ID":
+            # Les octets d'une image en ligne vont jusqu'à « EI » : ils ne
+            # se lisent pas comme des jetons.
+            fin = re.compile(rb"\sEI(?=\s|$)").search(contenu, position)
+            position = fin.end() if fin else len(contenu)
+        operandes = []
+    return aplats
+
+
+def aplats_de_page(octets: bytes, page: int) -> list[Aplat]:
+    """Les rectangles peints de la page ``page`` du document, comptée à
+    partir de 1 dans l'ordre de son arbre des pages."""
+    objets = _objets(octets)
+    pages = _pages_de_l_arbre(objets)
+    if not 1 <= page <= len(pages):
+        raise LookupError(f"le document n'a pas de page {page} ({len(pages)} pages)")
+    return _aplats(_contenu_de_la_page(objets, pages[page - 1]))
 
 
 if __name__ == "__main__":

@@ -1781,7 +1781,8 @@ institutions:
           data/reference/legislation/bonifications_jaune.csv,
           data/reference/legislation/avantages_non_contributifs.yaml,
           data/reference/legislation/contribution_employeur_public.csv,
-          data/reference/macro/caracteristiques_fonction_publique.csv
+          data/reference/macro/caracteristiques_fonction_publique.csv,
+          data/reference/macro/credits_ministeres.csv
         note: >-
           L'ÉDITION SUIVANTE DE `sre_jaune_pensions` : le stock de pensionnés
           au 31 décembre 2025 et le flux des pensions entrées en paiement en

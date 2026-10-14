@@ -146,6 +146,9 @@ HORS_DU_MODELE = (
     # types statutaires confrontent, et qu'aucun calcul ne lit (action 159,
     # étape 4).
     "data/reference/macro/caracteristiques_fonction_publique.csv",
+    # Ce que chaque ministère verse au compte « Pensions », que la page Coût
+    # montre par le paquet, et qu'aucun calcul ne lit (action 159, étape 8).
+    "data/reference/macro/credits_ministeres.csv",
 )
 
 #: Les calculs de ce processus, par leur nom : l'objet picklé, dont chaque

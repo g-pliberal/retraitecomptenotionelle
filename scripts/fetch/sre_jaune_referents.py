@@ -1711,12 +1711,16 @@ INCOHERENCES_DU_DOCUMENT: tuple[tuple[str, str], ...] = (
 )
 
 
-def incoherences_declarees(messages: list[str]) -> tuple[list[str], list[str]]:
+def incoherences_declarees(messages: list[str],
+                           declarees: tuple[tuple[str, str], ...] = INCOHERENCES_DU_DOCUMENT,
+                           ) -> tuple[list[str], list[str]]:
     """(inattendues, disparues) : les messages qu'aucune incohérence déclarée
     n'explique, et les incohérences déclarées qu'aucun message ne montre
-    plus."""
+    plus. Celles de la figure 3B se déclarent à part
+    (``sre_jaune_ministeres.INCOHERENCES_3B``), et le lecteur du jaune passe
+    les deux listes."""
     inattendues = [m for m in messages
-                   if not any(re.search(motif, m) for motif, _ in INCOHERENCES_DU_DOCUMENT)]
-    disparues = [explication for motif, explication in INCOHERENCES_DU_DOCUMENT
+                   if not any(re.search(motif, m) for motif, _ in declarees)]
+    disparues = [explication for motif, explication in declarees
                  if not any(re.search(motif, m) for m in messages)]
     return inattendues, disparues

@@ -1,0 +1,123 @@
+# Ce que chaque ministère verse au compte « Pensions », en part de ses crédits
+# source_id: sre_jaune_pensions_2027
+#
+# Le « Rapport sur les pensions de retraite de la fonction publique »,
+# annexe au projet de loi de finances pour 2027 (le jaune budgétaire),
+# décompose, page 24, les crédits que le PLF ouvre à dix-sept ministères
+# (figure 3B), sans en imprimer une valeur : ses barres sont des tracés,
+# lus par scripts/fetch/sre_jaune_ministeres.py, et chaque part est la
+# longueur de son rectangle rapportée à l'axe, que ses graduations
+# donnent. Le producteur pose ses points sur une grille de 0,12 point :
+# chaque valeur se lit à 0,0005 près, et une part de 0,0005 n'a que
+# l'épaisseur minimale du tracé, sous le dixième de point.
+#
+# Clé : annee (celle des crédits, 2027), ministere, part. Les parts, en
+# fraction des crédits du ministère :
+#   t2_cas                 : la contribution employeur au CAS « Pensions »
+#                            sur les dépenses de personnel (titre 2) ;
+#   t3_cas                 : celle que les opérateurs de l'Enseignement
+#                            supérieur versent sur leurs crédits de
+#                            fonctionnement (titre 3), pour ce seul
+#                            ministère ;
+#   cotisations_salariales : la retenue des fonctionnaires, estimée sur
+#                            leur traitement indiciaire ;
+#   reste_personnel        : les autres dépenses de personnel ;
+#   reste_depenses         : les dépenses hors personnel.
+# La Santé et les Transports, qui ne versent pas de contribution, ne
+# sont pas sur la figure.
+#
+# CE QUE LE TEXTE IMPRIME S'Y RETROUVE, à l'arrondi près : les parts de
+# l'Éducation nationale et de l'Intérieur, en points et en milliards
+# (pages 7, 10, 11, 12 et 24), la Justice au bas de « entre 18 et 28 % »
+# (page 25), les deux derniers ministères sous 1 %. Deux points s'en
+# écartent, déclarés par le lecteur (INCOHERENCES_3B) : LA BARRE DE
+# L'ENSEIGNEMENT SUPÉRIEUR FAIT 119,1 % DE L'AXE, son reste des dépenses
+# comptant aussi les 19,1 points de son T3 CAS, et la borne basse de
+# « entre 20 % et 32 % », page 25, ajoute les parts arrondies de la
+# Justice, 18 et 2 %, quand la figure en trace 20,9. Chaque part reste
+# telle que la figure la trace.
+#
+# fiabilite :
+#   certifiee : lu dans le document du producteur et recontrôlé par
+#               scripts/verifier_donnees.py. Le document ne se télécharge
+#               pas depuis une session (budget.gouv.fr refuse) : son
+#               miroir est dans data/sources.yaml, avec son empreinte,
+#               et scripts/fetch/source_locale.py --recuperer le lit.
+#
+# À QUOI CE FICHIER SERT : à dire, sur la page Coût, ce que pèse dans le
+# budget de chaque ministère la contribution d'équilibre que l'État verse
+# aux retraites de ses fonctionnaires (action 159, étape 8). Aucun calcul
+# du modèle ne le lit (memoire.HORS_DU_MODELE).
+#
+# Ne pas modifier à la main : les valeurs seraient écrasées au prochain
+# scripts/verifier_donnees.py --appliquer.
+annee,ministere,part,valeur,fiabilite
+2027,action_comptes_publics,cotisations_salariales,0.0200,certifiee
+2027,action_comptes_publics,reste_depenses,0.5110,certifiee
+2027,action_comptes_publics,reste_personnel,0.3195,certifiee
+2027,action_comptes_publics,t2_cas,0.1495,certifiee
+2027,agriculture,cotisations_salariales,0.0133,certifiee
+2027,agriculture,reste_depenses,0.5910,certifiee
+2027,agriculture,reste_personnel,0.2952,certifiee
+2027,agriculture,t2_cas,0.1005,certifiee
+2027,amenagement_territoire,cotisations_salariales,0.0005,certifiee
+2027,amenagement_territoire,reste_depenses,0.9976,certifiee
+2027,amenagement_territoire,reste_personnel,0.0019,certifiee
+2027,amenagement_territoire,t2_cas,0.0005,certifiee
+2027,armees,cotisations_salariales,0.0105,certifiee
+2027,armees,reste_depenses,0.6762,certifiee
+2027,armees,reste_personnel,0.2014,certifiee
+2027,armees,t2_cas,0.1119,certifiee
+2027,culture,cotisations_salariales,0.0067,certifiee
+2027,culture,reste_depenses,0.8267,certifiee
+2027,culture,reste_personnel,0.1195,certifiee
+2027,culture,t2_cas,0.0471,certifiee
+2027,economie_finances,cotisations_salariales,0.0005,certifiee
+2027,economie_finances,reste_depenses,0.9867,certifiee
+2027,economie_finances,reste_personnel,0.0100,certifiee
+2027,economie_finances,t2_cas,0.0029,certifiee
+2027,education_nationale,cotisations_salariales,0.0376,certifiee
+2027,education_nationale,reste_depenses,0.0505,certifiee
+2027,education_nationale,reste_personnel,0.6305,certifiee
+2027,education_nationale,t2_cas,0.2814,certifiee
+2027,enseignement_superieur,cotisations_salariales,0.0005,certifiee
+2027,enseignement_superieur,reste_depenses,0.9842,certifiee
+2027,enseignement_superieur,reste_personnel,0.0105,certifiee
+2027,enseignement_superieur,t2_cas,0.0048,certifiee
+2027,enseignement_superieur,t3_cas,0.1910,certifiee
+2027,europe_affaires_etrangeres,cotisations_salariales,0.0043,certifiee
+2027,europe_affaires_etrangeres,reste_depenses,0.7433,certifiee
+2027,europe_affaires_etrangeres,reste_personnel,0.2152,certifiee
+2027,europe_affaires_etrangeres,t2_cas,0.0371,certifiee
+2027,interieur,cotisations_salariales,0.0310,certifiee
+2027,interieur,reste_depenses,0.2681,certifiee
+2027,interieur,reste_personnel,0.4310,certifiee
+2027,interieur,t2_cas,0.2700,certifiee
+2027,justice,cotisations_salariales,0.0248,certifiee
+2027,justice,reste_depenses,0.4057,certifiee
+2027,justice,reste_personnel,0.3857,certifiee
+2027,justice,t2_cas,0.1838,certifiee
+2027,outre_mer,cotisations_salariales,0.0014,certifiee
+2027,outre_mer,reste_depenses,0.9438,certifiee
+2027,outre_mer,reste_personnel,0.0376,certifiee
+2027,outre_mer,t2_cas,0.0171,certifiee
+2027,services_premier_ministre,cotisations_salariales,0.0052,certifiee
+2027,services_premier_ministre,reste_depenses,0.8138,certifiee
+2027,services_premier_ministre,reste_personnel,0.1433,certifiee
+2027,services_premier_ministre,t2_cas,0.0376,certifiee
+2027,sports,cotisations_salariales,0.0043,certifiee
+2027,sports,reste_depenses,0.8962,certifiee
+2027,sports,reste_personnel,0.0676,certifiee
+2027,sports,t2_cas,0.0319,certifiee
+2027,transition_ecologique,cotisations_salariales,0.0133,certifiee
+2027,transition_ecologique,reste_depenses,0.6029,certifiee
+2027,transition_ecologique,reste_personnel,0.2814,certifiee
+2027,transition_ecologique,t2_cas,0.1024,certifiee
+2027,travail_solidarites,cotisations_salariales,0.0014,certifiee
+2027,travail_solidarites,reste_depenses,0.9671,certifiee
+2027,travail_solidarites,reste_personnel,0.0229,certifiee
+2027,travail_solidarites,t2_cas,0.0086,certifiee
+2027,ville_logement,cotisations_salariales,0.0005,certifiee
+2027,ville_logement,reste_depenses,0.9990,certifiee
+2027,ville_logement,reste_personnel,0.0005,certifiee
+2027,ville_logement,t2_cas,0.0005,certifiee

@@ -59,6 +59,13 @@ modalité, indicateur, valeur] par tableau ; ``scripts/verifier_donnees.py``
 les certifie dans ``data/reference/macro/caracteristiques_fonction_publique.csv``,
 et le B-22 dans ``bonifications_jaune.csv``.
 
+**LA FIGURE 3B** (action 159, étape 8), de l'édition 2027 seule : la
+décomposition des crédits de dix-sept ministères, qui n'imprime aucune valeur.
+``sre_jaune_ministeres.py`` la lit sur les tracés de ses barres, dit ce
+qu'elle s'accorde avec le texte du document, et
+``scripts/verifier_donnees.py`` la certifie dans
+``data/reference/macro/credits_ministeres.csv``.
+
 **LE DOCUMENT NE SE TÉLÉCHARGE PAS DEPUIS UNE SESSION** : ``budget.gouv.fr``
 refuse les adresses de sortie du proxy. Mais l'annexe est déposée au
 Parlement, et l'Assemblée nationale sert le même fichier, octet pour octet :
@@ -104,8 +111,12 @@ from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lecture_pdf import fragments_par_page, lignes_par_page, texte_de_ligne  # noqa: E402
+from lecture_pdf import aplats_de_page, fragments_par_page, lignes_par_page, texte_de_ligne  # noqa: E402
+from sre_jaune_ministeres import (  # noqa: E402
+    INCOHERENCES_3B, PAGE as PAGE_3B, figure_3b, incoherences_3b,
+)
 from sre_jaune_referents import (  # noqa: E402
+    INCOHERENCES_DU_DOCUMENT,
     depuis_json,
     en_json,
     incoherences_declarees,
@@ -404,6 +415,10 @@ def lire(octets: bytes, edition: int = EDITION) -> dict:
               "taux_employeur": tableau_taux_employeur(pages)}
     if EDITIONS[edition]["referents"]:
         tables["referents"] = en_json(referents(positionnees))
+        # La figure 3B, que l'édition 2027 est la première à publier : ses
+        # libellés dans le texte de sa page, ses parts dans ses tracés.
+        lignes = _page(pages, lambda ligne: ligne.startswith("figure 3b"))
+        tables["3B"] = figure_3b(aplats_de_page(octets, PAGE_3B), lignes)
     return tables
 
 
@@ -451,11 +466,11 @@ def confronter(tables: dict, avantages: Path = AVANTAGES) -> tuple[list[str], li
     notes du YAML, selon qu'ils figurent ou non dans les tableaux lus."""
     import yaml
 
-    # Les taux employeurs et les référents ne sont pas des bonifications :
-    # aucune note ne les cite, et un chiffre mal saisi ne doit pas s'y
-    # retrouver par hasard.
+    # Les taux employeurs, les référents et la figure 3B ne sont pas des
+    # bonifications : aucune note ne les cite, et un chiffre mal saisi ne doit
+    # pas s'y retrouver par hasard.
     formes = _valeurs_du_document({k: v for k, v in tables.items()
-                                   if k not in ("taux_employeur", "referents")})
+                                   if k not in ("taux_employeur", "referents", "3B")})
     trouves: list[str] = []
     manquants: list[str] = []
     document = yaml.safe_load(avantages.read_text(encoding="utf-8"))
@@ -515,6 +530,8 @@ def main(argv: list[str] | None = None) -> int:
     incoherences = incoherences_50(tables["50"])
     if "referents" in tables:
         incoherences += incoherences_referents(depuis_json(tables["referents"]))
+    if "3B" in tables:
+        incoherences += incoherences_3b(tables["3B"])
 
     sortie.parent.mkdir(parents=True, exist_ok=True)
     sortie.write_text(json.dumps({
@@ -540,10 +557,16 @@ def main(argv: list[str] | None = None) -> int:
     for numero, cases in tables.get("referents", {}).items():
         print(f"  référent {numero} : {sum(c[-1] is not None for c in cases)} valeurs, "
               f"{sum(c[-1] is None for c in cases)} cases sans objet")
+    if "3B" in tables:
+        ministeres = tables["3B"]["ministeres"]
+        print(f"  figure 3B : {len(ministeres)} ministères, "
+              f"{sum(len(parts) for parts in ministeres.values())} parts lues sur leurs tracés")
     # Les incohérences du document sont déclarées une à une
     # (``sre_jaune_referents.INCOHERENCES_DU_DOCUMENT``, et la case du tableau
-    # 50) ; une autre est une lecture de travers.
-    inattendues, disparues = incoherences_declarees(incoherences)
+    # 50 ; ``sre_jaune_ministeres.INCOHERENCES_3B``, pour l'édition qui a la
+    # figure) ; une autre est une lecture de travers.
+    declarees = INCOHERENCES_DU_DOCUMENT + (INCOHERENCES_3B if "3B" in tables else ())
+    inattendues, disparues = incoherences_declarees(incoherences, declarees)
     for message in incoherences:
         print(f"  {'INATTENDU ' if message in inattendues else 'INCOHÉRENT'}  {message}")
     for explication in disparues:
