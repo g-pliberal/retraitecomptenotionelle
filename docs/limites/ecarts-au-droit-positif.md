@@ -558,3 +558,11 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   avant 2011, nominale ensuite (fiche `majoration_conjoint_a_charge`) ; sans
   ressources dites, elle ne l'est pas, ni au conjoint inapte dès soixante ans,
   ni dans les régimes alignés.
+- **Les prestations de la Cnav qui ne sont pas la pension de l'assuré.**
+  L'allocation veuvage, servie sous conditions de ressources au conjoint
+  survivant trop jeune pour la réversion (L. 356-1) ; la pension d'orphelin,
+  créée par la loi du 14 avril 2023 pour les décès depuis le 1er septembre
+  2023 (L. 358-3) ; la rente des retraites ouvrières et paysannes, qui
+  s'ajoute à la pension de qui a cotisé à ce régime d'avant 1930. La
+  circulaire de revalorisation de la Cnav les publie chaque année avec les
+  minima ; le modèle n'en sert aucune.

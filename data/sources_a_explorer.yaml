@@ -257,7 +257,19 @@ sources:
       questions-réponses. C'est la source d'APPLICATION qu'exige
       docs/veille_droit.md à côté du texte de Légifrance. Dérouler la
       recherche par thème et par date, pas seulement la page d'accueil.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-14
+    note: >-
+      Lu le 14 octobre 2026 par son API (`/api/v1/baremes`, 397 barèmes
+      en un JSON) : neuf récupérateurs de `scripts/fetch/` l'interrogent
+      déjà, et 369 barèmes ne sont cités nulle part au dépôt. Ceux qui
+      touchent le modèle sont nommés dans la note
+      `docs/feuille_de_route/89/2026-10-14-cnav-service-public.md` — les
+      taux de droit commun de 2014 à 2026, conformes à
+      `taux_cotisation_annuels.csv`, les rachats de cotisations de 2013
+      à 2026, les salaires forfaitaires des apprentis, des artistes, des
+      journalistes. Reste à dérouler les exposés et les circulaires, par
+      thème.
 
   - id: cnav_circulaire_2026_07
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_07_05032026.pdf
@@ -267,7 +279,19 @@ sources:
     a_en_tirer: >-
       Circulaire du 5 mars 2026 : à lire pour ce qu'elle change au scénario 1,
       avec sa ligne dans veille.yaml et son exemple chiffré s'il y en a un.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026. Âges et durées par génération, annexes 1
+      et 3 : identiques à `age_ouverture_requis.csv` et
+      `duree_assurance_requise.csv`. Ses exemples du régime de base
+      étaient au témoin ; celui du RCI y entre en écart connu
+      (`cnav_2026_07_abattement_rci_1962`, fiche `abattement_rci`) : 7 %
+      d'abattement pour sept trimestres manquants, l'annexe 2 du
+      règlement, quand le modèle applique la décote du régime de base,
+      0,9125. La durée de référence de la réversion d'un défunt né en
+      1964 ou 1965 (point 4.5) est ajoutée à l'écart déclaré de
+      `data/reference/regles/reversion.yaml`.
 
   - id: cnav_circulaire_2026_04
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_04_05022026.pdf
@@ -276,7 +300,16 @@ sources:
     regimes: [regime_general]
     a_en_tirer: >-
       Circulaire du 5 février 2026, même traitement.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 : le barème du versement pour la retraite
+      est celui de l'arrêté du 21 octobre 2012, inchangé de 2013 à 2026,
+      seules ses tranches de revenu suivant le plafond (36 045 et 48 060
+      € en 2026) ; de 1 055 € le trimestre à 20 ans à 6 684 € à 62 ans,
+      taux et durée, tranche haute. Le modèle ne rachète rien : la
+      lecture va à la fiche
+      `data/reference/regles/rachats_et_versements.yaml`.
 
   - id: cnav_circulaire_2025_33
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2025_33_23122025.pdf
@@ -287,7 +320,16 @@ sources:
       Circulaire du 23 décembre 2025 : période où la loi du 30 décembre 2025 a
       déplacé les âges légaux, celle-là même qui avait pris le dépôt en défaut
       le 17 septembre 2026. Vérifier que les tables du dépôt la portent.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 : déjà lue par le dépôt (fiches
+      `minimum_contributif` et `avpf`, `assiette_avpf.csv`). Minimum
+      contributif, majoré et plafond de 1 410,89 € par mois (16 930,68 €
+      l'an), plafonds de la réversion, assiette de l'AVPF : tout
+      concorde. Ses points 2.3 et 2.5 sont modifiés par la circulaire
+      2026/16, que la fiche `minimum_contributif` a lue. Rien de plus à prendre
+      (`data/reference/regles/minimum_contributif.yaml`).
 
   - id: cnav_circulaire_2025_29
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2025_29_22122025.pdf
@@ -296,7 +338,20 @@ sources:
     regimes: [regime_general]
     a_en_tirer: >-
       Circulaire du 22 décembre 2025, même traitement.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026. Les coefficients de report des salaires de
+      1942 à 2025 sont, au millième, la colonne du 1er janvier 2026 de
+      `data/reference/legislation/revalorisation_salaires.csv` (ceux de
+      1930 à 1941 n'y sont pas, sans assuré vivant). Versement
+      forfaitaire unique, minimum et plafond de la réversion, majoration
+      forfaitaire, ASPA, AVTS, majoration pour conjoint : concordent.
+      Hors du modèle : l'allocation veuvage (719,58 €), la pension
+      d'orphelin (108,57 €), la rente des retraites ouvrières et
+      paysannes, dits aux limites ; les points de base des commerçants
+      et des artisans d'avant 1973 restent au référent du chantier
+      138.18.
 
   - id: cnav_prelevements_sociaux
     url: https://www.lassuranceretraite.fr/portail-info/portail-info/home/retraite/paiements-retraite/prelevements-sociaux-retraite.html
@@ -308,17 +363,36 @@ sources:
       référence, exonération et taux réduit. Le dépôt compare des pensions
       BRUTES ; ces taux sont ce qui manque pour dire un net de pension, comme
       l'action 39 l'a fait pour le salaire.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 : CSG à 3,80, 6,60 et 8,30 %, CRDS à 0,50
+      %, CASA à 0,30 % aux deux derniers taux, les seuils renvoyant à
+      service-public : c'est le barème de
+      `data/reference/legislation/prelevements_remuneration.yaml`
+      (`pensions`), déjà lu sur F2971.
 
   - id: cnav_arrierees_artiste_auteur
     url: https://www.lassuranceretraite.fr/portail-info/hors-menu/annexe/salaries/montant-retraite/cotis-arrierees-artiste-auteur.html
-    nature: bareme
+    nature: simulateur
     acces: session
     regimes: [regime_general, ircec_raap]
     a_en_tirer: >-
       Le barème de régularisation des cotisations arriérées des
       artistes-auteurs. Chiffres rares, et fiche IRCEC partielle à l'inventaire.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 : non un barème mais un simulateur, qui
+      calcule la régularisation par année (droits d'auteur, report,
+      assiette, taux, coefficient de revalorisation, actualisation à 2,5
+      %), de 1976 aux trois dernières années, cinq périodes de trois ans
+      au plus. Son fichier de taux (`Simulateur AA/tauxVei.csv`) est la
+      part salariale de la cotisation plafonnée, pondérée par mois, de
+      1976 à 2017 : elle concorde avec `taux_cotisation_annuels.csv`
+      sauf aux relèvements de l'année, que le dépôt date au 1er janvier
+      — 1991, 7,60 % au lieu de 6,64 %. Aucune saisie : le lot est
+      proposé au propriétaire dans la note du 14 octobre 2026.
 
   # ---- Agirc-Arrco ------------------------------------------------------
 
@@ -3271,7 +3345,15 @@ sources:
       Le RCI et ses prédécesseurs (RCO artisans, NRIC commerçants), servis par
       la Cnav depuis 2020 : classes, points, valeur de service. Trois fiches
       que le dépôt modélise sur des valeurs saisies.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 : pas de chiffre, mais la règle — la
+      retraite complémentaire est « réduite [...] selon des coefficients
+      d'abattement qui sont spécifiques au régime complémentaire » — que
+      l'annexe 2 du règlement chiffre : voir la fiche
+      `data/reference/regles/abattement_rci.yaml`. Le PDF « vos droits à
+      la retraite complémentaire » qu'elle lie reste à lire.
 
   # ---- service-public.gouv.fr ---------------------------------------------
   # Quatre fiches de ce site sont DÉJÀ rejouées par test_oracle.py. Les autres
@@ -3286,7 +3368,16 @@ sources:
       « Comment les enfants sont-ils pris en compte pour la retraite du
       salarié ? » : MDA, AVPF, majoration de 10 %. Les trois canaux, avec
       leurs exemples — matière de l'action 43 et de la frontière contributive.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 : l'identifiant ment, F21552 est « Montant
+      de la retraite du salarié du secteur privé » (vérifiée le 1er
+      septembre 2026), et F16336 la fiche des enfants. Ses exemples sont
+      déjà au témoin (`tests/temoins/exemples_officiels.yaml`,
+      `sp_f21552_*`). Son troisième cas du minimum contributif — 756,29
+      € × 140/170 à 67 ans — n'y entre pas : il présente une pension de
+      2031 aux montants de 2026.
 
   - id: sp_f21142_montant_agent_public
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F21142
@@ -3314,7 +3405,14 @@ sources:
     a_en_tirer: >-
       Le montant de la retraite d'un salarié du privé : SAM, taux, prorata,
       et les exemples de la fiche.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 : l'identifiant ment, F16336 est « Comment
+      les enfants sont-ils pris en compte pour la retraite du salarié ?
+      » (vérifiée le 14 août 2026). Son exemple est déjà au témoin
+      (`tests/temoins/exemples_officiels.yaml`,
+      `sp_f16336_mda_deux_enfants`), aux plafonds de l'AVPF de 2026.
 
   - id: sp_f31249_chomage
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F31249
@@ -3325,7 +3423,15 @@ sources:
       Les périodes de chômage : trimestres assimilés, points de complémentaire,
       et leurs limites. Poste central de docs/frontiere_contributive.md et des
       17,9 milliards de l'action 81.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 (vérifiée le 28 août 2025) : cinquante
+      jours par trimestre, un an après l'indemnisation, cinq ans à
+      cinquante-cinq ans avec vingt ans cotisés, six trimestres pour la
+      première période non indemnisée depuis 2011 : c'est la fiche
+      `data/reference/regles/chomage_non_indemnise.yaml`, qui les porte
+      déjà. Aucun exemple chiffré.
 
   - id: sp_f19666_decote
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F19666
@@ -3336,7 +3442,12 @@ sources:
       La décote du salarié. Fiche DÉJÀ rejouée (témoin `sp_f19666_decote`,
       vérifiée au 1er janvier 2026) : à relire pour la redater et voir si son
       exemple a changé.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Relue le 14 octobre 2026 : toujours vérifiée au 1er janvier 2026,
+      son exemple inchangé (`tests/temoins/exemples_officiels.yaml`,
+      `sp_f19666_decote`).
 
   - id: sp_f19643_surcote
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F19643
@@ -3346,7 +3457,12 @@ sources:
     a_en_tirer: >-
       La surcote du salarié. Fiche déjà rejouée (`sp_f19643_surcote`), même
       traitement.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Relue le 14 octobre 2026 : toujours vérifiée au 1er janvier 2026,
+      son exemple inchangé (`tests/temoins/exemples_officiels.yaml`,
+      `sp_f19643_surcote`).
 
   - id: sp_f13736_duree_fonctionnaire
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F13736
@@ -3373,7 +3489,15 @@ sources:
       CSG et CRDS sur les revenus d'activité ET de remplacement, avec les
       seuils de revenu fiscal de référence : la source de référence pour
       passer du brut au net, des deux côtés de la vie.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 (vérifiée le 1er juin 2026) : le barème des
+      pensions, une part et ses demi-parts, est celui de
+      `data/reference/legislation/prelevements_remuneration.yaml`. Un
+      désaccord : la fiche écrit le taux médian « de 17 058 € à 26 472 €
+      », seuil compris, quand le dépôt suit la loi, « inférieurs à » (L.
+      136-8, III bis, 2°).
 
   - id: sp_f33841_micro_entrepreneur
     url: https://entreprendre.service-public.gouv.fr/vosdroits/F33841
@@ -3394,7 +3518,16 @@ sources:
     a_en_tirer: >-
       Le régime de retraite de l'entrepreneur individuel, base et
       complémentaire.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 (vérifiée le 1er avril 2026) : un exemple
+      chiffré du micro-entrepreneur — 12 100 € de chiffre d'affaires
+      commercial en 2026, 12,3 % de versement, 43,45 % à la base, 17,87
+      % pour le revenu cotisé, 3 644,78 € ; 19,75 % à la complémentaire
+      —, et le même en prestations de services, à 21,2 %. Il revient à
+      la session du micro-entrepreneur (action 138.12), qui seule touche
+      à la saisie : rien n'en est pris ici.
 
   # ---- CLEISS : le versant international ----------------------------------
   # `docs/limites.md` déclare les carrières internationales hors modèle. Ce
@@ -3786,7 +3919,13 @@ sources:
       Le nombre d'années retenues pour le salaire annuel moyen, GÉNÉRATION PAR
       GÉNÉRATION : la montée de 10 à 25 ans, que le dépôt applique et dont la
       table mérite d'être lue chez celui qui liquide.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 : dix années avant 1934, une de plus par
+      génération, vingt-cinq dès 1948 —
+      `data/reference/legislation/annees_salaire_reference.csv`,
+      identique.
 
   - id: cnav_interruptions_carriere
     url: https://www.lassuranceretraite.fr/portail-info/home/actif/ma-carriere/interruptions-carriere.html
@@ -3796,7 +3935,15 @@ sources:
     a_en_tirer: >-
       Chômage, maladie, maternité, service national : les trimestres assimilés
       et leurs plafonds. Poste central de la frontière contributive.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 : soixante jours de maladie,
+      quatre-vingt-dix de service national, trois mensualités
+      d'invalidité par trimestre (le trimestre de paiement avant le 1er
+      octobre 1986), RSA sans droit : rien que le dépôt ne porte, ni
+      exemple. Voir la note
+      `docs/feuille_de_route/89/2026-10-14-cnav-service-public.md`.
 
   - id: cnav_ameliorer_montant
     url: https://www.lassuranceretraite.fr/portail-info/home/actif/montant-retraite/ameliorer-montant-retraite.html
@@ -3807,7 +3954,11 @@ sources:
       Surcote, rachat, cumul, minimum contributif : la liste, par la Cnav, de
       tout ce qui relève un montant — donc la liste de ce que le modèle doit
       savoir appliquer.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 : une page de renvois (rachats, surcote,
+      cumul), sans règle ni chiffre ; rien à prendre.
 
   - id: cnav_parentalite
     url: https://www.lassuranceretraite.fr/portail-info/home/actif/vie-personnelle-retraite/parentalite-droits-retraite.html
@@ -3818,7 +3969,17 @@ sources:
       MDA, AVPF, majoration de pension, congé parental : les quatre canaux de
       la parentalité, chez celui qui les liquide. Matière de l'action 43 et du
       chiffrage des avantages non contributifs.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 : les vingt-quatre et vingt-trois
+      meilleures années des parents depuis le 1er septembre 2026, « pas
+      encore appliqué aux nouveaux retraités », qui le sera « courant
+      2027 » avec un rappel : lecture ajoutée à
+      `data/reference/regles/sam_parents_24_23.yaml`. Les deux
+      trimestres de parentalité réputés cotisés pour la carrière longue
+      sont dans `carriere_longue_enfants_reputes_cotises`. Aucun exemple
+      chiffré.
 
   - id: cnav_handicap_invalidite
     url: https://www.lassuranceretraite.fr/portail-info/portail-info/home/actif/vie-personnelle-retraite/handicap-invalidite.html
@@ -3829,7 +3990,17 @@ sources:
       Retraite anticipée des travailleurs handicapés, pension d'invalidité
       convertie, inaptitude : trois portes de sortie anticipée que le dépôt ne
       distingue pas, et qui pèsent sur l'âge moyen de départ.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 : retraite anticipée dès 55 ans,
+      majorations pour enfant ou adulte handicapé (un trimestre par
+      trente mois, huit au plus), taux plein à 65 ans de l'aidant,
+      inaptitude à 62 ans, incapacité permanente à 60 ans : les fiches
+      du domaine de l'invalidité les portent ou les déclarent
+      (`docs/limites/ecarts-au-droit-positif.md`, « Pénibilité ; le
+      handicap, l'invalidité et l'inaptitude en partie »). Aucun chiffre
+      neuf.
 
   - id: cnav_rachat_trimestres
     url: https://www.lassuranceretraite.fr/portail-info/home/actif/ma-carriere/rachat-trimestres-retraite.html
@@ -3841,7 +4012,15 @@ sources:
       et par option : quatrième barème de rachat du lot, et le plus utilisé.
       C'est le prix que l'État met sur un trimestre — à comparer à ce que le
       système notionnel ferait payer pour le même droit.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Lue le 14 octobre 2026 : les règles des rachats (douze trimestres,
+      études jusqu'à quarante ans, stages jusqu'à trente, quatre ans
+      pour payer), pas le barème, renvoyé au simulateur de l'espace
+      personnel « en cours de mise à jour » ; le barème est celui de la
+      circulaire 2026-04. Lecture portée à
+      `data/reference/regles/rachats_et_versements.yaml`.
 
   - id: sp_a15703_minimum_contributif
     url: https://www.service-public.gouv.fr/particuliers/actualites/A15703
@@ -3852,7 +4031,17 @@ sources:
       Le montant du minimum contributif, majoré ou non, à sa date de
       publication : une valeur que le dépôt projette et qui doit être recalée
       sur la valeur servie.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-14
+    note: >-
+      Relue le 14 octobre 2026 : son premier exemple est au témoin
+      (`tests/temoins/exemples_officiels.yaml`,
+      `sp_a15703_minimum_contributif_2026`). Le second n'y entre pas, la
+      page s'y contredit : né en 1959, parti à 67 ans en 2026 avec « 140
+      trimestres cotisés » sur 167, il recevrait 756,29 × 140/167 =
+      634,02 € ; or 140 trimestres cotisés passent le seuil de 120 qui
+      ouvre la majoration (D. 351-2-1), et le modèle sert 903,93 ×
+      140/167 = 757,79 €, ce que la page dit elle-même au cas précédent.
 
   # ---- Suite des régimes spéciaux et de la fonction publique ---------------
 
@@ -5978,12 +6167,22 @@ sources:
       Toutes les fiches « Vos droits » en XML, chacune avec sa date de
       dernière modification importante : à chaque veille, dire lesquelles des
       fiches que citent les règles du dépôt ont changé, sans ouvrir le site.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-14
     note: >-
       Mesuré le 5 octobre 2026 : l'archive entière pèse 23 Mo ; une fiche se
       lit seule à `…/vdd/3.4/part/xml/F13243.xml`, attribut
       `dateDerniereModificationImportante` (le 1er janvier 2026 pour
       celle-là).
+      Mesuré le 14 octobre 2026 sur les fiches de ce lot :
+      `dateDerniereModificationImportante` (F21552 au 1er septembre
+      2026, F16336 au 14 août, F19666 et F19643 au 1er janvier, F2971 au
+      1er juin) est exactement le `verifie_le` des exemples du témoin ;
+      F31249 n'a que sa `dc:date`, et F23369, fiche des professionnels,
+      n'est pas sous `part/`. Un contrôle qui compare les deux dates à
+      chaque veille est donc possible : proposé dans la note
+      `docs/feuille_de_route/89/2026-10-14-cnav-service-public.md`, non
+      écrit.
 
   - id: gallica_sru
     url: https://gallica.bnf.fr/SRU?operation=searchRetrieve&version=1.2&query=dc.title%20all%20%22Journal%20officiel%22

@@ -19,6 +19,15 @@ sources:
   - type: legifrance
     reference: décret n° 2026-699, JORFTEXT000054569098
     date: 2026-07-29
+  - type: autre
+    reference: >-
+      Cnav, « Parentalité : vos droits à la retraite » : vingt-quatre années pour
+      une majoration au titre d'un enfant, vingt-trois pour deux et plus, depuis le
+      1er septembre 2026 ; « Le nouveau calcul n'est pas encore appliqué aux nouveaux
+      retraités. Il le sera courant 2027 », avec un recalcul automatique et un rappel
+      des sommes dues. Aucun exemple chiffré.
+    url: https://www.lassuranceretraite.fr/portail-info/home/actif/vie-personnelle-retraite/parentalite-droits-retraite.html
+    date: 2026-10-14
 textes_a_rattacher:
 - reference: R. 173-3-2 I CSS (décret n° 2026-699 du 29 juillet 2026, article 1er)
 - reference: loi n° 2025-1403, article 103

@@ -19,6 +19,25 @@ sources:
       ENSAP, calculette du rachat d'études, qui applique encore en septembre 2026
       le barème du décret n° 2003-1310 abrogé
     date: 2026-09-24
+  - type: circulaire_cnav
+    reference: >-
+      circulaire 2026-04 du 5 février 2026 : le versement pour la retraite du régime
+      général et des artisans et commerçants (L. 351-14-1), et les rachats qui lui sont
+      alignés depuis 2010, au barème de l'arrêté du 21 octobre 2012, inchangé de 2013
+      à 2026 ; trois tranches de revenu (75 % et 100 % du plafond, 36 045 et 48 060 €
+      en 2026), deux options (taux seul, taux et durée), de 20 à 66 ans ; de 1 055 €
+      le trimestre à 20 ans, tranche basse, taux et durée, à 6 684 € à 62 ans, tranche
+      haute ; au-delà de 67 ans, le montant de 62 ans diminué de 2,5 % par année
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_04_05022026.pdf
+    date: 2026-10-14
+  - type: autre
+    reference: >-
+      Cnav, « Les rachats de trimestres » : douze trimestres au plus, études au tarif
+      réduit jusqu'à la fin de l'année des quarante ans, stages jusqu'à trente ans,
+      quatre ans pour payer ; son simulateur, dans l'espace personnel, « en cours de
+      mise à jour »
+    url: https://www.lassuranceretraite.fr/portail-info/home/actif/ma-carriere/rachat-trimestres-retraite.html
+    date: 2026-10-14
 textes_a_rattacher:
 - reference: L. 351-14-1 CSS
 - reference: >-

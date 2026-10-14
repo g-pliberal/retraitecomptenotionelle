@@ -1,0 +1,32 @@
+date: "2026-10-14"
+session: "action 89 : la Cnav et service-public, vingt-trois lignes de l'inventaire"
+consulte: >-
+  `python scripts/veille_droit.py` en commençant. Les circulaires Cnav 2025-29
+  (revalorisation au 1er janvier 2026), 2025-33 (SMIC), 2026-04 (versement pour la
+  retraite) et 2026-07 (âge légal et durée après la loi de financement pour 2026) ; la
+  liste des 397 barèmes de la base de législation, par son API ; les pages de la Cnav
+  sur les prélèvements, la complémentaire des indépendants, les années retenues, les
+  interruptions de carrière, la parentalité, le handicap, les rachats, l'amélioration
+  du montant, et le simulateur des cotisations arriérées des artistes-auteurs et son
+  fichier de taux ; les fiches F21552, F16336, F31249, F19666, F19643, F2971 et F23369
+  et l'actualité A15703 de service-public, et leurs XML. Dans l'index LEGI, récupéré
+  et à jour au 11 octobre 2026 : l'article 12 et l'annexe 2 du règlement du RCI
+  (arrêté du 9 février 2012), en leurs versions de 2013 et du 26 juin 2024.
+trouve: >-
+  Une règle que le modèle applique mal : l'abattement des points du RCI avant le taux
+  plein est celui de l'annexe 2 du règlement, 1 % par trimestre manquant jusqu'à douze
+  puis 1,25 %, 22 % à vingt — le barème de l'Agirc-Arrco —, sur le RCO et le NRIC
+  comme sur le RCI ; le modèle y applique la décote du régime de base, 0,9125 au lieu
+  de 0,93 dans l'exemple de la circulaire 2026-07, qui entre au témoin en écart connu
+  (fiche abattement_rci). Tout le reste concorde : coefficients de report des salaires
+  de 1942 à 2025, âges et durées par génération, minima, plafonds, AVPF, barème de la
+  CSG des pensions, années retenues. Lectures ajoutées aux fiches rachats_et_versements,
+  sam_parents_24_23 (le calcul des parents appliqué « courant 2027 ») et reversion (la
+  durée de référence lue à la date d'effet de la réversion). L'exemple de A15703 à
+  67 ans omet la majoration du minimum contributif ; le modèle suit D. 351-2-1.
+reste: >-
+  Corriger l'abattement du RCI (`abattement_points: agirc_arrco` aux périodes liquidées
+  depuis 2013) et lire les règlements du RCO de 1979 et du NRIC de 2004 pour les
+  liquidations antérieures. Le simulateur des artistes-auteurs attend un lot approuvé
+  par le propriétaire. Les 369 barèmes de la base de législation que le dépôt ne cite
+  pas, et ses exposés, restent à dérouler.

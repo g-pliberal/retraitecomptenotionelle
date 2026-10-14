@@ -1220,16 +1220,15 @@ borne basse et l'écart une borne haute.
 
 ### 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026 — `en cours`
 
-**Reprise, au 13 octobre 2026.** Les 260 adresses se dépouillent par lots.
+**Reprise, au 14 octobre 2026.** Les 260 adresses se dépouillent par lots.
 Sont faits l'IRCEC, les libérales, la CRPN, l'Ircantec, l'ENIM, la fonction
-publique de l'État, la CNRACL, la Caisse des dépôts, le RAFP, l'Agirc-Arrco
-et les régimes spéciaux. Les saisies passent par `scripts/simulateurs.py`,
-sur un lot approuvé ; en attendent un la calculette de points du RAFP et le
-guide des prélèvements de l'Ircantec. Restent `a_explorer` : la Cnav et
-service-public, par où commencer, le CLEISS, les modèles publics,
-mon-entreprise, et quinze API publiques. Ce que l'Ircantec laisse — certifier
-2022 à 2026, ses points gratuits — est dans la note du 13 octobre
-(`docs/feuille_de_route/89/2026-10-13-pages-ircantec.md`).
+publique, la CNRACL, la Caisse des dépôts, le RAFP, l'Agirc-Arrco, les régimes
+spéciaux, la Cnav et service-public. Attendent un lot approuvé (saisies par
+`scripts/simulateurs.py`) : la calculette du RAFP, le guide des prélèvements de
+l'Ircantec, le simulateur des artistes-auteurs de la Cnav. À corriger :
+l'abattement du RCI, en écart connu (fiche `abattement_rci`). Restent
+`a_explorer` : le CLEISS, par où commencer, les modèles publics, mon-entreprise,
+quinze API publiques. Détail : `docs/feuille_de_route/89/2026-10-14-cnav-service-public.md`.
 
 **Demande.** Huit lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut
