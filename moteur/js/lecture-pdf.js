@@ -99,7 +99,7 @@ const ECHAPPEMENT = /\\(?:([0-7]{1,3})|\r\n|\r|\n|([\s\S]))/g;
  * Ce que cp1252 met là où latin-1 met des caractères de contrôle. C'est la
  * seule différence entre les deux encodages, et c'est celle qui porte les
  * guillemets typographiques, le tiret cadratin et l'œ — les caractères qu'une
- * police WinAnsi pose sans les déclarer dans sa table.
+ * police WinAnsi pose sans les déclarer dans sa table, ou sans table du tout.
  */
 const CP1252 = {
   0x80: "€", 0x82: "‚", 0x83: "ƒ", 0x84: "„",
@@ -116,6 +116,11 @@ const CP1252 = {
  * référence, `errors="replace"`, les rend « \ufffd ».
  */
 const INDEFINIS_CP1252 = new Set([0x81, 0x8D, 0x8F, 0x90, 0x9D]);
+
+/** La lettre que cp1252 donne à un octet : celle de latin-1, hors de 0x80 à 0x9F. */
+function versCp1252(code) {
+  return CP1252[code] ?? (INDEFINIS_CP1252.has(code) ? "\ufffd" : String.fromCharCode(code));
+}
 
 /** Les octets d'un fichier, portés par une chaîne d'un caractère par octet. */
 export function enChaine(octets) {
@@ -463,13 +468,28 @@ function dictionnaire(objet, cle, objets) {
 function tableDe(police, objets, flux) {
   const trouve = /\/ToUnicode[ \t\n\r\f\v]+(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R/.exec(police);
   const contenu = trouve ? flux.get(Number(trouve[1])) : null;
-  if (!contenu) return null;
+  const simple = !/\/Subtype[ \t\n\r\f\v]*\/Type0\b/.test(police);
+  // SANS TABLE, UNE POLICE SIMPLE WINANSI SE LIT EN CP1252, qui est son
+  // encodage : elle reçoit une table sans entrée, qui ne garde que ce repli.
+  // Lue en latin-1, comme toute chaîne sans table, elle rendait « ’ » par le
+  // caractère de contrôle 0x92, « … » par 0x85, que le modèle de référence
+  // tient pour une espace, et « € » par 0x80 : sur les 36 documents que la
+  // fabrique télécharge, 443 polices WinAnsi n'ont pas de table, et leurs
+  // chaînes portaient 9 719 de ces octets, dont 6 888 apostrophes et 2 131
+  // euros.
+  if (!contenu) {
+    if (!simple || !police.includes("WinAnsiEncoding")) return null;
+    const table = new Table();
+    table.largeur = 1;
+    table.repli = "cp1252";
+    return table;
+  }
   const table = cmap(contenu);
   // Une police simple — TrueType, Type1, Type3 — code ses glyphes sur UN
   // octet, quoi que déclare le codespacerange de sa table : InDesign y écrit
   // <0000> <FFFF> avec des entrées <64>, et lire par deux rendait le rapport
   // de l'OPEF en lettres perdues. Seule une police Type0 lit par deux.
-  if (!/\/Subtype[ \t\n\r\f\v]*\/Type0\b/.test(police)) {
+  if (simple) {
     table.largeur = 1;
     // Et ce que sa table ne dit pas, son encodage le dit : un code absent
     // d'une table WinAnsi est la lettre WinAnsi de ce code.
@@ -506,8 +526,9 @@ function policesParContenu(objets, flux) {
     for (let t = references.exec(polices); t; t = references.exec(polices)) {
       const table = tableDe(objets.get(Number(t[2])) ?? "", objets, flux);
       // Une table vide n'en est pas une : le Python, pour qui elle est fausse,
-      // ne la range pas, et la police se lit alors comme sans table.
-      if (table && table.size) tables.set(t[1], table);
+      // ne la rangeait pas, et la police se lit alors comme sans table — par
+      // son encodage, s'il est WinAnsi (`tableDe`).
+      if (table && (table.size || table.repli)) tables.set(t[1], table);
     }
     if (!page) { parContenu.set(numeroObjet, tables); continue; }
     const contenus = fluxDesContenus(objet, objets);
@@ -545,7 +566,7 @@ function litteral(brut, table) {
     if (lettre !== undefined) return LETTRES[lettre] ?? lettre;
     return "";
   });
-  if (!table || !table.size) return texte;
+  if (!table || (!table.size && !table.repli)) return texte;
   // Les octets de la chaîne sont des codes de la police, pas des lettres : la
   // table les traduit, par un ou par deux selon ce qu'elle déclare. Un code
   // qu'elle ne connaît pas et qui tombe dans l'ASCII imprimable est rendu tel
@@ -561,8 +582,7 @@ function litteral(brut, table) {
     }
     if (table.has(code)) { sortie += table.get(code); continue; }
     if (table.repli === "cp1252" && largeur === 1) {
-      sortie += CP1252[code]
-        ?? (INDEFINIS_CP1252.has(code) ? "\ufffd" : String.fromCharCode(code));
+      sortie += versCp1252(code);
       continue;
     }
     if (code >= 32 && code < 127) sortie += String.fromCharCode(code);
@@ -578,7 +598,14 @@ function hexa(brut, table) {
   for (let i = 0; i < chiffres.length; i += pas) {
     const code = parseInt(chiffres.slice(i, i + pas), 16);
     if (table && table.size) sortie += table.get(code) ?? "";
-    else if (code >= 32 && code < 0x3000) sortie += String.fromCharCode(code);
+    // Une police WinAnsi sans table lit aussi son hexadécimal par un octet, en
+    // cp1252 : lu par deux, « <E9> » devenait le code 0xE900, hors de portée,
+    // et l'« é » se perdait. Les codes de contrôle restent écartés, si bien
+    // qu'un numéro de glyphe écrit sur deux octets, « <0048> », rend la même
+    // lettre qu'avant.
+    else if (code >= 32 && code < 0x3000) {
+      sortie += table && table.repli === "cp1252" ? versCp1252(code) : String.fromCharCode(code);
+    }
   }
   return sortie;
 }
@@ -896,11 +923,12 @@ async function fragments(octets) {
  * Les espaces du modèle de référence : ce que `str.strip` ôte et ce que `\s`
  * reconnaît dans une chaîne Python. Ce sont ceux de JavaScript, moins U+FEFF,
  * plus les séparateurs \x1c à \x1f et \x85, que `trim` et `\s` ignorent — et
- * les documents en sont pleins : une police sans table ToUnicode écrit « … »
- * par l'octet \x85, et le programme d'une police lu comme du texte sème les
- * séparateurs. Avec `trim`, le portage gardait ces caractères là où le Python
- * les tient pour des espaces, et 33 documents de la fabrique sur 36 sortaient
- * autrement, à 119 chaînes près.
+ * les documents en étaient pleins : une police WinAnsi sans table ToUnicode
+ * écrivait « … » par l'octet \x85, et le programme d'une police lu comme du
+ * texte semait les séparateurs, jusqu'à ce que l'une se lise en cp1252 et que
+ * l'autre ne se lise plus. Avec `trim`, le portage gardait ces caractères là
+ * où le Python les tient pour des espaces, et 33 documents de la fabrique sur
+ * 36 sortaient autrement, à 119 chaînes près.
  */
 const ESPACES = "\\t-\\r\\x1c-\\x20\\x85\\xa0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000";
 const BORDS = new RegExp(`^[${ESPACES}]+|[${ESPACES}]+$`, "g");

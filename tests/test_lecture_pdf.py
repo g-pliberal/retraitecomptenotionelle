@@ -240,6 +240,21 @@ def test_la_derniere_ligne_garde_ses_insecables():
     attendu = "1\u00a0339\u00a0945 1\u00a0654"
     assert lignes_pdf(pdf) == [attendu, attendu], lignes_pdf(pdf)
 
+def test_une_police_winansi_sans_table_se_lit_en_cp1252():
+    """Sans table ToUnicode, une police simple en WinAnsiEncoding pose « ’ »,
+    « … », « € », « – » et « œ » par les octets que latin-1 réserve aux
+    caractères de contrôle : ils se lisent en cp1252. Son hexadécimal se lit
+    par un octet, sans quoi « <E9> » perdait son « é »."""
+    contenu = (b"BT /F1 10 Tf 70 700 Td (l\\222autonomie \\205 5\\200 \\226 \\234uvre) Tj "
+               b"0 -20 Td <64E963656D627265> Tj ET")
+    pdf = _document(
+        _objet(1, b"<< /Type /Page /Contents 2 0 R /Resources << /Font << /F1 3 0 R >> >> >>"),
+        _objet(2, _flux(b"<< >>", contenu)),
+        _objet(3, b"<< /Type /Font /Subtype /TrueType /BaseFont /ArialMT "
+                  b"/Encoding /WinAnsiEncoding >>"),
+    )
+    assert lignes_pdf(pdf) == ["l’autonomie … 5€ – œuvre", "décembre"], lignes_pdf(pdf)
+
 def test_l_insecable_n_est_pas_une_espace_de_la_syntaxe():
     """Entre deux opérandes, la norme ne compte pour espace ni l'insécable ni
     aucun octet au-delà de l'ASCII : « 0\xa0700 Td » n'est pas un déplacement,
