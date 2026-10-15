@@ -357,6 +357,16 @@ def test_un_flux_comprime_tronque_ne_rend_rien():
     assert lignes_pdf(_document(objet)) == [], lignes_pdf(_document(objet))
 
 
+def test_un_flux_comprime_suivi_de_beaucoup_d_octets_parasites_se_lit():
+    """Ce qui traîne derrière la fin d'un flux comprimé ne compte pas, si long
+    soit-il : zlib s'arrête à la somme qui le clôt."""
+    contenu = b"BT /F1 10 Tf 60 700 Td (BAVARD) Tj ET"
+    donnees = zlib.compress(contenu) + b"\n" + b"x" * 1500
+    objet = _objet(1, b"<< /Filter /FlateDecode /Length %d >>\nstream\n" % len(donnees)
+                   + donnees + b"\nendstream")
+    assert lignes_pdf(_document(objet)) == ["BAVARD"], lignes_pdf(_document(objet))
+
+
 def _arbre(*pages: bytes) -> list[bytes]:
     """Un catalogue et un arbre de pages, dont les feuilles sont rangées à
     rebours des numéros de leurs objets : 10 + rang de la dernière à la

@@ -112,10 +112,13 @@ function adler32(octets) {
  *
  * On les sépare donc comme zlib le fait : un flux complet porte derrière ses
  * données la somme Adler-32 de ce qu'il vient de rendre. Si on la retrouve
- * dans la queue de l'entrée, le flux s'est terminé et ce qui suit n'est que du
- * bavardage ; sinon, il est tronqué, et l'on ne rend rien.
+ * dans l'entrée, le flux s'est terminé et ce qui suit n'est que du bavardage ;
+ * sinon, il est tronqué, et l'on ne rend rien. On la cherche dans TOUTE
+ * l'entrée, depuis sa fin : zlib ignore autant d'octets qu'il en traîne, et la
+ * chercher dans le dernier kilo-octet perdait le flux d'un producteur plus
+ * bavard, que le Python lit. Un flux tronqué ne la porte que par hasard : une
+ * chance sur quatre milliards par position.
  */
-const QUEUE_BAVARDE = 1024;
 
 async function inflater(donnees) {
   const flux = new Blob([enOctets(donnees)]).stream()
@@ -139,12 +142,11 @@ async function inflater(donnees) {
   const texte = enChaine(tout);
   if (acheve) return texte;
   const somme = adler32(texte);
-  const queue = donnees.slice(Math.max(0, donnees.length - QUEUE_BAVARDE));
-  for (let i = 0; i + 4 <= queue.length; i += 1) {
-    const lue = ((queue.charCodeAt(i) & 0xff) * 0x1000000)
-      + ((queue.charCodeAt(i + 1) & 0xff) << 16)
-      + ((queue.charCodeAt(i + 2) & 0xff) << 8)
-      + (queue.charCodeAt(i + 3) & 0xff);
+  for (let i = donnees.length - 4; i >= 0; i -= 1) {
+    const lue = ((donnees.charCodeAt(i) & 0xff) * 0x1000000)
+      + ((donnees.charCodeAt(i + 1) & 0xff) << 16)
+      + ((donnees.charCodeAt(i + 2) & 0xff) << 8)
+      + (donnees.charCodeAt(i + 3) & 0xff);
     if (lue >>> 0 === somme) return texte;
   }
   return null;

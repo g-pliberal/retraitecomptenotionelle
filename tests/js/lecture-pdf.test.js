@@ -257,6 +257,16 @@ test("un flux tronqué ne rend rien, un flux bavard rend tout", async () => {
   assert.deepEqual(await lignesPdf(tronque), []);
 });
 
+test("un flux comprimé suivi de beaucoup d'octets parasites se lit", async () => {
+  // La somme Adler-32 se cherche dans toute l'entrée, et non dans son dernier
+  // kilo-octet : zlib ignore autant d'octets qu'il en traîne.
+  const comprime = await comprimer("BT /F1 10 Tf 60 700 Td (BAVARD) Tj ET");
+  const pdf = document(objet(1, flux(
+    "<< /Filter /FlateDecode >>", `${comprime}\n${"x".repeat(1500)}`,
+  )));
+  assert.deepEqual(await lignesPdf(pdf), ["BAVARD"]);
+});
+
 test("un flux comprimé qui finit par un retour à la ligne se lit", async () => {
   // Les données comprimées peuvent finir par l'octet du retour à la ligne :
   // ôté avec la fin de ligne qui précède `endstream`, il tronquait le flux, et
