@@ -715,10 +715,11 @@ function contenusDesPages(objets) {
  * LE LECTEUR LISAIT TOUT FLUX OÙ PARAISSAIT « Tj », les images seules
  * écartées. Le programme d'une police embarquée en contient par hasard : sur
  * les 36 documents que la fabrique télécharge, 167 de ces programmes, dans 30
- * documents, se lisaient comme du texte, et leurs 19 788 fragments ajoutaient
- * aux documents des lignes de charabia, avec ceux de deux tables des
- * références, de quatre métadonnées et de six flux d'indications de la
- * linéarisation.
+ * documents, se lisaient chacun en une ligne de charabia, comme quatre
+ * métadonnées XMP, deux tables des références, deux flux d'indications de la
+ * linéarisation, un profil de couleur et une palette. Deux pieds de page
+ * qu'aucune page ne pose, enfin, rendaient avec les polices d'autres pages un
+ * double mutilé de la liste des membres d'un rapport à la CCSS, en 81 lignes.
  */
 function fluxDeTexte(objets, flux) {
   const porteurs = new Set();
