@@ -894,10 +894,19 @@ function fragmentsDesObjets({ objets, flux }) {
         if (nombres.length < 6) continue;
         repere = composer(nombres.slice(0, 6), repere);
       } else if (g.sauve) {
-        sauves.push(repere);
+        // LA POLICE ET L'INTERLIGNE SONT DE L'ÉTAT GRAPHIQUE, comme le repère :
+        // `q` les sauve, `Q` les rend. Excel pose chaque cellule d'un tableau
+        // entre `q` et `Q`, et la police d'une seule — une Type0 — avant des
+        // cellules qui n'en reposent aucune : garder la dernière posée
+        // traduisait leurs octets par la table de celle-là. Les rapports à la
+        // CCSS de 2022 à 2025 y perdaient la ligne de la CNAV, « Prises en
+        // charge de cotisations par le FSV » devenue « POises en cMaOge… », et
+        // avec elle 14,6 des 15,0 Md€ de cotisations que le fonds prenait en
+        // charge en 2021.
+        sauves.push([repere, police, interligne]);
       } else if (g.rend) {
-        // Un `Q` sans `q` ne rend rien : on garde le repère courant.
-        if (sauves.length) repere = sauves.pop();
+        // Un `Q` sans `q` ne rend rien : on garde l'état courant.
+        if (sauves.length) [repere, police, interligne] = sauves.pop();
       } else if (g.td) {
         const nombres = reels(g.td);
         if (nombres.length < 2) continue;

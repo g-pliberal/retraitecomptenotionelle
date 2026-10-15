@@ -356,6 +356,26 @@ def test_chaque_objet_texte_repart_de_l_origine_de_la_page():
     assert lignes_pdf(pdf) == ["HAUT", "MILIEU", "BAS"], lignes_pdf(pdf)
 
 
+def test_q_rend_la_police_d_avant_q():
+    """La police fait partie de l'état graphique, que « Q » rend tel que « q »
+    l'a sauvé. Excel pose chaque cellule entre « q » et « Q », chaque caractère
+    en sa chaîne, et la police d'une seule cellule — une Type0 — avant des
+    cellules qui n'en reposent aucune : garder la dernière police posée
+    traduisait leurs octets par la table de celle-là, « r » devenant « O »."""
+    contenu = (b"BT /F1 10 Tf ET "
+               b"q BT /F2 10 Tf 1 0 0 1 70 700 Tm <0001> Tj ET Q "
+               b"q BT 1 0 0 1 70 680 Tm [(P)(r)(i)(s)(e)(s)] TJ ET Q")
+    pdf = _document(
+        _objet(1, b"<< /Type /Page /Contents 2 0 R "
+                  b"/Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> >>"),
+        _objet(2, _flux(b"<< >>", contenu)),
+        _objet(3, b"<< /Type /Font /Subtype /TrueType /BaseFont /ArialMT "
+                  b"/Encoding /WinAnsiEncoding >>"),
+        _objet(4, b"<< /Type /Font /Subtype /Type0 /Encoding /Identity-H /ToUnicode 5 0 R >>"),
+        _objet(5, _flux(b"<< >>", _cmap(2, {1: "€", 0x72: "O"}))),
+    )
+    assert lignes_pdf(pdf) == ["€", "Prises"], lignes_pdf(pdf)
+
 def test_le_repere_retourne_de_la_page_se_lit_de_haut_en_bas():
     """« 0.05 0 0 -0.05 0 841.9 cm » : des vingtièmes de point, l'origine en
     haut de la feuille, les ordonnées croissant vers le bas. C'est ainsi que
