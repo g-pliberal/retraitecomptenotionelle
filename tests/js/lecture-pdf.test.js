@@ -171,6 +171,18 @@ test("les échappements d'une chaîne littérale se lisent en une passe", async 
   assert.deepEqual(await lignesPdf(pdf), ["a\\101(b)A"]);
 });
 
+test("un échappement octal au-delà de 377 perd son débordement", async () => {
+  const sansTable = "BT /F1 10 Tf 70 700 Td (A\\501B) Tj ET";
+  assert.deepEqual(await lignesPdf(document(objet(1, flux("<< >>", sansTable)))), ["AAB"]);
+  const avecTable = document(
+    objet(1, "<< /Type /Page /Resources << /Font << /F1 2 0 R >> >> /Contents 4 0 R >>"),
+    objet(2, "<< /Type /Font /Subtype /TrueType /Encoding /WinAnsiEncoding /ToUnicode 3 0 R >>"),
+    objet(3, flux("<< >>", cmap(1, { 0x41: "a", 0x42: "b" }))),
+    objet(4, flux("<< >>", "BT /F1 10 Tf 70 700 Td (A\\501B) Tj ET")),
+  );
+  assert.deepEqual(await lignesPdf(avecTable), ["aab"]);
+});
+
 test("une image n'est pas lue comme du texte", async () => {
   const pdf = document(
     objet(1, flux("<< /Type /XObject /Subtype /Image /Width 1 /Height 1 >>",

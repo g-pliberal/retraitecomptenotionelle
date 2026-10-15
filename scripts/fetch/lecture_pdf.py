@@ -345,8 +345,11 @@ def _polices(octets: bytes) -> dict[bytes, dict[int, str]]:
 
 
 def _litteral(brut: bytes, table: dict[int, str] | None = None) -> str:
+    # Un échappement octal au-delà de \377 déborde d'un octet, et la norme veut
+    # que le débordement s'ignore (ISO 32000-1, § 7.3.4.2) : « \501 » est « A »,
+    # comme le lit le portage JavaScript, et non « Ł ».
     texte = ECHAPPEMENT.sub(
-        lambda m: chr(int(m.group(1), 8)) if m.group(1)
+        lambda m: chr(int(m.group(1), 8) & 0xFF) if m.group(1)
         else LETTRES.get(m.group(2), m.group(2)) if m.group(2) is not None else "",
         brut.decode("latin-1"))
     if not table:

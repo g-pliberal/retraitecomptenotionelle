@@ -159,6 +159,21 @@ def test_les_echappements_d_une_chaine_litterale_se_lisent_en_une_passe():
     assert lignes_pdf(pdf) == ["a\\101(b)A"], lignes_pdf(pdf)
 
 
+def test_un_echappement_octal_au_dela_de_377_perd_son_debordement():
+    """La norme ignore le débordement d'un octal au-delà d'un octet :
+    « \\501 » est « A », avec une table ou sans."""
+    sans_table = b"BT /F1 10 Tf 70 700 Td (A\\501B) Tj ET"
+    assert lignes_pdf(_document(_objet(1, _flux(b"<< >>", sans_table)))) == ["AAB"]
+    avec_table = _document(
+        _objet(1, b"<< /Type /Page /Resources << /Font << /F1 2 0 R >> >> /Contents 4 0 R >>"),
+        _objet(2, b"<< /Type /Font /Subtype /TrueType /Encoding /WinAnsiEncoding "
+                  b"/ToUnicode 3 0 R >>"),
+        _objet(3, _flux(b"<< >>", _cmap(1, {0x41: "a", 0x42: "b"}))),
+        _objet(4, _flux(b"<< >>", b"BT /F1 10 Tf 70 700 Td (A\\501B) Tj ET")),
+    )
+    assert lignes_pdf(avec_table) == ["aab"], lignes_pdf(avec_table)
+
+
 def test_une_image_n_est_pas_lue_comme_du_texte():
     """Une image JPEG contient « Tj » par hasard ; elle n'a rien à dire."""
     pdf = _document(
