@@ -1,5 +1,10 @@
 """Extraction de texte PDF avec mise en page, sans dépendance externe.
 
+DEPUIS L'ACTION 161 (ÉTAPE 4), LES FONCTIONS PUBLIQUES DE CE MODULE LISENT PAR
+LE LECTEUR DU SITE, ``moteur/js/lecture-pdf.js``, que node fait tourner
+(``lecture_pdf.mjs``) : un seul lecteur pour le site et la fabrique. Ce qui
+suit décrit le cœur Python qu'il remplace, gardé le temps d'un commit.
+
 Écrit pour les barèmes de la CNBF, seule source des valeurs du point des
 avocats. Le dépôt n'a qu'une dépendance, PyYAML, et ce module n'en ajoute
 aucune : il n'utilise que ``re`` et ``zlib`` de la bibliothèque standard.
@@ -56,10 +61,40 @@ ou leur motif hachuré.
 """
 from __future__ import annotations
 
+import functools
+import json
 import math
 import re
+import shutil
+import subprocess
 import zlib
+from pathlib import Path
 from typing import NamedTuple
+
+#: Le lecteur du site, que la fabrique fait tourner par node.
+LECTEUR = Path(__file__).resolve().with_name("lecture_pdf.mjs")
+
+
+@functools.lru_cache(maxsize=8)
+def _demander(octets: bytes, question: str, argument: float = 3.0):
+    """Ce que le lecteur du site répond d'un document (``lecture_pdf.mjs``).
+
+    Un script relit souvent le même document — ses lignes, puis ses lignes par
+    page — : les dernières réponses se gardent. Sans node, la lecture s'arrête
+    net, sans repli : il n'y a plus de second lecteur pour en tenir lieu."""
+    if shutil.which("node") is None:
+        raise RuntimeError("node est absent : le lecteur PDF du dépôt, "
+                           "moteur/js/lecture-pdf.js, ne tourne pas sans lui")
+    fini = subprocess.run(["node", str(LECTEUR), question, str(argument)], input=octets,
+                          capture_output=True, check=False, timeout=600)
+    if fini.returncode:
+        raise RuntimeError("le lecteur PDF a échoué : "
+                           + fini.stderr.decode("utf-8", errors="replace")[-2000:])
+    reponse = json.loads(fini.stdout)
+    if "erreur" in reponse:
+        raise (LookupError if reponse["erreur"] == "LookupError" else RuntimeError)(
+            reponse["message"])
+    return reponse["rendu"]
 
 OCTAL = re.compile(r"\\([0-7]{1,3})")
 #: Les échappements d'une chaîne littérale : octal, les cinq lettres de la
@@ -713,9 +748,7 @@ def lignes_pdf(octets: bytes, tolerance: float = 3.0) -> list[str]:
     pas ». Elle se reconstitue très bien : c'est le lecteur qui empilait les
     pages.
     """
-    fragments = _fragments(octets)
-    fragments.sort(key=lambda f: (f[0], f[1], -f[2], f[3]))
-    return _assembler(fragments, tolerance)
+    return list(_demander(octets, "lignes", tolerance))
 
 
 def _assembler_par_abscisse(fragments: list[tuple[int, int, float, float, str]],
@@ -778,13 +811,10 @@ def texte_de_ligne(rangee: list[tuple[float, str]]) -> str:
 
 
 def _fragments_des_pages(octets: bytes) -> list[list[tuple[int, int, float, float, str]]]:
-    """Les fragments du document, page par page, de haut en bas."""
-    fragments = _fragments(octets)
-    fragments.sort(key=lambda f: (f[0], f[1], -f[2], f[3]))
-    pages: dict[int, list[tuple[int, int, float, float, str]]] = {}
-    for fragment in fragments:
-        pages.setdefault(fragment[0], []).append(fragment)
-    return [pages[page] for page in sorted(pages)]
+    """Les fragments du document, page par page, de haut en bas, tels que le
+    lecteur du site les pose (``fragmentsParPage``)."""
+    return [[(int(p), int(b), float(y), float(x), texte) for p, b, y, x, texte in page]
+            for page in _demander(octets, "fragments")]
 
 
 def fragments_par_page(octets: bytes, tolerance: float = 3.0
@@ -824,8 +854,9 @@ def lignes_par_page(octets: bytes, tolerance: float = 3.0,
     (:func:`_assembler_par_abscisse`) ; sans lui, rien ne change pour les
     lecteurs écrits avant.
     """
-    assembler = _assembler_par_abscisse if par_abscisse else _assembler
-    return [assembler(page, tolerance) for page in _fragments_des_pages(octets)]
+    if par_abscisse:
+        return [_assembler_par_abscisse(page, tolerance) for page in _fragments_des_pages(octets)]
+    return [list(page) for page in _demander(octets, "pages", tolerance)]
 
 
 def texte_pdf(octets: bytes) -> str:
@@ -1050,12 +1081,9 @@ def _aplats(contenu: bytes) -> list[Aplat]:
 
 def aplats_de_page(octets: bytes, page: int) -> list[Aplat]:
     """Les rectangles peints de la page ``page`` du document, comptée à
-    partir de 1 dans l'ordre de son arbre des pages."""
-    objets = _objets(octets)
-    pages = _pages_de_l_arbre(objets)
-    if not 1 <= page <= len(pages):
-        raise LookupError(f"le document n'a pas de page {page} ({len(pages)} pages)")
-    return _aplats(_contenu_de_la_page(objets, pages[page - 1]))
+    partir de 1 dans l'ordre de son arbre des pages, que le lecteur du site
+    retrouve (``contenuDeLaPage``)."""
+    return _aplats(_demander(octets, "page", page).encode("latin-1"))
 
 
 if __name__ == "__main__":

@@ -53,7 +53,7 @@ from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lecture_pdf import _flux, _hexa, _litteral, _objets, _polices, JETONS  # noqa: E402
+from lecture_pdf import lignes_pdf  # noqa: E402
 from source_locale import lire_ou_telecharger  # noqa: E402
 
 RACINE = "https://www.cnavpl.fr/documents"
@@ -89,24 +89,13 @@ def texte_colle(octets: bytes) -> str:
     """Tout le texte du document, espaces ôtés.
 
     Le recueil est un annuaire mis en pages sur plusieurs colonnes, avec des
-    graphiques : reconstituer ses lignes n'a pas de sens. Seules comptent ici
-    deux phrases, qu'on retrouve en collant le texte et en cherchant dedans.
+    graphiques : seules comptent ici deux phrases, qu'on retrouve en collant
+    ses lignes et en cherchant dedans. Le texte se collait autrefois chaîne par
+    chaîne, flux par flux, dans l'ordre du fichier et sans table de police ;
+    lu par le lecteur du dépôt, les recueils de 2021 à 2025 rendent les mêmes
+    valeurs (action 161, étape 4).
     """
-    tables = _polices(octets)
-    morceaux: list[str] = []
-    for objet in _objets(octets).values():
-        contenu = _flux(objet)
-        if not contenu or (b"Tj" not in contenu and b"TJ" not in contenu):
-            continue
-        police = None
-        for jeton in JETONS.finditer(contenu):
-            if jeton.group("tf"):
-                police = jeton.group(9)
-            elif jeton.group("hex"):
-                morceaux.append(_hexa(jeton.group("hex"), tables.get(police)))
-            elif jeton.group("txt"):
-                morceaux.append(_litteral(jeton.group("txt")[1:-1]))
-    return re.sub(r"\s+", "", "".join(morceaux))
+    return re.sub(r"\s+", "", "".join(lignes_pdf(octets)))
 
 
 def _nombre(texte: str) -> float:

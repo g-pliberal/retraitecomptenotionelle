@@ -16,12 +16,19 @@ pensions du PLF 2027 a demandés : ses barres sont des rectangles peints.
 
 from __future__ import annotations
 
+import shutil
 import sys
 import zlib
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts" / "fetch"))
 from lecture_pdf import Aplat, aplats_de_page, lignes_pdf  # noqa: E402
+
+#: Le lecteur est celui du site, que node fait tourner.
+pytestmark = pytest.mark.skipif(shutil.which("node") is None,
+                                reason="node absent : le lecteur PDF ne tourne pas sans lui")
 
 
 def _objet(numero: int, corps: bytes) -> bytes:

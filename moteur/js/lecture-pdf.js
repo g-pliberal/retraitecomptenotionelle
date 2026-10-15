@@ -1,14 +1,21 @@
 /**
- * Extraction de texte PDF avec mise en page, dans le navigateur.
+ * Extraction de texte PDF avec mise en page, dans le navigateur et pour la
+ * fabrique.
  *
- * Portage de ``scripts/fetch/lecture_pdf.py``, qui fait foi : mêmes fonctions,
- * mêmes expressions régulières, mêmes défauts corrigés — les flux d'objets
- * compressés, les polices à encodage propre, l'échelle de la matrice de texte,
- * le numéro de flux dans la clé de regroupement, le repère de la page, les
- * pages coupées en plusieurs flux et le flux comprimé qui finit par un retour
- * à la ligne. Toute correction apportée d'un
- * côté est à porter de l'autre, et `tests/js/lecture-pdf.test.js` rejoue ici
- * les documents minimaux de `tests/test_lecture_pdf.py`.
+ * LE SEUL LECTEUR PDF DU DÉPÔT (action 161, étape 4 ; note de décision 0003 :
+ * ce qui tourne aux deux endroits s'écrit une fois, en JavaScript). Le site le
+ * charge pour lire le relevé qu'un lecteur dépose ; la fabrique le fait tourner
+ * par node, à travers ``scripts/fetch/lecture_pdf.py``, qui garde en Python ce
+ * qu'elle seule utilise : la lecture par abscisse et les rectangles peints
+ * d'une page. Il a été le portage de ce module Python, qui faisait foi, jusqu'à
+ * ce que les deux, alignés cas par cas, lisent pareil les 36 documents que la
+ * fabrique télécharge, et qu'il reste seul. Ses défauts corrigés
+ * sont donc ceux du Python et les siens — les flux d'objets compressés, les
+ * polices à encodage propre, l'échelle de la matrice de texte, le numéro de
+ * flux dans la clé de regroupement, le repère de la page, les pages coupées en
+ * plusieurs flux, le flux comprimé qui finit par un retour à la ligne, les
+ * espaces de `str.strip` —, et `tests/test_lecture_pdf.py`, par node, comme
+ * `tests/js/lecture-pdf.test.js`, les tiennent.
  *
  * Deux écarts, et deux seulement, imposés par le navigateur :
  *
@@ -834,19 +841,102 @@ export async function lignesPdf(octets, tolerance = 3.0) {
 }
 
 /**
+ * Les fragments du document, page par page, de haut en bas : chacun
+ * `[page, bande, ligne, colonne, texte]`. La fabrique en refait les lignes de
+ * gauche à droite, cellule par cellule (`scripts/fetch/lecture_pdf.py`).
+ */
+export async function fragmentsParPage(octets) {
+  const pages = new Map();
+  for (const fragment of trier(await fragments(enChaine(octets)))) {
+    if (!pages.has(fragment[0])) pages.set(fragment[0], []);
+    pages.get(fragment[0]).push(fragment);
+  }
+  return [...pages.keys()].sort((a, b) => a - b).map((page) => pages.get(page));
+}
+
+/**
  * Les mêmes lignes, mais groupées par page. Savoir où une page commence et
  * finit est ce qui permet de rattacher un tableau à sa tête — et un relevé de
  * carrière recommence souvent son tableau, et son régime, à chaque feuille.
  */
 export async function lignesParPage(octets, tolerance = 3.0) {
-  const tous = trier(await fragments(enChaine(octets)));
-  const pages = new Map();
-  for (const fragment of tous) {
-    if (!pages.has(fragment[0])) pages.set(fragment[0], []);
-    pages.get(fragment[0]).push(fragment);
+  return (await fragmentsParPage(octets)).map((page) => assembler(page, tolerance));
+}
+
+// -- les pages de l'arbre ------------------------------------------------------
+
+/**
+ * Les objets page du document, dans l'ordre de ses pages.
+ *
+ * LE RANG D'UN FLUX N'EST PAS CELUI DE SA PAGE. Les lectures de texte
+ * numérotent les flux dans l'ordre du fichier : le jaune pensions du PLF 2027
+ * en compte 265 pour 250 pages, et sa page 24 y est la 23e. Une page désignée
+ * par son numéro se trouve donc en suivant l'arbre des pages depuis le
+ * catalogue, `/Kids` après `/Kids`.
+ */
+function pagesDeLArbre(objets) {
+  const catalogue = [...objets.values()].find((objet) => /\/Type[ \t\n\r\f\v]*\/Catalog\b/.test(objet));
+  const racine = catalogue && /\/Pages[ \t\n\r\f\v]+(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R/.exec(catalogue);
+  if (!racine) throw introuvable("le document n'a pas d'arbre des pages");
+  const pages = [];
+  const aVoir = [Number(racine[1])];
+  const vus = new Set();
+  while (aVoir.length) {
+    const numero = aVoir.pop();
+    if (vus.has(numero)) continue;
+    vus.add(numero);
+    const enfants = /\/Kids[ \t\n\r\f\v]*\[([^\]]*)\]/.exec(objets.get(numero) ?? "");
+    if (enfants) {
+      // Le dernier empilé sort le premier : les enfants s'empilent à rebours
+      // pour se lire dans leur ordre.
+      aVoir.push(...[...enfants[1].matchAll(/(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R/g)]
+        .map((t) => Number(t[1])).reverse());
+    } else {
+      pages.push(numero);
+    }
   }
-  return [...pages.keys()].sort((a, b) => a - b)
-    .map((page) => assembler(pages.get(page), tolerance));
+  return pages;
+}
+
+/**
+ * Les flux d'une page, bout à bout. `/Contents` désigne un flux, un tableau de
+ * flux, ou — le jaune pensions du PLF 2027 — un objet qui n'est qu'un tableau
+ * de flux : sa page 24 en pose trois, dont le premier ramène toute la feuille
+ * à 99,88 % de sa taille. Un objet page absent n'a rien à dire.
+ */
+function contenuDeLObjetPage(objets, flux, numero) {
+  const contenus = /\/Contents[ \t\n\r\f\v]*(?:\[([^\]]*)\]|(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R)/
+    .exec(objets.get(numero) ?? "");
+  if (!contenus) return "";
+  let tableau = contenus[1];
+  if (tableau === undefined) {
+    const cible = /^[ \t\n\r\f\v]*\[([^\]]*)\]/.exec(objets.get(Number(contenus[2])) ?? "");
+    tableau = cible ? cible[1] : `${contenus[2]} 0 R`;
+  }
+  return [...tableau.matchAll(/(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R/g)]
+    .map((t) => flux.get(Number(t[1]))).filter(Boolean).join("\n");
+}
+
+/** Une erreur que la fabrique lit comme le `LookupError` du Python. */
+function introuvable(message) {
+  const erreur = new Error(message);
+  erreur.name = "LookupError";
+  return erreur;
+}
+
+/**
+ * Le contenu de la page `page` du document, comptée à partir de 1 dans l'ordre
+ * de son arbre des pages : ses flux dépliés, bout à bout, un caractère par
+ * octet. La fabrique y lit les rectangles peints d'une figure
+ * (`aplats_de_page`).
+ */
+export async function contenuDeLaPage(octets, page) {
+  const { objets, flux } = await lireObjets(enChaine(octets));
+  const pages = pagesDeLArbre(objets);
+  if (!(page >= 1 && page <= pages.length)) {
+    throw introuvable(`le document n'a pas de page ${page} (${pages.length} pages)`);
+  }
+  return contenuDeLObjetPage(objets, flux, pages[page - 1]);
 }
 
 export async function textePdf(octets) {

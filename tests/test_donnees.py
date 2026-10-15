@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import shutil
 
 import pytest
 
@@ -1516,6 +1517,8 @@ def test_tout_regime_du_catalogue_est_route_ou_declare(catalogue):
         assert len(raison.split()) >= 10, f"{code} : raison trop courte pour être une raison"
 
 
+@pytest.mark.skipif(shutil.which("node") is None,
+                    reason="node absent : le lecteur PDF ne tourne pas sans lui")
 def test_le_lecteur_pdf_ne_colle_pas_les_pages_entre_elles():
     """Deux pages, deux lignes — et non une seule qui les empile.
 
@@ -1550,6 +1553,8 @@ def test_le_lecteur_pdf_ne_colle_pas_les_pages_entre_elles():
     assert lignes == ["PAGE UN", "PAGE DEUX"], lignes
 
 
+@pytest.mark.skipif(shutil.which("node") is None,
+                    reason="node absent : le lecteur PDF ne tourne pas sans lui")
 def test_le_lecteur_pdf_applique_l_echelle_de_la_matrice_de_texte():
     """« 9 0 0 9 … Tm » ne pose pas une position mais un REPÈRE.
 
