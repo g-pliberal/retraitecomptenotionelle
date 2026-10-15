@@ -6313,12 +6313,11 @@ de `contribution_etat`.
 **Reprise, au 15 octobre 2026.** Faites, les étapes 1 à 3 et, de l'étape 4,
 la paire du lecteur PDF : voulu unique, en JavaScript, il a été mesuré sur 36
 vrais documents, aligné, puis la fabrique l'a pris par node et le cœur Python
-est parti ; ses quatre défauts communs sont corrigés un à un, chacun mesuré
-sur les valeurs de la fabrique. Un cinquième attend le propriétaire : 382
-formulaires porteurs de texte pris pour des images, que lire demande
-d'adapter `ccss_regimes.py`. Reste de l'étape 4 `cycle_de_vie.py`, après
+est parti ; ses cinq défauts sont corrigés un à un, chacun mesuré sur les
+valeurs de la fabrique, et `ccss_regimes.py` lit désormais le formulaire que
+pose la page de chaque titre. Reste de l'étape 4 `cycle_de_vie.py`, après
 l'étape 10 de l'action 138 ; puis l'étape 5, le pont. Détail : les notes des
-quatre parties de l'étape 4.
+cinq parties de l'étape 4.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
