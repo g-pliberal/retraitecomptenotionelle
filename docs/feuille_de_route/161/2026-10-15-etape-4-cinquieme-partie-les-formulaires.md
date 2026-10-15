@@ -25,7 +25,7 @@ seule branche vieillesse, les trois tableaux des régimes complémentaires d'une
 même page se lisaient tous à partir du premier formulaire, et la CNAVPL de
 2023 portait les effectifs des autres régimes, rangés après sa page.
 
-**1. Le lecteur dit quels formulaires chaque page pose** (commit 983ed1e).
+**1. Le lecteur dit quels formulaires chaque page pose** (commit 1edbe13).
 `pagesEtFormulaires` — `pages_et_formulaires` pour la fabrique — rend les
 pages de `lignesParPage` et, pour chacune, les formulaires qu'elle pose par
 `Do`, nommés dans ses ressources ou celles qu'elle hérite de l'arbre, dans
@@ -34,7 +34,7 @@ que le lecteur rendait ne change : les 36 documents gardent leurs pages, et
 3 694 formulaires se rattachent à 1 927 pages ; la page de la CNAVPL de 2023
 retrouve ses cinq formulaires, rangés avant elle.
 
-**2. `ccss_regimes.py` lit le formulaire de son titre** (commit 14d0e3d). Le
+**2. `ccss_regimes.py` lit le formulaire de son titre** (commit 50676d9). Le
 k-ième titre « Données générales » d'une page lit le k-ième des formulaires
 qu'elle pose qui s'ouvrent sur une ligne d'années et portent des effectifs,
 et lui seul : l'appariement tombe juste pour les 241 tableaux qui en ont ; un
@@ -61,7 +61,7 @@ droits directs + droits dérivés » tient pour 84 % des triplets au lieu de
 50 %. `ccss_regimes.json` n'a pas de lecteur dans le dépôt. Quatre tests
 nouveaux, `tests/test_ccss_regimes.py`, au niveau contrôle.
 
-**3. Une image se reconnaît à son `/Subtype`** (commit 0b02554). Les 382
+**3. Une image se reconnaît à son `/Subtype`** (commit d81f9a8). Les 382
 formulaires se lisent : 15 documents gagnent 9 182 lignes, et n'en perdent
 aucune. `ccss_regimes.json` est le même avec ou sans eux.
 `ccss_transferts_retraite.json` corrige dix valeurs du FSV — ses prestations
