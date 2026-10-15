@@ -9,7 +9,9 @@
  * reculs d'un tableau ``TJ``, les dictionnaires en ligne du contenu balisé, les
  * échappements lus en une passe, et l'image qu'on ne lit pas comme du texte ;
  * puis, depuis le relevé de carrière d'info-retraite (2026), le repère
- * retourné de la page et la page coupée en plusieurs flux.
+ * retourné de la page et la page coupée en plusieurs flux ; et, depuis le
+ * jaune pensions du PLF 2027, le flux comprimé qui finit par un retour à la
+ * ligne.
  *
  * Les mêmes documents sont refaits ici, octet pour octet, et le portage doit en
  * rendre les mêmes lignes. Un lecteur qui diverge du modèle sur l'un d'eux
@@ -198,6 +200,23 @@ test("un flux tronqué ne rend rien, un flux bavard rend tout", async () => {
     "<< /Filter /FlateDecode >>", comprime.slice(0, comprime.length - 6),
   )));
   assert.deepEqual(await lignesPdf(tronque), []);
+});
+
+test("un flux comprimé qui finit par un retour à la ligne se lit", async () => {
+  // Les données comprimées peuvent finir par l'octet du retour à la ligne :
+  // ôté avec la fin de ligne qui précède `endstream`, il tronquait le flux, et
+  // la page disparaissait sans bruit. Le premier contenu est celui du test
+  // Python, qui finit par `\n` ; le second finit par `\r`. Ce dernier octet
+  // est celui de la somme Adler-32, qui ne dépend que du contenu : node a beau
+  // comprimer autrement que Python, les deux flux finissent de même.
+  for (const [contenu, fin, lue] of [
+    ["BT /F1 10 Tf 60 700 Td (FLUX 1399) Tj ET", "\n", "FLUX 1399"],
+    ["BT /F1 10 Tf 60 700 Td (FLUX 1699) Tj ET", "\r", "FLUX 1699"],
+  ]) {
+    assert.ok((await comprimer(contenu)).endsWith(fin));
+    const pdf = document(objet(1, await fluxComprime("<< >>", contenu)));
+    assert.deepEqual(await lignesPdf(pdf), [lue]);
+  }
 });
 
 test("chaque objet texte repart de l'origine de la page", async () => {

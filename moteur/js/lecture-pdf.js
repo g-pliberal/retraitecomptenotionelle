@@ -4,8 +4,9 @@
  * Portage de ``scripts/fetch/lecture_pdf.py``, qui fait foi : mêmes fonctions,
  * mêmes expressions régulières, mêmes défauts corrigés — les flux d'objets
  * compressés, les polices à encodage propre, l'échelle de la matrice de texte,
- * le numéro de flux dans la clé de regroupement, le repère de la page et les
- * pages coupées en plusieurs flux. Toute correction apportée d'un
+ * le numéro de flux dans la clé de regroupement, le repère de la page, les
+ * pages coupées en plusieurs flux et le flux comprimé qui finit par un retour
+ * à la ligne. Toute correction apportée d'un
  * côté est à porter de l'autre, et `tests/js/lecture-pdf.test.js` rejoue ici
  * les documents minimaux de `tests/test_lecture_pdf.py`.
  *
@@ -175,7 +176,17 @@ async function lireObjets(octets) {
       flux.set(numero, donnees[1]);
       return;
     }
-    const deplie = await inflater(donnees[1].replace(/^[\r\n]+|[\r\n]+$/g, ""));
+    // LES DONNÉES COMPRIMÉES PEUVENT FINIR PAR UN RETOUR À LA LIGNE, et l'ôter
+    // avec la fin de ligne qui précède « endstream » tronquait le flux : il ne
+    // se dépliait plus, et sa page disparaissait sans bruit — ou sa police,
+    // quand c'était sa table ToUnicode. Le dernier octet est celui de la somme
+    // Adler-32, si bien qu'un flux sur cent trente environ finit ainsi ; le
+    // lecteur de la fabrique perdait de la sorte cinq pages du jaune pensions
+    // du PLF 2027. Le flux se relit donc tel quel quand le premier essai
+    // échoue, ce qui suit sa fin écarté par `inflater` — pourvu qu'il finisse :
+    // un flux tronqué ne rend pas une demi-page.
+    const deplie = await inflater(donnees[1].replace(/^[\r\n]+|[\r\n]+$/g, ""))
+      ?? await inflater(donnees[1].replace(/^[\r\n]+/, ""));
     if (deplie !== null) flux.set(numero, deplie);
   }));
 
