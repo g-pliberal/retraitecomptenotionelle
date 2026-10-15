@@ -250,6 +250,21 @@ def test_une_image_n_est_pas_lue_comme_du_texte():
     assert lignes_pdf(pdf) == ["TEXTE"], lignes_pdf(pdf)
 
 
+def test_le_programme_d_une_police_n_est_pas_lu_comme_du_texte():
+    """Le programme d'une police embarquée contient « Tj » par hasard, entre
+    les noms de ses tables : seuls les flux que les pages désignent, et les
+    formulaires, portent du texte."""
+    programme = b"OS/2 cmap glyf (post) Tj (prep) Tj"
+    pdf = _document(
+        _objet(1, b"<< /Type /Page /Contents 2 0 R /Resources << /Font << /F1 3 0 R >> >> >>"),
+        _objet(2, _flux(b"<< >>", b"BT /F1 10 Tf 70 700 Td (TEXTE) Tj ET")),
+        _objet(3, b"<< /Type /Font /Subtype /TrueType /FontDescriptor 4 0 R >>"),
+        _objet(4, b"<< /Type /FontDescriptor /FontFile2 5 0 R >>"),
+        _objet(5, _flux(b"<< /Length1 %d >>" % len(programme), programme)),
+    )
+    assert lignes_pdf(pdf) == ["TEXTE"], lignes_pdf(pdf)
+
+
 def test_une_police_simple_lit_par_un_octet_quoi_que_declare_sa_table():
     """InDesign écrit <0000> <FFFF> en codespacerange d'une police TrueType
     dont les entrées font un octet ; lue par deux, la page du rapport de

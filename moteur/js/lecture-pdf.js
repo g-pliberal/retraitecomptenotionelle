@@ -707,6 +707,38 @@ function contenusDesPages(objets) {
 }
 
 /**
+ * Les flux qui portent du texte selon la norme : ceux que les pages désignent
+ * par `/Contents`, et les formulaires (`/Subtype /Form`), qu'une page pose par
+ * `Do`. `null` quand rien ne désigne de flux — un PDF fabriqué à la main, ou
+ * dont les pages ne se lisent pas : le document se lit alors comme avant.
+ *
+ * LE LECTEUR LISAIT TOUT FLUX OÙ PARAISSAIT « Tj », les images seules
+ * écartées. Le programme d'une police embarquée en contient par hasard : sur
+ * les 36 documents que la fabrique télécharge, 167 de ces programmes, dans 30
+ * documents, se lisaient comme du texte, et leurs 19 788 fragments ajoutaient
+ * aux documents des lignes de charabia, avec ceux de deux tables des
+ * références, de quatre métadonnées et de six flux d'indications de la
+ * linéarisation.
+ */
+function fluxDeTexte(objets, flux) {
+  const porteurs = new Set();
+  for (const objet of objets.values()) {
+    const contenus = fluxDesContenus(objet, objets);
+    if (contenus) for (const numero of contenus.numeros) if (flux.has(numero)) porteurs.add(numero);
+  }
+  if (!porteurs.size) return null;
+  for (const [numero, objet] of objets) {
+    if (/\/Subtype[ \t\n\r\f\v]*\/Form\b/.test(dictionnaireDuFlux(objet))) porteurs.add(numero);
+  }
+  return porteurs;
+}
+
+/** Le dictionnaire d'un flux, sans ses données ; rien pour un objet sans flux. */
+function dictionnaireDuFlux(objet) {
+  return objet.slice(0, Math.max(objet.indexOf("stream"), 0));
+}
+
+/**
  * Les flux de contenu qu'un objet désigne par `/Contents`, et s'ils forment un
  * tableau, qui se lit bout à bout ; `null` s'il n'en désigne aucun. La norme
  * permet trois formes : un flux, un tableau de flux, ou un objet qui n'est
@@ -746,15 +778,23 @@ async function fragments(octets) {
   const communes = polices(objets, flux);
   const parContenu = policesParContenu(objets, flux);
   const pages = contenusDesPages(objets);
+  const porteurs = fluxDeTexte(objets, flux);
   const lus = new Set();
   const tous = [];
   let page = -1;
   for (const [numero, objet] of objets) {
     page += 1;
-    // Une image JPEG contient « Tj » une fois sur dix, par hasard : on ne la
-    // lit pas comme du texte.
-    const debutFlux = objet.indexOf("stream");
-    if (lus.has(numero) || objet.slice(0, Math.max(debutFlux, 0)).includes("/Image")) continue;
+    // Seuls les flux qui portent du texte se lisent (`fluxDeTexte`) : le
+    // programme d'une police contient « Tj » par hasard.
+    if (lus.has(numero) || (porteurs && !porteurs.has(numero))) continue;
+    // Une image JPEG aussi, une fois sur dix : on ne la lit pas comme du texte.
+    // LE TEST EST TROP LARGE : « /Image » paraît aussi dans le dictionnaire
+    // d'un formulaire dont les ressources nomment une image (« /Image869 »,
+    // « /ImageC »). Sur les 36 documents de la fabrique, 382 formulaires qui
+    // portent du texte — graphiques, tableaux collés depuis Excel — sont ainsi
+    // écartés ; les lire déplace des valeurs de la fabrique, ce qui se mène à
+    // part (action 161, note du 15 octobre 2026 sur les défauts du lecteur).
+    if (dictionnaireDuFlux(objet).includes("/Image")) continue;
     // Les flux d'une même page se lisent ensemble, à la place du premier qu'on
     // rencontre, et dans l'ordre de la page.
     const fluxDePage = pages.get(numero) ?? [numero];
