@@ -12,6 +12,11 @@ relevé de carrière d'info-retraite (2026) a montrés, qui le rendaient page pa
 page du bas vers le haut : le repère retourné de la page, et la page coupée en
 plusieurs flux. Et les tracés d'une page, que la figure 3B du jaune
 pensions du PLF 2027 a demandés : ses barres sont des rectangles peints.
+
+Le lecteur est celui du site, ``moteur/js/lecture-pdf.js``, que ces tests font
+tourner par node à travers le module de la fabrique : ils tiennent à la fois le
+lecteur, le pont et ce que la fabrique garde en Python. Ils sont les seuls ; un
+fichier pour node seul rejouait les mêmes documents, jusqu'à l'action 161.
 """
 
 from __future__ import annotations
@@ -356,12 +361,15 @@ def test_un_flux_comprime_qui_finit_par_un_retour_a_la_ligne_se_lit():
     """Les données compressées peuvent finir par l'octet du retour à la ligne :
     ôté avec la fin de ligne qui précède ``endstream``, il tronquait le flux,
     zlib le refusait, et la page disparaissait sans bruit — cinq pages du
-    jaune pensions du PLF 2027, dont celle de ses tableaux B-20 et B-21. Ce
-    contenu-ci se compresse justement en finissant par ``\\n``."""
-    contenu = b"BT /F1 10 Tf 60 700 Td (FLUX 1399) Tj ET"
-    assert zlib.compress(contenu).endswith(b"\n")
-    pdf = _document(_objet(1, _flux(b"<< >>", contenu, comprimer=True)))
-    assert lignes_pdf(pdf) == ["FLUX 1399"], lignes_pdf(pdf)
+    jaune pensions du PLF 2027, dont celle de ses tableaux B-20 et B-21. Le
+    premier contenu se compresse justement en finissant par ``\\n``, le second
+    par ``\\r`` : ce dernier octet est celui de la somme Adler-32, qui ne dépend
+    que du contenu, et un flux sur cent trente environ finit ainsi."""
+    for contenu, fin, lue in ((b"BT /F1 10 Tf 60 700 Td (FLUX 1399) Tj ET", b"\n", "FLUX 1399"),
+                              (b"BT /F1 10 Tf 60 700 Td (FLUX 1699) Tj ET", b"\r", "FLUX 1699")):
+        assert zlib.compress(contenu).endswith(fin)
+        pdf = _document(_objet(1, _flux(b"<< >>", contenu, comprimer=True)))
+        assert lignes_pdf(pdf) == [lue], lignes_pdf(pdf)
 
 
 def test_un_flux_comprime_tronque_ne_rend_rien():

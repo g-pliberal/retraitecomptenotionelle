@@ -14,8 +14,8 @@
  * polices à encodage propre, l'échelle de la matrice de texte, le numéro de
  * flux dans la clé de regroupement, le repère de la page, les pages coupées en
  * plusieurs flux, le flux comprimé qui finit par un retour à la ligne, les
- * espaces de `str.strip` —, et `tests/test_lecture_pdf.py`, par node, comme
- * `tests/js/lecture-pdf.test.js`, les tiennent. « Le modèle de référence »,
+ * espaces de `str.strip` —, et `tests/test_lecture_pdf.py` les tient, par
+ * node, sur des documents fabriqués à la main. « Le modèle de référence »,
  * dans ce qui suit, est ce lecteur Python, dont celui-ci garde la conduite.
  *
  * Le lecteur est né en Python, pour les barèmes de la CNBF, seule source des
