@@ -9,7 +9,8 @@ sont sur le disque, de deux façons :
   niveau par niveau — objets, flux dépliés, tables des polices, fragments
   positionnés, lignes, lignes par page — avec, pour chaque écart, s'il tient
   à la seule règle des espaces (le Python tient pour espaces ``\\x1c`` à
-  ``\\x1f`` et ``\\x85``, que ``trim`` ignore) ;
+  ``\\x1f`` et ``\\x85``, que ``trim`` ignore), la cause des écarts du
+  premier temps, alignée depuis : aucun écart n'est plus attendu ;
 - **les valeurs** : chaque script de la fabrique qui lit des PDF, lancé avec
   l'un puis l'autre lecteur (``lancer.py``), ses fichiers écrits et sa sortie
   comparés ; et la certification qui lit un PDF (``verifier_donnees``).

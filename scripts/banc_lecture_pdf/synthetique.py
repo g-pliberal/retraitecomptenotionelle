@@ -8,9 +8,11 @@ Outil provisoire, à retirer avec le cœur Python du lecteur (voir
     python -I scripts/banc_lecture_pdf/synthetique.py cibles
     python -I scripts/banc_lecture_pdf/synthetique.py hasard N GRAINE [risque…]
 
-``cibles`` : un document par écart connu entre les deux lecteurs. ``hasard`` :
-N documents tirés au hasard, sans les risques connus sauf ceux que l'on nomme
-(``RISQUES``) ; sans risque, aucun écart n'est attendu.
+``cibles`` : un document par écart que l'analyse a relevé entre les deux
+lecteurs, tous alignés depuis (deuxième partie de l'étape 4) : chacun doit se
+lire pareil. ``hasard`` : N documents tirés au hasard, sans les risques relevés
+sauf ceux que l'on nomme (``RISQUES``) ; aucun écart n'est attendu, avec ou
+sans eux.
 """
 from __future__ import annotations
 
