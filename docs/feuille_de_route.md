@@ -6312,13 +6312,13 @@ de `contribution_etat`.
 
 **Reprise, au 15 octobre 2026.** Faites, les étapes 1 à 3. Pour
 `lecture_pdf.py`, le propriétaire a choisi un lecteur unique, en JavaScript,
-que la fabrique fait tourner par node, en trois temps. Fait, le premier : sur
-36 vrais documents, mêmes objets, flux et tables, une seule cause d'écart, la
-règle des espaces (`\x1c` à `\x1f`, `\x85`), et les mêmes valeurs extraites.
-Reste le deuxième, une session : aligner le JavaScript sur le Python jusqu'à
-`python -I scripts/banc_lecture_pdf/fabrique.py tout` sans écart ; puis le
-troisième. `cycle_de_vie.py` attend l'étape 10 de l'action 138. Détail : la
-note de la première partie de l'étape 4.
+que la fabrique fait tourner par node, en trois temps. Faits, les deux
+premiers : la mesure sur 36 vrais documents, puis l'alignement, sept cas en
+sept commits, jusqu'à aucun écart sur ces documents ni sur les fabriqués.
+Reste le troisième : la fabrique lit par node, sous les deux noms du module,
+puis le cœur Python part, avec `scripts/banc_lecture_pdf/`, valeurs
+identiques. `cycle_de_vie.py` attend l'étape 10 de l'action 138. Détail : les
+notes des deux premières parties de l'étape 4.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
