@@ -218,6 +218,16 @@ def test_un_code_que_cp1252_ne_definit_pas_rend_le_caractere_de_remplacement():
     assert lignes_pdf(pdf) == ["A\ufffdB\ufffdC\ufffdD\ufffdE\ufffdF"], lignes_pdf(pdf)
 
 
+def test_l_insecable_n_est_pas_une_espace_de_la_syntaxe():
+    """Entre deux opérandes, la norme ne compte pour espace ni l'insécable ni
+    aucun octet au-delà de l'ASCII : « 0\xa0700 Td » n'est pas un déplacement,
+    et « HAUT » reste à l'origine, sous « BAS »."""
+    contenu = (b"BT /F1 10 Tf 0 100 Td (BAS) Tj ET "
+               b"BT /F1 10 Tf 0\xa0700 Td (HAUT) Tj ET")
+    pdf = _document(_objet(1, _flux(b"<< >>", contenu)))
+    assert lignes_pdf(pdf) == ["BAS", "HAUT"], lignes_pdf(pdf)
+
+
 def test_une_image_n_est_pas_lue_comme_du_texte():
     """Une image JPEG contient « Tj » par hasard ; elle n'a rien à dire."""
     pdf = _document(

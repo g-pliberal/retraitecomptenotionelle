@@ -218,6 +218,13 @@ test("un code que cp1252 ne définit pas rend le caractère de remplacement", as
   assert.deepEqual(await lignesPdf(pdf), ["A\ufffdB\ufffdC\ufffdD\ufffdE\ufffdF"]);
 });
 
+test("l'insécable n'est pas une espace de la syntaxe", async () => {
+  // `\s` en JavaScript compte l'insécable pour une espace ; la norme non.
+  const contenu = "BT /F1 10 Tf 0 100 Td (BAS) Tj ET BT /F1 10 Tf 0\xa0700 Td (HAUT) Tj ET";
+  const pdf = document(objet(1, flux("<< >>", contenu)));
+  assert.deepEqual(await lignesPdf(pdf), ["BAS", "HAUT"]);
+});
+
 test("une image n'est pas lue comme du texte", async () => {
   const pdf = document(
     objet(1, flux("<< /Type /XObject /Subtype /Image /Width 1 /Height 1 >>",

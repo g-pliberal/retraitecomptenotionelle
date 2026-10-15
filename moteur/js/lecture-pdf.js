@@ -153,8 +153,14 @@ async function inflater(donnees) {
 }
 
 // -- objets et flux ---------------------------------------------------------
+//
+// Les espaces de la syntaxe PDF sont ceux de `\s` sur des octets en Python :
+// l'espace, les tabulations, les fins de ligne et le saut de page. `\s` en
+// JavaScript y ajoute l'insécable, l'octet \xa0, que la norme ne compte pas
+// (ISO 32000-1, § 7.2.3) : les expressions régulières de la syntaxe disent
+// donc leur classe, `[ \t\n\r\f\v]`, plutôt que `\s`.
 
-const OBJET = /(\d+)\s+0\s+obj\b([\s\S]*?)\bendobj/g;
+const OBJET = /(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+obj\b([\s\S]*?)\bendobj/g;
 const DONNEES_DE_FLUX = /stream\r?\n([\s\S]*?)endstream/;
 
 /**
@@ -201,11 +207,11 @@ async function lireObjets(octets) {
   for (const [numero, objet] of [...objets]) {
     if (!objet.includes("/ObjStm")) continue;
     const contenu = flux.get(numero);
-    const nombre = /\/N\s+(\d+)/.exec(objet);
-    const premier = /\/First\s+(\d+)/.exec(objet);
+    const nombre = /\/N[ \t\n\r\f\v]+(\d+)/.exec(objet);
+    const premier = /\/First[ \t\n\r\f\v]+(\d+)/.exec(objet);
     if (!contenu || !nombre || !premier) continue;
     const debut = Number(premier[1]);
-    const tete = contenu.slice(0, debut).split(/\s+/).filter(Boolean).map(Number);
+    const tete = contenu.slice(0, debut).split(/[ \t\n\r\f\v]+/).filter(Boolean).map(Number);
     const paires = [];
     for (let i = 0; i < Math.min(2 * Number(nombre[1]), tete.length - 1); i += 2) {
       paires.push([tete[i], tete[i + 1]]);
@@ -337,14 +343,14 @@ function cmap(contenu) {
   const table = new Table();
   const largeurs = [];
   for (const bloc of contenu.match(/begincodespacerange[\s\S]*?endcodespacerange/g) ?? []) {
-    for (const paire of bloc.match(/<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>/g) ?? []) {
+    for (const paire of bloc.match(/<([0-9A-Fa-f]+)>[ \t\n\r\f\v]*<([0-9A-Fa-f]+)>/g) ?? []) {
       largeurs.push(Math.floor(/<([0-9A-Fa-f]+)>/.exec(paire)[1].length / 2));
     }
   }
   if (largeurs.length) table.largeur = Math.max(...largeurs);
 
   for (const bloc of contenu.match(/beginbfchar[\s\S]*?endbfchar/g) ?? []) {
-    const paires = /<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>/g;
+    const paires = /<([0-9A-Fa-f]+)>[ \t\n\r\f\v]*<([0-9A-Fa-f]+)>/g;
     for (let t = paires.exec(bloc); t; t = paires.exec(bloc)) {
       table.set(parseInt(t[1], 16), deHexa(t[2]));
     }
@@ -380,7 +386,7 @@ function cmap(contenu) {
  * ou par référence à un autre objet. Vide si absent.
  */
 function dictionnaire(objet, cle, objets) {
-  const trouve = new RegExp(`${cle}\\s*(?:(\\d+)\\s+0\\s+R|<<)`).exec(objet);
+  const trouve = new RegExp(`${cle}[ \\t\\n\\r\\f\\v]*(?:(\\d+)[ \\t\\n\\r\\f\\v]+0[ \\t\\n\\r\\f\\v]+R|<<)`).exec(objet);
   if (!trouve) return "";
   if (trouve[1]) return objets.get(Number(trouve[1])) ?? "";
   const debut = trouve.index + trouve[0].length - 2;
@@ -396,7 +402,7 @@ function dictionnaire(objet, cle, objets) {
 }
 
 function tableDe(police, objets, flux) {
-  const trouve = /\/ToUnicode\s+(\d+)\s+0\s+R/.exec(police);
+  const trouve = /\/ToUnicode[ \t\n\r\f\v]+(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R/.exec(police);
   const contenu = trouve ? flux.get(Number(trouve[1])) : null;
   if (!contenu) return null;
   const table = cmap(contenu);
@@ -404,7 +410,7 @@ function tableDe(police, objets, flux) {
   // octet, quoi que déclare le codespacerange de sa table : InDesign y écrit
   // <0000> <FFFF> avec des entrées <64>, et lire par deux rendait le rapport
   // de l'OPEF en lettres perdues. Seule une police Type0 lit par deux.
-  if (!/\/Subtype\s*\/Type0\b/.test(police)) {
+  if (!/\/Subtype[ \t\n\r\f\v]*\/Type0\b/.test(police)) {
     table.largeur = 1;
     // Et ce que sa table ne dit pas, son encodage le dit : un code absent
     // d'une table WinAnsi est la lettre WinAnsi de ce code.
@@ -435,7 +441,7 @@ function policesParContenu(objets, flux) {
     );
     if (!polices) continue;
     const tables = new Map();
-    const references = /\/(\w+)\s+(\d+)\s+0\s+R/g;
+    const references = /\/(\w+)[ \t\n\r\f\v]+(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R/g;
     for (let t = references.exec(polices); t; t = references.exec(polices)) {
       const table = tableDe(objets.get(Number(t[2])) ?? "", objets, flux);
       // Une table vide n'en est pas une : le Python, pour qui elle est fausse,
@@ -443,11 +449,11 @@ function policesParContenu(objets, flux) {
       if (table && table.size) tables.set(t[1], table);
     }
     if (!page) { parContenu.set(numeroObjet, tables); continue; }
-    const contenus = /\/Contents\s*(?:(\d+)\s+0\s+R|\[([^\]]*)\])/.exec(objet);
+    const contenus = /\/Contents[ \t\n\r\f\v]*(?:(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R|\[([^\]]*)\])/.exec(objet);
     if (!contenus) continue;
     const numeros = contenus[1]
       ? [Number(contenus[1])]
-      : [...(contenus[2].match(/(\d+)\s+0\s+R/g) ?? [])].map((r) => Number(/\d+/.exec(r)[0]));
+      : [...(contenus[2].match(/(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R/g) ?? [])].map((r) => Number(/\d+/.exec(r)[0]));
     for (const numero of numeros) parContenu.set(numero, tables);
   }
   return parContenu;
@@ -460,11 +466,11 @@ function policesParContenu(objets, flux) {
 function polices(objets, flux) {
   const tables = new Map();
   for (const objet of objets.values()) {
-    const references = /\/(\w+)\s+(\d+)\s+0\s+R/g;
+    const references = /\/(\w+)[ \t\n\r\f\v]+(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R/g;
     for (let t = references.exec(objet); t; t = references.exec(objet)) {
       const police = objets.get(Number(t[2]));
       if (!police || !police.includes("/Font")) continue;
-      const vers = /\/ToUnicode\s+(\d+)\s+0\s+R/.exec(police);
+      const vers = /\/ToUnicode[ \t\n\r\f\v]+(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R/.exec(police);
       if (!vers) continue;
       const contenu = flux.get(Number(vers[1]));
       if (contenu) tables.set(t[1], cmap(contenu));
@@ -533,21 +539,21 @@ const JETONS = new RegExp([
   // page partait vers le haut à chaque ligne, et le document sortait à
   // l'envers, une ligne par fragment.
   "(?<bt>\\bBT\\b)",
-  "(?<tm>[-\\d.]+\\s+[-\\d.]+\\s+[-\\d.]+\\s+[-\\d.]+\\s+[-\\d.]+\\s+[-\\d.]+\\s+Tm)",
+  "(?<tm>[-\\d.]+[ \\t\\n\\r\\f\\v]+[-\\d.]+[ \\t\\n\\r\\f\\v]+[-\\d.]+[ \\t\\n\\r\\f\\v]+[-\\d.]+[ \\t\\n\\r\\f\\v]+[-\\d.]+[ \\t\\n\\r\\f\\v]+[-\\d.]+[ \\t\\n\\r\\f\\v]+Tm)",
   // Le repère de la page : ``cm`` le compose, ``q`` le sauve, ``Q`` le rend.
-  "(?<cm>[-\\d.]+\\s+[-\\d.]+\\s+[-\\d.]+\\s+[-\\d.]+\\s+[-\\d.]+\\s+[-\\d.]+\\s+cm)",
+  "(?<cm>[-\\d.]+[ \\t\\n\\r\\f\\v]+[-\\d.]+[ \\t\\n\\r\\f\\v]+[-\\d.]+[ \\t\\n\\r\\f\\v]+[-\\d.]+[ \\t\\n\\r\\f\\v]+[-\\d.]+[ \\t\\n\\r\\f\\v]+[-\\d.]+[ \\t\\n\\r\\f\\v]+cm)",
   "(?<sauve>\\bq\\b)",
   "(?<rend>\\bQ\\b)",
-  "(?<td>[-\\d.]+\\s+[-\\d.]+\\s+T[dD])",
-  "(?<tl>[-\\d.]+\\s+TL)",
+  "(?<td>[-\\d.]+[ \\t\\n\\r\\f\\v]+[-\\d.]+[ \\t\\n\\r\\f\\v]+T[dD])",
+  "(?<tl>[-\\d.]+[ \\t\\n\\r\\f\\v]+TL)",
   "(?<etoile>T\\*)",
-  "(?<retour>[)\\]]\\s*['\"])",
-  "(?<tf>/(?<nomPolice>\\w+)\\s+[-\\d.]+\\s+Tf)",
+  "(?<retour>[)\\]][ \\t\\n\\r\\f\\v]*['\"])",
+  "(?<tf>/(?<nomPolice>\\w+)[ \\t\\n\\r\\f\\v]+[-\\d.]+[ \\t\\n\\r\\f\\v]+Tf)",
   // Un dictionnaire en ligne — les propriétés d'un contenu balisé, « /Span
   // <</Lang (en-US)>> BDC » — porte des chaînes qui ne sont pas du texte : on
   // le saute d'un bloc, sinon « en-US » s'imprime entre chaque cellule.
   "(?<dict><<[\\s\\S]*?>>)",
-  "(?<hex><[0-9A-Fa-f\\s]+>)",
+  "(?<hex><[0-9A-Fa-f \\t\\n\\r\\f\\v]+>)",
   "(?<txt>\\((?:[^()\\\\]|\\\\[\\s\\S])*\\))",
   // Les crochets d'un tableau ``TJ`` et les nombres qu'il intercale entre ses
   // chaînes : un recul de plus d'un cinquième de cadratin est une espace que le
@@ -571,7 +577,7 @@ const ESPACE_DE_TABLEAU = -180.0;
  */
 function reels(operandes) {
   const valeurs = [];
-  for (const jeton of operandes.trim().split(/\s+/)) {
+  for (const jeton of operandes.split(/[ \t\n\r\f\v]+/).filter(Boolean)) {
     if (!/^[-+]?(\d+\.?\d*|\.\d+)$/.test(jeton)) break;
     valeurs.push(Number(jeton));
   }
@@ -624,9 +630,9 @@ function position(matrice, repere) {
 function contenusDesPages(objets) {
   const pages = new Map();
   for (const objet of objets.values()) {
-    const tableau = /\/Contents\s*\[([^\]]*)\]/.exec(objet);
+    const tableau = /\/Contents[ \t\n\r\f\v]*\[([^\]]*)\]/.exec(objet);
     if (!tableau) continue;
-    const numeros = [...tableau[1].matchAll(/(\d+)\s+0\s+R/g)].map((t) => Number(t[1]));
+    const numeros = [...tableau[1].matchAll(/(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R/g)].map((t) => Number(t[1]));
     for (const numero of numeros) if (!pages.has(numero)) pages.set(numero, numeros);
   }
   return pages;
