@@ -6313,12 +6313,12 @@ de `contribution_etat`.
 **Reprise, au 15 octobre 2026.** Faites, les étapes 1 à 3 (la carte, la note
 de décision 0003, le pilote : le lecteur du relevé en JavaScript seul).
 L'étape 4 attend le choix du propriétaire pour `scripts/fetch/lecture_pdf.py`,
-analysé le 15 : relu, confronté sur 20 000 PDF fabriqués, aucun écart hors de
-huit cas relevés. Le site en a un défaut : `lecture-pdf.js` perd un flux
-compressé qui finit par un retour à la ligne (0,74 % des flux), corrigé le 14
-dans le Python seul (action 159) ; à corriger quel que soit le choix. Choix :
-un lecteur, en JavaScript, que la fabrique fait tourner par node, ou deux,
-tenus par un corpus commun. `cycle_de_vie.py` attend l'étape 10 de l'action 138.
+analysé le 15 : relu, confronté sur 20 000 PDF fabriqués, sans écart hors de
+sept cas relevés. Le plus grave est corrigé (1f18f72) : `lecture-pdf.js`
+perdait un flux compressé qui finit par un retour à la ligne (0,74 % des
+flux), que le Python lit depuis le 14 (action 159). Choix : un lecteur, en
+JavaScript, que la fabrique fait tourner par node, ou deux, tenus par un
+corpus commun. `cycle_de_vie.py` attend l'étape 10 de l'action 138.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
