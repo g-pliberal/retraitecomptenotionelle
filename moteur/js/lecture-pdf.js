@@ -15,19 +15,69 @@
  * flux dans la clé de regroupement, le repère de la page, les pages coupées en
  * plusieurs flux, le flux comprimé qui finit par un retour à la ligne, les
  * espaces de `str.strip` —, et `tests/test_lecture_pdf.py`, par node, comme
- * `tests/js/lecture-pdf.test.js`, les tiennent.
+ * `tests/js/lecture-pdf.test.js`, les tiennent. « Le modèle de référence »,
+ * dans ce qui suit, est ce lecteur Python, dont celui-ci garde la conduite.
  *
- * Deux écarts, et deux seulement, imposés par le navigateur :
+ * Le lecteur est né en Python, pour les barèmes de la CNBF, seule source des
+ * valeurs du point des avocats, sans rien d'autre que la bibliothèque standard.
+ * Deux difficultés, toutes deux rencontrées sur ces barèmes :
+ *
+ * 1. **Les colonnes.** L'étiquette et sa valeur ne se suivent pas dans l'ordre
+ *    du flux : elles partagent une ligne à l'écran. On reconstitue donc la mise
+ *    en page à partir des opérateurs de position (`Td`, `TD`, `Tm`).
+ * 2. **Les polices à encodage propre.** Les nombres qui comptent — valeur de
+ *    service, coût d'acquisition du point — sont écrits avec une police Type0
+ *    « Identity-H », où chaque caractère est un numéro de glyphe et non une
+ *    lettre. Sans la table `/ToUnicode` de la police, ils sortent en charabia,
+ *    ou pas du tout. C'est exactement ce qui masquait les valeurs cherchées.
+ *
+ * Deux autres, rencontrées sur le jaune budgétaire des pensions (PLF 2026), qui
+ * rendaient tout le document en lettres décalées — « 5DSSRUW » pour
+ * « Rapport » :
+ *
+ * 3. **Les flux d'objets.** Un PDF 1.5 et plus range ses dictionnaires — pages,
+ *    polices, ressources — dans des flux `/ObjStm` compressés, où `N 0 obj`
+ *    n'apparaît plus. Un lecteur qui ne les déplie pas ne voit aucune police,
+ *    donc aucune table, et lit tout en latin-1.
+ * 4. **Les chaînes littérales à encodage propre.** Une police TrueType
+ *    sous-ensemble numérote ses glyphes dans l'ordre d'apparition — `\001`
+ *    pour le premier caractère écrit, `\002` pour le deuxième — et les pose en
+ *    chaînes `(…)` à un octet par code, non en hexadécimal. La table
+ *    `/ToUnicode` vaut pour elles aussi, avec la largeur de code que son
+ *    `codespacerange` déclare : un octet ici, deux pour une police Type0.
+ *
+ * Deux dernières, rencontrées sur le relevé de carrière qu'info-retraite
+ * délivre en 2026, dont chaque page sortait du bas vers le haut :
+ *
+ * 5. **Le repère de la page.** `cm` compose la matrice courante, que `q` sauve
+ *    et `Q` rend : elle place tout ce que la page écrit. Ce relevé ouvre chaque
+ *    page par « 0.05 0 0 -0.05 0 841.9 cm » — des vingtièmes de point,
+ *    l'origine en haut de la feuille et l'axe vertical RETOURNÉ —, si bien que
+ *    ses ordonnées croissent vers le bas. On range donc les fragments par leur
+ *    position sur la feuille, la matrice de texte composée avec ce repère.
+ * 6. **Une page en plusieurs flux.** Une page peut poser `/Contents` en
+ *    tableau ; ses flux se lisent alors bout à bout, comme un seul, et un
+ *    opérateur commencé dans l'un s'achève dans le suivant. Le même relevé coupe
+ *    ainsi ses deux premières pages : le repère dans un flux, une `Tm` à la fin
+ *    du deuxième, la chaîne qu'elle place au début du troisième.
+ *
+ * Et les tracés, que le jaune pensions du PLF 2027 a demandés : sa figure 3B
+ * décompose les crédits de dix-sept ministères sans imprimer une valeur, mais
+ * ses barres sont des rectangles peints, dont les longueurs sont les parts.
+ * `aplats_de_page` les lit, en Python, dans le contenu de page que
+ * `contenuDeLaPage` lui rend.
+ *
+ * Deux choix, et deux seulement, tiennent au navigateur :
  *
  * 1. **La décompression est asynchrone.** `zlib.decompress` n'a pas
  *    d'équivalent synchrone en JavaScript ; `DecompressionStream("deflate")`
  *    en tient lieu, et il rend une promesse. Les flux sont donc TOUS dépliés
  *    d'abord, en une passe, et le reste de la lecture se fait ensuite sans
- *    attendre : la structure du module Python est conservée, seul son point
- *    d'entrée devient `async`.
+ *    attendre : la structure du lecteur Python d'origine est conservée, seul
+ *    son point d'entrée devient `async`.
  * 2. **Les octets sont portés par une chaîne latin-1**, un caractère par
  *    octet. C'est ce qui permet de reprendre mot pour mot les expressions
- *    régulières binaires du modèle de référence, que JavaScript ne sait pas
+ *    régulières binaires du lecteur Python d'origine, que JavaScript ne sait pas
  *    appliquer à un `Uint8Array`.
  *
  * Le fichier n'est lu que dans la page : rien n'est envoyé nulle part, et le
@@ -304,8 +354,10 @@ const JETON_CMAP = /<([0-9A-Fa-f]+)>|([[\]])/g;
  * norme, et un lecteur qui ne la connaît pas se trompe sur tout le document.
  *
  * Une expression régulière qui cherchait trois hexadécimaux d'affilée ignorait
- * les crochets et lisait À CHEVAL sur les entrées : de proche en proche, TOUTE
- * la table se décalait. Le document sortait en lettres fausses — et ses
+ * les crochets et lisait À CHEVAL sur les entrées : la première destination du
+ * tableau devenait la destination de toute la plage, les deux suivantes se
+ * recollaient à l'entrée d'après, et de proche en proche TOUTE la table se
+ * décalait. Le document sortait en lettres fausses — et ses
  * chiffres, tombés sur des codes de contrôle, ne sortaient pas du tout.
  */
 function plagesDe(bloc) {
@@ -433,7 +485,9 @@ function tableDe(police, objets, flux) {
  * l'autre dès qu'un producteur sous-ensemble ses polices par page, ce que Word
  * fait : chaque page a son ``/TT0`` et sa table. Une table unique par nom, la
  * dernière rencontrée, traduisait donc chaque page avec les codes d'une autre —
- * et c'est ce qui rendait le jaune budgétaire en lettres décalées.
+ * et c'est ce qui rendait le jaune budgétaire en lettres décalées. On lit donc,
+ * page par page, ``/Resources`` puis ``/Font``, et l'on rattache la table au
+ * numéro du flux ``/Contents``.
  */
 function policesParContenu(objets, flux) {
   const parContenu = new Map();
@@ -541,7 +595,7 @@ const JETONS = new RegExp([
   // ``BT`` ouvre un objet texte, et la norme y remet la matrice de texte à
   // l'identité : les ``Td`` qui suivent partent de l'origine de la page, et non
   // du curseur laissé par l'objet précédent. Sans ce jeton, un producteur qui
-  // ouvre un ``BT`` par ligne — et c'est le cas des relevés de carrière que le
+  // ouvre un ``BT`` par ligne — ReportLab, et les relevés de carrière que le
   // site reçoit — voyait ses ordonnées s'ADDITIONNER d'un bloc au suivant : la
   // page partait vers le haut à chaque ligne, et le document sortait à
   // l'envers, une ligne par fragment.
@@ -555,6 +609,10 @@ const JETONS = new RegExp([
   "(?<tl>[-\\d.]+[ \\t\\n\\r\\f\\v]+TL)",
   "(?<etoile>T\\*)",
   "(?<retour>[)\\]][ \\t\\n\\r\\f\\v]*['\"])",
+  // Le nom de la police est un groupe NOMMÉ. Le Python le prenait d'abord par un
+  // rang écrit en dur — 9 —, qui désignait un autre groupe : le nom restait
+  // vide, aucune table ToUnicode ne s'appliquait aux chaînes, et le charabia
+  // « 5DSSRUW » venait de là autant que du reste.
   "(?<tf>/(?<nomPolice>\\w+)[ \\t\\n\\r\\f\\v]+[-\\d.]+[ \\t\\n\\r\\f\\v]+Tf)",
   // Un dictionnaire en ligne — les propriétés d'un contenu balisé, « /Span
   // <</Lang (en-US)>> BDC » — porte des chaînes qui ne sont pas du texte : on
@@ -578,7 +636,9 @@ const ESPACE_DE_TABLEAU = -180.0;
  *
  * On s'arrête au premier jeton qui n'est pas un nombre, ce qui laisse de côté
  * le nom de l'opérateur et, surtout, l'opérande réduit à « - » que certains
- * producteurs émettent. On ne devine jamais la valeur manquante — la mettre à
+ * producteurs émettent : un nombre qu'on lisait sans le vérifier levait, et
+ * TOUT le rapport devenait illisible — c'est ce qui fermait celui de 1995 à la
+ * CCSS, vingt méga-octets pourtant lisibles par ailleurs. On ne devine jamais la valeur manquante — la mettre à
  * zéro déplacerait le texte sans prévenir : c'est à l'appelant de vérifier
  * qu'il en a assez, et de SAUTER l'opérateur sinon.
  */
@@ -607,8 +667,10 @@ function composer(m, n) {
 }
 
 /**
- * ``tx ty Td`` : l'origine avance de (tx, ty) dans le repère du texte, qui
- * porte l'échelle et, pour un texte tourné, la direction.
+ * ``tx ty Td`` : l'origine avance de (tx, ty) dans le repère du texte. C'est ce
+ * repère qui porte l'échelle — « 9 0 0 9 82.97 723.62 Tm » place le curseur ET
+ * multiplie par neuf tout ce qui suit — et, pour un texte tourné, la direction :
+ * un `Td` y avance le long des glyphes, non le long des axes de la page.
  */
 function decaler(matrice, tx, ty) {
   const [a, b, c, d, e, f] = matrice;
@@ -632,7 +694,10 @@ function position(matrice, repere) {
 /**
  * Pour chaque flux d'une page qui en pose plusieurs, tous ceux de la page :
  * ``/Contents [15 0 R 21 0 R]`` se lit bout à bout, comme un seul flux, et la
- * norme permet de couper un opérateur entre deux.
+ * norme permet de couper un opérateur entre deux. Lus chacun pour soi, le repère
+ * posé dans le premier ne valait plus pour les suivants, et la première chaîne
+ * de chaque flux tombait à l'origine de la page, sa `Tm` restée dans le flux
+ * d'avant.
  */
 function contenusDesPages(objets) {
   const pages = new Map();
@@ -651,7 +716,13 @@ function contenusDesPages(objets) {
  * LE NUMÉRO DE FLUX FAIT PARTIE DE LA CLÉ, et c'est tout sauf un détail.
  * Chaque page d'un PDF a son propre repère : l'ordonnée 700 y désigne le même
  * endroit de la feuille, page 1 comme page 60. Regrouper les fragments sur la
- * seule ordonnée collait bout à bout la ligne du haut de CHAQUE page.
+ * seule ordonnée collait bout à bout la ligne du haut de CHAQUE page — un titre
+ * de la page 1 suivi d'un chiffre de la page 40 et d'une note de la page 97,
+ * dans une même chaîne. Sur un document d'une page le défaut ne se voit pas.
+ * Sur la chronologie de la CARMF, cent pages de tableaux, il rendait huit
+ * lignes pour cent quatre-vingt mille caractères, et l'on en concluait que la
+ * mise en page « ne se reconstituait pas ». Elle se reconstitue très bien :
+ * c'est le lecteur qui empilait les pages.
  */
 async function fragments(octets) {
   const { objets, flux } = await lireObjets(octets);
@@ -679,8 +750,10 @@ async function fragments(octets) {
     // multiplie par neuf tout ce qui suit. Les décalages `Td` qui viennent
     // ensuite sont exprimés dans CE repère, pas en points de la page. Les
     // additionner tels quels écrasait les interlignes d'un facteur neuf, et
-    // fondait en une seule des lignes distantes de quatorze points. La matrice
-    // de ligne se garde donc entière, et chaque `Td` s'y applique.
+    // fondait en une seule des lignes distantes de quatorze points : c'est ce qui
+    // rendait illisibles les tableaux de la chronologie de la CARMF, trente-six
+    // lignes ramenées à quatre. La matrice de ligne se garde donc entière, et
+    // chaque `Td` s'y applique.
     let matrice = IDENTITE;
     // LE REPÈRE DE LA PAGE, que `cm` compose et que `q` et `Q` sauvent et
     // rendent. Le relevé de carrière d'info-retraite retourne l'axe vertical et
@@ -807,7 +880,9 @@ function assembler(tous, tolerance) {
       // DEUX FRAGMENTS POSÉS À DES ABSCISSES DIFFÉRENTES SONT SÉPARÉS PAR UNE
       // ESPACE. Word n'écrit pas les espaces d'un tableau : il pose chaque
       // cellule, et souvent chaque mot, par son propre ``Tm``. Les coller
-      // rendait « 4 929 5 002 » comme « 49295002 » — un nombre qui n'existe
+      // rendait « Prise en charge de cotisations » comme
+      // « Priseenchargedecotisations », et surtout « 4 929 5 002 » comme
+      // « 49295002 » — un nombre qui n'existe
       // pas. Les glyphes d'un même tableau ``TJ``, eux, gardent la même
       // abscisse et restent collés : « 2023 » ne devient pas « 2 0 2 3 ».
       if (memeLigne && abscisse !== null && Math.abs(x - abscisse) > 0.01) {
