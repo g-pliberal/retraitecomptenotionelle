@@ -1,7 +1,9 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: c8b6d238277f6793b6f16e6b33e9c1ba8c6957e9
-date: 2026-10-14T19:32:53Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38623481877
+etat: rouge
+sources: c90a032d5fa61543314f57ac4438a1575fadc232
+date: 2026-10-15T00:04:46Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38656349274
+echecs:
+  - "FAILED tests/test_niveaux.py::test_chaque_exception_vise_un_test_qui_existe - AssertionError: [('test_releve_lu.py', 'test_le_portage_javascript_lit_les_memes_releves')] : ces exceptions ne visent plus aucun test"
 presomptions: vert
