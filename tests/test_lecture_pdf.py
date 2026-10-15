@@ -230,6 +230,16 @@ def test_un_code_que_cp1252_ne_definit_pas_rend_le_caractere_de_remplacement():
     assert lignes_pdf(pdf) == ["A\ufffdB\ufffdC\ufffdD\ufffdE\ufffdF"], lignes_pdf(pdf)
 
 
+def test_la_derniere_ligne_garde_ses_insecables():
+    """La dernière ligne se normalise comme les autres : ses insécables restent
+    insécables, sans quoi « 1 339 945 1 654 » ne s'y découpe plus en deux
+    nombres."""
+    contenu = (b"BT /F1 10 Tf 70 700 Td (1\\240339\\240945 1\\240654) Tj "
+               b"0 -20 Td (1\\240339\\240945 1\\240654) Tj ET")
+    pdf = _document(_objet(1, _flux(b"<< >>", contenu)))
+    attendu = "1\u00a0339\u00a0945 1\u00a0654"
+    assert lignes_pdf(pdf) == [attendu, attendu], lignes_pdf(pdf)
+
 def test_l_insecable_n_est_pas_une_espace_de_la_syntaxe():
     """Entre deux opérandes, la norme ne compte pour espace ni l'insécable ni
     aucun octet au-delà de l'ASCII : « 0\xa0700 Td » n'est pas un déplacement,

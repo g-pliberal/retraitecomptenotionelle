@@ -902,7 +902,6 @@ async function fragments(octets) {
  * autrement, à 119 chaînes près.
  */
 const ESPACES = "\\t-\\r\\x1c-\\x20\\x85\\xa0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000";
-const SUITE_D_ESPACES = new RegExp(`[${ESPACES}]+`, "g");
 const BORDS = new RegExp(`^[${ESPACES}]+|[${ESPACES}]+$`, "g");
 
 /** `str.strip()` : le texte sans les espaces du modèle de référence à ses bouts. */
@@ -953,7 +952,12 @@ function assembler(tous, tolerance) {
     ordonnee = y; feuille = [page, bande]; abscisse = x;
   }
   if (courante.length) {
-    lignes.push(ebarber(courante.join("").replace(SUITE_D_ESPACES, " ")));
+    // LA DERNIÈRE LIGNE SE NORMALISE COMME LES AUTRES. Le modèle de référence
+    // la rendait par `re.sub(r"\s+", " ", …).strip()`, qui fond aussi les
+    // insécables en espaces : la dernière ligne d'un document, et celle de
+    // chaque page, perdait la différence entre les milliers d'un nombre et les
+    // cellules d'un tableau, et « 1 339 945 1 654 » ne s'y découpait plus.
+    lignes.push(normaliser(courante.join("")));
   }
   return lignes.filter((ligne) => ligne);
 }
