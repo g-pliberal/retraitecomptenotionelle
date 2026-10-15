@@ -59,7 +59,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 import ccss_transferts_retraite as CCSS  # noqa: E402
-from lecture_pdf import lignes_par_page, lignes_pdf  # noqa: E402
+from lecture_pdf import pages_et_formulaires  # noqa: E402
 
 SORTIE = Path("data/brut/ccss_regimes.json")
 CACHE = Path("data/brut/ccss_rapports")
@@ -296,16 +296,103 @@ def _entete(lignes: list[str], rang: int) -> tuple[int, list] | None:
     return None
 
 
+#: « 2 015 » pour 2015 : la mise en page coupe parfois une année d'en-tête.
+ANNEE_COUPEE = re.compile(r"\b2 0(\d\d)\b")
+#: Ce qui fait d'un tableau un tableau de données générales : des effectifs.
+EFFECTIFS = re.compile(r"cotisant|b[ée]n[ée]ficiaire|effectif|assur[ée]s|pensionn", re.I)
+
+
+def _en_tete(ligne: str) -> list | None:
+    """Les colonnes d'une ligne d'en-tête de formulaire, ses années remises dans
+    l'ordre ; ``None`` si la ligne n'en est pas une.
+
+    Une ligne d'en-tête porte au moins trois années, toutes différentes, et rien
+    d'autre de chiffré — ce qui écarte une note de bas de page qui cite trois
+    fois 2017 (voir :func:`_entete`). LA LECTURE DÉSORDONNE PARFOIS L'EN-TÊTE
+    D'UN FORMULAIRE, quand une cellule est posée un peu plus haut que ses
+    voisines : la fiche de l'ENIM de 2018 s'ouvre sur « % 2017 % 2018 (p) %
+    2019 (p) % 2016 », quand ses lignes, elles, vont de 2016 à 2019 — leurs
+    taux d'évolution le disent. Les années se remettent donc dans l'ordre.
+    """
+    ligne = ANNEE_COUPEE.sub(r"20\1", ligne)
+    colonnes = CCSS._colonnes(ligne)
+    annees = [c for c in colonnes if c is not None]
+    if len(annees) < 3 or len({a for a, _ in annees}) != len(annees):
+        return None
+    if re.search(r"\d", CCSS.COLONNE.sub("", ligne)):
+        return None
+    return sorted(annees) + [None] * (len(colonnes) - len(annees))
+
+
+def _tableau_du_formulaire(forme: list[str]) -> tuple[int, list] | None:
+    """L'en-tête d'un formulaire de données générales : une ligne d'années dans
+    ses trois premières, et des effectifs dans les suivantes ; ``None`` sinon."""
+    for j, ligne in enumerate(forme[:3]):
+        colonnes = _en_tete(ligne)
+        if colonnes is not None:
+            if any(EFFECTIFS.search(l) for l in forme[j + 1:j + 12]):
+                return j, colonnes
+            return None
+    return None
+
+
+#: Un montant positif écrit par groupes de trois chiffres : « 157 784 ».
+GROUPES = re.compile(r"^\d{1,3}(?: \d{3})+$")
+
+
+def _valeurs(ligne: str, libelle: str, colonnes: list) -> dict[int, float] | None:
+    """Les montants d'une ligne, année par année (``CCSS._valeurs``), et ceux
+    d'une ligne dont les montants se suivent sans taux entre eux.
+
+    « 6,2 5,2 5,1 5,1 Bénéficiaires vieillesse 157 784 166 049 174 544 183 494 » :
+    les groupes de trois chiffres se suivent, la lecture par groupes y voit un
+    seul nombre et renonce, et la lecture chiffre par chiffre rend 157, 784,
+    166 et 49. Quand les montants lus par groupes sont moins nombreux que les
+    années, et que leurs groupes se partagent également entre elles — huit
+    groupes pour quatre années —, on les partage ainsi : 157 784, 166 049…
+    """
+    annees = [c for c in colonnes if c is not None]
+    taux = sum(1 for c in colonnes if c is None)
+    montants: list[list[str]] = []
+    evolutions = 0
+    for jeton in CCSS.JETONS_GROUPES.findall(ligne.replace(libelle, " ")):
+        if jeton in CCSS.CELLULES_VIDES:
+            continue
+        if CCSS._est_taux(jeton):
+            evolutions += 1
+        elif GROUPES.match(jeton):
+            montants.append(jeton.split(" "))
+        else:
+            return CCSS._valeurs(ligne, libelle, colonnes)
+    total = sum(len(m) for m in montants)
+    if 0 < len(montants) < len(annees) and evolutions >= taux - 1 and total % len(annees) == 0:
+        par_montant = total // len(annees)
+        if par_montant > 1 and all(len(m) % par_montant == 0 for m in montants):
+            groupes = [g for m in montants for g in m]
+            return {annee: float("".join(groupes[k * par_montant:(k + 1) * par_montant]))
+                    for k, (annee, _) in enumerate(annees)}
+    return CCSS._valeurs(ligne, libelle, colonnes)
+
+
 def lire_tableau(lignes: list[str], depart: int, colonnes: list) -> dict[str, dict[int, float]]:
-    """Les lignes chiffrées qui suivent l'en-tête, jusqu'au tableau suivant."""
+    """Les lignes chiffrées qui suivent l'en-tête, jusqu'au tableau suivant.
+
+    UN TABLEAU FINIT OÙ UN AUTRE COMMENCE : au titre « Données générales »
+    suivant, ou à la ligne d'années qui ouvre un autre tableau. Sans cette
+    seconde borne, la lecture passait du tableau des données générales de la
+    MSA salariés à celui de sa branche vieillesse, qui s'ouvre sur les mêmes
+    années et porte le même intitulé, « CHARGES NETTES (hors transfert
+    d'équilibrage) » : les charges de 2016, toutes branches, devenaient celles
+    de la seule vieillesse, 5 884 M€ pour 11 345.
+    """
     valeurs: dict[str, dict[int, float]] = {}
     for ligne in lignes[depart + 1:depart + 60]:
-        if TABLEAU.search(ligne):
+        if TABLEAU.search(ligne) or (valeurs and _en_tete(ligne) is not None):
             break
         libelle = CCSS._libelle(ligne).strip()
         if len(libelle) < LIBELLE_MINIMUM:
             continue
-        lus = CCSS._valeurs(ligne, libelle, colonnes)
+        lus = _valeurs(ligne, libelle, colonnes)
         if lus:
             valeurs.setdefault(_replie(libelle), {}).update(lus)
     return valeurs
@@ -321,34 +408,58 @@ def lire_rapport(annee_rapport: int, octets: bytes) -> tuple[dict, int]:
 
     Rend aussi le nombre de tableaux qu'on a vus sans savoir à quel régime les
     rattacher : c'est la mesure de ce que la mise en page de l'époque refuse.
+
+    LES CHIFFRES D'UN TABLEAU SONT LE PLUS SOUVENT DANS UN FORMULAIRE, collé
+    depuis Excel, que la page pose et que le lecteur lit comme une page à lui :
+    la page porte le titre, le formulaire les lignes. On les cherchait au
+    voisinage du titre, dans l'ordre du fichier, qui ne dit rien de la page
+    qui pose un formulaire — le rapport de 2023 range ceux d'une fiche AVANT sa
+    page, si bien que la CNAVPL y lisait les effectifs des autres régimes, et
+    les trois tableaux des régimes complémentaires d'une même page se lisaient
+    tous à partir du premier. Le lecteur dit désormais quels formulaires chaque
+    page pose (``pages_et_formulaires``) : le k-ième titre « Données
+    générales » d'une page lit le k-ième de ses formulaires de données
+    générales, et lui seul. Un tableau écrit dans la page même se lit comme
+    avant, au voisinage du titre, dans les pages qui ne sont pas des
+    formulaires.
     """
-    pages = lignes_par_page(octets)
-    titres = sommaire([l for page in pages for l in page])
+    pages, formulaires = pages_et_formulaires(octets)
+    poses = {f for liste in formulaires for f in liste}
+    titres = sommaire([l for j, page in enumerate(pages) if j not in poses for l in page])
     trouves: dict[tuple[str, str, str], dict[str, dict[int, float]]] = {}
     orphelins = 0
     for numero, page in enumerate(pages):
-        if not any(TABLEAU.search(l) for l in page):
+        if numero in poses or not any(TABLEAU.search(l) for l in page):
             continue
         fiche = _fiche_de_la_page(page)
         regime = titres.get(fiche or "")
         code = canonique(regime) if regime else None
+        tableaux = [(pages[f], tete) for f in formulaires[numero]
+                    if (tete := _tableau_du_formulaire(pages[f])) is not None]
         # La fenêtre déborde sur DEUX pages : un tableau annoncé en bas d'une
         # page a son en-tête sur la suivante et ses dernières lignes sur celle
         # d'après. S'arrêter à une seule page voisine faisait tomber le rapport
         # de 2026 de 407 valeurs à 107.
-        suite = page + [l for autre in pages[numero + 1:numero + 3] for l in autre]
+        voisines = [autre for j, autre in enumerate(pages[numero + 1:], numero + 1) if j not in poses][:2]
+        suite = page + [l for autre in voisines for l in autre]
+        rang_du_titre = 0
         for i, ligne in enumerate(page):
             if not TABLEAU.search(ligne):
                 continue
             if code is None:
                 orphelins += 1
                 continue
-            tete = _entete(suite, i)
+            if rang_du_titre < len(tableaux):
+                source, tete = tableaux[rang_du_titre]
+            else:
+                source = suite
+                tete = _entete(suite, i)
+            rang_du_titre += 1
             if tete is None:
                 continue
             rang, colonnes = tete
             tableau = _cle_tableau(ligne)
-            for libelle, annees in lire_tableau(suite, rang, colonnes).items():
+            for libelle, annees in lire_tableau(source, rang, colonnes).items():
                 cible = trouves.setdefault((code, regime, tableau), {}).setdefault(libelle, {})
                 for a, v in annees.items():
                     if a < annee_rapport:      # jamais une prévision
