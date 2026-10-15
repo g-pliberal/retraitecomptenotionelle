@@ -208,6 +208,16 @@ test("une table vide se lit comme aucune table", async () => {
   assert.deepEqual(await lignesPdf(pdf), ["Café 5"]);
 });
 
+test("un code que cp1252 ne définit pas rend le caractère de remplacement", async () => {
+  const pdf = document(
+    objet(1, "<< /Type /Page /Resources << /Font << /F1 2 0 R >> >> /Contents 4 0 R >>"),
+    objet(2, "<< /Type /Font /Subtype /TrueType /Encoding /WinAnsiEncoding /ToUnicode 3 0 R >>"),
+    objet(3, flux("<< >>", cmap(1, { 0x41: "A" }))),
+    objet(4, flux("<< >>", "BT /F1 10 Tf 70 700 Td (A\\201B\\215C\\217D\\220E\\235F) Tj ET")),
+  );
+  assert.deepEqual(await lignesPdf(pdf), ["A\ufffdB\ufffdC\ufffdD\ufffdE\ufffdF"]);
+});
+
 test("une image n'est pas lue comme du texte", async () => {
   const pdf = document(
     objet(1, flux("<< /Type /XObject /Subtype /Image /Width 1 /Height 1 >>",

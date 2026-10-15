@@ -54,6 +54,12 @@ const CP1252 = {
   0x9C: "œ", 0x9E: "ž", 0x9F: "Ÿ",
 };
 
+/**
+ * Les cinq octets que cp1252 ne définit pas : le décodeur du modèle de
+ * référence, `errors="replace"`, les rend « \ufffd ».
+ */
+const INDEFINIS_CP1252 = new Set([0x81, 0x8D, 0x8F, 0x90, 0x9D]);
+
 /** Les octets d'un fichier, portés par une chaîne d'un caractère par octet. */
 export function enChaine(octets) {
   const morceaux = [];
@@ -489,7 +495,8 @@ function litteral(brut, table) {
     }
     if (table.has(code)) { sortie += table.get(code); continue; }
     if (table.repli === "cp1252" && largeur === 1) {
-      sortie += CP1252[code] ?? String.fromCharCode(code);
+      sortie += CP1252[code]
+        ?? (INDEFINIS_CP1252.has(code) ? "\ufffd" : String.fromCharCode(code));
       continue;
     }
     if (code >= 32 && code < 127) sortie += String.fromCharCode(code);

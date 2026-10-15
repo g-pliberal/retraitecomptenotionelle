@@ -203,6 +203,21 @@ def test_une_table_vide_se_lit_comme_aucune_table():
     assert lignes_pdf(pdf) == ["Café 5"], lignes_pdf(pdf)
 
 
+def test_un_code_que_cp1252_ne_definit_pas_rend_le_caractere_de_remplacement():
+    """Une police WinAnsi traduit par cp1252 les codes que sa table ne dit
+    pas ; cinq octets — \\x81, \\x8d, \\x8f, \\x90, \\x9d — n'y ont pas de
+    lettre, et rendent « \ufffd », comme le décodeur du Python."""
+    pdf = _document(
+        _objet(1, b"<< /Type /Page /Resources << /Font << /F1 2 0 R >> >> /Contents 4 0 R >>"),
+        _objet(2, b"<< /Type /Font /Subtype /TrueType /Encoding /WinAnsiEncoding "
+                  b"/ToUnicode 3 0 R >>"),
+        _objet(3, _flux(b"<< >>", _cmap(1, {0x41: "A"}))),
+        _objet(4, _flux(b"<< >>", b"BT /F1 10 Tf 70 700 Td "
+                                  b"(A\\201B\\215C\\217D\\220E\\235F) Tj ET")),
+    )
+    assert lignes_pdf(pdf) == ["A\ufffdB\ufffdC\ufffdD\ufffdE\ufffdF"], lignes_pdf(pdf)
+
+
 def test_une_image_n_est_pas_lue_comme_du_texte():
     """Une image JPEG contient « Tj » par hasard ; elle n'a rien à dire."""
     pdf = _document(
