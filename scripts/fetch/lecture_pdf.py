@@ -158,8 +158,13 @@ def _cmap(contenu: bytes) -> Table:
         table.largeur = max(largeurs)
 
     def caracteres(hexa: bytes) -> str:
-        brut = bytes.fromhex(hexa.decode("ascii"))
-        return brut.decode("utf-16-be", errors="replace")
+        # Un nombre impair de chiffres se complète d'un zéro, comme toute chaîne
+        # hexadécimale de la norme (ISO 32000-1, § 7.3.4.3) : ``fromhex`` levait,
+        # et une seule destination abîmée rendait tout le document illisible.
+        chiffres = hexa.decode("ascii")
+        if len(chiffres) % 2:
+            chiffres += "0"
+        return bytes.fromhex(chiffres).decode("utf-16-be", errors="replace")
 
     for bloc in re.findall(rb"beginbfchar(.*?)endbfchar", contenu, re.S):
         for src, dst in re.findall(rb"<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>", bloc):

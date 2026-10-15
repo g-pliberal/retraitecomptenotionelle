@@ -155,7 +155,7 @@ test("les séparateurs et la ligne suivante sont des espaces", async () => {
   const contenu = "BT /F1 10 Tf 60 720 Td (A) Tj 100 0 Td (\\205) Tj 100 0 Td (B) Tj "
     + "-200 -20 Td (\\034Titre\\035) Tj 0 -20 Td (Suite\\205) Tj 0 -20 Td (FIN) Tj ET";
   const pdf = document(objet(1, flux("<< >>", contenu)));
-  assert.deepEqual(await lignesPdf(pdf), ["A   B", "Titre", "Suite", "FIN"]);
+  assert.deepEqual(await lignesPdf(pdf), ["A \u00a0 B", "Titre", "Suite", "FIN"]);
 });
 
 test("un dictionnaire en ligne du contenu balisé ne s'imprime pas", async () => {
@@ -181,6 +181,20 @@ test("un échappement octal au-delà de 377 perd son débordement", async () => 
     objet(4, flux("<< >>", "BT /F1 10 Tf 70 700 Td (A\\501B) Tj ET")),
   );
   assert.deepEqual(await lignesPdf(avecTable), ["aab"]);
+});
+
+test("une destination abîmée de la table ne perd pas le document", async () => {
+  // Les destinations se décodent comme le fait `utf-16-be` en Python : le
+  // zéro qui complète un chiffre impair, « \ufffd » pour ce qui n'est pas de l'UTF-16.
+  const table = "1 begincodespacerange\n<00> <FF>\nendcodespacerange\n"
+    + "4 beginbfchar\n<01> <041>\n<02> <41>\n<03> <D800>\n<04> <0042>\nendbfchar\n";
+  const pdf = document(
+    objet(1, "<< /Type /Page /Resources << /Font << /F1 2 0 R >> >> /Contents 4 0 R >>"),
+    objet(2, "<< /Type /Font /Subtype /TrueType /ToUnicode 3 0 R >>"),
+    objet(3, flux("<< >>", table)),
+    objet(4, flux("<< >>", "BT /F1 10 Tf 70 700 Td (\\001\\002\\003\\004) Tj ET")),
+  );
+  assert.deepEqual(await lignesPdf(pdf), ["\u0410\ufffd\ufffdB"]);
 });
 
 test("une image n'est pas lue comme du texte", async () => {

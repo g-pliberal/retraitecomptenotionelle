@@ -233,13 +233,36 @@ class Table extends Map {
   }
 }
 
-/** Une destination de table ToUnicode : de l'hexadécimal en UTF-16 gros-boutiste. */
-function deHexa(chiffres) {
+/**
+ * Une destination de table ToUnicode : de l'hexadécimal en UTF-16 gros-boutiste,
+ * lu comme le décodeur `utf-16-be` du modèle de référence, `errors="replace"`.
+ * Un chiffre impair se complète d'un zéro, comme toute chaîne hexadécimale de la
+ * norme (ISO 32000-1, § 7.3.4.3) ; ce qui n'est pas de l'UTF-16 — l'octet de
+ * reste, un surrogat sans sa moitié — rend « \ufffd ». Chaque unité se
+ * complétait d'abord de zéros à droite : « <41> » donnait « 䄀 ».
+ */
+function deHexa(hexa) {
+  const chiffres = hexa.length % 2 ? `${hexa}0` : hexa;
+  const reste = chiffres.length % 4 !== 0;
+  const unites = [];
+  for (let i = 0; i + 4 <= chiffres.length; i += 4) unites.push(parseInt(chiffres.slice(i, i + 4), 16));
   let texte = "";
-  for (let i = 0; i < chiffres.length; i += 4) {
-    texte += String.fromCharCode(parseInt(chiffres.slice(i, i + 4).padEnd(4, "0"), 16));
+  for (let k = 0; k < unites.length; k += 1) {
+    const unite = unites[k];
+    const suivante = unites[k + 1];
+    if (unite >= 0xD800 && unite <= 0xDBFF && suivante >= 0xDC00 && suivante <= 0xDFFF) {
+      texte += String.fromCharCode(unite, suivante);
+      k += 1;
+    } else if (unite >= 0xD800 && unite <= 0xDBFF && k === unites.length - 1 && reste) {
+      // Un surrogat haut que l'octet de reste ne complète pas : une seule
+      // marque pour les deux, comme le décodeur du Python.
+    } else if (unite >= 0xD800 && unite <= 0xDFFF) {
+      texte += "\ufffd";
+    } else {
+      texte += String.fromCharCode(unite);
+    }
   }
-  return texte;
+  return reste ? `${texte}\ufffd` : texte;
 }
 
 /**

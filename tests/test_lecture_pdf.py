@@ -140,7 +140,7 @@ def test_les_separateurs_et_la_ligne_suivante_sont_des_espaces():
     contenu = (b"BT /F1 10 Tf 60 720 Td (A) Tj 100 0 Td (\\205) Tj 100 0 Td (B) Tj "
                b"-200 -20 Td (\\034Titre\\035) Tj 0 -20 Td (Suite\\205) Tj 0 -20 Td (FIN) Tj ET")
     pdf = _document(_objet(1, _flux(b"<< >>", contenu)))
-    assert lignes_pdf(pdf) == ["A   B", "Titre", "Suite", "FIN"], lignes_pdf(pdf)
+    assert lignes_pdf(pdf) == ["A \u00a0 B", "Titre", "Suite", "FIN"], lignes_pdf(pdf)
 
 
 def test_un_dictionnaire_en_ligne_du_contenu_balise_ne_s_imprime_pas():
@@ -172,6 +172,22 @@ def test_un_echappement_octal_au_dela_de_377_perd_son_debordement():
         _objet(4, _flux(b"<< >>", b"BT /F1 10 Tf 70 700 Td (A\\501B) Tj ET")),
     )
     assert lignes_pdf(avec_table) == ["aab"], lignes_pdf(avec_table)
+
+
+def test_une_destination_abimee_de_la_table_ne_perd_pas_le_document():
+    """Trois chiffres se complètent d'un zéro, comme toute chaîne hexadécimale
+    de la norme ; un octet seul, ou un surrogat sans sa moitié, n'est pas de
+    l'UTF-16 et rend « \ufffd », comme le décodeur ``utf-16-be``. Une seule
+    destination de trois chiffres levait, et le document entier était perdu."""
+    table = (b"1 begincodespacerange\n<00> <FF>\nendcodespacerange\n"
+             b"4 beginbfchar\n<01> <041>\n<02> <41>\n<03> <D800>\n<04> <0042>\nendbfchar\n")
+    pdf = _document(
+        _objet(1, b"<< /Type /Page /Resources << /Font << /F1 2 0 R >> >> /Contents 4 0 R >>"),
+        _objet(2, b"<< /Type /Font /Subtype /TrueType /ToUnicode 3 0 R >>"),
+        _objet(3, _flux(b"<< >>", table)),
+        _objet(4, _flux(b"<< >>", b"BT /F1 10 Tf 70 700 Td (\\001\\002\\003\\004) Tj ET")),
+    )
+    assert lignes_pdf(pdf) == ["\u0410\ufffd\ufffdB"], lignes_pdf(pdf)
 
 
 def test_une_image_n_est_pas_lue_comme_du_texte():
