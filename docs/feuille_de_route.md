@@ -6310,14 +6310,15 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 14 octobre 2026.** Faites, les étapes 1 à 3 : la carte des
-jumeaux, la note de décision 0003, et le pilote — le lecteur du relevé n'a
-plus que son exemplaire JavaScript, relu, confronté sur 8 000 relevés, deux
-écarts corrigés, sa lecture des relevés d'essai figée. Reste l'étape 4, les
-deux autres paires hors du coût et de la fabrique : `scripts/fetch/lecture_pdf.py`,
-que la fabrique lit aussi, à trancher à sa relecture, puis `cycle_de_vie.py`,
-après l'étape 10 de l'action 138. Commencer par
-`python scripts/jumeaux.py lecture_pdf`. Détail : la note de l'étape 3.
+**Reprise, au 15 octobre 2026.** Faites, les étapes 1 à 3 (la carte, la note
+de décision 0003, le pilote : le lecteur du relevé en JavaScript seul).
+L'étape 4 attend le choix du propriétaire pour `scripts/fetch/lecture_pdf.py`,
+analysé le 15 : relu, confronté sur 20 000 PDF fabriqués, aucun écart hors de
+huit cas relevés. Le site en a un défaut : `lecture-pdf.js` perd un flux
+compressé qui finit par un retour à la ligne (0,74 % des flux), corrigé le 14
+dans le Python seul (action 159) ; à corriger quel que soit le choix. Choix :
+un lecteur, en JavaScript, que la fabrique fait tourner par node, ou deux,
+tenus par un corpus commun. `cycle_de_vie.py` attend l'étape 10 de l'action 138.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
