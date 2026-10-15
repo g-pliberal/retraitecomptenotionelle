@@ -6310,15 +6310,15 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 15 octobre 2026.** Faites, les étapes 1 à 3 (la carte, la note
-de décision 0003, le pilote : le lecteur du relevé en JavaScript seul).
-L'étape 4 attend le choix du propriétaire pour `scripts/fetch/lecture_pdf.py`,
-analysé le 15 : relu, confronté sur 20 000 PDF fabriqués, sans écart hors de
-sept cas relevés. Le plus grave est corrigé (1f18f72) : `lecture-pdf.js`
-perdait un flux compressé qui finit par un retour à la ligne (0,74 % des
-flux), que le Python lit depuis le 14 (action 159). Choix : un lecteur, en
-JavaScript, que la fabrique fait tourner par node, ou deux, tenus par un
-corpus commun. `cycle_de_vie.py` attend l'étape 10 de l'action 138.
+**Reprise, au 15 octobre 2026.** Faites, les étapes 1 à 3. Pour
+`lecture_pdf.py`, le propriétaire a choisi un lecteur unique, en JavaScript,
+que la fabrique fait tourner par node, en trois temps. Fait, le premier : sur
+36 vrais documents, mêmes objets, flux et tables, une seule cause d'écart, la
+règle des espaces (`\x1c` à `\x1f`, `\x85`), et les mêmes valeurs extraites.
+Reste le deuxième, une session : aligner le JavaScript sur le Python jusqu'à
+`python -I scripts/banc_lecture_pdf/fabrique.py tout` sans écart ; puis le
+troisième. `cycle_de_vie.py` attend l'étape 10 de l'action 138. Détail : la
+note de la première partie de l'étape 4.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
