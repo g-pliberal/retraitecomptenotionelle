@@ -150,6 +150,14 @@ test("les espaces posées seules et les reculs du tableau séparent les mots", a
   assert.deepEqual(await lignesPdf(pdf), ["Effectif total", "Rapport surles"]);
 });
 
+test("les séparateurs et la ligne suivante sont des espaces", async () => {
+  // Les espaces de `str.strip`, que `trim` ignore : \x1c à \x1f et \x85.
+  const contenu = "BT /F1 10 Tf 60 720 Td (A) Tj 100 0 Td (\\205) Tj 100 0 Td (B) Tj "
+    + "-200 -20 Td (\\034Titre\\035) Tj 0 -20 Td (Suite\\205) Tj 0 -20 Td (FIN) Tj ET";
+  const pdf = document(objet(1, flux("<< >>", contenu)));
+  assert.deepEqual(await lignesPdf(pdf), ["A   B", "Titre", "Suite", "FIN"]);
+});
+
 test("un dictionnaire en ligne du contenu balisé ne s'imprime pas", async () => {
   const contenu = "BT /F1 10 Tf 70 700 Td /Span <</MCID 3 /Lang (en-US)>> BDC "
     + "(FPE) Tj EMC ( ) Tj /Span <</Lang (en-US)>> BDC (Civils) Tj EMC ET";

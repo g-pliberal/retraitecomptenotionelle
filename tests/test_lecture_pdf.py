@@ -130,6 +130,19 @@ def test_les_espaces_posees_seules_et_les_reculs_du_tableau_separent_les_mots():
     assert lignes_pdf(pdf) == ["Effectif total", "Rapport surles"], lignes_pdf(pdf)
 
 
+def test_les_separateurs_et_la_ligne_suivante_sont_des_espaces():
+    """``str.strip`` tient pour espaces \\x1c à \\x1f et \\x85 : une chaîne qui
+    n'a qu'eux compte pour une insécable, et ils tombent aux bouts d'une ligne.
+    Une police sans table ToUnicode écrit « … » par l'octet \\x85, et le
+    programme d'une police lu comme du texte sème les séparateurs : les
+    documents de la fabrique en sont pleins, et le lecteur du site, dont
+    ``trim`` les ignore, les lit de même (action 161, étape 4)."""
+    contenu = (b"BT /F1 10 Tf 60 720 Td (A) Tj 100 0 Td (\\205) Tj 100 0 Td (B) Tj "
+               b"-200 -20 Td (\\034Titre\\035) Tj 0 -20 Td (Suite\\205) Tj 0 -20 Td (FIN) Tj ET")
+    pdf = _document(_objet(1, _flux(b"<< >>", contenu)))
+    assert lignes_pdf(pdf) == ["A   B", "Titre", "Suite", "FIN"], lignes_pdf(pdf)
+
+
 def test_un_dictionnaire_en_ligne_du_contenu_balise_ne_s_imprime_pas():
     """« /Span <</Lang (en-US)>> BDC » : la chaîne est une propriété, pas du texte."""
     contenu = (b"BT /F1 10 Tf 70 700 Td /Span <</MCID 3 /Lang (en-US)>> BDC "

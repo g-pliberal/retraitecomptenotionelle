@@ -698,7 +698,7 @@ async function fragments(octets) {
           ? hexa(g.hex, tables.get(police))
           : litteral(g.txt.slice(1, -1), tables.get(police));
         const [bande, ligne, colonne] = position(matrice, repere);
-        if (morceau.trim()) tous.push([page, bande, ligne, colonne, morceau]);
+        if (ebarber(morceau)) tous.push([page, bande, ligne, colonne, morceau]);
         else if (morceau) {
           // Une chaîne qui n'est qu'une espace est l'espace entre deux mots que
           // le producteur a posés séparément — « (Effectif) ( ) (total) » — :
@@ -715,6 +715,25 @@ async function fragments(octets) {
 }
 
 /**
+ * Les espaces du modèle de référence : ce que `str.strip` ôte et ce que `\s`
+ * reconnaît dans une chaîne Python. Ce sont ceux de JavaScript, moins U+FEFF,
+ * plus les séparateurs \x1c à \x1f et \x85, que `trim` et `\s` ignorent — et
+ * les documents en sont pleins : une police sans table ToUnicode écrit « … »
+ * par l'octet \x85, et le programme d'une police lu comme du texte sème les
+ * séparateurs. Avec `trim`, le portage gardait ces caractères là où le Python
+ * les tient pour des espaces, et 33 documents de la fabrique sur 36 sortaient
+ * autrement, à 119 chaînes près.
+ */
+const ESPACES = "\\t-\\r\\x1c-\\x20\\x85\\xa0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000";
+const SUITE_D_ESPACES = new RegExp(`[${ESPACES}]+`, "g");
+const BORDS = new RegExp(`^[${ESPACES}]+|[${ESPACES}]+$`, "g");
+
+/** `str.strip()` : le texte sans les espaces du modèle de référence à ses bouts. */
+function ebarber(texte) {
+  return texte.replace(BORDS, "");
+}
+
+/**
  * Une espace pour toute suite d'espaces ordinaires ; UNE ESPACE INSÉCABLE pour
  * toute suite d'insécables (U+00A0, U+202F), et elle reste insécable. Un
  * document qui sépare ses milliers d'une fine insécable et ses cellules d'une
@@ -722,8 +741,8 @@ async function fragments(octets) {
  * différentes.
  */
 function normaliser(texte) {
-  return texte.replace(/[  ]+/g, " ")
-    .replace(/[ \t\r\n\f\v]+/g, " ").trim();
+  return ebarber(texte.replace(/[  ]+/g, " ")
+    .replace(/[ \t\r\n\f\v]+/g, " "));
 }
 
 /** Regroupe des fragments déjà triés en lignes visuelles. */
@@ -755,7 +774,7 @@ function assembler(tous, tolerance) {
     ordonnee = y; feuille = [page, bande]; abscisse = x;
   }
   if (courante.length) {
-    lignes.push(courante.join("").replace(/\s+/g, " ").trim());
+    lignes.push(ebarber(courante.join("").replace(SUITE_D_ESPACES, " ")));
   }
   return lignes.filter((ligne) => ligne);
 }
