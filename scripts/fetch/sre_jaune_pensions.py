@@ -76,11 +76,16 @@ le miroir, et refuse un fichier dont l'empreinte diffère.
 **CE QUE LA LECTURE A COÛTÉ.** Les polices du jaune sont rangées dans des
 flux d'objets compressés et ses chaînes sont des codes à un octet : le lecteur
 PDF du dépôt en rendait « 5DSSRUW » pour « Rapport » avant d'apprendre les
-deux (voir ``lecture_pdf.py``). Il reste un défaut du document lui-même : la
-table Unicode d'une de ses polices n'a pas les lettres accentuées, si bien
-que « bénéficiaires » s'y lit « bnficiaires » — pdfminer rend la même chose.
-Les intitulés sont donc reconnus sans leurs accents ; les nombres, eux, sont
-intacts.
+deux (voir ``moteur/js/lecture-pdf.js``). On a cru ensuite à un défaut du
+document lui-même, une police dont la table Unicode n'aurait pas les lettres
+accentuées, si bien que « bénéficiaires » s'y lisait « bnficiaires » —
+pdfminer rendait la même chose. Les deux éditions se lisent aujourd'hui avec
+leurs accents ; pour celle de 2027, il a fallu que le lecteur attache leurs
+polices aux pages qui rangent la liste de leurs flux dans un objet à part
+(action 161, 15 octobre 2026), et deux lignes du B-1 ont alors changé de clé,
+« dparts_pour_invalidit » devenant « departs_pour_invalidite ». Les intitulés
+restent reconnus sans leurs accents, sous l'une et l'autre lecture ; les
+nombres, eux, ont toujours été intacts.
 
 **OÙ LES VALEURS VONT.** ``scripts/verifier_donnees.py --appliquer`` lit le
 JSON écrit ici et verse les trois tableaux, à plat, dans

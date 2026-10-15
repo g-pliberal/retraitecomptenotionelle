@@ -320,6 +320,32 @@ def test_une_page_en_plusieurs_flux_se_lit_d_un_seul_tenant():
 
 
 
+def test_un_tableau_de_flux_range_a_part_garde_les_polices_de_sa_page():
+    """``/Contents 6 0 R``, où l'objet 6 n'est qu'un tableau de flux : c'est
+    ainsi que le jaune pensions du PLF 2027 pose ses 250 pages. Lu comme un
+    flux, ce tableau ne rattachait les polices de la page à aucun des siens,
+    qui prenaient celles du document — ici la table de l'autre page, « xy » —,
+    et ses flux se lisaient chacun pour soi : la ``Tm`` de l'un ne plaçait plus
+    la chaîne de l'autre."""
+    def page(numero: int, police: int, contenus: bytes) -> bytes:
+        return _objet(numero, b"<< /Type /Page /Resources << /Font << /F1 %d 0 R >> >> "
+                              b"/Contents %s >>" % (police, contenus))
+
+    pdf = _document(
+        page(1, 4, b"6 0 R"),
+        _objet(6, b"[2 0 R 3 0 R]"),
+        _objet(2, _flux(b"<< >>", b"BT /F1 10 Tf 1 0 0 1 60 700 Tm")),
+        _objet(3, _flux(b"<< >>", b"(\\001\\002) Tj ET")),
+        _objet(4, b"<< /Type /Font /Subtype /Type0 /ToUnicode 5 0 R >>"),
+        _objet(5, _flux(b"<< >>", _cmap(1, {1: "O", 2: "K"}))),
+        page(7, 8, b"9 0 R"),
+        _objet(8, b"<< /Type /Font /Subtype /Type0 /ToUnicode 10 0 R >>"),
+        _objet(9, _flux(b"<< >>", b"BT /F1 10 Tf 60 650 Td (\\001\\002) Tj ET")),
+        _objet(10, _flux(b"<< >>", _cmap(1, {1: "x", 2: "y"}))),
+    )
+    assert lignes_pdf(pdf) == ["OK", "xy"], lignes_pdf(pdf)
+
+
 def test_une_ligne_aux_cellules_decalees_se_relit_de_gauche_a_droite():
     """Trois cellules d'une même ligne, centrées chacune dans sa case : 700,5,
     700 et 699,6 d'ordonnée. Le tri de haut en bas les rend dans l'ordre des

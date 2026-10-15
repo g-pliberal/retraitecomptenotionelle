@@ -510,12 +510,9 @@ function policesParContenu(objets, flux) {
       if (table && table.size) tables.set(t[1], table);
     }
     if (!page) { parContenu.set(numeroObjet, tables); continue; }
-    const contenus = /\/Contents[ \t\n\r\f\v]*(?:(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R|\[([^\]]*)\])/.exec(objet);
+    const contenus = fluxDesContenus(objet, objets);
     if (!contenus) continue;
-    const numeros = contenus[1]
-      ? [Number(contenus[1])]
-      : [...(contenus[2].match(/(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R/g) ?? [])].map((r) => Number(/\d+/.exec(r)[0]));
-    for (const numero of numeros) parContenu.set(numero, tables);
+    for (const numero of contenus.numeros) parContenu.set(numero, tables);
   }
   return parContenu;
 }
@@ -702,12 +699,32 @@ function position(matrice, repere) {
 function contenusDesPages(objets) {
   const pages = new Map();
   for (const objet of objets.values()) {
-    const tableau = /\/Contents[ \t\n\r\f\v]*\[([^\]]*)\]/.exec(objet);
-    if (!tableau) continue;
-    const numeros = [...tableau[1].matchAll(/(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R/g)].map((t) => Number(t[1]));
-    for (const numero of numeros) if (!pages.has(numero)) pages.set(numero, numeros);
+    const contenus = fluxDesContenus(objet, objets);
+    if (!contenus || !contenus.tableau) continue;
+    for (const numero of contenus.numeros) if (!pages.has(numero)) pages.set(numero, contenus.numeros);
   }
   return pages;
+}
+
+/**
+ * Les flux de contenu qu'un objet désigne par `/Contents`, et s'ils forment un
+ * tableau, qui se lit bout à bout ; `null` s'il n'en désigne aucun. La norme
+ * permet trois formes : un flux, un tableau de flux, ou un objet qui n'est
+ * qu'un tableau de flux. Le jaune pensions du PLF 2027 range ainsi le tableau
+ * de chacune de ses 250 pages : lu comme un flux, ce tableau ne rattachait les
+ * polices de la page à aucun de ses flux, qui prenaient celles du document,
+ * la dernière de chaque nom, et ses flux se lisaient chacun pour soi.
+ */
+function fluxDesContenus(objet, objets) {
+  const contenus = /\/Contents[ \t\n\r\f\v]*(?:(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R|\[([^\]]*)\])/.exec(objet);
+  if (!contenus) return null;
+  let tableau = contenus[2];
+  if (tableau === undefined) {
+    const cible = /^[ \t\n\r\f\v]*\[([^\]]*)\]/.exec(objets.get(Number(contenus[1])) ?? "");
+    if (!cible) return { numeros: [Number(contenus[1])], tableau: false };
+    tableau = cible[1];
+  }
+  return { numeros: [...tableau.matchAll(/(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R/g)].map((r) => Number(r[1])), tableau: true };
 }
 
 /**
@@ -980,16 +997,9 @@ function pagesDeLArbre(objets) {
  * à 99,88 % de sa taille. Un objet page absent n'a rien à dire.
  */
 function contenuDeLObjetPage(objets, flux, numero) {
-  const contenus = /\/Contents[ \t\n\r\f\v]*(?:\[([^\]]*)\]|(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R)/
-    .exec(objets.get(numero) ?? "");
+  const contenus = fluxDesContenus(objets.get(numero) ?? "", objets);
   if (!contenus) return "";
-  let tableau = contenus[1];
-  if (tableau === undefined) {
-    const cible = /^[ \t\n\r\f\v]*\[([^\]]*)\]/.exec(objets.get(Number(contenus[2])) ?? "");
-    tableau = cible ? cible[1] : `${contenus[2]} 0 R`;
-  }
-  return [...tableau.matchAll(/(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R/g)]
-    .map((t) => flux.get(Number(t[1]))).filter(Boolean).join("\n");
+  return contenus.numeros.map((n) => flux.get(n)).filter(Boolean).join("\n");
 }
 
 /** Une erreur que la fabrique lit comme le `LookupError` du Python. */
