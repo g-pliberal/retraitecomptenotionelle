@@ -240,6 +240,10 @@ def _montant(jeton: str) -> float:
 #: sont ni un montant ni un taux, et les compter pour l'un ou pour l'autre
 #: faisait rejeter toute ligne qui en portait une.
 CELLULES_VIDES = frozenset({"--", "++", "-"})
+#: Mais un double signe ne s'écrit que dans une colonne « % » : il y tient la
+#: place d'un taux, et compte comme tel quand on vérifie que la ligne porte
+#: autant de taux que l'en-tête de colonnes « % » (:func:`_valeurs`).
+DOUBLES_SIGNES = frozenset({"--", "++"})
 
 
 def _valeurs(ligne: str, libelle: str, colonnes: list) -> dict[int, float] | None:
@@ -261,6 +265,13 @@ def _valeurs(ligne: str, libelle: str, colonnes: list) -> dict[int, float] | Non
     illisibles une année sur deux. Avec elles, aucune des quatre séries déjà
     certifiées ne bouge d'un euro — c'est le contrôle qui a décidé de les
     poser.
+
+    UN DOUBLE SIGNE TIENT LA PLACE D'UN TAUX. L'édition d'automne du rapport
+    de 2026 écrit la ligne du fonds dans le compte de la CNAV « 15 064
+    15 691 4,2 0 -- 0 -- - 0 - » : le fonds disparaît en 2026, ses colonnes
+    de prévision sont nulles et leurs taux sans objet. Sans compter les « -- »
+    pour des taux, la ligne en avait trop peu, se rejetait, et la prise en
+    charge de 2025 tombait de 15 880 M€ à 189.
     """
     reste = ligne.replace(libelle, " ")
     annees = [c for c in colonnes if c is not None]
@@ -271,6 +282,8 @@ def _valeurs(ligne: str, libelle: str, colonnes: list) -> dict[int, float] | Non
         illisible = False
         for jeton in lecture.findall(reste):
             if jeton in CELLULES_VIDES:
+                if jeton in DOUBLES_SIGNES:
+                    evolutions += 1
                 continue
             if _est_taux(jeton):
                 evolutions += 1

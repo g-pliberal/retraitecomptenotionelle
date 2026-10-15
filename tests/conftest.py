@@ -113,6 +113,7 @@ CONTROLES = {
     "test_juris_cnracl_taux.py", "test_lecture_pdf.py", "test_sre_jaune_pensions.py",
     "test_sre_jaune_referents.py", "test_sre_jaune_ministeres.py",
     "test_pap_plf_2026.py", "test_opef_frais_per.py", "test_ccss_regimes.py",
+    "test_ccss_transferts_retraite.py",
     # Les registres.
     "test_frontiere_contributive.py", "test_sources_a_explorer.py",
     "test_source_locale.py", "test_referents.py",
