@@ -197,6 +197,17 @@ test("une destination abîmée de la table ne perd pas le document", async () =>
   assert.deepEqual(await lignesPdf(pdf), ["\u0410\ufffd\ufffdB"]);
 });
 
+test("une table vide se lit comme aucune table", async () => {
+  const vide = "1 begincodespacerange\n<00> <FF>\nendcodespacerange\n";
+  const pdf = document(
+    objet(1, "<< /Type /Page /Resources << /Font << /F1 2 0 R >> >> /Contents 4 0 R >>"),
+    objet(2, "<< /Type /Font /Subtype /Type1 /ToUnicode 3 0 R >>"),
+    objet(3, flux("<< >>", vide)),
+    objet(4, flux("<< >>", "BT /F1 10 Tf 70 700 Td (Caf\\351 5) Tj ET")),
+  );
+  assert.deepEqual(await lignesPdf(pdf), ["Café 5"]);
+});
+
 test("une image n'est pas lue comme du texte", async () => {
   const pdf = document(
     objet(1, flux("<< /Type /XObject /Subtype /Image /Width 1 /Height 1 >>",

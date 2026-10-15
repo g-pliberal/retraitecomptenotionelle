@@ -190,6 +190,19 @@ def test_une_destination_abimee_de_la_table_ne_perd_pas_le_document():
     assert lignes_pdf(pdf) == ["\u0410\ufffd\ufffdB"], lignes_pdf(pdf)
 
 
+def test_une_table_vide_se_lit_comme_aucune_table():
+    """Une table ToUnicode qui ne dit rien — son codespacerange seul — ne
+    traduit rien : la police se lit comme sans table, « é » compris."""
+    vide = b"1 begincodespacerange\n<00> <FF>\nendcodespacerange\n"
+    pdf = _document(
+        _objet(1, b"<< /Type /Page /Resources << /Font << /F1 2 0 R >> >> /Contents 4 0 R >>"),
+        _objet(2, b"<< /Type /Font /Subtype /Type1 /ToUnicode 3 0 R >>"),
+        _objet(3, _flux(b"<< >>", vide)),
+        _objet(4, _flux(b"<< >>", b"BT /F1 10 Tf 70 700 Td (Caf\\351 5) Tj ET")),
+    )
+    assert lignes_pdf(pdf) == ["Café 5"], lignes_pdf(pdf)
+
+
 def test_une_image_n_est_pas_lue_comme_du_texte():
     """Une image JPEG contient « Tj » par hasard ; elle n'a rien à dire."""
     pdf = _document(

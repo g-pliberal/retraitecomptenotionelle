@@ -430,7 +430,9 @@ function policesParContenu(objets, flux) {
     const references = /\/(\w+)\s+(\d+)\s+0\s+R/g;
     for (let t = references.exec(polices); t; t = references.exec(polices)) {
       const table = tableDe(objets.get(Number(t[2])) ?? "", objets, flux);
-      if (table) tables.set(t[1], table);
+      // Une table vide n'en est pas une : le Python, pour qui elle est fausse,
+      // ne la range pas, et la police se lit alors comme sans table.
+      if (table && table.size) tables.set(t[1], table);
     }
     if (!page) { parContenu.set(numeroObjet, tables); continue; }
     const contenus = /\/Contents\s*(?:(\d+)\s+0\s+R|\[([^\]]*)\])/.exec(objet);
@@ -471,7 +473,7 @@ function litteral(brut, table) {
     if (lettre !== undefined) return LETTRES[lettre] ?? lettre;
     return "";
   });
-  if (!table) return texte;
+  if (!table || !table.size) return texte;
   // Les octets de la chaîne sont des codes de la police, pas des lettres : la
   // table les traduit, par un ou par deux selon ce qu'elle déclare. Un code
   // qu'elle ne connaît pas et qui tombe dans l'ASCII imprimable est rendu tel
@@ -502,7 +504,7 @@ function hexa(brut, table) {
   let sortie = "";
   for (let i = 0; i < chiffres.length; i += pas) {
     const code = parseInt(chiffres.slice(i, i + pas), 16);
-    if (table) sortie += table.get(code) ?? "";
+    if (table && table.size) sortie += table.get(code) ?? "";
     else if (code >= 32 && code < 0x3000) sortie += String.fromCharCode(code);
   }
   return sortie;
