@@ -767,6 +767,20 @@ function dictionnaireDuFlux(objet) {
 }
 
 /**
+ * Une image se reconnaît à son `/Subtype /Image`.
+ *
+ * L'ÉCART DES IMAGES CHERCHAIT LA CHAÎNE « /Image » DANS LE DICTIONNAIRE DU
+ * FLUX, et l'y trouvait aussi dans les ressources d'un formulaire qui nomme
+ * une image, « /Image869 » ou « /ImageC » : sur les 36 documents que la
+ * fabrique télécharge, 382 formulaires qui portent du texte — des graphiques,
+ * des tableaux collés depuis Excel — ne se lisaient pas, et les rapports à la
+ * CCSS y perdaient des tableaux entiers.
+ */
+function estUneImage(objet) {
+  return /\/Subtype[ \t\n\r\f\v]*\/Image\b/.test(dictionnaireDuFlux(objet));
+}
+
+/**
  * Les flux de contenu qu'un objet désigne par `/Contents`, et s'ils forment un
  * tableau, qui se lit bout à bout ; `null` s'il n'en désigne aucun. La norme
  * permet trois formes : un flux, un tableau de flux, ou un objet qui n'est
@@ -817,16 +831,11 @@ function fragmentsDesObjets({ objets, flux }) {
   for (const [numero, objet] of objets) {
     page += 1;
     // Seuls les flux qui portent du texte se lisent (`fluxDeTexte`) : le
-    // programme d'une police contient « Tj » par hasard.
-    if (lus.has(numero) || (porteurs && !porteurs.has(numero))) continue;
-    // Une image JPEG aussi, une fois sur dix : on ne la lit pas comme du texte.
-    // LE TEST EST TROP LARGE : « /Image » paraît aussi dans le dictionnaire
-    // d'un formulaire dont les ressources nomment une image (« /Image869 »,
-    // « /ImageC »). Sur les 36 documents de la fabrique, 382 formulaires qui
-    // portent du texte — graphiques, tableaux collés depuis Excel — sont ainsi
-    // écartés ; les lire déplace des valeurs de la fabrique, ce qui se mène à
-    // part (action 161, note du 15 octobre 2026 sur les défauts du lecteur).
-    if (dictionnaireDuFlux(objet).includes("/Image")) continue;
+    // programme d'une police contient « Tj » par hasard, une image JPEG une
+    // fois sur dix. Un document qui ne désigne aucun contenu se lit comme
+    // avant, ses images seules écartées.
+    if (lus.has(numero)) continue;
+    if (porteurs ? !porteurs.has(numero) : estUneImage(objet)) continue;
     // Les flux d'une même page se lisent ensemble, à la place du premier qu'on
     // rencontre, et dans l'ordre de la page.
     const fluxDePage = pages.get(numero) ?? [numero];

@@ -275,6 +275,20 @@ def test_une_image_n_est_pas_lue_comme_du_texte():
     assert lignes_pdf(pdf) == ["TEXTE"], lignes_pdf(pdf)
 
 
+def test_un_formulaire_qui_nomme_une_image_se_lit():
+    """Un graphique collé depuis Excel est un ``/Form`` dont les ressources
+    nomment ses images, « /Image5 », « /ImageC » : ce n'est pas une image."""
+    pdf = _document(
+        _objet(1, b"<< /Type /Page /Contents 2 0 R /Resources << /XObject << /Fm0 3 0 R >> >> >>"),
+        _objet(2, _flux(b"<< >>", b"q /Fm0 Do Q")),
+        _objet(3, _flux(b"<< /Type /XObject /Subtype /Form /BBox [0 0 100 100] "
+                        b"/Resources << /ProcSet [/PDF /Text /ImageC] /XObject << /Image5 4 0 R >> >> >>",
+                        b"BT /F5 8 Tf 10 50 Td (Graphique) Tj ET q /Image5 Do Q")),
+        _objet(4, _flux(b"<< /Type /XObject /Subtype /Image /Width 1 /Height 1 >>", b"0")),
+    )
+    assert lignes_pdf(pdf) == ["Graphique"], lignes_pdf(pdf)
+
+
 def test_une_page_dit_quels_formulaires_elle_pose():
     """Un formulaire se lit comme une page à lui, au rang de son objet dans le
     fichier, qui ne dit rien de la page qui le pose : la page les nomme dans
