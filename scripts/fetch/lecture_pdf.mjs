@@ -1,15 +1,15 @@
 // Le lecteur PDF du site, pour la fabrique : le document sur l'entrée standard,
 // la question en argument, la réponse en JSON sur la sortie.
 //
-//     node scripts/fetch/lecture_pdf.mjs lignes|pages|fragments|page [argument] < document.pdf
+//     node scripts/fetch/lecture_pdf.mjs lignes|pages|formulaires|fragments|page [argument] < document.pdf
 //
 // `scripts/fetch/lecture_pdf.py` l'appelle ; les questions sont ses fonctions :
 // `lignes` et `pages` (`lignesPdf`, `lignesParPage`, la tolérance en argument),
-// `fragments` (`fragmentsParPage`), `page` (`contenuDeLaPage`, son numéro en
-// argument). Une erreur se rend comme une réponse, `{erreur, message}`, pour que
-// le Python lève la sienne.
+// `formulaires` (`pagesEtFormulaires`, de même), `fragments` (`fragmentsParPage`),
+// `page` (`contenuDeLaPage`, son numéro en argument). Une erreur se rend comme
+// une réponse, `{erreur, message}`, pour que le Python lève la sienne.
 import {
-  contenuDeLaPage, fragmentsParPage, lignesParPage, lignesPdf,
+  contenuDeLaPage, fragmentsParPage, lignesParPage, lignesPdf, pagesEtFormulaires,
 } from "../../moteur/js/lecture-pdf.js";
 
 const [question, argument] = process.argv.slice(2);
@@ -21,6 +21,7 @@ let reponse;
 try {
   if (question === "lignes") reponse = { rendu: await lignesPdf(octets, Number(argument)) };
   else if (question === "pages") reponse = { rendu: await lignesParPage(octets, Number(argument)) };
+  else if (question === "formulaires") reponse = { rendu: await pagesEtFormulaires(octets, Number(argument)) };
   else if (question === "fragments") reponse = { rendu: await fragmentsParPage(octets) };
   else if (question === "page") reponse = { rendu: await contenuDeLaPage(octets, Number(argument)) };
   else throw new Error(`question inconnue : ${question}`);

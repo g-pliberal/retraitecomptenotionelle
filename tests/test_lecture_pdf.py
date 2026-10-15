@@ -29,7 +29,7 @@ from pathlib import Path
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts" / "fetch"))
-from lecture_pdf import Aplat, aplats_de_page, lignes_pdf  # noqa: E402
+from lecture_pdf import Aplat, aplats_de_page, lignes_pdf, pages_et_formulaires  # noqa: E402
 
 #: Le lecteur est celui du site, que node fait tourner.
 pytestmark = pytest.mark.skipif(shutil.which("node") is None,
@@ -274,6 +274,27 @@ def test_une_image_n_est_pas_lue_comme_du_texte():
     )
     assert lignes_pdf(pdf) == ["TEXTE"], lignes_pdf(pdf)
 
+
+def test_une_page_dit_quels_formulaires_elle_pose():
+    """Un formulaire se lit comme une page à lui, au rang de son objet dans le
+    fichier, qui ne dit rien de la page qui le pose : la page les nomme dans
+    ses ressources et les pose par ``Do``, dans un ordre qui n'est pas celui du
+    fichier, et l'un peut en poser un autre."""
+    pdf = _document(
+        _objet(1, _flux(b"<< /Type /XObject /Subtype /Form /BBox [0 0 100 100] >>",
+                        b"BT /F1 8 Tf 10 50 Td (Second) Tj ET")),
+        _objet(2, b"<< /Type /Page /Contents 3 0 R "
+                  b"/Resources << /XObject << /Fm0 1 0 R /Fm1 4 0 R >> >> >>"),
+        _objet(3, _flux(b"<< >>", b"BT /F1 10 Tf 70 700 Td (Titre) Tj ET q /Fm1 Do Q q /Fm0 Do Q")),
+        _objet(4, _flux(b"<< /Type /XObject /Subtype /Form /BBox [0 0 100 100] "
+                        b"/Resources << /XObject << /Fm2 5 0 R >> >> >>",
+                        b"BT /F1 8 Tf 10 50 Td (Premier) Tj ET /Fm2 Do")),
+        _objet(5, _flux(b"<< /Type /XObject /Subtype /Form /BBox [0 0 100 100] >>",
+                        b"BT /F1 8 Tf 10 50 Td (Dedans) Tj ET")),
+    )
+    pages, formulaires = pages_et_formulaires(pdf)
+    assert pages == [["Second"], ["Titre"], ["Premier"], ["Dedans"]], pages
+    assert formulaires == [[], [2, 3, 0], [], []], formulaires
 
 def test_le_programme_d_une_police_n_est_pas_lu_comme_du_texte():
     """Le programme d'une police embarquée contient « Tj » par hasard, entre

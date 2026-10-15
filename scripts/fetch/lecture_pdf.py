@@ -183,6 +183,19 @@ def lignes_par_page(octets: bytes, tolerance: float = 3.0,
     return [list(page) for page in _demander(octets, "pages", tolerance)]
 
 
+def pages_et_formulaires(octets: bytes, tolerance: float = 3.0
+                         ) -> tuple[list[list[str]], list[list[int]]]:
+    """Les pages de :func:`lignes_par_page`, et pour chacune les rangs, dans
+    la même liste, des formulaires qu'elle pose, dans l'ordre de son contenu.
+
+    Un formulaire — un tableau collé depuis Excel — se lit comme une page à
+    lui, rangé au rang de son objet dans le fichier, qui ne dit rien de la page
+    qui le pose : c'est le lecteur qui le sait (``pagesEtFormulaires``).
+    """
+    rendu = _demander(octets, "formulaires", tolerance)
+    return [list(page) for page in rendu["pages"]], [list(f) for f in rendu["formulaires"]]
+
+
 def texte_pdf(octets: bytes) -> str:
     return "\n".join(lignes_pdf(octets))
 

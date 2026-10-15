@@ -802,7 +802,11 @@ function fluxDesContenus(objet, objets) {
  * c'est le lecteur qui empilait les pages.
  */
 async function fragments(octets) {
-  const { objets, flux } = await lireObjets(octets);
+  return fragmentsDesObjets(await lireObjets(octets));
+}
+
+/** Les fragments d'un document dont les objets sont lus (`fragments`). */
+function fragmentsDesObjets({ objets, flux }) {
   const communes = polices(objets, flux);
   const parContenu = policesParContenu(objets, flux);
   const pages = contenusDesPages(objets);
@@ -1011,12 +1015,17 @@ export async function lignesPdf(octets, tolerance = 3.0) {
  * gauche à droite, cellule par cellule (`scripts/fetch/lecture_pdf.py`).
  */
 export async function fragmentsParPage(octets) {
+  return parPage(trier(await fragments(enChaine(octets)))).map(([, page]) => page);
+}
+
+/** Les fragments triés, groupés par page — le rang de leur flux —, dans l'ordre des rangs. */
+function parPage(tous) {
   const pages = new Map();
-  for (const fragment of trier(await fragments(enChaine(octets)))) {
+  for (const fragment of tous) {
     if (!pages.has(fragment[0])) pages.set(fragment[0], []);
     pages.get(fragment[0]).push(fragment);
   }
-  return [...pages.keys()].sort((a, b) => a - b).map((page) => pages.get(page));
+  return [...pages.entries()].sort(([a], [b]) => a - b);
 }
 
 /**
@@ -1026,6 +1035,73 @@ export async function fragmentsParPage(octets) {
  */
 export async function lignesParPage(octets, tolerance = 3.0) {
   return (await fragmentsParPage(octets)).map((page) => assembler(page, tolerance));
+}
+
+/**
+ * Les lignes de chaque page, comme `lignesParPage`, et les formulaires que
+ * chacune pose : pour la i-ième page, les rangs, dans la même liste, des pages
+ * qui sont ses formulaires, dans l'ordre où son contenu les pose par `Do`,
+ * ceux qu'ils posent à leur tour compris.
+ *
+ * UN FORMULAIRE SE LIT À PART, comme une page à lui, que la liste range au
+ * rang de son objet dans le fichier : ce rang ne dit rien de la page qui le
+ * pose. Les rapports à la CCSS collent leurs tableaux depuis Excel, en
+ * formulaires ; celui de 2018 range ceux d'une fiche juste après sa page,
+ * celui de 2023 juste avant, si bien qu'à les chercher au voisinage de leur
+ * titre, une fiche lisait les tableaux de sa voisine. La page, elle, les
+ * nomme dans ses ressources.
+ */
+export async function pagesEtFormulaires(octets, tolerance = 3.0) {
+  const lus = await lireObjets(enChaine(octets));
+  const pages = parPage(trier(fragmentsDesObjets(lus)));
+  const index = new Map(pages.map(([rang], i) => [rang, i]));
+  const rangs = new Map([...lus.objets.keys()].map((numero, rang) => [numero, rang]));
+  const formulaires = pages.map(() => []);
+  for (const objet of lus.objets.values()) {
+    const contenus = fluxDesContenus(objet, lus.objets);
+    if (!contenus) continue;
+    // Le texte d'une page se lit au rang du premier de ses flux.
+    const i = index.get(Math.min(...contenus.numeros.map((n) => rangs.get(n) ?? Infinity)));
+    if (i === undefined) continue;
+    const contenu = contenus.numeros.map((n) => lus.flux.get(n) ?? "").join("\n");
+    for (const numero of formulairesPoses(contenu, lus, ressourcesDe(objet, lus.objets), new Set())) {
+      const j = index.get(rangs.get(numero));
+      if (j !== undefined && !formulaires[i].includes(j)) formulaires[i].push(j);
+    }
+  }
+  return { pages: pages.map(([, page]) => assembler(page, tolerance)), formulaires };
+}
+
+/** Les ressources d'une page : les siennes, ou celles qu'elle hérite de l'arbre des pages. */
+function ressourcesDe(objet, objets) {
+  for (let o = objet, n = 0; o && n < 32; n += 1) {
+    const ressources = dictionnaire(o, "/Resources", objets);
+    if (ressources) return ressources;
+    const parent = /\/Parent[ \t\n\r\f\v]+(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R/.exec(o);
+    o = parent ? objets.get(Number(parent[1])) : null;
+  }
+  return "";
+}
+
+/**
+ * Les formulaires qu'un contenu pose par `Do`, dans son ordre, chacun suivi de
+ * ceux qu'il pose à son tour ; un formulaire sans ressources à lui prend celles
+ * de qui le pose.
+ */
+function formulairesPoses(contenu, lus, ressources, vus) {
+  const noms = new Map([...dictionnaire(ressources, "/XObject", lus.objets)
+    .matchAll(/\/([^ \t\n\r\f\v/<>[\]()]+)[ \t\n\r\f\v]+(\d+)[ \t\n\r\f\v]+0[ \t\n\r\f\v]+R/g)]
+    .map((t) => [t[1], Number(t[2])]));
+  const poses = [];
+  for (const appel of contenu.matchAll(/\/([^ \t\n\r\f\v/<>[\]()]+)[ \t\n\r\f\v]*Do\b/g)) {
+    const numero = noms.get(appel[1]);
+    const forme = numero === undefined ? "" : lus.objets.get(numero) ?? "";
+    if (vus.has(numero) || !/\/Subtype[ \t\n\r\f\v]*\/Form\b/.test(dictionnaireDuFlux(forme))) continue;
+    vus.add(numero);
+    const siennes = dictionnaire(dictionnaireDuFlux(forme), "/Resources", lus.objets);
+    poses.push(numero, ...formulairesPoses(lus.flux.get(numero) ?? "", lus, siennes || ressources, vus));
+  }
+  return poses;
 }
 
 // -- les pages de l'arbre ------------------------------------------------------
