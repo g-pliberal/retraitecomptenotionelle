@@ -443,13 +443,26 @@ approximations:
     « susceptible de bénéficier d'une pension de réversion » qui n'a pas été chef
   effet: non mesuré
 - ecart: >-
-    la majoration se calcule au départ : sa révision quand les ressources changent, et
-    la PMR attribuée en 2009 aux pensions liquidées avant elle, ne sont pas servies ;
-    avant 2009, le minimum de points des plans de 1997 à 2002 l'est, à la liquidation
-    (fiche majoration_retraite_proportionnelle)
+    la PMR attribuée le 1er janvier 2009 aux pensions liquidées avant elle (D. 732-109,
+    1° et 2°) est servie depuis le 16 octobre 2026 : à l'échéance, la règle des pensions
+    dues jusqu'à celle de 2022 — le montant et le plafond de septembre 2023 et de 2026
+    ne nomment que les pensions prises depuis —, comparée à la pension de base surcote
+    comprise et plans de 1997 à 2008 révisés compris (D. 732-112), écrêtée sur toutes
+    les pensions de l'échéance ; le taux plein n'est demandé qu'aux pensions prises
+    depuis 2002. La durée de chef d'une pension d'avant 1997, que D. 732-110, III,
+    reconstitue des points d'avant 1994 divisés par seize, est celle de la carrière ; le
+    complément différentiel du relèvement de septembre 2023 ne compte pas cette PMR
+    dans les pensions agricoles qu'il plafonne
+  effet: non mesuré, faible
+- ecart: >-
+    la majoration d'une pension liquidée depuis 2009 se calcule au départ et suit
+    ensuite le coefficient de la pension : sa révision quand les ressources changent,
+    et la PMR unique de 2022 servie aux pensions déjà liquidées au taux de PMR2
+    (L. 732-54-2, « y compris aux pensions de retraite ayant pris effet avant cette
+    date »), ne le sont pas
   effet: >-
-    les pensions agricoles liquidées avant 2009, et celles qu'une pension étrangère ou
-    une seconde pension vient écrêter après le départ
+    les conjoints collaborateurs partis de 2009 à 2021, et les pensions qu'une pension
+    étrangère ou une seconde pension vient écrêter après le départ
 - ecart: >-
     la durée de référence DR est la durée de proratisation de la retraite forfaitaire que
     le modèle lit, 150 trimestres au moins ; pour les générations 1944 à 1948, R. 732-61
@@ -463,7 +476,7 @@ approximations:
     au plus quelques centimes par revalorisation ; le plafond de juillet 2022 retrouve
     celui que la MSA publie, 11 441,49 €
 sources:
-  lu_le: 2026-10-07
+  lu_le: 2026-10-16
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -484,6 +497,20 @@ sources:
       décembre 2021 (PMR unique au minimum contributif majoré, plafond à l'ASPA), dans
       l'index JORF du dépôt
     date: 2026-10-07
+  - type: jorf
+    reference: >-
+      décret n° 2009-173 du 13 février 2009, article 1er (JORFARTI000020252116) : D. 732-109,
+      « 1° Les personnes dont la pension de retraite servie à titre personnel a pris effet
+      avant le 1er janvier 2002, qui justifient d'une durée d'assurance non salariée
+      agricole [...] au moins égale à vingt-deux années et demie au 1er janvier 2009, puis
+      à dix-sept années et demie au 1er janvier 2011 » ; D. 732-112, « Pour les personnes
+      mentionnées aux 1° et 2° de l'article D. 732-109, les pensions de retraite et de
+      réversion sont appréciées après mise en œuvre des revalorisations prévues aux
+      articles D. 732-110 à D. 732-149 dans leur rédaction antérieure au 1er janvier 2009
+      ou de la majoration de pension prévues à l'article L. 732-25-1 » ; D. 732-115, «
+      s'appliquent aux pensions [...] dues à compter du 1er janvier 2009 » ; L. 732-54-1
+      (LEGIARTI000019959465), loi n° 2008-1330, article 77, I, dans les index du dépôt
+    date: 2026-10-16
   - type: autre
     reference: >-
       MSA, tableaux de bord « Les retraites du régime des non-salariés agricoles » d'août
@@ -499,10 +526,12 @@ textes_a_rattacher:
 code:
   python: >-
     scenarios/actuel.py : PensionMajoreeReference (regle, montant) ; droit/completer.py :
-    pension_majoree, completer ; droit/liquider.py : EligibleAgricole
+    pension_majoree, completer ; droit/liquider.py : EligibleAgricole ;
+    revalorisation.py : reviser_les_exploitants
   javascript: >-
     moteur/js/regimes.js : PensionMajoreeReference ; moteur/js/droit/completer.js :
-    pensionMajoree, completer ; moteur/js/droit/liquider.js
+    pensionMajoree, completer ; moteur/js/droit/liquider.js ;
+    moteur/js/revalorisation.js : reviserLesExploitants
   parametres: >-
     contenu.parametres de chaque version ; data/reference/legislation/pension_majoree_reference.csv,
     écrit par scripts/fetch/dila_legi_pension_majoree.py
@@ -513,6 +542,9 @@ historique:
   2026-10-07 — servie, à l'étape 138.8 : déclarée depuis le 19 septembre 2026 dans six
   périodes de msa_non_salaries.yaml sans qu'aucun code la serve ; sept versions, de son
   absence avant 2009 au plafond de l'article L. 173-2 en 2026.
+- >-
+  2026-10-16 — étape 138.8 : servie aux pensions liquidées avant 2009, depuis le
+  1er janvier 2009, à l'étape « faire vivre » (revalorisation.reviser_les_exploitants).
 exemples: []
 effet: >-
   Les petites pensions de base des chefs d'exploitation liquidées au taux plein depuis

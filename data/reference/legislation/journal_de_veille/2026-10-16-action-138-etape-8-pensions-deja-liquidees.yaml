@@ -1,0 +1,28 @@
+date: "2026-10-16"
+session: "action 138, étape 8 : les pensions des exploitants déjà liquidées, révisions des plans de revalorisation comprises"
+consulte: >-
+  Dans l'index JORF, récupéré le même jour : le décret n° 97-163 du 24 février 1997,
+  article 2 (JORFARTI000002386545) ; le décret n° 2002-297 du 1er mars 2002, articles 4
+  et 8 à 11 ; le décret n° 2009-173 du 13 février 2009, article 1er (JORFARTI000020252116),
+  qui écrit D. 732-109 à D. 732-115. Dans l'index LEGI : D. 732-114 à D. 732-117 et
+  D. 732-144 dans leurs rédactions de 2005 à 2009 ; L. 732-54-1 dans ses rédactions du
+  29 décembre 2001 (LEGIARTI000006585622) et du 19 décembre 2008 (LEGIARTI000019959465) ;
+  L. 732-54-2 dans sa rédaction de 2022. La veille du jour (python
+  scripts/veille_droit.py) ne nomme aucune fiche agricole à relire.
+trouve: >-
+  Chaque décret des plans sert sa règle aux « pensions dues » à compter de sa date,
+  quelle que soit la date d'effet : le tiers en 1997, les deux tiers en 1998, 29,23 points
+  sans minoration en 2001, A au minimum vieillesse du 1er janvier de chaque année depuis
+  2002 pour les pensions prises de 1997 à 2001 (décret n° 2002-297, article 4, sans
+  minimum C). La loi n° 2008-1330 ouvre la PMR le 1er janvier 2009 aux pensions prises
+  avant : avant 2002, sans taux plein, avec vingt-deux ans et demi dans le régime, dix-sept
+  et demi depuis 2011 ; de 2002 à 2008, avec le taux plein ; D. 732-112 compte les
+  pensions après les revalorisations des plans dans leur rédaction d'avant 2009 et après
+  la surcote. Servi dans les deux moteurs, à l'étape « faire vivre » (fiches
+  majoration_retraite_proportionnelle et pension_majoree_reference).
+reste: >-
+  La révision des pensions prises avant 1997 (article 2 du décret n° 97-163, D. 732-114 à
+  D. 732-117, décret n° 2002-297, articles 5 et suivants), sur la durée de chef
+  reconstituée des points d'avant 1994. La PMR unique de 2022 servie aux pensions
+  liquidées depuis 2009 à PMR2, et la révision de la PMR quand les ressources changent.
+  Un exemple chiffré publié d'une pension révisée par les plans.

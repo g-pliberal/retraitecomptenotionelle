@@ -290,6 +290,92 @@ def test_ni_plan_avant_1997_ni_sans_le_taux_plein(simulateur):
     assert majoration is None
 
 
+def _base(vivante):
+    return next(r for r in vivante.regimes if r.regime == "msa_non_salaries")
+
+
+def test_les_plans_se_servent_aux_pensions_deja_liquidees(simulateur):
+    """Partie en 1997 : les points ajoutés, servis au tiers à la liquidation, le
+    sont aux deux tiers en 1998, entiers en 1999, à 29,23 en 2001, au minimum
+    vieillesse de chaque année depuis 2002 (décret n° 97-163, article 3 ; décret
+    n° 2001-170, article 3 ; décret n° 2002-297, article 4) ; ceux de 2008
+    restent, et suivent la valeur du point (D. 732-112)."""
+    carriere = _chef(simulateur, 1935, 62)
+    resultat, avantages, _ = _resultat(simulateur, carriere)
+    assert avantages["majoration_retraite_proportionnelle"].detail.startswith(
+        f"{(26.933 - 16.0) * 37.5 / 3:,.2f} points")
+    assert faire_vivre(simulateur, carriere, resultat, 1997).exploitant is None
+    for annee, minimum, part in ((1998, 26.933, 2 / 3), (1999, 26.933, 1.0),
+                                 (2001, 29.23, 1.0)):
+        revision = faire_vivre(simulateur, carriere, resultat, annee).exploitant
+        assert revision.annee_des_plans == annee
+        assert revision.points_servis == pytest.approx((minimum - 16.0) * 37.5 * part,
+                                                       rel=1e-12)
+    en_2008 = faire_vivre(simulateur, carriere, resultat, 2008)
+    en_2026 = faire_vivre(simulateur, carriere, resultat, 2026)
+    assert en_2008.exploitant.points_servis > (29.23 - 16.0) * 37.5
+    assert en_2026.exploitant.annee_des_plans == 2008
+    assert en_2026.exploitant.points_servis == en_2008.exploitant.points_servis
+    # Les points de 2008, et non ceux de la liquidation, suivent le coefficient.
+    plans = (_base(en_2008).plans + avantages["majoration_retraite_proportionnelle"].montant
+             * _base(en_2008).coefficient)
+    assert _base(en_2026).plans + (avantages["majoration_retraite_proportionnelle"].montant
+                                   * _base(en_2026).coefficient) == pytest.approx(
+        plans * _base(en_2026).coefficient / _base(en_2008).coefficient, rel=1e-9)
+
+
+def test_la_minoration_tombe_en_2001(simulateur):
+    """Vingt ans de chef, partis en 1999 : les points minorés de quarante pour
+    cent à la liquidation ne le sont plus depuis 2001, « le IV de l'article 1er
+    est supprimé » (décret n° 2001-170, article 3)."""
+    metiers = [Metier("salarie_prive_non_cadre", 20.0, niveau_salaire=0.3),
+               Metier("exploitant_agricole", 40.0, niveau_salaire=0.3)]
+    carriere = _chef(simulateur, 1939, 60, metiers=metiers)
+    resultat, avantages, _ = _resultat(simulateur, carriere)
+    detail = avantages["majoration_retraite_proportionnelle"].detail
+    moyenne = float(detail.split("(")[1].split(")")[0].split(" - ")[1])
+    revision = faire_vivre(simulateur, carriere, resultat, 2001).exploitant
+    assert revision.points_servis == pytest.approx((29.23 - moyenne) * 20, abs=0.02)
+
+
+def test_la_pmr_de_2009_s_ouvre_aux_pensions_prises_avant(simulateur):
+    """Une carrière complète de chef partie en 1995, que les plans ne révisent
+    pas ici, est portée le 1er janvier 2009 à la pension majorée de référence
+    entière (loi n° 2008-1330, article 77 ; D. 732-109 à D. 732-112) ; rien
+    avant."""
+    carriere = _chef(simulateur, 1930, 65)
+    resultat, _, _ = _resultat(simulateur, carriere)
+    assert resultat.exploitant_agricole.plans is None
+    assert faire_vivre(simulateur, carriere, resultat, 2008).exploitant is None
+    for annee in (2009, 2026):
+        vivante = faire_vivre(simulateur, carriere, resultat, annee)
+        assert vivante.exploitant.pmr > 0
+        assert _base(vivante).aujourd_hui == pytest.approx(vivante.exploitant.pmr_entiere,
+                                                           rel=1e-12)
+    pmr = simulateur.scenario_actuel.pension_majoree_reference.montant("pmr_chef", 2026, 12)
+    assert vivante.exploitant.pmr_entiere == pytest.approx(pmr[0], rel=1e-12)
+
+
+def test_la_pmr_d_une_pension_d_avant_2002_ne_veut_pas_le_taux_plein(simulateur):
+    """Vingt ans de chef partis à soixante ans en 2000 sans la durée requise :
+    ni plans, ni PMR en 2009 et 2010, faute de vingt-deux ans et demi dans le
+    régime ; depuis 2011, dix-sept ans et demi suffisent, et le taux plein
+    n'est pas demandé aux pensions prises avant 2002 (D. 732-109, 1°). Partie
+    en 2004 sans lui, la même carrière n'a rien (D. 732-109, 2°)."""
+    carriere = _chef(simulateur, 1940, 60, debut=40.0)
+    resultat, _, _ = _resultat(simulateur, carriere)
+    assert not resultat.exploitant_agricole.eligible.taux_plein
+    assert faire_vivre(simulateur, carriere, resultat, 2010).exploitant is None
+    vivante = faire_vivre(simulateur, carriere, resultat, 2011)
+    eligible = resultat.exploitant_agricole.eligible
+    assert _base(vivante).aujourd_hui == pytest.approx(
+        vivante.exploitant.pmr_entiere * eligible.duree / eligible.reference, rel=1e-12)
+    carriere = _chef(simulateur, 1944, 60, debut=40.0)
+    resultat, _, _ = _resultat(simulateur, carriere)
+    assert not resultat.exploitant_agricole.eligible.taux_plein
+    assert faire_vivre(simulateur, carriere, resultat, 2026).exploitant is None
+
+
 def test_le_chef_de_moins_de_dix_sept_ans_et_demi_a_le_minimum_du_couple(simulateur):
     """Depuis 2002, douze ans de chef après trente de conjoint collaborateur :
     C = (MV2 - AVTS) / (37,5 × VP), MV2 étant l'écart entre le minimum d'un
@@ -591,6 +677,10 @@ CAS = [
     {"naissance": "1942", "liquidation": "60"},
     {"naissance": "1943", "liquidation": "62", "statut": "collaborateur_agricole",
      "metier2_debut": "50", "metier2_statut": "exploitant_agricole", "metier2_salaire": "0.3"},
+    # La pension majorée de référence de 2009 : une carrière complète partie
+    # en 1995, vingt ans de chef partis sans le taux plein en 2000.
+    {"naissance": "1930", "liquidation": "65"},
+    {"naissance": "1940", "liquidation": "60", "debut": "40"},
 ]
 
 
@@ -620,6 +710,11 @@ def test_les_deux_moteurs_servent_les_memes_minima_agricoles():
             "majoration_retraite_proportionnelle"} <= codes
     assert sum(any(e["id"] == "relevement_msa_rco" for e in a["journal"])
                for a in attendus) == 2
+    revises = [{cle for e in a["journal"] if "regimes" in e["contenu"].get("donnee", {})
+                for r in e["contenu"]["donnee"]["regimes"] for cle in r}
+               for a in attendus]
+    assert sum("pension_majoree_de_2009" in cles for cles in revises) >= 3
+    assert sum("plans_de_revalorisation" in cles for cles in revises) >= 3
     ecarts: list[str] = []
     for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
         _ecarts(obtenu, attendu, f"requête {rang}", ecarts)

@@ -674,6 +674,14 @@ export class Echeancier {
         detail += ", relèvement de septembre 2023 compris "
           + `(${formatFixe(regime.relevement, 2, true)} €)`;
       }
+      if (regime.plans) {
+        detail += ", plans de revalorisation révisés compris "
+          + `(${formatFixe(regime.plans, 2, true)} €)`;
+      }
+      if ((regime.pmr ?? 0.0) > 0) {
+        detail += ", pension majorée de référence de 2009 comprise "
+          + `(${formatFixe(regime.pmr, 2, true)} €)`;
+      }
       this.journal.inscrire(new Entree({
         id: `${origine}_${annee}`, evenement: ident, inscriteLe: date, debut: date,
         sorte: "composante",

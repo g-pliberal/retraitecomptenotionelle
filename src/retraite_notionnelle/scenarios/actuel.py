@@ -248,6 +248,10 @@ class ResultatActuel:
     #: (:func:`~retraite_notionnelle.revalorisation.relever_les_exploitants`) ;
     #: ``None`` sans RCO.
     chef_d_exploitation: _completer.ChefDExploitation | None = None
+    #: Ce que la révision des pensions agricoles déjà liquidées relit
+    #: (:func:`~retraite_notionnelle.revalorisation.reviser_les_exploitants`) ;
+    #: ``None`` sans pension de base agricole.
+    exploitant_agricole: _completer.ExploitantAgricole | None = None
 
     @property
     def pension_mensuelle(self) -> float:
@@ -286,6 +290,7 @@ def resultat_actuel(liquidation: Liquidation, foyer: Foyer) -> ResultatActuel:
         minimum_ecrete=liquidation.complements.minimum_ecrete,
         petites_pensions=liquidation.complements.petites_pensions,
         chef_d_exploitation=liquidation.complements.chef,
+        exploitant_agricole=liquidation.complements.exploitant,
     )
 
 
@@ -417,6 +422,9 @@ def resultat_des_departs(moteur, carriere: Carriere, departs, liquidations,
                                for petite in liquidation.complements.petites_pensions),
         chef_d_exploitation=next((liquidation.complements.chef for liquidation in liquidations
                                   if liquidation.complements.chef is not None), None),
+        exploitant_agricole=next((liquidation.complements.exploitant
+                                  for liquidation in liquidations
+                                  if liquidation.complements.exploitant is not None), None),
     )
 
 

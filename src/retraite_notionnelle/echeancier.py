@@ -608,6 +608,12 @@ class Echeancier:
             if regime.relevement > 0:
                 detail += (f", relèvement de septembre 2023 compris "
                            f"({regime.relevement:,.2f} €)")
+            if regime.plans:
+                detail += (f", plans de revalorisation révisés compris "
+                           f"({regime.plans:,.2f} €)")
+            if regime.pmr > 0:
+                detail += (f", pension majorée de référence de 2009 comprise "
+                           f"({regime.pmr:,.2f} €)")
             self.journal.inscrire(Entree(
                 f"{origine}_{annee}", ident, date, date, None, "composante",
                 {"id": f"{origine}_{annee}", "regime": regime.regime,

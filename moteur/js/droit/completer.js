@@ -281,19 +281,24 @@ export function majorationSousLeTraitement(montant, majoration, traitement, surc
  * d'effet au prorata de la durée sur DR, au taux plein, comparée avant surcote
  * et sans la majoration pour enfants, écrêtée de ce que `ressources` — toutes
  * les pensions et majorations pour enfants — dépassent du plafond. Voir
- * `pension_majoree` du Python.
+ * `pension_majoree` du Python. Une pension déjà liquidée passe, dans `options`,
+ * la `regle` des pensions qu'elle sert, le jour `quand` (DateMois) des montants,
+ * `tauxPleinRequis` et `surcoteComprise`.
  */
-export function pensionMajoree(moteur, carriere, eligible, pension, ressources) {
-  const regle = moteur.pensionMajoreeReference.regle(dateDEffet(carriere));
-  if (!regle.existe || !eligible.tauxPlein || pension.montant <= 0.0) {
+export function pensionMajoree(moteur, carriere, eligible, pension, ressources,
+  { quand = null, regle = null, tauxPleinRequis = true, surcoteComprise = false } = {}) {
+  if (regle === null) {
+    regle = moteur.pensionMajoreeReference.regle(dateDEffet(carriere));
+  }
+  if (!regle.existe || (tauxPleinRequis && !eligible.tauxPlein) || pension.montant <= 0.0) {
     return null;
   }
   const duree = eligible.duree + (regle.majorations_de_duree ? eligible.enfants : 0);
   if (duree < (regle.duree_minimale ?? 0)) {
     return null;
   }
-  const annee = carriere.anneeLiquidation;
-  const mois = carriere.moisLiquidation;
+  const annee = quand === null ? carriere.anneeLiquidation : quand.annee;
+  const mois = quand === null ? carriere.moisLiquidation : quand.mois;
   const lu = moteur.pensionMajoreeReference.montant(regle.montant, annee, mois);
   if (lu === null) {
     return null;
@@ -319,7 +324,7 @@ export function pensionMajoree(moteur, carriere, eligible, pension, ressources) 
   }
   const pmr = (entiere * (retenue - dureeReduite) + (reduite ?? 0.0) * dureeReduite)
     / eligible.reference;
-  const avant = Math.max(0.0, pmr - pension.montant / eligible.surcote);
+  const avant = Math.max(0.0, pmr - pension.montant / (surcoteComprise ? 1.0 : eligible.surcote));
   if (avant <= 0.0) {
     return null;
   }
@@ -385,16 +390,19 @@ function minimumVieillesse(moteur, nom, annee) {
  * Ce que les plans de revalorisation ajoutent à la retraite proportionnelle
  * d'un chef d'exploitation parti de 1997 à 2008 ; null quand ils n'y ajoutent
  * rien : P = (A - n) × DCE, minoré sous vingt-deux ans et demi de 1997 à 2000
- * et réduit à la part servie. Voir `majoration_retraite_proportionnelle` du
- * Python.
+ * et réduit à la part servie. `quand` (AAAA-01-01), la révision d'une pension
+ * déjà liquidée : la règle des pensions dues cette année-là, A aux montants du
+ * 1er janvier, n celui de la liquidation. Voir
+ * `majoration_retraite_proportionnelle` du Python.
  */
 export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pension,
-  trimestres) {
+  trimestres, quand = null) {
   const dateEffet = dateDEffet(carriere);
   if (dateEffet === null || !eligible.tauxPlein || pension.montant <= 0.0) {
     return null;
   }
-  const regle = moteur.fichesDatees.regle(FICHE_DE_LA_MAJORATION_PROPORTIONNELLE, dateEffet);
+  const regle = moteur.fichesDatees.regle(FICHE_DE_LA_MAJORATION_PROPORTIONNELLE,
+    quand ?? dateEffet);
   if (!regle || !regle.existe || trimestres <= 0) {
     return null;
   }
@@ -407,29 +415,54 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
   const annee = carriere.anneeLiquidation;
   const chef = eligible.chef / 4.0;
   const agricole = eligible.duree / 4.0;
+  let reduit = regle.minimum_reduit;
+  if (reduit && dateEffet < String(regle.minimum_reduit_depuis ?? dateEffet)) {
+    reduit = null;
+  }
   let minimumNomme;
   if (chef >= ANNEES_DE_CHEF_DU_MINIMUM) {
     minimumNomme = regle.minimum;
-  } else if (regle.minimum_reduit && chef > 0.0 && agricole >= ANNEES_DE_CHEF_DU_MINIMUM) {
-    minimumNomme = regle.minimum_reduit;
+  } else if (reduit && chef > 0.0 && agricole >= ANNEES_DE_CHEF_DU_MINIMUM) {
+    minimumNomme = reduit;
   } else {
     return null;
   }
-  let valeur = liquider.valeurDuPoint(moteur, periode.points_de ?? pension.regime,
-    carriere.dateLiquidation);
-  if (valeur === null && periode.valeur_point_euros !== null
-      && periode.valeur_point_euros !== undefined) {
-    valeur = [liquider.valeurPointFiche(moteur, periode, annee), Fiabilite.MOYENNE];
-  }
-  if (valeur === null || valeur[0] <= 0.0) {
+  const [requis] = ouvrir.dureeRequise(moteur, periode, carriere);
+  // La valeur du point, celle d'une année de la durée requise, et la retraite
+  // forfaitaire d'une carrière complète, au jour `quandPoint`.
+  const serviceEtForfait = (quandPoint, an) => {
+    let valeur = liquider.valeurDuPoint(moteur, periode.points_de ?? pension.regime,
+      quandPoint);
+    if (valeur === null && periode.valeur_point_euros !== null
+        && periode.valeur_point_euros !== undefined) {
+      valeur = [liquider.valeurPointFiche(moteur, periode, an), Fiabilite.MOYENNE];
+    }
+    if (valeur === null || valeur[0] <= 0.0) {
+      return null;
+    }
+    return [valeur[0], valeur[0] * (requis > 0 ? 37.5 / (requis / 4.0) : 1.0),
+      periode.pension_forfaitaire_annuelle * moteur.macro.coefficientPrix(
+        periode.pension_forfaitaire_annee ?? an, an), valeur[1]];
+  };
+  const lus = serviceEtForfait(carriere.dateLiquidation, annee);
+  if (lus === null) {
     return null;
   }
-  const point = valeur[0];
-  let fiabilite = valeur[1];
-  const [requis] = ouvrir.dureeRequise(moteur, periode, carriere);
-  const service = point * (requis > 0 ? 37.5 / (requis / 4.0) : 1.0);
-  const forfait = periode.pension_forfaitaire_annuelle * moteur.macro.coefficientPrix(
-    periode.pension_forfaitaire_annee ?? annee, annee);
+  const [, service, forfait] = lus;
+  let fiabilite = lus[3];
+  let point = lus[0];
+  let serviceServi = service;
+  let forfaitServi = forfait;
+  let anServi = annee;
+  if (quand !== null) {
+    anServi = Number(quand.slice(0, 4));
+    const servis = serviceEtForfait(new DateMois(anServi, 1), anServi);
+    if (servis === null) {
+      return null;
+    }
+    [point, serviceServi, forfaitServi] = servis;
+    fiabilite = Math.min(fiabilite, servis[3]);
+  }
   let minimum;
   if (minimumNomme === null || minimumNomme === undefined) {
     minimum = Number(regle.minimum_points);
@@ -438,11 +471,11 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
       throw new Error(`${FICHE_DE_LA_MAJORATION_PROPORTIONNELLE} : minimum `
         + `'${minimumNomme}' inconnu`);
     }
-    const lu = minimumVieillesse(moteur, minimumNomme, annee);
+    const lu = minimumVieillesse(moteur, minimumNomme, anServi);
     if (lu === null) {
       return null;
     }
-    minimum = (lu[0] - forfait) / (ANNEES_DU_MINIMUM_AU_PLUS * point);
+    minimum = (lu[0] - forfaitServi) / (ANNEES_DU_MINIMUM_AU_PLUS * point);
     fiabilite = Math.min(fiabilite, lu[1]);
   }
   // La retraite proportionnelle, en points de la liquidation par année
@@ -470,7 +503,7 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
   if (points <= 0.0) {
     return null;
   }
-  return { minimum, moyenne, duree, points, complement: points * service, fiabilite };
+  return { minimum, moyenne, duree, points, complement: points * serviceServi, fiabilite };
 }
 
 /**
@@ -742,7 +775,8 @@ export function plancherInternational(eligible, montantBase, montantMajore, dure
 /** Ce que l'étape « compléter tous régimes » écrit. */
 export class Complements {
   constructor({ personne, regimes, avantages, total, minimumApplique, fiabilite,
-    plancher = 0.0, minimumEcrete = null, petitesPensions = [], chef = null }) {
+    plancher = 0.0, minimumEcrete = null, petitesPensions = [], chef = null,
+    exploitant = null }) {
     this.personne = personne;
     this.regimes = regimes;
     this.avantages = avantages;
@@ -766,6 +800,10 @@ export class Complements {
     // eligible, points, gratuits, complement}` ; `null` sans RCO. Voir
     // `ChefDExploitation` du Python.
     this.chef = chef;
+    // Ce que la révision des pensions agricoles déjà liquidées relit :
+    // `{regime, carriere, eligible, trimestres, pension, plans}` ; `null` sans
+    // pension de base agricole. Voir `ExploitantAgricole` du Python.
+    this.exploitant = exploitant;
   }
 
   /** Les compléments, tels que le schéma de l'étape les décrit. */
@@ -825,6 +863,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
   // Ce que le minimum contributif ajoute à chaque pension, par son indice.
   let ajoutsDuMinimum = new Map();
   let chef = null;
+  let exploitant = null;
 
   // La règle du minimum que la date d'effet fait valoir (fiche
   // `minimum_contributif`) : il n'existe que depuis le 1er avril 1983, sa
@@ -1404,6 +1443,11 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     // proportionnelle du chef à un minimum de points (1997 à 2008).
     const proportionnelle = majorationRetraiteProportionnelle(
       moteur, carriere, agricole, base, durees.trimestresParRegime.get(base.regime) ?? 0);
+    exploitant = {
+      regime: base.regime, carriere, eligible: agricole,
+      trimestres: durees.trimestresParRegime.get(base.regime) ?? 0,
+      pension: base, plans: proportionnelle,
+    };
     if (proportionnelle !== null) {
       base = {
         ...base,
@@ -1541,6 +1585,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     minimumEcrete,
     petitesPensions,
     chef,
+    exploitant,
   });
 }
 

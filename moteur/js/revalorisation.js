@@ -18,7 +18,10 @@
 
 import { DateMois } from "./calendrier.js";
 import { RevalorisationStock, SituationFoyer } from "./config.js";
-import { RCO, complementDifferentiel } from "./droit/completer.js";
+import {
+  FICHE_DE_LA_MAJORATION_PROPORTIONNELLE, RCO, complementDifferentiel,
+  majorationRetraiteProportionnelle, pensionMajoree,
+} from "./droit/completer.js";
 import {
   MAJORATION_ENFANTS, majorationDuConjoint, partsDeLaMajoration,
 } from "./droit/commun.js";
@@ -337,6 +340,17 @@ export function menerAuMois(moteur, pensions, depart, jusqua) {
     * servie.coefficient(p, depart.annee, debut, fin, mensuel2019)[0]);
 }
 
+/**
+ * Ce qu'une pension de régime sert à l'échéance : son montant du départ mené
+ * par son coefficient, et ce que les révisions y retirent ou y ajoutent. Voir
+ * `RegimeServi.aujourd_hui` du Python.
+ */
+export function servieALEcheance(r) {
+  return (r.au_depart - (r.conjoint_au_depart ?? 0.0)) * r.coefficient - (r.revision ?? 0.0)
+    + (r.majoration ?? 0.0) + (r.relevement ?? 0.0) + (r.plans ?? 0.0) + (r.pmr ?? 0.0)
+    + (r.conjoint ?? 0.0);
+}
+
 /** Le système 1 aujourd'hui : ce que le droit sert, régime par régime. */
 export class ActuelAujourdhui {
   constructor(champs) {
@@ -384,6 +398,8 @@ export class Revalorisee {
         relevement_des_exploitants: r.relevement ?? 0.0,
         ...((r.conjoint || r.conjoint_au_depart)
           ? { majoration_conjoint_a_charge: r.conjoint } : {}),
+        ...(r.plans ? { plans_de_revalorisation: r.plans } : {}),
+        ...(r.pmr ? { pension_majoree_de_2009: r.pmr } : {}),
       })),
       majoration: this.coefficient_majoration,
       mensuel_decembre_2019: this.mensuel_decembre_2019,
@@ -522,6 +538,8 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
       revision: 0.0,
       majoration: 0.0,
       relevement: 0.0,
+      plans: 0.0,
+      pmr: 0.0,
       conjoint_au_depart: conjointAuDepart,
       conjoint,
     });
@@ -532,6 +550,8 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
     datees, regimes, servie, aLEffet, mensuel2019, fin);
   const relevement = releverLesExploitants(simulateur.scenarioActuel, carriere, resultat,
     datees, regimes, servie, aLEffet, mensuel2019, fin);
+  const exploitant = reviserLesExploitants(simulateur.scenarioActuel, resultat, datees,
+    regimes, servie, mensuel2019, fin, majoration * coefficientMajoration);
 
   return new Revalorisee({
     personne: carriere.personne,
@@ -543,6 +563,7 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
     fiabilite,
     majorations,
     relevement,
+    exploitant,
   });
 }
 
@@ -587,8 +608,7 @@ export function reviserLeMinimum(moteur, carriere, resultat, regimes, annee) {
     code, part * coefficient / servi * baisse]));
   for (const r of regimes) {
     r.revision = retraits.get(r.regime) ?? 0.0;
-    r.aujourd_hui = (r.au_depart - (r.conjoint_au_depart ?? 0.0)) * r.coefficient - r.revision
-      + (r.majoration ?? 0.0) + (r.relevement ?? 0.0) + (r.conjoint ?? 0.0);
+    r.aujourd_hui = servieALEcheance(r);
   }
 }
 
@@ -724,8 +744,7 @@ export function majorerLesPetitesPensions(moteur, resultat, datees, regimes, ser
     const majoration = parRegime.get(r.regime) ?? 0.0;
     if (majoration > 0) {
       r.majoration = majoration;
-      r.aujourd_hui = (r.au_depart - (r.conjoint_au_depart ?? 0.0)) * r.coefficient - r.revision
-        + majoration + (r.relevement ?? 0.0) + (r.conjoint ?? 0.0);
+      r.aujourd_hui = servieALEcheance(r);
     }
   }
   return majorations;
@@ -806,8 +825,7 @@ export function releverLesExploitants(moteur, carriere, resultat, datees, regime
   for (const r of regimes) {
     if (r.regime === RCO) {
       r.relevement = relevement.a_l_echeance;
-      r.aujourd_hui = (r.au_depart - (r.conjoint_au_depart ?? 0.0)) * r.coefficient - r.revision
-        + (r.majoration ?? 0.0) + r.relevement + (r.conjoint ?? 0.0);
+      r.aujourd_hui = servieALEcheance(r);
     }
   }
   return relevement;
@@ -1106,4 +1124,98 @@ export class RevalorisationServie {
     if (prospectif) return this.coefficient(bascule, annee);
     return this.coefficient(anneeLiquidation, annee);
   }
+}
+
+/**
+ * La dernière année des plans de revalorisation : la pension majorée de
+ * référence les remplace pour les pensions dues depuis 2009, et compte leurs
+ * points de 2008 (D. 732-112). Voir `DERNIERE_ANNEE_DES_PLANS` du Python.
+ */
+export const DERNIERE_ANNEE_DES_PLANS = 2008;
+/**
+ * La pension majorée de référence s'ouvre aux pensions prises avant elle le
+ * 1er janvier 2009, à la règle des pensions dues jusqu'à celle de 2022 ; le
+ * taux plein n'est exigé que des pensions prises depuis 2002 (D. 732-109).
+ */
+export const PMR_DES_PENSIONS_PRISES_AVANT = "2009-01-01";
+export const DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT = "2023-08-31";
+export const TAUX_PLEIN_DE_LA_PMR_DEPUIS = "2002-01-01";
+
+/**
+ * La révision d'une pension des non-salariés agricoles déjà liquidée, menée
+ * jusqu'à l'échéance `fin` : les plans de revalorisation, à la règle des
+ * pensions dues l'année de l'échéance, 2008 au plus, puis la pension majorée
+ * de référence ouverte en 2009 aux pensions prises avant, écrêtée sur toutes
+ * les pensions et les majorations pour enfants `enfants`. Modifie la base de
+ * `regimes` en place et rend le calcul, ou `null`. Voir
+ * `reviser_les_exploitants` du Python.
+ */
+export function reviserLesExploitants(moteur, resultat, datees, regimes, servie, mensuel2019,
+  fin, enfants) {
+  const exploitant = resultat.exploitant_agricole ?? null;
+  if (exploitant === null) return null;
+  const datee = datees.find(([p]) => p.regime === exploitant.regime);
+  if (datee === undefined) return null;
+  const [pension, a, debut] = datee;
+  const carriere = exploitant.carriere;
+  const auDepart = exploitant.plans !== null ? exploitant.plans.points : 0.0;
+  const coefficient = servie.coefficient(pension, a, debut, fin, mensuel2019)[0];
+
+  // Les plans, à la règle de l'année de l'échéance, 2008 au plus.
+  let anneeDesPlans = null;
+  let servis = auDepart;
+  let plans = 0.0;
+  const annee = Math.min(Number(fin.slice(0, 4)), DERNIERE_ANNEE_DES_PLANS);
+  const regle = moteur.fichesDatees.regle(FICHE_DE_LA_MAJORATION_PROPORTIONNELLE, debut);
+  if (annee > Number(debut.slice(0, 4)) && regle && regle.existe) {
+    const quand = dateIso(annee, 1, 1);
+    const revisee = majorationRetraiteProportionnelle(moteur, carriere, exploitant.eligible,
+      exploitant.pension, exploitant.trimestres, quand);
+    servis = revisee !== null ? revisee.points : 0.0;
+    const menee = coefficient / servie.coefficient(pension, a, debut, quand, mensuel2019)[0];
+    const aLEcheance = revisee === null ? 0.0 : revisee.complement * menee;
+    const deja = exploitant.plans === null ? 0.0 : exploitant.plans.complement * coefficient;
+    anneeDesPlans = annee;
+    plans = aLEcheance - deja;
+  }
+
+  // La pension majorée de référence de 2009, aux pensions prises avant.
+  let entiere = null;
+  let pmr = 0.0;
+  if (debut < PMR_DES_PENSIONS_PRISES_AVANT && PMR_DES_PENSIONS_PRISES_AVANT <= fin) {
+    let base = 0.0;
+    let ressources = enfants;
+    for (const r of regimes) {
+      const montant = servieALEcheance(r.regime === exploitant.regime ? { ...r, plans } : r);
+      if (r.regime === exploitant.regime) base = montant;
+      ressources += montant;
+    }
+    const [anneeFin, moisFin] = fin.split("-").map(Number);
+    ressources += pensionsEtrangeresServies(moteur.macro, carriere,
+      new DateMois(anneeFin, moisFin));
+    const reglePmr = moteur.pensionMajoreeReference.regle(
+      fin < DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT
+        ? fin : DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT);
+    const majoree = pensionMajoree(moteur, carriere, exploitant.eligible,
+      { ...exploitant.pension, montant: base }, ressources, {
+        quand: new DateMois(anneeFin, moisFin), regle: reglePmr,
+        tauxPleinRequis: debut >= TAUX_PLEIN_DE_LA_PMR_DEPUIS, surcoteComprise: true,
+      });
+    if (majoree !== null) {
+      entiere = majoree.entiere;
+      pmr = majoree.complement;
+    }
+  }
+  if (plans === 0.0 && pmr <= 0.0) return null;
+  for (const r of regimes) {
+    if (r.regime === exploitant.regime) {
+      r.plans = plans;
+      r.pmr = pmr;
+      r.aujourd_hui = servieALEcheance(r);
+    }
+  }
+  return {
+    annee_des_plans: anneeDesPlans, points_a_la_liquidation: auDepart, points_servis: servis,
+    plans, pmr_entiere: entiere, pmr,
+  };
 }

@@ -417,7 +417,10 @@ class PensionMajoree:
 
 
 def pension_majoree(moteur: ScenarioActuel, carriere: Carriere, eligible,
-                    pension: PensionRegime, ressources: float) -> PensionMajoree | None:
+                    pension: PensionRegime, ressources: float,
+                    quand: DateMois | None = None, regle: dict | None = None,
+                    taux_plein_requis: bool = True,
+                    surcote_comprise: bool = False) -> PensionMajoree | None:
     """Ce que la pension majorée de référence (PMR) ajoute à la pension de
     base des non-salariés agricoles ; ``None`` quand elle n'y ajoute rien.
 
@@ -439,14 +442,23 @@ def pension_majoree(moteur: ScenarioActuel, carriere: Carriere, eligible,
     que d'autres départs servent et les pensions étrangères (L. 732-54-3,
     D. 732-114). ``eligible`` est l'
     :class:`~retraite_notionnelle.droit.liquider.EligibleAgricole` du régime.
+
+    Une pension déjà liquidée (:func:`~retraite_notionnelle.revalorisation.reviser_les_exploitants`)
+    passe la ``regle`` des pensions qu'elle sert et le jour ``quand`` des
+    montants ; ``taux_plein_requis`` et ``surcote_comprise`` disent les deux
+    conditions que D. 732-109 et D. 732-112 posent autrement aux pensions
+    prises avant 2009.
     """
-    regle = moteur.pension_majoree_reference.regle(date_d_effet(carriere))
-    if not regle["existe"] or not eligible.taux_plein or pension.montant <= 0.0:
+    if regle is None:
+        regle = moteur.pension_majoree_reference.regle(date_d_effet(carriere))
+    if (not regle["existe"] or (taux_plein_requis and not eligible.taux_plein)
+            or pension.montant <= 0.0):
         return None
     duree = eligible.duree + (eligible.enfants if regle["majorations_de_duree"] else 0)
     if duree < (regle["duree_minimale"] or 0):
         return None
-    annee, mois = carriere.annee_liquidation, carriere.mois_liquidation
+    annee, mois = ((carriere.annee_liquidation, carriere.mois_liquidation) if quand is None
+                   else (quand.annee, quand.mois))
     lu = moteur.pension_majoree_reference.montant(regle["montant"], annee, mois)
     if lu is None:
         return None
@@ -467,7 +479,7 @@ def pension_majoree(moteur: ScenarioActuel, carriere: Carriere, eligible,
         duree_reduite = retenue - min(chef, retenue)
     pmr = (entiere * (retenue - duree_reduite)
            + (reduite or 0.0) * duree_reduite) / eligible.reference
-    avant = max(0.0, pmr - pension.montant / eligible.surcote)
+    avant = max(0.0, pmr - pension.montant / (1.0 if surcote_comprise else eligible.surcote))
     if avant <= 0.0:
         return None
     if regle["plafond"] == "minimum_contributif":
@@ -544,7 +556,7 @@ def _minimum_vieillesse(moteur: ScenarioActuel, nom: str, annee: int
 
 def majoration_retraite_proportionnelle(
         moteur: ScenarioActuel, carriere: Carriere, eligible, pension: PensionRegime,
-        trimestres: int) -> MajorationProportionnelle | None:
+        trimestres: int, quand: str | None = None) -> MajorationProportionnelle | None:
     """Ce que les plans de revalorisation ajoutent à la retraite
     proportionnelle d'un chef d'exploitation parti de 1997 à 2008 ; ``None``
     quand ils n'y ajoutent rien.
@@ -571,11 +583,20 @@ def majoration_retraite_proportionnelle(
     ``majoration_retraite_proportionnelle``).
     ``eligible`` est l':class:`~retraite_notionnelle.droit.liquider.EligibleAgricole`
     du régime ; ``trimestres``, sa durée d'assurance.
+
+    ``quand`` (AAAA-01-01), la révision d'une pension déjà liquidée : la règle
+    des pensions dues cette année-là, que chaque décret applique aux pensions
+    prises depuis 1997, et A au minimum vieillesse, au forfait et à la valeur
+    du point « en vigueur au 1er janvier de l'année considérée » (décret
+    n° 2002-297, article 4 ; D. 732-144) ; n reste celui de la liquidation, et
+    le minimum C n'est pas ouvert aux pensions prises avant 2002, que le décret
+    n° 2002-297 ne nomme pas (``minimum_reduit_depuis``).
     """
     date_effet = date_d_effet(carriere)
     if date_effet is None or not eligible.taux_plein or pension.montant <= 0.0:
         return None
-    regle = moteur.fiches_datees.regle(FICHE_DE_LA_MAJORATION_PROPORTIONNELLE, date_effet)
+    regle = moteur.fiches_datees.regle(FICHE_DE_LA_MAJORATION_PROPORTIONNELLE,
+                                       quand or date_effet)
     if not regle or not regle["existe"] or trimestres <= 0:
         return None
     periode = periode_de_liquidation(moteur.catalogue[pension.regime],
@@ -584,33 +605,54 @@ def majoration_retraite_proportionnelle(
         return None
     annee = carriere.annee_liquidation
     chef, agricole = eligible.chef / 4.0, eligible.duree / 4.0
+    reduit = regle["minimum_reduit"]
+    if reduit and date_effet < str(regle.get("minimum_reduit_depuis") or date_effet):
+        reduit = None
     if chef >= ANNEES_DE_CHEF_DU_MINIMUM:
         minimum_nomme = regle["minimum"]
-    elif regle["minimum_reduit"] and chef > 0.0 and agricole >= ANNEES_DE_CHEF_DU_MINIMUM:
-        minimum_nomme = regle["minimum_reduit"]
+    elif reduit and chef > 0.0 and agricole >= ANNEES_DE_CHEF_DU_MINIMUM:
+        minimum_nomme = reduit
     else:
         return None
-    valeur = liquider.valeur_du_point(moteur, periode.points_de or pension.regime,
-                                      carriere.date_liquidation)
-    if valeur is None and periode.valeur_point_euros is not None:
-        valeur = liquider.valeur_point_fiche(moteur, periode, annee), Fiabilite.MOYENNE
-    if valeur is None or valeur[0] <= 0.0:
-        return None
-    point, fiabilite = valeur
     requis, _ = ouvrir.duree_requise(moteur, periode, carriere)
-    service = point * (37.5 / (requis / 4.0) if requis > 0 else 1.0)
-    forfait = periode.pension_forfaitaire_annuelle * moteur.macro.coefficient_prix(
-        periode.pension_forfaitaire_annee or annee, annee)
+
+    def service_et_forfait(quand_point: DateMois, an: int
+                           ) -> tuple[float, float, float, Fiabilite] | None:
+        """La valeur du point, celle d'une année de la durée requise, et la
+        retraite forfaitaire d'une carrière complète, au jour ``quand_point``."""
+        valeur = liquider.valeur_du_point(moteur, periode.points_de or pension.regime,
+                                          quand_point)
+        if valeur is None and periode.valeur_point_euros is not None:
+            valeur = liquider.valeur_point_fiche(moteur, periode, an), Fiabilite.MOYENNE
+        if valeur is None or valeur[0] <= 0.0:
+            return None
+        return (valeur[0], valeur[0] * (37.5 / (requis / 4.0) if requis > 0 else 1.0),
+                periode.pension_forfaitaire_annuelle * moteur.macro.coefficient_prix(
+                    periode.pension_forfaitaire_annee or an, an), valeur[1])
+
+    lus = service_et_forfait(carriere.date_liquidation, annee)
+    if lus is None:
+        return None
+    _, service, forfait, fiabilite = lus
+    if quand is None:
+        point, service_servi, forfait_servi, an_servi = lus[0], service, forfait, annee
+    else:
+        an_servi = int(quand[:4])
+        servis = service_et_forfait(DateMois(an_servi, 1), an_servi)
+        if servis is None:
+            return None
+        point, service_servi, forfait_servi, fiabilite_servie = servis
+        fiabilite = min(fiabilite, fiabilite_servie)
     if minimum_nomme is None:
         minimum = float(regle["minimum_points"])
     else:
         if minimum_nomme not in MINIMA_DE_LA_MAJORATION_PROPORTIONNELLE:
             raise ValueError(f"{FICHE_DE_LA_MAJORATION_PROPORTIONNELLE} : minimum "
                              f"{minimum_nomme!r} inconnu")
-        lu = _minimum_vieillesse(moteur, minimum_nomme, annee)
+        lu = _minimum_vieillesse(moteur, minimum_nomme, an_servi)
         if lu is None:
             return None
-        minimum = (lu[0] - forfait) / (ANNEES_DU_MINIMUM_AU_PLUS * point)
+        minimum = (lu[0] - forfait_servi) / (ANNEES_DU_MINIMUM_AU_PLUS * point)
         fiabilite = min(fiabilite, lu[1])
     # La retraite proportionnelle : la pension avant surcote, moins sa part
     # forfaitaire, en points de la liquidation par année agricole, trente-sept
@@ -637,7 +679,7 @@ def majoration_retraite_proportionnelle(
         return None
     return MajorationProportionnelle(
         minimum=minimum, moyenne=moyenne, duree=duree, points=points,
-        complement=points * service, fiabilite=fiabilite)
+        complement=points * service_servi, fiabilite=fiabilite)
 
 
 @dataclass(frozen=True)
@@ -835,6 +877,28 @@ class ChefDExploitation:
 
 
 @dataclass(frozen=True)
+class ExploitantAgricole:
+    """Ce que la révision des pensions des non-salariés agricoles déjà
+    liquidées relit de leur liquidation : les plans de revalorisation de 1997
+    à 2008, servis chaque année à la règle des pensions dues cette année-là,
+    puis la pension majorée de référence que la loi n° 2008-1330 ouvre en 2009
+    aux pensions prises avant (:func:`~retraite_notionnelle.revalorisation.reviser_les_exploitants`)."""
+
+    #: Le régime de base des non-salariés agricoles.
+    regime: str
+    #: La carrière du départ qui l'a liquidée, sa date d'effet comprise.
+    carriere: object
+    #: Son :class:`~retraite_notionnelle.droit.liquider.EligibleAgricole`.
+    eligible: object
+    #: Sa durée d'assurance, en trimestres.
+    trimestres: int
+    #: La pension de base avant les plans et la pension majorée de référence.
+    pension: PensionRegime
+    #: La majoration des plans servie à la liquidation (:class:`MajorationProportionnelle`).
+    plans: MajorationProportionnelle | None
+
+
+@dataclass(frozen=True)
 class Complements:
     """Ce que l'étape « compléter tous régimes » écrit."""
 
@@ -864,6 +928,9 @@ class Complements:
     #: Ce que le relèvement des exploitants de septembre 2023 relit
     #: (:class:`ChefDExploitation`) ; ``None`` sans RCO.
     chef: ChefDExploitation | None = None
+    #: Ce que la révision des pensions agricoles déjà liquidées relit
+    #: (:class:`ExploitantAgricole`) ; ``None`` sans pension de base agricole.
+    exploitant: ExploitantAgricole | None = None
 
     def donnees(self) -> dict:
         """Les compléments, tels que le schéma de l'étape les décrit."""
@@ -931,6 +998,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
     #: Ce que le minimum contributif ajoute à chaque pension, par son indice.
     ajouts_du_minimum: dict[int, float] = {}
     chef: ChefDExploitation | None = None
+    exploitant: ExploitantAgricole | None = None
 
     # La règle du minimum que la date d'effet fait valoir (fiche
     # ``minimum_contributif``) : il n'existe que depuis le 1er avril 1983, sa
@@ -1504,6 +1572,10 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         proportionnelle = majoration_retraite_proportionnelle(
             moteur, carriere, agricole, base,
             durees.trimestres_par_regime.get(base.regime, 0))
+        exploitant = ExploitantAgricole(
+            regime=base.regime, carriere=carriere, eligible=agricole,
+            trimestres=durees.trimestres_par_regime.get(base.regime, 0),
+            pension=base, plans=proportionnelle)
         if proportionnelle is not None:
             base = replace(
                 base, montant=base.montant + proportionnelle.complement,
@@ -1631,6 +1703,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         minimum_ecrete=minimum_ecrete,
         petites_pensions=petites_pensions,
         chef=chef,
+        exploitant=exploitant,
     )
 
 

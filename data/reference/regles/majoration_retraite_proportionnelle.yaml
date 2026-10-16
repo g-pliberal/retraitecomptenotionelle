@@ -53,6 +53,7 @@ versions:
       minimum_points: null
       minimum: null
       minimum_reduit: null
+      minimum_reduit_depuis: null
       part_servie: null
       minorations: null
   exemples: aucun trouvé
@@ -94,6 +95,7 @@ versions:
       minimum_points: 26.933
       minimum: null
       minimum_reduit: null
+      minimum_reduit_depuis: null
       part_servie: 0.3333333333333333
       minorations: [0.15, 0.15, 0.20, 0.20, 0.20]
   exemples: aucun trouvé
@@ -114,6 +116,7 @@ versions:
       minimum_points: 26.933
       minimum: null
       minimum_reduit: null
+      minimum_reduit_depuis: null
       part_servie: 0.6666666666666666
       minorations: [0.15, 0.15, 0.20, 0.20, 0.20]
   exemples: aucun trouvé
@@ -138,6 +141,7 @@ versions:
       minimum_points: 26.933
       minimum: null
       minimum_reduit: null
+      minimum_reduit_depuis: null
       part_servie: 1.0
       minorations: [0.15, 0.15, 0.20, 0.20, 0.20]
   exemples: aucun trouvé
@@ -163,6 +167,7 @@ versions:
       minimum_points: 26.933
       minimum: null
       minimum_reduit: null
+      minimum_reduit_depuis: null
       part_servie: 1.0
       minorations: [0.15, 0.15, 0.10, 0.10, 0.10]
   exemples: aucun trouvé
@@ -188,6 +193,7 @@ versions:
       minimum_points: 29.23
       minimum: null
       minimum_reduit: null
+      minimum_reduit_depuis: null
       part_servie: 1.0
       minorations: null
   exemples: aucun trouvé
@@ -262,6 +268,7 @@ versions:
       minimum_points: null
       minimum: minimum_vieillesse_personne_seule
       minimum_reduit: differentiel_du_couple
+      minimum_reduit_depuis: "2002-01-01"
       part_servie: 1.0
       minorations: null
   exemples: aucun trouvé
@@ -287,6 +294,7 @@ versions:
       minimum_points: null
       minimum: null
       minimum_reduit: null
+      minimum_reduit_depuis: null
       part_servie: null
       minorations: null
   exemples: aucun trouvé
@@ -321,30 +329,36 @@ approximations:
     le décret ne compte que des années
   effet: au plus quelques points
 - ecart: >-
-    la majoration se calcule à la liquidation : le service au tiers puis aux deux tiers,
-    les relèvements de 1999 à 2002 et le nombre A qui suit chaque année le minimum
-    vieillesse ne sont pas servis aux pensions déjà liquidées, ni la révision des
-    pensions prises avant 1997 ; la surcote ne porte pas sur la majoration, ni la
+    depuis le 16 octobre 2026, une pension prise de 1997 à 2008 reçoit chaque année la
+    règle des pensions dues cette année-là — les deux tiers en 1998, les points entiers
+    en 1999, 29,23 sans minoration en 2001, A au minimum vieillesse de chaque année
+    depuis 2002 —, puis garde les points de 2008, que la PMR de 2009 compte
+    (D. 732-112) ; le nombre n reste celui de la liquidation, et le minimum C ne
+    s'ouvre pas aux pensions prises avant 2002, que le décret n° 2002-297 ne nomme pas.
+    Un recul de A d'une année sur l'autre retire des points, ce que les textes
+    n'interdisent pas et que la caisse a peut-être évité ; la révision des pensions
+    prises avant 1997 (article 2 du décret n° 97-163, D. 732-114 à D. 732-117, articles
+    5 et suivants du décret n° 2002-297), qui reconstitue la durée de chef des points
+    d'avant 1994, n'est pas servie ; la surcote ne porte pas sur la majoration, ni la
     majoration pour enfants
   effet: >-
-    les pensions agricoles prises de 1997 à 2001 sont sous-estimées après leur première
-    année
+    les pensions agricoles prises avant 1997, de 1997 à 2008 seulement : depuis 2009,
+    la PMR les porte au moins à son montant
 - ecart: >-
     le minimum vieillesse de 2008, que minimum_vieillesse.csv ne porte pas, est celui de
     2007 revalorisé sur les prix
   effet: quelques euros par an, en 2008
 sources:
-  lu_le: 2026-10-14
+  lu_le: 2026-10-16
   prochaine_relecture: 2027-10-31
   a_relire:
   - >-
     Chercher un exemple chiffré publié par la MSA ou le ministère d'une pension portée au
     minimum de points de 1997 à 2008, et le rejouer dans exemples_officiels.yaml.
   - >-
-    Servir aux pensions déjà liquidées le service au tiers et aux deux tiers, les
-    relèvements de 1999 à 2002 et la révision des pensions d'avant 1997 (article 2 du
-    décret n° 97-163, D. 732-114 à D. 732-117), avec l'étape des pensions déjà
-    liquidées.
+    Servir la révision des pensions prises avant 1997 (article 2 du décret n° 97-163,
+    vingt points puis 23,9 en 1999 ; D. 732-114 à D. 732-117 ; décret n° 2002-297,
+    articles 5 et suivants), sur la durée de chef reconstituée des points d'avant 1994.
   lectures:
   - type: jorf
     reference: >-
@@ -366,15 +380,19 @@ textes_a_rattacher: []
 code:
   python: >-
     droit/completer.py : majoration_retraite_proportionnelle, completer ;
-    scenarios/actuel.py : FichesDatees
+    revalorisation.py : reviser_les_exploitants ; scenarios/actuel.py : FichesDatees
   javascript: >-
-    moteur/js/droit/completer.js : majorationRetraiteProportionnelle, completer
+    moteur/js/droit/completer.js : majorationRetraiteProportionnelle, completer ;
+    moteur/js/revalorisation.js : reviserLesExploitants
   parametres: contenu.parametres de chaque version
   tests: tests/test_minima_agricoles.py, dans les deux moteurs
 historique:
 - >-
   2026-10-14 — servie, à l'étape 138.8 : les plans de revalorisation de 1997 à 2002, que
   la fiche pension_majoree_reference déclarait omis avant 2009.
+- >-
+  2026-10-16 — étape 138.8 : servie aussi aux pensions déjà liquidées, à la règle des
+  pensions dues de chaque année jusqu'en 2008 (revalorisation.reviser_les_exploitants).
 reformes: []
 exemples: []
 effet: >-

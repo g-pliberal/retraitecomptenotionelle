@@ -308,6 +308,13 @@ class RegimeServi:
     #: chef d'exploitation parti avant — points gratuits et complément
     #: différentiel —, en euros de l'échéance (:func:`relever_les_exploitants`).
     relevement: float = 0.0
+    #: Ce que la révision d'une pension agricole déjà liquidée ajoute à la
+    #: base des non-salariés agricoles, en euros de l'échéance : les plans de
+    #: revalorisation servis à la règle des pensions dues, et la pension
+    #: majorée de référence ouverte en 2009 aux pensions prises avant
+    #: (:func:`reviser_les_exploitants`).
+    plans: float = 0.0
+    pmr: float = 0.0
     #: La majoration pour conjoint à charge (L. 351-13) : sa part de
     #: ``au_depart``, que le coefficient ne mène pas, et celle de l'échéance,
     #: nominale — elle ne se revalorise pas, et commence parfois après le
@@ -318,7 +325,8 @@ class RegimeServi:
     @property
     def aujourd_hui(self) -> float:
         return ((self.au_depart - self.conjoint_au_depart) * self.coefficient
-                - self.revision + self.majoration + self.relevement + self.conjoint)
+                - self.revision + self.majoration + self.relevement + self.plans + self.pmr
+                + self.conjoint)
 
 
 @dataclass(frozen=True)
@@ -379,6 +387,25 @@ class RelevementAgricole:
 
 
 @dataclass(frozen=True)
+class RevisionAgricole:
+    """Ce que la révision d'une pension des non-salariés agricoles déjà
+    liquidée sert à l'échéance (:func:`reviser_les_exploitants`)."""
+
+    #: L'année dont la règle des plans de revalorisation est servie — 2008 au
+    #: plus —, ou ``None`` quand les plans ne révisent rien ; les points de la
+    #: liquidation et ceux de cette année.
+    annee_des_plans: int | None
+    points_a_la_liquidation: float
+    points_servis: float
+    #: Ce que leur révision ajoute, en euros de l'échéance.
+    plans: float
+    #: La pension majorée de référence d'une pension prise avant 2009, à
+    #: l'échéance : entière, au prorata, et la majoration servie, écrêtée.
+    pmr_entiere: float | None
+    pmr: float
+
+
+@dataclass(frozen=True)
 class Revalorisee:
     """Ce que l'étape « faire vivre » écrit : les pensions du système 1 menées
     à une échéance. Son schéma : ``data/reference/etapes/faire_vivre.yaml``."""
@@ -402,6 +429,9 @@ class Revalorisee:
     #: Le relèvement d'un chef d'exploitation de septembre 2023
     #: (:class:`RelevementAgricole`) ; ``None`` sans lui.
     relevement: RelevementAgricole | None = None
+    #: La révision d'une pension agricole déjà liquidée
+    #: (:class:`RevisionAgricole`) ; ``None`` sans elle.
+    exploitant: RevisionAgricole | None = None
 
     def donnees(self) -> dict:
         """La revalorisation, telle que le schéma de l'étape la décrit."""
@@ -416,6 +446,8 @@ class Revalorisee:
                          "relevement_des_exploitants": r.relevement}
                         | ({"majoration_conjoint_a_charge": r.conjoint}
                            if r.conjoint or r.conjoint_au_depart else {})
+                        | ({"plans_de_revalorisation": r.plans} if r.plans else {})
+                        | ({"pension_majoree_de_2009": r.pmr} if r.pmr else {})
                         for r in self.regimes],
             "majoration": self.coefficient_majoration,
             "mensuel_decembre_2019": self.mensuel_decembre_2019,
@@ -812,6 +844,9 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
     regimes, relevement = relever_les_exploitants(
         simulateur.scenario_actuel, carriere, resultat, datees, regimes, servie,
         a_l_effet, mensuel_2019, fin)
+    regimes, exploitant = reviser_les_exploitants(
+        simulateur.scenario_actuel, resultat, datees, regimes, servie, mensuel_2019, fin,
+        majoration * coefficient_majoration)
     return Revalorisee(
         personne=carriere.personne,
         annee=annee,
@@ -822,6 +857,7 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
         fiabilite=fiabilite,
         majorations=majorations,
         relevement=relevement,
+        exploitant=exploitant,
     )
 
 
@@ -1092,6 +1128,114 @@ def relever_les_exploitants(moteur, carriere, resultat, datees, regimes: list[Re
         valeur_point=valeur[0], smic_net=smic[0], coefficient=coefficient)
     return ([replace(r, relevement=relevement.a_l_echeance) if r.regime == RCO else r
              for r in regimes], relevement)
+
+
+#: La dernière année des plans de revalorisation : la loi n° 2008-1330 les
+#: remplace, pour les pensions dues depuis le 1er janvier 2009, par la pension
+#: majorée de référence, qui compte les pensions « après mise en œuvre des
+#: revalorisations prévues aux articles D. 732-110 à D. 732-149 dans leur
+#: rédaction antérieure au 1er janvier 2009 » (D. 732-112) : les points de 2008
+#: restent, et suivent la valeur du point.
+DERNIERE_ANNEE_DES_PLANS = 2008
+#: La pension majorée de référence s'ouvre aux pensions prises avant elle le
+#: 1er janvier 2009 (D. 732-109, 1° et 2°, décret n° 2009-173) ; elles suivent
+#: la règle des pensions dues jusqu'à la dernière qui les nomme, celle de 2022 :
+#: le montant et le plafond de septembre 2023 et de 2026 ne valent que pour les
+#: pensions prises depuis (D. 732-111, D. 732-113).
+PMR_DES_PENSIONS_PRISES_AVANT = date(2009, 1, 1)
+DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT = date(2023, 8, 31)
+#: Les pensions prises avant 2002 n'ont pas à remplir la condition du taux
+#: plein (D. 732-109, 1°).
+TAUX_PLEIN_DE_LA_PMR_DEPUIS = date(2002, 1, 1)
+
+
+def reviser_les_exploitants(moteur, resultat, datees, regimes: list[RegimeServi],
+                            servie: PensionServie, mensuel_2019: float | None, fin: date,
+                            enfants: float
+                            ) -> tuple[list[RegimeServi], RevisionAgricole | None]:
+    """La révision d'une pension des non-salariés agricoles déjà liquidée,
+    menée jusqu'à l'échéance ``fin``.
+
+    LES PLANS DE REVALORISATION, pour une pension prise de 1997 à 2008 : chaque
+    décret sert sa règle aux « pensions dues » à compter de sa date, quelle que
+    soit leur date d'effet — le tiers en 1997, les deux tiers en 1998, puis
+    entiers (décret n° 97-163, article 3), 29,23 points sans minoration en 2001
+    (décret n° 2001-170, article 3), depuis 2002 le nombre A au minimum
+    vieillesse « en vigueur au 1er janvier de l'année considérée » (décret
+    n° 2002-297, article 4 ; D. 732-144). La majoration se recalcule à la règle
+    de l'année de l'échéance, 2008 au plus, sur le nombre de points de la
+    liquidation (:func:`~retraite_notionnelle.droit.completer.majoration_retraite_proportionnelle`) ;
+    ses points suivent ensuite la valeur du point, et remplacent ceux de la
+    liquidation.
+
+    LA PENSION MAJORÉE DE RÉFÉRENCE, ouverte le 1er janvier 2009 aux pensions
+    prises avant (loi n° 2008-1330, article 77 ; D. 732-109 à D. 732-115) : le
+    différentiel, à l'échéance, entre la PMR de la règle des pensions dues et
+    la pension de base, plans compris, surcote comprise (D. 732-112), écrêté au
+    plafond de toutes les pensions et des majorations pour enfants ``enfants``
+    (D. 732-114) ; le taux plein n'est exigé que des pensions prises depuis
+    2002 (D. 732-109, 2°).
+
+    Rend les régimes, la base portant la révision en euros de l'échéance, et
+    le calcul ; rien quand elle n'ajoute rien.
+    """
+    from .droit.completer import (FICHE_DE_LA_MAJORATION_PROPORTIONNELLE,
+                                  majoration_retraite_proportionnelle, pension_majoree)
+
+    exploitant = getattr(resultat, "exploitant_agricole", None)
+    if exploitant is None:
+        return regimes, None
+    datee = next(((p, a, debut, montant) for p, a, debut, montant in datees
+                  if p.regime == exploitant.regime), None)
+    if datee is None:
+        return regimes, None
+    pension, a, debut, _ = datee
+    carriere = exploitant.carriere
+    au_depart = exploitant.plans.points if exploitant.plans is not None else 0.0
+    coefficient = servie.coefficient(pension, a, debut, fin, mensuel_2019)[0]
+
+    # Les plans, à la règle de l'année de l'échéance, 2008 au plus.
+    annee_des_plans, servis, plans = None, au_depart, 0.0
+    annee = min(fin.year, DERNIERE_ANNEE_DES_PLANS)
+    regle = moteur.fiches_datees.regle(FICHE_DE_LA_MAJORATION_PROPORTIONNELLE,
+                                       debut.isoformat())
+    if annee > debut.year and regle and regle["existe"]:
+        quand = date(annee, 1, 1)
+        revisee = majoration_retraite_proportionnelle(
+            moteur, carriere, exploitant.eligible, exploitant.pension,
+            exploitant.trimestres, quand=quand.isoformat())
+        servis = revisee.points if revisee is not None else 0.0
+        menee = (coefficient / servie.coefficient(pension, a, debut, quand,
+                                                  mensuel_2019)[0])
+        a_l_echeance = 0.0 if revisee is None else revisee.complement * menee
+        deja = (0.0 if exploitant.plans is None
+                else exploitant.plans.complement * coefficient)
+        annee_des_plans, plans = annee, a_l_echeance - deja
+
+    # La pension majorée de référence de 2009, aux pensions prises avant.
+    entiere, pmr = None, 0.0
+    if debut < PMR_DES_PENSIONS_PRISES_AVANT <= fin:
+        regimes_plans = [replace(r, plans=plans) if r.regime == exploitant.regime else r
+                         for r in regimes]
+        base = next(r for r in regimes_plans if r.regime == exploitant.regime).aujourd_hui
+        ressources = (somme_ordonnee(r.aujourd_hui for r in regimes_plans) + enfants
+                      + pensions_etrangeres_servies(moteur.macro, carriere,
+                                                    DateMois(fin.year, fin.month)))
+        regle = moteur.pension_majoree_reference.regle(
+            min(fin, DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT).isoformat())
+        majoree = pension_majoree(
+            moteur, carriere, exploitant.eligible, replace(exploitant.pension, montant=base),
+            ressources, quand=DateMois(fin.year, fin.month), regle=regle,
+            taux_plein_requis=debut >= TAUX_PLEIN_DE_LA_PMR_DEPUIS, surcote_comprise=True)
+        if majoree is not None:
+            entiere, pmr = majoree.entiere, majoree.complement
+    if plans == 0.0 and pmr <= 0.0:
+        return regimes, None
+    revision = RevisionAgricole(
+        annee_des_plans=annee_des_plans, points_a_la_liquidation=au_depart,
+        points_servis=servis, plans=plans, pmr_entiere=entiere, pmr=pmr)
+    return ([replace(r, plans=plans, pmr=pmr) if r.regime == exploitant.regime else r
+             for r in regimes], revision)
 
 
 def foyer_a_l_echeance(simulateur, carriere, vivante: Revalorisee) -> Foyer:

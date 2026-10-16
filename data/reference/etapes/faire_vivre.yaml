@@ -40,5 +40,7 @@ objets:
       revision: {porte: "ce que la révision du minimum contributif retire, en euros de l'échéance, quand une pension étrangère commence après le départ (R. 173-8)", type: nombre, defaut: 0}
       majoration_exceptionnelle: {porte: "la majoration exceptionnelle des petites pensions due depuis le 1er septembre 2023, en euros de l'échéance (loi n° 2023-270, article 18, V)", type: nombre, defaut: 0}
       relevement_des_exploitants: {porte: "ce que le taux plein ouvre depuis le 1er septembre 2023 à la RCO d'un chef d'exploitation parti avant, points gratuits et complément différentiel, en euros de l'échéance (loi n° 2023-270, article 18, VI)", type: nombre, defaut: 0}
+      plans_de_revalorisation: {porte: "ce que la révision des plans de revalorisation de 1997 à 2008 ajoute à la base d'un chef d'exploitation parti de 1997 à 2008, à la règle des pensions dues jusqu'en 2008, en euros de l'échéance (décrets n° 97-163, 2001-170, 2002-297, 2002-298)", type: nombre, defaut: 0}
+      pension_majoree_de_2009: {porte: "la pension majorée de référence que la loi n° 2008-1330 ouvre le 1er janvier 2009 aux pensions agricoles prises avant, en euros de l'échéance (D. 732-109 à D. 732-115)", type: nombre, defaut: 0}
       majoration_conjoint_a_charge: {porte: "la majoration pour conjoint à charge que la pension porte à l'échéance, nominale, que le coefficient ne mène pas (L. 351-13)", type: nombre, defaut: 0}
       fiabilite: {porte: "le niveau de ce coefficient", type: texte, obligatoire: true}
