@@ -3,13 +3,13 @@
 **Reprise, au 16 octobre 2026.** Fait : la validation publique, chaque grille
 de la page Coût confrontée en 2020 à la distribution des pensions de l'EIR
 (`grille_large.py --distribution`, 7 octobre) ; la population de l'action 136 ;
-le 16 octobre, ses départs avec décote (quinzième version), puis les retraités
-de l'étranger dans la mesure du minimum contributif, dont la part suit
-désormais la pente de l'EACR, mais 3 à 5 points dessous. Reste, dans cet
-ordre : un emploi fragmenté sur une part des carrières complètes, faute de
-quoi des sous-classes du bas plus fines ; les autres départs choisis ; le
-recours à l'ASPA ; les limites. Au propriétaire : les cas types statutaires
-(152), la bascule (157), le CASD. Détail : `2026-10-16-etape-14-minimum-selon-la-generation.md`.
+le 16 octobre, ses départs avec décote (quinzième version), les retraités de
+l'étranger dans la mesure du minimum contributif, puis l'emploi fragmenté
+(seizième version) : les hommes ne basculent plus au minimum par blocs de
+génération, mais restent à 8 % des liquidants de 2023 pour 12,2. Reste, dans
+cet ordre : ce niveau des hommes ; les autres départs choisis ; le recours à
+l'ASPA ; les limites. Au propriétaire : les cas types statutaires (152), la
+bascule (157), le CASD. Détail : `2026-10-16-etape-14-emploi-fragmente.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape

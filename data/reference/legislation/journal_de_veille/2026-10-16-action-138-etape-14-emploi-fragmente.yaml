@@ -1,0 +1,20 @@
+date: "2026-10-16"
+session: "action 138, étape 14, quatrième partie : l'emploi fragmenté, concentré sur une part des carrières du bas"
+consulte: >-
+  Aucun texte : la session n'écrit aucune règle du scénario 1, et ne touche
+  qu'à la population de `scripts/grille_large.py`. Données lues, déjà
+  certifiées : les heures salariées de 2019, centile par centile, des
+  salariés du privé et de ceux à bas revenu salarial
+  (`macro/heures_salariees.csv`), le volume de travail par âge et par
+  catégorie (`macro/volume_travail.csv`).
+trouve: >-
+  Rien de neuf au droit. Les bas revenus salariaux travaillent 0,487 fois
+  les heures de tous ; concentré sur 22,8 % des employés et 10,1 % des
+  ouvriers, le volume plus faible des classes du bas ne fait plus basculer
+  les hommes au minimum contributif par blocs de génération (8,6 à 9,1 % de
+  chacune de 1955 à 1990), mais leur niveau reste à 8 % des liquidants de
+  2023, pour 12,2 à l'EACR.
+reste: >-
+  Ceux de la note (`docs/feuille_de_route/138/2026-10-16-etape-14-emploi-fragmente.md`) :
+  le niveau des hommes au minimum ; la fragmentation selon la génération,
+  qu'aucune source ne publie.
