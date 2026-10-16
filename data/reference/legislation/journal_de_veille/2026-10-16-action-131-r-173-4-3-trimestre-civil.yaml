@@ -1,0 +1,17 @@
+date: "2026-10-16"
+session: >-
+  l'action 131, R. 173-4-3 : les durées au trimestre civil qui précède l'effet
+consulte: >-
+  La base législative de la Cnav, par sa recherche (/api/v1/search/custom) :
+  la circulaire n° 2004/29 du 30 juin 2004, en entier ; la fiche
+  salaire_annuel_moyen ; le journal du 28 septembre 2026.
+trouve: >-
+  Points 2121 et 2122 : la durée du régime général « est arrêtée au dernier
+  jour du trimestre civil précédant la date d'effet de la pension », celle des
+  autres régimes alignés « au dernier jour du trimestre civil qui précède la
+  date d'effet de la pension du régime général ». Le moteur bornait déjà ainsi
+  les lignes de carrière, non les périodes assimilées d'une année sans ligne :
+  c'est corrigé dans les deux moteurs (liquider.duree_du_regime_aligne).
+reste: >-
+  La durée de proratisation de chaque régime (Durees.cumul_plafonne) garde le
+  même défaut, l'année de l'effet sans ligne de carrière.

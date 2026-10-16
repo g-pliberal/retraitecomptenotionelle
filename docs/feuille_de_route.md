@@ -4171,7 +4171,8 @@ vétérinaire (au propriétaire), des décrets non lus ; les textes d'avant 2003
 `coefficients_anticipation_agirc_arrco` ; de `decote_avant_1983`, l'ajournement
 des artisans et commerçants, et les « soixante et un ans » agricoles, aux décrets
 de 1956 à 1968 hors de l'index (au propriétaire) ; les artisans et commerçants,
-`pension_non_salaries_agricoles_2026`, R. 173-4-3. Détail : les notes.
+`pension_non_salaries_agricoles_2026`. R. 173-4-3 est fini ; reste, trouvé là,
+la durée de proratisation (`Durees.cumul_plafonne`). Détail : les notes.
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
 session, à la demande du propriétaire, après avoir vérifié qu'elle ne lui

@@ -22,7 +22,7 @@ import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import * as acquerir from "./acquerir.js";
 import * as categories from "./categories.js";
 import { dateDEffet, derniereAnnee, periodeDeLiquidation } from "./commun.js";
-import { trimestresDeLaLigneEntre } from "./compter.js";
+import { plafondDeLAnnee, trimestresDeLaLigneEntre } from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import { REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
 import * as cultes from "./cultes.js";
@@ -1232,7 +1232,9 @@ export function dureeDuRegimeAligne(carriere, durees, membres) {
   }
   let total = 0;
   for (const [annee, somme] of sommes) {
-    total += Math.min(somme, carriere.plafondTrimestres(annee));
+    // Arrêtée au dernier jour du trimestre civil qui précède la date d'effet
+    // (circulaire Cnav n° 2004/29, points 2121 et 2122).
+    total += Math.min(somme, carriere.plafondTrimestres(annee), plafondDeLAnnee(carriere, annee));
   }
   for (const membre of membres) {
     total += durees.horsAnnee.assurance.get(membre) ?? 0;

@@ -38,7 +38,7 @@ from ..donnees.chargement import Fiabilite
 from .. import revalorisation
 from ..donnees.primes import charger_primes_soumises
 from . import acquerir, categories, coordonner, cultes, invalidite, ouvrir, primes
-from .compter import trimestres_de_la_ligne_entre
+from .compter import plafond_de_l_annee, trimestres_de_la_ligne_entre
 from .commun import PensionRegime, date_d_effet, derniere_annee, periode_de_liquidation
 from .etranger import famille_du_regime
 from .ouvrir import TRIMESTRES_DECOTE_MILITAIRE
@@ -1822,7 +1822,11 @@ def duree_du_regime_aligne(carriere: Carriere, durees,
     """La durée d'un régime aligné que les répartitions comparent : ses
     trimestres année par année, bornés aux trimestres civils de l'année, plus
     ceux des enfants ; pour les artisans et les commerçants, les seules années
-    alignées, depuis 1973 (circulaire Cnav n° 2004/29, point 2122)."""
+    alignées, depuis 1973 (circulaire Cnav n° 2004/29, point 2122). Elle est
+    « arrêtée au dernier jour du trimestre civil qui précède la date d'effet »
+    (points 2121 et 2122) : l'année de la date d'effet ne compte que ses
+    trimestres civils écoulés, même ceux qu'une période assimilée y valide
+    sans ligne de carrière (:func:`compter.plafond_de_l_annee`)."""
     sommes: dict[int, int] = {}
     for membre in membres:
         for annee, n in durees.par_annee["assurance"].get(membre, {}).items():
@@ -1830,7 +1834,8 @@ def duree_du_regime_aligne(carriere: Carriere, durees,
                     and annee < coordonner.ALIGNEMENT_DES_ARTISANS_ET_COMMERCANTS):
                 continue
             sommes[annee] = sommes.get(annee, 0) + n
-    return (somme_ordonnee(min(somme, carriere.plafond_trimestres(annee))
+    return (somme_ordonnee(min(somme, carriere.plafond_trimestres(annee),
+                               plafond_de_l_annee(carriere, annee))
                 for annee, somme in sommes.items())
             + somme_ordonnee(durees.hors_annee["assurance"].get(membre, 0) for membre in membres))
 

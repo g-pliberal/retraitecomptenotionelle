@@ -265,7 +265,10 @@ sources:
       s'ils se superposent », celles des artisans et commerçants « à compter du 1er
       janvier 1973 » ; « Années SAM maxi = 21 x 126 = 15,2 arrondi à 15 / 174 » pour un
       assuré né en 1944 ; « 20 x 28 = 4,14 arrondi à 4 / 135 » pour une assurée née en
-      1943, qui n'a que trois années civiles au régime général et en retient trois
+      1943, qui n'a que trois années civiles au régime général et en retient trois ;
+      chaque durée « est arrêtée au dernier jour du trimestre civil qui précède la date
+      d'effet de la pension du régime général » (points 2121 et 2122). Relue par la
+      recherche de la base de la Cnav le 16 octobre 2026
     url: https://legislation.lassuranceretraite.fr/references-reglementaires?file_leaf_ref=CR_CN_2004029_30062004.aspx
     date: 2026-09-28
   - type: legifrance
@@ -323,7 +326,8 @@ code:
     `liquider.annees_des_regimes_alignes` (`anneesDesRegimesAlignes`) partage ce nombre
     quand d'autres régimes le partagent : depuis 2004, entre régimes alignés que la
     liquidation unique ne réunit pas, au prorata de leurs durées, celles des artisans et
-    commerçants depuis 1973 (R. 173-4-3, `liquider.annees_au_prorata`) ; depuis 2026,
+    commerçants depuis 1973, arrêtées au dernier jour du trimestre civil qui précède la
+    date d'effet (R. 173-4-3, `liquider.annees_au_prorata`) ; depuis 2026,
     avec les exploitants agricoles, puis, pour qui est né avant 1953, entre régimes
     alignés (R. 173-3-2, fiche pension_non_salaries_agricoles_2026). Le détail de la
     pension dit le nombre retenu et l'article.

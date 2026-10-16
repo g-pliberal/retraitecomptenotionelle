@@ -4855,6 +4855,56 @@ def test_les_regimes_alignes_hors_liquidation_unique_se_partagent_les_annees(sim
     assert "R. 173-4-3" not in " ".join(details(1941, "artisan", 45, 62).values())
 
 
+
+def test_r_173_4_3_arrete_les_durees_au_trimestre_civil_qui_precede_l_effet(simulateur):
+    """Les durées que R. 173-4-3 compare sont « arrêtée[s] au dernier jour du
+    trimestre civil précédant la date d'effet » (circulaire Cnav n° 2004/29,
+    points 2121 et 2122). Né en 1952, salarié de 1972 à 2000, artisan de 2001
+    à 2015, en stage de formation de janvier à mai 2016, parti le 1er juin : le
+    stage valide deux trimestres en 2016, dont le seul premier précède le
+    trimestre civil de l'effet. Le régime général compare 117 trimestres, et
+    non 118, dans les deux moteurs."""
+    import json
+    import shutil
+    import subprocess
+
+    from retraite_notionnelle import chronologie
+    from retraite_notionnelle.droit import releve
+
+    construite = chronologie.completer(chronologie.avec_periodes_assimilees(
+        chronologie.du_releve(
+            annee_naissance=1952, sexe="H", age_liquidation=64.35, releve=[
+                LigneRelevee(annee=annee, affiliation="salarie_prive_non_cadre"
+                             if annee < 2001 else "artisan", revenu=20000.0)
+                for annee in range(1972, 2016)]),
+        [{"motif": "stage_de_formation_professionnelle", "debut": "2016-01-01",
+          "fin": "2016-12-31", "jours": 300}]))
+    carriere = Carriere.depuis_chronologie(construite, simulateur.macro)
+    assert str(carriere.date_liquidation) == "juin 2016"
+    durees = releve.construire(simulateur.scenario_actuel, carriere).durees
+    assert durees.par_annee["assurance"]["regime_general"][2016] == 2
+    assert liquider.duree_du_regime_aligne(carriere, durees, ("regime_general",)) == 117
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { readFileSync } from "node:fs";
+import { Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+import { construire } from "./moteur/js/droit/releve.js";
+import { dureeDuRegimeAligne } from "./moteur/js/droit/liquider.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const carriere = Carriere.depuisChronologie(JSON.parse(process.argv[1]), simulateur.macro);
+const durees = construire(simulateur.scenarioActuel, carriere).durees;
+process.stdout.write(String(dureeDuRegimeAligne(carriere, durees, ["regime_general"])));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(construite)],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert execution.stdout == "117"
+
 def test_la_repartition_des_annees_suit_r_173_3_2():
     """« Arrondis à chaque étape à l'entier non nul le plus proche, la fraction
     d'année égale à 0,5 étant comptée pour une année » ; les années
