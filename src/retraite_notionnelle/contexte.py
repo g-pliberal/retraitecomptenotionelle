@@ -959,6 +959,26 @@ def minimum_vieillesse_servi(actuel, aujourd_hui=None) -> float:
     return total
 
 
+def part_des_regimes_speciaux(pensions, actuel, aujourd_hui=None,
+                              coefficient: float = 1.0) -> float:
+    """La cotisation maladie de la SNCF et des mines en part de la pension du
+    scénario 1, au taux plein : chaque pension de leurs régimes, menée par
+    ``coefficient`` en euros de l'année de référence, celle des plafonds,
+    majoration pour enfants exclue (``remuneration.assiette_maladie``). Son
+    jumeau est ``partDesRegimesSpeciaux``, dans ``moteur/js/contexte.js``."""
+    if not pensions.regimes_speciaux:
+        return 0.0
+    _, total = assiette_maladie(frozenset(), actuel, aujourd_hui)
+    if total <= 0:
+        return 0.0
+    montants = {}
+    for special in pensions.regimes_speciaux:
+        for regime in sorted(special.regimes):
+            montants[regime] = assiette_maladie(
+                frozenset((regime,)), actuel, aujourd_hui)[0] * coefficient
+    return pensions.maladie_des_regimes_speciaux(montants) / (total * coefficient)
+
+
 @dataclass(frozen=True)
 class Montants:
     """Le mode net/brut, et ce qu'il fait à chaque montant affiché.
@@ -1033,8 +1053,15 @@ class Montants:
         QUI RÉSIDE HORS DE FRANCE ne doit ni CSG, ni CRDS, ni CASA (L. 136-1) ;
         si la France prend en charge ses soins (:func:`couverture_francaise`),
         une cotisation maladie à ses taux particuliers, sur la pension de base
-        du régime général et sur les complémentaires (L. 131-9 ; D. 242-8)."""
-        part = minimum = part_generale = 0.0
+        du régime général et sur les complémentaires (L. 131-9 ; D. 242-8).
+
+        LA SNCF ET LES MINES prélèvent encore leur propre cotisation maladie
+        sur leurs pensions (``maladie_regimes_speciaux``), 0,70 % sous un
+        plafond et 0,50 %, aux mêmes tranches que celle des complémentaires :
+        ``part_regimes_speciaux`` est ce qu'elle prend à la pension, au taux
+        plein. Le non-résident ne la paie pas ici : ses taux ne sont pas
+        portés."""
+        part = minimum = part_generale = speciaux = 0.0
         pension = None
         if actuel is not None:
             assiette, total = assiette_maladie(pensions.regimes_maladie, actuel, aujourd_hui)
@@ -1043,6 +1070,7 @@ class Montants:
             pension = total * coefficient
             generale, _ = assiette_maladie(pensions.regimes_generaux, actuel, aujourd_hui)
             part_generale = generale / total if total > 0 else 0.0
+            speciaux = part_des_regimes_speciaux(pensions, actuel, aujourd_hui, coefficient)
         if saisie.residence:
             couvert, motif = couverture_francaise(
                 saisie, actuel, europeen, pensions.non_residents_duree_minimale)
@@ -1068,11 +1096,13 @@ class Montants:
             tranche = pensions.tranche(revenu, parts)
         taux = pensions.taux_de_la_tranche(tranche)
         maladie = pensions.maladie_de_la_tranche(tranche)
-        return cls(net=saisie.en_net, taux_pension=taux + maladie * part,
+        regimes_speciaux = speciaux if tranche.maladie else 0.0
+        return cls(net=saisie.en_net, taux_pension=taux + maladie * part + regimes_speciaux,
                    rapport_net_brut_salaire=rapport,
                    rapport_net_brut_proposition=rapport_proposition,
                    taux_sans_maladie=taux, taux_maladie=maladie, part_maladie=part,
                    regimes_maladie=pensions.regimes_maladie,
+                   part_regimes_speciaux=speciaux, taux_regimes_speciaux=regimes_speciaux,
                    tranche=tranche.libelle, taux_csg=tranche.taux,
                    revenu_fiscal=revenu, revenu_presume=presume, aspa=minimum > 0,
                    parts=parts, bareme=pensions, saisie=saisie)
@@ -1095,16 +1125,27 @@ class Montants:
     def net_d_assiette(self, brut: float, assiette: float,
                        assiette_generale: float = 0.0) -> float:
         """La même, nette quel que soit le mode : la colonne du net d'un
-        tableau qui montre les deux."""
-        return (brut * (1.0 - self.taux_sans_maladie) - self.taux_maladie * assiette
+        tableau qui montre les deux. La cotisation de la SNCF et des mines s'y
+        prend au prorata de ``brut`` : exacte sur le total, elle se répartit
+        sur les étages, que la page ne distingue pas encore."""
+        return (brut * (1.0 - self.taux_sans_maladie - self.taux_regimes_speciaux)
+                - self.taux_maladie * assiette
                 - self.taux_regime_general * assiette_generale)
 
-    def pension_du_regime(self, brut: float, regime: str) -> float:
+    def pension_du_regime(self, brut: float, regime: str, reversion: bool = False) -> float:
         """La pension d'un seul régime : chaque cotisation maladie y est toute
-        ou rien."""
-        return self.pension_d_assiette(
-            brut, brut if regime in self.regimes_maladie else 0.0,
-            brut if regime in self.regimes_generaux else 0.0)
+        ou rien ; celle de la SNCF, sous son plafond, de moitié pour une
+        ``reversion``."""
+        if not self.net:
+            return brut
+        net = (brut * (1.0 - self.taux_sans_maladie)
+               - self.taux_maladie * (brut if regime in self.regimes_maladie else 0.0)
+               - self.taux_regime_general * (brut if regime in self.regimes_generaux else 0.0))
+        # Due quand la tranche du foyer prélève la maladie des complémentaires,
+        # même si sa propre pension n'en sert pas : la réversion d'un autre.
+        if not self.non_resident and self.taux_maladie > 0 and self.bareme is not None:
+            net -= self.bareme.maladie_des_regimes_speciaux({regime: brut}, reversion)
+        return net
 
     def net_d_un_depart(self, total: float, assiette: float,
                         minimum: float = 0.0, generale: float = 0.0) -> float:
@@ -1123,7 +1164,8 @@ class Montants:
                       and self.revenu_fiscal is not None
                       else bareme.revenu_fiscal_presume(_foyer(self.saisie, total)))
             tranche = bareme.tranche(revenu, self.parts)
-        return (total * (1.0 - bareme.taux_de_la_tranche(tranche))
+        speciaux = self.part_regimes_speciaux if tranche.maladie else 0.0
+        return (total * (1.0 - bareme.taux_de_la_tranche(tranche) - speciaux)
                 - bareme.maladie_de_la_tranche(tranche) * assiette)
 
     def pension_servie(self, actuel, aujourd_hui=None) -> float:
@@ -1176,6 +1218,11 @@ class Montants:
     taux_maladie: float = 0.0
     part_maladie: float = 0.0
     regimes_maladie: frozenset[str] = frozenset()
+    #: La cotisation maladie de la SNCF et des mines, en part de la pension du
+    #: scénario 1 : au taux plein, et telle que la tranche du foyer la prélève.
+    #: Un autre départ garde la part du sien (:meth:`net_d_un_depart`).
+    part_regimes_speciaux: float = 0.0
+    taux_regimes_speciaux: float = 0.0
     #: La tranche de CSG du foyer, son taux, le revenu fiscal qui la fixe et
     #: s'il est présumé, l'exonération de l'allocataire de l'ASPA, les parts du
     #: foyer ; le barème et la saisie, pour la tranche d'un autre départ.

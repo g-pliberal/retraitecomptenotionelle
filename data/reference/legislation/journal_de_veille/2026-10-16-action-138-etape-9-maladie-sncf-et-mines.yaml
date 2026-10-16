@@ -1,0 +1,27 @@
+date: "2026-10-16"
+session: "action 138, étape 9, suite de la huitième partie : la maladie des pensions de la SNCF et des mines sur la fiche de paie du site, et le plafond de la SNCF dans l'histoire"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche de la carte touchée. Dans
+  l'index LEGI : le décret n° 2007-1056, art. 7, toutes ses versions, de la
+  première à celle du 3 août 2025 (LEGIARTI000052041125), IV et VII ; le décret
+  n° 46-2769, art. 91 (LEGIARTI000037456798) ; R. 711-15
+  (LEGIARTI000006752049). Dans l'index JORF : le décret n° 2010-1362 du
+  10 novembre 2010, art. 3 (JORFARTI000023036949) et art. 4. Sur le web : la
+  table « cotisations du secteur public, SNCF » des barèmes de l'IPP, et une
+  recherche du plafond revalorisé chez la CPRP SNCF.
+trouve: >-
+  Le plafond de 5 128 € par trimestre est écrit dans le décret n° 2007-1056 par
+  le décret n° 2010-1362, en vigueur le 14 novembre 2010, et le VII le
+  revalorise « dans les mêmes conditions que les pensions » et le réduit de
+  moitié pour une réversion : 25 582 € par an en 2026, calcul du dépôt sur les
+  revalorisations de L. 161-23-1, qu'aucune source ne publie. Les mines
+  prélèvent 0,50 % sans plafond, sur les pensions et leurs avantages
+  accessoires. R. 711-15 donne aux deux les exonérations du régime général
+  (D. 242-9). Le non-résident paie 3,90 % et 3,20 % à la SNCF, 3,70 % aux mines.
+reste: >-
+  Le plafond revalorisé tel que la caisse l'applique, s'il se publie ; le
+  non-résident de la SNCF et des mines ; les avantages accessoires des mines
+  dans l'assiette ; les deux retouches de `pages.js` (la réversion au plafond
+  de moitié, l'assiette de chaque étage). Ceux de la huitième partie : les
+  décrets des exploitants de 1980 à 1989 et de 1993, et les arrêtés des mines
+  de 1972 et de 1987, au fac-similé.

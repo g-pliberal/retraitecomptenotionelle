@@ -22,8 +22,9 @@ le dépôt n'y prélève rien.
 TROIS CONVENTIONS, qui sont celles de toute l'histoire des pensions. Un taux par
 tranches, ou borné par un plafond, est celui d'une pension sous le premier
 plafond — la SNCF prélevait 3,60 % puis 2,25 % au-delà de 109 040 F et de
-163 560 F par an en 1996, et prélève aujourd'hui 0,70 % sous 5 128 € par
-trimestre, rien au-delà. Les exonérations des retraités non imposables et le
+163 560 F par an en 1996 —, sauf celui de la SNCF depuis le 14 novembre 2010,
+0,70 % sous 5 128 € par trimestre revalorisés, rien au-delà
+(``maladie_sncf_sous_plafond``). Les exonérations des retraités non imposables et le
 taux réduit d'un exploitant soigné par un autre régime ne jouent pas : le dépôt
 prélève au taux plein. Un taux s'applique aux pensions dues à sa date, même
 quand la caisse les paie par trimestre et d'avance, sauf quand le texte dit
@@ -39,8 +40,9 @@ des chemins de fer secondaires avant 60 ans (2,5 %, puis 2,9 % en 1987, décret
 n° 50-1448, article 6), que le dépôt ne distingue pas de celle d'après ; les
 pensions de la SEITA, du port autonome de Strasbourg, des marins, des cultes,
 des assemblées et du Conseil économique, social et environnemental. La
-cotisation de la SNCF et celle des mines, qui courent encore, ne sont pas sur la
-fiche de paie du site (``prelevements_remuneration.yaml``).
+cotisation de la SNCF et celle des mines, qui courent encore, sont aussi sur la
+fiche de paie du site depuis le 16 octobre 2026 (``maladie_regimes_speciaux`` de
+``prelevements_remuneration.yaml``).
 """
 
 from __future__ import annotations
@@ -219,6 +221,28 @@ PENSIONS_LUES_AUX_TEXTES["maladie_sncf"] = [
                                      "d'administration"),
             ("LEGIARTI000052041125", "est fixé à 0,70 % du montant trimestriel de la pension "
                                      "inférieur à un plafond fixé à 5 128 euros"))},
+    {"depuis": "2010-11-14", "taux": 0.0,
+     "texte": "Décret 2010-1362 du 10/11/2010, art. 3 : décret 2007-1056, art. 7, IV ; "
+              "la cotisation passe à `maladie_sncf_sous_plafond`",
+     "lu": (("JORFARTI000023036949", "est fixé à 0,70 % du montant trimestriel de la pension "
+                                     "inférieur à un plafond fixé à 5 128 euros"),)},
+]
+
+#: LA SNCF DEPUIS LE 14 NOVEMBRE 2010, quand le décret n° 2010-1362 écrit le
+#: plafond dans le décret n° 2007-1056 (art. 7, IV) : 5 128 € par trimestre,
+#: revalorisés comme les pensions (VII). La série ne prend que la part de la
+#: pension sous ce plafond, que ``_parts_assujetties`` calcule avec le plafond
+#: de ``maladie_regimes_speciaux`` (``prelevements_remuneration.yaml``) : la
+#: pension et le plafond suivant les mêmes revalorisations, leur rapport ne
+#: change pas. Avant, le plafond du conseil n'est connu qu'en 1996, et la
+#: convention de la première tranche tient (``maladie_sncf``).
+PENSIONS_LUES_AUX_TEXTES["maladie_sncf_sous_plafond"] = [
+    {"depuis": "2010-11-14", "taux": 0.007,
+     "texte": "Décret 2010-1362 du 10/11/2010, art. 3 : décret 2007-1056, art. 7, IV "
+              "(LEGIARTI000052041125)",
+     "lu": (("JORFARTI000023036949", "est fixé à 0,70 % du montant trimestriel de la pension "
+                                     "inférieur à un plafond fixé à 5 128 euros"),
+            ("LEGIARTI000052041125", "revalorisés dans les mêmes conditions que les pensions"))},
 ]
 
 #: LA RATP : la part des pensionnés de la contribution à sa caisse de
@@ -349,6 +373,7 @@ REGIMES_DES_PENSIONS = {
     "maladie_regimes_speciaux": ("opera_de_paris", "comedie_francaise", "chemins_fer_secondaires"),
     "maladie_ieg": ("ieg",),
     "maladie_sncf": ("sncf",),
+    "maladie_sncf_sous_plafond": ("sncf",),
     "maladie_ratp": ("ratp",),
     "maladie_banque_de_france": ("banque_de_france",),
     "maladie_crpcen": ("crpcen",),

@@ -941,6 +941,25 @@ function minimumVieillesseServi(actuel, aujourdhui = null) {
 }
 
 /**
+ * La cotisation maladie de la SNCF et des mines en part de la pension du
+ * scénario 1, au taux plein, chaque pension de leurs régimes menée par
+ * `coefficient` en euros de l'année des plafonds. Voir
+ * `part_des_regimes_speciaux` dans `contexte.py`.
+ */
+export function partDesRegimesSpeciaux(pensions, actuel, aujourdhui = null, coefficient = 1) {
+  if (pensions.regimes_speciaux.length === 0) return 0;
+  const [, total] = assietteMaladie(new Set(), actuel, aujourdhui);
+  if (total <= 0) return 0;
+  const montants = new Map();
+  for (const special of pensions.regimes_speciaux) {
+    for (const regime of [...special.regimes].sort()) {
+      montants.set(regime, assietteMaladie(new Set([regime]), actuel, aujourdhui)[0] * coefficient);
+    }
+  }
+  return pensions.maladieDesRegimesSpeciaux(montants) / (total * coefficient);
+}
+
+/**
  * Le mode net/brut, et ce qu'il fait à chaque montant affiché.
  *
  * Un seul objet, construit une fois par rendu, pour que la bascule n'existe
@@ -964,6 +983,10 @@ export class Montants {
     this.tauxMaladie = maladie?.tauxMaladie ?? 0;
     this.partMaladie = maladie?.partMaladie ?? 0;
     this.regimesMaladie = maladie?.regimesMaladie ?? new Set();
+    // La cotisation maladie de la SNCF et des mines, en part de la pension du
+    // scénario 1 : au taux plein, et telle que la tranche du foyer la prélève.
+    this.partRegimesSpeciaux = maladie?.partRegimesSpeciaux ?? 0;
+    this.tauxRegimesSpeciaux = maladie?.tauxRegimesSpeciaux ?? 0;
     // La tranche de CSG du foyer, son taux, le revenu fiscal qui la fixe et
     // s'il est présumé, l'exonération de l'allocataire de l'ASPA, les parts du
     // foyer ; le barème et la saisie, pour la tranche d'un autre départ.
@@ -1043,6 +1066,7 @@ export class Montants {
     let minimum = 0;
     let pension = null;
     let partGenerale = 0;
+    let speciaux = 0;
     if (actuel !== null) {
       const [assiette, total] = assietteMaladie(pensions.regimes_maladie, actuel, aujourdhui);
       part = total > 0 ? assiette / total : 0;
@@ -1050,6 +1074,7 @@ export class Montants {
       pension = total * coefficient;
       const [generale] = assietteMaladie(pensions.regimes_generaux, actuel, aujourdhui);
       partGenerale = total > 0 ? generale / total : 0;
+      speciaux = partDesRegimesSpeciaux(pensions, actuel, aujourdhui, coefficient);
     }
     if (saisie.residence) {
       const [couvert, motif] = couvertureFrancaise(
@@ -1078,9 +1103,12 @@ export class Montants {
     }
     const taux = pensions.tauxDeLaTranche(tranche);
     const maladie = pensions.maladieDeLaTranche(tranche);
-    return new Montants(saisie.enNet, taux + maladie * part, rapport, rapportProposition, {
+    const regimesSpeciaux = tranche.maladie ? speciaux : 0;
+    return new Montants(saisie.enNet, taux + maladie * part + regimesSpeciaux, rapport,
+      rapportProposition, {
       tauxSansMaladie: taux, tauxMaladie: maladie, partMaladie: part,
       regimesMaladie: pensions.regimes_maladie,
+      partRegimesSpeciaux: speciaux, tauxRegimesSpeciaux: regimesSpeciaux,
       tranche: tranche.libelle, tauxCsg: tranche.taux, revenuFiscal: revenu,
       revenuPresume: presume, aspa: minimum > 0, parts, bareme: pensions, saisie,
     });
@@ -1128,17 +1156,26 @@ export class Montants {
    * montre les deux.
    */
   netDAssiette(brut, assiette, assietteGenerale = 0) {
-    return brut * (1 - this.tauxSansMaladie) - this.tauxMaladie * assiette
+    // La cotisation de la SNCF et des mines s'y prend au prorata de `brut`.
+    return brut * (1 - this.tauxSansMaladie - this.tauxRegimesSpeciaux)
+      - this.tauxMaladie * assiette
       - this.tauxRegimeGeneral * assietteGenerale;
   }
 
   /**
-   * La pension d'un seul régime : la cotisation maladie y est toute ou rien,
-   * 10,1 % pour une complémentaire qui la prélève, 9,1 % sinon.
+   * La pension d'un seul régime : chaque cotisation maladie y est toute ou
+   * rien ; celle de la SNCF, sous son plafond, de moitié pour une `reversion`.
+   * Voir `Montants.pension_du_regime` dans `contexte.py`.
    */
-  pensionDuRegime(brut, regime) {
-    return this.pensionDAssiette(brut, this.regimesMaladie.has(regime) ? brut : 0,
-      this.regimesGeneraux.has(regime) ? brut : 0);
+  pensionDuRegime(brut, regime, reversion = false) {
+    if (!this.net) return brut;
+    let net = brut * (1 - this.tauxSansMaladie)
+      - this.tauxMaladie * (this.regimesMaladie.has(regime) ? brut : 0)
+      - this.tauxRegimeGeneral * (this.regimesGeneraux.has(regime) ? brut : 0);
+    if (!this.nonResident && this.tauxMaladie > 0 && this.bareme !== null) {
+      net -= this.bareme.maladieDesRegimesSpeciaux(new Map([[regime, brut]]), reversion);
+    }
+    return net;
   }
 
   /**
@@ -1156,7 +1193,8 @@ export class Montants {
         ? this.revenuFiscal : bareme.revenuFiscalPresume(foyer(this.saisie, total));
       tranche = bareme.tranche(revenu, this.parts);
     }
-    return total * (1 - bareme.tauxDeLaTranche(tranche))
+    const speciaux = tranche.maladie ? this.partRegimesSpeciaux : 0;
+    return total * (1 - bareme.tauxDeLaTranche(tranche) - speciaux)
       - bareme.maladieDeLaTranche(tranche) * assiette;
   }
 

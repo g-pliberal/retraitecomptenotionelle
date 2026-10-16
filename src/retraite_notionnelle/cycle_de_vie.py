@@ -1023,19 +1023,25 @@ def convention_cor(simulateur, comparaison) -> Convention:
         age_deces=age_de_deces_cor(simulateur.mortalite,
                                    comparaison.carriere.annee_naissance),
         unisexe=True,
-        prelevement=taux_de_prelevement(simulateur, comparaison.actuel),
+        prelevement=taux_de_prelevement(simulateur, comparaison.actuel,
+                                        comparaison.carriere.annee_liquidation),
         prelevements=prelevements_par_annee(simulateur, comparaison),
     )
 
 
-def _parts_assujetties(simulateur, resultat) -> dict[str, float]:
+def _parts_assujetties(simulateur, resultat,
+                       annee_liquidation: int | None = None) -> dict[str, float]:
     """Les parts de la pension du scénario 1 au départ qui ont payé une
     cotisation maladie, par cotisation : celle des complémentaires
     (``regimes_maladie``), toujours ; jusqu'en 1997, celle du régime général et
     des salariés agricoles, de la fonction publique, des retraités indépendants
     et des exploitants sur leur pension de base, des régimes spéciaux, dont la
     SNCF et les mines prélèvent encore (``regimes_des_pensions`` de
-    l'histoire)."""
+    l'histoire). Celle de la SNCF depuis 2010 ne prend que la part de sa
+    pension sous son plafond (``maladie_regimes_speciaux``) : la pension du
+    départ en ``annee_liquidation``, menée par les prix en euros de l'année du
+    plafond, que les deux suivent ensuite au même pas. Sans l'année, toute la
+    pension, comme sous la convention de la première tranche."""
     racine = simulateur.parametres.racine_donnees
     prelevements = charger_prelevements(racine).pensions
     total = _au_depart(simulateur, resultat)
@@ -1043,9 +1049,16 @@ def _parts_assujetties(simulateur, resultat) -> dict[str, float]:
         return {"maladie_complementaires": 1.0}
     groupes = {**charger_prelevements_historiques(racine).regimes_des_pensions,
                "maladie_complementaires": prelevements.regimes_maladie}
-    return {serie: somme_ordonnee(p.montant for p in resultat.pensions_par_regime
-                                  if p.regime in regimes) / total
-            for serie, regimes in groupes.items()}
+    parts = {serie: somme_ordonnee(p.montant for p in resultat.pensions_par_regime
+                                   if p.regime in regimes) / total
+             for serie, regimes in groupes.items()}
+    for special in prelevements.regimes_speciaux:
+        if (special.plafond_annuel is not None and annee_liquidation is not None
+                and parts.get(special.serie, 0.0) > 0.0):
+            montant = parts[special.serie] * total * simulateur.macro.coefficient_prix(
+                annee_liquidation, special.annee)
+            parts[special.serie] *= min(1.0, special.plafond_annuel / montant)
+    return parts
 
 
 def prelevements_par_annee(simulateur, comparaison) -> dict[int, float]:
@@ -1063,7 +1076,8 @@ def prelevements_par_annee(simulateur, comparaison) -> dict[int, float]:
     (:func:`_parts_assujetties`). Les autres systèmes gardent les parts du
     scénario 1, comme ils gardent son taux de l'année courante."""
     historique = charger_prelevements_historiques(simulateur.parametres.racine_donnees)
-    parts = _parts_assujetties(simulateur, comparaison.actuel)
+    parts = _parts_assujetties(simulateur, comparaison.actuel,
+                               comparaison.carriere.annee_liquidation)
     return {annee: historique.taux_pension_annuel(annee, parts)
             for annee in _annees_des_pensions(comparaison)}
 
@@ -1080,7 +1094,8 @@ def parts_imposables_par_annee(simulateur, comparaison) -> dict[int, float]:
     pension imposable qu'attend :mod:`~retraite_notionnelle.impot_revenu`,
     avant l'abattement de 10 %."""
     historique = charger_prelevements_historiques(simulateur.parametres.racine_donnees)
-    parts = _parts_assujetties(simulateur, comparaison.actuel)
+    parts = _parts_assujetties(simulateur, comparaison.actuel,
+                               comparaison.carriere.annee_liquidation)
     return {annee: 1.0 - historique.taux_deductible_pension_annuel(annee, parts)
             for annee in _annees_des_pensions(comparaison)}
 
@@ -1094,19 +1109,26 @@ def _annees_des_pensions(comparaison) -> range:
     return range(premiere, derniere + 1)
 
 
-def taux_de_prelevement(simulateur, resultat) -> float:
+def taux_de_prelevement(simulateur, resultat, annee_liquidation: int | None = None) -> float:
     """Ce que les prélèvements de l'année courante retirent à la pension du
     scénario 1 de ``resultat``, en part du brut : la CSG au taux plein, la
     CRDS et la CASA sur toute la pension, la cotisation maladie sur sa part
-    complémentaire. Les autres systèmes gardent le taux de la même personne,
-    comme le simulateur le fait (``contexte.Montants``)."""
+    complémentaire, et celle de la SNCF et des mines sur la leur, sous le
+    plafond de la SNCF (:func:`_parts_assujetties`). Les autres systèmes
+    gardent le taux de la même personne, comme le simulateur le fait
+    (``contexte.Montants``)."""
     prelevements = charger_prelevements(simulateur.parametres.racine_donnees).pensions
     total = _au_depart(simulateur, resultat)
     if total <= 0.0:
         return prelevements.taux_total
     complementaire = somme_ordonnee(p.montant for p in resultat.pensions_par_regime
                                     if p.regime in prelevements.regimes_maladie)
-    return prelevements.taux_total + prelevements.maladie_complementaire * complementaire / total
+    parts = (_parts_assujetties(simulateur, resultat, annee_liquidation)
+             if prelevements.regimes_speciaux else {})
+    speciaux = somme_ordonnee(special.taux * parts.get(special.serie, 0.0)
+                              for special in prelevements.regimes_speciaux)
+    return (prelevements.taux_total + prelevements.maladie_complementaire * complementaire / total
+            + speciaux)
 
 
 # -- l'impôt sur le revenu ---------------------------------------------------
@@ -1478,7 +1500,8 @@ def convention_nette(simulateur, comparaison, cor: bool = False) -> Convention:
     chaque année au taux de son année (:func:`prelevements_par_annee`)."""
     if cor:
         return convention_cor(simulateur, comparaison)
-    return Convention(prelevement=taux_de_prelevement(simulateur, comparaison.actuel),
+    return Convention(prelevement=taux_de_prelevement(simulateur, comparaison.actuel,
+                                                      comparaison.carriere.annee_liquidation),
                       prelevements=prelevements_par_annee(simulateur, comparaison))
 
 

@@ -2065,6 +2065,13 @@ def _prelevements_remuneration() -> dict:
                 "duree_minimale_trimestres":
                     prelevements.pensions.non_residents_duree_minimale,
             },
+            # La cotisation maladie des pensions de la SNCF et des mines.
+            "maladie_regimes_speciaux": [
+                {"serie": special.serie, "taux": special.taux,
+                 "plafond_annuel": special.plafond_annuel, "annee": special.annee,
+                 "regimes": sorted(special.regimes)}
+                for special in prelevements.pensions.regimes_speciaux
+            ],
         },
     }
 

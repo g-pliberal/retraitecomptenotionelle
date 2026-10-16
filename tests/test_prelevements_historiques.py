@@ -147,8 +147,15 @@ def test_la_maladie_des_pensions_des_autres_regimes_de_base(historique, courants
     assert {"fonction_publique_etat", "cnracl"} <= regimes["maladie_fonction_publique"]
     assert {"cancava", "cancava_avant_1973", "organic", "organic_avant_1973", "cnavpl",
             "cnbf"} == regimes["maladie_independants"]
-    # Une pension n'est comptée que dans une cotisation.
-    groupes = [*regimes.values(), courants.pensions.regimes_maladie]
+    # Une pension n'est comptée que dans une cotisation, à une même date : la
+    # SNCF passe le 14 novembre 2010 d'une série à l'autre.
+    relais = dt.date(2010, 11, 14)
+    assert pensions["maladie_sncf"].valeur(relais) == 0.0
+    assert pensions["maladie_sncf"].valeur(relais - dt.timedelta(days=1)) == 0.007
+    assert pensions["maladie_sncf_sous_plafond"].valeur(relais - dt.timedelta(days=1)) == 0.0
+    assert pensions["maladie_sncf_sous_plafond"].valeur(APRES) == 0.007
+    groupes = [*(r for serie, r in regimes.items() if serie != "maladie_sncf_sous_plafond"),
+               courants.pensions.regimes_maladie]
     assert sum(len(g) for g in groupes) == len(frozenset().union(*groupes))
 
 
@@ -211,7 +218,7 @@ def test_la_maladie_des_pensions_des_exploitants_et_des_regimes_speciaux(histori
     for serie in ("maladie_exploitants", "maladie_regimes_speciaux", "maladie_ieg",
                   "maladie_ratp", "maladie_banque_de_france", "maladie_crpcen"):
         assert pensions[serie].valeur(APRES) == 0.0, serie
-    assert pensions["maladie_sncf"].valeur(APRES) == pytest.approx(0.007)
+    assert pensions["maladie_sncf_sous_plafond"].valeur(APRES) == pytest.approx(0.007)
     assert pensions["maladie_mines"].valeur(APRES) == pytest.approx(0.005)
     regimes = historique.regimes_des_pensions
     assert regimes["maladie_exploitants"] == {"msa_non_salaries"}
@@ -223,19 +230,84 @@ def test_la_maladie_des_pensions_des_exploitants_et_des_regimes_speciaux(histori
 
 def test_la_pension_d_un_agent_sncf_paie_encore_sa_maladie(simulateur):
     """Un agent de la SNCF parti à 55 ans en 1990 : 4,50 % de sa pension en
-    1992, en plus de la CSG ; 0,70 % depuis 1998, toujours, que la fiche de paie
-    du site ne prélève pas encore (``taux_de_prelevement``) : un écart déclaré,
-    que le test tient jusqu'à ce qu'elle le prélève."""
+    1992, en plus de la CSG ; 0,70 % de 1998 au 13 novembre 2010 ; depuis, 0,70 %
+    de sa seule part sous le plafond, que la fiche de paie du site prélève
+    aussi : l'année courante est la dernière marche de l'histoire."""
     comparaison = simulateur.simuler(simulateur.carriere_simple(
         annee_naissance=1935, sexe="H", affiliation="agent_sncf", age_debut=20,
         age_liquidation=55, niveau_salaire=1.0))
     taux = cycle_de_vie.prelevements_par_annee(simulateur, comparaison)
-    assert cycle_de_vie._parts_assujetties(simulateur, comparaison.actuel)[
-        "maladie_sncf"] == pytest.approx(1.0)
+    parts = cycle_de_vie._parts_assujetties(simulateur, comparaison.actuel, 1990)
+    assert parts["maladie_sncf"] == pytest.approx(1.0)
+    assert 0.9 < parts["maladie_sncf_sous_plafond"] < 1.0
     assert taux[1992] == pytest.approx(0.011 + 0.045)
     assert taux[1998] == pytest.approx(0.062 + 0.005 + 0.007)
-    courant = cycle_de_vie.taux_de_prelevement(simulateur, comparaison.actuel)
-    assert taux[2030] == pytest.approx(courant + 0.007)
+    courant = cycle_de_vie.taux_de_prelevement(simulateur, comparaison.actuel, 1990)
+    assert courant == pytest.approx(0.091 + 0.007 * parts["maladie_sncf_sous_plafond"])
+    assert taux[2030] == pytest.approx(courant)
+
+
+def test_le_plafond_de_la_sncf_est_celui_du_texte_revalorise(courants):
+    """4 × 5 128 € au 14 novembre 2010 (décret n° 2010-1362), revalorisés
+    « dans les mêmes conditions que les pensions » (décret n° 2007-1056,
+    art. 7, VII) jusqu'au 1er janvier de l'année du plafond : chaque
+    coefficient de L. 161-23-1, la tranche de 2020 d'une pension mensuelle de
+    la taille du plafond. Une revalorisation de plus, et le plafond se refait."""
+    import csv
+    import math
+
+    sncf, = [s for s in courants.pensions.regimes_speciaux if "sncf" in s.regimes]
+    chemin = RACINE_DONNEES / "reference" / "legislation" / "revalorisation_pensions.csv"
+    with chemin.open(encoding="utf-8") as fichier:
+        lignes = list(csv.DictReader(l for l in fichier if not l.startswith("#")))
+    trimestriel = 5128.0
+    for ligne in sorted(lignes, key=lambda l: l["date_effet"]):
+        effet = dt.date.fromisoformat(ligne["date_effet"])
+        if not dt.date(2010, 11, 14) < effet <= dt.date(sncf.annee, 1, 1):
+            continue
+        mensuel = trimestriel / 3.0
+        if ((ligne["mensuel_superieur_a"] and mensuel <= float(ligne["mensuel_superieur_a"]))
+                or (ligne["mensuel_au_plus"] and mensuel > float(ligne["mensuel_au_plus"]))):
+            continue
+        trimestriel *= float(ligne["coefficient"])
+    assert sncf.plafond_annuel == pytest.approx(4.0 * trimestriel, abs=0.5)
+    assert sncf.taux == 0.007 and math.isclose(
+        sncf.cotisation(2.0 * sncf.plafond_annuel), 0.007 * sncf.plafond_annuel)
+    assert sncf.cotisation(sncf.plafond_annuel, reversion=True) == pytest.approx(
+        0.007 * sncf.plafond_annuel / 2.0)
+    mines, = [s for s in courants.pensions.regimes_speciaux if "mines" in s.regimes]
+    assert mines.plafond_annuel is None and mines.cotisation(30000.0) == pytest.approx(150.0)
+
+
+def test_la_fiche_de_paie_du_site_prelieve_la_maladie_de_la_sncf(simulateur, courants):
+    """Sur le site, au taux plein : la pension d'un agent de la SNCF paie 9,1 %
+    et 0,70 % de sa part sous le plafond ; exonéré de CSG, rien ; un mineur,
+    0,50 % de toute sa pension."""
+    from retraite_notionnelle.contexte import Montants, part_des_regimes_speciaux
+    from retraite_notionnelle.saisie import Saisie
+
+    pensions = courants.pensions
+    comparaison = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1965, sexe="H", affiliation="agent_sncf", age_debut=20,
+        age_liquidation=57, niveau_salaire=3.0))
+    actuel = comparaison.actuel
+    part = part_des_regimes_speciaux(pensions, actuel, None, 1.0)
+    assert 0.0 < part < 0.007
+    montants = Montants.du_foyer(Saisie(montants="net"), pensions, actuel)
+    assert montants.taux_pension == pytest.approx(pensions.taux_total + part)
+    assert montants.pension_du_regime(1000.0, "sncf") == pytest.approx(1000.0 * (1 - 0.091 - 0.007))
+    assert montants.pension_du_regime(1000.0, "regime_general") == pytest.approx(909.0)
+    exonere = Montants.du_foyer(Saisie(montants="net", revenu_fiscal=5000), pensions, actuel)
+    assert exonere.taux_pension == 0.0
+    assert exonere.pension_du_regime(1000.0, "sncf") == pytest.approx(1000.0)
+    mineur = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1965, sexe="H", affiliation="mineur", age_debut=20,
+        age_liquidation=57, niveau_salaire=1.0)).actuel
+    regimes = {p.regime for p in mineur.pensions_par_regime}
+    if "mines" in regimes:
+        mines = sum(p.montant for p in mineur.pensions_par_regime if p.regime == "mines")
+        assert part_des_regimes_speciaux(pensions, mineur) == pytest.approx(
+            0.005 * mines / mineur.pension_annuelle)
 
 
 def _lectures():

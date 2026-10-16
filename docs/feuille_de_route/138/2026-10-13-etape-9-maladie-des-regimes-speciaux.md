@@ -1,15 +1,15 @@
 # Étape 9, huitième partie : la maladie des pensions des exploitants et des régimes spéciaux, lue aux textes
 
-**Reprise, au 13 octobre 2026.** Fait : la cotisation maladie des pensions
+**Reprise, au 16 octobre 2026.** Fait : la cotisation maladie des pensions
 de tous les régimes de base que le modèle calcule, sauf la SEITA, le port de
-Strasbourg, les marins, les cultes et les assemblées, chaque marche relue dans
-les index JORF et LEGI (`scripts/fetch/maladie_des_pensions.py`). Reste, une
-session par point : celle de la SNCF (0,70 %) et des mines (0,50 %), qui
-courent encore, sur la fiche de paie du site ; la limite 5 ante ter (2), à
-récrire à la fin de l'étape ; la complémentaire de la CNBF et la Cipav dans
-la fiche de paie ; les décrets qu'aucune marche ne rejoint. Au propriétaire :
-les décrets des exploitants de 1980 à 1989, au fac-similé. Détail : « Ce qui
-reste ».
+Strasbourg, les marins, les cultes et les assemblées ; celle de la SNCF et des
+mines sur la fiche de paie du site, et le plafond de la SNCF depuis 2010 (note
+du 16 octobre). Reste, une session par point : deux retouches de `pages.js`
+(la réversion, les étages), le non-résident de la SNCF et des mines ; la
+limite 5 ante ter (2), à récrire à la fin de l'étape ; la complémentaire de la
+CNBF et la Cipav dans la fiche de paie ; les décrets qu'aucune marche ne
+rejoint. Au propriétaire : les décrets des exploitants de 1980 à 1989, au
+fac-similé. Détail : « Ce qui reste » des deux notes.
 
 **La demande.** Le propriétaire, le 13 octobre 2026 : « Action 138, étape 9,
 histoire des prélèvements : la maladie des pensions des exploitants d'avant

@@ -614,6 +614,29 @@ class ProfilRemuneration:
 
 
 @dataclass(frozen=True)
+class MaladieRegimeSpecial:
+    """La cotisation maladie des pensions d'un régime spécial qui la prélève
+    encore — la SNCF, les mines : son taux, sur la pension annuelle sous
+    ``plafond_annuel`` (en euros de l'année ``annee``) quand il y en a un, ses
+    régimes, et la série de l'histoire des prélèvements qui la porte."""
+
+    serie: str
+    taux: float
+    plafond_annuel: float | None
+    annee: int
+    regimes: frozenset[str]
+
+    def cotisation(self, montant: float, reversion: bool = False) -> float:
+        """Ce qu'elle prélève sur ``montant``, pension annuelle de ses régimes
+        en euros de :attr:`annee` ; le plafond d'une réversion est de moitié
+        (décret n° 2007-1056, art. 7, VII)."""
+        if self.plafond_annuel is None:
+            return self.taux * montant
+        plafond = self.plafond_annuel / 2.0 if reversion else self.plafond_annuel
+        return self.taux * min(montant, plafond)
+
+
+@dataclass(frozen=True)
 class TrancheCsgPension:
     """Un des quatre cas de l'article L. 136-8 : son taux de CSG, le seuil qui
     la borne pour la première part de quotient familial et sa majoration par
@@ -676,6 +699,9 @@ class PrelevementsPension:
     non_residents_complementaires: float = 0.0
     regimes_generaux: frozenset[str] = frozenset()
     non_residents_duree_minimale: int = 0
+    #: La cotisation maladie des pensions de la SNCF et des mines, qui suit la
+    #: tranche de CSG comme celle des complémentaires (R. 711-15).
+    regimes_speciaux: tuple[MaladieRegimeSpecial, ...] = ()
 
     @property
     def taux_total(self) -> float:
@@ -725,6 +751,18 @@ class PrelevementsPension:
     def maladie_de_la_tranche(self, tranche: TrancheCsgPension) -> float:
         """La cotisation maladie des complémentaires, si la tranche la prélève."""
         return self.maladie_complementaire if tranche.maladie else 0.0
+
+    def maladie_des_regimes_speciaux(self, montants: dict[str, float],
+                                     reversion: bool = False) -> float:
+        """La cotisation maladie de la SNCF et des mines, en euros, sur
+        ``montants``, la pension annuelle de chaque régime en euros de l'année
+        des plafonds, au taux plein : la tranche de CSG décide ensuite si elle
+        est due."""
+        return somme_ordonnee(
+            special.cotisation(somme_ordonnee(montants.get(regime, 0.0)
+                                              for regime in sorted(special.regimes)),
+                               reversion)
+            for special in self.regimes_speciaux)
 
     def revenu_fiscal_presume(self, pensions: list[float]) -> float:
         """Le revenu fiscal d'un foyer qui n'a que des pensions, une par
@@ -896,6 +934,14 @@ def _charger(chemin: str, signature: tuple) -> Prelevements:
                 )
                 for tranche in pensions["bareme_csg"]
             ),
+            regimes_speciaux=tuple(
+                MaladieRegimeSpecial(
+                    serie=str(special["serie"]), taux=float(special["taux"]),
+                    plafond_annuel=(None if special.get("plafond_annuel") is None
+                                    else float(special["plafond_annuel"])),
+                    annee=int(special["annee"]),
+                    regimes=frozenset(special.get("regimes") or ()))
+                for special in pensions.get("maladie_regimes_speciaux") or ()),
         ),
         fiabilite=fiabilite,
     )

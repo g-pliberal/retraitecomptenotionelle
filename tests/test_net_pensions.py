@@ -226,6 +226,60 @@ def test_le_portage_javascript_rend_les_memes_seuils_a_toute_part(pensions):
     assert json.loads(execution.stdout) == attendu
 
 
+_SPECIAUX_JS = """
+import { PrelevementsPension } from "./moteur/js/remuneration.js";
+import { partDesRegimesSpeciaux } from "./moteur/js/contexte.js";
+const { fiche, cas } = JSON.parse(process.argv[1]);
+const pensions = new PrelevementsPension(fiche);
+process.stdout.write(JSON.stringify(cas.map(([actuel, coefficient]) => [
+  partDesRegimesSpeciaux(pensions, actuel, null, coefficient),
+  pensions.maladieDesRegimesSpeciaux(new Map(actuel.pensions_par_regime.map(
+    (p) => [p.regime, p.montant])), true)])));
+"""
+
+
+def test_le_portage_javascript_preleve_la_maladie_de_la_sncf_et_des_mines(pensions):
+    """La cotisation de la SNCF, sous son plafond, et celle des mines, dans les
+    deux moteurs : la part qu'elle prend à la pension, et son montant pour une
+    réversion, au plafond de moitié."""
+    from types import SimpleNamespace
+
+    from retraite_notionnelle.contexte import part_des_regimes_speciaux
+
+    def actuel(*lignes):
+        return {"pensions_par_regime": [{"regime": r, "montant": m} for r, m in lignes],
+                "pension_annuelle": sum(m for _, m in lignes)}
+
+    cas = [(actuel(("sncf", 18000.0)), 1.0), (actuel(("sncf", 18000.0)), 2.0),
+           (actuel(("sncf", 30000.0), ("agirc_arrco", 4000.0)), 1.0),
+           (actuel(("mines", 17000.0), ("regime_general", 3000.0)), 1.1),
+           (actuel(("regime_general", 15000.0)), 1.0)]
+    attendu = []
+    for brut, coefficient in cas:
+        lu = SimpleNamespace(pension_annuelle=brut["pension_annuelle"], pensions_par_regime=[
+            SimpleNamespace(**ligne) for ligne in brut["pensions_par_regime"]])
+        attendu.append([part_des_regimes_speciaux(pensions, lu, None, coefficient),
+                        pensions.maladie_des_regimes_speciaux(
+                            {p["regime"]: p["montant"] for p in brut["pensions_par_regime"]},
+                            True)])
+    sncf = pensions.regimes_speciaux[0].plafond_annuel
+    assert attendu[0][0] == pytest.approx(0.007)
+    assert attendu[1][0] == pytest.approx(0.007 * sncf / 36000.0)
+    assert attendu[3][0] == pytest.approx(0.005 * 17000.0 / 20000.0)
+    assert attendu[4] == [0.0, 0.0]
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    with open(RACINE / "data/reference/legislation/prelevements_remuneration.yaml",
+              encoding="utf-8") as flux:
+        fiche = yaml.safe_load(flux)["pensions"]
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _SPECIAUX_JS,
+         json.dumps({"fiche": fiche, "cas": cas}, default=str)],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr
+    assert sum(json.loads(execution.stdout), []) == pytest.approx(sum(attendu, []))
+
+
 def test_l_abattement_de_10_pour_cent(pensions):
     """CGI, art. 158, 5 a : 10 %, au moins 454 € par pensionné, au plus 4 439 €
     pour le foyer."""

@@ -3,7 +3,7 @@
 # source_id: ipp_prelevements_sociaux
 #
 # ÉCRIT PAR `scripts/fetch/ipp_prelevements_sociaux.py`, jamais à la main : les
-# barèmes de l'Institut des politiques publiques, lus le 2026-10-13, chacun avec la
+# barèmes de l'Institut des politiques publiques, lus le 2026-10-16, chacun avec la
 # référence que l'IPP cite pour sa marche. Une transcription, non une source
 # productrice : `haute` au plus (data/sources.yaml, `ipp`).
 #
@@ -99,7 +99,7 @@
 # art. 3). Ce sont les valeurs de l'IPP, que le script confronte aux versions
 # de l'article (`DEDUCTIBLE_AUX_TEXTES`). Le reste de la CSG, la CRDS et la
 # CASA ne se déduisent pas ; les cotisations, si (CGI, art. 83).
-lu_le: "2026-10-13"
+lu_le: "2026-10-16"
 fiabilite: haute
 tenues_avant_leur_premiere_marche: [maladie_prive, maladie_etat, maladie_collectivites, famille]
 
@@ -111,6 +111,7 @@ regimes_des_pensions:
   maladie_regimes_speciaux: [opera_de_paris, comedie_francaise, chemins_fer_secondaires]
   maladie_ieg: [ieg]
   maladie_sncf: [sncf]
+  maladie_sncf_sous_plafond: [sncf]
   maladie_ratp: [ratp]
   maladie_banque_de_france: [banque_de_france]
   maladie_crpcen: [crpcen]
@@ -188,6 +189,9 @@ pensions:
     - {depuis: "1991-07-01", taux: 0.045, texte: "Décret 91-613 du 28/06/1991, art. 8 : décret du 06/08/1938, art. 3, § 6 bis", jorf: "JORFTEXT000000720106"}
     - {depuis: "1997-01-01", taux: 0.035, texte: "Décret 96-1151 du 26/12/1996, art. 12 : décret du 06/08/1938, art. 3, § 6 bis", jorf: "JORFTEXT000000381201"}
     - {depuis: "1998-01-01", taux: 0.007, texte: "Décret 97-1249 du 29/12/1997, art. 11, puis décret 2007-1056, art. 7, IV (LEGIARTI000052041125)", jorf: "JORFTEXT000000753405"}
+    - {depuis: "2010-11-14", taux: 0, texte: "Décret 2010-1362 du 10/11/2010, art. 3 : décret 2007-1056, art. 7, IV ; la cotisation passe à `maladie_sncf_sous_plafond`", jorf: "JORFTEXT000023036935"}
+  maladie_sncf_sous_plafond:
+    - {depuis: "2010-11-14", taux: 0.007, texte: "Décret 2010-1362 du 10/11/2010, art. 3 : décret 2007-1056, art. 7, IV (LEGIARTI000052041125)", jorf: "JORFTEXT000023036935"}
   maladie_ratp:
     - {depuis: "1991-07-01", taux: 0.0165, texte: "Décret 91-613 du 28/06/1991, art. 11 : décret 50-1566, art. 12", jorf: "JORFTEXT000000720106"}
     - {depuis: "1996-08-01", taux: 0.0285, texte: "Décret 96-680 du 31/07/1996, art. 3 : décret 50-1566, art. 12", jorf: "JORFTEXT000000734595"}

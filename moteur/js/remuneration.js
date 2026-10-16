@@ -324,6 +324,42 @@ export class PrelevementsPension {
     this.non_residents_complementaires = nonResidents.complementaires ?? 0;
     this.regimes_generaux = new Set(nonResidents.regimes_generaux ?? []);
     this.non_residents_duree_minimale = nonResidents.duree_minimale_trimestres ?? 0;
+    // La cotisation maladie des pensions de la SNCF et des mines, qui suit la
+    // tranche de CSG comme celle des complémentaires (R. 711-15). Voir
+    // `MaladieRegimeSpecial` dans `remuneration.py`.
+    this.regimes_speciaux = (fiche.maladie_regimes_speciaux ?? []).map((special) => ({
+      serie: special.serie,
+      taux: special.taux,
+      plafond_annuel: special.plafond_annuel ?? null,
+      annee: special.annee,
+      regimes: new Set(special.regimes ?? []),
+    }));
+  }
+
+  /**
+   * Ce qu'une cotisation de `regimes_speciaux` prélève sur `montant`, pension
+   * annuelle de ses régimes en euros de son année ; le plafond d'une réversion
+   * est de moitié. Voir `MaladieRegimeSpecial.cotisation` en Python.
+   */
+  static cotisationSpeciale(special, montant, reversion = false) {
+    if (special.plafond_annuel === null) return special.taux * montant;
+    const plafond = reversion ? special.plafond_annuel / 2 : special.plafond_annuel;
+    return special.taux * Math.min(montant, plafond);
+  }
+
+  /**
+   * La cotisation maladie de la SNCF et des mines, en euros, sur `montants`
+   * (une `Map` du régime à sa pension annuelle), au taux plein. Voir
+   * `maladie_des_regimes_speciaux` dans `remuneration.py`.
+   */
+  maladieDesRegimesSpeciaux(montants, reversion = false) {
+    let total = 0;
+    for (const special of this.regimes_speciaux) {
+      let montant = 0;
+      for (const regime of [...special.regimes].sort()) montant += montants.get(regime) ?? 0;
+      total += PrelevementsPension.cotisationSpeciale(special, montant, reversion);
+    }
+    return total;
   }
 
   /**

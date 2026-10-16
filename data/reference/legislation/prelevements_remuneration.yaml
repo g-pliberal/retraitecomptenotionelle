@@ -835,6 +835,38 @@ pensions:
       - crpnpac
       - crpnpac_tranche_2
       - enseignants_prive_additionnel
+  #: LA COTISATION MALADIE DES PENSIONS DE DEUX RÉGIMES SPÉCIAUX, qui courent
+  #: encore quand toutes les autres ont cédé la place à la CSG en 1998
+  #: (décret n° 97-1249). Ses exonérations sont celles du régime général
+  #: (R. 711-15, LEGIARTI000006752049, qui renvoie à D. 242-9) : elle suit la
+  #: tranche de CSG comme `maladie_complementaire`.
+  #: - LA SNCF : 0,70 % « du montant trimestriel de la pension inférieur à un
+  #:   plafond fixé à 5 128 euros », rien au-delà (décret n° 2007-1056, art. 7,
+  #:   IV, LEGIARTI000052041125, rédaction du décret n° 2010-1362, art. 3, en
+  #:   vigueur le 14 novembre 2010) ; le VII revalorise ce plafond « dans les
+  #:   mêmes conditions que les pensions », et le réduit de moitié pour une
+  #:   pension de réversion. `plafond_annuel` est celui de `annee` : 4 × 5 128 €
+  #:   multipliés par chaque revalorisation des pensions servies depuis le
+  #:   14 novembre 2010 jusqu'au 1er janvier de `annee` — celles de L. 161-23-1,
+  #:   que les régimes spéciaux suivent depuis 2009, la tranche de 2020 étant
+  #:   celle d'une pension mensuelle de la taille du plafond, 1 % —, soit
+  #:   1,2472 et 25 582 € (`revalorisation_pensions.csv` ;
+  #:   `tests/test_prelevements_historiques.py` le refait). La caisse ne publie
+  #:   pas le plafond revalorisé : c'est le calcul du texte, et non une valeur
+  #:   lue. `serie` nomme la série de l'histoire des prélèvements qui prend la
+  #:   part de la pension sous le plafond (`prelevements_historiques.yaml`).
+  #: - LES MINES : 0,50 % des pensions de vieillesse, d'invalidité et de
+  #:   réversion et de leurs avantages accessoires, sans plafond (décret
+  #:   n° 46-2769, art. 91, 3°, a, LEGIARTI000037456798).
+  #: Le dépôt les prélève sur ce que ces régimes servent, majoration pour
+  #: enfants exclue, comme la cotisation des complémentaires. Le non-résident
+  #: paie d'autres taux — 3,90 % sous le plafond et 3,20 % au-delà à la SNCF,
+  #: 3,70 % aux mines —, que le dépôt ne prélève pas encore.
+  maladie_regimes_speciaux:
+    - {serie: maladie_sncf_sous_plafond, taux: 0.007, plafond_annuel: 25582, annee: 2026,
+       regimes: [sncf]}
+    - {serie: maladie_mines, taux: 0.005, plafond_annuel: null, annee: 2026,
+       regimes: [mines]}
   #: Les quatre cas de l'article L. 136-8 (LEGIARTI000054336623, en vigueur
   #: depuis le 27 juin 2026) : le seuil de chaque tranche pour la première
   #: part de quotient familial, et sa majoration par demi-part, montants 2026

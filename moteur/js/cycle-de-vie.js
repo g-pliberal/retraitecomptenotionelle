@@ -711,7 +711,7 @@ export function ageDeDecesCor(mortalite, generation) {
  * Ce que les prélèvements de l'année courante retirent à la pension du
  * scénario 1 de `resultat`, en part du brut.
  */
-export function tauxDePrelevement(simulateur, resultat) {
+export function tauxDePrelevement(simulateur, resultat, anneeLiquidation = null) {
   const prelevements = simulateur.baremePrelevements.pensions;
   const total = auDepart(simulateur, resultat);
   if (total <= 0.0) return prelevements.tauxTotal;
@@ -719,7 +719,15 @@ export function tauxDePrelevement(simulateur, resultat) {
   for (const p of resultat.pensions_par_regime) {
     if (prelevements.regimes_maladie.has(p.regime)) complementaire += p.montant;
   }
-  return prelevements.tauxTotal + prelevements.maladie_complementaire * complementaire / total;
+  // La SNCF et les mines, sur leur part, sous le plafond de la SNCF.
+  const parts = prelevements.regimes_speciaux.length > 0
+    ? partsAssujetties(simulateur, resultat, anneeLiquidation) : new Map();
+  let speciaux = 0.0;
+  for (const special of prelevements.regimes_speciaux) {
+    speciaux += special.taux * (parts.get(special.serie) ?? 0.0);
+  }
+  return prelevements.tauxTotal + prelevements.maladie_complementaire * complementaire / total
+    + speciaux;
 }
 
 /**
@@ -732,7 +740,8 @@ export function conventionCor(simulateur, comparaison) {
   return new Convention({
     age_deces: ageDeDecesCor(simulateur.mortalite, comparaison.carriere.annee_naissance),
     unisexe: true,
-    prelevement: tauxDePrelevement(simulateur, comparaison.actuel),
+    prelevement: tauxDePrelevement(simulateur, comparaison.actuel,
+      comparaison.carriere.anneeLiquidation),
     prelevements: prelevementsParAnnee(simulateur, comparaison),
   });
 }
@@ -744,7 +753,8 @@ export function conventionCor(simulateur, comparaison) {
 export function conventionNette(simulateur, comparaison, cor = false) {
   if (cor) return conventionCor(simulateur, comparaison);
   return new Convention({
-    prelevement: tauxDePrelevement(simulateur, comparaison.actuel),
+    prelevement: tauxDePrelevement(simulateur, comparaison.actuel,
+      comparaison.carriere.anneeLiquidation),
     prelevements: prelevementsParAnnee(simulateur, comparaison),
   });
 }
@@ -754,16 +764,27 @@ export function conventionNette(simulateur, comparaison, cor = false) {
  * maladie, par cotisation : une `Map` de la série à sa part. Jumeau de
  * `_parts_assujetties`.
  */
-export function partsAssujetties(simulateur, resultat) {
+export function partsAssujetties(simulateur, resultat, anneeLiquidation = null) {
   const total = auDepart(simulateur, resultat);
   if (total <= 0.0) return new Map([["maladie_complementaires", 1.0]]);
+  const prelevements = simulateur.baremePrelevements.pensions;
   const groupes = new Map(historiqueDe(simulateur).regimes_des_pensions);
-  groupes.set("maladie_complementaires", simulateur.baremePrelevements.pensions.regimes_maladie);
+  groupes.set("maladie_complementaires", prelevements.regimes_maladie);
   const parts = new Map();
   for (const [serie, regimes] of groupes) {
     let montant = 0.0;
     for (const p of resultat.pensions_par_regime) if (regimes.has(p.regime)) montant += p.montant;
     parts.set(serie, montant / total);
+  }
+  // La SNCF depuis 2010 : sa part sous son plafond, la pension du départ menée
+  // par les prix en euros de l'année du plafond.
+  for (const special of prelevements.regimes_speciaux) {
+    const part = parts.get(special.serie) ?? 0.0;
+    if (special.plafond_annuel !== null && anneeLiquidation !== null && part > 0.0) {
+      const montant = part * total * simulateur.macro.coefficientPrix(
+        anneeLiquidation, special.annee);
+      parts.set(special.serie, part * Math.min(1.0, special.plafond_annuel / montant));
+    }
   }
   return parts;
 }
@@ -783,7 +804,8 @@ function anneesDesPensions(comparaison) {
  */
 export function prelevementsParAnnee(simulateur, comparaison) {
   const historique = historiqueDe(simulateur);
-  const parts = partsAssujetties(simulateur, comparaison.actuel);
+  const parts = partsAssujetties(simulateur, comparaison.actuel,
+    comparaison.carriere.anneeLiquidation);
   return new Map(anneesDesPensions(comparaison)
     .map((annee) => [annee, historique.tauxPensionAnnuel(annee, parts)]));
 }
@@ -794,7 +816,8 @@ export function prelevementsParAnnee(simulateur, comparaison) {
  */
 export function partsImposablesParAnnee(simulateur, comparaison) {
   const historique = historiqueDe(simulateur);
-  const parts = partsAssujetties(simulateur, comparaison.actuel);
+  const parts = partsAssujetties(simulateur, comparaison.actuel,
+    comparaison.carriere.anneeLiquidation);
   return new Map(anneesDesPensions(comparaison)
     .map((annee) => [annee, 1.0 - historique.tauxDeductiblePensionAnnuel(annee, parts)]));
 }
