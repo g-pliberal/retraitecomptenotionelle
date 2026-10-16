@@ -2227,16 +2227,16 @@ fabriqués.
 
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
-**Reprise, au 14 octobre 2026.** Fait : phases 0 à 8, cinq domaines clos ;
-le sixième, les périodes assimilées manquantes (apprentissage, TUC, stages,
-sportifs, congé de naissance), mesuré et ouvert le 14 octobre, devant les
-départs anticipés particuliers, les rachats et les régimes hors champ. Reste
-de lui son gabarit en sept étapes ; commencer par la première, les fiches lues
-à la source (`scripts/veille_droit.py`), l'apprentissage d'abord. Restent
-aussi : les points ouverts des phases 2 à 8 ; la décision du propriétaire
-sur la retraite progressive, le cumul et la seconde pension (README muet) ;
-les restes des fiches de chaque domaine. Détail et mesure :
-`130/2026-10-14-sixieme-domaine-mesure.md`.
+**Reprise, au 16 octobre 2026.** Fait : phases 0 à 8, cinq domaines clos ;
+le sixième, les périodes assimilées manquantes, ouvert le 14 octobre, a son
+étape 1 faite : quatre fiches lues à la source (apprentissage, stages et TUC,
+sportifs, congé de naissance), `pas_encore_modelisee`. Reste de lui les étapes
+2 à 7 ; commencer par la deuxième, les faits de la chronologie (un motif par
+sorte de période, l'apprentissage en attribut de l'emploi). Restent aussi :
+les points ouverts des phases 2 à 8 ; la décision du propriétaire sur la
+retraite progressive, le cumul et la seconde pension (README muet) ; les
+restes des fiches de chaque domaine. Détail :
+`130/2026-10-16-sixieme-domaine-etape-1.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
