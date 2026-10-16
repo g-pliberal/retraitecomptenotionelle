@@ -1,0 +1,88 @@
+schema_version: 1
+id: conge_supplementaire_naissance
+intitule: >-
+  Le congé supplémentaire de naissance, créé par la loi de financement pour 2026, est une
+  période assimilée du régime général depuis le 1er juillet 2026 : un trimestre par
+  période, continue ou non, de cinquante-huit jours indemnisés.
+domaine: periodes_assimilees
+regimes: [regime_general]
+etape: compter_les_durees
+face: droit
+etat: pas_encore_modelisee
+lit:
+- les jours de congé supplémentaire de naissance indemnisés de l'assuré, année par année
+ecrit:
+- >-
+  les trimestres assimilés de chaque année, sans salaire porté au compte, quatre au plus
+  par an tous motifs confondus
+dates_qui_decident:
+- periode.debut
+versions:
+- id: avant_le_conge
+  statut: supposee
+  hypothese: >-
+    avant le c de R. 351-12, aucun congé supplémentaire de naissance n'est décompté ; le
+    congé lui-même naît de la loi n° 2025-1403
+  fiabilite: moyenne, les congés indemnisés du premier semestre 2026 restent à lire
+  bornes:
+    periode.debut: [null, 2026-07-01]
+  contenu:
+    droit: aucun trimestre à ce titre
+  exemples: aucun trouvé
+- id: cinquante_huit_jours
+  statut: lue
+  textes:
+  - id: LEGIARTI000053279221
+    reference: >-
+      CSS, article L. 351-3, 1°, rédaction de la loi n° 2025-1403 du 30 décembre 2025 :
+      les périodes « pendant lesquelles l'assuré a bénéficié des prestations maladie,
+      maternité, invalidité, accident du travail ou du congé supplémentaire de naissance »
+    en_vigueur: 2025-12-31
+    lu_le: 2026-10-16
+  - id: LEGIARTI000053270151
+    reference: CSS, article L. 331-8-1, le congé supplémentaire de naissance
+    en_vigueur: 2025-12-31
+    lu_le: 2026-10-16
+  - id: LEGIARTI000054167657
+    reference: >-
+      CSS, article R. 351-12, 2°, c, rédaction du décret n° 2026-425 du 30 mars 2026
+    citation: >-
+      « c) Un trimestre est également décompté pour chaque période, continue ou non, durant
+      laquelle l'assuré a bénéficié de cinquante-huit jours d'indemnisation au titre du
+      congé supplémentaire de naissance mentionné à l'article L. 331-8-1 »
+    en_vigueur: 2026-07-01
+    lu_le: 2026-10-16
+  nee_de: LEGIARTI000054167657
+  bornes:
+    periode.debut: [2026-07-01, null]
+  contenu:
+    droit: un trimestre assimilé par cinquante-huit jours indemnisés, continus ou non
+    a_dire: >-
+      les bornes suivent l'entrée en vigueur du c (1er juillet 2026) ; un congé indemnisé
+      entre le 1er janvier et le 30 juin 2026, que L. 351-3 vise déjà, reste à lire dans le
+      décret n° 2026-425 et dans la circulaire de la Cnav qui l'appliquera
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-01-31
+  a_relire:
+  - >-
+    Lire le décret n° 2026-425 du 30 mars 2026, article 5, pour les congés pris avant le
+    1er juillet 2026, et la circulaire de la Cnav qui applique le c, quand elle paraît ;
+    lire L. 331-8-1 pour la durée du congé et la date des naissances qu'il vise.
+  lectures:
+  - type: legifrance
+    reference: >-
+      CSS, L. 351-3, rédactions du 31 décembre 2025 et du 1er novembre 2026 ; R. 351-12,
+      rédactions du 1er janvier, du 1er juillet et du 1er novembre 2026 ; L. 331-8-1 ;
+      dans l'index LEGI à jour du 15 octobre 2026
+    date: 2026-10-16
+historique:
+- >-
+  2026-10-16 — née avec l'étape 1 du sixième domaine (action 130) : le congé
+  supplémentaire de naissance, que la frontière contributive portait, lu à la source.
+effet: >-
+  Les parents qui prennent le congé supplémentaire de naissance depuis le 1er juillet
+  2026 : un trimestre par cinquante-huit jours, que le modèle ne compte pas ; pour une
+  carrière de salarié à temps plein, l'année est déjà validée par les salaires, et
+  l'effet ne joue que pour les carrières incomplètes.

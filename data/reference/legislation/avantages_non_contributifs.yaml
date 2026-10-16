@@ -547,7 +547,7 @@ avantages:
       d'assurance — donc contre la décote et pour le prorata — et jamais pour
       le salaire annuel moyen.
     base_legale: [L. 351-3 CSS, R. 351-12 CSS]
-    fiches: []
+    fiches: [stages_formation_professionnelle, sportifs_haut_niveau, conge_supplementaire_naissance]
     creation: 1945
     fin: null
     regimes: régime général, régimes alignés, non-salariés
@@ -657,7 +657,7 @@ avantages:
       été versé, et c'est un tiers qui paie la différence — le Fonds de
       solidarité vieillesse jusqu'en 2025, la branche vieillesse depuis.
     base_legale: [L. 6243-3 code du travail (second alinéa), L. 222-2-1 7° CSS]
-    fiches: []
+    fiches: [apprentissage]
     creation: 2014
     fin: null
     regimes: régime général, régimes alignés

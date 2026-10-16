@@ -1,0 +1,172 @@
+schema_version: 1
+id: stages_formation_professionnelle
+intitule: >-
+  Le stage de la formation professionnelle continue valide, en plus des trimestres que
+  porte son assiette forfaitaire, un trimestre assimilé par cinquante jours de stage dans
+  l'année civile, quatre au plus : tous les stages depuis le 1er janvier 2015 ; et, pour
+  les pensions qui prennent effet depuis le 1er septembre 2023, les travaux d'utilité
+  collective (TUC) de 1984 à 1990 et quatre autres stages d'insertion des années 1977 à
+  1992.
+domaine: periodes_assimilees
+regimes: [regime_general]
+etape: compter_les_durees
+face: droit
+etat: pas_encore_modelisee
+lit:
+- >-
+  les périodes de stage de l'assuré, avec leurs dates, et pour celles d'avant 2015 la
+  sorte de stage (TUC, stage pratique en entreprise, stage jeunes volontaires, programme
+  d'insertion locale, stage d'initiation à la vie professionnelle)
+- l'assiette forfaitaire du stage, portée au compte, et les trimestres qu'elle valide
+- la date d'effet de la pension
+ecrit:
+- >-
+  les trimestres assimilés de chaque année civile, pour la durée d'assurance, sans
+  salaire porté au compte, dans la limite de quatre par an tous motifs confondus
+dates_qui_decident:
+- periode.debut
+- liquidation.date_effet
+versions:
+- id: assiette_seule
+  statut: lue
+  textes:
+  - id: LEGIARTI000006904381
+    reference: >-
+      code du travail, article L. 6342-3, rédaction de 2008 : les cotisations du stagiaire
+      rémunéré par l'État ou la région, ou non rémunéré, sont prises en charge et
+      « calculées sur la base de taux forfaitaires »
+    en_vigueur: 2008-05-01
+    lu_le: 2026-10-16
+  bornes:
+    periode.debut: [null, 2015-01-01]
+  contenu:
+    droit: >-
+      le salaire forfaitaire, nombre d'heures de stage × assiette horaire forfaitaire
+      (arrêté du 24 janvier 1980), est porté au compte et valide des trimestres par la
+      règle commune de R. 351-9 ; il est trop faible pour en valider autant que le stage
+      dure (circulaire Cnav 2024-18, préambule et 3.1)
+  exemples: aucun trouvé
+- id: cinquante_jours_depuis_2015
+  statut: lue
+  textes:
+  - id: LEGIARTI000028498769
+    reference: CSS, article L. 351-3, 8°, rédaction de la loi n° 2014-40, article 31
+    citation: « 8° Les périodes de stage mentionnées à l'article L. 6342-3 du code du travail »
+    en_vigueur: 2014-01-22
+    lu_le: 2026-10-16
+  - id: LEGIARTI000054425288
+    reference: >-
+      CSS, article R. 351-12, 4°, i : « autant de trimestres qu'au cours de l'année civile
+      correspond de fois à cinquante jours la durée [...] i) Des périodes de stage
+      mentionnées au 8° de l'article L. 351-3 », rédaction du 1er novembre 2026 ; le i
+      vient du décret n° 2015-1240 du 7 octobre 2015, que la circulaire nomme et que le
+      dépôt n'a pas lu
+    en_vigueur: 2026-11-01
+    lu_le: 2026-10-16
+  nee_de: LEGIARTI000028498769
+  bornes:
+    periode.debut: [2015-01-01, null]
+  contenu:
+    beneficiaire: >-
+      le stagiaire de la formation professionnelle continue : demandeur d'emploi non
+      indemnisé, détenu, personne handicapée, et depuis 2021 le jeune de moins de trente
+      ans des programmes nationaux (circulaire 2024-18, point 1)
+    droit: >-
+      dans l'année civile, un trimestre assimilé par cinquante jours de stage, continus ou
+      non, sans report des reliquats d'une année sur l'autre, quatre au plus avec les
+      trimestres des salaires ; le stage commencé avant 2015 compte pour ses jours de 2015
+      et après (circulaire 2024-18, 3.2.1.2 et 3.2.2)
+    payeur: le Fonds de solidarité vieillesse, par un forfait (L. 135-2, 2°, a ; R. 135-16-1)
+  exemples: aucun trouvé
+- id: tuc_et_stages_d_insertion
+  statut: lue
+  textes:
+  - id: LEGIARTI000047453382
+    reference: CSS, article L. 351-3, 9°, rédaction de la loi n° 2023-270, article 23
+    citation: >-
+      « 9° Les périodes de stage dont les cotisations sociales ont été prises en charge par
+      l'Etat et ayant pour finalité l'insertion dans l'emploi par la pratique d'une
+      activité professionnelle définies par décret en Conseil d'Etat ainsi que celles
+      mentionnées à l'article 3 de la loi n° 79-575 du 10 juillet 1979 [...] et à l'article
+      L. 980-9 du code du travail, dans sa rédaction antérieure à la loi n° 91-1405 »
+    en_vigueur: 2023-09-01
+    lu_le: 2026-10-16
+  - id: JORFARTI000047984309
+    reference: >-
+      décret n° 2023-799 du 21 août 2023, article 4, qui complète le 4° de R. 351-12 par
+      un k : les TUC (décret n° 84-919, article 1er), les stages pratiques en entreprise
+      des lois de 1977, 1978 et 1979 et ceux de 1982, les stages jeunes volontaires (décrets
+      de 1982, 1983 et 1984), les programmes d'insertion locale (décret n° 87-236, sauf
+      période déjà prise au titre du 2° de L. 351-3), les stages d'initiation à la vie
+      professionnelle (ancien L. 980-9)
+    publie_le: 2023-08-22
+    lu_le: 2026-10-16
+  - id: LEGIARTI000047985880
+    reference: CSS, article R. 351-12, 4°, k, première rédaction
+    en_vigueur: 2023-09-01
+    lu_le: 2026-10-16
+  nee_de: LEGIARTI000047453382
+  exception_de: assiette_seule
+  bornes:
+    periode.debut: [1977-01-01, 1993-01-01]
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: >-
+      la règle des cinquante jours, en plus de l'assiette forfaitaire (« double
+      validation », annexe 1 de la circulaire 2024-18), pour les cinq sortes de stage
+      nommées : TUC de 1984 à 1990, stages pratiques en entreprise de 1977 à 1982, stages
+      jeunes volontaires de 1982 à 1987, programmes d'insertion locale de 1987 à 1990,
+      stages d'initiation à la vie professionnelle de 1985 à 1992 ; un stage commencé la
+      dernière année de son dispositif valide aussi sur l'année suivante
+    conditions: >-
+      sur pièces justificatives seulement, celles de l'instruction ministérielle
+      DSS/SD3A/2023/167 du 19 octobre 2023 ; pour les retraites personnelles qui prennent
+      effet à compter du 1er septembre 2023
+    payeur: l'État, par décret (loi n° 2023-270, article 23), que le dépôt n'a pas lu
+    portee: >-
+      des périodes assimilées, non cotisées : elles ne comptent pas pour la carrière
+      longue (questions écrites au Sénat de 2024 ; D. 351-1-2 ne les nomme pas)
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-04-16
+  a_relire:
+  - >-
+    Les exemples 1 à 4 de la circulaire Cnav 2024-18 (point 3.2.2) se rejouent : 88 jours
+    continus, 1 trimestre ; 46 et 34 jours, 1 ; un stage de 120 heures par mois
+    d'octobre 2014 à mars 2015, 0 en 2014, 1 assimilé en 2015 ; un stage de toute
+    l'année 2015, 2 trimestres de salaire et 2 assimilés. Ils entrent à
+    `exemples_officiels.yaml` à l'étape 4 du domaine, quand le modèle saura les jouer.
+  - >-
+    Lire le décret n° 2015-1240 du 7 octobre 2015 (le i de R. 351-12, 4°), le décret qui
+    fixe la prise en charge par l'État des périodes d'avant 2015, et l'instruction
+    DSS/SD3A/2023/167, lue ici dans la seule liste que la circulaire en reprend.
+  - >-
+    Le nombre des anciens des TUC : « au moins 350 000 » selon les questions écrites ;
+    ce que la Cnav a validé depuis le 1er septembre 2023, s'il est publié.
+  lectures:
+  - type: legifrance
+    reference: >-
+      CSS, L. 351-3, ses rédactions de 2011 à 2026 (les 7°, 8° et 9°) ; R. 351-12, 4°,
+      i et k, rédactions de 2023 et du 1er novembre 2026 ; code du travail, L. 6342-3 ;
+      dans l'index LEGI à jour du 15 octobre 2026
+    date: 2026-10-16
+  - type: jorf
+    reference: décret n° 2023-799 du 21 août 2023, article 4
+    date: 2023-08-22
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2024-18 du 11 avril 2024, « Stage de la formation professionnelle
+      continue à compter du 1er septembre 2023 », qui remplace la 2016-35, ses quatre
+      exemples et son annexe
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2024_18_11042024.pdf
+    date: 2024-04-11
+historique:
+- >-
+  2026-10-16 — née avec l'étape 1 du sixième domaine (action 130) : les 8° et 9° de
+  L. 351-3, que la frontière contributive portait `non_applique`, lus à la source.
+effet: >-
+  Les stagiaires de la formation professionnelle depuis 2015, et les anciens des TUC et
+  des stages d'insertion des années 1977 à 1992 partis depuis septembre 2023, « au moins
+  350 000 » pour les seuls TUC : jusqu'à quatre trimestres par an d'écart sur la durée
+  d'assurance, que le modèle ne compte pas.

@@ -1,0 +1,123 @@
+schema_version: 1
+id: sportifs_haut_niveau
+intitule: >-
+  Les périodes d'inscription sur la liste des sportifs de haut niveau postérieures au
+  31 décembre 2011 valident, au régime général et sans affiliation préalable, un
+  trimestre par période continue de quatre-vingt-dix jours après le vingtième
+  anniversaire, si les ressources de l'année n'excèdent pas les trois quarts du plafond,
+  seize trimestres au plus, trente-deux depuis le 1er septembre 2023.
+domaine: periodes_assimilees
+regimes: [regime_general]
+etape: compter_les_durees
+face: droit
+etat: pas_encore_modelisee
+lit:
+- les périodes d'inscription de l'assuré sur la liste des sportifs de haut niveau
+- sa date de naissance
+- ses ressources de chaque année, au sens de l'impôt sur le revenu
+- les trimestres qu'il valide déjà chaque année, dans tous les régimes de base
+ecrit:
+- >-
+  les trimestres d'assurance de chaque année, sans salaire porté au compte, quatre au
+  plus par an tous régimes, seize puis trente-deux au plus en tout
+dates_qui_decident:
+- periode.debut
+- liquidation.date_effet
+versions:
+- id: avant_2012
+  statut: supposee
+  hypothese: >-
+    avant le 7° de L. 351-3, qui ne vise que les périodes d'inscription postérieures au
+    31 décembre 2011, l'inscription sur la liste ne valide rien par elle-même
+  fiabilite: haute, le texte borne lui-même les périodes qu'il vise
+  bornes:
+    periode.debut: [null, 2012-01-01]
+  contenu:
+    droit: aucun trimestre au titre de l'inscription ; seuls comptent les salaires et revenus portés au compte
+  exemples: aucun trouvé
+- id: seize_trimestres
+  statut: lue
+  textes:
+  - id: LEGIARTI000025014498
+    reference: CSS, article L. 351-3, 7°, rédaction de la loi de financement pour 2012
+    citation: >-
+      « 7° Dans des conditions et limites d'âge, de ressources et de nombre total de
+      trimestres validés à ce titre, fixées par le décret prévu au présent article, et
+      sans condition d'affiliation préalable, les périodes n'ayant pas donné lieu à
+      validation à un autre titre dans un régime de base pendant lesquelles une personne a
+      été inscrite en tant que sportif de haut niveau » ; « applicable aux périodes
+      d'inscription postérieures au 31 décembre 2011 »
+    en_vigueur: 2011-12-23
+    lu_le: 2026-10-16
+  - id: LEGIARTI000026560090
+    reference: CSS, article R. 351-12, 9°, première rédaction
+    citation: >-
+      « a) Ces périodes sont celles postérieures au vingtième anniversaire de l'intéressé ;
+      b) Ces périodes sont décomptées à raison d'un trimestre par période d'inscription
+      continue de 90 jours [...] c) Les ressources annuelles de l'intéressé n'excèdent pas
+      [...] 0,75 fois la valeur annuelle du plafond [...] e) Le nombre total de trimestres
+      pouvant être validés par chaque intéressé en application du présent 9° est limité à
+      16. »
+    en_vigueur: 2012-11-01
+    lu_le: 2026-10-16
+  nee_de: LEGIARTI000025014498
+  bornes:
+    periode.debut: [2012-01-01, null]
+    liquidation.date_effet: [null, 2023-09-01]
+  contenu:
+    droit: >-
+      un trimestre par période d'inscription continue de 90 jours, à partir du premier jour
+      d'inscription, affecté à l'année qui en compte le plus de jours ; quatre trimestres
+      au plus par année civile, tous régimes de base ; seize au plus en tout
+    conditions: >-
+      périodes postérieures au vingtième anniversaire ; ressources de l'année au plus
+      0,75 fois le plafond annuel, revenus nets catégoriels de l'impôt, revenus taxés à
+      taux proportionnel et revenus perçus hors de France compris ; sans validation à un
+      autre titre
+  exemples: aucun trouvé
+- id: trente_deux_trimestres
+  statut: lue
+  textes:
+  - id: JORFARTI000047984309
+    reference: >-
+      décret n° 2023-799 du 21 août 2023, article 4 : « Au e du 9°, le nombre : “ 16 ” est
+      remplacé par le nombre : “ 32 ” »
+    publie_le: 2023-08-22
+    lu_le: 2026-10-16
+  - id: LEGIARTI000047985880
+    reference: CSS, article R. 351-12, 9°, e, « est limité à 32 »
+    en_vigueur: 2023-09-01
+    lu_le: 2026-10-16
+  nee_de: LEGIARTI000047985880
+  bornes:
+    periode.debut: [2012-01-01, null]
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: la version précédente, trente-deux trimestres au plus
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-04-16
+  a_relire:
+  - >-
+    Lire la circulaire de la Cnav sur les sportifs de haut niveau, et celle qui applique
+    le relèvement à trente-deux : à quelle date d'effet de pension il joue, que le dépôt
+    déduit ici de l'entrée en vigueur de la rédaction (1er septembre 2023) sans l'avoir lue.
+  - Lire le décret qui crée le 9° de R. 351-12, en vigueur le 1er novembre 2012.
+  lectures:
+  - type: legifrance
+    reference: >-
+      CSS, L. 351-3, 7°, rédactions de 2011 à 2026 ; R. 351-12, 9°, rédactions de 2012,
+      2021, 2023 et du 1er novembre 2026 ; dans l'index LEGI à jour du 15 octobre 2026
+    date: 2026-10-16
+  - type: jorf
+    reference: décret n° 2023-799 du 21 août 2023, article 4
+    date: 2023-08-22
+historique:
+- >-
+  2026-10-16 — née avec l'étape 1 du sixième domaine (action 130) : le 7° de L. 351-3,
+  que la frontière contributive portait, lu à la source.
+effet: >-
+  Les sportifs inscrits sur la liste de haut niveau depuis 2012, à faibles ressources :
+  jusqu'à quatre trimestres par an, trente-deux en tout, que le modèle ne compte pas.
+  L'effectif n'est pas dans les sources lues.

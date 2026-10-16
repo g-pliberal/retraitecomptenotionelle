@@ -1,0 +1,231 @@
+schema_version: 1
+id: apprentissage
+intitule: >-
+  L'apprentissage accompli depuis le 1er janvier 2014 valide, au régime général et au
+  régime des salariés agricoles, autant de trimestres que le contrat dure : ses salaires
+  réels, portés au compte, en valident selon la règle commune, et un complément de
+  cotisations, payé par le Fonds de solidarité vieillesse puis, depuis 2026, par la
+  branche vieillesse, valide ceux qui manquent, pour la durée d'assurance seulement.
+  Avant 2014, l'apprenti cotise sur une assiette forfaitaire, et ne valide que ce
+  qu'elle porte.
+domaine: periodes_assimilees
+regimes: [regime_general, msa_salaries]
+etape: compter_les_durees
+face: droit
+etat: pas_encore_modelisee
+lit:
+- >-
+  les périodes d'apprentissage de l'assuré, contrat par contrat, avec leurs dates de
+  début et de fin, et la rémunération versée chaque année civile
+- >-
+  le salaire qui valide un trimestre, chaque année (R. 351-9 CSS : 200 heures du SMIC
+  jusqu'en 2013, 150 depuis 2014)
+ecrit:
+- >-
+  les trimestres « cotisés » de chaque année d'apprentissage, par la règle commune des
+  salaires portés au compte
+- >-
+  les trimestres complémentaires de chaque année, qui comptent pour la durée
+  d'assurance (taux et proratisation) et non pour la durée cotisée, ni pour le salaire
+  annuel moyen
+dates_qui_decident:
+- periode.debut
+versions:
+- id: assiette_forfaitaire_avant_2014
+  statut: lue
+  textes:
+  - id: LEGIARTI000006646669
+    reference: code du travail, article L. 118-6, rédaction de 1979
+    citation: >-
+      « La prise en compte des droits validables à l'assurance vieillesse ouverts pendant
+      la période d'apprentissage s'effectue sur une base forfaitaire suivant des modalités
+      fixées ou approuvées par décret »
+    en_vigueur: 1979-01-01
+    lu_le: 2026-10-16
+  - id: LEGIARTI000006904109
+    reference: code du travail, article L. 6243-3, rédaction de la recodification
+    citation: >-
+      « La prise en compte des droits validables à l'assurance vieillesse ouverts pendant
+      la période d'apprentissage s'opère sur une base forfaitaire »
+    en_vigueur: 2008-05-01
+    lu_le: 2026-10-16
+  bornes:
+    periode.debut: [null, 2014-01-01]
+  contenu:
+    droit: >-
+      les cotisations, prises en charge par l'État, sont calculées sur une assiette
+      forfaitaire, « égale au salaire minimum légal dû à l'apprenti diminuée de 11 points »
+      (circulaire Cnav 2016-41, préambule) ; cette assiette, portée au compte, valide
+      autant de trimestres qu'elle représente de fois 200 heures du SMIC
+    complement: aucun ; le rachat de L. 351-14-1, depuis la loi n° 2014-40, est un autre domaine
+    a_dire: >-
+      l'assiette forfaitaire elle-même tient à l'arrêté du 5 juin 1979 fixant les
+      cotisations forfaitaires, et à ses modifications, que l'index nomme sans que le
+      dépôt les ait lus
+  exemples: aucun trouvé
+- id: duree_du_contrat_depuis_2014
+  statut: lue
+  textes:
+  - id: LEGIARTI000028498742
+    reference: code du travail, article L. 6243-3, rédaction de la loi n° 2014-40, article 30
+    citation: >-
+      « Le fonds mentionné à l'article L. 135-1 du code de la sécurité sociale prend à sa
+      charge, dans des conditions fixées par décret, le versement d'un complément de
+      cotisations d'assurance vieillesse afin de valider auprès des régimes de base un
+      nombre de trimestres correspondant à la durée du contrat d'apprentissage. »
+    en_vigueur: 2014-01-22
+    lu_le: 2026-10-16
+  - id: LEGIARTI000037947666
+    reference: code du travail, article L. 6243-3, rédaction de 2019, même dernier alinéa
+    en_vigueur: 2019-01-01
+    lu_le: 2026-10-16
+  - id: LEGIARTI000051289076
+    reference: >-
+      code du travail, article L. 6243-3, rédaction de la loi n° 2025-199, article 24 :
+      « La branche mentionnée au 3° de l'article L. 200-2 du code de la sécurité sociale »
+      prend le complément à sa charge à la place du fonds
+    en_vigueur: 2026-01-01
+    lu_le: 2026-10-16
+  - id: LEGIARTI000029914815
+    reference: >-
+      CSS, article D. 373-1, II : les cotisations vieillesse de base « sont calculées en
+      appliquant le taux de droit commun à la rémunération [...] versée à l'apprenti »
+    en_vigueur: 2014-01-01
+    lu_le: 2026-10-16
+  - id: LEGIARTI000029914820
+    reference: CSS, article D. 373-3, le décompte des trimestres du contrat
+    citation: >-
+      « 1° Il est retenu un mois au titre de chaque mois civil entier d'exécution du
+      contrat ; 2° Le nombre de jours d'exécution du contrat au cours de mois civils
+      incomplets est totalisé et il est retenu un mois lorsque ce total est au moins égal
+      à trente jours ; 3° Le nombre de trimestres correspondant à la durée du contrat est
+      égal à la valeur du tiers, arrondie au nombre entier inférieur, du nombre total de
+      mois [...] Chaque trimestre civil entier d'exécution du contrat est affecté à
+      l'année de son exécution. Le trimestre pouvant résulter de la différence [...] est
+      affecté à l'année civile au cours de laquelle le contrat a pris fin. »
+    en_vigueur: 2014-01-01
+    lu_le: 2026-10-16
+  - id: LEGIARTI000029914805
+    reference: >-
+      CSS, article D. 373-4, rédaction de 2014 : les trimestres complémentaires d'une
+      année sont la différence entre ceux du contrat (D. 373-3) et ceux que la
+      rémunération valide (R. 351-9) ; le versement, trimestres × taux vieillesse ×
+      50 % du plafond trimestriel ; II : ils « sont pris en compte [...] au titre de
+      l'atténuation du coefficient de minoration mentionné à l'article R. 351-27 et pour
+      la détermination de la durée d'assurance mentionnée au troisième alinéa de l'article
+      L. 351-1 »
+    en_vigueur: 2014-01-01
+    lu_le: 2026-10-16
+  - id: LEGIARTI000037456240
+    reference: CSS, article D. 373-4, rédaction de 2018, les « revenus d'activité » au lieu de la « rémunération »
+    en_vigueur: 2018-09-30
+    lu_le: 2026-10-16
+  - id: JORFTEXT000029914030
+    reference: >-
+      décret n° 2014-1514 du 16 décembre 2014, qui crée D. 373-1 à D. 373-4 ; « applicables
+      aux périodes d'apprentissage accomplies à compter du 1er janvier 2014 »
+    publie_le: 2014-12-17
+    lu_le: 2026-10-16
+  nee_de: LEGIARTI000028498742
+  bornes:
+    periode.debut: [2014-01-01, null]
+  contenu:
+    beneficiaire: >-
+      l'apprenti affilié au régime général ou au régime des salariés agricoles ; le contrat
+      conclu avant 2014 et en cours le 1er janvier 2014 compte à partir de cette date
+      (circulaire Cnav 2016-41, point 4)
+    droit: >-
+      chaque année civile couverte par le contrat, les trimestres du contrat (D. 373-3)
+      moins ceux que les salaires réels valident (R. 351-9, 150 heures du SMIC), s'ils
+      sont moins nombreux ; aucun salaire n'est porté au compte pour eux
+    portee: >-
+      les trimestres complémentaires comptent pour le taux et la proratisation ; ils ne
+      sont pas « cotisés à la charge de l'assuré », et n'ouvrent ni la carrière longue ni
+      le minimum contributif majoré (circulaire 2016-41, point 2.2.4 ; D. 351-1-2 ne les
+      nomme pas, rédaction du 1er janvier 2026, LEGIARTI000053356011) ; les trimestres
+      issus des salaires, eux, sont cotisés (point 2.1.2)
+    payeur: >-
+      le Fonds de solidarité vieillesse jusqu'au 31 décembre 2025, la branche vieillesse
+      depuis ; le financement est l'objet de l'étape 6 du domaine
+  exemples: aucun trouvé
+- id: versement_forfaitise_depuis_2022
+  statut: lue
+  textes:
+  - id: LEGIARTI000045658237
+    reference: >-
+      CSS, article D. 373-4, rédaction du décret n° 2022-652 du 25 avril 2022 : le
+      versement est le produit d'« une fraction du nombre d'apprentis [...] ayant perçu
+      [...] une rémunération inférieure à 33 % du salaire minimum de croissance », fixée
+      par arrêté, des taux vieillesse et de 50 % du plafond trimestriel ; applicable aux
+      périodes d'apprentissage accomplies à compter du 1er janvier 2022
+    en_vigueur: 2022-01-01
+    lu_le: 2026-10-16
+  - id: JORFTEXT000045653551
+    reference: décret n° 2022-652 du 25 avril 2022, notice
+    publie_le: 2022-04-26
+    lu_le: 2026-10-16
+  nee_de: LEGIARTI000045658237
+  bornes:
+    periode.debut: [2022-01-01, null]
+  exception_de: duree_du_contrat_depuis_2014
+  contenu:
+    droit: >-
+      le droit de l'apprenti ne change pas : L. 6243-3 garantit toujours « un nombre de
+      trimestres correspondant à la durée du contrat », que D. 373-3 décompte ; seul le
+      versement du payeur devient forfaitaire, sur un effectif et non plus apprenti par
+      apprenti
+    a_dire: >-
+      la rédaction de 2022 n'a plus le II qui disait les trimestres complémentaires
+      comptés pour la décote et la durée d'assurance ; la portée se lit désormais dans
+      L. 6243-3 seul et dans la circulaire de 2016, que rien de lu ne dit abrogée
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-04-16
+  a_relire:
+  - >-
+    Chercher une circulaire de la Cnav postérieure à 2022 sur l'apprentissage : la
+    rédaction de D. 373-4 issue du décret n° 2022-652 ne dit plus, à son II, que les
+    trimestres complémentaires comptent pour la décote et la durée d'assurance ; la
+    circulaire 2016-41 le disait de la rédaction de 2014.
+  - >-
+    L'exemple 3 de la circulaire 2016-41 porte un contrat « du 15 novembre 2014 au 14
+    février 2015 » et le compte sur trois années, quinze mois : le contrat finit sans
+    doute le 14 février 2016. À ne rejouer qu'avec cette lecture, dite.
+  - >-
+    Lire l'arrêté du 5 juin 1979 fixant les cotisations forfaitaires des apprentis, et
+    ses modifications, pour l'assiette d'avant 2014, que la circulaire dit « salaire
+    minimum légal [...] diminué de 11 points ».
+  - >-
+    Lire la fiche de service-public.gouv.fr sur l'apprenti et la retraite, et la
+    circulaire de la MSA, pour le régime des salariés agricoles.
+  lectures:
+  - type: legifrance
+    reference: >-
+      code du travail, L. 118-6 (1979) et L. 6243-3, ses quatre rédactions de 2008 à 2026 ;
+      CSS, D. 373-1, D. 373-3 et D. 373-4, leurs rédactions de 2014, 2018 et 2022 ;
+      D. 351-1-2, rédaction du 1er janvier 2026 ; dans l'index LEGI à jour du 15 octobre
+      2026
+    date: 2026-10-16
+  - type: jorf
+    reference: >-
+      loi n° 2014-40 du 20 janvier 2014, article 30 ; décret n° 2014-1514 du 16 décembre
+      2014 ; décret n° 2022-652 du 25 avril 2022
+    date: 2022-04-26
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2016-41 du 17 octobre 2016, « Droits à la retraite des apprentis
+      à compter du 1er janvier 2014 », et ses quatre exemples en annexe
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2016_41_17102016.pdf
+    date: 2016-10-17
+historique:
+- >-
+  2026-10-16 — née avec l'étape 1 du sixième domaine (action 130), les fiches lues à la
+  source : l'apprentissage d'abord, que l'inventaire des avantages non contributifs
+  portait `absent` sans fiche.
+effet: >-
+  Les apprentis depuis 2014 : 878 871 contrats commencés en 2024 (DARES). Un apprenti
+  de moins de dix-huit ans payé 25 à 37 % du SMIC valide par ses salaires deux à trois
+  trimestres par an, et le complément porte le reste à quatre ; le modèle, qui ne connaît
+  pas l'apprentissage, ne lui compte que ses salaires. L'effet sur la pension passe par
+  la décote et le prorata, à mesurer avec les fonctions de l'étape 3.
