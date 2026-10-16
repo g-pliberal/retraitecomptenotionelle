@@ -2,13 +2,14 @@
 
 **Reprise, au 16 octobre 2026.** Fait : le plafond propre du RCI, le barème
 propre des artisans, l'assiette abattue (13 octobre) ; les cotisations PCV et
-leur saisie, les points d'avant 1973 (14 octobre) ; les points d'invalidité
-(16 octobre) ; le conjoint collaborateur des artisans et des commerçants, deux
-statuts, l'assiette choisie ou le tiers du plafond, dans les deux moteurs (16
-octobre, note `…-conjoint-collaborateur.md`, qui dit son champ de saisie à la
-session des pages). Reste, une session par point : les dispenses de l'assiette
-minimale ; la Lodeom ; au fac-similé, les classes d'avant 1973. CAVEC, CNBF :
-action 131 ; Mayotte : 121. Commencer par les dispenses de l'assiette minimale.
+leur saisie, les points d'avant 1973 (14 octobre) ; les points d'invalidité,
+le conjoint collaborateur (16 octobre) ; le 16 encore, les dispenses de
+l'assiette minimale — RSA, prime d'activité, activité saisonnière, libéral
+d'avant 2016 —, déclarées ligne par ligne sur le relevé, dans les deux moteurs
+(note `…-dispenses-de-l-assiette-minimale.md`, qui dit leur champ de saisie à
+la session des pages). Reste, une session par point : la Lodeom ; au
+fac-similé, les classes d'avant 1973. CAVEC, CNBF : action 131 ; Mayotte :
+121. Commencer par la Lodeom.
 
 **La demande.** Le propriétaire, le 13 octobre 2026 : « Action 138, étape 18,
 pas encore commencée : commence par l'assiette abattue des indépendants, leurs

@@ -7312,14 +7312,15 @@ referents:
           L. 613-11 (LEGIARTI000041394691) : minimums « pas
           applicables … aux cotisations … dues par les personnes au
           titre des activités accessoires saisonnières », « sauf
-          demande contraire »
-        etat: coupe
+          demande contraire ». Repris le 16 octobre 2026 (action 138,
+          étape 18) : le RSA et la prime d'activité depuis 2016,
+          l'activité saisonnière depuis 2020, et, de 2004 à 2015, le
+          libéral non principal ou pensionné (D. 642-4), déclarés
+          ligne par ligne sur le relevé, dans les deux moteurs
+          (`legislation/dispenses_assiette_minimale.yaml`) ; la saisie
+          du site ne les porte pas encore.
+        etat: repris
         chantier: "138.18"
-        raison: >-
-          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
-          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
-          octobre). La dispense de l'assiette minimale des activités saisonnières (L.
-          613-11).
         fiche: assiette_minimale_independants
       - quoi: >-
           Il appelle le forfait CNBF selon l'ancienneté (363 € la

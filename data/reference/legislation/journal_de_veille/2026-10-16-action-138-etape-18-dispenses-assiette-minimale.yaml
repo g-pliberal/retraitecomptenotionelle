@@ -1,0 +1,32 @@
+date: "2026-10-16"
+session: "action 138, étape 18, sixième partie : les dispenses de l'assiette minimale des indépendants"
+consulte: >-
+  veille_droit.py. L'index LEGI du dépôt, récupéré puis mis à jour des incréments
+  jusqu'au 15 octobre 2026 ; l'index JORF. Dans LEGI, toutes leurs versions :
+  L. 131-6-3 (2016-2017), L. 613-9 (2018), L. 613-11 (2018-2026), D. 613-7,
+  D. 613-32, D. 622-9, D. 612-5, D. 633-2 (1985-2026), D. 642-4 (2004-2026). Dans
+  le JORF : la loi n° 2015-1702, article 21, le décret n° 2015-1856, article 3, la
+  loi n° 2019-1446, article 10. Bpifrance Création, « Cotisations minimales dues
+  par les travailleurs indépendants » (barème de 2026). L'Urssaf, refusée au
+  réseau de la session.
+trouve: >-
+  Sauf demande contraire, faite avant le 31 octobre de l'année d'avant et
+  tacitement reconduite (D. 613-7), les montants minimaux de la base et de la
+  complémentaire des artisans et commerçants, de la base et des complémentaires
+  des libéraux (L. 644-1, L. 644-2), ne s'appliquent pas aux bénéficiaires du RSA
+  (L. 262-2 CASF) ni de la prime d'activité (L. 842-1) : L. 131-6-3, rétabli par
+  la loi n° 2015-1702, art. 21, pour les périodes courant depuis le 1er janvier
+  2016, puis L. 613-9 et L. 613-11. Avant 2016, seule la cotisation minimale
+  maladie en dispensait le RSA (D. 612-5). Depuis le 28 décembre 2019, les
+  activités accessoires saisonnières aussi (loi n° 2019-1446, art. 10), sans date
+  d'effet propre ni décret qui les définisse. De 2004 à 2015, D. 642-4 écartait
+  la cotisation minimale du libéral dont l'activité n'est pas principale, ou
+  titulaire d'une retraite ou d'une pension d'invalidité ; D. 633-2 ne l'a jamais
+  fait pour l'artisan et le commerçant. Aucun exemple chiffré publié. Fait : la
+  table `legislation/dispenses_assiette_minimale.yaml`, le champ de relevé
+  `dispense_assiette_minimale`, appliqués dans les deux moteurs ; fiche
+  `assiette_minimale_independants` relue, toujours `approchee` (la saisie).
+reste: >-
+  Un exemple chiffré de l'Urssaf. Si la dispense saisonnière vaut dès les
+  cotisations de 2019. Le champ de saisie, à la session des pages. Le reste de
+  l'étape 138.18 : la Lodeom, au fac-similé les classes d'avant 1973.
