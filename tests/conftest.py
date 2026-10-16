@@ -92,7 +92,7 @@ CONTROLES = {
     # OpenFisca au-delà des carrières simples, une famille de profils à la
     # fois (action 153).
     "test_oracle.py", "test_oracle_familles.py", "test_oracle_enfants.py",
-    "test_oracle_categorie_active.py",
+    "test_oracle_categorie_active.py", "test_oracle_carriere_longue_fonction_publique.py",
     "test_destinie.py",
     "test_trajectoire.py", "test_ines.py", "test_part_minimum_contributif.py",
     # Les cas types statutaires, confrontés aux départs de 2025 que le jaune

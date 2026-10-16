@@ -2021,6 +2021,29 @@ class CarriereLongue:
     ENFANTS_REPUTES_COTISES_DEPUIS = DateMois(2026, 9)
     ENFANTS_REPUTES_COTISES_MAXIMUM = 2
 
+    #: LES FONCTIONNAIRES N'ONT LA CARRIÈRE LONGUE QUE DEPUIS 2005, ET CHAQUE
+    #: PORTE À SA DATE : « 1° A compter du 1er janvier 2008, à cinquante-six
+    #: ans [...] ; 2° A compter du 1er juillet 2006, à cinquante-huit ans [...] ;
+    #: 3° A compter du 1er janvier 2005, à cinquante-neuf ans » — L. 25 bis du
+    #: code des pensions (LEGIARTI000006362733) pour l'État, article 57 de la
+    #: loi n° 2004-1370 (LEGIARTI000006759076) pour la CNRACL, dans leur
+    #: rédaction en vigueur jusqu'au 1er janvier 2011, où D. 16-1 les reprend
+    #: sans date. Le régime général les ouvrait toutes trois dès 2004 ; le
+    #: modèle les ouvrait de même aux fonctionnaires (action 153, étape 2).
+    REGIMES_FONCTION_PUBLIQUE = frozenset({"fonction_publique_etat", "cnracl"})
+    PORTES_FONCTION_PUBLIQUE_DEPUIS = {
+        59.0: DateMois(2005, 1), 58.0: DateMois(2006, 7), 56.0: DateMois(2008, 1),
+    }
+    #: Et la durée y était fixe : 168 trimestres d'assurance, et 168, 164 ou
+    #: 160 trimestres cotisés selon la porte, soit cent soixante plus le
+    #: supplément de la table, jusqu'à la rédaction du 19 décembre 2008
+    #: (LEGIARTI000019959540), qui la rapporte à « la durée [...] applicable
+    #: l'année où l'assuré atteint l'âge » de soixante ans. Le modèle lui
+    #: opposait celle de l'année d'ouverture du droit, de 152 à 158 trimestres
+    #: avant 2008.
+    DUREE_FIXE_FONCTION_PUBLIQUE = 160
+    DUREE_FIXE_FONCTION_PUBLIQUE_AVANT = DateMois(2009, 1)
+
     def __init__(self, racine: Path) -> None:
         self._table: dict[float, list[tuple[float, int, int, float, int, Fiabilite]]] = {}
         chemin = racine / "reference" / "legislation" / "carriere_longue.csv"
@@ -2053,7 +2076,7 @@ class CarriereLongue:
         """
         return round(date.annee + (date.mois - 1) / 12.0, 3)
 
-    def _portes(self, carriere: Carriere
+    def _portes(self, carriere: Carriere, fonction_publique: bool = False
                 ) -> list[tuple[int, int, float, int, Fiabilite]] | None:
         """Les portes opposables à cette carrière : celles du texte en vigueur
         à sa date d'effet, et pour chaque porte — borne d'entrée ET supplément
@@ -2089,7 +2112,28 @@ class CarriereLongue:
                 retenues[(age_max, supplement)] = (
                     gen, (age_max, trimestres_debut, age_depart, supplement, fiabilite)
                 )
-        return [porte for _, porte in sorted(retenues.values())]
+        portes = [porte for _, porte in sorted(retenues.values())]
+        if fonction_publique:
+            liquidation = carriere.date_liquidation.rang
+            portes = [porte for porte in portes
+                      if (depuis := self.PORTES_FONCTION_PUBLIQUE_DEPUIS.get(porte[2]))
+                      is None or liquidation >= depuis.rang]
+        return portes
+
+    @classmethod
+    def de_la_fonction_publique(cls, codes) -> bool:
+        """Les régimes qui opposent la durée sont-ils tous ceux des
+        fonctionnaires (:attr:`PORTES_FONCTION_PUBLIQUE_DEPUIS`) ?"""
+        codes = set(codes)
+        return bool(codes) and codes <= cls.REGIMES_FONCTION_PUBLIQUE
+
+    def _requis(self, carriere: Carriere, requis: int, fonction_publique: bool) -> int:
+        """La durée que la porte majore : la durée fixe des fonctionnaires
+        avant 2009 (:attr:`DUREE_FIXE_FONCTION_PUBLIQUE`), ``requis`` sinon."""
+        if (fonction_publique and carriere.date_liquidation.rang
+                < self.DUREE_FIXE_FONCTION_PUBLIQUE_AVANT.rang):
+            return self.DUREE_FIXE_FONCTION_PUBLIQUE
+        return requis
 
     def _entree_precoce(self, carriere: Carriere, annee_liquidation: int,
                         age_max: int, trimestres_debut: int,
@@ -2188,7 +2232,8 @@ class CarriereLongue:
 
     def age_de_depart(self, carriere: Carriere, annee_liquidation: int,
                       trimestres_cotises: int, requis: int,
-                      etrangers: dict[int, int] | None = None
+                      etrangers: dict[int, int] | None = None,
+                      fonction_publique: bool = False
                       ) -> tuple[float, Fiabilite] | None:
         """Âge le plus précoce ouvert par le dispositif, ou ``None``.
 
@@ -2200,9 +2245,10 @@ class CarriereLongue:
         :meth:`cotises_reputes` a déjà complétée, ``etrangers`` les trimestres
         cotisés hors de France, année par année (:meth:`_entree_precoce`).
         """
-        portes = self._portes(carriere)
+        portes = self._portes(carriere, fonction_publique)
         if portes is None:
             return None
+        requis = self._requis(carriere, requis, fonction_publique)
         ouvertures = []
         for age_max, trimestres_debut, age_depart, supplement, fiabilite in portes:
             if not self._entree_precoce(
@@ -2216,7 +2262,8 @@ class CarriereLongue:
     def age_propose(self, carriere: Carriere, annee_liquidation: int,
                     trimestres_cotises: int, requis: int,
                     age_liquidation: float,
-                    etrangers: dict[int, int] | None = None) -> float | None:
+                    etrangers: dict[int, int] | None = None,
+                    fonction_publique: bool = False) -> float | None:
         """Âge le plus précoce que le dispositif ouvrirait à qui continue de
         cotiser jusqu'à son départ, ou ``None``.
 
@@ -2230,9 +2277,10 @@ class CarriereLongue:
         Chaque porte ouvre donc au plus tardif de son âge et de l'âge où la
         durée cotisée est réunie, et la plus précoce l'emporte.
         """
-        portes = self._portes(carriere)
+        portes = self._portes(carriere, fonction_publique)
         if portes is None:
             return None
+        requis = self._requis(carriere, requis, fonction_publique)
         candidats = []
         for age_max, trimestres_debut, age_depart, supplement, _ in portes:
             if not self._entree_precoce(

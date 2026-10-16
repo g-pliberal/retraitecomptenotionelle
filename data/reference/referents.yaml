@@ -1613,6 +1613,37 @@ referents:
         preuve: >-
           tests/temoins/openfisca_categorie_active.json ;
           tests/test_oracle_categorie_active.py
+      - constat: >-
+          Il lit la condition d'entrée avant vingt ans à la fin de l'année des
+          seize : `duree_assurance_cotisee_seuil_haut` reprend, mot pour mot, la
+          formule de `seuil_bas`, à `annee_de_naissance + 16`. Le fonctionnaire
+          de l'État né en 1955, entré à dix-huit ans, parti à soixante ans en
+          2015 avec 168 trimestres cotisés, sa génération en devant 166, n'a
+          chez lui aucune carrière longue, et son droit ne s'ouvre qu'à
+          soixante-deux ans.
+        tranche: >-
+          D. 16-1, I, du code des pensions, rédaction du décret n° 2012-847
+          (LEGIARTI000026140012) : l'âge est abaissé à soixante ans « pour les
+          fonctionnaires ayant débuté leur activité avant l'âge de vingt ans »
+          et cotisé la durée de leur génération. Le dépôt a raison
+        preuve: >-
+          tests/temoins/openfisca_carriere_longue_fonction_publique.json ;
+          tests/test_oracle_carriere_longue_fonction_publique.py
+      - constat: >-
+          Il lit, pour la CNRACL, l'entrée précoce dans les services de la
+          fonction publique de l'État : les deux seuils du gabarit des régimes
+          appellent `fonction_publique_duree_de_service_effective` en dur. Il
+          ne sert donc la carrière longue à aucun fonctionnaire territorial ou
+          hospitalier : ni à celui né en 1952, entré à quatorze ans, parti à
+          56 ans en 2008 avec 168 trimestres cotisés, ni aux deux autres
+          profils de la CNRACL confrontés.
+        tranche: >-
+          Loi n° 2004-1370, article 57 (LEGIARTI000006759076), pour la
+          CNRACL : la carrière longue de ses affiliés, aux mêmes conditions
+          qu'à l'État. Le dépôt a raison
+        preuve: >-
+          tests/temoins/openfisca_carriere_longue_fonction_publique.json ;
+          tests/test_oracle_carriere_longue_fonction_publique.py
     fait_mieux:
       - quoi: >-
           Il code le départ anticipé des fonctionnaires parents de trois
@@ -1696,7 +1727,10 @@ referents:
           durée des enfants nés depuis 2004, les enfants nés avant le
           recrutement (`tests/test_oracle_enfants.py`, étape 2) ; la
           catégorie active — l'âge anticipé, la durée de services actifs, la
-          décote, la super-active (`tests/test_oracle_categorie_active.py`).
+          décote, la super-active (`tests/test_oracle_categorie_active.py`) ;
+          depuis le 16 octobre, la carrière longue des fonctionnaires — les
+          portes d'avant 2009, l'entrée avant vingt ans, la CNRACL, la durée
+          cotisée (`tests/test_oracle_carriere_longue_fonction_publique.py`).
           Restent les autres familles.
         preuve: >-
           ses 140 tests de formules (`tests/formulas/`), au commit `1c45423`
@@ -2004,7 +2038,9 @@ referents:
       majoration de durée de la CNRACL ; à la catégorie active, sur la
       proratisation des actifs et sur la super-active, qu'il ne connaît
       pas — mais juste sur la durée de services actifs, que le dépôt
-      lisait par génération (action 153).
+      lisait par génération ; à la carrière longue des fonctionnaires,
+      sur l'entrée avant vingt ans et sur la CNRACL, qu'il lit dans les
+      services de l'État (action 153).
     manifeste:
       - openfisca_points
       - openfisca_regime_general_oracle
@@ -2012,6 +2048,7 @@ referents:
       - openfisca_temps_partiel_et_parents_oracle
       - openfisca_enfants_oracle
       - openfisca_categorie_active_oracle
+      - openfisca_carriere_longue_fonction_publique_oracle
       - openfisca_arrco_oracle
       - openfisca_minimum_contributif
       - openfisca_parametres_generation

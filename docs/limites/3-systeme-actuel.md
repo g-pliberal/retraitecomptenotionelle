@@ -113,7 +113,7 @@ rejoue sans avoir à installer le paquet.
 **Cinq familles de régimes y passent aujourd'hui**, et c'est tout ce
 qu'OpenFisca expose : le régime général, la pension civile (État et CNRACL),
 l'Arrco d'avant 2019, l'Agirc des cadres et l'Ircantec des agents non
-titulaires — <!--chiffre:mesure(profils_oracle)-->82<!--/--> profils en tout. Les régimes alignés — MSA des
+titulaires — <!--chiffre:mesure(profils_oracle)-->94<!--/--> profils en tout. Les régimes alignés — MSA des
 salariés agricoles, artisans, commerçants — n'ont chez lui aucun module, et
 n'en ont pas besoin : la loi les calcule comme le régime général, et c'est à
 l'oracle du régime général qu'ils se confrontent — à une table près : le
@@ -330,9 +330,19 @@ laisse l'âge anticipé, la limite d'âge et la décote concorder. Ses deux éca
 sont les siens : il proratise la pension des actifs sur la durée de leur
 génération, et non sur celle de l'année où le droit s'ouvre (L. 13, III) ; il
 ne connaît pas la super-active, ni ses années, ni l'âge minoré, ni la
-bonification du cinquième. Restent les autres familles que le registre
-nomme : les points enfants de l'Arrco, la carrière longue de la fonction
-publique, les minima, la minoration de l'Arrco, les périodes assimilées, le
+bonification du cinquième. La quatrième, la carrière longue des
+fonctionnaires (`tests/test_oracle_carriere_longue_fonction_publique.py`), a
+trouvé deux erreurs chez nous : le dépôt ouvrait aux fonctionnaires les trois
+portes du régime général dès 2004, quand la fonction publique ne les a eues
+qu'une à une, de 2005 à 2008, et sur la durée de l'année d'ouverture, quand
+la loi la fixait à cent soixante trimestres et le supplément de la porte.
+Corrigées le 16 octobre 2026, elles laissent les deux ouvrir et refuser les
+mêmes départs. Ses deux écarts sont les siens : il lit l'entrée avant vingt
+ans à la fin de l'année des seize, et l'entrée précoce de la CNRACL dans les
+services de l'État, si bien qu'il ne sert la carrière longue ni à qui a
+commencé à dix-huit ans ni à aucun fonctionnaire territorial ou hospitalier.
+Restent les autres familles que le registre nomme : les points enfants de
+l'Arrco, les minima, la minoration de l'Arrco, les périodes assimilées, le
 salaire annuel moyen sur des salaires qui varient.
 
 **TRAJECTOiRE**, le modèle de la DREES dont un module calcule les cas types du

@@ -1713,7 +1713,7 @@ export class CarriereLongue {
    * avant 2023, débuter avant seize ans ouvrait cinquante-six ans avec huit
    * trimestres de plus, ou cinquante-huit avec quatre.
    */
-  portes(carriere) {
+  portes(carriere, fonctionPublique = false) {
     if (this._dates.length === 0) {
       return null;
     }
@@ -1745,7 +1745,31 @@ export class CarriereLongue {
         retenues.set(clePorte, [gen, [ageMax, trimestresDebut, ageDepart, supplement, fiabilite]]);
       }
     }
-    return [...retenues.values()].sort((a, b) => a[1][0] - b[1][0]).map(([, porte]) => porte);
+    const portes = [...retenues.values()].sort((a, b) => a[1][0] - b[1][0])
+      .map(([, porte]) => porte);
+    if (!fonctionPublique) {
+      return portes;
+    }
+    // Les fonctionnaires n'ont chaque porte qu'à sa date : voir le Python.
+    const liquidation = carriere.dateLiquidation.rang;
+    return portes.filter(([, , ageDepart]) => {
+      const depuis = CarriereLongue.PORTES_FONCTION_PUBLIQUE_DEPUIS.get(ageDepart);
+      return depuis === undefined || liquidation >= depuis;
+    });
+  }
+
+  /** Les régimes qui opposent la durée sont-ils tous ceux des fonctionnaires ? */
+  deLaFonctionPublique(codes) {
+    const liste = [...codes];
+    return liste.length > 0
+      && liste.every((code) => CarriereLongue.REGIMES_FONCTION_PUBLIQUE.has(code));
+  }
+
+  /** La durée que la porte majore : la durée fixe des fonctionnaires avant 2009. */
+  requisDe(carriere, requis, fonctionPublique) {
+    return fonctionPublique
+      && carriere.dateLiquidation.rang < CarriereLongue.DUREE_FIXE_FONCTION_PUBLIQUE_AVANT
+      ? CarriereLongue.DUREE_FIXE_FONCTION_PUBLIQUE : requis;
   }
 
   /**
@@ -1811,11 +1835,13 @@ export class CarriereLongue {
    *
    * @returns {[number, number]|null} âge de départ et fiabilité.
    */
-  ageDeDepart(carriere, anneeLiquidation, trimestresCotises, requis, etrangers = null) {
-    const portes = this.portes(carriere);
+  ageDeDepart(carriere, anneeLiquidation, trimestresCotises, requis, etrangers = null,
+    fonctionPublique = false) {
+    const portes = this.portes(carriere, fonctionPublique);
     if (portes === null) {
       return null;
     }
+    requis = this.requisDe(carriere, requis, fonctionPublique);
 
     let meilleur = null;
     for (const [ageMax, trimestresDebut, ageDepart, supplement, fiabilite] of portes) {
@@ -1845,11 +1871,12 @@ export class CarriereLongue {
    * de l'âge où la durée cotisée est réunie, et la plus précoce l'emporte.
    */
   agePropose(carriere, anneeLiquidation, trimestresCotises, requis, ageLiquidation,
-    etrangers = null) {
-    const portes = this.portes(carriere);
+    etrangers = null, fonctionPublique = false) {
+    const portes = this.portes(carriere, fonctionPublique);
     if (portes === null) {
       return null;
     }
+    requis = this.requisDe(carriere, requis, fonctionPublique);
     let meilleur = null;
     for (const [ageMax, trimestresDebut, ageDepart, supplement] of portes) {
       if (!this.entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers)) {
@@ -1903,6 +1930,18 @@ CarriereLongue.MOIS_DERNIER_TRIMESTRE = 10;
 /** Rang du mois de septembre 2026 : premières pensions où les enfants comptent. */
 CarriereLongue.ENFANTS_REPUTES_COTISES_DEPUIS = 2026 * 12 + 8;
 CarriereLongue.ENFANTS_REPUTES_COTISES_MAXIMUM = 2;
+/**
+ * Les fonctionnaires n'ont la carrière longue que depuis 2005, chaque porte à
+ * sa date (L. 25 bis du code des pensions ; loi n° 2004-1370, article 57) :
+ * rang du premier mois de chacune, par âge de départ.
+ */
+CarriereLongue.REGIMES_FONCTION_PUBLIQUE = new Set(["fonction_publique_etat", "cnracl"]);
+CarriereLongue.PORTES_FONCTION_PUBLIQUE_DEPUIS = new Map([
+  [59, new DateMois(2005, 1).rang], [58, new DateMois(2006, 7).rang],
+  [56, new DateMois(2008, 1).rang]]);
+/** Et la durée y était fixe jusqu'à la rédaction du 19 décembre 2008. */
+CarriereLongue.DUREE_FIXE_FONCTION_PUBLIQUE = 160;
+CarriereLongue.DUREE_FIXE_FONCTION_PUBLIQUE_AVANT = new DateMois(2009, 1).rang;
 
 /**
  * Barème DATÉ de la surcote — D. 351-1-4 du code de la sécurité sociale,

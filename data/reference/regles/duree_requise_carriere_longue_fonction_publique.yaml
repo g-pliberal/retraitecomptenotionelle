@@ -6,7 +6,10 @@ intitule: >-
   ans : celle des fonctionnaires qui atteignent soixante ans l'année où son droit
   s'ouvre, s'il s'ouvre avant le 1er septembre 2023 ; 169 trimestres à compter de
   cette date, 170 en 2025, 171 en 2027, la durée de sa génération à compter de 2028.
-  La condition de durée cotisée de la carrière longue reste celle de sa génération.
+  La condition de durée cotisée de la carrière longue reste celle de sa génération ;
+  avant 2009, elle était fixe, cent soixante trimestres et le supplément de la porte,
+  et chaque porte ne s'ouvrait qu'à sa date : 59 ans en 2005, 58 au 1er juillet 2006,
+  56 en 2008.
 etat: conforme
 effet: >-
   Fonctionnaires sédentaires partis en carrière longue. Jusqu'au 24 septembre 2026,
@@ -15,9 +18,13 @@ effet: >-
   2025, 168 au lieu de 167 à celui de 1961 ouvert à cinquante-neuf ans en 2020.
   La pension n'en bouge que si les services n'atteignent pas la durée — une carrière
   commencée ailleurs. tests/test_cnracl.py ; la Banque de France, qui n'est pas
-  au code des pensions, garde la durée de sa génération.
+  au code des pensions, garde la durée de sa génération. Jusqu'au 16 octobre 2026,
+  le modèle ouvrait aussi aux fonctionnaires les trois portes du régime général dès
+  2004, sur la durée de l'année d'ouverture, de 152 à 158 trimestres : le
+  fonctionnaire de l'État né en 1946, entré à quinze ans, partait à 58 ans en 2004
+  (action 153, tests/test_oracle_carriere_longue_fonction_publique.py).
 sources:
-  lu_le: 2026-09-24
+  lu_le: 2026-10-16
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -42,6 +49,17 @@ sources:
       d'un départ anticipé avant 60 ans pour un autre motif » (mise à jour du 1er
       septembre 2026) et « Maintien de l'ancienne réglementation »
     date: 2026-09-24
+  - type: legifrance
+    reference: >-
+      L. 25 bis CPCMR, rédactions du 1er janvier 2005 (LEGIARTI000006362733) et du
+      19 décembre 2008 (LEGIARTI000019959540), et loi n° 2004-1370, article 57
+      (LEGIARTI000006759076), pour la CNRACL, lus dans l'index LEGI : « 1° A compter
+      du 1er janvier 2008, à cinquante-six ans [...] ; 2° A compter du 1er juillet
+      2006, à cinquante-huit ans [...] ; 3° A compter du 1er janvier 2005, à
+      cinquante-neuf ans », sur 168, 164 et 160 trimestres cotisés ; D. 16-1, versions
+      du 1er janvier 2011 (LEGIARTI000023383582) et du 1er novembre 2012
+      (LEGIARTI000026140012)
+    date: 2026-10-16
     url: >-
       https://www.juris-cnracl.retraites.fr/pension-normale/calcul-de-la-pension/duree-dassurance-requise-pour-beneficier-du-taux-maximal-de/duree-dassurance-requise-fonctionnaire-beneficiant-dun-depart-anticipe-avant-60-ans-pour-un-autre
 textes_a_rattacher:
@@ -52,7 +70,23 @@ textes_a_rattacher:
 - reference: >-
     D. 16-1 du code des pensions, rédaction du décret n° 2026-345 (LEGIARTI000054059616)
 - reference: décret n° 2023-435, article 13, II, C (CNRACL)
+- reference: >-
+    L. 25 bis du code des pensions, rédaction du 1er janvier 2005 (LEGIARTI000006362733)
+- reference: loi n° 2004-1370 du 20 décembre 2004, article 57 (LEGIARTI000006759076)
 exemples:
 - cnracl_carriere_longue_avant_soixante_ans
 reformes:
 - reforme_2023
+referents:
+  openfisca_france_pension:
+    equivalent: >-
+      cnracl_carriere_longue et fonction_publique_carriere_longue, sur
+      carriere_longue_seuil_determine_aod et les barèmes carriere_longue, par génération
+      seulement
+    confrontation: >-
+      le 16 octobre 2026 (action 153, étape 2 ;
+      tests/test_oracle_carriere_longue_fonction_publique.py) : il refuse les départs
+      d'avant 2009 que les portes datées refusent, ce que le dépôt ouvrait et a
+      corrigé ; il lit l'entrée avant vingt ans à seize ans, et l'entrée précoce de la
+      CNRACL dans les services de l'État : les écarts sont les siens (registre) ; il
+      date l'ouverture à l'âge de la porte, sans effet sur la pension

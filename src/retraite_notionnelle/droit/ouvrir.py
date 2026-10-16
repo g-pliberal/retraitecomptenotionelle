@@ -213,6 +213,9 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
     # un assuré au taux plein liquide sa complémentaire sans abattement,
     # quel que soit son âge.
     requis_reference = 0
+    #: Les régimes qui l'opposent : ceux des fonctionnaires ont leurs portes
+    #: de la carrière longue (:meth:`CarriereLongue.de_la_fonction_publique`).
+    opposants: list[str] = []
     #: Âge d'ouverture des droits le plus précoce parmi les régimes de base
     #: que la demande liquide. Un polypensionné liquide chaque pension à
     #: l'âge de son régime (:mod:`.departs`) ; quand tous liquident au même
@@ -260,6 +263,7 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
             requis_reference = max(
                 requis_reference, duree_requise(moteur, periode, carriere)[0]
             )
+            opposants.append(code)
             age_regime = age_ouverture(moteur, periode, carriere)
             age_ouverture_reference = (
                 age_regime if age_ouverture_reference is None
@@ -332,6 +336,7 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
                 majoration_enfants.trimestres if majoration_enfants is not None else 0,
             ),
             requis_reference, etrangers,
+            moteur.carriere_longue.de_la_fonction_publique(opposants),
         )
         # Au mois près : la table écrit soixante ans et huit mois 60,67, que
         # l'âge exact, 60,666…, n'atteindrait jamais.
@@ -1188,7 +1193,8 @@ def age_carriere_longue(moteur, carriere: Carriere,
     )
     return moteur.carriere_longue.age_propose(
         carriere, annee_liquidation, cotises, requis, carriere.age_liquidation,
-        etrangers.cotises[famille]
+        etrangers.cotises[famille],
+        moteur.carriere_longue.de_la_fonction_publique(code for code, _ in periodes),
     )
 
 

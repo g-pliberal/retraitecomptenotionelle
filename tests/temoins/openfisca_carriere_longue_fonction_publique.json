@@ -1,0 +1,521 @@
+{
+  "avertissement": "Deuxième implémentation, pas une source officielle. Il lit l'entrée avant vingt ans à la fin de l'année des seize, et les services de l'État pour la CNRACL : il refuse la carrière longue à qui a commencé à dix-huit ans, et à tout fonctionnaire territorial ou hospitalier. Il date l'ouverture à l'âge de la porte, sur la durée cotisée à la liquidation.",
+  "convention": {
+    "date_de_naissance": "le 1er janvier de `naissance`",
+    "duree_de_service_cotisee_annuelle": "4 trimestres chaque année, dès l'année des quatorze à dix-huit ans",
+    "entree_precoce": "Les années d'avant dix-huit ans, dans la vie celles d'un apprenti ou d'un auxiliaire, sont rangées au régime de la liquidation : OpenFisca ne lit l'entrée précoce que dans les services de la fonction publique.",
+    "liquidation_date": "le 1er janvier de `liquidation`",
+    "non_traduit": "Les périodes réputées cotisées, que les profils n'ont pas ; la durée d'assurance de cent soixante-huit trimestres d'avant 2012, que la durée cotisée emporte ici ; la réforme de 2023, au-delà des barèmes d'OpenFisca.",
+    "ouverture": "Le dépôt ouvre ou refuse la liquidation ; OpenFisca, qui sert la pension même avant l'âge, l'ouvre quand sa date d'ouverture des droits tombe au plus tard le 1er janvier de `liquidation`.",
+    "quotite_de_travail": "1",
+    "raison_depart_taux_plein_anticipe": "non déclarée",
+    "salaire_de_base": "le traitement, chaque année de `debut` à `liquidation` exclue",
+    "sexe": "faux (`sexe` H)",
+    "taux_de_prime": "0"
+  },
+  "famille": "la carrière longue des fonctionnaires : l'entrée précoce, la durée cotisée, l'âge de chaque porte",
+  "perimetre": "Fonction publique de l'État et CNRACL, sédentaires, sans prime ni enfant, à temps plein, carrières continues entrées de quatorze à dix-huit ans, à traitement nominal constant, liquidations de 2004 à 2019 : quatre aux portes d'avant 2009, deux entrés à dix-huit ans, deux à la CNRACL entrés plus tôt, quatre à l'État sur la durée cotisée.",
+  "profils": {
+    "cnracl_1952_debut_14_en_2008": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "carriere_longue": 0.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 1.0,
+        "cotises_a_la_porte_basse": 0.0,
+        "cotises_a_la_porte_haute": 0.0,
+        "cotises_tous_regimes": 168.0,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 168.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 0.0,
+        "ouverture_carriere_longue_le": "1952-01-01",
+        "ouverture_des_droits_le": "2012-01-01",
+        "pension": 22679.984375,
+        "pension_avant_minimum": 22679.984375,
+        "pension_brute": 22679.984375,
+        "porte": 0.0,
+        "services": 168.0,
+        "services_cnracl_a_16_ans": 12.0,
+        "services_cnracl_a_20_ans": 28.0,
+        "services_fonction_publique_a_16_ans": 0.0,
+        "services_fonction_publique_a_20_ans": 0.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 30239.98046875
+      },
+      "profil": {
+        "code": "cnracl_1952_debut_14_en_2008",
+        "debut": 1966,
+        "liquidation": 2008,
+        "naissance": 1952,
+        "objet": "parti à 56 ans en 2008, cent soixante-huit trimestres cotisés : ouvert par la porte de 56 ans",
+        "regime": "cnracl",
+        "regle": "cnracl",
+        "traitement": 30000.0
+      }
+    },
+    "cnracl_1955_debut_15_en_2014": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "carriere_longue": 0.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 1.0,
+        "cotises_a_la_porte_basse": 0.0,
+        "cotises_a_la_porte_haute": 0.0,
+        "cotises_tous_regimes": 176.0,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 176.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 0.0,
+        "ouverture_carriere_longue_le": "1955-01-01",
+        "ouverture_des_droits_le": "2017-01-01",
+        "pension": 22500.0,
+        "pension_avant_minimum": 22500.0,
+        "pension_brute": 22500.0,
+        "porte": 0.0,
+        "services": 176.0,
+        "services_cnracl_a_16_ans": 8.0,
+        "services_cnracl_a_20_ans": 24.0,
+        "services_fonction_publique_a_16_ans": 0.0,
+        "services_fonction_publique_a_20_ans": 0.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 30000.0
+      },
+      "profil": {
+        "code": "cnracl_1955_debut_15_en_2014",
+        "debut": 1970,
+        "liquidation": 2014,
+        "naissance": 1955,
+        "objet": "entré à 15 ans, parti à 59 ans avec 176 trimestres cotisés",
+        "regime": "cnracl",
+        "regle": "cnracl",
+        "traitement": 30000.0
+      }
+    },
+    "cnracl_1958_debut_18_en_2018": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "carriere_longue": 0.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 1.0,
+        "cotises_a_la_porte_basse": 0.0,
+        "cotises_a_la_porte_haute": 0.0,
+        "cotises_tous_regimes": 168.0,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 168.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 0.0,
+        "ouverture_carriere_longue_le": "1958-01-01",
+        "ouverture_des_droits_le": "2020-01-01",
+        "pension": 20371.5078125,
+        "pension_avant_minimum": 20371.5078125,
+        "pension_brute": 20371.5078125,
+        "porte": 0.0,
+        "services": 168.0,
+        "services_cnracl_a_16_ans": 0.0,
+        "services_cnracl_a_20_ans": 12.0,
+        "services_fonction_publique_a_16_ans": 0.0,
+        "services_fonction_publique_a_20_ans": 0.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 27162.009765625
+      },
+      "profil": {
+        "code": "cnracl_1958_debut_18_en_2018",
+        "debut": 1976,
+        "liquidation": 2018,
+        "naissance": 1958,
+        "objet": "entrée à 18 ans, partie à 60 ans avec 168 trimestres cotisés, sa génération en devant 167",
+        "regime": "cnracl",
+        "regle": "entree_avant_vingt_ans",
+        "traitement": 27000.0
+      }
+    },
+    "etat_1946_debut_15_en_2004": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "carriere_longue": 1.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 1.0,
+        "cotises_a_la_porte_basse": 8.0,
+        "cotises_a_la_porte_haute": 8.0,
+        "cotises_tous_regimes": 172.0,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 172.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 11448.0087890625,
+        "ouverture_carriere_longue_le": "2250-12-31",
+        "ouverture_des_droits_le": "2250-12-31",
+        "pension": 22612.51171875,
+        "pension_avant_minimum": 22612.51171875,
+        "pension_brute": 22612.51171875,
+        "porte": 15.0,
+        "services": 172.0,
+        "services_fonction_publique_a_16_ans": 8.0,
+        "services_fonction_publique_a_20_ans": 24.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 30150.015625
+      },
+      "profil": {
+        "code": "etat_1946_debut_15_en_2004",
+        "debut": 1961,
+        "liquidation": 2004,
+        "naissance": 1946,
+        "objet": "quarante-trois ans cotisés, parti à 58 ans en 2004 : la fonction publique n'a pas encore la carrière longue",
+        "regime": "fonction_publique_etat",
+        "regle": "portes_avant_2009",
+        "traitement": 30000.0
+      }
+    },
+    "etat_1947_debut_15_en_2005": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "carriere_longue": 1.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 1.0,
+        "cotises_a_la_porte_basse": 8.0,
+        "cotises_a_la_porte_haute": 8.0,
+        "cotises_tous_regimes": 172.0,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 172.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 11500.7646484375,
+        "ouverture_carriere_longue_le": "2250-12-31",
+        "ouverture_des_droits_le": "2250-12-31",
+        "pension": 22500.001953125,
+        "pension_avant_minimum": 22500.001953125,
+        "pension_brute": 22500.001953125,
+        "porte": 15.0,
+        "services": 172.0,
+        "services_fonction_publique_a_16_ans": 8.0,
+        "services_fonction_publique_a_20_ans": 24.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 30000.001953125
+      },
+      "profil": {
+        "code": "etat_1947_debut_15_en_2005",
+        "debut": 1962,
+        "liquidation": 2005,
+        "naissance": 1947,
+        "objet": "parti à 58 ans en janvier 2005 : seule la porte de 59 ans est ouverte",
+        "regime": "fonction_publique_etat",
+        "regle": "portes_avant_2009",
+        "traitement": 30000.0
+      }
+    },
+    "etat_1949_debut_15_en_2008": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "carriere_longue": 1.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 1.0,
+        "cotises_a_la_porte_basse": 8.0,
+        "cotises_a_la_porte_haute": 8.0,
+        "cotises_tous_regimes": 176.0,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 176.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 12024.8974609375,
+        "ouverture_carriere_longue_le": "2005-01-01",
+        "ouverture_des_droits_le": "2005-01-01",
+        "pension": 22679.984375,
+        "pension_avant_minimum": 22679.984375,
+        "pension_brute": 22679.984375,
+        "porte": 1.0,
+        "services": 176.0,
+        "services_fonction_publique_a_16_ans": 8.0,
+        "services_fonction_publique_a_20_ans": 24.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 30239.98046875
+      },
+      "profil": {
+        "code": "etat_1949_debut_15_en_2008",
+        "debut": 1964,
+        "liquidation": 2008,
+        "naissance": 1949,
+        "objet": "parti à 59 ans en 2008, quarante-quatre ans cotisés : ouvert",
+        "regime": "fonction_publique_etat",
+        "regle": "portes_avant_2009",
+        "traitement": 30000.0
+      }
+    },
+    "etat_1950_debut_15_en_2007": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "carriere_longue": 1.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 1.0,
+        "cotises_a_la_porte_basse": 8.0,
+        "cotises_a_la_porte_haute": 8.0,
+        "cotises_tous_regimes": 168.0,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 168.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 11875.490234375,
+        "ouverture_carriere_longue_le": "2010-01-01",
+        "ouverture_des_droits_le": "2010-01-01",
+        "pension": 22612.4765625,
+        "pension_avant_minimum": 22612.4765625,
+        "pension_brute": 22612.4765625,
+        "porte": 2.0,
+        "services": 168.0,
+        "services_fonction_publique_a_16_ans": 8.0,
+        "services_fonction_publique_a_20_ans": 24.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 30149.96875
+      },
+      "profil": {
+        "code": "etat_1950_debut_15_en_2007",
+        "debut": 1965,
+        "liquidation": 2007,
+        "naissance": 1950,
+        "objet": "parti à 57 ans en 2007 : la porte de 56 ans ne s'ouvre qu'en 2008",
+        "regime": "fonction_publique_etat",
+        "regle": "portes_avant_2009",
+        "traitement": 30000.0
+      }
+    },
+    "etat_1953_debut_14_en_2010": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "carriere_longue": 1.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 1.0,
+        "cotises_a_la_porte_basse": 12.0,
+        "cotises_a_la_porte_haute": 12.0,
+        "cotises_tous_regimes": 172.0,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 172.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 12329.0234375,
+        "ouverture_carriere_longue_le": "2011-01-01",
+        "ouverture_des_droits_le": "2011-01-01",
+        "pension": 22680.3359375,
+        "pension_avant_minimum": 22680.3359375,
+        "pension_brute": 22680.3359375,
+        "porte": 15.0,
+        "services": 172.0,
+        "services_fonction_publique_a_16_ans": 12.0,
+        "services_fonction_publique_a_20_ans": 28.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 30240.44921875
+      },
+      "profil": {
+        "code": "etat_1953_debut_14_en_2010",
+        "debut": 1967,
+        "liquidation": 2010,
+        "naissance": 1953,
+        "objet": "parti à 57 ans avec 172 trimestres cotisés, quand la porte de 56 ans en exige 173 : refusé",
+        "regime": "fonction_publique_etat",
+        "regle": "duree_cotisee",
+        "traitement": 30000.0
+      }
+    },
+    "etat_1954_debut_14_en_2011": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "carriere_longue": 1.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 1.0,
+        "cotises_a_la_porte_basse": 12.0,
+        "cotises_a_la_porte_haute": 12.0,
+        "cotises_tous_regimes": 172.0,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 172.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 12446.2236328125,
+        "ouverture_carriere_longue_le": "2012-05-01",
+        "ouverture_des_droits_le": "2012-05-01",
+        "pension": 22612.484375,
+        "pension_avant_minimum": 22612.484375,
+        "pension_brute": 22612.484375,
+        "porte": 15.0,
+        "services": 172.0,
+        "services_fonction_publique_a_16_ans": 12.0,
+        "services_fonction_publique_a_20_ans": 28.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 30149.98046875
+      },
+      "profil": {
+        "code": "etat_1954_debut_14_en_2011",
+        "debut": 1968,
+        "liquidation": 2011,
+        "naissance": 1954,
+        "objet": "le même un an plus tard : refusé",
+        "regime": "fonction_publique_etat",
+        "regle": "duree_cotisee",
+        "traitement": 30000.0
+      }
+    },
+    "etat_1955_debut_15_en_2014": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "carriere_longue": 1.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 1.0,
+        "cotises_a_la_porte_basse": 8.0,
+        "cotises_a_la_porte_haute": 8.0,
+        "cotises_tous_regimes": 176.0,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 176.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 12612.9140625,
+        "ouverture_carriere_longue_le": "2011-01-01",
+        "ouverture_des_droits_le": "2011-01-01",
+        "pension": 22500.0,
+        "pension_avant_minimum": 22500.0,
+        "pension_brute": 22500.0,
+        "porte": 1.0,
+        "services": 176.0,
+        "services_fonction_publique_a_16_ans": 8.0,
+        "services_fonction_publique_a_20_ans": 24.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 30000.0
+      },
+      "profil": {
+        "code": "etat_1955_debut_15_en_2014",
+        "debut": 1970,
+        "liquidation": 2014,
+        "naissance": 1955,
+        "objet": "le même à l'État : la porte de 56 ans exige 174 trimestres, réunis à 58 ans et demi",
+        "regime": "fonction_publique_etat",
+        "regle": "duree_cotisee",
+        "traitement": 30000.0
+      }
+    },
+    "etat_1955_debut_18_en_2015": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "carriere_longue": 0.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 1.0,
+        "cotises_a_la_porte_basse": 0.0,
+        "cotises_a_la_porte_haute": 0.0,
+        "cotises_tous_regimes": 168.0,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 168.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 12612.9140625,
+        "ouverture_carriere_longue_le": "1955-01-01",
+        "ouverture_des_droits_le": "2017-01-01",
+        "pension": 22500.0,
+        "pension_avant_minimum": 22500.0,
+        "pension_brute": 22500.0,
+        "porte": 0.0,
+        "services": 168.0,
+        "services_fonction_publique_a_16_ans": 0.0,
+        "services_fonction_publique_a_20_ans": 12.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 30000.0
+      },
+      "profil": {
+        "code": "etat_1955_debut_18_en_2015",
+        "debut": 1973,
+        "liquidation": 2015,
+        "naissance": 1955,
+        "objet": "entré à 18 ans, parti à 60 ans avec 168 trimestres cotisés, sa génération en devant 166",
+        "regime": "fonction_publique_etat",
+        "regle": "entree_avant_vingt_ans",
+        "traitement": 30000.0
+      }
+    },
+    "etat_1960_debut_15_en_2019": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "carriere_longue": 1.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 1.0,
+        "cotises_a_la_porte_basse": 8.0,
+        "cotises_a_la_porte_haute": 8.0,
+        "cotises_tous_regimes": 176.0,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 176.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 12764.732421875,
+        "ouverture_carriere_longue_le": "2017-09-01",
+        "ouverture_des_droits_le": "2017-09-01",
+        "pension": 22500.0,
+        "pension_avant_minimum": 22500.0,
+        "pension_brute": 22500.0,
+        "porte": 1.0,
+        "services": 176.0,
+        "services_fonction_publique_a_16_ans": 8.0,
+        "services_fonction_publique_a_20_ans": 24.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 30000.0
+      },
+      "profil": {
+        "code": "etat_1960_debut_15_en_2019",
+        "debut": 1975,
+        "liquidation": 2019,
+        "naissance": 1960,
+        "objet": "entré à 15 ans, parti à 59 ans avec 176 trimestres cotisés",
+        "regime": "fonction_publique_etat",
+        "regle": "duree_cotisee",
+        "traitement": 30000.0
+      }
+    }
+  },
+  "recupere_le": "2026-10-16",
+  "source": "OpenFisca-France-Pension",
+  "version": "0.1.3"
+}

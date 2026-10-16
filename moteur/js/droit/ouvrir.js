@@ -139,6 +139,9 @@ export function ouvrir(moteur, releve, regimes = null) {
   // un assuré au taux plein liquide sa complémentaire sans abattement, quel
   // que soit son âge.
   let requisReference = 0;
+  // Les régimes qui l'opposent : ceux des fonctionnaires ont leurs portes de
+  // la carrière longue. Voir le Python.
+  const opposants = [];
   // Âge d'ouverture des droits le plus précoce parmi les régimes de base que
   // la demande liquide. Un polypensionné liquide chaque pension à l'âge de son
   // régime (`departs.js`) ; quand tous liquident au même départ, c'est l'âge
@@ -179,6 +182,7 @@ export function ouvrir(moteur, releve, regimes = null) {
         continue;
       }
       requisReference = Math.max(requisReference, dureeRequise(moteur, periode, carriere)[0]);
+      opposants.push(code);
       const ageRegime = ageOuverture(moteur, periode, carriere);
       ageOuvertureReference = ageOuvertureReference === null
         ? ageRegime
@@ -241,6 +245,7 @@ export function ouvrir(moteur, releve, regimes = null) {
         majorationEnfants !== null ? majorationEnfants.trimestres : 0,
       ),
       requisReference, etrangers,
+      moteur.carriereLongue.deLaFonctionPublique(opposants),
     );
     // Au mois près : la table écrit soixante ans et huit mois 60,67, que
     // l'âge exact, 60,666…, n'atteindrait jamais.
@@ -1014,6 +1019,7 @@ export function ageCarriereLongue(moteur, carriere, annuites) {
   return moteur.carriereLongue.agePropose(
     carriere, anneeLiquidation, cotises, requis, carriere.age_liquidation,
     etrangers.cotises[famille],
+    moteur.carriereLongue.deLaFonctionPublique(annuites.map(([code]) => code)),
   );
 }
 
