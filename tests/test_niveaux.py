@@ -10,6 +10,7 @@ mécanique de `zones.yaml` : la table et les fichiers se tiennent l'un l'autre.
 from __future__ import annotations
 
 import ast
+import builtins
 from pathlib import Path
 
 import conftest
@@ -62,18 +63,48 @@ def test_un_fichier_que_rien_ne_nomme_est_rapide():
 
 def test_chaque_fichier_isole_et_ce_qu_il_lit_existent():
     racine = TESTS.parent
-    absents = sorted(f for f in conftest.ISOLES if not (TESTS / f).is_file())
+    absents = sorted(c for c in conftest.ISOLES if not (TESTS / c.split("::")[0]).is_file())
+    absents += sorted(c for c in conftest.ISOLES if "::" in c
+                      and c.split("::")[1] not in _fonctions(c.split("::")[0]))
     absents += sorted(c for lus in conftest.ISOLES.values() for c in lus
-                      if not (racine / c).is_file())
+                      if not (racine / c).exists())
     assert not absents, f"{absents} : la table des fichiers isolés nomme des fichiers disparus"
+
+
+def _arbre_isole(cle: str) -> ast.AST:
+    """Le fichier isolé, ou la seule fonction du test isolé."""
+    fichier, _, test = cle.partition("::")
+    arbre = ast.parse((TESTS / fichier).read_text(encoding="utf-8"))
+    if not test:
+        return arbre
+    return next(n for n in arbre.body if isinstance(n, ast.FunctionDef) and n.name == test)
+
+
+def test_un_test_isole_ne_lit_rien_de_son_fichier():
+    """Déclaré seul, un test ne demande aucune fixture ni ne lit aucun nom de
+    son module, hors ``pytest`` et ``__file__`` : son fichier, qui lit le modèle, entre dans
+    son empreinte, mais pas les modules qu'il importe."""
+    for cle in (c for c in conftest.ISOLES if "::" in c):
+        fonction = _arbre_isole(cle)
+        assert not fonction.args.args, (cle, "demande une fixture")
+        locaux = {n.id for n in ast.walk(fonction)
+                  if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store)}
+        locaux |= {alias.asname or alias.name.split(".")[0] for n in ast.walk(fonction)
+                   if isinstance(n, (ast.Import, ast.ImportFrom)) for alias in n.names}
+        lus = {n.id for n in ast.walk(fonction)
+               if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)}
+        lus |= {n.target.id for n in ast.walk(fonction) if isinstance(n, ast.comprehension)
+                and isinstance(n.target, ast.Name)}
+        externes = lus - locaux - set(dir(builtins))
+        assert externes <= {"pytest", "__file__"}, (cle, sorted(externes))
 
 
 def test_un_fichier_isole_n_importe_rien_du_depot():
     """Isolé, il ne lit que ce qu'il déclare : un import du modèle, ou d'un
     module des tests, ferait dépendre son résultat de ce que son empreinte
-    ne lit pas."""
+    ne lit pas. Déclaré seul, un test n'importe, lui, rien du dépôt."""
     for fichier in conftest.ISOLES:
-        arbre = ast.parse((TESTS / fichier).read_text(encoding="utf-8"))
+        arbre = _arbre_isole(fichier)
         modules = {alias.name.split(".")[0] for n in ast.walk(arbre)
                    if isinstance(n, ast.Import) for alias in n.names}
         modules |= {(n.module or "").split(".")[0] for n in ast.walk(arbre)
@@ -99,3 +130,35 @@ def test_l_empreinte_d_un_fichier_isole_suit_ce_qu_il_lit(monkeypatch, tmp_path)
     assert apres != avant
     assert (conftest.marque_de_reussite(apres, "tests/test_isole.py::test_x")
             != conftest.marque_de_reussite(avant, "tests/test_isole.py::test_x"))
+
+
+def test_l_empreinte_d_un_test_isole_suit_les_dossiers_qu_il_lit(monkeypatch, tmp_path):
+    """Un fichier retouché, né ou disparu, à toute profondeur du dossier
+    déclaré, relance le test ; le test seul prime sur son fichier."""
+    (tmp_path / "tests").mkdir()
+    (tmp_path / "tests" / "test_isole.py").write_text("def test_x(): pass\n", encoding="utf-8")
+    (tmp_path / "tests" / "conftest.py").write_text("", encoding="utf-8")
+    (tmp_path / "moteur" / "js").mkdir(parents=True)
+    (tmp_path / "moteur" / "js" / "a.js").write_text("1\n", encoding="utf-8")
+    monkeypatch.setattr(conftest, "RACINE", tmp_path)
+    monkeypatch.setattr(conftest, "ISOLES", {"test_isole.py::test_x": ("moteur",)})
+    monkeypatch.setattr(conftest, "OUTILS_DES_ISOLES", ())
+    assert conftest.cle_isolee("test_isole.py", "test_x") == "test_isole.py::test_x"
+    assert conftest.cle_isolee("test_isole.py", "test_y") is None
+
+    def empreinte():
+        monkeypatch.setattr(conftest, "_EMPREINTES", {})
+        return conftest.empreinte_isolee("test_isole.py::test_x")
+
+    vues = [empreinte()]
+    (tmp_path / "moteur" / "js" / "a.js").write_text("2\n", encoding="utf-8")
+    vues.append(empreinte())
+    (tmp_path / "moteur" / "js" / "b.js").write_text("", encoding="utf-8")
+    vues.append(empreinte())
+    (tmp_path / "moteur" / "js" / "b.js").unlink()
+    (tmp_path / "moteur" / "js" / "c.js").write_text("", encoding="utf-8")
+    vues.append(empreinte())
+    (tmp_path / "moteur" / "js" / "c.js").unlink()
+    (tmp_path / "moteur" / "js" / "__pycache__").mkdir()
+    (tmp_path / "moteur" / "js" / "__pycache__" / "x.pyc").write_bytes(b"")
+    assert len(set(vues)) == 4 and empreinte() == vues[1]

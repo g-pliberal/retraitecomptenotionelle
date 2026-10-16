@@ -278,6 +278,8 @@ def pytest_collection_modifyitems(config, items):
     ceux d'un fichier isolé qui ont réussi tels quels (:data:`ISOLES`), et,
     les présomptions décalées, ceux qui confrontent le Python au portage."""
     vises = {Path(str(argument).split("::")[0]).name for argument in config.args}
+    vises |= {f"{Path(argument.split('::')[0]).name}::{argument.split('::')[1].split('[')[0]}"
+              for argument in map(str, config.args) if "::" in argument}
     decalees = os.environ.get(PRESOMPTIONS_DECALEES)
     for item in items:
         nom = getattr(item, "originalname", None) or item.name
@@ -287,11 +289,11 @@ def pytest_collection_modifyitems(config, items):
         if decalees and _confronte_au_portage(item):
             item.add_marker(pytest.mark.skip(
                 reason="le portage lit ses présomptions dans le paquet, que la mesure ne décale pas"))
-        fichier = item.path.name
-        if fichier not in ISOLES or os.environ.get(TESTS_SANS_MEMOIRE):
+        cle = cle_isolee(item.path.name, nom)
+        if cle is None or os.environ.get(TESTS_SANS_MEMOIRE):
             continue
-        empreinte = empreinte_isolee(fichier)
-        if fichier not in vises and marque_de_reussite(empreinte, item.nodeid).exists():
+        empreinte = empreinte_isolee(cle)
+        if cle not in vises and marque_de_reussite(empreinte, item.nodeid).exists():
             item.add_marker(pytest.mark.skip(
                 reason="réussi au dernier passage, et rien de ce qu'il lit n'a bougé"))
 
@@ -299,12 +301,14 @@ def pytest_collection_modifyitems(config, items):
 # -- les fichiers isolés : ne se rejoue que ce qui a bougé ----------------------
 
 #: Les fichiers de tests qui ne lisent rien du modèle, seulement ce qu'ils
-#: déclarent ici et les outils qu'ils lancent. Un cas qui y a réussi ne se
-#: rejoue pas tant que ni son fichier, ni ce qu'il lit, ni ces outils n'ont
-#: bougé : son résultat serait le même. La mémoire en est commune aux
-#: worktrees, comme celle des calculs. Visé expressément, le fichier se
-#: rejoue ; ``TESTS_SANS_MEMOIRE=1`` rejoue tout, et GitHub, sans mémoire,
-#: aussi.
+#: déclarent ici et les outils qu'ils lancent, et, sous ``fichier::test``,
+#: les tests qui, dans un fichier qui le lit, n'en lisent rien eux-mêmes. Un
+#: cas qui y a réussi ne se rejoue pas tant que ni son fichier, ni ce qu'il
+#: lit, fichiers ou dossiers entiers, ni ces outils n'ont bougé : son
+#: résultat serait le même. La mémoire en est commune aux worktrees, comme
+#: celle des calculs. Visé expressément, le fichier — ou le test, pour un
+#: test déclaré seul — se rejoue ; ``TESTS_SANS_MEMOIRE=1`` rejoue tout, et
+#: GitHub, sans mémoire, aussi.
 ISOLES: dict[str, tuple[str, ...]] = {
     # Le script de publication, sur des dépôts montés dans un dossier
     # temporaire. Sous Windows, la machine chargée, un git coûte près d'une
@@ -312,12 +316,18 @@ ISOLES: dict[str, tuple[str, ...]] = {
     # 4 octobre 2026. Ses pilotes de fusion, que le script donne à git
     # (action 148, étape 3), sont de ce qu'il lit.
     "test_pousser.py": ("scripts/pousser.sh", "scripts/fusionner.py"),
+    # ``node --test`` (action 135) : 13 s, la mémoire des calculs pleine. Il
+    # ne lit que le portage et le site, le paquet, les témoins, les essais
+    # JavaScript et les quotients de mortalité qu'il refait au bit près ; le
+    # paquet suit le modèle, mais c'est à d'autres tests de le dire à jour.
+    "test_web.py::test_le_portage_javascript_retrouve_les_chiffres_du_modele": (
+        "moteur", "tests/js", "tests/temoins", "data/reference/mortalite"),
 }
 #: Les outils qu'un fichier isolé lance : leur version et leur configuration
 #: entrent dans son empreinte.
 OUTILS_DES_ISOLES = (("git", "--version"), ("bash", "--version"),
                      ("git", "config", "--system", "--list"),
-                     ("git", "config", "--global", "--list"))
+                     ("git", "config", "--global", "--list"), ("node", "--version"))
 TESTS_SANS_MEMOIRE = "TESTS_SANS_MEMOIRE"
 #: Où les réussites se gardent : une marque par cas, sous l'empreinte.
 REUSSITES = memoire.DOSSIER.parent / "tests"
@@ -327,24 +337,45 @@ RACINE = Path(__file__).resolve().parents[1]
 _EMPREINTES: dict[str, str] = {}
 
 
-def empreinte_isolee(fichier: str) -> str:
-    """Tout ce dont dépend le résultat d'un fichier isolé : lui-même, ce
-    ``conftest.py``, ce qu'il déclare lire, les outils qu'il lance, leurs
-    variables ``GIT_*``, Python et pytest. Une fois par processus."""
-    if fichier not in _EMPREINTES:
-        somme = hashlib.sha256(f"{sys.version}|{sys.platform}|{pytest.__version__}".encode())
-        for chemin in (f"tests/{fichier}", "tests/conftest.py", *ISOLES[fichier]):
-            somme.update(chemin.encode() + b"\0" + (RACINE / chemin).read_bytes())
+def cle_isolee(fichier: str, test: str) -> str | None:
+    """La clé de :data:`ISOLES` qui couvre ce test, le test seul d'abord."""
+    for cle in (f"{fichier}::{test}", fichier):
+        if cle in ISOLES:
+            return cle
+    return None
+
+
+def _lus(chemin: str) -> list[str]:
+    """Le fichier déclaré, ou tous ceux du dossier déclaré, à toute
+    profondeur : un fichier qui y naît ou en disparaît change l'empreinte."""
+    dossier = RACINE / chemin
+    if not dossier.is_dir():
+        return [chemin]
+    return sorted(f.relative_to(RACINE).as_posix() for f in dossier.rglob("*")
+                  if f.is_file() and "__pycache__" not in f.parts)
+
+
+def empreinte_isolee(cle: str) -> str:
+    """Tout ce dont dépend le résultat d'un fichier ou d'un test isolé : son
+    fichier, ce ``conftest.py``, ce qu'il déclare lire, les outils qu'il
+    lance, leurs variables ``GIT_*`` et ``NODE_*``, Python et pytest. Une fois
+    par processus."""
+    if cle not in _EMPREINTES:
+        somme = hashlib.sha256(f"{cle}|{sys.version}|{sys.platform}|{pytest.__version__}".encode())
+        fichier = cle.split("::")[0]
+        for declare in (f"tests/{fichier}", "tests/conftest.py", *ISOLES[cle]):
+            for chemin in _lus(declare):
+                somme.update(chemin.encode() + b"\0" + (RACINE / chemin).read_bytes())
         for outil in OUTILS_DES_ISOLES:
             try:
                 acheve = subprocess.run(outil, capture_output=True)
                 somme.update(acheve.stdout + acheve.stderr + str(acheve.returncode).encode())
             except OSError as souci:
                 somme.update(repr(souci).encode())
-        for nom in sorted(n for n in os.environ if n.startswith("GIT_")):
+        for nom in sorted(n for n in os.environ if n.startswith(("GIT_", "NODE_"))):
             somme.update(f"{nom}={os.environ[nom]}".encode())
-        _EMPREINTES[fichier] = somme.hexdigest()[:24]
-    return _EMPREINTES[fichier]
+        _EMPREINTES[cle] = somme.hexdigest()[:24]
+    return _EMPREINTES[cle]
 
 
 def marque_de_reussite(empreinte: str, nodeid: str) -> Path:
@@ -357,10 +388,11 @@ def pytest_runtest_logreport(report):
     rien, ne marque rien)."""
     if report.when != "call" or not report.passed or os.environ.get(TESTS_SANS_MEMOIRE):
         return
-    fichier = Path(report.nodeid.split("::")[0]).name
-    if fichier not in _EMPREINTES:
+    parties = report.nodeid.split("::")
+    cle = cle_isolee(Path(parties[0]).name, parties[-1].split("[")[0])
+    if cle not in _EMPREINTES:
         return
-    marque = marque_de_reussite(_EMPREINTES[fichier], report.nodeid)
+    marque = marque_de_reussite(_EMPREINTES[cle], report.nodeid)
     try:
         if not marque.parent.exists():
             marque.parent.mkdir(parents=True, exist_ok=True)
