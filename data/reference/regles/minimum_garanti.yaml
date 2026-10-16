@@ -23,7 +23,7 @@ effet: >-
   en 2000, qu'un départ par régime fait paraître, perdait 2 378,39 € par an en
   euros de son départ déclaré.
 sources:
-  lu_le: 2026-10-14
+  lu_le: 2026-10-16
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
@@ -147,6 +147,15 @@ sources:
       de l'État), article 10, rédaction du 9 octobre 1976 (LEGIARTI000006766756) :
       le même minimum, jusqu'au 1er janvier 2004
     date: 2026-09-29
+  - type: jorf
+    reference: >-
+      loi n° 2010-1330, article 45, IV, V et VII (JORFARTI000023022174) : qui avait
+      atteint l'âge d'ouverture avant 2011 conserve L. 17 « dans [sa] rédaction
+      antérieure », le c sous quinze ans ; décret n° 2010-1744, article 3
+      (JORFARTI000023334941) ; décret n° 2003-1306, article 22, rédaction du 1er
+      janvier 2011 (LEGIARTI000023412553), le même barème à la CNRACL. Relus pour la
+      confrontation à OpenFisca (action 153)
+    date: 2026-10-16
 textes_a_rattacher:
 - reference: >-
     L. 17 CPCMR (versions LEGIARTI000006362711, LEGIARTI000006362712,
@@ -173,3 +182,15 @@ historique:
   périodes le déclarent depuis le code de 1964 et les décrets de 1965, le barème du
   dépôt commençant en 1976 (domaine des départs multiples, la pension militaire
   servie dès la sortie de l'armée).
+referents:
+  openfisca_france_pension:
+    equivalent: >-
+      fonction_publique_minimum_garanti et cnracl_minimum_garanti, sur les paramètres
+      minimum_garanti de la pension civile, à la référence de l'indice majoré au point
+      de l'année
+    confrontation: >-
+      le 16 octobre 2026 (action 153, étape 2 ; tests/test_oracle_minima.py) : le
+      barème, sa marche de quinze à trente ans, la référence entière, le d sous quinze
+      ans et la condition de taux plein concordent, rapportés à la référence ; il lit
+      les services de l'État pour la CNRACL, sert le d à l'ancien droit et ignore la
+      minoration de 2011 à 2015 : les écarts sont les siens (registre)

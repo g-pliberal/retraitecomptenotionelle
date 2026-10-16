@@ -1,0 +1,544 @@
+{
+  "avertissement": "Deuxième implémentation, pas une source officielle. Son minimum garanti de la CNRACL lit les services de l'État, et vaut zéro ; il sert le d de L. 17 à qui l'avait perdu, et ne minore pas l'âge d'annulation qui l'ouvre de 2011 à 2015. Son minimum contributif ne lit pas la durée corrigée après l'âge du taux plein.",
+  "convention": {
+    "categorie_salarie": "titulaire de l'État ou de la territoriale, ou non-cadre du privé",
+    "date_de_naissance": "le 1er janvier de `naissance`",
+    "duree_de_service_cotisee_annuelle": "4 trimestres chaque année, aux fonctionnaires",
+    "liquidation_date": "le 1er janvier de `liquidation`, dans le régime du profil",
+    "nombre_enfants": "0",
+    "non_traduit": "Le plafond de ressources du minimum garanti, que ni l'un ni l'autre ne porte ; l'écrêtement du minimum contributif sur l'ensemble des pensions, qu'aucun profil n'atteint ; la surcote du minimum contributif, tranchée au registre.",
+    "reference": "Le minimum garanti se compare rapporté à sa référence : chez OpenFisca, l'indice majoré de l'année au point d'indice du 1er janvier de `liquidation` ; au dépôt, l'indice majoré 227 au 1er janvier 2004, revalorisé comme les pensions.",
+    "salaire_de_base": "le traitement ou le salaire, chaque année de `debut` à `liquidation` exclue",
+    "sexe": "faux (`sexe` H)",
+    "taux_de_prime": "0"
+  },
+  "famille": "les minima : le minimum garanti de la pension civile, à l'État et à la CNRACL, et le minimum contributif du régime général",
+  "perimetre": "Fonction publique de l'État et CNRACL, sédentaires, sans prime ni enfant, à temps plein, à traitement nominal constant et bas, liquidations de 2008 à 2022 ; salariés non-cadres du régime général, à salaire nominal constant, entrés tard, liquidations de 2009 à 2017.",
+  "profils": {
+    "cnracl_1948_vingt_ans_en_2008": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "coefficient_de_decote": 0.029999999329447746,
+        "coefficient_de_proratisation": 0.5,
+        "decote_trimestres": 8.0,
+        "duree_assurance": 80.0,
+        "duree_requise_de_la_generation": 160.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 0.0,
+        "ouverture_des_droits_le": "2008-01-01",
+        "pension": 4399.91748046875,
+        "pension_avant_minimum": 4399.91748046875,
+        "pension_brute": 4399.91748046875,
+        "reference_du_minimum": 12024.897299999999,
+        "services": 80.0,
+        "services_fonction_publique": 0.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.7275000214576721,
+        "traitement_de_reference": 12095.9921875
+      },
+      "profil": {
+        "code": "cnracl_1948_vingt_ans_en_2008",
+        "debut": 1988,
+        "liquidation": 2008,
+        "naissance": 1948,
+        "objet": "le premier profil, à la CNRACL",
+        "regime": "cnracl",
+        "regle": "cnracl",
+        "traitement": 12000.0
+      }
+    },
+    "cnracl_1952_quarante_ans_en_2017": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 0.9756097793579102,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 160.0,
+        "duree_requise_de_la_generation": 164.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 0.0,
+        "ouverture_des_droits_le": "2012-10-01",
+        "pension": 10305.3701171875,
+        "pension_avant_minimum": 10305.3701171875,
+        "pension_brute": 10305.3701171875,
+        "reference_du_minimum": 12688.596300000001,
+        "services": 160.0,
+        "services_fonction_publique": 0.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 14084.0048828125
+      },
+      "profil": {
+        "code": "cnracl_1952_quarante_ans_en_2017",
+        "debut": 1977,
+        "liquidation": 2017,
+        "naissance": 1952,
+        "objet": "le troisième, à la CNRACL",
+        "regime": "cnracl",
+        "regle": "cnracl",
+        "traitement": 14000.0
+      }
+    },
+    "cnracl_1953_dix_huit_ans_en_2019": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 0.4363636374473572,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 72.0,
+        "duree_requise_de_la_generation": 165.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 0.0,
+        "ouverture_des_droits_le": "2014-03-01",
+        "pension": 4909.0908203125,
+        "pension_avant_minimum": 4909.0908203125,
+        "pension_brute": 4909.0908203125,
+        "reference_du_minimum": 12764.732100000001,
+        "services": 72.0,
+        "services_fonction_publique": 0.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 15000.0
+      },
+      "profil": {
+        "code": "cnracl_1953_dix_huit_ans_en_2019",
+        "debut": 2001,
+        "liquidation": 2019,
+        "naissance": 1953,
+        "objet": "le deuxième, à la CNRACL",
+        "regime": "cnracl",
+        "regle": "cnracl",
+        "traitement": 15000.0
+      }
+    },
+    "etat_1948_vingt_ans_en_2008": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "coefficient_de_decote": 0.029999999329447746,
+        "coefficient_de_proratisation": 0.5,
+        "decote_trimestres": 8.0,
+        "duree_assurance": 80.0,
+        "duree_requise_de_la_generation": 160.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 8898.423828125,
+        "ouverture_des_droits_le": "2008-01-01",
+        "pension": 8898.423828125,
+        "pension_avant_minimum": 4399.91748046875,
+        "pension_brute": 8898.423828125,
+        "reference_du_minimum": 12024.897299999999,
+        "services": 80.0,
+        "services_fonction_publique": 80.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.7275000214576721,
+        "traitement_de_reference": 12095.9921875
+      },
+      "profil": {
+        "code": "etat_1948_vingt_ans_en_2008",
+        "debut": 1988,
+        "liquidation": 2008,
+        "naissance": 1948,
+        "objet": "vingt ans de services, une décote, avant 2011 : le minimum sans condition",
+        "regime": "fonction_publique_etat",
+        "regle": "bareme",
+        "traitement": 12000.0
+      }
+    },
+    "etat_1950_treize_ans_en_2013": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 0.32098764181137085,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 52.0,
+        "duree_requise_de_la_generation": 162.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 4048.58984375,
+        "ouverture_des_droits_le": "2010-01-01",
+        "pension": 4048.58984375,
+        "pension_avant_minimum": 3611.11083984375,
+        "pension_brute": 4048.58984375,
+        "reference_du_minimum": 12612.914499999999,
+        "services": 52.0,
+        "services_fonction_publique": 52.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 15000.0
+      },
+      "profil": {
+        "code": "etat_1950_treize_ans_en_2013",
+        "debut": 2000,
+        "liquidation": 2013,
+        "naissance": 1950,
+        "objet": "treize ans, l'âge d'ouverture atteint en 2010 : le c de L. 17, dans sa rédaction d'avant 2011",
+        "regime": "fonction_publique_etat",
+        "regle": "ancien_droit",
+        "traitement": 15000.0
+      }
+    },
+    "etat_1951_minoration_en_2012": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "coefficient_de_decote": 0.05249999836087227,
+        "coefficient_de_proratisation": 0.7852760553359985,
+        "decote_trimestres": 7.0,
+        "duree_assurance": 128.0,
+        "duree_requise_de_la_generation": 163.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 0.0,
+        "ouverture_des_droits_le": "2011-01-01",
+        "pension": 7254.478515625,
+        "pension_avant_minimum": 7254.478515625,
+        "pension_brute": 7254.478515625,
+        "reference_du_minimum": 12501.7875,
+        "services": 128.0,
+        "services_fonction_publique": 128.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.7106249928474426,
+        "traitement_de_reference": 13000.0
+      },
+      "profil": {
+        "code": "etat_1951_minoration_en_2012",
+        "debut": 1980,
+        "liquidation": 2012,
+        "naissance": 1951,
+        "objet": "trente-deux ans, sept trimestres de décote, l'âge d'ouverture atteint en 2011 : l'âge d'annulation minoré de neuf trimestres",
+        "regime": "fonction_publique_etat",
+        "regle": "minoration",
+        "traitement": 13000.0
+      }
+    },
+    "etat_1952_quarante_ans_en_2017": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 0.9756097793579102,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 160.0,
+        "duree_requise_de_la_generation": 164.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 12688.5966796875,
+        "ouverture_des_droits_le": "2012-10-01",
+        "pension": 12688.5966796875,
+        "pension_avant_minimum": 10305.3701171875,
+        "pension_brute": 12688.5966796875,
+        "reference_du_minimum": 12688.596300000001,
+        "services": 160.0,
+        "services_fonction_publique": 160.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 14084.0048828125
+      },
+      "profil": {
+        "code": "etat_1952_quarante_ans_en_2017",
+        "debut": 1977,
+        "liquidation": 2017,
+        "naissance": 1952,
+        "objet": "quarante ans de services : la référence entière",
+        "regime": "fonction_publique_etat",
+        "regle": "bareme",
+        "traitement": 14000.0
+      }
+    },
+    "etat_1953_dix_huit_ans_en_2019": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 0.4363636374473572,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 72.0,
+        "duree_requise_de_la_generation": 165.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 8297.076171875,
+        "ouverture_des_droits_le": "2014-03-01",
+        "pension": 8297.076171875,
+        "pension_avant_minimum": 4909.0908203125,
+        "pension_brute": 8297.076171875,
+        "reference_du_minimum": 12764.732100000001,
+        "services": 72.0,
+        "services_fonction_publique": 72.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 15000.0
+      },
+      "profil": {
+        "code": "etat_1953_dix_huit_ans_en_2019",
+        "debut": 2001,
+        "liquidation": 2019,
+        "naissance": 1953,
+        "objet": "dix-huit ans, parti à 66 ans sans décote : la marche de quinze à trente ans",
+        "regime": "fonction_publique_etat",
+        "regle": "bareme",
+        "traitement": 15000.0
+      }
+    },
+    "etat_1955_decote_en_2017": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "coefficient_de_decote": 0.21250000596046448,
+        "coefficient_de_proratisation": 0.891566276550293,
+        "decote_trimestres": 17.0,
+        "duree_assurance": 148.0,
+        "duree_requise_de_la_generation": 166.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 0.0,
+        "ouverture_des_droits_le": "2017-01-01",
+        "pension": 6886.63330078125,
+        "pension_avant_minimum": 6886.63330078125,
+        "pension_brute": 6886.63330078125,
+        "reference_du_minimum": 12688.596300000001,
+        "services": 148.0,
+        "services_fonction_publique": 148.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.5906250476837158,
+        "traitement_de_reference": 13078.00390625
+      },
+      "profil": {
+        "code": "etat_1955_decote_en_2017",
+        "debut": 1980,
+        "liquidation": 2017,
+        "naissance": 1955,
+        "objet": "trente-sept ans, dix-sept trimestres de décote, l'âge d'ouverture atteint en 2017 : aucun minimum",
+        "regime": "fonction_publique_etat",
+        "regle": "condition",
+        "traitement": 13000.0
+      }
+    },
+    "etat_1955_treize_ans_en_2022": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "bonification": 0.0,
+        "coefficient_de_decote": 0.0,
+        "coefficient_de_proratisation": 0.3132530152797699,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 52.0,
+        "duree_requise_de_la_generation": 166.0,
+        "majoration_pension": 0.0,
+        "minimum_garanti": 3998.5908203125,
+        "ouverture_des_droits_le": "2017-01-01",
+        "pension": 3998.5908203125,
+        "pension_avant_minimum": 3524.0966796875,
+        "pension_brute": 3998.5908203125,
+        "reference_du_minimum": 12764.732100000001,
+        "services": 52.0,
+        "services_fonction_publique": 52.0,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 15000.0
+      },
+      "profil": {
+        "code": "etat_1955_treize_ans_en_2022",
+        "debut": 2009,
+        "liquidation": 2022,
+        "naissance": 1955,
+        "objet": "treize ans, l'âge d'ouverture atteint en 2017 : le d de L. 17, 52 trimestres sur 166",
+        "regime": "fonction_publique_etat",
+        "regle": "moins_de_quinze_ans",
+        "traitement": 15000.0
+      }
+    },
+    "salarie_1944_trente_ans_en_2009": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "coefficient_de_proratisation": 0.7894737124443054,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 120.0,
+        "duree_cotisee": 120.0,
+        "minimum_contributif": 6050.7080078125,
+        "pension_avant_minimum": 5384.1962890625,
+        "pension_brute": 6050.7080078125,
+        "salaire_de_reference": 13639.9638671875,
+        "taux_de_liquidation": 0.5
+      },
+      "profil": {
+        "code": "salarie_1944_trente_ans_en_2009",
+        "debut": 1979,
+        "liquidation": 2009,
+        "naissance": 1944,
+        "objet": "cent vingt trimestres cotisés, parti à 65 ans en janvier 2009 : le minimum majoré, sans condition de durée cotisée",
+        "regime": "regime_general",
+        "regle": "minimum_contributif",
+        "salaire": 9000.0
+      }
+    },
+    "salarie_1945_vingt_ans_en_2010": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "coefficient_de_proratisation": 0.5194805264472961,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 80.0,
+        "duree_cotisee": 80.0,
+        "minimum_contributif": 3680.0,
+        "pension_avant_minimum": 2738.213134765625,
+        "pension_brute": 3680.0,
+        "salaire_de_reference": 10542.1201171875,
+        "taux_de_liquidation": 0.5
+      },
+      "profil": {
+        "code": "salarie_1945_vingt_ans_en_2010",
+        "debut": 1990,
+        "liquidation": 2010,
+        "naissance": 1945,
+        "objet": "quatre-vingts trimestres, après avril 2009 : le minimum seul, sans la majoration",
+        "regime": "regime_general",
+        "regle": "minimum_contributif",
+        "salaire": 9000.0
+      }
+    },
+    "salarie_1946_en_2011": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "coefficient_de_proratisation": 0.7948718070983887,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 124.0,
+        "duree_cotisee": 124.0,
+        "minimum_contributif": 6208.3701171875,
+        "pension_avant_minimum": 5209.326171875,
+        "pension_brute": 6208.3701171875,
+        "salaire_de_reference": 13107.3369140625,
+        "taux_de_liquidation": 0.5
+      },
+      "profil": {
+        "code": "salarie_1946_en_2011",
+        "debut": 1980,
+        "liquidation": 2011,
+        "naissance": 1946,
+        "objet": "cent vingt-quatre trimestres cotisés : la majoration ouverte",
+        "regime": "regime_general",
+        "regle": "minimum_contributif",
+        "salaire": 9000.0
+      }
+    },
+    "salarie_1948_en_2013": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "coefficient_de_proratisation": 0.7749999761581421,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 124.0,
+        "duree_cotisee": 124.0,
+        "minimum_contributif": 6310.0576171875,
+        "pension_avant_minimum": 4855.16796875,
+        "pension_brute": 6310.0576171875,
+        "salaire_de_reference": 12529.4658203125,
+        "taux_de_liquidation": 0.5
+      },
+      "profil": {
+        "code": "salarie_1948_en_2013",
+        "debut": 1982,
+        "liquidation": 2013,
+        "naissance": 1948,
+        "objet": "le même en 2013, sous le plafond de l'écrêtement",
+        "regime": "regime_general",
+        "regle": "minimum_contributif",
+        "salaire": 9000.0
+      }
+    },
+    "salarie_1949_en_2014": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "coefficient_de_proratisation": 0.5962733030319214,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 96.0,
+        "duree_cotisee": 96.0,
+        "minimum_contributif": 4500.64697265625,
+        "pension_avant_minimum": 3610.507080078125,
+        "pension_brute": 4500.64697265625,
+        "salaire_de_reference": 12110.2421875,
+        "taux_de_liquidation": 0.5
+      },
+      "profil": {
+        "code": "salarie_1949_en_2014",
+        "debut": 1990,
+        "liquidation": 2014,
+        "naissance": 1949,
+        "objet": "quatre-vingt-seize trimestres : le minimum seul",
+        "regime": "regime_general",
+        "regle": "minimum_contributif",
+        "salaire": 10000.0
+      }
+    },
+    "salarie_1951_ajourne_en_2017": {
+      "entrees_openfisca": {
+        "nombre_enfants": 0,
+        "sexe": false
+      },
+      "openfisca": {
+        "coefficient_de_proratisation": 0.8063803911209106,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 124.0,
+        "duree_cotisee": 124.0,
+        "minimum_contributif": 6280.70654296875,
+        "pension_avant_minimum": 5217.72265625,
+        "pension_brute": 6280.70654296875,
+        "salaire_de_reference": 12941.0947265625,
+        "taux_de_liquidation": 0.5
+      },
+      "profil": {
+        "code": "salarie_1951_ajourne_en_2017",
+        "debut": 1986,
+        "liquidation": 2017,
+        "naissance": 1951,
+        "objet": "parti à 66 ans, un an après l'âge du taux plein, avec 124 trimestres : la durée corrigée de 10 %",
+        "regime": "regime_general",
+        "regle": "duree_corrigee",
+        "salaire": 10000.0
+      }
+    }
+  },
+  "recupere_le": "2026-10-16",
+  "source": "OpenFisca-France-Pension",
+  "version": "0.1.3"
+}

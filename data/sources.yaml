@@ -4878,6 +4878,27 @@ institutions:
           n° 2004-1370, article 57) ; deux écarts chez lui, l'entrée avant
           vingt ans et la CNRACL.
 
+      - id: openfisca_minima_oracle
+        titre: >-
+          Moteur de calcul des pensions, au-delà des carrières simples : le
+          minimum garanti de la pension civile et le minimum contributif
+        url: https://github.com/openfisca/openfisca-france-pension
+        acces: api
+        statut_integration: automatise
+        cible: tests/temoins/openfisca_minima.json
+        recuperation: scripts/fetch/openfisca_minima.py
+        note: >-
+          La cinquième famille de profils de l'action 153, exécutée à part le
+          16 octobre 2026 (version 0.1.3, AGPL : ses sorties seules entrent) :
+          dix fonctionnaires sédentaires, à l'État et à la CNRACL, au
+          traitement bas, liquidés de 2008 à 2022, et six salariés du régime
+          général entrés tard, liquidés de 2009 à 2017. La convention de
+          traduction est écrite dans le script et portée par le témoin ;
+          `tests/test_oracle_minima.py` la vérifie, puis confronte. Le barème
+          de L. 17 et le minimum contributif concordent ; quatre écarts chez
+          lui : la CNRACL, l'ancien droit sous quinze ans, la minoration de
+          2011 à 2015, la durée corrigée du minimum contributif.
+
       - id: openfisca_arrco_oracle
         titre: Moteur de calcul de l'Arrco 1999-2018 — contre-expertise du scénario 1
         url: https://github.com/openfisca/openfisca-france-pension

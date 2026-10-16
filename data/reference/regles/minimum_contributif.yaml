@@ -708,3 +708,12 @@ referents:
       complément
       diffère avec le salaire annuel moyen, dont TRAJECTOiRE a la chaîne de coefficients
       fausse (registre)
+  openfisca_france_pension:
+    equivalent: >-
+      regime_general_cnav_pension_minimale et regime_general_cnav_pension_brute
+    confrontation: >-
+      le 16 octobre 2026 (action 153, étape 2 ; tests/test_oracle_minima.py) : cinq
+      salariés entrés tard, liquidés de 2009 à 2014, portés au même minimum au centime,
+      la majoration servie aux seuls 120 trimestres cotisés et plus ; il ne proratise
+      pas le minimum sur la durée corrigée après l'âge du taux plein : l'écart est le
+      sien (registre)

@@ -1644,6 +1644,68 @@ referents:
         preuve: >-
           tests/temoins/openfisca_carriere_longue_fonction_publique.json ;
           tests/test_oracle_carriere_longue_fonction_publique.py
+      - constat: >-
+          Son minimum garanti de la CNRACL lit les services de la fonction
+          publique de l'État : `cnracl_minimum_garanti` appelle
+          `fonction_publique_duree_de_service_effective` en dur. Il vaut zéro
+          à tout fonctionnaire territorial ou hospitalier : à celui né en 1948,
+          vingt ans de services, parti en 2008 au traitement de 12 000 euros,
+          il sert 4 399,92 euros, quand l'État en sert 8 898,42 à son jumeau.
+        tranche: >-
+          Décret n° 2003-1306, article 22 (LEGIARTI000023412553), et avant lui
+          sa rédaction de 2004 : la pension de la CNRACL « ne peut être
+          inférieure » au barème de L. 17 ; loi n° 2010-1330, article 45, VII.
+          Le dépôt a raison
+        preuve: >-
+          tests/temoins/openfisca_minima.json ;
+          tests/test_oracle_minima.py
+      - constat: >-
+          Il sert le d de L. 17 — la référence rapportée à la durée de la
+          génération — à toute pension de moins de quinze ans de services, même
+          à qui avait atteint l'âge d'ouverture avant 2011. Au fonctionnaire
+          de l'État né en 1950, treize ans de services, parti en 2013 : 52/162
+          de la référence, contre 57,5 % fois 52/60 au dépôt.
+        tranche: >-
+          Loi n° 2010-1330, article 45, V (JORFARTI000023022174) : qui avait
+          atteint son âge d'ouverture avant le 1er janvier 2011 conserve « le
+          bénéfice des dispositions de l'article L. 17 [...] dans leur
+          rédaction antérieure à la présente loi », le c, que l'article 53, V,
+          a ensuite réservé à l'invalidité. Le dépôt a raison
+        preuve: >-
+          tests/temoins/openfisca_minima.json ;
+          tests/test_oracle_minima.py
+      - constat: >-
+          Il n'ouvre le minimum garanti, depuis 2011, qu'à la durée requise ou
+          sans décote, et ignore la minoration transitoire de l'âge
+          d'annulation qui l'ouvre aussi. Le fonctionnaire de l'État né en
+          1951, parti à soixante et un ans en 2012 avec sept trimestres de
+          décote, n'a chez lui aucun minimum : 7 254,48 euros, contre
+          12 888,73 au dépôt.
+        tranche: >-
+          Loi n° 2010-1330, article 45, IV, et décret n° 2010-1744, article 3
+          (JORFARTI000023334941) : l'âge d'annulation minoré de neuf, sept,
+          cinq, trois et un trimestres pour un âge d'ouverture atteint de 2011
+          à 2015. Le dépôt a raison
+        preuve: >-
+          tests/temoins/openfisca_minima.json ;
+          tests/test_oracle_minima.py
+      - constat: >-
+          Il proratise le minimum contributif sur la durée accomplie, sans la
+          majoration de 2,5 % par trimestre d'ajournement au-delà de l'âge du
+          taux plein (R. 351-7) qu'il porte pourtant à la pension
+          (`regime_general_cnav_pension_minimale`). Au salarié né en 1951,
+          parti à soixante-six ans en 2017 avec 124 trimestres, 137 corrigés :
+          6 280,71 euros, contre 6 883,29 au dépôt.
+        tranche: >-
+          Circulaire Cnav n° 8/89, point 3 : le minimum se calcule sur « la
+          durée d'assurance retenue par le régime général pour le calcul de la
+          pension c'est-à-dire y compris, la durée d'assurance corrigée »
+          (fiche majoration_duree_apres_65_ans) ; D. 351-2-1 parle des
+          « trimestres d'assurance effectivement accomplis », que la caisse
+          lit ainsi. Le dépôt suit la caisse
+        preuve: >-
+          tests/temoins/openfisca_minima.json ;
+          tests/test_oracle_minima.py
     fait_mieux:
       - quoi: >-
           Il code le départ anticipé des fonctionnaires parents de trois
@@ -1730,7 +1792,10 @@ referents:
           décote, la super-active (`tests/test_oracle_categorie_active.py`) ;
           depuis le 16 octobre, la carrière longue des fonctionnaires — les
           portes d'avant 2009, l'entrée avant vingt ans, la CNRACL, la durée
-          cotisée (`tests/test_oracle_carriere_longue_fonction_publique.py`).
+          cotisée (`tests/test_oracle_carriere_longue_fonction_publique.py`) ;
+          les minima — le minimum garanti de l'État et de la CNRACL, son
+          barème, sa condition de taux plein, et le minimum contributif
+          (`tests/test_oracle_minima.py`).
           Restent les autres familles.
         preuve: >-
           ses 140 tests de formules (`tests/formulas/`), au commit `1c45423`
@@ -2040,7 +2105,9 @@ referents:
       pas — mais juste sur la durée de services actifs, que le dépôt
       lisait par génération ; à la carrière longue des fonctionnaires,
       sur l'entrée avant vingt ans et sur la CNRACL, qu'il lit dans les
-      services de l'État (action 153).
+      services de l'État ; aux minima, sur la CNRACL encore, l'ancien
+      droit sous quinze ans, la minoration de 2011 à 2015 et la durée
+      corrigée du minimum contributif (action 153).
     manifeste:
       - openfisca_points
       - openfisca_regime_general_oracle
@@ -2049,6 +2116,7 @@ referents:
       - openfisca_enfants_oracle
       - openfisca_categorie_active_oracle
       - openfisca_carriere_longue_fonction_publique_oracle
+      - openfisca_minima_oracle
       - openfisca_arrco_oracle
       - openfisca_minimum_contributif
       - openfisca_parametres_generation
