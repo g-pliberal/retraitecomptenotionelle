@@ -28,36 +28,30 @@ effet: >-
   0,78), et un second la suit à travers la fusion de 2019 (1960, parti en 2022 : ses
   points Agirc convertis au quotient des valeurs de service du 31 décembre 2018, article
   52, gardent à part ceux de la tranche C d'avant 2016, que l'article 102 nomme encore). Deux approximations : le report de ces points, sans abattement, à l'âge du 1° de
-  L. 351-8 (article 102), que l'assuré peut demander et que le moteur ne sert pas, faute
-  de liquider une pension en deux fois ; et les liquidations de 1991 à 2003, où le moteur
-  applique la même règle sans avoir lu l'accord de l'ASF. Deux questions restent
-  ouvertes : l'âge de référence des liquidations de 2011 à 2018, et les assurés dont la
-  base n'est ni le régime général ni le régime agricole. Avant 1955, l'Agirc servait une
+  L. 351-8, que l'assuré peut demander « au moment de la liquidation » (article 102,
+  comme avant 2019 l'annexe I de 1947, article 6, § 3 a), et que le moteur ne sert pas,
+  faute de liquider une pension en deux fois : il sert la règle de l'article 102, « la
+  liquidation se fait simultanément sur toutes les tranches » ; et les liquidations de
+  1991 à 2003, où le moteur applique la même règle sans avoir lu l'accord de l'ASF. De
+  2011 à 2018, l'âge de référence est celui que la caisse a servi, 65 ans et 9 mois pour
+  1952, 66 ans et 2 mois pour 1953, 66 ans et 7 mois pour 1954, 67 ans dès 1955 (sa
+  table de décembre 2018), et non celui de la rédaction que l'accord du 18 mars 2011
+  fige : le moteur, qui lit l'âge d'annulation du régime de base, rend cette table
+  ligne pour ligne. Une question reste ouverte : les assurés dont la base n'est ni le
+  régime général ni le régime agricole. Avant 1955, l'Agirc servait une
   autre table, par année d'âge, et un ajournement : ceux de la convention d'origine
   (fiche coefficients_anticipation_agirc_1947). L'Arrco d'avant 1965 garde ici la table
   des accords, faute du texte de 1961.
 sources:
-  lu_le: 2026-10-14
+  lu_le: 2026-10-16
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
     Tranche C d'avant 2016 : lire l'accord du 4 février 1983 (ASF) et ceux de l'AGFF
     d'avant 2003, pour dater l'exonération « sur les tranches A et B » que le moteur
-    applique dès 1991 ; et le report sans abattement de l'article 102, que servir
-    demanderait de liquider ces points à part.
-  - >-
-    À trancher : de juillet 2011 à 2018, l'âge de référence de l'Agirc et de l'Arrco est
-    celui du 1° de L. 351-8 « dans la rédaction au 18 mars 2011 » (accord du 18 mars
-    2011, article 3), où l'âge légal montait « à raison de quatre mois par génération »
-    jusqu'à 62 ans pour la génération 1956. Le moteur lit l'âge d'annulation du régime de
-    base, qui suit la rédaction du 23 décembre 2011 : 65,75 ans pour 1952, 66,17 pour
-    1953, 66,58 pour 1954, 67 pour 1955. La rédaction figée, lue depuis dans D. 161-2-1-9
-    (rédaction du second semestre 2011) augmenté des cinq ans du 1° de L. 351-8, donne 65
-    ans et 8 mois, 66 ans, 66 ans et 4 mois et 66 ans et 8 mois : jusqu'à deux trimestres
-    d'anticipation de trop pour ces générations liquidées avant 2019. Reste à lire ce que
-    la caisse a appliqué, dans ses circulaires 2011-6-DRE et 2011-17-DRE, introuvables le
-    27 septembre 2026 ; si elles confirment, après la phase 8 : une table d'âges propre à
-    ces périodes.
+    applique dès 1991. Le report sans abattement de l'article 102 est lu (16 octobre
+    2026) : une faculté de l'assuré, que servir demanderait de liquider ces points à part,
+    et de dire quand le report vaut mieux que le coefficient.
   - >-
     À lire : les articles 84, 3 et 85, 3 nomment le régime général et le régime des
     assurances sociales agricoles ; le moteur accorde l'exonération et la table des
@@ -361,6 +355,55 @@ sources:
     date: 1962-03-31
   - type: autre
     reference: >-
+      Agirc-Arrco, « Coefficients d'anticipation – Carrières courtes – régime
+      AGIRC-ARRCO » et « Coefficients d'anticipation pour âge – régime AGIRC-ARRCO »,
+      document créé le 27 décembre 2018, la copie de Previssima, l'adresse de la caisse
+      (wp-content/uploads/2021/10/coefficients_de_minoration.pdf) répondant 404 le 16
+      octobre 2026. Coefficient 1 à « 65 ans » pour les « Nés avant 01/07/1951 », « 65
+      ans 4 mois » du 1er juillet au 31 décembre 1951, « 65 ans 9 mois » pour 1952, « 66
+      ans 2 mois » pour 1953, « 66 ans 7 mois » pour 1954, « 67 ans » dès 1955 ; 0,78 à
+      « 61 ans 2 mois » (1953) et « 61 ans 7 mois » (1954) ; « le coefficient applicable
+      est déterminé par génération en fonction de l'âge atteint ou de la durée
+      d'assurance, en retenant la solution la plus avantageuse ». Les colonnes de 1951 et
+      1952 ne servent qu'avant 2019 : c'est l'âge accéléré par la loi n° 2011-1906 que la
+      caisse appliquait, non la rédaction du 18 mars 2011 (65 ans et 8 mois, 66 ans, 66
+      ans et 4 mois, 66 ans et 8 mois)
+    url: https://www.previssima.fr/files/previssima/documents_pdf/autres/coefficients_de_minoration-agirc-arrco.pdf
+    date: 2018-12-27
+  - type: autre
+    reference: >-
+      Étude « Retraite complémentaire AGIRC-ARRCO » (document créé le 28 octobre 2013,
+      sans éditeur nommé), n° 15 : l'âge de la retraite Agirc-Arrco est de « 65 ans et 4
+      mois, pour les salariés nés entre le 1er juillet et le 31 décembre 1951 inclus ; 65
+      ans et 9 mois, pour les participants nés en 1952 ; 66 ans et 2 mois, pour les
+      salariés nés en 1953 ; 66 ans et 7 mois, pour les salariés nés en 1954 », « 67 ans,
+      pour les salariés relevant de l'AGIRC-ARRCO nés à compter du 1er janvier 1955 »,
+      sous les références « Circ. AGIRC/ARRCO n° 2011-6-DRE, 19 mai 2011 » et « n°
+      2011-16-DRE, 29 sept. 2011 », qui restent introuvables ; n° 16, l'âge minimum
+      « relevé de 55 à 57 ans ». Source secondaire, qui confirme la table de 2018 pour les
+      liquidations de 2013
+    url: https://s7f24a41a4f6a05ee.jimcontent.com/download/version/1410536133/module/10270961824/name/RETRAITE%20COMPLEMENTAIRE%20AGIRC%20ARRCO.pdf
+    date: 2013-10-28
+  - type: autre
+    reference: >-
+      Accord du 17 novembre 2017, « applicable au 1er janvier 2019 », article 102 : « La
+      liquidation se fait simultanément sur toutes les tranches. Toutefois, s'agissant des
+      points constitués sur la tranche C des rémunérations avant 2016 dans l'ancien régime
+      AGIRC, les intéressés peuvent demander, au moment de la liquidation, le report de la
+      liquidation de ces points, sans abattement, à l'âge mentionné au 1° de l'article
+      L. 351-8 du code de la sécurité sociale ». Avant 2019, convention du 14 mars 1947,
+      « Mise à jour au 1 janvier 2018 », annexe I, article 6, § 3 a) : liquidée à partir de
+      l'âge de l'article, la liquidation « doit être opérée sur l'ensemble des droits
+      constitués sur les tranches B et C (s'il y a lieu) à la même échéance » ; « La
+      liquidation au titre de la tranche C, demandée avant cet âge, est subordonnée à celle
+      des droits en tranche B » ; b) : pas de points de tranche C pour qui « a différé sa
+      demande de paiement des arrérages sur la tranche C ». Les accords du 13 mars 2013 et
+      du 30 octobre 2015, relus au recueil de la caisse, ne changent ni l'âge de
+      l'article 3 de l'accord de 2011, ni ce report
+    url: https://www.agirc-arrco.fr/storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf
+    date: 2026-10-16
+  - type: autre
+    reference: >-
       COR, séance du 28 janvier 2009, document n° 13, p. 14-15, tableau « ARRCO (UNIRS) » :
       colonne « 1957-1965 », 0,75 à 60 ans … 0,95 à 64 ans, puis 1,05 à 1,25 sur les lignes
       de 65 à 69 ans ; colonne « 1965-1983 », 0,78 à 60 ans … 0,96 à 64 ans
@@ -386,7 +429,8 @@ textes_a_rattacher:
 - reference: >-
     code de la sécurité sociale, L. 351-8, 1° (LEGIARTI000023030950) et L. 161-17-2
     (LEGIARTI000023030935), dans la rédaction que l'accord du 18 mars 2011 fige pour
-    l'âge de référence de 2011 à 2018
+    l'âge de référence de 2011 à 2018, et que la caisse n'a pas servie : sa table de
+    2018 suit la rédaction issue de la loi n° 2011-1906 (LEGIARTI000025014605)
 exemples:
 - agirc_arrco_tranche_c_63_ans_11_mois
 - aa_livret4_minoration_64_ans_6_mois

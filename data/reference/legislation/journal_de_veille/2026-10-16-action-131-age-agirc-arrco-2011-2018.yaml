@@ -1,0 +1,25 @@
+date: "2026-10-16"
+session: "action 131 : l'âge de référence de l'Agirc-Arrco de 2011 à 2018, et le report de l'article 102"
+consulte: >-
+  `python scripts/veille_droit.py` en commençant. Le recueil « Accords nationaux des
+  partenaires sociaux » de la caisse (accords du 18 mars 2011, du 13 mars 2013, du
+  30 octobre 2015) ; l'accord du 17 novembre 2017 applicable au 1er janvier 2019,
+  article 102 ; la convention du 14 mars 1947 mise à jour au 1er janvier 2018,
+  annexe I, article 6, § 3 ; la table « Coefficients d'anticipation » de la caisse
+  créée le 27 décembre 2018 (copie de Previssima, l'adresse de la caisse répondant
+  404) ; une étude « Retraite complémentaire AGIRC-ARRCO » d'octobre 2013. Le site
+  de réglementation de la caisse a répondu 503, l'archive du web n'a aucune copie des
+  circulaires 2011-6-DRE et 2011-16-DRE.
+trouve: >-
+  La caisse a servi de 2011 à 2018 l'âge accéléré par la loi n° 2011-1906 (65 ans et
+  9 mois pour 1952, 66 ans et 2 mois pour 1953, 66 ans et 7 mois pour 1954, 67 ans dès
+  1955), et non la rédaction que l'accord du 18 mars 2011 fige ; le moteur, qui lit
+  l'âge d'annulation du régime de base, rend sa table ligne pour ligne, et un test
+  l'épingle. L'article 102 et, avant 2019, l'annexe I de 1947 font de la liquidation
+  simultanée la règle et du report de la tranche C d'avant 2016 une faculté, que le
+  moteur ne sert pas. Aucun écart, rien de corrigé dans les moteurs ; fiche
+  coefficients_anticipation_agirc_arrco relue.
+reste: >-
+  Les circulaires 2011-6-DRE et 2011-16-DRE, pour la date d'application de l'âge
+  accéléré entre 2011 et 2012 ; les textes d'avant 2003 de la fiche ; les assurés dont
+  la base n'est ni le régime général ni le régime agricole.

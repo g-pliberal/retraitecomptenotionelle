@@ -4732,6 +4732,32 @@ def test_la_tranche_c_d_avant_2016_garde_le_coefficient_pour_age(simulateur):
         "pour âge 0.7800")
     assert "valeur de service 0.446599 €" in apres.detail
 
+def test_l_age_agirc_arrco_de_2011_a_2018_est_celui_de_la_caisse(simulateur):
+    """De 2011 à 2018, l'accord du 18 mars 2011 (article 3) fige l'âge de
+    référence à la rédaction de L. 161-17-2 de cette date, quatre mois par
+    génération ; la caisse a servi l'âge accéléré de la loi n° 2011-1906,
+    cinq mois : sa table de décembre 2018 met le coefficient 1 à « 66 ans 2
+    mois » pour 1953 et à « 66 ans 7 mois » pour 1954, 0,8175 à « 61 ans 11
+    mois » (1953), 0,7925 à « 61 ans 10 mois » et 0,805 à « 62 ans 1 mois »
+    (1954). Un non-cadre entré à trente ans, loin de la durée, part à
+    soixante-deux ans : la table de l'âge atteint, celle de la caisse. La
+    rédaction figée aurait donné 0,83 et 0,805.
+    """
+    scenario = simulateur.scenario_actuel
+
+    def arrco(naissance, age):
+        resultat = scenario.calculer(simulateur.carriere_simple(
+            annee_naissance=naissance, sexe="H", affiliation="salarie_prive_non_cadre",
+            age_debut=30, age_liquidation=age, niveau_salaire=1.0,
+            profil_carriere="plat", jour_naissance=15,
+        ))
+        return next(p for p in resultat.pensions_par_regime if p.regime == "arrco")
+
+    assert arrco(1953, 62).detail.endswith("coefficient d'anticipation 0.8175")
+    assert arrco(1954, 62).detail.endswith("coefficient d'anticipation 0.7925")
+    assert arrco(1954, 62 + 1 / 12).detail.endswith(
+        "coefficient d'anticipation 0.8050")
+
 def test_la_reforme_agricole_rend_l_exemple_de_la_msa(simulateur):
     """L'exemple de la MSA (« Réforme de la retraite des exploitants : 25
     meilleures années », section 3). Un salarié agricole de 1984 à 1993,
