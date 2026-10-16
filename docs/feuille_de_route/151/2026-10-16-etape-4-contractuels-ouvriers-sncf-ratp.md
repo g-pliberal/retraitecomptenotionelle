@@ -3,7 +3,7 @@
 **Le 16 octobre 2026 : l'agent contractuel, l'ouvrier de l'État et l'agent de la SNCF
 ou de la RATP dont le départ saisi passe sa limite d'âge la quittent à la limite,
 reculée et prolongée par les seules exceptions que leur droit leur ouvre ; leurs
-pensions partent de ce jour. Python et JavaScript, témoins compris (5313523).**
+pensions partent de ce jour. Python et JavaScript, témoins compris (e3e12a2).**
 
 ## Ce qui a été lu
 
