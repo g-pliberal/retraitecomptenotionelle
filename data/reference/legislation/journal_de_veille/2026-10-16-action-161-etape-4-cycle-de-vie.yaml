@@ -1,0 +1,11 @@
+date: "2026-10-16"
+session: "action 161, étape 4, septième partie : le cycle de vie, ses deux jumeaux gardés"
+consulte: >-
+  Aucun texte : la session ne touche pas au droit. Le code seul, src/retraite_notionnelle/cycle_de_vie.py
+  et moteur/js/cycle-de-vie.js, la carte des jumeaux et sa couverture.
+trouve: >-
+  Le script des cas types atteint 84 des 87 noms du module ; les cas types du COR n'ont pas
+  de jumeau JavaScript. La fonction grille, sans appelant, est retirée ; le reste du module
+  demeure, tenu par la concordance (93 % du Python, 97 % du JavaScript exécutés).
+reste: >-
+  Rien pour la veille. L'étape 5 de l'action 161, le pont.

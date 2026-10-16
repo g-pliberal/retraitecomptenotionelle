@@ -6309,14 +6309,14 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 15 octobre 2026.** Faites, les étapes 1 à 3 et, de l'étape 4,
-la paire du lecteur PDF : voulu unique, en JavaScript, il a été mesuré sur 36
-vrais documents, aligné, puis la fabrique l'a pris par node et le cœur Python
-est parti ; ses six défauts sont corrigés un à un, chacun mesuré sur les
-valeurs de la fabrique, `ccss_regimes.py` lit le formulaire que pose la page
-de chaque titre, et la certification sort propre. Reste de l'étape 4
-`cycle_de_vie.py`, après l'étape 10 de l'action 138 ; puis l'étape 5, le
-pont. Détail : les notes des six parties de l'étape 4.
+**Reprise, au 16 octobre 2026.** Faites, les étapes 1 à 4. Le lecteur du
+relevé et le lecteur PDF sont du JavaScript seul ; `cycle_de_vie.py` garde
+son jumeau, parce que les cas types du COR, Python seul (`castypes.py`), le
+lisent par `scripts/cycle_de_vie.py` (84 de ses 87 noms) et le test des
+références : seul `grille`, mort, en est parti. Reste l'étape 5, le pont,
+qui dira si le script et les références peuvent lire le portage. Détail :
+les notes des sept parties de l'étape 4, la dernière
+`2026-10-16-etape-4-septieme-partie-le-cycle-de-vie.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

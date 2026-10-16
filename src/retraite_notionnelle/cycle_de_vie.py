@@ -155,10 +155,19 @@ une année d'avant 1960, sans barème lu, ne paie pas d'impôt ; la majoration
 pour enfants, exonérée jusqu'à l'abrogation du 2° ter de l'article 81 du code
 général des impôts au 1er janvier 2014, s'impose à toute époque ; la prime pour
 l'emploi d'une année incomplète se calcule comme celle d'une année entière
-(:data:`~retraite_notionnelle.impot_revenu.HORS_CHAMP`). Il ne s'affiche pas
-encore sur le site ; son jumeau JavaScript (``moteur/js/cycle-de-vie.js``) a
-tout, l'impôt compris, sauf les âges de départ et ceux d'équilibre d'un cas
-type.
+(:data:`~retraite_notionnelle.impot_revenu.HORS_CHAMP`).
+
+SON JUMEAU, ET POURQUOI IL RESTE. Le site affiche ces indicateurs par le
+jumeau JavaScript du module (``moteur/js/cycle-de-vie.js``, dépliant « Partir
+plus tôt ou plus tard », action 138, étape 10), qui a tout, l'impôt compris,
+sauf les cas types du COR : ni :func:`ages_de_depart`, ni :func:`balayage`, ni
+:func:`ages_d_equilibre`, ni :func:`hypotheses_de_productivite`. Ce module ne
+se retire pas pour autant (action 161, étape 4) : les cas types se bâtissent
+en Python seul (:mod:`~retraite_notionnelle.castypes`, que le coût lit), et
+``scripts/cycle_de_vie.py``, qui les mène sous les six systèmes, atteint 84
+de ses 87 noms ; ``tests/test_cycle_de_vie_references.py`` confronte aux
+publications du COR et de l'OCDE des carrières bâties ici. Les deux jumeaux
+restent donc, et ``tests/test_cycle_de_vie_portage.py`` les tient ensemble.
 """
 
 from __future__ import annotations
@@ -1462,15 +1471,6 @@ def indicateurs_des_systemes(simulateur, comparaison,
                                  nets=convention.nette, impot=convention.impot)
     return {scenario: indicateurs(flux, simulateur, convention)
             for scenario, flux in systemes.items()}
-
-
-def grille(simulateur, resultat, convention: Convention = Convention()
-           ) -> dict[tuple[str, int], dict[str, Indicateurs]]:
-    """Les indicateurs de la grille des cas types
-    (:func:`~retraite_notionnelle.castypes.calculer_cas_types`), case par
-    case et système par système."""
-    return {cle: indicateurs_des_systemes(simulateur, comparaison, convention)
-            for cle, comparaison in sorted(resultat.resultats.items())}
 
 
 # -- à chaque âge de départ --------------------------------------------------
