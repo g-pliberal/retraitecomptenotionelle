@@ -3065,7 +3065,19 @@ referents:
         preuve: >-
           `R/Outils.R:399` (`import_scenario_demo_insee`) et
           `data/fec_*_vie_*_mig_*.rda`, au commit `4c1d34b`
-        etat: a_reprendre
+        verification: >-
+          Le 16 octobre 2026, le modèle lit les six scénarios de
+          l'INSEE de 2026 qui ne diffèrent du central que par une
+          composante : l'espérance de vie dans le diviseur et la page
+          Coût (`Parametres.hypothese_esperance_vie`), la fécondité et
+          les migrations dans la page Coût (`Population(demographie=...)`,
+          `memoire.cout(demographie=...)`). En 2070, le système actuel y
+          passe de 15,30 % du PIB à 16,38 et 14,31 % sous la fécondité
+          basse et haute, à 16,54 et 14,27 % sous les migrations (le
+          COR : 16,34, 14,34, 16,40 et 14,16 %). Les composantes ne se
+          croisent pas ; la page ne montre pas encore les quatre
+          nouvelles (action 138, étape 7).
+        etat: repris
         chantier: "138.7"
       - quoi: >-
           Il lit les quotients de mortalité projetés de l'INSEE par sexe, âge
@@ -4362,7 +4374,19 @@ referents:
           (`data/sources.yaml:464-465`).
         preuve: >-
           `R/fonctionsImport.R:116-127, 205-212`, au commit `0963b57`
-        etat: a_reprendre
+        verification: >-
+          Le 16 octobre 2026, le modèle lit les six scénarios de
+          l'INSEE de 2026 qui ne diffèrent du central que par une
+          composante : l'espérance de vie dans le diviseur et la page
+          Coût (`Parametres.hypothese_esperance_vie`), la fécondité et
+          les migrations dans la page Coût (`Population(demographie=...)`,
+          `memoire.cout(demographie=...)`). En 2070, le système actuel y
+          passe de 15,30 % du PIB à 16,38 et 14,31 % sous la fécondité
+          basse et haute, à 16,54 et 14,27 % sous les migrations (le
+          COR : 16,34, 14,34, 16,40 et 14,16 %). Les composantes ne se
+          croisent pas ; la page ne montre pas encore les quatre
+          nouvelles (action 138, étape 7).
+        etat: repris
         chantier: "138.7"
       - quoi: >-
           Il impute aux cas types du COR le taux de CSG de la convention du
@@ -5549,7 +5573,15 @@ referents:
           basse et à 16,61 % sous la haute (le COR : 14,30 et
           16,35 %) ; la proposition reste entre 8,06 et 8,10 %, et
           son solde entre +0,06 et +0,11 point : son diviseur
-          absorbe la longévité (action 138, étape 7).
+          absorbe la longévité (action 138, étape 7). Le 16 octobre
+          2026, la fécondité et les migrations aussi, au modèle : en
+          2070, le système actuel passe à 16,38 et 14,31 % sous la
+          fécondité basse et haute, à 16,54 et 14,27 % sous les
+          migrations ; le PIB suivant désormais les 20-64 ans de la
+          variante, l'espérance de vie basse et haute le mettent à
+          14,14 et 16,54 %. La proposition, payée sous l'indexation
+          du central, bouge d'un demi-point sous la fécondité : son
+          diviseur n'y peut rien.
         etat: repris
         chantier: "138.7"
       - quoi: >-
@@ -8213,7 +8245,19 @@ referents:
           longévité.
         preuve: >-
           `config/hypotheses.yaml:26-31, 86-95`, au commit `b75b211`
-        etat: a_reprendre
+        verification: >-
+          Le 16 octobre 2026, le modèle lit les six scénarios de
+          l'INSEE de 2026 qui ne diffèrent du central que par une
+          composante : l'espérance de vie dans le diviseur et la page
+          Coût (`Parametres.hypothese_esperance_vie`), la fécondité et
+          les migrations dans la page Coût (`Population(demographie=...)`,
+          `memoire.cout(demographie=...)`). En 2070, le système actuel y
+          passe de 15,30 % du PIB à 16,38 et 14,31 % sous la fécondité
+          basse et haute, à 16,54 et 14,27 % sous les migrations (le
+          COR : 16,34, 14,34, 16,40 et 14,16 %). Les composantes ne se
+          croisent pas ; la page ne montre pas encore les quatre
+          nouvelles (action 138, étape 7).
+        etat: repris
         chantier: "138.7"
     bilan: >-
       Les variantes démographiques restent son seul apport. Le reste est

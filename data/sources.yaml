@@ -651,7 +651,8 @@ institutions:
           data/reference/macro/population_active.csv,
           data/reference/macro/arrivees_tardives.csv,
           data/reference/macro/population_par_age_variantes.csv,
-          data/reference/macro/population_active_variantes.csv
+          data/reference/macro/population_active_variantes.csv,
+          data/reference/macro/arrivees_tardives_variantes.csv
         note: >-
           Pyramide des âges au 1er janvier, par âge détaillé et par année, de
           1962 à 2070 — l'onglet `population` du classeur du scénario central.
@@ -674,7 +675,16 @@ institutions:
           comptent les retraités de la page Coût quand le diviseur lit la
           même hypothèse (`Parametres.hypothese_esperance_vie`). Les arrivées
           tardives restent celles du central : sous les variantes, leur manque
-          ne bouge que de deux dix-millièmes au plus.
+          ne bouge que de deux dix-millièmes au plus. Quatre autres le sont
+          depuis le 16 octobre 2026, sur la même page, que la page Coût seule
+          lit, sous `Population(demographie=...)` : « fécondité haute » et
+          « basse » (`11_fec_haute.xlsx`, `12_fec_basse.xlsx`, 1,70 et 1,20
+          enfant par femme), dont seuls les 20-64 ans sont repris, leur
+          pyramide des 50 ans et plus étant celle du central jusqu'en 2070, ce
+          que le récupérateur vérifie ; « solde migratoire haut » et « bas »
+          (`15_smi_haut.xlsx`, `16_smi_bas.xlsx`, + 230 000 et + 70 000 par
+          an), dont les deux séries et les arrivées tardives, refaites sur
+          leur classeur, sont reprises (`arrivees_tardives_variantes.csv`).
 
       - id: insee_mortalite_niveau_de_vie
         titre: >-

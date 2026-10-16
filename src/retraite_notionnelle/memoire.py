@@ -554,13 +554,17 @@ def _reglages(fonction, noms: tuple[str, ...], options: dict) -> dict:
 
 
 def cout(parametres: Parametres | None = None, *, comptes: bool = True,
-         assiette: bool = True, cas_types: tuple | None = None, **options):
+         assiette: bool = True, cas_types: tuple | None = None,
+         demographie: str = "centrale", **options):
     """``calculer_cout`` sous ces paramètres, sur les données du dépôt.
 
     ``comptes`` et ``assiette`` : avec les comptes du COR et l'assiette des
     prélèvements, comme la page Coût, ou sans ; les comptes sont ceux du
     scénario de projection des paramètres, comme sur la page. ``cas_types`` :
-    une autre grille que celle du dépôt. Les autres options sont celles de
+    une autre grille que celle du dépôt. ``demographie`` : une variante de
+    fécondité ou de migrations de la pyramide (``Population``), que le
+    simulateur ne lit pas — la grille simulée est celle du central. Les
+    autres options sont celles de
     ``calculer_cout``, et la clé les porte toutes, défaut compris :
     ``convention_recette`` écrite ou non, c'est le même calcul.
     """
@@ -592,13 +596,18 @@ def cout(parametres: Parametres | None = None, *, comptes: bool = True,
             parametres, ("grille_du_cout", parametres, grille, reglages["liquidation"]),
             lambda: module._pensionnes(simulateur, grille, reglages["liquidation"]))
         return calculer_cout(
-            simulateur, DepensesRetraite(racine), Population(racine, parametres.hypothese_esperance_vie),
+            simulateur, DepensesRetraite(racine),
+            Population(racine, parametres.hypothese_esperance_vie, demographie),
             ComptesRetraite(racine, variante=variante) if comptes else None,
             cas_types=grille, assiette=AssietteActivite(racine) if assiette else None,
             grille_simulee=simulee, **reglages)
 
-    return memoriser_pour(parametres, ("cout", parametres, comptes, assiette, grille,
-                                  tuple(sorted(reglages.items()))), calcul)
+    # La clé du central reste celle d'avant la variante : ses calculs gardés
+    # servent encore.
+    cle = ("cout", parametres, comptes, assiette, grille, tuple(sorted(reglages.items())))
+    if demographie != "centrale":
+        cle += (("demographie", demographie),)
+    return memoriser_pour(parametres, cle, calcul)
 
 
 def avantages(parametres: Parametres | None = None, **options):

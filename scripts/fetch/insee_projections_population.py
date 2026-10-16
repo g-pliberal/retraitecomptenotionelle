@@ -3,7 +3,7 @@
 
     python scripts/fetch/insee_projections_population.py
     python scripts/fetch/insee_projections_population.py --fichier 00_central.xlsx
-    python scripts/fetch/insee_projections_population.py --variantes 14_ev_basse.xlsx 13_ev_haute.xlsx
+    python scripts/fetch/insee_projections_population.py --dossier CLASSEURS/
 
 Le dépôt calcule des droits individuels. Pour dire ce que coûtera un système,
 il faut en plus savoir COMBIEN de gens le percevront : une pyramide des âges.
@@ -61,6 +61,20 @@ la mortalité, sont publiés dans deux classeurs de même disposition
 tirées, et écrites à part (`SORTIE_VARIANTES`). Les arrivées tardives restent
 celles du central : sous les variantes, leur manque ne bouge que de deux
 dix-millièmes au plus, génération par génération.
+
+LES QUATRE SCÉNARIOS DE FÉCONDITÉ ET DE MIGRATIONS (action 138, étape 7)
+--------------------------------------------------------------------------
+La même page de l'INSEE publie, de même disposition, les scénarios qui ne
+diffèrent du central que par la fécondité (`11_fec_haute.xlsx`,
+`12_fec_basse.xlsx` : 1,70 ou 1,20 enfant par femme) ou par le solde
+migratoire (`15_smi_haut.xlsx`, `16_smi_bas.xlsx` : + 230 000 ou + 70 000
+par an). Ils ne touchent pas le diviseur, mais la page Coût : la fécondité,
+les seuls 20-64 ans, donc le PIB — ses naissances n'ont pas 50 ans en 2070,
+et le contrôle vérifie que la pyramide des 50 ans et plus est celle du
+central, qui n'est donc pas réécrite ; les migrations, la pyramide, les
+20-64 ans et les arrivées tardives, que :func:`arrivees_tardives` refait sur
+leur classeur. Ils sont écrits avec ceux de l'espérance de vie
+(`SORTIE_VARIANTES`), sous les noms de ``Population(demographie=...)``.
 """
 
 from __future__ import annotations
@@ -79,11 +93,23 @@ URL = "https://www.insee.fr/fr/statistiques/fichier/8990852/00_central.xlsx"
 ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
 SORTIE = Path("data/brut/insee_projections_population.json")
 
-#: Les scénarios qui ne diffèrent du central que par l'hypothèse d'espérance
-#: de vie, sous le nom que ``Parametres.hypothese_esperance_vie`` leur donne.
+#: Les scénarios qui ne diffèrent du central que par une composante : ceux
+#: de l'espérance de vie sous le nom que ``Parametres.hypothese_esperance_vie``
+#: leur donne, ceux de la fécondité et des migrations sous celui de
+#: ``Population(demographie=...)``.
 URLS_VARIANTES = {
     "basse": "https://www.insee.fr/fr/statistiques/fichier/8990856/14_ev_basse.xlsx",
     "haute": "https://www.insee.fr/fr/statistiques/fichier/8990856/13_ev_haute.xlsx",
+    "fecondite_basse": "https://www.insee.fr/fr/statistiques/fichier/8990856/12_fec_basse.xlsx",
+    "fecondite_haute": "https://www.insee.fr/fr/statistiques/fichier/8990856/11_fec_haute.xlsx",
+    "migrations_basse": "https://www.insee.fr/fr/statistiques/fichier/8990856/16_smi_bas.xlsx",
+    "migrations_haute": "https://www.insee.fr/fr/statistiques/fichier/8990856/15_smi_haut.xlsx",
+}
+#: Les paires de scénarios d'une même composante, la basse puis la haute.
+COMPOSANTES = {
+    "esperance_vie": ("basse", "haute"),
+    "fecondite": ("fecondite_basse", "fecondite_haute"),
+    "migrations": ("migrations_basse", "migrations_haute"),
 }
 SORTIE_VARIANTES = Path("data/brut/insee_projections_population_variantes.json")
 #: Dernière année dont la pyramide est commune aux trois hypothèses : celle du
@@ -310,9 +336,10 @@ def controler(charge: dict) -> None:
 
 
 def controler_variantes(variantes: dict[str, dict]) -> None:
-    """Les deux scénarios ne doivent différer qu'à partir de 2026, et la
-    basse doit compter, chaque année projetée, moins de 65 ans ou plus que
-    la haute : un classeur échangé, ou d'un autre scénario, le trahirait."""
+    """Les deux scénarios d'espérance de vie ne doivent différer qu'à partir
+    de 2026, et la basse doit compter, chaque année projetée, moins de 65 ans
+    ou plus que la haute : un classeur échangé, ou d'un autre scénario, le
+    trahirait."""
     basse, haute = variantes["basse"]["par_age"], variantes["haute"]["par_age"]
     if set(basse) != set(haute):
         raise ValueError("les deux scénarios ne couvrent pas les mêmes âges et années")
@@ -331,27 +358,67 @@ def controler_variantes(variantes: dict[str, dict]) -> None:
                              "que la haute")
 
 
+def controler_composantes(central: dict, variantes: dict[str, dict]) -> None:
+    """Les scénarios de fécondité et de migrations : la fécondité ne touche
+    pas les 50 ans et plus avant 2070, et la basse compte moins de 20-64 ans
+    que la haute dès que ses naissances y entrent ; les migrations comptent,
+    sous la basse, moins de 20-64 ans et moins de 65 ans ou plus que sous la
+    haute, chaque année projetée. Un classeur échangé le trahirait."""
+    for nom in COMPOSANTES["fecondite"]:
+        if variantes[nom]["par_age"] != central["par_age"]:
+            raise ValueError(f"{nom} : la pyramide des {AGE_MINIMAL} ans et plus "
+                             "n'est pas celle du central")
+    for basse, haute in (COMPOSANTES["fecondite"], COMPOSANTES["migrations"]):
+        bas, haut = variantes[basse]["actifs_20_64"], variantes[haute]["actifs_20_64"]
+        if set(bas) != set(haut) or set(bas) != set(central["actifs_20_64"]):
+            raise ValueError(f"{basse}, {haute} : pas les mêmes années que le central")
+        # La fécondité n'entre dans les 20-64 ans que vingt ans après 2026.
+        debut = DERNIERE_ANNEE_COMMUNE + (21 if basse.startswith("fecondite") else 1)
+        for annee in sorted(bas, key=int):
+            if int(annee) >= debut and not bas[annee] < haut[annee]:
+                raise ValueError(f"en {annee}, {basse} compte plus de 20-64 ans "
+                                 f"que {haute}")
+    bas = variantes["migrations_basse"]["par_age"]
+    haut = variantes["migrations_haute"]["par_age"]
+    for annee in range(DERNIERE_ANNEE_COMMUNE + 1, 2071):
+        cles = [cle for cle in bas if cle.startswith(f"{annee}|")
+                and int(cle.split("|")[1]) >= 65]
+        if not sum(bas[c] for c in cles) < sum(haut[c] for c in cles):
+            raise ValueError(f"en {annee}, migrations_basse compte plus de 65 ans "
+                             "ou plus que migrations_haute")
+
+
 def _telecharger(url: str) -> bytes:
     demande = urllib.request.Request(url, headers=ENTETES)
     with urllib.request.urlopen(demande, timeout=300) as reponse:
         return reponse.read()
 
 
-def variantes(classeurs: dict[str, bytes]) -> int:
-    """Les scénarios d'espérance de vie basse et haute, lus et écrits à part."""
+def variantes(classeurs: dict[str, bytes], central: dict) -> int:
+    """Les six scénarios d'une seule composante, lus, contrôlés contre le
+    central et entre eux, et écrits à part. La fécondité n'y garde que ses
+    20-64 ans, sa pyramide étant celle du central ; les migrations, leurs
+    arrivées tardives."""
     charge: dict = {}
     for hypothese, donnees in classeurs.items():
-        lu = extraire(_grille(feuilles(donnees)))
+        onglets = feuilles(donnees)
+        lu = extraire(_grille(onglets))
         controler(lu)
         charge[hypothese] = {"par_age": lu["par_age"], "actifs_20_64": lu["actifs_20_64"],
                              "source": URLS_VARIANTES[hypothese]}
+        if hypothese in COMPOSANTES["migrations"]:
+            charge[hypothese]["arrivees_tardives"] = arrivees_tardives(onglets)
     controler_variantes(charge)
+    controler_composantes(central, charge)
+    for hypothese in COMPOSANTES["fecondite"]:
+        del charge[hypothese]["par_age"]
     SORTIE_VARIANTES.parent.mkdir(parents=True, exist_ok=True)
     SORTIE_VARIANTES.write_text(
         json.dumps(charge, ensure_ascii=False, indent=1), encoding="utf-8")
     for hypothese, lu in charge.items():
-        print(f"Espérance de vie {hypothese} : {len(lu['par_age'])} effectifs par âge "
-              f"écrits dans {SORTIE_VARIANTES}")
+        print(f"Scénario {hypothese} : {len(lu.get('par_age', {}))} effectifs par âge, "
+              f"{len(lu['actifs_20_64'])} effectifs de 20-64 ans écrits dans "
+              f"{SORTIE_VARIANTES}")
     return 0
 
 
@@ -361,15 +428,17 @@ def main(arguments: list[str] | None = None) -> int:
     if arguments[:1] == ["--fichier"] and len(arguments) == 2:
         # Le classeur déjà téléchargé : le même fichier, lu sans réseau.
         donnees = Path(arguments[1]).expanduser().read_bytes()
-    elif arguments[:1] == ["--variantes"] and len(arguments) == 3:
-        # Les deux classeurs des variantes, basse puis haute, lus sans réseau.
-        return variantes({
-            "basse": Path(arguments[1]).expanduser().read_bytes(),
-            "haute": Path(arguments[2]).expanduser().read_bytes(),
-        })
+    elif arguments[:1] == ["--dossier"] and len(arguments) == 2:
+        # Les sept classeurs déjà téléchargés, sous le nom que l'INSEE leur
+        # donne, lus sans réseau.
+        dossier = Path(arguments[1]).expanduser()
+        donnees = (dossier / URL.rsplit("/", 1)[1]).read_bytes()
+        classeurs_variantes = {
+            hypothese: (dossier / url.rsplit("/", 1)[1]).read_bytes()
+            for hypothese, url in URLS_VARIANTES.items()}
     elif arguments:
         print("usage : insee_projections_population.py [--fichier CLASSEUR | "
-              "--variantes BASSE HAUTE]", file=sys.stderr)
+              "--dossier CLASSEURS]", file=sys.stderr)
         return 2
     else:
         try:
@@ -399,7 +468,7 @@ def main(arguments: list[str] | None = None) -> int:
     print(f"Arrivées tardives de {min(manques)} à {max(manques)} : manque de "
           f"{manques[min(manques)]['manque']:.2%} à {manques[max(manques)]['manque']:.2%}")
     if classeurs_variantes is not None:
-        return variantes(classeurs_variantes)
+        return variantes(classeurs_variantes, charge)
     return 0
 
 

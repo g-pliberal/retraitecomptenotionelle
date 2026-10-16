@@ -11,8 +11,18 @@ en sont tirés par le rapport de masses du modèle.
 projections de population 2026 de l'INSEE : effectifs par âge de 1962 à 2070,
 observés jusqu'en 2023. C'est cette source qui fixe l'horizon de la page — 2070
 et pas 2080 — et non une préférence du dépôt. L'INSEE publie seize autres
-scénarios ; leur écart mesurerait l'incertitude démographique, que cette page ne
-montre pas. Les hypothèses macroéconomiques sont celles du COR, déjà décrites
+scénarios ; le modèle lit les six qui ne diffèrent du central que par une
+composante — l'espérance de vie (`Parametres.hypothese_esperance_vie`), la
+fécondité et les migrations (`Population(demographie=...)`), basses et
+hautes —, et la page n'en montre encore que les deux premiers. Sous une
+variante, la dépense du COR suit ce que sa pyramide change à la masse du
+système actuel, et son PIB ce qu'elle change aux 20-64 ans, l'emploi du COR
+suivant le central ; mais l'indexation des comptes et des pensions, elle, suit
+toujours la masse salariale du central : sous une fécondité ou des migrations
+plus fortes, la proposition paie les mêmes euros sur un PIB plus grand, et sa
+dépense, en part de PIB, baisse plus que si ses comptes suivaient l'emploi de
+la variante. Deux composantes croisées ne se lisent pas : l'INSEE ne les
+publie pas. Les hypothèses macroéconomiques sont celles du COR, déjà décrites
 dans `data/reference/macro/hypotheses_projection.yaml`.
 
 **Ce qui est de nous, et qui se discute.** Le PIB projeté suit le rythme nominal

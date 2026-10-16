@@ -1298,23 +1298,38 @@ def source_population_par_age_variantes() -> dict[tuple, float]:
     """La pyramide des scénarios « espérance de vie basse » et « haute » des
     projections de population 2026 (action 138, étape 7), à partir de 2026 :
     la page Coût y compte ses retraités quand le diviseur lit la même
-    hypothèse (``Parametres.hypothese_esperance_vie``)."""
+    hypothèse (``Parametres.hypothese_esperance_vie``) ; et celle des
+    scénarios de migrations, sous ``Population(demographie=...)``. Ceux de
+    la fécondité n'en ont pas : leur pyramide des 50 ans et plus est celle
+    du central."""
     return {
         (hypothese, *cle.split("|")): effectif
         for hypothese, lu in sorted(_population_variantes().items())
-        for cle, effectif in sorted(lu["par_age"].items(),
+        for cle, effectif in sorted(lu.get("par_age", {}).items(),
                                     key=lambda kv: tuple(map(int, kv[0].split("|"))))
         if int(cle.split("|")[0]) > DERNIERE_ANNEE_POPULATION_COMMUNE
     }
 
 
 def source_population_active_variantes() -> dict[tuple, float]:
-    """Les 20-64 ans des mêmes scénarios, à partir de 2026."""
+    """Les 20-64 ans des six scénarios d'une seule composante, à partir de
+    2026."""
     return {
         (hypothese, annee): effectif
         for hypothese, lu in sorted(_population_variantes().items())
         for annee, effectif in sorted(lu["actifs_20_64"].items())
         if int(annee) > DERNIERE_ANNEE_POPULATION_COMMUNE
+    }
+
+
+def source_arrivees_tardives_variantes() -> dict[tuple, float]:
+    """Les arrivées tardives des scénarios de migrations basse et haute,
+    tirées de leurs classeurs comme celles du central."""
+    return {
+        (hypothese, generation, mesure): valeur
+        for hypothese, lu in sorted(_population_variantes().items())
+        for generation, mesures in sorted(lu.get("arrivees_tardives", {}).items())
+        for mesure, valeur in sorted(mesures.items())
     }
 
 
@@ -5841,16 +5856,17 @@ CERTIFICATIONS = (
         colonne="effectif",
         source=source_population_par_age_variantes,
         origine="INSEE, projections de population 2026, scénarios d'espérance "
-                "de vie basse et haute",
+                "de vie et de migrations bas et hauts",
         decimales=0,
         tolerance=0.51,
         niveau="projetee",
         entete=(
             "# Population au 1er janvier par âge, France, 50 ans et plus, sous les",
-            "# hypothèses d'espérance de vie basse et haute",
+            "# hypothèses d'espérance de vie et de migrations basses et hautes",
             "# source_id: insee_projections_population",
             "# unite: personnes",
-            "# hypothese: basse | haute",
+            "# hypothese: basse | haute (espérance de vie) | migrations_basse |",
+            "#            migrations_haute",
             "#",
             "# Les scénarios « espérance de vie basse » et « haute » des projections",
             "# de population 2026 de l'INSEE (14_ev_basse.xlsx, 13_ev_haute.xlsx),",
@@ -5866,6 +5882,15 @@ CERTIFICATIONS = (
             "# cohortes (quotients_projetes_basse.csv, quotients_projetes_haute.csv ;",
             "# action 138, étape 7).",
             "#",
+            "# Les scénarios « solde migratoire bas » et « haut » (16_smi_bas.xlsx,",
+            "# 15_smi_haut.xlsx : + 70 000 et + 230 000 par an, au lieu de + 150 000),",
+            "# sous Population(demographie=\"migrations_basse\" | \"migrations_haute\"),",
+            "# que la page Coût seule lit : ils ne touchent pas le diviseur. Ils",
+            "# s'écartent du central dès 2024 ; comme les autres, ils ne s'écrivent",
+            "# qu'à partir de 2026. Ceux de la fécondité n'ont pas de ligne ici : leurs",
+            "# naissances n'ont pas 50 ans en 2070, et leur pyramide est celle du",
+            "# central, au résident près.",
+            "#",
             "# fiabilite: projetee — une projection du producteur, qui vaut estimee",
             "# dans le modèle.",
             "#",
@@ -5880,23 +5905,62 @@ CERTIFICATIONS = (
         colonne="effectif",
         source=source_population_active_variantes,
         origine="INSEE, projections de population 2026, scénarios d'espérance "
-                "de vie basse et haute",
+                "de vie, de fécondité et de migrations bas et hauts",
         decimales=0,
         tolerance=0.51,
         niveau="projetee",
         entete=(
             "# Population des 20 à 64 ans au 1er janvier, France, sous les",
-            "# hypothèses d'espérance de vie basse et haute",
+            "# hypothèses d'espérance de vie, de fécondité et de migrations",
+            "# basses et hautes",
             "# source_id: insee_projections_population",
             "# unite: personnes",
-            "# hypothese: basse | haute",
+            "# hypothese: basse | haute (espérance de vie) | fecondite_basse |",
+            "#            fecondite_haute | migrations_basse | migrations_haute",
             "#",
-            "# Le dénominateur du PIB projeté de la page Coût (voir",
-            "# population_active.csv), sous les mêmes scénarios que",
-            "# population_par_age_variantes.csv, à partir de 2026.",
+            "# Le rapport de dépendance de la page Coût, sous les mêmes scénarios que",
+            "# population_par_age_variantes.csv, à partir de 2026 ; et, rapportés aux",
+            "# 20-64 ans du central, ce que la variante change au PIB que la page",
+            "# projette sur l'emploi du COR (cout.py, AvenirAnnuel.facteur_pib).",
+            "# Fécondité : 1,70 ou 1,20 enfant par femme (11_fec_haute.xlsx,",
+            "# 12_fec_basse.xlsx), au lieu de 1,45 ; elle n'entre dans les 20-64 ans",
+            "# qu'à partir de 2046.",
             "#",
             "# fiabilite: projetee — une projection du producteur, qui vaut estimee",
             "# dans le modèle.",
+            "#",
+            "# Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas",
+            "# modifier à la main.",
+        ),
+    ),
+    Certification(
+        nom="arrivees_tardives_variantes",
+        chemin=REFERENCE / "macro" / "arrivees_tardives_variantes.csv",
+        cles=("hypothese", "generation", "mesure"),
+        colonne="valeur",
+        source=source_arrivees_tardives_variantes,
+        origine="INSEE, projections de population 2026, scénarios de solde "
+                "migratoire bas et haut : population au 1er janvier et décès par "
+                "âge, 1962-2070",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="estimee",
+        entete=(
+            "# Les arrivées tardives sous les hypothèses de migrations basse et haute",
+            "# source_id: insee_projections_population",
+            "# unite: comme arrivees_tardives.csv",
+            "# hypothese: migrations_basse | migrations_haute",
+            "# fiabilite:",
+            "#   estimee (1941-2005) : tirée, comme arrivees_tardives.csv, des onglets",
+            "#             `population` et `deces` des classeurs 16_smi_bas.xlsx et",
+            "#             15_smi_haut.xlsx (+ 70 000 et + 230 000 par an au lieu de",
+            "#             + 150 000), par scripts/fetch/insee_projections_population.py.",
+            "#",
+            "# Sous Population(demographie=\"migrations_basse\" | \"migrations_haute\")",
+            "# (action 138, étape 7), la page Coût multiplie la masse de pensions de",
+            "# chaque génération par un moins le `manque` de la variante, et non du",
+            "# central : plus d'arrivées tardives, des pensions plus courtes. Le",
+            "# facteur des carrières incomplètes des natifs reste celui du central.",
             "#",
             "# Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas",
             "# modifier à la main.",

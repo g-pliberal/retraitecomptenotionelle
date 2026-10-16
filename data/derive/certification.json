@@ -112,15 +112,26 @@
    "verifiee_le": "2026-09-17"
   },
   "arrivees_tardives": {
-   "ajoutees": 130,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "853ad9edf20ddb83",
-   "identiques": 0,
+   "identiques": 130,
    "niveau": "estimee",
    "source": "INSEE, projections de population 2026, scénario central : population au 1er janvier et décès par âge, 1962-2070",
    "valeurs": 130,
-   "verifiee_le": "2026-10-06"
+   "verifiee_le": "2026-10-16"
+  },
+  "arrivees_tardives_variantes": {
+   "ajoutees": 260,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "5146f166c98d974d",
+   "identiques": 0,
+   "niveau": "estimee",
+   "source": "INSEE, projections de population 2026, scénarios de solde migratoire bas et haut : population au 1er janvier et décès par âge, 1962-2070",
+   "valeurs": 260,
+   "verifiee_le": "2026-10-16"
   },
   "assiette_revenu_mixte": {
    "ajoutees": 0,
@@ -1190,70 +1201,70 @@
    "verifiee_le": "2026-09-17"
   },
   "population_active": {
-   "ajoutees": 62,
+   "ajoutees": 0,
    "colonne": "effectif",
    "corrigees": 0,
    "empreinte": "8f27d54abe3f73fa",
-   "identiques": 0,
+   "identiques": 62,
    "niveau": "certifiee",
    "source": "INSEE, estimations de population, scénario central des projections 2026",
    "valeurs": 62,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-16"
   },
   "population_active_projetee": {
-   "ajoutees": 47,
+   "ajoutees": 0,
    "colonne": "effectif",
    "corrigees": 0,
    "empreinte": "67acabf31a7d2563",
-   "identiques": 0,
+   "identiques": 47,
    "niveau": "projetee",
    "source": "INSEE, projections de population 2026, scénario central",
    "valeurs": 47,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-16"
   },
   "population_active_variantes": {
-   "ajoutees": 90,
+   "ajoutees": 180,
    "colonne": "effectif",
    "corrigees": 0,
-   "empreinte": "ae430dfe85f73000",
-   "identiques": 0,
+   "empreinte": "06cdbb01146c7256",
+   "identiques": 90,
    "niveau": "projetee",
-   "source": "INSEE, projections de population 2026, scénarios d'espérance de vie basse et haute",
-   "valeurs": 90,
-   "verifiee_le": "2026-10-14"
+   "source": "INSEE, projections de population 2026, scénarios d'espérance de vie, de fécondité et de migrations bas et hauts",
+   "valeurs": 270,
+   "verifiee_le": "2026-10-16"
   },
   "population_par_age": {
-   "ajoutees": 3410,
+   "ajoutees": 0,
    "colonne": "effectif",
    "corrigees": 0,
    "empreinte": "86f910a2a8348641",
-   "identiques": 0,
+   "identiques": 3410,
    "niveau": "certifiee",
    "source": "INSEE, estimations de population, scénario central des projections 2026",
    "valeurs": 3410,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-16"
   },
   "population_par_age_projetee": {
-   "ajoutees": 2585,
+   "ajoutees": 0,
    "colonne": "effectif",
    "corrigees": 0,
    "empreinte": "e11ac05261b4c4b0",
-   "identiques": 0,
+   "identiques": 2585,
    "niveau": "projetee",
    "source": "INSEE, projections de population 2026, scénario central",
    "valeurs": 2585,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-16"
   },
   "population_par_age_variantes": {
    "ajoutees": 4950,
    "colonne": "effectif",
    "corrigees": 0,
-   "empreinte": "11fc9a07f42972fd",
-   "identiques": 0,
+   "empreinte": "0f15268a1ba4aea8",
+   "identiques": 4950,
    "niveau": "projetee",
-   "source": "INSEE, projections de population 2026, scénarios d'espérance de vie basse et haute",
-   "valeurs": 4950,
-   "verifiee_le": "2026-10-14"
+   "source": "INSEE, projections de population 2026, scénarios d'espérance de vie et de migrations bas et hauts",
+   "valeurs": 9900,
+   "verifiee_le": "2026-10-16"
   },
   "prestations_non_contributives": {
    "ajoutees": 20,

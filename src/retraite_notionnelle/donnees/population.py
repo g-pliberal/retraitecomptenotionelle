@@ -29,6 +29,15 @@ sont, à partir de 2026, celles des scénarios « espérance de vie basse » et
 « haute » de l'INSEE (``population_par_age_variantes.csv``,
 ``population_active_variantes.csv``) : la page Coût compte alors ses retraités
 sous la mortalité que lisent ses diviseurs et ses survies de cohortes.
+
+Sous une variante de fécondité ou de migrations (``demographie``, même étape),
+que seule la page Coût lit — elles ne touchent pas le diviseur —, les 20-64 ans
+sont ceux du scénario de l'INSEE ; sous les migrations, la pyramide aussi, et
+les arrivées tardives (:class:`ArriveesTardives`). La pyramide des 50 ans et
+plus de la fécondité est celle du central : ses naissances n'ont pas 50 ans en
+2070. L'INSEE ne publie pas de scénario qui croise deux composantes : une
+variante démographique sous une hypothèse d'espérance de vie autre que la
+centrale est refusée.
 """
 
 from __future__ import annotations
@@ -48,17 +57,43 @@ AGE_MINIMAL = 50
 #: ``Parametres.hypothese_esperance_vie``.
 HYPOTHESES_ESPERANCE_VIE = ("centrale", "basse", "haute")
 
+#: Les variantes de fécondité et de migrations dont la pyramide est publiée,
+#: celles de ``Population(demographie=...)``.
+VARIANTES_DEMOGRAPHIQUES = ("centrale", "fecondite_basse", "fecondite_haute",
+                            "migrations_basse", "migrations_haute")
+
+#: Les variantes dont les 50 ans et plus ne sont pas ceux du central.
+_AVEC_PYRAMIDE = ("migrations_basse", "migrations_haute")
+
+
+def verifier_demographie(hypothese_esperance_vie: str, demographie: str) -> None:
+    """Refuse une variante inconnue, ou deux composantes croisées, que
+    l'INSEE ne publie pas."""
+    if hypothese_esperance_vie not in HYPOTHESES_ESPERANCE_VIE:
+        raise ValueError(
+            f"hypothèse d'espérance de vie inconnue : {hypothese_esperance_vie!r} "
+            f"(attendu : {HYPOTHESES_ESPERANCE_VIE})")
+    if demographie not in VARIANTES_DEMOGRAPHIQUES:
+        raise ValueError(
+            f"variante démographique inconnue : {demographie!r} "
+            f"(attendu : {VARIANTES_DEMOGRAPHIQUES})")
+    if demographie != "centrale" and hypothese_esperance_vie != "centrale":
+        raise ValueError(
+            f"variante {demographie!r} sous l'espérance de vie "
+            f"{hypothese_esperance_vie!r} : l'INSEE ne publie que des scénarios "
+            "qui ne diffèrent du central que par une composante")
+
 
 class Population:
     """Effectifs par âge et par année, observés puis projetés, sous une
-    hypothèse d'espérance de vie (``centrale`` par défaut)."""
+    hypothèse d'espérance de vie et une variante de fécondité ou de
+    migrations (``centrale`` par défaut, l'une et l'autre)."""
 
-    def __init__(self, racine: Path, hypothese_esperance_vie: str = "centrale") -> None:
-        if hypothese_esperance_vie not in HYPOTHESES_ESPERANCE_VIE:
-            raise ValueError(
-                f"hypothèse d'espérance de vie inconnue : {hypothese_esperance_vie!r} "
-                f"(attendu : {HYPOTHESES_ESPERANCE_VIE})")
+    def __init__(self, racine: Path, hypothese_esperance_vie: str = "centrale",
+                 demographie: str = "centrale") -> None:
+        verifier_demographie(hypothese_esperance_vie, demographie)
         self.hypothese_esperance_vie = hypothese_esperance_vie
+        self.demographie = demographie
         macro = racine / "reference" / "macro"
         self._effectifs: dict[int, dict[int, float]] = {}
         self._fiabilites: dict[int, Fiabilite] = {}
@@ -79,8 +114,12 @@ class Population:
         self.actifs: SerieAnnuelle = charger_serie_annuelle(
             macro / "population_active.csv", "effectif", nom="population_active"
         )
+        self._actifs_centraux = self.actifs
         if hypothese_esperance_vie != "centrale":
             self._lire_variante(macro, hypothese_esperance_vie)
+        elif demographie != "centrale":
+            self._lire_variante(macro, demographie,
+                                pyramide=demographie in _AVEC_PYRAMIDE)
         self._annees = sorted(self._effectifs)
         self.premiere_annee = self._annees[0]
         self.derniere_annee = self._annees[-1]
@@ -88,14 +127,23 @@ class Population:
             age for effectifs in self._effectifs.values() for age in effectifs
         )
 
-    def _lire_variante(self, macro: Path, hypothese: str) -> None:
+    @property
+    def variante(self) -> str:
+        """La variante de la pyramide : ``centrale``, une hypothèse
+        d'espérance de vie ou une variante démographique."""
+        if self.hypothese_esperance_vie != "centrale":
+            return f"esperance_vie_{self.hypothese_esperance_vie}"
+        return self.demographie
+
+    def _lire_variante(self, macro: Path, hypothese: str, pyramide: bool = True) -> None:
         """Les années que la variante publie remplacent celles du central,
         âge par âge : toutes celles d'après 2025. Une variante absente est
         refusée, plutôt que de compter sous le central les retraités d'un
-        diviseur qui suit la variante."""
+        diviseur qui suit la variante. Sans ``pyramide`` — la fécondité —,
+        seuls les 20-64 ans sont remplacés."""
         chemin = macro / "population_par_age_variantes.csv"
         remplacees: dict[int, dict[int, float]] = {}
-        if chemin.exists():
+        if pyramide and chemin.exists():
             with chemin.open(encoding="utf-8") as flux:
                 lignes = (l for l in flux if not l.lstrip().startswith("#"))
                 for ligne in csv.DictReader(lignes):
@@ -106,16 +154,15 @@ class Population:
                     niveau = Fiabilite.depuis_texte(ligne["fiabilite"])
                     self._fiabilites[annee] = min(self._fiabilites.get(annee, niveau),
                                                   niveau)
-        if not remplacees:
+        if pyramide and not remplacees:
             raise ValueError(
-                f"aucune pyramide sous l'hypothèse d'espérance de vie {hypothese!r} "
-                f"dans {chemin}")
+                f"aucune pyramide sous l'hypothèse {hypothese!r} dans {chemin}")
         self._effectifs.update(remplacees)
         chemin_actifs = macro / "population_active_variantes.csv"
         variante = charger_serie_annuelle(
             chemin_actifs, "effectif", nom=f"population_active_{hypothese}",
             filtre={"hypothese": hypothese})
-        if set(variante.annees()) != set(remplacees):
+        if pyramide and set(variante.annees()) != set(remplacees):
             raise ValueError(
                 f"{chemin_actifs} ne couvre pas les années de la pyramide "
                 f"{hypothese!r}")
@@ -123,6 +170,20 @@ class Population:
                    if annee < variante.premiere_annee}
         valeurs.update({annee: variante.brut(annee) for annee in variante.annees()})
         self.actifs = SerieAnnuelle(valeurs, f"population_active_{hypothese}")
+
+    def actifs_centraux(self, annee: int) -> float:
+        """Les 20-64 ans du central, quelle que soit la variante : ce à quoi
+        :meth:`facteur_actifs` les rapporte."""
+        return self._actifs_centraux(annee)
+
+    def facteur_actifs(self, annee: int) -> float:
+        """Les 20-64 ans de la variante, rapportés à ceux du central : un sous
+        le central, et jusqu'en 2025 sous toutes les variantes. La page Coût
+        en multiplie le PIB, projeté sur l'emploi du COR, qui suit le central
+        (``cout.AvenirAnnuel.facteur_pib``)."""
+        if self.variante == "centrale":
+            return 1.0
+        return self.actifs(annee) / self.actifs_centraux(annee)
 
     def verifier_hypothese(self, hypothese_esperance_vie: str) -> None:
         """Refuse une pyramide d'une autre hypothèse d'espérance de vie que
@@ -228,18 +289,27 @@ class ArriveesTardives:
     La série va de 1941, première génération dont la carrière commence dans la
     pyramide, à 2005, qui a 64 ans en 2070 ; en deçà et au-delà, la génération
     prend la valeur du bord.
+
+    Sous une variante de migrations (``demographie``), le manque est celui que
+    le classeur de la variante donne (``arrivees_tardives_variantes.csv``) ;
+    sous toute autre, celui du central.
     """
 
-    def __init__(self, racine: Path) -> None:
-        chemin = racine / "reference" / "macro" / "arrivees_tardives.csv"
+    def __init__(self, racine: Path, demographie: str = "centrale") -> None:
+        verifier_demographie("centrale", demographie)
+        macro = racine / "reference" / "macro"
+        propre = demographie in _AVEC_PYRAMIDE
+        chemin = macro / ("arrivees_tardives_variantes.csv" if propre
+                          else "arrivees_tardives.csv")
         self._manques: dict[int, float] = {}
         with chemin.open(encoding="utf-8") as flux:
             lignes = (l for l in flux if not l.lstrip().startswith("#"))
             for ligne in csv.DictReader(lignes):
-                if ligne["mesure"] == "manque":
+                if ligne["mesure"] == "manque" and (
+                        not propre or ligne["hypothese"] == demographie):
                     self._manques[int(ligne["generation"])] = float(ligne["valeur"])
         if not self._manques:
-            raise ValueError(f"aucun manque dans {chemin}")
+            raise ValueError(f"aucun manque sous {demographie!r} dans {chemin}")
         self.premiere_generation = min(self._manques)
         self.derniere_generation = max(self._manques)
 
@@ -277,7 +347,7 @@ class CarrieresIncompletes:
     garde le sien.
     """
 
-    def __init__(self, racine: Path) -> None:
+    def __init__(self, racine: Path, demographie: str = "centrale") -> None:
         chemin = racine / "reference" / "macro" / "duree_assurance_generations.csv"
         par_sexe: dict[str, dict[int, float]] = {}
         with chemin.open(encoding="utf-8") as flux:
@@ -290,7 +360,11 @@ class CarrieresIncompletes:
         requises, generations_requises = charger_table_par_generation(
             racine / "reference" / "legislation" / "duree_assurance_requise.csv",
             "trimestres")
-        self.arrivees = ArriveesTardives(racine)
+        # Les durées du COR comptent les arrivées du central : le facteur des
+        # natifs s'en tire, et la variante de migrations ne change que celui
+        # des arrivées.
+        centrales = ArriveesTardives(racine)
+        self.arrivees = ArriveesTardives(racine, demographie)
         premiere = max(min(serie) for serie in par_sexe.values())
         derniere = min(max(serie) for serie in par_sexe.values())
         #: Le facteur des natifs, génération par génération, sur celles que
@@ -302,7 +376,7 @@ class CarrieresIncompletes:
             if requise is None:
                 raise ValueError(f"aucune durée requise pour la génération {generation}")
             self._natifs[generation] = (
-                duree / requise[0] / self.arrivees.completude(generation))
+                duree / requise[0] / centrales.completude(generation))
         self.premiere_generation = min(premiere, self.arrivees.premiere_generation)
         self.derniere_generation = max(derniere, self.arrivees.derniere_generation)
 

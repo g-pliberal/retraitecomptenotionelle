@@ -20,7 +20,8 @@ from retraite_notionnelle.donnees.chargement import (
 from retraite_notionnelle.donnees.depenses import DepensesRetraite
 from retraite_notionnelle.donnees.effectifs import EffectifsRetraites
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite
-from retraite_notionnelle.donnees.population import Population
+from retraite_notionnelle.donnees.population import (ArriveesTardives, Population,
+                                                    VARIANTES_DEMOGRAPHIQUES)
 from retraite_notionnelle.donnees.macro import DonneesMacro
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite
 from retraite_notionnelle.donnees.regimes import (
@@ -459,6 +460,7 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # (action 138, étape 7).
         "population_par_age_variantes": "macro/population_par_age_variantes.csv",
         "population_active_variantes": "macro/population_active_variantes.csv",
+        "arrivees_tardives_variantes": "macro/arrivees_tardives_variantes.csv",
         # Les arrivées tardives, tirées du même classeur que la pyramide :
         # une reconstitution, au niveau `estimee` (action 147, étape 11).
         "arrivees_tardives": "macro/arrivees_tardives.csv",
@@ -2031,6 +2033,40 @@ def test_la_pyramide_suit_l_hypothese_d_esperance_de_vie():
     assert ecarts[::10] == sorted(ecarts[::10])
     with pytest.raises(ValueError, match="inconnue"):
         Population(RACINE_DONNEES, "moyenne")
+
+
+def test_la_pyramide_suit_la_fecondite_et_les_migrations():
+    """Sous la fécondité basse ou haute, la pyramide des 50 ans et plus est
+    celle du central, et les 20-64 ans n'en diffèrent qu'à partir de 2046 ;
+    sous les migrations, l'une et l'autre diffèrent dès 2026, et les arrivées
+    tardives aussi (action 138, étape 7). Deux composantes croisées, que
+    l'INSEE ne publie pas, sont refusées."""
+    centrale = Population(RACINE_DONNEES)
+    pyramides = {d: Population(RACINE_DONNEES, demographie=d)
+                 for d in VARIANTES_DEMOGRAPHIQUES}
+    for nom in ("fecondite_basse", "fecondite_haute"):
+        pyramide = pyramides[nom]
+        assert all(pyramide.effectif(age, annee) == centrale.effectif(age, annee)
+                   for annee in (2030, 2070) for age in (50, 65, 90))
+        assert pyramide.facteur_actifs(2045) == 1.0
+    assert (pyramides["fecondite_basse"].facteur_actifs(2070) < 1.0
+            < pyramides["fecondite_haute"].facteur_actifs(2070))
+    for annee in (2026, 2050, 2070):
+        basse, haute = pyramides["migrations_basse"], pyramides["migrations_haute"]
+        assert basse.facteur_actifs(annee) < 1.0 < haute.facteur_actifs(annee)
+        assert (basse.effectif_tranche(65, 104, annee)
+                < centrale.effectif_tranche(65, 104, annee)
+                < haute.effectif_tranche(65, 104, annee)), annee
+    assert {p.facteur_actifs(2025) for p in pyramides.values()} == {1.0}
+    manques = {d: 1.0 - ArriveesTardives(RACINE_DONNEES, d).completude(1990)
+               for d in ("migrations_basse", "centrale", "fecondite_haute",
+                         "migrations_haute")}
+    assert manques["fecondite_haute"] == manques["centrale"]
+    assert manques["migrations_basse"] < manques["centrale"] < manques["migrations_haute"]
+    with pytest.raises(ValueError, match="une composante"):
+        Population(RACINE_DONNEES, "haute", "migrations_haute")
+    with pytest.raises(ValueError, match="inconnue"):
+        Population(RACINE_DONNEES, demographie="guerre")
 
 
 def test_une_pyramide_de_variante_absente_est_refusee(tmp_path):

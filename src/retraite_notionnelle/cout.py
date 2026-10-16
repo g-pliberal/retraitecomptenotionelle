@@ -813,12 +813,20 @@ class AvenirAnnuel:
     #: projetée. Un sur les années publiées, et partout sans compte du COR.
     #: Voir :func:`rapport_derive`.
     derive: float = 1.0
-    #: Ce que la pyramide de l'hypothèse d'espérance de vie basse ou haute
-    #: change cette année-là à la masse du système actuel, rapportée à la
-    #: pyramide centrale : la dépense du COR, projetée sous la centrale, en
-    #: est multipliée, dans la base comme dans le bilan. Un sous la centrale
-    #: et sur les années publiées (action 138, étape 7).
-    facteur_esperance_vie: float = 1.0
+    #: Ce que la pyramide de la variante — l'hypothèse d'espérance de vie
+    #: basse ou haute, ou les migrations basses ou hautes, arrivées tardives
+    #: comprises — change cette année-là à la masse du système actuel,
+    #: rapportée à la pyramide centrale : la dépense du COR, projetée sous la
+    #: centrale, en est multipliée, dans la base comme dans le bilan. Un sous
+    #: la centrale, sous la fécondité et sur les années publiées (action 138,
+    #: étape 7).
+    facteur_pyramide: float = 1.0
+    #: Ce que la variante change au PIB de l'année : ses 20-64 ans rapportés
+    #: à ceux du central (:meth:`Population.facteur_actifs`), l'emploi du COR,
+    #: qui projette le PIB, suivant le central. ``pib`` en est déjà multiplié,
+    #: et la dépense du COR, en part de PIB, divisée dans le bilan. Un sous la
+    #: centrale et jusqu'en 2025 (action 138, étape 7).
+    facteur_pib: float = 1.0
     #: La même base du modèle, régime par régime — chacun au bout de ses
     #: fusions, comme le COR le compte — et ses têtes : un polypensionné
     #: compte dans chacun des siens. Ce que
@@ -3798,7 +3806,8 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             reversion_servie: bool = False,
             poids_cotisants: Callable[[int], dict[str, float]] | None = None,
             garantie: GarantieDistribution | None = None,
-            comptes: ComptesRetraite | None = None) -> Avenir:
+            comptes: ComptesRetraite | None = None,
+            pensionnes_centraux: list[Pensionne] | None = None) -> Avenir:
     """La trajectoire de la répartition, de la première année ventilée à l'horizon.
 
     Jusqu'à la dernière année publiée par la DREES, la base est la dépense de
@@ -3833,11 +3842,22 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
     système actuel ne bougerait pas sous la variante, et les autres, tirés de
     lui par leur rapport de masses, porteraient seuls l'effet de la longévité.
     Le COR ne publie pas ces variantes dans les comptes que le dépôt lit.
+
+    SOUS UNE VARIANTE DE FÉCONDITÉ OU DE MIGRATIONS (même étape), de même : la
+    masse du système actuel se compte dans la pyramide de la variante, les
+    arrivées tardives de la variante comprises (``pensionnes`` les porte,
+    ``pensionnes_centraux`` celles du central) ; et le PIB, projeté sur
+    l'emploi du COR, qui suit le central, se multiplie par ce que la variante
+    change aux 20-64 ans (``AvenirAnnuel.facteur_pib``). La fécondité ne touche
+    que le second, ses naissances n'ayant pas 50 ans en 2070. Le PIB suit
+    aussi, à quelques millièmes près, les variantes d'espérance de vie.
     """
     if poids_cotisants is None:
         poids_cotisants = poids
+    if pensionnes_centraux is None:
+        pensionnes_centraux = pensionnes
     centrale = (Population(simulateur.parametres.racine_donnees)
-                if population.hypothese_esperance_vie != "centrale" else None)
+                if population.variante != "centrale" else None)
     macro = simulateur.macro
     annee_euros = simulateur.parametres.annee_euros_constants
     derniere_publiee = depenses.derniere_annee
@@ -3924,10 +3944,11 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
         masses_regimes, tetes_regimes = _masses_regimes(
             pensionnes, population, annee, poids_annee, revalorisation)
         part_derives = depenses.part_droits_derives(annee)
-        facteur_esperance_vie = 1.0
+        facteur_pyramide = 1.0
         reversion = (1.0 - part_ancrage) / (1.0 - part_derives)
         modele = ancrage * masses["actuel"] * reversion
-        pib = pib_projete.get(annee, depenses.pib(min(annee, derniere_pib)))
+        facteur_pib = population.facteur_actifs(annee) if annee > derniere_pib else 1.0
+        pib = pib_projete.get(annee, depenses.pib(min(annee, derniere_pib))) * facteur_pib
         if not projete:
             base = depenses.repartition(annee) * coefficient
         elif comptes is not None and comptes.premiere_annee <= annee <= comptes.derniere_annee:
@@ -3936,10 +3957,10 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             # PIB affichée est donc exactement la sienne.
             base = comptes.depense(annee) * pib * coefficient
             if centrale is not None:
-                masses_centrale, _, _ = _masses(pensionnes, centrale, annee, poids_annee,
-                                                revalorisation)
-                facteur_esperance_vie = masses["actuel"] / masses_centrale["actuel"]
-                base *= facteur_esperance_vie
+                masses_centrale, _, _ = _masses(pensionnes_centraux, centrale, annee,
+                                                poids_annee, revalorisation)
+                facteur_pyramide = masses["actuel"] / masses_centrale["actuel"]
+                base *= facteur_pyramide / facteur_pib
         else:
             base = modele
         derive = 1.0
@@ -3975,7 +3996,8 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             salaire_reel=(macro.coefficient_salaire_moyen(annee_euros, annee)
                           / macro.coefficient_prix(annee_euros, annee)),
             derive=derive,
-            facteur_esperance_vie=facteur_esperance_vie,
+            facteur_pyramide=facteur_pyramide,
+            facteur_pib=facteur_pib,
             masses_regimes={regime: ancrage * masse
                             for regime, masse in masses_regimes.items()},
             tetes_regimes=tetes_regimes,
@@ -4021,9 +4043,10 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
     pas celui sur lequel il a été calculé. La dépense du système actuel, elle,
     reste celle du COR de bout en bout : c'est ce qui fait que le solde du
     scénario 1 est exactement le solde publié, et non une reconstitution.
-    Sauf sous l'hypothèse d'espérance de vie basse ou haute, que le COR ne
-    publie pas : sa dépense y suit la pyramide de la variante
-    (``AvenirAnnuel.facteur_esperance_vie``), ses ressources non.
+    Sauf sous une variante démographique, que le COR ne publie pas dans ses
+    comptes : sa dépense, en part de PIB, y suit la pyramide de la variante
+    (``AvenirAnnuel.facteur_pyramide``) et son PIB
+    (``AvenirAnnuel.facteur_pib``), ses ressources, en part de PIB, non.
 
     ``tva_liberal`` est ce que la TVA à taux unique rapporte de plus, en part
     de PIB : la même chaque année, l'assiette gardant sa part de PIB, et nulle
@@ -4062,7 +4085,8 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
             annee=annee,
             projete=annee > comptes.derniere_annee_observee,
             ressources=comptes.ressource(annee),
-            depenses=comptes.depense(annee) * par_annee[annee].facteur_esperance_vie,
+            depenses=(comptes.depense(annee) * par_annee[annee].facteur_pyramide
+                      / par_annee[annee].facteur_pib),
             rapports=({scenario: rapport_derive(par_annee[annee].rapports, scenario,
                                                 par_annee[annee].derive)
                        for scenario in par_annee[annee].rapports}
@@ -4417,6 +4441,25 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
     )
 
 
+def _sous_la_demographie(simulateur: Simulateur, pensionnes: list[Pensionne],
+                         demographie: str) -> list[Pensionne]:
+    """La grille sous une variante de fécondité ou de migrations : les
+    complétudes de ses cohortes refaites sur les arrivées tardives de la
+    variante (:class:`CarrieresIncompletes`), qui ne changent que sous les
+    migrations. La grille simulée, elle, ne change pas : la variante ne touche
+    pas le diviseur, et ``memoire.cout`` la partage avec le central."""
+    if demographie == "centrale" or not any(p.completudes for p in pensionnes):
+        return pensionnes
+    carrieres = CarrieresIncompletes(simulateur.parametres.racine_donnees, demographie)
+    return [
+        replace(pensionne, completudes=tuple(
+            carrieres.completude(pensionne.generation + decalage)
+            for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)))
+        if pensionne.completudes else pensionne
+        for pensionne in pensionnes
+    ]
+
+
 def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
                   population: Population,
                   comptes: ComptesRetraite | None = None,
@@ -4481,6 +4524,8 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     reversion_servie = convention_reversion == CONVENTION_REVERSION_SERVIE
     pensionnes, echecs = (grille_simulee if grille_simulee is not None
                           else _pensionnes(simulateur, cas_types, liquidation))
+    pensionnes_centraux = pensionnes
+    pensionnes = _sous_la_demographie(simulateur, pensionnes, population.demographie)
     poids = _ponderation(simulateur, ponderation, cas_types)
     poids_cotisants = _ponderation(simulateur, ponderation, cas_types, COTE_COTISANTS)
     macro = simulateur.macro
@@ -4544,7 +4589,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     )
     avenir = _avenir(pensionnes, depenses, population, simulateur, poids,
                      revalorisation, reversion_servie, poids_cotisants, garantie,
-                     comptes)
+                     comptes, pensionnes_centraux)
     # La TVA à taux unique que la proposition affecte à sa retraite : lue ici
     # plutôt que passée, pour que tout appelant la reçoive — elle est un terme
     # de la proposition, pas un réglage de page.

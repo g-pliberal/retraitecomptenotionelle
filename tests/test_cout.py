@@ -1909,8 +1909,9 @@ def test_la_page_cout_suit_l_hypothese_d_esperance_de_vie(depenses):
     soldes = {h: {s.annee: s for s in c.solde.annees} for h, c in couts.items()}
     for annee in (2010, 2024):
         assert len({fins[h][annee].part_pib("actuel") for h in fins}) == 1
-        assert {fins[h][annee].facteur_esperance_vie for h in fins} == {1.0}
-    assert {a.facteur_esperance_vie for a in fins["centrale"].values()} == {1.0}
+        assert {fins[h][annee].facteur_pyramide for h in fins} == {1.0}
+    assert {a.facteur_pyramide for a in fins["centrale"].values()} == {1.0}
+    assert {a.facteur_pib for a in fins["centrale"].values()} == {1.0}
     actuel = {h: fins[h][2070].part_pib("actuel") for h in fins}
     liberal = {h: fins[h][2070].part_pib("notionnel_liberal") for h in fins}
     assert actuel["basse"] < actuel["centrale"] < actuel["haute"]
@@ -1924,6 +1925,38 @@ def test_la_page_cout_suit_l_hypothese_d_esperance_de_vie(depenses):
     with pytest.raises(ValueError, match="hypothèse d'espérance de vie"):
         calculer_cout(Simulateur(Parametres(hypothese_esperance_vie="haute")), depenses,
                       Population(RACINE_DONNEES))
+
+
+def test_la_page_cout_suit_la_fecondite_et_les_migrations(depenses):
+    """Sous une variante de fécondité ou de migrations de l'INSEE (action 138,
+    étape 7), que le diviseur ne lit pas, la dépense du COR suit ce que la
+    pyramide de la variante change à la masse du système actuel, et son PIB,
+    ce qu'elle change aux 20-64 ans. En 2070, le système actuel est à quelques
+    dixièmes de point de ce que le COR publie (rapport annuel de 2026, fig.
+    2.18 à 2.20) : 16,34 et 14,34 % du PIB sous la fécondité basse et haute,
+    16,40 et 14,16 % sous les migrations basses et hautes. La fécondité ne
+    touche que le PIB, et rien ne bouge avant 2026 que les arrivées tardives
+    des migrations de 2024 et 2025, de deux dix-millièmes."""
+    publie = {"fecondite_basse": 0.1634, "fecondite_haute": 0.1434,
+              "migrations_basse": 0.1640, "migrations_haute": 0.1416}
+    centrale = memoire.cout(Parametres())
+    for demographie, cor in publie.items():
+        cout = memoire.cout(Parametres(), demographie=demographie)
+        fins = {a.annee: a for a in cout.avenir.annees}
+        assert fins[2024].part_pib("actuel") == centrale.avenir.annee(2024).part_pib("actuel")
+        # Les arrivées de 2024 et 2025 de la variante, ses seules jusque-là.
+        assert fins[2025].facteur_pib == 1.0
+        assert fins[2025].facteur_pyramide == pytest.approx(1.0, abs=5e-4)
+        assert cout.solde.annee(2070).depense("actuel") == pytest.approx(cor, abs=0.003)
+        assert fins[2070].part_pib("actuel") == pytest.approx(
+            cout.solde.annee(2070).depense("actuel"), abs=1e-9), demographie
+        if demographie.startswith("fecondite"):
+            assert {a.facteur_pyramide for a in fins.values()} == {1.0}
+        else:
+            assert fins[2070].facteur_pyramide != 1.0
+    with pytest.raises(ValueError, match="une composante"):
+        memoire.cout(Parametres(hypothese_esperance_vie="haute"),
+                     demographie="fecondite_haute")
 
 
 # -- la garantie vieillesse, chiffrée sur la distribution ---------------------
