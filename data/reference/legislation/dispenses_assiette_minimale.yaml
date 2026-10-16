@@ -1,0 +1,105 @@
+# Les DISPENSES de l'assiette minimale des indépendants
+# -----------------------------------------------------
+# Action 138, étape 18 ; fiche `assiette_minimale_independants`. L'artisan, le
+# commerçant ou le libéral qui déclare peu cotise sur une assiette minimale
+# (`assiette_minimale_independants.csv`), qui lui valide des trimestres. Les
+# textes en dispensent certains : la ligne d'un relevé qui dit son motif
+# (`LigneRelevee.dispense_assiette_minimale`) cotise alors sur son seul revenu,
+# et ne valide que ce que ce revenu valide.
+#
+# Textes lus dans l'index LEGI et le JORF du dépôt, le 16 octobre 2026 :
+#
+#   Le RSA et la prime d'activité. Loi n° 2015-1702 (LFSS pour 2016), art. 21,
+#   qui rétablit L. 131-6-3 « aux cotisations et contributions dues au titre
+#   des périodes courant à compter du 1er janvier 2016 »
+#   (JORFARTI000031663570 ; LEGIARTI000031675836, LEGIARTI000033713969),
+#   renuméroté L. 613-9 en 2018 (LEGIARTI000036391156), puis L. 613-11
+#   (LEGIARTI000037051811, LEGIARTI000041394691) : « Sauf demande contraire de
+#   la part des travailleurs indépendants [...], les montants minimaux de
+#   cotisations prévus aux articles L. 621-1 et L. 633-1, à l'avant-dernier
+#   alinéa de l'article L. 635-1 [...] et, pour les professions libérales, à
+#   l'avant-dernier alinéa de l'article L. 642-1 et, le cas échéant, aux
+#   articles L. 644-1 et L. 644-2 ne sont pas applicables [...] aux
+#   cotisations [...] dues par les personnes mentionnées à l'article L. 262-2
+#   du code de l'action sociale et des familles [le RSA] et à l'article
+#   L. 842-1 du présent code [la prime d'activité] ». La demande contraire se
+#   fait au plus tard le 31 octobre de l'année d'avant, tacitement reconduite
+#   (D. 613-7, LEGIARTI000041967556 ; décret n° 2015-1856, art. 3, avant lui) :
+#   l'assuré qui l'a faite ne déclare pas de dispense. Avant 2016, la seule
+#   dispense des bénéficiaires du RSA était celle de la cotisation minimale
+#   MALADIE (D. 612-5, LEGIARTI000020763282, 2009) : D. 633-2 et D. 642-4 n'en
+#   portaient aucune pour la vieillesse.
+#
+#   Les activités accessoires saisonnières. Loi n° 2019-1446 (LFSS pour
+#   2020), art. 10, I (JORFARTI000039675367), qui complète L. 613-11 « ainsi
+#   qu'aux cotisations et aux contributions de sécurité sociale dues par les
+#   personnes au titre des activités accessoires saisonnières qu'elles
+#   exercent » (LEGIARTI000041394691, en vigueur le 28 décembre 2019). La loi
+#   ne date pas autrement son effet : la table l'ouvre aux cotisations de
+#   2020, la première année entière. Aucun décret ne définit l'activité
+#   accessoire saisonnière : l'assuré la déclare.
+#
+#   Le libéral dont l'activité n'est pas principale, ou déjà pensionné. D. 642-4,
+#   de 2004 à 2015 : « La cotisation minimale n'est applicable ni aux personnes
+#   dont l'activité libérale n'est pas l'activité professionnelle principale,
+#   ni aux personnes bénéficiaires d'un avantage de retraite ou d'une pension
+#   d'invalidité » (LEGIARTI000006738120, LEGIARTI000006738121,
+#   LEGIARTI000025629881, LEGIARTI000030034623). La rédaction du 1er janvier
+#   2016 (LEGIARTI000031799405) et les suivantes ne la portent plus. D. 633-2,
+#   pour l'artisan et le commerçant, ne l'a jamais portée
+#   (LEGIARTI000006737877 à LEGIARTI000048838330).
+#
+# Champs : `debut` et `fin`, les années de cotisation couvertes (`fin` vide :
+# toujours) ; `familles`, celles de `familles` ci-dessous que la dispense
+# touche ; `complementaires`, vrai si elle écarte aussi l'assiette minimale
+# des complémentaires des libéraux (L. 644-1 et L. 644-2 : la CARPIMKO, la
+# CAVOM), que porte leur fiche de régime (`assiette_minimale_pass`).
+schema_version: 1
+
+# Les statuts qui subissent l'assiette minimale, par famille : ceux de
+# `assiette_minimale_independants.csv`, que `tests/test_independants.py` tient
+# égaux.
+familles:
+  artisans_commercants: [artisan, commercant, gerant_debit_tabac]
+  liberaux: [profession_liberale, liberal_non_reglemente, auxiliaire_medical,
+             pharmacien, expert_comptable, agent_general_assurance, notaire,
+             veterinaire, officier_ministeriel, chirurgien_dentiste_ou_sage_femme,
+             medecin_liberal, medecin_liberal_secteur_2, sage_femme,
+             biologiste_liberal]
+
+dispenses:
+  rsa:
+    dit: bénéficiaire du revenu de solidarité active
+    debut: 2016
+    fin:
+    familles: [artisans_commercants, liberaux]
+    complementaires: true
+    texte: L. 131-6-3, puis L. 613-9, puis L. 613-11
+  prime_activite:
+    dit: bénéficiaire de la prime d'activité
+    debut: 2016
+    fin:
+    familles: [artisans_commercants, liberaux]
+    complementaires: true
+    texte: L. 131-6-3, puis L. 613-9, puis L. 613-11
+  activite_saisonniere:
+    dit: activité accessoire saisonnière
+    debut: 2020
+    fin:
+    familles: [artisans_commercants, liberaux]
+    complementaires: true
+    texte: L. 613-11, rédaction de la loi n° 2019-1446, art. 10
+  activite_non_principale:
+    dit: activité libérale qui n'est pas l'activité principale
+    debut: 2004
+    fin: 2015
+    familles: [liberaux]
+    complementaires: false
+    texte: D. 642-4, rédactions de 2004 à 2015
+  pensionne:
+    dit: libéral titulaire d'une retraite ou d'une pension d'invalidité
+    debut: 2004
+    fin: 2015
+    familles: [liberaux]
+    complementaires: false
+    texte: D. 642-4, rédactions de 2004 à 2015

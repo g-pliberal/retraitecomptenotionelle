@@ -854,6 +854,8 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
             attributs["motif"] = ligne.type_periode
         elif ligne.quotite < 1.0:
             attributs["quotite"] = ligne.quotite
+        if emploi and ligne.dispense_assiette_minimale:
+            attributs["dispense_assiette_minimale"] = ligne.dispense_assiette_minimale
         periodes.append(fait(f"releve_{rang}", ASSURE, EMPLOI if emploi else INTERRUPTION,
                              f"{ligne.annee:04d}-01-01", f"{ligne.annee + 1:04d}-01-01",
                              attributs))

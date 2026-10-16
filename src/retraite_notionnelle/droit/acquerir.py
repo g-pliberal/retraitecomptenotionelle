@@ -33,6 +33,7 @@ from ..donnees.chargement import (
     Fiabilite,
     assiette_minimale as _assiette_minimale_de,
     charger_assiettes_minimales,
+    dispense_les_complementaires,
 )
 from ..donnees.primes import charger_primes_soumises
 from . import compter
@@ -590,11 +591,14 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     # sur 1 820 SMIC même quand le revenu est en dessous,
                     # et ouvre donc ses cent points malgré tout.
                     assiette = repere
-                if not periode.assiette_forfaitaire:
+                if not (periode.assiette_forfaitaire
+                        or dispense_les_complementaires(
+                            moteur.macro.racine, ligne.dispense_assiette_minimale)):
                     # Assiette minimale en plafonds : la CARPIMKO appelle
                     # depuis 2026 sa cotisation sur un demi-plafond au
                     # moins, et les points suivent ce qui est appelé. Le
                     # plafond est déjà proratisé sur les mois de l'année.
+                    # Le libéral au RSA en est dispensé (L. 613-11).
                     assiette = max(assiette,
                                    periode.assiette_minimale(pass_annuel))
                 # Le collaborateur et l'aide familial cotisent sur un forfait,

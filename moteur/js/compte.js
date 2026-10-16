@@ -13,7 +13,9 @@
  */
 
 import { ContributionEtat, SourceCotisations, PartCotisation } from "./config.js";
-import { chomageComplementaires, salaireMoyenAnnuel } from "./carriere.js";
+import {
+  chomageComplementaires, dispenseLesComplementaires, salaireMoyenAnnuel,
+} from "./carriere.js";
 import {
   ClassesCotisation, ContributionsEmployeurPubliques, PartRetraiteSeuleEtat,
   CotisationsDesCultes, SalairesForfaitaires, ValeursPoint,
@@ -658,9 +660,10 @@ export class ConstructeurCompte {
           // prélevé ouvre des droits, ici comme dans le scénario 1.
           assiette = repere;
         }
-        if (!periode.assiette_forfaitaire) {
+        if (!periode.assiette_forfaitaire && !dispenseLesComplementaires(
+          this.macro.paquet, ligne.dispense_assiette_minimale)) {
           // Assiette minimale en plafonds : celle de la CARPIMKO depuis 2026,
-          // comme dans le scénario 1.
+          // comme dans le scénario 1, dont le RSA dispense (L. 613-11).
           assiette = Math.max(assiette, periode.assietteMinimale(
             this.macro.plafond_securite_sociale.valeur(annee)) * part);
         }

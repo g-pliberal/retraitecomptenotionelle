@@ -12,7 +12,8 @@
 
 import { DateMois } from "../calendrier.js";
 import {
-  assietteMinimale as assietteMinimaleDe, chomageComplementaires, salaireMoyenAnnuel,
+  assietteMinimale as assietteMinimaleDe, chomageComplementaires,
+  dispenseLesComplementaires, salaireMoyenAnnuel,
 } from "../carriere.js";
 import { nomFiabilite, Fiabilite } from "../serie.js";
 import { primesSoumises } from "../primes.js";
@@ -500,10 +501,12 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           // 1 820 SMIC même quand le revenu est en dessous.
           assiette = repere;
         }
-        if (!periode.assiette_forfaitaire) {
+        if (!periode.assiette_forfaitaire && !dispenseLesComplementaires(
+          moteur.macro.paquet, ligne.dispense_assiette_minimale)) {
           // Assiette minimale en plafonds : la CARPIMKO appelle depuis 2026
           // sa cotisation sur un demi-plafond au moins, et les points suivent
           // ce qui est appelé. Le plafond est déjà proratisé sur les mois.
+          // Le libéral au RSA en est dispensé (L. 613-11).
           assiette = Math.max(assiette, periode.assietteMinimale(pass));
         }
         // Le collaborateur et l'aide familial cotisent sur un forfait, quel

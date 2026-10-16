@@ -671,6 +671,71 @@ def assiette_minimale(table: tuple[AssietteMinimale, ...], statut: str,
     return None
 
 
+@dataclass(frozen=True)
+class DispenseAssietteMinimale:
+    """Un motif de ``legislation/dispenses_assiette_minimale.yaml``."""
+
+    motif: str
+    debut: int
+    fin: int | None
+    statuts: frozenset[str]
+    #: Écarte-t-il aussi l'assiette minimale des complémentaires des libéraux
+    #: (L. 644-1 et L. 644-2) ?
+    complementaires: bool
+
+    def s_applique(self, statut: str, annee: int) -> bool:
+        """Le texte dispense-t-il ce statut cette année-là ?"""
+        return (statut in self.statuts and self.debut <= annee
+                and (self.fin is None or annee <= self.fin))
+
+
+@une_fois_par_instantane
+def charger_dispenses_assiette_minimale(
+        racine: Path) -> dict[str, DispenseAssietteMinimale]:
+    """Les dispenses de l'assiette minimale des indépendants, par motif
+    (L. 613-11, D. 642-4 ; action 138, étape 18)."""
+    chemin = racine / "reference" / "legislation" / "dispenses_assiette_minimale.yaml"
+    if not chemin.exists():
+        return {}
+    donnees = charger_yaml(chemin)
+    familles = donnees["familles"]
+    return {
+        motif: DispenseAssietteMinimale(
+            motif=motif,
+            debut=int(regle["debut"]),
+            fin=None if regle.get("fin") is None else int(regle["fin"]),
+            statuts=frozenset(s for f in regle["familles"] for s in familles[f]),
+            complementaires=bool(regle["complementaires"]),
+        )
+        for motif, regle in donnees["dispenses"].items()
+    }
+
+
+def dispense_assiette_minimale(table: dict[str, DispenseAssietteMinimale],
+                               motif: str, statut: str, annee: int) -> str:
+    """Le motif que la ligne retient : ``motif`` si le texte en dispense ce
+    statut cette année-là, vide sinon — l'assuré qui se dit au RSA en 2010
+    cotise sur l'assiette minimale, que rien ne lui épargnait encore. Un motif
+    inconnu est refusé."""
+    if not motif:
+        return ""
+    if motif not in table:
+        raise ValueError(f"dispense de l'assiette minimale inconnue : {motif!r} "
+                         f"(motifs : {', '.join(sorted(table))})")
+    return motif if table[motif].s_applique(statut, annee) else ""
+
+
+def dispense_les_complementaires(racine: Path, motif: str) -> bool:
+    """Le motif retenu par une ligne écarte-t-il aussi l'assiette minimale des
+    complémentaires des libéraux (L. 644-1, L. 644-2) ? Le RSA, la prime
+    d'activité et l'activité saisonnière, oui (L. 613-11) ; les dispenses
+    de D. 642-4, non."""
+    if not motif:
+        return False
+    regle = charger_dispenses_assiette_minimale(racine).get(motif)
+    return regle is not None and regle.complementaires
+
+
 @une_fois_par_instantane
 def charger_validation_micro(racine: Path) -> dict[str, dict[int, float]]:
     """Le revenu qui valide les trimestres du micro-entrepreneur, rapporté à

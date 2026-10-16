@@ -773,3 +773,153 @@ def test_les_deux_moteurs_servent_les_memes_droits_au_conjoint():
     finally:
         Path(chemin).unlink()
     assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
+
+
+# --- Les dispenses de l'assiette minimale ---------------------------------------
+
+
+def _dispense(simulateur, affiliation: str, motif: str, annees, revenu: float = 3000.0,
+              naissance: int = 1962, liquidation: int = 2027):
+    releve = [LigneRelevee(annee, affiliation, revenu, dispense_assiette_minimale=motif)
+              for annee in annees]
+    carriere = simulateur.carriere_releve(naissance, "F", releve,
+                                          float(liquidation - naissance))
+    return carriere, {ligne.annee: ligne for ligne in carriere.lignes}
+
+
+def test_les_familles_des_dispenses_sont_celles_de_l_assiette_minimale():
+    """Les statuts que `dispenses_assiette_minimale.yaml` range par famille
+    sont ceux qui subissent l'assiette minimale, ni plus ni moins."""
+    from retraite_notionnelle.donnees.chargement import (
+        charger_assiettes_minimales, charger_yaml)
+    familles = charger_yaml(RACINE_DONNEES / "reference" / "legislation"
+                            / "dispenses_assiette_minimale.yaml")["familles"]
+    ranges = [s for statuts in familles.values() for s in statuts]
+    assert len(ranges) == len(set(ranges))
+    assert set(ranges) == {s for r in charger_assiettes_minimales(RACINE_DONNEES)
+                           for s in r.statuts}
+
+
+def test_le_rsa_dispense_de_l_assiette_minimale_depuis_2016(simulateur):
+    """L. 131-6-3, de la loi n° 2015-1702, puis L. 613-11 : l'artisan au RSA qui
+    déclare 3 000 € cotise sur 3 000 € depuis 2016, et ne valide que ce qu'ils
+    valident ; avant, rien ne l'en dispensait."""
+    _, sans = _dispense(simulateur, "artisan", "", range(2014, 2026))
+    _, rsa = _dispense(simulateur, "artisan", "rsa", range(2014, 2026))
+    for annee in (2014, 2015):
+        assert rsa[annee].dispense_assiette_minimale == ""
+        assert rsa[annee].assiette_minimale_base == sans[annee].assiette_minimale_base > 0
+        assert rsa[annee].trimestres_valides == sans[annee].trimestres_valides
+    for annee in range(2016, 2026):
+        assert rsa[annee].dispense_assiette_minimale == "rsa"
+        assert rsa[annee].assiette_minimale_base == 0.0
+        assert rsa[annee].revenu == sans[annee].revenu == 3000.0
+    assert sans[2025].trimestres_valides == 3 and rsa[2025].trimestres_valides == 1
+
+
+def test_l_activite_saisonniere_depuis_2020_et_les_dispenses_de_d_642_4(simulateur):
+    """L'activité accessoire saisonnière, depuis la loi n° 2019-1446 ; le libéral
+    dont l'activité n'est pas principale, de 2004 à 2015 seulement (D. 642-4),
+    et jamais l'artisan."""
+    _, saison = _dispense(simulateur, "commercant", "activite_saisonniere",
+                          range(2018, 2022))
+    assert [saison[a].assiette_minimale_base == 0.0 for a in range(2018, 2022)] == [
+        False, False, True, True]
+    _, liberal = _dispense(simulateur, "profession_liberale", "activite_non_principale",
+                           range(2014, 2018))
+    assert [liberal[a].dispense_assiette_minimale for a in range(2014, 2018)] == [
+        "activite_non_principale", "activite_non_principale", "", ""]
+    _, artisan = _dispense(simulateur, "artisan", "pensionne", range(2010, 2012))
+    assert all(ligne.assiette_minimale_base > 0 for ligne in artisan.values())
+    with pytest.raises(ValueError, match="inconnue"):
+        _dispense(simulateur, "artisan", "chomage", range(2020, 2021))
+
+
+def test_le_rsa_ecarte_aussi_le_minimum_de_la_carpimko(simulateur):
+    """L. 613-11 couvre « le cas échéant » les complémentaires des libéraux
+    (L. 644-1, L. 644-2) : le demi-plafond de la CARPIMKO, en 2026, ne s'oppose
+    pas à l'infirmière au RSA ; la dispense de D. 642-4, elle, ne touchait que
+    la base."""
+    def carpimko(motif, fin):
+        carriere, _ = _dispense(simulateur, "auxiliaire_medical", motif,
+                                range(2010, fin + 1), liquidation=2028)
+        return next(p["montant"] for p in simulateur.simuler(carriere).dictionnaire()
+                    ["scenarios"]["actuel"]["par_regime"]
+                    if p["regime"] == "carpimko_complementaire")
+
+    assert carpimko("rsa", 2025) == pytest.approx(carpimko("", 2025))
+    assert carpimko("rsa", 2026) < carpimko("", 2026)
+    assert carpimko("activite_non_principale", 2026) == pytest.approx(carpimko("", 2026))
+
+
+#: Le jumeau JavaScript : les lignes d'un relevé qui porte des dispenses, et
+#: le résultat entier.
+_JUMEAU_DISPENSES = """
+import { readFileSync } from "node:fs";
+import { Simulateur } from "./moteur/js/simulateur.js";
+const cas = JSON.parse(process.argv[1]);
+const simulateur = new Simulateur(JSON.parse(readFileSync("./moteur/donnees.json", "utf8")));
+const sortie = cas.map(({ releve, naissance, age }) => {
+  const carriere = simulateur.carriereReleve({
+    annee_naissance: naissance, sexe: "F", releve, age_liquidation: age });
+  return {
+    lignes: carriere.lignes.map((l) => [l.annee, l.trimestres_valides,
+      l.assiette_minimale_base, l.dispense_assiette_minimale]),
+    resultat: simulateur.simuler(carriere).dictionnaire(),
+  };
+});
+process.stdout.write(JSON.stringify(sortie));
+"""
+
+
+def _proches(obtenu, attendu, chemin="") -> list[str]:
+    if attendu is None:
+        return []
+    if isinstance(attendu, bool) or not isinstance(attendu, (int, float)):
+        if isinstance(attendu, dict):
+            return [e for cle, v in attendu.items()
+                    for e in _proches(obtenu.get(cle), v, f"{chemin}.{cle}")]
+        if isinstance(attendu, list):
+            if not isinstance(obtenu, list) or len(obtenu) != len(attendu):
+                return [f"{chemin} : {obtenu!r} au lieu de {attendu!r}"]
+            return [e for i, v in enumerate(attendu)
+                    for e in _proches(obtenu[i], v, f"{chemin}[{i}]")]
+        return [] if obtenu == attendu else [f"{chemin} : {obtenu!r} au lieu de {attendu!r}"]
+    if obtenu is None or abs(obtenu - attendu) > 1e-9 * max(1.0, abs(attendu)):
+        return [f"{chemin} : {obtenu!r} au lieu de {attendu!r}"]
+    return []
+
+
+def test_les_deux_moteurs_servent_les_memes_droits_aux_dispenses(simulateur):
+    """Les lignes et le résultat entier, en Python et en JavaScript, pour un
+    artisan au RSA puis saisonnier et une infirmière libérale au RSA."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    sys.path.insert(0, str(RACINE / "scripts"))
+    from construire_temoins import _fini
+    cas = [
+        {"naissance": 1962, "age": 65.0, "releve": [
+            {"annee": a, "affiliation": "artisan", "revenu": 3000.0 + 100 * (a % 7),
+             "dispense_assiette_minimale": ("" if a < 2016 else "rsa" if a < 2021
+                                            else "activite_saisonniere")}
+            for a in range(1995, 2027)]},
+        {"naissance": 1963, "age": 65.0, "releve": [
+            {"annee": a, "affiliation": "auxiliaire_medical", "revenu": 4000.0,
+             "dispense_assiette_minimale": "rsa" if a % 2 else "activite_non_principale"}
+            for a in range(2005, 2028)]},
+    ]
+    attendus = []
+    for c in cas:
+        carriere = simulateur.carriere_releve(
+            c["naissance"], "F", [LigneRelevee(**ligne) for ligne in c["releve"]], c["age"])
+        attendus.append({
+            "lignes": [[l.annee, l.trimestres_valides, l.assiette_minimale_base,
+                        l.dispense_assiette_minimale] for l in carriere.lignes],
+            "resultat": _fini(simulateur.simuler(carriere).dictionnaire())})
+    assert any(l[3] == "" and l[2] > 0 for l in attendus[1]["lignes"])
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _JUMEAU_DISPENSES, json.dumps(cas)],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    ecarts = _proches(json.loads(execution.stdout), attendus)
+    assert not ecarts, ecarts[:10]

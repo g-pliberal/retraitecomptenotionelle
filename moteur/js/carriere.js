@@ -139,6 +139,10 @@ export class AnneeCarriere {
     //: ASSIETTE MINIMALE du régime de base d'un indépendant (D. 633-2,
     //: D. 642-4), en euros de l'année ; nulle pour tout autre statut.
     assiette_minimale_base = 0.0,
+    //: Le motif qui DISPENSE la ligne de l'assiette minimale, quand le texte
+    //: l'en dispense cette année-là (L. 613-11, D. 642-4) ; vide sinon. Voir
+    //: carriere.py.
+    dispense_assiette_minimale = "",
     //: Salaire porté au compte du régime général quand l'année est RÉTABLIE :
     //: celle d'un fonctionnaire parti sans droit à pension (L. 65 du code des
     //: pensions) — le dernier traitement soumis à retenue, sur la fraction de
@@ -163,7 +167,8 @@ export class AnneeCarriere {
       fraction_annee,
       services_fonction_publique, services_plafond_trimestres_par_enfant,
       reputes_cotises_enveloppe, reputes_cotises_plafond,
-      assiette_minimale_base, revenu_retabli, jours_de_services, micro,
+      assiette_minimale_base, dispense_assiette_minimale, revenu_retabli,
+      jours_de_services, micro,
     });
   }
 
@@ -376,6 +381,37 @@ export function assietteMinimale(paquet, statut, annee) {
   return null;
 }
 
+/**
+ * Le motif de dispense de l'assiette minimale que la ligne retient : `motif`
+ * si le texte en dispense ce statut cette année-là
+ * (`legislation/dispenses_assiette_minimale.yaml`), vide sinon ; un motif
+ * inconnu est refusé. Portage de `dispense_assiette_minimale`.
+ */
+export function dispenseAssietteMinimale(paquet, motif, statut, annee) {
+  if (!motif) {
+    return "";
+  }
+  const regle = (paquet.dispenses_assiette_minimale ?? {})[motif];
+  if (regle === undefined) {
+    throw new Error(`dispense de l'assiette minimale inconnue : ${JSON.stringify(motif)}`);
+  }
+  const [statuts, debut, fin] = regle;
+  return statuts.includes(statut) && debut <= annee && (fin === null || annee <= fin)
+    ? motif : "";
+}
+
+/**
+ * Le motif retenu écarte-t-il aussi l'assiette minimale des complémentaires
+ * des libéraux (L. 644-1, L. 644-2) ? Portage de `dispense_les_complementaires`.
+ */
+export function dispenseLesComplementaires(paquet, motif) {
+  if (!motif) {
+    return false;
+  }
+  const regle = (paquet.dispenses_assiette_minimale ?? {})[motif];
+  return regle !== undefined && regle[3] === true;
+}
+
 /** Le montant de cette règle pour une année couverte à `part`. */
 function montantAssietteMinimale(regle, pass, smicHoraire, part) {
   const [, , , , heuresSmic, partPass, proratise, joursMinimum] = regle;
@@ -499,6 +535,7 @@ function ligneAnnuelle({
   trimestresDeclares = null,
   quotite = 1.0,
   micro = "",
+  dispense = "",
 }) {
   const cotise = typePeriode === "emploi";
   const motifs = macro.paquet.periodes_non_travaillees ?? {};
@@ -533,6 +570,13 @@ function ligneAnnuelle({
         macro.smic_horaire.valeur(annee), part);
     }
   }
+  // LES DISPENSES (L. 613-11, D. 642-4) : l'artisan au RSA qui déclare
+  // 3 000 € en 2026 cotise sur 3 000 €, et ne valide qu'un trimestre.
+  const dispenseRetenue = cotise && dispense
+    ? dispenseAssietteMinimale(macro.paquet, dispense, affiliation, annee) : "";
+  if (dispenseRetenue) {
+    minimale = 0.0;
+  }
   // Une fraction ne se déclare que des services de la fonction publique, qui
   // se comptent au jour (`jours_de_services`) ; la durée en trimestres
   // entiers que les autres régimes lisent l'arrondit au mois et demi.
@@ -554,6 +598,7 @@ function ligneAnnuelle({
     // soit le salaire.
     trimestres_valides: Math.min(trimestresMaximum, trimestres),
     assiette_minimale_base: minimale,
+    dispense_assiette_minimale: dispenseRetenue,
     micro,
     // Pendant une période indemnisée, les régimes complémentaires attribuent
     // des points sur le salaire d'avant. L'Unédic les paie pour le chômage ;
@@ -1957,6 +2002,7 @@ function lignesDuReleve(dateNaissance, periodes, fin, macro, identifiant,
         ? quotiteDeLAnnee(annee, new DateMois(annee, 1), fin, progressive,
           attributs.quotite ?? 1.0)
         : 1.0,
+      dispense: attributs.dispense_assiette_minimale ?? "",
     });
   });
   return limiterChomageNonIndemnise(

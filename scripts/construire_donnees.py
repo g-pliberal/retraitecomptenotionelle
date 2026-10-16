@@ -1266,6 +1266,16 @@ def _assiette_minimale_independants() -> list:
     ]
 
 
+def _dispenses_assiette_minimale() -> dict:
+    """Les dispenses de l'assiette minimale des indépendants, par motif :
+    les statuts, les années, et si elles touchent les complémentaires."""
+    from retraite_notionnelle.donnees.chargement import (
+        charger_dispenses_assiette_minimale)
+
+    return {motif: [sorted(r.statuts), r.debut, r.fin, r.complementaires]
+            for motif, r in sorted(charger_dispenses_assiette_minimale(DONNEES).items())}
+
+
 def _validation_micro() -> dict:
     """Le rapport du revenu qui valide les trimestres du micro-entrepreneur à
     son revenu abattu, par activité et par année (``micro_social.yaml``)."""
@@ -2396,6 +2406,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "prelevements_historiques": _prelevements_historiques(),
         "impot_revenu": _impot_revenu(),
         "assiette_minimale_independants": _assiette_minimale_independants(),
+        "dispenses_assiette_minimale": _dispenses_assiette_minimale(),
         "validation_micro": _validation_micro(),
         "profil_salaire_age": _profil_salaire("profil_salaire_age.csv", "annee"),
         "profil_salaire_categorie": _profil_salaire(

@@ -34,11 +34,13 @@ from .donnees.chargement import (
     assiette_minimale,
     charger_assiettes_minimales,
     charger_chomage_complementaires,
+    charger_dispenses_assiette_minimale,
     charger_periodes_non_travaillees,
     charger_table_csv,
     charger_validation_micro,
     charger_yaml,
     dans_un_instantane,
+    dispense_assiette_minimale,
     rapport_validation_micro,
     une_fois_par_instantane,
 )
@@ -194,6 +196,13 @@ class AnneeCarriere:
     #: trimestres et entre dans son salaire annuel moyen ou ses points. Nulle
     #: pour tout autre statut. Voir `legislation/assiette_minimale_independants.csv`.
     assiette_minimale_base: float = 0.0
+    #: Le motif qui DISPENSE la ligne de l'assiette minimale, quand le texte
+    #: l'en dispense cette année-là (L. 613-11, D. 642-4 ;
+    #: ``legislation/dispenses_assiette_minimale.yaml``) : le RSA, la prime
+    #: d'activité, l'activité accessoire saisonnière… Vide sinon.
+    #: ``assiette_minimale_base`` est alors nulle, et celle des complémentaires
+    #: des libéraux tombe aussi quand le motif les couvre.
+    dispense_assiette_minimale: str = ""
     #: Cette année entre-t-elle dans les SERVICES d'un régime de la fonction
     #: publique ? Ce régime-là ne proratise pas sur la durée d'assurance mais
     #: sur les services et bonifications (L. 13 du code des pensions), et
@@ -405,6 +414,11 @@ class LigneRelevee:
     #: revenu que porte la ligne en est déjà réduit (fiche
     #: ``temps_partiel_fonction_publique``).
     quotite: float = 1.0
+    #: Le motif qui dispense l'indépendant de l'assiette minimale cette année :
+    #: ``rsa``, ``prime_activite``, ``activite_saisonniere``,
+    #: ``activite_non_principale``, ``pensionne``
+    #: (``legislation/dispenses_assiette_minimale.yaml``). Vide : aucun.
+    dispense_assiette_minimale: str = ""
 
 
 #: Article R. 351-12, 4°, d, du code de la sécurité sociale : le chômage NON
@@ -558,6 +572,7 @@ def _ligne_annuelle(
     trimestres_declares: float | None = None,
     quotite: float = 1.0,
     micro: str = "",
+    dispense: str = "",
 ) -> AnneeCarriere:
     """Une année de carrière, une fois connus son revenu et sa nature.
 
@@ -574,6 +589,9 @@ def _ligne_annuelle(
 
     ``micro``, l'activité d'un micro-entrepreneur, fait valider ses trimestres
     sur le revenu que sa cotisation achète (:func:`_revenu_validant`).
+
+    ``dispense``, le motif qui en dispense l'indépendant (le RSA, la prime
+    d'activité…), annule l'assiette minimale les années où le texte le veut.
     """
     cotise = type_periode == "emploi"
     regle = None if cotise else motifs.get(type_periode, motifs.get("sans_activite"))
@@ -592,6 +610,13 @@ def _ligne_annuelle(
             minimale = regle_minimale.montant(
                 macro.plafond_securite_sociale(annee),
                 macro.smic_horaire(annee), part)
+    # LES DISPENSES (L. 613-11, D. 642-4) : l'artisan au RSA qui déclare
+    # 3 000 € en 2026 cotise sur 3 000 €, et ne valide qu'un trimestre.
+    dispense = (dispense_assiette_minimale(
+        charger_dispenses_assiette_minimale(macro.racine), dispense,
+        affiliation, annee) if cotise and dispense else "")
+    if dispense:
+        minimale = 0.0
     if trimestres_declares is None:
         validant = _revenu_validant(macro, revenu, micro, annee) if micro else revenu
         trimestres = (macro.trimestres_valides(max(validant, minimale), annee)
@@ -617,6 +642,7 @@ def _ligne_annuelle(
         # que soit le salaire.
         trimestres_valides=min(trimestres_maximum, trimestres),
         assiette_minimale_base=minimale,
+        dispense_assiette_minimale=dispense,
         cotisations_versees=cotise,
         micro=micro,
         # Pendant une période indemnisée, les régimes complémentaires
@@ -2079,6 +2105,7 @@ def _lignes_du_releve(date_naissance: DateMois, periodes: list[dict], fin: DateM
             quotite=(_quotite_de_l_annee(annee, DateMois(annee, 1), fin, progressive,
                                          attributs.get("quotite", 1.0))
                      if periode["sorte"] == chrono.EMPLOI else 1.0),
+            dispense=attributs.get("dispense_assiette_minimale", ""),
         ))
     return limiter_chomage_non_indemnise(
         lignes, date_naissance.annee,
