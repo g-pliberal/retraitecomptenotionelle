@@ -308,12 +308,20 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   avant 2010, dont le décret n° 48-1907 n'est pas lu, si bien que l'actif né
   avant 1950 est radié à sa limite ; les bonifications, que la prolongation pour
   carrière incomplète ne compte pas ; le recul pour enfant mort pour la France
-  ou invalide, et le maintien du militaire pour les besoins des forces ; les
-  contractuels, les ouvriers de l'État et les régimes spéciaux, qui ont leur
-  propre limite ; et les comptes notionnels, qui gardent les services déclarés
-  au-delà de la radiation. Les fiches `limite_age_fonction_publique` et
+  ou invalide, et le maintien du militaire pour les besoins des forces ; et les
+  comptes notionnels, qui gardent les services déclarés au-delà de la
+  radiation. Les fiches `limite_age_fonction_publique` et
   `limite_age_militaires`, et celles qu'elles relient, portent le droit
-  (action 151, étape 3).
+  (action 151, étape 3). Depuis l'étape 4, l'agent contractuel, l'ouvrier de
+  l'État et l'agent de la SNCF et de la RATP ont aussi leur limite, chacun sa
+  fiche (`limite_age_contractuels`, `limite_age_ouvriers_etat`,
+  `limite_age_sncf_ratp`), avec les seules exceptions que leur droit leur
+  ouvre, et leurs pensions partent de la radiation ; approchés : la limite de
+  l'ouvrier avant 2004, supposée de soixante ans, la marche des cheminots nés
+  de 1957 à 1961, supposée de quatre mois par génération, le roulant, traité en
+  sédentaire, et la durée d'assurance du contractuel, comptée par les années
+  cotisées. Restent dehors : la limite des cheminots avant 2010, et celle des
+  autres régimes spéciaux, dont les statuts ne sont pas lus.
 - **Pension militaire : la durée est servie, le grade ne l'est pas.** Les deux
   statuts militaires opposent la durée de services qui ouvre la pension —
   <!--chiffre:maximum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=non_officier)-->17<!--/--> ans pour un non-officier, <!--chiffre:maximum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=officier)-->27<!--/--> pour un officier, <!--chiffre:minimum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=non_officier)-->15<!--/--> et <!--chiffre:minimum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=officier)-->25<!--/--> avant la loi du

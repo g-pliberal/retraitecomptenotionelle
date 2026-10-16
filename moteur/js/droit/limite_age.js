@@ -1,5 +1,6 @@
 /**
- * La limite d'âge des fonctionnaires, et ses exceptions (action 151, étape 3).
+ * La limite d'âge des agents publics, et ses exceptions (action 151, étapes 3
+ * et 4).
  *
  * Le fonctionnaire est radié des cadres à la limite d'âge de son emploi,
  * reculée de droit pour ses enfants, prolongée — présumée demandée et accordée
@@ -7,7 +8,9 @@
  * l'actif jusqu'à la limite des sédentaires, et pour le sédentaire jusqu'à
  * soixante-dix ans ; depuis le 14 juin 2023, pas au-delà de soixante-dix ans.
  * Le militaire prend la limite la plus haute de sa catégorie. Sa pension part
- * de la radiation, et ce qui suit n'est plus du service.
+ * de la radiation, et ce qui suit n'est plus du service. L'agent contractuel,
+ * l'ouvrier de l'État et l'agent de la SNCF et de la RATP ont chacun leur
+ * fiche, dont chaque version nomme les exceptions qui jouent pour eux.
  *
  * Jumeau de `src/retraite_notionnelle/droit/limite_age.py`, qui fait foi et
  * dit le droit.
@@ -25,6 +28,11 @@ export const FICHE_DE_LA_CARRIERE_INCOMPLETE = "prolongation_activite_carriere_i
 export const FICHE_DE_L_ACTIF = "prolongation_activite_categorie_active";
 export const FICHE_DU_MAINTIEN = "maintien_en_fonctions_jusqu_a_70_ans";
 export const FICHE_DU_PLAFOND = "plafond_limite_age_fonction_publique";
+export const FICHE_DES_CONTRACTUELS = "limite_age_contractuels";
+export const FICHE_DES_OUVRIERS = "limite_age_ouvriers_etat";
+export const FICHE_SNCF_RATP = "limite_age_sncf_ratp";
+/** Les fiches du code des pensions, fonctionnaires et militaires. */
+export const FICHES_DU_CODE_DES_PENSIONS = new Set([FICHE_DE_LA_LIMITE, FICHE_DES_MILITAIRES]);
 
 /** Les régimes du code des pensions, dont l'agent est radié des cadres. */
 export const REGIMES_RADIES = new Set(["fonction_publique_etat", "cnracl", "pensions_civiles_1853"]);
@@ -36,12 +44,28 @@ export const NON_OFFICIER = "non_officier";
 export const OFFICIER = "officier";
 /** Les statuts de la police nationale et de la surveillance pénitentiaire. */
 export const STATUTS_DE_POLICE = new Set(["policier", "fonctionnaire_etat_super_actif"]);
+/** Les statuts d'agent contractuel de droit public (L. 556-11 CGFP). */
+export const STATUTS_CONTRACTUELS = new Set(["contractuel_public"]);
+/** Les régimes dont l'emploi a sa propre limite d'âge, et la fiche qui la porte. */
+export const FICHE_DU_REGIME = Object.freeze({
+  fspoeie: FICHE_DES_OUVRIERS, sncf: FICHE_SNCF_RATP, ratp: FICHE_SNCF_RATP,
+});
+/** Le régime dont la durée d'assurance décide la prolongation du contractuel. */
+export const REGIME_DU_CONTRACTUEL = "regime_general";
 
 export const RECUL_ENFANTS = "recul_enfants_a_charge";
 export const RECUL_PARENT_DE_TROIS = "recul_parent_de_trois_enfants";
 export const CARRIERE_INCOMPLETE = "prolongation_carriere_incomplete";
 export const PROLONGATION_ACTIVE = "prolongation_categorie_active";
 export const MAINTIEN = "maintien_jusqu_a_70_ans";
+
+/** Les exceptions que nomme le paramètre `exceptions` d'une version. */
+export const ENFANTS = "enfants";
+export const INCOMPLETE = "carriere_incomplete";
+export const ACTIF_JUSQU_AUX_SEDENTAIRES = "prolongation_active";
+export const JUSQU_A_70_ANS = "maintien";
+export const PLAFOND = "plafond";
+const TOUTES = new Set([ENFANTS, INCOMPLETE, ACTIF_JUSQU_AUX_SEDENTAIRES, JUSQU_A_70_ANS, PLAFOND]);
 
 const MOIS_PAR_AN = 12;
 const deux = (n) => String(n).padStart(2, "0");
@@ -74,21 +98,69 @@ function moisAu(carriere, jour) {
 }
 
 /**
- * La classe d'emploi d'un statut, qui choisit sa limite ; `null` pour un
- * statut sans limite d'âge au modèle.
+ * La fiche de la limite d'âge d'un statut cette année, et sa classe d'emploi ;
+ * `null` pour un statut sans limite d'âge au modèle. Voir `emploi_de` du
+ * Python.
  */
-export function classeDe(moteur, affiliation, annee) {
+export function emploiDe(moteur, affiliation, annee, entree = null) {
   const categorie = moteur.affiliations.pensionMilitaire(affiliation);
   if (categorie !== null) {
-    return categorie;
+    return [FICHE_DES_MILITAIRES, categorie];
   }
-  if (!moteur.affiliations.regimes(affiliation, annee).some((code) => REGIMES_RADIES.has(code))) {
+  if (STATUTS_CONTRACTUELS.has(affiliation)) {
+    return [FICHE_DES_CONTRACTUELS, SEDENTAIRE];
+  }
+  const regimes = moteur.affiliations.regimes(affiliation, annee, entree);
+  const active = moteur.affiliations.categorieActive(affiliation);
+  const propre = [...regimes].sort().find((code) => code in FICHE_DU_REGIME);
+  if (propre !== undefined) {
+    return [FICHE_DU_REGIME[propre], active ? ACTIVE : SEDENTAIRE];
+  }
+  if (!regimes.some((code) => REGIMES_RADIES.has(code))) {
     return null;
   }
   if (STATUTS_DE_POLICE.has(affiliation)) {
-    return POLICE_PENITENTIAIRE;
+    return [FICHE_DE_LA_LIMITE, POLICE_PENITENTIAIRE];
   }
-  return moteur.affiliations.categorieActive(affiliation) ? ACTIVE : SEDENTAIRE;
+  return [FICHE_DE_LA_LIMITE, active ? ACTIVE : SEDENTAIRE];
+}
+
+/**
+ * La classe d'emploi d'un statut, qui choisit sa limite ; `null` pour un
+ * statut sans limite d'âge au modèle.
+ */
+export function classeDe(moteur, affiliation, annee, entree = null) {
+  const emploi = emploiDe(moteur, affiliation, annee, entree);
+  return emploi === null ? null : emploi[1];
+}
+
+/** L'emploi d'une ligne de la carrière, à sa date d'entrée dans le statut. */
+function emploiDeLaLigne(moteur, carriere, ligne) {
+  return emploiDe(moteur, ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation));
+}
+
+/** Les régimes d'une ligne de la carrière, à sa date d'entrée dans le statut. */
+function regimesDeLaLigne(moteur, carriere, ligne) {
+  return moteur.affiliations.regimes(ligne.affiliation, ligne.annee,
+    carriere.dateEntree(ligne.affiliation));
+}
+
+/** Les exceptions que la fiche de la limite ouvre ce jour-là. */
+function exceptions(moteur, nom, jour) {
+  if (nom === FICHE_DE_LA_LIMITE) {
+    return TOUTES;
+  }
+  const version = versionAu(moteur, nom, jour);
+  if (version === null) {
+    return new Set();
+  }
+  const nommees = version.parametres.exceptions;
+  return nommees === undefined || nommees === null ? TOUTES : new Set(nommees);
+}
+
+/** Les fiches dont la radiation arrête les services. */
+function memesEmplois(nom) {
+  return FICHES_DU_CODE_DES_PENSIONS.has(nom) ? FICHES_DU_CODE_DES_PENSIONS : new Set([nom]);
 }
 
 function ageDeLaVersion(carriere, parametres, classe) {
@@ -218,7 +290,7 @@ function prolongationCarriereIncomplete(moteur, carriere, depuis, affiliations, 
     depuis / MOIS_PAR_AN, (depuis + prolongation) / MOIS_PAR_AN, true);
 }
 
-function jusquALaLimite(moteur, carriere, depuis, classe) {
+function jusquALaLimite(moteur, carriere, depuis, classe, nomDeLaLimite = FICHE_DE_LA_LIMITE) {
   const jour = jourDe(carriere, depuis);
   let version;
   let cible = null;
@@ -234,7 +306,7 @@ function jusquALaLimite(moteur, carriere, depuis, classe) {
     if (version === null || version.parametres.jusqu_a !== SEDENTAIRE) {
       return null;
     }
-    const lue = limiteDe(moteur, carriere, FICHE_DE_LA_LIMITE, SEDENTAIRE);
+    const lue = limiteDe(moteur, carriere, nomDeLaLimite, SEDENTAIRE);
     cible = lue === null ? null : lue[0];
     [nom, ficheDuRecul] = [PROLONGATION_ACTIVE, FICHE_DE_L_ACTIF];
   }
@@ -246,7 +318,7 @@ function jusquALaLimite(moteur, carriere, depuis, classe) {
 
 function lignesRadiees(moteur, carriere) {
   return carriere.lignes.filter((ligne) => ligne.annee <= carriere.anneeLiquidation
-    && classeDe(moteur, ligne.affiliation, ligne.annee) !== null);
+    && emploiDeLaLigne(moteur, carriere, ligne) !== null);
 }
 
 /**
@@ -269,11 +341,10 @@ export function radiation(moteur, carriere) {
     }
   }
   const affiliation = derniere.affiliation;
-  const classe = classeDe(moteur, affiliation, derniere.annee);
+  const [nom, classe] = emploiDeLaLigne(moteur, carriere, derniere);
   const declare = carriere.dateLiquidation;
   const fin = derniere.annee >= declare.annee ? declare : new DateMois(derniere.annee + 1, 1);
-  const lue = limiteDe(moteur, carriere,
-    militaire(classe) ? FICHE_DES_MILITAIRES : FICHE_DE_LA_LIMITE, classe);
+  const lue = limiteDe(moteur, carriere, nom, classe);
   if (lue === null) {
     return null;
   }
@@ -281,38 +352,56 @@ export function radiation(moteur, carriere) {
   if (carriere.dateDeLAge(limite / MOIS_PAR_AN).rang >= fin.rang) {
     return null;
   }
+  // Les services de l'emploi : ceux du code des pensions ensemble, ceux de la
+  // même fiche pour les autres, dont la radiation ouvre tous les régimes.
+  const codeDesPensions = FICHES_DU_CODE_DES_PENSIONS.has(nom);
+  const memes = memesEmplois(nom);
+  const services = lignes.filter((ligne) => memes.has(emploiDeLaLigne(moteur, carriere, ligne)[0]));
   const regimes = new Set();
-  for (const ligne of lignes) {
-    for (const code of moteur.affiliations.regimes(ligne.affiliation, ligne.annee)) {
-      if (REGIMES_RADIES.has(code)) {
+  for (const ligne of services) {
+    for (const code of regimesDeLaLigne(moteur, carriere, ligne)) {
+      if (REGIMES_RADIES.has(code) || !codeDesPensions) {
         regimes.add(code);
       }
     }
   }
   let candidats = [];
   if (!militaire(classe)) {
-    const civiles = new Set(lignes
-      .filter((ligne) => !militaire(classeDe(moteur, ligne.affiliation, ligne.annee)))
-      .map((ligne) => ligne.affiliation));
-    const regime = [...moteur.affiliations.regimes(affiliation, derniere.annee)]
-      .sort().find((code) => REGIMES_RADIES.has(code)) ?? null;
+    let civiles;
+    let regime;
+    if (nom === FICHE_DES_CONTRACTUELS) {
+      civiles = new Set(carriere.lignes.filter((ligne) => ligne.cotise)
+        .map((ligne) => ligne.affiliation));
+      regime = REGIME_DU_CONTRACTUEL;
+    } else {
+      civiles = new Set(services
+        .filter((ligne) => !militaire(emploiDeLaLigne(moteur, carriere, ligne)[1]))
+        .map((ligne) => ligne.affiliation));
+      const propre = (code) => (codeDesPensions ? REGIMES_RADIES.has(code) : code in FICHE_DU_REGIME);
+      regime = [...regimesDeLaLigne(moteur, carriere, derniere)].sort().find(propre) ?? null;
+    }
     let atteint = limite;
-    const enfants = reculsPourEnfants(moteur, carriere, atteint, classe);
+    const enfants = exceptions(moteur, nom, jourDe(carriere, atteint)).has(ENFANTS)
+      ? reculsPourEnfants(moteur, carriere, atteint, classe) : null;
     if (enfants !== null) {
       candidats.push(enfants);
       atteint = mois(enfants.jusqu_a);
     }
-    const incomplete = prolongationCarriereIncomplete(moteur, carriere, atteint, civiles, regime);
+    const incomplete = exceptions(moteur, nom, jourDe(carriere, atteint)).has(INCOMPLETE)
+      ? prolongationCarriereIncomplete(moteur, carriere, atteint, civiles, regime) : null;
     if (incomplete !== null) {
       candidats.push(incomplete);
       atteint = mois(incomplete.jusqu_a);
     }
-    const prolongee = jusquALaLimite(moteur, carriere, atteint, classe);
+    const ouvertes = exceptions(moteur, nom, jourDe(carriere, atteint));
+    const prolongee = ouvertes.has(classe === SEDENTAIRE ? JUSQU_A_70_ANS : ACTIF_JUSQU_AUX_SEDENTAIRES)
+      ? jusquALaLimite(moteur, carriere, atteint, classe, nom) : null;
     if (prolongee !== null) {
       candidats.push(prolongee);
       atteint = mois(prolongee.jusqu_a);
     }
-    const plafond = versionAu(moteur, FICHE_DU_PLAFOND, jourDe(carriere, atteint));
+    const plafond = exceptions(moteur, nom, jourDe(carriere, atteint)).has(PLAFOND)
+      ? versionAu(moteur, FICHE_DU_PLAFOND, jourDe(carriere, atteint)) : null;
     const maximum = plafond === null ? null : (plafond.parametres.age_maximal ?? null);
     if (maximum !== null) {
       const plafonne = Math.max(mois(maximum), limite);
@@ -340,12 +429,13 @@ export function radiation(moteur, carriere) {
     reculs,
     presumees: reculs.filter((r) => r.presumee),
     forcee: auPlusTard.rang <= fin.rang && auPlusTard.rang < declare.rang,
+    fiche: nom,
   });
 }
 
 /**
- * La carrière dont les services de fonctionnaire ou de militaire s'arrêtent à
- * la radiation par limite d'âge, quand elle précède leur fin déclarée ; rendue
+ * La carrière dont les services de l'emploi radié s'arrêtent à la radiation
+ * par limite d'âge, quand elle précède leur fin déclarée ; rendue
  * telle quelle sinon. Voir `radier` du Python.
  */
 export function radier(moteur, carriere) {
@@ -354,8 +444,12 @@ export function radier(moteur, carriere) {
     return carriere;
   }
   const derniere = radiee.date.annee - (radiee.date.mois === 1 ? 1 : 0);
-  const gardees = carriere.lignes.filter((ligne) => ligne.annee <= derniere
-    || classeDe(moteur, ligne.affiliation, ligne.annee) === null);
+  const memes = memesEmplois(radiee.fiche);
+  const deLEmploi = (ligne) => {
+    const emploi = emploiDeLaLigne(moteur, carriere, ligne);
+    return emploi !== null && memes.has(emploi[0]);
+  };
+  const gardees = carriere.lignes.filter((ligne) => ligne.annee <= derniere || !deLEmploi(ligne));
   if (gardees.length === carriere.lignes.length) {
     return carriere;
   }

@@ -318,6 +318,15 @@ def _cas() -> list[dict]:
         ("limite_age_officier", {"statut": "militaire_officier", "liquidation": "70"}),
         ("limite_age_sedentaire_1912", {
             "statut": "fonctionnaire_etat", "naissance": "1912", "liquidation": "72"}),
+        # Étape 4 : l'agent contractuel, l'ouvrier de l'État, sédentaire sous
+        # les paliers du décret de 2004 ou insalubre prolongé jusqu'à la
+        # limite des autres, et le cheminot, chacun sous sa propre fiche.
+        ("limite_age_contractuel", {"statut": "contractuel_public", "liquidation": "75"}),
+        ("limite_age_ouvrier_insalubre", {"statut": "ouvrier_etat_actif", "liquidation": "75"}),
+        ("limite_age_ouvrier_1945", {
+            "statut": "ouvrier_etat", "naissance": "1945", "liquidation": "68"}),
+        ("limite_age_cheminot_1960", {
+            "statut": "agent_sncf", "naissance": "1960", "liquidation": "75"}),
     ):
         cas.append((nom, modifications))
     cas.append(("liquidation_demi", {"liquidation": "64.5", "debut": "20.5"}))

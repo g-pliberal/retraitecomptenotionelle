@@ -1186,7 +1186,7 @@ class FichesDatees:
     la loi assujettit à la retenue pour pension, que ``primes.prime_de_la_pension``
     lit, et les plans de revalorisation des retraites agricoles de 1997 à 2008,
     que ``completer.majoration_retraite_proportionnelle`` lit, et la limite
-    d'âge des fonctionnaires et ses exceptions, que ``limite_age.radiation``
+    d'âge des agents publics et ses exceptions, que ``limite_age.radiation``
     lit au jour où la limite est atteinte (date ``age_atteint``,
     :data:`~retraite_notionnelle.droit.limite_age.FICHES`).
     """
@@ -1213,7 +1213,8 @@ class FichesDatees:
             "recul_limite_age_enfants", "prolongation_activite_carriere_incomplete",
             "prolongation_activite_categorie_active",
             "maintien_en_fonctions_jusqu_a_70_ans",
-            "plafond_limite_age_fonction_publique")
+            "plafond_limite_age_fonction_publique", "limite_age_contractuels",
+            "limite_age_ouvriers_etat", "limite_age_sncf_ratp")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

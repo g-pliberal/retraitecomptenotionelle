@@ -1,0 +1,202 @@
+schema_version: 1
+id: limite_age_ouvriers_etat
+intitule: >-
+  L'ouvrier des établissements industriels de l'État est mis à la retraite à sa limite
+  d'âge : soixante-cinq ans depuis le décret du 5 octobre 2004, atteints par paliers de
+  six mois jusqu'en 2012, et soixante ans pour qui a quinze ans de travaux insalubres ;
+  soixante-sept et soixante-deux ans depuis la loi de 2010, relevés comme ceux des
+  fonctionnaires ; reculée pour enfants, prolongée pour carrière incomplète, et, depuis le
+  1er septembre 2023, prolongée pour l'insalubre jusqu'à la limite des autres, ou
+  maintenue sur autorisation jusqu'à soixante-dix ans, comme pour les fonctionnaires.
+domaine: age
+regimes: [fspoeie]
+etape: preparer_la_chronologie
+face: droit
+etat: approchee
+lit:
+- le statut d'ouvrier de l'État, sédentaire (`ouvrier_etat`) ou d'un emploi insalubre
+  (`ouvrier_etat_actif`)
+- les naissances des enfants, pour le recul de droit
+- la durée des services au FSPOEIE, pour la prolongation pour carrière incomplète
+ecrit:
+- la date de la radiation des contrôles par limite d'âge, d'où part la pension du
+  FSPOEIE (`droit/limite_age.py`)
+dates_qui_decident:
+- age_atteint
+versions:
+- id: avant_2004
+  statut: supposee
+  hypothese: >-
+    soixante ans pour tous, la limite que le décret de 2004 dit « inférieure » à
+    soixante-cinq ans et qu'il relève, par six mois, à partir de soixante ans et demi en
+    2004 (article 2), l'insalubre partant au même âge (article 3) ; les décrets qui
+    l'appliquaient à chaque administration depuis 1953 (décret n° 2004-1057, article 4)
+    ne sont pas lus
+  fiabilite: faible
+  textes: []
+  bornes:
+    age_atteint: [null, 2004-10-07]
+  contenu:
+    parametres:
+      limites: {sedentaire: 60, active: 60}
+      exceptions: []
+    droit: >-
+      les limites d'âge « des personnels ouvriers affiliés au régime de retraite de la loi
+      du 2 août 1949 », fixées par règlement, « ne pourront être inférieures à celles des
+      fonctionnaires civils » (décret n° 53-711, article 3), puis par les décrets de 1954
+      à 1960 que le décret n° 2004-1057 abroge
+  exemples: aucun trouvé
+- id: decret_de_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006234954, article: "décret n° 2004-1057, article 1er", en_vigueur: 2004-10-07}
+  - {id: LEGIARTI000006234955, article: "décret n° 2004-1057, article 2", en_vigueur: 2004-10-07}
+  - {id: LEGIARTI000006234956, article: "décret n° 2004-1057, article 3", en_vigueur: 2004-10-07}
+  - {id: LEGIARTI000006781476, article: "décret n° 2004-1056, article 7", en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000006234954
+  bornes:
+    age_atteint: [2004-10-07, 2011-07-01]
+  contenu:
+    parametres:
+      limites: {sedentaire: 60.5, active: 60}
+      paliers:
+      - {depuis: "2005-01-01", sedentaire: 61, active: 60}
+      - {depuis: "2006-01-01", sedentaire: 61.5, active: 59}
+      - {depuis: "2007-01-01", sedentaire: 62, active: 58.5}
+      - {depuis: "2008-01-01", sedentaire: 62.5, active: 58}
+      - {depuis: "2009-01-01", sedentaire: 63, active: 58}
+      - {depuis: "2010-01-01", sedentaire: 63.5, active: 58.5}
+      - {depuis: "2011-01-01", sedentaire: 64, active: 59}
+      exceptions: [enfants, carriere_incomplete]
+    droit: >-
+      « Sous réserve des droits au recul des limites d'âge reconnus au titre des
+      dispositions de la loi du 18 août 1936 [...], la limite d'âge des personnels relevant
+      du régime des pensions des ouvriers des établissements industriels de l'Etat est
+      fixée à soixante-cinq ans. Toutefois, pour le personnel ayant effectivement accompli
+      quinze ans de services dans des emplois comportant des risques particuliers
+      d'insalubrité, la limite d'âge est fixée à soixante ans » (article 1er) ; « A titre
+      transitoire, pour le personnel dont la limite d'âge était inférieure », soixante ans
+      et six mois jusqu'au 31 décembre 2004, six mois de plus chaque année, soixante-quatre
+      ans et six mois jusqu'au 31 décembre 2012 (article 2), abaissés pour l'insalubre de
+      six mois en 2004, d'un an en 2005, de deux ans et demi en 2006, de trois ans et demi
+      en 2007, de quatre ans et demi en 2008, de cinq ans de 2009 à 2012 (article 3) ; « Les
+      services accomplis postérieurement à la limite d'âge sont pris en compte dans les
+      conditions prévues par l'article 1er-1 de la loi du 13 septembre 1984 » (décret n°
+      2004-1056, article 7), la prolongation pour carrière incomplète
+    transition: >-
+      les paliers de l'article 2, que le modèle oppose à tout ouvrier, la saisie ne disant
+      pas sa limite d'avant 2004
+  exemples: aucun trouvé
+- id: transition_jusqu_en_2012
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023414132, article: "décret n° 2004-1057, article 1er", en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000006234955, article: "décret n° 2004-1057, article 2", en_vigueur: 2004-10-07}
+  - {id: LEGIARTI000006234956, article: "décret n° 2004-1057, article 3", en_vigueur: 2004-10-07}
+  nee_de: LEGIARTI000023414132
+  bornes:
+    age_atteint: [2011-07-01, 2013-01-01]
+  contenu:
+    parametres:
+      limites: {sedentaire: 64, active: 59}
+      paliers:
+      - {depuis: "2012-01-01", sedentaire: 64.5, active: 59.5}
+      exceptions: [enfants, carriere_incomplete]
+    droit: >-
+      les paliers transitoires des articles 2 et 3, en vigueur jusqu'au 31 décembre 2012,
+      sous la limite de soixante-sept et soixante-deux ans que l'article 1er porte depuis
+      le 1er juillet 2011 (décret n° 2010-1740, article 16)
+  exemples: aucun trouvé
+- id: loi_de_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023414132, article: "décret n° 2004-1057, article 1er", en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000023394391, article: "décret n° 2004-1057, article 3-1", en_vigueur: 2011-07-01}
+  nee_de: LEGIARTI000023394391
+  bornes:
+    age_atteint: [2013-01-01, 2023-09-01]
+  contenu:
+    parametres:
+      limites_avant: {sedentaire: 65, active: 60}
+      ecart_de_reference: 5
+      marche:
+      - {depuis: "2011-07-01", mois: 4}
+      - {depuis: "2012-01-01", mois: 9}
+      - {depuis: "2013-01-01", mois: 14}
+      - {depuis: "2014-01-01", mois: 19}
+      - {depuis: "2015-01-01", mois: 24}
+      exceptions: [enfants, carriere_incomplete]
+    droit: >-
+      soixante-sept ans, soixante-deux pour qui a dix-sept ans de services insalubres
+      (article 1er, rédaction du 1er juillet 2011) ; « Les limites d'âge mentionnées à
+      l'article 1er du présent décret évoluent conformément aux valeurs respectivement
+      fixées par le décret prévu au II de l'article 28 et au II de l'article 31 de la loi
+      n° 2010-1330 » (article 3-1) : la marche des fonctionnaires, comptée depuis l'année
+      où l'ancien âge d'ouverture est atteint
+  exemples: aucun trouvé
+- id: reforme_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047633407, article: "décret n° 2004-1057, article 1er", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000023394391, article: "décret n° 2004-1057, article 3-1", en_vigueur: 2011-07-01}
+  nee_de: LEGIARTI000047633407
+  bornes:
+    age_atteint: [2023-09-01, null]
+  contenu:
+    parametres:
+      limites_avant: {sedentaire: 65, active: 60}
+      ecart_de_reference: 5
+      marche:
+      - {depuis: "2011-07-01", mois: 4}
+      - {depuis: "2012-01-01", mois: 9}
+      - {depuis: "2013-01-01", mois: 14}
+      - {depuis: "2014-01-01", mois: 19}
+      - {depuis: "2015-01-01", mois: 24}
+      exceptions: [enfants, carriere_incomplete, prolongation_active, maintien, plafond]
+    droit: >-
+      « Les dispositions des trois derniers alinéas de l'article L. 556-1 relatives au
+      maintien en fonctions ainsi que des articles L. 556-2 à L. 556-5 et de l'article L.
+      556-7 du code général de la fonction publique sont applicables aux ouvriers de
+      l'Etat » (article 1er, rédaction du 1er septembre 2023, décret n° 2023-435) : les
+      reculs pour enfants, la prolongation pour carrière incomplète, celle de l'insalubre
+      jusqu'à la limite des autres, le maintien jusqu'à soixante-dix ans et son plafond
+  exemples: aucun trouvé
+presomptions:
+  exceptions_a_la_limite_d_age: >-
+    la prolongation pour carrière incomplète, celle de l'insalubre et le maintien jusqu'à
+    soixante-dix ans, présumés demandés et accordés autant que le départ saisi les demande
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-10-16
+  a_relire:
+  - >-
+    La limite des ouvriers avant le 7 octobre 2004 : les décrets n° 54-1181 à 54-1184,
+    56-870, 56-871, 57-288 et 60-416, et l'article 15 bis du décret n° 47-2097, que le
+    décret n° 2004-1057 abroge (article 4). La version `avant_2004` suppose soixante ans.
+  - >-
+    Le personnel dont la limite était déjà de soixante-cinq ans en 2004, que les paliers de
+    l'article 2 ne touchent pas : la saisie ne le distingue pas, et le modèle lui oppose les
+    paliers.
+  - >-
+    La prolongation pour carrière incomplète compte les seuls services au FSPOEIE, comme
+    celle des fonctionnaires compte les seuls services.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2004-1057, articles 1er (rédactions du 7 octobre 2004, du 1er juillet 2011
+      et du 1er septembre 2023), 2, 3, 3-1 et 4 ; décret n° 2004-1056, article 7 ; décret n°
+      53-711, article 3. Lus dans l'index LEGI du dépôt
+    date: 2026-10-16
+historique:
+- >-
+  2026-10-16 — née et appliquée, action 151, étape 4 : l'ouvrier de l'État dont le départ
+  saisi passe sa limite est radié à la limite, reculée et prolongée par les exceptions qui
+  s'appliquent, et sa pension du FSPOEIE en part, comme la décision du propriétaire du
+  14 octobre 2026 le dit du fonctionnaire.
+effet: >-
+  Tout ouvrier de l'État dont le départ saisi passe sa limite — soixante-sept ans pour
+  les générations nées depuis 1955, soixante-deux pour l'insalubre, et moins avant — est
+  radié à la limite, prolongée jusqu'à soixante-dix ans depuis le 1er septembre 2023 pour
+  qui n'est pas insalubre, et sa pension du FSPOEIE en part. Approchée : la limite d'avant
+  2004 est supposée, et l'ouvrier dont la limite était déjà de soixante-cinq ans en 2004
+  n'est pas distingué.

@@ -1,4 +1,4 @@
-"""La limite d'âge des fonctionnaires, et ses exceptions (action 151, étape 3).
+"""La limite d'âge des agents publics, et ses exceptions (action 151, étapes 3 et 4).
 
 « Le fonctionnaire ne peut être maintenu en fonctions au-delà de l'âge limite
 de l'activité dans l'emploi qu'il occupe, sous réserve des exceptions prévues
@@ -32,10 +32,18 @@ plus. Les exceptions, dans l'ordre que la loi leur donne (relation
 
 Le militaire, dont la saisie ne connaît ni le grade ni le corps, prend la
 limite la plus haute de sa catégorie (fiche ``limite_age_militaires``), sans
-recul : la loi de 1936 ne le nomme pas. Les agents contractuels, les ouvriers
-de l'État et les régimes spéciaux, qui ont leur propre limite, viendront à
-une étape suivante ; les corps particuliers restent hors du modèle tant que
-la saisie ne porte pas le corps.
+recul : la loi de 1936 ne le nomme pas. Les corps particuliers restent hors
+du modèle tant que la saisie ne porte pas le corps.
+
+Depuis l'étape 4, trois emplois de plus ont leur limite, chacune dans sa
+fiche, dont chaque version dit, par son paramètre ``exceptions``, celles
+des exceptions ci-dessus qui jouent pour eux ce jour-là : l'agent contractuel
+de droit public (fiche ``limite_age_contractuels``), dont la prolongation
+pour carrière incomplète compte la durée d'assurance tous régimes ;
+l'ouvrier de l'État (fiche ``limite_age_ouvriers_etat``) ; l'agent du cadre
+permanent de la SNCF et de la RATP (fiche ``limite_age_sncf_ratp``). Leur
+pension part de la radiation, celle des régimes que l'emploi radié route.
+Les autres régimes spéciaux n'ont pas de limite au modèle.
 
 La limite se lit, version par version, au jour où elle est atteinte (date
 ``age_atteint``) : chaque version porte, dans ses paramètres, la limite de
@@ -73,11 +81,18 @@ FICHE_DE_LA_CARRIERE_INCOMPLETE = "prolongation_activite_carriere_incomplete"
 FICHE_DE_L_ACTIF = "prolongation_activite_categorie_active"
 FICHE_DU_MAINTIEN = "maintien_en_fonctions_jusqu_a_70_ans"
 FICHE_DU_PLAFOND = "plafond_limite_age_fonction_publique"
+FICHE_DES_CONTRACTUELS = "limite_age_contractuels"
+FICHE_DES_OUVRIERS = "limite_age_ouvriers_etat"
+FICHE_SNCF_RATP = "limite_age_sncf_ratp"
 #: Les fiches que le module lit, et que le paquet du site porte
 #: (``FichesDatees``).
 FICHES = (FICHE_DE_LA_LIMITE, FICHE_DES_MILITAIRES, FICHE_DES_ENFANTS,
           FICHE_DE_LA_CARRIERE_INCOMPLETE, FICHE_DE_L_ACTIF, FICHE_DU_MAINTIEN,
-          FICHE_DU_PLAFOND)
+          FICHE_DU_PLAFOND, FICHE_DES_CONTRACTUELS, FICHE_DES_OUVRIERS,
+          FICHE_SNCF_RATP)
+#: Les fiches du code des pensions, fonctionnaires et militaires, dont la
+#: radiation ouvre les seuls régimes de ``REGIMES_RADIES``.
+FICHES_DU_CODE_DES_PENSIONS = frozenset({FICHE_DE_LA_LIMITE, FICHE_DES_MILITAIRES})
 
 #: Les régimes du code des pensions, dont l'agent est radié des cadres : un
 #: statut qui y est affilié a une limite d'âge.
@@ -92,6 +107,18 @@ OFFICIER = "officier"
 #: Les statuts de la police nationale et de la surveillance pénitentiaire,
 #: dont la limite est cinquante-sept ans (L. 556-8 et L. 556-9).
 STATUTS_DE_POLICE = frozenset({"policier", "fonctionnaire_etat_super_actif"})
+#: Les statuts d'agent contractuel de droit public (L. 556-11 du code général
+#: de la fonction publique), que leurs régimes ne distinguent pas de l'élu
+#: local ou du membre du CESE, affiliés eux aussi à l'Ircantec.
+STATUTS_CONTRACTUELS = frozenset({"contractuel_public"})
+#: Les régimes dont l'emploi a sa propre limite d'âge, et la fiche qui la
+#: porte : celui qui ne les route plus, recruté après leur fermeture, n'en a
+#: pas.
+FICHE_DU_REGIME = {"fspoeie": FICHE_DES_OUVRIERS, "sncf": FICHE_SNCF_RATP,
+                   "ratp": FICHE_SNCF_RATP}
+#: Le régime dont la durée d'assurance décide la prolongation du contractuel
+#: pour carrière incomplète (article 5 de la loi n° 2003-775).
+REGIME_DU_CONTRACTUEL = "regime_general"
 
 #: Ce qui recule ou prolonge la limite.
 RECUL_ENFANTS = "recul_enfants_a_charge"
@@ -99,6 +126,17 @@ RECUL_PARENT_DE_TROIS = "recul_parent_de_trois_enfants"
 CARRIERE_INCOMPLETE = "prolongation_carriere_incomplete"
 PROLONGATION_ACTIVE = "prolongation_categorie_active"
 MAINTIEN = "maintien_jusqu_a_70_ans"
+
+#: Les exceptions qu'une version des fiches des contractuels, des ouvriers et
+#: de la SNCF et de la RATP nomme dans son paramètre ``exceptions`` ; une
+#: version qui ne le porte pas, celles des fonctionnaires, les ouvre toutes.
+ENFANTS = "enfants"
+INCOMPLETE = "carriere_incomplete"
+ACTIF_JUSQU_AUX_SEDENTAIRES = "prolongation_active"
+JUSQU_A_70_ANS = "maintien"
+PLAFOND = "plafond"
+TOUTES = frozenset({ENFANTS, INCOMPLETE, ACTIF_JUSQU_AUX_SEDENTAIRES, JUSQU_A_70_ANS,
+                    PLAFOND})
 
 MOIS_PAR_AN = 12
 
@@ -127,7 +165,8 @@ class Radiation:
     ``forcee`` dit que la radiation précède la fin des services que la saisie
     déclare : les services s'arrêtent là, et la pension part de ce jour ;
     sinon, l'agent quitte le service avant la limite que les exceptions lui
-    ouvrent, et la radiation est sa sortie."""
+    ouvrent, et la radiation est sa sortie. ``fiche`` est celle de la limite :
+    la radiation n'arrête que les services de son emploi."""
 
     date: DateMois
     age: float
@@ -138,6 +177,7 @@ class Radiation:
     regimes: frozenset[str]
     reculs: tuple[Recul, ...]
     forcee: bool
+    fiche: str = FICHE_DE_LA_LIMITE
 
     @property
     def presumees(self) -> tuple[Recul, ...]:
@@ -174,18 +214,64 @@ def _mois_au(carriere: Carriere, jour: str) -> int:
     return ecart - (1 if quantieme < min(carriere.jour_de_naissance, 28) else 0)
 
 
-def classe_de(moteur: ScenarioActuel, affiliation: str, annee: int) -> str | None:
-    """La classe d'emploi d'un statut, qui choisit sa limite : celle du
-    militaire, ou celle du fonctionnaire civil affilié à un régime du code des
-    pensions ; ``None`` pour un statut sans limite d'âge au modèle."""
+def emploi_de(moteur: ScenarioActuel, affiliation: str, annee: int,
+              entree: DateMois | None = None) -> tuple[str, str] | None:
+    """La fiche de la limite d'âge d'un statut cette année, et sa classe
+    d'emploi : celle du militaire, de l'agent contractuel, de l'ouvrier de
+    l'État, de l'agent de la SNCF ou de la RATP, ou du fonctionnaire civil
+    affilié à un régime du code des pensions ; ``None`` pour un statut sans
+    limite d'âge au modèle. ``entree``, l'entrée dans le statut, décide du
+    régime de qui a été recruté avant sa fermeture."""
     militaire = moteur.affiliations.pension_militaire(affiliation)
     if militaire is not None:
-        return militaire
-    if REGIMES_RADIES.isdisjoint(moteur.affiliations.regimes(affiliation, annee)):
+        return FICHE_DES_MILITAIRES, militaire
+    if affiliation in STATUTS_CONTRACTUELS:
+        return FICHE_DES_CONTRACTUELS, SEDENTAIRE
+    regimes = moteur.affiliations.regimes(affiliation, annee, entree)
+    active = moteur.affiliations.categorie_active(affiliation)
+    propre = next((FICHE_DU_REGIME[code] for code in sorted(regimes)
+                   if code in FICHE_DU_REGIME), None)
+    if propre is not None:
+        return propre, ACTIVE if active else SEDENTAIRE
+    if REGIMES_RADIES.isdisjoint(regimes):
         return None
     if affiliation in STATUTS_DE_POLICE:
-        return POLICE_PENITENTIAIRE
-    return ACTIVE if moteur.affiliations.categorie_active(affiliation) else SEDENTAIRE
+        return FICHE_DE_LA_LIMITE, POLICE_PENITENTIAIRE
+    return FICHE_DE_LA_LIMITE, ACTIVE if active else SEDENTAIRE
+
+
+def classe_de(moteur: ScenarioActuel, affiliation: str, annee: int,
+              entree: DateMois | None = None) -> str | None:
+    """La classe d'emploi d'un statut, qui choisit sa limite
+    (:func:`emploi_de`) ; ``None`` pour un statut sans limite d'âge au
+    modèle."""
+    emploi = emploi_de(moteur, affiliation, annee, entree)
+    return None if emploi is None else emploi[1]
+
+
+def _emploi(moteur: ScenarioActuel, carriere: Carriere, ligne) -> tuple[str, str] | None:
+    """L'emploi d'une ligne de la carrière, à sa date d'entrée dans le statut."""
+    return emploi_de(moteur, ligne.affiliation, ligne.annee,
+                     carriere.date_entree(ligne.affiliation))
+
+
+def _regimes(moteur: ScenarioActuel, carriere: Carriere, ligne) -> tuple[str, ...]:
+    """Les régimes d'une ligne de la carrière, à sa date d'entrée dans le statut."""
+    return moteur.affiliations.regimes(ligne.affiliation, ligne.annee,
+                                       carriere.date_entree(ligne.affiliation))
+
+
+def _exceptions(moteur: ScenarioActuel, nom: str, jour: str) -> frozenset[str]:
+    """Les exceptions que la fiche de la limite ouvre ce jour-là : toutes,
+    pour le fonctionnaire ; celles que sa version nomme, pour les autres ;
+    aucune, sans version."""
+    if nom == FICHE_DE_LA_LIMITE:
+        return TOUTES
+    version = _version(moteur, nom, jour)
+    if version is None:
+        return frozenset()
+    nommees = version["parametres"].get("exceptions")
+    return TOUTES if nommees is None else frozenset(nommees)
 
 
 def _age_de_la_version(carriere: Carriere, parametres: dict, classe: str) -> int | None:
@@ -315,7 +401,8 @@ def _prolongation_carriere_incomplete(moteur: ScenarioActuel, carriere: Carriere
 
 
 def _jusqu_a_la_limite(moteur: ScenarioActuel, carriere: Carriere, depuis: int,
-                       classe: str) -> Recul | None:
+                       classe: str, nom_de_la_limite: str = FICHE_DE_LA_LIMITE
+                       ) -> Recul | None:
     """La prolongation de l'actif jusqu'à la limite des sédentaires, ou le
     maintien du sédentaire jusqu'à soixante-dix ans."""
     jour = _jour(carriere, depuis)
@@ -328,7 +415,7 @@ def _jusqu_a_la_limite(moteur: ScenarioActuel, carriere: Carriere, depuis: int,
         version = _version(moteur, FICHE_DE_L_ACTIF, jour)
         if version is None or version["parametres"].get("jusqu_a") != SEDENTAIRE:
             return None
-        lue = _limite(moteur, carriere, FICHE_DE_LA_LIMITE, SEDENTAIRE)
+        lue = _limite(moteur, carriere, nom_de_la_limite, SEDENTAIRE)
         cible = None if lue is None else lue[0]
         nom, fiche = PROLONGATION_ACTIVE, FICHE_DE_L_ACTIF
     if cible is None or cible <= depuis:
@@ -337,10 +424,17 @@ def _jusqu_a_la_limite(moteur: ScenarioActuel, carriere: Carriere, depuis: int,
                  presumee=True)
 
 
+def _memes_emplois(nom: str) -> frozenset[str]:
+    """Les fiches dont la radiation arrête les services : celles du code des
+    pensions ensemble, le fonctionnaire et le militaire ; la sienne seule
+    pour les autres."""
+    return FICHES_DU_CODE_DES_PENSIONS if nom in FICHES_DU_CODE_DES_PENSIONS else frozenset({nom})
+
+
 def _lignes_radiees(moteur: ScenarioActuel, carriere: Carriere):
     return [ligne for ligne in carriere.lignes
             if ligne.annee <= carriere.annee_liquidation
-            and classe_de(moteur, ligne.affiliation, ligne.annee) is not None]
+            and _emploi(moteur, carriere, ligne) is not None]
 
 
 def radiation(moteur: ScenarioActuel, carriere: Carriere) -> Radiation | None:
@@ -361,43 +455,65 @@ def radiation(moteur: ScenarioActuel, carriere: Carriere) -> Radiation | None:
         return None
     derniere = max(lignes, key=lambda ligne: ligne.annee)
     affiliation = derniere.affiliation
-    classe = classe_de(moteur, affiliation, derniere.annee)
+    nom, classe = _emploi(moteur, carriere, derniere)
     declare = carriere.date_liquidation
     fin = declare if derniere.annee >= declare.annee else DateMois(derniere.annee + 1, 1)
     militaire = classe in (NON_OFFICIER, OFFICIER)
-    lue = _limite(moteur, carriere,
-                  FICHE_DES_MILITAIRES if militaire else FICHE_DE_LA_LIMITE, classe)
+    lue = _limite(moteur, carriere, nom, classe)
     if lue is None:
         return None
     limite, version = lue
     if carriere.date_de_l_age(limite / MOIS_PAR_AN) >= fin:
         return None
+    # Les services de l'emploi : ceux du code des pensions, fonctionnaire ou
+    # militaire, ensemble ; ceux de la même fiche, pour les autres, dont la
+    # radiation ouvre tous les régimes que l'emploi route.
+    code_des_pensions = nom in FICHES_DU_CODE_DES_PENSIONS
+    memes = _memes_emplois(nom)
+    services = [ligne for ligne in lignes
+                if _emploi(moteur, carriere, ligne)[0] in memes]
     regimes = frozenset(
-        code for ligne in lignes
-        for code in moteur.affiliations.regimes(ligne.affiliation, ligne.annee)
-        if code in REGIMES_RADIES)
+        code for ligne in services
+        for code in _regimes(moteur, carriere, ligne)
+        if code in REGIMES_RADIES or not code_des_pensions)
     candidats: list[Recul] = []
     if not militaire:
-        civiles = frozenset(ligne.affiliation for ligne in lignes
-                            if classe_de(moteur, ligne.affiliation, ligne.annee)
-                            not in (NON_OFFICIER, OFFICIER))
-        regime = next((code for code in sorted(moteur.affiliations.regimes(
-            affiliation, derniere.annee)) if code in REGIMES_RADIES), None)
+        if nom == FICHE_DES_CONTRACTUELS:
+            # La durée d'assurance tous régimes, que le modèle compte par les
+            # années cotisées de toute la carrière, sans les périodes assimilées.
+            civiles = frozenset(ligne.affiliation for ligne in carriere.lignes
+                                if ligne.cotise)
+            regime = REGIME_DU_CONTRACTUEL
+        else:
+            civiles = frozenset(ligne.affiliation for ligne in services
+                                if _emploi(moteur, carriere, ligne)[1]
+                                not in (NON_OFFICIER, OFFICIER))
+            propres = REGIMES_RADIES if code_des_pensions else FICHE_DU_REGIME
+            regime = next((code for code in sorted(_regimes(moteur, carriere, derniere))
+                           if code in propres), None)
         atteint = limite
-        enfants = _reculs_pour_enfants(moteur, carriere, atteint, classe)
+        enfants = (_reculs_pour_enfants(moteur, carriere, atteint, classe)
+                   if ENFANTS in _exceptions(moteur, nom, _jour(carriere, atteint))
+                   else None)
         if enfants is not None:
             candidats.append(enfants)
             atteint = _mois(enfants.jusqu_a)
-        incomplete = _prolongation_carriere_incomplete(
+        incomplete = (_prolongation_carriere_incomplete(
             moteur, carriere, atteint, civiles, regime)
+            if INCOMPLETE in _exceptions(moteur, nom, _jour(carriere, atteint)) else None)
         if incomplete is not None:
             candidats.append(incomplete)
             atteint = _mois(incomplete.jusqu_a)
-        prolongee = _jusqu_a_la_limite(moteur, carriere, atteint, classe)
+        ouvertes = _exceptions(moteur, nom, _jour(carriere, atteint))
+        prolongee = (_jusqu_a_la_limite(moteur, carriere, atteint, classe, nom)
+                     if (JUSQU_A_70_ANS if classe == SEDENTAIRE
+                         else ACTIF_JUSQU_AUX_SEDENTAIRES) in ouvertes else None)
         if prolongee is not None:
             candidats.append(prolongee)
             atteint = _mois(prolongee.jusqu_a)
-        plafond = _version(moteur, FICHE_DU_PLAFOND, _jour(carriere, atteint))
+        plafond = (_version(moteur, FICHE_DU_PLAFOND, _jour(carriere, atteint))
+                   if PLAFOND in _exceptions(moteur, nom, _jour(carriere, atteint))
+                   else None)
         maximum = None if plafond is None else plafond["parametres"].get("age_maximal")
         if maximum is not None:
             plafonne = max(_mois(maximum), limite)
@@ -412,23 +528,28 @@ def radiation(moteur: ScenarioActuel, carriere: Carriere) -> Radiation | None:
                    for r in candidats
                    if carriere.date_de_l_age(r.depuis) < date)
     return Radiation(date, age, limite / MOIS_PAR_AN, classe, affiliation, version,
-                     regimes, reculs, forcee=au_plus_tard <= fin and au_plus_tard < declare)
+                     regimes, reculs, forcee=au_plus_tard <= fin and au_plus_tard < declare,
+                     fiche=nom)
 
 
 def radier(moteur: ScenarioActuel, carriere: Carriere) -> Carriere:
-    """La carrière dont les services de fonctionnaire ou de militaire
-    s'arrêtent à la radiation par limite d'âge, quand elle précède leur fin
-    déclarée : les années qui la suivent ne sont plus du service, et la
-    carrière n'en garde que les autres métiers. L'année de la radiation reste,
-    que la date d'effet de la pension borne. Rendue telle quelle sans
-    radiation forcée."""
+    """La carrière dont les services de l'emploi radié s'arrêtent à la
+    radiation par limite d'âge, quand elle précède leur fin déclarée : les
+    années qui la suivent ne sont plus du service, et la carrière n'en garde
+    que les autres métiers. L'année de la radiation reste, que la date
+    d'effet de la pension borne. Rendue telle quelle sans radiation forcée."""
     radiee = radiation(moteur, carriere)
     if radiee is None or not radiee.forcee:
         return carriere
     derniere = radiee.date.annee - (1 if radiee.date.mois == 1 else 0)
+    memes = _memes_emplois(radiee.fiche)
+
+    def de_l_emploi(ligne) -> bool:
+        emploi = _emploi(moteur, carriere, ligne)
+        return emploi is not None and emploi[0] in memes
+
     gardees = [ligne for ligne in carriere.lignes
-               if ligne.annee <= derniere
-               or classe_de(moteur, ligne.affiliation, ligne.annee) is None]
+               if ligne.annee <= derniere or not de_l_emploi(ligne)]
     if len(gardees) == len(carriere.lignes):
         return carriere
     return carriere.avec_lignes(gardees)

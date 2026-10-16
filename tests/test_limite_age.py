@@ -1,4 +1,5 @@
-"""La limite d'âge des fonctionnaires et ses exceptions (action 151, étape 3 ;
+"""La limite d'âge des agents publics et ses exceptions (action 151, étapes 3
+et 4 ;
 fiches ``limite_age_fonction_publique``, ``limite_age_militaires``,
 ``recul_limite_age_enfants``, ``prolongation_activite_carriere_incomplete``,
 ``prolongation_activite_categorie_active``,
@@ -188,8 +189,82 @@ def test_radier_est_idempotent(simulateur):
 
 
 def test_les_statuts_sans_limite_au_modele_n_en_ont_pas(simulateur):
-    """Le salarié, le contractuel et l'ouvrier de l'État, dont la limite
-    viendra à une étape suivante, ne sont pas radiés."""
+    """Le salarié, l'agent des IEG, et le cheminot recruté depuis la fermeture
+    du régime spécial, salarié de droit commun, ne sont pas radiés."""
     moteur = simulateur.scenario_actuel
-    for statut in ("salarie_prive_non_cadre", "contractuel_public", "ouvrier_etat"):
-        assert limite_age.radiation(moteur, _simple(simulateur, statut, 1990, 75)) is None
+    for statut, naissance in (("salarie_prive_non_cadre", 1990), ("agent_ieg", 1990),
+                              ("agent_sncf", 2000)):
+        carriere = _simple(simulateur, statut, naissance, 75)
+        assert limite_age.radiation(moteur, carriere) is None, statut
+
+
+# --- Action 151, étape 4 : les contractuels, les ouvriers de l'État, la SNCF
+# et la RATP (fiches ``limite_age_contractuels``, ``limite_age_ouvriers_etat``
+# et ``limite_age_sncf_ratp``).
+
+def test_le_contractuel_est_maintenu_jusqu_a_soixante_dix_ans(simulateur):
+    """L. 556-11 : soixante-sept ans, et, depuis le 14 juin 2023, le maintien
+    sur autorisation jusqu'à soixante-dix ans ; ses pensions du régime général
+    et de l'Ircantec partent de la fin du contrat."""
+    moteur = simulateur.scenario_actuel
+    carriere = _simple(simulateur, "contractuel_public", 1990, 75)
+    radiation = limite_age.radiation(moteur, carriere)
+    assert (radiation.fiche, radiation.limite, radiation.age, radiation.version) \
+        == (limite_age.FICHE_DES_CONTRACTUELS, 67.0, 70.0, "reforme_2023")
+    assert _reculs(radiation) == [(limite_age.MAINTIEN, 67.0, 70.0, True)]
+    assert [(d.date, sorted(d.regimes), d.motif) for d in departs.departs(moteur, carriere)] \
+        == [(carriere.date_de_l_age(70), ["ircantec", "regime_general"], departs.MOTIF_LIMITE)]
+
+
+def test_avant_2023_le_contractuel_part_a_sa_limite(simulateur):
+    """Né en 1950, il atteint soixante-cinq ans en 2015 : sa limite n'est pas
+    relevée (il a eu soixante ans en 2010), et rien ne la prolonge ; avant 2012,
+    le maintien de la loi de 1947 s'arrêtait aussi à soixante-cinq ans."""
+    moteur = simulateur.scenario_actuel
+    for naissance, version in ((1950, "loi_de_2012"), (1940, "loi_de_1947")):
+        radiation = limite_age.radiation(
+            moteur, _simple(simulateur, "contractuel_public", naissance, 70))
+        assert (radiation.limite, radiation.age, radiation.version, radiation.reculs) \
+            == (65.0, 65.0, version, ())
+
+
+def test_l_ouvrier_suit_les_paliers_du_decret_de_2004(simulateur):
+    """Né en 1945, l'ouvrier a soixante et un ans et demi en 2006, la limite de
+    cette année-là (décret n° 2004-1057, article 2) ; l'insalubre, soixante ans
+    en 2005, la sienne (article 3)."""
+    moteur = simulateur.scenario_actuel
+    for statut, limite in (("ouvrier_etat", 61.5), ("ouvrier_etat_actif", 60.0)):
+        radiation = limite_age.radiation(moteur, _simple(simulateur, statut, 1945, 68))
+        assert (radiation.fiche, radiation.limite, radiation.age, radiation.version) \
+            == (limite_age.FICHE_DES_OUVRIERS, limite, limite, "decret_de_2004")
+        assert sorted(radiation.regimes) == ["fspoeie"]
+
+
+def test_depuis_2023_l_ouvrier_insalubre_est_prolonge_jusqu_a_la_limite_des_autres(simulateur):
+    """Né en 1990, l'ouvrier insalubre atteint soixante-deux ans en 2052 : la
+    prolongation pour carrière incomplète, puis celle de L. 556-7, que le décret
+    lui ouvre depuis le 1er septembre 2023, le mènent à soixante-sept ans ; le
+    sédentaire est maintenu jusqu'à soixante-dix ans."""
+    moteur = simulateur.scenario_actuel
+    actif = limite_age.radiation(moteur, _simple(simulateur, "ouvrier_etat_actif", 1990, 75))
+    assert (actif.limite, actif.age) == (62.0, 67.0)
+    assert [r.nom for r in actif.reculs] == [limite_age.CARRIERE_INCOMPLETE,
+                                            limite_age.PROLONGATION_ACTIVE]
+    sedentaire = limite_age.radiation(moteur, _simple(simulateur, "ouvrier_etat", 1990, 75))
+    assert (sedentaire.limite, sedentaire.age) == (67.0, 70.0)
+
+
+def test_le_cheminot_recrute_avant_2020_a_la_limite_de_sa_generation(simulateur):
+    """Né en 1950, il est admis à la retraite à soixante-cinq ans ; né en 1960,
+    sa limite est relevée de seize mois (présumé), et le maintien jusqu'à
+    soixante-dix ans lui est ouvert depuis le 1er septembre 2023 ; sa pension du
+    régime spécial part de la limite."""
+    moteur = simulateur.scenario_actuel
+    ancien = limite_age.radiation(moteur, _simple(simulateur, "agent_sncf", 1950, 68))
+    assert (ancien.fiche, ancien.limite, ancien.age, sorted(ancien.regimes)) \
+        == (limite_age.FICHE_SNCF_RATP, 65.0, 65.0, ["sncf"])
+    carriere = _simple(simulateur, "agent_sncf", 1960, 75)
+    recent = limite_age.radiation(moteur, carriere)
+    assert (round(recent.limite, 4), recent.age) == (round(65 + 16 / 12, 4), 70.0)
+    assert [d.motif for d in departs.departs(moteur, carriere)] == [departs.MOTIF_LIMITE]
+

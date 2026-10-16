@@ -1,0 +1,228 @@
+schema_version: 1
+id: limite_age_contractuels
+intitule: >-
+  L'agent contractuel de droit public ne peut servir au-delà de sa limite d'âge : soixante-
+  cinq ans, jusqu'où l'employé auxiliaire ou contractuel pouvait, sur sa demande, être
+  maintenu en activité depuis la loi du 8 août 1947, puis soixante-sept ans, relevés
+  comme la limite des fonctionnaires sédentaires depuis la loi de 2010 ; depuis le
+  14 mars 2012, reculée pour enfants comme celle des fonctionnaires et prolongée de dix
+  trimestres au plus pour qui n'a pas la durée d'assurance tous régimes du taux plein ;
+  depuis le 14 juin 2023, maintenu sur autorisation jusqu'à soixante-dix ans, sans
+  qu'aucun cumul ne mène au-delà.
+domaine: age
+regimes: [regime_general, ircantec, ipacte, igrante]
+etape: preparer_la_chronologie
+face: droit
+etat: approchee
+lit:
+- le statut d'agent contractuel de droit public (`contractuel_public`), que la saisie
+  porte ; ni l'élu local, ni le membre du CESE, ni le maître de l'enseignement privé, que
+  l'Ircantec affilie aussi, n'en ont la limite au modèle
+- les naissances des enfants, pour le recul de droit
+- la durée d'assurance tous régimes, que le modèle compte par les années cotisées
+ecrit:
+- la date de la fin du contrat par limite d'âge, d'où partent les pensions du régime
+  général et de l'Ircantec (`droit/limite_age.py`)
+dates_qui_decident:
+- age_atteint
+versions:
+- id: avant_1947
+  statut: supposee
+  hypothese: >-
+    aucune limite opposée à l'agent contractuel avant la loi du 8 août 1947 : le droit
+    d'avant, s'il en avait une, n'est pas lu
+  fiabilite: faible
+  textes: []
+  bornes:
+    age_atteint: [null, 1947-08-09]
+  contenu:
+    parametres:
+      exceptions: []
+    droit: >-
+      aucune limite au modèle
+  exemples: aucun trouvé
+- id: loi_de_1947
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023096793, article: "loi n° 47-1465 du 8 août 1947, article 20", en_vigueur: 2011-07-01}
+  - {id: JORFARTI000023022519, article: "loi n° 2010-1330, article 38", en_vigueur: 2010-11-10}
+  nee_de: LEGIARTI000023096793
+  bornes:
+    age_atteint: [1947-08-09, 2011-07-01]
+  contenu:
+    parametres:
+      limites: {sedentaire: 65}
+      exceptions: []
+    droit: >-
+      « Tout employé auxiliaire ou agent contractuel de l'Etat, des départements, des
+      communes et de tous services publics peut, sur sa demande, être maintenu en activité
+      jusqu'à l'âge de soixante-cinq ans, s'il réunit les conditions intellectuelles et
+      physiques suffisantes » (article 20 de la loi de 1947, dont la loi n° 2010-1330,
+      article 38, XIV, remplace « soixante-cinq » par « soixante-sept » : la rédaction
+      d'avant se lit là, celle de 1947 n'étant pas dans l'index)
+    presomption: >-
+      le maintien jusqu'à soixante-cinq ans, présumé demandé et accordé autant que le
+      départ saisi le demande ; la limite de chaque administration, en deçà, n'est pas lue
+  exemples: aucun trouvé
+- id: loi_de_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023096793, article: "loi n° 47-1465 du 8 août 1947, article 20", en_vigueur: 2011-07-01}
+  - {id: JORFARTI000023022519, article: "loi n° 2010-1330, article 38, XIV et XIX", en_vigueur: 2010-11-10}
+  nee_de: LEGIARTI000023096793
+  bornes:
+    age_atteint: [2011-07-01, 2012-03-14]
+  contenu:
+    parametres:
+      limites_avant: {sedentaire: 65}
+      ecart_de_reference: 5
+      marche:
+      - {depuis: "2011-07-01", mois: 4}
+      - {depuis: "2012-01-01", mois: 9}
+      - {depuis: "2013-01-01", mois: 14}
+      - {depuis: "2014-01-01", mois: 19}
+      - {depuis: "2015-01-01", mois: 24}
+      exceptions: []
+    droit: >-
+      le maintien sur demande « jusqu'à l'âge de soixante-sept ans » (article 20 de la loi
+      de 1947, rédaction du 1er juillet 2011), limite qui « évolue dans les conditions
+      fixées par le décret prévu au II de l'article 28 » (loi n° 2010-1330, article 38,
+      XIX) : la marche des fonctionnaires sédentaires, comptée depuis l'année où l'ancien
+      âge d'ouverture, soixante ans, est atteint (fiche `limite_age_fonction_publique`,
+      version `loi_de_2010`)
+  exemples: aucun trouvé
+- id: loi_de_2012
+  statut: lue
+  textes:
+  - {id: LEGIARTI000025494907, article: "loi n° 84-834, article 6-1", en_vigueur: 2012-03-14}
+  - {id: JORFARTI000025490328, article: "loi n° 2012-347, article 115", en_vigueur: 2012-03-14}
+  nee_de: LEGIARTI000025494907
+  bornes:
+    age_atteint: [2012-03-14, 2022-03-01]
+  contenu:
+    parametres:
+      limites_avant: {sedentaire: 65}
+      ecart_de_reference: 5
+      marche:
+      - {depuis: "2011-07-01", mois: 4}
+      - {depuis: "2012-01-01", mois: 9}
+      - {depuis: "2013-01-01", mois: 14}
+      - {depuis: "2014-01-01", mois: 19}
+      - {depuis: "2015-01-01", mois: 24}
+      exceptions: [enfants, carriere_incomplete]
+    droit: >-
+      « la limite d'âge des agents contractuels employés par les administrations de l'Etat,
+      les collectivités territoriales, leurs établissements publics ne présentant pas un
+      caractère industriel et commercial, [les établissements hospitaliers] ainsi que par
+      toutes autres personnes morales de droit public recrutant sous un régime de droit
+      public est fixée à soixante-sept ans » (I) ; elle « est, le cas échéant, reculée
+      conformément aux dispositions de l'article 4 de la loi du 18 août 1936 » (II) ; les
+      agents « dont la durée d'assurance tous régimes est inférieure à celle définie à
+      l'article 5 de la loi n° 2003-775 [...] peuvent sur leur demande [...] être maintenus
+      en activité », sans aller « au-delà de la durée d'assurance définie au même article
+      5, ni au-delà d'une durée de dix trimestres » (III). La limite « évolue dans les
+      conditions fixées par le décret prévu au II de l'article 28 de la loi n° 2010-1330 »
+      (loi n° 2012-347, article 115, II), qui abroge l'article 20 de la loi de 1947 (III)
+  exemples: aucun trouvé
+- id: code_general_2022
+  statut: lue
+  textes:
+  - {id: LEGIARTI000044425120, article: "L. 556-13 CGFP", en_vigueur: 2022-03-01}
+  - reference: >-
+      L. 556-11 et L. 556-12 du code général de la fonction publique, que l'index LEGI du
+      dépôt ne porte pas, et que L. 556-13 et la loi n° 2023-270 citent
+    en_vigueur: 2022-03-01
+  nee_de: LEGIARTI000044425120
+  bornes:
+    age_atteint: [2022-03-01, 2023-06-14]
+  contenu:
+    parametres:
+      limites_avant: {sedentaire: 65}
+      ecart_de_reference: 5
+      marche:
+      - {depuis: "2011-07-01", mois: 4}
+      - {depuis: "2012-01-01", mois: 9}
+      - {depuis: "2013-01-01", mois: 14}
+      - {depuis: "2014-01-01", mois: 19}
+      - {depuis: "2015-01-01", mois: 24}
+      exceptions: [enfants, carriere_incomplete]
+    droit: >-
+      l'article 6-1 de la loi n° 84-834, codifié : « Après application, le cas échéant, de
+      l'article L. 556-12, les agents contractuels dont la durée d'assurance tous régimes
+      est inférieure à celle définie à l'article 5 de la loi n° 2003-775 [...] peuvent sur
+      leur demande [...] » (L. 556-13)
+  exemples: aucun trouvé
+- id: reforme_2023
+  statut: lue
+  textes:
+  - {id: JORFARTI000047445097, article: "loi n° 2023-270, article 10, VIII, 5°", en_vigueur: 2023-06-14}
+  nee_de: JORFARTI000047445097
+  bornes:
+    age_atteint: [2023-06-14, null]
+  contenu:
+    parametres:
+      limites_avant: {sedentaire: 65}
+      ecart_de_reference: 5
+      marche:
+      - {depuis: "2011-07-01", mois: 4}
+      - {depuis: "2012-01-01", mois: 9}
+      - {depuis: "2013-01-01", mois: 14}
+      - {depuis: "2014-01-01", mois: 19}
+      - {depuis: "2015-01-01", mois: 24}
+      exceptions: [enfants, carriere_incomplete, maintien, plafond]
+    droit: >-
+      « Toutefois, l'agent contractuel occupant un emploi auquel s'applique la limite
+      d'âge mentionnée au premier alinéa ou une limite d'âge qui lui est égale ou
+      supérieure peut, sur autorisation, être maintenu en fonctions jusqu'à l'âge de
+      soixante-dix ans. Le refus d'autorisation est motivé. Le bénéfice cumulé de ce
+      maintien en fonctions et des reculs de limite d'âge prévus à l'article L. 556-12 ne
+      peut conduire l'agent contractuel à être maintenu en fonctions au delà de
+      soixante-dix ans » (L. 556-11, complété par la loi n° 2023-270, article 10, VIII, 5°)
+  exemples: aucun trouvé
+presomptions:
+  exceptions_a_la_limite_d_age: >-
+    le maintien jusqu'à soixante-cinq ans de la loi de 1947, la prolongation pour durée
+    d'assurance incomplète et le maintien jusqu'à soixante-dix ans, présumés demandés et
+    accordés autant que le départ saisi les demande
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-10-16
+  a_relire:
+  - >-
+    L. 556-11 et L. 556-12 du code général de la fonction publique, que l'index LEGI ne
+    porte pas : les lire sur Légifrance, pour s'assurer que la codification n'a rien
+    changé à l'article 6-1.
+  - >-
+    La rédaction de 1947 de l'article 20 de la loi n° 47-1465, et la limite de chaque
+    administration en deçà de soixante-cinq ans, que le maintien sur demande dépasse ;
+    avant le 9 août 1947, le modèle n'oppose aucune limite au contractuel.
+  - >-
+    Les maîtres contractuels de l'enseignement privé (L. 914-1 du code de l'éducation),
+    que la loi n° 2023-270 nomme à part, et les agents publics que l'Ircantec affilie
+    sans le statut de contractuel, n'ont pas de limite au modèle.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 84-834, article 6-1 (LEGIARTI000025494907) ; L. 556-13 du code général de la
+      fonction publique (LEGIARTI000044425120) ; loi n° 47-1465, article 20, rédaction du
+      1er juillet 2011 (LEGIARTI000023096793). Lus dans l'index LEGI du dépôt
+    date: 2026-10-16
+  - type: jorf
+    reference: >-
+      loi n° 2010-1330, article 38 (JORFARTI000023022519) ; loi n° 2012-347, article 115
+      (JORFARTI000025490328) ; loi n° 2023-270, article 10 (JORFARTI000047445097). Lus dans
+      l'index JORF du dépôt
+    date: 2026-10-16
+historique:
+- >-
+  2026-10-16 — née et appliquée, action 151, étape 4 : l'agent contractuel dont le
+  départ saisi passe sa limite quitte le service à la limite, reculée et prolongée par
+  les exceptions qui s'appliquent, et ses pensions du régime général et de l'Ircantec en
+  partent, comme la décision du propriétaire du 14 octobre 2026 le dit du fonctionnaire.
+effet: >-
+  Tout agent contractuel dont le départ saisi passe soixante-sept ans (soixante-cinq avant
+  le 1er juillet 2011, relevés de quatre mois à deux ans pour les générations 1951 à 1955)
+  quitte le service à la limite, prolongée jusqu'à soixante-dix ans depuis le 14 juin
+  2023, et ses pensions en partent. Approchée : la durée d'assurance tous régimes se
+  compte par les années cotisées, et la limite de chaque administration, avant 2011, est
+  présumée la plus haute que la loi permette.
