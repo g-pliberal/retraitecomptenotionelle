@@ -364,3 +364,59 @@ def test_les_deux_lecteurs_lisent_le_meme_cout(montres, bilan):
         assert lue.reprises_constants() == figee.reprises_constants()
         if figee.pilier is not None:
             assert dict(lue.pilier.niveaux(1000.0)) == figee.pilier.niveaux(1000.0)
+
+
+# -- le coût sous les hypothèses d'espérance de vie ------------------------------
+
+
+def test_le_cout_sous_chaque_esperance_de_vie_est_celui_du_modele(contexte, montres):
+    """La table porte, sous chacune des trois hypothèses de l'INSEE (action
+    138, étape 7), ce que le modèle calcule sous elle : la dépense du bilan aux
+    années que la page cite, le solde à l'horizon, le solde moyen projeté. Le
+    système actuel suit la longévité ; la proposition n'en bouge presque pas
+    à l'horizon."""
+    from retraite_notionnelle import memoire
+
+    figee = AGREGATS.esperance_vie
+    assert figee.hypotheses == ("basse", "centrale", "haute")
+    assert figee.annees == tuple(module("pages").ANNEES_ESPERANCE_VIE)
+    for hypothese in figee.hypotheses:
+        cout = memoire.cout(contexte.base.avec(hypothese_esperance_vie=hypothese))
+        solde = cout.solde
+        assert (figee.premiere_annee, figee.derniere_annee) == (
+            solde.premiere_annee_projetee, solde.derniere_annee)
+        for scenario in montres:
+            for annee in figee.annees:
+                assert figee.part_pib(hypothese, scenario, annee) == solde.annee(
+                    annee).depense(scenario), (hypothese, scenario, annee)
+            assert figee.solde(hypothese, scenario) == solde.annee(
+                solde.derniere_annee).solde(scenario)
+            assert figee.solde_moyen(hypothese, scenario) == solde.solde_moyen(
+                scenario, solde.premiere_annee_projetee, solde.derniere_annee)
+    horizon = figee.derniere_annee
+    actuel = [figee.part_pib(h, "actuel", horizon) for h in figee.hypotheses]
+    assert actuel == sorted(actuel)
+    liberal = [figee.part_pib(h, "notionnel_liberal", horizon) for h in figee.hypotheses]
+    assert max(liberal) - min(liberal) < 0.001
+    with pytest.raises(KeyError, match="absent de la table figée"):
+        figee.solde("tres_haute", "actuel")
+    with pytest.raises(KeyError, match="absent de la table figée"):
+        figee.part_pib("haute", "actuel", 2051)
+
+
+@sans_node
+def test_les_deux_lecteurs_lisent_les_memes_esperances_de_vie(montres):
+    js = site().contexte.agregats().esperanceVie
+    figee = AGREGATS.esperance_vie
+    assert tuple(js.hypotheses) == figee.hypotheses
+    assert tuple(js.annees) == figee.annees
+    assert (js.premiereAnnee, js.derniereAnnee) == (figee.premiere_annee,
+                                                    figee.derniere_annee)
+    for hypothese in figee.hypotheses:
+        for scenario in montres:
+            assert js.solde(hypothese, scenario) == figee.solde(hypothese, scenario)
+            assert js.soldeMoyen(hypothese, scenario) == figee.solde_moyen(
+                hypothese, scenario)
+            for annee in figee.annees:
+                assert js.partPib(hypothese, scenario, annee) == figee.part_pib(
+                    hypothese, scenario, annee)

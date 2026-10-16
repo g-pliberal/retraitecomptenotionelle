@@ -556,6 +556,11 @@ def _cas() -> list[dict]:
     # L'emploi constant après 2025 : la convention d'avant la trajectoire du
     # COR, qui ne déplace que les systèmes 2 à 6, par l'indexation.
     cas.append(("emploi_constant", {"emploi": "constant"}))
+    # Les hypothèses d'espérance de vie basse et haute de l'INSEE : les
+    # quotients projetés, donc le diviseur des systèmes 2 à 6, que les deux
+    # moteurs doivent tirer des mêmes tables (action 138, étape 7).
+    for hypothese in ("basse", "haute"):
+        cas.append((f"esperance_vie_{hypothese}", {"esperance_vie": hypothese}))
     for bascule in ("1980", "2000", "2026", "2040", "2060"):
         cas.append((f"bascule_{bascule}", {"bascule": bascule, "naissance": "1990"}))
     for euros in ("1980", "2000", "2050"):
@@ -2205,6 +2210,10 @@ def _pages() -> dict:
             "metier2_debut": "40", "metier2_statut": "artisan",
             "metier2_salaire": "4200",
         }),
+        # L'hypothèse d'espérance de vie haute de l'INSEE : le réglage écrit
+        # dans l'adresse, la courbe de survie tirée de ses quotients, et ce
+        # que les trois hypothèses font du système 2 (action 138, étape 7).
+        ("simuler_esperance_vie_haute", "/simuler", {**BASE, "esperance_vie": "haute"}),
         ("programme", "/", {}),
         # La page « Cumul versé » n'est plus : son adresse rend les résultats
         # du simulateur, que les témoins ci-dessus couvrent, et

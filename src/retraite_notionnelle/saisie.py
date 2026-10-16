@@ -162,6 +162,16 @@ PROJECTIONS = [
     ("cor_productivite_haute", "COR variante haute — 1,0 %"),
 ]
 
+#: L'espérance de vie des projections de population 2026 de l'INSEE : la
+#: centrale, ou l'une des deux hypothèses qui en ôtent ou y ajoutent trois ans
+#: à l'horizon 2070 (action 138, étape 7). Elle décide des quotients projetés,
+#: donc du diviseur : les systèmes 2 à 6 la lisent, le système 1 n'en lit rien.
+HYPOTHESES_ESPERANCE_VIE = [
+    ("centrale", "INSEE, hypothèse centrale (défaut)"),
+    ("basse", "INSEE, espérance de vie basse (trois ans de moins en 2070)"),
+    ("haute", "INSEE, espérance de vie haute (trois ans de plus en 2070)"),
+]
+
 #: L'emploi au-delà de la dernière observation. Il ne compose que la masse
 #: salariale et le PIB projetés, donc l'indexation des comptes notionnels :
 #: les systèmes 2 à 6 le lisent, le système 1 ne lit ni l'une ni l'autre.
@@ -608,7 +618,7 @@ CLES_MODELISATION = (
     "indexation", "lissage", "age_reference", "table", "population",
     "rattachement", "conversion_acquis", "part_cotisation",
     "contribution_etat", "foyer", "projection", "emploi", "stock", "reprise",
-    "frais", "taux", "bascule", "euros",
+    "frais", "taux", "bascule", "euros", "esperance_vie",
 )
 
 
@@ -805,6 +815,8 @@ class Saisie:
     #: système 1, de sorte que les deux planchers se comparent.
     foyer: str = "seul"
     projection: str = "cor_reference"
+    #: L'hypothèse d'espérance de vie de l'INSEE, que le diviseur lit.
+    esperance_vie: str = "centrale"
     #: L'emploi projeté : la trajectoire du COR par défaut, ou constant.
     emploi: str = "cor_2026"
     #: Les pensions déjà servies à la bascule : sur les prix, ou réindexées.
@@ -987,6 +999,8 @@ class Saisie:
             ),
             foyer=_parmi(parametres, "foyer", SITUATIONS_FOYER, defauts.foyer),
             projection=_parmi(parametres, "projection", PROJECTIONS, defauts.projection),
+            esperance_vie=_parmi(parametres, "esperance_vie", HYPOTHESES_ESPERANCE_VIE,
+                                 defauts.esperance_vie),
             emploi=_parmi(parametres, "emploi", TRAJECTOIRES_EMPLOI, defauts.emploi),
             stock=_parmi(parametres, "stock", REVALORISATIONS_STOCK, defauts.stock),
             reprise=_entier(parametres, "reprise", defauts.reprise),
@@ -1530,6 +1544,7 @@ class Saisie:
             contribution_etat=ContributionEtat(self.contribution_etat),
             situation_foyer=SituationFoyer(self.foyer),
             scenario_projection=self.projection,
+            hypothese_esperance_vie=self.esperance_vie,
             trajectoire_emploi=self.emploi,
             revalorisation_stock=RevalorisationStock(self.stock),
             part_reprise_garantie=None if self.reprise is None else self.reprise / 100,
@@ -2406,6 +2421,10 @@ class Saisie:
             "foyer": self.foyer,
             "projection": self.projection, "emploi": self.emploi,
             "stock": self.stock,
+            # L'espérance de vie ne s'écrit qu'écartée de la centrale : les
+            # adresses d'avant elle restent celles qu'elles étaient.
+            **({"esperance_vie": self.esperance_vie}
+               if self.esperance_vie != "centrale" else {}),
             "reprise": "" if self.reprise is None else self.reprise,
             "frais": self.frais, "taux": self.taux,
             "bascule": self.bascule, "euros": self.euros,

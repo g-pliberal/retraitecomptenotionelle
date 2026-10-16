@@ -75,7 +75,7 @@ import {
   ACTIVITES_A_L_ETRANGER, AUTRE_ETAT, ENFANTS_MAXIMUM, ETRANGER_MAXIMUM, ErreurSaisie,
   INDEXATIONS, LISSAGE_MAXIMUM, METIERS_MAXIMUM,
   MODES_MONTANT, NAISSANCE_MAXIMALE, NAISSANCE_MINIMALE, OUI, PARTS_COTISATION,
-  POPULATIONS, PROFILS, PROJECTIONS, RATTACHEMENTS, REGIMES_FRAIS, REGIMES_TAUX,
+  HYPOTHESES_ESPERANCE_VIE, POPULATIONS, PROFILS, PROJECTIONS, RATTACHEMENTS, REGIMES_FRAIS, REGIMES_TAUX,
   RELEVE_MAXIMUM, REVALORISATIONS_STOCK, SAISIES, SAISIE_DE_LA_SITUATION,
   SALAIRE_DEFAUT, SANS_EMPLOI, SITUATIONS, SITUATIONS_FOYER, Saisie, TABLES,
   MOIS_DE_GUERRE_MAXIMUM, TRAJECTOIRES_EMPLOI, TRAVAUX_MANUELS, UNITES_REVENU, age, entier, estEntier, jourEnClair,
@@ -692,6 +692,7 @@ const LIBELLES_MODELISATION = Object.freeze({
   contribution_etat: ["contribution de l'État portée au compte", CONTRIBUTIONS_ETAT],
   foyer: ["situation de foyer", SITUATIONS_FOYER],
   projection: ["scénario macroéconomique", PROJECTIONS],
+  esperance_vie: ["espérance de vie", HYPOTHESES_ESPERANCE_VIE],
   emploi: ["emploi projeté", TRAJECTOIRES_EMPLOI],
   stock: ["pensions en cours à la bascule", REVALORISATIONS_STOCK],
   reprise: ["part de l'avance couverte par la succession", null],
@@ -821,6 +822,14 @@ export function champsModelisation(saisie) {
       + "à deux."),
     g.liste("projection", "Scénario macroéconomique", PROJECTIONS, saisie.projection,
       "au-delà de la dernière observation"),
+    g.liste("esperance_vie", "Espérance de vie", HYPOTHESES_ESPERANCE_VIE,
+      saisie.esperance_vie, "systèmes 2 à 6 seulement", {},
+      "Les quotients de mortalité au-delà des derniers observés sont ceux "
+      + "des projections de population 2026 de l'INSEE : l'hypothèse centrale "
+      + "par défaut, ou l'une des deux variantes qui ôtent ou ajoutent trois "
+      + "ans d'espérance de vie à la naissance en 2070. Elle décide du "
+      + "diviseur, donc de la pension des comptes notionnels : qui vivra plus "
+      + "longtemps touchera moins chaque mois. Le système 1 n'en lit rien."),
     g.liste("emploi", "Emploi projeté", TRAJECTOIRES_EMPLOI, saisie.emploi,
       "systèmes 2 à 6 seulement", {},
       "Au-delà de la dernière observation, la masse des salaires, qui est le "
@@ -2377,7 +2386,8 @@ function corpsTrajectoire(contexte, comparaison, saisie) {
   const conversion = comparaison.notionnel_retroactif.conversion;
   const esperance = conversion.esperance_residuelle;
   const ageEsperance = depart + esperance;
-  const survie = courbeDeSurvie(contexte, carriere, conversion.table);
+  const survie = courbeDeSurvie(contexte, carriere, conversion.table,
+    comparaison.parametres);
   const vivants = (age) => g.pourcentage(partVivante(survie, age - depart), false, 0);
 
   // Le système 2 passe au-dessus du système 1 pour qui a beaucoup cotisé sans
@@ -2950,12 +2960,15 @@ function titresScenarios(saisie) {
  * coefficient, plutôt que d'être recalculés depuis les paramètres : deux
  * chemins de décision pour une seule table finiraient par diverger, et le
  * graphique annoncerait alors une espérance de vie qui ne serait pas celle
- * ayant servi à diviser le capital.
+ * ayant servi à diviser le capital. La mortalité est celle du simulateur de
+ * la simulation (`parametres`), non celle du simulateur par défaut : sous une
+ * hypothèse d'espérance de vie basse ou haute, la courbe serait sinon celle
+ * de la centrale, et non celle du diviseur.
  */
-function courbeDeSurvie(contexte, carriere, table) {
+function courbeDeSurvie(contexte, carriere, table, parametres) {
   const sexe = table.startsWith("unisexe") ? null : table.split("_")[0];
   const generation = table.endsWith("_generation");
-  return contexte.simulateur().mortalite.courbe(
+  return contexte.simulateur(parametres).mortalite.courbe(
     carriere.age_liquidation || 0.0,
     carriere.anneeLiquidation + (carriere.moisLiquidation - 1) / 12,
     sexe, generation,
@@ -3039,7 +3052,7 @@ function financements(contexte, comparaison) {
         ? Math.max(depart.anneeLiquidation, comparaison.parametres.annee_courante)
         : depart.anneeLiquidation;
       const ecoule = debutDepart - depart.anneeLiquidation;
-      const survie = courbeDeSurvie(contexte, depart, table);
+      const survie = courbeDeSurvie(contexte, depart, table, comparaison.parametres);
       const poids = [];
       for (let rang = 0; rang < Math.max(survie.length - 1 - ecoule, 0); rang += 1) {
         poids.push(partVivante(survie, ecoule + rang + 0.5));
@@ -4891,7 +4904,8 @@ function fourchette(contexte, saisie, comparaison) {
 <p class="note">Rien, ici : la carrière s'achève en ${liquidation}, et les séries
 sont observées jusqu'en ${derniereObservee}. <strong>Aucune année projetée
 n'entre dans ce calcul</strong> — les montants ci-dessus sont identiques dans
-les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p>`);
+les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p>${
+  poidsEsperanceVie(contexte, saisie, comparaison)}`);
   }
 
   const montants = new Map();
@@ -4991,9 +5005,49 @@ ${g.tableau(
     "Pension mensuelle de chaque système sous les trois hypothèses de "
       + "productivité du COR",
     true,
-  )}${poidsEmploi}
+  )}${poidsEmploi}${poidsEsperanceVie(contexte, saisie, comparaison)}
 <p class="discret">Montants mensuels bruts, en euros constants de
 ${saisie.euros}.</p>`);
+}
+
+/**
+ * Ce que l'hypothèse d'espérance de vie de l'INSEE pèse sur le système 2.
+ *
+ * Elle ne passe que par le diviseur, qui lit les quotients projetés : la même
+ * carrière, rejouée sous les deux variantes, dit ce qu'une longévité plus
+ * courte ou plus longue de trois ans en 2070 ferait de la pension. Le diviseur
+ * se calcule à la liquidation sur des quotients encore à venir : même une
+ * carrière tout entière observée y est exposée, à la différence du scénario
+ * macroéconomique (action 138, étape 7).
+ */
+function poidsEsperanceVie(contexte, saisie, comparaison) {
+  const mensuelles = new Map();
+  for (const [code] of HYPOTHESES_ESPERANCE_VIE) {
+    try {
+      const variante = code === saisie.esperance_vie
+        ? comparaison
+        : contexte.simuler(new Saisie({ ...saisie, esperance_vie: code }));
+      mensuelles.set(code, variante.enEurosConstants(
+        variante.notionnel_retroactif.pension_annuelle) / 12);
+    } catch (erreur) {
+      if (fauteDeProgramme(erreur)) throw erreur;
+    }
+  }
+  const basse = mensuelles.get("basse");
+  const haute = mensuelles.get("haute");
+  const centrale = mensuelles.get("centrale");
+  if ([basse, centrale, haute].includes(undefined)) {
+    return "";
+  }
+  return `
+<p>L'espérance de vie pèse aussi, par le diviseur. Sous les trois hypothèses
+des projections de population de l'INSEE, le système 2 donnerait
+${g.eurosCentimes(basse)} par mois sous la basse (trois ans de moins en
+2070), ${g.eurosCentimes(centrale)} sous la centrale et
+${g.eurosCentimes(haute)} sous la haute (trois ans de plus), soit
+${g.pourcentage(haute > 0 ? basse / haute - 1 : NaN)} d'amplitude. Qui vivra
+plus longtemps touche moins chaque mois, pendant plus d'années. Le
+système 1 ne bouge pas : il ne lit pas l'espérance de vie.</p>`;
 }
 
 /**
@@ -8012,6 +8066,7 @@ plus large que les cartes).
     coutDetailRessources(contexte),
     coutDetailTransferts(contexte),
     coutDetailScenarios(contexte),
+    coutDetailEsperanceVie(contexte),
     coutDetailCascade(contexte, regards),
     coutDetailEquilibre(contexte),
     coutDetailPostes(contexte),
@@ -9450,6 +9505,75 @@ sa dépense est celle du COR. La garantie vieillesse non plus, qui n'est pas
 lue sur la grille mais sur la distribution des pensions. Le
 <a href="${g.DEPOT}/blob/main/docs/limites.md">§ 5 ter des limites</a> dit ce
 qui réduirait l'écart, et donc la fourchette.</p>`;
+}
+
+/**
+ * Les années où la page Coût dit ce que l'espérance de vie déplace de la
+ * dépense : le milieu de la transition et l'horizon. Le Python les lit pour
+ * fabriquer la table (`_agregats`).
+ */
+export const ANNEES_ESPERANCE_VIE = [2050, 2070];
+
+/** Le nom de chaque hypothèse d'espérance de vie dans le tableau de la page. */
+const NOMS_ESPERANCE_VIE = { basse: "basse", centrale: "centrale", haute: "haute" };
+
+/**
+ * Ce que l'hypothèse d'espérance de vie de l'INSEE déplace du coût.
+ *
+ * LA PAGE EST CALCULÉE SOUS L'HYPOTHÈSE CENTRALE, et elle le reste : elle est
+ * figée une fois sous la référence (action 150). Les deux variantes de la
+ * table (`esperanceVie`, action 138, étape 7) disent ce qu'une longévité plus
+ * courte ou plus longue de trois ans en 2070 en ferait, système par système.
+ * Le système actuel la paie tout entière ; la proposition, dont le diviseur
+ * la reporte sur la pension de chacun, à peine : c'est ce que le tableau
+ * montre, et la phrase qui le suit le chiffre.
+ */
+function coutDetailEsperanceVie(contexte) {
+  const table = contexte.agregats().esperanceVie;
+  const hypotheses = table.hypotheses;
+  const triple = (lire) => hypotheses
+    .map((hypothese) => g.nombre(lire(hypothese) * 100, 2)).join(" / ");
+  const lignes = SCENARIOS_COMPARES.map(([scenario, libelle]) => [
+    nomScenario(scenario, libelle),
+    ...table.annees.map((annee) => triple(
+      (hypothese) => table.partPib(hypothese, scenario, annee))),
+    triple((hypothese) => table.solde(hypothese, scenario)),
+    triple((hypothese) => table.soldeMoyen(hypothese, scenario)),
+  ]);
+  const horizon = table.derniereAnnee;
+  const ecart = (scenario, hypothese) => (
+    table.partPib(hypothese, scenario, horizon)
+    - table.partPib("centrale", scenario, horizon)) * 100;
+  const points = (valeur) => `${valeur >= 0 ? "+" : ""}${g.nombre(valeur, 2)} point`
+    + (Math.abs(valeur) >= 2 ? "s" : "");
+  return g.depliant("Si l'on vit plus ou moins longtemps", `
+<p>Cette page est calculée sous l'hypothèse centrale d'espérance de vie des
+projections de population 2026 de l'INSEE. Ses deux variantes ôtent ou ajoutent
+trois ans d'espérance de vie à la naissance en 2070 : le modèle y recompte les
+retraités dans la pyramide de la variante, et les comptes notionnels y
+divisent leur capital par une espérance de vie plus courte ou plus longue.</p>
+${g.tableau(
+    ["Système", ...table.annees.map((annee) => `Dépense ${annee}`),
+      `Solde ${horizon}`, `Solde moyen ${table.premiereAnnee}-${horizon}`],
+    lignes,
+    ["", "nombre", "nombre", "nombre", "nombre"],
+    "Dépense et solde de chaque système sous les hypothèses d'espérance de vie "
+      + "basse, centrale et haute de l'INSEE, en points de PIB",
+    true,
+  )}
+<p>En ${horizon}, la dépense du système actuel varie de
+${points(ecart("actuel", "basse"))} sous la basse et de
+${points(ecart("actuel", "haute"))} sous la haute ; celle de la proposition
+libérale, de ${points(ecart("notionnel_liberal", "basse"))} et de
+${points(ecart("notionnel_liberal", "haute"))}. Le diviseur reporte la
+longévité sur la pension de chacun, à mesure que les comptes remplacent les
+droits d'avant : il ne l'absorbe tout entière qu'à l'horizon.</p>
+<p class="discret">En points de PIB, sous chaque hypothèse dans l'ordre
+${hypotheses.map((hypothese) => NOMS_ESPERANCE_VIE[hypothese]).join(" / ")}.
+La dépense du système actuel est celle du COR, que le modèle fait suivre la
+pyramide de chaque variante ; ses ressources ne bougent pas. Le
+<a href="${g.lien("/simuler")}">simulateur</a> offre le même réglage, sur une
+carrière.</p>`, "cout-esperance-vie");
 }
 
 function coutDetailScenarios(contexte) {

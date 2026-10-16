@@ -535,15 +535,52 @@ export class CoutFige {
   }
 }
 
+// -- le coût sous les hypothèses d'espérance de vie ---------------------------
+
+/**
+ * Le coût sous les trois hypothèses d'espérance de vie de l'INSEE, que la page
+ * Coût met côte à côte (action 138, étape 7) : la dépense de chaque système à
+ * quelques années, son solde à l'horizon, son solde moyen sur les années
+ * projetées. `figer_esperance_vie` (`donnees/agregats.py`) l'écrit.
+ */
+export class EsperanceVieFigee {
+  constructor(brut) {
+    this._brut = brut;
+    this.hypotheses = [...brut.hypotheses];
+    this.annees = brut.annees.map(Number);
+    [this.premiereAnnee, this.derniereAnnee] = brut.fenetre.map(Number);
+  }
+
+  /** La dépense d'un système une année, en part de PIB. */
+  partPib(hypothese, scenario, annee) {
+    const parts = lire(lire(this._brut.parts_pib, hypothese, "hypothèse"),
+      scenario, "système");
+    return Number(lire(parts, String(annee), "année"));
+  }
+
+  /** Le solde d'un système à l'horizon, en part de PIB. */
+  solde(hypothese, scenario) {
+    return Number(lire(lire(this._brut.soldes, hypothese, "hypothèse"),
+      scenario, "système"));
+  }
+
+  /** Le solde moyen d'un système sur les années projetées, en part de PIB. */
+  soldeMoyen(hypothese, scenario) {
+    return Number(lire(lire(this._brut.soldes_moyens, hypothese, "hypothèse"),
+      scenario, "système"));
+  }
+}
+
 // -- la table -----------------------------------------------------------------
 
 /** Ce que les trois pages qui agrègent lisent, tel que la table le porte. */
 export class AgregatsFiges {
-  constructor(casTypes, avantages, classement, cout) {
+  constructor(casTypes, avantages, classement, cout, esperanceVie) {
     this.casTypes = casTypes;
     this.avantages = avantages;
     this.classement = classement;
     this.cout = cout;
+    this.esperanceVie = esperanceVie;
   }
 }
 
@@ -554,5 +591,6 @@ export function chargerAgregats(donnees) {
     new AvantagesFiges(donnees.avantages),
     new ClassementFige(donnees.classement),
     new CoutFige(donnees.cout),
+    new EsperanceVieFigee(donnees.esperance_vie),
   );
 }

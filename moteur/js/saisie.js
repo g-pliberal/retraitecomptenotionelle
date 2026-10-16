@@ -113,6 +113,16 @@ export const PROJECTIONS = [
   ["cor_productivite_haute", "COR variante haute — 1,0 %"],
 ];
 
+// L'espérance de vie des projections de population 2026 de l'INSEE : la
+// centrale, ou l'une des deux hypothèses qui en ôtent ou y ajoutent trois ans à
+// l'horizon 2070 (action 138, étape 7). Elle décide des quotients projetés,
+// donc du diviseur : les systèmes 2 à 6 la lisent, le système 1 n'en lit rien.
+export const HYPOTHESES_ESPERANCE_VIE = [
+  ["centrale", "INSEE, hypothèse centrale (défaut)"],
+  ["basse", "INSEE, espérance de vie basse (trois ans de moins en 2070)"],
+  ["haute", "INSEE, espérance de vie haute (trois ans de plus en 2070)"],
+];
+
 // L'emploi au-delà de la dernière observation. Il ne compose que la masse
 // salariale et le PIB projetés, donc l'indexation des comptes notionnels : les
 // systèmes 2 à 6 le lisent, le système 1 ne lit ni l'une ni l'autre.
@@ -479,7 +489,7 @@ export const CLES_MODELISATION = Object.freeze([
   "indexation", "lissage", "age_reference", "table", "population",
   "rattachement", "conversion_acquis", "part_cotisation",
   "contribution_etat", "foyer", "projection", "emploi", "stock", "reprise",
-  "frais", "taux", "bascule", "euros",
+  "frais", "taux", "bascule", "euros", "esperance_vie",
 ]);
 
 export const DEFAUTS = Object.freeze({
@@ -641,6 +651,8 @@ export const DEFAUTS = Object.freeze({
   // système 4. Le défaut est la personne seule, comme pour l'ASPA.
   foyer: "seul",
   projection: "cor_reference",
+  //: L'hypothèse d'espérance de vie de l'INSEE, que le diviseur lit.
+  esperance_vie: "centrale",
   emploi: "cor_2026",
   stock: "prix",
   // Part de l'avance de la garantie que la succession couvre, en pour cent ;
@@ -812,6 +824,8 @@ export class Saisie {
       ),
       foyer: parmi(parametres, "foyer", SITUATIONS_FOYER, DEFAUTS.foyer),
       projection: parmi(parametres, "projection", PROJECTIONS, DEFAUTS.projection),
+      esperance_vie: parmi(parametres, "esperance_vie", HYPOTHESES_ESPERANCE_VIE,
+        DEFAUTS.esperance_vie),
       emploi: parmi(parametres, "emploi", TRAJECTOIRES_EMPLOI, DEFAUTS.emploi),
       stock: parmi(parametres, "stock", REVALORISATIONS_STOCK, DEFAUTS.stock),
       reprise: entier(parametres, "reprise", DEFAUTS.reprise),
@@ -1303,6 +1317,7 @@ export class Saisie {
         cleEnum(ContributionEtat, this.contribution_etat)],
       situation_foyer: SituationFoyer[cleEnum(SituationFoyer, this.foyer)],
       scenario_projection: this.projection,
+      hypothese_esperance_vie: this.esperance_vie,
       trajectoire_emploi: this.emploi,
       revalorisation_stock: this.stock,
       part_reprise_garantie: this.reprise === null ? null : this.reprise / 100,
@@ -2461,6 +2476,9 @@ export class Saisie {
       contribution_etat: this.contribution_etat,
       foyer: this.foyer,
       projection: this.projection, emploi: this.emploi, stock: this.stock,
+      // L'espérance de vie ne s'écrit qu'écartée de la centrale : les adresses
+      // d'avant elle restent celles qu'elles étaient.
+      ...(this.esperance_vie !== "centrale" ? { esperance_vie: this.esperance_vie } : {}),
       reprise: this.reprise === null ? "" : this.reprise,
       frais: this.frais,
       taux: this.taux,

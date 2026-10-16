@@ -286,7 +286,8 @@ def test_les_pages_longues_portent_leur_plan():
     for chemin, attendus in (
         ("/cout", ["cout-bilan", "cout-provenance", "cout-flux", "cout-depenses",
                    "cout-ressources",
-                   "cout-transferts", "cout-scenarios", "cout-cascade",
+                   "cout-transferts", "cout-scenarios", "cout-esperance-vie",
+                   "cout-cascade",
                    "cout-equilibre", "cout-postes",
                    "cout-dette",
                    "cout-frise", "cout-garantie", "cout-capitalisation", "cout-poids", "cout-sources",
@@ -549,7 +550,7 @@ def test_chaque_tableau_de_scenarios_distingue_proposition_et_contrefactuel():
     """Un badge là où l'erreur de lecture se produit, non dans un préambule.
 
     Sur Cas types, chaque panneau porte le sien dans son titre ; sur Coût, les
-    quatre tableaux qui alignent les systèmes le portent en tête de ligne.
+    cinq tableaux qui alignent les systèmes le portent en tête de ligne.
     Le système actuel n'en a pas : c'est la référence.
     """
     cas_types = rendre("/cas-types", {})[1]
@@ -562,12 +563,12 @@ def test_chaque_tableau_de_scenarios_distingue_proposition_et_contrefactuel():
     cout = rendre("/cout", {})[1]
     lignes = re.findall(r'<th class="" scope="row">(\d)\. [^<]*(?:<span class="badge (\w+)">)?',
                         cout)
-    # Quatre tableaux à quatre lignes : le passé, l'avenir, l'équilibre, la
-    # dette.
-    assert lignes.count(("1", "")) == 4, lignes
-    assert lignes.count(("4", "proposition")) == 4
+    # Cinq tableaux à quatre lignes : le passé, l'avenir, l'espérance de vie
+    # (action 138, étape 7), l'équilibre, la dette.
+    assert lignes.count(("1", "")) == 5, lignes
+    assert lignes.count(("4", "proposition")) == 5
     for numero in "23":
-        assert lignes.count((numero, "contrefactuel")) == 4, numero
+        assert lignes.count((numero, "contrefactuel")) == 5, numero
     assert ".badge.proposition" in FEUILLE_DE_STYLE
 
 

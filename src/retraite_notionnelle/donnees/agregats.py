@@ -915,6 +915,79 @@ class CoutFige:
                                    "dette au taux décalé de"))
 
 
+# -- le coût sous les hypothèses d'espérance de vie ----------------------------
+#
+# LA PAGE COÛT MONTRE LA RÉFÉRENCE, sous l'hypothèse centrale de l'INSEE. Ce
+# qu'une longévité plus courte ou plus longue de trois ans en 2070 en ferait
+# (action 138, étape 7) tient en un tableau : la dépense de chaque système à
+# quelques années, son solde à l'horizon, et son solde moyen sur les années
+# projetées, sous chacune des trois hypothèses. Le coût entier n'est figé que
+# sous la centrale.
+
+
+def figer_esperance_vie(couts: dict, scenarios, annees) -> dict:
+    """Le coût sous chaque hypothèse d'espérance de vie (``couts``, par
+    hypothèse, ce que ``cout.calculer_cout`` rend), pour les systèmes
+    ``scenarios`` et les années ``annees`` de la dépense.
+
+    La dépense est celle du bilan (``SoldeAnnuel.depense``), dont le solde
+    est tiré : les deux se lisent ensemble. Le solde moyen court sur les
+    années que le bilan projette, comme sur la page : de sa première année
+    projetée à son horizon.
+    """
+    def fenetre(cout):
+        return cout.solde.premiere_annee_projetee, cout.solde.derniere_annee
+    fenetres = {fenetre(cout) for cout in couts.values()}
+    if len(fenetres) != 1:
+        raise ValueError(f"les hypothèses ne projettent pas les mêmes années : {fenetres}")
+    debut, fin = fenetres.pop()
+    return {
+        "hypotheses": list(couts),
+        "annees": list(annees),
+        "fenetre": [debut, fin],
+        "parts_pib": {
+            hypothese: {scenario: {str(annee): cout.solde.annee(annee).depense(scenario)
+                                   for annee in annees}
+                        for scenario in scenarios}
+            for hypothese, cout in couts.items()},
+        "soldes": {
+            hypothese: {scenario: cout.solde.annee(fin).solde(scenario)
+                        for scenario in scenarios}
+            for hypothese, cout in couts.items()},
+        "soldes_moyens": {
+            hypothese: {scenario: cout.solde.solde_moyen(scenario, debut, fin)
+                        for scenario in scenarios}
+            for hypothese, cout in couts.items()},
+    }
+
+
+class EsperanceVieFigee:
+    """Le coût sous les trois hypothèses d'espérance de vie, que la page Coût
+    met côte à côte."""
+
+    def __init__(self, brut: dict):
+        self._brut = brut
+        self.hypotheses: tuple[str, ...] = tuple(brut["hypotheses"])
+        self.annees: tuple[int, ...] = tuple(int(annee) for annee in brut["annees"])
+        self.premiere_annee, self.derniere_annee = (int(a) for a in brut["fenetre"])
+
+    def part_pib(self, hypothese: str, scenario: str, annee: int) -> float:
+        """La dépense d'un système une année, en part de PIB."""
+        parts = _lire(_lire(self._brut["parts_pib"], hypothese, "hypothèse"),
+                      scenario, "système")
+        return float(_lire(parts, str(annee), "année"))
+
+    def solde(self, hypothese: str, scenario: str) -> float:
+        """Le solde d'un système à l'horizon, en part de PIB."""
+        return float(_lire(_lire(self._brut["soldes"], hypothese, "hypothèse"),
+                           scenario, "système"))
+
+    def solde_moyen(self, hypothese: str, scenario: str) -> float:
+        """Le solde moyen d'un système sur les années projetées, en part de PIB."""
+        return float(_lire(_lire(self._brut["soldes_moyens"], hypothese, "hypothèse"),
+                           scenario, "système"))
+
+
 # -- la table ------------------------------------------------------------------
 
 
@@ -926,6 +999,7 @@ class AgregatsFiges:
     avantages: AvantagesFiges
     classement: ClassementFige
     cout: CoutFige
+    esperance_vie: EsperanceVieFigee
 
 
 def depuis_dictionnaire(donnees: dict) -> AgregatsFiges:
@@ -935,6 +1009,7 @@ def depuis_dictionnaire(donnees: dict) -> AgregatsFiges:
         avantages=_avantages(donnees["avantages"]),
         classement=_classement(donnees["classement"]),
         cout=CoutFige(donnees["cout"]),
+        esperance_vie=EsperanceVieFigee(donnees["esperance_vie"]),
     )
 
 
