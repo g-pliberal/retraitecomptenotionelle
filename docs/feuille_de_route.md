@@ -4693,15 +4693,15 @@ de statuts et les `manque` de la page Méthode.
 
 ### 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats — `en cours`
 
-**Reprise, au 14 octobre 2026.** Fait : le levier 1 (scripts) ; le 2, les
-tests qui déclarent leur date et leur garde sur GitHub (note du 14) ; le 3
-pour l'essentiel ; le hook de démarrage ; « Économiser le contexte » ;
-l'arbre du dépôt ; le parcours `tenu` ; le contexte en cinq étapes ; la
-mémoire indexée sur le seul modèle, et les fiches de règles qui y entrent
-sans leur documentation (note du 14, `fiches-dans-l-empreinte`) ;
-`pousser.sh` publie une tête détachée. Reste : `actions/cache` sur GitHub,
-que le propriétaire décide ; la fin du portage rejoué
-(`2026-10-10-portage-que-node-rejoue.md`), par quoi commencer ; le 4 et 5.
+**Reprise, au 16 octobre 2026.** Fait : les leviers 1, 2 et, pour
+l'essentiel, 3 ; le hook de démarrage ; « Économiser le contexte » ; l'arbre
+du dépôt ; le parcours `tenu` ; le contexte en cinq étapes ; la mémoire
+indexée sur le seul modèle, fiches de règles comprises ; `pousser.sh` publie
+une tête détachée ; `node --test` sauté quand rien de ce qu'il lit n'a bougé
+(note du 16, `empreinte-de-node-test`). Reste : `actions/cache` sur GitHub,
+que le propriétaire décide ; du portage rejoué, les cumuls tirés au hasard
+et le portage du coût, à mesurer, et les pages au hasard, que la session des
+pages tient (`2026-10-10-portage-que-node-rejoue.md`) ; le 4 et 5.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus

@@ -1,0 +1,12 @@
+date: "2026-10-16"
+session: "action 135 : l'empreinte de node --test, sauté quand rien de ce qu'il lit n'a bougé"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement à l'outillage des tests (tests/conftest.py, tests/test_niveaux.py).
+trouve: >-
+  Aucune règle n'a changé. node --test ne lit rien du modèle : le portage, le
+  paquet, les témoins, ses essais et les quotients de mortalité ; il entre
+  dans ISOLES, sous une clé de test seul et des dossiers entiers.
+reste: >-
+  Les cumuls tirés au hasard et le portage du coût, à mesurer ; actions/cache
+  sur GitHub, que le propriétaire décide.
