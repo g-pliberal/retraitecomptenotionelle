@@ -88,6 +88,37 @@ export function pointsMsa(moteur, periode, annee, revenu) {
   return Math.floor(points + 0.5 + 1e-9);
 }
 
+/** Le plancher de R. 732-73, seize points par an, pour les retraites
+ * proportionnelles qui prennent effet de 1994 à 2025. Voir acquerir.py. */
+export const POINTS_MSA_MINIMUM = 16.0;
+
+/** Les points de R. 732-71 portés au plancher de R. 732-73. */
+export function pointsMsaRetenus(points, anneeLiquidation) {
+  if (anneeLiquidation >= 1994 && anneeLiquidation < 2026) {
+    return Math.max(points, POINTS_MSA_MINIMUM);
+  }
+  return points;
+}
+
+/**
+ * L'assiette FORFAITAIRE du collaborateur d'exploitation et de l'aide
+ * familial, en SMIC horaires, ou `null` : 400 SMIC au régime de base depuis
+ * 2004 (D. 731-123, D. 731-120), 600 depuis 2026 ; 1 200 SMIC à la RCO depuis
+ * 2011 (D. 732-155, II). Voir acquerir.py.
+ */
+export function assietteDuCollaborateur(code, ligne) {
+  if (ligne.affiliation !== "collaborateur_agricole") {
+    return null;
+  }
+  if (code === "msa_non_salaries" && ligne.annee >= 2004) {
+    return ligne.annee < 2026 ? 400.0 : 600.0;
+  }
+  if (code === "msa_rco" && ligne.annee >= 2011) {
+    return 1200.0;
+  }
+  return null;
+}
+
 /**
  * Points que ce régime attribue sans cotisation à la liquidation, et la
  * fiabilité de la durée requise qui les conditionne : cent points par année
@@ -376,6 +407,12 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           // ce qui est appelé. Le plafond est déjà proratisé sur les mois.
           assiette = Math.max(assiette, periode.assietteMinimale(pass));
         }
+        // Le collaborateur et l'aide familial cotisent sur un forfait, quel
+        // que soit leur revenu : `assietteDuCollaborateur`.
+        const forfaitCollaborateur = assietteDuCollaborateur(code, ligne);
+        if (forfaitCollaborateur !== null) {
+          assiette = forfaitCollaborateur * moteur.macro.smic_horaire.valeur(ligne.annee) * part;
+        }
         // La cotisation forfaitaire s'ajoute à la proportionnelle, et elle est
         // due quel que soit le revenu — même convention que dans compte.js.
         let forfait = 0.0;
@@ -416,7 +453,8 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           const [echelleMsa, fiabiliteEchelleMsa] = moteur.conversionsPoints
             .echelle(bareme, ligne.annee, anneeLiquidation);
           crediter(code, ligne.annee,
-            pointsMsa(moteur, periode, ligne.annee, assiette) * part * echelleMsa,
+            pointsMsaRetenus(pointsMsa(moteur, periode, ligne.annee, assiette),
+              anneeLiquidation) * part * echelleMsa,
             Boolean(periode.points_abattus_a_l_age));
           fiabilitePoints.set(code, Math.min(
             fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, regime.fiabilite,
@@ -502,8 +540,13 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           // sont les barèmes qui sont publiés, pas les prix d'achat.
           const [echelleBareme, fiabiliteEchelleBareme] = moteur.conversionsPoints
             .echelle(bareme, ligne.annee, anneeLiquidation);
-          crediter(code, ligne.annee,
-            periode.points_maximum * assiette / repere * echelleBareme,
+          // Les points du collaborateur sont ceux que le texte écrit, entiers :
+          // 66, 77 et 88 (D. 732-155, II).
+          const pointsAnnee = forfaitCollaborateur === null
+            ? periode.points_maximum * assiette / repere
+            : Math.floor(periode.points_maximum * forfaitCollaborateur
+              / periode.assiette_repere_smic + 0.5) * part;
+          crediter(code, ligne.annee, pointsAnnee * echelleBareme,
             Boolean(periode.points_abattus_a_l_age));
           fiabilitePoints.set(code, Math.min(
             fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, regime.fiabilite,

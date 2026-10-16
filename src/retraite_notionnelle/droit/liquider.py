@@ -828,7 +828,11 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 )
                 if fiabilite_prorata is not None:
                     fiabilite_regime = min(fiabilite_regime, fiabilite_prorata)
-                acquis = min(trimestres_par_regime.get(code, 0), proratisation)
+                acquis = min(
+                    max(0, trimestres_par_regime.get(code, 0)
+                        - trimestres_hors_forfait(carriere, durees, code,
+                                                  annee_liquidation)),
+                    proratisation)
                 if proratisation > 0 and acquis > 0:
                     forfait = (
                         periode.pension_forfaitaire_annuelle
@@ -1622,6 +1626,40 @@ def annuites_au_taux_de_leur_annee(moteur, code: str, carriere: Carriere, durees
 #: deux minima des exploitants, à compter du 1er janvier de cette année
 #: (D. 732-110 et D. 732-166-1, rédaction du décret n° 2025-1410).
 ANNEE_DU_TITRE_SECONDAIRE = 2026
+
+
+#: L'année depuis laquelle le chef d'exploitation à titre accessoire n'a plus
+#: droit qu'à la retraite proportionnelle (article 1121-1 de l'ancien code
+#: rural, puis L. 732-28) : qui l'était avant 1981 garde la forfaitaire
+#: (décret n° 80-808, article 12 ; R. 732-65).
+ANNEE_DU_TITRE_ACCESSOIRE = 1981
+
+
+def trimestres_hors_forfait(carriere: Carriere, durees, code: str,
+                            annee_liquidation: int) -> int:
+    """Les trimestres du régime des non-salariés agricoles que la retraite
+    forfaitaire ne compte pas : ceux des années de chef à titre secondaire.
+
+    « Les personnes ayant exercé, concurremment avec une activité salariée,
+    une activité agricole non salariée ne présentant qu'un caractère
+    accessoire peuvent seulement prétendre à la pension de retraite
+    proportionnelle » (L. 732-28) ; elles ne doivent pas la cotisation qui la
+    finance (L. 731-42, 1°), et la MSA sert le forfait à « l'activité
+    non-salariée agricole exercée à titre exclusif ou principal ». Qui a été
+    non-salarié agricole avant 1981 la garde (R. 732-65). La loi n° 2025-199
+    abroge L. 732-28 au 1er janvier 2026, et le décret n° 2025-1409 R. 732-65
+    pour les pensions qui prennent effet depuis : la règle ne vaut que pour
+    les pensions d'avant 2026."""
+    if (code != coordonner.REGIME_DES_NON_SALARIES_AGRICOLES
+            or annee_liquidation >= ANNEE_DU_TITRE_SECONDAIRE):
+        return 0
+    par_annee = durees.par_annee["assurance"].get(code, {})
+    if any(annee < ANNEE_DU_TITRE_ACCESSOIRE and nombre > 0
+           for annee, nombre in par_annee.items()):
+        return 0
+    return somme_ordonnee(min(nombre, carriere.plafond_trimestres(annee))
+                          for annee, nombre in par_annee.items()
+                          if carriere.qualite_agricole(annee) == "chef_secondaire")
 
 
 def eligible_agricole(moteur, periode: PeriodeRegime, carriere: Carriere, releve: Releve,
@@ -2447,6 +2485,16 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
                 revenu = max(revenu, periode.assiette_repere_smic
                              * moteur.macro.smic_horaire(ligne.annee)
                              * ligne.fraction_annee)
+            # Le collaborateur et l'aide familial n'ont pour revenu que
+            # l'assiette forfaitaire de leurs cotisations : 400 SMIC jusqu'en
+            # 2025, 600 depuis (`acquerir.assiette_du_collaborateur`).
+            forfait = (acquerir.assiette_du_collaborateur(
+                           coordonner.REGIME_DES_NON_SALARIES_AGRICOLES, ligne)
+                       if coordonner.REGIME_DES_NON_SALARIES_AGRICOLES in codes_admis
+                       else None)
+            if forfait is not None:
+                revenu = (forfait * moteur.macro.smic_horaire(ligne.annee)
+                          * ligne.fraction_annee)
         # TRANCHE DE SALAIRE. Un régime qui liquide TRANCHE PAR TRANCHE —
         # le personnel navigant, dont l'article R. 426-16-1 attribue
         # 1,85 % par annuité à la première et 1,4 % à la seconde — a

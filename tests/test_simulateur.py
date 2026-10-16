@@ -3542,7 +3542,7 @@ def test_la_complementaire_agricole_ouvre_ses_points_a_l_assiette_minimale(simul
     assert pension.montant > 0
 
 
-def test_la_base_agricole_ouvre_quinze_points_au_minimum_avant_2004(simulateur):
+def test_la_base_agricole_ouvre_seize_points_au_minimum_avant_2004(simulateur):
     """Le minimum d'assiette de la retraite proportionnelle agricole est de 400
     SMIC horaires jusqu'au décret n° 2004-783, de 600 ensuite : quinze points,
     puis 22,5, au chef dont le revenu est plus bas (décret n° 90-498, article
@@ -3551,7 +3551,9 @@ def test_la_base_agricole_ouvre_quinze_points_au_minimum_avant_2004(simulateur):
     entier le plus proche » : 23 (R. 732-71, dernier alinéa). Jusqu'au 27
     septembre 2026, le modèle relevait le revenu à 600 SMIC dès 1990, et
     servait 22,5 points. L'année 2004, que le décret ne date pas, est prise à
-    600 SMIC, comme la fiche `assiette_minimale_agricole` le déclare.
+    600 SMIC, comme la fiche `assiette_minimale_agricole` le déclare. Les
+    quinze points sont portés à seize pour une pension prenant effet de 1994 à
+    2025 (R. 732-73), depuis le 16 octobre 2026.
     """
     from retraite_notionnelle.droit import acquerir, compter, coordonner
 
@@ -3565,8 +3567,10 @@ def test_la_base_agricole_ouvre_quinze_points_au_minimum_avant_2004(simulateur):
                                compter.compter(actuel, coordination))
     base = {annee: points for regime, annee, points, _ in droits.points
             if regime == "msa_non_salaries"}
-    assert all(base[annee] == pytest.approx(15.0) for annee in range(1990, 2004))
+    assert all(base[annee] == pytest.approx(16.0) for annee in range(1990, 2004))
     assert all(base[annee] == pytest.approx(23.0) for annee in range(2004, 2010))
+    assert acquerir.points_msa_retenus(15.0, 1993) == 15.0
+    assert acquerir.points_msa_retenus(15.0, 2026) == 15.0
 
 def _rco(resultat):
     """La pension de RCO et la ligne de cascade de ses points gratuits."""

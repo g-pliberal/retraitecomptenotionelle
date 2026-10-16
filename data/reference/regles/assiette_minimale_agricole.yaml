@@ -23,7 +23,11 @@ effet: >-
   (+1,4 %) ; les scénarios rétroactifs de la proposition, dont le compte reçoit désormais
   la cotisation au taux de chaque année, baissent de 1 à 3 %. Reste une approximation : la
   première année de cotisation sur 600 SMIC, que le moteur place en 2004 et que le décret
-  n° 2004-783 ne date pas.
+  n° 2004-783 ne date pas. Depuis le 16 octobre 2026 (étape 138.8), le collaborateur et
+  l'aide familial n'ont pas de plancher mais un forfait : 400 SMIC horaires à la base
+  depuis 2004 (D. 731-123), 600 depuis 2026 ; à la RCO, 1 200 SMIC depuis 2011, qui
+  ouvrent 66 points par an jusqu'en 2016, 77 en 2017 et 88 depuis (D. 732-155, II), au lieu
+  des cent points au moins que le plancher du chef leur donnait.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2027-03-31
@@ -104,6 +108,16 @@ sources:
       (LEGIARTI000049904715) : « P = C/ [(1820 SMIC x T)/ N] », N étant « égal à 133 ».
       Lu dans l'index LEGI du dépôt
     date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      D. 732-155, II, rédactions du 5 mai 2017 (LEGIARTI000034578860) et pour les
+      cotisations depuis 2026 (LEGIARTI000049904715) : « Pour les personnes mentionnées au
+      IV de l'article L. 732-56, l'assiette des cotisations [...] est fixée à 1 200 fois le
+      montant du salaire minimum de croissance » ; le nombre de points « est égal à 66 par
+      an pour les périodes postérieures au 31 décembre 2010 et antérieures au 1er janvier
+      2017, à 77 par an pour l'année 2017, à 88 par an à compter de l'année 2018 ». Lu
+      dans l'index LEGI du dépôt
+    date: 2026-10-16
   - type: jorf
     reference: >-
       décret n° 2017-716 du 2 mai 2017 (JORFTEXT000034567505), notice : « à compter de

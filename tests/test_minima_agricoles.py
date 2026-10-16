@@ -409,6 +409,58 @@ def test_le_chef_a_titre_secondaire_ne_compte_que_depuis_2026(simulateur):
         assert "points_gratuits_rco" not in avantages
 
 
+def _points(simulateur: Simulateur, carriere: Carriere) -> dict[tuple[str, int], float]:
+    from retraite_notionnelle.droit import releve
+    points: dict[tuple[str, int], float] = {}
+    for code, annee, nombre, _ in releve.construire(
+            simulateur.scenario_actuel, carriere).droits.points:
+        points[code, annee] = points.get((code, annee), 0.0) + nombre
+    return points
+
+
+def test_le_collaborateur_cotise_sur_l_assiette_forfaitaire(simulateur):
+    """Le collaborateur et l'aide familial cotisent sur un forfait, non sur
+    leur revenu : au régime de base, 400 SMIC horaires depuis 2004
+    (D. 731-123), qui ouvrent quinze points, portés à seize (R. 732-73) ; à la
+    RCO, 1 200 SMIC depuis 2011, 66 points jusqu'en 2016, 77 en 2017, 88
+    depuis (D. 732-155, II). Le revenu saisi n'y change rien depuis 2004."""
+    resultats = []
+    for niveau in (0.3, 1.5):
+        metiers = [Metier("collaborateur_agricole", 20.0, niveau_salaire=niveau)]
+        carriere = _chef(simulateur, 1960, 64, sexe="F", metiers=metiers)
+        assert carriere.annee_liquidation < 2026
+        points = _points(simulateur, carriere)
+        for annee in range(2004, 2024):
+            assert points["msa_non_salaries", annee] == 16.0, annee
+        assert ("msa_rco", 2010) not in points
+        assert [points["msa_rco", annee] for annee in (2011, 2016, 2017, 2018, 2023)] == [
+            66.0, 66.0, 77.0, 88.0, 88.0]
+        resultats.append(_resultat(simulateur, carriere)[2]["msa_rco"])
+    # Avant 2004, la cotisation se prenait des revenus du chef, que le modèle
+    # ne connaît pas : seule la RCO est entière au forfait.
+    assert resultats[0] == resultats[1]
+
+
+def test_le_chef_a_titre_secondaire_n_a_pas_de_forfait_avant_2026(simulateur):
+    """Salarié, et chef d'exploitation à côté depuis 1988 : avant 2026, ses
+    années de chef à titre accessoire ne lui ouvrent que la retraite
+    proportionnelle (L. 732-28), et le forfait ne les compte pas. Qui était
+    déjà chef avant 1981 le garde (R. 732-65)."""
+    metiers = [Metier("salarie_prive_non_cadre", 20.0, niveau_salaire=0.3),
+               Metier("exploitant_agricole", 30.0, niveau_salaire=0.1, cumul=True)]
+    carriere = _chef(simulateur, 1958, 66, metiers=metiers)
+    assert carriere.annee_liquidation < 2026
+    resultat, _, pensions = _resultat(simulateur, carriere)
+    detail = {p.regime: p.detail for p in resultat.pensions_par_regime}["msa_non_salaries"]
+    assert "forfait" not in detail and pensions["msa_non_salaries"] > 0
+    ancien = _chef(simulateur, 1945, 65, metiers=[
+        Metier("salarie_prive_non_cadre", 20.0, niveau_salaire=0.3),
+        Metier("exploitant_agricole", 30.0, niveau_salaire=0.1, cumul=True)])
+    resultat, _, _ = _resultat(simulateur, ancien)
+    assert "forfait" in {p.regime: p.detail
+                         for p in resultat.pensions_par_regime}["msa_non_salaries"]
+
+
 # -- les deux moteurs -------------------------------------------------------------
 
 #: Des chefs d'exploitation à faible revenu, de 2010 à 2030 : la PMR seule,

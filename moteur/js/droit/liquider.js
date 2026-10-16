@@ -347,7 +347,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           fiabiliteRegime = Math.min(fiabiliteRegime, fiabiliteProrataForfait);
         }
         const acquis = Math.min(
-          trimestresParRegime.get(code) ?? 0, proratisationForfait,
+          Math.max(0, (trimestresParRegime.get(code) ?? 0)
+            - trimestresHorsForfait(carriere, durees, code, anneeLiquidation)),
+          proratisationForfait,
         );
         if (proratisationForfait > 0 && acquis > 0) {
           const forfait = periode.pension_forfaitaire_annuelle
@@ -1019,6 +1021,34 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
  * D. 732-166-1, rédaction du décret n° 2025-1410).
  */
 export const ANNEE_DU_TITRE_SECONDAIRE = 2026;
+
+/** L'année depuis laquelle le chef à titre accessoire n'a plus droit qu'à la
+ * retraite proportionnelle (L. 732-28 ; R. 732-65). */
+export const ANNEE_DU_TITRE_ACCESSOIRE = 1981;
+
+/**
+ * Les trimestres du régime des non-salariés agricoles que la retraite
+ * forfaitaire ne compte pas : ceux des années de chef à titre secondaire,
+ * pour les pensions d'avant 2026, sauf à qui l'était déjà avant 1981. Voir
+ * `trimestres_hors_forfait` dans le Python.
+ */
+export function trimestresHorsForfait(carriere, durees, code, anneeLiquidation) {
+  if (code !== coordonner.REGIME_DES_NON_SALARIES_AGRICOLES
+      || anneeLiquidation >= ANNEE_DU_TITRE_SECONDAIRE) {
+    return 0;
+  }
+  const parAnnee = durees.parAnnee.assurance.get(code) ?? new Map();
+  let hors = 0;
+  for (const [annee, nombre] of parAnnee) {
+    if (annee < ANNEE_DU_TITRE_ACCESSOIRE && nombre > 0) {
+      return 0;
+    }
+    if (carriere.qualiteAgricole(annee) === "chef_secondaire") {
+      hors += Math.min(nombre, carriere.plafondTrimestres(annee));
+    }
+  }
+  return hors;
+}
 
 /**
  * Ce que la pension majorée de référence et le complément différentiel de la
@@ -1729,6 +1759,15 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
           && periode.assiette_repere_smic !== undefined) {
         revenu = Math.max(revenu, periode.assiette_repere_smic
           * moteur.macro.smic_horaire.valeur(ligne.annee) * ligne.fraction_annee);
+      }
+      // Le collaborateur et l'aide familial n'ont pour revenu que l'assiette
+      // forfaitaire de leurs cotisations (`acquerir.assietteDuCollaborateur`).
+      const forfait = codesAdmis.has(coordonner.REGIME_DES_NON_SALARIES_AGRICOLES)
+        ? acquerir.assietteDuCollaborateur(
+          coordonner.REGIME_DES_NON_SALARIES_AGRICOLES, ligne)
+        : null;
+      if (forfait !== null) {
+        revenu = forfait * moteur.macro.smic_horaire.valeur(ligne.annee) * ligne.fraction_annee;
       }
     }
     // TRANCHE DE SALAIRE. Un régime qui liquide tranche par tranche — le

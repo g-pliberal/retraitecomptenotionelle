@@ -141,6 +141,50 @@ def points_msa(moteur: ScenarioActuel, periode: PeriodeRegime, annee: int,
     return float(math.floor(points + 0.5 + 1e-9))
 
 
+#: Le plancher de R. 732-73 : seize points par an au moins, pour les retraites
+#: proportionnelles qui prennent effet depuis 1994 ; le décret n° 2025-1409
+#: l'abroge pour celles qui prennent effet depuis 2026.
+POINTS_MSA_MINIMUM = 16.0
+
+
+def points_msa_retenus(points: float, annee_liquidation: int) -> float:
+    """Les points de R. 732-71 portés au plancher de R. 732-73 : « Pour le
+    calcul des retraites proportionnelles prenant effet postérieurement au
+    31 décembre 1993, le nombre de points acquis chaque année [...] ne peut
+    être inférieur à seize ». C'est ce que vaut l'année du collaborateur et
+    de l'aide familial, dont l'assiette de 400 SMIC ouvre quinze points."""
+    if 1994 <= annee_liquidation < 2026:
+        return max(points, POINTS_MSA_MINIMUM)
+    return points
+
+
+def assiette_du_collaborateur(code: str, ligne) -> float | None:
+    """L'assiette FORFAITAIRE du collaborateur d'exploitation et de l'aide
+    familial, en SMIC horaires, ou ``None`` : leurs cotisations ne se
+    prennent pas de leur revenu, mais d'un forfait que le décret fixe.
+
+    * Au régime de base, la cotisation du b du 2° de L. 731-42 « est assise
+      sur l'assiette minimale prévue à l'article D. 731-120 » (D. 731-123,
+      depuis la cotisation de 2004), 400 SMIC horaires (D. 731-120, 3°) ;
+      depuis 2026, l'assiette forfaitaire de la cotisation du 2° « est égale
+      à l'assiette minimale prévue à l'article D. 731-120 », 600 SMIC.
+    * À la RCO, ouverte au collaborateur et à l'aide familial en 2011,
+      « l'assiette des cotisations [...] est fixée à 1 200 fois le montant du
+      salaire minimum de croissance », qui ouvre 66 points par an jusqu'en
+      2016, 77 en 2017 et 88 depuis (D. 732-155, II).
+
+    Avant 2004, la cotisation du conjoint collaborateur se prenait des
+    revenus du chef (L. 731-42, 2°, rédaction de 2000), que le modèle ne
+    connaît pas : il garde le revenu saisi."""
+    if ligne.affiliation != "collaborateur_agricole":
+        return None
+    if code == "msa_non_salaries" and ligne.annee >= 2004:
+        return 400.0 if ligne.annee < 2026 else 600.0
+    if code == "msa_rco" and ligne.annee >= 2011:
+        return 1200.0
+    return None
+
+
 def points_gratuits(moteur: ScenarioActuel, periode: PeriodeRegime,
                     carriere: Carriere, assurance: dict[str, dict[int, int]],
                     trimestres: int, age_liquidation: float, au_taux_plein: bool = False
@@ -466,6 +510,12 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     # plafond est déjà proratisé sur les mois de l'année.
                     assiette = max(assiette,
                                    periode.assiette_minimale(pass_annuel))
+                # Le collaborateur et l'aide familial cotisent sur un forfait,
+                # quel que soit leur revenu : `assiette_du_collaborateur`.
+                forfait_collaborateur = assiette_du_collaborateur(code, ligne)
+                if forfait_collaborateur is not None:
+                    assiette = (forfait_collaborateur
+                                * moteur.macro.smic_horaire(ligne.annee) * part)
                 # La cotisation forfaitaire s'ajoute à la proportionnelle,
                 # et elle est due quel que soit le revenu — cf.
                 # `Compte._cotisation_forfaitaire`, même convention
@@ -519,7 +569,9 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                         bareme, ligne.annee, annee_liquidation
                     )
                     crediter(code, ligne.annee, (
-                        points_msa(moteur, periode, ligne.annee, assiette)
+                        points_msa_retenus(
+                            points_msa(moteur, periode, ligne.annee, assiette),
+                            annee_liquidation)
                         * part * echelle
                     ), periode.points_abattus_a_l_age)
                     fiabilite_points[code] = min(
@@ -608,8 +660,15 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     echelle, fiabilite_echelle = moteur.conversions_points.echelle(
                         bareme, ligne.annee, annee_liquidation
                     )
-                    crediter(code, ligne.annee,
-                             periode.points_maximum * assiette / repere * echelle,
+                    points_annee = periode.points_maximum * assiette / repere
+                    if forfait_collaborateur is not None:
+                        # Les points du collaborateur sont ceux que le texte
+                        # écrit, entiers : 66, 77 et 88 (D. 732-155, II), et
+                        # non 65,93, 77,14 et 87,69.
+                        points_annee = math.floor(
+                            periode.points_maximum * forfait_collaborateur
+                            / periode.assiette_repere_smic + 0.5) * part
+                    crediter(code, ligne.annee, points_annee * echelle,
                              periode.points_abattus_a_l_age)
                     fiabilite_points[code] = min(
                         fiabilite_points.get(code, Fiabilite.CERTIFIEE),

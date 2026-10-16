@@ -6,7 +6,10 @@ intitule: >-
   jusqu'à trente à 800 SMIC, trente jusqu'à deux fois le minimum contributif, puis une
   pente jusqu'au maximum M au plafond, arrondis à l'entier le plus proche ; pour les
   pensions prenant effet depuis 2026, les points d'avant 2016 ne comptent plus que par la
-  moyenne des meilleures années.
+  moyenne des meilleures années. Seize points par an au moins pour les pensions de 1994 à
+  2025 ; le collaborateur et l'aide familial cotisent sur un forfait de 400 SMIC depuis
+  2004 ; le chef à titre secondaire n'a, avant 2026, que cette retraite, sans la
+  forfaitaire.
 etat: approchee
 etape: acquerir_les_droits
 effet: >-
@@ -22,11 +25,36 @@ effet: >-
   meilleures années, multipliée par le nombre d'années — dans l'exemple de la MSA, 682
   points au lieu des 633 de la somme —, ceux de 2016 à 2027 dans le seul calcul
   provisoire des pensions de 2026 et 2027 ; le moteur le fait depuis le 28 septembre
-  2026, voir la fiche pension_non_salaries_agricoles_2026.
+  2026, voir la fiche pension_non_salaries_agricoles_2026. Depuis le 16 octobre 2026
+  (étape 138.8) : le plancher de seize points de R. 732-73, pour les pensions de 1994 à
+  2025 ; le collaborateur et l'aide familial cotisent sur 400 SMIC horaires depuis 2004
+  (D. 731-123), 600 depuis 2026, et non sur leur revenu — seize points par an, quel que
+  soit le revenu saisi —, et le revenu de leurs années depuis 2016, au 1° de L. 732-24, est
+  ce forfait ; le chef à titre secondaire n'a, pour une pension d'avant 2026, que la
+  retraite proportionnelle (L. 732-28), le forfait ne comptant pas ses années, sauf à qui
+  était non-salarié agricole avant 1981 (R. 732-65). Le salarié de 1958, chef à côté
+  depuis ses trente ans et parti en 2024, perd ainsi son forfait, qui faisait l'essentiel
+  des 4 900 € que le modèle lui servait.
 sources:
-  lu_le: 2026-10-14
+  lu_le: 2026-10-16
   prochaine_relecture: 2027-03-31
   a_relire:
+  - >-
+    Le chef à titre secondaire des pensions prenant effet depuis 2026 : la loi n° 2025-199
+    abroge L. 732-28, et le décret n° 2025-1409 R. 732-65 pour ces pensions ; la part a du
+    2° de L. 732-24 compte « la durée d'activité accomplie dans le régime » avant 2016, et
+    le modèle y garde les années de chef à titre secondaire. Chercher ce qu'en fait la MSA
+    (circulaire de la réforme, ou sa page « 25 meilleures années »).
+  - >-
+    L. 732-28 ne vise que l'activité accessoire d'un salarié ; le modèle écarte du forfait
+    toute année de chef à titre secondaire, comme la MSA, qui ne sert le forfait qu'à
+    « l'activité non-salariée agricole exercée à titre exclusif ou principal ». Le décret
+    qui définit le titre secondaire face à une autre activité non salariée reste à lire.
+  - >-
+    Le collaborateur d'avant 2004 : sa cotisation se prenait des revenus du chef (L.
+    731-42, 2°, rédaction de 2000), et l'aide familial d'avant 1999 cotisait déjà au b du
+    2° ; le conjoint participant aux travaux n'avait que la forfaitaire (L. 732-34). Le
+    modèle, qui ne distingue pas ces qualités, garde le revenu saisi avant 2004.
   - >-
     R. 732-70 ne dit pas à quelle date lire l'AVTS : le modèle prend, depuis le 14 octobre
     2026, le montant en vigueur au 1er janvier de l'année (pension_minimum_avant_1983.csv,
@@ -161,7 +189,60 @@ sources:
       compter de 2016 »
     url: https://www.msa.fr/lfp/retraite/non-salaries-agricoles
     date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      code rural et de la pêche maritime, R. 732-73 (LEGIARTI000006597482, du 22 avril
+      2005 au 1er janvier 2026) : « Pour le calcul des retraites proportionnelles prenant
+      effet postérieurement au 31 décembre 1993, le nombre de points acquis chaque année
+      par les intéressés en application des articles R. 732-69 à R. 732-72 ne peut être
+      inférieur à seize » ; abrogé, avec R. 732-69 à D. 732-77 et R. 732-65, pour les
+      pensions prenant effet depuis le 1er janvier 2026 (décret n° 2025-1409, article 1, I,
+      6° b et II, JORFARTI000053227477). Lu dans les index LEGI et JORF du dépôt
+    date: 2026-10-16
+  - type: legifrance
+    reference: >-
+      code rural et de la pêche maritime, D. 731-123 (LEGIARTI000006597345, « Pour l'année
+      2004 » ; LEGIARTI000019506723 ; LEGIARTI000026140073, du 4 juillet 2012 au 1er
+      janvier 2026) : « Les cotisations prévues au b du 2° de l'article L. 731-42 au titre
+      du collaborateur d'exploitation ou d'entreprise agricole au sens de l'article L.
+      321-5 et de l'aide familial au sens du 2° de l'article L. 722-10 sont assises sur
+      l'assiette minimale prévue à l'article D. 731-120 » ; D. 731-120, 3°
+      (LEGIARTI000028393446) : « 400 fois le montant du salaire minimum de croissance [...]
+      pour les cotisations mentionnées au 2° b) » ; depuis 2026 (LEGIARTI000053296672) : «
+      L'assiette forfaitaire de la cotisation prévue au 2° de l'article L. 731-42 est
+      égale à l'assiette minimale prévue à l'article D. 731-120 », 600 SMIC. L. 731-42,
+      rédaction du 1er janvier 2004 (LEGIARTI000006585488) : au b du 2°, « l'assiette de
+      ces cotisations est déterminée forfaitairement » ; rédaction de 2000
+      (LEGIARTI000006585486) : la cotisation du conjoint collaborateur se calcule « en
+      pourcentage des revenus professionnels du chef d'exploitation ». Lu dans l'index
+      LEGI du dépôt
+    date: 2026-10-16
+  - type: legifrance
+    reference: >-
+      code rural et de la pêche maritime, L. 732-28 (LEGIARTI000006585555,
+      LEGIARTI000006585556, jusqu'au 1er janvier 2026), et avant lui l'article 1121-1 de
+      l'ancien code (LEGIARTI000006581013, depuis le 5 juillet 1980) : « Les personnes
+      ayant exercé, concurremment avec une activité salariée, une activité agricole non
+      salariée ne présentant qu'un caractère accessoire peuvent seulement prétendre à la
+      pension de retraite proportionnelle » ; L. 731-42, 1° (LEGIARTI000023034860) : la
+      cotisation de la forfaitaire est due « pour chaque personne non salariée [...] à
+      l'exception des personnes mentionnées à l'article L. 732-28 » ; R. 732-65
+      (LEGIARTI000006597473) : celles « qui ont exercé une activité non salariée agricole
+      antérieurement au 1er janvier 1981, bénéficient, en plus de la retraite
+      proportionnelle, d'une retraite forfaitaire », déjà au décret n° 80-808, article 12
+      (LEGIARTI000006769225). Lu dans l'index LEGI du dépôt
+    date: 2026-10-16
+  - type: autre
+    reference: >-
+      MSA, « La retraite des non-salariés agricoles », lue le 16 octobre 2026 : la
+      retraite forfaitaire est un « montant forfaitaire dépendant de l'activité
+      non-salariée agricole exercée à titre exclusif ou principal »
+    url: https://www.msa.fr/lfp/retraite/non-salaries-agricoles
+    date: 2026-10-16
 textes_a_rattacher:
+- reference: >-
+    code rural et de la pêche maritime, R. 732-73, D. 731-123, L. 732-28 et R. 732-65,
+    jusqu'aux pensions prenant effet en 2025, et D. 731-123 dans sa rédaction de 2026
 - reference: >-
     décret n° 80-808 du 14 octobre 1980, article 8-1 (LEGIARTI000006769212,
     LEGIARTI000006769213, LEGIARTI000006769214), de 1990 à 2005
