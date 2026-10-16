@@ -1,0 +1,31 @@
+date: "2026-10-16"
+session: >-
+  l'action 131 : la durée de proratisation arrêtée au trimestre civil qui
+  précède la date d'effet
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI du dépôt (récupéré, à jour au
+  11 octobre 2026) : R. 351-1 CSS, toutes ses rédactions, et la phrase
+  « dernier jour du trimestre civil » ; la base législative de la Cnav, par sa
+  recherche (/api/v1/search/custom), phrases « date d'arrêt du compte » et
+  « trimestre civil précédant la date d'effet » : circulaires n° 2004/29
+  (point 2121), 51/98 (point 1321), 2002/71 (points 132 et 133), 2004/8
+  (points 3231 à 3233), 82/97 (point 21), 2010/54 (note 2, point 63) ; la
+  fiche taux_plein_et_proratisation.
+trouve: >-
+  R. 351-1 (LEGIARTI000006749339, rédaction du 21 décembre 1985, en vigueur)
+  arrête les droits au « dernier jour du trimestre civil précédant la date
+  prévue pour l'entrée en jouissance de la pension » ; la durée de L. 351-1
+  qui proratise l'est aussi, « les trimestres assimilés » compris (circulaire
+  n° 2004/29, point 2121). Le moteur laissait une période assimilée de l'année
+  de l'effet, sans ligne de carrière, y valider jusqu'à quatre trimestres
+  (Durees.cumul_plafonne) : corrigé dans les deux moteurs par un seul plafond
+  de l'année (Durees.plafond), que la durée de R. 173-4-3 lit aussi. La fiche
+  taux_plein_et_proratisation cite R. 351-1 et les circulaires ; le cliquet des
+  textes passe à 9 722.
+reste: >-
+  Le régime des non-salariés agricoles compte « les 4 trimestres de l'année de
+  cessation d'activité même s'il s'agit de l'année d'arrêt du compte au régime
+  général » (circulaire n° 2004/8, point 3232, renvoyant aux circulaires
+  n° 83/83 et 27/89), quand le moteur borne la ligne de l'année du départ aux
+  trimestres civils écoulés dans tous les régimes : à lire au code rural, une
+  étape à part.
