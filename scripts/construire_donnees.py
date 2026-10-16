@@ -1285,6 +1285,18 @@ def _validation_micro() -> dict:
             for activite, par_annee in sorted(charger_validation_micro(DONNEES).items())}
 
 
+def _cotisation_micro() -> dict:
+    """Le forfait de retraite du micro-entrepreneur, par activité : les deux
+    régimes qui le reçoivent et, par année, leurs taux sur le revenu abattu
+    (``micro_social.yaml``)."""
+    from retraite_notionnelle.donnees.chargement import charger_cotisation_micro
+
+    return {activite: {"regimes": list(regimes),
+                       "taux": {str(annee): list(taux) for annee, taux in par_annee.items()}}
+            for activite, (regimes, par_annee)
+            in sorted(charger_cotisation_micro(DONNEES).items())}
+
+
 def _periodes_non_travaillees() -> dict:
     """Ce qu'ouvre chaque motif d'interruption."""
     from retraite_notionnelle.donnees.chargement import charger_periodes_non_travaillees
@@ -2417,6 +2429,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "assiette_minimale_independants": _assiette_minimale_independants(),
         "dispenses_assiette_minimale": _dispenses_assiette_minimale(),
         "validation_micro": _validation_micro(),
+        "cotisation_micro": _cotisation_micro(),
         "profil_salaire_age": _profil_salaire("profil_salaire_age.csv", "annee"),
         "profil_salaire_categorie": _profil_salaire(
             "profil_salaire_categorie.csv", "categorie"),

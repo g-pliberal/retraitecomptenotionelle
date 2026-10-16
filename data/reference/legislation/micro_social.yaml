@@ -29,6 +29,22 @@
 #   D. 633-3 : LEGIARTI000041967101 (17,15 % + 0,60 %, jusqu'en 2024),
 #     LEGIARTI000049904636 (17,15 % + 0,72 %, périodes courant depuis le
 #     1er janvier 2025).
+#
+# LA COTISATION QUE LE COMPTE NOTIONNEL PORTE (même étape, le 16 octobre
+# 2026) : le forfait de retraite que le micro-entrepreneur a versé, le
+# chiffre d'affaires fois le taux global, fois la part de base — les deux
+# tranches de la CNAVPL pour la Cipav, `part_base_seconde` (D. 642-3, 2°) —
+# et la part complémentaire de D. 613-6. Celle du libéral de l'Assurance
+# retraite est nulle jusqu'au 30 juin 2024 : le Conseil d'État a annulé, au
+# 1er juin 2024, la rédaction du 7 décembre 2022 « en tant qu'[elle
+# n'inclut] pas une cotisation au titre du régime complémentaire » (décision
+# n° 471203 du 9 février 2024, en note de LEGIARTI000046714699), sans
+# toucher aux cotisations déjà dues. Versions de D. 613-6 relues au texte :
+# 10 décembre 2022, 1er juin 2024 (LEGIARTI000049623885, la même que celle
+# de 2022), 1er juillet 2024, 2025, 2026. Les rédactions d'avant, de 2020
+# (LEGIARTI000041967529) et de 2021 (LEGIARTI000043656780), ne répartissent
+# que le forfait de la Cipav ; celui de l'Assurance retraite n'avait pas de
+# répartition au code avant le décret n° 2022-1529.
 schema_version: 1
 
 # La part du chiffre d'affaires que la saisie retire (L. 613-7, II) : le
@@ -39,26 +55,35 @@ abattements:
   liberal: 0.34
   cipav: 0.34
 
+# Les régimes qui reçoivent la part de base et la part complémentaire du
+# forfait, quand le compte notionnel le porte (D. 613-6 ; la Cipav verse ses
+# deux tranches de base à la CNAVPL).
+regimes_du_forfait:
+  vente: [regime_general, rci]
+  services: [regime_general, rci]
+  liberal: [regime_general, rci]
+  cipav: [cnavpl, cipav_complementaire]
+
 versions:
   # a) vente de marchandises, 1° du 1 de l'article 50-0 du CGI.
   vente:
-    - {debut: "2022-10", taux_global: 0.123, part_base: 0.418, taux_base: 0.1775}
-    - {debut: "2025-01", taux_global: 0.123, part_base: 0.418, taux_base: 0.1787}
-    - {debut: "2026-01", taux_global: 0.123, part_base: 0.4345, taux_base: 0.1787}
+    - {debut: "2022-10", taux_global: 0.123, part_base: 0.418, taux_base: 0.1775, part_complementaire: 0.165}
+    - {debut: "2025-01", taux_global: 0.123, part_base: 0.418, taux_base: 0.1787, part_complementaire: 0.165}
+    - {debut: "2026-01", taux_global: 0.123, part_base: 0.4345, taux_base: 0.1787, part_complementaire: 0.1975}
   # d) services commerciaux ou artisanaux, 2° du 1 de l'article 50-0.
   services:
-    - {debut: "2022-10", taux_global: 0.212, part_base: 0.418, taux_base: 0.1775}
-    - {debut: "2025-01", taux_global: 0.212, part_base: 0.418, taux_base: 0.1787}
-    - {debut: "2026-01", taux_global: 0.212, part_base: 0.4345, taux_base: 0.1787}
+    - {debut: "2022-10", taux_global: 0.212, part_base: 0.418, taux_base: 0.1775, part_complementaire: 0.165}
+    - {debut: "2025-01", taux_global: 0.212, part_base: 0.418, taux_base: 0.1787, part_complementaire: 0.165}
+    - {debut: "2026-01", taux_global: 0.212, part_base: 0.4345, taux_base: 0.1787, part_complementaire: 0.1975}
   # e) libéral de l'Assurance retraite (L. 631-1 et 102 ter du CGI).
   liberal:
-    - {debut: "2022-10", taux_global: 0.211, part_base: 0.555, taux_base: 0.1775}
-    - {debut: "2024-07", taux_global: 0.231, part_base: 0.5075, taux_base: 0.1775}
-    - {debut: "2025-01", taux_global: 0.246, part_base: 0.476, taux_base: 0.1787}
-    - {debut: "2026-01", taux_global: 0.256, part_base: 0.464, taux_base: 0.1787}
+    - {debut: "2022-10", taux_global: 0.211, part_base: 0.555, taux_base: 0.1775, part_complementaire: 0.0}
+    - {debut: "2024-07", taux_global: 0.231, part_base: 0.5075, taux_base: 0.1775, part_complementaire: 0.0785}
+    - {debut: "2025-01", taux_global: 0.246, part_base: 0.476, taux_base: 0.1787, part_complementaire: 0.13}
+    - {debut: "2026-01", taux_global: 0.256, part_base: 0.464, taux_base: 0.1787, part_complementaire: 0.21}
   # b) section de la Cipav (R. 641-1, 11°) : première tranche de la CNAVPL.
   cipav:
-    - {debut: "2022-10", taux_global: 0.212, part_base: 0.26, taux_base: 0.0823}
-    - {debut: "2024-07", taux_global: 0.232, part_base: 0.2345, taux_base: 0.0823}
-    - {debut: "2025-01", taux_global: 0.232, part_base: 0.2345, taux_base: 0.0873}
-    - {debut: "2026-01", taux_global: 0.232, part_base: 0.243, taux_base: 0.0873}
+    - {debut: "2022-10", taux_global: 0.212, part_base: 0.26, taux_base: 0.0823, part_base_seconde: 0.053, part_complementaire: 0.2075}
+    - {debut: "2024-07", taux_global: 0.232, part_base: 0.2345, taux_base: 0.0823, part_base_seconde: 0.0535, part_complementaire: 0.256}
+    - {debut: "2025-01", taux_global: 0.232, part_base: 0.2345, taux_base: 0.0873, part_base_seconde: 0.0535, part_complementaire: 0.256}
+    - {debut: "2026-01", taux_global: 0.232, part_base: 0.243, taux_base: 0.0873, part_base_seconde: 0.052, part_complementaire: 0.307}

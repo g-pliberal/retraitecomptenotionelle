@@ -16,11 +16,14 @@ import pytest
 
 from retraite_notionnelle.carriere import Carriere, Metier, salaire_moyen_annuel
 from retraite_notionnelle.donnees.chargement import (
+    charger_cotisation_micro,
     charger_validation_micro,
     charger_yaml,
     rapport_validation_micro,
 )
 from retraite_notionnelle.donnees.macro import DonneesMacro
+from retraite_notionnelle.moteur.compte import ConstructeurCompte
+from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.saisie import ABATTEMENTS_MICRO
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -100,3 +103,79 @@ def test_le_paquet_porte_la_table_du_python():
     attendu = {activite: {str(annee): rapport for annee, rapport in par_annee.items()}
                for activite, par_annee in charger_validation_micro(DONNEES).items()}
     assert paquet["validation_micro"] == attendu
+
+
+def test_le_paquet_porte_le_forfait_du_python():
+    paquet = json.loads((RACINE / "moteur" / "donnees.json").read_text(encoding="utf-8"))
+    attendu = {activite: {"regimes": list(regimes),
+                          "taux": {str(annee): list(taux) for annee, taux in par_annee.items()}}
+               for activite, (regimes, par_annee) in charger_cotisation_micro(DONNEES).items()}
+    assert paquet["cotisation_micro"] == attendu
+
+
+#: Le forfait de retraite, en part du chiffre d'affaires : taux global
+#: (D. 613-4) fois part de base et part complémentaire (D. 613-6), et les deux
+#: régimes qui les reçoivent.
+FORFAITS = [
+    # Vente, 2026 : 12,3 % × 43,45 % et 12,3 % × 19,75 %.
+    ("micro_entrepreneur", "vente", 2026, "regime_general", 0.123 * 0.4345,
+     "rci", 0.123 * 0.1975),
+    ("micro_entrepreneur", "services", 2023, "regime_general", 0.212 * 0.418,
+     "rci", 0.212 * 0.165),
+    # Le libéral de 2023 ne verse rien à la complémentaire : la rédaction de
+    # 2022, que le Conseil d'État a annulée au 1er juin 2024 sans toucher aux
+    # cotisations dues, n'en portait pas.
+    ("micro_entrepreneur", "liberal", 2023, "regime_general", 0.211 * 0.555,
+     "rci", 0.0),
+    # 2024 : six mois sans, six mois à 23,1 % × 7,85 %.
+    ("micro_entrepreneur", "liberal", 2024, "regime_general",
+     (0.211 * 0.555 + 0.231 * 0.5075) / 2, "rci", 0.231 * 0.0785 / 2),
+    # La Cipav verse ses deux tranches de base à la CNAVPL.
+    ("profession_liberale", "cipav", 2025, "cnavpl", 0.232 * (0.2345 + 0.0535),
+     "cipav_complementaire", 0.232 * 0.256),
+]
+
+
+@pytest.fixture(scope="module")
+def simulateur():
+    return Simulateur()
+
+
+@pytest.mark.parametrize("statut,activite,annee,base,part_base,complementaire,"
+                         "part_complementaire", FORFAITS)
+def test_le_compte_porte_le_forfait_verse(simulateur, statut, activite, annee, base,
+                                          part_base, complementaire,
+                                          part_complementaire):
+    """Le compte notionnel porte la part de retraite du forfait, et non le
+    barème du commerçant ou du libéral sur le revenu abattu, qui s'en écartait
+    de +39 % pour le libéral de 2023 et de +13 % pour la Cipav de 2025."""
+    macro = simulateur.macro
+    chiffre_d_affaires = 40_000.0
+    abattu = chiffre_d_affaires * (1.0 - ABATTEMENTS_MICRO[activite])
+    carriere = Carriere.depuis_parcours(
+        1975, "H", [Metier(statut, 20.0, abattu / salaire_moyen_annuel(macro, annee),
+                           micro=activite)], 64.0, macro, profil_carriere="plat")
+    constructeur = ConstructeurCompte(macro, simulateur.catalogue,
+                                      simulateur.affiliations, simulateur.indexation,
+                                      simulateur.parametres)
+    versees = constructeur.cotisation_annuelle(carriere, annee)
+    par_regime = dict(versees.par_regime)
+    assert par_regime[base] == pytest.approx(chiffre_d_affaires * part_base, rel=1e-9)
+    assert par_regime.get(complementaire, 0.0) == pytest.approx(
+        chiffre_d_affaires * part_complementaire, rel=1e-9)
+    assert versees.cotisation == pytest.approx(
+        chiffre_d_affaires * (part_base + part_complementaire), rel=1e-9)
+
+
+def test_avant_2023_le_compte_garde_le_bareme(simulateur):
+    """Avant le décret n° 2022-1529, D. 613-6 ne répartit pas le forfait de
+    l'Assurance retraite : le compte garde le barème sur le revenu abattu."""
+    macro = simulateur.macro
+    constructeur = ConstructeurCompte(macro, simulateur.catalogue,
+                                      simulateur.affiliations, simulateur.indexation,
+                                      simulateur.parametres)
+    niveau = 11_600.0 / salaire_moyen_annuel(macro, 2021)
+    avec, sans = (constructeur.cotisation_annuelle(Carriere.depuis_parcours(
+        1975, "H", [Metier("micro_entrepreneur", 20.0, niveau, micro=micro)], 64.0,
+        macro, profil_carriere="plat"), 2021) for micro in ("vente", ""))
+    assert avec.cotisation == sans.cotisation

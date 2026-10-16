@@ -523,6 +523,25 @@ function revenuValidant(macro, revenu, micro, annee) {
   return revenu * parAnnee[String(Math.min(annee, Math.max(...annees)))];
 }
 
+/**
+ * Le forfait de retraite que verse un micro-entrepreneur, cette année-là :
+ * les deux régimes qui en reçoivent la part de base et la part
+ * complémentaire (D. 613-6), et leurs taux sur le revenu abattu ; `null`
+ * avant la première année lue, où le compte porte le barème ; au-delà de la
+ * dernière, la dernière. Voir `forfait_micro` (chargement.py).
+ */
+export function forfaitMicro(macro, micro, annee) {
+  const entree = (macro.paquet.cotisation_micro ?? {})[micro];
+  if (entree === undefined) {
+    return null;
+  }
+  const annees = Object.keys(entree.taux).map(Number);
+  if (annee < Math.min(...annees)) {
+    return null;
+  }
+  return [entree.regimes, entree.taux[String(Math.min(annee, Math.max(...annees)))]];
+}
+
 function ligneAnnuelle({
   annee,
   revenu,

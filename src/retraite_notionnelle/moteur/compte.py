@@ -24,7 +24,8 @@ from functools import cached_property
 from ..carriere import Affiliations, Carriere, salaire_moyen_annuel
 from ..config import ContributionEtat, Parametres, PartCotisation, SourceCotisations
 from ..donnees.chargement import (Fiabilite, charger_chomage_complementaires,
-                                  dispense_les_complementaires)
+                                  charger_cotisation_micro,
+                                  dispense_les_complementaires, forfait_micro)
 from ..donnees.primes import charger_primes_soumises
 from ..donnees.macro import DonneesMacro
 from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation,
@@ -994,6 +995,25 @@ class ConstructeurCompte:
                             1.0 - periode.part_salariale_deplafonnee
                         )
                 retenus.append(code)
+
+        # LE FORFAIT DU MICRO-ENTREPRENEUR. Il ne verse pas le barème du
+        # commerçant ou du libéral sur son revenu abattu, mais un taux global
+        # de son chiffre d'affaires (D. 613-4), que D. 613-6 répartit entre
+        # les branches : le compte porte la part de base et la part
+        # complémentaire, versées à leurs deux régimes. Le barème s'en
+        # écartait de +39 % pour le libéral de 2023, dont la part
+        # complémentaire était nulle, de +13 à +15 % pour la Cipav de 2023 à
+        # 2025, de -3 % pour la vente et les services de 2026. Avant 2023,
+        # faute de répartition au code, le barème reste.
+        if ligne.micro and ligne.cotise and not acquisition_commune:
+            forfait = forfait_micro(charger_cotisation_micro(self.macro.racine),
+                                    ligne.micro, annee)
+            if forfait is not None:
+                for code, taux_forfait in zip(*forfait):
+                    if code in par_regime:
+                        cotisation -= par_regime[code]
+                        par_regime[code] = base_ligne * taux_forfait
+                        cotisation += par_regime[code]
 
         if acquisition_commune:
             taux_commun = self.parametres.taux_cotisation_uniforme

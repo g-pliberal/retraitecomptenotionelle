@@ -284,8 +284,10 @@ affiliations:
       le statut route les mêmes régimes que le commerçant, avant 2009 comme
       lui, sauf à la Cipav, que la saisie route vers `profession_liberale`.
       Depuis 2023, ses trimestres se valident sur le revenu que sa
-      cotisation achète (`micro_social.yaml`), sans assiette minimale ;
-      avant, sur le revenu abattu, la règle n'étant pas lue.
+      cotisation achète (`micro_social.yaml`), sans assiette minimale, et
+      le compte notionnel porte la part de retraite de son forfait ; avant,
+      le revenu abattu valide et le compte porte le barème, la règle n'étant
+      pas lue.
 
   parlementaire:
     libelle: Député ou sénateur (indemnité parlementaire)

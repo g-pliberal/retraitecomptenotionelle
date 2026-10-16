@@ -7559,7 +7559,10 @@ referents:
           le champ « micro » de la saisie, ses quatre activités et la Cipav,
           dans les deux moteurs ; le même jour, le revenu qui valide les
           trimestres, cotisé et non abattu, dès 2023
-          (`legislation/micro_social.yaml`).
+          (`legislation/micro_social.yaml`) ; le 16 octobre, la cotisation
+          que porte le compte notionnel, le forfait versé, part de base et
+          part complémentaire de D. 613-6, et non le barème sur le revenu
+          abattu.
         preuve: >-
           `règles/entreprise/imposition.publicodes:327-353` et
           `règles/protection-sociale.publicodes:77-105`, au commit `6bb0f26`

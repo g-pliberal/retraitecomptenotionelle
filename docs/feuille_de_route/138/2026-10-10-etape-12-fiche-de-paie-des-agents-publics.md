@@ -1,13 +1,15 @@
 # Étape 12, première partie : la fiche de paie d'un agent public — la RAFP, l'indemnité compensatrice de la CSG, le taux d'équilibre sur le traitement
 
-**Reprise, au 14 octobre 2026.** Fait : le coût du travail complet d'un agent
+**Reprise, au 16 octobre 2026.** Fait : le coût du travail complet d'un agent
 public (10 octobre) ; le micro-entrepreneur saisi par son chiffre d'affaires,
 la Cipav routée vers le libéral, puis ses trimestres validés sur le revenu que
-sa cotisation achète, dès 2023, dans les deux moteurs (14 octobre). Reste, une
-session par point : la veille du projet de loi de financement pour 2027, à son
-vote ; du micro-entrepreneur, sa cotisation notionnelle, puis la validation
-d'avant 2023 ; les points légers du 5 de « Ce qui reste ». Détail : « Ce qui
-reste », ici, et `2026-10-14-etape-12-trimestres-du-micro-entrepreneur.md`.
+sa cotisation achète, dès 2023, dans les deux moteurs (14 octobre) ; le
+16 octobre, sa cotisation au compte notionnel, le forfait de retraite versé
+dès 2023. Reste, une session par point : la veille du projet de loi de
+financement pour 2027, à son vote ; du micro-entrepreneur, la validation et la
+répartition d'avant 2023, le salaire annuel moyen, l'arrondi ; les points
+légers du 5 de « Ce qui reste ». Détail : « Ce qui reste », ici, et
+`2026-10-16-etape-12-cotisation-du-micro-entrepreneur.md`.
 
 **Le 10 octobre 2026, la demande.** Le propriétaire : porter sur la fiche de
 paie, en Python puis en JavaScript, la cotisation de la RAFP sur les primes,

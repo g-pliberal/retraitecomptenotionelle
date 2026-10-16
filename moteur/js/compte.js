@@ -14,7 +14,7 @@
 
 import { ContributionEtat, SourceCotisations, PartCotisation } from "./config.js";
 import {
-  chomageComplementaires, dispenseLesComplementaires, salaireMoyenAnnuel,
+  chomageComplementaires, dispenseLesComplementaires, forfaitMicro, salaireMoyenAnnuel,
 } from "./carriere.js";
 import {
   ClassesCotisation, ContributionsEmployeurPubliques, PartRetraiteSeuleEtat,
@@ -822,6 +822,23 @@ export class ConstructeurCompte {
           }
         }
         retenus.push(code);
+      }
+    }
+
+    // LE FORFAIT DU MICRO-ENTREPRENEUR : le compte porte la part de base et la
+    // part complémentaire de son taux global (D. 613-4, D. 613-6), et non le
+    // barème sur son revenu abattu. Voir compte.py.
+    if (ligne.micro && ligne.cotise && !acquisitionCommune) {
+      const forfait = forfaitMicro(this.macro, ligne.micro, annee);
+      if (forfait !== null) {
+        const [regimes, taux] = forfait;
+        regimes.forEach((code, i) => {
+          if (parRegime.has(code)) {
+            cotisation -= parRegime.get(code);
+            parRegime.set(code, baseLigne * taux[i]);
+            cotisation += parRegime.get(code);
+          }
+        });
       }
     }
 

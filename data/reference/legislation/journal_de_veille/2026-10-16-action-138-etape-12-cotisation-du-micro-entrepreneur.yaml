@@ -1,0 +1,36 @@
+date: "2026-10-16"
+session: "action 138, étape 12 : la cotisation que le compte notionnel porte pour le micro-entrepreneur"
+consulte: >-
+  L'index LEGI du dépôt (récupéré le 16 octobre 2026, à jour au 11 octobre) :
+  D. 613-6 dans toutes ses rédactions (LEGIARTI000041967529, 2020 ;
+  LEGIARTI000043656780, 2021 ; LEGIARTI000046714699, 2022, et sa note sur la
+  décision n° 471203 du Conseil d'État du 9 février 2024 ; LEGIARTI000049623885,
+  1er juin 2024 ; LEGIARTI000049625264, 1er juillet 2024 ; LEGIARTI000049625405,
+  2025 ; LEGIARTI000052218747, 2026) ; D. 613-4 de 2020 et de 2021
+  (LEGIARTI000041918199, LEGIARTI000043656794) ; D. 131-6-1 et D. 131-6-2 de
+  2009 (LEGIARTI000019960777, LEGIARTI000020209904) et leurs rédactions de
+  2018 et 2019, qui ne portent plus les taux.
+trouve: >-
+  D. 613-6 affecte au régime complémentaire 16,50 % puis, depuis 2026, 19,75 %
+  du forfait de la vente et des services ; rien du forfait du libéral de
+  l'Assurance retraite jusqu'au 30 juin 2024 (le Conseil d'État annule la
+  rédaction de 2022 en tant qu'elle n'inclut pas de cotisation complémentaire,
+  au 1er juin 2024, sans toucher aux cotisations dues), puis 7,85 %, 13,00 % et
+  21,00 % ; 20,75 %, 25,60 % puis 30,70 % de celui de la Cipav, avec la seconde
+  tranche de la CNAVPL (5,30 %, 5,35 %, 5,20 %). Mesuré à 40 000 € de chiffre
+  d'affaires, le barème du commerçant ou du libéral sur le revenu abattu, que le
+  compte notionnel portait, s'écartait du forfait de retraite versé de +0,1 %
+  pour la vente et les services en 2023, +5 % en 2025, -3 % en 2026 ; de +39 %
+  pour le libéral en 2023, +15 % en 2025, -1 % en 2026 ; de +13 à +15 % pour la
+  Cipav de 2023 à 2025, +2 % en 2026. Le compte porte désormais, dès 2023, la
+  part de base et la part complémentaire du forfait (`micro_social.yaml`), dans
+  les deux moteurs. Avant le décret n° 2022-1529, aucune rédaction de D. 613-6
+  ne répartit le forfait de l'Assurance retraite ; celles de 2020 et de 2021
+  répartissent celui de la Cipav (25 et 24,80 % à la première tranche, 5 % à la
+  seconde, 20 et 19,80 % à la complémentaire).
+reste: >-
+  La répartition d'avant le 1er octobre 2022 de l'Assurance retraite, sans doute
+  dans un arrêté ou une convention entre caisses, et les rédactions de 2020 et
+  de 2021 pour la Cipav, à porter en table sans changer la validation des
+  trimestres ; D. 131-6-3, la fraction du taux pendant l'exonération de début
+  d'activité ; les points du RCI sur la part du forfait au scénario 1.

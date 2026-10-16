@@ -9,7 +9,9 @@ intitule: >-
   b). Ses trimestres se valident sur le revenu que sa cotisation achète : le
   chiffre d'affaires fois le taux global (D. 613-4), fois la part de base
   (D. 613-6), divisé par le taux de base (D. 633-3, ou la première tranche de
-  la CNAVPL), comparé à 150 SMIC horaires (circulaire Cnav n° 2024-23).
+  la CNAVPL), comparé à 150 SMIC horaires (circulaire Cnav n° 2024-23). Sa
+  cotisation de retraite est la part du taux global que D. 613-6 affecte au
+  régime de base et à la complémentaire.
 etat: approchee
 etape: acquerir_les_droits
 effet: >-
@@ -21,12 +23,18 @@ effet: >-
   par activité et par année), sans assiette minimale : 12 100 € de ventes en
   2026 en valident deux, et non un ; 2 793 € de recettes à la Cipav, un, et non
   les trois de l'assiette minimale du libéral (tests/test_micro_social.py, sur
-  les exemples de F23369 et de la circulaire). Approchée sur quatre points :
-  avant 2023, le revenu abattu valide, la règle d'avant le décret n° 2022-1529
-  n'étant pas lue ; l'abattement minimal de 305 € n'est pas opposé ; la
-  cotisation des services et du libéral est celle du barème de l'artisan, ou du
-  libéral à la Cipav, sur le revenu abattu, non le taux global du chiffre
-  d'affaires, et le revenu cotisé n'entre pas dans le salaire annuel moyen ;
+  les exemples de F23369 et de la circulaire). Depuis 2023 aussi, le compte
+  notionnel porte le forfait versé, part de base et part complémentaire de
+  D. 613-6, et non le barème sur le revenu abattu, qui s'en écartait de +39 %
+  pour le libéral de 2023, sans part complémentaire jusqu'au 30 juin 2024, de
+  +13 à +15 % pour la Cipav de 2023 à 2025, de +5 % puis -3 % pour la vente
+  et les services de 2025 et 2026 (le 16 octobre 2026). Approchée sur cinq
+  points : avant 2023, le revenu abattu valide, la règle d'avant le décret
+  n° 2022-1529 n'étant pas lue, et le compte porte le barème, D. 613-6 ne
+  répartissant alors que le forfait de la Cipav ; l'abattement minimal de
+  305 € n'est pas opposé ; les points du RCI se calculent au barème, non sur
+  la part du forfait, et le revenu cotisé n'entre pas dans le salaire annuel
+  moyen ; l'exonération de début d'activité (D. 131-6-3) n'est pas portée ;
   l'année prend la moyenne de ses mois, sans les arrondis trimestriels de la
   caisse. Une seule activité pour toute la carrière.
 sources:
@@ -41,9 +49,13 @@ sources:
     « les droits » par le forfait payé, L. 613-7, II par le chiffre d'affaires
     abattu ; lire ce que la caisse reporte au compte.
   - >-
-    La cotisation micro-sociale de chaque activité et de chaque année (D. 613-4 et
-    ses versions, D. 131-6-3 pendant l'exonération de début d'activité), pour la
-    cotisation des comptes notionnels.
+    La cotisation micro-sociale d'avant le 1er octobre 2022, pour le compte
+    notionnel : D. 131-6-1 et D. 131-6-2 (2009-2017) et D. 613-4 (2020-2022)
+    donnent le taux global, mais aucune rédaction de D. 613-6 d'avant le décret
+    n° 2022-1529 ne répartit le forfait de l'Assurance retraite ; celles de
+    2020 et de 2021 répartissent celui de la Cipav, que la table ne porte pas
+    encore. Et D. 131-6-3, la fraction du taux pendant l'exonération de début
+    d'activité.
   lectures:
   - type: legifrance
     reference: >-
@@ -77,6 +89,20 @@ sources:
       versions de 2022 à 2026 ; D. 633-3, LEGIARTI000041967101 et
       LEGIARTI000049904636 (17,75 % puis 17,87 % depuis 2025)
     date: 2026-10-14
+  - type: legifrance
+    reference: >-
+      D. 613-6 CSS, les mêmes versions et LEGIARTI000049623885 (1er juin 2024),
+      relues pour la part complémentaire : 16,50 % puis 19,75 % pour la vente
+      et les services ; aucune pour le libéral jusqu'au 30 juin 2024, puis
+      7,85 %, 13,00 % et 21,00 % ; 20,75 %, 25,60 % puis 30,70 % pour la Cipav,
+      avec la seconde tranche de la CNAVPL, 5,30 %, 5,35 % puis 5,20 %. En
+      note de LEGIARTI000046714699 : la décision n° 471203 du Conseil d'État
+      du 9 février 2024 annule, au 1er juin 2024, la rédaction de 2022 « en
+      tant qu'[elle n'inclut] pas une cotisation au titre du régime
+      complémentaire obligatoire », ses effets passés étant « regardés comme
+      définitifs ». Les rédactions de 2020 (LEGIARTI000041967529) et de 2021
+      (LEGIARTI000043656780) ne répartissent que le forfait de la Cipav
+    date: 2026-10-16
   - type: circulaire_cnav
     reference: >-
       Circulaire Cnav n° 2024-23 du 16 juillet 2024, « Les modalités de
@@ -109,10 +135,12 @@ code:
     saisie.py : ACTIVITES_MICRO, ABATTEMENTS_MICRO, Saisie.en_chiffre_d_affaires et
     Saisie.abattu, appelée par parcours et emploi_retraite_declare ;
     carriere.py : Metier.micro, AnneeCarriere.micro, _revenu_validant ;
-    donnees/chargement.py : charger_validation_micro
+    donnees/chargement.py : charger_validation_micro, charger_cotisation_micro,
+    forfait_micro ; moteur/compte.py : ConstructeurCompte._cotisation_ligne
   javascript: moteur/js/saisie.js (enChiffreDAffaires, abattu) ; moteur/js/pages.js
     (microFormulaire, champChiffreDAffaires) ; moteur/js/carriere.js
-    (revenuValidant, paquet validation_micro)
+    (revenuValidant, forfaitMicro, paquets validation_micro et
+    cotisation_micro) ; moteur/js/compte.js (_cotisationLigne)
   tests: >-
     tests/test_web_saisie.py ; tests/test_micro_social.py ; témoins
     micro_entrepreneur_* et simuler_micro_entrepreneur*
