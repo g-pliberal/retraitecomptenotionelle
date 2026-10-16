@@ -26,10 +26,16 @@ effet: >-
   À la CAVEC d'avant 1980, que le décret de 1953 faisait choisir, la grille de 1980
   ramenée tient lieu. CARPV : la grille du moteur a la forme du texte depuis 2016 (trois
   classes à 16, 20 et 24 points, quatre à 17, 21, 25 et 28 points depuis 2026) ; avant
-  1998, un nombre d'actes selon l'âge, sans égard au revenu ; de 1998 à 2015, des actes
-  médicaux vétérinaires, dont l'ordre fixait la valeur, au taux d'appel du décret annuel
-  (77 % en 1998, 104 % en 2015), que rien ne publie en euros ; le moteur y reporte la
-  grille de 2016. L'année de revenu est celle du texte, et la classe de début d'activité
+  1998, un nombre d'actes selon l'âge, sans égard au revenu, où la grille de 1998 ramenée
+  tient lieu ; de 1998 à 2015, depuis le 16 octobre 2026, la grille du texte : classes B,
+  C et D à 480, 600 et 720 actes médicaux vétérinaires, au taux d'appel que le décret
+  annuel fixe et que le moteur lit pour chacun des dix-huit exercices (77 % de 1998 à
+  2001, 104 % en 2015). La valeur de l'acte, que l'ordre fixait, n'est publiée nulle
+  part : CONVENTION, la valeur d'achat du point de 2016 (446 €) prolonge l'appel de 2015,
+  et l'acte de chaque exercice antérieur en est tiré au rapport des plafonds (14,08 € en
+  2015) ; les bornes, 4 500 et 6 000 actes, sont celles du livret de 2024 ramenées. Le
+  barème réduit des moins de trente-trois ans de 1997 (décret n° 97-1112, article 3) n'est
+  pas porté. L'année de revenu est celle du texte, et la classe de début d'activité
   aussi : l'avant-dernière année à la CAVEC de 2008 à 2018 et à la CARPV de 1998 à 2021,
   la précédente à la CAVEC depuis 2019, à la CARPV depuis 2022 et à la Cipav de 2016 à
   2020, l'année même à la Cipav depuis 2021 ; la classe A les deux premières années à la
@@ -39,15 +45,20 @@ effet: >-
   ligne. Avant les statuts lus (Cipav avant 2016, CAVEC avant 2008), l'année même.
   Les grilles du texte abaissent les pensions des 24 cas types de la Cipav et de la CAVEC,
   de 2 % à 20 % au scénario 1 ; l'année de revenu et la classe de début en déplacent
-  quinze de plus, de moins de 1 % pour la plupart.
+  quinze de plus, de moins de 1 % pour la plupart. La grille de la CARPV de 1998 à 2015
+  abaisse celles des sept cas types vétérinaires, de 3,7 % à 14,4 % au scénario 1.
 sources:
-  lu_le: 2026-10-14
+  lu_le: 2026-10-16
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Fait le 14 octobre 2026 pour la Cipav et la CAVEC (`classes_cotisation_epoques.yaml`).
-    Restent : la CARPV de 1998 à 2015, dont le décret écrit les classes en actes médicaux
-    vétérinaires, et les montants que le décret annuel ne donne qu'en taux d'appel ; les
+    Fait le 14 octobre 2026 pour la Cipav et la CAVEC, le 16 octobre pour la CARPV de 1998 à
+    2015 (`classes_cotisation_epoques.yaml`). Restent : la valeur de l'acte médical
+    vétérinaire (l'acte médical ordinal) de 1997 à 2015, que fixait le Conseil supérieur de
+    l'ordre des vétérinaires et qu'aucun texte du Journal officiel ne porte (index LEGI et
+    JORF, 16 octobre 2026) : la demander à l'ordre ou à la CARPV, ou la chercher dans ses
+    bulletins, et remplacer la convention de 2016 prolongée ; le barème réduit des moins de
+    trente-trois ans (décret n° 97-1112, article 3, II : 304, 380 et 456 AMV) ; les
     décrets de la Cipav de 1979 à 1985 et de 1989 et 1991 (n° 89-313 et 91-864, dont l'index
     n'a que le sommaire), de la CAVEC de 1980 à 1983 ; la date d'effet de la grille A à H de
     la CAVEC, que le décret n° 2008-85 ne dit pas, et le montant de 2 262 € de 2008. Les
@@ -233,6 +244,25 @@ sources:
       officiel : « L'arrêté du 13 mai 1994 sera publié intégralement au Bulletin officiel du
       ministère no 94-17 »
     date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      CARPV, le taux d'appel de chaque exercice de 1998 à 2015, au décret annuel des
+      cotisations des complémentaires libérales, lu dans l'index LEGI du dépôt : « Section
+      professionnelle des vétérinaires : Taux d'appel de la cotisation : 77 % » en 1998
+      (n° 98-599, art. 4, LEGIARTI000006772562), 1999 (LEGIARTI000006779463), 2000
+      (LEGIARTI000006779649) et 2001 (LEGIARTI000006780641) ; 78,50 % en 2002
+      (LEGIARTI000006216022) ; 80 % en 2003 (LEGIARTI000006226335) ; 85 % en 2004
+      (LEGIARTI000006235225) ; 87 % en 2005 (LEGIARTI000006248064) ; 90 % en 2006
+      (LEGIARTI000006257601) ; 93 % en 2007 (LEGIARTI000006268615) ; 96 % en 2008
+      (LEGIARTI000019908651) ; 97 % en 2009 (LEGIARTI000021537812) ; 100 % en 2010
+      (LEGIARTI000022942424) et 2011 (LEGIARTI000024193768) ; 101 % en 2012
+      (LEGIARTI000025691651) ; 101,50 % en 2013 (LEGIARTI000028255086) et 2014
+      (LEGIARTI000029994686) ; 104 % en 2015 (n° 2015-1802, art. 1, LEGIARTI000031845891),
+      dont l'article 2 (LEGIARTI000031845892) fixe pour 2016 la « Valeur d'achat du point :
+      446 euros ». 77 % déjà en 1997 (décret n° 97-1112, art. 4, LEGIARTI000006772124). Les
+      montants de « classe A (classe de référence) » des vétérinaires dans les articles 2 de
+      2012 à 2014 (402,60 €, 390 €) sont ceux de l'invalidité-décès, pas de la retraite
+    date: 2026-10-16
   - type: jorf
     reference: >-
       CARPV. Décret n° 97-1112, article 1er (JORFARTI000001804631), et article 2 du décret

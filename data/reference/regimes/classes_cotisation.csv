@@ -28,13 +28,14 @@
 # ANNÉES SANS GRILLE PUBLIÉE : LA GRILLE DE SON ÉPOQUE
 #
 # Le fichier porte le millésime que la caisse publie entier. Pour les autres
-# exercices de la Cipav (1979-2022) et de la CAVEC (1980-2025), la grille est
+# exercices de la Cipav (1979-2022), de la CAVEC (1980-2025) et de la CARPV
+# (1998-2015, depuis le 16 octobre 2026), la grille est
 # celle que les textes fixent : les classes de l'article 2 dans sa rédaction
 # de l'exercice, le montant que le décret annuel donne à la classe de
 # référence, et les bornes que la caisse publie, ou les plus proches ramenées
 # au rapport des plafonds — `classes_cotisation_epoques.yaml`, que le
 # chargeur déplie en une grille par exercice (action 131, 14 octobre 2026).
-# Au-delà, et pour la CARPV, c'est la grille la plus récente qui précède
+# Au-delà, c'est la grille la plus récente qui précède
 # l'exercice qui s'applique, bornes ET montants multipliés par le rapport des
 # plafonds de la Sécurité sociale.
 #

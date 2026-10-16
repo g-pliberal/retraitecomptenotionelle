@@ -43,11 +43,15 @@
 #    c'est une convention, que rien ne publie, et la fiche
 #    `cotisation_par_classes_liberales` la déclare.
 #
-# Ce que ce fichier ne porte pas : la CARPV, dont les classes de 1998 à 2015
-# sont écrites en actes médicaux vétérinaires, que rien ne publie en euros,
-# et avant 1998 en actes selon l'âge, sans égard au revenu ; la CAVEC
-# d'avant 1980, dont le décret de 1953 fait opter l'assujetti sans nommer le
-# revenu. L'une et l'autre gardent la grille la plus ancienne ramenée.
+# La CARPV de 1998 à 2015, dont les classes sont écrites en actes médicaux
+# vétérinaires, que rien ne publie en euros, a sa propre convention : le taux
+# d'appel de chaque décret annuel, sur un acte tiré de la valeur d'achat du
+# point de 2016 (action 131, 16 octobre 2026 ; voir son bloc).
+#
+# Ce que ce fichier ne porte pas : la CARPV d'avant 1998, en actes selon
+# l'âge, sans égard au revenu ; la CAVEC d'avant 1980, dont le décret de 1953
+# fait opter l'assujetti sans nommer le revenu. L'une et l'autre gardent la
+# grille la plus ancienne ramenée.
 
 cipav_complementaire:
   reference: classe 1 (quatre points) jusqu'en 2012, classe A (36 points) ensuite
@@ -198,6 +202,74 @@ cavec_complementaire:
     2023: [16190, 32350, 44790, 64560, 79040, 94850, 132780]
     2024: [16190, 32350, 44790, 64560, 79040, 94850, 132780]
     2025: [16190, 32350, 44790, 64560, 79040, 94850, 132780]
+
+carpv_complementaire:
+  reference: classe B (480 actes médicaux vétérinaires, 16 points)
+  epoques:
+  # Décret n° 50-1318, article 2, version du 2 décembre 1997
+  # (LEGIARTI000006776823), et du 30 décembre 2012 (LEGIARTI000026885093),
+  # le même barème : « La cotisation est exprimée sous la forme d'un
+  # multiple de l'acte médical vétérinaire (AMV) dont la valeur est fixée
+  # par le conseil de l'ordre » ; classe B à 480 AMV sous 4 500 AMV de
+  # revenu, C à 600 AMV jusqu'à 6 000 AMV, D à 720 AMV au-delà, pour 16, 20
+  # et 24 points ; « Le taux d'appel des cotisations est fixé chaque année
+  # par décret ». Les classes réduites (60 à 360 AMV) ne s'ouvrent que sur
+  # demande : elles n'entrent pas, comme depuis 2016.
+  #
+  # LE MONTANT DE LA CLASSE B est 480 AMV fois le taux d'appel. Le taux est
+  # lu, exercice par exercice, au décret annuel des cotisations des
+  # complémentaires libérales (`taux_appel`). La valeur de l'AMV ne l'est
+  # pas : l'ordre la fixe, et aucun texte publié au Journal officiel ne la
+  # porte (index LEGI et JORF, 16 octobre 2026). CONVENTION, que la fiche
+  # `cotisation_par_classes_liberales` déclare : la valeur d'achat du point
+  # de 2016, 446 € (décret n° 2015-1802, art. 2), prolonge l'appel de 2015 à
+  # 104 %, comme la classe A de 2013 de la Cipav prolonge sa classe 1 de
+  # 2012 ; l'AMV de chaque exercice antérieur en est tirée au rapport des
+  # plafonds (14,08 € en 2015, 30 AMV par point). Le montant est donc
+  # `estimee`, mais sa pente, de 77 % à 104 % d'appel, est lue.
+  # Le montant de 2016, 16 points à 446 €, est noté à son taux de 104 % : le
+  # chargeur le ramène à un appel de 100 % avant de l'appliquer.
+  #
+  # Ce que la grille ne porte pas : le barème réduit du décret n° 97-1112,
+  # article 3, II (LEGIARTI000006772123), 304, 380 et 456 AMV pour les
+  # classes B, C et D, des cotisants de moins de trente-trois ans au 1er
+  # janvier 1997 inscrits avant cette date, jusqu'à l'année qui suit leur
+  # trente-troisième anniversaire, qui dépend de l'âge et de la date
+  # d'inscription ; et le passage progressif, sur demande, de 1997 (même
+  # article, I). Avant 1998 (actes selon l'âge, sans égard au revenu), la
+  # grille de 1998 ramenée s'applique, comme avant elle celle de 2016.
+  - debut: 1998
+    fin: 2015
+    multiples: [1, 1.25, 1.5]
+    taux_appel:
+      1998: {taux: 0.77, texte: LEGIARTI000006772562, decret: "n° 98-599, art. 4"}
+      1999: {taux: 0.77, texte: LEGIARTI000006779463, decret: "n° 99-959, art. 4"}
+      2000: {taux: 0.77, texte: LEGIARTI000006779649, decret: "n° 2000-1082, art. 4"}
+      2001: {taux: 0.77, texte: LEGIARTI000006780641, decret: "n° 2001-1182, art. 4"}
+      2002: {taux: 0.785, texte: LEGIARTI000006216022, decret: "n° 2002-1525, art. 4"}
+      2003: {taux: 0.8, texte: LEGIARTI000006226335, decret: "n° 2003-1214, art. 4"}
+      2004: {taux: 0.85, texte: LEGIARTI000006235225, decret: "n° 2004-1095, art. 1"}
+      2005: {taux: 0.87, texte: LEGIARTI000006248064, decret: "n° 2005-1683, art. 1"}
+      2006: {taux: 0.9, texte: LEGIARTI000006257601, decret: "n° 2006-1579, art. 1"}
+      2007: {taux: 0.93, texte: LEGIARTI000006268615, decret: "n° 2007-1437, art. 1"}
+      2008: {taux: 0.96, texte: LEGIARTI000019908651, decret: "n° 2008-1303, art. 1"}
+      2009: {taux: 0.97, texte: LEGIARTI000021537812, decret: "n° 2009-1635, art. 1"}
+      2010: {taux: 1.0, texte: LEGIARTI000022942424, decret: "n° 2010-1253, article unique"}
+      2011: {taux: 1.0, texte: LEGIARTI000024193768, decret: "n° 2011-674, art. 1"}
+      2012: {taux: 1.01, texte: LEGIARTI000025691651, decret: "n° 2012-478, art. 1"}
+      2013: {taux: 1.015, texte: LEGIARTI000028255086, decret: "n° 2013-1081, art. 1"}
+      2014: {taux: 1.015, texte: LEGIARTI000029994686, decret: "n° 2014-1639, art. 1"}
+      2015: {taux: 1.04, texte: LEGIARTI000031845891, decret: "n° 2015-1802, art. 1"}
+  montants:
+      2016: {montant: 7136, taux_appel: 1.04, texte: LEGIARTI000031845892, decret: "n° 2015-1802, art. 2 : 16 points à 446 €"}
+  bornes:
+    # Les bornes sont 4 500 et 6 000 AMV jusqu'en 2015, 4 500 et 6 000 fois
+    # l'indice de référence depuis (article 2, version du 25 juin 2015,
+    # LEGIARTI000030774327) : ni l'AMV ni l'indice ne sont publiés au Journal
+    # officiel. Les plus anciennes que la caisse publie, celles de son livret
+    # de 2024 (classes_cotisation.csv), ramenées au rapport des plafonds,
+    # comme le CSV le fait déjà pour 2016 à 2023.
+    2024: [75104, 100140]
 
 # L'ANNÉE DE REVENU ET LA CLASSE DE DÉBUT D'ACTIVITÉ
 # ---------------------------------------------------

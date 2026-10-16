@@ -287,3 +287,23 @@ def test_la_classe_suit_l_annee_de_revenu_et_le_debut_d_activite():
     # Avant 2008, rien n'est lu : l'année même.
     assert classes.revenu_retenu("cavec_complementaire", 2005, 40_000.0,
                                  carriere, "expert_comptable") == (40_000.0, None)
+
+
+def test_la_carpv_de_1998_a_2015_suit_le_taux_d_appel_du_decret():
+    """Action 131 : de 1998 à 2015, la CARPV appelle 480, 600 et 720 actes
+    médicaux vétérinaires au taux d'appel du décret annuel ; l'acte, que rien
+    ne publie, est tiré de la valeur d'achat du point de 2016 au rapport des
+    plafonds (`classes_cotisation_epoques.yaml`)."""
+    from pathlib import Path
+
+    from retraite_notionnelle.donnees.regimes import ClassesCotisation
+
+    classes = ClassesCotisation(Path(__file__).resolve().parents[1] / "data")
+    grille = classes.grille("carpv_complementaire", 2015)
+    assert [c.cotisation for c in grille] == pytest.approx(
+        [7136 * 38040 / 38616 * r for r in (1, 1.25, 1.5)], abs=0.01)
+    assert grille[0].revenu_maximum / grille[1].revenu_maximum == pytest.approx(0.75, rel=1e-4)
+    # De 77 % en 2001 à 104 % en 2015, à plafond constant.
+    b2001 = classes.grille("carpv_complementaire", 2001)[0].cotisation
+    assert b2001 / grille[0].cotisation == pytest.approx(
+        0.77 / 1.04 * 27349 / 38040, rel=1e-3)

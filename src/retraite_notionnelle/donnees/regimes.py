@@ -1294,8 +1294,11 @@ class ClassesCotisation:
         les conventions, que voici. Un exercice sans montant lu prend le
         montant lu le plus proche qui le précède, ou le premier, ramené au
         rapport des plafonds ; de même des bornes, qu'une époque de moins de
-        classes prend rang pour rang. Une grille entière publiée, lue dans le
-        CSV, l'emporte.
+        classes prend rang pour rang. Une époque qui a un `taux_appel` (la
+        CARPV de 1998 à 2015) multiplie chaque année le montant par le taux
+        que le décret de l'exercice fixe, le montant lu étant d'abord ramené
+        à un appel de 100 % par le `taux_appel` qu'il porte. Une grille
+        entière publiée, lue dans le CSV, l'emporte.
         """
         chemin = racine / "reference" / "regimes" / "classes_cotisation_epoques.yaml"
         if not chemin.exists():
@@ -1320,10 +1323,13 @@ class ClassesCotisation:
             for epoque in spec["epoques"]:
                 montants = {
                     int(a): float(m["montant"]) / (
-                        FRANCS_PAR_EURO if m.get("monnaie") == "FRF" else 1.0)
+                        FRANCS_PAR_EURO if m.get("monnaie") == "FRF" else 1.0
+                    ) / float(m.get("taux_appel", 1.0))
                     for a, m in (epoque.get("montants")
                                  or spec.get("montants") or {}).items()
                 }
+                taux_appel = {int(a): float(t["taux"])
+                              for a, t in (epoque.get("taux_appel") or {}).items()}
                 multiples = epoque.get("multiples") or [
                     p / reference_points for p in epoque["points"]
                 ]
@@ -1333,6 +1339,8 @@ class ClassesCotisation:
                     unite, fiab_unite = _au_plus_proche(montants, annee, plafond)
                     if unite is None:
                         continue
+                    if taux_appel:
+                        unite *= taux_appel[annee]
                     seuils, fiab_bornes = _au_plus_proche(bornes, annee, plafond)
                     fiabilite = min(fiab_unite, fiab_bornes)
                     seuils = list(seuils or [])[: len(multiples) - 1]
