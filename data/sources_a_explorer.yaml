@@ -1862,7 +1862,7 @@ sources:
       cotisation vieillesse de TOUS les statuts, datés, dans un format lisible
       par machine. C'est peut-être le récupérateur automatique qui manque aux
       taux saisis à la main dans data/reference/regimes/.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Resondé le 22 septembre 2026 par `scripts/fetch/sonder_sources.py` : le 200
       porte une coquille de 7 Ko, presque sans texte, que le JavaScript remplit.
@@ -1895,7 +1895,7 @@ sources:
     a_en_tirer: >-
       Le dépôt des règles : `modele-social`, ses fichiers de taux et leurs
       dates d'effet, avec l'historique git qui date chaque changement.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté.
 
@@ -1908,7 +1908,7 @@ sources:
       Le comparateur des statuts : pour un même revenu, ce que chaque statut
       cotise et ce qu'il acquiert en retraite. Exactement la grandeur que la
       page Coût du dépôt met en regard des scénarios.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Resondé le 22 septembre 2026 par `scripts/fetch/sonder_sources.py` : le 200
       porte une coquille de 7 Ko, presque sans texte, que le JavaScript remplit.
@@ -1924,7 +1924,7 @@ sources:
       Les cotisations de l'indépendant, assiette par assiette, avec la réforme
       d'assiette unique de 2025. Le dépôt doit savoir dire ce qu'un
       indépendant cotise ET ce qu'il acquiert.
-    statut: a_explorer
+    statut: en_cours
 
   - id: mon_entreprise_auto_entrepreneur
     url: https://mon-entreprise.urssaf.fr/simulateurs/auto-entrepreneur
@@ -1935,7 +1935,7 @@ sources:
       Le taux global du micro-social et la part qui ouvre des droits vieillesse :
       la fiche `micro_entrepreneurs` est un simple routage à l'inventaire, et
       c'est ici que se lit ce qu'un micro-entrepreneur acquiert réellement.
-    statut: a_explorer
+    statut: en_cours
 
   - id: mon_entreprise_cipav
     url: https://mon-entreprise.urssaf.fr/simulateurs/profession-liberale/cipav
@@ -1972,7 +1972,7 @@ sources:
     a_en_tirer: >-
       Le régime des artistes-auteurs, dont les trois fiches IRCEC sont
       `partiel` : assiette, taux, seuil d'affiliation.
-    statut: a_explorer
+    statut: en_cours
 
   # ---- CNAVPL et ses sections professionnelles ---------------------------
   # C'est ici que l'inventaire est le plus faible : `cnavpl` est `partiel`, et
@@ -6343,7 +6343,7 @@ sources:
       montant mensuel moyen, durées de services et de bonifications. Ce que
       la caisse publie d'elle-même, à confronter au jaune budgétaire
       (`scripts/fetch/sre_jaune_pensions.py`) et au modèle.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Mesuré le 5 octobre 2026 : catalogue Opendatasoft ouvert, sans compte ;
       les cubes, publiés par la DGFiP, datent du 11 août 2026. Chacun se lit
@@ -6359,7 +6359,7 @@ sources:
       Agirc-Arrco —, salariales et patronales, que l'Urssaf calcule pour le
       salaire qu'on lui donne : des exemples officiels pour les taux de
       cotisation du dépôt, en une requête et sans navigateur.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Mesuré le 5 octobre 2026 : un POST de JSON, `{"situation": {…},
       "expressions": […]}`, rend chaque expression évaluée, avec son unité ;
@@ -6402,7 +6402,7 @@ sources:
       ark et la page d'un texte daté, que les fiches citent aujourd'hui à la
       main (neuf liens vers Gallica), retrouvés par une requête plutôt qu'en
       feuilletant.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Mesuré le 5 octobre 2026 : l'interface SRU de la BnF répond en XML,
       sans compte (420 notices au titre « Journal officiel »).
@@ -6417,7 +6417,7 @@ sources:
       de téléchargements (`wpdmpro`, dont le guide 2026 en trois parties),
       31 PDF, 26 pages et 10 chiffres clés (`ucpt_statistique`) — ce que le
       lot des libérales n'a pas vu, et, à chaque veille, ce qui a bougé.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Mesuré le 5 octobre 2026 : l'API REST de WordPress est ouverte, sans
       compte ; `search=`, `modified_after=` et `per_page=100` y servent, et le
@@ -6432,7 +6432,7 @@ sources:
     a_en_tirer: >-
       Les 269 pages et 50 PDF du site, chacun daté : relever ce que le lot
       des libérales n'a pas vu, et, à chaque veille, ce qui a bougé.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Mesuré le 5 octobre 2026 : API REST de WordPress ouverte, comme celle
       de la CNAVPL (`cnavpl_wordpress`).
@@ -6445,7 +6445,7 @@ sources:
     a_en_tirer: >-
       Les 44 pages et 70 PDF du site, chacun daté : relever ce que le lot des
       libérales n'a pas vu, et, à chaque veille, ce qui a bougé.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Mesuré le 5 octobre 2026 : API REST de WordPress ouverte, comme celle
       de la CNAVPL (`cnavpl_wordpress`).
@@ -6459,7 +6459,7 @@ sources:
       Les 38 pages et 63 PDF du site, chacun daté, dont les règlements de la
       caisse au 1er juillet 2026 : relever ce que le lot des libérales n'a pas
       vu, et, à chaque veille, ce qui a bougé.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Mesuré le 5 octobre 2026 : API REST de WordPress ouverte, comme celle
       de la CNAVPL (`cnavpl_wordpress`).
@@ -6472,7 +6472,7 @@ sources:
     a_en_tirer: >-
       Les 59 pages et 111 PDF du site, chacun daté : relever ce que le lot des
       notaires n'a pas vu, et, à chaque veille, ce qui a bougé.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Mesuré le 5 octobre 2026 : API REST de WordPress ouverte, comme celle
       de la CNAVPL (`cnavpl_wordpress`).
@@ -6486,7 +6486,7 @@ sources:
       Les 76 pages et 373 PDF du site, chacun daté, dont les notices de
       réversion : relever ce que le lot de la CRPN n'a pas vu, et, à chaque
       veille, ce qui a bougé.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Mesuré le 5 octobre 2026 : API REST de WordPress ouverte, comme celle
       de la CNAVPL (`cnavpl_wordpress`).
@@ -6500,7 +6500,7 @@ sources:
       Chaque page de la base servie en JSON (`?_format=json`), avec sa date de
       modification (`changed`) : savoir, à chaque veille, lesquelles des
       pages lues au lot de l'Ircantec ont bougé, sans les relire.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Mesuré le 5 octobre 2026 : le titre, la date et quelques champs en
       HTML ; le corps, rangé en paragraphes Drupal, n'est pas servi
@@ -6515,7 +6515,7 @@ sources:
       Chaque page du site de la Cipav servie en JSON, avec sa date de
       modification (`changed`) : la veille des pages que le lot des libérales
       a lues, sans les relire.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Mesuré le 5 octobre 2026 : un Drupal qui sert ses pages en JSON, comme
       la base de l'Ircantec (`baseircantec_json`).
@@ -6530,7 +6530,7 @@ sources:
       première année pleine de retraite, par catégorie, sexe et définition du
       revenu — 4 806 lignes, mises à jour le 19 mars 2026 : de quoi confronter
       les taux de remplacement que le modèle calcule.
-    statut: a_explorer
+    statut: en_cours
 
   - id: drees_minimum_vieillesse
     url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/1377_le-minimum-vieillesse/
@@ -6543,7 +6543,7 @@ sources:
       15 décembre 2025 : les effectifs et la dépense constatés, en face du
       barème que le dépôt tient de LEGI
       (`scripts/fetch/dila_legi_minimum_vieillesse.py`).
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Mesuré le 5 octobre 2026 : le jeu n'a pas de lignes, seulement des
       pièces jointes (`…/datasets/1377_le-minimum-vieillesse/attachments`).
@@ -6557,7 +6557,7 @@ sources:
       Légifrance interrogé en direct : tout le JORF et tous les codes, à une
       date, au-delà du champ social que porte l'index du dépôt — et les
       circulaires, si l'API les sert.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Sans jeton, l'API répond 400 (mesuré le 5 octobre 2026) : il faut un
       compte PISTE et l'acceptation de ses conditions, un geste du
