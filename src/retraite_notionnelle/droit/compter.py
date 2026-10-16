@@ -16,6 +16,12 @@ régime, celui que la priorité entre régimes désigne (R. 173-15) :
 régime qui le pensionne, bonification de services ou majoration de durée :
 :func:`trimestres_des_emplois`.
 
+Et les trimestres des périodes assimilées que la chronologie porte (action
+130, sixième domaine) : le complément de l'apprentissage, jusqu'à la durée
+du contrat, et les jours de stage, d'inscription des sportifs de haut niveau
+et de congé supplémentaire de naissance, à l'assurance seule :
+:func:`trimestres_assimiles`.
+
 Et les services du code des pensions AU JOUR, que le décompte final arrondit
 une seule fois (R. 26) et que la décote lit sans arrondi (L. 14, I) :
 :func:`jours_de_la_ligne`, :func:`arrondir_les_services`.
@@ -27,12 +33,13 @@ Ce que l'étape écrit, :class:`Durees`, suit son schéma,
 
 from __future__ import annotations
 
+import datetime
 import math
 from dataclasses import dataclass, field, replace
 from typing import TYPE_CHECKING
 
 from .. import chronologie as chrono
-from ..calendrier import DateMois
+from ..calendrier import DateMois, trimestres_civils
 from ..donnees.chargement import Fiabilite
 from . import coordonner
 from .commun import ligne_cotisee, periode_de_liquidation
@@ -51,8 +58,8 @@ if TYPE_CHECKING:
 #: enfants enfant par enfant, chacun dans son régime ; la troisième, les
 #: trimestres que les périodes hors de France apportent ; la quatrième, ceux
 #: que les emplois classés ajoutent ; la cinquième, les services du code des
-#: pensions au jour.
-SCHEMA_VERSION = 5
+#: pensions au jour ; la sixième, ceux des périodes assimilées.
+SCHEMA_VERSION = 6
 
 #: La fiche du décompte des services du code des pensions, lue à la date
 #: d'effet (:func:`decompte_des_services`) : l'unité et le seuil du décompte
@@ -158,6 +165,24 @@ AGE_LEGAL = "age_legal"
 #: La tolérance des années de service, qu'une somme de fractions de mois laisse
 #: flottantes : un milliardième d'année.
 EPSILON_ANNEES = 1e-9
+
+#: La fiche de l'apprentissage, que l'emploi porte en attribut, et celle de
+#: chaque motif de période assimilée (``chronologie.MOTIFS_D_ASSIMILATION``) :
+#: le sixième domaine (action 130).
+FICHE_DE_L_APPRENTISSAGE = "apprentissage"
+FICHES_DES_ASSIMILEES = {
+    "stage_de_formation_professionnelle": "stages_formation_professionnelle",
+    "stage_d_insertion": "stages_formation_professionnelle",
+    "sportif_de_haut_niveau": "sportifs_haut_niveau",
+    "conge_supplementaire_de_naissance": "conge_supplementaire_naissance",
+}
+#: Comment une version compte ses trimestres : la durée du contrat
+#: d'apprentissage (D. 373-3), des jours dans l'année civile (R. 351-12, 2°, c
+#: et 4°, i et k), ou des périodes continues (R. 351-12, 9°, b).
+DECOMPTES_DES_ASSIMILEES = ("duree_du_contrat", "jours_dans_l_annee", "periodes_continues")
+#: Les jours d'exécution du contrat en mois civils incomplets qui font un mois
+#: (D. 373-3, 2°).
+JOURS_PAR_MOIS_DE_CONTRAT = 30
 
 
 @dataclass(frozen=True)
@@ -276,6 +301,28 @@ class TrimestresEmploi:
     fiabilite: Fiabilite
 
 
+@dataclass(frozen=True)
+class TrimestresAssimiles:
+    """Ce qu'une période assimilée apporte dans une année, au régime qui la
+    valide : des trimestres d'assurance, qui comptent pour le taux et la
+    proratisation, non cotisés (D. 351-1-2 ne les nomme pas) et sans services."""
+
+    #: ``apprentissage``, ou le motif de la période (vocabulaire,
+    #: ``motifs_d_assimilation``).
+    motif: str
+    #: Le régime qui les valide.
+    regime: str
+    #: L'année civile où ils comptent.
+    annee: int
+    #: La fiche et la version appliquées, et le texte qui fait naître celle-ci.
+    fiche: str
+    version: str
+    texte: str | None
+    #: Les trimestres, avant le plafond de l'année.
+    trimestres: int
+    fiabilite: Fiabilite
+
+
 @dataclass(frozen=True, eq=False)
 class Durees:
     """Ce que l'étape écrit. Son schéma :
@@ -328,6 +375,14 @@ class Durees:
     #: et les trimestres des autres régimes, quatre au plus (R. 26 bis) —
     #: moins la durée en trimestres entiers.
     ecart_au_jour: float = 0.0
+    #: Les trimestres des périodes assimilées, période par période et année
+    #: par année, avant le plafond de l'année : ils sont dans ``par_annee``,
+    #: au compte ``assurance`` seul (:func:`trimestres_assimiles`).
+    assimilees: tuple[TrimestresAssimiles, ...] = ()
+    #: Le plafond des années où une période assimilée compte : leurs
+    #: trimestres civils jusqu'à la date d'effet, quatre pour une année
+    #: pleine, même quand la carrière n'en couvre qu'une partie (R. 351-12).
+    plafonds_assimilees: dict[int, int] = field(default_factory=dict)
 
     def au_jour(self, membres: tuple[str, ...]) -> bool:
         """Ces régimes comptent-ils leurs services au jour, à la date d'effet ?"""
@@ -412,7 +467,9 @@ class Durees:
             for annee, trimestres in self.par_annee[table].get(membre, {}).items():
                 if annees is None or annees(annee):
                     sommes[annee] = sommes.get(annee, 0) + trimestres
-        return (somme_ordonnee(min(somme, self.carriere.plafond_trimestres(annee))
+        plafonds = self.plafonds_assimilees if table == "assurance" else {}
+        return (somme_ordonnee(min(somme, max(self.carriere.plafond_trimestres(annee),
+                                              plafonds.get(annee, 0)))
                     for annee, somme in sommes.items())
                 + (0 if annees is not None else
                    somme_ordonnee(self.hors_annee[table].get(membre, 0) for membre in membres)))
@@ -455,6 +512,11 @@ class Durees:
                     for annee, jours in annees.items()],
                 "ecart": self.ecart_au_jour,
             },
+            "assimilees": [
+                {"motif": a.motif, "regime": a.regime, "annee": a.annee, "fiche": a.fiche,
+                 "version": a.version, "trimestres": a.trimestres,
+                 "fiabilite": a.fiabilite.name.lower()}
+                for a in self.assimilees],
         }
 
 
@@ -579,7 +641,26 @@ def compter(moteur: ScenarioActuel, coordination: Coordination,
             au_jour_annee = min(4.0, autres_par_annee.get(annee, 0)
                                 + jours_par_annee[annee] / JOURS_PAR_TRIMESTRE)
             ecart_au_jour += au_jour_annee - entiers
-    durees = Durees(carriere, par_annee, hors_annee, None, trimestres, {}, {})
+    # Les périodes assimilées : à l'assurance de leur régime, année par année,
+    # et à la durée tous régimes, dans les trimestres civils que leur année
+    # laisse libres.
+    assimilees = (trimestres_assimiles(moteur, carriere, par_annee["assurance"])
+                  if avantages_non_contributifs else ())
+    plafonds_assimilees: dict[int, int] = {}
+    if assimilees:
+        par_annee_assimilees: dict[int, int] = {}
+        for assimilee in assimilees:
+            crediter_trimestres("assurance", assimilee.regime, assimilee.annee,
+                                assimilee.trimestres)
+            par_annee_assimilees[assimilee.annee] = (
+                par_annee_assimilees.get(assimilee.annee, 0) + assimilee.trimestres)
+        for annee in sorted(par_annee_assimilees):
+            plafond = plafond_de_l_annee(carriere, annee)
+            plafonds_assimilees[annee] = plafond
+            deja = carriere.trimestres_par_annee(carriere.lignes_de(annee)).get(annee, 0)
+            trimestres += max(0, min(par_annee_assimilees[annee], plafond - deja))
+    durees = Durees(carriere, par_annee, hors_annee, None, trimestres, {}, {},
+                    plafonds_assimilees=plafonds_assimilees)
     # Durée d'assurance validée dans chaque régime, PÉRIODES ASSIMILÉES
     # COMPRISES : le coefficient de proratisation du régime général porte
     # sur la durée d'assurance, pas sur les seules années cotisées. Une
@@ -634,7 +715,294 @@ def compter(moteur: ScenarioActuel, coordination: Coordination,
     return Durees(carriere, par_annee, hors_annee, majoration_enfants, trimestres,
                   trimestres_par_regime, bonifications_par_regime, etranger, emplois,
                   decompte=decompte, jours=jours if decompte is not None else {},
-                  ecart_au_jour=ecart_au_jour)
+                  ecart_au_jour=ecart_au_jour, assimilees=assimilees,
+                  plafonds_assimilees=plafonds_assimilees)
+
+
+# -- les périodes assimilées (action 130, sixième domaine) ----------------------
+
+def date_d_effet(carriere: Carriere) -> str:
+    """La date d'effet de la pension (AAAA-MM-JJ) : le premier jour du mois
+    de la liquidation."""
+    mois = carriere.date_liquidation.mois if carriere.age_liquidation is not None else 1
+    return f"{carriere.annee_liquidation:04d}-{mois:02d}-01"
+
+
+def plafond_de_l_annee(carriere: Carriere, annee: int) -> int:
+    """Les trimestres civils d'une année que la durée d'assurance peut
+    compter : quatre, et ceux qui précèdent la date d'effet l'année où la
+    pension prend effet."""
+    if annee < carriere.annee_liquidation:
+        return 4
+    mois = carriere.date_liquidation.mois if carriere.age_liquidation is not None else 1
+    return trimestres_civils(mois - 1)
+
+
+def trimestres_assimiles(moteur: ScenarioActuel, carriere: Carriere,
+                         assurance: dict[str, dict[int, int]]
+                         ) -> tuple[TrimestresAssimiles, ...]:
+    """Les trimestres des périodes assimilées de la carrière, année par
+    année, avant le plafond de l'année : ceux de l'apprentissage
+    (:func:`trimestres_de_l_apprentissage`), puis ceux des périodes que la
+    personne déclare, dans leur ordre (:func:`trimestres_des_periodes`).
+
+    Une année dont un relevé déposé porte les trimestres n'en reçoit aucun :
+    ce que la caisse a validé fait foi, périodes assimilées comprises. Les
+    trimestres ne sont pas cotisés, et n'entrent pas aux services.
+    """
+    if not carriere.chronologie:
+        return ()
+    effet = date_d_effet(carriere)
+    assimilees = (trimestres_de_l_apprentissage(moteur, carriere, assurance, effet)
+                  + trimestres_des_periodes(moteur, carriere, effet))
+    return tuple(a for a in assimilees
+                 if a.trimestres > 0 and a.annee not in carriere.annees_declarees)
+
+
+def _jour(texte: str) -> datetime.date:
+    return datetime.date.fromisoformat(texte)
+
+
+def _premier_janvier(annee: int) -> datetime.date:
+    return datetime.date(annee, 1, 1)
+
+
+def _mois_suivant(jour: datetime.date) -> datetime.date:
+    return (datetime.date(jour.year + 1, 1, 1) if jour.month == 12
+            else datetime.date(jour.year, jour.month + 1, 1))
+
+
+def _trimestre_suivant(jour: datetime.date) -> datetime.date:
+    """Le premier jour du trimestre civil qui suit celui de ce jour."""
+    mois = 3 * ((jour.month - 1) // 3) + 4
+    return (datetime.date(jour.year + 1, 1, 1) if mois > 12
+            else datetime.date(jour.year, mois, 1))
+
+
+def version_ouverte(moteur: ScenarioActuel, fiche: str, motif: str | None,
+                    debut: datetime.date, fin: datetime.date, effet: str
+                    ) -> tuple[datetime.date, dict] | None:
+    """Le premier jour d'une période où la fiche ouvre un droit, et la
+    version qui l'ouvre : son début, ou le premier 1er janvier qui le suit,
+    puisque les versions se coupent à des 1er janvier. La période commencée
+    avant la version qui l'ouvre compte pour ses jours d'après (circulaire
+    Cnav 2024-18, 3.2.1.2 ; circulaire 2016-41, point 4) ; celle qui commence
+    sous une version ouverte garde celle-ci jusqu'à sa fin — le stage
+    commencé la dernière année de son dispositif (circulaire 2024-18,
+    annexe 1). ``None`` quand rien ne l'ouvre avant ``fin``."""
+    jour = debut
+    while jour < fin:
+        version = moteur.fiches_datees.version_aux_dates(
+            fiche, {"periode.debut": jour.isoformat(), "liquidation.date_effet": effet})
+        if version is not None and version["parametres"].get("existe"):
+            parametres = version["parametres"]
+            if parametres.get("decompte") not in DECOMPTES_DES_ASSIMILEES:
+                raise ValueError(f"{fiche}.{version['id']} : décompte inconnu, "
+                                 f"{parametres.get('decompte')!r}")
+            if motif is None or motif in (parametres.get("motifs") or ()):
+                return jour, version
+        jour = _premier_janvier(jour.year + 1)
+    return None
+
+
+def _regime_de(moteur: ScenarioActuel, parametres: dict, annee: int,
+               assurance: dict[str, dict[int, int]]) -> str | None:
+    """Le régime qui valide une période assimilée : le premier de la version
+    qui a validé des trimestres cette année, sinon le premier qu'il connaît."""
+    connus = [code for code in parametres.get("regimes") or () if code in moteur.catalogue]
+    return next((code for code in connus if assurance.get(code, {}).get(annee)),
+                connus[0] if connus else None)
+
+
+def trimestres_du_contrat(debut: datetime.date, fin: datetime.date) -> dict[int, int]:
+    """Les trimestres d'un contrat d'apprentissage, année par année
+    (D. 373-3) : un mois par mois civil entier d'exécution, un mois par
+    trente jours des mois incomplets, totalisés ; un trimestre par trois
+    mois, arrondi à l'entier inférieur. Chaque trimestre civil entier va à
+    son année ; ce qui reste, à l'année où le contrat prend fin. ``fin`` est
+    exclue."""
+    mois_entiers, jours = 0, 0
+    jour = debut
+    while jour < fin:
+        suivant = _mois_suivant(jour)
+        if jour.day == 1 and suivant <= fin:
+            mois_entiers += 1
+        else:
+            jours += (min(suivant, fin) - jour).days
+        jour = suivant
+    total = (mois_entiers + jours // JOURS_PAR_MOIS_DE_CONTRAT) // 3
+    par_annee: dict[int, int] = {}
+    trimestre = (debut if debut.day == 1 and debut.month % 3 == 1
+                 else _trimestre_suivant(debut))
+    while _trimestre_suivant(trimestre) <= fin:
+        par_annee[trimestre.year] = par_annee.get(trimestre.year, 0) + 1
+        trimestre = _trimestre_suivant(trimestre)
+    reste = total - somme_ordonnee(par_annee.values())
+    if reste > 0:
+        derniere = (fin - datetime.timedelta(days=1)).year
+        par_annee[derniere] = par_annee.get(derniere, 0) + reste
+    return par_annee
+
+
+def _contrats(carriere: Carriere) -> list[tuple[datetime.date, datetime.date]]:
+    """Les contrats d'apprentissage de la carrière : ses emplois qui portent
+    l'attribut, ceux qui se suivent sans interruption réunis — le temps
+    partiel coupe un contrat en morceaux."""
+    contrats: list[list[datetime.date]] = []
+    for periode in chrono.periodes(carriere.chronologie, carriere.personne):
+        if periode["sorte"] != chrono.EMPLOI or not periode["attributs"].get("apprentissage"):
+            continue
+        debut, fin = _jour(periode["debut"]), _jour(periode["fin"])
+        if contrats and contrats[-1][1] == debut:
+            contrats[-1][1] = fin
+        else:
+            contrats.append([debut, fin])
+    return [(debut, fin) for debut, fin in sorted(contrats)]
+
+
+def trimestres_de_l_apprentissage(moteur: ScenarioActuel, carriere: Carriere,
+                                  assurance: dict[str, dict[int, int]], effet: str
+                                  ) -> list[TrimestresAssimiles]:
+    """Le complément de l'apprentissage, année par année : les trimestres du
+    contrat (:func:`trimestres_du_contrat`) moins ceux que l'année a déjà
+    validés dans son régime (D. 373-4), quand la version de la fiche ouvre le
+    droit — le contrat d'avant 2014 ne compte qu'à partir du 1er janvier 2014.
+
+    Le moteur ne sait pas quels trimestres de l'année la rémunération de
+    l'apprenti valide, et ceux d'un autre emploi de la même année : il
+    retire tous ceux du régime, et l'apprenti qui change d'emploi en cours
+    d'année reçoit moins que le complément (fiche ``apprentissage``)."""
+    resultat: list[TrimestresAssimiles] = []
+    fin_de_carriere = _jour(effet)
+    for debut, fin in _contrats(carriere):
+        fin = min(fin, fin_de_carriere)
+        ouverte = version_ouverte(moteur, FICHE_DE_L_APPRENTISSAGE, None, debut, fin, effet)
+        if ouverte is None:
+            continue
+        ouverture, version = ouverte
+        parametres = version["parametres"]
+        for annee, du_contrat in sorted(trimestres_du_contrat(ouverture, fin).items()):
+            regime = _regime_de(moteur, parametres, annee, assurance)
+            if regime is None:
+                continue
+            valides = assurance.get(regime, {}).get(annee, 0)
+            resultat.append(TrimestresAssimiles(
+                motif=FICHE_DE_L_APPRENTISSAGE, regime=regime, annee=annee,
+                fiche=FICHE_DE_L_APPRENTISSAGE, version=version["id"],
+                texte=version["texte"], trimestres=max(0, du_contrat - valides),
+                fiabilite=Fiabilite.depuis_texte(parametres["fiabilite"])))
+    return resultat
+
+
+def jours_par_annee(debut: datetime.date, fin: datetime.date,
+                    jours: int | None = None) -> dict[int, int]:
+    """Les jours d'une période, année civile par année civile, ``fin``
+    exclue ; ou ``jours`` qu'elle compte entre ses dates, répartis au
+    prorata de ses jours de calendrier, sans fraction : chaque année reçoit
+    ce que son cumul arrondi à l'entier inférieur lui laisse."""
+    calendrier: dict[int, int] = {}
+    jour = debut
+    while jour < fin:
+        suivant = min(_premier_janvier(jour.year + 1), fin)
+        calendrier[jour.year] = (suivant - jour).days
+        jour = suivant
+    if jours is None:
+        return calendrier
+    total = somme_ordonnee(calendrier.values())
+    reparti: dict[int, int] = {}
+    cumul, donnes = 0, 0
+    for annee, nombre in calendrier.items():
+        cumul += nombre
+        part = jours * cumul // total - donnes
+        reparti[annee] = part
+        donnes += part
+    return reparti
+
+
+def _anniversaire(carriere: Carriere, age: int) -> datetime.date:
+    """Le jour anniversaire de cet âge : le 1er mars pour qui est né un
+    29 février."""
+    naissance = _jour(chrono.naissance(carriere.chronologie, carriere.personne)["debut"])
+    try:
+        return naissance.replace(year=naissance.year + age)
+    except ValueError:
+        return datetime.date(naissance.year + age, 3, 1)
+
+
+def trimestres_des_periodes(moteur: ScenarioActuel, carriere: Carriere, effet: str
+                            ) -> list[TrimestresAssimiles]:
+    """Les trimestres des périodes assimilées que la personne déclare.
+
+    Les jours dans l'année (``jours_dans_l_annee``) — stages, congé
+    supplémentaire de naissance — s'additionnent par fiche et par année, une
+    période comptant ses ``jours`` déclarés ou ses jours de calendrier : un
+    trimestre par tranche que la version dit, sans report d'une année sur
+    l'autre. Les périodes continues (``periodes_continues``) — les sportifs de
+    haut niveau — comptent un trimestre par tranche de jours continus depuis
+    le premier jour d'inscription après l'âge que la version dit, affecté à
+    l'année qui en porte le plus, quand les revenus de cette année ne
+    dépassent pas la fraction du plafond de la sécurité sociale qu'elle dit,
+    et jusqu'à son plafond de trimestres. Les jours d'après la date d'effet
+    ne comptent pas."""
+    fin_de_carriere = _jour(effet)
+    # Par fiche et par année : le motif et la version de la première période,
+    # puis les jours, ou les trimestres des périodes continues.
+    jours_cumules: dict[tuple[str, int], list] = {}
+    continues: dict[tuple[str, int], list] = {}
+    sportifs: dict[str, int] = {}
+    for periode in chrono.periodes_assimilees(carriere.chronologie, carriere.personne):
+        attributs = periode["attributs"]
+        motif = attributs["motif"]
+        fiche = FICHES_DES_ASSIMILEES[motif]
+        debut, fin_declaree = _jour(periode["debut"]), _jour(periode["fin"])
+        fin = min(fin_declaree, fin_de_carriere)
+        ouverte = version_ouverte(moteur, fiche, motif, debut, fin, effet)
+        if ouverte is None:
+            continue
+        ouverture, version = ouverte
+        parametres = version["parametres"]
+        par_tranche = int(parametres["jours_par_trimestre"])
+        if parametres["decompte"] == "jours_dans_l_annee":
+            jours = attributs.get("jours")
+            if jours is not None:
+                jours = jours * (fin - ouverture).days // (fin_declaree - debut).days
+            for annee, nombre in jours_par_annee(ouverture, fin, jours).items():
+                cle = (fiche, annee)
+                jours_cumules.setdefault(cle, [motif, version, 0])[2] += nombre
+            continue
+        if parametres["decompte"] == "periodes_continues":
+            ouverture = max(ouverture, _anniversaire(carriere, int(parametres["age_minimum"])))
+            plafond = int(parametres["plafond_trimestres"])
+            tranche = ouverture
+            while (tranche + datetime.timedelta(days=par_tranche) <= fin
+                   and sportifs.get(fiche, 0) < plafond):
+                fin_tranche = tranche + datetime.timedelta(days=par_tranche)
+                repartis = jours_par_annee(tranche, fin_tranche)
+                annee = max(repartis, key=lambda a: (repartis[a], -a))
+                tranche = fin_tranche
+                revenus = somme_ordonnee(ligne.revenu for ligne in carriere.lignes_de(annee))
+                if revenus > (float(parametres["ressources_maximum_en_plafonds"])
+                              * moteur.macro.plafond_securite_sociale(annee)):
+                    continue
+                sportifs[fiche] = sportifs.get(fiche, 0) + 1
+                continues.setdefault((fiche, annee), [motif, version, 0])[2] += 1
+            continue
+        raise ValueError(f"{fiche}.{version['id']} : la fiche d'une période assimilée "
+                         f"ne compte pas la durée d'un contrat")
+    resultat: list[TrimestresAssimiles] = []
+    for comptes, en_jours in ((jours_cumules, True), (continues, False)):
+        for (fiche, annee), (motif, version, nombre) in comptes.items():
+            parametres = version["parametres"]
+            regime = _regime_de(moteur, parametres, annee, {})
+            if regime is None:
+                continue
+            resultat.append(TrimestresAssimiles(
+                motif=motif, regime=regime, annee=annee, fiche=fiche, version=version["id"],
+                texte=version["texte"],
+                trimestres=(nombre // int(parametres["jours_par_trimestre"]) if en_jours
+                            else nombre),
+                fiabilite=Fiabilite.depuis_texte(parametres["fiabilite"])))
+    return resultat
 
 
 def decompte_des_services(moteur: ScenarioActuel, carriere: Carriere,

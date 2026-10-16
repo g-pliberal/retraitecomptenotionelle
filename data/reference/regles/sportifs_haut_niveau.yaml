@@ -10,7 +10,7 @@ domaine: periodes_assimilees
 regimes: [regime_general]
 etape: compter_les_durees
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - les périodes d'inscription de l'assuré sur la liste des sportifs de haut niveau
 - sa date de naissance
@@ -34,6 +34,9 @@ versions:
     periode.debut: [null, 2012-01-01]
   contenu:
     droit: aucun trimestre au titre de l'inscription ; seuls comptent les salaires et revenus portés au compte
+    parametres:
+      existe: false
+      fiabilite: haute
   exemples: aucun trouvé
 - id: seize_trimestres
   statut: lue
@@ -74,6 +77,16 @@ versions:
       0,75 fois le plafond annuel, revenus nets catégoriels de l'impôt, revenus taxés à
       taux proportionnel et revenus perçus hors de France compris ; sans validation à un
       autre titre
+    parametres:
+      existe: true
+      regimes: [regime_general]
+      decompte: periodes_continues
+      jours_par_trimestre: 90
+      motifs: [sportif_de_haut_niveau]
+      age_minimum: 20
+      ressources_maximum_en_plafonds: 0.75
+      plafond_trimestres: 16
+      fiabilite: haute
   exemples: aucun trouvé
 - id: trente_deux_trimestres
   statut: lue
@@ -94,6 +107,16 @@ versions:
     liquidation.date_effet: [2023-09-01, null]
   contenu:
     droit: la version précédente, trente-deux trimestres au plus
+    parametres:
+      existe: true
+      regimes: [regime_general]
+      decompte: periodes_continues
+      jours_par_trimestre: 90
+      motifs: [sportif_de_haut_niveau]
+      age_minimum: 20
+      ressources_maximum_en_plafonds: 0.75
+      plafond_trimestres: 32
+      fiabilite: moyenne
   exemples: aucun trouvé
 presomptions:
   pas_de_periode_assimilee: >-
@@ -116,11 +139,49 @@ sources:
   - type: jorf
     reference: décret n° 2023-799 du 21 août 2023, article 4
     date: 2023-08-22
+approximations:
+- ecart: >-
+    les ressources de l'année sont les revenus d'activité que la carrière lui porte,
+    et non les revenus nets catégoriels de l'impôt, revenus taxés à taux proportionnel
+    et perçus hors de France compris
+  effet: >-
+    le sportif qui a d'autres revenus reçoit des trimestres que la caisse refuse ; non
+    mesuré
+- ecart: >-
+    « sans validation à un autre titre » se lit par le plafond de l'année : le
+    trimestre compte au plafond de seize ou trente-deux même quand l'année est déjà
+    pleine
+  effet: >-
+    le sportif qui travaille atteint le plafond plus tôt que la caisse ne le dirait ;
+    non mesuré
+- ecart: >-
+    la version de trente-deux trimestres vaut pour les pensions qui prennent effet
+    depuis le 1er septembre 2023, date déduite de l'entrée en vigueur de la rédaction,
+    sans circulaire lue
+  effet: >-
+    seize trimestres de plus au plus, pour les pensions de cette date ; non mesuré
+code:
+  python: >-
+    droit/compter.py : trimestres_assimiles, trimestres_des_periodes, jours_par_annee, version_ouverte ;
+    compter (Durees.assimilees, Durees.plafonds_assimilees) ; scenarios/actuel.py :
+    FichesDatees.version_aux_dates
+  javascript: >-
+    moteur/js/droit/compter.js, les jumeaux de chacune ; moteur/js/regimes.js :
+    FichesDatees.versionAuxDates
+  parametres: >-
+    contenu.parametres de chaque version : existe, decompte, regimes, jours_par_trimestre, motifs, age_minimum, ressources_maximum_en_plafonds, plafond_trimestres, fiabilite
+  tests: >-
+    tests/test_periodes_assimilees.py, dans les deux moteurs
 historique:
 - >-
   2026-10-16 — née avec l'étape 1 du sixième domaine (action 130) : le 7° de L. 351-3,
   que la frontière contributive portait, lu à la source.
+- >-
+  2026-10-16 — modélisée, approchée, à l'étape 3 du sixième domaine : l'étape « compter
+  les durées » compte les périodes d'inscription continues de quatre-vingt-dix jours, dans les deux moteurs ; aucune saisie ne les déclare
+  encore (étape 5).
 effet: >-
   Les sportifs inscrits sur la liste de haut niveau depuis 2012, à faibles ressources :
-  jusqu'à quatre trimestres par an, trente-deux en tout, que le modèle ne compte pas.
+  jusqu'à quatre trimestres par an, trente-deux en tout, que le modèle compte depuis l'étape 3 du sixième
+  domaine, sans saisie qui les déclare encore.
   L'effectif n'est pas dans les sources lues.

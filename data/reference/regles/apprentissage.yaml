@@ -12,7 +12,7 @@ domaine: periodes_assimilees
 regimes: [regime_general, msa_salaries]
 etape: compter_les_durees
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - >-
   les périodes d'apprentissage de l'assuré, contrat par contrat, avec leurs dates de
@@ -62,6 +62,9 @@ versions:
       l'assiette forfaitaire elle-même tient à l'arrêté du 5 juin 1979 fixant les
       cotisations forfaitaires, et à ses modifications, que l'index nomme sans que le
       dépôt les ait lus
+    parametres:
+      existe: false
+      fiabilite: haute
   exemples: aucun trouvé
 - id: duree_du_contrat_depuis_2014
   statut: lue
@@ -147,6 +150,11 @@ versions:
     payeur: >-
       le Fonds de solidarité vieillesse jusqu'au 31 décembre 2025, la branche vieillesse
       depuis ; le financement est l'objet de l'étape 6 du domaine
+    parametres:
+      existe: true
+      regimes: [regime_general, msa_salaries]
+      decompte: duree_du_contrat
+      fiabilite: haute
   exemples: aucun trouvé
 - id: versement_forfaitise_depuis_2022
   statut: lue
@@ -178,6 +186,11 @@ versions:
       la rédaction de 2022 n'a plus le II qui disait les trimestres complémentaires
       comptés pour la décote et la durée d'assurance ; la portée se lit désormais dans
       L. 6243-3 seul et dans la circulaire de 2016, que rien de lu ne dit abrogée
+    parametres:
+      existe: true
+      regimes: [regime_general, msa_salaries]
+      decompte: duree_du_contrat
+      fiabilite: haute
   exemples: aucun trouvé
 presomptions:
   pas_de_periode_assimilee: >-
@@ -221,14 +234,51 @@ sources:
       à compter du 1er janvier 2014 », et ses quatre exemples en annexe
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2016_41_17102016.pdf
     date: 2016-10-17
+approximations:
+- ecart: >-
+    le complément est la durée du contrat moins TOUS les trimestres que l'année valide
+    dans le régime, et non ceux de la seule rémunération de l'apprenti (D. 373-4) : le
+    modèle ne sait pas quelle part de l'année l'apprentissage paie
+  effet: >-
+    l'apprenti qui prend un autre emploi l'année où son contrat finit reçoit moins que
+    le complément ; un trimestre ou deux, non mesuré
+- ecart: >-
+    le régime qui valide le complément est le premier de la version, régime général
+    puis salariés agricoles, qui a validé des trimestres dans l'année, et non celui du
+    contrat
+  effet: >-
+    aucun sur la durée tous régimes ; le prorata d'un apprenti agricole qui change de
+    régime l'année de son contrat
+- ecart: >-
+    une année dont un relevé déposé porte les trimestres n'en reçoit aucun : la caisse
+    les a déjà comptés
+  effet: >-
+    aucun quand le relevé est à jour
+code:
+  python: >-
+    droit/compter.py : trimestres_assimiles, trimestres_de_l_apprentissage, trimestres_du_contrat, version_ouverte ;
+    compter (Durees.assimilees, Durees.plafonds_assimilees) ; scenarios/actuel.py :
+    FichesDatees.version_aux_dates
+  javascript: >-
+    moteur/js/droit/compter.js, les jumeaux de chacune ; moteur/js/regimes.js :
+    FichesDatees.versionAuxDates
+  parametres: >-
+    contenu.parametres de chaque version : existe, decompte, regimes, fiabilite
+  tests: >-
+    tests/test_periodes_assimilees.py, dans les deux moteurs
 historique:
 - >-
   2026-10-16 — née avec l'étape 1 du sixième domaine (action 130), les fiches lues à la
   source : l'apprentissage d'abord, que l'inventaire des avantages non contributifs
   portait `absent` sans fiche.
+- >-
+  2026-10-16 — modélisée, approchée, à l'étape 3 du sixième domaine : l'étape « compter
+  les durées » compte le complément de l'apprentissage, jusqu'à la durée du contrat, dans les deux moteurs ; aucune saisie ne les déclare
+  encore (étape 5).
 effet: >-
   Les apprentis depuis 2014 : 878 871 contrats commencés en 2024 (DARES). Un apprenti
   de moins de dix-huit ans payé 25 à 37 % du SMIC valide par ses salaires deux à trois
-  trimestres par an, et le complément porte le reste à quatre ; le modèle, qui ne connaît
-  pas l'apprentissage, ne lui compte que ses salaires. L'effet sur la pension passe par
-  la décote et le prorata, à mesurer avec les fonctions de l'étape 3.
+  trimestres par an, et le complément porte le reste à quatre ; le modèle le compte depuis
+  l'étape 3 du sixième domaine, mais aucune saisie ne déclare encore l'apprentissage.
+  L'effet sur la pension passe par la décote et le prorata, à mesurer quand la saisie
+  le portera.

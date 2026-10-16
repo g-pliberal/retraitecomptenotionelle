@@ -6,13 +6,15 @@
  * assimilées comprises ; les services, qui proratisent la pension de la
  * fonction publique ; la durée cotisée —, régime par régime et année par
  * année, et les trimestres des enfants, dans le régime que la priorité entre
- * régimes désigne (R. 173-15) : `majorationPourEnfants`. Et les services du
+ * régimes désigne (R. 173-15) : `majorationPourEnfants`. Et les trimestres
+ * des périodes assimilées que la chronologie porte : `trimestresAssimiles`.
+ * Et les services du
  * code des pensions au jour, que le décompte final arrondit une seule fois
  * (R. 26) : `joursDeLaLigne`, `arrondirLesServices`. Ce que l'étape écrit,
  * `Durees`, suit son schéma, `data/reference/etapes/compter_les_durees.yaml`.
  */
 
-import { DateMois } from "../calendrier.js";
+import { DateMois, trimestresCivils } from "../calendrier.js";
 import * as chrono from "../chronologie.js";
 import { fiabiliteDepuisTexte, nomFiabilite, Fiabilite } from "../serie.js";
 import { ligneCotisee, periodeDeLiquidation } from "./commun.js";
@@ -24,9 +26,9 @@ import { compterLesPeriodes, familleDesRegimes } from "./etranger.js";
  * enfants enfant par enfant, chacun dans son régime ; la troisième, les
  * trimestres que les périodes hors de France apportent ; la quatrième, ceux
  * que les emplois classés ajoutent ; la cinquième, les services du code des
- * pensions au jour.
+ * pensions au jour ; la sixième, ceux des périodes assimilées.
  */
-export const SCHEMA_VERSION = 5;
+export const SCHEMA_VERSION = 6;
 
 /**
  * La fiche du décompte des services du code des pensions, lue à la date
@@ -119,6 +121,42 @@ export const AGE_LEGAL = "age_legal";
 const EPSILON_ANNEES = 1e-9;
 
 /**
+ * La fiche de l'apprentissage, que l'emploi porte en attribut, et celle de
+ * chaque motif de période assimilée : le sixième domaine (action 130). Voir
+ * `FICHES_DES_ASSIMILEES` du Python.
+ */
+export const FICHE_DE_L_APPRENTISSAGE = "apprentissage";
+export const FICHES_DES_ASSIMILEES = Object.freeze({
+  stage_de_formation_professionnelle: "stages_formation_professionnelle",
+  stage_d_insertion: "stages_formation_professionnelle",
+  sportif_de_haut_niveau: "sportifs_haut_niveau",
+  conge_supplementaire_de_naissance: "conge_supplementaire_naissance",
+});
+/** Comment une version compte ses trimestres. */
+export const DECOMPTES_DES_ASSIMILEES = Object.freeze([
+  "duree_du_contrat", "jours_dans_l_annee", "periodes_continues"]);
+/** Les jours des mois incomplets qui font un mois de contrat (D. 373-3, 2°). */
+export const JOURS_PAR_MOIS_DE_CONTRAT = 30;
+
+/**
+ * Ce qu'une période assimilée apporte dans une année, au régime qui la valide :
+ * des trimestres d'assurance, non cotisés et sans services. Voir
+ * `TrimestresAssimiles` du Python.
+ */
+export class TrimestresAssimiles {
+  constructor({ motif, regime, annee, fiche, version, texte, trimestres, fiabilite }) {
+    this.motif = motif;
+    this.regime = regime;
+    this.annee = annee;
+    this.fiche = fiche;
+    this.version = version;
+    this.texte = texte;
+    this.trimestres = trimestres;
+    this.fiabilite = fiabilite;
+  }
+}
+
+/**
  * Ce que l'emploi classé ajoute dans le régime qui le pensionne : des services
  * liquidés, sous le pourcentage maximum sauf `auDelaDuMaximum` ; de la durée
  * tous régimes, que la surcote du fonctionnaire ne lit pas (L. 14, III) ; une
@@ -199,7 +237,8 @@ export class MajorationEnfants {
 export class Durees {
   constructor({ carriere, parAnnee, horsAnnee, enfants, trimestres, trimestresParRegime,
     bonificationsParRegime, etranger = null, emplois = [], decompte = null,
-    jours = { assurance: new Map(), services: new Map() }, ecartAuJour = 0.0 }) {
+    jours = { assurance: new Map(), services: new Map() }, ecartAuJour = 0.0,
+    assimilees = [], plafondsAssimilees = new Map() }) {
     this.carriere = carriere;
     /** Par compte, par régime et par année, les trimestres crédités. */
     this.parAnnee = parAnnee;
@@ -243,6 +282,18 @@ export class Durees {
      * `trimestres`, quand la durée de leur décote se compte au jour.
      */
     this.ecartAuJour = ecartAuJour;
+    /**
+     * Les trimestres des périodes assimilées, période par période et année par
+     * année, avant le plafond de l'année : ils sont dans `parAnnee`, au compte
+     * `assurance` seul.
+     */
+    this.assimilees = assimilees;
+    /**
+     * Le plafond des années où une période assimilée compte : leurs trimestres
+     * civils jusqu'à la date d'effet, même quand la carrière n'en couvre
+     * qu'une partie.
+     */
+    this.plafondsAssimilees = plafondsAssimilees;
   }
 
   /** Ces régimes comptent-ils leurs services au jour, à la date d'effet ? */
@@ -369,8 +420,10 @@ export class Durees {
         total += this.horsAnnee[table].get(membre) ?? 0;
       }
     }
+    const plafonds = table === "assurance" ? this.plafondsAssimilees : new Map();
     for (const [annee, somme] of sommes) {
-      total += Math.min(somme, this.carriere.plafondTrimestres(annee));
+      total += Math.min(somme, Math.max(this.carriere.plafondTrimestres(annee),
+        plafonds.get(annee) ?? 0));
     }
     return total;
   }
@@ -416,6 +469,10 @@ export class Durees {
             .map(([annee, jours]) => ({ compte, regime, annee, jours })))),
         ecart: this.ecartAuJour,
       },
+      assimilees: this.assimilees.map((a) => ({
+        motif: a.motif, regime: a.regime, annee: a.annee, fiche: a.fiche,
+        version: a.version, trimestres: a.trimestres, fiabilite: nomFiabilite(a.fiabilite),
+      })),
     };
   }
 }
@@ -533,9 +590,29 @@ export function compter(moteur, coordination, avantagesNonContributifs = true) {
       ecartAuJour += auJourAnnee - entiers;
     }
   }
+  // Les périodes assimilées : à l'assurance de leur régime, année par année,
+  // et à la durée tous régimes, dans les trimestres civils que leur année
+  // laisse libres.
+  const assimilees = avantagesNonContributifs
+    ? trimestresAssimiles(moteur, carriere, parAnnee.assurance) : [];
+  const plafondsAssimilees = new Map();
+  if (assimilees.length > 0) {
+    const parAnneeAssimilees = new Map();
+    for (const assimilee of assimilees) {
+      crediterTrimestres("assurance", assimilee.regime, assimilee.annee, assimilee.trimestres);
+      parAnneeAssimilees.set(assimilee.annee,
+        (parAnneeAssimilees.get(assimilee.annee) ?? 0) + assimilee.trimestres);
+    }
+    for (const annee of [...parAnneeAssimilees.keys()].sort((a, b) => a - b)) {
+      const plafond = plafondDeLAnnee(carriere, annee);
+      plafondsAssimilees.set(annee, plafond);
+      const deja = carriere.trimestresParAnnee(carriere.lignesDe(annee)).get(annee) ?? 0;
+      trimestres += Math.max(0, Math.min(parAnneeAssimilees.get(annee), plafond - deja));
+    }
+  }
   const provisoire = new Durees({
     carriere, parAnnee, horsAnnee, enfants: null, trimestres,
-    trimestresParRegime: new Map(), bonificationsParRegime: new Map(),
+    trimestresParRegime: new Map(), bonificationsParRegime: new Map(), plafondsAssimilees,
   });
   // Durée d'assurance validée dans chaque régime, PÉRIODES ASSIMILÉES
   // COMPRISES : le coefficient de proratisation porte sur la durée
@@ -584,8 +661,310 @@ export function compter(moteur, coordination, avantagesNonContributifs = true) {
     carriere, parAnnee, horsAnnee, enfants: majorationEnfants, trimestres,
     trimestresParRegime, bonificationsParRegime, etranger, emplois,
     decompte, jours: decompte !== null ? jours : { assurance: new Map(), services: new Map() },
-    ecartAuJour,
+    ecartAuJour, assimilees, plafondsAssimilees,
   });
+}
+
+// -- les périodes assimilées (action 130, sixième domaine) ---------------------
+
+/** Un jour, compté depuis le 1er janvier 1970. */
+const JOUR_MS = 86400000;
+const versJour = (annee, mois, quantieme) => Date.UTC(annee, mois - 1, quantieme) / JOUR_MS;
+const jourDe = (texte) => versJour(Number(texte.slice(0, 4)), Number(texte.slice(5, 7)),
+  Number(texte.slice(8, 10)));
+const anneeDuJour = (jour) => new Date(jour * JOUR_MS).getUTCFullYear();
+const moisDuJour = (jour) => new Date(jour * JOUR_MS).getUTCMonth() + 1;
+const quantiemeDuJour = (jour) => new Date(jour * JOUR_MS).getUTCDate();
+const premierJanvier = (annee) => versJour(annee, 1, 1);
+const moisSuivant = (jour) => versJour(anneeDuJour(jour), moisDuJour(jour) + 1, 1);
+const trimestreSuivant = (jour) => versJour(anneeDuJour(jour),
+  3 * Math.floor((moisDuJour(jour) - 1) / 3) + 4, 1);
+const isoDuJour = (jour) => {
+  const date = new Date(jour * JOUR_MS);
+  return `${String(date.getUTCFullYear()).padStart(4, "0")}-`
+    + `${String(date.getUTCMonth() + 1).padStart(2, "0")}-`
+    + `${String(date.getUTCDate()).padStart(2, "0")}`;
+};
+
+/** La date d'effet de la pension (AAAA-MM-JJ). Voir `date_d_effet` du Python. */
+export function dateDEffet(carriere) {
+  const mois = carriere.age_liquidation !== null ? carriere.dateLiquidation.mois : 1;
+  return `${String(carriere.anneeLiquidation).padStart(4, "0")}-${String(mois).padStart(2, "0")}-01`;
+}
+
+/**
+ * Les trimestres civils d'une année que la durée d'assurance peut compter.
+ * Voir `plafond_de_l_annee` du Python.
+ */
+export function plafondDeLAnnee(carriere, annee) {
+  if (annee < carriere.anneeLiquidation) {
+    return 4;
+  }
+  const mois = carriere.age_liquidation !== null ? carriere.dateLiquidation.mois : 1;
+  return trimestresCivils(mois - 1);
+}
+
+/**
+ * Les trimestres des périodes assimilées de la carrière, année par année,
+ * avant le plafond de l'année ; aucun dans une année dont un relevé déposé
+ * porte les trimestres. Voir `trimestres_assimiles` du Python.
+ */
+export function trimestresAssimiles(moteur, carriere, assurance) {
+  if (!carriere.chronologie) {
+    return [];
+  }
+  const effet = dateDEffet(carriere);
+  return [...trimestresDeLApprentissage(moteur, carriere, assurance, effet),
+    ...trimestresDesPeriodes(moteur, carriere, effet)]
+    .filter((a) => a.trimestres > 0 && !carriere.anneesDeclarees.has(a.annee));
+}
+
+/**
+ * Le premier jour d'une période où la fiche ouvre un droit, et la version qui
+ * l'ouvre ; `null` quand rien ne l'ouvre avant `fin`. Voir `version_ouverte`
+ * du Python.
+ */
+export function versionOuverte(moteur, fiche, motif, debut, fin, effet) {
+  let jour = debut;
+  while (jour < fin) {
+    const version = moteur.fichesDatees.versionAuxDates(fiche,
+      { "periode.debut": isoDuJour(jour), "liquidation.date_effet": effet });
+    if (version !== null && version.parametres.existe) {
+      const parametres = version.parametres;
+      if (!DECOMPTES_DES_ASSIMILEES.includes(parametres.decompte)) {
+        throw new Error(`${fiche}.${version.id} : décompte inconnu, `
+          + `'${parametres.decompte}'`);
+      }
+      if (motif === null || (parametres.motifs ?? []).includes(motif)) {
+        return [jour, version];
+      }
+    }
+    jour = premierJanvier(anneeDuJour(jour) + 1);
+  }
+  return null;
+}
+
+/** Le régime qui valide une période assimilée. Voir `_regime_de` du Python. */
+function regimeDe(moteur, parametres, annee, assurance) {
+  const connus = (parametres.regimes ?? []).filter((code) => moteur.catalogue.contient(code));
+  return connus.find((code) => (assurance.get(code)?.get(annee) ?? 0) > 0)
+    ?? (connus.length > 0 ? connus[0] : null);
+}
+
+/**
+ * Les trimestres d'un contrat d'apprentissage, année par année (D. 373-3), en
+ * jours depuis 1970, `fin` exclue. Voir `trimestres_du_contrat` du Python.
+ */
+export function trimestresDuContrat(debut, fin) {
+  let moisEntiers = 0;
+  let jours = 0;
+  let jour = debut;
+  while (jour < fin) {
+    const suivant = moisSuivant(jour);
+    if (quantiemeDuJour(jour) === 1 && suivant <= fin) {
+      moisEntiers += 1;
+    } else {
+      jours += Math.min(suivant, fin) - jour;
+    }
+    jour = suivant;
+  }
+  const total = Math.floor((moisEntiers + Math.floor(jours / JOURS_PAR_MOIS_DE_CONTRAT)) / 3);
+  const parAnnee = new Map();
+  let trimestre = quantiemeDuJour(debut) === 1 && moisDuJour(debut) % 3 === 1
+    ? debut : trimestreSuivant(debut);
+  let entiers = 0;
+  while (trimestreSuivant(trimestre) <= fin) {
+    const annee = anneeDuJour(trimestre);
+    parAnnee.set(annee, (parAnnee.get(annee) ?? 0) + 1);
+    entiers += 1;
+    trimestre = trimestreSuivant(trimestre);
+  }
+  const reste = total - entiers;
+  if (reste > 0) {
+    const derniere = anneeDuJour(fin - 1);
+    parAnnee.set(derniere, (parAnnee.get(derniere) ?? 0) + reste);
+  }
+  return parAnnee;
+}
+
+/** Les contrats d'apprentissage de la carrière. Voir `_contrats` du Python. */
+function contrats(carriere) {
+  const liste = [];
+  for (const periode of chrono.periodes(carriere.chronologie, carriere.personne)) {
+    if (periode.sorte !== chrono.EMPLOI || !periode.attributs.apprentissage) {
+      continue;
+    }
+    const debut = jourDe(periode.debut);
+    const fin = jourDe(periode.fin);
+    if (liste.length > 0 && liste[liste.length - 1][1] === debut) {
+      liste[liste.length - 1][1] = fin;
+    } else {
+      liste.push([debut, fin]);
+    }
+  }
+  return liste.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+}
+
+/**
+ * Le complément de l'apprentissage, année par année : les trimestres du contrat
+ * moins ceux que l'année a déjà validés dans son régime (D. 373-4). Voir
+ * `trimestres_de_l_apprentissage` du Python.
+ */
+export function trimestresDeLApprentissage(moteur, carriere, assurance, effet) {
+  const resultat = [];
+  const finDeCarriere = jourDe(effet);
+  for (const [debut, finDuContrat] of contrats(carriere)) {
+    const fin = Math.min(finDuContrat, finDeCarriere);
+    const ouverte = versionOuverte(moteur, FICHE_DE_L_APPRENTISSAGE, null, debut, fin, effet);
+    if (ouverte === null) {
+      continue;
+    }
+    const [ouverture, version] = ouverte;
+    const parametres = version.parametres;
+    const parAnnee = [...trimestresDuContrat(ouverture, fin)].sort((a, b) => a[0] - b[0]);
+    for (const [annee, duContrat] of parAnnee) {
+      const regime = regimeDe(moteur, parametres, annee, assurance);
+      if (regime === null) {
+        continue;
+      }
+      const valides = assurance.get(regime)?.get(annee) ?? 0;
+      resultat.push(new TrimestresAssimiles({
+        motif: FICHE_DE_L_APPRENTISSAGE, regime, annee, fiche: FICHE_DE_L_APPRENTISSAGE,
+        version: version.id, texte: version.texte, trimestres: Math.max(0, duContrat - valides),
+        fiabilite: fiabiliteDepuisTexte(parametres.fiabilite),
+      }));
+    }
+  }
+  return resultat;
+}
+
+/**
+ * Les jours d'une période, année civile par année civile, `fin` exclue ; ou
+ * `jours`, répartis au prorata, sans fraction. Voir `jours_par_annee` du
+ * Python.
+ */
+export function joursParAnnee(debut, fin, jours = null) {
+  const calendrier = new Map();
+  let jour = debut;
+  while (jour < fin) {
+    const suivant = Math.min(premierJanvier(anneeDuJour(jour) + 1), fin);
+    calendrier.set(anneeDuJour(jour), suivant - jour);
+    jour = suivant;
+  }
+  if (jours === null || jours === undefined) {
+    return calendrier;
+  }
+  const total = [...calendrier.values()].reduce((somme, n) => somme + n, 0);
+  const reparti = new Map();
+  let cumul = 0;
+  let donnes = 0;
+  for (const [annee, nombre] of calendrier) {
+    cumul += nombre;
+    const part = Math.floor((jours * cumul) / total) - donnes;
+    reparti.set(annee, part);
+    donnes += part;
+  }
+  return reparti;
+}
+
+/** Le jour anniversaire de cet âge. Voir `_anniversaire` du Python. */
+function anniversaire(carriere, age) {
+  const texte = chrono.naissance(carriere.chronologie, carriere.personne).debut;
+  const annee = Number(texte.slice(0, 4)) + age;
+  const mois = Number(texte.slice(5, 7));
+  const quantieme = Number(texte.slice(8, 10));
+  if (mois === 2 && quantieme === 29 && !(annee % 4 === 0 && (annee % 100 !== 0
+    || annee % 400 === 0))) {
+    return versJour(annee, 3, 1);
+  }
+  return versJour(annee, mois, quantieme);
+}
+
+/**
+ * Les trimestres des périodes assimilées que la personne déclare : les jours
+ * dans l'année, par fiche et par année ; les périodes continues des sportifs,
+ * tranche par tranche. Voir `trimestres_des_periodes` du Python.
+ */
+export function trimestresDesPeriodes(moteur, carriere, effet) {
+  const finDeCarriere = jourDe(effet);
+  const joursCumules = new Map();
+  const continues = new Map();
+  const sportifs = new Map();
+  const cumuler = (table, fiche, annee, motif, version, nombre) => {
+    const cle = `${fiche}|${annee}`;
+    if (!table.has(cle)) {
+      table.set(cle, [fiche, annee, motif, version, 0]);
+    }
+    table.get(cle)[4] += nombre;
+  };
+  for (const periode of chrono.periodesAssimilees(carriere.chronologie, carriere.personne)) {
+    const attributs = periode.attributs;
+    const motif = attributs.motif;
+    const fiche = FICHES_DES_ASSIMILEES[motif];
+    const debut = jourDe(periode.debut);
+    const finDeclaree = jourDe(periode.fin);
+    const fin = Math.min(finDeclaree, finDeCarriere);
+    const ouverte = versionOuverte(moteur, fiche, motif, debut, fin, effet);
+    if (ouverte === null) {
+      continue;
+    }
+    let [ouverture, version] = ouverte;
+    const parametres = version.parametres;
+    const parTranche = Math.trunc(parametres.jours_par_trimestre);
+    if (parametres.decompte === "jours_dans_l_annee") {
+      let jours = attributs.jours ?? null;
+      if (jours !== null) {
+        jours = Math.floor((jours * (fin - ouverture)) / (finDeclaree - debut));
+      }
+      for (const [annee, nombre] of joursParAnnee(ouverture, fin, jours)) {
+        cumuler(joursCumules, fiche, annee, motif, version, nombre);
+      }
+      continue;
+    }
+    if (parametres.decompte === "periodes_continues") {
+      ouverture = Math.max(ouverture, anniversaire(carriere, Math.trunc(parametres.age_minimum)));
+      const plafond = Math.trunc(parametres.plafond_trimestres);
+      let tranche = ouverture;
+      while (tranche + parTranche <= fin && (sportifs.get(fiche) ?? 0) < plafond) {
+        const finTranche = tranche + parTranche;
+        let annee = null;
+        for (const [candidate, nombre] of joursParAnnee(tranche, finTranche)) {
+          if (annee === null || nombre > annee[1]) {
+            annee = [candidate, nombre];
+          }
+        }
+        tranche = finTranche;
+        const revenus = carriere.lignesDe(annee[0])
+          .reduce((somme, ligne) => somme + ligne.revenu, 0);
+        if (revenus > parametres.ressources_maximum_en_plafonds
+          * moteur.macro.plafond_securite_sociale.valeur(annee[0])) {
+          continue;
+        }
+        sportifs.set(fiche, (sportifs.get(fiche) ?? 0) + 1);
+        cumuler(continues, fiche, annee[0], motif, version, 1);
+      }
+      continue;
+    }
+    throw new Error(`${fiche}.${version.id} : la fiche d'une période assimilée `
+      + "ne compte pas la durée d'un contrat");
+  }
+  const resultat = [];
+  for (const [table, enJours] of [[joursCumules, true], [continues, false]]) {
+    for (const [fiche, annee, motif, version, nombre] of table.values()) {
+      const parametres = version.parametres;
+      const regime = regimeDe(moteur, parametres, annee, new Map());
+      if (regime === null) {
+        continue;
+      }
+      resultat.push(new TrimestresAssimiles({
+        motif, regime, annee, fiche, version: version.id, texte: version.texte,
+        trimestres: enJours ? Math.floor(nombre / Math.trunc(parametres.jours_par_trimestre))
+          : nombre,
+        fiabilite: fiabiliteDepuisTexte(parametres.fiabilite),
+      }));
+    }
+  }
+  return resultat;
 }
 
 /**

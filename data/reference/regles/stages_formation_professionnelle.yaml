@@ -11,7 +11,7 @@ domaine: periodes_assimilees
 regimes: [regime_general]
 etape: compter_les_durees
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - >-
   les périodes de stage de l'assuré, avec leurs dates, et pour celles d'avant 2015 la
@@ -45,6 +45,9 @@ versions:
       (arrêté du 24 janvier 1980), est porté au compte et valide des trimestres par la
       règle commune de R. 351-9 ; il est trop faible pour en valider autant que le stage
       dure (circulaire Cnav 2024-18, préambule et 3.1)
+    parametres:
+      existe: false
+      fiabilite: haute
   exemples: aucun trouvé
 - id: cinquante_jours_depuis_2015
   statut: lue
@@ -77,6 +80,13 @@ versions:
       trimestres des salaires ; le stage commencé avant 2015 compte pour ses jours de 2015
       et après (circulaire 2024-18, 3.2.1.2 et 3.2.2)
     payeur: le Fonds de solidarité vieillesse, par un forfait (L. 135-2, 2°, a ; R. 135-16-1)
+    parametres:
+      existe: true
+      regimes: [regime_general]
+      decompte: jours_dans_l_annee
+      jours_par_trimestre: 50
+      motifs: [stage_de_formation_professionnelle]
+      fiabilite: haute
   exemples: aucun trouvé
 - id: tuc_et_stages_d_insertion
   statut: lue
@@ -126,6 +136,13 @@ versions:
     portee: >-
       des périodes assimilées, non cotisées : elles ne comptent pas pour la carrière
       longue (questions écrites au Sénat de 2024 ; D. 351-1-2 ne les nomme pas)
+    parametres:
+      existe: true
+      regimes: [regime_general]
+      decompte: jours_dans_l_annee
+      jours_par_trimestre: 50
+      motifs: [stage_d_insertion]
+      fiabilite: haute
   exemples: aucun trouvé
 presomptions:
   pas_de_periode_assimilee: >-
@@ -164,12 +181,44 @@ sources:
       exemples et son annexe
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2024_18_11042024.pdf
     date: 2024-04-11
+approximations:
+- ecart: >-
+    les jours qu'un stage déclare se répartissent entre ses années au prorata de ses
+    jours de calendrier, faute de les connaître année par année
+  effet: >-
+    un trimestre au plus, l'année d'un bord ; non mesuré
+- ecart: >-
+    le stage d'insertion des années 1977 à 1992 compte sans les pièces justificatives
+    que l'instruction du 19 octobre 2023 exige : le modèle croit la déclaration
+  effet: >-
+    aucun pour qui les produit
+- ecart: >-
+    une année dont un relevé déposé porte les trimestres n'en reçoit aucun
+  effet: >-
+    aucun quand le relevé est à jour
+code:
+  python: >-
+    droit/compter.py : trimestres_assimiles, trimestres_des_periodes, jours_par_annee, version_ouverte ;
+    compter (Durees.assimilees, Durees.plafonds_assimilees) ; scenarios/actuel.py :
+    FichesDatees.version_aux_dates
+  javascript: >-
+    moteur/js/droit/compter.js, les jumeaux de chacune ; moteur/js/regimes.js :
+    FichesDatees.versionAuxDates
+  parametres: >-
+    contenu.parametres de chaque version : existe, decompte, regimes, jours_par_trimestre, motifs, fiabilite
+  tests: >-
+    tests/test_periodes_assimilees.py, dans les deux moteurs
 historique:
 - >-
   2026-10-16 — née avec l'étape 1 du sixième domaine (action 130) : les 8° et 9° de
   L. 351-3, que la frontière contributive portait `non_applique`, lus à la source.
+- >-
+  2026-10-16 — modélisée, approchée, à l'étape 3 du sixième domaine : l'étape « compter
+  les durées » compte les jours de stage, cinquante par trimestre, année par année, dans les deux moteurs ; aucune saisie ne les déclare
+  encore (étape 5).
 effet: >-
   Les stagiaires de la formation professionnelle depuis 2015, et les anciens des TUC et
   des stages d'insertion des années 1977 à 1992 partis depuis septembre 2023, « au moins
   350 000 » pour les seuls TUC : jusqu'à quatre trimestres par an d'écart sur la durée
-  d'assurance, que le modèle ne compte pas.
+  d'assurance, que le modèle compte depuis l'étape 3 du sixième domaine,
+  sans saisie qui les déclare encore.

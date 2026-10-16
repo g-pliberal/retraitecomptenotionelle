@@ -579,6 +579,20 @@ export class FichesDatees {
     }
     return applicable(fiche, { "liquidation.date_effet": dateEffet });
   }
+
+  /**
+   * La version de `nom` qui vaut à ces dates (AAAA-MM-JJ), parmi lesquelles la
+   * fiche ne lit que celles qu'elle déclare ; `null` sans fiche ou sans
+   * version. Voir `version_aux_dates` du Python.
+   */
+  versionAuxDates(nom, dates) {
+    const fiche = this._fiches[nom] ?? null;
+    if (fiche === null) {
+      return null;
+    }
+    return applicable(fiche, Object.fromEntries(Object.entries(dates)
+      .filter(([cle]) => fiche.dates_qui_decident.includes(cle))));
+  }
 }
 
 /**

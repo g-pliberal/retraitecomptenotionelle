@@ -28,11 +28,17 @@
 # fois (R. 26), et la durée que leur décote lit ne les arrondit pas (L. 14, I ;
 # fiche decompte_des_services_fonction_publique).
 #
+# La version 6 (16 octobre 2026) compte les périodes assimilées que la
+# chronologie porte (action 130, sixième domaine) : le complément de
+# l'apprentissage, jusqu'à la durée du contrat (D. 373-3), et les jours de
+# stage, d'inscription des sportifs de haut niveau et de congé supplémentaire
+# de naissance, à l'assurance de leur régime seule, ni cotisés ni services.
+#
 # src/retraite_notionnelle/droit/compter.py, et son jumeau
 # moteur/js/droit/compter.js.
 
 etape: compter_les_durees
-schema_version: 5
+schema_version: 6
 lit: [coordination]
 ecrit: durees
 
@@ -48,6 +54,17 @@ objets:
       etranger: {porte: "les trimestres que les périodes hors de France apportent à la durée du taux", type: objet, objet: etranger, defaut: null}
       emplois: {porte: "ce que les emplois classés et le service militaire ajoutent, régime par régime", type: liste, de: {objet: emploi}, obligatoire: true}
       au_jour: {porte: "les services du code des pensions comptés au jour, quand la version du décompte qui vaut à la date d'effet les y compte", type: objet, objet: au_jour, defaut: null}
+      assimilees: {porte: "les trimestres des périodes assimilées, par motif, régime et année, avant le plafond de l'année ; ils sont dans les comptes, à l'assurance seule", type: liste, de: {objet: assimilee}, obligatoire: true}
+
+  assimilee:
+    champs:
+      motif: {porte: "apprentissage, ou le motif de la période assimilée", type: identifiant, obligatoire: true}
+      regime: {porte: "le régime qui les valide", type: identifiant, obligatoire: true}
+      annee: {porte: "l'année civile où ils comptent", type: entier, obligatoire: true}
+      fiche: {porte: "la fiche qui les porte", type: identifiant, obligatoire: true}
+      version: {porte: "la version de la fiche qui s'applique", type: identifiant, obligatoire: true}
+      trimestres: {porte: "les trimestres, avant le plafond de l'année", type: entier, obligatoire: true}
+      fiabilite: {porte: "le niveau de la donnée", type: texte, obligatoire: true}
 
   au_jour:
     champs:

@@ -1223,7 +1223,9 @@ class FichesDatees:
             "maintien_en_fonctions_jusqu_a_70_ans",
             "plafond_limite_age_fonction_publique", "limite_age_contractuels",
             "limite_age_ouvriers_etat", "limite_age_sncf_ratp", "limite_age_ieg",
-            "limite_age_opera", "limite_age_seita")
+            "limite_age_opera", "limite_age_seita",
+            "apprentissage", "stages_formation_professionnelle",
+            "sportifs_haut_niveau", "conge_supplementaire_naissance")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}
@@ -1260,6 +1262,18 @@ class FichesDatees:
         if fiche is None:
             return None
         return versions.applicable(fiche, {"liquidation.date_effet": date_effet})
+
+    def version_aux_dates(self, nom: str, dates: dict[str, str]) -> dict | None:
+        """La version de ``nom`` qui vaut à ces dates (AAAA-MM-JJ), parmi
+        lesquelles la fiche ne lit que celles qu'elle déclare : une période
+        assimilée donne son début et la date d'effet de la pension, que la
+        fiche de l'apprentissage ne lit pas. ``None`` sans fiche ou sans
+        version à ces dates."""
+        fiche = self._fiches.get(nom)
+        if fiche is None:
+            return None
+        return versions.applicable(fiche, {cle: valeur for cle, valeur in dates.items()
+                                           if cle in fiche["dates_qui_decident"]})
 
 
 @dataclass(frozen=True)

@@ -8,7 +8,7 @@ domaine: periodes_assimilees
 regimes: [regime_general]
 etape: compter_les_durees
 face: droit
-etat: pas_encore_modelisee
+etat: approchee
 lit:
 - les jours de congé supplémentaire de naissance indemnisés de l'assuré, année par année
 ecrit:
@@ -28,6 +28,9 @@ versions:
     periode.debut: [null, 2026-07-01]
   contenu:
     droit: aucun trimestre à ce titre
+    parametres:
+      existe: false
+      fiabilite: moyenne
   exemples: aucun trouvé
 - id: cinquante_huit_jours
   statut: lue
@@ -61,6 +64,13 @@ versions:
       les bornes suivent l'entrée en vigueur du c (1er juillet 2026) ; un congé indemnisé
       entre le 1er janvier et le 30 juin 2026, que L. 351-3 vise déjà, reste à lire dans le
       décret n° 2026-425 et dans la circulaire de la Cnav qui l'appliquera
+    parametres:
+      existe: true
+      regimes: [regime_general]
+      decompte: jours_dans_l_annee
+      jours_par_trimestre: 58
+      motifs: [conge_supplementaire_de_naissance]
+      fiabilite: haute
   exemples: aucun trouvé
 presomptions:
   pas_de_periode_assimilee: >-
@@ -80,12 +90,41 @@ sources:
       rédactions du 1er janvier, du 1er juillet et du 1er novembre 2026 ; L. 331-8-1 ;
       dans l'index LEGI à jour du 15 octobre 2026
     date: 2026-10-16
+approximations:
+- ecart: >-
+    les jours se comptent dans l'année civile, sans report, comme les autres périodes
+    assimilées du 2° de R. 351-12 : le c ne le dit pas, et la circulaire de la Cnav
+    qui l'appliquera n'a pas paru
+  effet: >-
+    un trimestre au plus, pour un congé à cheval sur deux années ; non mesuré
+- ecart: >-
+    le congé indemnisé du premier semestre 2026 ne compte pas : la version d'avant le
+    c n'ouvre rien, en attendant la lecture du décret n° 2026-425
+  effet: >-
+    un trimestre au plus, pour les congés de janvier à juin 2026
+code:
+  python: >-
+    droit/compter.py : trimestres_assimiles, trimestres_des_periodes, jours_par_annee, version_ouverte ;
+    compter (Durees.assimilees, Durees.plafonds_assimilees) ; scenarios/actuel.py :
+    FichesDatees.version_aux_dates
+  javascript: >-
+    moteur/js/droit/compter.js, les jumeaux de chacune ; moteur/js/regimes.js :
+    FichesDatees.versionAuxDates
+  parametres: >-
+    contenu.parametres de chaque version : existe, decompte, regimes, jours_par_trimestre, motifs, fiabilite
+  tests: >-
+    tests/test_periodes_assimilees.py, dans les deux moteurs
 historique:
 - >-
   2026-10-16 — née avec l'étape 1 du sixième domaine (action 130) : le congé
   supplémentaire de naissance, que la frontière contributive portait, lu à la source.
+- >-
+  2026-10-16 — modélisée, approchée, à l'étape 3 du sixième domaine : l'étape « compter
+  les durées » compte les jours de congé indemnisés, cinquante-huit par trimestre, année par année, dans les deux moteurs ; aucune saisie ne les déclare
+  encore (étape 5).
 effet: >-
   Les parents qui prennent le congé supplémentaire de naissance depuis le 1er juillet
-  2026 : un trimestre par cinquante-huit jours, que le modèle ne compte pas ; pour une
+  2026 : un trimestre par cinquante-huit jours, que le modèle compte sans saisie
+  qui les déclare encore ; pour une
   carrière de salarié à temps plein, l'année est déjà validée par les salaires, et
   l'effet ne joue que pour les carrières incomplètes.
