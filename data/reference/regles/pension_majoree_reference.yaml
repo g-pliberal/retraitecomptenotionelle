@@ -127,15 +127,26 @@ versions:
       partie des périodes d'assurance validées en qualité de chef d'exploitation [...]
       à titre exclusif ou principal par les personnes qui justifient d'une durée
       d'assurance en qualité de chef [...] au moins égale à dix-sept années et demie »
-      ; au 4°, celles du collaborateur, du conjoint participant aux travaux, de l'aide
-      familial, et du chef qui n'a pas ces dix-sept ans et demi
-    lu_le: 2026-10-14
+      ; « 2° Pour tout ou partie des périodes d'assurance non salariée agricole à titre
+      exclusif ou principal validées par les personnes susceptibles de bénéficier d'une
+      pension de réversion prévue aux articles L. 732-41 à L. 732-46 ; 3° Pour tout ou
+      partie des périodes d'assurance cotisées à titre exclusif ou principal à compter
+      du 1er janvier 1999 et avant le 1er janvier 2009 en qualité de collaborateur
+      d'exploitation [...] par les personnes justifiant de la régularité de leur
+      situation au regard des dispositions du deuxième alinéa du II de l'article
+      L. 732-54-2 » ; au 4°, celles du collaborateur autres que celles du 3°, du
+      conjoint participant aux travaux, de l'aide familial, et du chef qui n'a pas ces
+      dix-sept ans et demi
+    lu_le: 2026-10-16
   - id: LEGIARTI000020254705
     article: D. 732-111 code rural
     en_vigueur: 2009-02-16
     citation: >-
       « PMR = [PMR1 × (DM1 / DR)] + [PMR2 × (DM2) / DR] où ― PMR1 est égal à 7 596 euros
-      au 1er janvier 2009 ; ― PMR2 est égal à 6 036 euros au 1er janvier 2009 » ; « DR
+      au 1er janvier 2009 ; ― PMR2 est égal à 6 036 euros au 1er janvier 2009 » ; « DM1
+      représente la durée d'assurance de l'assuré composée des périodes définies aux 1°
+      et 2°, ou au 3°, du II de l'article D. 732-110 » ; « Les périodes mentionnées aux
+      1° et 3° du II de l'article D. 732-110 sont retenues en priorité » ; « DR
       [...] ne peut être inférieure à 37, 5 années » ; « Les montants minimums annuels
       PMR1 et PMR2 sont revalorisés aux mêmes dates et dans les mêmes conditions que
       celles prévues pour les pensions de vieillesse de base par l'article L. 161-23-1 »
@@ -433,14 +444,24 @@ approximations:
     le statut se lit année par année : chef à titre principal quand la ligne du chef
     d'exploitation est l'activité principale de l'année, à titre secondaire quand une
     autre la précède ; conjoint collaborateur et aide familial sont un même statut, que
-    la règle traite de même (D. 732-110, II, 4°) ; les périodes de collaborateur
-    régularisées de 1999 à 2008, que le 3° range avec celles du chef, et celles de qui
-    peut prétendre à une réversion, que le 2° y range aussi, reçoivent PMR2
-  effet: non mesuré
+    la règle traite de même ; depuis le 16 octobre 2026, ses années de 1999 à 2008
+    reçoivent PMR1, avec celles du chef et en priorité (D. 732-110, II, 3°), toutes
+    présumées cotisées par un collaborateur qui a régularisé sa situation au sens du
+    deuxième alinéa du II de L. 732-54-2 d'avant 2009 — conjoint en 1998, avoir opté
+    avant 2001 et gardé le statut — ; l'aide familial de ces années, et le collaborateur
+    qui n'a pas régularisé, relèvent du 4°, à PMR2 ; les périodes de conjoint d'avant
+    1999 rachetées avant 2009, que le 3° y range depuis 2011, sont présumées non
+    rachetées
+  effet: >-
+    la conjointe collaboratrice de 1972 à 2016 : PMR1 sur ses dix années de 1999 à 2008,
+    410 € par an de plus ; l'aide familial de ces années en reçoit autant de trop
 - ecart: >-
     la réversion n'entre ni dans la pension comparée ni dans l'écrêtement : le modèle
-    liquide la pension personnelle seule, et PMR1 n'est pas servie à la personne
-    « susceptible de bénéficier d'une pension de réversion » qui n'a pas été chef
+    liquide la pension personnelle seule ; et le 2° de D. 732-110, II, qui sert PMR1 sur
+    toutes les périodes de qui peut prétendre à une réversion du régime (L. 732-41 à
+    L. 732-46), ne trouve personne : le modèle ne connaît pas le décès du conjoint de
+    l'assuré, que la saisie ne demande pas — le veuf ou la veuve d'un chef, collaborateur
+    toute sa vie, reçoit PMR2 au lieu de PMR1
   effet: non mesuré
 - ecart: >-
     la PMR attribuée le 1er janvier 2009 aux pensions liquidées avant elle (D. 732-109,
@@ -484,6 +505,17 @@ sources:
     pension portée à la PMR, et le rejouer dans exemples_officiels.yaml.
   - Relire les montants à chaque revalorisation de janvier.
   lectures:
+  - type: legifrance
+    reference: >-
+      L. 732-54-2 du code rural, rédaction du 1er janvier 2007 (LEGIARTI000006585628),
+      deuxième alinéa du II : « les personnes qui avaient au 31 décembre 1998 et au 1er
+      janvier 1999 la qualité de conjoint définie à l'article L. 732-34 ne sont
+      considérées comme conjoint collaborateur que si elles ont opté avant le 1er janvier
+      2001 pour le statut mentionné à l'article L. 321-5 et ont conservé ce statut de
+      manière durable » ; D. 732-110, II, 3°, rédaction de 2011 (LEGIARTI000023395298), qui
+      y ajoute les périodes de conjoint participant aux travaux d'avant 1999 rachetées
+      avant 2009, dans l'index LEGI du dépôt à jour au 11 octobre 2026
+    date: 2026-10-16
   - type: legifrance
     reference: >-
       L. 732-54-1 à L. 732-54-4 du code rural (rédactions de 2002, 2008, 2014, 2022,
@@ -542,6 +574,10 @@ historique:
   2026-10-07 — servie, à l'étape 138.8 : déclarée depuis le 19 septembre 2026 dans six
   périodes de msa_non_salaries.yaml sans qu'aucun code la serve ; sept versions, de son
   absence avant 2009 au plafond de l'article L. 173-2 en 2026.
+- >-
+  2026-10-16 — étape 138.8 : les périodes de collaborateur de 1999 à 2008, présumées
+  régularisées, à PMR1 (D. 732-110, II, 3°, rédactions de 2009 et de 2011, et D. 732-111,
+  relus) ; le 2°, sans personne à qui le servir, déclaré.
 - >-
   2026-10-16 — étape 138.8 : servie aux pensions liquidées avant 2009, depuis le
   1er janvier 2009, à l'étape « faire vivre » (revalorisation.reviser_les_exploitants).

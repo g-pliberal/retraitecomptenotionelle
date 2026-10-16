@@ -320,11 +320,14 @@ approximations:
 - ecart: >-
     la durée de chef ne compte que les années où le chef d'exploitation est l'activité
     principale, et, depuis 2026, celles où il est secondaire ; la durée agricole compte
-    aussi le conjoint collaborateur et l'aide familial ; mais tous les points de RCO
-    entrent dans la formule différentielle, ceux acquis comme collaborateur depuis 2011
-    compris, quand D. 732-166-3 ne retient que ceux de chef : le complément d'une
-    carrière mêlée est un peu trop bas
-  effet: non mesuré
+    aussi le conjoint collaborateur et l'aide familial ; les points que la formule
+    différentielle retranche, N, sont ceux des seules années de chef, gratuits compris
+    (D. 732-166-4), lus année par année depuis le 16 octobre 2026 ; une année où deux
+    activités agricoles se mêlent prend la qualité de la principale
+  effet: >-
+    jusqu'au 16 octobre 2026, ceux du collaborateur, acquis depuis 2011, en étaient
+    aussi : vingt-neuf ans de chef puis quinze de collaborateur, parti en 2026,
+    recevaient 1 184 points de complément de moins, 468 € par an
 - ecart: >-
     le complément se calcule au départ : servi depuis 2015 aux pensions liquidées avant,
     revu à chaque changement des pensions, il ne l'est pas — seul l'est le relèvement de
@@ -333,7 +336,7 @@ approximations:
     pensions des élus locaux exclues depuis 2026
   effet: non mesuré
 sources:
-  lu_le: 2026-10-08
+  lu_le: 2026-10-16
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -393,6 +396,10 @@ code:
   tests: >-
     tests/test_minima_agricoles.py, dans les deux moteurs
 historique:
+- >-
+  2026-10-16 — étape 138.8 : N, les seuls points de RCO acquis au titre des années de
+  chef (D. 732-166-4, rédactions de novembre 2021 et de 2026, relues), au lieu de tous
+  ceux de la RCO (completer.points_rco_de_chef).
 - >-
   2026-10-08 — le SMIC net agricole de 2023, estimé, lu dans une note de presse de la
   MSA qui le confirme ; le relèvement de septembre 2023 des pensions déjà liquidées,

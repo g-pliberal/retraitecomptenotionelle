@@ -476,6 +476,54 @@ def test_le_chef_de_moins_de_dix_sept_ans_et_demi_recoit_pmr1_depuis_2011(simula
     assert "+ " not in avantages["pension_majoree_reference"].detail.split(", au taux")[0]
 
 
+def test_le_collaborateur_de_1999_a_2008_recoit_pmr1(simulateur):
+    """Les périodes de collaborateur cotisées de 1999 à 2008 par qui a
+    régularisé sa situation entrent dans DM1, avec celles du chef, et sont
+    retenues en priorité (D. 732-110, II, 3° ; D. 732-111) : la conjointe
+    collaboratrice partie en 2016 reçoit PMR1 sur ces dix ans, PMR2 sur le
+    reste."""
+    metiers = [Metier("collaborateur_agricole", 20.0, niveau_salaire=0.3)]
+    carriere = _chef(simulateur, 1952, 64, sexe="F", metiers=metiers)
+    resultat, avantages, _ = _resultat(simulateur, carriere)
+    eligible = resultat.chef_d_exploitation.eligible
+    assert eligible.chef == 0 and eligible.collaborateur_regularise == 40
+    pmr = simulateur.scenario_actuel.pension_majoree_reference
+    pleine, _ = pmr.montant("pmr_chef", 2016, carriere.mois_liquidation)
+    reduite, _ = pmr.montant("pmr_conjoint", 2016, carriere.mois_liquidation)
+    reste = eligible.reference - 40
+    assert (f"PMR {pleine:,.2f} € × 40/{eligible.reference} + {reduite:,.2f} € × "
+            f"{reste}/") in avantages["pension_majoree_reference"].detail
+
+
+def test_le_complement_ne_retranche_que_les_points_de_chef(simulateur):
+    """Vingt-neuf ans de chef, puis quinze de collaborateur, à la RCO depuis
+    2011, parti en 2026 : la formule de D. 732-166-4 ne retranche que N, les
+    points acquis au titre des périodes de chef, gratuits compris ; ceux du
+    collaborateur n'en sont pas, et le complément les laisse en sus."""
+    from retraite_notionnelle.droit import releve
+    metiers = [Metier("exploitant_agricole", 20.0, niveau_salaire=0.3),
+               Metier("collaborateur_agricole", 49.0, niveau_salaire=0.3)]
+    carriere = _chef(simulateur, 1962, 64, metiers=metiers)
+    resultat, avantages, _ = _resultat(simulateur, carriere)
+    droits = releve.construire(simulateur.scenario_actuel, carriere).droits
+    qualite = carriere.qualite_agricole
+    credits = [(annee, p) for code, annee, p, _ in droits.points if code == completer.RCO]
+    de_chef = sum(p for annee, p in credits if qualite(annee) == "chef")
+    du_collaborateur = sum(p for annee, p in credits if qualite(annee) == "collaborateur")
+    gratuits = droits.gratuits[completer.RCO][0]
+    assert de_chef > 0 and du_collaborateur > 0 and gratuits > 0
+    n = completer.points_rco_de_chef(droits, carriere)
+    assert n == pytest.approx(gratuits + de_chef)
+    assert resultat.chef_d_exploitation.points == n
+    differentiel = avantages["complement_differentiel_rco"]
+    valeur = differentiel.montant / int(differentiel.detail.split(" points")[0].replace(",", ""))
+    tous = droits.points_acquis[completer.RCO]
+    assert tous == pytest.approx(n + du_collaborateur)
+    # Retrancher tous les points de la RCO en ôterait ceux du collaborateur.
+    assert round(du_collaborateur) >= 1
+    assert differentiel.montant > (du_collaborateur - 1) * valeur
+
+
 def test_le_chef_a_titre_secondaire_ne_compte_que_depuis_2026(simulateur):
     """Salarié, et chef d'exploitation à côté : ses années de chef à titre
     secondaire n'entrent dans les durées des deux minima qu'à compter de 2026
@@ -681,6 +729,10 @@ CAS = [
     # en 1995, vingt ans de chef partis sans le taux plein en 2000.
     {"naissance": "1930", "liquidation": "65"},
     {"naissance": "1940", "liquidation": "60", "debut": "40"},
+    # Les points de RCO de chef seuls dans le complément (D. 732-166-4) :
+    # vingt-neuf ans de chef, puis quinze de collaborateur, parti en 2026.
+    {"naissance": "1962", "metier2_debut": "49", "metier2_statut": "collaborateur_agricole",
+     "metier2_salaire": "0.3"},
 ]
 
 

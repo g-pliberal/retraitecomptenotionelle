@@ -536,7 +536,8 @@ class EligibleAgricole:
     duree: int
     #: Celle des années de chef d'exploitation, DCE : le reste de ``duree``
     #: est celui du conjoint collaborateur ou de l'aide familial, que la PMR
-    #: servait à un montant réduit de 2009 à 2021 et que le complément
+    #: servait à un montant réduit de 2009 à 2021, hors
+    #: ``collaborateur_regularise``, et que le complément
     #: différentiel ne compte pas (D. 732-111, D. 732-166-1, II).
     chef: int
     #: Les trimestres pour enfants que le régime porte, que les durées
@@ -545,6 +546,10 @@ class EligibleAgricole:
     #: La durée de référence DR, en trimestres : celle de la retraite
     #: forfaitaire (R. 732-61, 1°), 150 au moins (D. 732-111, D. 732-166-4).
     reference: int
+    #: Celle des années de collaborateur de 1999 à 2008, que la PMR de 2009 à
+    #: 2021 sert au montant du chef, présumées cotisées par qui a régularisé sa
+    #: situation (D. 732-110, II, 3° ; D. 732-111) ; ``chef`` ne la compte pas.
+    collaborateur_regularise: int = 0
 
 
 @dataclass(frozen=True)
@@ -606,6 +611,7 @@ class Pensions:
                 "chef": self.agricole.chef,
                 "enfants": self.agricole.enfants,
                 "reference": self.agricole.reference,
+                "collaborateur_regularise": self.agricole.collaborateur_regularise,
             }
         for eligible in self.plafonds:
             regimes[eligible.indice]["plafond_enfants"] = {
@@ -1627,6 +1633,12 @@ def annuites_au_taux_de_leur_annee(moteur, code: str, carriere: Carriere, durees
 #: (D. 732-110 et D. 732-166-1, rédaction du décret n° 2025-1410).
 ANNEE_DU_TITRE_SECONDAIRE = 2026
 
+#: Les années où les périodes de collaborateur « cotisées » par qui a
+#: régularisé sa situation comptent avec celles du chef dans la PMR de 2009 à
+#: 2021 (D. 732-110, II, 3°) : le statut de collaborateur, que la loi
+#: d'orientation agricole du 9 juillet 1999 crée, jusqu'à la PMR.
+COLLABORATEUR_REGULARISE = (1999, 2008)
+
 
 #: L'année depuis laquelle le chef d'exploitation à titre accessoire n'a plus
 #: droit qu'à la retraite proportionnelle (article 1121-1 de l'ancien code
@@ -1693,6 +1705,10 @@ def eligible_agricole(moteur, periode: PeriodeRegime, carriere: Carriere, releve
         "assurance", membres,
         lambda annee: qualite(annee) == "chef" or (
             annee >= ANNEE_DU_TITRE_SECONDAIRE and qualite(annee) == "chef_secondaire"))
+    regularise = durees.cumul_plafonne(
+        "assurance", membres,
+        lambda annee: (COLLABORATEUR_REGULARISE[0] <= annee <= COLLABORATEUR_REGULARISE[1]
+                       and qualite(annee) == "collaborateur"))
     annees = durees.cumul_plafonne("assurance", membres, lambda annee: True)
     toutes = durees.cumul_plafonne("assurance", membres)
     return EligibleAgricole(
@@ -1708,6 +1724,7 @@ def eligible_agricole(moteur, periode: PeriodeRegime, carriere: Carriere, releve
         chef=chef,
         enfants=max(0, toutes - annees),
         reference=max(150, proratisation),
+        collaborateur_regularise=regularise,
     )
 
 

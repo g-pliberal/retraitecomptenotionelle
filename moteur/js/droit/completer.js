@@ -307,9 +307,11 @@ export function pensionMajoree(moteur, carriere, eligible, pension, ressources,
   let fiabilite = lu[1];
   const retenue = Math.min(duree, eligible.reference);
   // De 2009 à 2021, PMR = PMR1 × DM1 / DR + PMR2 × DM2 / DR : DM1, les
-  // périodes de chef, retenues en priorité ; DM2, celles du conjoint
+  // périodes de chef et celles du collaborateur de 1999 à 2008 qui a
+  // régularisé sa situation, retenues en priorité ; DM2, les autres du conjoint
   // collaborateur et de l'aide familial, et, jusqu'en 2010, celles du chef qui
-  // ne l'a pas été dix-sept ans et demi (D. 732-110, II ; D. 732-111).
+  // ne l'a pas été dix-sept ans et demi (D. 732-110, II, 1°, 3° et 4° ;
+  // D. 732-111). Le 2° ne trouve personne : voir le Python.
   let reduite = null;
   let dureeReduite = 0;
   if (regle.montant_reduit) {
@@ -320,7 +322,7 @@ export function pensionMajoree(moteur, carriere, eligible, pension, ressources,
     reduite = luReduite[0];
     fiabilite = Math.min(fiabilite, luReduite[1]);
     const chef = eligible.chef >= (regle.seuil_chef ?? 0) ? eligible.chef : 0;
-    dureeReduite = retenue - Math.min(chef, retenue);
+    dureeReduite = retenue - Math.min(chef + (eligible.collaborateurRegularise ?? 0), retenue);
   }
   const pmr = (entiere * (retenue - dureeReduite) + (reduite ?? 0.0) * dureeReduite)
     / eligible.reference;
@@ -504,6 +506,34 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
     return null;
   }
   return { minimum, moyenne, duree, points, complement: points * serviceServi, fiabilite };
+}
+
+/**
+ * Les points de RCO que la formule du complément différentiel retranche depuis
+ * novembre 2021, N : ceux des seules années de chef, à titre exclusif ou
+ * principal, et secondaire depuis 2026, les points gratuits compris
+ * (D. 732-166-4). Voir `points_rco_de_chef` du Python.
+ */
+export function pointsRcoDeChef(droits, carriere) {
+  const acquis = droits.pointsAcquis.get(RCO) ?? 0.0;
+  const gratuits = droits.gratuits.has(RCO) ? droits.gratuits.get(RCO)[0] : 0.0;
+  let total = 0;
+  let deChef = 0;
+  for (const [code, annee, points] of droits.points) {
+    if (code !== RCO) {
+      continue;
+    }
+    total += points;
+    const qualite = carriere.qualiteAgricole(annee);
+    if (qualite === "chef"
+        || (annee >= liquider.ANNEE_DU_TITRE_SECONDAIRE && qualite === "chef_secondaire")) {
+      deChef += points;
+    }
+  }
+  if (deChef >= total) {
+    return acquis;
+  }
+  return gratuits + (acquis - gratuits) * deChef / total;
 }
 
 /**
@@ -1508,11 +1538,12 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       && periodeRco.avantages_non_contributifs.includes("complement_differentiel_rco")
       ? liquider.valeurDuPoint(moteur, RCO, carriere.dateLiquidation) : null;
     let differentiel = null;
+    const pointsDeChef = pointsRcoDeChef(droits, carriere);
     if (indiceRco >= 0 && valeur !== null) {
       const rco = pensions[indiceRco];
       differentiel = complementDifferentiel(
         moteur, carriere, agricole, pensions[agricole.indice].montant, rco.montant,
-        pointsAcquis.get(RCO) ?? 0.0, valeur[0], total + servies + etrangeres);
+        pointsDeChef, valeur[0], total + servies + etrangeres);
       if (differentiel !== null) {
         pensions[indiceRco] = {
           ...rco,
@@ -1549,7 +1580,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       }
       chef = {
         regime: pensions[agricole.indice].regime, eligible: agricole,
-        points: pointsAcquis.get(RCO) ?? 0.0, gratuits, complement: differentiel !== null,
+        points: pointsDeChef, gratuits, complement: differentiel !== null,
       };
     }
   }

@@ -465,9 +465,13 @@ def pension_majoree(moteur: ScenarioActuel, carriere: Carriere, eligible,
     entiere, fiabilite = lu
     retenue = min(duree, eligible.reference)
     # De 2009 à 2021, PMR = PMR1 × DM1 / DR + PMR2 × DM2 / DR : DM1, les
-    # périodes de chef, retenues en priorité ; DM2, celles du conjoint
-    # collaborateur et de l'aide familial, et, jusqu'en 2010, celles du chef
-    # qui ne l'a pas été dix-sept ans et demi (D. 732-110, II ; D. 732-111).
+    # périodes de chef et celles du collaborateur de 1999 à 2008 qui a
+    # régularisé sa situation, retenues en priorité ; DM2, les autres du
+    # conjoint collaborateur et de l'aide familial, et, jusqu'en 2010, celles
+    # du chef qui ne l'a pas été dix-sept ans et demi (D. 732-110, II, 1°, 3°
+    # et 4° ; D. 732-111). Le 2°, toutes les périodes de qui peut prétendre à
+    # une réversion du régime, ne trouve personne : le modèle ne connaît pas
+    # le veuvage de l'assuré.
     reduite, duree_reduite = None, 0
     if regle["montant_reduit"]:
         lu_reduite = moteur.pension_majoree_reference.montant(
@@ -476,7 +480,7 @@ def pension_majoree(moteur: ScenarioActuel, carriere: Carriere, eligible,
             return None
         reduite, fiabilite = lu_reduite[0], min(fiabilite, lu_reduite[1])
         chef = eligible.chef if eligible.chef >= (regle["seuil_chef"] or 0) else 0
-        duree_reduite = retenue - min(chef, retenue)
+        duree_reduite = retenue - min(chef + eligible.collaborateur_regularise, retenue)
     pmr = (entiere * (retenue - duree_reduite)
            + (reduite or 0.0) * duree_reduite) / eligible.reference
     avant = max(0.0, pmr - pension.montant / (1.0 if surcote_comprise else eligible.surcote))
@@ -736,8 +740,9 @@ def complement_differentiel(moteur: ScenarioActuel, carriere: Carriere, eligible
     (D. 732-166-6). La durée de chef, DCE, ne compte que les années de chef,
     à titre exclusif ou principal, et à titre secondaire depuis 2026
     (D. 732-166-1, II) ; la durée agricole, Dnsa, aussi celles du conjoint
-    collaborateur et de l'aide familial. Les ``points_rco`` sont tous ceux de
-    la RCO : ceux du collaborateur, acquis depuis 2011, y entrent aussi.
+    collaborateur et de l'aide familial. Les ``points_rco`` sont ceux des
+    seules années de chef, N (:func:`points_rco_de_chef`) : ceux du
+    collaborateur, acquis depuis 2011, n'y entrent pas.
 
     ``quand``, ``smic`` et ``pmr`` lisent la règle, le SMIC net agricole et la
     PMR d'une autre date que la date d'effet : ceux du 1er septembre 2023, pour
@@ -783,6 +788,30 @@ def complement_differentiel(moteur: ScenarioActuel, carriere: Carriere, eligible
         valeur_point=valeur_point, montant=points * valeur_point,
         plafonne=montant < formule - 1e-9,
         fiabilite=min(fiabilite, pmr[1]))
+
+
+def points_rco_de_chef(droits, carriere: Carriere) -> float:
+    """Les points de RCO que la formule du complément différentiel retranche
+    depuis novembre 2021, N : ceux « acquis par l'assuré, par cotisation ou à
+    titre gratuit, [...] au titre des périodes d'assurance accomplies par
+    l'assuré en qualité de chef d'exploitation ou d'entreprise agricole à
+    titre exclusif ou principal », et à titre secondaire depuis 2026
+    (D. 732-166-4). Les points gratuits sont tous de chef (D. 732-154) ; ceux
+    des cotisations se lisent année par année, et ceux du collaborateur,
+    acquis depuis 2011, n'en sont pas. Le compte de la liquidation,
+    ``points_acquis``, en garde la part qu'en ont les années de chef."""
+    acquis = droits.points_acquis.get(RCO, 0.0)
+    gratuits = droits.gratuits.get(RCO, (0.0, 0))[0]
+    credits = [(annee, points) for code, annee, points, _ in droits.points if code == RCO]
+    total = somme_ordonnee(points for _, points in credits)
+    de_chef = somme_ordonnee(
+        points for annee, points in credits
+        if carriere.qualite_agricole(annee) == "chef" or (
+            annee >= liquider.ANNEE_DU_TITRE_SECONDAIRE
+            and carriere.qualite_agricole(annee) == "chef_secondaire"))
+    if de_chef >= total:
+        return acquis
+    return gratuits + (acquis - gratuits) * de_chef / total
 
 
 @dataclass(frozen=True)
@@ -866,8 +895,9 @@ class ChefDExploitation:
     #: Son taux plein, la durée requise, ses durées et sa durée de référence
     #: (:class:`~retraite_notionnelle.droit.liquider.EligibleAgricole`).
     eligible: object
-    #: Les points de RCO acquis à la liquidation, par cotisation ou à titre
-    #: gratuit : le N du complément (D. 732-166-4).
+    #: Les points de RCO acquis à la liquidation au titre des années de chef,
+    #: par cotisation ou à titre gratuit : le N du complément (D. 732-166-4,
+    #: :func:`points_rco_de_chef`).
     points: float
     #: Les points gratuits que le taux plein ouvre, quand la durée requise ne
     #: les avait pas ouverts à la liquidation (L. 732-56, D. 732-154).
@@ -1626,11 +1656,12 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                   if periode_rco is not None and "complement_differentiel_rco"
                   in periode_rco.avantages_non_contributifs else None)
         differentiel = None
+        points_de_chef = points_rco_de_chef(droits, carriere)
         if indice_rco is not None and valeur is not None:
             rco = pensions[indice_rco]
             differentiel = complement_differentiel(
                 moteur, carriere, agricole, pensions[agricole.indice].montant,
-                rco.montant, points_acquis.get(RCO, 0.0), valeur[0],
+                rco.montant, points_de_chef, valeur[0],
                 total + servies + etrangeres)
             if differentiel is not None:
                 pensions[indice_rco] = replace(
@@ -1668,7 +1699,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                     au_taux_plein=True)[0]
             chef = ChefDExploitation(
                 regime=pensions[agricole.indice].regime, eligible=agricole,
-                points=points_acquis.get(RCO, 0.0), gratuits=gratuits,
+                points=points_de_chef, gratuits=gratuits,
                 complement=differentiel is not None)
 
     # LES SUPPLÉMENTS DE PENSION des primes soumises à retenue — celui de
