@@ -1,0 +1,24 @@
+date: "2026-10-16"
+session: "action 151, étape 8 : la limite d'âge du personnel de la Banque de France"
+consulte: >-
+  python scripts/veille_droit.py. Index JORF et LEGI du dépôt, récupérés ce jour (à jour au
+  11 octobre 2026) : décret n° 2012-697, notice (JORFTEXT000025823991), dont l'article qui
+  modifie le décret n° 68-299 n'est pas dans l'index ; décret n° 2007-262, annexe, articles
+  26 et 32 (LEGIARTI000047909725), qui renvoient à la limite « du grade ». Site de la Banque
+  de France, registre de publication officiel : arrêtés du conseil général n° A-2012-02 du
+  1er juin 2012 (publié le 26 juillet 2012), n° 2018-02 du 12 mars 2018 (le statut du
+  personnel récrit, en vigueur le 1er janvier 2019) et n° A-2024-01 du 22 janvier 2024 ;
+  arrêtés n° A-2008-04, A-2008-08, A-2009-04 et A-2021-06, sans rien sur la limite.
+  Conseil d'État, 18 décembre 2017, n° 395450 (analyse), par un moteur de recherche.
+trouve: >-
+  L'article 241 du statut du personnel fixe la limite par semestre de naissance : soixante
+  et un ans pour le né au second semestre de 1947, trois mois de plus par semestre jusqu'à
+  soixante-sept ans depuis le second semestre de 1959 ; les agents des plus hauts niveaux
+  ont une limite plus haute jusqu'aux nés de 1955. L'article 242 la proroge d'un an pour
+  deux enfants à charge, de deux pour trois, deux ans au plus ; l'article 242-1 maintient
+  l'agent à carrière incomplète dix trimestres au plus, sans cumul avec l'article 242.
+  Portés en Python et en JavaScript (fiche limite_age_banque_de_france).
+reste: >-
+  La limite d'avant le 26 juillet 2012 (délibération de 1954, décret n° 68-299, arrêté du
+  19 janvier 2007), les articles 242 et 242-1 dans leur rédaction de 2012, et le niveau de
+  l'agent, que la saisie ne porte pas. Puis la limite des IEG et de l'Opéra avant 2008.

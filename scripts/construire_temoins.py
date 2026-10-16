@@ -339,6 +339,12 @@ def _cas() -> list[dict]:
             "liquidation": "70"}),
         ("limite_age_seita_1940", {
             "statut": "agent_seita", "naissance": "1940", "liquidation": "68"}),
+        # Étape 8 : l'agent de la Banque de France né en 1958, à soixante-six
+        # ans et trois mois (article 241), prolongé de dix trimestres pour
+        # carrière incomplète (article 242-1).
+        ("limite_age_banque_de_france_1958", {
+            "statut": "agent_banque_de_france", "naissance": "1958", "debut": "40",
+            "liquidation": "72"}),
     ):
         cas.append((nom, modifications))
     cas.append(("liquidation_demi", {"liquidation": "64.5", "debut": "20.5"}))

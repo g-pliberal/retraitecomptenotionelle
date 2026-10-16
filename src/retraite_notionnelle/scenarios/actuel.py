@@ -1223,7 +1223,7 @@ class FichesDatees:
             "maintien_en_fonctions_jusqu_a_70_ans",
             "plafond_limite_age_fonction_publique", "limite_age_contractuels",
             "limite_age_ouvriers_etat", "limite_age_sncf_ratp", "limite_age_ieg",
-            "limite_age_opera", "limite_age_seita",
+            "limite_age_opera", "limite_age_seita", "limite_age_banque_de_france",
             "apprentissage", "stages_formation_professionnelle",
             "sportifs_haut_niveau", "conge_supplementaire_naissance")
 

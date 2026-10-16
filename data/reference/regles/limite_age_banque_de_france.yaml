@@ -1,0 +1,259 @@
+schema_version: 1
+id: limite_age_banque_de_france
+intitule: >-
+  L'agent titulaire de la Banque de France doit prendre sa retraite dès qu'il atteint la
+  limite d'âge que le statut du personnel fixe par semestre de naissance (article 241) :
+  depuis le 26 juillet 2012, soixante et un ans pour le né au second semestre de 1947,
+  relevés de trois mois par semestre jusqu'à soixante-sept ans pour le né depuis le second
+  semestre de 1959, les agents des plus hauts niveaux partant plus tard jusqu'aux nés de
+  1955 ; prorogée d'un ou deux ans pour enfants à charge, deux ans au plus (article 242),
+  ou, sans cumul, maintenu en activité pour carrière incomplète, dix trimestres au plus
+  (article 242-1).
+domaine: age
+regimes: [banque_de_france]
+etape: preparer_la_chronologie
+face: droit
+etat: approchee
+lit:
+- le statut d'agent titulaire de la Banque de France, quand il route le régime spécial ; la
+  saisie ne dit pas le niveau, et le modèle prend la colonne « Limite d'âge » du tableau,
+  celle des agents qui ne sont pas des niveaux nommés ; les naissances des enfants ; ses
+  services au régime, pour la prolongation
+ecrit:
+- la date de la mise à la retraite par limite d'âge, d'où part la pension du régime spécial
+  (`droit/limite_age.py`)
+dates_qui_decident:
+- age_atteint
+versions:
+- id: avant_2012
+  statut: supposee
+  hypothese: >-
+    aucune limite opposée à l'agent avant la rédaction de l'article 241 du statut du
+    personnel publiée le 26 juillet 2012 : les limites d'avant, arrêtées par grade entre
+    soixante et soixante-cinq ans par le conseil général (décret n° 68-299, article 1er,
+    selon le Conseil d'État) et relevées par un arrêté du 19 janvier 2007, ne sont pas lues
+  fiabilite: faible
+  textes: []
+  bornes:
+    age_atteint: [null, 2012-07-26]
+  contenu:
+    parametres:
+      exceptions: []
+    droit: >-
+      aucune limite au modèle
+  exemples: aucun trouvé
+- id: statut_de_2012
+  statut: lue
+  textes:
+  - {id: "https://www.banque-france.fr/system/files/arrete-conseil-general_a-2012-02_2012-07-26.pdf",
+     article: "arrêté n° A-2012-02 du conseil général du 1er juin 2012, article 1er, 24°, récrivant l'article 241 du statut du personnel (Registre de publication officiel, 26 juillet 2012)",
+     en_vigueur: 2012-07-26}
+  - {id: JORFTEXT000025823991, article: "décret n° 2012-697 du 7 mai 2012, notice", en_vigueur: 2012-05-09}
+  bornes:
+    age_atteint: [2012-07-26, 2019-01-01]
+  contenu:
+    parametres:
+      limites_avant: {sedentaire: 61}
+      ecart_de_reference: 61
+      marche:
+      - {depuis: "1948-01-01", mois: 3}
+      - {depuis: "1948-07-01", mois: 6}
+      - {depuis: "1949-01-01", mois: 9}
+      - {depuis: "1949-07-01", mois: 12}
+      - {depuis: "1950-01-01", mois: 15}
+      - {depuis: "1950-07-01", mois: 18}
+      - {depuis: "1951-01-01", mois: 21}
+      - {depuis: "1951-07-01", mois: 24}
+      - {depuis: "1952-01-01", mois: 27}
+      - {depuis: "1952-07-01", mois: 30}
+      - {depuis: "1953-01-01", mois: 33}
+      - {depuis: "1953-07-01", mois: 36}
+      - {depuis: "1954-01-01", mois: 39}
+      - {depuis: "1954-07-01", mois: 42}
+      - {depuis: "1955-01-01", mois: 45}
+      - {depuis: "1955-07-01", mois: 48}
+      - {depuis: "1956-01-01", mois: 51}
+      - {depuis: "1956-07-01", mois: 54}
+      - {depuis: "1957-01-01", mois: 57}
+      - {depuis: "1957-07-01", mois: 60}
+      - {depuis: "1958-01-01", mois: 63}
+      - {depuis: "1958-07-01", mois: 66}
+      - {depuis: "1959-01-01", mois: 69}
+      - {depuis: "1959-07-01", mois: 72}
+      enfants:
+        age_a_charge: 18
+        eleves_jusqu_a: 16
+        prorogations:
+        - {a_charge: 3, eleves: 0, ans: 2}
+        - {a_charge: 2, eleves: 1, ans: 2}
+        - {a_charge: 2, eleves: 0, ans: 1}
+        - {a_charge: 1, eleves: 2, ans: 1}
+        au_plus: 2
+      sans_cumul: true
+      exceptions: [enfants, carriere_incomplete]
+    droit: >-
+      « Sous réserve des dérogations prévues aux articles 242, 242-1, ils doivent prendre
+      leur retraite dès qu'ils ont atteint l'âge prévu dans le tableau ci-dessous » : par
+      période de naissance, la « Limite d'âge » est de 61 ans pour le 2e semestre 1947, 61
+      ans 3 mois pour le 1er semestre 1948, et ainsi de trois mois par semestre, 65 ans pour
+      le 2e semestre 1955, 66 ans pour le 2e semestre 1957, 66 ans 9 mois pour le 1er
+      semestre 1959, 67 ans « à partir du 2e semestre 1959 » ; les « Agents des 4e et 5e
+      degrés » ont un an de plus jusqu'aux nés du 1er semestre 1954, qui ont 65 ans, ceux du
+      « 6e degré » 64 ans pour le 2e semestre 1947 et 65 ans depuis le 2e semestre 1949, ceux
+      du « 7e degré » 65 ans ; toutes les colonnes se rejoignent depuis le 1er semestre
+      1956 (65 ans 3 mois). « Le dernier alinéa de l'article est supprimé » (24°). Le décret
+      n° 2012-697 « étend la réforme des retraites aux personnels de la Banque de France en
+      ce qui concerne la limite d'âge », en modifiant l'article 1er du décret n° 68-299
+      (notice)
+    transition: >-
+      la marche se compte par la date de naissance (`ecart_de_reference` égal à la limite
+      du 2e semestre 1947), trois mois par semestre, tels que le tableau les écrit ; le
+      tableau ne dit rien des nés avant le 2e semestre 1947, que le modèle traite comme eux,
+      et qui avaient passé soixante-cinq ans quand l'article est né. Les articles 242 et
+      242-1 de 2012 ne sont pas lus : le modèle leur prête leur rédaction de 2019
+      (`enfants`, `sans_cumul`), que le Conseil d'État décrit déjà en 2017 (report pour
+      enfants à charge)
+  exemples: aucun trouvé
+- id: statut_de_2019
+  statut: lue
+  textes:
+  - {id: "https://www.banque-france.fr/system/files/a-2018-02_modification_de_dispositions_statut_personnel.pdf",
+     article: "arrêté n° 2018-02 du conseil général du 12 mars 2018, statut du personnel, articles 241, 242 et 242-1 ; en vigueur le 1er janvier 2019 (article 21)",
+     en_vigueur: 2019-01-01}
+  - {id: "https://www.banque-france.fr/system/files/2024-04/A-2024-01_modification_statut.pdf",
+     article: "arrêté n° A-2024-01 du conseil général du 22 janvier 2024, article 1er, 6° à 9° : les articles 240 à 242-1 réservés aux agents titulaires d'avant le 1er septembre 2023",
+     en_vigueur: 2024-04-22}
+  bornes:
+    age_atteint: [2019-01-01, null]
+  contenu:
+    parametres:
+      limites_avant: {sedentaire: 61}
+      ecart_de_reference: 61
+      marche:
+      - {depuis: "1948-01-01", mois: 3}
+      - {depuis: "1948-07-01", mois: 6}
+      - {depuis: "1949-01-01", mois: 9}
+      - {depuis: "1949-07-01", mois: 12}
+      - {depuis: "1950-01-01", mois: 15}
+      - {depuis: "1950-07-01", mois: 18}
+      - {depuis: "1951-01-01", mois: 21}
+      - {depuis: "1951-07-01", mois: 24}
+      - {depuis: "1952-01-01", mois: 27}
+      - {depuis: "1952-07-01", mois: 30}
+      - {depuis: "1953-01-01", mois: 33}
+      - {depuis: "1953-07-01", mois: 36}
+      - {depuis: "1954-01-01", mois: 39}
+      - {depuis: "1954-07-01", mois: 42}
+      - {depuis: "1955-01-01", mois: 45}
+      - {depuis: "1955-07-01", mois: 48}
+      - {depuis: "1956-01-01", mois: 51}
+      - {depuis: "1956-07-01", mois: 54}
+      - {depuis: "1957-01-01", mois: 57}
+      - {depuis: "1957-07-01", mois: 60}
+      - {depuis: "1958-01-01", mois: 63}
+      - {depuis: "1958-07-01", mois: 66}
+      - {depuis: "1959-01-01", mois: 69}
+      - {depuis: "1959-07-01", mois: 72}
+      enfants:
+        age_a_charge: 18
+        eleves_jusqu_a: 16
+        prorogations:
+        - {a_charge: 3, eleves: 0, ans: 2}
+        - {a_charge: 2, eleves: 1, ans: 2}
+        - {a_charge: 2, eleves: 0, ans: 1}
+        - {a_charge: 1, eleves: 2, ans: 1}
+        au_plus: 2
+      sans_cumul: true
+      exceptions: [enfants, carriere_incomplete]
+    droit: >-
+      Article 241 : le même tableau, qui commence au « 1er semestre 1950 » (62 ans 3 mois),
+      les colonnes devenant les « Agents des niveaux 5 et 6 » et les « Agents des niveaux 7
+      et 8 ». Article 242 : « La limite d'âge du personnel titulaire arrêtée conformément
+      aux dispositions de l'article 241 ci-dessus est prorogée des durées ci-après sans que
+      la prorogation totale puisse excéder deux ans : un an pour les agents qui, lorsqu'ils
+      atteignent ladite limite, ont la charge légale de deux enfants ou la charge légale
+      d'un seul enfant s'ils en ont par ailleurs élevé au moins deux autres jusqu'à l'âge de
+      16 ans, deux ans pour les agents qui, lorsqu'ils atteignent ladite limite, ont la
+      charge légale d'au moins trois enfants ou la charge légale de deux enfants s'ils en
+      ont par ailleurs élevé au moins un autre jusqu'à l'âge de 16 ans, Ne peuvent être
+      considérés comme à charge que les enfants âgés de moins de 18 ans ou -s'ils sont en
+      cours d'études ou d'apprentissage- de moins de 21 ans, un an par enfant ouvrant droit
+      au versement de l'allocation aux adultes handicapés, un an pour chaque enfant décédé
+      au Champ d'honneur ». Article 242-1 : les agents « dont la durée des services
+      admissibles en liquidation est inférieure à celle définie au I de l'article 31 du
+      règlement du régime des retraites des agents titulaires peuvent, lorsqu'ils
+      atteignent la limite d'âge qui leur est applicable, sur leur demande, sous réserve de
+      l'intérêt du service et de leur aptitude physique, être maintenus en activité. La
+      prolongation d'activité prévue à l'alinéa précédent ne peut avoir pour effet de
+      maintenir l'agent concerné en activité au-delà de la durée des services liquidables
+      prévue à l'article 31 dudit règlement ni au-delà d'une durée de dix trimestres. [...]
+      Elle n'est pas cumulable avec la prorogation de la limite d'âge visée à l'article
+      242 ». Depuis 2024, ces articles visent les agents titulaires « visés à l'article
+      240 », ceux d'avant le 1er septembre 2023, les seuls que le modèle affilie au régime
+      spécial
+    transition: >-
+      l'enfant à charge est celui de moins de dix-huit ans, la saisie ne disant ni les
+      études ni l'apprentissage ; l'enfant « élevé jusqu'à 16 ans » est celui qui n'est plus
+      à charge, né dix-huit ans au moins avant la limite, sa vie présumée ; l'allocation aux
+      adultes handicapés et le décès au champ d'honneur, que la saisie ne connaît pas, ne
+      prorogent rien. La prolongation pour carrière incomplète prend ses dix trimestres de
+      la fiche `prolongation_activite_carriere_incomplete`, qui les dit aussi, et la durée
+      du taux maximum du régime ; sans cumul, le modèle garde celle des deux exceptions qui
+      mène le plus loin
+  exemples: aucun trouvé
+presomptions:
+  exceptions_a_la_limite_d_age: >-
+    le maintien en activité pour carrière incomplète, dix trimestres au plus, présumé demandé
+    et accordé autant que le départ saisi le demande et que les services n'atteignent pas la
+    durée du taux maximum, l'intérêt du service et l'aptitude physique présumés ; il remplace
+    la prorogation pour enfants quand il mène plus loin ; tout agent prend la colonne « Limite
+    d'âge », la saisie ne disant pas son niveau
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-10-16
+  a_relire:
+  - >-
+    Le niveau de l'agent, que la saisie ne porte pas : jusqu'aux nés de 1955, les agents des
+    niveaux 5 et 6 (4e et 5e degrés en 2012) ont un an de plus, et ceux des niveaux 7 et 8
+    (6e et 7e degrés) jusqu'à soixante-cinq ans ; le modèle les radie à la limite de la
+    première colonne.
+  - >-
+    La limite d'avant le 26 juillet 2012 : la délibération du conseil général du 18 février
+    1954 (décret n° 54-474, article 2), le décret n° 68-299, que l'index de la DILA ne porte
+    pas, l'arrêté du conseil général du 19 janvier 2007 qui l'avait relevée de soixante-trois
+    à soixante-cinq ans pour certains emplois (Conseil d'État, 18 décembre 2017, n° 395450).
+    Le modèle n'y oppose aucune limite, et radie le 26 juillet 2012 l'agent qui avait alors
+    passé la sienne.
+  - >-
+    Les articles 242 et 242-1 dans leur rédaction de 2012, non lus ; la date exacte de la
+    publication de l'arrêté n° A-2024-01, que le modèle date du 22 avril 2024, jour du fichier
+    publié, sans effet sur la limite.
+  lectures:
+  - type: autre
+    reference: >-
+      Statut du personnel de la Banque de France : arrêté n° A-2012-02 du conseil général du
+      1er juin 2012 (Registre de publication officiel, 26 juillet 2012), article 1er, 24° ;
+      arrêté n° 2018-02 du 12 mars 2018, articles 240 à 242-1 du statut et article 21 ; arrêté
+      n° A-2024-01 du 22 janvier 2024, article 1er, 6° à 9°. Lus sur le site de la Banque de
+      France
+    date: 2026-10-16
+  - type: jorf
+    reference: >-
+      décret n° 2012-697 du 7 mai 2012, notice (JORFTEXT000025823991), dont l'article, qui
+      modifie le décret n° 68-299, n'est pas dans l'index ; décret n° 2007-262, annexe,
+      articles 26 et 32 (LEGIARTI000047909725), qui renvoient à la limite « du grade ». Lus
+      dans les index JORF et LEGI du dépôt
+    date: 2026-10-16
+historique:
+- >-
+  2026-10-16 — née et appliquée, action 151, étape 8 : l'agent titulaire de la Banque de
+  France dont le départ saisi passe sa limite prend sa retraite à la limite, prorogée pour
+  enfants ou prolongée pour carrière incomplète, et sa pension du régime spécial en part,
+  comme la décision du propriétaire du 14 octobre 2026 le dit du fonctionnaire.
+effet: >-
+  Tout agent titulaire de la Banque de France, affilié au régime spécial, dont le départ
+  saisi passe sa limite depuis le 26 juillet 2012 — soixante et un à soixante-sept ans selon
+  le semestre de naissance, prorogés d'un ou deux ans pour enfants à charge ou de dix
+  trimestres au plus pour carrière incomplète — prend sa retraite à cette limite, et sa
+  pension du régime spécial en part. Approchée : le niveau n'est pas distingué, et aucune
+  limite n'est opposée avant 2012.

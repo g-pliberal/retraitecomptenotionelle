@@ -11,8 +11,11 @@
  * de la radiation, et ce qui suit n'est plus du service. L'agent contractuel,
  * l'ouvrier de l'État, l'agent de la SNCF et de la RATP, et, depuis l'étape 6,
  * l'agent des industries électriques et gazières, le personnel de l'Opéra
- * national de Paris et l'agent de la SEITA ont chacun leur fiche, dont chaque
- * version nomme les exceptions qui jouent pour eux.
+ * national de Paris et l'agent de la SEITA, et, depuis l'étape 8, l'agent
+ * titulaire de la Banque de France, dont la prorogation pour enfants est celle
+ * de son statut et ne se cumule pas avec la prolongation pour carrière
+ * incomplète, ont chacun leur fiche, dont chaque version nomme les exceptions
+ * qui jouent pour eux.
  *
  * Jumeau de `src/retraite_notionnelle/droit/limite_age.py`, qui fait foi et
  * dit le droit.
@@ -36,6 +39,7 @@ export const FICHE_SNCF_RATP = "limite_age_sncf_ratp";
 export const FICHE_IEG = "limite_age_ieg";
 export const FICHE_OPERA = "limite_age_opera";
 export const FICHE_SEITA = "limite_age_seita";
+export const FICHE_BANQUE_DE_FRANCE = "limite_age_banque_de_france";
 /** Les fiches du code des pensions, fonctionnaires et militaires. */
 export const FICHES_DU_CODE_DES_PENSIONS = new Set([FICHE_DE_LA_LIMITE, FICHE_DES_MILITAIRES]);
 
@@ -55,6 +59,7 @@ export const STATUTS_CONTRACTUELS = new Set(["contractuel_public"]);
 export const FICHE_DU_REGIME = Object.freeze({
   fspoeie: FICHE_DES_OUVRIERS, sncf: FICHE_SNCF_RATP, ratp: FICHE_SNCF_RATP,
   ieg: FICHE_IEG, opera_de_paris: FICHE_OPERA, seita: FICHE_SEITA,
+  banque_de_france: FICHE_BANQUE_DE_FRANCE,
 });
 /** Le régime dont la durée d'assurance décide la prolongation du contractuel. */
 export const REGIME_DU_CONTRACTUEL = "regime_general";
@@ -240,11 +245,37 @@ function recul(nom, ficheDuRecul, version, depuis, jusquA, presumee) {
   return Object.freeze({ nom, fiche: ficheDuRecul, version, depuis, jusqu_a: jusquA, presumee });
 }
 
-function reculsPourEnfants(moteur, carriere, limite, classe) {
+/**
+ * La prorogation pour enfants qu'un statut écrit lui-même (paramètre `enfants`
+ * de la version de la limite), celle de la Banque de France. Voir
+ * `_prorogation_du_statut` du Python.
+ */
+function prorogationDuStatut(carriere, limite, nom, version, p) {
+  const jour = jourDe(carriere, limite);
+  const aCharge = enfantsACharge(carriere, jour, p.age_a_charge);
+  const annees = Math.trunc(Math.max(p.age_a_charge, p.eleves_jusqu_a));
+  const seuil = `${String(Number(jour.slice(0, 4)) - annees).padStart(4, "0")}${jour.slice(4)}`;
+  const eleves = carriere.naissancesDesEnfants.filter(([, naissance]) => naissance <= seuil).length;
+  const ans = Math.max(0, ...p.prorogations
+    .filter((q) => aCharge >= q.a_charge && eleves >= (q.eleves ?? 0)).map((q) => q.ans));
+  const valeur = mois(Math.min(ans, p.au_plus));
+  if (valeur <= 0) {
+    return null;
+  }
+  return recul(RECUL_ENFANTS, nom, version.id, limite / MOIS_PAR_AN,
+    (limite + valeur) / MOIS_PAR_AN, false);
+}
+
+function reculsPourEnfants(moteur, carriere, limite, classe, nomDeLaLimite = FICHE_DE_LA_LIMITE) {
   if (militaire(classe)) {
     return null;
   }
   const jour = jourDe(carriere, limite);
+  const propre = FICHES_DU_CODE_DES_PENSIONS.has(nomDeLaLimite)
+    ? null : versionAu(moteur, nomDeLaLimite, jour);
+  if (propre !== null && propre.parametres.enfants) {
+    return prorogationDuStatut(carriere, limite, nomDeLaLimite, propre, propre.parametres.enfants);
+  }
   const version = versionAu(moteur, FICHE_DES_ENFANTS, jour);
   if (version === null || Object.keys(version.parametres).length === 0) {
     return null;
@@ -401,13 +432,25 @@ export function radiation(moteur, carriere) {
     }
     let atteint = limite;
     const enfants = exceptions(moteur, nom, jourDe(carriere, atteint)).has(ENFANTS)
-      ? reculsPourEnfants(moteur, carriere, atteint, classe) : null;
+      ? reculsPourEnfants(moteur, carriere, atteint, classe, nom) : null;
     if (enfants !== null) {
       candidats.push(enfants);
       atteint = mois(enfants.jusqu_a);
     }
-    const incomplete = exceptions(moteur, nom, jourDe(carriere, atteint)).has(INCOMPLETE)
-      ? prolongationCarriereIncomplete(moteur, carriere, atteint, civiles, regime, nom) : null;
+    // Sans cumul (Banque de France, article 242-1), la prolongation part de
+    // la limite, et seule la plus longue des deux exceptions reste.
+    const deLaLimite = codeDesPensions ? null : versionAu(moteur, nom, jourDe(carriere, limite));
+    const sansCumul = Boolean(deLaLimite && deLaLimite.parametres.sans_cumul);
+    const depuis = sansCumul ? limite : atteint;
+    let incomplete = exceptions(moteur, nom, jourDe(carriere, depuis)).has(INCOMPLETE)
+      ? prolongationCarriereIncomplete(moteur, carriere, depuis, civiles, regime, nom) : null;
+    if (incomplete !== null && sansCumul && enfants !== null) {
+      if (incomplete.jusqu_a > enfants.jusqu_a) {
+        candidats = candidats.filter((r) => r !== enfants);
+      } else {
+        incomplete = null;
+      }
+    }
     if (incomplete !== null) {
       candidats.push(incomplete);
       atteint = mois(incomplete.jusqu_a);

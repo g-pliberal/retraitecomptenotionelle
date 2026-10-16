@@ -189,13 +189,13 @@ def test_radier_est_idempotent(simulateur):
 
 
 def test_les_statuts_sans_limite_au_modele_n_en_ont_pas(simulateur):
-    """Le salarié, l'agent des IEG et le cheminot recrutés depuis la fermeture
-    de leur régime spécial, salariés de droit commun, ne sont pas radiés, ni
-    les régimes spéciaux dont le statut n'est pas lu ou n'a pas de limite
-    (étape 6)."""
+    """Le salarié, l'agent des IEG, le cheminot et l'agent de la Banque de
+    France recrutés depuis la fermeture de leur régime spécial, salariés de
+    droit commun, ne sont pas radiés, ni les régimes spéciaux dont le statut
+    n'est pas lu ou n'a pas de limite (étape 6)."""
     moteur = simulateur.scenario_actuel
     for statut, naissance in (("salarie_prive_non_cadre", 1990), ("agent_ieg", 2005),
-                              ("agent_sncf", 2000), ("agent_banque_de_france", 1960),
+                              ("agent_sncf", 2000), ("agent_banque_de_france", 2005),
                               ("clerc_de_notaire", 1960), ("mineur", 1950), ("marin", 1990),
                               ("personnel_comedie_francaise", 1990),
                               ("agent_port_strasbourg", 1990)):
@@ -332,3 +332,55 @@ def test_l_agent_de_la_seita_est_retraite_a_soixante_cinq_ans(simulateur):
     radiation = limite_age.radiation(moteur, _simple(simulateur, "agent_seita", 1940, 68))
     assert (radiation.fiche, radiation.limite, radiation.age, radiation.version,
             radiation.reculs) == (limite_age.FICHE_SEITA, 65.0, 65.0, "statut_de_1962", ())
+
+
+# --- Action 151, étape 8 : la Banque de France (fiche
+# ``limite_age_banque_de_france``), statut du personnel, articles 241 à 242-1.
+
+def test_l_agent_de_la_banque_de_france_prend_sa_retraite_a_sa_limite(simulateur):
+    """Le tableau de l'article 241 : soixante-quatre ans et neuf mois pour le
+    né au premier semestre de 1955, soixante-six ans et trois mois pour celui
+    de 1958, soixante-sept ans depuis le second semestre de 1959 ; le né en
+    1950 avait passé la sienne quand l'article est né, le 26 juillet 2012."""
+    moteur = simulateur.scenario_actuel
+    for naissance, depart, limite, version in ((1955, 70, 64.75, "statut_de_2019"),
+                                               (1958, 70, 66.25, "statut_de_2019"),
+                                               (1960, 72, 67.0, "statut_de_2019")):
+        radiation = limite_age.radiation(
+            moteur, _simple(simulateur, "agent_banque_de_france", naissance, depart))
+        assert (radiation.fiche, radiation.limite, radiation.age, radiation.version,
+                sorted(radiation.regimes), radiation.reculs) == (
+            limite_age.FICHE_BANQUE_DE_FRANCE, limite, limite, version,
+            ["banque_de_france"], ()), naissance
+    premier = limite_age.radiation(moteur, _simple(simulateur, "agent_banque_de_france",
+                                                   1950, 68, mois_naissance=1,
+                                                   jour_naissance=15))
+    assert (premier.version, premier.date) == ("statut_de_2012", DateMois(2012, 8))
+
+
+def test_la_banque_de_france_proroge_pour_enfants_selon_son_statut(simulateur):
+    """Article 242 : deux ans pour trois enfants à charge, ou deux à charge et
+    un autre élevé ; un an pour deux à charge ; rien pour un seul ; et la
+    prolongation pour carrière incomplète, qui ne s'y cumule pas, la remplace
+    quand elle mène plus loin."""
+    moteur = simulateur.scenario_actuel
+
+    def radiation(naissances, debut=22.0):
+        carriere = Carriere.depuis_parcours(
+            annee_naissance=1960, sexe="F", metiers=[Metier("agent_banque_de_france", debut)],
+            age_liquidation=75, macro=simulateur.macro, nombre_enfants=len(naissances),
+            naissances_enfants=naissances)
+        return limite_age.radiation(moteur, carriere)
+
+    for naissances, age in ((("2012-01-01", "2014-01-01", "2016-01-01"), 69.0),
+                            (("1990-01-01", "2014-01-01", "2016-01-01"), 69.0),
+                            (("2014-01-01", "2016-01-01"), 68.0),
+                            (("1985-01-01", "1990-01-01", "2016-01-01"), 68.0),
+                            (("2016-01-01",), 67.0)):
+        lue = radiation(naissances)
+        assert lue.age == age, naissances
+        assert all(r.fiche == limite_age.FICHE_BANQUE_DE_FRANCE and not r.presumee
+                   for r in lue.reculs)
+    incomplete = radiation(("2014-01-01", "2016-01-01"), debut=45.0)
+    assert [(r.nom, r.depuis, r.jusqu_a) for r in incomplete.reculs] == [
+        (limite_age.CARRIERE_INCOMPLETE, 67.0, 69.5)]

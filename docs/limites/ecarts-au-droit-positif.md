@@ -325,9 +325,12 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   (`limite_age_ieg`, `limite_age_opera`, `limite_age_seita`) ; approchés : la
   catégorie de l'Opéra — le danseur, limité à quarante-deux ans, est traité
   comme les autres — et l'ouvrière de la SEITA, limitée à soixante, traitée à
-  soixante-cinq. Restent dehors : la limite des cheminots avant 2010, des IEG
-  avant 2008, de l'Opéra avant 2008, et celle de la Banque de France, fixée par
-  grade dans des textes que l'index de la DILA ne porte pas ; la CRPCEN, les
+  soixante-cinq. Depuis l'étape 8, l'agent titulaire de la Banque de France a
+  la sienne, par semestre de naissance, prorogée pour enfants selon son statut
+  (`limite_age_banque_de_france`) ; approché : son niveau, les plus hauts
+  partant plus tard jusqu'aux nés de 1955, traité comme les autres. Restent
+  dehors : la limite des cheminots avant 2010, des IEG avant 2008, de l'Opéra
+  avant 2008, de la Banque de France avant juillet 2012 ; la CRPCEN, les
   mines, les marins, la Comédie-Française et le port de Strasbourg n'ont pas de
   limite d'âge statutaire trouvée.
 - **Pension militaire : la durée est servie, le grade ne l'est pas.** Les deux
