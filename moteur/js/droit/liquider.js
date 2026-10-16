@@ -736,7 +736,12 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       if (periode.surcote_par_trimestre && supplementaires > 0
           && ageLiquidation >= ageOuverture
           && ouvrir.droitMilitaire(moteur, periode, carriere) === null) {
-        coefficientDuMaximum = 1.0;
+        // Le maximum garde le coefficient du taux acquis au 31 mars 1983 :
+        // « compte tenu des coefficients de majoration acquis à cette
+        // dernière date » (arrêté du 9 octobre 1986, article 2, en vigueur
+        // depuis), et la surcote s'applique à la pension ramenée à ce maximum.
+        coefficientDuMaximum = coefficientSurcote;
+        coefficientSurcote = 1.0;
         if (periode.surcote_bareme) {
           // Barème DATÉ : chaque trimestre civil de surcote au taux en
           // vigueur quand il a été accompli, depuis le trimestre qui suit
@@ -760,6 +765,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           }
         }
         taux *= coefficientSurcote;
+        coefficientSurcote *= coefficientDuMaximum;
       }
     }
 

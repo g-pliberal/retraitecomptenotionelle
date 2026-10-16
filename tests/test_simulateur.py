@@ -5883,11 +5883,12 @@ def test_la_carmf_majore_des_62_ans_puis_moins_apres_65_et_plus_rien_a_70(simula
     assert liquider.abattement_points(scenario,
         periode, carriere, 100, 165, 62.0, 2016 + 1) == pytest.approx(1.0)
     # Avant 2017, le taux plein est à soixante-cinq ans, l'anticipation abat
-    # 1,25 % par trimestre, et le différé se compte par années PLEINES.
+    # 1,25 % par trimestre, et rien ne majore au-delà : « Avant réforme »,
+    # 100 % de 65 à 70 ans (CARMF, réunions de formation 2018).
     avant = _periode(simulateur, "carmf_complementaire", 2015)
-    assert avant.surcote_pas_trimestres == 4
+    assert avant.surcote_points == "aucune"
     assert liquider.abattement_points(scenario,
-        avant, carriere, 140, 165, 66.5, 2015) == pytest.approx(1.05)
+        avant, carriere, 140, 165, 66.5, 2015) == pytest.approx(1.0)
     assert liquider.abattement_points(scenario,
         avant, carriere, 140, 165, 63.0, 2015) == pytest.approx(0.90)
     # L'ASV suit les mêmes mots.

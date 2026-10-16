@@ -988,10 +988,7 @@ periodes:
     taux_cotisation_retraite: 0.0900
     decote_par_trimestre: 0.0125
     abattement_points: carmf_asv_minoration_enfants
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_age_debut: 65
-    surcote_pas_trimestres: 4
+    surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
@@ -1002,11 +999,16 @@ periodes:
       0,85 à 62 ans, 0,90 à 63 ans, 0,95 à 64 ans » — l'âge seul, 1,25 %
       par trimestre, sans durée d'assurance ; la fiche portait 62, 67 et
       172 trimestres, la décote du régime de base. Le report au-delà de
-      65 ans est majoré par l'article 32, « de 5 % par année pleine de
-      différé » : `surcote_pas_trimestres: 4` ne compte que les années
-      pleines. Cet article n'est lu que dans l'état consolidé des
-      statuts, sans date d'origine : la fiche le sert à partir de 2000,
-      borne de période, et rien avant.
+      65 ans n'est pas majoré : « Avant réforme », la caisse sert 100 %
+      à 65, 66, 67, 68, 69 et 70 ans (CARMF, réunions de formation 2018,
+      « Retraite en temps choisi », diapositive 18). L'article 32, « 5 %
+      par année pleine de différé » pour le médecin « remplissant toutes
+      les conditions », dont celle de « cesser l'exercice de la médecine
+      non salariée » (arrêté du 28 septembre 2011), ne joue qu'entre la
+      cessation et la demande, un temps que le modèle, où l'on part en
+      cessant, ne connaît pas. La fiche le servait de 2000 à 2016, sans
+      plafond, jusqu'à 255 % à 116 ans ; ôté le 16 octobre 2026
+      (action 151).
       LA MINORATION COMPTE DES ANNÉES D'ÂGE. « 0,75 à 60 ans, 0,80 à 61
       ans, 0,85 à 62 ans, 0,90 à 63 ans, 0,95 à 64 ans » : l'âge atteint,
       en années, et non les trimestres. La fiche l'écrivait en 1,25 % par
@@ -1031,10 +1033,7 @@ periodes:
     taux_cotisation_retraite: 0.0910
     decote_par_trimestre: 0.0125
     abattement_points: carmf_asv_minoration_enfants
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_age_debut: 65
-    surcote_pas_trimestres: 4
+    surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
@@ -1045,11 +1044,16 @@ periodes:
       0,85 à 62 ans, 0,90 à 63 ans, 0,95 à 64 ans » — l'âge seul, 1,25 %
       par trimestre, sans durée d'assurance ; la fiche portait 62, 67 et
       172 trimestres, la décote du régime de base. Le report au-delà de
-      65 ans est majoré par l'article 32, « de 5 % par année pleine de
-      différé » : `surcote_pas_trimestres: 4` ne compte que les années
-      pleines. Cet article n'est lu que dans l'état consolidé des
-      statuts, sans date d'origine : la fiche le sert à partir de 2000,
-      borne de période, et rien avant.
+      65 ans n'est pas majoré : « Avant réforme », la caisse sert 100 %
+      à 65, 66, 67, 68, 69 et 70 ans (CARMF, réunions de formation 2018,
+      « Retraite en temps choisi », diapositive 18). L'article 32, « 5 %
+      par année pleine de différé » pour le médecin « remplissant toutes
+      les conditions », dont celle de « cesser l'exercice de la médecine
+      non salariée » (arrêté du 28 septembre 2011), ne joue qu'entre la
+      cessation et la demande, un temps que le modèle, où l'on part en
+      cessant, ne connaît pas. La fiche le servait de 2000 à 2016, sans
+      plafond, jusqu'à 255 % à 116 ans ; ôté le 16 octobre 2026
+      (action 151).
   - debut: 2009
     fin: 2012
     type_calcul: points
@@ -1063,10 +1067,7 @@ periodes:
     taux_cotisation_retraite: 0.0920
     decote_par_trimestre: 0.0125
     abattement_points: carmf_asv_minoration_enfants
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_age_debut: 65
-    surcote_pas_trimestres: 4
+    surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
@@ -1077,11 +1078,16 @@ periodes:
       0,85 à 62 ans, 0,90 à 63 ans, 0,95 à 64 ans » — l'âge seul, 1,25 %
       par trimestre, sans durée d'assurance ; la fiche portait 62, 67 et
       172 trimestres, la décote du régime de base. Le report au-delà de
-      65 ans est majoré par l'article 32, « de 5 % par année pleine de
-      différé » : `surcote_pas_trimestres: 4` ne compte que les années
-      pleines. Cet article n'est lu que dans l'état consolidé des
-      statuts, sans date d'origine : la fiche le sert à partir de 2000,
-      borne de période, et rien avant.
+      65 ans n'est pas majoré : « Avant réforme », la caisse sert 100 %
+      à 65, 66, 67, 68, 69 et 70 ans (CARMF, réunions de formation 2018,
+      « Retraite en temps choisi », diapositive 18). L'article 32, « 5 %
+      par année pleine de différé » pour le médecin « remplissant toutes
+      les conditions », dont celle de « cesser l'exercice de la médecine
+      non salariée » (arrêté du 28 septembre 2011), ne joue qu'entre la
+      cessation et la demande, un temps que le modèle, où l'on part en
+      cessant, ne connaît pas. La fiche le servait de 2000 à 2016, sans
+      plafond, jusqu'à 255 % à 116 ans ; ôté le 16 octobre 2026
+      (action 151).
   - debut: 2013
     fin: 2013
     type_calcul: points
@@ -1095,10 +1101,7 @@ periodes:
     taux_cotisation_retraite: 0.0930
     decote_par_trimestre: 0.0125
     abattement_points: carmf_asv_minoration_enfants
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_age_debut: 65
-    surcote_pas_trimestres: 4
+    surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
@@ -1109,11 +1112,16 @@ periodes:
       0,85 à 62 ans, 0,90 à 63 ans, 0,95 à 64 ans » — l'âge seul, 1,25 %
       par trimestre, sans durée d'assurance ; la fiche portait 62, 67 et
       172 trimestres, la décote du régime de base. Le report au-delà de
-      65 ans est majoré par l'article 32, « de 5 % par année pleine de
-      différé » : `surcote_pas_trimestres: 4` ne compte que les années
-      pleines. Cet article n'est lu que dans l'état consolidé des
-      statuts, sans date d'origine : la fiche le sert à partir de 2000,
-      borne de période, et rien avant.
+      65 ans n'est pas majoré : « Avant réforme », la caisse sert 100 %
+      à 65, 66, 67, 68, 69 et 70 ans (CARMF, réunions de formation 2018,
+      « Retraite en temps choisi », diapositive 18). L'article 32, « 5 %
+      par année pleine de différé » pour le médecin « remplissant toutes
+      les conditions », dont celle de « cesser l'exercice de la médecine
+      non salariée » (arrêté du 28 septembre 2011), ne joue qu'entre la
+      cessation et la demande, un temps que le modèle, où l'on part en
+      cessant, ne connaît pas. La fiche le servait de 2000 à 2016, sans
+      plafond, jusqu'à 255 % à 116 ans ; ôté le 16 octobre 2026
+      (action 151).
   - debut: 2014
     fin: 2014
     type_calcul: points
@@ -1127,10 +1135,7 @@ periodes:
     taux_cotisation_retraite: 0.0940
     decote_par_trimestre: 0.0125
     abattement_points: carmf_asv_minoration_enfants
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_age_debut: 65
-    surcote_pas_trimestres: 4
+    surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
@@ -1141,11 +1146,16 @@ periodes:
       0,85 à 62 ans, 0,90 à 63 ans, 0,95 à 64 ans » — l'âge seul, 1,25 %
       par trimestre, sans durée d'assurance ; la fiche portait 62, 67 et
       172 trimestres, la décote du régime de base. Le report au-delà de
-      65 ans est majoré par l'article 32, « de 5 % par année pleine de
-      différé » : `surcote_pas_trimestres: 4` ne compte que les années
-      pleines. Cet article n'est lu que dans l'état consolidé des
-      statuts, sans date d'origine : la fiche le sert à partir de 2000,
-      borne de période, et rien avant.
+      65 ans n'est pas majoré : « Avant réforme », la caisse sert 100 %
+      à 65, 66, 67, 68, 69 et 70 ans (CARMF, réunions de formation 2018,
+      « Retraite en temps choisi », diapositive 18). L'article 32, « 5 %
+      par année pleine de différé » pour le médecin « remplissant toutes
+      les conditions », dont celle de « cesser l'exercice de la médecine
+      non salariée » (arrêté du 28 septembre 2011), ne joue qu'entre la
+      cessation et la demande, un temps que le modèle, où l'on part en
+      cessant, ne connaît pas. La fiche le servait de 2000 à 2016, sans
+      plafond, jusqu'à 255 % à 116 ans ; ôté le 16 octobre 2026
+      (action 151).
   - debut: 2015
     fin: 2015
     type_calcul: points
@@ -1159,10 +1169,7 @@ periodes:
     taux_cotisation_retraite: 0.0950
     decote_par_trimestre: 0.0125
     abattement_points: carmf_asv_minoration_enfants
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_age_debut: 65
-    surcote_pas_trimestres: 4
+    surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
@@ -1173,11 +1180,16 @@ periodes:
       0,85 à 62 ans, 0,90 à 63 ans, 0,95 à 64 ans » — l'âge seul, 1,25 %
       par trimestre, sans durée d'assurance ; la fiche portait 62, 67 et
       172 trimestres, la décote du régime de base. Le report au-delà de
-      65 ans est majoré par l'article 32, « de 5 % par année pleine de
-      différé » : `surcote_pas_trimestres: 4` ne compte que les années
-      pleines. Cet article n'est lu que dans l'état consolidé des
-      statuts, sans date d'origine : la fiche le sert à partir de 2000,
-      borne de période, et rien avant.
+      65 ans n'est pas majoré : « Avant réforme », la caisse sert 100 %
+      à 65, 66, 67, 68, 69 et 70 ans (CARMF, réunions de formation 2018,
+      « Retraite en temps choisi », diapositive 18). L'article 32, « 5 %
+      par année pleine de différé » pour le médecin « remplissant toutes
+      les conditions », dont celle de « cesser l'exercice de la médecine
+      non salariée » (arrêté du 28 septembre 2011), ne joue qu'entre la
+      cessation et la demande, un temps que le modèle, où l'on part en
+      cessant, ne connaît pas. La fiche le servait de 2000 à 2016, sans
+      plafond, jusqu'à 255 % à 116 ans ; ôté le 16 octobre 2026
+      (action 151).
   - debut: 2016
     fin: 2016
     type_calcul: points
@@ -1191,10 +1203,7 @@ periodes:
     taux_cotisation_retraite: 0.0960
     decote_par_trimestre: 0.0125
     abattement_points: carmf_asv_minoration_enfants
-    surcote_par_trimestre: 0.0125
-    surcote_points: surcote_par_age_seul
-    surcote_age_debut: 65
-    surcote_pas_trimestres: 4
+    surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
@@ -1205,11 +1214,16 @@ periodes:
       0,85 à 62 ans, 0,90 à 63 ans, 0,95 à 64 ans » — l'âge seul, 1,25 %
       par trimestre, sans durée d'assurance ; la fiche portait 62, 67 et
       172 trimestres, la décote du régime de base. Le report au-delà de
-      65 ans est majoré par l'article 32, « de 5 % par année pleine de
-      différé » : `surcote_pas_trimestres: 4` ne compte que les années
-      pleines. Cet article n'est lu que dans l'état consolidé des
-      statuts, sans date d'origine : la fiche le sert à partir de 2000,
-      borne de période, et rien avant.
+      65 ans n'est pas majoré : « Avant réforme », la caisse sert 100 %
+      à 65, 66, 67, 68, 69 et 70 ans (CARMF, réunions de formation 2018,
+      « Retraite en temps choisi », diapositive 18). L'article 32, « 5 %
+      par année pleine de différé » pour le médecin « remplissant toutes
+      les conditions », dont celle de « cesser l'exercice de la médecine
+      non salariée » (arrêté du 28 septembre 2011), ne joue qu'entre la
+      cessation et la demande, un temps que le modèle, où l'on part en
+      cessant, ne connaît pas. La fiche le servait de 2000 à 2016, sans
+      plafond, jusqu'à 255 % à 116 ans ; ôté le 16 octobre 2026
+      (action 151).
   - debut: 2017
     fin: 2017
     type_calcul: points

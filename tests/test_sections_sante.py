@@ -203,6 +203,16 @@ def test_la_carmf_de_2000_a_2016_compte_des_annees_d_age(
         coefficient)
 
 
+@pytest.mark.parametrize("naissance,liquidation", [(1945, 68.0), (1946, 70.0)])
+def test_la_carmf_avant_2017_ne_majore_pas_apres_65_ans(
+        simulateur, naissance, liquidation):
+    """« Avant réforme », 100 % de 65 à 70 ans (CARMF, réunions de formation
+    2018, diapositive 18) : le « différé » de l'article 32 suppose la
+    cessation, et le modèle part en cessant."""
+    _, pensions = _calculer(simulateur, "medecin_liberal", naissance, liquidation)
+    assert _coefficient(pensions["carmf_complementaire"].detail) == pytest.approx(1.0)
+
+
 # -- la CARPIMKO -----------------------------------------------------------------
 
 

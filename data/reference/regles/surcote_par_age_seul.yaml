@@ -35,11 +35,14 @@ effet: >-
   reste, qui attend ce que le modèle ne sait pas encore faire : jusqu'au 4 septembre 2018,
   seuls les points acquis jusqu'à la fin de l'année, puis, depuis 2012, du trimestre du
   65e anniversaire, étaient majorés ; le moteur, qui ne garde pas les points année par
-  année, les majore tous, non mesuré. Restent à lire la
-  rédaction d'origine de l'article 32 des statuts de la CARMF et l'article 3.15 des
-  statuts de la Cipav de 2006, publiés au Bulletin officiel.
+  année, les majore tous, non mesuré. Avant 2017, la CARMF ne majore pas le départ
+  après 65 ans, comme sa propre table le dit (« Avant réforme », 100 % de 65 à 70 ans) :
+  l'article 32 et son « différé » supposent la cessation, et la fiche du régime, qui
+  les servait de 2000 à 2016 sans plafond, ne les sert plus depuis le 16 octobre 2026.
+  Restent à lire la rédaction d'origine de l'article 32 des statuts de la CARMF et
+  l'article 3.15 des statuts de la Cipav de 2006, publiés au Bulletin officiel.
 sources:
-  lu_le: 2026-10-13
+  lu_le: 2026-10-16
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
@@ -61,8 +64,11 @@ sources:
     CARMF : l'article 32 des statuts, lu dans les statuts que publie la caisse, à jour de
     l'arrêté du 7 janvier 2025 : « 5 % par année pleine de différé » pour le médecin
     « remplissant toutes les conditions », sans nommer 65 ans, que la fiche de régime sert
-    de 2000 à 2016. Dater sa rédaction d'origine (Bulletin officiel), et dire si la caisse
-    l'a cumulé avec la majoration de l'article 15 de 2017 à 2026.
+    de 2000 à 2016, et ne sert plus depuis le 16 octobre 2026 : la caisse ne majore pas le
+    départ après 65 ans avant 2017, ni ne cumule depuis les deux majorations (1,30 à
+    70 ans, sa table de 2018). Dater sa rédaction d'origine (Bulletin officiel), et lire
+    à quoi elle sert : le différé entre la cessation et la demande, que le modèle ne
+    connaît pas.
   - >-
     CARCDSF : l'article 35 de ses statuts, dans la rédaction de l'arrêté du 27 décembre
     2023, ne compte que les trimestres « d'exercice libéral », que `par_age_seul` confond
@@ -332,6 +338,18 @@ sources:
       pas dans le règlement approuvé par l'arrêté du 10 juillet 2026 (LEGIARTI000054890209)
     url: https://www.carmf.fr/doc/documents/statuts/d297-3.pdf
     date: 2026-09-27
+  - type: autre
+    reference: >-
+      CARMF, diaporamas du régime complémentaire. Réunions de formation 2018, « Retraite
+      en temps choisi », « Pourcentage de la retraite perçue selon l'âge de départ en
+      retraite » (diapositive 18) : « Avant réforme », 85 % à 62 ans, 90 % à 63 ans, 95 %
+      à 64 ans, « 100 % » à 65, 66, 67, 68, 69 et 70 ans ; « Depuis la réforme », un
+      coefficient de majoration de 1,00 à 62 ans à 1,30 à 70 ans. Assemblée générale 2015
+      (diapositive 11) et Médec 2008 (diapositive 11) : « Sans minoration », « À partir
+      de 65 ans quelle que soit la durée d'assurance », sans majoration au-delà ; le projet
+      de 2015 (diapositive 24) : « Avant réforme », « 65 ans pour tout le monde ».
+    url: https://www.carmf.fr/focus/slides/2018/reunionformation/rcv.pdf
+    date: 2026-10-16
   - type: jorf
     reference: >-
       CARMF, index JORF : aucun arrêté approuvant les statuts du régime complémentaire ne

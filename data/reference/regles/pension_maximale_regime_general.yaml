@@ -394,6 +394,19 @@ sources:
       précise : la pension calculée ramenée au maximum, puis la surcote
     url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2007005_16012007.aspx
     date: 2007-01-16
+  - type: legifrance
+    reference: >-
+      index LEGI du dépôt, relu le 16 octobre 2026 (action 151) : l'arrêté du 9 octobre
+      1986, article 2 (LEGIARTI000006784464, en vigueur depuis le 11 octobre 1986, sans
+      version suivante), majore le maximum « compte tenu des coefficients de majoration
+      acquis à cette dernière date et conservés en application du cinquième alinéa de
+      l'article L. 351-1 », que la rédaction de 2003 garde (LEGIARTI000006742622, 22
+      août 2003 → 11 novembre 2010) comme celle de 2010 (LEGIARTI000023035688). Rien,
+      en 2004, ne retire ce coefficient au maximum : le moteur le perdait dès qu'une
+      surcote entrait en compte, et une carrière née en 1900 tombait de 38 946 € en
+      2003 à 14 856 € en 2004 ; il le garde depuis, et la surcote s'applique à la
+      pension ramenée à ce maximum (circulaire n° 2007-5)
+    date: 2026-10-16
   - type: service_public
     reference: >-
       F21552, « Montant de la retraite du salarié du secteur privé », vérifiée le 1er

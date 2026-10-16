@@ -147,6 +147,20 @@ def test_le_maximum_suit_le_taux_acquis_au_31_mars_1983(simulateur):
     assert pension.montant == pytest.approx(0.55 * plafond)
 
 
+def test_le_maximum_garde_le_taux_acquis_sous_la_surcote(simulateur):
+    """Né en 1917, parti en 2005 à quatre-vingt-huit ans et demi : le maximum
+    garde le coefficient du taux acquis de 55 % — l'arrêté du 9 octobre 1986,
+    article 2, qui le dit, est en vigueur —, et la surcote de 4,5 % s'applique
+    à la pension ramenée à ce maximum (circulaire n° 2007-5). Le moteur le
+    perdait dès qu'une surcote entrait en compte, depuis 2004."""
+    carriere, pension = _regime_general(simulateur, 1917, 88.5)
+    plafond = simulateur.macro.plafond_securite_sociale(carriere.annee_liquidation)
+    assert carriere.annee_liquidation == 2005
+    assert "taux 57.475%" in pension.detail
+    assert "ramenée au maximum des pensions" in pension.detail
+    assert pension.montant == pytest.approx(0.55 * 1.045 * plafond)
+
+
 def test_la_pension_sous_le_maximum_ne_bouge_pas(simulateur):
     """Au salaire moyen, la pension reste celle que le taux et la durée donnent."""
     _, pension = _regime_general(simulateur, 1925, 65, niveau=1.0)
@@ -194,14 +208,15 @@ REQUETE = {
     "profil": "plat", "projection": "cor_reference", "salaire": "5", "sexe": "H",
     "statut": "salarie_prive_cadre", "stock": "prix", "table": "unisexe",
 }
-#: Le maximum de 1990, celui de l'ajournement de 1982, du taux acquis de 1983 ;
-#: une pension surcotée de 2015, sous le maximum ; une pension au salaire moyen ;
+#: Le maximum de 1990, celui de l'ajournement de 1982, du taux acquis de 1983,
+#: puis de ce taux sous la surcote, en 2005 ; une pension surcotée de 2015, sous le maximum ; une pension au salaire moyen ;
 #: le salarié agricole de 1990, au maximum de son régime.
 CAS = [
     {},
     {"statut": "salarie_agricole"},
     {"naissance": "1912", "liquidation": "70"},
     {"naissance": "1917", "naissance_mois": "3", "liquidation": "66.5"},
+    {"naissance": "1917", "liquidation": "88.5"},
     {"naissance": "1950", "liquidation": "65"},
     {"salaire": "1"},
 ]

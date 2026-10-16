@@ -1,0 +1,19 @@
+date: "2026-10-16"
+session: "action 151, étape 7 : la CARMF avant 2017 et le taux acquis au 31 mars 1983"
+consulte: >-
+  python scripts/veille_droit.py. CARMF : diaporamas du régime complémentaire publiés par
+  la caisse, Médec 2008, assemblée générale 2015 et réunions de formation 2018
+  (carmf.fr/focus/slides/…/rcv.pdf), et les lectures de la fiche surcote_par_age_seul
+  (statuts consolidés, article 32 ; arrêté du 28 septembre 2011). Index LEGI du dépôt,
+  récupéré ce jour (à jour au 11 octobre 2026) : arrêté du 9 octobre 1986, article 2
+  (LEGIARTI000006784464) ; L. 351-1 du code de la sécurité sociale, rédactions de 2003
+  et de 2010. Circulaire Cnav n° 2007-5, point 3.
+trouve: >-
+  La CARMF ne majore pas le départ après 65 ans avant 2017 (« Avant réforme », 100 % de
+  65 à 70 ans) : les sept périodes de 2000 à 2016 de carmf_complementaire ne majorent
+  plus. Le maximum des pensions garde le coefficient du taux acquis au 31 mars 1983
+  après 2004, l'arrêté de 1986 n'ayant pas de version suivante : le moteur le perdait
+  dès qu'une surcote entrait en compte, corrigé en Python et en JavaScript.
+reste: >-
+  La rédaction d'origine de l'article 32 des statuts de la CARMF ; le cumul de la
+  surcote avec le taux acquis au 31 mars 1983, qu'aucun texte lu ne tranche.

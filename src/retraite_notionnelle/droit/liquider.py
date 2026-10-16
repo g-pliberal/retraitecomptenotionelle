@@ -1285,7 +1285,13 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             if (periode.surcote_par_trimestre and supplementaires > 0
                     and age_liquidation >= age_ouverture
                     and ouvrir.droit_militaire(moteur, periode, carriere) is None):
-                coefficient_du_maximum = 1.0
+                # Le maximum garde le coefficient du taux acquis au 31 mars
+                # 1983 : « compte tenu des coefficients de majoration acquis à
+                # cette dernière date » (arrêté du 9 octobre 1986, article 2,
+                # en vigueur depuis), et la surcote s'applique à la pension
+                # ramenée à ce maximum.
+                coefficient_du_maximum = coefficient_surcote
+                coefficient_surcote = 1.0
                 if periode.surcote_bareme:
                     # Barème DATÉ : chaque trimestre civil de surcote au
                     # taux en vigueur quand il a été accompli, depuis le
@@ -1314,6 +1320,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                             1.0 + periode.surcote_par_trimestre * supplementaires
                         )
                 taux *= coefficient_surcote
+                coefficient_surcote *= coefficient_du_maximum
 
         taux_retenu = max(taux_retenu, taux)
         prorata = min(trimestres_regime / proratisation, rapport_maximum)
