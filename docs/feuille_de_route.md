@@ -4167,9 +4167,10 @@ R. 111-2 ; la condition de L. 816-1 ; le tableau de 2008 des régimes
 l'AVPF de 1972 à 1982, la tranche C à travers la fusion de 2019, les grilles
 des classes de la Cipav et de la CAVEC (14 octobre) ; `retraite_proportionnelle_msa`,
 le maximum M et la série de l'AVTS (note 138/2026-10-14-etape-6-r-732-70) ;
-l'âge Agirc-Arrco de 2011 à 2018 et le report de l'article 102, sans écart
-(16 octobre). Restent : des classes, la CARPV de 1998 à 2015 et les décrets non
-lus ; de `coefficients_anticipation_agirc_arrco`, les textes d'avant 2003 ; les
+l'âge Agirc-Arrco de 2011 à 2018, sans écart, les classes de la CARPV de 1998 à
+2015 (16 octobre). Restent : des classes, la valeur de l'acte vétérinaire (au
+propriétaire) et les décrets non lus ; de
+`coefficients_anticipation_agirc_arrco`, les textes d'avant 2003 ; les
 restes de `decote_avant_1983`, des artisans et commerçants, de
 `pension_non_salaries_agricoles_2026` et de R. 173-4-3. Détail : les notes.
 

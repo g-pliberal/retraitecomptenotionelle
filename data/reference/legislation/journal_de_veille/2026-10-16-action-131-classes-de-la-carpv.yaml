@@ -1,0 +1,22 @@
+date: "2026-10-16"
+session: "action 131 : les classes de la CARPV de 1998 à 2015"
+consulte: >-
+  `python scripts/veille_droit.py` en commençant. Index LEGI et JORF du dépôt
+  (récupérés, à jour au 11 octobre 2026) : le décret n° 50-1318, article 2, versions
+  du 2 décembre 1997, du 30 décembre 2012 et du 25 juin 2015 ; le décret n° 97-1112,
+  articles 3 et 4 ; les décrets annuels des cotisations des complémentaires libérales
+  de 1998 à 2015 ; l'arrêté du 16 avril 2014 (statuts de la CARPV) ; la notice du
+  décret n° 2015-712. Une recherche sur le web de la valeur de l'acte médical
+  vétérinaire, sans résultat.
+trouve: >-
+  Les classes B, C et D à 480, 600 et 720 AMV de 1998 à 2015, et le taux d'appel de
+  chacun des dix-huit exercices (77 % de 1998 à 2001, 104 % en 2015), entrés dans
+  classes_cotisation_epoques.yaml, chacun avec son identifiant. La valeur de l'AMV,
+  fixée par l'ordre, n'est dans aucun texte publié : convention de la valeur d'achat du
+  point de 2016 prolongée au rapport des plafonds. Les sept cas types vétérinaires
+  baissent de 3,7 % à 14,4 % au scénario 1. Fiche cotisation_par_classes_liberales
+  relue, toujours approchee.
+reste: >-
+  La valeur de l'AMV de 1997 à 2015 (ordre des vétérinaires, CARPV), au propriétaire ;
+  le barème réduit des moins de trente-trois ans du décret n° 97-1112 ; les décrets de
+  la Cipav et de la CAVEC que l'index ne porte pas.
