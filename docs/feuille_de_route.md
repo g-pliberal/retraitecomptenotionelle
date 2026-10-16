@@ -6061,16 +6061,15 @@ plutôt que déplacer celui qui existe, et l'ordre des groupes.
 
 ### 153. L'oracle au-delà des carrières simples : ce qu'OpenFisca calcule et que le dépôt ne lui confronte pas — `en cours`
 
-**Reprise, au 16 octobre 2026.** Faites, l'étape 1 et sept familles de
-l'étape 2, la dernière le salaire annuel moyen
-(`openfisca_salaire_annuel_moyen.py` et son test) : rien chez nous, la règle
-concordant au centime sous nos paramètres ; trois écarts neufs chez
-OpenFisca — le plafond de janvier en 1960 et 1961, la moyenne annuelle avant
-juillet 1995, la décote au jour anniversaire — et ses coefficients précisés ;
-vingt-six en tout chez lui, quatre chez nous. Reste l'étape 2, une famille :
-les périodes assimilées, après le sixième domaine (action 130). Le
-signalement à OpenFisca, et la borne du 2 août 1951 (KALI), attendent le
-propriétaire. Détail : la note du salaire annuel moyen, du 16 octobre.
+**Reprise, au 16 octobre 2026.** Faites, les deux étapes : la dernière
+famille, les périodes assimilées (`openfisca_periodes_assimilees.py` et son
+test), n'a rien trouvé chez nous — durée, plafond de l'année, durée cotisée,
+surcote, minimum contributif concordent — et un écart chez OpenFisca : aucune
+surcote l'année de l'âge légal (D. 351-1-4). Vingt-sept erreurs chez lui en
+tout, quatre chez nous. Ne restent que deux décisions du propriétaire : le
+signalement à OpenFisca, et la borne du 2 août 1951 (KALI) ; l'action se clôt
+quand il les aura prises. Détail : la note des périodes assimilées, du
+16 octobre.
 
 **D'où elle vient.** L'action 136 (étape 2). Le 1er octobre 2026, les
 48 profils que l'oracle confrontait à OpenFisca-France-Pension

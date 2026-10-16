@@ -1,0 +1,30 @@
+date: "2026-10-16"
+session: >-
+  action 153, étape 2, huitième et dernière famille : les périodes assimilées du régime
+  général, année par année, confrontées à OpenFisca-France-Pension
+consulte: >-
+  Les fiches stages_formation_professionnelle, sportifs_haut_niveau, apprentissage et
+  conge_supplementaire_naissance, et ce que `droit/compter.py` en compte (action 130,
+  sixième domaine) ; la fiche surcote_regime_general. Dans l'index LEGI du dépôt, récupéré
+  à jour au 11 octobre 2026 : D. 351-1-4, ses cinq rédactions, dont celle du 1er juillet
+  2011 au 1er janvier 2026 (LEGIARTI000023397575). Et le code d'OpenFisca-France-Pension
+  0.1.3 (`TypesStatutDuCotisant`, `regime_general_cnav_duree_assurance_annuelle`,
+  `_periode_assimilee_annuelle`, `_cotisee_annuelle`, `_surcote_trimestres`,
+  `_pension_minimale`), exécuté à part. Aucune règle du scénario 1 n'a été écrite.
+trouve: >-
+  Rien chez nous. OpenFisca ne compte pas les trimestres d'une période assimilée : il
+  reçoit ceux de chaque catégorie, année par année. Ceux du dépôt reçus, il les mène à la
+  même durée, quatre par année au plus, au même taux et à la même proratisation ; il les
+  tient comme nous hors de la durée cotisée, de la surcote, de la majoration du minimum
+  contributif et de son seuil de 120 trimestres cotisés ; une année dont le salaire
+  n'achète pas un trimestre reste hors du salaire annuel moyen. Un écart chez lui :
+  aucune surcote l'année de l'âge légal quand le trimestre civil qui le suit commence
+  après le 1er janvier, quand D. 351-1-4 retient « le nombre de trimestres civils entiers
+  suivant celui au cours duquel cet âge a été atteint » — trois au né du 1er janvier 1955.
+  Les deux jumeaux du salaire annuel moyen retrouvent aussi la décote au jour
+  anniversaire, déjà au registre.
+reste: >-
+  L'action 153 a fini son étape 2. Le signalement à OpenFisca, de vingt-sept erreurs, et
+  la borne du 2 août 1951 (KALI), que le propriétaire tranche. Les stages d'insertion et
+  le congé supplémentaire de naissance, qui ne valident qu'après septembre 2023 et juillet
+  2026, restent hors de la table d'OpenFisca.
