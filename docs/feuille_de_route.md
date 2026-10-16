@@ -6061,16 +6061,16 @@ plutôt que déplacer celui qui existe, et l'ordre des groupes.
 
 ### 153. L'oracle au-delà des carrières simples : ce qu'OpenFisca calcule et que le dépôt ne lui confronte pas — `en cours`
 
-**Reprise, au 16 octobre 2026.** Faites, l'étape 1 et trois familles de
-l'étape 2 : les enfants, la catégorie active, puis la carrière longue des
-fonctionnaires (`openfisca_carriere_longue_fonction_publique.py` et son test),
-qui a trouvé deux erreurs chez nous, corrigées — les portes d'avant 2009,
-datées une à une, et leur durée fixe — et deux de plus chez OpenFisca,
-dix-huit en tout. Reste l'étape 2, une famille par session, dans un script et
-un test frères : les minima (le minimum garanti de la CNRACL, nul chez lui),
-les points enfants et la minoration de l'Arrco, les périodes assimilées, le
+**Reprise, au 16 octobre 2026.** Faites, l'étape 1 et quatre familles de
+l'étape 2 : les enfants, la catégorie active, la carrière longue des
+fonctionnaires, puis les minima (`openfisca_minima.py` et son test), qui
+n'ont rien trouvé chez nous et quatre erreurs chez OpenFisca, vingt-deux en
+tout : le minimum garanti de la CNRACL, l'ancien droit sous quinze ans, la
+minoration de 2011 à 2015, la durée corrigée du minimum contributif. Reste
+l'étape 2, une famille par session, dans un script et un test frères : les
+points enfants et la minoration de l'Arrco, les périodes assimilées, le
 salaire annuel moyen (153.2). Le signalement à OpenFisca attend le
-propriétaire. Détail : la note du 16 octobre.
+propriétaire. Détail : la note des minima, du 16 octobre.
 
 **D'où elle vient.** L'action 136 (étape 2). Le 1er octobre 2026, les
 48 profils que l'oracle confrontait à OpenFisca-France-Pension
