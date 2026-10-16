@@ -545,6 +545,12 @@ def test_journal_de_certification_decrit_les_series_certifiees():
             "legislation/minimum_vieillesse_avant_2007.csv",
         "salaire_validant_trimestre_journal_officiel":
             "legislation/salaire_validant_trimestre_avant_1972.csv",
+        # L'AVTS à chacune de ses dates, la pension minimum d'avant 1983 et
+        # le maximum de R. 732-70 : le Journal officiel ce qu'un texte redit,
+        # la Cnav le reste (action 138, étape 6).
+        "pension_minimum_avant_1983_cnav": "legislation/pension_minimum_avant_1983.csv",
+        "pension_minimum_avant_1983_journal_officiel":
+            "legislation/pension_minimum_avant_1983.csv",
         "minimum_garanti_reference": "legislation/minimum_garanti_montants.csv",
         "esperances_vie": "mortalite/esperances_vie.csv",
         "esperance_65_derivee": "mortalite/esperances_vie.csv",

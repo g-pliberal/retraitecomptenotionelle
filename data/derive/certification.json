@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-10-14",
+ "dernier_passage_le": "2026-10-16",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -54,7 +54,7 @@
    "niveau": "haute",
    "source": "Cnav, barème « Allocation supplémentaire - Montant »",
    "valeurs": 29,
-   "verifiee_le": "2026-10-13"
+   "verifiee_le": "2026-10-16"
   },
   "allocation_supplementaire_journal_officiel": {
    "ajoutees": 0,
@@ -65,7 +65,7 @@
    "niveau": "certifiee",
    "source": "DILA, bases JORF et LEGI, décrets fixant le montant de divers avantages de vieillesse et de l'allocation supplémentaire",
    "valeurs": 22,
-   "verifiee_le": "2026-10-13"
+   "verifiee_le": "2026-10-16"
   },
   "allocation_supplementaire_menage_cnav": {
    "ajoutees": 0,
@@ -76,7 +76,7 @@
    "niveau": "haute",
    "source": "Cnav, barème « Allocation supplémentaire - Montant »",
    "valeurs": 3,
-   "verifiee_le": "2026-10-13"
+   "verifiee_le": "2026-10-16"
   },
   "allocation_supplementaire_menage_journal_officiel": {
    "ajoutees": 0,
@@ -87,7 +87,7 @@
    "niveau": "certifiee",
    "source": "DILA, bases JORF et LEGI, décrets fixant le montant de divers avantages de vieillesse et de l'allocation supplémentaire",
    "valeurs": 22,
-   "verifiee_le": "2026-10-13"
+   "verifiee_le": "2026-10-16"
   },
   "annees_revenu_annuel_moyen_independants": {
    "ajoutees": 0,
@@ -153,7 +153,7 @@
    "niveau": "haute",
    "source": "Cnav, barème « Allocation aux vieux travailleurs salariés […] - Montant »",
    "valeurs": 44,
-   "verifiee_le": "2026-10-13"
+   "verifiee_le": "2026-10-16"
   },
   "avts_journal_officiel": {
    "ajoutees": 0,
@@ -164,7 +164,7 @@
    "niveau": "certifiee",
    "source": "DILA, bases JORF et LEGI, décrets fixant le montant de divers avantages de vieillesse et de l'allocation supplémentaire",
    "valeurs": 22,
-   "verifiee_le": "2026-10-13"
+   "verifiee_le": "2026-10-16"
   },
   "bonifications_jaune_effectifs": {
    "ajoutees": 0,
@@ -714,7 +714,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-10-14"
+   "verifiee_le": "2026-10-16"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -1002,6 +1002,28 @@
    "valeurs": 61,
    "verifiee_le": "2026-10-05"
   },
+  "pension_minimum_avant_1983_cnav": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "7f418903a0c9e4ce",
+   "identiques": 57,
+   "niveau": "haute",
+   "source": "Cnav, barème « Allocation aux vieux travailleurs salariés […] - Montant »",
+   "valeurs": 57,
+   "verifiee_le": "2026-10-16"
+  },
+  "pension_minimum_avant_1983_journal_officiel": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "807b4bf47cf21897",
+   "identiques": 47,
+   "niveau": "certifiee",
+   "source": "DILA, bases JORF et LEGI, décrets fixant le montant de divers avantages de vieillesse",
+   "valeurs": 47,
+   "verifiee_le": "2026-10-16"
+  },
   "pensions_droits": {
    "ajoutees": 0,
    "colonne": "montant_meur",
@@ -1088,7 +1110,7 @@
    "niveau": "haute",
    "source": "Cnav, barème « Allocation supplémentaire - Plafond de ressources »",
    "valeurs": 29,
-   "verifiee_le": "2026-10-13"
+   "verifiee_le": "2026-10-16"
   },
   "plafond_couple_minimum_vieillesse_journal_officiel": {
    "ajoutees": 0,
@@ -1099,7 +1121,7 @@
    "niveau": "certifiee",
    "source": "DILA, bases JORF et LEGI, décrets fixant le montant de divers avantages de vieillesse et de l'allocation supplémentaire",
    "valeurs": 22,
-   "verifiee_le": "2026-10-13"
+   "verifiee_le": "2026-10-16"
   },
   "plafond_journal_officiel": {
    "ajoutees": 0,
@@ -1132,7 +1154,7 @@
    "niveau": "haute",
    "source": "Cnav, barème « Allocation supplémentaire - Plafond de ressources »",
    "valeurs": 29,
-   "verifiee_le": "2026-10-13"
+   "verifiee_le": "2026-10-16"
   },
   "plafond_minimum_vieillesse_journal_officiel": {
    "ajoutees": 0,
@@ -1143,7 +1165,7 @@
    "niveau": "certifiee",
    "source": "DILA, bases JORF et LEGI, décrets fixant le montant de divers avantages de vieillesse et de l'allocation supplémentaire",
    "valeurs": 22,
-   "verifiee_le": "2026-10-13"
+   "verifiee_le": "2026-10-16"
   },
   "point_indice_fonction_publique": {
    "ajoutees": 0,
@@ -1440,7 +1462,7 @@
    "niveau": "haute",
    "source": "Cnav, barèmes « Allocation aux vieux travailleurs salariés […] - Montant » et « Salaire validant un trimestre »",
    "valeurs": 22,
-   "verifiee_le": "2026-10-13"
+   "verifiee_le": "2026-10-16"
   },
   "salaire_validant_trimestre_journal_officiel": {
    "ajoutees": 0,
@@ -1451,7 +1473,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI (R. 351-9) et base JORF (l'AVTS au 1er janvier)",
    "valeurs": 4,
-   "verifiee_le": "2026-10-13"
+   "verifiee_le": "2026-10-16"
   },
   "salaires_forfaitaires_marins": {
    "ajoutees": 380,
@@ -1517,7 +1539,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-10-14"
+   "verifiee_le": "2026-10-16"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -1704,7 +1726,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
    "valeurs": 29,
-   "verifiee_le": "2026-10-14"
+   "verifiee_le": "2026-10-16"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -1737,7 +1759,7 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-10-14"
+   "verifiee_le": "2026-10-16"
   },
   "valeurs_point_msa": {
    "ajoutees": 0,

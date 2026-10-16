@@ -4032,6 +4032,33 @@ def source_plafond_couple_minimum_vieillesse_journal_officiel() -> dict[tuple, f
     return _deux_etages_journal_officiel("plafond_couple")
 
 
+def source_pension_minimum_avant_1983_journal_officiel() -> dict[tuple, float]:
+    """L'AVTS à chacune de ses dates, et la pension minimum de vieillesse
+    qu'elle fixe jusqu'au 1er janvier 1983, quand un texte la redit à la même
+    date (``scripts/fetch/jorf_avts.py``, ``certifiees``) : par sa notice ou son
+    titre depuis 1970, par son article de 1982 au 1er janvier 2003. Après, un
+    arrêté puis la caisse n'appliquent qu'un coefficient, et la Cnav garde ces
+    dates au niveau ``haute`` (action 138, étape 6)."""
+    certifiees = _lire_json("jorf_avts.json", "scripts/fetch/jorf_avts.py")["certifiees"]
+    return {(cle.split("|")[1],): valeur["euros"]
+            for cle, valeur in sorted(certifiees.items()) if cle.startswith("avts|")}
+
+
+def source_pension_minimum_avant_1983_cnav() -> dict[tuple, float]:
+    """L'AVTS à chacune des dates que la Cnav date, depuis l'ordonnance du
+    2 février 1945 qui en fait la pension minimum de vieillesse, hors les dates
+    que le Journal officiel redit. Niveau ``haute``."""
+    datee = _lire_json("cnav_avts.json", "scripts/fetch/cnav_avts.py")["datee"]
+    try:
+        relues = set(source_pension_minimum_avant_1983_journal_officiel())
+    except SourceAbsente:
+        relues = set()
+    return {(jour,): valeur for jour, valeur in sorted(
+                (cle.split("|")[1], valeur) for cle, valeur in datee.items()
+                if cle.startswith("avts|"))
+            if jour >= "1945-01-01" and (jour,) not in relues}
+
+
 def source_avts_cnav() -> dict[tuple, float]:
     """Le premier étage : l'allocation aux vieux travailleurs salariés, depuis
     la loi du 14 mars 1941. Niveau ``haute``."""
@@ -7776,6 +7803,33 @@ CERTIFICATIONS = (
         origine="DILA, bases JORF et LEGI, décrets fixant le montant de divers "
                 "avantages de vieillesse et de l'allocation supplémentaire",
         decimales=6,
+        tolerance=5e-3,
+        unite=" €",
+    ),
+    # L'AVTS à chacune de ses dates : la pension minimum de vieillesse
+    # jusqu'au 1er janvier 1983, le maximum de points de R. 732-70 depuis. Le
+    # Journal officiel certifie ce qu'un texte redit, la Cnav garde le reste.
+    Certification(
+        nom="pension_minimum_avant_1983_cnav",
+        chemin=REFERENCE / "legislation" / "pension_minimum_avant_1983.csv",
+        cles=("date",),
+        colonne="valeur",
+        source=source_pension_minimum_avant_1983_cnav,
+        origine="Cnav, barème « Allocation aux vieux travailleurs salariés […] - Montant »",
+        decimales=None,
+        tolerance=5e-3,
+        unite=" €",
+        niveau="haute",
+    ),
+    Certification(
+        nom="pension_minimum_avant_1983_journal_officiel",
+        chemin=REFERENCE / "legislation" / "pension_minimum_avant_1983.csv",
+        cles=("date",),
+        colonne="valeur",
+        source=source_pension_minimum_avant_1983_journal_officiel,
+        origine="DILA, bases JORF et LEGI, décrets fixant le montant de divers "
+                "avantages de vieillesse",
+        decimales=None,
         tolerance=5e-3,
         unite=" €",
     ),

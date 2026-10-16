@@ -1518,7 +1518,11 @@ institutions:
           chaque montant daté de l'AVTS de 1945 au 1er janvier 1983 est aussi
           celui de la pension minimum de vieillesse d'avant le minimum
           contributif (L. 345), que les mêmes décrets fixent, au niveau `haute`
-          (pension_minimum_avant_1983.csv, tiré du barème daté de data/brut/cnav_avts.json).
+          (pension_minimum_avant_1983.csv, tiré du barème daté de data/brut/cnav_avts.json),
+          prolongé de chaque date de l'AVTS jusqu'au 1er janvier 2026 pour
+          R. 732-70. Depuis le 16 octobre 2026, les dates que leurs décrets
+          redisent, d'octobre 1970 au 1er janvier 2003, y passent au niveau
+          `certifiee` par `jorf_avts` ; la caisse garde les autres.
 
       - id: cnav_montants_minimum
         titre: Barèmes du minimum contributif et du plafond d'écrêtement, 1983-2026

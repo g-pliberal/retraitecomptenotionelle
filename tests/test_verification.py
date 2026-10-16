@@ -1732,6 +1732,23 @@ def test_une_annee_n_est_certifiee_que_si_toute_sa_ligne_l_est():
     assert seuils["1971"] == pytest.approx(_francs(1_750.0) / 4)
 
 
+def test_l_avts_de_chaque_date_se_partage_entre_le_journal_officiel_et_la_caisse(
+        verificateur, tmp_path, monkeypatch):
+    """La table de la pension minimum et de R. 732-70 porte l'AVTS à chacune de
+    ses dates : le Journal officiel certifie celles qu'un texte redit, l'AVTS
+    seule ; la caisse garde les autres depuis 1945, jamais la loi de 1941."""
+    (tmp_path / "cnav_avts.json").write_text(json.dumps({"datee": {
+        "avts|1941-01-01": 1.0, "avts|1990-01-01": 2256.25, "avts|2010-04-01": 3181.67,
+        "as_seul|1990-01-01": 2000.0}}), encoding="utf-8")
+    (tmp_path / "jorf_avts.json").write_text(json.dumps({"certifiees": {
+        "avts|1990-01-01": {"euros": 2256.25}, "as_seul|1990-01-01": {"euros": 2000.0}}}),
+        encoding="utf-8")
+    monkeypatch.setattr(verificateur, "BRUT", tmp_path)
+    assert verificateur.source_pension_minimum_avant_1983_journal_officiel() == {
+        ("1990-01-01",): 2256.25}
+    assert verificateur.source_pension_minimum_avant_1983_cnav() == {("2010-04-01",): 3181.67}
+
+
 def test_l_aspa_lit_l_annuel_du_texte_et_non_douze_fois_le_mensuel():
     """8 507,49 € par an, et non 708,95 × 12 = 8 507,40 €."""
     module = _aspa()

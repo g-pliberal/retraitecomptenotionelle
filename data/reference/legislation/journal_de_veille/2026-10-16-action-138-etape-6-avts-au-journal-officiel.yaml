@@ -1,0 +1,21 @@
+date: "2026-10-16"
+session: "action 138, étape 6 : l'AVTS de chaque date, certifiée au Journal officiel"
+consulte: >-
+  Les index JORF et LEGI de la release `index-dila`, à jour au 11 octobre 2026, par
+  `scripts/fetch/jorf_avts.py` : 613 textes « fixant le montant de divers avantages de
+  vieillesse et d'invalidité », de l'allocation supplémentaire, ou « portant
+  revalorisation », de 1941 à 2007 ; et, depuis 2003, tout article qui nomme
+  l'allocation aux vieux travailleurs salariés près de « montant »
+  (`dila_cherche.py`). Le barème « Allocation aux vieux travailleurs salariés […] -
+  Montant » de la Cnav, par son API, récupéré le jour même (`cnav_avts.py`).
+trouve: >-
+  L'AVTS à chacune de ses dates, du 1er juillet 1983 (décret n° 83-551) au 1er janvier
+  2003 (décret n° 2002-1619, 2 849,84 €), redite par l'article de son décret, au
+  centime du barème ; d'octobre 1970 à 1983, par la notice ou le titre, hors sept dates (1971, 1972, janvier 1975, trois de 1979, juin 1980).
+  Depuis 2004, aucun texte de l'index n'écrit son montant : les arrêtés de 2004 à 2007
+  ne fixent qu'un coefficient, et les articles qui la nomment (R. 732-70, L. 341-15,
+  D. 643-9, R. 742-21…) y renvoient sans la chiffrer. 47 dates de
+  `pension_minimum_avant_1983.csv` passent au niveau `certifiee`, 57 restent `haute`.
+reste: >-
+  L'AVTS de 2004 à 2026, qu'aucun texte n'écrit : la caisse en reste la seule source.
+  Les textes d'avant 1970, au fac-similé du Journal officiel.
