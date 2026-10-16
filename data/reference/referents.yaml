@@ -5108,15 +5108,21 @@ referents:
           contrôle pour la page Coût (part des liquidants au
           minimum, décotés, surcotés) et pour les coefficients
           temporaires ; ils se lisent aussi à la source, classeur «
-          62 EACR diffusée » du 26 mai 2026 sur data.drees.
-        etat: coupe
+          62 EACR diffusée » du 26 mai 2026 sur data.drees. Les
+          tables H, B et C, lues à la source le 16 octobre 2026
+          (`tests/temoins/drees_eacr_tables_2026.json`) et
+          confrontées à la grille de la page Coût en 2024
+          (`retraite_notionnelle.controle_eacr`,
+          `tests/test_controle_eacr.py`) : chaque tranche d'âge du
+          stock à moins de deux points de la table C ; les nouveaux
+          retraités de la grille partent à 62,7 ans pour 63,6, presque
+          la moitié à 62 ans pour un quart, aucun à 60 ans ni après
+          67 ; ni décote ni surcote, quand la Cnav décote 13,4 % de
+          ses liquidants et en surcote 18,9 %. La table E est lue
+          depuis le 11 octobre (`drees_eacr`), les coefficients de
+          l'Agirc-Arrco restent à confronter.
+        etat: repris
         chantier: "138.3"
-        raison: >-
-          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
-          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
-          octobre). Nul : une confrontation ou un indicateur, qui ne change aucun
-          chiffre tant qu'il ne trouve pas d'erreur. Les tables E, H, B et C de l'EACR,
-          à confronter.
     bilan: >-
       Ses paramètres de législation ne valent pas mieux que les séries
       certifiées du dépôt, et les trois écarts du registre tiennent au
@@ -5126,6 +5132,7 @@ referents:
       janvier 2026. Son apport est l'EACR de mai 2026 mise en tables,
       que le dépôt ne lit qu'en partie.
     sas: [drees_legiretraite]
+    manifeste: [drees_eacr, drees_eacr_tables]
     lu_le: 2026-10-04
     lu_dans:
       - https://git.drees.fr/drees_code_public/outils/legiretraite

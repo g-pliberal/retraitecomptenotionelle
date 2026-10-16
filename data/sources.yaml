@@ -1121,6 +1121,25 @@ institutions:
           deux caisses compte des personnes, et le montant moyen du minimum
           servi (colonne `m1`, en euros bruts par mois), qu'un contrôle borne au
           minimum majoré de l'année.
+      - id: drees_eacr_tables
+        titre: >-
+          Les tables H, B et C de l'EACR, version du 26 mai 2026 : les
+          conditions de liquidation (taux plein, décote, surcote), les
+          liquidants par âge, les droits directs tous régimes par âge
+        url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/donnes_eacr/
+        acces: api
+        statut_integration: controle
+        cible: tests/temoins/drees_eacr_tables_2026.json
+        recuperation: scripts/fetch/drees_eacr_tables.py
+        millesime: 26 mai 2026
+        note: >-
+          Il n'alimente aucune valeur : `tests/test_controle_eacr.py`
+          confronte la grille de la page Coût en 2024 — l'âge de ses
+          retraités, l'âge où ils partent, leur pension selon l'âge — aux
+          tables C (tous régimes, tirée d'Ancetre) et H
+          (`retraite_notionnelle.controle_eacr`, action 138, étape 3). Les
+          mêmes classeurs que `drees_eacr`, d'autres feuilles, chacune lue
+          seule.
       - id: drees_eir_caracteristiques
         titre: Caractéristiques des retraités (échantillon interrégimes de retraités)
         url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/3013_donnees-statistiques-sur-les-caracteristiques-des-retraites/

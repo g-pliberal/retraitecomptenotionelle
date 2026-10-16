@@ -110,6 +110,9 @@ CONTROLES = {
     # Le niveau de pension des cas types, confronté à Ancetre par régime
     # principal (le témoin et la mesure restent rapides, plus bas).
     "test_controle_ancetre.py",
+    # L'âge des retraités, l'âge où ils partent et leurs conditions de départ,
+    # confrontés à l'EACR (le témoin et la mesure restent rapides, plus bas).
+    "test_controle_eacr.py",
     # Les données : leur socle, leur certification, les lecteurs des
     # documents qui les apportent.
     "test_donnees.py", "test_verification.py", "test_bonifications_jaune.py",
@@ -163,6 +166,13 @@ EXCEPTIONS = {
      "test_la_pension_d_un_cas_type_pese_ses_cohortes_parties"): "rapide",
     ("test_controle_ancetre.py",
      "test_un_regime_principal_moyenne_ses_cas_types_a_leur_poids"): "rapide",
+    # Le témoin de l'EACR, et la mesure sur une grille d'essai.
+    ("test_controle_eacr.py",
+     "test_le_temoin_de_l_eacr_dit_sa_source_et_redonne_ses_totaux"): "rapide",
+    ("test_controle_eacr.py", "test_les_tranches_couvrent_tous_les_ages"): "rapide",
+    ("test_controle_eacr.py",
+     "test_une_cohorte_compte_ses_tetes_et_dit_si_elle_part_l_annee_meme"): "rapide",
+    ("test_controle_eacr.py", "test_les_conditions_de_depart_se_lisent_en_parts"): "rapide",
     # Le portage JavaScript, rejoué contre le Python : deux moteurs.
     ("test_cumul_activites.py",
      "test_le_portage_javascript_concorde_sur_des_cumuls_tires_au_hasard"): "complet",
