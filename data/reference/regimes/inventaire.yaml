@@ -150,8 +150,9 @@ inventaire:
     integre_dans: null
     couverture: modelise
     statuts: [salarie_prive_non_cadre, salarie_prive_cadre, contractuel_public, artisan,
-      commercant, artiste_auteur, personnel_navigant, agent_sncf, agent_ratp, agent_ieg,
-      mineur, clerc_de_notaire, agent_banque_de_france, agent_seita, agent_chemins_fer_secondaires,
+      commercant, conjoint_collaborateur_artisan, conjoint_collaborateur_commercant,
+      artiste_auteur, personnel_navigant, agent_sncf, agent_ratp, agent_ieg, mineur,
+      clerc_de_notaire, agent_banque_de_france, agent_seita, agent_chemins_fer_secondaires,
       salarie_prive_cadre_entreprise_recente, salarie_prive_non_cadre_entreprise_recente,
       maitre_enseignement_prive, elu_local, auteur_dramatique, auteur_lyrique, gerant_debit_tabac,
       micro_entrepreneur, membre_cese, salarie_regime_professionnel_integre, liberal_non_reglemente]
@@ -2363,7 +2364,7 @@ inventaire:
     succede_a: []
     integre_dans: rsi
     couverture: modelise
-    statuts: [artisan]
+    statuts: [artisan, conjoint_collaborateur_artisan]
     textes:
     - {reference: "loi n° 48-101 du 17 janvier 1948 instituant une allocation de vieillesse\
         \ pour les personnes non salariées", id: null}
@@ -2395,7 +2396,7 @@ inventaire:
     succede_a: []
     integre_dans: rsi
     couverture: modelise
-    statuts: [commercant, gerant_debit_tabac, micro_entrepreneur]
+    statuts: [commercant, conjoint_collaborateur_commercant, gerant_debit_tabac, micro_entrepreneur]
     textes:
     - {reference: loi n° 48-101 du 17 janvier 1948, id: null}
 
@@ -2427,7 +2428,8 @@ inventaire:
     succede_a: [cancava, organic]
     integre_dans: regime_general
     couverture: modelise
-    statuts: [artisan, commercant, gerant_debit_tabac, micro_entrepreneur]
+    statuts: [artisan, commercant, conjoint_collaborateur_artisan, conjoint_collaborateur_commercant,
+      gerant_debit_tabac, micro_entrepreneur]
     textes:
     - {reference: "ordonnance n° 2005-1528 du 8 décembre 2005 relative à la création\
         \ du régime social des indépendants", id: null}
@@ -2444,7 +2446,7 @@ inventaire:
     succede_a: []
     integre_dans: rci
     couverture: modelise
-    statuts: [artisan]
+    statuts: [artisan, conjoint_collaborateur_artisan]
     textes:
     - {reference: "décret n° 78-351 du 14 mars 1978 (régime complémentaire obligatoire\
         \ d'assurance vieillesse des artisans)", id: null}
@@ -2459,7 +2461,7 @@ inventaire:
     succede_a: []
     integre_dans: rci
     couverture: modelise
-    statuts: [commercant, gerant_debit_tabac, micro_entrepreneur]
+    statuts: [commercant, conjoint_collaborateur_commercant, gerant_debit_tabac, micro_entrepreneur]
     textes:
     - {reference: "décret n° 2004-848 du 23 août 2004 (régime complémentaire obligatoire\
         \ des industriels et commerçants)", id: null}
@@ -2508,7 +2510,8 @@ inventaire:
     succede_a: [rco_artisans, nric]
     integre_dans: null
     couverture: modelise
-    statuts: [artisan, commercant, gerant_debit_tabac, micro_entrepreneur, liberal_non_reglemente]
+    statuts: [artisan, commercant, conjoint_collaborateur_artisan, conjoint_collaborateur_commercant,
+      gerant_debit_tabac, micro_entrepreneur, liberal_non_reglemente]
     textes:
     - {reference: "arrêté du 9 février 2012 portant approbation du règlement du régime\
         \ complémentaire obligatoire d'assurance vieillesse des indépendants", id: LEGIARTI000025397326}
