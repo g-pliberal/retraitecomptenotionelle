@@ -62,13 +62,20 @@ page, garantie vieillesse à part.
   pension moyenne relative du modèle (:meth:`~.cout.Avenir.decomposition`),
   réversion comprise.
 
+LA COUVERTURE PARTAGÉE PAR ÂGE (:func:`retraites_par_age`,
+:func:`partager_couverture`). Les retraités de 65 ans et plus et les plus
+jeunes, comptés comme ``cout.py`` compte ses têtes, dont ce module refait le
+geste sans y toucher : la couverture est leur somme rapportée aux 65 ans et
+plus, et son effet se partage exactement entre les deux, pas à pas. L'annexe
+de l'AWG publie ses pensionnés de 65 ans et plus : le même partage s'y fait,
+et les deux se comparent terme à terme (action 138, étape 3, note « la
+couverture de 2022-2030 »).
+
 CE QUI MANQUE. Les têtes de la proposition : son âge légal de 65 ans reporte
 des départs que ``AvenirAnnuel`` ne compte pas à part. La couverture de chaque
 système est donc celle du droit en vigueur, et sa prestation porte ce que le
-report change — à ``cout.py`` d'exposer ces têtes. Le partage de la couverture
-entre les 65 ans et plus et les plus jeunes, qui demanderait les têtes par âge.
-Et le flux des pensions nouvelles que l'AWG décompose à part (fiche France,
-tableau 14).
+report change — à ``cout.py`` d'exposer ces têtes. Et le flux des pensions
+nouvelles que l'AWG décompose à part (fiche France, tableau 14).
 """
 
 from __future__ import annotations
@@ -247,4 +254,143 @@ def annees_du_modele(avenir, population, macro,
             population_20_64=population_20_64,
             emploi=emploi[ligne.annee],
         )
+    return resultat
+
+
+#: L'âge où l'AWG range ses pensionnés parmi les « vieux » : celui de la
+#: dépendance.
+AGE_VIEILLESSE = 65
+
+
+def partager_couverture(part_pib: Mapping[int, float], retraites: Mapping[int, float],
+                        retraites_agees: Mapping[int, float],
+                        population_65: Mapping[int, float],
+                        grille: Sequence[int] = GRILLE_AWG) -> dict[str, dict[int, float]]:
+    """L'effet de la couverture, partagé entre les retraités de 65 ans et plus
+    (``vieillesse``) et les plus jeunes (``precoce``), cumulé comme
+    :func:`effet`.
+
+    La couverture est la somme de deux rapports aux 65 ans et plus, et sa
+    variation relative sur un pas la somme de leurs variations rapportées à
+    la couverture du début : les deux parts refont l'effet de la couverture
+    exactement. Ce n'est pas le partage de l'AWG, dont les trois effets
+    (couverture des 65 ans et plus, des plus jeunes rapportée aux 50-64 ans,
+    effet de cohorte) ne s'ajoutent pas ; celui-ci se refait des deux côtés
+    sur les mêmes séries.
+    """
+    def rapport(serie: Mapping[int, float], annee: int) -> float:
+        return serie[annee] / population_65[annee]
+
+    cumuls = {"vieillesse": 0.0, "precoce": 0.0}
+    resultat: dict[str, dict[int, float]] = {nom: {} for nom in cumuls}
+    for debut, fin in zip(grille, grille[1:]):
+        couverture = rapport(retraites, debut)
+        agees = rapport(retraites_agees, fin) - rapport(retraites_agees, debut)
+        jeunes = ((rapport(retraites, fin) - rapport(retraites_agees, fin))
+                  - (rapport(retraites, debut) - rapport(retraites_agees, debut)))
+        cumuls["vieillesse"] += part_pib[debut] * agees / couverture
+        cumuls["precoce"] += part_pib[debut] * jeunes / couverture
+        for nom in cumuls:
+            resultat[nom][fin] = cumuls[nom]
+    return resultat
+
+
+def au_perimetre(population_65: Mapping[int, float], agees: float, jeunes: float,
+                 retraites: Mapping[int, float], retraites_agees: Mapping[int, float],
+                 population_65_propre: Mapping[int, float],
+                 grille: Sequence[int] = GRILLE_AWG,
+                 stable: float = 0.0) -> tuple[dict[int, float], dict[int, float]]:
+    """Les retraités d'une trajectoire, portés à un autre périmètre : les
+    retraités de tous âges, puis ceux de 65 ans et plus, sur ``population_65``.
+
+    La première année de la grille, les deux couvertures sont celles de
+    l'autre périmètre (``agees`` et ``jeunes`` retraités par personne de 65
+    ans et plus) ; ensuite, chacune suit la variation relative qu'elle a dans
+    la trajectoire (``retraites``, ``retraites_agees``, sur
+    ``population_65_propre``). Ce qui sépare l'effet de couverture ainsi porté
+    de celui de l'autre périmètre est la dynamique ; ce qui le sépare de
+    celui de la trajectoire, le niveau.
+
+    ``stable`` est la part des plus jeunes de l'autre périmètre qui ne suit
+    pas la trajectoire, et garde son rapport aux 65 ans et plus : des
+    pensionnés que la trajectoire n'a pas — l'invalidité, que l'AWG compte
+    et que l'âge légal ne fait pas reculer.
+    """
+    premiere = grille[0]
+
+    def couverture(serie: Mapping[int, float], annee: int) -> float:
+        return serie[annee] / population_65_propre[annee]
+
+    def jeunes_de(annee: int) -> float:
+        return couverture(retraites, annee) - couverture(retraites_agees, annee)
+
+    portes_agees = {annee: population_65[annee] * agees * couverture(retraites_agees, annee)
+                    / couverture(retraites_agees, premiere) for annee in grille}
+    portes = {annee: portes_agees[annee]
+              + population_65[annee] * jeunes
+              * (stable + (1.0 - stable) * jeunes_de(annee) / jeunes_de(premiere))
+              for annee in grille}
+    return portes, portes_agees
+
+
+class _Agee:
+    """La population, sans ceux qui n'ont pas encore ``age_minimum`` ans :
+    les têtes que ``cout._masses`` y compte sont celles de cet âge et plus."""
+
+    def __init__(self, population, age_minimum: int) -> None:
+        self._population = population
+        self._age_minimum = age_minimum
+
+    def effectif(self, age: int, annee: int) -> float:
+        return self._population.effectif(age, annee) if age >= self._age_minimum else 0.0
+
+
+def retraites_par_age(parametres, annees: Sequence[int],
+                      age: int = AGE_VIEILLESSE) -> dict[int, tuple[float, float]]:
+    """Chaque année, les retraités du modèle de tous âges, puis ceux d'``age``
+    ans et plus, en personnes.
+
+    Ce sont les têtes de ``calculer_cout`` (``AvenirAnnuel.tetes``), sous la
+    démographie centrale et les réglages de la page : la même grille, que
+    ``memoire.cout`` garde, les mêmes poids recalés sur les groupes du COR, la
+    même somme (``cout._masses``), sur une population dont les moins
+    d'``age`` ans sont ôtés. ``cout.py`` ne les expose pas par âge : ce geste
+    le refait, et ``tests/test_facteurs_depense.py`` vérifie qu'il redonne ses
+    têtes.
+    """
+    from . import cout as module
+    from . import memoire
+    from .castypes import GRILLE_DU_COUT
+    from .donnees.equilibre import ComptesRetraite, variante_du_scenario
+    from .donnees.population import Population
+    from .revalorisation import RevalorisationServie
+    from .simulateur import Simulateur
+
+    racine = parametres.racine_donnees
+    simulateur = Simulateur(parametres)
+    grille = GRILLE_DU_COUT
+    pensionnes, _ = memoire.memoriser_pour(
+        parametres, ("grille_du_cout", parametres, grille, "droit"),
+        lambda: module._pensionnes(simulateur, grille, "droit"))
+    population = Population(racine, parametres.hypothese_esperance_vie)
+    pensionnes = module._sous_la_demographie(simulateur, pensionnes, population.demographie)
+    revalorisation = RevalorisationServie(
+        simulateur.pour_la_projection(),
+        min((p.annee_liquidation for p in pensionnes), default=module.HORIZON)
+        - module._DEMI_TRANCHE,
+        module.HORIZON,
+    )
+    variante = variante_du_scenario(parametres.scenario_projection,
+                                    racine / "reference" / "macro")
+    poids = module._poids_par_groupe(
+        module._ponderation(simulateur, "effectifs", grille), pensionnes, population,
+        revalorisation, ComptesRetraite(racine, variante=variante).decomposition)
+    agee = _Agee(population, age)
+    resultat: dict[int, tuple[float, float]] = {}
+    for annee in annees:
+        poids_annee = poids(annee)
+        _, _, toutes = module._masses(pensionnes, population, annee, poids_annee,
+                                      revalorisation)
+        _, _, agees = module._masses(pensionnes, agee, annee, poids_annee, revalorisation)
+        resultat[annee] = (toutes[module.TETES_TOUTES], agees[module.TETES_TOUTES])
     return resultat

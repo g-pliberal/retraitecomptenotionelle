@@ -154,6 +154,8 @@ EXCEPTIONS = {
     ("test_facteurs_depense.py", "test_la_formule_de_l_awg_refait_ses_effets_publies"): "rapide",
     ("test_facteurs_depense.py",
      "test_les_quatre_facteurs_font_la_part_de_pib_et_un_seul_qui_bouge_fait_tout"): "rapide",
+    ("test_facteurs_depense.py",
+     "test_la_couverture_se_partage_exactement_entre_les_ages"): "rapide",
     # Le témoin des leviers du COR, et le geste de l'âge refait sur ses séries.
     ("test_leviers.py", "test_le_temoin_du_cor_dit_sa_source_et_redonne_le_rapport"): "rapide",
     ("test_leviers.py",
