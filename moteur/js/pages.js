@@ -14872,8 +14872,12 @@ function programmeQuestions(contexte) {
       + "le chiffre année par année.";
   } else {
     const mesures = MESURES_BLOCAGES;
+    // Les soldes cités, au dixième de point : égaux à cette précision, ni
+    // l'un ni l'autre ne dépasse (−1,1 contre −1,1 depuis le 16 octobre 2026).
     const rapport = mesures.solde_moyen_proposition > mesures.solde_moyen_actuel
-      ? "reste inférieur à" : "dépasse";
+      ? "reste inférieur à"
+      : mesures.solde_moyen_proposition < mesures.solde_moyen_actuel
+        ? "dépasse" : "égale, au dixième de point près,";
     const deficit = `déficit moyen ${rapport} celui du système actuel.`;
     const consequence = base.age_legal_liberal === null || base.age_legal_liberal === undefined
       ? ` Son ${deficit}`
@@ -15630,7 +15634,7 @@ export const MESURES_BLOCAGES = {
   // proposition, solde moyen 2026-2070, en points de PIB : ce que coûtent les
   // 18 %, l'âge légal de 65 ans de la proposition compris — il en rend un
   // demi-point.
-  cout_18_pour_cent: 2.2,
+  cout_18_pour_cent: 2.3,
   // Le coût par défaut : soldes moyens 2026-2070, dette et coefficient à
   // l'horizon, en points de PIB, en % du PIB et en valeur. Mesurés avec l'âge
   // légal de 65 ans et SANS TVA à taux unique : la proposition ne réforme plus
@@ -15658,14 +15662,17 @@ export const MESURES_BLOCAGES = {
   // leur régime — l'ont reporté à −0,9, sa dette à 62 %, et le creux du
   // coefficient à 0,84. Le même jour, les revalorisations que le droit a
   // servies au système actuel, et non plus les prix (action 147, étape 19),
-  // l'ont porté à −1,0 et sa dette à 69 %.
-  solde_moyen_proposition: -1.0,
+  // l'ont porté à −1,0 et sa dette à 69 %. Le 16 octobre, la CNRACL pesée
+  // sur ses départs actifs et sédentaires (action 138, étape 3, cf48b45) l'a
+  // porté à −1,1, sa dette à 77 %, le creux du coefficient à 0,83 et celui de
+  // 2070 de 1,01 à 1,00 ; le coût des 18 %, de 2,2 à 2,3 points.
+  solde_moyen_proposition: -1.1,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 69,
+  dette_2070_proposition: 77,
   dette_2070_actuel: 66,
-  coefficient_minimum: 0.84,
+  coefficient_minimum: 0.83,
   decennie_coefficient_minimum: 2040,
-  coefficient_2070: 1.01,
+  coefficient_2070: 1.00,
   // donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
   // quatre taux d'aujourd'hui, en points de PIB ; zéro, la TVA n'étant pas
   // réformée.
@@ -15674,8 +15681,9 @@ export const MESURES_BLOCAGES = {
   // stock intact, en points de PIB : −3,0 avant le 7 octobre 2026 (étapes 3
   // et 7 de l'action 138), −3,1 ensuite, −3,0 depuis le cas type militaire
   // du 12 octobre (action 152, étape 1), −3,1 depuis les fonctionnaires
-  // civils recalés le 14 (action 159, étape 5).
-  solde_moyen_prospectif: -3.1,
+  // civils recalés le 14 (action 159, étape 5), −3,2 depuis la CNRACL pesée
+  // sur ses départs actifs et sédentaires le 16 (action 138, étape 3).
+  solde_moyen_prospectif: -3.2,
   // stock_age_legal.py : ce que coûte le diviseur de l'âge de l'assuré au lieu
   // de celui de 65 ans, en points de PIB par an.
   cout_diviseur_age_legal: 0.2,
