@@ -6309,14 +6309,15 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 16 octobre 2026.** Faites, les étapes 1 à 4. Le lecteur du
-relevé et le lecteur PDF sont du JavaScript seul ; `cycle_de_vie.py` garde
-son jumeau, parce que les cas types du COR, Python seul (`castypes.py`), le
-lisent par `scripts/cycle_de_vie.py` (84 de ses 87 noms) et le test des
-références : seul `grille`, mort, en est parti. Reste l'étape 5, le pont,
-qui dira si le script et les références peuvent lire le portage. Détail :
-les notes des sept parties de l'étape 4, la dernière
-`2026-10-16-etape-4-septieme-partie-le-cycle-de-vie.md`.
+**Reprise, au 16 octobre 2026.** Faites, les étapes 1 à 4, et la première
+partie de l'étape 5 : `scripts/cycle_de_vie.py` mène les cas types du COR par
+le portage (`scripts/cycle_de_vie.mjs`), tableaux identiques à l'octet, et
+les noms des seuls cas types sont partis de `cycle_de_vie.py`, que plus aucun
+script ne lit. Le module reste pour le test des références, qui lit les
+régimes un à un et le coût (`coefficient_actuel`). Reste la suite de l'étape
+5, le pont du coût et de la fabrique, sous les six conditions de la note
+0003 ; le test des références et le retrait du module l'attendent. Détail :
+`2026-10-16-etape-5-premiere-partie-le-pont-du-cycle-de-vie.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

@@ -1,0 +1,11 @@
+date: "2026-10-16"
+session: "action 161, étape 5, première partie : le pont du cycle de vie"
+consulte: >-
+  Aucun texte : la session ne touche pas au droit. Le code seul, scripts/cycle_de_vie.py,
+  src/retraite_notionnelle/castypes.py, cycle_de_vie.py et son portage, le test des références.
+trouve: >-
+  Le script des cas types lit le portage par scripts/cycle_de_vie.mjs : tableaux identiques à
+  l'octet sur dix lancements, nombres à 2,3e-12 près. Les noms des seuls cas types quittent le
+  module Python ; le test des références, qui lit les régimes et le coût, attend le pont du coût.
+reste: >-
+  Rien pour la veille. La suite de l'étape 5 de l'action 161, le pont du coût et de la fabrique.
