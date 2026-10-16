@@ -20,9 +20,10 @@
  * (`impot-revenu.js`, étape 5), donc la convention après impôt et le taux de
  * remplacement après impôt au départ ; depuis le 16 octobre aussi, les âges
  * de départ d'une carrière (`agesBalayes`, `depart`, `balayageDUneCarriere`),
- * qu'une fonction bâtit à chaque âge. Pas les cas types du COR, que le
- * portage n'a pas : ni `ages_de_depart`, ni `balayage`, ni leurs âges
- * d'équilibre (`ages_d_equilibre`).
+ * qu'une fonction bâtit à chaque âge. Les cas types du COR, que le Python
+ * bâtit, passent par lui depuis le pont (action 161, étape 5) :
+ * `scripts/cycle_de_vie.mjs` en calcule les indicateurs, les âges de départ
+ * et les âges d'équilibre pour `scripts/cycle_de_vie.py`.
  * `node tests/js/comparer-cycle-de-vie.mjs` rejoue le tout contre le Python
  * (`tests/test_cycle_de_vie_portage.py`).
  */

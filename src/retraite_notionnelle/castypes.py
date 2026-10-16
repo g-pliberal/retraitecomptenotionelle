@@ -146,7 +146,7 @@ class CasType:
     def carriere_a(self, simulateur: Simulateur, generation: int, age: float) -> Carriere:
         """La carrière de ce cas type liquidée à ``age``, et non à l'âge que
         le pilote fixe : celle que les indicateurs à chaque âge de départ
-        balaient (:func:`~retraite_notionnelle.cycle_de_vie.balayage`)."""
+        balaient (``scripts/cycle_de_vie.py --ages``)."""
         if self.affiliation_avant_entree and simulateur.parametres.conventions_cor:
             delai = simulateur.macro.delai_entree(self.serie_entree, generation)
             if delai > 0.0:
@@ -188,25 +188,31 @@ class CasType:
         )
         return primes_projetees(carriere, simulateur.macro)
 
+    def options(self, generation: int, age_liquidation: float) -> dict:
+        """Les options de la carrière d'un seul statut de ce cas type, né en
+        ``generation`` et liquidé à ``age_liquidation`` : celles de
+        ``carriere_simple``, du simulateur et de son portage, que
+        ``scripts/cycle_de_vie.py`` passe au portage (action 161, étape 5)."""
+        return {
+            "annee_naissance": generation,
+            "sexe": self.sexe,
+            "affiliation": self.affiliation,
+            "age_debut": self.age_debut,
+            "age_liquidation": age_liquidation,
+            "niveau_salaire": self.niveau_salaire,
+            "profil_carriere": self.profil_carriere,
+            "interruptions": {
+                int(generation + self.age_debut + decalage): motif
+                for decalage, motif in self.interruptions_relatives
+            },
+            "nombre_enfants": self.nombre_enfants,
+            "part_primes": self.part_primes,
+            "identifiant": f"{self.libelle} (génération {generation})",
+        }
+
     def _carriere(self, simulateur: Simulateur, generation: int,
                   age_liquidation: float) -> Carriere:
-        interruptions = {
-            int(generation + self.age_debut + decalage): motif
-            for decalage, motif in self.interruptions_relatives
-        }
-        carriere = simulateur.carriere_simple(
-            annee_naissance=generation,
-            sexe=self.sexe,
-            affiliation=self.affiliation,
-            age_debut=self.age_debut,
-            age_liquidation=age_liquidation,
-            niveau_salaire=self.niveau_salaire,
-            profil_carriere=self.profil_carriere,
-            interruptions=interruptions,
-            nombre_enfants=self.nombre_enfants,
-            part_primes=self.part_primes,
-            identifiant=f"{self.libelle} (génération {generation})",
-        )
+        carriere = simulateur.carriere_simple(**self.options(generation, age_liquidation))
         if not simulateur.parametres.conventions_cor:
             return carriere
         return primes_projetees(carriere, simulateur.macro)
@@ -720,21 +726,25 @@ def calculer_cas_types(
         for generation in generations:
             cle = (cas.code, generation)
             try:
-                carriere = cas.construire(simulateur, generation, liquidation)
-                if carriere.annee_liquidation <= simulateur.parametres.annee_debut_repartition:
-                    resultat.echecs[cle] = "liquidation antérieure à la répartition"
-                    continue
-                regimes_connus = any(
-                    simulateur.affiliations.regimes(cas.affiliation, ligne.annee)
-                    for ligne in carriere.lignes
-                )
-                if not regimes_connus:
-                    resultat.echecs[cle] = "aucun régime actif sur la période"
-                    continue
+                carriere = carriere_de_la_grille(simulateur, cas, generation, liquidation)
                 resultat.resultats[cle] = simulateur.simuler(carriere)
             except (ValueError, KeyError) as erreur:
                 resultat.echecs[cle] = str(erreur)
     return resultat
+
+
+def carriere_de_la_grille(simulateur: Simulateur, cas: CasType, generation: int,
+                          liquidation: str = "droit") -> Carriere:
+    """La carrière d'une case de la grille, ou ``ValueError`` portant le motif
+    qui l'écarte : une liquidation avant l'origine de la répartition, un
+    régime qui n'existait pas encore (:func:`calculer_cas_types`)."""
+    carriere = cas.construire(simulateur, generation, liquidation)
+    if carriere.annee_liquidation <= simulateur.parametres.annee_debut_repartition:
+        raise ValueError("liquidation antérieure à la répartition")
+    if not any(simulateur.affiliations.regimes(cas.affiliation, ligne.annee)
+               for ligne in carriere.lignes):
+        raise ValueError("aucun régime actif sur la période")
+    return carriere
 
 
 @dataclass(frozen=True)

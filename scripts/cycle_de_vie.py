@@ -15,10 +15,17 @@
 
 Ce qu'il imprime : pour chaque indicateur et chaque système, un tableau des
 treize cas types sur les sept générations de la grille
-(``castypes.calculer_cas_types``). Les définitions, les deux conventions et ce
-qu'elles laissent de côté sont dans ``retraite_notionnelle/cycle_de_vie.py`` ;
+(``castypes.carriere_de_la_grille``). Les définitions, les deux conventions et
+ce qu'elles laissent de côté sont dans ``retraite_notionnelle/cycle_de_vie.py`` ;
 la confrontation au COR, à TRAJECTOiRE et à l'OCDE, dans
 ``tests/test_cycle_de_vie_references.py``.
+
+LE PONT (action 161, étape 5). Les cas types ne se bâtissent qu'en Python
+(``castypes.py``, que le coût lit) ; le reste se calcule par le portage, comme
+le site le calcule d'une saisie : le script résout chaque case — les options de
+sa carrière (``CasType.options``), l'âge où le pilote la fait partir —, et
+``scripts/cycle_de_vie.mjs``, que node fait tourner, en rend les indicateurs,
+les âges de départ et les âges d'équilibre. Sans node, le script s'arrête.
 
 LES DEUX CONVENTIONS. Par défaut, celle de l'OCDE, sur les tables du dépôt :
 la survie de génération du sexe du cas type, le patrimoine actualisé à 1,5 %
@@ -28,7 +35,7 @@ génération, la pension nette des prélèvements de chaque année (IPP).
 
 APRÈS IMPÔT (``--impot``, action 138, étape 5) : la pension et les revenus de
 chaque année, nets de leurs prélèvements, perdent aussi l'impôt sur le revenu
-d'une personne seule sans enfant (``cycle_de_vie.convention_apres_impot``),
+d'une personne seule sans enfant (``conventionApresImpot``),
 sous les conventions du dépôt ou, avec ``--cor``, sous celles du COR. Le
 barème se projette au-delà de la dernière loi de finances lue sur les prix
 (``--impot`` ou ``--impot prix``) ou, comme l'OCDE, sur le salaire moyen
@@ -38,7 +45,7 @@ remplacement après impôt au départ, le taux net de l'OCDE.
 À CHAQUE ÂGE DE DÉPART (``--ages``, action 138, étape 9) : pour chaque cas type
 nommé, chaque génération et chaque hypothèse de productivité du COR, un
 tableau des âges de départ, de l'âge d'ouverture à l'âge d'annulation de la
-décote, de trimestre en trimestre (``cycle_de_vie.balayage``), en net — la
+décote, de trimestre en trimestre (``balayageDUneCarriere``), en net — la
 pension nette rapportée au minimum vieillesse, le taux de remplacement net en
 euros courants, constants et en salaire moyen, et les indicateurs de cycle de
 vie. Le scénario 1 seul, sauf ``--scenarios``.
@@ -49,23 +56,25 @@ la mortalité de sa population, l'âge où le diviseur du compte rejoint celui d
 la génération de référence à l'âge de référence — exact, et au premier mois,
 comme l'ETK compte son âge cible —, et l'âge qui tient la part de la vie
 passée en retraite de la référence, sous la convention du COR et sous celle du
-dépôt (``cycle_de_vie.age_d_equilibre``, ``age_de_part_de_vie_constante``).
+dépôt (``ageDEquilibre``, ``ageDePartDeVieConstante``).
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
-from retraite_notionnelle import cycle_de_vie  # noqa: E402
 from retraite_notionnelle.calendrier import decomposer, formater_age  # noqa: E402
-from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS, calculer_cas_types  # noqa: E402
+from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS, carriere_de_la_grille  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
+from retraite_notionnelle.donnees.chargement import charger_yaml  # noqa: E402
 from retraite_notionnelle.donnees.impot_revenu import INDEXATIONS  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 
@@ -93,22 +102,73 @@ LIBELLES = {
     "notionnel_liberal": "6. Proposition libérale",
 }
 
+#: Les six systèmes, dans l'ordre du portage (``SCENARIOS``, cycle-de-vie.js).
+SCENARIOS = tuple(LIBELLES)
+
+#: Le programme qui calcule ce que le script imprime.
+PROGRAMME = RACINE / "scripts" / "cycle_de_vie.mjs"
+
+#: Le pas des âges de départ, un trimestre (``PAS_DES_AGES``, cycle-de-vie.js).
+PAS_DES_AGES = 0.25
+
+
+def portage(demande: dict) -> dict:
+    """Ce que le portage rend d'une demande (``scripts/cycle_de_vie.mjs``).
+    Sans node, rien : aucun moteur périmé ne prend le relais."""
+    if shutil.which("node") is None:
+        raise SystemExit("node absent : le cycle de vie se calcule par le portage "
+                         "JavaScript (scripts/cycle_de_vie.mjs)")
+    execution = subprocess.run(
+        ["node", str(PROGRAMME)], input=json.dumps(demande), cwd=RACINE,
+        capture_output=True, text=True, encoding="utf-8", check=False)
+    if execution.returncode != 0:
+        raise RuntimeError(f"{PROGRAMME.name} : {execution.stderr.strip()}")
+    return json.loads(execution.stdout)
+
+
+def _sans_echec(reponse: dict) -> None:
+    """Un cas type nommé que le portage refuse arrête le script : seule la
+    grille en écarte, comme le droit les écarte."""
+    echecs = reponse.pop("echecs")
+    if echecs:
+        raise RuntimeError("; ".join(f"{cle} : {motif}" for cle, motif in echecs.items()))
+
+
+def options(simulateur: Simulateur, cas, generation: int, age: float) -> dict:
+    """Les options de la carrière du cas type ``cas`` né en ``generation``,
+    liquidée à ``age``, celles que le portage reçoit. Sous
+    ``Parametres.conventions_cor``, que le script n'allume jamais, la carrière
+    d'un cas type se déforme en Python (``primes_projetees``) : rien ne passe."""
+    if simulateur.parametres.conventions_cor:
+        raise ValueError("les conventions de projection du COR ne passent pas au portage")
+    return cas.options(generation, age)
+
+
+def productivites(racine_donnees) -> tuple[str, ...]:
+    """Les scénarios de projection du COR, de la productivité la plus basse à
+    la plus haute : 0,4, 0,7 et 1,0 % par an depuis son rapport de juin 2025,
+    qui a retiré le 1,3 % que TRAJECTOiRE balaie encore. Les jeux de
+    référence d'une autre institution, l'OCDE, n'en sont pas."""
+    scenarios = charger_yaml(Path(racine_donnees) / "reference" / "macro"
+                             / "hypotheses_projection.yaml").get("scenarios", {})
+    return tuple(sorted(scenarios, key=lambda nom: float(scenarios[nom]["productivite_reelle"])))
+
 
 def calculer(simulateur: Simulateur, cor: bool = False, impot: str | None = None) -> dict:
-    """Les indicateurs de chaque case de la grille, système par système ;
-    après impôt avec ``impot``, l'indexation du barème."""
-    grille = calculer_cas_types(simulateur)
-    resultats = {}
-    for cle, comparaison in sorted(grille.resultats.items()):
-        if impot is not None:
-            convention = cycle_de_vie.convention_apres_impot(simulateur, comparaison, cor, impot)
-        elif cor:
-            convention = cycle_de_vie.convention_cor(simulateur, comparaison)
-        else:
-            convention = cycle_de_vie.Convention()
-        resultats[cle] = cycle_de_vie.indicateurs_des_systemes(
-            simulateur, comparaison, convention)
-    return resultats
+    """Les indicateurs de chaque case de la grille, système par système, sous
+    ``"<code>|<génération>"`` ; après impôt avec ``impot``, l'indexation du
+    barème. Une case que le droit écarte (``carriere_de_la_grille``) ou que le
+    portage refuse en est absente."""
+    cas = []
+    for code, generation in sorted((c.code, g) for c in CAS_TYPES for g in GENERATIONS):
+        type_ = next(c for c in CAS_TYPES if c.code == code)
+        try:
+            carriere = carriere_de_la_grille(simulateur, type_, generation)
+        except (ValueError, KeyError):
+            continue
+        cas.append({"cle": f"{code}|{generation}", "options": options(
+            simulateur, type_, generation, carriere.age_liquidation)})
+    return portage({"grille": {"cas": cas, "cor": cor, "impot": impot}})["resultats"]
 
 
 def _titre_des_conventions(cor: bool, nettes: bool, impot: str | None) -> str:
@@ -145,8 +205,8 @@ def tableau(resultats: dict, indicateur: str, scenario: str) -> str:
     for cas in CAS_TYPES:
         cellules = []
         for generation in GENERATIONS:
-            case = resultats.get((cas.code, generation))
-            cellules.append(_cellule(getattr(case[scenario], indicateur), unite)
+            case = resultats.get(f"{cas.code}|{generation}")
+            cellules.append(_cellule(case[scenario][indicateur], unite)
                             if case else f"{'—':>6}")
         lignes.append(f"{cas.libelle[:45]:<46}" + " ".join(cellules))
     return "\n".join(lignes)
@@ -155,18 +215,18 @@ def tableau(resultats: dict, indicateur: str, scenario: str) -> str:
 #: Les colonnes du balayage des âges : l'en-tête, l'unité, et ce qu'elle lit
 #: d'un départ pour un système.
 COLONNES_AGES = (
-    ("ASPA", "x", lambda depart, s: depart.pensions_aspa[s]),
+    ("ASPA", "x", lambda depart, s: depart[s]["pension_aspa"]),
     ("Rnet €", "%", lambda depart, s: _remplacement(depart, s, "courants")),
     ("Rnet K", "%", lambda depart, s: _remplacement(depart, s, "constants")),
     ("Rnet S", "%", lambda depart, s: _remplacement(depart, s, "salaire_moyen")),
-    ("Durée", "ans", lambda depart, s: depart.indicateurs[s].duree_retraite),
-    ("D/carr", "x", lambda depart, s: depart.indicateurs[s].duree_relative),
-    ("Récup", "x", lambda depart, s: depart.indicateurs[s].taux_recuperation),
-    ("Annuit", "%", lambda depart, s: depart.indicateurs[s].taux_annuite),
-    ("Rcycle", "%", lambda depart, s: depart.indicateurs[s].taux_remplacement_cycle),
-    ("TRIrée", "%2", lambda depart, s: depart.indicateurs[s].rendement_reel),
-    ("TRIsal", "%2", lambda depart, s: depart.indicateurs[s].rendement_smpt),
-    ("Patrim", "x", lambda depart, s: depart.indicateurs[s].patrimoine),
+    ("Durée", "ans", lambda depart, s: depart[s]["duree_retraite"]),
+    ("D/carr", "x", lambda depart, s: depart[s]["duree_relative"]),
+    ("Récup", "x", lambda depart, s: depart[s]["taux_recuperation"]),
+    ("Annuit", "%", lambda depart, s: depart[s]["taux_annuite"]),
+    ("Rcycle", "%", lambda depart, s: depart[s]["taux_remplacement_cycle"]),
+    ("TRIrée", "%2", lambda depart, s: depart[s]["rendement_reel"]),
+    ("TRIsal", "%2", lambda depart, s: depart[s]["rendement_smpt"]),
+    ("Patrim", "x", lambda depart, s: depart[s]["patrimoine"]),
 )
 
 LEGENDE_AGES = (
@@ -180,7 +240,7 @@ LEGENDE_AGES = (
 
 #: Après impôt, la colonne de plus : le taux de remplacement après impôt au
 #: départ, le taux net de l'OCDE.
-COLONNE_APRES_IMPOT = ("Rimp", "%", lambda depart, s: depart.remplacements_apres_impot[s])
+COLONNE_APRES_IMPOT = ("Rimp", "%", lambda depart, s: depart[s]["remplacement_apres_impot"])
 
 LEGENDE_APRES_IMPOT = (
     "Après impôt : la pension et les revenus perdent aussi l'impôt sur le revenu de "
@@ -190,8 +250,8 @@ LEGENDE_APRES_IMPOT = (
 
 
 def _remplacement(depart, scenario: str, unite: str) -> float | None:
-    remplacement = depart.remplacements[scenario]
-    return None if remplacement is None else getattr(remplacement, unite)
+    remplacement = depart[scenario]["remplacement_net"]
+    return None if remplacement is None else remplacement[unite]
 
 
 def tableau_des_ages(departs, scenario: str, titre: str, colonnes=COLONNES_AGES) -> str:
@@ -199,26 +259,32 @@ def tableau_des_ages(departs, scenario: str, titre: str, colonnes=COLONNES_AGES)
     lignes = [titre, f"{'âge':>6} {'année':>6} "
               + " ".join(f"{entete:>6}" for entete, _, _ in colonnes)]
     for depart in departs:
-        lignes.append(f"{depart.age:>6.2f} {depart.annee:>6} " + " ".join(
+        lignes.append(f"{depart['age']:>6.2f} {depart['annee']:>6} " + " ".join(
             _cellule(lire(depart, scenario), unite) for _, unite, lire in colonnes))
     return "\n".join(lignes)
 
 
 def balayer(cas_types: list, generations: list[int], productivites: list[str],
-            cor: bool, impot: str | None = None
-            ) -> tuple[dict[tuple[str, int, str], tuple], dict[str, str]]:
+            cor: bool, impot: str | None = None, pas: float = PAS_DES_AGES
+            ) -> tuple[dict[str, list[dict]], dict[str, str]]:
     """Les balayages des cas types nommés, génération par génération, sous
-    chaque hypothèse de productivité, et le libellé de chaque hypothèse ;
-    après impôt avec ``impot``, l'indexation du barème."""
-    resultats, libelles = {}, {}
+    chaque hypothèse de productivité, sous ``"<code>|<génération>|<hypothèse>"``,
+    et le libellé de chaque hypothèse ; après impôt avec ``impot``,
+    l'indexation du barème. Chaque cas type part de l'âge où le pilote le fait
+    partir ; le portage balaie les autres (``balayageDUneCarriere``)."""
+    cas, libelles = [], {}
     for productivite in productivites:
         simulateur = Simulateur(Parametres(scenario_projection=productivite))
         libelles[productivite] = simulateur.macro.projection["libelle"]
-        for cas in cas_types:
+        for type_ in cas_types:
             for generation in generations:
-                resultats[(cas.code, generation, productivite)] = cycle_de_vie.balayage(
-                    simulateur, cas, generation, cor, impot=impot)
-    return resultats, libelles
+                age = type_.age_liquidation_pour(simulateur, generation)
+                cas.append({"cle": f"{type_.code}|{generation}|{productivite}",
+                            "productivite": productivite, "age": age,
+                            "options": options(simulateur, type_, generation, age)})
+    reponse = portage({"ages": {"cas": cas, "cor": cor, "impot": impot, "pas": pas}})
+    _sans_echec(reponse)
+    return reponse["resultats"], libelles
 
 
 def _imprimer_les_ages(arguments, analyseur, scenarios: list[str]) -> None:
@@ -230,13 +296,13 @@ def _imprimer_les_ages(arguments, analyseur, scenarios: list[str]) -> None:
         cas_types.append(par_code[code])
     generations = ([int(g) for g in arguments.generations.split(",") if g]
                    if arguments.generations else list(GENERATIONS))
-    connues = cycle_de_vie.hypotheses_de_productivite(Parametres().racine_donnees)
-    productivites = ([nom for nom in arguments.productivites.split(",") if nom]
-                     if arguments.productivites else list(connues))
-    for nom in productivites:
+    connues = productivites(Parametres().racine_donnees)
+    choisies = ([nom for nom in arguments.productivites.split(",") if nom]
+                if arguments.productivites else list(connues))
+    for nom in choisies:
         if nom not in connues:
             analyseur.error(f"productivité inconnue : {nom} ({', '.join(connues)})")
-    resultats, hypotheses = balayer(cas_types, generations, productivites, arguments.cor,
+    resultats, hypotheses = balayer(cas_types, generations, choisies, arguments.cor,
                                     arguments.impot)
     print(_titre_des_conventions(arguments.cor, True, arguments.impot))
     print(LEGENDE_AGES)
@@ -244,28 +310,16 @@ def _imprimer_les_ages(arguments, analyseur, scenarios: list[str]) -> None:
     if arguments.impot is not None:
         print(LEGENDE_APRES_IMPOT)
         colonnes = COLONNES_AGES + (COLONNE_APRES_IMPOT,)
-    for (code, generation, productivite), departs in resultats.items():
+    for cle, departs in resultats.items():
+        code, generation, productivite = cle.split("|")
         for scenario in scenarios if departs else ():
             print()
             print(tableau_des_ages(departs, scenario, (
                 f"{par_code[code].libelle}, génération {generation} — {LIBELLES[scenario]} — "
                 f"{hypotheses[productivite]}"), colonnes))
     if arguments.json:
-        Path(arguments.json).write_text(json.dumps(
-            {f"{code}|{generation}|{productivite}": [
-                {"age": depart.age, "annee": depart.annee, **{
-                    scenario: {**depart.indicateurs[scenario].dictionnaire(),
-                               "pension_nette": depart.pensions_nettes[scenario],
-                               "pension_aspa": depart.pensions_aspa[scenario],
-                               "remplacement_net": (None if depart.remplacements[scenario] is None
-                                                    else vars(depart.remplacements[scenario])),
-                               "remplacement_apres_impot": (
-                                   None if depart.remplacements_apres_impot is None
-                                   else depart.remplacements_apres_impot[scenario])}
-                    for scenario in cycle_de_vie.SCENARIOS}}
-                for depart in departs]
-             for (code, generation, productivite), departs in resultats.items()},
-            ensure_ascii=False, indent=1), encoding="utf-8")
+        Path(arguments.json).write_text(json.dumps(resultats, ensure_ascii=False, indent=1),
+                                        encoding="utf-8")
 
 
 #: Les générations de la table commune, sauf ``--generations``.
@@ -281,28 +335,26 @@ LEGENDE_EQUILIBRE = (
 #: Les tableaux des cas types : le titre, et ce qu'il lit de leurs âges.
 TABLEAUX_EQUILIBRE = (
     ("Vingtile de niveau de vie de la mortalité de son diviseur",
-     lambda ages: (ages.population or "commune").replace("niveau_de_vie_", "")),
-    ("Âge de départ du droit de sa génération", lambda ages: ages.age_de_depart),
+     lambda ages: (ages["population"] or "commune").replace("niveau_de_vie_", "")),
+    ("Âge de départ du droit de sa génération", lambda ages: ages["age_de_depart"]),
     ("Âge d'équilibre du diviseur, sur la mortalité de sa population",
-     lambda ages: ages.diviseur.age),
+     lambda ages: ages["diviseur"]["age"]),
     ("Âge de part de vie constante, survie de génération de son sexe et de sa population",
-     lambda ages: ages.part_de_vie),
+     lambda ages: ages["part_de_vie"]),
 )
 
 
-def equilibres_communs(simulateur: Simulateur, generations) -> dict[int, dict]:
-    """Les âges d'équilibre de chaque génération, sur la table commune."""
-    resultats = {}
-    for generation in generations:
-        resultats[generation] = {
-            "diviseur": cycle_de_vie.age_d_equilibre(simulateur, generation),
-            "part_de_vie_cor": cycle_de_vie.age_de_part_de_vie_constante(
-                simulateur, generation, cor=True),
-            **{f"part_de_vie_{qui}": cycle_de_vie.age_de_part_de_vie_constante(
-                simulateur, generation, sexe)
-               for qui, sexe in (("unisexe", None), ("hommes", "H"), ("femmes", "F"))},
-        }
-    return resultats
+def equilibres(simulateur: Simulateur, generations, generations_des_cas) -> dict:
+    """La référence du compte ; les âges d'équilibre de chaque génération de
+    ``generations``, sur la table commune ; ceux de chaque cas type né en une
+    génération de ``generations_des_cas``, sur la mortalité de la population
+    où son salaire le range, à l'âge où le pilote le fait partir."""
+    cas = [{"cle": f"{type_.code}|{generation}", "options": options(
+                simulateur, type_, generation, type_.age_liquidation_pour(simulateur, generation))}
+           for type_ in CAS_TYPES for generation in generations_des_cas]
+    reponse = portage({"equilibre": {"generations": list(generations), "cas": cas}})
+    _sans_echec(reponse)
+    return reponse
 
 
 def _valeur(valeur) -> str:
@@ -315,15 +367,14 @@ def _mois(age: float) -> str:
 
 
 def _imprimer_l_equilibre(arguments) -> None:
-    simulateur = Simulateur(Parametres())
-    reference = cycle_de_vie.reference_du_compte(simulateur)
     choisies = ([int(g) for g in arguments.generations.split(",") if g]
                 if arguments.generations else None)
-    communs = equilibres_communs(simulateur, choisies or GENERATIONS_EQUILIBRE)
-    cas_types = {(cas.code, generation): cycle_de_vie.ages_d_equilibre(simulateur, cas, generation)
-                 for cas in CAS_TYPES for generation in choisies or GENERATIONS}
-    print(f"Référence du compte : la génération {reference.naissance:.0f}, "
-          f"{formater_age(reference.age)} au 1er janvier {reference.annee}.")
+    resultats = equilibres(Simulateur(Parametres()), choisies or GENERATIONS_EQUILIBRE,
+                           choisies or GENERATIONS)
+    reference, communs = resultats["reference"], resultats["table_commune"]
+    cas_types = resultats["cas_types"]
+    print(f"Référence du compte : la génération {reference['naissance']:.0f}, "
+          f"{formater_age(reference['age'])} au 1er janvier {reference['annee']}.")
     print(LEGENDE_EQUILIBRE)
     print()
     print("Table commune")
@@ -331,32 +382,23 @@ def _imprimer_l_equilibre(arguments) -> None:
           + " ".join(f"{entete:>6}" for entete in ("P COR", "P 2 sx", "P H", "P F")))
     for generation, ages in communs.items():
         diviseur = ages["diviseur"]
-        print(f"{generation:>6} {diviseur.diviseur_a_l_age_de_reference:>6.2f} "
-              f"{diviseur.coefficient:>7.4f} {diviseur.age:>6.2f} {_mois(diviseur.au_mois):>8} "
+        print(f"{generation:>6} {diviseur['diviseur_a_l_age_de_reference']:>6.2f} "
+              f"{diviseur['coefficient']:>7.4f} {diviseur['age']:>6.2f} "
+              f"{_mois(diviseur['au_mois']):>8} "
               + " ".join(f"{ages[cle]:>6.2f}" for cle in (
                   "part_de_vie_cor", "part_de_vie_unisexe", "part_de_vie_hommes",
                   "part_de_vie_femmes")))
-    colonnes = sorted({generation for _, generation in cas_types})
+    colonnes = sorted({int(cle.split("|")[1]) for cle in cas_types})
     for titre, lire in TABLEAUX_EQUILIBRE:
         print()
         print(titre)
         print(f"{'':<46}" + " ".join(f"{generation:>6}" for generation in colonnes))
         for cas in CAS_TYPES:
             print(f"{cas.libelle[:45]:<46}" + " ".join(
-                _valeur(lire(cas_types[(cas.code, generation)])) for generation in colonnes))
+                _valeur(lire(cas_types[f"{cas.code}|{generation}"])) for generation in colonnes))
     if arguments.json:
-        Path(arguments.json).write_text(json.dumps({
-            "reference": vars(reference),
-            "table_commune": {str(generation): {
-                **{cle: valeur for cle, valeur in ages.items() if cle != "diviseur"},
-                "diviseur": {**vars(ages["diviseur"]),
-                             "coefficient": ages["diviseur"].coefficient}}
-                for generation, ages in communs.items()},
-            "cas_types": {f"{code}|{generation}": {
-                **{cle: valeur for cle, valeur in vars(ages).items() if cle != "diviseur"},
-                "diviseur": {**vars(ages.diviseur), "coefficient": ages.diviseur.coefficient}}
-                for (code, generation), ages in cas_types.items()},
-        }, ensure_ascii=False, indent=1), encoding="utf-8")
+        Path(arguments.json).write_text(json.dumps(resultats, ensure_ascii=False, indent=1),
+                                        encoding="utf-8")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -386,14 +428,14 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     indicateurs = [nom for nom in arguments.indicateurs.split(",") if nom]
-    defaut = "actuel" if arguments.ages else ",".join(cycle_de_vie.SCENARIOS)
+    defaut = "actuel" if arguments.ages else ",".join(SCENARIOS)
     scenarios = [nom for nom in (arguments.scenarios or defaut).split(",") if nom]
     for nom in indicateurs:
         if nom not in INDICATEURS:
             analyseur.error(f"indicateur inconnu : {nom} ({', '.join(INDICATEURS)})")
     for nom in scenarios:
-        if nom not in cycle_de_vie.SCENARIOS:
-            analyseur.error(f"système inconnu : {nom} ({', '.join(cycle_de_vie.SCENARIOS)})")
+        if nom not in SCENARIOS:
+            analyseur.error(f"système inconnu : {nom} ({', '.join(SCENARIOS)})")
     if arguments.ages:
         _imprimer_les_ages(arguments, analyseur, scenarios)
         return 0
@@ -405,11 +447,8 @@ def main(argv: list[str] | None = None) -> int:
             print()
             print(tableau(resultats, indicateur, scenario))
     if arguments.json:
-        Path(arguments.json).write_text(json.dumps(
-            {f"{code}|{generation}": {scenario: valeurs.dictionnaire()
-                                      for scenario, valeurs in case.items()}
-             for (code, generation), case in resultats.items()},
-            ensure_ascii=False, indent=1), encoding="utf-8")
+        Path(arguments.json).write_text(json.dumps(resultats, ensure_ascii=False, indent=1),
+                                        encoding="utf-8")
     return 0
 
 

@@ -652,7 +652,10 @@ def _cas(code: str):
 @pytest.fixture(scope="module")
 def balayage_1970(simulateur):
     """Le salarié au salaire moyen né en 1970, à chacun de ses âges de départ."""
-    return cycle_de_vie.balayage(simulateur, _cas("salaire_moyen"), 1970)
+    cas = _cas("salaire_moyen")
+    return cycle_de_vie.balayage_d_une_carriere(
+        simulateur, lambda age: cas.carriere_a(simulateur, 1970, age),
+        cas.age_liquidation_pour(simulateur, 1970))
 
 
 def test_les_ages_vont_de_l_ouverture_a_l_annulation_de_la_decote_par_trimestre(
@@ -663,7 +666,10 @@ def test_les_ages_vont_de_l_ouverture_a_l_annulation_de_la_decote_par_trimestre(
     et le balayage avec elle."""
     assert [depart.age for depart in balayage_1970] == [64.0 + 0.25 * rang for rang in range(13)]
     assert all(depart.annee == 1970 + int(depart.age) for depart in balayage_1970)
-    longue = cycle_de_vie.ages_de_depart(simulateur, _cas("smic_carriere_complete"), 1970)
+    smic = _cas("smic_carriere_complete")
+    longue = cycle_de_vie.ages_balayes(
+        simulateur, lambda age: smic.carriere_a(simulateur, 1970, age),
+        smic.age_liquidation_pour(simulateur, 1970))
     assert longue[0] < 64.0
     assert longue[-1] == 67.0
 
@@ -731,11 +737,6 @@ def test_les_trois_remplacements_nets_ne_different_que_par_le_deflateur(
             rel=1e-12)
 
 
-def test_les_hypotheses_de_productivite_sont_les_trois_du_cor():
-    assert cycle_de_vie.hypotheses_de_productivite(RACINE_DONNEES) == (
-        "cor_productivite_basse", "cor_reference", "cor_productivite_haute")
-
-
 def test_sous_une_productivite_plus_forte_la_pension_monte_sur_l_aspa():
     """La génération 2000, partie à 64 ans en 2064. Plus la productivité est
     forte, plus les salaires dépassent les prix : sa pension, qui suit les
@@ -744,7 +745,7 @@ def test_sous_une_productivite_plus_forte_la_pension_monte_sur_l_aspa():
     salaire moyen."""
     cas = _cas("salaire_moyen")
     departs = []
-    for nom in cycle_de_vie.hypotheses_de_productivite(RACINE_DONNEES):
+    for nom in ("cor_productivite_basse", "cor_reference", "cor_productivite_haute"):
         simulateur = Simulateur(Parametres(scenario_projection=nom))
         comparaison = simulateur.simuler(cas.carriere_a(simulateur, 2000, 64.0))
         departs.append(cycle_de_vie.depart(simulateur, comparaison))
@@ -838,28 +839,3 @@ def test_sous_la_convention_du_cor_l_age_suit_l_age_de_deces(simulateur):
         assert cycle_de_vie.part_de_vie(simulateur, age, generation + age, cor=True) == (
             pytest.approx(cycle_de_vie.part_de_vie(simulateur, 65.0, 2026.0, cor=True),
                           abs=1e-12))
-
-
-def test_les_ages_d_un_cas_type_ne_tiennent_qu_a_sa_mortalite(simulateur):
-    """Le cas type n'entre dans ses âges d'équilibre que par la mortalité de
-    son diviseur, la population où son salaire le range, et par son sexe pour
-    la part de vie : le salarié au SMIC et l'exploitant agricole, du même
-    vingtile, ont les mêmes âges, à des âges de départ qu'une année sépare. Le
-    fonctionnaire de catégorie active le montrait, du vingtile du salarié au
-    salaire moyen et parti cinq ans avant lui, jusqu'à son recalage sur les
-    actifs de la CNRACL (action 159, étape 5), qui le range au onzième. Le
-    salarié au SMIC, d'un vingtile qui vit moins longtemps, retrouve plus tard
-    la référence : de 1961 à 2000, son diviseur à 65 ans gagne 3,58 ans,
-    contre 3,38, et il baisse moins vite avec l'âge, de 0,83 an par an, contre
-    0,88."""
-    moyen = cycle_de_vie.ages_d_equilibre(simulateur, _cas("salaire_moyen"), 2000)
-    smic = cycle_de_vie.ages_d_equilibre(simulateur, _cas("smic_carriere_complete"), 2000)
-    exploitant = cycle_de_vie.ages_d_equilibre(simulateur, _cas("exploitant_agricole"), 2000)
-    assert smic.population == exploitant.population == "niveau_de_vie_v04"
-    assert exploitant.age_de_depart - smic.age_de_depart == 1.0
-    assert (smic.diviseur, smic.part_de_vie) == (exploitant.diviseur, exploitant.part_de_vie)
-    assert smic.diviseur == cycle_de_vie.age_d_equilibre(simulateur, 2000, "H", smic.population)
-    assert moyen.population == "niveau_de_vie_v14"
-    assert moyen.diviseur == cycle_de_vie.age_d_equilibre(simulateur, 2000, "H", moyen.population)
-    assert smic.diviseur.age > moyen.diviseur.age
-    assert smic.part_de_vie > moyen.part_de_vie

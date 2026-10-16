@@ -112,14 +112,15 @@ Le taux de remplacement après impôt au départ (:func:`remplacement_apres_impo
 est le taux net de l'OCDE. Les cotisations restent brutes : l'impôt ne les
 atteint pas.
 
-À CHAQUE ÂGE DE DÉPART (:func:`balayage`). Calculés au seul âge où un cas type
+À CHAQUE ÂGE DE DÉPART (:func:`balayage_d_une_carriere`). Calculés au seul âge où un cas type
 part, les indicateurs ne disent pas ce qu'un départ plus tôt ou plus tard
 change. TRAJECTOiRE les calcule de trimestre en trimestre, de l'âge
 d'ouverture, carrière longue comprise, à l'âge d'annulation de la décote,
 sous plusieurs productivités, en net, avec la pension nette rapportée à
 l'ASPA et le taux de remplacement net en euros courants, constants et en
-salaire moyen ; le dépôt fait de même (:class:`Depart`), sous les trois
-productivités du COR (:func:`hypotheses_de_productivite`).
+salaire moyen ; le dépôt fait de même (:class:`Depart`), et le mène sur les
+cas types sous les trois productivités du COR (``scripts/cycle_de_vie.py
+--ages``).
 
 L'ÂGE D'ÉQUILIBRE (:func:`age_d_equilibre`). Les indicateurs disent ce qu'une
 génération reçoit à l'âge où elle part ; deux modèles disent en plus à quel
@@ -142,9 +143,9 @@ constante la DURÉE de la retraite. Le simulateur du COR, réécrit par B. Scher
 Baudin, tient constante sa PART dans la vie, (60 + e60 − âge) / (60 + e60) ;
 :func:`age_de_part_de_vie_constante` le fait sous les deux conventions de
 :attr:`Indicateurs.part_de_vie`, pour la même référence. Par cas type
-(:func:`ages_d_equilibre`), le diviseur suit la population de la carrière, la
-même des deux côtés de l'égalité, et la part de vie aussi, avec le sexe du cas
-type.
+(``scripts/cycle_de_vie.py --equilibre``), le diviseur suit la population de la
+carrière, la même des deux côtés de l'égalité, et la part de vie aussi, avec le
+sexe du cas type.
 
 CE QUE LE MODULE NE FAIT PAS. La pension nette l'est au taux plein de CSG, sans
 le taux réduit ni le médian que le revenu fiscal d'un foyer ouvrirait ; la
@@ -162,15 +163,16 @@ l'emploi d'une année incomplète se calcule comme celle d'une année entière
 
 SON JUMEAU, ET POURQUOI IL RESTE. Le site affiche ces indicateurs par le
 jumeau JavaScript du module (``moteur/js/cycle-de-vie.js``, dépliant « Partir
-plus tôt ou plus tard », action 138, étape 10), qui a tout, l'impôt compris,
-sauf les cas types du COR : ni :func:`ages_de_depart`, ni :func:`balayage`, ni
-:func:`ages_d_equilibre`, ni :func:`hypotheses_de_productivite`. Ce module ne
-se retire pas pour autant (action 161, étape 4) : les cas types se bâtissent
-en Python seul (:mod:`~retraite_notionnelle.castypes`, que le coût lit), et
-``scripts/cycle_de_vie.py``, qui les mène sous les six systèmes, atteint 84
-de ses 87 noms ; ``tests/test_cycle_de_vie_references.py`` confronte aux
-publications du COR et de l'OCDE des carrières bâties ici. Les deux jumeaux
-restent donc, et ``tests/test_cycle_de_vie_portage.py`` les tient ensemble.
+plus tôt ou plus tard », action 138, étape 10), qui a tout, l'impôt compris.
+Depuis le pont (action 161, étape 5), ``scripts/cycle_de_vie.py`` mène les
+cas types du COR par lui : le Python les bâtit (:mod:`~retraite_notionnelle.castypes`,
+que le coût lit), le portage en calcule le cycle de vie, et les noms qui ne
+servaient qu'aux cas types — leurs âges de départ, leur balayage, leurs âges
+d'équilibre, les productivités du COR — sont partis. Ce module reste, que plus
+rien ne lit hors des tests : ``tests/test_cycle_de_vie_references.py``
+confronte aux publications du COR et de l'OCDE des carrières bâties ici, en
+lisant les régimes un à un et le coût, que le portage n'a pas ;
+``tests/test_cycle_de_vie_portage.py`` tient les deux jumeaux ensemble.
 """
 
 from __future__ import annotations
@@ -179,13 +181,10 @@ import math
 from dataclasses import dataclass, replace
 from functools import lru_cache
 
-from pathlib import Path
-
 from . import pilote
 from .config import RevalorisationStock
 from .contributions_equilibre import contributions_d_une_carriere, part_salariale_annualisee
 from .cout import coefficient_actuel
-from .donnees.chargement import charger_yaml
 from .donnees.impot_revenu import (
     INDEXATIONS,
     ParametresImpot,
@@ -1544,16 +1543,6 @@ def indicateurs_des_systemes(simulateur, comparaison,
 PAS_DES_AGES = 0.25
 
 
-def hypotheses_de_productivite(racine_donnees) -> tuple[str, ...]:
-    """Les scénarios de projection du COR, de la productivité la plus basse à
-    la plus haute : 0,4, 0,7 et 1,0 % par an depuis son rapport de juin 2025,
-    qui a retiré le 1,3 % que TRAJECTOiRE balaie encore. Les jeux de
-    référence d'une autre institution, l'OCDE, n'en sont pas."""
-    scenarios = charger_yaml(Path(racine_donnees) / "reference" / "macro"
-                             / "hypotheses_projection.yaml").get("scenarios", {})
-    return tuple(sorted(scenarios, key=lambda nom: float(scenarios[nom]["productivite_reelle"])))
-
-
 def convention_nette(simulateur, comparaison, cor: bool = False) -> Convention:
     """La convention du balayage : celle du dépôt — la survie de génération
     du sexe de la carrière, le patrimoine à 1,5 % réel —, ou celle du COR
@@ -1702,16 +1691,6 @@ def depart(simulateur, comparaison, cor: bool = False,
     )
 
 
-def ages_de_depart(simulateur, cas, generation: int,
-                   pas: float = PAS_DES_AGES) -> tuple[float, ...]:
-    """Les âges de départ du cas type ``cas`` né en ``generation``, de ``pas``
-    en ``pas`` : de l'âge d'ouverture, carrière longue comprise, à l'âge
-    d'annulation de la décote (:func:`ages_balayes`). Vide quand le droit
-    n'oppose aucun âge à la carrière."""
-    return ages_balayes(simulateur, lambda age: cas.carriere_a(simulateur, generation, age),
-                        cas.age_liquidation_pour(simulateur, generation), pas)
-
-
 def ages_balayes(simulateur, batir, age_demande: float,
                  pas: float = PAS_DES_AGES) -> tuple[float, ...]:
     """Les âges de départ de la carrière que ``batir(age)`` rend liquidée à
@@ -1721,9 +1700,7 @@ def ages_balayes(simulateur, batir, age_demande: float,
     :func:`~retraite_notionnelle.pilote.ages_de_l_estimation`, partis de
     ``age_demande``, chacun un point fixe sur la carrière que l'âge déplace. Le
     dernier est toujours l'âge d'annulation, même s'il n'est pas à un pas du
-    précédent. Vide quand le droit n'oppose aucun âge à la carrière. Le
-    portage n'a pas les cas types : il balaie la carrière d'une saisie par
-    celle-ci (``agesBalayes``)."""
+    précédent. Vide quand le droit n'oppose aucun âge à la carrière."""
     ages = pilote.ages_de_l_estimation(simulateur.scenario_actuel, batir, age_demande)
     if ages is None:
         return ()
@@ -1733,18 +1710,6 @@ def ages_balayes(simulateur, batir, age_demande: float,
     if fin - balayes[-1] > 1e-9:
         balayes.append(fin)
     return tuple(balayes)
-
-
-def balayage(simulateur, cas, generation: int, cor: bool = False,
-             pas: float = PAS_DES_AGES, impot: str | None = None) -> tuple[Depart, ...]:
-    """Les indicateurs nets du cas type ``cas`` né en ``generation``, à
-    chacun de ses âges de départ (:func:`ages_de_depart`), sous les
-    hypothèses macroéconomiques de ``simulateur`` : une productivité, que
-    :func:`hypotheses_de_productivite` énumère ; avec ``impot``, après impôt
-    (:func:`depart`)."""
-    return balayage_d_une_carriere(
-        simulateur, lambda age: cas.carriere_a(simulateur, generation, age),
-        cas.age_liquidation_pour(simulateur, generation), cor, pas, impot)
 
 
 def balayage_d_une_carriere(simulateur, batir, age_demande: float, cor: bool = False,
@@ -1937,41 +1902,3 @@ def age_de_part_de_vie_constante(simulateur, naissance: float, sexe: str | None 
         else:
             haut = milieu
     return 0.5 * (bas + haut)
-
-
-@dataclass(frozen=True)
-class AgesDEquilibre:
-    """Les âges d'équilibre d'un cas type né en ``generation``, et celui où il
-    part."""
-
-    generation: int
-    #: L'âge où il part sous le droit de sa génération, que le pilote fixe.
-    age_de_depart: float
-    #: La population dont la mortalité entre dans son diviseur.
-    population: str | None
-    diviseur: AgeEquilibre
-    #: L'âge qui lui laisse la part de vie de la référence, sous la survie de
-    #: génération de son sexe et de sa population.
-    part_de_vie: float
-
-
-def ages_d_equilibre(simulateur, cas, generation: int) -> AgesDEquilibre:
-    """Les âges d'équilibre du cas type ``cas`` né en ``generation``, sur la
-    mortalité de la population où son salaire le range
-    (:meth:`~retraite_notionnelle.moteur.conversion.Convertisseur.population_de`),
-    celle de son diviseur ; sous le rattachement par la pension, une variante,
-    qui la lit sur une pension que l'âge d'équilibre ne connaît pas, celle du
-    salaire reste. Sa part de vie suit aussi son sexe. Ni l'une ni l'autre
-    n'entrent dans :attr:`Indicateurs.part_de_vie`, ni dans l'âge de part de
-    vie constante sous la convention du COR, qui ne dépend que de la
-    génération."""
-    carriere = cas.construire(simulateur, generation)
-    population = simulateur.convertisseur.population_de(carriere)
-    return AgesDEquilibre(
-        generation=generation,
-        age_de_depart=carriere.age_liquidation,
-        population=population,
-        diviseur=age_d_equilibre(simulateur, generation, carriere.sexe, population),
-        part_de_vie=age_de_part_de_vie_constante(simulateur, generation, carriere.sexe,
-                                                 population=population),
-    )

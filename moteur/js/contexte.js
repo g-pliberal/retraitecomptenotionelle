@@ -391,8 +391,8 @@ export class Contexte {
    * `cor`, et `comparaison`, qui en passe les montants aux euros de la page
    * (`enEurosConstants`). Vide dans les cas où `departsDeLEstimation` l'est ;
    * un départ d'une année déjà passée est omis. Le site seul le montre : il
-   * n'a pas de jumeau dans le contexte Python, dont les cas types passent par
-   * `balayage` (cycle_de_vie.py).
+   * n'a pas de jumeau dans le contexte Python ; les cas types du COR passent
+   * par `scripts/cycle_de_vie.mjs`.
    */
   balayageDeLEstimation(saisie, pas = 1.0, cor = false) {
     const estimation = this._estimation(saisie);
