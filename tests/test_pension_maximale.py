@@ -87,13 +87,32 @@ def test_le_bareme_de_1965_reprend_le_plafond_de_1966(simulateur):
     assert _maximum(simulateur, "1966-01-01") == pytest.approx(5_184 / FRANC, rel=1e-3)
 
 
-def test_aucun_maximum_avant_1949_ni_hors_du_regime_general(simulateur):
+def test_aucun_maximum_avant_1949_ni_hors_des_regimes_nommes(simulateur):
     assert _maximum(simulateur, "1948-12-01") is None
     carriere = simulateur.carriere_simple(
         annee_naissance=1925, sexe="H", affiliation="salarie_prive_cadre",
         age_debut=20, age_liquidation=65, niveau_salaire=5.0)
-    assert liquider.pension_maximale(simulateur.scenario_actuel, "msa_salaries", carriere) is None
+    assert liquider.pension_maximale(simulateur.scenario_actuel, "cnav_pl", carriere) is None
     assert liquider.pension_maximale(simulateur.scenario_actuel, "regime_general", carriere)
+
+
+def test_le_maximum_des_salaries_agricoles_depuis_1972(simulateur):
+    """Le maximum des salariés agricoles, que l'article 59-1 du décret
+    n° 50-1225 renvoie à un arrêté de 1972 à 1974 et que les textes de leur
+    régime nomment ensuite, supposé celui du régime général, avec sa fiabilité
+    à lui ; aucun avant 1972."""
+    moteur = simulateur.scenario_actuel
+    for naissance, attendu in ((1925, 0.5), (1907, 0.44), (1905, None)):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=naissance, sexe="H", affiliation="salarie_agricole",
+            age_debut=20, age_liquidation=65, niveau_salaire=5.0)
+        maximum = liquider.pension_maximale(moteur, "msa_salaries", carriere)
+        if attendu is None:
+            assert maximum is None
+            continue
+        plafond = simulateur.macro.plafond_securite_sociale(carriere.annee_liquidation)
+        assert maximum[0] == pytest.approx(attendu * plafond)
+        assert maximum[1] < liquider.pension_maximale(moteur, "regime_general", carriere)[1]
 
 
 # -- la pension -----------------------------------------------------------------
@@ -176,9 +195,11 @@ REQUETE = {
     "statut": "salarie_prive_cadre", "stock": "prix", "table": "unisexe",
 }
 #: Le maximum de 1990, celui de l'ajournement de 1982, du taux acquis de 1983 ;
-#: une pension surcotée de 2015, sous le maximum ; une pension au salaire moyen.
+#: une pension surcotée de 2015, sous le maximum ; une pension au salaire moyen ;
+#: le salarié agricole de 1990, au maximum de son régime.
 CAS = [
     {},
+    {"statut": "salarie_agricole"},
     {"naissance": "1912", "liquidation": "70"},
     {"naissance": "1917", "naissance_mois": "3", "liquidation": "66.5"},
     {"naissance": "1950", "liquidation": "65"},

@@ -2272,7 +2272,9 @@ export function maximumDesPensions(moteur, code, dateEffet, annee) {
     return null;
   }
   const plafond = moteur.macro.plafond_securite_sociale.valeur(annee);
-  return [pourcentage * plafond, fiabiliteDepuisTexte(regle.fiabilite)];
+  // Un régime borné sur la foi d'un autre texte que le sien a sa fiabilité.
+  const fiabilite = (regle.fiabilite_par_regime || {})[code] ?? regle.fiabilite;
+  return [pourcentage * plafond, fiabiliteDepuisTexte(fiabilite)];
 }
 
 /**

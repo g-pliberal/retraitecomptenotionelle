@@ -41,12 +41,15 @@ effet: >-
   agents non titulaires de soixante-trois ans dès le 1er juillet 1982. Chez les salariés
   agricoles, la rédaction du 6 juin 1951 ne majorait le taux que pour une liquidation
   demandée « après soixante et un ans » : si la caisse la lisait ainsi, le moteur sert
-  jusqu'à trois points de trop entre soixante et soixante et un ans. Pour les artisans et
+  jusqu'à trois points de trop entre soixante et soixante et un ans, d'une date de 1951 à
+  une date d'avant 1972 que les textes lus ne disent pas ; avant le 9 juin 1951, la
+  pension agricole, vingt fois la cotisation annuelle moyenne, ne croissait pas avec
+  l'âge, quand le moteur la majore déjà. Pour les artisans et
   commerçants, le moteur passe à la règle nouvelle en 1983, quand les textes lus datent
   leur taux plein à soixante ans du 1er juillet 1984, et il arrête leur taux au taux
   plein, faute d'avoir lu que l'ajournement y courait au-delà.
 sources:
-  lu_le: 2026-10-13
+  lu_le: 2026-10-16
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
@@ -77,8 +80,29 @@ sources:
     soixante ans » que « lorsque la liquidation en est demandée après soixante et un
     ans », sans dire si ces 4 p. 100 portent sur le salaire ou sur la pension ; et la date
     où les 25 % les ont atteints, que l'article 55 du décret n° 50-1225 ne porte qu'au 1er
-    juillet 1972.
+    juillet 1972. Relu le 16 octobre 2026 : l'index LEGI ne porte l'article 1er bis du
+    décret n° 51-727 que depuis le 26 août 1977, l'index JORF ne garde que la notice des
+    décrets qui ont réécrit ses articles 1er et 1er bis — n° 56-967 du 28 septembre 1956
+    (JORFTEXT000000324918, « garantie de l'assurance vieillesse »), n° 59-1064, n° 61-961,
+    n° 64-1352, n° 65-56, n° 65-911 (JORFTEXT000000491102, « taux »), n° 68-158
+    (JORFTEXT000000702292, « taux des pensions ») —, et la base de la Cnav, interrogée sur
+    « soixante et un ans » et « par année postérieure », n'a aucun texte agricole d'après
+    1945 : à lire au Journal officiel (Gallica ou fac-similé de Légifrance, poste du
+    propriétaire), d'abord le décret n° 56-967 (JO du 29 septembre 1956) et le n° 68-158
+    (JO du 20 février 1968). Le moteur n'est pas corrigé tant que la date où la condition
+    tombe n'est pas lue.
   lectures:
+  - type: autre
+    reference: >-
+      décret-loi du 30 octobre 1935 modifié jusqu'à l'ordonnance du 19 avril 1945, base de
+      législation de la Cnav (DEC_30101935), article 8, § 2 : « L'assuré agricole âgé de
+      60 ans, dont le compte individuel d'assurance vieillesse a été crédité chaque année
+      pendant trente ans au moins de cotisations [...] a droit à une pension de retraite
+      égale à vingt fois la cotisation annuelle moyenne versée au titre de l'assurance
+      vieillesse » : aucune majoration par l'âge avant la rédaction du 6 juin 1951. Lu par
+      la recherche de la base le 16 octobre 2026
+    date: 1945-04-19
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=DEC_30101935.aspx
   - type: legifrance
     reference: >-
       relu pour couper la période de 1983 au jour : l'article 9 de l'ordonnance et

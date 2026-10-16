@@ -1,0 +1,30 @@
+date: "2026-10-16"
+session: "action 131 : le maximum des pensions et les « soixante et un ans » des salariés agricoles (restes de decote_avant_1983)"
+consulte: >-
+  L'index LEGI et l'index JORF de la release index-dila (à jour au 11 octobre 2026),
+  sans --inscrire (fait le 16 octobre). LEGI : décret n° 50-1225, articles 55 (1972,
+  1982), 59-1 et 71 ter (1982, 1988) ; décret n° 51-727, articles 1er bis (1977 à 1990) et
+  2 (1981) ; code rural, L. 742-3 (2000 à 2023) ; les arrêtés de revalorisation du régime
+  général de 1975 à 1986. JORF : les notices des décrets qui modifient le décret n° 51-727
+  de 1952 à 1977 et de l'arrêté du 27 juin 1972. Base de législation de la Cnav, par sa
+  recherche : « soixante et un ans », « par année postérieure », et la copie du décret du
+  30 octobre 1935 dans la rédaction de l'ordonnance du 19 avril 1945.
+trouve: >-
+  Le maximum des salariés agricoles : de 1972 à 1974, fixé par arrêté du ministre de
+  l'agriculture (décret n° 50-1225, article 59-1, § 2), l'arrêté du 27 juin 1972 n'ayant
+  que sa notice ; ensuite, nommé sans chiffre par les articles 2 du décret n° 51-727 et 71
+  ter du décret n° 50-1225 (« le montant maximum de la pension de vieillesse du régime des
+  assurances sociales agricoles liquidée à soixante-cinq ans »), L. 742-3 rendant
+  applicable le titre V du livre III. Porté dans les deux moteurs depuis 1972, aux
+  pourcentages du régime général, supposés, avec une fiabilité moyenne
+  (`fiabilite_par_regime`) ; aucun témoin ne bouge. Les « soixante et un ans » : avant juin
+  1951, la pension agricole ne croissait pas avec l'âge ; la condition de la rédaction du
+  6 juin 1951 tombe à une date d'avant 1972 que les textes lus ne donnent pas ; le moteur
+  n'est pas corrigé. Le cliquet des textes baisse d'une rédaction.
+reste: >-
+  Au propriétaire, au Journal officiel (Gallica, fac-similés de Légifrance) : l'arrêté du
+  27 juin 1972 (JO du 1er juillet 1972) ; les décrets n° 56-967 (JO du 29 septembre 1956)
+  et n° 68-158 (JO du 20 février 1968), puis n° 59-1064, 61-961, 64-1352, 65-56 et 65-911 ;
+  un barème ou une circulaire de la MSA donnant le maximum des salariés agricoles. Le
+  maximum de la pension unique des régimes alignés, et l'ajournement des artisans et
+  commerçants.

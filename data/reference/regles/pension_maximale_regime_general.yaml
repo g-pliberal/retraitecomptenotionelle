@@ -5,10 +5,12 @@ intitule: >-
   Sécurité sociale de l'année jusqu'en 1971, 44 %, 46 % puis 48 % de 1972 à 1974, 50 %
   depuis 1975, majoré comme le taux par l'ajournement au-delà de soixante-cinq ans avant
   le 1er avril 1983, et par le taux acquis au 31 mars 1983 ; la surcote s'applique au
-  montant ramené au maximum, et le passe.
+  montant ramené au maximum, et le passe. Celle des salariés agricoles a le sien depuis
+  1972, que le modèle suppose égal.
 domaine: salaire_de_reference
 regimes:
 - regime_general
+- msa_salaries
 etape: liquider_chaque_regime
 face: droit
 etat: approchee
@@ -31,7 +33,9 @@ dates_qui_decident:
 # `pourcentages`, la part du plafond de la Sécurité sociale que le maximum vaut à
 # soixante-cinq ans, à chaque date — celui de la date d'effet est le dernier qui ne
 # la passe pas —, appliquée au plafond annuel de l'année de la date d'effet ;
-# `fiabilite`, que le résultat prend quand le maximum ramène la pension. Le maximum
+# `fiabilite`, que le résultat prend quand le maximum ramène la pension, et
+# `fiabilite_par_regime`, celle d'un régime que la version borne sur un autre texte
+# que celui qui fixe le pourcentage (les salariés agricoles). Le maximum
 # se multiplie par le coefficient que le moteur applique au taux plein au-delà de
 # soixante-cinq ans — l'ajournement avant 1983, le taux acquis au 31 mars 1983 — ou
 # pour la surcote : la pension ramenée au maximum, puis majorée.
@@ -95,6 +99,13 @@ versions:
       titre du régime général à partir du 1er janvier 1972, dont l'index JORF ne garde
       que la notice
     publie_le: 1972-01-29
+  - {id: LEGIARTI000006774035, article: 59-1, en_vigueur: 1972-07-01, reference: "décret n° 50-1225 du 21 septembre 1950, article 59-1, § 2 : le maximum des pensions des salariés agricoles de 1972 à 1974, fixé par arrêté du ministre de l'agriculture"}
+  - id: JORFTEXT000000452192
+    reference: >-
+      arrêté du 27 juin 1972 fixant le plafond des pensions de vieillesse servies au
+      titre des assurances sociales agricoles au cours de la période du 1er janvier 1972
+      au 31 décembre 1974, dont l'index JORF ne garde que la notice
+    publie_le: 1972-07-01
   nee_de: LEGIARTI000006760613
   bornes:
     liquidation.date_effet: [1972-01-01, 1975-01-01]
@@ -107,13 +118,18 @@ versions:
       transcrit : « en pourcentage du salaire limite soumis à cotisations, le maximum des
       arrérages susceptibles d'être servis », 44 % à soixante-cinq ans en 1972, 46 % en
       1973, 48 % en 1974, majorés de 1,10 %, 1,15 % et 1,20 % par trimestre
-      d'ajournement après soixante-cinq ans
+      d'ajournement après soixante-cinq ans. Chez les salariés agricoles : « Le montant
+      maximum que ne pourront dépasser les pensions servies au cours de la période du 1er
+      janvier 1972 au 31 décembre 1974 est fixé par arrêté du ministre de l'agriculture »
+      (décret n° 50-1225, article 59-1, § 2) ; l'arrêté du 27 juin 1972, dont seule la
+      notice est lue, et dont le modèle suppose les pourcentages du régime général
     beneficiaire: l'assuré dont la pension de vieillesse passe le maximum
     parametres:
       existe: true
-      regimes: [regime_general]
+      regimes: [regime_general, msa_salaries]
       pourcentages: [["1972-01-01", 0.44], ["1973-01-01", 0.46], ["1974-01-01", 0.48]]
       fiabilite: haute
+      fiabilite_par_regime: {msa_salaries: moyenne}
   exemples: aucun trouvé
 - id: cinquante_pour_cent_du_plafond
   statut: supposee
@@ -122,7 +138,13 @@ versions:
     pas dans l'index ; le barème vaut, au franc près, 50 % du plafond de chaque année
     où celui-ci n'a pas changé en cours d'année, la circulaire n° 22/83 compte le
     maximum de 1983 à 50 % du plafond, 44 460 F, et à 55 % pour le taux acquis, 48 906
-    F, et les arrêtés de 1986 écrivent la règle
+    F, et les arrêtés de 1986 écrivent la règle. Chez les salariés agricoles, les
+    articles 2 du décret n° 51-727 (rédaction du 12 mars 1981) et 71 ter du décret n°
+    50-1225 (rédaction du 1er janvier 1982), lus dans l'index LEGI, bornent le cumul de
+    la réversion à « 60 p. 100 » et « 73 p. 100 du montant maximum de la pension de
+    vieillesse du régime des assurances sociales agricoles liquidée à soixante-cinq
+    ans » : le maximum existe, sa valeur n'est pas lue, le modèle la suppose celle du
+    régime général
   fiabilite: haute
   bornes:
     liquidation.date_effet: [1975-01-01, 1986-01-19]
@@ -131,13 +153,17 @@ versions:
       50 % du plafond, de 16 500 F au 1er janvier 1975 à 55 320 F au 1er janvier 1986
       (barème de la Cnav) ; « Dispositions antérieures au 1.4.83 Montant maximum de la
       pension : 48 906 Dispositions applicables à partir du 1-4-83 Montant maximum de la
-      pension : 44 460 » (circulaire Cnav n° 22/83, point 313)
+      pension : 44 460 » (circulaire Cnav n° 22/83, point 313) ; chez les salariés
+      agricoles, « le montant maximum de la pension de vieillesse du régime des
+      assurances sociales agricoles liquidée à soixante-cinq ans » (décret n° 50-1225,
+      article 71 ter, LEGIARTI000006774075), supposé le même
     beneficiaire: l'assuré dont la pension de vieillesse passe le maximum
     parametres:
       existe: true
-      regimes: [regime_general]
+      regimes: [regime_general, msa_salaries]
       pourcentages: [["1975-01-01", 0.50]]
       fiabilite: haute
+      fiabilite_par_regime: {msa_salaries: moyenne}
   exemples: [cnav_22_83_taux_acquis_145_trimestres, cnav_22_83_taux_acquis_117_trimestres]
 - id: arretes_de_1986
   statut: lue
@@ -165,13 +191,18 @@ versions:
       à ce montant la surcote » ; « la somme du montant calculé de la pension
       (éventuellement limité au maximum) et de la surcote peut dépasser le maximum des
       pensions. Dans ce cas, elle n'est pas ramenée au maximum » (circulaire Cnav n°
-      2007-5, point 3, lettre ministérielle du 1er septembre 2006)
+      2007-5, point 3, lettre ministérielle du 1er septembre 2006). Chez les salariés
+      agricoles, l'article 71 ter du décret n° 50-1225 vise jusqu'en 2005 le maximum de
+      leur régime (LEGIARTI000006774076), et L. 742-3 du code rural leur rend applicable
+      le titre V du livre III du code de la sécurité sociale : le modèle leur applique
+      celui de ces arrêtés, qui ne visent que le régime général
     beneficiaire: l'assuré dont la pension de vieillesse passe le maximum
     parametres:
       existe: true
-      regimes: [regime_general]
+      regimes: [regime_general, msa_salaries]
       pourcentages: [["1986-01-19", 0.50]]
       fiabilite: haute
+      fiabilite_par_regime: {msa_salaries: moyenne}
   exemples: aucun trouvé
 approximations:
 - version: [quarante_pour_cent_du_plafond]
@@ -218,17 +249,26 @@ approximations:
     troisième groupe gardaient le maximum de 50 % de 1972 à 1974 (circulaire n° 2/72) :
     le modèle leur applique celui de l'année.
   effet: non mesuré
-- version: [quarante_pour_cent_du_plafond, arrete_du_28_janvier_1972, cinquante_pour_cent_du_plafond, arretes_de_1986]
+- version: [quarante_pour_cent_du_plafond]
   ecart: >-
-    Les salariés agricoles avaient leur propre maximum, que les textes de leur régime
-    nomment (décret n° 51-727, article 2), et la liquidation unique de 2017 sert une
-    seule pension aux régimes alignés : le modèle ne borne que la pension du régime
-    général, et celle que la liquidation unique fait liquider par lui ; ni celle des
-    salariés agricoles, ni celle des artisans et commerçants, ni la pension unique que
-    l'un d'eux liquide.
+    Les salariés agricoles n'ont aucun maximum avant 1972 dans le modèle : aucun texte
+    lu de leur régime n'en nomme un avant l'article 59-1 du décret n° 50-1225, et la loi
+    n° 49-244, qui borne « une pension ou rente de vieillesse » en 1949, renvoie aux
+    arrêtés de l'ordonnance du 19 octobre 1945, du régime général.
+  effet: >-
+    non mesuré ; les seules pensions agricoles de 1949 à 1971 sur un salaire annuel
+    moyen proche du plafond
+- version: [arrete_du_28_janvier_1972, cinquante_pour_cent_du_plafond, arretes_de_1986]
+  ecart: >-
+    Le maximum des salariés agricoles est supposé celui du régime général : l'arrêté du
+    27 juin 1972 n'est lu que par sa notice, et les textes de 1975 à aujourd'hui ne
+    font que le nommer. Et la liquidation unique de 2017 sert une seule pension aux
+    régimes alignés : le modèle borne chacune des parts du régime général et des
+    salariés agricoles au maximum entier, ni celle des artisans et commerçants, ni la
+    pension unique que l'un d'eux liquide.
   effet: non mesuré ; les seules pensions que le maximum ramènerait
 sources:
-  lu_le: 2026-10-11
+  lu_le: 2026-10-16
   prochaine_relecture: 2027-04-30
   lectures_divergentes:
   - >-
@@ -246,15 +286,36 @@ sources:
     pension ramenée au maximum (circulaire n° 2007-5).
   a_relire:
   - >-
-    Lire le maximum des salariés agricoles et celui des artisans et des commerçants, et
-    dire celui de la pension unique des régimes alignés quand un autre que le régime
-    général la liquide.
+    Lire l'arrêté du 27 juin 1972 (Journal officiel du 1er juillet 1972), dont l'index
+    n'a que la notice, et un barème ou une circulaire de la MSA qui donne le maximum des
+    salariés agricoles depuis 1975 ; lire celui des artisans et des commerçants, et dire
+    celui de la pension unique des régimes alignés quand un autre que le régime général
+    la liquide.
   - >-
     Lire les décrets que le barème de la Cnav cite de 1950 à 1971, et la loi n° 48-1306
     du 23 août 1948 : le maximum restait-il de 40 % du plafond sans égard à l'âge jusqu'en
     1972, comme la loi n° 49-244 l'écrit pour 1949 ? Si oui, ne plus le majorer par
     l'ajournement avant 1972, en Python puis en JavaScript (première approximation).
   lectures:
+  - type: legifrance
+    reference: >-
+      salariés agricoles, lus dans l'index LEGI le 16 octobre 2026 : décret n° 50-1225,
+      article 59-1, § 2 (LEGIARTI000006774035, 1972-07-01 → 2005-04-22) : « Le montant
+      maximum que ne pourront dépasser les pensions servies au cours de la période du 1er
+      janvier 1972 au 31 décembre 1974 est fixé par arrêté du ministre de l'agriculture
+      » ; décret n° 51-727, article 2 (LEGIARTI000006773776, 1981-03-12 → 1983-05-08) : «
+      jusqu'à concurrence de 60 p. 100 du montant maximum de la pension du régime des
+      assurances sociales agricoles liquidée à soixante-cinq ans » ; décret n° 50-1225,
+      article 71 ter (LEGIARTI000006774075, 1982-01-01 → 1988-06-23, et
+      LEGIARTI000006774076, 1988-06-23 → 2005-04-22) : « 73 p. 100 du montant maximum de
+      la pension de vieillesse du régime des assurances sociales agricoles liquidée à
+      soixante-cinq ans » ; code rural, L. 742-3 (LEGIARTI000047453569, en vigueur depuis
+      le 1er septembre 2023) : sont applicables au régime des assurances sociales
+      agricoles les « titres III et IV, titre V à l'exception du 7° de l'article L. 351-3
+      et du chapitre VII » du livre III du code de la sécurité sociale. L'article 55 du
+      décret n° 50-1225 (1972 et 1982) ne nomme aucun maximum ; l'arrêté du 27 juin 1972
+      (JORFTEXT000000452192) n'a que sa notice dans l'index JORF
+    date: 2023-09-01
   - type: legifrance
     reference: >-
       décret n° 45-0179, article 72-1 (LEGIARTI000006760613, 1972-01-29 → 1985-12-21) ;
@@ -367,9 +428,14 @@ historique:
   2026-10-11 — la loi n° 49-244 et le décret n° 48-361 lus au fac-similé du Journal
   officiel, depuis le poste du propriétaire : les 40 % de 1949 sont lus, sans majoration
   pour l'ajournement, que le modèle applique (première approximation).
+- >-
+  2026-10-16 — action 131 : le maximum des salariés agricoles, nommé par l'article 59-1 du
+  décret n° 50-1225 de 1972 à 1974 et par les articles 2 du décret n° 51-727 et 71 ter
+  du décret n° 50-1225 ensuite, borne leur pension depuis 1972, supposé celui du régime
+  général.
 effet: >-
   L'assuré du régime général dont la pension calculée passe la moitié du plafond — un
   salaire annuel moyen au-dessus du plafond de l'année, quand la revalorisation des
   salaires portés au compte a couru plus vite que le plafond, et des carrières complètes
   — la reçoit ramenée au maximum, surcote en sus ; avant 1983, ajournement et taux acquis
-  compris.
+  compris. De même le salarié agricole depuis 1972.

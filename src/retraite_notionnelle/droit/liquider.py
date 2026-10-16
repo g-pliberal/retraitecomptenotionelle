@@ -3237,7 +3237,11 @@ def maximum_des_pensions(moteur, code: str, date_effet: str,
     if pourcentage is None:
         return None
     plafond = moteur.macro.plafond_securite_sociale(annee)
-    return pourcentage * plafond, Fiabilite.depuis_texte(regle["fiabilite"])
+    #: Un régime que la version borne sur la foi d'un autre texte que le
+    #: sien a sa fiabilité à lui : les salariés agricoles, dont le maximum
+    #: n'est lu que dans le renvoi qui le nomme.
+    fiabilite = (regle.get("fiabilite_par_regime") or {}).get(code, regle["fiabilite"])
+    return pourcentage * plafond, Fiabilite.depuis_texte(fiabilite)
 
 
 def taux_acquis_l_emporte(acquis: float, trimestres: int, taux: float, majores: int,
