@@ -22,7 +22,7 @@ import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import * as acquerir from "./acquerir.js";
 import * as categories from "./categories.js";
 import { dateDEffet, derniereAnnee, periodeDeLiquidation } from "./commun.js";
-import { plafondDeLAnnee, trimestresDeLaLigneEntre } from "./compter.js";
+import { trimestresDeLaLigneEntre } from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import { REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
 import * as cultes from "./cultes.js";
@@ -1228,8 +1228,9 @@ export function premiereRepartition(moteur, carriere, releve, code, total, duree
 
 /**
  * La durée d'un régime aligné que les répartitions comparent : ses trimestres
- * année par année, bornés aux trimestres civils, plus ceux des enfants ; pour
- * les artisans et commerçants, les seules années depuis 1973. Voir le Python.
+ * année par année, sous le plafond de l'année qui borne aussi la durée qui
+ * proratise (`Durees.plafond`), plus ceux des enfants ; pour les artisans et
+ * commerçants, les seules années depuis 1973. Voir le Python.
  */
 export function dureeDuRegimeAligne(carriere, durees, membres) {
   const sommes = new Map();
@@ -1246,7 +1247,7 @@ export function dureeDuRegimeAligne(carriere, durees, membres) {
   for (const [annee, somme] of sommes) {
     // Arrêtée au dernier jour du trimestre civil qui précède la date d'effet
     // (circulaire Cnav n° 2004/29, points 2121 et 2122).
-    total += Math.min(somme, carriere.plafondTrimestres(annee), plafondDeLAnnee(carriere, annee));
+    total += Math.min(somme, durees.plafond("assurance", annee));
   }
   for (const membre of membres) {
     total += durees.horsAnnee.assurance.get(membre) ?? 0;

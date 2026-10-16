@@ -402,9 +402,24 @@ export class Durees {
   }
 
   /**
+   * Les trimestres qu'un compte retient au plus d'une année : ceux de
+   * l'activité qui en couvre le plus, quatre pour l'année pleine d'une période
+   * assimilée (R. 351-12), et, l'année de la date d'effet, ceux qui précèdent
+   * le trimestre civil de l'effet, même sans ligne de carrière (R. 351-1 ;
+   * circulaire Cnav n° 2004/29, point 2121). Voir `Durees.plafond` du Python.
+   */
+  plafond(table, annee) {
+    let plafond = this.carriere.plafondTrimestres(annee);
+    if (table === "assurance") {
+      plafond = Math.max(plafond, this.plafondsAssimilees.get(annee) ?? 0);
+    }
+    return Math.min(plafond, plafondDeLAnnee(this.carriere, annee));
+  }
+
+  /**
    * Les trimestres d'un compte, pour un régime ou un groupe de régimes
-   * liquidés ensemble : sommés ANNÉE PAR ANNÉE, sans dépasser les trimestres
-   * civils de chaque année, plus ce qui ne tient à aucune. `annees` ne garde
+   * liquidés ensemble : sommés ANNÉE PAR ANNÉE, sans dépasser le plafond de
+   * chaque année (`plafond`), plus ce qui ne tient à aucune. `annees` ne garde
    * que les années qu'il accepte, et rien de ce qui ne tient à aucune.
    */
   cumulPlafonne(table, membres, annees = null) {
@@ -420,10 +435,8 @@ export class Durees {
         total += this.horsAnnee[table].get(membre) ?? 0;
       }
     }
-    const plafonds = table === "assurance" ? this.plafondsAssimilees : new Map();
     for (const [annee, somme] of sommes) {
-      total += Math.min(somme, Math.max(this.carriere.plafondTrimestres(annee),
-        plafonds.get(annee) ?? 0));
+      total += Math.min(somme, this.plafond(table, annee));
     }
     return total;
   }

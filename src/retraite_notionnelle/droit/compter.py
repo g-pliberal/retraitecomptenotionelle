@@ -455,11 +455,26 @@ class Durees:
         return 0 if self.etranger is None else self.etranger.trimestres(
             self.etranger.famille)
 
+    def plafond(self, table: str, annee: int) -> int:
+        """Les trimestres qu'un compte retient au plus d'une année : les
+        trimestres civils de l'activité qui en couvre le plus, quatre pour
+        l'année pleine d'une période assimilée même quand la carrière n'en
+        couvre qu'une partie (R. 351-12), et, l'année de la date d'effet, ceux
+        qui précèdent le trimestre civil de l'effet, même sans ligne de
+        carrière : le compte est « arrêté au dernier jour du trimestre civil
+        précédant la date prévue pour l'entrée en jouissance de la pension »
+        (R. 351-1), périodes assimilées comprises (circulaire Cnav n° 2004/29,
+        point 2121)."""
+        plafond = self.carriere.plafond_trimestres(annee)
+        if table == "assurance":
+            plafond = max(plafond, self.plafonds_assimilees.get(annee, 0))
+        return min(plafond, plafond_de_l_annee(self.carriere, annee))
+
     def cumul_plafonne(self, table: str, membres: tuple[str, ...],
                        annees: Callable[[int], bool] | None = None) -> int:
         """Les trimestres d'un compte, pour un régime ou un groupe de régimes
-        liquidés ensemble : sommés ANNÉE PAR ANNÉE, sans dépasser les
-        trimestres civils de chaque année, plus ce qui ne tient à aucune.
+        liquidés ensemble : sommés ANNÉE PAR ANNÉE, sans dépasser le plafond
+        de chaque année (:meth:`plafond`), plus ce qui ne tient à aucune.
         ``annees`` ne garde que les années qu'il accepte, et rien de ce qui ne
         tient à aucune : la durée accomplie en situation de handicap."""
         sommes: dict[int, int] = {}
@@ -467,9 +482,7 @@ class Durees:
             for annee, trimestres in self.par_annee[table].get(membre, {}).items():
                 if annees is None or annees(annee):
                     sommes[annee] = sommes.get(annee, 0) + trimestres
-        plafonds = self.plafonds_assimilees if table == "assurance" else {}
-        return (somme_ordonnee(min(somme, max(self.carriere.plafond_trimestres(annee),
-                                              plafonds.get(annee, 0)))
+        return (somme_ordonnee(min(somme, self.plafond(table, annee))
                     for annee, somme in sommes.items())
                 + (0 if annees is not None else
                    somme_ordonnee(self.hors_annee[table].get(membre, 0) for membre in membres)))

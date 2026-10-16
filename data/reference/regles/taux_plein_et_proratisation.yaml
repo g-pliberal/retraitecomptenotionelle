@@ -7,15 +7,44 @@ etat: conforme
 etape: liquider_chaque_regime
 effet: Toute pension du régime général et des régimes alignés.
 sources:
-  lu_le: 2026-09-17
+  lu_le: 2026-10-16
   prochaine_relecture: 2027-06-30
   lectures:
   - type: service_public
     reference: fiches F21552 et F36464
     date: 2026-09-01
+  - type: legifrance
+    reference: >-
+      code de la sécurité sociale, R. 351-1, rédaction du 21 décembre 1985
+      (LEGIARTI000006749339), toujours en vigueur : « Les droits à l'assurance vieillesse
+      sont déterminés en tenant compte : 1°) des cotisations versées au titre de la
+      législation sur les assurances sociales et arrêtées au dernier jour du trimestre
+      civil précédant la date prévue pour l'entrée en jouissance de la pension [...] ; 2°)
+      de l'âge atteint par l'intéressé à cette dernière date ; 3°) du nombre de trimestres
+      d'assurance valables pour le calcul de la pension ». Lu dans l'index LEGI du dépôt
+    date: 2026-10-16
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2004/29 du 30 juin 2004, point 2121 : la durée d'assurance « au
+      sens de l'article L.351-1 3ème alinéa » — celle qui proratise — « est arrêtée au
+      dernier jour du trimestre civil précédant la date d'effet de la pension », et
+      « comprend [...] les trimestres assimilés à des trimestres d'assurance » ;
+      circulaires n° 51/98 (point 1321) et 2002/71 (point 132) : l'arrêt du compte de
+      R. 351-1 « limite[...] la validation des périodes d'assurance au dernier jour du
+      trimestre civil précédant la date d'effet de la pension » ; n° 2004/8 (points 3231
+      et 3232) : de même au régime général, aux salariés agricoles, aux artisans, aux
+      commerçants et aux professions libérales, quand le régime des non-salariés agricoles
+      prend « en compte [...] les 4 trimestres de l'année de cessation d'activité ». Lues
+      par la recherche de la base de la Cnav
+    url: https://legislation.lassuranceretraite.fr/references-reglementaires?file_leaf_ref=CR_CN_2004029_30062004.aspx
+    date: 2026-10-16
 textes_a_rattacher:
 - reference: L. 351-1 CSS
 - reference: R. 351-6 CSS
+- id: LEGIARTI000006749339
+  reference: >-
+    code de la sécurité sociale, R. 351-1, rédaction du 21 décembre 1985 : le compte
+    arrêté au dernier jour du trimestre civil précédant l'entrée en jouissance
 exemples:
 - sp_f21552_taux_plein_170
 - sp_f21552_67_ans_158
@@ -43,3 +72,11 @@ code:
     Quoi qu'il arrive, la durée de proratisation retenue ne dépasse jamais la durée requise
     : les périodes anciennes, dont la durée maximale est plus courte que 150 trimestres,
     gardent la leur.
+
+
+    Le NUMÉRATEUR, la durée du régime, se somme année par année sous le plafond de
+    l'année (`compter.Durees.plafond`, `cumulPlafonne` en JavaScript) : l'année de la
+    date d'effet n'y compte que les trimestres civils qui précèdent celui de l'effet,
+    périodes assimilées comprises, même sans ligne de carrière cette année-là (R. 351-1 ;
+    circulaire Cnav n° 2004/29, point 2121). La durée que R. 173-4-3 compare est la même
+    (`liquider.duree_du_regime_aligne`).

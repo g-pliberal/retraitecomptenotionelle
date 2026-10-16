@@ -4856,22 +4856,14 @@ def test_les_regimes_alignes_hors_liquidation_unique_se_partagent_les_annees(sim
 
 
 
-def test_r_173_4_3_arrete_les_durees_au_trimestre_civil_qui_precede_l_effet(simulateur):
-    """Les durées que R. 173-4-3 compare sont « arrêtée[s] au dernier jour du
-    trimestre civil précédant la date d'effet » (circulaire Cnav n° 2004/29,
-    points 2121 et 2122). Né en 1952, salarié de 1972 à 2000, artisan de 2001
-    à 2015, en stage de formation de janvier à mai 2016, parti le 1er juin : le
-    stage valide deux trimestres en 2016, dont le seul premier précède le
-    trimestre civil de l'effet. Le régime général compare 117 trimestres, et
-    non 118, dans les deux moteurs."""
-    import json
-    import shutil
-    import subprocess
-
+def _stagiaire_de_2016() -> dict:
+    """Né en 1952, salarié de 1972 à 2000, artisan de 2001 à 2015, en stage de
+    formation de janvier à mai 2016, parti le 1er juin : le stage valide deux
+    trimestres en 2016, dont le seul premier précède le trimestre civil de
+    l'effet."""
     from retraite_notionnelle import chronologie
-    from retraite_notionnelle.droit import releve
 
-    construite = chronologie.completer(chronologie.avec_periodes_assimilees(
+    return chronologie.completer(chronologie.avec_periodes_assimilees(
         chronologie.du_releve(
             annee_naissance=1952, sexe="H", age_liquidation=64.35, releve=[
                 LigneRelevee(annee=annee, affiliation="salarie_prive_non_cadre"
@@ -4879,6 +4871,21 @@ def test_r_173_4_3_arrete_les_durees_au_trimestre_civil_qui_precede_l_effet(simu
                 for annee in range(1972, 2016)]),
         [{"motif": "stage_de_formation_professionnelle", "debut": "2016-01-01",
           "fin": "2016-12-31", "jours": 300}]))
+
+
+def test_r_173_4_3_arrete_les_durees_au_trimestre_civil_qui_precede_l_effet(simulateur):
+    """Les durées que R. 173-4-3 compare sont « arrêtée[s] au dernier jour du
+    trimestre civil précédant la date d'effet » (circulaire Cnav n° 2004/29,
+    points 2121 et 2122). Le stagiaire de 2016 (:func:`_stagiaire_de_2016`) :
+    le régime général compare 117 trimestres, et non 118, dans les deux
+    moteurs."""
+    import json
+    import shutil
+    import subprocess
+
+    from retraite_notionnelle.droit import releve
+
+    construite = _stagiaire_de_2016()
     carriere = Carriere.depuis_chronologie(construite, simulateur.macro)
     assert str(carriere.date_liquidation) == "juin 2016"
     durees = releve.construire(simulateur.scenario_actuel, carriere).durees
@@ -4904,6 +4911,73 @@ process.stdout.write(String(dureeDuRegimeAligne(carriere, durees, ["regime_gener
         encoding="utf-8", check=False)
     assert execution.returncode == 0, execution.stderr[-2000:]
     assert execution.stdout == "117"
+
+
+def test_la_duree_qui_proratise_s_arrete_au_trimestre_civil_qui_precede_l_effet(simulateur):
+    """La durée d'assurance du régime général, celle de L. 351-1 qui
+    proratise, est « arrêtée au dernier jour du trimestre civil précédant la
+    date d'effet de la pension », trimestres assimilés compris (R. 351-1 ;
+    circulaire Cnav n° 2004/29, point 2121) : le stagiaire de 2016
+    (:func:`_stagiaire_de_2016`), sans ligne de carrière en 2016, voit sa
+    pension proratisée sur 117/164, et non 118/164. Et la durée que
+    R. 173-4-3 compare est celle-là, année partielle comprise : née en 1995,
+    en stage de janvier à septembre 2015, salariée depuis octobre, l'assurée
+    compte quatre trimestres en 2015 (R. 351-12) dans l'une et l'autre, et
+    non un seul dans la seconde. Dans les deux moteurs."""
+    import json
+    import shutil
+    import subprocess
+
+    from retraite_notionnelle import chronologie
+    from retraite_notionnelle.droit import releve
+
+    partielle = chronologie.completer(chronologie.avec_periodes_assimilees(
+        chronologie.du_parcours(
+            annee_naissance=1995, sexe="F", age_liquidation=64.0, jour_naissance=15,
+            metiers=[Metier("salarie_prive_non_cadre", 20.75, 1.0)]),
+        [{"motif": "stage_de_formation_professionnelle", "debut": "2015-01-01",
+          "fin": "2015-09-30"}]))
+    construites = [_stagiaire_de_2016(), partielle]
+    carrieres = [Carriere.depuis_chronologie(c, simulateur.macro) for c in construites]
+    durees = [releve.construire(simulateur.scenario_actuel, c).durees for c in carrieres]
+    stagiaire, salariee = durees
+    assert stagiaire.trimestres_par_regime["regime_general"] == 117
+    assert stagiaire.plafond("assurance", 2016) == 1
+    pension = next(p for p in simulateur.scenario_actuel.calculer(carrieres[0]).pensions_par_regime
+                   if p.regime == "regime_general")
+    assert "× 117/164" in pension.detail
+    assert salariee.par_annee["assurance"]["regime_general"][2015] == 6
+    assert salariee.plafond("assurance", 2015) == 4
+    assert salariee.trimestres_par_regime["regime_general"] == 176
+    attendu = [[d.trimestres_par_regime["regime_general"],
+                liquider.duree_du_regime_aligne(c, d, ("regime_general",))]
+               for c, d in zip(carrieres, durees)]
+    assert attendu == [[117, 117], [176, 176]]
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { readFileSync } from "node:fs";
+import { Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+import { construire } from "./moteur/js/droit/releve.js";
+import { dureeDuRegimeAligne } from "./moteur/js/droit/liquider.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const obtenus = JSON.parse(process.argv[1]).map((construite) => {
+  const carriere = Carriere.depuisChronologie(construite, simulateur.macro);
+  const durees = construire(simulateur.scenarioActuel, carriere).durees;
+  return [durees.trimestresParRegime.get("regime_general"),
+    dureeDuRegimeAligne(carriere, durees, ["regime_general"])];
+});
+process.stdout.write(JSON.stringify(obtenus));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(construites)],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert json.loads(execution.stdout) == attendu
+
 
 def test_la_repartition_des_annees_suit_r_173_3_2():
     """« Arrondis à chaque étape à l'entier non nul le plus proche, la fraction

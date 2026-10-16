@@ -38,7 +38,7 @@ from ..donnees.chargement import Fiabilite
 from .. import revalorisation
 from ..donnees.primes import charger_primes_soumises
 from . import acquerir, categories, coordonner, cultes, invalidite, ouvrir, primes
-from .compter import plafond_de_l_annee, trimestres_de_la_ligne_entre
+from .compter import trimestres_de_la_ligne_entre
 from .commun import PensionRegime, date_d_effet, derniere_annee, periode_de_liquidation
 from .etranger import famille_du_regime
 from .ouvrir import TRIMESTRES_DECOTE_MILITAIRE
@@ -1839,13 +1839,15 @@ def premiere_repartition(moteur, carriere: Carriere, releve: Releve, code: str,
 def duree_du_regime_aligne(carriere: Carriere, durees,
                            membres: tuple[str, ...]) -> int:
     """La durée d'un régime aligné que les répartitions comparent : ses
-    trimestres année par année, bornés aux trimestres civils de l'année, plus
-    ceux des enfants ; pour les artisans et les commerçants, les seules années
-    alignées, depuis 1973 (circulaire Cnav n° 2004/29, point 2122). Elle est
-    « arrêtée au dernier jour du trimestre civil qui précède la date d'effet »
-    (points 2121 et 2122) : l'année de la date d'effet ne compte que ses
-    trimestres civils écoulés, même ceux qu'une période assimilée y valide
-    sans ligne de carrière (:func:`compter.plafond_de_l_annee`)."""
+    trimestres année par année, sous le plafond de l'année, plus ceux des
+    enfants ; pour les artisans et les commerçants, les seules années
+    alignées, depuis 1973 (circulaire Cnav n° 2004/29, point 2122). C'est la
+    durée d'assurance de L. 351-1, périodes assimilées comprises, « arrêtée
+    au dernier jour du trimestre civil qui précède la date d'effet » (points
+    2121 et 2122) : sous le même plafond que la durée qui proratise
+    (:meth:`compter.Durees.plafond`), l'année de la date d'effet ne compte que
+    ses trimestres civils écoulés, même ceux qu'une période assimilée y valide
+    sans ligne de carrière."""
     sommes: dict[int, int] = {}
     for membre in membres:
         for annee, n in durees.par_annee["assurance"].get(membre, {}).items():
@@ -1853,8 +1855,7 @@ def duree_du_regime_aligne(carriere: Carriere, durees,
                     and annee < coordonner.ALIGNEMENT_DES_ARTISANS_ET_COMMERCANTS):
                 continue
             sommes[annee] = sommes.get(annee, 0) + n
-    return (somme_ordonnee(min(somme, carriere.plafond_trimestres(annee),
-                               plafond_de_l_annee(carriere, annee))
+    return (somme_ordonnee(min(somme, durees.plafond("assurance", annee))
                 for annee, somme in sommes.items())
             + somme_ordonnee(durees.hors_annee["assurance"].get(membre, 0) for membre in membres))
 
