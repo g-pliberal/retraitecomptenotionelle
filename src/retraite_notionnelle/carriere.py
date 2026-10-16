@@ -1434,8 +1434,8 @@ class Carriere:
         """
         return self.trimestres_cumules(self.lignes)
 
-    def trimestres_par_annee(self, lignes: Iterable[AnneeCarriere]
-                             ) -> dict[int, int]:
+    def trimestres_par_annee(self, lignes: Iterable[AnneeCarriere],
+                             ecoules: bool = False) -> dict[int, int]:
         """Trimestres que ces lignes font entrer dans une durée, année par année.
 
         **Quatre au plus par année civile, quel que soit le nombre
@@ -1448,19 +1448,24 @@ class Carriere:
         du décret n° 2003-1306 l'écrit pour la durée d'assurance tous régimes
         que la CNRACL oppose (LEGIARTI000054590030). Une année d'une seule
         ligne n'est pas touchée : sa ligne ne dépasse déjà pas ce plafond.
+
+        ``ecoules`` lit :meth:`trimestres_ecoules` au lieu de
+        :meth:`trimestres_retenus` : sans l'année entière de l'exploitant.
         """
         sommes: dict[int, int] = {}
         for ligne in lignes:
-            retenus = self.trimestres_retenus(ligne)
+            retenus = (self.trimestres_ecoules(ligne) if ecoules
+                       else self.trimestres_retenus(ligne))
             if retenus > 0:
                 sommes[ligne.annee] = sommes.get(ligne.annee, 0) + retenus
         plafonds = self._plafonds_trimestres
         return {annee: min(somme, plafonds[annee])
                 for annee, somme in sommes.items()}
 
-    def trimestres_cumules(self, lignes: Iterable[AnneeCarriere]) -> int:
+    def trimestres_cumules(self, lignes: Iterable[AnneeCarriere],
+                           ecoules: bool = False) -> int:
         """Somme de :meth:`trimestres_par_annee` : une durée, tous régimes."""
-        return somme_ordonnee(self.trimestres_par_annee(lignes).values())
+        return somme_ordonnee(self.trimestres_par_annee(lignes, ecoules).values())
 
     @cached_property
     def _plafonds_trimestres(self) -> dict[int, int]:
@@ -1471,9 +1476,41 @@ class Carriere:
             part = self.part_retenue_ligne(ligne)
             plafonds[ligne.annee] = max(
                 plafonds.get(ligne.annee, 0),
-                trimestres_civils(round(part * 12)) if part > 0 else 0,
+                4 if self._annee_entiere_agricole(ligne)
+                else trimestres_civils(round(part * 12)) if part > 0 else 0,
             )
         return plafonds
+
+    @cached_property
+    def annee_de_cessation_agricole(self) -> int | None:
+        """L'année de la date d'effet quand le non-salarié agricole y cesse
+        son activité, ``None`` sinon : ses cotisations y sont dues « au titre
+        de l'année civile entière » (L. 731-10-1 du code rural), et ses
+        quatre trimestres comptent « même s'il s'agit de l'année d'arrêt du
+        compte » (circulaire Cnav n° 2004/8, point 3232 ; exposé « Durée
+        d'assurance pour le taux plein » de la Cnav). Il faut être au régime
+        au 1er janvier, où se lit la situation de l'exploitant : une ligne
+        agricole cotisée l'année d'avant ; et n'avoir cette année-là aucune
+        autre activité cotisée, car qui quitte l'agriculture pour un autre
+        métier ne cotise qu'au prorata des mois écoulés (R. 731-83)."""
+        if self.age_liquidation is None:
+            return None
+        annee = self.annee_liquidation
+        cotisees = [ligne for ligne in self.lignes_de(annee)
+                    if ligne.cotise and self.part_retenue_ligne(ligne) > 0]
+        if not cotisees or any(ligne.affiliation not in AFFILIATIONS_AGRICOLES
+                               for ligne in cotisees):
+            return None
+        if not any(ligne.cotise and ligne.affiliation in AFFILIATIONS_AGRICOLES
+                   for ligne in self.lignes_de(annee - 1)):
+            return None
+        return annee
+
+    def _annee_entiere_agricole(self, ligne: AnneeCarriere) -> bool:
+        """La ligne agricole de l'année de cessation, qui en vaut quatre
+        trimestres (:attr:`annee_de_cessation_agricole`)."""
+        return (ligne.annee == self.annee_de_cessation_agricole
+                and ligne.cotise and ligne.affiliation in AFFILIATIONS_AGRICOLES)
 
     def plafond_trimestres(self, annee: int) -> int:
         """Trimestres civils que cette année peut valider, toutes activités
@@ -1544,8 +1581,21 @@ class Carriere:
         Plafonnés par les trimestres CIVILS écoulés avant le point de départ :
         l'année de la liquidation en vaut quatre pour qui part en janvier de
         l'année suivante, un seul pour qui part en avril, aucun pour qui part
-        en février.
+        en février. Sauf l'exploitant agricole, qui compte les quatre de
+        l'année où il cesse (:attr:`annee_de_cessation_agricole`).
         """
+        if self._annee_entiere_agricole(ligne):
+            return 4
+        return self.trimestres_ecoules(ligne)
+
+    def trimestres_ecoules(self, ligne: AnneeCarriere) -> int:
+        """:meth:`trimestres_retenus` sans l'année de cessation de
+        l'exploitant : ceux des mois que la ligne couvre avant le point de
+        départ. Ce qui se compte entre deux dates — la surcote, l'âge où la
+        durée est atteinte — les lit, car l'année entière de l'exploitant
+        compte pour le taux « mais ne remet[...] pas en cause les bornes de
+        la période de référence » de la surcote (circulaire Cnav n° 2004/37,
+        point 131)."""
         part = self.part_retenue_ligne(ligne)
         if part <= 0:
             return 0

@@ -3201,5 +3201,5 @@ function trimestresCotisesApres(carriere, age, anneeLiquidation) {
   return carriere.trimestresCumules(carriere.lignes.filter(
     (ligne) => ligne.cotise && ligne.annee <= anneeLiquidation
       && ligne.annee - carriere.annee_naissance >= age,
-  ));
+  ), true);
 }

@@ -744,6 +744,7 @@ export class Carriere {
       this._parAnnee.get(ligne.annee).push(ligne);
     }
     this._plafonds = null;
+    this._cessationAgricole = undefined;
     this.chronologie = chronologie ?? preparer(chrono.duResume(
       annee_naissance, sexe, mois_naissance, age_liquidation, nombre_enfants,
       naissances_enfants, jour_naissance));
@@ -1609,10 +1610,10 @@ export class Carriere {
    * (R. 351-5, et le 2° de R. 173-4-4-1 pour les régimes alignés). Une année
    * d'une seule ligne n'est pas touchée.
    */
-  trimestresParAnnee(lignes) {
+  trimestresParAnnee(lignes, ecoules = false) {
     const sommes = new Map();
     for (const ligne of lignes) {
-      const retenus = this.trimestresRetenus(ligne);
+      const retenus = ecoules ? this.trimestresEcoules(ligne) : this.trimestresRetenus(ligne);
       if (retenus > 0) {
         sommes.set(ligne.annee, (sommes.get(ligne.annee) ?? 0) + retenus);
       }
@@ -1625,9 +1626,9 @@ export class Carriere {
   }
 
   /** Somme de {@link trimestresParAnnee} : une durée, tous régimes. */
-  trimestresCumules(lignes) {
+  trimestresCumules(lignes, ecoules = false) {
     let total = 0;
-    for (const trimestres of this.trimestresParAnnee(lignes).values()) {
+    for (const trimestres of this.trimestresParAnnee(lignes, ecoules).values()) {
       total += trimestres;
     }
     return total;
@@ -1645,11 +1646,44 @@ export class Carriere {
         const part = this.partRetenueLigne(ligne);
         this._plafonds.set(ligne.annee, Math.max(
           this._plafonds.get(ligne.annee) ?? 0,
-          part > 0 ? trimestresCivils(Math.round(part * 12)) : 0,
+          this._anneeEntiereAgricole(ligne) ? 4
+            : part > 0 ? trimestresCivils(Math.round(part * 12)) : 0,
         ));
       }
     }
     return this._plafonds.get(annee) ?? 4;
+  }
+
+  /**
+   * L'année de la date d'effet quand le non-salarié agricole y cesse son
+   * activité, null sinon : ses cotisations y sont dues « au titre de l'année
+   * civile entière » (L. 731-10-1 du code rural), et ses quatre trimestres
+   * comptent « même s'il s'agit de l'année d'arrêt du compte » (circulaire
+   * Cnav n° 2004/8, point 3232). Au régime au 1er janvier (une ligne agricole
+   * cotisée l'année d'avant), sans autre activité cotisée cette année-là
+   * (R. 731-83).
+   */
+  get anneeDeCessationAgricole() {
+    if (this._cessationAgricole === undefined) {
+      this._cessationAgricole = null;
+      if (this.age_liquidation !== null && this.age_liquidation !== undefined) {
+        const annee = this.anneeLiquidation;
+        const cotisees = this.lignesDe(annee)
+          .filter((ligne) => ligne.cotise && this.partRetenueLigne(ligne) > 0);
+        const agricole = (ligne) => Object.hasOwn(AFFILIATIONS_AGRICOLES, ligne.affiliation);
+        if (cotisees.length > 0 && cotisees.every(agricole)
+            && this.lignesDe(annee - 1).some((ligne) => ligne.cotise && agricole(ligne))) {
+          this._cessationAgricole = annee;
+        }
+      }
+    }
+    return this._cessationAgricole;
+  }
+
+  /** La ligne agricole de l'année de cessation, qui en vaut quatre trimestres. */
+  _anneeEntiereAgricole(ligne) {
+    return ligne.annee === this.anneeDeCessationAgricole && ligne.cotise
+      && Object.hasOwn(AFFILIATIONS_AGRICOLES, ligne.affiliation);
   }
 
   /** Toutes les lignes d'une année, l'activité principale en tête. */
@@ -1713,9 +1747,24 @@ export class Carriere {
 
   /**
    * Trimestres qu'une ligne fait entrer dans la durée d'assurance, plafonnés
-   * par les trimestres CIVILS écoulés avant le point de départ.
+   * par les trimestres CIVILS écoulés avant le point de départ, sauf
+   * l'exploitant agricole, qui compte les quatre de l'année où il cesse
+   * ({@link anneeDeCessationAgricole}).
    */
   trimestresRetenus(ligne) {
+    if (this._anneeEntiereAgricole(ligne)) {
+      return 4;
+    }
+    return this.trimestresEcoules(ligne);
+  }
+
+  /**
+   * {@link trimestresRetenus} sans l'année de cessation de l'exploitant : ceux
+   * des mois couverts avant le point de départ, que lit ce qui se compte
+   * entre deux dates, la surcote d'abord (circulaire Cnav n° 2004/37,
+   * point 131).
+   */
+  trimestresEcoules(ligne) {
     const part = this.partRetenueLigne(ligne);
     if (part <= 0) {
       return 0;

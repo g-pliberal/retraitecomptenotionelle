@@ -4045,14 +4045,18 @@ def _trimestres_cotises_apres(carriere: Carriere, age: float,
     """Trimestres cotisés à partir de l'année où l'assuré atteint ``age``.
 
     Seuls ceux-là ouvrent droit à la surcote : c'est une récompense du travail
-    prolongé, pas de l'entrée précoce dans la vie active.
+    prolongé, pas de l'entrée précoce dans la vie active. Ceux des mois
+    écoulés avant l'effet : l'année entière de l'exploitant agricole ne
+    déplace pas les bornes de la surcote (circulaire Cnav n° 2004/37,
+    point 131).
     """
     return carriere.trimestres_cumules(
-        ligne
-        for ligne in carriere.lignes
-        if ligne.cotise
-        and ligne.annee <= annee_liquidation
-        and ligne.annee - carriere.annee_naissance >= age
+        (ligne
+         for ligne in carriere.lignes
+         if ligne.cotise
+         and ligne.annee <= annee_liquidation
+         and ligne.annee - carriere.annee_naissance >= age),
+        ecoules=True,
     )
 
 

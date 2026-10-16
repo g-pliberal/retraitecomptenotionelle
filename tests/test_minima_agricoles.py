@@ -268,17 +268,20 @@ def test_les_points_de_1997_ne_sont_servis_qu_au_tiers(simulateur):
 
 
 def test_les_points_se_minorent_sous_vingt_deux_ans_et_demi_de_chef(simulateur):
-    """Vingt ans de chef en 1999, après vingt de salarié : il en manque deux
-    et demi, 15 + 15 + la moitié de 20 %, quarante pour cent de moins."""
+    """Vingt et un ans de chef en 1999, après vingt de salarié — vingt, et
+    l'année du départ, que le chef compte entière (L. 731-10-1) — : il en
+    manque un et demi, 15 + la moitié de 15 %, vingt-deux et demi pour cent
+    de moins."""
     metiers = [Metier("salarie_prive_non_cadre", 20.0, niveau_salaire=0.3),
                Metier("exploitant_agricole", 40.0, niveau_salaire=0.3)]
-    majoration, _ = _majoration(simulateur, _chef(simulateur, 1939, 60, metiers=metiers))
+    majoration, _ = _majoration(simulateur, _chef(
+        simulateur, 1939, 60, metiers=metiers, mois_naissance=1, jour_naissance=15))
     assert majoration is not None
     points = float(majoration.detail.split(" points")[0].replace(",", ""))
     minimum, moyenne = (float(x) for x in
                         majoration.detail.split("(")[1].split(")")[0].split(" - "))
-    assert majoration.detail.endswith("× 20 ans de chef")
-    assert points == pytest.approx((minimum - moyenne) * 20 * 0.6, abs=0.02)
+    assert majoration.detail.endswith("× 21 ans de chef")
+    assert points == pytest.approx((minimum - moyenne) * 21 * 0.775, abs=0.02)
 
 
 def test_ni_plan_avant_1997_ni_sans_le_taux_plein(simulateur):
@@ -325,17 +328,19 @@ def test_les_plans_se_servent_aux_pensions_deja_liquidees(simulateur):
 
 
 def test_la_minoration_tombe_en_2001(simulateur):
-    """Vingt ans de chef, partis en 1999 : les points minorés de quarante pour
-    cent à la liquidation ne le sont plus depuis 2001, « le IV de l'article 1er
+    """Vingt et un ans de chef, partis en 1999 (l'année du départ comptée
+    entière, L. 731-10-1) : les points minorés à la liquidation ne le sont
+    plus depuis 2001, « le IV de l'article 1er
     est supprimé » (décret n° 2001-170, article 3)."""
     metiers = [Metier("salarie_prive_non_cadre", 20.0, niveau_salaire=0.3),
                Metier("exploitant_agricole", 40.0, niveau_salaire=0.3)]
-    carriere = _chef(simulateur, 1939, 60, metiers=metiers)
+    carriere = _chef(simulateur, 1939, 60, metiers=metiers, mois_naissance=1,
+                     jour_naissance=15)
     resultat, avantages, _ = _resultat(simulateur, carriere)
     detail = avantages["majoration_retraite_proportionnelle"].detail
     moyenne = float(detail.split("(")[1].split(")")[0].split(" - ")[1])
     revision = faire_vivre(simulateur, carriere, resultat, 2001).exploitant
-    assert revision.points_servis == pytest.approx((29.23 - moyenne) * 20, abs=0.02)
+    assert revision.points_servis == pytest.approx((29.23 - moyenne) * 21, abs=0.02)
 
 
 def test_la_pmr_de_2009_s_ouvre_aux_pensions_prises_avant(simulateur):
@@ -419,14 +424,16 @@ def test_la_pmr_unique_garde_la_duree_minimale_du_depart(simulateur):
     assert faire_vivre(simulateur, carriere, resultat, 2022).exploitant is None
 
 def test_le_chef_de_moins_de_dix_sept_ans_et_demi_a_le_minimum_du_couple(simulateur):
-    """Depuis 2002, douze ans de chef après trente de conjoint collaborateur :
+    """Depuis 2002, treize ans de chef — douze, et l'année du départ, comptée
+    entière (L. 731-10-1) — après trente de conjoint collaborateur :
     C = (MV2 - AVTS) / (37,5 × VP), MV2 étant l'écart entre le minimum d'un
     couple et celui d'une personne seule (D. 732-146)."""
     metiers = [Metier("collaborateur_agricole", 20.0, niveau_salaire=0.3),
                Metier("exploitant_agricole", 50.0, niveau_salaire=0.3)]
-    carriere = _chef(simulateur, 1943, 62, metiers=metiers)
+    carriere = _chef(simulateur, 1943, 62, metiers=metiers, mois_naissance=1,
+                     jour_naissance=15)
     majoration, _ = _majoration(simulateur, carriere)
-    assert majoration is not None and "× 12 ans de chef + " in majoration.detail
+    assert majoration is not None and "× 13 ans de chef + " in majoration.detail
     etages = simulateur.scenario_actuel.minimum_vieillesse.deux_etages(2005)
     seule = etages.avts + etages.supplementaire
     mv2 = 2 * etages.avts + etages.supplementaire_menage - seule
@@ -470,11 +477,13 @@ def test_les_annees_de_conjoint_recoivent_b_moins_seize_points(simulateur):
                                          rel=1e-12)
     melee = _chef(simulateur, 1943, 62, metiers=[
         Metier("collaborateur_agricole", 20.0, niveau_salaire=0.3),
-        Metier("exploitant_agricole", 50.0, niveau_salaire=0.3)])
+        Metier("exploitant_agricole", 50.0, niveau_salaire=0.3)],
+        mois_naissance=1, jour_naissance=15)
     du_chef, plans_du_chef = _plans(simulateur, melee)
     assert plans_du_chef.minimum == pytest.approx(plans.conjoint_minimum, rel=1e-12)
-    # Douze ans de chef d'abord, puis trente d'avant 1999 moins six.
-    assert du_chef.eligible.chef == 48 and du_chef.eligible.conjoint_avant_1999 == 120
+    # Treize ans de chef d'abord, l'année du départ comptée entière
+    # (L. 731-10-1), puis trente d'avant 1999 moins six.
+    assert du_chef.eligible.chef == 52 and du_chef.eligible.conjoint_avant_1999 == 120
     assert plans_du_chef.conjoint_annees == 30 - (_annee_des_conjoints(melee) - 1999)
     majoration, _ = _majoration(simulateur, conjointe)
     assert majoration.detail.endswith(f"- 16) × {attendues:g} ans de conjoint")

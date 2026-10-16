@@ -710,7 +710,7 @@ export function dateDEffet(carriere) {
  * Voir `plafond_de_l_annee` du Python.
  */
 export function plafondDeLAnnee(carriere, annee) {
-  if (annee < carriere.anneeLiquidation) {
+  if (annee < carriere.anneeLiquidation || annee === carriere.anneeDeCessationAgricole) {
     return 4;
   }
   const mois = carriere.age_liquidation !== null ? carriere.dateLiquidation.mois : 1;
@@ -1522,7 +1522,7 @@ export function choisir(candidats, dernieres) {
  * qui en fait la somme.
  */
 export function trimestresDeLaLigneEntre(carriere, ligne, debut, fin) {
-  const retenus = carriere.trimestresRetenus(ligne);
+  const retenus = carriere.trimestresEcoules(ligne);
   const moisLigne = Math.round(carriere.partRetenue(ligne.annee) * 12);
   if (retenus <= 0 || moisLigne <= 0) {
     return 0.0;

@@ -744,8 +744,9 @@ def date_d_effet(carriere: Carriere) -> str:
 def plafond_de_l_annee(carriere: Carriere, annee: int) -> int:
     """Les trimestres civils d'une année que la durée d'assurance peut
     compter : quatre, et ceux qui précèdent la date d'effet l'année où la
-    pension prend effet."""
-    if annee < carriere.annee_liquidation:
+    pension prend effet, sauf l'année où l'exploitant agricole cesse, qui en
+    compte quatre (:attr:`~retraite_notionnelle.carriere.Carriere.annee_de_cessation_agricole`)."""
+    if annee < carriere.annee_liquidation or annee == carriere.annee_de_cessation_agricole:
         return 4
     mois = carriere.date_liquidation.mois if carriere.age_liquidation is not None else 1
     return trimestres_civils(mois - 1)
@@ -1595,9 +1596,10 @@ def trimestres_de_la_ligne_entre(carriere: Carriere, ligne, debut: DateMois,
     Les trimestres de la ligne sont répartis sur ses mois — les premiers de
     l'année pour celle du départ, les derniers pour celle de l'entrée —, comme
     le fait :func:`~retraite_notionnelle.scenarios.actuel._trimestres_entre_dates`,
-    qui en fait la somme.
+    qui en fait la somme. Ceux que les mois de la ligne couvrent
+    (:meth:`~retraite_notionnelle.carriere.Carriere.trimestres_ecoules`).
     """
-    retenus = carriere.trimestres_retenus(ligne)
+    retenus = carriere.trimestres_ecoules(ligne)
     mois_ligne = round(carriere.part_retenue(ligne.annee) * 12)
     if retenus <= 0 or mois_ligne <= 0:
         return 0.0

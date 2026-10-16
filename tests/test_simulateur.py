@@ -4786,9 +4786,12 @@ def test_la_reforme_agricole_rend_l_exemple_de_la_msa(simulateur):
     assert moyenne == 31 and moyenne * 22 == 682
 
     # La même carrière dans le moteur : ses propres points, mais les mêmes
-    # années retenues.
+    # années retenues. Partie le 1er janvier 2027, après l'année 2026 : partie
+    # en février, elle compterait les quatre trimestres de 2027, l'année où
+    # elle cesse (L. 731-10-1), et une douzième année depuis 2016.
     carriere = simulateur.carriere_parcours(
-        annee_naissance=1963, sexe="H", age_liquidation=64,
+        annee_naissance=1963, sexe="H", age_liquidation=63 + 11 / 12,
+        mois_naissance=1, jour_naissance=15,
         metiers=[Metier("salarie_agricole", 21), Metier("exploitant_agricole", 31)],
     )
     assert carriere.annee_liquidation == 2027
@@ -4968,6 +4971,81 @@ const obtenus = JSON.parse(process.argv[1]).map((construite) => {
   const durees = construire(simulateur.scenarioActuel, carriere).durees;
   return [durees.trimestresParRegime.get("regime_general"),
     dureeDuRegimeAligne(carriere, durees, ["regime_general"])];
+});
+process.stdout.write(JSON.stringify(obtenus));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(construites)],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert json.loads(execution.stdout) == attendu
+
+
+def _exploitant_parti_en_aout_2024(derniere: str = "exploitant_agricole",
+                                    depuis: int = 1990) -> dict:
+    """Né en 1962, salarié de 1985 à ``depuis``, exploitant agricole ensuite,
+    jusqu'à son départ du 1er août 2024 ; ``derniere`` est l'activité de 2024."""
+    from retraite_notionnelle import chronologie
+
+    def affiliation(annee: int) -> str:
+        if annee == 2024:
+            return derniere
+        return "salarie_prive_non_cadre" if annee < depuis else "exploitant_agricole"
+
+    return chronologie.completer(chronologie.du_releve(
+        annee_naissance=1962, sexe="H", age_liquidation=62.5, releve=[
+            LigneRelevee(annee=annee, affiliation=affiliation(annee), revenu=20000.0)
+            for annee in range(1985, 2025)]))
+
+
+def test_l_exploitant_agricole_compte_les_quatre_trimestres_de_l_annee_ou_il_cesse(simulateur):
+    """Le chef d'exploitation qui cesse en cours d'année doit les cotisations
+    « au titre de l'année civile entière » (L. 731-10-1 du code rural), et le
+    régime en compte « les 4 trimestres de l'année de cessation d'activité
+    même s'il s'agit de l'année d'arrêt du compte » (circulaire Cnav
+    n° 2004/8, point 3232 ; exposé « Durée d'assurance pour le taux plein »
+    de la Cnav). Parti le 1er août 2024 après vingt-quatre ans d'exploitation,
+    l'exploitant compte quatre trimestres en 2024, et non deux, dans la durée
+    de son régime (140) comme dans la durée tous régimes du taux (160). Ni le
+    salarié qui part la même année, ni l'exploitant installé l'année de son
+    départ (L. 731-10-1 lit sa situation au 1er janvier), ni celui qui quitte
+    l'agriculture pour un autre métier (R. 731-83). Dans les deux moteurs."""
+    import json
+    import shutil
+    import subprocess
+
+    from retraite_notionnelle.droit import releve
+
+    construites = [_exploitant_parti_en_aout_2024(),
+                   _exploitant_parti_en_aout_2024("salarie_prive_non_cadre"),
+                   _exploitant_parti_en_aout_2024(depuis=2024)]
+    carrieres = [Carriere.depuis_chronologie(c, simulateur.macro) for c in construites]
+    assert str(carrieres[0].date_liquidation) == "août 2024"
+    assert [c.annee_de_cessation_agricole for c in carrieres] == [2024, None, None]
+    durees = [releve.construire(simulateur.scenario_actuel, c).durees for c in carrieres]
+    assert durees[0].plafond("assurance", 2024) == 4
+    attendu = [[d.trimestres_par_regime.get("msa_non_salaries", 0),
+                d.trimestres_par_regime.get("regime_general", 0), d.trimestres]
+               for d in durees]
+    assert attendu == [[140, 20, 160], [136, 22, 158], [2, 156, 158]]
+    pension = next(p for p in simulateur.scenario_actuel.calculer(carrieres[0]).pensions_par_regime
+                   if p.regime == "msa_non_salaries")
+    assert "(140/169)" in pension.detail
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { readFileSync } from "node:fs";
+import { Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+import { construire } from "./moteur/js/droit/releve.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const obtenus = JSON.parse(process.argv[1]).map((construite) => {
+  const carriere = Carriere.depuisChronologie(construite, simulateur.macro);
+  const durees = construire(simulateur.scenarioActuel, carriere).durees;
+  return [durees.trimestresParRegime.get("msa_non_salaries") ?? 0,
+    durees.trimestresParRegime.get("regime_general") ?? 0, durees.trimestres];
 });
 process.stdout.write(JSON.stringify(obtenus));
 """

@@ -1,0 +1,33 @@
+date: "2026-10-16"
+session: >-
+  l'action 131 : l'année de cessation de l'exploitant agricole, comptée pour
+  ses quatre trimestres
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI du dépôt (récupéré, mis à jour
+  au 15 octobre 2026) : L. 731-10-1, R. 731-83, L. 732-20, R. 732-48,
+  D. 732-48-1, D. 732-48 et R. 732-49 du code rural ; l'index JORF : le décret
+  n° 2025-1409, article 1er (R. 732-44 à R. 732-48, abrogations) ; la base
+  législative de la Cnav, par sa recherche (/api/v1/search/custom, phrase
+  « trimestres de l'année de cessation ») : l'exposé « Durée d'assurance pour
+  le taux plein », l'exposé « Minimum avant 2012 », les circulaires
+  n° 2004/8 (point 3232), 2004/20 (point 3214) et 2004/37 (point 131) ; la
+  question écrite n° 10883 de la XVIIe législature et sa réponse (JO du
+  3 février 2026, p. 928), sur le site de l'Assemblée nationale.
+trouve: >-
+  L. 731-10-1 (LEGIARTI000019950453, depuis le 19 décembre 2008) tient le chef
+  qui cesse en cours d'année au paiement des cotisations « au titre de l'année
+  civile entière », sa situation lue au 1er janvier ; prorata au décès, et
+  pour qui prend une autre activité (R. 731-83). R. 732-48 et D. 732-48-1 font
+  valoir quatre trimestres à l'année dont les cotisations sont acquittées.
+  La Cnav retient aujourd'hui, pour le taux, « les 4 trimestres de l'année de
+  cessation d'activité validés par ce régime », même l'année d'arrêt du compte,
+  sans déplacer les bornes de la surcote (circulaire n° 2004/37, point 131) ;
+  le ministre maintient la règle en février 2026. Portée dans les deux moteurs
+  (Carriere.annee_de_cessation_agricole, trimestres_ecoules pour ce qui se
+  compte entre deux dates) ; la fiche taux_plein_et_proratisation cite ces
+  lectures et rattache D. 732-48-1 : le cliquet des textes passe à 9 721.
+reste: >-
+  Les cotisations et les points de l'année de cessation, que L. 731-10-1 fait
+  dus pour l'année entière, restent ceux des mois de la ligne ; une cessation
+  avant l'année du départ n'est pas comptée pleine ; l'année d'installation,
+  que la réponse ministérielle dit exonérée, n'est pas lue au texte.
