@@ -63,6 +63,7 @@ objets:
       enfants: {porte: "les trimestres pour enfants que le régime porte, que les durées comptent depuis 2026", type: entier, obligatoire: true}
       reference: {porte: "la durée de référence DR, celle de la retraite forfaitaire, 150 trimestres au moins", type: entier, obligatoire: true}
       collaborateur_regularise: {porte: "la part de cette durée accomplie comme collaborateur de 1999 à 2008, présumée régularisée, que la PMR de 2009 à 2021 sert au montant du chef (D. 732-110, II, 3°), en trimestres", type: entier, obligatoire: true}
+      conjoint_avant_1999: {porte: "la part de cette durée accomplie comme collaborateur avant 1999, conjoint participant aux travaux, que les plans de 1998 à 2008 portent à un minimum de points (D. 732-123, D. 732-145), en trimestres", type: entier, obligatoire: true}
 
   garanti:
     champs:

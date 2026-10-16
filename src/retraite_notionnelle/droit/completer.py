@@ -44,6 +44,7 @@ from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
+from ..carriere import AFFILIATIONS_AGRICOLES
 from ..donnees.chargement import Fiabilite
 from . import acquerir
 from . import etranger as _etranger
@@ -514,10 +515,17 @@ class MajorationProportionnelle:
     moyenne: float
     #: Les années retenues, DCE, trente-sept et demie au plus.
     duree: float
-    #: Les points ajoutés, minorés et réduits à la part servie, et leur montant.
+    #: Les points ajoutés, minorés et réduits à la part servie, ceux des
+    #: années de conjoint compris, et leur montant.
     points: float
     complement: float
     fiabilite: Fiabilite
+    #: Ceux des années de conjoint et d'aide familial : le nombre minimal
+    #: annuel B (ou C), les années retenues, les points qu'elles ajoutent,
+    #: minorés (:func:`_points_des_conjoints`).
+    conjoint_minimum: float = 0.0
+    conjoint_annees: float = 0.0
+    conjoint_points: float = 0.0
 
 
 #: La fiche des plans de revalorisation de 1997 à 2008, que :class:`FichesDatees
@@ -536,6 +544,93 @@ ANNEES_DU_MINIMUM_AU_PLUS = 37.5
 ANNEES_SANS_MINORATION = 22.5
 #: Le nombre de points au-dessous duquel aucune année ne compte dans la moyenne.
 PLANCHER_DES_POINTS_D_UNE_ANNEE = 16.0
+#: Les points qu'une année de collaborateur ou d'aide familial porte déjà,
+#: cotisés ou gratuits, que le différentiel des plans retranche du minimum B
+#: (D. 732-123, D. 732-124, D. 732-145).
+POINTS_D_UNE_ANNEE_DE_CONJOINT = 16.0
+#: La première pension que les plans des conjoints servent : celles de 1997 ne
+#: le sont qu'à qui a 280 points de chef (D. 732-118), ce que le modèle ne sert pas.
+CONJOINTS_DEPUIS = "1998-01-01"
+#: Les pensions prises depuis relèvent de L. 732-54-8 (D. 732-141 à D. 732-146) ;
+#: celles d'avant, de L. 732-54-2 (D. 732-118 à D. 732-131).
+PLANS_DE_2002 = "2002-01-01"
+
+
+def _annee_d_effet_des_conjoints(date_effet: str) -> int:
+    """« Les pensions de retraite dont la date d'effet intervient le 1er
+    janvier d'une année sont considérées, pour l'application des
+    revalorisations afférentes aux périodes en tant que conjoint, comme ayant
+    pris effet au 31 décembre de l'année antérieure » (D. 732-120, D. 732-142)."""
+    annee = int(date_effet[:4])
+    return annee - 1 if date_effet[5:] == "01-01" else annee
+
+
+def _points_des_conjoints(regle: dict, carriere: Carriere, eligible, date_effet: str,
+                          minimum: float) -> tuple[float, float]:
+    """Les années de conjoint et d'aide familial que les plans revalorisent,
+    et les points qu'elles ajoutent, au minimum annuel ``minimum`` (B, ou C
+    sous dix-sept ans et demi de chef, que la même formule donne) ; (0, 0)
+    quand rien.
+
+    Chaque année de conjoint collaborateur depuis 1999, et de conjoint
+    participant aux travaux avant, reçoit B diminué de seize points : la
+    première porte seize points cotisés, la seconde, que la loi ne dote
+    d'aucun et à qui le plan sert B entier, en porte seize dans le modèle
+    (plancher de R. 732-73). Les années d'avant 1999 se minorent d'une année
+    par année d'écart entre l'année d'effet et 1999, dans la limite de
+    trente-sept et demie moins l'écart avec 1998 ; toutes, chef compris, en
+    priorité, trente-sept et demie au plus (D. 732-119 à D. 732-123,
+    D. 732-142, D. 732-145, D. 732-146). Les pensions prises de 1998 à 2001
+    demandent trente-deux ans et demi d'activité agricole, vingt-sept et demi
+    à qui a quinze ans de conjoint et aucune autre pension, vingt-deux et demi
+    depuis 2007, et se minorent sous trente-sept et demie (D. 732-118,
+    D. 732-131) ; celles prises depuis 2002, le taux plein et dix-sept ans et
+    demi (D. 732-141)."""
+    conjoints = regle.get("conjoints")
+    if not conjoints or date_effet < CONJOINTS_DEPUIS:
+        return 0.0, 0.0
+    chef, agricole = eligible.chef / 4.0, eligible.duree / 4.0
+    avant = eligible.conjoint_avant_1999 / 4.0
+    depuis = eligible.collaborateur_regularise / 4.0
+    if avant + depuis <= 0.0:
+        return 0.0, 0.0
+    minoration = 0.0
+    if date_effet < PLANS_DE_2002:
+        anciens = conjoints["pensions_prises_avant_2002"]
+        requise = anciens["duree_minimale"]
+        plafonnee = False
+        if (anciens["duree_minimale_des_conjoints"] is not None
+                and avant + depuis >= anciens["annees_de_conjoint"]
+                and all(ligne.affiliation in AFFILIATIONS_AGRICOLES
+                        for ligne in carriere.lignes)):
+            requise = min(requise, anciens["duree_minimale_des_conjoints"])
+            plafonnee = agricole < anciens["duree_minimale"]
+        if agricole < requise:
+            return 0.0, 0.0
+        manque = max(0.0, ANNEES_DU_MINIMUM_AU_PLUS - agricole)
+        if anciens["minorations"]:
+            coefficients = anciens["minorations"]
+            if plafonnee:
+                # « Il n'est pas appliqué de coefficient supplémentaire au titre
+                # des années manquantes situées au-delà de la cinquième. »
+                coefficients = coefficients[:anciens["minorations_des_conjoints_au_plus"]]
+            minoration = somme_ordonnee(coefficient * min(1.0, manque - rang)
+                                        for rang, coefficient in enumerate(coefficients)
+                                        if manque > rang)
+        elif anciens["minoration_par_annee"]:
+            minoration = anciens["minoration_par_annee"] * manque
+    elif not eligible.taux_plein or agricole < ANNEES_DE_CHEF_DU_MINIMUM:
+        return 0.0, 0.0
+    an = _annee_d_effet_des_conjoints(date_effet)
+    restant = max(0.0, ANNEES_DU_MINIMUM_AU_PLUS - min(chef, ANNEES_DU_MINIMUM_AU_PLUS))
+    retenues_depuis = min(depuis, restant)
+    restant -= retenues_depuis
+    retenues_avant = max(0.0, min(avant - max(0, an - liquider.ANNEE_DU_CONJOINT_COLLABORATEUR),
+                                  ANNEES_DU_MINIMUM_AU_PLUS - max(0, an - 1998), restant))
+    annees = retenues_depuis + retenues_avant
+    points = (max(0.0, minimum - POINTS_D_UNE_ANNEE_DE_CONJOINT) * annees
+              * max(0.0, 1.0 - minoration))
+    return (annees, points) if points > 0.0 else (0.0, 0.0)
 
 
 def _minimum_vieillesse(moteur: ScenarioActuel, nom: str, annee: int
@@ -599,9 +694,14 @@ def majoration_retraite_proportionnelle(
     n° 2002-297, article 4 ; D. 732-144) ; n reste celui de la liquidation, et
     le minimum C n'est pas ouvert aux pensions prises avant 2002, que le décret
     n° 2002-297 ne nomme pas (``minimum_reduit_depuis``).
+
+    Les années de conjoint et d'aide familial reçoivent leur différentiel
+    depuis les pensions dues en 2002, aux pensions prises de 1998 à 2001
+    sans le taux plein (:func:`_points_des_conjoints`, ``conjoints`` de la
+    fiche).
     """
     date_effet = date_d_effet(carriere)
-    if date_effet is None or not eligible.taux_plein or pension.montant <= 0.0:
+    if date_effet is None or pension.montant <= 0.0:
         return None
     regle = moteur.fiches_datees.regle(FICHE_DE_LA_MAJORATION_PROPORTIONNELLE,
                                        quand or date_effet)
@@ -616,11 +716,16 @@ def majoration_retraite_proportionnelle(
     reduit = regle["minimum_reduit"]
     if reduit and date_effet < str(regle.get("minimum_reduit_depuis") or date_effet):
         reduit = None
-    if chef >= ANNEES_DE_CHEF_DU_MINIMUM:
+    # Les années de chef, au taux plein ; celles de conjoint, selon la règle
+    # de leur date d'effet (:func:`_points_des_conjoints`).
+    minimum_nomme, chef_ouvert = None, eligible.taux_plein
+    if chef_ouvert and chef >= ANNEES_DE_CHEF_DU_MINIMUM:
         minimum_nomme = regle["minimum"]
-    elif reduit and chef > 0.0 and agricole >= ANNEES_DE_CHEF_DU_MINIMUM:
+    elif chef_ouvert and reduit and chef > 0.0 and agricole >= ANNEES_DE_CHEF_DU_MINIMUM:
         minimum_nomme = reduit
     else:
+        chef_ouvert = False
+    if not chef_ouvert and not regle.get("conjoints"):
         return None
     requis, _ = ouvrir.duree_requise(moteur, periode, carriere)
 
@@ -651,16 +756,41 @@ def majoration_retraite_proportionnelle(
             return None
         point, service_servi, forfait_servi, fiabilite_servie = servis
         fiabilite = min(fiabilite, fiabilite_servie)
+
+    def minimum_de(nomme: str) -> tuple[float, Fiabilite] | None:
+        """Le nombre minimal annuel moyen de points que ``nomme`` désigne."""
+        if nomme not in MINIMA_DE_LA_MAJORATION_PROPORTIONNELLE:
+            raise ValueError(f"{FICHE_DE_LA_MAJORATION_PROPORTIONNELLE} : minimum "
+                             f"{nomme!r} inconnu")
+        lu = _minimum_vieillesse(moteur, nomme, an_servi)
+        if lu is None:
+            return None
+        return (lu[0] - forfait_servi) / (ANNEES_DU_MINIMUM_AU_PLUS * point), lu[1]
+
+    conjoint_minimum, conjoint_annees, conjoint_points = 0.0, 0.0, 0.0
+    if regle.get("conjoints"):
+        lu = minimum_de(regle["conjoints"]["minimum"])
+        if lu is not None:
+            conjoint_annees, conjoint_points = _points_des_conjoints(
+                regle, carriere, eligible, date_effet, lu[0])
+            if conjoint_points > 0.0:
+                conjoint_minimum = lu[0]
+                fiabilite = min(fiabilite, lu[1])
+    if not chef_ouvert:
+        if conjoint_points <= 0.0:
+            return None
+        return MajorationProportionnelle(
+            minimum=0.0, moyenne=0.0, duree=0.0, points=conjoint_points,
+            complement=conjoint_points * service_servi, fiabilite=fiabilite,
+            conjoint_minimum=conjoint_minimum, conjoint_annees=conjoint_annees,
+            conjoint_points=conjoint_points)
     if minimum_nomme is None:
         minimum = float(regle["minimum_points"])
     else:
-        if minimum_nomme not in MINIMA_DE_LA_MAJORATION_PROPORTIONNELLE:
-            raise ValueError(f"{FICHE_DE_LA_MAJORATION_PROPORTIONNELLE} : minimum "
-                             f"{minimum_nomme!r} inconnu")
-        lu = _minimum_vieillesse(moteur, minimum_nomme, an_servi)
+        lu = minimum_de(minimum_nomme)
         if lu is None:
             return None
-        minimum = (lu[0] - forfait_servi) / (ANNEES_DU_MINIMUM_AU_PLUS * point)
+        minimum = lu[0]
         fiabilite = min(fiabilite, lu[1])
     # La retraite proportionnelle : la pension avant surcote, moins sa part
     # forfaitaire, en points de la liquidation par année agricole, trente-sept
@@ -683,11 +813,26 @@ def majoration_retraite_proportionnelle(
                               if manque > rang)
         points *= max(0.0, 1.0 - taux)
     points *= regle["part_servie"]
-    if points <= 0.0:
+    if points + conjoint_points <= 0.0:
         return None
     return MajorationProportionnelle(
-        minimum=minimum, moyenne=moyenne, duree=duree, points=points,
-        complement=points * service_servi, fiabilite=fiabilite)
+        minimum=minimum, moyenne=moyenne, duree=duree, points=points + conjoint_points,
+        complement=(points + conjoint_points) * service_servi, fiabilite=fiabilite,
+        conjoint_minimum=conjoint_minimum, conjoint_annees=conjoint_annees,
+        conjoint_points=conjoint_points)
+
+
+def detail_des_plans(plans: MajorationProportionnelle) -> str:
+    """Le détail de la majoration : les points du chef, puis ceux des années
+    de conjoint et d'aide familial."""
+    parties = []
+    if plans.duree > 0.0:
+        parties.append(f"({plans.minimum:.3f} - {plans.moyenne:.3f}) × {plans.duree:g} ans "
+                       f"de chef")
+    if plans.conjoint_points > 0.0:
+        parties.append(f"({plans.conjoint_minimum:.3f} - {POINTS_D_UNE_ANNEE_DE_CONJOINT:g}) × "
+                       f"{plans.conjoint_annees:g} ans de conjoint")
+    return f"{plans.points:,.2f} points : " + " + ".join(parties)
 
 
 @dataclass(frozen=True)
@@ -1627,9 +1772,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 code="majoration_retraite_proportionnelle",
                 libelle="Majoration de la retraite proportionnelle",
                 montant=proportionnelle.complement,
-                detail=(f"{proportionnelle.points:,.2f} points : ({proportionnelle.minimum:.3f} "
-                        f"- {proportionnelle.moyenne:.3f}) × {proportionnelle.duree:g} ans "
-                        f"de chef"),
+                detail=detail_des_plans(proportionnelle),
                 par_regime=((base.regime, proportionnelle.complement),),
             ))
         majoree = pension_majoree(moteur, carriere, agricole, base,

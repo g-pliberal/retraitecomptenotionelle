@@ -550,6 +550,10 @@ class EligibleAgricole:
     #: 2021 sert au montant du chef, présumées cotisées par qui a régularisé sa
     #: situation (D. 732-110, II, 3° ; D. 732-111) ; ``chef`` ne la compte pas.
     collaborateur_regularise: int = 0
+    #: Celle des années de collaborateur d'avant 1999, du conjoint participant
+    #: aux travaux, que les plans de revalorisation de 1998 à 2008 portent à un
+    #: minimum de points (D. 732-123, D. 732-145) ; ``chef`` ne la compte pas.
+    conjoint_avant_1999: int = 0
 
 
 @dataclass(frozen=True)
@@ -612,6 +616,7 @@ class Pensions:
                 "enfants": self.agricole.enfants,
                 "reference": self.agricole.reference,
                 "collaborateur_regularise": self.agricole.collaborateur_regularise,
+                "conjoint_avant_1999": self.agricole.conjoint_avant_1999,
             }
         for eligible in self.plafonds:
             regimes[eligible.indice]["plafond_enfants"] = {
@@ -1645,6 +1650,9 @@ ANNEE_DU_TITRE_SECONDAIRE = 2026
 #: 2021 (D. 732-110, II, 3°) : le statut de collaborateur, que la loi
 #: d'orientation agricole du 9 juillet 1999 crée, jusqu'à la PMR.
 COLLABORATEUR_REGULARISE = (1999, 2008)
+#: La première année du statut de conjoint collaborateur : celles d'avant sont
+#: du conjoint participant aux travaux (L. 732-34, D. 732-119, 2°).
+ANNEE_DU_CONJOINT_COLLABORATEUR = COLLABORATEUR_REGULARISE[0]
 
 
 #: L'année depuis laquelle le chef d'exploitation à titre accessoire n'a plus
@@ -1716,6 +1724,9 @@ def eligible_agricole(moteur, periode: PeriodeRegime, carriere: Carriere, releve
         "assurance", membres,
         lambda annee: (COLLABORATEUR_REGULARISE[0] <= annee <= COLLABORATEUR_REGULARISE[1]
                        and qualite(annee) == "collaborateur"))
+    avant_1999 = durees.cumul_plafonne(
+        "assurance", membres,
+        lambda annee: annee < ANNEE_DU_CONJOINT_COLLABORATEUR and qualite(annee) == "collaborateur")
     annees = durees.cumul_plafonne("assurance", membres, lambda annee: True)
     toutes = durees.cumul_plafonne("assurance", membres)
     return EligibleAgricole(
@@ -1732,6 +1743,7 @@ def eligible_agricole(moteur, periode: PeriodeRegime, carriere: Carriere, releve
         enfants=max(0, toutes - annees),
         reference=max(150, proratisation),
         collaborateur_regularise=regularise,
+        conjoint_avant_1999=avant_1999,
     )
 
 

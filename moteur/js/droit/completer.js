@@ -16,6 +16,7 @@
  */
 
 import { DateMois } from "../calendrier.js";
+import { AFFILIATIONS_AGRICOLES } from "../carriere.js";
 import { formatFixe, formatPourcentage } from "../format.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import {
@@ -356,6 +357,92 @@ export const ANNEES_DE_CHEF_DU_MINIMUM = 17.5;
 export const ANNEES_DU_MINIMUM_AU_PLUS = 37.5;
 export const ANNEES_SANS_MINORATION = 22.5;
 export const PLANCHER_DES_POINTS_D_UNE_ANNEE = 16.0;
+export const POINTS_D_UNE_ANNEE_DE_CONJOINT = 16.0;
+export const CONJOINTS_DEPUIS = "1998-01-01";
+export const PLANS_DE_2002 = "2002-01-01";
+
+/** L'année d'effet des revalorisations des conjoints. Voir le Python. */
+function anneeDEffetDesConjoints(dateEffet) {
+  const annee = Number(dateEffet.slice(0, 4));
+  return dateEffet.slice(5) === "01-01" ? annee - 1 : annee;
+}
+
+/**
+ * Les années de conjoint et d'aide familial que les plans revalorisent, et les
+ * points qu'elles ajoutent au minimum annuel `minimum` (B, ou C) ; [0, 0] quand
+ * rien. Voir `_points_des_conjoints` du Python.
+ */
+function pointsDesConjoints(regle, carriere, eligible, dateEffet, minimum) {
+  const conjoints = regle.conjoints;
+  if (!conjoints || dateEffet < CONJOINTS_DEPUIS) {
+    return [0.0, 0.0];
+  }
+  const chef = eligible.chef / 4.0;
+  const agricole = eligible.duree / 4.0;
+  const avant = (eligible.conjointAvant1999 ?? 0) / 4.0;
+  const depuis = (eligible.collaborateurRegularise ?? 0) / 4.0;
+  if (avant + depuis <= 0.0) {
+    return [0.0, 0.0];
+  }
+  let minoration = 0.0;
+  if (dateEffet < PLANS_DE_2002) {
+    const anciens = conjoints.pensions_prises_avant_2002;
+    let requise = anciens.duree_minimale;
+    let plafonnee = false;
+    if (anciens.duree_minimale_des_conjoints !== null
+        && anciens.duree_minimale_des_conjoints !== undefined
+        && avant + depuis >= anciens.annees_de_conjoint
+        && carriere.lignes.every((ligne) => Object.hasOwn(AFFILIATIONS_AGRICOLES,
+          ligne.affiliation))) {
+      requise = Math.min(requise, anciens.duree_minimale_des_conjoints);
+      plafonnee = agricole < anciens.duree_minimale;
+    }
+    if (agricole < requise) {
+      return [0.0, 0.0];
+    }
+    const manque = Math.max(0.0, ANNEES_DU_MINIMUM_AU_PLUS - agricole);
+    if (anciens.minorations) {
+      const coefficients = plafonnee
+        ? anciens.minorations.slice(0, anciens.minorations_des_conjoints_au_plus)
+        : anciens.minorations;
+      coefficients.forEach((coefficient, rang) => {
+        if (manque > rang) {
+          minoration += coefficient * Math.min(1.0, manque - rang);
+        }
+      });
+    } else if (anciens.minoration_par_annee) {
+      minoration = anciens.minoration_par_annee * manque;
+    }
+  } else if (!eligible.tauxPlein || agricole < ANNEES_DE_CHEF_DU_MINIMUM) {
+    return [0.0, 0.0];
+  }
+  const an = anneeDEffetDesConjoints(dateEffet);
+  let restant = Math.max(0.0, ANNEES_DU_MINIMUM_AU_PLUS
+    - Math.min(chef, ANNEES_DU_MINIMUM_AU_PLUS));
+  const retenuesDepuis = Math.min(depuis, restant);
+  restant -= retenuesDepuis;
+  const retenuesAvant = Math.max(0.0, Math.min(
+    avant - Math.max(0, an - liquider.ANNEE_DU_CONJOINT_COLLABORATEUR),
+    ANNEES_DU_MINIMUM_AU_PLUS - Math.max(0, an - 1998), restant));
+  const annees = retenuesDepuis + retenuesAvant;
+  const points = Math.max(0.0, minimum - POINTS_D_UNE_ANNEE_DE_CONJOINT) * annees
+    * Math.max(0.0, 1.0 - minoration);
+  return points > 0.0 ? [annees, points] : [0.0, 0.0];
+}
+
+/** Le détail de la majoration. Voir `detail_des_plans` du Python. */
+export function detailDesPlans(plans) {
+  const parties = [];
+  if (plans.duree > 0.0) {
+    parties.push(`(${formatFixe(plans.minimum, 3)} - ${formatFixe(plans.moyenne, 3)})`
+      + ` × ${plans.duree} ans de chef`);
+  }
+  if (plans.conjointPoints > 0.0) {
+    parties.push(`(${formatFixe(plans.conjointMinimum, 3)} - ${POINTS_D_UNE_ANNEE_DE_CONJOINT})`
+      + ` × ${plans.conjointAnnees} ans de conjoint`);
+  }
+  return `${formatFixe(plans.points, 2, true)} points : ${parties.join(" + ")}`;
+}
 
 /**
  * Le minimum vieillesse d'une personne seule (MV1), ou l'écart entre celui d'un
@@ -400,7 +487,7 @@ function minimumVieillesse(moteur, nom, annee) {
 export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pension,
   trimestres, quand = null) {
   const dateEffet = dateDEffet(carriere);
-  if (dateEffet === null || !eligible.tauxPlein || pension.montant <= 0.0) {
+  if (dateEffet === null || pension.montant <= 0.0) {
     return null;
   }
   const regle = moteur.fichesDatees.regle(FICHE_DE_LA_MAJORATION_PROPORTIONNELLE,
@@ -421,12 +508,18 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
   if (reduit && dateEffet < String(regle.minimum_reduit_depuis ?? dateEffet)) {
     reduit = null;
   }
-  let minimumNomme;
-  if (chef >= ANNEES_DE_CHEF_DU_MINIMUM) {
+  // Les années de chef, au taux plein ; celles de conjoint, selon la règle de
+  // leur date d'effet (`pointsDesConjoints`).
+  let minimumNomme = null;
+  let chefOuvert = eligible.tauxPlein;
+  if (chefOuvert && chef >= ANNEES_DE_CHEF_DU_MINIMUM) {
     minimumNomme = regle.minimum;
-  } else if (reduit && chef > 0.0 && agricole >= ANNEES_DE_CHEF_DU_MINIMUM) {
+  } else if (chefOuvert && reduit && chef > 0.0 && agricole >= ANNEES_DE_CHEF_DU_MINIMUM) {
     minimumNomme = reduit;
   } else {
+    chefOuvert = false;
+  }
+  if (!chefOuvert && !regle.conjoints) {
     return null;
   }
   const [requis] = ouvrir.dureeRequise(moteur, periode, carriere);
@@ -465,19 +558,51 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
     [point, serviceServi, forfaitServi] = servis;
     fiabilite = Math.min(fiabilite, servis[3]);
   }
+  // Le nombre minimal annuel moyen de points que `nomme` désigne.
+  const minimumDe = (nomme) => {
+    if (!MINIMA_DE_LA_MAJORATION_PROPORTIONNELLE.includes(nomme)) {
+      throw new Error(`${FICHE_DE_LA_MAJORATION_PROPORTIONNELLE} : minimum `
+        + `'${nomme}' inconnu`);
+    }
+    const lu = minimumVieillesse(moteur, nomme, anServi);
+    if (lu === null) {
+      return null;
+    }
+    return [(lu[0] - forfaitServi) / (ANNEES_DU_MINIMUM_AU_PLUS * point), lu[1]];
+  };
+  let conjointMinimum = 0.0;
+  let conjointAnnees = 0.0;
+  let conjointPoints = 0.0;
+  if (regle.conjoints) {
+    const lu = minimumDe(regle.conjoints.minimum);
+    if (lu !== null) {
+      [conjointAnnees, conjointPoints] = pointsDesConjoints(
+        regle, carriere, eligible, dateEffet, lu[0]);
+      if (conjointPoints > 0.0) {
+        conjointMinimum = lu[0];
+        fiabilite = Math.min(fiabilite, lu[1]);
+      }
+    }
+  }
+  if (!chefOuvert) {
+    if (conjointPoints <= 0.0) {
+      return null;
+    }
+    return {
+      minimum: 0.0, moyenne: 0.0, duree: 0.0, points: conjointPoints,
+      complement: conjointPoints * serviceServi, fiabilite,
+      conjointMinimum, conjointAnnees, conjointPoints,
+    };
+  }
   let minimum;
   if (minimumNomme === null || minimumNomme === undefined) {
     minimum = Number(regle.minimum_points);
   } else {
-    if (!MINIMA_DE_LA_MAJORATION_PROPORTIONNELLE.includes(minimumNomme)) {
-      throw new Error(`${FICHE_DE_LA_MAJORATION_PROPORTIONNELLE} : minimum `
-        + `'${minimumNomme}' inconnu`);
-    }
-    const lu = minimumVieillesse(moteur, minimumNomme, anServi);
+    const lu = minimumDe(minimumNomme);
     if (lu === null) {
       return null;
     }
-    minimum = (lu[0] - forfaitServi) / (ANNEES_DU_MINIMUM_AU_PLUS * point);
+    minimum = lu[0];
     fiabilite = Math.min(fiabilite, lu[1]);
   }
   // La retraite proportionnelle, en points de la liquidation par année
@@ -502,10 +627,14 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
     points *= Math.max(0.0, 1.0 - taux);
   }
   points *= regle.part_servie;
-  if (points <= 0.0) {
+  if (points + conjointPoints <= 0.0) {
     return null;
   }
-  return { minimum, moyenne, duree, points, complement: points * serviceServi, fiabilite };
+  return {
+    minimum, moyenne, duree, points: points + conjointPoints,
+    complement: (points + conjointPoints) * serviceServi, fiabilite,
+    conjointMinimum, conjointAnnees, conjointPoints,
+  };
 }
 
 /**
@@ -1496,9 +1625,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         code: "majoration_retraite_proportionnelle",
         libelle: "Majoration de la retraite proportionnelle",
         montant: proportionnelle.complement,
-        detail: `${formatFixe(proportionnelle.points, 2, true)} points : `
-          + `(${formatFixe(proportionnelle.minimum, 3)} - ${formatFixe(proportionnelle.moyenne, 3)})`
-          + ` × ${proportionnelle.duree} ans de chef`,
+        detail: detailDesPlans(proportionnelle),
         par_regime: [[base.regime, proportionnelle.complement]],
       });
     }

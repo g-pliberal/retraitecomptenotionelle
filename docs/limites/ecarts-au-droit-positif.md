@@ -349,8 +349,10 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   durée agricole, écrêtée au plafond de toutes les pensions ; le complément
   différentiel de la complémentaire agricole, aux pensions qui prennent effet
   depuis 2015, à qui compte <!--chiffre:valeur(data/reference/regles/complement_differentiel_rco.yaml:versions.id=complement_de_2026.contenu.parametres.seuil_chef)-->70<!--/--> trimestres de chef d'exploitation. Restent
-  dehors : la pension majorée que la loi de 2008 a accordée aux pensions déjà
-  liquidées, et les plans de revalorisation de 1994 à 2002 ; l'assiette
+  dehors : la révision par les plans de revalorisation des pensions prises
+  avant 1997, et, des points que ces plans servent depuis 2002 aux années de
+  conjoint et d'aide familial (fiche `majoration_retraite_proportionnelle`),
+  ceux des pensions dues de 1998 à 2001, du rachat et de l'option tardive ; l'assiette
   forfaitaire du conjoint collaborateur et de l'aide familial, statut que la
   saisie propose depuis le 14 octobre 2026 et dont le modèle sert le montant
   réduit de la pension majorée de 2009 à 2021, sans points gratuits ni

@@ -145,6 +145,7 @@ export class Pensions {
         enfants: this.agricole.enfants,
         reference: this.agricole.reference,
         collaborateur_regularise: this.agricole.collaborateurRegularise,
+        conjoint_avant_1999: this.agricole.conjointAvant1999,
       };
     }
     for (const eligible of this.plafonds) {
@@ -1034,6 +1035,8 @@ export const ANNEE_DU_TITRE_SECONDAIRE = 2026;
  * celles du chef dans la PMR de 2009 à 2021 (D. 732-110, II, 3°).
  */
 export const COLLABORATEUR_REGULARISE = [1999, 2008];
+/** La première année du statut de conjoint collaborateur. Voir le Python. */
+export const ANNEE_DU_CONJOINT_COLLABORATEUR = COLLABORATEUR_REGULARISE[0];
 
 /** L'année depuis laquelle le chef à titre accessoire n'a plus droit qu'à la
  * retraite proportionnelle (L. 732-28 ; R. 732-65). */
@@ -1110,6 +1113,8 @@ export function eligibleAgricole(moteur, periode, carriere, releve, membres, tri
   const regularise = durees.cumulPlafonne("assurance", membres,
     (annee) => annee >= COLLABORATEUR_REGULARISE[0] && annee <= COLLABORATEUR_REGULARISE[1]
       && qualite(annee) === "collaborateur");
+  const avant1999 = durees.cumulPlafonne("assurance", membres,
+    (annee) => annee < ANNEE_DU_CONJOINT_COLLABORATEUR && qualite(annee) === "collaborateur");
   const annees = durees.cumulPlafonne("assurance", membres, () => true);
   const toutes = durees.cumulPlafonne("assurance", membres);
   return {
@@ -1125,6 +1130,7 @@ export function eligibleAgricole(moteur, periode, carriere, releve, membres, tri
     enfants: Math.max(0, toutes - annees),
     reference: Math.max(150, proratisation),
     collaborateurRegularise: regularise,
+    conjointAvant1999: avant1999,
   };
 }
 

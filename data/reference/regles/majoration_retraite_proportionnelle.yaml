@@ -8,7 +8,9 @@ intitule: >-
   deux tiers en 1998, minorés sous vingt-deux ans et demi ; 29,23 en 2001 ; depuis 2002,
   ce qui porte, avec la retraite forfaitaire, une carrière complète au minimum
   vieillesse d'une personne seule ; et, depuis 2002, le chef de moins de dix-sept ans
-  et demi au différentiel du minimum d'un couple.
+  et demi au différentiel du minimum d'un couple. Les années de conjoint et d'aide
+  familial reçoivent le différentiel du minimum d'un couple moins seize points, depuis
+  1998 aux pensions prises depuis, au taux plein depuis 2002.
 domaine: minima
 regimes: [msa_non_salaries]
 etape: completer_tous_regimes
@@ -56,6 +58,7 @@ versions:
       minimum_reduit_depuis: null
       part_servie: null
       minorations: null
+      conjoints: null
   exemples: aucun trouvé
 - id: plan_de_1997
   statut: lue
@@ -98,6 +101,7 @@ versions:
       minimum_reduit_depuis: null
       part_servie: 0.3333333333333333
       minorations: [0.15, 0.15, 0.20, 0.20, 0.20]
+      conjoints: null
   exemples: aucun trouvé
 - id: pensions_dues_en_1998
   statut: lue
@@ -119,6 +123,7 @@ versions:
       minimum_reduit_depuis: null
       part_servie: 0.6666666666666666
       minorations: [0.15, 0.15, 0.20, 0.20, 0.20]
+      conjoints: null
   exemples: aucun trouvé
 - id: pensions_dues_en_1999
   statut: lue
@@ -144,6 +149,7 @@ versions:
       minimum_reduit_depuis: null
       part_servie: 1.0
       minorations: [0.15, 0.15, 0.20, 0.20, 0.20]
+      conjoints: null
   exemples: aucun trouvé
 - id: pensions_dues_en_2000
   statut: lue
@@ -170,6 +176,7 @@ versions:
       minimum_reduit_depuis: null
       part_servie: 1.0
       minorations: [0.15, 0.15, 0.10, 0.10, 0.10]
+      conjoints: null
   exemples: aucun trouvé
 - id: pensions_dues_en_2001
   statut: lue
@@ -196,6 +203,7 @@ versions:
       minimum_reduit_depuis: null
       part_servie: 1.0
       minorations: null
+      conjoints: null
   exemples: aucun trouvé
 - id: au_minimum_vieillesse
   statut: lue
@@ -254,15 +262,146 @@ versions:
       rédaction du 12 octobre 2006 ramène aux 37,5 du décret n° 2002-298 ; le moteur
       garde 37,5
     lu_le: 2026-10-14
+  - id: JORFARTI000001460021
+    article: décret n° 2002-297 du 1er mars 2002, article 8
+    en_vigueur: 2002-03-02
+    citation: >-
+      pour les pensions prises de 1998 à 2001, « B = (MV 2 - AVTS) / 37,5 x VP » ; aux
+      années de conjoint collaborateur depuis 1999, « un différentiel [...] égal au nombre
+      minimum annuel de points de retraite proportionnelle B diminué de 16 points » ; à
+      celles de conjoint participant aux travaux d'avant 1999, B, « le nombre d'années
+      ainsi revalorisables est minoré d'une année pour les retraites qui ont pris effet en
+      2000 et de deux années pour les retraites qui ont pris effet en 2001 » ; « IV. - Pour
+      les assurés qui justifient d'une durée d'assurance inférieure à trente-sept années et
+      demie [...] de 15 % pour chacune des deux premières années manquantes ; de 10 % pour
+      chacune des trois années suivantes ; de 40 % pour la sixième année. Dans le cas prévu
+      au deuxième alinéa de l'article 6, il n'est pas appliqué de coefficient
+      supplémentaire au titre des années manquantes situées au-delà de la cinquième »
+    lu_le: 2026-10-16
+  - id: LEGIARTI000006597545
+    article: D. 732-118 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « Les personnes dont la pension de retraite, servie à titre personnel, a pris effet
+      postérieurement au 31 décembre 1997 et antérieurement au 1er janvier 2002, qui ont
+      exercé leur activité non salariée agricole pendant une durée minimale de trente-deux
+      années et demie et qui ne sont pas titulaires [...] d'une pension de réversion » ;
+      « ramenée à vingt-sept années et demie pour les personnes ayant effectué au moins
+      quinze années en qualité de conjoints [...] à condition qu'elles ne bénéficient pas
+      d'un autre avantage de retraite »
+    lu_le: 2026-10-16
+  - id: LEGIARTI000006597547
+    article: D. 732-119 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « 1° Tout ou partie des années effectuées en qualité d'aide familial majeur [...] ;
+      2° Tout ou partie des années effectuées jusqu'au 31 décembre 1998 en qualité de
+      conjoint participant aux travaux [...] ; 3° Tout ou partie des années effectuées à
+      partir du 1er janvier 1999 par des conjoints collaborateurs » ; « le nombre d'années
+      revalorisables afférent à la période antérieure à 1999 est retenu dans une limite de
+      trente-sept années et demie minorées de l'écart entre l'année d'effet de la retraite
+      et 1998 »
+    lu_le: 2026-10-16
+  - id: LEGIARTI000006597548
+    article: D. 732-120 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « les périodes mentionnées au 4° de l'article D. 732-119 sont prises en
+      considération par priorité » ; « Les pensions de retraite dont la date d'effet
+      intervient le 1er janvier d'une année sont considérées, pour l'application des
+      revalorisations afférentes aux périodes en tant que conjoint, comme ayant pris effet
+      au 31 décembre de l'année antérieure »
+    lu_le: 2026-10-16
+  - id: LEGIARTI000006597549
+    article: D. 732-121 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « B = (MV 2 - AVTS) / 37,5 x VP » ; « Ce nombre minimal annuel de points B n'est pas
+      applicable aux années effectuées en qualité de conjoint par des personnes ne
+      remplissant pas les conditions prévues aux premier et deuxième alinéas du II de
+      l'article L. 732-54-2 et pour lesquelles le nombre minimal annuel de points est fixé
+      à 8,63 »
+    lu_le: 2026-10-16
+  - id: LEGIARTI000006597551
+    article: D. 732-123 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « 1° Lorsque la pension de retraite a pris effet en 2000 ou 2001 : a) A l'attribution
+      gratuite d'un différentiel pour les années effectuées à partir du 1er janvier 1999 en
+      qualité de conjoint collaborateur [...] égal au nombre minimal annuel de points de
+      retraite proportionnelle B diminué de 16 points » ; « 2° Lorsque la pension de
+      retraite a pris effet en 1997, 1998 ou 1999, à l'attribution gratuite du nombre
+      minimal annuel de points de retraite proportionnelle B, pour chaque année prise en
+      compte, effectuée en qualité de conjoint participant aux travaux »
+    lu_le: 2026-10-16
+  - id: LEGIARTI000006597552
+    article: D. 732-124 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « Les périodes en tant qu'aide familial donnent droit [...] : 1° A l'attribution
+      gratuite de 16 points de retraite proportionnelle par an pour les années accomplies
+      antérieurement au 1er janvier 1994 [...] ; 2° A l'attribution gratuite d'un
+      différentiel [...] égal au nombre minimal annuel de points de retraite
+      proportionnelle B diminué de 16 points »
+    lu_le: 2026-10-16
+  - id: LEGIARTI000006597576
+    article: D. 732-142 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « Le nombre total d'années revalorisables ne peut excéder trente-sept années et
+      demie » ; « Pour les périodes effectuées au titre du 3° du présent article, le
+      nombre d'années revalorisables afférent à la période antérieure à 1999 est retenu
+      dans une limite de trente-sept années et demie minorées de l'écart entre l'année
+      d'effet de la pension de retraite et 1998 » ; « les périodes mentionnées au 1° du
+      présent article sont prises en considération par priorité. Les autres périodes sont
+      ensuite prises en considération dans l'ordre de priorité suivant : périodes en tant
+      que conjoint ayant donné lieu à attribution de points de retraite proportionnelle,
+      périodes en tant qu'aide familial ayant donné lieu à attribution de points [...],
+      périodes en tant que conjoint n'ayant pas donné attribution de points [...] »
+    lu_le: 2026-10-16
+  - id: LEGIARTI000006597580
+    article: D. 732-145 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « Pour les périodes de conjoint ou d'aide familial, le nombre minimal annuel moyen de
+      points de retraite proportionnelle B est déterminé selon la formule suivante : B =
+      (MV 2 - AVTS) / 37,5 x VP » ; « a) A l'attribution gratuite d'un différentiel pour
+      les années effectuées à partir du 1er janvier 1999 en qualité de conjoint
+      collaborateur [...] égal au nombre minimal annuel de points de retraite
+      proportionnelle B diminué de 16 points » ; « c) A l'attribution gratuite du nombre
+      minimal annuel moyen de points de retraite proportionnelle B, pour chaque année prise
+      en compte, effectuée avant le 1er janvier 1999, en qualité de conjoint participant
+      aux travaux [...]. Toutefois, le nombre d'années ainsi revalorisables est minoré
+      d'une année par année d'écart entre l'année d'effet de la pension de retraite et
+      1999 »
+    lu_le: 2026-10-16
+  - id: LEGIARTI000006597581
+    article: D. 732-146 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « pour les personnes qui totalisent des périodes d'assurance en qualité de chef
+      d'exploitation [...] inférieures à dix-sept années et demie [...] Pour les périodes
+      en qualité de chef d'exploitation ou d'entreprise et pour les périodes en tant que
+      conjoint ou aide familial, le nombre minimal annuel moyen de points de retraite
+      proportionnelle C est déterminé selon la formule suivante : C = (MV 2 - AVTS) / 37,5
+      x VP » ; aux années de conjoint, « un différentiel [...] égal au nombre minimal annuel
+      moyen de points de retraite proportionnelle C diminué de 16 points »
+    lu_le: 2026-10-16
   bornes:
-    liquidation.date_effet: [2002-01-01, 2009-01-01]
+    liquidation.date_effet: [2002-01-01, 2007-01-01]
   contenu:
     droit: >-
       A = (MV1 - AVTS) / (37,5 x VP) par année de chef, ce qui porte la retraite
       forfaitaire et la proportionnelle d'une carrière complète de chef au minimum
       vieillesse d'une personne seule ; sous dix-sept ans et demi de chef, avec
       dix-sept ans et demi d'activité non salariée agricole, C = (MV2 - AVTS) / (37,5 x
-      VP), MV2 étant l'écart entre le minimum d'un couple et celui d'une personne seule
+      VP), MV2 étant l'écart entre le minimum d'un couple et celui d'une personne seule ;
+      chaque année de conjoint ou d'aide familial, B - 16 points, B ayant la formule de C
+      (D. 732-145, D. 732-146), celles d'avant 1999 minorées d'une année par année d'écart
+      avec 1999 ; aux pensions prises de 1998 à 2001, la même chose, sans condition de
+      taux plein, à trente-deux ans et demi d'activité agricole (vingt-sept et demi à
+      quinze ans de conjoint sans autre pension), minorée sous trente-sept et demie
+      (D. 732-118 à D. 732-124, décret n° 2002-297, article 8)
     parametres:
       existe: true
       minimum_points: null
@@ -271,6 +410,92 @@ versions:
       minimum_reduit_depuis: "2002-01-01"
       part_servie: 1.0
       minorations: null
+      conjoints:
+        minimum: differentiel_du_couple
+        pensions_prises_avant_2002:
+          duree_minimale: 32.5
+          duree_minimale_des_conjoints: 27.5
+          annees_de_conjoint: 15
+          minorations: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
+          minorations_des_conjoints_au_plus: 5
+          minoration_par_annee: null
+  exemples: aucun trouvé
+- id: pensions_dues_en_2007
+  statut: lue
+  textes:
+  - id: LEGIARTI000006597546
+    article: D. 732-118 code rural
+    en_vigueur: 2007-01-01
+    citation: >-
+      « qui ont exercé leur activité non salariée agricole pendant une durée minimale de
+      vingt-deux années et demie et qui ne sont pas titulaires, à la date d'effet de leur
+      pension de retraite personnelle, d'une pension de réversion »
+    lu_le: 2026-10-16
+  - id: LEGIARTI000006597561
+    article: D. 732-131 code rural
+    en_vigueur: 2007-01-01
+    citation: >-
+      « Pour les assurés qui justifient d'une durée d'assurance inférieure à trente-sept
+      années et demie, le montant des points déterminé conformément aux articles D. 732-121
+      à D. 732-130 est minoré [...]. Pour chacune des années de l'écart constaté, le
+      coefficient de minoration à appliquer est de 5,5 % au 1er janvier 2007 pour les
+      pensions dues au titre de l'année 2007 et de 4 % au 1er janvier 2008 pour les
+      pensions dues à compter du 1er janvier 2008 »
+    lu_le: 2026-10-16
+  bornes:
+    liquidation.date_effet: [2007-01-01, 2008-01-01]
+  contenu:
+    droit: >-
+      la règle de 2002, sauf aux années de conjoint des pensions prises de 1998 à 2001 :
+      vingt-deux ans et demi d'activité agricole, et 5,5 % de minoration par année
+      manquante sous trente-sept et demie
+    parametres:
+      existe: true
+      minimum_points: null
+      minimum: minimum_vieillesse_personne_seule
+      minimum_reduit: differentiel_du_couple
+      minimum_reduit_depuis: "2002-01-01"
+      part_servie: 1.0
+      minorations: null
+      conjoints:
+        minimum: differentiel_du_couple
+        pensions_prises_avant_2002:
+          duree_minimale: 22.5
+          duree_minimale_des_conjoints: null
+          annees_de_conjoint: null
+          minorations: null
+          minorations_des_conjoints_au_plus: null
+          minoration_par_annee: 0.055
+  exemples: aucun trouvé
+- id: pensions_dues_en_2008
+  statut: lue
+  textes:
+  - id: LEGIARTI000006597561
+    article: D. 732-131 code rural
+    en_vigueur: 2007-01-01
+    citation: « et de 4 % au 1er janvier 2008 pour les pensions dues à compter du 1er janvier 2008 »
+    lu_le: 2026-10-16
+  bornes:
+    liquidation.date_effet: [2008-01-01, 2009-01-01]
+  contenu:
+    droit: la règle de 2007, la minoration ramenée à 4 % par année manquante
+    parametres:
+      existe: true
+      minimum_points: null
+      minimum: minimum_vieillesse_personne_seule
+      minimum_reduit: differentiel_du_couple
+      minimum_reduit_depuis: "2002-01-01"
+      part_servie: 1.0
+      minorations: null
+      conjoints:
+        minimum: differentiel_du_couple
+        pensions_prises_avant_2002:
+          duree_minimale: 22.5
+          duree_minimale_des_conjoints: null
+          annees_de_conjoint: null
+          minorations: null
+          minorations_des_conjoints_au_plus: null
+          minoration_par_annee: 0.04
   exemples: aucun trouvé
 - id: remplacee_par_la_pmr
   statut: lue
@@ -297,6 +522,7 @@ versions:
       minimum_reduit_depuis: null
       part_servie: null
       minorations: null
+      conjoints: null
   exemples: aucun trouvé
 approximations:
 - ecart: >-
@@ -320,10 +546,39 @@ approximations:
 - ecart: >-
     les années d'aide familial, que D. 732-113 et D. 732-144 ajoutent à la durée de chef
     dans la limite de quatre, n'y entrent pas : le statut du modèle ne distingue pas
-    l'aide familial du conjoint collaborateur ; ni les points que les plans de 1994 à
-    2002 attribuent aux années de conjoint et d'aide familial (D. 732-110, D. 732-118 à
-    D. 732-131, D. 732-145), ni la majoration de la retraite forfaitaire de L. 732-54-3
+    l'aide familial du conjoint collaborateur ; ni les points du plan de 1994 aux années
+    d'aide familial d'avant 1994 des chefs partis de 1994 à 2001 (D. 732-110), ni la
+    majoration de la retraite forfaitaire de L. 732-54-3, servie aux pensions prises
+    avant 1998
   effet: non mesuré
+- ecart: >-
+    depuis le 16 octobre 2026, les années de collaborateur (statut collaborateur_agricole)
+    reçoivent B - 16 points, B = (MV2 - AVTS) / (37,5 x VP), aux pensions prises de 2002
+    à 2008 au taux plein avec dix-sept ans et demi d'activité agricole (D. 732-141,
+    D. 732-145, D. 732-146), et, depuis les pensions dues en 2002, aux pensions prises de
+    1998 à 2001 qui en ont trente-deux et demi, vingt-sept et demi à quinze ans de
+    conjoint sans autre ligne de carrière que les non-salariés agricoles, vingt-deux et
+    demi depuis 2007, minorées sous trente-sept et demie (D. 732-118, D. 732-123,
+    D. 732-131 ; décret n° 2002-297, articles 6 et 8). Toutes sont présumées régularisées
+    et, avant 1999, non rachetées : ni le minimum de 8,63 points de qui est resté conjoint
+    participant aux travaux en 1999 sans opter, ni le différentiel d'un rachat ne sont
+    servis. L'aide familial y est servi comme un conjoint : ses années d'avant 1999 se
+    minorent comme celles d'un conjoint, quand le décret ne les minore pas. Une année de
+    conjoint d'avant 1999, sans points dans la loi, en porte seize dans le modèle
+    (plancher de R. 732-73), plus quand le revenu saisi d'avant 2004 en ouvre
+    davantage : le différentiel B - 16 la porte à B dans le premier cas, au-delà dans le
+    second. Ne sont pas servis : les pensions dues de 1998 à 2001, aux montants de leurs
+    décrets (8,63 points en 1998, 11,44 en 1999 pour un conjoint, décret n° 99-875 ;
+    décrets n° 2000-261 et 2001-170) ; les années de chef des pensions prises de 1998 à
+    2001 sous dix-sept ans et demi de chef (D. 732-119, 4°, D. 732-125) ; la condition de
+    ne pas être titulaire d'une réversion à la date d'effet (D. 732-118), et la majoration
+    de la réversion de D. 732-147 ; le droit de L. 732-54-8, I, deuxième alinéa, des
+    conjoints qui ont opté en 1999 sans la durée du taux plein
+  effet: >-
+    une conjointe collaboratrice de quarante-deux ans partie en 2005 : 286 points de plus,
+    environ 950 € par an jusqu'en 2008 ; une conjointe de trente ans partie en 2000, rien
+    avant 2002, puis de 97 à 147 points ; depuis 2009, la PMR les porte au moins à son
+    montant réduit
 - ecart: >-
     la minoration de 1997 à 2000 se proratise sur la fraction d'année manquante, quand
     le décret ne compte que des années
@@ -356,6 +611,10 @@ sources:
     Chercher un exemple chiffré publié par la MSA ou le ministère d'une pension portée au
     minimum de points de 1997 à 2008, et le rejouer dans exemples_officiels.yaml.
   - >-
+    Des points des conjoints : les pensions dues de 1998 à 2001 (décret n° 99-875,
+    articles 1er à 4 ; décret n° 2000-261 ; décret n° 2001-170), le minimum de 8,63
+    points et le rachat, à saisir ; les années de chef de D. 732-119, 4°.
+  - >-
     Servir la révision des pensions prises avant 1997 (article 2 du décret n° 97-163,
     vingt points puis 23,9 en 1999 ; D. 732-114 à D. 732-117 ; décret n° 2002-297,
     articles 5 et suivants), sur la durée de chef reconstituée des points d'avant 1994.
@@ -376,6 +635,13 @@ sources:
       et D. 732-141 à D. 732-147 dans leurs rédactions de 2005 à 2009, dans l'index LEGI
       du dépôt
     date: 2026-10-14
+  - type: legifrance
+    reference: >-
+      D. 732-110 (rédaction de 2007), D. 732-118 (2005, 2007), D. 732-119 à D. 732-131,
+      D. 732-141, D. 732-142, D. 732-145 à D. 732-147, L. 732-54-2 (2007) et L. 732-54-8
+      (2005), dans l'index LEGI du dépôt ; décret n° 2002-297 du 1er mars 2002, articles 6,
+      8 et 9, et décret n° 99-875 du 13 octobre 1999 (sa notice), dans l'index JORF
+    date: 2026-10-16
 textes_a_rattacher: []
 code:
   python: >-
@@ -393,10 +659,16 @@ historique:
 - >-
   2026-10-16 — étape 138.8 : servie aussi aux pensions déjà liquidées, à la règle des
   pensions dues de chaque année jusqu'en 2008 (revalorisation.reviser_les_exploitants).
+- >-
+  2026-10-16 — étape 138.8 : les années de conjoint et d'aide familial (D. 732-118 à
+  D. 732-131, D. 732-141 à D. 732-146), la version de 2002 coupée en 2007 et en 2008
+  pour la minoration de D. 732-131.
 reformes: []
 exemples: []
 effet: >-
-  Les chefs d'exploitation partis au taux plein de 1997 à 2008 avec une petite retraite
+  Les conjoints collaborateurs partis de 1998 à 2008, servis depuis 2002 au plus tôt :
+  une conjointe de quarante-deux ans partie en 2005 reçoit 286 points de plus. Les chefs
+  d'exploitation partis au taux plein de 1997 à 2008 avec une petite retraite
   proportionnelle : le moteur ne servait que le calcul contributif — un chef de
   quarante ans à faible revenu parti en 2002 touchait 4 485 € par an, quand le plan lui
   garantissait le minimum vieillesse, 6 833 €.

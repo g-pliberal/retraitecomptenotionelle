@@ -384,13 +384,109 @@ def test_le_chef_de_moins_de_dix_sept_ans_et_demi_a_le_minimum_du_couple(simulat
                Metier("exploitant_agricole", 50.0, niveau_salaire=0.3)]
     carriere = _chef(simulateur, 1943, 62, metiers=metiers)
     majoration, _ = _majoration(simulateur, carriere)
-    assert majoration is not None and majoration.detail.endswith("× 12 ans de chef")
+    assert majoration is not None and "× 12 ans de chef + " in majoration.detail
     etages = simulateur.scenario_actuel.minimum_vieillesse.deux_etages(2005)
     seule = etages.avts + etages.supplementaire
     mv2 = 2 * etages.avts + etages.supplementaire_menage - seule
     assert mv2 < seule
     minimum = float(majoration.detail.split("(")[1].split(" - ")[0])
     assert minimum < 26.933
+
+
+def _annee_des_conjoints(carriere: Carriere) -> int:
+    """L'année d'effet des revalorisations des conjoints : celle d'avant, pour
+    une pension prise un 1er janvier (D. 732-120, D. 732-142)."""
+    from retraite_notionnelle.droit.commun import date_d_effet
+    effet = date_d_effet(carriere)
+    return int(effet[:4]) - (1 if effet[5:] == "01-01" else 0)
+
+
+def _plans(simulateur: Simulateur, carriere: Carriere, quand: str | None = None):
+    """Les plans de ``carriere``, à la liquidation ou dus au 1er janvier ``quand``."""
+    exploitant = simulateur.scenario_actuel.calculer(carriere).exploitant_agricole
+    return exploitant, completer.majoration_retraite_proportionnelle(
+        simulateur.scenario_actuel, carriere, exploitant.eligible, exploitant.pension,
+        exploitant.trimestres, quand=quand)
+
+
+def test_les_annees_de_conjoint_recoivent_b_moins_seize_points(simulateur):
+    """Quarante-deux ans de conjointe collaboratrice, partie en 2005 au taux
+    plein : chaque année reçoit B - 16 points, B = (MV2 - AVTS) / (37,5 × VP),
+    le C du chef de moins de dix-sept ans et demi (D. 732-145, D. 732-146) ;
+    celles d'avant 1999 se minorent de six, l'écart de 2005 à 1999 : six ans
+    depuis 1999, trente avant (D. 732-142)."""
+    conjointe = _chef(simulateur, 1943, 62, sexe="F",
+                      metiers=[Metier("collaborateur_agricole", 20.0, niveau_salaire=0.3)])
+    exploitant, plans = _plans(simulateur, conjointe)
+    eligible, an = exploitant.eligible, _annee_des_conjoints(conjointe)
+    assert eligible.chef == 0 and conjointe.annee_liquidation == 2005
+    attendues = (eligible.collaborateur_regularise / 4
+                 + min(eligible.conjoint_avant_1999 / 4 - (an - 1999), 37.5 - (an - 1998)))
+    assert plans.duree == 0.0 and 35.0 <= attendues <= 37.0
+    assert plans.conjoint_annees == pytest.approx(attendues, abs=1e-12)
+    assert plans.points == pytest.approx((plans.conjoint_minimum - 16.0) * attendues,
+                                         rel=1e-12)
+    melee = _chef(simulateur, 1943, 62, metiers=[
+        Metier("collaborateur_agricole", 20.0, niveau_salaire=0.3),
+        Metier("exploitant_agricole", 50.0, niveau_salaire=0.3)])
+    du_chef, plans_du_chef = _plans(simulateur, melee)
+    assert plans_du_chef.minimum == pytest.approx(plans.conjoint_minimum, rel=1e-12)
+    # Douze ans de chef d'abord, puis trente d'avant 1999 moins six.
+    assert du_chef.eligible.chef == 48 and du_chef.eligible.conjoint_avant_1999 == 120
+    assert plans_du_chef.conjoint_annees == 30 - (_annee_des_conjoints(melee) - 1999)
+    majoration, _ = _majoration(simulateur, conjointe)
+    assert majoration.detail.endswith(f"- 16) × {attendues:g} ans de conjoint")
+
+
+def test_les_conjoints_partis_avant_2002_sont_servis_depuis_2002(simulateur):
+    """Trente ans de conjointe, partie en 2000 : rien à la liquidation ; depuis
+    2002, B - 16 points par année, minorés de 15, 15, 10, 10 et 10 % sous
+    trente-sept ans et demi, vingt-sept et demi suffisant à quinze ans de
+    conjoint sans autre pension, sans rien au-delà de la cinquième année
+    manquante (décret n° 2002-297, articles 6 et 8) ; 5,5 % par année
+    manquante en 2007, 4 % en 2008 (D. 732-131). Salariée d'abord, il lui
+    faut trente-deux ans et demi jusqu'en 2006, vingt-deux et demi depuis
+    (D. 732-118)."""
+    seule = _chef(simulateur, 1938, 62, sexe="F",
+                  metiers=[Metier("collaborateur_agricole", 32.0, niveau_salaire=0.3)])
+    exploitant, plans = _plans(simulateur, seule)
+    eligible = exploitant.eligible
+    manque = 37.5 - eligible.duree / 4
+    assert plans is None and seule.annee_liquidation == 2000 and 5.0 < manque < 10.0
+    # Depuis 1999, et avant, moins un (rien, partie le 1er janvier 2000).
+    annees = (eligible.collaborateur_regularise / 4 + eligible.conjoint_avant_1999 / 4
+              - max(0, _annee_des_conjoints(seule) - 1999))
+    for quand, minoration in (("2002-01-01", 0.6), ("2007-01-01", 0.055 * manque),
+                              ("2008-01-01", 0.04 * manque)):
+        _, plans = _plans(simulateur, seule, quand)
+        assert plans.conjoint_annees == pytest.approx(annees, abs=1e-12)
+        assert plans.points == pytest.approx(
+            (plans.conjoint_minimum - 16.0) * annees * (1.0 - minoration), rel=1e-12), quand
+    salariee = _chef(simulateur, 1938, 62, sexe="F", metiers=[
+        Metier("salarie_prive_non_cadre", 20.0, niveau_salaire=0.3),
+        Metier("collaborateur_agricole", 32.0, niveau_salaire=0.3)])
+    assert _plans(simulateur, salariee, "2006-01-01")[1] is None
+    _, plans = _plans(simulateur, salariee, "2007-01-01")
+    assert plans.points == pytest.approx(
+        (plans.conjoint_minimum - 16.0) * annees * (1.0 - 0.055 * manque), rel=1e-12)
+    revision = faire_vivre(simulateur, seule, simulateur.scenario_actuel.calculer(seule),
+                           2005).exploitant
+    assert revision.annee_des_plans == 2005 and revision.points_servis > 0.0
+
+
+def test_les_annees_de_conjoint_d_avant_1999_se_bornent_a_l_ecart_avec_1998(simulateur):
+    """Quarante-deux ans de conjointe, partie en 2001 : quarante avant 1999,
+    moins deux, et au plus trente-sept et demie moins trois ; deux depuis
+    (D. 732-119, D. 732-123) — un an de moins à chaque écart, partie le 1er
+    janvier."""
+    conjointe = _chef(simulateur, 1939, 62, sexe="F",
+                      metiers=[Metier("collaborateur_agricole", 20.0, niveau_salaire=0.3)])
+    exploitant, plans = _plans(simulateur, conjointe, "2002-01-01")
+    eligible, an = exploitant.eligible, _annee_des_conjoints(conjointe)
+    assert conjointe.annee_liquidation == 2001
+    assert eligible.conjoint_avant_1999 / 4 - (an - 1999) > 37.5 - (an - 1998)
+    assert plans.conjoint_annees == pytest.approx(
+        37.5 - (an - 1998) + eligible.collaborateur_regularise / 4, abs=1e-12)
 
 
 def test_une_pension_decotee_n_a_ni_pmr_ni_complement(simulateur):
@@ -733,6 +829,13 @@ CAS = [
     # vingt-neuf ans de chef, puis quinze de collaborateur, parti en 2026.
     {"naissance": "1962", "metier2_debut": "49", "metier2_statut": "collaborateur_agricole",
      "metier2_salaire": "0.3"},
+    # Les points des conjoints des plans (D. 732-118 à D. 732-146) : une conjointe
+    # collaboratrice partie en 2005 ; une autre, trente ans de conjointe, partie
+    # en 2000, servie depuis 2002 ; quarante-deux ans de conjointe, partie en 2001.
+    {"naissance": "1943", "liquidation": "62", "sexe": "F", "statut": "collaborateur_agricole"},
+    {"naissance": "1938", "liquidation": "62", "sexe": "F", "statut": "collaborateur_agricole",
+     "debut": "32"},
+    {"naissance": "1939", "liquidation": "62", "sexe": "F", "statut": "collaborateur_agricole"},
 ]
 
 
