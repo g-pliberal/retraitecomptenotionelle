@@ -14,6 +14,7 @@ inventaire:
   statuts: []
   textes:
     - {reference: "loi n° 2001-616 du 11 juillet 2001 relative à Mayotte, article 64-1 (intégration des agents dans les fonctions publiques au plus tard le 31 décembre 2010 ; IX : dissolution de la caisse)", id: LEGIARTI000025950147}
+    - {reference: "loi n° 2001-616, article 64-1, VII, dans sa rédaction de 2007 (pension unique : les services d'avant l'intégration aux règles de la caisse au 1er janvier 2006, l'âge de la caisse conservé)", id: LEGIARTI000006386575}
     - {reference: "décret n° 2012-1256 du 13 novembre 2012 relatif au règlement des droits à pension des agents publics de Mayotte intégrés ou titularisés (préliquidation par la CRFM de la part antérieure)", id: LEGITEXT000026637100}
     - {reference: "décret n° 2013-255 du 26 mars 2013, article 2 (pensions dues par la CRFM versées par la CNRACL ou par le service des retraites de l'État)", id: LEGIARTI000027239454}
     - {reference: "répertoire Sirene, établissement public administratif n° 200 025 260 créé le 16 mars 1977 (hors JORF)", id: null}
@@ -24,5 +25,9 @@ inventaire:
     publiques d'État, territoriale et hospitalière au plus tard fin 2010,
     en liquidation depuis : ses pensions sont versées par la CNRACL ou par
     l'État, la caisse ne préliquidant plus que la part antérieure. Les
-    statuts de fonctionnaire portent la carrière ; le règlement de la
-    caisse n'est pas dans l'index.
+    statuts de fonctionnaire portent la carrière, aux règles du régime
+    d'accueil sur toute sa durée, quand la loi garde à l'agent intégré une
+    part de pension calculée au règlement de la caisse au 1er janvier 2006,
+    sur ses derniers émoluments, et l'âge de 55 ans, sauf option ; ce
+    règlement, adopté localement, n'est pas dans l'index (fiche
+    `crfm_mayotte_pension_unique`).

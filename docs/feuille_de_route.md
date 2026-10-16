@@ -5848,16 +5848,15 @@ la décision du 1er novembre, une ligne de plus à la table datée.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 
-**Reprise, au 16 octobre 2026.** Fait : l'étape 1 — dix-sept régimes entrés à
-l'inventaire, sept fiches ; de l'étape 2, dix-neuf fiches, dont, le 16, l'archipel
-de Saint-Pierre-et-Miquelon, la CAFAT, la CPS de Polynésie, Wallis-et-Futuna et
-les fonctionnaires calédoniens ; l'étape 3 — huit pistes relues, aucune inscrite.
-Reste : l'étape 2 seule, les trois hors champ (CRFM de Mayotte, élus du
-Pacifique, régies ferroviaires), puis les limites de l'étape (note pacifique) ;
-LexPol et le Journal officiel de Wallis-et-Futuna, injoignables, à relire.
-Au propriétaire : les écarts des notes du 13, du 14 et du 16 octobre, dont le
-rendement de la CAFAT (9 %, non 10 %) et le taux de retraite de Wallis-et-Futuna
-(21 %, non 27 %), qui se corrigeraient d'une donnée chacun.
+**Reprise, au 16 octobre 2026.** Faites, les trois étapes : dix-sept régimes
+entrés à l'inventaire ; vingt-deux fiches à l'étape 2, close le 16 par la CRFM
+de Mayotte, les élus calédoniens et les régies ferroviaires, et ses limites
+écrites ; huit pistes relues. Reste, hors étape : LexPol et le Journal officiel
+de Wallis-et-Futuna, toujours injoignables du conteneur, et le règlement de la
+CRFM. Au propriétaire, puis clore l'action : les écarts des notes du 13, du 14
+et du 16 octobre, dont le rendement de la CAFAT (9 %, non 10 %) et le taux de
+Wallis-et-Futuna (21 %, non 27 %), d'une donnée chacun, et la part de pension
+CRFM des agents mahorais intégrés (note « trois hors champ »).
 
 **Demande**, le 4 octobre 2026 : « Je veux que tu documentes les régimes de
 retraite que nous n'avons pas encore documenter pour l'instant. Il faut

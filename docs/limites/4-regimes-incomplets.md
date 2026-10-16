@@ -164,6 +164,34 @@ solidarité de 1979 estimés.
 **Les autres, et le mur devant chacun** : voir la couverture « à modéliser »
 de l'inventaire, qui porte pour chacun ce qui bloque.
 
+**Les régimes sans fiche ont chacun la leur, et elles disent ce que le modèle
+ne fait pas.** Chaque régime de l'inventaire qui n'avait que la fiche générique
+de liquidation a été lu à la source et décrit, sans que rien n'en soit calculé
+(action 145) ; ce qu'elles trouvent tient en trois familles.
+
+* **Des régimes calculés, mais approchés.** Outre-mer, la caisse de
+  Saint-Pierre-et-Miquelon, la CAFAT, la CPS de Polynésie, Wallis-et-Futuna et
+  les fonctionnaires calédoniens ont des règles que la fiche de régime ne
+  porte pas : salaire de référence, abattements, anticipation, minimum. Deux
+  écarts tiennent à une seule donnée, que le propriétaire n'a pas encore
+  tranchée : le rendement de la CAFAT, que le dépôt estime trop haut depuis que
+  le point est gelé, et le taux de retraite de Wallis-et-Futuna, que la fiche
+  prend égal au taux total de la caisse.
+* **Des régimes hors champ dont la loi garde une part.** L'agent mahorais
+  intégré dans une fonction publique reçoit une pension unique dont la part
+  d'avant l'intégration suit le règlement de la CRFM, sur ses derniers
+  émoluments, et garde l'âge d'ouverture de la caisse, sauf option ; le
+  modèle simule toute sa carrière aux règles du régime d'accueil. De même,
+  l'ancien agent du Crédit foncier, de la CRFOM ou d'un régime transféré au
+  régime général garde des droits que son statut ne porte pas.
+* **Des régimes que rien de lisible ne décrit.** Les règlements de la CRFM, de
+  la caisse des régies ferroviaires d'outre-mer (tenu à la Caisse des dépôts),
+  des ports autonomes et du personnel de la CANSSM ne sont publiés nulle part
+  où le dépôt lit ; les élus de Nouvelle-Calédonie sont affiliés à la CAFAT
+  depuis une délibération connue par l'arrêt qui la cite ; ceux de Polynésie
+  relèvent d'actes du pays que LexPol, injoignable depuis le conteneur, n'a pas
+  laissé lire, non plus que le Journal officiel de Wallis-et-Futuna.
+
 ## Un rendement unique là où il faudrait une série
 
 La fiche CARPIMKO met en lumière une approximation qui vaut pour TOUS les

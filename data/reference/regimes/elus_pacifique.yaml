@@ -15,6 +15,7 @@ inventaire:
   textes:
     - {reference: "loi organique n° 99-209 du 19 mars 1999 relative à la Nouvelle-Calédonie, article 78 (le congrès fixe le régime de sécurité sociale et de retraite de ses membres)", id: LEGIARTI000028213954}
     - {reference: "loi organique n° 99-209, article 163 (même compétence de l'assemblée de province pour ses membres)", id: LEGIARTI000028213949}
+    - {reference: "cour administrative d'appel de Paris, 1er février 2006, n° 02PA01530 (Juridoc) : la délibération n° 431 du 22 juillet 1977 affilie à la CAFAT les membres du conseil de gouvernement et de l'assemblée territoriale pendant la perception de leur indemnité, et ouvre le rachat des mandats antérieurs, pris en charge par le territoire depuis la délibération n° 124 du 25 février 1981 (hors JORF)", id: null}
     - {reference: "Radio 1 Tahiti, « Les détails du texte qui doit faire cotiser les élus à la CPS » : proposition de loi du pays affiliant les représentants au régime de base des salariés, le régime par capitalisation existant étant maintenu à titre complémentaire (hors JORF)", id: null}
     - {reference: "TNTV, « Les membres du gouvernement vont cotiser au régime de retraite », 24 avril 2024 : arrêté du conseil des ministres affiliant les membres du gouvernement au régime de base des salariés de la CPS au 1er juin 2024 (hors JORF)", id: null}
     - {reference: "Outre-mer La 1ère, « Le gouvernement va cotiser au régime de retraite de la CPS », 30 avril 2024 : « représentants et ministres souscrivent à des régimes de retraite privés », cotisation d'environ 3 % des indemnités ministérielles (hors JORF)", id: null}
@@ -25,5 +26,8 @@ inventaire:
     notionnels comme toute capitalisation, et les membres du gouvernement
     ne cotisent au régime de base de la CPS que depuis le 1er juin 2024 ;
     en Nouvelle-Calédonie, la loi organique confie au congrès et aux
-    assemblées de province le régime de retraite de leurs membres, et le
-    dépôt n'a lu aucune de leurs délibérations. Aucun barème lu.
+    assemblées de province le régime de retraite de leurs membres ; la
+    délibération n° 431 du 22 juillet 1977, connue par l'arrêt qui la cite,
+    affilie les élus indemnisés à la CAFAT, sauf ceux qui gardent un régime
+    obligatoire (fiche `elus_nouvelle_caledonie_cafat`). Aucun texte
+    polynésien lu : LexPol refuse la connexion.

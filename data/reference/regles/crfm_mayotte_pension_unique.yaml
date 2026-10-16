@@ -1,0 +1,149 @@
+schema_version: 1
+id: crfm_mayotte_pension_unique
+intitule: >-
+  Les agents titulaires de la collectivité, des communes et des établissements publics
+  de Mayotte cotisent, de 1977 à leur intégration dans l'une des trois fonctions
+  publiques, à la caisse de retraite des fonctionnaires et agents des collectivités
+  publiques de Mayotte (CRFM) ; intégrés, ils reçoivent une pension unique du régime
+  d'accueil, dont la part des services d'avant l'intégration suit les règles de la
+  caisse au 1er janvier 2006, sur les derniers émoluments, et gardent l'âge de 55 ans
+  de la caisse, sauf option pour celui de leur corps ; les pensions de ceux qui ne sont
+  pas intégrés sont versées depuis 2011 par la CNRACL ou par l'État.
+domaine: coordination
+regimes: [crfm_mayotte, cnracl, fonction_publique_etat]
+etape: coordonner_les_affiliations
+face: droit
+etat: pas_encore_modelisee
+lit:
+- les services accomplis à Mayotte sous l'affiliation à la caisse, et la date de l'intégration ou de la titularisation dans un corps ou cadre d'emplois
+- les derniers émoluments soumis à retenue, perçus depuis six mois au moins avant l'affiliation au régime d'accueil
+- l'option pour l'âge d'ouverture du droit et la limite d'âge du corps d'intégration
+- les enfants nés avant et après l'affiliation au régime d'accueil
+ecrit:
+- une pension de la caisse, ou une pension unique du régime d'accueil faite de deux parts, l'une préliquidée aux règles de la caisse, l'autre au code des pensions civiles et militaires ou au régime de la CNRACL
+dates_qui_decident:
+- liquidation.date_effet
+# Le régime est hors champ (inventaire) : aucune version n'est lue par un moteur. Les
+# statuts de fonctionnaire portent la carrière, aux règles du régime d'accueil sur
+# toute sa durée.
+versions:
+- id: caisse_locale
+  statut: supposee
+  hypothese: >-
+    la caisse, établissement public administratif créé le 16 mars 1977 (répertoire
+    Sirene), a un règlement adopté localement, hors Journal officiel, que l'index ne
+    porte pas ; ce que les textes nationaux en disent : un « régime spécial local »
+    ouvrant le droit à 55 ans, « avec prolongation d'activité possible jusqu'à 60 ans »
+    (rapport au Président de la République sur l'ordonnance n° 2012-790), et des
+    règles de bonification pour enfants propres (décret n° 2012-1256, article 10) ;
+    la durée, le taux, la retenue et le salaire de référence ne sont pas lus
+  fiabilite: haute pour l'âge et l'existence, nulle pour le calcul
+  textes: []
+  bornes:
+    liquidation.date_effet: [null, 2007-08-01]
+  contenu:
+    droit: >-
+      une pension de la caisse, créée le 16 mars 1977, dès 55 ans, dont le calcul n'est
+      pas lu
+    affiliation: >-
+      les agents titulaires de la collectivité, des communes et des établissements
+      publics administratifs de Mayotte ; jusqu'à leur intégration, ils restent
+      assujettis aux régimes de sécurité sociale auxquels ils étaient affiliés au
+      21 juillet 2003 (loi n° 2001-616, article 64-1, VI)
+  exemples: aucun trouvé
+- id: pension_unique
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006386575, article: "loi n° 2001-616 du 11 juillet 2001, article 64-1, VII", en_vigueur: 2007-02-06}
+  - {id: LEGIARTI000034109989, article: "loi n° 2001-616, article 64-1, VII à XI", en_vigueur: 2017-03-02}
+  - {id: LEGIARTI000026637112, article: "décret n° 2012-1256 du 13 novembre 2012, article 2", en_vigueur: 2012-11-16}
+  - {id: LEGIARTI000026637120, article: "décret n° 2012-1256, article 3", en_vigueur: 2012-11-16}
+  - {id: LEGIARTI000026637119, article: "décret n° 2012-1256, article 5", en_vigueur: 2012-11-16}
+  - {id: LEGIARTI000026637129, article: "décret n° 2012-1256, article 9", en_vigueur: 2012-11-16}
+  - {id: LEGIARTI000026637132, article: "décret n° 2012-1256, article 10", en_vigueur: 2012-11-16}
+  - {id: LEGIARTI000026637135, article: "décret n° 2012-1256, article 14", en_vigueur: 2012-11-16}
+  - {id: LEGIARTI000026637137, article: "décret n° 2012-1256, article 15", en_vigueur: 2012-11-16}
+  - {id: LEGIARTI000027239454, article: "décret n° 2013-255 du 26 mars 2013, article 2", en_vigueur: 2013-03-29}
+  nee_de: LEGIARTI000006386575
+  bornes:
+    liquidation.date_effet: [2007-08-01, null]
+  contenu:
+    affiliation: >-
+      intégrés dans un corps ou cadre d'emplois des trois fonctions publiques au plus
+      tard le 31 décembre 2010, les agents sont affiliés au régime spécial du corps
+      d'accueil au jour de leur intégration, et au plus tôt le 1er août 2007 (premier
+      jour du sixième mois suivant la publication de la loi n° 2007-148)
+    pension_unique: >-
+      « Les services effectués antérieurement à l'affiliation au régime spécial précité
+      sont pris en compte selon les règles applicables, au 1er janvier 2006, dans le
+      régime de la caisse [...] en retenant les derniers émoluments soumis à retenue
+      pour pension perçus par l'intéressé depuis six mois au moins avant l'affiliation
+      au régime spécial de retraite » ; les services postérieurs, selon les règles du
+      régime d'accueil ; tous comptent pour la constitution du droit (article 64-1,
+      VII), ouvert après deux années de services (décret n° 2012-1256, article 2)
+    preliquidation: >-
+      la part d'avant l'intégration est préliquidée par la caisse, notifiée à l'agent et
+      au régime d'accueil, puis revalorisée comme les pensions de ce régime jusqu'à la
+      concession (décret n° 2012-1256, articles 3 à 5) ; la pension unique est
+      concédée par le service des retraites de l'État ou par la CNRACL (article 6), et
+      ne peut être inférieure au minimum garanti (article 9)
+    age: >-
+      l'agent garde, à titre personnel, l'âge d'ouverture du droit et la limite d'âge de
+      la caisse, 55 et 60 ans, sauf s'il opte, depuis l'ordonnance n° 2012-790, pour
+      ceux de son corps d'intégration, au moins six mois avant d'atteindre l'âge
+      d'ouverture, irrévocablement (article 64-1, VII ; décret n° 2012-1256, article
+      14) ; ses services d'avant l'intégration de même nature que des emplois de
+      catégorie active comptent pour la condition de durée de ces emplois
+    enfants: >-
+      les enfants nés avant l'affiliation au régime d'accueil sont comptés selon les
+      règles de la caisse au 1er janvier 2006, les suivants selon L. 9, L. 9 ter et
+      L. 12 bis du code des pensions civiles et militaires (décret n° 2012-1256, article
+      10)
+    sans_pension: >-
+      l'agent qui quitte le service sans droit à pension est rétabli au régime de base de
+      la caisse de sécurité sociale de Mayotte, le régime d'accueil versant les
+      cotisations qu'il y aurait acquittées, plafonnées (article 64-1, VIII ; décret
+      n° 2012-1256, article 15)
+    non_integres: >-
+      les pensions de la caisse dues aux assurés qui n'ont pas été intégrés, et à leurs
+      ayants cause, sont versées depuis le 1er janvier 2011 par la CNRACL ou le service
+      des retraites de l'État, selon l'emploi qu'ils occupaient, et revalorisées comme
+      les leurs (article 64-1, IX ; décret n° 2013-255, article 2)
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-10-16
+  a_relire:
+  - >-
+    Le règlement de la caisse, au 1er janvier 2006 : durée, taux par année, retenue,
+    émoluments de référence, bonifications pour enfants ; adopté par délibération de
+    la collectivité, hors Journal officiel, il n'est publié nulle part où le dépôt lit.
+    Le demander au service liquidateur de la caisse, ou à la CNRACL.
+  - >-
+    Le décret de dissolution prévu par le X de l'article 64-1, que l'index ne porte
+    pas ; la liquidation de la caisse était encore en cours en septembre 2025.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 2001-616, article 64-1, rédactions de 2007 (LEGIARTI000006386575), de 2012
+      (LEGIARTI000025950147) et de 2017 (LEGIARTI000034109989) ; décret n° 2012-1256,
+      articles 1er à 16 ; décret n° 2013-255, articles 1er à 4 ; par l'index LEGI du
+      dépôt
+    date: 2026-10-16
+  - type: jorf
+    reference: >-
+      rapport au Président de la République relatif à l'ordonnance n° 2012-790
+      (JORFARTI000025944757) ; par l'index JORF du dépôt
+    date: 2026-10-16
+historique:
+- >-
+  2026-10-16 — née avec l'action 145, étape 2 : la ligne d'inventaire tenait la caisse
+  pour une affaire close, ses pensions versées par la CNRACL ou l'État ; la loi lue dit
+  plus : tout agent mahorais intégré garde une part de pension calculée aux règles de
+  la caisse, et l'âge de 55 ans.
+effet: >-
+  Les agents publics de Mayotte titulaires avant 2003, nés pour la plupart de 1945 à
+  1985 : le modèle simule leur carrière aux règles du régime d'accueil sur toute sa
+  durée, quand la part de leurs services d'avant l'intégration suit le règlement de la
+  caisse, sur les derniers émoluments, et quand ils gardent, sauf option, l'âge
+  d'ouverture de 55 ans.

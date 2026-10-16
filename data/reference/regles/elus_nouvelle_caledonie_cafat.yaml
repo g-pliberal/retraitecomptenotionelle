@@ -1,0 +1,101 @@
+schema_version: 1
+id: elus_nouvelle_caledonie_cafat
+intitule: >-
+  Les membres de l'assemblée et du gouvernement de Nouvelle-Calédonie, puis du congrès
+  et des assemblées de province, n'ont de régime de retraite que celui que leurs
+  assemblées fixent : l'affiliation à la CAFAT pendant la perception de l'indemnité,
+  depuis la délibération n° 431 du 22 juillet 1977, sauf pour qui garde un régime
+  obligatoire, et le rachat des mandats antérieurs, que le territoire prend en charge.
+domaine: coordination
+regimes: [elus_pacifique, cafat_nouvelle_caledonie]
+etape: coordonner_les_affiliations
+face: droit
+etat: pas_encore_modelisee
+lit:
+- les mandats à l'assemblée territoriale, au congrès, aux assemblées de province et au gouvernement, et l'indemnité qui s'y attache
+- le régime obligatoire dont l'élu relève par ailleurs, fonctionnaire détaché compris
+ecrit:
+- des points de la CAFAT au titre de l'indemnité, ou rachetés pour les mandats d'avant 1977
+dates_qui_decident:
+- liquidation.date_effet
+# Le régime est hors champ (inventaire) : aucune version n'est lue par un moteur. La
+# fiche `cafat_pension_de_base` dit la règle du régime auquel les élus sont affiliés ;
+# les élus de Polynésie n'ont pas de fiche : aucun texte du pays n'a pu être lu,
+# LexPol refusant la connexion (ligne d'inventaire `elus_pacifique`).
+versions:
+- id: avant_1977
+  statut: supposee
+  hypothese: >-
+    avant la délibération n° 431, les élus territoriaux n'avaient d'autre couverture que
+    celle de leur activité : c'est ce que suppose le rachat qu'elle ouvre, à son article
+    10, pour les mandats antérieurs (CAA Paris, 1er février 2006)
+  fiabilite: moyenne
+  textes: []
+  bornes:
+    liquidation.date_effet: [null, 1977-07-22]
+  contenu:
+    droit: >-
+      aucun droit au titre du mandat, sauf rachat après 1977
+  exemples: aucun trouvé
+- id: nouvelle_caledonie_cafat
+  statut: supposee
+  hypothese: >-
+    la délibération n° 431 du 22 juillet 1977 de l'assemblée territoriale, prise sur
+    l'article 46 de la loi n° 76-1222 (« l'assemblée territoriale [...] peut également
+    définir pour ses membres un régime de prestations sociales »), n'est connue que par
+    l'arrêt de la cour administrative d'appel de Paris du 1er février 2006 (n° 02PA01530,
+    sur Juridoc) qui la cite : affiliation obligatoire des membres du conseil de
+    gouvernement et de l'assemblée territoriale à la CAFAT pendant la perception de
+    leur indemnité de fonction, sauf pour ceux qui gardent un régime obligatoire ;
+    rachat des mandats antérieurs (article 10), pris en charge par le territoire à la
+    demande (délibération n° 124 du 25 février 1981) ; que les délibérations du congrès
+    et des provinces prises depuis 1999 sur les articles 78 et 163 de la loi organique
+    la reconduisent n'est pas lu
+  fiabilite: haute pour 1977, inconnue depuis 1999
+  textes:
+  - {id: LEGIARTI000028213954, article: "loi organique n° 99-209 du 19 mars 1999, article 78", en_vigueur: 2013-11-17}
+  - {id: LEGIARTI000028213949, article: "loi organique n° 99-209, article 163", en_vigueur: 2013-11-17}
+  bornes:
+    liquidation.date_effet: [1977-07-22, null]
+  contenu:
+    affiliation: >-
+      les élus indemnisés cotisent à la CAFAT sur leur indemnité, au régime vieillesse
+      des salariés (fiche `cafat_pension_de_base`) ; un fonctionnaire de l'État détaché
+      pour exercer le mandat en est exclu, puisqu'il garde de plein droit le régime du
+      code des pensions civiles et militaires (CAA Paris, 1er février 2006)
+    rachat: >-
+      les mandats exercés avant 1977 peuvent être rachetés auprès de la CAFAT, sauf s'ils
+      ont déjà valu des points, et le territoire en prend le coût à sa charge depuis 1981
+    competence: >-
+      depuis 1999, le congrès et chaque assemblée de province fixent « le régime de
+      sécurité sociale et de retraite » de leurs membres (loi organique n° 99-209,
+      articles 78 et 163)
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-10-16
+  a_relire:
+  - >-
+    Les délibérations n° 431 du 22 juillet 1977 et n° 124 du 25 février 1981, et celles
+    du congrès et des assemblées de province prises depuis 1999 sur les articles 78 et
+    163 de la loi organique, au Journal officiel de la Nouvelle-Calédonie ou sur
+    Juridoc.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi organique n° 99-209, articles 78 et 163 ; par l'index LEGI du dépôt
+    date: 2026-10-16
+  - type: autre
+    reference: >-
+      cour administrative d'appel de Paris, 1er février 2006, n° 02PA01530, et tribunal
+      administratif de Nouméa, 6 mars 2002, n° 01-270, sur juridoc.gouv.nc
+    date: 2026-10-16
+historique:
+- >-
+  2026-10-16 — née avec l'action 145, étape 2 : la ligne d'inventaire disait n'avoir lu
+  aucune délibération calédonienne ; l'arrêt de 2006 en cite deux, qui affilient les
+  élus à la CAFAT depuis 1977.
+effet: >-
+  Les élus calédoniens qui n'ont pas d'autre activité : le modèle ne simule pas leurs
+  mandats, quand ils valent des points de la CAFAT depuis 1977 ; un fonctionnaire
+  détaché y est simulé à son code des pensions, comme il convient.

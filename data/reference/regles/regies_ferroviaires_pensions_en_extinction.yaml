@@ -1,0 +1,146 @@
+schema_version: 1
+id: regies_ferroviaires_pensions_en_extinction
+intitule: >-
+  Les agents sous statut des chemins de fer d'outre-mer cotisaient à la caisse des
+  retraites des régies ferroviaires de la France d'outre-mer, et ceux d'Afrique du Nord
+  aux caisses des réseaux algériens, marocains et tunisiens ; aux indépendances, leurs
+  pensions restent servies par la caisse, gérée par l'État depuis le 30 septembre 1993,
+  dont la Caisse nationale d'assurance vieillesse assure l'équilibre depuis 2025, et
+  leurs services d'Algérie sont validés au régime général par la loi du 26 décembre
+  1964.
+domaine: coordination
+regimes: [regies_ferroviaires_outre_mer, regime_general]
+etape: coordonner_les_affiliations
+face: droit
+etat: pas_encore_modelisee
+lit:
+- les services accomplis dans les régies ferroviaires d'outre-mer ou les réseaux d'Afrique du Nord, et leur territoire
+- le reclassement à la SNCF ou dans un service public métropolitain après 1958
+ecrit:
+- une pension de la caisse des régies, servie par l'État, ou la validation des services au régime général
+dates_qui_decident:
+- liquidation.date_effet
+# Le régime est hors champ (inventaire) : aucune version n'est lue par un moteur. Les
+# carrières métropolitaines qui suivent portent les droits de leurs propres régimes.
+versions:
+- id: caisse_des_regies
+  statut: supposee
+  hypothese: >-
+    la caisse des retraites des régies ferroviaires de la France d'outre-mer a un
+    règlement que l'index ne porte pas ; le dépôt n'en connaît que les textes qui la
+    nomment : le décret n° 58-1090, qui affilie ses retraités au régime général de la
+    sécurité sociale en modifiant les articles 61 bis et 74 du décret n° 45-0179 (son
+    analyse seule, qui laisse penser aux prestations en nature de ses pensionnés, non à
+    leur pension) ; l'ordonnance n° 58-1036, qui prévoit le reclassement à la SNCF de
+    ses agents sous statut cessant de servir outre-mer ; le décret n° 93-426, où elle
+    verse en 1993 sa contribution au fonds spécial d'allocation vieillesse (125 706 F) ;
+    les réseaux d'Afrique du Nord ont leurs propres règlements, homologués par le
+    gouverneur général de l'Algérie (arrêté du 24 mars 1951, décisions de 1958 et 1959)
+    ou rattachés au reclassement des agents du Maroc et de Tunisie (décret n° 60-25)
+  fiabilite: haute pour l'existence et la population, nulle pour le calcul
+  textes:
+  - {id: LEGIARTI000006452068, article: "ordonnance n° 58-1036 du 29 octobre 1958, article 1er", en_vigueur: 1958-11-01}
+  - {id: LEGIARTI000006452074, article: "ordonnance n° 58-1036, article 7", en_vigueur: 1958-11-01}
+  - {id: LEGIARTI000006928885, article: "décret n° 93-426 du 18 mars 1993, article 2", en_vigueur: 1993-03-24}
+  bornes:
+    liquidation.date_effet: [null, 1993-09-30]
+  contenu:
+    droit: >-
+      une pension de la caisse des régies, ou d'une caisse des chemins de fer d'Afrique
+      du Nord, dont le calcul n'est pas lu
+    reclassement: >-
+      le Gouvernement passe avec la SNCF une convention de reclassement des agents sous
+      statut des régies qui cessent de servir outre-mer autrement que par démission ou
+      retraite ; ils peuvent aussi être intégrés dans les services publics
+      métropolitains (ordonnance n° 58-1036, article 7)
+    algerie: >-
+      les Français ayant travaillé en Algérie, affiliés avant le 1er juillet 1962 à une
+      institution algérienne, ont droit à la validation de ces périodes par le régime
+      français correspondant, régimes spéciaux compris, et à l'avance des pensions que
+      les institutions algériennes ne servent pas (loi n° 64-1330, articles 1er et 2)
+  exemples: aucun trouvé
+- id: gestion_par_l_etat
+  statut: supposee
+  hypothese: >-
+    le décret n° 93-1150 dissout l'Office français de coopération pour les chemins de
+    fer et les matériels d'équipement au 31 décembre 1993 et transfère à l'État, au
+    30 septembre 1993, la gestion du régime des anciennes régies ferroviaires
+    d'outre-mer ; son règlement administratif et financier est approuvé par l'arrêté du
+    13 mai 1996, qui n'en publie pas le texte, « disponible à la Caisse des dépôts » :
+    l'index ne porte que leurs analyses
+  fiabilite: haute pour la gestion, nulle pour le calcul
+  textes:
+  - {id: LEGIARTI000006758772, article: "loi n° 64-1330 du 26 décembre 1964, article 1er", en_vigueur: 1964-12-29}
+  - {id: LEGIARTI000006758773, article: "loi n° 64-1330, article 2", en_vigueur: 1964-12-29}
+  - {id: LEGIARTI000006321982, article: "loi n° 2003-1312 du 30 décembre 2003, article 80, I, 23°", en_vigueur: 2004-12-31}
+  bornes:
+    liquidation.date_effet: [1993-09-30, 2025-01-01]
+  contenu:
+    droit: >-
+      les pensions de la caisse, servies par l'État, la Caisse des dépôts gérant le
+      régime ; aucune pension nouvelle n'est connue, la population étant celle des
+      agents en fonction avant les indépendances
+    garantie: >-
+      la garantie de l'État couvre les pensions des anciens agents des chemins de fer
+      d'Afrique du Nord et du Niger-Méditerranée, des transports urbains tunisiens et
+      marocains (loi n° 2003-1312, article 80, I, 23°, issu de la loi n° 2004-1485)
+  exemples: aucun trouvé
+- id: equilibre_par_la_cnav
+  statut: lue
+  textes:
+  - {id: LEGIARTI000048701250, article: "code de la sécurité sociale, L. 134-3, 3°, i et j", en_vigueur: 2025-01-01}
+  - {id: LEGIARTI000051288904, article: "code de la sécurité sociale, L. 134-3", en_vigueur: 2025-02-28}
+  nee_de: LEGIARTI000048701250
+  bornes:
+    liquidation.date_effet: [2025-01-01, null]
+  contenu:
+    equilibre: >-
+      sont retracés dans les comptes de la Caisse nationale d'assurance vieillesse, qui
+      en assure l'équilibre financier, le solde des charges et des produits « des
+      régimes des agents des chemins de fer d'Afrique du Nord et d'outre-mer » et « du
+      régime des régies ferroviaires d'outre-mer », à compter du premier exercice au
+      terme duquel leurs fonds propres sont négatifs (L. 134-3, 3°, i et j, issu de la
+      loi n° 2023-1250, article 15) ; la règle de calcul des pensions n'en change pas
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-10-16
+  a_relire:
+  - >-
+    Le règlement de la caisse des retraites des régies ferroviaires d'outre-mer (durée,
+    taux, âge, émoluments de référence), annexé à l'arrêté du 13 mai 1996 et tenu à la
+    Caisse des dépôts ; et les règlements des chemins de fer algériens (arrêté du
+    gouverneur général du 24 mars 1951), marocains et tunisiens.
+  - >-
+    Le texte du décret n° 58-1090 au fac-similé du Journal officiel du 13 novembre 1958 :
+    affiliation des pensionnés pour la maladie, ou davantage.
+  - >-
+    Le décret d'application de L. 134-3, et ce que la Cnav porte de ces régimes depuis
+    2025, en nombre de pensionnés et en montant.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 134-3 du code de la sécurité sociale, rédactions du 1er janvier et du 28 février
+      2025 ; ordonnance n° 58-1036, articles 1er et 7 ; loi n° 64-1330, articles 1er à
+      3 ; décret n° 93-426, article 2 ; loi n° 2003-1312, article 80 ; par l'index LEGI
+      du dépôt
+    date: 2026-10-16
+  - type: jorf
+    reference: >-
+      analyses du décret n° 58-1090 (JORFTEXT000000669975), du décret n° 93-1150
+      (JORFTEXT000000332371), de l'arrêté du 13 mai 1996 (JORFTEXT000000742477), de
+      l'arrêté du 28 mars 1997, des décrets du 4 novembre 1958 et du 17 mars 1959
+      (chemins de fer algériens) et du décret n° 60-25 (chemins de fer marocains) ;
+      loi n° 2004-1485, article 103 ; par l'index JORF du dépôt
+    date: 2026-10-16
+historique:
+- >-
+  2026-10-16 — née avec l'action 145, étape 2 : la ligne d'inventaire disait les
+  régimes gérés par l'État depuis 1993 ; la loi de financement pour 2024 en fait passer
+  le solde à la Cnav, et l'ordonnance de 1958 dit ce que devenaient les agents
+  reclassés.
+effet: >-
+  Les anciens agents des chemins de fer d'outre-mer et d'Afrique du Nord, nés pour la
+  plupart avant 1940 : le modèle ne simule pas leurs services d'outre-mer ; ceux qui ont
+  été reclassés à la SNCF ou dans un service public métropolitain y sont simulés pour
+  leur seule carrière métropolitaine.
