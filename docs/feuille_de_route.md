@@ -2228,15 +2228,15 @@ fabriqués.
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
 **Reprise, au 16 octobre 2026.** Fait : phases 0 à 8, cinq domaines clos ;
-le sixième, les périodes assimilées manquantes, a ses étapes 1 à 4 faites : les
-quatre fiches sont `approchee` ; `compter_les_durees` compte les périodes dans
-les deux moteurs, sans saisie qui les déclare encore ; les huit exemples des
-circulaires Cnav 2016-41 et 2024-18 sont reproduits par les deux, en cas
-d'essai. Reste de lui les étapes 5 à 7 : la saisie, à la session des pages ;
-commencer, hors d'elle, par la sixième, le coût du complément. Restent aussi :
-les points ouverts des phases 2 à 8 ; la décision du propriétaire sur la
-retraite progressive, le cumul et la seconde pension (README muet) ; les
-restes des fiches. Détail : `130/2026-10-16-sixieme-domaine-etape-4.md`.
+le sixième, les périodes assimilées manquantes, a ses étapes 1 à 5 faites : les
+quatre fiches sont `approchee`, comptées dans les deux moteurs, les exemples
+des circulaires reproduits ; le simulateur les déclare (dépliant
+« Apprentissage et périodes assimilées », `assimileeN_…` et `apprentissage`),
+cinq témoins de simulation et un de page. Reste de lui : la sixième étape, le
+coût du complément, puis la septième, la décision de la proposition. Restent
+aussi : les points ouverts des phases 2 à 8 ; la décision du propriétaire sur
+la retraite progressive, le cumul et la seconde pension (README muet) ; les
+restes des fiches. Détail : `130/2026-10-16-sixieme-domaine-etape-5.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

@@ -1118,6 +1118,38 @@ def _cas() -> list[dict]:
         "naissance": "1951-03-15", "debut": "2000-01", "liquidation": "2016-04",
         "etranger1_pays": "MA", "etranger1_debut": "1975-01", "etranger1_fin": "1990-01",
         "etranger2_pays": "RO", "etranger2_debut": "1990-01", "etranger2_fin": "2000-01"}))
+    # LES PÉRIODES ASSIMILÉES (droit/compter.py, action 130, sixième domaine),
+    # que la saisie déclare : un an de TUC avant l'embauche, pour une pension
+    # prise depuis septembre 2023 ; l'apprenti de 1983, avant la fiche de
+    # 2014, et celui de 2016, payé peu, que le complément porte ; quatre-vingts
+    # jours de stage de la formation professionnelle dans une année sans
+    # activité ; une sportive de haut niveau à vingt ans.
+    entre_en_1987 = {"naissance": "1966-04-10", "debut": "1987-09",
+                     "liquidation": "2030-05"}
+    cas.append(("assimilee_tuc_avant_l_embauche", {
+        **entre_en_1987, "assimilee1_motif": "stage_d_insertion",
+        "assimilee1_dispositif": "tuc", "assimilee1_debut": "1985-10-01",
+        "assimilee1_fin": "1986-10-01"}))
+    cas.append(("assimilee_apprenti_avant_2014", {
+        **entre_en_1987, "debut": "1983-09", "apprentissage": "1",
+        "metier2_debut": "1985-09", "metier2_statut": "salarie_prive_non_cadre"}))
+    cas.append(("assimilee_apprenti_paye_peu", {
+        "naissance": "2000-02-20", "debut": "2016-09", "liquidation": "2065-03",
+        "salaire": "0.15", "apprentissage": "1",
+        "metier2_debut": "2018-09", "metier2_statut": "salarie_prive_non_cadre",
+        "metier2_salaire": "0.8"}))
+    cas.append(("assimilee_stage_sans_activite", {
+        "naissance": "1970-05-12", "debut": "1992-09", "liquidation": "2034-06",
+        "metier2_debut": "2016-01",
+        "metier2_statut": "sans_activite", "metier3_debut": "2017-01",
+        "metier3_statut": "salarie_prive_non_cadre", "metier3_salaire": "0.8",
+        "assimilee1_motif": "stage_de_formation_professionnelle",
+        "assimilee1_debut": "2016-03-07", "assimilee1_fin": "2016-07-01",
+        "assimilee1_jours": "80"}))
+    cas.append(("assimilee_sportive_de_haut_niveau", {
+        "naissance": "1992-06-03", "sexe": "F", "debut": "2017-01",
+        "liquidation": "2056-07", "assimilee1_motif": "sportif_de_haut_niveau",
+        "assimilee1_debut": "2012-06-03", "assimilee1_fin": "2017-01-01"}))
     # L'ASPA n'est servie qu'à qui réside en France : une petite carrière,
     # quatre ans au Maroc puis vingt-six en France, repartie vivre au Maroc.
     cas.append(("etranger_residence_au_maroc_sans_aspa", {
@@ -1867,6 +1899,7 @@ FORMULAIRE_ENTIER = frozenset({
     "simuler_releve", "simuler_par_pension", "simuler_revenu_en_multiples",
     "simuler_reversion", "simuler_demande_de_pension", "simuler_radiation_invalidite",
     "simuler_carriere_hors_de_france", "simuler_handicap", "simuler_micro_entrepreneur",
+    "simuler_periodes_assimilees",
 })
 _FORMULAIRE = re.compile(r'(<form class="carte"[^>]*>).*?(</form>)', re.DOTALL)
 
@@ -1978,6 +2011,15 @@ def _pages() -> dict:
             "etranger1_debut": "1978-01", "etranger1_fin": "2003-01", "residence": "ES",
             "pension_etrangere1_pays": "ES", "pension_etrangere1": "600",
             "pension_etrangere1_debut": "2027-04",
+        }),
+        # LES PÉRIODES ASSIMILÉES (droit/compter.py) : un an de TUC et un
+        # apprentissage ; son formulaire, figé entier, montre le bloc rempli.
+        ("simuler_periodes_assimilees", "/simuler", {
+            **BASE, "naissance": "1966-04-10", "debut": "1983-09", "liquidation": "2030-05",
+            "apprentissage": "1", "metier2_debut": "1985-09",
+            "metier2_statut": "salarie_prive_non_cadre", "metier2_salaire": "1.0",
+            "assimilee1_motif": "stage_d_insertion", "assimilee1_dispositif": "tuc",
+            "assimilee1_debut": "1985-10-01", "assimilee1_fin": "1986-10-01",
         }),
         ("simuler_hors_de_france_sans_accord", "/simuler", {
             **BASE, "naissance": "1962-03-15", "statut": "fonctionnaire_etat",

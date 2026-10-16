@@ -75,6 +75,7 @@ import {
   CODES_SANS_EMPLOI, CONTRIBUTIONS_ETAT, CONVERSIONS_ACQUIS, CUMUL, DEFAUTS,
   EMPLOYEURS_APRES_DEPART, PREFIXE_DEMANDE,
   ACTIVITES_A_L_ETRANGER, AUTRE_ETAT, ENFANTS_MAXIMUM, ETRANGER_MAXIMUM, ErreurSaisie,
+  ASSIMILEES_MAXIMUM, DISPOSITIFS_D_INSERTION, MOTIFS_D_ASSIMILATION,
   INDEXATIONS, LISSAGE_MAXIMUM, METIERS_MAXIMUM,
   MODES_MONTANT, NAISSANCE_MAXIMALE, NAISSANCE_MINIMALE, OUI, PARTS_COTISATION,
   HYPOTHESES_ESPERANCE_VIE, POPULATIONS, PROFILS, PROJECTIONS, RATTACHEMENTS, REGIMES_FRAIS, REGIMES_TAUX,
@@ -1050,6 +1051,7 @@ export function formulaire(saisie, contexte, comparaison = null) {
   ${apresLeDepartFormulaire(saisie, contexte, affiliations, echelle)}
   ${invaliditeFormulaire(saisie)}
   ${etrangerFormulaire(saisie, contexte)}
+  ${assimileesFormulaire(saisie)}
   <details class="options">
     ${g.sommaire("Options de modélisation (sexe, profil, indexation, "
       + "projection)")}
@@ -1461,6 +1463,63 @@ function etrangerFormulaire(saisie, contexte) {
     ${g.sommaire("Carrière hors de France")}
     <div class="metiers">${lignesPeriodes.join("")}${lignesPensions.join("")}</div>
     <div class="grille">${residence}</div>
+  </details>`;
+}
+
+/**
+ * Les périodes assimilées (le sixième domaine, action 130) : une ligne par
+ * période — son motif, le dispositif d'un stage d'insertion, ses deux dates,
+ * la fin exclue, et ses jours quand elle ne les compte pas tous —, suivie d'une
+ * ligne vide tant qu'il reste de la place ; et la ligne de carrière qui est un
+ * contrat d'apprentissage. Le formulaire déclare ; ce que chaque période
+ * valide, et depuis quand, ce sont les fiches qui le disent
+ * (`droit/compter.js`). La saisie refuse ce qui ne tient pas : une ligne
+ * incomplète, un dispositif sans stage d'insertion, une période hors de la vie
+ * ou après le départ, des jours de trop.
+ */
+function assimileesFormulaire(saisie) {
+  // Une date dite à l'année ou au mois tombe au premier jour, que le
+  // calendrier sait montrer.
+  const jour = (date) => (date.length === 4 ? `${date}-01-01`
+    : date.length === 7 ? `${date}-01` : date);
+  const periodes = [...saisie.assimilees, null].slice(0, ASSIMILEES_MAXIMUM);
+  const lignes = periodes.map((periode, index) => {
+    const rang = index + 1;
+    const champs = g.liste(`assimilee${rang}_motif`, "Motif",
+      [["", "aucun"], ...MOTIFS_D_ASSIMILATION], periode === null ? "" : periode.motif,
+      "", {},
+      rang > 1 ? "" : "Ces périodes valident des trimestres sans cotisation, dans la "
+        + "limite de quatre par an : les stages de la formation professionnelle depuis "
+        + "2015, les TUC et stages d'insertion de 1977 à 1992 pour une pension prise "
+        + "depuis septembre 2023, les sportifs de haut niveau depuis 2012, le congé "
+        + "supplémentaire de naissance depuis juillet 2026.")
+      + g.liste(`assimilee${rang}_dispositif`, "Dispositif",
+        [["", "sans objet"], ...DISPOSITIFS_D_INSERTION], periode === null ? "" : periode.dispositif,
+        "pour un TUC ou un stage d'insertion")
+      + g.champDate(`assimilee${rang}_debut`, "Du",
+        periode === null ? "" : jour(periode.debut), "le premier jour")
+      + g.champDate(`assimilee${rang}_fin`, "Au",
+        periode === null ? "" : jour(periode.fin), "le lendemain du dernier")
+      + g.champ(`assimilee${rang}_jours`, "Jours",
+        periode === null || periode.jours === null ? "" : String(periode.jours),
+        "à dire si tous ne comptent pas", "number", { min: "1", step: "1" });
+    return `<fieldset class="ligne-etrangere${periode === null ? " facultatif" : ""}">`
+      + `<legend class="rang etranger">${echapper(`Période assimilée n° ${rang}`)}</legend>`
+      + `<div class="grille">${champs}</div></fieldset>`;
+  });
+  const apprentissage = g.liste("apprentissage", "Contrat d'apprentissage",
+    [["", "aucun"], ...saisie.lignesCarriere.map((_, index) => [String(index + 1),
+      `le métier n° ${index + 1}`])],
+    saisie.apprentissage === null ? "" : String(saisie.apprentissage), "", {},
+    "Depuis 2014, un apprenti valide autant de trimestres que son contrat dure, même "
+    + "payé moins que le seuil d'un trimestre : le complément ne se cotise pas. Le "
+    + "métier que vous désignez est ce contrat, de son début à la ligne suivante.");
+  const ouvert = saisie.assimilees.length > 0 || saisie.apprentissage !== null;
+  return `
+  <details class="options"${ouvert ? " open" : ""}>
+    ${g.sommaire("Apprentissage et périodes assimilées")}
+    <div class="metiers">${lignes.join("")}</div>
+    <div class="grille">${apprentissage}</div>
   </details>`;
 }
 

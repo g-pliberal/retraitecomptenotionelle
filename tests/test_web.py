@@ -2373,8 +2373,10 @@ def test_le_simulateur_tient_en_peu_de_mots():
     # Le 8 octobre 2026, de deux encore : le dépliant de l'invalidité dit
     # aussi « taux plein », les champs de l'ancien déporté, de l'ancien
     # combattant et du travail manuel (L. 351-8, 3° à 5°), repliés avec eux.
+    # Le 16 octobre 2026, de quatre pour un contrôle : le dépliant
+    # « Apprentissage et périodes assimilées » (le sixième domaine), replié.
     vierge = rendre("/simuler", {})[1]
-    assert _mots_visibles(vierge) <= 182, "le formulaire reprend de la prose"
+    assert _mots_visibles(vierge) <= 186, "le formulaire reprend de la prose"
 
     resultats = rendre("/simuler", {
         "naissance": "1962-03-15", "debut": "1984-09", "liquidation": "2026-07",
