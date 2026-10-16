@@ -10527,7 +10527,10 @@ function coutDetailEquilibre(contexte) {
   // recette de la proposition est devenue ses 18 % sur l'assiette, le facteur
   // est passé sous un : la page lisait « une économie de −9 % » au-dessus d'un
   // 0,92. Le catalogue des affirmations du site le tient.
+  // Sous un, assez de décimales pour ne pas écrire 1,00 ni « rogner de 0 % » :
+  // la proposition finit à 0,998 depuis le 16 octobre 2026.
   const coefficient = horizon.coefficient("notionnel_liberal");
+  const decimalesCoefficient = coefficient < 1.0 ? decimalesSousUn(coefficient) : 2;
   const lectureCoefficient = coefficient >= 1.0
     ? "<strong>Un coefficient supérieur à un est une marge, et une "
       + `marge se sert.</strong> Lire les ${g.nombre(coefficient, 2)} de la `
@@ -10537,14 +10540,14 @@ function coutDetailEquilibre(contexte) {
       + "ce que la colonne « dépense » lui prête, et autrement réparti entre "
       + "les carrières."
     : "<strong>Un coefficient inférieur à un est un manque, et un manque "
-      + `se règle.</strong> Les ${g.nombre(coefficient, 2)} de la proposition `
+      + `se règle.</strong> Les ${g.nombre(coefficient, decimalesCoefficient)} de la proposition `
       + `en ${solde.derniereAnnee} disent qu'à ses recettes, `
       + `${g.pourcentage(horizon.tauxLiberal, false, 0)} appliqués à `
       + "l'assiette des revenus d'activité, sans les impôts affectés ni les "
       + "transferts qui payaient des droits supprimés, le système servirait "
-      + `${g.pourcentage(coefficient, false, 0)} de ce que la colonne `
+      + `${g.pourcentage(coefficient, false, decimalesCoefficient - 2)} de ce que la colonne `
       + "« dépense » lui prête. Il faudrait rogner de "
-      + `${g.pourcentage(1 - coefficient, false, 0)}, relever le taux, ou `
+      + `${g.pourcentage(1 - coefficient, false, decimalesCoefficient - 2)}, relever le taux, ou `
       + "financer autrement. C'est au réglage annuel du programme de "
       + "l'absorber, et il déplacerait toutes les pensions du même facteur.";
   return g.depliant(
