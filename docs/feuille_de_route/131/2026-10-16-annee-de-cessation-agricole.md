@@ -53,7 +53,7 @@ rejoue trois carrières dans les deux moteurs : l'exploitant parti le
 158), le salarié qui part la même année, l'exploitant installé l'année de son
 départ. La fiche `taux_plein_et_proratisation` lit L. 731-10-1, R. 731-83,
 R. 732-48, l'exposé et la réponse ministérielle, et rattache D. 732-48-1 : le
-cliquet des textes passe de 9 722 à 9 721.
+cliquet des textes descend d'une rédaction, à 9 720 avec une autre session.
 
 **Ce qui bouge.** Onze des 868 témoins de simulation au scénario 1, tous des
 exploitants ou des collaborateurs agricoles, tous en hausse : +1,87 % en

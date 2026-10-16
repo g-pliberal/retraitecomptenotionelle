@@ -165,7 +165,7 @@ le 5 octobre 2026 dans `decomposition_depense_retraite.csv` et
 (`Avenir.decomposition`). De 2025 à 2070, le COR compte
 <!--chiffre:mesure(decomposition?facteur=retraites&de=2025&a=2070&source=cor)-->27,6<!--/--> % de
 retraités de plus, le modèle
-<!--chiffre:mesure(decomposition?facteur=retraites&de=2025&a=2070)-->26,4<!--/--> % : ce n'est pas par
+<!--chiffre:mesure(decomposition?facteur=retraites&de=2025&a=2070)-->26,5<!--/--> % : ce n'est pas par
 les têtes que la trajectoire s'écarte. La pension moyenne relative, elle, recule
 de <!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070&source=cor)-->−17,2<!--/--> %
 chez le COR et de
