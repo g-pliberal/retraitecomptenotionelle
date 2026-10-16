@@ -4909,6 +4909,27 @@ institutions:
           lui : la CNRACL, l'ancien droit sous quinze ans, la minoration de
           2011 à 2015, la durée corrigée du minimum contributif.
 
+      - id: openfisca_salaire_annuel_moyen_oracle
+        titre: >-
+          Moteur de calcul des pensions, au-delà des carrières simples : le
+          salaire annuel moyen du régime général sur des salaires qui varient
+        url: https://github.com/openfisca/openfisca-france-pension
+        acces: api
+        statut_integration: automatise
+        cible: tests/temoins/openfisca_salaire_annuel_moyen.json
+        recuperation: scripts/fetch/openfisca_salaire_annuel_moyen.py
+        note: >-
+          La septième famille de profils de l'action 153, exécutée à part le
+          16 octobre 2026 (version 0.1.3, AGPL : ses sorties seules entrent) :
+          douze non-cadres du régime général, des générations 1934 à 1955,
+          liquidés de 1994 à 2017, à salaires croissants, décroissants, en
+          dents de scie, au-delà du plafond ou sous le salaire d'un trimestre.
+          Le témoin porte, année par année, le salaire, le plafond,
+          l'exclusion et le coefficient qu'il forme. La règle concorde au
+          centime sous les paramètres du dépôt ; quatre écarts, les siens : les
+          coefficients, le plafond des années à deux plafonds, le calcul
+          trimestriel d'avant juillet 1995, la décote au jour anniversaire.
+
       - id: openfisca_points_enfants_arrco_oracle
         titre: >-
           Moteur de calcul des pensions, au-delà des carrières simples : les

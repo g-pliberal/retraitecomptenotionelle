@@ -113,7 +113,7 @@ rejoue sans avoir à installer le paquet.
 **Cinq familles de régimes y passent aujourd'hui**, et c'est tout ce
 qu'OpenFisca expose : le régime général, la pension civile (État et CNRACL),
 l'Arrco d'avant 2019, l'Agirc des cadres et l'Ircantec des agents non
-titulaires — <!--chiffre:mesure(profils_oracle)-->123<!--/--> profils en tout. Les régimes alignés — MSA des
+titulaires — <!--chiffre:mesure(profils_oracle)-->135<!--/--> profils en tout. Les régimes alignés — MSA des
 salariés agricoles, artisans, commerçants — n'ont chez lui aucun module, et
 n'en ont pas besoin : la loi les calcule comme le régime général, et c'est à
 l'oracle du régime général qu'ils se confrontent — à une table près : le
@@ -356,9 +356,19 @@ et double de celui de chacun ; il est désormais de <!--chiffre:partout(data/ref
 du 1er janvier 2012, dans les deux moteurs. Les taux par période
 d'acquisition, les enfants à charge et le coefficient d'anticipation
 concordent ; son écart est le sien : de 2012 à 2018, il minore du coefficient
-la majoration pour enfants à charge, qui porte sur les droits bruts. Restent
-les autres familles que le registre nomme : les périodes assimilées, le
-salaire annuel moyen sur des salaires qui varient.
+la majoration pour enfants à charge, qui porte sur les droits bruts. La
+septième, le salaire annuel moyen sur des salaires qui varient
+(`tests/test_oracle_salaire_annuel_moyen.py`), n'a rien trouvé chez nous :
+rejouée sous les coefficients et le plafond du dépôt, sa règle rend notre
+salaire au centime — les meilleures années, l'écrêtement de chacune,
+l'exclusion depuis 2004 des années qui n'achètent pas un trimestre, le nombre
+par génération. Ses écarts sont les siens : ses coefficients, composés d'une
+série annuelle, s'écartent des colonnes de la Cnav dès avant 2022 ; il écrête
+au plafond de janvier une année où le plafond a changé, 1960 et 1961 ; il
+divise par le nombre d'années avant juillet 1995, quand la somme se rapportait
+aux trimestres ; et il compte un trimestre de décote de trop à qui part le
+jour anniversaire d'un âge entier, son âge en mois tiré d'un mois moyen.
+Restent les périodes assimilées, que le registre nomme.
 
 **TRAJECTOiRE**, le modèle de la DREES dont un module calcule les cas types du
 COR, s'exécute à part, sa licence à réciprocité (EUPL) le tenant hors du dépôt :

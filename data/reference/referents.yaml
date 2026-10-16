@@ -1308,9 +1308,14 @@ referents:
           Ses coefficients de revalorisation des salaires portés au compte
           s'écartent de la table de la Cnav : de −3 à −5,5 % après 1990, faute
           de la revalorisation de 4 % du 1er juillet 2022, de −17 à +10 % sur
-          1949-1962. Son salaire annuel moyen en reste en deçà.
+          1949-1962. Son salaire annuel moyen en reste en deçà. Avant 2022
+          aussi : il les compose d'une série annuelle (`reval_s`), et s'écarte
+          des colonnes de −9 à +2 % — au départ de 2018, 21,89 aux salaires de
+          1961 au lieu de 20,034, 1,000 à ceux de 2017 au lieu de 1,008.
         tranche: la circulaire de la Cnav, que le modèle lit
-        preuve: docs/limites.md (« Ce que dit la confrontation à une seconde implémentation »)
+        preuve: >-
+          docs/limites.md (« Ce que dit la confrontation à une seconde
+          implémentation ») ; tests/test_oracle_salaire_annuel_moyen.py
       - constat: >-
           Sa décote de la pension civile porte 0,65 % pour l'année d'ouverture
           2010, là où la loi écrit 0,625 % ; son minimum garanti suit le point
@@ -1722,6 +1727,49 @@ referents:
         preuve: >-
           tests/temoins/openfisca_points_enfants_arrco.json ;
           tests/test_oracle_points_enfants_arrco.py
+      - constat: >-
+          Il écrête le salaire d'une année au plafond du 1er janvier
+          (`regime_general_cnav_salaire_de_reference`, formule de 1994), quand
+          le plafond a changé en cours d'année : 6 600 francs en 1960, 7 200
+          en 1961. Au salarié né en 1938, parti en 1998, dont 1960 à 1962
+          sont parmi les meilleures années, 101,73 euros de salaire annuel
+          moyen en moins, à coefficients égaux.
+        tranche: >-
+          Le plafond annuel est la somme des plafonds mensuels : 6 600 F
+          jusqu'en juin 1960, 7 080 F ensuite (décret n° 60-620 du 29 juin
+          1960), soit 6 840 F ; 7 200 F puis 8 400 F au 1er avril 1961
+          (décret n° 61-169), soit 8 100 F
+          (`macro/plafond_securite_sociale.csv`). Le dépôt suit la règle
+        preuve: >-
+          tests/temoins/openfisca_salaire_annuel_moyen.json ;
+          tests/test_oracle_salaire_annuel_moyen.py
+      - constat: >-
+          Il divise la somme des salaires retenus par le nombre d'années dès
+          1994. Au salarié né en 1934, parti en 1994 avec neuf années dont une
+          de trois trimestres : 9 493,69 euros de salaire annuel moyen, contre
+          9 654,86 au dépôt.
+        tranche: >-
+          Jusqu'au 30 juin 1995, la somme se rapporte aux trimestres des
+          années retenues, multipliée par quatre (circulaire Cnav 1/73) ; la
+          moyenne annuelle ensuite (circulaire Cnav 95/94) : fiche
+          salaire_annuel_moyen. Le dépôt suit les circulaires
+        preuve: >-
+          tests/temoins/openfisca_salaire_annuel_moyen.json ;
+          tests/test_oracle_salaire_annuel_moyen.py
+      - constat: >-
+          Il tire l'âge en mois à la liquidation d'une durée en jours,
+          convertie au mois moyen de numpy (`timedelta64[M]`), et tronque
+          (`regime_general_cnav_decote_trimestres`) : né le 1er janvier 1950,
+          parti le 1er janvier 2012, il a 743 mois, et treize trimestres de
+          décote au lieu de douze. Tout départ au jour anniversaire, à un âge
+          qui tombe sur un trimestre entier, en prend un de trop.
+        tranche: >-
+          R. 351-27 : les trimestres entre la date d'effet et l'âge
+          d'annulation, arrondis au trimestre supérieur ; soixante-deux ans
+          tout juste en font douze avant soixante-cinq. Le dépôt a raison
+        preuve: >-
+          tests/temoins/openfisca_salaire_annuel_moyen.json ;
+          tests/test_oracle_salaire_annuel_moyen.py
     fait_mieux:
       - quoi: >-
           Il code le départ anticipé des fonctionnaires parents de trois
@@ -1835,8 +1883,12 @@ referents:
           (`tests/test_oracle_minima.py`) ; les points enfants de l'Arrco et
           de l'Agirc et la minoration qui les frappe — les taux par période
           d'acquisition, le plafond, les enfants à charge, le coefficient
-          d'anticipation (`tests/test_oracle_points_enfants_arrco.py`).
-          Restent les périodes assimilées et le salaire annuel moyen.
+          d'anticipation (`tests/test_oracle_points_enfants_arrco.py`) ; le
+          salaire annuel moyen sur des salaires qui varient — les meilleures
+          années, le plafond de chaque année, l'exclusion des années sans
+          trimestre, le nombre par génération
+          (`tests/test_oracle_salaire_annuel_moyen.py`). Restent les périodes
+          assimilées.
         preuve: >-
           ses 140 tests de formules (`tests/formulas/`), au commit `1c45423`
         etat: a_reprendre

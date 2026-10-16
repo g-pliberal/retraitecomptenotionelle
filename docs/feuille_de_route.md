@@ -6061,16 +6061,16 @@ plutôt que déplacer celui qui existe, et l'ordre des groupes.
 
 ### 153. L'oracle au-delà des carrières simples : ce qu'OpenFisca calcule et que le dépôt ne lui confronte pas — `en cours`
 
-**Reprise, au 16 octobre 2026.** Faites, l'étape 1 et six familles de
-l'étape 2, dont les minima, puis les points enfants et la minoration de
-l'Arrco (`openfisca_points_enfants_arrco.py` et son test) : une erreur chez
-nous, le plafond de la majoration pour enfants de 2012 à 2018, corrigé dans
-les deux moteurs, et une chez OpenFisca, les droits bruts des enfants à
-charge ; vingt-trois en tout chez lui, quatre chez nous. Reste l'étape 2, une
-famille par session, dans un script et un test frères : les périodes
-assimilées, le salaire annuel moyen (153.2). Le signalement à OpenFisca, et
-la borne du 2 août 1951 à lire dans l'accord du 18 mars 2011 (KALI),
-attendent le propriétaire. Détail : la note des points enfants, du 16 octobre.
+**Reprise, au 16 octobre 2026.** Faites, l'étape 1 et sept familles de
+l'étape 2, la dernière le salaire annuel moyen
+(`openfisca_salaire_annuel_moyen.py` et son test) : rien chez nous, la règle
+concordant au centime sous nos paramètres ; trois écarts neufs chez
+OpenFisca — le plafond de janvier en 1960 et 1961, la moyenne annuelle avant
+juillet 1995, la décote au jour anniversaire — et ses coefficients précisés ;
+vingt-six en tout chez lui, quatre chez nous. Reste l'étape 2, une famille :
+les périodes assimilées, après le sixième domaine (action 130). Le
+signalement à OpenFisca, et la borne du 2 août 1951 (KALI), attendent le
+propriétaire. Détail : la note du salaire annuel moyen, du 16 octobre.
 
 **D'où elle vient.** L'action 136 (étape 2). Le 1er octobre 2026, les
 48 profils que l'oracle confrontait à OpenFisca-France-Pension

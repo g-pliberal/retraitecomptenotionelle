@@ -1,0 +1,3280 @@
+{
+  "avertissement": "Deuxième implémentation, pas une source officielle. Ses coefficients de revalorisation composent une série annuelle et s'écartent des colonnes de la circulaire Cnav ; il divise par le nombre d'années dès 1994, quand la somme se rapporte aux trimestres jusqu'au 30 juin 1995.",
+  "convention": {
+    "categorie_salarie": "non-cadre du privé",
+    "comparaison": "Le salaire annuel moyen et la pension de base ; et, année par année, le salaire qu'OpenFisca retient, plafonné et exclu ou non, et le coefficient qu'il lui applique, relevés dans ses paramètres.",
+    "date_de_naissance": "le 1er janvier de `naissance`",
+    "liquidation_date": "le 1er janvier de `liquidation`, au régime général",
+    "non_traduit": "L'AVPF, les périodes assimilées, les années incomplètes ; les salaires d'avant les onze ans, qu'aucun profil n'a.",
+    "salaire_de_base": "`salaires`, année par année, de `debut` à `liquidation` exclue",
+    "sexe": "faux (`sexe` H)",
+    "trimestres": "Au dépôt : ceux que le salaire de l'année achète (`trimestres_valides`) ; chez OpenFisca, tirés du salaire de même."
+  },
+  "famille": "le salaire annuel moyen du régime général sur des salaires qui varient",
+  "perimetre": "Régime général des non-cadres, carrières à salaires variables liquidées de 1994 à 2017, générations 1934 à 1955.",
+  "profils": {
+    "annees_faibles_en_2003": {
+      "openfisca": {
+        "annees": {
+          "1988": {
+            "coefficient": 1.3052130428496018,
+            "exclue": false,
+            "plafond": 18348.763714694713,
+            "salaire": 18000.0,
+            "seuil_d_un_trimestre": 848.836127977901
+          },
+          "1989": {
+            "coefficient": 1.2897362083494086,
+            "exclue": false,
+            "plafond": 19098.812879502773,
+            "salaire": 18000.0,
+            "seuil_d_un_trimestre": 876.8867471495846
+          },
+          "1990": {
+            "coefficient": 1.2463874751571793,
+            "exclue": false,
+            "plafond": 19976.91921879026,
+            "salaire": 18000.0,
+            "seuil_d_un_trimestre": 911.950021114189
+          },
+          "1991": {
+            "coefficient": 1.215826461227759,
+            "exclue": false,
+            "plafond": 21001.376614625657,
+            "salaire": 18000.0,
+            "seuil_d_un_trimestre": 973.8443221125775
+          },
+          "1992": {
+            "coefficient": 1.1825035122524838,
+            "exclue": false,
+            "plafond": 21970.952364255587,
+            "salaire": 700.0,
+            "seuil_d_un_trimestre": 995.7969805947647
+          },
+          "1993": {
+            "coefficient": 1.1673282450666176,
+            "exclue": false,
+            "plafond": 22839.911762508826,
+            "salaire": 18000.0,
+            "seuil_d_un_trimestre": 1038.4827054212396
+          },
+          "1994": {
+            "coefficient": 1.1444394559476647,
+            "exclue": false,
+            "plafond": 23342.99351939228,
+            "salaire": 18000.0,
+            "seuil_d_un_trimestre": 1061.9598540758009
+          },
+          "1995": {
+            "coefficient": 1.125242813548527,
+            "exclue": false,
+            "plafond": 23772.899748001775,
+            "salaire": 18000.0,
+            "seuil_d_un_trimestre": 1084.2174105924628
+          },
+          "1996": {
+            "coefficient": 1.1031792289691442,
+            "exclue": false,
+            "plafond": 24577.830559015303,
+            "salaire": 18000.0,
+            "seuil_d_un_trimestre": 1127.5129314878873
+          },
+          "1997": {
+            "coefficient": 1.0900980523410515,
+            "exclue": false,
+            "plafond": 25099.206197967247,
+            "salaire": 800.0,
+            "seuil_d_un_trimestre": 1155.8684486940456
+          },
+          "1998": {
+            "coefficient": 1.0782374404955999,
+            "exclue": false,
+            "plafond": 25776.07983450135,
+            "salaire": 18000.0,
+            "seuil_d_un_trimestre": 1202.2129499342184
+          },
+          "1999": {
+            "coefficient": 1.0654520162999999,
+            "exclue": false,
+            "plafond": 26471.24735310394,
+            "salaire": 18000.0,
+            "seuil_d_un_trimestre": 1226.2998946577293
+          },
+          "2000": {
+            "coefficient": 1.0601512599999998,
+            "exclue": false,
+            "plafond": 26892.006640679192,
+            "salaire": 18000.0,
+            "seuil_d_un_trimestre": 1241.5447963814702
+          },
+          "2001": {
+            "coefficient": 1.0373299999999999,
+            "exclue": false,
+            "plafond": 27349.353692391425,
+            "salaire": 18000.0,
+            "seuil_d_un_trimestre": 1281.181540863197
+          },
+          "2002": {
+            "coefficient": 1.015,
+            "exclue": false,
+            "plafond": 28224.0,
+            "salaire": 18000.0,
+            "seuil_d_un_trimestre": 1334.0
+          }
+        },
+        "coefficient_de_proratisation": 0.3466666638851166,
+        "decote_trimestres": 20.0,
+        "duree_assurance": 52.0,
+        "nombre_d_annees": 20,
+        "pension_brute": 1554.5877685546875,
+        "salaire_de_reference": 17937.55078125,
+        "taux_de_liquidation": 0.25
+      },
+      "profil": {
+        "code": "annees_faibles_en_2003",
+        "debut": 1988,
+        "liquidation": 2003,
+        "naissance": 1943,
+        "objet": "quinze ans, dont deux sous le salaire d'un trimestre : retenues avant 2004",
+        "regle": "avant_2004",
+        "salaires": {
+          "1988": 18000.0,
+          "1989": 18000.0,
+          "1990": 18000.0,
+          "1991": 18000.0,
+          "1992": 700.0,
+          "1993": 18000.0,
+          "1994": 18000.0,
+          "1995": 18000.0,
+          "1996": 18000.0,
+          "1997": 800.0,
+          "1998": 18000.0,
+          "1999": 18000.0,
+          "2000": 18000.0,
+          "2001": 18000.0,
+          "2002": 18000.0
+        }
+      }
+    },
+    "annees_sans_trimestre_en_2016": {
+      "openfisca": {
+        "annees": {
+          "1996": {
+            "coefficient": 1.301913084045639,
+            "exclue": false,
+            "plafond": 24577.830559015303,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1127.5129314878873
+          },
+          "1997": {
+            "coefficient": 1.2864753794917378,
+            "exclue": false,
+            "plafond": 25099.206197967247,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1155.8684486940456
+          },
+          "1998": {
+            "coefficient": 1.2724781201698696,
+            "exclue": false,
+            "plafond": 25776.07983450135,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1202.2129499342184
+          },
+          "1999": {
+            "coefficient": 1.2573894468081714,
+            "exclue": false,
+            "plafond": 26471.24735310394,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1226.2998946577293
+          },
+          "2000": {
+            "coefficient": 1.2511337779185785,
+            "exclue": false,
+            "plafond": 26892.006640679192,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1241.5447963814702
+          },
+          "2001": {
+            "coefficient": 1.2242013482569263,
+            "exclue": true,
+            "plafond": 27349.353692391425,
+            "salaire": 900.0,
+            "seuil_d_un_trimestre": 1281.181540863197
+          },
+          "2002": {
+            "coefficient": 1.1978486773551138,
+            "exclue": false,
+            "plafond": 28224.0,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1334.0
+          },
+          "2003": {
+            "coefficient": 1.1801464801528214,
+            "exclue": false,
+            "plafond": 29184.0,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1366.0
+          },
+          "2004": {
+            "coefficient": 1.160419351182715,
+            "exclue": false,
+            "plafond": 29712.0,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1438.0
+          },
+          "2005": {
+            "coefficient": 1.1376660305712896,
+            "exclue": false,
+            "plafond": 30192.0,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1522.0
+          },
+          "2006": {
+            "coefficient": 1.1175501282625635,
+            "exclue": true,
+            "plafond": 31068.0,
+            "salaire": 1000.0,
+            "seuil_d_un_trimestre": 1606.0
+          },
+          "2007": {
+            "coefficient": 1.0977899098846395,
+            "exclue": false,
+            "plafond": 32184.0,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1654.0
+          },
+          "2008": {
+            "coefficient": 1.0772277859072423,
+            "exclue": false,
+            "plafond": 33276.0,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1688.0
+          },
+          "2009": {
+            "coefficient": 1.0665621642645964,
+            "exclue": false,
+            "plafond": 34308.0,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1742.0
+          },
+          "2010": {
+            "coefficient": 1.0570487257329995,
+            "exclue": false,
+            "plafond": 34620.0,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1772.0
+          },
+          "2011": {
+            "coefficient": 1.0353072729999997,
+            "exclue": true,
+            "plafond": 35352.0,
+            "salaire": 1100.0,
+            "seuil_d_un_trimestre": 1800.0
+          },
+          "2012": {
+            "coefficient": 1.0140129999999998,
+            "exclue": false,
+            "plafond": 36372.0,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1844.0
+          },
+          "2013": {
+            "coefficient": 1.001,
+            "exclue": false,
+            "plafond": 37032.0,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1886.0
+          },
+          "2014": {
+            "coefficient": 1.001,
+            "exclue": false,
+            "plafond": 37548.0,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1429.5
+          },
+          "2015": {
+            "coefficient": 1.0,
+            "exclue": false,
+            "plafond": 38040.0,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1441.5
+          }
+        },
+        "coefficient_de_proratisation": 0.4121212065219879,
+        "decote_trimestres": 19.0,
+        "duree_assurance": 68.0,
+        "nombre_d_annees": 25,
+        "pension_brute": 3578.687255859375,
+        "salaire_de_reference": 22776.6015625,
+        "taux_de_liquidation": 0.3812499940395355
+      },
+      "profil": {
+        "code": "annees_sans_trimestre_en_2016",
+        "debut": 1996,
+        "liquidation": 2016,
+        "naissance": 1954,
+        "objet": "vingt ans, dont trois sous le salaire d'un trimestre : exclues depuis 2004",
+        "regle": "sans_trimestre",
+        "salaires": {
+          "1996": 20000.0,
+          "1997": 20000.0,
+          "1998": 20000.0,
+          "1999": 20000.0,
+          "2000": 20000.0,
+          "2001": 900.0,
+          "2002": 20000.0,
+          "2003": 20000.0,
+          "2004": 20000.0,
+          "2005": 20000.0,
+          "2006": 1000.0,
+          "2007": 20000.0,
+          "2008": 20000.0,
+          "2009": 20000.0,
+          "2010": 20000.0,
+          "2011": 1100.0,
+          "2012": 20000.0,
+          "2013": 20000.0,
+          "2014": 20000.0,
+          "2015": 20000.0
+        }
+      }
+    },
+    "au_plafond_en_2014": {
+      "openfisca": {
+        "annees": {
+          "1976": {
+            "coefficient": 4.080376642758594,
+            "exclue": false,
+            "plafond": 5780.8667336426015,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 240.5645492006336
+          },
+          "1977": {
+            "coefficient": 3.508172636680229,
+            "exclue": false,
+            "plafond": 6604.091426724618,
+            "salaire": 9600.0,
+            "seuil_d_un_trimestre": 272.5788428204898
+          },
+          "1978": {
+            "coefficient": 3.1056549145192234,
+            "exclue": false,
+            "plafond": 7317.552827395699,
+            "salaire": 10200.0,
+            "seuil_d_un_trimestre": 306.7274226816697
+          },
+          "1979": {
+            "coefficient": 2.8039499047663607,
+            "exclue": false,
+            "plafond": 8177.365284614693,
+            "salaire": 10800.0,
+            "seuil_d_un_trimestre": 344.8396769910223
+          },
+          "1980": {
+            "coefficient": 2.500276341440378,
+            "exclue": false,
+            "plafond": 9165.234916313113,
+            "salaire": 11400.0,
+            "seuil_d_un_trimestre": 394.23315857594326
+          },
+          "1981": {
+            "coefficient": 2.2064753258960215,
+            "exclue": false,
+            "plafond": 10482.394425244338,
+            "salaire": 12000.0,
+            "seuil_d_un_trimestre": 450.94419298825994
+          },
+          "1982": {
+            "coefficient": 1.9254417054517012,
+            "exclue": false,
+            "plafond": 12503.8683938124,
+            "salaire": 12600.0,
+            "seuil_d_un_trimestre": 553.3899325717997
+          },
+          "1983": {
+            "coefficient": 1.8513862552420213,
+            "exclue": false,
+            "plafond": 13976.525900325785,
+            "salaire": 13200.0,
+            "seuil_d_un_trimestre": 618.6381119494114
+          },
+          "1984": {
+            "coefficient": 1.7795015121569286,
+            "exclue": false,
+            "plafond": 15183.922116846075,
+            "salaire": 13800.0,
+            "seuil_d_un_trimestre": 694.5577225336417
+          },
+          "1985": {
+            "coefficient": 1.6741127653524606,
+            "exclue": false,
+            "plafond": 16272.408099921186,
+            "salaire": 14400.0,
+            "seuil_d_un_trimestre": 742.7316119806634
+          },
+          "1986": {
+            "coefficient": 1.6444065608310483,
+            "exclue": false,
+            "plafond": 17104.779734037445,
+            "salaire": 15000.0,
+            "seuil_d_un_trimestre": 793.9544817724333
+          },
+          "1987": {
+            "coefficient": 1.5993372374788926,
+            "exclue": false,
+            "plafond": 17809.094193674282,
+            "salaire": 15600.0,
+            "seuil_d_un_trimestre": 820.7855088062175
+          },
+          "1988": {
+            "coefficient": 1.5388037745939174,
+            "exclue": false,
+            "plafond": 18348.763714694713,
+            "salaire": 16200.0,
+            "seuil_d_un_trimestre": 848.836127977901
+          },
+          "1989": {
+            "coefficient": 1.5205570895196805,
+            "exclue": false,
+            "plafond": 19098.812879502773,
+            "salaire": 16800.0,
+            "seuil_d_un_trimestre": 876.8867471495846
+          },
+          "1990": {
+            "coefficient": 1.469450341371936,
+            "exclue": false,
+            "plafond": 19976.91921879026,
+            "salaire": 17400.0,
+            "seuil_d_un_trimestre": 911.950021114189
+          },
+          "1991": {
+            "coefficient": 1.4334198987958044,
+            "exclue": false,
+            "plafond": 21001.376614625657,
+            "salaire": 18000.0,
+            "seuil_d_un_trimestre": 973.8443221125775
+          },
+          "1992": {
+            "coefficient": 1.394133224528589,
+            "exclue": false,
+            "plafond": 21970.952364255587,
+            "salaire": 18600.0,
+            "seuil_d_un_trimestre": 995.7969805947647
+          },
+          "1993": {
+            "coefficient": 1.3762420775208182,
+            "exclue": false,
+            "plafond": 22839.911762508826,
+            "salaire": 19200.0,
+            "seuil_d_un_trimestre": 1038.4827054212396
+          },
+          "1994": {
+            "coefficient": 1.3492569387459006,
+            "exclue": false,
+            "plafond": 23342.99351939228,
+            "salaire": 19800.0,
+            "seuil_d_un_trimestre": 1061.9598540758009
+          },
+          "1995": {
+            "coefficient": 1.3266247210055464,
+            "exclue": false,
+            "plafond": 23772.899748001775,
+            "salaire": 80000.0,
+            "seuil_d_un_trimestre": 1084.2174105924628
+          },
+          "1996": {
+            "coefficient": 1.300612471574065,
+            "exclue": false,
+            "plafond": 24577.830559015303,
+            "salaire": 80000.0,
+            "seuil_d_un_trimestre": 1127.5129314878873
+          },
+          "1997": {
+            "coefficient": 1.2851901893024356,
+            "exclue": false,
+            "plafond": 25099.206197967247,
+            "salaire": 80000.0,
+            "seuil_d_un_trimestre": 1155.8684486940456
+          },
+          "1998": {
+            "coefficient": 1.271206913256613,
+            "exclue": false,
+            "plafond": 25776.07983450135,
+            "salaire": 80000.0,
+            "seuil_d_un_trimestre": 1202.2129499342184
+          },
+          "1999": {
+            "coefficient": 1.2561333134946768,
+            "exclue": false,
+            "plafond": 26471.24735310394,
+            "salaire": 80000.0,
+            "seuil_d_un_trimestre": 1226.2998946577293
+          },
+          "2000": {
+            "coefficient": 1.249883894024554,
+            "exclue": false,
+            "plafond": 26892.006640679192,
+            "salaire": 80000.0,
+            "seuil_d_un_trimestre": 1241.5447963814702
+          },
+          "2001": {
+            "coefficient": 1.2229783698870393,
+            "exclue": false,
+            "plafond": 27349.353692391425,
+            "salaire": 80000.0,
+            "seuil_d_un_trimestre": 1281.181540863197
+          },
+          "2002": {
+            "coefficient": 1.196652025329784,
+            "exclue": false,
+            "plafond": 28224.0,
+            "salaire": 80000.0,
+            "seuil_d_un_trimestre": 1334.0
+          },
+          "2003": {
+            "coefficient": 1.1789675126401813,
+            "exclue": false,
+            "plafond": 29184.0,
+            "salaire": 80000.0,
+            "seuil_d_un_trimestre": 1366.0
+          },
+          "2004": {
+            "coefficient": 1.1592600910916235,
+            "exclue": false,
+            "plafond": 29712.0,
+            "salaire": 80000.0,
+            "seuil_d_un_trimestre": 1438.0
+          },
+          "2005": {
+            "coefficient": 1.1365295010702194,
+            "exclue": false,
+            "plafond": 30192.0,
+            "salaire": 26400.0,
+            "seuil_d_un_trimestre": 1522.0
+          },
+          "2006": {
+            "coefficient": 1.1164336945679956,
+            "exclue": false,
+            "plafond": 31068.0,
+            "salaire": 27000.0,
+            "seuil_d_un_trimestre": 1606.0
+          },
+          "2007": {
+            "coefficient": 1.0966932166679717,
+            "exclue": false,
+            "plafond": 32184.0,
+            "salaire": 27600.0,
+            "seuil_d_un_trimestre": 1654.0
+          },
+          "2008": {
+            "coefficient": 1.0761516342729696,
+            "exclue": false,
+            "plafond": 33276.0,
+            "salaire": 28200.0,
+            "seuil_d_un_trimestre": 1688.0
+          },
+          "2009": {
+            "coefficient": 1.0654966675969995,
+            "exclue": false,
+            "plafond": 34308.0,
+            "salaire": 28800.0,
+            "seuil_d_un_trimestre": 1742.0
+          },
+          "2010": {
+            "coefficient": 1.0559927329999996,
+            "exclue": false,
+            "plafond": 34620.0,
+            "salaire": 29400.0,
+            "seuil_d_un_trimestre": 1772.0
+          },
+          "2011": {
+            "coefficient": 1.0342729999999998,
+            "exclue": false,
+            "plafond": 35352.0,
+            "salaire": 30000.0,
+            "seuil_d_un_trimestre": 1800.0
+          },
+          "2012": {
+            "coefficient": 1.013,
+            "exclue": false,
+            "plafond": 36372.0,
+            "salaire": 30600.0,
+            "seuil_d_un_trimestre": 1844.0
+          },
+          "2013": {
+            "coefficient": 1.0,
+            "exclue": false,
+            "plafond": 37032.0,
+            "salaire": 31200.0,
+            "seuil_d_un_trimestre": 1886.0
+          }
+        },
+        "coefficient_de_proratisation": 0.9268292784690857,
+        "decote_trimestres": 12.0,
+        "duree_assurance": 152.0,
+        "nombre_d_annees": 25,
+        "pension_brute": 11812.4189453125,
+        "salaire_de_reference": 30526.892578125,
+        "taux_de_liquidation": 0.41749998927116394
+      },
+      "profil": {
+        "code": "au_plafond_en_2014",
+        "debut": 1976,
+        "liquidation": 2014,
+        "naissance": 1952,
+        "objet": "dix ans à 80 000 €, écrêtés au plafond de chaque année",
+        "regle": "plafond",
+        "salaires": {
+          "1976": 9000.0,
+          "1977": 9600.0,
+          "1978": 10200.0,
+          "1979": 10800.0,
+          "1980": 11400.0,
+          "1981": 12000.0,
+          "1982": 12600.0,
+          "1983": 13200.0,
+          "1984": 13800.0,
+          "1985": 14400.0,
+          "1986": 15000.0,
+          "1987": 15600.0,
+          "1988": 16200.0,
+          "1989": 16800.0,
+          "1990": 17400.0,
+          "1991": 18000.0,
+          "1992": 18600.0,
+          "1993": 19200.0,
+          "1994": 19800.0,
+          "1995": 80000.0,
+          "1996": 80000.0,
+          "1997": 80000.0,
+          "1998": 80000.0,
+          "1999": 80000.0,
+          "2000": 80000.0,
+          "2001": 80000.0,
+          "2002": 80000.0,
+          "2003": 80000.0,
+          "2004": 80000.0,
+          "2005": 26400.0,
+          "2006": 27000.0,
+          "2007": 27600.0,
+          "2008": 28200.0,
+          "2009": 28800.0,
+          "2010": 29400.0,
+          "2011": 30000.0,
+          "2012": 30600.0,
+          "2013": 31200.0
+        }
+      }
+    },
+    "carriere_courte_en_2012": {
+      "openfisca": {
+        "annees": {
+          "1996": {
+            "coefficient": 1.257513704383722,
+            "exclue": false,
+            "plafond": 24577.830559015303,
+            "salaire": 15000.0,
+            "seuil_d_un_trimestre": 1127.5129314878873
+          },
+          "1997": {
+            "coefficient": 1.242602474687472,
+            "exclue": false,
+            "plafond": 25099.206197967247,
+            "salaire": 15900.0,
+            "seuil_d_un_trimestre": 1155.8684486940456
+          },
+          "1998": {
+            "coefficient": 1.2290825664564513,
+            "exclue": false,
+            "plafond": 25776.07983450135,
+            "salaire": 16800.0,
+            "seuil_d_un_trimestre": 1202.2129499342184
+          },
+          "1999": {
+            "coefficient": 1.2145084648779163,
+            "exclue": false,
+            "plafond": 26471.24735310394,
+            "salaire": 17700.0,
+            "seuil_d_un_trimestre": 1226.2998946577293
+          },
+          "2000": {
+            "coefficient": 1.2084661342068819,
+            "exclue": false,
+            "plafond": 26892.006640679192,
+            "salaire": 18600.0,
+            "seuil_d_un_trimestre": 1241.5447963814702
+          },
+          "2001": {
+            "coefficient": 1.182452186112409,
+            "exclue": false,
+            "plafond": 27349.353692391425,
+            "salaire": 19500.0,
+            "seuil_d_un_trimestre": 1281.181540863197
+          },
+          "2002": {
+            "coefficient": 1.1569982251589128,
+            "exclue": false,
+            "plafond": 28224.0,
+            "salaire": 20400.0,
+            "seuil_d_un_trimestre": 1334.0
+          },
+          "2003": {
+            "coefficient": 1.1398997292206037,
+            "exclue": false,
+            "plafond": 29184.0,
+            "salaire": 21300.0,
+            "seuil_d_un_trimestre": 1366.0
+          },
+          "2004": {
+            "coefficient": 1.1208453581323536,
+            "exclue": false,
+            "plafond": 29712.0,
+            "salaire": 22200.0,
+            "seuil_d_un_trimestre": 1438.0
+          },
+          "2005": {
+            "coefficient": 1.0988679981689744,
+            "exclue": false,
+            "plafond": 30192.0,
+            "salaire": 23100.0,
+            "seuil_d_un_trimestre": 1522.0
+          },
+          "2006": {
+            "coefficient": 1.0794381121502696,
+            "exclue": false,
+            "plafond": 31068.0,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 1606.0
+          },
+          "2007": {
+            "coefficient": 1.0603517801083195,
+            "exclue": false,
+            "plafond": 32184.0,
+            "salaire": 24900.0,
+            "seuil_d_un_trimestre": 1654.0
+          },
+          "2008": {
+            "coefficient": 1.0404908899999998,
+            "exclue": false,
+            "plafond": 33276.0,
+            "salaire": 25800.0,
+            "seuil_d_un_trimestre": 1688.0
+          },
+          "2009": {
+            "coefficient": 1.0301889999999998,
+            "exclue": false,
+            "plafond": 34308.0,
+            "salaire": 26700.0,
+            "seuil_d_un_trimestre": 1742.0
+          },
+          "2010": {
+            "coefficient": 1.021,
+            "exclue": false,
+            "plafond": 34620.0,
+            "salaire": 27600.0,
+            "seuil_d_un_trimestre": 1772.0
+          },
+          "2011": {
+            "coefficient": 1.0,
+            "exclue": false,
+            "plafond": 35352.0,
+            "salaire": 28500.0,
+            "seuil_d_un_trimestre": 1800.0
+          }
+        },
+        "coefficient_de_proratisation": 0.395061731338501,
+        "decote_trimestres": 13.0,
+        "duree_assurance": 64.0,
+        "nombre_d_annees": 25,
+        "pension_brute": 3776.161376953125,
+        "salaire_de_reference": 24236.8515625,
+        "taux_de_liquidation": 0.3943749964237213
+      },
+      "profil": {
+        "code": "carriere_courte_en_2012",
+        "debut": 1996,
+        "liquidation": 2012,
+        "naissance": 1950,
+        "objet": "seize ans quand la génération en retient vingt-cinq : toutes",
+        "regle": "moins_que_le_nombre",
+        "salaires": {
+          "1996": 15000.0,
+          "1997": 15900.0,
+          "1998": 16800.0,
+          "1999": 17700.0,
+          "2000": 18600.0,
+          "2001": 19500.0,
+          "2002": 20400.0,
+          "2003": 21300.0,
+          "2004": 22200.0,
+          "2005": 23100.0,
+          "2006": 24000.0,
+          "2007": 24900.0,
+          "2008": 25800.0,
+          "2009": 26700.0,
+          "2010": 27600.0,
+          "2011": 28500.0
+        }
+      }
+    },
+    "croissant_en_2017": {
+      "openfisca": {
+        "annees": {
+          "1977": {
+            "coefficient": 3.5116808093169087,
+            "exclue": false,
+            "plafond": 6604.091426724618,
+            "salaire": 6000.0,
+            "seuil_d_un_trimestre": 272.5788428204898
+          },
+          "1978": {
+            "coefficient": 3.108760569433742,
+            "exclue": false,
+            "plafond": 7317.552827395699,
+            "salaire": 6700.0,
+            "seuil_d_un_trimestre": 306.7274226816697
+          },
+          "1979": {
+            "coefficient": 2.806753854671127,
+            "exclue": false,
+            "plafond": 8177.365284614693,
+            "salaire": 7400.0,
+            "seuil_d_un_trimestre": 344.8396769910223
+          },
+          "1980": {
+            "coefficient": 2.502776617781818,
+            "exclue": false,
+            "plafond": 9165.234916313113,
+            "salaire": 8100.0,
+            "seuil_d_un_trimestre": 394.23315857594326
+          },
+          "1981": {
+            "coefficient": 2.208681801221917,
+            "exclue": false,
+            "plafond": 10482.394425244338,
+            "salaire": 8800.0,
+            "seuil_d_un_trimestre": 450.94419298825994
+          },
+          "1982": {
+            "coefficient": 1.9273671471571527,
+            "exclue": false,
+            "plafond": 12503.8683938124,
+            "salaire": 9500.0,
+            "seuil_d_un_trimestre": 553.3899325717997
+          },
+          "1983": {
+            "coefficient": 1.853237641497263,
+            "exclue": false,
+            "plafond": 13976.525900325785,
+            "salaire": 10200.0,
+            "seuil_d_un_trimestre": 618.6381119494114
+          },
+          "1984": {
+            "coefficient": 1.7812810136690853,
+            "exclue": false,
+            "plafond": 15183.922116846075,
+            "salaire": 10900.0,
+            "seuil_d_un_trimestre": 694.5577225336417
+          },
+          "1985": {
+            "coefficient": 1.675786878117813,
+            "exclue": false,
+            "plafond": 16272.408099921186,
+            "salaire": 11600.0,
+            "seuil_d_un_trimestre": 742.7316119806634
+          },
+          "1986": {
+            "coefficient": 1.646050967391879,
+            "exclue": false,
+            "plafond": 17104.779734037445,
+            "salaire": 12300.0,
+            "seuil_d_un_trimestre": 793.9544817724333
+          },
+          "1987": {
+            "coefficient": 1.6009365747163713,
+            "exclue": false,
+            "plafond": 17809.094193674282,
+            "salaire": 13000.0,
+            "seuil_d_un_trimestre": 820.7855088062175
+          },
+          "1988": {
+            "coefficient": 1.5403425783685112,
+            "exclue": false,
+            "plafond": 18348.763714694713,
+            "salaire": 13700.0,
+            "seuil_d_un_trimestre": 848.836127977901
+          },
+          "1989": {
+            "coefficient": 1.5220776466092,
+            "exclue": false,
+            "plafond": 19098.812879502773,
+            "salaire": 14400.0,
+            "seuil_d_un_trimestre": 876.8867471495846
+          },
+          "1990": {
+            "coefficient": 1.4709197917133077,
+            "exclue": false,
+            "plafond": 19976.91921879026,
+            "salaire": 15100.0,
+            "seuil_d_un_trimestre": 911.950021114189
+          },
+          "1991": {
+            "coefficient": 1.4348533186946002,
+            "exclue": false,
+            "plafond": 21001.376614625657,
+            "salaire": 15800.0,
+            "seuil_d_un_trimestre": 973.8443221125775
+          },
+          "1992": {
+            "coefficient": 1.3955273577531173,
+            "exclue": false,
+            "plafond": 21970.952364255587,
+            "salaire": 16500.0,
+            "seuil_d_un_trimestre": 995.7969805947647
+          },
+          "1993": {
+            "coefficient": 1.377618319598339,
+            "exclue": false,
+            "plafond": 22839.911762508826,
+            "salaire": 17200.0,
+            "seuil_d_un_trimestre": 1038.4827054212396
+          },
+          "1994": {
+            "coefficient": 1.3506061956846462,
+            "exclue": false,
+            "plafond": 23342.99351939228,
+            "salaire": 17900.0,
+            "seuil_d_un_trimestre": 1061.9598540758009
+          },
+          "1995": {
+            "coefficient": 1.3279513457265517,
+            "exclue": false,
+            "plafond": 23772.899748001775,
+            "salaire": 18600.0,
+            "seuil_d_un_trimestre": 1084.2174105924628
+          },
+          "1996": {
+            "coefficient": 1.301913084045639,
+            "exclue": false,
+            "plafond": 24577.830559015303,
+            "salaire": 19300.0,
+            "seuil_d_un_trimestre": 1127.5129314878873
+          },
+          "1997": {
+            "coefficient": 1.2864753794917378,
+            "exclue": false,
+            "plafond": 25099.206197967247,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1155.8684486940456
+          },
+          "1998": {
+            "coefficient": 1.2724781201698696,
+            "exclue": false,
+            "plafond": 25776.07983450135,
+            "salaire": 20700.0,
+            "seuil_d_un_trimestre": 1202.2129499342184
+          },
+          "1999": {
+            "coefficient": 1.2573894468081714,
+            "exclue": false,
+            "plafond": 26471.24735310394,
+            "salaire": 21400.0,
+            "seuil_d_un_trimestre": 1226.2998946577293
+          },
+          "2000": {
+            "coefficient": 1.2511337779185785,
+            "exclue": false,
+            "plafond": 26892.006640679192,
+            "salaire": 22100.0,
+            "seuil_d_un_trimestre": 1241.5447963814702
+          },
+          "2001": {
+            "coefficient": 1.2242013482569263,
+            "exclue": false,
+            "plafond": 27349.353692391425,
+            "salaire": 22800.0,
+            "seuil_d_un_trimestre": 1281.181540863197
+          },
+          "2002": {
+            "coefficient": 1.1978486773551138,
+            "exclue": false,
+            "plafond": 28224.0,
+            "salaire": 23500.0,
+            "seuil_d_un_trimestre": 1334.0
+          },
+          "2003": {
+            "coefficient": 1.1801464801528214,
+            "exclue": false,
+            "plafond": 29184.0,
+            "salaire": 24200.0,
+            "seuil_d_un_trimestre": 1366.0
+          },
+          "2004": {
+            "coefficient": 1.160419351182715,
+            "exclue": false,
+            "plafond": 29712.0,
+            "salaire": 24900.0,
+            "seuil_d_un_trimestre": 1438.0
+          },
+          "2005": {
+            "coefficient": 1.1376660305712896,
+            "exclue": false,
+            "plafond": 30192.0,
+            "salaire": 25600.0,
+            "seuil_d_un_trimestre": 1522.0
+          },
+          "2006": {
+            "coefficient": 1.1175501282625635,
+            "exclue": false,
+            "plafond": 31068.0,
+            "salaire": 26300.0,
+            "seuil_d_un_trimestre": 1606.0
+          },
+          "2007": {
+            "coefficient": 1.0977899098846395,
+            "exclue": false,
+            "plafond": 32184.0,
+            "salaire": 27000.0,
+            "seuil_d_un_trimestre": 1654.0
+          },
+          "2008": {
+            "coefficient": 1.0772277859072423,
+            "exclue": false,
+            "plafond": 33276.0,
+            "salaire": 27700.0,
+            "seuil_d_un_trimestre": 1688.0
+          },
+          "2009": {
+            "coefficient": 1.0665621642645964,
+            "exclue": false,
+            "plafond": 34308.0,
+            "salaire": 28400.0,
+            "seuil_d_un_trimestre": 1742.0
+          },
+          "2010": {
+            "coefficient": 1.0570487257329995,
+            "exclue": false,
+            "plafond": 34620.0,
+            "salaire": 29100.0,
+            "seuil_d_un_trimestre": 1772.0
+          },
+          "2011": {
+            "coefficient": 1.0353072729999997,
+            "exclue": false,
+            "plafond": 35352.0,
+            "salaire": 29800.0,
+            "seuil_d_un_trimestre": 1800.0
+          },
+          "2012": {
+            "coefficient": 1.0140129999999998,
+            "exclue": false,
+            "plafond": 36372.0,
+            "salaire": 30500.0,
+            "seuil_d_un_trimestre": 1844.0
+          },
+          "2013": {
+            "coefficient": 1.001,
+            "exclue": false,
+            "plafond": 37032.0,
+            "salaire": 31200.0,
+            "seuil_d_un_trimestre": 1886.0
+          },
+          "2014": {
+            "coefficient": 1.001,
+            "exclue": false,
+            "plafond": 37548.0,
+            "salaire": 31900.0,
+            "seuil_d_un_trimestre": 1429.5
+          },
+          "2015": {
+            "coefficient": 1.0,
+            "exclue": false,
+            "plafond": 38040.0,
+            "salaire": 32600.0,
+            "seuil_d_un_trimestre": 1441.5
+          },
+          "2016": {
+            "coefficient": 1.0,
+            "exclue": false,
+            "plafond": 38616.0,
+            "salaire": 33300.0,
+            "seuil_d_un_trimestre": 1450.5
+          }
+        },
+        "coefficient_de_proratisation": 0.9638554453849792,
+        "decote_trimestres": 6.0,
+        "duree_assurance": 160.0,
+        "nombre_d_annees": 25,
+        "pension_brute": 12673.71484375,
+        "salaire_de_reference": 28430.224609375,
+        "taux_de_liquidation": 0.4625000059604645
+      },
+      "profil": {
+        "code": "croissant_en_2017",
+        "debut": 1977,
+        "liquidation": 2017,
+        "naissance": 1955,
+        "objet": "un salaire qui croît de 700 € par an : les vingt-cinq dernières",
+        "regle": "meilleures",
+        "salaires": {
+          "1977": 6000.0,
+          "1978": 6700.0,
+          "1979": 7400.0,
+          "1980": 8100.0,
+          "1981": 8800.0,
+          "1982": 9500.0,
+          "1983": 10200.0,
+          "1984": 10900.0,
+          "1985": 11600.0,
+          "1986": 12300.0,
+          "1987": 13000.0,
+          "1988": 13700.0,
+          "1989": 14400.0,
+          "1990": 15100.0,
+          "1991": 15800.0,
+          "1992": 16500.0,
+          "1993": 17200.0,
+          "1994": 17900.0,
+          "1995": 18600.0,
+          "1996": 19300.0,
+          "1997": 20000.0,
+          "1998": 20700.0,
+          "1999": 21400.0,
+          "2000": 22100.0,
+          "2001": 22800.0,
+          "2002": 23500.0,
+          "2003": 24200.0,
+          "2004": 24900.0,
+          "2005": 25600.0,
+          "2006": 26300.0,
+          "2007": 27000.0,
+          "2008": 27700.0,
+          "2009": 28400.0,
+          "2010": 29100.0,
+          "2011": 29800.0,
+          "2012": 30500.0,
+          "2013": 31200.0,
+          "2014": 31900.0,
+          "2015": 32600.0,
+          "2016": 33300.0
+        }
+      }
+    },
+    "decroissant_en_2015": {
+      "openfisca": {
+        "annees": {
+          "1975": {
+            "coefficient": 4.781409832244378,
+            "exclue": false,
+            "plafond": 5030.817568834543,
+            "salaire": 30000.0,
+            "seuil_d_un_trimestre": 205.80617327050402
+          },
+          "1976": {
+            "coefficient": 4.080376642758594,
+            "exclue": false,
+            "plafond": 5780.8667336426015,
+            "salaire": 29500.0,
+            "seuil_d_un_trimestre": 240.5645492006336
+          },
+          "1977": {
+            "coefficient": 3.508172636680229,
+            "exclue": false,
+            "plafond": 6604.091426724618,
+            "salaire": 29000.0,
+            "seuil_d_un_trimestre": 272.5788428204898
+          },
+          "1978": {
+            "coefficient": 3.1056549145192234,
+            "exclue": false,
+            "plafond": 7317.552827395699,
+            "salaire": 28500.0,
+            "seuil_d_un_trimestre": 306.7274226816697
+          },
+          "1979": {
+            "coefficient": 2.8039499047663607,
+            "exclue": false,
+            "plafond": 8177.365284614693,
+            "salaire": 28000.0,
+            "seuil_d_un_trimestre": 344.8396769910223
+          },
+          "1980": {
+            "coefficient": 2.500276341440378,
+            "exclue": false,
+            "plafond": 9165.234916313113,
+            "salaire": 27500.0,
+            "seuil_d_un_trimestre": 394.23315857594326
+          },
+          "1981": {
+            "coefficient": 2.2064753258960215,
+            "exclue": false,
+            "plafond": 10482.394425244338,
+            "salaire": 27000.0,
+            "seuil_d_un_trimestre": 450.94419298825994
+          },
+          "1982": {
+            "coefficient": 1.9254417054517012,
+            "exclue": false,
+            "plafond": 12503.8683938124,
+            "salaire": 26500.0,
+            "seuil_d_un_trimestre": 553.3899325717997
+          },
+          "1983": {
+            "coefficient": 1.8513862552420213,
+            "exclue": false,
+            "plafond": 13976.525900325785,
+            "salaire": 26000.0,
+            "seuil_d_un_trimestre": 618.6381119494114
+          },
+          "1984": {
+            "coefficient": 1.7795015121569286,
+            "exclue": false,
+            "plafond": 15183.922116846075,
+            "salaire": 25500.0,
+            "seuil_d_un_trimestre": 694.5577225336417
+          },
+          "1985": {
+            "coefficient": 1.6741127653524606,
+            "exclue": false,
+            "plafond": 16272.408099921186,
+            "salaire": 25000.0,
+            "seuil_d_un_trimestre": 742.7316119806634
+          },
+          "1986": {
+            "coefficient": 1.6444065608310483,
+            "exclue": false,
+            "plafond": 17104.779734037445,
+            "salaire": 24500.0,
+            "seuil_d_un_trimestre": 793.9544817724333
+          },
+          "1987": {
+            "coefficient": 1.5993372374788926,
+            "exclue": false,
+            "plafond": 17809.094193674282,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 820.7855088062175
+          },
+          "1988": {
+            "coefficient": 1.5388037745939174,
+            "exclue": false,
+            "plafond": 18348.763714694713,
+            "salaire": 23500.0,
+            "seuil_d_un_trimestre": 848.836127977901
+          },
+          "1989": {
+            "coefficient": 1.5205570895196805,
+            "exclue": false,
+            "plafond": 19098.812879502773,
+            "salaire": 23000.0,
+            "seuil_d_un_trimestre": 876.8867471495846
+          },
+          "1990": {
+            "coefficient": 1.469450341371936,
+            "exclue": false,
+            "plafond": 19976.91921879026,
+            "salaire": 22500.0,
+            "seuil_d_un_trimestre": 911.950021114189
+          },
+          "1991": {
+            "coefficient": 1.4334198987958044,
+            "exclue": false,
+            "plafond": 21001.376614625657,
+            "salaire": 22000.0,
+            "seuil_d_un_trimestre": 973.8443221125775
+          },
+          "1992": {
+            "coefficient": 1.394133224528589,
+            "exclue": false,
+            "plafond": 21970.952364255587,
+            "salaire": 21500.0,
+            "seuil_d_un_trimestre": 995.7969805947647
+          },
+          "1993": {
+            "coefficient": 1.3762420775208182,
+            "exclue": false,
+            "plafond": 22839.911762508826,
+            "salaire": 21000.0,
+            "seuil_d_un_trimestre": 1038.4827054212396
+          },
+          "1994": {
+            "coefficient": 1.3492569387459006,
+            "exclue": false,
+            "plafond": 23342.99351939228,
+            "salaire": 20500.0,
+            "seuil_d_un_trimestre": 1061.9598540758009
+          },
+          "1995": {
+            "coefficient": 1.3266247210055464,
+            "exclue": false,
+            "plafond": 23772.899748001775,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1084.2174105924628
+          },
+          "1996": {
+            "coefficient": 1.300612471574065,
+            "exclue": false,
+            "plafond": 24577.830559015303,
+            "salaire": 19500.0,
+            "seuil_d_un_trimestre": 1127.5129314878873
+          },
+          "1997": {
+            "coefficient": 1.2851901893024356,
+            "exclue": false,
+            "plafond": 25099.206197967247,
+            "salaire": 19000.0,
+            "seuil_d_un_trimestre": 1155.8684486940456
+          },
+          "1998": {
+            "coefficient": 1.271206913256613,
+            "exclue": false,
+            "plafond": 25776.07983450135,
+            "salaire": 18500.0,
+            "seuil_d_un_trimestre": 1202.2129499342184
+          },
+          "1999": {
+            "coefficient": 1.2561333134946768,
+            "exclue": false,
+            "plafond": 26471.24735310394,
+            "salaire": 18000.0,
+            "seuil_d_un_trimestre": 1226.2998946577293
+          },
+          "2000": {
+            "coefficient": 1.249883894024554,
+            "exclue": false,
+            "plafond": 26892.006640679192,
+            "salaire": 17500.0,
+            "seuil_d_un_trimestre": 1241.5447963814702
+          },
+          "2001": {
+            "coefficient": 1.2229783698870393,
+            "exclue": false,
+            "plafond": 27349.353692391425,
+            "salaire": 17000.0,
+            "seuil_d_un_trimestre": 1281.181540863197
+          },
+          "2002": {
+            "coefficient": 1.196652025329784,
+            "exclue": false,
+            "plafond": 28224.0,
+            "salaire": 16500.0,
+            "seuil_d_un_trimestre": 1334.0
+          },
+          "2003": {
+            "coefficient": 1.1789675126401813,
+            "exclue": false,
+            "plafond": 29184.0,
+            "salaire": 16000.0,
+            "seuil_d_un_trimestre": 1366.0
+          },
+          "2004": {
+            "coefficient": 1.1592600910916235,
+            "exclue": false,
+            "plafond": 29712.0,
+            "salaire": 15500.0,
+            "seuil_d_un_trimestre": 1438.0
+          },
+          "2005": {
+            "coefficient": 1.1365295010702194,
+            "exclue": false,
+            "plafond": 30192.0,
+            "salaire": 15000.0,
+            "seuil_d_un_trimestre": 1522.0
+          },
+          "2006": {
+            "coefficient": 1.1164336945679956,
+            "exclue": false,
+            "plafond": 31068.0,
+            "salaire": 14500.0,
+            "seuil_d_un_trimestre": 1606.0
+          },
+          "2007": {
+            "coefficient": 1.0966932166679717,
+            "exclue": false,
+            "plafond": 32184.0,
+            "salaire": 14000.0,
+            "seuil_d_un_trimestre": 1654.0
+          },
+          "2008": {
+            "coefficient": 1.0761516342729696,
+            "exclue": false,
+            "plafond": 33276.0,
+            "salaire": 13500.0,
+            "seuil_d_un_trimestre": 1688.0
+          },
+          "2009": {
+            "coefficient": 1.0654966675969995,
+            "exclue": false,
+            "plafond": 34308.0,
+            "salaire": 13000.0,
+            "seuil_d_un_trimestre": 1742.0
+          },
+          "2010": {
+            "coefficient": 1.0559927329999996,
+            "exclue": false,
+            "plafond": 34620.0,
+            "salaire": 12500.0,
+            "seuil_d_un_trimestre": 1772.0
+          },
+          "2011": {
+            "coefficient": 1.0342729999999998,
+            "exclue": false,
+            "plafond": 35352.0,
+            "salaire": 12000.0,
+            "seuil_d_un_trimestre": 1800.0
+          },
+          "2012": {
+            "coefficient": 1.013,
+            "exclue": false,
+            "plafond": 36372.0,
+            "salaire": 11500.0,
+            "seuil_d_un_trimestre": 1844.0
+          },
+          "2013": {
+            "coefficient": 1.0,
+            "exclue": false,
+            "plafond": 37032.0,
+            "salaire": 11000.0,
+            "seuil_d_un_trimestre": 1886.0
+          },
+          "2014": {
+            "coefficient": 1.0,
+            "exclue": false,
+            "plafond": 37548.0,
+            "salaire": 10500.0,
+            "seuil_d_un_trimestre": 1429.5
+          }
+        },
+        "coefficient_de_proratisation": 0.9696969985961914,
+        "decote_trimestres": 5.0,
+        "duree_assurance": 160.0,
+        "nombre_d_annees": 25,
+        "pension_brute": 11800.7958984375,
+        "salaire_de_reference": 25961.75,
+        "taux_de_liquidation": 0.46875
+      },
+      "profil": {
+        "code": "decroissant_en_2015",
+        "debut": 1975,
+        "liquidation": 2015,
+        "naissance": 1953,
+        "objet": "un salaire qui décroît : les meilleures sont revalorisées, pas les plus fortes en euros courants",
+        "regle": "meilleures",
+        "salaires": {
+          "1975": 30000.0,
+          "1976": 29500.0,
+          "1977": 29000.0,
+          "1978": 28500.0,
+          "1979": 28000.0,
+          "1980": 27500.0,
+          "1981": 27000.0,
+          "1982": 26500.0,
+          "1983": 26000.0,
+          "1984": 25500.0,
+          "1985": 25000.0,
+          "1986": 24500.0,
+          "1987": 24000.0,
+          "1988": 23500.0,
+          "1989": 23000.0,
+          "1990": 22500.0,
+          "1991": 22000.0,
+          "1992": 21500.0,
+          "1993": 21000.0,
+          "1994": 20500.0,
+          "1995": 20000.0,
+          "1996": 19500.0,
+          "1997": 19000.0,
+          "1998": 18500.0,
+          "1999": 18000.0,
+          "2000": 17500.0,
+          "2001": 17000.0,
+          "2002": 16500.0,
+          "2003": 16000.0,
+          "2004": 15500.0,
+          "2005": 15000.0,
+          "2006": 14500.0,
+          "2007": 14000.0,
+          "2008": 13500.0,
+          "2009": 13000.0,
+          "2010": 12500.0,
+          "2011": 12000.0,
+          "2012": 11500.0,
+          "2013": 11000.0,
+          "2014": 10500.0
+        }
+      }
+    },
+    "en_dents_de_scie_en_2012": {
+      "openfisca": {
+        "annees": {
+          "1972": {
+            "coefficient": 6.895850345924353,
+            "exclue": false,
+            "plafond": 3347.780418533532,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 120.12982558307938
+          },
+          "1973": {
+            "coefficient": 6.218079662691034,
+            "exclue": false,
+            "plafond": 3731.9519419718063,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 138.72860568604347
+          },
+          "1974": {
+            "coefficient": 5.385978327034211,
+            "exclue": false,
+            "plafond": 4244.180639889505,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 165.55963271982768
+          },
+          "1975": {
+            "coefficient": 4.622966888088908,
+            "exclue": false,
+            "plafond": 5030.817568834543,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 205.80617327050402
+          },
+          "1976": {
+            "coefficient": 3.9451640357609596,
+            "exclue": false,
+            "plafond": 5780.8667336426015,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 240.5645492006336
+          },
+          "1977": {
+            "coefficient": 3.3919213173700076,
+            "exclue": false,
+            "plafond": 6604.091426724618,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 272.5788428204898
+          },
+          "1978": {
+            "coefficient": 3.002741940009286,
+            "exclue": false,
+            "plafond": 7317.552827395699,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 306.7274226816697
+          },
+          "1979": {
+            "coefficient": 2.711034615392997,
+            "exclue": false,
+            "plafond": 8177.365284614693,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 344.8396769910223
+          },
+          "1980": {
+            "coefficient": 2.4174239697259607,
+            "exclue": false,
+            "plafond": 9165.234916313113,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 394.23315857594326
+          },
+          "1981": {
+            "coefficient": 2.1333587224031003,
+            "exclue": false,
+            "plafond": 10482.394425244338,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 450.94419298825994
+          },
+          "1982": {
+            "coefficient": 1.8616377933598784,
+            "exclue": false,
+            "plafond": 12503.8683938124,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 553.3899325717997
+          },
+          "1983": {
+            "coefficient": 1.7900363397691146,
+            "exclue": false,
+            "plafond": 13976.525900325785,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 618.6381119494114
+          },
+          "1984": {
+            "coefficient": 1.720533661960555,
+            "exclue": false,
+            "plafond": 15183.922116846075,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 694.5577225336417
+          },
+          "1985": {
+            "coefficient": 1.618637212179435,
+            "exclue": false,
+            "plafond": 16272.408099921186,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 742.7316119806634
+          },
+          "1986": {
+            "coefficient": 1.5899153906473906,
+            "exclue": false,
+            "plafond": 17104.779734037445,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 793.9544817724333
+          },
+          "1987": {
+            "coefficient": 1.5463395423441324,
+            "exclue": false,
+            "plafond": 17809.094193674282,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 820.7855088062175
+          },
+          "1988": {
+            "coefficient": 1.4878119941194614,
+            "exclue": false,
+            "plafond": 18348.763714694713,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 848.836127977901
+          },
+          "1989": {
+            "coefficient": 1.4701699546634988,
+            "exclue": false,
+            "plafond": 19098.812879502773,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 876.8867471495846
+          },
+          "1990": {
+            "coefficient": 1.4207567454356211,
+            "exclue": false,
+            "plafond": 19976.91921879026,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 911.950021114189
+          },
+          "1991": {
+            "coefficient": 1.385920253932767,
+            "exclue": false,
+            "plafond": 21001.376614625657,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 973.8443221125775
+          },
+          "1992": {
+            "coefficient": 1.3479354334190192,
+            "exclue": false,
+            "plafond": 21970.952364255587,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 995.7969805947647
+          },
+          "1993": {
+            "coefficient": 1.3306371504630001,
+            "exclue": false,
+            "plafond": 22839.911762508826,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 1038.4827054212396
+          },
+          "1994": {
+            "coefficient": 1.304546225944118,
+            "exclue": false,
+            "plafond": 23342.99351939228,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 1061.9598540758009
+          },
+          "1995": {
+            "coefficient": 1.2826639784713965,
+            "exclue": false,
+            "plafond": 23772.899748001775,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 1084.2174105924628
+          },
+          "1996": {
+            "coefficient": 1.257513704383722,
+            "exclue": false,
+            "plafond": 24577.830559015303,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 1127.5129314878873
+          },
+          "1997": {
+            "coefficient": 1.242602474687472,
+            "exclue": false,
+            "plafond": 25099.206197967247,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 1155.8684486940456
+          },
+          "1998": {
+            "coefficient": 1.2290825664564513,
+            "exclue": false,
+            "plafond": 25776.07983450135,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 1202.2129499342184
+          },
+          "1999": {
+            "coefficient": 1.2145084648779163,
+            "exclue": false,
+            "plafond": 26471.24735310394,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 1226.2998946577293
+          },
+          "2000": {
+            "coefficient": 1.2084661342068819,
+            "exclue": false,
+            "plafond": 26892.006640679192,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 1241.5447963814702
+          },
+          "2001": {
+            "coefficient": 1.182452186112409,
+            "exclue": false,
+            "plafond": 27349.353692391425,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 1281.181540863197
+          },
+          "2002": {
+            "coefficient": 1.1569982251589128,
+            "exclue": false,
+            "plafond": 28224.0,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 1334.0
+          },
+          "2003": {
+            "coefficient": 1.1398997292206037,
+            "exclue": false,
+            "plafond": 29184.0,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 1366.0
+          },
+          "2004": {
+            "coefficient": 1.1208453581323536,
+            "exclue": false,
+            "plafond": 29712.0,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 1438.0
+          },
+          "2005": {
+            "coefficient": 1.0988679981689744,
+            "exclue": false,
+            "plafond": 30192.0,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 1522.0
+          },
+          "2006": {
+            "coefficient": 1.0794381121502696,
+            "exclue": false,
+            "plafond": 31068.0,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 1606.0
+          },
+          "2007": {
+            "coefficient": 1.0603517801083195,
+            "exclue": false,
+            "plafond": 32184.0,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 1654.0
+          },
+          "2008": {
+            "coefficient": 1.0404908899999998,
+            "exclue": false,
+            "plafond": 33276.0,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 1688.0
+          },
+          "2009": {
+            "coefficient": 1.0301889999999998,
+            "exclue": false,
+            "plafond": 34308.0,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 1742.0
+          },
+          "2010": {
+            "coefficient": 1.021,
+            "exclue": false,
+            "plafond": 34620.0,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 1772.0
+          },
+          "2011": {
+            "coefficient": 1.0,
+            "exclue": false,
+            "plafond": 35352.0,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 1800.0
+          }
+        },
+        "coefficient_de_proratisation": 0.9876543283462524,
+        "decote_trimestres": 2.0,
+        "duree_assurance": 160.0,
+        "nombre_d_annees": 25,
+        "pension_brute": 12677.9560546875,
+        "salaire_de_reference": 26535.2578125,
+        "taux_de_liquidation": 0.48374998569488525
+      },
+      "profil": {
+        "code": "en_dents_de_scie_en_2012",
+        "debut": 1972,
+        "liquidation": 2012,
+        "naissance": 1950,
+        "objet": "une année sur trois à 9 000 € : celles-là d'abord écartées",
+        "regle": "meilleures",
+        "salaires": {
+          "1972": 24000.0,
+          "1973": 24000.0,
+          "1974": 9000.0,
+          "1975": 24000.0,
+          "1976": 24000.0,
+          "1977": 9000.0,
+          "1978": 24000.0,
+          "1979": 24000.0,
+          "1980": 9000.0,
+          "1981": 24000.0,
+          "1982": 24000.0,
+          "1983": 9000.0,
+          "1984": 24000.0,
+          "1985": 24000.0,
+          "1986": 9000.0,
+          "1987": 24000.0,
+          "1988": 24000.0,
+          "1989": 9000.0,
+          "1990": 24000.0,
+          "1991": 24000.0,
+          "1992": 9000.0,
+          "1993": 24000.0,
+          "1994": 24000.0,
+          "1995": 9000.0,
+          "1996": 24000.0,
+          "1997": 24000.0,
+          "1998": 9000.0,
+          "1999": 24000.0,
+          "2000": 24000.0,
+          "2001": 9000.0,
+          "2002": 24000.0,
+          "2003": 24000.0,
+          "2004": 9000.0,
+          "2005": 24000.0,
+          "2006": 24000.0,
+          "2007": 9000.0,
+          "2008": 24000.0,
+          "2009": 24000.0,
+          "2010": 9000.0,
+          "2011": 24000.0
+        }
+      }
+    },
+    "generation_1938_en_1998": {
+      "openfisca": {
+        "annees": {
+          "1960": {
+            "coefficient": 18.37815394023946,
+            "exclue": false,
+            "plafond": 1006.1635137669085,
+            "salaire": 2000.0,
+            "seuil_d_un_trimestre": 27.585649669109408
+          },
+          "1961": {
+            "coefficient": 17.06420978666616,
+            "exclue": false,
+            "plafond": 1097.6329241093547,
+            "salaire": 2450.0,
+            "seuil_d_un_trimestre": 27.585649669109408
+          },
+          "1962": {
+            "coefficient": 14.838443292753194,
+            "exclue": false,
+            "plafond": 1463.5105654791398,
+            "salaire": 2900.0,
+            "seuil_d_un_trimestre": 27.585649669109408
+          },
+          "1963": {
+            "coefficient": 12.791761459269983,
+            "exclue": false,
+            "plafond": 1591.5677399585645,
+            "salaire": 3350.0,
+            "seuil_d_un_trimestre": 30.48980344748208
+          },
+          "1964": {
+            "coefficient": 11.421215588633917,
+            "exclue": false,
+            "plafond": 1737.9187965064784,
+            "salaire": 3800.0,
+            "seuil_d_un_trimestre": 34.301028878417334
+          },
+          "1965": {
+            "coefficient": 10.28938341318371,
+            "exclue": false,
+            "plafond": 1865.9759709859031,
+            "salaire": 4250.0,
+            "seuil_d_un_trimestre": 38.1122543093526
+          },
+          "1966": {
+            "coefficient": 9.625241733567544,
+            "exclue": false,
+            "plafond": 1975.7392633968386,
+            "salaire": 4700.0,
+            "seuil_d_un_trimestre": 43.829092455755486
+          },
+          "1967": {
+            "coefficient": 9.097581978797306,
+            "exclue": false,
+            "plafond": 2085.502555807774,
+            "salaire": 5150.0,
+            "seuil_d_un_trimestre": 49.54593060215838
+          },
+          "1968": {
+            "coefficient": 8.61513444961866,
+            "exclue": false,
+            "plafond": 2195.2658482187094,
+            "salaire": 5600.0,
+            "seuil_d_un_trimestre": 55.262768748561264
+          },
+          "1969": {
+            "coefficient": 7.7072428251016,
+            "exclue": false,
+            "plafond": 2487.9679613145377,
+            "salaire": 6050.0,
+            "seuil_d_un_trimestre": 59.07399417949652
+          },
+          "1970": {
+            "coefficient": 6.887616465685075,
+            "exclue": false,
+            "plafond": 2744.082310273387,
+            "salaire": 6500.0,
+            "seuil_d_un_trimestre": 62.88521961043178
+          },
+          "1971": {
+            "coefficient": 6.25578243931433,
+            "exclue": false,
+            "plafond": 3018.490541300726,
+            "salaire": 6950.0,
+            "seuil_d_un_trimestre": 66.69644504136704
+          },
+          "1972": {
+            "coefficient": 5.610567210147381,
+            "exclue": false,
+            "plafond": 3347.780418533532,
+            "salaire": 7400.0,
+            "seuil_d_un_trimestre": 120.12982558307938
+          },
+          "1973": {
+            "coefficient": 5.059122822495386,
+            "exclue": false,
+            "plafond": 3731.9519419718063,
+            "salaire": 7850.0,
+            "seuil_d_un_trimestre": 138.72860568604347
+          },
+          "1974": {
+            "coefficient": 4.3821127026172375,
+            "exclue": false,
+            "plafond": 4244.180639889505,
+            "salaire": 8300.0,
+            "seuil_d_un_trimestre": 165.55963271982768
+          },
+          "1975": {
+            "coefficient": 3.7613151583602007,
+            "exclue": false,
+            "plafond": 5030.817568834543,
+            "salaire": 8750.0,
+            "seuil_d_un_trimestre": 205.80617327050402
+          },
+          "1976": {
+            "coefficient": 3.2098445974506027,
+            "exclue": false,
+            "plafond": 5780.8667336426015,
+            "salaire": 9200.0,
+            "seuil_d_un_trimestre": 240.5645492006336
+          },
+          "1977": {
+            "coefficient": 2.7597180286668648,
+            "exclue": false,
+            "plafond": 6604.091426724618,
+            "salaire": 9650.0,
+            "seuil_d_un_trimestre": 272.5788428204898
+          },
+          "1978": {
+            "coefficient": 2.4430758534525827,
+            "exclue": false,
+            "plafond": 7317.552827395699,
+            "salaire": 10100.0,
+            "seuil_d_un_trimestre": 306.7274226816697
+          },
+          "1979": {
+            "coefficient": 2.2057384014559247,
+            "exclue": false,
+            "plafond": 8177.365284614693,
+            "salaire": 10550.0,
+            "seuil_d_un_trimestre": 344.8396769910223
+          },
+          "1980": {
+            "coefficient": 1.96685237892162,
+            "exclue": false,
+            "plafond": 9165.234916313113,
+            "salaire": 11000.0,
+            "seuil_d_un_trimestre": 394.23315857594326
+          },
+          "1981": {
+            "coefficient": 1.7357326355655287,
+            "exclue": false,
+            "plafond": 10482.394425244338,
+            "salaire": 11450.0,
+            "seuil_d_un_trimestre": 450.94419298825994
+          },
+          "1982": {
+            "coefficient": 1.514656414602916,
+            "exclue": false,
+            "plafond": 12503.8683938124,
+            "salaire": 11900.0,
+            "seuil_d_un_trimestre": 553.3899325717997
+          },
+          "1983": {
+            "coefficient": 1.4564003986566505,
+            "exclue": false,
+            "plafond": 13976.525900325785,
+            "salaire": 12350.0,
+            "seuil_d_un_trimestre": 618.6381119494114
+          },
+          "1984": {
+            "coefficient": 1.399851978147407,
+            "exclue": false,
+            "plafond": 15183.922116846075,
+            "salaire": 12800.0,
+            "seuil_d_un_trimestre": 694.5577225336417
+          },
+          "1985": {
+            "coefficient": 1.316947499179085,
+            "exclue": false,
+            "plafond": 16272.408099921186,
+            "salaire": 13250.0,
+            "seuil_d_un_trimestre": 742.7316119806634
+          },
+          "1986": {
+            "coefficient": 1.2935789946408975,
+            "exclue": false,
+            "plafond": 17104.779734037445,
+            "salaire": 13700.0,
+            "seuil_d_un_trimestre": 793.9544817724333
+          },
+          "1987": {
+            "coefficient": 1.258125031259991,
+            "exclue": false,
+            "plafond": 17809.094193674282,
+            "salaire": 14150.0,
+            "seuil_d_un_trimestre": 820.7855088062175
+          },
+          "1988": {
+            "coefficient": 1.210506140697243,
+            "exclue": false,
+            "plafond": 18348.763714694713,
+            "salaire": 14600.0,
+            "seuil_d_un_trimestre": 848.836127977901
+          },
+          "1989": {
+            "coefficient": 1.1961523129419396,
+            "exclue": false,
+            "plafond": 19098.812879502773,
+            "salaire": 15050.0,
+            "seuil_d_un_trimestre": 876.8867471495846
+          },
+          "1990": {
+            "coefficient": 1.1559489852108005,
+            "exclue": false,
+            "plafond": 19976.91921879026,
+            "salaire": 15500.0,
+            "seuil_d_un_trimestre": 911.950021114189
+          },
+          "1991": {
+            "coefficient": 1.1276054935255428,
+            "exclue": false,
+            "plafond": 21001.376614625657,
+            "salaire": 15950.0,
+            "seuil_d_un_trimestre": 973.8443221125775
+          },
+          "1992": {
+            "coefficient": 1.096700474163612,
+            "exclue": false,
+            "plafond": 21970.952364255587,
+            "salaire": 16400.0,
+            "seuil_d_un_trimestre": 995.7969805947647
+          },
+          "1993": {
+            "coefficient": 1.0826263318495677,
+            "exclue": false,
+            "plafond": 22839.911762508826,
+            "salaire": 16850.0,
+            "seuil_d_un_trimestre": 1038.4827054212396
+          },
+          "1994": {
+            "coefficient": 1.0613983645584,
+            "exclue": false,
+            "plafond": 23342.99351939228,
+            "salaire": 17300.0,
+            "seuil_d_un_trimestre": 1061.9598540758009
+          },
+          "1995": {
+            "coefficient": 1.04359464,
+            "exclue": false,
+            "plafond": 23772.899748001775,
+            "salaire": 17750.0,
+            "seuil_d_un_trimestre": 1084.2174105924628
+          },
+          "1996": {
+            "coefficient": 1.023132,
+            "exclue": false,
+            "plafond": 24577.830559015303,
+            "salaire": 18200.0,
+            "seuil_d_un_trimestre": 1127.5129314878873
+          },
+          "1997": {
+            "coefficient": 1.011,
+            "exclue": false,
+            "plafond": 25099.206197967247,
+            "salaire": 18650.0,
+            "seuil_d_un_trimestre": 1155.8684486940456
+          }
+        },
+        "coefficient_de_proratisation": 1.0,
+        "decote_trimestres": 3.0,
+        "duree_assurance": 152.0,
+        "nombre_d_annees": 15,
+        "pension_brute": 8915.65625,
+        "salaire_de_reference": 19277.09375,
+        "taux_de_liquidation": 0.4625000059604645
+      },
+      "profil": {
+        "code": "generation_1938_en_1998",
+        "debut": 1960,
+        "liquidation": 1998,
+        "naissance": 1938,
+        "objet": "quinze années pour la génération 1938",
+        "regle": "generation",
+        "salaires": {
+          "1960": 2000.0,
+          "1961": 2450.0,
+          "1962": 2900.0,
+          "1963": 3350.0,
+          "1964": 3800.0,
+          "1965": 4250.0,
+          "1966": 4700.0,
+          "1967": 5150.0,
+          "1968": 5600.0,
+          "1969": 6050.0,
+          "1970": 6500.0,
+          "1971": 6950.0,
+          "1972": 7400.0,
+          "1973": 7850.0,
+          "1974": 8300.0,
+          "1975": 8750.0,
+          "1976": 9200.0,
+          "1977": 9650.0,
+          "1978": 10100.0,
+          "1979": 10550.0,
+          "1980": 11000.0,
+          "1981": 11450.0,
+          "1982": 11900.0,
+          "1983": 12350.0,
+          "1984": 12800.0,
+          "1985": 13250.0,
+          "1986": 13700.0,
+          "1987": 14150.0,
+          "1988": 14600.0,
+          "1989": 15050.0,
+          "1990": 15500.0,
+          "1991": 15950.0,
+          "1992": 16400.0,
+          "1993": 16850.0,
+          "1994": 17300.0,
+          "1995": 17750.0,
+          "1996": 18200.0,
+          "1997": 18650.0
+        }
+      }
+    },
+    "generation_1944_en_2004": {
+      "openfisca": {
+        "annees": {
+          "1966": {
+            "coefficient": 10.554727043139504,
+            "exclue": false,
+            "plafond": 1975.7392633968386,
+            "salaire": 3500.0,
+            "seuil_d_un_trimestre": 43.829092455755486
+          },
+          "1967": {
+            "coefficient": 9.976112517145095,
+            "exclue": false,
+            "plafond": 2085.502555807774,
+            "salaire": 4050.0,
+            "seuil_d_un_trimestre": 49.54593060215838
+          },
+          "1968": {
+            "coefficient": 9.44707624729649,
+            "exclue": false,
+            "plafond": 2195.2658482187094,
+            "salaire": 4600.0,
+            "seuil_d_un_trimestre": 55.262768748561264
+          },
+          "1969": {
+            "coefficient": 8.45151181922489,
+            "exclue": false,
+            "plafond": 2487.9679613145377,
+            "salaire": 5150.0,
+            "seuil_d_un_trimestre": 59.07399417949652
+          },
+          "1970": {
+            "coefficient": 7.552736210209909,
+            "exclue": false,
+            "plafond": 2744.082310273387,
+            "salaire": 5700.0,
+            "seuil_d_un_trimestre": 62.88521961043178
+          },
+          "1971": {
+            "coefficient": 6.859887566039884,
+            "exclue": false,
+            "plafond": 3018.490541300726,
+            "salaire": 6250.0,
+            "seuil_d_un_trimestre": 66.69644504136704
+          },
+          "1972": {
+            "coefficient": 6.152365530080613,
+            "exclue": false,
+            "plafond": 3347.780418533532,
+            "salaire": 6800.0,
+            "seuil_d_un_trimestre": 120.12982558307938
+          },
+          "1973": {
+            "coefficient": 5.547669549216064,
+            "exclue": false,
+            "plafond": 3731.9519419718063,
+            "salaire": 7350.0,
+            "seuil_d_un_trimestre": 138.72860568604347
+          },
+          "1974": {
+            "coefficient": 4.8052822701686315,
+            "exclue": false,
+            "plafond": 4244.180639889505,
+            "salaire": 7900.0,
+            "seuil_d_un_trimestre": 165.55963271982768
+          },
+          "1975": {
+            "coefficient": 4.124535873344813,
+            "exclue": false,
+            "plafond": 5030.817568834543,
+            "salaire": 8450.0,
+            "seuil_d_un_trimestre": 205.80617327050402
+          },
+          "1976": {
+            "coefficient": 3.51981119173721,
+            "exclue": false,
+            "plafond": 5780.8667336426015,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 240.5645492006336
+          },
+          "1977": {
+            "coefficient": 3.0262170358825506,
+            "exclue": false,
+            "plafond": 6604.091426724618,
+            "salaire": 9550.0,
+            "seuil_d_un_trimestre": 272.5788428204898
+          },
+          "1978": {
+            "coefficient": 2.678997524701092,
+            "exclue": false,
+            "plafond": 7317.552827395699,
+            "salaire": 10100.0,
+            "seuil_d_un_trimestre": 306.7274226816697
+          },
+          "1979": {
+            "coefficient": 2.418740993771299,
+            "exclue": false,
+            "plafond": 8177.365284614693,
+            "salaire": 10650.0,
+            "seuil_d_un_trimestre": 344.8396769910223
+          },
+          "1980": {
+            "coefficient": 2.156786350754108,
+            "exclue": false,
+            "plafond": 9165.234916313113,
+            "salaire": 11200.0,
+            "seuil_d_un_trimestre": 394.23315857594326
+          },
+          "1981": {
+            "coefficient": 1.903347956900924,
+            "exclue": false,
+            "plafond": 10482.394425244338,
+            "salaire": 11750.0,
+            "seuil_d_un_trimestre": 450.94419298825994
+          },
+          "1982": {
+            "coefficient": 1.6609229630587887,
+            "exclue": false,
+            "plafond": 12503.8683938124,
+            "salaire": 12300.0,
+            "seuil_d_un_trimestre": 553.3899325717997
+          },
+          "1983": {
+            "coefficient": 1.5970413106334511,
+            "exclue": false,
+            "plafond": 13976.525900325785,
+            "salaire": 12850.0,
+            "seuil_d_un_trimestre": 618.6381119494114
+          },
+          "1984": {
+            "coefficient": 1.5350321518281984,
+            "exclue": false,
+            "plafond": 15183.922116846075,
+            "salaire": 13400.0,
+            "seuil_d_un_trimestre": 694.5577225336417
+          },
+          "1985": {
+            "coefficient": 1.4441217964952304,
+            "exclue": false,
+            "plafond": 16272.408099921186,
+            "salaire": 13950.0,
+            "seuil_d_un_trimestre": 742.7316119806634
+          },
+          "1986": {
+            "coefficient": 1.4184966544329007,
+            "exclue": false,
+            "plafond": 17104.779734037445,
+            "salaire": 14500.0,
+            "seuil_d_un_trimestre": 793.9544817724333
+          },
+          "1987": {
+            "coefficient": 1.3796189912592158,
+            "exclue": false,
+            "plafond": 17809.094193674282,
+            "salaire": 15050.0,
+            "seuil_d_un_trimestre": 820.7855088062175
+          },
+          "1988": {
+            "coefficient": 1.3274016645780449,
+            "exclue": false,
+            "plafond": 18348.763714694713,
+            "salaire": 15600.0,
+            "seuil_d_un_trimestre": 848.836127977901
+          },
+          "1989": {
+            "coefficient": 1.3116617238913484,
+            "exclue": false,
+            "plafond": 19098.812879502773,
+            "salaire": 16150.0,
+            "seuil_d_un_trimestre": 876.8867471495846
+          },
+          "1990": {
+            "coefficient": 1.2675760622348513,
+            "exclue": false,
+            "plafond": 19976.91921879026,
+            "salaire": 16700.0,
+            "seuil_d_un_trimestre": 911.950021114189
+          },
+          "1991": {
+            "coefficient": 1.2364955110686306,
+            "exclue": false,
+            "plafond": 21001.376614625657,
+            "salaire": 17250.0,
+            "seuil_d_un_trimestre": 973.8443221125775
+          },
+          "1992": {
+            "coefficient": 1.202606071960776,
+            "exclue": false,
+            "plafond": 21970.952364255587,
+            "salaire": 17800.0,
+            "seuil_d_un_trimestre": 995.7969805947647
+          },
+          "1993": {
+            "coefficient": 1.18717282523275,
+            "exclue": false,
+            "plafond": 22839.911762508826,
+            "salaire": 18350.0,
+            "seuil_d_un_trimestre": 1038.4827054212396
+          },
+          "1994": {
+            "coefficient": 1.1638949266987748,
+            "exclue": false,
+            "plafond": 23342.99351939228,
+            "salaire": 18900.0,
+            "seuil_d_un_trimestre": 1061.9598540758009
+          },
+          "1995": {
+            "coefficient": 1.144371941378852,
+            "exclue": false,
+            "plafond": 23772.899748001775,
+            "salaire": 19450.0,
+            "seuil_d_un_trimestre": 1084.2174105924628
+          },
+          "1996": {
+            "coefficient": 1.1219332758616196,
+            "exclue": false,
+            "plafond": 24577.830559015303,
+            "salaire": 20000.0,
+            "seuil_d_un_trimestre": 1127.5129314878873
+          },
+          "1997": {
+            "coefficient": 1.1086297192308492,
+            "exclue": false,
+            "plafond": 25099.206197967247,
+            "salaire": 20550.0,
+            "seuil_d_un_trimestre": 1155.8684486940456
+          },
+          "1998": {
+            "coefficient": 1.096567476984025,
+            "exclue": false,
+            "plafond": 25776.07983450135,
+            "salaire": 21100.0,
+            "seuil_d_un_trimestre": 1202.2129499342184
+          },
+          "1999": {
+            "coefficient": 1.0835647005770999,
+            "exclue": false,
+            "plafond": 26471.24735310394,
+            "salaire": 21650.0,
+            "seuil_d_un_trimestre": 1226.2998946577293
+          },
+          "2000": {
+            "coefficient": 1.0781738314199998,
+            "exclue": false,
+            "plafond": 26892.006640679192,
+            "salaire": 22200.0,
+            "seuil_d_un_trimestre": 1241.5447963814702
+          },
+          "2001": {
+            "coefficient": 1.0549646099999999,
+            "exclue": false,
+            "plafond": 27349.353692391425,
+            "salaire": 22750.0,
+            "seuil_d_un_trimestre": 1281.181540863197
+          },
+          "2002": {
+            "coefficient": 1.0322549999999997,
+            "exclue": false,
+            "plafond": 28224.0,
+            "salaire": 23300.0,
+            "seuil_d_un_trimestre": 1334.0
+          },
+          "2003": {
+            "coefficient": 1.017,
+            "exclue": false,
+            "plafond": 29184.0,
+            "salaire": 23850.0,
+            "seuil_d_un_trimestre": 1366.0
+          }
+        },
+        "coefficient_de_proratisation": 1.0,
+        "decote_trimestres": 8.0,
+        "duree_assurance": 152.0,
+        "nombre_d_annees": 21,
+        "pension_brute": 8951.0078125,
+        "salaire_de_reference": 22101.25390625,
+        "taux_de_liquidation": 0.4050000011920929
+      },
+      "profil": {
+        "code": "generation_1944_en_2004",
+        "debut": 1966,
+        "liquidation": 2004,
+        "naissance": 1944,
+        "objet": "vingt et une années pour la génération 1944",
+        "regle": "generation",
+        "salaires": {
+          "1966": 3500.0,
+          "1967": 4050.0,
+          "1968": 4600.0,
+          "1969": 5150.0,
+          "1970": 5700.0,
+          "1971": 6250.0,
+          "1972": 6800.0,
+          "1973": 7350.0,
+          "1974": 7900.0,
+          "1975": 8450.0,
+          "1976": 9000.0,
+          "1977": 9550.0,
+          "1978": 10100.0,
+          "1979": 10650.0,
+          "1980": 11200.0,
+          "1981": 11750.0,
+          "1982": 12300.0,
+          "1983": 12850.0,
+          "1984": 13400.0,
+          "1985": 13950.0,
+          "1986": 14500.0,
+          "1987": 15050.0,
+          "1988": 15600.0,
+          "1989": 16150.0,
+          "1990": 16700.0,
+          "1991": 17250.0,
+          "1992": 17800.0,
+          "1993": 18350.0,
+          "1994": 18900.0,
+          "1995": 19450.0,
+          "1996": 20000.0,
+          "1997": 20550.0,
+          "1998": 21100.0,
+          "1999": 21650.0,
+          "2000": 22200.0,
+          "2001": 22750.0,
+          "2002": 23300.0,
+          "2003": 23850.0
+        }
+      }
+    },
+    "generation_1946_en_2009": {
+      "openfisca": {
+        "annees": {
+          "1968": {
+            "coefficient": 10.176649946165979,
+            "exclue": false,
+            "plafond": 2195.2658482187094,
+            "salaire": 3000.0,
+            "seuil_d_un_trimestre": 55.262768748561264
+          },
+          "1969": {
+            "coefficient": 9.104200606483873,
+            "exclue": false,
+            "plafond": 2487.9679613145377,
+            "salaire": 3600.0,
+            "seuil_d_un_trimestre": 59.07399417949652
+          },
+          "1970": {
+            "coefficient": 8.13601484046816,
+            "exclue": false,
+            "plafond": 2744.082310273387,
+            "salaire": 4200.0,
+            "seuil_d_un_trimestre": 62.88521961043178
+          },
+          "1971": {
+            "coefficient": 7.389659255647742,
+            "exclue": false,
+            "plafond": 3018.490541300726,
+            "salaire": 4800.0,
+            "seuil_d_un_trimestre": 66.69644504136704
+          },
+          "1972": {
+            "coefficient": 6.627497090267032,
+            "exclue": false,
+            "plafond": 3347.780418533532,
+            "salaire": 5400.0,
+            "seuil_d_un_trimestre": 120.12982558307938
+          },
+          "1973": {
+            "coefficient": 5.976101974992818,
+            "exclue": false,
+            "plafond": 3731.9519419718063,
+            "salaire": 6000.0,
+            "seuil_d_un_trimestre": 138.72860568604347
+          },
+          "1974": {
+            "coefficient": 5.176382012373229,
+            "exclue": false,
+            "plafond": 4244.180639889505,
+            "salaire": 6600.0,
+            "seuil_d_un_trimestre": 165.55963271982768
+          },
+          "1975": {
+            "coefficient": 4.443063300716558,
+            "exclue": false,
+            "plafond": 5030.817568834543,
+            "salaire": 7200.0,
+            "seuil_d_un_trimestre": 205.80617327050402
+          },
+          "1976": {
+            "coefficient": 3.7916372682138144,
+            "exclue": false,
+            "plafond": 5780.8667336426015,
+            "salaire": 7800.0,
+            "seuil_d_un_trimestre": 240.5645492006336
+          },
+          "1977": {
+            "coefficient": 3.259924089647732,
+            "exclue": false,
+            "plafond": 6604.091426724618,
+            "salaire": 8400.0,
+            "seuil_d_un_trimestre": 272.5788428204898
+          },
+          "1978": {
+            "coefficient": 2.8858896977072868,
+            "exclue": false,
+            "plafond": 7317.552827395699,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 306.7274226816697
+          },
+          "1979": {
+            "coefficient": 2.6055342160593042,
+            "exclue": false,
+            "plafond": 8177.365284614693,
+            "salaire": 9600.0,
+            "seuil_d_un_trimestre": 344.8396769910223
+          },
+          "1980": {
+            "coefficient": 2.3233494814413618,
+            "exclue": false,
+            "plafond": 9165.234916313113,
+            "salaire": 10200.0,
+            "seuil_d_un_trimestre": 394.23315857594326
+          },
+          "1981": {
+            "coefficient": 2.050338684275362,
+            "exclue": false,
+            "plafond": 10482.394425244338,
+            "salaire": 10800.0,
+            "seuil_d_un_trimestre": 450.94419298825994
+          },
+          "1982": {
+            "coefficient": 1.7891918240244071,
+            "exclue": false,
+            "plafond": 12503.8683938124,
+            "salaire": 11400.0,
+            "seuil_d_un_trimestre": 553.3899325717997
+          },
+          "1983": {
+            "coefficient": 1.7203767538696229,
+            "exclue": false,
+            "plafond": 13976.525900325785,
+            "salaire": 12000.0,
+            "seuil_d_un_trimestre": 618.6381119494114
+          },
+          "1984": {
+            "coefficient": 1.6535787852602488,
+            "exclue": false,
+            "plafond": 15183.922116846075,
+            "salaire": 12600.0,
+            "seuil_d_un_trimestre": 694.5577225336417
+          },
+          "1985": {
+            "coefficient": 1.5556476541370152,
+            "exclue": false,
+            "plafond": 16272.408099921186,
+            "salaire": 13200.0,
+            "seuil_d_un_trimestre": 742.7316119806634
+          },
+          "1986": {
+            "coefficient": 1.5280435474522904,
+            "exclue": false,
+            "plafond": 17104.779734037445,
+            "salaire": 13800.0,
+            "seuil_d_un_trimestre": 793.9544817724333
+          },
+          "1987": {
+            "coefficient": 1.486163461117985,
+            "exclue": false,
+            "plafond": 17809.094193674282,
+            "salaire": 14400.0,
+            "seuil_d_un_trimestre": 820.7855088062175
+          },
+          "1988": {
+            "coefficient": 1.4299135229520958,
+            "exclue": false,
+            "plafond": 18348.763714694713,
+            "salaire": 15000.0,
+            "seuil_d_un_trimestre": 848.836127977901
+          },
+          "1989": {
+            "coefficient": 1.4129580266325052,
+            "exclue": false,
+            "plafond": 19098.812879502773,
+            "salaire": 15600.0,
+            "seuil_d_un_trimestre": 876.8867471495846
+          },
+          "1990": {
+            "coefficient": 1.365467741323157,
+            "exclue": false,
+            "plafond": 19976.91921879026,
+            "salaire": 16200.0,
+            "seuil_d_un_trimestre": 911.950021114189
+          },
+          "1991": {
+            "coefficient": 1.3319869181485744,
+            "exclue": false,
+            "plafond": 21001.376614625657,
+            "salaire": 16800.0,
+            "seuil_d_un_trimestre": 973.8443221125775
+          },
+          "1992": {
+            "coefficient": 1.295480283752431,
+            "exclue": false,
+            "plafond": 21970.952364255587,
+            "salaire": 17400.0,
+            "seuil_d_un_trimestre": 995.7969805947647
+          },
+          "1993": {
+            "coefficient": 1.2788551665868024,
+            "exclue": false,
+            "plafond": 22839.911762508826,
+            "salaire": 18000.0,
+            "seuil_d_un_trimestre": 1038.4827054212396
+          },
+          "1994": {
+            "coefficient": 1.2537795750851006,
+            "exclue": false,
+            "plafond": 23342.99351939228,
+            "salaire": 18600.0,
+            "seuil_d_un_trimestre": 1061.9598540758009
+          },
+          "1995": {
+            "coefficient": 1.2327488792058494,
+            "exclue": false,
+            "plafond": 23772.899748001775,
+            "salaire": 19200.0,
+            "seuil_d_un_trimestre": 1084.2174105924628
+          },
+          "1996": {
+            "coefficient": 1.2085773325547542,
+            "exclue": false,
+            "plafond": 24577.830559015303,
+            "salaire": 19800.0,
+            "seuil_d_un_trimestre": 1127.5129314878873
+          },
+          "1997": {
+            "coefficient": 1.194246376042247,
+            "exclue": false,
+            "plafond": 25099.206197967247,
+            "salaire": 20400.0,
+            "seuil_d_un_trimestre": 1155.8684486940456
+          },
+          "1998": {
+            "coefficient": 1.1812525974700763,
+            "exclue": false,
+            "plafond": 25776.07983450135,
+            "salaire": 21000.0,
+            "seuil_d_un_trimestre": 1202.2129499342184
+          },
+          "1999": {
+            "coefficient": 1.1672456496739885,
+            "exclue": false,
+            "plafond": 26471.24735310394,
+            "salaire": 21600.0,
+            "seuil_d_un_trimestre": 1226.2998946577293
+          },
+          "2000": {
+            "coefficient": 1.161438457387053,
+            "exclue": false,
+            "plafond": 26892.006640679192,
+            "salaire": 22200.0,
+            "seuil_d_un_trimestre": 1241.5447963814702
+          },
+          "2001": {
+            "coefficient": 1.1364368467583692,
+            "exclue": false,
+            "plafond": 27349.353692391425,
+            "salaire": 22800.0,
+            "seuil_d_un_trimestre": 1281.181540863197
+          },
+          "2002": {
+            "coefficient": 1.11197343127042,
+            "exclue": false,
+            "plafond": 28224.0,
+            "salaire": 23400.0,
+            "seuil_d_un_trimestre": 1334.0
+          },
+          "2003": {
+            "coefficient": 1.0955403263747978,
+            "exclue": false,
+            "plafond": 29184.0,
+            "salaire": 24000.0,
+            "seuil_d_un_trimestre": 1366.0
+          },
+          "2004": {
+            "coefficient": 1.0772274595622398,
+            "exclue": false,
+            "plafond": 29712.0,
+            "salaire": 24600.0,
+            "seuil_d_un_trimestre": 1438.0
+          },
+          "2005": {
+            "coefficient": 1.056105352512,
+            "exclue": false,
+            "plafond": 30192.0,
+            "salaire": 25200.0,
+            "seuil_d_un_trimestre": 1522.0
+          },
+          "2006": {
+            "coefficient": 1.037431584,
+            "exclue": false,
+            "plafond": 31068.0,
+            "salaire": 25800.0,
+            "seuil_d_un_trimestre": 1606.0
+          },
+          "2007": {
+            "coefficient": 1.019088,
+            "exclue": false,
+            "plafond": 32184.0,
+            "salaire": 26400.0,
+            "seuil_d_un_trimestre": 1654.0
+          },
+          "2008": {
+            "coefficient": 1.0,
+            "exclue": false,
+            "plafond": 33276.0,
+            "salaire": 27000.0,
+            "seuil_d_un_trimestre": 1688.0
+          }
+        },
+        "coefficient_de_proratisation": 1.0,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 164.0,
+        "nombre_d_annees": 23,
+        "pension_brute": 12606.4130859375,
+        "salaire_de_reference": 24478.47265625,
+        "taux_de_liquidation": 0.5149999856948853
+      },
+      "profil": {
+        "code": "generation_1946_en_2009",
+        "debut": 1968,
+        "liquidation": 2009,
+        "naissance": 1946,
+        "objet": "vingt-trois années, parti à soixante-trois ans",
+        "regle": "generation",
+        "salaires": {
+          "1968": 3000.0,
+          "1969": 3600.0,
+          "1970": 4200.0,
+          "1971": 4800.0,
+          "1972": 5400.0,
+          "1973": 6000.0,
+          "1974": 6600.0,
+          "1975": 7200.0,
+          "1976": 7800.0,
+          "1977": 8400.0,
+          "1978": 9000.0,
+          "1979": 9600.0,
+          "1980": 10200.0,
+          "1981": 10800.0,
+          "1982": 11400.0,
+          "1983": 12000.0,
+          "1984": 12600.0,
+          "1985": 13200.0,
+          "1986": 13800.0,
+          "1987": 14400.0,
+          "1988": 15000.0,
+          "1989": 15600.0,
+          "1990": 16200.0,
+          "1991": 16800.0,
+          "1992": 17400.0,
+          "1993": 18000.0,
+          "1994": 18600.0,
+          "1995": 19200.0,
+          "1996": 19800.0,
+          "1997": 20400.0,
+          "1998": 21000.0,
+          "1999": 21600.0,
+          "2000": 22200.0,
+          "2001": 22800.0,
+          "2002": 23400.0,
+          "2003": 24000.0,
+          "2004": 24600.0,
+          "2005": 25200.0,
+          "2006": 25800.0,
+          "2007": 26400.0,
+          "2008": 27000.0
+        }
+      }
+    },
+    "quatre_trimestres_en_1994": {
+      "openfisca": {
+        "annees": {
+          "1956": {
+            "coefficient": 26.14617100716745,
+            "exclue": false,
+            "plafond": 804.9308110135267,
+            "salaire": 900.0,
+            "seuil_d_un_trimestre": 27.585649669109408
+          },
+          "1957": {
+            "coefficient": 23.344795542113776,
+            "exclue": false,
+            "plafond": 804.9308110135267,
+            "salaire": 1200.0,
+            "seuil_d_un_trimestre": 27.585649669109408
+          },
+          "1958": {
+            "coefficient": 21.716088876384926,
+            "exclue": false,
+            "plafond": 914.6941034244622,
+            "salaire": 1500.0,
+            "seuil_d_un_trimestre": 27.585649669109408
+          },
+          "1959": {
+            "coefficient": 19.133117952762053,
+            "exclue": false,
+            "plafond": 1006.1635137669085,
+            "salaire": 1800.0,
+            "seuil_d_un_trimestre": 27.585649669109408
+          },
+          "1960": {
+            "coefficient": 17.315038871277878,
+            "exclue": false,
+            "plafond": 1006.1635137669085,
+            "salaire": 2100.0,
+            "seuil_d_un_trimestre": 27.585649669109408
+          },
+          "1961": {
+            "coefficient": 16.077102016042595,
+            "exclue": false,
+            "plafond": 1097.6329241093547,
+            "salaire": 2400.0,
+            "seuil_d_un_trimestre": 27.585649669109408
+          },
+          "1962": {
+            "coefficient": 13.980088709602265,
+            "exclue": false,
+            "plafond": 1463.5105654791398,
+            "salaire": 2700.0,
+            "seuil_d_un_trimestre": 27.585649669109408
+          },
+          "1963": {
+            "coefficient": 12.05180061172608,
+            "exclue": false,
+            "plafond": 1591.5677399585645,
+            "salaire": 3000.0,
+            "seuil_d_un_trimestre": 30.48980344748208
+          },
+          "1964": {
+            "coefficient": 10.760536260469719,
+            "exclue": false,
+            "plafond": 1737.9187965064784,
+            "salaire": 3300.0,
+            "seuil_d_un_trimestre": 34.301028878417334
+          },
+          "1965": {
+            "coefficient": 9.69417681123398,
+            "exclue": false,
+            "plafond": 1865.9759709859031,
+            "salaire": 3600.0,
+            "seuil_d_un_trimestre": 38.1122543093526
+          },
+          "1966": {
+            "coefficient": 9.068453518460222,
+            "exclue": false,
+            "plafond": 1975.7392633968386,
+            "salaire": 3900.0,
+            "seuil_d_un_trimestre": 43.829092455755486
+          },
+          "1967": {
+            "coefficient": 8.571317125198702,
+            "exclue": false,
+            "plafond": 2085.502555807774,
+            "salaire": 4200.0,
+            "seuil_d_un_trimestre": 49.54593060215838
+          },
+          "1968": {
+            "coefficient": 8.116777580680587,
+            "exclue": false,
+            "plafond": 2195.2658482187094,
+            "salaire": 4500.0,
+            "seuil_d_un_trimestre": 55.262768748561264
+          },
+          "1969": {
+            "coefficient": 7.26140446646367,
+            "exclue": false,
+            "plafond": 2487.9679613145377,
+            "salaire": 4800.0,
+            "seuil_d_un_trimestre": 59.07399417949652
+          },
+          "1970": {
+            "coefficient": 6.489190765383083,
+            "exclue": false,
+            "plafond": 2744.082310273387,
+            "salaire": 5100.0,
+            "seuil_d_un_trimestre": 62.88521961043178
+          },
+          "1971": {
+            "coefficient": 5.8939062355886325,
+            "exclue": false,
+            "plafond": 3018.490541300726,
+            "salaire": 5400.0,
+            "seuil_d_un_trimestre": 66.69644504136704
+          },
+          "1972": {
+            "coefficient": 5.286014561066039,
+            "exclue": false,
+            "plafond": 3347.780418533532,
+            "salaire": 5700.0,
+            "seuil_d_un_trimestre": 120.12982558307938
+          },
+          "1973": {
+            "coefficient": 4.766469396813381,
+            "exclue": false,
+            "plafond": 3731.9519419718063,
+            "salaire": 6000.0,
+            "seuil_d_un_trimestre": 138.72860568604347
+          },
+          "1974": {
+            "coefficient": 4.128622060238841,
+            "exclue": false,
+            "plafond": 4244.180639889505,
+            "salaire": 6300.0,
+            "seuil_d_un_trimestre": 165.55963271982768
+          },
+          "1975": {
+            "coefficient": 3.5437355887816118,
+            "exclue": false,
+            "plafond": 5030.817568834543,
+            "salaire": 6600.0,
+            "seuil_d_un_trimestre": 205.80617327050402
+          },
+          "1976": {
+            "coefficient": 3.0241657653072367,
+            "exclue": false,
+            "plafond": 5780.8667336426015,
+            "salaire": 6900.0,
+            "seuil_d_un_trimestre": 240.5645492006336
+          },
+          "1977": {
+            "coefficient": 2.60007752114359,
+            "exclue": false,
+            "plafond": 6604.091426724618,
+            "salaire": 7200.0,
+            "seuil_d_un_trimestre": 272.5788428204898
+          },
+          "1978": {
+            "coefficient": 2.3017520424285154,
+            "exclue": false,
+            "plafond": 7317.552827395699,
+            "salaire": 7500.0,
+            "seuil_d_un_trimestre": 306.7274226816697
+          },
+          "1979": {
+            "coefficient": 2.0781437725067846,
+            "exclue": false,
+            "plafond": 8177.365284614693,
+            "salaire": 7800.0,
+            "seuil_d_un_trimestre": 344.8396769910223
+          },
+          "1980": {
+            "coefficient": 1.85307651170156,
+            "exclue": false,
+            "plafond": 9165.234916313113,
+            "salaire": 8100.0,
+            "seuil_d_un_trimestre": 394.23315857594326
+          },
+          "1981": {
+            "coefficient": 1.635326276659272,
+            "exclue": false,
+            "plafond": 10482.394425244338,
+            "salaire": 8400.0,
+            "seuil_d_un_trimestre": 450.94419298825994
+          },
+          "1982": {
+            "coefficient": 1.4270385796506257,
+            "exclue": false,
+            "plafond": 12503.8683938124,
+            "salaire": 8700.0,
+            "seuil_d_un_trimestre": 553.3899325717997
+          },
+          "1983": {
+            "coefficient": 1.3721524804332943,
+            "exclue": false,
+            "plafond": 13976.525900325785,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 618.6381119494114
+          },
+          "1984": {
+            "coefficient": 1.3188751979374138,
+            "exclue": false,
+            "plafond": 15183.922116846075,
+            "salaire": 9300.0,
+            "seuil_d_un_trimestre": 694.5577225336417
+          },
+          "1985": {
+            "coefficient": 1.240766467288658,
+            "exclue": false,
+            "plafond": 16272.408099921186,
+            "salaire": 9600.0,
+            "seuil_d_un_trimestre": 742.7316119806634
+          },
+          "1986": {
+            "coefficient": 1.2187497530007008,
+            "exclue": false,
+            "plafond": 17104.779734037445,
+            "salaire": 9900.0,
+            "seuil_d_un_trimestre": 793.9544817724333
+          },
+          "1987": {
+            "coefficient": 1.185346683460776,
+            "exclue": false,
+            "plafond": 17809.094193674282,
+            "salaire": 10200.0,
+            "seuil_d_un_trimestre": 820.7855088062175
+          },
+          "1988": {
+            "coefficient": 1.140482387308822,
+            "exclue": false,
+            "plafond": 18348.763714694713,
+            "salaire": 10500.0,
+            "seuil_d_un_trimestre": 848.836127977901
+          },
+          "1989": {
+            "coefficient": 1.1269588807399424,
+            "exclue": false,
+            "plafond": 19098.812879502773,
+            "salaire": 10800.0,
+            "seuil_d_un_trimestre": 876.8867471495846
+          },
+          "1990": {
+            "coefficient": 1.0890811817782844,
+            "exclue": false,
+            "plafond": 19976.91921879026,
+            "salaire": 11100.0,
+            "seuil_d_un_trimestre": 911.950021114189
+          },
+          "1991": {
+            "coefficient": 1.0623772668,
+            "exclue": false,
+            "plafond": 21001.376614625657,
+            "salaire": 11400.0,
+            "seuil_d_un_trimestre": 973.8443221125775
+          },
+          "1992": {
+            "coefficient": 1.0332599999999998,
+            "exclue": false,
+            "plafond": 21970.952364255587,
+            "salaire": 11700.0,
+            "seuil_d_un_trimestre": 995.7969805947647
+          },
+          "1993": {
+            "coefficient": 1.02,
+            "exclue": false,
+            "plafond": 22839.911762508826,
+            "salaire": 12000.0,
+            "seuil_d_un_trimestre": 1038.4827054212396
+          }
+        },
+        "coefficient_de_proratisation": 1.0,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 152.0,
+        "nombre_d_annees": 11,
+        "pension_brute": 9510.966796875,
+        "salaire_de_reference": 19021.93359375,
+        "taux_de_liquidation": 0.5
+      },
+      "profil": {
+        "code": "quatre_trimestres_en_1994",
+        "debut": 1956,
+        "liquidation": 1994,
+        "naissance": 1934,
+        "objet": "onze années pour la génération 1934, toutes de quatre trimestres",
+        "regle": "generation",
+        "salaires": {
+          "1956": 900.0,
+          "1957": 1200.0,
+          "1958": 1500.0,
+          "1959": 1800.0,
+          "1960": 2100.0,
+          "1961": 2400.0,
+          "1962": 2700.0,
+          "1963": 3000.0,
+          "1964": 3300.0,
+          "1965": 3600.0,
+          "1966": 3900.0,
+          "1967": 4200.0,
+          "1968": 4500.0,
+          "1969": 4800.0,
+          "1970": 5100.0,
+          "1971": 5400.0,
+          "1972": 5700.0,
+          "1973": 6000.0,
+          "1974": 6300.0,
+          "1975": 6600.0,
+          "1976": 6900.0,
+          "1977": 7200.0,
+          "1978": 7500.0,
+          "1979": 7800.0,
+          "1980": 8100.0,
+          "1981": 8400.0,
+          "1982": 8700.0,
+          "1983": 9000.0,
+          "1984": 9300.0,
+          "1985": 9600.0,
+          "1986": 9900.0,
+          "1987": 10200.0,
+          "1988": 10500.0,
+          "1989": 10800.0,
+          "1990": 11100.0,
+          "1991": 11400.0,
+          "1992": 11700.0,
+          "1993": 12000.0
+        }
+      }
+    },
+    "trois_trimestres_en_1994": {
+      "openfisca": {
+        "annees": {
+          "1985": {
+            "coefficient": 1.240766467288658,
+            "exclue": false,
+            "plafond": 16272.408099921186,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 742.7316119806634
+          },
+          "1986": {
+            "coefficient": 1.2187497530007008,
+            "exclue": false,
+            "plafond": 17104.779734037445,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 793.9544817724333
+          },
+          "1987": {
+            "coefficient": 1.185346683460776,
+            "exclue": false,
+            "plafond": 17809.094193674282,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 820.7855088062175
+          },
+          "1988": {
+            "coefficient": 1.140482387308822,
+            "exclue": false,
+            "plafond": 18348.763714694713,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 848.836127977901
+          },
+          "1989": {
+            "coefficient": 1.1269588807399424,
+            "exclue": false,
+            "plafond": 19098.812879502773,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 876.8867471495846
+          },
+          "1990": {
+            "coefficient": 1.0890811817782844,
+            "exclue": false,
+            "plafond": 19976.91921879026,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 911.950021114189
+          },
+          "1991": {
+            "coefficient": 1.0623772668,
+            "exclue": false,
+            "plafond": 21001.376614625657,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 973.8443221125775
+          },
+          "1992": {
+            "coefficient": 1.0332599999999998,
+            "exclue": false,
+            "plafond": 21970.952364255587,
+            "salaire": 9000.0,
+            "seuil_d_un_trimestre": 995.7969805947647
+          },
+          "1993": {
+            "coefficient": 1.02,
+            "exclue": false,
+            "plafond": 22839.911762508826,
+            "salaire": 3500.0,
+            "seuil_d_un_trimestre": 1038.4827054212396
+          }
+        },
+        "coefficient_de_proratisation": 0.23333333432674408,
+        "decote_trimestres": 20.0,
+        "duree_assurance": 35.0,
+        "nombre_d_annees": 11,
+        "pension_brute": 553.798583984375,
+        "salaire_de_reference": 9493.689453125,
+        "taux_de_liquidation": 0.25
+      },
+      "profil": {
+        "code": "trois_trimestres_en_1994",
+        "debut": 1985,
+        "liquidation": 1994,
+        "naissance": 1934,
+        "objet": "neuf ans pour onze retenus, dont un de trois trimestres : avant juillet 1995, la somme rapportée aux trimestres",
+        "regle": "trimestriel",
+        "salaires": {
+          "1985": 9000.0,
+          "1986": 9000.0,
+          "1987": 9000.0,
+          "1988": 9000.0,
+          "1989": 9000.0,
+          "1990": 9000.0,
+          "1991": 9000.0,
+          "1992": 9000.0,
+          "1993": 3500.0
+        }
+      }
+    }
+  },
+  "recupere_le": "2026-10-16",
+  "source": "OpenFisca-France-Pension",
+  "version": "0.1.3"
+}

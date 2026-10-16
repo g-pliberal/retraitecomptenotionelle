@@ -1,0 +1,29 @@
+date: "2026-10-16"
+session: >-
+  action 153, étape 2, septième famille : le salaire annuel moyen du régime général sur
+  des salaires qui varient, confronté à OpenFisca-France-Pension
+consulte: >-
+  La fiche salaire_annuel_moyen et ses cinq versions datées (R. 351-29, R. 351-29-1, les
+  circulaires Cnav 1/73 et 95/94, le décret n° 2004-144) ; les colonnes de la Cnav
+  (`legislation/revalorisation_salaires.csv`) et le plafond annuel
+  (`macro/plafond_securite_sociale.csv`), tels que le dépôt les tient. Et le code
+  d'OpenFisca-France-Pension 0.1.3 (`regime_general_cnav_salaire_de_reference`,
+  `build_revalorisation_salaire_cummulee`, `revalorisation_salaire_cummulee.yaml`,
+  `reval_s.yaml`, `sam.yaml`, `pss/plafond_securite_sociale_annuel.yaml`,
+  `regime_general_cnav_decote_trimestres`), exécuté à part. Aucune règle du scénario 1
+  n'a été écrite : `veille_droit.py` n'avait rien à ouvrir.
+trouve: >-
+  Rien chez nous : la règle d'OpenFisca, rejouée sous les coefficients et le plafond du
+  dépôt, rend son salaire annuel moyen au centime sur onze profils — les meilleures
+  années, l'écrêtement de chacune, l'exclusion des années sans trimestre depuis 2004, le
+  nombre par génération. Quatre écarts chez OpenFisca : ses coefficients, composés d'une
+  série annuelle, s'écartent des colonnes de la Cnav de −9 à +2 % dès avant 2022 ; il
+  écrête au plafond du 1er janvier les années 1960 et 1961, où le plafond a changé en
+  cours d'année ; il divise par le nombre d'années avant juillet 1995 ; il compte un
+  trimestre de décote de trop au départ du jour anniversaire (âge en mois tiré du mois
+  moyen de numpy).
+reste: >-
+  À l'action 153, étape 2 : les périodes assimilées, après le sixième domaine. Le
+  signalement à OpenFisca, que le propriétaire tranche. Les plafonds de 1960 et 1961 à
+  lire au JORF (décrets n° 60-620 du 29 juin 1960 et n° 61-169 du 16 février 1961),
+  que le dépôt tient de la transcription d'OpenFisca-France, fiabilité « haute ».

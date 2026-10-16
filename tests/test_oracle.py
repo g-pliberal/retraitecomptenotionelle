@@ -97,13 +97,14 @@ TOLERANCE_EXACTE = 1e-4
 #: quarante ans.
 #:
 #: Le modèle lit désormais les coefficients dans la circulaire annuelle de la
-#: Cnav, et **c'est OpenFisca qui s'en écarte** : sa table cumulée est de 3 à
-#: 5,5 % en dessous de ce que la caisse publie pour toutes les perceptions
-#: postérieures à 1990 — il lui manque la revalorisation exceptionnelle de 4 %
-#: du 1er juillet 2022 — et jusqu'à 17 % à côté sur les années 1950. La
+#: Cnav, et **c'est OpenFisca qui s'en écarte** : il compose sa table d'une
+#: série annuelle (``reval_s``), qui s'écarte des colonnes publiées de −9 à
+#: +2 % selon l'année dès avant 2022, et de 3 à 5,5 % de plus au-delà, faute de
+#: la revalorisation exceptionnelle de 4 % du 1er juillet 2022. La
 #: confrontation vaut toujours, mais elle ne peut plus être une égalité sur ce
-#: poste : le désaccord résiduel, de 0,16 % à 2,22 %, est celui d'OpenFisca avec
-#: la source. `tests/test_simulateur.py` vérifie, lui, que le modèle reproduit
+#: poste : le désaccord résiduel, de 0,12 % à 2,46 %, est celui d'OpenFisca avec
+#: la source ; ``tests/test_oracle_salaire_annuel_moyen.py`` montre que, sous
+#: les mêmes coefficients, les deux règles rendent le même salaire au centime. `tests/test_simulateur.py` vérifie, lui, que le modèle reproduit
 #: la colonne que la caisse a publiée.
 TOLERANCE_SALAIRE = 0.03
 
@@ -225,14 +226,16 @@ def test_le_salaire_de_reference_reste_proche(oracle, simulateur):
 
     Il divergeait de 0,30 % à 7,55 % quand le modèle APPROCHAIT les coefficients
     de revalorisation. Il les lit maintenant dans la circulaire de la Cnav, et
-    ce qui reste — de 0,16 % à 2,22 % — n'est plus notre écart mais celui
-    d'OpenFisca avec la source : il manque à sa table la revalorisation
-    exceptionnelle de 4 % du 1er juillet 2022.
+    ce qui reste — de 0,12 % à 2,46 % sur ces départs de 2007 à 2018 — n'est
+    plus notre écart mais celui d'OpenFisca avec la source : il compose ses
+    coefficients d'une série annuelle, qui s'écarte des colonnes de la caisse.
 
     Le test garde donc une borne large, et ce n'est pas un relâchement : le
     contrôle serré de cette grandeur est ailleurs, dans
     `test_les_coefficients_de_revalorisation_reproduisent_la_circulaire`, qui
-    oppose au modèle la colonne que la caisse a publiée.
+    oppose au modèle la colonne que la caisse a publiée, et dans
+    `tests/test_oracle_salaire_annuel_moyen.py`, qui rejoue la règle
+    d'OpenFisca sous les coefficients du dépôt.
     """
     for code, entree in oracle["profils"].items():
         nous, eux = _notre_calcul(simulateur, entree["profil"]), entree["openfisca"]

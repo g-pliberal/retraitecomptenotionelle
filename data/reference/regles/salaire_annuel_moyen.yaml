@@ -332,9 +332,18 @@ code:
     alignés (R. 173-3-2, fiche pension_non_salaries_agricoles_2026). Le détail de la
     pension dit le nombre retenu et l'article.
 referents:
-  openfisca_france_pension: >-
-    écarte depuis 2004 les années qui ne valident aucun trimestre, comme R. 351-29 ; ne
-    rapporte jamais les salaires aux trimestres
+  openfisca_france_pension:
+    equivalent: >-
+      regime_general_cnav_salaire_de_reference : écarte depuis 2004 les années qui ne
+      valident aucun trimestre, comme R. 351-29 ; ne rapporte jamais les salaires aux
+      trimestres
+    confrontation: >-
+      le 16 octobre 2026 (action 153, étape 2 ; tests/test_oracle_salaire_annuel_moyen.py),
+      douze carrières à salaires variables liquidées de 1994 à 2017 : rejouée sous les
+      coefficients et le plafond du dépôt, sa règle rend notre salaire au centime — les
+      meilleures années, l'écrêtement, l'exclusion, le nombre par génération. Ses écarts
+      sont les siens : des coefficients composés d'une série annuelle, le plafond de
+      janvier en 1960 et 1961, la moyenne annuelle avant juillet 1995 (registre)
   calcul_pension: écarte les années sans trimestre cotisé depuis 2004, comme R. 351-29
   trajectoire:
     equivalent: >-
