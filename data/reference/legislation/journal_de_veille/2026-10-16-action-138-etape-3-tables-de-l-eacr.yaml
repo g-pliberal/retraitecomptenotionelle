@@ -1,0 +1,16 @@
+date: "2026-10-16"
+session: "action 138, étape 3 : les tables H, B et C de l'EACR, contre la grille de la page Coût et la population"
+consulte: >-
+  Aucun texte de droit : le contrôle ne touche à aucune règle du scénario 1. Les
+  deux classeurs « 62 EACR diffusée » de la DREES, version du 26 mai 2026
+  (data.drees, jeu donnes_eacr) : les feuilles H-Conditions_liq, B-Liquidants
+  et C-Droits_directs, lues une à une.
+trouve: >-
+  La table C, tous régimes, vient d'Ancetre 2024 ; quelques âges secrétisés y
+  manquent au détail, moins d'un pour cent des retraités. Dans la table H, la
+  surcote n'est pas comptée dans le taux plein ; le SRE l'écrit en minuscule,
+  ne la donne pas aux militaires, et l'Agirc-Arrco n'en sert pas. Aucune règle
+  n'y paraît fausse : les écarts tiennent aux âges de départ de la grille.
+reste: >-
+  Rien au droit. Les coefficients temporaires de l'Agirc-Arrco, que le second
+  classeur porte aussi, à confronter.

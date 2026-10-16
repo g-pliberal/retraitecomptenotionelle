@@ -2,13 +2,13 @@
 
 **Reprise, au 16 octobre 2026.** Fait : la part des reportés en emploi
 (7 octobre) ; la décomposition de l'Ageing Report (13) ; les leviers du COR
-et la CSG effective (14) ; le 16, la pension des cas types en 2024 contrôlée
-sur Ancetre par régime principal (`controle_ancetre.py`) : l'ensemble à 3 %
-des carrières complètes, chaque régime d'un seul cas type de 13 à 42 % plus
-bas, compensé en têtes. Reste, une session par point : les tables H, B et C
-de l'EACR ; les retraités par régime, avec l'action 147 ; la couverture de
-2022-2030 ; les leviers et le taux effectif sur la page Coût. Commencer par
-l'EACR. Détail : note du 16 octobre, « Ce qui reste ».
+et la CSG effective (14) ; le 16, la pension des cas types contrôlée sur
+Ancetre (`controle_ancetre.py`), puis l'âge des retraités, l'âge de départ et
+les conditions de départ sur les tables H, B et C de l'EACR
+(`controle_eacr.py`) : le stock aux bons âges, les départs trop groupés à
+62 ans, sans surcote. Reste, une session par point : les retraités par régime,
+avec l'action 147 ; la couverture de 2022-2030 ; les leviers et le taux
+effectif sur la page Coût. Détail : note « tables de l'EACR », « Ce qui reste ».
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.3 ». L'étape est
 vaste — sept chantiers, vingt-neuf points du registre — ; cette session en
