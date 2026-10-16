@@ -1,0 +1,160 @@
+schema_version: 1
+id: cps_polynesie_pension_des_salaries
+intitule: >-
+  Le salarié de Polynésie française reçoit de la CPS une pension de tranche A en
+  annuités, 70 % du salaire mensuel moyen des 180 meilleurs mois des 240 derniers,
+  au prorata des mois cotisés sur 456, à 62 ans depuis 2023, avec des abattements
+  avant l'âge et pour durée manquante et une majoration au-delà ; et, au-dessus du
+  plafond de la tranche A, une pension de tranche B en points, 2 % du salaire de
+  chaque année revalorisé au salaire minimum horaire de référence.
+domaine: salaire_de_reference
+regimes: [cps_polynesie, cps_polynesie_tranche_b]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- les salaires mensuels soumis à cotisation, sous le plafond de la tranche A et entre ce plafond et celui de la tranche B
+- les mois d'assurance, les mois d'activité pénible, l'incapacité
+- la date de naissance et la date d'effet
+- le conjoint et les enfants à charge, pour les majorations et la réversion
+ecrit:
+- la pension de tranche A, ses abattements et ses majorations
+- les points et la pension de tranche B
+- les cotisations vieillesse des deux tranches
+dates_qui_decident:
+- liquidation.date_effet
+# Les textes sont des délibérations de l'assemblée de la Polynésie française et des lois
+# du pays, publiés au Journal officiel de la Polynésie française, hors de l'index de la
+# DILA. Leur base, LexPol (lexpol.cloud.pf), refuse la connexion depuis le conteneur le
+# 16 octobre 2026 (connexion réinitialisée en HTTPS, 503 en HTTP), et aucun site
+# officiel joignable n'en publie la version consolidée : la fiche lit les résumés du
+# CLEISS, organisme public de liaison, et le rapport 2020 du Conseil d'orientation et de
+# suivi des retraites polynésien que la fiche de régime cite. La montée en charge suit
+# l'année du départ, non la génération.
+versions:
+- id: deliberation_de_1987
+  statut: supposee
+  hypothese: >-
+    la délibération n° 87-11 AT du 29 janvier 1987 (tranche A) et la délibération
+    n° 95-180 AT du 26 octobre 1995 (tranche B), non lues : 60 ans et 420 mois
+    d'assurance pour le taux plein jusqu'au 31 décembre 2019, comme le rapport 2020
+    du Conseil d'orientation et de suivi des retraites les date, et le calcul de 2026
+    pour le reste
+  fiabilite: >-
+    faible : l'âge et la durée sont ceux d'un rapport officiel ; le salaire de
+    référence, les abattements et les majorations d'avant 2020 ne sont lus nulle part
+  bornes:
+    liquidation.date_effet: [null, 2020-01-01]
+  contenu:
+    droit: >-
+      non lu ; la borne basse ouverte ne sert qu'à couvrir toutes les dates, le régime
+      couvrant les salariés depuis 1968 à l'inventaire
+  exemples: aucun trouvé
+- id: loi_du_pays_de_2019
+  statut: lue
+  textes:
+  - {reference: "CLEISS, « Le régime polynésien de sécurité sociale des salariés », rubrique vieillesse, tranches A et B (cleiss.fr/docs/regimes/regime_pf_salaries.html), lue le 16 octobre 2026", en_vigueur: 2023-01-01}
+  - {reference: "CLEISS, « Les cotisations en Polynésie française », tableau au 1er janvier 2026 (cleiss.fr/docs/cotisations/pf.html)", en_vigueur: 2026-01-01}
+  - {reference: "rapport annuel 2020 du Conseil d'orientation et de suivi des retraites de la Polynésie française (service-public.pf), tableaux « source CPS 2020 » et tableaux 3 et 4, tels que la fiche de régime les cite : loi du pays n° 2019-6 du 1er février 2019", en_vigueur: 2020-01-01}
+  bornes:
+    liquidation.date_effet: [2020-01-01, null]
+  contenu:
+    ouverture: >-
+      « Les droits à retraite de base (tranche A) sont ouverts à partir de 62 ans
+      depuis le 1er janvier 2023 », avec cinq années d'assurance et la cessation de
+      l'activité salariée (CLEISS) ; 60 ans et 6 mois et 429 mois en 2020, 61 ans et
+      438 mois en 2021, 61 ans et 6 mois et 447 mois en 2022 (rapport de 2020) ; à 57
+      ans avec 33 années, une pension réduite ; à 55 ans sans abattement avec 396 mois
+      dont 120 d'activité pénible dans les 180 derniers ; à 50 ans pour une incapacité
+      de plus de 70 % ; à 65 ans, sans abattement, au prorata des années cotisées
+    calcul: >-
+      « 70 % x salaire mensuel moyen x (nombre de mois cotisés / 456 mois) -/+
+      abattements ou majorations » ; le salaire moyen, depuis 2020, des 180 meilleurs
+      salaires mensuels plafonnés des 240 derniers mois (CLEISS)
+    abattements: >-
+      1,5 % par trimestre d'anticipation avant l'âge légal, au plus 10 % pour qui a la
+      durée, plafond qui baisse de 0,25 % par trimestre acquis au-delà de 57 ans ; 0,5 %
+      par trimestre manquant à la durée, au plus 30 % (CLEISS)
+    majorations: >-
+      1,84 % par année d'assurance au-delà de la durée, cinq au plus, à la liquidation à
+      l'âge légal ; 25 % pour le conjoint à charge, au plus un douzième du plafond
+      mensuel ; 5 % par enfant à charge, au plus 25 %, non cumulables avec les
+      prestations familiales (CLEISS)
+    tranche_b: >-
+      les points de l'année sont le salaire de la tranche B divisé par le salaire
+      minimum horaire de référence, 1 024,74 F CFP depuis le 1er mai 2024 ; la valeur
+      du point est 2 % de ce salaire, 20,49 F CFP ; la pension, points fois valeur sur
+      douze, réduite de 0,5 % par trimestre manquant, au plus 30 %, et de 1,5 % par
+      trimestre d'anticipation (CLEISS) ; soit 2 % du salaire revalorisé par année,
+      pour une cotisation de 17,43 %, un rendement de 11,5 %
+    cotisations: >-
+      en 2026, tranche A, 15,69 % et 7,84 % jusqu'à 269 000 F CFP par mois ; tranche
+      B, 11,62 % et 5,81 % entre 269 000 et 525 000 F CFP (CLEISS)
+    reversion: >-
+      deux tiers de la pension au conjoint de 55 ans marié depuis deux ans, ou avec un
+      enfant, si le défunt avait cinq années, majorés de 10 % par enfant à charge, et
+      perdus au remariage ; avant 55 ans, une allocation de deux ans au plus (CLEISS)
+    minimum: >-
+      le minimum vieillesse, sous condition de ressources et de quinze ans de
+      résidence : 85 000 F CFP pour une personne seule, 148 750 pour un couple (CLEISS)
+  exemples: aucun trouvé
+approximations:
+- version: loi_du_pays_de_2019
+  ecart: >-
+    La fiche de régime prend les dix meilleures années, quand le droit prend les 180
+    meilleurs mois des 240 derniers ; elle ne porte ni les abattements, ni la pension
+    réduite dès 57 ans, ni le prorata sans abattement à 65 ans, ni la majoration de
+    1,84 % par année au-delà de la durée, ni celles pour conjoint et enfants à charge.
+  effet: >-
+    non mesuré ; les carrières dont les meilleures années sont anciennes, celles qui
+    partent avant l'âge ou sans la durée, et celles qui la dépassent
+- version: [deliberation_de_1987, loi_du_pays_de_2019]
+  ecart: >-
+    Les taux et les plafonds de 2026 sont projetés sur toute la période ; le plafond de
+    la tranche A, 269 000 F CFP, est remplacé par le plafond national, plus haut, et la
+    tranche B par celle d'un à deux plafonds nationaux. Le rendement de la tranche B,
+    2 % du salaire pour 17,43 % de cotisation, est celui de rendements_points.csv.
+  effet: >-
+    non mesuré ; les salaires entre 269 000 F CFP et le plafond national, comptés en
+    tranche A au lieu de la tranche B
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-04-16
+  a_relire:
+  - >-
+    Lire sur LexPol, quand il sera joignable, la délibération n° 87-11 AT et la loi du
+    pays n° 2019-6 dans leurs rédactions successives, et la délibération n° 95-180 AT :
+    le salaire de référence d'avant 2020 (un site privé dit les 120 meilleurs mois des
+    180 derniers), les abattements et les majorations d'avant la réforme, et les
+    plafonds et taux de chaque année.
+  lectures:
+  - type: autre
+    reference: >-
+      CLEISS, régime des salariés et cotisations de Polynésie française, lus le 16
+      octobre 2026 ; LexPol (lexpol.cloud.pf, lexpol.pf) et le site de la CPS
+      (cps.pf, application sans texte lisible) essayés le même jour, sans résultat
+    date: 2026-10-16
+reformes: []
+code:
+  moteur: >-
+    deux fiches de régime : la tranche A en annuités, une période par année de la
+    montée de 2020 à 2023 ; la tranche B en points, au rendement de
+    rendements_points.csv
+  python: >-
+    données : regimes/cps_polynesie.yaml, regimes/cps_polynesie_tranche_b.yaml,
+    regimes/rendements_points.csv ; droit/liquider.py : liquider_chaque_regime
+  javascript: moteur/js/droit/liquider.js et moteur/js/regimes.js, le même catalogue
+  parametres: regimes/cps_polynesie.yaml (taux_plein, duree_requise_trimestres, salaire_reference, taux_cotisation_retraite) et rendements_points.csv
+  tests: >-
+    tests/temoins/simulations.json, les carrières du statut salarie_polynesie, que le
+    portage rejoue
+historique:
+- >-
+  2026-10-16 — écrite à l'étape 2 de l'action 145 : les deux tranches de la CPS
+  n'avaient que la fiche générique de liquidation. LexPol ne répond pas ; le CLEISS
+  écrit le salaire de référence, les abattements, les majorations et la tranche B, dont
+  le rendement confirme celui du dépôt. Aucun chiffre ne change.
+effet: >-
+  Les salariés de Polynésie française : leur pension de tranche A est simulée au bon âge
+  et à la bonne durée, mais sur un salaire de référence et un plafond qui ne sont pas
+  ceux du droit, sans abattement ni majoration.
