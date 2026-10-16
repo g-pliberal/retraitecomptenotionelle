@@ -1,0 +1,27 @@
+date: "2026-10-16"
+session: "action 138, étape 5 : les années d'avant 2019 de l'effet retour, au barème de CSG de chacune"
+consulte: >-
+  L'index LEGI (à jour au 11 octobre 2026) : L. 136-2 du code de la sécurité sociale, ses
+  rédactions de 1993 à 2018 (III, 2°) ; L. 136-8, ses rédactions de 1996 à 2019 (II puis
+  III) ; l'article 1417 du CGI, ses rédactions de 2006 à 2026 (I). L'index JORF : la loi
+  n° 96-1181 (art. 8), les arrêtés annuels « fixant les limites d'application des
+  abattements, exonérations et dégrèvements » de taxe d'habitation, de 1998 à 2007. Les
+  barèmes de l'IPP, `prelevements_sociaux.contributions_sociales.csg.remplacement`, colonnes
+  des seuils.
+trouve: >-
+  De 1991 à 1997, la pension est exonérée de CSG quand l'impôt de l'année précédente n'est pas
+  mis en recouvrement (CGI, art. 1657, 1 bis), au taux plein sinon ; le taux de 1 % de 1997
+  vise un écart d'impôt avant et après réductions. De 1998 à 2014, exonérée sous le seuil du I
+  de l'article 1417 (revenu de l'avant-dernière année), au taux réduit de 3,8 % quand l'impôt
+  n'est pas mis en recouvrement. Depuis 2015, deux seuils de revenu fiscal écrits dans L.
+  136-8, III (10 633 et 13 900 € en 2015 ; 10 996 et 14 375 € en 2017), un troisième en 2019
+  (22 580 €). La CSG d'une année prend le seuil de la taxe d'habitation de l'année
+  précédente. En 1999 et 2000, l'article 1417 a un I à 25 200 F et un I bis à 43 900 F ; la
+  série de l'exonération continue au I bis. L'IPP date d'un an trop tôt les seuils de 2017 et
+  2018. Écrit dans `legislation/csg_pensions_seuils.csv`, lu par l'effet retour seul : aucune
+  règle du scénario 1 ne change.
+reste: >-
+  L'arrêté de 2002 (taxe d'habitation de 2002, CSG de 2003), absent de l'index : le seuil est
+  interpolé. La lecture du I ou du I bis de l'article 1417 en 1999 et 2000, qu'une circulaire
+  de la Cnav ou de l'Acoss trancherait. Les seuils revalorisés de 2016, 2018 et 2020 à 2025,
+  lus à l'IPP, et non à une instruction de la DSS.

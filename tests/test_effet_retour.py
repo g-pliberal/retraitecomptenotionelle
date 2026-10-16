@@ -8,13 +8,16 @@ import pytest
 
 from retraite_notionnelle import memoire
 from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.donnees.impot_revenu import FRANC
 from retraite_notionnelle.effet_retour import (
-    PREMIERE_ANNEE_EFFET_RETOUR,
     SCENARIOS_EFFET_RETOUR,
     SCENARIOS_PROSPECTIFS,
+    SeuilsCsg,
     _deformer,
     _points,
+    charger_seuils_csg,
     complement_minimum,
+    tranche_csg,
 )
 from retraite_notionnelle.garantie import pension_moyenne
 from retraite_notionnelle.simulateur import Simulateur
@@ -26,13 +29,64 @@ def avenir():
     return memoire.cout(Parametres()).avenir
 
 
-def test_rien_avant_le_bareme_a_quatre_taux(avenir):
-    avant = avenir.annee(PREMIERE_ANNEE_EFFET_RETOUR - 1)
-    assert avant is not None and avant.effet_retour is not None
-    assert avant.effet_retour.taux("notionnel_retroactif") == 0.0
-    assert avant.effet_retour_constants("notionnel_retroactif") == 0.0
-    apres = avenir.annee(PREMIERE_ANNEE_EFFET_RETOUR)
-    assert set(apres.effet_retour.prelevements) == set(SCENARIOS_EFFET_RETOUR)
+def test_chaque_annee_de_la_trajectoire_a_son_effet_retour(avenir):
+    """Depuis le 16 octobre 2026, chaque année a son barème de CSG : rien
+    avant 2019 n'est plus laissé à zéro. Avant février 1991, sans CSG, les
+    prélèvements ne sont que l'impôt ; la CSG les fait monter ensuite."""
+    taux = {}
+    for annee in (avenir.annees[0].annee, 1995, 2005, 2015, 2025):
+        effet = avenir.annee(annee).effet_retour
+        assert set(effet.prelevements) == set(SCENARIOS_EFFET_RETOUR)
+        assert avenir.annee(annee).effet_retour_constants("notionnel_retroactif") > 0.0
+        taux[annee] = effet.prelevements["notionnel_retroactif"]
+    assert avenir.annees[0].annee < 1991
+    annees = sorted(taux)
+    assert all(taux[a] < taux[b] for a, b in zip(annees, annees[1:]))
+    assert 0.0 < taux[annees[0]] < 0.08
+
+
+@pytest.mark.parametrize("scenario", ("notionnel_retroactif", "notionnel_retroactif_employeur"))
+def test_les_annees_passees_dans_l_ordre_de_grandeur(avenir, scenario):
+    """De 1990 à 2018, sous des barèmes plus légers, l'effet retour reprend
+    un peu moins de l'économie qu'après 2026, mais garde l'ordre de l'IPP."""
+    passe = avenir.part_effet_retour(scenario, 1990, 2018)
+    assert passe is not None and 0.15 < passe < avenir.part_effet_retour(scenario, 2026, 2070)
+
+
+def test_les_seuils_de_chaque_annee():
+    seuils = charger_seuils_csg(Simulateur(Parametres()).parametres.racine_donnees)
+    assert min(seuils) == 1991 and max(seuils) == 2025
+    assert set(range(1991, 2026)) == set(seuils)
+    assert {seuils[a].regle for a in range(1991, 1998)} == {"impot"}
+    assert {seuils[a].regle for a in range(1998, 2015)} == {"impot_et_revenu"}
+    assert {seuils[a].regle for a in range(2015, 2026)} == {"revenu"}
+    # Le franc converti ; 10 224 € pour 2014, 10 633 € et 13 900 € pour 2015,
+    # que L. 136-8 écrit ; le taux médian depuis 2019.
+    assert seuils[1998].exoneration == pytest.approx(43080 / FRANC)
+    assert seuils[2014].exoneration == 10224
+    assert (seuils[2015].exoneration, seuils[2015].reduit) == (10633, 13900)
+    assert seuils[2018].median is None and seuils[2019].median == 22580
+    # Le seuil monte chaque année, sauf la réforme de 2006, qui le relève
+    # d'un quart en fondant l'abattement de 20 % dans le barème, et le gel
+    # de 2012.
+    for annee in range(1999, 2026):
+        assert seuils[annee].exoneration >= seuils[annee - 1].exoneration
+    assert seuils[2008].exoneration / seuils[2007].exoneration > 1.25
+
+
+def test_la_tranche_selon_la_regle_de_l_annee():
+    avant_1998 = SeuilsCsg(1995, "impot")
+    assert tranche_csg(avant_1998, 1e9, impot_recouvre=False) == "exonere"
+    assert tranche_csg(avant_1998, 0.0, impot_recouvre=True) == "plein"
+    mixte = SeuilsCsg(2010, "impot_et_revenu", exoneration=9837.0)
+    assert tranche_csg(mixte, 9837.0, impot_recouvre=False) == "exonere"
+    assert tranche_csg(mixte, 9838.0, impot_recouvre=False) == "reduit"
+    assert tranche_csg(mixte, 9838.0, impot_recouvre=True) == "plein"
+    revenu = SeuilsCsg(2019, "revenu", 11128.0, 14548.0, 22580.0)
+    assert [tranche_csg(revenu, r, impot_recouvre=False)
+            for r in (11128.0, 14000.0, 20000.0, 22580.0)] == [
+        "exonere", "reduit", "median", "plein"]
+    assert tranche_csg(SeuilsCsg(2016, "revenu", 10676.0, 13956.0), 20000.0, False) == "plein"
 
 
 def test_le_scenario_6_n_en_a_pas(avenir):

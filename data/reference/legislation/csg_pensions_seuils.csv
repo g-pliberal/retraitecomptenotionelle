@@ -1,0 +1,100 @@
+# Les seuils de la CSG des pensions, année par année, de 1991 à 2025
+# -------------------------------------------------------------------
+# source_id: legifrance_textes, ipp_prelevements_sociaux
+#
+# Ce qui décide du taux de CSG d'une pension, l'année où elle est versée, pour
+# une personne seule (une part de quotient familial, en métropole). Lu par
+# l'effet retour de la page Coût (`effet_retour.py`, action 138, étape 5) ;
+# l'année 2026 et les suivantes sont au barème de
+# `prelevements_remuneration.yaml` (`bareme_csg`), ramené sur les prix. Les
+# taux de chaque tranche sont dans `prelevements_historiques.yaml`.
+#
+# TROIS RÈGLES SE SUCCÈDENT (colonne `regle`) :
+#
+# - `impot`, de février 1991 à 1997 : la pension est exonérée quand la
+#   cotisation d'impôt sur le revenu de l'année précédente est inférieure au
+#   seuil de mise en recouvrement (CGI, art. 1657, 1 bis), et prélevée au taux
+#   plein sinon (L. 136-2, III, 2°, LEGIARTI000006740235 et suivants). Le taux
+#   de 1 % de 1997 (L. 136-8, II, LEGIARTI000006740334) vise qui n'est pas
+#   mis en recouvrement après ses réductions d'impôt et l'est avant : pour qui
+#   n'a que sa pension, personne.
+# - `impot_et_revenu`, de 1998 à 2014 : exonérée quand le revenu fiscal de
+#   référence de l'avant-dernière année n'excède pas le seuil du I de
+#   l'article 1417 du CGI (L. 136-2, III, 2°, LEGIARTI000006740239 et
+#   suivants) ; au taux réduit de 3,8 % quand il l'excède mais que la
+#   cotisation d'impôt de l'année précédente est sous le seuil de mise en
+#   recouvrement (L. 136-8, III, LEGIARTI000006740335 à LEGIARTI000028419140) ;
+#   au taux plein sinon.
+# - `revenu`, depuis 2015 : le revenu fiscal de référence seul, contre les
+#   seuils que L. 136-8, III, écrit (LEGIARTI000029961387 pour 2015,
+#   LEGIARTI000033712894 pour 2017) puis revalorise ; le taux médian de 6,6 %
+#   naît en 2019 (LEGIARTI000037947799 : 11 128, 14 548 et 22 580 €).
+#
+# LE SEUIL D'EXONÉRATION DE 1998 À 2014 est celui de la taxe d'habitation de
+# l'année précédente, que l'arrêté annuel « fixant les limites d'application
+# des abattements, exonérations et dégrèvements » fixe, puis, depuis 2007, le
+# I de l'article 1417 lui-même : la CSG d'une année compare le revenu de
+# l'avant-dernière année au seuil que la taxe d'habitation de l'année
+# précédente lui oppose. Ainsi 10 224 € pour 2014 (art. 1417, I,
+# LEGIARTI000027517723, en vigueur du 7 juin 2013), 10 633 € pour 2015, que
+# L. 136-8 reprend. Trois lectures :
+#
+# - 1999 et 2000 (CSG de 2000 et 2001) : la loi de finances pour 1999 coupe le
+#   I de l'article 1417 en deux, un I à 25 200 F et un I bis à 43 900 F ; L.
+#   136-2 renvoie au I, mais la série, de 43 080 F en 1997 à 44 730 F en 2001,
+#   continue au I bis, que la table retient.
+# - 2002 (CSG de 2003) : l'arrêté n'est pas dans l'index du Journal officiel ;
+#   la valeur est la moyenne géométrique de 2001 (44 730 F) et de 2003
+#   (7 046 €).
+# - Jusqu'aux revenus de 2005 (CSG de 2007), le revenu fiscal de référence
+#   suit l'abattement de 20 % ; la réforme de 2006, qui l'intègre au barème,
+#   porte le seuil de 7 417 € à 9 437 €. L'effet retour en tient compte
+#   (`effet_retour.py`).
+#
+# Les seuils de 2016, 2018 et 2020 à 2025 sont revalorisés par l'Urssaf sans
+# que le texte change : ils sont lus aux barèmes de l'IPP
+# (`prelevements_sociaux.contributions_sociales.csg.remplacement`, colonnes
+# `seuils.seuil_rfr1` à `seuil_rfr3`, lus le 16 octobre 2026), qui datent d'un
+# an trop tôt les seuils de 2017 et 2018 : ceux de L. 136-8 pour 2017,
+# 10 996 et 14 375 €, y sont à 2017 et 2018 ; la table suit le texte.
+#
+# Colonnes : `annee` de la CSG ; `regle` ; `exoneration`, le revenu fiscal de
+# référence au-delà duquel la pension n'est plus exonérée ; `reduit`, celui
+# en deçà duquel elle est au taux réduit ; `median`, celui en deçà duquel elle
+# est au taux médian ; `monnaie` de ces seuils ; `texte`.
+annee,regle,exoneration,reduit,median,monnaie,texte
+1991,impot,,,,FRF,"L. 136-2, III, 2° (loi n° 90-1168 du 29 décembre 1990, art. 127)"
+1992,impot,,,,FRF,"L. 136-2, III, 2°"
+1993,impot,,,,FRF,"L. 136-2, III, 2°, LEGIARTI000006740235"
+1994,impot,,,,FRF,"L. 136-2, III, 2°, LEGIARTI000006740236"
+1995,impot,,,,FRF,"L. 136-2, III, 2°, LEGIARTI000006740237"
+1996,impot,,,,FRF,"L. 136-2, III, 2°, LEGIARTI000006740237"
+1997,impot,,,,FRF,"L. 136-2, III, 2°, LEGIARTI000006740238 ; L. 136-8, II, LEGIARTI000006740334"
+1998,impot_et_revenu,43080,,,FRF,"Loi n° 96-1181 du 30 décembre 1996, art. 8 (art. 1417, I, taxe d'habitation de 1997)"
+1999,impot_et_revenu,43550,,,FRF,"Arrêté du 25 février 1998 (taxe d'habitation de 1998)"
+2000,impot_et_revenu,43900,,,FRF,"Arrêté du 19 février 1999, I bis (taxe d'habitation de 1999)"
+2001,impot_et_revenu,44110,,,FRF,"Arrêté du 28 février 2000, I bis (taxe d'habitation de 2000)"
+2002,impot_et_revenu,44730,,,FRF,"Arrêté du 30 janvier 2001 (taxe d'habitation de 2001)"
+2003,impot_et_revenu,6932,,,EUR,"Interpolé : arrêtés de 2001 et de 2003"
+2004,impot_et_revenu,7046,,,EUR,"Arrêté du 8 janvier 2003 (taxe d'habitation de 2003)"
+2005,impot_et_revenu,7165,,,EUR,"Arrêté du 2 février 2004 (taxe d'habitation de 2004)"
+2006,impot_et_revenu,7286,,,EUR,"Arrêté du 5 avril 2005 (taxe d'habitation de 2005)"
+2007,impot_et_revenu,7417,,,EUR,"Arrêté du 1er mars 2006 (taxe d'habitation de 2006)"
+2008,impot_et_revenu,9437,,,EUR,"Arrêté du 21 février 2007 ; art. 1417, I, LEGIARTI000006306124"
+2009,impot_et_revenu,9560,,,EUR,"Art. 1417, I, LEGIARTI000018619090"
+2010,impot_et_revenu,9837,,,EUR,"Art. 1417, I, LEGIARTI000020548940"
+2011,impot_et_revenu,9876,,,EUR,"Art. 1417, I, LEGIARTI000022202241"
+2012,impot_et_revenu,10024,,,EUR,"Art. 1417, I, LEGIARTI000024188919"
+2013,impot_et_revenu,10024,,,EUR,"Art. 1417, I, LEGIARTI000026294293"
+2014,impot_et_revenu,10224,,,EUR,"Art. 1417, I, LEGIARTI000027517723"
+2015,revenu,10633,13900,,EUR,"L. 136-8, III, LEGIARTI000029961387"
+2016,revenu,10676,13956,,EUR,"Barèmes de l'IPP"
+2017,revenu,10996,14375,,EUR,"L. 136-8, III, LEGIARTI000033712894"
+2018,revenu,11018,14404,,EUR,"Barèmes de l'IPP"
+2019,revenu,11128,14548,22580,EUR,"L. 136-8, III, LEGIARTI000037947799"
+2020,revenu,11306,14781,22941,EUR,"Barèmes de l'IPP"
+2021,revenu,11408,14914,23147,EUR,"Barèmes de l'IPP"
+2022,revenu,11431,14944,23193,EUR,"Barèmes de l'IPP"
+2023,revenu,11614,15183,23564,EUR,"Barèmes de l'IPP"
+2024,revenu,12230,15988,24813,EUR,"Barèmes de l'IPP"
+2025,revenu,12817,16755,26004,EUR,"Barèmes de l'IPP"

@@ -71,9 +71,21 @@ moyenne des bénéficiaires, et non retiré à chacun ; le relèvement de 2023
 n'y est pas. Les prélèvements restent calculés sur la distribution déplacée,
 non déformée. Chacun est une personne seule de soixante-dix ans, qui n'a que
 sa pension : ni le quotient conjugal, ni les revenus du patrimoine, ni la
-cotisation maladie des complémentaires. Le barème de CSG est celui de 2026,
-ramené à chaque année sur les prix, et l'effet n'est chiffré qu'à partir de
-2019, première année de ce barème à quatre taux.
+cotisation maladie des complémentaires.
+
+CHAQUE ANNÉE A SON BARÈME DE CSG (depuis le 16 octobre 2026) : celui de son
+année jusqu'en 2025 (``legislation/csg_pensions_seuils.csv``), celui de 2026
+ramené sur les prix ensuite. Trois règles s'y succèdent. De 1991 à 1997, la
+pension est exonérée quand l'impôt sur le revenu n'est pas mis en
+recouvrement, prélevée au taux plein sinon ; de 1998 à 2014, exonérée sous le
+seuil de revenu fiscal du I de l'article 1417 du CGI, au taux réduit quand
+l'impôt n'est pas mis en recouvrement, au taux plein sinon ; depuis 2015, le
+revenu fiscal seul. Les taux sont ceux de l'histoire des prélèvements, en
+moyenne des douze mois. La convention du site vaut pour toutes : le revenu
+et l'impôt de l'année même, et non ceux de l'avant-dernière et de la
+précédente ; jusqu'aux revenus de 2005, le revenu fiscal suit l'abattement
+de 20 % que la réforme de 2006 a fondu dans le barème. Avant février 1991,
+pas de CSG : l'effet retour n'y est que l'impôt et l'ASPA.
 """
 
 from __future__ import annotations
@@ -84,7 +96,7 @@ import datetime as dt
 from dataclasses import dataclass, field
 
 from .donnees.distribution import Tranche
-from .donnees.impot_revenu import charger_baremes_impot_revenu, croissance_macro
+from .donnees.impot_revenu import FRANC, charger_baremes_impot_revenu, croissance_macro
 from .donnees.prelevements_historiques import charger_prelevements_historiques
 from .impot_revenu import Declarant, Foyer, impot_aux_parametres
 from .remuneration import charger_prelevements
@@ -105,19 +117,27 @@ SCENARIOS_EFFET_RETOUR: tuple[str, ...] = (
 SCENARIOS_PROSPECTIFS: frozenset[str] = frozenset({
     "notionnel_prospectif", "notionnel_prospectif_employeur"})
 
-#: La première année chiffrée : celle du barème de CSG à quatre taux des
-#: pensions (L. 136-8, III bis, en vigueur le 1er janvier 2019), qui est le
-#: seul que le module applique. Avant, l'effet retour vaut zéro, faute de
-#: barème, et non parce qu'il serait nul.
-PREMIERE_ANNEE_EFFET_RETOUR = 2019
-
 #: L'âge que la convention donne à chaque retraité, au 31 décembre de
 #: l'année des revenus : au-delà de 65 ans, il ouvre l'abattement des
 #: personnes âgées (CGI, art. 157 bis), comme pour la plupart des retraités.
 AGE_DECLARE = 70
 
-#: L'année dont le barème de CSG des pensions est lu.
+#: L'année dont le barème de CSG des pensions est lu, et qui vaut, ramené
+#: sur les prix, pour elle et les suivantes ; les précédentes ont le leur
+#: (:func:`charger_seuils_csg`).
 ANNEE_BAREME_CSG = 2026
+
+#: La dernière année de revenus dont le revenu fiscal de référence suit
+#: l'abattement de 20 % des salaires et des pensions, que la loi de finances
+#: pour 2006 a fondu dans le barème, en relevant d'autant les seuils de
+#: l'article 1417 (7 417 € pour la taxe d'habitation de 2006, 9 437 € pour
+#: celle de 2007).
+DERNIERS_REVENUS_ABATTUS = 2005
+ABATTEMENT_VINGT_POUR_CENT = 0.20
+
+#: La CSG d'une année compare le revenu de l'avant-dernière année aux seuils
+#: (L. 136-2, III, 2° ; L. 136-8, III).
+DECALAGE_DU_REVENU = 2
 
 #: La part déductible de chaque taux de CSG d'une pension (CGI, art. 154
 #: quinquies), par le libellé de sa tranche.
@@ -194,6 +214,7 @@ class EffetRetour:
         self.minimum_vieillesse = simulateur.scenario_actuel.minimum_vieillesse
         self.prelevements = charger_prelevements(racine).pensions
         self.historiques = charger_prelevements_historiques(racine)
+        self.seuils_csg = charger_seuils_csg(racine)
         baremes = charger_baremes_impot_revenu(racine)
         self.baremes = baremes.chronique(derniere, "prix", croissance_macro(self.macro, "prix"))
         self.points = _points(self.distribution, moyenne_publiee)
@@ -251,10 +272,16 @@ class EffetRetour:
         """Ce que paie une personne seule qui n'a que ``pension``, annuelle et
         brute, en euros du barème de CSG : la CSG, la CRDS et la CASA de sa
         tranche, et l'impôt sur le revenu de l'année ``annee``, sur sa pension
-        de l'année nette de la CSG déductible, ramené aux mêmes euros."""
+        de l'année nette de la CSG déductible, ramené aux mêmes euros. Avant
+        :data:`ANNEE_BAREME_CSG`, la tranche et ses taux sont ceux de
+        l'année (:meth:`_preleve_historique`)."""
         cle = (annee, round(pension, 2))
         if cle in self._impots:
             return self._impots[cle]
+        if annee < ANNEE_BAREME_CSG:
+            total = self._preleve_historique(annee, pension)
+            self._impots[cle] = total
+            return total
         p = self.prelevements
         tranche = p.tranche(p.revenu_fiscal_presume([pension]), 1.0)
         sociaux = pension * p.taux_de_la_tranche(tranche)
@@ -262,15 +289,60 @@ class EffetRetour:
         deductible = (0.0 if cle_deductible is None else
                       self.historiques.csg_deductible_pension(
                           dt.date(ANNEE_BAREME_CSG, 7, 1), cle_deductible))
-        impot = 0.0
-        parametres = self.baremes.get(annee)
-        if parametres is not None:
-            vers_annee = self.macro.coefficient_prix(ANNEE_BAREME_CSG, annee)
-            imposable = pension * (1.0 - deductible) * vers_annee
-            foyer = Foyer(declarants=(Declarant(pensions=imposable, age=AGE_DECLARE),))
-            impot = impot_aux_parametres(foyer, parametres).impot / vers_annee
+        impot = self._impot(annee, pension, deductible)
         self._impots[cle] = sociaux + impot
         return sociaux + impot
+
+    def _impot(self, annee: int, pension: float, deductible: float,
+               detail: bool = False):
+        """L'impôt sur le revenu de l'année ``annee`` d'une personne seule
+        qui n'a que ``pension``, en euros du barème de CSG, sur sa pension
+        nette de la part ``deductible`` ; ``detail`` rend aussi le calcul de
+        l'impôt, dans la monnaie de l'année, ou ``None`` faute de barème."""
+        parametres = self.baremes.get(annee)
+        if parametres is None:
+            return (0.0, None) if detail else 0.0
+        vers_annee = self.macro.coefficient_prix(ANNEE_BAREME_CSG, annee)
+        imposable = pension * (1.0 - deductible) * vers_annee
+        foyer = Foyer(declarants=(Declarant(pensions=imposable, age=AGE_DECLARE),))
+        calcul = impot_aux_parametres(foyer, parametres)
+        impot = calcul.impot / vers_annee
+        return (impot, calcul) if detail else impot
+
+    def _preleve_historique(self, annee: int, pension: float) -> float:
+        """:meth:`_preleve` une année d'avant :data:`ANNEE_BAREME_CSG` : la
+        tranche que la règle de l'année donne (:func:`tranche_csg`), au revenu
+        fiscal présumé de la pension, abattu de 20 % quand l'avant-dernière
+        année l'était, et à l'impôt de l'année ; les taux de la tranche en
+        moyenne des douze mois de l'année. Avant la CSG, l'impôt seul."""
+        seuils = self.seuils_csg.get(annee)
+        h = self.historiques
+        plein = _moyenne_annuelle(h.pensions["csg_taux_plein"], annee)
+        if seuils is None or plein <= 0.0:
+            return self._impot(annee, pension, 0.0)
+        vers_annee = self.macro.coefficient_prix(ANNEE_BAREME_CSG, annee)
+        revenu = self.prelevements.revenu_fiscal_presume([pension]) * vers_annee
+        if annee - DECALAGE_DU_REVENU <= DERNIERS_REVENUS_ABATTUS:
+            revenu *= 1.0 - ABATTEMENT_VINGT_POUR_CENT
+        deductible = {
+            taux: _moyenne_annuelle(h.pensions[f"csg_taux_{taux}"], annee, "deductible")
+            for taux in ("plein", "median", "reduit")}
+        # L'impôt décide de la tranche jusqu'en 2014 : il se calcule d'abord
+        # au taux plein, puis à la tranche, dont la part déductible diffère.
+        impot, calcul = self._impot(annee, pension, deductible["plein"], detail=True)
+        recouvre = calcul is not None and calcul.mis_en_recouvrement
+        tranche = tranche_csg(seuils, revenu, recouvre)
+        if tranche != "plein":
+            impot = self._impot(annee, pension, deductible.get(tranche, 0.0))
+        if tranche == "exonere":
+            return impot
+        taux = (_moyenne_annuelle(h.pensions[f"csg_taux_{tranche}"], annee)
+                + _moyenne_annuelle(h.pensions["crds"], annee))
+        # La CASA : au seul taux plein jusqu'en 2018 (L. 137-41, II), au taux
+        # médian aussi depuis.
+        if tranche in ("plein", "median"):
+            taux += _moyenne_annuelle(h.pensions["casa"], annee)
+        return pension * taux + impot
 
     # -- l'année -----------------------------------------------------------
 
@@ -289,9 +361,7 @@ class EffetRetour:
         65 ans : la distribution ne le dit pas, et l'ASPA de qui l'attend est
         nulle. ``masse_stock`` est la masse que les scénarios prospectifs
         servent encore au droit actuel, minimum compris : la déformation n'en
-        touche que le reste. Vide avant :data:`PREMIERE_ANNEE_EFFET_RETOUR`."""
-        if annee < PREMIERE_ANNEE_EFFET_RETOUR:
-            return EffetRetourAnnuel()
+        touche que le reste."""
         facteurs = {cle: self.facteur(masses[cle], tetes)
                     for cle in ("actuel", *SCENARIOS_EFFET_RETOUR)}
         reference = facteurs["actuel"]
@@ -325,6 +395,70 @@ class EffetRetour:
                 preleve_actuel - self._prelevements(annee, facteur)) / economie
         return EffetRetourAnnuel(aspa=aspa, prelevements=prelevements,
                                  aspa_deformation=deformation, facteurs=facteurs)
+
+
+@dataclass(frozen=True)
+class SeuilsCsg:
+    """La règle de la CSG des pensions une année d'avant
+    :data:`ANNEE_BAREME_CSG`, et ses seuils de revenu fiscal de référence
+    pour une part, en euros de l'année (``legislation/csg_pensions_seuils.csv``)."""
+
+    annee: int
+    #: ``impot`` (1991-1997), ``impot_et_revenu`` (1998-2014) ou ``revenu``.
+    regle: str
+    exoneration: float | None = None
+    reduit: float | None = None
+    median: float | None = None
+
+
+#: Les règles que :func:`tranche_csg` sait appliquer.
+REGLES_CSG = ("impot", "impot_et_revenu", "revenu")
+
+
+def charger_seuils_csg(racine) -> dict[int, SeuilsCsg]:
+    """Les seuils de chaque année, convertis en euros."""
+    chemin = racine / "reference" / "legislation" / "csg_pensions_seuils.csv"
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = list(csv.DictReader(l for l in flux if not l.lstrip().startswith("#")))
+    seuils = {}
+    for ligne in lignes:
+        if ligne["regle"] not in REGLES_CSG:
+            raise ValueError(f"{chemin.name} : règle inconnue {ligne['regle']!r}")
+        vers_euros = 1.0 / FRANC if ligne["monnaie"] == "FRF" else 1.0
+
+        def lire(colonne: str) -> float | None:
+            valeur = ligne[colonne].strip()
+            return float(valeur) * vers_euros if valeur else None
+
+        annee = int(ligne["annee"])
+        seuils[annee] = SeuilsCsg(annee, ligne["regle"], lire("exoneration"),
+                                  lire("reduit"), lire("median"))
+    return seuils
+
+
+def tranche_csg(seuils: SeuilsCsg, revenu: float, impot_recouvre: bool) -> str:
+    """La tranche de CSG d'une pension : ``exonere``, ``reduit``, ``median``
+    ou ``plein``, selon la règle de l'année, le revenu fiscal de référence
+    et l'impôt mis en recouvrement ou non. Une borne d'exonération est
+    comprise (« n'excède pas ») ; les autres, exclues (« inférieurs à »)."""
+    if seuils.regle == "impot":
+        return "plein" if impot_recouvre else "exonere"
+    if seuils.exoneration is not None and revenu <= seuils.exoneration:
+        return "exonere"
+    if seuils.regle == "impot_et_revenu":
+        return "plein" if impot_recouvre else "reduit"
+    if seuils.reduit is not None and revenu < seuils.reduit:
+        return "reduit"
+    if seuils.median is not None and revenu < seuils.median:
+        return "median"
+    return "plein"
+
+
+def _moyenne_annuelle(serie, annee: int, cle: str = "taux") -> float:
+    """La moyenne des douze mois de l'année d'un taux de l'histoire des
+    prélèvements."""
+    return somme_ordonnee(serie.valeur(dt.date(annee, mois, 1), cle)
+                          for mois in range(1, 13)) / 12.0
 
 
 def complement_minimum(racine, millesime: int) -> float:

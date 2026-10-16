@@ -3,12 +3,13 @@
 **Reprise, au 16 octobre 2026.** Fait : l'impôt sur le revenu d'un foyer
 (`impot_revenu.py`, 10 octobre) ; la CSG déductible (11) ; l'impôt dans les
 indicateurs de cycle de vie (13) ; l'effet retour de la page Coût, au modèle
-(14) ; l'ASPA d'un scénario sans minimum, sur une distribution déformée (16) :
-l'effet retour reprend 27 à 32 % de l'économie des scénarios 2 à 5 de 2026 à
-2070 (`effet_retour.py`, `Avenir.part_effet_retour`). Reste : au
-propriétaire, s'il entre dans le solde ; son affichage, à la session du site ;
-les années d'avant 2019 ; l'impôt au site ; le bénéfice des indépendants ; les
-règles d'avant 1981. Détail : `2026-10-16-etape-5-aspa-deformee.md`.
+(14) ; l'ASPA d'un scénario sans minimum, déformée (16) ; le 16 encore,
+chaque année de 1990 à 2025 au barème de CSG de son année
+(`csg_pensions_seuils.csv`) : l'effet retour reprend 27 à 32 % de l'économie
+des scénarios 2 à 5 de 2026 à 2070, 23 à 25 % des rétroactifs de 1990 à
+2018. Reste : au propriétaire, s'il entre dans le solde ; son affichage, à la
+session du site ; l'impôt au site ; le bénéfice des indépendants ; les règles
+d'avant 1981. Détail : `2026-10-16-etape-5-annees-d-avant-2019.md`.
 
 **La demande.** Le propriétaire, le 10 octobre 2026 : l'impôt sur le revenu
 d'un foyer, de son barème à son montant, chaque année ; les barèmes de l'IPP
