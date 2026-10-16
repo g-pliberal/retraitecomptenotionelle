@@ -140,9 +140,19 @@ sources:
     aucune limite, et radie le 31 janvier 2010 l'agent qui avait alors passé soixante-cinq
     ans.
   - >-
-    Les autres régimes spéciaux — industries électriques et gazières, Banque de France,
-    CRPCEN, mines, marins, Opéra, Comédie-Française, SEITA, port de Strasbourg — n'ont
-    pas de limite au modèle : leurs statuts n'ont pas été lus.
+    Les industries électriques et gazières, l'Opéra et la SEITA ont leur fiche depuis le
+    16 octobre 2026 (`limite_age_ieg`, `limite_age_opera`, `limite_age_seita`). Les autres
+    régimes spéciaux n'ont pas de limite au modèle, ce que l'index de la DILA, cherché le
+    16 octobre 2026, laisse ainsi : la Banque de France fixe ses limites par grade, par
+    une délibération du conseil général du 18 février 1954 (décret n° 54-474, article 2)
+    et le décret n° 68-299, que l'index ne porte pas, ni les articles du décret n°
+    2012-697 qui les relève « à partir de 2016 » comme celles des fonctionnaires (notice) ;
+    le sociétaire de la Comédie-Française est mis à la retraite par arrêté après dix,
+    quinze, vingt, vingt-cinq ou trente ans de services, et non à un âge (décret n°
+    95-356, article 15) ; le clerc de notaire, salarié de droit privé, relève de la mise
+    à la retraite du code du travail, que l'employeur décide et qui n'est pas une limite ;
+    aucune limite n'est trouvée au statut du mineur, ni pour le marin ou l'agent du port
+    autonome de Strasbourg.
   lectures:
   - type: legifrance
     reference: >-

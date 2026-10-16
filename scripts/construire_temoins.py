@@ -327,6 +327,17 @@ def _cas() -> list[dict]:
             "statut": "ouvrier_etat", "naissance": "1945", "liquidation": "68"}),
         ("limite_age_cheminot_1960", {
             "statut": "agent_sncf", "naissance": "1960", "liquidation": "75"}),
+        # Étape 6 : l'agent des IEG, dont la carrière incomplète ne prolonge pas
+        # au-delà de la durée du taux maximum moins cent cinquante trimestres,
+        # le personnel de l'Opéra, prolongé de dix trimestres, et l'agent de
+        # la SEITA, à soixante-cinq ans sans exception.
+        ("limite_age_ieg_1955", {
+            "statut": "agent_ieg", "naissance": "1955", "debut": "40", "liquidation": "72"}),
+        ("limite_age_opera_1950", {
+            "statut": "personnel_opera", "naissance": "1950", "debut": "40",
+            "liquidation": "70"}),
+        ("limite_age_seita_1940", {
+            "statut": "agent_seita", "naissance": "1940", "liquidation": "68"}),
     ):
         cas.append((nom, modifications))
     cas.append(("liquidation_demi", {"liquidation": "64.5", "debut": "20.5"}))

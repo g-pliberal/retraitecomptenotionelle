@@ -9,8 +9,10 @@
  * soixante-dix ans ; depuis le 14 juin 2023, pas au-delà de soixante-dix ans.
  * Le militaire prend la limite la plus haute de sa catégorie. Sa pension part
  * de la radiation, et ce qui suit n'est plus du service. L'agent contractuel,
- * l'ouvrier de l'État et l'agent de la SNCF et de la RATP ont chacun leur
- * fiche, dont chaque version nomme les exceptions qui jouent pour eux.
+ * l'ouvrier de l'État, l'agent de la SNCF et de la RATP, et, depuis l'étape 6,
+ * l'agent des industries électriques et gazières, le personnel de l'Opéra
+ * national de Paris et l'agent de la SEITA ont chacun leur fiche, dont chaque
+ * version nomme les exceptions qui jouent pour eux.
  *
  * Jumeau de `src/retraite_notionnelle/droit/limite_age.py`, qui fait foi et
  * dit le droit.
@@ -31,6 +33,9 @@ export const FICHE_DU_PLAFOND = "plafond_limite_age_fonction_publique";
 export const FICHE_DES_CONTRACTUELS = "limite_age_contractuels";
 export const FICHE_DES_OUVRIERS = "limite_age_ouvriers_etat";
 export const FICHE_SNCF_RATP = "limite_age_sncf_ratp";
+export const FICHE_IEG = "limite_age_ieg";
+export const FICHE_OPERA = "limite_age_opera";
+export const FICHE_SEITA = "limite_age_seita";
 /** Les fiches du code des pensions, fonctionnaires et militaires. */
 export const FICHES_DU_CODE_DES_PENSIONS = new Set([FICHE_DE_LA_LIMITE, FICHE_DES_MILITAIRES]);
 
@@ -49,6 +54,7 @@ export const STATUTS_CONTRACTUELS = new Set(["contractuel_public"]);
 /** Les régimes dont l'emploi a sa propre limite d'âge, et la fiche qui la porte. */
 export const FICHE_DU_REGIME = Object.freeze({
   fspoeie: FICHE_DES_OUVRIERS, sncf: FICHE_SNCF_RATP, ratp: FICHE_SNCF_RATP,
+  ieg: FICHE_IEG, opera_de_paris: FICHE_OPERA, seita: FICHE_SEITA,
 });
 /** Le régime dont la durée d'assurance décide la prolongation du contractuel. */
 export const REGIME_DU_CONTRACTUEL = "regime_general";
@@ -266,10 +272,22 @@ function reculsPourEnfants(moteur, carriere, limite, classe) {
     (limite + valeur) / MOIS_PAR_AN, false);
 }
 
-function prolongationCarriereIncomplete(moteur, carriere, depuis, affiliations, regime) {
-  const version = versionAu(moteur, FICHE_DE_LA_CARRIERE_INCOMPLETE, jourDe(carriere, depuis));
-  if (version === null || !version.parametres.trimestres_au_plus) {
-    return null;
+function prolongationCarriereIncomplete(moteur, carriere, depuis, affiliations, regime,
+  nom = FICHE_DE_LA_LIMITE) {
+  // La version de la limite qui porte `incomplete_au_dela_de`, celle des
+  // industries électriques et gazières, borne la prolongation à la durée du
+  // taux maximum moins ce nombre de trimestres.
+  const jour = jourDe(carriere, depuis);
+  const propre = FICHES_DU_CODE_DES_PENSIONS.has(nom) ? null : versionAu(moteur, nom, jour);
+  const auDelaDe = propre?.parametres?.incomplete_au_dela_de ?? null;
+  let fiche = nom;
+  let version = propre;
+  if (auDelaDe === null) {
+    fiche = FICHE_DE_LA_CARRIERE_INCOMPLETE;
+    version = versionAu(moteur, FICHE_DE_LA_CARRIERE_INCOMPLETE, jour);
+    if (version === null || !version.parametres.trimestres_au_plus) {
+      return null;
+    }
   }
   if (regime === null || !moteur.catalogue.contient(regime)) {
     return null;
@@ -282,11 +300,12 @@ function prolongationCarriereIncomplete(moteur, carriere, depuis, affiliations, 
   const requis = ouvrirLeDroit.dureeRequise(moteur, periode, carriere.liquideeAu(date))[0];
   const services = carriere.dureeDeServiceAvant(affiliations, date);
   const manque = Math.ceil((requis / 4 - services) * MOIS_PAR_AN - 1e-9);
-  const prolongation = Math.min(manque, version.parametres.trimestres_au_plus * 3);
+  const auPlus = auDelaDe !== null ? requis - auDelaDe : version.parametres.trimestres_au_plus;
+  const prolongation = Math.min(manque, auPlus * 3);
   if (prolongation <= 0) {
     return null;
   }
-  return recul(CARRIERE_INCOMPLETE, FICHE_DE_LA_CARRIERE_INCOMPLETE, version.id,
+  return recul(CARRIERE_INCOMPLETE, fiche, version.id,
     depuis / MOIS_PAR_AN, (depuis + prolongation) / MOIS_PAR_AN, true);
 }
 
@@ -388,7 +407,7 @@ export function radiation(moteur, carriere) {
       atteint = mois(enfants.jusqu_a);
     }
     const incomplete = exceptions(moteur, nom, jourDe(carriere, atteint)).has(INCOMPLETE)
-      ? prolongationCarriereIncomplete(moteur, carriere, atteint, civiles, regime) : null;
+      ? prolongationCarriereIncomplete(moteur, carriere, atteint, civiles, regime, nom) : null;
     if (incomplete !== null) {
       candidats.push(incomplete);
       atteint = mois(incomplete.jusqu_a);

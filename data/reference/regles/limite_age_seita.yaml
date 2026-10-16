@@ -1,0 +1,90 @@
+schema_version: 1
+id: limite_age_seita
+intitule: >-
+  L'agent du service d'exploitation industrielle des tabacs et allumettes qui atteint la
+  limite d'âge de son emploi est obligatoirement retraité le premier jour du mois qui
+  suit : soixante ans pour les agents féminins occupant un emploi d'ouvrière,
+  soixante-cinq ans pour tous les autres, depuis le statut du 6 juillet 1962, sans
+  exception.
+domaine: age
+regimes: [seita]
+etape: preparer_la_chronologie
+face: droit
+etat: approchee
+lit:
+- le statut d'agent de la SEITA, quand il route le régime spécial ; la saisie ne dit pas
+  l'emploi d'ouvrière, et le modèle traite tout agent comme « tous les autres agents »
+ecrit:
+- la date de la mise à la retraite par limite d'âge, d'où part la pension du régime
+  spécial (`droit/limite_age.py`)
+dates_qui_decident:
+- age_atteint
+versions:
+- id: avant_1962
+  statut: supposee
+  hypothese: >-
+    aucune limite opposée à l'agent avant le statut du 6 juillet 1962 : les règles d'avant
+    ne sont pas lues
+  fiabilite: faible
+  textes: []
+  bornes:
+    age_atteint: [null, 1962-07-11]
+  contenu:
+    parametres:
+      exceptions: []
+    droit: >-
+      aucune limite au modèle
+  exemples: aucun trouvé
+- id: statut_de_1962
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006324578, article: "décret n° 62-766, article 111", en_vigueur: 1962-07-11}
+  - {id: LEGIARTI000006324817, article: "décret n° 62-766, article 137", en_vigueur: 1995-02-02}
+  nee_de: LEGIARTI000006324578
+  bornes:
+    age_atteint: [1962-07-11, null]
+  contenu:
+    parametres:
+      limites: {sedentaire: 65}
+      exceptions: []
+    droit: >-
+      « Tout agent atteignant la limite d'âge est obligatoirement retraité à compter du
+      premier jour du mois qui suit celui au cours duquel il atteint cette limite. La limite
+      d'âge est ainsi fixée : Soixante ans pour les agents féminins occupant un emploi
+      d'ouvrière. Soixante cinq ans pour tous les autres agents » (article 111) ; « Aucun
+      agent ne peut être maintenu en activité au-delà de la limite d'âge fixée pour son
+      emploi par le présent décret » (article 137, rédaction de 1995)
+  exemples: aucun trouvé
+presomptions:
+  exceptions_a_la_limite_d_age: >-
+    aucune : le statut n'en ouvre pas ; tout agent est de « tous les autres agents », la
+    saisie ne disant pas l'emploi d'ouvrière
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-10-16
+  a_relire:
+  - >-
+    L'emploi d'ouvrière, que la saisie ne porte pas : l'ouvrière, retraitée à soixante ans,
+    est traitée comme les autres agents, à soixante-cinq.
+  - >-
+    Le relèvement de la loi n° 2010-1330, que l'index ne porte pour la SEITA dans aucune
+    rédaction de l'article 111 : les derniers agents du régime, entrés avant 1981, sont nés
+    avant 1965, et le modèle garde soixante-cinq ans.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 62-766 du 6 juillet 1962 portant statut des personnels du service
+      d'exploitation industrielle des tabacs et allumettes, articles 111 (LEGIARTI000006324578)
+      et 137, rédactions de 1962 et de 1995 (LEGIARTI000006324816, LEGIARTI000006324817). Lus
+      dans l'index LEGI du dépôt
+    date: 2026-10-16
+historique:
+- >-
+  2026-10-16 — née et appliquée, action 151, étape 6 : l'agent de la SEITA dont le départ
+  saisi passe sa limite est mis à la retraite à la limite, et sa pension du régime spécial
+  en part, comme la décision du propriétaire du 14 octobre 2026 le dit du fonctionnaire.
+effet: >-
+  Tout agent de la SEITA, affilié au régime spécial, dont le départ saisi passe
+  soixante-cinq ans est mis à la retraite à cette limite, et sa pension du régime spécial
+  en part. Approchée : l'ouvrière n'est pas distinguée, et aucune limite n'est opposée
+  avant 1962.

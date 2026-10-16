@@ -1,0 +1,179 @@
+schema_version: 1
+id: limite_age_ieg
+intitule: >-
+  L'agent statutaire des industries électriques et gazières qui atteint sa limite d'âge
+  sans avoir demandé son départ est mis en inactivité à l'initiative de son employeur :
+  soixante-cinq ans depuis le 5 juillet 2008, relevés jusqu'à soixante-sept ans pour les
+  générations nées depuis 1957, atteints par les nés depuis 1962 ; la limite est reculée
+  pour enfants et prolongée pour carrière incomplète, et, depuis le 1er septembre 2023,
+  l'agent peut être maintenu en activité jusqu'à soixante-dix ans, qui bornent le tout.
+domaine: age
+regimes: [ieg]
+etape: preparer_la_chronologie
+face: droit
+etat: approchee
+lit:
+- le statut d'agent des industries électriques et gazières, quand il route le régime
+  spécial ; ses enfants et leurs dates de naissance, pour le recul ; ses services au
+  régime, pour la prolongation ; l'aptitude physique n'est pas saisie, et le modèle la
+  présume
+ecrit:
+- la date de la mise en inactivité par limite d'âge, d'où part la pension du régime
+  spécial (`droit/limite_age.py`)
+dates_qui_decident:
+- age_atteint
+versions:
+- id: avant_2008
+  statut: supposee
+  hypothese: >-
+    aucune limite opposée à l'agent avant le décret n° 2008-627 : l'article 4 de l'annexe
+    du statut national, dans sa rédaction de 1959 à 2008, ne parle que du stage et de la
+    titularisation, et l'ancienne annexe 3, le règlement des retraites, n'est pas dans
+    l'index
+  fiabilite: faible
+  textes:
+  - {id: LEGIARTI000006632433, article: "statut national, annexe, article 4, rédaction de 1959", en_vigueur: 1959-11-26}
+  bornes:
+    age_atteint: [null, 2008-07-05]
+  contenu:
+    parametres:
+      exceptions: []
+    droit: >-
+      aucune limite au modèle
+  exemples: aucun trouvé
+- id: decret_de_2008
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019231972, article: "statut national, annexe, article 4", en_vigueur: 2008-07-05}
+  nee_de: LEGIARTI000019231972
+  bornes:
+    age_atteint: [2008-07-05, 2011-03-21]
+  contenu:
+    parametres:
+      limites: {sedentaire: 65}
+      incomplete_au_dela_de: 150
+      exceptions: [enfants, carriere_incomplete]
+    droit: >-
+      « l'agent qui atteint l'âge de soixante-cinq ans sans avoir pris l'initiative d'un
+      départ en inactivité est mis en inactivité à l'initiative de son employeur.
+      Toutefois, l'âge limite [...] est reculé d'une année par enfant à charge, sans que la
+      prolongation d'activité puisse être supérieure à trois ans [...]. L'âge limite est
+      également reculé d'une année pour tout agent qui, au moment où il atteignait sa
+      cinquantième année, était parent d'au moins trois enfants vivants » ; les agents qui
+      n'ont pas validé « le nombre de trimestres devant être validé au titre du régime des
+      industries électriques et gazières pour obtenir le taux maximum [...] peuvent, sur
+      leur demande et sous réserve de leur aptitude physique, être maintenus en activité »,
+      sans aller au-delà de ce nombre, « ni au-delà d'une durée égale à la différence entre
+      le nombre de trimestres nécessaire pour bénéficier du taux maximum susvisé et 150
+      trimestres »
+  exemples: aucun trouvé
+- id: decret_de_2011
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023732109, article: "statut national, annexe, article 4", en_vigueur: 2011-03-21}
+  nee_de: LEGIARTI000023732109
+  bornes:
+    age_atteint: [2011-03-21, 2023-09-01]
+  contenu:
+    parametres:
+      limites_avant: {sedentaire: 65}
+      ecart_de_reference: 65
+      marche:
+      - {depuis: "1957-01-01", mois: 4}
+      - {depuis: "1958-01-01", mois: 8}
+      - {depuis: "1959-01-01", mois: 12}
+      - {depuis: "1960-01-01", mois: 16}
+      - {depuis: "1961-01-01", mois: 20}
+      - {depuis: "1962-01-01", mois: 24}
+      incomplete_au_dela_de: 150
+      exceptions: [enfants, carriere_incomplete]
+    droit: >-
+      « l'agent qui atteint l'âge de soixante-sept ans sans avoir pris l'initiative d'un
+      départ en inactivité est mis en inactivité à l'initiative de son employeur », sous
+      les mêmes reculs et la même prolongation ; « L'âge de soixante-sept ans [...]
+      s'applique aux agents nés à compter du 1er janvier 1962. Pour les agents nés
+      antérieurement à cette date, l'âge de mise en inactivité à l'initiative de
+      l'employeur est fixé : -à soixante-cinq ans pour les agents nés avant le 1er janvier
+      1957 ; -à soixante-cinq ans et quatre mois pour les agents nés en 1957 ; -à
+      soixante-cinq ans et huit mois pour les agents nés en 1958 ; -à soixante-six ans pour
+      les agents nés en 1959 ; -à soixante-six ans et quatre mois pour les agents nés en
+      1960 ; -à soixante-six ans et huit mois pour les agents nés en 1961 » (dispositions
+      transitoires, 1°, citées dans la rédaction de 2023, qui les reprend telles quelles)
+    transition: >-
+      la marche se compte par la date de naissance (`ecart_de_reference` égal à l'ancienne
+      limite)
+  exemples: aucun trouvé
+- id: decret_de_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047908873, article: "statut national, annexe, article 4", en_vigueur: 2023-09-01}
+  nee_de: LEGIARTI000047908873
+  bornes:
+    age_atteint: [2023-09-01, null]
+  contenu:
+    parametres:
+      limites_avant: {sedentaire: 65}
+      ecart_de_reference: 65
+      marche:
+      - {depuis: "1957-01-01", mois: 4}
+      - {depuis: "1958-01-01", mois: 8}
+      - {depuis: "1959-01-01", mois: 12}
+      - {depuis: "1960-01-01", mois: 16}
+      - {depuis: "1961-01-01", mois: 20}
+      - {depuis: "1962-01-01", mois: 24}
+      incomplete_au_dela_de: 150
+      exceptions: [enfants, carriere_incomplete, maintien, plafond]
+    droit: >-
+      la limite, ses reculs et sa prolongation de 2011, la durée manquante étant désormais
+      « la durée d'assurance requise pour obtenir le taux maximum mentionné à l'annexe 3 » ;
+      « Sous réserve de leur aptitude physique, les agents qui atteignent l'âge limite
+      mentionné aux alinéas précédents peuvent, sur autorisation, être maintenus en activité
+      jusqu'à l'âge de soixante-dix ans. Le refus d'autorisation est motivé. Le bénéfice
+      cumulé de ce maintien en activité et des reculs de limite d'âge prévus aux alinéas
+      précédents ne peut conduire l'agent à être maintenu en activité au-delà de soixante-dix
+      ans »
+  exemples: aucun trouvé
+presomptions:
+  exceptions_a_la_limite_d_age: >-
+    la prolongation pour carrière incomplète et le maintien jusqu'à soixante-dix ans,
+    présumés demandés et accordés autant que le départ saisi les demande, l'aptitude
+    physique présumée ; la durée manquante se compte, comme celle du fonctionnaire, sur les
+    seuls services du régime
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-10-16
+  a_relire:
+  - >-
+    La mise en inactivité d'office d'avant le 5 juillet 2008 : l'ancienne annexe 3 du statut
+    national, le règlement des retraites, n'est pas dans l'index LEGI. Le modèle n'oppose
+    aucune limite avant, et met en inactivité le 5 juillet 2008 l'agent qui avait alors
+    passé soixante-cinq ans.
+  - >-
+    Depuis 2023, la durée manquante est « la durée d'assurance requise » : le modèle la
+    compte, comme avant, sur les seuls services du régime, sans les autres régimes ni les
+    bonifications.
+  - >-
+    La mise en inactivité de l'agent en longue maladie, accidenté, en cessation anticipée
+    amiante ou invalide, que la saisie ne connaît pas.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 46-1541 du 22 juin 1946, statut national du personnel des industries
+      électriques et gazières, annexe, article 4, rédactions du 26 novembre 1959
+      (LEGIARTI000006632433), du 5 juillet 2008 (LEGIARTI000019231972), du 21 mars 2011
+      (LEGIARTI000023732109) et du 1er septembre 2023 (LEGIARTI000047908873). Lus dans
+      l'index LEGI du dépôt
+    date: 2026-10-16
+historique:
+- >-
+  2026-10-16 — née et appliquée, action 151, étape 6 : l'agent des industries électriques
+  et gazières dont le départ saisi passe sa limite est mis en inactivité à la limite,
+  reculée et prolongée, et sa pension du régime spécial en part, comme la décision du
+  propriétaire du 14 octobre 2026 le dit du fonctionnaire.
+effet: >-
+  Tout agent des industries électriques et gazières, affilié au régime spécial, dont le
+  départ saisi passe soixante-cinq ans depuis le 5 juillet 2008 — soixante-sept pour les
+  nés depuis 1962, reculés pour enfants, prolongés pour carrière incomplète, et soixante-dix
+  depuis le 1er septembre 2023 par le maintien présumé — est mis en inactivité à cette
+  limite, et sa pension du régime spécial en part. Approchée : aucune limite n'est opposée
+  avant 2008, et la durée manquante se compte sur les seuls services du régime.

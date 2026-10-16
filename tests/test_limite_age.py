@@ -189,11 +189,16 @@ def test_radier_est_idempotent(simulateur):
 
 
 def test_les_statuts_sans_limite_au_modele_n_en_ont_pas(simulateur):
-    """Le salarié, l'agent des IEG, et le cheminot recruté depuis la fermeture
-    du régime spécial, salarié de droit commun, ne sont pas radiés."""
+    """Le salarié, l'agent des IEG et le cheminot recrutés depuis la fermeture
+    de leur régime spécial, salariés de droit commun, ne sont pas radiés, ni
+    les régimes spéciaux dont le statut n'est pas lu ou n'a pas de limite
+    (étape 6)."""
     moteur = simulateur.scenario_actuel
-    for statut, naissance in (("salarie_prive_non_cadre", 1990), ("agent_ieg", 1990),
-                              ("agent_sncf", 2000)):
+    for statut, naissance in (("salarie_prive_non_cadre", 1990), ("agent_ieg", 2005),
+                              ("agent_sncf", 2000), ("agent_banque_de_france", 1960),
+                              ("clerc_de_notaire", 1960), ("mineur", 1950), ("marin", 1990),
+                              ("personnel_comedie_francaise", 1990),
+                              ("agent_port_strasbourg", 1990)):
         carriere = _simple(simulateur, statut, naissance, 75)
         assert limite_age.radiation(moteur, carriere) is None, statut
 
@@ -268,3 +273,62 @@ def test_le_cheminot_recrute_avant_2020_a_la_limite_de_sa_generation(simulateur)
     assert (round(recent.limite, 4), recent.age) == (round(65 + 16 / 12, 4), 70.0)
     assert [d.motif for d in departs.departs(moteur, carriere)] == [departs.MOTIF_LIMITE]
 
+
+
+# --- Action 151, étape 6 : les industries électriques et gazières, l'Opéra
+# national de Paris et la SEITA (fiches ``limite_age_ieg``,
+# ``limite_age_opera`` et ``limite_age_seita``).
+
+def test_l_agent_des_ieg_est_mis_en_inactivite_a_sa_limite(simulateur):
+    """Né en 1950, il a soixante-cinq ans en 2015 ; né en 1960, sa limite est
+    de soixante-six ans et quatre mois (dispositions transitoires de 2011), et
+    le maintien jusqu'à soixante-dix ans lui est ouvert depuis le 1er
+    septembre 2023 ; né en 1940, il avait passé sa limite quand elle est née,
+    le 5 juillet 2008."""
+    moteur = simulateur.scenario_actuel
+    ancien = limite_age.radiation(moteur, _simple(simulateur, "agent_ieg", 1950, 68))
+    assert (ancien.fiche, ancien.limite, ancien.age, ancien.version, sorted(ancien.regimes)) \
+        == (limite_age.FICHE_IEG, 65.0, 65.0, "decret_de_2011", ["ieg"])
+    recent = limite_age.radiation(moteur, _simple(simulateur, "agent_ieg", 1960, 75))
+    assert (round(recent.limite, 4), recent.age, recent.version) \
+        == (round(66 + 4 / 12, 4), 70.0, "decret_de_2023")
+    assert [r.nom for r in recent.reculs] == [limite_age.MAINTIEN]
+    premier = limite_age.radiation(moteur, _simple(simulateur, "agent_ieg", 1940, 70))
+    assert (premier.version, premier.date) == ("decret_de_2008", DateMois(2008, 7))
+
+
+def test_la_prolongation_de_l_agent_des_ieg_s_arrete_a_cent_cinquante_trimestres(simulateur):
+    """La carrière incomplète ne prolonge pas au-delà de la durée du taux
+    maximum moins cent cinquante trimestres : quatre trimestres pour le né en
+    1955, à qui le modèle demande 154 trimestres ; rien pour le né en 1950, à
+    qui il en demande 150 ; le né en 1965, à qui il en demande 168, est arrêté
+    à soixante-dix ans par le plafond de 2023."""
+    moteur = simulateur.scenario_actuel
+    for naissance, debut, depart, age in ((1955, 40, 72, 66.0), (1950, 45, 70, 65.0),
+                                          (1965, 45, 75, 70.0)):
+        carriere = simulateur.carriere_simple(naissance, "H", "agent_ieg", debut, depart)
+        radiation = limite_age.radiation(moteur, carriere)
+        assert radiation.age == age, naissance
+        assert all(r.fiche == limite_age.FICHE_IEG for r in radiation.reculs)
+
+
+def test_le_personnel_de_l_opera_cesse_ses_fonctions_a_sa_limite(simulateur):
+    """Soixante-cinq ans pour le né en 1950, soixante-sept pour le né en 1990
+    (décret n° 2008-240, article 2) ; entré à quarante-cinq ans, sa carrière
+    incomplète le maintient dix trimestres de plus."""
+    moteur = simulateur.scenario_actuel
+    for naissance, debut, depart, limite, age in ((1950, 22, 68, 65.0, 65.0),
+                                                  (1990, 22, 75, 67.0, 67.0),
+                                                  (1950, 45, 70, 65.0, 67.5)):
+        carriere = simulateur.carriere_simple(naissance, "H", "personnel_opera", debut, depart)
+        radiation = limite_age.radiation(moteur, carriere)
+        assert (radiation.fiche, radiation.limite, radiation.age, sorted(radiation.regimes)) \
+            == (limite_age.FICHE_OPERA, limite, age, ["opera_de_paris"]), naissance
+
+
+def test_l_agent_de_la_seita_est_retraite_a_soixante_cinq_ans(simulateur):
+    """Le statut de 1962 (article 111) : soixante-cinq ans, sans exception."""
+    moteur = simulateur.scenario_actuel
+    radiation = limite_age.radiation(moteur, _simple(simulateur, "agent_seita", 1940, 68))
+    assert (radiation.fiche, radiation.limite, radiation.age, radiation.version,
+            radiation.reculs) == (limite_age.FICHE_SEITA, 65.0, 65.0, "statut_de_1962", ())

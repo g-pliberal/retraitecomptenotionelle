@@ -41,9 +41,16 @@ des exceptions ci-dessus qui jouent pour eux ce jour-là : l'agent contractuel
 de droit public (fiche ``limite_age_contractuels``), dont la prolongation
 pour carrière incomplète compte la durée d'assurance tous régimes ;
 l'ouvrier de l'État (fiche ``limite_age_ouvriers_etat``) ; l'agent du cadre
-permanent de la SNCF et de la RATP (fiche ``limite_age_sncf_ratp``). Leur
+permanent de la SNCF et de la RATP (fiche ``limite_age_sncf_ratp``). Depuis
+l'étape 6, trois de plus : l'agent des industries électriques et gazières
+(fiche ``limite_age_ieg``), dont la prolongation pour carrière incomplète va
+jusqu'à la durée du taux maximum moins cent cinquante trimestres (paramètre
+``incomplete_au_dela_de``) ; le personnel de l'Opéra national de Paris (fiche
+``limite_age_opera``) ; l'agent de la SEITA (fiche ``limite_age_seita``). Leur
 pension part de la radiation, celle des régimes que l'emploi radié route.
-Les autres régimes spéciaux n'ont pas de limite au modèle.
+Les autres régimes spéciaux — Banque de France, CRPCEN, mines, marins,
+Comédie-Française, port de Strasbourg — n'ont pas de limite au modèle : leurs
+statuts ne sont pas dans l'index, ou n'en fixent pas.
 
 La limite se lit, version par version, au jour où elle est atteinte (date
 ``age_atteint``) : chaque version porte, dans ses paramètres, la limite de
@@ -84,12 +91,15 @@ FICHE_DU_PLAFOND = "plafond_limite_age_fonction_publique"
 FICHE_DES_CONTRACTUELS = "limite_age_contractuels"
 FICHE_DES_OUVRIERS = "limite_age_ouvriers_etat"
 FICHE_SNCF_RATP = "limite_age_sncf_ratp"
+FICHE_IEG = "limite_age_ieg"
+FICHE_OPERA = "limite_age_opera"
+FICHE_SEITA = "limite_age_seita"
 #: Les fiches que le module lit, et que le paquet du site porte
 #: (``FichesDatees``).
 FICHES = (FICHE_DE_LA_LIMITE, FICHE_DES_MILITAIRES, FICHE_DES_ENFANTS,
           FICHE_DE_LA_CARRIERE_INCOMPLETE, FICHE_DE_L_ACTIF, FICHE_DU_MAINTIEN,
           FICHE_DU_PLAFOND, FICHE_DES_CONTRACTUELS, FICHE_DES_OUVRIERS,
-          FICHE_SNCF_RATP)
+          FICHE_SNCF_RATP, FICHE_IEG, FICHE_OPERA, FICHE_SEITA)
 #: Les fiches du code des pensions, fonctionnaires et militaires, dont la
 #: radiation ouvre les seuls régimes de ``REGIMES_RADIES``.
 FICHES_DU_CODE_DES_PENSIONS = frozenset({FICHE_DE_LA_LIMITE, FICHE_DES_MILITAIRES})
@@ -115,7 +125,8 @@ STATUTS_CONTRACTUELS = frozenset({"contractuel_public"})
 #: porte : celui qui ne les route plus, recruté après leur fermeture, n'en a
 #: pas.
 FICHE_DU_REGIME = {"fspoeie": FICHE_DES_OUVRIERS, "sncf": FICHE_SNCF_RATP,
-                   "ratp": FICHE_SNCF_RATP}
+                   "ratp": FICHE_SNCF_RATP, "ieg": FICHE_IEG,
+                   "opera_de_paris": FICHE_OPERA, "seita": FICHE_SEITA}
 #: Le régime dont la durée d'assurance décide la prolongation du contractuel
 #: pour carrière incomplète (article 5 de la loi n° 2003-775).
 REGIME_DU_CONTRACTUEL = "regime_general"
@@ -376,13 +387,24 @@ def _reculs_pour_enfants(moteur: ScenarioActuel, carriere: Carriere, limite: int
 
 def _prolongation_carriere_incomplete(moteur: ScenarioActuel, carriere: Carriere,
                                       depuis: int, affiliations: frozenset[str],
-                                      regime: str | None) -> Recul | None:
+                                      regime: str | None,
+                                      nom: str = FICHE_DE_LA_LIMITE) -> Recul | None:
     """La prolongation pour carrière incomplète : jusqu'à la durée des services
     du taux maximum (L. 13), dix trimestres au plus, que le modèle compte sur
-    les seuls services, sans les bonifications."""
-    version = _version(moteur, FICHE_DE_LA_CARRIERE_INCOMPLETE, _jour(carriere, depuis))
-    if version is None or not version["parametres"].get("trimestres_au_plus"):
-        return None
+    les seuls services, sans les bonifications. La version de la limite qui
+    porte ``incomplete_au_dela_de``, celle des industries électriques et
+    gazières, la borne à la durée du taux maximum moins ce nombre de
+    trimestres, et la prolongation est la sienne."""
+    jour = _jour(carriere, depuis)
+    propre = None if nom in FICHES_DU_CODE_DES_PENSIONS else _version(moteur, nom, jour)
+    au_dela_de = None if propre is None else propre["parametres"].get("incomplete_au_dela_de")
+    if au_dela_de is not None:
+        fiche, version = nom, propre
+    else:
+        fiche, version = (FICHE_DE_LA_CARRIERE_INCOMPLETE,
+                          _version(moteur, FICHE_DE_LA_CARRIERE_INCOMPLETE, jour))
+        if version is None or not version["parametres"].get("trimestres_au_plus"):
+            return None
     if regime is None or regime not in moteur.catalogue:
         return None
     date = carriere.date_de_l_age(depuis / MOIS_PAR_AN)
@@ -392,10 +414,12 @@ def _prolongation_carriere_incomplete(moteur: ScenarioActuel, carriere: Carriere
     requis = ouvrir.duree_requise(moteur, periode, carriere.liquidee_au(date))[0]
     services = carriere.duree_de_service_avant(affiliations, date)
     manque = math.ceil((requis / 4 - services) * MOIS_PAR_AN - 1e-9)
-    prolongation = min(manque, version["parametres"]["trimestres_au_plus"] * 3)
+    au_plus = (requis - au_dela_de if au_dela_de is not None
+               else version["parametres"]["trimestres_au_plus"])
+    prolongation = min(manque, au_plus * 3)
     if prolongation <= 0:
         return None
-    return Recul(CARRIERE_INCOMPLETE, FICHE_DE_LA_CARRIERE_INCOMPLETE, version["id"],
+    return Recul(CARRIERE_INCOMPLETE, fiche, version["id"],
                  depuis / MOIS_PAR_AN, (depuis + prolongation) / MOIS_PAR_AN,
                  presumee=True)
 
@@ -499,7 +523,7 @@ def radiation(moteur: ScenarioActuel, carriere: Carriere) -> Radiation | None:
             candidats.append(enfants)
             atteint = _mois(enfants.jusqu_a)
         incomplete = (_prolongation_carriere_incomplete(
-            moteur, carriere, atteint, civiles, regime)
+            moteur, carriere, atteint, civiles, regime, nom)
             if INCOMPLETE in _exceptions(moteur, nom, _jour(carriere, atteint)) else None)
         if incomplete is not None:
             candidats.append(incomplete)

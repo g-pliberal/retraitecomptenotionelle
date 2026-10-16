@@ -1,0 +1,136 @@
+schema_version: 1
+id: limite_age_opera
+intitule: >-
+  La cessation des fonctions du personnel de l'Opéra national de Paris engagé pour une
+  durée indéterminée est prononcée à l'initiative du théâtre à la limite d'âge de sa
+  catégorie : depuis le 10 mars 2008, quarante-deux ans pour les artistes chorégraphiques,
+  soixante pour les artistes du chœur, soixante-deux pour les musiciens, soixante-cinq
+  pour les autres, relevés depuis le 13 août 2011 jusqu'à soixante-sept ans pour les nés
+  depuis 1962 ; le maintien en activité pour carrière incomplète, dix trimestres au plus.
+domaine: age
+regimes: [opera_de_paris]
+etape: preparer_la_chronologie
+face: droit
+etat: approchee
+lit:
+- le statut de personnel de l'Opéra national de Paris, quand il route le régime spécial ;
+  la saisie ne dit pas la catégorie, et le modèle traite tout agent comme des « autres
+  catégories de personnel » ; ses services au régime, pour la prolongation
+ecrit:
+- la date de la cessation des fonctions par limite d'âge, d'où part la pension du régime
+  spécial (`droit/limite_age.py`)
+dates_qui_decident:
+- age_atteint
+versions:
+- id: avant_2008
+  statut: supposee
+  hypothese: >-
+    aucune limite opposée à l'agent avant le décret n° 2008-240 : les règles d'avant, s'il
+    y en avait, ne sont pas dans l'index, ni dans le décret n° 68-382 qui y est
+  fiabilite: faible
+  textes: []
+  bornes:
+    age_atteint: [null, 2008-03-10]
+  contenu:
+    parametres:
+      exceptions: []
+    droit: >-
+      aucune limite au modèle
+  exemples: aucun trouvé
+- id: decret_de_2008
+  statut: lue
+  textes:
+  - {id: LEGIARTI000018231995, article: "décret n° 2008-240, article 2", en_vigueur: 2008-03-10}
+  nee_de: LEGIARTI000018231995
+  bornes:
+    age_atteint: [2008-03-10, 2011-08-13]
+  contenu:
+    parametres:
+      limites: {sedentaire: 65}
+      exceptions: [carriere_incomplete]
+    droit: >-
+      « La cessation des fonctions des personnels de l'Opéra national de Paris engagés pour
+      une durée indéterminée est prononcée à l'initiative du théâtre lorsqu'ils atteignent
+      l'âge de : ― 42 ans pour les artistes chorégraphiques [...] ; ― 60 ans pour les
+      artistes du chœur ; ― 62 ans pour les musiciens, les chefs de chant et les pianistes
+      accompagnateurs ; ― 65 ans pour les autres catégories de personnel. Toutefois, et
+      notamment si la durée des services liquidables est inférieure à celle définie à
+      l'article 14 du décret du 5 avril 1968 susvisé, les personnels mentionnés ci-dessus
+      peuvent être maintenus en activité dans la limite de dix trimestres sous réserve de
+      leur aptitude au poste et lorsque l'intérêt du service n'y fait pas obstacle »
+      (article 2)
+  exemples: aucun trouvé
+- id: decret_de_2011
+  statut: lue
+  textes:
+  - {id: LEGIARTI000024468609, article: "décret n° 2008-240, article 2", en_vigueur: 2011-08-13}
+  nee_de: LEGIARTI000024468609
+  bornes:
+    age_atteint: [2011-08-13, null]
+  contenu:
+    parametres:
+      limites_avant: {sedentaire: 65}
+      ecart_de_reference: 65
+      marche:
+      - {depuis: "1957-01-01", mois: 4}
+      - {depuis: "1958-01-01", mois: 8}
+      - {depuis: "1959-01-01", mois: 12}
+      - {depuis: "1960-01-01", mois: 16}
+      - {depuis: "1961-01-01", mois: 20}
+      - {depuis: "1962-01-01", mois: 24}
+      exceptions: [carriere_incomplete]
+    droit: >-
+      « 67 ans pour les autres catégories de personnel », sous le même maintien de dix
+      trimestres (I) ; « L'âge de cessation d'activité de soixante-sept ans [...] s'applique
+      aux personnels mentionnés au 5° du I de l'article 6 du décret du 5 avril 1968 susvisé
+      nés à compter du 1er janvier 1962. Pour les personnels de même catégorie nés
+      antérieurement à cette date, cet âge est fixé : a) A soixante-cinq ans pour les
+      personnels nés avant le 1er janvier 1957 ; b) A soixante-cinq ans et quatre mois pour
+      les personnels nés en 1957 ; c) A soixante-cinq ans et huit mois pour les personnels
+      nés en 1958 ; d) A soixante-six ans pour les personnels nés en 1959 ; e) A soixante-six
+      ans et quatre mois pour les personnels nés en 1960 ; f) A soixante-six ans et huit
+      mois pour les personnels nés en 1961 » (II, A) ; pour les personnels du 3° du I de
+      l'article 6 et des 2°, 4° et 5° du I de l'article 52, la même marche décalée de cinq
+      générations, soixante-sept ans pour les nés depuis 1967 (II, B)
+    transition: >-
+      la marche se compte par la date de naissance (`ecart_de_reference` égal à l'ancienne
+      limite) ; celle du II, A, la saisie ne disant pas qui relève du II, B
+  exemples: aucun trouvé
+presomptions:
+  exceptions_a_la_limite_d_age: >-
+    le maintien en activité de dix trimestres au plus, présumé accordé autant que le départ
+    saisi le demande et que les services liquidables n'atteignent pas la durée du taux
+    maximum, l'aptitude au poste et l'intérêt du service présumés ; tout agent est des
+    « autres catégories de personnel », la saisie ne disant ni le danseur, ni le choriste,
+    ni le musicien
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-10-16
+  a_relire:
+  - >-
+    La catégorie de l'agent, que la saisie ne porte pas : le danseur, cessant à quarante-deux
+    ans, le choriste, à soixante, le musicien, à soixante-deux, sont traités comme les autres
+    catégories ; les personnels du II, B, comme ceux du II, A.
+  - >-
+    La cessation des fonctions d'avant le 10 mars 2008, non lue : le modèle n'y oppose
+    aucune limite.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2008-240 du 6 mars 2008, article 2, rédactions du 10 mars 2008
+      (LEGIARTI000018231995) et du 13 août 2011 (LEGIARTI000024468609) ; décret n° 68-382 du
+      5 avril 1968, articles cherchés par « limite d'âge » et « d'office ». Lus dans l'index
+      LEGI du dépôt
+    date: 2026-10-16
+historique:
+- >-
+  2026-10-16 — née et appliquée, action 151, étape 6 : l'agent de l'Opéra national de Paris
+  dont le départ saisi passe sa limite cesse ses fonctions à la limite, prolongée pour
+  carrière incomplète, et sa pension du régime spécial en part, comme la décision du
+  propriétaire du 14 octobre 2026 le dit du fonctionnaire.
+effet: >-
+  Tout agent de l'Opéra national de Paris, affilié au régime spécial, dont le départ saisi
+  passe soixante-cinq ans depuis le 10 mars 2008 — soixante-sept pour les nés depuis 1962,
+  prolongés de dix trimestres au plus pour carrière incomplète — cesse ses fonctions à
+  cette limite, et sa pension du régime spécial en part. Approchée : la catégorie n'est pas
+  distinguée, et aucune limite n'est opposée avant 2008.

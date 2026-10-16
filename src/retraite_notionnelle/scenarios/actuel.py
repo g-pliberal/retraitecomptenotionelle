@@ -1222,7 +1222,8 @@ class FichesDatees:
             "prolongation_activite_categorie_active",
             "maintien_en_fonctions_jusqu_a_70_ans",
             "plafond_limite_age_fonction_publique", "limite_age_contractuels",
-            "limite_age_ouvriers_etat", "limite_age_sncf_ratp")
+            "limite_age_ouvriers_etat", "limite_age_sncf_ratp", "limite_age_ieg",
+            "limite_age_opera", "limite_age_seita")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

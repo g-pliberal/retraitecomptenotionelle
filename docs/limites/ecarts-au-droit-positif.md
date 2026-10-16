@@ -320,8 +320,16 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   l'ouvrier avant 2004, supposée de soixante ans, la marche des cheminots nés
   de 1957 à 1961, supposée de quatre mois par génération, le roulant, traité en
   sédentaire, et la durée d'assurance du contractuel, comptée par les années
-  cotisées. Restent dehors : la limite des cheminots avant 2010, et celle des
-  autres régimes spéciaux, dont les statuts ne sont pas lus.
+  cotisées. Depuis l'étape 6, l'agent des industries électriques et gazières,
+  le personnel de l'Opéra et l'agent de la SEITA ont la leur
+  (`limite_age_ieg`, `limite_age_opera`, `limite_age_seita`) ; approchés : la
+  catégorie de l'Opéra — le danseur, limité à quarante-deux ans, est traité
+  comme les autres — et l'ouvrière de la SEITA, limitée à soixante, traitée à
+  soixante-cinq. Restent dehors : la limite des cheminots avant 2010, des IEG
+  avant 2008, de l'Opéra avant 2008, et celle de la Banque de France, fixée par
+  grade dans des textes que l'index de la DILA ne porte pas ; la CRPCEN, les
+  mines, les marins, la Comédie-Française et le port de Strasbourg n'ont pas de
+  limite d'âge statutaire trouvée.
 - **Pension militaire : la durée est servie, le grade ne l'est pas.** Les deux
   statuts militaires opposent la durée de services qui ouvre la pension —
   <!--chiffre:maximum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=non_officier)-->17<!--/--> ans pour un non-officier, <!--chiffre:maximum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=officier)-->27<!--/--> pour un officier, <!--chiffre:minimum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=non_officier)-->15<!--/--> et <!--chiffre:minimum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=officier)-->25<!--/--> avant la loi du

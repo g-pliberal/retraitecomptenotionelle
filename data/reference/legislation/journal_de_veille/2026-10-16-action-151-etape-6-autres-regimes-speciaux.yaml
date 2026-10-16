@@ -1,0 +1,35 @@
+date: "2026-10-16"
+session: >-
+  action 151, étape 6, au modèle : la limite d'âge des autres régimes spéciaux,
+  statuts lus dans l'index de la DILA, appliqués en Python et en JavaScript pour
+  les industries électriques et gazières, l'Opéra national de Paris et la SEITA
+consulte: >-
+  `python scripts/veille_droit.py` (trois fiches à relire, aucune du domaine).
+  Index LEGI et JORF récupérés de la release `index-dila`, à jour au 11 octobre
+  2026. LEGI : le statut national des IEG (décret n° 46-1541, annexe, article 4,
+  rédactions de 1959, 2008, 2011 et 2023) ; le décret n° 2008-240, article 2,
+  rédactions de 2008 et 2011 (Opéra) ; le décret n° 68-382 (Opéra), cherché ; le
+  décret n° 62-766, articles 111 et 137 (SEITA) ; le décret n° 54-474, article 2,
+  le décret n° 2007-262 et son règlement annexé, le décret n° 2012-697 (Banque de
+  France) ; le décret n° 95-356, article 15, et le décret n° 46-310 (Comédie-
+  Française). JORF : la notice du décret n° 2012-697 et le décret n° 2012-701
+  (Banque de France). Cherchés sans rien trouver : le statut du mineur, la limite
+  d'âge du marin, du port autonome de Strasbourg et du clerc de notaire.
+trouve: >-
+  IEG : soixante-cinq ans depuis le 5 juillet 2008, soixante-sept pour les nés
+  depuis 1962 depuis le 21 mars 2011, par une marche de quatre mois par
+  génération que le texte écrit ; le recul pour enfants, la prolongation pour
+  carrière incomplète bornée à la durée du taux maximum moins cent cinquante
+  trimestres, et, depuis le 1er septembre 2023, le maintien jusqu'à soixante-dix
+  ans, qui borne le tout. Opéra : quarante-deux ans pour les danseurs, soixante
+  pour le chœur, soixante-deux pour les musiciens, soixante-cinq pour les autres
+  depuis le 10 mars 2008, soixante-sept pour les nés depuis 1962 depuis le 13 août
+  2011, et dix trimestres de maintien pour carrière incomplète. SEITA : soixante-
+  cinq ans, soixante pour l'ouvrière, depuis 1962, sans exception. La marche des
+  IEG et de l'Opéra est celle que la fiche de la SNCF suppose pour les cheminots
+  nés de 1957 à 1961.
+reste: >-
+  La Banque de France, dont les limites par grade tiennent à une délibération de
+  1954 et au décret n° 68-299, absents de l'index, et les articles du décret n°
+  2012-697 ; la limite des IEG et de l'Opéra avant 2008 ; la catégorie de l'Opéra
+  et l'ouvrière de la SEITA, que la saisie ne porte pas ; le statut du mineur.
