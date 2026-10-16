@@ -185,6 +185,23 @@ def test_la_population_garde_les_parts_de_l_eir(simulateur, source):
         assert femmes[(groupe, "F")] / groupes[groupe] == pytest.approx(part, abs=1e-12)
 
 
+def test_la_population_rend_les_contractuels_au_salariat(simulateur, source, parametres):
+    """Sous ``CONTRACTUELS_AU_SALARIAT``, la population n'a plus de
+    contractuel, et la Cnav garde ceux qu'elle compte aussi : l'Ircantec ne
+    sert à ses retraités de 2023 que 161 € par mois en moyenne, le quart de ce
+    qu'en liquide un contractuel de toute une carrière."""
+    assert G.CONTRACTUELS_AU_SALARIAT
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    assert not any(v.cas.code.startswith("contractuel_public") for v in variantes)
+    gabarit = next(v for v in variantes if v.cas.code.startswith(f"{G.GABARIT}~"))
+    assert all(caisse != "ircantec" for caisse, _ in gabarit.retraites)
+    depense = next(float(l["depenses_meur"]) for l in G._lire_macro(
+        parametres.racine_donnees, "depenses_retraite_regimes.csv")
+        if l["annee"] == "2023" and l["regime"] == "ircantec")
+    mensuelle = depense * 1e6 / simulateur.effectifs.effectif("ircantec", 2023) / 12
+    assert mensuelle == pytest.approx(161, abs=0.5)
+
+
 def test_le_salariat_prive_a_les_salaires_de_son_sexe_et_de_son_temps(simulateur, source,
                                                                      parametres):
     """Au salariat privé, chaque sexe a, génération par génération, le salaire

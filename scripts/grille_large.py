@@ -185,7 +185,11 @@ La seizième (le même jour) concentre le volume de travail plus faible des
 classes du bas sur une part de leurs carrières, fragmentées toute la
 carrière au volume des bas revenus salariaux (:data:`EMPLOI_FRAGMENTE`) : il
 abaissait toutes leurs carrières un peu, et le seuil du minimum contributif
-les faisait basculer par blocs d'une génération à l'autre.
+les faisait basculer par blocs d'une génération à l'autre. La dix-septième
+(le même jour) rend au salariat privé les retraités de l'Ircantec
+(:data:`CONTRACTUELS_AU_SALARIAT`) : la population en faisait des
+contractuels de toute une carrière, à années entières, quand l'Ircantec ne
+leur sert que 161 € par mois en moyenne.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -602,6 +606,22 @@ MINIMUM_AU_PREMIER_QUINTILE = True
 #: 4,6 à 5,4 aux autres. Deux conventions : la décote se prend à l'âge
 #: d'ouverture, et la part ne dépend ni du rang de salaire ni de la tranche.
 DEPARTS_AVEC_DECOTE = True
+
+#: La dix-septième version (action 138, étape 14, le 16 octobre 2026) : les
+#: retraités de l'Ircantec sont, pour la plupart, des salariés du privé passés
+#: par un contrat public, et non des contractuels de toute une carrière.
+#: L'Ircantec leur a servi 3 990 M€ en 2023 (``depenses_retraite_regimes.csv``),
+#: à 2 066 393 retraités (``effectifs_retraites.csv``) : 161 € par mois, réversions
+#: comprises, quand le contractuel de la population, de toute sa carrière, en
+#: liquide 540 € dans la génération 1950 et 630 € dans celle de 1958. Il
+#: n'avait ni le volume de travail, ni l'emploi fragmenté, ni le Smic
+#: persistant du salariat privé, et aucun n'atteignait le minimum contributif
+#: : 9,5 % des hommes liquidants du régime général de 2022 et 2023. Sous cette
+#: constante, la population n'a plus de contractuel : la Cnav garde ceux
+#: qu'elle compte aussi, et le gabarit du salariat privé les porte, une
+#: pension de l'Agirc-Arrco tenant lieu de la petite pension de l'Ircantec.
+#: La grille « ensemble » et celles de la page gardent leur contractuel.
+CONTRACTUELS_AU_SALARIAT = True
 
 #: Les quintiles de la pension en équivalent carrière complète, dans l'ordre.
 QUINTILES_EQCC = ("q1", "q2", "q3", "q4", "q5")
@@ -1388,16 +1408,17 @@ def poids_retraites(variantes: list[Variante], effectifs, annee: int) -> list[fl
 
 
 def personnes(variantes: list[Variante], effectifs, source: CaracteristiquesRetraites,
-              ) -> list[Variante]:
+              retirer: tuple[str, ...] = CAISSES_DANS_LA_CNAV) -> list[Variante]:
     """Les poids de PERSONNES : chaque groupe à sa part de l'EIR, l'année de
-    l'enquête ; la Cnav sans les contractuels, qu'elle comptait aussi. Les
-    années suivent l'évolution des caisses, le rapport de l'enquête gardé."""
+    l'enquête ; la Cnav sans les caisses ``retirer``, les contractuels qu'elle
+    comptait aussi. Les années suivent l'évolution des caisses, le rapport de
+    l'enquête gardé."""
     retirees = []
     for v in variantes:
         cnav = somme_ordonnee(part for caisse, part in v.retraites if caisse == "cnav")
-        if cnav:
+        if cnav and retirer:
             v = replace(v, retraites=v.retraites + tuple(
-                (caisse, -cnav) for caisse in CAISSES_DANS_LA_CNAV))
+                (caisse, -cnav) for caisse in retirer))
         retirees.append(v)
     annee = source.millesime
     poids = poids_retraites(retirees, effectifs, annee)
@@ -1606,8 +1627,10 @@ def salaires(variantes: list[Variante], points) -> list[Variante]:
 
 def reference_population() -> list[Variante]:
     """La grille du dépôt, son salariat privé réduit au gabarit : les quatre cas
-    types de la Cnav lui cèdent chacun sa part de la caisse."""
-    variantes = [v for v in reference() if v.cas.code not in SALARIAT_PRIVE]
+    types de la Cnav lui cèdent chacun sa part de la caisse ; le contractuel
+    aussi sous :data:`CONTRACTUELS_AU_SALARIAT`."""
+    retires = SALARIAT_PRIVE + (("contractuel_public",) if CONTRACTUELS_AU_SALARIAT else ())
+    variantes = [v for v in reference() if v.cas.code not in retires]
     moyen = next(cas for cas in CAS_TYPES if cas.code == "salaire_moyen")
     gabarit = elargi(moyen, code=GABARIT, libelle="Salarié du privé")
     parts = (("cnav", 1.0),)
@@ -1715,8 +1738,9 @@ def population(effectifs, source: CaracteristiquesRetraites,
     distributions de chaque sexe plutôt que de quatre cas types étalés sur
     celle des deux sexes réunis, et ses carrières courtes étalées sur la vie
     active sous :data:`COURTES_ETALEES`."""
-    variantes = interruptions(melees(personnes(reference_population(), effectifs, source),
-                                     source), effectifs, source,
+    retirer = () if CONTRACTUELS_AU_SALARIAT else CAISSES_DANS_LA_CNAV
+    variantes = interruptions(melees(personnes(reference_population(), effectifs, source,
+                                               retirer), source), effectifs, source,
                               de_tous=COURTES_A_LA_PART_DE_TOUS, etalees=COURTES_ETALEES)
     if DUREE_DES_FEMMES_SELON_LA_GENERATION:
         variantes = femmes_selon_la_generation(variantes, effectifs, source, racine)
