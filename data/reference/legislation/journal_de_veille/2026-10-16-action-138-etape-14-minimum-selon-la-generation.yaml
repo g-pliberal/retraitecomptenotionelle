@@ -1,0 +1,22 @@
+date: "2026-10-16"
+session: "action 138, étape 14, troisième partie : le minimum contributif selon la génération, et les retraités de l'étranger"
+consulte: >-
+  Aucun texte : la session n'écrit aucune règle du scénario 1, et ne touche
+  qu'à la mesure de la population (`scripts/part_minimum_contributif.py`,
+  `scripts/grille_large.py`). Données lues, déjà certifiées : les quintiles
+  de la pension en équivalent carrière complète de l'EIR 2020, pour tous les
+  retraités et pour les seuls résidents (`macro/quintiles_eqcc.csv`,
+  `macro/quintiles_eqcc_residents.csv`), la part des liquidants au minimum
+  contributif de l'EACR (`regimes/minimum_contributif_liquidants.csv`), le
+  barème du minimum (`legislation/minimum_contributif.csv`).
+trouve: >-
+  Rien de neuf au droit. Les retraités de l'étranger, 3,3 % des femmes et
+  7,9 % des hommes en 2020, aux carrières françaises courtes et au minimum
+  de pension pour 62 et 43 % d'entre eux, s'ajoutent à la mesure : la part
+  des liquidants de 2023 au minimum contributif passe de 15,2 à 15,9 %
+  (18,8 aux régimes alignés). La pente de l'EACR se tient depuis 2013, pas
+  son niveau.
+reste: >-
+  Ceux de la note (`docs/feuille_de_route/138/2026-10-16-etape-14-minimum-selon-la-generation.md`) :
+  un emploi fragmenté concentré sur une part des carrières complètes, qu'aucune
+  source du dépôt ne répartit encore entre les personnes.
