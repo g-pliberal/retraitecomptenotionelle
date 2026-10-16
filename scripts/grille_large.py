@@ -1703,6 +1703,66 @@ def departs_avec_decote(variantes: list[Variante], effectifs,
     return sortie
 
 
+def non_residents(racine: Path) -> dict[str, tuple[float, dict[str, float], float]]:
+    """Les retraités qui résident à l'étranger, sexe par sexe, tels que l'EIR
+    les donne par différence entre tous les retraités (``quintiles_eqcc.csv``)
+    et ceux qui résident en France (``quintiles_eqcc_residents.csv``) : leur
+    part parmi les retraités du sexe, celle de chaque tranche de durée validée
+    hors majorations parmi eux, ramenées à un, et la part d'entre eux au
+    minimum de pension de leur régime principal, en pour cent. En 2020, 3,3 %
+    des femmes et 7,9 % des hommes ; 28 % de ces femmes et 22 % de ces hommes
+    ont moins de dix années validées, et 62 et 43 % sont au minimum. La
+    population ne compte que des résidents ; l'EACR, qui compte tous les
+    liquidants, et la dépense de la page, qui paie aussi les pensions servies
+    à l'étranger, les comptent."""
+    tous, residents = quintiles_eqcc(racine), quintiles_eqcc(racine, residents=True)
+    sortie = {}
+    for sexe in ("F", "H"):
+        def effectif(source: dict, indicateur: str) -> float:
+            return (source[("ensemble", "effectifs", sexe)]
+                    * source[("ensemble", indicateur, sexe)] / 100.0)
+
+        ailleurs = (tous[("ensemble", "effectifs", sexe)]
+                    - residents[("ensemble", "effectifs", sexe)])
+        tranches = {nom: max(0.0, effectif(tous, f"part_duree_validee_hors_majoration_{nom}")
+                             - effectif(residents,
+                                        f"part_duree_validee_hors_majoration_{nom}"))
+                    for nom, _ in TRANCHES}
+        total = somme_ordonnee(tranches.values())
+        minimum = (effectif(tous, "part_minimum_pension_regime_principal")
+                   - effectif(residents, "part_minimum_pension_regime_principal"))
+        sortie[sexe] = (ailleurs / tous[("ensemble", "effectifs", sexe)],
+                        {nom: masse / total for nom, masse in tranches.items()},
+                        100.0 * minimum / ailleurs)
+    return sortie
+
+
+def poids_des_non_residents(variantes: list[Variante], poids: list[float],
+                            racine: Path) -> list[float]:
+    """Les poids qui font de la population celle des retraités de l'étranger
+    (:func:`non_residents`) : chaque variante garde sa place dans sa tranche de
+    durée et son sexe, et chaque tranche prend la part que l'EIR donne aux
+    non-résidents du sexe ; une carrière hors des tranches, celle du cas type,
+    compte parmi les quarante ans et plus. Le total de chaque sexe ne bouge
+    pas. Une convention : à durée égale, un retraité de l'étranger a la
+    carrière d'un résident — le régime, le salaire, la décote."""
+    parts = non_residents(racine)
+
+    def tranche(v: Variante) -> str:
+        return v.tranche or TRANCHES[0][0]
+
+    masses: dict[tuple[str, str], float] = {}
+    sexes: dict[str, float] = {}
+    for v, p in zip(variantes, poids):
+        cle = (v.cas.sexe, tranche(v))
+        masses[cle] = masses.get(cle, 0.0) + p
+        sexes[v.cas.sexe] = sexes.get(v.cas.sexe, 0.0) + p
+    return [p * sexes[v.cas.sexe] * parts[v.cas.sexe][1][tranche(v)]
+            / masses[(v.cas.sexe, tranche(v))]
+            if masses[(v.cas.sexe, tranche(v))] else 0.0
+            for v, p in zip(variantes, poids)]
+
+
 def femmes_ponderees(variantes: list[Variante], effectifs,
                      source: CaracteristiquesRetraites) -> list[tuple[Variante, float]]:
     """Les variantes de femmes et leur poids de retraitées, l'année de l'enquête."""

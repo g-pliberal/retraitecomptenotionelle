@@ -6,8 +6,10 @@ l'enquête annuelle auprès des caisses de retraite et à TRAJECTOiRE (action
 tient ici la rend lisible : les fichiers certifiés redonnent ce que la DREES en
 publie, la part des régimes alignés réunis comme le montant moyen du minimum,
 que son contrôle borne ; une génération s'étale sur ses mois de naissance ; les
-montants se confrontent en euros de 2023 ; et le minimum se lit dans le
-scénario 1 tel que le moteur le sert.
+montants se confrontent en euros de 2023 ; le minimum se lit dans le
+scénario 1 tel que le moteur le sert ; et les retraités de l'étranger, que
+l'EACR compte et la population non, s'y ajoutent aux parts que l'EIR leur
+donne (action 138, étape 14).
 """
 
 from __future__ import annotations
@@ -136,3 +138,48 @@ def test_le_minimum_se_lit_dans_le_scenario_1():
     assert minimum > 0.0 and majore
     assert avant is not None and minimum <= avant
     assert mesures[1][2] == 0.0
+
+
+def test_les_retraites_de_l_etranger_sont_ceux_de_l_eir():
+    """La différence entre tous les retraités de l'EIR 2020 et ses résidents :
+    3,3 % des femmes et 7,9 % des hommes, aux carrières françaises courtes,
+    62 et 43 % au minimum de pension de leur régime principal."""
+    etranger = P.G.non_residents(Parametres().racine_donnees)
+    assert etranger["F"][0] == pytest.approx(0.0325, abs=5e-4)
+    assert etranger["H"][0] == pytest.approx(0.0793, abs=5e-4)
+    for sexe in ("F", "H"):
+        assert sum(etranger[sexe][1].values()) == pytest.approx(1.0)
+    assert etranger["F"][1]["moins_10"] == pytest.approx(0.284, abs=0.005)
+    assert etranger["H"][1]["moins_10"] == pytest.approx(0.222, abs=0.005)
+    assert etranger["F"][2] == pytest.approx(62.3, abs=0.1)
+    assert etranger["H"][2] == pytest.approx(42.6, abs=0.1)
+
+
+def test_les_retraites_de_l_etranger_se_pesent_par_tranche():
+    """Repesée, une grille garde le total de chaque sexe et donne à chaque
+    tranche la part des non-résidents ; mêlée aux résidents, sans nouvelle
+    simulation, elle pèse ce que pesaient les résidents seuls."""
+    from types import SimpleNamespace as N
+
+    def variante(sexe, tranche):
+        return N(cas=N(sexe=sexe), tranche=tranche)
+
+    racine = Parametres().racine_donnees
+    etranger = P.G.non_residents(racine)
+    variantes = [variante(s, t) for s in ("F", "H")
+                 for t in (None, "40_plus", "30_40", "20_30", "10_20", "moins_10")]
+    poids = [1.0 + i for i in range(len(variantes))]
+    ailleurs = P.G.poids_des_non_residents(variantes, poids, racine)
+    for sexe in ("F", "H"):
+        lot = [(v, p, q) for v, p, q in zip(variantes, poids, ailleurs) if v.cas.sexe == sexe]
+        assert sum(q for _, _, q in lot) == pytest.approx(sum(p for _, p, _ in lot))
+        assert (sum(q for v, _, q in lot if v.tranche == "moins_10")
+                / sum(q for _, _, q in lot)) == pytest.approx(etranger[sexe][1]["moins_10"])
+        pleines = sum(q for v, _, q in lot if v.tranche in (None, "40_plus"))
+        assert pleines / sum(q for _, _, q in lot) == pytest.approx(etranger[sexe][1]["40_plus"])
+    lignes = [(i, 1955, None) for i in range(len(variantes))]
+    doubles, melange, toutes = P.avec_les_non_residents(variantes, poids, ailleurs,
+                                                        lignes, etranger)
+    assert len(doubles) == len(melange) == len(toutes) == 2 * len(variantes)
+    assert sum(melange) == pytest.approx(sum(poids))
+    assert toutes[len(variantes)][0] == len(variantes)

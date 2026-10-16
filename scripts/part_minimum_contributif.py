@@ -63,7 +63,9 @@ condition de subsidiarité étant toujours remplie. Et les axes de la grille son
 indépendants : le salaire d'une femme y est celui d'un homme, ce qui efface une
 part de ce que l'EACR mesure entre les sexes. La population de
 ``scripts/grille_large.py`` (``--grille population``, action 136, étape 6)
-donne à chaque sexe les siens, et au salariat privé le temps partiel.
+donne à chaque sexe les siens, et au salariat privé le temps partiel ; elle
+ne compte que les résidents, et l'EACR tous les liquidants : sous
+:data:`NON_RESIDENTS`, les retraités de l'étranger s'y ajoutent.
 """
 
 from __future__ import annotations
@@ -147,6 +149,20 @@ TRAJECTOIRE = {
 CAISSES = ("cnav", "msa_salaries", "regimes_alignes")
 
 SEXES = ("ensemble", "F", "H")
+
+#: Les retraités de l'étranger, dans la population (action 138, étape 14, le
+#: 16 octobre 2026). L'EACR compte tous les liquidants, où qu'ils résident ;
+#: la population ne compte que les résidents, et ceux de l'étranger ont des
+#: carrières françaises courtes, souvent au minimum : le minimum contributif,
+#: qui n'est pas soumis à la résidence, leur est servi aussi. Sous cette
+#: constante, la grille « population » se mesure en deux parts : ses
+#: résidents, et la même grille repesée aux tranches de durée des retraités de l'étranger
+#: (``grille_large.poids_des_non_residents``), chaque sexe à la part que l'EIR
+#: leur donne parmi ses retraités de 2020 (3,3 % des femmes, 7,9 % des
+#: hommes). Une convention : leur part parmi les liquidants de chaque année est
+#: celle du stock de 2020. La part que l'EIR met au minimum de pension, 62 % de
+#: ces femmes et 43 % de ces hommes, juge la mesure, sans la caler.
+NON_RESIDENTS = True
 
 
 # -- la simulation ---------------------------------------------------------------
@@ -273,6 +289,21 @@ def parts(variantes: list, poids: list[float], lignes: list[tuple],
             for groupe, par_sexe in sorted(groupes.items())}
 
 
+def avec_les_non_residents(variantes: list, poids: list[float], ailleurs: list[float],
+                           lignes: list[tuple], etranger: dict) -> tuple[list, list, list]:
+    """La grille et ses retraités de l'étranger (:data:`NON_RESIDENTS`) : les
+    variantes deux fois, les résidents à leur poids fois la part des résidents
+    de leur sexe, puis les mêmes, repesés en non-résidents (``ailleurs``), à
+    celle des non-résidents ; les lignes simulées servent aux deux, sans
+    nouvelle simulation."""
+    n = len(variantes)
+    melange = ([p * (1.0 - etranger[v.cas.sexe][0]) for v, p in zip(variantes, poids)]
+               + [q * etranger[v.cas.sexe][0] for v, q in zip(variantes, ailleurs)])
+    return (list(variantes) * 2, melange,
+            list(lignes) + [(indice + n, generation, mesure)
+                            for indice, generation, mesure in lignes])
+
+
 def _lire_eacr(racine: Path, nom: str, colonne: str) -> dict[tuple[int, str, str], float]:
     chemin = racine / "reference" / "regimes" / nom
     with chemin.open(encoding="utf-8") as flux:
@@ -336,6 +367,13 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
         variantes = G.grille(nom, effectifs, source, points)
         poids = G.poids_retraites(variantes, effectifs, source.millesime)
         lignes = simuler(parametres, variantes, generations, processus)
+        etranger = None
+        if nom == "population" and NON_RESIDENTS:
+            etranger = G.non_residents(racine)
+            ailleurs = G.poids_des_non_residents(variantes, poids, racine)
+            residents_seuls = (variantes, poids, lignes)
+            variantes, poids, lignes = avec_les_non_residents(
+                variantes, poids, ailleurs, lignes, etranger)
         coefficients = {a: simulateur.macro.coefficient_prix(a, ANNEE_EUROS)
                         for a in {m[0] for _, _, m in lignes if m is not None}}
         voulues = set(annees)
@@ -347,12 +385,34 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
         par_generation = parts(variantes, poids, lignes, coefficients,
                                lambda generation, mesure: [(generation, 1.0)])
         resultat["grilles"][nom] = {
-            "carrieres": len(variantes),
+            "carrieres": len(variantes) if etranger is None else len(residents_seuls[0]),
             "refusees": len([m for _, _, m in lignes if m is None]),
             "par_annee": {str(a): v for a, v in par_annee.items()},
             "par_generation": {str(g): v for g, v in par_generation.items()},
             "secondes": round(time.time() - debut, 1),
         }
+        if etranger is not None:
+            seuls_v, seuls_p, seuls_l = residents_seuls
+            resultat["grilles"][nom]["non_residents"] = {
+                "part_des_retraites": {s: 100.0 * etranger[s][0] for s in ("F", "H")},
+                "tranches": {s: etranger[s][1] for s in ("F", "H")},
+                "eir_au_minimum": {s: etranger[s][2] for s in ("F", "H")},
+                "par_annee": {str(a): v for a, v in parts(
+                    seuls_v, ailleurs, seuls_l, coefficients,
+                    lambda generation, mesure: [
+                        (annee, part) for annee, part
+                        in etalement(generation, mesure[0], mesure[1]).items()
+                        if annee in voulues]).items()},
+                "par_generation": {str(g): v for g, v in parts(
+                    seuls_v, ailleurs, seuls_l, coefficients,
+                    lambda generation, mesure: [(generation, 1.0)]).items()},
+                "residents_par_annee": {str(a): v for a, v in parts(
+                    seuls_v, seuls_p, seuls_l, coefficients,
+                    lambda generation, mesure: [
+                        (annee, part) for annee, part
+                        in etalement(generation, mesure[0], mesure[1]).items()
+                        if annee in voulues]).items()},
+            }
     return resultat
 
 
@@ -427,6 +487,29 @@ def imprimer(resultat: dict) -> None:
                   f"{_pc(h.get('part_majoree'))}     {f.get('montant', 0):5.0f} / "
                   f"{h.get('montant', 0):3.0f} €                     "
                   f"{_pc(e.get('prives_par_l_ecretement'))}")
+        etranger = grille.get("non_residents")
+        if etranger:
+            print("\nLes retraités de l'étranger, compris ci-dessus : leur part, et "
+                  "celle des seuls résidents")
+            print("  année   résidents   F       H     non-résidents   F       H")
+            for annee, par_sexe in etranger["par_annee"].items():
+                r = etranger["residents_par_annee"].get(annee, {})
+                print(f"  {annee}    {_pc(r.get('ensemble', {}).get('part'))}  "
+                      f"{_pc(r.get('F', {}).get('part'))}  {_pc(r.get('H', {}).get('part'))}"
+                      f"    {_pc(par_sexe.get('ensemble', {}).get('part'))}  "
+                      f"{_pc(par_sexe.get('F', {}).get('part'))}  "
+                      f"{_pc(par_sexe.get('H', {}).get('part'))}")
+            parts, au_minimum = etranger["part_des_retraites"], etranger["eir_au_minimum"]
+            print(f"  pesés à {parts['F']:.1f} % des femmes et {parts['H']:.1f} % des hommes, "
+                  f"leur part dans l'EIR de 2020 ; l'EIR met au minimum de pension "
+                  f"{au_minimum['F']:.1f} % de ces femmes et {au_minimum['H']:.1f} % de ces "
+                  "hommes, toutes générations")
+            print("  génér.  non-résidents   F       H")
+            for generation, par_sexe in etranger["par_generation"].items():
+                if int(generation) in GENERATIONS_IMPRIMEES[:4]:
+                    print(f"  {generation}     {_pc(par_sexe.get('ensemble', {}).get('part'))}  "
+                          f"{_pc(par_sexe.get('F', {}).get('part'))}  "
+                          f"{_pc(par_sexe.get('H', {}).get('part'))}")
         g = trajectoire["generation_1975"]
         print(f"  TRAJECTOiRE, génération 1975 : femmes {g['F']} %, hommes {g['H']} %, "
               f"majorée {g['majore_F']} et {g['majore_H']} %, "
