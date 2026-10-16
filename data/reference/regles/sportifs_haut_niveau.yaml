@@ -95,6 +95,9 @@ versions:
   contenu:
     droit: la version précédente, trente-deux trimestres au plus
   exemples: aucun trouvé
+presomptions:
+  pas_de_periode_assimilee: >-
+    les périodes d'inscription sur la liste des sportifs de haut niveau, que l'assuré déclare
 sources:
   lu_le: 2026-10-16
   prochaine_relecture: 2027-04-16

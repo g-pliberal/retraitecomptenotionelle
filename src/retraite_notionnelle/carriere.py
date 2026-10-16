@@ -327,6 +327,12 @@ class Metier:
     #: (``saisie.ACTIVITES_MICRO``), qui valide ses trimestres sur le revenu
     #: que sa cotisation achète ; vide sinon.
     micro: str = ""
+    #: Vrai si ce métier est un contrat d'apprentissage, de ses dates de début
+    #: et de fin : un emploi salarié, que la chronologie porte comme tel
+    #: (attribut ``apprentissage``), et non une période assimilée. Faux par
+    #: défaut (présomption ``pas_de_periode_assimilee``) ; aucune étape ne le
+    #: lit encore (action 130, sixième domaine).
+    apprentissage: bool = False
 
 
 @dataclass(frozen=True)

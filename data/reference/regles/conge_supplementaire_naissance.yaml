@@ -62,6 +62,9 @@ versions:
       entre le 1er janvier et le 30 juin 2026, que L. 351-3 vise déjà, reste à lire dans le
       décret n° 2026-425 et dans la circulaire de la Cnav qui l'appliquera
   exemples: aucun trouvé
+presomptions:
+  pas_de_periode_assimilee: >-
+    les jours de congé supplémentaire de naissance indemnisés, que l'assuré déclare
 sources:
   lu_le: 2026-10-16
   prochaine_relecture: 2027-01-31

@@ -179,6 +179,9 @@ versions:
       comptés pour la décote et la durée d'assurance ; la portée se lit désormais dans
       L. 6243-3 seul et dans la circulaire de 2016, que rien de lu ne dit abrogée
   exemples: aucun trouvé
+presomptions:
+  pas_de_periode_assimilee: >-
+    les années d'apprentissage, qu'un emploi ne dit qu'en portant l'attribut apprentissage
 sources:
   lu_le: 2026-10-16
   prochaine_relecture: 2027-04-16

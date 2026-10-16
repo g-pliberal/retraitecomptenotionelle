@@ -47,9 +47,14 @@ Ce que les faits portent, par sorte :
   ses ``trimestres`` quand le relevé les porte ; dans les deux cas, la
   ``part_primes`` de la rémunération, et la ``quotite`` d'une période à temps
   partiel, entre zéro et un, absente à temps plein — un parcours coupe ses
-  métiers au 1er janvier des années où elle change ;
+  métiers au 1er janvier des années où elle change ; ``apprentissage`` pour
+  un contrat d'apprentissage, qui est un emploi et non une période assimilée ;
 * ``periode_d_interruption`` — le ``motif`` ; d'un relevé, aussi
   l'``affiliation``, le ``revenu`` de référence et les ``trimestres`` ;
+* ``periode_assimilee`` — le ``motif``, un des ``MOTIFS_D_ASSIMILATION`` ;
+  le ``dispositif`` d'un stage d'insertion ; les ``jours`` que la période
+  compte dans ses dates, quand ce n'en sont pas tous les jours — jours de
+  stage, jours de congé indemnisés (:func:`avec_periodes_assimilees`) ;
 * ``acte_de_la_personne`` — pour le départ : ``acte: depart``, le ``motif``,
   et l'``age`` que la personne déclare, en années décimales ; pour une
   retraite progressive : ``acte: retraite_progressive``, son ``age`` et la
@@ -102,6 +107,17 @@ FORMES_D_UNION = ("mariage", "pacs", "concubinage")
 
 #: Les sortes de faits qui sont des périodes de la carrière.
 EMPLOI, INTERRUPTION = "periode_d_activite", "periode_d_interruption"
+#: Une période validée sans cotisation, que la carrière d'aujourd'hui ne lit
+#: pas (action 130, sixième domaine) : :func:`periodes` ne la rend pas.
+ASSIMILEE = "periode_assimilee"
+#: Ses motifs (vocabulaire, ``motifs_d_assimilation``), une sorte de période
+#: par fiche ; et les dispositifs d'un stage d'insertion
+#: (``dispositifs_d_insertion``).
+MOTIFS_D_ASSIMILATION = ("stage_de_formation_professionnelle", "stage_d_insertion",
+                         "sportif_de_haut_niveau", "conge_supplementaire_de_naissance")
+DISPOSITIFS_D_INSERTION = ("tuc", "stage_pratique_en_entreprise", "stage_jeunes_volontaires",
+                           "programme_d_insertion_locale",
+                           "stage_d_initiation_a_la_vie_professionnelle")
 
 #: Le niveau d'un fait que la personne déclare, et celui d'un fait présumé.
 DECLAREE, PRESUMEE = "haute", "estimee"
@@ -760,6 +776,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                          "profil": profil_carriere, "part_primes": part_primes}
             if metier.micro:
                 attributs["micro"] = metier.micro
+            if metier.apprentissage:
+                attributs["apprentissage"] = True
             if quotite < 1.0:
                 attributs["quotite"] = quotite
             periodes.append(fait(f"emploi_{rang}" if morceau == 1 else f"emploi_{rang}_{morceau}",
@@ -784,7 +802,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
         periodes.append(fait(f"cumul_{rang}", ASSURE, EMPLOI, _jour(ouverture), _jour(cloture), {
             "affiliation": metier.affiliation, "niveau_salaire": metier.niveau_salaire,
             "profil": profil_carriere, "part_primes": part_primes, "cumul": True,
-            **({"micro": metier.micro} if metier.micro else {})}))
+            **({"micro": metier.micro} if metier.micro else {}),
+            **({"apprentissage": True} if metier.apprentissage else {})}))
     for annee in sorted(interruptions or {}):
         periodes.append(fait(f"interruption_{annee}", ASSURE, INTERRUPTION,
                              f"{annee:04d}-01-01", f"{annee + 1:04d}-01-01",
@@ -848,6 +867,63 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
                                          invalidite=invalidite, etranger=etranger)
     return {"schema_version": SCHEMA_VERSION, "faits": naissance + periodes + depart,
             "liens": liens}
+
+
+def avec_periodes_assimilees(chronologie: dict, declarees: list | tuple,
+                             personne: str = ASSURE) -> dict:
+    """La chronologie, et les périodes assimilées que la personne déclare :
+    une copie, où chacune devient un fait ``periode_assimilee``, dans
+    l'ordre, après ses autres faits. Sans période déclarée, la présomption
+    ``pas_de_periode_assimilee`` tient.
+
+    Chaque période est une table : son ``motif`` (``MOTIFS_D_ASSIMILATION``),
+    son ``debut`` et sa ``fin``, une année, un mois ou un jour
+    (:func:`date_declaree`), la fin exclue ; le ``dispositif`` d'un stage
+    d'insertion (``DISPOSITIFS_D_INSERTION``), et lui seul ; et, s'il le faut,
+    les ``jours`` qu'elle compte entre ces dates, quand ce n'en sont pas tous
+    les jours. Elle commence après la naissance de la personne, et avant son
+    départ. Aucune étape ne la lit encore (action 130, sixième domaine)."""
+    faits = [dict(f) for f in chronologie.get("faits") or []]
+    naissance = next((f for f in faits if f["sorte"] == "naissance"
+                      and f["personne"] == personne), None)
+    if naissance is None:
+        raise ValueError(f"une période assimilée de {personne}, qui n'a pas de naissance")
+    depart_ = next((f for f in faits if f["personne"] == personne
+                    and f["sorte"] == "acte_de_la_personne"
+                    and f["attributs"].get("acte") == "depart"), None)
+    for rang, declaree in enumerate(declarees, 1):
+        motif = declaree.get("motif")
+        if motif not in MOTIFS_D_ASSIMILATION:
+            raise ValueError(f"une période assimilée pour motif « {motif} » : "
+                             + ", ".join(MOTIFS_D_ASSIMILATION))
+        debut, precision = date_declaree(declaree.get("debut"),
+                                         "le début d'une période assimilée")
+        fin = date_declaree(declaree.get("fin"), "la fin d'une période assimilée")[0]
+        if fin <= debut:
+            raise ValueError(f"une période assimilée du {debut} au {fin} : "
+                             "elle finit après avoir commencé")
+        if debut <= naissance["debut"]:
+            raise ValueError(f"une période assimilée le {debut}, avant la naissance")
+        if depart_ is not None and debut >= depart_["debut"]:
+            raise ValueError(f"une période assimilée le {debut}, après le départ")
+        attributs = {"motif": motif, "precision": precision}
+        dispositif = declaree.get("dispositif")
+        if (motif == "stage_d_insertion") != (dispositif is not None):
+            raise ValueError("un stage d'insertion, et lui seul, dit son dispositif")
+        if dispositif is not None:
+            if dispositif not in DISPOSITIFS_D_INSERTION:
+                raise ValueError(f"un stage d'insertion du dispositif « {dispositif} » : "
+                                 + ", ".join(DISPOSITIFS_D_INSERTION))
+            attributs["dispositif"] = dispositif
+        if declaree.get("jours") is not None:
+            jours = declaree["jours"]
+            duree = (datetime.date.fromisoformat(fin) - datetime.date.fromisoformat(debut)).days
+            if isinstance(jours, bool) or not isinstance(jours, int) or not 0 < jours <= duree:
+                raise ValueError(f"une période assimilée de {duree} jours en compte "
+                                 f"{jours} : un nombre entier, de un à {duree}")
+            attributs["jours"] = jours
+        faits.append(fait(f"assimilee_{rang}", personne, ASSIMILEE, debut, fin, attributs))
+    return {**chronologie, "faits": faits}
 
 
 # -- compléter : les présomptions ------------------------------------------------
@@ -1111,6 +1187,11 @@ def periodes(chronologie: dict, personne: str) -> list[dict]:
             and not f["attributs"].get("apres_depart")]
 
 
+def periodes_assimilees(chronologie: dict, personne: str) -> list[dict]:
+    """Les périodes assimilées qu'une personne déclare, dans leur ordre."""
+    return faits_de(chronologie, personne, ASSIMILEE)
+
+
 def emploi_retraite(chronologie: dict, personne: str) -> dict | None:
     """L'activité qu'une personne exerce après son départ, si elle la
     déclare : le cumul emploi-retraite."""
@@ -1168,4 +1249,14 @@ def controler(chronologie: dict) -> list[str]:
     for f in faits:
         if f.get("fin") is not None and not str(f["fin"]) > str(f.get("debut")):
             erreurs.append(f"{f.get('id')} : une période finit après avoir commencé")
+        if f.get("sorte") == ASSIMILEE:
+            attributs = f.get("attributs") or {}
+            if attributs.get("motif") not in MOTIFS_D_ASSIMILATION:
+                erreurs.append(f"{f.get('id')} : une période assimilée dit son motif")
+            if ((attributs.get("motif") == "stage_d_insertion")
+                    != (attributs.get("dispositif") in DISPOSITIFS_D_INSERTION)):
+                erreurs.append(f"{f.get('id')} : un stage d'insertion, et lui seul, "
+                               "dit son dispositif")
+        if (f.get("attributs") or {}).get("apprentissage") and f.get("sorte") != EMPLOI:
+            erreurs.append(f"{f.get('id')} : l'apprentissage est un emploi")
     return erreurs

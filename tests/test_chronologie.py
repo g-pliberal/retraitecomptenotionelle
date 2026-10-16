@@ -262,6 +262,41 @@ def test_la_carriere_porte_la_chronologie_dont_elle_est_la_vue(macro):
     assert carriere.date_entree("fonctionnaire_etat").mois == 3
 
 
+def test_les_periodes_assimilees_ont_leur_motif_et_la_carriere_ne_les_lit_pas(macro):
+    """Le sixième domaine, étape 2 (action 130) : une période assimilée est un
+    fait de la chronologie, avec son motif, un des quatre du vocabulaire, et
+    le dispositif d'un stage d'insertion ; l'apprentissage est un attribut de
+    l'emploi. Aucune étape ne les lit encore : la carrière reste celle
+    d'aujourd'hui, et la présomption ``pas_de_periode_assimilee`` le dit."""
+    assert set(chronologie.MOTIFS_D_ASSIMILATION) == vocabulaire.liste("motifs_d_assimilation")
+    assert set(chronologie.DISPOSITIFS_D_INSERTION) == vocabulaire.liste("dispositifs_d_insertion")
+    assert chronologie.valeur("pas_de_periode_assimilee") == "aucune"
+
+    sans = _complete()
+    avec = chronologie.completer(chronologie.avec_periodes_assimilees(
+        chronologie.du_parcours(**{**PARCOURS, "metiers": [
+            Metier("salarie_prive", 22.5, 0.9, apprentissage=True), *PARCOURS["metiers"][1:]]}),
+        [{"motif": "stage_d_insertion", "dispositif": "tuc", "debut": "1987-10", "fin": "1988-06"},
+         {"motif": "sportif_de_haut_niveau", "debut": "1990-09-01", "fin": "1992-09-01"}]))
+    assert chronologie.controler(avec) == []
+    assert [f["attributs"]["motif"] for f in chronologie.periodes_assimilees(avec, "assure")] == [
+        "stage_d_insertion", "sportif_de_haut_niveau"]
+    assert chronologie.faits_de(avec, "assure", "periode_d_activite")[0]["attributs"]["apprentissage"]
+    assert chronologie.periodes(avec, "assure") == [
+        {**f, "attributs": {**f["attributs"], "apprentissage": True}} if f["id"] == "emploi_1" else f
+        for f in chronologie.periodes(sans, "assure")]
+    assert (Carriere.depuis_chronologie(avec, macro).lignes
+            == Carriere.depuis_chronologie(sans, macro).lignes)
+
+    fautive = {**avec, "faits": [
+        {**f, "attributs": {"motif": "stage_d_insertion"}} if f["id"] == "assimilee_1"
+        else {**f, "sorte": "periode_d_interruption"} if f["id"] == "emploi_1" else f
+        for f in avec["faits"]]}
+    erreurs = chronologie.controler(fautive)
+    assert any("assimilee_1" in e and "dispositif" in e for e in erreurs), erreurs
+    assert any("emploi_1" in e and "l'apprentissage est un emploi" in e for e in erreurs), erreurs
+
+
 def test_une_carriere_construite_ligne_a_ligne_recoit_sa_chronologie():
     """Sans périodes : sa naissance, ses enfants et son départ, et les
     présomptions qui les complètent."""
@@ -579,20 +614,78 @@ SAISIES = [
                 "etranger": {"residence": "FR"},
                 "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
                             "trimestres": 4, "type_periode": "emploi"}]}},
+    # Le sixième domaine (action 130, étape 2) : l'apprentissage en attribut
+    # de l'emploi, les périodes assimilées, un motif par sorte, et leurs refus.
+    {"parcours": {"annee_naissance": 1998, "sexe": "H", "age_liquidation": 64.0,
+                  "metiers": [{"affiliation": "salarie_prive", "age_debut": 16.5,
+                               "niveau_salaire": 0.5, "apprentissage": True},
+                              {"affiliation": "salarie_prive", "age_debut": 19.0,
+                               "niveau_salaire": 1.0}]},
+     "periodes_assimilees": [
+         {"motif": "stage_de_formation_professionnelle", "debut": "2021-03-01",
+          "fin": "2021-09-01", "jours": 120},
+         {"motif": "sportif_de_haut_niveau", "debut": "2016", "fin": "2018-07"},
+         {"motif": "conge_supplementaire_de_naissance", "debut": "2026-07-14",
+          "fin": "2026-09-10"}]},
+    {"releve": {"annee_naissance": 1966, "sexe": "F", "age_liquidation": 64.0,
+                "releve": [{"annee": 1985, "affiliation": "salarie_prive", "revenu": 2000.0,
+                            "trimestres": 1, "type_periode": "emploi"}]},
+     "periodes_assimilees": [{"motif": "stage_d_insertion", "dispositif": "tuc",
+                              "debut": "1985-02", "fin": "1985-11"}]},
+    {"releve": {"annee_naissance": 1966, "sexe": "F", "age_liquidation": 64.0,
+                "releve": [{"annee": 1985, "affiliation": "salarie_prive", "revenu": 2000.0,
+                            "trimestres": 1, "type_periode": "emploi"}]},
+     "periodes_assimilees": [{"motif": "stage_d_insertion", "debut": "1985", "fin": "1986"}]},
+    {"releve": {"annee_naissance": 1966, "sexe": "F", "age_liquidation": 64.0,
+                "releve": [{"annee": 1985, "affiliation": "salarie_prive", "revenu": 2000.0,
+                            "trimestres": 1, "type_periode": "emploi"}]},
+     "periodes_assimilees": [{"motif": "stage_d_insertion", "dispositif": "atelier",
+                              "debut": "1985", "fin": "1986"}]},
+    {"releve": {"annee_naissance": 1966, "sexe": "F", "age_liquidation": 64.0,
+                "releve": [{"annee": 1985, "affiliation": "salarie_prive", "revenu": 2000.0,
+                            "trimestres": 1, "type_periode": "emploi"}]},
+     "periodes_assimilees": [{"motif": "chomage_indemnise", "debut": "1985", "fin": "1986"}]},
+    {"releve": {"annee_naissance": 1966, "sexe": "F", "age_liquidation": 64.0,
+                "releve": [{"annee": 1985, "affiliation": "salarie_prive", "revenu": 2000.0,
+                            "trimestres": 1, "type_periode": "emploi"}]},
+     "periodes_assimilees": [{"motif": "sportif_de_haut_niveau", "debut": "1986",
+                              "fin": "1985"}]},
+    {"releve": {"annee_naissance": 1966, "sexe": "F", "age_liquidation": 64.0,
+                "releve": [{"annee": 1985, "affiliation": "salarie_prive", "revenu": 2000.0,
+                            "trimestres": 1, "type_periode": "emploi"}]},
+     "periodes_assimilees": [{"motif": "sportif_de_haut_niveau", "debut": "1960",
+                              "fin": "1985"}]},
+    {"releve": {"annee_naissance": 1966, "sexe": "F", "age_liquidation": 64.0,
+                "releve": [{"annee": 1985, "affiliation": "salarie_prive", "revenu": 2000.0,
+                            "trimestres": 1, "type_periode": "emploi"}]},
+     "periodes_assimilees": [{"motif": "sportif_de_haut_niveau", "debut": "2031",
+                              "fin": "2032"}]},
+    {"releve": {"annee_naissance": 1966, "sexe": "F", "age_liquidation": 64.0,
+                "releve": [{"annee": 1985, "affiliation": "salarie_prive", "revenu": 2000.0,
+                            "trimestres": 1, "type_periode": "emploi"}]},
+     "periodes_assimilees": [{"motif": "stage_de_formation_professionnelle",
+                              "debut": "2016-01", "fin": "2016-02", "jours": 40}]},
 ]
 
 
 def _python(saisie: dict) -> dict:
+    def assimilees(construite: dict) -> dict:
+        if not saisie.get("periodes_assimilees"):
+            return construite
+        return chronologie.avec_periodes_assimilees(construite, saisie["periodes_assimilees"])
+
     try:
         if "parcours" in saisie:
             options = dict(saisie["parcours"])
             options["metiers"] = [Metier(**m) for m in options["metiers"]]
             if options.get("interruptions"):
                 options["interruptions"] = {int(a): m for a, m in options["interruptions"].items()}
-            return {"chronologie": chronologie.completer(chronologie.du_parcours(**options))}
+            return {"chronologie": chronologie.completer(
+                assimilees(chronologie.du_parcours(**options)))}
         options = dict(saisie["releve"])
         options["releve"] = [LigneRelevee(**l) for l in options["releve"]]
-        return {"chronologie": chronologie.completer(chronologie.du_releve(**options))}
+        return {"chronologie": chronologie.completer(
+            assimilees(chronologie.du_releve(**options)))}
     except ValueError as erreur:
         return {"erreur": str(erreur)}
 

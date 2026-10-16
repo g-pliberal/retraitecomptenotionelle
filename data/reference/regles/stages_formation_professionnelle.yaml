@@ -127,6 +127,9 @@ versions:
       des périodes assimilées, non cotisées : elles ne comptent pas pour la carrière
       longue (questions écrites au Sénat de 2024 ; D. 351-1-2 ne les nomme pas)
   exemples: aucun trouvé
+presomptions:
+  pas_de_periode_assimilee: >-
+    les stages de la formation professionnelle et d'insertion, que l'assuré déclare un à un
 sources:
   lu_le: 2026-10-16
   prochaine_relecture: 2027-04-16

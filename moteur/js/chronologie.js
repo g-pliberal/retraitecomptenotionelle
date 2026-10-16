@@ -36,6 +36,18 @@ export const FORMES_D_UNION = Object.freeze(["mariage", "pacs", "concubinage"]);
 /** Les sortes de faits qui sont des périodes de la carrière. */
 export const EMPLOI = "periode_d_activite";
 export const INTERRUPTION = "periode_d_interruption";
+/**
+ * Une période validée sans cotisation, que la carrière d'aujourd'hui ne lit pas
+ * (action 130, sixième domaine) : {@link periodes} ne la rend pas. Ses motifs
+ * (vocabulaire, `motifs_d_assimilation`), et les dispositifs d'un stage
+ * d'insertion (`dispositifs_d_insertion`). Voir le Python.
+ */
+export const ASSIMILEE = "periode_assimilee";
+export const MOTIFS_D_ASSIMILATION = Object.freeze(["stage_de_formation_professionnelle",
+  "stage_d_insertion", "sportif_de_haut_niveau", "conge_supplementaire_de_naissance"]);
+export const DISPOSITIFS_D_INSERTION = Object.freeze(["tuc", "stage_pratique_en_entreprise",
+  "stage_jeunes_volontaires", "programme_d_insertion_locale",
+  "stage_d_initiation_a_la_vie_professionnelle"]);
 
 /** Le niveau d'un fait que la personne déclare, et celui d'un fait présumé. */
 const DECLAREE = "haute";
@@ -729,6 +741,9 @@ export function duParcours({
         if (metier.micro) {
           attributs.micro = metier.micro;
         }
+        if (metier.apprentissage) {
+          attributs.apprentissage = true;
+        }
         if (quotite < 1.0) {
           attributs.quotite = quotite;
         }
@@ -760,6 +775,7 @@ export function duParcours({
       part_primes,
       cumul: true,
       ...(metier.micro ? { micro: metier.micro } : {}),
+      ...(metier.apprentissage ? { apprentissage: true } : {}),
     }));
   });
   const annees = interruptions ? [...interruptions.keys()].sort((a, b) => a - b) : [];
@@ -852,6 +868,66 @@ export function duReleve({
     faits: [...naissance, ...periodes, ...depart],
     liens,
   };
+}
+
+/**
+ * La chronologie, et les périodes assimilées que la personne déclare : une
+ * copie, où chacune devient un fait `periode_assimilee`, dans l'ordre, après
+ * ses autres faits. Chaque période : son `motif`, son `debut` et sa `fin` (la
+ * fin exclue), le `dispositif` d'un stage d'insertion, et lui seul, et s'il le
+ * faut les `jours` qu'elle compte entre ces dates. Voir
+ * `avec_periodes_assimilees` du Python.
+ */
+export function avecPeriodesAssimilees(chronologie, declarees, personne_ = ASSURE) {
+  const faits = (chronologie.faits ?? []).map((f) => ({ ...f }));
+  const naissance_ = faits.find((f) => f.sorte === "naissance" && f.personne === personne_);
+  if (!naissance_) {
+    throw new Error(`une période assimilée de ${personne_}, qui n'a pas de naissance`);
+  }
+  const depart_ = faits.find((f) => f.personne === personne_
+    && f.sorte === "acte_de_la_personne" && f.attributs.acte === "depart");
+  declarees.forEach((declaree, i) => {
+    const { motif } = declaree;
+    if (!MOTIFS_D_ASSIMILATION.includes(motif)) {
+      throw new Error(`une période assimilée pour motif « ${motif} » : `
+        + MOTIFS_D_ASSIMILATION.join(", "));
+    }
+    const [debut, precision] = dateDeclaree(declaree.debut, "le début d'une période assimilée");
+    const [fin] = dateDeclaree(declaree.fin, "la fin d'une période assimilée");
+    if (fin <= debut) {
+      throw new Error(`une période assimilée du ${debut} au ${fin} : `
+        + "elle finit après avoir commencé");
+    }
+    if (debut <= naissance_.debut) {
+      throw new Error(`une période assimilée le ${debut}, avant la naissance`);
+    }
+    if (depart_ && debut >= depart_.debut) {
+      throw new Error(`une période assimilée le ${debut}, après le départ`);
+    }
+    const attributs = { motif, precision };
+    const dispositif = declaree.dispositif ?? null;
+    if ((motif === "stage_d_insertion") !== (dispositif !== null)) {
+      throw new Error("un stage d'insertion, et lui seul, dit son dispositif");
+    }
+    if (dispositif !== null) {
+      if (!DISPOSITIFS_D_INSERTION.includes(dispositif)) {
+        throw new Error(`un stage d'insertion du dispositif « ${dispositif} » : `
+          + DISPOSITIFS_D_INSERTION.join(", "));
+      }
+      attributs.dispositif = dispositif;
+    }
+    if (declaree.jours !== null && declaree.jours !== undefined) {
+      const { jours } = declaree;
+      const duree = Math.round((Date.parse(fin) - Date.parse(debut)) / 86400000);
+      if (!Number.isInteger(jours) || !(jours > 0 && jours <= duree)) {
+        throw new Error(`une période assimilée de ${duree} jours en compte `
+          + `${jours} : un nombre entier, de un à ${duree}`);
+      }
+      attributs.jours = jours;
+    }
+    faits.push(fait(`assimilee_${i + 1}`, personne_, ASSIMILEE, debut, fin, attributs));
+  });
+  return { ...chronologie, faits };
 }
 
 // -- compléter : les présomptions ------------------------------------------------
@@ -1122,6 +1198,11 @@ export function periodes(chronologie, personne) {
   return faitsDe(chronologie, personne)
     .filter((f) => (f.sorte === EMPLOI || f.sorte === INTERRUPTION)
       && !f.attributs.apres_depart);
+}
+
+/** Les périodes assimilées qu'une personne déclare, dans leur ordre. */
+export function periodesAssimilees(chronologie, personne) {
+  return faitsDe(chronologie, personne, ASSIMILEE);
 }
 
 /**

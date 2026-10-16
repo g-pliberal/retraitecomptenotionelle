@@ -2228,15 +2228,15 @@ fabriqués.
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
 **Reprise, au 16 octobre 2026.** Fait : phases 0 à 8, cinq domaines clos ;
-le sixième, les périodes assimilées manquantes, ouvert le 14 octobre, a son
-étape 1 faite : quatre fiches lues à la source (apprentissage, stages et TUC,
-sportifs, congé de naissance), `pas_encore_modelisee`. Reste de lui les étapes
-2 à 7 ; commencer par la deuxième, les faits de la chronologie (un motif par
-sorte de période, l'apprentissage en attribut de l'emploi). Restent aussi :
-les points ouverts des phases 2 à 8 ; la décision du propriétaire sur la
-retraite progressive, le cumul et la seconde pension (README muet) ; les
-restes des fiches de chaque domaine. Détail :
-`130/2026-10-16-sixieme-domaine-etape-1.md`.
+le sixième, les périodes assimilées manquantes, a ses étapes 1 (quatre fiches
+lues à la source, `pas_encore_modelisee`) et 2 faites : la chronologie porte
+`periode_assimilee` et ses quatre motifs (`avec_periodes_assimilees`, dans
+les deux moteurs), l'apprentissage en attribut de l'emploi, la présomption
+`pas_de_periode_assimilee`. Reste de lui les étapes 3 à 7 ; commencer par la
+troisième, les fonctions de `compter_les_durees`. Restent aussi : les points
+ouverts des phases 2 à 8 ; la décision du propriétaire sur la retraite
+progressive, le cumul et la seconde pension (README muet) ; les restes des
+fiches de chaque domaine. Détail : `130/2026-10-16-sixieme-domaine-etape-2.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

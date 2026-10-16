@@ -101,7 +101,7 @@ listes:
   sortes_de_fait:
     valeurs:
       periode_d_activite: une période d'activité, salariée ou non
-      periode_assimilee: une période validée sans cotisation
+      periode_assimilee: une période validée sans cotisation, avec son motif (motifs_d_assimilation) ; l'apprentissage n'en est pas une, c'est un emploi qui le dit
       periode_d_interruption: une période où l'emploi s'interrompt, avec son motif — chômage indemnisé ou non, maladie, maternité, invalidité, accident du travail, service militaire, éducation d'un enfant, sans activité ; ce qu'elle valide, les règles le disent
       periode_a_l_etranger: une période d'activité hors de France
       residence: une résidence
@@ -169,6 +169,28 @@ listes:
       inaptitude: la pension pour inaptitude
       carriere_longue: le départ anticipé pour carrière longue
       reversion: la pension de réversion
+
+  motifs_d_assimilation:
+    # Le motif d'une `periode_assimilee` de la chronologie (sixième domaine,
+    # action 130, étape 2) : une sorte de période par fiche. Le chômage, la
+    # maladie, la maternité, le service militaire restent des
+    # `periode_d_interruption`, que la carrière lit déjà ; l'apprentissage est
+    # un emploi salarié, qui le dit par son attribut `apprentissage`.
+    valeurs:
+      stage_de_formation_professionnelle: un stage de la formation professionnelle continue, depuis 2015 (L. 351-3, 8°, du code de la sécurité sociale ; fiche stages_formation_professionnelle)
+      stage_d_insertion: un TUC ou un stage d'insertion de 1977 à 1992, que son dispositif nomme (dispositifs_d_insertion ; L. 351-3, 9°, et R. 351-12, 4°, k)
+      sportif_de_haut_niveau: une inscription sur la liste des sportifs de haut niveau (L. 351-3, 7° ; fiche sportifs_haut_niveau)
+      conge_supplementaire_de_naissance: un congé supplémentaire de naissance indemnisé, depuis le 1er juillet 2026 (L. 351-3, 1° ; fiche conge_supplementaire_naissance)
+
+  dispositifs_d_insertion:
+    # Le dispositif d'un `stage_d_insertion` : les cinq que le k du 4° de
+    # R. 351-12 nomme (décret n° 2023-799 du 21 août 2023, article 4).
+    valeurs:
+      tuc: les travaux d'utilité collective, de 1984 à 1990 (décret n° 84-919)
+      stage_pratique_en_entreprise: un stage pratique en entreprise, de 1977 à 1982 (lois de 1977, 1978 et 1979, et ceux de 1982)
+      stage_jeunes_volontaires: un stage jeunes volontaires, de 1982 à 1987 (décrets de 1982, 1983 et 1984)
+      programme_d_insertion_locale: un programme d'insertion locale, de 1987 à 1990 (décret n° 87-236)
+      stage_d_initiation_a_la_vie_professionnelle: un stage d'initiation à la vie professionnelle, de 1985 à 1992 (ancien L. 980-9 du code du travail)
 
   natures:
     valeurs:
@@ -569,6 +591,32 @@ listes:
           commence après la date d'effet n'entre qu'à la révision qu'elle
           ouvre (R. 173-8), que le modèle fait à chaque échéance qui la suit.
           L'ASPA, et la garantie de la proposition, la comptent de même
+      pas_de_periode_assimilee:
+        dit: >-
+          l'assuré qui n'en déclare pas n'a eu ni stage de la formation
+          professionnelle ou d'insertion, ni inscription sur la liste des
+          sportifs de haut niveau, ni congé supplémentaire de naissance, et
+          aucun de ses emplois n'était un contrat d'apprentissage
+        valeur: aucune
+        appliquee_par: >-
+          aucune étape encore : les fiches apprentissage,
+          stages_formation_professionnelle, sportifs_haut_niveau et
+          conge_supplementaire_naissance sont pas_encore_modelisee, et le
+          moteur compte comme aujourd'hui. Une période déclarée
+          (chronologie.avec_periodes_assimilees, et son jumeau JavaScript) ou
+          un emploi en apprentissage (l'attribut apprentissage d'un métier)
+          prend la place de la présomption
+        entrera_a: compter_les_durees
+        raison: >-
+          la saisie ne demande encore aucune de ces périodes (action 130,
+          étape 5) ; les présumer absentes garde les résultats de qui ne dit
+          rien, et c'est le cas le plus fréquent : les TUC ont touché au moins
+          350 000 personnes, sur des générations de plusieurs centaines de
+          milliers chacune, et l'apprentissage ne compte au-delà de son
+          assiette que depuis 2014 (feuille de route, action 130, la mesure du
+          14 octobre 2026). Une période ignorée ne coûte, au plus, que des
+          trimestres de durée : aucune n'est cotisée, aucune n'ouvre la
+          carrière longue
       residence_en_france:
         dit: >-
           l'assuré qui ne déclare pas de résidence hors de France réside en
