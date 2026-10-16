@@ -29,17 +29,22 @@ inventaire:
     - {reference: "fiche du CLEISS, retraite complémentaire : « tous les salariés [...] soumis à titre obligatoire au régime d'assurance vieillesse de base géré par la CAFAT relèvent obligatoirement des régimes Agirc-Arrco » (accord collectif, hors JORF)", id: null}
     - {reference: "accord interprofessionnel territorial du 29 août 1994 pour la généralisation des régimes de retraite complémentaire ARRCO et AGIRC en Nouvelle-Calédonie, étendu par arrêté n° 1745-T du 25 avril 1995 (JONC n° 7063 du 2 mai 1995), avenants des 24 août et 12 décembre 1995 (direction du travail de Nouvelle-Calédonie, hors JORF)", id: null}
   manque: >-
-    La valeur de référence qui convertit les cotisations en points n'est
-    pas publiée : le rendement est estimé ; taux et barème de 2026
-    projetés sur toute la période ; plafond de 548 600 FCFP remplacé par
-    le plafond national. Le statut `salarie_nouvelle_caledonie` route aussi
-    l'Agirc-Arrco du non-cadre, obligatoire depuis le 1er janvier 1995 ; les
-    années d'avant, depuis 1958, en sont des services passés, validés sans
-    cotisation à une pension prise depuis 1995 et absents du compte
-    notionnel, sur les barèmes de métropole faute de ceux de la
+    La valeur de référence qui convertit les cotisations en points est
+    publiée par la CAFAT (2 845,44 FCFP en 2026, pour un point de 256,09) :
+    le rendement de 10 % est estimé, quand le droit le fait descendre de
+    10,3 % en 2016 à 9,0 % en 2026 ; l'anticipation de dix trimestres, avec
+    1,5 % d'abattement par trimestre ou sans abattement à 37 années, n'est
+    pas portée (délibération n° 458, articles 2 à 4) ; taux et barème de
+    2026 projetés sur toute la période ; plafond de 548 600 FCFP remplacé
+    par le plafond national. Le statut `salarie_nouvelle_caledonie` route
+    aussi l'Agirc-Arrco du non-cadre, obligatoire depuis le 1er janvier
+    1995 ; les années d'avant, depuis 1958, en sont des services passés,
+    validés sans cotisation à une pension prise depuis 1995 et absents du
+    compte notionnel, sur les barèmes de métropole faute de ceux de la
     généralisation (fiche `services_passes_outre_mer`). Le chômage, que la
-    CAFAT indemnise, ne vaut aucun point complémentaire ; il ne vaut pas non
-    plus de points CAFAT, dont la règle n'est pas lue.
+    CAFAT indemnise, ne vaut aucun point complémentaire ; il cotise à la
+    CAFAT et y vaut des points (loi du pays n° 2001-016, Lp. 100-7), que le
+    modèle ne porte pas.
 periodes:
   - debut: 1958
     fin: 2022

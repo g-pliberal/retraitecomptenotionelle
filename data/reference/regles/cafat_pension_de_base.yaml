@@ -1,0 +1,222 @@
+schema_version: 1
+id: cafat_pension_de_base
+intitule: >-
+  Le salarié de Nouvelle-Calédonie reçoit de la CAFAT une pension en points : chaque
+  année, sa cotisation vieillesse divisée par une valeur de référence que le conseil
+  d'administration fixe, servie au produit des points par la valeur du point ; à
+  l'âge de liquidation, 60 ans jusqu'en 2022 et 62 ans depuis 2026, ou jusqu'à dix
+  trimestres plus tôt avec un abattement de 1,5 % des points par trimestre, sans
+  abattement pour qui justifie d'une durée d'assurance de 35 à 37 années ; sur un
+  salaire plafonné au plafond du territoire, à 14 % depuis avril 2009.
+domaine: points
+regimes: [cafat_nouvelle_caledonie]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- les salaires soumis à cotisation, plafonnés au plafond retraite du territoire, et les prestations en espèces de maladie, maternité, chômage, invalidité et accidents du travail, qui cotisent
+- les années d'assurance, chacune comptée en 360es selon le salaire minimum garanti du secteur, et les périodes d'études rachetées
+- la date de naissance et la date d'effet, l'inaptitude et les activités pénibles ou dangereuses
+- le conjoint, le partenaire ou le concubin, et les orphelins, pour la réversion
+ecrit:
+- les points de retraite CAFAT de chaque année, leur abattement et la pension qu'ils servent
+- les cotisations vieillesse du salarié et de l'employeur
+- la pension de réversion et l'allocation veuvage
+dates_qui_decident:
+- liquidation.date_effet
+# Les textes sont des lois du pays et des délibérations du congrès de la
+# Nouvelle-Calédonie, hors de l'index de la DILA : ils sont lus sur Juridoc, dans leur
+# version consolidée, et cités sans identifiant LEGI. « Les conditions de la liquidation
+# s'apprécient en fonction de la réglementation en vigueur à la date de l'entrée en
+# jouissance de la pension » (délibération n° 458, article 22, 3°).
+versions:
+- id: regime_de_1961
+  statut: supposee
+  hypothese: >-
+    le régime de prévoyance et de retraite de la délibération n° 300 du 17 juin 1961,
+    non lue, que la loi du pays n° 2009-3 reprend comme période d'assurance (Lp. 100-6) :
+    le dépôt lui prête les points, l'âge de 60 ans et la durée de 35 années qui ouvraient
+    le taux plein avant 2023
+  fiabilite: >-
+    faible : le texte n'est pas sur Juridoc dans la version consolidée trouvée ; la
+    fiche des paramètres de la CAFAT n'en cite que la bonification pour conjoint à
+    charge et le minimum de pension par années de cotisation
+  bornes:
+    liquidation.date_effet: [null, 2009-01-13]
+  contenu:
+    droit: >-
+      non lu ; la borne basse ouverte ne sert qu'à couvrir toutes les dates, le régime
+      couvrant les salariés depuis 1958 à l'inventaire
+  exemples: aucun trouvé
+- id: reforme_de_2009
+  statut: lue
+  textes:
+  - {reference: "loi du pays n° 2001-016 du 11 janvier 2002 relative à la sécurité sociale en Nouvelle-Calédonie, articles Lp. 100-1 à Lp. 100-13, créés par la loi du pays n° 2009-3 du 7 janvier 2009 (JONC du 13 janvier 2009), version consolidée du 5 mai 2026 sur Juridoc", en_vigueur: 2009-01-13}
+  - {reference: "délibération n° 458 du 8 janvier 2009 portant réforme de la branche assurance vieillesse et veuvage du régime général de sécurité sociale en Nouvelle-Calédonie (JONC du 20 janvier 2009), articles 1er à 30, version consolidée du 13 décembre 2022 sur Juridoc", en_vigueur: 2009-01-20}
+  - {reference: "délibération n° 70/CP du 12 février 2009 modifiant les taux des cotisations de la branche vieillesse (JONC du 24 février 2009), article 1er, au texte de l'article 30 de la délibération n° 458", en_vigueur: 2009-04-01}
+  - {reference: "délibération n° 42/CP du 20 avril 2011 (JONC du 3 mai 2011), articles 1er, 2 et 4 : la réversion de 50 à 60 % au 1er août 2011", en_vigueur: 2011-08-01}
+  - {reference: "délibération n° 261 du 24 janvier 2013 portant diverses mesures d'ordre social (JONC du 6 février 2013), article 3 : les articles 7 et 28 de la délibération n° 458", en_vigueur: 2013-02-06}
+  bornes:
+    liquidation.date_effet: [2009-01-13, 2023-01-01]
+  contenu:
+    ouverture: >-
+      « une pension de retraite à l'assuré qui en demande la liquidation à partir d'un
+      âge déterminé, s'il justifie d'une durée d'assurance supérieure ou égale à la
+      durée minimale, à condition qu'il ait cessé son activité salariée » (Lp. 100-2) :
+      60 ans et cinq années jusqu'au 31 décembre 2022 (délibération n° 458, article
+      1er) ; plus tôt, « un abattement définitif de 1,50 % par trimestre d'anticipation
+      » des points, la fraction de trimestre comptant pour un trimestre entier (article
+      2), dans la limite de dix trimestres (article 4) ; sans abattement à 57 ans et 6
+      mois avec 35 années d'assurance (article 3, 2°, dans la rédaction de 2022, qui
+      donne la règle d'avant 2023 : la rédaction de 2009 n'est pas lue) ; l'âge abaissé
+      à 57,5 ans pour dix années d'activités pénibles, d'un an par deux ans d'activités
+      dangereuses jusqu'à 50 ans, à 50 ans pour l'inaptitude (article 5), sans cumul
+      avec l'anticipation (Lp. 100-4)
+    duree: >-
+      « l'année civile pendant laquelle ont été soumis à cotisations des salaires au
+      moins égaux à 360 fois le salaire minimum garanti journalier du secteur », en
+      360es, au plus 360 par année (article 7, rédaction de 2013) ; le service
+      militaire et les prestations en espèces qui cotisent sont assimilés (Lp. 100-6 et
+      Lp. 100-7) ; les études, rachetées « forfaitairement à cent points par année »,
+      d'un à trois ans (article 8)
+    calcul: >-
+      « Le nombre de points de retraite porté chaque année au compte de l'assuré est
+      obtenu en divisant le montant de la cotisation de l'année afférente [...] par le
+      montant de la valeur de référence fixé pour l'année par le conseil
+      d'administration », et « Toute augmentation du taux de la cotisation engendre une
+      augmentation proportionnelle de la valeur de référence » (Lp. 100-12) ; la pension
+      est « le produit du nombre total de points acquis [...], déduction faite [...] des
+      abattements [...], par la valeur du point », qui « en aucun cas [...] ne peut
+      diminuer » (Lp. 100-13) ; la valeur du point est fixée chaque année par la
+      formule (P + R) / N, produits nets et réserves sur points à servir (article 12) ;
+      les points acquis après l'âge de liquidation sont portés au compte (Lp. 100-5),
+      sans surcote
+    valeurs: >-
+      publiées chaque mois par la fiche des paramètres de la CAFAT : la valeur de
+      référence (« prix d'achat d'un point ») de 2 321,93 F CFP en 2016, 2 358 en 2017,
+      2 407,10 en 2018, 2 452,37 en 2019, 2 481,52 en 2020, 2 517,31 en 2021, 2 564,04
+      en 2022 ; la valeur du point de 238,26 F CFP au premier trimestre 2017, 239,62 en
+      2018, 242,62 en 2019, 244,46 en 2020 et 2021, 245,44 en 2022, 247,43 en 2023 ;
+      soit un rendement de 10,3 % en 2016, descendant à 9,6 % en 2022
+    reversion: >-
+      60 % des points du défunt, abattements déduits, au conjoint de cinquante ans marié
+      depuis deux ans, si le défunt comptait quinze années ou est mort après cinquante
+      ans (articles 14 et 15) ; 50 % avant le 1er août 2011 (délibération n° 42/CP,
+      article 4) ; au partenaire et au concubin dans les mêmes conditions (articles 16
+      et 17) ; 20 % à chaque orphelin de moins de 18 ou 21 ans (articles 18 et 19) ;
+      une allocation veuvage de trois ans au plus (article 20)
+    cotisations: >-
+      « A compter du 1er avril 2009, [...] au total de 14 % » : 9,8 % patronal, 4,2 %
+      salarial (article 30) ; sur un plafond « indexé sur l'évolution de l'indice
+      officiel du coût de la vie », de 317 600 F CFP par mois en 2008 (article 29) ; le
+      taux d'avant avril 2009 n'est pas lu
+    minimum: >-
+      sous un minimum fixé par arrêté, la pension est remplacée par un versement unique
+      de 180 mensualités (article 25)
+  exemples: aucun trouvé
+- id: reforme_de_2022
+  statut: lue
+  textes:
+  - {reference: "délibération n° 59/CP du 24 février 2022 modifiant la délibération n° 458 du 8 janvier 2009 (JONC du 25 février 2022), articles 1er à 4 : articles 1er, 3, 4 et 29 de la délibération n° 458", en_vigueur: 2022-02-25}
+  - {reference: "délibération n° 285 du 13 décembre 2022 portant modification de la délibération n° 458 (JONC du 27 décembre 2022, erratum au JONC du 16 mars 2023), article 1er : le plafond de 2023", en_vigueur: 2022-12-27}
+  - {reference: "CAFAT, « Fiche des paramètres », janvier 2017 à janvier 2026 et octobre 2026 (cafat.nc, rubrique « Les paramètres ») : valeur du point, valeur de référence, plafond retraite, minimum de pension", en_vigueur: 2017-01-01}
+  bornes:
+    liquidation.date_effet: [2023-01-01, null]
+  contenu:
+    ouverture: >-
+      l'âge de liquidation de « 60 ans et six mois à compter du 1er janvier 2023 », 61
+      ans en 2024, 61 ans et six mois en 2025, « 62 ans à compter du 1er janvier 2026 »,
+      à la date d'effet et non à la génération (article 1er) ; sans abattement pour «
+      une durée d'assurance de 37 ans », et, à titre transitoire, 58 ans avec 35 ans et
+      6 mois en 2023, 58 ans et 6 mois avec 36 ans en 2024, 59 ans avec 36 ans et 6 mois
+      en 2025, 59 ans et 6 mois avec 37 ans depuis 2026 ; qui avait au 1er janvier 2023
+      35 années et 57,5 ans garde le taux plein (article 3) ; l'anticipation portée,
+      pour 39 années d'assurance, à douze trimestres en 2023 et jusqu'à dix-huit en 2026
+      (article 4)
+    cotisations: >-
+      14 % sur un plafond de 539 500 F CFP par mois en 2023 (article 29, 5°), 548 600 F
+      CFP depuis 2025, soit 4 597 € (fiche des paramètres)
+    valeurs: >-
+      la valeur de référence de 2 681,57 F CFP en 2023, 2 709,95 en 2024, 2 738,93 en
+      2025, 2 845,44 en 2026 ; la valeur du point gelée à 256,09 F CFP depuis le 1er
+      avril 2023 ; soit un rendement de 9,5 % en 2023, 9,0 % en 2026
+    minimum: >-
+      un minimum mensuel des pensions, « D. n° 300 du 17.06.1961 », de 1 995 points pour
+      cinq à neuf années de cotisation à 4 788 points pour quarante et plus (42 570 à
+      102 180 F CFP en 2026) ; une bonification de 500 points pour le conjoint à charge ;
+      un complément retraite de solidarité sous condition de ressources (fiche des
+      paramètres d'octobre 2026)
+  exemples: aucun trouvé
+approximations:
+- version: [regime_de_1961, reforme_de_2009, reforme_de_2022]
+  ecart: >-
+    La valeur de référence est publiée chaque année par la CAFAT : la fiche de régime,
+    qui la disait introuvable, prête un rendement estimé de 10 % sur toute la période,
+    quand celui des fiches des paramètres descend de 10,3 % en 2016 à 9,0 % en 2026.
+  effet: >-
+    non mesuré ; la pension simulée depuis 2020 est trop haute, de 1,5 % en 2020 à
+    11 % en 2026, et celle de 2016 à 2018 un peu trop basse, de 2,5 % au plus
+- version: [reforme_de_2009, reforme_de_2022]
+  ecart: >-
+    L'âge d'ouverture de la fiche de régime est l'âge de liquidation : l'anticipation de
+    dix trimestres avec abattement, et celle sans abattement à 57,5 ans avec 35 années
+    puis 59,5 ans avec 37 années, ne sont pas portées ; la fiche de régime lit la durée
+    en trimestres, quand le droit compte les années en 360es d'un salaire minimum. Le
+    plafond retraite, 548 600 F CFP en 2026, est remplacé par le plafond national, plus
+    bas ; le minimum de pension par années de cotisation, la bonification pour conjoint
+    et le complément de solidarité ne sont pas portés.
+  effet: >-
+    non mesuré ; les assurés à longue carrière, qui peuvent partir jusqu'à dix-huit
+    trimestres plus tôt, et les salaires au-dessus du plafond national, dont les points
+    manquent
+- version: regime_de_1961
+  ecart: >-
+    La délibération n° 300 du 17 juin 1961 n'est pas lue, ni le taux de cotisation
+    d'avant avril 2009 : la fiche de régime projette 14 % et les paramètres de 2009 sur
+    toute la période depuis 1958.
+  effet: non mesuré ; les carrières d'avant 2009
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-04-16
+  a_relire:
+  - >-
+    Lire la délibération n° 300 du 17 juin 1961 et la loi du pays n° 2009-3 dans sa
+    rédaction de 2009, et la rédaction initiale des articles 1er à 4 de la délibération
+    n° 458, que la version consolidée de 2022 remplace ; relever le taux de cotisation
+    d'avant avril 2009 et la « valeur du point gratuit » (85 % de la valeur du point).
+  - >-
+    Suivre le projet de 2026 qui déplafonne la cotisation vieillesse et crée une seconde
+    tranche (avis n° 5 et n° 20 de 2026 du CESE de Nouvelle-Calédonie) : la version
+    consolidée trouvée est celle du 13 décembre 2022.
+  lectures:
+  - type: autre
+    reference: >-
+      Juridoc (juridoc.gouv.nc) : loi du pays n° 2001-016, articles Lp. 100-1 à Lp.
+      100-23, version du 5 mai 2026 ; délibération n° 458 du 8 janvier 2009, articles
+      1er à 48, version du 13 décembre 2022 ; CAFAT, fiches des paramètres de janvier
+      2017 à janvier 2026 et d'octobre 2026
+    date: 2026-10-16
+reformes: []
+code:
+  moteur: >-
+    une fiche de régime en points, une période par année de la montée de 2023 à 2026,
+    au rendement estimé de rendements_points.csv
+  python: >-
+    données : regimes/cafat_nouvelle_caledonie.yaml, regimes/rendements_points.csv ;
+    droit/liquider.py : liquider_chaque_regime
+  javascript: moteur/js/droit/liquider.js et moteur/js/regimes.js, le même catalogue
+  parametres: regimes/cafat_nouvelle_caledonie.yaml (age_ouverture, duree_requise_trimestres, decote_par_trimestre, taux_cotisation_retraite) et rendements_points.csv
+  tests: >-
+    tests/temoins/simulations.json, les carrières du statut salarie_nouvelle_caledonie,
+    que le portage rejoue
+historique:
+- >-
+  2026-10-16 — écrite à l'étape 2 de l'action 145 : le régime de la CAFAT n'avait que la
+  fiche générique de liquidation. La loi du pays n° 2001-016 et la délibération n° 458,
+  lues sur Juridoc, écrivent les points, l'anticipation et la réversion ; les fiches des
+  paramètres de la CAFAT publient la valeur de référence, que la fiche de régime disait
+  introuvable. Aucun chiffre ne change.
+effet: >-
+  Les salariés de Nouvelle-Calédonie : leur pension est simulée en points au bon âge de
+  liquidation, mais à un rendement trop haut depuis 2020, sans l'anticipation ni le
+  minimum de pension, et sur le plafond national au lieu de celui du territoire.
