@@ -1,0 +1,22 @@
+date: "2026-10-16"
+session: "action 138, étape 14, cinquième partie : les retraités de l'Ircantec, rendus au salariat privé"
+consulte: >-
+  Aucun texte : la session n'écrit aucune règle du scénario 1, et ne touche
+  qu'à la population de la mesure (`scripts/grille_large.py`), que la page ne
+  lit pas. Données lues, déjà certifiées : la dépense de l'Ircantec
+  (`macro/depenses_retraite_regimes.csv`) et ses retraités
+  (`regimes/effectifs_retraites.csv`), la part des liquidants au minimum
+  contributif de l'EACR (`regimes/minimum_contributif_liquidants.csv`), les
+  caractéristiques des retraités de l'EIR 2020
+  (`macro/caracteristiques_retraites.csv`).
+trouve: >-
+  Rien de neuf au droit. L'Ircantec sert 161 € par mois en moyenne à ses
+  retraités de 2023 : la population, qui en faisait des contractuels de toute
+  une carrière, les rend au salariat privé. Les hommes au minimum contributif
+  passent de 9,4 à 10,1 % des liquidants de 2023 (10,7 à la Cnav, 12,2 aux
+  régimes alignés).
+reste: >-
+  Ceux de la note (`docs/feuille_de_route/138/2026-10-16-etape-14-contractuels-au-salariat.md`) :
+  les salariés agricoles, au minimum trois fois plus que ceux de la Cnav, et
+  la dispersion des revenus des indépendants, qu'aucune source du dépôt ne
+  publie.

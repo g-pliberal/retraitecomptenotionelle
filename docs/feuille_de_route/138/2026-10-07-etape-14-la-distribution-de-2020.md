@@ -1,15 +1,14 @@
 # Étape 14, première partie : les pensions de 2020, simulées contre publiées
 
-**Reprise, au 16 octobre 2026.** Fait : la validation publique, chaque grille
-de la page Coût confrontée en 2020 à la distribution des pensions de l'EIR
-(`grille_large.py --distribution`, 7 octobre) ; la population de l'action 136 ;
-le 16 octobre, ses départs avec décote (quinzième version), les retraités de
-l'étranger dans la mesure du minimum contributif, puis l'emploi fragmenté
-(seizième version) : les hommes ne basculent plus au minimum par blocs de
-génération, mais restent à 8 % des liquidants de 2023 pour 12,2. Reste, dans
-cet ordre : ce niveau des hommes ; les autres départs choisis ; le recours à
-l'ASPA ; les limites. Au propriétaire : les cas types statutaires (152), la
-bascule (157), le CASD. Détail : `2026-10-16-etape-14-emploi-fragmente.md`.
+**Reprise, au 16 octobre 2026.** Fait : chaque grille de la page Coût
+confrontée en 2020 à la distribution des pensions de l'EIR (7 octobre) ; la
+population de l'action 136 ; le 16 octobre, ses départs avec décote, les
+retraités de l'étranger, l'emploi fragmenté, puis les retraités de l'Ircantec
+rendus au salariat privé (dix-septième version) : les hommes à 10,1 % des
+liquidants de 2023 au minimum, pour 10,7 à la Cnav et 12,2 aux régimes
+alignés. Reste : les salariés agricoles et les indépendants de la population ;
+les autres départs choisis ; l'ASPA ; les limites. Au propriétaire : 152, 157,
+le CASD. Détail : `2026-10-16-etape-14-contractuels-au-salariat.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape
