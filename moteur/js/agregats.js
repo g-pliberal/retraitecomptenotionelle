@@ -535,15 +535,16 @@ export class CoutFige {
   }
 }
 
-// -- le coût sous les hypothèses d'espérance de vie ---------------------------
+// -- le coût sous les variantes de population de l'INSEE ---------------------
 
 /**
- * Le coût sous les trois hypothèses d'espérance de vie de l'INSEE, que la page
- * Coût met côte à côte (action 138, étape 7) : la dépense de chaque système à
+ * Le coût sous les trois hypothèses d'une composante de la population de
+ * l'INSEE (espérance de vie, fécondité, migrations), que la page Coût met
+ * côte à côte (action 138, étape 7) : la dépense de chaque système à
  * quelques années, son solde à l'horizon, son solde moyen sur les années
- * projetées. `figer_esperance_vie` (`donnees/agregats.py`) l'écrit.
+ * projetées. `figer_variantes` (`donnees/agregats.py`) l'écrit.
  */
-export class EsperanceVieFigee {
+export class VariantesFigees {
   constructor(brut) {
     this._brut = brut;
     this.hypotheses = [...brut.hypotheses];
@@ -575,12 +576,14 @@ export class EsperanceVieFigee {
 
 /** Ce que les trois pages qui agrègent lisent, tel que la table le porte. */
 export class AgregatsFiges {
-  constructor(casTypes, avantages, classement, cout, esperanceVie) {
+  constructor(casTypes, avantages, classement, cout, esperanceVie, fecondite, migrations) {
     this.casTypes = casTypes;
     this.avantages = avantages;
     this.classement = classement;
     this.cout = cout;
     this.esperanceVie = esperanceVie;
+    this.fecondite = fecondite;
+    this.migrations = migrations;
   }
 }
 
@@ -591,6 +594,8 @@ export function chargerAgregats(donnees) {
     new AvantagesFiges(donnees.avantages),
     new ClassementFige(donnees.classement),
     new CoutFige(donnees.cout),
-    new EsperanceVieFigee(donnees.esperance_vie),
+    new VariantesFigees(donnees.esperance_vie),
+    new VariantesFigees(donnees.fecondite),
+    new VariantesFigees(donnees.migrations),
   );
 }

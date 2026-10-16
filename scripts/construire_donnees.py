@@ -130,7 +130,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 22
+VERSION = 23
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -2257,7 +2257,7 @@ def _agregats(contexte=None) -> dict:
     )
     from retraite_notionnelle.donnees.tva import AssietteTva
     from retraite_notionnelle.donnees.agregats import (
-        figer_avantages, figer_cas_types, figer_cout, figer_departs, figer_esperance_vie,
+        figer_avantages, figer_cas_types, figer_cout, figer_departs, figer_variantes,
     )
     from retraite_notionnelle import memoire
     from retraite_notionnelle.web.site import module
@@ -2308,12 +2308,21 @@ def _agregats(contexte=None) -> dict:
         # LE COÛT SOUS LES TROIS HYPOTHÈSES D'ESPÉRANCE DE VIE DE L'INSEE
         # (action 138, étape 7) : la page Coût, calculée sous la centrale,
         # dit dans un tableau ce que les deux variantes en déplacent.
-        "esperance_vie": figer_esperance_vie(
+        "esperance_vie": figer_variantes(
             {hypothese: (cout if hypothese == contexte.base.hypothese_esperance_vie
                          else memoire.cout(contexte.base.avec(
                              hypothese_esperance_vie=hypothese)))
              for hypothese in ("basse", "centrale", "haute")},
             list(pages.SCENARIOS_MONTRES), pages.ANNEES_ESPERANCE_VIE),
+        # ET SOUS LES VARIANTES DE FÉCONDITÉ ET DE MIGRATIONS, que le diviseur
+        # ne lit pas : la même table, de ``memoire.cout(demographie=...)``.
+        **{composante: figer_variantes(
+            {hypothese: (cout if hypothese == "centrale"
+                         else memoire.cout(contexte.base,
+                                           demographie=f"{composante}_{hypothese}"))
+             for hypothese in ("basse", "centrale", "haute")},
+            list(pages.SCENARIOS_MONTRES), pages.ANNEES_ESPERANCE_VIE)
+           for composante in ("fecondite", "migrations")},
     }
 
 

@@ -1,0 +1,13 @@
+date: "2026-10-16"
+session: "action 138, étape 7 : les variantes de fécondité et de migrations de l'INSEE, affichées sur la page Coût"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  La note du 16 octobre 2026 sur la fécondité et les migrations, le coût du
+  modèle sous chaque variante (memoire.cout(demographie=...)).
+trouve: >-
+  Aucun texte de droit. La page Coût montre la dépense et le solde des quatre
+  systèmes sous les variantes de fécondité et de migrations, deux tables
+  figées par le Python, comme l'espérance de vie.
+reste: >-
+  L'indexation sous la variante ; la mortalité différentielle ; les départs
+  qui suivent l'espérance de vie.

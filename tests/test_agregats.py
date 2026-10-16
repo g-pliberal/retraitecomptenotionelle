@@ -372,23 +372,37 @@ def test_les_deux_lecteurs_lisent_le_meme_cout(montres, bilan):
             assert dict(lue.pilier.niveaux(1000.0)) == figee.pilier.niveaux(1000.0)
 
 
-# -- le coût sous les hypothèses d'espérance de vie ------------------------------
+# -- le coût sous les variantes de population de l'INSEE ------------------------
 
 
-def test_le_cout_sous_chaque_esperance_de_vie_est_celui_du_modele(contexte, montres):
-    """La table porte, sous chacune des trois hypothèses de l'INSEE (action
-    138, étape 7), ce que le modèle calcule sous elle : la dépense du bilan aux
-    années que la page cite, le solde à l'horizon, le solde moyen projeté. Le
-    système actuel suit la longévité ; la proposition n'en bouge presque pas
-    à l'horizon."""
+def _sous_la_variante(contexte, composante, hypothese):
+    """Le coût que le modèle calcule sous une hypothèse d'une composante."""
     from retraite_notionnelle import memoire
 
-    figee = AGREGATS.esperance_vie
+    if composante == "esperance_vie":
+        return memoire.cout(contexte.base.avec(hypothese_esperance_vie=hypothese))
+    if hypothese == "centrale":
+        return memoire.cout(contexte.base)
+    return memoire.cout(contexte.base, demographie=f"{composante}_{hypothese}")
+
+
+COMPOSANTES = ("esperance_vie", "fecondite", "migrations")
+
+
+@pytest.mark.parametrize("composante", COMPOSANTES)
+def test_le_cout_sous_chaque_variante_est_celui_du_modele(contexte, montres, composante):
+    """La table porte, sous chacune des trois hypothèses de l'INSEE d'une
+    composante (action 138, étape 7), ce que le modèle calcule sous elle : la
+    dépense du bilan aux années que la page cite, le solde à l'horizon, le
+    solde moyen projeté. Le système actuel paie plus quand la longévité monte,
+    quand la fécondité ou les migrations baissent ; la proposition ne bouge
+    presque pas de la longévité à l'horizon, son diviseur l'absorbant, mais
+    suit la fécondité et les migrations, qu'il ne voit pas."""
+    figee = getattr(AGREGATS, composante)
     assert figee.hypotheses == ("basse", "centrale", "haute")
     assert figee.annees == tuple(module("pages").ANNEES_ESPERANCE_VIE)
     for hypothese in figee.hypotheses:
-        cout = memoire.cout(contexte.base.avec(hypothese_esperance_vie=hypothese))
-        solde = cout.solde
+        solde = _sous_la_variante(contexte, composante, hypothese).solde
         assert (figee.premiere_annee, figee.derniere_annee) == (
             solde.premiere_annee_projetee, solde.derniere_annee)
         for scenario in montres:
@@ -401,9 +415,14 @@ def test_le_cout_sous_chaque_esperance_de_vie_est_celui_du_modele(contexte, mont
                 scenario, solde.premiere_annee_projetee, solde.derniere_annee)
     horizon = figee.derniere_annee
     actuel = [figee.part_pib(h, "actuel", horizon) for h in figee.hypotheses]
-    assert actuel == sorted(actuel)
     liberal = [figee.part_pib(h, "notionnel_liberal", horizon) for h in figee.hypotheses]
-    assert max(liberal) - min(liberal) < 0.001
+    if composante == "esperance_vie":
+        assert actuel == sorted(actuel)
+        assert max(liberal) - min(liberal) < 0.001
+    else:
+        assert actuel == sorted(actuel, reverse=True)
+        assert liberal == sorted(liberal, reverse=True)
+        assert max(liberal) - min(liberal) > 0.005
     with pytest.raises(KeyError, match="absent de la table figée"):
         figee.solde("tres_haute", "actuel")
     with pytest.raises(KeyError, match="absent de la table figée"):
@@ -411,9 +430,11 @@ def test_le_cout_sous_chaque_esperance_de_vie_est_celui_du_modele(contexte, mont
 
 
 @sans_node
-def test_les_deux_lecteurs_lisent_les_memes_esperances_de_vie(montres):
-    js = site().contexte.agregats().esperanceVie
-    figee = AGREGATS.esperance_vie
+@pytest.mark.parametrize("composante", COMPOSANTES)
+def test_les_deux_lecteurs_lisent_les_memes_variantes(montres, composante):
+    js = getattr(site().contexte.agregats(),
+                 {"esperance_vie": "esperanceVie"}.get(composante, composante))
+    figee = getattr(AGREGATS, composante)
     assert tuple(js.hypotheses) == figee.hypotheses
     assert tuple(js.annees) == figee.annees
     assert (js.premiereAnnee, js.derniereAnnee) == (figee.premiere_annee,

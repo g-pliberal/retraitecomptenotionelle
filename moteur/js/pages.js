@@ -8238,6 +8238,7 @@ plus large que les cartes).
     coutDetailTransferts(contexte),
     coutDetailScenarios(contexte),
     coutDetailEsperanceVie(contexte),
+    coutDetailDemographie(contexte),
     coutDetailCascade(contexte, regards),
     coutDetailEquilibre(contexte),
     coutDetailPostes(contexte),
@@ -9685,22 +9686,18 @@ qui réduirait l'écart, et donc la fourchette.</p>`;
  */
 export const ANNEES_ESPERANCE_VIE = [2050, 2070];
 
-/** Le nom de chaque hypothèse d'espérance de vie dans le tableau de la page. */
-const NOMS_ESPERANCE_VIE = { basse: "basse", centrale: "centrale", haute: "haute" };
+/** Le nom de chaque hypothèse d'une variante dans les tableaux de la page. */
+const NOMS_HYPOTHESES = { basse: "basse", centrale: "centrale", haute: "haute" };
 
 /**
- * Ce que l'hypothèse d'espérance de vie de l'INSEE déplace du coût.
- *
- * LA PAGE EST CALCULÉE SOUS L'HYPOTHÈSE CENTRALE, et elle le reste : elle est
- * figée une fois sous la référence (action 150). Les deux variantes de la
- * table (`esperanceVie`, action 138, étape 7) disent ce qu'une longévité plus
- * courte ou plus longue de trois ans en 2070 en ferait, système par système.
- * Le système actuel la paie tout entière ; la proposition, dont le diviseur
- * la reporte sur la pension de chacun, à peine : c'est ce que le tableau
- * montre, et la phrase qui le suit le chiffre.
+ * Ce qu'une variante de population de l'INSEE déplace du coût, en un tableau :
+ * la dépense de chaque système aux années de la table, son solde à l'horizon,
+ * son solde moyen, sous les trois hypothèses dans l'ordre. `table` est l'une
+ * des trois tables figées (`esperanceVie`, `fecondite`, `migrations`) ;
+ * `quoi`, ce que la légende dit de la variante. Rend aussi ce que chaque
+ * hypothèse déplace de la dépense d'un système à l'horizon, en points.
  */
-function coutDetailEsperanceVie(contexte) {
-  const table = contexte.agregats().esperanceVie;
+function tableauVariantes(table, quoi) {
   const hypotheses = table.hypotheses;
   const triple = (lire) => hypotheses
     .map((hypothese) => g.nombre(lire(hypothese) * 100, 2)).join(" / ");
@@ -9715,36 +9712,106 @@ function coutDetailEsperanceVie(contexte) {
   const ecart = (scenario, hypothese) => (
     table.partPib(hypothese, scenario, horizon)
     - table.partPib("centrale", scenario, horizon)) * 100;
-  const points = (valeur) => `${valeur >= 0 ? "+" : ""}${g.nombre(valeur, 2)} point`
-    + (Math.abs(valeur) >= 2 ? "s" : "");
+  const points = (scenario, hypothese) => {
+    const valeur = ecart(scenario, hypothese);
+    return `${valeur >= 0 ? "+" : ""}${g.nombre(valeur, 2)} point`
+      + (Math.abs(valeur) >= 2 ? "s" : "");
+  };
+  const html = g.tableau(
+    ["Système", ...table.annees.map((annee) => `Dépense ${annee}`),
+      `Solde ${horizon}`, `Solde moyen ${table.premiereAnnee}-${horizon}`],
+    lignes,
+    ["", "nombre", "nombre", "nombre", "nombre"],
+    `Dépense et solde de chaque système sous les hypothèses ${quoi} basse, `
+      + "centrale et haute de l'INSEE, en points de PIB",
+    true,
+  );
+  const ordre = hypotheses.map((hypothese) => NOMS_HYPOTHESES[hypothese]).join(" / ");
+  return { html, horizon, points, ordre };
+}
+
+/**
+ * Ce que l'hypothèse d'espérance de vie de l'INSEE déplace du coût.
+ *
+ * LA PAGE EST CALCULÉE SOUS L'HYPOTHÈSE CENTRALE, et elle le reste : elle est
+ * figée une fois sous la référence (action 150). Les deux variantes de la
+ * table (`esperanceVie`, action 138, étape 7) disent ce qu'une longévité plus
+ * courte ou plus longue de trois ans en 2070 en ferait, système par système.
+ * Le système actuel la paie tout entière ; la proposition, dont le diviseur
+ * la reporte sur la pension de chacun, à peine : c'est ce que le tableau
+ * montre, et la phrase qui le suit le chiffre.
+ */
+function coutDetailEsperanceVie(contexte) {
+  const { html, horizon, points, ordre } = tableauVariantes(
+    contexte.agregats().esperanceVie, "d'espérance de vie");
   return g.depliant("Si l'on vit plus ou moins longtemps", `
 <p>Cette page est calculée sous l'hypothèse centrale d'espérance de vie des
 projections de population 2026 de l'INSEE. Ses deux variantes ôtent ou ajoutent
 trois ans d'espérance de vie à la naissance en 2070 : le modèle y recompte les
 retraités dans la pyramide de la variante, et les comptes notionnels y
 divisent leur capital par une espérance de vie plus courte ou plus longue.</p>
-${g.tableau(
-    ["Système", ...table.annees.map((annee) => `Dépense ${annee}`),
-      `Solde ${horizon}`, `Solde moyen ${table.premiereAnnee}-${horizon}`],
-    lignes,
-    ["", "nombre", "nombre", "nombre", "nombre"],
-    "Dépense et solde de chaque système sous les hypothèses d'espérance de vie "
-      + "basse, centrale et haute de l'INSEE, en points de PIB",
-    true,
-  )}
+${html}
 <p>En ${horizon}, la dépense du système actuel varie de
-${points(ecart("actuel", "basse"))} sous la basse et de
-${points(ecart("actuel", "haute"))} sous la haute ; celle de la proposition
-libérale, de ${points(ecart("notionnel_liberal", "basse"))} et de
-${points(ecart("notionnel_liberal", "haute"))}. Le diviseur reporte la
+${points("actuel", "basse")} sous la basse et de
+${points("actuel", "haute")} sous la haute ; celle de la proposition
+libérale, de ${points("notionnel_liberal", "basse")} et de
+${points("notionnel_liberal", "haute")}. Le diviseur reporte la
 longévité sur la pension de chacun, à mesure que les comptes remplacent les
 droits d'avant : il ne l'absorbe tout entière qu'à l'horizon.</p>
 <p class="discret">En points de PIB, sous chaque hypothèse dans l'ordre
-${hypotheses.map((hypothese) => NOMS_ESPERANCE_VIE[hypothese]).join(" / ")}.
-La dépense du système actuel est celle du COR, que le modèle fait suivre la
-pyramide de chaque variante ; ses ressources ne bougent pas. Le
+${ordre}. La dépense du système actuel est celle du COR, que le modèle fait
+suivre la pyramide de chaque variante, et le PIB ses 20-64 ans ; ses
+ressources ne bougent pas. Le
 <a href="${g.lien("/simuler")}">simulateur</a> offre le même réglage, sur une
 carrière.</p>`, "cout-esperance-vie");
+}
+
+/**
+ * Ce que les variantes de fécondité et de migrations de l'INSEE déplacent du
+ * coût (action 138, étape 7), comme l'espérance de vie : une table figée par
+ * composante (`fecondite`, `migrations`), un tableau chacune, dans une seule
+ * section. Le diviseur ne les lit pas : la proposition n'en est pas protégée
+ * comme de la longévité, ses pensions se rapportant à un PIB plus petit ou
+ * plus grand. Le simulateur n'offre pas ce réglage, qui ne change pas une
+ * carrière.
+ */
+function coutDetailDemographie(contexte) {
+  const agregats = contexte.agregats();
+  const fecondite = tableauVariantes(agregats.fecondite, "de fécondité");
+  const migrations = tableauVariantes(agregats.migrations, "de migrations");
+  const horizon = fecondite.horizon;
+  const ecarts = ({ points }, scenario) => `${points(scenario, "basse")} et
+${points(scenario, "haute")}`;
+  return g.depliant("Naissances et migrations", `
+<p>Les deux variantes de fécondité des projections de population 2026 de
+l'INSEE portent l'indicateur conjoncturel à 1,20 ou 1,70 enfant par femme, au
+lieu de 1,45. Les enfants qui naissent en plus ou en moins n'arrivent parmi les
+20-64 ans qu'à partir de 2046 : les retraités sont ceux du scénario central, et
+seul le PIB, que le modèle fait suivre les 20-64 ans de la variante, en
+bouge.</p>
+${fecondite.html}
+<p>Les deux variantes de migrations portent le solde migratoire à 70 000 ou
+230 000 personnes par an, au lieu de 150 000. La pyramide en change dès 2024,
+aux âges actifs comme aux âges de la retraite : le modèle y recompte les
+retraités, dont les arrivées tardives, aux carrières plus courtes, et fait
+suivre au PIB les 20-64 ans de la variante.</p>
+${migrations.html}
+<p>En ${horizon}, sous la basse et sous la haute, la dépense du système actuel
+varie de ${ecarts(fecondite, "actuel")} sous la fécondité, de
+${ecarts(migrations, "actuel")} sous les migrations ; celle de la proposition
+libérale, de ${ecarts(fecondite, "notionnel_liberal")}, et de
+${ecarts(migrations, "notionnel_liberal")}. Le diviseur ne voit pas qui
+cotise : la proposition n'en est pas protégée comme de la longévité, ses
+pensions se rapportant à un PIB plus petit ou plus grand. Ses comptes
+s'indexent ici sur la masse salariale du scénario central, quand une
+population active plus nombreuse la ferait croître plus vite et leur rendrait
+une part de ce que le PIB gagne.</p>
+<p class="discret">En points de PIB, sous chaque hypothèse dans l'ordre
+${fecondite.ordre}. La dépense du système actuel est celle du COR, que le
+modèle fait suivre la pyramide de chaque variante, et le PIB ses 20-64 ans ;
+les ressources, en part de PIB, ne bougent pas. Le simulateur n'offre pas ce
+réglage : la variante ne change ni une carrière ni le diviseur.</p>`,
+  "cout-demographie");
 }
 
 function coutDetailScenarios(contexte) {

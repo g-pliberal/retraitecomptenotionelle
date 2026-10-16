@@ -928,20 +928,21 @@ class CoutFige:
                                    "dette au taux décalé de"))
 
 
-# -- le coût sous les hypothèses d'espérance de vie ----------------------------
+# -- le coût sous les variantes de population de l'INSEE ----------------------
 #
-# LA PAGE COÛT MONTRE LA RÉFÉRENCE, sous l'hypothèse centrale de l'INSEE. Ce
-# qu'une longévité plus courte ou plus longue de trois ans en 2070 en ferait
-# (action 138, étape 7) tient en un tableau : la dépense de chaque système à
-# quelques années, son solde à l'horizon, et son solde moyen sur les années
-# projetées, sous chacune des trois hypothèses. Le coût entier n'est figé que
-# sous la centrale.
+# LA PAGE COÛT MONTRE LA RÉFÉRENCE, sous le scénario central de l'INSEE. Ce
+# qu'une longévité, une fécondité ou des migrations plus basses ou plus hautes
+# en feraient (action 138, étape 7) tient, pour chaque composante, en un
+# tableau : la dépense de chaque système à quelques années, son solde à
+# l'horizon, et son solde moyen sur les années projetées, sous chacune des
+# trois hypothèses. Le coût entier n'est figé que sous le central.
 
 
-def figer_esperance_vie(couts: dict, scenarios, annees) -> dict:
-    """Le coût sous chaque hypothèse d'espérance de vie (``couts``, par
-    hypothèse, ce que ``cout.calculer_cout`` rend), pour les systèmes
-    ``scenarios`` et les années ``annees`` de la dépense.
+def figer_variantes(couts: dict, scenarios, annees) -> dict:
+    """Le coût sous chaque hypothèse d'une composante de la population
+    (``couts``, par hypothèse, ``basse``, ``centrale`` et ``haute``, ce que
+    ``cout.calculer_cout`` rend), pour les systèmes ``scenarios`` et les
+    années ``annees`` de la dépense.
 
     La dépense est celle du bilan (``SoldeAnnuel.depense``), dont le solde
     est tiré : les deux se lisent ensemble. Le solde moyen court sur les
@@ -974,9 +975,10 @@ def figer_esperance_vie(couts: dict, scenarios, annees) -> dict:
     }
 
 
-class EsperanceVieFigee:
-    """Le coût sous les trois hypothèses d'espérance de vie, que la page Coût
-    met côte à côte."""
+class VariantesFigees:
+    """Le coût sous les trois hypothèses d'une composante de la population
+    (espérance de vie, fécondité, migrations), que la page Coût met côte à
+    côte."""
 
     def __init__(self, brut: dict):
         self._brut = brut
@@ -1012,7 +1014,9 @@ class AgregatsFiges:
     avantages: AvantagesFiges
     classement: ClassementFige
     cout: CoutFige
-    esperance_vie: EsperanceVieFigee
+    esperance_vie: VariantesFigees
+    fecondite: VariantesFigees
+    migrations: VariantesFigees
 
 
 def depuis_dictionnaire(donnees: dict) -> AgregatsFiges:
@@ -1022,7 +1026,9 @@ def depuis_dictionnaire(donnees: dict) -> AgregatsFiges:
         avantages=_avantages(donnees["avantages"]),
         classement=_classement(donnees["classement"]),
         cout=CoutFige(donnees["cout"]),
-        esperance_vie=EsperanceVieFigee(donnees["esperance_vie"]),
+        esperance_vie=VariantesFigees(donnees["esperance_vie"]),
+        fecondite=VariantesFigees(donnees["fecondite"]),
+        migrations=VariantesFigees(donnees["migrations"]),
     )
 
 
