@@ -1,14 +1,15 @@
 # Étape 3, première partie : la part des reportés en emploi, lue dans les évaluations de 2010
 
 **Reprise, au 16 octobre 2026.** Fait : la part des reportés en emploi
-(7 octobre) ; la décomposition de l'Ageing Report (13) ; les leviers du COR
-et la CSG effective (14) ; le 16, la pension des cas types contrôlée sur
-Ancetre (`controle_ancetre.py`), puis l'âge des retraités, l'âge de départ et
-les conditions de départ sur les tables H, B et C de l'EACR
-(`controle_eacr.py`) : le stock aux bons âges, les départs trop groupés à
-62 ans, sans surcote. Reste, une session par point : les retraités par régime,
-avec l'action 147 ; la couverture de 2022-2030 ; les leviers et le taux
-effectif sur la page Coût. Détail : note « tables de l'EACR », « Ce qui reste ».
+(7 octobre) ; l'Ageing Report (13) ; les leviers du COR et la CSG effective
+(14) ; le 16, les contrôles d'Ancetre et de l'EACR, puis la CNRACL pesée sur
+ses départs, un actif pour quatre sédentaires (`GRILLE_DU_COUT`,
+`parts_caisses`) : la dépense de la CNRACL à l'horizon passe de +13 à +7,5 %
+du COR. Reste, une session par point : les actifs de l'État et l'Ircantec,
+par la même mécanique, avec l'action 147 ; la couverture de 2022-2030 ; les
+leviers et le taux effectif sur la page Coût ; au propriétaire, la table des
+poids de la page en deux lignes pour la CNRACL (`pages.js`). Détail : note
+« la CNRACL par ses départs », « Ce qui reste ».
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.3 ». L'étape est
 vaste — sept chantiers, vingt-neuf points du registre — ; cette session en

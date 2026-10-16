@@ -1,0 +1,16 @@
+date: "2026-10-16"
+session: "action 138, étape 3 : la CNRACL pesée sur ses départs actifs et sédentaires, et les parts déclarées des caisses partagées"
+consulte: >-
+  Aucun texte de droit : le changement porte sur la pondération de la page
+  Coût, non sur une règle du scénario 1. Le rapport sur les pensions de
+  retraite de la fonction publique annexé au PLF 2027 (jaune pensions),
+  tableaux A-1, B-3bis et B-5, déjà certifiés dans
+  macro/caracteristiques_fonction_publique.csv.
+trouve: >-
+  Un départ pour ancienneté de la CNRACL sur cinq est en catégorie active en
+  2025 (10 597 sur 53 128) ; les sédentaires partent à 64,0 ans avec 89,9
+  trimestres de services, les carrières longues à 62,2 ans avec 116,3. La
+  grille ne pesait la caisse que sur l'actif.
+reste: >-
+  Rien au droit. La part des actifs dans le stock, que le jaune ne publie pas ;
+  les actifs de l'État (tableau B-4), que le seul sédentaire porte encore.
