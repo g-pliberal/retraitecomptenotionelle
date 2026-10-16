@@ -1,0 +1,224 @@
+schema_version: 1
+id: points_invalidite_independants
+intitule: >-
+  Pour chaque mois de pension d'invalidité totale et définitive ou d'incapacité
+  partielle au métier, la complémentaire des artisans et des commerçants porte au
+  compte des points sans cotisation : au RCI, depuis 2013, le quotient, au centième,
+  des points cotisés avant l'arrêt du compte de la pension par les mois entiers
+  d'activité qui les ont cotisés, et deux points par mois à qui n'en a cotisé aucun
+  depuis l'arrêté du 19 juin 2024 ; avant 2013, seize points par trimestre à
+  l'artisan qui n'avait rien cotisé, le quotient de ses points par ses trimestres
+  cotisés sinon, et deux points par mois au commerçant.
+domaine: points
+regimes: [rci, rco_artisans, nric]
+etape: acquerir_les_droits
+face: droit
+etat: transcrite
+lit:
+- les années d'invalidité de l'artisan ou du commerçant (lignes `invalidite` de son
+  statut) et leurs mois retenus avant le départ
+- les points cotisés au régime et à ceux qu'il reprend avant la première année de
+  l'invalidité, à leur coefficient de fusion (regimes/conversions_points.csv)
+- les mois des années cotisées que ces régimes couvrent, avant la même année
+- la règle de chaque régime et de chaque année (regimes/rci.yaml, rco_artisans.yaml,
+  nric.yaml, `points_invalidite`)
+ecrit:
+- les points d'invalidité crédités au compte du régime, l'année de l'invalidité, au
+  scénario 1 ; le compte notionnel n'en porte rien, aucune cotisation ne les ayant
+  achetés
+dates_qui_decident:
+- periode.debut
+versions:
+- id: avant_la_rco_des_artisans
+  statut: lue
+  textes:
+  - reference: >-
+      arrêté du 9 février 2012 portant approbation du règlement du régime
+      complémentaire obligatoire d'assurance vieillesse des professions artisanales,
+      industrielles et commerciales, annexe 1, 3, b (JORFARTI000025395326) : les
+      points de la carrière artisanale sont attribués « pour la période comprise entre
+      le 1er janvier 1979 et le 31 décembre 2012 »
+    lu_le: 2026-10-16
+  bornes:
+    periode.debut: [null, 1979-01-01]
+  contenu:
+    droit: aucun
+    raison: >-
+      la complémentaire obligatoire des artisans naît le 1er janvier 1979, celle des
+      commerçants le 1er janvier 2004 (fiches rco_artisans et nric)
+  exemples: aucun trouvé
+- id: rco_des_artisans_et_nric
+  statut: lue
+  textes:
+  - reference: >-
+      arrêté du 9 février 2012, règlement du RCI, annexe 1, 3 (JORFARTI000025395326),
+      qui reprend l'article 14 du règlement des artisans de 1978 et l'article 3 de
+      celui des industriels et commerçants de 2004 : « a) Les points gratuits issus de
+      la carrière industrielle ou commerciale ont été attribués : ― aux assurés
+      bénéficiant avant le 1er janvier 2013 d'une pension d'invalidité partielle ou
+      totale et définitive […] et qui n'ont pas d'activité industrielle et
+      commerciale ; ― à raison de deux points gratuits par mois à compter du jour de
+      la date d'effet de la pension d'invalidité […], dans la limite du 31 décembre
+      2012 ; b) […] Chaque trimestre d'arrérages de cette pension effectivement versée
+      entraîne l'inscription au compte […] 1° Si l'assuré n'a pas versé de cotisation
+      […] seize points forfaitaires par trimestre civil de perception de la pension
+      d'invalidité, sans réfaction ; 2° Si l'assuré a versé des cotisations […] un
+      nombre de points de retraite proportionnels par trimestre civil […] égal au
+      quotient, établi à la seconde décimale, du nombre de points de retraite
+      résultant du paiement des cotisations réglées au titre du régime complémentaire
+      à compter du 1er janvier 1979 par le nombre de trimestres au titre desquels ces
+      cotisations ont été versées »
+    lu_le: 2026-10-16
+  bornes:
+    periode.debut: [1979-01-01, 2013-01-01]
+  contenu:
+    droit: >-
+      l'artisan : par trimestre de pension, seize points s'il n'a rien cotisé à la
+      RCO, le quotient au centième de ses points cotisés depuis 1979 par ses trimestres
+      cotisés sinon ; le commerçant : deux points par mois de pension, depuis 2004 ;
+      les points, figés au 31 décembre 2012, sont repris par le RCI au coefficient de
+      la fusion
+    parametres:
+      artisan: {par: trimestre, forfait: 16, proportionnels: true}
+      commercant: {par: mois, forfait: 2, proportionnels: false}
+  exemples: aucun trouvé
+- id: rci_quotient
+  statut: lue
+  textes:
+  - reference: >-
+      arrêté du 9 février 2012, règlement du RCI, article 9 (JORFARTI000025395326) :
+      « Les points de retraite complémentaire du régime complémentaire des
+      indépendants sont acquis : ― par le versement de cotisations […] ; ― par
+      l'attribution de points gratuits au titre du service d'une pension d'invalidité
+      ou d'une pension d'incapacité au métier […]. Le nombre de points, porté chaque
+      année au compte de l'assuré, est attribué pour chaque mensualité de pension
+      d'invalidité ou d'incapacité au métier, que cette prestation soit ou non versée.
+      Ce nombre de points est égal au quotient, établi à la seconde décimale, du nombre
+      de points de retraite résultant du paiement des cotisations instituées par
+      l'article D. 635-2 du code de la sécurité sociale et versée au plus tard à la
+      date d'arrêt du compte de la pension d'invalidité ou d'incapacité au métier par
+      le nombre de mois civils entiers d'activité artisanale, industrielle ou
+      commerciale arrêté à cette même date d'arrêt du compte »
+    lu_le: 2026-10-16
+  - reference: >-
+      arrêté du 1er avril 2026 portant approbation du règlement du régime d'assurance
+      invalidité-décès des travailleurs indépendants, article 47 (JORFARTI000053762045),
+      comme ceux du 28 décembre 2012, du 4 juillet 2014, du 21 décembre 2018 et du 1er
+      août 2023 : le régime d'invalidité finance « les points gratuits servis au titre
+      de la perception d'une pension d'invalidité partielle ou totale et définitive »,
+      au nombre « défini à l'article 9 du règlement du régime complémentaire »
+    lu_le: 2026-10-16
+  bornes:
+    periode.debut: [2013-01-01, 2024-07-01]
+  contenu:
+    droit: >-
+      par mois de pension, versée ou non, le quotient au centième des points cotisés
+      avant l'arrêt du compte de la pension par les mois civils entiers d'activité ;
+      rien à qui n'a cotisé aucun point
+    parametres: {par: mois, proportionnels: true}
+  exemples: aucun trouvé
+- id: rci_deux_points_sans_cotisation
+  statut: lue
+  textes:
+  - reference: >-
+      arrêté du 19 juin 2024 portant approbation des modifications apportées au
+      règlement du RCI, annexe, 9° (JORFARTI000049776028, Journal officiel du 25 juin
+      2024) : l'invalidité est celle « du régime visé à l'article L. 632-1 », la
+      pension « totale et définitive » ou « d'incapacité partielle », les points ceux
+      « des cotisations prévues par l'article L. 635-1 […] et versées », les mois ceux
+      « d'activité indépendante des personnes mentionnées à l'article L. 631-1 […]
+      ayant donné lieu à appel de ces cotisations », et « Si l'assuré n'a pu acquérir
+      aucun point cotisé de retraite complémentaire antérieurement au bénéfice d'une
+      pension d'invalidité, il lui est octroyé deux points gratuits par mois
+      d'invalidité. » ; son article 2 ne diffère que l'article 27, au 1er janvier 2025
+    lu_le: 2026-10-16
+  - reference: >-
+      arrêtés du 6 octobre 2025 et du 21 septembre 2026 portant approbation des
+      modifications apportées au règlement du RCI (JORFARTI000052377587,
+      JORFARTI000054888306) : ils insèrent les articles 9-1 à 9-9, le complément
+      différentiel et le versement des micro-entrepreneurs, sans toucher à l'article 9
+    lu_le: 2026-10-16
+  bornes:
+    periode.debut: [2024-07-01, null]
+  contenu:
+    droit: >-
+      le même quotient ; deux points par mois d'invalidité à qui n'a cotisé aucun
+      point avant elle
+    parametres: {par: mois, proportionnels: true, forfait: 2}
+  exemples: aucun trouvé
+approximations:
+- ecart: >-
+    le modèle a une ligne par année : le compte de la pension s'arrête au 1er janvier
+    de la première année d'une suite d'années d'invalidité, et les mois de l'année où
+    elle commence n'en sont pas datés ; le forfait de deux points couvre, en 2024, la
+    moitié des mois de l'année, ceux qui suivent juin
+  effet: non mesuré ; au plus six mois de points cotisés ou de forfait par invalidité
+- ecart: >-
+    une ligne `invalidite` de l'artisan ou du commerçant vaut pension d'invalidité
+    totale et définitive ou d'incapacité partielle au métier, servie par le régime
+    d'invalidité des indépendants : le modèle ne distingue ni l'une de l'autre, ni
+    l'invalidité qu'un autre régime servirait ; avant 2013, les trimestres
+    d'arrérages de l'artisan sont présumés versés, et le commerçant sans activité
+  effet: non mesuré
+- ecart: >-
+    les points du commerçant d'avant 2013 commencent avec le NRIC, en 2004 : le
+    régime facultatif qui le précédait n'est pas modélisé
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    Le règlement de la complémentaire des artisans annexé à l'arrêté du 15 décembre
+    1978, article 14, et celui des industriels et commerçants annexé à l'arrêté du 17
+    décembre 2004, article 3, dans leurs rédactions successives : l'annexe 1 du
+    règlement du RCI les résume ; l'index ne les porte pas.
+  - >-
+    Un exemple chiffré de la Sécurité sociale des indépendants ou de l'Urssaf : les
+    points gratuits d'un invalide, leur quotient et ses mois d'activité.
+  - >-
+    Ce que « points cotisés » compte au RCI : les points des régimes repris en 2013,
+    que l'article 7 du règlement appelle aussi « points cotisés », sont ici dans le
+    quotient, à leur coefficient de fusion, avec les mois qui les ont cotisés.
+  lectures:
+  - type: autre
+    reference: >-
+      Journal officiel, par l'index JORF du dépôt : arrêtés du 9 février 2012
+      (règlement du RCI, articles 7, 9, 56 et annexe 1), du 19 juin 2024, du 6 octobre
+      2025 et du 21 septembre 2026 (ses modifications), du 1er avril 2026 (règlement
+      d'invalidité-décès, article 47)
+    date: 2026-10-16
+  - type: legifrance
+    reference: >-
+      R. 635-10 CSS, LEGIARTI000026885804 (2013) : le régime d'invalidité-décès des
+      artisans compense au RCI « le nombre total de points de retraite attribués au
+      titre des périodes d'invalidité »
+    date: 2026-10-16
+code:
+  python: >-
+    donnees/regimes.py : PointsInvalidite, PeriodeRegime.points_invalidite ;
+    droit/acquerir.py : points_d_invalidite, arrondi_au_centieme
+  javascript: >-
+    moteur/js/droit/acquerir.js : pointsDInvalidite, arrondiAuCentieme
+  parametres: >-
+    regimes/rci.yaml, regimes/rco_artisans.yaml, regimes/nric.yaml,
+    `points_invalidite` ; regimes/conversions_points.csv
+  tests: tests/test_independants.py
+referents:
+  modele_ti: >-
+    accorde les 400 points de la CNAVPL à l'année d'incapacité du libéral, rien à
+    l'artisan ni au commerçant
+historique:
+- >-
+  2026-10-16 — action 138, étape 18 : le modèle ne servait aucun point
+  d'invalidité aux artisans et aux commerçants ; il sert ceux du règlement du RCI,
+  article 9, depuis 2013, et ceux de son annexe 1 avant.
+reformes:
+- rci_2013
+effet: >-
+  Les artisans et commerçants invalides avant leur départ. Un artisan né en 1962, à
+  son compte depuis 1984 au salaire moyen, invalide de 2016 à 2023 et parti à 62 ans :
+  sa pension RCI passe de 538 € à 1 712 € par an, quand celle d'un artisan resté actif
+  vaut 2 047 €. Un commerçant né en 1958, invalide de 2008 à 2019 : 554 et 14 € au
+  NRIC et au RCI sans les points, 686 et 985 € avec. Un artisan né en 1955, invalide
+  de 1995 à 2016 : 1 933 et 15 € à la RCO et au RCI sans eux, 4 107 et 498 € avec.

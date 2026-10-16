@@ -23,12 +23,21 @@ l'assiette sociale de l'indépendant est son revenu avant cotisations, abattu de
 26 %, l'abattement borné entre 1,76 % et 130 % du plafond (L. 136-3, III ;
 D. 136-5 ; fiche ``assiette_sociale_independants``). La fiche de paie reçoit
 l'assiette ; son profil sait la tirer du revenu brut, et l'inverse.
+
+Les points d'invalidité : pour chaque mois de pension d'invalidité ou
+d'incapacité au métier, le RCI porte au compte le quotient, au centième, des
+points cotisés avant l'invalidité par les mois d'activité qui les ont cotisés,
+deux points par mois à qui n'en a cotisé aucun depuis l'arrêté du 19 juin 2024
+(règlement du RCI, article 9) ; avant 2013, seize points par trimestre ou le
+quotient par trimestre à l'artisan, deux points par mois au commerçant
+(annexe 1, 3 ; fiche ``points_invalidite_independants``).
 """
 
 from __future__ import annotations
 
 import importlib.util
 import json
+import math
 import shutil
 import subprocess
 import sys
@@ -42,6 +51,7 @@ from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.donnees import regimes
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes
+from retraite_notionnelle.droit import acquerir, compter, coordonner
 from retraite_notionnelle.moteur.compte import ConstructeurCompte
 from retraite_notionnelle.remuneration import (
     ConstructeurFiche, bloc_droit_en_vigueur, charger_prelevements, smic_annuel)
@@ -493,6 +503,158 @@ def test_les_deux_moteurs_servent_les_memes_points_d_avant_1973():
                 for cas in CAS_AVANT_1973]
     texte = json.dumps(attendus, ensure_ascii=False)
     assert "cancava_avant_1973" in texte and "organic_avant_1973" in texte
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        fichier.write(texte)
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", str(RACINE / "tests" / "js" / "comparer.mjs"), chemin],
+            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    finally:
+        Path(chemin).unlink()
+    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
+
+
+# --- Les points d'invalidité -------------------------------------------------
+
+
+def test_les_complementaires_des_artisans_et_des_commercants_portent_la_regle():
+    """Chaque année, une seule période de la complémentaire porte la règle : la
+    première tranche du RCI, la période de la RCO des artisans, du NRIC."""
+    catalogue = CatalogueRegimes(RACINE_DONNEES)
+    attendues = {"rci": ("mois", True, 2.0, (2024, 7)),
+                 "rco_artisans": ("trimestre", True, 16.0, None),
+                 "nric": ("mois", False, 2.0, None)}
+    for code, (par, proportionnels, forfait, depuis) in attendues.items():
+        regime = catalogue[code]
+        for annee in range(regime.creation, 2027 if code == "rci" else 2013):
+            regles = [p.points_invalidite for p in regime.periodes_actives(annee)
+                      if p.points_invalidite is not None]
+            assert len(regles) == 1, (code, annee)
+            regle = regles[0]
+            assert (regle.par, regle.proportionnels, regle.forfait,
+                    regle.forfait_depuis) == (par, proportionnels, forfait, depuis)
+
+
+def _invalide(simulateur, affiliation: str, naissance: int, invalidite: range,
+              age_debut: float = 22.0, age_liquidation: float = 62.0):
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=naissance, sexe="H",
+        metiers=[Metier(affiliation=affiliation, age_debut=age_debut, niveau_salaire=1.0)],
+        age_liquidation=age_liquidation, macro=simulateur.macro,
+        interruptions={annee: "invalidite" for annee in invalidite})
+    actuel = simulateur.scenario_actuel
+    coordination = coordonner.coordonner(actuel, carriere)
+    droits = acquerir.acquerir(actuel, coordination, compter.compter(actuel, coordination))
+    return carriere, coordination, droits
+
+
+def _credites(droits, code: str, annees) -> dict[int, float]:
+    credites: dict[int, float] = {}
+    for regime, annee, points, _ in droits.points:
+        if regime == code and annee in annees:
+            credites[annee] = credites.get(annee, 0.0) + points
+    return credites
+
+
+def test_le_rci_porte_le_quotient_des_points_cotises_par_les_mois(simulateur):
+    """Artisan né en 1962, à son compte depuis 1984, invalide de 2016 à 2023 :
+    chaque année d'invalidité vaut douze fois le quotient, au centième, de ses
+    points cotisés au RCI et à la RCO des artisans (au coefficient 0,2778 de la
+    fusion) avant 2016 par ses mois d'activité, et rien d'autre ne les crédite."""
+    carriere, coordination, droits = _invalide(
+        simulateur, "artisan", 1962, range(2016, 2024))
+    cotises = sum(points * {"rci": 1.0, "rco_artisans": 0.2778}[regime]
+                  for regime, annee, points, _ in droits.points
+                  if regime in ("rci", "rco_artisans") and annee < 2016)
+    mois = sum(carriere.part_retenue_ligne(ligne) * 12 for ligne in carriere.lignes
+               if ligne.cotise and ligne.annee < 2016)
+    par_mois = math.floor(cotises / math.floor(mois) * 100 + 0.5) / 100
+    assert 5 < par_mois < 20
+    assert _credites(droits, "rci", range(2016, 2024)) == {
+        annee: pytest.approx(12 * par_mois) for annee in range(2016, 2024)}
+
+
+def test_le_commercant_d_avant_2013_a_deux_points_par_mois(simulateur):
+    """Commerçant invalide de 2008 à 2019 : deux points par mois au NRIC
+    jusqu'en 2012, le quotient au RCI ensuite — ses points du NRIC, repris un
+    pour un, par ses mois d'activité depuis 2004, la création du NRIC."""
+    carriere, _, droits = _invalide(simulateur, "commercant", 1958, range(2008, 2020))
+    assert _credites(droits, "nric", range(2008, 2013)) == {
+        annee: pytest.approx(24.0) for annee in range(2008, 2013)}
+    cotises = sum(points for regime, annee, points, _ in droits.points
+                  if regime == "nric" and annee < 2008)
+    mois = sum(carriere.part_retenue_ligne(ligne) * 12 for ligne in carriere.lignes
+               if ligne.cotise and 2004 <= ligne.annee < 2008)
+    par_mois = math.floor(cotises / math.floor(mois) * 100 + 0.5) / 100
+    assert _credites(droits, "rci", range(2013, 2020)) == {
+        annee: pytest.approx(12 * par_mois) for annee in range(2013, 2020)}
+
+
+def test_l_artisan_d_avant_2013_a_le_quotient_par_trimestre(simulateur):
+    """Artisan invalide de 1995 à 2012 : chaque trimestre vaut le quotient, au
+    centième, de ses points de la RCO des artisans depuis 1979 par ses
+    trimestres cotisés."""
+    carriere, _, droits = _invalide(simulateur, "artisan", 1955, range(1995, 2013))
+    cotises = sum(points for regime, annee, points, _ in droits.points
+                  if regime == "rco_artisans" and annee < 1995)
+    trimestres = math.floor(sum(
+        carriere.part_retenue_ligne(ligne) * 12 for ligne in carriere.lignes
+        if ligne.cotise and 1979 <= ligne.annee < 1995)) // 3
+    par_trimestre = math.floor(cotises / trimestres * 100 + 0.5) / 100
+    assert _credites(droits, "rco_artisans", range(1995, 2013)) == {
+        annee: pytest.approx(4 * par_trimestre) for annee in range(1995, 2013)}
+
+
+def test_sans_point_cotise_deux_points_par_mois_depuis_juillet_2024(simulateur):
+    """Un artisan invalide dès sa première année n'a cotisé aucun point : rien
+    jusqu'en juin 2024, deux points par mois depuis juillet — six mois de 2024,
+    convention des mois non datés d'une ligne, puis toute l'année."""
+    _, _, droits = _invalide(simulateur, "artisan", 1960, range(2022, 2027),
+                             age_debut=62.0, age_liquidation=67.0)
+    assert _credites(droits, "rci", range(2022, 2027)) == {
+        2024: pytest.approx(12.0), 2025: pytest.approx(24.0), 2026: pytest.approx(24.0)}
+
+
+def test_les_points_d_invalidite_relevent_la_pension_du_rci(simulateur):
+    """L'artisan invalide de 2016 à 2023 garde, au RCI, l'essentiel de la
+    pension qu'il aurait eue en travaillant ; sans les points, il en perdait les
+    trois quarts."""
+    def pension(interruptions):
+        carriere = Carriere.depuis_parcours(
+            annee_naissance=1962, sexe="H",
+            metiers=[Metier(affiliation="artisan", age_debut=22.0, niveau_salaire=1.0)],
+            age_liquidation=62.0, macro=simulateur.macro, interruptions=interruptions)
+        resultat = simulateur.scenario_actuel.calculer(carriere)
+        return {p.regime: p.montant for p in resultat.pensions_par_regime}["rci"]
+    invalide = pension({annee: "invalidite" for annee in range(2016, 2024)})
+    actif = pension(None)
+    assert 0.6 < invalide / actif < 1.0
+
+
+CAS_INVALIDITE = [
+    {"statut": "artisan", "naissance": "1962-03-15", "debut": "22",
+     "liquidation": "2024-04", "interruptions": "2016:2023:invalidite"},
+    {"statut": "commercant", "naissance": "1958-03-15", "debut": "22",
+     "liquidation": "2020-04", "interruptions": "2008:2019:invalidite"},
+    {"statut": "artisan", "naissance": "1955-06-15", "debut": "20",
+     "liquidation": "2017-07", "interruptions": "1995:2016:invalidite"},
+]
+
+
+def test_les_deux_moteurs_servent_les_memes_points_d_invalidite():
+    """Le résultat entier, des six scénarios, est le même en Python et en
+    JavaScript pour trois indépendants invalides."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    sys.path.insert(0, str(RACINE / "scripts"))
+    from construire_temoins import _fini
+    contexte = Contexte()
+    attendus = [{"requete": cas,
+                 "resultat": _fini(contexte.simuler(Saisie.depuis_requete(cas)).dictionnaire())}
+                for cas in CAS_INVALIDITE]
+    texte = json.dumps(attendus, ensure_ascii=False)
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:
         fichier.write(texte)

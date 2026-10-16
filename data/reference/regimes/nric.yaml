@@ -40,6 +40,8 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_3_pass
+    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
+    points_invalidite: {par: mois, proportionnels: false, forfait: 2}
     taux_cotisation_retraite: 0.0400
     notes: >-
       D. 635-10, état du 24 août 2004 : 3,5 % au premier semestre et 4,5 % au second, soit 4 % sur l'année — la convention du dépôt étant un taux annuel, c'est la moyenne des deux semestres qui est portée.
@@ -65,6 +67,8 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_3_pass
+    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
+    points_invalidite: {par: mois, proportionnels: false, forfait: 2}
     taux_cotisation_retraite: 0.0650
     notes: >-
       D. 635-10, état du 26 mars 2005 : 6,5 % dans la limite de trois fois le plafond, inchangé jusqu'à la fusion dans le RCI.

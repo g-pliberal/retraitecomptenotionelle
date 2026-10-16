@@ -42,6 +42,9 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee
+    # Les points de la pension d'invalidité, portés par la seule première
+    # tranche : fiche `points_invalidite_independants`.
+    points_invalidite: {par: mois, proportionnels: true, forfait: 2, forfait_depuis: "2024-07"}
     # Le plafond propre de la première tranche, que la caisse publie chaque
     # année : fiche `rci_seuil_premiere_tranche`, qui cite la source de chacun.
     borne_haute_par_annee:
@@ -116,6 +119,9 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee
+    # Les points de la pension d'invalidité, portés par la seule première
+    # tranche : fiche `points_invalidite_independants`.
+    points_invalidite: {par: mois, proportionnels: true, forfait: 2, forfait_depuis: "2024-07"}
     taux_cotisation_retraite: 0.0810
     notes: >-
       D. 635-7, état du 7 juillet 2024, qui porte la première tranche à 8,1 % et l'arrête au « plafond annuel prévu au premier alinéa de l'article L. 241-3 » : le plafond propre au régime disparaît du texte. Les circulaires Cnav 2024-36 et 2025-31 publient pourtant encore un « plafond de cotisation RCI » pour 2025 et 2026, 43 891 et 44 286 €, en citant la rédaction abrogée de l'article ; la fiche suit le texte (fiche `rci_seuil_premiere_tranche`). La DATE DE L'ÉTAT N'EST PAS CELLE DE L'EFFET : l'article précise que, conformément à l'article 6 du décret n° 2024-688 du 5 juillet 2024, ces dispositions s'appliquent aux cotisations « dues au titre des périodes courant à compter du 1er janvier 2025 ». C'est la seule clause de ce genre parmi les états lus.

@@ -170,6 +170,105 @@ export function pointsGratuits(moteur, periode, carriere, assurance, trimestres,
   return [regle.points_par_annee * retenus / 4, fiabilite];
 }
 
+/** « Établi à la seconde décimale » : au centième le plus proche. */
+export function arrondiAuCentieme(valeur) {
+  return Math.floor(valeur * 100 + 0.5 + 1e-9) / 100;
+}
+
+/**
+ * La part des mois de l'année que le forfait des points d'invalidité couvre :
+ * un, zéro, ou celle des mois qui suivent `forfait_depuis` l'année où il
+ * commence. Voir `PointsInvalidite.part_au_forfait` dans le Python.
+ */
+function partAuForfait(regle, annee) {
+  if (regle.forfait_depuis === null || regle.forfait_depuis === undefined) {
+    return 1.0;
+  }
+  const [debut, mois] = regle.forfait_depuis;
+  return Math.min(1.0, Math.max(0.0, (12 * (annee - debut) + 13 - mois) / 12));
+}
+
+/**
+ * Les points que les complémentaires des artisans et des commerçants
+ * attribuent pour chaque mois d'invalidité : [régime, année, points,
+ * fiabilité], dans l'ordre des lignes. Au RCI, le quotient au centième des
+ * points cotisés avant l'invalidité par les mois entiers d'activité qui les ont
+ * cotisés, deux points par mois à qui n'en a cotisé aucun depuis l'arrêté du
+ * 19 juin 2024 (règlement du RCI, article 9) ; avant 2013, seize points par
+ * trimestre ou le quotient par trimestre à l'artisan, deux points par mois au
+ * commerçant (annexe 1, 3). Voir `points_d_invalidite` dans le Python.
+ */
+export function pointsDInvalidite(moteur, coordination, credits) {
+  const carriere = coordination.carriere;
+  const lignes = carriere.lignes;
+  const invalides = new Set(lignes.filter((l) => l.type_periode === "invalidite")
+    .map((l) => l.annee));
+  const attribues = [];
+  lignes.forEach((ligne, i) => {
+    if (ligne.type_periode !== "invalidite") {
+      return;
+    }
+    const part = carriere.partRetenueLigne(ligne);
+    if (part <= 0) {
+      return;
+    }
+    let debut = ligne.annee;
+    while (invalides.has(debut - 1)) {
+      debut -= 1;
+    }
+    for (const code of coordination.regimes[i]) {
+      if (!moteur.catalogue.contient(code)) {
+        continue;
+      }
+      const regime = moteur.catalogue.obtenir(code);
+      const porteuse = regime.periodesActives(ligne.annee).find(
+        (periode) => periode.points_invalidite !== null
+          && periode.points_invalidite !== undefined);
+      if (porteuse === undefined) {
+        continue;
+      }
+      const regle = porteuse.points_invalidite;
+      const moisParUnite = regle.par === "trimestre" ? 3 : 1;
+      const unites = part * 12 / moisParUnite;
+      let parUnite = 0.0;
+      if (regle.proportionnels) {
+        // Le régime et ceux qu'il reprend, à leur coefficient.
+        const repris = new Map([[code, 1.0]]);
+        for (const ancien of regime.succede_a) {
+          const fusion = moteur.conversionsPoints.fusion(ancien, code);
+          if (fusion !== null) {
+            repris.set(ancien, fusion.coefficient);
+          }
+        }
+        let cotises = 0;
+        for (const [regimeCredite, annee, points] of credits) {
+          if (repris.has(regimeCredite) && annee < debut) {
+            cotises += points * repris.get(regimeCredite);
+          }
+        }
+        let mois = 0;
+        lignes.forEach((autre, j) => {
+          if (autre.cotise && autre.annee < debut
+              && coordination.regimes[j].some((c) => repris.has(c))) {
+            mois += carriere.partRetenueLigne(autre) * 12;
+          }
+        });
+        const entieres = Math.floor(Math.floor(mois + 1e-9) / moisParUnite);
+        if (cotises > 0 && entieres > 0) {
+          parUnite = arrondiAuCentieme(cotises / entieres);
+        }
+      }
+      if (parUnite <= 0 && regle.forfait !== null && regle.forfait !== undefined) {
+        parUnite = regle.forfait * partAuForfait(regle, ligne.annee);
+      }
+      if (parUnite > 0) {
+        attribues.push([code, ligne.annee, parUnite * unites, regime.fiabilite]);
+      }
+    }
+  });
+  return attribues;
+}
+
 /**
  * Ce que l'étape écrit. Son schéma :
  * `data/reference/etapes/acquerir_les_droits.yaml`. Les crédits de points et
@@ -623,6 +722,16 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
       }
     }
   });
+
+  // LES POINTS D'INVALIDITÉ des complémentaires des artisans et des
+  // commerçants : voir `pointsDInvalidite`.
+  for (const [code, annee, points, fiabilite] of pointsDInvalidite(
+    moteur, coordination, credits)) {
+    crediter(code, annee, points);
+    derniereAnneeParRegime.set(code, Math.max(derniereAnneeParRegime.get(code) ?? 0, annee));
+    fiabilitePoints.set(code, Math.min(
+      fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, fiabilite));
+  }
 
   const pointsAcquis = new Map();
   const majorationPoints = new Map();

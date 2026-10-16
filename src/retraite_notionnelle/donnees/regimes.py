@@ -155,6 +155,63 @@ def _points_gratuits(fiche: dict | None) -> PointsGratuits | None:
     )
 
 
+@dataclass(frozen=True)
+class PointsInvalidite:
+    """Points attribués sans cotisation pour chaque mois, ou trimestre,
+    d'invalidité : ceux des complémentaires des artisans et des commerçants,
+    servis au titre d'une pension d'invalidité totale et définitive ou
+    d'incapacité partielle au métier.
+
+    Au RCI, depuis 2013, « pour chaque mensualité de pension d'invalidité ou
+    d'incapacité au métier, que cette prestation soit ou non versée », le
+    quotient, « établi à la seconde décimale », des points cotisés avant
+    l'arrêt du compte de la pension par les mois civils entiers d'activité
+    qui les ont cotisés ; deux points par mois à qui n'en a cotisé aucun,
+    depuis l'arrêté du 19 juin 2024 (règlement du RCI, article 9). Avant 2013,
+    l'artisan avait seize points par trimestre, ou le quotient de ses points
+    par ses trimestres cotisés, et le commerçant deux points par mois
+    (annexe 1, 3). Fiche ``points_invalidite_independants``.
+    """
+
+    #: « mois » ou « trimestre » : l'unité de l'invalidité et de l'activité.
+    par: str
+    #: Le nombre par unité est-il le quotient des points cotisés ?
+    proportionnels: bool
+    #: Les points par unité quand rien n'a été cotisé, ou toujours sans
+    #: ``proportionnels`` ; ``None`` : rien.
+    forfait: float | None
+    #: Le premier mois d'invalidité, (année, mois), que le forfait couvre.
+    forfait_depuis: tuple[int, int] | None
+
+    @property
+    def mois_par_unite(self) -> int:
+        return 3 if self.par == "trimestre" else 1
+
+    def part_au_forfait(self, annee: int) -> float:
+        """La part des mois de l'année que le forfait couvre : un, zéro, ou
+        celle des mois qui suivent ``forfait_depuis`` l'année où il commence,
+        les mois d'une ligne n'étant pas datés."""
+        if self.forfait_depuis is None:
+            return 1.0
+        debut, mois = self.forfait_depuis
+        return min(1.0, max(0.0, (12 * (annee - debut) + 13 - mois) / 12))
+
+
+def _points_invalidite(fiche: dict | None) -> PointsInvalidite | None:
+    """La règle écrite dans une fiche, date « AAAA-MM » comprise."""
+    if not fiche:
+        return None
+    if fiche["par"] not in ("mois", "trimestre"):
+        raise ValueError(f"points_invalidite : unité inconnue « {fiche['par']} »")
+    depuis = fiche.get("forfait_depuis")
+    return PointsInvalidite(
+        par=str(fiche["par"]),
+        proportionnels=bool(fiche["proportionnels"]),
+        forfait=None if fiche.get("forfait") is None else float(fiche["forfait"]),
+        forfait_depuis=(None if depuis is None
+                        else tuple(int(x) for x in str(depuis).split("-"))),
+    )
+
 def _bornes_par_annee(fiche: dict | None) -> tuple[tuple[int, float], ...]:
     """``{2013: 37032, …}`` en paires (année, euros) triées ; ``()`` sans elles."""
     return tuple(sorted((int(annee), float(euros))
@@ -691,6 +748,10 @@ class PeriodeRegime:
     #: création du régime : voir :class:`PointsGratuits`. ``None`` partout
     #: ailleurs qu'à la RCO des non-salariés agricoles.
     points_gratuits: PointsGratuits | None = None
+    #: POINTS D'INVALIDITÉ attribués pour chaque mois ou trimestre d'une
+    #: invalidité : voir :class:`PointsInvalidite`. ``None`` partout ailleurs
+    #: qu'aux complémentaires des artisans et des commerçants.
+    points_invalidite: PointsInvalidite | None = None
     #: BORNES EN EUROS, ANNÉE PAR ANNÉE : celle que le régime fixe lui-même
     #: chaque année, et qui ne suit ni le plafond de la Sécurité sociale ni un
     #: montant figé. C'est le plafond propre de la première tranche du RCI de
@@ -2223,6 +2284,7 @@ class CatalogueRegimes:
                 ),
                 avantages_non_contributifs=tuple(p.get("avantages_non_contributifs") or ()),
                 points_gratuits=_points_gratuits(p.get("points_gratuits")),
+                points_invalidite=_points_invalidite(p.get("points_invalidite")),
                 date_effet=_dates_d_effet(
                     p.get("date_effet"), int(p["debut"]),
                     None if p.get("fin") is None else int(p["fin"]),

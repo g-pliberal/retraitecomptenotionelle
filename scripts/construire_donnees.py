@@ -813,6 +813,7 @@ def _regimes() -> list[dict]:
                     **_regles_des_sections(p),
                     **_plafond_des_primes(p),
                     **_points_gratuits(p),
+                    **_points_invalidite(p),
                     **_bornes_par_annee(p),
                     **_taux_des_non_salaries(p),
                     **_assurance_maladie(p),
@@ -978,6 +979,21 @@ def _plafond_des_primes(p) -> dict:
         return {}
     return {"plafond_primes_traitement": p.plafond_primes_traitement}
 
+
+def _points_invalidite(p) -> dict:
+    """Les points d'invalidité des complémentaires des artisans et des
+    commerçants, et seulement là. Même raison que pour les marins ; la date
+    se transmet en (année, mois)."""
+    regle = p.points_invalidite
+    if regle is None:
+        return {}
+    return {"points_invalidite": {
+        "par": regle.par,
+        "proportionnels": regle.proportionnels,
+        "forfait": regle.forfait,
+        "forfait_depuis": (None if regle.forfait_depuis is None
+                           else list(regle.forfait_depuis)),
+    }}
 
 def _points_gratuits(p) -> dict:
     """Les points gratuits de la RCO agricole, et seulement là.

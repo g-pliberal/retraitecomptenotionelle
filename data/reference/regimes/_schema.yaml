@@ -1079,6 +1079,23 @@ champs_periode:
       point gratuit.
     defaut: null
 
+  points_invalidite:
+    description: >-
+      Points attribués SANS COTISATION pour chaque mois, ou chaque trimestre,
+      d'une période d'invalidité que l'année de la période déclare : ceux des
+      complémentaires des artisans et des commerçants, servis au titre d'une
+      pension d'invalidité totale et définitive ou d'incapacité partielle au
+      métier (règlement du RCI, article 9 et annexe 1, 3). Une table : `par`,
+      `mois` ou `trimestre`, l'unité de l'invalidité et de l'activité ;
+      `proportionnels`, vrai quand le nombre par unité est le quotient, à la
+      seconde décimale, des points cotisés au régime et à ceux qu'il reprend
+      avant l'invalidité par les unités entières d'activité qui les ont
+      cotisés ; `forfait`, les points par unité quand rien n'a été cotisé, ou
+      toujours sans `proportionnels` ; `forfait_depuis`, « AAAA-MM », le
+      premier mois d'invalidité que le forfait couvre. Portée par une seule
+      période de chaque année. `null` : aucun point d'invalidité.
+    defaut: null
+
   plafond_primes_traitement:
     description: >-
       `primes_uniquement` seulement : plafond de l'assiette, en fraction du

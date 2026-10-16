@@ -39,6 +39,8 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_3_pass
+    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
+    points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0440
     notes: >-
       4,40 %, taux de l'article 5 du décret n° 78-351 du 14 mars 1978 qui institue le régime. Il n'est pas lu dans ce décret — le JORF n'en garde que la notice — mais dans l'état codifié du 21 décembre 1985, le plus ancien que porte LEGI, ET dans le fait qu'aucun texte ne l'a modifié entre-temps : les trois seuls textes qui touchent au régime sur la période sont le décret n° 81-407 du 23 avril 1981, qui répartit les biens de l'organisation autonome et fixe le versement du complémentaire au régime de base sans toucher aux cotisations, le décret n° 84-1064 du 30 novembre 1984, qui ajoute la cotisation additionnelle de 0,10 % à compter du 1er janvier 1985, et la codification de décembre 1985. Le décret fondateur date les cotisations du 1er janvier 1979 (art. 12), d'où le début de cette période. La chaîne est complète et sans trou ; elle reste une déduction, le texte de l'article 5 n'étant pas publié en accès ouvert.
@@ -72,6 +74,8 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_3_pass
+    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
+    points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0450
     notes: >-
       D. 635-6, état du 21 décembre 1985 : 4,40 %, plus une cotisation additionnelle de 0,10 % due à compter du 1er janvier 1985. Cette additionnelle est datée par son propre texte, le décret n° 84-1064 du 30 novembre 1984 — « INSTITUTION D'UNE COTISATION ADDITIONNELLE FIXEE A 0,10% DU REVENU », applicable au 1er janvier 1985. Assiette : trois fois le plafond (D. 635-4).
@@ -90,6 +94,8 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_3_pass
+    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
+    points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0490
     notes: >-
       D. 635-6, état du 26 février 1997, qui échelonne quatre hausses.
@@ -108,6 +114,8 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_3_pass
+    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
+    points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0530
     notes: >-
       D. 635-6, même état.
@@ -126,6 +134,8 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_3_pass
+    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
+    points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0570
     notes: >-
       D. 635-6, même état.
@@ -144,6 +154,8 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_3_pass
+    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
+    points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0600
     notes: >-
       D. 635-6, même état.
@@ -162,6 +174,8 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_3_pass
+    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
+    points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0620
     notes: >-
       D. 635-6, état du 29 octobre 2003, qui échelonne 2003, 2004 et 2005.
@@ -180,6 +194,8 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_3_pass
+    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
+    points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0670
     notes: >-
       D. 635-6, même état.
@@ -198,6 +214,8 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_4_pass
+    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
+    points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0700
     notes: >-
       D. 635-7, état du 24 août 2004 : 7 %, et l'assiette passe de trois à quatre fois le plafond.
@@ -216,6 +234,8 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee
+    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
+    points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0720
     notes: >-
       D. 635-7, état du 1er janvier 2008 : le taux se découpe en deux tranches. Première tranche, 7,2 %, sous un plafond que l'article fixe à 33 276 € pour 2008 — c'est exactement le plafond de la Sécurité sociale de cette année-là, d'où la borne d'un plafond.

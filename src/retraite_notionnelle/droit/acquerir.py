@@ -26,7 +26,7 @@ import math
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from ..calendrier import DateMois
+from ..calendrier import MOIS_PAR_AN, DateMois
 from ..carriere import salaire_moyen_annuel
 from ..donnees.chargement import (
     charger_chomage_complementaires,
@@ -247,6 +247,93 @@ def points_gratuits(moteur: ScenarioActuel, periode: PeriodeRegime,
     )
     return regle.points_par_annee * retenus / 4, fiabilite
 
+
+
+def arrondi_au_centieme(valeur: float) -> float:
+    """« Établi à la seconde décimale » : au centième le plus proche."""
+    return math.floor(valeur * 100 + 0.5 + 1e-9) / 100
+
+
+def points_d_invalidite(moteur: ScenarioActuel, coordination: Coordination,
+                        credits: list[tuple[str, int, float, float | None]]
+                        ) -> list[tuple[str, int, float, Fiabilite]]:
+    """Les points que les complémentaires des artisans et des commerçants
+    attribuent pour chaque mois d'invalidité : régime, année, points,
+    fiabilité, dans l'ordre des lignes.
+
+    « Le nombre de points, porté chaque année au compte de l'assuré, est
+    attribué pour chaque mensualité de pension d'invalidité ou d'incapacité
+    au métier, que cette prestation soit ou non versée. Ce nombre de points
+    est égal au quotient, établi à la seconde décimale, du nombre de points
+    de retraite résultant du paiement des cotisations [...] versées au plus
+    tard à la date d'arrêt du compte de la pension [...] par le nombre de
+    mois civils entiers d'activité » (règlement du RCI, article 9, arrêté du
+    9 février 2012) ; « si l'assuré n'a pu acquérir aucun point cotisé [...],
+    il lui est octroyé deux points gratuits par mois d'invalidité » (même
+    article, depuis l'arrêté du 19 juin 2024). Avant 2013, seize points par
+    trimestre à l'artisan qui n'avait rien cotisé, le quotient de ses points
+    par ses trimestres cotisés sinon, et deux points par mois au commerçant
+    (annexe 1, 3). Le modèle ne servait aucun de ces points : un artisan
+    invalide de cinquante-quatre ans à son départ perdait une complémentaire
+    de dix ans.
+
+    L'invalidité est une ligne ``invalidite`` de l'artisan ou du commerçant,
+    dont les régimes portent la règle (``PeriodeRegime.points_invalidite``).
+    Le compte de la pension s'arrête au 1er janvier de la première année de
+    la suite de lignes d'invalidité où elle se tient : les points cotisés
+    sont ceux des années d'avant, au régime et à ceux qu'il reprend, à leur
+    coefficient de fusion ; les mois d'activité, ceux des lignes cotisées de
+    ces années que ces régimes couvrent. Fiche
+    ``points_invalidite_independants``.
+    """
+    carriere = coordination.carriere
+    lignes = list(zip(carriere.lignes, coordination.regimes))
+    invalides = {ligne.annee for ligne, _ in lignes if ligne.type_periode == "invalidite"}
+    attribues: list[tuple[str, int, float, Fiabilite]] = []
+    for ligne, regimes in lignes:
+        if ligne.type_periode != "invalidite":
+            continue
+        part = carriere.part_retenue_ligne(ligne)
+        if part <= 0:
+            continue
+        debut = ligne.annee
+        while debut - 1 in invalides:
+            debut -= 1
+        for code in regimes:
+            if code not in moteur.catalogue:
+                continue
+            regime = moteur.catalogue[code]
+            regle = next((periode.points_invalidite
+                          for periode in regime.periodes_actives(ligne.annee)
+                          if periode.points_invalidite is not None), None)
+            if regle is None:
+                continue
+            unites = part * MOIS_PAR_AN / regle.mois_par_unite
+            par_unite = 0.0
+            if regle.proportionnels:
+                # Le régime et ceux qu'il reprend, à leur coefficient.
+                repris = {code: 1.0}
+                for ancien in regime.succede_a:
+                    fusion = moteur.conversions_points.fusion(ancien, code)
+                    if fusion is not None:
+                        repris[ancien] = fusion.coefficient
+                cotises = somme_ordonnee(
+                    points * repris[regime_credite]
+                    for regime_credite, annee, points, _ in credits
+                    if regime_credite in repris and annee < debut)
+                mois = somme_ordonnee(
+                    carriere.part_retenue_ligne(autre) * MOIS_PAR_AN
+                    for autre, couverts in lignes
+                    if autre.cotise and autre.annee < debut
+                    and any(c in repris for c in couverts))
+                entieres = math.floor(mois + 1e-9) // regle.mois_par_unite
+                if cotises > 0 and entieres > 0:
+                    par_unite = arrondi_au_centieme(cotises / entieres)
+            if par_unite <= 0 and regle.forfait is not None:
+                par_unite = regle.forfait * regle.part_au_forfait(ligne.annee)
+            if par_unite > 0:
+                attribues.append((code, ligne.annee, par_unite * unites, regime.fiabilite))
+    return attribues
 
 @dataclass(frozen=True, eq=False)
 class Droits:
@@ -781,6 +868,17 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                         cotisation
                         * moteur.macro.coefficient_prix(ligne.annee, annee_liquidation)
                     )))
+
+    # LES POINTS D'INVALIDITÉ des complémentaires des artisans et des
+    # commerçants, sur les points cotisés avant l'invalidité : voir
+    # :func:`points_d_invalidite`.
+    for code, annee, points, fiabilite in points_d_invalidite(
+            moteur, coordination, credits):
+        crediter(code, annee, points)
+        derniere_annee_par_regime[code] = max(
+            derniere_annee_par_regime.get(code, 0), annee)
+        fiabilite_points[code] = min(
+            fiabilite_points.get(code, Fiabilite.CERTIFIEE), fiabilite)
 
     points_acquis: dict[str, float] = {}
     majoration_points: dict[str, float] = {}

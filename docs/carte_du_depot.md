@@ -66,7 +66,7 @@ flowchart LR
 
 Le modèle Python lit les données et fabrique deux choses : le paquet que
 charge le site, `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->5 540<!--/--> Ko, par
+(<!--chiffre:poids(moteur/donnees.json)-->5 543<!--/--> Ko, par
 `scripts/construire_donnees.py`), et les témoins qui vérifient la copie
 JavaScript, dans `tests/temoins/` (par `scripts/construire_temoins.py`).
 
@@ -77,7 +77,7 @@ témoins la tiennent :
 complètes et <!--chiffre:entrees(tests/temoins/pages.json:)-->73<!--/--> pages
 figées, que `node --test` rejoue ;
 <!--chiffre:portage(valeurs)-->157 768<!--/--> nombres comparés, dont
-<!--chiffre:portage(identiques)-->97,3<!--/--> % identiques au bit près.
+<!--chiffre:portage(identiques)-->97,1<!--/--> % identiques au bit près.
 
 Une exception, voulue : le coût pour toute la population ne se calcule qu'en
 Python. Il voyage tout fait dans le paquet (`data/derive/agregats.json`), et
