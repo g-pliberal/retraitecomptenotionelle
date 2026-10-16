@@ -1,0 +1,34 @@
+date: "2026-10-16"
+session: >-
+  action 153, étape 2, quatrième famille : la carrière longue des fonctionnaires —
+  l'entrée précoce, la durée cotisée, l'âge de chaque porte —, confrontée à
+  OpenFisca-France-Pension
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index LEGI, récupéré à jour au 11 octobre 2026.
+  L. 25 bis du code des pensions, rédactions du 1er janvier 2005 (LEGIARTI000006362733),
+  du 19 décembre 2008 (LEGIARTI000019959540) et du 11 novembre 2010
+  (LEGIARTI000023032081) ; la loi n° 2004-1370, article 57 (LEGIARTI000006759076 et
+  LEGIARTI000019959534), pour la CNRACL ; D. 16-1, versions du 1er janvier 2011
+  (LEGIARTI000023383582) et du 1er novembre 2012 (LEGIARTI000026140012). Et le code et
+  les barèmes d'OpenFisca-France-Pension 0.1.3 (`carriere_longue`,
+  `carriere_longue_seuil_determine_aod`, `duree_assurance_cotisee_seuil_bas` et
+  `_haut`, `parameters/.../carriere_longue/`), exécutés à part.
+trouve: >-
+  Deux erreurs du scénario 1, corrigées dans les deux moteurs. La fonction publique n'a
+  la carrière longue qu'au 1er janvier 2005, chaque porte à sa date — cinquante-neuf ans
+  en 2005, cinquante-huit au 1er juillet 2006, cinquante-six au 1er janvier 2008 — ; le
+  dépôt lui ouvrait les trois portes du régime général dès 2004. Et la durée y était
+  fixe jusqu'à la rédaction du 19 décembre 2008 : 168, 164 ou 160 trimestres cotisés
+  selon la porte ; le dépôt lui opposait la durée de l'année d'ouverture, de 152 à 158
+  trimestres avant 2008. `CarriereLongue` porte depuis les portes datées et la durée
+  fixe des fonctionnaires de l'État et de la CNRACL. Aucun témoin de simulation ne
+  bouge. Chez OpenFisca, deux écarts : l'entrée avant vingt ans lue à seize ans, et
+  l'entrée précoce de la CNRACL lue dans les services de l'État.
+reste: >-
+  À l'action 153, étape 2 : les familles suivantes, une par session. Le signalement à
+  OpenFisca, que le propriétaire tranche. Le FSPOEIE garde les portes du régime
+  général dès 2004, son texte n'étant pas lu (décret n° 2004-1056). La condition de
+  durée d'assurance des portes d'avant le 1er novembre 2012, cent soixante-huit
+  trimestres, n'est opposée à personne, au régime général comme ailleurs : la table
+  ne porte que la durée cotisée. Elle pèse sur qui part par la porte de cinquante-neuf
+  ans avec moins de 168 trimestres validés, non sur les profils confrontés.
