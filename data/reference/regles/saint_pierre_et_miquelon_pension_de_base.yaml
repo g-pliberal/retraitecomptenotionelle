@@ -1,0 +1,291 @@
+schema_version: 1
+id: saint_pierre_et_miquelon_pension_de_base
+intitule: >-
+  Le salarié et le non-salarié de Saint-Pierre-et-Miquelon reçoivent de la caisse de
+  prévoyance sociale une pension de base : de 1987 à juin 2016, le taux de R. 351-27
+  appliqué au revenu moyen de toute la carrière, les années de 1960 à 1987 au forfait de
+  97 000 F revalorisé, en autant de 150es que de trimestres, pour une durée qui monte de
+  108 trimestres en 1987 à 150 en 1998 ; depuis le 1er juillet 2016, le code de la
+  sécurité sociale adapté, l'âge et la durée décalés de sept générations, le revenu
+  moyen de quarante à vingt-huit années pour les nés avant 1962 et de vingt-cinq ensuite,
+  une surcote de 1,25 % par trimestre ; et des cotisations à des taux propres, 10,5 % en
+  1989, 11,5 % en 1998, puis montant jusqu'aux taux nationaux en 2026 et 2030.
+domaine: salaire_de_reference
+regimes: [cps_saint_pierre_et_miquelon]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- les revenus professionnels soumis à cotisation, plafonnés au plafond de l'archipel puis, depuis 2016, au plafond de la sécurité sociale, et les périodes d'activité du 1er mai 1960 au 31 juillet 1987
+- les périodes assimilées, les majorations pour enfants et la durée d'assurance dans les autres régimes de base
+- la date de naissance et la date d'effet, l'inaptitude et le handicap
+- le conjoint, ses ressources et celles du ménage, pour la réversion
+ecrit:
+- la pension de base de Saint-Pierre-et-Miquelon, sa surcote, sa majoration pour enfants et sa réversion
+- les cotisations vieillesse du salarié, de l'employeur et du non-salarié de l'archipel
+dates_qui_decident:
+- liquidation.date_effet
+# Depuis le 1er juillet 2016, l'âge, la durée requise et le nombre d'années du revenu
+# moyen se lisent à la génération (loi n° 87-563, article 5, 1°, b et c, et 3°, d) ; la
+# fiche de régime les porte par ses tables `spm_2015`, `spm_2023` et `spm_2026`, et la
+# version qui les écrit est bornée à la date d'effet.
+versions:
+- id: loi_de_1987
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006275326, article: "loi n° 87-563 du 17 juillet 1987, article 1er", en_vigueur: 1987-08-01}
+  - {id: LEGIARTI000006757149, article: "loi n° 87-563 du 17 juillet 1987, article 3", en_vigueur: 1987-08-01}
+  - {id: LEGIARTI000006757151, article: "loi n° 87-563 du 17 juillet 1987, article 5", en_vigueur: 1987-08-01}
+  - {id: LEGIARTI000006757152, article: "loi n° 87-563 du 17 juillet 1987, article 6", en_vigueur: 1987-08-01}
+  - {id: LEGIARTI000006757156, article: "loi n° 87-563 du 17 juillet 1987, article 9", en_vigueur: 1987-08-01}
+  - {id: LEGIARTI000006757158, article: "loi n° 87-563 du 17 juillet 1987, article 11", en_vigueur: 1987-08-01}
+  - {id: LEGIARTI000006757159, article: "loi n° 87-563 du 17 juillet 1987, article 12", en_vigueur: 1987-08-01}
+  - {id: LEGIARTI000006757161, article: "loi n° 87-563 du 17 juillet 1987, article 13", en_vigueur: 1987-08-01}
+  - {id: LEGIARTI000006757171, article: "loi n° 87-563 du 17 juillet 1987, article 16", en_vigueur: 1987-08-01}
+  - {id: LEGIARTI000006774242, article: "décret n° 89-110 du 20 février 1989, article 7", en_vigueur: 1989-02-22}
+  - {id: LEGIARTI000006774246, article: "décret n° 89-110 du 20 février 1989, article 8", en_vigueur: 1989-02-22}
+  - {id: LEGIARTI000006774247, article: "décret n° 89-110 du 20 février 1989, article 9", en_vigueur: 1989-02-22}
+  - {id: LEGIARTI000006774248, article: "décret n° 89-110 du 20 février 1989, article 10", en_vigueur: 1989-02-22}
+  - {id: LEGIARTI000006774252, article: "décret n° 89-110 du 20 février 1989, article 14", en_vigueur: 1989-02-22}
+  - {id: LEGIARTI000006771091, article: "décret n° 96-72 du 29 janvier 1996, article 1er", en_vigueur: 1996-01-31}
+  - {id: LEGIARTI000006771093, article: "décret n° 96-72 du 29 janvier 1996, article 3", en_vigueur: 1996-01-31}
+  - {id: JORFTEXT000000479787, reference: "arrêté du 11 juillet 1989 fixant le taux des cotisations au régime d'assurance vieillesse de Saint-Pierre-et-Miquelon (analyse du Journal officiel)", publie_le: 1989-08-05}
+  - {id: JORFARTI000002330312, reference: "arrêté du 29 janvier 1996 modifiant l'arrêté du 12 septembre 1983 relatif aux taux des cotisations au régime de protection sociale de Saint-Pierre-et-Miquelon, article 1er", publie_le: 1996-01-31}
+  - {id: JORFARTI000002138276, reference: "arrêté du 24 septembre 1998 modifiant l'arrêté du 12 septembre 1983, article 1er (article 10 : non-salariés)", publie_le: 1998-10-17}
+  nee_de: LEGIARTI000006275326
+  bornes:
+    liquidation.date_effet: [null, 2016-07-01]
+  contenu:
+    creation: >-
+      le régime naît le 1er août 1987 et remplace celui de l'ordonnance n° 77-1102 ; il
+      affilie « les personnes exerçant une activité professionnelle salariée ou non
+      salariée » dans l'archipel, et, pour leurs périodes de débarquement, les marins de
+      l'ENIM (loi, article 3) ; la borne basse ouverte ne sert qu'à couvrir toutes les
+      dates
+    ouverture: >-
+      soixante ans, taux plein à soixante-cinq, à l'inaptitude, aux anciens déportés et
+      prisonniers de guerre, et à la mère de trois enfants ouvrière depuis le décret n°
+      96-72 (loi, articles 6 et 11 ; décret n° 89-110, article 7, par renvoi à R. 351-1 et
+      suivants)
+    calcul: >-
+      « le taux applicable au revenu professionnel annuel de base est déterminé selon les
+      modalités définies à l'article R. 351-27 », 50 % au taux plein ; la durée limite,
+      celle du 1° de R. 351-27, « est abaissée à 108 trimestres pour les pensions dont
+      l'entrée en jouissance intervient entre le 1er août 1987 et le 31 décembre 1987.
+      Elle est égale à 110 trimestres au 1er janvier 1988 ; elle augmente ultérieurement
+      de 4 trimestres par année civile », 150 en 1998 ; « La pension est égale à autant
+      de 150es » (décret n° 89-110, article 9) ; le revenu de base « est le revenu
+      professionnel moyen correspondant aux cotisations versées au cours de toutes les
+      années civiles d'assurance », revalorisé comme au régime général (décret, article
+      8 ; loi, article 13)
+    periodes_d_avant: >-
+      « Pour toute période d'assurance comprise entre le 1er mai 1960 et le 31 juillet
+      1987, les revenus professionnels annuels pris en compte sont fixés forfaitairement
+      à 97 000 F », revalorisés par L. 351-11 (décret, article 8), et un trimestre se
+      valide pour « deux mois de cotisations sur la base de 173 heures 1/3 de travail »,
+      quatre par an au plus ; depuis le 1er août 1987, au salaire de R. 351-9 (décret,
+      article 10)
+    enfants: >-
+      deux ans de durée d'assurance par enfant élevé neuf ans avant ses seize ans, à la
+      mère, et 10 % de la pension à qui en a élevé trois, depuis le décret n° 96-72 du 29
+      janvier 1996 (articles 1er et 3) ; avant lui, la loi renvoyait la majoration de
+      durée à un décret (article 9)
+    minimum: >-
+      sous un minimum, un versement forfaitaire unique, le montant de 175 F de R. 351-26
+      remplacé par 632 F au 1er août 1987 (loi, article 12 ; décret, article 14) ; aucun
+      minimum contributif ; l'allocation minimale et l'allocation supplémentaire
+      relèvent du titre II de la loi
+    reversion: >-
+      au conjoint survivant, sous conditions de ressources, de durée de mariage et d'âge,
+      un pourcentage de la pension « fixé par décret », par renvoi à R. 353-1 et suivants
+      (loi, article 16 ; décret, article 19)
+    cotisations: >-
+      sur les revenus plafonnés au plafond de l'archipel, « automatiquement revalorisé à
+      la même date et du même taux que le plafond des cotisations du régime général »,
+      à des taux fixés par arrêté (loi, article 5) : 10,5 %, « 5 % à la charge de
+      l'employeur, 5,5 % à la charge du salarié », depuis le 1er septembre 1989 (arrêté
+      du 11 juillet 1989) ; 5,5 % et 5,5 % pour les rémunérations versées depuis le 1er
+      février 1996, la part salariale portée à 6 % au 1er janvier 1998 (arrêté du 29
+      janvier 1996) ; 11,5 % pour le non-salarié (arrêté du 24 septembre 1998) ; aucun
+      arrêté de l'index ne les change jusqu'en 2015, et le taux d'avant septembre 1989
+      (article 6 de l'arrêté du 12 septembre 1983) n'y est pas
+  exemples: aucun trouvé
+- id: ordonnance_de_2015
+  statut: lue
+  textes:
+  - {id: JORFTEXT000030920168, reference: "ordonnance n° 2015-896 du 23 juillet 2015 portant réforme du régime d'assurance vieillesse applicable à Saint-Pierre-et-Miquelon, articles 1er et 4", publie_le: 2015-07-24}
+  - {id: LEGIARTI000030930367, article: "loi n° 87-563 du 17 juillet 1987, article 4", en_vigueur: 2015-07-25}
+  - {id: LEGIARTI000030930361, article: "loi n° 87-563 du 17 juillet 1987, article 5", en_vigueur: 2015-07-25}
+  - {id: LEGIARTI000031825970, article: "décret n° 89-110 du 20 février 1989, article 38-3", en_vigueur: 2016-01-01}
+  - {id: LEGIARTI000034740766, article: "décret n° 2017-1000 du 10 mai 2017, article 3", en_vigueur: 2017-05-12}
+  nee_de: JORFTEXT000030920168
+  bornes:
+    liquidation.date_effet: [2016-07-01, 2023-09-01]
+  contenu:
+    droit: >-
+      la loi n° 87-563 récrite rend applicables les chapitres I à VI et VIII du titre V
+      du livre III du code de la sécurité sociale, sous réserve d'adaptations (article 5,
+      3°), aux pensions prenant effet depuis le 1er juillet 2016 (ordonnance, article 4)
+    ouverture: >-
+      l'âge de L. 161-17-2 et la durée de L. 161-17-3 décalés : 150 trimestres avant
+      1956, deux de plus par génération jusqu'à 166 pour 1963, 172 à compter de 1973
+      (article 5, 1°, b et c)
+    calcul: >-
+      le revenu professionnel de base de L. 351-1 « pour les assurés nés à compter du
+      1er janvier 1962 », vingt-cinq années ; avant, « 40 ans pour les assurés nés avant
+      1956 ; 38 ans pour les assurés nés en 1956 », deux de moins par génération jusqu'à
+      « 28 ans pour les assurés nés en 1961 » (article 5, 3°, d) ; le décret n° 2017-1000
+      écrit pourtant « égal à vingt-cinq » à R. 351-29 pour tous (article 3, XV, 2°) ; les
+      allocations de chômage de la morte-saison du tourisme, de la pêche, de
+      l'agriculture et du bâtiment entrent dans le revenu (article 5, 3°, e)
+    surcote: >-
+      « 1,25 % pour chaque trimestre accompli à compter du 1er juillet 2016 » au-delà de
+      l'âge et de la durée (décret n° 2017-1000, article 3, XI, adaptant D. 351-1-4)
+    periodes_d_avant: >-
+      les années du 1er mai 1960 au 31 juillet 1987 « correspondent à un montant
+      forfaitaire fixé par décret », et leurs trimestres se comptent à 173,33 heures de
+      cotisation (article 5, 3°, f et g)
+    cotisations: >-
+      au plafond de L. 241-3, celui de la sécurité sociale (article 4, I) ; aux taux
+      nationaux « A compter du 1er janvier 2026 » pour la part plafonnée et « à compter
+      du 1er janvier 2030 » pour la part déplafonnée, et, entre-temps, à des taux
+      « fixés par décret » (article 4, IV) : 5,78 % pour l'employeur et 6,08 % pour le
+      salarié en 2016, 6,61 % et 6,33 % en 2019, 7,44 % et 6,57 % en 2022 ; aucune part
+      déplafonnée avant 2027 (décret n° 89-110, article 38-3)
+  exemples: aucun trouvé
+- id: reforme_de_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000048697709, article: "loi n° 87-563 du 17 juillet 1987, article 5", en_vigueur: 2023-12-28}
+  - {id: LEGIARTI000046454724, article: "loi n° 87-563 du 17 juillet 1987, article 4", en_vigueur: 2024-12-01}
+  - {id: LEGIARTI000051225413, article: "décret n° 2017-1000 du 10 mai 2017, article 6-2", en_vigueur: 2025-02-22}
+  - {id: LEGIARTI000051225415, article: "décret n° 2017-1000 du 10 mai 2017, article 6-3", en_vigueur: 2025-02-22}
+  - {id: LEGIARTI000051227223, article: "décret n° 2017-1000 du 10 mai 2017, article 7", en_vigueur: 2025-02-22}
+  nee_de: LEGIARTI000048697709
+  bornes:
+    liquidation.date_effet: [2023-09-01, 2026-03-01]
+  contenu:
+    ouverture: >-
+      l'âge de L. 161-17-2 de la loi n° 2023-1250, décalé de sept générations, pour les
+      pensions prenant effet depuis le 1er septembre 2023 : trois mois de plus par
+      génération de 1963 à 1969, soixante-quatre ans à compter de 1970 ; la durée ne
+      change pas ; le taux plein à soixante-cinq ans pour le parent d'un enfant
+      handicapé ou qui a un trimestre de majoration pour enfant handicapé (décret n°
+      2017-1000, article 7)
+    cotisations: >-
+      8,00 % et 6,74 % en 2024, 8,27 % et 6,82 % en 2025 (décret n° 2017-1000, article
+      6-2, qui reprend la table de l'article 38-3 abrogé) ; depuis le 1er janvier 2025,
+      0,10 % de plus pour l'employeur et 0,10 % pour le salarié, contrepartie du chômage
+      de la morte-saison compté dans le revenu (article 6-3 ; loi, article 4, V)
+  exemples: aucun trouvé
+- id: suspension_de_2026
+  statut: lue
+  textes:
+  - {id: LEGIARTI000053281072, article: "loi n° 87-563 du 17 juillet 1987, article 5", en_vigueur: 2025-12-31}
+  - {id: LEGIARTI000054477924, article: "loi n° 87-563 du 17 juillet 1987, article 5", en_vigueur: 2026-07-23}
+  - {id: LEGIARTI000054978205, article: "décret n° 2017-1000 du 10 mai 2017, article 3", en_vigueur: 2026-10-14}
+  nee_de: LEGIARTI000053281072
+  bornes:
+    liquidation.date_effet: [2026-03-01, null]
+  contenu:
+    ouverture: >-
+      « 166 trimestres pour les assurés nés entre le 1er janvier 1963 et le 30 septembre
+      1965 ; 167 trimestres pour les assurés nés entre le 1er octobre et le 31 décembre
+      1965 », un de plus par génération jusqu'à 170 de 1968 à 1970, 171 de 1971 à 1973,
+      « 172 trimestres pour les assurés nés à compter du 1er janvier 1974 », et l'âge
+      suspendu de même, soixante-quatre ans à compter de 1971, pour les pensions prenant
+      effet depuis le 1er mars 2026 (article 5, 1°, b et c, dans la rédaction de la loi
+      n° 2025-1403 puis de l'ordonnance n° 2026-648)
+    cotisations: >-
+      depuis le 1er janvier 2026, les taux de L. 241-3 pour la part plafonnée ; pour la
+      part déplafonnée, 0,48 % et 0,10 % en 2027, 0,95 % et 0,20 % en 2028, 1,42 % et
+      0,30 % en 2029, les taux nationaux en 2030 (loi, article 4, IV ; décret n°
+      2017-1000, article 6-2)
+  exemples: aucun trouvé
+approximations:
+- version: loi_de_1987
+  ecart: >-
+    Le revenu de base est la moyenne de toutes les années d'assurance (décret n° 89-110,
+    article 8), quand la fiche de régime prend les dix meilleures ; les années de 1960 à
+    1987 entrent au forfait de 97 000 F revalorisé, que la fiche de régime, ouverte en
+    1987, ne porte pas, ni la validation de leurs trimestres à deux mois de cotisations.
+  effet: >-
+    non mesuré ; les pensions liquidées de 1987 à juin 2016 : la moyenne de toute la
+    carrière est plus basse que celle des dix meilleures années, et la carrière d'avant
+    1987, au forfait, peut la relever ou l'abaisser
+- version: [ordonnance_de_2015, reforme_de_2023, suspension_de_2026]
+  ecart: >-
+    Depuis juillet 2016, le revenu moyen se calcule sur quarante à vingt-huit années
+    pour les générations nées avant 1962, et vingt-cinq ensuite, quand la fiche de
+    régime prend dix années en 2016 et vingt-cinq depuis 2017 ; la surcote de
+    1,25 % par trimestre, le forfait des années 1960 à 1987 et le chômage de la
+    morte-saison ne sont pas portés.
+  effet: >-
+    non mesuré ; les assurés nés avant 1962, dont le salaire moyen simulé compte trop
+    peu d'années, et ceux qui travaillent au-delà du taux plein, dont la surcote manque
+- version: [loi_de_1987, ordonnance_de_2015, reforme_de_2023, suspension_de_2026]
+  ecart: >-
+    Les taux de cotisation sont écrits : 10,5 % en 1989, 11 % en 1996, 11,5 % depuis
+    1998, 11,86 % en 2016 montant à 15,09 % en 2025, plus 0,20 % depuis 2025, et aucune
+    part déplafonnée avant 2027 ; la fiche de régime, qui les disait fixés localement et
+    absents de l'index, prête ceux du régime général, 14,61 % à 15,45 % plafonnés et
+    0,44 % à 2,41 % déplafonnés.
+  effet: >-
+    la cotisation simulée est trop haute, de 42 à 52 % de 1989 à 2016, de 17 % en 2025 ;
+    la pension, en annuités, n'en dépend pas, mais l'effort contributif comparé dans
+    les scénarios, oui
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-04-16
+  a_relire:
+  - >-
+    Lire le décret qui fixe le forfait des années 1960 à 1987 depuis 2016 (loi n°
+    87-563, article 5, 3°, f), dans le décret n° 2017-1000, article 3, et dire s'il
+    reprend les 97 000 F revalorisés du décret n° 89-110.
+  - >-
+    Relever le plafond de l'archipel de 1987 à 2015, fixé par arrêté, et le taux de
+    l'article 6 de l'arrêté du 12 septembre 1983, que l'index ne donne pas.
+  - >-
+    Lire les articles 21 à 38 de la loi n° 87-563 et 19 à 38-2 du décret n° 89-110
+    (réversion, allocations minimales), et le régime de l'ordonnance n° 77-1102
+    d'avant août 1987.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 87-563, articles 1er à 16, 20 et 21 dans leur rédaction de 1987, articles 1er
+      à 10 dans toutes leurs rédactions depuis 2015 ; décret n° 89-110, articles 1er,
+      7 à 18 et 38-3 ; décret n° 96-72, articles 1er à 6 ; décret n° 2017-1000, articles
+      1er à 10, et l'article 3 aux fenêtres de R. 351-9, R. 351-27, R. 351-29 et
+      D. 351-1-4 : index LEGI du dépôt, à jour au 15 octobre 2026
+    date: 2026-10-16
+  - type: jorf
+    reference: >-
+      ordonnance n° 2015-896, articles 1er à 5 ; arrêtés du 12 septembre 1983, du 11
+      juillet 1989, du 29 janvier 1996, du 24 septembre 1998 et du 31 août 2006 ;
+      décrets n° 2025-157 et n° 2025-159 : index JORF du dépôt
+    date: 2026-10-16
+reformes: []
+code:
+  moteur: >-
+    une fiche de régime en annuités, une période par réforme, l'âge et la durée lus à la
+    génération par les tables `spm_2015`, `spm_2023` et `spm_2026`
+  python: >-
+    données : regimes/cps_saint_pierre_et_miquelon.yaml, legislation/ages_regimes.csv,
+    legislation/duree_requise_regimes_speciaux.csv ; droit/liquider.py :
+    liquider_chaque_regime
+  javascript: moteur/js/droit/liquider.js et moteur/js/regimes.js, le même catalogue
+  parametres: regimes/cps_saint_pierre_et_miquelon.yaml (taux_plein, duree_requise_trimestres, salaire_reference, decote_par_trimestre, taux_cotisation_retraite)
+  tests: >-
+    tests/temoins/simulations.json, les carrières du statut
+    salarie_saint_pierre_et_miquelon, que le portage rejoue
+historique:
+- >-
+  2026-10-16 — écrite à l'étape 2 de l'action 145 : le régime de Saint-Pierre-et-Miquelon
+  n'avait que la fiche générique de liquidation. Le décret n° 89-110 écrit le revenu
+  moyen de toute la carrière et le forfait des années 1960 à 1987 ; les arrêtés de 1989,
+  1996 et 1998 et le décret n° 2015-1876 écrivent les taux de cotisation, que la fiche de
+  régime disait absents de l'index. Aucun chiffre ne change.
+effet: >-
+  Les assurés de Saint-Pierre-et-Miquelon : leur pension est simulée au droit pour l'âge
+  et la durée, mais sur un revenu moyen de trop peu d'années, sans surcote ni carrière
+  d'avant 1987, et leur cotisation au taux national, plus haut que celui de l'archipel.

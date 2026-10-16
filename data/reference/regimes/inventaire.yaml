@@ -251,13 +251,18 @@ inventaire:
     - {reference: "décret n° 2017-1000 du 10 mai 2017 relatif à l'assurance vieillesse-veuvage\
         \ applicable à Saint-Pierre-et-Miquelon, article 3", id: LEGIARTI000034740766}
     manque: >-
-      Taux de cotisation et plafond de la caisse de prévoyance sociale, fixés localement
-      et absents de l'index : ceux du régime général tiennent lieu. Le régime d'avant
-      août 1987 (ordonnance n° 77-1102) n'est pas porté. Le revenu annuel moyen n'est
-      pas celui du droit : toute la carrière avant le 1er juillet 2016, puis quarante
-      à vingt-huit années pour les nés avant 1962 (loi n° 87-563, art. 5, 3°, d), quand
-      la fiche en retient dix, puis vingt-cinq ; la surcote de 1,25 % par trimestre
-      accompli depuis le 1er juillet 2016 (décret n° 2017-1000) n'est pas portée.
+      Taux de cotisation : ceux du régime général tiennent lieu, quand les taux de l'archipel
+      sont écrits — 10,5 % en 1989, 11 % en 1996, 11,5 % en 1998 (arrêtés du 11 juillet
+      1989, du 29 janvier 1996 et du 24 septembre 1998), 11,86 % en 2016 montant à 15,09
+      % en 2025, aucune part déplafonnée avant 2027 (décret n° 89-110, art. 38-3, puis
+      décret n° 2017-1000, art. 6-2) ; le plafond de l'archipel, de 1987 à 2015, fixé
+      par arrêté, n'est pas dans l'index. Le régime d'avant août 1987 (ordonnance n°
+      77-1102) n'est pas porté, ni le forfait de 97 000 F revalorisé des années 1960
+      à 1987 (décret n° 89-110, art. 8). Le revenu annuel moyen n'est pas celui du droit
+      : toute la carrière avant le 1er juillet 2016, puis quarante à vingt-huit années
+      pour les nés avant 1962 (loi n° 87-563, art. 5, 3°, d), quand la fiche en retient
+      dix, puis vingt-cinq ; la surcote de 1,25 % par trimestre accompli depuis le 1er
+      juillet 2016 (décret n° 2017-1000) n'est pas portée.
 
   - code: cps_polynesie
     nom: >-
