@@ -152,11 +152,10 @@ sources:
   prochaine_relecture: 2027-04-16
   a_relire:
   - >-
-    Les exemples 1 à 4 de la circulaire Cnav 2024-18 (point 3.2.2) se rejouent : 88 jours
-    continus, 1 trimestre ; 46 et 34 jours, 1 ; un stage de 120 heures par mois
-    d'octobre 2014 à mars 2015, 0 en 2014, 1 assimilé en 2015 ; un stage de toute
-    l'année 2015, 2 trimestres de salaire et 2 assimilés. Ils entrent à
-    `exemples_officiels.yaml` à l'étape 4 du domaine, quand le modèle saura les jouer.
+    L'exemple 1 de la circulaire Cnav 2024-18 (point 3.2.2) compte « 88 jours » du
+    1er janvier au 28 mars 2015, que le calendrier compte 87 : le cas d'essai le rejoue
+    sur ses dates, un trimestre de toute façon. Une circulaire plus récente le
+    corrigera peut-être.
   - >-
     Lire le décret n° 2015-1240 du 7 octobre 2015 (le i de R. 351-12, 4°), le décret qui
     fixe la prise en charge par l'État des périodes d'avant 2015, et l'instruction
@@ -207,7 +206,9 @@ code:
   parametres: >-
     contenu.parametres de chaque version : existe, decompte, regimes, jours_par_trimestre, motifs, fiabilite
   tests: >-
-    tests/test_periodes_assimilees.py, dans les deux moteurs
+    tests/test_periodes_assimilees.py, dans les deux moteurs ; les quatre exemples de
+    la circulaire Cnav 2024-18, rejoués dans les deux moteurs :
+    tests/test_periodes_assimilees_exemples_officiels.py
 historique:
 - >-
   2026-10-16 — née avec l'étape 1 du sixième domaine (action 130) : les 8° et 9° de
@@ -216,6 +217,10 @@ historique:
   2026-10-16 — modélisée, approchée, à l'étape 3 du sixième domaine : l'étape « compter
   les durées » compte les jours de stage, cinquante par trimestre, année par année, dans les deux moteurs ; aucune saisie ne les déclare
   encore (étape 5).
+- >-
+  2026-10-16 — les quatre exemples de la circulaire Cnav 2024-18 (point 3.2.2) rejoués
+  dans les deux moteurs, à l'étape 4 du sixième domaine : tous reproduits, le premier
+  sur ses dates, l'exemple comptant un jour de trop.
 effet: >-
   Les stagiaires de la formation professionnelle depuis 2015, et les anciens des TUC et
   des stages d'insertion des années 1977 à 1992 partis depuis septembre 2023, « au moins

@@ -206,8 +206,8 @@ sources:
     circulaire 2016-41 le disait de la rédaction de 2014.
   - >-
     L'exemple 3 de la circulaire 2016-41 porte un contrat « du 15 novembre 2014 au 14
-    février 2015 » et le compte sur trois années, quinze mois : le contrat finit sans
-    doute le 14 février 2016. À ne rejouer qu'avec cette lecture, dite.
+    février 2015 » et le compte sur trois années, quinze mois : le contrat finit le 14
+    février 2016, que le cas d'essai rejoue, cette lecture dite.
   - >-
     Lire l'arrêté du 5 juin 1979 fixant les cotisations forfaitaires des apprentis, et
     ses modifications, pour l'assiette d'avant 2014, que la circulaire dit « salaire
@@ -265,7 +265,9 @@ code:
   parametres: >-
     contenu.parametres de chaque version : existe, decompte, regimes, fiabilite
   tests: >-
-    tests/test_periodes_assimilees.py, dans les deux moteurs
+    tests/test_periodes_assimilees.py, dans les deux moteurs ; les quatre exemples de
+    la circulaire Cnav 2016-41, rejoués dans les deux moteurs :
+    tests/test_periodes_assimilees_exemples_officiels.py
 historique:
 - >-
   2026-10-16 — née avec l'étape 1 du sixième domaine (action 130), les fiches lues à la
@@ -275,6 +277,10 @@ historique:
   2026-10-16 — modélisée, approchée, à l'étape 3 du sixième domaine : l'étape « compter
   les durées » compte le complément de l'apprentissage, jusqu'à la durée du contrat, dans les deux moteurs ; aucune saisie ne les déclare
   encore (étape 5).
+- >-
+  2026-10-16 — les quatre exemples de l'annexe de la circulaire Cnav 2016-41 rejoués
+  dans les deux moteurs, à l'étape 4 du sixième domaine : tous reproduits, trimestres
+  garantis, complément et trimestres cotisés de l'exemple 4 compris.
 effet: >-
   Les apprentis depuis 2014 : 878 871 contrats commencés en 2024 (DARES). Un apprenti
   de moins de dix-huit ans payé 25 à 37 % du SMIC valide par ses salaires deux à trois
