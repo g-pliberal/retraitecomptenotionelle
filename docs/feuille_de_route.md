@@ -1223,13 +1223,13 @@ borne basse et l'écart une borne haute.
 **Reprise, au 16 octobre 2026.** Sont faits l'IRCEC, les libérales, la CRPN,
 l'Ircantec, l'ENIM, la fonction publique, la CNRACL, la Caisse des dépôts, le
 RAFP, l'Agirc-Arrco, les régimes spéciaux, la Cnav, service-public, le CLEISS,
-les modèles publics français, mon-entreprise et les API publiques. Attendent
-un lot approuvé (`scripts/simulateurs.py`) : la calculette du RAFP, le guide
-des prélèvements de l'Ircantec, le simulateur des artistes-auteurs de la Cnav.
-À corriger : l'abattement du RCI (`abattement_rci`). Attendent le propriétaire :
-un compte PISTE pour Légifrance, et Gallica, passé derrière Cloudflare. Restent
-`a_explorer` vingt-sept modèles du registre, à fermer quand 138.3, 138.5, 138.7,
-138.11 et 153 auront fini. Détail : `89/2026-10-16-mon-entreprise-et-api.md`.
+les modèles publics français, mon-entreprise, les API publiques, et l'abattement
+du RCI, corrigé. Attendent un lot approuvé (`scripts/simulateurs.py`) : la
+calculette du RAFP, le guide de l'Ircantec, le simulateur des artistes-auteurs.
+Attendent le propriétaire : un compte PISTE pour Légifrance, Gallica, et les
+règlements du RCO (1978) et du NRIC (2004), au seul Bulletin officiel. Restent
+`a_explorer` vingt-sept modèles du registre, après 138.3, 138.5, 138.7, 138.11
+et 153. Détail : `89/2026-10-16-abattement-rci.md`.
 
 **Demande.** Huit lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut

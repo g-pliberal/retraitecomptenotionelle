@@ -229,6 +229,7 @@ periodes:
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein_par_generation: age_annulation_decote
     decote_par_generation: decote_regime_general
+    abattement_points: abattement_rci
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
@@ -249,6 +250,7 @@ periodes:
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein_par_generation: age_annulation_decote
     decote_par_generation: decote_regime_general
+    abattement_points: abattement_rci
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null

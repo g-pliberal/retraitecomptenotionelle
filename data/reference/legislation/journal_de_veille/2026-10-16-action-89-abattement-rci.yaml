@@ -1,0 +1,22 @@
+date: "2026-10-16"
+session: "action 89 : l'abattement des points du RCI avant le taux plein"
+consulte: >-
+  `python scripts/veille_droit.py` en commençant. Les index JORF et LEGI de la DILA,
+  récupérés de la release du dépôt, à jour au 11 octobre 2026 : le décret 78-351 du 14
+  mars 1978, les arrêtés du 15 décembre 1978, du 6 mai 1981, du 30 novembre 1984 et du
+  5 février 1986 sur le règlement du RCO des artisans, le décret 84-1064 du 30 novembre
+  1984, l'arrêté du 22 septembre 2003, l'arrêté du 17 décembre 2004 portant approbation
+  du règlement du NRIC. Déjà lus le 14 octobre : l'article 12 et l'annexe 2 du
+  règlement du RCI, la circulaire Cnav 2026-07, point 4.1.2.
+trouve: >-
+  Les règlements d'avant 2013 ne sont pas lisibles dans l'index : le JORF ne porte que
+  l'analyse des arrêtés du RCO, dont celui du 30 novembre 1984, qui y met « un tableau
+  des taux d'abattement » pour la liquidation à soixante ans, sans le tableau ; le
+  règlement du NRIC est annexé à l'arrêté de 2004 sans être publié. Le correctif est
+  fait : les périodes du RCI, et les dernières du RCO et du NRIC qui liquident leurs
+  points après la fusion, appliquent le barème d'anticipation de l'Agirc-Arrco (fiche
+  abattement_rci) ; l'exemple de la circulaire 2026-07 concorde, 0,93.
+reste: >-
+  Les deux règlements, au Bulletin officiel, que Légifrance ou Gallica rendraient et que
+  le propriétaire seul peut ouvrir ; les liquidations de 2005 à 2012 prennent, d'ici là,
+  le barème de 2013.

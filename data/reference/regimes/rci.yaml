@@ -39,6 +39,7 @@ periodes:
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
     decote_par_generation: decote_regime_general
+    abattement_points: abattement_rci
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee
@@ -83,6 +84,7 @@ periodes:
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
     decote_par_generation: decote_regime_general
+    abattement_points: abattement_rci
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: tranche_1_4_pass
@@ -116,6 +118,7 @@ periodes:
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
     decote_par_generation: decote_regime_general
+    abattement_points: abattement_rci
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee
@@ -138,6 +141,7 @@ periodes:
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
     decote_par_generation: decote_regime_general
+    abattement_points: abattement_rci
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: tranche_1_4_pass

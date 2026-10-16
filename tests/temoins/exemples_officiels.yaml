@@ -603,19 +603,6 @@ exemples:
       45,625 %.
     carriere: {naissance: "1962-06-30", sexe: H, affiliation: artisan, liquidation: "2025-01", trimestres_valides: 162}
     attendu: {taux_liquidation: 0.45625, coefficients_des_regimes: {rci: 0.93, rco_artisans: 0.93}}
-    ecart_connu:
-      modele: {coefficients_des_regimes: {rci: 0.9125, rco_artisans: 0.9125}}
-      explication: >-
-        Les fiches rci et rco_artisans abattent les points de la décote du
-        régime de base, 1,25 % par trimestre manquant (decote_par_generation),
-        quand l'annexe 2 du règlement du RCI (arrêté du 9 février 2012,
-        LEGIARTI000054892591 depuis 2013, LEGIARTI000054907665 depuis le 26
-        juin 2024) retire 1 % par trimestre jusqu'à douze, puis 1,25 %, jusqu'à
-        22 % à vingt : le barème d'anticipation de l'Agirc-Arrco. Il faudrait
-        `abattement_points: agirc_arrco` aux périodes de ces régimes liquidées
-        depuis 2013 (fiche abattement_rci).
-      fiche: abattement_rci
-      depuis: "2026-10-14"
 
   - id: cnav_2026_29_racl_1967
     source: {editeur: "Cnav", reference: "circulaire 2026-29 du 4 septembre 2026, point 1.1.1 et annexe 3", verifie_le: "2026-09-04"}

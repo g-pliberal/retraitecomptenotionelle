@@ -8,32 +8,38 @@ intitule: >-
   artisans et du NRIC des commerçants comprises.
 etat: approchee
 effet: >-
-  Toute retraite du RCI liquidée avant le taux plein du régime de base. Le modèle
-  abat les points de la décote du régime général, 1,25 % par trimestre, soit 0,9125
-  à sept trimestres manquants quand la caisse sert 0,93 : 1,9 % de moins sur la
-  complémentaire de l'artisan de la circulaire 2026-07, et l'écart croît jusqu'à
-  douze trimestres (0,85 contre 0,88), et reste de trois points à vingt (0,75
-  contre 0,78).
+  Toute retraite du RCI liquidée avant le taux plein du régime de base. Jusqu'au 16
+  octobre 2026, le modèle abattait les points de la décote du régime général, 1,25 %
+  par trimestre : 0,9125 à sept trimestres manquants quand la caisse sert 0,93, 0,85
+  au lieu de 0,88 à douze, 0,75 au lieu de 0,78 à vingt. Les périodes du RCI, et les
+  dernières du RCO des artisans (2008-2012) et du NRIC (2005-2012), qui liquident
+  leurs points après la fusion, renvoient depuis à cette fiche.
 approximations:
 - ecart: >-
-    les fiches rci, rco_artisans et nric portent `decote_par_trimestre: 0.0125` et
-    `decote_par_generation`, le barème de la décote du régime de base, et non
-    l'annexe 2 du règlement ; l'exemple cnav_2026_07_abattement_rci_1962 entre au
-    témoin en écart connu
+    les dernières périodes du RCO des artisans (2008-2012) et du NRIC (2005-2012)
+    liquident aussi les pensions de ces années-là, avant la fusion, et leur appliquent
+    le barème de l'annexe 2 du règlement du RCI, que les règlements d'alors ne
+    disent pas : celui du RCO (arrêté du 15 décembre 1978) avait depuis 1985 un «
+    tableau des taux d'abattement » pour la liquidation à soixante ans (arrêté du 30
+    novembre 1984), que le JORF ne publie qu'en analyse ; celui du NRIC (arrêté du
+    17 décembre 2004) est annexé sans être publié. Les périodes plus anciennes gardent
+    la décote du régime de base, aussi peu lue.
   effet: >-
-    0,9125 au lieu de 0,93 à sept trimestres manquants ; 0,85 au lieu de 0,88 à
-    douze ; 0,75 au lieu de 0,78 à vingt
+    les seules liquidations de 2005 à 2012 au NRIC, de 2008 à 2012 au RCO, avant le
+    taux plein ; aucune après 2012
 exemples:
 - cnav_2026_07_abattement_rci_1962
 sources:
-  lu_le: 2026-10-14
+  lu_le: 2026-10-16
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Avant 2013 : les règlements du RCO des artisans (1979) et du NRIC des commerçants
-    (2004) avaient-ils déjà ce barème ? Le dépôt ne les a pas lus ; le correctif
-    `abattement_points: agirc_arrco` ne vaut, jusque-là, que pour les liquidations
-    depuis le 1er janvier 2013.
+    Avant 2013 : les règlements du RCO des artisans (arrêté du 15 décembre 1978, et
+    son tableau des taux d'abattement de l'arrêté du 30 novembre 1984) et du NRIC
+    (arrêté du 17 décembre 2004) avaient-ils déjà ce barème ? L'index de la DILA ne
+    porte que l'analyse du premier et le seul dispositif du second (lus le 16 octobre
+    2026) : leurs textes sont au Bulletin officiel, que Légifrance ou Gallica
+    rendraient, et que le propriétaire seul peut ouvrir.
   lectures:
   - type: legifrance
     reference: >-
@@ -49,6 +55,23 @@ sources:
       séparent du taux plein
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_07_05032026.pdf
     date: 2026-10-14
+  - type: jorf
+    reference: >-
+      arrêté du 15 décembre 1978 (JORFTEXT000000288049), arrêté du 30 novembre 1984
+      (JORFTEXT000000862877, « tableau des taux d'abattement applicable aux droits
+      acquis pour la liquidation d'une pension à l'âge de 60 ans », analyse seule),
+      arrêté du 17 décembre 2004 (JORFTEXT000000810229, règlement annexé non publié),
+      lus dans l'index JORF du dépôt à jour au 11 octobre 2026
+    date: 2026-10-16
 textes_a_rattacher:
 - reference: arrêté du 9 février 2012, article 12 et annexe 2
 - reference: L. 635-1 CSS
+code:
+  interrupteurs:
+    abattement_points: agirc_arrco
+  moteur: >-
+    `abattement_points: agirc_arrco` (`liquider.abattement_points`) : le coefficient
+    de la table des trimestres manquants et celui de la table des âges, le plus
+    avantageux retenu, ce qui revient à compter le plus petit des deux décomptes ; la
+    table des âges ne descend pas sous 0,78, vingt trimestres séparant au plus l'âge
+    légal de l'âge d'annulation de la décote.
