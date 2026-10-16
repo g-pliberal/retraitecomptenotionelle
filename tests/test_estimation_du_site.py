@@ -284,3 +284,46 @@ def test_sans_estimation_recopiee_la_page_n_a_pas_de_colonne_d_ecart(page):
     assert "Écart" not in _bloc(corps)
     assert '<form class="carte" id="simulateur"' in corps
     assert '<h2 id="estimation-officielle"' not in page("/simuler", **REQUETES["parti"])
+
+
+def _ages_de_depart(corps: str) -> str:
+    debut = corps.index("Partir plus tôt ou plus tard")
+    return corps[debut:corps.index("</details>", debut)]
+
+
+def test_plusieurs_ages_de_depart_cote_a_cote(contexte, page):
+    """Le dépliant « Partir plus tôt ou plus tard » (action 138, étape 10) :
+    la carrière de la saisie liquidée chaque année, de l'âge d'ouverture au
+    taux plein automatique, et ses pensions nettes sous les quatre systèmes,
+    celles que le Python tire de ``balayage_d_une_carriere`` après impôt ;
+    rien pour qui n'a pas de départ à chiffrer."""
+    from retraite_notionnelle.cycle_de_vie import balayage_d_une_carriere
+    from retraite_notionnelle.pilote import ages_de_l_estimation
+
+    saisie = Saisie.depuis_requete(REQUETES["trois_ages"])
+    simulateur = contexte.simulateur(saisie.parametres(contexte.base))
+
+    def batir(age):
+        autre = replace(saisie, liquidation=age)
+        autre.verifier()
+        return contexte.carriere(autre)
+
+    departs = balayage_d_une_carriere(simulateur, batir, saisie.liquidation, pas=1.0,
+                                      impot="prix")
+    ages = ages_de_l_estimation(simulateur.scenario_actuel, batir, saisie.liquidation)
+    assert departs[0].age == ages["legal"] and departs[-1].age == ages["automatique"]
+    bloc = _ages_de_depart(page("/simuler", **REQUETES["trois_ages"]))
+    tableau = bloc[:bloc.index("</table>")]
+    rangees = re.findall(r'<tr><th[^>]*scope="row">(.*?)</th>(.*?)</tr>', tableau)
+    assert len(rangees) == len(departs) >= 2
+    systemes = ("actuel", "notionnel_retroactif", "notionnel_retroactif_employeur",
+                "notionnel_liberal")
+    for (tete, cellules), depart in zip(rangees, departs):
+        assert f"en {depart.annee}" in tete
+        comparaison = simulateur.simuler(batir(depart.age))
+        valeurs = [_nombres(v) for v in re.findall(r"<td[^>]*>(.*?)</td>", cellules)]
+        attendus = [round(comparaison.en_euros_constants(
+            depart.pensions_nettes[scenario], scenario) / 12) for scenario in systemes]
+        assert valeurs == attendus
+    assert bloc.count("<table") == 3 and "rendement réel" in bloc
+    assert "Partir plus tôt ou plus tard" not in page("/simuler", **REQUETES["parti"])

@@ -59,6 +59,7 @@ import {
   varianteDuScenario,
 } from "./equilibre.js";
 import { Restitution } from "./restitution.js";
+import { ageDEquilibre, referenceDuCompte } from "./cycle-de-vie.js";
 import { Indexation } from "./indexation.js";
 import { echapper, formatFixe, formatG } from "./format.js";
 import * as g from "./gabarit.js";
@@ -4930,6 +4931,7 @@ voir.</p>
 ${pensionDAujourdhui(contexte, comparaison, saisie)}
 ${financement(contexte, comparaison, finances, montants)}
 ${trajectoire(contexte, comparaison, saisie)}
+${partirPlusTotOuPlusTard(contexte, saisie)}
 ${fourchette(contexte, saisie, comparaison)}
 ${decomposition(contexte, saisie, comparaison)}
 ${contributionEmployeur(comparaison)}
@@ -4937,6 +4939,107 @@ ${garantieVieillesse(comparaison, saisie)}
 ${pilierCapitalise(comparaison, saisie)}
 ${detail(contexte, comparaison)}
 `;
+}
+
+/**
+ * Plusieurs âges de départ côte à côte (action 138, étape 10) : la carrière
+ * de la saisie liquidée chaque année, de l'âge d'ouverture à l'âge du taux
+ * plein automatique (`balayageDeLEstimation`, contexte.js), et ce que
+ * chacun des quatre systèmes en fait sur toute la retraite — la pension
+ * nette du premier mois, le taux de remplacement net, après impôt, le
+ * rendement réel, le patrimoine retraite —, sous la convention de l'OCDE.
+ * Puis l'âge d'équilibre de la génération, où son diviseur rend celui de la
+ * génération de référence. Rien quand l'estimation ne se chiffre pas, ni
+ * pour un seul âge.
+ */
+function partirPlusTotOuPlusTard(contexte, saisie) {
+  const balayage = contexte.balayageDeLEstimation(saisie);
+  if (balayage.length < 2) return "";
+  const libelleDepart = ({ depart }) =>
+    `${age(depart.age)}<span class="aide">en ${depart.annee}</span>`;
+  const ouRien = (valeur, rendu) =>
+    (valeur === null || valeur === undefined || !Number.isFinite(valeur) ? "—" : rendu(valeur));
+  const enAnnees = (valeur) => `${g.nombre(valeur, 1)}${"\u202f"}ans`;
+  const numeros = SCENARIOS_AFFICHES.map(([, libelle]) => libelle.split(".")[0]);
+
+  const pensions = g.tableau(
+    ["Départ", ...SCENARIOS_AFFICHES.map(([, libelle]) => echapper(libelle))],
+    balayage.map((ligne) => [
+      libelleDepart(ligne),
+      ...SCENARIOS_AFFICHES.map(([scenario]) => g.euros(ligne.comparaison.enEurosConstants(
+        ligne.depart.pensions_nettes[scenario], scenario) / 12)),
+    ]),
+    ["", ...SCENARIOS_AFFICHES.map(() => "nombre")],
+    `La pension nette du premier mois, en euros de ${saisie.euros}`, true);
+
+  const actuel = g.tableau(
+    ["Départ", "Années de retraite", "Remplacement net", "Après impôt",
+      "Patrimoine retraite", "Minimum vieillesse"],
+    balayage.map((ligne) => {
+      const { depart } = ligne;
+      const indicateurs = depart.indicateurs.actuel;
+      return [
+        libelleDepart(ligne),
+        enAnnees(indicateurs.duree_retraite),
+        ouRien(depart.remplacements.actuel?.constants, (v) => g.pourcentage(v, false, 0)),
+        ouRien(depart.remplacements_apres_impot?.actuel, (v) => g.pourcentage(v, false, 0)),
+        ouRien(indicateurs.patrimoine, enAnnees),
+        ouRien(depart.pensions_aspa.actuel, (v) => `${g.nombre(v, 1)}${"\u202f"}fois`),
+      ];
+    }),
+    ["", "nombre", "nombre", "nombre", "nombre", "nombre"],
+    "Le système 1 sur toute la retraite", true);
+
+  const rendements = g.tableau(
+    ["Départ", ...numeros.map((numero) => `Système ${numero}`)],
+    balayage.map((ligne) => [
+      libelleDepart(ligne),
+      ...SCENARIOS_AFFICHES.map(([scenario]) => ouRien(
+        ligne.depart.indicateurs[scenario].rendement_reel,
+        // Arrondi au millième, un rendement de −0,04 % s'écrit 0,0 %, sans signe.
+        (v) => g.pourcentage(Math.abs(v) < 0.0005 ? 0.0 : v, true, 1))),
+    ]),
+    ["", ...numeros.map(() => "nombre")],
+    "Le rendement réel de vos cotisations, par an", true);
+
+  let equilibre = "";
+  const simulateur = contexte.simulateur(saisie.parametres(contexte.base));
+  try {
+    const reference = referenceDuCompte(simulateur);
+    const lui = ageDEquilibre(simulateur, saisie.naissance);
+    equilibre = `
+<p>Dans le compte notionnel, le diviseur de votre génération, ${saisie.naissance},
+égale celui de la génération ${reference.naissance} à ${age(reference.age)} vers
+${age(lui.au_mois)} : c'est l'âge auquel, à cotisations égales,
+vous toucheriez la pension qu'elle touche en partant à ${age(reference.age)},
+l'âge de référence du compte en ${reference.annee}.</p>`;
+  } catch (erreur) {
+    if (fauteDeProgramme(erreur)) throw erreur;
+  }
+
+  return g.depliant("Partir plus tôt ou plus tard", `
+<p>La même carrière, liquidée chaque année de l'âge où le droit s'ouvre à
+l'âge du taux plein automatique, travail prolongé jusqu'au départ. Partir plus
+tard relève la pension de chaque mois, mais la sert moins longtemps : les
+deux derniers tableaux comptent toute la retraite, chaque année pesée par la
+chance d'y être en vie.${g.bulle(
+    "Comment ces indicateurs sont comptés",
+    "Selon la convention de l'OCDE (<i>Pensions at a Glance</i>) : la mortalité "
+    + "projetée de l'INSEE, propre à votre génération et à votre sexe, le "
+    + "patrimoine actualisé à 1,5 % par an au-dessus des prix et rapporté au "
+    + "dernier revenu. Pensions et revenus sont nets de la CSG, de la CRDS et "
+    + "des cotisations de chaque année ; « après impôt », ils sont aussi nets "
+    + "de l'impôt sur le revenu, d'un barème qui suit les prix. Le "
+    + "remplacement rapporte la pension du premier mois au revenu net de la "
+    + "dernière année travaillée en entier, en euros constants ; le "
+    + "rendement réel est le taux qui égale les cotisations versées aux "
+    + "pensions espérées, au-dessus des prix ; le minimum vieillesse dit "
+    + "combien de fois la pension nette couvre l'allocation d'une personne "
+    + "seule.",
+  )}</p>
+${pensions}
+${actuel}
+${rendements}${equilibre}`);
 }
 
 /**

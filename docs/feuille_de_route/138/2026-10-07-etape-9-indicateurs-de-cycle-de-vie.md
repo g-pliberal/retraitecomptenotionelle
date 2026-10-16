@@ -5,10 +5,10 @@ des six systèmes, sous les conventions de l'OCDE et du COR, chaque âge de
 départ, les prélèvements de chaque année, l'âge d'équilibre ; leur portage —
 les flux, les indicateurs, l'âge d'équilibre, les revenus nets, l'impôt, puis
 les âges de départ d'une carrière (`agesBalayes`, `balayageDUneCarriere`,
-16 octobre) —, rejoué contre le Python. Reste, dans cet ordre : l'affichage,
-avec l'étape 10, à la session du site ; la révision de 2026, au COR ;
-Typfallsmodellen. Les cas types du COR restent au Python. Détail :
-`2026-10-16-etape-9-ages-de-depart-au-portage.md`.
+16 octobre) —, rejoué contre le Python, puis affiché au site avec l'étape 10
+(`2026-10-16-etape-10-ages-de-depart-au-site.md`). Reste, dans cet ordre : la
+révision de 2026, au COR ; Typfallsmodellen. Les cas types du COR restent au
+Python. Détail : `2026-10-16-etape-9-ages-de-depart-au-portage.md`.
 
 **La demande.** L'étape 9 de l'action : « les indicateurs de cycle de vie, par
 cas type et génération, sous les six systèmes : rendement interne, durée de

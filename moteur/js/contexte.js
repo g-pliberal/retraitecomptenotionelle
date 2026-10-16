@@ -22,6 +22,7 @@ import { Simulateur, niveauPourPension } from "./simulateur.js";
 import { REGIMES_CODE_DES_PENSIONS } from "./droit/coordonner.js";
 import * as g from "./gabarit.js";
 import { agesDeLEstimation } from "./pilote.js";
+import { agesBalayes, depart as departDuCycle } from "./cycle-de-vie.js";
 import {
   AUTRE_ETAT, Echelle, ErreurSaisie, HEURES_SMIC_PAR_MOIS, NIVEAU_MAXIMAL, NIVEAU_MINIMAL,
   Saisie, refus,
@@ -348,23 +349,12 @@ export class Contexte {
    * `departs_de_l_estimation` (contexte.py).
    */
   departsDeLEstimation(saisie) {
-    if (saisie.parPension || saisie.demandes.length > 0 || saisie.invalidite !== null
-        || saisie.radiation_invalidite !== null) {
+    const estimation = this._estimation(saisie);
+    if (estimation === null) {
       return [];
     }
-    const parametres = saisie.parametres(this.base);
-    const simulateur = this.simulateur(parametres);
+    const { parametres, simulateur, batir } = estimation;
     const annee = parametres.annee_courante;
-    if (saisie.dateLiquidation.annee < annee) {
-      return [];
-    }
-    // La saisie refuse ce que sa date rend incohérent — un métier commencé
-    // après le départ —, avec ses mots, avant le modèle.
-    const batir = (age) => {
-      const autre = new Saisie({ ...saisie, liquidation: age });
-      autre.verifier();
-      return this.carriere(autre);
-    };
     const departs = [];
     try {
       const ages = agesDeLEstimation(simulateur.scenarioActuel, batir, saisie.liquidation);
@@ -390,6 +380,69 @@ export class Contexte {
       return [];
     }
     return departs;
+  }
+
+  /**
+   * La carrière de la saisie à plusieurs âges de départ, et ce qu'en donne,
+   * en net et après impôt, chacun des six systèmes : à chaque âge de
+   * `agesBalayes` (cycle-de-vie.js), de `pas` en `pas`, de l'âge d'ouverture
+   * à l'âge d'annulation de la décote, `depart`, le `Depart` de
+   * `balayageDUneCarriere` sous la convention de l'OCDE, ou du COR avec
+   * `cor`, et `comparaison`, qui en passe les montants aux euros de la page
+   * (`enEurosConstants`). Vide dans les cas où `departsDeLEstimation` l'est ;
+   * un départ d'une année déjà passée est omis. Le site seul le montre : il
+   * n'a pas de jumeau dans le contexte Python, dont les cas types passent par
+   * `balayage` (cycle_de_vie.py).
+   */
+  balayageDeLEstimation(saisie, pas = 1.0, cor = false) {
+    const estimation = this._estimation(saisie);
+    if (estimation === null) {
+      return [];
+    }
+    const { parametres, simulateur, batir } = estimation;
+    try {
+      return agesBalayes(simulateur, batir, saisie.liquidation, pas)
+        .map((age) => {
+          const comparaison = simulateur.simuler(batir(age));
+          return {
+            depart: departDuCycle(simulateur, comparaison, cor, age, "prix"), comparaison,
+          };
+        })
+        .filter(({ depart: lui }) => lui.annee >= parametres.annee_courante);
+    } catch (erreur) {
+      // Comme `departsDeLEstimation` : une carrière refusée à l'un des âges
+      // tait le bloc ; une faute de programme remonte.
+      if (erreur instanceof TypeError || erreur instanceof ReferenceError
+          || erreur instanceof RangeError || erreur instanceof SyntaxError) {
+        throw erreur;
+      }
+      return [];
+    }
+  }
+
+  /**
+   * Ce que les départs d'une saisie demandent — ses paramètres, son
+   * simulateur, et `batir(age)`, sa carrière liquidée à `age` —, ou `null`
+   * quand ils ne se chiffrent pas : une saisie par la pension, des pensions
+   * que la saisie date elle-même, un départ d'une année déjà passée.
+   */
+  _estimation(saisie) {
+    if (saisie.parPension || saisie.demandes.length > 0 || saisie.invalidite !== null
+        || saisie.radiation_invalidite !== null) {
+      return null;
+    }
+    const parametres = saisie.parametres(this.base);
+    if (saisie.dateLiquidation.annee < parametres.annee_courante) {
+      return null;
+    }
+    // La saisie refuse ce que sa date rend incohérent — un métier commencé
+    // après le départ —, avec ses mots, avant le modèle.
+    const batir = (age) => {
+      const autre = new Saisie({ ...saisie, liquidation: age });
+      autre.verifier();
+      return this.carriere(autre);
+    };
+    return { parametres, simulateur: this.simulateur(parametres), batir };
   }
 
   /**
