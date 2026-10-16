@@ -749,10 +749,13 @@ def _nos_points(simulateur: Simulateur, profil: dict, regime: str,
     celle qu'on doit pouvoir refaire à la main, et c'est donc elle qu'on
     oppose à l'oracle.
     """
+    # `prive_des` : l'année où le profil quitte le service public pour le privé
+    # (l'Ircantec `surcote_1945`, que sa limite d'âge arrête à soixante-cinq ans).
+    prive_des = profil.get("prive_des", profil["liquidation"])
     lignes = [
         AnneeCarriere(
-            annee=annee, revenu=profil["salaire"], affiliation=affiliation,
-            trimestres_valides=4,
+            annee=annee, revenu=profil["salaire"], trimestres_valides=4,
+            affiliation=affiliation if annee < prive_des else "salarie_prive_non_cadre",
         )
         for annee in range(profil["debut"], profil["liquidation"])
     ]
@@ -1086,7 +1089,7 @@ def test_le_prix_du_point_ircantec_concorde_sauf_le_taux_d_appel_de_1991(
     contestees = 0
     for code, entree in oracle_ircantec["profils"].items():
         profil, mesures = entree["profil"], entree["openfisca"]
-        for annee in range(profil["debut"], profil["liquidation"]):
+        for annee in range(profil["debut"], profil.get("prive_des", profil["liquidation"])):
             reference, appel, _ = simulateur.scenario_actuel.valeurs_point.achat(
                 "ircantec", annee
             )
@@ -1116,7 +1119,7 @@ def test_la_cotisation_ircantec_concorde_sauf_un_arrondi(
         profil, mesures = entree["profil"], entree["openfisca"]
         if code.startswith("tranche_b_1992"):
             continue
-        for annee in range(profil["debut"], profil["liquidation"]):
+        for annee in range(profil["debut"], profil.get("prive_des", profil["liquidation"])):
             plafonds = BORNES_ASSIETTE[
                 "tranche_2_ircantec" if annee < ANNEE_DES_HUIT_PLAFONDS_DECRET
                 else "tranche_2"][1]
@@ -1144,7 +1147,7 @@ def test_le_taux_appele_ircantec_est_celui_du_producteur_arrondi(
     lus = 0
     for code, entree in oracle_ircantec["profils"].items():
         profil, mesures = entree["profil"], entree["openfisca"]
-        for annee in range(profil["debut"], profil["liquidation"]):
+        for annee in range(profil["debut"], profil.get("prive_des", profil["liquidation"])):
             if annee == ANNEE_DU_BAREME_EN_RETARD:
                 continue
             plafond = simulateur.macro.plafond_securite_sociale(annee)

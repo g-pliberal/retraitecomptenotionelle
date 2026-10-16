@@ -44,6 +44,10 @@ Et un écart qui est chez lui, sur la même assiette que le premier :
   +60 % de pension. Le profil `surcote_1945` le montre, et le test vérifie
   que son coefficient est exactement 1 + 0,075 × trimestres — le modèle, lui,
   ne sert AUCUNE surcote à l'Ircantec, ce que `limites.md` dit désormais.
+  Ce profil quitte le service public à soixante-quatre ans et finit sa
+  carrière au privé (clé ``prive_des``) : la limite d'âge du contractuel de
+  son temps, soixante-cinq ans (article 20 de la loi du 8 août 1947, fiche
+  `limite_age_contractuels`), lui interdit de servir au-delà.
 
 Trois bornes de périmètre.
 
@@ -105,7 +109,7 @@ PROFILS: tuple[dict, ...] = (
      "liquidation": 2016, "salaire": 24000.0},
     {"code": "apres_2008_1956", "naissance": 1956, "debut": 1985,
      "liquidation": 2018, "salaire": 40000.0},
-    {"code": "surcote_1945", "naissance": 1945, "debut": 1971,
+    {"code": "surcote_1945", "naissance": 1945, "debut": 1971, "prive_des": 2010,
      "liquidation": 2012, "salaire": 26000.0},
     {"code": "tranche_b_1992_1948", "naissance": 1948, "debut": 1975,
      "liquidation": 2010, "salaire": 200000.0},
@@ -130,7 +134,11 @@ def calculer(profil: dict, tbs) -> dict:
         "ircantec_liquidation_date": {"ETERNITY": f"{liquidation}-01-01"},
         "regime_general_cnav_salaire_de_base": {a: profil["salaire"] for a in annees},
         "statut_du_cotisant": {a: "emploi" for a in annees},
-        "categorie_salarie": {a: "public_non_titulaire" for a in annees},
+        # `prive_des` : l'année où le profil quitte le service public pour le
+        # privé, qui ne cotise plus à l'Ircantec.
+        "categorie_salarie": {
+            a: "prive_non_cadre" if int(a) >= profil.get("prive_des", liquidation)
+            else "public_non_titulaire" for a in annees},
     }
     simulation = SimulationBuilder().build_from_entities(
         tbs, {"persons": {"assure": situation}}
@@ -219,7 +227,9 @@ def main(argv: list[str] | None = None) -> int:
             "Ircantec des agents non titulaires, carrières continues à salaire "
             "nominal constant commençant en 1971 au plus tôt — avant, le dépôt "
             "a deux régimes distincts, l'IPACTE et l'IGRANTE, quand OpenFisca "
-            "n'en a qu'un."
+            "n'en a qu'un. Le profil surcote_1945 quitte le service public à "
+            "soixante-quatre ans, avant la limite d'âge du contractuel de son "
+            "temps, et finit sa carrière au privé."
         ),
         "profils": releves,
     }

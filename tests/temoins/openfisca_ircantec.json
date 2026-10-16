@@ -1,6 +1,6 @@
 {
   "avertissement": "Deuxième implémentation, pas une source officielle. Son assiette de tranche B passe de 4,75 à huit plafonds en 1992, quand le décret n° 2008-996 l'y porte au 25 septembre 2008 ; ses taux de 1989 et suivants sont arrondis au dix-millième près différemment de ceux que publie la Caisse des dépôts.",
-  "perimetre": "Ircantec des agents non titulaires, carrières continues à salaire nominal constant commençant en 1971 au plus tôt — avant, le dépôt a deux régimes distincts, l'IPACTE et l'IGRANTE, quand OpenFisca n'en a qu'un.",
+  "perimetre": "Ircantec des agents non titulaires, carrières continues à salaire nominal constant commençant en 1971 au plus tôt — avant, le dépôt a deux régimes distincts, l'IPACTE et l'IGRANTE, quand OpenFisca n'en a qu'un. Le profil surcote_1945 quitte le service public à soixante-quatre ans, avant la limite d'âge du contractuel de son temps, et finit sa carrière au privé.",
   "profils": {
     "anticipation_1954": {
       "openfisca": {
@@ -751,13 +751,13 @@
           "2007": 1462.5,
           "2008": 1462.5,
           "2009": 1462.5,
-          "2010": 1462.5,
-          "2011": 1478.75
+          "2010": 0.0,
+          "2011": 0.0
         },
         "decote_trimestres_regime_general": 0.0,
-        "pension": 32533.384765625,
-        "pension_brute": 25025.681640625,
-        "points": 54537.62890625,
+        "pension": 32129.625,
+        "pension_brute": 24715.09765625,
+        "points": 53860.78515625,
         "points_annuels": {
           "1971": 3611.792236328125,
           "1972": 3714.63525390625,
@@ -798,17 +798,18 @@
           "2007": 408.51953125,
           "2008": 404.0055236816406,
           "2009": 374.2802429199219,
-          "2010": 349.7757873535156,
-          "2011": 327.0666198730469
+          "2010": 0.0,
+          "2011": 0.0
         },
         "surcote_trimestres_regime_general": 4.0,
-        "valeur_du_point": 0.4588699975139011
+        "valeur_du_point": 0.4588699846196368
       },
       "profil": {
         "code": "surcote_1945",
         "debut": 1971,
         "liquidation": 2012,
         "naissance": 1945,
+        "prive_des": 2010,
         "salaire": 26000.0
       }
     },
@@ -997,7 +998,7 @@
       }
     }
   },
-  "recupere_le": "2026-09-15",
+  "recupere_le": "2026-10-16",
   "source": "OpenFisca-France-Pension",
   "version": "0.1.3"
 }
