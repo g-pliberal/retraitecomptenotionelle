@@ -35,10 +35,11 @@ def simulateur() -> Simulateur:
 
 
 def _apprenti(apprentissage: bool = True, niveau: float = 0.05) -> dict:
-    """Né en janvier 1998, apprenti à seize ans et demi, à un vingtième du
-    salaire moyen, puis salarié à dix-neuf ans ; parti à soixante-quatre."""
+    """Né le 15 janvier 1998, apprenti à seize ans et demi, à un vingtième du
+    salaire moyen, puis salarié à dix-neuf ans ; parti à soixante-quatre. Le
+    jour se déclare : le trimestre de sportif de 2018 en dépend."""
     return chronologie.du_parcours(
-        annee_naissance=1998, sexe="H", age_liquidation=64.0, metiers=[
+        annee_naissance=1998, sexe="H", age_liquidation=64.0, jour_naissance=15, metiers=[
             Metier(affiliation=SALARIE, age_debut=16.5, niveau_salaire=niveau,
                    apprentissage=apprentissage),
             Metier(affiliation=SALARIE, age_debut=19.0, niveau_salaire=1.0)])
