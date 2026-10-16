@@ -22,6 +22,27 @@
 # Retraites, `salaires_pensions` de B. Scherrer). Les copies du simulateur du
 # COR, que sa ligne nomme. Et les dépôts personnels que personne n'a lus.
 #
+# Les pistes du 1er octobre, vérifiées le 16 octobre 2026, qui n'y entrent
+# pas. Les caisses des professions libérales projettent leurs régimes par
+# « leurs propres modèles (assez variés et plus ou moins élaborés) », que
+# rien ne décrit ; la CNAVPL agrège ses dix sections avant de les remettre au
+# COR, qui n'en publie que la somme (fiche CNAVPL, juin 2024). La CAVIMAC
+# est hors de l'exercice du COR de 2024 (148 M€ de prestations en 2023) ;
+# l'IRCEC n'est sur aucune de ses deux listes. Aucun n'a de modèle qui se
+# lise. À l'étranger : la Russie a eu des comptes notionnels de 2002 à 2014,
+# leur capital divisé par une « période attendue de versement » fixée par la
+# loi pour tous (144 mois en 2002, 228 en 2013 : art. 32 de la loi 173-FZ),
+# puis des points depuis 2015 ; l'Égypte a voté les siens (loi 135 de 2010),
+# annulés en 2013 sans avoir servi (décret-loi 79 de 2013), et sa loi 148 de
+# 2019 calcule sur le salaire moyen de carrière ; l'Azerbaïdjan divise depuis
+# 2006 le capital par une période fixée de même (144 mois selon l'AISS,
+# 2022, non relu à la source : la loi, sur NATLEX, répond 403) ; la
+# Mongolie, en comptes notionnels depuis 1999 pour les générations nées
+# après 1960, sur l'espérance de vie unisexe, se projette avec PROST (voir
+# sa ligne). Aucun ne publie de modèle ; un diviseur fixé par la loi, le
+# même à tout âge, ne confronte pas celui de la proposition, lu à l'âge du
+# départ.
+#
 # OÙ VA LE RESTE
 #   l'adresse à explorer, ce qu'elle a donné .. data/sources_a_explorer.yaml,
 #                                               nommée par le champ `sas`
@@ -6527,7 +6548,10 @@ referents:
       analyses sur cas-types ».
     confrontation: >-
       Des résultats publiés à retrouver : les cas types de l'étude d'impact
-      de 2020 (« Source : DSS/SDEPF/6C – maquette Osiris »).
+      de 2020 (« Source : DSS/SDEPF/6C – maquette Osiris »). Aucun depuis :
+      l'étude d'impact de 2023 ne nomme que PRISME, et ses cas types du
+      minimum contributif sont sans source ; la fiche de l'article 45 bis du
+      PLFSS pour 2026 (la suspension) chiffre par PRISME.
     ecarts:
       - constat: >-
           Ses résultats « sans réforme » de 2020 font partir les
@@ -6574,14 +6598,21 @@ referents:
       Osiris, maquette interne de la DSS, ne publie que ses cas types de
       2020, calculés sous un droit périmé. Il n'en reste que la forme de
       deux de ses cas types : une carrière heurtée par le chômage, que
-      la grille du dépôt n'a pas, et une plage d'âges.
-    lu_le: 2026-10-04
+      la grille du dépôt n'a pas, et une plage d'âges. Les études d'impact
+      de 2023 et de 2025 ne le nomment plus (relu le 16 octobre 2026).
+    lu_le: 2026-10-16
     lu_dans:
       - http://gesd.free.fr/caliper.pdf
       - https://www.assemblee-nationale.fr/dyn/15/textes/l15b2623_etude-impact.pdf
+      - https://www.assemblee-nationale.fr/dyn/16/textes/l16b0760_etude-impact.pdf
+      - https://www.assemblee-nationale.fr/dyn/dyn/contenu/visualisation/1089902/file/Lettre_rectificative_PLFSS2026-Annexe09%20v2.pdf
     note: >-
-      Son usage actuel n'est pas connu. La DSS tient aussi une maquette
-      comptable, qui agrège les comptes des régimes.
+      Son usage actuel n'est pas publié : ni l'étude d'impact de la réforme
+      de 2023, ni la fiche de la suspension (PLFSS pour 2026, art. 45 bis),
+      qui nomment PRISME, ne le citent. La DSS tient aussi une maquette
+      comptable, qui agrège les comptes des régimes, et extrapole avec le
+      secrétariat du COR les régimes que les actualisations annuelles ne
+      projettent pas.
 
   - id: aphrodite
     nom: Aphrodite
@@ -6601,7 +6632,9 @@ referents:
       (1989), Mars (2003) et Vénus (2007).
     confrontation: >-
       Des résultats publiés à retrouver, ceux de ses documents de travail ;
-      son usage après 2020 n'est pas connu.
+      aucun après 2020 : la DG Trésor ne range sous son nom que le document
+      de travail de 2016, et les études d'impact de 2023 et du PLFSS pour
+      2026 chiffrent par PRISME.
     ecarts:
       - constat: >-
           Ses résultats publiés reposent sur la législation de 2016
@@ -6693,11 +6726,14 @@ referents:
       complète (ex-conjoints, décès avant le départ), deux points déjà
       prévus par les étapes 3 et 4, et par son bouclage avec Mésange.
       Ses résultats chiffrés, de 2016, ne se confrontent plus ; son
-      usage après 2020 n'est pas publié.
-    lu_le: 2026-10-04
+      usage après 2020 n'est pas publié (relu le 16 octobre 2026).
+    lu_le: 2026-10-16
     lu_dans:
       - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%206_Aphrodite_DG-Tr%C3%A9sor.pdf
       - https://www.tresor.economie.gouv.fr/Articles/482ec69f-5251-4129-98b2-f4dfaccfb81e/files/5ad8638a-a272-4e14-8823-54a245de9606
+      - https://www.tresor.economie.gouv.fr/Articles/tags/Modele-Aphrodite
+      - https://www.assemblee-nationale.fr/dyn/16/textes/l16b0760_etude-impact.pdf
+      - https://www.assemblee-nationale.fr/dyn/dyn/contenu/visualisation/1089902/file/Lettre_rectificative_PLFSS2026-Annexe09%20v2.pdf
     note: >-
       Il partage les biographies de Destinie, pas ses règles. Pour l'Ageing
       Report de 2024, la France a projeté avec Destinie, non avec lui.
@@ -10827,7 +10863,13 @@ referents:
       - https://documents1.worldbank.org/curated/en/099061024110535659/pdf/P1777231d8367c0111800816452e83c58d7.pdf
     note: >-
       L'outil n'est pas téléchargeable : la Banque mondiale le remet sur clé
-      USB en formation (« World Bank property »).
+      USB en formation (« World Bank property »). C'est par lui qu'elle
+      projette la Mongolie, en comptes notionnels depuis 1999 (générations
+      nées après 1960, 15 points des 19 % de cotisation au compte, rendement
+      du salaire moyen sur trois ans, espérance de vie unisexe), et y a
+      formé l'administration : rapport n° 70430, 21 avril 2008, lu le 16
+      octobre 2026 ; ses taux de 2003 (28 % du salaire pour une carrière
+      complète) ne confrontent rien.
 
   - id: modeles_ocde
     nom: Les modèles de pension de l'OCDE
@@ -10947,6 +10989,17 @@ referents:
     lu_dans:
       - https://doi.org/10.1787/e40274c1-en
       - https://sdmx.oecd.org/public/rest/data/OECD.ELS.SPD,DSD_PAG@DF_PRR,1.0/FRA..........?format=csvfilewithlabels
+    note: >-
+      Le Pension Adequacy Report de la Commission et du Comité de la
+      protection sociale (2024) n'est pas un modèle de plus : ses taux de
+      remplacement théoriques ont pour source « OECD and Member States », et
+      ses calculs de patrimoine, « the OECD pension models » (vol. I, encadré
+      4 et § 4.4.4). Pour la France (vol. II), 40 ans au salaire moyen
+      jusqu'à 67 ans donnent 77,9 % net en 2022 et 66,4 % en 2062 ; ses
+      carrières ne sont pas celles de Pensions at a Glance (âge, durée), et
+      le dépôt n'en a pas de témoin. Lu le 16 octobre 2026 :
+      https://data.consilium.europa.eu/doc/document/ST-10251-2024-ADD-1/en/pdf
+      et ST-10251-2024-ADD-2.
 
   - id: ageing_report
     nom: Ageing Report et ses fiches pays

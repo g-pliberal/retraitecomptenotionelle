@@ -5119,16 +5119,16 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 
 ### 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation — `en cours`
 
-**Reprise, au 14 octobre 2026.** Fait : le registre (70 modèles, 48 en
+**Reprise, au 16 octobre 2026.** Fait : le registre (70 modèles, 48 en
 France) et sa relecture à l'action 138 ; Destinie 2, TRAJECTOiRE et Ines
 exécutés à part ; CALIPER, `calcul_pension`, l'Études et résultats n° 1283 et
-le minimum contributif de l'EACR, confrontés ; M@rel (son moteur, `marel`) et
-Oscar, lus et classés (note du 14 octobre) : rien ne s'en confronte. Reste
-ici : la campagne 2025 de l'EACR, non publiée au 14 octobre (la DREES diffuse
-au printemps ; relancer `drees_eacr.py`, `verifier_donnees.py`, puis
-`part_minimum_contributif.py`, et relire 2024 contre la grille) ; les autres
-pistes non vérifiées du 1er octobre (Aphrodite, Osiris, les sections
-libérales…) ; les `referents` des fiches, à leur relecture.
+le minimum contributif de l'EACR, confrontés ; M@rel et Oscar, puis toutes
+les autres pistes du 1er octobre (Aphrodite, Osiris, les sections libérales,
+l'IRCEC, la CAVIMAC, le Pension Adequacy Report, quatre pays), lus et
+classés (notes du 14 et du 16 octobre) : rien ne s'en confronte. Reste : la
+campagne 2025 de l'EACR, au printemps 2027 (relancer `drees_eacr.py`,
+`verifier_donnees.py`, `part_minimum_contributif.py`, relire 2024 contre la
+grille) ; les `referents` des fiches, à leur relecture.
 
 **Demande**, le 1er octobre 2026 : « Quels sont les autres modèles publics
 autres que openfisca ? », puis : « Ajoute les modèles qui ne sont pas encore
