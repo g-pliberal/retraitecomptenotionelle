@@ -1,0 +1,194 @@
+{
+ "annee": 2024,
+ "champ": "Champ : Retraités ayant perçu un droit direct au cours de l’année 2024, résidant en France, vivants au 31 décembre 2024.",
+ "pensions": {
+  "aucun_principal": {
+   "carriere_complete": {
+    "ensemble": 2450.0,
+    "femmes": 1910.0,
+    "hommes": 2760.0
+   },
+   "tous": {
+    "ensemble": 2200.0,
+    "femmes": 1640.0,
+    "hommes": 2550.0
+   }
+  },
+  "autre_non_salarie": {
+   "carriere_complete": {
+    "ensemble": 1430.0,
+    "femmes": 1160.0,
+    "hommes": 1670.0
+   },
+   "tous": {
+    "ensemble": 1420.0,
+    "femmes": 1070.0,
+    "hommes": 1750.0
+   }
+  },
+  "autre_salarie": {
+   "carriere_complete": {
+    "ensemble": 2490.0,
+    "femmes": 2280.0,
+    "hommes": 2680.0
+   },
+   "tous": {
+    "ensemble": 2270.0,
+    "femmes": 2060.0,
+    "hommes": 2500.0
+   }
+  },
+  "cnracl": {
+   "carriere_complete": {
+    "ensemble": 2010.0,
+    "femmes": 1960.0,
+    "hommes": 2090.0
+   },
+   "tous": {
+    "ensemble": 1860.0,
+    "femmes": 1790.0,
+    "hommes": 2050.0
+   }
+  },
+  "ensemble": {
+   "carriere_complete": {
+    "ensemble": 2100.0,
+    "femmes": 1770.0,
+    "hommes": 2390.0
+   },
+   "tous": {
+    "ensemble": 1750.0,
+    "femmes": 1380.0,
+    "hommes": 2190.0
+   }
+  },
+  "fpe_civils": {
+   "carriere_complete": {
+    "ensemble": 2750.0,
+    "femmes": 2580.0,
+    "hommes": 2960.0
+   },
+   "tous": {
+    "ensemble": 2570.0,
+    "femmes": 2390.0,
+    "hommes": 2820.0
+   }
+  },
+  "fpe_militaires": {
+   "carriere_complete": {
+    "ensemble": 2920.0,
+    "femmes": 2370.0,
+    "hommes": 2940.0
+   },
+   "tous": {
+    "ensemble": 2260.0,
+    "femmes": 1580.0,
+    "hommes": 2330.0
+   }
+  },
+  "monopensionnes": {
+   "carriere_complete": {
+    "ensemble": 2080.0,
+    "femmes": 1750.0,
+    "hommes": 2390.0
+   },
+   "tous": {
+    "ensemble": 1680.0,
+    "femmes": 1310.0,
+    "hommes": 2150.0
+   }
+  },
+  "msa_non_salaries": {
+   "carriere_complete": {
+    "ensemble": 1040.0,
+    "femmes": 920.0,
+    "hommes": 1160.0
+   },
+   "tous": {
+    "ensemble": 970.0,
+    "femmes": 820.0,
+    "hommes": 1130.0
+   }
+  },
+  "msa_salaries": {
+   "carriere_complete": {
+    "ensemble": 2070.0,
+    "femmes": 1860.0,
+    "hommes": 2190.0
+   },
+   "tous": {
+    "ensemble": 1720.0,
+    "femmes": 1430.0,
+    "hommes": 1920.0
+   }
+  },
+  "polypensionnes": {
+   "carriere_complete": {
+    "ensemble": 2140.0,
+    "femmes": 1830.0,
+    "hommes": 2400.0
+   },
+   "tous": {
+    "ensemble": 1970.0,
+    "femmes": 1630.0,
+    "hommes": 2310.0
+   }
+  },
+  "professions_liberales": {
+   "carriere_complete": {
+    "ensemble": 3220.0,
+    "femmes": 2540.0,
+    "hommes": 3680.0
+   },
+   "tous": {
+    "ensemble": 2840.0,
+    "femmes": 2160.0,
+    "hommes": 3260.0
+   }
+  },
+  "regime_de_base": {
+   "carriere_complete": {
+    "ensemble": 2100.0,
+    "femmes": 1770.0,
+    "hommes": 2390.0
+   },
+   "tous": {
+    "ensemble": 1760.0,
+    "femmes": 1390.0,
+    "hommes": 2200.0
+   }
+  },
+  "regime_general": {
+   "carriere_complete": {
+    "ensemble": 2020.0,
+    "femmes": 1650.0,
+    "hommes": 2350.0
+   },
+   "tous": {
+    "ensemble": 1610.0,
+    "femmes": 1200.0,
+    "hommes": 2120.0
+   }
+  },
+  "regimes_speciaux": {
+   "carriere_complete": {
+    "ensemble": 2970.0,
+    "femmes": 2780.0,
+    "hommes": 3010.0
+   },
+   "tous": {
+    "ensemble": 2740.0,
+    "femmes": 2370.0,
+    "hommes": 2840.0
+   }
+  }
+ },
+ "source": {
+  "editeur": "Conseil d'orientation des retraites",
+  "lu_le": "2026-10-16",
+  "producteur": "DREES, EACR et modèle Ancetre",
+  "reference": "Rapport annuel de juin 2026, tableau 3.2, p. 161 (Données_RA2026_P3.xlsx, feuille « Tab 3.2 »)",
+  "url": "https://www.cor-retraites.fr/sites/default/files/2026-06/Donn%C3%A9es_RA2026_P3.xlsx"
+ },
+ "unite": "euros bruts par mois, droit direct, majoration pour trois enfants comprise"
+}

@@ -958,6 +958,24 @@ institutions:
           cotisants. Le tableau 2.11 du classeur garde le titre et les notes
           du rapport de 2025 ; ses valeurs sont celles que celui de 2026
           imprime.
+      - id: cor_pension_regime_principal
+        titre: >-
+          La pension brute moyenne de droit direct par régime principal, fin
+          2024, tous retraités et carrières complètes, par sexe — tableau 3.2
+          du rapport annuel de juin 2026 (DREES, EACR, modèle Ancetre)
+        url: https://www.cor-retraites.fr/sites/default/files/2026-06/Donn%C3%A9es_RA2026_P3.xlsx
+        acces: fichier
+        statut_integration: controle
+        cible: tests/temoins/cor_pension_regime_principal_2026.json
+        recuperation: scripts/fetch/cor_pension_regime_principal.py
+        millesime: juin 2026
+        note: >-
+          Il n'alimente aucune valeur : `tests/test_controle_ancetre.py`
+          confronte la pension de 2024 des cas types de la page Coût,
+          régime principal par régime principal
+          (`retraite_notionnelle.controle_ancetre`, action 138, étape 3). Le
+          titre de la feuille dit « fin 2023 », son champ 2024 : le champ
+          fait foi, le titre est resté celui du rapport de 2025.
       - id: cor_cas_types
         titre: Cas types du COR (carrières de référence)
         url: https://www.cor-retraites.fr/simulateurs

@@ -4920,14 +4920,19 @@ referents:
           Sources : Drees, EACR, modèle Ancètre ») ; le document n°
           3 du COR du 19 décembre 2024, cité jusqu'ici, ne porte pas
           ces montants
-        etat: coupe
+        verification: >-
+          Le tableau, lu au classeur de la partie 3 du rapport
+          (`tests/temoins/cor_pension_regime_principal_2026.json`),
+          et confronté le 16 octobre 2026
+          (`retraite_notionnelle.controle_ancetre`,
+          `tests/test_controle_ancetre.py`) : la grille sert en 2024
+          2 043 € par mois, au poids de la page, contre 2 100 € aux
+          carrières complètes d'Ancetre ; le régime général, +6 % ;
+          chaque régime qu'un seul cas type représente, de −13 %
+          (civils de l'État) à −42 % (militaires), compensé en têtes
+          par le calage des groupes.
+        etat: repris
         chantier: "138.3"
-        raison: >-
-          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
-          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
-          octobre). Nul : une confrontation ou un indicateur, qui ne change aucun
-          chiffre tant qu'il ne trouve pas d'erreur. Le contrôle de la pension par
-          régime principal.
       - quoi: >-
           Il donne la répartition tous régimes, sans doublon, des
           retraités par taux de CSG : en 2024, droits directs, 3 815
@@ -4954,7 +4959,7 @@ referents:
       taux de CSG — que la page Coût n'a pas. Mais les deux points du
       registre citent un document qui ne les contient pas, et la
       projection de l'âge de départ est celle de TRAJECTOiRE.
-    manifeste: [drees_age_conjoncturel]
+    manifeste: [drees_age_conjoncturel, cor_pension_regime_principal]
     lu_le: 2026-10-04
     lu_dans:
       - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_03_SI_Drees.pdf

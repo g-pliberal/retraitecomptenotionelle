@@ -107,6 +107,9 @@ CONTROLES = {
     # Les leviers qui équilibreraient chaque système, confrontés à ceux du COR
     # (le témoin et le geste de l'âge restent rapides, plus bas).
     "test_leviers.py",
+    # Le niveau de pension des cas types, confronté à Ancetre par régime
+    # principal (le témoin et la mesure restent rapides, plus bas).
+    "test_controle_ancetre.py",
     # Les données : leur socle, leur certification, les lecteurs des
     # documents qui les apportent.
     "test_donnees.py", "test_verification.py", "test_bonifications_jaune.py",
@@ -152,6 +155,14 @@ EXCEPTIONS = {
      "test_le_recul_deplace_des_generations_entieres_et_avance_sur_une_marge"): "rapide",
     ("test_leviers.py", "test_les_leviers_et_les_ecarts_se_lisent_dans_le_bilan"): "rapide",
     ("test_leviers.py", "test_le_geste_de_l_age_refait_les_ages_d_equilibre_du_cor"): "rapide",
+    # Le témoin d'Ancetre, et la mesure sur une grille d'essai.
+    ("test_controle_ancetre.py",
+     "test_le_temoin_d_ancetre_dit_sa_source_et_redonne_le_rapport"): "rapide",
+    ("test_controle_ancetre.py", "test_chaque_caisse_de_la_grille_a_son_regime_principal"): "rapide",
+    ("test_controle_ancetre.py",
+     "test_la_pension_d_un_cas_type_pese_ses_cohortes_parties"): "rapide",
+    ("test_controle_ancetre.py",
+     "test_un_regime_principal_moyenne_ses_cas_types_a_leur_poids"): "rapide",
     # Le portage JavaScript, rejoué contre le Python : deux moteurs.
     ("test_cumul_activites.py",
      "test_le_portage_javascript_concorde_sur_des_cumuls_tires_au_hasard"): "complet",
