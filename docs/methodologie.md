@@ -2321,7 +2321,11 @@ centrale, y est multipliée chaque année par ce que la pyramide de la variante
 change à la masse du système actuel — les mêmes pensions, que la variante ne
 touche pas, comptées dans les deux pyramides —, dans la trajectoire comme dans
 le bilan ; ses ressources ne bougent pas, ni les arrivées tardives, celles du
-central.
+central. Le site les montre depuis le 16 octobre 2026 : un réglage du
+simulateur (`esperance_vie`), qui dit aussi ce que les trois hypothèses font
+du système 2, et un tableau de la page Coût, la dépense et le solde de chaque
+système sous chacune, que le Python fige avec la page (`esperance_vie` de
+`agregats.json`) ; la page elle-même reste calculée sous la centrale.
 
 **Ce que la loi rendait aux années projetées, mesuré le 7 octobre 2026.**
 Jusqu'à ce jour, la loi de Gompertz-Makeham décrivait seule les années

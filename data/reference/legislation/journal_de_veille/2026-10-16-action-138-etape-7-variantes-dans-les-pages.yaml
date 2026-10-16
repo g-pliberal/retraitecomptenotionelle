@@ -1,0 +1,14 @@
+date: "2026-10-16"
+session: "action 138, étape 7 : les hypothèses d'espérance de vie basse et haute de l'INSEE, affichées au simulateur et sur la page Coût"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  Les notes du 13 et du 14 octobre 2026 de l'étape 7, les projections de
+  population 2026 de l'INSEE déjà certifiées (quotients et pyramides des
+  variantes), le coût du modèle sous chaque hypothèse.
+trouve: >-
+  Aucun texte de droit. Le système 1 ne bouge pas sous les variantes, vérifié
+  sur une carrière ; la page Coût montre la dépense et le solde des quatre
+  systèmes sous les trois hypothèses, figés par le Python.
+reste: >-
+  La fécondité et les migrations de la page Coût ; la mortalité
+  différentielle ; les départs qui suivent l'espérance de vie.

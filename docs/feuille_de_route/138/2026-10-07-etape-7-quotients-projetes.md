@@ -1,15 +1,15 @@
 # Étape 7, première partie : les quotients projetés de l'INSEE au lieu de la loi de Gompertz-Makeham
 
-**Reprise, au 14 octobre 2026.** Fait : les quotients projetés de l'INSEE lus
+**Reprise, au 16 octobre 2026.** Fait : les quotients projetés de l'INSEE lus
 âge par âge par les deux moteurs ; la marche de 1941 (10 octobre) ; les
 hypothèses d'espérance de vie basse et haute dans le diviseur (13 octobre),
-puis dans la page Coût, avec la pyramide de la même hypothèse et la dépense du
-COR qui la suit (14 octobre : le système actuel à 14,05 et 16,61 % du PIB en
-2070, la proposition à 8,06 et 8,10). Reste, dans cet ordre : l'affichage des
-variantes, page Coût et simulateur, par la session des pages ; la fécondité et
-les migrations de la page Coût ; la mortalité différentielle ; les départs qui
-suivent l'espérance de vie ; la queue de 85 à 98 ans ; 2025. Commencer par les
-pages. Détail : « Ce qui reste », note du 14 octobre.
+puis dans la page Coût (14 octobre), puis dans les pages (16 octobre : un
+réglage au simulateur, un tableau des trois hypothèses sur la page Coût).
+Reste, dans cet ordre : la fécondité et les migrations de la page Coût ; la
+mortalité différentielle ; les départs qui suivent l'espérance de vie ; la
+queue de 85 à 98 ans ; 2025. Commencer par la fécondité et les migrations
+(classeurs `11_fec_haute.xlsx` à `16_smi_bas.xlsx`). Détail : « Ce qui
+reste », note du 16 octobre.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.7 ». L'étape 7 de
 l'action : « La démographie en variantes : les quotients projetés âge par âge
