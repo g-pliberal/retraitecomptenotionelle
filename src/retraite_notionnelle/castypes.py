@@ -258,6 +258,20 @@ DEPARTS_CNRACL_2025 = {"active": 10_597, "sedentaire": 27_477, "carriere_longue"
 PART_ACTIVE_CNRACL = (DEPARTS_CNRACL_2025["active"]
                       / somme_ordonnee(DEPARTS_CNRACL_2025.values()))
 
+#: Les départs pour ancienneté des civils de l'État en 2025, au même jaune
+#: (tableau B-4, La Poste et Orange compris, comme la caisse que la DREES
+#: compte) : sédentaires hors carrières longues, actifs ouverts à cinquante-sept
+#: ans et à cinquante-deux, en carrière longue — ceux-ci sédentaires, les
+#: actifs du tableau B-3 n'étant que les 8 899 des deux catégories actives. Le
+#: sédentaire de catégorie B portait la caisse entière : un départ sur cinq est
+#: actif (action 138, étape 3).
+DEPARTS_ETAT_CIVILS_2025 = {"sedentaire": 28_209, "active_57": 5_552,
+                            "active_52": 3_347, "carriere_longue": 4_704}
+PART_ACTIVE_ETAT = (DEPARTS_ETAT_CIVILS_2025["active_57"]
+                    / somme_ordonnee(DEPARTS_ETAT_CIVILS_2025.values()))
+PART_SUPER_ACTIVE_ETAT = (DEPARTS_ETAT_CIVILS_2025["active_52"]
+                          / somme_ordonnee(DEPARTS_ETAT_CIVILS_2025.values()))
+
 #: Jeu de cas types couvrant les principales configurations du système.
 CAS_TYPES: tuple[CasType, ...] = (
     CasType(
@@ -314,6 +328,8 @@ CAS_TYPES: tuple[CasType, ...] = (
         part_primes=0.18,
         profil_carriere="public_categorie_b",
         caisses=("fonction_publique_etat_civile",),
+        parts_caisses=(("fonction_publique_etat_civile",
+                        1.0 - PART_ACTIVE_ETAT - PART_SUPER_ACTIVE_ETAT),),
         affiliation_avant_entree="contractuel_public",
         commentaire="Traitement indiciaire hors primes ; les primes relèvent du RAFP.",
     ),
@@ -486,9 +502,50 @@ AGENT_SEDENTAIRE_CNRACL = replace(
     ),
 )
 
+#: Les deux fonctionnaires ACTIFS de l'État, que la page Coût pèse avec le
+#: sédentaire de catégorie B et que la page Cas types ne montre pas : la même
+#: carrière, dans un emploi classé. Les actifs ouverts à cinquante-sept ans —
+#: douaniers de la surveillance, instituteurs d'hier — sont mis en paiement à
+#: 61,9 ans en 2025, à l'indice 757,9 contre 735,3 aux sédentaires ; ceux
+#: ouverts à cinquante-deux — policiers, surveillants pénitentiaires —, à 58,3
+#: ans, à l'indice 768,2, avec 22,9 trimestres de bonification du cinquième
+#: (tableau B-4). Chacun part au
+#: taux plein de sa catégorie, et porte la caisse dans la proportion de ses
+#: départs (:data:`PART_ACTIVE_ETAT`, :data:`PART_SUPER_ACTIVE_ETAT`).
+FONCTIONNAIRE_ACTIF_ETAT = replace(
+    _cas("fonctionnaire_sedentaire"),
+    code="fonctionnaire_sedentaire~actif",
+    libelle="Fonctionnaire de l'État de catégorie active",
+    affiliation="fonctionnaire_etat_actif",
+    age_liquidation=62,
+    niveau_salaire=round(1.2 * 757.9 / 735.3, 2),
+    parts_caisses=(("fonction_publique_etat_civile", PART_ACTIVE_ETAT),),
+    commentaire=(
+        "Douanier de la surveillance, instituteur d'avant le corps des "
+        "professeurs des écoles : "
+        "l'emploi classé ouvre la pension cinq ans avant les sédentaires, et "
+        "il part au taux plein de sa catégorie."
+    ),
+)
+FONCTIONNAIRE_SUPER_ACTIF_ETAT = replace(
+    _cas("fonctionnaire_sedentaire"),
+    code="fonctionnaire_sedentaire~super_actif",
+    libelle="Fonctionnaire de l'État de catégorie super-active",
+    affiliation="fonctionnaire_etat_super_actif",
+    age_liquidation=57,
+    niveau_salaire=round(1.2 * 768.2 / 735.3, 2),
+    parts_caisses=(("fonction_publique_etat_civile", PART_SUPER_ACTIVE_ETAT),),
+    commentaire=(
+        "Policier, surveillant pénitentiaire : la pension s'ouvre dix ans "
+        "avant les sédentaires, la bonification du cinquième s'ajoute aux "
+        "services, et il part au taux plein de sa catégorie."
+    ),
+)
+
 #: La grille de la page Coût : les cas types de la page Cas types, et les
 #: variantes qui partagent leur caisse avec eux.
-GRILLE_DU_COUT: tuple[CasType, ...] = CAS_TYPES + (AGENT_SEDENTAIRE_CNRACL,)
+GRILLE_DU_COUT: tuple[CasType, ...] = CAS_TYPES + (
+    AGENT_SEDENTAIRE_CNRACL, FONCTIONNAIRE_ACTIF_ETAT, FONCTIONNAIRE_SUPER_ACTIF_ETAT)
 
 
 def cas_type_affiche(code: str) -> str:

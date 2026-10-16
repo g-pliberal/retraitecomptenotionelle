@@ -21,9 +21,14 @@ from retraite_notionnelle.castypes import (
     AGENT_SEDENTAIRE_CNRACL,
     CAS_TYPES,
     DEPARTS_CNRACL_2025,
+    DEPARTS_ETAT_CIVILS_2025,
+    FONCTIONNAIRE_ACTIF_ETAT,
+    FONCTIONNAIRE_SUPER_ACTIF_ETAT,
     GENERATIONS,
     GRILLE_DU_COUT,
     PART_ACTIVE_CNRACL,
+    PART_ACTIVE_ETAT,
+    PART_SUPER_ACTIVE_ETAT,
     cas_type_affiche,
     parts_des_caisses,
     poids_effectifs,
@@ -1061,12 +1066,15 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: L'agent sédentaire de la CNRACL, qui porte quatre cinquièmes de la caisse
 #: et part trois ans après l'actif (action 138, étape 3), y suit enfin la
 #: montée de l'âge de départ que le COR projette : la dépense de la CNRACL
-#: passe de +13,3 à +7,5 %, sa pension relative de +3,4 à +3,5 %.
+#: passe de +13,3 à +7,5 %, sa pension relative de +3,4 à +3,5 %. Les deux
+#: actifs de l'État, qui portent un départ civil sur cinq et partent de deux à
+#: huit ans avant le sédentaire (même étape), y font de même pour la FPE : sa
+#: pension relative passe de +8,0 à +5,1 %, sa dépense de +22,3 à +19,3 %.
 DECOMPOSITION_GROUPES_CLIQUETS = {
-    ("pension_relative", "fpe"): 0.08,
+    ("pension_relative", "fpe"): 0.06,
     ("pension_relative", "cnracl"): 0.04,
     ("pension_relative", "agirc_arrco"): 0.23,
-    ("depense_part_pib", "fpe"): 0.23,
+    ("depense_part_pib", "fpe"): 0.20,
     ("depense_part_pib", "cnracl"): 0.08,
     ("depense_part_pib", "regimes_speciaux"): 0.34,
 }
@@ -1527,11 +1535,12 @@ def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):
     # sur le jaune pensions et rapproche la masse du modèle de la dépense du
     # COR. Depuis l'étape 19 de l'action 147, le scénario 1 servant les
     # revalorisations de son droit, la dérive repasse au-dessus d'un après
-    # 2027, et la seconde lecture ALOURDIT la dette de sept points. Les deux
-    # lectures encadrent encore la vérité.
+    # 2027, et la seconde lecture ALOURDIT la dette de sept points ; de cinq
+    # depuis les civils de l'État pesés sur leurs départs actifs (action 138,
+    # étape 3). Les deux lectures encadrent encore la vérité.
     ecart = cout.dette_derive.horizon("notionnel_liberal") - cout.dette.horizon(
         "notionnel_liberal")
-    assert 0.05 < ecart < 0.09, ecart
+    assert 0.04 < ecart < 0.09, ecart
 
 
 def test_le_pib_projete_croit_moins_vite_que_l_hypothese_nominale(avenir):
@@ -1632,6 +1641,51 @@ def test_la_cnracl_se_partage_entre_ses_departs_actifs_et_sedentaires():
             == pytest.approx(page["fonctionnaire_actif"]))
     assert cas_type_affiche(AGENT_SEDENTAIRE_CNRACL.code) == "fonctionnaire_actif"
     assert AGENT_SEDENTAIRE_CNRACL not in CAS_TYPES
+
+
+def test_les_civils_de_l_etat_se_partagent_entre_leurs_trois_departs():
+    """Les civils de l'État n'étaient pesés que sur le sédentaire de catégorie
+    B ; un départ sur cinq est actif, ouvert à cinquante-sept ou à cinquante-deux
+    ans (action 138, étape 3). La grille du coût partage la caisse dans la
+    proportion des départs du tableau B-4, que ce test relit, et que les
+    actifs du tableau B-3 confirment ; chaque actif part au taux plein de sa
+    catégorie, avant le sédentaire."""
+    def departs(tableau, champs):
+        return {
+            row["champ"]: float(row["valeur"])
+            for row in csv.DictReader(
+                ligne for ligne in open(RACINE_DONNEES / "reference" / "macro"
+                                        / "caracteristiques_fonction_publique.csv",
+                                        encoding="utf-8")
+                if not ligne.startswith("#"))
+            if row["tableau"] == tableau and row["population"] == "fpe_civils"
+            and row["indicateur"] == "departs" and row["champ"] in champs
+        }
+    lignes = departs("B-4", DEPARTS_ETAT_CIVILS_2025)
+    assert lignes == {champ: float(n) for champ, n in DEPARTS_ETAT_CIVILS_2025.items()}
+    b3 = departs("B-3", ("anciennete", "categorie_active"))
+    assert b3["anciennete"] == sum(lignes.values())
+    assert b3["categorie_active"] == lignes["active_57"] + lignes["active_52"]
+    parts = parts_des_caisses(GRILLE_DU_COUT)
+    caisse = "fonction_publique_etat_civile"
+    assert parts[(FONCTIONNAIRE_ACTIF_ETAT.code, caisse)] == pytest.approx(PART_ACTIVE_ETAT)
+    assert parts[(FONCTIONNAIRE_SUPER_ACTIF_ETAT.code, caisse)] == pytest.approx(
+        PART_SUPER_ACTIVE_ETAT)
+    assert parts[("fonctionnaire_sedentaire", caisse)] == pytest.approx(
+        1.0 - PART_ACTIVE_ETAT - PART_SUPER_ACTIVE_ETAT)
+    assert parts_des_caisses(CAS_TYPES)[("fonctionnaire_sedentaire", caisse)] == 1.0
+    effectifs = EffectifsRetraites(RACINE_DONNEES)
+    grille, page = poids_effectifs(effectifs, 2024, GRILLE_DU_COUT), poids_effectifs(effectifs, 2024)
+    codes = ("fonctionnaire_sedentaire", FONCTIONNAIRE_ACTIF_ETAT.code,
+             FONCTIONNAIRE_SUPER_ACTIF_ETAT.code)
+    assert (sum(grille[code] for code in codes)
+            == pytest.approx(page["fonctionnaire_sedentaire"]))
+    assert {cas_type_affiche(code) for code in codes} == {"fonctionnaire_sedentaire"}
+    projection = Simulateur(Parametres()).pour_la_projection()
+    sedentaire = next(cas for cas in CAS_TYPES if cas.code == "fonctionnaire_sedentaire")
+    ages = [cas.age_liquidation_pour(projection, 1963)
+            for cas in (FONCTIONNAIRE_SUPER_ACTIF_ETAT, FONCTIONNAIRE_ACTIF_ETAT, sedentaire)]
+    assert ages == sorted(ages) and ages[0] < ages[1] < ages[2]
 
 
 def test_un_partage_a_demi_declare_leve():

@@ -15704,7 +15704,7 @@ export const MESURES_BLOCAGES = {
   // proposition, solde moyen 2026-2070, en points de PIB : ce que coûtent les
   // 18 %, l'âge légal de 65 ans de la proposition compris — il en rend un
   // demi-point.
-  cout_18_pour_cent: 2.3,
+  cout_18_pour_cent: 2.2,
   // Le coût par défaut : soldes moyens 2026-2070, dette et coefficient à
   // l'horizon, en points de PIB, en % du PIB et en valeur. Mesurés avec l'âge
   // légal de 65 ans et SANS TVA à taux unique : la proposition ne réforme plus
@@ -15735,10 +15735,13 @@ export const MESURES_BLOCAGES = {
   // l'ont porté à −1,0 et sa dette à 69 %. Le 16 octobre, la CNRACL pesée
   // sur ses départs actifs et sédentaires (action 138, étape 3, cf48b45) l'a
   // porté à −1,1, sa dette à 77 %, le creux du coefficient à 0,83 et celui de
-  // 2070 de 1,01 à 1,00 ; le coût des 18 %, de 2,2 à 2,3 points.
+  // 2070 de 1,01 à 1,00 ; le coût des 18 %, de 2,2 à 2,3 points. Le même
+  // jour, les civils de l'État pesés sur leurs départs actifs, super-actifs
+  // et sédentaires (même étape) ont porté sa dette à 73 %, et le coût des
+  // 18 % à 2,2 points.
   solde_moyen_proposition: -1.1,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 77,
+  dette_2070_proposition: 73,
   dette_2070_actuel: 66,
   coefficient_minimum: 0.83,
   decennie_coefficient_minimum: 2040,

@@ -2,14 +2,14 @@
 
 **Reprise, au 16 octobre 2026.** Fait : la part des reportés en emploi
 (7 octobre) ; l'Ageing Report (13) ; les leviers du COR et la CSG effective
-(14) ; le 16, les contrôles d'Ancetre et de l'EACR, puis la CNRACL pesée sur
-ses départs, un actif pour quatre sédentaires (`GRILLE_DU_COUT`,
-`parts_caisses`) : la dépense de la CNRACL à l'horizon passe de +13 à +7,5 %
-du COR. Reste, une session par point : les actifs de l'État et l'Ircantec,
-par la même mécanique, avec l'action 147 ; la couverture de 2022-2030 ; les
-leviers et le taux effectif sur la page Coût ; au propriétaire, la table des
-poids de la page en deux lignes pour la CNRACL (`pages.js`). Détail : note
-« la CNRACL par ses départs », « Ce qui reste ».
+(14) ; le 16, les contrôles d'Ancetre et de l'EACR, la CNRACL puis les civils
+de l'État pesés sur leurs départs (`GRILLE_DU_COUT`, `parts_caisses`) : un
+actif pour quatre sédentaires dans chaque caisse. Reste, une session par
+point : l'Ircantec, faite de passages, qui demande un poids en équivalents
+carrières complètes (une décision, avec l'action 147) ; la couverture de
+2022-2030 ; les leviers et le taux effectif sur la page Coût ; au
+propriétaire, la table des poids de la page en plusieurs lignes par caisse
+(`pages.js`). Détail : note « les actifs de l'État », « Ce qui reste ».
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.3 ». L'étape est
 vaste — sept chantiers, vingt-neuf points du registre — ; cette session en

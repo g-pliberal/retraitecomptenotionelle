@@ -1,0 +1,21 @@
+date: "2026-10-16"
+session: "action 138, étape 3 : les civils de l'État pesés sur leurs départs actifs, super-actifs et sédentaires ; l'Ircantec mesurée"
+consulte: >-
+  Aucun texte de droit : le changement porte sur la pondération de la page
+  Coût, non sur une règle du scénario 1. Le rapport sur les pensions de
+  retraite de la fonction publique annexé au PLF 2027 (jaune pensions),
+  tableaux B-3 et B-4, déjà certifiés dans
+  macro/caracteristiques_fonction_publique.csv ; pour l'Ircantec, ses
+  effectifs et sa dépense de 2024, déjà certifiés
+  (regimes/effectifs_retraites.csv, macro/depenses_retraite_regimes.csv).
+trouve: >-
+  Un départ pour ancienneté des civils de l'État sur cinq est actif en 2025 :
+  5 552 ouverts à cinquante-sept ans, mis en paiement à 61,9 ans, et 3 347 à
+  cinquante-deux, à 58,3 ans, sur 41 812 ; les sédentaires, carrières longues
+  comprises, à 64,4 ans. L'Ircantec sert 4 331,8 M€ en 2024 à 2,11 millions
+  de retraités, 171 € par mois en moyenne, le tiers environ de ce que le cas
+  type contractuel en reçoit.
+reste: >-
+  Rien au droit. L'Ircantec, faite de passages, demanderait un poids en
+  équivalents carrières complètes, que les parts déclarées, ramenées à leur
+  somme, ne donnent pas ; le départ des super-actifs, deux ans sous le jaune.
