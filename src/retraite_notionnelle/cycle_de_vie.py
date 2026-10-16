@@ -156,8 +156,9 @@ pour enfants, exonérée jusqu'à l'abrogation du 2° ter de l'article 81 du cod
 général des impôts au 1er janvier 2014, s'impose à toute époque ; la prime pour
 l'emploi d'une année incomplète se calcule comme celle d'une année entière
 (:data:`~retraite_notionnelle.impot_revenu.HORS_CHAMP`). Il ne s'affiche pas
-encore sur le site, et n'a pas de jumeau JavaScript, pas plus que
-:mod:`~retraite_notionnelle.contributions_equilibre`.
+encore sur le site ; son jumeau JavaScript (``moteur/js/cycle-de-vie.js``) a
+tout, l'impôt compris, sauf les âges de départ et ceux d'équilibre d'un cas
+type.
 """
 
 from __future__ import annotations

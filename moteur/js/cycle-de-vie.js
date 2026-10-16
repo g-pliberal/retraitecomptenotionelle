@@ -14,12 +14,12 @@
  * d'équilibre de l'Agirc-Arrco comprises (`contributions-equilibre.js`), et ce
  * qui est servi, année après année —, et, depuis le 14 octobre, les revenus
  * nets de chaque année, que l'histoire des prélèvements donne
- * (`prelevements-historiques.js`) : donc toute convention qui ne demande pas
- * l'impôt, celle de l'OCDE, la convention nette et celle du COR, la pension
- * nette chaque année au taux de son année. Pas encore : l'impôt sur le revenu
- * (`impot_revenu.py`, étape 5), dont le net imposable est prêt
- * (`revenusImposables`, `partsImposablesParAnnee`) ; une convention qui le
- * demande lève une erreur plutôt que de rendre un chiffre faux.
+ * (`prelevements-historiques.js`) : donc la convention de l'OCDE, la
+ * convention nette et celle du COR, la pension nette chaque année au taux de
+ * son année ; depuis le 16 octobre, l'impôt sur le revenu de chaque année
+ * (`impot-revenu.js`, étape 5), donc la convention après impôt et le taux de
+ * remplacement après impôt au départ. Pas encore : les âges de départ
+ * (`depart`, `balayage`) et les âges d'équilibre d'un cas type.
  * `node tests/js/comparer-cycle-de-vie.mjs` rejoue le tout contre le Python
  * (`tests/test_cycle_de_vie_portage.py`).
  */
@@ -32,6 +32,9 @@ import {
 import {
   ficheDepuisBrut, indemnitesDesLignes, profilDeLaFiche, remunerationDeLaCarriere,
 } from "./remuneration.js";
+import {
+  chargerBaremesImpotRevenu, croissanceMacro, Declarant, Foyer, impotAuxParametres, INDEXATIONS,
+} from "./impot-revenu.js";
 import { faireVivre, RevalorisationServie } from "./revalorisation.js";
 
 /** Les six systèmes, dans l'ordre de la comparaison. */
@@ -59,17 +62,31 @@ export class Convention {
     age_deces = null, unisexe = false, taux_actualisation = TAUX_ACTUALISATION_OCDE,
     prelevement = 0.0, prelevements = null, impot = null,
   } = {}) {
-    if (impot !== null) {
-      throw new Error("l'impôt sur le revenu n'est pas encore porté (`impot_revenu.py`) : "
-        + "la convention après impôt attend son jumeau");
-    }
     this.age_deces = age_deces;
     this.unisexe = unisexe;
     this.taux_actualisation = taux_actualisation;
     this.prelevement = prelevement;
     this.prelevements = prelevements;
     this.impot = impot;
+    if (impot !== null) {
+      if (!INDEXATIONS.includes(impot)) {
+        throw new Error(`indexation du barème inconnue : '${impot}' (${INDEXATIONS.join(", ")})`);
+      }
+      if (!this.nette) {
+        throw new Error("l'impôt se calcule sur le net imposable : une convention après "
+          + "impôt porte les prélèvements");
+      }
+    }
     Object.freeze(this);
+  }
+
+  /** La même convention, après l'impôt d'`impot` (`replace(…, impot=…)`). */
+  avecLImpot(impot) {
+    return new Convention({
+      age_deces: this.age_deces, unisexe: this.unisexe,
+      taux_actualisation: this.taux_actualisation, prelevement: this.prelevement,
+      prelevements: this.prelevements, impot,
+    });
   }
 
   /** La pension est-elle nette des prélèvements ? */
@@ -87,16 +104,43 @@ export class Convention {
   }
 }
 
+/**
+ * L'impôt sur le revenu d'une année du cycle de vie, et ce qu'en supportent
+ * le salaire et la pension (`impotsParAnnee`).
+ */
+export class ImpotDeLAnnee {
+  constructor({ annee, salaire, pension, foyer, sur_la_pension }) {
+    Object.assign(this, { annee, salaire, pension, foyer, sur_la_pension });
+    Object.freeze(this);
+  }
+
+  /** Ce que le foyer paie ; négatif, ce qui lui est restitué. */
+  get impot() {
+    return this.foyer.impot;
+  }
+
+  get sur_le_salaire() {
+    return this.foyer.impot - this.sur_la_pension;
+  }
+}
+
 /** Ce qu'une carrière verse et reçoit sous un système, en euros courants. */
 export class Flux {
   constructor({
     scenario, cotisations, revenus, niveaux, debut, age, sexe, dernier_revenu,
-    revenus_nets = null, dernier_revenu_net = null,
+    revenus_nets = null, dernier_revenu_net = null, indexation_impot = null, impots = null,
+    revenus_apres_impot = null, dernier_revenu_apres_impot = null,
   }) {
     Object.assign(this, {
       scenario, cotisations, revenus, niveaux, debut, age, sexe, dernier_revenu,
-      revenus_nets, dernier_revenu_net,
+      revenus_nets, dernier_revenu_net, indexation_impot, impots, revenus_apres_impot,
+      dernier_revenu_apres_impot,
     });
+  }
+
+  /** Le même flux, ses champs de `champs` remplacés (`dataclasses.replace`). */
+  remplace(champs) {
+    return new Flux({ ...this, ...champs });
   }
 
   get naissance() {
@@ -106,6 +150,17 @@ export class Flux {
   /** La part de l'année `annee` où la pension est servie. */
   servi(annee) {
     return Math.min(Math.max(annee + 1 - this.debut, 0.0), 1.0);
+  }
+
+  /**
+   * La part de la pension brute de l'année `annee` que l'impôt lui retire :
+   * ce qu'elle en supporte sur ce qu'elle sert dans l'année ; zéro sans impôt.
+   */
+  impotDeLaPension(annee) {
+    const impot = this.impots === null ? undefined : this.impots.get(annee);
+    const servie = (this.niveaux.get(annee) ?? 0.0) * this.servi(annee);
+    if (impot === undefined || servie <= 0.0) return 0.0;
+    return impot.sur_la_pension / servie;
   }
 
   get annee_liquidation() {
@@ -327,15 +382,22 @@ export function revenusNets(simulateur, carriere, proposition = false) {
 /**
  * Les revenus d'activité nets imposables, année par année : le net, plus ce
  * que la paie retire sans que le revenu imposable le déduise. Jumeau de
- * `revenus_imposables` ; l'impôt lui-même n'est pas encore porté.
+ * `revenus_imposables`.
  */
 export function revenusImposables(simulateur, carriere, proposition = false) {
+  const revenus = netsEtImposables(simulateur, carriere, proposition);
+  return revenus === null ? null : revenus[1];
+}
+
+/** `revenusNets` et `revenusImposables`, d'une seule fiche de paie par ligne. */
+function netsEtImposables(simulateur, carriere, proposition) {
   const lues = paies(simulateur, carriere, true);
   if (lues === null) return null;
   let nets = parAnnee(lues.map(([annee, net]) => [annee, net]));
   if (proposition) nets = avecLaProposition(simulateur, carriere, nets);
   const retires = parAnnee(lues.map(([annee, , part]) => [annee, part]));
-  return new Map([...nets].map(([annee, net]) => [annee, net + (retires.get(annee) ?? 0.0)]));
+  return [nets,
+    new Map([...nets].map(([annee, net]) => [annee, net + (retires.get(annee) ?? 0.0)]))];
 }
 
 /** Le dernier revenu annualisé, net : le rapport du net au brut de la dernière année cotisée. */
@@ -473,13 +535,11 @@ export function niveauxNotionnels(simulateur, comparaison, scenario, revalorisat
 /**
  * Les deux flux d'une carrière sous chacun des six systèmes ; avec `nets`,
  * leurs revenus nets aussi (`revenusNets`), sur la fiche du droit en vigueur,
- * ou sur celle de la proposition pour le scénario 6. L'impôt n'est pas encore
- * porté.
+ * ou sur celle de la proposition pour le scénario 6 ; avec `impot`,
+ * l'indexation du barème de l'impôt sur le revenu, l'impôt de chaque année
+ * aussi, et les revenus nets qu'il laisse (`avecLImpot`).
  */
 export function fluxDesSystemes(simulateur, comparaison, { nets = false, impot = null } = {}) {
-  if (impot !== null) {
-    throw new Error("l'impôt sur le revenu n'est pas encore porté (`impot_revenu.py`)");
-  }
   const carriere = comparaison.carriere;
   let derniere = -Infinity;
   for (const scenario of SCENARIOS) {
@@ -489,8 +549,10 @@ export function fluxDesSystemes(simulateur, comparaison, { nets = false, impot =
     simulateur, simulateur.parametres.annee_debut_repartition, derniere);
   const versees = cotisationsVersees(simulateur, carriere);
   const actuels = niveauxActuels(simulateur, comparaison, revalorisation, derniere);
-  // Les revenus de chaque carrière, et leur net : une fiche de paie par année,
-  // une fois par carrière et par fiche (`_cle_des_revenus`).
+  const parts = impot === null ? null : partsImposablesParAnnee(simulateur, comparaison);
+  // Les revenus de chaque carrière, leur net et, sous l'impôt, leur net
+  // imposable : une fiche de paie par année, une fois par carrière et par
+  // fiche (`_cle_des_revenus`).
   const revenus = new Map();
   const revenusDe = (scenario) => {
     const duScenario = comparaison.carriereDe(scenario);
@@ -499,19 +561,26 @@ export function fluxDesSystemes(simulateur, comparaison, { nets = false, impot =
     if (!revenus.has(duScenario)) revenus.set(duScenario, new Map());
     const parFiche = revenus.get(duScenario);
     if (!parFiche.has(proposition)) {
-      parFiche.set(proposition, [revenusDActivite(duScenario),
-        nets ? revenusNets(simulateur, duScenario, proposition) : null]);
+      const bruts = revenusDActivite(duScenario);
+      let lus;
+      if (impot === null) {
+        lus = [bruts, nets ? revenusNets(simulateur, duScenario, proposition) : null, null];
+      } else {
+        const deux = netsEtImposables(simulateur, duScenario, proposition);
+        lus = deux === null ? [bruts, null, null] : [bruts, ...deux];
+      }
+      parFiche.set(proposition, lus);
     }
     return parFiche.get(proposition);
   };
 
   const flux = (scenario, cotisations, niveaux) => {
     const duScenario = comparaison.carriereDe(scenario);
-    const [bruts, netsDuScenario] = revenusDe(scenario);
+    const [bruts, netsDuScenario, imposables] = revenusDe(scenario);
     const dernier = duScenario !== carriere
       ? comparaison.dernier_revenu_annualise_liberal
       : comparaison.dernier_revenu_annualise;
-    return new Flux({
+    const avantImpot = new Flux({
       scenario,
       cotisations,
       revenus: bruts,
@@ -523,6 +592,8 @@ export function fluxDesSystemes(simulateur, comparaison, { nets = false, impot =
       revenus_nets: netsDuScenario,
       dernier_revenu_net: dernierRevenuNet(dernier, bruts, netsDuScenario),
     });
+    if (impot === null) return avantImpot;
+    return avecLImpot(simulateur, avantImpot, duScenario, parts, imposables, impot, derniere);
   };
 
   const systemes = { actuel: flux("actuel", versees, actuels) };
@@ -577,6 +648,7 @@ function trieesNiveaux(flux) {
  * moyen, années de vie espérées dans l'année].
  */
 export function pensionsEsperees(flux, simulateur, convention) {
+  verifierLImpot(flux, convention);
   const esperees = [];
   if (convention.age_deces !== null) {
     const deces = flux.naissance + convention.age_deces;
@@ -584,7 +656,7 @@ export function pensionsEsperees(flux, simulateur, convention) {
       const debut = Math.max(annee, flux.debut);
       const fin = Math.min(annee + 1, deces);
       if (fin > debut) {
-        esperees.push([annee, niveau * (fin - debut) * convention.retenu(annee),
+        esperees.push([annee, niveau * (fin - debut) * retenu(flux, convention, annee),
           (debut + fin) / 2.0, fin - debut]);
       }
     }
@@ -598,10 +670,29 @@ export function pensionsEsperees(flux, simulateur, convention) {
     if (fin <= debut) continue;
     const vie = integraleSurvie(courbe, debut - flux.debut, fin - flux.debut);
     if (vie > 0.0) {
-      esperees.push([annee, niveau * vie * convention.retenu(annee), (debut + fin) / 2.0, vie]);
+      esperees.push([annee, niveau * vie * retenu(flux, convention, annee),
+        (debut + fin) / 2.0, vie]);
     }
   }
   return esperees;
+}
+
+/**
+ * La part de la pension brute de l'année `annee` qui reste : ce que les
+ * prélèvements de la convention laissent, moins, après impôt, ce que
+ * l'impôt prend.
+ */
+function retenu(flux, convention, annee) {
+  if (convention.impot === null) return convention.retenu(annee);
+  return convention.retenu(annee) - flux.impotDeLaPension(annee);
+}
+
+/** Une convention après impôt demande un flux qui porte l'impôt de son indexation. */
+function verifierLImpot(flux, convention) {
+  if (convention.impot !== null && flux.indexation_impot !== convention.impot) {
+    throw new Error(`la convention est après impôt ('${convention.impot}') : il faut les flux `
+      + `de fluxDesSystemes(…, {impot: '${convention.impot}'})`);
+  }
 }
 
 /**
@@ -695,13 +786,203 @@ export function prelevementsParAnnee(simulateur, comparaison) {
 
 /**
  * La part des pensions que le revenu imposable de chaque année retient.
- * Jumeau de `parts_imposables_par_annee` ; l'impôt n'est pas encore porté.
+ * Jumeau de `parts_imposables_par_annee`.
  */
 export function partsImposablesParAnnee(simulateur, comparaison) {
   const historique = historiqueDe(simulateur);
   const parts = partsAssujetties(simulateur, comparaison.actuel);
   return new Map(anneesDesPensions(comparaison)
     .map((annee) => [annee, 1.0 - historique.tauxDeductiblePensionAnnuel(annee, parts)]));
+}
+
+// -- l'impôt sur le revenu ---------------------------------------------------
+
+const chroniques = new WeakMap();
+
+/**
+ * Les paramètres de l'impôt de chaque année de revenus, du premier barème lu
+ * à `derniere`, projetés au-delà de la dernière loi de finances lue sur
+ * `indexation` par le scénario de projection du simulateur : une `Map`.
+ */
+function baremesDeLImpot(simulateur, indexation, derniere) {
+  if (!chroniques.has(simulateur)) chroniques.set(simulateur, new Map());
+  const memoire = chroniques.get(simulateur);
+  const cle = `${indexation}:${derniere}`;
+  if (!memoire.has(cle)) {
+    const baremes = chargerBaremesImpotRevenu(simulateur.paquet);
+    if (baremes === null) {
+      throw new Error("le paquet ne porte pas les barèmes de l'impôt sur le revenu "
+        + "(`impot_revenu`) : l'impôt ne se calcule pas");
+    }
+    memoire.set(cle, baremes.chronique(derniere, indexation,
+      croissanceMacro(simulateur.macro, indexation)));
+  }
+  return memoire.get(cle);
+}
+
+/**
+ * Le foyer fiscal de `carriere` l'année `annee` : une personne seule, sans
+ * enfant à charge, qui a au 31 décembre l'âge de sa génération et déclare
+ * `salaire` et `pension`, imposables. Jumeau de `foyer_de_l_annee`.
+ */
+export function foyerDeLAnnee(carriere, annee, salaire = 0.0, pension = 0.0) {
+  return new Foyer({
+    declarants: [new Declarant({
+      salaires: salaire, pensions: pension, age: annee - carriere.annee_naissance,
+    })],
+  });
+}
+
+/**
+ * Les années où `carriere` a un revenu d'indépendant, que le module de
+ * l'impôt ne calcule pas. Jumeau de `annees_hors_impot`.
+ */
+export function anneesHorsImpot(simulateur, carriere) {
+  const annees = new Set();
+  for (const ligne of carriere.lignes) {
+    if (ligne.cotise && profilDeLaFiche(simulateur.affiliations, simulateur.catalogue,
+      ligne.affiliation, ligne.annee) === "independant") {
+      annees.add(ligne.annee);
+    }
+  }
+  return annees;
+}
+
+/** La part de l'impôt d'un foyer que supporte sa pension, au prorata des revenus nets. */
+function partDeLaPension(impot) {
+  let salaires = 0.0;
+  for (const s of impot.salaires_nets) salaires += s;
+  let pensions = 0.0;
+  for (const p of impot.pensions_nettes) pensions += p;
+  if (salaires + pensions <= 0.0) return 0.0;
+  return pensions / (salaires + pensions);
+}
+
+/**
+ * L'impôt sur le revenu de chaque année d'un flux : celui du foyer de
+ * l'année, qui déclare son salaire imposable (`salaires`) et la part
+ * imposable (`parts`) de ce que la pension sert dans l'année, au barème de
+ * l'année. Une `Map` de l'année à son `ImpotDeLAnnee`. Jumeau de
+ * `impots_par_annee`.
+ */
+export function impotsParAnnee(simulateur, flux, carriere, parts, salaires,
+  indexation = "prix", derniere = null) {
+  const pensions = new Map();
+  for (const [annee, niveau] of flux.niveaux) {
+    const servieDansLAnnee = niveau * flux.servi(annee);
+    if (servieDansLAnnee > 0.0) pensions.set(annee, servieDansLAnnee * parts.get(annee));
+  }
+  const annees = [...new Set([...salaires.keys(), ...pensions.keys()])].sort((a, b) => a - b);
+  const impots = new Map();
+  if (annees.length === 0) return impots;
+  const baremes = baremesDeLImpot(simulateur, indexation,
+    Math.max(annees[annees.length - 1], derniere ?? 0));
+  for (const annee of annees) {
+    const parametres = baremes.get(annee);
+    if (parametres === undefined) continue;
+    const salaire = salaires.get(annee) ?? 0.0;
+    const pension = pensions.get(annee) ?? 0.0;
+    const foyer = impotAuxParametres(foyerDeLAnnee(carriere, annee, salaire, pension),
+      parametres);
+    impots.set(annee, new ImpotDeLAnnee({
+      annee, salaire, pension, foyer, sur_la_pension: foyer.impot * partDeLaPension(foyer),
+    }));
+  }
+  return impots;
+}
+
+/**
+ * `flux` sous l'impôt sur le revenu : l'impôt de chaque année, les revenus
+ * nets qu'il laisse et le dernier revenu net d'une année entière d'impôt.
+ * Jumeau de `avec_l_impot`.
+ */
+export function avecLImpot(simulateur, flux, carriere, parts, imposables,
+  indexation = "prix", derniere = null) {
+  const hors = imposables === null ? new Set() : anneesHorsImpot(simulateur, carriere);
+  const salaires = new Map([...(imposables ?? new Map())]
+    .filter(([annee]) => !hors.has(annee)));
+  const impots = impotsParAnnee(simulateur, flux, carriere, parts, salaires, indexation,
+    derniere);
+  let apres = null;
+  let dernier = null;
+  if (flux.revenus_nets !== null && imposables !== null && hors.size === 0) {
+    apres = new Map([...flux.revenus_nets].map(([annee, net]) => [annee,
+      net - (impots.has(annee) ? impots.get(annee).sur_le_salaire : 0.0)]));
+    dernier = dernierRevenuApresImpot(simulateur, flux, imposables, indexation, derniere);
+  }
+  return flux.remplace({
+    indexation_impot: indexation, impots, revenus_apres_impot: apres,
+    dernier_revenu_apres_impot: dernier,
+  });
+}
+
+/**
+ * Le dernier revenu annualisé, net de ses prélèvements et de l'impôt d'une
+ * année entière de ce revenu, déclaré seul au barème de l'année du départ ;
+ * `null` sans dernier revenu net. Jumeau de `dernier_revenu_apres_impot`.
+ */
+export function dernierRevenuApresImpot(simulateur, flux, imposables, indexation = "prix",
+  derniere = null) {
+  if (flux.dernier_revenu_net === null || flux.revenus.size === 0) return null;
+  const annee = Math.max(...flux.revenus.keys());
+  const imposable = flux.dernier_revenu * (imposables.get(annee) ?? 0.0)
+    / flux.revenus.get(annee);
+  const depart = flux.annee_liquidation;
+  const parametres = baremesDeLImpot(simulateur, indexation,
+    Math.max(depart, derniere ?? 0)).get(depart);
+  if (parametres === undefined) return flux.dernier_revenu_net;
+  const impot = impotAuxParametres(
+    new Foyer({ declarants: [new Declarant({ salaires: imposable })] }), parametres);
+  return flux.dernier_revenu_net - impot.impot;
+}
+
+/**
+ * La convention nette, après impôt sur le revenu, son barème projeté sur
+ * `indexation`. Jumeau de `convention_apres_impot`.
+ */
+export function conventionApresImpot(simulateur, comparaison, cor = false, indexation = "prix") {
+  return conventionNette(simulateur, comparaison, cor).avecLImpot(indexation);
+}
+
+/**
+ * La pension brute du premier mois servi, annualisée, en euros de l'année du
+ * départ du système. Jumeau de `pension_au_depart`.
+ */
+export function pensionAuDepart(simulateur, comparaison, scenario) {
+  if (scenario === "actuel") return auDepart(simulateur, comparaison.actuel);
+  const calcul = simulateur.calculs[scenario];
+  const liquidation = comparaison.carriereDe(scenario).anneeLiquidation;
+  if (calcul.prospectif && liquidation <= simulateur.parametres.annee_bascule) {
+    return auDepart(simulateur, comparaison.actuel);
+  }
+  const resultat = comparaison[scenario];
+  return pensionContributive(calcul, resultat) + (resultat.rente_capitalisation_obligatoire ?? 0.0);
+}
+
+/**
+ * Le taux de remplacement après impôt au départ du système `scenario` : le
+ * taux net de l'OCDE ; `null` sans dernier revenu après impôt. `systemes`,
+ * les flux sous l'impôt d'`indexation`, s'ils sont déjà calculés. Jumeau de
+ * `remplacement_apres_impot`.
+ */
+export function remplacementApresImpot(simulateur, comparaison, scenario = "actuel",
+  indexation = "prix", systemes = null) {
+  const lesSystemes = systemes
+    ?? fluxDesSystemes(simulateur, comparaison, { impot: indexation });
+  const flux = lesSystemes[scenario];
+  const convention = conventionNette(simulateur, comparaison);
+  verifierLImpot(flux, convention.avecLImpot(indexation));
+  const dernier = flux.dernier_revenu_apres_impot;
+  if (dernier === null || dernier <= 0.0) return null;
+  const annee = flux.annee_liquidation;
+  const brute = pensionAuDepart(simulateur, comparaison, scenario);
+  const parts = partsImposablesParAnnee(simulateur, comparaison);
+  const parametres = baremesDeLImpot(simulateur, flux.indexation_impot,
+    Math.max(...flux.niveaux.keys())).get(annee);
+  const impot = parametres === undefined ? 0.0 : impotAuxParametres(
+    foyerDeLAnnee(comparaison.carriereDe(scenario), annee, 0.0, brute * parts.get(annee)),
+    parametres).impot;
+  return (brute * convention.retenu(annee) - impot) / dernier;
 }
 
 // -- les indicateurs ---------------------------------------------------------
@@ -755,7 +1036,10 @@ export function indicateurs(flux, simulateur, convention = new Convention()) {
   const [prix, salaires] = indices(simulateur.macro, Math.min(...annees), Math.max(...annees));
   let revenus;
   let dernier;
-  if (convention.nette) {
+  if (convention.impot !== null) {
+    revenus = flux.revenus_apres_impot;
+    dernier = flux.dernier_revenu_apres_impot;
+  } else if (convention.nette) {
     revenus = flux.revenus_nets;
     dernier = flux.dernier_revenu_net;
   } else {
@@ -799,7 +1083,8 @@ export function indicateurs(flux, simulateur, convention = new Convention()) {
     valeurNette /= flux.dernier_revenu;
     const derniereServie = Math.floor(flux.debut + duree - 1e-9);
     if (duree > 0.0 && flux.niveaux.has(derniereServie) && dernier) {
-      remplacementAuDeces = flux.niveaux.get(derniereServie) * convention.retenu(derniereServie)
+      remplacementAuDeces = flux.niveaux.get(derniereServie)
+        * retenu(flux, convention, derniereServie)
         / (dernier * salaires.get(derniereServie) / salaires.get(liquidation));
     }
   }
@@ -824,7 +1109,8 @@ export function indicateurs(flux, simulateur, convention = new Convention()) {
 
 /** Les indicateurs d'une carrière sous chacun des six systèmes. */
 export function indicateursDesSystemes(simulateur, comparaison, convention = new Convention()) {
-  const systemes = fluxDesSystemes(simulateur, comparaison, { nets: convention.nette });
+  const systemes = fluxDesSystemes(simulateur, comparaison,
+    { nets: convention.nette, impot: convention.impot });
   return Object.fromEntries(Object.entries(systemes)
     .map(([scenario, flux]) => [scenario, indicateurs(flux, simulateur, convention)]));
 }

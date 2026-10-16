@@ -1,0 +1,17 @@
+date: "2026-10-16"
+session: "action 138, étape 9, onzième partie : l'impôt sur le revenu au portage JavaScript des indicateurs de cycle de vie"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche de la carte touchée, la
+  session n'écrivant aucune règle du scénario 1. Aucun texte lu : le portage
+  reprend les barèmes que `data/reference/legislation/impot_revenu.yaml` tient
+  déjà, lus le 10 octobre 2026 (IPP, index LEGI), et les règles que
+  `impot_revenu.py` en tire.
+trouve: >-
+  Rien de neuf au droit. Le jumeau JavaScript retrouve l'impôt du Python à
+  10⁻⁹ près sur 864 foyers de 1962 à 2045, et les indicateurs après impôt de
+  sept carrières.
+reste: >-
+  Ceux de l'étape 5 (note du 13 octobre) : le bénéfice des indépendants et la
+  majoration de l'article 158, 7 ; l'année de revenus de l'imposition de la
+  majoration pour enfants, au texte de la loi de finances pour 2014 ; les
+  règles d'avant 1981 sans texte lu.

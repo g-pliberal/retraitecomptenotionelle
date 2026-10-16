@@ -1305,6 +1305,28 @@ def _prelevements_historiques() -> dict:
     }
 
 
+def _impot_revenu() -> dict:
+    """Les barèmes de l'impôt sur le revenu (``legislation/impot_revenu.yaml``),
+    marche par marche, tels que le Python les lit
+    (:mod:`retraite_notionnelle.donnees.impot_revenu`), sans leurs clés de
+    source autres que l'année : l'impôt des indicateurs de cycle de vie du
+    portage (``moteur/js/impot-revenu.js``)."""
+    from retraite_notionnelle.donnees.impot_revenu import (
+        CLES_DE_SOURCE,
+        charger_baremes_impot_revenu,
+    )
+
+    baremes = charger_baremes_impot_revenu(DONNEES)
+    return {
+        "lu_le": baremes.lu_le,
+        "premiere_annee": baremes.premiere_annee,
+        "series": {nom: [{cle: valeur for cle, valeur in sorted(marche.items())
+                          if cle == "annee" or cle not in CLES_DE_SOURCE}
+                         for marche in marches]
+                   for nom, marches in sorted(baremes.series.items())},
+    }
+
+
 def _contributions_equilibre() -> dict:
     """Les contributions d'équilibre de l'Agirc-Arrco
     (``legislation/contributions_equilibre_agirc_arrco.yaml``), telles que le
@@ -2338,6 +2360,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "indemnite_compensatrice_csg": _indemnite_compensatrice_csg(),
         "contributions_equilibre": _contributions_equilibre(),
         "prelevements_historiques": _prelevements_historiques(),
+        "impot_revenu": _impot_revenu(),
         "assiette_minimale_independants": _assiette_minimale_independants(),
         "validation_micro": _validation_micro(),
         "profil_salaire_age": _profil_salaire("profil_salaire_age.csv", "annee"),

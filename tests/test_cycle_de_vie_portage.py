@@ -7,11 +7,15 @@ convention de l'OCDE et sous un âge de décès fixe, l'âge d'équilibre du
 diviseur et l'âge de part de vie constante ; depuis le 14 octobre, les
 revenus nets de chaque année (``moteur/js/prelevements-historiques.js``, le
 jumeau de ``donnees/prelevements_historiques.py``), donc la convention nette
-et celle du COR. Des carrières de statuts et de générations variés — un
-départ passé, que le droit a fait vivre, un départ de l'année, un départ à
-venir — se calculent des deux côtés, sous le simulateur du site, et chaque
-chiffre doit s'y retrouver. Ce que le portage n'a pas encore — l'impôt — est
-refusé par lui, et le test le vérifie aussi.
+et celle du COR ; depuis le 16 octobre, l'impôt sur le revenu
+(``moteur/js/impot-revenu.js``, le jumeau de ``impot_revenu.py`` et de
+``donnees/impot_revenu.py``), donc les deux conventions après impôt, l'impôt
+de chaque année et le taux de remplacement après impôt au départ. Des
+carrières de statuts et de générations variés — un départ passé, que le droit
+a fait vivre, un départ de l'année, un départ à venir — se calculent des deux
+côtés, sous le simulateur du site, et chaque chiffre doit s'y retrouver ; le
+module de l'impôt se rejoue seul sur une grille de foyers, d'années et de
+revenus.
 """
 
 from __future__ import annotations
@@ -52,9 +56,82 @@ CONVENTIONS = {
     "deces_fixe": {"age_deces": "cor", "unisexe": True, "taux_actualisation": 0.0},
     "nette": {"construite": "nette"},
     "cor": {"construite": "cor"},
+    "apres_impot": {"construite": "nette", "impot": "prix"},
+    "cor_apres_impot": {"construite": "cor", "impot": "salaire_moyen"},
 }
 
+#: Les systèmes dont le taux de remplacement après impôt au départ se compare.
+SCENARIOS_REMPLACEMENT = ("actuel", "notionnel_retroactif", "notionnel_liberal")
+
 EQUILIBRES = ((1950, None), (1975, "F"), (1995, "H"))
+
+#: La grille du module de l'impôt seul : des années de chaque règle — les
+#: majorations et minorations des années 1960, les paliers de 1968 et 1969, la
+#: décote de 1981 à 1985, le plafonnement, les 20 % d'avant 2006, la prime pour
+#: l'emploi, les mesures de 2001, 2008 et 2013, la réduction de 2016 à 2019 —,
+#: deux années projetées, des foyers de chaque sorte, quatre revenus.
+ANNEES_IMPOT = (1962, 1966, 1968, 1969, 1971, 1975, 1978, 1981, 1983, 1984, 1988, 1995,
+                1999, 2000, 2001, 2005, 2008, 2010, 2013, 2014, 2017, 2020, 2024, 2025,
+                2031, 2045)
+FOYERS_IMPOT = {
+    "salarie": {"declarants": [{"salaires": 1.0}]},
+    "retraite": {"declarants": [{"pensions": 0.8, "age": 70}]},
+    "depart": {"declarants": [{"salaires": 0.4, "pensions": 0.5, "age": 64}]},
+    "couple": {"declarants": [{"salaires": 1.0}, {"pensions": 0.6, "age": 66}], "enfants": 2},
+    "parent_isole": {"declarants": [{"salaires": 1.0}], "enfants": 3, "enfants_invalides": 1},
+    "veuf": {"declarants": [{"pensions": 1.0, "age": 75}], "enfants": 1, "veuf": True},
+    "invalide": {"declarants": [{"salaires": 0.5, "invalide": True}]},
+    "couple_mono_emploi": {"declarants": [{"salaires": 1.0}, {}], "enfants": 1},
+}
+NIVEAUX_IMPOT = (0.25, 0.7, 1.6, 5.0)
+
+
+def _demandes_d_impot() -> list[dict]:
+    """Chaque foyer de la grille, chaque année, à chaque niveau : ses revenus
+    en euros, d'environ 20 000 € en 2000 au niveau 1, menés à 4 % l'an ;
+    l'année 1975 en francs aussi."""
+    demandes = []
+    for annee in ANNEES_IMPOT:
+        echelle = 20000.0 * 1.04 ** (annee - 2000)
+        for nom, foyer in FOYERS_IMPOT.items():
+            for niveau in NIVEAUX_IMPOT:
+                declarants = [{cle: (valeur * niveau * echelle
+                                     if cle in ("salaires", "pensions") else valeur)
+                               for cle, valeur in d.items()} for d in foyer["declarants"]]
+                for unite in (("euro", "monnaie") if annee == 1975 else ("euro",)):
+                    demandes.append({
+                        "annee": annee, "unite": unite,
+                        "indexation": "salaire_moyen" if annee == 2045 else "prix",
+                        "foyer": {**foyer, "declarants": declarants}, "nom": nom})
+    return demandes
+
+
+def _impots_python(demandes: tuple) -> list[dict]:
+    import dataclasses
+
+    from retraite_notionnelle.donnees.impot_revenu import (
+        charger_baremes_impot_revenu,
+        croissance_macro,
+    )
+    from retraite_notionnelle.impot_revenu import Declarant, Foyer, impot_du_foyer
+
+    simulateur = Contexte().simulateur()
+    baremes = charger_baremes_impot_revenu(RACINE / "data")
+    resultats = []
+    for demande in map(json.loads, demandes):
+        foyer = demande["foyer"]
+        resultat = impot_du_foyer(
+            Foyer(declarants=tuple(Declarant(**d) for d in foyer["declarants"]),
+                  enfants=foyer.get("enfants", 0),
+                  enfants_invalides=foyer.get("enfants_invalides", 0),
+                  veuf=foyer.get("veuf", False)),
+            demande["annee"], baremes, unite=demande["unite"],
+            indexation=demande["indexation"],
+            croissance=croissance_macro(simulateur.macro, demande["indexation"]))
+        valeurs = dataclasses.asdict(resultat)
+        valeurs["fiabilite"] = resultat.fiabilite.name.lower()
+        resultats.append(json.loads(json.dumps(valeurs)))
+    return resultats
 
 
 def _options(affiliation, generation, sexe, age):
@@ -76,17 +153,33 @@ def _python(carrieres, conventions, equilibres):
         for nom, champs in conventions:
             reglages = dict(champs)
             construite = reglages.pop("construite", None)
+            impot = reglages.pop("impot", None)
             if reglages.get("age_deces") == "cor":
                 reglages["age_deces"] = cycle_de_vie.age_de_deces_cor(
                     simulateur.mortalite, carriere.annee_naissance)
-            convention = (cycle_de_vie.convention_nette(simulateur, comparaison,
-                                                        cor=construite == "cor")
-                          if construite else cycle_de_vie.Convention(**reglages))
+            if impot:
+                convention = cycle_de_vie.convention_apres_impot(
+                    simulateur, comparaison, cor=construite == "cor", indexation=impot)
+            elif construite:
+                convention = cycle_de_vie.convention_nette(simulateur, comparaison,
+                                                           cor=construite == "cor")
+            else:
+                convention = cycle_de_vie.Convention(**reglages)
             systemes = cycle_de_vie.indicateurs_des_systemes(simulateur, comparaison,
                                                              convention)
             indicateurs[nom] = {scenario: valeurs.dictionnaire()
                                 for scenario, valeurs in systemes.items()}
+        sous_l_impot = cycle_de_vie.flux_des_systemes(simulateur, comparaison, impot="prix")
+        actuel = sous_l_impot["actuel"]
         cas.append({
+            "impots": {str(annee): [i.salaire, i.pension, i.impot, i.sur_la_pension]
+                       for annee, i in actuel.impots.items()},
+            "revenus_apres_impot": _par_annee(actuel.revenus_apres_impot),
+            "dernier_revenu_apres_impot": actuel.dernier_revenu_apres_impot,
+            "remplacements_apres_impot": {
+                scenario: cycle_de_vie.remplacement_apres_impot(
+                    simulateur, comparaison, scenario, systemes=sous_l_impot)
+                for scenario in SCENARIOS_REMPLACEMENT},
             "contributions": {str(annee): montant for annee, montant in
                               contributions_d_une_carriere(simulateur, carriere).items()},
             "taux_de_prelevement": cycle_de_vie.taux_de_prelevement(simulateur,
@@ -155,9 +248,14 @@ def les_deux():
     conventions = tuple(sorted((nom, tuple(sorted(champs.items())))
                                for nom, champs in CONVENTIONS.items()))
     attendu = moitie_python(_python, CARRIERES, conventions, EQUILIBRES)
+    demandes = _demandes_d_impot()
+    attendu["impots"] = moitie_python(
+        _impots_python, tuple(json.dumps(d, sort_keys=True) for d in demandes))
     obtenu = _node({
         "cas": [{"carriere": _options(*c), "conventions": CONVENTIONS} for c in CARRIERES],
         "equilibres": [{"generation": g, "sexe": s} for g, s in EQUILIBRES],
+        "remplacements": SCENARIOS_REMPLACEMENT,
+        "impots": demandes,
     })
     return obtenu, attendu
 
@@ -178,6 +276,30 @@ def test_le_salarie_du_prive_verse_des_contributions_d_equilibre_des_deux_cotes(
     assert len(obtenu["cas"][2]["contributions"]) > 30
 
 
+def test_l_impot_de_chaque_foyer_se_retrouve_en_javascript(les_deux):
+    """Le jumeau de ``impot_revenu.py``, étape par étape, sur la grille : les
+    parts, le barème et son plafonnement, la décote, chaque correction, la
+    prime pour l'emploi, le seuil de recouvrement, en francs et en euros, lus
+    et projetés."""
+    obtenu, attendu = les_deux
+    assert len(obtenu["impots"]) == len(attendu["impots"])
+    ecarts = [e for rang, (o, a) in enumerate(zip(obtenu["impots"], attendu["impots"]))
+              for e in _ecarts(o, a, f"[{rang}] {a['annee']}")]
+    assert not ecarts, f"{len(ecarts)} écarts : " + "; ".join(ecarts[:8])
+
+
+def test_la_grille_de_l_impot_a_un_objet(les_deux):
+    """La grille touche chaque étape : chaque correction y joue au moins une
+    fois."""
+    _, attendu = les_deux
+    for etape in ("plafonnement", "reduction_complementaire", "decote",
+                  "reduction_sous_condition_de_revenus", "minoration_exceptionnelle",
+                  "majoration_exceptionnelle", "reduction_exceptionnelle",
+                  "reduction_proportionnelle", "prime_pour_l_emploi", "credit_exceptionnel",
+                  "abattement_vingt_pour_cent", "abattement_age_invalidite"):
+        assert any(i[etape] for i in attendu["impots"]), etape
+
+
 def test_les_ages_d_equilibre_se_retrouvent_en_javascript(les_deux):
     obtenu, attendu = les_deux
     ecarts = _ecarts(obtenu["equilibres"], attendu["equilibres"])
@@ -193,28 +315,51 @@ def test_les_revenus_nets_ont_un_objet(les_deux):
         assert cas["indicateurs"]["cor"]["actuel"]["taux_annuite"] is not None
 
 
-def test_ce_que_le_portage_n_a_pas_encore_est_refuse():
-    """L'impôt n'est pas porté : une convention qui le demande lève une
-    erreur, plutôt que de rendre un chiffre faux."""
+def test_l_impot_a_un_objet(les_deux):
+    """Le contrôle de l'impôt a un objet : le salarié paie l'impôt de son
+    salaire, puis de sa pension, et l'impôt déplace les indicateurs ;
+    l'artisan, dont le bénéfice n'est pas imposé, n'a pas de revenus après
+    impôt."""
+    obtenu, _ = les_deux
+    cadre = obtenu["cas"][3]
+    assert sum(1 for *_, impot, _ in cadre["impots"].values() if impot > 0) > 40
+    assert sum(1 for *_, sur_la_pension in cadre["impots"].values() if sur_la_pension > 0) > 10
+    for scenario in ("actuel", "notionnel_prospectif"):
+        assert (cadre["indicateurs"]["apres_impot"][scenario]["rendement_reel"]
+                < cadre["indicateurs"]["nette"][scenario]["rendement_reel"])
+    assert all(cadre["remplacements_apres_impot"].values())
+    artisan = obtenu["cas"][5]
+    assert artisan["revenus_apres_impot"] is None
+    assert artisan["indicateurs"]["apres_impot"]["actuel"]["taux_annuite"] is None
+
+
+def test_une_convention_apres_impot_veut_ses_flux():
+    """Une convention après impôt sans prélèvements est refusée, et des flux
+    sans l'impôt de son indexation aussi, plutôt que de rendre un chiffre
+    faux."""
     if shutil.which("node") is None:
         pytest.skip("node absent")
     script = (
         "import { Contexte } from './moteur/js/contexte.js';"
-        "import { Convention, fluxDesSystemes } from './moteur/js/cycle-de-vie.js';"
+        "import { Convention, conventionApresImpot, fluxDesSystemes, indicateurs }"
+        " from './moteur/js/cycle-de-vie.js';"
         "import { readFileSync } from 'node:fs';"
         "const s = new Contexte(JSON.parse(readFileSync('moteur/donnees.json','utf8'))).simulateur();"
         "const c = s.simuler(s.carriereSimple({annee_naissance: 1962, sexe: 'H',"
         " affiliation: 'salarie_prive_non_cadre', age_debut: 21, age_liquidation: 64,"
         " niveau_salaire: 1}));"
+        "const convention = conventionApresImpot(s, c);"
         "const refus = [];"
-        "for (const f of [() => fluxDesSystemes(s, c, {impot: 'prix'}),"
-        " () => new Convention({impot: 'prix'})]) {"
-        " try { f(); refus.push(false); } catch (e) { refus.push(/pas encore port/.test(e.message)); } }"
+        "for (const f of [() => new Convention({impot: 'prix'}),"
+        " () => new Convention({prelevement: 0.1, impot: 'loyers'}),"
+        " () => indicateurs(fluxDesSystemes(s, c, {nets: true}).actuel, s, convention),"
+        " () => indicateurs(fluxDesSystemes(s, c, {impot: 'salaire_moyen'}).actuel, s, convention)]) {"
+        " try { f(); refus.push(false); } catch (e) { refus.push(true); } }"
         "process.stdout.write(JSON.stringify(refus));")
     execution = subprocess.run(["node", "--input-type=module", "-e", script], cwd=RACINE,
                                capture_output=True, text=True, encoding="utf-8", check=False)
     assert execution.returncode == 0, execution.stderr
-    assert json.loads(execution.stdout) == [True, True]
+    assert json.loads(execution.stdout) == [True, True, True, True]
 
 
 #: La grille du module seul : chaque famille, des années de chaque époque, des
