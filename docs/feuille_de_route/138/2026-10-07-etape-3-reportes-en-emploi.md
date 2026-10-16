@@ -2,14 +2,14 @@
 
 **Reprise, au 16 octobre 2026.** Fait : la part des reportés en emploi
 (7 octobre) ; l'Ageing Report (13) ; les leviers du COR et la CSG effective
-(14) ; le 16, les contrôles d'Ancetre et de l'EACR, la CNRACL puis les civils
-de l'État pesés sur leurs départs (`GRILLE_DU_COUT`, `parts_caisses`) : un
-actif pour quatre sédentaires dans chaque caisse. Reste, une session par
-point : l'Ircantec, faite de passages, qui demande un poids en équivalents
-carrières complètes (une décision, avec l'action 147) ; la couverture de
-2022-2030 ; les leviers et le taux effectif sur la page Coût ; au
-propriétaire, la table des poids de la page en plusieurs lignes par caisse
-(`pages.js`). Détail : note « les actifs de l'État », « Ce qui reste ».
+(14) ; le 16, Ancetre, l'EACR, la CNRACL et les civils de l'État pesés sur
+leurs départs, puis la couverture de 2022-2030 départagée : périmètre 0,23
+point, 65 ans et plus 0,15, suspension 0,09 à sa mesure, 0,07 non séparé.
+Reste, une session par point : l'Ircantec, qui demande un poids en
+équivalents carrières complètes (une décision, avec l'action 147) ; la part
+stable des moins de 65 ans de l'AWG, à mesurer ; les leviers et le taux
+effectif sur la page Coût ; au propriétaire, la table des poids (`pages.js`).
+Détail : notes « actifs de l'État », « couverture de 2022-2030 ».
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.3 ». L'étape est
 vaste — sept chantiers, vingt-neuf points du registre — ; cette session en

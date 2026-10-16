@@ -11330,8 +11330,10 @@ referents:
           dix-millième de point (`tests/test_facteurs_depense.py`). La
           couverture n'y est plus supposée : celle du système actuel recule de
           12 % de 2022 à 2070, −1,7 point de PIB. Le modèle n'a ni les heures
-          travaillées, ni les têtes de la proposition, ni la couverture par
-          âge.
+          travaillées, ni les têtes de la proposition. La couverture par âge,
+          refaite des têtes de `cout.py` le 16 octobre 2026
+          (`retraites_par_age`), se partage entre les 65 ans et plus et les
+          plus jeunes, des deux côtés (`partager_couverture`).
         etat: repris
         chantier: "138.3"
       - quoi: >-
@@ -11349,7 +11351,9 @@ referents:
           −0,9 : dépendance +7,0 contre +6,0, les 65 ans et plus de l'INSEE de
           2026 croissant de 65 % rapportés aux 20-64 ans, ceux d'Eurostat de
           2023 de 52 % ; couverture −1,7 contre −2,2, l'écart tenant presque
-          entier à 2022-2030 ; prestation −3,0 contre −3,4 ; marché du travail
+          entier à 2022-2030, et là au périmètre surtout (16 octobre : l'AWG
+          compte deux fois plus de pensionnés de moins de 65 ans) ;
+          prestation −3,0 contre −3,4 ; marché du travail
           −0,7 contre −1,0. Sous la variante haute du COR, une productivité de
           1,0 % proche des 1,03 % de l'AWG, la prestation fait −3,7 : la
           mécanique du modèle retient la dépense comme Destinie, et l'écart

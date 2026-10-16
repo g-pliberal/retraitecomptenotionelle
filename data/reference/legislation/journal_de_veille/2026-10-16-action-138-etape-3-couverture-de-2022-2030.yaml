@@ -1,0 +1,23 @@
+date: "2026-10-16"
+session: "action 138, étape 3 : la couverture de 2022-2030, départagée entre le périmètre, les 65 ans et plus et la suspension de 2026"
+consulte: >-
+  Aucun texte neuf : l'univers sans la suspension rend aux générations 1964 à
+  1968 l'âge d'ouverture de D. 161-2-1-9 dans sa version du 1er septembre 2023
+  (LEGIARTI000047634502, déjà lu pour age_legal_par_generation), et aux
+  générations 1964 et 1965 la durée de L. 161-17-3 dans la même version
+  (LEGIARTI000047452764, déjà certifiée dans
+  duree_requise_avant_suspension.csv), sur une copie des données, jamais dans
+  le dépôt. Pour l'AWG, ses pensionnés de tous âges et de 65 ans et plus, déjà
+  dans tests/temoins/ageing_report_france.json.
+trouve: >-
+  De 2022 à 2030, l'écart de couverture au modèle, 0,54 point de PIB, tient au
+  périmètre pour 0,23 (l'AWG compte 4,87 millions de pensionnés de moins de 65
+  ans en 2022, le modèle 2,56 millions de retraités), aux 65 ans et plus pour
+  0,15, et chez les moins de 65 ans, à périmètre égal, à la suspension pour
+  environ 0,09 à sa mesure de trois mois, la grille de cinq générations du
+  coût l'agrandissant à 0,35. La suspension décale les départs sans changer la
+  pente : de 2022 à 2070, −1,67 sans elle, −1,69 avec.
+reste: >-
+  Rien au droit. La part stable des moins de 65 ans de l'AWG, calée à 21 %, à
+  mesurer sur l'invalidité et la réversion seule de la DREES ; la suspension
+  au trimestre demanderait une grille plus fine dans cout.py (action 147).
