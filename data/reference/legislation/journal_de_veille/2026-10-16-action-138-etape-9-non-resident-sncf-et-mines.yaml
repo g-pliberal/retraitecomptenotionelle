@@ -1,0 +1,18 @@
+date: "2026-10-16"
+session: "action 138, étape 9, suite de la huitième partie : le non-résident de la SNCF et des mines, à ses taux de L. 131-9"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche à relire touchée. Dans
+  l'index LEGI, récupéré le jour même (à jour au 11 octobre 2026) : le décret
+  n° 2007-1056, art. 7, version du 3 août 2025 (LEGIARTI000052041125), IV ; le
+  décret n° 46-2769, art. 91 (LEGIARTI000037456798).
+trouve: >-
+  Pour les pensionnés qui relèvent de L. 131-9 : 3,90 % du montant
+  trimestriel de la pension de la SNCF sous le plafond, 3,20 % au-delà ;
+  3,70 % des pensions des mines et de leurs avantages accessoires, hors ceux
+  des articles 139 et 141, sans plafond. Écrits dans
+  `prelevements_remuneration.yaml` et la fiche
+  `cotisation_maladie_des_non_residents`.
+reste: >-
+  Ce que la fonction publique, les autres régimes spéciaux et les
+  indépendants prélèvent sur la pension d'un non-résident ; les avantages
+  accessoires des mines dans l'assiette ; le plafond de la SNCF de 2027.
