@@ -376,6 +376,48 @@ def test_la_pmr_d_une_pension_d_avant_2002_ne_veut_pas_le_taux_plein(simulateur)
     assert faire_vivre(simulateur, carriere, resultat, 2026).exploitant is None
 
 
+
+def test_la_pmr_unique_de_2022_se_sert_aux_pensions_prises_depuis_2009(simulateur):
+    """Une conjointe collaboratrice partie en 2016 à PMR2, et vingt ans de
+    collaborateur puis vingt-quatre de chef partis en 2019 : leur majoration,
+    calculée au départ et menée par le coefficient, se refait depuis le
+    1er janvier 2022 au montant unique (loi n° 2021-1679, article 1er, II ;
+    décret n° 2021-1919, article 2) ; rien ne change en 2021. La carrière
+    complète sans surcote est portée à la PMR entière."""
+    pmr = simulateur.scenario_actuel.pension_majoree_reference
+    collaboratrice = _chef(simulateur, 1952, 64, sexe="F", metiers=[
+        Metier("collaborateur_agricole", 20.0, niveau_salaire=0.3)])
+    melee = _chef(simulateur, 1957, 62, metiers=[
+        Metier("collaborateur_agricole", 20.0, niveau_salaire=0.3),
+        Metier("exploitant_agricole", 40.0, niveau_salaire=0.3)])
+    for carriere in (collaboratrice, melee):
+        resultat, avantages, _ = _resultat(simulateur, carriere)
+        assert resultat.exploitant_agricole.pmr == pytest.approx(
+            avantages["pension_majoree_reference"].montant, rel=1e-12)
+        assert faire_vivre(simulateur, carriere, resultat, 2021).exploitant is None
+        for annee in (2022, 2026):
+            vivante = faire_vivre(simulateur, carriere, resultat, annee)
+            assert vivante.exploitant.pmr > 0
+            assert vivante.exploitant.pmr_entiere == pytest.approx(
+                pmr.montant("pmr_chef", annee, 12)[0], rel=1e-12)
+    assert _base(vivante).aujourd_hui == pytest.approx(vivante.exploitant.pmr_entiere,
+                                                       rel=1e-12)
+
+
+def test_la_pmr_unique_garde_la_duree_minimale_du_depart(simulateur):
+    """Quinze ans de chef après une carrière de salarié, parti au taux plein en
+    2012 : sous les soixante-dix trimestres que D. 732-109 demandait alors, ni
+    PMR au départ, ni en 2022, la règle unique n'ouvrant pas une majoration
+    refusée à la liquidation."""
+    metiers = [Metier("salarie_prive_non_cadre", 20.0, niveau_salaire=0.3),
+               Metier("exploitant_agricole", 47.0, niveau_salaire=0.3)]
+    carriere = _chef(simulateur, 1950, 62, metiers=metiers)
+    resultat, avantages, _ = _resultat(simulateur, carriere)
+    assert resultat.exploitant_agricole.eligible.taux_plein
+    assert resultat.exploitant_agricole.eligible.duree < 70
+    assert "pension_majoree_reference" not in avantages
+    assert faire_vivre(simulateur, carriere, resultat, 2022).exploitant is None
+
 def test_le_chef_de_moins_de_dix_sept_ans_et_demi_a_le_minimum_du_couple(simulateur):
     """Depuis 2002, douze ans de chef après trente de conjoint collaborateur :
     C = (MV2 - AVTS) / (37,5 × VP), MV2 étant l'écart entre le minimum d'un
@@ -825,6 +867,10 @@ CAS = [
     # en 1995, vingt ans de chef partis sans le taux plein en 2000.
     {"naissance": "1930", "liquidation": "65"},
     {"naissance": "1940", "liquidation": "60", "debut": "40"},
+    # La PMR unique de 2022, aux pensions prises depuis 2009 : quinze ans de
+    # chef après le salariat, partis en 2012 sous la durée minimale.
+    {"naissance": "1950", "liquidation": "62", "statut": "salarie_prive_non_cadre",
+     "metier2_debut": "47", "metier2_statut": "exploitant_agricole", "metier2_salaire": "0.3"},
     # Les points de RCO de chef seuls dans le complément (D. 732-166-4) :
     # vingt-neuf ans de chef, puis quinze de collaborateur, parti en 2026.
     {"naissance": "1962", "metier2_debut": "49", "metier2_statut": "collaborateur_agricole",

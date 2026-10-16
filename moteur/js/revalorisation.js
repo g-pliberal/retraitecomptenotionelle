@@ -1140,13 +1140,22 @@ export const DERNIERE_ANNEE_DES_PLANS = 2008;
 export const PMR_DES_PENSIONS_PRISES_AVANT = "2009-01-01";
 export const DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT = "2023-08-31";
 export const TAUX_PLEIN_DE_LA_PMR_DEPUIS = "2002-01-01";
+/**
+ * La pension majorée de référence unique, applicable aux pensions dues depuis
+ * le 1er janvier 2022, « y compris aux pensions de retraite ayant pris effet
+ * avant » (loi n° 2021-1679) : celle d'une pension prise de 2009 à 2021 se
+ * refait chaque année depuis. Voir `PMR_UNIQUE` du Python.
+ */
+export const PMR_UNIQUE = "2022-01-01";
 
 /**
  * La révision d'une pension des non-salariés agricoles déjà liquidée, menée
  * jusqu'à l'échéance `fin` : les plans de revalorisation, à la règle des
  * pensions dues l'année de l'échéance, 2008 au plus, puis la pension majorée
  * de référence ouverte en 2009 aux pensions prises avant, écrêtée sur toutes
- * les pensions et les majorations pour enfants `enfants`. Modifie la base de
+ * les pensions et les majorations pour enfants `enfants` ; depuis 2022, la PMR
+ * unique, refaite à la règle des pensions dues, à la place de celle d'une
+ * pension prise de 2009 à 2021. Modifie la base de
  * `regimes` en place et rend le calcul, ou `null`. Voir
  * `reviser_les_exploitants` du Python.
  */
@@ -1205,8 +1214,33 @@ export function reviserLesExploitants(moteur, resultat, datees, regimes, servie,
       entiere = majoree.entiere;
       pmr = majoree.complement;
     }
+  } else if (PMR_DES_PENSIONS_PRISES_AVANT <= debut && debut < PMR_UNIQUE
+    && PMR_UNIQUE <= fin) {
+    const servieAuDepart = (exploitant.pmr ?? 0.0) * coefficient;
+    let base = 0.0;
+    let ressources = enfants - servieAuDepart;
+    for (const r of regimes) {
+      const montant = servieALEcheance(r);
+      if (r.regime === exploitant.regime) base = montant - servieAuDepart;
+      ressources += montant;
+    }
+    const [anneeFin, moisFin] = fin.split("-").map(Number);
+    ressources += pensionsEtrangeresServies(moteur.macro, carriere,
+      new DateMois(anneeFin, moisFin));
+    const reglePmr = {
+      ...moteur.pensionMajoreeReference.regle(
+        fin < DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT
+          ? fin : DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT),
+      duree_minimale: moteur.pensionMajoreeReference.regle(debut).duree_minimale,
+    };
+    const majoree = pensionMajoree(moteur, carriere, exploitant.eligible,
+      { ...exploitant.pension, montant: base }, ressources, {
+        quand: new DateMois(anneeFin, moisFin), regle: reglePmr,
+      });
+    if (majoree !== null) entiere = majoree.entiere;
+    pmr = (majoree === null ? 0.0 : majoree.complement) - servieAuDepart;
   }
-  if (plans === 0.0 && pmr <= 0.0) return null;
+  if (plans === 0.0 && pmr === 0.0) return null;
   for (const r of regimes) {
     if (r.regime === exploitant.regime) {
       r.plans = plans;

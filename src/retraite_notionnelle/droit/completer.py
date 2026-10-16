@@ -1075,6 +1075,10 @@ class ExploitantAgricole:
     pension: PensionRegime
     #: La majoration des plans servie à la liquidation (:class:`MajorationProportionnelle`).
     plans: MajorationProportionnelle | None
+    #: La pension majorée de référence servie à la liquidation, en euros de
+    #: la date d'effet : celle d'une pension prise de 2009 à 2021 se refait
+    #: depuis 2022 à la règle unique (loi n° 2021-1679, article 1er, II).
+    pmr: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -1783,6 +1787,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 detail=(f"{base.detail} = {base.montant:,.2f} €, porté à la pension "
                         f"majorée de référence par + {majoree.complement:,.2f} €"))
             total += majoree.complement
+            exploitant = replace(exploitant, pmr=majoree.complement)
             fiabilite_globale = min(fiabilite_globale, majoree.fiabilite)
             avantages.append(AvantageApplique(
                 code="pension_majoree_reference",

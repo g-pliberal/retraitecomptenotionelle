@@ -400,7 +400,9 @@ class RevisionAgricole:
     #: Ce que leur révision ajoute, en euros de l'échéance.
     plans: float
     #: La pension majorée de référence d'une pension prise avant 2009, à
-    #: l'échéance : entière, au prorata, et la majoration servie, écrêtée.
+    #: l'échéance : entière, et la majoration servie, écrêtée ; d'une pension
+    #: prise de 2009 à 2021, depuis 2022 : entière, et ce que la règle unique
+    #: change à la majoration de la liquidation menée par le coefficient.
     pmr_entiere: float | None
     pmr: float
 
@@ -1147,6 +1149,12 @@ DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT = date(2023, 8, 31)
 #: Les pensions prises avant 2002 n'ont pas à remplir la condition du taux
 #: plein (D. 732-109, 1°).
 TAUX_PLEIN_DE_LA_PMR_DEPUIS = date(2002, 1, 1)
+#: La pension majorée de référence unique, « applicable[] aux pensions dues
+#: à compter de cette date, y compris aux pensions de retraite ayant pris
+#: effet avant » (loi n° 2021-1679, article 1er, II ; décret n° 2021-1919,
+#: article 2) : celle d'une pension prise de 2009 à 2021, calculée au départ,
+#: se refait chaque année depuis à la règle des pensions dues.
+PMR_UNIQUE = date(2022, 1, 1)
 
 
 def reviser_les_exploitants(moteur, resultat, datees, regimes: list[RegimeServi],
@@ -1175,6 +1183,16 @@ def reviser_les_exploitants(moteur, resultat, datees, regimes: list[RegimeServi]
     plafond de toutes les pensions et des majorations pour enfants ``enfants``
     (D. 732-114) ; le taux plein n'est exigé que des pensions prises depuis
     2002 (D. 732-109, 2°).
+
+    LA PENSION MAJORÉE DE RÉFÉRENCE UNIQUE DE 2022, servie aux pensions prises
+    depuis 2009 (loi n° 2021-1679, article 1er, II ; décret n° 2021-1919,
+    article 2) : la majoration de la liquidation, menée par le coefficient,
+    cède la place, depuis le 1er janvier 2022, à celle de la règle des pensions
+    dues — un seul montant, quel que soit le statut, et le plafond relevé —,
+    comparée à la pension de base avant surcote, écrêtée sur toutes les
+    pensions de l'échéance ; la durée minimale reste celle de la date d'effet
+    (D. 732-109). La base porte la différence, qui peut être négative quand
+    les ressources ont crû.
 
     Rend les régimes, la base portant la révision en euros de l'échéance, et
     le calcul ; rien quand elle n'ajoute rien.
@@ -1229,7 +1247,24 @@ def reviser_les_exploitants(moteur, resultat, datees, regimes: list[RegimeServi]
             taux_plein_requis=debut >= TAUX_PLEIN_DE_LA_PMR_DEPUIS, surcote_comprise=True)
         if majoree is not None:
             entiere, pmr = majoree.entiere, majoree.complement
-    if plans == 0.0 and pmr <= 0.0:
+    elif PMR_DES_PENSIONS_PRISES_AVANT <= debut < PMR_UNIQUE <= fin:
+        servie_au_depart = exploitant.pmr * coefficient
+        base = (next(r for r in regimes if r.regime == exploitant.regime).aujourd_hui
+                - servie_au_depart)
+        ressources = (somme_ordonnee(r.aujourd_hui for r in regimes) - servie_au_depart
+                      + enfants + pensions_etrangeres_servies(moteur.macro, carriere,
+                                                              DateMois(fin.year, fin.month)))
+        regle = dict(moteur.pension_majoree_reference.regle(
+            min(fin, DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT).isoformat()))
+        regle["duree_minimale"] = moteur.pension_majoree_reference.regle(
+            debut.isoformat())["duree_minimale"]
+        majoree = pension_majoree(
+            moteur, carriere, exploitant.eligible, replace(exploitant.pension, montant=base),
+            ressources, quand=DateMois(fin.year, fin.month), regle=regle)
+        if majoree is not None:
+            entiere = majoree.entiere
+        pmr = (0.0 if majoree is None else majoree.complement) - servie_au_depart
+    if plans == 0.0 and pmr == 0.0:
         return regimes, None
     revision = RevisionAgricole(
         annee_des_plans=annee_des_plans, points_a_la_liquidation=au_depart,

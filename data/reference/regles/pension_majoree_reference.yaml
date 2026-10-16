@@ -292,6 +292,15 @@ versions:
 - id: pmr_unique_de_2022
   statut: lue
   textes:
+  - id: LEGIARTI000044522709
+    article: L. 732-54-2 code rural
+    en_vigueur: 2022-01-01
+    citation: >-
+      « Conformément au II de l'article 1er de la loi n° 2021-1679 du 17 décembre 2021,
+      ces dispositions entrent en vigueur le 1er janvier 2022 et sont applicables aux
+      pensions dues à compter de cette date, y compris aux pensions de retraite ayant
+      pris effet avant cette date »
+    lu_le: 2026-10-16
   - id: LEGIARTI000044944271
     article: D. 732-111 code rural
     en_vigueur: 2022-01-01
@@ -476,14 +485,21 @@ approximations:
     dans les pensions agricoles qu'il plafonne
   effet: non mesuré, faible
 - ecart: >-
-    la majoration d'une pension liquidée depuis 2009 se calcule au départ et suit
-    ensuite le coefficient de la pension : sa révision quand les ressources changent,
-    et la PMR unique de 2022 servie aux pensions déjà liquidées au taux de PMR2
-    (L. 732-54-2, « y compris aux pensions de retraite ayant pris effet avant cette
-    date »), ne le sont pas
+    la majoration d'une pension liquidée de 2009 à 2021 se calcule au départ et suit
+    le coefficient de la pension jusqu'en 2021 ; depuis le 1er janvier 2022, elle se
+    refait à chaque échéance à la règle unique des pensions dues (L. 732-54-2, « y
+    compris aux pensions de retraite ayant pris effet avant cette date », loi
+    n° 2021-1679 ; D. 732-111, décret n° 2021-1919, article 2), servie depuis le
+    16 octobre 2026 : comparée à la pension de base avant surcote, écrêtée sur toutes
+    les pensions de l'échéance, la durée minimale restant celle de la date d'effet,
+    ce que les textes ne disent pas. Sa révision quand les ressources changent de 2009
+    à 2021, et celle d'une pension prise depuis 2022, ne sont pas servies ; depuis
+    2022, la majoration refaite peut descendre sous celle du départ menée par le
+    coefficient, quand les ressources ont crû
   effet: >-
-    les conjoints collaborateurs partis de 2009 à 2021, et les pensions qu'une pension
-    étrangère ou une seconde pension vient écrêter après le départ
+    de 2009 à 2021, les pensions qu'une pension étrangère ou une seconde pension vient
+    écrêter après le départ ; depuis 2022, aucun pour les conjoints collaborateurs
+    partis de 2009 à 2021, que la règle unique porte au montant du chef
 - ecart: >-
     la durée de référence DR est la durée de proratisation de la retraite forfaitaire que
     le modèle lit, 150 trimestres au moins ; pour les générations 1944 à 1948, R. 732-61

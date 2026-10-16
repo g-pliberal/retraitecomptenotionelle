@@ -1609,7 +1609,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     exploitant = {
       regime: base.regime, carriere, eligible: agricole,
       trimestres: durees.trimestresParRegime.get(base.regime) ?? 0,
-      pension: base, plans: proportionnelle,
+      pension: base, plans: proportionnelle, pmr: 0.0,
     };
     if (proportionnelle !== null) {
       base = {
@@ -1639,6 +1639,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
           + `majorée de référence par + ${formatFixe(majoree.complement, 2, true)} €`,
       };
       total += majoree.complement;
+      exploitant.pmr = majoree.complement;
       fiabiliteGlobale = Math.min(fiabiliteGlobale, majoree.fiabilite);
       avantages.push({
         code: "pension_majoree_reference",
