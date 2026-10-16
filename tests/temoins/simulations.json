@@ -191962,11 +191962,11 @@
      "fiabilite": "haute",
      "majoration_enfants": 0,
      "mensuel_decembre_2019": 792.8042807195093,
-     "minimum_vieillesse": 1420.656758132931,
+     "minimum_vieillesse": 219.7270094046453,
      "par_regime": [
       {
        "au_depart": 7483.692879385431,
-       "aujourd_hui": 11102.423241867069,
+       "aujourd_hui": 12303.352990595355,
        "coefficient": 1.483548753376797,
        "fiabilite": "haute",
        "majoration_exceptionnelle": 0.0,

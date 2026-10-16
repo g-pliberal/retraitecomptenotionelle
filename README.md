@@ -188,8 +188,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1648<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->8 563<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1652<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->8 584<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Neuf pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -228,7 +228,7 @@ consultable en JSON au bas de la page.
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
 `index.html` charge deux choses : `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->5 596<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->5 606<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->80<!--/--> fiches de régime, et ce que le Python a calculé une fois pour toutes
 sous les réglages de référence : le coût et les carrières types, que les pages
@@ -773,12 +773,12 @@ de chaque cas type :
 | Système | Cumul 1959-2024, euros de 2026 | Écart |
 |---|---|---|
 | 1. Système actuel | <!--chiffre:mesure(cumul_passe?scenario=1)-->13 767<!--/--> Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cumul_passe?scenario=2)-->2 748<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=2)-->−80,0<!--/--> % |
+| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cumul_passe?scenario=2)-->2 736<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=2)-->−80,1<!--/--> % |
 | 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cumul_passe?scenario=3)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=3)-->+0,0<!--/--> % |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 461<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,1<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 433<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,3<!--/--> % |
 | 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=5)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=5)-->+0,0<!--/--> % |
-| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->6 461<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−53,1<!--/--> % |
-| *s'ajoute au 6 : sa garantie vieillesse, payée par l'impôt, lue sur la distribution des pensions* | *<!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 416<!--/--> Md €* | |
+| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->6 433<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−53,3<!--/--> % |
+| *s'ajoute au 6 : sa garantie vieillesse, payée par l'impôt, lue sur la distribution des pensions* | *<!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 414<!--/--> Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
 ce n'est pas un défaut du calcul : leur bascule est fixée à 2026, aucune pension
@@ -800,10 +800,10 @@ cotisée à <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/-
 retraités de sa caisse, publié par la DREES et lu année par année, puis calé
 pour que chaque groupe de régimes pèse la part que le COR donne à sa dépense
 (`docs/limites.md` § 5 ter) : l'agent de
-conduite pèse <!--chiffre:mesure(poids?cas=agent_sncf_conduite)-->1,5<!--/--> % et non <!--chiffre:mesure(poids?cas=agent_sncf_conduite&ponderation=egale)-->7,1<!--/--> %, les quatre carrières du privé <!--chiffre:mesure(poids?cas=smic_carriere_complete|salaire_moyen|cadre|carriere_interrompue)-->52<!--/--> % à elles
+conduite pèse <!--chiffre:mesure(poids?cas=agent_sncf_conduite)-->1,5<!--/--> % et non <!--chiffre:mesure(poids?cas=agent_sncf_conduite&ponderation=egale)-->6,2<!--/--> %, les quatre carrières du privé <!--chiffre:mesure(poids?cas=smic_carriere_complete|salaire_moyen|cadre|carriere_interrompue)-->52<!--/--> % à elles
 quatre. Ce que la convention égalitaire valait est désormais mesuré plutôt
-qu'argumenté — elle donne <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−78,2<!--/--> % au scénario 2 contre <!--chiffre:mesure(ecart_passe?scenario=2)-->−80,0<!--/--> %, et <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−55,4<!--/--> % au
-scénario 4 contre <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,1<!--/--> %. Le sens du biais n'était donc pas celui qu'on
+qu'argumenté — elle donne <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−79,7<!--/--> % au scénario 2 contre <!--chiffre:mesure(ecart_passe?scenario=2)-->−80,1<!--/--> %, et <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−57,3<!--/--> % au
+scénario 4 contre <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,3<!--/--> %. Le sens du biais n'était donc pas celui qu'on
 annonçait : la surreprésentation des départs très précoces faisait bien du
 scénario 4 un plancher, mais elle faisait du scénario 2 un plafond.
 
@@ -817,7 +817,7 @@ pour 2020 — celle des retraités qui résident en France, les seuls que la
 garantie sert, comme l'ASPA qu'elle remplace ; l'enquête compte aussi les
 autres, et le dépôt les en retire —, déplacée du seul facteur que la grille sait donner — la pension
 moyenne que la garantie regarde, rapportée à celle du système actuel en 2020 :
-<!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,63<!--/--> cette année-là, <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->0,99<!--/--> en 2070. Sur la trajectoire, elle coûte
+<!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,62<!--/--> cette année-là, <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->0,99<!--/--> en 2070. Sur la trajectoire, elle coûte
 **<!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->14<!--/--> milliards en 2026** (<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,5<!--/--> % du PIB), et <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->14<!--/--> milliards en 2070
 (<!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,4<!--/--> %) : les pensions montent face à un plancher indexé sur les prix. Ces
 coûts comptent les <!--chiffre:mesure(parametre?nom=taux_recours_garantie)-->50<!--/--> % d'ayants droit qui la réclament, le taux que la DREES
@@ -850,11 +850,11 @@ génération acquiert sous chaque règle.
 | Système | Coût 2070 | Part du PIB 2070 | Cumul 2025-2070 | Écart |
 |---|---|---|---|---|
 | 1. Système actuel | <!--chiffre:mesure(cout_annee?scenario=1&annee=2070)-->596<!--/--> Md € | **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->15,3<!--/-->** % | <!--chiffre:mesure(cumul_avenir?scenario=1)-->23 872<!--/--> Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cout_annee?scenario=2&annee=2070)-->182<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=2&annee=2070)-->4,7<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=2)-->7 182<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=2)-->−69,9<!--/--> % |
-| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cout_annee?scenario=3&annee=2070)-->278<!--/--> Md € | **<!--chiffre:mesure(part_pib?scenario=3&annee=2070)-->7,1<!--/-->** % | <!--chiffre:mesure(cumul_avenir?scenario=3)-->17 746<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=3)-->−25,7<!--/--> % |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cout_annee?scenario=4&annee=2070)-->405<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=4&annee=2070)-->10,4<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=4)-->17 089<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=4)-->−28,4<!--/--> % |
-| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cout_annee?scenario=5&annee=2070)-->438<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=5&annee=2070)-->11,2<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=5)-->20 598<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=5)-->−13,7<!--/--> % |
-| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cout_annee?scenario=6&annee=2070)-->317<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,2<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=6)-->15 278<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=6)-->−36,0<!--/--> % |
+| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cout_annee?scenario=2&annee=2070)-->182<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=2&annee=2070)-->4,7<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=2)-->7 172<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=2)-->−70,0<!--/--> % |
+| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cout_annee?scenario=3&annee=2070)-->278<!--/--> Md € | **<!--chiffre:mesure(part_pib?scenario=3&annee=2070)-->7,1<!--/-->** % | <!--chiffre:mesure(cumul_avenir?scenario=3)-->17 729<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=3)-->−25,7<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cout_annee?scenario=4&annee=2070)-->405<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=4&annee=2070)-->10,4<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=4)-->17 040<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=4)-->−28,6<!--/--> % |
+| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cout_annee?scenario=5&annee=2070)-->438<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=5&annee=2070)-->11,2<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=5)-->20 577<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=5)-->−13,8<!--/--> % |
+| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cout_annee?scenario=6&annee=2070)-->317<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,2<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=6)-->15 220<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=6)-->−36,2<!--/--> % |
 
 Ces chiffres sont recalculés par le modèle : l'emploi projeté suit le scénario
 de référence du COR pour les systèmes 2 à 6, et les pensions déjà servies à la
@@ -872,7 +872,7 @@ avec un modèle de population complet : **<!--chiffre:cellule(data/reference/mac
 2070** dans le scénario de référence de son dernier rapport annuel, que
 `comptes_retraite.csv` porte — trois dixièmes de point séparant en 2024 son
 périmètre de celui de la DREES. Le modèle, laissé à lui-même — sa masse de
-pensions mise à l'échelle de 2024 —, donnerait <!--chiffre:mesure(trajectoire_propre?annee=2070)-->15,5<!--/--> % en 2070, <!--chiffre:mesure(trajectoire_propre?annee=2070&en=milliards)-->603<!--/--> Md€ :
+pensions mise à l'échelle de 2024 —, donnerait <!--chiffre:mesure(trajectoire_propre?annee=2070)-->15,4<!--/--> % en 2070, <!--chiffre:mesure(trajectoire_propre?annee=2070&en=milliards)-->601<!--/--> Md€ :
 partie de la dépense, plus étroite, de la DREES, cette trajectoire croît à
 peu près comme celle du COR, mais la page ne la prend pas : elle donne le
 chiffre officiel. Il compte les retraités du COR à un point près ; leur pension
@@ -904,7 +904,7 @@ le défaut et faux sur son sens, et c'est la mesure qui le dit.
 
 Ces étapes sont celles de septembre 2026, et le tableau ci-dessus ne les
 recopie pas. La trajectoire que le modèle se donne lui-même vaut aujourd'hui
-<!--chiffre:mesure(trajectoire_propre?annee=2070)-->15,5<!--/--> % en 2070, <!--chiffre:mesure(trajectoire_propre?annee=2070&en=milliards)-->603<!--/--> Md€ ; depuis le 5 octobre 2026, ce n'est plus celle du
+<!--chiffre:mesure(trajectoire_propre?annee=2070)-->15,4<!--/--> % en 2070, <!--chiffre:mesure(trajectoire_propre?annee=2070&en=milliards)-->601<!--/--> Md€ ; depuis le 5 octobre 2026, ce n'est plus celle du
 tableau, qui prend la dépense du COR, et elle reste le contrôle de la
 projection. [`docs/limites.md`](docs/limites.md) §5 ter porte le chiffrage et la
 piste qui reste — la pension moyenne relative du modèle recule un peu moins
@@ -950,11 +950,11 @@ contrôle et non identité.
 | Système | Solde 2025 | Solde moyen 2026-2070 | Coefficient 2070 |
 |---|---|---|---|
 | 1. Système actuel | <!--chiffre:mesure(solde?scenario=1&annee=2025)-->−0,17<!--/--> % du PIB, <!--chiffre:mesure(solde?scenario=1&annee=2025&en=milliards)-->−5,1<!--/--> Md€ | **<!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> %**, <!--chiffre:mesure(solde_moyen?scenario=1&en=milliards)-->−34<!--/--> Md€ | **<!--chiffre:mesure(coefficient?scenario=1)-->0,84<!--/-->** |
-| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(solde?scenario=2&annee=2025)-->+9,29<!--/--> %, <!--chiffre:mesure(solde?scenario=2&annee=2025&en=milliards)-->+278<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=2)-->+7,96<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=2&en=milliards)-->+238<!--/--> Md€ | <!--chiffre:mesure(coefficient?scenario=2)-->2,56<!--/--> |
-| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(solde?scenario=3&annee=2025)-->−0,15<!--/--> %, <!--chiffre:mesure(solde?scenario=3&annee=2025&en=milliards)-->−4,5<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,58<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=3&en=milliards)-->+47<!--/--> Md€ | **<!--chiffre:mesure(coefficient?scenario=3)-->1,67<!--/-->** |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(solde?scenario=4&annee=2025)-->+3,85<!--/--> %, <!--chiffre:mesure(solde?scenario=4&annee=2025&en=milliards)-->+115<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=4)-->+1,96<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=4&en=milliards)-->+59<!--/--> Md€ | <!--chiffre:mesure(coefficient?scenario=4)-->1,15<!--/--> |
-| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(solde?scenario=5&annee=2025)-->−0,15<!--/--> %, <!--chiffre:mesure(solde?scenario=5&annee=2025&en=milliards)-->−4,5<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,09<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=5&en=milliards)-->−2,8<!--/--> Md€ | <!--chiffre:mesure(coefficient?scenario=5)-->1,06<!--/--> |
-| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(solde?scenario=6&annee=2025)-->+3,85<!--/--> %, <!--chiffre:mesure(solde?scenario=6&annee=2025&en=milliards)-->+115<!--/--> Md€ | **<!--chiffre:mesure(solde_moyen?scenario=6)-->−1,13<!--/--> %**, <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−34<!--/--> Md€ | **<!--chiffre:mesure(coefficient?scenario=6)-->1,00<!--/-->** |
+| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(solde?scenario=2&annee=2025)-->+9,30<!--/--> %, <!--chiffre:mesure(solde?scenario=2&annee=2025&en=milliards)-->+278<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=2)-->+7,96<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=2&en=milliards)-->+238<!--/--> Md€ | <!--chiffre:mesure(coefficient?scenario=2)-->2,56<!--/--> |
+| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(solde?scenario=3&annee=2025)-->−0,15<!--/--> %, <!--chiffre:mesure(solde?scenario=3&annee=2025&en=milliards)-->−4,4<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,60<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=3&en=milliards)-->+48<!--/--> Md€ | **<!--chiffre:mesure(coefficient?scenario=3)-->1,67<!--/-->** |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(solde?scenario=4&annee=2025)-->+3,89<!--/--> %, <!--chiffre:mesure(solde?scenario=4&annee=2025&en=milliards)-->+116<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=4)-->+1,99<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=4&en=milliards)-->+60<!--/--> Md€ | <!--chiffre:mesure(coefficient?scenario=4)-->1,15<!--/--> |
+| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(solde?scenario=5&annee=2025)-->−0,15<!--/--> %, <!--chiffre:mesure(solde?scenario=5&annee=2025&en=milliards)-->−4,5<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,08<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=5&en=milliards)-->−2,4<!--/--> Md€ | <!--chiffre:mesure(coefficient?scenario=5)-->1,06<!--/--> |
+| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(solde?scenario=6&annee=2025)-->+3,89<!--/--> %, <!--chiffre:mesure(solde?scenario=6&annee=2025&en=milliards)-->+116<!--/--> Md€ | **<!--chiffre:mesure(solde_moyen?scenario=6)-->−1,08<!--/--> %**, <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−32<!--/--> Md€ | **<!--chiffre:mesure(coefficient?scenario=6)-->1,00<!--/-->** |
 
 Les milliards sont ceux de 2025 pour le solde de 2025, et la même part du PIB
 de 2025 pour la moyenne des années projetées : c'est la règle de la page Coût,
@@ -964,14 +964,14 @@ les recalcule, et
 `test_le_README_donne_le_solde_que_la_page_cout_calcule` les confronte en plus
 à la page, ligne par ligne. Ils ont été faux plusieurs jours de suite, chaque
 fois que le modèle de coût a bougé. Le scénario 6 finit <!--chiffre:mesure(annees_equilibrees?scenario=6)-->0<!--/--> années de
-l'horizon à l'équilibre ou en excédent, et toutes les autres en déficit : <!--chiffre:mesure(solde?scenario=6&annee=2026)-->−0,85<!--/--> point de PIB en 2026 (<!--chiffre:mesure(solde?scenario=6&annee=2026&en=milliards)-->−25<!--/--> Md€ au PIB de 2025),
-<!--chiffre:mesure(solde?scenario=6&annee=2050)-->−1,66<!--/--> en 2050 (<!--chiffre:mesure(solde?scenario=6&annee=2050&en=milliards)-->−50<!--/--> Md€), <!--chiffre:mesure(solde?scenario=6&annee=2070)-->−0,02<!--/--> en 2070 (<!--chiffre:mesure(solde?scenario=6&annee=2070&en=milliards)-->−0,6<!--/--> Md€). C'est le
+l'horizon à l'équilibre ou en excédent, et toutes les autres en déficit : <!--chiffre:mesure(solde?scenario=6&annee=2026)-->−0,79<!--/--> point de PIB en 2026 (<!--chiffre:mesure(solde?scenario=6&annee=2026&en=milliards)-->−24<!--/--> Md€ au PIB de 2025),
+<!--chiffre:mesure(solde?scenario=6&annee=2050)-->−1,62<!--/--> en 2050 (<!--chiffre:mesure(solde?scenario=6&annee=2050&en=milliards)-->−48<!--/--> Md€), <!--chiffre:mesure(solde?scenario=6&annee=2070)-->−0,01<!--/--> en 2070 (<!--chiffre:mesure(solde?scenario=6&annee=2070&en=milliards)-->−0,2<!--/--> Md€). C'est le
 coût de transition du taux unique, qu'aucun impôt ne couvre (plus bas, « La
 recette suit aussi le TAUX »). L'âge légal de <!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans en rend une part,
 en faisant cotiser la moitié de ceux qu'il fait attendre, la part que le recul
 de 60 à <!--chiffre:illustration()-->62<!--/--> ans a mise en emploi en 2010 : `docs/limites.md` dit ce qu'il en
 serait si tous travaillaient, ou aucun. Le scénario accumule en
-2070 une dette de <!--chiffre:mesure(dette?scenario=6)-->77<!--/--> % du PIB, <!--chiffre:mesure(dette?scenario=6&en=milliards)-->2293<!--/--> Md€, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le
+2070 une dette de <!--chiffre:mesure(dette?scenario=6)-->73<!--/--> % du PIB, <!--chiffre:mesure(dette?scenario=6&en=milliards)-->2184<!--/--> Md€, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le
 système actuel, <!--chiffre:mesure(dette?scenario=1&en=milliards)-->1 976<!--/--> Md€.
 
 **Ces chiffres de la proposition ont une fourchette, étroite.** Ils
@@ -983,10 +983,10 @@ France adultes, et que les fonctionnaires civils entrent tard dans leur régime.
 Si cet écart est partagé par toutes les règles, le rapport est juste et ce
 sont les chiffres ci-dessus. S'il tient tout entier au système actuel, le
 rapport de chaque système notionnel doit être multiplié par la dérive de
-l'année — <!--chiffre:mesure(derive_cor?annee=2050)-->+1<!--/--> % en 2050, presque rien à l'horizon —,
+l'année — <!--chiffre:mesure(derive_cor?annee=2050)-->+0<!--/--> % en 2050, presque rien à l'horizon —,
 et la proposition coûte <!--chiffre:mesure(part_pib?scenario=6&annee=2070&borne=haute)-->8,4<!--/--> % du PIB en 2070
-(<!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,2<!--/--> dans la première lecture), son solde moyen est de <!--chiffre:mesure(solde_moyen?scenario=6&borne=haute)-->−1,22<!--/--> % (<!--chiffre:mesure(solde_moyen?scenario=6)-->−1,13<!--/-->), et sa dette
-de <!--chiffre:mesure(dette?scenario=6&borne=haute)-->82<!--/--> % (<!--chiffre:mesure(dette?scenario=6)-->77<!--/-->) : la seconde lecture, qui bornait la proposition par
+(<!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,2<!--/--> dans la première lecture), son solde moyen est de <!--chiffre:mesure(solde_moyen?scenario=6&borne=haute)-->−1,16<!--/--> % (<!--chiffre:mesure(solde_moyen?scenario=6)-->−1,08<!--/-->), et sa dette
+de <!--chiffre:mesure(dette?scenario=6&borne=haute)-->78<!--/--> % (<!--chiffre:mesure(dette?scenario=6)-->73<!--/-->) : la seconde lecture, qui bornait la proposition par
 le haut, l'allège désormais. La vérité est entre les deux, que la page Coût
 donne côte à côte.
 
@@ -1037,7 +1037,7 @@ leur prêtait en 2025 un déficit de plus d'un point de PIB, plus de trente
 milliards, que leur seule construction fabriquait. Après la bascule, ils
 servent encore, telles quelles, les pensions liquidées avant elle, majorations
 pour enfants comprises : la branche famille continue de leur rembourser
-celles-là, <!--chiffre:mesure(recette?quoi=majorations_stock&annee=2026)-->0,19<!--/--> point de PIB en 2026, <!--chiffre:mesure(recette?quoi=majorations_stock&annee=2026&en=milliards)-->5,8<!--/--> Md€, puis de moins en
+celles-là, <!--chiffre:mesure(recette?quoi=majorations_stock&annee=2026)-->0,19<!--/--> point de PIB en 2026, <!--chiffre:mesure(recette?quoi=majorations_stock&annee=2026&en=milliards)-->5,7<!--/--> Md€, puis de moins en
 moins à mesure que ces retraités disparaissent. Le système actuel, lui,
 encaisse tout, et son solde reste celui du COR.
 
@@ -1056,10 +1056,10 @@ proposition ne met aucun impôt à la place de ce qu'elle cesse de prélever. Un
 TVA à taux unique l'a fait du 23 au 24 septembre 2026 ; elle est retirée, les
 quatre taux de TVA d'aujourd'hui restent ce qu'ils sont, et rien de la TVA ne
 va à la retraite. L'âge légal de <!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans en rend une part, et le solde
-moyen du scénario s'établit à <!--chiffre:mesure(solde_moyen?scenario=6)-->−1,13<!--/--> % du PIB, <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−34<!--/--> Md€ par an au PIB de 2025,
+moyen du scénario s'établit à <!--chiffre:mesure(solde_moyen?scenario=6)-->−1,08<!--/--> % du PIB, <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−32<!--/--> Md€ par an au PIB de 2025,
 contre <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=1&en=milliards)-->−34<!--/--> Md€, pour le système actuel : un déficit plus
 petit, mais un déficit. Son coefficient descend à <!--chiffre:mesure(coefficient?scenario=6&quoi=minimum)-->0,83<!--/--> au plus bas,
-en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2048<!--/-->, et atteint <!--chiffre:mesure(coefficient?scenario=6)-->0,998<!--/--> en 2070 ; `docs/chiffrage_plf.md` chiffre
+en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2048<!--/-->, et atteint <!--chiffre:mesure(coefficient?scenario=6)-->0,999<!--/--> en 2070 ; `docs/chiffrage_plf.md` chiffre
 ce déficit année par année. Les quatre autres scénarios notionnels ne changent que ce qui est PORTÉ
 AU COMPTE, non ce qui est PRÉLEVÉ : l'employeur verse sa part dans tous les
 cas, et leur recette ne bouge pas.

@@ -52,15 +52,15 @@ le 19 septembre 2026 :
    fixerait » la pondération. C'était faux : l'enquête annuelle auprès des
    caisses de retraite dénombre les retraités caisse par caisse et année par
    année depuis 2004. Chaque cas type porte désormais l'effectif de sa caisse ;
-   l'agent de conduite pèse <!--chiffre:mesure(poids?cas=agent_sncf_conduite)-->1,5<!--/--> % et non <!--chiffre:mesure(poids?cas=agent_sncf_conduite&ponderation=egale)-->7,1<!--/--> %, et les quatre carrières du
+   l'agent de conduite pèse <!--chiffre:mesure(poids?cas=agent_sncf_conduite)-->1,5<!--/--> % et non <!--chiffre:mesure(poids?cas=agent_sncf_conduite&ponderation=egale)-->6,2<!--/--> %, et les quatre carrières du
    privé <!--chiffre:mesure(poids?cas=smic_carriere_complete|salaire_moyen|cadre|carriere_interrompue)-->52<!--/--> % à elles quatre.
 
    Ce que l'ancienne convention valait est donc mesuré plutôt qu'argumenté, et
    **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
    affiché « plutôt un plancher », les départs très précoces que le notionnel
    pénalise le plus étant surreprésentés. C'est vrai des scénarios qui portent
-   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−55,4<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,1<!--/--> % — et faux du
-   scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−78,2<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−80,0<!--/--> % : la pondération donne aux
+   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−57,3<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,3<!--/--> % — et faux du
+   scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−79,7<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−80,1<!--/--> % : la pondération donne aux
    carrières du privé, que le compte salarial seul pénalise davantage encore,
    les deux tiers du poids. C'était un plancher pour les uns, un plafond pour
    l'autre.
