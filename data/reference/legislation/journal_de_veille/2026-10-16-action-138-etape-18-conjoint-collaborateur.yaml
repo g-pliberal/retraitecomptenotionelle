@@ -1,0 +1,34 @@
+date: "2026-10-16"
+session: "action 138, étape 18, cinquième partie : le conjoint collaborateur des artisans et des commerçants"
+consulte: >-
+  veille_droit.py. L'index LEGI du dépôt, récupéré puis mis à jour des incréments
+  jusqu'au 15 octobre 2026 ; l'index JORF. Dans LEGI, toutes leurs versions :
+  L. 633-10 (2005-2017), L. 662-1 (2018-2026), D. 633-19-2 à D. 633-19-8,
+  D. 635-10-2, D. 635-19, D. 632-6, D. 613-5, R. 662-1, R. 662-2, D. 663-6,
+  D. 742-25 à D. 742-28, D. 633-4 ; l'article 7 de la loi n° 82-596 du 10 juillet
+  1982 et l'article 8 du décret n° 73-1215 du 29 décembre 1973.
+trouve: >-
+  Le conjoint collaborateur d'un artisan ou d'un commerçant cotise, à sa demande,
+  sur un revenu forfaitaire égal au tiers du plafond, sur 33,33 % ou 50 % du
+  revenu du chef, ou, avec son accord, sur une fraction de ce revenu déduite de
+  l'assiette du chef (L. 633-10 de 2005 ; L. 662-1 depuis 2018 ; D. 633-19-2, qui
+  porte jusqu'au 25 mai 2020 un tiers ou la moitié en partage). Sans choix, le
+  forfait (D. 633-19-3 jusqu'en 2019, R. 662-1 depuis, l'option valant trois
+  ans). La complémentaire cotise sur le revenu retenu pour la base (D. 635-10-2,
+  dans les limites de D. 635-7 et D. 635-10), l'invalidité-décès aussi, avec un
+  minimum (D. 635-19, D. 632-6). Affiliation obligatoire au premier jour du
+  quatrième trimestre civil suivant le décret de L. 121-4 du code de commerce
+  (loi n° 2005-882, art. 15, XIV), soit le 1er juillet 2007 ; avant, l'assurance
+  volontaire de L. 742-6, 5°, depuis 1983, au tiers ou à la moitié du revenu du
+  chef, partagé ou non, au moins sur 200 SMIC horaires (D. 742-26, D. 742-28). Le
+  conjoint du micro-entrepreneur cotise sur 58 % du chiffre d'affaires du chef ou
+  d'un forfait (D. 613-5). Aucun exemple chiffré publié trouvé. Fait : deux statuts,
+  `conjoint_collaborateur_artisan` et `conjoint_collaborateur_commercant`, la
+  fiche `conjoint_collaborateur_independants`, transcrite.
+reste: >-
+  Un exemple chiffré de l'Urssaf. Si l'assiette minimale de D. 633-2 s'oppose au
+  conjoint à l'option. La limite de cinq ans du statut (code de commerce, L. 121-4,
+  loi n° 2019-486), hors de l'index. La complémentaire volontaire d'avant 2007. Le
+  conjoint du libéral (moitié du forfait à la CNAVPL) et celui du
+  micro-entrepreneur (D. 613-5). Le reste de l'étape 138.18 : les dispenses de
+  l'assiette minimale, la Lodeom, au fac-similé les classes d'avant 1973.
