@@ -5855,8 +5855,7 @@ de Polynésie, Wallis-et-Futuna, les fonctionnaires du Pacifique (délibération
 locales hors de l'index) et trois hors champ, puis les limites de l'étape (note
 saint-pierre-et-miquelon). Au propriétaire : les écarts des notes du 13 et du
 14 octobre, le Crédit foncier sans statut, et ceux de l'archipel (taux de
-cotisation écrits, revenu moyen de toute la carrière avant 2016). `textes.py
---inscrire` reste à une session seule sur la liste.
+cotisation écrits, revenu moyen de toute la carrière avant 2016).
 
 **Demande**, le 4 octobre 2026 : « Je veux que tu documentes les régimes de
 retraite que nous n'avons pas encore documenter pour l'instant. Il faut
