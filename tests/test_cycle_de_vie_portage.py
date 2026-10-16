@@ -10,8 +10,9 @@ jumeau de ``donnees/prelevements_historiques.py``), donc la convention nette
 et celle du COR ; depuis le 16 octobre, l'impôt sur le revenu
 (``moteur/js/impot-revenu.js``, le jumeau de ``impot_revenu.py`` et de
 ``donnees/impot_revenu.py``), donc les deux conventions après impôt, l'impôt
-de chaque année et le taux de remplacement après impôt au départ. Des
-carrières de statuts et de générations variés — un départ passé, que le droit
+de chaque année et le taux de remplacement après impôt au départ ; depuis
+le 16 octobre aussi, les âges de départ d'une carrière et ce que chacun
+donne (``ages_balayes``, ``balayage_d_une_carriere``). Des carrières de statuts et de générations variés — un départ passé, que le droit
 a fait vivre, un départ de l'année, un départ à venir — se calculent des deux
 côtés, sous le simulateur du site, et chaque chiffre doit s'y retrouver ; le
 module de l'impôt se rejoue seul sur une grille de foyers, d'années et de
@@ -64,6 +65,18 @@ CONVENTIONS = {
 SCENARIOS_REMPLACEMENT = ("actuel", "notionnel_retroactif", "notionnel_liberal")
 
 EQUILIBRES = ((1950, None), (1975, "F"), (1995, "H"))
+
+#: Les balayages des âges de départ : une carrière sans son âge, l'âge que la
+#: saisie demande, la convention du COR ou non, le pas, l'impôt. Une carrière
+#: longue après impôt, un départ passé sous le COR, un indépendant.
+BALAYAGES = (
+    ({"annee_naissance": 1966, "sexe": "H", "affiliation": "salarie_prive_non_cadre",
+      "age_debut": 18, "niveau_salaire": 1.0}, 64.0, False, 0.25, "prix"),
+    ({"annee_naissance": 1944, "sexe": "F", "affiliation": "fonctionnaire_etat",
+      "age_debut": 22, "niveau_salaire": 1.3}, 62.0, True, 0.5, None),
+    ({"annee_naissance": 1975, "sexe": "H", "affiliation": "artisan",
+      "age_debut": 21, "niveau_salaire": 1.3}, 64.0, False, 0.5, None),
+)
 
 #: La grille du module de l'impôt seul : des années de chaque règle — les
 #: majorations et minorations des années 1960, les paliers de 1968 et 1969, la
@@ -206,6 +219,34 @@ def _python(carrieres, conventions, equilibres):
     return {"cas": cas, "equilibres": ages}
 
 
+def _depart_en_dictionnaire(depart: cycle_de_vie.Depart) -> dict:
+    import dataclasses
+
+    return {
+        "age": depart.age, "annee": depart.annee,
+        "indicateurs": {scenario: valeurs.dictionnaire()
+                        for scenario, valeurs in depart.indicateurs.items()},
+        "pensions_nettes": depart.pensions_nettes, "pensions_aspa": depart.pensions_aspa,
+        "remplacements": {scenario: None if r is None else dataclasses.asdict(r)
+                          for scenario, r in depart.remplacements.items()},
+        "remplacements_apres_impot": depart.remplacements_apres_impot,
+    }
+
+
+def _balayages_python(balayages: tuple) -> list[dict]:
+    simulateur = Contexte().simulateur()
+    resultats = []
+    for options, age, cor, pas, impot in map(json.loads, balayages):
+        def batir(a, options=options):
+            return simulateur.carriere_simple(**options, age_liquidation=a)
+        resultats.append({
+            "ages": list(cycle_de_vie.ages_balayes(simulateur, batir, age, pas)),
+            "departs": [_depart_en_dictionnaire(d) for d in cycle_de_vie.balayage_d_une_carriere(
+                simulateur, batir, age, cor, pas, impot)],
+        })
+    return resultats
+
+
 def _node(demande: dict) -> dict:
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:
@@ -251,11 +292,15 @@ def les_deux():
     demandes = _demandes_d_impot()
     attendu["impots"] = moitie_python(
         _impots_python, tuple(json.dumps(d, sort_keys=True) for d in demandes))
+    attendu["balayages"] = moitie_python(
+        _balayages_python, tuple(json.dumps(b, sort_keys=True) for b in BALAYAGES))
     obtenu = _node({
         "cas": [{"carriere": _options(*c), "conventions": CONVENTIONS} for c in CARRIERES],
         "equilibres": [{"generation": g, "sexe": s} for g, s in EQUILIBRES],
         "remplacements": SCENARIOS_REMPLACEMENT,
         "impots": demandes,
+        "balayages": [{"carriere": o, "age": a, "cor": c, "pas": p, "impot": i}
+                      for o, a, c, p, i in BALAYAGES],
     })
     return obtenu, attendu
 
@@ -268,6 +313,36 @@ def test_les_indicateurs_de_chaque_systeme_se_retrouvent_en_javascript(les_deux,
     assert "erreur" not in cas, cas.get("erreur")
     ecarts = _ecarts(cas, attendu["cas"][rang])
     assert not ecarts, "; ".join(sorted(ecarts)[:8])
+
+
+@pytest.mark.parametrize("rang", range(len(BALAYAGES)),
+                         ids=[o["affiliation"] for o, *_ in BALAYAGES])
+def test_chaque_age_de_depart_se_retrouve_en_javascript(les_deux, rang):
+    """Les âges balayés, et à chacun, sous les six systèmes, les indicateurs
+    nets ou après impôt, la pension nette, rapportée au minimum vieillesse, le
+    taux de remplacement net en trois unités et après impôt."""
+    obtenu, attendu = les_deux
+    balayage = obtenu["balayages"][rang]
+    assert "erreur" not in balayage, balayage.get("erreur")
+    ecarts = _ecarts(balayage, attendu["balayages"][rang])
+    assert not ecarts, "; ".join(sorted(ecarts)[:8])
+
+
+def test_le_balayage_a_un_objet(les_deux):
+    """Le contrôle a un objet : la carrière longue part avant l'âge légal, le
+    balayage finit à l'âge d'annulation de la décote, que le pas n'atteint
+    pas toujours, chaque âge a son taux de remplacement net, l'impôt y joue,
+    et le minimum vieillesse à deux étages d'un départ d'avant 2007 aussi."""
+    _, attendu = les_deux
+    longue, fonctionnaire, artisan = attendu["balayages"]
+    assert longue["ages"][0] < 62.0 and longue["ages"][-1] == 67.0
+    assert len(longue["departs"]) == len(longue["ages"]) > 20
+    assert all(d["remplacements"]["actuel"] for d in longue["departs"])
+    assert all(d["remplacements_apres_impot"]["actuel"] for d in longue["departs"])
+    assert fonctionnaire["departs"][0]["annee"] < 2007
+    assert all(d["pensions_aspa"]["actuel"] for b in attendu["balayages"]
+               for d in b["departs"])
+    assert artisan["departs"] and fonctionnaire["departs"]
 
 
 def test_le_salarie_du_prive_verse_des_contributions_d_equilibre_des_deux_cotes(les_deux):

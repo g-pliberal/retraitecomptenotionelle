@@ -1621,15 +1621,25 @@ def ages_de_depart(simulateur, cas, generation: int,
                    pas: float = PAS_DES_AGES) -> tuple[float, ...]:
     """Les âges de départ du cas type ``cas`` né en ``generation``, de ``pas``
     en ``pas`` : de l'âge d'ouverture, carrière longue comprise, à l'âge
-    d'annulation de la décote, les âges « au plus tôt » et « au taux plein
-    automatique » de :func:`~retraite_notionnelle.pilote.ages_de_l_estimation`,
-    chacun un point fixe sur la carrière que l'âge déplace. Le dernier est
-    toujours l'âge d'annulation, même s'il n'est pas à un pas du précédent.
-    Vide quand le droit n'oppose aucun âge à la carrière."""
-    ages = pilote.ages_de_l_estimation(
-        simulateur.scenario_actuel,
-        lambda age: cas.carriere_a(simulateur, generation, age),
-        cas.age_liquidation_pour(simulateur, generation))
+    d'annulation de la décote (:func:`ages_balayes`). Vide quand le droit
+    n'oppose aucun âge à la carrière."""
+    return ages_balayes(simulateur, lambda age: cas.carriere_a(simulateur, generation, age),
+                        cas.age_liquidation_pour(simulateur, generation), pas)
+
+
+def ages_balayes(simulateur, batir, age_demande: float,
+                 pas: float = PAS_DES_AGES) -> tuple[float, ...]:
+    """Les âges de départ de la carrière que ``batir(age)`` rend liquidée à
+    ``age``, de ``pas`` en ``pas`` : de l'âge d'ouverture, carrière longue
+    comprise, à l'âge d'annulation de la décote, les âges « au plus tôt » et
+    « au taux plein automatique » de
+    :func:`~retraite_notionnelle.pilote.ages_de_l_estimation`, partis de
+    ``age_demande``, chacun un point fixe sur la carrière que l'âge déplace. Le
+    dernier est toujours l'âge d'annulation, même s'il n'est pas à un pas du
+    précédent. Vide quand le droit n'oppose aucun âge à la carrière. Le
+    portage n'a pas les cas types : il balaie la carrière d'une saisie par
+    celle-ci (``agesBalayes``)."""
+    ages = pilote.ages_de_l_estimation(simulateur.scenario_actuel, batir, age_demande)
     if ages is None:
         return ()
     debut, fin = float(ages["legal"]), float(ages["automatique"])
@@ -1647,10 +1657,19 @@ def balayage(simulateur, cas, generation: int, cor: bool = False,
     hypothèses macroéconomiques de ``simulateur`` : une productivité, que
     :func:`hypotheses_de_productivite` énumère ; avec ``impot``, après impôt
     (:func:`depart`)."""
-    return tuple(
-        depart(simulateur, simulateur.simuler(cas.carriere_a(simulateur, generation, age)),
-               cor, age, impot)
-        for age in ages_de_depart(simulateur, cas, generation, pas))
+    return balayage_d_une_carriere(
+        simulateur, lambda age: cas.carriere_a(simulateur, generation, age),
+        cas.age_liquidation_pour(simulateur, generation), cor, pas, impot)
+
+
+def balayage_d_une_carriere(simulateur, batir, age_demande: float, cor: bool = False,
+                            pas: float = PAS_DES_AGES, impot: str | None = None
+                            ) -> tuple[Depart, ...]:
+    """Les indicateurs nets de la carrière que ``batir(age)`` rend liquidée à
+    ``age``, à chacun de ses âges de départ (:func:`ages_balayes`, partis de
+    ``age_demande``) ; avec ``impot``, après impôt (:func:`depart`)."""
+    return tuple(depart(simulateur, simulateur.simuler(batir(age)), cor, age, impot)
+                 for age in ages_balayes(simulateur, batir, age_demande, pas))
 
 
 # -- l'âge d'équilibre -------------------------------------------------------

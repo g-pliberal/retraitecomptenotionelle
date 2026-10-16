@@ -3,11 +3,13 @@
  *
  * Reçoit un fichier JSON — `{cas: [{carriere, conventions}], equilibres:
  * [{generation, sexe}], remplacements: [scenario], impots: [{annee, foyer,
- * unite, indexation}]}` — et écrit, pour chaque cas, les contributions
+ * unite, indexation}], balayages: [{carriere, age, cor, pas, impot}]}` — et
+ * écrit, pour chaque cas, les contributions
  * d'équilibre de la carrière, ses revenus nets et imposables, l'impôt de
  * chaque année et ses indicateurs sous chaque convention ; pour chaque
  * génération, ses âges d'équilibre ; pour chaque foyer, son impôt, étape par
- * étape. `tests/test_cycle_de_vie_portage.py` compare le tout au modèle
+ * étape ; pour chaque balayage, ses âges de départ et ce que chacun donne.
+ * `tests/test_cycle_de_vie_portage.py` compare le tout au modèle
  * Python.
  *
  *     node tests/js/comparer-cycle-de-vie.mjs demande.json
@@ -20,8 +22,8 @@ import { fileURLToPath } from "node:url";
 import { Contexte } from "../../moteur/js/contexte.js";
 import { contributionsDUneCarriere } from "../../moteur/js/contributions-equilibre.js";
 import {
-  ageDeDecesCor, ageDEquilibre, ageDePartDeVieConstante, Convention, conventionApresImpot,
-  conventionNette, fluxDesSystemes, indicateursDesSystemes, prelevementsParAnnee,
+  ageDeDecesCor, ageDEquilibre, ageDePartDeVieConstante, agesBalayes, balayageDUneCarriere,
+  Convention, conventionApresImpot, conventionNette, fluxDesSystemes, indicateursDesSystemes, prelevementsParAnnee,
   remplacementApresImpot, revenusImposables, revenusNets, tauxDePrelevement,
 } from "../../moteur/js/cycle-de-vie.js";
 import {
@@ -99,4 +101,22 @@ const impots = (demande.impots ?? []).map(({ annee, foyer, unite, indexation }) 
   return { ...resultat, remarques: [...resultat.remarques] };
 });
 
-process.stdout.write(JSON.stringify({ cas, equilibres, impots }));
+const balayages = (demande.balayages ?? []).map(({ carriere: options, age, cor, pas, impot }) => {
+  try {
+    const batir = (a) => simulateur.carriereSimple({ ...options, age_liquidation: a });
+    return {
+      ages: agesBalayes(simulateur, batir, age, pas),
+      departs: balayageDUneCarriere(simulateur, batir, age, cor, pas, impot).map((d) => ({
+        ...d,
+        indicateurs: Object.fromEntries(Object.entries(d.indicateurs)
+          .map(([scenario, valeurs]) => [scenario, valeurs.dictionnaire()])),
+        remplacements: Object.fromEntries(Object.entries(d.remplacements)
+          .map(([scenario, r]) => [scenario, r === null ? null : { ...r }])),
+      })),
+    };
+  } catch (erreur) {
+    return { erreur: String(erreur.stack ?? erreur) };
+  }
+});
+
+process.stdout.write(JSON.stringify({ cas, equilibres, impots, balayages }));

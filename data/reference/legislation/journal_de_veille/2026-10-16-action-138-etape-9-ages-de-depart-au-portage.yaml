@@ -1,0 +1,13 @@
+date: "2026-10-16"
+session: "action 138, étape 9, douzième partie : les âges de départ au portage JavaScript des indicateurs de cycle de vie"
+consulte: >-
+  Aucun texte : la session n'écrit aucune règle du scénario 1. Le portage
+  reprend les âges que le droit oppose à une carrière (`agesDeLEstimation`,
+  déjà jumeau de `ages_de_l_estimation`) et les barèmes du minimum vieillesse
+  que le paquet porte déjà.
+trouve: >-
+  Rien de neuf au droit. Le jumeau JavaScript retrouve, âge par âge, les
+  indicateurs, la pension nette, le minimum vieillesse et les taux de
+  remplacement de trois balayages du Python, à 10⁻⁹ près.
+reste: >-
+  Rien au droit pour cette partie.

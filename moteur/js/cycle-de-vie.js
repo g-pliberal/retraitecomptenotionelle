@@ -18,8 +18,11 @@
  * convention nette et celle du COR, la pension nette chaque année au taux de
  * son année ; depuis le 16 octobre, l'impôt sur le revenu de chaque année
  * (`impot-revenu.js`, étape 5), donc la convention après impôt et le taux de
- * remplacement après impôt au départ. Pas encore : les âges de départ
- * (`depart`, `balayage`) et les âges d'équilibre d'un cas type.
+ * remplacement après impôt au départ ; depuis le 16 octobre aussi, les âges
+ * de départ d'une carrière (`agesBalayes`, `depart`, `balayageDUneCarriere`),
+ * qu'une fonction bâtit à chaque âge. Pas les cas types du COR, que le
+ * portage n'a pas : ni `ages_de_depart`, ni `balayage`, ni leurs âges
+ * d'équilibre (`ages_d_equilibre`).
  * `node tests/js/comparer-cycle-de-vie.mjs` rejoue le tout contre le Python
  * (`tests/test_cycle_de_vie_portage.py`).
  */
@@ -35,6 +38,7 @@ import {
 import {
   chargerBaremesImpotRevenu, croissanceMacro, Declarant, Foyer, impotAuxParametres, INDEXATIONS,
 } from "./impot-revenu.js";
+import { agesDeLEstimation } from "./pilote.js";
 import { faireVivre, RevalorisationServie } from "./revalorisation.js";
 
 /** Les six systèmes, dans l'ordre de la comparaison. */
@@ -972,11 +976,19 @@ export function remplacementApresImpot(simulateur, comparaison, scenario = "actu
   const flux = lesSystemes[scenario];
   const convention = conventionNette(simulateur, comparaison);
   verifierLImpot(flux, convention.avecLImpot(indexation));
+  return remplacementApresImpotDe(simulateur, comparaison, scenario, flux, convention,
+    partsImposablesParAnnee(simulateur, comparaison));
+}
+
+/**
+ * `remplacementApresImpot`, de la convention nette et des parts imposables de
+ * la comparaison. Jumeau de `_remplacement_apres_impot`.
+ */
+function remplacementApresImpotDe(simulateur, comparaison, scenario, flux, convention, parts) {
   const dernier = flux.dernier_revenu_apres_impot;
   if (dernier === null || dernier <= 0.0) return null;
   const annee = flux.annee_liquidation;
   const brute = pensionAuDepart(simulateur, comparaison, scenario);
-  const parts = partsImposablesParAnnee(simulateur, comparaison);
   const parametres = baremesDeLImpot(simulateur, flux.indexation_impot,
     Math.max(...flux.niveaux.keys())).get(annee);
   const impot = parametres === undefined ? 0.0 : impotAuxParametres(
@@ -1113,6 +1125,164 @@ export function indicateursDesSystemes(simulateur, comparaison, convention = new
     { nets: convention.nette, impot: convention.impot });
   return Object.fromEntries(Object.entries(systemes)
     .map(([scenario, flux]) => [scenario, indicateurs(flux, simulateur, convention)]));
+}
+
+// -- les âges de départ ------------------------------------------------------
+
+/** Le pas du balayage des âges de départ, en années : un trimestre. */
+export const PAS_DES_AGES = 0.25;
+
+/**
+ * Le minimum vieillesse d'une personne seule l'année `annee`, en euros par
+ * an : l'ASPA depuis 2007, menée sur les prix au-delà de son barème ; avant,
+ * ses deux étages. `null` avant la loi du 14 mars 1941. Jumeau de
+ * `minimum_vieillesse`.
+ */
+export function minimumVieillesse(simulateur, annee) {
+  const bareme = simulateur.scenarioActuel.minimumVieillesse;
+  if (annee <= bareme.constructor.DERNIERE_ANNEE_A_DEUX_ETAGES) {
+    const etages = bareme.deuxEtages(annee);
+    return etages === null ? null : etages.avts + etages.supplementaire;
+  }
+  const plafond = bareme.plafond(annee);
+  return plafond === null ? null : plafond[0];
+}
+
+/**
+ * La dernière année civile travaillée en entier avant celle du départ ;
+ * `null` sans année pleine. Jumeau de `derniere_annee_pleine`.
+ */
+export function derniereAnneePleine(carriere) {
+  const couverture = new Map();
+  for (const ligne of carriere.lignes) {
+    if (ligne.cotise && ligne.annee < carriere.anneeLiquidation) {
+      couverture.set(ligne.annee, (couverture.get(ligne.annee) ?? 0.0) + ligne.fraction_annee);
+    }
+  }
+  const pleines = [...couverture].filter(([, part]) => part >= 1.0 - 1e-9)
+    .map(([annee]) => annee);
+  return pleines.length ? Math.max(...pleines) : null;
+}
+
+/**
+ * La pension nette du départ sur le revenu net de la dernière année pleine,
+ * chacun en euros de son année (`courants`), en euros constants
+ * (`constants`), en salaire moyen par tête de son année (`salaire_moyen`).
+ * Jumeau de `RemplacementNet`.
+ */
+export class RemplacementNet {
+  constructor({ courants, constants, salaire_moyen }) {
+    Object.assign(this, { courants, constants, salaire_moyen });
+  }
+}
+
+/**
+ * Le taux de remplacement net au départ de `carriere`, en trois unités ;
+ * `null` sans année pleine ou sans revenu net. Jumeau de `remplacement_net`.
+ */
+export function remplacementNet(simulateur, carriere, nets, pensionNette) {
+  const annee = derniereAnneePleine(carriere);
+  if (annee === null || !nets || nets.size === 0 || (nets.get(annee) ?? 0.0) <= 0.0) {
+    return null;
+  }
+  const courants = pensionNette / nets.get(annee);
+  const liquidation = carriere.anneeLiquidation;
+  const { macro } = simulateur;
+  return new RemplacementNet({
+    courants,
+    constants: courants / macro.coefficientPrix(annee, liquidation),
+    salaire_moyen: courants / macro.coefficientSalaireMoyen(annee, liquidation),
+  });
+}
+
+/**
+ * Un âge du balayage, et ce qu'y donne chacun des six systèmes, en net :
+ * `age`, `annee` (du départ du scénario 1), `indicateurs`, `pensions_nettes`,
+ * `pensions_aspa`, `remplacements`, `remplacements_apres_impot` (`null` avant
+ * impôt), chacun un objet par système. Jumeau de `Depart`.
+ */
+export class Depart {
+  constructor({
+    age, annee, indicateurs: lesIndicateurs, pensions_nettes, pensions_aspa, remplacements,
+    remplacements_apres_impot = null,
+  }) {
+    Object.assign(this, {
+      age, annee, indicateurs: lesIndicateurs, pensions_nettes, pensions_aspa, remplacements,
+      remplacements_apres_impot,
+    });
+  }
+}
+
+/**
+ * Ce que donne, en net, le départ de `comparaison` sous les six systèmes ;
+ * avec `impot`, l'indexation du barème de l'impôt sur le revenu, les
+ * indicateurs après impôt et le taux de remplacement après impôt. Jumeau de
+ * `depart`.
+ */
+export function depart(simulateur, comparaison, cor = false, age = null, impot = null) {
+  const convention = impot === null ? conventionNette(simulateur, comparaison, cor)
+    : conventionApresImpot(simulateur, comparaison, cor, impot);
+  const systemes = fluxDesSystemes(simulateur, comparaison, { nets: true, impot });
+  let apres = null;
+  if (impot !== null) {
+    const parts = partsImposablesParAnnee(simulateur, comparaison);
+    apres = Object.fromEntries(Object.entries(systemes).map(([scenario, flux]) => [scenario,
+      remplacementApresImpotDe(simulateur, comparaison, scenario, flux, convention, parts)]));
+  }
+  const pensions = {};
+  const aspa = {};
+  const remplacements = {};
+  for (const [scenario, flux] of Object.entries(systemes)) {
+    const carriere = comparaison.carriereDe(scenario);
+    const nette = pensionAuDepart(simulateur, comparaison, scenario)
+      * convention.retenu(carriere.anneeLiquidation);
+    const minimum = minimumVieillesse(simulateur, carriere.anneeLiquidation);
+    pensions[scenario] = nette;
+    aspa[scenario] = minimum ? nette / minimum : null;
+    remplacements[scenario] = remplacementNet(simulateur, carriere, flux.revenus_nets, nette);
+  }
+  return new Depart({
+    age: age === null ? comparaison.carriere.age_liquidation : age,
+    annee: comparaison.carriere.anneeLiquidation,
+    indicateurs: Object.fromEntries(Object.entries(systemes)
+      .map(([scenario, flux]) => [scenario, indicateurs(flux, simulateur, convention)])),
+    pensions_nettes: pensions,
+    pensions_aspa: aspa,
+    remplacements,
+    remplacements_apres_impot: apres,
+  });
+}
+
+/**
+ * Les âges de départ de la carrière que `batir(age)` rend liquidée à `age`,
+ * de `pas` en `pas` : de l'âge d'ouverture, carrière longue comprise, à
+ * l'âge d'annulation de la décote (`agesDeLEstimation`, partis de
+ * `ageDemande`) ; le dernier est toujours l'âge d'annulation. Vide quand le
+ * droit n'oppose aucun âge à la carrière. Jumeau de `ages_balayes`.
+ */
+export function agesBalayes(simulateur, batir, ageDemande, pas = PAS_DES_AGES) {
+  const ages = agesDeLEstimation(simulateur.scenarioActuel, batir, ageDemande);
+  if (ages === null) return [];
+  const debut = Number(ages.legal);
+  const fin = Number(ages.automatique);
+  const nombre = Math.floor((fin - debut) / pas + 1e-9);
+  const balayes = [];
+  for (let rang = 0; rang <= nombre; rang += 1) {
+    balayes.push(Number((debut + rang * pas).toFixed(9)));
+  }
+  if (fin - balayes[balayes.length - 1] > 1e-9) balayes.push(fin);
+  return balayes;
+}
+
+/**
+ * Les indicateurs nets de la carrière que `batir(age)` rend liquidée à
+ * `age`, à chacun de ses âges de départ (`agesBalayes`) ; avec `impot`,
+ * après impôt (`depart`). Jumeau de `balayage_d_une_carriere`.
+ */
+export function balayageDUneCarriere(simulateur, batir, ageDemande, cor = false,
+  pas = PAS_DES_AGES, impot = null) {
+  return agesBalayes(simulateur, batir, ageDemande, pas)
+    .map((age) => depart(simulateur, simulateur.simuler(batir(age)), cor, age, impot));
 }
 
 // -- l'âge d'équilibre -------------------------------------------------------
