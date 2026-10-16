@@ -181,6 +181,11 @@ la population se mesure contre eux. La quinzième (action 138, étape 14, le
 16 octobre 2026) fait partir une part des carrières incomplètes avec une
 décote, à l'ouverture du droit (:data:`DEPARTS_AVEC_DECOTE`) : l'EIR en compte
 8,8 % chez les résidentes, quand la population partait toute au taux plein.
+La seizième (le même jour) concentre le volume de travail plus faible des
+classes du bas sur une part de leurs carrières, fragmentées toute la
+carrière au volume des bas revenus salariaux (:data:`EMPLOI_FRAGMENTE`) : il
+abaissait toutes leurs carrières un peu, et le seuil du minimum contributif
+les faisait basculer par blocs d'une génération à l'autre.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -528,6 +533,22 @@ VOLUME_DE_TRAVAIL = True
 #: distribution des pensions, mais abaisse encore celles des hommes.
 VOLUME_SELON_LE_RANG = True
 
+#: L'emploi fragmenté : le volume plus faible des classes du bas ne pèse pas
+#: sur toutes leurs carrières un peu, mais sur une part d'entre elles
+#: beaucoup. Sous :data:`VOLUME_SELON_LE_RANG`, une classe dont la catégorie
+#: travaille moins que l'ensemble se scinde : une part y est fragmentée toute
+#: la carrière, au volume des salariés du privé à bas revenu salarial
+#: rapporté à celui de tous — 748 heures dans l'année pour 1 536 en moyenne
+#: des centiles, 0,487 (``heures_salariees.csv``) —, le reste au volume de
+#: l'ensemble, et la part est celle qui garde le volume de la catégorie : 22,8 %
+#: des employés, 10,1 % des ouvriers. La masse des salaires ne bouge pas. Deux
+#: conventions : la fragmentation dure toute la carrière, quand la moitié des
+#: bas revenus salariaux de 2011 le sont encore en 2019 (le dossier de la
+#: Dares qui publie les heures), et elle ne change pas d'une génération à
+#: l'autre, aucune source ne le disant. Une carrière fragmentée valide moins
+#: de trimestres, avant 2014 surtout.
+EMPLOI_FRAGMENTE = True
+
 #: Les catégories que le volume selon le rang prête aux classes de centiles.
 CATEGORIE_DU_RANG = {"p10": "employes", "p25": "ouvriers", "p50": "ensemble",
                      "p75": "professions_intermediaires", "p90": "cadres",
@@ -872,7 +893,9 @@ class DonneesPopulation:
     complète de l'EIR (:data:`RANG_SELON_LA_DUREE`) ; ``ecarts_du_bas`` : les
     niveaux relatifs des sous-classes du reste de la classe du bas
     (:data:`SOUS_CLASSES_DU_BAS`) ; ``entrees`` : l'âge d'entrée des carrières
-    pleines, génération par génération (:data:`ENTREE_SELON_LA_GENERATION`).
+    pleines, génération par génération (:data:`ENTREE_SELON_LA_GENERATION`) ;
+    ``fragmente`` : le volume relatif d'une carrière fragmentée
+    (:data:`EMPLOI_FRAGMENTE`).
     """
 
     niveaux: dict[tuple[str, str], tuple[tuple[int, float], ...]]
@@ -887,6 +910,7 @@ class DonneesPopulation:
     quintiles: dict[tuple[str, str, str], float]
     ecarts_du_bas: dict[str, tuple[tuple[int, tuple[float, ...]], ...]]
     entrees: dict[str, tuple[tuple[int, float], ...]]
+    fragmente: float
 
 
 def resserrer(relatifs: dict[str, float], moyenne: float) -> dict[str, float]:
@@ -1018,6 +1042,40 @@ def volumes_de_travail(racine: Path) -> tuple[tuple[tuple[int, float], ...], dic
                    else volume[("categorie", categorie)] / ensemble)
              for nom, categorie in CATEGORIE_DU_RANG.items()}
     return volumes, rangs
+
+
+def volume_fragmente(racine: Path) -> float:
+    """Le volume relatif d'une carrière fragmentée (:data:`EMPLOI_FRAGMENTE`) :
+    les heures moyennes des salariés du privé à bas revenu salarial, rapportées
+    à celles de tous, en moyenne de leurs centiles publiés
+    (``heures_salariees.csv``), la dernière année."""
+    lignes = _lire_macro(racine, "heures_salariees.csv")
+    derniere = max(l["annee"] for l in lignes)
+    moyennes = {}
+    for population in ("bas_revenus", "ensemble"):
+        heures = [float(l["heures"]) for l in lignes
+                  if l["annee"] == derniere and l["population"] == population]
+        moyennes[population] = somme_ordonnee(heures) / len(heures)
+    return moyennes["bas_revenus"] / moyennes["ensemble"]
+
+
+def fragmentees(classes: list, relatif: float, fragmente: float,
+                volumes: tuple[tuple[int, float], ...]) -> list:
+    """Les classes d'une catégorie qui travaille ``relatif`` fois le volume de
+    l'ensemble, scindées (:data:`EMPLOI_FRAGMENTE`) : la part fragmentée au
+    volume ``fragmente``, le reste au volume de l'ensemble, la part gardant le
+    volume de la catégorie. Telles quelles si elle travaille autant ou plus."""
+    if relatif >= 1.0:
+        return classes
+    part = (1.0 - relatif) / (1.0 - fragmente)
+    entiers = tuple((age, min(1.0, annee)) for age, annee in volumes)
+    reduits = tuple((age, annee * fragmente) for age, annee in volumes)
+    sortie = []
+    for classe, poids in classes:
+        sortie.append((replace(classe, volumes=entiers), poids * (1.0 - part)))
+        sortie.append((replace(classe, code=f"{classe.code}~fragmente", volumes=reduits),
+                       poids * part))
+    return sortie
 
 
 def quintiles_eqcc(racine: Path, residents: bool = False
@@ -1195,7 +1253,7 @@ def donnees_population(racine: Path) -> DonneesPopulation:
     return DonneesPopulation(niveaux, parts, par_generation, points, persistants,
                              au_smic, reste, volumes, rangs,
                              quintiles_eqcc(racine, residents=DUREES_DES_RESIDENTS), ecarts,
-                             entrees_des_carrieres_pleines(racine))
+                             entrees_des_carrieres_pleines(racine), volume_fragmente(racine))
 
 
 def durees_pleines(racine: Path) -> dict[str, tuple[tuple[int, float], ...]]:
@@ -1577,7 +1635,8 @@ def salaires_population(variantes: list[Variante],
     (:func:`rangs_selon_la_duree`), et la part de sa classe du bas payée le
     Smic toute la carrière la suit ; sous :data:`SOUS_CLASSES_DU_BAS`, le
     reste de la classe du bas se décline en sous-classes de rang
-    (:func:`sous_classes_du_bas`).
+    (:func:`sous_classes_du_bas`) ; sous :data:`EMPLOI_FRAGMENTE`, les classes
+    du bas en carrières fragmentées et entières (:func:`fragmentees`).
     """
     rangs = (rangs_selon_la_duree(donnees.quintiles, parts_des_tranches(variantes))
              if RANG_SELON_LA_DUREE else {})
@@ -1618,6 +1677,8 @@ def salaires_population(variantes: list[Variante],
                     classes.append((replace(rang, code=f"{rang.code}~smic",
                                             niveaux=donnees.smic, persistante=True),
                                     persistants))
+            if EMPLOI_FRAGMENTE and VOLUME_DE_TRAVAIL and VOLUME_SELON_LE_RANG:
+                classes = fragmentees(classes, relatif, donnees.fragmente, donnees.volumes)
             for classe, poids in classes:
                 sortie.append(v.fois(poids * (1.0 - partiel), cas=classe))
                 sortie.append(v.fois(poids * partiel, cas=replace(

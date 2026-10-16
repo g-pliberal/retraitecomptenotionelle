@@ -339,7 +339,7 @@ def test_une_part_du_bas_reste_au_smic_toute_la_carriere(simulateur, source, par
                  if v.cas.code == f"{G.GABARIT}~h~40_plus~p10~smic").cas
     bas = [v.cas for v in variantes
            if v.cas.code.startswith(f"{G.GABARIT}~h~40_plus~p10~bas")
-           and not v.cas.code.endswith("~partiel")]
+           and not v.cas.code.endswith("~partiel") and "~fragmente" not in v.cas.code]
     assert len(bas) == G.SOUS_CLASSES_DU_BAS
     generation = 1960
     assert not any(cas.au_smic(simulateur, generation) for cas in bas)
@@ -398,18 +398,46 @@ def test_chaque_classe_travaille_le_volume_de_sa_categorie(simulateur, source, p
     privé travaille, à chaque âge, la part de l'année de cet âge fois le volume
     de sa catégorie rapporté à l'ensemble, sans dépasser l'année entière : les
     employés au bas, sa part au Smic toute la carrière comprise, les cadres au
-    haut, la classe médiane au volume de tous."""
-    assert G.VOLUME_SELON_LE_RANG
+    haut, la classe médiane au volume de tous. Sous ``EMPLOI_FRAGMENTE``, une
+    classe du bas le travaille en moyenne de ses carrières entières et
+    fragmentées, à leurs poids."""
+    assert G.VOLUME_SELON_LE_RANG and G.EMPLOI_FRAGMENTE
     volumes, rangs = G.volumes_de_travail(parametres.racine_donnees)
-    par_code = {v.cas.code: v.cas for v in G.grille("population", simulateur.effectifs,
-                                                     source, ())}
-    for classe, nom in (("p10~bas1", "p10"), ("p10~smic", "p10"), ("p50", "p50"),
-                        ("p99", "p99")):
-        cas = par_code[f"{G.GABARIT}~h~40_plus~{classe}"]
-        assert cas.volumes == tuple((age, min(1.0, part * rangs[nom]))
-                                    for age, part in volumes), classe
-    assert rangs["p10"] < 1.0 < rangs["p99"]
-    assert max(part for _, part in par_code[f"{G.GABARIT}~h~40_plus~p99"].volumes) == 1.0
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    par_code = {v.cas.code: v for v in variantes}
+    for classe, nom in (("p10~bas1", "p10"), ("p10~smic", "p10"), ("p25", "p25"),
+                        ("p50", "p50"), ("p99", "p99")):
+        code = f"{G.GABARIT}~h~40_plus~{classe}"
+        lot = [par_code[c] for c in (code, f"{code}~fragmente") if c in par_code]
+        assert len(lot) == (2 if rangs[nom] < 1.0 else 1), classe
+        poids = [v.retraites[0][1] for v in lot]
+        for i, (age, part) in enumerate(volumes):
+            moyenne = sum(p * v.cas.volumes[i][1] for p, v in zip(poids, lot)) / sum(poids)
+            assert all(v.cas.volumes[i][0] == age for v in lot)
+            assert moyenne == pytest.approx(min(1.0, part * rangs[nom])), classe
+    assert rangs["p10"] < rangs["p25"] < 1.0 < rangs["p99"]
+    assert max(part for _, part in par_code[f"{G.GABARIT}~h~40_plus~p99"].cas.volumes) == 1.0
+
+
+def test_l_emploi_fragmente_pese_sur_une_part_du_bas(simulateur, source, parametres):
+    """Sous ``EMPLOI_FRAGMENTE``, le volume relatif d'une carrière fragmentée
+    est celui des salariés à bas revenu salarial, rapporté à celui de tous, en
+    moyenne de leurs centiles (748 heures pour 1 536) ; les carrières
+    fragmentées font 22,8 % de la classe des employés, 10,1 % de celle des
+    ouvriers, et le reste de ces classes travaille le volume de l'ensemble."""
+    fragmente = G.volume_fragmente(parametres.racine_donnees)
+    assert fragmente == pytest.approx(748.09 / 1536.42, abs=1e-4)
+    volumes, rangs = G.volumes_de_travail(parametres.racine_donnees)
+    par_code = {v.cas.code: v for v in G.grille("population", simulateur.effectifs,
+                                                 source, ())}
+    for classe, part in (("p10~bas2", 0.228), ("p25", 0.101)):
+        code = f"{G.GABARIT}~f~40_plus~{classe}"
+        entiere, reduite = par_code[code], par_code[f"{code}~fragmente"]
+        poids = reduite.retraites[0][1] / (entiere.retraites[0][1] + reduite.retraites[0][1])
+        assert poids == pytest.approx(part, abs=1e-3)
+        assert entiere.cas.volumes == tuple((age, min(1.0, a)) for age, a in volumes)
+        assert reduite.cas.volumes == tuple((age, a * fragmente) for age, a in volumes)
+    assert f"{G.GABARIT}~f~40_plus~p50~fragmente" not in par_code
 
 
 def test_les_carrieres_pleines_entrent_selon_leur_generation(simulateur, source, parametres):
