@@ -421,6 +421,7 @@ class Contexte:
                 demandes_de_pension=demandes,
                 invalidite=saisie.invalidite_declaree(),
                 etranger=etranger,
+                periodes_assimilees=saisie.periodes_assimilees_declarees(),
                 part_primes=saisie.primes,
                 identifiant="assuré",
             )
@@ -548,6 +549,7 @@ class Contexte:
             demandes_de_pension=_demandes_de_pension(simulateur, saisie),
             invalidite=saisie.invalidite_declaree(),
             etranger=_etranger(simulateur, saisie),
+            periodes_assimilees=saisie.periodes_assimilees_declarees(),
             part_primes=saisie.primes,
             identifiant="assuré",
         )

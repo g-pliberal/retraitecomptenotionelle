@@ -463,6 +463,33 @@ ACTIVITES_A_L_ETRANGER = [
     ("non_salariee", "non salariée"),
 ]
 
+#: Combien de périodes assimilées l'adresse peut porter : « assimilee1_motif »
+#: à « assimilee4_… » (action 130, sixième domaine, étape 5). La borne est
+#: celle du formulaire, pas du moteur.
+ASSIMILEES_MAXIMUM = 4
+
+#: Les motifs d'une période assimilée que la saisie déclare, dans l'ordre de
+#: ``chronologie.MOTIFS_D_ASSIMILATION``, et ce que le formulaire en dit. Ce
+#: que chacun valide, et depuis quand, ce sont les fiches qui le disent : la
+#: saisie ne fait que déclarer la période.
+MOTIFS_D_ASSIMILATION = [
+    ("stage_de_formation_professionnelle", "stage de formation professionnelle"),
+    ("stage_d_insertion", "TUC ou stage d'insertion"),
+    ("sportif_de_haut_niveau", "sportif de haut niveau"),
+    ("conge_supplementaire_de_naissance", "congé supplémentaire de naissance"),
+]
+
+#: Les dispositifs d'un stage d'insertion (``chronologie.DISPOSITIFS_D_INSERTION``),
+#: que ce motif, et lui seul, doit nommer.
+DISPOSITIFS_D_INSERTION = [
+    ("tuc", "travaux d'utilité collective (TUC)"),
+    ("stage_pratique_en_entreprise", "stage pratique en entreprise"),
+    ("stage_jeunes_volontaires", "stage jeunes volontaires"),
+    ("programme_d_insertion_locale", "programme d'insertion locale"),
+    ("stage_d_initiation_a_la_vie_professionnelle",
+     "stage d'initiation à la vie professionnelle"),
+]
+
 
 #: Ce qu'une ligne de carrière peut décrire à la place d'un métier.
 #:
@@ -572,6 +599,24 @@ class PeriodeEtrangereSaisie:
     fin: float
     #: L'un des codes de :data:`ACTIVITES_A_L_ETRANGER`.
     activite: str = ACTIVITES_A_L_ETRANGER[0][0]
+
+
+@dataclass
+class PeriodeAssimileeSaisie:
+    """Une période assimilée, telle que la chronologie la reçoit
+    (:func:`chronologie.avec_periodes_assimilees`) : son motif, ses deux
+    dates, en AAAA, AAAA-MM ou AAAA-MM-JJ, la fin exclue ; le dispositif d'un
+    stage d'insertion, et les jours qu'elle compte quand ce ne sont pas tous
+    ceux de ses dates."""
+
+    #: L'un des codes de :data:`MOTIFS_D_ASSIMILATION`.
+    motif: str
+    debut: str
+    fin: str
+    #: L'un des codes de :data:`DISPOSITIFS_D_INSERTION`, pour un stage
+    #: d'insertion ; vide sinon.
+    dispositif: str = ""
+    jours: int | None = None
 
 
 @dataclass
@@ -789,6 +834,14 @@ class Saisie:
     pensions_etrangeres: list[PensionEtrangereSaisie] = field(default_factory=list)
     residence: str = ""
     mois_en_france: int | None = None
+    #: Les périodes assimilées que la personne déclare (fiches
+    #: ``stages_formation_professionnelle``, ``tuc_stages_insertion``,
+    #: ``sportifs_haut_niveau`` et ``conge_supplementaire_naissance``), et le
+    #: rang de la ligne de carrière qui est un contrat d'apprentissage
+    #: (fiche ``apprentissage``), ``None`` sans lui. Voir
+    #: :meth:`periodes_assimilees_declarees`.
+    assimilees: list[PeriodeAssimileeSaisie] = field(default_factory=list)
+    apprentissage: int | None = None
     #: Le revenu fiscal de référence du foyer, en euros, s'il le dit : il fixe
     #: le taux de CSG de sa pension (action 138, étape 2). ``None`` : la
     #: présomption ``aucun_autre_revenu_que_ses_pensions``.
@@ -974,6 +1027,9 @@ class Saisie:
             residence=(parametres.get("residence") or "").strip(),
             mois_en_france=(None if parametres.get("mois_en_france") in (None, "")
                             else _entier(parametres, "mois_en_france", MOIS_PAR_AN)),
+            assimilees=_periodes_assimilees_saisies(parametres, tolerante),
+            apprentissage=(None if parametres.get("apprentissage") in (None, "")
+                           else _entier(parametres, "apprentissage", 1)),
             interruptions=(parametres.get("interruptions") or "").strip(),
             temps_partiel=(parametres.get("temps_partiel") or "").strip(),
             indexation=_parmi(parametres, "indexation", INDEXATIONS, defauts.indexation),
@@ -1081,6 +1137,7 @@ class Saisie:
         self._verifier_demandes()
         self._verifier_invalidite()
         self._verifier_etranger()
+        self._verifier_assimilees()
         if not ANNEE_MINIMALE <= self.bascule <= ANNEE_MAXIMALE:
             raise ErreurSaisie(
                 f"Année de bascule attendue entre {ANNEE_MINIMALE} et "
@@ -1326,7 +1383,8 @@ class Saisie:
             self._verifier_niveau(niveau, rang, echelle, ligne.statut)
             metiers.append(Metier(affiliation=statut, age_debut=ligne.debut,
                                   niveau_salaire=niveau, cumul=ligne.cumul,
-                                  age_fin=ligne.fin, micro=micro))
+                                  age_fin=ligne.fin, micro=micro,
+                                  apprentissage=rang == self.apprentissage))
         return metiers
 
     def interruptions_de_carriere(
@@ -2102,6 +2160,87 @@ class Saisie:
                     f"Incapacité d'au moins 50 % en {date} : elle ne suit pas le départ "
                     f"à la retraite, fixé en {depart}.")
 
+    def periodes_assimilees_declarees(self) -> list[dict]:
+        """Les périodes assimilées que la saisie déclare, telles que
+        :func:`chronologie.avec_periodes_assimilees` les reçoit : vide quand
+        rien n'est dit, et la présomption ``pas_de_periode_assimilee`` tient."""
+        declarees = []
+        for periode in self.assimilees:
+            declaree = {"motif": periode.motif, "debut": periode.debut, "fin": periode.fin}
+            if periode.dispositif:
+                declaree["dispositif"] = periode.dispositif
+            if periode.jours is not None:
+                declaree["jours"] = periode.jours
+            declarees.append(declaree)
+        return declarees
+
+    def _verifier_assimilees(self) -> None:
+        """Une période assimilée : un motif connu, le dispositif d'un stage
+        d'insertion et de lui seul, deux dates que la chronologie sait lire,
+        la fin après le début, un début après la naissance et avant le départ,
+        et des jours, s'ils sont dits, entre un et ceux de ses dates. Le
+        contrat d'apprentissage : une ligne de carrière qui est un emploi, et
+        une carrière qui n'est pas lue sur un relevé, dont les lignes n'ont pas
+        d'attribut pour lui."""
+        motifs = [code for code, _ in MOTIFS_D_ASSIMILATION]
+        dispositifs = [code for code, _ in DISPOSITIFS_D_INSERTION]
+        depart = self.date_de(self.liquidation, depart=True)
+        depart_iso = f"{depart.annee:04d}-{depart.mois:02d}-01"
+        for rang, periode in enumerate(self.assimilees, start=1):
+            quoi = f"Période assimilée n° {rang}"
+            if periode.motif not in motifs:
+                raise ErreurSaisie(
+                    f"{quoi} : « {periode.motif} » n'est pas un motif possible — "
+                    + ", ".join(motifs) + ".")
+            if periode.motif == "stage_d_insertion":
+                if periode.dispositif not in dispositifs:
+                    raise ErreurSaisie(
+                        f"{quoi} : un stage d'insertion nomme son dispositif — "
+                        + ", ".join(dispositifs) + ".")
+            elif periode.dispositif:
+                raise ErreurSaisie(
+                    f"{quoi} : seul un stage d'insertion nomme un dispositif.")
+            dates = {}
+            for nom, valeur in (("debut", periode.debut), ("fin", periode.fin)):
+                try:
+                    dates[nom], _ = chronologie.date_declaree(valeur, nom)
+                except ValueError:
+                    raise ErreurSaisie(
+                        f"{quoi} : « {valeur} » attendu en AAAA, AAAA-MM ou AAAA-MM-JJ, "
+                        "par exemple 1986-03-01.") from None
+            if dates["fin"] <= dates["debut"]:
+                raise ErreurSaisie(
+                    f"{quoi} : elle finit ({dates['fin']}) après avoir commencé "
+                    f"({dates['debut']}).")
+            if dates["debut"] <= self.naissance_iso:
+                raise ErreurSaisie(f"{quoi} : elle commence après la naissance.")
+            if dates["debut"] >= depart_iso:
+                raise ErreurSaisie(
+                    f"{quoi} : elle commence avant le départ à la retraite, fixé en "
+                    f"{depart}.")
+            if periode.jours is not None:
+                duree = (date.fromisoformat(dates["fin"])
+                         - date.fromisoformat(dates["debut"])).days
+                if not 1 <= periode.jours <= duree:
+                    raise ErreurSaisie(
+                        f"{quoi} : ses jours se comptent de 1 à {duree}, ceux de ses "
+                        f"dates ; reçu {periode.jours}.")
+        if self.apprentissage is not None:
+            lignes = self.lignes_carriere
+            if self.releve:
+                raise ErreurSaisie(
+                    "Contrat d'apprentissage : un relevé de carrière ne le porte pas, et "
+                    "ses trimestres font foi ; il se déclare sur une ligne de métier.")
+            if not 1 <= self.apprentissage <= len(lignes):
+                raise ErreurSaisie(
+                    f"Contrat d'apprentissage : le métier n° {self.apprentissage} "
+                    f"n'existe pas ; la carrière en compte {len(lignes)}.")
+            ligne = lignes[self.apprentissage - 1]
+            if ligne.sans_emploi:
+                raise ErreurSaisie(
+                    f"Contrat d'apprentissage : la ligne n° {self.apprentissage} est une "
+                    "période sans emploi, pas un contrat de travail.")
+
     def etranger_declare(self) -> dict | None:
         """La carrière hors de France que la saisie déclare : les ``periodes``
         — l'État, les âges du début et de la fin, l'``activite`` —, les
@@ -2408,6 +2547,8 @@ class Saisie:
             **({"residence": self.residence} if self.residence else {}),
             **({"mois_en_france": self.mois_en_france}
                if self.mois_en_france is not None else {}),
+            **({"apprentissage": self.apprentissage}
+               if self.apprentissage is not None else {}),
             **({"revenu_fiscal": _nombre(self.revenu_fiscal)}
                if self.revenu_fiscal is not None else {}),
             **({"temps_partiel": self.temps_partiel} if self.temps_partiel else {}),
@@ -2471,6 +2612,16 @@ class Saisie:
             champs[f"pension_etrangere{rang}_pays"] = pension.pays
             champs[f"pension_etrangere{rang}"] = _nombre(pension.montant)
             champs[f"pension_etrangere{rang}_debut"] = self.mois_de(pension.debut)
+        # Les périodes assimilées, une ligne chacune, leurs dates telles
+        # qu'elles ont été dites : la chronologie les lit au jour.
+        for rang, periode in enumerate(self.assimilees, start=1):
+            champs[f"assimilee{rang}_motif"] = periode.motif
+            champs[f"assimilee{rang}_debut"] = periode.debut
+            champs[f"assimilee{rang}_fin"] = periode.fin
+            if periode.dispositif:
+                champs[f"assimilee{rang}_dispositif"] = periode.dispositif
+            if periode.jours is not None:
+                champs[f"assimilee{rang}_jours"] = periode.jours
         champs.update(remplacements)
         return urlencode(champs)
 
@@ -2603,6 +2754,36 @@ def _periodes_etrangeres_saisies(parametres: dict[str, str], mois_de_naissance: 
             debut=_age_saisi(parametres, f"etranger{rang}_debut", 0.0, mois_de_naissance),
             fin=_age_saisi(parametres, f"etranger{rang}_fin", 0.0, mois_de_naissance),
             activite=activite or activites[0],
+        ))
+    return periodes
+
+
+def _periodes_assimilees_saisies(parametres: dict[str, str],
+                                 tolerante: bool = False) -> list[PeriodeAssimileeSaisie]:
+    """Les périodes assimilées, lues dans « assimilee1_… » à « assimilee4_… » :
+    le motif, le début, la fin, le dispositif d'un stage d'insertion et les
+    jours. Une ligne vide ne dit rien ; une ligne commencée sans son motif ou
+    ses deux dates se refuse, comme une ligne de métier."""
+    periodes: list[PeriodeAssimileeSaisie] = []
+    for rang in range(1, ASSIMILEES_MAXIMUM + 1):
+        motif, debut, fin, dispositif, jours = (
+            (parametres.get(f"assimilee{rang}_{suffixe}") or "").strip()
+            for suffixe in ("motif", "debut", "fin", "dispositif", "jours"))
+        if not (motif or debut or fin or dispositif or jours):
+            continue
+        if tolerante and not (motif and debut and fin):
+            break
+        if not motif:
+            raise ErreurSaisie(
+                f"Période assimilée n° {rang} : indiquer son motif, ou laisser sa ligne "
+                "entièrement vide.")
+        if not (debut and fin):
+            raise ErreurSaisie(
+                f"Période assimilée n° {rang} : indiquer le jour où elle commence et "
+                "celui où elle finit.")
+        periodes.append(PeriodeAssimileeSaisie(
+            motif=motif, debut=debut, fin=fin, dispositif=dispositif,
+            jours=_entier(parametres, f"assimilee{rang}_jours", 0) if jours else None,
         ))
     return periodes
 

@@ -1762,13 +1762,14 @@ export class Carriere {
     demandes_de_pension = null,
     invalidite = null,
     etranger = null,
+    periodes_assimilees = [],
   }) {
-    const chronologie = preparer(chrono.duReleve({
+    const chronologie = preparer(chrono.avecPeriodesAssimilees(chrono.duReleve({
       annee_naissance, sexe, releve, age_liquidation, mois_naissance,
       nombre_enfants, part_primes, naissances_enfants, jour_naissance,
       presomptions: macro.paquet.presomptions, conjoint, deces, retraite_progressive,
       emploi_retraite, demandes_de_pension, invalidite, etranger,
-    }), macro.paquet.presomptions);
+    }), periodes_assimilees), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
 
@@ -1834,14 +1835,15 @@ export class Carriere {
     demandes_de_pension = null,
     invalidite = null,
     etranger = null,
+    periodes_assimilees = [],
   }) {
-    const chronologie = preparer(chrono.duParcours({
+    const chronologie = preparer(chrono.avecPeriodesAssimilees(chrono.duParcours({
       annee_naissance, sexe, metiers, age_liquidation, mois_naissance,
       profil_carriere, interruptions, temps_partiel, nombre_enfants, part_primes,
       naissances_enfants,
       jour_naissance, presomptions: macro.paquet.presomptions, conjoint, deces,
       retraite_progressive, emploi_retraite, demandes_de_pension, invalidite, etranger,
-    }), macro.paquet.presomptions);
+    }), periodes_assimilees), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
 

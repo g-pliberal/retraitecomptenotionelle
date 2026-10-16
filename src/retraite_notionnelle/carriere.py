@@ -1787,6 +1787,7 @@ class Carriere:
         demandes_de_pension: dict[str, float] | None = None,
         invalidite: dict | None = None,
         etranger: dict | None = None,
+        periodes_assimilees: list[dict] | tuple = (),
     ) -> "Carriere":
         """Construit une carrière à partir d'un relevé, ligne par ligne.
 
@@ -1813,14 +1814,14 @@ class Carriere:
         perçu mais le salaire de référence d'avant l'interruption, celui sur
         lequel les régimes complémentaires continuent d'acquérir des points.
         """
-        chronologie = preparer(chrono.du_releve(
+        chronologie = preparer(chrono.avec_periodes_assimilees(chrono.du_releve(
             annee_naissance, sexe, releve, age_liquidation,
             mois_naissance=mois_naissance, nombre_enfants=nombre_enfants,
             part_primes=part_primes, naissances_enfants=naissances_enfants,
             jour_naissance=jour_naissance, conjoint=conjoint, deces=deces,
             retraite_progressive=retraite_progressive, emploi_retraite=emploi_retraite,
             demandes_de_pension=demandes_de_pension, invalidite=invalidite,
-            etranger=etranger))
+            etranger=etranger), periodes_assimilees))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod
@@ -1902,6 +1903,7 @@ class Carriere:
         demandes_de_pension: dict[str, float] | None = None,
         invalidite: dict | None = None,
         etranger: dict | None = None,
+        periodes_assimilees: list[dict] | tuple = (),
     ) -> "Carriere":
         """Construit une carrière à partir de la suite des métiers exercés.
 
@@ -1964,6 +1966,10 @@ class Carriere:
         aussi dans ``interruptions`` : la carrière française n'y voit aucune
         activité.
 
+        ``periodes_assimilees`` déclare les périodes assimilées, chacune une
+        table que :func:`chronologie.avec_periodes_assimilees` reçoit : vide,
+        la présomption ``pas_de_periode_assimilee`` tient.
+
         Les deux bords sont des années INCOMPLÈTES et sont construites comme
         telles : celui qui entre en septembre ne travaille que quatre mois de
         son année d'entrée, celui qui part en août n'en travaille que sept de
@@ -1971,7 +1977,7 @@ class Carriere:
         pour une, selon un arrondi — d'où une marche de plusieurs pour cent au
         milieu de l'année.
         """
-        chronologie = preparer(chrono.du_parcours(
+        chronologie = preparer(chrono.avec_periodes_assimilees(chrono.du_parcours(
             annee_naissance, sexe, metiers, age_liquidation,
             mois_naissance=mois_naissance, profil_carriere=profil_carriere,
             interruptions=interruptions, temps_partiel=temps_partiel,
@@ -1980,7 +1986,7 @@ class Carriere:
             jour_naissance=jour_naissance, conjoint=conjoint, deces=deces,
             retraite_progressive=retraite_progressive, emploi_retraite=emploi_retraite,
             demandes_de_pension=demandes_de_pension, invalidite=invalidite,
-            etranger=etranger))
+            etranger=etranger), periodes_assimilees))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod

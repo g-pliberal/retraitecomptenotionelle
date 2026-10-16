@@ -360,6 +360,34 @@ export const ACTIVITES_A_L_ETRANGER = [
 ];
 
 /**
+ * Combien de périodes assimilées l'adresse peut porter : « assimilee1_motif » à
+ * « assimilee4_… » (action 130, sixième domaine, étape 5). Voir le Python.
+ */
+export const ASSIMILEES_MAXIMUM = 4;
+
+/**
+ * Les motifs d'une période assimilée que la saisie déclare, et ce que le
+ * formulaire en dit. Ce que chacun valide, ce sont les fiches qui le disent.
+ * Voir `MOTIFS_D_ASSIMILATION` du Python.
+ */
+export const MOTIFS_D_ASSIMILATION = [
+  ["stage_de_formation_professionnelle", "stage de formation professionnelle"],
+  ["stage_d_insertion", "TUC ou stage d'insertion"],
+  ["sportif_de_haut_niveau", "sportif de haut niveau"],
+  ["conge_supplementaire_de_naissance", "congé supplémentaire de naissance"],
+];
+
+/** Les dispositifs d'un stage d'insertion, que ce motif, et lui seul, nomme. */
+export const DISPOSITIFS_D_INSERTION = [
+  ["tuc", "travaux d'utilité collective (TUC)"],
+  ["stage_pratique_en_entreprise", "stage pratique en entreprise"],
+  ["stage_jeunes_volontaires", "stage jeunes volontaires"],
+  ["programme_d_insertion_locale", "programme d'insertion locale"],
+  ["stage_d_initiation_a_la_vie_professionnelle",
+    "stage d'initiation à la vie professionnelle"],
+];
+
+/**
  * Bornes des deux années que l'utilisateur peut choisir : celle de la bascule
  * au régime unique, et celle des euros constants dans lesquels les montants
  * sont exprimés. Elles étaient déclarées sur les champs du formulaire, donc
@@ -631,6 +659,12 @@ export const DEFAUTS = Object.freeze({
   pensions_etrangeres: Object.freeze([]),
   residence: "",
   mois_en_france: null,
+  //: Les périodes assimilées que la personne déclare — `{motif, debut, fin,
+  //: dispositif, jours}`, les dates telles qu'elles sont dites —, et le rang
+  //: de la ligne de carrière qui est un contrat d'apprentissage, `null` sans
+  //: lui. Voir `periodesAssimileesDeclarees`.
+  assimilees: Object.freeze([]),
+  apprentissage: null,
   // Le revenu fiscal de référence du foyer, s'il le dit. Voir `revenu_fiscal`
   // dans `saisie.py`.
   revenu_fiscal: null,
@@ -803,6 +837,9 @@ export class Saisie {
       residence: (parametres.residence || "").trim(),
       mois_en_france: [undefined, null, ""].includes(parametres.mois_en_france)
         ? null : entier(parametres, "mois_en_france", MOIS_PAR_AN),
+      assimilees: periodesAssimileesSaisies(parametres, tolerante),
+      apprentissage: [undefined, null, ""].includes(parametres.apprentissage)
+        ? null : entier(parametres, "apprentissage", 1),
       interruptions: (parametres.interruptions || "").trim(),
       temps_partiel: (parametres.temps_partiel || "").trim(),
       indexation: parmi(parametres, "indexation", INDEXATIONS, DEFAUTS.indexation),
@@ -920,6 +957,7 @@ export class Saisie {
     this.verifierDemandes();
     this.verifierInvalidite();
     this.verifierEtranger();
+    this.verifierAssimilees();
     if (!(this.bascule >= ANNEE_MINIMALE && this.bascule <= ANNEE_MAXIMALE)) {
       throw new ErreurSaisie(
         `Année de bascule attendue entre ${ANNEE_MINIMALE} et `
@@ -1181,6 +1219,7 @@ export class Saisie {
         cumul: ligne.cumul,
         age_fin: ligne.fin,
         micro,
+        apprentissage: index + 1 === this.apprentissage,
       });
     });
     return metiers;
@@ -2098,6 +2137,100 @@ export class Saisie {
   }
 
   /**
+   * Les périodes assimilées que la saisie déclare, telles que
+   * `avecPeriodesAssimilees` les reçoit : vide quand rien n'est dit. Voir
+   * `periodes_assimilees_declarees` du Python.
+   */
+  periodesAssimileesDeclarees() {
+    return this.assimilees.map((periode) => ({
+      motif: periode.motif, debut: periode.debut, fin: periode.fin,
+      ...(periode.dispositif ? { dispositif: periode.dispositif } : {}),
+      ...(periode.jours !== null ? { jours: periode.jours } : {}),
+    }));
+  }
+
+  /**
+   * Une période assimilée : un motif connu, le dispositif d'un stage
+   * d'insertion et de lui seul, deux dates lisibles, la fin après le début, un
+   * début après la naissance et avant le départ, des jours entre un et ceux de
+   * ses dates. Le contrat d'apprentissage : une ligne de carrière qui est un
+   * emploi, hors d'un relevé. Voir `_verifier_assimilees` du Python.
+   */
+  verifierAssimilees() {
+    const motifs = MOTIFS_D_ASSIMILATION.map(([code]) => code);
+    const dispositifs = DISPOSITIFS_D_INSERTION.map(([code]) => code);
+    const depart = this.dateDe(this.liquidation, true);
+    const departIso = `${String(depart.annee).padStart(4, "0")}-`
+      + `${String(depart.mois).padStart(2, "0")}-01`;
+    this.assimilees.forEach((periode, index) => {
+      const quoi = `Période assimilée n° ${index + 1}`;
+      if (!motifs.includes(periode.motif)) {
+        throw new ErreurSaisie(
+          `${quoi} : « ${periode.motif} » n'est pas un motif possible — `
+          + `${motifs.join(", ")}.`);
+      }
+      if (periode.motif === "stage_d_insertion") {
+        if (!dispositifs.includes(periode.dispositif)) {
+          throw new ErreurSaisie(
+            `${quoi} : un stage d'insertion nomme son dispositif — `
+            + `${dispositifs.join(", ")}.`);
+        }
+      } else if (periode.dispositif) {
+        throw new ErreurSaisie(`${quoi} : seul un stage d'insertion nomme un dispositif.`);
+      }
+      const dates = {};
+      for (const [nom, valeur] of [["debut", periode.debut], ["fin", periode.fin]]) {
+        try {
+          [dates[nom]] = dateDeclaree(valeur, nom);
+        } catch (erreur) {
+          if (erreur instanceof ErreurSaisie) { throw erreur; }
+          throw new ErreurSaisie(
+            `${quoi} : « ${valeur} » attendu en AAAA, AAAA-MM ou AAAA-MM-JJ, `
+            + "par exemple 1986-03-01.");
+        }
+      }
+      if (dates.fin <= dates.debut) {
+        throw new ErreurSaisie(
+          `${quoi} : elle finit (${dates.fin}) après avoir commencé (${dates.debut}).`);
+      }
+      if (dates.debut <= this.naissanceIso) {
+        throw new ErreurSaisie(`${quoi} : elle commence après la naissance.`);
+      }
+      if (dates.debut >= departIso) {
+        throw new ErreurSaisie(
+          `${quoi} : elle commence avant le départ à la retraite, fixé en ${depart}.`);
+      }
+      if (periode.jours !== null) {
+        const duree = Math.round((Date.parse(`${dates.fin}T00:00:00Z`)
+          - Date.parse(`${dates.debut}T00:00:00Z`)) / 86400000);
+        if (!(periode.jours >= 1 && periode.jours <= duree)) {
+          throw new ErreurSaisie(
+            `${quoi} : ses jours se comptent de 1 à ${duree}, ceux de ses dates ; `
+            + `reçu ${periode.jours}.`);
+        }
+      }
+    });
+    if (this.apprentissage !== null) {
+      const lignes = this.lignesCarriere;
+      if (this.releve) {
+        throw new ErreurSaisie(
+          "Contrat d'apprentissage : un relevé de carrière ne le porte pas, et ses "
+          + "trimestres font foi ; il se déclare sur une ligne de métier.");
+      }
+      if (!(this.apprentissage >= 1 && this.apprentissage <= lignes.length)) {
+        throw new ErreurSaisie(
+          `Contrat d'apprentissage : le métier n° ${this.apprentissage} n'existe pas ; `
+          + `la carrière en compte ${lignes.length}.`);
+      }
+      if (lignes[this.apprentissage - 1].sans_emploi) {
+        throw new ErreurSaisie(
+          `Contrat d'apprentissage : la ligne n° ${this.apprentissage} est une période `
+          + "sans emploi, pas un contrat de travail.");
+      }
+    }
+  }
+
+  /**
    * Une période hors de France : un État qui n'est pas la France, un début
    * après quatorze ans, une fin qui le suit sans dépasser le départ, et aucune
    * autre période hors de France qui la chevauche. Une pension étrangère : un
@@ -2465,6 +2598,7 @@ export class Saisie {
       ...(this.micro ? { micro: this.micro } : {}),
       ...(this.residence ? { residence: this.residence } : {}),
       ...(this.mois_en_france !== null ? { mois_en_france: this.mois_en_france } : {}),
+      ...(this.apprentissage !== null ? { apprentissage: this.apprentissage } : {}),
       ...(this.revenu_fiscal !== null ? { revenu_fiscal: nombreBrut(this.revenu_fiscal) } : {}),
       ...(this.temps_partiel ? { temps_partiel: this.temps_partiel } : {}),
       interruptions: this.interruptions, indexation: this.indexation,
@@ -2534,6 +2668,20 @@ export class Saisie {
       champs[`pension_etrangere${rang}_pays`] = pension.pays;
       champs[`pension_etrangere${rang}`] = nombreBrut(pension.montant);
       champs[`pension_etrangere${rang}_debut`] = this.moisDe(pension.debut);
+    });
+    // Les périodes assimilées, une ligne chacune, leurs dates telles qu'elles
+    // ont été dites : la chronologie les lit au jour.
+    this.assimilees.forEach((periode, index) => {
+      const rang = index + 1;
+      champs[`assimilee${rang}_motif`] = periode.motif;
+      champs[`assimilee${rang}_debut`] = periode.debut;
+      champs[`assimilee${rang}_fin`] = periode.fin;
+      if (periode.dispositif) {
+        champs[`assimilee${rang}_dispositif`] = periode.dispositif;
+      }
+      if (periode.jours !== null) {
+        champs[`assimilee${rang}_jours`] = periode.jours;
+      }
     });
     Object.assign(champs, remplacements);
     return Object.entries(champs)
@@ -2724,6 +2872,41 @@ function periodesEtrangeresSaisies(parametres, moisDeNaissance, tolerante = fals
       debut: ageSaisi(parametres, `etranger${rang}_debut`, 0.0, moisDeNaissance),
       fin: ageSaisi(parametres, `etranger${rang}_fin`, 0.0, moisDeNaissance),
       activite: activite || activites[0],
+    });
+  }
+  return periodes;
+}
+
+/**
+ * Les périodes assimilées, lues dans « assimilee1_… » à « assimilee4_… » : le
+ * motif, le début, la fin, le dispositif d'un stage d'insertion et les jours.
+ * Une ligne vide ne dit rien ; une ligne commencée sans son motif ou ses deux
+ * dates se refuse. Voir `_periodes_assimilees_saisies` du Python.
+ */
+function periodesAssimileesSaisies(parametres, tolerante = false) {
+  const periodes = [];
+  for (let rang = 1; rang <= ASSIMILEES_MAXIMUM; rang += 1) {
+    const [motif, debut, fin, dispositif, jours] = ["motif", "debut", "fin", "dispositif",
+      "jours"].map((suffixe) => String(parametres[`assimilee${rang}_${suffixe}`] ?? "").trim());
+    if (!motif && !debut && !fin && !dispositif && !jours) {
+      continue;
+    }
+    if (tolerante && (!motif || !debut || !fin)) {
+      break;
+    }
+    if (!motif) {
+      throw new ErreurSaisie(
+        `Période assimilée n° ${rang} : indiquer son motif, ou laisser sa ligne `
+        + "entièrement vide.");
+    }
+    if (!debut || !fin) {
+      throw new ErreurSaisie(
+        `Période assimilée n° ${rang} : indiquer le jour où elle commence et celui où `
+        + "elle finit.");
+    }
+    periodes.push({
+      motif, debut, fin, dispositif,
+      jours: jours ? entier(parametres, `assimilee${rang}_jours`, 0) : null,
     });
   }
   return periodes;

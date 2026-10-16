@@ -483,6 +483,7 @@ export class Contexte {
       demandes_de_pension: demandes,
       invalidite: saisie.invaliditeDeclaree(),
       etranger,
+      periodes_assimilees: saisie.periodesAssimileesDeclarees(),
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
@@ -605,6 +606,7 @@ export class Contexte {
       demandes_de_pension: demandesDePension(simulateur, saisie),
       invalidite: saisie.invaliditeDeclaree(),
       etranger: etrangerDeclare(simulateur, saisie),
+      periodes_assimilees: saisie.periodesAssimileesDeclarees(),
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
