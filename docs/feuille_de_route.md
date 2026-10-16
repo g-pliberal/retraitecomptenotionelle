@@ -5936,16 +5936,16 @@ changement dans les moteurs. »
 
 ### 151. Partir très tard : le départ jusqu'au bout des tables de mortalité, puis la limite d'âge des fonctionnaires et ses exceptions — `en cours`
 
-**Reprise, au 14 octobre 2026.** Faites, les étapes 1 à 3 : le départ jusqu'à
-119 ans ; la limite d'âge et ses exceptions lues ; et, sur la décision du
-propriétaire, la radiation des cadres à la limite, reculée de droit pour enfants et
-prolongée par les exceptions présumées accordées, le militaire à la limite la plus
-haute de sa catégorie, en Python et en JavaScript (`droit/limite_age.py`). Reste au
-site : dire la radiation et l'exception présumée (la note de l'étape 3, « Ce que la
-page doit dire »). Reste au modèle : les contractuels, les ouvriers de l'État et les
-régimes spéciaux ; la CARMF avant 2017 et le taux acquis au 31 mars 1983. Attendent
-le propriétaire : la radiation dans les comptes notionnels, et l'actif d'avant 2010.
-Détail : la note de l'étape 3.
+**Reprise, au 16 octobre 2026.** Faites, les étapes 1 à 4 : le départ jusqu'à
+119 ans ; la limite d'âge lue ; la radiation à la limite des fonctionnaires et des
+militaires (étape 3), puis des contractuels, des ouvriers de l'État, de la SNCF et de
+la RATP (étape 4), chacun avec ses seules exceptions, en Python et en JavaScript
+(`droit/limite_age.py`). Reste au site : dire la radiation et l'exception présumée
+(notes des étapes 3 et 4, « Ce que la page doit dire »). Reste au modèle : les autres
+régimes spéciaux, dont les statuts sont à lire ; la CARMF avant 2017 et le taux
+acquis au 31 mars 1983. Attendent le propriétaire : la radiation dans les comptes
+notionnels, l'actif d'avant 2010, et les choix de l'étape 4 (ouvrier d'avant 2004,
+marche des cheminots). Détail : la note de l'étape 4.
 
 **Demande**, le 10 octobre 2026 : « Pourquoi on bloque à 75 ans ? Est-ce que
 c'est uniquement une raison technique ? Ou est-ce qu'il y a un vrai problème

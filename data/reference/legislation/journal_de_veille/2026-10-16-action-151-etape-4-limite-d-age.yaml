@@ -1,0 +1,40 @@
+date: "2026-10-16"
+session: >-
+  action 151, étape 4 : la limite d'âge des agents contractuels, des ouvriers de l'État
+  et des agents de la SNCF et de la RATP, lue et modélisée en Python et en JavaScript,
+  comme l'étape 3 l'a fait pour les fonctionnaires et les militaires
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index LEGI, mis à jour jusqu'au 15 octobre 2026
+  (`dila_index.py legi --mettre-a-jour`, cinq incréments) ; `textes.py --inscrire`
+  n'est pas lancé, la session 8 inscrivant seule la liste cette nuit. Dans l'index
+  LEGI : l'article 6-1 de la loi n° 84-834, L. 556-13 du code général de la fonction
+  publique, l'article 20 de la loi n° 47-1465 dans sa rédaction de 2011 ; les articles
+  1er à 5 du décret n° 2004-1057 dans toutes leurs rédactions, l'article 7 du décret n°
+  2004-1056, les articles 1er à 6 du décret n° 53-711 ; les articles du décret n°
+  2010-105 et la rédaction de 2023 de l'article 1er du décret n° 2011-288. Dans l'index
+  JORF : les articles 38 de la loi n° 2010-1330, 115 de la loi n° 2012-347 et 10 de la
+  loi n° 2023-270 ; les notices des décrets n° 2011-288, 2016-1005 et 2023-840, et
+  l'article 3 de ce dernier. Les statuts des IEG et de la Banque de France, cherchés
+  sans aboutir.
+trouve: >-
+  Le contractuel : maintenu sur sa demande jusqu'à soixante-cinq ans depuis 1947,
+  soixante-sept relevés comme les sédentaires depuis le 1er juillet 2011 ; sa limite
+  propre, reculée pour enfants et prolongée de dix trimestres pour durée d'assurance
+  incomplète, depuis le 14 mars 2012 ; le maintien jusqu'à soixante-dix ans et son
+  plafond depuis le 14 juin 2023. L'ouvrier : soixante-cinq ans et soixante pour
+  l'insalubre depuis le 7 octobre 2004, par paliers jusqu'en 2012 ; soixante-sept et
+  soixante-deux relevés depuis le 1er juillet 2011 ; les exceptions des fonctionnaires
+  depuis le 1er septembre 2023. La SNCF et la RATP : soixante-cinq ans depuis le
+  31 janvier 2010, soixante-sept pour les nés depuis 1962, le maintien jusqu'à
+  soixante-dix ans du sédentaire depuis le 1er septembre 2023. Aucune rédaction de ces
+  textes n'est postérieure au 1er septembre 2023. Trois fiches neuves, `approchee` ;
+  aucun exemple chiffré publié. Sept témoins baissent au scénario 1, de 4 à 15 % : les
+  ouvriers de l'État nés de 1925 à 1955 dont le départ saisi passait la limite.
+reste: >-
+  L. 556-11 et L. 556-12 du code général de la fonction publique, absents de l'index ;
+  la rédaction de 1947 de l'article 20 de la loi n° 47-1465 ; les décrets de 1954 à
+  1960 qui fixaient la limite des ouvriers avant 2004, supposée de soixante ans ;
+  l'article 1er du décret n° 2011-288 dans ses rédactions de 2011 et de 2016, dont la
+  marche des nés de 1957 à 1961 est supposée ; les décrets n° 54-23 et n° 54-24 ; les
+  statuts des autres régimes spéciaux (IEG, Banque de France, CRPCEN, mines, marins,
+  Opéra, Comédie-Française, SEITA, port de Strasbourg).
