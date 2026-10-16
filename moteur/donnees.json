@@ -13905,28 +13905,28 @@
 "hypotheses":["basse","centrale","haute"],
 "parts_pib":{
 "basse":{
-"actuel":{"2050":0.1378108780288965,"2070":0.14052557014576858},
-"notionnel_liberal":{"2050":0.09880413233288102,"2070":0.08078140871479578},
-"notionnel_retroactif":{"2050":0.045911874586129636,"2070":0.04662779463913413},
-"notionnel_retroactif_employeur":{"2050":0.1093746491925174,"2070":0.10373894376259121}
+"actuel":{"2050":0.13822322259649486,"2070":0.1413660062634219},
+"notionnel_liberal":{"2050":0.09909976463568945,"2070":0.08126453511982232},
+"notionnel_retroactif":{"2050":0.04604924771911177,"2070":0.046906659778486355},
+"notionnel_retroactif_employeur":{"2050":0.10970190958786918,"2070":0.10435937145453975}
 },
 "centrale":{"actuel":{"2050":0.143652,"2070":0.153},"notionnel_liberal":{"2050":0.09710748200421816,"2070":0.0812178170484117},"notionnel_retroactif":{"2050":0.044950021806545316,"2070":0.0463487582378646},"notionnel_retroactif_employeur":{"2050":0.10718679172562486,"2070":0.10337437465528564}},
 "haute":{
-"actuel":{"2050":0.15041115476246333,"2070":0.16606333910237714},
-"notionnel_liberal":{"2050":0.09485778285925928,"2070":0.08116209840024227},
-"notionnel_retroactif":{"2050":0.04371606590447492,"2070":0.04569456855547545},
-"notionnel_retroactif_employeur":{"2050":0.10438105269654943,"2070":0.10226390733932457}
+"actuel":{"2050":0.1500540196616789,"2070":0.16535790644067377},
+"notionnel_liberal":{"2050":0.09463255326179273,"2070":0.08081732395807224},
+"notionnel_retroactif":{"2050":0.04361226681040274,"2070":0.04550045923974259},
+"notionnel_retroactif_employeur":{"2050":0.10413321111968209,"2070":0.10182949297224929}
 }
 },
 "soldes":{
-"basse":{"actuel":-0.011420570145768583,"notionnel_liberal":0.0008824353106340194,"notionnel_retroactif":0.07278109621898032,"notionnel_retroactif_employeur":0.015669947095523246},
+"basse":{"actuel":-0.012261006263421914,"notionnel_liberal":0.0003993089056074789,"notionnel_retroactif":0.07250223107962811,"notionnel_retroactif_employeur":0.015049519403574713},
 "centrale":{"actuel":-0.023895,"notionnel_liberal":0.0004563258510641849,"notionnel_retroactif":0.07306013262024985,"notionnel_retroactif_employeur":0.016034516202828822},
-"haute":{"actuel":-0.03695833910237714,"notionnel_liberal":0.0005193220919396946,"notionnel_retroactif":0.07371432230263901,"notionnel_retroactif_employeur":0.01714498351878989}
+"haute":{"actuel":-0.03625290644067378,"notionnel_liberal":0.0008640965341097234,"notionnel_retroactif":0.07390843161837188,"notionnel_retroactif_employeur":0.01757939788586517}
 },
 "soldes_moyens":{
-"basse":{"actuel":-0.005759263371743173,"notionnel_liberal":-0.011503691414833398,"notionnel_retroactif":0.079081629998265,"notionnel_retroactif_employeur":0.018560163241900032},
+"basse":{"actuel":-0.006146346069127193,"notionnel_liberal":-0.011759312993870941,"notionnel_retroactif":0.07895376171110077,"notionnel_retroactif_employeur":0.01826295450247644},
 "centrale":{"actuel":-0.011347111111111113,"notionnel_liberal":-0.010229759799210248,"notionnel_retroactif":0.07985330614405786,"notionnel_retroactif_employeur":0.02031119899216441},
-"haute":{"actuel":-0.01748565659390412,"notionnel_liberal":-0.008305341949463325,"notionnel_retroactif":0.08095179272124516,"notionnel_retroactif_employeur":0.022809262401876647}
+"haute":{"actuel":-0.017153696313214947,"notionnel_liberal":-0.008113495152013908,"notionnel_retroactif":0.08104606278709103,"notionnel_retroactif_employeur":0.02302949417618298}
 }
 }
 },
@@ -16099,7 +16099,18 @@ false,
 },
 "annees_revenu_annuel_moyen_independants":{"ajoutees":0,"colonne":"annees","corrigees":0,"empreinte":"83b7accde0e25626","identiques":21,"niveau":"certifiee","source":"DILA, base LEGI, code de la sécurité sociale R. 634-1-1","valeurs":21,"verifiee_le":"2026-10-05"},
 "annees_salaire_reference":{"ajoutees":0,"colonne":"annees","corrigees":0,"empreinte":"6e131b394a4502fe","identiques":16,"niveau":"certifiee","source":"DILA, base LEGI, code de la sécurité sociale R. 351-29-1","valeurs":16,"verifiee_le":"2026-09-17"},
-"arrivees_tardives":{"ajoutees":130,"colonne":"valeur","corrigees":0,"empreinte":"853ad9edf20ddb83","identiques":0,"niveau":"estimee","source":"INSEE, projections de population 2026, scénario central : population au 1er janvier et décès par âge, 1962-2070","valeurs":130,"verifiee_le":"2026-10-06"},
+"arrivees_tardives":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"853ad9edf20ddb83","identiques":130,"niveau":"estimee","source":"INSEE, projections de population 2026, scénario central : population au 1er janvier et décès par âge, 1962-2070","valeurs":130,"verifiee_le":"2026-10-16"},
+"arrivees_tardives_variantes":{
+"ajoutees":260,
+"colonne":"valeur",
+"corrigees":0,
+"empreinte":"5146f166c98d974d",
+"identiques":0,
+"niveau":"estimee",
+"source":"INSEE, projections de population 2026, scénarios de solde migratoire bas et haut : population au 1er janvier et décès par âge, 1962-2070",
+"valeurs":260,
+"verifiee_le":"2026-10-16"
+},
 "assiette_revenu_mixte":{"ajoutees":0,"colonne":"montant_meur","corrigees":0,"empreinte":"9c3a492bb97dfb64","identiques":77,"niveau":"certifiee","source":"INSEE Melodi, DD_CNA_TEE (B3G du secteur S14)","valeurs":77,"verifiee_le":"2026-09-19"},
 "assiette_salaires":{"ajoutees":0,"colonne":"montant_meur","corrigees":0,"empreinte":"d34610dbbc21c963","identiques":77,"niveau":"certifiee","source":"INSEE BDM, idbank 011785411 (D11, total des branches)","valeurs":77,"verifiee_le":"2026-10-06"},
 "avts_cnav":{"ajoutees":0,"colonne":"avts","corrigees":0,"empreinte":"fd021141eb7e0d31","identiques":44,"niveau":"haute","source":"Cnav, barème « Allocation aux vieux travailleurs salariés […] - Montant »","valeurs":44,"verifiee_le":"2026-10-16"},
@@ -16267,12 +16278,12 @@ false,
 "plafond_minimum_vieillesse_journal_officiel":{"ajoutees":0,"colonne":"plafond","corrigees":0,"empreinte":"4f17ba17b97b59b6","identiques":22,"niveau":"certifiee","source":"DILA, bases JORF et LEGI, décrets fixant le montant de divers avantages de vieillesse et de l'allocation supplémentaire","valeurs":22,"verifiee_le":"2026-10-16"},
 "point_indice_fonction_publique":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"aff9e1938730bd29","identiques":36,"niveau":"haute","source":"OpenFisca-France, point_indice_en_euros.yaml","valeurs":36,"verifiee_le":"2026-09-13"},
 "point_indice_journal_officiel":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"e2ce048367b5e2b0","identiques":32,"niveau":"certifiee","source":"DILA, base LEGI, décret n° 85-1148 du 24 octobre 1985, article 3","valeurs":32,"verifiee_le":"2026-09-17"},
-"population_active":{"ajoutees":62,"colonne":"effectif","corrigees":0,"empreinte":"8f27d54abe3f73fa","identiques":0,"niveau":"certifiee","source":"INSEE, estimations de population, scénario central des projections 2026","valeurs":62,"verifiee_le":"2026-09-13"},
-"population_active_projetee":{"ajoutees":47,"colonne":"effectif","corrigees":0,"empreinte":"67acabf31a7d2563","identiques":0,"niveau":"projetee","source":"INSEE, projections de population 2026, scénario central","valeurs":47,"verifiee_le":"2026-09-13"},
-"population_active_variantes":{"ajoutees":90,"colonne":"effectif","corrigees":0,"empreinte":"ae430dfe85f73000","identiques":0,"niveau":"projetee","source":"INSEE, projections de population 2026, scénarios d'espérance de vie basse et haute","valeurs":90,"verifiee_le":"2026-10-14"},
-"population_par_age":{"ajoutees":3410,"colonne":"effectif","corrigees":0,"empreinte":"86f910a2a8348641","identiques":0,"niveau":"certifiee","source":"INSEE, estimations de population, scénario central des projections 2026","valeurs":3410,"verifiee_le":"2026-09-13"},
-"population_par_age_projetee":{"ajoutees":2585,"colonne":"effectif","corrigees":0,"empreinte":"e11ac05261b4c4b0","identiques":0,"niveau":"projetee","source":"INSEE, projections de population 2026, scénario central","valeurs":2585,"verifiee_le":"2026-09-13"},
-"population_par_age_variantes":{"ajoutees":4950,"colonne":"effectif","corrigees":0,"empreinte":"11fc9a07f42972fd","identiques":0,"niveau":"projetee","source":"INSEE, projections de population 2026, scénarios d'espérance de vie basse et haute","valeurs":4950,"verifiee_le":"2026-10-14"},
+"population_active":{"ajoutees":0,"colonne":"effectif","corrigees":0,"empreinte":"8f27d54abe3f73fa","identiques":62,"niveau":"certifiee","source":"INSEE, estimations de population, scénario central des projections 2026","valeurs":62,"verifiee_le":"2026-10-16"},
+"population_active_projetee":{"ajoutees":0,"colonne":"effectif","corrigees":0,"empreinte":"67acabf31a7d2563","identiques":47,"niveau":"projetee","source":"INSEE, projections de population 2026, scénario central","valeurs":47,"verifiee_le":"2026-10-16"},
+"population_active_variantes":{"ajoutees":180,"colonne":"effectif","corrigees":0,"empreinte":"06cdbb01146c7256","identiques":90,"niveau":"projetee","source":"INSEE, projections de population 2026, scénarios d'espérance de vie, de fécondité et de migrations bas et hauts","valeurs":270,"verifiee_le":"2026-10-16"},
+"population_par_age":{"ajoutees":0,"colonne":"effectif","corrigees":0,"empreinte":"86f910a2a8348641","identiques":3410,"niveau":"certifiee","source":"INSEE, estimations de population, scénario central des projections 2026","valeurs":3410,"verifiee_le":"2026-10-16"},
+"population_par_age_projetee":{"ajoutees":0,"colonne":"effectif","corrigees":0,"empreinte":"e11ac05261b4c4b0","identiques":2585,"niveau":"projetee","source":"INSEE, projections de population 2026, scénario central","valeurs":2585,"verifiee_le":"2026-10-16"},
+"population_par_age_variantes":{"ajoutees":4950,"colonne":"effectif","corrigees":0,"empreinte":"0f15268a1ba4aea8","identiques":4950,"niveau":"projetee","source":"INSEE, projections de population 2026, scénarios d'espérance de vie et de migrations bas et hauts","valeurs":9900,"verifiee_le":"2026-10-16"},
 "prestations_non_contributives":{"ajoutees":20,"colonne":"montant_meur","corrigees":0,"empreinte":"ebaa1639a6284121","identiques":40,"niveau":"certifiee","source":"DREES, Comptes de la protection sociale","valeurs":60,"verifiee_le":"2026-09-19"},
 "productivite":{"ajoutees":0,"colonne":"variation_reelle","corrigees":0,"empreinte":"9c69741a05c75be3","identiques":76,"niveau":"certifiee","source":"INSEE BDM, idbanks 011785223 et 011793334","valeurs":76,"verifiee_le":"2026-10-06"},
 "profil_salaire_age":{"ajoutees":0,"colonne":"salaire_relatif","corrigees":0,"empreinte":"dea10baec089b7ec","identiques":310,"niveau":"certifiee","source":"INSEE Melodi, DS_DERA_PRIVE_SERIES_LONGUES","valeurs":310,"verifiee_le":"2026-10-05"},
@@ -16378,6 +16389,24 @@ false,
 "validation_depuis_affiliations":{"salarie_agricole":[1974,4]}
 },
 "classes_cotisation":{
+"carpv_complementaire|1998":[[41750.36024844721,3526.63,0],[55667.88819875776,4408.29,0],[null,5289.95,0]],
+"carpv_complementaire|1999":[[42876.07798481711,3621.72,0],[57168.86516563146,4527.15,0],[null,5432.59,0]],
+"carpv_complementaire|2000":[[43557.98757763975,3679.32,0],[58078.090062111805,4599.16,0],[null,5518.99,0]],
+"carpv_complementaire|2001":[[44298.2077294686,3741.85,0],[59065.063405797104,4677.31,0],[null,5612.78,0]],
+"carpv_complementaire|2002":[[45715.47826086957,3936.79,0],[60954.782608695656,4920.99,0],[null,5905.19,0]],
+"carpv_complementaire|2003":[[47270.426501035196,4148.48,0],[63028.07453416149,5185.6,0],[null,6222.72,0]],
+"carpv_complementaire|2004":[[48125.648033126294,4487.51,0],[64168.3850931677,5609.38,0],[null,6731.26,0]],
+"carpv_complementaire|2005":[[48903.12215320911,4667.3,0],[65205.03105590062,5834.12,0],[null,7000.94,0]],
+"carpv_complementaire|2006":[[50322.01242236025,4968.33,0],[67096.9099378882,6210.41,0],[null,7452.49,0]],
+"carpv_complementaire|2007":[[52129.63975155279,5318.35,0],[69507.11180124224,6647.94,0],[null,7977.53,0]],
+"carpv_complementaire|2008":[[53898.3933747412,5676.19,0],[71865.48136645963,7095.23,0],[null,8514.28,0]],
+"carpv_complementaire|2009":[[55569.96273291926,5913.18,0],[74094.27018633542,7391.48,0],[null,8869.78,0]],
+"carpv_complementaire|2010":[[56075.32091097309,6151.5,0],[74768.0900621118,7689.38,0],[null,9227.26,0]],
+"carpv_complementaire|2011":[[57260.96894409938,6281.57,0],[76348.9751552795,7851.96,0],[null,9422.36,0]],
+"carpv_complementaire|2012":[[58913.10144927537,6527.44,0],[78551.84782608696,8159.3,0],[null,9791.16,0]],
+"carpv_complementaire|2013":[[59982.12836438923,6678.78,0],[79977.23602484472,8348.48,0],[null,10018.18,0]],
+"carpv_complementaire|2014":[[60817.913043478264,6771.85,0],[81091.63043478261,8464.81,0],[null,10157.77,0]],
+"carpv_complementaire|2015":[[61614.82401656314,7029.56,0],[82154.19254658384,8786.95,0],[null,10544.34,0]],
 "carpv_complementaire|2016":[[62548.0,7136.0,1],[83398.0,8920.0,1],[null,10704.0,1]],
 "carpv_complementaire|2017":[[63539.0,7224.0,1],[84720.0,9030.0,1],[null,10836.0,1]],
 "carpv_complementaire|2018":[[64355.0,7376.0,1],[85808.0,9220.0,1],[null,11064.0,1]],
@@ -25064,26 +25093,44 @@ null
 "dates_qui_decident":["liquidation.date_effet"],
 "id":"majoration_retraite_proportionnelle",
 "versions":[
-{"bornes":{"liquidation.date_effet":[null,"1997-01-01"]},"exception_de":null,"id":"avant_les_plans","parametres":{"existe":false,"minimum":null,"minimum_points":null,"minimum_reduit":null,"minorations":null,"part_servie":null},"texte":"JORFARTI000002386544"},
-{"bornes":{"liquidation.date_effet":["1997-01-01","1998-01-01"]},"exception_de":null,"id":"plan_de_1997","parametres":{"existe":true,"minimum":null,"minimum_points":26.933,"minimum_reduit":null,"minorations":[0.15,0.15,0.2,0.2,0.2],"part_servie":0.3333333333333333},"texte":"JORFARTI000002386544"},
+{"bornes":{"liquidation.date_effet":[null,"1997-01-01"]},"exception_de":null,"id":"avant_les_plans","parametres":{"existe":false,"minimum":null,"minimum_points":null,"minimum_reduit":null,"minimum_reduit_depuis":null,"minorations":null,"part_servie":null},"texte":"JORFARTI000002386544"},
+{
+"bornes":{"liquidation.date_effet":["1997-01-01","1998-01-01"]},
+"exception_de":null,
+"id":"plan_de_1997",
+"parametres":{"existe":true,"minimum":null,"minimum_points":26.933,"minimum_reduit":null,"minimum_reduit_depuis":null,"minorations":[0.15,0.15,0.2,0.2,0.2],"part_servie":0.3333333333333333},
+"texte":"JORFARTI000002386544"
+},
 {
 "bornes":{"liquidation.date_effet":["1998-01-01","1999-01-01"]},
 "exception_de":null,
 "id":"pensions_dues_en_1998",
-"parametres":{"existe":true,"minimum":null,"minimum_points":26.933,"minimum_reduit":null,"minorations":[0.15,0.15,0.2,0.2,0.2],"part_servie":0.6666666666666666},
+"parametres":{"existe":true,"minimum":null,"minimum_points":26.933,"minimum_reduit":null,"minimum_reduit_depuis":null,"minorations":[0.15,0.15,0.2,0.2,0.2],"part_servie":0.6666666666666666},
 "texte":"JORFARTI000001027316"
 },
-{"bornes":{"liquidation.date_effet":["1999-01-01","2000-01-01"]},"exception_de":null,"id":"pensions_dues_en_1999","parametres":{"existe":true,"minimum":null,"minimum_points":26.933,"minimum_reduit":null,"minorations":[0.15,0.15,0.2,0.2,0.2],"part_servie":1.0},"texte":"JORFARTI000002096328"},
-{"bornes":{"liquidation.date_effet":["2000-01-01","2001-01-01"]},"exception_de":null,"id":"pensions_dues_en_2000","parametres":{"existe":true,"minimum":null,"minimum_points":26.933,"minimum_reduit":null,"minorations":[0.15,0.15,0.1,0.1,0.1],"part_servie":1.0},"texte":"JORFARTI000001577799"},
-{"bornes":{"liquidation.date_effet":["2001-01-01","2002-01-01"]},"exception_de":null,"id":"pensions_dues_en_2001","parametres":{"existe":true,"minimum":null,"minimum_points":29.23,"minimum_reduit":null,"minorations":null,"part_servie":1.0},"texte":"JORFARTI000002487752"},
+{
+"bornes":{"liquidation.date_effet":["1999-01-01","2000-01-01"]},
+"exception_de":null,
+"id":"pensions_dues_en_1999",
+"parametres":{"existe":true,"minimum":null,"minimum_points":26.933,"minimum_reduit":null,"minimum_reduit_depuis":null,"minorations":[0.15,0.15,0.2,0.2,0.2],"part_servie":1.0},
+"texte":"JORFARTI000002096328"
+},
+{
+"bornes":{"liquidation.date_effet":["2000-01-01","2001-01-01"]},
+"exception_de":null,
+"id":"pensions_dues_en_2000",
+"parametres":{"existe":true,"minimum":null,"minimum_points":26.933,"minimum_reduit":null,"minimum_reduit_depuis":null,"minorations":[0.15,0.15,0.1,0.1,0.1],"part_servie":1.0},
+"texte":"JORFARTI000001577799"
+},
+{"bornes":{"liquidation.date_effet":["2001-01-01","2002-01-01"]},"exception_de":null,"id":"pensions_dues_en_2001","parametres":{"existe":true,"minimum":null,"minimum_points":29.23,"minimum_reduit":null,"minimum_reduit_depuis":null,"minorations":null,"part_servie":1.0},"texte":"JORFARTI000002487752"},
 {
 "bornes":{"liquidation.date_effet":["2002-01-01","2009-01-01"]},
 "exception_de":null,
 "id":"au_minimum_vieillesse",
-"parametres":{"existe":true,"minimum":"minimum_vieillesse_personne_seule","minimum_points":null,"minimum_reduit":"differentiel_du_couple","minorations":null,"part_servie":1.0},
+"parametres":{"existe":true,"minimum":"minimum_vieillesse_personne_seule","minimum_points":null,"minimum_reduit":"differentiel_du_couple","minimum_reduit_depuis":"2002-01-01","minorations":null,"part_servie":1.0},
 "texte":"JORFARTI000002041505"
 },
-{"bornes":{"liquidation.date_effet":["2009-01-01",null]},"exception_de":null,"id":"remplacee_par_la_pmr","parametres":{"existe":false,"minimum":null,"minimum_points":null,"minimum_reduit":null,"minorations":null,"part_servie":null},"texte":"LEGIARTI000019959465"}
+{"bornes":{"liquidation.date_effet":["2009-01-01",null]},"exception_de":null,"id":"remplacee_par_la_pmr","parametres":{"existe":false,"minimum":null,"minimum_points":null,"minimum_reduit":null,"minimum_reduit_depuis":null,"minorations":null,"part_servie":null},"texte":"LEGIARTI000019959465"}
 ]
 },
 "majorations_forfaitaires_1972_1982":{
@@ -26495,7 +26542,7 @@ null
 "famille":"base_prive",
 "fermeture":null,
 "integre_dans":null,
-"manque":"La valeur de référence qui convertit les cotisations en points n'est pas publiée : le rendement est estimé ; taux et barème de 2026 projetés sur toute la période ; plafond de 548 600 FCFP remplacé par le plafond national. Le statut `salarie_nouvelle_caledonie` route aussi l'Agirc-Arrco du non-cadre, obligatoire depuis le 1er janvier 1995 ; les années d'avant, depuis 1958, en sont des services passés, validés sans cotisation à une pension prise depuis 1995 et absents du compte notionnel, sur les barèmes de métropole faute de ceux de la généralisation (fiche `services_passes_outre_mer`). Le chômage, que la CAFAT indemnise, ne vaut aucun point complémentaire ; il ne vaut pas non plus de points CAFAT, dont la règle n'est pas lue.",
+"manque":"La valeur de référence qui convertit les cotisations en points est publiée par la CAFAT (2 845,44 FCFP en 2026, pour un point de 256,09) : le rendement de 10 % est estimé, quand le droit le fait descendre de 10,3 % en 2016 à 9,0 % en 2026 ; l'anticipation de dix trimestres, avec 1,5 % d'abattement par trimestre ou sans abattement à 37 années, n'est pas portée (délibération n° 458, articles 2 à 4) ; taux et barème de 2026 projetés sur toute la période ; plafond de 548 600 FCFP remplacé par le plafond national. Le statut `salarie_nouvelle_caledonie` route aussi l'Agirc-Arrco du non-cadre, obligatoire depuis le 1er janvier 1995 ; les années d'avant, depuis 1958, en sont des services passés, validés sans cotisation à une pension prise depuis 1995 et absents du compte notionnel, sur les barèmes de métropole faute de ceux de la généralisation (fiche `services_passes_outre_mer`). Le chômage, que la CAFAT indemnise, ne vaut aucun point complémentaire ; il cotise à la CAFAT et y vaut des points (loi du pays n° 2001-016, Lp. 100-7), que le modèle ne porte pas.",
 "nom":"Régime de retraite des travailleurs salariés de Nouvelle-Calédonie (CAFAT)",
 "population":"Salariés de Nouvelle-Calédonie",
 "raison_hors_champ":"",
@@ -26522,7 +26569,7 @@ null
 "famille":"base_prive",
 "fermeture":null,
 "integre_dans":null,
-"manque":"Le régime existe bel et bien, contrairement à ce que l'inventaire disait : 60 ans, quinze ans de cotisation, 2,6 % puis 1,3 % par an sur les quinze meilleures années. Non lus : le plafond, la date de création, le barème d'avant 2009, la réforme en préparation (65 ans).",
+"manque":"Le régime existe bel et bien, contrairement à ce que l'inventaire disait : 60 ans, quinze ans de cotisation, 2,6 % puis 1,3 % par an sur les quinze meilleures années ; dès 55 ans avec 7 % d'abattement par année, sans abattement à 57 ans avec 35 années (délibération n° 25/AT/2015, non portée). Le taux de cotisation retenu est le taux total de la caisse, 17,10 % en 2009 et 27 % en 2020 : celui de la retraite est de six points plus bas, 11,1 % puis 21 % (IEOM, rapport 2021). Non lus : le plafond, la date de création, le barème d'avant 2009, la réforme en préparation (65 ans).",
 "nom":"Retraite des salariés de Wallis-et-Futuna",
 "population":"Salariés de Wallis-et-Futuna",
 "raison_hors_champ":"",
@@ -27220,7 +27267,7 @@ null
 "famille":"fonction_publique",
 "fermeture":null,
 "integre_dans":null,
-"manque":"La fiche est celle de la Caisse locale de retraites de Nouvelle- Calédonie ; les fonctionnaires de Polynésie relèvent de la CPS, portée par le statut salarié. Les cotisations d'avant 2023 sont projetées ; la durée de services qui ouvre la pension d'ancienneté (31 ans en 2024, six mois de plus par an jusqu'à 35 ans, article Lp. 221-1) n'est pas portée, ni les minorations, fixées par délibération et lues dans la seule page de la direction de la fonction publique.",
+"manque":"La fiche est celle de la Caisse locale de retraites de Nouvelle- Calédonie ; les fonctionnaires de Polynésie relèvent de la CPS, portée par le statut salarié. Les cotisations d'avant 2023 sont projetées ; la durée de services qui ouvre la pension d'ancienneté (31 ans en 2024, six mois de plus par an jusqu'à 35 ans, article Lp. 221-1) n'est pas portée, ni les réductions d'âge pour services calédoniens (Lp. 222-1). L'abattement est écrit 2,5 % par trimestre, quand le code l'écrit par tranches d'âge, 10, 16, 24, 35 et 40 % (R. 232-6) ; la minoration de toutes les pensions, 8 % en 2026 et 2027 (R. 232-7), n'est pas portée, ni l'assiette des cotisations, le traitement majoré de 73 % (R. 212-1).",
 "nom":"Caisses de retraite des fonctionnaires de Nouvelle-Calédonie et de Polynésie française",
 "population":"Fonctionnaires territoriaux et communaux du Pacifique",
 "raison_hors_champ":"",
@@ -28203,7 +28250,7 @@ null
 "famille":"liberal",
 "fermeture":null,
 "integre_dans":null,
-"manque":"Dix périodes suivent les onze versions de l'article 2 du décret n° 50-1318 (actes médicaux par âge de 1950 à 1997, classes de revenu en AMV de 1998 à 2014, points depuis 2015), mais aucun montant d'époque n'est dans le texte — la valeur de l'acte et le prix du point sont fixés hors index — : la grille de 2016, ramenée par le rapport des plafonds, tient lieu de montant avant 2016. La règle d'âge — taux plein à 65 ans, 1,25 % par trimestre avant, que la durée n'annule pas — et la bonification pour trois enfants ne sont lues que dans les statuts de 2021 : la première est supposée la même avant, la seconde n'est servie que depuis 2022.",
+"manque":"Dix périodes suivent les onze versions de l'article 2 du décret n° 50-1318 (actes médicaux par âge de 1950 à 1997, classes de revenu en AMV de 1998 à 2014, points depuis 2015), mais aucun montant d'époque n'est dans le texte avant 2016 — la valeur de l'acte est fixée par l'ordre, hors du Journal officiel — : de 1998 à 2015, la grille suit le taux d'appel de chaque décret annuel, sur un acte tiré de la valeur d'achat du point de 2016 au rapport des plafonds (classes_cotisation_epoques.yaml, 16 octobre 2026) ; avant 1998, la grille de 1998 ramenée tient lieu. La règle d'âge — taux plein à 65 ans, 1,25 % par trimestre avant, que la durée n'annule pas — et la bonification pour trois enfants ne sont lues que dans les statuts de 2021 : la première est supposée la même avant, la seconde n'est servie que depuis 2022.",
 "nom":"Complémentaire des vétérinaires (CARPV)",
 "population":"Vétérinaires libéraux",
 "raison_hors_champ":"",
@@ -36169,7 +36216,7 @@ null
 "tenue_avant":false
 }
 },
-"lu_le":"2026-10-13",
+"lu_le":"2026-10-16",
 "pensions":{
 "casa":{"marches":[["2013-04-01",{"taux":0.003}]],"tenue_avant":false},
 "crds":{"marches":[["1996-02-01",{"taux":0.005}]],"tenue_avant":false},
@@ -36207,7 +36254,8 @@ null
 "maladie_ratp":{"marches":[["1991-07-01",{"taux":0.0165}],["1996-08-01",{"taux":0.0285}],["1997-01-01",{"taux":0.0185}],["1997-07-01",{"taux":0.028}],["1998-01-01",{"taux":0.0}]],"tenue_avant":false},
 "maladie_regime_general":{"marches":[["1980-07-01",{"taux":0.01}],["1987-07-01",{"taux":0.014}],["1996-01-01",{"taux":0.026}],["1997-01-01",{"taux":0.028}],["1998-01-01",{"taux":0.0}]],"tenue_avant":false},
 "maladie_regimes_speciaux":{"marches":[["1980-07-31",{"taux":0.015}],["1987-07-01",{"taux":0.019}],["1996-08-01",{"taux":0.0285}],["1997-01-01",{"taux":0.0185}],["1997-07-01",{"taux":0.028}],["1998-01-01",{"taux":0.0}]],"tenue_avant":false},
-"maladie_sncf":{"marches":[["1991-07-01",{"taux":0.045}],["1997-01-01",{"taux":0.035}],["1998-01-01",{"taux":0.007}]],"tenue_avant":false}
+"maladie_sncf":{"marches":[["1991-07-01",{"taux":0.045}],["1997-01-01",{"taux":0.035}],["1998-01-01",{"taux":0.007}],["2010-11-14",{"taux":0.0}]],"tenue_avant":false},
+"maladie_sncf_sous_plafond":{"marches":[["2010-11-14",{"taux":0.007}]],"tenue_avant":false}
 },
 "regimes_des_pensions":{
 "maladie_banque_de_france":["banque_de_france"],
@@ -36220,7 +36268,8 @@ null
 "maladie_ratp":["ratp"],
 "maladie_regime_general":["msa_salaries","regime_general"],
 "maladie_regimes_speciaux":["chemins_fer_secondaires","comedie_francaise","opera_de_paris"],
-"maladie_sncf":["sncf"]
+"maladie_sncf":["sncf"],
+"maladie_sncf_sous_plafond":["sncf"]
 },
 "salaires":{
 "chomage_prive":{
@@ -36412,6 +36461,7 @@ null
 "csg_affectee_vieillesse":0.0294,
 "csg_taux_plein":0.083,
 "maladie_complementaire":{"regimes":["agirc","agirc_arrco","agirc_entreprises_nouvelles","arrco","arrco_tranche_2","arrco_tranche_2_entreprises_nouvelles","crpnpac","crpnpac_tranche_2","enseignants_prive_additionnel","igrante","ipacte","ircantec","regimes_professionnels_integres","unirs"],"taux":0.01},
+"maladie_regimes_speciaux":[{"annee":2026,"plafond_annuel":25582.0,"regimes":["sncf"],"serie":"maladie_sncf_sous_plafond","taux":0.007},{"annee":2026,"plafond_annuel":null,"regimes":["mines"],"serie":"maladie_mines","taux":0.005}],
 "non_residents":{"complementaires":0.042,"duree_minimale_trimestres":60,"regime_general":0.032,"regimes_generaux":["regime_general"]}
 },
 "profils":{
@@ -36776,6 +36826,7 @@ null
 "opposition_a_la_substitution":{"dit":"avant le 1er mars 2010, l'invalide qui travaille encore à l'âge de la substitution s'y oppose, et demande sa pension de vieillesse à son départ","valeur":"opposée, la pension demandée au départ déclaré"},
 "pas_d_accord_des_parents":{"dit":"les parents n'ont conclu aucun accord sur les trimestres de leurs enfants","valeur":"aucun accord ; le défaut légal les donne à la mère"},
 "pas_de_pension_etrangere":{"dit":"l'assuré qui ne déclare pas de pension étrangère n'en touche aucune à la date d'effet de sa pension française","valeur":"aucune"},
+"pas_de_periode_assimilee":{"dit":"l'assuré qui n'en déclare pas n'a eu ni stage de la formation professionnelle ou d'insertion, ni inscription sur la liste des sportifs de haut niveau, ni congé supplémentaire de naissance, et aucun de ses emplois n'était un contrat d'apprentissage","valeur":"aucune"},
 "pension_d_invalidite_de_la_periode":{"dit":"l'assuré dont la carrière finit par une période d'invalidité touche une pension d'invalidité depuis le début de cette période, qui court jusqu'à l'âge où la pension de vieillesse la remplace","valeur":"depuis le 1er janvier de la première année de la période d'invalidité finale"},
 "radiation_au_1er_janvier_suivant":{"dit":"l'agent public est radié des cadres le 1er janvier qui suit sa dernière année de services","valeur":"le 1er janvier qui suit la dernière année de services, ou le départ s'il part en fonctions"},
 "residence_en_france":{"dit":"l'assuré qui ne déclare pas de résidence hors de France réside en France après son départ, toute l'année quand il ne dit pas les mois qu'il y passe","valeur":"en France"},
@@ -168250,7 +168301,7 @@ null
 "valeur_point_euros":null
 },
 {
-"abattement_points":"decote_du_regime_de_base",
+"abattement_points":"agirc_arrco",
 "age_ouverture":60.0,
 "age_ouverture_par_generation":true,
 "age_surcote_regimes_speciaux":false,
@@ -168328,7 +168379,7 @@ null
 "valeur_point_euros":null
 },
 {
-"abattement_points":"decote_du_regime_de_base",
+"abattement_points":"agirc_arrco",
 "age_ouverture":60.0,
 "age_ouverture_par_generation":true,
 "age_surcote_regimes_speciaux":false,
@@ -168500,7 +168551,7 @@ null
 "valeur_point_euros":null
 },
 {
-"abattement_points":"decote_du_regime_de_base",
+"abattement_points":"agirc_arrco",
 "age_ouverture":60.0,
 "age_ouverture_par_generation":true,
 "age_surcote_regimes_speciaux":false,
@@ -168595,7 +168646,7 @@ null
 "nom":"Régime complémentaire des indépendants",
 "periodes":[
 {
-"abattement_points":"decote_du_regime_de_base",
+"abattement_points":"agirc_arrco",
 "age_ouverture":62.0,
 "age_ouverture_par_generation":true,
 "age_surcote_regimes_speciaux":false,
@@ -168674,7 +168725,7 @@ null
 "valeur_point_euros":null
 },
 {
-"abattement_points":"decote_du_regime_de_base",
+"abattement_points":"agirc_arrco",
 "age_ouverture":62.0,
 "age_ouverture_par_generation":true,
 "age_surcote_regimes_speciaux":false,
@@ -168752,7 +168803,7 @@ null
 "valeur_point_euros":null
 },
 {
-"abattement_points":"decote_du_regime_de_base",
+"abattement_points":"agirc_arrco",
 "age_ouverture":62.0,
 "age_ouverture_par_generation":true,
 "age_surcote_regimes_speciaux":false,
@@ -168830,7 +168881,7 @@ null
 "valeur_point_euros":null
 },
 {
-"abattement_points":"decote_du_regime_de_base",
+"abattement_points":"agirc_arrco",
 "age_ouverture":62.0,
 "age_ouverture_par_generation":true,
 "age_surcote_regimes_speciaux":false,
