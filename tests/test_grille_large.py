@@ -831,3 +831,62 @@ def test_la_mesure_appliquee_a_l_enquete_redonne_l_enquete(parametres):
     # L'ensemble n'est pas le mélange des deux sexes au poids des effectifs à
     # mieux que quelques dixièmes de point : les parts publiées sont arrondies.
     assert abs(mesure["ensemble"]["kolmogorov"]) < 5e-3
+
+
+def test_une_part_des_carrieres_incompletes_part_avec_une_decote(simulateur, source,
+                                                                  parametres):
+    """Sous ``DEPARTS_AVEC_DECOTE``, chaque carrière incomplète du salariat et
+    des non-salariés se dédouble : une part, la même pour tout le sexe, part à
+    l'ouverture du droit. Ses départs pèsent, parmi tous les retraités du sexe,
+    la part des départs avec décote que l'EIR mesure aux résidents — 8,8 % des
+    femmes, 4,5 % des hommes. Un tel départ part avec une décote, une carrière
+    pleine ou statutaire garde son départ, et partir plus tôt que le taux plein
+    n'est pas partir décoté : l'agent de conduite né en 1958 part à cinquante
+    ans à 75 %, celui né en 1962 en dessous."""
+    assert G.DEPARTS_AVEC_DECOTE
+    residents = G.quintiles_eqcc(parametres.racine_donnees, residents=True)
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    poids = _poids(variantes, simulateur.effectifs, source.millesime)
+    for sexe in ("F", "H"):
+        du_sexe = [v for v in variantes if v.cas.sexe == sexe]
+        part = (sum(poids[v.cas.code] for v in du_sexe if v.decote)
+                / sum(poids[v.cas.code] for v in du_sexe))
+        assert part == pytest.approx(residents[("ensemble", "part_decote", sexe)] / 100.0,
+                                     abs=1e-9), sexe
+    assert all(G.incomplete(v) and v.cas.regle_liquidation == "ouverture"
+               for v in variantes if v.decote)
+    assert not any(v.decote for v in variantes if v.tranche == "40_plus"
+                   or v.groupe not in G.GROUPES_INTERROMPUS)
+    projection = simulateur.pour_la_projection()
+
+    def decotee(cas, generation):
+        taux = projection.echeancier(cas.construire(projection, generation)
+                                     ).au_depart.taux_liquidation
+        return G.avec_decote(projection, cas, generation, taux)
+
+    courte = next(v for v in variantes if v.decote and v.cas.sexe == "F"
+                  and v.tranche == "20_30" and v.groupe == "regime_general")
+    assert decotee(courte.cas, 1950)
+    pleine = next(v for v in variantes if not v.decote and v.tranche == "40_plus")
+    assert not decotee(pleine.cas, 1950)
+    conduite = next(v for v in variantes if v.cas.code.startswith("agent_sncf_conduite"))
+    assert conduite.cas.regle_liquidation == "ouverture"
+    assert not decotee(conduite.cas, 1958) and decotee(conduite.cas, 1962)
+
+
+def test_les_departs_avec_decote_se_comptent_quintile_par_quintile(parametres):
+    """Les départs avec décote se rangent dans leur quintile, sexe par sexe,
+    contre ceux de l'EIR des résidents : 17,5 % des femmes du premier
+    quintile."""
+    lignes = [(float(montant), 1.0, "F" if montant % 2 else "H", "40_plus", False, 1.0,
+               40.0, "regime_general", montant <= 3) for montant in range(1, 11)]
+    confrontee = G.confronter_eqcc(lignes, G.quintiles_eqcc(parametres.racine_donnees,
+                                                            residents=True))
+    assert confrontee["F"]["decote"] == [1.0, 1.0, 0.0, 0.0, 0.0]
+    assert confrontee["H"]["decote"] == [1.0, 0.0, 0.0, 0.0, 0.0]
+    assert confrontee["F"]["decote_ensemble"] == pytest.approx(0.4)
+    assert confrontee["F"]["decote_eir"][0] == pytest.approx(0.175)
+    assert confrontee["H"]["decote_ensemble_eir"] == pytest.approx(0.045)
+    assert "decote" not in G.confronter_eqcc([ligne[:8] for ligne in lignes],
+                                             G.quintiles_eqcc(parametres.racine_donnees,
+                                                              residents=True))["F"]

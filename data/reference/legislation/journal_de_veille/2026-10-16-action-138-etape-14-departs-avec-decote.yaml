@@ -1,0 +1,17 @@
+date: "2026-10-16"
+session: "action 138, étape 14 : la population part aussi avec une décote"
+consulte: >-
+  Aucun texte : l'étape ne touche pas au scénario 1, ni au droit qu'il applique. Lu
+  dans le dépôt : la part des départs avec décote des résidents de l'EIR 2020, par
+  sexe et quintile de la pension en équivalent carrière complète
+  (`quintiles_eqcc_residents.csv`, certifiée), et les règles de départ des cas types
+  (`castypes.py`, `pilote.py`).
+trouve: >-
+  Rien sur le droit. La population de `scripts/grille_large.py` fait partir une part
+  de ses carrières incomplètes à l'ouverture du droit, avec la décote et sans le
+  minimum contributif que le scénario 1 leur applique déjà. En chemin : partir avant
+  l'âge du taux plein n'est pas toujours partir décoté — l'agent de conduite de la
+  SNCF né en 1958 part à cinquante ans au taux de 75 % —, et la mesure lit le taux.
+reste: >-
+  Rien au droit. La population : la part au minimum selon la génération, les autres
+  départs choisis, le recours à l'ASPA (note de l'étape).

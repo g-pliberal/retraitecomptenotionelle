@@ -1,15 +1,15 @@
 # Étape 14, première partie : les pensions de 2020, simulées contre publiées
 
-**Reprise, au 7 octobre 2026.** Fait : la validation publique — chaque grille
-de la page Coût lue en 2020, en têtes, sa distribution des pensions confrontée
-à celle que l'EIR publie (`grille_large.py --distribution`) ; trouvé en chemin,
-le niveau « faible » qui arrêtait les deux moteurs pour les mères de l'IEG, de
-la RATP et de la CRPCEN. Reste, dans cet ordre : la population (action 136,
-étape 6, seconde moitié), qui commence par ce que la mesure accuse — le salaire
-des femmes, une dispersion de carrière, les générations — et se juge sur elle
-sans s'y caler ; les départs choisis ; le recours à l'ASPA ; la confrontation
-pension par pension, au CASD. Au propriétaire : les réglages de la page Coût
-(action 150), l'habilitation au CASD. Détail : plus bas, « Ce qui reste ».
+**Reprise, au 16 octobre 2026.** Fait : la validation publique, chaque grille
+de la page Coût confrontée en 2020 à la distribution des pensions de l'EIR
+(`grille_large.py --distribution`, 7 octobre) ; la population de l'action 136
+— le salaire des femmes, la dispersion de carrière, les générations —, puis,
+le 16 octobre, ses départs avec décote, mesurés quintile par quintile
+(quinzième version). Reste, dans cet ordre : la part au minimum selon la
+génération ; les autres départs choisis (l'âge publié, la surcote) ; le recours
+à l'ASPA ; les limites. Au propriétaire : les cas types statutaires (action
+152), la bascule de la page (157), le CASD. Détail : « Ce qui reste »,
+`2026-10-16-etape-14-departs-avec-decote.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape

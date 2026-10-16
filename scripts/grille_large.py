@@ -177,7 +177,10 @@ partiel jusqu'au départ (:data:`PARTIEL_JUSQU_AU_DEPART`), et non jusqu'à 49
 ans : les années d'après cinquante ans n'entrent plus entières dans le salaire
 annuel moyen des carrières à temps partiel. La quatorzième (le même jour)
 prend les durées des seuls résidents en France (:data:`DUREES_DES_RESIDENTS`) :
-la population se mesure contre eux.
+la population se mesure contre eux. La quinzième (action 138, étape 14, le
+16 octobre 2026) fait partir une part des carrières incomplètes avec une
+décote, à l'ouverture du droit (:data:`DEPARTS_AVEC_DECOTE`) : l'EIR en compte
+8,8 % chez les résidentes, quand la population partait toute au taux plein.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -563,6 +566,21 @@ RANG_SELON_LA_DUREE = True
 #: minimum ou non, les retraités d'un quintile ont les mêmes tranches de durée.
 MINIMUM_AU_PREMIER_QUINTILE = True
 
+#: La quinzième version (action 138, étape 14, le 16 octobre 2026) : une part
+#: des carrières incomplètes de chaque sexe part avec une décote — à l'âge où
+#: le droit ouvre la liquidation (``regle_liquidation="ouverture"``), et non au
+#: taux plein —, et perd avec lui le minimum contributif, qui ne relève que les
+#: pensions au taux plein. La part est celle que l'EIR mesure aux résidents du
+#: sexe (``part_decote`` de ``quintiles_eqcc_residents.csv`` : 8,8 % des
+#: femmes, 4,5 % des hommes), rapportée au poids des carrières incomplètes du
+#: salariat et des non-salariés (:func:`incomplete`), les seules à qui la
+#: population en donne ; les carrières pleines y ont la durée à l'ouverture, et
+#: les statutaires gardent leur départ. La mesure le juge quintile par quintile,
+#: l'EIR comptant 17,5 % de départs avec décote au premier quintile des femmes,
+#: 4,6 à 5,4 aux autres. Deux conventions : la décote se prend à l'âge
+#: d'ouverture, et la part ne dépend ni du rang de salaire ni de la tranche.
+DEPARTS_AVEC_DECOTE = True
+
 #: Les quintiles de la pension en équivalent carrière complète, dans l'ordre.
 QUINTILES_EQCC = ("q1", "q2", "q3", "q4", "q5")
 
@@ -733,6 +751,9 @@ class Variante:
     #: La tranche de durée de :data:`TRANCHES` où les interruptions l'ont
     #: rangée ; ``None`` hors d'elles.
     tranche: str | None = None
+    #: Part-elle à l'ouverture du droit, avec une décote
+    #: (:data:`DEPARTS_AVEC_DECOTE`) ?
+    decote: bool = False
 
     def fois(self, part: float, **changements) -> "Variante":
         """La même, pour ``part`` de son poids, avec ces changements."""
@@ -1639,7 +1660,47 @@ def population(effectifs, source: CaracteristiquesRetraites,
                               de_tous=COURTES_A_LA_PART_DE_TOUS, etalees=COURTES_ETALEES)
     if DUREE_DES_FEMMES_SELON_LA_GENERATION:
         variantes = femmes_selon_la_generation(variantes, effectifs, source, racine)
-    return salaires_population(variantes, donnees_population(racine))
+    donnees = donnees_population(racine)
+    if DEPARTS_AVEC_DECOTE:
+        variantes = departs_avec_decote(variantes, effectifs, source, donnees.quintiles)
+    return salaires_population(variantes, donnees)
+
+
+def parts_avec_decote(variantes: list[Variante], effectifs,
+                      source: CaracteristiquesRetraites,
+                      quintiles: dict) -> dict[str, float]:
+    """La part des carrières incomplètes de chaque sexe qui part avec une
+    décote (:data:`DEPARTS_AVEC_DECOTE`) : celle des départs avec décote que
+    l'EIR mesure à tous les retraités du sexe, divisée par le poids des
+    carrières incomplètes parmi eux, l'année de l'enquête ; un au plus."""
+    poids = poids_retraites(variantes, effectifs, source.millesime)
+    sortie = {}
+    for sexe in ("F", "H"):
+        tous = somme_ordonnee(p for v, p in zip(variantes, poids) if v.cas.sexe == sexe)
+        incompletes = somme_ordonnee(p for v, p in zip(variantes, poids)
+                                     if v.cas.sexe == sexe and incomplete(v))
+        cible = quintiles[("ensemble", "part_decote", sexe)] / 100.0
+        sortie[sexe] = min(1.0, cible * tous / incompletes) if incompletes else 0.0
+    return sortie
+
+
+def departs_avec_decote(variantes: list[Variante], effectifs,
+                        source: CaracteristiquesRetraites,
+                        quintiles: dict) -> list[Variante]:
+    """Chaque carrière incomplète en deux : la part de son sexe
+    (:func:`parts_avec_decote`) part à l'ouverture du droit, avec une décote,
+    le reste au taux plein ; les autres variantes telles quelles."""
+    parts = parts_avec_decote(variantes, effectifs, source, quintiles)
+    sortie = []
+    for v in variantes:
+        part = parts[v.cas.sexe]
+        if not incomplete(v) or v.cas.regle_liquidation != "taux_plein" or not part:
+            sortie.append(v)
+            continue
+        sortie.append(v.fois(1.0 - part))
+        sortie.append(v.fois(part, decote=True, cas=replace(
+            v.cas, code=f"{v.cas.code}~decote", regle_liquidation="ouverture")))
+    return sortie
 
 
 def femmes_ponderees(variantes: list[Variante], effectifs,
@@ -2067,13 +2128,35 @@ def duree_de(v: Variante) -> float:
 MINIMA_DE_PENSION = ("minimum_contributif", "minimum_garanti", "pension_majoree_reference")
 
 
+def avec_decote(simulateur: Simulateur, cas: CasType, generation: int,
+                taux: float) -> bool:
+    """Vrai si ce cas type, liquidé au taux ``taux``, part avec une décote :
+    sous la règle ``ouverture``, avant l'âge que le pilote fixe sous
+    ``taux_plein``, et à un taux plus bas que celui de ce départ-là — ou,
+    quand le régime principal compte en points et ne dit pas de taux, avant
+    lui seulement. Partir plus tôt n'est pas toujours partir décoté : l'agent
+    de conduite né en 1958 part à cinquante ans au taux de 75 %, la décote
+    des régimes spéciaux ne mordant qu'aux générations suivantes. Les autres
+    règles partent au taux plein, ou à leurs services."""
+    if cas.regle_liquidation != "ouverture":
+        return False
+    plein = replace(cas, regle_liquidation="taux_plein")
+    age_plein = plein.age_liquidation_pour(simulateur, generation)
+    if cas.age_liquidation_pour(simulateur, generation) >= age_plein - 1e-6:
+        return False
+    taux_plein = simulateur.echeancier(
+        plein.carriere_a(simulateur, generation, age_plein)).au_depart.taux_liquidation
+    return taux_plein == 0.0 or taux < taux_plein - 1e-9
+
+
 def _proratisations(parametres: Parametres, morceau: tuple
-                    ) -> list[tuple[str, int, float, bool, float]]:
+                    ) -> list[tuple[str, int, float, bool, float, bool]]:
     """La proratisation de chaque couple du morceau, au scénario 1 de la page :
     sa durée d'assurance tous régimes, enfants compris, rapportée à la durée
     requise de sa génération, bornée à un ; si sa pension porte un minimum
-    (:data:`MINIMA_DE_PENSION`) ; et cette durée, en années. Gardée sous
-    l'empreinte du modèle et le code de ce script."""
+    (:data:`MINIMA_DE_PENSION`) ; cette durée, en années ; et s'il part avec
+    une décote (:func:`avec_decote`). Gardée sous l'empreinte du modèle et le
+    code de ce script."""
 
     def calcul():
         simulateur = Simulateur(parametres).pour_la_projection()
@@ -2081,6 +2164,8 @@ def _proratisations(parametres: Parametres, morceau: tuple
         for cas, generation in morceau:
             try:
                 actuel = simulateur.echeancier(cas.construire(simulateur, generation)).au_depart
+                decote = avec_decote(simulateur, cas, generation,
+                                     actuel.taux_liquidation)
             except (ValueError, KeyError):
                 continue
             requis = actuel.trimestres_requis
@@ -2088,19 +2173,20 @@ def _proratisations(parametres: Parametres, morceau: tuple
                           for avantage in actuel.avantages_appliques)
             sortie.append((cas.code, generation,
                            min(1.0, actuel.trimestres_valides / requis) if requis else 1.0,
-                           minimum, actuel.trimestres_valides / 4.0))
+                           minimum, actuel.trimestres_valides / 4.0, decote))
         return sortie
 
     return memoire.memoriser_pour(
-        parametres, ("proratisation_minimum_et_duree_de_la_grille", parametres, morceau),
+        parametres, ("proratisation_minimum_duree_et_decote_de_la_grille", parametres,
+                     morceau),
         calcul)
 
 
 def proratisations(parametres: Parametres, couples, processus: int
-                   ) -> dict[tuple[str, int], tuple[float, bool, float]]:
+                   ) -> dict[tuple[str, int], tuple[float, bool, float, bool]]:
     """La proratisation de chaque couple ``(cas type, génération)``, s'il est
-    au minimum, et sa durée validée : par morceaux, chacun gardé, sur
-    ``processus`` cœurs quand il y en a plusieurs."""
+    au minimum, sa durée validée et s'il part avec une décote : par morceaux,
+    chacun gardé, sur ``processus`` cœurs quand il y en a plusieurs."""
     couples = sorted(couples, key=lambda couple: (couple[0].code, couple[1]))
     taille = max(1, math.ceil(len(couples) / max(1, 2 * processus)))
     morceaux = [tuple(couples[i:i + taille]) for i in range(0, len(couples), taille)]
@@ -2111,8 +2197,9 @@ def proratisations(parametres: Parametres, couples, processus: int
                                  mp_context=multiprocessing.get_context("spawn")) as pool:
             resultats = list(pool.map(_proratisations, [parametres] * len(morceaux),
                                       morceaux))
-    return {(code, generation): (coefficient, minimum, annees) for resultat in resultats
-            for code, generation, coefficient, minimum, annees in resultat}
+    return {(code, generation): (coefficient, minimum, annees, decote)
+            for resultat in resultats
+            for code, generation, coefficient, minimum, annees, decote in resultat}
 
 
 def quintiles_ponderes(lignes: list[tuple]) -> dict:
@@ -2122,8 +2209,8 @@ def quintiles_ponderes(lignes: list[tuple]) -> dict:
     quintile, celui des retraités au minimum, et celui de leur proratisation.
     ``lignes`` : ``(pension, poids, sexe, tranche)``, et en cinquième, s'il y
     est, le minimum, en sixième la proratisation, en septième les années
-    validées, en huitième le groupe. Une ligne à cheval sur une borne va au
-    quintile de son milieu."""
+    validées, en huitième le groupe, en neuvième le départ avec décote. Une
+    ligne à cheval sur une borne va au quintile de son milieu."""
     tries = sorted(lignes, key=lambda ligne: ligne[0])
     total = somme_ordonnee(ligne[1] for ligne in tries)
     bornes: list[float] = []
@@ -2132,6 +2219,7 @@ def quintiles_ponderes(lignes: list[tuple]) -> dict:
     proratisees: dict[str, list[float]] = {}
     validees: dict[str, list[float]] = {}
     groupes: dict[str, dict[str, list[float]]] = {}
+    decotes: dict[str, list[float]] = {}
     cumul = 0.0
     for ligne in tries:
         montant, poids, sexe, tranche = ligne[:4]
@@ -2153,8 +2241,12 @@ def quintiles_ponderes(lignes: list[tuple]) -> dict:
             if len(ligne) > 7:
                 groupes.setdefault(cle, {}).setdefault(
                     ligne[7], [0.0] * len(QUINTILES_EQCC))[rang] += poids
+            if len(ligne) > 8:
+                decotes.setdefault(cle, [0.0] * len(QUINTILES_EQCC))[rang] += (
+                    poids if ligne[8] else 0.0)
     return {"bornes": bornes, "masses": masses, "minima": minima,
-            "proratisees": proratisees, "validees": validees, "groupes": groupes}
+            "proratisees": proratisees, "validees": validees, "groupes": groupes,
+            "decotes": decotes}
 
 
 def confronter_eqcc(lignes: list[tuple], quintiles: dict) -> dict:
@@ -2163,9 +2255,10 @@ def confronter_eqcc(lignes: list[tuple], quintiles: dict) -> dict:
     celle de chaque tranche de durée qui tombe dans le premier, celle des
     retraités au minimum dans chaque quintile — l'EIR, au minimum de leur régime
     principal —, leur proratisation et, là où l'EIR les publie, leur durée
-    validée, majorations comprises, et la place de chaque groupe — la part de
+    validée, majorations comprises, la place de chaque groupe — la part de
     ses retraités dans chaque quintile, monopensionnés et polypensionnés de
-    deux régimes dont c'est le régime principal."""
+    deux régimes dont c'est le régime principal —, et, là où la grille les
+    compte et l'EIR les publie, les départs avec décote."""
     rangees = quintiles_ponderes(lignes)
     sortie: dict = {"bornes": rangees["bornes"]}
     for sexe in ("F", "H"):
@@ -2217,6 +2310,15 @@ def confronter_eqcc(lignes: list[tuple], quintiles: dict) -> dict:
                                               for q in QUINTILES_EQCC],
                         "groupes": places_des_groupes(rangees["groupes"].get(sexe, {}),
                                                       quintiles, sexe)}
+        decotes = rangees["decotes"].get(sexe)
+        if decotes is not None and ("ensemble", "part_decote", sexe) in quintiles:
+            sortie[sexe].update({
+                "decote": [d / masse if masse else None
+                           for d, masse in zip(decotes, par_quintile)],
+                "decote_eir": [quintiles[(q, "part_decote", sexe)] / 100.0
+                               for q in QUINTILES_EQCC],
+                "decote_ensemble": somme_ordonnee(decotes) / total,
+                "decote_ensemble_eir": quintiles[("ensemble", "part_decote", sexe)] / 100.0})
     return sortie
 
 
@@ -2261,14 +2363,14 @@ def eqcc(parametres: Parametres, variantes: list[Variante], tetes: GrilleEnTetes
                      for pensionne, _, _ in cohortes}, processus)
     lignes, durees = [], []
     for pensionne, montant, poids in cohortes:
-        coefficient, minimum, annees = coefficients.get(
-            (pensionne.code, pensionne.generation), (0.0, False, 0.0))
+        coefficient, minimum, annees, decote = coefficients.get(
+            (pensionne.code, pensionne.generation), (0.0, False, 0.0, False))
         if not coefficient:
             continue
         v = par_code[pensionne.code]
         lignes.append((montant / coefficient, poids, v.cas.sexe,
                        tranche_de_duree(duree_de(v)), minimum, coefficient, annees,
-                       v.groupe))
+                       v.groupe, decote))
         durees.append((pensionne.generation, v.cas.sexe, annees, poids))
     sortie = confronter_eqcc(lignes, quintiles)
     sortie["durees"] = durees_par_generation(
@@ -2451,6 +2553,21 @@ def imprimer_eqcc(resultat: dict) -> None:
                 f"{p * 100:>7.1f}%" if p is not None else f"{'—':>8}"
                 for p in mesure[sexe]["proratisation"]))
     _, premiere = lues[0]
+    if all("decote" in premiere[sexe] for sexe in ("F", "H")):
+        print("\nLa part des départs avec décote, quintile par quintile")
+        for sexe in ("F", "H"):
+            print(f"\n{INTITULES_SEXES[sexe]:16}" + "".join(f"{q:>8}" for q in QUINTILES_EQCC)
+                  + f"{'ensemble':>10}")
+            print(f"{'  EIR':16}" + "".join(f"{p * 100:>7.1f}%"
+                                            for p in premiere[sexe]["decote_eir"])
+                  + f"{premiere[sexe]['decote_ensemble_eir'] * 100:>9.1f}%")
+            for nom, mesure in lues:
+                if "decote" not in mesure[sexe]:
+                    continue
+                print(f"{'  ' + nom:16}" + "".join(
+                    f"{p * 100:>7.1f}%" if p is not None else f"{'—':>8}"
+                    for p in mesure[sexe]["decote"])
+                    + f"{mesure[sexe]['decote_ensemble'] * 100:>9.1f}%")
     if all(d is not None for sexe in ("F", "H") for d in premiere[sexe]["duree_validee_eir"]):
         print("\nLa durée validée, quintile par quintile, en années, majorations comprises")
         for sexe in ("F", "H"):
