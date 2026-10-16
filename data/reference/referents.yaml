@@ -1770,6 +1770,24 @@ referents:
         preuve: >-
           tests/temoins/openfisca_salaire_annuel_moyen.json ;
           tests/test_oracle_salaire_annuel_moyen.py
+      - constat: >-
+          Il ne compte aucun trimestre de surcote l'année où le trimestre
+          civil qui suit l'âge légal commence après le 1er janvier
+          (`regime_general_cnav_surcote_trimestres`, formule de 2004 : la
+          surcote de l'année ne court que si ce trimestre commence au plus
+          tard le 1er janvier). Né le 1er janvier 1955, soixante-deux ans le
+          1er janvier 2017, parti en 2020 après une carrière complète : huit
+          trimestres de surcote, contre onze au dépôt.
+        tranche: >-
+          D. 351-1-4 (LEGIARTI000023397575) : « il est retenu au titre de
+          l'année au cours de laquelle l'assuré a atteint l'âge prévu au
+          premier alinéa de l'article L. 351-1 […] un nombre de trimestres
+          égal au nombre de trimestres civils entiers suivant celui au cours
+          duquel cet âge a été atteint » ; trois en 2017. Le dépôt suit le
+          texte
+        preuve: >-
+          tests/temoins/openfisca_periodes_assimilees.json ;
+          tests/test_oracle_periodes_assimilees.py
     fait_mieux:
       - quoi: >-
           Il code le départ anticipé des fonctionnaires parents de trois
@@ -1887,11 +1905,19 @@ referents:
           salaire annuel moyen sur des salaires qui varient — les meilleures
           années, le plafond de chaque année, l'exclusion des années sans
           trimestre, le nombre par génération
-          (`tests/test_oracle_salaire_annuel_moyen.py`). Restent les périodes
-          assimilées.
+          (`tests/test_oracle_salaire_annuel_moyen.py`) ; les périodes
+          assimilées — la durée, le plafond de l'année, la durée cotisée, la
+          surcote, le minimum contributif et sa majoration
+          (`tests/test_oracle_periodes_assimilees.py`).
         preuve: >-
           ses 140 tests de formules (`tests/formulas/`), au commit `1c45423`
-        etat: a_reprendre
+        verification: >-
+          L'étape 1 et les huit familles de l'étape 2 de l'action 153, du 13
+          au 16 octobre 2026, chacune confrontée à son calcul exécuté à part, sous une
+          convention de traduction que son témoin porte
+          (`tests/temoins/openfisca_*.json`) ; ses erreurs et les nôtres au
+          registre, chacune avec le texte qui la tranche.
+        etat: repris
         chantier: "153.2"
       - quoi: >-
           Il rend, pour toute simulation, chaque variable calculée, sa valeur,

@@ -113,7 +113,7 @@ rejoue sans avoir à installer le paquet.
 **Cinq familles de régimes y passent aujourd'hui**, et c'est tout ce
 qu'OpenFisca expose : le régime général, la pension civile (État et CNRACL),
 l'Arrco d'avant 2019, l'Agirc des cadres et l'Ircantec des agents non
-titulaires — <!--chiffre:mesure(profils_oracle)-->135<!--/--> profils en tout. Les régimes alignés — MSA des
+titulaires — <!--chiffre:mesure(profils_oracle)-->146<!--/--> profils en tout. Les régimes alignés — MSA des
 salariés agricoles, artisans, commerçants — n'ont chez lui aucun module, et
 n'en ont pas besoin : la loi les calcule comme le régime général, et c'est à
 l'oracle du régime général qu'ils se confrontent — à une table près : le
@@ -368,7 +368,15 @@ au plafond de janvier une année où le plafond a changé, 1960 et 1961 ; il
 divise par le nombre d'années avant juillet 1995, quand la somme se rapportait
 aux trimestres ; et il compte un trimestre de décote de trop à qui part le
 jour anniversaire d'un âge entier, son âge en mois tiré d'un mois moyen.
-Restent les périodes assimilées, que le registre nomme.
+La huitième et dernière, les périodes assimilées
+(`tests/test_oracle_periodes_assimilees.py`), n'a rien trouvé chez nous :
+OpenFisca ne compte pas les trimestres d'un stage, d'une inscription de
+sportif ou d'un contrat d'apprentissage, mais, ceux du dépôt reçus, il les
+mène à la même durée, quatre par année au plus, au même taux et à la même
+proratisation, et les tient comme nous hors de la durée cotisée, de la
+surcote et de la majoration du minimum contributif. Son écart est le sien :
+il ne compte aucune surcote l'année de l'âge légal quand le trimestre qui
+suit cet âge commence après le 1er janvier.
 
 **TRAJECTOiRE**, le modèle de la DREES dont un module calcule les cas types du
 COR, s'exécute à part, sa licence à réciprocité (EUPL) le tenant hors du dépôt :

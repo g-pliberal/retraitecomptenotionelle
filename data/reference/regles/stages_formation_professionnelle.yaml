@@ -227,3 +227,15 @@ effet: >-
   350 000 » pour les seuls TUC : jusqu'à quatre trimestres par an d'écart sur la durée
   d'assurance, que le modèle compte depuis l'étape 3 du sixième domaine,
   sans saisie qui les déclare encore.
+referents:
+  openfisca_france_pension:
+    equivalent: >-
+      regime_general_cnav_duree_assurance_chomage_annuelle, une entrée : il ne compte pas
+      les jours de stage, il reçoit les trimestres et les ajoute à ceux du salaire, quatre
+      par année au plus, hors de la durée cotisée
+    confrontation: >-
+      le 16 octobre 2026 (action 153, étape 2 ; tests/test_oracle_periodes_assimilees.py),
+      neuf carrières à stages liquidées de 2016 à 2021, les trimestres que le dépôt compte
+      portés chez lui : la durée, le plafond de l'année, la décote, la proratisation, la
+      surcote, le minimum contributif et sa majoration, l'année exclue du salaire moyen
+      concordent. Son écart, la surcote de l'année de l'âge légal, est le sien (registre)

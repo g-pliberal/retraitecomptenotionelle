@@ -1,0 +1,795 @@
+{
+  "avertissement": "Deuxième implémentation, pas une source officielle. Il ne compte pas les trimestres d'une période assimilée : il reçoit ceux que le dépôt compte. Il ne compte aucune surcote l'année de l'âge légal quand le trimestre qui le suit commence après le 1er janvier.",
+  "convention": {
+    "categorie_salarie": "non-cadre du privé",
+    "comparaison": "La durée d'assurance et la durée cotisée, la décote et la surcote, le taux, la proratisation, le minimum contributif, et la pension rapportée au salaire annuel moyen.",
+    "date_de_naissance": "le 1er janvier de `naissance`",
+    "liquidation_date": "le 1er janvier de `liquidation`, au régime général",
+    "non_traduit": "La règle qui compte les trimestres d'une période ; les stages d'insertion et le congé supplémentaire de naissance, qui ne valident qu'après 2023 ; l'année de la liquidation.",
+    "periodes": "Au dépôt : `periodes`, telles que la chronologie les porte, et les années `apprentissage` d'un contrat ; il en compte les trimestres, année par année, avant le plafond de l'année.",
+    "salaire_de_base": "`salaires`, année par année, de `debut` à `liquidation` exclue",
+    "sexe": "faux (`sexe` H)",
+    "trimestres_assimiles": "Chez OpenFisca : ceux que le dépôt compte, par catégorie — les stages de formation à `duree_assurance_chomage_annuelle`, les sportifs et le complément de l'apprentissage à `duree_assurance_autre_annuelle`."
+  },
+  "famille": "les périodes assimilées du régime général, année par année",
+  "perimetre": "Régime général des non-cadres, stages de formation, sportifs de haut niveau et apprentissage, liquidés de 2016 à 2021, générations 1951 à 1958.",
+  "profils": {
+    "annee_faible_et_stage": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.4819277226924896,
+        "decote_trimestres": 17.0,
+        "duree_assurance": 80.0,
+        "duree_cotisee": 76.0,
+        "pension_brute": 3823.174560546875,
+        "pension_minimale": 3718.1494140625,
+        "salaire_de_reference": 20147.521484375,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.39375001192092896
+      },
+      "profil": {
+        "code": "annee_faible_et_stage",
+        "liquidation": 2020,
+        "naissance": 1957,
+        "objet": "vingt ans, dont un de 900 € et d'un an de stage : quatre trimestres, et l'année hors du salaire annuel moyen",
+        "periodes": [
+          {
+            "debut": "2016-01",
+            "fin": "2017-01",
+            "motif": "stage_de_formation_professionnelle"
+          }
+        ],
+        "regle": "salaire_annuel_moyen",
+        "salaires": {
+          "2000": 18000.0,
+          "2001": 18000.0,
+          "2002": 18000.0,
+          "2003": 18000.0,
+          "2004": 18000.0,
+          "2005": 18000.0,
+          "2006": 18000.0,
+          "2007": 18000.0,
+          "2008": 18000.0,
+          "2009": 18000.0,
+          "2010": 18000.0,
+          "2011": 18000.0,
+          "2012": 18000.0,
+          "2013": 18000.0,
+          "2014": 18000.0,
+          "2015": 18000.0,
+          "2016": 900.0,
+          "2017": 18000.0,
+          "2018": 18000.0,
+          "2019": 18000.0
+        },
+        "trimestres_assimiles": {
+          "stage_de_formation_professionnelle": {
+            "2016": 7
+          }
+        }
+      }
+    },
+    "annee_sans_salaire_et_stage": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.4819277226924896,
+        "decote_trimestres": 17.0,
+        "duree_assurance": 80.0,
+        "duree_cotisee": 76.0,
+        "pension_brute": 3823.174560546875,
+        "pension_minimale": 3718.1494140625,
+        "salaire_de_reference": 20147.521484375,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.39375001192092896
+      },
+      "profil": {
+        "code": "annee_sans_salaire_et_stage",
+        "liquidation": 2020,
+        "naissance": 1957,
+        "objet": "le jumeau du précédent, sans les 900 € : le même salaire annuel moyen",
+        "periodes": [
+          {
+            "debut": "2016-01",
+            "fin": "2017-01",
+            "motif": "stage_de_formation_professionnelle"
+          }
+        ],
+        "regle": "salaire_annuel_moyen",
+        "salaires": {
+          "2000": 18000.0,
+          "2001": 18000.0,
+          "2002": 18000.0,
+          "2003": 18000.0,
+          "2004": 18000.0,
+          "2005": 18000.0,
+          "2006": 18000.0,
+          "2007": 18000.0,
+          "2008": 18000.0,
+          "2009": 18000.0,
+          "2010": 18000.0,
+          "2011": 18000.0,
+          "2012": 18000.0,
+          "2013": 18000.0,
+          "2014": 18000.0,
+          "2015": 18000.0,
+          "2016": 0.0,
+          "2017": 18000.0,
+          "2018": 18000.0,
+          "2019": 18000.0
+        },
+        "trimestres_assimiles": {
+          "stage_de_formation_professionnelle": {
+            "2016": 7
+          }
+        }
+      }
+    },
+    "apprenti": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.9397590160369873,
+        "decote_trimestres": 10.0,
+        "duree_assurance": 156.0,
+        "duree_cotisee": 145.0,
+        "pension_brute": 12225.7529296875,
+        "pension_minimale": 7774.0009765625,
+        "salaire_de_reference": 29735.8984375,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.4375
+      },
+      "profil": {
+        "apprentissage": [
+          2014,
+          2015,
+          2016
+        ],
+        "code": "apprenti",
+        "liquidation": 2019,
+        "naissance": 1957,
+        "objet": "trois ans d'apprentissage, sans limite d'âge pour un travailleur handicapé : le complément du contrat",
+        "periodes": [],
+        "regle": "duree",
+        "salaires": {
+          "1980": 24000.0,
+          "1981": 24000.0,
+          "1982": 24000.0,
+          "1983": 24000.0,
+          "1984": 24000.0,
+          "1985": 24000.0,
+          "1986": 24000.0,
+          "1987": 24000.0,
+          "1988": 24000.0,
+          "1989": 24000.0,
+          "1990": 24000.0,
+          "1991": 24000.0,
+          "1992": 24000.0,
+          "1993": 24000.0,
+          "1994": 24000.0,
+          "1995": 24000.0,
+          "1996": 24000.0,
+          "1997": 24000.0,
+          "1998": 24000.0,
+          "1999": 24000.0,
+          "2000": 24000.0,
+          "2001": 24000.0,
+          "2002": 24000.0,
+          "2003": 24000.0,
+          "2004": 24000.0,
+          "2005": 24000.0,
+          "2006": 24000.0,
+          "2007": 24000.0,
+          "2008": 24000.0,
+          "2009": 24000.0,
+          "2010": 24000.0,
+          "2011": 24000.0,
+          "2012": 24000.0,
+          "2013": 24000.0,
+          "2014": 500.0,
+          "2015": 1500.0,
+          "2016": 1000.0,
+          "2017": 24000.0,
+          "2018": 24000.0
+        },
+        "trimestres_assimiles": {
+          "apprentissage": {
+            "2014": 4,
+            "2015": 3,
+            "2016": 4
+          }
+        }
+      }
+    },
+    "formation_en_jours": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.9759036302566528,
+        "decote_trimestres": 4.0,
+        "duree_assurance": 162.0,
+        "duree_cotisee": 160.0,
+        "pension_brute": 12410.302734375,
+        "pension_minimale": 8113.08837890625,
+        "salaire_de_reference": 26772.0625,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.4749999940395355
+      },
+      "profil": {
+        "code": "formation_en_jours",
+        "liquidation": 2019,
+        "naissance": 1956,
+        "objet": "cent quarante-neuf jours de stage déclarés : deux trimestres",
+        "periodes": [
+          {
+            "debut": "2015-02",
+            "fin": "2015-12",
+            "jours": 149,
+            "motif": "stage_de_formation_professionnelle"
+          }
+        ],
+        "regle": "duree",
+        "salaires": {
+          "1978": 20000.0,
+          "1979": 20000.0,
+          "1980": 20000.0,
+          "1981": 20000.0,
+          "1982": 20000.0,
+          "1983": 20000.0,
+          "1984": 20000.0,
+          "1985": 20000.0,
+          "1986": 20000.0,
+          "1987": 20000.0,
+          "1988": 20000.0,
+          "1989": 20000.0,
+          "1990": 20000.0,
+          "1991": 20000.0,
+          "1992": 20000.0,
+          "1993": 20000.0,
+          "1994": 20000.0,
+          "1995": 20000.0,
+          "1996": 20000.0,
+          "1997": 20000.0,
+          "1998": 20000.0,
+          "1999": 20000.0,
+          "2000": 20000.0,
+          "2001": 20000.0,
+          "2002": 20000.0,
+          "2003": 20000.0,
+          "2004": 20000.0,
+          "2005": 20000.0,
+          "2006": 20000.0,
+          "2007": 20000.0,
+          "2008": 20000.0,
+          "2009": 20000.0,
+          "2010": 20000.0,
+          "2011": 20000.0,
+          "2012": 20000.0,
+          "2013": 20000.0,
+          "2014": 20000.0,
+          "2015": 0.0,
+          "2016": 20000.0,
+          "2017": 20000.0,
+          "2018": 20000.0
+        },
+        "trimestres_assimiles": {
+          "stage_de_formation_professionnelle": {
+            "2015": 2
+          }
+        }
+      }
+    },
+    "formation_et_salaire": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.9879518151283264,
+        "decote_trimestres": 2.0,
+        "duree_assurance": 164.0,
+        "duree_cotisee": 161.0,
+        "pension_brute": 13782.0751953125,
+        "pension_minimale": 8316.0576171875,
+        "salaire_de_reference": 28615.689453125,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.48750001192092896
+      },
+      "profil": {
+        "code": "formation_et_salaire",
+        "liquidation": 2020,
+        "naissance": 1957,
+        "objet": "un salaire qui achète deux et trois trimestres, et des stages qui en ajoutent : quatre par année au plus",
+        "periodes": [
+          {
+            "debut": "2016-05",
+            "fin": "2016-11",
+            "motif": "stage_de_formation_professionnelle"
+          },
+          {
+            "debut": "2017-01",
+            "fin": "2017-12",
+            "motif": "stage_de_formation_professionnelle"
+          }
+        ],
+        "regle": "plafond_annuel",
+        "salaires": {
+          "1979": 22000.0,
+          "1980": 22000.0,
+          "1981": 22000.0,
+          "1982": 22000.0,
+          "1983": 22000.0,
+          "1984": 22000.0,
+          "1985": 22000.0,
+          "1986": 22000.0,
+          "1987": 22000.0,
+          "1988": 22000.0,
+          "1989": 22000.0,
+          "1990": 22000.0,
+          "1991": 22000.0,
+          "1992": 22000.0,
+          "1993": 22000.0,
+          "1994": 22000.0,
+          "1995": 22000.0,
+          "1996": 22000.0,
+          "1997": 22000.0,
+          "1998": 22000.0,
+          "1999": 22000.0,
+          "2000": 22000.0,
+          "2001": 22000.0,
+          "2002": 22000.0,
+          "2003": 22000.0,
+          "2004": 22000.0,
+          "2005": 22000.0,
+          "2006": 22000.0,
+          "2007": 22000.0,
+          "2008": 22000.0,
+          "2009": 22000.0,
+          "2010": 22000.0,
+          "2011": 22000.0,
+          "2012": 22000.0,
+          "2013": 22000.0,
+          "2014": 22000.0,
+          "2015": 22000.0,
+          "2016": 3500.0,
+          "2017": 5200.0,
+          "2018": 22000.0,
+          "2019": 22000.0
+        },
+        "trimestres_assimiles": {
+          "stage_de_formation_professionnelle": {
+            "2016": 3,
+            "2017": 6
+          }
+        }
+      }
+    },
+    "formation_sans_salaire": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.976047933101654,
+        "decote_trimestres": 4.0,
+        "duree_assurance": 163.0,
+        "duree_cotisee": 156.0,
+        "pension_brute": 14267.708984375,
+        "pension_minimale": 8231.4365234375,
+        "salaire_de_reference": 30774.39453125,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.4749999940395355
+      },
+      "profil": {
+        "code": "formation_sans_salaire",
+        "liquidation": 2021,
+        "naissance": 1958,
+        "objet": "quinze mois de stage sans salaire : six trimestres en 2016, ramenés à quatre, trois en 2017",
+        "periodes": [
+          {
+            "debut": "2016-03",
+            "fin": "2017-06",
+            "motif": "stage_de_formation_professionnelle"
+          }
+        ],
+        "regle": "duree",
+        "salaires": {
+          "1980": 25000.0,
+          "1981": 25000.0,
+          "1982": 25000.0,
+          "1983": 25000.0,
+          "1984": 25000.0,
+          "1985": 25000.0,
+          "1986": 25000.0,
+          "1987": 25000.0,
+          "1988": 25000.0,
+          "1989": 25000.0,
+          "1990": 25000.0,
+          "1991": 25000.0,
+          "1992": 25000.0,
+          "1993": 25000.0,
+          "1994": 25000.0,
+          "1995": 25000.0,
+          "1996": 25000.0,
+          "1997": 25000.0,
+          "1998": 25000.0,
+          "1999": 25000.0,
+          "2000": 25000.0,
+          "2001": 25000.0,
+          "2002": 25000.0,
+          "2003": 25000.0,
+          "2004": 25000.0,
+          "2005": 25000.0,
+          "2006": 25000.0,
+          "2007": 25000.0,
+          "2008": 25000.0,
+          "2009": 25000.0,
+          "2010": 25000.0,
+          "2011": 25000.0,
+          "2012": 25000.0,
+          "2013": 25000.0,
+          "2014": 25000.0,
+          "2015": 25000.0,
+          "2016": 0.0,
+          "2017": 0.0,
+          "2018": 25000.0,
+          "2019": 25000.0,
+          "2020": 25000.0
+        },
+        "trimestres_assimiles": {
+          "stage_de_formation_professionnelle": {
+            "2016": 6,
+            "2017": 3
+          }
+        }
+      }
+    },
+    "minimum_contributif_et_stage": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.8588957190513611,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 140.0,
+        "duree_cotisee": 136.0,
+        "pension_brute": 7073.927734375,
+        "pension_minimale": 7073.927734375,
+        "salaire_de_reference": 10569.4453125,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.5
+      },
+      "profil": {
+        "code": "minimum_contributif_et_stage",
+        "liquidation": 2016,
+        "naissance": 1951,
+        "objet": "un petit salaire et un an de stage, parti à soixante-cinq ans : la majoration sur les seuls trimestres cotisés",
+        "periodes": [
+          {
+            "debut": "2015-01",
+            "fin": "2016-01",
+            "motif": "stage_de_formation_professionnelle"
+          }
+        ],
+        "regle": "minimum_contributif",
+        "salaires": {
+          "1980": 7000.0,
+          "1981": 7000.0,
+          "1982": 7000.0,
+          "1983": 7000.0,
+          "1984": 7000.0,
+          "1985": 7000.0,
+          "1986": 7000.0,
+          "1987": 7000.0,
+          "1988": 7000.0,
+          "1989": 7000.0,
+          "1990": 7000.0,
+          "1991": 7000.0,
+          "1992": 7000.0,
+          "1993": 7000.0,
+          "1994": 7000.0,
+          "1995": 7000.0,
+          "1996": 7000.0,
+          "1997": 7000.0,
+          "1998": 7000.0,
+          "1999": 7000.0,
+          "2000": 7000.0,
+          "2001": 7000.0,
+          "2002": 7000.0,
+          "2003": 7000.0,
+          "2004": 7000.0,
+          "2005": 7000.0,
+          "2006": 7000.0,
+          "2007": 7000.0,
+          "2008": 7000.0,
+          "2009": 7000.0,
+          "2010": 7000.0,
+          "2011": 7000.0,
+          "2012": 7000.0,
+          "2013": 7000.0,
+          "2014": 7000.0,
+          "2015": 0.0
+        },
+        "trimestres_assimiles": {
+          "stage_de_formation_professionnelle": {
+            "2015": 7
+          }
+        }
+      }
+    },
+    "minimum_contributif_sous_120_cotises": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.7361963391304016,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 120.0,
+        "duree_cotisee": 116.0,
+        "pension_brute": 5562.3310546875,
+        "pension_minimale": 5562.3310546875,
+        "salaire_de_reference": 9232.01171875,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.5
+      },
+      "profil": {
+        "code": "minimum_contributif_sous_120_cotises",
+        "liquidation": 2016,
+        "naissance": 1951,
+        "objet": "cent vingt trimestres dont cent seize cotisés : pas de majoration",
+        "periodes": [
+          {
+            "debut": "2015-01",
+            "fin": "2016-01",
+            "motif": "stage_de_formation_professionnelle"
+          }
+        ],
+        "regle": "minimum_contributif",
+        "salaires": {
+          "1985": 7000.0,
+          "1986": 7000.0,
+          "1987": 7000.0,
+          "1988": 7000.0,
+          "1989": 7000.0,
+          "1990": 7000.0,
+          "1991": 7000.0,
+          "1992": 7000.0,
+          "1993": 7000.0,
+          "1994": 7000.0,
+          "1995": 7000.0,
+          "1996": 7000.0,
+          "1997": 7000.0,
+          "1998": 7000.0,
+          "1999": 7000.0,
+          "2000": 7000.0,
+          "2001": 7000.0,
+          "2002": 7000.0,
+          "2003": 7000.0,
+          "2004": 7000.0,
+          "2005": 7000.0,
+          "2006": 7000.0,
+          "2007": 7000.0,
+          "2008": 7000.0,
+          "2009": 7000.0,
+          "2010": 7000.0,
+          "2011": 7000.0,
+          "2012": 7000.0,
+          "2013": 7000.0,
+          "2014": 7000.0,
+          "2015": 0.0
+        },
+        "trimestres_assimiles": {
+          "stage_de_formation_professionnelle": {
+            "2015": 7
+          }
+        }
+      }
+    },
+    "sportif": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.9397590160369873,
+        "decote_trimestres": 10.0,
+        "duree_assurance": 156.0,
+        "duree_cotisee": 148.0,
+        "pension_brute": 12225.7509765625,
+        "pension_minimale": 7786.763671875,
+        "salaire_de_reference": 29735.89453125,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.4375
+      },
+      "profil": {
+        "code": "sportif",
+        "liquidation": 2019,
+        "naissance": 1957,
+        "objet": "quatre ans sur la liste des sportifs de haut niveau, à 4 000 € par an : quatre trimestres chaque année",
+        "periodes": [
+          {
+            "debut": "2012-01",
+            "fin": "2016-01",
+            "motif": "sportif_de_haut_niveau"
+          }
+        ],
+        "regle": "duree",
+        "salaires": {
+          "1980": 24000.0,
+          "1981": 24000.0,
+          "1982": 24000.0,
+          "1983": 24000.0,
+          "1984": 24000.0,
+          "1985": 24000.0,
+          "1986": 24000.0,
+          "1987": 24000.0,
+          "1988": 24000.0,
+          "1989": 24000.0,
+          "1990": 24000.0,
+          "1991": 24000.0,
+          "1992": 24000.0,
+          "1993": 24000.0,
+          "1994": 24000.0,
+          "1995": 24000.0,
+          "1996": 24000.0,
+          "1997": 24000.0,
+          "1998": 24000.0,
+          "1999": 24000.0,
+          "2000": 24000.0,
+          "2001": 24000.0,
+          "2002": 24000.0,
+          "2003": 24000.0,
+          "2004": 24000.0,
+          "2005": 24000.0,
+          "2006": 24000.0,
+          "2007": 24000.0,
+          "2008": 24000.0,
+          "2009": 24000.0,
+          "2010": 24000.0,
+          "2011": 24000.0,
+          "2012": 4000.0,
+          "2013": 4000.0,
+          "2014": 4000.0,
+          "2015": 4000.0,
+          "2016": 24000.0,
+          "2017": 24000.0,
+          "2018": 24000.0
+        },
+        "trimestres_assimiles": {
+          "sportif_de_haut_niveau": {
+            "2012": 4,
+            "2013": 4,
+            "2014": 4,
+            "2015": 4
+          }
+        }
+      }
+    },
+    "surcote_et_stage": {
+      "openfisca": {
+        "coefficient_de_proratisation": 1.0,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 180.0,
+        "duree_cotisee": 176.0,
+        "pension_brute": 17441.40234375,
+        "pension_minimale": 8852.087890625,
+        "salaire_de_reference": 33221.71875,
+        "surcote_trimestres": 4.0,
+        "taux_de_liquidation": 0.5249999761581421
+      },
+      "profil": {
+        "code": "surcote_et_stage",
+        "liquidation": 2020,
+        "naissance": 1955,
+        "objet": "un an de stage après l'âge légal et la durée requise : aucune surcote",
+        "periodes": [
+          {
+            "debut": "2018-01",
+            "fin": "2019-01",
+            "motif": "stage_de_formation_professionnelle"
+          }
+        ],
+        "regle": "surcote",
+        "salaires": {
+          "1975": 30000.0,
+          "1976": 30000.0,
+          "1977": 30000.0,
+          "1978": 30000.0,
+          "1979": 30000.0,
+          "1980": 30000.0,
+          "1981": 30000.0,
+          "1982": 30000.0,
+          "1983": 30000.0,
+          "1984": 30000.0,
+          "1985": 30000.0,
+          "1986": 30000.0,
+          "1987": 30000.0,
+          "1988": 30000.0,
+          "1989": 30000.0,
+          "1990": 30000.0,
+          "1991": 30000.0,
+          "1992": 30000.0,
+          "1993": 30000.0,
+          "1994": 30000.0,
+          "1995": 30000.0,
+          "1996": 30000.0,
+          "1997": 30000.0,
+          "1998": 30000.0,
+          "1999": 30000.0,
+          "2000": 30000.0,
+          "2001": 30000.0,
+          "2002": 30000.0,
+          "2003": 30000.0,
+          "2004": 30000.0,
+          "2005": 30000.0,
+          "2006": 30000.0,
+          "2007": 30000.0,
+          "2008": 30000.0,
+          "2009": 30000.0,
+          "2010": 30000.0,
+          "2011": 30000.0,
+          "2012": 30000.0,
+          "2013": 30000.0,
+          "2014": 30000.0,
+          "2015": 30000.0,
+          "2016": 30000.0,
+          "2017": 30000.0,
+          "2018": 0.0,
+          "2019": 30000.0
+        },
+        "trimestres_assimiles": {
+          "stage_de_formation_professionnelle": {
+            "2018": 7
+          }
+        }
+      }
+    },
+    "surcote_sans_stage": {
+      "openfisca": {
+        "coefficient_de_proratisation": 1.0,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 180.0,
+        "duree_cotisee": 180.0,
+        "pension_brute": 18271.9453125,
+        "pension_minimale": 9273.6162109375,
+        "salaire_de_reference": 33221.71875,
+        "surcote_trimestres": 8.0,
+        "taux_de_liquidation": 0.550000011920929
+      },
+      "profil": {
+        "code": "surcote_sans_stage",
+        "liquidation": 2020,
+        "naissance": 1955,
+        "objet": "le jumeau du précédent, qui travaille : la surcote de 2017 à 2019",
+        "periodes": [],
+        "regle": "surcote",
+        "salaires": {
+          "1975": 30000.0,
+          "1976": 30000.0,
+          "1977": 30000.0,
+          "1978": 30000.0,
+          "1979": 30000.0,
+          "1980": 30000.0,
+          "1981": 30000.0,
+          "1982": 30000.0,
+          "1983": 30000.0,
+          "1984": 30000.0,
+          "1985": 30000.0,
+          "1986": 30000.0,
+          "1987": 30000.0,
+          "1988": 30000.0,
+          "1989": 30000.0,
+          "1990": 30000.0,
+          "1991": 30000.0,
+          "1992": 30000.0,
+          "1993": 30000.0,
+          "1994": 30000.0,
+          "1995": 30000.0,
+          "1996": 30000.0,
+          "1997": 30000.0,
+          "1998": 30000.0,
+          "1999": 30000.0,
+          "2000": 30000.0,
+          "2001": 30000.0,
+          "2002": 30000.0,
+          "2003": 30000.0,
+          "2004": 30000.0,
+          "2005": 30000.0,
+          "2006": 30000.0,
+          "2007": 30000.0,
+          "2008": 30000.0,
+          "2009": 30000.0,
+          "2010": 30000.0,
+          "2011": 30000.0,
+          "2012": 30000.0,
+          "2013": 30000.0,
+          "2014": 30000.0,
+          "2015": 30000.0,
+          "2016": 30000.0,
+          "2017": 30000.0,
+          "2018": 30000.0,
+          "2019": 30000.0
+        },
+        "trimestres_assimiles": {}
+      }
+    }
+  },
+  "recupere_le": "2026-10-16",
+  "source": "OpenFisca-France-Pension",
+  "version": "0.1.3"
+}

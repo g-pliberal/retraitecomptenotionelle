@@ -185,3 +185,13 @@ effet: >-
   jusqu'à quatre trimestres par an, trente-deux en tout, que le modèle compte depuis l'étape 3 du sixième
   domaine, sans saisie qui les déclare encore.
   L'effectif n'est pas dans les sources lues.
+referents:
+  openfisca_france_pension:
+    equivalent: >-
+      regime_general_cnav_duree_assurance_autre_annuelle, une entrée : ni l'inscription, ni
+      l'âge, ni les ressources, ni le plafond de trimestres ; il reçoit les trimestres
+    confrontation: >-
+      le 16 octobre 2026 (action 153, étape 2 ; tests/test_oracle_periodes_assimilees.py),
+      un sportif inscrit de 2012 à 2015, parti en 2019 : ses seize trimestres, portés
+      chez lui, donnent la même durée, la même décote et la même pension rapportée au
+      salaire moyen
