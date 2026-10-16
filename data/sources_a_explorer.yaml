@@ -1862,12 +1862,27 @@ sources:
       cotisation vieillesse de TOUS les statuts, datés, dans un format lisible
       par machine. C'est peut-être le récupérateur automatique qui manque aux
       taux saisis à la main dans data/reference/regimes/.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-16
     note: >-
       Resondé le 22 septembre 2026 par `scripts/fetch/sonder_sources.py` : le 200
       porte une coquille de 7 Ko, presque sans texte, que le JavaScript remplit.
       La page se lit dans Chromium ; les règles, elles, sont dans le dépôt du
       code (`mon_entreprise_depot`), qui se clone.
+      Le 16 octobre 2026, au commit `77836ae` de mon-entreprise (15
+      octobre) : aucune règle n'a bougé depuis `05cb5be`, le commit que
+      le registre (`data/reference/referents.yaml`) a lu le 4 octobre
+      (`git diff` vide sur
+      `modele-social`, `modele-ti`, `modele-as`, `modele-commun` et
+      `api` ; les 36 commits suivants touchent la Lodeom, le comparateur
+      et l'intégration continue). La bibliothèque est le paquet
+      `modele-social`, au registre (`referents.yaml`, `modele_social`)
+      avec ses écarts : ce qu'elle avait à rendre l'a été. Ses taux
+      vieillesse de 2026 relus contre le dépôt : voir
+      `mon_entreprise_api`. Elle n'est pas le récupérateur espéré : ses
+      taux sont ceux de l'année en cours, sa branche indépendante a un
+      an de retard, et le dépôt lit les siens au texte (LEGI),
+      certifiés.
 
   - id: mon_entreprise_developpeur
     url: https://mon-entreprise.urssaf.fr/développeur/
@@ -1895,9 +1910,21 @@ sources:
     a_en_tirer: >-
       Le dépôt des règles : `modele-social`, ses fichiers de taux et leurs
       dates d'effet, avec l'historique git qui date chaque changement.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-16
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté.
+      Le 16 octobre 2026, au commit `77836ae` de mon-entreprise (15
+      octobre) : aucune règle n'a bougé depuis `05cb5be`, le commit que
+      le registre (`data/reference/referents.yaml`) a lu le 4 octobre
+      (`git diff` vide sur
+      `modele-social`, `modele-ti`, `modele-as`, `modele-commun` et
+      `api` ; les 36 commits suivants touchent la Lodeom, le comparateur
+      et l'intégration continue). Les trois modèles du dépôt ont leur
+      entrée au registre (`modele_social`, `modele_ti`, `modele_as`),
+      lue le 4 octobre ; leurs écarts tiennent. Les dates d'effet sont
+      dans les `variations` des règles, non dans l'historique git ; le
+      dépôt date les siennes par LEGI.
 
   - id: mon_entreprise_comparaison_ei
     url: https://mon-entreprise.urssaf.fr/simulateurs/comparaison-régimes-sociaux/EI/protection-sociale/retraite
@@ -1908,12 +1935,25 @@ sources:
       Le comparateur des statuts : pour un même revenu, ce que chaque statut
       cotise et ce qu'il acquiert en retraite. Exactement la grandeur que la
       page Coût du dépôt met en regard des scénarios.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-16
     note: >-
       Resondé le 22 septembre 2026 par `scripts/fetch/sonder_sources.py` : le 200
       porte une coquille de 7 Ko, presque sans texte, que le JavaScript remplit.
       La page se lit dans Chromium ; les règles, elles, sont dans le dépôt du
       code (`mon_entreprise_depot`), qui se clone.
+      Le 16 octobre 2026, au commit `77836ae` de mon-entreprise (15
+      octobre) : aucune règle n'a bougé depuis `05cb5be`, le commit que
+      le registre (`data/reference/referents.yaml`) a lu le 4 octobre
+      (`git diff` vide sur
+      `modele-social`, `modele-ti`, `modele-as`, `modele-commun` et
+      `api` ; les 36 commits suivants touchent la Lodeom, le comparateur
+      et l'intégration continue). Le comparateur ne calcule rien qui lui
+      soit propre : il évalue `modele-ti` et `modele-social`, lus en
+      entier au registre. Une saisie rejouerait ce code ; aucun lot
+      n'est proposé. Les droits acquis qu'il affiche ont les défauts que
+      le registre consigne (trimestres annulés par l'Acre, pension de
+      base à 50 % du revenu de l'année).
 
   - id: mon_entreprise_independant
     url: https://mon-entreprise.urssaf.fr/simulateurs/indépendant
@@ -1924,7 +1964,23 @@ sources:
       Les cotisations de l'indépendant, assiette par assiette, avec la réforme
       d'assiette unique de 2025. Le dépôt doit savoir dire ce qu'un
       indépendant cotise ET ce qu'il acquiert.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-16
+    note: >-
+      Le 16 octobre 2026, au commit `77836ae` de mon-entreprise (15
+      octobre) : aucune règle n'a bougé depuis `05cb5be`, le commit que
+      le registre (`data/reference/referents.yaml`) a lu le 4 octobre
+      (`git diff` vide sur
+      `modele-social`, `modele-ti`, `modele-as`, `modele-commun` et
+      `api` ; les 36 commits suivants touchent la Lodeom, le comparateur
+      et l'intégration continue). Le simulateur charge `modele-ti`, au
+      registre : 17,87 % sous le plafond et 0,72 % au-delà à la base (D.
+      633-3, que le dépôt lit 17,15 % + 0,72 % sur la totalité : même
+      barème), 8,1 et 9,1 % au RCI (D. 635-7, comme `rci.yaml`).
+      Concordant ; aucun lot de saisies n'est proposé, le code étant lu.
+      La branche `dirigeant . indépendant` de `modele-social` (17,75 %
+      et 0,60 %, RCI 7 et 8 %) est celle d'avant 2025, écart déjà au
+      registre.
 
   - id: mon_entreprise_auto_entrepreneur
     url: https://mon-entreprise.urssaf.fr/simulateurs/auto-entrepreneur
@@ -1935,7 +1991,22 @@ sources:
       Le taux global du micro-social et la part qui ouvre des droits vieillesse :
       la fiche `micro_entrepreneurs` est un simple routage à l'inventaire, et
       c'est ici que se lit ce qu'un micro-entrepreneur acquiert réellement.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-16
+    note: >-
+      Le 16 octobre 2026, au commit `77836ae` de mon-entreprise (15
+      octobre) : aucune règle n'a bougé depuis `05cb5be`, le commit que
+      le registre (`data/reference/referents.yaml`) a lu le 4 octobre
+      (`git diff` vide sur
+      `modele-social`, `modele-ti`, `modele-as`, `modele-commun` et
+      `api` ; les 36 commits suivants touchent la Lodeom, le comparateur
+      et l'intégration continue). Le simulateur évalue `modele-social`,
+      à jour de 2026 pour le micro-social : taux globaux 12,3, 21,2,
+      25,6 et 23,2 %, part de base 43,45 et 46,40 %
+      (`auto-entrepreneur/cotisations-et-contributions.publicodes`),
+      ceux de `legislation/micro_social.yaml`. Son seul écart, les
+      trimestres validés sur le revenu abattu, est au registre, et le
+      dépôt ne le partage plus depuis le 14 octobre. Aucun lot proposé.
 
   - id: mon_entreprise_cipav
     url: https://mon-entreprise.urssaf.fr/simulateurs/profession-liberale/cipav
@@ -1972,7 +2043,20 @@ sources:
     a_en_tirer: >-
       Le régime des artistes-auteurs, dont les trois fiches IRCEC sont
       `partiel` : assiette, taux, seuil d'affiliation.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-16
+    note: >-
+      Le 16 octobre 2026, au commit `77836ae` de mon-entreprise (15
+      octobre) : aucune règle n'a bougé depuis `05cb5be`, le commit que
+      le registre (`data/reference/referents.yaml`) a lu le 4 octobre
+      (`git diff` vide sur
+      `modele-social`, `modele-ti`, `modele-as`, `modele-commun` et
+      `api` ; les 36 commits suivants touchent la Lodeom, le comparateur
+      et l'intégration continue). Le simulateur évalue
+      `artiste-auteur.publicodes` de `modele-social`, lu au registre :
+      seuil d'affiliation au RAAP, taux réduit, conversion des BNC et
+      précompte, coupés le 14 octobre (action 138, classement du 9
+      octobre). Rien d'autre à en tirer ; aucun lot proposé.
 
   # ---- CNAVPL et ses sections professionnelles ---------------------------
   # C'est ici que l'inventaire est le plus faible : `cnavpl` est `partiel`, et
@@ -6343,11 +6427,25 @@ sources:
       montant mensuel moyen, durées de services et de bonifications. Ce que
       la caisse publie d'elle-même, à confronter au jaune budgétaire
       (`scripts/fetch/sre_jaune_pensions.py`) et au modèle.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-16
     note: >-
       Mesuré le 5 octobre 2026 : catalogue Opendatasoft ouvert, sans compte ;
       les cubes, publiés par la DGFiP, datent du 11 août 2026. Chacun se lit
       par `…/datasets/<id>/records`, ou s'exporte en CSV.
+      Dépouillé le 16 octobre 2026. Les cubes sont le jaune budgétaire
+      en CSV : chaque ligne porte des SOMMES (âge, pension, durées) à
+      diviser par l'effectif. Le stock civil de droit direct de 2025
+      rend 1 656 399 pensions et 2 478 € par mois, l'âge de première
+      mise en paiement 59,3 ans, les valeurs du tableau A-1 que le dépôt
+      tient de l'édition 2027
+      (`macro/caracteristiques_fonction_publique.csv`) ; les pensions
+      moyennes de 2016 à 2025 sont celles d'A-4 à l'euro ; les effectifs
+      d'A-3 à quelques dizaines près (23 en 2024), révisions d'une
+      extraction plus récente. Le flux civil de 2025 : 47 104 départs à
+      62,8 ans, 2 453 €. Rien n'entre : le jaune est déjà certifié. Ce
+      qui reste, les cubes par génération (1944 à 1957) et 2015, ne sert
+      qu'à une population (138.14).
 
   - id: mon_entreprise_api
     url: https://mon-entreprise.urssaf.fr/api/v1/evaluate
@@ -6359,12 +6457,30 @@ sources:
       Agirc-Arrco —, salariales et patronales, que l'Urssaf calcule pour le
       salaire qu'on lui donne : des exemples officiels pour les taux de
       cotisation du dépôt, en une requête et sans navigateur.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-16
     note: >-
       Mesuré le 5 octobre 2026 : un POST de JSON, `{"situation": {…},
       "expressions": […]}`, rend chaque expression évaluée, avec son unité ;
       « plafond sécurité sociale » y vaut 4 005 €/mois. Le droit de l'année
       en cours seulement.
+      Le 16 octobre 2026, au commit `77836ae` de mon-entreprise (15
+      octobre) : aucune règle n'a bougé depuis `05cb5be`, le commit que
+      le registre (`data/reference/referents.yaml`) a lu le 4 octobre
+      (`git diff` vide sur
+      `modele-social`, `modele-ti`, `modele-as`, `modele-commun` et
+      `api` ; les 36 commits suivants touchent la Lodeom, le comparateur
+      et l'intégration continue). L'API évalue `modele-social`, lu dans
+      le dépôt de code plutôt qu'interrogé : un simulateur ne se saisit
+      que par lot approuvé, et le code donne la même valeur. 2026 :
+      vieillesse plafonnée 6,90 + 8,55 %, déplafonnée 0,40 + 2,11 %
+      (2,02 % en 2024 et 2025), Agirc-Arrco 3,15 + 4,72 % et 8,64 +
+      12,95 %, CEG 0,86 + 1,29 % et 1,08 + 1,62 %, CET 0,14 + 0,21 %,
+      PSS 4 005 €/mois : exactement les taux du dépôt
+      (`taux_cotisation_annuels.csv`, certifiés sur D. 242-4 ;
+      `agirc_arrco.yaml`). Mayotte (5,54 + 9,90 %, sans déplafonnée, PSS
+      2 821 puis 3 022 €) reste l'écart que le registre porte, à
+      reprendre en 138.18.
 
   - id: service_public_fiches_xml
     url: https://lecomarquage.service-public.fr/vdd/3.4/part/zip/vosdroits-latest.zip
@@ -6395,17 +6511,22 @@ sources:
   - id: gallica_sru
     url: https://gallica.bnf.fr/SRU?operation=searchRetrieve&version=1.2&query=dc.title%20all%20%22Journal%20officiel%22
     nature: index
-    acces: session
+    acces: navigateur
     regimes: []
     a_en_tirer: >-
       Le Journal officiel numérisé, interrogé en plein texte : l'identifiant
       ark et la page d'un texte daté, que les fiches citent aujourd'hui à la
       main (neuf liens vers Gallica), retrouvés par une requête plutôt qu'en
       feuilletant.
-    statut: en_cours
+    statut: a_explorer
     note: >-
       Mesuré le 5 octobre 2026 : l'interface SRU de la BnF répond en XML,
       sans compte (420 notices au titre « Journal officiel »).
+      Resondé le 16 octobre 2026 : `/SRU` répond 403 et
+      `/services/OAIRecord` sert la page « Attention Required » de
+      Cloudflare, avec l'en-tête du dépôt comme sans. Ce qui répondait
+      le 5 octobre ne répond plus à une session ; la ligne attend une
+      lecture dans le navigateur, ou que le pare-feu s'ouvre.
 
   - id: cnavpl_wordpress
     url: https://www.cnavpl.fr/wp-json/wp/v2
@@ -6417,12 +6538,22 @@ sources:
       de téléchargements (`wpdmpro`, dont le guide 2026 en trois parties),
       31 PDF, 26 pages et 10 chiffres clés (`ucpt_statistique`) — ce que le
       lot des libérales n'a pas vu, et, à chaque veille, ce qui a bougé.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-16
     note: >-
       Mesuré le 5 octobre 2026 : l'API REST de WordPress est ouverte, sans
       compte ; `search=`, `modified_after=` et `per_page=100` y servent, et le
       total est dans l'en-tête `X-WP-Total`. Les graphiques `visualizer` n'y
       portent pas leurs données (`chart_data` : false).
+      Dépouillé le 16 octobre 2026. L'API refuse l'agent par défaut de
+      curl (403, connexion coupée) et sert celui des scripts du dépôt («
+      retraite-notionnelle/0.1 (recherche publique) »). 31 PDF, aucun
+      modifié depuis le lot des libérales (le dernier, le guide 2026 en
+      trois parties, le 29 mai). Ni ce guide ni les statuts de novembre
+      2024 ne sont cités au dépôt, qui lit le guide 2025 et les textes
+      au Journal officiel ; ils n'ont pas été ouverts ce jour. La requête
+      `media?mime_type=application/pdf&orderby=modified` suffit à une
+      veille.
 
   - id: cavec_wordpress
     url: https://www.cavec.fr/wp-json/wp/v2
@@ -6432,10 +6563,15 @@ sources:
     a_en_tirer: >-
       Les 269 pages et 50 PDF du site, chacun daté : relever ce que le lot
       des libérales n'a pas vu, et, à chaque veille, ce qui a bougé.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-16
     note: >-
       Mesuré le 5 octobre 2026 : API REST de WordPress ouverte, comme celle
       de la CNAVPL (`cnavpl_wordpress`).
+      Dépouillé le 16 octobre 2026 : 50 PDF, aucun modifié depuis le 20
+      août (guide du nouvel affilié). Le barème de rachat (janvier 2026)
+      n'est pas cité au dépôt, qui ne modélise pas le rachat. Même agent
+      que `cnavpl_wordpress`.
 
   - id: cavamac_wordpress
     url: https://www.cavamac.fr/wp-json/wp/v2
@@ -6445,10 +6581,20 @@ sources:
     a_en_tirer: >-
       Les 44 pages et 70 PDF du site, chacun daté : relever ce que le lot des
       libérales n'a pas vu, et, à chaque veille, ce qui a bougé.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-16
     note: >-
       Mesuré le 5 octobre 2026 : API REST de WordPress ouverte, comme celle
       de la CNAVPL (`cnavpl_wordpress`).
+      Dépouillé le 16 octobre 2026 : 70 PDF ; depuis le lot, un livret
+      des administrateurs et un entretien, rien de réglementaire. Non
+      cités au dépôt : les textes réglementaires (30 juillet 2026), les
+      statuts globaux (septembre 2025), les taux RBL, RCO et RID 2026 et
+      les valeurs de point (décembre 2025). La fiche, `partiel`, prend
+      ses règles aux statuts de 2011 au Journal officiel ; ce qui lui
+      manque (la règle d'âge d'avant 2011, au seul Bulletin officiel)
+      n'est pas dans ces titres. Même agent que `cnavpl_wordpress` (le
+      403 de curl y est le même).
 
   - id: cavom_wordpress
     url: https://www.cavom.net/wp-json/wp/v2
@@ -6459,10 +6605,16 @@ sources:
       Les 38 pages et 63 PDF du site, chacun daté, dont les règlements de la
       caisse au 1er juillet 2026 : relever ce que le lot des libérales n'a pas
       vu, et, à chaque veille, ce qui a bougé.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-16
     note: >-
       Mesuré le 5 octobre 2026 : API REST de WordPress ouverte, comme celle
       de la CNAVPL (`cnavpl_wordpress`).
+      Dépouillé le 16 octobre 2026 : 61 PDF, aucun modifié depuis le 25
+      juin. Les règlements au 1er juillet 2026 sont ceux que la fiche
+      lit déjà par leur arrêté d'approbation du 10 juillet 2026 au
+      Journal officiel ; les décrets n° 79-265 et 81-755 consolidés,
+      ceux qu'elle lit dans LEGI.
 
   - id: cprn_wordpress
     url: https://www.cprn.fr/wp-json/wp/v2
@@ -6472,10 +6624,19 @@ sources:
     a_en_tirer: >-
       Les 59 pages et 111 PDF du site, chacun daté : relever ce que le lot des
       notaires n'a pas vu, et, à chaque veille, ce qui a bougé.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-16
     note: >-
       Mesuré le 5 octobre 2026 : API REST de WordPress ouverte, comme celle
       de la CNAVPL (`cnavpl_wordpress`).
+      Dépouillé le 16 octobre 2026 : 113 PDF ; depuis le lot, un rapport
+      d'activité 2025 (7 septembre), des bulletins et un congrès. Le
+      guide du nouvel affilié 2026 et la notice « Votre décompte de
+      cotisation » confirment la fiche sans la compléter : huit classes
+      « de même effectif » en section B, 10 à 80 points, point acheté
+      275,81 €, coefficient d'âge (1,15 pour un notaire entré en 2015),
+      section C à 4,10 % et 17,69 € — mais toujours aucune borne de
+      classe publiée.
 
   - id: crpn_wordpress
     url: https://www.crpn.fr/wp-json/wp/v2
@@ -6486,10 +6647,18 @@ sources:
       Les 76 pages et 373 PDF du site, chacun daté, dont les notices de
       réversion : relever ce que le lot de la CRPN n'a pas vu, et, à chaque
       veille, ce qui a bougé.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-16
     note: >-
       Mesuré le 5 octobre 2026 : API REST de WordPress ouverte, comme celle
       de la CNAVPL (`cnavpl_wordpress`).
+      Dépouillé le 16 octobre 2026 : 375 PDF ; depuis le lot, des
+      formulaires republiés (9 octobre), un organigramme et un essai de
+      notice de réversion (« NOUVEAU_TEST », 14 octobre). Les notices de
+      calcul (décrets n° 2011-1500 et 2018-337) et le tableau des
+      conditions de 2012 à 2021 ont été remis en ligne le 28 juillet
+      sous les versions de 2021 et 2022 : rien de plus récent que ce que
+      la fiche lit au code des transports.
 
   - id: baseircantec_json
     url: https://baseircantec.retraites.fr/?_format=json
@@ -6500,11 +6669,16 @@ sources:
       Chaque page de la base servie en JSON (`?_format=json`), avec sa date de
       modification (`changed`) : savoir, à chaque veille, lesquelles des
       pages lues au lot de l'Ircantec ont bougé, sans les relire.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-16
     note: >-
       Mesuré le 5 octobre 2026 : le titre, la date et quelques champs en
       HTML ; le corps, rangé en paragraphes Drupal, n'est pas servi
       (`/entity/paragraph/<id>` répond 404).
+      Dépouillé le 16 octobre 2026 : `changed` toujours servi. Des trois
+      pages du lot de l'Ircantec, aucune n'a bougé depuis sa lecture du
+      13 octobre (dernières modifications : 3 mars 2026, 13 août 2026, 2
+      mai 2024). Les annexes PDF n'ont pas de `changed`.
 
   - id: lacipav_json
     url: https://www.lacipav.fr/?_format=json
@@ -6515,10 +6689,20 @@ sources:
       Chaque page du site de la Cipav servie en JSON, avec sa date de
       modification (`changed`) : la veille des pages que le lot des libérales
       a lues, sans les relire.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-16
     note: >-
       Mesuré le 5 octobre 2026 : un Drupal qui sert ses pages en JSON, comme
       la base de l'Ircantec (`baseircantec_json`).
+      Dépouillé le 16 octobre 2026. Des six pages du lot des libérales,
+      deux ont bougé depuis le 23 septembre : `cipav_documents` (25
+      septembre) et `cipav_cotiser` (13 octobre), qui porte maintenant
+      le versement de l'auto-entrepreneur, 23,20 % répartis en 29,50 % à
+      la base et 30,70 % à la complémentaire, et la validation d'un
+      trimestre par 2 792 € de recettes en 2026 — le seuil que
+      `legislation/micro_social.yaml` tire de F23369. Concordant ; les
+      taux du libéral au réel restent dans la fiche pratique, que la
+      note de `cipav_cotiser` dit en retard.
 
   - id: drees_taux_de_remplacement
     url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/repartition-des-taux-de-remplacement-entre-les-revenus-juste-avant-et-juste-apres-la-retraite/
@@ -6530,7 +6714,16 @@ sources:
       première année pleine de retraite, par catégorie, sexe et définition du
       revenu — 4 806 lignes, mises à jour le 19 mars 2026 : de quoi confronter
       les taux de remplacement que le modèle calcule.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-16
+    note: >-
+      Dépouillé le 16 octobre 2026 : 4 806 lignes, premières années
+      pleines de retraite de 2012 à 2020, quatre définitions du revenu
+      (dont « retraite et revenus du travail » et le niveau de vie du
+      ménage), que complète le n° 1369 d'Études et résultats, de mars
+      2026. Ce sont des quantiles d'une population appariée aux revenus
+      fiscaux : rien à confronter aux cas types du modèle ; ils
+      attendent sa population (138.14).
 
   - id: drees_minimum_vieillesse
     url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/1377_le-minimum-vieillesse/
@@ -6543,10 +6736,20 @@ sources:
       15 décembre 2025 : les effectifs et la dépense constatés, en face du
       barème que le dépôt tient de LEGI
       (`scripts/fetch/dila_legi_minimum_vieillesse.py`).
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-10-16
     note: >-
       Mesuré le 5 octobre 2026 : le jeu n'a pas de lignes, seulement des
       pièces jointes (`…/datasets/1377_le-minimum-vieillesse/attachments`).
+      Dépouillé le 16 octobre 2026, classeur 2024 (tableau A1) : 754 460
+      allocataires de l'ASV ou de l'Aspa au 31 décembre 2024, dont 652
+      470 à l'Aspa, et 4 586 millions d'euros versés en 2024, plus 253
+      millions d'allocations de premier étage ; 653 550 de ces
+      allocataires et 3 723 millions au régime général. Recoupement :
+      les Comptes de la protection sociale, que le dépôt tient
+      (`macro/prestations_non_contributives.csv`), portent 4 941
+      millions pour 2024, 2 % de plus que les 4 839 du premier étage, de
+      l'ASV et de l'Aspa. Aucune page ne demande encore les effectifs.
 
   - id: legifrance_piste
     url: https://api.piste.gouv.fr/dila/legifrance/lf-engine-app
@@ -6557,10 +6760,12 @@ sources:
       Légifrance interrogé en direct : tout le JORF et tous les codes, à une
       date, au-delà du champ social que porte l'index du dépôt — et les
       circulaires, si l'API les sert.
-    statut: en_cours
+    statut: a_explorer
     note: >-
       Sans jeton, l'API répond 400 (mesuré le 5 octobre 2026) : il faut un
       compte PISTE et l'acceptation de ses conditions, un geste du
       propriétaire qu'aucune session ne fait ; le catalogue de l'État la range
       en accès restreint. En attendant, l'index plein texte LEGI et JORF du
       dépôt sert (`scripts/fetch/dila_cherche.py`).
+      Le 16 octobre 2026 : rien de changé, la ligne attend le compte
+      PISTE du propriétaire (voir le bloc « Reprise » de l'action 89).

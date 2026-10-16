@@ -1,0 +1,25 @@
+date: "2026-10-16"
+session: "action 89 : mon-entreprise et les API publiques, vingt lignes de l'inventaire"
+consulte: >-
+  Le dépôt de mon-entreprise au commit 77836ae (15 octobre 2026), comparé au commit
+  05cb5be que le registre a lu : les règles publicodes des salariés, des indépendants
+  (modele-social et modele-ti), du micro-social et des artistes-auteurs. Les quinze cubes
+  de pensions du Service des retraites de l'État (data.economie.gouv.fr, 11 août 2026) ;
+  le classeur 2024 de l'enquête de la DREES sur le minimum vieillesse et la notice du jeu
+  des taux de remplacement ; les médias PDF des sites de la CNAVPL, de la CAVEC, de la
+  CAVAMAC, de la CAVOM, de la CPRN et de la CRPN, le guide du nouvel affilié 2026 et le
+  décompte de cotisation de la CPRN ; la date de modification des pages de l'Ircantec et
+  de la Cipav lues aux lots de septembre et d'octobre. Le scénario 1 n'est pas touché :
+  ni veille_droit.py, ni index LEGI.
+trouve: >-
+  Rien qui contredise le dépôt. Les taux vieillesse de 2026 de mon-entreprise sont
+  exactement ceux du dépôt (régime général, Agirc-Arrco, indépendants, micro-social) ;
+  son seul écart, Mayotte, est déjà au registre. Les cubes du SRE rendent le jaune 2027
+  à l'euro. Le minimum vieillesse versé en 2024 (4 839 millions d'euros avec le premier
+  étage) est à 2 % des Comptes de la protection sociale. La Cipav publie le seuil de
+  2 792 € par trimestre que le dépôt applique. Les sites des caisses n'ont rien publié
+  de réglementaire depuis les lots de septembre.
+reste: >-
+  Gallica est désormais derrière Cloudflare (403) ; l'API de Légifrance attend un
+  compte PISTE du propriétaire. Les cubes par génération et les quantiles du taux de
+  remplacement attendent une population (138.14). Mayotte reste à reprendre en 138.18.
