@@ -1,0 +1,13 @@
+date: "2026-10-16"
+session: "action 135 : les cumuls tirés au hasard et le portage du coût, mesurés"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement à un test du portage (tests/test_cumul_activites.py).
+trouve: >-
+  Aucune règle n'a changé. Le portage du coût n'existe plus depuis l'action
+  150 (le site lit les agrégats figés, vérifiés en 0,07 s) ; les cumuls au
+  hasard, seuls à croiser des statuts tirés avec des cumuls, gardent leur
+  moitié Python en mémoire : 0,9 s au lieu de 3,3.
+reste: >-
+  Les pages au hasard, que la session des pages tient ; actions/cache sur
+  GitHub, que le propriétaire décide.

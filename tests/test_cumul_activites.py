@@ -27,6 +27,8 @@ from retraite_notionnelle.saisie import ErreurSaisie, Saisie
 from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.web.site import disponible, rendre
 
+from outils_portage import moitie_python
+
 
 @pytest.fixture(scope="module")
 def simulateur() -> Simulateur:
@@ -155,22 +157,14 @@ def _ecarts(obtenu, attendu, chemin="") -> list[str]:
     return [f"{chemin} : {obtenu!r} au lieu de {attendu!r}"]
 
 
-def test_le_portage_javascript_concorde_sur_des_cumuls_tires_au_hasard():
-    """Les témoins figés n'exercent qu'un statut à la fois : aucun ne cumule.
-
-    On tire donc des parcours au hasard — graine fixe —, chacun avec une à deux
-    activités cumulées, on les simule ici et dans le site, et chaque valeur de
-    la comparaison doit se retrouver des deux côtés, refus compris.
-    """
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-
-    contexte = Contexte()
-    simulateur = contexte.simulateur()
-    alea = random.Random(20260922)
+def _cumuls_tires_au_hasard(graine: int, nombre: int) -> tuple[list, list]:
+    """Les parcours tirés — graine fixe —, et ce que le Python en fait : la
+    moitié Python du test, que la mémoire des calculs garde."""
+    simulateur = Contexte().simulateur()
+    alea = random.Random(graine)
     statuts = list(simulateur.affiliations.codes)
     parcours = []
-    for _ in range(40):
+    for _ in range(nombre):
         debut = alea.randint(16 * 12, 28 * 12) / 12
         liquidation = alea.randint(60 * 12, 69 * 12) / 12
         metiers = [{"affiliation": alea.choice(statuts), "age_debut": debut,
@@ -208,6 +202,22 @@ def test_le_portage_javascript_concorde_sur_des_cumuls_tires_au_hasard():
                 simulateur.simuler(carriere).dictionnaire())})
         except (ValueError, KeyError) as erreur:
             attendus.append({"erreur": str(erreur)})
+    return parcours, attendus
+
+
+def test_le_portage_javascript_concorde_sur_des_cumuls_tires_au_hasard():
+    """Les témoins figés n'exercent qu'un statut à la fois : aucun ne cumule.
+
+    On tire donc des parcours au hasard — graine fixe —, chacun avec une à deux
+    activités cumulées, on les simule ici et dans le site, et chaque valeur de
+    la comparaison doit se retrouver des deux côtés, refus compris. La moitié
+    Python est gardée par la mémoire des calculs (``moitie_python``) ; la
+    moitié JavaScript, celle qu'on éprouve, se rejoue à chaque passage.
+    """
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+
+    parcours, attendus = moitie_python(_cumuls_tires_au_hasard, 20260922, 40)
     assert sum("resultat" in a for a in attendus) >= 20, "trop peu de parcours simulés"
 
     racine = Path(__file__).resolve().parents[1]

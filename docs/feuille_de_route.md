@@ -4699,10 +4699,11 @@ l'essentiel, 3 ; le hook de démarrage ; « Économiser le contexte » ; l'arbre
 du dépôt ; le parcours `tenu` ; le contexte en cinq étapes ; la mémoire
 indexée sur le seul modèle, fiches de règles comprises ; `pousser.sh` publie
 une tête détachée ; `node --test` sauté quand rien de ce qu'il lit n'a bougé
-(note du 16, `empreinte-de-node-test`). Reste : `actions/cache` sur GitHub,
-que le propriétaire décide ; du portage rejoué, les cumuls tirés au hasard
-et le portage du coût, à mesurer, et les pages au hasard, que la session des
-pages tient (`2026-10-10-portage-que-node-rejoue.md`) ; le 4 et 5.
+(note du 16, `empreinte-de-node-test`) ; les cumuls au hasard gardent leur
+moitié Python, et le portage du coût n'existe plus depuis l'action 150 (note
+du 16, `cumuls-et-portage-du-cout`). Reste : `actions/cache` sur GitHub, que
+le propriétaire décide ; du portage rejoué, les pages au hasard, que la
+session des pages tient (`2026-10-10-portage-que-node-rejoue.md`) ; le 4 et 5.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus
