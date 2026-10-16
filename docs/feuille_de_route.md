@@ -5848,15 +5848,15 @@ la décision du 1er novembre, une ligne de plus à la table datée.
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 
 **Reprise, au 16 octobre 2026.** Fait : l'étape 1 — dix-sept régimes entrés à
-l'inventaire, sept fiches ; de l'étape 2, quinze fiches — six régimes que
-l'action 121 ne touche pas, le Crédit foncier, l'ORTF et la CRFOM, les
-navigants, les députés, Mayotte, puis Saint-Pierre-et-Miquelon ; l'étape 3 —
-huit pistes relues, aucune inscrite. Reste : l'étape 2 seule, la CAFAT, la CPS
-de Polynésie, Wallis-et-Futuna, les fonctionnaires du Pacifique (délibérations
-locales hors de l'index) et trois hors champ, puis les limites de l'étape (note
-saint-pierre-et-miquelon). Au propriétaire : les écarts des notes du 13 et du
-14 octobre, le Crédit foncier sans statut, et ceux de l'archipel (taux de
-cotisation écrits, revenu moyen de toute la carrière avant 2016).
+l'inventaire, sept fiches ; de l'étape 2, dix-neuf fiches, dont, le 16, l'archipel
+de Saint-Pierre-et-Miquelon, la CAFAT, la CPS de Polynésie, Wallis-et-Futuna et
+les fonctionnaires calédoniens ; l'étape 3 — huit pistes relues, aucune inscrite.
+Reste : l'étape 2 seule, les trois hors champ (CRFM de Mayotte, élus du
+Pacifique, régies ferroviaires), puis les limites de l'étape (note pacifique) ;
+LexPol et le Journal officiel de Wallis-et-Futuna, injoignables, à relire.
+Au propriétaire : les écarts des notes du 13, du 14 et du 16 octobre, dont le
+rendement de la CAFAT (9 %, non 10 %) et le taux de retraite de Wallis-et-Futuna
+(21 %, non 27 %), qui se corrigeraient d'une donnée chacun.
 
 **Demande**, le 4 octobre 2026 : « Je veux que tu documentes les régimes de
 retraite que nous n'avons pas encore documenter pour l'instant. Il faut
