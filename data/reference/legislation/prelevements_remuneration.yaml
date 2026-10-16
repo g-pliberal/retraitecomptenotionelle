@@ -859,7 +859,14 @@ pensions:
   #:   réversion et de leurs avantages accessoires, sans plafond (décret
   #:   n° 46-2769, art. 91, 3°, a, LEGIARTI000037456798).
   #: Le dépôt les prélève sur ce que ces régimes servent, majoration pour
-  #: enfants exclue, comme la cotisation des complémentaires. LE NON-RÉSIDENT
+  #: enfants exclue, comme la cotisation des complémentaires : aux mines, c'est
+  #: le texte, dont les « avantages accessoires » sont pris « à l'exception de
+  #: ceux mentionnés aux articles 139 et 141 » — la majoration d'un dixième
+  #: pour trois enfants (art. 139, LEGIARTI000006765039) et l'allocation pour
+  #: enfant à charge (art. 141, LEGIARTI000031137571), exception présente
+  #: depuis le taux de 0,50 % (rédaction du 30 décembre 1997) ; les autres, le
+  #: 0,15 % par trimestre au fond (art. 138) et la majoration pour conjoint à
+  #: charge (art. 140), le modèle ne les sert pas. LE NON-RÉSIDENT
   #: dont la France prend en charge les soins (L. 131-9) paie, à la place,
   #: `taux_non_resident` sous le plafond et `taux_non_resident_au_dela`
   #: au-delà : 3,90 % et 3,20 % du montant trimestriel de la pension à la

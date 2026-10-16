@@ -45,6 +45,8 @@ versions:
   - {id: LEGIARTI000037456300, article: "D. 242-8 du code de la sécurité sociale", en_vigueur: 2018-09-30}
   - {id: LEGIARTI000052041125, article: "décret n° 2007-1056 du 28 juin 2007, art. 7", en_vigueur: 2025-08-03}
   - {id: LEGIARTI000037456798, article: "décret n° 46-2769 du 27 novembre 1946, art. 91", en_vigueur: 2018-09-30}
+  - {id: LEGIARTI000006765039, article: "décret n° 46-2769 du 27 novembre 1946, art. 139", en_vigueur: 2002-05-05}
+  - {id: LEGIARTI000031137571, article: "décret n° 46-2769 du 27 novembre 1946, art. 141", en_vigueur: 2015-09-06}
   nee_de: LEGIARTI000037950374
   bornes:
     pension.echeance: [2019-07-01, null]
@@ -69,7 +71,11 @@ versions:
       trimestriel de la pension de retraite supérieur à ce plafond » (décret n° 2007-1056,
       art. 7, IV, second alinéa ; le plafond de 5 128 € de 2010, revalorisé comme les
       pensions et de moitié pour une réversion, VII) ; « 3,70 % » des pensions de
-      vieillesse, d'invalidité et de réversion des mines (décret n° 46-2769, art. 91).
+      vieillesse, d'invalidité et de réversion des mines « ainsi que leurs avantages
+      accessoires, à l'exception de ceux mentionnés aux articles 139 et 141 » (décret
+      n° 46-2769, art. 91) : la majoration d'un dixième pour trois enfants (art. 139) et
+      l'allocation pour enfant à charge (art. 141) n'en paient pas, au taux du résident
+      (0,50 %) comme à celui-ci.
     parametres:
       regime_general: 0.032
       complementaires: 0.042
@@ -95,8 +101,10 @@ approximations:
   ecart: >-
     Ce que la fonction publique, les régimes spéciaux autres que la SNCF et les mines, et
     les indépendants prélèvent sur la pension d'un non-résident n'est pas lu : rien n'y
-    est prélevé. Les avantages accessoires des mines, majoration pour enfants comprise,
-    restent hors de l'assiette, comme pour les résidents.
+    est prélevé. Des avantages accessoires des mines, que l'article 91 prélève, le modèle
+    ne sert ni le 0,15 % par trimestre au fond (art. 138) ni la majoration pour conjoint
+    à charge (art. 140) ; la majoration pour enfants, qu'il sert, en est exceptée par le
+    texte (art. 139).
   effet: non mesuré
 - version: quinze_ans_ou_competence_exclusive
   ecart: >-
@@ -121,6 +129,16 @@ sources:
       décret n° 2007-1056, art. 7, IV (LEGIARTI000052041125), et décret n° 46-2769,
       art. 91 (LEGIARTI000037456798), lus dans l'index LEGI du dépôt : les taux de la SNCF
       et des mines pour les personnes qui relèvent de L. 131-9
+    date: 2026-10-16
+  - type: legifrance
+    reference: >-
+      décret n° 46-2769, art. 91, toutes ses rédactions depuis celle du 30 décembre 1997
+      (LEGIARTI000006764900), qui excepte déjà des avantages accessoires « ceux
+      mentionnés aux articles 139 et 141 », et ces deux articles : 139
+      (LEGIARTI000006765039), la majoration d'un dixième pour trois enfants ; 141
+      (LEGIARTI000031137571), l'allocation pour enfant à charge ; avec 138
+      (LEGIARTI000006765036) et 140 (LEGIARTI000031137566), les avantages que
+      l'exception laisse dans l'assiette. Lus dans l'index LEGI du dépôt
     date: 2026-10-16
   - type: autre
     reference: >-
@@ -152,6 +170,10 @@ historique:
 - >-
   2026-10-16 — action 138, étape 9 : la SNCF et les mines prélèvent le non-résident à
   leurs taux de L. 131-9 ; jusque-là, rien sur ces pensions.
+- >-
+  2026-10-16 — action 138, étape 9 : les avantages accessoires des mines, lus à
+  l'article 91 ; la majoration pour enfants, que le dépôt laissait hors de l'assiette
+  comme celle des complémentaires, en est exceptée par le texte : rien ne change au calcul.
 effet: >-
   Tout retraité qui déclare résider hors de France : plus de CSG ni de CRDS ni de CASA ;
   3,5 % environ au salaire moyen si la France prend en charge ses soins, rien sinon.

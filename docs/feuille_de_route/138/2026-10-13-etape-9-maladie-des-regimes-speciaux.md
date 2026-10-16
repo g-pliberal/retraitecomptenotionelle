@@ -3,10 +3,10 @@
 **Reprise, au 16 octobre 2026.** Fait : la cotisation maladie des pensions
 de tous les régimes de base calculés, sauf la SEITA, le port de Strasbourg,
 les marins, les cultes et les assemblées ; celle de la SNCF et des mines au
-site, leur plafond depuis 2010 et leurs taux du non-résident. Reste, une
-session par point : deux retouches de `pages.js` (la réversion, les étages) ;
-les avantages accessoires des mines ; le plafond de 2027 ; la limite 5 ante
-ter (2), en fin d'étape ; la CNBF et la Cipav dans la fiche de paie ; les
+site, leur plafond depuis 2010, leurs taux du non-résident, et leurs
+avantages accessoires, lus (rien ne change). Reste, une session par point :
+deux retouches de `pages.js` (la réversion, les étages) ; le plafond de
+2027 ; la limite 5 ante ter (2), en fin d'étape ; la CNBF et la Cipav dans la fiche de paie ; les
 décrets qu'aucune marche ne rejoint. Au propriétaire : les décrets des
 exploitants de 1980 à 1989, au fac-similé. Détail : notes du 16 octobre.
 

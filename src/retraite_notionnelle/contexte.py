@@ -966,7 +966,11 @@ def part_des_regimes_speciaux(pensions, actuel, aujourd_hui=None,
     scénario 1, au taux plein, ou aux taux du ``non_resident`` : chaque pension
     de leurs régimes, menée par ``coefficient`` en euros de l'année de
     référence, celle des plafonds, majoration pour enfants exclue
-    (``remuneration.assiette_maladie``). Son jumeau est
+    (``remuneration.assiette_maladie``) : aux mines, l'article 91 du décret
+    n° 46-2769 l'excepte lui-même des avantages accessoires qu'il prélève
+    (art. 139, comme l'allocation pour enfant à charge de l'art. 141), et ceux
+    qu'il prend, le dixième du fond (art. 138) et le conjoint à charge
+    (art. 140), le modèle ne les sert pas. Son jumeau est
     ``partDesRegimesSpeciaux``, dans ``moteur/js/contexte.js``."""
     if not pensions.regimes_speciaux:
         return 0.0

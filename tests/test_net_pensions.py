@@ -139,6 +139,27 @@ def test_la_majoration_pour_enfants_reste_hors_de_l_assiette(contexte, pensions)
         a.montant for a in majorations) == pytest.approx(total)
 
 
+def test_la_majoration_des_mines_reste_hors_de_leur_cotisation(contexte, pensions):
+    """Les mines prélèvent 0,50 % des pensions « ainsi que leurs avantages
+    accessoires, à l'exception de ceux mentionnés aux articles 139 et 141 »
+    (décret n° 46-2769, art. 91) : la majoration d'un dixième pour trois
+    enfants (art. 139) n'en paie pas, et la part de la cotisation dans la
+    pension majorée tombe à 0,50 % divisés par 1,1."""
+    from retraite_notionnelle.contexte import part_des_regimes_speciaux
+
+    comparaison, _ = _simuler(contexte, {
+        "naissance": "1960-03-01", "sexe": "M", "statut": "mineur",
+        "debut": "1980-09-01", "liquidation": "2020-03-01", "unite_revenu": "moyen",
+        "salaire": "1", "montants": "net", "enfants": "3"})
+    actuel = comparaison.actuel
+    mines = sum(p.montant for p in actuel.pensions_par_regime if p.regime == "mines")
+    majoration = sum(part for a in actuel.avantages_appliques
+                     if a.code == "majoration_enfants" for code, part in a.par_regime
+                     if code == "mines")
+    assert majoration == pytest.approx(0.1 * mines)
+    assert part_des_regimes_speciaux(pensions, actuel) == pytest.approx(0.005 / 1.1)
+
+
 def test_une_ligne_paie_le_taux_de_son_regime(pensions):
     """Une ligne de réversion, un étage : 10,1 % pour une complémentaire qui
     prélève la cotisation, 9,1 % sinon ; rien en brut."""

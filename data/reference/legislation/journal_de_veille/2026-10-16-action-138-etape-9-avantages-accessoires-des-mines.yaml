@@ -1,0 +1,22 @@
+date: "2026-10-16"
+session: "action 138, étape 9, suite de la huitième partie : les avantages accessoires des mines, dans l'assiette de leur cotisation maladie"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche à relire touchée. Dans
+  l'index LEGI, récupéré le jour même (à jour au 11 octobre 2026) : le décret
+  n° 46-2769, art. 91, toutes ses rédactions de 1993 à celle du 30 septembre
+  2018 (LEGIARTI000037456798), et ses articles 138 (LEGIARTI000006765036),
+  139 (LEGIARTI000006765039), 140 (LEGIARTI000031137566) et 141
+  (LEGIARTI000031137571).
+trouve: >-
+  L'article 91 prend 0,50 % (3,70 % au non-résident) des pensions des mines
+  « ainsi que leurs avantages accessoires, à l'exception de ceux mentionnés
+  aux articles 139 et 141 » : la majoration d'un dixième pour trois enfants et
+  l'allocation pour enfant à charge, exception présente depuis la rédaction
+  du 30 décembre 1997. L'exclusion du dépôt est celle du texte ; les
+  avantages qui restent dans l'assiette (art. 138 et 140) ne sont pas servis
+  par le modèle. Écrit dans `prelevements_remuneration.yaml` et la fiche
+  `cotisation_maladie_des_non_residents`.
+reste: >-
+  Le plafond de la SNCF de 2027 ; les rédactions de 1993 à 1997 de
+  l'article 91, sans exception écrite, que l'histoire des prélèvements ne
+  distingue pas.

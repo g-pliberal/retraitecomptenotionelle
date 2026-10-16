@@ -996,8 +996,10 @@ function minimumVieillesseServi(actuel, aujourdhui = null) {
 /**
  * La cotisation maladie de la SNCF et des mines en part de la pension du
  * scénario 1, au taux plein ou aux taux du `nonResident`, chaque pension de
- * leurs régimes menée par `coefficient` en euros de l'année des plafonds. Voir
- * `part_des_regimes_speciaux` dans `contexte.py`.
+ * leurs régimes menée par `coefficient` en euros de l'année des plafonds,
+ * majoration pour enfants exclue, que l'article 91 du décret n° 46-2769
+ * excepte lui-même aux mines (art. 139). Voir `part_des_regimes_speciaux` dans
+ * `contexte.py`.
  */
 export function partDesRegimesSpeciaux(pensions, actuel, aujourdhui = null, coefficient = 1,
   nonResident = false) {
