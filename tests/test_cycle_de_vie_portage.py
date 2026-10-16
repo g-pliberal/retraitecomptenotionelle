@@ -95,6 +95,10 @@ FOYERS_IMPOT = {
     "veuf": {"declarants": [{"pensions": 1.0, "age": 75}], "enfants": 1, "veuf": True},
     "invalide": {"declarants": [{"salaires": 0.5, "invalide": True}]},
     "couple_mono_emploi": {"declarants": [{"salaires": 1.0}, {}], "enfants": 1},
+    "artisan_adherent": {"declarants": [{"benefices": 1.0}]},
+    "liberal_adherent": {"declarants": [{"benefices": 1.0, "categorie": "bnc"}]},
+    "non_adherent": {"declarants": [{"benefices": 1.0, "regime": "reel_non_adherent"}]},
+    "deficit": {"declarants": [{"salaires": 1.0}, {"benefices": -0.3, "regime": "micro"}]},
 }
 NIVEAUX_IMPOT = (0.25, 0.7, 1.6, 5.0)
 
@@ -109,7 +113,8 @@ def _demandes_d_impot() -> list[dict]:
         for nom, foyer in FOYERS_IMPOT.items():
             for niveau in NIVEAUX_IMPOT:
                 declarants = [{cle: (valeur * niveau * echelle
-                                     if cle in ("salaires", "pensions") else valeur)
+                                     if cle in ("salaires", "pensions", "benefices")
+                                     else valeur)
                                for cle, valeur in d.items()} for d in foyer["declarants"]]
                 for unite in (("euro", "monnaie") if annee == 1975 else ("euro",)):
                     demandes.append({
@@ -185,7 +190,7 @@ def _python(carrieres, conventions, equilibres):
         sous_l_impot = cycle_de_vie.flux_des_systemes(simulateur, comparaison, impot="prix")
         actuel = sous_l_impot["actuel"]
         cas.append({
-            "impots": {str(annee): [i.salaire, i.pension, i.impot, i.sur_la_pension]
+            "impots": {str(annee): [i.salaire, i.benefice, i.pension, i.impot, i.sur_la_pension]
                        for annee, i in actuel.impots.items()},
             "revenus_apres_impot": _par_annee(actuel.revenus_apres_impot),
             "dernier_revenu_apres_impot": actuel.dernier_revenu_apres_impot,
@@ -371,7 +376,8 @@ def test_la_grille_de_l_impot_a_un_objet(les_deux):
                   "reduction_sous_condition_de_revenus", "minoration_exceptionnelle",
                   "majoration_exceptionnelle", "reduction_exceptionnelle",
                   "reduction_proportionnelle", "prime_pour_l_emploi", "credit_exceptionnel",
-                  "abattement_vingt_pour_cent", "abattement_age_invalidite"):
+                  "abattement_vingt_pour_cent", "abattement_age_invalidite",
+                  "abattement_adherents", "majoration_des_benefices"):
         assert any(i[etape] for i in attendu["impots"]), etape
 
 
@@ -393,8 +399,7 @@ def test_les_revenus_nets_ont_un_objet(les_deux):
 def test_l_impot_a_un_objet(les_deux):
     """Le contrôle de l'impôt a un objet : le salarié paie l'impôt de son
     salaire, puis de sa pension, et l'impôt déplace les indicateurs ;
-    l'artisan, dont le bénéfice n'est pas imposé, n'a pas de revenus après
-    impôt."""
+    l'artisan déclare son bénéfice, et a ses revenus après impôt."""
     obtenu, _ = les_deux
     cadre = obtenu["cas"][3]
     assert sum(1 for *_, impot, _ in cadre["impots"].values() if impot > 0) > 40
@@ -404,8 +409,9 @@ def test_l_impot_a_un_objet(les_deux):
                 < cadre["indicateurs"]["nette"][scenario]["rendement_reel"])
     assert all(cadre["remplacements_apres_impot"].values())
     artisan = obtenu["cas"][5]
-    assert artisan["revenus_apres_impot"] is None
-    assert artisan["indicateurs"]["apres_impot"]["actuel"]["taux_annuite"] is None
+    assert sum(1 for _, benefice, *_ in artisan["impots"].values() if benefice > 0) > 30
+    assert artisan["revenus_apres_impot"] is not None
+    assert artisan["indicateurs"]["apres_impot"]["actuel"]["taux_annuite"] is not None
 
 
 def test_une_convention_apres_impot_veut_ses_flux():

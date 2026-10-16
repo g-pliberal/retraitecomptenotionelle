@@ -63,7 +63,7 @@ const cas = demande.cas.map(({ carriere: options, conventions }) => {
     const actuel = sousLImpot.actuel;
     return {
       impots: Object.fromEntries([...actuel.impots].map(([annee, i]) => [annee,
-        [i.salaire, i.pension, i.impot, i.sur_la_pension]])),
+        [i.salaire, i.benefice, i.pension, i.impot, i.sur_la_pension]])),
       revenus_apres_impot: parAnnee(actuel.revenus_apres_impot),
       dernier_revenu_apres_impot: actuel.dernier_revenu_apres_impot,
       remplacements_apres_impot: Object.fromEntries(demande.remplacements.map((scenario) => [

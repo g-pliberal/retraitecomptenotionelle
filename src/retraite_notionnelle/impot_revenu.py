@@ -11,8 +11,8 @@ de cycle de vie le prennent, après impôt
 et la page Coût le prendront plus tard.
 
 LE FOYER. Une personne seule — célibataire, divorcée ou veuve — ou un couple
-marié ou pacsé, imposé en commun ; des enfants à charge ou non ; des salaires
-et des pensions imposables, c'est-à-dire déjà nets de la CSG déductible de
+marié ou pacsé, imposé en commun ; des enfants à charge ou non ; des salaires,
+des bénéfices d'indépendant et des pensions imposables, c'est-à-dire déjà nets de la CSG déductible de
 leur année (:func:`~retraite_notionnelle.cycle_de_vie.revenus_imposables`,
 :func:`~retraite_notionnelle.cycle_de_vie.parts_imposables_par_annee`) : ce
 module part du net imposable. Chaque déclarant dit son âge au 31 décembre de
@@ -32,7 +32,10 @@ successives :
    a), au moins un minimum par pensionné, au plus un maximum par foyer ;
    jusqu'aux revenus de 2005, 80 % seulement de leur somme, l'abattement de
    20 % s'appréciant pour chaque membre du foyer jusqu'à sa limite (DB 5 F
-   3122) ;
+   3122) ; les bénéfices d'un indépendant, sans frais professionnels, réduits
+   de l'abattement des adhérents d'un organisme de gestion agréé de 1978 à
+   2005, majorés pour qui n'y adhère pas de 2006 à 2022
+   (:func:`benefice_retenu`) ;
 2. le revenu net global, puis l'abattement des personnes de plus de 65 ans ou
    invalides (art. 157 bis), le revenu net imposable, arrondi ;
 3. le nombre de parts (art. 194 et 195) : un, deux pour un couple ou un veuf
@@ -61,7 +64,9 @@ franc le plus proche depuis 1979, à la dizaine de centimes avant (art. 1657,
 1), puis à l'euro le plus proche.
 
 CE QU'IL NE FAIT PAS, et que :data:`HORS_CHAMP` énumère : les revenus autres
-que les salaires et les pensions, les charges déductibles, les réductions et
+que les salaires, les bénéfices et les pensions, le bénéfice des régimes micro
+(qu'on lui donne déjà réduit de son abattement forfaitaire), les revenus non
+salariés de la prime pour l'emploi, les charges déductibles, les réductions et
 crédits d'impôt autres que la prime pour l'emploi, les réductions de 2001 et
 de 2013 et le crédit de 2008, les demi-parts des anciens combattants et de
 qui vit seul après avoir élevé un enfant (case L), les enfants en résidence
@@ -82,7 +87,10 @@ from .somme import somme_ordonnee
 
 #: Ce que le module ne calcule pas : voir l'en-tête.
 HORS_CHAMP = (
-    "revenus autres que les salaires et les pensions",
+    "revenus autres que les salaires, les bénéfices et les pensions",
+    "abattement forfaitaire des régimes micro : le bénéfice s'entend après lui",
+    "revenus d'activité non salariée de la prime pour l'emploi",
+    "limites de chiffre d'affaires de l'abattement des adhérents, de 1978 à 1982",
     "charges déductibles et pensions alimentaires",
     "réductions et crédits d'impôt autres que la prime pour l'emploi, les réductions de 2001 "
     "et de 2013 et le crédit de 2008",
@@ -120,6 +128,61 @@ PREMIERE_ANNEE_PLAFONNEMENT = 1981
 #: (LEGIARTI000006303356).
 PREMIERE_ANNEE_SEUIL_DE_LA_PPE = 2005
 
+#: LE BÉNÉFICE D'UN INDÉPENDANT (art. 158, 4 bis et 7, lus dans LEGI le 16
+#: octobre 2026). Ses régimes : le réel, adhérent d'un centre ou d'une
+#: association de gestion agréés (ou de ce que le 7 leur assimile, l'expert-
+#: comptable conventionné), le réel sans eux, et le micro, dont le
+#: bénéfice s'entend après son abattement forfaitaire et qui n'a ni
+#: abattement ni majoration.
+REGIMES_DU_BENEFICE = ("reel_adherent", "reel_non_adherent", "micro")
+
+#: Ses catégories : les bénéfices industriels et commerciaux (l'artisan, le
+#: commerçant), les bénéfices non commerciaux (le libéral), les bénéfices
+#: agricoles.
+CATEGORIES_DU_BENEFICE = ("bic", "bnc", "ba")
+
+#: L'abattement des adhérents, de 20 % : la première année de revenus que
+#: l'index LEGI en donne, sa rédaction du 1er juillet 1979
+#: (LEGIARTI000006307959, « pour l'imposition des revenus de 1978 et de
+#: 1979 ») ; il naît plus tôt, dans une rédaction que l'index n'a pas. Les
+#: bénéfices non commerciaux n'y entrent qu'avec les associations agréées, à
+#: la rédaction du 15 juillet 1985 (LEGIARTI000006307964, revenus de 1984) ;
+#: avant, l'abattement ne vise que « la catégorie des bénéfices industriels
+#: et commerciaux ou des bénéfices agricoles ».
+PREMIERE_ANNEE_ABATTEMENT_ADHERENTS = 1978
+PREMIERE_ANNEE_ABATTEMENT_BNC = 1984
+#: La dernière, avant que le barème de 2006 ne l'intègre (LEGIARTI000006307988).
+DERNIERE_ANNEE_ABATTEMENT_ADHERENTS = 2005
+
+#: Jusqu'aux revenus de 1995, « le taux de l'abattement est ramené à 10 %
+#: pour la fraction du bénéfice qui excède » un seuil, en francs : 150 000 F
+#: pour les revenus de 1978 à 1981, 165 000 F pour ceux de 1982 et 1983, puis
+#: la limite du cinquième alinéa du a du 5, celle des salaires des dirigeants
+#: (de 182 000 F pour les revenus de 1984 à 469 000 F pour ceux de 1995). Chaque montant est celui de la
+#: rédaction en vigueur au milieu de l'année qui suit les revenus — celle qui
+#: écrit le plafond de ces revenus —, sans l'indexation annuelle que le code
+#: prescrit quand une rédaction n'en écrit pas de nouveau (1988, 1992, 1993).
+#: La rédaction du 11 avril 1997 (LEGIARTI000006307975, revenus de 1996)
+#: supprime la fraction à 10 %.
+SEUILS_ABATTEMENT_REDUIT = {
+    1978: 150000, 1979: 150000, 1980: 150000, 1981: 150000,
+    1982: 165000, 1983: 165000, 1984: 182000, 1985: 192200, 1986: 250000,
+    1987: 320000, 1988: 320000, 1989: 413200, 1990: 426400, 1991: 440000,
+    1992: 440000, 1993: 440000, 1994: 469000, 1995: 469000,
+}
+
+#: La majoration du bénéfice au réel de qui n'adhère pas (art. 158, 7, 1°) :
+#: 1,25 de sa rédaction du 31 décembre 2006 (LEGIARTI000006307988, revenus de
+#: 2006) aux revenus de 2019 ; puis 1,20, 1,15 et 1,10 pour les revenus de
+#: 2020, 2021 et 2022 (loi n° 2020-1721, art. 34, que l'index n'a pas, lu au
+#: BOFiP, BOI-IR-BASE-10-10-20-20210512, n° 55) ; abrogée « à compter de
+#: l'imposition des revenus de l'année 2023 » (LEGIARTI000042978882). Un
+#: déficit n'est pas majoré (même BOI, n° 90).
+PREMIERE_ANNEE_MAJORATION = 2006
+COEFFICIENT_MAJORATION = 1.25
+COEFFICIENTS_MAJORATION_DEGRESSIFS = {2020: 1.20, 2021: 1.15, 2022: 1.10}
+DERNIERE_ANNEE_MAJORATION = 2022
+
 
 @dataclass(frozen=True)
 class Declarant:
@@ -133,6 +196,19 @@ class Declarant:
     #: Âge atteint au 31 décembre de l'année des revenus.
     age: int | None = None
     invalide: bool = False
+    #: Bénéfice imposable d'une activité indépendante, net de ses cotisations
+    #: sociales et de la CSG déductible ; négatif, un déficit.
+    benefices: float = 0.0
+    #: Son régime (:data:`REGIMES_DU_BENEFICE`) et sa catégorie
+    #: (:data:`CATEGORIES_DU_BENEFICE`).
+    regime: str = "reel_adherent"
+    categorie: str = "bic"
+
+    def __post_init__(self):
+        if self.regime not in REGIMES_DU_BENEFICE:
+            raise ValueError(f"régime du bénéfice inconnu : {self.regime!r}")
+        if self.categorie not in CATEGORIES_DU_BENEFICE:
+            raise ValueError(f"catégorie du bénéfice inconnue : {self.categorie!r}")
 
 
 @dataclass(frozen=True)
@@ -187,6 +263,11 @@ class ImpotDuFoyer:
     salaires_nets: tuple[float, ...]
     pensions_nettes: tuple[float, ...]
     abattement_vingt_pour_cent: float
+    #: Par déclarant, le bénéfice retenu (:func:`benefice_retenu`), et, pour
+    #: le foyer, l'abattement des adhérents et la majoration qu'il a reçus.
+    benefices_retenus: tuple[float, ...]
+    abattement_adherents: float
+    majoration_des_benefices: float
     revenu_net_global: float
     abattement_age_invalidite: float
     revenu_net_imposable: float
@@ -338,6 +419,43 @@ def _revenus_nets(foyer: Foyer, parametres: ParametresImpot, salaires: tuple[flo
                 abattement += 0.10 * max(base - limite, 0.0)
             vingt += _arrondir_element(annee, abattement)
     return tuple(salaires_nets), tuple(pensions_nettes), vingt
+
+
+def benefice_retenu(declarant: Declarant, parametres: ParametresImpot,
+                    benefice: float | None = None) -> float:
+    """Le bénéfice d'un déclarant tel que l'impôt le retient (art. 158) : réduit,
+    de 1978 à 2005, de l'abattement de 20 % de l'adhérent d'un organisme de
+    gestion agréé, à 10 % sur la fraction qui excède le seuil de l'année
+    jusqu'en 1995 (:data:`SEUILS_ABATTEMENT_REDUIT`), et nul au-delà de la
+    limite de l'abattement de 20 % des salaires (« la limite fixée au
+    cinquième alinéa du a du 5 ») ; majoré, de 2006 à 2022, pour qui n'adhère
+    pas. Un déficit, le bénéfice d'un régime micro, ceux des autres années
+    restent tels quels. ``benefice``, dans la monnaie de l'année, remplace
+    celui du déclarant."""
+    annee = parametres.annee
+    benefice = declarant.benefices if benefice is None else benefice
+    if benefice <= 0.0 or declarant.regime == "micro":
+        return benefice
+    if declarant.regime == "reel_non_adherent":
+        if not PREMIERE_ANNEE_MAJORATION <= annee <= DERNIERE_ANNEE_MAJORATION:
+            return benefice
+        coefficient = COEFFICIENTS_MAJORATION_DEGRESSIFS.get(annee, COEFFICIENT_MAJORATION)
+        return _arrondir_element(annee, benefice * coefficient)
+    return benefice - _abattement_adherent(declarant, parametres, benefice)
+
+
+def _abattement_adherent(declarant: Declarant, parametres: ParametresImpot,
+                         benefice: float) -> float:
+    """L'abattement de l'article 158, 4 bis, d'un bénéfice positif d'adhérent."""
+    annee = parametres.annee
+    premiere = (PREMIERE_ANNEE_ABATTEMENT_BNC if declarant.categorie == "bnc"
+                else PREMIERE_ANNEE_ABATTEMENT_ADHERENTS)
+    if not premiere <= annee <= DERNIERE_ANNEE_ABATTEMENT_ADHERENTS:
+        return 0.0
+    plafond = parametres["deductions"].get("vingt_pour_cent_plafond", math.inf)
+    seuil = min(SEUILS_ABATTEMENT_REDUIT.get(annee, plafond), plafond)
+    abattement = 0.20 * min(benefice, seuil) + 0.10 * max(min(benefice, plafond) - seuil, 0.0)
+    return _arrondir_element(annee, abattement)
 
 
 def _abattement_age_invalidite(foyer: Foyer, parametres: ParametresImpot,
@@ -653,7 +771,8 @@ def prime_pour_l_emploi(foyer: Foyer, parametres: ParametresImpot,
 
 
 def _remarques(foyer: Foyer, parametres: ParametresImpot, la_decote: float,
-               minoration: float, majoration: float, ppe: float) -> tuple[str, ...]:
+               minoration: float, majoration: float, ppe: float,
+               benefices: tuple[float, ...] = ()) -> tuple[str, ...]:
     """Ce que le calcul de ce foyer doit à une règle qu'aucun texte lu ne
     porte, ou à une hypothèse."""
     annee = parametres.annee
@@ -671,6 +790,15 @@ def _remarques(foyer: Foyer, parametres: ParametresImpot, la_decote: float,
         remarques.append("prime pour l'emploi d'un travail à temps plein toute l'année")
     if annee < PREMIERE_ANNEE_PLAFONNEMENT and any(d.invalide for d in foyer.declarants):
         remarques.append("invalide : les régimes des couples d'avant 1981 ne sont pas repris")
+    adherents = [b for d, b in zip(foyer.declarants, benefices)
+                 if b > 0 and d.regime == "reel_adherent"]
+    if adherents and annee < PREMIERE_ANNEE_ABATTEMENT_ADHERENTS:
+        remarques.append("bénéfice d'un adhérent d'avant 1978 : l'abattement de sa rédaction, "
+                         "que l'index n'a pas, n'est pas appliqué")
+    if any(b > SEUILS_ABATTEMENT_REDUIT.get(annee, math.inf) for b in adherents):
+        remarques.append("abattement des adhérents : le seuil de sa fraction à 10 % est celui de "
+                         "la rédaction de l'année, sans l'indexation que le code prescrit, "
+                         "et sa limite celle des salaires")
     return tuple(remarques)
 
 
@@ -711,14 +839,22 @@ def impot_aux_parametres(foyer: Foyer, parametres: ParametresImpot, *,
     salaires = tuple(_au_plus_proche(d.salaires * vers) for d in foyer.declarants)
     pensions = tuple(_au_plus_proche(d.pensions * vers) for d in foyer.declarants)
     salaires_nets, pensions_nettes, vingt = _revenus_nets(foyer, parametres, salaires, pensions)
+    benefices = tuple(_au_plus_proche(d.benefices * vers) for d in foyer.declarants)
+    retenus = tuple(benefice_retenu(d, parametres, b) for d, b in zip(foyer.declarants, benefices))
+    abattement_adherents = somme_ordonnee(max(b - r, 0.0) for b, r in zip(benefices, retenus))
+    majoration_benefices = somme_ordonnee(max(r - b, 0.0) for b, r in zip(benefices, retenus))
     revenu_net_global = max(somme_ordonnee(salaires_nets) + somme_ordonnee(pensions_nettes)
-                            - vingt, 0.0)
+                            - vingt + somme_ordonnee(retenus), 0.0)
     revenu_net_global = _arrondir_element(annee, revenu_net_global)
     abattement = min(_abattement_age_invalidite(foyer, parametres, revenu_net_global),
                      revenu_net_global)
     revenu = _arrondir_revenu_imposable(annee, revenu_net_global - abattement)
     assiette = {"salaires_nets": salaires_nets, "pensions_nettes": pensions_nettes,
-                "abattement_vingt_pour_cent": vingt, "revenu_net_global": revenu_net_global,
+                "abattement_vingt_pour_cent": vingt, "benefices": benefices,
+                "benefices_retenus": retenus,
+                "abattement_adherents": abattement_adherents,
+                "majoration_des_benefices": majoration_benefices,
+                "revenu_net_global": revenu_net_global,
                 "abattement_age_invalidite": abattement}
     return _liquider(foyer, parametres, revenu, salaires, assiette, unite, vers)
 
@@ -733,6 +869,8 @@ def impot_d_un_revenu_imposable(foyer: Foyer, annee: int, revenu_net_imposable: 
     vers = _conversion(parametres, unite)
     revenu = _arrondir_revenu_imposable(annee, revenu_net_imposable * vers)
     assiette = {"salaires_nets": (), "pensions_nettes": (), "abattement_vingt_pour_cent": 0.0,
+                "benefices_retenus": (), "abattement_adherents": 0.0,
+                "majoration_des_benefices": 0.0,
                 "revenu_net_global": revenu, "abattement_age_invalidite": 0.0}
     return _liquider(foyer, parametres, revenu, (), assiette, unite, vers)
 
@@ -780,6 +918,9 @@ def _liquider(foyer: Foyer, parametres: ParametresImpot, revenu: float,
         salaires_nets=tuple(s * retour for s in assiette["salaires_nets"]),
         pensions_nettes=tuple(p * retour for p in assiette["pensions_nettes"]),
         abattement_vingt_pour_cent=assiette["abattement_vingt_pour_cent"] * retour,
+        benefices_retenus=tuple(b * retour for b in assiette["benefices_retenus"]),
+        abattement_adherents=assiette["abattement_adherents"] * retour,
+        majoration_des_benefices=assiette["majoration_des_benefices"] * retour,
         revenu_net_global=assiette["revenu_net_global"] * retour,
         abattement_age_invalidite=assiette["abattement_age_invalidite"] * retour,
         revenu_net_imposable=revenu * retour,
@@ -800,5 +941,6 @@ def _liquider(foyer: Foyer, parametres: ParametresImpot, revenu: float,
         mis_en_recouvrement=mis_en_recouvrement,
         impot=net * retour,
         fiabilite=parametres.fiabilite,
-        remarques=_remarques(foyer, parametres, la_decote, minoration, majoration, ppe),
+        remarques=_remarques(foyer, parametres, la_decote, minoration, majoration, ppe,
+                             assiette.get("benefices", ())),
     )

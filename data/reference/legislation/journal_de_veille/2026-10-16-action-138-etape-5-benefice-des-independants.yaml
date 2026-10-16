@@ -1,0 +1,24 @@
+date: "2026-10-16"
+session: "action 138, étape 5, septième partie : le bénéfice des indépendants dans l'impôt sur le revenu"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche de la carte touchée, la
+  session n'écrivant aucune règle du scénario 1. L'index LEGI de la DILA (à
+  jour au 11 octobre 2026) : toutes les rédactions de l'article 158 du code
+  général des impôts, de celle du 1er juillet 1979 (LEGIARTI000006307959) à
+  celle du 1er janvier 2024 (LEGIARTI000042978882), leur 4 bis et leur 7.
+  L'index du JORF, pour l'article 34 de la loi n° 2020-1721 : absent. Le
+  BOFiP, BOI-IR-BASE-10-10-20-20210512 (n° 55, 90, 100).
+trouve: >-
+  L'abattement de 20 % des adhérents d'un organisme de gestion agréé, des
+  revenus de 1978 à ceux de 2005 (des bénéfices non commerciaux à partir de
+  1984), à 10 % au-delà d'un seuil jusqu'en 1995 ; la majoration du bénéfice
+  de qui n'adhère pas, 1,25 de 2006 à 2019, 1,20, 1,15 et 1,10 de 2020 à 2022,
+  abrogée pour les revenus de 2023 ; le déficit non majoré, le revenu fiscal
+  de référence majoré. Écrits dans `impot_revenu.py` et son jumeau.
+reste: >-
+  L'abattement des adhérents d'avant 1978, dans une rédaction que l'index n'a
+  pas (loi de finances rectificative pour 1974) ; l'indexation annuelle des
+  seuils de la fraction à 10 % les années où le code n'en écrit pas ; les
+  revenus non salariés de la prime pour l'emploi ; l'année de revenus de
+  l'imposition de la majoration pour enfants, au texte de la loi de finances
+  pour 2014 ; les règles d'avant 1981 sans texte lu.

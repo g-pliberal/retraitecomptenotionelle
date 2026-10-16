@@ -6,7 +6,7 @@
  * Les barèmes de 1960 à la dernière loi de finances lue, marche par marche,
  * projetés au-delà sur les prix ou sur le salaire moyen ; l'impôt d'un foyer
  * — une personne seule ou un couple, des enfants à charge ou non, des
- * salaires et des pensions imposables — étape par étape, dans l'ordre de
+ * salaires, des bénéfices d'indépendant et des pensions imposables — étape par étape, dans l'ordre de
  * l'article 193 du code général des impôts, avec les arrondis du code et le
  * calcul en francs des années en francs. Les indicateurs de cycle de vie
  * (`cycle-de-vie.js`) en tirent leur convention après impôt. Le paquet porte
@@ -56,7 +56,10 @@ export const CLES_DE_SOURCE = Object.freeze(["annee", "texte", "note", "origine"
 
 /** Ce que le module ne calcule pas : voir l'en-tête de `impot_revenu.py`. */
 export const HORS_CHAMP = Object.freeze([
-  "revenus autres que les salaires et les pensions",
+  "revenus autres que les salaires, les bénéfices et les pensions",
+  "abattement forfaitaire des régimes micro : le bénéfice s'entend après lui",
+  "revenus d'activité non salariée de la prime pour l'emploi",
+  "limites de chiffre d'affaires de l'abattement des adhérents, de 1978 à 1982",
   "charges déductibles et pensions alimentaires",
   "réductions et crédits d'impôt autres que la prime pour l'emploi, les réductions de 2001 "
     + "et de 2013 et le crédit de 2008",
@@ -79,6 +82,25 @@ export const PREMIERE_ANNEE_PLAFONNEMENT = 1981;
 
 /** Depuis les revenus de 2005, le montant minimal de la prime pour l'emploi est un seuil. */
 export const PREMIERE_ANNEE_SEUIL_DE_LA_PPE = 2005;
+
+/** Le bénéfice d'un indépendant (art. 158, 4 bis et 7) : voir `impot_revenu.py`. */
+export const REGIMES_DU_BENEFICE = Object.freeze(["reel_adherent", "reel_non_adherent", "micro"]);
+export const CATEGORIES_DU_BENEFICE = Object.freeze(["bic", "bnc", "ba"]);
+export const PREMIERE_ANNEE_ABATTEMENT_ADHERENTS = 1978;
+export const PREMIERE_ANNEE_ABATTEMENT_BNC = 1984;
+export const DERNIERE_ANNEE_ABATTEMENT_ADHERENTS = 2005;
+/** Le seuil, en francs, au-delà duquel l'abattement des adhérents tombe à 10 %, jusqu'en 1995. */
+export const SEUILS_ABATTEMENT_REDUIT = Object.freeze({
+  1978: 150000, 1979: 150000, 1980: 150000, 1981: 150000,
+  1982: 165000, 1983: 165000, 1984: 182000, 1985: 192200, 1986: 250000,
+  1987: 320000, 1988: 320000, 1989: 413200, 1990: 426400, 1991: 440000,
+  1992: 440000, 1993: 440000, 1994: 469000, 1995: 469000,
+});
+/** La majoration du bénéfice au réel de qui n'adhère pas, de 2006 à 2022. */
+export const PREMIERE_ANNEE_MAJORATION = 2006;
+export const COEFFICIENT_MAJORATION = 1.25;
+export const COEFFICIENTS_MAJORATION_DEGRESSIFS = Object.freeze({ 2020: 1.20, 2021: 1.15, 2022: 1.10 });
+export const DERNIERE_ANNEE_MAJORATION = 2022;
 
 /** Python `round(x, 6)`. */
 function arrondi6(valeur) {
@@ -280,8 +302,17 @@ export function chargerBaremesImpotRevenu(paquet) {
 
 /** Un déclarant du foyer, ses revenus imposables de l'année et sa situation. */
 export class Declarant {
-  constructor({ salaires = 0.0, pensions = 0.0, age = null, invalide = false } = {}) {
-    Object.assign(this, { salaires, pensions, age, invalide });
+  constructor({
+    salaires = 0.0, pensions = 0.0, age = null, invalide = false, benefices = 0.0,
+    regime = "reel_adherent", categorie = "bic",
+  } = {}) {
+    if (!REGIMES_DU_BENEFICE.includes(regime)) {
+      throw new Error(`régime du bénéfice inconnu : '${regime}'`);
+    }
+    if (!CATEGORIES_DU_BENEFICE.includes(categorie)) {
+      throw new Error(`catégorie du bénéfice inconnue : '${categorie}'`);
+    }
+    Object.assign(this, { salaires, pensions, age, invalide, benefices, regime, categorie });
     Object.freeze(this);
   }
 }
@@ -417,6 +448,31 @@ function revenusNetsDuFoyer(foyer, parametres, salaires, pensions) {
 }
 
 /** L'abattement de l'article 157 bis, par déclarant de plus de 65 ans ou invalide. */
+/** Le bénéfice d'un déclarant tel que l'impôt le retient : voir `benefice_retenu`. */
+export function beneficeRetenu(declarant, parametres, benefice = null) {
+  const annee = parametres.annee;
+  const montant = benefice === null ? declarant.benefices : benefice;
+  if (montant <= 0.0 || declarant.regime === "micro") return montant;
+  if (declarant.regime === "reel_non_adherent") {
+    if (annee < PREMIERE_ANNEE_MAJORATION || annee > DERNIERE_ANNEE_MAJORATION) return montant;
+    const coefficient = obtenir(COEFFICIENTS_MAJORATION_DEGRESSIFS, annee, COEFFICIENT_MAJORATION);
+    return arrondirElement(annee, montant * coefficient);
+  }
+  return montant - abattementAdherent(declarant, parametres, montant);
+}
+
+function abattementAdherent(declarant, parametres, benefice) {
+  const annee = parametres.annee;
+  const premiere = declarant.categorie === "bnc"
+    ? PREMIERE_ANNEE_ABATTEMENT_BNC : PREMIERE_ANNEE_ABATTEMENT_ADHERENTS;
+  if (annee < premiere || annee > DERNIERE_ANNEE_ABATTEMENT_ADHERENTS) return 0.0;
+  const plafond = obtenir(parametres.serie("deductions"), "vingt_pour_cent_plafond", Infinity);
+  const seuil = Math.min(obtenir(SEUILS_ABATTEMENT_REDUIT, annee, plafond), plafond);
+  const abattement = 0.20 * Math.min(benefice, seuil)
+    + 0.10 * Math.max(Math.min(benefice, plafond) - seuil, 0.0);
+  return arrondirElement(annee, abattement);
+}
+
 function abattementAgeInvalidite(foyer, parametres, revenuNetGlobal) {
   const a = parametres.serie("abattement_age_invalidite");
   if (vide(a)) return 0.0;
@@ -661,7 +717,8 @@ export function primePourLEmploi(foyer, parametres, salaires, rfr, parts) {
   return prime;
 }
 
-function remarquesDe(foyer, parametres, laDecote, laMinoration, laMajoration, ppe) {
+function remarquesDe(foyer, parametres, laDecote, laMinoration, laMajoration, ppe,
+  benefices = []) {
   const annee = parametres.annee;
   const remarques = [];
   if (parametres.projete) {
@@ -679,6 +736,17 @@ function remarquesDe(foyer, parametres, laDecote, laMinoration, laMajoration, pp
   if (ppe) remarques.push("prime pour l'emploi d'un travail à temps plein toute l'année");
   if (annee < PREMIERE_ANNEE_PLAFONNEMENT && foyer.declarants.some((d) => d.invalide)) {
     remarques.push("invalide : les régimes des couples d'avant 1981 ne sont pas repris");
+  }
+  const adherents = benefices.filter((b, i) => b > 0
+    && foyer.declarants[i].regime === "reel_adherent");
+  if (adherents.length && annee < PREMIERE_ANNEE_ABATTEMENT_ADHERENTS) {
+    remarques.push("bénéfice d'un adhérent d'avant 1978 : l'abattement de sa rédaction, "
+      + "que l'index n'a pas, n'est pas appliqué");
+  }
+  if (adherents.some((b) => b > obtenir(SEUILS_ABATTEMENT_REDUIT, annee, Infinity))) {
+    remarques.push("abattement des adhérents : le seuil de sa fraction à 10 % est celui de "
+      + "la rédaction de l'année, sans l'indexation que le code prescrit, "
+      + "et sa limite celle des salaires");
   }
   return remarques;
 }
@@ -705,15 +773,21 @@ export function impotAuxParametres(foyer, parametres, { unite = "euro" } = {}) {
   const pensions = foyer.declarants.map((d) => auPlusProche(d.pensions * vers));
   const [salairesNets, pensionsNettes, vingt] = revenusNetsDuFoyer(
     foyer, parametres, salaires, pensions);
-  let revenuNetGlobal = Math.max(somme(salairesNets) + somme(pensionsNettes) - vingt, 0.0);
+  const benefices = foyer.declarants.map((d) => auPlusProche(d.benefices * vers));
+  const retenus = foyer.declarants.map((d, i) => beneficeRetenu(d, parametres, benefices[i]));
+  const abattementAdherents = somme(benefices.map((b, i) => Math.max(b - retenus[i], 0.0)));
+  const majorationBenefices = somme(benefices.map((b, i) => Math.max(retenus[i] - b, 0.0)));
+  let revenuNetGlobal = Math.max(somme(salairesNets) + somme(pensionsNettes) - vingt
+    + somme(retenus), 0.0);
   revenuNetGlobal = arrondirElement(annee, revenuNetGlobal);
   const abattement = Math.min(abattementAgeInvalidite(foyer, parametres, revenuNetGlobal),
     revenuNetGlobal);
   const revenu = arrondirRevenuImposable(annee, revenuNetGlobal - abattement);
   return liquider(foyer, parametres, revenu, salaires, {
     salaires_nets: salairesNets, pensions_nettes: pensionsNettes,
-    abattement_vingt_pour_cent: vingt, revenu_net_global: revenuNetGlobal,
-    abattement_age_invalidite: abattement,
+    abattement_vingt_pour_cent: vingt, benefices, benefices_retenus: retenus,
+    abattement_adherents: abattementAdherents, majoration_des_benefices: majorationBenefices,
+    revenu_net_global: revenuNetGlobal, abattement_age_invalidite: abattement,
   }, unite, vers);
 }
 
@@ -726,6 +800,7 @@ export function impotDUnRevenuImposable(foyer, annee, revenuNetImposable, bareme
   const revenu = arrondirRevenuImposable(annee, revenuNetImposable * vers);
   return liquider(foyer, parametres, revenu, [], {
     salaires_nets: [], pensions_nettes: [], abattement_vingt_pour_cent: 0.0,
+    benefices_retenus: [], abattement_adherents: 0.0, majoration_des_benefices: 0.0,
     revenu_net_global: revenu, abattement_age_invalidite: 0.0,
   }, unite, vers);
 }
@@ -766,6 +841,9 @@ function liquider(foyer, parametres, revenu, salaires, assiette, unite, vers) {
     salaires_nets: assiette.salaires_nets.map((s) => s * retour),
     pensions_nettes: assiette.pensions_nettes.map((p) => p * retour),
     abattement_vingt_pour_cent: assiette.abattement_vingt_pour_cent * retour,
+    benefices_retenus: assiette.benefices_retenus.map((b) => b * retour),
+    abattement_adherents: assiette.abattement_adherents * retour,
+    majoration_des_benefices: assiette.majoration_des_benefices * retour,
     revenu_net_global: assiette.revenu_net_global * retour,
     abattement_age_invalidite: assiette.abattement_age_invalidite * retour,
     revenu_net_imposable: revenu * retour,
@@ -786,6 +864,7 @@ function liquider(foyer, parametres, revenu, salaires, assiette, unite, vers) {
     mis_en_recouvrement: misEnRecouvrement,
     impot: net * retour,
     fiabilite: parametres.fiabilite,
-    remarques: remarquesDe(foyer, parametres, laDecote, laMinoration, laMajoration, ppe),
+    remarques: remarquesDe(foyer, parametres, laDecote, laMinoration, laMajoration, ppe,
+      assiette.benefices || []),
   });
 }

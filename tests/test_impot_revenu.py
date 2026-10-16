@@ -472,6 +472,61 @@ def _montant(valeur) -> str:
     return f"{int(valeur):,}".replace(",", " ")
 
 
+# -- Le bénéfice d'un indépendant ---------------------------------------------------
+
+
+def _benefice(baremes, annee, benefice, unite="euro", **declarant):
+    return impot_du_foyer(Foyer((Declarant(benefices=benefice, age=45, **declarant),)), annee,
+                          baremes, unite=unite)
+
+
+def test_le_benefice_de_qui_n_adhere_pas_est_majore_comme_le_bofip_l_illustre(baremes):
+    """BOI-IR-BASE-10-10-20-20210512, n° 90 : le bénéfice de 50 000 € des
+    revenus de 2019 d'un non-adhérent est retenu pour 62 500 € ; le déficit de
+    10 000 € reste de 10 000 €. Le revenu fiscal de référence porte la
+    majoration (n° 100). Puis 1,20, 1,15 et 1,10 de 2020 à 2022 (n° 55), rien
+    avant 2006 ni depuis 2023."""
+    majore = _benefice(baremes, 2019, 50000, regime="reel_non_adherent")
+    assert majore.benefices_retenus == (62500,) and majore.majoration_des_benefices == 12500
+    assert majore.revenu_fiscal_de_reference == 62500
+    deficit = impot_du_foyer(Foyer((Declarant(salaires=40000, benefices=-10000,
+                                              regime="reel_non_adherent"),)), 2019, baremes)
+    assert deficit.benefices_retenus == (-10000,)
+    assert deficit.revenu_net_global == 36000 - 10000
+    for annee, retenu in ((2005, 50000), (2006, 62500), (2020, 60000), (2021, 57500),
+                          (2022, 55000), (2023, 50000), (2025, 50000)):
+        assert _benefice(baremes, annee, 50000,
+                         regime="reel_non_adherent").benefices_retenus == (retenu,), annee
+    adherent = _benefice(baremes, 2019, 50000)
+    assert adherent.benefices_retenus == (50000,) and adherent.impot < majore.impot
+    assert _benefice(baremes, 2019, 50000, regime="micro").benefices_retenus == (50000,)
+
+
+def test_l_adherent_a_son_abattement_jusqu_en_2005(baremes):
+    """Art. 158, 4 bis : 20 % du bénéfice de l'adhérent de 1978 à 2005, sans
+    les 10 % de frais professionnels d'un salaire ; jusqu'en 1995, 10 % sur la
+    fraction qui excède le seuil de l'année — 150 000 F en 1980 —, rien
+    au-delà de la limite de l'abattement des salaires ; les bénéfices non
+    commerciaux à partir des revenus de 1984 seulement."""
+    en_2005 = _benefice(baremes, 2005, 50000)
+    assert en_2005.abattement_adherents == 10000 and en_2005.revenu_net_global == 40000
+    en_1980 = _benefice(baremes, 1980, 300000, unite="monnaie")
+    assert en_1980.abattement_adherents == pytest.approx(0.2 * 150000 + 0.1 * 150000)
+    assert any("fraction à 10 %" in r for r in en_1980.remarques)
+    plafond = _benefice(baremes, 1980, 1000000, unite="monnaie")
+    assert plafond.abattement_adherents == pytest.approx(0.2 * 150000 + 0.1 * (410000 - 150000))
+    en_1997 = _benefice(baremes, 1997, 300000, unite="monnaie")
+    assert en_1997.abattement_adherents == 60000
+    assert _benefice(baremes, 1983, 100000, unite="monnaie",
+                     categorie="bnc").abattement_adherents == 0
+    assert _benefice(baremes, 1984, 100000, unite="monnaie",
+                     categorie="bnc").abattement_adherents == 20000
+    avant = _benefice(baremes, 1975, 50000, unite="monnaie")
+    assert avant.abattement_adherents == 0 and any("avant 1978" in r for r in avant.remarques)
+    with pytest.raises(ValueError, match="régime"):
+        Declarant(benefices=1.0, regime="forfait")
+
+
 def test_les_valeurs_lues_dans_legi_y_sont():
     """Chaque montant que ``scripts/fetch/ipp_impot_revenu.py`` dit avoir lu dans
     une rédaction du code — ce qu'il ajoute à l'IPP, ce qu'il y corrige — s'y

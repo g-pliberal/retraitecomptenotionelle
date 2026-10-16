@@ -102,7 +102,9 @@ seule, sans enfant à charge, comme l'OCDE calcule ses taux nets
 (:func:`foyer_de_l_annee`), au barème de l'année, projeté au-delà de la
 dernière loi de finances lue sur les prix ou, comme l'OCDE, sur le salaire
 moyen. Le foyer déclare son net imposable : le revenu d'activité moins ses
-cotisations et la CSG déductible de son année (:func:`revenus_imposables`),
+cotisations et la CSG déductible de son année (:func:`revenus_imposables`) —
+pour un indépendant, son bénéfice, au réel et adhérent d'un organisme de
+gestion agréé (:func:`benefices_par_annee`) —,
 la pension moins la CSG déductible et la cotisation maladie de l'année où
 elle est servie (:func:`parts_imposables_par_annee`). L'année du départ, il
 déclare les deux, et leur impôt se partage au prorata (:func:`impots_par_annee`).
@@ -149,9 +151,10 @@ le taux réduit ni le médian que le revenu fiscal d'un foyer ouvrirait ; la
 maladie des pensions des régimes de base autres que le régime général, que
 l'IPP n'écrit pas, n'y est pas ; l'indépendant garde les prélèvements hors
 retraite de l'année courante. Après impôt, le foyer n'est jamais un couple ni
-un parent ; le bénéfice d'un indépendant n'est pas imposé
-(:func:`annees_hors_impot`), et ses revenus après impôt ne se calculent pas ;
-une année d'avant 1960, sans barème lu, ne paie pas d'impôt ; la majoration
+un parent ; le bénéfice d'un indépendant est celui d'un adhérent d'un
+organisme de gestion agréé, au réel, sans la majoration de qui n'y adhère
+pas ; l'année où il est aussi salarié, il se partage le revenu imposable au
+prorata des revenus bruts ; une année d'avant 1960, sans barème lu, ne paie pas d'impôt ; la majoration
 pour enfants, exonérée jusqu'à l'abrogation du 2° ter de l'article 81 du code
 général des impôts au 1er janvier 2014, s'impose à toute époque ; la prime pour
 l'emploi d'une année incomplète se calcule comme celle d'une année entière
@@ -295,9 +298,12 @@ class ImpotDeLAnnee:
     pension: float
     #: L'impôt du foyer, étape par étape.
     foyer: ImpotDuFoyer
-    #: La part de l'impôt que supporte la pension : au prorata des deux
-    #: revenus après leurs abattements de 10 %.
+    #: La part de l'impôt que supporte la pension : au prorata des revenus
+    #: après leurs abattements (:func:`_part_de_la_pension`).
     sur_la_pension: float
+    #: Le bénéfice imposable de l'année, en euros courants, que le foyer
+    #: déclare en plus de son salaire (:func:`benefices_par_annee`).
+    benefice: float = 0.0
 
     @property
     def impot(self) -> float:
@@ -306,6 +312,7 @@ class ImpotDeLAnnee:
 
     @property
     def sur_le_salaire(self) -> float:
+        """Ce que supporte le revenu d'activité, salaire ou bénéfice."""
         return self.foyer.impot - self.sur_la_pension
 
 
@@ -344,9 +351,7 @@ class Flux:
     impots: dict[int, ImpotDeLAnnee] | None = None
     #: Les revenus nets que l'impôt laisse, et le dernier revenu net d'une
     #: année entière d'impôt (:func:`dernier_revenu_apres_impot`) ; ``None``
-    #: quand une année de la carrière porte un revenu que le module de
-    #: l'impôt ne prend pas (:func:`annees_hors_impot`), ou qu'un statut n'a
-    #: pas de fiche de paie.
+    #: quand un statut n'a pas de fiche de paie.
     revenus_apres_impot: dict[int, float] | None = None
     dernier_revenu_apres_impot: float | None = None
 
@@ -1155,32 +1160,78 @@ def _baremes_de_l_impot(simulateur, indexation: str, derniere: int
 
 
 def foyer_de_l_annee(carriere, annee: int, salaire: float = 0.0,
-                     pension: float = 0.0) -> Foyer:
+                     pension: float = 0.0, benefice: float = 0.0,
+                     categorie: str = "bic") -> Foyer:
     """Le foyer fiscal de ``carriere`` l'année ``annee`` : une personne seule,
     sans enfant à charge, comme l'OCDE calcule ses taux nets, qui a au 31
     décembre l'âge de sa génération — à 65 ans, il ouvre l'abattement des
-    personnes âgées (CGI, art. 157 bis) — et déclare ``salaire`` et
-    ``pension``, imposables."""
-    return Foyer(declarants=(Declarant(salaires=salaire, pensions=pension,
+    personnes âgées (CGI, art. 157 bis) — et déclare ``salaire``,
+    ``benefice`` et ``pension``, imposables. Le bénéfice, de ``categorie``,
+    est celui d'un adhérent d'un organisme de gestion agréé, au réel : de 1978
+    à 2005 il a l'abattement des adhérents, de 2006 à 2022 il échappe à la
+    majoration (CGI, art. 158, 4 bis et 7 ;
+    :func:`~retraite_notionnelle.impot_revenu.benefice_retenu`)."""
+    return Foyer(declarants=(Declarant(salaires=salaire, pensions=pension, benefices=benefice,
+                                       categorie=categorie,
                                        age=annee - carriere.annee_naissance),))
 
 
-def annees_hors_impot(simulateur, carriere) -> frozenset[int]:
-    """Les années où ``carriere`` a un revenu d'indépendant : un bénéfice, que
-    l'impôt ne prend pas comme un salaire — sans l'abattement de 10 %, et
-    majoré pour qui n'adhérait pas à un organisme de gestion agréé, de 2006 à
-    l'abrogation de l'article 158, 7, 1° du code au 1er janvier 2024 —, et
-    que le module de l'impôt ne calcule pas
-    (:data:`~retraite_notionnelle.impot_revenu.HORS_CHAMP`)."""
-    return frozenset(
-        ligne.annee for ligne in carriere.lignes
-        if ligne.cotise and profil_de_la_fiche(simulateur.affiliations, simulateur.catalogue,
-                                               ligne.affiliation, ligne.annee) == "independant")
+#: Les familles d'indépendant dont le bénéfice est non commercial ; les
+#: autres — l'artisan, le commerçant — ont des bénéfices industriels et
+#: commerciaux.
+FAMILLES_BNC = ("liberal", "avocat")
+
+
+def benefices_par_annee(simulateur, carriere) -> dict[int, tuple[float, str]]:
+    """Les années où ``carriere`` a un revenu d'indépendant : la part de son
+    revenu imposable qui est un bénéfice — celle des revenus bruts des lignes
+    d'indépendant dans ceux des lignes cotisées de l'année, un l'année où il
+    n'est qu'indépendant — et la catégorie de ce bénéfice, non commercial
+    pour le libéral et l'avocat, industriel et commercial sinon, celle de la
+    ligne au plus fort revenu quand il en a plusieurs."""
+    revenus, independants = {}, {}
+    for ligne in carriere.lignes:
+        if not ligne.cotise:
+            continue
+        revenus[ligne.annee] = revenus.get(ligne.annee, 0.0) + ligne.revenu
+        profil = profil_de_la_fiche(simulateur.affiliations, simulateur.catalogue,
+                                    ligne.affiliation, ligne.annee)
+        if profil != "independant":
+            continue
+        regimes = simulateur.affiliations.regimes(ligne.affiliation, ligne.annee,
+                                                  carriere.date_entree(ligne.affiliation))
+        famille = famille_de_la_fiche(profil, regimes)
+        independants.setdefault(ligne.annee, []).append(
+            (ligne.revenu, "bnc" if famille in FAMILLES_BNC else "bic"))
+    benefices = {}
+    for annee, lignes in independants.items():
+        total = somme_ordonnee(revenu for revenu, _ in lignes)
+        part = total / revenus[annee] if revenus[annee] > 0.0 else 1.0
+        benefices[annee] = (min(part, 1.0), max(lignes, key=lambda l: l[0])[1])
+    return benefices
+
+
+def _partage_des_imposables(simulateur, carriere, imposables: dict[int, float]
+                            ) -> tuple[dict[int, float], dict[int, tuple[float, str]]]:
+    """Les revenus imposables de chaque année, partagés entre le salaire et
+    le bénéfice (:func:`benefices_par_annee`) : les salaires, et les
+    bénéfices avec leur catégorie."""
+    parts = benefices_par_annee(simulateur, carriere)
+    salaires, benefices = {}, {}
+    for annee, montant in imposables.items():
+        part, categorie = parts.get(annee, (0.0, "bic"))
+        if part < 1.0:
+            salaires[annee] = montant * (1.0 - part)
+        if part > 0.0:
+            benefices[annee] = (montant * part, categorie)
+    return salaires, benefices
 
 
 def impots_par_annee(simulateur, flux: Flux, carriere, parts: dict[int, float],
                      salaires: dict[int, float], indexation: str = "prix",
-                     derniere: int | None = None) -> dict[int, ImpotDeLAnnee]:
+                     derniere: int | None = None,
+                     benefices: dict[int, tuple[float, str]] | None = None
+                     ) -> dict[int, ImpotDeLAnnee]:
     """L'impôt sur le revenu de chaque année d'un flux, de la première de la
     carrière à la dernière que la pension peut atteindre : celui du foyer de
     l'année (:func:`foyer_de_l_annee`), qui déclare son salaire imposable —
@@ -1188,7 +1239,9 @@ def impots_par_annee(simulateur, flux: Flux, carriere, parts: dict[int, float],
     la part imposable de l'année (``parts``, :func:`parts_imposables_par_annee`)
     de ce que la pension sert dans l'année (:meth:`Flux.servi`), au barème de
     l'année, projeté au-delà de la dernière loi de finances lue sur
-    ``indexation``, jusqu'à ``derniere`` au moins.
+    ``indexation``, jusqu'à ``derniere`` au moins. ``benefices`` donne, pour
+    une année d'indépendant, son bénéfice imposable et sa catégorie
+    (:func:`_partage_des_imposables`).
 
     Chaque année de retraite se compte vécue en entier : l'impôt plus faible
     de l'année que le décès interrompt n'est pas calculé. L'année du départ,
@@ -1201,7 +1254,8 @@ def impots_par_annee(simulateur, flux: Flux, carriere, parts: dict[int, float],
         servie = niveau * flux.servi(annee)
         if servie > 0.0:
             pensions[annee] = servie * parts[annee]
-    annees = sorted(set(salaires) | set(pensions))
+    benefices = benefices or {}
+    annees = sorted(set(salaires) | set(benefices) | set(pensions))
     if not annees:
         return {}
     baremes = _baremes_de_l_impot(simulateur, indexation, max(annees[-1], derniere or 0))
@@ -1211,21 +1265,25 @@ def impots_par_annee(simulateur, flux: Flux, carriere, parts: dict[int, float],
         if parametres is None:
             continue
         salaire, pension = salaires.get(annee, 0.0), pensions.get(annee, 0.0)
-        foyer = impot_aux_parametres(foyer_de_l_annee(carriere, annee, salaire, pension),
-                                     parametres)
+        benefice, categorie = benefices.get(annee, (0.0, "bic"))
+        foyer = impot_aux_parametres(
+            foyer_de_l_annee(carriere, annee, salaire, pension, benefice, categorie), parametres)
         impots[annee] = ImpotDeLAnnee(annee=annee, salaire=salaire, pension=pension, foyer=foyer,
-                                      sur_la_pension=foyer.impot * _part_de_la_pension(foyer))
+                                      sur_la_pension=foyer.impot * _part_de_la_pension(foyer),
+                                      benefice=benefice)
     return impots
 
 
 def _part_de_la_pension(impot: ImpotDuFoyer) -> float:
     """La part de l'impôt d'un foyer que supporte sa pension : au prorata des
-    revenus après leurs abattements de 10 %."""
-    salaires = somme_ordonnee(impot.salaires_nets)
+    revenus après leurs abattements de 10 %, le bénéfice tel que l'impôt le
+    retient, un déficit ne comptant pour rien."""
+    activite = max(somme_ordonnee(impot.salaires_nets)
+                   + somme_ordonnee(impot.benefices_retenus), 0.0)
     pensions = somme_ordonnee(impot.pensions_nettes)
-    if salaires + pensions <= 0.0:
+    if activite + pensions <= 0.0:
         return 0.0
-    return pensions / (salaires + pensions)
+    return pensions / (activite + pensions)
 
 
 def avec_l_impot(simulateur, flux: Flux, carriere, parts: dict[int, float],
@@ -1235,36 +1293,36 @@ def avec_l_impot(simulateur, flux: Flux, carriere, parts: dict[int, float],
     (:func:`impots_par_annee`), les revenus nets qu'il laisse et le dernier
     revenu net d'une année entière d'impôt (:func:`dernier_revenu_apres_impot`).
 
-    ``imposables`` sont les salaires imposables de ``carriere``
+    ``imposables`` sont les revenus imposables de ``carriere``
     (:func:`revenus_imposables`), ``None`` pour un statut sans fiche de paie —
-    l'exploitant agricole —, dont la pension s'impose alors seule. Une année
-    où la carrière a un revenu que le module de l'impôt ne prend pas
-    (:func:`annees_hors_impot`) n'en déclare aucun : l'année du départ d'un
-    indépendant, sa pension s'impose seule. Les revenus après impôt ne se
-    calculent pas, alors, faute de l'impôt de ces années-là."""
-    hors = frozenset() if imposables is None else annees_hors_impot(simulateur, carriere)
-    salaires = {annee: montant for annee, montant in (imposables or {}).items()
-                if annee not in hors}
-    impots = impots_par_annee(simulateur, flux, carriere, parts, salaires, indexation, derniere)
+    l'exploitant agricole —, dont la pension s'impose alors seule. Ceux d'un
+    indépendant sont son bénéfice (:func:`_partage_des_imposables`)."""
+    salaires, benefices = (({}, {}) if imposables is None
+                           else _partage_des_imposables(simulateur, carriere, imposables))
+    impots = impots_par_annee(simulateur, flux, carriere, parts, salaires, indexation, derniere,
+                              benefices)
     apres = dernier = None
-    if flux.revenus_nets is not None and imposables is not None and not hors:
+    if flux.revenus_nets is not None and imposables is not None:
         apres = {annee: net - (impots[annee].sur_le_salaire if annee in impots else 0.0)
                  for annee, net in flux.revenus_nets.items()}
-        dernier = dernier_revenu_apres_impot(simulateur, flux, imposables, indexation, derniere)
+        dernier = dernier_revenu_apres_impot(simulateur, flux, imposables, indexation, derniere,
+                                             benefices)
     return replace(flux, indexation_impot=indexation, impots=impots, revenus_apres_impot=apres,
                    dernier_revenu_apres_impot=dernier)
 
 
 def dernier_revenu_apres_impot(simulateur, flux: Flux, imposables: dict[int, float],
-                               indexation: str = "prix", derniere: int | None = None
+                               indexation: str = "prix", derniere: int | None = None,
+                               benefices: dict[int, tuple[float, str]] | None = None
                                ) -> float | None:
     """Le dernier revenu annualisé (:attr:`Flux.dernier_revenu`), net de ses
     prélèvements (:attr:`Flux.dernier_revenu_net`) et de l'impôt d'une année
     entière de ce revenu, déclaré seul, au barème de l'année du départ — celle
     de ses euros — et sans l'abattement des personnes âgées, comme le revenu
     d'un actif. Son imposable est le dernier revenu fois le rapport de
-    l'imposable au brut de la dernière année cotisée. C'est le dernier salaire
-    net que l'OCDE oppose à la pension après impôt
+    l'imposable au brut de la dernière année cotisée, partagé comme elle
+    entre le salaire et le bénéfice (``benefices``, :func:`_partage_des_imposables`).
+    C'est le dernier salaire net que l'OCDE oppose à la pension après impôt
     (:func:`remplacement_apres_impot`) ; ``None`` sans dernier revenu net."""
     if flux.dernier_revenu_net is None or not flux.revenus:
         return None
@@ -1275,7 +1333,11 @@ def dernier_revenu_apres_impot(simulateur, flux: Flux, imposables: dict[int, flo
                                      max(depart, derniere or 0)).get(depart)
     if parametres is None:
         return flux.dernier_revenu_net
-    impot = impot_aux_parametres(Foyer(declarants=(Declarant(salaires=imposable),)), parametres)
+    benefice, categorie = (benefices or {}).get(annee, (0.0, "bic"))
+    part = benefice / imposables[annee] if benefice and imposables.get(annee) else 0.0
+    declarant = Declarant(salaires=imposable * (1.0 - part), benefices=imposable * part,
+                          categorie=categorie)
+    impot = impot_aux_parametres(Foyer(declarants=(declarant,)), parametres)
     return flux.dernier_revenu_net - impot.impot
 
 

@@ -587,29 +587,47 @@ def test_sur_le_salaire_moyen_le_bareme_projete_prend_moins(simulateur, parti_en
         assert salaires.impots[annee].impot < prix.impots[annee].impot, annee
 
 
-def test_le_benefice_d_un_independant_n_est_pas_impose(simulateur):
-    """Le module de l'impôt ne calcule pas le bénéfice d'un artisan : aucune
-    de ses années ne le déclare, ses revenus après impôt ne se calculent pas,
-    ni ce qui s'y rapporte ; sa pension paie l'impôt, seule l'année du départ.
-    Sans fiche de paie, la pension d'un exploitant s'impose seule aussi."""
+def test_le_benefice_d_un_independant_est_impose(simulateur):
+    """Le bénéfice d'un artisan s'impose comme celui d'un adhérent d'un
+    organisme de gestion agréé : chaque année cotisée le déclare, sans
+    l'abattement de 10 % des salaires, avec celui des adhérents jusqu'en 2005 ;
+    ses revenus après impôt se calculent, et ce qui s'y rapporte. Le libéral
+    déclare un bénéfice non commercial. Sans fiche de paie, la pension d'un
+    exploitant s'impose seule."""
     artisan = simulateur.simuler(simulateur.carriere_simple(
         annee_naissance=1970, sexe="H", affiliation="artisan", age_debut=24,
         age_liquidation=64, niveau_salaire=1.0))
-    assert cycle_de_vie.annees_hors_impot(simulateur, artisan.carriere) == frozenset(
-        cycle_de_vie.revenus_d_activite(artisan.carriere))
+    benefices = cycle_de_vie.benefices_par_annee(simulateur, artisan.carriere)
+    assert set(benefices) == set(cycle_de_vie.revenus_d_activite(artisan.carriere))
+    assert set(benefices.values()) == {(1.0, "bic")}
     flux = cycle_de_vie.flux_des_systemes(simulateur, artisan, impot="prix")["actuel"]
-    assert flux.revenus_apres_impot is None and flux.dernier_revenu_apres_impot is None
-    depart = flux.annee_liquidation
-    assert flux.impots[depart].salaire == 0.0 and flux.impots[depart + 1].impot > 0.0
+    assert flux.revenus_apres_impot is not None and flux.dernier_revenu_apres_impot is not None
+    imposables = cycle_de_vie.revenus_imposables(simulateur, artisan.carriere)
+    for annee in (2000, 2010, 2024):
+        impot = flux.impots[annee]
+        assert impot.salaire == 0.0 and impot.benefice == pytest.approx(imposables[annee])
+        assert impot.foyer.salaires_nets == (0.0,)
+        assert (impot.foyer.abattement_adherents > 0.0) == (annee <= 2005)
+        assert impot.foyer.majoration_des_benefices == 0.0
+        assert flux.revenus_apres_impot[annee] == pytest.approx(
+            flux.revenus_nets[annee] - impot.impot)
     resultat = cycle_de_vie.indicateurs(
         flux, simulateur, cycle_de_vie.convention_apres_impot(simulateur, artisan))
-    assert resultat.taux_annuite is None and resultat.rendement_reel is not None
+    nette = cycle_de_vie.indicateurs(
+        flux, simulateur, cycle_de_vie.convention_nette(simulateur, artisan))
+    assert resultat.taux_annuite is not None and resultat.rendement_reel is not None
+    assert resultat.rendement_reel < nette.rendement_reel
+    liberal = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1970, sexe="F", affiliation="profession_liberale", age_debut=26,
+        age_liquidation=64, niveau_salaire=1.5))
+    assert {c for _, c in cycle_de_vie.benefices_par_annee(
+        simulateur, liberal.carriere).values()} == {"bnc"}
     exploitant = simulateur.simuler(simulateur.carriere_simple(
         annee_naissance=1980, sexe="H", affiliation="exploitant_agricole", age_debut=20,
         age_liquidation=64, niveau_salaire=1.0))
     flux = cycle_de_vie.flux_des_systemes(simulateur, exploitant, impot="prix")["actuel"]
     assert flux.revenus_apres_impot is None
-    assert all(impot.salaire == 0.0 for impot in flux.impots.values())
+    assert all(impot.salaire == 0.0 and impot.benefice == 0.0 for impot in flux.impots.values())
 
 
 def test_une_convention_apres_impot_est_nette_et_demande_un_flux_impose(simulateur,
