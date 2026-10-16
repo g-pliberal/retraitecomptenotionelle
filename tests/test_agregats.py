@@ -235,7 +235,13 @@ def test_le_passe_et_l_avenir_figes_sont_ceux_que_le_modele_calcule(cout, montre
     avec_garantie = (*montres, COMPOSANTE_GARANTIE)
     assert (fige.premiere_annee, fige.annee_euros, fige.generations) == (
         cout.premiere_annee, cout.annee_euros, cout.generations)
-    assert (fige.poids, fige.poids_cotisants) == (cout.poids, cout.poids_cotisants)
+    # Par cas type de la page : l'agent sédentaire de la CNRACL compte avec
+    # l'actif dont il porte le code.
+    from retraite_notionnelle.donnees.agregats import _par_cas_type_affiche
+
+    assert (fige.poids, fige.poids_cotisants) == (
+        _par_cas_type_affiche(cout.poids), _par_cas_type_affiche(cout.poids_cotisants))
+    assert set(fige.poids) == {cas.code for cas in CAS_TYPES}
     assert fige.confondus_avec_actuel() == cout.confondus_avec_actuel()
     assert fige.cumul_observe() == cout.cumul_observe()
     for figee, calculee in zip(fige.annees, cout.annees, strict=True):

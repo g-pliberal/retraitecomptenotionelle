@@ -317,6 +317,17 @@ entree_fonction_publique:
 entree_cnracl:
   - {generation: 1963, annees: 6}
 
+# L'entrée tardive de l'agent SÉDENTAIRE de la CNRACL (action 138, étape 3),
+# de la même façon. Les sédentaires et les carrières longues de la caisse,
+# que le cas type porte ensemble, partent en 2025 avec 99,2 trimestres de
+# services en moyenne (89,9 et 116,3 ; jaune pensions annexé au PLF 2027,
+# tableau B-5), quand l'actif en a 127,6 : ce sont des polypensionnés, venus
+# tard à la fonction publique. Le cas type, entré dans la vie active à
+# 22 ans et parti au taux plein à 64 ans en 2025, en a 24,8 ans en passant
+# dix-sept ans sous contrat. Rien ne dit comment ce délai varie : il est tenu.
+entree_cnracl_sedentaire:
+  - {generation: 1961, annees: 17}
+
 traitement_indiciaire:
   annee_base: 2025
   nominal: {depuis: 2026, jusqu_a: 2027, taux: 0.001}

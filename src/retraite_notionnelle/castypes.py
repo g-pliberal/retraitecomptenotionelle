@@ -55,8 +55,16 @@ class CasType:
     #: Caisses de ``effectifs_retraites.csv`` dont ce cas type porte les
     #: retraités. C'est par elles qu'il reçoit son POIDS dans les agrégats :
     #: voir :func:`poids_effectifs`. Une caisse réclamée par plusieurs cas types
-    #: se partage entre eux.
+    #: se partage entre eux, également sauf si chacun déclare la sienne.
     caisses: tuple[str, ...] = ()
+    #: La part de ses caisses partagées que ce cas type porte, quand le
+    #: partage n'est pas égal : ``(("cnracl", 0.2),)``. Ce que la caisse compte
+    #: n'est pas une population homogène, et la part de chaque départ se
+    #: publie (action 138, étape 3). Ou tous les cas types qui réclament une
+    #: caisse dans la grille déclarent leur part, ou aucun : les parts déclarées
+    #: sont ramenées à leur somme, si bien qu'un cas type seul de sa caisse,
+    #: dans une grille réduite, la porte entière.
+    parts_caisses: tuple[tuple[str, float], ...] = ()
     #: Ce qui DATE le départ, quand ce n'est pas un nombre. Trois règles, et
     #: chacune répond à la question « qu'est-ce qui, pour cette carrière-là,
     #: commande le départ ? ».
@@ -237,6 +245,19 @@ def primes_projetees(carriere: Carriere, macro) -> Carriere:
     return carriere.avec_lignes(lignes)
 
 
+#: Les départs pour ancienneté de la CNRACL en 2025, au jaune pensions annexé
+#: au PLF 2027 (tableau B-5, ``macro/caracteristiques_fonction_publique.csv``) :
+#: en catégorie active, sédentaires, en carrière longue — ceux-ci sédentaires
+#: aussi, le tableau B-3bis ne comptant d'actifs que les 10 597 premiers. Un
+#: départ sur cinq est actif, et la grille n'en avait qu'un : la caisse entière
+#: partait au taux plein de la catégorie active (action 138, étape 3). Le flux,
+#: non le stock, que le jaune ne partage pas : ses retraités les plus âgés
+#: comptaient plus d'actifs — les infirmiers l'étaient tous avant 2010 —, mais
+#: la page Coût se joue dans la projection, que le flux d'aujourd'hui fait.
+DEPARTS_CNRACL_2025 = {"active": 10_597, "sedentaire": 27_477, "carriere_longue": 15_054}
+PART_ACTIVE_CNRACL = (DEPARTS_CNRACL_2025["active"]
+                      / somme_ordonnee(DEPARTS_CNRACL_2025.values()))
+
 #: Jeu de cas types couvrant les principales configurations du système.
 CAS_TYPES: tuple[CasType, ...] = (
     CasType(
@@ -313,6 +334,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         part_primes=0.22,
         profil_carriere="public_categorie_c",
         caisses=("cnracl",),
+        parts_caisses=(("cnracl", PART_ACTIVE_CNRACL),),
         affiliation_avant_entree="contractuel_public",
         serie_entree="entree_cnracl",
         commentaire=(
@@ -433,6 +455,47 @@ CAS_TYPES: tuple[CasType, ...] = (
     ),
 )
 
+def _cas(code: str) -> CasType:
+    return next(cas for cas in CAS_TYPES if cas.code == code)
+
+
+#: L'agent SÉDENTAIRE de la CNRACL, que la page Coût pèse avec l'actif et que
+#: la page Cas types ne montre pas : la même carrière de catégorie C, hors de
+#: l'emploi classé. Il part au taux plein des sédentaires — les sédentaires de
+#: la CNRACL sont mis en paiement à 64,0 ans en 2025, trois ans après les
+#: actifs (tableau B-5) —, à l'indice 489,5 contre 508, d'où son niveau, et
+#: avec un quart de services en moins : il entre tard à la caisse
+#: (``entree_cnracl_sedentaire``). Les
+#: deux portent la caisse dans la proportion de leurs départs
+#: (:data:`PART_ACTIVE_CNRACL`). Son code dit de quel cas type il est la
+#: variante : les poids que la page affiche l'y rapportent
+#: (:func:`cas_type_affiche`).
+AGENT_SEDENTAIRE_CNRACL = replace(
+    _cas("fonctionnaire_actif"),
+    code="fonctionnaire_actif~sedentaire",
+    libelle="Agent sédentaire de la fonction publique territoriale ou hospitalière",
+    affiliation="fonctionnaire_territorial_hospitalier",
+    age_liquidation=64,
+    niveau_salaire=round(0.9 * 489.5 / 508, 2),
+    parts_caisses=(("cnracl", 1.0 - PART_ACTIVE_CNRACL),),
+    serie_entree="entree_cnracl_sedentaire",
+    commentaire=(
+        "Agent technique, adjoint administratif territorial ou hospitalier, "
+        "hors catégorie active : quatre départs sur cinq de la CNRACL. La "
+        "pension ne s'ouvre qu'à l'âge légal, et il part au taux plein."
+    ),
+)
+
+#: La grille de la page Coût : les cas types de la page Cas types, et les
+#: variantes qui partagent leur caisse avec eux.
+GRILLE_DU_COUT: tuple[CasType, ...] = CAS_TYPES + (AGENT_SEDENTAIRE_CNRACL,)
+
+
+def cas_type_affiche(code: str) -> str:
+    """Le cas type de la page dont ``code`` est la variante, lui-même sinon."""
+    return code.split("~", 1)[0]
+
+
 #: Générations couvertes par défaut : de la première génération entièrement
 #: couverte par la Sécurité sociale aux actifs entrés récemment.
 GENERATIONS = (1940, 1950, 1960, 1970, 1980, 1990, 2000)
@@ -448,11 +511,14 @@ def poids_effectifs(effectifs: "EffectifsRetraites", annee: int,
     poids réel — et c'est ce que les effectifs de la DREES donnent.
 
     **La règle.** Chaque cas type reçoit l'effectif de ses caisses. Une caisse
-    réclamée par plusieurs cas types se partage ÉGALEMENT entre eux : la Cnav
-    est la caisse des quatre carrières du privé, et rien ne dit combien de ses
-    retraités ont été cadres, combien ont été au SMIC. C'est la seule part de
-    convention égalitaire qui subsiste, et elle ne joue plus qu'à l'intérieur du
-    salariat privé — non plus entre un agent de conduite et un salarié moyen.
+    réclamée par plusieurs cas types se partage entre eux selon la part que
+    chacun déclare (:attr:`CasType.parts_caisses`) quand elle se publie — la
+    CNRACL entre ses départs actifs et sédentaires, au jaune pensions —, et
+    ÉGALEMENT sinon : la Cnav est la caisse des quatre carrières du privé, et
+    rien ne dit combien de ses retraités ont été cadres, combien ont été au
+    SMIC. C'est la seule part de convention égalitaire qui subsiste, et elle ne
+    joue plus qu'à l'intérieur du salariat privé — non plus entre un agent de
+    conduite et un salarié moyen.
 
     **Les poids sont normalisés** : leur somme vaut un. Seul leur rapport
     importe — la masse de pensions est de toute façon divisée par celle du
@@ -462,14 +528,10 @@ def poids_effectifs(effectifs: "EffectifsRetraites", annee: int,
     serait une erreur silencieuse, et le contrôle qui l'interdit est dans les
     tests.
     """
-    reclamants: dict[str, int] = {}
-    for cas in cas_types:
-        for caisse in cas.caisses:
-            reclamants[caisse] = reclamants.get(caisse, 0) + 1
-
+    parts = parts_des_caisses(cas_types)
     bruts = {
         cas.code: somme_ordonnee(
-            effectifs.effectif(caisse, annee) / reclamants[caisse]
+            effectifs.effectif(caisse, annee) * parts[(cas.code, caisse)]
             for caisse in cas.caisses
         )
         for cas in cas_types
@@ -478,6 +540,34 @@ def poids_effectifs(effectifs: "EffectifsRetraites", annee: int,
     if total <= 0:
         raise ValueError(f"aucun effectif connu en {annee} pour pondérer les cas types")
     return {code: poids / total for code, poids in bruts.items()}
+
+
+def parts_des_caisses(cas_types: tuple[CasType, ...] = CAS_TYPES
+                      ) -> dict[tuple[str, str], float]:
+    """La part de chaque caisse que chaque cas type porte, ``(code, caisse)``.
+
+    Égale entre les cas types qui la réclament, sauf s'ils déclarent tous la
+    leur, ramenée alors à la somme des parts déclarées. Un partage où les uns
+    déclarent et les autres non lève : il n'y a pas de bonne façon de le lire.
+    """
+    reclamants: dict[str, list[CasType]] = {}
+    for cas in cas_types:
+        for caisse in cas.caisses:
+            reclamants.setdefault(caisse, []).append(cas)
+    parts: dict[tuple[str, str], float] = {}
+    for caisse, cas_de_la_caisse in reclamants.items():
+        declarees = [dict(cas.parts_caisses).get(caisse) for cas in cas_de_la_caisse]
+        if all(part is None for part in declarees):
+            for cas in cas_de_la_caisse:
+                parts[(cas.code, caisse)] = 1.0 / len(cas_de_la_caisse)
+            continue
+        if any(part is None for part in declarees) or any(part <= 0.0 for part in declarees):
+            raise ValueError(f"la caisse {caisse!r} : parts déclarées par les uns, "
+                             f"non par les autres, ou nulles")
+        total = somme_ordonnee(declarees)
+        for cas, part in zip(cas_de_la_caisse, declarees):
+            parts[(cas.code, caisse)] = part / total
+    return parts
 
 
 def poids_egaux(cas_types: tuple[CasType, ...] = CAS_TYPES) -> dict[str, float]:

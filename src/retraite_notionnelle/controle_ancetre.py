@@ -154,7 +154,7 @@ def controle(parametres=None) -> tuple[dict[str, float], dict[str, float]]:
     poids sont ceux de la page Coût, que la mémoire des calculs garde."""
     from . import Parametres, memoire
     from . import cout as module
-    from .castypes import CAS_TYPES
+    from .castypes import GRILLE_DU_COUT
     from .donnees.population import Population
     from .simulateur import Simulateur
 
@@ -162,8 +162,8 @@ def controle(parametres=None) -> tuple[dict[str, float], dict[str, float]]:
     simulateur = Simulateur(parametres)
     # La clé de ``memoire.cout`` pour sa grille : la même mémoire sert aux deux.
     pensionnes, _ = memoire.memoriser_pour(
-        parametres, ("grille_du_cout", parametres, CAS_TYPES, "droit"),
-        lambda: module._pensionnes(simulateur, CAS_TYPES, "droit"))
+        parametres, ("grille_du_cout", parametres, GRILLE_DU_COUT, "droit"),
+        lambda: module._pensionnes(simulateur, GRILLE_DU_COUT, "droit"))
     cout = memoire.cout(parametres)
     # La règle d'indexation de la page, depuis la plus ancienne liquidation.
     revalorisation = module.RevalorisationServie(
@@ -174,5 +174,5 @@ def controle(parametres=None) -> tuple[dict[str, float], dict[str, float]]:
         pensionnes, Population(parametres.racine_donnees, parametres.hypothese_esperance_vie),
         revalorisation,
         simulateur.macro.coefficient_prix(parametres.annee_euros_constants, ANNEE_ANCETRE))
-    caisses = {cas.code: cas.caisses[0] for cas in CAS_TYPES if cas.caisses}
+    caisses = {cas.code: cas.caisses[0] for cas in GRILLE_DU_COUT if cas.caisses}
     return pensions, par_regime_principal(pensions, cout.poids, caisses)

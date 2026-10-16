@@ -568,12 +568,12 @@ def cout(parametres: Parametres | None = None, *, comptes: bool = True,
     ``calculer_cout``, et la clé les porte toutes, défaut compris :
     ``convention_recette`` écrite ou non, c'est le même calcul.
     """
-    from .castypes import CAS_TYPES
+    from .castypes import GRILLE_DU_COUT
     from .cout import calculer_cout
 
     parametres = parametres if parametres is not None else Parametres()
     reglages = _reglages(calculer_cout, OPTIONS_DU_COUT, options)
-    grille = tuple(cas_types) if cas_types is not None else CAS_TYPES
+    grille = tuple(cas_types) if cas_types is not None else GRILLE_DU_COUT
 
     def calcul():
         from . import cout as module

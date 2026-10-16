@@ -457,6 +457,17 @@ def _figer_dette(dette, scenarios) -> dict:
     }
 
 
+def _par_cas_type_affiche(poids: dict[str, float]) -> dict[str, float]:
+    """Les poids de la grille du coût, rapportés aux cas types de la page
+    (``castypes.cas_type_affiche``), dans leur ordre."""
+    from ..castypes import cas_type_affiche
+
+    rapportes: dict[str, list[float]] = {}
+    for code, part in poids.items():
+        rapportes.setdefault(cas_type_affiche(code), []).append(part)
+    return {code: somme_ordonnee(parts) for code, parts in rapportes.items()}
+
+
 def figer_cout(cout, scenarios, bilan, garantie: str, masse_du_scenario,
                dettes_decalees: dict, taux_tva_requis: tuple[float, int]) -> dict:
     """Le coût agrégé de ``cout.calculer_cout``.
@@ -476,8 +487,10 @@ def figer_cout(cout, scenarios, bilan, garantie: str, masse_du_scenario,
     return {
         "annee_euros": cout.annee_euros,
         "generations": list(cout.generations),
-        "poids": dict(cout.poids),
-        "poids_cotisants": dict(cout.poids_cotisants),
+        # Par cas type de la page : une variante de la grille du coût, l'agent
+        # sédentaire de la CNRACL, compte avec celui dont elle porte le code.
+        "poids": _par_cas_type_affiche(cout.poids),
+        "poids_cotisants": _par_cas_type_affiche(cout.poids_cotisants),
         "cumuls": {scenario: cout.cumul(scenario) for scenario in avec_garantie},
         "cumul_observe": cout.cumul_observe(),
         "confondus_avec_actuel": list(cout.confondus_avec_actuel()),

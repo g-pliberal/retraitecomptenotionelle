@@ -239,15 +239,15 @@ def controle(parametres=None) -> list[Cohorte]:
     les poids sont ceux que la mémoire des calculs garde pour la page."""
     from . import Parametres, memoire
     from . import cout as module
-    from .castypes import CAS_TYPES
+    from .castypes import GRILLE_DU_COUT
     from .donnees.population import Population
     from .simulateur import Simulateur
 
     parametres = parametres if parametres is not None else Parametres()
     simulateur = Simulateur(parametres)
     pensionnes, _ = memoire.memoriser_pour(
-        parametres, ("grille_du_cout", parametres, CAS_TYPES, "droit"),
-        lambda: module._pensionnes(simulateur, CAS_TYPES, "droit"))
+        parametres, ("grille_du_cout", parametres, GRILLE_DU_COUT, "droit"),
+        lambda: module._pensionnes(simulateur, GRILLE_DU_COUT, "droit"))
     cout = memoire.cout(parametres)
     revalorisation = module.RevalorisationServie(
         simulateur.pour_la_projection(),

@@ -18,8 +18,14 @@ import pytest
 
 from retraite_notionnelle import Parametres, memoire
 from retraite_notionnelle.castypes import (
+    AGENT_SEDENTAIRE_CNRACL,
     CAS_TYPES,
+    DEPARTS_CNRACL_2025,
     GENERATIONS,
+    GRILLE_DU_COUT,
+    PART_ACTIVE_CNRACL,
+    cas_type_affiche,
+    parts_des_caisses,
     poids_effectifs,
     poids_egaux,
 )
@@ -879,8 +885,12 @@ DECOMPOSITION_TETES = 0.03
 #: complémentaire du libéral de la population, seul de la Cipav pour les dix
 #: sections (action 152), baisse d'un tiers en 2025, et le calage sur la
 #: dépense des groupes du COR lui rend 18 % de têtes, et 2 % de masse à
-#: l'Agirc-Arrco, qu'ils gardent jusqu'en 2070. Il ne doit que descendre.
-DECOMPOSITION_PENSION_CLIQUET = 0.055
+#: l'Agirc-Arrco, qu'ils gardent jusqu'en 2070. Le partage de la CNRACL entre
+#: ses départs actifs et sédentaires (action 138, étape 3, 16 octobre) le
+#: relève à 5,7 % : quatre agents sur cinq partent désormais au taux plein des
+#: sédentaires, trois ans après l'actif, comme le jaune pensions le dit, et
+#: leur pension est plus haute d'autant. Il ne doit que descendre.
+DECOMPOSITION_PENSION_CLIQUET = 0.06
 DECOMPOSITION_PENSION_CIBLE = 0.03
 
 
@@ -1048,12 +1058,16 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: régimes spéciaux -33,1 % — : le
 #: stock de 2025, revalorisé au point d'indice, par décret ou à une valeur de
 #: service gelée, sous les prix, pèse moins dans l'ancrage, et s'éteint.
+#: L'agent sédentaire de la CNRACL, qui porte quatre cinquièmes de la caisse
+#: et part trois ans après l'actif (action 138, étape 3), y suit enfin la
+#: montée de l'âge de départ que le COR projette : la dépense de la CNRACL
+#: passe de +13,3 à +7,5 %, sa pension relative de +3,4 à +3,5 %.
 DECOMPOSITION_GROUPES_CLIQUETS = {
     ("pension_relative", "fpe"): 0.08,
     ("pension_relative", "cnracl"): 0.04,
     ("pension_relative", "agirc_arrco"): 0.23,
     ("depense_part_pib", "fpe"): 0.23,
-    ("depense_part_pib", "cnracl"): 0.14,
+    ("depense_part_pib", "cnracl"): 0.08,
     ("depense_part_pib", "regimes_speciaux"): 0.34,
 }
 
@@ -1587,6 +1601,46 @@ def test_les_poids_somment_a_un_et_reflètent_les_effectifs():
     assert sum(poids_egaux().values()) == pytest.approx(1.0)
 
 
+def test_la_cnracl_se_partage_entre_ses_departs_actifs_et_sedentaires():
+    """La CNRACL n'était pesée que sur l'agent de catégorie active, au départ
+    le plus précoce de la caisse ; un départ sur cinq l'est (action 138,
+    étape 3). La grille du coût la partage dans la proportion des départs du
+    jaune pensions, que ce test relit ; la page Cas types, qui n'a que l'actif,
+    lui donne la caisse entière."""
+    lignes = {
+        row["champ"]: float(row["valeur"])
+        for row in csv.DictReader(
+            ligne for ligne in open(RACINE_DONNEES / "reference" / "macro"
+                                    / "caracteristiques_fonction_publique.csv",
+                                    encoding="utf-8")
+            if not ligne.startswith("#"))
+        if row["tableau"] == "B-5" and row["population"] == "cnracl_total"
+        and row["indicateur"] == "departs"
+    }
+    assert lignes == {champ: float(n) for champ, n in DEPARTS_CNRACL_2025.items()}
+    assert 0.15 < PART_ACTIVE_CNRACL < 0.25
+    parts = parts_des_caisses(GRILLE_DU_COUT)
+    assert parts[("fonctionnaire_actif", "cnracl")] == pytest.approx(PART_ACTIVE_CNRACL)
+    assert parts[(AGENT_SEDENTAIRE_CNRACL.code, "cnracl")] == pytest.approx(
+        1.0 - PART_ACTIVE_CNRACL)
+    assert parts_des_caisses(CAS_TYPES)[("fonctionnaire_actif", "cnracl")] == 1.0
+    # La Cnav, que personne ne partage par une part publiée, reste égale.
+    assert parts[("cadre", "cnav")] == pytest.approx(0.25)
+    effectifs = EffectifsRetraites(RACINE_DONNEES)
+    grille, page = poids_effectifs(effectifs, 2024, GRILLE_DU_COUT), poids_effectifs(effectifs, 2024)
+    assert (grille["fonctionnaire_actif"] + grille[AGENT_SEDENTAIRE_CNRACL.code]
+            == pytest.approx(page["fonctionnaire_actif"]))
+    assert cas_type_affiche(AGENT_SEDENTAIRE_CNRACL.code) == "fonctionnaire_actif"
+    assert AGENT_SEDENTAIRE_CNRACL not in CAS_TYPES
+
+
+def test_un_partage_a_demi_declare_leve():
+    actif = next(cas for cas in CAS_TYPES if cas.code == "fonctionnaire_actif")
+    muet = replace(AGENT_SEDENTAIRE_CNRACL, parts_caisses=())
+    with pytest.raises(ValueError):
+        parts_des_caisses((actif, muet))
+
+
 def test_les_poids_cotisants_somment_a_un_et_ne_sont_pas_ceux_des_retraites():
     """Le côté recette pèse les cotisants, et ce n'est pas le même poids.
 
@@ -1651,7 +1705,7 @@ def test_la_recette_pese_les_cotisants_et_la_depense_les_retraites(cout: Cout):
     # Les cotisants y pèsent ce que pèsent les retraités avant leur calage sur
     # la dépense de chaque groupe du COR, qui ne touche que les pensions.
     assert ancien.poids_cotisants == _ponderation(
-        Simulateur(Parametres()), "effectifs", CAS_TYPES)(
+        Simulateur(Parametres()), "effectifs", GRILLE_DU_COUT)(
             DepensesRetraite(RACINE_DONNEES).derniere_annee)
     for annee in (2030, 2050, 2070):
         ligne = cout.avenir.annee(annee)
@@ -1684,7 +1738,7 @@ def test_la_ponderation_egale_reproduit_l_ancienne_convention():
     """
     egale = memoire.cout(Parametres(), comptes=False, assiette=False, ponderation="egale")
     assert egale.ponderation == "egale"
-    assert all(poids == pytest.approx(1 / len(CAS_TYPES))
+    assert all(poids == pytest.approx(1 / len(GRILLE_DU_COUT))
                for poids in egale.poids.values())
     assert egale.poids_cotisants == egale.poids
     # Les deux pondérations ne donnent pas le même rapport — sans quoi l'action

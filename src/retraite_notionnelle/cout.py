@@ -135,7 +135,7 @@ from dataclasses import dataclass, field, replace
 from typing import Callable, Sequence
 
 from .castypes import (
-    CAS_TYPES,
+    GRILLE_DU_COUT,
     VARIANTES_LIQUIDATION,
     CasType,
     calculer_cas_types,
@@ -4249,7 +4249,7 @@ def _courbes_survie(mortalite, cohortes: set[int], depart: int,
 def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
                          population: Population, annee: int,
                          scenarios: Sequence[str],
-                         cas_types: tuple[CasType, ...] = CAS_TYPES,
+                         cas_types: tuple[CasType, ...] = GRILLE_DU_COUT,
                          ponderation: str = "effectifs",
                          liquidation: str = "droit") -> EngagementAcquis:
     """L'engagement acquis à ``annee``, système par système, en part de PIB.
@@ -4470,7 +4470,7 @@ def _sous_la_demographie(simulateur: Simulateur, pensionnes: list[Pensionne],
 def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
                   population: Population,
                   comptes: ComptesRetraite | None = None,
-                  cas_types: tuple[CasType, ...] = CAS_TYPES,
+                  cas_types: tuple[CasType, ...] = GRILLE_DU_COUT,
                   ponderation: str = "effectifs",
                   liquidation: str = "droit",
                   assiette: AssietteActivite | None = None,
