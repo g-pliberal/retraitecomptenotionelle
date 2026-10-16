@@ -373,7 +373,7 @@ def retraites_par_age(parametres, annees: Sequence[int],
         parametres, ("grille_du_cout", parametres, grille, "droit"),
         lambda: module._pensionnes(simulateur, grille, "droit"))
     population = Population(racine, parametres.hypothese_esperance_vie)
-    pensionnes = module._sous_la_demographie(simulateur, pensionnes, population.demographie)
+    pensionnes = module._sous_la_demographie(simulateur, pensionnes, population)
     revalorisation = RevalorisationServie(
         simulateur.pour_la_projection(),
         min((p.annee_liquidation for p in pensionnes), default=module.HORIZON)
