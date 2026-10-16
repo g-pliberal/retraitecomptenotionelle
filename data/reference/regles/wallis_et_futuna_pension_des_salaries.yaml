@@ -1,0 +1,163 @@
+schema_version: 1
+id: wallis_et_futuna_pension_des_salaries
+intitule: >-
+  Le salarié de Wallis-et-Futuna reçoit de la Caisse des prestations sociales une
+  pension de 2,6 % par année pour ses quinze premières années de cotisation et de 1,3 %
+  par année au-delà, du salaire moyen de ses quinze meilleures années, à 60 ans avec
+  quinze années au moins, ou dès 55 ans avec un abattement de 7 % par année
+  d'anticipation, sans abattement à 57 ans avec 35 années ; la cotisation de retraite
+  monte de 0,9 point par an de 2009 à 21 % en 2020.
+domaine: salaire_de_reference
+regimes: [wallis_et_futuna]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- les salaires bruts soumis à cotisation et les années de cotisation à la CPSWF
+- la date de naissance et la date d'effet
+- le conjoint survivant, pour la réversion
+ecrit:
+- la pension de retraite de la CPSWF et son abattement
+- les cotisations de retraite du salarié et de l'employeur
+- la pension de réversion et l'allocation veuvage
+dates_qui_decident:
+- liquidation.date_effet
+# Les textes sont des délibérations de l'assemblée territoriale rendues exécutoires par
+# arrêté de l'administrateur supérieur, et le statut de la CPSWF, publiés au Journal
+# officiel du territoire, hors de l'index de la DILA. Le site de l'administration
+# supérieure (wallis-et-futuna.gouv.fr), qui publie ce Journal officiel, refuse la
+# connexion depuis le conteneur le 16 octobre 2026 (flux HTTP/2 coupé, 503 en HTTP) :
+# la fiche lit le site de la caisse et le rapport annuel 2021 de l'IEOM, qui citent les
+# délibérations n° 20 bis/AT/2009 et n° 25/AT/2015.
+versions:
+- id: avant_2009
+  statut: supposee
+  hypothese: >-
+    la caisse locale de retraites, absorbée par la CPSWF en 2012, dont rien n'est
+    publié : le dépôt lui prête le barème et l'âge de 2009, et le taux de cotisation de
+    2009
+  fiabilite: faible ; aucun texte ni aucun résumé officiel n'est lu
+  bornes:
+    liquidation.date_effet: [null, 2009-03-01]
+  contenu:
+    droit: >-
+      non lu ; la borne basse ouverte ne sert qu'à couvrir toutes les dates, le régime
+      couvrant les salariés depuis 1975 à l'inventaire
+  exemples: aucun trouvé
+- id: deliberation_de_2009
+  statut: lue
+  textes:
+  - {reference: "IEOM, rapport annuel économique Wallis-et-Futuna 2021, § 4.2 « Les retraites et pensions » : délibération n° 20 bis/AT/2009 rendue exécutoire par arrêté de l'administrateur supérieur, effet au 1er mars 2009", en_vigueur: 2009-03-01}
+  - {reference: "CPSWF, pages « Retraites », « La pension de réversion », « L'allocation veuvage », « Le complément social de retraite », « Les taux de cotisation » et « Déclaration des rémunérations et versement des cotisations » (cpswf.wf), lues le 16 octobre 2026", en_vigueur: 2009-03-01}
+  bornes:
+    liquidation.date_effet: [2009-03-01, 2016-01-01]
+  contenu:
+    ouverture: >-
+      « Etre âgée de 60 ans », « Avoir cotisé à la caisse pendant au moins 15 ans »
+      (CPSWF) ; avant la délibération de 2015, la durée du taux plein était de 32 ans et
+      l'anticipation possible à 55 ans (IEOM)
+    calcul: >-
+      « Salaire moyen des 15 meilleures années multiplié par le taux qui correspond au
+      nombre d'années de cotisations. Le taux est de 2,60% pour les 15 premières années
+      avec 1,30% par année supplémentaire » (CPSWF) : 39 % à quinze ans, 58,5 % à
+      trente, 71,5 % à quarante ; aucun plafond lu
+    cotisations: >-
+      « le taux des cotisations est augmenté de 0,9 % tous les 1ers janviers jusqu'en
+      2020 » ; « Au 1er janvier 2020, date de la dernière augmentation, le taux des
+      cotisations a été porté à 21 % (contre 20,1 % en 2019), soit 7 % pour la part
+      salariale et 14 % pour la part patronale » (IEOM) ; soit 11,1 % en mars 2009 ;
+      le site de la caisse, qui affiche 17,10 % en 2009 et 27 % en 2020, donne le taux
+      total de ses cotisations, six points de plus à la charge de l'employeur
+    reversion: >-
+      « 50% de la retraite de l'assuré décédé » au conjoint d'au moins 50 ans, si
+      l'assuré a cotisé quinze ans, perdue au remariage ; avant 50 ans, une allocation
+      veuvage de 50 % pendant quatre ans (CPSWF)
+    remboursement: >-
+      sous quinze années, le remboursement de 95 % des cotisations salariales, à l'âge
+      légal seulement depuis le 1er janvier 2019 (statut de la CPSWF, article 106, cité
+      par l'IEOM)
+    minimum: >-
+      un complément social de retraite au conjoint sans revenu d'un retraité dont la
+      pension ne dépasse pas 90 000 F CFP : 14 333 F CFP par mois depuis janvier 2018
+      (CPSWF)
+  exemples: aucun trouvé
+- id: deliberation_de_2015
+  statut: supposee
+  hypothese: >-
+    la délibération n° 25/AT/2015, que le rapport de l'IEOM résume sans dater son
+    effet : le dépôt la prend au 1er janvier 2016
+  fiabilite: >-
+    moyenne : le contenu est celui d'un rapport officiel ; la date d'effet n'est pas lue
+  textes:
+  - {reference: "IEOM, rapport annuel économique Wallis-et-Futuna 2021, § 4.2 : délibération n° 25/AT/2015 rendue exécutoire par arrêté de l'administrateur supérieur", en_vigueur: 2016-01-01}
+  bornes:
+    liquidation.date_effet: [2016-01-01, null]
+  contenu:
+    ouverture: >-
+      « 1/ La durée de cotisation pour obtenir le taux plein est passé de 32 à 35 ans ;
+      2/ L'âge légal du départ à la retraite est fixé à 60 ans ; 3/ Le départ à la
+      retraite anticipée est possible à l'âge de 57 ans (contre 55 ans auparavant) sans
+      abattement si 35 ans de cotisation. 4/ A défaut, une retraite anticipée est
+      possible dès l'âge de 55 ans mais avec application d'un abattement définitif de 7
+      % du montant de la pension par année d'anticipation » (IEOM)
+    calcul: le barème de 2,6 % et 1,3 % par année, inchangé (CPSWF)
+  exemples: aucun trouvé
+approximations:
+- version: [avant_2009, deliberation_de_2009, deliberation_de_2015]
+  ecart: >-
+    La fiche de régime prend pour la retraite le taux total des cotisations de la
+    caisse, 17,10 % en 2009 montant à 27 % en 2020, quand celui de la retraite est de
+    six points plus bas, 11,1 % en 2009 et 21 % depuis 2020 ; la part salariale est
+    d'un tiers, non d'un quart.
+  effet: >-
+    la cotisation simulée est trop haute, de 54 % en 2009 à 29 % depuis 2020 ; la
+    pension, en annuités, n'en dépend pas, mais l'effort contributif comparé dans les
+    scénarios, oui
+- version: [deliberation_de_2009, deliberation_de_2015]
+  ecart: >-
+    La fiche de régime écrit 58,5 % pour trente années, proratisé, et les dix
+    meilleures années : le barème est reproduit jusqu'à trente ans et sous-estimé
+    au-delà, sur un salaire moyen de trop peu d'années ; l'anticipation dès 55 ans,
+    avec ou sans abattement, n'est pas portée.
+  effet: >-
+    non mesuré ; les carrières de plus de trente ans, dont la pension simulée est trop
+    basse, et les départs avant 60 ans
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-04-16
+  a_relire:
+  - >-
+    Lire au Journal officiel de Wallis-et-Futuna, quand le site de l'administration
+    supérieure sera joignable, le statut de la CPSWF, les délibérations n° 20 bis/AT/2009
+    et n° 25/AT/2015 et leurs arrêtés, pour la date d'effet de la réforme de 2015, un
+    éventuel plafond et la part des cotisations qui va à la retraite ; et le projet de
+    réforme à 65 ans que l'inventaire dit en préparation.
+  lectures:
+  - type: autre
+    reference: >-
+      CPSWF (cpswf.wf), pages des retraites et des cotisations ; IEOM, rapport annuel
+      économique Wallis-et-Futuna 2021, pages 111 et 112 ; wallis-et-futuna.gouv.fr
+      essayé le même jour, sans résultat
+    date: 2026-10-16
+reformes: []
+code:
+  moteur: >-
+    une fiche de régime en annuités, une période par année de la montée du taux de
+    cotisation de 2009 à 2020
+  python: >-
+    données : regimes/wallis_et_futuna.yaml ; droit/liquider.py : liquider_chaque_regime
+  javascript: moteur/js/droit/liquider.js et moteur/js/regimes.js, le même catalogue
+  parametres: regimes/wallis_et_futuna.yaml (taux_plein, duree_requise_trimestres, salaire_reference, taux_cotisation_retraite, part_salariale)
+  tests: >-
+    tests/temoins/simulations.json, les carrières du statut salarie_wallis_et_futuna, que
+    le portage rejoue
+historique:
+- >-
+  2026-10-16 — écrite à l'étape 2 de l'action 145 : le régime de Wallis-et-Futuna
+  n'avait que la fiche générique de liquidation. Le rapport de l'IEOM donne le taux de
+  la retraite, six points sous le taux total que la fiche de régime prend, et la réforme
+  de 2015. Aucun chiffre ne change.
+effet: >-
+  Les salariés de Wallis-et-Futuna : leur pension est simulée à 60 ans au barème jusqu'à
+  trente ans, mais leur cotisation au taux total de la caisse, plus haut que celui de la
+  retraite.
