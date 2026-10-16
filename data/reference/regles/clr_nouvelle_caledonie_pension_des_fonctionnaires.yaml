@@ -1,0 +1,167 @@
+schema_version: 1
+id: clr_nouvelle_caledonie_pension_des_fonctionnaires
+intitule: >-
+  Le fonctionnaire des fonctions publiques de Nouvelle-Calédonie reçoit de la caisse
+  locale de retraites une pension de 2 % de son dernier traitement par annuité, quarante
+  au plus, à la double condition d'âge et de services, 61 ans et 32 ans en 2026, minorée
+  d'un abattement viager par tranche d'âge avant cet âge, puis d'une minoration de tous
+  les pensionnés, 8 % en 2026 et 2027 ; sa retenue, 13,1 %, et la contribution de
+  l'employeur, 27,9 % en 2026, portent sur le traitement de base majoré de 73 %.
+domaine: salaire_de_reference
+regimes: [fonctionnaires_pacifique]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- le traitement de base de l'échelon tenu depuis seize mois, ou moins en 2023 à 2026, et la majoration indiciaire
+- les services effectifs, les bonifications pour services accomplis en Nouvelle-Calédonie, pénibles ou à risques, et pour enfants
+- la date de naissance et la date d'admission à la retraite
+- les enfants, pour la majoration, et le conjoint, pour la réversion
+ecrit:
+- la pension d'ancienneté ou proportionnelle de la caisse locale de retraites, son abattement, sa minoration et sa majoration
+- la retenue pour pension du fonctionnaire et la contribution de l'employeur
+dates_qui_decident:
+- liquidation.date_effet
+# Les textes sont des lois du pays et des délibérations du congrès de la
+# Nouvelle-Calédonie, hors de l'index de la DILA : le code des pensions de retraites des
+# fonctionnaires relevant des fonctions publiques de Nouvelle-Calédonie, lu sur Juridoc
+# dans sa version consolidée, partie législative au 1er janvier 2025 et partie
+# réglementaire au 23 décembre 2025. Ces versions ne donnent que la rédaction en
+# vigueur : les règles d'avant 2025 ne sont lues que là où le texte les garde. Les
+# fonctionnaires de Polynésie relèvent de la CPS (fiche
+# `cps_polynesie_pension_des_salaries`).
+versions:
+- id: avant_2025
+  statut: supposee
+  hypothese: >-
+    les rédactions du code d'avant la loi du pays n° 2024-10, non lues : 60 ans, la
+    pension de 2 % par annuité et les coefficients de minoration que la direction des
+    ressources humaines et de la fonction publique publie pour les pensions concédées
+    depuis le 1er janvier 2024, 35 % avant 57 ans à 10 % entre 59 et 60 ans, que la
+    fiche de régime porte ; le code de 2013 succède au régime de la caisse créée en
+    1959, non lu
+  fiabilite: >-
+    moyenne de 2014 à 2024, où la version consolidée garde les minorations des pensions
+    concédées de juillet 2003 à février 2014 et les minima d'avant et d'après mars 2014 ;
+    faible avant 2003
+  bornes:
+    liquidation.date_effet: [null, 2025-01-01]
+  contenu:
+    droit: >-
+      la pension est « fixée à 2 % des émoluments de base par annuité liquidable », «
+      quarante annuités » au plus (Lp. 232-3 et Lp. 232-1) ; les pensions concédées du
+      1er juillet 2003 au 28 février 2014 sont minorées selon l'âge à l'ouverture des
+      droits et la date, de 20 % avant 50 ans à 1,5 % entre 59 et 60 ans depuis 2011,
+      de moitié pour 35 années de services (Lp. 232-4, I ; R. 232-6, I) ; la borne
+      basse ouverte ne sert qu'à couvrir toutes les dates
+  exemples: aucun trouvé
+- id: loi_du_pays_de_2024
+  statut: lue
+  textes:
+  - {reference: "code des pensions de retraites des fonctionnaires relevant des fonctions publiques de Nouvelle-Calédonie, partie législative, articles Lp. 212-1, Lp. 212-2, Lp. 221-1, Lp. 221-2, Lp. 222-1 à Lp. 222-6, Lp. 231-1, Lp. 232-1 à Lp. 232-14 et Lp. 240-2, dans la rédaction de la loi du pays n° 2024-10 du 12 septembre 2024 (JONC du 19 septembre 2024), version consolidée du 1er janvier 2025 sur Juridoc", en_vigueur: 2025-01-01}
+  - {reference: "même code, partie réglementaire, articles R. 212-1 à R. 212-3, R. 222-1, R. 232-4, R. 232-6, R. 232-6-1, R. 232-7 et R. 232-7-1, dans la rédaction des délibérations n° 422 du 8 août 2024, n° 153/CP du 20 septembre 2024 et n° 534 du 23 décembre 2025, version consolidée du 23 décembre 2025 sur Juridoc", en_vigueur: 2025-01-01}
+  bornes:
+    liquidation.date_effet: [2025-01-01, null]
+  contenu:
+    ouverture: >-
+      « la double condition de 62 ans d'âge et de 35 ans de services effectifs », l'âge
+      fixé à 60 ans et 6 mois en 2025, 61 ans en 2026, 61 ans et 6 mois en 2027, à la
+      date d'admission, et la durée à 31,5 ans en 2025, 32 ans en 2026, six mois de
+      plus par an jusqu'à 34,5 ans en 2031 (Lp. 221-1) ; l'âge réduit, jusqu'à 55 ans,
+      du tiers des services civils accomplis en Nouvelle-Calédonie avant juillet 2003,
+      de 45,6 à 52,2 jours par an de juillet 2003 à février 2014, du cinquième des
+      services pénibles, et d'un an au plus par enfant né avant 2004 (Lp. 222-1 ;
+      R. 222-1) ; la pension proportionnelle, différée à l'âge légal (Lp. 240-2)
+    calcul: >-
+      2 % des émoluments de base par annuité, quarante au plus ; les émoluments, le
+      traitement de l'échelon tenu depuis seize mois, huit en 2023 à quatorze en 2026
+      (Lp. 232-2) ; « Lorsque les émoluments [...] excèdent six fois le minimum vital
+      [...], la portion dépassant cette limite n'est comptée que pour moitié » (R.
+      232-4) ; un minimum, le minimum vital, 80 % du traitement de l'indice minimum,
+      sous 33,5 annuités, et 3 % de ce minimum par annuité au-delà (Lp. 232-3, II ;
+      Lp. 232-7)
+    abattement: >-
+      un « coefficient d'abattement viager » par l'âge de départ : en 2026, 10 % entre
+      60 et 61 ans, 16 % entre 59 et 60, 24 % entre 58 et 59, 35 % entre 57 et 58, 40 %
+      avant 57 ans ; le barème glisse de six mois par an, et s'arrête à 62 ans en 2028
+      (R. 232-6, II et III) ; réduit d'un quart pour 35 années de services, de moitié
+      pour 40 (R. 232-6-1), de moitié pour l'inaptitude (Lp. 232-4)
+    minoration: >-
+      tout pensionné supporte une minoration de sa pension, 6 % depuis le 1er octobre
+      2023, 8 % du 1er janvier 2026 au 31 décembre 2027 (Lp. 232-5 ; R. 232-7 et
+      délibération n° 534, article 1er)
+    majorations: >-
+      au-delà de 40 années de services effectifs, 2 % par année révolue, dans la limite
+      de 10 %, 1 % en 2025 et 2026, 1,5 % de 2027 à 2029 (Lp. 232-5-1) ; 5 % par enfant
+      à charge pour les pensions concédées depuis 2004 (Lp. 232-8) ; une indemnité de
+      résidence (Lp. 232-12)
+    cotisations: >-
+      la retenue, « 13,1 % » depuis le 1er août 2024, et la contribution de
+      l'employeur, 26,70 % au 1er avril 2024, 27,30 % en 2025, 27,90 % en 2026, 28,50 %
+      en 2027, sur le traitement de base dont « Le taux de majoration [...] est fixé à
+      73 % » (Lp. 212-1 et Lp. 212-2 ; R. 212-1 à R. 212-3)
+  exemples: aucun trouvé
+approximations:
+- version: loi_du_pays_de_2024
+  ecart: >-
+    La fiche de régime écrit l'abattement comme 2,5 % par trimestre manquant, quand le
+    droit l'écrit par tranches d'âge : 10 % la première année, puis 16, 24, 35 et 40 %,
+    réduit pour 35 et 40 années de services ; elle ne porte ni la condition de durée de
+    services, ni les réductions d'âge pour services calédoniens, pénibles ou pour
+    enfants, ni la minoration de 6 à 8 % de toutes les pensions, ni l'écrêtement
+    au-delà de six minima vitaux, ni le minimum vital, ni les majorations.
+  effet: >-
+    non mesuré ; les départs de plus d'un an avant l'âge, dont l'abattement simulé est
+    trop fort, et tous les pensionnés, dont la pension simulée est trop haute de la
+    minoration
+- version: [avant_2025, loi_du_pays_de_2024]
+  ecart: >-
+    La retenue et la contribution portent sur le traitement de base majoré de 73 %, que
+    la fiche de régime ne porte pas ; ses taux de 2026, 12,7 % et 28,5 %, pris au
+    calendrier de la direction de la fonction publique, ne sont pas ceux du code, 13,1 %
+    depuis août 2024 et 27,9 % en 2026.
+  effet: >-
+    la cotisation simulée est trop basse, d'environ 42 % ; la pension, en annuités, n'en
+    dépend pas, mais l'effort contributif comparé dans les scénarios, oui
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-04-16
+  a_relire:
+  - >-
+    Lire les rédactions successives du code depuis 2013 (lois du pays n° 2014-5,
+    n° 2016-4, n° 2019-11, n° 2022-5 ; délibérations n° 116 de 2014, n° 220 de 2022,
+    n° 346 de 2023), que Juridoc publie en versions datées, pour l'âge, la durée et les
+    abattements de 2014 à 2024 ; et le régime de la caisse d'avant 2013.
+  - >-
+    Dire si les émoluments de base de la pension comprennent la majoration de 73 % du
+    traitement soumis à retenue (Lp. 212-1 et Lp. 232-2).
+  lectures:
+  - type: autre
+    reference: >-
+      Juridoc (juridoc.gouv.nc) : code des pensions de retraites des fonctionnaires
+      relevant des fonctions publiques de Nouvelle-Calédonie, partie législative,
+      version du 1er janvier 2025, et partie réglementaire, version du 23 décembre 2025
+    date: 2026-10-16
+reformes: []
+code:
+  moteur: >-
+    une fiche de régime en annuités, une période par année de la montée de 2024 à 2028,
+    sur le dernier traitement indiciaire
+  python: >-
+    données : regimes/fonctionnaires_pacifique.yaml ; droit/liquider.py :
+    liquider_chaque_regime
+  javascript: moteur/js/droit/liquider.js et moteur/js/regimes.js, le même catalogue
+  parametres: regimes/fonctionnaires_pacifique.yaml (age_ouverture, taux_plein, duree_requise_trimestres, decote_par_trimestre, taux_cotisation_retraite, part_salariale)
+  tests: >-
+    tests/temoins/simulations.json, les carrières du statut fonctionnaire_pacifique, que
+    le portage rejoue
+historique:
+- >-
+  2026-10-16 — écrite à l'étape 2 de l'action 145 : la caisse locale de retraites de
+  Nouvelle-Calédonie n'avait que la fiche générique de liquidation. Le code des pensions,
+  lu sur Juridoc, écrit l'abattement par tranches d'âge, la minoration de toutes les
+  pensions et l'assiette majorée de 73 %. Aucun chiffre ne change.
+effet: >-
+  Les fonctionnaires de Nouvelle-Calédonie : leur pension est simulée au bon âge et au
+  bon taux par annuité, mais sans minoration ni réduction d'âge, avec un abattement trop
+  fort, et leur cotisation sur une assiette trop basse.

@@ -1328,8 +1328,11 @@ inventaire:
       fonctionnaires de Polynésie relèvent de la CPS, portée par le statut salarié.
       Les cotisations d'avant 2023 sont projetées ; la durée de services qui ouvre la
       pension d'ancienneté (31 ans en 2024, six mois de plus par an jusqu'à 35 ans,
-      article Lp. 221-1) n'est pas portée, ni les minorations, fixées par délibération
-      et lues dans la seule page de la direction de la fonction publique.
+      article Lp. 221-1) n'est pas portée, ni les réductions d'âge pour services calédoniens
+      (Lp. 222-1). L'abattement est écrit 2,5 % par trimestre, quand le code l'écrit
+      par tranches d'âge, 10, 16, 24, 35 et 40 % (R. 232-6) ; la minoration de toutes
+      les pensions, 8 % en 2026 et 2027 (R. 232-7), n'est pas portée, ni l'assiette
+      des cotisations, le traitement majoré de 73 % (R. 212-1).
 
   - code: retrep
     nom: >-
@@ -2658,12 +2661,15 @@ inventaire:
     manque: >-
       Dix périodes suivent les onze versions de l'article 2 du décret n° 50-1318 (actes
       médicaux par âge de 1950 à 1997, classes de revenu en AMV de 1998 à 2014, points
-      depuis 2015), mais aucun montant d'époque n'est dans le texte — la valeur de l'acte
-      et le prix du point sont fixés hors index — : la grille de 2016, ramenée par le
-      rapport des plafonds, tient lieu de montant avant 2016. La règle d'âge — taux
-      plein à 65 ans, 1,25 % par trimestre avant, que la durée n'annule pas — et la
-      bonification pour trois enfants ne sont lues que dans les statuts de 2021 : la
-      première est supposée la même avant, la seconde n'est servie que depuis 2022.
+      depuis 2015), mais aucun montant d'époque n'est dans le texte avant 2016 — la
+      valeur de l'acte est fixée par l'ordre, hors du Journal officiel — : de 1998 à
+      2015, la grille suit le taux d'appel de chaque décret annuel, sur un acte tiré
+      de la valeur d'achat du point de 2016 au rapport des plafonds (classes_cotisation_epoques.yaml,
+      16 octobre 2026) ; avant 1998, la grille de 1998 ramenée tient lieu. La règle
+      d'âge — taux plein à 65 ans, 1,25 % par trimestre avant, que la durée n'annule
+      pas — et la bonification pour trois enfants ne sont lues que dans les statuts
+      de 2021 : la première est supposée la même avant, la seconde n'est servie que
+      depuis 2022.
 
   - code: cavamac_complementaire
     nom: Complémentaire des agents généraux d'assurance (CAVAMAC)
