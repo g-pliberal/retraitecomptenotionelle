@@ -333,31 +333,37 @@ export class PrelevementsPension {
       plafond_annuel: special.plafond_annuel ?? null,
       annee: special.annee,
       regimes: new Set(special.regimes ?? []),
+      taux_non_resident: special.taux_non_resident ?? 0,
+      taux_non_resident_au_dela: special.taux_non_resident_au_dela ?? 0,
     }));
   }
 
   /**
    * Ce qu'une cotisation de `regimes_speciaux` prélève sur `montant`, pension
    * annuelle de ses régimes en euros de son année ; le plafond d'une réversion
-   * est de moitié. Voir `MaladieRegimeSpecial.cotisation` en Python.
+   * est de moitié ; au `nonResident`, ses taux de L. 131-9. Voir
+   * `MaladieRegimeSpecial.cotisation` en Python.
    */
-  static cotisationSpeciale(special, montant, reversion = false) {
-    if (special.plafond_annuel === null) return special.taux * montant;
+  static cotisationSpeciale(special, montant, reversion = false, nonResident = false) {
+    const taux = nonResident ? special.taux_non_resident : special.taux;
+    if (special.plafond_annuel === null) return taux * montant;
     const plafond = reversion ? special.plafond_annuel / 2 : special.plafond_annuel;
-    return special.taux * Math.min(montant, plafond);
+    const auDela = nonResident ? special.taux_non_resident_au_dela : 0;
+    return taux * Math.min(montant, plafond) + auDela * Math.max(montant - plafond, 0);
   }
 
   /**
    * La cotisation maladie de la SNCF et des mines, en euros, sur `montants`
-   * (une `Map` du régime à sa pension annuelle), au taux plein. Voir
-   * `maladie_des_regimes_speciaux` dans `remuneration.py`.
+   * (une `Map` du régime à sa pension annuelle), au taux plein, ou aux taux
+   * du `nonResident`. Voir `maladie_des_regimes_speciaux` dans
+   * `remuneration.py`.
    */
-  maladieDesRegimesSpeciaux(montants, reversion = false) {
+  maladieDesRegimesSpeciaux(montants, reversion = false, nonResident = false) {
     let total = 0;
     for (const special of this.regimes_speciaux) {
       let montant = 0;
       for (const regime of [...special.regimes].sort()) montant += montants.get(regime) ?? 0;
-      total += PrelevementsPension.cotisationSpeciale(special, montant, reversion);
+      total += PrelevementsPension.cotisationSpeciale(special, montant, reversion, nonResident);
     }
     return total;
   }

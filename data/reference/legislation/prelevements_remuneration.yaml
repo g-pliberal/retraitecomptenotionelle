@@ -859,14 +859,18 @@ pensions:
   #:   réversion et de leurs avantages accessoires, sans plafond (décret
   #:   n° 46-2769, art. 91, 3°, a, LEGIARTI000037456798).
   #: Le dépôt les prélève sur ce que ces régimes servent, majoration pour
-  #: enfants exclue, comme la cotisation des complémentaires. Le non-résident
-  #: paie d'autres taux — 3,90 % sous le plafond et 3,20 % au-delà à la SNCF,
-  #: 3,70 % aux mines —, que le dépôt ne prélève pas encore.
+  #: enfants exclue, comme la cotisation des complémentaires. LE NON-RÉSIDENT
+  #: dont la France prend en charge les soins (L. 131-9) paie, à la place,
+  #: `taux_non_resident` sous le plafond et `taux_non_resident_au_dela`
+  #: au-delà : 3,90 % et 3,20 % du montant trimestriel de la pension à la
+  #: SNCF (art. 7, IV, second alinéa, même version), 3,70 % aux mines, sans
+  #: plafond (art. 91, alinéa des personnes « qui relèvent des dispositions de
+  #: l'article L. 131-9 », a). Ce taux ne suit aucune tranche de CSG.
   maladie_regimes_speciaux:
     - {serie: maladie_sncf_sous_plafond, taux: 0.007, plafond_annuel: 25582, annee: 2026,
-       regimes: [sncf]}
+       regimes: [sncf], taux_non_resident: 0.039, taux_non_resident_au_dela: 0.032}
     - {serie: maladie_mines, taux: 0.005, plafond_annuel: null, annee: 2026,
-       regimes: [mines]}
+       regimes: [mines], taux_non_resident: 0.037, taux_non_resident_au_dela: null}
   #: Les quatre cas de l'article L. 136-8 (LEGIARTI000054336623, en vigueur
   #: depuis le 27 juin 2026) : le seuil de chaque tranche pour la première
   #: part de quotient familial, et sa majoration par demi-part, montants 2026

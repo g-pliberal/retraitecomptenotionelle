@@ -995,11 +995,12 @@ function minimumVieillesseServi(actuel, aujourdhui = null) {
 
 /**
  * La cotisation maladie de la SNCF et des mines en part de la pension du
- * scénario 1, au taux plein, chaque pension de leurs régimes menée par
- * `coefficient` en euros de l'année des plafonds. Voir
+ * scénario 1, au taux plein ou aux taux du `nonResident`, chaque pension de
+ * leurs régimes menée par `coefficient` en euros de l'année des plafonds. Voir
  * `part_des_regimes_speciaux` dans `contexte.py`.
  */
-export function partDesRegimesSpeciaux(pensions, actuel, aujourdhui = null, coefficient = 1) {
+export function partDesRegimesSpeciaux(pensions, actuel, aujourdhui = null, coefficient = 1,
+  nonResident = false) {
   if (pensions.regimes_speciaux.length === 0) return 0;
   const [, total] = assietteMaladie(new Set(), actuel, aujourdhui);
   if (total <= 0) return 0;
@@ -1009,7 +1010,7 @@ export function partDesRegimesSpeciaux(pensions, actuel, aujourdhui = null, coef
       montants.set(regime, assietteMaladie(new Set([regime]), actuel, aujourdhui)[0] * coefficient);
     }
   }
-  return pensions.maladieDesRegimesSpeciaux(montants) / (total * coefficient);
+  return pensions.maladieDesRegimesSpeciaux(montants, false, nonResident) / (total * coefficient);
 }
 
 /**
@@ -1120,6 +1121,7 @@ export class Montants {
     let pension = null;
     let partGenerale = 0;
     let speciaux = 0;
+    let speciauxNonResident = 0;
     if (actuel !== null) {
       const [assiette, total] = assietteMaladie(pensions.regimes_maladie, actuel, aujourdhui);
       part = total > 0 ? assiette / total : 0;
@@ -1128,18 +1130,25 @@ export class Montants {
       const [generale] = assietteMaladie(pensions.regimes_generaux, actuel, aujourdhui);
       partGenerale = total > 0 ? generale / total : 0;
       speciaux = partDesRegimesSpeciaux(pensions, actuel, aujourdhui, coefficient);
+      if (saisie.residence) {
+        speciauxNonResident = partDesRegimesSpeciaux(
+          pensions, actuel, aujourdhui, coefficient, true);
+      }
     }
     if (saisie.residence) {
       const [couvert, motif] = couvertureFrancaise(
         saisie, actuel, europeen, pensions.non_residents_duree_minimale);
       const tauxGeneral = couvert ? pensions.non_residents_regime_general : 0;
       const maladie = couvert ? pensions.non_residents_complementaires : 0;
-      return new Montants(saisie.enNet, maladie * part + tauxGeneral * partGenerale,
+      const speciauxDus = couvert ? speciauxNonResident : 0;
+      return new Montants(saisie.enNet,
+        maladie * part + tauxGeneral * partGenerale + speciauxDus,
         rapport, rapportProposition, {
           tauxSansMaladie: 0, tauxMaladie: maladie, partMaladie: part,
           regimesMaladie: pensions.regimes_maladie,
           tauxRegimeGeneral: tauxGeneral, partRegimeGeneral: partGenerale,
           regimesGeneraux: pensions.regimes_generaux,
+          partRegimesSpeciaux: speciauxDus, tauxRegimesSpeciaux: speciauxDus,
           tranche: "non-résident", nonResident: true, couvert, motifCouverture: motif,
           bareme: pensions, saisie,
         });
@@ -1225,8 +1234,10 @@ export class Montants {
     let net = brut * (1 - this.tauxSansMaladie)
       - this.tauxMaladie * (this.regimesMaladie.has(regime) ? brut : 0)
       - this.tauxRegimeGeneral * (this.regimesGeneraux.has(regime) ? brut : 0);
-    if (!this.nonResident && this.tauxMaladie > 0 && this.bareme !== null) {
-      net -= this.bareme.maladieDesRegimesSpeciaux(new Map([[regime, brut]]), reversion);
+    // Au non-résident que la France couvre, à ses taux de L. 131-9.
+    if (this.tauxMaladie > 0 && this.bareme !== null) {
+      net -= this.bareme.maladieDesRegimesSpeciaux(
+        new Map([[regime, brut]]), reversion, this.nonResident);
     }
     return net;
   }

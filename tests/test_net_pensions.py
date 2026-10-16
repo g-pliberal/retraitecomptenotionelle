@@ -234,14 +234,18 @@ const pensions = new PrelevementsPension(fiche);
 process.stdout.write(JSON.stringify(cas.map(([actuel, coefficient]) => [
   partDesRegimesSpeciaux(pensions, actuel, null, coefficient),
   pensions.maladieDesRegimesSpeciaux(new Map(actuel.pensions_par_regime.map(
-    (p) => [p.regime, p.montant])), true)])));
+    (p) => [p.regime, p.montant])), true),
+  partDesRegimesSpeciaux(pensions, actuel, null, coefficient, true),
+  pensions.maladieDesRegimesSpeciaux(new Map(actuel.pensions_par_regime.map(
+    (p) => [p.regime, p.montant])), true, true)])));
 """
 
 
 def test_le_portage_javascript_preleve_la_maladie_de_la_sncf_et_des_mines(pensions):
     """La cotisation de la SNCF, sous son plafond, et celle des mines, dans les
     deux moteurs : la part qu'elle prend à la pension, et son montant pour une
-    réversion, au plafond de moitié."""
+    réversion, au plafond de moitié ; les mêmes aux taux du non-résident de
+    L. 131-9."""
     from types import SimpleNamespace
 
     from retraite_notionnelle.contexte import part_des_regimes_speciaux
@@ -258,15 +262,23 @@ def test_le_portage_javascript_preleve_la_maladie_de_la_sncf_et_des_mines(pensio
     for brut, coefficient in cas:
         lu = SimpleNamespace(pension_annuelle=brut["pension_annuelle"], pensions_par_regime=[
             SimpleNamespace(**ligne) for ligne in brut["pensions_par_regime"]])
+        montants = {p["regime"]: p["montant"] for p in brut["pensions_par_regime"]}
         attendu.append([part_des_regimes_speciaux(pensions, lu, None, coefficient),
-                        pensions.maladie_des_regimes_speciaux(
-                            {p["regime"]: p["montant"] for p in brut["pensions_par_regime"]},
-                            True)])
+                        pensions.maladie_des_regimes_speciaux(montants, True),
+                        part_des_regimes_speciaux(pensions, lu, None, coefficient,
+                                                  non_resident=True),
+                        pensions.maladie_des_regimes_speciaux(montants, True, True)])
     sncf = pensions.regimes_speciaux[0].plafond_annuel
     assert attendu[0][0] == pytest.approx(0.007)
     assert attendu[1][0] == pytest.approx(0.007 * sncf / 36000.0)
     assert attendu[3][0] == pytest.approx(0.005 * 17000.0 / 20000.0)
-    assert attendu[4] == [0.0, 0.0]
+    assert attendu[4] == [0.0] * 4
+    # Le non-résident : 3,90 % sous le plafond, 3,20 % au-delà ; 3,70 % aux mines.
+    assert attendu[0][2] == pytest.approx(0.039)
+    assert attendu[1][2] == pytest.approx(
+        (0.039 * sncf + 0.032 * (36000.0 - sncf)) / 36000.0)
+    assert attendu[2][3] == pytest.approx(0.039 * sncf / 2 + 0.032 * (30000.0 - sncf / 2))
+    assert attendu[3][2] == pytest.approx(0.037 * 17000.0 / 20000.0)
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     with open(RACINE / "data/reference/legislation/prelevements_remuneration.yaml",
@@ -360,6 +372,11 @@ def test_un_non_resident_que_la_france_soigne_paie_la_cotisation_maladie(context
     assert montants.pension_du_regime(1000.0, "regime_general") == pytest.approx(968.0)
     assert montants.pension_du_regime(1000.0, "agirc_arrco") == pytest.approx(958.0)
     assert montants.pension_du_regime(1000.0, "fonction_publique_etat") == 1000.0
+    # Décret n° 2007-1056, art. 7, IV ; décret n° 46-2769, art. 91 : la SNCF et
+    # les mines, à leurs taux de L. 131-9, que la CSG ne remplace pas.
+    assert montants.pension_du_regime(1000.0, "sncf") == pytest.approx(961.0)
+    assert montants.pension_du_regime(1000.0, "mines") == pytest.approx(963.0)
+    assert montants.taux_regimes_speciaux == 0.0
 
 
 def test_l_etat_de_residence_qui_sert_une_pension_soigne(contexte):

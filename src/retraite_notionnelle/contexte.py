@@ -960,12 +960,14 @@ def minimum_vieillesse_servi(actuel, aujourd_hui=None) -> float:
 
 
 def part_des_regimes_speciaux(pensions, actuel, aujourd_hui=None,
-                              coefficient: float = 1.0) -> float:
+                              coefficient: float = 1.0,
+                              non_resident: bool = False) -> float:
     """La cotisation maladie de la SNCF et des mines en part de la pension du
-    scénario 1, au taux plein : chaque pension de leurs régimes, menée par
-    ``coefficient`` en euros de l'année de référence, celle des plafonds,
-    majoration pour enfants exclue (``remuneration.assiette_maladie``). Son
-    jumeau est ``partDesRegimesSpeciaux``, dans ``moteur/js/contexte.js``."""
+    scénario 1, au taux plein, ou aux taux du ``non_resident`` : chaque pension
+    de leurs régimes, menée par ``coefficient`` en euros de l'année de
+    référence, celle des plafonds, majoration pour enfants exclue
+    (``remuneration.assiette_maladie``). Son jumeau est
+    ``partDesRegimesSpeciaux``, dans ``moteur/js/contexte.js``."""
     if not pensions.regimes_speciaux:
         return 0.0
     _, total = assiette_maladie(frozenset(), actuel, aujourd_hui)
@@ -976,7 +978,8 @@ def part_des_regimes_speciaux(pensions, actuel, aujourd_hui=None,
         for regime in sorted(special.regimes):
             montants[regime] = assiette_maladie(
                 frozenset((regime,)), actuel, aujourd_hui)[0] * coefficient
-    return pensions.maladie_des_regimes_speciaux(montants) / (total * coefficient)
+    return (pensions.maladie_des_regimes_speciaux(montants, non_resident=non_resident)
+            / (total * coefficient))
 
 
 @dataclass(frozen=True)
@@ -1053,15 +1056,15 @@ class Montants:
         QUI RÉSIDE HORS DE FRANCE ne doit ni CSG, ni CRDS, ni CASA (L. 136-1) ;
         si la France prend en charge ses soins (:func:`couverture_francaise`),
         une cotisation maladie à ses taux particuliers, sur la pension de base
-        du régime général et sur les complémentaires (L. 131-9 ; D. 242-8).
+        du régime général et sur les complémentaires (L. 131-9 ; D. 242-8), et
+        sur celles de la SNCF et des mines, aux leurs.
 
         LA SNCF ET LES MINES prélèvent encore leur propre cotisation maladie
         sur leurs pensions (``maladie_regimes_speciaux``), 0,70 % sous un
         plafond et 0,50 %, aux mêmes tranches que celle des complémentaires :
         ``part_regimes_speciaux`` est ce qu'elle prend à la pension, au taux
-        plein. Le non-résident ne la paie pas ici : ses taux ne sont pas
-        portés."""
-        part = minimum = part_generale = speciaux = 0.0
+        plein."""
+        part = minimum = part_generale = speciaux = speciaux_non_resident = 0.0
         pension = None
         if actuel is not None:
             assiette, total = assiette_maladie(pensions.regimes_maladie, actuel, aujourd_hui)
@@ -1071,19 +1074,24 @@ class Montants:
             generale, _ = assiette_maladie(pensions.regimes_generaux, actuel, aujourd_hui)
             part_generale = generale / total if total > 0 else 0.0
             speciaux = part_des_regimes_speciaux(pensions, actuel, aujourd_hui, coefficient)
+            if saisie.residence:
+                speciaux_non_resident = part_des_regimes_speciaux(
+                    pensions, actuel, aujourd_hui, coefficient, non_resident=True)
         if saisie.residence:
             couvert, motif = couverture_francaise(
                 saisie, actuel, europeen, pensions.non_residents_duree_minimale)
             generale_taux = pensions.non_residents_regime_general if couvert else 0.0
             maladie = pensions.non_residents_complementaires if couvert else 0.0
+            speciaux = speciaux_non_resident if couvert else 0.0
             return cls(net=saisie.en_net,
-                       taux_pension=maladie * part + generale_taux * part_generale,
+                       taux_pension=maladie * part + generale_taux * part_generale + speciaux,
                        rapport_net_brut_salaire=rapport,
                        rapport_net_brut_proposition=rapport_proposition,
                        taux_sans_maladie=0.0, taux_maladie=maladie, part_maladie=part,
                        regimes_maladie=pensions.regimes_maladie,
                        taux_regime_general=generale_taux, part_regime_general=part_generale,
                        regimes_generaux=pensions.regimes_generaux,
+                       part_regimes_speciaux=speciaux, taux_regimes_speciaux=speciaux,
                        tranche="non-résident", non_resident=True, couvert=couvert,
                        motif_couverture=motif, bareme=pensions, saisie=saisie)
         revenu, presume = revenu_fiscal_du_foyer(saisie, pensions, pension)
@@ -1142,9 +1150,11 @@ class Montants:
                - self.taux_maladie * (brut if regime in self.regimes_maladie else 0.0)
                - self.taux_regime_general * (brut if regime in self.regimes_generaux else 0.0))
         # Due quand la tranche du foyer prélève la maladie des complémentaires,
-        # même si sa propre pension n'en sert pas : la réversion d'un autre.
-        if not self.non_resident and self.taux_maladie > 0 and self.bareme is not None:
-            net -= self.bareme.maladie_des_regimes_speciaux({regime: brut}, reversion)
+        # même si sa propre pension n'en sert pas : la réversion d'un autre ;
+        # au non-résident que la France couvre, à ses taux.
+        if self.taux_maladie > 0 and self.bareme is not None:
+            net -= self.bareme.maladie_des_regimes_speciaux(
+                {regime: brut}, reversion, self.non_resident)
         return net
 
     def net_d_un_depart(self, total: float, assiette: float,
@@ -1219,7 +1229,8 @@ class Montants:
     part_maladie: float = 0.0
     regimes_maladie: frozenset[str] = frozenset()
     #: La cotisation maladie de la SNCF et des mines, en part de la pension du
-    #: scénario 1 : au taux plein, et telle que la tranche du foyer la prélève.
+    #: scénario 1 : au taux plein, et telle que la tranche du foyer la prélève ;
+    #: au non-résident que la France couvre, à ses taux de L. 131-9.
     #: Un autre départ garde la part du sien (:meth:`net_d_un_depart`).
     part_regimes_speciaux: float = 0.0
     taux_regimes_speciaux: float = 0.0

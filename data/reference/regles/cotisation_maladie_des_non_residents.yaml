@@ -3,9 +3,10 @@ id: cotisation_maladie_des_non_residents
 intitule: >-
   Qui réside hors de France ne doit ni CSG, ni CRDS, ni CASA ; si la France prend en charge
   ses frais de santé, il doit une cotisation d'assurance maladie de 3,20 % sur la pension de
-  base du régime général et de 4,20 % sur les complémentaires, et rien sinon.
+  base du régime général et de 4,20 % sur les complémentaires, 3,90 % sous un plafond et
+  3,20 % au-delà sur celle de la SNCF, 3,70 % sur celle des mines, et rien sinon.
 domaine: cotisations
-regimes: [regime_general, agirc_arrco, ircantec]
+regimes: [regime_general, agirc_arrco, ircantec, sncf, mines]
 etape: foyer_et_net
 face: cotisation
 etat: approchee
@@ -42,6 +43,8 @@ versions:
   - {id: LEGIARTI000037950374, article: "L. 160-3 du code de la sécurité sociale", en_vigueur: 2019-07-01}
   - {id: LEGIARTI000048683656, article: "L. 131-9 du code de la sécurité sociale", en_vigueur: 2023-12-28}
   - {id: LEGIARTI000037456300, article: "D. 242-8 du code de la sécurité sociale", en_vigueur: 2018-09-30}
+  - {id: LEGIARTI000052041125, article: "décret n° 2007-1056 du 28 juin 2007, art. 7", en_vigueur: 2025-08-03}
+  - {id: LEGIARTI000037456798, article: "décret n° 46-2769 du 27 novembre 1946, art. 91", en_vigueur: 2018-09-30}
   nee_de: LEGIARTI000037950374
   bornes:
     pension.echeance: [2019-07-01, null]
@@ -60,11 +63,20 @@ versions:
       d'assurance supérieure ou égale à quinze années au titre d'un régime français »
       (L. 160-3, a et b), sous réserve des règlements européens : l'État de résidence qui
       sert une pension est compétent (règlement (CE) n° 883/2004, art. 23), la France
-      sinon (art. 24).
+      sinon (art. 24). La SNCF et les mines, qui prélèvent encore leur propre cotisation
+      maladie, ont leurs taux pour ceux qui relèvent de L. 131-9 : « 3,90 % du montant
+      trimestriel de la pension de retraite inférieur au plafond […] et 3,20 % du montant
+      trimestriel de la pension de retraite supérieur à ce plafond » (décret n° 2007-1056,
+      art. 7, IV, second alinéa ; le plafond de 5 128 € de 2010, revalorisé comme les
+      pensions et de moitié pour une réversion, VII) ; « 3,70 % » des pensions de
+      vieillesse, d'invalidité et de réversion des mines (décret n° 46-2769, art. 91).
     parametres:
       regime_general: 0.032
       complementaires: 0.042
       duree_minimale_trimestres: 60
+      sncf_sous_plafond: 0.039
+      sncf_au_dela: 0.032
+      mines: 0.037
   exemples: aucun trouvé
 approximations:
 - version: quinze_ans_ou_competence_exclusive
@@ -81,8 +93,10 @@ approximations:
   effet: non mesuré
 - version: quinze_ans_ou_competence_exclusive
   ecart: >-
-    Ce que la fonction publique, les régimes spéciaux et les indépendants prélèvent sur la
-    pension d'un non-résident n'est pas lu : rien n'y est prélevé.
+    Ce que la fonction publique, les régimes spéciaux autres que la SNCF et les mines, et
+    les indépendants prélèvent sur la pension d'un non-résident n'est pas lu : rien n'y
+    est prélevé. Les avantages accessoires des mines, majoration pour enfants comprise,
+    restent hors de l'assiette, comme pour les résidents.
   effet: non mesuré
 - version: quinze_ans_ou_competence_exclusive
   ecart: >-
@@ -94,7 +108,7 @@ sources:
   prochaine_relecture: 2027-10-05
   a_relire:
   - Lire les conventions bilatérales qui rendent la France seule compétente pour les soins.
-  - Chercher ce que le SRE, la CNRACL et les régimes spéciaux prélèvent sur la pension d'un non-résident.
+  - Chercher ce que le SRE, la CNRACL et les régimes spéciaux autres que la SNCF et les mines prélèvent sur la pension d'un non-résident.
   lectures:
   - type: legifrance
     reference: >-
@@ -102,6 +116,12 @@ sources:
       sécurité sociale, lus dans l'index LEGI du dépôt ; L. 136-1, rédaction de 2018 ;
       D. 242-8 (LEGIARTI000037456300)
     date: 2026-10-05
+  - type: legifrance
+    reference: >-
+      décret n° 2007-1056, art. 7, IV (LEGIARTI000052041125), et décret n° 46-2769,
+      art. 91 (LEGIARTI000037456798), lus dans l'index LEGI du dépôt : les taux de la SNCF
+      et des mines pour les personnes qui relèvent de L. 131-9
+    date: 2026-10-16
   - type: autre
     reference: >-
       urssaf.fr, « Les revenus de remplacement » : pour les non-résidents relevant du
@@ -116,16 +136,22 @@ code:
   python: >-
     contexte.py : couverture_francaise, reglements_europeens, Montants.du_foyer (qui réside
     hors de France), pension_du_regime ; remuneration.py : PrelevementsPension
-    (non_residents_regime_general, non_residents_complementaires, regimes_generaux)
+    (non_residents_regime_general, non_residents_complementaires, regimes_generaux),
+    MaladieRegimeSpecial (taux_non_resident, taux_non_resident_au_dela)
   javascript: >-
     moteur/js/contexte.js : couvertureFrancaise, reglementsEuropeens, Montants.duFoyer ;
     moteur/js/pages.js : noteDuMode, etagesActuels, estimationOfficielle
-  parametres: legislation/prelevements_remuneration.yaml, pensions.non_residents
+  parametres: >-
+    legislation/prelevements_remuneration.yaml, pensions.non_residents et
+    pensions.maladie_regimes_speciaux
   tests: tests/test_net_pensions.py
 historique:
 - >-
   2026-10-05 — née avec l'action 138, étape 2 : le dépôt prélevait la CSG de tout le
   monde, résident ou non ; le propriétaire a demandé d'appliquer la législation.
+- >-
+  2026-10-16 — action 138, étape 9 : la SNCF et les mines prélèvent le non-résident à
+  leurs taux de L. 131-9 ; jusque-là, rien sur ces pensions.
 effet: >-
   Tout retraité qui déclare résider hors de France : plus de CSG ni de CRDS ni de CASA ;
   3,5 % environ au salaire moyen si la France prend en charge ses soins, rien sinon.

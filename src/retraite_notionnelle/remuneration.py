@@ -618,22 +618,29 @@ class MaladieRegimeSpecial:
     """La cotisation maladie des pensions d'un régime spécial qui la prélève
     encore — la SNCF, les mines : son taux, sur la pension annuelle sous
     ``plafond_annuel`` (en euros de l'année ``annee``) quand il y en a un, ses
-    régimes, et la série de l'histoire des prélèvements qui la porte."""
+    régimes, et la série de l'histoire des prélèvements qui la porte ; les taux
+    du non-résident de L. 131-9, sous le plafond et au-delà."""
 
     serie: str
     taux: float
     plafond_annuel: float | None
     annee: int
     regimes: frozenset[str]
+    taux_non_resident: float = 0.0
+    taux_non_resident_au_dela: float = 0.0
 
-    def cotisation(self, montant: float, reversion: bool = False) -> float:
+    def cotisation(self, montant: float, reversion: bool = False,
+                   non_resident: bool = False) -> float:
         """Ce qu'elle prélève sur ``montant``, pension annuelle de ses régimes
         en euros de :attr:`annee` ; le plafond d'une réversion est de moitié
-        (décret n° 2007-1056, art. 7, VII)."""
+        (décret n° 2007-1056, art. 7, VII). Au ``non_resident``, ses taux de
+        L. 131-9, dont celui de la part au-delà du plafond."""
+        taux = self.taux_non_resident if non_resident else self.taux
         if self.plafond_annuel is None:
-            return self.taux * montant
+            return taux * montant
         plafond = self.plafond_annuel / 2.0 if reversion else self.plafond_annuel
-        return self.taux * min(montant, plafond)
+        au_dela = self.taux_non_resident_au_dela if non_resident else 0.0
+        return taux * min(montant, plafond) + au_dela * max(montant - plafond, 0.0)
 
 
 @dataclass(frozen=True)
@@ -753,15 +760,16 @@ class PrelevementsPension:
         return self.maladie_complementaire if tranche.maladie else 0.0
 
     def maladie_des_regimes_speciaux(self, montants: dict[str, float],
-                                     reversion: bool = False) -> float:
+                                     reversion: bool = False,
+                                     non_resident: bool = False) -> float:
         """La cotisation maladie de la SNCF et des mines, en euros, sur
         ``montants``, la pension annuelle de chaque régime en euros de l'année
         des plafonds, au taux plein : la tranche de CSG décide ensuite si elle
-        est due."""
+        est due. Au ``non_resident``, ses taux de L. 131-9."""
         return somme_ordonnee(
             special.cotisation(somme_ordonnee(montants.get(regime, 0.0)
                                               for regime in sorted(special.regimes)),
-                               reversion)
+                               reversion, non_resident)
             for special in self.regimes_speciaux)
 
     def revenu_fiscal_presume(self, pensions: list[float]) -> float:
@@ -940,7 +948,10 @@ def _charger(chemin: str, signature: tuple) -> Prelevements:
                     plafond_annuel=(None if special.get("plafond_annuel") is None
                                     else float(special["plafond_annuel"])),
                     annee=int(special["annee"]),
-                    regimes=frozenset(special.get("regimes") or ()))
+                    regimes=frozenset(special.get("regimes") or ()),
+                    taux_non_resident=float(special.get("taux_non_resident") or 0.0),
+                    taux_non_resident_au_dela=float(
+                        special.get("taux_non_resident_au_dela") or 0.0))
                 for special in pensions.get("maladie_regimes_speciaux") or ()),
         ),
         fiabilite=fiabilite,
