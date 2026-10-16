@@ -1,7 +1,19 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: 22a7dfaba57b235f6adaf6c0edf5445b25fca50b
-date: 2026-10-16T07:22:47Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38864416335
-presomptions: vert
+etat: rouge
+sources: 872a02307c2a2e7ffbcbdddf75c6b5d8401639bb
+date: 2026-10-16T13:19:14Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/38904678154
+echecs:
+  - "FAILED tests/test_affirmations.py::test_rien_n_echappe_au_catalogue - AssertionError: phrases fortes hors catalogue — les ajouter à data/reference/site/affirmations.yaml, avec un contrôle ou en sans_portee :"
+  - "FAILED tests/test_solde_fusion.py::test_l_accueil_cite_le_taux_du_regime_unique_et_le_cout_des_18_pour_cent - assert 2.3 == 2.2"
+  - "FAILED tests/test_solde_fusion.py::test_l_accueil_cite_le_solde_la_dette_et_le_coefficient_du_cout_par_defaut - AssertionError: assert -1.1 == -1"
+  - "FAILED tests/test_proposition_prospective.py::test_l_accueil_cite_le_solde_de_la_variante_prospective - assert -3.2 == -3.1"
+  - "FAILED tests/test_prose.py::test_chaque_action_en_cours_s_ouvre_sur_son_bloc_reprise - AssertionError: ['2026-10-07-etape-8-minima-des-exploitants.md : plus de dix lignes de reprise']"
+  - "FAILED tests/test_grille_large.py::test_la_grille_du_depot_reecrite_redonne_la_page - AssertionError: assert 0.25527196475591296 < 1e-06"
+  - "FAILED tests/test_web.py::test_le_balayage_des_temoins_couvre_tous_les_statuts - AssertionError: statuts sans témoin, donc sans comparaison Python/JavaScript : conjoint_collaborateur_artisan, conjoint_collaborateur_commercant"
+  - "FAILED tests/test_web_revues.py::test_le_menu_des_statuts_est_groupe_par_famille - assert 73 == 71"
+  - "FAILED tests/test_web.py::test_le_README_dit_le_vrai_nombre_de_statuts_et_de_regimes - AssertionError: README.md annonce 71 statuts, le dépôt en compte 73"
+presomptions: rouge
+presomptions_echecs:
+  - "FAILED tests/test_periodes_assimilees.py::test_une_annee_pleine_ne_recoit_rien_de_plus - AssertionError: assert {('apprentiss...2021): 2, ...} == {('apprentiss...2021): 2, ...}"
