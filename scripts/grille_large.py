@@ -226,7 +226,8 @@ from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.carriere import (  # noqa: E402
     PROFIL_SMIC, Metier, salaire_moyen_annuel,
 )
-from retraite_notionnelle.castypes import CAS_TYPES, CasType  # noqa: E402
+from retraite_notionnelle.castypes import (  # noqa: E402
+    CAS_TYPES, GRILLE_DU_COUT, CasType, cas_type_affiche, parts_des_caisses)
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
 from retraite_notionnelle.donnees.caracteristiques import CaracteristiquesRetraites  # noqa: E402
@@ -1368,17 +1369,15 @@ def groupe_de(code: str) -> str:
 
 
 def reference() -> list[Variante]:
-    """La grille du dépôt, en parts : chaque cas type, la part de sa caisse que
-    ``poids_effectifs`` lui donne — l'effectif de la caisse partagé également
-    entre les cas types qui la réclament."""
-    reclamants: dict[str, int] = {}
-    for cas in CAS_TYPES:
-        for caisse in cas.caisses:
-            reclamants[caisse] = reclamants.get(caisse, 0) + 1
+    """La grille du dépôt, en parts : chaque cas type de la grille de la page
+    Coût, variantes comprises — l'agent sédentaire de la CNRACL —, la part de sa
+    caisse que ``poids_effectifs`` lui donne : celle qu'il déclare, l'effectif
+    de la caisse partagé également sinon (``parts_des_caisses``)."""
+    parts_de = parts_des_caisses(GRILLE_DU_COUT)
     variantes = []
-    for cas in CAS_TYPES:
-        parts = tuple((caisse, 1.0 / reclamants[caisse]) for caisse in cas.caisses)
-        variantes.append(Variante(cas=cas, groupe=groupe_de(cas.code),
+    for cas in GRILLE_DU_COUT:
+        parts = tuple((caisse, parts_de[(cas.code, caisse)]) for caisse in cas.caisses)
+        variantes.append(Variante(cas=cas, groupe=groupe_de(cas_type_affiche(cas.code)),
                                   retraites=parts, cotisants=parts))
     return variantes
 

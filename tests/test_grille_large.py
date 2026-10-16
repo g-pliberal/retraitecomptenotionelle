@@ -21,7 +21,7 @@ import pytest
 
 from retraite_notionnelle import cout as C
 from retraite_notionnelle import memoire
-from retraite_notionnelle.castypes import CAS_TYPES, poids_effectifs
+from retraite_notionnelle.castypes import GRILLE_DU_COUT, poids_effectifs
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.simulateur import Simulateur
 
@@ -72,9 +72,9 @@ def test_la_grille_du_depot_en_parts_redonne_les_poids_de_la_page(simulateur):
                              (simulateur.cotisants, cotisants)):
         reparti = G.EffectifsRepartis(effectifs, parts)
         for annee in (1980, 2004, 2020, 2024, 2050):
-            attendu = poids_effectifs(effectifs, annee, CAS_TYPES)
+            attendu = poids_effectifs(effectifs, annee, GRILLE_DU_COUT)
             obtenu = poids_effectifs(reparti, annee, cas_types)
-            for cas in CAS_TYPES:
+            for cas in GRILLE_DU_COUT:
                 assert obtenu[cas.code] == pytest.approx(attendu[cas.code], abs=1e-12)
 
 
@@ -161,8 +161,8 @@ def test_les_salaires_gardent_la_moyenne_et_passent_la_grille_du_depot(source, s
     assert sum(part for _, part, _ in points) == pytest.approx(1.0)
     assert sum(part * facteur for _, part, facteur in points) == pytest.approx(1.0)
     variantes = G.grille("salaires", simulateur.effectifs, source, points)
-    for cas in CAS_TYPES:
-        siens = [v for v in variantes if v.cas.code.startswith(f"{cas.code}~")]
+    for cas in GRILLE_DU_COUT:
+        siens = [v for v in variantes if v.cas.code.rsplit("~", 1)[0] == cas.code]
         assert len(siens) == len(G.CENTILES)
         poids = sum(v.retraites[0][1] for v in siens)
         moyenne = sum(v.retraites[0][1] * v.cas.niveau_salaire for v in siens) / poids
