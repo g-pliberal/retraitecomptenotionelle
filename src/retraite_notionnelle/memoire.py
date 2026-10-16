@@ -132,10 +132,10 @@ HORS_DU_MODELE = (
     # Ce que les pages qui agrègent lisent du modèle : fabriqué depuis ses
     # calculs, et qu'aucun ne relit (action 150).
     "data/derive/agregats.json", "src/retraite_notionnelle/donnees/agregats.py",
-    # Deux mesures publiées que les grilles confrontent, et qu'aucun calcul
-    # ne lit (action 137).
+    # Une mesure publiée que les grilles confrontent, et qu'aucun calcul ne
+    # lit (action 137) ; le montant, que l'effet retour lit, en est sorti
+    # (action 138, étape 5).
     "data/reference/regimes/minimum_contributif_liquidants.csv",
-    "data/reference/regimes/minimum_contributif_montant.csv",
     # Le patrimoine des personnes décédées, que la reprise sur succession
     # confronte à celui des ménages, et qu'aucun calcul ne lit (action 47).
     "data/reference/macro/patrimoine_defunts.csv",

@@ -856,7 +856,13 @@ class AvenirAnnuel:
         le revenu que les pensions ne paient plus (:mod:`.effet_retour`)."""
         if self.effet_retour is None:
             return 0.0
-        return self.effet_retour.taux(scenario) * self.economie_constants(scenario)
+        return self.effet_retour.montant(scenario, self.economie_constants(scenario),
+                                         self.pensions_propres_constants(scenario))
+
+    def pensions_propres_constants(self, scenario: str) -> float:
+        """Les pensions de droit direct que le système sert, en millions
+        d'euros constants : sa base hors réversion, au rapport de sa grille."""
+        return self.base * (1.0 - self.part_derives) * self.rapports[scenario]
 
     def gain_public_constants(self, scenario: str) -> float:
         """L'économie des régimes, moins son effet retour : ce que les
@@ -4003,7 +4009,8 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             tetes_regimes=tetes_regimes,
             effet_retour=effet_retour.chiffrer(
                 annee, masses, tetes[TETES_TOUTES],
-                tetes[TETES_GARANTIE] / tetes[TETES_TOUTES] if tetes[TETES_TOUTES] else 0.0),
+                tetes[TETES_GARANTIE] / tetes[TETES_TOUTES] if tetes[TETES_TOUTES] else 0.0,
+                masses[MASSE_STOCK]),
         ))
     _reprises_successions(lignes, simulateur, garantie)
 

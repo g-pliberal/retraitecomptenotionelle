@@ -51,10 +51,14 @@
 #
 # À QUOI CETTE SÉRIE SERT
 # ------------------------
-# À CONFRONTER : le modèle ne la lit pas. scripts/part_minimum_contributif.py
-# y oppose, en euros de 2023, le minimum moyen que les grilles de
+# À CONFRONTER, d'abord : scripts/part_minimum_contributif.py y
+# oppose, en euros de 2023, le minimum moyen que les grilles de
 # carrières de la page Coût servent au scénario 1, et celui que
-# TRAJECTOiRE publie (action 137).
+# TRAJECTOiRE publie (action 137). Et à DÉFORMER la distribution des
+# pensions d'un scénario sans minimum, pour l'ASPA de l'effet retour
+# (src/retraite_notionnelle/effet_retour.py, action 138, étape 5) : le
+# complément des régimes alignés de l'année de l'EIR, 122,2 € en 2020,
+# est retiré au bas de la distribution.
 #
 # Ne pas modifier ces valeurs à la main : elles seraient écrasées
 # au prochain scripts/verifier_donnees.py --appliquer.

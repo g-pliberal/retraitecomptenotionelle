@@ -11,8 +11,12 @@ from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.effet_retour import (
     PREMIERE_ANNEE_EFFET_RETOUR,
     SCENARIOS_EFFET_RETOUR,
+    SCENARIOS_PROSPECTIFS,
+    _deformer,
     _points,
+    complement_minimum,
 )
+from retraite_notionnelle.garantie import pension_moyenne
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.somme import somme_ordonnee
 
@@ -44,8 +48,11 @@ def test_le_gain_public_est_l_economie_moins_l_effet_retour(avenir):
         ligne = avenir.annee(annee)
         for scenario in SCENARIOS_EFFET_RETOUR:
             economie = ligne.economie_constants(scenario)
+            effet = ligne.effet_retour
             assert ligne.gain_public_constants(scenario) == pytest.approx(
-                economie - ligne.effet_retour.taux(scenario) * economie)
+                economie - effet.taux(scenario) * economie
+                - effet.aspa_deformation[scenario]
+                * ligne.pensions_propres_constants(scenario))
 
 
 @pytest.mark.parametrize("scenario", SCENARIOS_EFFET_RETOUR)
@@ -76,3 +83,44 @@ def test_la_tranche_ouverte_redonne_la_moyenne_publiee():
     total = somme_ordonnee(part for _, part in points)
     assert somme_ordonnee(m * p for m, p in points) / total == pytest.approx(moyenne)
     assert points[-1][0] > distribution.tranches[-1].borne_inferieure
+
+
+@pytest.mark.parametrize("scenario", SCENARIOS_EFFET_RETOUR)
+def test_sans_minimum_l_aspa_coute_plus_a_pension_egale(avenir, scenario):
+    """La distribution d'un scénario sans minimum est déformée : à pension
+    moyenne égale, son ASPA dépasse celle de la distribution déplacée, d'un
+    peu moins de 2 % de ses pensions propres."""
+    for annee in (2030, 2050, 2070):
+        deformation = avenir.annee(annee).effet_retour.aspa_deformation[scenario]
+        assert 0.0 <= deformation < 0.02
+
+
+def test_les_prospectifs_gardent_le_minimum_de_leur_stock(avenir):
+    """Juste après la bascule, presque tout ce que les scénarios prospectifs
+    servent l'est encore au droit actuel, minimum compris."""
+    debut, fin = avenir.annee(2026).effet_retour, avenir.annee(2070).effet_retour
+    for scenario in SCENARIOS_PROSPECTIFS:
+        assert debut.aspa_deformation[scenario] < 0.25 * fin.aspa_deformation[scenario]
+    assert debut.aspa_deformation["notionnel_retroactif"] > 0.005
+
+
+def test_la_deformation_retire_le_complement_au_bas_sans_toucher_la_moyenne():
+    simulateur = Simulateur(Parametres())
+    distribution = simulateur.distribution
+    complement = complement_minimum(simulateur.parametres.racine_donnees,
+                                    distribution.millesime)
+    assert complement == pytest.approx(122.2)
+    caracteristiques = simulateur.caracteristiques
+    part = (caracteristiques.beneficiaires_minimum("ensemble")
+            / caracteristiques.valeur("effectifs", "ensemble"))
+    deformee = _deformer(distribution, part, complement)
+    assert deformee.part_minimum == pytest.approx(part)
+    assert somme_ordonnee(t.part for t in deformee.tranches) == pytest.approx(1.0)
+    assert pension_moyenne(deformee) == pytest.approx(pension_moyenne(distribution))
+    # Le bas perd le complément, en moyenne ; le haut gagne ce qu'il perd.
+    assert deformee.facteur_bas < 1.0 < deformee.facteur_haut
+    bas = [t for t in deformee.tranches[:len(distribution.tranches)]
+           if t.borne_superieure is not None][:5]
+    origine = distribution.tranches[:5]
+    assert all(d.borne_superieure < o.borne_superieure for d, o in zip(bas, origine))
+    assert _deformer(distribution, 0.0, complement).tranches == distribution.tranches
