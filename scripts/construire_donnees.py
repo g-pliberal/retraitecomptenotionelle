@@ -749,6 +749,7 @@ def _regimes() -> list[dict]:
                         p.surcote_affiliation_minimale_trimestres,
                     "plafond_majoration_enfants": p.plafond_majoration_enfants,
                     "plafond_majoration_annee": p.plafond_majoration_annee,
+                    "plafond_majoration_regime": p.plafond_majoration_regime,
                     "points_maximum": p.points_maximum,
                     "points_minimum_annuels": p.points_minimum_annuels,
                     "points_par_trimestre_valide": p.points_par_trimestre_valide,

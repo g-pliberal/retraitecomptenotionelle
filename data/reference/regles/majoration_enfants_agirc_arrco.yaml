@@ -4,7 +4,8 @@ intitule: >-
   Majoration pour enfants nés ou élevés de l'Agirc-Arrco par année d'acquisition
   des points : 10 à 30 % pour l'Arrco d'avant 1999 si le règlement de la caisse
   la prévoyait, 5 % pour l'Arrco de 1999 à 2011, 8 à 24 % pour l'Agirc d'avant 2012,
-  10 % depuis ; plafond en euros sur l'ensemble.
+  10 % depuis ; plafond en euros sur l'ensemble, 1 000 € par régime au 1er janvier
+  2012 pour les allocations de 2012 à 2018, celui du régime unifié depuis.
 etat: conforme
 effet: >-
   Parents de trois enfants salariés du privé avant 2019. Le modèle servait 10 %
@@ -13,9 +14,13 @@ effet: >-
   en 1962 et entrée à 22 ans voit sa pension Arrco majorée de 7,9 % pour trois enfants,
   et non de 10. La table est `majoration_enfants_points.csv` ; l'exemple de la caisse
   est rejoué par `test_la_majoration_agirc_arrco_suit_la_periode_d_acquisition`,
-  hors la ligne de la Capaves.
+  hors la ligne de la Capaves. Le plafond de 2012 à 2018 est de 1 000 € au titre de
+  l'Arrco et 1 000 € au titre de l'Agirc, revalorisés comme le point : le modèle servait
+  le plafond unifié de 2025, commun aux deux et double, et l'opposait dès 1999 ; un
+  non-cadre né en 1952, parti en 2018 au salaire de 100 000 € avec trois enfants, perd
+  73,53 € par an de majoration (1 031,15 € au lieu de 1 104,68).
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-10-16
   prochaine_relecture: 2027-06-30
   a_relire:
   - >-
@@ -30,6 +35,11 @@ sources:
     d'anticipation éventuellement appliqués » : le modèle la calcule sur l'allocation,
     coefficient compris, et la sous-estime sous un coefficient d'anticipation (relevé le
     8 octobre 2026, à l'étape 17 de l'action 138).
+  - >-
+    Le plafond ne s'oppose, au modèle comme chez OpenFisca, qu'aux participants nés à
+    compter du 2 août 1951 ; les deux pages lues le 16 octobre 2026 (Legisocial, COR) ne
+    donnent pour champ que les allocations prenant effet depuis le 1er janvier 2012. Lire
+    l'accord du 18 mars 2011 sur Légifrance (KALI) et la circulaire du 7 juillet 2011.
   lectures:
   - type: legifrance
     reference: >-
@@ -43,5 +53,34 @@ sources:
       Agirc-Arrco, dépliant « Décrypter la majoration pour enfants » (mars 2025),
       tableau des taux par période et exemple de Justine, 414,31 € par an
     date: 2026-09-23
+  - type: autre
+    reference: >-
+      Legisocial, « Retraites complémentaires : les nouvelles majorations familiales »
+      (août 2011), qui cite la circulaire Agirc-Arrco du 7 juillet 2011, point 3.3.1 :
+      « plafonné à 1 000€ par an au titre de l'Agirc et à 1 000€ par an au titre de
+      l'Arrco », « revalorisé comme le point de retraite », pour les allocations prenant
+      effet à compter du 1er janvier 2012
+    url: https://www.legisocial.fr/actualites-sociales/073-retraites-complementaires-les-nouvelles-majorations-familiales.html
+    date: 2011-08-01
+  - type: autre
+    reference: >-
+      COR, séance de mai 2011, document n° 7, « Règles ARRCO-AGIRC » : l'accord du
+      18 mars 2011 prévoit le « plafonnement de l'ensemble des majorations pour enfants
+      nés ou élevés, fixé à 1000 euros par an et par régime »
+    url: https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1530.pdf
+    date: 2011-05-19
 textes_a_rattacher:
+- reference: accord du 18 mars 2011 relatif aux retraites complémentaires Agirc et Arrco
 - reference: accord national interprofessionnel du 17 novembre 2017, article 94
+referents:
+  openfisca_france_pension:
+    equivalent: >-
+      arrco_points_enfants_nes_et_eleves et agirc_points_enfants_nes_et_eleves, par
+      période d'acquisition, et arrco_majoration_pension et agirc_majoration_pension, qui
+      les plafonnent
+    confrontation: >-
+      le 16 octobre 2026 (action 153, étape 2 ; tests/test_oracle_points_enfants_arrco.py) :
+      5 % des points Arrco de 1999 à 2011, 10 % depuis, la génération du 2 août 1951 et
+      la minoration de la majoration avec l'allocation concordent au centime ; son
+      plafond de 1 000 € par régime au 1er janvier 2012 était juste, le nôtre faux,
+      repris dans les deux moteurs

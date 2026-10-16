@@ -536,6 +536,12 @@ class PeriodeRegime:
     #: est publié. Le plafond suit ensuite la valeur de service du point.
     plafond_majoration_enfants: float | None
     plafond_majoration_annee: int | None
+    #: Le régime au titre duquel le plafond s'oppose, et dont il suit la
+    #: valeur du point : de 2012 à 2018, 1 000 € « au titre de l'Agirc et
+    #: [...] au titre de l'Arrco » (accord du 18 mars 2011), chacun à part.
+    #: ``None`` : un plafond commun à toute la complémentaire, celui du
+    #: régime unifié depuis 2019, au point du régime de la fiche.
+    plafond_majoration_regime: str | None
     #: Barème PROPRE de la majoration pour enfants, indexé par le nombre
     #: d'enfants — le dernier taux vaut au-delà. ``None`` : le barème commun
     #: de ``_taux_majoration_enfants``. Les marins bonifient dès DEUX enfants,
@@ -2176,6 +2182,7 @@ class CatalogueRegimes:
                     None if p.get("plafond_majoration_annee") is None
                     else int(p["plafond_majoration_annee"])
                 ),
+                plafond_majoration_regime=p.get("plafond_majoration_regime"),
                 points_maximum=(
                     None if p.get("points_maximum") is None
                     else float(p["points_maximum"])

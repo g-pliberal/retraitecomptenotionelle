@@ -804,6 +804,16 @@ champs_periode:
       ensuite la valeur de service du point. `null` : majoration non plafonnée,
       ce qui est le cas de tous les régimes de base.
 
+  plafond_majoration_regime:
+    description: >-
+      Le régime au titre duquel le plafond de la majoration pour enfants
+      s'oppose, et dont il suit la valeur du point : `arrco` ou `agirc` pour
+      les allocations de 2012 à 2018, que l'accord du 18 mars 2011 plafonne
+      à 1 000 euros « au titre de l'Agirc et [...] au titre de l'Arrco »,
+      chacun à part. `null` : un plafond commun à toute la complémentaire,
+      celui du régime unifié depuis 2019.
+    defaut: null
+
   borne_basse_euros:
   borne_haute_euros:
     description: >-

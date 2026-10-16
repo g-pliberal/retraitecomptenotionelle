@@ -123,6 +123,10 @@ FICHE_DU_VERSEMENT_IRCANTEC = "versement_unique_ircantec"
 #: peut nommer : l'allocation servie, ou les droits de l'ensemble de la
 #: carrière sans le coefficient d'anticipation.
 FICHE_DES_ENFANTS_A_CHARGE = "majoration_enfants_a_charge_agirc_arrco"
+#: La première date d'effet que le plafond de la majoration pour enfants nés
+#: ou élevés borne : « Ces dispositions s'appliquent aux allocations prenant
+#: effet à compter du 1er janvier 2012 » (accord du 18 mars 2011).
+PREMIER_PLAFOND_MAJORATION = DateMois(2012, 1)
 ASSIETTES_DES_ENFANTS_A_CHARGE = ("allocation", "droits_bruts")
 
 #: La majoration pour conjoint à charge, que :class:`FichesDatees
@@ -1413,15 +1417,17 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
     if avantages_non_contributifs and carriere.nombre_enfants >= 2:
         majoration = 0.0
         taux_cite = 0.0
-        # Le plafond de l'Agirc-Arrco s'oppose à la majoration de LA
-        # complémentaire, pas à celle de chacune de ses fiches : les points
-        # d'un salarié du privé sont répartis entre l'Agirc, l'Arrco et le
-        # régime unifié, et plafonner chacun séparément reviendrait à
-        # tripler le plafond. On les met donc dans un même seau.
-        majoration_plafonnee = 0.0
-        plafond_commun: float | None = None
-        #: (régime, part, soumise au plafond), dans l'ordre des pensions.
-        parts: list[tuple[str, float, bool]] = []
+        # Le plafond de l'Agirc-Arrco s'oppose à la majoration du RÉGIME qui
+        # le porte, pas à celle de chacune de ses fiches : les points d'un
+        # salarié du privé sont répartis entre ses tranches, ses fiches des
+        # entreprises nouvelles et le régime unifié, et plafonner chacune
+        # séparément multiplierait le plafond. Un seau par régime du plafond
+        # (`plafond_majoration_regime`) : l'Arrco et l'Agirc chacun le leur
+        # de 2012 à 2018, toute la complémentaire le même depuis 2019.
+        #: régime du plafond -> [majoration, plafond].
+        seaux: dict[str, list[float]] = {}
+        #: (régime, part, seau ou None), dans l'ordre des pensions.
+        parts: list[tuple[str, float, str | None]] = []
         # Le plafond de L. 18, au traitement qui a liquidé la pension de chaque
         # régime du code des pensions.
         plafond_l18 = plafond_de_l_article_l18(moteur, carriere)
@@ -1464,23 +1470,26 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                     part = sous
                     if part <= 0.0:
                         continue
-            plafond = plafond_majoration(moteur,
-                pension.regime, periode, carriere, annee_liquidation
-            )
+            code_du_plafond, periode_du_plafond = regime_du_plafond(
+                moteur, pension.regime, periode, carriere.date_liquidation)
+            plafond = (None if periode_du_plafond is None else plafond_majoration(
+                moteur, code_du_plafond, periode_du_plafond, carriere,
+                annee_liquidation))
+            seau = None
             if plafond is None:
                 majoration += part
             else:
-                majoration_plafonnee += part
-                plafond_commun = (plafond if plafond_commun is None
-                                  else max(plafond_commun, plafond))
-            parts.append((pension.regime, part, plafond is not None))
+                seau = periode_du_plafond.plafond_majoration_regime or ""
+                cumul = seaux.setdefault(seau, [0.0, plafond])
+                cumul[0] += part
+                cumul[1] = max(cumul[1], plafond)
+            parts.append((pension.regime, part, seau))
             taux_cite = max(taux_cite, taux)
-        plafonnee = plafond_commun is not None
-        retenue_plafonnee = 1.0
-        if plafond_commun is not None:
-            majoration += min(majoration_plafonnee, plafond_commun)
-            if majoration_plafonnee > plafond_commun:
-                retenue_plafonnee = plafond_commun / majoration_plafonnee
+        plafonnee = bool(seaux)
+        retenues: dict[str, float] = {}
+        for seau, (cumul, plafond) in seaux.items():
+            majoration += min(cumul, plafond)
+            retenues[seau] = plafond / cumul if cumul > plafond else 1.0
         if majoration > 0:
             total += majoration
             detail = f"jusqu'à {taux_cite:.0%} selon le régime"
@@ -1496,8 +1505,8 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 montant=majoration,
                 detail=detail,
                 par_regime=tuple(
-                    (code, part * (retenue_plafonnee if soumise else 1.0))
-                    for code, part, soumise in parts
+                    (code, part * (1.0 if seau is None else retenues[seau]))
+                    for code, part, seau in parts
                 ),
             ))
 
@@ -1916,6 +1925,23 @@ def verser_en_capital(moteur, carriere: Carriere, pensions: list[PensionRegime],
     return min(fiabilites) if fiabilites else None
 
 
+def regime_du_plafond(moteur, code: str, periode: PeriodeRegime,
+                      date: DateMois) -> tuple[str, PeriodeRegime | None]:
+    """Le régime dont le plafond de la majoration pour enfants borne la
+    pension de ``code`` prenant effet à ``date``, et sa période : le sien, ou,
+    après sa dernière année, celui du régime qui l'a intégré. L'Arrco et l'Agirc
+    fermés en 2018 servent leurs points en 2019 au plafond du régime unifié,
+    et non au plafond de 1 000 euros de chacun, que leur dernière période
+    porte."""
+    while (periode is not None and periode.fin is not None and date.annee > periode.fin):
+        successeur = moteur.catalogue[code].integre_dans
+        if not successeur or successeur not in moteur.catalogue:
+            break
+        code = successeur
+        periode = periode_de_liquidation(moteur.catalogue[code], date)
+    return code, periode
+
+
 def plafond_majoration(moteur, code: str, periode: PeriodeRegime,
                         carriere: Carriere,
                         annee_liquidation: int) -> float | None:
@@ -1934,18 +1960,29 @@ def plafond_majoration(moteur, code: str, periode: PeriodeRegime,
     d'année.
 
     Le plafond publié est celui du 31 décembre de son année ; celui d'une
-    pension, celui de sa date d'effet, comme la valeur du point qu'il suit.
+    pension, celui de sa date d'effet, comme la valeur du point qu'il suit,
+    celle du régime au titre duquel il s'oppose (`plafond_majoration_regime`),
+    les tranches de l'Arrco n'ayant pas de valeur à elles. De 2012 à 2018,
+    1 000 € par an « au titre de l'Agirc et [...] au titre de l'Arrco »,
+    « revalorisé comme le point de retraite » : le plafond des allocations
+    prenant effet au 1er janvier 2012, au point du 31 décembre 2011
+    (accord du 18 mars 2011, circulaire Agirc-Arrco du 7 juillet 2011,
+    point 3.3.1). Aucun avant 2012 : le modèle servait le plafond unifié de
+    2025, deux fois celui d'un seul régime, et l'opposait dès 1999.
     """
     if periode.plafond_majoration_enfants is None:
         return None
     if carriere.annee_naissance < 1952:
         return None
+    if carriere.date_liquidation < PREMIER_PLAFOND_MAJORATION:
+        return None
     plafond = periode.plafond_majoration_enfants
     annee_reference = periode.plafond_majoration_annee
     if annee_reference is None:
         return plafond
-    servie = liquider.valeur_du_point(moteur, code, carriere.date_liquidation)
-    publiee = liquider.valeur_du_point(moteur, code, annee_reference)
+    point = periode.plafond_majoration_regime or code
+    servie = liquider.valeur_du_point(moteur, point, carriere.date_liquidation)
+    publiee = liquider.valeur_du_point(moteur, point, annee_reference)
     if servie is None or publiee is None or publiee[0] <= 0:
         return plafond * moteur.macro.coefficient_prix(
             annee_reference, annee_liquidation

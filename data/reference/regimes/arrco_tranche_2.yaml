@@ -40,8 +40,9 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.025
@@ -91,8 +92,9 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.04
@@ -116,8 +118,9 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.041
@@ -142,8 +145,9 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.042
@@ -165,8 +169,9 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.043
@@ -188,8 +193,9 @@ periodes:
     duree_requise_trimestres: null
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.044
@@ -213,8 +219,9 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.046
@@ -247,8 +254,9 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.047
@@ -273,8 +281,9 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.048
@@ -299,8 +308,9 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.0492
@@ -325,8 +335,9 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.05
@@ -352,8 +363,9 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.05625
@@ -381,8 +393,9 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.0625
@@ -407,8 +420,9 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.06875
@@ -433,8 +447,9 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.075
@@ -461,8 +476,9 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.125
@@ -491,8 +507,9 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.15
@@ -517,8 +534,9 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.175
@@ -544,8 +562,9 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.2
@@ -572,8 +591,9 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.2
@@ -601,8 +621,9 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.20125
@@ -629,8 +650,9 @@ periodes:
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     abattement_points: coefficients_anticipation_agirc_arrco
-    plafond_majoration_enfants: 2367.48
-    plafond_majoration_annee: 2025
+    plafond_majoration_enfants: 1000.0
+    plafond_majoration_annee: 2011
+    plafond_majoration_regime: arrco
     salaire_reference: carriere_entiere
     assiette: tranche_2_arrco
     taux_cotisation_retraite: 0.2025

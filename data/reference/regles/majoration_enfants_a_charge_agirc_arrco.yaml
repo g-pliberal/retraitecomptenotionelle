@@ -221,7 +221,12 @@ referents:
       regimes/regimes_complementaires_prives.py:87-102 (la plus avantageuse des deux),
       :222-233 (Arrco) et :360-371 (Agirc, depuis 2012), au commit 1c45423 : le nombre
       d'enfants à charge au départ en entrée, sans fin de la charge
-    confrontation: aucune exécutée
+    confrontation: >-
+      le 16 octobre 2026 (action 153, étape 2 ; tests/test_oracle_points_enfants_arrco.py) :
+      5 % par enfant à charge, la plus forte des deux majorations, et, avant 2012, sur
+      l'allocation coefficient compris, concordent au centime ; de 2012 à 2018, il minore
+      la majoration du coefficient d'anticipation, quand elle porte sur les droits bruts :
+      l'écart est le sien (registre)
   til_pension:
     equivalent: >-
       til_pension/regime.py:246 et :272, au commit c4e0d50 : le plus fort des points des

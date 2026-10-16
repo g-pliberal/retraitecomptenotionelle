@@ -1,0 +1,371 @@
+{
+  "avertissement": "Deuxième implémentation, pas une source officielle. Il minore la majoration pour enfants à charge du coefficient d'anticipation, quand elle porte de 2012 à 2018 sur les droits bruts ; il ne lit son coefficient que par année entière.",
+  "convention": {
+    "categorie_salarie": "non-cadre du privé, ou cadre (`cadre`)",
+    "comparaison": "La majoration de chaque régime telle que la pension la sert : chez OpenFisca, la majoration fois le coefficient d'anticipation ; au dépôt, sa part de la majoration pour enfants.",
+    "date_de_naissance": "le 1er janvier de `naissance`",
+    "liquidation_date": "le 1er janvier de `liquidation`, au régime général, à l'Arrco et à l'Agirc",
+    "naissances": "Au dépôt : les enfants nés ou élevés le 1er juin des 25e, 26e, ... années du parent ; les enfants à charge le 1er juin de `liquidation - 12`, `- 10`, ...",
+    "nombre_enfants": "les enfants nés ou élevés et les enfants à charge",
+    "nombre_enfants_a_charge": "les enfants à charge, l'année de `liquidation`",
+    "non_traduit": "Les points d'avant 1999 ; la condition des neuf ans avant seize ans ; le 2 août 1951, qu'aucun profil n'approche ; les points de l'Agirc du cadre, confrontés par tests/test_oracle.py.",
+    "salaire_de_base": "le salaire, chaque année de `debut` à `liquidation` exclue",
+    "sexe": "faux (`sexe` H)"
+  },
+  "famille": "les points enfants de l'Arrco et de l'Agirc, et la minoration qui les frappe",
+  "perimetre": "Arrco des non-cadres, et Agirc d'un cadre, carrières continues à salaire nominal constant commençant en 1999 et liquidées de 2004 à 2018, de zéro à quatre enfants.",
+  "profils": {
+    "deux_a_charge_decote_en_2014": {
+      "openfisca": {
+        "arrco": {
+          "coefficient_de_minoration": 0.9200000166893005,
+          "majoration_pension": 190.31765747070312,
+          "pension": 1926.0146484375,
+          "pension_brute": 1903.176513671875,
+          "points": 1520.95947265625,
+          "points_enfants": 152.095947265625,
+          "points_enfants_a_charge": 152.095947265625,
+          "points_enfants_nes_et_eleves": 0.0
+        },
+        "decote_trimestres_regime_general": 8.0
+      },
+      "profil": {
+        "a_charge": 2,
+        "code": "deux_a_charge_decote_en_2014",
+        "debut": 1999,
+        "enfants": 0,
+        "liquidation": 2014,
+        "naissance": 1951,
+        "objet": "deux enfants à charge, huit trimestres de décote, après 2011 : 5 % des droits bruts, sans le coefficient",
+        "regle": "droits_bruts",
+        "salaire": 22000.0
+      }
+    },
+    "deux_a_charge_en_2018": {
+      "openfisca": {
+        "arrco": {
+          "coefficient_de_minoration": 1.0,
+          "majoration_pension": 233.95362854003906,
+          "pension": 2573.489990234375,
+          "pension_brute": 2339.536376953125,
+          "points": 1869.6845703125,
+          "points_enfants": 186.9684600830078,
+          "points_enfants_a_charge": 186.9684600830078,
+          "points_enfants_nes_et_eleves": 0.0
+        },
+        "decote_trimestres_regime_general": 0.0
+      },
+      "profil": {
+        "a_charge": 2,
+        "code": "deux_a_charge_en_2018",
+        "debut": 1999,
+        "enfants": 0,
+        "liquidation": 2018,
+        "naissance": 1952,
+        "objet": "deux enfants à charge, sans décote : 5 % chacun",
+        "regle": "a_charge",
+        "salaire": 22000.0
+      }
+    },
+    "deux_enfants_en_2018": {
+      "openfisca": {
+        "arrco": {
+          "coefficient_de_minoration": 1.0,
+          "majoration_pension": 0.0,
+          "pension": 2339.536376953125,
+          "pension_brute": 2339.536376953125,
+          "points": 1869.6845703125,
+          "points_enfants": 0.0,
+          "points_enfants_a_charge": 0.0,
+          "points_enfants_nes_et_eleves": 0.0
+        },
+        "decote_trimestres_regime_general": 0.0
+      },
+      "profil": {
+        "a_charge": 0,
+        "code": "deux_enfants_en_2018",
+        "debut": 1999,
+        "enfants": 2,
+        "liquidation": 2018,
+        "naissance": 1952,
+        "objet": "deux enfants qui ne sont plus à charge : rien",
+        "regle": "sans_majoration",
+        "salaire": 22000.0
+      }
+    },
+    "generation_1950_en_2015": {
+      "openfisca": {
+        "arrco": {
+          "coefficient_de_minoration": 1.0,
+          "majoration_pension": 938.5802001953125,
+          "pension": 16659.720703125,
+          "pension_brute": 15721.1396484375,
+          "points": 12563.845703125,
+          "points_enfants": 750.0841064453125,
+          "points_enfants_a_charge": 0.0,
+          "points_enfants_nes_et_eleves": 750.0841064453125
+        },
+        "decote_trimestres_regime_general": 0.0
+      },
+      "profil": {
+        "a_charge": 0,
+        "code": "generation_1950_en_2015",
+        "debut": 1999,
+        "enfants": 3,
+        "liquidation": 2015,
+        "naissance": 1950,
+        "objet": "né avant le 2 août 1951 : aucun plafond",
+        "regle": "generation",
+        "salaire": 100000.0
+      }
+    },
+    "plafond_arrco_en_2018": {
+      "openfisca": {
+        "arrco": {
+          "coefficient_de_minoration": 1.0,
+          "majoration_pension": 1031.1495361328125,
+          "pension": 19703.994140625,
+          "pension_brute": 18672.84375,
+          "points": 14922.755859375,
+          "points_enfants": 985.97509765625,
+          "points_enfants_a_charge": 0.0,
+          "points_enfants_nes_et_eleves": 985.97509765625
+        },
+        "decote_trimestres_regime_general": 0.0
+      },
+      "profil": {
+        "a_charge": 0,
+        "code": "plafond_arrco_en_2018",
+        "debut": 1999,
+        "enfants": 3,
+        "liquidation": 2018,
+        "naissance": 1952,
+        "objet": "deux tranches de l'Arrco, une majoration au-delà de 1 000 € de 2012 revalorisés",
+        "regle": "plafond",
+        "salaire": 100000.0
+      }
+    },
+    "plafond_par_regime_en_2018": {
+      "openfisca": {
+        "agirc": {
+          "coefficient_de_minoration": 1.0,
+          "majoration_pension": 1028.1124267578125,
+          "pension": 17600.453125,
+          "pension_brute": 16572.33984375,
+          "points": 38079.82421875,
+          "points_enfants": 3238.27783203125,
+          "points_enfants_a_charge": 0.0,
+          "points_enfants_nes_et_eleves": 3238.27783203125
+        },
+        "arrco": {
+          "coefficient_de_minoration": 1.0,
+          "majoration_pension": 228.9287872314453,
+          "pension": 3682.928955078125,
+          "pension_brute": 3454.000244140625,
+          "points": 2760.32958984375,
+          "points_enfants": 182.9527587890625,
+          "points_enfants_a_charge": 0.0,
+          "points_enfants_nes_et_eleves": 182.9527587890625
+        },
+        "decote_trimestres_regime_general": 0.0
+      },
+      "profil": {
+        "a_charge": 0,
+        "cadre": true,
+        "code": "plafond_par_regime_en_2018",
+        "debut": 1999,
+        "enfants": 3,
+        "liquidation": 2018,
+        "naissance": 1952,
+        "objet": "un cadre : l'Agirc au plafond, l'Arrco sous le sien",
+        "regle": "plafond",
+        "salaire": 90000.0
+      }
+    },
+    "quatre_enfants_en_2018": {
+      "openfisca": {
+        "arrco": {
+          "coefficient_de_minoration": 1.0,
+          "majoration_pension": 149.704345703125,
+          "pension": 2489.24072265625,
+          "pension_brute": 2339.536376953125,
+          "points": 1869.6845703125,
+          "points_enfants": 119.63905334472656,
+          "points_enfants_a_charge": 0.0,
+          "points_enfants_nes_et_eleves": 119.63905334472656
+        },
+        "decote_trimestres_regime_general": 0.0
+      },
+      "profil": {
+        "a_charge": 0,
+        "code": "quatre_enfants_en_2018",
+        "debut": 1999,
+        "enfants": 4,
+        "liquidation": 2018,
+        "naissance": 1952,
+        "objet": "un quatrième enfant n'ajoute rien depuis 1999",
+        "regle": "nes_ou_eleves",
+        "salaire": 22000.0
+      }
+    },
+    "trois_enfants_a_soixante_ans_en_2004": {
+      "openfisca": {
+        "arrco": {
+          "coefficient_de_minoration": 0.7799999713897705,
+          "majoration_pension": 30.376272201538086,
+          "pension": 497.56329345703125,
+          "pension_brute": 607.525390625,
+          "points": 567.8869018554688,
+          "points_enfants": 28.394346237182617,
+          "points_enfants_a_charge": 0.0,
+          "points_enfants_nes_et_eleves": 28.394346237182617
+        },
+        "decote_trimestres_regime_general": 20.0
+      },
+      "profil": {
+        "a_charge": 0,
+        "code": "trois_enfants_a_soixante_ans_en_2004",
+        "debut": 1999,
+        "enfants": 3,
+        "liquidation": 2004,
+        "naissance": 1944,
+        "objet": "parti à soixante ans, vingt trimestres de décote par l'âge : 0,78",
+        "regle": "minoration",
+        "salaire": 22000.0
+      }
+    },
+    "trois_enfants_decote_en_2011": {
+      "openfisca": {
+        "arrco": {
+          "coefficient_de_minoration": 0.9200000166893005,
+          "majoration_pension": 78.08126068115234,
+          "pension": 1508.530029296875,
+          "pension_brute": 1561.625244140625,
+          "points": 1314.056884765625,
+          "points_enfants": 65.70284271240234,
+          "points_enfants_a_charge": 0.0,
+          "points_enfants_nes_et_eleves": 65.70284271240234
+        },
+        "decote_trimestres_regime_general": 8.0
+      },
+      "profil": {
+        "a_charge": 0,
+        "code": "trois_enfants_decote_en_2011",
+        "debut": 1999,
+        "enfants": 3,
+        "liquidation": 2011,
+        "naissance": 1948,
+        "objet": "huit trimestres de décote : 0,92 sur l'allocation et sa majoration",
+        "regle": "minoration",
+        "salaire": 23000.0
+      }
+    },
+    "trois_enfants_en_2012": {
+      "openfisca": {
+        "arrco": {
+          "coefficient_de_minoration": 1.0,
+          "majoration_pension": 81.7042236328125,
+          "pension": 1715.788818359375,
+          "pension_brute": 1634.0845947265625,
+          "points": 1346.5880126953125,
+          "points_enfants": 67.32939910888672,
+          "points_enfants_a_charge": 0.0,
+          "points_enfants_nes_et_eleves": 67.32939910888672
+        },
+        "decote_trimestres_regime_general": 0.0
+      },
+      "profil": {
+        "a_charge": 0,
+        "code": "trois_enfants_en_2012",
+        "debut": 1999,
+        "enfants": 3,
+        "liquidation": 2012,
+        "naissance": 1947,
+        "objet": "des points de 1999 à 2011 : 5 %",
+        "regle": "nes_ou_eleves",
+        "salaire": 22000.0
+      }
+    },
+    "trois_enfants_en_2018": {
+      "openfisca": {
+        "arrco": {
+          "coefficient_de_minoration": 1.0,
+          "majoration_pension": 149.704345703125,
+          "pension": 2489.24072265625,
+          "pension_brute": 2339.536376953125,
+          "points": 1869.6845703125,
+          "points_enfants": 119.63905334472656,
+          "points_enfants_a_charge": 0.0,
+          "points_enfants_nes_et_eleves": 119.63905334472656
+        },
+        "decote_trimestres_regime_general": 0.0
+      },
+      "profil": {
+        "a_charge": 0,
+        "code": "trois_enfants_en_2018",
+        "debut": 1999,
+        "enfants": 3,
+        "liquidation": 2018,
+        "naissance": 1952,
+        "objet": "5 % jusqu'en 2011, 10 % depuis, sous le plafond",
+        "regle": "nes_ou_eleves",
+        "salaire": 22000.0
+      }
+    },
+    "trois_enfants_quinze_trimestres_en_2014": {
+      "openfisca": {
+        "arrco": {
+          "coefficient_de_minoration": 0.8799999952316284,
+          "majoration_pension": 106.0683822631836,
+          "pension": 1768.135498046875,
+          "pension_brute": 1903.176513671875,
+          "points": 1520.95947265625,
+          "points_enfants": 84.76654815673828,
+          "points_enfants_a_charge": 0.0,
+          "points_enfants_nes_et_eleves": 84.76654815673828
+        },
+        "decote_trimestres_regime_general": 15.0
+      },
+      "profil": {
+        "a_charge": 0,
+        "code": "trois_enfants_quinze_trimestres_en_2014",
+        "debut": 1999,
+        "enfants": 3,
+        "liquidation": 2014,
+        "naissance": 1952,
+        "objet": "quinze trimestres de décote : le barème au trimestre, que OpenFisca tronque à l'année",
+        "regle": "troncature",
+        "salaire": 22000.0
+      }
+    },
+    "un_a_charge_decote_en_2011": {
+      "openfisca": {
+        "arrco": {
+          "coefficient_de_minoration": 0.9200000166893005,
+          "majoration_pension": 78.08126068115234,
+          "pension": 1508.530029296875,
+          "pension_brute": 1561.625244140625,
+          "points": 1314.056884765625,
+          "points_enfants": 65.70284271240234,
+          "points_enfants_a_charge": 65.70284271240234,
+          "points_enfants_nes_et_eleves": 0.0
+        },
+        "decote_trimestres_regime_general": 8.0
+      },
+      "profil": {
+        "a_charge": 1,
+        "code": "un_a_charge_decote_en_2011",
+        "debut": 1999,
+        "enfants": 0,
+        "liquidation": 2011,
+        "naissance": 1948,
+        "objet": "un enfant à charge, huit trimestres de décote, avant 2012 : 5 % de l'allocation, coefficient compris",
+        "regle": "a_charge",
+        "salaire": 23000.0
+      }
+    }
+  },
+  "recupere_le": "2026-10-16",
+  "source": "OpenFisca-France-Pension",
+  "version": "0.1.3"
+}

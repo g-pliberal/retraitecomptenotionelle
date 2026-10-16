@@ -516,13 +516,18 @@ def test_une_cellule_doit_etre_designee_sans_ambiguite():
 def test_partout_refuse_une_valeur_qui_ne_l_est_plus():
     """`partout` dit « toutes les entrées portent ce nombre », et c'est une
     affirmation : le jour où l'une s'en écarte, la prose qui l'annonce une
-    fois est devenue fausse, et la sonde doit le dire plutôt que choisir."""
+    fois est devenue fausse, et la sonde doit le dire plutôt que choisir. Le
+    plafond de la majoration familiale de l'Agirc-Arrco en est l'exemple : un
+    seul, 2 367,48 €, dans toutes les fiches, jusqu'au 16 octobre 2026, où
+    celles d'avant 2019 ont pris le leur, 1 000 € (action 153, étape 2)."""
+    assert verifier_prose.sonde_partout(
+        "data/reference/regimes/agirc_arrco.yaml:periodes.*.plafond_majoration_enfants"
+    ) == 2367.48
     fiches = ("data/reference/regimes/agirc*.yaml + data/reference/regimes/arrco*.yaml"
               " + data/reference/regimes/unirs.yaml")
-    assert verifier_prose.sonde_partout(
-        f"{fiches}:periodes.*.plafond_majoration_enfants") == 2367.48
-    with pytest.raises(ValueError):
-        verifier_prose.sonde_partout(f"{fiches}:periodes.*.debut")
+    for champ in ("plafond_majoration_enfants", "debut"):
+        with pytest.raises(ValueError):
+            verifier_prose.sonde_partout(f"{fiches}:periodes.*.{champ}")
 
 
 def test_une_sonde_peut_traverser_un_cran_d_entrees():

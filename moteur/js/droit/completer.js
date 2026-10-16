@@ -1275,13 +1275,13 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
   if (avantagesNonContributifs && carriere.nombre_enfants >= 2) {
     let majoration = 0.0;
     let tauxCite = 0.0;
-    // Le plafond de l'Agirc-Arrco s'oppose à la majoration de LA
-    // complémentaire, pas à celle de chacune de ses fiches : les points d'un
-    // salarié du privé sont répartis entre l'Agirc, l'Arrco et le régime
-    // unifié, et plafonner chacun séparément triplerait le plafond.
-    let majorationPlafonnee = 0.0;
-    let plafondCommun = null;
-    // [régime, part, soumise au plafond], dans l'ordre des pensions.
+    // Le plafond de l'Agirc-Arrco s'oppose à la majoration du RÉGIME qui le
+    // porte, pas à celle de chacune de ses fiches : un seau par régime du
+    // plafond (`plafond_majoration_regime`), l'Arrco et l'Agirc chacun le
+    // leur de 2012 à 2018, toute la complémentaire le même depuis 2019.
+    // régime du plafond -> [majoration, plafond].
+    const seaux = new Map();
+    // [régime, part, seau ou null], dans l'ordre des pensions.
     const parts = [];
     // Le plafond de L. 18, au traitement qui a liquidé la pension de chaque
     // régime du code des pensions.
@@ -1325,25 +1325,29 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
           }
         }
       }
-      const plafond = plafondMajoration(
-        moteur, pension.regime, periode, carriere, anneeLiquidation,
+      const [codeDuPlafond, periodeDuPlafond] = regimeDuPlafond(
+        moteur, pension.regime, periode, carriere.dateLiquidation);
+      const plafond = periodeDuPlafond === null ? null : plafondMajoration(
+        moteur, codeDuPlafond, periodeDuPlafond, carriere, anneeLiquidation,
       );
+      let seau = null;
       if (plafond === null) {
         majoration += part;
       } else {
-        majorationPlafonnee += part;
-        plafondCommun = plafondCommun === null ? plafond : Math.max(plafondCommun, plafond);
+        seau = periodeDuPlafond.plafond_majoration_regime ?? "";
+        const cumul = seaux.get(seau) ?? [0.0, plafond];
+        cumul[0] += part;
+        cumul[1] = Math.max(cumul[1], plafond);
+        seaux.set(seau, cumul);
       }
-      parts.push([pension.regime, part, plafond !== null]);
+      parts.push([pension.regime, part, seau]);
       tauxCite = Math.max(tauxCite, taux);
     }
-    const plafonnee = plafondCommun !== null;
-    let retenuePlafonnee = 1.0;
-    if (plafondCommun !== null) {
-      majoration += Math.min(majorationPlafonnee, plafondCommun);
-      if (majorationPlafonnee > plafondCommun) {
-        retenuePlafonnee = plafondCommun / majorationPlafonnee;
-      }
+    const plafonnee = seaux.size > 0;
+    const retenues = new Map();
+    for (const [seau, [cumul, plafond]] of seaux) {
+      majoration += Math.min(cumul, plafond);
+      retenues.set(seau, cumul > plafond ? plafond / cumul : 1.0);
     }
     if (majoration > 0) {
       total += majoration;
@@ -1361,8 +1365,8 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
           : "Bonification pour deux enfants",
         montant: majoration,
         detail,
-        par_regime: parts.map(([code, part, soumise]) => [
-          code, part * (soumise ? retenuePlafonnee : 1.0),
+        par_regime: parts.map(([code, part, seau]) => [
+          code, part * (seau === null ? 1.0 : retenues.get(seau)),
         ]),
       });
     }
@@ -1839,13 +1843,36 @@ export function surcoteHorsMinimum(montant, eligible, ajout, dateEffet) {
 }
 
 /**
+ * Le régime dont le plafond de la majoration pour enfants borne la pension de
+ * ``code`` prenant effet à ``date``, et sa période : le sien, ou, après sa
+ * dernière année, celui du régime qui l'a intégré. Voir le Python.
+ */
+export function regimeDuPlafond(moteur, code, periode, date) {
+  while (periode !== null && periode.fin !== null && periode.fin !== undefined
+         && date.annee > periode.fin) {
+    const successeur = moteur.catalogue.obtenir(code).integre_dans;
+    if (!successeur || !moteur.catalogue.contient(successeur)) {
+      break;
+    }
+    code = successeur;
+    periode = periodeDeLiquidation(moteur.catalogue.obtenir(code), date);
+  }
+  return [code, periode];
+}
+
+// La première date d'effet que le plafond borne : les allocations prenant effet
+// à compter du 1er janvier 2012 (accord du 18 mars 2011).
+const PREMIER_PLAFOND_MAJORATION = new DateMois(2012, 1);
+
+/**
  * Plafond en euros de la majoration pour enfants, ou ``null``.
  *
  * Les régimes de base servent 10 % sans plafond ; l'Agirc-Arrco borne la
- * majoration en euros — 2 367,48 € par an depuis le 1er novembre 2024 — et le
- * plafond suit la valeur de service du point. Il ne s'oppose qu'aux assurés
- * nés à compter du 2 août 1951 ; le modèle ne connaît que l'année de
- * naissance et retient les générations à partir de 1952.
+ * majoration en euros — 2 367,48 € par an depuis le 1er novembre 2024, 1 000 €
+ * au 1er janvier 2012 par régime de 2012 à 2018 — et le plafond suit la valeur
+ * de service du point du régime au titre duquel il s'oppose. Aucun avant 2012.
+ * Il ne s'oppose qu'aux assurés nés à compter du 2 août 1951 ; le modèle ne
+ * connaît que l'année de naissance et retient les générations à partir de 1952.
  */
 export function plafondMajoration(moteur, code, periode, carriere, anneeLiquidation) {
   if (periode.plafond_majoration_enfants === null
@@ -1855,14 +1882,18 @@ export function plafondMajoration(moteur, code, periode, carriere, anneeLiquidat
   if (carriere.annee_naissance < 1952) {
     return null;
   }
+  if (carriere.dateLiquidation.rang < PREMIER_PLAFOND_MAJORATION.rang) {
+    return null;
+  }
   const plafond = periode.plafond_majoration_enfants;
   const anneeReference = periode.plafond_majoration_annee;
   if (anneeReference === null || anneeReference === undefined) {
     return plafond;
   }
   // Le plafond de la date d'effet, comme la valeur du point qu'il suit.
-  const servie = liquider.valeurDuPoint(moteur, code, carriere.dateLiquidation);
-  const publiee = liquider.valeurDuPoint(moteur, code, anneeReference);
+  const point = periode.plafond_majoration_regime ?? code;
+  const servie = liquider.valeurDuPoint(moteur, point, carriere.dateLiquidation);
+  const publiee = liquider.valeurDuPoint(moteur, point, anneeReference);
   if (servie === null || publiee === null || publiee[0] <= 0) {
     return plafond * moteur.macro.coefficientPrix(anneeReference, anneeLiquidation);
   }

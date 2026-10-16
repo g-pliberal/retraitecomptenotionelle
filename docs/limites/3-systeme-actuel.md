@@ -113,7 +113,7 @@ rejoue sans avoir à installer le paquet.
 **Cinq familles de régimes y passent aujourd'hui**, et c'est tout ce
 qu'OpenFisca expose : le régime général, la pension civile (État et CNRACL),
 l'Arrco d'avant 2019, l'Agirc des cadres et l'Ircantec des agents non
-titulaires — <!--chiffre:mesure(profils_oracle)-->110<!--/--> profils en tout. Les régimes alignés — MSA des
+titulaires — <!--chiffre:mesure(profils_oracle)-->123<!--/--> profils en tout. Les régimes alignés — MSA des
 salariés agricoles, artisans, commerçants — n'ont chez lui aucun module, et
 n'en ont pas besoin : la loi les calcule comme le régime général, et c'est à
 l'oracle du régime général qu'ils se confrontent — à une table près : le
@@ -348,9 +348,17 @@ son minimum garanti de la CNRACL lit les services de l'État et vaut zéro ; il
 sert sous quinze ans la règle de 2011 à qui avait gardé l'ancienne ; il ne
 minore pas, de 2011 à 2015, l'âge qui ouvre le minimum sans la durée ; il
 proratise le minimum contributif sans la durée corrigée après l'âge du taux
-plein. Restent les autres familles que le registre nomme : les points enfants
-de l'Arrco, la minoration de l'Arrco, les périodes assimilées, le salaire
-annuel moyen sur des salaires qui varient.
+plein. La sixième, les points enfants de l'Arrco et de l'Agirc et la
+minoration qui les frappe (`tests/test_oracle_points_enfants_arrco.py`), a
+trouvé une erreur chez nous : le plafond de la majoration pour enfants nés ou
+élevés était, de 2012 à 2018, celui du régime unifié, commun aux deux régimes
+et double de celui de chacun ; il est désormais de <!--chiffre:partout(data/reference/regimes/arrco.yaml:periodes.*.plafond_majoration_enfants)-->1 000<!--/--> € par régime au point
+du 1er janvier 2012, dans les deux moteurs. Les taux par période
+d'acquisition, les enfants à charge et le coefficient d'anticipation
+concordent ; son écart est le sien : de 2012 à 2018, il minore du coefficient
+la majoration pour enfants à charge, qui porte sur les droits bruts. Restent
+les autres familles que le registre nomme : les périodes assimilées, le
+salaire annuel moyen sur des salaires qui varient.
 
 **TRAJECTOiRE**, le modèle de la DREES dont un module calcule les cas types du
 COR, s'exécute à part, sa licence à réciprocité (EUPL) le tenant hors du dépôt :

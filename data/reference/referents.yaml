@@ -1706,6 +1706,22 @@ referents:
         preuve: >-
           tests/temoins/openfisca_minima.json ;
           tests/test_oracle_minima.py
+      - constat: >-
+          Il minore la majoration de l'Arrco et de l'Agirc pour enfants à
+          charge du coefficient d'anticipation, comme l'allocation
+          (`arrco_pension` : la pension et la majoration, fois le
+          coefficient). Au non-cadre né en 1951, parti en 2014 avec deux
+          enfants à charge et huit trimestres de décote : 175,09 euros, contre
+          190,32 au dépôt.
+        tranche: >-
+          Accord du 8 décembre 1961, annexe A, article 17, dans sa rédaction
+          de l'accord du 18 mars 2011 : de 2012 à 2018, une majoration « égale
+          à 5 % des droits bruts de l'ensemble de la carrière par enfant à
+          charge » (fiche majoration_enfants_a_charge_agirc_arrco). Le dépôt
+          suit le texte
+        preuve: >-
+          tests/temoins/openfisca_points_enfants_arrco.json ;
+          tests/test_oracle_points_enfants_arrco.py
     fait_mieux:
       - quoi: >-
           Il code le départ anticipé des fonctionnaires parents de trois
@@ -1774,6 +1790,27 @@ referents:
         etat: repris
         chantier: "153.2"
       - quoi: >-
+          Il plafonne la majoration pour enfants nés ou élevés à 1 000 euros
+          par an et par régime, l'Arrco et l'Agirc chacun le sien, au point du
+          1er janvier 2012. Le dépôt servait de 1999 à 2018 le plafond du
+          régime unifié, 2 367,48 euros en 2025, commun aux deux : au
+          non-cadre né en 1952, parti en 2018 au salaire de 100 000 euros avec
+          trois enfants, 1 104,68 euros de majoration au lieu de 1 031,15.
+        preuve: >-
+          `variables/regimes_complementaires_prives.py`
+          (`arrco_majoration_pension`, `agirc_majoration_pension`), version
+          0.1.3
+        verification: >-
+          Accord du 18 mars 2011 : « plafonné à 1 000 € par an au titre de
+          l'Agirc et à 1 000 € par an au titre de l'Arrco », « revalorisé comme
+          le point de retraite », pour les allocations prenant effet à compter
+          du 1er janvier 2012 (circulaire Agirc-Arrco du 7 juillet 2011, point
+          3.3.1, citée par Legisocial ; COR, document n° 7 de mai 2011). Repris
+          le 16 octobre 2026 dans les deux moteurs (`plafond_majoration_regime`)
+          et confronté sur deux profils (action 153, sixième famille).
+        etat: repris
+        chantier: "153.2"
+      - quoi: >-
           Il calcule, et le plus souvent teste, la majoration de durée et la
           bonification pour enfants, la majoration de 10 %, les points enfants
           de l'Arrco, la catégorie active, la carrière longue de la fonction
@@ -1795,8 +1832,11 @@ referents:
           cotisée (`tests/test_oracle_carriere_longue_fonction_publique.py`) ;
           les minima — le minimum garanti de l'État et de la CNRACL, son
           barème, sa condition de taux plein, et le minimum contributif
-          (`tests/test_oracle_minima.py`).
-          Restent les autres familles.
+          (`tests/test_oracle_minima.py`) ; les points enfants de l'Arrco et
+          de l'Agirc et la minoration qui les frappe — les taux par période
+          d'acquisition, le plafond, les enfants à charge, le coefficient
+          d'anticipation (`tests/test_oracle_points_enfants_arrco.py`).
+          Restent les périodes assimilées et le salaire annuel moyen.
         preuve: >-
           ses 140 tests de formules (`tests/formulas/`), au commit `1c45423`
         etat: a_reprendre
