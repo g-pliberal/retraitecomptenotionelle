@@ -46,6 +46,34 @@ export const PERIODES_NON_COTISEES = new Set([
 ]);
 
 /**
+ * Les statuts de CONJOINT COLLABORATEUR d'un artisan ou d'un commerçant, dont
+ * le revenu de la ligne est l'assiette choisie (`assietteDuConjointCollaborateur`).
+ */
+export const CONJOINTS_COLLABORATEURS = new Set([
+  "conjoint_collaborateur_artisan",
+  "conjoint_collaborateur_commercant",
+]);
+/** L'affiliation obligatoire du 1er juillet 2007 (loi n° 2005-882, art. 15, XIV). */
+export const CONJOINT_COLLABORATEUR_OBLIGATOIRE = 2007;
+/** « Un revenu forfaitaire égal au tiers du plafond » (D. 633-19-2, 1°). */
+export const CONJOINT_COLLABORATEUR_FORFAIT = 1.0 / 3.0;
+
+/**
+ * L'assiette d'une année d'emploi du conjoint collaborateur : le revenu de la
+ * ligne, qui est l'assiette qu'il a choisie, ou, sans revenu et depuis 2007,
+ * le forfait du tiers du plafond que la caisse applique à défaut de choix
+ * (R. 662-1), proratisé sur les mois de la ligne. Voir carriere.py.
+ */
+export function assietteDuConjointCollaborateur(macro, affiliation, annee, revenu, part) {
+  if (!CONJOINTS_COLLABORATEURS.has(affiliation) || revenu > 0
+      || annee < CONJOINT_COLLABORATEUR_OBLIGATOIRE) {
+    return revenu;
+  }
+  return CONJOINT_COLLABORATEUR_FORFAIT
+    * macro.plafond_securite_sociale.valeur(annee) * part;
+}
+
+/**
  * Les statuts de non-salarié agricole, et la qualité que chacun donne quand
  * il est l'activité principale de l'année (`Carriere.qualiteAgricole`).
  */
@@ -474,6 +502,9 @@ function ligneAnnuelle({
 }) {
   const cotise = typePeriode === "emploi";
   const motifs = macro.paquet.periodes_non_travaillees ?? {};
+  if (cotise) {
+    revenu = assietteDuConjointCollaborateur(macro, affiliation, annee, revenu, part);
+  }
   const regle = cotise ? null : (motifs[typePeriode] ?? motifs.sans_activite ?? null);
   const ouvreComplementaires = regle !== null && regle[1] === true;
   // Ces points sont-ils PAYÉS ? Par l'Unédic pour le chômage ; la maladie les

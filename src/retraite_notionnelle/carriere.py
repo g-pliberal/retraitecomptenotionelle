@@ -87,6 +87,46 @@ PERIODES_NON_COTISEES = {
     "etudes",
 }
 
+#: Les statuts de CONJOINT COLLABORATEUR d'un artisan ou d'un commerçant. Le
+#: revenu de leur ligne est l'assiette qu'ils ont choisie ; une ligne d'emploi
+#: sans revenu cotise sur le forfait du tiers du plafond, celui que le texte
+#: retient à défaut de choix, depuis l'affiliation obligatoire de 2007
+#: (:func:`assiette_du_conjoint_collaborateur`).
+CONJOINTS_COLLABORATEURS = frozenset({"conjoint_collaborateur_artisan",
+                                      "conjoint_collaborateur_commercant"})
+#: La première année où le conjoint collaborateur est affilié d'office, et
+#: cotise donc au forfait faute d'avoir choisi : le 1er juillet 2007, au
+#: « premier jour du quatrième trimestre civil suivant » le décret
+#: n° 2006-966 (loi n° 2005-882, art. 15, XIV, 2°). L'année est l'unité.
+CONJOINT_COLLABORATEUR_OBLIGATOIRE = 2007
+#: Le forfait, en plafonds annuels de la sécurité sociale : « un revenu
+#: forfaitaire égal au tiers du plafond » (D. 633-19-2, 1°).
+CONJOINT_COLLABORATEUR_FORFAIT = 1.0 / 3.0
+
+
+def assiette_du_conjoint_collaborateur(macro: DonneesMacro, affiliation: str,
+                                       annee: int, revenu: float,
+                                       part: float) -> float:
+    """L'assiette d'une année d'emploi du conjoint collaborateur.
+
+    Il cotise « à sa demande » sur un revenu forfaitaire ou sur une fraction
+    du revenu du chef d'entreprise, partagée ou non avec lui (L. 662-1 ;
+    L. 633-10 de 2005 à 2017) : le tiers du plafond, 33,33 % ou 50 % de ce
+    revenu (D. 633-19-2 ; jusqu'en 2020, un tiers ou la moitié en partage,
+    ses 4° et 5°). Le modèle ne connaît pas le revenu du chef : le revenu de
+    la ligne EST l'assiette choisie. Sans revenu, la ligne prend le forfait,
+    que la caisse applique « si aucun autre choix n'est effectué »
+    (R. 662-1 ; D. 633-19-3, jusqu'en 2019), et que la complémentaire
+    reprend (D. 635-10-2) — depuis 2007 seulement : avant, l'assurance était
+    volontaire (L. 742-6, 5°), et une ligne sans revenu ne l'a pas souscrite.
+    Le forfait se proratise sur les mois de la ligne, comme le plafond."""
+    if (affiliation not in CONJOINTS_COLLABORATEURS or revenu > 0
+            or annee < CONJOINT_COLLABORATEUR_OBLIGATOIRE):
+        return revenu
+    return (CONJOINT_COLLABORATEUR_FORFAIT
+            * macro.plafond_securite_sociale(annee) * part)
+
+
 #: Les statuts de non-salarié agricole, et la qualité que chacun donne quand
 #: il est l'activité principale de l'année (:meth:`Carriere.qualite_agricole`).
 AFFILIATIONS_AGRICOLES = {
@@ -537,6 +577,9 @@ def _ligne_annuelle(
     """
     cotise = type_periode == "emploi"
     regle = None if cotise else motifs.get(type_periode, motifs.get("sans_activite"))
+    if cotise:
+        revenu = assiette_du_conjoint_collaborateur(macro, affiliation, annee,
+                                                    revenu, part)
     # L'ASSIETTE MINIMALE DES INDÉPENDANTS : un artisan qui déclare 3 000 €
     # cotise en 2026 sur 450 SMIC horaires, soit 5 409 €, et valide trois
     # trimestres au lieu d'un. Le revenu de la ligne reste celui qu'il a

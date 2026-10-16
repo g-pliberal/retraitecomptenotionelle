@@ -20,7 +20,7 @@ inventaire:
   rang: 40
   population: Artisans
   couverture: modelise
-  statuts: [artisan]
+  statuts: [artisan, conjoint_collaborateur_artisan]
   textes:
     - {reference: "décret n° 78-351 du 14 mars 1978 (régime complémentaire obligatoire d'assurance vieillesse des artisans)", id: null}
 periodes:

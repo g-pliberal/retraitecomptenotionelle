@@ -667,6 +667,44 @@ affiliations:
       - {debut: 2013, fin: 2017, regimes: [rsi, rci]}
       - {debut: 2018, fin: null, regimes: [regime_general, rci]}
 
+  conjoint_collaborateur_artisan:
+    libelle: Conjoint collaborateur d'un artisan
+    famille: independant
+    sans_employeur: true
+    periodes:
+      - {debut: 1983, fin: 2005, regimes: [cancava]}
+      - {debut: 2006, fin: 2006, regimes: [rsi]}
+      - {debut: 2007, fin: 2012, regimes: [rsi, rco_artisans]}
+      - {debut: 2013, fin: 2017, regimes: [rsi, rci]}
+      - {debut: 2018, fin: null, regimes: [regime_general, rci]}
+    note: >-
+      Le conjoint, ou le partenaire pacsé, qui collabore à l'entreprise sans
+      rémunération (code de commerce, L. 121-4). Le revenu de la ligne est son
+      ASSIETTE : celle qu'il a choisie, 33,33 % ou 50 % du revenu du chef, avec
+      ou sans partage (L. 662-1 ; D. 633-19-2) ; une ligne d'emploi sans revenu
+      cotise, depuis 2007, sur le forfait du tiers du plafond, l'option du 1° et
+      celle qui s'applique à défaut de choix (R. 662-1 ; avant 2019,
+      D. 633-19-3), qui vaut aussi pour la complémentaire (D. 635-10-2).
+      Affilié d'office depuis le 1er juillet 2007 (loi n° 2005-882, art. 15,
+      XIV ; décret n° 2006-966) ; de 1983 à 2006, l'assurance volontaire du
+      seul régime de base (L. 742-6, 5° ; D. 742-26), qu'une ligne sans revenu
+      dit non souscrite. Fiche `conjoint_collaborateur_independants`.
+
+  conjoint_collaborateur_commercant:
+    libelle: Conjoint collaborateur d'un commerçant ou d'un industriel
+    famille: independant
+    sans_employeur: true
+    periodes:
+      - {debut: 1983, fin: 2005, regimes: [organic]}
+      - {debut: 2006, fin: 2006, regimes: [rsi]}
+      - {debut: 2007, fin: 2012, regimes: [rsi, nric]}
+      - {debut: 2013, fin: 2017, regimes: [rsi, rci]}
+      - {debut: 2018, fin: null, regimes: [regime_general, rci]}
+    note: >-
+      Comme le conjoint collaborateur d'un artisan, à la complémentaire des
+      commerçants près de 2007 à 2012 (D. 635-10-2, qui borne sa cotisation par
+      D. 635-10). Fiche `conjoint_collaborateur_independants`.
+
   profession_liberale:
     libelle: Profession libérale (CNAVPL et CIPAV)
     famille: independant

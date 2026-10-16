@@ -17,7 +17,7 @@ inventaire:
   rang: 20
   population: Industriels et commerçants
   couverture: modelise
-  statuts: [commercant,
+  statuts: [commercant, conjoint_collaborateur_commercant,
             gerant_debit_tabac, micro_entrepreneur]
   textes:
     - {reference: "loi n° 48-101 du 17 janvier 1948", id: null}

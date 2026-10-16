@@ -20,7 +20,7 @@ inventaire:
   rang: 50
   population: Industriels et commerçants
   couverture: modelise
-  statuts: [commercant,
+  statuts: [commercant, conjoint_collaborateur_commercant,
             gerant_debit_tabac, micro_entrepreneur]
   textes:
     - {reference: "décret n° 2004-848 du 23 août 2004 (régime complémentaire obligatoire des industriels et commerçants)", id: null}

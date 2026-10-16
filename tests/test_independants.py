@@ -46,7 +46,7 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere, Metier
+from retraite_notionnelle.carriere import AnneeCarriere, Carriere, LigneRelevee, Metier
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.donnees import regimes
@@ -655,6 +655,113 @@ def test_les_deux_moteurs_servent_les_memes_points_d_invalidite():
                  "resultat": _fini(contexte.simuler(Saisie.depuis_requete(cas)).dictionnaire())}
                 for cas in CAS_INVALIDITE]
     texte = json.dumps(attendus, ensure_ascii=False)
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        fichier.write(texte)
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", str(RACINE / "tests" / "js" / "comparer.mjs"), chemin],
+            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    finally:
+        Path(chemin).unlink()
+    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
+
+
+# --- Le conjoint collaborateur ------------------------------------------------
+
+
+def _conjoint(simulateur, affiliation: str, revenus: dict[int, float],
+              naissance: int = 1962, liquidation: int = 2026):
+    carriere = Carriere.depuis_releve(
+        annee_naissance=naissance, sexe="F", age_liquidation=float(liquidation - naissance),
+        releve=[LigneRelevee(annee, affiliation, revenu) for annee, revenu in revenus.items()],
+        macro=simulateur.macro)
+    actuel = simulateur.scenario_actuel
+    coordination = coordonner.coordonner(actuel, carriere)
+    droits = acquerir.acquerir(actuel, coordination, compter.compter(actuel, coordination))
+    return carriere, droits
+
+
+@pytest.mark.parametrize("affiliation", ["conjoint_collaborateur_artisan",
+                                         "conjoint_collaborateur_commercant"])
+def test_sans_revenu_le_conjoint_cotise_au_tiers_du_plafond(simulateur, affiliation):
+    """Depuis l'affiliation obligatoire de 2007, une année d'emploi du conjoint
+    collaborateur sans revenu cotise sur « un revenu forfaitaire égal au tiers
+    du plafond » (D. 633-19-2, 1°), l'option que la caisse applique à défaut de
+    choix (R. 662-1) ; avant, l'assurance volontaire non souscrite ne valide
+    rien. Un revenu saisi est l'assiette choisie, et reste tel quel."""
+    macro = simulateur.macro
+    carriere, _ = _conjoint(simulateur, affiliation,
+                            {2005: 0.0, 2006: 0.0, 2007: 0.0, 2019: 0.0, 2020: 9000.0})
+    lignes = {ligne.annee: ligne for ligne in carriere.lignes}
+    assert lignes[2005].revenu == lignes[2006].revenu == 0.0
+    assert lignes[2005].trimestres_valides == 0
+    for annee in (2007, 2019):
+        assert lignes[annee].revenu == pytest.approx(macro.plafond_securite_sociale(annee) / 3)
+        assert lignes[annee].trimestres_valides == 4
+    assert lignes[2020].revenu == 9000.0
+
+
+def test_le_conjoint_route_ses_regimes():
+    """Le régime de base des artisans ou des commerçants dès l'assurance
+    volontaire de 1983, la complémentaire de sa profession depuis 2007, le RCI
+    depuis 2013, le régime général depuis 2018."""
+    from retraite_notionnelle.carriere import Affiliations
+    affiliations = Affiliations(RACINE_DONNEES)
+    attendus = {"conjoint_collaborateur_artisan": {
+                    1983: ["cancava"], 2006: ["rsi"], 2007: ["rsi", "rco_artisans"],
+                    2013: ["rsi", "rci"], 2018: ["regime_general", "rci"]},
+                "conjoint_collaborateur_commercant": {
+                    1983: ["organic"], 2006: ["rsi"], 2007: ["rsi", "nric"],
+                    2013: ["rsi", "rci"], 2018: ["regime_general", "rci"]}}
+    for code, debuts in attendus.items():
+        assert affiliations.sans_employeur(code)
+        assert {p["debut"]: p["regimes"] for p in affiliations.periodes(code)} == debuts
+
+
+def test_le_forfait_ouvre_les_points_du_rci_et_de_la_complementaire(simulateur):
+    """La complémentaire cotise sur le revenu retenu pour la base
+    (D. 635-10-2) : au forfait, le conjoint d'un artisan acquiert les points
+    qu'acquiert l'artisan au tiers du plafond, à la RCO des artisans de 2007 à
+    2012 et au RCI depuis."""
+    macro = simulateur.macro
+    annees = range(2007, 2026)
+    _, conjoint = _conjoint(simulateur, "conjoint_collaborateur_artisan",
+                            {annee: 0.0 for annee in annees})
+    _, artisan = _conjoint(simulateur, "artisan",
+                           {annee: macro.plafond_securite_sociale(annee) / 3
+                            for annee in annees})
+    for code, periode in (("rco_artisans", range(2007, 2013)), ("rci", range(2013, 2026))):
+        attendus = _credites(artisan, code, periode)
+        assert set(attendus) == set(periode)
+        assert _credites(conjoint, code, periode) == {
+            annee: pytest.approx(points) for annee, points in attendus.items()}
+
+
+CAS_CONJOINT = [
+    {"statut": "artisan", "naissance": "1962-03-15", "liquidation": "2026-04",
+     "releve": "\n".join(f"{annee}:conjoint_collaborateur_artisan:0"
+                         for annee in range(1990, 2026))},
+    {"statut": "commercant", "naissance": "1960-03-15", "liquidation": "2024-04",
+     "releve": "\n".join(f"{annee}:conjoint_collaborateur_commercant:"
+                         f"{0 if annee % 3 else 7500}" for annee in range(1985, 2024))},
+]
+
+
+def test_les_deux_moteurs_servent_les_memes_droits_au_conjoint():
+    """Le résultat entier, des six scénarios, est le même en Python et en
+    JavaScript pour deux conjoints collaborateurs, au forfait et à l'option."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    sys.path.insert(0, str(RACINE / "scripts"))
+    from construire_temoins import _fini
+    contexte = Contexte()
+    attendus = [{"requete": cas,
+                 "resultat": _fini(contexte.simuler(Saisie.depuis_requete(cas)).dictionnaire())}
+                for cas in CAS_CONJOINT]
+    texte = json.dumps(attendus, ensure_ascii=False)
+    assert "rco_artisans" in texte and "nric" in texte
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:
         fichier.write(texte)

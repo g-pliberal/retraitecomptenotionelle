@@ -1,0 +1,219 @@
+schema_version: 1
+id: conjoint_collaborateur_independants
+intitule: >-
+  Le conjoint collaborateur d'un artisan ou d'un commerçant cotise, à son choix, sur un
+  revenu forfaitaire égal au tiers du plafond ou sur une fraction du revenu du chef
+  d'entreprise, partagée ou non avec lui ; le forfait s'applique à défaut de choix. Sa
+  complémentaire cotise sur le revenu retenu pour sa base. Affilié d'office depuis le
+  1er juillet 2007, il ne relevait avant que d'une assurance volontaire du régime de
+  base, ouverte en 1983.
+domaine: cotisations
+regimes: [cancava, organic, rsi, rco_artisans, nric, rci, regime_general]
+etape: preparer_la_chronologie
+face: droit
+etat: transcrite
+lit:
+- les lignes d'emploi des statuts `conjoint_collaborateur_artisan` et
+  `conjoint_collaborateur_commercant`, leur revenu et la fraction de leur année
+- le plafond annuel de la sécurité sociale de l'année
+ecrit:
+- >-
+  le revenu de la ligne, qui est l'assiette de sa base et de sa complémentaire : le
+  revenu saisi, ou, sans revenu et depuis 2007, le tiers du plafond proratisé ; ses
+  trimestres en suivent
+dates_qui_decident:
+- periode.debut
+versions:
+- id: avant_le_statut
+  statut: lue
+  textes:
+  - reference: >-
+      décret n° 73-1215 du 29 décembre 1973, article 8, LEGIARTI000006764310, en vigueur
+      au 1er janvier 1983 : « l'assiette de la cotisation volontaire du conjoint
+      collaborateur est fixée, dans la limite du plafond »
+    lu_le: 2026-10-16
+  bornes:
+    periode.debut: [null, 1983-01-01]
+  contenu:
+    droit: aucun
+    raison: >-
+      le statut naît de la loi n° 82-596 du 10 juillet 1982 (article 7,
+      LEGIARTI000006512446) ; son assurance volontaire, du décret du 29 décembre 1973
+      dans sa rédaction de 1983
+  exemples: aucun trouvé
+- id: assurance_volontaire
+  statut: lue
+  textes:
+  - reference: >-
+      D. 742-26 CSS, LEGIARTI000006738540 et LEGIARTI000006738541 (1985-2006) : « Les
+      conjoints collaborateurs mentionnés au 5° de l'article L. 742-6 peuvent demander
+      […] que l'assiette de leur cotisation soit fixée, dans la limite du plafond […],
+      au tiers ou à la moitié des revenus professionnels […] du chef d'entreprise », ou
+      leur partage, « cette fraction étant alors déduite desdits revenus pour
+      déterminer l'assiette de la cotisation de l'assurance obligatoire du chef
+      d'entreprise »
+    lu_le: 2026-10-16
+  - reference: >-
+      D. 742-28 CSS, LEGIARTI000006738966 (1985-2006) : la cotisation annuelle « tant
+      du conjoint collaborateur que du chef d'entreprise, ne peut être inférieure à
+      celle […] qui serait due au titre d'un revenu égal à 200 fois le montant horaire
+      du salaire minimum de croissance »
+    lu_le: 2026-10-16
+  bornes:
+    periode.debut: [1983-01-01, 2007-07-01]
+  contenu:
+    droit: >-
+      l'assurance volontaire du seul régime de base, sur une fraction du revenu du chef
+      ou à la cotisation de l'assuré volontaire ; le modèle porte le revenu de la ligne,
+      et une ligne sans revenu ne l'a pas souscrite
+  exemples: aucun trouvé
+- id: affiliation_obligatoire
+  statut: lue
+  textes:
+  - reference: >-
+      L. 633-10 CSS, LEGIARTI000006743702 (2005-2011), qui reproduit le XIV de l'article
+      15 de la loi n° 2005-882 du 2 août 2005 : affiliation des conjoints collaborateurs
+      « à compter du premier jour du quatrième trimestre civil suivant la date de
+      publication du décret en Conseil d'Etat prévu au V de l'article L. 121-4 du code
+      de commerce » ; « Les cotisations du conjoint collaborateur […] sont calculées, à
+      sa demande : 1° Soit sur un revenu forfaitaire ou sur un pourcentage du revenu
+      professionnel du chef d'entreprise ; 2° Soit, avec l'accord du chef d'entreprise,
+      sur une fraction du revenu professionnel de ce dernier qui est déduite […] »
+    lu_le: 2026-10-16
+  - reference: >-
+      D. 633-19-2 CSS, LEGIARTI000006737951, LEGIARTI000025629841, LEGIARTI000028435858
+      (2006-2020) : « 1° Soit sur un revenu forfaitaire égal au tiers du plafond […] ;
+      2° Soit sur 33,33 % du revenu […] ; 3° Soit sur 50 % […] ; 4° Soit sur une
+      fraction fixée au tiers du revenu […] ; 5° Soit sur une fraction fixée à la moitié
+      […] », les 4° et 5° en partage
+    lu_le: 2026-10-16
+  - reference: >-
+      D. 633-19-3 CSS, LEGIARTI000006737952 (2006-2019) : « Lorsque les conditions
+      prévues aux alinéas ci-dessus ne sont pas remplies, les cotisations sont calculées
+      sur le revenu forfaitaire mentionné au 1° de l'article D. 633-19-2 »
+    lu_le: 2026-10-16
+  - reference: >-
+      D. 635-10-2 CSS, LEGIARTI000006738041 et LEGIARTI000025263590 (2006-2019) : « La
+      cotisation d'assurance vieillesse complémentaire du conjoint collaborateur est
+      calculée sur le revenu retenu […] pour le calcul de sa cotisation d'assurance
+      vieillesse de base », dans les limites de D. 635-7 (artisans) et D. 635-10
+      (commerçants) ; en partage, il est déduit du revenu du chef
+    lu_le: 2026-10-16
+  bornes:
+    periode.debut: [2007-07-01, 2019-07-08]
+  contenu:
+    droit: >-
+      la base et la complémentaire sur le forfait du tiers du plafond, ou sur 33,33 %
+      ou 50 % du revenu du chef, ou sur son tiers ou sa moitié en partage ; le forfait à
+      défaut de choix
+    parametres: {forfait_en_plafonds: 0.3333}
+  exemples: aucun trouvé
+- id: l_662_1
+  statut: lue
+  textes:
+  - reference: >-
+      L. 662-1 CSS, LEGIARTI000037053297 à LEGIARTI000048683471 (2018-) : « 1° Soit sur
+      la base d'un revenu forfaitaire ; 2° Soit sur la base d'une fraction du revenu
+      d'activité du chef d'entreprise […] ; 3° Soit, avec l'accord du chef d'entreprise,
+      sur la base d'une fraction du revenu d'activité de ce dernier, laquelle est alors
+      déduite […] » ; le conjoint du micro-entrepreneur à part (D. 613-5)
+    lu_le: 2026-10-16
+  - reference: >-
+      R. 662-1 CSS, LEGIARTI000038785217 (depuis le 8 juillet 2019) : « Si aucun autre
+      choix n'est effectué dans le délai mentionné au premier alinéa les cotisations du
+      conjoint collaborateur sont calculées sur la base du revenu le plus faible fixé
+      pour l'application du 1° de l'article L. 662-1 » ; l'option vaut trois ans
+    lu_le: 2026-10-16
+  - reference: >-
+      D. 633-19-2 CSS, LEGIARTI000041966711 (depuis le 25 mai 2020) : « 1° Soit sur un
+      revenu forfaitaire égal au tiers du plafond mentionné au premier alinéa de
+      l'article L. 241-3 ; 2° Soit sur 33,33 % du revenu d'activité du chef
+      d'entreprise ; 3° Soit sur 50 % […] »
+    lu_le: 2026-10-16
+  bornes:
+    periode.debut: [2019-07-08, null]
+  contenu:
+    droit: >-
+      les mêmes options, le partage relevant du 3° de L. 662-1 ; le forfait à défaut de
+      choix
+    parametres: {forfait_en_plafonds: 0.3333}
+  exemples: aucun trouvé
+approximations:
+- ecart: >-
+    le modèle ne connaît pas le revenu du chef d'entreprise : le revenu de la ligne est
+    l'assiette que le conjoint a choisie, et le partage ne réduit pas l'assiette du chef,
+    qui n'est pas dans la carrière
+  effet: aucun sur le conjoint ; le chef se saisit à part, sur son revenu après partage
+- ecart: >-
+    l'année est l'unité : l'affiliation obligatoire du 1er juillet 2007 vaut pour toute
+    l'année 2007, et le forfait s'applique à une ligne de 2007 sans revenu
+  effet: au plus six mois de forfait, en 2007
+- ecart: >-
+    aucune assiette minimale n'est opposée au conjoint qui cotise sur une fraction du
+    revenu du chef : ni les 200 SMIC de D. 742-28 avant 2007, ni le minimum de D. 633-2
+    depuis, que le dépôt n'a pas lu pour lui ; au forfait, l'assiette les dépasse
+  effet: non mesuré ; les seuls conjoints à l'option d'un petit revenu
+- ecart: >-
+    avant 2007, l'assurance volontaire ne porte que la base, sur le revenu saisi : ni la
+    cotisation de l'assuré volontaire (D. 742-25), ni une complémentaire volontaire
+  effet: non mesuré
+- ecart: >-
+    la limite de cinq ans du statut depuis le 1er janvier 2022 (code de commerce,
+    L. 121-4) n'est pas opposée : le modèle prend la carrière saisie
+  effet: aucun sur le calcul
+sources:
+  lu_le: 2026-10-16
+  prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    Un exemple chiffré de l'Urssaf ou de la Sécurité sociale des indépendants : la
+    cotisation et les trimestres d'un conjoint au forfait ou à l'option.
+  - >-
+    Si l'assiette minimale de D. 633-2 et de D. 612-5 s'oppose au conjoint qui cotise
+    sur une fraction du revenu du chef, et depuis quand.
+  - >-
+    La limite de cinq ans du statut (code de commerce, L. 121-4, loi n° 2019-486,
+    article 8), que l'index du dépôt ne porte pas.
+  - >-
+    La complémentaire des conjoints d'avant 2007 : le règlement de la RCO des artisans
+    de 1978 et le régime facultatif des commerçants avant le NRIC.
+  lectures:
+  - type: legifrance
+    reference: >-
+      index LEGI du dépôt, mis à jour de l'incrément du 15 octobre 2026 : L. 633-10
+      (2005-2017), L. 662-1 (2018-), D. 633-19-2 à D. 633-19-7, D. 635-10-2, D. 635-19,
+      D. 632-6, R. 662-1, R. 662-2, D. 613-5, D. 742-25 à D. 742-28, toutes leurs
+      versions
+    date: 2026-10-16
+textes_a_rattacher:
+- reference: code de commerce, L. 121-4
+- reference: loi n° 2005-882 du 2 août 2005, article 15
+- reference: décret n° 2006-966 du 1er août 2006
+code:
+  python: >-
+    carriere.py : CONJOINTS_COLLABORATEURS, assiette_du_conjoint_collaborateur,
+    _ligne_annuelle
+  javascript: >-
+    moteur/js/carriere.js : CONJOINTS_COLLABORATEURS, assietteDuConjointCollaborateur,
+    ligneAnnuelle
+  parametres: >-
+    legislation/affiliations.yaml, statuts `conjoint_collaborateur_artisan` et
+    `conjoint_collaborateur_commercant`
+  tests: tests/test_independants.py
+referents:
+  modele_ti: >-
+    porte le conjoint collaborateur et ses options : le tiers du plafond, un tiers ou
+    la moitié du revenu du chef, avec ou sans partage
+historique:
+- >-
+  2026-10-16 — action 138, étape 18 : le dépôt n'avait pas de statut pour le conjoint
+  collaborateur d'un artisan ou d'un commerçant ; il en a deux, cotisant sur
+  l'assiette choisie ou, à défaut, sur le tiers du plafond, dans les deux moteurs.
+effet: >-
+  Les conjoints collaborateurs des artisans et des commerçants, qui n'avaient pas de
+  statut. Une conjointe d'artisan née en 1962, collaboratrice de 1990 à 2025 sans revenu
+  déclaré et partie en avril 2026, a au scénario 1 une pension de 4 143 € par an : 2 948
+  € au régime général, 360 € à la RCO des artisans et 835 € au RCI, ses années 2007 à 2025
+  au forfait ; une conjointe de commerçant au même parcours, 4 127 €. À l'option de 6 000
+  € par an, 3 312 €, quand l'artisan au même revenu en a 3 974 €, sa RCO comptant aussi
+  1990 à 2006, et l'assiette minimale lui validant un trimestre de plus en 2026.

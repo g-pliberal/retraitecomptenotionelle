@@ -17,7 +17,7 @@ inventaire:
   rang: 30
   population: Artisans, industriels et commerçants
   couverture: modelise
-  statuts: [artisan, commercant,
+  statuts: [artisan, commercant, conjoint_collaborateur_artisan, conjoint_collaborateur_commercant,
             gerant_debit_tabac, micro_entrepreneur]
   textes:
     - {reference: "ordonnance n° 2005-1528 du 8 décembre 2005 relative à la création du régime social des indépendants", id: null}

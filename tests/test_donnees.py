@@ -2710,7 +2710,8 @@ def test_les_statuts_sans_employeur_sont_marques():
                     "sage_femme", "biologiste_liberal", "medecin_liberal_secteur_2",
                     "pharmacien", "auxiliaire_medical", "veterinaire",
                     "officier_ministeriel", "notaire", "liberal_non_reglemente",
-                    "gerant_debit_tabac", "micro_entrepreneur"}
+                    "gerant_debit_tabac", "micro_entrepreneur",
+                    "conjoint_collaborateur_artisan", "conjoint_collaborateur_commercant"}
     # L'AGENT GÉNÉRAL D'ASSURANCE EST LE SEUL LIBÉRAL QUI N'Y EST PAS, et ce
     # n'est pas un oubli : un tiers de son complémentaire est payé par les
     # compagnies mandantes, « depuis 1952 » et par accords de branche

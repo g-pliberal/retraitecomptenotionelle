@@ -7250,14 +7250,15 @@ referents:
           D. 633-19-2 (LEGIARTI000041966711) : « Soit sur un revenu
           forfaitaire égal au tiers du plafond … Soit sur 33,33 % …
           Soit sur 50 % du revenu d'activité du chef d'entreprise »
-        etat: coupe
+          Repris le 16 octobre 2026 (action 138, étape 18) pour
+          l'artisan et le commerçant : deux statuts neufs, dont le
+          revenu est l'assiette choisie, le tiers du plafond à
+          défaut, à la base et à la complémentaire (fiche
+          `conjoint_collaborateur_independants`). Celui du libéral
+          reste déclaré dans `un_statut_par_annee`.
+        etat: repris
         chantier: "138.18"
-        raison: >-
-          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
-          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
-          octobre). Le conjoint collaborateur des indépendants et ses options de
-          cotisation.
-        fiche: un_statut_par_annee
+        fiche: conjoint_collaborateur_independants
       - quoi: >-
           Il dispense de l'assiette minimale l'activité saisonnière,
           comme le bénéficiaire du RSA ou de la prime d'activité,

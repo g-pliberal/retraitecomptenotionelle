@@ -20,7 +20,7 @@ inventaire:
   rang: 70
   population: Artisans, industriels et commerçants
   couverture: modelise
-  statuts: [artisan, commercant,
+  statuts: [artisan, commercant, conjoint_collaborateur_artisan, conjoint_collaborateur_commercant,
             gerant_debit_tabac, micro_entrepreneur,
             liberal_non_reglemente]
   textes:

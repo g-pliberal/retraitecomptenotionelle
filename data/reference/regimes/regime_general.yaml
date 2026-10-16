@@ -26,7 +26,7 @@ inventaire:
   nom: Régime général de la Sécurité sociale (Cnav)
   population: Salariés du secteur privé, et depuis 2018 les artisans et commerçants
   couverture: modelise
-  statuts: [salarie_prive_non_cadre, salarie_prive_cadre, contractuel_public, artisan, commercant,
+  statuts: [salarie_prive_non_cadre, salarie_prive_cadre, contractuel_public, artisan, commercant, conjoint_collaborateur_artisan, conjoint_collaborateur_commercant,
             artiste_auteur, personnel_navigant, agent_sncf, agent_ratp, agent_ieg, mineur,
             clerc_de_notaire, agent_banque_de_france, agent_seita,
             agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,

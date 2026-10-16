@@ -17,7 +17,7 @@ inventaire:
   rang: 10
   population: Artisans
   couverture: modelise
-  statuts: [artisan]
+  statuts: [artisan, conjoint_collaborateur_artisan]
   textes:
     - {reference: "loi n° 48-101 du 17 janvier 1948 instituant une allocation de vieillesse pour les personnes non salariées", id: null}
 # LES ANNÉES DE 1949 À 1972 ONT LEUR RÉGIME, `cancava_avant_1973` (action 138, étape 18) :
